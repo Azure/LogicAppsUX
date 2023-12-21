@@ -216,659 +216,879 @@
   "fileMap": {
     "nonProjectFiles": [
       {
-        "file": "Localize/lang/strings.ru.json",
-        "hash": "11310816713743440548"
-      },
-      {
-        "file": "jest.config.ts",
-        "hash": "10692344265727502540"
-      },
-      {
-        "file": "__mocks__/schemas/PlaygroundTargetSchema.json",
-        "hash": "809269604960596195"
-      },
-      {
-        "file": ".github/ISSUE_TEMPLATE/ca11y.yml",
-        "hash": "5293457826370554882"
-      },
-      {
-        "file": ".nx/cache/d/server-process.json",
-        "hash": "9116414310183441727"
-      },
-      {
-        "file": "Localize/settings/ICUFormatMessage.lss",
-        "hash": "120651321713162269"
-      },
-      {
-        "file": "Localize/lang/strings.id.json",
-        "hash": "6651094204590720091"
-      },
-      {
-        "file": "Localize/loc/hu/strings.json.lcl",
-        "hash": "11767915221900196147"
-      },
-      {
-        "file": "Localize/lang/strings.es.json",
-        "hash": "3260602753405918958"
-      },
-      {
-        "file": "__mocks__/workflows/Empty.json",
-        "hash": "18273642241049546868"
-      },
-      {
-        "file": "jest.preset.js",
-        "hash": "9430166341120122740"
-      },
-      {
-        "file": ".gitignore",
-        "hash": "9801647620651152260"
-      },
-      {
-        "file": "__mocks__/workflows/StressTest300.json",
-        "hash": "8073244307323596319"
-      },
-      {
-        "file": "__mocks__/workflows/simpleBigworkflow.json",
-        "hash": "6589532073964586460"
-      },
-      {
-        "file": "Localize/loc/tr/strings.json.lcl",
-        "hash": "9680913056134170248"
-      },
-      {
-        "file": "Localize/loc/zh-Hans/strings.json.lcl",
-        "hash": "2295273165016448836"
-      },
-      {
-        "file": "__mocks__/workflows/Panel.json",
-        "hash": "13581712218449529118"
-      },
-      {
-        "file": "__mocks__/runs/simpleScoped.json",
-        "hash": "7980537690521249977"
-      },
-      {
-        "file": "__mocks__/workflows/Conditionals.json",
-        "hash": "5437366788188040215"
-      },
-      {
-        "file": ".eslintrc.json",
-        "hash": "7261948969674397125"
-      },
-      {
-        "file": "__mocks__/workflows/AllScopeNodes.json",
-        "hash": "14356671101748434170"
-      },
-      {
-        "file": "Localize/loc/ru/strings.json.lcl",
-        "hash": "10499947932261359040"
-      },
-      {
-        "file": "__mocks__/workflows/simpleScoped.json",
-        "hash": "3543061434896807894"
-      },
-      {
-        "file": "__mocks__/mapDefinitions/TranscriptJsonMapDefinition.ts",
-        "hash": "11752793667417622953"
-      },
-      {
-        "file": "Localize/lang/strings.zh-Hant.json",
-        "hash": "12262277802393974078"
-      },
-      {
-        "file": "Localize/lang/strings.de.json",
-        "hash": "5848394912432190675"
-      },
-      {
-        "file": "CODE_OF_CONDUCT.md",
-        "hash": "15583593583900038246"
-      },
-      {
-        "file": ".github/pull_request_template.md",
-        "hash": "15522796552713692114"
-      },
-      {
-        "file": "Localize/loc/nl/strings.json.lcl",
-        "hash": "14467079336539565109"
-      },
-      {
-        "file": "package-lock.json",
-        "hash": "15635856576396847112"
-      },
-      {
-        "file": ".github/workflows/compile-loc.yml",
-        "hash": "6716544478710748287"
-      },
-      {
-        "file": "__mocks__/workflows/RunAfter.json",
-        "hash": "17581560171894355118"
-      },
-      {
-        "file": "__mocks__/workflows/StandardWorkflowParameters.json",
-        "hash": "3382298018965360790"
-      },
-      {
-        "file": "CHANGELOG.md",
-        "hash": "5200023122043223865"
-      },
-      {
-        "file": "tsconfig.base.json",
-        "hash": "5860741228218372507"
-      },
-      {
-        "file": ".npmrc",
-        "hash": "4554515537806935951"
-      },
-      {
-        "file": "format.js",
-        "hash": "1306498498269790088"
-      },
-      {
-        "file": ".prettierignore",
-        "hash": "15310167839438387450"
-      },
-      {
-        "file": "custom-webpack.config.js",
-        "hash": "16585808971029004329"
-      },
-      {
-        "file": "cypress.json",
-        "hash": "15753941481085060538"
-      },
-      {
-        "file": "types/Svg.d.ts",
-        "hash": "16119276421185882375"
-      },
-      {
-        "file": "babel.config.json",
-        "hash": "12905936786051367349"
-      },
-      {
-        "file": "__mocks__/workflows/ComplexConditionals.json",
-        "hash": "8082757735638268806"
-      },
-      {
-        "file": "__mocks__/svgTransform.js",
-        "hash": "11323230226160083933"
-      },
-      {
-        "file": ".editorconfig",
-        "hash": "5443105041930014821"
-      },
-      {
-        "file": "__mocks__/workflows/StressTest600.json",
-        "hash": "14263668666459582022"
-      },
-      {
-        "file": "__mocks__/schemas/DeepNestedSequenceAndObj.json",
-        "hash": "12317783714393955752"
-      },
-      {
-        "file": "migrations.json",
-        "hash": "7974914535834739943"
-      },
-      {
-        "file": "Localize/lang/strings.ko.json",
-        "hash": "15598547987832782062"
-      },
-      {
-        "file": "__mocks__/workflows/StraightLine.json",
-        "hash": "4991082168474140639"
-      },
-      {
-        "file": "__mocks__/schemas/ComprehensiveSourceSchema.json",
-        "hash": "14056455167740757319"
-      },
-      {
-        "file": "playwright.config.base.ts",
-        "hash": "4390107713842743045"
-      },
-      {
-        "file": ".prettierrc",
-        "hash": "15499642227079700142"
-      },
-      {
-        "file": "SUPPORT.md",
-        "hash": "14636316271959715561"
-      },
-      {
-        "file": "Localize/lang/strings.nl.json",
-        "hash": "1329740517823029376"
-      },
-      {
-        "file": "NOTICE",
-        "hash": "4974440325704483544"
-      },
-      {
-        "file": "extension-copy-svgs.js",
-        "hash": "11484980984219560786"
-      },
-      {
-        "file": ".vscode/extensions.json",
-        "hash": "8407723965504764325"
-      },
-      {
-        "file": "__mocks__/workflows/Switch.json",
-        "hash": "3916122250248788443"
-      },
-      {
-        "file": "__mocks__/schemas/ComprehensiveTargetSchema.json",
-        "hash": "12236172821382509954"
-      },
-      {
-        "file": "__mocks__/workflows/MultipleRunAftersBig.json",
-        "hash": "14490270762819621991"
-      },
-      {
-        "file": "Localize/lang/strings.fr.json",
-        "hash": "13276500407141180100"
-      },
-      {
-        "file": "Localize/lang/strings.hu.json",
-        "hash": "7119629325036695557"
-      },
-      {
-        "file": "Localize/loc/es/strings.json.lcl",
-        "hash": "10853012563360222132"
-      },
-      {
         "file": ".github/ISSUE_TEMPLATE/config.yml",
         "hash": "17858606678031151155"
-      },
-      {
-        "file": "__mocks__/workflows/UnicodeKeys.json",
-        "hash": "9641220241181624180"
-      },
-      {
-        "file": "Localize/lang/strings.it.json",
-        "hash": "16979967004314839938"
-      },
-      {
-        "file": ".github/workflows/codeql-analysis.yml",
-        "hash": "14513951734113331483"
-      },
-      {
-        "file": ".versionrc",
-        "hash": "738397178437334680"
-      },
-      {
-        "file": "Localize/loc/zh-Hant/strings.json.lcl",
-        "hash": "10505577291540268513"
-      },
-      {
-        "file": ".github/workflows/production-build.yml",
-        "hash": "2808330893745098052"
-      },
-      {
-        "file": "__mocks__/schemas/index.ts",
-        "hash": "2795136411859709371"
-      },
-      {
-        "file": "__mocks__/workflows/StressTest100.json",
-        "hash": "18015117502836215746"
-      },
-      {
-        "file": "LICENSE.md",
-        "hash": "11929769968810875751"
-      },
-      {
-        "file": "Localize/lang/strings.pt-PT.json",
-        "hash": "7944797230477030031"
-      },
-      {
-        "file": "Localize/loc/ja/strings.json.lcl",
-        "hash": "1522525026754686700"
-      },
-      {
-        "file": "__mocks__/mapMetadata/index.ts",
-        "hash": "15499977704685244619"
-      },
-      {
-        "file": "README.md",
-        "hash": "8981796807056710969"
-      },
-      {
-        "file": "__mocks__/schemas/TargetSchemaJson.json",
-        "hash": "10254182426973397227"
-      },
-      {
-        "file": "__mocks__/schemas/SourceSchema.json",
-        "hash": "8324048840990279918"
-      },
-      {
-        "file": "__mocks__/mapDefinitions/FullTranscriptMapDefinition.ts",
-        "hash": "3944062966816905762"
-      },
-      {
-        "file": "Localize/loc/id/strings.json.lcl",
-        "hash": "12877049034123267994"
-      },
-      {
-        "file": "package.json",
-        "hash": "9961917896998752490"
-      },
-      {
-        "file": "Localize/lang/strings.cs.json",
-        "hash": "11349558440982422554"
-      },
-      {
-        "file": "Localize/loc/pl/strings.json.lcl",
-        "hash": "10677972438459639216"
-      },
-      {
-        "file": "__mocks__/workflows/StressTest400.json",
-        "hash": "4743644115029324208"
-      },
-      {
-        "file": "__mocks__/workflows/StressTest500Gross.json",
-        "hash": "12246450347458963764"
-      },
-      {
-        "file": "Localize/loc/sv/strings.json.lcl",
-        "hash": "8848263924961247459"
-      },
-      {
-        "file": "Localize/lang/strings.json",
-        "hash": "7167967294997166275"
-      },
-      {
-        "file": "__mocks__/workflows/MoreComplex.json",
-        "hash": "11179731100125920842"
-      },
-      {
-        "file": "__mocks__/workflows/ConsumptionWorkflowParameters.json",
-        "hash": "7629133120774663506"
-      },
-      {
-        "file": ".github/workflows/ISSUE_MANAGEMENT.yml",
-        "hash": "13114629795705431580"
-      },
-      {
-        "file": "__mocks__/workflows/Recurrence.json",
-        "hash": "3782576819996791784"
-      },
-      {
-        "file": "__mocks__/workflows/StressTest200.json",
-        "hash": "1645800986951066668"
-      },
-      {
-        "file": "Localize/lang/strings.tr.json",
-        "hash": "18361217182273724421"
-      },
-      {
-        "file": ".gitattributes",
-        "hash": "8207937369485138236"
-      },
-      {
-        "file": "__mocks__/connectors.json",
-        "hash": "7808230621967601702"
       },
       {
         "file": "__mocks__/schemas/TargetSchema.json",
         "hash": "15315721781980201592"
       },
       {
-        "file": "__mocks__/workflows/StressTest1000.json",
-        "hash": "7669209502452834210"
+        "file": "Localize/settings/ICUFormatMessage.lss",
+        "hash": "120651321713162269"
       },
       {
-        "file": "SECURITY.md",
-        "hash": "9439797681970859283"
+        "file": "__mocks__/mapMetadata/index.ts",
+        "hash": "15499977704685244619"
       },
       {
-        "file": ".husky/pre-commit",
-        "hash": "6967574673299791861"
+        "file": "__mocks__/schemas/index.ts",
+        "hash": "2795136411859709371"
       },
       {
-        "file": "Localize/loc/ko/strings.json.lcl",
-        "hash": "2536699974410694952"
+        "file": "playwright.config.base.ts",
+        "hash": "4390107713842743045"
       },
       {
-        "file": "__mocks__/workflows/StressTest50.json",
-        "hash": "14704594591881977339"
-      },
-      {
-        "file": "Localize/lang/strings.ja.json",
-        "hash": "8705052815569710528"
-      },
-      {
-        "file": "__mocks__/schemas/PlaygroundSourceSchema.json",
-        "hash": "8210905390020844267"
-      },
-      {
-        "file": ".github/workflows/loc-auto-merge.yml",
-        "hash": "4051908195568450540"
-      },
-      {
-        "file": "nx.json",
-        "hash": "16471146652404048437"
+        "file": "__mocks__/workflows/ConsumptionWorkflowParameters.json",
+        "hash": "7629133120774663506"
       },
       {
         "file": ".vscode/launch.json",
         "hash": "3792413396413002889"
       },
       {
-        "file": "__mocks__/workflows/Scoped.json",
-        "hash": "4353911984650933419"
+        "file": "__mocks__/schemas/PlaygroundTargetSchema.json",
+        "hash": "809269604960596195"
       },
       {
-        "file": "Localize/loc/it/strings.json.lcl",
-        "hash": "9848488737132947494"
+        "file": "Localize/lang/strings.ko.json",
+        "hash": "15598547987832782062"
       },
       {
-        "file": ".github/ISSUE_TEMPLATE/data_mapper.yml",
-        "hash": "17111424543774017603"
+        "file": "Localize/lang/strings.ja.json",
+        "hash": "8705052815569710528"
+      },
+      {
+        "file": "Localize/loc/id/strings.json.lcl",
+        "hash": "12877049034123267994"
       },
       {
         "file": ".github/pr-title-checker-config.json",
         "hash": "17204226807832485512"
       },
       {
-        "file": "Localize/lang/strings.pt-BR.json",
-        "hash": "13666935741494757034"
+        "file": "Localize/lang/strings.tr.json",
+        "hash": "18361217182273724421"
       },
       {
-        "file": "Localize/lang/strings.sv.json",
-        "hash": "8532045254264416296"
-      },
-      {
-        "file": "__mocks__/mapDefinitions/ComprehensiveMapDefinition.ts",
-        "hash": "9919290274382928880"
-      },
-      {
-        "file": "__mocks__/workflows/simpleForeach.json",
-        "hash": "3200434854997074561"
-      },
-      {
-        "file": "Localize/loc/cs/strings.json.lcl",
-        "hash": "17809208134011830735"
-      },
-      {
-        "file": "init.js",
-        "hash": "18386098831189968662"
-      },
-      {
-        "file": ".github/workflows/package-lock-version-test.yml",
-        "hash": "3012940027669865641"
-      },
-      {
-        "file": "Localize/lang/strings.zh-Hans.json",
-        "hash": "2895580291270932950"
-      },
-      {
-        "file": "Localize/loc/pt-PT/strings.json.lcl",
-        "hash": "5641134581460797997"
-      },
-      {
-        "file": "Localize/loc/de/strings.json.lcl",
-        "hash": "12802513263956908855"
-      },
-      {
-        "file": "Localize/lang/strings.pl.json",
-        "hash": "5959274191541273117"
-      },
-      {
-        "file": ".github/ISSUE_TEMPLATE/bug_report.yml",
-        "hash": "5880008548202455380"
-      },
-      {
-        "file": "__mocks__/mapMetadata/testMetadataStandalone.ts",
-        "hash": "12239882979432947255"
-      },
-      {
-        "file": ".vscode/tasks.json",
-        "hash": "16863986330420562344"
-      },
-      {
-        "file": "__mocks__/mapDefinitions/index.ts",
-        "hash": "16382172872236827587"
-      },
-      {
-        "file": "Localize/loc/fr/strings.json.lcl",
-        "hash": "17073595228658620661"
-      },
-      {
-        "file": "Localize/LocProject.json",
-        "hash": "3095542586741732925"
-      },
-      {
-        "file": ".github/workflows/Deploy-Documentation.yml",
-        "hash": "4737775065503146582"
-      },
-      {
-        "file": "__mocks__/mapMetadata/testMetadata.json",
-        "hash": "2848973044264925539"
-      },
-      {
-        "file": ".github/workflows/pr-title-check.yml",
-        "hash": "16865650786881394050"
-      },
-      {
-        "file": ".github/workflows/test.yml",
-        "hash": "1713889682552947488"
-      },
-      {
-        "file": "__mocks__/schemas/SourceSchemaJson.json",
-        "hash": "4190556006012848629"
-      },
-      {
-        "file": "__mocks__/workflows/StressTest500.json",
-        "hash": "12244941126482239468"
+        "file": "__mocks__/schemas/SourceSchema.json",
+        "hash": "8324048840990279918"
       },
       {
         "file": "Localize/loc/pt-BR/strings.json.lcl",
         "hash": "13971130388785983263"
       },
       {
+        "file": ".vscode/tasks.json",
+        "hash": "16863986330420562344"
+      },
+      {
+        "file": ".prettierignore",
+        "hash": "15310167839438387450"
+      },
+      {
+        "file": "Localize/loc/pt-PT/strings.json.lcl",
+        "hash": "5641134581460797997"
+      },
+      {
+        "file": "__mocks__/runs/simpleScoped.json",
+        "hash": "7980537690521249977"
+      },
+      {
+        "file": "__mocks__/workflows/StressTest500Gross.json",
+        "hash": "12246450347458963764"
+      },
+      {
+        "file": "migrations.json",
+        "hash": "7974914535834739943"
+      },
+      {
+        "file": "__mocks__/workflows/RunAfter.json",
+        "hash": "17581560171894355118"
+      },
+      {
+        "file": ".github/ISSUE_TEMPLATE/ca11y.yml",
+        "hash": "5293457826370554882"
+      },
+      {
+        "file": "__mocks__/workflows/StraightLine.json",
+        "hash": "4991082168474140639"
+      },
+      {
+        "file": "__mocks__/workflows/ComplexConditionals.json",
+        "hash": "8082757735638268806"
+      },
+      {
         "file": "one-loc-build.yml",
         "hash": "17077157507478279771"
+      },
+      {
+        "file": ".github/workflows/Deploy-Documentation.yml",
+        "hash": "4737775065503146582"
+      },
+      {
+        "file": "__mocks__/mapMetadata/testMetadataStandalone.ts",
+        "hash": "12239882979432947255"
+      },
+      {
+        "file": "Localize/loc/hu/strings.json.lcl",
+        "hash": "11767915221900196147"
+      },
+      {
+        "file": "Localize/lang/strings.id.json",
+        "hash": "6651094204590720091"
+      },
+      {
+        "file": "__mocks__/workflows/Empty.json",
+        "hash": "18273642241049546868"
+      },
+      {
+        "file": "__mocks__/workflows/MoreComplex.json",
+        "hash": "11179731100125920842"
+      },
+      {
+        "file": ".github/workflows/loc-auto-merge.yml",
+        "hash": "4051908195568450540"
+      },
+      {
+        "file": "Localize/lang/strings.pt-PT.json",
+        "hash": "7944797230477030031"
+      },
+      {
+        "file": "__mocks__/workflows/MultipleRunAftersBig.json",
+        "hash": "14490270762819621991"
+      },
+      {
+        "file": "SECURITY.md",
+        "hash": "9439797681970859283"
+      },
+      {
+        "file": "format.js",
+        "hash": "1306498498269790088"
+      },
+      {
+        "file": "custom-webpack.config.js",
+        "hash": "16585808971029004329"
+      },
+      {
+        "file": ".github/workflows/package-lock-version-test.yml",
+        "hash": "3012940027669865641"
+      },
+      {
+        "file": "__mocks__/workflows/Scoped.json",
+        "hash": "4353911984650933419"
+      },
+      {
+        "file": ".editorconfig",
+        "hash": "5443105041930014821"
+      },
+      {
+        "file": ".npmrc",
+        "hash": "4554515537806935951"
+      },
+      {
+        "file": "__mocks__/schemas/ComprehensiveSourceSchema.json",
+        "hash": "14056455167740757319"
+      },
+      {
+        "file": "Localize/lang/strings.ru.json",
+        "hash": "11310816713743440548"
+      },
+      {
+        "file": "__mocks__/schemas/DeepNestedSequenceAndObj.json",
+        "hash": "12317783714393955752"
+      },
+      {
+        "file": "__mocks__/workflows/StressTest100.json",
+        "hash": "18015117502836215746"
+      },
+      {
+        "file": ".github/workflows/production-build.yml",
+        "hash": "2808330893745098052"
+      },
+      {
+        "file": ".github/workflows/compile-loc.yml",
+        "hash": "6716544478710748287"
+      },
+      {
+        "file": ".github/ISSUE_TEMPLATE/bug_report.yml",
+        "hash": "5880008548202455380"
+      },
+      {
+        "file": "__mocks__/workflows/Conditionals.json",
+        "hash": "5437366788188040215"
+      },
+      {
+        "file": "__mocks__/workflows/StressTest50.json",
+        "hash": "14704594591881977339"
+      },
+      {
+        "file": "__mocks__/workflows/UnicodeKeys.json",
+        "hash": "9641220241181624180"
+      },
+      {
+        "file": "Localize/lang/strings.zh-Hans.json",
+        "hash": "2895580291270932950"
+      },
+      {
+        "file": ".vscode/extensions.json",
+        "hash": "8407723965504764325"
+      },
+      {
+        "file": "Localize/loc/fr/strings.json.lcl",
+        "hash": "17073595228658620661"
+      },
+      {
+        "file": "Localize/lang/strings.sv.json",
+        "hash": "8532045254264416296"
+      },
+      {
+        "file": "__mocks__/mapDefinitions/FullTranscriptMapDefinition.ts",
+        "hash": "3944062966816905762"
+      },
+      {
+        "file": "init.js",
+        "hash": "18386098831189968662"
+      },
+      {
+        "file": "jest.config.ts",
+        "hash": "10692344265727502540"
+      },
+      {
+        "file": "__mocks__/schemas/TargetSchemaJson.json",
+        "hash": "10254182426973397227"
+      },
+      {
+        "file": ".github/workflows/test.yml",
+        "hash": "1713889682552947488"
+      },
+      {
+        "file": "__mocks__/workflows/StressTest1000.json",
+        "hash": "7669209502452834210"
+      },
+      {
+        "file": "extension-copy-svgs.js",
+        "hash": "11484980984219560786"
+      },
+      {
+        "file": "Localize/lang/strings.fr.json",
+        "hash": "13276500407141180100"
+      },
+      {
+        "file": "NOTICE",
+        "hash": "4974440325704483544"
+      },
+      {
+        "file": "jest.preset.js",
+        "hash": "9430166341120122740"
+      },
+      {
+        "file": "Localize/lang/strings.it.json",
+        "hash": "16979967004314839938"
+      },
+      {
+        "file": "__mocks__/mapMetadata/testMetadata.json",
+        "hash": "2848973044264925539"
+      },
+      {
+        "file": "Localize/lang/strings.hu.json",
+        "hash": "7119629325036695557"
+      },
+      {
+        "file": "Localize/loc/pl/strings.json.lcl",
+        "hash": "10677972438459639216"
+      },
+      {
+        "file": "cypress.json",
+        "hash": "15753941481085060538"
+      },
+      {
+        "file": "nx.json",
+        "hash": "16471146652404048437"
+      },
+      {
+        "file": "__mocks__/workflows/StressTest500.json",
+        "hash": "12244941126482239468"
+      },
+      {
+        "file": "__mocks__/workflows/simpleBigworkflow.json",
+        "hash": "6589532073964586460"
+      },
+      {
+        "file": "Localize/loc/nl/strings.json.lcl",
+        "hash": "14467079336539565109"
+      },
+      {
+        "file": ".eslintrc.json",
+        "hash": "7261948969674397125"
+      },
+      {
+        "file": ".gitattributes",
+        "hash": "8207937369485138236"
+      },
+      {
+        "file": "package-lock.json",
+        "hash": "15635856576396847112"
+      },
+      {
+        "file": "Localize/loc/zh-Hant/strings.json.lcl",
+        "hash": "10505577291540268513"
+      },
+      {
+        "file": "__mocks__/workflows/simpleScoped.json",
+        "hash": "3543061434896807894"
+      },
+      {
+        "file": "Localize/lang/strings.pl.json",
+        "hash": "5959274191541273117"
+      },
+      {
+        "file": "Localize/loc/ko/strings.json.lcl",
+        "hash": "2536699974410694952"
+      },
+      {
+        "file": "README.md",
+        "hash": "8981796807056710969"
+      },
+      {
+        "file": ".gitignore",
+        "hash": "11682054106340670857"
+      },
+      {
+        "file": ".husky/pre-commit",
+        "hash": "6967574673299791861"
+      },
+      {
+        "file": "Localize/loc/zh-Hans/strings.json.lcl",
+        "hash": "2295273165016448836"
+      },
+      {
+        "file": "CODE_OF_CONDUCT.md",
+        "hash": "15583593583900038246"
+      },
+      {
+        "file": ".prettierrc",
+        "hash": "15499642227079700142"
+      },
+      {
+        "file": "package.json",
+        "hash": "9961917896998752490"
+      },
+      {
+        "file": "__mocks__/workflows/StandardWorkflowParameters.json",
+        "hash": "3382298018965360790"
+      },
+      {
+        "file": ".github/workflows/pr-title-check.yml",
+        "hash": "16865650786881394050"
+      },
+      {
+        "file": "__mocks__/workflows/AllScopeNodes.json",
+        "hash": "14356671101748434170"
+      },
+      {
+        "file": "CHANGELOG.md",
+        "hash": "5200023122043223865"
+      },
+      {
+        "file": "__mocks__/schemas/PlaygroundSourceSchema.json",
+        "hash": "8210905390020844267"
+      },
+      {
+        "file": "types/Svg.d.ts",
+        "hash": "16119276421185882375"
+      },
+      {
+        "file": "Localize/loc/ru/strings.json.lcl",
+        "hash": "10499947932261359040"
+      },
+      {
+        "file": "Localize/LocProject.json",
+        "hash": "3095542586741732925"
+      },
+      {
+        "file": "SUPPORT.md",
+        "hash": "14636316271959715561"
+      },
+      {
+        "file": "__mocks__/workflows/StressTest600.json",
+        "hash": "14263668666459582022"
+      },
+      {
+        "file": "Localize/lang/strings.es.json",
+        "hash": "3260602753405918958"
+      },
+      {
+        "file": "__mocks__/mapDefinitions/index.ts",
+        "hash": "16382172872236827587"
+      },
+      {
+        "file": "__mocks__/workflows/StressTest300.json",
+        "hash": "8073244307323596319"
+      },
+      {
+        "file": "tsconfig.base.json",
+        "hash": "5860741228218372507"
+      },
+      {
+        "file": "__mocks__/schemas/ComprehensiveTargetSchema.json",
+        "hash": "12236172821382509954"
+      },
+      {
+        "file": "Localize/lang/strings.nl.json",
+        "hash": "1329740517823029376"
+      },
+      {
+        "file": ".github/workflows/ISSUE_MANAGEMENT.yml",
+        "hash": "13114629795705431580"
+      },
+      {
+        "file": "__mocks__/connectors.json",
+        "hash": "7808230621967601702"
+      },
+      {
+        "file": ".github/workflows/codeql-analysis.yml",
+        "hash": "14513951734113331483"
+      },
+      {
+        "file": "__mocks__/schemas/SourceSchemaJson.json",
+        "hash": "4190556006012848629"
+      },
+      {
+        "file": "LICENSE.md",
+        "hash": "11929769968810875751"
+      },
+      {
+        "file": "__mocks__/workflows/StressTest400.json",
+        "hash": "4743644115029324208"
+      },
+      {
+        "file": "Localize/lang/strings.json",
+        "hash": "7167967294997166275"
+      },
+      {
+        "file": "Localize/loc/cs/strings.json.lcl",
+        "hash": "17809208134011830735"
+      },
+      {
+        "file": "__mocks__/workflows/simpleForeach.json",
+        "hash": "3200434854997074561"
+      },
+      {
+        "file": "Localize/loc/es/strings.json.lcl",
+        "hash": "10853012563360222132"
+      },
+      {
+        "file": "Localize/loc/tr/strings.json.lcl",
+        "hash": "9680913056134170248"
+      },
+      {
+        "file": "Localize/loc/sv/strings.json.lcl",
+        "hash": "8848263924961247459"
+      },
+      {
+        "file": "Localize/loc/ja/strings.json.lcl",
+        "hash": "1522525026754686700"
+      },
+      {
+        "file": "__mocks__/mapDefinitions/ComprehensiveMapDefinition.ts",
+        "hash": "9919290274382928880"
+      },
+      {
+        "file": "__mocks__/workflows/Switch.json",
+        "hash": "3916122250248788443"
+      },
+      {
+        "file": "Localize/lang/strings.pt-BR.json",
+        "hash": "13666935741494757034"
+      },
+      {
+        "file": "Localize/lang/strings.de.json",
+        "hash": "5848394912432190675"
+      },
+      {
+        "file": "__mocks__/workflows/Panel.json",
+        "hash": "13581712218449529118"
+      },
+      {
+        "file": "babel.config.json",
+        "hash": "12905936786051367349"
+      },
+      {
+        "file": ".github/ISSUE_TEMPLATE/data_mapper.yml",
+        "hash": "17111424543774017603"
+      },
+      {
+        "file": "__mocks__/workflows/StressTest200.json",
+        "hash": "1645800986951066668"
+      },
+      {
+        "file": ".versionrc",
+        "hash": "738397178437334680"
+      },
+      {
+        "file": ".github/pull_request_template.md",
+        "hash": "15522796552713692114"
+      },
+      {
+        "file": "Localize/lang/strings.cs.json",
+        "hash": "11349558440982422554"
+      },
+      {
+        "file": "Localize/lang/strings.zh-Hant.json",
+        "hash": "12262277802393974078"
+      },
+      {
+        "file": "__mocks__/mapDefinitions/TranscriptJsonMapDefinition.ts",
+        "hash": "11752793667417622953"
+      },
+      {
+        "file": "Localize/loc/it/strings.json.lcl",
+        "hash": "9848488737132947494"
+      },
+      {
+        "file": "__mocks__/workflows/Recurrence.json",
+        "hash": "3782576819996791784"
+      },
+      {
+        "file": "__mocks__/svgTransform.js",
+        "hash": "11323230226160083933"
+      },
+      {
+        "file": "Localize/loc/de/strings.json.lcl",
+        "hash": "12802513263956908855"
       }
     ],
     "projectFileMap": {
-      "data-mapper-standalone": [
+      "designer-standalone": [
         {
-          "file": "apps/data-mapper-standalone/.babelrc",
+          "file": "apps/designer-standalone/.babelrc",
           "hash": "10988945498763611993"
         },
         {
-          "file": "apps/data-mapper-standalone/.browserslistrc",
+          "file": "apps/designer-standalone/.browserslistrc",
           "hash": "2888533144288818662"
         },
         {
-          "file": "apps/data-mapper-standalone/.eslintrc.json",
+          "file": "apps/designer-standalone/.eslintrc.json",
           "hash": "10075191527724852300"
         },
         {
-          "file": "apps/data-mapper-standalone/jest.config.ts",
-          "hash": "10050787640558341124"
+          "file": "apps/designer-standalone/jest.config.ts",
+          "hash": "6845899561104758274"
         },
         {
-          "file": "apps/data-mapper-standalone/project.json",
-          "hash": "7080845987675559370"
+          "file": "apps/designer-standalone/project.json",
+          "hash": "768587329335897468"
         },
         {
-          "file": "apps/data-mapper-standalone/src/app/DataMapperStandaloneDesigner.tsx",
-          "hash": "17654810894441284463",
+          "file": "apps/designer-standalone/src/app/AzureLogicAppsDesigner/DesignerCommandBar.tsx",
+          "hash": "15212344328171402327",
           "deps": [
-            "npm:@fluentui/azure-themes",
             "npm:@fluentui/react",
             "npm:@fluentui/react-components",
-            "npm:@fluentui/react-portal-compat",
-            "data-mapper",
+            "services-designer-client-services",
+            "designer",
+            "utils",
+            "npm:react",
+            "npm:react-query",
+            "npm:react-redux"
+          ]
+        },
+        {
+          "file": "apps/designer-standalone/src/app/AzureLogicAppsDesigner/LogicAppSelectionSetting/AzureConsumptionLogicAppSelector.tsx",
+          "hash": "13505482435147628633",
+          "deps": [
+            "npm:@fluentui/react",
+            "npm:react-redux"
+          ]
+        },
+        {
+          "file": "apps/designer-standalone/src/app/AzureLogicAppsDesigner/LogicAppSelectionSetting/AzureStandardLogicAppSelector.tsx",
+          "hash": "9606761639132729551",
+          "deps": [
+            "npm:@fluentui/react",
+            "npm:axios",
+            "npm:react",
+            "npm:react-query",
+            "npm:react-redux"
+          ]
+        },
+        {
+          "file": "apps/designer-standalone/src/app/AzureLogicAppsDesigner/Models/Arm.ts",
+          "hash": "6979701506181809557"
+        },
+        {
+          "file": "apps/designer-standalone/src/app/AzureLogicAppsDesigner/Models/LogicAppAppTypes.ts",
+          "hash": "14118413145410608191"
+        },
+        {
+          "file": "apps/designer-standalone/src/app/AzureLogicAppsDesigner/Models/Workflow.ts",
+          "hash": "1588066658590448230"
+        },
+        {
+          "file": "apps/designer-standalone/src/app/AzureLogicAppsDesigner/Models/WorkflowApp.ts",
+          "hash": "11196696306113960606"
+        },
+        {
+          "file": "apps/designer-standalone/src/app/AzureLogicAppsDesigner/Models/WorkflowListTypes.ts",
+          "hash": "14682812772519432090"
+        },
+        {
+          "file": "apps/designer-standalone/src/app/AzureLogicAppsDesigner/Queries/FetchConsumptionApps.ts",
+          "hash": "4580548922855359394",
+          "deps": [
+            "npm:react-query"
+          ]
+        },
+        {
+          "file": "apps/designer-standalone/src/app/AzureLogicAppsDesigner/Queries/FetchStandardApps.ts",
+          "hash": "12895583927495006597",
+          "deps": [
+            "npm:react-query"
+          ]
+        },
+        {
+          "file": "apps/designer-standalone/src/app/AzureLogicAppsDesigner/Services/Artifact.ts",
+          "hash": "33254579765197474",
+          "deps": [
+            "services-designer-client-services"
+          ]
+        },
+        {
+          "file": "apps/designer-standalone/src/app/AzureLogicAppsDesigner/Services/ChildWorkflow.ts",
+          "hash": "9686034561910267383",
+          "deps": [
+            "services-designer-client-services",
+            "utils"
+          ]
+        },
+        {
+          "file": "apps/designer-standalone/src/app/AzureLogicAppsDesigner/Services/ConsumptionSerializationHelpers.ts",
+          "hash": "3650806178140220648",
+          "deps": [
+            "designer",
+            "utils"
+          ]
+        },
+        {
+          "file": "apps/designer-standalone/src/app/AzureLogicAppsDesigner/Services/FileSystemConnectionCreationClient.ts",
+          "hash": "16282006530518627098",
+          "deps": [
+            "services-designer-client-services"
+          ]
+        },
+        {
+          "file": "apps/designer-standalone/src/app/AzureLogicAppsDesigner/Services/HttpClient.ts",
+          "hash": "13140183694348595461",
+          "deps": [
+            "services-designer-client-services",
+            "npm:axios",
+            "npm:axios-retry"
+          ]
+        },
+        {
+          "file": "apps/designer-standalone/src/app/AzureLogicAppsDesigner/Services/WorkflowAndArtifacts.tsx",
+          "hash": "16986915283245984455",
+          "deps": [
+            "utils",
+            "npm:axios",
+            "npm:jwt-decode",
+            "npm:react-query"
+          ]
+        },
+        {
+          "file": "apps/designer-standalone/src/app/AzureLogicAppsDesigner/Utilities/ArmParser.ts",
+          "hash": "11766814904345254217"
+        },
+        {
+          "file": "apps/designer-standalone/src/app/AzureLogicAppsDesigner/Utilities/Workflow.ts",
+          "hash": "15506843406517501314",
+          "deps": [
+            "designer"
+          ]
+        },
+        {
+          "file": "apps/designer-standalone/src/app/AzureLogicAppsDesigner/Utilities/resourceUtilities.ts",
+          "hash": "14307775349799332849",
+          "deps": [
+            "utils",
+            "npm:axios"
+          ]
+        },
+        {
+          "file": "apps/designer-standalone/src/app/AzureLogicAppsDesigner/laDesigner.tsx",
+          "hash": "268586210461337852",
+          "deps": [
+            "chatbot",
+            "services-designer-client-services",
+            "designer",
+            "utils",
+            "npm:axios",
+            "npm:lodash.isequal",
+            "npm:react",
+            "npm:react-query",
+            "npm:react-redux"
+          ]
+        },
+        {
+          "file": "apps/designer-standalone/src/app/AzureLogicAppsDesigner/laDesignerConsumption.tsx",
+          "hash": "16435446161933786399",
+          "deps": [
+            "chatbot",
+            "services-designer-client-services",
+            "designer",
             "utils",
             "npm:react",
             "npm:react-redux"
           ]
         },
         {
-          "file": "apps/data-mapper-standalone/src/assets/.gitkeep",
-          "hash": "3244421341483603138"
+          "file": "apps/designer-standalone/src/app/DesignerShell/designer.tsx",
+          "hash": "13293572578025384518",
+          "deps": [
+            "designer",
+            "npm:react-query"
+          ]
         },
         {
-          "file": "apps/data-mapper-standalone/src/components/DevApiTester.tsx",
-          "hash": "14944117756580093119",
+          "file": "apps/designer-standalone/src/app/LocalDesigner/LogicAppSelector/LogicAppSelector.tsx",
+          "hash": "8960093372869801569",
           "deps": [
             "npm:@fluentui/react",
-            "npm:@fluentui/react-components",
-            "designer-ui",
-            "data-mapper",
+            "npm:react",
+            "npm:react-redux"
+          ]
+        },
+        {
+          "file": "apps/designer-standalone/src/app/LocalDesigner/customConnectionParameterEditorService.tsx",
+          "hash": "5954226795749334215",
+          "deps": [
+            "services-designer-client-services",
+            "designer",
             "npm:react"
           ]
         },
         {
-          "file": "apps/data-mapper-standalone/src/components/DevSerializationTester.tsx",
-          "hash": "1284985494789010035",
+          "file": "apps/designer-standalone/src/app/LocalDesigner/customEditorService.tsx",
+          "hash": "3774349098540884121",
           "deps": [
-            "npm:@fluentui/react",
-            "npm:@fluentui/react-components",
-            "designer-ui",
-            "data-mapper",
-            "npm:react",
+            "services-designer-client-services",
+            "designer"
+          ]
+        },
+        {
+          "file": "apps/designer-standalone/src/app/LocalDesigner/httpClient.ts",
+          "hash": "2370177925399279703",
+          "deps": [
+            "services-designer-client-services"
+          ]
+        },
+        {
+          "file": "apps/designer-standalone/src/app/LocalDesigner/localDesigner.tsx",
+          "hash": "12654670635941736057",
+          "deps": [
+            "services-designer-client-services",
+            "designer",
+            "utils",
             "npm:react-redux"
           ]
         },
         {
-          "file": "apps/data-mapper-standalone/src/components/DevToolbox.tsx",
-          "hash": "3692903746232914103",
+          "file": "apps/designer-standalone/src/app/LocalDesigner/pseudoCommandBar.less",
+          "hash": "4190195339052860475"
+        },
+        {
+          "file": "apps/designer-standalone/src/app/LocalDesigner/pseudoCommandBar.tsx",
+          "hash": "13172202456425056840",
           "deps": [
-            "npm:../../../../__mocks__/mapDefinitions",
-            "npm:../../../../__mocks__/mapMetadata",
             "npm:@fluentui/react",
-            "npm:@fluentui/react-components",
+            "designer-ui",
+            "designer",
             "utils",
             "npm:react",
             "npm:react-redux"
           ]
         },
         {
-          "file": "apps/data-mapper-standalone/src/environments/environment.prod.ts",
+          "file": "apps/designer-standalone/src/app/SettingsSections/contextSettings.tsx",
+          "hash": "11607811223135449660",
+          "deps": [
+            "npm:@fluentui/react",
+            "npm:react",
+            "npm:react-redux"
+          ]
+        },
+        {
+          "file": "apps/designer-standalone/src/app/SettingsSections/sourceSettings.tsx",
+          "hash": "11182070599256684242",
+          "deps": [
+            "npm:@fluentui/react",
+            "npm:react",
+            "npm:react-redux"
+          ]
+        },
+        {
+          "file": "apps/designer-standalone/src/assets/.gitkeep",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "apps/designer-standalone/src/components/LocalizationSettings.tsx",
+          "hash": "11358026391684952458",
+          "deps": [
+            "npm:@fluentui/react",
+            "npm:react-redux"
+          ]
+        },
+        {
+          "file": "apps/designer-standalone/src/components/settings_box.module.less",
+          "hash": "9808519016183858536"
+        },
+        {
+          "file": "apps/designer-standalone/src/components/settings_box.tsx",
+          "hash": "12099490358448849702",
+          "deps": [
+            "npm:@fluentui/react",
+            "npm:@fluentui/react-hooks",
+            "npm:@fluentui/utilities"
+          ]
+        },
+        {
+          "file": "apps/designer-standalone/src/components/themes.ts",
+          "hash": "10280533146008251816",
+          "deps": [
+            "npm:@fluentui/react"
+          ]
+        },
+        {
+          "file": "apps/designer-standalone/src/environments/environment.prod.ts",
           "hash": "10220522844224226756"
         },
         {
-          "file": "apps/data-mapper-standalone/src/environments/environment.ts",
-          "hash": "11309522437153898482"
+          "file": "apps/designer-standalone/src/environments/environment.ts",
+          "hash": "5920947766445218989"
         },
         {
-          "file": "apps/data-mapper-standalone/src/favicon.ico",
+          "file": "apps/designer-standalone/src/favicon.ico",
           "hash": "9303420814833116677"
         },
         {
-          "file": "apps/data-mapper-standalone/src/index.html",
-          "hash": "1875896067774755003"
+          "file": "apps/designer-standalone/src/index.html",
+          "hash": "706131400937913887"
         },
         {
-          "file": "apps/data-mapper-standalone/src/main.tsx",
-          "hash": "6068944128467478622",
+          "file": "apps/designer-standalone/src/main.tsx",
+          "hash": "7964702032348471603",
           "deps": [
-            "data-mapper",
+            "designer",
             "npm:@fluentui/react",
-            "npm:react",
             "npm:react-dom",
             "npm:react-redux"
           ]
         },
         {
-          "file": "apps/data-mapper-standalone/src/polyfills.ts",
+          "file": "apps/designer-standalone/src/polyfills.ts",
           "hash": "17041846422484582267",
           "deps": [
             "npm:buffer",
@@ -878,820 +1098,777 @@
           ]
         },
         {
-          "file": "apps/data-mapper-standalone/src/state/DataMapDataLoader.ts",
-          "hash": "11918975678905576505",
+          "file": "apps/designer-standalone/src/state/connectionReferences.ts",
+          "hash": "3642930491684807465",
           "deps": [
-            "data-mapper",
+            "designer"
+          ]
+        },
+        {
+          "file": "apps/designer-standalone/src/state/historyHelpers.ts",
+          "hash": "14898556878004432608"
+        },
+        {
+          "file": "apps/designer-standalone/src/state/store.ts",
+          "hash": "11326541673147537080",
+          "deps": [
+            "npm:@reduxjs/toolkit"
+          ]
+        },
+        {
+          "file": "apps/designer-standalone/src/state/workflowLoadingSelectors.ts",
+          "hash": "2817444802055692850",
+          "deps": [
+            "npm:react-redux"
+          ]
+        },
+        {
+          "file": "apps/designer-standalone/src/state/workflowLoadingSlice.ts",
+          "hash": "482585834745823205",
+          "deps": [
+            "designer",
             "utils",
             "npm:@reduxjs/toolkit"
           ]
         },
         {
-          "file": "apps/data-mapper-standalone/src/state/SchemaDataLoader.ts",
-          "hash": "7824708775567846878",
-          "deps": [
-            "utils",
-            "npm:@reduxjs/toolkit"
-          ]
+          "file": "apps/designer-standalone/src/styles.less",
+          "hash": "17529353978711030180"
         },
         {
-          "file": "apps/data-mapper-standalone/src/state/Store.ts",
-          "hash": "7832192686281280578",
-          "deps": [
-            "npm:@reduxjs/toolkit"
-          ]
-        },
-        {
-          "file": "apps/data-mapper-standalone/src/styles.less",
-          "hash": "11491636838694553899"
-        },
-        {
-          "file": "apps/data-mapper-standalone/src/typings.d.ts",
+          "file": "apps/designer-standalone/src/typings.d.ts",
           "hash": "8667080681692980982"
         },
         {
-          "file": "apps/data-mapper-standalone/tsconfig.app.json",
+          "file": "apps/designer-standalone/tsconfig.app.json",
           "hash": "9143020992508194197"
         },
         {
-          "file": "apps/data-mapper-standalone/tsconfig.json",
+          "file": "apps/designer-standalone/tsconfig.json",
           "hash": "679998256963355764"
         },
         {
-          "file": "apps/data-mapper-standalone/tsconfig.spec.json",
+          "file": "apps/designer-standalone/tsconfig.spec.json",
           "hash": "9898935272968742566"
         }
       ],
-      "services-designer-client-services": [
+      "chatbot": [
         {
-          "file": "libs/services/designer-client-services/.babelrc",
-          "hash": "18193182628669222361"
+          "file": "libs/chatbot/.babelrc",
+          "hash": "10988945498763611993"
         },
         {
-          "file": "libs/services/designer-client-services/.eslintrc.json",
-          "hash": "9703569748258640057"
+          "file": "libs/chatbot/.eslintrc.json",
+          "hash": "10075191527724852300"
         },
         {
-          "file": "libs/services/designer-client-services/README.md",
-          "hash": "11207908698819292426"
+          "file": "libs/chatbot/README.md",
+          "hash": "3371213512265826840"
         },
         {
-          "file": "libs/services/designer-client-services/jest.config.ts",
-          "hash": "8817897571683555521"
+          "file": "libs/chatbot/jest.config.ts",
+          "hash": "4368886451131338817"
         },
         {
-          "file": "libs/services/designer-client-services/package.json",
-          "hash": "13900347662189529588"
-        },
-        {
-          "file": "libs/services/designer-client-services/project.json",
-          "hash": "11655888760036047651"
-        },
-        {
-          "file": "libs/services/designer-client-services/src/index.ts",
-          "hash": "9380633527024969017"
-        },
-        {
-          "file": "libs/services/designer-client-services/src/lib/__test__/__mocks__/azureConnectorResponse.ts",
-          "hash": "4041114759273409584"
-        },
-        {
-          "file": "libs/services/designer-client-services/src/lib/__test__/__mocks__/azureOperationResponse.ts",
-          "hash": "17000986385516647933",
-          "deps": [
-            "utils"
-          ]
-        },
-        {
-          "file": "libs/services/designer-client-services/src/lib/__test__/__mocks__/builtInOperationResponse.ts",
-          "hash": "14289134969433992055",
-          "deps": [
-            "utils"
-          ]
-        },
-        {
-          "file": "libs/services/designer-client-services/src/lib/__test__/__mocks__/monitoringInputsOutputsResponse.ts",
-          "hash": "4954893213128657861"
-        },
-        {
-          "file": "libs/services/designer-client-services/src/lib/__test__/connectionParameterEditor.spec.ts",
-          "hash": "7641115249858288898"
-        },
-        {
-          "file": "libs/services/designer-client-services/src/lib/__test__/editor.spec.ts",
-          "hash": "14155161053626149773"
-        },
-        {
-          "file": "libs/services/designer-client-services/src/lib/__test__/logger.spec.ts",
-          "hash": "10972091389277624213"
-        },
-        {
-          "file": "libs/services/designer-client-services/src/lib/apimanagement.ts",
-          "hash": "12901147613173554504",
-          "deps": [
-            "parsers",
-            "utils"
-          ]
-        },
-        {
-          "file": "libs/services/designer-client-services/src/lib/appService.ts",
-          "hash": "3751793778306133707",
-          "deps": [
-            "utils"
-          ]
-        },
-        {
-          "file": "libs/services/designer-client-services/src/lib/badges.ts",
-          "hash": "4669131476797349411"
-        },
-        {
-          "file": "libs/services/designer-client-services/src/lib/base/apimanagement.ts",
-          "hash": "4626501719196491130",
-          "deps": [
-            "parsers",
-            "utils",
-            "npm:react-query"
-          ]
-        },
-        {
-          "file": "libs/services/designer-client-services/src/lib/base/appService.ts",
-          "hash": "17579504446195460798",
-          "deps": [
-            "parsers",
-            "utils"
-          ]
-        },
-        {
-          "file": "libs/services/designer-client-services/src/lib/base/chatbot.ts",
-          "hash": "3146353485935789540",
-          "deps": [
-            "utils",
-            "npm:axios"
-          ]
-        },
-        {
-          "file": "libs/services/designer-client-services/src/lib/base/connection.ts",
-          "hash": "6787624688246193376",
-          "deps": [
-            "parsers",
-            "utils"
-          ]
-        },
-        {
-          "file": "libs/services/designer-client-services/src/lib/base/connector.ts",
-          "hash": "1526864294272728335",
+          "file": "libs/chatbot/jest.setup.js",
+          "hash": "7549777980287095058",
           "deps": [
             "services-intl",
-            "utils",
+            "services-designer-client-services",
             "npm:react-intl"
           ]
         },
         {
-          "file": "libs/services/designer-client-services/src/lib/base/function.ts",
-          "hash": "12920523983165699197",
+          "file": "libs/chatbot/package.json",
+          "hash": "12905195183372761280",
           "deps": [
-            "parsers",
-            "utils"
+            "npm:react",
+            "npm:react-dom"
           ]
         },
         {
-          "file": "libs/services/designer-client-services/src/lib/base/gateway.ts",
-          "hash": "4376324986322626398",
+          "file": "libs/chatbot/project.json",
+          "hash": "2250286647013619683"
+        },
+        {
+          "file": "libs/chatbot/src/index.ts",
+          "hash": "5472632491119599158"
+        },
+        {
+          "file": "libs/chatbot/src/lib/common/constants.ts",
+          "hash": "2429934717009400244"
+        },
+        {
+          "file": "libs/chatbot/src/lib/common/models/Query.ts",
+          "hash": "12711516361292056739",
           "deps": [
-            "utils"
+            "designer"
           ]
         },
         {
-          "file": "libs/services/designer-client-services/src/lib/base/index.ts",
-          "hash": "100886477017713472"
+          "file": "libs/chatbot/src/lib/common/models/workflow.ts",
+          "hash": "15855456327309866932"
         },
         {
-          "file": "libs/services/designer-client-services/src/lib/base/manifests/condition.ts",
-          "hash": "2528883352766393708",
+          "file": "libs/chatbot/src/lib/core/util/index.ts",
+          "hash": "5139985942597791835"
+        },
+        {
+          "file": "libs/chatbot/src/lib/images/LogicApps.svg",
+          "hash": "2097860906489808431"
+        },
+        {
+          "file": "libs/chatbot/src/lib/images/Sparkle.svg",
+          "hash": "3138281638005072555"
+        },
+        {
+          "file": "libs/chatbot/src/lib/images/SparkleDisabled.svg",
+          "hash": "12308741199338082792"
+        },
+        {
+          "file": "libs/chatbot/src/lib/images/Workflow.svg",
+          "hash": "9644831917975499371"
+        },
+        {
+          "file": "libs/chatbot/src/lib/index.tsx",
+          "hash": "7293379411218707820"
+        },
+        {
+          "file": "libs/chatbot/src/lib/styles.less",
+          "hash": "17038065324912682386"
+        },
+        {
+          "file": "libs/chatbot/src/lib/ui/chatbot.tsx",
+          "hash": "18164106321370969107",
           "deps": [
-            "utils"
+            "npm:@fluentui/react",
+            "npm:@fluentui/react-icons",
+            "services-designer-client-services",
+            "designer-ui",
+            "designer",
+            "utils",
+            "npm:react",
+            "npm:react-intl"
           ]
         },
         {
-          "file": "libs/services/designer-client-services/src/lib/base/manifests/csvtable.ts",
-          "hash": "3382734649002278977",
+          "file": "libs/chatbot/src/lib/ui/panelheader.tsx",
+          "hash": "10918014337139668623",
           "deps": [
-            "utils"
+            "npm:@fluentui/react",
+            "npm:@fluentui/react-components",
+            "npm:@fluentui/react-icons",
+            "services-designer-client-services",
+            "npm:react-intl"
           ]
         },
         {
-          "file": "libs/services/designer-client-services/src/lib/base/manifests/datetime.ts",
-          "hash": "14262418996958567036",
+          "file": "libs/chatbot/src/lib/ui/styles.less",
+          "hash": "16062592558757698716"
+        },
+        {
+          "file": "libs/chatbot/tsconfig.json",
+          "hash": "11642020620037452120"
+        },
+        {
+          "file": "libs/chatbot/tsconfig.lib.json",
+          "hash": "9143020992508194197"
+        },
+        {
+          "file": "libs/chatbot/tsconfig.spec.json",
+          "hash": "13298942017574878772"
+        }
+      ],
+      "vscode-extension": [
+        {
+          "file": "libs/vscode-extension/.babelrc",
+          "hash": "10988945498763611993"
+        },
+        {
+          "file": "libs/vscode-extension/.eslintrc.json",
+          "hash": "13800677001662881425"
+        },
+        {
+          "file": "libs/vscode-extension/README.md",
+          "hash": "5909881734460119225"
+        },
+        {
+          "file": "libs/vscode-extension/jest.config.ts",
+          "hash": "120501684975477353"
+        },
+        {
+          "file": "libs/vscode-extension/package.json",
+          "hash": "764889341578821180"
+        },
+        {
+          "file": "libs/vscode-extension/project.json",
+          "hash": "16820032847976901717"
+        },
+        {
+          "file": "libs/vscode-extension/src/assets/architecture.png",
+          "hash": "26421078174694397"
+        },
+        {
+          "file": "libs/vscode-extension/src/index.ts",
+          "hash": "13894618422633116150"
+        },
+        {
+          "file": "libs/vscode-extension/src/lib/helpers/authorization.ts",
+          "hash": "13120906341305634586"
+        },
+        {
+          "file": "libs/vscode-extension/src/lib/helpers/index.ts",
+          "hash": "10780152196575928830"
+        },
+        {
+          "file": "libs/vscode-extension/src/lib/models/artifact.ts",
+          "hash": "7146957473126889114"
+        },
+        {
+          "file": "libs/vscode-extension/src/lib/models/bundleFeed.ts",
+          "hash": "6154477977645149666"
+        },
+        {
+          "file": "libs/vscode-extension/src/lib/models/cliFeed.ts",
+          "hash": "5895652225166913174"
+        },
+        {
+          "file": "libs/vscode-extension/src/lib/models/connection.ts",
+          "hash": "8902288875218630610"
+        },
+        {
+          "file": "libs/vscode-extension/src/lib/models/context.ts",
+          "hash": "289535333068392984",
           "deps": [
-            "utils"
+            "npm:@microsoft/vscode-azext-azureappservice",
+            "npm:@microsoft/vscode-azext-utils"
           ]
         },
         {
-          "file": "libs/services/designer-client-services/src/lib/base/manifests/foreach.ts",
-          "hash": "3747644781035519288",
-          "deps": [
-            "utils"
-          ]
-        },
-        {
-          "file": "libs/services/designer-client-services/src/lib/base/manifests/htmltable.ts",
-          "hash": "6434545695123875610",
-          "deps": [
-            "utils"
-          ]
-        },
-        {
-          "file": "libs/services/designer-client-services/src/lib/base/manifests/http.ts",
-          "hash": "11377772128119674077",
-          "deps": [
-            "utils"
-          ]
-        },
-        {
-          "file": "libs/services/designer-client-services/src/lib/base/manifests/join.ts",
-          "hash": "16769231047432995378",
-          "deps": [
-            "utils"
-          ]
-        },
-        {
-          "file": "libs/services/designer-client-services/src/lib/base/manifests/parsejson.ts",
-          "hash": "14911336691483942483",
-          "deps": [
-            "utils"
-          ]
-        },
-        {
-          "file": "libs/services/designer-client-services/src/lib/base/manifests/query.ts",
-          "hash": "12251337832597580912",
-          "deps": [
-            "utils"
-          ]
-        },
-        {
-          "file": "libs/services/designer-client-services/src/lib/base/manifests/request.ts",
-          "hash": "17926375301374973997",
-          "deps": [
-            "utils"
-          ]
-        },
-        {
-          "file": "libs/services/designer-client-services/src/lib/base/manifests/response.ts",
-          "hash": "12137094563635446477",
-          "deps": [
-            "utils"
-          ]
-        },
-        {
-          "file": "libs/services/designer-client-services/src/lib/base/manifests/schedule.ts",
-          "hash": "6509733789198374357",
-          "deps": [
-            "services-intl",
-            "utils"
-          ]
-        },
-        {
-          "file": "libs/services/designer-client-services/src/lib/base/manifests/scope.ts",
-          "hash": "13510299268834526211",
-          "deps": [
-            "utils"
-          ]
-        },
-        {
-          "file": "libs/services/designer-client-services/src/lib/base/manifests/select.ts",
-          "hash": "1643197952223172164",
-          "deps": [
-            "utils"
-          ]
-        },
-        {
-          "file": "libs/services/designer-client-services/src/lib/base/manifests/switch.ts",
-          "hash": "10758295372115762295",
-          "deps": [
-            "utils"
-          ]
-        },
-        {
-          "file": "libs/services/designer-client-services/src/lib/base/manifests/terminate.ts",
-          "hash": "14520390700643046095",
-          "deps": [
-            "utils"
-          ]
-        },
-        {
-          "file": "libs/services/designer-client-services/src/lib/base/manifests/until.ts",
-          "hash": "4380255825215761751",
-          "deps": [
-            "utils"
-          ]
-        },
-        {
-          "file": "libs/services/designer-client-services/src/lib/base/manifests/variables.ts",
-          "hash": "6473836827615366669",
-          "deps": [
-            "utils"
-          ]
-        },
-        {
-          "file": "libs/services/designer-client-services/src/lib/base/oAuth.ts",
-          "hash": "1901414365924075312",
-          "deps": [
-            "utils"
-          ]
-        },
-        {
-          "file": "libs/services/designer-client-services/src/lib/base/operationmanifest.ts",
-          "hash": "13881054719378594004",
-          "deps": [
-            "utils"
-          ]
-        },
-        {
-          "file": "libs/services/designer-client-services/src/lib/base/operations/control.ts",
-          "hash": "2276513063347032356"
-        },
-        {
-          "file": "libs/services/designer-client-services/src/lib/base/operations/dataoperations.ts",
-          "hash": "17998935529655324249"
-        },
-        {
-          "file": "libs/services/designer-client-services/src/lib/base/operations/datetime.ts",
-          "hash": "15364460512758958557"
-        },
-        {
-          "file": "libs/services/designer-client-services/src/lib/base/operations/http.ts",
-          "hash": "16899240778924055950"
-        },
-        {
-          "file": "libs/services/designer-client-services/src/lib/base/operations/index.ts",
-          "hash": "9924011533457598450"
-        },
-        {
-          "file": "libs/services/designer-client-services/src/lib/base/operations/operationgroups.ts",
-          "hash": "7767572464887768924"
-        },
-        {
-          "file": "libs/services/designer-client-services/src/lib/base/operations/request.ts",
-          "hash": "7686527428866436332"
-        },
-        {
-          "file": "libs/services/designer-client-services/src/lib/base/operations/schedule.ts",
-          "hash": "11373234010056310761"
-        },
-        {
-          "file": "libs/services/designer-client-services/src/lib/base/operations/variables.ts",
-          "hash": "7741997988177804309"
-        },
-        {
-          "file": "libs/services/designer-client-services/src/lib/base/search.ts",
-          "hash": "12657489857821642840",
+          "file": "libs/vscode-extension/src/lib/models/dataMapper.ts",
+          "hash": "11006397952409723415",
           "deps": [
             "utils"
           ]
         },
         {
-          "file": "libs/services/designer-client-services/src/lib/chatbot.ts",
-          "hash": "11213091128467396666",
+          "file": "libs/vscode-extension/src/lib/models/extensioncommand.ts",
+          "hash": "1162172237894803614"
+        },
+        {
+          "file": "libs/vscode-extension/src/lib/models/functions.ts",
+          "hash": "8921509321344504417",
           "deps": [
+            "npm:@microsoft/vscode-azext-utils",
+            "npm:vscode"
+          ]
+        },
+        {
+          "file": "libs/vscode-extension/src/lib/models/host.ts",
+          "hash": "4946881646528119602"
+        },
+        {
+          "file": "libs/vscode-extension/src/lib/models/index.ts",
+          "hash": "8629351622118864800"
+        },
+        {
+          "file": "libs/vscode-extension/src/lib/models/language.ts",
+          "hash": "12998506532698409684"
+        },
+        {
+          "file": "libs/vscode-extension/src/lib/models/launch.ts",
+          "hash": "3299137502222266496",
+          "deps": [
+            "npm:vscode"
+          ]
+        },
+        {
+          "file": "libs/vscode-extension/src/lib/models/parameter.ts",
+          "hash": "2466587591546831647"
+        },
+        {
+          "file": "libs/vscode-extension/src/lib/models/process.ts",
+          "hash": "12858203324101334851"
+        },
+        {
+          "file": "libs/vscode-extension/src/lib/models/project.ts",
+          "hash": "12064643844535713228",
+          "deps": [
+            "npm:@microsoft/vscode-azext-utils",
+            "npm:vscode"
+          ]
+        },
+        {
+          "file": "libs/vscode-extension/src/lib/models/tasks.ts",
+          "hash": "15455125440905214634",
+          "deps": [
+            "npm:vscode"
+          ]
+        },
+        {
+          "file": "libs/vscode-extension/src/lib/models/templates/IBindingTemplate.ts",
+          "hash": "11529840343560446484"
+        },
+        {
+          "file": "libs/vscode-extension/src/lib/models/templates/IWorkflowTemplate.ts",
+          "hash": "10730630576740403610"
+        },
+        {
+          "file": "libs/vscode-extension/src/lib/models/templates/index.ts",
+          "hash": "15419456393693419504"
+        },
+        {
+          "file": "libs/vscode-extension/src/lib/models/workflow.ts",
+          "hash": "5035512833209723551",
+          "deps": [
+            "utils"
+          ]
+        },
+        {
+          "file": "libs/vscode-extension/src/lib/services/httpClient.ts",
+          "hash": "1946711609025571142",
+          "deps": [
+            "services-designer-client-services",
             "utils",
             "npm:axios"
           ]
         },
         {
-          "file": "libs/services/designer-client-services/src/lib/common/azure.ts",
-          "hash": "16730245766611684683"
+          "file": "libs/vscode-extension/src/lib/services/index.ts",
+          "hash": "2286143948438821916"
         },
         {
-          "file": "libs/services/designer-client-services/src/lib/common/exceptions/connection.ts",
-          "hash": "8989089486875747106",
+          "file": "libs/vscode-extension/tsconfig.json",
+          "hash": "11862585966703612229"
+        },
+        {
+          "file": "libs/vscode-extension/tsconfig.lib.json",
+          "hash": "12597263177960957631"
+        },
+        {
+          "file": "libs/vscode-extension/tsconfig.spec.json",
+          "hash": "9983375138734725293"
+        }
+      ],
+      "services-intl": [
+        {
+          "file": "libs/services/intl/.babelrc",
+          "hash": "2294372414848561296"
+        },
+        {
+          "file": "libs/services/intl/.eslintrc.json",
+          "hash": "18250621763427026584"
+        },
+        {
+          "file": "libs/services/intl/README.md",
+          "hash": "16501704097124815619"
+        },
+        {
+          "file": "libs/services/intl/jest.config.ts",
+          "hash": "12414588718326768938"
+        },
+        {
+          "file": "libs/services/intl/package.json",
+          "hash": "8148914404105563604"
+        },
+        {
+          "file": "libs/services/intl/project.json",
+          "hash": "18191785955151423292"
+        },
+        {
+          "file": "libs/services/intl/src/IntlProvider.tsx",
+          "hash": "13376692848441355005",
           "deps": [
-            "utils"
+            "npm:@formatjs/intl",
+            "npm:react-intl",
+            "npm:react-query"
           ]
         },
         {
-          "file": "libs/services/designer-client-services/src/lib/common/exceptions/index.ts",
-          "hash": "5887391731984230327"
+          "file": "libs/services/intl/src/compiled-lang/strings.cs.json",
+          "hash": "5578224630421714301"
         },
         {
-          "file": "libs/services/designer-client-services/src/lib/common/exceptions/service.ts",
-          "hash": "452353707785459105",
+          "file": "libs/services/intl/src/compiled-lang/strings.de.json",
+          "hash": "9696569000771092410"
+        },
+        {
+          "file": "libs/services/intl/src/compiled-lang/strings.en-XA.json",
+          "hash": "14683932564555155625"
+        },
+        {
+          "file": "libs/services/intl/src/compiled-lang/strings.es.json",
+          "hash": "17592834166179626353"
+        },
+        {
+          "file": "libs/services/intl/src/compiled-lang/strings.fr.json",
+          "hash": "12111355033646331082"
+        },
+        {
+          "file": "libs/services/intl/src/compiled-lang/strings.hu.json",
+          "hash": "14079144317792721776"
+        },
+        {
+          "file": "libs/services/intl/src/compiled-lang/strings.id.json",
+          "hash": "14132725308260426676"
+        },
+        {
+          "file": "libs/services/intl/src/compiled-lang/strings.it.json",
+          "hash": "4738549725340812764"
+        },
+        {
+          "file": "libs/services/intl/src/compiled-lang/strings.ja.json",
+          "hash": "12157398066765172402"
+        },
+        {
+          "file": "libs/services/intl/src/compiled-lang/strings.json",
+          "hash": "7501576278361422899"
+        },
+        {
+          "file": "libs/services/intl/src/compiled-lang/strings.ko.json",
+          "hash": "9066326663001119661"
+        },
+        {
+          "file": "libs/services/intl/src/compiled-lang/strings.nl.json",
+          "hash": "2101612823787574728"
+        },
+        {
+          "file": "libs/services/intl/src/compiled-lang/strings.pl.json",
+          "hash": "11041430844616945711"
+        },
+        {
+          "file": "libs/services/intl/src/compiled-lang/strings.pt-BR.json",
+          "hash": "6648747268931298551"
+        },
+        {
+          "file": "libs/services/intl/src/compiled-lang/strings.pt-PT.json",
+          "hash": "17128285153026592830"
+        },
+        {
+          "file": "libs/services/intl/src/compiled-lang/strings.ru.json",
+          "hash": "7137350726982222172"
+        },
+        {
+          "file": "libs/services/intl/src/compiled-lang/strings.sv.json",
+          "hash": "5101898800473181514"
+        },
+        {
+          "file": "libs/services/intl/src/compiled-lang/strings.tr.json",
+          "hash": "2590966016579731069"
+        },
+        {
+          "file": "libs/services/intl/src/compiled-lang/strings.xa.json",
+          "hash": "9536863172217279644"
+        },
+        {
+          "file": "libs/services/intl/src/compiled-lang/strings.zh-Hans.json",
+          "hash": "12655885851991192779"
+        },
+        {
+          "file": "libs/services/intl/src/compiled-lang/strings.zh-Hant.json",
+          "hash": "4146714647486581474"
+        },
+        {
+          "file": "libs/services/intl/src/index.ts",
+          "hash": "5880101155327804229"
+        },
+        {
+          "file": "libs/services/intl/src/intl.tsx",
+          "hash": "9493587879189422226",
           "deps": [
-            "utils"
+            "npm:react",
+            "npm:react-intl"
           ]
         },
         {
-          "file": "libs/services/designer-client-services/src/lib/connection.ts",
-          "hash": "9009646194793225524",
+          "file": "libs/services/intl/tsconfig.json",
+          "hash": "1386939308342903331"
+        },
+        {
+          "file": "libs/services/intl/tsconfig.lib.json",
+          "hash": "845137741353322353"
+        },
+        {
+          "file": "libs/services/intl/tsconfig.spec.json",
+          "hash": "9648545877377768905"
+        }
+      ],
+      "utils": [
+        {
+          "file": "libs/utils/.babelrc",
+          "hash": "10988945498763611993"
+        },
+        {
+          "file": "libs/utils/.eslintrc.json",
+          "hash": "13800677001662881425"
+        },
+        {
+          "file": "libs/utils/README.md",
+          "hash": "14342862180974447819"
+        },
+        {
+          "file": "libs/utils/jest.config.ts",
+          "hash": "18098739924373078805"
+        },
+        {
+          "file": "libs/utils/package.json",
+          "hash": "5017058067787069241"
+        },
+        {
+          "file": "libs/utils/project.json",
+          "hash": "17930380977579914366"
+        },
+        {
+          "file": "libs/utils/src/index.ts",
+          "hash": "10410575831740573676"
+        },
+        {
+          "file": "libs/utils/src/lib/exception/argument.ts",
+          "hash": "4727605297220290209"
+        },
+        {
+          "file": "libs/utils/src/lib/exception/assertion.ts",
+          "hash": "1806037691508090654"
+        },
+        {
+          "file": "libs/utils/src/lib/exception/baseexception.ts",
+          "hash": "14917406684066904829"
+        },
+        {
+          "file": "libs/utils/src/lib/exception/connector.ts",
+          "hash": "13784490208174778956"
+        },
+        {
+          "file": "libs/utils/src/lib/exception/exception.ts",
+          "hash": "5485574054856489322"
+        },
+        {
+          "file": "libs/utils/src/lib/exception/index.ts",
+          "hash": "7212073480745607382"
+        },
+        {
+          "file": "libs/utils/src/lib/exception/invalidFormat.ts",
+          "hash": "10702209958963271416"
+        },
+        {
+          "file": "libs/utils/src/lib/exception/serialization.ts",
+          "hash": "4266295413916081180"
+        },
+        {
+          "file": "libs/utils/src/lib/exception/unsupported.ts",
+          "hash": "18218774632996040833"
+        },
+        {
+          "file": "libs/utils/src/lib/exception/user.ts",
+          "hash": "3921550207499097708"
+        },
+        {
+          "file": "libs/utils/src/lib/exception/validation.ts",
+          "hash": "16323037561979992179"
+        },
+        {
+          "file": "libs/utils/src/lib/helpers/__test__/color.spec.ts",
+          "hash": "4346902897670598580"
+        },
+        {
+          "file": "libs/utils/src/lib/helpers/__test__/functions.spec.ts",
+          "hash": "17209003169944320058"
+        },
+        {
+          "file": "libs/utils/src/lib/helpers/__test__/guid.spec.ts",
+          "hash": "12780007669564837262"
+        },
+        {
+          "file": "libs/utils/src/lib/helpers/__test__/run.spec.ts",
+          "hash": "10649237237708086601"
+        },
+        {
+          "file": "libs/utils/src/lib/helpers/__test__/stringFunctions.spec.ts",
+          "hash": "16265988629726370223"
+        },
+        {
+          "file": "libs/utils/src/lib/helpers/color.ts",
+          "hash": "16474445702678842685"
+        },
+        {
+          "file": "libs/utils/src/lib/helpers/connections.ts",
+          "hash": "9214865892567553485",
           "deps": [
-            "utils"
+            "npm:react-intl"
           ]
         },
         {
-          "file": "libs/services/designer-client-services/src/lib/connectionParameterEditor.ts",
-          "hash": "5805544311453773744",
+          "file": "libs/utils/src/lib/helpers/flow-utils.ts",
+          "hash": "14172933526512144674"
+        },
+        {
+          "file": "libs/utils/src/lib/helpers/functions.ts",
+          "hash": "3674798879674515644"
+        },
+        {
+          "file": "libs/utils/src/lib/helpers/guid.ts",
+          "hash": "17424119200157481456"
+        },
+        {
+          "file": "libs/utils/src/lib/helpers/hooks.ts",
+          "hash": "6316675658315917165",
           "deps": [
-            "utils"
+            "npm:react"
           ]
         },
         {
-          "file": "libs/services/designer-client-services/src/lib/connector.ts",
-          "hash": "8103560418410733915",
+          "file": "libs/utils/src/lib/helpers/http.ts",
+          "hash": "3772391856521608981"
+        },
+        {
+          "file": "libs/utils/src/lib/helpers/index.ts",
+          "hash": "1080913797613952748"
+        },
+        {
+          "file": "libs/utils/src/lib/helpers/logicapps.ts",
+          "hash": "924391710566473857"
+        },
+        {
+          "file": "libs/utils/src/lib/helpers/operations.ts",
+          "hash": "4421237494227621410"
+        },
+        {
+          "file": "libs/utils/src/lib/helpers/recurrence.ts",
+          "hash": "13857137252655707685",
           "deps": [
-            "parsers",
-            "utils"
+            "npm:react-intl"
           ]
         },
         {
-          "file": "libs/services/designer-client-services/src/lib/consumption/connection.ts",
-          "hash": "13578819245019626090",
+          "file": "libs/utils/src/lib/helpers/run.ts",
+          "hash": "13175286304358008848"
+        },
+        {
+          "file": "libs/utils/src/lib/helpers/stringFunctions.ts",
+          "hash": "18162345614153057711"
+        },
+        {
+          "file": "libs/utils/src/lib/mocks/connections.ts",
+          "hash": "13941170058709179863"
+        },
+        {
+          "file": "libs/utils/src/lib/mocks/connectors.ts",
+          "hash": "5560781174328914491"
+        },
+        {
+          "file": "libs/utils/src/lib/mocks/connectorsSearchResultsMock.ts",
+          "hash": "13885780335314142211"
+        },
+        {
+          "file": "libs/utils/src/lib/mocks/index.ts",
+          "hash": "14719921367101255082"
+        },
+        {
+          "file": "libs/utils/src/lib/mocks/operations.ts",
+          "hash": "3496869497616421796"
+        },
+        {
+          "file": "libs/utils/src/lib/models/armresource.ts",
+          "hash": "79196203943799003"
+        },
+        {
+          "file": "libs/utils/src/lib/models/connection.ts",
+          "hash": "11350458563417854019"
+        },
+        {
+          "file": "libs/utils/src/lib/models/connector.ts",
+          "hash": "16462763711137735088"
+        },
+        {
+          "file": "libs/utils/src/lib/models/dataMap.ts",
+          "hash": "16779865992229698101",
           "deps": [
-            "utils"
+            "npm:reactflow"
           ]
         },
         {
-          "file": "libs/services/designer-client-services/src/lib/consumption/connector.ts",
-          "hash": "8790866886652140464",
-          "deps": [
-            "utils"
-          ]
+          "file": "libs/utils/src/lib/models/dataMapSchema.ts",
+          "hash": "2444271336449621910"
         },
         {
-          "file": "libs/services/designer-client-services/src/lib/consumption/index.ts",
-          "hash": "12581863165798765230"
+          "file": "libs/utils/src/lib/models/gateway.ts",
+          "hash": "2681330121858908210"
         },
         {
-          "file": "libs/services/designer-client-services/src/lib/consumption/manifests/apiManagement.ts",
-          "hash": "5097908589386864850",
-          "deps": [
-            "utils"
-          ]
+          "file": "libs/utils/src/lib/models/index.ts",
+          "hash": "3670299451416716175"
         },
         {
-          "file": "libs/services/designer-client-services/src/lib/consumption/manifests/appServices.ts",
-          "hash": "17237673082690741115",
-          "deps": [
-            "utils"
-          ]
+          "file": "libs/utils/src/lib/models/logicApps.ts",
+          "hash": "6771680877558200992"
         },
         {
-          "file": "libs/services/designer-client-services/src/lib/consumption/manifests/batchWorkflow.ts",
-          "hash": "3117639368288167970",
-          "deps": [
-            "utils"
-          ]
+          "file": "libs/utils/src/lib/models/logicAppsIntegration.ts",
+          "hash": "17593916544224071508"
         },
         {
-          "file": "libs/services/designer-client-services/src/lib/consumption/manifests/compose.ts",
-          "hash": "5215050163438905925",
-          "deps": [
-            "utils"
-          ]
+          "file": "libs/utils/src/lib/models/logicAppsV2.ts",
+          "hash": "15083217313912934355"
         },
         {
-          "file": "libs/services/designer-client-services/src/lib/consumption/manifests/flatfile.ts",
-          "hash": "4782268273390612652",
-          "deps": [
-            "utils"
-          ]
+          "file": "libs/utils/src/lib/models/logicAppsV2Expression.ts",
+          "hash": "2572403417534260160"
         },
         {
-          "file": "libs/services/designer-client-services/src/lib/consumption/manifests/functions.ts",
-          "hash": "6307335634561087533",
-          "deps": [
-            "utils"
-          ]
+          "file": "libs/utils/src/lib/models/logicAppsV2Integration.ts",
+          "hash": "2078500890542782930"
         },
         {
-          "file": "libs/services/designer-client-services/src/lib/consumption/manifests/inlinecode.ts",
-          "hash": "6847003761951768216",
-          "deps": [
-            "utils"
-          ]
+          "file": "libs/utils/src/lib/models/managedidentity.ts",
+          "hash": "13095245056926067394"
         },
         {
-          "file": "libs/services/designer-client-services/src/lib/consumption/manifests/integrationaccountartifactlookup.ts",
-          "hash": "15967624890498103123",
-          "deps": [
-            "utils"
-          ]
+          "file": "libs/utils/src/lib/models/openApiV2.ts",
+          "hash": "5866684311064342041"
         },
         {
-          "file": "libs/services/designer-client-services/src/lib/consumption/manifests/invokeWorkflow.ts",
-          "hash": "10457204618643096247",
-          "deps": [
-            "utils"
-          ]
+          "file": "libs/utils/src/lib/models/operation.ts",
+          "hash": "10053725396844537374"
         },
         {
-          "file": "libs/services/designer-client-services/src/lib/consumption/manifests/liquid.ts",
-          "hash": "5909738856928726363",
-          "deps": [
-            "utils"
-          ]
+          "file": "libs/utils/src/lib/models/operationDiscoveryResults.ts",
+          "hash": "8854410007244543755"
         },
         {
-          "file": "libs/services/designer-client-services/src/lib/consumption/manifests/swaggerFunctions.ts",
-          "hash": "17069672683272304369",
-          "deps": [
-            "utils"
-          ]
+          "file": "libs/utils/src/lib/models/operationmanifest.ts",
+          "hash": "3827527429415846737"
         },
         {
-          "file": "libs/services/designer-client-services/src/lib/consumption/manifests/xml.ts",
-          "hash": "11296179642764402009",
-          "deps": [
-            "utils"
-          ]
+          "file": "libs/utils/src/lib/models/run.ts",
+          "hash": "9814598968821475901"
         },
         {
-          "file": "libs/services/designer-client-services/src/lib/consumption/operationmanifest.ts",
-          "hash": "7697530607309882326",
-          "deps": [
-            "utils"
-          ]
+          "file": "libs/utils/src/lib/models/subscription.ts",
+          "hash": "9515526602733602379"
         },
         {
-          "file": "libs/services/designer-client-services/src/lib/consumption/operations/apiManagement.ts",
-          "hash": "889254322578873619"
+          "file": "libs/utils/src/lib/models/swagger.ts",
+          "hash": "14414270210888289399"
         },
         {
-          "file": "libs/services/designer-client-services/src/lib/consumption/operations/appServices.ts",
-          "hash": "14413093575682152883"
+          "file": "libs/utils/src/lib/models/theme.ts",
+          "hash": "18138026162521915000"
         },
         {
-          "file": "libs/services/designer-client-services/src/lib/consumption/operations/batchWorkflow.ts",
-          "hash": "6828262639021969187"
+          "file": "libs/utils/src/lib/models/workflowNode.ts",
+          "hash": "5600260597734849270"
         },
         {
-          "file": "libs/services/designer-client-services/src/lib/consumption/operations/flatfile.ts",
-          "hash": "16330222175525472241"
+          "file": "libs/utils/tsconfig.json",
+          "hash": "11862585966703612229"
         },
         {
-          "file": "libs/services/designer-client-services/src/lib/consumption/operations/functions.ts",
-          "hash": "12427938755401727885"
+          "file": "libs/utils/tsconfig.lib.json",
+          "hash": "12597263177960957631"
         },
         {
-          "file": "libs/services/designer-client-services/src/lib/consumption/operations/index.ts",
-          "hash": "9806185549847712404"
-        },
-        {
-          "file": "libs/services/designer-client-services/src/lib/consumption/operations/inlineCode.ts",
-          "hash": "14739455734775086197"
-        },
-        {
-          "file": "libs/services/designer-client-services/src/lib/consumption/operations/integrationAccount.ts",
-          "hash": "1170392313973954221"
-        },
-        {
-          "file": "libs/services/designer-client-services/src/lib/consumption/operations/invokeWorkflow.ts",
-          "hash": "8180427621259037034"
-        },
-        {
-          "file": "libs/services/designer-client-services/src/lib/consumption/operations/liquid.ts",
-          "hash": "15958942562504641676"
-        },
-        {
-          "file": "libs/services/designer-client-services/src/lib/consumption/operations/operationgroups.ts",
-          "hash": "7763682490519613414"
-        },
-        {
-          "file": "libs/services/designer-client-services/src/lib/consumption/operations/xml.ts",
-          "hash": "4794954947494896316"
-        },
-        {
-          "file": "libs/services/designer-client-services/src/lib/consumption/search.ts",
-          "hash": "16172263600130959885",
-          "deps": [
-            "utils"
-          ]
-        },
-        {
-          "file": "libs/services/designer-client-services/src/lib/editor.ts",
-          "hash": "1878197417808898894",
-          "deps": [
-            "utils"
-          ]
-        },
-        {
-          "file": "libs/services/designer-client-services/src/lib/function.ts",
-          "hash": "13210688171782359611",
-          "deps": [
-            "parsers",
-            "utils"
-          ]
-        },
-        {
-          "file": "libs/services/designer-client-services/src/lib/gateway.ts",
-          "hash": "8997567675221203029",
-          "deps": [
-            "utils"
-          ]
-        },
-        {
-          "file": "libs/services/designer-client-services/src/lib/helpers.ts",
-          "hash": "2393713334543305448",
-          "deps": [
-            "utils"
-          ]
-        },
-        {
-          "file": "libs/services/designer-client-services/src/lib/host.ts",
-          "hash": "12503927710404579531",
-          "deps": [
-            "utils"
-          ]
-        },
-        {
-          "file": "libs/services/designer-client-services/src/lib/httpClient.ts",
-          "hash": "8175155994288497941"
-        },
-        {
-          "file": "libs/services/designer-client-services/src/lib/logger.ts",
-          "hash": "11240823588330486476",
-          "deps": [
-            "utils"
-          ]
-        },
-        {
-          "file": "libs/services/designer-client-services/src/lib/logging/browserLogger.ts",
-          "hash": "11206711847389194503"
-        },
-        {
-          "file": "libs/services/designer-client-services/src/lib/logging/devLogger.ts",
-          "hash": "2374550337372765993",
-          "deps": [
-            "utils"
-          ]
-        },
-        {
-          "file": "libs/services/designer-client-services/src/lib/logging/logEntry.ts",
-          "hash": "7773406589009896884"
-        },
-        {
-          "file": "libs/services/designer-client-services/src/lib/oAuth.ts",
-          "hash": "14899032435258629714",
-          "deps": [
-            "utils"
-          ]
-        },
-        {
-          "file": "libs/services/designer-client-services/src/lib/operationmanifest.ts",
-          "hash": "13978727088425991837",
-          "deps": [
-            "utils"
-          ]
-        },
-        {
-          "file": "libs/services/designer-client-services/src/lib/run.ts",
-          "hash": "8430517164659478828",
-          "deps": [
-            "utils"
-          ]
-        },
-        {
-          "file": "libs/services/designer-client-services/src/lib/search.ts",
-          "hash": "10816891295907220",
-          "deps": [
-            "utils"
-          ]
-        },
-        {
-          "file": "libs/services/designer-client-services/src/lib/standard/artifact.ts",
-          "hash": "2205405226598303423"
-        },
-        {
-          "file": "libs/services/designer-client-services/src/lib/standard/connection.ts",
-          "hash": "1800400412742092624",
-          "deps": [
-            "services-intl",
-            "utils"
-          ]
-        },
-        {
-          "file": "libs/services/designer-client-services/src/lib/standard/connector.ts",
-          "hash": "14250827067770714051",
-          "deps": [
-            "utils"
-          ]
-        },
-        {
-          "file": "libs/services/designer-client-services/src/lib/standard/index.ts",
-          "hash": "11041788749094915589"
-        },
-        {
-          "file": "libs/services/designer-client-services/src/lib/standard/operationmanifest.ts",
-          "hash": "9987099156182554751",
-          "deps": [
-            "utils"
-          ]
-        },
-        {
-          "file": "libs/services/designer-client-services/src/lib/standard/run.ts",
-          "hash": "6735942034853579613",
-          "deps": [
-            "parsers",
-            "utils"
-          ]
-        },
-        {
-          "file": "libs/services/designer-client-services/src/lib/standard/search.ts",
-          "hash": "16441453285043553807",
-          "deps": [
-            "utils"
-          ]
-        },
-        {
-          "file": "libs/services/designer-client-services/src/lib/standard/test/connection.spec.ts",
-          "hash": "6895097639477963071"
-        },
-        {
-          "file": "libs/services/designer-client-services/src/lib/staticresult.ts",
-          "hash": "6506523357462422398",
-          "deps": [
-            "parsers"
-          ]
-        },
-        {
-          "file": "libs/services/designer-client-services/src/lib/staticresultschema/index.ts",
-          "hash": "7818240524701103827",
-          "deps": [
-            "parsers",
-            "utils"
-          ]
-        },
-        {
-          "file": "libs/services/designer-client-services/src/lib/staticresultschema/schemas/apiConnector.ts",
-          "hash": "12144891656181705072",
-          "deps": [
-            "parsers",
-            "utils"
-          ]
-        },
-        {
-          "file": "libs/services/designer-client-services/src/lib/staticresultschema/schemas/baseactionresult.ts",
-          "hash": "14887903726630584377",
-          "deps": [
-            "services-intl",
-            "parsers",
-            "utils"
-          ]
-        },
-        {
-          "file": "libs/services/designer-client-services/src/lib/staticresultschema/schemas/flatfiledecoding.ts",
-          "hash": "6513148549455253766",
-          "deps": [
-            "services-intl"
-          ]
-        },
-        {
-          "file": "libs/services/designer-client-services/src/lib/staticresultschema/schemas/flatfileencoding.ts",
-          "hash": "7719247431736720337",
-          "deps": [
-            "services-intl"
-          ]
-        },
-        {
-          "file": "libs/services/designer-client-services/src/lib/staticresultschema/schemas/httpresult.ts",
-          "hash": "17114006039447115186",
-          "deps": [
-            "services-intl",
-            "parsers"
-          ]
-        },
-        {
-          "file": "libs/services/designer-client-services/src/lib/staticresultschema/schemas/parseJson.ts",
-          "hash": "2683324531147412909",
-          "deps": [
-            "services-intl",
-            "parsers",
-            "utils"
-          ]
-        },
-        {
-          "file": "libs/services/designer-client-services/src/lib/staticresultschema/schemas/query.ts",
-          "hash": "4151644782342350047",
-          "deps": [
-            "services-intl"
-          ]
-        },
-        {
-          "file": "libs/services/designer-client-services/src/lib/workflow.ts",
-          "hash": "9818855055482479929",
-          "deps": [
-            "utils"
-          ]
-        },
-        {
-          "file": "libs/services/designer-client-services/tsconfig.json",
-          "hash": "17627781843503974156"
-        },
-        {
-          "file": "libs/services/designer-client-services/tsconfig.lib.json",
-          "hash": "13623992947506424656"
-        },
-        {
-          "file": "libs/services/designer-client-services/tsconfig.spec.json",
-          "hash": "7522800167796512492"
+          "file": "libs/utils/tsconfig.spec.json",
+          "hash": "9983375138734725293"
         }
       ],
       "designer-ui": [
@@ -5810,459 +5987,6 @@
           "hash": "16114433005601201854"
         }
       ],
-      "plugins-playwright": [
-        {
-          "file": "libs/plugins/playwright/.babelrc",
-          "hash": "18238232969178643540"
-        },
-        {
-          "file": "libs/plugins/playwright/.eslintrc.json",
-          "hash": "14239329316766405882"
-        },
-        {
-          "file": "libs/plugins/playwright/README.md",
-          "hash": "7663863984151861300"
-        },
-        {
-          "file": "libs/plugins/playwright/executors.json",
-          "hash": "10169112945617181143"
-        },
-        {
-          "file": "libs/plugins/playwright/package.json",
-          "hash": "16193099819579269948"
-        },
-        {
-          "file": "libs/plugins/playwright/project.json",
-          "hash": "3340660597861106118"
-        },
-        {
-          "file": "libs/plugins/playwright/src/executors/run-tests/executor.ts",
-          "hash": "12602890254466519991",
-          "deps": [
-            "npm:@nrwl/devkit",
-            "npm:child_process",
-            "npm:util"
-          ]
-        },
-        {
-          "file": "libs/plugins/playwright/src/executors/run-tests/lib/start-dev-server.ts",
-          "hash": "8469114353013518803",
-          "deps": [
-            "npm:@nrwl/devkit"
-          ]
-        },
-        {
-          "file": "libs/plugins/playwright/src/executors/run-tests/schema-types.d.ts",
-          "hash": "12763587536188237330"
-        },
-        {
-          "file": "libs/plugins/playwright/src/executors/run-tests/schema.json",
-          "hash": "13845305884690347897"
-        },
-        {
-          "file": "libs/plugins/playwright/src/types.ts",
-          "hash": "4746955870903203595"
-        },
-        {
-          "file": "libs/plugins/playwright/tsconfig.json",
-          "hash": "7756952173499661182"
-        },
-        {
-          "file": "libs/plugins/playwright/tsconfig.lib.json",
-          "hash": "154339738929850465"
-        }
-      ],
-      "designer-standalone": [
-        {
-          "file": "apps/designer-standalone/.babelrc",
-          "hash": "10988945498763611993"
-        },
-        {
-          "file": "apps/designer-standalone/.browserslistrc",
-          "hash": "2888533144288818662"
-        },
-        {
-          "file": "apps/designer-standalone/.eslintrc.json",
-          "hash": "10075191527724852300"
-        },
-        {
-          "file": "apps/designer-standalone/jest.config.ts",
-          "hash": "6845899561104758274"
-        },
-        {
-          "file": "apps/designer-standalone/project.json",
-          "hash": "768587329335897468"
-        },
-        {
-          "file": "apps/designer-standalone/src/app/AzureLogicAppsDesigner/DesignerCommandBar.tsx",
-          "hash": "15212344328171402327",
-          "deps": [
-            "npm:@fluentui/react",
-            "npm:@fluentui/react-components",
-            "services-designer-client-services",
-            "designer",
-            "utils",
-            "npm:react",
-            "npm:react-query",
-            "npm:react-redux"
-          ]
-        },
-        {
-          "file": "apps/designer-standalone/src/app/AzureLogicAppsDesigner/LogicAppSelectionSetting/AzureConsumptionLogicAppSelector.tsx",
-          "hash": "13505482435147628633",
-          "deps": [
-            "npm:@fluentui/react",
-            "npm:react-redux"
-          ]
-        },
-        {
-          "file": "apps/designer-standalone/src/app/AzureLogicAppsDesigner/LogicAppSelectionSetting/AzureStandardLogicAppSelector.tsx",
-          "hash": "9606761639132729551",
-          "deps": [
-            "npm:@fluentui/react",
-            "npm:axios",
-            "npm:react",
-            "npm:react-query",
-            "npm:react-redux"
-          ]
-        },
-        {
-          "file": "apps/designer-standalone/src/app/AzureLogicAppsDesigner/Models/Arm.ts",
-          "hash": "6979701506181809557"
-        },
-        {
-          "file": "apps/designer-standalone/src/app/AzureLogicAppsDesigner/Models/LogicAppAppTypes.ts",
-          "hash": "14118413145410608191"
-        },
-        {
-          "file": "apps/designer-standalone/src/app/AzureLogicAppsDesigner/Models/Workflow.ts",
-          "hash": "1588066658590448230"
-        },
-        {
-          "file": "apps/designer-standalone/src/app/AzureLogicAppsDesigner/Models/WorkflowApp.ts",
-          "hash": "11196696306113960606"
-        },
-        {
-          "file": "apps/designer-standalone/src/app/AzureLogicAppsDesigner/Models/WorkflowListTypes.ts",
-          "hash": "14682812772519432090"
-        },
-        {
-          "file": "apps/designer-standalone/src/app/AzureLogicAppsDesigner/Queries/FetchConsumptionApps.ts",
-          "hash": "4580548922855359394",
-          "deps": [
-            "npm:react-query"
-          ]
-        },
-        {
-          "file": "apps/designer-standalone/src/app/AzureLogicAppsDesigner/Queries/FetchStandardApps.ts",
-          "hash": "12895583927495006597",
-          "deps": [
-            "npm:react-query"
-          ]
-        },
-        {
-          "file": "apps/designer-standalone/src/app/AzureLogicAppsDesigner/Services/Artifact.ts",
-          "hash": "33254579765197474",
-          "deps": [
-            "services-designer-client-services"
-          ]
-        },
-        {
-          "file": "apps/designer-standalone/src/app/AzureLogicAppsDesigner/Services/ChildWorkflow.ts",
-          "hash": "9686034561910267383",
-          "deps": [
-            "services-designer-client-services",
-            "utils"
-          ]
-        },
-        {
-          "file": "apps/designer-standalone/src/app/AzureLogicAppsDesigner/Services/ConsumptionSerializationHelpers.ts",
-          "hash": "3650806178140220648",
-          "deps": [
-            "designer",
-            "utils"
-          ]
-        },
-        {
-          "file": "apps/designer-standalone/src/app/AzureLogicAppsDesigner/Services/FileSystemConnectionCreationClient.ts",
-          "hash": "16282006530518627098",
-          "deps": [
-            "services-designer-client-services"
-          ]
-        },
-        {
-          "file": "apps/designer-standalone/src/app/AzureLogicAppsDesigner/Services/HttpClient.ts",
-          "hash": "13140183694348595461",
-          "deps": [
-            "services-designer-client-services",
-            "npm:axios",
-            "npm:axios-retry"
-          ]
-        },
-        {
-          "file": "apps/designer-standalone/src/app/AzureLogicAppsDesigner/Services/WorkflowAndArtifacts.tsx",
-          "hash": "16986915283245984455",
-          "deps": [
-            "utils",
-            "npm:axios",
-            "npm:jwt-decode",
-            "npm:react-query"
-          ]
-        },
-        {
-          "file": "apps/designer-standalone/src/app/AzureLogicAppsDesigner/Utilities/ArmParser.ts",
-          "hash": "11766814904345254217"
-        },
-        {
-          "file": "apps/designer-standalone/src/app/AzureLogicAppsDesigner/Utilities/Workflow.ts",
-          "hash": "15506843406517501314",
-          "deps": [
-            "designer"
-          ]
-        },
-        {
-          "file": "apps/designer-standalone/src/app/AzureLogicAppsDesigner/Utilities/resourceUtilities.ts",
-          "hash": "14307775349799332849",
-          "deps": [
-            "utils",
-            "npm:axios"
-          ]
-        },
-        {
-          "file": "apps/designer-standalone/src/app/AzureLogicAppsDesigner/laDesigner.tsx",
-          "hash": "268586210461337852",
-          "deps": [
-            "chatbot",
-            "services-designer-client-services",
-            "designer",
-            "utils",
-            "npm:axios",
-            "npm:lodash.isequal",
-            "npm:react",
-            "npm:react-query",
-            "npm:react-redux"
-          ]
-        },
-        {
-          "file": "apps/designer-standalone/src/app/AzureLogicAppsDesigner/laDesignerConsumption.tsx",
-          "hash": "16435446161933786399",
-          "deps": [
-            "chatbot",
-            "services-designer-client-services",
-            "designer",
-            "utils",
-            "npm:react",
-            "npm:react-redux"
-          ]
-        },
-        {
-          "file": "apps/designer-standalone/src/app/DesignerShell/designer.tsx",
-          "hash": "13293572578025384518",
-          "deps": [
-            "designer",
-            "npm:react-query"
-          ]
-        },
-        {
-          "file": "apps/designer-standalone/src/app/LocalDesigner/LogicAppSelector/LogicAppSelector.tsx",
-          "hash": "8960093372869801569",
-          "deps": [
-            "npm:@fluentui/react",
-            "npm:react",
-            "npm:react-redux"
-          ]
-        },
-        {
-          "file": "apps/designer-standalone/src/app/LocalDesigner/customConnectionParameterEditorService.tsx",
-          "hash": "5954226795749334215",
-          "deps": [
-            "services-designer-client-services",
-            "designer",
-            "npm:react"
-          ]
-        },
-        {
-          "file": "apps/designer-standalone/src/app/LocalDesigner/customEditorService.tsx",
-          "hash": "3774349098540884121",
-          "deps": [
-            "services-designer-client-services",
-            "designer"
-          ]
-        },
-        {
-          "file": "apps/designer-standalone/src/app/LocalDesigner/httpClient.ts",
-          "hash": "2370177925399279703",
-          "deps": [
-            "services-designer-client-services"
-          ]
-        },
-        {
-          "file": "apps/designer-standalone/src/app/LocalDesigner/localDesigner.tsx",
-          "hash": "12654670635941736057",
-          "deps": [
-            "services-designer-client-services",
-            "designer",
-            "utils",
-            "npm:react-redux"
-          ]
-        },
-        {
-          "file": "apps/designer-standalone/src/app/LocalDesigner/pseudoCommandBar.less",
-          "hash": "4190195339052860475"
-        },
-        {
-          "file": "apps/designer-standalone/src/app/LocalDesigner/pseudoCommandBar.tsx",
-          "hash": "13172202456425056840",
-          "deps": [
-            "npm:@fluentui/react",
-            "designer-ui",
-            "designer",
-            "utils",
-            "npm:react",
-            "npm:react-redux"
-          ]
-        },
-        {
-          "file": "apps/designer-standalone/src/app/SettingsSections/contextSettings.tsx",
-          "hash": "11607811223135449660",
-          "deps": [
-            "npm:@fluentui/react",
-            "npm:react",
-            "npm:react-redux"
-          ]
-        },
-        {
-          "file": "apps/designer-standalone/src/app/SettingsSections/sourceSettings.tsx",
-          "hash": "11182070599256684242",
-          "deps": [
-            "npm:@fluentui/react",
-            "npm:react",
-            "npm:react-redux"
-          ]
-        },
-        {
-          "file": "apps/designer-standalone/src/assets/.gitkeep",
-          "hash": "3244421341483603138"
-        },
-        {
-          "file": "apps/designer-standalone/src/components/LocalizationSettings.tsx",
-          "hash": "11358026391684952458",
-          "deps": [
-            "npm:@fluentui/react",
-            "npm:react-redux"
-          ]
-        },
-        {
-          "file": "apps/designer-standalone/src/components/settings_box.module.less",
-          "hash": "9808519016183858536"
-        },
-        {
-          "file": "apps/designer-standalone/src/components/settings_box.tsx",
-          "hash": "12099490358448849702",
-          "deps": [
-            "npm:@fluentui/react",
-            "npm:@fluentui/react-hooks",
-            "npm:@fluentui/utilities"
-          ]
-        },
-        {
-          "file": "apps/designer-standalone/src/components/themes.ts",
-          "hash": "10280533146008251816",
-          "deps": [
-            "npm:@fluentui/react"
-          ]
-        },
-        {
-          "file": "apps/designer-standalone/src/environments/environment.prod.ts",
-          "hash": "10220522844224226756"
-        },
-        {
-          "file": "apps/designer-standalone/src/environments/environment.ts",
-          "hash": "5920947766445218989"
-        },
-        {
-          "file": "apps/designer-standalone/src/favicon.ico",
-          "hash": "9303420814833116677"
-        },
-        {
-          "file": "apps/designer-standalone/src/index.html",
-          "hash": "706131400937913887"
-        },
-        {
-          "file": "apps/designer-standalone/src/main.tsx",
-          "hash": "7964702032348471603",
-          "deps": [
-            "designer",
-            "npm:@fluentui/react",
-            "npm:react-dom",
-            "npm:react-redux"
-          ]
-        },
-        {
-          "file": "apps/designer-standalone/src/polyfills.ts",
-          "hash": "17041846422484582267",
-          "deps": [
-            "npm:buffer",
-            "npm:core-js",
-            "npm:process",
-            "npm:regenerator-runtime"
-          ]
-        },
-        {
-          "file": "apps/designer-standalone/src/state/connectionReferences.ts",
-          "hash": "3642930491684807465",
-          "deps": [
-            "designer"
-          ]
-        },
-        {
-          "file": "apps/designer-standalone/src/state/historyHelpers.ts",
-          "hash": "14898556878004432608"
-        },
-        {
-          "file": "apps/designer-standalone/src/state/store.ts",
-          "hash": "11326541673147537080",
-          "deps": [
-            "npm:@reduxjs/toolkit"
-          ]
-        },
-        {
-          "file": "apps/designer-standalone/src/state/workflowLoadingSelectors.ts",
-          "hash": "2817444802055692850",
-          "deps": [
-            "npm:react-redux"
-          ]
-        },
-        {
-          "file": "apps/designer-standalone/src/state/workflowLoadingSlice.ts",
-          "hash": "482585834745823205",
-          "deps": [
-            "designer",
-            "utils",
-            "npm:@reduxjs/toolkit"
-          ]
-        },
-        {
-          "file": "apps/designer-standalone/src/styles.less",
-          "hash": "17529353978711030180"
-        },
-        {
-          "file": "apps/designer-standalone/src/typings.d.ts",
-          "hash": "8667080681692980982"
-        },
-        {
-          "file": "apps/designer-standalone/tsconfig.app.json",
-          "hash": "9143020992508194197"
-        },
-        {
-          "file": "apps/designer-standalone/tsconfig.json",
-          "hash": "679998256963355764"
-        },
-        {
-          "file": "apps/designer-standalone/tsconfig.spec.json",
-          "hash": "9898935272968742566"
-        }
-      ],
       "data-mapper": [
         {
           "file": "libs/data-mapper/.babelrc",
@@ -7449,282 +7173,223 @@
           "hash": "13071285186636949876"
         }
       ],
-      "utils": [
+      "plugins-playwright": [
         {
-          "file": "libs/utils/.babelrc",
-          "hash": "10988945498763611993"
+          "file": "libs/plugins/playwright/.babelrc",
+          "hash": "18238232969178643540"
         },
         {
-          "file": "libs/utils/.eslintrc.json",
-          "hash": "13800677001662881425"
+          "file": "libs/plugins/playwright/.eslintrc.json",
+          "hash": "14239329316766405882"
         },
         {
-          "file": "libs/utils/README.md",
-          "hash": "14342862180974447819"
+          "file": "libs/plugins/playwright/README.md",
+          "hash": "7663863984151861300"
         },
         {
-          "file": "libs/utils/jest.config.ts",
-          "hash": "18098739924373078805"
+          "file": "libs/plugins/playwright/executors.json",
+          "hash": "10169112945617181143"
         },
         {
-          "file": "libs/utils/package.json",
-          "hash": "5017058067787069241"
+          "file": "libs/plugins/playwright/package.json",
+          "hash": "16193099819579269948"
         },
         {
-          "file": "libs/utils/project.json",
-          "hash": "17930380977579914366"
+          "file": "libs/plugins/playwright/project.json",
+          "hash": "3340660597861106118"
         },
         {
-          "file": "libs/utils/src/index.ts",
-          "hash": "10410575831740573676"
-        },
-        {
-          "file": "libs/utils/src/lib/exception/argument.ts",
-          "hash": "4727605297220290209"
-        },
-        {
-          "file": "libs/utils/src/lib/exception/assertion.ts",
-          "hash": "1806037691508090654"
-        },
-        {
-          "file": "libs/utils/src/lib/exception/baseexception.ts",
-          "hash": "14917406684066904829"
-        },
-        {
-          "file": "libs/utils/src/lib/exception/connector.ts",
-          "hash": "13784490208174778956"
-        },
-        {
-          "file": "libs/utils/src/lib/exception/exception.ts",
-          "hash": "5485574054856489322"
-        },
-        {
-          "file": "libs/utils/src/lib/exception/index.ts",
-          "hash": "7212073480745607382"
-        },
-        {
-          "file": "libs/utils/src/lib/exception/invalidFormat.ts",
-          "hash": "10702209958963271416"
-        },
-        {
-          "file": "libs/utils/src/lib/exception/serialization.ts",
-          "hash": "4266295413916081180"
-        },
-        {
-          "file": "libs/utils/src/lib/exception/unsupported.ts",
-          "hash": "18218774632996040833"
-        },
-        {
-          "file": "libs/utils/src/lib/exception/user.ts",
-          "hash": "3921550207499097708"
-        },
-        {
-          "file": "libs/utils/src/lib/exception/validation.ts",
-          "hash": "16323037561979992179"
-        },
-        {
-          "file": "libs/utils/src/lib/helpers/__test__/color.spec.ts",
-          "hash": "4346902897670598580"
-        },
-        {
-          "file": "libs/utils/src/lib/helpers/__test__/functions.spec.ts",
-          "hash": "17209003169944320058"
-        },
-        {
-          "file": "libs/utils/src/lib/helpers/__test__/guid.spec.ts",
-          "hash": "12780007669564837262"
-        },
-        {
-          "file": "libs/utils/src/lib/helpers/__test__/run.spec.ts",
-          "hash": "10649237237708086601"
-        },
-        {
-          "file": "libs/utils/src/lib/helpers/__test__/stringFunctions.spec.ts",
-          "hash": "16265988629726370223"
-        },
-        {
-          "file": "libs/utils/src/lib/helpers/color.ts",
-          "hash": "16474445702678842685"
-        },
-        {
-          "file": "libs/utils/src/lib/helpers/connections.ts",
-          "hash": "9214865892567553485",
+          "file": "libs/plugins/playwright/src/executors/run-tests/executor.ts",
+          "hash": "12602890254466519991",
           "deps": [
-            "npm:react-intl"
+            "npm:@nrwl/devkit",
+            "npm:child_process",
+            "npm:util"
           ]
         },
         {
-          "file": "libs/utils/src/lib/helpers/flow-utils.ts",
-          "hash": "14172933526512144674"
-        },
-        {
-          "file": "libs/utils/src/lib/helpers/functions.ts",
-          "hash": "3674798879674515644"
-        },
-        {
-          "file": "libs/utils/src/lib/helpers/guid.ts",
-          "hash": "17424119200157481456"
-        },
-        {
-          "file": "libs/utils/src/lib/helpers/hooks.ts",
-          "hash": "6316675658315917165",
+          "file": "libs/plugins/playwright/src/executors/run-tests/lib/start-dev-server.ts",
+          "hash": "8469114353013518803",
           "deps": [
+            "npm:@nrwl/devkit"
+          ]
+        },
+        {
+          "file": "libs/plugins/playwright/src/executors/run-tests/schema-types.d.ts",
+          "hash": "12763587536188237330"
+        },
+        {
+          "file": "libs/plugins/playwright/src/executors/run-tests/schema.json",
+          "hash": "13845305884690347897"
+        },
+        {
+          "file": "libs/plugins/playwright/src/types.ts",
+          "hash": "4746955870903203595"
+        },
+        {
+          "file": "libs/plugins/playwright/tsconfig.json",
+          "hash": "7756952173499661182"
+        },
+        {
+          "file": "libs/plugins/playwright/tsconfig.lib.json",
+          "hash": "154339738929850465"
+        }
+      ],
+      "data-mapper-standalone": [
+        {
+          "file": "apps/data-mapper-standalone/.babelrc",
+          "hash": "10988945498763611993"
+        },
+        {
+          "file": "apps/data-mapper-standalone/.browserslistrc",
+          "hash": "2888533144288818662"
+        },
+        {
+          "file": "apps/data-mapper-standalone/.eslintrc.json",
+          "hash": "10075191527724852300"
+        },
+        {
+          "file": "apps/data-mapper-standalone/jest.config.ts",
+          "hash": "10050787640558341124"
+        },
+        {
+          "file": "apps/data-mapper-standalone/project.json",
+          "hash": "7080845987675559370"
+        },
+        {
+          "file": "apps/data-mapper-standalone/src/app/DataMapperStandaloneDesigner.tsx",
+          "hash": "17654810894441284463",
+          "deps": [
+            "npm:@fluentui/azure-themes",
+            "npm:@fluentui/react",
+            "npm:@fluentui/react-components",
+            "npm:@fluentui/react-portal-compat",
+            "data-mapper",
+            "utils",
+            "npm:react",
+            "npm:react-redux"
+          ]
+        },
+        {
+          "file": "apps/data-mapper-standalone/src/assets/.gitkeep",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "apps/data-mapper-standalone/src/components/DevApiTester.tsx",
+          "hash": "14944117756580093119",
+          "deps": [
+            "npm:@fluentui/react",
+            "npm:@fluentui/react-components",
+            "designer-ui",
+            "data-mapper",
             "npm:react"
           ]
         },
         {
-          "file": "libs/utils/src/lib/helpers/http.ts",
-          "hash": "3772391856521608981"
-        },
-        {
-          "file": "libs/utils/src/lib/helpers/index.ts",
-          "hash": "1080913797613952748"
-        },
-        {
-          "file": "libs/utils/src/lib/helpers/logicapps.ts",
-          "hash": "924391710566473857"
-        },
-        {
-          "file": "libs/utils/src/lib/helpers/operations.ts",
-          "hash": "4421237494227621410"
-        },
-        {
-          "file": "libs/utils/src/lib/helpers/recurrence.ts",
-          "hash": "13857137252655707685",
+          "file": "apps/data-mapper-standalone/src/components/DevSerializationTester.tsx",
+          "hash": "1284985494789010035",
           "deps": [
-            "npm:react-intl"
+            "npm:@fluentui/react",
+            "npm:@fluentui/react-components",
+            "designer-ui",
+            "data-mapper",
+            "npm:react",
+            "npm:react-redux"
           ]
         },
         {
-          "file": "libs/utils/src/lib/helpers/run.ts",
-          "hash": "13175286304358008848"
-        },
-        {
-          "file": "libs/utils/src/lib/helpers/stringFunctions.ts",
-          "hash": "18162345614153057711"
-        },
-        {
-          "file": "libs/utils/src/lib/mocks/connections.ts",
-          "hash": "13941170058709179863"
-        },
-        {
-          "file": "libs/utils/src/lib/mocks/connectors.ts",
-          "hash": "5560781174328914491"
-        },
-        {
-          "file": "libs/utils/src/lib/mocks/connectorsSearchResultsMock.ts",
-          "hash": "13885780335314142211"
-        },
-        {
-          "file": "libs/utils/src/lib/mocks/index.ts",
-          "hash": "14719921367101255082"
-        },
-        {
-          "file": "libs/utils/src/lib/mocks/operations.ts",
-          "hash": "3496869497616421796"
-        },
-        {
-          "file": "libs/utils/src/lib/models/armresource.ts",
-          "hash": "79196203943799003"
-        },
-        {
-          "file": "libs/utils/src/lib/models/connection.ts",
-          "hash": "11350458563417854019"
-        },
-        {
-          "file": "libs/utils/src/lib/models/connector.ts",
-          "hash": "16462763711137735088"
-        },
-        {
-          "file": "libs/utils/src/lib/models/dataMap.ts",
-          "hash": "16779865992229698101",
+          "file": "apps/data-mapper-standalone/src/components/DevToolbox.tsx",
+          "hash": "3692903746232914103",
           "deps": [
-            "npm:reactflow"
+            "npm:../../../../__mocks__/mapDefinitions",
+            "npm:../../../../__mocks__/mapMetadata",
+            "npm:@fluentui/react",
+            "npm:@fluentui/react-components",
+            "utils",
+            "npm:react",
+            "npm:react-redux"
           ]
         },
         {
-          "file": "libs/utils/src/lib/models/dataMapSchema.ts",
-          "hash": "2444271336449621910"
+          "file": "apps/data-mapper-standalone/src/environments/environment.prod.ts",
+          "hash": "10220522844224226756"
         },
         {
-          "file": "libs/utils/src/lib/models/gateway.ts",
-          "hash": "2681330121858908210"
+          "file": "apps/data-mapper-standalone/src/environments/environment.ts",
+          "hash": "11309522437153898482"
         },
         {
-          "file": "libs/utils/src/lib/models/index.ts",
-          "hash": "3670299451416716175"
+          "file": "apps/data-mapper-standalone/src/favicon.ico",
+          "hash": "9303420814833116677"
         },
         {
-          "file": "libs/utils/src/lib/models/logicApps.ts",
-          "hash": "6771680877558200992"
+          "file": "apps/data-mapper-standalone/src/index.html",
+          "hash": "1875896067774755003"
         },
         {
-          "file": "libs/utils/src/lib/models/logicAppsIntegration.ts",
-          "hash": "17593916544224071508"
+          "file": "apps/data-mapper-standalone/src/main.tsx",
+          "hash": "6068944128467478622",
+          "deps": [
+            "data-mapper",
+            "npm:@fluentui/react",
+            "npm:react",
+            "npm:react-dom",
+            "npm:react-redux"
+          ]
         },
         {
-          "file": "libs/utils/src/lib/models/logicAppsV2.ts",
-          "hash": "15083217313912934355"
+          "file": "apps/data-mapper-standalone/src/polyfills.ts",
+          "hash": "17041846422484582267",
+          "deps": [
+            "npm:buffer",
+            "npm:core-js",
+            "npm:process",
+            "npm:regenerator-runtime"
+          ]
         },
         {
-          "file": "libs/utils/src/lib/models/logicAppsV2Expression.ts",
-          "hash": "2572403417534260160"
+          "file": "apps/data-mapper-standalone/src/state/DataMapDataLoader.ts",
+          "hash": "11918975678905576505",
+          "deps": [
+            "data-mapper",
+            "utils",
+            "npm:@reduxjs/toolkit"
+          ]
         },
         {
-          "file": "libs/utils/src/lib/models/logicAppsV2Integration.ts",
-          "hash": "2078500890542782930"
+          "file": "apps/data-mapper-standalone/src/state/SchemaDataLoader.ts",
+          "hash": "7824708775567846878",
+          "deps": [
+            "utils",
+            "npm:@reduxjs/toolkit"
+          ]
         },
         {
-          "file": "libs/utils/src/lib/models/managedidentity.ts",
-          "hash": "13095245056926067394"
+          "file": "apps/data-mapper-standalone/src/state/Store.ts",
+          "hash": "7832192686281280578",
+          "deps": [
+            "npm:@reduxjs/toolkit"
+          ]
         },
         {
-          "file": "libs/utils/src/lib/models/openApiV2.ts",
-          "hash": "5866684311064342041"
+          "file": "apps/data-mapper-standalone/src/styles.less",
+          "hash": "11491636838694553899"
         },
         {
-          "file": "libs/utils/src/lib/models/operation.ts",
-          "hash": "10053725396844537374"
+          "file": "apps/data-mapper-standalone/src/typings.d.ts",
+          "hash": "8667080681692980982"
         },
         {
-          "file": "libs/utils/src/lib/models/operationDiscoveryResults.ts",
-          "hash": "8854410007244543755"
+          "file": "apps/data-mapper-standalone/tsconfig.app.json",
+          "hash": "9143020992508194197"
         },
         {
-          "file": "libs/utils/src/lib/models/operationmanifest.ts",
-          "hash": "3827527429415846737"
+          "file": "apps/data-mapper-standalone/tsconfig.json",
+          "hash": "679998256963355764"
         },
         {
-          "file": "libs/utils/src/lib/models/run.ts",
-          "hash": "9814598968821475901"
-        },
-        {
-          "file": "libs/utils/src/lib/models/subscription.ts",
-          "hash": "9515526602733602379"
-        },
-        {
-          "file": "libs/utils/src/lib/models/swagger.ts",
-          "hash": "14414270210888289399"
-        },
-        {
-          "file": "libs/utils/src/lib/models/theme.ts",
-          "hash": "18138026162521915000"
-        },
-        {
-          "file": "libs/utils/src/lib/models/workflowNode.ts",
-          "hash": "5600260597734849270"
-        },
-        {
-          "file": "libs/utils/tsconfig.json",
-          "hash": "11862585966703612229"
-        },
-        {
-          "file": "libs/utils/tsconfig.lib.json",
-          "hash": "12597263177960957631"
-        },
-        {
-          "file": "libs/utils/tsconfig.spec.json",
-          "hash": "9983375138734725293"
+          "file": "apps/data-mapper-standalone/tsconfig.spec.json",
+          "hash": "9898935272968742566"
         }
       ],
       "designer": [
@@ -9991,1053 +9656,6 @@
         {
           "file": "libs/designer/tsconfig.spec.json",
           "hash": "13298942017574878772"
-        }
-      ],
-      "data-mapper-e2e": [
-        {
-          "file": "apps/data-mapper-e2e/.eslintrc.json",
-          "hash": "13297243373673238057"
-        },
-        {
-          "file": "apps/data-mapper-e2e/playwright.config.ts",
-          "hash": "10493114135744873964",
-          "deps": [
-            "npm:../../playwright.config.base",
-            "npm:@playwright/test"
-          ]
-        },
-        {
-          "file": "apps/data-mapper-e2e/project.json",
-          "hash": "5158926182545029514"
-        },
-        {
-          "file": "apps/data-mapper-e2e/src/general/GeneralTranscript.e2e.spec.ts",
-          "hash": "7617839732144270267",
-          "deps": [
-            "npm:@playwright/test"
-          ]
-        },
-        {
-          "file": "apps/data-mapper-e2e/src/utils.ts",
-          "hash": "4660621315572426897"
-        },
-        {
-          "file": "apps/data-mapper-e2e/tsconfig.e2e.json",
-          "hash": "2404025130951761221"
-        },
-        {
-          "file": "apps/data-mapper-e2e/tsconfig.json",
-          "hash": "4500232260948002331"
-        }
-      ],
-      "chatbot": [
-        {
-          "file": "libs/chatbot/.babelrc",
-          "hash": "10988945498763611993"
-        },
-        {
-          "file": "libs/chatbot/.eslintrc.json",
-          "hash": "10075191527724852300"
-        },
-        {
-          "file": "libs/chatbot/README.md",
-          "hash": "3371213512265826840"
-        },
-        {
-          "file": "libs/chatbot/jest.config.ts",
-          "hash": "4368886451131338817"
-        },
-        {
-          "file": "libs/chatbot/jest.setup.js",
-          "hash": "7549777980287095058",
-          "deps": [
-            "services-intl",
-            "services-designer-client-services",
-            "npm:react-intl"
-          ]
-        },
-        {
-          "file": "libs/chatbot/package.json",
-          "hash": "12905195183372761280",
-          "deps": [
-            "npm:react",
-            "npm:react-dom"
-          ]
-        },
-        {
-          "file": "libs/chatbot/project.json",
-          "hash": "2250286647013619683"
-        },
-        {
-          "file": "libs/chatbot/src/index.ts",
-          "hash": "5472632491119599158"
-        },
-        {
-          "file": "libs/chatbot/src/lib/common/constants.ts",
-          "hash": "2429934717009400244"
-        },
-        {
-          "file": "libs/chatbot/src/lib/common/models/Query.ts",
-          "hash": "12711516361292056739",
-          "deps": [
-            "designer"
-          ]
-        },
-        {
-          "file": "libs/chatbot/src/lib/common/models/workflow.ts",
-          "hash": "15855456327309866932"
-        },
-        {
-          "file": "libs/chatbot/src/lib/core/util/index.ts",
-          "hash": "5139985942597791835"
-        },
-        {
-          "file": "libs/chatbot/src/lib/images/LogicApps.svg",
-          "hash": "2097860906489808431"
-        },
-        {
-          "file": "libs/chatbot/src/lib/images/Sparkle.svg",
-          "hash": "3138281638005072555"
-        },
-        {
-          "file": "libs/chatbot/src/lib/images/SparkleDisabled.svg",
-          "hash": "12308741199338082792"
-        },
-        {
-          "file": "libs/chatbot/src/lib/images/Workflow.svg",
-          "hash": "9644831917975499371"
-        },
-        {
-          "file": "libs/chatbot/src/lib/index.tsx",
-          "hash": "7293379411218707820"
-        },
-        {
-          "file": "libs/chatbot/src/lib/styles.less",
-          "hash": "17038065324912682386"
-        },
-        {
-          "file": "libs/chatbot/src/lib/ui/chatbot.tsx",
-          "hash": "18164106321370969107",
-          "deps": [
-            "npm:@fluentui/react",
-            "npm:@fluentui/react-icons",
-            "services-designer-client-services",
-            "designer-ui",
-            "designer",
-            "utils",
-            "npm:react",
-            "npm:react-intl"
-          ]
-        },
-        {
-          "file": "libs/chatbot/src/lib/ui/panelheader.tsx",
-          "hash": "10918014337139668623",
-          "deps": [
-            "npm:@fluentui/react",
-            "npm:@fluentui/react-components",
-            "npm:@fluentui/react-icons",
-            "services-designer-client-services",
-            "npm:react-intl"
-          ]
-        },
-        {
-          "file": "libs/chatbot/src/lib/ui/styles.less",
-          "hash": "16062592558757698716"
-        },
-        {
-          "file": "libs/chatbot/tsconfig.json",
-          "hash": "11642020620037452120"
-        },
-        {
-          "file": "libs/chatbot/tsconfig.lib.json",
-          "hash": "9143020992508194197"
-        },
-        {
-          "file": "libs/chatbot/tsconfig.spec.json",
-          "hash": "13298942017574878772"
-        }
-      ],
-      "designer-e2e": [
-        {
-          "file": "apps/designer-e2e/.eslintrc.json",
-          "hash": "13297243373673238057"
-        },
-        {
-          "file": "apps/designer-e2e/playwright.config.ts",
-          "hash": "10493114135744873964",
-          "deps": [
-            "npm:../../playwright.config.base",
-            "npm:@playwright/test"
-          ]
-        },
-        {
-          "file": "apps/designer-e2e/project.json",
-          "hash": "1400572376374772862"
-        },
-        {
-          "file": "apps/designer-e2e/src/general/app.spec.ts",
-          "hash": "10939435193497015697",
-          "deps": [
-            "npm:@playwright/test"
-          ]
-        },
-        {
-          "file": "apps/designer-e2e/src/general/dragAndDrop.spec.ts",
-          "hash": "16994345898446936094",
-          "deps": [
-            "designer",
-            "npm:@playwright/test"
-          ]
-        },
-        {
-          "file": "apps/designer-e2e/src/general/serialization.spec.ts",
-          "hash": "13871486187837910959",
-          "deps": [
-            "npm:@playwright/test",
-            [
-              "npm:../../../../__mocks__/workflows/Panel.json",
-              "dynamic"
-            ],
-            [
-              "npm:../../../../__mocks__/workflows/Switch.json",
-              "dynamic"
-            ],
-            [
-              "npm:../../../../__mocks__/workflows/UnicodeKeys.json",
-              "dynamic"
-            ]
-          ]
-        },
-        {
-          "file": "apps/designer-e2e/src/utils.ts",
-          "hash": "4660621315572426897"
-        },
-        {
-          "file": "apps/designer-e2e/tsconfig.e2e.json",
-          "hash": "2404025130951761221"
-        },
-        {
-          "file": "apps/designer-e2e/tsconfig.json",
-          "hash": "4500232260948002331"
-        }
-      ],
-      "vs-code-react": [
-        {
-          "file": "apps/vs-code-react/.babelrc",
-          "hash": "10988945498763611993"
-        },
-        {
-          "file": "apps/vs-code-react/.browserslistrc",
-          "hash": "167759602395835039"
-        },
-        {
-          "file": "apps/vs-code-react/.eslintrc.json",
-          "hash": "10075191527724852300"
-        },
-        {
-          "file": "apps/vs-code-react/jest.config.ts",
-          "hash": "8630938695886870630"
-        },
-        {
-          "file": "apps/vs-code-react/project.json",
-          "hash": "16256351966424755288"
-        },
-        {
-          "file": "apps/vs-code-react/src/app/components/reviewList/helper.ts",
-          "hash": "7103226391461447657",
-          "deps": [
-            "npm:@fluentui/react"
-          ]
-        },
-        {
-          "file": "apps/vs-code-react/src/app/components/reviewList/reviewList.tsx",
-          "hash": "15235190526173296646",
-          "deps": [
-            "npm:@fluentui/react",
-            "npm:react"
-          ]
-        },
-        {
-          "file": "apps/vs-code-react/src/app/components/reviewList/styles.less",
-          "hash": "3923189858935612561"
-        },
-        {
-          "file": "apps/vs-code-react/src/app/components/searchableDropdown/index.tsx",
-          "hash": "14252331570865470453",
-          "deps": [
-            "npm:@fluentui/react",
-            "npm:react",
-            "npm:react-intl"
-          ]
-        },
-        {
-          "file": "apps/vs-code-react/src/app/components/searchableDropdown/styles.less",
-          "hash": "14353098042527666078"
-        },
-        {
-          "file": "apps/vs-code-react/src/app/dataMapper/app.less",
-          "hash": "10860476654260307609"
-        },
-        {
-          "file": "apps/vs-code-react/src/app/dataMapper/app.tsx",
-          "hash": "1490405593321068540",
-          "deps": [
-            "data-mapper",
-            "designer",
-            "utils",
-            "vscode-extension",
-            "npm:react",
-            "npm:react-redux"
-          ]
-        },
-        {
-          "file": "apps/vs-code-react/src/app/designer/DesignerCommandBar/index.tsx",
-          "hash": "745167337467991286",
-          "deps": [
-            "npm:@fluentui/react",
-            "designer-ui",
-            "designer",
-            "utils",
-            "vscode-extension",
-            "npm:@reduxjs/toolkit",
-            "npm:react",
-            "npm:react-intl",
-            "npm:react-query",
-            "npm:react-redux"
-          ]
-        },
-        {
-          "file": "apps/vs-code-react/src/app/designer/app.less",
-          "hash": "2873139032757981092"
-        },
-        {
-          "file": "apps/vs-code-react/src/app/designer/app.tsx",
-          "hash": "8765328314277611844",
-          "deps": [
-            "npm:@fluentui/react",
-            "services-designer-client-services",
-            "designer",
-            "utils",
-            "vscode-extension",
-            "npm:react",
-            "npm:react-intl",
-            "npm:react-query",
-            "npm:react-redux"
-          ]
-        },
-        {
-          "file": "apps/vs-code-react/src/app/designer/constants.ts",
-          "hash": "5903664051922439610"
-        },
-        {
-          "file": "apps/vs-code-react/src/app/designer/models/workflow.ts",
-          "hash": "17193178260645736617",
-          "deps": [
-            "utils"
-          ]
-        },
-        {
-          "file": "apps/vs-code-react/src/app/designer/services/JwtHelper.ts",
-          "hash": "13157754222681752876"
-        },
-        {
-          "file": "apps/vs-code-react/src/app/designer/services/oAuth.ts",
-          "hash": "17965986977097938725",
-          "deps": [
-            "services-designer-client-services",
-            "vscode-extension"
-          ]
-        },
-        {
-          "file": "apps/vs-code-react/src/app/designer/servicesHelper.ts",
-          "hash": "13508474351544954605",
-          "deps": [
-            "services-designer-client-services",
-            "utils",
-            "vscode-extension",
-            "npm:react-query",
-            "npm:vscode-webview"
-          ]
-        },
-        {
-          "file": "apps/vs-code-react/src/app/designer/utilities/workflow.ts",
-          "hash": "11284208617598927726",
-          "deps": [
-            "designer",
-            "vscode-extension"
-          ]
-        },
-        {
-          "file": "apps/vs-code-react/src/app/export/export.less",
-          "hash": "5078490720772691441"
-        },
-        {
-          "file": "apps/vs-code-react/src/app/export/export.tsx",
-          "hash": "13259091756978929972",
-          "deps": [
-            "npm:@fluentui/react",
-            "npm:react-redux",
-            "npm:react-router-dom"
-          ]
-        },
-        {
-          "file": "apps/vs-code-react/src/app/export/instanceSelection/helper.ts",
-          "hash": "17894075162777359883"
-        },
-        {
-          "file": "apps/vs-code-react/src/app/export/instanceSelection/instanceSelection.tsx",
-          "hash": "639017268043328160",
-          "deps": [
-            "npm:@fluentui/react",
-            "utils",
-            "npm:react",
-            "npm:react-intl",
-            "npm:react-query",
-            "npm:react-redux"
-          ]
-        },
-        {
-          "file": "apps/vs-code-react/src/app/export/navigation/navigation.tsx",
-          "hash": "3549403869914834281",
-          "deps": [
-            "npm:@fluentui/react",
-            "vscode-extension",
-            "npm:react",
-            "npm:react-intl",
-            "npm:react-redux",
-            "npm:react-router-dom"
-          ]
-        },
-        {
-          "file": "apps/vs-code-react/src/app/export/status/status.tsx",
-          "hash": "8289299293182874286",
-          "deps": [
-            "npm:@fluentui/react",
-            "npm:react-intl",
-            "npm:react-redux"
-          ]
-        },
-        {
-          "file": "apps/vs-code-react/src/app/export/summary/helper.ts",
-          "hash": "14153533387296877593",
-          "deps": [
-            "npm:@fluentui/react"
-          ]
-        },
-        {
-          "file": "apps/vs-code-react/src/app/export/summary/managedConnections.tsx",
-          "hash": "13576086556206572716",
-          "deps": [
-            "npm:@fluentui/react",
-            "npm:react",
-            "npm:react-intl",
-            "npm:react-query",
-            "npm:react-redux"
-          ]
-        },
-        {
-          "file": "apps/vs-code-react/src/app/export/summary/newResourceGroup.tsx",
-          "hash": "158008153757211273",
-          "deps": [
-            "npm:@fluentui/react",
-            "npm:@fluentui/react-hooks",
-            "npm:react",
-            "npm:react-intl",
-            "npm:react-redux"
-          ]
-        },
-        {
-          "file": "apps/vs-code-react/src/app/export/summary/summary.tsx",
-          "hash": "789650010018237971",
-          "deps": [
-            "npm:@fluentui/react",
-            "vscode-extension",
-            "npm:react",
-            "npm:react-intl",
-            "npm:react-query",
-            "npm:react-redux"
-          ]
-        },
-        {
-          "file": "apps/vs-code-react/src/app/export/validation/helper.ts",
-          "hash": "11787808914725369004"
-        },
-        {
-          "file": "apps/vs-code-react/src/app/export/validation/validation.tsx",
-          "hash": "13271943055030887969",
-          "deps": [
-            "npm:@fluentui/react",
-            "npm:react",
-            "npm:react-intl",
-            "npm:react-query",
-            "npm:react-redux"
-          ]
-        },
-        {
-          "file": "apps/vs-code-react/src/app/export/workflowsSelection/advancedOptions.tsx",
-          "hash": "7130733322392167908",
-          "deps": [
-            "npm:@fluentui/react",
-            "npm:react",
-            "npm:react-intl",
-            "npm:react-redux"
-          ]
-        },
-        {
-          "file": "apps/vs-code-react/src/app/export/workflowsSelection/filters.tsx",
-          "hash": "14669922824977716355",
-          "deps": [
-            "npm:@fluentui/react",
-            "npm:react-intl"
-          ]
-        },
-        {
-          "file": "apps/vs-code-react/src/app/export/workflowsSelection/helper.ts",
-          "hash": "7520401107418434159",
-          "deps": [
-            "npm:@fluentui/react"
-          ]
-        },
-        {
-          "file": "apps/vs-code-react/src/app/export/workflowsSelection/selectedList.tsx",
-          "hash": "1730831938770927108",
-          "deps": [
-            "npm:@fluentui/react",
-            "npm:react",
-            "npm:react-intl",
-            "npm:react-redux"
-          ]
-        },
-        {
-          "file": "apps/vs-code-react/src/app/export/workflowsSelection/workflowsSelection.tsx",
-          "hash": "13214877034162784239",
-          "deps": [
-            "npm:@fluentui/react",
-            "npm:react",
-            "npm:react-intl",
-            "npm:react-query",
-            "npm:react-redux"
-          ]
-        },
-        {
-          "file": "apps/vs-code-react/src/app/overview/app.tsx",
-          "hash": "4454234827451107729",
-          "deps": [
-            "services-designer-client-services",
-            "designer-ui",
-            "utils",
-            "vscode-extension",
-            "npm:react",
-            "npm:react-query",
-            "npm:react-redux",
-            "npm:tiny-invariant"
-          ]
-        },
-        {
-          "file": "apps/vs-code-react/src/app/review/index.tsx",
-          "hash": "17050061761908500120",
-          "deps": [
-            "npm:react-redux"
-          ]
-        },
-        {
-          "file": "apps/vs-code-react/src/assets/.gitkeep",
-          "hash": "3244421341483603138"
-        },
-        {
-          "file": "apps/vs-code-react/src/environments/environment.prod.ts",
-          "hash": "10220522844224226756"
-        },
-        {
-          "file": "apps/vs-code-react/src/environments/environment.ts",
-          "hash": "11309522437153898482"
-        },
-        {
-          "file": "apps/vs-code-react/src/favicon.ico",
-          "hash": "9303420814833116677"
-        },
-        {
-          "file": "apps/vs-code-react/src/fixtures/get-more-runs.json",
-          "hash": "8025372240546622652"
-        },
-        {
-          "file": "apps/vs-code-react/src/fixtures/get-run.json",
-          "hash": "14954993404334898723"
-        },
-        {
-          "file": "apps/vs-code-react/src/fixtures/get-runs.json",
-          "hash": "16210149105685428411"
-        },
-        {
-          "file": "apps/vs-code-react/src/index.html",
-          "hash": "15542557927961559597"
-        },
-        {
-          "file": "apps/vs-code-react/src/main.tsx",
-          "hash": "15776913249061645162",
-          "deps": [
-            "designer",
-            "npm:@fluentui/react",
-            "npm:react",
-            "npm:react-dom",
-            "npm:react-intl",
-            "npm:react-query",
-            "npm:react-redux"
-          ]
-        },
-        {
-          "file": "apps/vs-code-react/src/polyfills.ts",
-          "hash": "17041846422484582267",
-          "deps": [
-            "npm:buffer",
-            "npm:core-js",
-            "npm:process",
-            "npm:regenerator-runtime"
-          ]
-        },
-        {
-          "file": "apps/vs-code-react/src/resources/Caution.svg",
-          "hash": "12946324935578891880"
-        },
-        {
-          "file": "apps/vs-code-react/src/resources/Error.svg",
-          "hash": "1306017530222758526"
-        },
-        {
-          "file": "apps/vs-code-react/src/resources/Success.svg",
-          "hash": "1346479691433759862"
-        },
-        {
-          "file": "apps/vs-code-react/src/router/index.tsx",
-          "hash": "15140865326278989359",
-          "deps": [
-            "npm:react-router-dom"
-          ]
-        },
-        {
-          "file": "apps/vs-code-react/src/run-service.ts",
-          "hash": "17001222516069202300"
-        },
-        {
-          "file": "apps/vs-code-react/src/run-service/export/helper.ts",
-          "hash": "17978663445350106988"
-        },
-        {
-          "file": "apps/vs-code-react/src/run-service/export/index.ts",
-          "hash": "1275925199593562910",
-          "deps": [
-            "vscode-extension"
-          ]
-        },
-        {
-          "file": "apps/vs-code-react/src/run-service/types.ts",
-          "hash": "3541720905513274018",
-          "deps": [
-            "services-designer-client-services",
-            "utils",
-            "vscode-extension"
-          ]
-        },
-        {
-          "file": "apps/vs-code-react/src/state/DataMapSlice.ts",
-          "hash": "9668008902194948133",
-          "deps": [
-            "data-mapper",
-            "utils",
-            "npm:@reduxjs/toolkit"
-          ]
-        },
-        {
-          "file": "apps/vs-code-react/src/state/DesignerSlice.ts",
-          "hash": "8913041496049035821",
-          "deps": [
-            "services-designer-client-services",
-            "vscode-extension",
-            "npm:@reduxjs/toolkit"
-          ]
-        },
-        {
-          "file": "apps/vs-code-react/src/state/WorkflowSlice.ts",
-          "hash": "17422552152551623659",
-          "deps": [
-            "designer-ui",
-            "npm:@reduxjs/toolkit"
-          ]
-        },
-        {
-          "file": "apps/vs-code-react/src/state/projectSlice.ts",
-          "hash": "17786023480081942934",
-          "deps": [
-            "npm:@reduxjs/toolkit"
-          ]
-        },
-        {
-          "file": "apps/vs-code-react/src/state/store.ts",
-          "hash": "9306760291102940367",
-          "deps": [
-            "npm:@reduxjs/toolkit"
-          ]
-        },
-        {
-          "file": "apps/vs-code-react/src/stateWrapper.tsx",
-          "hash": "2412499423087675880",
-          "deps": [
-            "vscode-extension",
-            "npm:react",
-            "npm:react-redux",
-            "npm:react-router-dom"
-          ]
-        },
-        {
-          "file": "apps/vs-code-react/src/styles.less",
-          "hash": "5195668842064076916"
-        },
-        {
-          "file": "apps/vs-code-react/src/themeProvider.tsx",
-          "hash": "3199307216492964650",
-          "deps": [
-            "npm:@fluentui/azure-themes",
-            "npm:@fluentui/react",
-            "npm:react"
-          ]
-        },
-        {
-          "file": "apps/vs-code-react/src/webviewCommunication.tsx",
-          "hash": "9902709143751257824",
-          "deps": [
-            "utils",
-            "vscode-extension",
-            "npm:@use-it/event-listener",
-            "npm:react",
-            "npm:react-redux",
-            "npm:vscode-webview"
-          ]
-        },
-        {
-          "file": "apps/vs-code-react/tsconfig.app.json",
-          "hash": "4251399858593500384"
-        },
-        {
-          "file": "apps/vs-code-react/tsconfig.json",
-          "hash": "10761964834584941335"
-        },
-        {
-          "file": "apps/vs-code-react/tsconfig.spec.json",
-          "hash": "9702384420104162802"
-        }
-      ],
-      "vscode-extension": [
-        {
-          "file": "libs/vscode-extension/.babelrc",
-          "hash": "10988945498763611993"
-        },
-        {
-          "file": "libs/vscode-extension/.eslintrc.json",
-          "hash": "13800677001662881425"
-        },
-        {
-          "file": "libs/vscode-extension/README.md",
-          "hash": "5909881734460119225"
-        },
-        {
-          "file": "libs/vscode-extension/jest.config.ts",
-          "hash": "120501684975477353"
-        },
-        {
-          "file": "libs/vscode-extension/package.json",
-          "hash": "764889341578821180"
-        },
-        {
-          "file": "libs/vscode-extension/project.json",
-          "hash": "16820032847976901717"
-        },
-        {
-          "file": "libs/vscode-extension/src/assets/architecture.png",
-          "hash": "26421078174694397"
-        },
-        {
-          "file": "libs/vscode-extension/src/index.ts",
-          "hash": "13894618422633116150"
-        },
-        {
-          "file": "libs/vscode-extension/src/lib/helpers/authorization.ts",
-          "hash": "13120906341305634586"
-        },
-        {
-          "file": "libs/vscode-extension/src/lib/helpers/index.ts",
-          "hash": "10780152196575928830"
-        },
-        {
-          "file": "libs/vscode-extension/src/lib/models/artifact.ts",
-          "hash": "7146957473126889114"
-        },
-        {
-          "file": "libs/vscode-extension/src/lib/models/bundleFeed.ts",
-          "hash": "6154477977645149666"
-        },
-        {
-          "file": "libs/vscode-extension/src/lib/models/cliFeed.ts",
-          "hash": "5895652225166913174"
-        },
-        {
-          "file": "libs/vscode-extension/src/lib/models/connection.ts",
-          "hash": "8902288875218630610"
-        },
-        {
-          "file": "libs/vscode-extension/src/lib/models/context.ts",
-          "hash": "289535333068392984",
-          "deps": [
-            "npm:@microsoft/vscode-azext-azureappservice",
-            "npm:@microsoft/vscode-azext-utils"
-          ]
-        },
-        {
-          "file": "libs/vscode-extension/src/lib/models/dataMapper.ts",
-          "hash": "11006397952409723415",
-          "deps": [
-            "utils"
-          ]
-        },
-        {
-          "file": "libs/vscode-extension/src/lib/models/extensioncommand.ts",
-          "hash": "1162172237894803614"
-        },
-        {
-          "file": "libs/vscode-extension/src/lib/models/functions.ts",
-          "hash": "8921509321344504417",
-          "deps": [
-            "npm:@microsoft/vscode-azext-utils",
-            "npm:vscode"
-          ]
-        },
-        {
-          "file": "libs/vscode-extension/src/lib/models/host.ts",
-          "hash": "4946881646528119602"
-        },
-        {
-          "file": "libs/vscode-extension/src/lib/models/index.ts",
-          "hash": "8629351622118864800"
-        },
-        {
-          "file": "libs/vscode-extension/src/lib/models/language.ts",
-          "hash": "12998506532698409684"
-        },
-        {
-          "file": "libs/vscode-extension/src/lib/models/launch.ts",
-          "hash": "3299137502222266496",
-          "deps": [
-            "npm:vscode"
-          ]
-        },
-        {
-          "file": "libs/vscode-extension/src/lib/models/parameter.ts",
-          "hash": "2466587591546831647"
-        },
-        {
-          "file": "libs/vscode-extension/src/lib/models/process.ts",
-          "hash": "12858203324101334851"
-        },
-        {
-          "file": "libs/vscode-extension/src/lib/models/project.ts",
-          "hash": "12064643844535713228",
-          "deps": [
-            "npm:@microsoft/vscode-azext-utils",
-            "npm:vscode"
-          ]
-        },
-        {
-          "file": "libs/vscode-extension/src/lib/models/tasks.ts",
-          "hash": "15455125440905214634",
-          "deps": [
-            "npm:vscode"
-          ]
-        },
-        {
-          "file": "libs/vscode-extension/src/lib/models/templates/IBindingTemplate.ts",
-          "hash": "11529840343560446484"
-        },
-        {
-          "file": "libs/vscode-extension/src/lib/models/templates/IWorkflowTemplate.ts",
-          "hash": "10730630576740403610"
-        },
-        {
-          "file": "libs/vscode-extension/src/lib/models/templates/index.ts",
-          "hash": "15419456393693419504"
-        },
-        {
-          "file": "libs/vscode-extension/src/lib/models/workflow.ts",
-          "hash": "5035512833209723551",
-          "deps": [
-            "utils"
-          ]
-        },
-        {
-          "file": "libs/vscode-extension/src/lib/services/httpClient.ts",
-          "hash": "1946711609025571142",
-          "deps": [
-            "services-designer-client-services",
-            "utils",
-            "npm:axios"
-          ]
-        },
-        {
-          "file": "libs/vscode-extension/src/lib/services/index.ts",
-          "hash": "2286143948438821916"
-        },
-        {
-          "file": "libs/vscode-extension/tsconfig.json",
-          "hash": "11862585966703612229"
-        },
-        {
-          "file": "libs/vscode-extension/tsconfig.lib.json",
-          "hash": "12597263177960957631"
-        },
-        {
-          "file": "libs/vscode-extension/tsconfig.spec.json",
-          "hash": "9983375138734725293"
-        }
-      ],
-      "services-intl": [
-        {
-          "file": "libs/services/intl/.babelrc",
-          "hash": "2294372414848561296"
-        },
-        {
-          "file": "libs/services/intl/.eslintrc.json",
-          "hash": "18250621763427026584"
-        },
-        {
-          "file": "libs/services/intl/README.md",
-          "hash": "16501704097124815619"
-        },
-        {
-          "file": "libs/services/intl/jest.config.ts",
-          "hash": "12414588718326768938"
-        },
-        {
-          "file": "libs/services/intl/package.json",
-          "hash": "8148914404105563604"
-        },
-        {
-          "file": "libs/services/intl/project.json",
-          "hash": "18191785955151423292"
-        },
-        {
-          "file": "libs/services/intl/src/IntlProvider.tsx",
-          "hash": "13376692848441355005",
-          "deps": [
-            "npm:@formatjs/intl",
-            "npm:react-intl",
-            "npm:react-query"
-          ]
-        },
-        {
-          "file": "libs/services/intl/src/compiled-lang/strings.cs.json",
-          "hash": "5578224630421714301"
-        },
-        {
-          "file": "libs/services/intl/src/compiled-lang/strings.de.json",
-          "hash": "9696569000771092410"
-        },
-        {
-          "file": "libs/services/intl/src/compiled-lang/strings.en-XA.json",
-          "hash": "14683932564555155625"
-        },
-        {
-          "file": "libs/services/intl/src/compiled-lang/strings.es.json",
-          "hash": "17592834166179626353"
-        },
-        {
-          "file": "libs/services/intl/src/compiled-lang/strings.fr.json",
-          "hash": "12111355033646331082"
-        },
-        {
-          "file": "libs/services/intl/src/compiled-lang/strings.hu.json",
-          "hash": "14079144317792721776"
-        },
-        {
-          "file": "libs/services/intl/src/compiled-lang/strings.id.json",
-          "hash": "14132725308260426676"
-        },
-        {
-          "file": "libs/services/intl/src/compiled-lang/strings.it.json",
-          "hash": "4738549725340812764"
-        },
-        {
-          "file": "libs/services/intl/src/compiled-lang/strings.ja.json",
-          "hash": "12157398066765172402"
-        },
-        {
-          "file": "libs/services/intl/src/compiled-lang/strings.json",
-          "hash": "7501576278361422899"
-        },
-        {
-          "file": "libs/services/intl/src/compiled-lang/strings.ko.json",
-          "hash": "9066326663001119661"
-        },
-        {
-          "file": "libs/services/intl/src/compiled-lang/strings.nl.json",
-          "hash": "2101612823787574728"
-        },
-        {
-          "file": "libs/services/intl/src/compiled-lang/strings.pl.json",
-          "hash": "11041430844616945711"
-        },
-        {
-          "file": "libs/services/intl/src/compiled-lang/strings.pt-BR.json",
-          "hash": "6648747268931298551"
-        },
-        {
-          "file": "libs/services/intl/src/compiled-lang/strings.pt-PT.json",
-          "hash": "17128285153026592830"
-        },
-        {
-          "file": "libs/services/intl/src/compiled-lang/strings.ru.json",
-          "hash": "8488462660386453728"
-        },
-        {
-          "file": "libs/services/intl/src/compiled-lang/strings.sv.json",
-          "hash": "9640286025688897814"
-        },
-        {
-          "file": "libs/services/intl/src/compiled-lang/strings.tr.json",
-          "hash": "5728682048231602171"
-        },
-        {
-          "file": "libs/services/intl/src/compiled-lang/strings.xa.json",
-          "hash": "9536863172217279644"
-        },
-        {
-          "file": "libs/services/intl/src/compiled-lang/strings.zh-Hans.json",
-          "hash": "9674580465050270449"
-        },
-        {
-          "file": "libs/services/intl/src/compiled-lang/strings.zh-Hant.json",
-          "hash": "16722401894089259564"
-        },
-        {
-          "file": "libs/services/intl/src/index.ts",
-          "hash": "5880101155327804229"
-        },
-        {
-          "file": "libs/services/intl/src/intl.tsx",
-          "hash": "9493587879189422226",
-          "deps": [
-            "npm:react",
-            "npm:react-intl"
-          ]
-        },
-        {
-          "file": "libs/services/intl/tsconfig.json",
-          "hash": "1386939308342903331"
-        },
-        {
-          "file": "libs/services/intl/tsconfig.lib.json",
-          "hash": "845137741353322353"
-        },
-        {
-          "file": "libs/services/intl/tsconfig.spec.json",
-          "hash": "9648545877377768905"
         }
       ],
       "parsers": [
@@ -13586,6 +12204,1384 @@
         {
           "file": "apps/vs-code-designer/tsconfig.spec.json",
           "hash": "9983375138734725293"
+        }
+      ],
+      "designer-e2e": [
+        {
+          "file": "apps/designer-e2e/.eslintrc.json",
+          "hash": "13297243373673238057"
+        },
+        {
+          "file": "apps/designer-e2e/playwright.config.ts",
+          "hash": "10493114135744873964",
+          "deps": [
+            "npm:../../playwright.config.base",
+            "npm:@playwright/test"
+          ]
+        },
+        {
+          "file": "apps/designer-e2e/project.json",
+          "hash": "1400572376374772862"
+        },
+        {
+          "file": "apps/designer-e2e/src/general/app.spec.ts",
+          "hash": "10939435193497015697",
+          "deps": [
+            "npm:@playwright/test"
+          ]
+        },
+        {
+          "file": "apps/designer-e2e/src/general/dragAndDrop.spec.ts",
+          "hash": "16994345898446936094",
+          "deps": [
+            "designer",
+            "npm:@playwright/test"
+          ]
+        },
+        {
+          "file": "apps/designer-e2e/src/general/serialization.spec.ts",
+          "hash": "13871486187837910959",
+          "deps": [
+            "npm:@playwright/test",
+            [
+              "npm:../../../../__mocks__/workflows/Panel.json",
+              "dynamic"
+            ],
+            [
+              "npm:../../../../__mocks__/workflows/Switch.json",
+              "dynamic"
+            ],
+            [
+              "npm:../../../../__mocks__/workflows/UnicodeKeys.json",
+              "dynamic"
+            ]
+          ]
+        },
+        {
+          "file": "apps/designer-e2e/src/utils.ts",
+          "hash": "4660621315572426897"
+        },
+        {
+          "file": "apps/designer-e2e/tsconfig.e2e.json",
+          "hash": "2404025130951761221"
+        },
+        {
+          "file": "apps/designer-e2e/tsconfig.json",
+          "hash": "4500232260948002331"
+        }
+      ],
+      "services-designer-client-services": [
+        {
+          "file": "libs/services/designer-client-services/.babelrc",
+          "hash": "18193182628669222361"
+        },
+        {
+          "file": "libs/services/designer-client-services/.eslintrc.json",
+          "hash": "9703569748258640057"
+        },
+        {
+          "file": "libs/services/designer-client-services/README.md",
+          "hash": "11207908698819292426"
+        },
+        {
+          "file": "libs/services/designer-client-services/jest.config.ts",
+          "hash": "8817897571683555521"
+        },
+        {
+          "file": "libs/services/designer-client-services/package.json",
+          "hash": "13900347662189529588"
+        },
+        {
+          "file": "libs/services/designer-client-services/project.json",
+          "hash": "11655888760036047651"
+        },
+        {
+          "file": "libs/services/designer-client-services/src/index.ts",
+          "hash": "9380633527024969017"
+        },
+        {
+          "file": "libs/services/designer-client-services/src/lib/__test__/__mocks__/azureConnectorResponse.ts",
+          "hash": "4041114759273409584"
+        },
+        {
+          "file": "libs/services/designer-client-services/src/lib/__test__/__mocks__/azureOperationResponse.ts",
+          "hash": "17000986385516647933",
+          "deps": [
+            "utils"
+          ]
+        },
+        {
+          "file": "libs/services/designer-client-services/src/lib/__test__/__mocks__/builtInOperationResponse.ts",
+          "hash": "14289134969433992055",
+          "deps": [
+            "utils"
+          ]
+        },
+        {
+          "file": "libs/services/designer-client-services/src/lib/__test__/__mocks__/monitoringInputsOutputsResponse.ts",
+          "hash": "4954893213128657861"
+        },
+        {
+          "file": "libs/services/designer-client-services/src/lib/__test__/connectionParameterEditor.spec.ts",
+          "hash": "7641115249858288898"
+        },
+        {
+          "file": "libs/services/designer-client-services/src/lib/__test__/editor.spec.ts",
+          "hash": "14155161053626149773"
+        },
+        {
+          "file": "libs/services/designer-client-services/src/lib/__test__/logger.spec.ts",
+          "hash": "10972091389277624213"
+        },
+        {
+          "file": "libs/services/designer-client-services/src/lib/apimanagement.ts",
+          "hash": "12901147613173554504",
+          "deps": [
+            "parsers",
+            "utils"
+          ]
+        },
+        {
+          "file": "libs/services/designer-client-services/src/lib/appService.ts",
+          "hash": "3751793778306133707",
+          "deps": [
+            "utils"
+          ]
+        },
+        {
+          "file": "libs/services/designer-client-services/src/lib/badges.ts",
+          "hash": "4669131476797349411"
+        },
+        {
+          "file": "libs/services/designer-client-services/src/lib/base/apimanagement.ts",
+          "hash": "4626501719196491130",
+          "deps": [
+            "parsers",
+            "utils",
+            "npm:react-query"
+          ]
+        },
+        {
+          "file": "libs/services/designer-client-services/src/lib/base/appService.ts",
+          "hash": "17579504446195460798",
+          "deps": [
+            "parsers",
+            "utils"
+          ]
+        },
+        {
+          "file": "libs/services/designer-client-services/src/lib/base/chatbot.ts",
+          "hash": "3146353485935789540",
+          "deps": [
+            "utils",
+            "npm:axios"
+          ]
+        },
+        {
+          "file": "libs/services/designer-client-services/src/lib/base/connection.ts",
+          "hash": "6787624688246193376",
+          "deps": [
+            "parsers",
+            "utils"
+          ]
+        },
+        {
+          "file": "libs/services/designer-client-services/src/lib/base/connector.ts",
+          "hash": "1526864294272728335",
+          "deps": [
+            "services-intl",
+            "utils",
+            "npm:react-intl"
+          ]
+        },
+        {
+          "file": "libs/services/designer-client-services/src/lib/base/function.ts",
+          "hash": "12920523983165699197",
+          "deps": [
+            "parsers",
+            "utils"
+          ]
+        },
+        {
+          "file": "libs/services/designer-client-services/src/lib/base/gateway.ts",
+          "hash": "4376324986322626398",
+          "deps": [
+            "utils"
+          ]
+        },
+        {
+          "file": "libs/services/designer-client-services/src/lib/base/index.ts",
+          "hash": "100886477017713472"
+        },
+        {
+          "file": "libs/services/designer-client-services/src/lib/base/manifests/condition.ts",
+          "hash": "2528883352766393708",
+          "deps": [
+            "utils"
+          ]
+        },
+        {
+          "file": "libs/services/designer-client-services/src/lib/base/manifests/csvtable.ts",
+          "hash": "3382734649002278977",
+          "deps": [
+            "utils"
+          ]
+        },
+        {
+          "file": "libs/services/designer-client-services/src/lib/base/manifests/datetime.ts",
+          "hash": "14262418996958567036",
+          "deps": [
+            "utils"
+          ]
+        },
+        {
+          "file": "libs/services/designer-client-services/src/lib/base/manifests/foreach.ts",
+          "hash": "3747644781035519288",
+          "deps": [
+            "utils"
+          ]
+        },
+        {
+          "file": "libs/services/designer-client-services/src/lib/base/manifests/htmltable.ts",
+          "hash": "6434545695123875610",
+          "deps": [
+            "utils"
+          ]
+        },
+        {
+          "file": "libs/services/designer-client-services/src/lib/base/manifests/http.ts",
+          "hash": "11377772128119674077",
+          "deps": [
+            "utils"
+          ]
+        },
+        {
+          "file": "libs/services/designer-client-services/src/lib/base/manifests/join.ts",
+          "hash": "16769231047432995378",
+          "deps": [
+            "utils"
+          ]
+        },
+        {
+          "file": "libs/services/designer-client-services/src/lib/base/manifests/parsejson.ts",
+          "hash": "14911336691483942483",
+          "deps": [
+            "utils"
+          ]
+        },
+        {
+          "file": "libs/services/designer-client-services/src/lib/base/manifests/query.ts",
+          "hash": "12251337832597580912",
+          "deps": [
+            "utils"
+          ]
+        },
+        {
+          "file": "libs/services/designer-client-services/src/lib/base/manifests/request.ts",
+          "hash": "17926375301374973997",
+          "deps": [
+            "utils"
+          ]
+        },
+        {
+          "file": "libs/services/designer-client-services/src/lib/base/manifests/response.ts",
+          "hash": "12137094563635446477",
+          "deps": [
+            "utils"
+          ]
+        },
+        {
+          "file": "libs/services/designer-client-services/src/lib/base/manifests/schedule.ts",
+          "hash": "6509733789198374357",
+          "deps": [
+            "services-intl",
+            "utils"
+          ]
+        },
+        {
+          "file": "libs/services/designer-client-services/src/lib/base/manifests/scope.ts",
+          "hash": "13510299268834526211",
+          "deps": [
+            "utils"
+          ]
+        },
+        {
+          "file": "libs/services/designer-client-services/src/lib/base/manifests/select.ts",
+          "hash": "1643197952223172164",
+          "deps": [
+            "utils"
+          ]
+        },
+        {
+          "file": "libs/services/designer-client-services/src/lib/base/manifests/switch.ts",
+          "hash": "10758295372115762295",
+          "deps": [
+            "utils"
+          ]
+        },
+        {
+          "file": "libs/services/designer-client-services/src/lib/base/manifests/terminate.ts",
+          "hash": "14520390700643046095",
+          "deps": [
+            "utils"
+          ]
+        },
+        {
+          "file": "libs/services/designer-client-services/src/lib/base/manifests/until.ts",
+          "hash": "4380255825215761751",
+          "deps": [
+            "utils"
+          ]
+        },
+        {
+          "file": "libs/services/designer-client-services/src/lib/base/manifests/variables.ts",
+          "hash": "6473836827615366669",
+          "deps": [
+            "utils"
+          ]
+        },
+        {
+          "file": "libs/services/designer-client-services/src/lib/base/oAuth.ts",
+          "hash": "1901414365924075312",
+          "deps": [
+            "utils"
+          ]
+        },
+        {
+          "file": "libs/services/designer-client-services/src/lib/base/operationmanifest.ts",
+          "hash": "13881054719378594004",
+          "deps": [
+            "utils"
+          ]
+        },
+        {
+          "file": "libs/services/designer-client-services/src/lib/base/operations/control.ts",
+          "hash": "2276513063347032356"
+        },
+        {
+          "file": "libs/services/designer-client-services/src/lib/base/operations/dataoperations.ts",
+          "hash": "17998935529655324249"
+        },
+        {
+          "file": "libs/services/designer-client-services/src/lib/base/operations/datetime.ts",
+          "hash": "15364460512758958557"
+        },
+        {
+          "file": "libs/services/designer-client-services/src/lib/base/operations/http.ts",
+          "hash": "16899240778924055950"
+        },
+        {
+          "file": "libs/services/designer-client-services/src/lib/base/operations/index.ts",
+          "hash": "9924011533457598450"
+        },
+        {
+          "file": "libs/services/designer-client-services/src/lib/base/operations/operationgroups.ts",
+          "hash": "7767572464887768924"
+        },
+        {
+          "file": "libs/services/designer-client-services/src/lib/base/operations/request.ts",
+          "hash": "7686527428866436332"
+        },
+        {
+          "file": "libs/services/designer-client-services/src/lib/base/operations/schedule.ts",
+          "hash": "11373234010056310761"
+        },
+        {
+          "file": "libs/services/designer-client-services/src/lib/base/operations/variables.ts",
+          "hash": "7741997988177804309"
+        },
+        {
+          "file": "libs/services/designer-client-services/src/lib/base/search.ts",
+          "hash": "12657489857821642840",
+          "deps": [
+            "utils"
+          ]
+        },
+        {
+          "file": "libs/services/designer-client-services/src/lib/chatbot.ts",
+          "hash": "11213091128467396666",
+          "deps": [
+            "utils",
+            "npm:axios"
+          ]
+        },
+        {
+          "file": "libs/services/designer-client-services/src/lib/common/azure.ts",
+          "hash": "16730245766611684683"
+        },
+        {
+          "file": "libs/services/designer-client-services/src/lib/common/exceptions/connection.ts",
+          "hash": "8989089486875747106",
+          "deps": [
+            "utils"
+          ]
+        },
+        {
+          "file": "libs/services/designer-client-services/src/lib/common/exceptions/index.ts",
+          "hash": "5887391731984230327"
+        },
+        {
+          "file": "libs/services/designer-client-services/src/lib/common/exceptions/service.ts",
+          "hash": "452353707785459105",
+          "deps": [
+            "utils"
+          ]
+        },
+        {
+          "file": "libs/services/designer-client-services/src/lib/connection.ts",
+          "hash": "9009646194793225524",
+          "deps": [
+            "utils"
+          ]
+        },
+        {
+          "file": "libs/services/designer-client-services/src/lib/connectionParameterEditor.ts",
+          "hash": "5805544311453773744",
+          "deps": [
+            "utils"
+          ]
+        },
+        {
+          "file": "libs/services/designer-client-services/src/lib/connector.ts",
+          "hash": "8103560418410733915",
+          "deps": [
+            "parsers",
+            "utils"
+          ]
+        },
+        {
+          "file": "libs/services/designer-client-services/src/lib/consumption/connection.ts",
+          "hash": "13578819245019626090",
+          "deps": [
+            "utils"
+          ]
+        },
+        {
+          "file": "libs/services/designer-client-services/src/lib/consumption/connector.ts",
+          "hash": "8790866886652140464",
+          "deps": [
+            "utils"
+          ]
+        },
+        {
+          "file": "libs/services/designer-client-services/src/lib/consumption/index.ts",
+          "hash": "12581863165798765230"
+        },
+        {
+          "file": "libs/services/designer-client-services/src/lib/consumption/manifests/apiManagement.ts",
+          "hash": "5097908589386864850",
+          "deps": [
+            "utils"
+          ]
+        },
+        {
+          "file": "libs/services/designer-client-services/src/lib/consumption/manifests/appServices.ts",
+          "hash": "17237673082690741115",
+          "deps": [
+            "utils"
+          ]
+        },
+        {
+          "file": "libs/services/designer-client-services/src/lib/consumption/manifests/batchWorkflow.ts",
+          "hash": "3117639368288167970",
+          "deps": [
+            "utils"
+          ]
+        },
+        {
+          "file": "libs/services/designer-client-services/src/lib/consumption/manifests/compose.ts",
+          "hash": "5215050163438905925",
+          "deps": [
+            "utils"
+          ]
+        },
+        {
+          "file": "libs/services/designer-client-services/src/lib/consumption/manifests/flatfile.ts",
+          "hash": "4782268273390612652",
+          "deps": [
+            "utils"
+          ]
+        },
+        {
+          "file": "libs/services/designer-client-services/src/lib/consumption/manifests/functions.ts",
+          "hash": "6307335634561087533",
+          "deps": [
+            "utils"
+          ]
+        },
+        {
+          "file": "libs/services/designer-client-services/src/lib/consumption/manifests/inlinecode.ts",
+          "hash": "6847003761951768216",
+          "deps": [
+            "utils"
+          ]
+        },
+        {
+          "file": "libs/services/designer-client-services/src/lib/consumption/manifests/integrationaccountartifactlookup.ts",
+          "hash": "15967624890498103123",
+          "deps": [
+            "utils"
+          ]
+        },
+        {
+          "file": "libs/services/designer-client-services/src/lib/consumption/manifests/invokeWorkflow.ts",
+          "hash": "10457204618643096247",
+          "deps": [
+            "utils"
+          ]
+        },
+        {
+          "file": "libs/services/designer-client-services/src/lib/consumption/manifests/liquid.ts",
+          "hash": "5909738856928726363",
+          "deps": [
+            "utils"
+          ]
+        },
+        {
+          "file": "libs/services/designer-client-services/src/lib/consumption/manifests/swaggerFunctions.ts",
+          "hash": "17069672683272304369",
+          "deps": [
+            "utils"
+          ]
+        },
+        {
+          "file": "libs/services/designer-client-services/src/lib/consumption/manifests/xml.ts",
+          "hash": "11296179642764402009",
+          "deps": [
+            "utils"
+          ]
+        },
+        {
+          "file": "libs/services/designer-client-services/src/lib/consumption/operationmanifest.ts",
+          "hash": "7697530607309882326",
+          "deps": [
+            "utils"
+          ]
+        },
+        {
+          "file": "libs/services/designer-client-services/src/lib/consumption/operations/apiManagement.ts",
+          "hash": "889254322578873619"
+        },
+        {
+          "file": "libs/services/designer-client-services/src/lib/consumption/operations/appServices.ts",
+          "hash": "14413093575682152883"
+        },
+        {
+          "file": "libs/services/designer-client-services/src/lib/consumption/operations/batchWorkflow.ts",
+          "hash": "6828262639021969187"
+        },
+        {
+          "file": "libs/services/designer-client-services/src/lib/consumption/operations/flatfile.ts",
+          "hash": "16330222175525472241"
+        },
+        {
+          "file": "libs/services/designer-client-services/src/lib/consumption/operations/functions.ts",
+          "hash": "12427938755401727885"
+        },
+        {
+          "file": "libs/services/designer-client-services/src/lib/consumption/operations/index.ts",
+          "hash": "9806185549847712404"
+        },
+        {
+          "file": "libs/services/designer-client-services/src/lib/consumption/operations/inlineCode.ts",
+          "hash": "14739455734775086197"
+        },
+        {
+          "file": "libs/services/designer-client-services/src/lib/consumption/operations/integrationAccount.ts",
+          "hash": "1170392313973954221"
+        },
+        {
+          "file": "libs/services/designer-client-services/src/lib/consumption/operations/invokeWorkflow.ts",
+          "hash": "8180427621259037034"
+        },
+        {
+          "file": "libs/services/designer-client-services/src/lib/consumption/operations/liquid.ts",
+          "hash": "15958942562504641676"
+        },
+        {
+          "file": "libs/services/designer-client-services/src/lib/consumption/operations/operationgroups.ts",
+          "hash": "7763682490519613414"
+        },
+        {
+          "file": "libs/services/designer-client-services/src/lib/consumption/operations/xml.ts",
+          "hash": "4794954947494896316"
+        },
+        {
+          "file": "libs/services/designer-client-services/src/lib/consumption/search.ts",
+          "hash": "16172263600130959885",
+          "deps": [
+            "utils"
+          ]
+        },
+        {
+          "file": "libs/services/designer-client-services/src/lib/editor.ts",
+          "hash": "1878197417808898894",
+          "deps": [
+            "utils"
+          ]
+        },
+        {
+          "file": "libs/services/designer-client-services/src/lib/function.ts",
+          "hash": "13210688171782359611",
+          "deps": [
+            "parsers",
+            "utils"
+          ]
+        },
+        {
+          "file": "libs/services/designer-client-services/src/lib/gateway.ts",
+          "hash": "8997567675221203029",
+          "deps": [
+            "utils"
+          ]
+        },
+        {
+          "file": "libs/services/designer-client-services/src/lib/helpers.ts",
+          "hash": "2393713334543305448",
+          "deps": [
+            "utils"
+          ]
+        },
+        {
+          "file": "libs/services/designer-client-services/src/lib/host.ts",
+          "hash": "12503927710404579531",
+          "deps": [
+            "utils"
+          ]
+        },
+        {
+          "file": "libs/services/designer-client-services/src/lib/httpClient.ts",
+          "hash": "8175155994288497941"
+        },
+        {
+          "file": "libs/services/designer-client-services/src/lib/logger.ts",
+          "hash": "11240823588330486476",
+          "deps": [
+            "utils"
+          ]
+        },
+        {
+          "file": "libs/services/designer-client-services/src/lib/logging/browserLogger.ts",
+          "hash": "11206711847389194503"
+        },
+        {
+          "file": "libs/services/designer-client-services/src/lib/logging/devLogger.ts",
+          "hash": "2374550337372765993",
+          "deps": [
+            "utils"
+          ]
+        },
+        {
+          "file": "libs/services/designer-client-services/src/lib/logging/logEntry.ts",
+          "hash": "7773406589009896884"
+        },
+        {
+          "file": "libs/services/designer-client-services/src/lib/oAuth.ts",
+          "hash": "14899032435258629714",
+          "deps": [
+            "utils"
+          ]
+        },
+        {
+          "file": "libs/services/designer-client-services/src/lib/operationmanifest.ts",
+          "hash": "13978727088425991837",
+          "deps": [
+            "utils"
+          ]
+        },
+        {
+          "file": "libs/services/designer-client-services/src/lib/run.ts",
+          "hash": "8430517164659478828",
+          "deps": [
+            "utils"
+          ]
+        },
+        {
+          "file": "libs/services/designer-client-services/src/lib/search.ts",
+          "hash": "10816891295907220",
+          "deps": [
+            "utils"
+          ]
+        },
+        {
+          "file": "libs/services/designer-client-services/src/lib/standard/artifact.ts",
+          "hash": "2205405226598303423"
+        },
+        {
+          "file": "libs/services/designer-client-services/src/lib/standard/connection.ts",
+          "hash": "1800400412742092624",
+          "deps": [
+            "services-intl",
+            "utils"
+          ]
+        },
+        {
+          "file": "libs/services/designer-client-services/src/lib/standard/connector.ts",
+          "hash": "14250827067770714051",
+          "deps": [
+            "utils"
+          ]
+        },
+        {
+          "file": "libs/services/designer-client-services/src/lib/standard/index.ts",
+          "hash": "11041788749094915589"
+        },
+        {
+          "file": "libs/services/designer-client-services/src/lib/standard/operationmanifest.ts",
+          "hash": "9987099156182554751",
+          "deps": [
+            "utils"
+          ]
+        },
+        {
+          "file": "libs/services/designer-client-services/src/lib/standard/run.ts",
+          "hash": "6735942034853579613",
+          "deps": [
+            "parsers",
+            "utils"
+          ]
+        },
+        {
+          "file": "libs/services/designer-client-services/src/lib/standard/search.ts",
+          "hash": "16441453285043553807",
+          "deps": [
+            "utils"
+          ]
+        },
+        {
+          "file": "libs/services/designer-client-services/src/lib/standard/test/connection.spec.ts",
+          "hash": "6895097639477963071"
+        },
+        {
+          "file": "libs/services/designer-client-services/src/lib/staticresult.ts",
+          "hash": "6506523357462422398",
+          "deps": [
+            "parsers"
+          ]
+        },
+        {
+          "file": "libs/services/designer-client-services/src/lib/staticresultschema/index.ts",
+          "hash": "7818240524701103827",
+          "deps": [
+            "parsers",
+            "utils"
+          ]
+        },
+        {
+          "file": "libs/services/designer-client-services/src/lib/staticresultschema/schemas/apiConnector.ts",
+          "hash": "12144891656181705072",
+          "deps": [
+            "parsers",
+            "utils"
+          ]
+        },
+        {
+          "file": "libs/services/designer-client-services/src/lib/staticresultschema/schemas/baseactionresult.ts",
+          "hash": "14887903726630584377",
+          "deps": [
+            "services-intl",
+            "parsers",
+            "utils"
+          ]
+        },
+        {
+          "file": "libs/services/designer-client-services/src/lib/staticresultschema/schemas/flatfiledecoding.ts",
+          "hash": "6513148549455253766",
+          "deps": [
+            "services-intl"
+          ]
+        },
+        {
+          "file": "libs/services/designer-client-services/src/lib/staticresultschema/schemas/flatfileencoding.ts",
+          "hash": "7719247431736720337",
+          "deps": [
+            "services-intl"
+          ]
+        },
+        {
+          "file": "libs/services/designer-client-services/src/lib/staticresultschema/schemas/httpresult.ts",
+          "hash": "17114006039447115186",
+          "deps": [
+            "services-intl",
+            "parsers"
+          ]
+        },
+        {
+          "file": "libs/services/designer-client-services/src/lib/staticresultschema/schemas/parseJson.ts",
+          "hash": "2683324531147412909",
+          "deps": [
+            "services-intl",
+            "parsers",
+            "utils"
+          ]
+        },
+        {
+          "file": "libs/services/designer-client-services/src/lib/staticresultschema/schemas/query.ts",
+          "hash": "4151644782342350047",
+          "deps": [
+            "services-intl"
+          ]
+        },
+        {
+          "file": "libs/services/designer-client-services/src/lib/workflow.ts",
+          "hash": "9818855055482479929",
+          "deps": [
+            "utils"
+          ]
+        },
+        {
+          "file": "libs/services/designer-client-services/tsconfig.json",
+          "hash": "17627781843503974156"
+        },
+        {
+          "file": "libs/services/designer-client-services/tsconfig.lib.json",
+          "hash": "13623992947506424656"
+        },
+        {
+          "file": "libs/services/designer-client-services/tsconfig.spec.json",
+          "hash": "7522800167796512492"
+        }
+      ],
+      "vs-code-react": [
+        {
+          "file": "apps/vs-code-react/.babelrc",
+          "hash": "10988945498763611993"
+        },
+        {
+          "file": "apps/vs-code-react/.browserslistrc",
+          "hash": "167759602395835039"
+        },
+        {
+          "file": "apps/vs-code-react/.eslintrc.json",
+          "hash": "10075191527724852300"
+        },
+        {
+          "file": "apps/vs-code-react/jest.config.ts",
+          "hash": "8630938695886870630"
+        },
+        {
+          "file": "apps/vs-code-react/project.json",
+          "hash": "16256351966424755288"
+        },
+        {
+          "file": "apps/vs-code-react/src/app/components/reviewList/helper.ts",
+          "hash": "7103226391461447657",
+          "deps": [
+            "npm:@fluentui/react"
+          ]
+        },
+        {
+          "file": "apps/vs-code-react/src/app/components/reviewList/reviewList.tsx",
+          "hash": "15235190526173296646",
+          "deps": [
+            "npm:@fluentui/react",
+            "npm:react"
+          ]
+        },
+        {
+          "file": "apps/vs-code-react/src/app/components/reviewList/styles.less",
+          "hash": "3923189858935612561"
+        },
+        {
+          "file": "apps/vs-code-react/src/app/components/searchableDropdown/index.tsx",
+          "hash": "14252331570865470453",
+          "deps": [
+            "npm:@fluentui/react",
+            "npm:react",
+            "npm:react-intl"
+          ]
+        },
+        {
+          "file": "apps/vs-code-react/src/app/components/searchableDropdown/styles.less",
+          "hash": "14353098042527666078"
+        },
+        {
+          "file": "apps/vs-code-react/src/app/dataMapper/app.less",
+          "hash": "10860476654260307609"
+        },
+        {
+          "file": "apps/vs-code-react/src/app/dataMapper/app.tsx",
+          "hash": "1490405593321068540",
+          "deps": [
+            "data-mapper",
+            "designer",
+            "utils",
+            "vscode-extension",
+            "npm:react",
+            "npm:react-redux"
+          ]
+        },
+        {
+          "file": "apps/vs-code-react/src/app/designer/DesignerCommandBar/index.tsx",
+          "hash": "745167337467991286",
+          "deps": [
+            "npm:@fluentui/react",
+            "designer-ui",
+            "designer",
+            "utils",
+            "vscode-extension",
+            "npm:@reduxjs/toolkit",
+            "npm:react",
+            "npm:react-intl",
+            "npm:react-query",
+            "npm:react-redux"
+          ]
+        },
+        {
+          "file": "apps/vs-code-react/src/app/designer/app.less",
+          "hash": "2873139032757981092"
+        },
+        {
+          "file": "apps/vs-code-react/src/app/designer/app.tsx",
+          "hash": "8765328314277611844",
+          "deps": [
+            "npm:@fluentui/react",
+            "services-designer-client-services",
+            "designer",
+            "utils",
+            "vscode-extension",
+            "npm:react",
+            "npm:react-intl",
+            "npm:react-query",
+            "npm:react-redux"
+          ]
+        },
+        {
+          "file": "apps/vs-code-react/src/app/designer/constants.ts",
+          "hash": "5903664051922439610"
+        },
+        {
+          "file": "apps/vs-code-react/src/app/designer/models/workflow.ts",
+          "hash": "17193178260645736617",
+          "deps": [
+            "utils"
+          ]
+        },
+        {
+          "file": "apps/vs-code-react/src/app/designer/services/JwtHelper.ts",
+          "hash": "13157754222681752876"
+        },
+        {
+          "file": "apps/vs-code-react/src/app/designer/services/oAuth.ts",
+          "hash": "17965986977097938725",
+          "deps": [
+            "services-designer-client-services",
+            "vscode-extension"
+          ]
+        },
+        {
+          "file": "apps/vs-code-react/src/app/designer/servicesHelper.ts",
+          "hash": "13508474351544954605",
+          "deps": [
+            "services-designer-client-services",
+            "utils",
+            "vscode-extension",
+            "npm:react-query",
+            "npm:vscode-webview"
+          ]
+        },
+        {
+          "file": "apps/vs-code-react/src/app/designer/utilities/workflow.ts",
+          "hash": "11284208617598927726",
+          "deps": [
+            "designer",
+            "vscode-extension"
+          ]
+        },
+        {
+          "file": "apps/vs-code-react/src/app/export/export.less",
+          "hash": "5078490720772691441"
+        },
+        {
+          "file": "apps/vs-code-react/src/app/export/export.tsx",
+          "hash": "13259091756978929972",
+          "deps": [
+            "npm:@fluentui/react",
+            "npm:react-redux",
+            "npm:react-router-dom"
+          ]
+        },
+        {
+          "file": "apps/vs-code-react/src/app/export/instanceSelection/helper.ts",
+          "hash": "17894075162777359883"
+        },
+        {
+          "file": "apps/vs-code-react/src/app/export/instanceSelection/instanceSelection.tsx",
+          "hash": "639017268043328160",
+          "deps": [
+            "npm:@fluentui/react",
+            "utils",
+            "npm:react",
+            "npm:react-intl",
+            "npm:react-query",
+            "npm:react-redux"
+          ]
+        },
+        {
+          "file": "apps/vs-code-react/src/app/export/navigation/navigation.tsx",
+          "hash": "3549403869914834281",
+          "deps": [
+            "npm:@fluentui/react",
+            "vscode-extension",
+            "npm:react",
+            "npm:react-intl",
+            "npm:react-redux",
+            "npm:react-router-dom"
+          ]
+        },
+        {
+          "file": "apps/vs-code-react/src/app/export/status/status.tsx",
+          "hash": "8289299293182874286",
+          "deps": [
+            "npm:@fluentui/react",
+            "npm:react-intl",
+            "npm:react-redux"
+          ]
+        },
+        {
+          "file": "apps/vs-code-react/src/app/export/summary/helper.ts",
+          "hash": "14153533387296877593",
+          "deps": [
+            "npm:@fluentui/react"
+          ]
+        },
+        {
+          "file": "apps/vs-code-react/src/app/export/summary/managedConnections.tsx",
+          "hash": "13576086556206572716",
+          "deps": [
+            "npm:@fluentui/react",
+            "npm:react",
+            "npm:react-intl",
+            "npm:react-query",
+            "npm:react-redux"
+          ]
+        },
+        {
+          "file": "apps/vs-code-react/src/app/export/summary/newResourceGroup.tsx",
+          "hash": "158008153757211273",
+          "deps": [
+            "npm:@fluentui/react",
+            "npm:@fluentui/react-hooks",
+            "npm:react",
+            "npm:react-intl",
+            "npm:react-redux"
+          ]
+        },
+        {
+          "file": "apps/vs-code-react/src/app/export/summary/summary.tsx",
+          "hash": "789650010018237971",
+          "deps": [
+            "npm:@fluentui/react",
+            "vscode-extension",
+            "npm:react",
+            "npm:react-intl",
+            "npm:react-query",
+            "npm:react-redux"
+          ]
+        },
+        {
+          "file": "apps/vs-code-react/src/app/export/validation/helper.ts",
+          "hash": "11787808914725369004"
+        },
+        {
+          "file": "apps/vs-code-react/src/app/export/validation/validation.tsx",
+          "hash": "13271943055030887969",
+          "deps": [
+            "npm:@fluentui/react",
+            "npm:react",
+            "npm:react-intl",
+            "npm:react-query",
+            "npm:react-redux"
+          ]
+        },
+        {
+          "file": "apps/vs-code-react/src/app/export/workflowsSelection/advancedOptions.tsx",
+          "hash": "7130733322392167908",
+          "deps": [
+            "npm:@fluentui/react",
+            "npm:react",
+            "npm:react-intl",
+            "npm:react-redux"
+          ]
+        },
+        {
+          "file": "apps/vs-code-react/src/app/export/workflowsSelection/filters.tsx",
+          "hash": "14669922824977716355",
+          "deps": [
+            "npm:@fluentui/react",
+            "npm:react-intl"
+          ]
+        },
+        {
+          "file": "apps/vs-code-react/src/app/export/workflowsSelection/helper.ts",
+          "hash": "7520401107418434159",
+          "deps": [
+            "npm:@fluentui/react"
+          ]
+        },
+        {
+          "file": "apps/vs-code-react/src/app/export/workflowsSelection/selectedList.tsx",
+          "hash": "1730831938770927108",
+          "deps": [
+            "npm:@fluentui/react",
+            "npm:react",
+            "npm:react-intl",
+            "npm:react-redux"
+          ]
+        },
+        {
+          "file": "apps/vs-code-react/src/app/export/workflowsSelection/workflowsSelection.tsx",
+          "hash": "13214877034162784239",
+          "deps": [
+            "npm:@fluentui/react",
+            "npm:react",
+            "npm:react-intl",
+            "npm:react-query",
+            "npm:react-redux"
+          ]
+        },
+        {
+          "file": "apps/vs-code-react/src/app/overview/app.tsx",
+          "hash": "4454234827451107729",
+          "deps": [
+            "services-designer-client-services",
+            "designer-ui",
+            "utils",
+            "vscode-extension",
+            "npm:react",
+            "npm:react-query",
+            "npm:react-redux",
+            "npm:tiny-invariant"
+          ]
+        },
+        {
+          "file": "apps/vs-code-react/src/app/review/index.tsx",
+          "hash": "17050061761908500120",
+          "deps": [
+            "npm:react-redux"
+          ]
+        },
+        {
+          "file": "apps/vs-code-react/src/assets/.gitkeep",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "apps/vs-code-react/src/environments/environment.prod.ts",
+          "hash": "10220522844224226756"
+        },
+        {
+          "file": "apps/vs-code-react/src/environments/environment.ts",
+          "hash": "11309522437153898482"
+        },
+        {
+          "file": "apps/vs-code-react/src/favicon.ico",
+          "hash": "9303420814833116677"
+        },
+        {
+          "file": "apps/vs-code-react/src/fixtures/get-more-runs.json",
+          "hash": "8025372240546622652"
+        },
+        {
+          "file": "apps/vs-code-react/src/fixtures/get-run.json",
+          "hash": "14954993404334898723"
+        },
+        {
+          "file": "apps/vs-code-react/src/fixtures/get-runs.json",
+          "hash": "16210149105685428411"
+        },
+        {
+          "file": "apps/vs-code-react/src/index.html",
+          "hash": "15542557927961559597"
+        },
+        {
+          "file": "apps/vs-code-react/src/main.tsx",
+          "hash": "15776913249061645162",
+          "deps": [
+            "designer",
+            "npm:@fluentui/react",
+            "npm:react",
+            "npm:react-dom",
+            "npm:react-intl",
+            "npm:react-query",
+            "npm:react-redux"
+          ]
+        },
+        {
+          "file": "apps/vs-code-react/src/polyfills.ts",
+          "hash": "17041846422484582267",
+          "deps": [
+            "npm:buffer",
+            "npm:core-js",
+            "npm:process",
+            "npm:regenerator-runtime"
+          ]
+        },
+        {
+          "file": "apps/vs-code-react/src/resources/Caution.svg",
+          "hash": "12946324935578891880"
+        },
+        {
+          "file": "apps/vs-code-react/src/resources/Error.svg",
+          "hash": "1306017530222758526"
+        },
+        {
+          "file": "apps/vs-code-react/src/resources/Success.svg",
+          "hash": "1346479691433759862"
+        },
+        {
+          "file": "apps/vs-code-react/src/router/index.tsx",
+          "hash": "15140865326278989359",
+          "deps": [
+            "npm:react-router-dom"
+          ]
+        },
+        {
+          "file": "apps/vs-code-react/src/run-service.ts",
+          "hash": "17001222516069202300"
+        },
+        {
+          "file": "apps/vs-code-react/src/run-service/export/helper.ts",
+          "hash": "17978663445350106988"
+        },
+        {
+          "file": "apps/vs-code-react/src/run-service/export/index.ts",
+          "hash": "1275925199593562910",
+          "deps": [
+            "vscode-extension"
+          ]
+        },
+        {
+          "file": "apps/vs-code-react/src/run-service/types.ts",
+          "hash": "3541720905513274018",
+          "deps": [
+            "services-designer-client-services",
+            "utils",
+            "vscode-extension"
+          ]
+        },
+        {
+          "file": "apps/vs-code-react/src/state/DataMapSlice.ts",
+          "hash": "9668008902194948133",
+          "deps": [
+            "data-mapper",
+            "utils",
+            "npm:@reduxjs/toolkit"
+          ]
+        },
+        {
+          "file": "apps/vs-code-react/src/state/DesignerSlice.ts",
+          "hash": "8913041496049035821",
+          "deps": [
+            "services-designer-client-services",
+            "vscode-extension",
+            "npm:@reduxjs/toolkit"
+          ]
+        },
+        {
+          "file": "apps/vs-code-react/src/state/WorkflowSlice.ts",
+          "hash": "17422552152551623659",
+          "deps": [
+            "designer-ui",
+            "npm:@reduxjs/toolkit"
+          ]
+        },
+        {
+          "file": "apps/vs-code-react/src/state/projectSlice.ts",
+          "hash": "17786023480081942934",
+          "deps": [
+            "npm:@reduxjs/toolkit"
+          ]
+        },
+        {
+          "file": "apps/vs-code-react/src/state/store.ts",
+          "hash": "9306760291102940367",
+          "deps": [
+            "npm:@reduxjs/toolkit"
+          ]
+        },
+        {
+          "file": "apps/vs-code-react/src/stateWrapper.tsx",
+          "hash": "2412499423087675880",
+          "deps": [
+            "vscode-extension",
+            "npm:react",
+            "npm:react-redux",
+            "npm:react-router-dom"
+          ]
+        },
+        {
+          "file": "apps/vs-code-react/src/styles.less",
+          "hash": "5195668842064076916"
+        },
+        {
+          "file": "apps/vs-code-react/src/themeProvider.tsx",
+          "hash": "3199307216492964650",
+          "deps": [
+            "npm:@fluentui/azure-themes",
+            "npm:@fluentui/react",
+            "npm:react"
+          ]
+        },
+        {
+          "file": "apps/vs-code-react/src/webviewCommunication.tsx",
+          "hash": "9902709143751257824",
+          "deps": [
+            "utils",
+            "vscode-extension",
+            "npm:@use-it/event-listener",
+            "npm:react",
+            "npm:react-redux",
+            "npm:vscode-webview"
+          ]
+        },
+        {
+          "file": "apps/vs-code-react/tsconfig.app.json",
+          "hash": "4251399858593500384"
+        },
+        {
+          "file": "apps/vs-code-react/tsconfig.json",
+          "hash": "10761964834584941335"
+        },
+        {
+          "file": "apps/vs-code-react/tsconfig.spec.json",
+          "hash": "9702384420104162802"
+        }
+      ],
+      "data-mapper-e2e": [
+        {
+          "file": "apps/data-mapper-e2e/.eslintrc.json",
+          "hash": "13297243373673238057"
+        },
+        {
+          "file": "apps/data-mapper-e2e/playwright.config.ts",
+          "hash": "10493114135744873964",
+          "deps": [
+            "npm:../../playwright.config.base",
+            "npm:@playwright/test"
+          ]
+        },
+        {
+          "file": "apps/data-mapper-e2e/project.json",
+          "hash": "5158926182545029514"
+        },
+        {
+          "file": "apps/data-mapper-e2e/src/general/GeneralTranscript.e2e.spec.ts",
+          "hash": "7617839732144270267",
+          "deps": [
+            "npm:@playwright/test"
+          ]
+        },
+        {
+          "file": "apps/data-mapper-e2e/src/utils.ts",
+          "hash": "4660621315572426897"
+        },
+        {
+          "file": "apps/data-mapper-e2e/tsconfig.e2e.json",
+          "hash": "2404025130951761221"
+        },
+        {
+          "file": "apps/data-mapper-e2e/tsconfig.json",
+          "hash": "4500232260948002331"
         }
       ]
     }

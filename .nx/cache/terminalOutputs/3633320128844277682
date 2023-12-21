@@ -1,7 +1,0 @@
-
-Linting "plugins-playwright"...
-[33mConvert compiler options from json failed, No inputs were found in config file 'tsconfig.json'. Specified 'include' paths were '["../types/*"]' and 'exclude' paths were '["node_modules","tmp"]'.[39m
-[33mConvert compiler options from json failed, No inputs were found in config file 'tsconfig.json'. Specified 'include' paths were '["../types/*"]' and 'exclude' paths were '["node_modules","tmp"]'.[39m
-
-All files pass linting.
-
