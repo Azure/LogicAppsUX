@@ -1,6 +1,9 @@
+import type { ValueSegment } from '../editor';
+import { TokenField } from '../settings/settingsection/settingTokenField';
 import type { ILabelStyles, IStyle, ITextFieldStyles } from '@fluentui/react';
 import { Label, Text, TextField } from '@fluentui/react';
 import { isEmptyString } from '@microsoft/utils-logic-apps';
+import { useState } from 'react';
 import { useIntl } from 'react-intl';
 
 export const labelStyles: Partial<ILabelStyles> = {
@@ -25,10 +28,12 @@ const textFieldStyles: Partial<ITextFieldStyles> = {
 
 const DESCRIPTION_KEY = 'description';
 const NAME_KEY = 'name';
+const CONDITION_KEY = 'condition';
 
 export interface ParameterFieldDetails {
   description: string;
   name: string;
+  condition: any; //TODO(ccastrotrejo): Change to condition object type
 }
 
 export interface AssertionFieldProps {
@@ -49,10 +54,12 @@ export const AssertionField = ({
   isReadOnly,
 }: AssertionFieldProps): JSX.Element => {
   const intl = useIntl();
+  const [tokenMapping, _setTokenMapping] = useState<Record<string, ValueSegment>>({});
 
   const parameterDetails: ParameterFieldDetails = {
     description: `${name}-${DESCRIPTION_KEY}`,
     name: `${name}-${NAME_KEY}`,
+    condition: `${name}-${CONDITION_KEY}`,
   };
 
   const nameTitle = intl.formatMessage({
@@ -63,6 +70,11 @@ export const AssertionField = ({
   const descriptionTitle = intl.formatMessage({
     defaultMessage: 'Description',
     description: 'Assertion field description title',
+  });
+
+  const conditionTitle = intl.formatMessage({
+    defaultMessage: 'Condition expression',
+    description: 'Assertion field condition title',
   });
 
   const noDescription = intl.formatMessage({
@@ -133,6 +145,38 @@ export const AssertionField = ({
         ) : (
           <Text className="msla-assertion-field-read-only">{description}</Text>
         )}
+      </div>
+      <div className="msla-assertion-condition">
+        {isEditable ? (
+          <Label styles={labelStyles} required={true} htmlFor={parameterDetails.condition}>
+            {conditionTitle}
+          </Label>
+        ) : null}
+        <div className="msla-assertion-condition-editor">
+          {isEditable ? (
+            <TokenField
+              editor="condition"
+              editorViewModel={{
+                isOldFormat: false,
+                items: {
+                  type: 'group',
+                  items: [],
+                  condition: undefined,
+                },
+              }}
+              readOnly={false}
+              label="Condition"
+              labelId="condition-label"
+              tokenEditor={true}
+              value={[]}
+              tokenMapping={tokenMapping}
+              getTokenPicker={() => {
+                return <div>{'Token Picker'}</div>;
+              }}
+              onCastParameter={() => ''}
+            />
+          ) : null}
+        </div>
       </div>
     </>
   );
