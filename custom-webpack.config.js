@@ -7,7 +7,10 @@ const fs = require('fs');
 module.exports = composePlugins(withNx(), withReact(), (config) => {
   config.resolve.alias['https'] = false;
   config.resolve.alias['http'] = false;
-  config.devServer.client.overlay = false;
+  if(config?.devServer?.client?.overlay) {
+    config.devServer.client.overlay = false;
+  }
+  
   return merge(config, {
     resolve: {
       aliasFields: ['browser', 'browser.esm'],
