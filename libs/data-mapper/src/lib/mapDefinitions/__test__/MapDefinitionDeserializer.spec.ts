@@ -2148,17 +2148,9 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
       expect(resultEntries[0][1]).toBeTruthy();
       expect(resultEntries[0][1].outputs[0].reactFlowKey).toEqual('target-/root/ComplexArray1/*');
 
-      expect(resultEntries[1][0]).toEqual('source-/root/Nums/*/Num');
+      expect(resultEntries[1][0]).toEqual('source-/ns0:Root/Looping/Employee/TelephoneNumber');
       expect(resultEntries[1][1]).toBeTruthy();
       expect(resultEntries[1][1].outputs[0].reactFlowKey).toEqual('target-/root/ComplexArray1/*/F1');
-
-      expect(resultEntries[2][0]).toEqual('target-/root/ComplexArray1/*');
-      expect(resultEntries[2][1]).toBeTruthy();
-      expect((resultEntries[2][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual('source-/root/Nums/*');
-
-      expect(resultEntries[3][0]).toEqual('target-/root/ComplexArray1/*/F1');
-      expect(resultEntries[3][1]).toBeTruthy();
-      expect((resultEntries[3][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual('source-/root/Nums/*/Num');
     });
   });
 

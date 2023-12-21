@@ -329,12 +329,11 @@ export class MapDefinitionDeserializer {
           // Gets tgtKey for current loop (which will be the single key chunk immediately following the loop path chunk)
           const startIdxOfNextPathChunk = loopKey.indexOf('/', endOfForIdx + 2);
           tgtLoopNodeKey = getTargetValueWithoutLoopsSchemaSpecific(
-            // danielle this assumes that if there is a * in the source there will be in the target
             startIdxOfNextPathChunk > -1 ? loopKey.substring(0, startIdxOfNextPathChunk) : loopKey,
             loopKey.indexOf('*') > -1
           );
-          // danielle try inserting code to get target node with /*/
           tgtLoopNode = findNodeForKey(tgtLoopNodeKey, this._targetSchema.schemaTreeRoot, true);
+          // accounts for xsd to json maps
           if (!tgtLoopNode) {
             const jsonTgt = getLoopTargetNodeWithJson(tgtLoopNodeKey, this._targetSchema.schemaTreeRoot);
             if (jsonTgt) {
