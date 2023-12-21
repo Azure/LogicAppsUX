@@ -5,10 +5,9 @@ exports[`ui/panel/panelheadercomment should construct. 1`] = `
   className="msla-panel-comment-container"
   hidden={false}
 >
-  <Memo(Icon)
-    ariaLabel="Comment"
+  <CompoundIcon
+    aria-label="Comment"
     className="msla-comment-icon"
-    iconName="Comment"
   />
   <StyledTextFieldBase
     ariaLabel="Comment"

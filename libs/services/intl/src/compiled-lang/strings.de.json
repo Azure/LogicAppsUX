@@ -23,16 +23,6 @@
       "value": "Geschützt"
     }
   ],
-  "+7IA0V": [
-    {
-      "type": 1,
-      "value": "connectorName"
-    },
-    {
-      "type": 0,
-      "value": "-Verbindungen"
-    }
-  ],
   "+FcXe9": [
     {
       "type": 0,
@@ -179,6 +169,12 @@
       "value": "Azure Copilot öffnen"
     }
   ],
+  "/c1l10": [
+    {
+      "type": 0,
+      "value": "⌘+C"
+    }
+  ],
   "/doURb": [
     {
       "type": 0,
@@ -307,6 +303,12 @@
     {
       "type": 0,
       "value": "(UTC+05:30) Sri Jayawardenepura"
+    }
+  ],
+  "0CPsxh": [
+    {
+      "type": 0,
+      "value": "Del"
     }
   ],
   "0CvRZW": [
@@ -559,12 +561,6 @@
     {
       "type": 0,
       "value": "5"
-    }
-  ],
-  "1zgFh1": [
-    {
-      "type": 0,
-      "value": "Schließen"
     }
   ],
   "20oqsp": [
@@ -3963,12 +3959,6 @@
       "value": "OK"
     }
   ],
-  "OBKhVi": [
-    {
-      "type": 0,
-      "value": "Diese Aktion/dieser Trigger kann nicht kopiert werden."
-    }
-  ],
   "ODQCKj": [
     {
       "type": 0,
@@ -4497,12 +4487,6 @@
       "value": "h"
     }
   ],
-  "Qy0Kha": [
-    {
-      "type": 0,
-      "value": "Trigger können nicht gelöscht werden."
-    }
-  ],
   "R/aiRy": [
     {
       "type": 0,
@@ -4595,12 +4579,6 @@
     {
       "type": 0,
       "value": "Problem"
-    }
-  ],
-  "Ro4+PC": [
-    {
-      "type": 0,
-      "value": "Sie können nur Notizen hinzufügen, wenn Sie die Eingaben eines Schritts bearbeiten."
     }
   ],
   "Rp5pHU": [
@@ -4889,6 +4867,12 @@
     {
       "type": 0,
       "value": "Notiz"
+    }
+  ],
+  "TsJbGH": [
+    {
+      "type": 0,
+      "value": "Disconnected"
     }
   ],
   "Ttc0SM": [
@@ -5469,6 +5453,12 @@
       "value": "Eine verwaltete Identität ist in der Logik-App nicht konfiguriert."
     }
   ],
+  "WvvJYw": [
+    {
+      "type": 0,
+      "value": "Actions"
+    }
+  ],
   "X/7je+": [
     {
       "type": 0,
@@ -6017,12 +6007,6 @@
     {
       "type": 0,
       "value": "Weitere Informationen"
-    }
-  ],
-  "ZbX8xq": [
-    {
-      "type": 0,
-      "value": "Dieser Vorgang wurde bereits gelöscht."
     }
   ],
   "Zg3IjD": [
@@ -6655,6 +6639,12 @@
       "value": "Kursiv (⌘I)"
     }
   ],
+  "en/5A3": [
+    {
+      "type": 0,
+      "value": "Reassign"
+    }
+  ],
   "eo1YKX": [
     {
       "type": 0,
@@ -7043,12 +7033,6 @@
     {
       "type": 0,
       "value": "Rückgängig machen"
-    }
-  ],
-  "hTZZr+": [
-    {
-      "type": 0,
-      "value": "Verbundene Aktionen"
     }
   ],
   "hZqQdt": [
@@ -8329,12 +8313,6 @@
       "value": "In-App"
     }
   ],
-  "p3K7eM": [
-    {
-      "type": 0,
-      "value": "Getrennte Aktionen"
-    }
-  ],
   "p5ZID0": [
     {
       "type": 0,
@@ -8901,6 +8879,12 @@
     {
       "type": 0,
       "value": "Schlüssel"
+    }
+  ],
+  "snJFUi": [
+    {
+      "type": 0,
+      "value": "Ctrl+C"
     }
   ],
   "soqP+Z": [
@@ -9799,12 +9783,6 @@
       "value": "Wert"
     }
   ],
-  "xxeu75": [
-    {
-      "type": 0,
-      "value": "Zuweisen aller getrennten Aktionen zu einer neuen Verbindung"
-    }
-  ],
   "y1e9yw": [
     {
       "type": 0,
@@ -10053,12 +10031,6 @@
     {
       "type": 0,
       "value": "Beenden"
-    }
-  ],
-  "ziXw25": [
-    {
-      "type": 0,
-      "value": "Löschen"
     }
   ],
   "ziYCiA": [

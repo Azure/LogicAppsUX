@@ -6,30 +6,15 @@ exports[`ui/workflowparameters/workflowparameter should construct. 1`] = `
 >
   <div>
     <div>
-      <CustomizedCommandBarButton
+      <Button
+        appearance="subtle"
         className="msla-workflow-parameter-heading-button"
         data-testid="-parameter-heading-button"
-        iconProps={
-          {
-            "iconName": "ChevronRightMed",
-            "styles": {
-              "root": {
-                "color": "#514f4e",
-                "fontSize": 14,
-              },
-            },
-          }
-        }
+        icon={<CompoundIcon />}
         onClick={[Function]}
-        styles={
-          {
-            "label": {
-              "fontWeight": 600,
-            },
-          }
-        }
-        text="New parameter"
-      />
+      >
+        New parameter
+      </Button>
     </div>
   </div>
   <div

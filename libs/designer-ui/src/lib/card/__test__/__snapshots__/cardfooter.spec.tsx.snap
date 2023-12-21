@@ -18,41 +18,21 @@ exports[`lib/card/cardfooter should render with a comment icon 1`] = `
     className="msla-badges"
   >
     <div
-      className="ms-TooltipHost root-109"
-      onBlurCapture={[Function]}
-      onFocusCapture={[Function]}
-      onKeyDown={[Function]}
-      onMouseEnter={[Function]}
-      onMouseLeave={[Function]}
-      role="none"
+      aria-label="comment"
+      onBlur={[Function]}
+      onFocus={[Function]}
+      onPointerEnter={[Function]}
+      onPointerLeave={[Function]}
     >
       <i
         aria-label="Comment: comment"
-        className="panel-card-v2-badge active root-112"
+        className="panel-card-v2-badge active root-111"
         data-icon-name="Comment"
         role="img"
         tabIndex={0}
       >
         
       </i>
-      <div
-        hidden={true}
-        id="tooltip0"
-        style={
-          {
-            "border": 0,
-            "height": 1,
-            "margin": -1,
-            "overflow": "hidden",
-            "padding": 0,
-            "position": "absolute",
-            "whiteSpace": "nowrap",
-            "width": 1,
-          }
-        }
-      >
-        comment
-      </div>
     </div>
   </div>
 </div>
@@ -66,41 +46,21 @@ exports[`lib/card/cardfooter should render with a connection icon 1`] = `
     className="msla-badges"
   >
     <div
-      className="ms-TooltipHost root-109"
-      onBlurCapture={[Function]}
-      onFocusCapture={[Function]}
-      onKeyDown={[Function]}
-      onMouseEnter={[Function]}
-      onMouseLeave={[Function]}
-      role="none"
+      aria-label="joechung@microsoft.com"
+      onBlur={[Function]}
+      onFocus={[Function]}
+      onPointerEnter={[Function]}
+      onPointerLeave={[Function]}
     >
       <i
         aria-label="Connection name: joechung@microsoft.com"
-        className="panel-card-v2-badge active root-115"
+        className="panel-card-v2-badge active root-114"
         data-icon-name="Link"
         role="img"
         tabIndex={0}
       >
         
       </i>
-      <div
-        hidden={true}
-        id="tooltip2"
-        style={
-          {
-            "border": 0,
-            "height": 1,
-            "margin": -1,
-            "overflow": "hidden",
-            "padding": 0,
-            "position": "absolute",
-            "whiteSpace": "nowrap",
-            "width": 1,
-          }
-        }
-      >
-        joechung@microsoft.com
-      </div>
     </div>
   </div>
 </div>
@@ -114,41 +74,21 @@ exports[`lib/card/cardfooter should render with a lock icon 1`] = `
     className="msla-badges"
   >
     <div
-      className="ms-TooltipHost root-109"
-      onBlurCapture={[Function]}
-      onFocusCapture={[Function]}
-      onKeyDown={[Function]}
-      onMouseEnter={[Function]}
-      onMouseLeave={[Function]}
-      role="none"
+      aria-label="This operation has secure inputs or outputs enabled."
+      onBlur={[Function]}
+      onFocus={[Function]}
+      onPointerEnter={[Function]}
+      onPointerLeave={[Function]}
     >
       <i
         aria-label="Secure inputs or outputs enabled.: This operation has secure inputs or outputs enabled."
-        className="panel-card-v2-badge active root-115"
+        className="panel-card-v2-badge active root-114"
         data-icon-name="Lock"
         role="img"
         tabIndex={0}
       >
         
       </i>
-      <div
-        hidden={true}
-        id="tooltip1"
-        style={
-          {
-            "border": 0,
-            "height": 1,
-            "margin": -1,
-            "overflow": "hidden",
-            "padding": 0,
-            "position": "absolute",
-            "whiteSpace": "nowrap",
-            "width": 1,
-          }
-        }
-      >
-        This operation has secure inputs or outputs enabled.
-      </div>
     </div>
   </div>
 </div>
@@ -162,41 +102,21 @@ exports[`lib/card/cardfooter should render with a testing icon 1`] = `
     className="msla-badges"
   >
     <div
-      className="ms-TooltipHost root-109"
-      onBlurCapture={[Function]}
-      onFocusCapture={[Function]}
-      onKeyDown={[Function]}
-      onMouseEnter={[Function]}
-      onMouseLeave={[Function]}
-      role="none"
+      aria-label="This Action has testing configured."
+      onBlur={[Function]}
+      onFocus={[Function]}
+      onPointerEnter={[Function]}
+      onPointerLeave={[Function]}
     >
       <i
         aria-label="Testing: This Action has testing configured."
-        className="panel-card-v2-badge active root-118"
+        className="panel-card-v2-badge active root-117"
         data-icon-name="TestBeaker"
         role="img"
         tabIndex={0}
       >
         
       </i>
-      <div
-        hidden={true}
-        id="tooltip3"
-        style={
-          {
-            "border": 0,
-            "height": 1,
-            "margin": -1,
-            "overflow": "hidden",
-            "padding": 0,
-            "position": "absolute",
-            "whiteSpace": "nowrap",
-            "width": 1,
-          }
-        }
-      >
-        This Action has testing configured.
-      </div>
     </div>
   </div>
 </div>
@@ -211,7 +131,7 @@ exports[`lib/card/cardfooter should render with an inactive connection icon 1`] 
   >
     <i
       aria-label="Connection required"
-      className="panel-card-v2-badge inactive root-115"
+      className="panel-card-v2-badge inactive root-114"
       data-icon-name="Link"
       role="img"
       tabIndex={0}

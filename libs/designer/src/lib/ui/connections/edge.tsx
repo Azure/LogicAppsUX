@@ -102,10 +102,10 @@ export const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
   const onlyEdge = !multipleSources && !multipleTargets;
   const isLeaf = edgeTargets.length === 0;
 
-  const dynamicMidEdgeY =
+  let dynamicMidEdgeY =
     multipleSources && !multipleTargets ? targetY - 64 : multipleTargets && !multipleSources ? sourceY + 64 : edgeCenterY;
 
-  // if (numRunAfters !== 0) dynamicMidEdgeY -= 4;
+  if (numRunAfters !== 0) dynamicMidEdgeY -= 7;
 
   const [d] = useMemo(() => {
     return getSmoothStepPath({
