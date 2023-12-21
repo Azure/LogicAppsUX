@@ -41,9 +41,9 @@ export function Assertions({ assertions, onDismiss, onAssertionAdd, onAssertionU
     }
   };
 
-  const renderAssertion = (item?: AssertionDefintion): JSX.Element => {
+  const renderAssertion = (item?: AssertionDefintion): JSX.Element | null => {
     if (!item) {
-      return <></>;
+      return null;
     }
     return (
       <Assertion

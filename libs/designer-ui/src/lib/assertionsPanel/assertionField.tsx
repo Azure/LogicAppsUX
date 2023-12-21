@@ -57,17 +57,17 @@ export const AssertionField = ({
 
   const nameTitle = intl.formatMessage({
     defaultMessage: 'Assertion name',
-    description: 'Parameter field assertion name title',
+    description: 'Assertion field name title',
   });
 
   const descriptionTitle = intl.formatMessage({
     defaultMessage: 'Description',
-    description: 'Parameter field description title',
+    description: 'Assertion field description title',
   });
 
   const noDescription = intl.formatMessage({
     defaultMessage: 'No description',
-    description: 'Parameter field no description text',
+    description: 'Assertion field no description text',
   });
 
   const namePlaceholder = intl.formatMessage({
