@@ -1,0 +1,31 @@
+assets by info 9.31 MiB [immutable]
+  assets by path *.svg 45.9 KiB
+    asset noResults.f1b67a51b832c14924b47170a8ff5ec1.svg 7.67 KiB [emitted] [immutable] [from: ../../libs/designer-ui/src/assets/search/noResults.svg] (auxiliary name: main)
+    + 54 assets
+  assets by path *.js 9.02 MiB
+    assets by status 6.27 MiB [big] 3 assets
+    + 49 assets
+  assets by path *.css 253 KiB
+    asset main.b9685da93fa61e93.css 253 KiB [emitted] [immutable] [minimized] [big] (name: main)
+    asset styles.36024d76b5f4818f.css 55 bytes [emitted] [immutable] [minimized] (name: styles)
+asset stats.json 60.8 MiB [emitted] [big]
+asset 3rdpartylicenses.txt 247 KiB [emitted] [big]
+asset favicon.ico 14.7 KiB [emitted] [from: src/favicon.ico] [copied]
+asset index.html 705 bytes [emitted]
+asset assets/.gitkeep 0 bytes [emitted] [from: src/assets/.gitkeep] [copied]
+Entrypoint main [big] 5.79 MiB (45.9 KiB) = runtime.568893901d84364a.js 4.64 KiB main.b9685da93fa61e93.css 253 KiB main.b25b9d581be252c3.js 5.53 MiB 55 auxiliary assets
+Entrypoint polyfills 130 KiB = runtime.568893901d84364a.js 4.64 KiB polyfills.cd278b372c79a744.js 126 KiB
+Entrypoint styles 4.8 KiB = runtime.568893901d84364a.js 4.64 KiB styles.36024d76b5f4818f.css 55 bytes styles.474f63861d0d6233.js 112 bytes
+  
+
+LOG from webpack.Compilation.ModuleProfile
+<i> 3798 ms resolve to new modules
+<i>  |  | 328 ms (parallelism 3.4) build modules > ./src/styles.less
+<i>  | 328 ms build modules > 1 x javascript/auto with ../../node_modules/mini-css-extract-plugin/dist/loader.js??ruleSet[1].rules[5].oneOf[10].use[0]!../../node_modules/css-loader/dist/cjs.js??ruleSet[1].rules[5].oneOf[10].use[1]!../../node_modules/postcss-loader/dist/cjs.js??ruleSet[1].rules[5].oneOf[10].use[2]!../../node_modules/@nx/webpack/node_modules/less-loader/dist/cjs.js??ruleSet[1].rules[5].oneOf[10].use[3]
+<i>  |  | 451 ms (parallelism 3.1) build modules > ./src/main.tsx
+<i>  |  | 338 ms (parallelism 3.4) build modules > ./src/polyfills.ts
+<i>  | 2862 ms build modules > 702 x javascript/auto with ../../node_modules/@nx/webpack/src/utils/web-babel-loader.js??ruleSet[1].rules[2]
+<w> 5932 ms build modules
++ 71 hidden lines
+
+webpack 5.89.0 compiled successfully (4887d90c17e4e380)

@@ -1,0 +1,164 @@
+Bundling data-mapper...
+'@microsoft/utils-logic-apps' is imported by libs/data-mapper/src/lib/core/state/PanelSlice.ts, but could not be resolved – treating it as an external dependency
+'@microsoft/utils-logic-apps' is imported by libs/data-mapper/src/lib/core/state/AppSlice.ts, but could not be resolved – treating it as an external dependency
+'@microsoft/utils-logic-apps' is imported by libs/data-mapper/src/lib/models/Function.ts, but could not be resolved – treating it as an external dependency
+'@microsoft/utils-logic-apps' is imported by libs/data-mapper/src/lib/utils/Icon.Utils.tsx, but could not be resolved – treating it as an external dependency
+'@microsoft/utils-logic-apps' is imported by libs/data-mapper/src/lib/components/tree/SchemaTreeSearchbar.tsx, but could not be resolved – treating it as an external dependency
+'@microsoft/utils-logic-apps' is imported by libs/data-mapper/src/lib/utils/Schema.Utils.ts, but could not be resolved – treating it as an external dependency
+'@microsoft/utils-logic-apps' is imported by libs/data-mapper/src/lib/constants/ReactFlowConstants.ts, but could not be resolved – treating it as an external dependency
+'@microsoft/designer-ui' is imported by libs/data-mapper/src/lib/components/tree/TreeBranch.tsx, but could not be resolved – treating it as an external dependency
+'@microsoft/utils-logic-apps' is imported by libs/data-mapper/src/lib/utils/MapChecker.Utils.ts, but could not be resolved – treating it as an external dependency
+'@microsoft/utils-logic-apps' is imported by libs/data-mapper/src/lib/components/nodeCard/HandleWrapper.tsx, but could not be resolved – treating it as an external dependency
+'@microsoft/designer-ui' is imported by libs/data-mapper/src/lib/components/nodeCard/SchemaCard.tsx, but could not be resolved – treating it as an external dependency
+'@microsoft/utils-logic-apps' is imported by libs/data-mapper/src/lib/components/nodeCard/SchemaCard.tsx, but could not be resolved – treating it as an external dependency
+'@microsoft/utils-logic-apps' is imported by libs/data-mapper/src/lib/utils/Function.Utils.ts, but could not be resolved – treating it as an external dependency
+'@microsoft/utils-logic-apps' is imported by libs/data-mapper/src/lib/utils/Connection.Utils.ts, but could not be resolved – treating it as an external dependency
+'@microsoft/utils-logic-apps' is imported by libs/data-mapper/src/lib/utils/ReactFlow.Util.ts, but could not be resolved – treating it as an external dependency
+'@microsoft/utils-logic-apps' is imported by libs/data-mapper/src/lib/utils/DataMap.Utils.ts, but could not be resolved – treating it as an external dependency
+'@microsoft/designer-ui' is imported by libs/data-mapper/src/lib/components/canvasToolbox/CanvasToolbox.tsx, but could not be resolved – treating it as an external dependency
+'@microsoft/utils-logic-apps' is imported by libs/data-mapper/src/lib/mapDefinitions/MapDefinitionDeserializer.ts, but could not be resolved – treating it as an external dependency
+'@microsoft/utils-logic-apps' is imported by libs/data-mapper/src/lib/mapDefinitions/MapDefinitionSerializer.ts, but could not be resolved – treating it as an external dependency
+'@microsoft/utils-logic-apps' is imported by libs/data-mapper/src/lib/core/state/DataMapSlice.ts, but could not be resolved – treating it as an external dependency
+'@microsoft/utils-logic-apps' is imported by libs/data-mapper/src/lib/core/DataMapperDesignerProvider.tsx, but could not be resolved – treating it as an external dependency
+'@microsoft/utils-logic-apps' is imported by libs/data-mapper/src/lib/core/DataMapDataProvider.tsx, but could not be resolved – treating it as an external dependency
+'@microsoft/intl-logic-apps' is imported by libs/data-mapper/src/lib/core/DataMapperDesignerProvider.tsx, but could not be resolved – treating it as an external dependency
+'@microsoft/utils-logic-apps' is imported by libs/data-mapper/src/lib/core/services/dataMapperApiService/index.ts, but could not be resolved – treating it as an external dependency
+'@microsoft/designer-ui' is imported by libs/data-mapper/src/lib/components/testMapPanel/TestMapPanel.tsx, but could not be resolved – treating it as an external dependency
+'@microsoft/utils-logic-apps' is imported by libs/data-mapper/src/lib/components/testMapPanel/TestMapPanel.tsx, but could not be resolved – treating it as an external dependency
+'@microsoft/designer-ui' is imported by libs/data-mapper/src/lib/components/codeView/CodeView.tsx, but could not be resolved – treating it as an external dependency
+'@microsoft/utils-logic-apps' is imported by libs/data-mapper/src/lib/components/configPanel/SelectExistingSchema.tsx, but could not be resolved – treating it as an external dependency
+'@microsoft/utils-logic-apps' is imported by libs/data-mapper/src/lib/components/configPanel/AddOrUpdateSchemaView.tsx, but could not be resolved – treating it as an external dependency
+'@microsoft/utils-logic-apps' is imported by libs/data-mapper/src/lib/components/configPanel/DefaultConfigView.tsx, but could not be resolved – treating it as an external dependency
+'@microsoft/utils-logic-apps' is imported by libs/data-mapper/src/lib/components/configPanel/ConfigPanel.tsx, but could not be resolved – treating it as an external dependency
+'@microsoft/designer-ui' is imported by libs/data-mapper/src/lib/components/configPanel/DefaultConfigView.tsx, but could not be resolved – treating it as an external dependency
+'@microsoft/designer-ui' is imported by libs/data-mapper/src/lib/components/nodeCard/functionCard/SimpleFunctionCard.tsx, but could not be resolved – treating it as an external dependency
+'@microsoft/utils-logic-apps' is imported by libs/data-mapper/src/lib/components/globalView/GlobalView.tsx, but could not be resolved – treating it as an external dependency
+'@microsoft/utils-logic-apps' is imported by libs/data-mapper/src/lib/components/schemaSelection/SelectSchemaCard.tsx, but could not be resolved – treating it as an external dependency
+'@microsoft/utils-logic-apps' is imported by libs/data-mapper/src/lib/components/mapOverview/MapOverview.tsx, but could not be resolved – treating it as an external dependency
+'@microsoft/designer-ui' is imported by libs/data-mapper/src/lib/components/propertiesPane/tabs/CodeTab.tsx, but could not be resolved – treating it as an external dependency
+'@microsoft/utils-logic-apps' is imported by libs/data-mapper/src/lib/components/inputTypes/InputDropdown.tsx, but could not be resolved – treating it as an external dependency
+'@microsoft/utils-logic-apps' is imported by libs/data-mapper/src/lib/components/propertiesPane/tabs/BoundedInputEntry.tsx, but could not be resolved – treating it as an external dependency
+The 'this' keyword is equivalent to 'undefined' at the top level of an ES module, and has been rewritten
+The 'this' keyword is equivalent to 'undefined' at the top level of an ES module, and has been rewritten
+The 'this' keyword is equivalent to 'undefined' at the top level of an ES module, and has been rewritten
+The 'this' keyword is equivalent to 'undefined' at the top level of an ES module, and has been rewritten
+The 'this' keyword is equivalent to 'undefined' at the top level of an ES module, and has been rewritten
+The 'this' keyword is equivalent to 'undefined' at the top level of an ES module, and has been rewritten
+'@microsoft/designer-ui' is imported by libs/data-mapper/src/lib/components/edge/ConnectionEdge.tsx, but could not be resolved – treating it as an external dependency
+'@microsoft/designer-ui' is imported by libs/data-mapper/src/lib/components/nodeCard/functionCard/ExpandedFunctionCard.tsx, but could not be resolved – treating it as an external dependency
+'@microsoft/utils-logic-apps' is imported by libs/data-mapper/src/lib/ui/ReactFlowWrapper.tsx, but could not be resolved – treating it as an external dependency
+The 'this' keyword is equivalent to 'undefined' at the top level of an ES module, and has been rewritten
+The 'this' keyword is equivalent to 'undefined' at the top level of an ES module, and has been rewritten
+The 'this' keyword is equivalent to 'undefined' at the top level of an ES module, and has been rewritten
+Circular dependency: node_modules/@fluentui/react-utilities/lib/compose/index.js -> node_modules/@fluentui/react-utilities/lib/compose/assertSlots.js -> node_modules/@fluentui/react-utilities/lib/compose/index.js
+Circular dependency: libs/data-mapper/src/lib/core/state/DataMapSlice.ts -> libs/data-mapper/src/lib/mapDefinitions/index.ts -> libs/data-mapper/src/lib/mapDefinitions/MapDefinitionDeserializer.ts -> libs/data-mapper/src/lib/core/state/DataMapSlice.ts
+Circular dependency: libs/data-mapper/src/lib/utils/Connection.Utils.ts -> libs/data-mapper/src/lib/utils/Function.Utils.ts -> libs/data-mapper/src/lib/utils/Connection.Utils.ts
+Circular dependency: libs/data-mapper/src/lib/utils/Connection.Utils.ts -> libs/data-mapper/src/lib/utils/Function.Utils.ts -> libs/data-mapper/src/lib/utils/DataMap.Utils.ts -> libs/data-mapper/src/lib/utils/Connection.Utils.ts
+Circular dependency: libs/data-mapper/src/lib/utils/Function.Utils.ts -> libs/data-mapper/src/lib/utils/DataMap.Utils.ts -> libs/data-mapper/src/lib/utils/Function.Utils.ts
+Circular dependency: libs/data-mapper/src/lib/utils/Function.Utils.ts -> libs/data-mapper/src/lib/utils/DataMap.Utils.ts -> libs/data-mapper/src/lib/utils/ReactFlow.Util.ts -> libs/data-mapper/src/lib/utils/Function.Utils.ts
+Circular dependency: libs/data-mapper/src/lib/utils/Connection.Utils.ts -> libs/data-mapper/src/lib/utils/Function.Utils.ts -> libs/data-mapper/src/lib/utils/DataMap.Utils.ts -> libs/data-mapper/src/lib/utils/ReactFlow.Util.ts -> libs/data-mapper/src/lib/utils/Layout.Utils.ts -> libs/data-mapper/src/lib/utils/Connection.Utils.ts
+Circular dependency: libs/data-mapper/src/lib/utils/Function.Utils.ts -> libs/data-mapper/src/lib/utils/DataMap.Utils.ts -> libs/data-mapper/src/lib/utils/ReactFlow.Util.ts -> libs/data-mapper/src/lib/utils/Layout.Utils.ts -> libs/data-mapper/src/lib/utils/Function.Utils.ts
+Circular dependency: libs/data-mapper/src/lib/utils/ReactFlow.Util.ts -> libs/data-mapper/src/lib/utils/Layout.Utils.ts -> libs/data-mapper/src/lib/utils/ReactFlow.Util.ts
+Circular dependency: libs/data-mapper/src/lib/utils/Icon.Utils.tsx -> libs/data-mapper/src/lib/components/sidePane/tabs/mapCheckerTab/MapCheckerItem.tsx -> libs/data-mapper/src/lib/utils/Icon.Utils.tsx
+Circular dependency: node_modules/d3-selection/src/selection/index.js -> node_modules/d3-selection/src/selection/select.js -> node_modules/d3-selection/src/selection/index.js
+Circular dependency: node_modules/d3-selection/src/selection/index.js -> node_modules/d3-selection/src/selection/selectAll.js -> node_modules/d3-selection/src/selection/index.js
+Circular dependency: node_modules/d3-selection/src/selection/index.js -> node_modules/d3-selection/src/selection/filter.js -> node_modules/d3-selection/src/selection/index.js
+Circular dependency: node_modules/d3-selection/src/selection/index.js -> node_modules/d3-selection/src/selection/data.js -> node_modules/d3-selection/src/selection/index.js
+Circular dependency: node_modules/d3-selection/src/selection/index.js -> node_modules/d3-selection/src/selection/data.js -> node_modules/d3-selection/src/selection/enter.js -> node_modules/d3-selection/src/selection/index.js
+Circular dependency: node_modules/d3-selection/src/selection/index.js -> node_modules/d3-selection/src/selection/exit.js -> node_modules/d3-selection/src/selection/index.js
+Circular dependency: node_modules/d3-selection/src/selection/index.js -> node_modules/d3-selection/src/selection/merge.js -> node_modules/d3-selection/src/selection/index.js
+Circular dependency: node_modules/d3-selection/src/selection/index.js -> node_modules/d3-selection/src/selection/sort.js -> node_modules/d3-selection/src/selection/index.js
+Circular dependency: node_modules/d3-interpolate/src/value.js -> node_modules/d3-interpolate/src/array.js -> node_modules/d3-interpolate/src/value.js
+Circular dependency: node_modules/d3-interpolate/src/value.js -> node_modules/d3-interpolate/src/object.js -> node_modules/d3-interpolate/src/value.js
+Circular dependency: node_modules/d3-transition/src/transition/index.js -> node_modules/d3-transition/src/transition/filter.js -> node_modules/d3-transition/src/transition/index.js
+Circular dependency: node_modules/d3-transition/src/transition/index.js -> node_modules/d3-transition/src/transition/merge.js -> node_modules/d3-transition/src/transition/index.js
+Circular dependency: node_modules/d3-transition/src/transition/index.js -> node_modules/d3-transition/src/transition/select.js -> node_modules/d3-transition/src/transition/index.js
+Circular dependency: node_modules/d3-transition/src/transition/index.js -> node_modules/d3-transition/src/transition/selectAll.js -> node_modules/d3-transition/src/transition/index.js
+Circular dependency: node_modules/d3-transition/src/transition/index.js -> node_modules/d3-transition/src/transition/transition.js -> node_modules/d3-transition/src/transition/index.js
+Circular dependency: libs/data-mapper/src/lib/core/services/dataMapperApiService/index.ts -> libs/data-mapper/src/lib/core/services/dataMapperApiService/DataMapperApiService.ts -> libs/data-mapper/src/lib/core/services/dataMapperApiService/index.ts
+Circular dependency: libs/data-mapper/src/lib/components/tree/TreeBranch.tsx -> libs/data-mapper/src/lib/components/tree/Tree.tsx -> libs/data-mapper/src/lib/components/tree/TreeBranch.tsx
+[1m[31mError during bundle: Error: [96mlibs/data-mapper/src/lib/components/index.tsx[0m:[93m1[0m:[93m15[0m - [91merror[0m[90m TS2307: [0mCannot find module './lib' or its corresponding type declarations.[39m[22m
+[1m[31m[39m[22m
+[1m[31m[7m1[0m export * from './lib';[39m[22m
+[1m[31m[7m [0m [91m              ~~~~~~~[0m[39m[22m
+[1m[31m[39m[22m
+'@microsoft/utils-logic-apps' is imported by libs/data-mapper/src/lib/models/Function.ts, but could not be resolved – treating it as an external dependency
+'@microsoft/utils-logic-apps' is imported by libs/data-mapper/src/lib/utils/Schema.Utils.ts, but could not be resolved – treating it as an external dependency
+'@microsoft/utils-logic-apps' is imported by libs/data-mapper/src/lib/mapDefinitions/MapDefinitionSerializer.ts, but could not be resolved – treating it as an external dependency
+'@microsoft/utils-logic-apps' is imported by libs/data-mapper/src/lib/core/DataMapDataProvider.tsx, but could not be resolved – treating it as an external dependency
+'@microsoft/utils-logic-apps' is imported by libs/data-mapper/src/lib/mapDefinitions/MapDefinitionDeserializer.ts, but could not be resolved – treating it as an external dependency
+'@microsoft/utils-logic-apps' is imported by libs/data-mapper/src/lib/core/DataMapperDesignerProvider.tsx, but could not be resolved – treating it as an external dependency
+'@microsoft/intl-logic-apps' is imported by libs/data-mapper/src/lib/core/DataMapperDesignerProvider.tsx, but could not be resolved – treating it as an external dependency
+'@microsoft/utils-logic-apps' is imported by libs/data-mapper/src/lib/utils/MapChecker.Utils.ts, but could not be resolved – treating it as an external dependency
+'@microsoft/utils-logic-apps' is imported by libs/data-mapper/src/lib/constants/ReactFlowConstants.ts, but could not be resolved – treating it as an external dependency
+'@microsoft/utils-logic-apps' is imported by libs/data-mapper/src/lib/ui/ReactFlowWrapper.tsx, but could not be resolved – treating it as an external dependency
+'@microsoft/utils-logic-apps' is imported by libs/data-mapper/src/lib/utils/Function.Utils.ts, but could not be resolved – treating it as an external dependency
+'@microsoft/utils-logic-apps' is imported by libs/data-mapper/src/lib/utils/ReactFlow.Util.ts, but could not be resolved – treating it as an external dependency
+'@microsoft/utils-logic-apps' is imported by libs/data-mapper/src/lib/utils/Connection.Utils.ts, but could not be resolved – treating it as an external dependency
+'@microsoft/utils-logic-apps' is imported by libs/data-mapper/src/lib/utils/DataMap.Utils.ts, but could not be resolved – treating it as an external dependency
+'@microsoft/utils-logic-apps' is imported by libs/data-mapper/src/lib/core/state/DataMapSlice.ts, but could not be resolved – treating it as an external dependency
+'@microsoft/designer-ui' is imported by libs/data-mapper/src/lib/components/codeView/CodeView.tsx, but could not be resolved – treating it as an external dependency
+'@microsoft/utils-logic-apps' is imported by libs/data-mapper/src/lib/components/globalView/GlobalView.tsx, but could not be resolved – treating it as an external dependency
+'@microsoft/utils-logic-apps' is imported by libs/data-mapper/src/lib/core/state/AppSlice.ts, but could not be resolved – treating it as an external dependency
+'@microsoft/utils-logic-apps' is imported by libs/data-mapper/src/lib/components/mapOverview/MapOverview.tsx, but could not be resolved – treating it as an external dependency
+'@microsoft/utils-logic-apps' is imported by libs/data-mapper/src/lib/components/configPanel/ConfigPanel.tsx, but could not be resolved – treating it as an external dependency
+'@microsoft/utils-logic-apps' is imported by libs/data-mapper/src/lib/components/testMapPanel/TestMapPanel.tsx, but could not be resolved – treating it as an external dependency
+'@microsoft/designer-ui' is imported by libs/data-mapper/src/lib/components/testMapPanel/TestMapPanel.tsx, but could not be resolved – treating it as an external dependency
+'@microsoft/utils-logic-apps' is imported by libs/data-mapper/src/lib/components/tree/SchemaTreeSearchbar.tsx, but could not be resolved – treating it as an external dependency
+The 'this' keyword is equivalent to 'undefined' at the top level of an ES module, and has been rewritten
+The 'this' keyword is equivalent to 'undefined' at the top level of an ES module, and has been rewritten
+The 'this' keyword is equivalent to 'undefined' at the top level of an ES module, and has been rewritten
+The 'this' keyword is equivalent to 'undefined' at the top level of an ES module, and has been rewritten
+The 'this' keyword is equivalent to 'undefined' at the top level of an ES module, and has been rewritten
+The 'this' keyword is equivalent to 'undefined' at the top level of an ES module, and has been rewritten
+'@microsoft/utils-logic-apps' is imported by libs/data-mapper/src/lib/core/services/dataMapperApiService/index.ts, but could not be resolved – treating it as an external dependency
+'@microsoft/utils-logic-apps' is imported by libs/data-mapper/src/lib/utils/Icon.Utils.tsx, but could not be resolved – treating it as an external dependency
+'@microsoft/designer-ui' is imported by libs/data-mapper/src/lib/components/canvasToolbox/CanvasToolbox.tsx, but could not be resolved – treating it as an external dependency
+'@microsoft/designer-ui' is imported by libs/data-mapper/src/lib/components/edge/ConnectionEdge.tsx, but could not be resolved – treating it as an external dependency
+'@microsoft/designer-ui' is imported by libs/data-mapper/src/lib/components/nodeCard/SchemaCard.tsx, but could not be resolved – treating it as an external dependency
+'@microsoft/utils-logic-apps' is imported by libs/data-mapper/src/lib/components/nodeCard/SchemaCard.tsx, but could not be resolved – treating it as an external dependency
+'@microsoft/utils-logic-apps' is imported by libs/data-mapper/src/lib/core/state/PanelSlice.ts, but could not be resolved – treating it as an external dependency
+'@microsoft/utils-logic-apps' is imported by libs/data-mapper/src/lib/components/schemaSelection/SelectSchemaCard.tsx, but could not be resolved – treating it as an external dependency
+'@microsoft/utils-logic-apps' is imported by libs/data-mapper/src/lib/components/configPanel/AddOrUpdateSchemaView.tsx, but could not be resolved – treating it as an external dependency
+'@microsoft/designer-ui' is imported by libs/data-mapper/src/lib/components/configPanel/DefaultConfigView.tsx, but could not be resolved – treating it as an external dependency
+'@microsoft/utils-logic-apps' is imported by libs/data-mapper/src/lib/components/configPanel/DefaultConfigView.tsx, but could not be resolved – treating it as an external dependency
+'@microsoft/designer-ui' is imported by libs/data-mapper/src/lib/components/nodeCard/functionCard/SimpleFunctionCard.tsx, but could not be resolved – treating it as an external dependency
+'@microsoft/designer-ui' is imported by libs/data-mapper/src/lib/components/nodeCard/functionCard/ExpandedFunctionCard.tsx, but could not be resolved – treating it as an external dependency
+'@microsoft/designer-ui' is imported by libs/data-mapper/src/lib/components/propertiesPane/tabs/CodeTab.tsx, but could not be resolved – treating it as an external dependency
+The 'this' keyword is equivalent to 'undefined' at the top level of an ES module, and has been rewritten
+'@microsoft/utils-logic-apps' is imported by libs/data-mapper/src/lib/components/nodeCard/HandleWrapper.tsx, but could not be resolved – treating it as an external dependency
+'@microsoft/utils-logic-apps' is imported by libs/data-mapper/src/lib/components/configPanel/SelectExistingSchema.tsx, but could not be resolved – treating it as an external dependency
+'@microsoft/utils-logic-apps' is imported by libs/data-mapper/src/lib/components/inputTypes/InputDropdown.tsx, but could not be resolved – treating it as an external dependency
+'@microsoft/utils-logic-apps' is imported by libs/data-mapper/src/lib/components/propertiesPane/tabs/BoundedInputEntry.tsx, but could not be resolved – treating it as an external dependency
+'@microsoft/designer-ui' is imported by libs/data-mapper/src/lib/components/tree/TreeBranch.tsx, but could not be resolved – treating it as an external dependency
+The 'this' keyword is equivalent to 'undefined' at the top level of an ES module, and has been rewritten
+The 'this' keyword is equivalent to 'undefined' at the top level of an ES module, and has been rewritten
+Circular dependency: node_modules/@fluentui/react-utilities/lib/compose/index.js -> node_modules/@fluentui/react-utilities/lib/compose/assertSlots.js -> node_modules/@fluentui/react-utilities/lib/compose/index.js
+Circular dependency: libs/data-mapper/src/lib/core/state/DataMapSlice.ts -> libs/data-mapper/src/lib/mapDefinitions/index.ts -> libs/data-mapper/src/lib/mapDefinitions/MapDefinitionDeserializer.ts -> libs/data-mapper/src/lib/core/state/DataMapSlice.ts
+Circular dependency: libs/data-mapper/src/lib/utils/Connection.Utils.ts -> libs/data-mapper/src/lib/utils/Function.Utils.ts -> libs/data-mapper/src/lib/utils/Connection.Utils.ts
+Circular dependency: libs/data-mapper/src/lib/utils/Connection.Utils.ts -> libs/data-mapper/src/lib/utils/Function.Utils.ts -> libs/data-mapper/src/lib/utils/DataMap.Utils.ts -> libs/data-mapper/src/lib/utils/Connection.Utils.ts
+Circular dependency: libs/data-mapper/src/lib/utils/Function.Utils.ts -> libs/data-mapper/src/lib/utils/DataMap.Utils.ts -> libs/data-mapper/src/lib/utils/Function.Utils.ts
+Circular dependency: libs/data-mapper/src/lib/utils/Function.Utils.ts -> libs/data-mapper/src/lib/utils/DataMap.Utils.ts -> libs/data-mapper/src/lib/utils/ReactFlow.Util.ts -> libs/data-mapper/src/lib/utils/Function.Utils.ts
+Circular dependency: libs/data-mapper/src/lib/utils/Connection.Utils.ts -> libs/data-mapper/src/lib/utils/Function.Utils.ts -> libs/data-mapper/src/lib/utils/DataMap.Utils.ts -> libs/data-mapper/src/lib/utils/ReactFlow.Util.ts -> libs/data-mapper/src/lib/utils/Layout.Utils.ts -> libs/data-mapper/src/lib/utils/Connection.Utils.ts
+Circular dependency: libs/data-mapper/src/lib/utils/Function.Utils.ts -> libs/data-mapper/src/lib/utils/DataMap.Utils.ts -> libs/data-mapper/src/lib/utils/ReactFlow.Util.ts -> libs/data-mapper/src/lib/utils/Layout.Utils.ts -> libs/data-mapper/src/lib/utils/Function.Utils.ts
+Circular dependency: libs/data-mapper/src/lib/utils/ReactFlow.Util.ts -> libs/data-mapper/src/lib/utils/Layout.Utils.ts -> libs/data-mapper/src/lib/utils/ReactFlow.Util.ts
+Circular dependency: libs/data-mapper/src/lib/utils/Icon.Utils.tsx -> libs/data-mapper/src/lib/components/sidePane/tabs/mapCheckerTab/MapCheckerItem.tsx -> libs/data-mapper/src/lib/utils/Icon.Utils.tsx
+Circular dependency: node_modules/d3-selection/src/selection/index.js -> node_modules/d3-selection/src/selection/select.js -> node_modules/d3-selection/src/selection/index.js
+Circular dependency: node_modules/d3-selection/src/selection/index.js -> node_modules/d3-selection/src/selection/selectAll.js -> node_modules/d3-selection/src/selection/index.js
+Circular dependency: node_modules/d3-selection/src/selection/index.js -> node_modules/d3-selection/src/selection/filter.js -> node_modules/d3-selection/src/selection/index.js
+Circular dependency: node_modules/d3-selection/src/selection/index.js -> node_modules/d3-selection/src/selection/data.js -> node_modules/d3-selection/src/selection/index.js
+Circular dependency: node_modules/d3-selection/src/selection/index.js -> node_modules/d3-selection/src/selection/data.js -> node_modules/d3-selection/src/selection/enter.js -> node_modules/d3-selection/src/selection/index.js
+Circular dependency: node_modules/d3-selection/src/selection/index.js -> node_modules/d3-selection/src/selection/exit.js -> node_modules/d3-selection/src/selection/index.js
+Circular dependency: node_modules/d3-selection/src/selection/index.js -> node_modules/d3-selection/src/selection/merge.js -> node_modules/d3-selection/src/selection/index.js
+Circular dependency: node_modules/d3-selection/src/selection/index.js -> node_modules/d3-selection/src/selection/sort.js -> node_modules/d3-selection/src/selection/index.js
+Circular dependency: node_modules/d3-interpolate/src/value.js -> node_modules/d3-interpolate/src/array.js -> node_modules/d3-interpolate/src/value.js
+Circular dependency: node_modules/d3-interpolate/src/value.js -> node_modules/d3-interpolate/src/object.js -> node_modules/d3-interpolate/src/value.js
+Circular dependency: node_modules/d3-transition/src/transition/index.js -> node_modules/d3-transition/src/transition/filter.js -> node_modules/d3-transition/src/transition/index.js
+Circular dependency: node_modules/d3-transition/src/transition/index.js -> node_modules/d3-transition/src/transition/merge.js -> node_modules/d3-transition/src/transition/index.js
+Circular dependency: node_modules/d3-transition/src/transition/index.js -> node_modules/d3-transition/src/transition/select.js -> node_modules/d3-transition/src/transition/index.js
+Circular dependency: node_modules/d3-transition/src/transition/index.js -> node_modules/d3-transition/src/transition/selectAll.js -> node_modules/d3-transition/src/transition/index.js
+Circular dependency: node_modules/d3-transition/src/transition/index.js -> node_modules/d3-transition/src/transition/transition.js -> node_modules/d3-transition/src/transition/index.js
+Circular dependency: libs/data-mapper/src/lib/core/services/dataMapperApiService/index.ts -> libs/data-mapper/src/lib/core/services/dataMapperApiService/DataMapperApiService.ts -> libs/data-mapper/src/lib/core/services/dataMapperApiService/index.ts
+Circular dependency: libs/data-mapper/src/lib/components/tree/TreeBranch.tsx -> libs/data-mapper/src/lib/components/tree/Tree.tsx -> libs/data-mapper/src/lib/components/tree/TreeBranch.tsx
+  [1mindex.esm.js[22m [36m5.508 MB[39m
+[1m[31mBundle failed: data-mapper[39m[22m

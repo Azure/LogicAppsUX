@@ -1,0 +1,28 @@
+Entrypoint [1mmain[39m[22m [1m[33m[big][39m[22m 6.26 MiB (48.8 KiB) = [1m[32mruntime.7e33a251d11d10bc.js[39m[22m 3.97 KiB [1m[32mmain.c18abda2486d62b4.css[39m[22m 249 KiB [1m[32mmain.829f5378b8c462c5.js[39m[22m 6.01 MiB 61 auxiliary assets
+Entrypoint [1mpolyfills[39m[22m 130 KiB = [1m[32mruntime.7e33a251d11d10bc.js[39m[22m 3.97 KiB [1m[32mpolyfills.5cc3415d80ef1faf.js[39m[22m 126 KiB
+Entrypoint [1mstyles[39m[22m 4.08 KiB = [1m[32mruntime.7e33a251d11d10bc.js[39m[22m 3.97 KiB [1m[32mstyles.ef46db3751d8e999.css[39m[22m 0 bytes [1m[32mstyles.474f63861d0d6233.js[39m[22m 112 bytes
+chunk (runtime: runtime) [1m[32m24.2ab8884de407d0d2.js[39m[22m 109 KiB [1m[32m[rendered][39m[22m
+chunk (runtime: runtime) [1m[32m32.9143d1331a032c11.js[39m[22m 114 KiB [1m[32m[rendered][39m[22m
+chunk (runtime: runtime) [1m[32m75.c3c040dc7fa14960.js[39m[22m 71.7 KiB [1m[32m[rendered][39m[22m
+chunk (runtime: runtime) [1m[32m109.74204d217a9902d4.js[39m[22m 110 KiB [1m[32m[rendered][39m[22m
+chunk (runtime: runtime) [1m[32mmain.c18abda2486d62b4.css[39m[22m, [1m[32mmain.829f5378b8c462c5.js[39m[22m (main) 22.6 MiB (javascript) 561 KiB (css/mini-extract) [1m[33m[initial][39m[22m [1m[32m[rendered][39m[22m
+chunk (runtime: runtime) [1m[32m190.202104f62cd0a462.js[39m[22m 104 KiB [1m[32m[rendered][39m[22m
+chunk (runtime: runtime) [1m[32m280.9d60768078fcd72e.js[39m[22m 79.4 KiB [1m[32m[rendered][39m[22m
+chunk (runtime: runtime) [1m[32m317.09711ffc9efb93d8.js[39m[22m 109 KiB [1m[32m[rendered][39m[22m
+chunk (runtime: runtime) [1m[32m394.6190655188792575.js[39m[22m 112 KiB [1m[32m[rendered][39m[22m
+chunk (runtime: runtime) [1m[32m407.ab58a1c7dbde13ca.js[39m[22m 101 KiB [1m[32m[rendered][39m[22m
+chunk (runtime: runtime) [1m[32mpolyfills.5cc3415d80ef1faf.js[39m[22m (polyfills) 383 KiB [1m[33m[initial][39m[22m [1m[32m[rendered][39m[22m
+chunk (runtime: runtime) [1m[32m458.178a3d3a71f69104.js[39m[22m 112 KiB [1m[32m[rendered][39m[22m
+chunk (runtime: runtime) [1m[32m477.542d9c8399ee5482.js[39m[22m 111 KiB [1m[32m[rendered][39m[22m
+chunk (runtime: runtime) [1m[32m492.2cf90c2cb81f84bc.js[39m[22m 111 KiB [1m[32m[rendered][39m[22m
+chunk (runtime: runtime) [1m[32mstyles.ef46db3751d8e999.css[39m[22m, [1m[32mstyles.474f63861d0d6233.js[39m[22m (styles) 50 bytes (javascript) 80 bytes (css/mini-extract) [1m[33m[initial][39m[22m [1m[32m[rendered][39m[22m
+chunk (runtime: runtime) [1m[32m614.40007905c2884610.js[39m[22m 112 KiB [1m[32m[rendered][39m[22m
+chunk (runtime: runtime) [1m[32m618.3f14db99ae61c8df.js[39m[22m 105 KiB [1m[32m[rendered][39m[22m
+chunk (runtime: runtime) [1m[32mruntime.7e33a251d11d10bc.js[39m[22m (runtime) 9.72 KiB [1m[33m[entry][39m[22m [1m[32m[rendered][39m[22m
+chunk (runtime: runtime) [1m[32m667.82734bc27e7fa942.js[39m[22m 109 KiB [1m[32m[rendered][39m[22m
+chunk (runtime: runtime) [1m[32m727.d77ebb3248dfebdc.js[39m[22m 180 KiB [1m[32m[rendered][39m[22m
+chunk (runtime: runtime) [1m[32m734.2929a985df79203d.js[39m[22m 71.6 KiB [1m[32m[rendered][39m[22m
+chunk (runtime: runtime) [1m[32m809.6d7eaec32894e01d.js[39m[22m 106 KiB [1m[32m[rendered][39m[22m
+chunk (runtime: runtime) [1m[32m816.18605c3be8212862.js[39m[22m 103 KiB [1m[32m[rendered][39m[22m
+chunk (runtime: runtime) [1m[32m982.17dfd9142637934e.js[39m[22m 79.3 KiB [1m[32m[rendered][39m[22m
+webpack compiled [1m[32msuccessfully[39m[22m (9c4c3b5d573b013a)

@@ -1,0 +1,13 @@
+
+Linting "data-mapper"...
+[0m[0m
+[0m[4m/Users/travisharris/code/LogicAppsUX/libs/data-mapper/jest.setup.js[24m[0m
+[0m  [2m1:1[22m  [31merror[39m  Projects cannot be imported by a relative or absolute path, and must begin with a npm scope  [2m@nrwl/nx/enforce-module-boundaries[22m[0m
+[0m[0m
+[0m[4m/Users/travisharris/code/LogicAppsUX/libs/data-mapper/src/lib/__test__/intl-test-helper.tsx[24m[0m
+[0m  [2m7:1[22m  [31merror[39m  External resources cannot be imported using a relative or absolute path  [2m@nrwl/nx/enforce-module-boundaries[22m[0m
+[0m[0m
+[0m[31m[1m✖ 2 problems (2 errors, 0 warnings)[22m[39m[0m
+[0m[31m[1m[22m[39m[0m
+Lint errors found in the listed files.
+

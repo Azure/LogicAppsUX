@@ -1,0 +1,21 @@
+chunk (runtime: main) [1m[32mmain.js[39m[22m (main) 21.1 MiB (javascript) 2.76 KiB (runtime) [1m[33m[entry][39m[22m [1m[32m[rendered][39m[22m
+chunk (runtime: main) [1m[32m1.js[39m[22m (id hint: vendors) 123 KiB [1m[32m[rendered][39m[22m [1m[33mreused as split chunk (cache group: defaultVendors)[39m[22m
+chunk (runtime: main) [1m[32m2.js[39m[22m (id hint: vendors) 247 KiB [1m[32m[rendered][39m[22m [1m[33msplit chunk (cache group: defaultVendors)[39m[22m
+chunk (runtime: main) [1m[32m3.js[39m[22m (id hint: vendors) 146 KiB [1m[32m[rendered][39m[22m [1m[33mreused as split chunk (cache group: defaultVendors)[39m[22m
+
+[1m[33mWARNING[39m[22m in [1m../../node_modules/@vscode/extension-telemetry/lib/telemetryReporter.node.min.js[39m[22m [1m[32m8:14890-14935[39m[22m
+[1mModule [1m[31mnot found[39m[22m[1m: [1m[31mError[39m[22m[1m: Can't resolve 'applicationinsights-native-metrics' in '/Users/travisharris/code/LogicAppsUX/node_modules/@vscode/extension-telemetry/lib'[39m[22m
+
+[1m[33mWARNING[39m[22m in [1m../../node_modules/adm-zip/util/fileSystem.js[39m[22m [1m[32m4:31-53[39m[22m
+[1mModule [1m[31mnot found[39m[22m[1m: [1m[31mError[39m[22m[1m: Can't resolve 'original-fs' in '/Users/travisharris/code/LogicAppsUX/node_modules/adm-zip/util'[39m[22m
+
+[1m[33mWARNING[39m[22m in [1m../../node_modules/ws/lib/buffer-util.js[39m[22m [1m[32m113:23-44[39m[22m
+[1mModule [1m[31mnot found[39m[22m[1m: [1m[31mError[39m[22m[1m: Can't resolve 'bufferutil' in '/Users/travisharris/code/LogicAppsUX/node_modules/ws/lib'[39m[22m
+
+[1m[33mWARNING[39m[22m in [1m../../node_modules/ws/lib/validation.js[39m[22m [1m[32m117:24-49[39m[22m
+[1mModule [1m[31mnot found[39m[22m[1m: [1m[31mError[39m[22m[1m: Can't resolve 'utf-8-validate' in '/Users/travisharris/code/LogicAppsUX/node_modules/ws/lib'[39m[22m
+
+[1m[33mWARNING[39m[22m in [1m../../node_modules/yargs-parser/build/index.cjs[39m[22m [1m[32m1021:19-32[39m[22m
+[1mCritical dependency: the request of a dependency is an expression[39m[22m
+
+webpack compiled with [1m[33m5 warnings[39m[22m (8158f82b34a7f2bf)
