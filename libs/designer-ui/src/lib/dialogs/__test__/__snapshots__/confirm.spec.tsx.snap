@@ -17,7 +17,7 @@ exports[`ui/dialogs/_confirm should render 1`] = `
   onDismiss={[MockFunction]}
 >
   Message
-  <StyledDialogFooterBase>
+  <DialogFooter>
     <CustomizedPrimaryButton
       className="dialog-ok-button"
       onClick={[MockFunction]}
@@ -29,6 +29,6 @@ exports[`ui/dialogs/_confirm should render 1`] = `
     >
       Cancel
     </CustomizedDefaultButton>
-  </StyledDialogFooterBase>
+  </DialogFooter>
 </Dialog>
 `;

@@ -17,13 +17,13 @@ exports[`ui/dialogs/_alert should render 1`] = `
   onDismiss={[MockFunction]}
 >
   Message
-  <StyledDialogFooterBase>
+  <DialogFooter>
     <CustomizedPrimaryButton
       className="dialog-ok-button"
       onClick={[MockFunction]}
     >
       OK
     </CustomizedPrimaryButton>
-  </StyledDialogFooterBase>
+  </DialogFooter>
 </Dialog>
 `;

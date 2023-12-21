@@ -1763,6 +1763,8 @@ exports[`lib/monitoring/requestpanel should render with a request 1`] = `
                         data-is-focusable="true"
                         data-item-key="$key"
                         draggable={false}
+                        onBlur={[Function]}
+                        onFocus={[Function]}
                         role="columnheader"
                         style={
                           {
@@ -1807,6 +1809,8 @@ exports[`lib/monitoring/requestpanel should render with a request 1`] = `
                         data-is-focusable="true"
                         data-item-key="$value"
                         draggable={false}
+                        onBlur={[Function]}
+                        onFocus={[Function]}
                         role="columnheader"
                         style={
                           {
@@ -2801,6 +2805,8 @@ exports[`lib/monitoring/requestpanel should render with a response 1`] = `
                         data-is-focusable="true"
                         data-item-key="$key"
                         draggable={false}
+                        onBlur={[Function]}
+                        onFocus={[Function]}
                         role="columnheader"
                         style={
                           {
@@ -2845,6 +2851,8 @@ exports[`lib/monitoring/requestpanel should render with a response 1`] = `
                         data-is-focusable="true"
                         data-item-key="$value"
                         draggable={false}
+                        onBlur={[Function]}
+                        onFocus={[Function]}
                         role="columnheader"
                         style={
                           {
