@@ -206,7 +206,7 @@
     "jsonc-parser": "^2.3.1",
     "less-loader": "11.0.0",
     "nx": "^17.2.6",
-    "playwright": "^1.37.1",
+    "playwright": "^1.40.1",
     "prettier": "^2.6.2",
     "react": "18.2.0",
     "react-dom": "18.2.0",
