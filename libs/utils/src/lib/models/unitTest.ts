@@ -4,7 +4,7 @@ export interface OperationMock {
 }
 
 export interface Assertion {
-  assertionString: string;
+  name: string;
   description: string;
 }
 
@@ -14,8 +14,6 @@ export interface UnitTestDefinition {
   assertions: Assertion[];
 }
 
-export interface AssertionDefintion {
+export interface AssertionDefintion extends Assertion {
   id: string;
-  name: string;
-  description: string;
 }

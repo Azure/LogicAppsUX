@@ -5,7 +5,7 @@ import type {
   InitDefintionPayload,
   UnitTestState,
 } from './unitTestInterfaces';
-import { isNullOrUndefined } from '@microsoft/utils-logic-apps';
+import { type Assertion, type AssertionDefintion, guid, isNullOrUndefined } from '@microsoft/utils-logic-apps';
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 
@@ -20,14 +20,22 @@ export const initialUnitTestState: UnitTestState = {
   assertions: {},
 };
 
+const parseAssertions = (assertions: Assertion[]): Record<string, AssertionDefintion> => {
+  return assertions.reduce((acc, assertion) => {
+    const { name, description } = assertion;
+    const id = guid();
+    return { ...acc, [id]: { id, name, description } };
+  }, {});
+};
+
 export const unitTestSlice = createSlice({
   name: 'unitTest',
   initialState: initialUnitTestState,
   reducers: {
     initUnitTestDefinition: (state: UnitTestState, action: PayloadAction<InitDefintionPayload | null>) => {
       if (!isNullOrUndefined(action.payload)) {
-        const { mockResults } = action.payload;
-        // state.assertions = assertions;
+        const { mockResults, assertions } = action.payload;
+        state.assertions = parseAssertions(assertions);
         state.mockResults = mockResults;
       }
     },
