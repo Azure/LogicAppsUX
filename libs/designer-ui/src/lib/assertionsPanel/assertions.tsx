@@ -14,6 +14,14 @@ export interface AssertionsProps {
   onAssertionDelete: AssertionDeleteHandler;
 }
 
+export const EXPRESSION_DEFAULT = {
+  and: [
+    {
+      equals: ['', ''],
+    },
+  ],
+};
+
 export function Assertions({ assertions, onDismiss, onAssertionAdd, onAssertionUpdate, onAssertionDelete }: AssertionsProps): JSX.Element {
   const intl = useIntl();
   const theme = useTheme();
@@ -37,7 +45,7 @@ export function Assertions({ assertions, onDismiss, onAssertionAdd, onAssertionU
   const handleAddAssertion = (event: React.MouseEvent<HTMLButtonElement>): void => {
     if (onAssertionAdd) {
       event.stopPropagation();
-      onAssertionAdd({ name: headingTitle, description: '' });
+      onAssertionAdd({ name: headingTitle, description: '', expression: EXPRESSION_DEFAULT });
     }
   };
 

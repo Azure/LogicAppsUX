@@ -15,6 +15,7 @@ import {
   getEncodeValue,
   getJSONValueFromString,
   parameterValueToString,
+  toConditionViewModel,
 } from '../../utils/parameters/helper';
 import { buildOperationDetailsFromControls } from '../../utils/swagger/inputsbuilder';
 import type { Settings } from './settings';
@@ -1078,8 +1079,8 @@ export const serializeUnitTestDefinition = async (rootState: RootState): Promise
 
 const getAssertions = (assertions: Record<string, AssertionDefintion>): Assertion[] => {
   return Object.values(assertions).map((assertion) => {
-    const { name, description } = assertion;
-    return { name, description };
+    const { name, description, expression } = assertion;
+    return { name, description, expression: toConditionViewModel(expression) };
   });
 };
 

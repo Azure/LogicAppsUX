@@ -6,6 +6,7 @@ export interface OperationMock {
 export interface Assertion {
   name: string;
   description: string;
+  expression: any;
 }
 
 export interface UnitTestDefinition {

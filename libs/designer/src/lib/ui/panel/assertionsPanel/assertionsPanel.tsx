@@ -1,6 +1,7 @@
 import { useAssertions } from '../../../core/state/unitTest/unitTestSelectors';
 import { updateAssertions, updateAssertion } from '../../../core/state/unitTest/unitTestSlice';
 import type { AppDispatch } from '../../../core/store';
+import { toConditionViewModel } from '../../../core/utils/parameters/helper';
 import {
   type AssertionDeleteEvent,
   type AssertionUpdateEvent,
@@ -30,7 +31,7 @@ export const AssertionsPanel = (props: CommonPanelProps) => {
 
   const onAssertionUpdate = (event: AssertionUpdateEvent) => {
     const { name, description, id } = event;
-    const assertionToUpdate = { name: name, description: description, id: id };
+    const assertionToUpdate = { name: name, description: description, id: id, expression: {} };
     dispatch(updateAssertion({ assertionToUpdate }));
 
     const newAssertions = { ...assertions };
@@ -40,7 +41,15 @@ export const AssertionsPanel = (props: CommonPanelProps) => {
 
   const onAssertionAdd = (event: AssertionAddEvent) => {
     const id = guid();
-    const newAssertions = { ...assertions, [id]: { id: id, name: event.name, description: event.description } };
+    const newAssertions = {
+      ...assertions,
+      [id]: {
+        id: id,
+        name: event.name,
+        description: event.description,
+        expression: toConditionViewModel(event.expression),
+      },
+    };
     setAssertions(newAssertions);
     dispatch(updateAssertions({ assertions: newAssertions }));
   };

@@ -25,6 +25,7 @@ export interface AssertionDeleteEvent {
 export interface AssertionAddEvent {
   name: string;
   description: string;
+  expression: any; //TODO: Change to condition object type
 }
 
 export type AssertionDeleteHandler = EventHandler<AssertionDeleteEvent>;
@@ -43,6 +44,7 @@ export function Assertion({ isInverted, assertion, onAssertionUpdate, onAssertio
   const [isEditable, setIsEditable] = useState(false);
   const [name, setName] = useState(assertion.name);
   const [description, setDescription] = useState(assertion.description);
+  const [expression, setExpression] = useState(assertion.expression);
 
   const handleEdit: React.MouseEventHandler<HTMLButtonElement> = (): void => {
     setIsEditable(true);
@@ -86,7 +88,15 @@ export function Assertion({ isInverted, assertion, onAssertionUpdate, onAssertio
       </div>
       <div className="msla-workflow-assertion-content">
         {expanded ? (
-          <AssertionField name={name} description={description} setName={setName} setDescription={setDescription} isEditable={isEditable} />
+          <AssertionField
+            name={name}
+            description={description}
+            expression={expression}
+            setName={setName}
+            setDescription={setDescription}
+            setExpression={setExpression}
+            isEditable={isEditable}
+          />
         ) : null}
       </div>
     </div>
