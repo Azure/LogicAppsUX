@@ -23,16 +23,6 @@
       "value": "Chronione"
     }
   ],
-  "+7IA0V": [
-    {
-      "type": 0,
-      "value": "Połączenia łącznika "
-    },
-    {
-      "type": 1,
-      "value": "connectorName"
-    }
-  ],
   "+FcXe9": [
     {
       "type": 0,
@@ -175,6 +165,12 @@
       "value": "Otwórz funkcję Azure Copilot"
     }
   ],
+  "/c1l10": [
+    {
+      "type": 0,
+      "value": "⌘+C"
+    }
+  ],
   "/doURb": [
     {
       "type": 0,
@@ -303,6 +299,12 @@
     {
       "type": 0,
       "value": "(UTC+05:30) Sri Jayawardenepura"
+    }
+  ],
+  "0CPsxh": [
+    {
+      "type": 0,
+      "value": "Del"
     }
   ],
   "0CvRZW": [
@@ -555,12 +557,6 @@
     {
       "type": 0,
       "value": "5"
-    }
-  ],
-  "1zgFh1": [
-    {
-      "type": 0,
-      "value": "Odrzuć"
     }
   ],
   "20oqsp": [
@@ -4005,12 +4001,6 @@
       "value": "OK"
     }
   ],
-  "OBKhVi": [
-    {
-      "type": 0,
-      "value": "Nie można skopiować tej akcji/tego wyzwalacza."
-    }
-  ],
   "ODQCKj": [
     {
       "type": 0,
@@ -4535,12 +4525,6 @@
       "value": " godz."
     }
   ],
-  "Qy0Kha": [
-    {
-      "type": 0,
-      "value": "Nie można usunąć wyzwalaczy."
-    }
-  ],
   "R/aiRy": [
     {
       "type": 0,
@@ -4651,12 +4635,6 @@
     {
       "type": 0,
       "value": "problem"
-    }
-  ],
-  "Ro4+PC": [
-    {
-      "type": 0,
-      "value": "Notatki można dodawać tylko podczas edytowania danych wejściowych kroku."
     }
   ],
   "Rp5pHU": [
@@ -4945,6 +4923,12 @@
     {
       "type": 0,
       "value": "Notatka"
+    }
+  ],
+  "TsJbGH": [
+    {
+      "type": 0,
+      "value": "Disconnected"
     }
   ],
   "Ttc0SM": [
@@ -5517,6 +5501,12 @@
       "value": "Tożsamość zarządzana nie jest skonfigurowana w aplikacji logiki."
     }
   ],
+  "WvvJYw": [
+    {
+      "type": 0,
+      "value": "Actions"
+    }
+  ],
   "X/7je+": [
     {
       "type": 0,
@@ -6065,12 +6055,6 @@
     {
       "type": 0,
       "value": "Więcej informacji"
-    }
-  ],
-  "ZbX8xq": [
-    {
-      "type": 0,
-      "value": "Ta operacja została już usunięta."
     }
   ],
   "Zg3IjD": [
@@ -6703,6 +6687,12 @@
       "value": "Kursywa (⌘I)"
     }
   ],
+  "en/5A3": [
+    {
+      "type": 0,
+      "value": "Reassign"
+    }
+  ],
   "eo1YKX": [
     {
       "type": 0,
@@ -7109,12 +7099,6 @@
     {
       "type": 0,
       "value": "Cofnij"
-    }
-  ],
-  "hTZZr+": [
-    {
-      "type": 0,
-      "value": "Połączone akcje"
     }
   ],
   "hZqQdt": [
@@ -8429,12 +8413,6 @@
       "value": "W aplikacji"
     }
   ],
-  "p3K7eM": [
-    {
-      "type": 0,
-      "value": "Rozłączone akcje"
-    }
-  ],
   "p5ZID0": [
     {
       "type": 0,
@@ -9023,6 +9001,12 @@
     {
       "type": 0,
       "value": "Klucz"
+    }
+  ],
+  "snJFUi": [
+    {
+      "type": 0,
+      "value": "Ctrl+C"
     }
   ],
   "soqP+Z": [
@@ -9921,12 +9905,6 @@
       "value": "Wartość"
     }
   ],
-  "xxeu75": [
-    {
-      "type": 0,
-      "value": "Ponownie przypisz wszystkie połączone akcje do nowego połączenia"
-    }
-  ],
   "y1e9yw": [
     {
       "type": 0,
@@ -10171,12 +10149,6 @@
     {
       "type": 0,
       "value": "Zatrzymaj"
-    }
-  ],
-  "ziXw25": [
-    {
-      "type": 0,
-      "value": "Usuń"
     }
   ],
   "ziYCiA": [

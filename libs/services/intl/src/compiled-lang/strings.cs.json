@@ -23,16 +23,6 @@
       "value": "Chráněno"
     }
   ],
-  "+7IA0V": [
-    {
-      "type": 0,
-      "value": "Připojení "
-    },
-    {
-      "type": 1,
-      "value": "connectorName"
-    }
-  ],
   "+FcXe9": [
     {
       "type": 0,
@@ -175,6 +165,12 @@
       "value": "Otevřít Azure Copilot"
     }
   ],
+  "/c1l10": [
+    {
+      "type": 0,
+      "value": "⌘+C"
+    }
+  ],
   "/doURb": [
     {
       "type": 0,
@@ -303,6 +299,12 @@
     {
       "type": 0,
       "value": "(UTC+05:30) Šrí Džajavardanapura"
+    }
+  ],
+  "0CPsxh": [
+    {
+      "type": 0,
+      "value": "Del"
     }
   ],
   "0CvRZW": [
@@ -555,12 +557,6 @@
     {
       "type": 0,
       "value": "5"
-    }
-  ],
-  "1zgFh1": [
-    {
-      "type": 0,
-      "value": "Zavřít"
     }
   ],
   "20oqsp": [
@@ -4005,12 +4001,6 @@
       "value": "OK"
     }
   ],
-  "OBKhVi": [
-    {
-      "type": 0,
-      "value": "Tuto akci nebo aktivační událost nelze zkopírovat."
-    }
-  ],
   "ODQCKj": [
     {
       "type": 0,
@@ -4527,12 +4517,6 @@
       "value": " h"
     }
   ],
-  "Qy0Kha": [
-    {
-      "type": 0,
-      "value": "Aktivační události nelze odstranit."
-    }
-  ],
   "R/aiRy": [
     {
       "type": 0,
@@ -4643,12 +4627,6 @@
     {
       "type": 0,
       "value": "problém"
-    }
-  ],
-  "Ro4+PC": [
-    {
-      "type": 0,
-      "value": "Poznámky můžete přidat jen pokud upravíte vstupy kroku."
     }
   ],
   "Rp5pHU": [
@@ -4933,6 +4911,12 @@
     {
       "type": 0,
       "value": "Poznámka"
+    }
+  ],
+  "TsJbGH": [
+    {
+      "type": 0,
+      "value": "Disconnected"
     }
   ],
   "Ttc0SM": [
@@ -5505,6 +5489,12 @@
       "value": "Spravovaná identita není v aplikaci logiky nakonfigurovaná."
     }
   ],
+  "WvvJYw": [
+    {
+      "type": 0,
+      "value": "Actions"
+    }
+  ],
   "X/7je+": [
     {
       "type": 0,
@@ -6053,12 +6043,6 @@
     {
       "type": 0,
       "value": "Více informací"
-    }
-  ],
-  "ZbX8xq": [
-    {
-      "type": 0,
-      "value": "Tato operace už byla odstraněna."
     }
   ],
   "Zg3IjD": [
@@ -6691,6 +6675,12 @@
       "value": "Kurzíva (⌘I)"
     }
   ],
+  "en/5A3": [
+    {
+      "type": 0,
+      "value": "Reassign"
+    }
+  ],
   "eo1YKX": [
     {
       "type": 0,
@@ -6854,7 +6844,7 @@
   "gA1dde": [
     {
       "type": 0,
-      "value": "Toggle code view"
+      "value": "Přepnout zobrazení kódu"
     }
   ],
   "gCXOd5": [
@@ -7097,12 +7087,6 @@
     {
       "type": 0,
       "value": "Vrátit zpět"
-    }
-  ],
-  "hTZZr+": [
-    {
-      "type": 0,
-      "value": "Připojené akce"
     }
   ],
   "hZqQdt": [
@@ -8405,12 +8389,6 @@
       "value": "V aplikaci"
     }
   ],
-  "p3K7eM": [
-    {
-      "type": 0,
-      "value": "Odpojené akce"
-    }
-  ],
   "p5ZID0": [
     {
       "type": 0,
@@ -8999,6 +8977,12 @@
     {
       "type": 0,
       "value": "Klíč"
+    }
+  ],
+  "snJFUi": [
+    {
+      "type": 0,
+      "value": "Ctrl+C"
     }
   ],
   "soqP+Z": [
@@ -9889,12 +9873,6 @@
       "value": "Hodnota"
     }
   ],
-  "xxeu75": [
-    {
-      "type": 0,
-      "value": "Znovu přiřadit všechny odpojené akce k novému připojení"
-    }
-  ],
   "y1e9yw": [
     {
       "type": 0,
@@ -10139,12 +10117,6 @@
     {
       "type": 0,
       "value": "Zastavit"
-    }
-  ],
-  "ziXw25": [
-    {
-      "type": 0,
-      "value": "Odstranit"
     }
   ],
   "ziYCiA": [
