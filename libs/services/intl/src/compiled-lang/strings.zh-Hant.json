@@ -23,16 +23,6 @@
       "value": "受保護"
     }
   ],
-  "+7IA0V": [
-    {
-      "type": 1,
-      "value": "connectorName"
-    },
-    {
-      "type": 0,
-      "value": " 連線"
-    }
-  ],
   "+FcXe9": [
     {
       "type": 0,
@@ -175,6 +165,12 @@
       "value": "開啟 Azure Copilot"
     }
   ],
+  "/c1l10": [
+    {
+      "type": 0,
+      "value": "⌘+C"
+    }
+  ],
   "/doURb": [
     {
       "type": 0,
@@ -303,6 +299,12 @@
     {
       "type": 0,
       "value": "(UTC+05:30) 斯里加亞渥登普拉"
+    }
+  ],
+  "0CPsxh": [
+    {
+      "type": 0,
+      "value": "Del"
     }
   ],
   "0CvRZW": [
@@ -555,12 +557,6 @@
     {
       "type": 0,
       "value": "5"
-    }
-  ],
-  "1zgFh1": [
-    {
-      "type": 0,
-      "value": "關閉"
     }
   ],
   "20oqsp": [
@@ -3886,12 +3882,6 @@
       "value": "確定"
     }
   ],
-  "OBKhVi": [
-    {
-      "type": 0,
-      "value": "無法複製此動作/觸發程式。"
-    }
-  ],
   "ODQCKj": [
     {
       "type": 0,
@@ -4404,12 +4394,6 @@
       "value": " 小時"
     }
   ],
-  "Qy0Kha": [
-    {
-      "type": 0,
-      "value": "無法刪除觸發。"
-    }
-  ],
   "R/aiRy": [
     {
       "type": 0,
@@ -4491,12 +4475,6 @@
     {
       "type": 0,
       "value": "問題"
-    }
-  ],
-  "Ro4+PC": [
-    {
-      "type": 0,
-      "value": "只有在編輯步驟的輸入時才可新增備註。"
     }
   ],
   "Rp5pHU": [
@@ -4785,6 +4763,12 @@
     {
       "type": 0,
       "value": "備註"
+    }
+  ],
+  "TsJbGH": [
+    {
+      "type": 0,
+      "value": "Disconnected"
     }
   ],
   "Ttc0SM": [
@@ -5369,6 +5353,12 @@
       "value": "邏輯應用程式上未設定受控識別。"
     }
   ],
+  "WvvJYw": [
+    {
+      "type": 0,
+      "value": "Actions"
+    }
+  ],
   "X/7je+": [
     {
       "type": 0,
@@ -5917,12 +5907,6 @@
     {
       "type": 0,
       "value": "閱讀更多"
-    }
-  ],
-  "ZbX8xq": [
-    {
-      "type": 0,
-      "value": "已刪除這項作業。"
     }
   ],
   "Zg3IjD": [
@@ -6555,6 +6539,12 @@
       "value": "斜體 (⌘I)"
     }
   ],
+  "en/5A3": [
+    {
+      "type": 0,
+      "value": "Reassign"
+    }
+  ],
   "eo1YKX": [
     {
       "type": 0,
@@ -6924,12 +6914,6 @@
     {
       "type": 0,
       "value": "復原"
-    }
-  ],
-  "hTZZr+": [
-    {
-      "type": 0,
-      "value": "已連線的動作"
     }
   ],
   "hZqQdt": [
@@ -8187,12 +8171,6 @@
       "value": "應用程式內"
     }
   ],
-  "p3K7eM": [
-    {
-      "type": 0,
-      "value": "已中斷連線的動作"
-    }
-  ],
   "p5ZID0": [
     {
       "type": 0,
@@ -8748,6 +8726,12 @@
     {
       "type": 0,
       "value": "索引鍵"
+    }
+  ],
+  "snJFUi": [
+    {
+      "type": 0,
+      "value": "Ctrl+C"
     }
   ],
   "soqP+Z": [
@@ -9646,12 +9630,6 @@
       "value": "值"
     }
   ],
-  "xxeu75": [
-    {
-      "type": 0,
-      "value": "將所有已中斷連線的動作重新指派至新的連線"
-    }
-  ],
   "y1e9yw": [
     {
       "type": 0,
@@ -9900,12 +9878,6 @@
     {
       "type": 0,
       "value": "停止"
-    }
-  ],
-  "ziXw25": [
-    {
-      "type": 0,
-      "value": "刪除"
     }
   ],
   "ziYCiA": [
