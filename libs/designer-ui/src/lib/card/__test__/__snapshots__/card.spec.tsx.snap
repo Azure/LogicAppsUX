@@ -3,7 +3,7 @@
 exports[`lib/card should render 1`] = `
 <div
   style={
-    Object {
+    {
       "position": "relative",
     }
   }
@@ -17,7 +17,7 @@ exports[`lib/card should render 1`] = `
     onKeyDown={[Function]}
     onKeyUp={[Function]}
     style={
-      Object {
+      {
         "borderLeft": "4px solid rgba(71,71,71, 1)",
         "borderRadius": "2px",
       }
@@ -77,7 +77,7 @@ exports[`lib/card should render 1`] = `
 exports[`lib/card should render as cloned 1`] = `
 <div
   style={
-    Object {
+    {
       "position": "relative",
     }
   }
@@ -91,7 +91,7 @@ exports[`lib/card should render as cloned 1`] = `
     onKeyDown={[Function]}
     onKeyUp={[Function]}
     style={
-      Object {
+      {
         "borderLeft": "4px solid rgba(71,71,71, 1)",
         "borderRadius": "2px",
       }
@@ -151,7 +151,7 @@ exports[`lib/card should render as cloned 1`] = `
 exports[`lib/card should render as draggable 1`] = `
 <div
   style={
-    Object {
+    {
       "position": "relative",
     }
   }
@@ -165,7 +165,7 @@ exports[`lib/card should render as draggable 1`] = `
     onKeyDown={[Function]}
     onKeyUp={[Function]}
     style={
-      Object {
+      {
         "borderLeft": "4px solid rgba(71,71,71, 1)",
         "borderRadius": "2px",
       }
@@ -238,7 +238,7 @@ exports[`lib/card should render as draggable 1`] = `
 exports[`lib/card should render as inactive 1`] = `
 <div
   style={
-    Object {
+    {
       "position": "relative",
     }
   }
@@ -252,7 +252,7 @@ exports[`lib/card should render as inactive 1`] = `
     onKeyDown={[Function]}
     onKeyUp={[Function]}
     style={
-      Object {
+      {
         "borderLeft": "4px solid rgba(71,71,71, 1)",
         "borderRadius": "2px",
       }
@@ -312,7 +312,7 @@ exports[`lib/card should render as inactive 1`] = `
 exports[`lib/card should render as selected 1`] = `
 <div
   style={
-    Object {
+    {
       "position": "relative",
     }
   }
@@ -326,7 +326,7 @@ exports[`lib/card should render as selected 1`] = `
     onKeyDown={[Function]}
     onKeyUp={[Function]}
     style={
-      Object {
+      {
         "borderLeft": "4px solid rgba(71,71,71, 1)",
         "borderRadius": "2px",
       }
@@ -386,7 +386,7 @@ exports[`lib/card should render as selected 1`] = `
 exports[`lib/card should render with a context menu 1`] = `
 <div
   style={
-    Object {
+    {
       "position": "relative",
     }
   }
@@ -400,7 +400,7 @@ exports[`lib/card should render with a context menu 1`] = `
     onKeyDown={[Function]}
     onKeyUp={[Function]}
     style={
-      Object {
+      {
         "borderLeft": "4px solid rgba(71,71,71, 1)",
         "borderRadius": "2px",
       }
@@ -460,7 +460,7 @@ exports[`lib/card should render with a context menu 1`] = `
 exports[`lib/card should render with an icon 1`] = `
 <div
   style={
-    Object {
+    {
       "position": "relative",
     }
   }
@@ -474,7 +474,7 @@ exports[`lib/card should render with an icon 1`] = `
     onKeyDown={[Function]}
     onKeyUp={[Function]}
     style={
-      Object {
+      {
         "borderLeft": "4px solid rgba(71,71,71, 1)",
         "borderRadius": "2px",
       }

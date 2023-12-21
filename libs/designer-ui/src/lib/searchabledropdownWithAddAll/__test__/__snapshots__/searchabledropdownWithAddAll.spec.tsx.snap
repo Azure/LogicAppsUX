@@ -11,23 +11,23 @@ exports[`lib/searchabledropdownwithaddall should create a dropdown with an add a
     onDismiss={[Function]}
     onRenderItem={[Function]}
     options={
-      Array [
-        Object {
+      [
+        {
           "key": "foo",
           "text": "Foo",
         },
-        Object {
+        {
           "key": "bar",
           "text": "Bar",
         },
-        Object {
+        {
           "key": "baz",
           "text": "Baz",
         },
       ]
     }
     placeholder="Select an option"
-    selectedKeys={Array []}
+    selectedKeys={[]}
   />
   <div
     className="ms-TooltipHost root-110"
@@ -52,7 +52,7 @@ exports[`lib/searchabledropdownwithaddall should create a dropdown with an add a
       hidden={true}
       id="tooltip0"
       style={
-        Object {
+        {
           "border": 0,
           "height": 1,
           "margin": -1,
@@ -90,7 +90,7 @@ exports[`lib/searchabledropdownwithaddall should create a dropdown with an add a
       hidden={true}
       id="tooltip1"
       style={
-        Object {
+        {
           "border": 0,
           "height": 1,
           "margin": -1,
@@ -119,23 +119,23 @@ exports[`lib/searchabledropdownwithaddall should create a dropdown with an add a
     onDismiss={[Function]}
     onRenderItem={[Function]}
     options={
-      Array [
-        Object {
+      [
+        {
           "key": "foo",
           "text": "Foo",
         },
-        Object {
+        {
           "key": "bar",
           "text": "Bar",
         },
-        Object {
+        {
           "key": "baz",
           "text": "Baz",
         },
       ]
     }
     placeholder="Select an option"
-    selectedKeys={Array []}
+    selectedKeys={[]}
   />
   <div
     className="ms-TooltipHost root-110"
@@ -160,7 +160,7 @@ exports[`lib/searchabledropdownwithaddall should create a dropdown with an add a
       hidden={true}
       id="tooltip2"
       style={
-        Object {
+        {
           "border": 0,
           "height": 1,
           "margin": -1,

@@ -37,7 +37,7 @@ exports[`lib/combobox should render 1`] = `
         role="combobox"
         spellCheck={false}
         style={
-          Object {
+          {
             "fontFamily": "inherit",
           }
         }
@@ -66,8 +66,8 @@ exports[`lib/combobox should render 1`] = `
             className="ms-Icon root-105 css-144 ms-Button-icon icon-138"
             data-icon-name="ChevronDown"
             style={
-              Object {
-                "fontFamily": "\\"FabricMDL2Icons\\"",
+              {
+                "fontFamily": ""FabricMDL2Icons"",
               }
             }
           >

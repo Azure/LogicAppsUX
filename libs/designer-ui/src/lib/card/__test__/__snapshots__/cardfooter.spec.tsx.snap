@@ -39,7 +39,7 @@ exports[`lib/card/cardfooter should render with a comment icon 1`] = `
         hidden={true}
         id="tooltip0"
         style={
-          Object {
+          {
             "border": 0,
             "height": 1,
             "margin": -1,
@@ -87,7 +87,7 @@ exports[`lib/card/cardfooter should render with a connection icon 1`] = `
         hidden={true}
         id="tooltip2"
         style={
-          Object {
+          {
             "border": 0,
             "height": 1,
             "margin": -1,
@@ -135,7 +135,7 @@ exports[`lib/card/cardfooter should render with a lock icon 1`] = `
         hidden={true}
         id="tooltip1"
         style={
-          Object {
+          {
             "border": 0,
             "height": 1,
             "margin": -1,
@@ -183,7 +183,7 @@ exports[`lib/card/cardfooter should render with a testing icon 1`] = `
         hidden={true}
         id="tooltip3"
         style={
-          Object {
+          {
             "border": 0,
             "height": 1,
             "margin": -1,

@@ -9,6 +9,7 @@ export default {
       {
         presets: ['@nx/react/babel'],
         plugins: [
+          ['@babel/plugin-transform-private-methods', { loose: true }],
           [
             'formatjs',
             {
