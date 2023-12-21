@@ -36,6 +36,7 @@ import {
 } from '@microsoft/parsers-logic-apps';
 import type {
   Assertion,
+  AssertionDefintion,
   LocationSwapMap,
   LogicAppsV2,
   OperationManifest,
@@ -1075,15 +1076,11 @@ export const serializeUnitTestDefinition = async (rootState: RootState): Promise
   };
 };
 
-const getAssertions = (assertions: string[]): Assertion[] => {
-  const result: Assertion[] = [];
-  assertions.forEach((assert) => {
-    // if it's an empty assertion, don't add it to the def file
-    if (assert.length > 0) {
-      result.push({ assertionString: assert, description: '' });
-    }
+const getAssertions = (assertions: Record<string, AssertionDefintion>): Assertion[] => {
+  return Object.values(assertions).map((assertion) => {
+    const { name, description } = assertion;
+    return { name, description };
   });
-  return result;
 };
 
 const getTriggerMocks = (mockResults: { [key: string]: string }): Record<string, OperationMock> => {

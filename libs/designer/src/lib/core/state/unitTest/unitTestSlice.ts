@@ -1,5 +1,11 @@
-import type { AddAssertionPayload, AddMockResultPayload, InitDefintionPayload, UnitTestState } from './unitTestInterfaces';
-import { isNullOrUndefined } from '@microsoft/utils-logic-apps';
+import type {
+  UpdateAssertionsPayload,
+  UpdateAssertionPayload,
+  AddMockResultPayload,
+  InitDefintionPayload,
+  UnitTestState,
+} from './unitTestInterfaces';
+import { type Assertion, type AssertionDefintion, guid, isNullOrUndefined } from '@microsoft/utils-logic-apps';
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 
@@ -11,7 +17,15 @@ export interface AddImplicitForeachPayload {
 
 export const initialUnitTestState: UnitTestState = {
   mockResults: {},
-  assertions: [],
+  assertions: {},
+};
+
+const parseAssertions = (assertions: Assertion[]): Record<string, AssertionDefintion> => {
+  return assertions.reduce((acc, assertion) => {
+    const { name, description } = assertion;
+    const id = guid();
+    return { ...acc, [id]: { id, name, description } };
+  }, {});
 };
 
 export const unitTestSlice = createSlice({
@@ -20,8 +34,8 @@ export const unitTestSlice = createSlice({
   reducers: {
     initUnitTestDefinition: (state: UnitTestState, action: PayloadAction<InitDefintionPayload | null>) => {
       if (!isNullOrUndefined(action.payload)) {
-        const { assertions, mockResults } = action.payload;
-        state.assertions = assertions;
+        const { mockResults, assertions } = action.payload;
+        state.assertions = parseAssertions(assertions);
         state.mockResults = mockResults;
       }
     },
@@ -29,13 +43,22 @@ export const unitTestSlice = createSlice({
       const { operationName, mockResult } = action.payload;
       state.mockResults[operationName] = mockResult;
     },
-    addAssertions: (state: UnitTestState, action: PayloadAction<AddAssertionPayload>) => {
+    updateAssertions: (state: UnitTestState, action: PayloadAction<UpdateAssertionsPayload>) => {
       const { assertions } = action.payload;
       state.assertions = assertions;
+    },
+    updateAssertion: (state: UnitTestState, action: PayloadAction<UpdateAssertionPayload>) => {
+      const { assertionToUpdate } = action.payload;
+      const { name, id, description } = assertionToUpdate;
+      state.assertions[id] = {
+        ...state.assertions[id],
+        name,
+        description,
+      };
     },
   },
 });
 
-export const { addAssertions, addMockResult, initUnitTestDefinition } = unitTestSlice.actions;
+export const { updateAssertions, addMockResult, updateAssertion, initUnitTestDefinition } = unitTestSlice.actions;
 
 export default unitTestSlice.reducer;

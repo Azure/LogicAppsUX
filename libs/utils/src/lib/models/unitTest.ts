@@ -4,7 +4,7 @@ export interface OperationMock {
 }
 
 export interface Assertion {
-  assertionString: string;
+  name: string;
   description: string;
 }
 
@@ -12,4 +12,8 @@ export interface UnitTestDefinition {
   triggerMocks: Record<string, OperationMock>;
   actionMocks: Record<string, OperationMock>;
   assertions: Assertion[];
+}
+
+export interface AssertionDefintion extends Assertion {
+  id: string;
 }

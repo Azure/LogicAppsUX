@@ -1421,6 +1421,12 @@
       "value": "\" cannot be found for this operation"
     }
   ],
+  "7PTnxD": [
+    {
+      "type": 0,
+      "value": "New assertion"
+    }
+  ],
   "7PtWvu": [
     {
       "type": 0,
@@ -2835,6 +2841,12 @@
       "value": "Explain flow"
     }
   ],
+  "GX3fkR": [
+    {
+      "type": 0,
+      "value": "New assertion"
+    }
+  ],
   "GXXLuT": [
     {
       "type": 0,
@@ -3535,6 +3547,12 @@
       "value": "Removed this action"
     }
   ],
+  "LdBN0m": [
+    {
+      "type": 0,
+      "value": "Assertion name"
+    }
+  ],
   "LdITnG": [
     {
       "type": 0,
@@ -4225,6 +4243,12 @@
     {
       "type": 0,
       "value": "Workflow functions"
+    }
+  ],
+  "PhBS5+": [
+    {
+      "type": 0,
+      "value": "Enter name"
     }
   ],
   "PjBcG3": [
@@ -5447,12 +5471,6 @@
       "value": "Tenant"
     }
   ],
-  "X5d+tr": [
-    {
-      "type": 0,
-      "value": "Create assertion"
-    }
-  ],
   "X7X5ew": [
     {
       "type": 0,
@@ -6513,6 +6531,12 @@
       "value": "Warnings"
     }
   ],
+  "dzPAxq": [
+    {
+      "type": 0,
+      "value": "Edit assertion"
+    }
+  ],
   "e+GuGo": [
     {
       "type": 0,
@@ -6995,6 +7019,12 @@
     {
       "type": 0,
       "value": "Undo"
+    }
+  ],
+  "hW7oe7": [
+    {
+      "type": 0,
+      "value": "Enter description"
     }
   ],
   "hZqQdt": [
@@ -7505,6 +7535,12 @@
     {
       "type": 0,
       "value": "(UTC-05:00) Bogota, Lima, Quito, Rio Branco"
+    }
+  ],
+  "kSXjTx": [
+    {
+      "type": 0,
+      "value": "No description"
     }
   ],
   "kVwJXt": [
@@ -8747,6 +8783,12 @@
     {
       "type": 0,
       "value": "Open folder"
+    }
+  ],
+  "s4omwa": [
+    {
+      "type": 0,
+      "value": "Description"
     }
   ],
   "s5RV9B": [

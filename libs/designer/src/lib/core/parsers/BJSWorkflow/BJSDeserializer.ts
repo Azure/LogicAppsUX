@@ -110,7 +110,12 @@ export const Deserialize = (
   };
 };
 
-export const deserializeUnitTestDefinition = (unitTestDefinition: UnitTestDefinition | null): any => {
+export const deserializeUnitTestDefinition = (
+  unitTestDefinition: UnitTestDefinition | null
+): {
+  assertions: Assertion[];
+  mockResults: { [key: string]: string };
+} | null => {
   if (isNullOrUndefined(unitTestDefinition)) return null;
   // deserialize mocks
   const mockResults: { [key: string]: string } = {};
@@ -121,8 +126,7 @@ export const deserializeUnitTestDefinition = (unitTestDefinition: UnitTestDefini
   });
 
   // deserialize assertions
-  const assertions = unitTestDefinition.assertions.map((assertionObj: Assertion) => assertionObj.assertionString);
-  return { mockResults, assertions };
+  return { mockResults, assertions: unitTestDefinition.assertions };
 };
 
 const isScopeAction = (action: LogicAppsV2.ActionDefinition): action is LogicAppsV2.ScopeAction => {
