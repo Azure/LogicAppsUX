@@ -18,6 +18,7 @@ export interface AssertionUpdateEvent {
   id: string;
   name: string;
   description: string;
+  expression: any; //TODO: Change to condition object type
 }
 
 export interface AssertionDeleteEvent {
@@ -64,7 +65,7 @@ export function Assertion({ isInverted, assertion, onAssertionUpdate, onAssertio
 
   const handleSave: React.MouseEventHandler<HTMLButtonElement> = (): void => {
     setIsEditable(false);
-    onAssertionUpdate({ name: name, description: description, id: assertion.id });
+    onAssertionUpdate({ name: name, description: description, id: assertion.id, expression: {} });
   };
 
   const handleDelete: React.MouseEventHandler<HTMLButtonElement> = (): void => {

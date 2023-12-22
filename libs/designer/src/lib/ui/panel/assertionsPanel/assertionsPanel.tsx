@@ -200,8 +200,8 @@ export const AssertionsPanel = (props: CommonPanelProps) => {
   };
 
   const onAssertionUpdate = (event: AssertionUpdateEvent) => {
-    const { name, description, id } = event;
-    const assertionToUpdate = { name: name, description: description, id: id, expression: {} };
+    const { name, description, id, expression } = event;
+    const assertionToUpdate = { name: name, description: description, id: id, expression: expression };
     dispatch(updateAssertion({ assertionToUpdate }));
 
     const newAssertions = { ...assertions };

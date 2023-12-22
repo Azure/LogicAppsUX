@@ -111,7 +111,7 @@ export const AssertionField = ({
   };
 
   const onExpressionChange = (newState: ChangeState): void => {
-    setExpression(newState);
+    setExpression(newState.viewModel);
   };
 
   return (
