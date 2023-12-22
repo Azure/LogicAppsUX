@@ -26,13 +26,16 @@ import type {
 import {
   Capabilities,
   ConnectionParameterTypes,
+  ResourceIdentityType,
   SERVICE_PRINCIPLE_CONSTANTS,
   connectorContainsAllServicePrinicipalConnectionParameters,
+  equals,
   filterRecord,
   getPropertyValue,
   isServicePrinicipalConnectionParameter,
   usesLegacyManagedIdentity,
 } from '@microsoft/utils-logic-apps';
+import { isUserAssignedIdentitySupportedForInApp } from 'libs/designer/src/lib/core/utils/connectors/connections';
 import fromPairs from 'lodash.frompairs';
 import type { FormEvent } from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -171,6 +174,13 @@ export const CreateConnection = (props: CreateConnectionProps) => {
     [selectedParamSetIndex, showLegacyMultiAuth]
   );
 
+  const showIdentityPicker = useMemo(() =>
+    isMultiAuth &&
+    isUserAssignedIdentitySupportedForInApp(connectorCapabilities) && identity?.type?.toLowerCase()?.includes(ResourceIdentityType.USER_ASSIGNED.toLowerCase()) &&
+    equals(connectionParameterSets?.values[selectedParamSetIndex].name, 'ManagedServiceIdentity'),
+    [connectionParameterSets?.values, connectorCapabilities, identity?.type, isMultiAuth, selectedParamSetIndex]
+  );
+
   const [selectedManagedIdentity, setSelectedManagedIdentity] = useState<string | undefined>(undefined);
 
   const onLegacyManagedIdentityChange = useCallback((_: any, option?: IDropdownOption<any>) => {
@@ -294,7 +304,7 @@ export const CreateConnection = (props: CreateConnectionProps) => {
     }
 
     const alternativeParameterValues = legacyManagedIdentitySelected ? {} : undefined;
-    const identitySelected = legacyManagedIdentitySelected ? selectedManagedIdentity : undefined;
+    const identitySelected = legacyManagedIdentitySelected || showIdentityPicker ? selectedManagedIdentity : undefined;
 
     return createConnectionCallback?.(
       showNameInput ? connectionDisplayName : undefined,
@@ -304,21 +314,7 @@ export const CreateConnection = (props: CreateConnectionProps) => {
       alternativeParameterValues,
       identitySelected
     );
-  }, [
-    parameterValues,
-    supportsServicePrincipalConnection,
-    unfilteredParameters,
-    legacyManagedIdentitySelected,
-    selectedManagedIdentity,
-    createConnectionCallback,
-    showNameInput,
-    connectionDisplayName,
-    connectionParameterSets?.values,
-    selectedParamSetIndex,
-    isUsingOAuth,
-    capabilityEnabledParameters,
-    servicePrincipalSelected,
-  ]);
+  }, [parameterValues, supportsServicePrincipalConnection, unfilteredParameters, legacyManagedIdentitySelected, showIdentityPicker, selectedManagedIdentity, createConnectionCallback, showNameInput, connectionDisplayName, connectionParameterSets?.values, selectedParamSetIndex, isUsingOAuth, capabilityEnabledParameters, servicePrincipalSelected]);
 
   // INTL STRINGS
 
@@ -558,6 +554,16 @@ export const CreateConnection = (props: CreateConnectionProps) => {
               onChange={onAuthDropdownChange}
               connectionParameterSets={connectionParameterSets}
             />
+          )}
+
+          {/* Managed Identity Selection for In-App Connectors */}
+          {showIdentityPicker && (
+            <div className="param-row">
+              <Label className="label" required htmlFor={'connection-param-set-select'} disabled={isLoading}>
+                {legacyManagedIdentityLabelText}
+              </Label>
+              <LegacyManagedIdentityDropdown identity={identity} onChange={onLegacyManagedIdentityChange} disabled={isLoading} />
+            </div>
           )}
 
           {/* Connector Parameters */}

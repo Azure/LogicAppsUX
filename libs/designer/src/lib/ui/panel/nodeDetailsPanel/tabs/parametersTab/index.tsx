@@ -138,7 +138,7 @@ export const ParametersTab = () => {
           hasError={errorInfo?.level === ErrorLevel.Connection}
         />
       ) : null}
-      {showIdentitySelector.data ? <IdentitySelector nodeId={selectedNodeId} readOnly={!!readOnly} /> : null}
+      {showIdentitySelector ? <IdentitySelector nodeId={selectedNodeId} readOnly={!!readOnly} /> : null}
     </>
   );
 };

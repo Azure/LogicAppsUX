@@ -10,7 +10,7 @@ import {
   OperationManifestService,
   isServiceProviderOperation,
 } from '@microsoft/designer-client-services-logic-apps';
-import type { Connector } from '@microsoft/utils-logic-apps';
+import { type Connector } from '@microsoft/utils-logic-apps';
 import { useMemo } from 'react';
 import { useQuery } from 'react-query';
 import { useSelector } from 'react-redux';
@@ -109,25 +109,13 @@ export const useIsOperationMissingConnection = (nodeId: string) => {
 export const useShowIdentitySelectorQuery = (nodeId: string) => {
   const connector = useConnectorByNodeId(nodeId);
   const connectionQuery = useConnectionByNodeId(nodeId);
-
   const operationInfo = useOperationInfo(nodeId);
   const connectionReference = useSelector((state: RootState) => getConnectionReference(state.connections, nodeId));
 
-  return useQuery(
-    ['showIdentitySelector', { nodeId }],
-    () => {
-      if (connectionReference && !isServiceProviderOperation(operationInfo?.type) && !connectionQuery.isLoading) {
-        return isConnectionMultiAuthManagedIdentityType(connectionQuery.data, connector);
-      }
-      return false;
-    },
-    {
-      enabled: !connectionQuery.isLoading && !!operationInfo?.connectorId,
-      placeholderData: false,
-      cacheTime: 1000 * 60 * 60 * 24,
-      refetchOnMount: false,
-      refetchOnWindowFocus: false,
-      refetchOnReconnect: false,
+  return useMemo(() => {
+    if (connectionReference && !connectionQuery.isLoading && !isServiceProviderOperation(operationInfo?.type)) {
+      return isConnectionMultiAuthManagedIdentityType(connectionQuery.data, connector);
     }
-  );
+    return false;
+  }, [connectionQuery, connectionReference, connector, operationInfo.type]);
 };
