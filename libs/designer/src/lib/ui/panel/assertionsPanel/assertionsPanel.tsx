@@ -186,7 +186,6 @@ export const AssertionsPanel = (props: CommonPanelProps) => {
   const dispatch = useDispatch<AppDispatch>();
 
   const tokens = useTokens();
-  console.log('tokenGroup', tokens);
 
   const onClose = () => {
     props.toggleCollapse?.();

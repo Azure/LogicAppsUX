@@ -65,7 +65,7 @@ export function Assertion({ isInverted, assertion, onAssertionUpdate, onAssertio
 
   const handleSave: React.MouseEventHandler<HTMLButtonElement> = (): void => {
     setIsEditable(false);
-    onAssertionUpdate({ name: name, description: description, id: assertion.id, expression: {} });
+    onAssertionUpdate({ name: name, description: description, id: assertion.id, expression: expression });
   };
 
   const handleDelete: React.MouseEventHandler<HTMLButtonElement> = (): void => {
