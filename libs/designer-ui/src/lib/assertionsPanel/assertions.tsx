@@ -1,5 +1,11 @@
 import { isHighContrastBlack } from '../utils';
-import { type AssertionUpdateHandler, type AssertionDeleteHandler, type AssertionAddHandler, Assertion } from './assertion';
+import {
+  type AssertionUpdateHandler,
+  type AssertionDeleteHandler,
+  type AssertionAddHandler,
+  Assertion,
+  type GetAssertionTokenPickerHandler,
+} from './assertion';
 import { IconButton, List, Text, useTheme, ActionButton } from '@fluentui/react';
 import type { AssertionDefintion } from '@microsoft/utils-logic-apps';
 import { useIntl } from 'react-intl';
@@ -12,6 +18,7 @@ export interface AssertionsProps {
   onAssertionAdd: AssertionAddHandler;
   onAssertionUpdate: AssertionUpdateHandler;
   onAssertionDelete: AssertionDeleteHandler;
+  getTokenPicker: GetAssertionTokenPickerHandler;
 }
 
 export const EXPRESSION_DEFAULT = {
@@ -22,7 +29,14 @@ export const EXPRESSION_DEFAULT = {
   ],
 };
 
-export function Assertions({ assertions, onDismiss, onAssertionAdd, onAssertionUpdate, onAssertionDelete }: AssertionsProps): JSX.Element {
+export function Assertions({
+  assertions,
+  onDismiss,
+  onAssertionAdd,
+  onAssertionUpdate,
+  onAssertionDelete,
+  getTokenPicker,
+}: AssertionsProps): JSX.Element {
   const intl = useIntl();
   const theme = useTheme();
   const isInverted = isHighContrastBlack() || theme.isInverted;
@@ -60,6 +74,7 @@ export function Assertions({ assertions, onDismiss, onAssertionAdd, onAssertionU
         onAssertionDelete={onAssertionDelete}
         onAssertionUpdate={onAssertionUpdate}
         isInverted={isInverted}
+        getTokenPicker={getTokenPicker}
       />
     );
   };

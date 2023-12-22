@@ -1,4 +1,6 @@
+import type { ValueSegment } from '../editor';
 import type { EventHandler } from '../eventhandler';
+import type { TokenPickerMode } from '../tokenpicker';
 import { AssertionButtons } from './assertionButtons';
 import { AssertionField } from './assertionField';
 import type { IButtonStyles, IIconProps } from '@fluentui/react';
@@ -31,15 +33,23 @@ export interface AssertionAddEvent {
 export type AssertionDeleteHandler = EventHandler<AssertionDeleteEvent>;
 export type AssertionUpdateHandler = EventHandler<AssertionUpdateEvent>;
 export type AssertionAddHandler = EventHandler<AssertionAddEvent>;
+export type GetAssertionTokenPickerHandler = (
+  editorId: string,
+  labelId: string,
+  type: string,
+  tokenPickerMode?: TokenPickerMode,
+  tokenClickedCallback?: (token: ValueSegment) => void
+) => JSX.Element;
 
 export interface AssertionProps {
   assertion: AssertionDefintion;
   onAssertionDelete: AssertionDeleteHandler;
   onAssertionUpdate: AssertionUpdateHandler;
   isInverted: boolean;
+  getTokenPicker: GetAssertionTokenPickerHandler;
 }
 
-export function Assertion({ isInverted, assertion, onAssertionUpdate, onAssertionDelete }: AssertionProps): JSX.Element {
+export function Assertion({ isInverted, assertion, onAssertionUpdate, onAssertionDelete, getTokenPicker }: AssertionProps): JSX.Element {
   const [expanded, setExpanded] = useState(false);
   const [isEditable, setIsEditable] = useState(false);
   const [name, setName] = useState(assertion.name);
@@ -96,6 +106,7 @@ export function Assertion({ isInverted, assertion, onAssertionUpdate, onAssertio
             setDescription={setDescription}
             setExpression={setExpression}
             isEditable={isEditable}
+            getTokenPicker={getTokenPicker}
           />
         ) : null}
       </div>

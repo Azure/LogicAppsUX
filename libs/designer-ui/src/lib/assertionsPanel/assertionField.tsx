@@ -1,6 +1,8 @@
 import type { ValueSegment } from '../editor';
 import type { ChangeState } from '../editor/base';
 import { TokenField } from '../settings/settingsection/settingTokenField';
+import type { TokenPickerMode } from '../tokenpicker';
+import type { GetAssertionTokenPickerHandler } from './assertion';
 import type { ILabelStyles, IStyle, ITextFieldStyles } from '@fluentui/react';
 import { Label, Text, TextField } from '@fluentui/react';
 import { isEmptyString } from '@microsoft/utils-logic-apps';
@@ -46,6 +48,7 @@ export interface AssertionFieldProps {
   setExpression: React.Dispatch<React.SetStateAction<any>>;
   isEditable?: boolean;
   isReadOnly?: boolean;
+  getTokenPicker: GetAssertionTokenPickerHandler;
 }
 
 export const AssertionField = ({
@@ -56,6 +59,7 @@ export const AssertionField = ({
   expression,
   isEditable,
   isReadOnly,
+  getTokenPicker,
 }: AssertionFieldProps): JSX.Element => {
   const intl = useIntl();
   const [tokenMapping, _setTokenMapping] = useState<Record<string, ValueSegment>>({});
@@ -107,8 +111,6 @@ export const AssertionField = ({
   const onExpressionChange = (newState: ChangeState): void => {
     console.log('charlie', newState);
   };
-
-  console.log('charlie expression', expression);
 
   return (
     <>
@@ -173,22 +175,18 @@ export const AssertionField = ({
               tokenEditor={true}
               value={[]}
               tokenMapping={tokenMapping}
-              getTokenPicker={() => {
-                return <div>{'Token Picker'}</div>;
-              }}
+              getTokenPicker={(
+                editorId: string,
+                labelId: string,
+                tokenPickerMode?: TokenPickerMode,
+                editorType?: string,
+                setIsInTokenPicker?: (b: boolean) => void,
+                tokenClickedCallback?: (token: ValueSegment) => void
+              ) => getTokenPicker(editorId, labelId, 'any', tokenPickerMode, tokenClickedCallback)}
               onCastParameter={() => ''}
               onValueChange={onExpressionChange}
             />
-          ) : // <QueryBuilderEditor
-          //   readonly={readOnly}
-          //   groupProps={JSON.parse(JSON.stringify(editorViewModel.items))}
-          //   onChange={onValueChange}
-          //   tokenMapping={tokenMapping}
-          //   loadParameterValueFromString={loadParameterValueFromString}
-          //   getTokenPicker={getTokenPicker}
-          //   showDescription={true}
-          // />
-          null}
+          ) : null}
         </div>
       </div>
     </>
