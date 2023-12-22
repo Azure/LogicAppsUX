@@ -32,18 +32,18 @@ const textFieldStyles: Partial<ITextFieldStyles> = {
 
 const DESCRIPTION_KEY = 'description';
 const NAME_KEY = 'name';
-const CONDITION_KEY = 'condition';
+const EXPRESSION_KEY = 'expression';
 
 export interface ParameterFieldDetails {
   description: string;
   name: string;
-  condition: any; //TODO(ccastrotrejo): Change to condition object type
+  expression: string; //TODO(ccastrotrejo): Change to condition object type
 }
 
 export interface AssertionFieldProps {
   name: string;
   description: string;
-  expression: any;
+  expression: Record<string, any>;
   setName: React.Dispatch<React.SetStateAction<string>>;
   setDescription: React.Dispatch<React.SetStateAction<string>>;
   setExpression: React.Dispatch<React.SetStateAction<any>>;
@@ -69,7 +69,7 @@ export const AssertionField = ({
   const parameterDetails: ParameterFieldDetails = {
     description: `${name}-${DESCRIPTION_KEY}`,
     name: `${name}-${NAME_KEY}`,
-    condition: `${name}-${CONDITION_KEY}`,
+    expression: `${name}-${EXPRESSION_KEY}`,
   };
 
   const nameTitle = intl.formatMessage({
@@ -162,7 +162,7 @@ export const AssertionField = ({
       </div>
       <div className="msla-assertion-condition">
         {isEditable ? (
-          <Label styles={labelStyles} required={true} htmlFor={parameterDetails.condition}>
+          <Label styles={labelStyles} required={true} htmlFor={parameterDetails.expression}>
             {conditionTitle}
           </Label>
         ) : null}
