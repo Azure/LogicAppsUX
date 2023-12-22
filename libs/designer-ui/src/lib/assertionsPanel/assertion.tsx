@@ -38,6 +38,7 @@ export type GetAssertionTokenPickerHandler = (
   labelId: string,
   type: string,
   tokenPickerMode?: TokenPickerMode,
+  setIsTokenPickerOpened?: (b: boolean) => void,
   tokenClickedCallback?: (token: ValueSegment) => void
 ) => JSX.Element;
 

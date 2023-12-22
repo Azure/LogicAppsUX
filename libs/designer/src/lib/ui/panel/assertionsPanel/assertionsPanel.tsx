@@ -82,8 +82,6 @@ export const useTokens = (): { outputTokensWithValues: TokenGroup[]; variableTok
     ];
   }, [variables]);
 
-  console.log('charlie', variables, variableTokens);
-
   const outputTokensWithValues = useMemo(() => {
     return Object.keys(outputTokens).map((tokenKey) => {
       const tokensArray = outputTokens[tokenKey].tokens.map((token) => {
@@ -158,6 +156,7 @@ const getTokenPicker = (
   tokenGroup: TokenGroup[],
   expressionGroup: TokenGroup[],
   tokenPickerMode?: TokenPickerMode,
+  setIsTokenPickerOpened?: (b: boolean) => void,
   tokenClickedCallback?: (token: ValueSegment) => void
 ): JSX.Element => {
   const supportedTypes: string[] = getPropertyValue(Constants.TOKENS, type);
@@ -173,6 +172,7 @@ const getTokenPicker = (
       tokenGroup={filteredTokens}
       filteredTokenGroup={filteredTokens}
       expressionGroup={expressionGroup}
+      setIsTokenPickerOpened={setIsTokenPickerOpened}
       initialMode={tokenPickerMode}
       getValueSegmentFromToken={(token: OutputToken) => Promise.resolve(getValueSegmentFromToken(token))}
       tokenClickedCallback={tokenClickedCallback}
@@ -230,6 +230,7 @@ export const AssertionsPanel = (props: CommonPanelProps) => {
       labelId: string,
       type: string,
       tokenPickerMode?: TokenPickerMode,
+      setIsTokenPickerOpened?: (b: boolean) => void,
       tokenClickedCallback?: (token: ValueSegment) => void
     ) => {
       return getTokenPicker(
@@ -239,6 +240,7 @@ export const AssertionsPanel = (props: CommonPanelProps) => {
         [...tokens.outputTokensWithValues, ...tokens.variableTokens],
         tokens.expressionTokens,
         tokenPickerMode,
+        setIsTokenPickerOpened,
         tokenClickedCallback
       );
     },

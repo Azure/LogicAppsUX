@@ -1,3 +1,4 @@
+import constants from '../constants';
 import type { ValueSegment } from '../editor';
 import type { ChangeState } from '../editor/base';
 import { TokenField } from '../settings/settingsection/settingTokenField';
@@ -56,6 +57,7 @@ export const AssertionField = ({
   description,
   setName,
   setDescription,
+  setExpression,
   expression,
   isEditable,
   isReadOnly,
@@ -109,7 +111,7 @@ export const AssertionField = ({
   };
 
   const onExpressionChange = (newState: ChangeState): void => {
-    console.log('charlie', newState);
+    setExpression(newState);
   };
 
   return (
@@ -179,10 +181,10 @@ export const AssertionField = ({
                 editorId: string,
                 labelId: string,
                 tokenPickerMode?: TokenPickerMode,
-                editorType?: string,
+                _editorType?: string,
                 setIsInTokenPicker?: (b: boolean) => void,
                 tokenClickedCallback?: (token: ValueSegment) => void
-              ) => getTokenPicker(editorId, labelId, 'any', tokenPickerMode, tokenClickedCallback)}
+              ) => getTokenPicker(editorId, labelId, constants.SWAGGER.TYPE.ANY, tokenPickerMode, setIsInTokenPicker, tokenClickedCallback)}
               onCastParameter={() => ''}
               onValueChange={onExpressionChange}
             />
