@@ -22,9 +22,9 @@ export const initialUnitTestState: UnitTestState = {
 
 const parseAssertions = (assertions: Assertion[]): Record<string, AssertionDefintion> => {
   return assertions.reduce((acc, assertion) => {
-    const { name, description } = assertion;
+    const { name, description, expression } = assertion;
     const id = guid();
-    return { ...acc, [id]: { id, name, description } };
+    return { ...acc, [id]: { id, name, description, expression } };
   }, {});
 };
 

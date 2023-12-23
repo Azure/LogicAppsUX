@@ -121,7 +121,10 @@ export const deserializeUnitTestDefinition = (
   // deserialize mocks
   const mockResults: { [key: string]: string } = {};
   const triggerName = Object.keys(unitTestDefinition.triggerMocks)[0]; // only 1 trigger
-  mockResults[`&${triggerName}`] = JSON.stringify(unitTestDefinition.triggerMocks[triggerName], null, 4);
+
+  if (triggerName) {
+    mockResults[`&${triggerName}`] = JSON.stringify(unitTestDefinition.triggerMocks[triggerName], null, 4);
+  }
   Object.keys(unitTestDefinition.actionMocks).forEach((actionName) => {
     mockResults[actionName] = JSON.stringify(unitTestDefinition.actionMocks[actionName], null, 4);
   });
