@@ -22,9 +22,9 @@ export const initialUnitTestState: UnitTestState = {
 
 const parseAssertions = (assertions: Assertion[]): Record<string, AssertionDefintion> => {
   return assertions.reduce((acc, assertion) => {
-    const { name, description } = assertion;
+    const { name, description, expression } = assertion;
     const id = guid();
-    return { ...acc, [id]: { id, name, description } };
+    return { ...acc, [id]: { id, name, description, expression } };
   }, {});
 };
 
@@ -49,11 +49,12 @@ export const unitTestSlice = createSlice({
     },
     updateAssertion: (state: UnitTestState, action: PayloadAction<UpdateAssertionPayload>) => {
       const { assertionToUpdate } = action.payload;
-      const { name, id, description } = assertionToUpdate;
+      const { name, id, description, expression } = assertionToUpdate;
       state.assertions[id] = {
         ...state.assertions[id],
         name,
         description,
+        expression,
       };
     },
   },

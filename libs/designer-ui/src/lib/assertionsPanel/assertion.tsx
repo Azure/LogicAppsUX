@@ -1,4 +1,6 @@
+import type { ValueSegment } from '../editor';
 import type { EventHandler } from '../eventhandler';
+import type { TokenPickerMode } from '../tokenpicker';
 import { AssertionButtons } from './assertionButtons';
 import { AssertionField } from './assertionField';
 import type { IButtonStyles, IIconProps } from '@fluentui/react';
@@ -16,6 +18,7 @@ export interface AssertionUpdateEvent {
   id: string;
   name: string;
   description: string;
+  expression: Record<string, any>;
 }
 
 export interface AssertionDeleteEvent {
@@ -25,24 +28,35 @@ export interface AssertionDeleteEvent {
 export interface AssertionAddEvent {
   name: string;
   description: string;
+  expression: Record<string, any>;
 }
 
 export type AssertionDeleteHandler = EventHandler<AssertionDeleteEvent>;
 export type AssertionUpdateHandler = EventHandler<AssertionUpdateEvent>;
 export type AssertionAddHandler = EventHandler<AssertionAddEvent>;
+export type GetAssertionTokenPickerHandler = (
+  editorId: string,
+  labelId: string,
+  type: string,
+  tokenPickerMode?: TokenPickerMode,
+  setIsTokenPickerOpened?: (b: boolean) => void,
+  tokenClickedCallback?: (token: ValueSegment) => void
+) => JSX.Element;
 
 export interface AssertionProps {
   assertion: AssertionDefintion;
   onAssertionDelete: AssertionDeleteHandler;
   onAssertionUpdate: AssertionUpdateHandler;
   isInverted: boolean;
+  getTokenPicker: GetAssertionTokenPickerHandler;
 }
 
-export function Assertion({ isInverted, assertion, onAssertionUpdate, onAssertionDelete }: AssertionProps): JSX.Element {
+export function Assertion({ isInverted, assertion, onAssertionUpdate, onAssertionDelete, getTokenPicker }: AssertionProps): JSX.Element {
   const [expanded, setExpanded] = useState(false);
   const [isEditable, setIsEditable] = useState(false);
   const [name, setName] = useState(assertion.name);
   const [description, setDescription] = useState(assertion.description);
+  const [expression, setExpression] = useState(assertion.expression);
 
   const handleEdit: React.MouseEventHandler<HTMLButtonElement> = (): void => {
     setIsEditable(true);
@@ -51,7 +65,7 @@ export function Assertion({ isInverted, assertion, onAssertionUpdate, onAssertio
 
   const handleSave: React.MouseEventHandler<HTMLButtonElement> = (): void => {
     setIsEditable(false);
-    onAssertionUpdate({ name: name, description: description, id: assertion.id });
+    onAssertionUpdate({ name: name, description: description, id: assertion.id, expression: expression });
   };
 
   const handleDelete: React.MouseEventHandler<HTMLButtonElement> = (): void => {
@@ -86,7 +100,16 @@ export function Assertion({ isInverted, assertion, onAssertionUpdate, onAssertio
       </div>
       <div className="msla-workflow-assertion-content">
         {expanded ? (
-          <AssertionField name={name} description={description} setName={setName} setDescription={setDescription} isEditable={isEditable} />
+          <AssertionField
+            name={name}
+            description={description}
+            expression={expression}
+            setName={setName}
+            setDescription={setDescription}
+            setExpression={setExpression}
+            isEditable={isEditable}
+            getTokenPicker={getTokenPicker}
+          />
         ) : null}
       </div>
     </div>

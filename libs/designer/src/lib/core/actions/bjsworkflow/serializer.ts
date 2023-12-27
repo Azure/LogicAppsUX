@@ -14,6 +14,7 @@ import {
   getAndEscapeSegment,
   getEncodeValue,
   getJSONValueFromString,
+  getStringifiedValueFromEditorViewModel,
   parameterValueToString,
 } from '../../utils/parameters/helper';
 import { buildOperationDetailsFromControls } from '../../utils/swagger/inputsbuilder';
@@ -1078,8 +1079,24 @@ export const serializeUnitTestDefinition = async (rootState: RootState): Promise
 
 const getAssertions = (assertions: Record<string, AssertionDefintion>): Assertion[] => {
   return Object.values(assertions).map((assertion) => {
-    const { name, description } = assertion;
-    return { name, description };
+    const { name, description, expression, id } = assertion;
+    const stringifiedExpression = getStringifiedValueFromEditorViewModel(
+      {
+        editor: 'condition',
+        editorViewModel: expression,
+        suppressCasting: false,
+        id: id,
+        label: `condition-${id}`,
+        info: {},
+        type: '',
+        required: true,
+        parameterKey: id,
+        parameterName: `condition-${id}`,
+        value: [],
+      },
+      false
+    );
+    return { name, description, expression: JSON.parse(stringifiedExpression ?? '') };
   });
 };
 

@@ -3,6 +3,7 @@ import constants from '../../../common/constants';
 import { UnsupportedException, UnsupportedExceptionCode } from '../../../common/exceptions/unsupported';
 import type { Operations, NodesMetadata } from '../../state/workflow/workflowInterfaces';
 import { createWorkflowNode, createWorkflowEdge } from '../../utils/graph';
+import { toConditionViewModel } from '../../utils/parameters/helper';
 import type { WorkflowNode, WorkflowEdge } from '../models/workflowNode';
 import { LoggerService, Status } from '@microsoft/designer-client-services-logic-apps';
 import { getDurationStringPanelMode } from '@microsoft/designer-ui';
@@ -120,13 +121,21 @@ export const deserializeUnitTestDefinition = (
   // deserialize mocks
   const mockResults: { [key: string]: string } = {};
   const triggerName = Object.keys(unitTestDefinition.triggerMocks)[0]; // only 1 trigger
-  mockResults[`&${triggerName}`] = JSON.stringify(unitTestDefinition.triggerMocks[triggerName], null, 4);
+
+  if (triggerName) {
+    mockResults[`&${triggerName}`] = JSON.stringify(unitTestDefinition.triggerMocks[triggerName], null, 4);
+  }
   Object.keys(unitTestDefinition.actionMocks).forEach((actionName) => {
     mockResults[actionName] = JSON.stringify(unitTestDefinition.actionMocks[actionName], null, 4);
   });
 
   // deserialize assertions
-  return { mockResults, assertions: unitTestDefinition.assertions };
+  const assertions = Object.values(unitTestDefinition.assertions).map((assertion) => {
+    const { name, description, expression } = assertion;
+    return { name, description, expression: toConditionViewModel(expression) };
+  });
+
+  return { mockResults, assertions: assertions };
 };
 
 const isScopeAction = (action: LogicAppsV2.ActionDefinition): action is LogicAppsV2.ScopeAction => {

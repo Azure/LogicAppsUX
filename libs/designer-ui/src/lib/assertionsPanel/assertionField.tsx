@@ -1,3 +1,9 @@
+import constants from '../constants';
+import type { ValueSegment } from '../editor';
+import type { ChangeState } from '../editor/base';
+import { TokenField } from '../settings/settingsection/settingTokenField';
+import type { TokenPickerMode } from '../tokenpicker';
+import type { GetAssertionTokenPickerHandler } from './assertion';
 import type { ILabelStyles, IStyle, ITextFieldStyles } from '@fluentui/react';
 import { Label, Text, TextField } from '@fluentui/react';
 import { isEmptyString } from '@microsoft/utils-logic-apps';
@@ -25,19 +31,24 @@ const textFieldStyles: Partial<ITextFieldStyles> = {
 
 const DESCRIPTION_KEY = 'description';
 const NAME_KEY = 'name';
+const EXPRESSION_KEY = 'expression';
 
 export interface ParameterFieldDetails {
   description: string;
   name: string;
+  expression: string;
 }
 
 export interface AssertionFieldProps {
   name: string;
   description: string;
+  expression: Record<string, any>;
   setName: React.Dispatch<React.SetStateAction<string>>;
   setDescription: React.Dispatch<React.SetStateAction<string>>;
+  setExpression: React.Dispatch<React.SetStateAction<Record<string, any>>>;
   isEditable?: boolean;
   isReadOnly?: boolean;
+  getTokenPicker: GetAssertionTokenPickerHandler;
 }
 
 export const AssertionField = ({
@@ -45,14 +56,18 @@ export const AssertionField = ({
   description,
   setName,
   setDescription,
+  setExpression,
+  expression,
   isEditable,
   isReadOnly,
+  getTokenPicker,
 }: AssertionFieldProps): JSX.Element => {
   const intl = useIntl();
 
   const parameterDetails: ParameterFieldDetails = {
     description: `${name}-${DESCRIPTION_KEY}`,
     name: `${name}-${NAME_KEY}`,
+    expression: `${name}-${EXPRESSION_KEY}`,
   };
 
   const nameTitle = intl.formatMessage({
@@ -63,6 +78,11 @@ export const AssertionField = ({
   const descriptionTitle = intl.formatMessage({
     defaultMessage: 'Description',
     description: 'Assertion field description title',
+  });
+
+  const conditionTitle = intl.formatMessage({
+    defaultMessage: 'Condition expression',
+    description: 'Assertion field condition title',
   });
 
   const noDescription = intl.formatMessage({
@@ -86,6 +106,10 @@ export const AssertionField = ({
 
   const onNameChange = (_event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string): void => {
     setName(newValue ?? '');
+  };
+
+  const onExpressionChange = (newState: ChangeState): void => {
+    setExpression(newState.viewModel);
   };
 
   return (
@@ -133,6 +157,46 @@ export const AssertionField = ({
         ) : (
           <Text className="msla-assertion-field-read-only">{description}</Text>
         )}
+      </div>
+      <div className="msla-assertion-condition">
+        {isEditable ? (
+          <Label styles={labelStyles} required={true} htmlFor={parameterDetails.expression}>
+            {conditionTitle}
+          </Label>
+        ) : null}
+        <div className="msla-assertion-condition-editor">
+          {isEditable ? (
+            <TokenField
+              editor="condition"
+              editorViewModel={expression ?? {}}
+              readOnly={false}
+              label="Condition"
+              labelId="condition-label"
+              tokenEditor={true}
+              value={[]}
+              tokenMapping={{}}
+              getTokenPicker={(
+                editorId: string,
+                labelId: string,
+                tokenPickerMode?: TokenPickerMode,
+                editorType?: string,
+                setIsInTokenPicker?: (b: boolean) => void,
+                tokenClickedCallback?: (token: ValueSegment) => void
+              ) =>
+                getTokenPicker(
+                  editorId,
+                  labelId,
+                  editorType ?? constants.SWAGGER.TYPE.ANY,
+                  tokenPickerMode,
+                  setIsInTokenPicker,
+                  tokenClickedCallback
+                )
+              }
+              onCastParameter={() => ''}
+              onValueChange={onExpressionChange}
+            />
+          ) : null}
+        </div>
       </div>
     </>
   );
