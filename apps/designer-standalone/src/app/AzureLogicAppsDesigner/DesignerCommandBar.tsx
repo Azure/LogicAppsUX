@@ -94,8 +94,8 @@ export const DesignerCommandBar = ({
     const designerState = DesignerStore.getState();
     const definition = await serializeUnitTestDefinition(designerState);
 
-    console.log('definition', definition);
-    //alert('Check console for workflow serialization');
+    console.log(definition);
+    alert('Check console for unit test serialization');
   });
 
   const designerIsDirty = useIsDesignerDirty();
