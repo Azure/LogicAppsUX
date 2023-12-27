@@ -21,14 +21,6 @@ export interface AssertionsProps {
   getTokenPicker: GetAssertionTokenPickerHandler;
 }
 
-export const EXPRESSION_DEFAULT = {
-  and: [
-    {
-      equals: ['', ''],
-    },
-  ],
-};
-
 export function Assertions({
   assertions,
   onDismiss,
@@ -59,7 +51,7 @@ export function Assertions({
   const handleAddAssertion = (event: React.MouseEvent<HTMLButtonElement>): void => {
     if (onAssertionAdd) {
       event.stopPropagation();
-      onAssertionAdd({ name: headingTitle, description: '', expression: EXPRESSION_DEFAULT });
+      onAssertionAdd({ name: headingTitle, description: '', expression: {} });
     }
   };
 
