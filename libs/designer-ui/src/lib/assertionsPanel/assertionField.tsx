@@ -7,7 +7,6 @@ import type { GetAssertionTokenPickerHandler } from './assertion';
 import type { ILabelStyles, IStyle, ITextFieldStyles } from '@fluentui/react';
 import { Label, Text, TextField } from '@fluentui/react';
 import { isEmptyString } from '@microsoft/utils-logic-apps';
-import { useState } from 'react';
 import { useIntl } from 'react-intl';
 
 export const labelStyles: Partial<ILabelStyles> = {
@@ -37,7 +36,7 @@ const EXPRESSION_KEY = 'expression';
 export interface ParameterFieldDetails {
   description: string;
   name: string;
-  expression: string; //TODO(ccastrotrejo): Change to condition object type
+  expression: string;
 }
 
 export interface AssertionFieldProps {
@@ -46,7 +45,7 @@ export interface AssertionFieldProps {
   expression: Record<string, any>;
   setName: React.Dispatch<React.SetStateAction<string>>;
   setDescription: React.Dispatch<React.SetStateAction<string>>;
-  setExpression: React.Dispatch<React.SetStateAction<any>>;
+  setExpression: React.Dispatch<React.SetStateAction<Record<string, any>>>;
   isEditable?: boolean;
   isReadOnly?: boolean;
   getTokenPicker: GetAssertionTokenPickerHandler;
@@ -64,7 +63,6 @@ export const AssertionField = ({
   getTokenPicker,
 }: AssertionFieldProps): JSX.Element => {
   const intl = useIntl();
-  const [tokenMapping, _setTokenMapping] = useState<Record<string, ValueSegment>>({});
 
   const parameterDetails: ParameterFieldDetails = {
     description: `${name}-${DESCRIPTION_KEY}`,
@@ -176,15 +174,24 @@ export const AssertionField = ({
               labelId="condition-label"
               tokenEditor={true}
               value={[]}
-              tokenMapping={tokenMapping}
+              tokenMapping={{}}
               getTokenPicker={(
                 editorId: string,
                 labelId: string,
                 tokenPickerMode?: TokenPickerMode,
-                _editorType?: string,
+                editorType?: string,
                 setIsInTokenPicker?: (b: boolean) => void,
                 tokenClickedCallback?: (token: ValueSegment) => void
-              ) => getTokenPicker(editorId, labelId, constants.SWAGGER.TYPE.ANY, tokenPickerMode, setIsInTokenPicker, tokenClickedCallback)}
+              ) =>
+                getTokenPicker(
+                  editorId,
+                  labelId,
+                  editorType ?? constants.SWAGGER.TYPE.ANY,
+                  tokenPickerMode,
+                  setIsInTokenPicker,
+                  tokenClickedCallback
+                )
+              }
               onCastParameter={() => ''}
               onValueChange={onExpressionChange}
             />

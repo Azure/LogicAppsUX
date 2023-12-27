@@ -20,7 +20,6 @@ export async function runUnitTest(context: IAzureConnectorsContext, node: vscode
     const projectPath: string | undefined = await getLogicAppProjectRoot(this.context, pathToUnitTest);
     const workflowName = path.basename(path.dirname(pathToUnitTest));
 
-    // TODO(ccastrotrejo): Need to confirm with BE and Nidhi on how we are going to execute the unit tests.
     const UNIT_TEST_EXE_NAME = 'LogicAppsTest.exe';
     const pathToExe = path.join(projectPath, UNIT_TEST_EXE_NAME);
 
