@@ -23,16 +23,6 @@
       "value": "Dilindungi"
     }
   ],
-  "+7IA0V": [
-    {
-      "type": 0,
-      "value": "Koneksi "
-    },
-    {
-      "type": 1,
-      "value": "connectorName"
-    }
-  ],
   "+FcXe9": [
     {
       "type": 0,
@@ -175,6 +165,12 @@
       "value": "Buka Azure Copilot"
     }
   ],
+  "/c1l10": [
+    {
+      "type": 0,
+      "value": "⌘+C"
+    }
+  ],
   "/doURb": [
     {
       "type": 0,
@@ -303,6 +299,12 @@
     {
       "type": 0,
       "value": "(UTC+05:30) Sri Jayawardenepura"
+    }
+  ],
+  "0CPsxh": [
+    {
+      "type": 0,
+      "value": "Del"
     }
   ],
   "0CvRZW": [
@@ -555,12 +557,6 @@
     {
       "type": 0,
       "value": "5"
-    }
-  ],
-  "1zgFh1": [
-    {
-      "type": 0,
-      "value": "Tutup"
     }
   ],
   "20oqsp": [
@@ -1153,6 +1149,12 @@
     {
       "type": 0,
       "value": "Parameter yang digunakan dalam Aplikasi Logika akan dikonversi menjadi templat Azure Resource Manager selama pembuatan templat penerapan."
+    }
+  ],
+  "5gOG+F": [
+    {
+      "type": 0,
+      "value": "Provide the values to compare and select the operator to use."
     }
   ],
   "5hWg4V": [
@@ -3884,12 +3886,6 @@
       "value": "OK"
     }
   ],
-  "OBKhVi": [
-    {
-      "type": 0,
-      "value": "Tindakan/Pemicu ini tidak dapat disalin."
-    }
-  ],
   "ODQCKj": [
     {
       "type": 0,
@@ -4410,12 +4406,6 @@
       "value": "j"
     }
   ],
-  "Qy0Kha": [
-    {
-      "type": 0,
-      "value": "Pemicu tidak dapat dihapus."
-    }
-  ],
   "R/aiRy": [
     {
       "type": 0,
@@ -4493,12 +4483,6 @@
     {
       "type": 0,
       "value": "masalah"
-    }
-  ],
-  "Ro4+PC": [
-    {
-      "type": 0,
-      "value": "Anda hanya dapat menambahkan catatan saat mengedit input langkah."
     }
   ],
   "Rp5pHU": [
@@ -4787,6 +4771,12 @@
     {
       "type": 0,
       "value": "Catatan"
+    }
+  ],
+  "TsJbGH": [
+    {
+      "type": 0,
+      "value": "Disconnected"
     }
   ],
   "Ttc0SM": [
@@ -5359,6 +5349,12 @@
       "value": "Identitas terkelola tidak dikonfigurasi di aplikasi logika."
     }
   ],
+  "WvvJYw": [
+    {
+      "type": 0,
+      "value": "Actions"
+    }
+  ],
   "X/7je+": [
     {
       "type": 0,
@@ -5907,12 +5903,6 @@
     {
       "type": 0,
       "value": "Baca selengkapnya"
-    }
-  ],
-  "ZbX8xq": [
-    {
-      "type": 0,
-      "value": "Operasi ini sudah dihapus."
     }
   ],
   "Zg3IjD": [
@@ -6545,6 +6535,12 @@
       "value": "Miring (⌘I)"
     }
   ],
+  "en/5A3": [
+    {
+      "type": 0,
+      "value": "Reassign"
+    }
+  ],
   "eo1YKX": [
     {
       "type": 0,
@@ -6712,7 +6708,7 @@
   "gA1dde": [
     {
       "type": 0,
-      "value": "Toggle code view"
+      "value": "Aktifkan/nonaktifkan tampilan kode"
     }
   ],
   "gCXOd5": [
@@ -6914,12 +6910,6 @@
     {
       "type": 0,
       "value": "Batalkan"
-    }
-  ],
-  "hTZZr+": [
-    {
-      "type": 0,
-      "value": "Tindakan yang terhubung"
     }
   ],
   "hZqQdt": [
@@ -8185,12 +8175,6 @@
       "value": "Dalam Aplikasi"
     }
   ],
-  "p3K7eM": [
-    {
-      "type": 0,
-      "value": "Tindakan yang terputus"
-    }
-  ],
   "p5ZID0": [
     {
       "type": 0,
@@ -8746,6 +8730,12 @@
     {
       "type": 0,
       "value": "Kunci"
+    }
+  ],
+  "snJFUi": [
+    {
+      "type": 0,
+      "value": "Ctrl+C"
     }
   ],
   "soqP+Z": [
@@ -9644,12 +9634,6 @@
       "value": "Nilai"
     }
   ],
-  "xxeu75": [
-    {
-      "type": 0,
-      "value": "Menetapkan ulang semua tindakan yang terputus ke koneksi baru"
-    }
-  ],
   "y1e9yw": [
     {
       "type": 0,
@@ -9894,12 +9878,6 @@
     {
       "type": 0,
       "value": "Berhenti"
-    }
-  ],
-  "ziXw25": [
-    {
-      "type": 0,
-      "value": "Hapus"
     }
   ],
   "ziYCiA": [

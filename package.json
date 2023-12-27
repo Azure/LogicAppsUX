@@ -1,6 +1,6 @@
 {
   "name": "@microsoft/logicappsux",
-  "version": "2.95.0",
+  "version": "2.96.0",
   "license": "MIT",
   "scripts": {
     "start": "nx serve",
@@ -38,8 +38,8 @@
     "start:arm": "npm run generateArmToken && npm run start"
   },
   "engines": {
-    "node": ">=16",
-    "npm": ">=8"
+    "node": ">=18",
+    "npm": ">=9"
   },
   "private": true,
   "dependencies": {

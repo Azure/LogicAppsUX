@@ -29,8 +29,6 @@ describe('ui/panel/panelheadercomment', () => {
 
     const [icon, comment]: any[] = React.Children.toArray(commentContainer.props.children);
     expect(icon.props.className).toBe('msla-comment-icon');
-    expect(icon.props.ariaLabel).toBe('Comment');
-    expect(icon.props.iconName).toBe('Comment');
 
     expect(comment.props.className).toBe('msla-card-comment');
     expect(comment.props.ariaLabel).toBe('Comment');

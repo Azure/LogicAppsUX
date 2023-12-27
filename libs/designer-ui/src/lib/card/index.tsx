@@ -5,10 +5,11 @@ import { CardFooter } from './cardfooter';
 import { ErrorBanner } from './errorbanner';
 import { useCardContextMenu, useCardKeyboardInteraction } from './hooks';
 import { Gripper } from './images/dynamicsvgs/gripper';
-import type { CommentBoxProps, MenuItemOption } from './types';
+import type { CommentBoxProps } from './types';
 import { getCardStyle } from './utils';
 import type { ISpinnerStyles, MessageBarType } from '@fluentui/react';
-import { Icon, Spinner, SpinnerSize, css } from '@fluentui/react';
+import { Icon, css } from '@fluentui/react';
+import { Spinner } from '@fluentui/react-components';
 import type { LogicAppsV2 } from '@microsoft/utils-logic-apps';
 import { useEffect, useMemo, useRef } from 'react';
 import type { ConnectDragPreview, ConnectDragSource } from 'react-dnd';
@@ -22,7 +23,7 @@ export interface CardProps {
   connectionDisplayName?: string;
   connectionRequired?: boolean;
   connectorName?: string;
-  contextMenuOptions?: MenuItemOption[];
+  contextMenuItems?: JSX.Element[];
   describedBy?: string;
   drag: ConnectDragSource;
   draggable: boolean;
@@ -40,6 +41,8 @@ export interface CardProps {
   staticResultsEnabled?: boolean;
   title: string;
   onClick?(): void;
+  onDeleteClick?(): void;
+  onCopyClick?(): void;
   runData?: LogicAppsV2.WorkflowRunAction | LogicAppsV2.WorkflowRunTrigger;
   setFocus?: boolean;
   isSecureInputsOutputs?: boolean;
@@ -65,7 +68,7 @@ export const Card: React.FC<CardProps> = ({
   connectionDisplayName,
   connectionRequired,
   connectorName,
-  contextMenuOptions = [],
+  contextMenuItems = [],
   describedBy,
   drag,
   draggable,
@@ -80,6 +83,8 @@ export const Card: React.FC<CardProps> = ({
   staticResultsEnabled,
   title,
   onClick,
+  onDeleteClick,
+  onCopyClick,
   runData,
   setFocus,
   isSecureInputsOutputs,
@@ -89,7 +94,7 @@ export const Card: React.FC<CardProps> = ({
     onClick?.();
   };
   const focusRef = useRef<HTMLElement | null>(null);
-  const keyboardInteraction = useCardKeyboardInteraction(onClick, contextMenuOptions);
+  const keyboardInteraction = useCardKeyboardInteraction(onClick, onDeleteClick, onCopyClick);
   const contextMenu = useCardContextMenu();
 
   useEffect(() => {
@@ -113,7 +118,7 @@ export const Card: React.FC<CardProps> = ({
   const cardIcon = useMemo(
     () =>
       isLoading ? (
-        <Spinner className="msla-card-header-spinner" size={SpinnerSize.medium} />
+        <Spinner className="msla-card-header-spinner" size={'tiny'} />
       ) : icon ? (
         <img className="panel-card-icon" src={icon} alt={connectorIconAltText} />
       ) : errorMessage ? (
@@ -121,7 +126,7 @@ export const Card: React.FC<CardProps> = ({
           <Icon iconName="PlugDisconnected" style={{ fontSize: '16px', textAlign: 'center' }} />
         </div>
       ) : (
-        <Spinner className="msla-card-header-spinner" size={SpinnerSize.medium} />
+        <Spinner className="msla-card-header-spinner" size={'tiny'} />
       ),
     [icon, isLoading, errorMessage, connectorIconAltText]
   );
@@ -180,16 +185,16 @@ export const Card: React.FC<CardProps> = ({
             isSecureInputsOutputs={isSecureInputsOutputs}
           />
         </div>
-        {contextMenuOptions?.length > 0 ? (
-          <CardContextMenu
-            contextMenuLocation={contextMenu.location}
-            contextMenuOptions={contextMenuOptions}
-            showContextMenu={contextMenu.isShowing}
-            title={title}
-            onSetShowContextMenu={contextMenu.setIsShowing}
-          />
-        ) : null}
       </div>
+      {contextMenuItems.length > 0 && (
+        <CardContextMenu
+          contextMenuLocation={contextMenu.location}
+          menuItems={contextMenuItems}
+          open={contextMenu.isShowing}
+          title={title}
+          setOpen={contextMenu.setIsShowing}
+        />
+      )}
     </div>
   );
 };

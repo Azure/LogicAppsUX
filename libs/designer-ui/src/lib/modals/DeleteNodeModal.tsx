@@ -1,4 +1,5 @@
-import { DefaultButton, Modal, PrimaryButton } from '@fluentui/react';
+import { Modal } from '@fluentui/react';
+import { Button } from '@fluentui/react-components';
 import type { WorkflowNodeType } from '@microsoft/utils-logic-apps';
 import { idDisplayCase, WORKFLOW_NODE_TYPES } from '@microsoft/utils-logic-apps';
 import { useIntl } from 'react-intl';
@@ -77,8 +78,10 @@ export const DeleteNodeModal = (props: DeleteNodeModalProps) => {
         <p>{bodyConfirmText}</p>
         <p>{bodyMessage}</p>
         <div className="msla-modal-footer">
-          <PrimaryButton text={confirmText} onClick={onConfirm} />
-          <DefaultButton text={cancelText} onClick={onDismiss} />
+          <Button appearance="primary" onClick={onConfirm}>
+            {confirmText}
+          </Button>
+          <Button onClick={onDismiss}>{cancelText}</Button>
         </div>
       </div>
     </Modal>

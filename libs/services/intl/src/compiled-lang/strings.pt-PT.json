@@ -23,16 +23,6 @@
       "value": "Protegida"
     }
   ],
-  "+7IA0V": [
-    {
-      "type": 0,
-      "value": "Ligações "
-    },
-    {
-      "type": 1,
-      "value": "connectorName"
-    }
-  ],
   "+FcXe9": [
     {
       "type": 0,
@@ -175,6 +165,12 @@
       "value": "Abrir o Azure Copilot"
     }
   ],
+  "/c1l10": [
+    {
+      "type": 0,
+      "value": "⌘+C"
+    }
+  ],
   "/doURb": [
     {
       "type": 0,
@@ -303,6 +299,12 @@
     {
       "type": 0,
       "value": "(UTC+05:30) Sri Jayawardenepura"
+    }
+  ],
+  "0CPsxh": [
+    {
+      "type": 0,
+      "value": "Del"
     }
   ],
   "0CvRZW": [
@@ -555,12 +557,6 @@
     {
       "type": 0,
       "value": "5"
-    }
-  ],
-  "1zgFh1": [
-    {
-      "type": 0,
-      "value": "Dispensar"
     }
   ],
   "20oqsp": [
@@ -1161,6 +1157,12 @@
     {
       "type": 0,
       "value": "Os parâmetros utilizados no Logic App serão convertidos num modelo do Azure Resource Manager durante a geração do modelo de implementação."
+    }
+  ],
+  "5gOG+F": [
+    {
+      "type": 0,
+      "value": "Provide the values to compare and select the operator to use."
     }
   ],
   "5hWg4V": [
@@ -3966,12 +3968,6 @@
       "value": "OK"
     }
   ],
-  "OBKhVi": [
-    {
-      "type": 0,
-      "value": "Não é possível copiar este(a) Ação/Acionador."
-    }
-  ],
   "ODQCKj": [
     {
       "type": 0,
@@ -4492,12 +4488,6 @@
       "value": "h"
     }
   ],
-  "Qy0Kha": [
-    {
-      "type": 0,
-      "value": "Os acionadores não podem ser eliminados."
-    }
-  ],
   "R/aiRy": [
     {
       "type": 0,
@@ -4597,12 +4587,6 @@
     {
       "type": 0,
       "value": "problema"
-    }
-  ],
-  "Ro4+PC": [
-    {
-      "type": 0,
-      "value": "Só pode adicionar notas quando editar as entradas de um passo."
     }
   ],
   "Rp5pHU": [
@@ -4891,6 +4875,12 @@
     {
       "type": 0,
       "value": "Nota"
+    }
+  ],
+  "TsJbGH": [
+    {
+      "type": 0,
+      "value": "Disconnected"
     }
   ],
   "Ttc0SM": [
@@ -5463,6 +5453,12 @@
       "value": "Uma identidade gerida não está configurada na aplicação lógica."
     }
   ],
+  "WvvJYw": [
+    {
+      "type": 0,
+      "value": "Actions"
+    }
+  ],
   "X/7je+": [
     {
       "type": 0,
@@ -6011,12 +6007,6 @@
     {
       "type": 0,
       "value": "Ler mais"
-    }
-  ],
-  "ZbX8xq": [
-    {
-      "type": 0,
-      "value": "Esta operação já foi eliminada."
     }
   ],
   "Zg3IjD": [
@@ -6649,6 +6639,12 @@
       "value": "Itálico (⌘I)"
     }
   ],
+  "en/5A3": [
+    {
+      "type": 0,
+      "value": "Reassign"
+    }
+  ],
   "eo1YKX": [
     {
       "type": 0,
@@ -6816,7 +6812,7 @@
   "gA1dde": [
     {
       "type": 0,
-      "value": "Toggle code view"
+      "value": "Alternar vista de código"
     }
   ],
   "gCXOd5": [
@@ -7048,12 +7044,6 @@
     {
       "type": 0,
       "value": "Anular"
-    }
-  ],
-  "hTZZr+": [
-    {
-      "type": 0,
-      "value": "Ações ligadas"
     }
   ],
   "hZqQdt": [
@@ -8341,12 +8331,6 @@
       "value": "Na Aplicação"
     }
   ],
-  "p3K7eM": [
-    {
-      "type": 0,
-      "value": "Ações desligadas"
-    }
-  ],
   "p5ZID0": [
     {
       "type": 0,
@@ -8924,6 +8908,12 @@
     {
       "type": 0,
       "value": "Chave"
+    }
+  ],
+  "snJFUi": [
+    {
+      "type": 0,
+      "value": "Ctrl+C"
     }
   ],
   "soqP+Z": [
@@ -9822,12 +9812,6 @@
       "value": "Valor"
     }
   ],
-  "xxeu75": [
-    {
-      "type": 0,
-      "value": "Reatribuir todas as ações desligadas a uma nova ligação"
-    }
-  ],
   "y1e9yw": [
     {
       "type": 0,
@@ -10072,12 +10056,6 @@
     {
       "type": 0,
       "value": "Parar"
-    }
-  ],
-  "ziXw25": [
-    {
-      "type": 0,
-      "value": "Eliminar"
     }
   ],
   "ziYCiA": [

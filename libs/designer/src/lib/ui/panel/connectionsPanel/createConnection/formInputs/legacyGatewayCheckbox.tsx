@@ -1,4 +1,6 @@
-import { Checkbox, TooltipHost, Icon } from '@fluentui/react';
+import { Checkbox } from '@fluentui/react';
+import { Tooltip } from '@fluentui/react-components';
+import { Info16Regular } from '@fluentui/react-icons';
 import { useIntl } from 'react-intl';
 
 export interface LegacyGatewayCheckboxProps {
@@ -21,9 +23,9 @@ const LegacyGatewayCheckbox = ({ isLoading, value, onChange }: LegacyGatewayChec
   return (
     <div className="param-row center" style={{ margin: '8px 0px' }}>
       <Checkbox label={gatewayLabelText} disabled={isLoading} checked={value} onChange={onChange} />
-      <TooltipHost content={gatewayTooltipText}>
-        <Icon iconName="Info" style={{ marginLeft: '4px', transform: 'translate(0px, 2px)' }} />
-      </TooltipHost>
+      <Tooltip relationship="label" withArrow content={gatewayTooltipText}>
+        <Info16Regular style={{ marginLeft: '4px', transform: 'translate(0px, 2px)' }} />
+      </Tooltip>
     </div>
   );
 };
