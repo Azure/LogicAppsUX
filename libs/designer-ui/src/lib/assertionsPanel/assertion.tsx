@@ -18,7 +18,7 @@ export interface AssertionUpdateEvent {
   id: string;
   name: string;
   description: string;
-  expression: any; //TODO: Change to condition object type
+  expression: Record<string, any>;
 }
 
 export interface AssertionDeleteEvent {
@@ -28,7 +28,7 @@ export interface AssertionDeleteEvent {
 export interface AssertionAddEvent {
   name: string;
   description: string;
-  expression: any; //TODO: Change to condition object type
+  expression: Record<string, any>;
 }
 
 export type AssertionDeleteHandler = EventHandler<AssertionDeleteEvent>;

@@ -19,6 +19,7 @@ import {
   updateParameterValidation,
   openPanel,
   useNodesInitialized,
+  serializeUnitTestDefinition,
 } from '@microsoft/logic-apps-designer';
 import { isNullOrEmpty, RUN_AFTER_COLORS } from '@microsoft/utils-logic-apps';
 import { useMemo } from 'react';
@@ -89,6 +90,14 @@ export const DesignerCommandBar = ({
     }
   });
 
+  const { isLoading: isSavingUnitTest, mutate: saveUnitTestMutate } = useMutation(async () => {
+    const designerState = DesignerStore.getState();
+    const definition = await serializeUnitTestDefinition(designerState);
+
+    console.log('definition', definition);
+    //alert('Check console for workflow serialization');
+  });
+
   const designerIsDirty = useIsDesignerDirty();
 
   const allInputErrors = useSelector((state: RootState) => {
@@ -111,6 +120,7 @@ export const DesignerCommandBar = ({
   );
 
   const saveIsDisabled = isSaving || allInputErrors.length > 0 || haveWorkflowParameterErrors || haveSettingsErrors || !designerIsDirty;
+
   const items: ICommandBarItemProps[] = useMemo(
     () => [
       {
@@ -126,6 +136,21 @@ export const DesignerCommandBar = ({
         },
         onClick: () => {
           saveWorkflowMutate();
+        },
+      },
+      {
+        key: 'saveUnitTest',
+        text: 'Save Unit Test',
+        disabled: !isUnitTest,
+        onRenderIcon: () => {
+          return isSavingUnitTest ? (
+            <Spinner size={SpinnerSize.small} />
+          ) : (
+            <FontIcon aria-label="Save" iconName="Save" className={isUnitTest ? classNames.azureBlue : classNames.azureGrey} />
+          );
+        },
+        onClick: () => {
+          saveUnitTestMutate();
         },
       },
       {

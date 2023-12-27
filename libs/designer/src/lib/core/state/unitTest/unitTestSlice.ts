@@ -49,11 +49,12 @@ export const unitTestSlice = createSlice({
     },
     updateAssertion: (state: UnitTestState, action: PayloadAction<UpdateAssertionPayload>) => {
       const { assertionToUpdate } = action.payload;
-      const { name, id, description } = assertionToUpdate;
+      const { name, id, description, expression } = assertionToUpdate;
       state.assertions[id] = {
         ...state.assertions[id],
         name,
         description,
+        expression,
       };
     },
   },

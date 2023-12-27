@@ -1096,7 +1096,7 @@ const getAssertions = (assertions: Record<string, AssertionDefintion>): Assertio
       },
       false
     );
-    return { name, description, expression: stringifiedExpression };
+    return { name, description, expression: JSON.parse(stringifiedExpression ?? '') };
   });
 };
 
