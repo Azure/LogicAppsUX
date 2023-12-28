@@ -304,7 +304,7 @@
   "0CPsxh": [
     {
       "type": 0,
-      "value": "Del"
+      "value": "Supr"
     }
   ],
   "0CvRZW": [
@@ -1162,7 +1162,7 @@
   "5gOG+F": [
     {
       "type": 0,
-      "value": "Provide the values to compare and select the operator to use."
+      "value": "Proporcione los valores que se van a comparar y seleccione el operador que se va a usar."
     }
   ],
   "5hWg4V": [
@@ -4872,7 +4872,7 @@
   "TsJbGH": [
     {
       "type": 0,
-      "value": "Disconnected"
+      "value": "Desconectado"
     }
   ],
   "Ttc0SM": [
@@ -5448,7 +5448,7 @@
   "WvvJYw": [
     {
       "type": 0,
-      "value": "Actions"
+      "value": "Acciones"
     }
   ],
   "X/7je+": [
@@ -6634,7 +6634,7 @@
   "en/5A3": [
     {
       "type": 0,
-      "value": "Reassign"
+      "value": "Reasignar"
     }
   ],
   "eo1YKX": [

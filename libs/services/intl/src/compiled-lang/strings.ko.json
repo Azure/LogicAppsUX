@@ -1154,7 +1154,7 @@
   "5gOG+F": [
     {
       "type": 0,
-      "value": "Provide the values to compare and select the operator to use."
+      "value": "비교할 값을 제공하고 사용할 연산자를 선택하세요."
     }
   ],
   "5hWg4V": [
@@ -4768,7 +4768,7 @@
   "TsJbGH": [
     {
       "type": 0,
-      "value": "Disconnected"
+      "value": "연결 끊김"
     }
   ],
   "Ttc0SM": [
@@ -5340,7 +5340,7 @@
   "WvvJYw": [
     {
       "type": 0,
-      "value": "Actions"
+      "value": "작업"
     }
   ],
   "X/7je+": [
@@ -6522,7 +6522,7 @@
   "en/5A3": [
     {
       "type": 0,
-      "value": "Reassign"
+      "value": "재할당"
     }
   ],
   "eo1YKX": [

@@ -1154,7 +1154,7 @@
   "5gOG+F": [
     {
       "type": 0,
-      "value": "Provide the values to compare and select the operator to use."
+      "value": "Karşılaştırılacak değerleri sağlayın ve kullanılacak operatörü seçin."
     }
   ],
   "5hWg4V": [
@@ -4816,7 +4816,7 @@
   "TsJbGH": [
     {
       "type": 0,
-      "value": "Disconnected"
+      "value": "Bağlantı kesildi"
     }
   ],
   "Ttc0SM": [
@@ -5392,7 +5392,7 @@
   "WvvJYw": [
     {
       "type": 0,
-      "value": "Actions"
+      "value": "Eylemler"
     }
   ],
   "X/7je+": [
@@ -6574,7 +6574,7 @@
   "en/5A3": [
     {
       "type": 0,
-      "value": "Reassign"
+      "value": "Yeniden ata"
     }
   ],
   "eo1YKX": [

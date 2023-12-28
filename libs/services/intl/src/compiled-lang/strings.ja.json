@@ -1154,7 +1154,7 @@
   "5gOG+F": [
     {
       "type": 0,
-      "value": "Provide the values to compare and select the operator to use."
+      "value": "比較する値を指定し、使用する演算子を選択してください。"
     }
   ],
   "5hWg4V": [
@@ -4772,7 +4772,7 @@
   "TsJbGH": [
     {
       "type": 0,
-      "value": "Disconnected"
+      "value": "切断済み"
     }
   ],
   "Ttc0SM": [
@@ -5344,7 +5344,7 @@
   "WvvJYw": [
     {
       "type": 0,
-      "value": "Actions"
+      "value": "アクション"
     }
   ],
   "X/7je+": [
@@ -6526,7 +6526,7 @@
   "en/5A3": [
     {
       "type": 0,
-      "value": "Reassign"
+      "value": "再割り当て"
     }
   ],
   "eo1YKX": [
