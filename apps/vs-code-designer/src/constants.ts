@@ -288,3 +288,7 @@ export const logicAppFilter = {
   type: 'microsoft.web/sites',
   kind: 'functionapp,workflowapp',
 };
+
+// Telemetry Events
+export const saveUnitTestEvent = 'saveUnitTestDefinition';
+export const runUnitTestEvent = 'runUnitTest';
