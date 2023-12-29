@@ -45,8 +45,6 @@ exports[`lib/overview/runhistory renders 1`] = `
             data-is-focusable="true"
             data-item-key="identifier"
             draggable={false}
-            onBlur={[Function]}
-            onFocus={[Function]}
             role="columnheader"
             style={
               {
@@ -91,8 +89,6 @@ exports[`lib/overview/runhistory renders 1`] = `
             data-is-focusable="true"
             data-item-key="status"
             draggable={false}
-            onBlur={[Function]}
-            onFocus={[Function]}
             role="columnheader"
             style={
               {
@@ -137,8 +133,6 @@ exports[`lib/overview/runhistory renders 1`] = `
             data-is-focusable="true"
             data-item-key="startTime"
             draggable={false}
-            onBlur={[Function]}
-            onFocus={[Function]}
             role="columnheader"
             style={
               {
@@ -183,8 +177,6 @@ exports[`lib/overview/runhistory renders 1`] = `
             data-is-focusable="true"
             data-item-key="duration"
             draggable={false}
-            onBlur={[Function]}
-            onFocus={[Function]}
             role="columnheader"
             style={
               {
@@ -229,8 +221,6 @@ exports[`lib/overview/runhistory renders 1`] = `
             data-is-focusable="true"
             data-item-key="contextMenu"
             draggable={false}
-            onBlur={[Function]}
-            onFocus={[Function]}
             role="columnheader"
             style={
               {
@@ -352,8 +342,6 @@ exports[`lib/overview/runhistory renders a shimmered details list 1`] = `
             data-is-focusable="true"
             data-item-key="identifier"
             draggable={false}
-            onBlur={[Function]}
-            onFocus={[Function]}
             role="columnheader"
             style={
               {
@@ -398,8 +386,6 @@ exports[`lib/overview/runhistory renders a shimmered details list 1`] = `
             data-is-focusable="true"
             data-item-key="status"
             draggable={false}
-            onBlur={[Function]}
-            onFocus={[Function]}
             role="columnheader"
             style={
               {
@@ -444,8 +430,6 @@ exports[`lib/overview/runhistory renders a shimmered details list 1`] = `
             data-is-focusable="true"
             data-item-key="startTime"
             draggable={false}
-            onBlur={[Function]}
-            onFocus={[Function]}
             role="columnheader"
             style={
               {
@@ -490,8 +474,6 @@ exports[`lib/overview/runhistory renders a shimmered details list 1`] = `
             data-is-focusable="true"
             data-item-key="duration"
             draggable={false}
-            onBlur={[Function]}
-            onFocus={[Function]}
             role="columnheader"
             style={
               {
@@ -536,8 +518,6 @@ exports[`lib/overview/runhistory renders a shimmered details list 1`] = `
             data-is-focusable="true"
             data-item-key="contextMenu"
             draggable={false}
-            onBlur={[Function]}
-            onFocus={[Function]}
             role="columnheader"
             style={
               {
@@ -2737,8 +2717,6 @@ exports[`lib/overview/runhistory renders with items 1`] = `
             data-is-focusable="true"
             data-item-key="identifier"
             draggable={false}
-            onBlur={[Function]}
-            onFocus={[Function]}
             role="columnheader"
             style={
               {
@@ -2783,8 +2761,6 @@ exports[`lib/overview/runhistory renders with items 1`] = `
             data-is-focusable="true"
             data-item-key="status"
             draggable={false}
-            onBlur={[Function]}
-            onFocus={[Function]}
             role="columnheader"
             style={
               {
@@ -2829,8 +2805,6 @@ exports[`lib/overview/runhistory renders with items 1`] = `
             data-is-focusable="true"
             data-item-key="startTime"
             draggable={false}
-            onBlur={[Function]}
-            onFocus={[Function]}
             role="columnheader"
             style={
               {
@@ -2875,8 +2849,6 @@ exports[`lib/overview/runhistory renders with items 1`] = `
             data-is-focusable="true"
             data-item-key="duration"
             draggable={false}
-            onBlur={[Function]}
-            onFocus={[Function]}
             role="columnheader"
             style={
               {
@@ -2921,8 +2893,6 @@ exports[`lib/overview/runhistory renders with items 1`] = `
             data-is-focusable="true"
             data-item-key="contextMenu"
             draggable={false}
-            onBlur={[Function]}
-            onFocus={[Function]}
             role="columnheader"
             style={
               {

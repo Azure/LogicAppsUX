@@ -312,8 +312,6 @@ exports[`lib/monitoring/requestpanel/request should render 1`] = `
                     data-is-focusable="true"
                     data-item-key="$key"
                     draggable={false}
-                    onBlur={[Function]}
-                    onFocus={[Function]}
                     role="columnheader"
                     style={
                       {
@@ -358,8 +356,6 @@ exports[`lib/monitoring/requestpanel/request should render 1`] = `
                     data-is-focusable="true"
                     data-item-key="$value"
                     draggable={false}
-                    onBlur={[Function]}
-                    onFocus={[Function]}
                     role="columnheader"
                     style={
                       {
@@ -754,8 +750,6 @@ exports[`lib/monitoring/requestpanel/request should render a body 1`] = `
                     data-is-focusable="true"
                     data-item-key="$key"
                     draggable={false}
-                    onBlur={[Function]}
-                    onFocus={[Function]}
                     role="columnheader"
                     style={
                       {
@@ -800,8 +794,6 @@ exports[`lib/monitoring/requestpanel/request should render a body 1`] = `
                     data-is-focusable="true"
                     data-item-key="$value"
                     draggable={false}
-                    onBlur={[Function]}
-                    onFocus={[Function]}
                     role="columnheader"
                     style={
                       {
@@ -1385,8 +1377,6 @@ exports[`lib/monitoring/requestpanel/request should render a body link 1`] = `
                     data-is-focusable="true"
                     data-item-key="$key"
                     draggable={false}
-                    onBlur={[Function]}
-                    onFocus={[Function]}
                     role="columnheader"
                     style={
                       {
@@ -1431,8 +1421,6 @@ exports[`lib/monitoring/requestpanel/request should render a body link 1`] = `
                     data-is-focusable="true"
                     data-item-key="$value"
                     draggable={false}
-                    onBlur={[Function]}
-                    onFocus={[Function]}
                     role="columnheader"
                     style={
                       {
