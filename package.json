@@ -73,7 +73,7 @@
     "@use-it/event-listener": "0.1.7",
     "axios": "1.6.0",
     "axios-retry": "3.5.0",
-    "azure-storage": "2.10.3",
+    "azure-storage": "2.10.7",
     "buffer": "6.0.3",
     "clsx": "1.2.1",
     "consola": "2.15.3",
