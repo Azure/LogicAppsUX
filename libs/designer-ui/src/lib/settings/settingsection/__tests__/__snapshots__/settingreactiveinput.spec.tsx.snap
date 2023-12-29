@@ -11,7 +11,7 @@ exports[`ui/settings/settingreactiveinput should construct 1`] = `
   />
   <div
     style={
-      Object {
+      {
         "marginBottom": "10px",
         "marginTop": "-10px",
       }

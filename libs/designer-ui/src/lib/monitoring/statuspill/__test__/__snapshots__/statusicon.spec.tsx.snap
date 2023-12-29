@@ -109,7 +109,7 @@ exports[`lib/monitoring/statuspill/statusicon renders (status = Skipped, has ret
 exports[`lib/monitoring/statuspill/statusicon renders (status = Succeeded, has retries = false) 1`] = `
 <div
   style={
-    Object {
+    {
       "opacity": "100%",
     }
   }
@@ -138,7 +138,7 @@ exports[`lib/monitoring/statuspill/statusicon renders (status = Succeeded, has r
 exports[`lib/monitoring/statuspill/statusicon renders (status = Succeeded, has retries = true) 1`] = `
 <div
   style={
-    Object {
+    {
       "opacity": "100%",
     }
   }

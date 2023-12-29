@@ -6,7 +6,7 @@ exports[`ui/workflowparameters/workflowparameter should construct. 1`] = `
   className="msla-panel-container"
   customWidth="630px"
   focusTrapZoneProps={
-    Object {
+    {
       "disabled": false,
     }
   }
@@ -17,14 +17,14 @@ exports[`ui/workflowparameters/workflowparameter should construct. 1`] = `
   isOpen={true}
   onRenderHeader={[Function]}
   styles={
-    Object {
-      "content": Object {
+    {
+      "content": {
         "padding": "1rem 2rem",
       },
-      "main": Object {
+      "main": {
         "overflow": "hidden",
       },
-      "scrollableContent": Object {
+      "scrollableContent": {
         "height": "100%",
       },
     }
@@ -33,7 +33,7 @@ exports[`ui/workflowparameters/workflowparameter should construct. 1`] = `
 >
   <React.Fragment>
     <PanelContent
-      tabs={Object {}}
+      tabs={{}}
       trackEvent={[MockFunction]}
     />
   </React.Fragment>
