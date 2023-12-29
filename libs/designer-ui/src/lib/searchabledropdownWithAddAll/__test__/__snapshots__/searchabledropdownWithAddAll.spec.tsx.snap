@@ -11,23 +11,23 @@ exports[`lib/searchabledropdownwithaddall should create a dropdown with an add a
     onDismiss={[Function]}
     onRenderItem={[Function]}
     options={
-      Array [
-        Object {
+      [
+        {
           "key": "foo",
           "text": "Foo",
         },
-        Object {
+        {
           "key": "bar",
           "text": "Bar",
         },
-        Object {
+        {
           "key": "baz",
           "text": "Baz",
         },
       ]
     }
     placeholder="Select an option"
-    selectedKeys={Array []}
+    selectedKeys={[]}
   />
   <button
     aria-label="Add all tooltip"
@@ -71,23 +71,23 @@ exports[`lib/searchabledropdownwithaddall should create a dropdown with an add a
     onDismiss={[Function]}
     onRenderItem={[Function]}
     options={
-      Array [
-        Object {
+      [
+        {
           "key": "foo",
           "text": "Foo",
         },
-        Object {
+        {
           "key": "bar",
           "text": "Bar",
         },
-        Object {
+        {
           "key": "baz",
           "text": "Baz",
         },
       ]
     }
     placeholder="Select an option"
-    selectedKeys={Array []}
+    selectedKeys={[]}
   />
   <button
     aria-label="Add all tooltip"

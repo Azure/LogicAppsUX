@@ -50,7 +50,7 @@ exports[`lib/panel/panelHeader/main should render 1`] = `
   </button>
   <div
     className="msla-panel-card-header"
-    style={Object {}}
+    style={{}}
   >
     <div
       className="fui-Spinner msla-card-header-spinner ___p104zz0_oywd6f0 f22iagw f122n59 f4d9j23 fez10in f4px1ci fn67r4l f1063pyq"
@@ -105,7 +105,7 @@ exports[`lib/panel/panelHeader/main should render 1`] = `
       aria-label="More commands"
       className="fui-Button r1alrhcs ___1p24v7a_y4hy550 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f4xjyn1 f1et0tmh f9ddjv3 f1wi8ngl f1sbtcvk fwiuce9 fdghr9 f15vdbe4 fwbmr0d f44c6la"
       data-automation-id="msla-panel-header-more-options"
-      data-tabster="{\\"restorer\\":{\\"type\\":1}}"
+      data-tabster="{"restorer":{"type":1}}"
       id="menur2"
       onBlur={[Function]}
       onClick={[Function]}
@@ -209,7 +209,7 @@ exports[`lib/panel/panelHeader/main should render with panel header menu 1`] = `
   </button>
   <div
     className="msla-panel-card-header"
-    style={Object {}}
+    style={{}}
   >
     <div
       className="fui-Spinner msla-card-header-spinner ___p104zz0_oywd6f0 f22iagw f122n59 f4d9j23 fez10in f4px1ci fn67r4l f1063pyq"
@@ -264,7 +264,7 @@ exports[`lib/panel/panelHeader/main should render with panel header menu 1`] = `
       aria-label="More commands"
       className="fui-Button r1alrhcs ___1p24v7a_y4hy550 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f4xjyn1 f1et0tmh f9ddjv3 f1wi8ngl f1sbtcvk fwiuce9 fdghr9 f15vdbe4 fwbmr0d f44c6la"
       data-automation-id="msla-panel-header-more-options"
-      data-tabster="{\\"restorer\\":{\\"type\\":1}}"
+      data-tabster="{"restorer":{"type":1}}"
       id="menur6"
       onBlur={[Function]}
       onClick={[Function]}

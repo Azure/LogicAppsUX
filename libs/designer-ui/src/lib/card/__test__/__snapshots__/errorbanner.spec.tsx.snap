@@ -30,7 +30,7 @@ exports[`lib/card/errorbanner should render 1`] = `
     hidden={true}
     id="tooltip0"
     style={
-      Object {
+      {
         "border": 0,
         "height": 1,
         "margin": -1,

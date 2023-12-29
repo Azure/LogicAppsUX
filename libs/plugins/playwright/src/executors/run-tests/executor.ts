@@ -1,7 +1,7 @@
 import { startDevServer } from './lib/start-dev-server';
 import type { PlaywrightExecutorSchema } from './schema-types';
 import executorSchema from './schema.json';
-import type { ExecutorContext } from '@nrwl/devkit';
+import type { ExecutorContext } from '@nx/devkit';
 import { exec } from 'child_process';
 import { promisify } from 'util';
 

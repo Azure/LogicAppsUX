@@ -1,8 +1,10 @@
+// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
 import {
   comprehensiveMapDefinition,
   fullTranscriptMapDefinitionString,
   transcriptJsonMapDefinitionString,
 } from '../../../../__mocks__/mapDefinitions';
+// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
 import { testMetadata } from '../../../../__mocks__/mapMetadata';
 import { LoadingMethod, dataMapDataLoaderSlice, loadDataMap } from '../state/DataMapDataLoader';
 import { loadSourceSchema, loadTargetSchema, schemaDataLoaderSlice } from '../state/SchemaDataLoader';

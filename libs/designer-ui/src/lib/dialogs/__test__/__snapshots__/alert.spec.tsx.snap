@@ -3,13 +3,13 @@
 exports[`ui/dialogs/_alert should render 1`] = `
 <Dialog
   dialogContentProps={
-    Object {
+    {
       "title": "Title",
     }
   }
   hidden={false}
   modalProps={
-    Object {
+    {
       "firstFocusableSelector": "dialog-ok-button",
       "isBlocking": true,
     }

@@ -10,13 +10,13 @@ exports[`ui/workflowparameters/workflowparameter should construct. 1`] = `
     <TabList
       onTabSelect={[Function]}
       style={
-        Object {
+        {
           "margin": "0px -12px",
         }
       }
     >
       <OverflowMenu
-        tabs={Array []}
+        tabs={[]}
       />
     </TabList>
   </ForwardRef>

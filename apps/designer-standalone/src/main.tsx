@@ -1,3 +1,4 @@
+// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
 import '../../../libs/designer/src/lib/ui/styles.less';
 import { DesignerWrapper } from './app/DesignerShell/designer';
 import './polyfills';

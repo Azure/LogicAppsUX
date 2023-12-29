@@ -1,3 +1,4 @@
+// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
 import '../../../libs/data-mapper/src/lib/styles.less';
 import { DataMapperStandaloneDesigner } from './app/DataMapperStandaloneDesigner';
 import { store } from './state/Store';

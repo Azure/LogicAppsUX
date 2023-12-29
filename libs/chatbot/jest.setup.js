@@ -1,3 +1,4 @@
+// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
 import messages from '../services/intl/src/compiled-lang/strings.json';
 import { InitLoggerService } from '@microsoft/designer-client-services-logic-apps';
 import { createIntl, createIntlCache } from 'react-intl';

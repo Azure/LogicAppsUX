@@ -1,10 +1,10 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
 exports[`elklayout elkLayout layout should be deterministic 1`] = `
-Object {
+{
   "$H": 13,
-  "children": Array [
-    Object {
+  "children": [
+    {
       "$H": 277,
       "height": 40,
       "id": "manual",
@@ -12,7 +12,7 @@ Object {
       "x": 174,
       "y": 0,
     },
-    Object {
+    {
       "$H": 279,
       "height": 40,
       "id": "Increment_variable",
@@ -20,7 +20,7 @@ Object {
       "x": 174,
       "y": 208,
     },
-    Object {
+    {
       "$H": 281,
       "height": 40,
       "id": "Initialize_variable",
@@ -28,13 +28,13 @@ Object {
       "x": 174,
       "y": 104,
     },
-    Object {
+    {
       "$H": 283,
-      "children": Array [
-        Object {
+      "children": [
+        {
           "$H": 285,
-          "children": Array [
-            Object {
+          "children": [
+            {
               "$H": 287,
               "height": 40,
               "id": "Increment_variable2",
@@ -42,7 +42,7 @@ Object {
               "x": 16,
               "y": 0,
             },
-            Object {
+            {
               "$H": 289,
               "height": 40,
               "id": "Increment_variable4",
@@ -51,32 +51,32 @@ Object {
               "y": 104,
             },
           ],
-          "edges": Array [
-            Object {
+          "edges": [
+            {
               "container": "ActionIf-actions",
               "id": "Increment_variable2-Increment_variable4",
-              "layoutOptions": Object {
+              "layoutOptions": {
                 "edgeType": "BUTTON_EDGE",
               },
-              "sections": Array [
-                Object {
-                  "endPoint": Object {
+              "sections": [
+                {
+                  "endPoint": {
                     "x": 116,
                     "y": 104,
                   },
                   "id": "Increment_variable2-Increment_variable4_s0",
                   "incomingShape": "Increment_variable2",
                   "outgoingShape": "Increment_variable4",
-                  "startPoint": Object {
+                  "startPoint": {
                     "x": 116,
                     "y": 40,
                   },
                 },
               ],
-              "sources": Array [
+              "sources": [
                 "Increment_variable2",
               ],
-              "targets": Array [
+              "targets": [
                 "Increment_variable4",
               ],
             },
@@ -87,14 +87,14 @@ Object {
           "x": 16,
           "y": 0,
         },
-        Object {
+        {
           "$H": 291,
-          "children": Array [
-            Object {
+          "children": [
+            {
               "$H": 293,
               "height": 40,
               "id": "Increment_variable3",
-              "layoutOptions": Object {
+              "layoutOptions": {
                 "nodeType": "OPERATION_NODE",
               },
               "width": 200,
@@ -102,7 +102,7 @@ Object {
               "y": 0,
             },
           ],
-          "edges": Array [],
+          "edges": [],
           "height": 56,
           "id": "ActionIf-elseActions",
           "width": 232,
@@ -116,7 +116,7 @@ Object {
       "x": 16,
       "y": 312,
     },
-    Object {
+    {
       "$H": 295,
       "height": 40,
       "id": "Response",
@@ -125,123 +125,123 @@ Object {
       "y": 552,
     },
   ],
-  "edges": Array [
-    Object {
+  "edges": [
+    {
       "container": "root",
       "id": "manual-Initialize_variable",
-      "layoutOptions": Object {
+      "layoutOptions": {
         "edgeType": "BUTTON_EDGE",
       },
-      "sections": Array [
-        Object {
-          "endPoint": Object {
+      "sections": [
+        {
+          "endPoint": {
             "x": 274,
             "y": 104,
           },
           "id": "manual-Initialize_variable_s0",
           "incomingShape": "manual",
           "outgoingShape": "Initialize_variable",
-          "startPoint": Object {
+          "startPoint": {
             "x": 274,
             "y": 40,
           },
         },
       ],
-      "sources": Array [
+      "sources": [
         "manual",
       ],
-      "targets": Array [
+      "targets": [
         "Initialize_variable",
       ],
     },
-    Object {
+    {
       "container": "root",
       "id": "Initialize_variable-Increment_variable",
-      "layoutOptions": Object {
+      "layoutOptions": {
         "edgeType": "BUTTON_EDGE",
       },
-      "sections": Array [
-        Object {
-          "endPoint": Object {
+      "sections": [
+        {
+          "endPoint": {
             "x": 274,
             "y": 208,
           },
           "id": "Initialize_variable-Increment_variable_s0",
           "incomingShape": "Initialize_variable",
           "outgoingShape": "Increment_variable",
-          "startPoint": Object {
+          "startPoint": {
             "x": 274,
             "y": 144,
           },
         },
       ],
-      "sources": Array [
+      "sources": [
         "Initialize_variable",
       ],
-      "targets": Array [
+      "targets": [
         "Increment_variable",
       ],
     },
-    Object {
+    {
       "container": "root",
       "id": "Increment_variable-ActionIf",
-      "layoutOptions": Object {
+      "layoutOptions": {
         "edgeType": "BUTTON_EDGE",
       },
-      "sections": Array [
-        Object {
-          "endPoint": Object {
+      "sections": [
+        {
+          "endPoint": {
             "x": 274,
             "y": 312,
           },
           "id": "Increment_variable-ActionIf_s0",
           "incomingShape": "Increment_variable",
           "outgoingShape": "ActionIf",
-          "startPoint": Object {
+          "startPoint": {
             "x": 274,
             "y": 248,
           },
         },
       ],
-      "sources": Array [
+      "sources": [
         "Increment_variable",
       ],
-      "targets": Array [
+      "targets": [
         "ActionIf",
       ],
     },
-    Object {
+    {
       "container": "root",
       "id": "ActionIf-Response",
-      "layoutOptions": Object {
+      "layoutOptions": {
         "edgeType": "BUTTON_EDGE",
       },
-      "sections": Array [
-        Object {
-          "endPoint": Object {
+      "sections": [
+        {
+          "endPoint": {
             "x": 274,
             "y": 552,
           },
           "id": "ActionIf-Response_s0",
           "incomingShape": "ActionIf",
           "outgoingShape": "Response",
-          "startPoint": Object {
+          "startPoint": {
             "x": 274,
             "y": 488,
           },
         },
       ],
-      "sources": Array [
+      "sources": [
         "ActionIf",
       ],
-      "targets": Array [
+      "targets": [
         "Response",
       ],
     },
   ],
   "height": 640,
   "id": "root",
-  "layoutOptions": Object {
+  "layoutOptions": {
     "elk.padding": "[top=0,left=16,bottom=48,right=16]",
     "elk.position": "(0, 0)",
     "nodeType": "GRAPH_NODE",

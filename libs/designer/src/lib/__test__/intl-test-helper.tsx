@@ -4,10 +4,11 @@
  * These helper functions aim to address that and wrap a valid,
  * English-locale intl context around them.
  */
-
+// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
+import messages from '../../../../../lib/services/intl/src/compiled-lang/strings.json';
 import { createIntl, createIntlCache } from 'react-intl';
 import * as Intl from 'react-intl';
-import messages from '../../../../../lib/services/intl/src/compiled-lang/strings.json';
+
 // You can pass your messages to the IntlProvider. Optional: remove if unneeded.
 // en.json
 const defaultLocale = 'en';

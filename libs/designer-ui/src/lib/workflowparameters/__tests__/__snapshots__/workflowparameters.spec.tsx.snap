@@ -31,15 +31,15 @@ exports[`ui/workflowparameters/workflowparameters should construct. 1`] = `
   </div>
   <List
     items={
-      Array [
-        Object {
+      [
+        {
           "id": "test1",
           "isEditable": true,
           "name": "test",
           "type": "Bool",
           "value": "true",
         },
-        Object {
+        {
           "id": "test2",
           "isEditable": false,
           "name": "test2",

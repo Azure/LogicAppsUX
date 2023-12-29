@@ -29,7 +29,7 @@ exports[`ui/flyout should render 1`] = `
     hidden={true}
     id="tooltip0"
     style={
-      Object {
+      {
         "border": 0,
         "height": 1,
         "margin": -1,
@@ -73,7 +73,7 @@ exports[`ui/flyout should render with a non-zero tab index 1`] = `
     hidden={true}
     id="tooltip2"
     style={
-      Object {
+      {
         "border": 0,
         "height": 1,
         "margin": -1,
@@ -117,7 +117,7 @@ exports[`ui/flyout should render with a title 1`] = `
     hidden={true}
     id="tooltip3"
     style={
-      Object {
+      {
         "border": 0,
         "height": 1,
         "margin": -1,
@@ -161,7 +161,7 @@ exports[`ui/flyout should render with an ARIA label 1`] = `
     hidden={true}
     id="tooltip1"
     style={
-      Object {
+      {
         "border": 0,
         "height": 1,
         "margin": -1,

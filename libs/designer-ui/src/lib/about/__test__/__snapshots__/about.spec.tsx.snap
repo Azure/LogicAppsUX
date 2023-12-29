@@ -10,8 +10,8 @@ exports[`lib/monitoring/requestpanel/request should render 1`] = `
     <StyledLabelBase
       className="msla-panel-connector-label"
       styles={
-        Object {
-          "root": Object {
+        {
+          "root": {
             "fontSize": "14px",
           },
         }
@@ -31,8 +31,8 @@ exports[`lib/monitoring/requestpanel/request should render 1`] = `
     <StyledLabelBase
       className="msla-panel-description-label"
       styles={
-        Object {
-          "root": Object {
+        {
+          "root": {
             "fontSize": "14px",
           },
         }
@@ -52,8 +52,8 @@ exports[`lib/monitoring/requestpanel/request should render 1`] = `
     <StyledLabelBase
       className="msla-panel-tags-label"
       styles={
-        Object {
-          "root": Object {
+        {
+          "root": {
             "fontSize": "14px",
           },
         }
@@ -80,8 +80,8 @@ exports[`lib/monitoring/requestpanel/request should render a body 1`] = `
     <StyledLabelBase
       className="msla-panel-connector-label"
       styles={
-        Object {
-          "root": Object {
+        {
+          "root": {
             "fontSize": "14px",
           },
         }
@@ -101,8 +101,8 @@ exports[`lib/monitoring/requestpanel/request should render a body 1`] = `
     <StyledLabelBase
       className="msla-panel-description-label"
       styles={
-        Object {
-          "root": Object {
+        {
+          "root": {
             "fontSize": "14px",
           },
         }
@@ -124,8 +124,8 @@ exports[`lib/monitoring/requestpanel/request should render a body 1`] = `
     <StyledLabelBase
       className="msla-panel-tags-label"
       styles={
-        Object {
-          "root": Object {
+        {
+          "root": {
             "fontSize": "14px",
           },
         }
@@ -167,8 +167,8 @@ exports[`lib/monitoring/requestpanel/request should render a description with ex
     <StyledLabelBase
       className="msla-panel-connector-label"
       styles={
-        Object {
-          "root": Object {
+        {
+          "root": {
             "fontSize": "14px",
           },
         }
@@ -188,8 +188,8 @@ exports[`lib/monitoring/requestpanel/request should render a description with ex
     <StyledLabelBase
       className="msla-panel-description-label"
       styles={
-        Object {
-          "root": Object {
+        {
+          "root": {
             "fontSize": "14px",
           },
         }
@@ -203,7 +203,7 @@ exports[`lib/monitoring/requestpanel/request should render a description with ex
       <DocumentationItem
         description="This is a description "
         link={
-          Object {
+          {
             "url": "www.microsoft.com",
             "urlDescription": "Learn more",
           }
@@ -217,8 +217,8 @@ exports[`lib/monitoring/requestpanel/request should render a description with ex
     <StyledLabelBase
       className="msla-panel-tags-label"
       styles={
-        Object {
-          "root": Object {
+        {
+          "root": {
             "fontSize": "14px",
           },
         }

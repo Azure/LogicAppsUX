@@ -13,7 +13,7 @@ exports[`lib/errorboundary should render a default experience if an error occurs
   </i>
   <span
     style={
-      Object {
+      {
         "alignSelf": "center",
         "color": "#e00202",
         "fontSize": "18px",

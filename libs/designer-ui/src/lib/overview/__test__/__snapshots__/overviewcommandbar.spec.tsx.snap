@@ -6,7 +6,7 @@ exports[`lib/overview/overviewcommandbar renders 1`] = `
 >
   <div
     style={
-      Object {
+      {
         "position": "relative",
       }
     }
@@ -14,7 +14,7 @@ exports[`lib/overview/overviewcommandbar renders 1`] = `
     <div
       data-automation-id="visibleContent"
       style={
-        Object {
+        {
           "position": "fixed",
           "visibility": "hidden",
         }
@@ -59,8 +59,8 @@ exports[`lib/overview/overviewcommandbar renders 1`] = `
                   className="ms-Icon root-105 css-125 ms-Button-icon icon-119"
                   data-icon-name="Refresh"
                   style={
-                    Object {
-                      "fontFamily": "\\"FabricMDL2Icons-0\\"",
+                    {
+                      "fontFamily": ""FabricMDL2Icons-0"",
                     }
                   }
                 >
@@ -92,7 +92,7 @@ exports[`lib/overview/overviewcommandbar renders with Run trigger button 1`] = `
 >
   <div
     style={
-      Object {
+      {
         "position": "relative",
       }
     }
@@ -100,7 +100,7 @@ exports[`lib/overview/overviewcommandbar renders with Run trigger button 1`] = `
     <div
       data-automation-id="visibleContent"
       style={
-        Object {
+        {
           "position": "fixed",
           "visibility": "hidden",
         }
@@ -145,8 +145,8 @@ exports[`lib/overview/overviewcommandbar renders with Run trigger button 1`] = `
                   className="ms-Icon root-105 css-125 ms-Button-icon icon-119"
                   data-icon-name="Refresh"
                   style={
-                    Object {
-                      "fontFamily": "\\"FabricMDL2Icons-0\\"",
+                    {
+                      "fontFamily": ""FabricMDL2Icons-0"",
                     }
                   }
                 >
@@ -192,8 +192,8 @@ exports[`lib/overview/overviewcommandbar renders with Run trigger button 1`] = `
                   className="ms-Icon root-105 css-125 ms-Button-icon icon-119"
                   data-icon-name="Play"
                   style={
-                    Object {
-                      "fontFamily": "\\"FabricMDL2Icons-0\\"",
+                    {
+                      "fontFamily": ""FabricMDL2Icons-0"",
                     }
                   }
                 >

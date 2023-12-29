@@ -7,7 +7,7 @@ exports[`lib/flyout/flyoutcallout should render 1`] = `
   className="msla-flyout-callout"
   directionalHint={11}
   focusTrapProps={
-    Object {
+    {
       "isClickableOutsideFocusTrap": true,
     }
   }
@@ -15,9 +15,9 @@ exports[`lib/flyout/flyoutcallout should render 1`] = `
   onDismiss={[MockFunction]}
   setInitialFocus={true}
   styles={
-    Object {
+    {
       "calloutMain": "calloutMain-115",
-      "subComponentStyles": Object {},
+      "subComponentStyles": {},
     }
   }
 >
@@ -27,7 +27,7 @@ exports[`lib/flyout/flyoutcallout should render 1`] = `
     data-testid="callout-text"
     role="dialog"
     style={
-      Object {
+      {
         "color": "#323130",
       }
     }

@@ -16,8 +16,8 @@ exports[`ui/settings/settingsection should construct 1`] = `
         className="msla-setting-section-header-icon"
         iconName="ChevronRightMed"
         styles={
-          Object {
-            "root": Object {
+          {
+            "root": {
               "color": "#514f4e",
               "fontSize": 14,
             },
@@ -34,8 +34,8 @@ exports[`ui/settings/settingsection should construct 1`] = `
       <Separator
         className="msla-setting-section-separator"
         styles={
-          Object {
-            "root": Object {
+          {
+            "root": {
               "color": "#eaeaea",
             },
           }

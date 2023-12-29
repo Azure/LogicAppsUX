@@ -6,7 +6,7 @@ exports[`ui/panel/panelheadertitle should construct. 1`] = `
   borderless={true}
   className="msla-card-title"
   componentRef={
-    Object {
+    {
       "current": null,
     }
   }
@@ -16,14 +16,14 @@ exports[`ui/panel/panelheadertitle should construct. 1`] = `
   onChange={[Function]}
   onKeyDown={[Function]}
   styles={
-    Object {
-      "errorMessage": Object {
+    {
+      "errorMessage": {
         "paddingLeft": "8px",
       },
-      "fieldGroup": Object {
+      "fieldGroup": {
         "background": "inherit",
       },
-      "root": Object {
+      "root": {
         "marginTop": "5px",
       },
     }

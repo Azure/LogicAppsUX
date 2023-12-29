@@ -45,8 +45,8 @@ exports[`ui/monitoring/values/_raw should render 1`] = `
               className="ms-Icon root-105 css-118 ms-Button-icon icon-112"
               data-icon-name="SelectAll"
               style={
-                Object {
-                  "fontFamily": "\\"FabricMDL2Icons-1\\"",
+                {
+                  "fontFamily": ""FabricMDL2Icons-1"",
                 }
               }
             >
@@ -75,8 +75,8 @@ exports[`ui/monitoring/values/_raw should render 1`] = `
               className="ms-Icon root-105 css-120 ms-Button-icon icon-112"
               data-icon-name="Copy"
               style={
-                Object {
-                  "fontFamily": "\\"FabricMDL2Icons-2\\"",
+                {
+                  "fontFamily": ""FabricMDL2Icons-2"",
                 }
               }
             >
@@ -88,7 +88,7 @@ exports[`ui/monitoring/values/_raw should render 1`] = `
       <pre
         className="prism-code language-json"
         style={
-          Object {
+          {
             "backgroundColor": "#ffffff",
             "color": "#000000",
           }
@@ -97,7 +97,7 @@ exports[`ui/monitoring/values/_raw should render 1`] = `
         <div
           className="token-line"
           style={
-            Object {
+            {
               "backgroundColor": null,
               "color": "#000000",
             }
@@ -158,8 +158,8 @@ exports[`ui/monitoring/values/_raw should rendered a zero-width space if value i
               className="ms-Icon root-105 css-118 ms-Button-icon icon-112"
               data-icon-name="SelectAll"
               style={
-                Object {
-                  "fontFamily": "\\"FabricMDL2Icons-1\\"",
+                {
+                  "fontFamily": ""FabricMDL2Icons-1"",
                 }
               }
             >
@@ -188,8 +188,8 @@ exports[`ui/monitoring/values/_raw should rendered a zero-width space if value i
               className="ms-Icon root-105 css-120 ms-Button-icon icon-112"
               data-icon-name="Copy"
               style={
-                Object {
-                  "fontFamily": "\\"FabricMDL2Icons-2\\"",
+                {
+                  "fontFamily": ""FabricMDL2Icons-2"",
                 }
               }
             >
@@ -201,7 +201,7 @@ exports[`ui/monitoring/values/_raw should rendered a zero-width space if value i
       <pre
         className="prism-code language-json"
         style={
-          Object {
+          {
             "backgroundColor": "#ffffff",
             "color": "#000000",
           }
@@ -210,7 +210,7 @@ exports[`ui/monitoring/values/_raw should rendered a zero-width space if value i
         <div
           className="token-line"
           style={
-            Object {
+            {
               "backgroundColor": null,
               "color": "#000000",
             }
