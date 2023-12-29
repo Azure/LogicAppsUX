@@ -308,7 +308,7 @@
   "0CPsxh": [
     {
       "type": 0,
-      "value": "Del"
+      "value": "ENTF"
     }
   ],
   "0CvRZW": [
@@ -1174,7 +1174,7 @@
   "5gOG+F": [
     {
       "type": 0,
-      "value": "Provide the values to compare and select the operator to use."
+      "value": "Geben Sie die zu vergleichenden Werte an, und wählen Sie den zu verwendenden Operator aus."
     }
   ],
   "5hWg4V": [
@@ -4872,7 +4872,7 @@
   "TsJbGH": [
     {
       "type": 0,
-      "value": "Disconnected"
+      "value": "Getrennt"
     }
   ],
   "Ttc0SM": [
@@ -5456,7 +5456,7 @@
   "WvvJYw": [
     {
       "type": 0,
-      "value": "Actions"
+      "value": "Aktionen"
     }
   ],
   "X/7je+": [
@@ -6642,7 +6642,7 @@
   "en/5A3": [
     {
       "type": 0,
-      "value": "Reassign"
+      "value": "Neu zuweisen"
     }
   ],
   "eo1YKX": [
@@ -8884,7 +8884,7 @@
   "snJFUi": [
     {
       "type": 0,
-      "value": "Ctrl+C"
+      "value": "STRG+C"
     }
   ],
   "soqP+Z": [

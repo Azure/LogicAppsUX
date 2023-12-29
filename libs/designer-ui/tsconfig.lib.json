@@ -13,6 +13,8 @@
     "**/*.test.js",
     "**/*.spec.jsx",
     "**/*.test.jsx",
+    "**/__test__/**/*.ts",
+    "**/__test__/**/*.tsx",
     "jest.config.ts"
   ],
   "include": ["**/*.js", "**/*.jsx", "**/*.ts", "**/*.tsx"]

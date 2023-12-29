@@ -1,11 +1,19 @@
 {
   "presets": [
     [
-      "@nrwl/react/babel",
+      "@nx/react/babel",
       {
         "runtime": "automatic",
       }
     ]
   ],
-  "plugins": []
+  "plugins": [
+    [
+      "formatjs",
+      {
+        "idInterpolationPattern": "[sha512:contenthash:base64:6]",
+        "ast": true
+      }
+    ]
+  ]
 }

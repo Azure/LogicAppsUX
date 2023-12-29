@@ -1,6 +1,6 @@
 import type { PlaywrightExecutorSchema } from '../schema-types';
-import type { ExecutorContext } from '@nrwl/devkit';
-import { runExecutor } from '@nrwl/devkit';
+import type { ExecutorContext } from '@nx/devkit';
+import { runExecutor } from '@nx/devkit';
 
 export async function* startDevServer(opts: PlaywrightExecutorSchema, context: ExecutorContext) {
   // no dev server, return the provisioned base url

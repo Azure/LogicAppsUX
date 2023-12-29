@@ -61,8 +61,8 @@ exports[`lib/copyinputcontrol should construct the copyinputcontrol correctly 1`
           className="ms-Icon root-105 css-131 ms-Button-icon icon-125"
           data-icon-name="Copy"
           style={
-            Object {
-              "fontFamily": "\\"FabricMDL2Icons-2\\"",
+            {
+              "fontFamily": ""FabricMDL2Icons-2"",
             }
           }
         >
@@ -74,7 +74,7 @@ exports[`lib/copyinputcontrol should construct the copyinputcontrol correctly 1`
       hidden={true}
       id="tooltip5"
       style={
-        Object {
+        {
           "border": 0,
           "height": 1,
           "margin": -1,
@@ -154,8 +154,8 @@ exports[`lib/copyinputcontrol should set the aria-labelledby attribute 1`] = `
           className="ms-Icon root-105 css-131 ms-Button-icon icon-125"
           data-icon-name="Copy"
           style={
-            Object {
-              "fontFamily": "\\"FabricMDL2Icons-2\\"",
+            {
+              "fontFamily": ""FabricMDL2Icons-2"",
             }
           }
         >
@@ -167,7 +167,7 @@ exports[`lib/copyinputcontrol should set the aria-labelledby attribute 1`] = `
       hidden={true}
       id="tooltip14"
       style={
-        Object {
+        {
           "border": 0,
           "height": 1,
           "margin": -1,
