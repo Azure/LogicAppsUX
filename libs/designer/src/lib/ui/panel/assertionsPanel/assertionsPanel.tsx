@@ -194,6 +194,7 @@ export const AssertionsPanel = (props: CommonPanelProps) => {
     const newAssertions = { ...assertions };
     delete newAssertions[id];
     setAssertions(newAssertions);
+    dispatch(updateAssertions({ assertions: newAssertions }));
   };
 
   const onAssertionUpdate = (event: AssertionUpdateEvent) => {
