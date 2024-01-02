@@ -9,7 +9,7 @@ exports[`lib/combobox should render 1`] = `
     onClick={[Function]}
   >
     <div
-      className="ms-ComboBox css-184"
+      className="ms-ComboBox css-127"
       data-ktp-target={true}
       id="ComboBox0wrapper"
     >
@@ -18,7 +18,7 @@ exports[`lib/combobox should render 1`] = `
         aria-expanded={false}
         autoCapitalize="off"
         autoComplete="off"
-        className="ms-ComboBox-Input css-185"
+        className="ms-ComboBox-Input css-128"
         data-is-interactable={true}
         data-ktp-execute-target={true}
         data-lpignore={true}
@@ -37,7 +37,7 @@ exports[`lib/combobox should render 1`] = `
         role="combobox"
         spellCheck={false}
         style={
-          {
+          Object {
             "fontFamily": "inherit",
           }
         }
@@ -45,7 +45,7 @@ exports[`lib/combobox should render 1`] = `
         value=""
       />
       <button
-        className="ms-Button ms-Button--icon ms-ComboBox-CaretDown-button root-192"
+        className="ms-Button ms-Button--icon ms-ComboBox-CaretDown-button root-135"
         data-is-focusable={false}
         onBlur={[Function]}
         onClick={[Function]}
@@ -58,16 +58,16 @@ exports[`lib/combobox should render 1`] = `
         type="button"
       >
         <span
-          className="ms-Button-flexContainer flexContainer-193"
+          className="ms-Button-flexContainer flexContainer-136"
           data-automationid="splitbuttonprimary"
         >
           <i
             aria-hidden={true}
-            className="ms-Icon root-105 css-201 ms-Button-icon icon-195"
+            className="ms-Icon root-105 css-144 ms-Button-icon icon-138"
             data-icon-name="ChevronDown"
             style={
-              {
-                "fontFamily": ""FabricMDL2Icons"",
+              Object {
+                "fontFamily": "\\"FabricMDL2Icons\\"",
               }
             }
           >

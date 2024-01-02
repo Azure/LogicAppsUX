@@ -116,9 +116,7 @@ export const getUpdatedManifestForSplitOn = (manifest: OperationManifest, splitO
       defaultMessage: `Invalid split on format in '{splitOn}'.`,
       description: 'Error message for invalid split on value.',
     },
-    // There is a eslint bug when there are quotes around the replacement text
-    // eslint-disable-next-line formatjs/enforce-placeholders
-    { splitOn: splitOn }
+    { splitOn }
   );
 
   if (splitOn === undefined) {

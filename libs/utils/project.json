@@ -5,7 +5,7 @@
   "projectType": "library",
   "targets": {
     "build": {
-      "executor": "@nx/rollup:rollup",
+      "executor": "@nrwl/rollup:rollup",
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/libs/utils",
@@ -14,7 +14,7 @@
         "project": "libs/utils/package.json",
         "buildableProjectDepsInPackageJsonType": "dependencies",
         "entryFile": "libs/utils/src/index.ts",
-        "rollupConfig": "@nx/react/plugins/bundle-rollup",
+        "rollupConfig": "@nrwl/react/plugins/bundle-rollup",
         "format": ["cjs", "esm"],
         "assets": [
           {
@@ -39,14 +39,14 @@
       }
     },
     "lint": {
-      "executor": "@nx/eslint:lint",
+      "executor": "@nrwl/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": ["libs/utils/**/*.ts"]
       }
     },
     "test": {
-      "executor": "@nx/jest:jest",
+      "executor": "@nrwl/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/utils"],
       "options": {
         "jestConfig": "libs/utils/jest.config.ts",

@@ -5,7 +5,7 @@
   "projectType": "application",
   "targets": {
     "build": {
-      "executor": "@nx/webpack:webpack",
+      "executor": "@nrwl/webpack:webpack",
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/apps/designer-standalone",
@@ -45,7 +45,7 @@
       "defaultConfiguration": "production"
     },
     "serve": {
-      "executor": "@nx/webpack:dev-server",
+      "executor": "@nrwl/webpack:dev-server",
       "options": {
         "buildTarget": "designer-standalone:build",
         "hmr": true,
@@ -74,14 +74,14 @@
       "defaultConfiguration": "development"
     },
     "lint": {
-      "executor": "@nx/eslint:lint",
+      "executor": "@nrwl/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": ["apps/designer-standalone/**/*.{ts,tsx,js,jsx}"]
       }
     },
     "test": {
-      "executor": "@nx/jest:jest",
+      "executor": "@nrwl/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/apps/designer-standalone"],
       "options": {
         "jestConfig": "apps/designer-standalone/jest.config.ts",

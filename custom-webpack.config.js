@@ -1,17 +1,11 @@
-const { composePlugins, withNx } = require('@nx/webpack');
-const { withReact } = require('@nx/react');
-
+const ReactConfig = require('@nrwl/react/plugins/webpack');
 const { merge } = require('webpack-merge');
 const webpack = require('webpack');
-const fs = require('fs');
-module.exports = composePlugins(withNx(), withReact(), (config) => {
-  config.resolve.alias['https'] = false;
-  config.resolve.alias['http'] = false;
-  if(config?.devServer?.client?.overlay) {
-    config.devServer.client.overlay = false;
-  }
-  
-  return merge(config, {
+module.exports = (config, context) => {
+  const webpackConfig = ReactConfig(config, context);
+  webpackConfig.resolve.alias['https'] = false;
+  webpackConfig.resolve.alias['http'] = false;
+  return merge(webpackConfig, {
     resolve: {
       aliasFields: ['browser', 'browser.esm'],
     },
@@ -24,4 +18,4 @@ module.exports = composePlugins(withNx(), withReact(), (config) => {
       }),
     ],
   });
-});
+};

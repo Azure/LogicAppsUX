@@ -1,4 +1,3 @@
-// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
 import messages from '../services/intl/src/compiled-lang/strings.json';
 import { createIntl, createIntlCache } from 'react-intl';
 import * as Intl from 'react-intl';

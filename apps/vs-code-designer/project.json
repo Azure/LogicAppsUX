@@ -5,13 +5,12 @@
   "projectType": "application",
   "targets": {
     "build": {
-      "executor": "@nx/webpack:webpack",
+      "executor": "@nrwl/webpack:webpack",
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/apps/vs-code-designer",
         "main": "apps/vs-code-designer/src/main.ts",
         "tsConfig": "apps/vs-code-designer/tsconfig.app.json",
-        "isolatedConfig": false,
         "assets": [
           "apps/vs-code-designer/src/assets",
           "apps/vs-code-designer/src/package.json",
@@ -48,14 +47,14 @@
       }
     },
     "lint": {
-      "executor": "@nx/eslint:lint",
+      "executor": "@nrwl/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": ["apps/vs-code-designer/**/*.ts"]
       }
     },
     "test": {
-      "executor": "@nx/jest:jest",
+      "executor": "@nrwl/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/apps/vs-code-designer"],
       "options": {
         "jestConfig": "apps/vs-code-designer/jest.config.ts",

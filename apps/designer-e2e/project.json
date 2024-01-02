@@ -28,7 +28,7 @@
       }
     },
     "lint": {
-      "executor": "@nx/eslint:lint",
+      "executor": "@nrwl/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": ["apps/designer-e2e/**/*.{ts,tsx,js,jsx}"]
