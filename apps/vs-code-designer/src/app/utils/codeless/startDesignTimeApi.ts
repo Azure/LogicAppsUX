@@ -114,6 +114,10 @@ export async function startDesignTimeApi(projectPath: string): Promise<void> {
 
 export async function getOrCreateDesignTimeDirectory(designTimeDirectory: string, projectRoot: string): Promise<Uri | undefined> {
   const directory: string = designTimeDirectory + path.sep;
+  if (projectRoot.includes(designTimeDirectoryName)) {
+    return Uri.file(projectRoot);
+  }
+
   const designTimeDirectoryUri: Uri = Uri.file(path.join(projectRoot, directory));
   if (!fs.existsSync(designTimeDirectoryUri.fsPath)) {
     await workspace.fs.createDirectory(designTimeDirectoryUri);
