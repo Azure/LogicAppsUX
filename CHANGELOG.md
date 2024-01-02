@@ -1,4 +1,11 @@
 # Logic Apps Designer
+## [2.99.0](https://github.com/Azure/LogicAppsUX/compare/v2.98.0...v2.99.0) (2024-01-02)
+
+
+### Bug Fixes
+
+* **vscode:** Add validation for design-time folder ([#3910](https://github.com/Azure/LogicAppsUX/issues/3910)) ([0c48a29](https://github.com/Azure/LogicAppsUX/commit/0c48a297e39403351dc6cdc3aefe3e1735cff13c))
+
 ## [2.98.0](https://github.com/Azure/LogicAppsUX/compare/v2.97.0...v2.98.0) (2023-12-30)
 
 ## [2.97.0](https://github.com/Azure/LogicAppsUX/compare/v2.96.0...v2.97.0) (2023-12-28)
