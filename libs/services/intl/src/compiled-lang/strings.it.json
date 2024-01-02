@@ -23,16 +23,6 @@
       "value": "Protetta"
     }
   ],
-  "+7IA0V": [
-    {
-      "type": 0,
-      "value": "Connessioni di "
-    },
-    {
-      "type": 1,
-      "value": "connectorName"
-    }
-  ],
   "+FcXe9": [
     {
       "type": 0,
@@ -175,6 +165,12 @@
       "value": "Apri Azure Copilot"
     }
   ],
+  "/c1l10": [
+    {
+      "type": 0,
+      "value": "⌘+C"
+    }
+  ],
   "/doURb": [
     {
       "type": 0,
@@ -303,6 +299,12 @@
     {
       "type": 0,
       "value": "(UTC + 05.30 h) Sri Jayawardenepura"
+    }
+  ],
+  "0CPsxh": [
+    {
+      "type": 0,
+      "value": "CANC"
     }
   ],
   "0CvRZW": [
@@ -555,12 +557,6 @@
     {
       "type": 0,
       "value": "5"
-    }
-  ],
-  "1zgFh1": [
-    {
-      "type": 0,
-      "value": "Ignora"
     }
   ],
   "20oqsp": [
@@ -1158,7 +1154,7 @@
   "5gOG+F": [
     {
       "type": 0,
-      "value": "Provide the values to compare and select the operator to use."
+      "value": "Specificare i valori da confrontare e selezionare l'operatore da utilizzare."
     }
   ],
   "5hWg4V": [
@@ -3948,12 +3944,6 @@
       "value": "OK"
     }
   ],
-  "OBKhVi": [
-    {
-      "type": 0,
-      "value": "Non è possibile copiare l'azione o il trigger."
-    }
-  ],
   "ODQCKj": [
     {
       "type": 0,
@@ -4482,12 +4472,6 @@
       "value": " h"
     }
   ],
-  "Qy0Kha": [
-    {
-      "type": 0,
-      "value": "Non è possibile eliminare i trigger."
-    }
-  ],
   "R/aiRy": [
     {
       "type": 0,
@@ -4587,12 +4571,6 @@
     {
       "type": 0,
       "value": "problema"
-    }
-  ],
-  "Ro4+PC": [
-    {
-      "type": 0,
-      "value": "È possibile aggiungere note solo quando si modificano gli input di un passaggio."
     }
   ],
   "Rp5pHU": [
@@ -4881,6 +4859,12 @@
     {
       "type": 0,
       "value": "Nota"
+    }
+  ],
+  "TsJbGH": [
+    {
+      "type": 0,
+      "value": "Disconnessa"
     }
   ],
   "Ttc0SM": [
@@ -5453,6 +5437,12 @@
       "value": "Un'identità gestita non è configurata nell'app per la logica."
     }
   ],
+  "WvvJYw": [
+    {
+      "type": 0,
+      "value": "Azioni"
+    }
+  ],
   "X/7je+": [
     {
       "type": 0,
@@ -6001,12 +5991,6 @@
     {
       "type": 0,
       "value": "Altre informazioni"
-    }
-  ],
-  "ZbX8xq": [
-    {
-      "type": 0,
-      "value": "Questa operazione è già stata eliminata."
     }
   ],
   "Zg3IjD": [
@@ -6639,6 +6623,12 @@
       "value": "Corsivo (⌘I)"
     }
   ],
+  "en/5A3": [
+    {
+      "type": 0,
+      "value": "Riassegna"
+    }
+  ],
   "eo1YKX": [
     {
       "type": 0,
@@ -6806,7 +6796,7 @@
   "gA1dde": [
     {
       "type": 0,
-      "value": "Toggle code view"
+      "value": "Attiva/Disattiva visualizzazione codice"
     }
   ],
   "gCXOd5": [
@@ -7030,12 +7020,6 @@
     {
       "type": 0,
       "value": "Annulla"
-    }
-  ],
-  "hTZZr+": [
-    {
-      "type": 0,
-      "value": "Azioni connesse"
     }
   ],
   "hZqQdt": [
@@ -8319,12 +8303,6 @@
       "value": "In-app"
     }
   ],
-  "p3K7eM": [
-    {
-      "type": 0,
-      "value": "Azioni disconnesse"
-    }
-  ],
   "p5ZID0": [
     {
       "type": 0,
@@ -8902,6 +8880,12 @@
     {
       "type": 0,
       "value": "Chiave"
+    }
+  ],
+  "snJFUi": [
+    {
+      "type": 0,
+      "value": "CTRL+C"
     }
   ],
   "soqP+Z": [
@@ -9800,12 +9784,6 @@
       "value": "Valore"
     }
   ],
-  "xxeu75": [
-    {
-      "type": 0,
-      "value": "Riassegna tutte le azioni disconnesse a una nuova connessione"
-    }
-  ],
   "y1e9yw": [
     {
       "type": 0,
@@ -10050,12 +10028,6 @@
     {
       "type": 0,
       "value": "Arresta"
-    }
-  ],
-  "ziXw25": [
-    {
-      "type": 0,
-      "value": "Elimina"
     }
   ],
   "ziYCiA": [

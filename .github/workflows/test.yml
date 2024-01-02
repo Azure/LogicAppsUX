@@ -32,6 +32,7 @@ jobs:
       - run: npx nx affected --target=lint --parallel
       - run: npx nx affected --target=build
       - run: npx nx affected --target=test --parallel
+      - run: npx playwright install
       - run: npx nx e2e designer-e2e --reporter=html
       - run: npx nx e2e data-mapper-e2e --reporter=html
 

@@ -15,7 +15,7 @@ exports[`ui/panel/panelheadercomment should construct. 1`] = `
     borderless={true}
     className="msla-card-comment"
     componentRef={
-      Object {
+      {
         "current": null,
       }
     }
@@ -28,8 +28,8 @@ exports[`ui/panel/panelheadercomment should construct. 1`] = `
     onKeyUp={[Function]}
     resizable={false}
     styles={
-      Object {
-        "field": Object {
+      {
+        "field": {
           "backgroundColor": "#faf9f8",
         },
       }

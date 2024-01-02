@@ -23,20 +23,6 @@
       "value": "보호됨"
     }
   ],
-  "+7IA0V": [
-    {
-      "type": 0,
-      "value": "연결 "
-    },
-    {
-      "type": 1,
-      "value": "connectorName"
-    },
-    {
-      "type": 0,
-      "value": "개"
-    }
-  ],
   "+FcXe9": [
     {
       "type": 0,
@@ -179,6 +165,12 @@
       "value": "Azure Copilot 열기"
     }
   ],
+  "/c1l10": [
+    {
+      "type": 0,
+      "value": "⌘+C"
+    }
+  ],
   "/doURb": [
     {
       "type": 0,
@@ -307,6 +299,12 @@
     {
       "type": 0,
       "value": "(UTC+05:30) 스리자야와르데네푸라"
+    }
+  ],
+  "0CPsxh": [
+    {
+      "type": 0,
+      "value": "Del"
     }
   ],
   "0CvRZW": [
@@ -559,12 +557,6 @@
     {
       "type": 0,
       "value": "5"
-    }
-  ],
-  "1zgFh1": [
-    {
-      "type": 0,
-      "value": "해제"
     }
   ],
   "20oqsp": [
@@ -1162,7 +1154,7 @@
   "5gOG+F": [
     {
       "type": 0,
-      "value": "Provide the values to compare and select the operator to use."
+      "value": "비교할 값을 제공하고 사용할 연산자를 선택하세요."
     }
   ],
   "5hWg4V": [
@@ -3882,12 +3874,6 @@
       "value": "확인"
     }
   ],
-  "OBKhVi": [
-    {
-      "type": 0,
-      "value": "이 작업/트리거는 복사할 수 없습니다."
-    }
-  ],
   "ODQCKj": [
     {
       "type": 0,
@@ -4412,12 +4398,6 @@
       "value": "시간"
     }
   ],
-  "Qy0Kha": [
-    {
-      "type": 0,
-      "value": "트리거를 삭제할 수 없습니다."
-    }
-  ],
   "R/aiRy": [
     {
       "type": 0,
@@ -4495,12 +4475,6 @@
     {
       "type": 0,
       "value": "문제"
-    }
-  ],
-  "Ro4+PC": [
-    {
-      "type": 0,
-      "value": "단계의 입력을 편집할 때만 메모를 추가할 수 있습니다."
     }
   ],
   "Rp5pHU": [
@@ -4789,6 +4763,12 @@
     {
       "type": 0,
       "value": "참고 항목"
+    }
+  ],
+  "TsJbGH": [
+    {
+      "type": 0,
+      "value": "연결 끊김"
     }
   ],
   "Ttc0SM": [
@@ -5357,6 +5337,12 @@
       "value": "논리 앱에 관리 ID가 구성되어 있지 않습니다."
     }
   ],
+  "WvvJYw": [
+    {
+      "type": 0,
+      "value": "작업"
+    }
+  ],
   "X/7je+": [
     {
       "type": 0,
@@ -5905,12 +5891,6 @@
     {
       "type": 0,
       "value": "자세히 표시"
-    }
-  ],
-  "ZbX8xq": [
-    {
-      "type": 0,
-      "value": "이 작업은 이미 삭제되었습니다."
     }
   ],
   "Zg3IjD": [
@@ -6539,6 +6519,12 @@
       "value": "기울임꼴(⌘I)"
     }
   ],
+  "en/5A3": [
+    {
+      "type": 0,
+      "value": "재할당"
+    }
+  ],
   "eo1YKX": [
     {
       "type": 0,
@@ -6908,12 +6894,6 @@
     {
       "type": 0,
       "value": "실행 취소"
-    }
-  ],
-  "hTZZr+": [
-    {
-      "type": 0,
-      "value": "연결된 작업"
     }
   ],
   "hZqQdt": [
@@ -8167,12 +8147,6 @@
       "value": "앱 내"
     }
   ],
-  "p3K7eM": [
-    {
-      "type": 0,
-      "value": "연결이 끊긴 작업"
-    }
-  ],
   "p5ZID0": [
     {
       "type": 0,
@@ -8724,6 +8698,12 @@
     {
       "type": 0,
       "value": "키"
+    }
+  ],
+  "snJFUi": [
+    {
+      "type": 0,
+      "value": "Ctrl+C"
     }
   ],
   "soqP+Z": [
@@ -9614,12 +9594,6 @@
       "value": "값"
     }
   ],
-  "xxeu75": [
-    {
-      "type": 0,
-      "value": "연결이 끊긴 모든 작업을 새 연결에 다시 할당"
-    }
-  ],
   "y1e9yw": [
     {
       "type": 0,
@@ -9864,12 +9838,6 @@
     {
       "type": 0,
       "value": "중지"
-    }
-  ],
-  "ziXw25": [
-    {
-      "type": 0,
-      "value": "삭제"
     }
   ],
   "ziYCiA": [

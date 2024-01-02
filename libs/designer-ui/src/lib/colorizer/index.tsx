@@ -35,6 +35,7 @@ export const Colorizer: React.FC<ColorizerProps> = ({ ariaLabel, code, language 
       description: 'Accessibility label for a button to copy all text in a value box',
     },
     {
+      // eslint-disable-next-line formatjs/enforce-placeholders
       label: ariaLabel,
     }
   );

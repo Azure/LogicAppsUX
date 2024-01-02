@@ -23,16 +23,6 @@
       "value": "已受保护"
     }
   ],
-  "+7IA0V": [
-    {
-      "type": 1,
-      "value": "connectorName"
-    },
-    {
-      "type": 0,
-      "value": " 连接"
-    }
-  ],
   "+FcXe9": [
     {
       "type": 0,
@@ -175,6 +165,12 @@
       "value": "打开 Azure Copilot"
     }
   ],
+  "/c1l10": [
+    {
+      "type": 0,
+      "value": "⌘+C"
+    }
+  ],
   "/doURb": [
     {
       "type": 0,
@@ -303,6 +299,12 @@
     {
       "type": 0,
       "value": "(UTC+05:30)斯里加亚渥登普拉"
+    }
+  ],
+  "0CPsxh": [
+    {
+      "type": 0,
+      "value": "Del"
     }
   ],
   "0CvRZW": [
@@ -555,12 +557,6 @@
     {
       "type": 0,
       "value": "5"
-    }
-  ],
-  "1zgFh1": [
-    {
-      "type": 0,
-      "value": "关闭"
     }
   ],
   "20oqsp": [
@@ -1170,7 +1166,7 @@
   "5gOG+F": [
     {
       "type": 0,
-      "value": "Provide the values to compare and select the operator to use."
+      "value": "提供要比较的值，并选择要使用的运算符。"
     }
   ],
   "5hWg4V": [
@@ -3906,12 +3902,6 @@
       "value": "确定"
     }
   ],
-  "OBKhVi": [
-    {
-      "type": 0,
-      "value": "无法复制此操作/触发器。"
-    }
-  ],
   "ODQCKj": [
     {
       "type": 0,
@@ -4436,12 +4426,6 @@
       "value": " 小时"
     }
   ],
-  "Qy0Kha": [
-    {
-      "type": 0,
-      "value": "无法删除触发器。"
-    }
-  ],
   "R/aiRy": [
     {
       "type": 0,
@@ -4523,12 +4507,6 @@
     {
       "type": 0,
       "value": "议题"
-    }
-  ],
-  "Ro4+PC": [
-    {
-      "type": 0,
-      "value": "只能在编辑步骤的输入时添加备注。"
     }
   ],
   "Rp5pHU": [
@@ -4817,6 +4795,12 @@
     {
       "type": 0,
       "value": "备注"
+    }
+  ],
+  "TsJbGH": [
+    {
+      "type": 0,
+      "value": "已断开连接"
     }
   ],
   "Ttc0SM": [
@@ -5401,6 +5385,12 @@
       "value": "未在逻辑应用上配置托管标识。"
     }
   ],
+  "WvvJYw": [
+    {
+      "type": 0,
+      "value": "操作"
+    }
+  ],
   "X/7je+": [
     {
       "type": 0,
@@ -5949,12 +5939,6 @@
     {
       "type": 0,
       "value": "阅读更多信息"
-    }
-  ],
-  "ZbX8xq": [
-    {
-      "type": 0,
-      "value": "已删除此操作。"
     }
   ],
   "Zg3IjD": [
@@ -6587,6 +6571,12 @@
       "value": "斜体(⌘I)"
     }
   ],
+  "en/5A3": [
+    {
+      "type": 0,
+      "value": "重新分配"
+    }
+  ],
   "eo1YKX": [
     {
       "type": 0,
@@ -6964,12 +6954,6 @@
     {
       "type": 0,
       "value": "撤消"
-    }
-  ],
-  "hTZZr+": [
-    {
-      "type": 0,
-      "value": "连接的操作"
     }
   ],
   "hZqQdt": [
@@ -8251,12 +8235,6 @@
       "value": "应用内"
     }
   ],
-  "p3K7eM": [
-    {
-      "type": 0,
-      "value": "已断开连接的操作"
-    }
-  ],
   "p5ZID0": [
     {
       "type": 0,
@@ -8812,6 +8790,12 @@
     {
       "type": 0,
       "value": "密钥"
+    }
+  ],
+  "snJFUi": [
+    {
+      "type": 0,
+      "value": "Ctrl+C"
     }
   ],
   "soqP+Z": [
@@ -9706,12 +9690,6 @@
       "value": "值"
     }
   ],
-  "xxeu75": [
-    {
-      "type": 0,
-      "value": "将所有已断开连接的操作重新分配到新连接"
-    }
-  ],
   "y1e9yw": [
     {
       "type": 0,
@@ -9960,12 +9938,6 @@
     {
       "type": 0,
       "value": "停止"
-    }
-  ],
-  "ziXw25": [
-    {
-      "type": 0,
-      "value": "删除"
     }
   ],
   "ziYCiA": [

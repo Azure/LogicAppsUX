@@ -22,7 +22,7 @@ exports[`ui/workflowparameters/workflowparameter should construct. 1`] = `
   >
     <EditOrDeleteButton
       definition={
-        Object {
+        {
           "id": "id",
           "name": "",
           "type": "Array",

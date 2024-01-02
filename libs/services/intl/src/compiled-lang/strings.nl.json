@@ -23,16 +23,6 @@
       "value": "Beveiligd"
     }
   ],
-  "+7IA0V": [
-    {
-      "type": 1,
-      "value": "connectorName"
-    },
-    {
-      "type": 0,
-      "value": "-verbindingen"
-    }
-  ],
   "+FcXe9": [
     {
       "type": 0,
@@ -175,6 +165,12 @@
       "value": "Azure Copilot openen"
     }
   ],
+  "/c1l10": [
+    {
+      "type": 0,
+      "value": "⌘+C"
+    }
+  ],
   "/doURb": [
     {
       "type": 0,
@@ -303,6 +299,12 @@
     {
       "type": 0,
       "value": "(UTC+05:30) Sri Jayawardenepura"
+    }
+  ],
+  "0CPsxh": [
+    {
+      "type": 0,
+      "value": "Del"
     }
   ],
   "0CvRZW": [
@@ -555,12 +557,6 @@
     {
       "type": 0,
       "value": "5"
-    }
-  ],
-  "1zgFh1": [
-    {
-      "type": 0,
-      "value": "Sluiten"
     }
   ],
   "20oqsp": [
@@ -1170,7 +1166,7 @@
   "5gOG+F": [
     {
       "type": 0,
-      "value": "Provide the values to compare and select the operator to use."
+      "value": "Geef de waarden op die u wilt vergelijken en selecteer de operator die u wilt gebruiken."
     }
   ],
   "5hWg4V": [
@@ -3935,12 +3931,6 @@
       "value": "OK"
     }
   ],
-  "OBKhVi": [
-    {
-      "type": 0,
-      "value": "Deze actie/trigger kan niet worden gekopieerd."
-    }
-  ],
   "ODQCKj": [
     {
       "type": 0,
@@ -4457,12 +4447,6 @@
       "value": "h"
     }
   ],
-  "Qy0Kha": [
-    {
-      "type": 0,
-      "value": "Triggers kunnen niet worden verwijderd."
-    }
-  ],
   "R/aiRy": [
     {
       "type": 0,
@@ -4551,12 +4535,6 @@
     {
       "type": 0,
       "value": "probleem"
-    }
-  ],
-  "Ro4+PC": [
-    {
-      "type": 0,
-      "value": "U kunt alleen notities toevoegen wanneer u de invoer van een stap bewerkt."
     }
   ],
   "Rp5pHU": [
@@ -4841,6 +4819,12 @@
     {
       "type": 0,
       "value": "Notitie"
+    }
+  ],
+  "TsJbGH": [
+    {
+      "type": 0,
+      "value": "De verbinding is verbroken"
     }
   ],
   "Ttc0SM": [
@@ -5413,6 +5397,12 @@
       "value": "Er is geen beheerde identiteit geconfigureerd in de logische app."
     }
   ],
+  "WvvJYw": [
+    {
+      "type": 0,
+      "value": "Acties"
+    }
+  ],
   "X/7je+": [
     {
       "type": 0,
@@ -5961,12 +5951,6 @@
     {
       "type": 0,
       "value": "Meer informatie"
-    }
-  ],
-  "ZbX8xq": [
-    {
-      "type": 0,
-      "value": "Deze bewerking is al verwijderd."
     }
   ],
   "Zg3IjD": [
@@ -6599,6 +6583,12 @@
       "value": "Cursief (⌘I)"
     }
   ],
+  "en/5A3": [
+    {
+      "type": 0,
+      "value": "Opnieuw toewijzen"
+    }
+  ],
   "eo1YKX": [
     {
       "type": 0,
@@ -6983,12 +6973,6 @@
     {
       "type": 0,
       "value": "Ongedaan maken"
-    }
-  ],
-  "hTZZr+": [
-    {
-      "type": 0,
-      "value": "Verbonden acties"
     }
   ],
   "hZqQdt": [
@@ -8265,12 +8249,6 @@
       "value": "In-app"
     }
   ],
-  "p3K7eM": [
-    {
-      "type": 0,
-      "value": "Verbroken acties"
-    }
-  ],
   "p5ZID0": [
     {
       "type": 0,
@@ -8833,6 +8811,12 @@
     {
       "type": 0,
       "value": "Sleutel"
+    }
+  ],
+  "snJFUi": [
+    {
+      "type": 0,
+      "value": "Ctrl+C"
     }
   ],
   "soqP+Z": [
@@ -9723,12 +9707,6 @@
       "value": "Waarde"
     }
   ],
-  "xxeu75": [
-    {
-      "type": 0,
-      "value": "Alle niet-verbonden acties opnieuw toewijzen aan een nieuwe verbinding"
-    }
-  ],
   "y1e9yw": [
     {
       "type": 0,
@@ -9973,12 +9951,6 @@
     {
       "type": 0,
       "value": "Stoppen"
-    }
-  ],
-  "ziXw25": [
-    {
-      "type": 0,
-      "value": "Verwijderen"
     }
   ],
   "ziYCiA": [

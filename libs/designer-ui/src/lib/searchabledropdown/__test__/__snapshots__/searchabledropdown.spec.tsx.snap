@@ -8,41 +8,41 @@ exports[`lib/searchabledropdown should create a dropdown with a search box for 5
   onDismiss={[Function]}
   onRenderItem={[Function]}
   options={
-    Array [
-      Object {
+    [
+      {
         "itemType": 2,
         "key": "FilterHeader",
         "text": "",
       },
-      Object {
+      {
         "itemType": 1,
         "key": "FilterDivider",
         "text": "-",
       },
-      Object {
+      {
         "key": "foo",
         "text": "Foo",
       },
-      Object {
+      {
         "key": "bar",
         "text": "Bar",
       },
-      Object {
+      {
         "key": "baz",
         "text": "Baz",
       },
-      Object {
+      {
         "key": "qux",
         "text": "Qux",
       },
-      Object {
+      {
         "key": "qoz",
         "text": "Qoz",
       },
     ]
   }
   placeholder="Select an option"
-  selectedKeys={Array []}
+  selectedKeys={[]}
 />
 `;
 
@@ -54,22 +54,22 @@ exports[`lib/searchabledropdown should create a dropdown without a search box fo
   onDismiss={[Function]}
   onRenderItem={[Function]}
   options={
-    Array [
-      Object {
+    [
+      {
         "key": "foo",
         "text": "Foo",
       },
-      Object {
+      {
         "key": "bar",
         "text": "Bar",
       },
-      Object {
+      {
         "key": "baz",
         "text": "Baz",
       },
     ]
   }
   placeholder="Select an option"
-  selectedKeys={Array []}
+  selectedKeys={[]}
 />
 `;
