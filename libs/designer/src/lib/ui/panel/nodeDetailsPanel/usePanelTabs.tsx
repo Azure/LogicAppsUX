@@ -81,7 +81,13 @@ export const usePanelTabs = () => {
     [intl, isMonitoringView, runHistory]
   );
 
-  const scratchTabItem = useMemo(() => scratchTab, []);
+  const scratchTabItem = useMemo(
+    () => ({
+      ...scratchTab,
+      visible: process.env.NODE_ENV !== 'production',
+    }),
+    []
+  );
 
   const tabs = useMemo(() => {
     // Switch cases should only show parameters tab
