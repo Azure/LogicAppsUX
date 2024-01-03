@@ -1,5 +1,4 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
-// import { Button } from '@fluentui/react-components';
 import constants from '../../common/constants';
 import { getMonitoringError } from '../../common/utilities/error';
 import type { AppDispatch } from '../../core';
@@ -42,7 +41,7 @@ import {
   useRunInstance,
   useShouldNodeFocus,
   useParentRunId,
-  useIsNodeLeafNode,
+  useIsLeafNode,
 } from '../../core/state/workflow/workflowSelectors';
 import { setRepetitionRunData } from '../../core/state/workflow/workflowSlice';
 import { getRepetitionName } from '../common/LoopsPager/helper';
@@ -170,9 +169,9 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
   const nodeComment = useNodeDescription(id);
   const connectionResult = useNodeConnectionName(id);
   const isConnectionRequired = useIsConnectionRequired(operationInfo);
-  const isLeaf = useIsNodeLeafNode(id);
+  const isLeaf = useIsLeafNode(id);
 
-  const showLeafComponents: boolean = useMemo(() => !readOnly && isLeaf, [readOnly, isLeaf]);
+  const showLeafComponents = useMemo(() => !readOnly && isLeaf, [readOnly, isLeaf]);
 
   const nodeClick = useCallback(() => {
     if (nodeSelectCallbackOverride) nodeSelectCallbackOverride(id);
@@ -313,9 +312,6 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
     <>
       <div className="nopan" ref={setRef}>
         <Handle className="node-handle top" type="target" position={targetPosition} isConnectable={false} />
-        {/* <Button onClick={nodeClick}>
-          {id}  
-        </Button> */}
         <Card
           title={label}
           icon={iconUri}

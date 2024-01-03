@@ -1,6 +1,6 @@
 import { useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
 import { useIsNodeSelected } from '../../core/state/panel/panelSelectors';
-import { useActionMetadata, useIsNodeLeafNode, useNodeMetadata } from '../../core/state/workflow/workflowSelectors';
+import { useActionMetadata, useIsLeafNode, useNodeMetadata } from '../../core/state/workflow/workflowSelectors';
 import { DropZone } from '../connections/dropzone';
 import { css } from '@fluentui/react';
 import { GraphContainer } from '@microsoft/designer-ui';
@@ -15,7 +15,7 @@ const GraphContainerNode = ({ targetPosition = Position.Top, sourcePosition = Po
   const selected = useIsNodeSelected(id);
   const actionMetadata = useActionMetadata(id);
   const nodeMetadata = useNodeMetadata(id);
-  const isLeaf = useIsNodeLeafNode(id);
+  const isLeaf = useIsLeafNode(id);
   const showLeafComponents = !readOnly && actionMetadata?.type && isLeaf;
   const isSubgraphContainer = nodeMetadata?.subgraphType !== undefined;
   const hasFooter = nodeMetadata?.subgraphType === SUBGRAPH_TYPES.UNTIL_DO;

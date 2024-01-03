@@ -11,7 +11,7 @@ import { changePanelNode, setSelectedNodeId } from '../../core/state/panel/panel
 import {
   useActionMetadata,
   useIsGraphCollapsed,
-  useIsNodeLeafNode,
+  useIsLeafNode,
   useNewSwitchCaseId,
   useNodeDisplayName,
   useNodeMetadata,
@@ -39,7 +39,7 @@ const SubgraphCardNode = ({ data, targetPosition = Position.Top, sourcePosition 
   const dispatch = useDispatch<AppDispatch>();
 
   const selected = useIsNodeSelected(subgraphId);
-  const isLeaf = useIsNodeLeafNode(id);
+  const isLeaf = useIsLeafNode(id);
   const metadata = useNodeMetadata(subgraphId);
   const graphId = useMemo(() => metadata?.graphId ?? '', [metadata]);
   const graphNode = useWorkflowNode(graphId);

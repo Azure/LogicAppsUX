@@ -11,7 +11,7 @@ import { useSettingValidationErrors } from '../../core/state/setting/settingSele
 import {
   useActionMetadata,
   useIsGraphCollapsed,
-  useIsNodeLeafNode,
+  useIsLeafNode,
   useNodeDisplayName,
   useNodeMetadata,
   useNodesMetadata,
@@ -140,7 +140,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
   const selected = useIsNodeSelected(scopeId);
   const brandColor = useBrandColor(scopeId);
   const iconUri = useIconUri(scopeId);
-  const isLeaf = useIsNodeLeafNode(id);
+  const isLeaf = useIsLeafNode(id);
 
   const label = useNodeDisplayName(scopeId);
   const nodeClick = useCallback(() => {

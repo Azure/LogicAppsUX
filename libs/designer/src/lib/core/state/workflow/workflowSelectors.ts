@@ -141,10 +141,9 @@ export const useIsGraphEmpty = () => {
   return useSelector((state: RootState) => state.workflow.graph?.children?.length === 0);
 };
 
-export const useIsNodeLeafNode = (nodeId: string): boolean => {
+export const useIsLeafNode = (nodeId: string): boolean => {
   const targets = useNodeEdgeTargets(nodeId);
-  const isLeaf = useMemo(() => targets.length === 0, [targets.length]);
-  return isLeaf;
+  return useMemo(() => targets.length === 0, [targets.length]);
 };
 
 export const useNodeIds = () => {
