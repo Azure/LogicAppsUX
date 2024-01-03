@@ -333,13 +333,6 @@ export class MapDefinitionDeserializer {
             loopKey.indexOf('*') > -1
           );
           tgtLoopNode = findNodeForKey(tgtLoopNodeKey, this._targetSchema.schemaTreeRoot, true);
-          // accounts for xsd to json maps
-          if (!tgtLoopNode) {
-            const jsonTgt = getLoopTargetNodeWithJson(tgtLoopNodeKey, this._targetSchema.schemaTreeRoot);
-            if (jsonTgt) {
-              tgtLoopNode = jsonTgt as SchemaNodeExtended;
-            }
-          }
         }
 
         // Handle index variables
@@ -468,6 +461,10 @@ export class MapDefinitionDeserializer {
 
 export const getLoopTargetNodeWithJson = (targetKey: string, targetSchemaRoot: SchemaNodeExtended) => {
   let trimmedTargetKey = targetKey;
+  if (!targetKey.includes('/')) {
+    // excludes custom values and others that aren't schema nodes
+    return undefined;
+  }
   if (targetKey[0] === '/') {
     trimmedTargetKey = targetKey.substring(1);
   }
