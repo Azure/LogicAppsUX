@@ -8998,7 +8998,7 @@
         <Str Cat="Text">
           <Val><![CDATA[(UTC-06:00) Central America]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[(UTC-06:00) Közép-Amerika]]></Val>
+            <Val><![CDATA[(UTC–06:00) Közép-Amerika]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
