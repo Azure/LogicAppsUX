@@ -1,13 +1,14 @@
 import { Modal } from '@fluentui/react';
-import { Button } from '@fluentui/react-components';
+import { Button, Spinner } from '@fluentui/react-components';
 import type { WorkflowNodeType } from '@microsoft/utils-logic-apps';
 import { idDisplayCase, WORKFLOW_NODE_TYPES } from '@microsoft/utils-logic-apps';
 import { useIntl } from 'react-intl';
 
 export interface DeleteNodeModalProps {
   nodeId: string;
-  nodeType: WorkflowNodeType;
+  nodeType?: WorkflowNodeType;
   isOpen: boolean;
+  isLoading?: boolean;
   onDismiss: () => void;
   onConfirm: () => void;
 }
@@ -74,15 +75,21 @@ export const DeleteNodeModal = (props: DeleteNodeModalProps) => {
   return (
     <Modal titleAriaId={title} isOpen={isOpen} onDismiss={onDismiss}>
       <div className="msla-modal-container">
-        <h2>{title}</h2>
-        <p>{bodyConfirmText}</p>
-        <p>{bodyMessage}</p>
-        <div className="msla-modal-footer">
-          <Button appearance="primary" onClick={onConfirm}>
-            {confirmText}
-          </Button>
-          <Button onClick={onDismiss}>{cancelText}</Button>
-        </div>
+        {!nodeId ? (
+          <Spinner label={'Deleting...'} />
+        ) : (
+          <>
+            <h2>{title}</h2>
+            <p>{bodyConfirmText}</p>
+            <p>{bodyMessage}</p>
+            <div className="msla-modal-footer">
+              <Button appearance="primary" onClick={onConfirm}>
+                {confirmText}
+              </Button>
+              <Button onClick={onDismiss}>{cancelText}</Button>
+            </div>
+          </>
+        )}
       </div>
     </Modal>
   );

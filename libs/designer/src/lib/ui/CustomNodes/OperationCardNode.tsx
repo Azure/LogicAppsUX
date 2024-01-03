@@ -1,9 +1,9 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
+// import { Button } from '@fluentui/react-components';
 import constants from '../../common/constants';
 import { getMonitoringError } from '../../common/utilities/error';
 import type { AppDispatch } from '../../core';
 import { copyOperation } from '../../core/actions/bjsworkflow/copypaste';
-import { deleteOperation } from '../../core/actions/bjsworkflow/delete';
 import { moveOperation } from '../../core/actions/bjsworkflow/move';
 import {
   useMonitoringView,
@@ -11,6 +11,7 @@ import {
   useReadOnly,
   useSuppressDefaultNodeSelectFunctionality,
 } from '../../core/state/designerOptions/designerOptionsSelectors';
+import { setShowDeleteModal } from '../../core/state/designerView/designerViewSlice';
 import { ErrorLevel } from '../../core/state/operation/operationMetadataSlice';
 import {
   useOperationErrorInfo,
@@ -18,14 +19,13 @@ import {
   useParameterStaticResult,
   useParameterValidationErrors,
   useTokenDependencies,
+  useOperationVisuals,
 } from '../../core/state/operation/operationSelector';
 import { useIsNodeSelected } from '../../core/state/panel/panelSelectors';
 import { changePanelNode, setSelectedNodeId } from '../../core/state/panel/panelSlice';
 import {
   useAllOperations,
-  useBrandColor,
   useConnectorName,
-  useIconUri,
   useIsConnectionRequired,
   useNodeConnectionName,
   useOperationInfo,
@@ -33,7 +33,6 @@ import {
 } from '../../core/state/selectors/actionMetadataSelector';
 import { useSettingValidationErrors } from '../../core/state/setting/settingSelector';
 import {
-  useIsLeafNode,
   useNodeDescription,
   useNodeDisplayName,
   useNodeMetadata,
@@ -43,6 +42,7 @@ import {
   useRunInstance,
   useShouldNodeFocus,
   useParentRunId,
+  useIsNodeLeafNode,
 } from '../../core/state/workflow/workflowSelectors';
 import { setRepetitionRunData } from '../../core/state/workflow/workflowSlice';
 import { getRepetitionName } from '../common/LoopsPager/helper';
@@ -53,9 +53,8 @@ import { ResubmitMenuItem } from '../menuItems/resubmitMenuItem';
 import { MessageBarType } from '@fluentui/react';
 import { Tooltip } from '@fluentui/react-components';
 import { RunService, WorkflowService } from '@microsoft/designer-client-services-logic-apps';
-import { Card, DeleteNodeModal } from '@microsoft/designer-ui';
+import { Card } from '@microsoft/designer-ui';
 import type { LogicAppsV2 } from '@microsoft/utils-logic-apps';
-import { WORKFLOW_NODE_TYPES } from '@microsoft/utils-logic-apps';
 import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { useDrag } from 'react-dnd';
 import { useIntl } from 'react-intl';
@@ -171,9 +170,9 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
   const nodeComment = useNodeDescription(id);
   const connectionResult = useNodeConnectionName(id);
   const isConnectionRequired = useIsConnectionRequired(operationInfo);
-  const isLeaf = useIsLeafNode(id);
+  const isLeaf = useIsNodeLeafNode(id);
 
-  const showLeafComponents = useMemo(() => !readOnly && isLeaf, [readOnly, isLeaf]);
+  const showLeafComponents: boolean = useMemo(() => !readOnly && isLeaf, [readOnly, isLeaf]);
 
   const nodeClick = useCallback(() => {
     if (nodeSelectCallbackOverride) nodeSelectCallbackOverride(id);
@@ -182,8 +181,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
     else dispatch(changePanelNode(id));
   }, [dispatch, id, nodeSelectCallbackOverride, suppressDefaultNodeSelect]);
 
-  const brandColor = useBrandColor(id);
-  const iconUri = useIconUri(id);
+  const { brandColor, iconUri } = useOperationVisuals(id);
 
   const comment = useMemo(
     () =>
@@ -200,7 +198,6 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
 
   const label = useNodeDisplayName(id);
 
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showCopyCallout, setShowCopyCallout] = useState(false);
 
   useOnViewportChange({
@@ -211,11 +208,10 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
     }, [showCopyCallout]),
   });
 
-  const handleDelete = () => dispatch(deleteOperation({ nodeId: id, isTrigger: !!isTrigger }));
-
   const deleteClick = useCallback(() => {
-    setShowDeleteModal(true);
-  }, []);
+    dispatch(setSelectedNodeId(id));
+    dispatch(setShowDeleteModal(true));
+  }, [dispatch, id]);
 
   const copyClick = useCallback(() => {
     setShowCopyCallout(true);
@@ -229,11 +225,14 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
     WorkflowService().resubmitWorkflow?.(runInstance?.name ?? '', [id]);
   }, [runInstance, id]);
 
-  const contextMenuItems: JSX.Element[] = [
-    <DeleteMenuItem key={'delete'} onClick={deleteClick} showKey />,
-    <CopyMenuItem key={'copy'} isTrigger={isTrigger} onClick={copyClick} showKey />,
-    ...(runData?.canResubmit ? [<ResubmitMenuItem key={'resubmit'} onClick={resubmitClick} />] : []),
-  ];
+  const contextMenuItems: JSX.Element[] = useMemo(
+    () => [
+      <DeleteMenuItem key={'delete'} onClick={deleteClick} showKey />,
+      <CopyMenuItem key={'copy'} isTrigger={isTrigger} onClick={copyClick} showKey />,
+      ...(runData?.canResubmit ? [<ResubmitMenuItem key={'resubmit'} onClick={resubmitClick} />] : []),
+    ],
+    [copyClick, deleteClick, isTrigger, resubmitClick, runData?.canResubmit]
+  );
 
   const opQuery = useOperationQuery(id);
 
@@ -314,6 +313,9 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
     <>
       <div className="nopan" ref={setRef}>
         <Handle className="node-handle top" type="target" position={targetPosition} isConnectable={false} />
+        {/* <Button onClick={nodeClick}>
+          {id}  
+        </Button> */}
         <Card
           title={label}
           icon={iconUri}
@@ -356,13 +358,6 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
           <DropZone graphId={metadata?.graphId ?? ''} parentId={id} isLeaf={isLeaf} />
         </div>
       ) : null}
-      <DeleteNodeModal
-        nodeId={id}
-        nodeType={WORKFLOW_NODE_TYPES.OPERATION_NODE}
-        isOpen={showDeleteModal}
-        onDismiss={() => setShowDeleteModal(false)}
-        onConfirm={handleDelete}
-      />
     </>
   );
 };

@@ -7,6 +7,8 @@ import type { NodeOperation } from '../operation/operationMetadataSlice';
 import { OperationManifestService } from '@microsoft/designer-client-services-logic-apps';
 import { SwaggerParser } from '@microsoft/parsers-logic-apps';
 import { getObjectPropertyValue } from '@microsoft/utils-logic-apps';
+import { createSelector } from '@reduxjs/toolkit';
+import { useMemo } from 'react';
 import { useQuery } from 'react-query';
 import { useSelector } from 'react-redux';
 
@@ -27,31 +29,31 @@ export const useAllowUserToChangeConnection = (op: NodeOperation) => {
 };
 
 export const useNodeConnectionName = (nodeId: string): QueryResult => {
-  const { connectionId, connectorId } = useSelector((state: RootState) => {
-    return nodeId
-      ? { connectionId: getConnectionId(state.connections, nodeId), connectorId: state.operations.operationInfo[nodeId]?.connectorId }
-      : { connectionId: '', connectorId: '' };
-  });
+  const connectorId = useSelector((state: RootState) => state.operations.operationInfo[nodeId]?.connectorId);
+  const connectionId = useSelector((state: RootState) => getConnectionId(state.connections, nodeId));
 
   const { result: connection, isLoading } = useConnectionById(connectionId, connectorId);
 
-  return {
-    isLoading,
-    result: !isLoading && connectionId ? connection?.properties.displayName ?? connectionId.split('/').at(-1) : '',
-  };
+  const result = useMemo(
+    () => ({
+      isLoading,
+      result: !isLoading && connectionId ? connection?.properties.displayName ?? connectionId.split('/').at(-1) : '',
+    }),
+    [connection?.properties.displayName, connectionId, isLoading]
+  );
+
+  return nodeId ? result : { isLoading: false, result: undefined };
 };
 
 export const useOperationInfo = (nodeId: string) => {
-  return useSelector((state: RootState) => {
-    return state.operations.operationInfo[nodeId];
-  });
+  const selector = createSelector(
+    [(state: RootState) => state.operations.operationInfo, (_, nodeId: string) => nodeId],
+    (operationInfo, id) => operationInfo[id]
+  );
+  return useSelector((state: RootState) => selector(state, nodeId));
 };
 
-export const useAllOperations = () => {
-  return useSelector((state: RootState) => {
-    return state.operations.operationInfo;
-  });
-};
+export const useAllOperations = () => useSelector((state: RootState) => state.operations.operationInfo);
 
 export const useOperationManifest = (operationInfo: NodeOperation, enabled = true) => {
   const operationManifestService = OperationManifestService();
@@ -103,18 +105,6 @@ const useNodeAttribute = (operationInfo: NodeOperation, propertyInManifest: stri
       ? getObjectPropertyValue(connector.properties, propertyInConnector)
       : undefined,
   };
-};
-
-export const useBrandColor = (nodeId: string) => {
-  return useSelector((state: RootState) => {
-    return state.operations.operationMetadata[nodeId]?.brandColor ?? '';
-  });
-};
-
-export const useIconUri = (nodeId: string) => {
-  return useSelector((state: RootState) => {
-    return state.operations.operationMetadata[nodeId]?.iconUri ?? '';
-  });
 };
 
 export const useConnectorName = (operationInfo: NodeOperation) => {

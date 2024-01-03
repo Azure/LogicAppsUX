@@ -1,25 +1,23 @@
 import constants from '../../common/constants';
 import { getMonitoringError } from '../../common/utilities/error';
-import { deleteGraphNode } from '../../core/actions/bjsworkflow/delete';
 import { moveOperation } from '../../core/actions/bjsworkflow/move';
-import type { WorkflowNode } from '../../core/parsers/models/workflowNode';
 import { useMonitoringView, useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
-import { useParameterValidationErrors } from '../../core/state/operation/operationSelector';
+import { setShowDeleteModal } from '../../core/state/designerView/designerViewSlice';
+import { useBrandColor, useIconUri, useParameterValidationErrors } from '../../core/state/operation/operationSelector';
 import { useIsNodeSelected } from '../../core/state/panel/panelSelectors';
-import { changePanelNode } from '../../core/state/panel/panelSlice';
-import { useAllOperations, useBrandColor, useIconUri, useOperationQuery } from '../../core/state/selectors/actionMetadataSelector';
+import { changePanelNode, setSelectedNodeId } from '../../core/state/panel/panelSlice';
+import { useAllOperations, useOperationQuery } from '../../core/state/selectors/actionMetadataSelector';
 import { useSettingValidationErrors } from '../../core/state/setting/settingSelector';
 import {
   useActionMetadata,
   useIsGraphCollapsed,
-  useIsLeafNode,
+  useIsNodeLeafNode,
   useNodeDisplayName,
   useNodeMetadata,
   useNodesMetadata,
   useRunData,
   useParentRunIndex,
   useRunInstance,
-  useWorkflowNode,
   useParentRunId,
 } from '../../core/state/workflow/workflowSelectors';
 import { setRepetitionRunData, toggleCollapsedGraphId } from '../../core/state/workflow/workflowSlice';
@@ -31,10 +29,10 @@ import { DeleteMenuItem } from '../menuItems/deleteMenuItem';
 import { ResubmitMenuItem } from '../menuItems/resubmitMenuItem';
 import { MessageBarType } from '@fluentui/react';
 import { RunService, WorkflowService } from '@microsoft/designer-client-services-logic-apps';
-import { DeleteNodeModal, ScopeCard } from '@microsoft/designer-ui';
+import { ScopeCard } from '@microsoft/designer-ui';
 import type { LogicAppsV2 } from '@microsoft/utils-logic-apps';
-import { removeIdTag, WORKFLOW_NODE_TYPES } from '@microsoft/utils-logic-apps';
-import { memo, useCallback, useEffect, useMemo, useState } from 'react';
+import { removeIdTag } from '@microsoft/utils-logic-apps';
+import { memo, useCallback, useEffect, useMemo } from 'react';
 import { useDrag } from 'react-dnd';
 import { useIntl } from 'react-intl';
 import { useQuery } from 'react-query';
@@ -54,7 +52,6 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
   const readOnly = useReadOnly();
   const isMonitoringView = useMonitoringView();
 
-  const graphNode = useWorkflowNode(scopeId) as WorkflowNode;
   const metadata = useNodeMetadata(scopeId);
   const parentRunIndex = useParentRunIndex(scopeId);
   const runInstance = useRunInstance();
@@ -143,7 +140,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
   const selected = useIsNodeSelected(scopeId);
   const brandColor = useBrandColor(scopeId);
   const iconUri = useIconUri(scopeId);
-  const isLeaf = useIsLeafNode(id);
+  const isLeaf = useIsNodeLeafNode(id);
 
   const label = useNodeDisplayName(scopeId);
   const nodeClick = useCallback(() => {
@@ -155,21 +152,22 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
     dispatch(toggleCollapsedGraphId(scopeId));
   }, [dispatch, scopeId]);
 
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const handleDelete = () => dispatch(deleteGraphNode({ graphId: scopeId ?? '', graphNode }));
-
   const deleteClick = useCallback(() => {
-    setShowDeleteModal(true);
-  }, []);
+    dispatch(setSelectedNodeId(id));
+    dispatch(setShowDeleteModal(true));
+  }, [dispatch, id]);
 
   const resubmitClick = useCallback(() => {
     WorkflowService().resubmitWorkflow?.(runInstance?.name ?? '', [id]);
   }, [runInstance, id]);
 
-  const contextMenuItems: JSX.Element[] = [
-    <DeleteMenuItem key={'delete'} onClick={deleteClick} showKey />,
-    ...(runData?.canResubmit ? [<ResubmitMenuItem key={'resubmit'} onClick={resubmitClick} />] : []),
-  ];
+  const contextMenuItems: JSX.Element[] = useMemo(
+    () => [
+      <DeleteMenuItem key={'delete'} onClick={deleteClick} showKey />,
+      ...(runData?.canResubmit ? [<ResubmitMenuItem key={'resubmit'} onClick={resubmitClick} />] : []),
+    ],
+    [deleteClick, resubmitClick, runData?.canResubmit]
+  );
 
   const opQuery = useOperationQuery(scopeId);
 
@@ -297,15 +295,6 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
             <p className="no-actions-text">No Actions</p>
           )
         ) : null}
-        <DeleteNodeModal
-          nodeId={id}
-          // nodeIcon={iconUriResult.result}
-          // brandColor={brandColor}
-          nodeType={WORKFLOW_NODE_TYPES.GRAPH_NODE}
-          isOpen={showDeleteModal}
-          onDismiss={() => setShowDeleteModal(false)}
-          onConfirm={handleDelete}
-        />
       </>
     );
   } else {

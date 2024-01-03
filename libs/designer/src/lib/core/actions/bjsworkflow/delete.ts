@@ -26,14 +26,14 @@ export type DeleteGraphPayload = {
 export const deleteOperation = createAsyncThunk(
   'deleteOperation',
   async (deletePayload: DeleteOperationPayload, { getState, dispatch }) => {
-    batch(() => {
+    batch(async () => {
       const { nodeId } = deletePayload;
 
       dispatch(clearFocusNode());
       dispatch(clearPanel());
 
       dispatch(deleteNode(deletePayload));
-      deleteOperationDetails(nodeId, dispatch);
+      await deleteOperationDetails(nodeId, dispatch);
       updateAllUpstreamNodes(getState() as RootState, dispatch);
     });
   }

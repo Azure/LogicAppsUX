@@ -3,6 +3,7 @@ import { ConnectionService } from '@microsoft/designer-client-services-logic-app
 import { SwaggerParser } from '@microsoft/parsers-logic-apps';
 import type { Connector } from '@microsoft/utils-logic-apps';
 import { equals } from '@microsoft/utils-logic-apps';
+import { useMemo } from 'react';
 import { useQuery } from 'react-query';
 
 const connectionKey = 'connections';
@@ -40,30 +41,32 @@ export const useConnectionById = (connectionId: string, connectorId: string) => 
   const { data: connections, isLoading } = useConnectionsForConnector(connectorId);
   const { data: connection, isLoading: isConnectionLoading } = useConnectionResource(connectionId);
 
-  if (!connectionId) {
-    return { isLoading: false, result: undefined };
-  }
-
-  if (connections) {
-    const foundConnection = connections.find((connection) => equals(connection.id, connectionId));
-
-    if (foundConnection) {
-      return {
-        isLoading,
-        result: foundConnection,
-      };
-    } else {
-      return {
-        isLoading: isConnectionLoading,
-        result: connection,
-      };
+  return useMemo(() => {
+    if (!connectionId) {
+      return { isLoading: false, result: undefined };
     }
-  }
 
-  return {
-    isLoading: isLoading || isConnectionLoading,
-    result: undefined,
-  };
+    if (connections) {
+      const foundConnection = connections.find((connection) => equals(connection.id, connectionId));
+
+      if (foundConnection) {
+        return {
+          isLoading,
+          result: foundConnection,
+        };
+      } else {
+        return {
+          isLoading: isConnectionLoading,
+          result: connection,
+        };
+      }
+    }
+
+    return {
+      isLoading: isLoading || isConnectionLoading,
+      result: undefined,
+    };
+  }, [connection, connectionId, connections, isConnectionLoading, isLoading]);
 };
 
 export const useAllConnections = () => {

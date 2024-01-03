@@ -6,6 +6,7 @@ import type { NodesMetadata, WorkflowState } from './workflowInterfaces';
 import type { LogicAppsV2 } from '@microsoft/utils-logic-apps';
 import { labelCase, WORKFLOW_NODE_TYPES, WORKFLOW_EDGE_TYPES } from '@microsoft/utils-logic-apps';
 import { createSelector } from '@reduxjs/toolkit';
+import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import Queue from 'yocto-queue';
 
@@ -36,13 +37,13 @@ export const useReplacedIds = () => {
 };
 
 export const useNodeMetadata = (id?: string) =>
-  useSelector(createSelector(getWorkflowState, (state: WorkflowState) => (id ? state.nodesMetadata[id] : undefined)));
+  useSelector(createSelector(getWorkflowState, (state: WorkflowState) => (id ? state.nodesMetadata?.[id] : undefined)));
 
 export const useActionMetadata = (id?: string) =>
-  useSelector(createSelector(getWorkflowState, (state: WorkflowState) => (id ? state.operations[id] : undefined)));
+  useSelector(createSelector(getWorkflowState, (state: WorkflowState) => (id ? state.operations?.[id] : undefined)));
 
 export const useNodeDescription = (id: string) =>
-  useSelector(createSelector(getWorkflowState, (state: WorkflowState) => (id ? state.operations[id]?.description : undefined)));
+  useSelector(createSelector(getWorkflowState, (state: WorkflowState) => (id ? state.operations?.[id]?.description : undefined)));
 
 export const useShouldNodeFocus = (id: string) =>
   useSelector(createSelector(getWorkflowState, (state: WorkflowState) => state.focusedCanvasNodeId === id));
@@ -118,13 +119,14 @@ export const getWorkflowNodeFromGraphState = (state: WorkflowState, actionId: st
   return traverseGraph(graph);
 };
 
-export const useNodeEdgeTargets = (nodeId?: string): string[] =>
-  useSelector(
+export const useNodeEdgeTargets = (nodeId?: string): string[] => {
+  return useSelector(
     createSelector(getWorkflowState, (state: WorkflowState) => {
       if (!nodeId || !state.graph) return [];
       return state.edgeIdsBySource?.[nodeId] ?? [];
     })
   );
+};
 
 export const useWorkflowNode = (actionId?: string) => {
   return useSelector((state: RootState) => {
@@ -139,7 +141,11 @@ export const useIsGraphEmpty = () => {
   return useSelector((state: RootState) => state.workflow.graph?.children?.length === 0);
 };
 
-export const useIsLeafNode = (nodeId: string): boolean => useNodeEdgeTargets(nodeId).length === 0;
+export const useIsNodeLeafNode = (nodeId: string): boolean => {
+  const targets = useNodeEdgeTargets(nodeId);
+  const isLeaf = useMemo(() => targets.length === 0, [targets.length]);
+  return isLeaf;
+};
 
 export const useNodeIds = () => {
   return useSelector(
