@@ -1,9 +1,8 @@
 import { isConnectionRequiredForOperation } from '../../actions/bjsworkflow/connections';
-import { useConnectionById } from '../../queries/connections';
+import { useConnectionResource } from '../../queries/connections';
 import type { RootState } from '../../store';
 import { useConnector, useConnectorAndSwagger, useNodeConnectionId } from '../connection/connectionSelector';
 import type { NodeOperation } from '../operation/operationMetadataSlice';
-import { useNodeConnectorId } from '../operation/operationSelector';
 import { OperationManifestService } from '@microsoft/designer-client-services-logic-apps';
 import { SwaggerParser } from '@microsoft/parsers-logic-apps';
 import { getObjectPropertyValue } from '@microsoft/utils-logic-apps';
@@ -29,17 +28,14 @@ export const useAllowUserToChangeConnection = (op: NodeOperation) => {
 };
 
 export const useNodeConnectionName = (nodeId: string): QueryResult => {
-  const connectorId = useNodeConnectorId(nodeId);
   const connectionId = useNodeConnectionId(nodeId);
-
-  const { result: connection, isLoading } = useConnectionById(connectionId, connectorId);
-
+  const { data: connection, isLoading } = useConnectionResource(connectionId);
   return useMemo(
     () =>
-      nodeId
+      nodeId && connectionId
         ? {
             isLoading,
-            result: !isLoading && connectionId ? connection?.properties?.displayName ?? connectionId.split('/').at(-1) : '',
+            result: !isLoading ? connection?.properties?.displayName ?? connectionId.split('/').at(-1) : '',
           }
         : {
             isLoading: false,

@@ -69,9 +69,9 @@ export const useAllConnections = () => {
 export const useConnectionsForConnector = (connectorId: string) => {
   return useQuery([connectionKey, connectorId?.toLowerCase()], () => ConnectionService().getConnections(connectorId), {
     enabled: !!connectorId,
-    refetchOnMount: false,
-    // cacheTime: 0,
-    // staleTime: 0,
+    refetchOnMount: true,
+    cacheTime: 0,
+    staleTime: 0,
   });
 };
 
@@ -94,7 +94,7 @@ export const getUniqueConnectionName = async (connectorId: string): Promise<stri
   return ConnectionService().getUniqueConnectionName(connectorId, connectionNames, connectorName as string);
 };
 
-const useConnectionResource = (connectionId: string) => {
+export const useConnectionResource = (connectionId: string) => {
   return useQuery(['connection', connectionId?.toLowerCase()], () => ConnectionService().getConnection(connectionId), {
     enabled: !!connectionId,
     refetchOnMount: false,
