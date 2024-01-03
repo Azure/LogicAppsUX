@@ -23,16 +23,6 @@
       "value": "Dilindungi"
     }
   ],
-  "+7IA0V": [
-    {
-      "type": 1,
-      "value": "connectorName"
-    },
-    {
-      "type": 0,
-      "value": " connections"
-    }
-  ],
   "+FcXe9": [
     {
       "type": 0,
@@ -175,6 +165,12 @@
       "value": "Buka Azure Copilot"
     }
   ],
+  "/c1l10": [
+    {
+      "type": 0,
+      "value": "⌘+C"
+    }
+  ],
   "/doURb": [
     {
       "type": 0,
@@ -303,6 +299,12 @@
     {
       "type": 0,
       "value": "(UTC+05:30) Sri Jayawardenepura"
+    }
+  ],
+  "0CPsxh": [
+    {
+      "type": 0,
+      "value": "Del"
     }
   ],
   "0CvRZW": [
@@ -555,12 +557,6 @@
     {
       "type": 0,
       "value": "5"
-    }
-  ],
-  "1zgFh1": [
-    {
-      "type": 0,
-      "value": "Tutup"
     }
   ],
   "20oqsp": [
@@ -924,7 +920,7 @@
   "41drjl": [
     {
       "type": 0,
-      "value": "Open connection"
+      "value": "Buka koneksi"
     }
   ],
   "41eMpW": [
@@ -1155,6 +1151,12 @@
       "value": "Parameter yang digunakan dalam Aplikasi Logika akan dikonversi menjadi templat Azure Resource Manager selama pembuatan templat penerapan."
     }
   ],
+  "5gOG+F": [
+    {
+      "type": 0,
+      "value": "Berikan nilai untuk dibandingkan dan pilih operator yang akan digunakan."
+    }
+  ],
   "5hWg4V": [
     {
       "type": 0,
@@ -1360,7 +1362,7 @@
   "74e2xB": [
     {
       "type": 0,
-      "value": "Create a new connection"
+      "value": "Buat koneksi baru"
     }
   ],
   "78Vggn": [
@@ -2379,7 +2381,7 @@
   "DfXxoX": [
     {
       "type": 0,
-      "value": "Select an existing connection or create a new one"
+      "value": "Pilih koneksi yang ada atau buat koneksi baru"
     }
   ],
   "Dhu3IS": [
@@ -3779,7 +3781,7 @@
   "NdOhXD": [
     {
       "type": 0,
-      "value": "Create Connection"
+      "value": "Buat Koneksi"
     }
   ],
   "Nh91qA": [
@@ -3882,12 +3884,6 @@
     {
       "type": 0,
       "value": "OK"
-    }
-  ],
-  "OBKhVi": [
-    {
-      "type": 0,
-      "value": "Tindakan/Pemicu ini tidak dapat disalin."
     }
   ],
   "ODQCKj": [
@@ -4410,12 +4406,6 @@
       "value": "j"
     }
   ],
-  "Qy0Kha": [
-    {
-      "type": 0,
-      "value": "Pemicu tidak dapat dihapus."
-    }
-  ],
   "R/aiRy": [
     {
       "type": 0,
@@ -4493,12 +4483,6 @@
     {
       "type": 0,
       "value": "masalah"
-    }
-  ],
-  "Ro4+PC": [
-    {
-      "type": 0,
-      "value": "Anda hanya dapat menambahkan catatan saat mengedit input langkah."
     }
   ],
   "Rp5pHU": [
@@ -4787,6 +4771,12 @@
     {
       "type": 0,
       "value": "Catatan"
+    }
+  ],
+  "TsJbGH": [
+    {
+      "type": 0,
+      "value": "Terputus"
     }
   ],
   "Ttc0SM": [
@@ -5359,6 +5349,12 @@
       "value": "Identitas terkelola tidak dikonfigurasi di aplikasi logika."
     }
   ],
+  "WvvJYw": [
+    {
+      "type": 0,
+      "value": "Tindakan"
+    }
+  ],
   "X/7je+": [
     {
       "type": 0,
@@ -5852,7 +5848,7 @@
   "ZAdaBl": [
     {
       "type": 0,
-      "value": "Select an existing connection reference or create a new one"
+      "value": "Pilih referensi koneksi yang ada atau buat referensi koneksi baru"
     }
   ],
   "ZBJiuD": [
@@ -5907,12 +5903,6 @@
     {
       "type": 0,
       "value": "Baca selengkapnya"
-    }
-  ],
-  "ZbX8xq": [
-    {
-      "type": 0,
-      "value": "Operasi ini sudah dihapus."
     }
   ],
   "Zg3IjD": [
@@ -6240,13 +6230,13 @@
   "cZXqqf": [
     {
       "type": 0,
-      "value": "Change Connection"
+      "value": "Ubah Koneksi"
     }
   ],
   "cZv9J0": [
     {
       "type": 0,
-      "value": "Connection is valid"
+      "value": "Koneksi valid"
     }
   ],
   "ca/QIc": [
@@ -6545,6 +6535,12 @@
       "value": "Miring (⌘I)"
     }
   ],
+  "en/5A3": [
+    {
+      "type": 0,
+      "value": "Tetapkan ulang"
+    }
+  ],
   "eo1YKX": [
     {
       "type": 0,
@@ -6566,7 +6562,7 @@
   "evyGYj": [
     {
       "type": 0,
-      "value": "Reassign all connected actions to a new connection"
+      "value": "Menetapkan ulang semua tindakan yang terhubung ke koneksi baru"
     }
   ],
   "f/lWTW": [
@@ -6707,6 +6703,12 @@
     {
       "type": 0,
       "value": "Jalankan pengujian"
+    }
+  ],
+  "gA1dde": [
+    {
+      "type": 0,
+      "value": "Aktifkan/nonaktifkan tampilan kode"
     }
   ],
   "gCXOd5": [
@@ -6908,12 +6910,6 @@
     {
       "type": 0,
       "value": "Batalkan"
-    }
-  ],
-  "hTZZr+": [
-    {
-      "type": 0,
-      "value": "Connected actions"
     }
   ],
   "hZqQdt": [
@@ -7750,7 +7746,7 @@
   "mUURJW": [
     {
       "type": 0,
-      "value": "Connection is invalid"
+      "value": "Koneksi tidak valid"
     }
   ],
   "mYQFtf": [
@@ -7798,7 +7794,7 @@
   "mlU+AC": [
     {
       "type": 0,
-      "value": "Connections"
+      "value": "Koneksi"
     }
   ],
   "mvrlkP": [
@@ -7922,7 +7918,7 @@
   "nSUXtP": [
     {
       "type": 0,
-      "value": "Multiple actions will be modified by this change."
+      "value": "Perubahan ini akan mengubah beberapa tindakan."
     }
   ],
   "nSan4V": [
@@ -8177,12 +8173,6 @@
     {
       "type": 0,
       "value": "Dalam Aplikasi"
-    }
-  ],
-  "p3K7eM": [
-    {
-      "type": 0,
-      "value": "Disconnected actions"
     }
   ],
   "p5ZID0": [
@@ -8740,6 +8730,12 @@
     {
       "type": 0,
       "value": "Kunci"
+    }
+  ],
+  "snJFUi": [
+    {
+      "type": 0,
+      "value": "Ctrl+C"
     }
   ],
   "soqP+Z": [
@@ -9638,12 +9634,6 @@
       "value": "Nilai"
     }
   ],
-  "xxeu75": [
-    {
-      "type": 0,
-      "value": "Reassign all disconnected actions to a new connection"
-    }
-  ],
   "y1e9yw": [
     {
       "type": 0,
@@ -9888,12 +9878,6 @@
     {
       "type": 0,
       "value": "Berhenti"
-    }
-  ],
-  "ziXw25": [
-    {
-      "type": 0,
-      "value": "Hapus"
     }
   ],
   "ziYCiA": [

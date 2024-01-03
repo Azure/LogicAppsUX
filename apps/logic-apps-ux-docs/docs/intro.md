@@ -11,7 +11,7 @@ Welcome to the LogicApps UX documentation! This guide will help new engineers se
 
 Ensure you have the following installed on your system:
 
-- Node.js v16 or higher
+- Node.js v18 or higher
 - MkCert
 - (Optional) Nx CLI
 

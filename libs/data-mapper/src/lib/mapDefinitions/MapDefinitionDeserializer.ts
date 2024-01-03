@@ -458,3 +458,36 @@ export class MapDefinitionDeserializer {
     }
   };
 }
+
+export const getLoopTargetNodeWithJson = (targetKey: string, targetSchemaRoot: SchemaNodeExtended) => {
+  let trimmedTargetKey = targetKey;
+  if (!targetKey.includes('/')) {
+    // excludes custom values and others that aren't schema nodes
+    return undefined;
+  }
+  if (targetKey[0] === '/') {
+    trimmedTargetKey = targetKey.substring(1);
+  }
+  const targetKeyPath = trimmedTargetKey.split('/');
+  const matchingSchemaNode = getLoopTargetNode(targetKeyPath, 1, targetSchemaRoot);
+  return matchingSchemaNode;
+};
+
+const getLoopTargetNode = (targetKeyPath: string[], ind: number, parentNode: SchemaNodeExtended) => {
+  if (ind === targetKeyPath.length) {
+    return parentNode;
+  }
+
+  const possibleNodes: (SchemaNodeExtended | SchemaExtended | undefined)[] = [];
+
+  parentNode.children.forEach((child) => {
+    if (child.name === targetKeyPath[ind]) {
+      possibleNodes.push(getLoopTargetNode(targetKeyPath, ind + 1, child));
+    }
+    if (child.name === '<ArrayItem>') {
+      possibleNodes.push(getLoopTargetNode(targetKeyPath, ind, child));
+    }
+  });
+
+  return possibleNodes.find((node) => node !== null);
+};

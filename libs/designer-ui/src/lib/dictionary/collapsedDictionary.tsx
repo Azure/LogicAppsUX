@@ -47,7 +47,6 @@ export const CollapsedDictionary = ({
           {...props}
           className="msla-collapsed-editor-container"
           basePlugins={{
-            tokens: true,
             tabbable: true,
           }}
           placeholder={editorPlaceHolder}

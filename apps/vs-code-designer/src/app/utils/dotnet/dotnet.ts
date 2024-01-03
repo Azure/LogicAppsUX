@@ -242,6 +242,7 @@ export async function setDotNetCommand(context: IActionContext): Promise<void> {
         const workspaceFolder = await getWorkspaceFolder(context);
         const projectPath = await tryGetLogicAppProjectRoot(context, workspaceFolder);
 
+        // Check if LogicAppProject to prevent updating LogicAppsUX settings.
         if (projectPath) {
           const pathEnv = {
             PATH: newPath,

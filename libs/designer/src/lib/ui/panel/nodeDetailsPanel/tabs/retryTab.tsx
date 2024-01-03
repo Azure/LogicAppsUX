@@ -11,11 +11,11 @@ export const RetryPanelTab = () => {
 };
 
 export const monitorRetryTab: PanelTabFn = (intl) => ({
+  id: constants.PANEL_TAB_NAMES.RETRY_HISTORY,
   title: intl.formatMessage({
     defaultMessage: 'Retry History',
     description: 'The tab label for the retry history tab on the operation panel',
   }),
-  name: constants.PANEL_TAB_NAMES.RETRY_HISTORY,
   description: intl.formatMessage({
     defaultMessage: 'Retry History',
     description: 'An accessability label that describes the retry history tab',

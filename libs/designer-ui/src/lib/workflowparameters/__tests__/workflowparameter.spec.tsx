@@ -36,6 +36,7 @@ describe('ui/workflowparameters/workflowparameter', () => {
     expect(commandBar).toBeDefined();
 
     expect(commandBar.props.className).toBe('msla-workflow-parameter-heading-button');
-    expect(commandBar.props.text).toBe('New parameter');
+    console.log('commandBar.props', commandBar.props);
+    expect(commandBar.props.children).toBe('New parameter');
   });
 });

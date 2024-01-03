@@ -23,16 +23,6 @@
       "value": "已受保护"
     }
   ],
-  "+7IA0V": [
-    {
-      "type": 1,
-      "value": "connectorName"
-    },
-    {
-      "type": 0,
-      "value": " connections"
-    }
-  ],
   "+FcXe9": [
     {
       "type": 0,
@@ -175,6 +165,12 @@
       "value": "打开 Azure Copilot"
     }
   ],
+  "/c1l10": [
+    {
+      "type": 0,
+      "value": "⌘+C"
+    }
+  ],
   "/doURb": [
     {
       "type": 0,
@@ -303,6 +299,12 @@
     {
       "type": 0,
       "value": "(UTC+05:30)斯里加亚渥登普拉"
+    }
+  ],
+  "0CPsxh": [
+    {
+      "type": 0,
+      "value": "Del"
     }
   ],
   "0CvRZW": [
@@ -555,12 +557,6 @@
     {
       "type": 0,
       "value": "5"
-    }
-  ],
-  "1zgFh1": [
-    {
-      "type": 0,
-      "value": "关闭"
     }
   ],
   "20oqsp": [
@@ -936,7 +932,7 @@
   "41drjl": [
     {
       "type": 0,
-      "value": "Open connection"
+      "value": "打开连接"
     }
   ],
   "41eMpW": [
@@ -1167,6 +1163,12 @@
       "value": "在部署模板生成期间，逻辑应用中使用的参数将被转换为 Azure 资源管理器模板。"
     }
   ],
+  "5gOG+F": [
+    {
+      "type": 0,
+      "value": "提供要比较的值，并选择要使用的运算符。"
+    }
+  ],
   "5hWg4V": [
     {
       "type": 0,
@@ -1372,7 +1374,7 @@
   "74e2xB": [
     {
       "type": 0,
-      "value": "Create a new connection"
+      "value": "创建新连接"
     }
   ],
   "78Vggn": [
@@ -2395,7 +2397,7 @@
   "DfXxoX": [
     {
       "type": 0,
-      "value": "Select an existing connection or create a new one"
+      "value": "选择现有连接或创建新连接"
     }
   ],
   "Dhu3IS": [
@@ -3795,7 +3797,7 @@
   "NdOhXD": [
     {
       "type": 0,
-      "value": "Create Connection"
+      "value": "创建连接"
     }
   ],
   "Nh91qA": [
@@ -3898,12 +3900,6 @@
     {
       "type": 0,
       "value": "确定"
-    }
-  ],
-  "OBKhVi": [
-    {
-      "type": 0,
-      "value": "无法复制此操作/触发器。"
     }
   ],
   "ODQCKj": [
@@ -4430,12 +4426,6 @@
       "value": " 小时"
     }
   ],
-  "Qy0Kha": [
-    {
-      "type": 0,
-      "value": "无法删除触发器。"
-    }
-  ],
   "R/aiRy": [
     {
       "type": 0,
@@ -4517,12 +4507,6 @@
     {
       "type": 0,
       "value": "议题"
-    }
-  ],
-  "Ro4+PC": [
-    {
-      "type": 0,
-      "value": "只能在编辑步骤的输入时添加备注。"
     }
   ],
   "Rp5pHU": [
@@ -4811,6 +4795,12 @@
     {
       "type": 0,
       "value": "备注"
+    }
+  ],
+  "TsJbGH": [
+    {
+      "type": 0,
+      "value": "已断开连接"
     }
   ],
   "Ttc0SM": [
@@ -5395,6 +5385,12 @@
       "value": "未在逻辑应用上配置托管标识。"
     }
   ],
+  "WvvJYw": [
+    {
+      "type": 0,
+      "value": "操作"
+    }
+  ],
   "X/7je+": [
     {
       "type": 0,
@@ -5888,7 +5884,7 @@
   "ZAdaBl": [
     {
       "type": 0,
-      "value": "Select an existing connection reference or create a new one"
+      "value": "选择现有连接引用或创建新连接引用"
     }
   ],
   "ZBJiuD": [
@@ -5943,12 +5939,6 @@
     {
       "type": 0,
       "value": "阅读更多信息"
-    }
-  ],
-  "ZbX8xq": [
-    {
-      "type": 0,
-      "value": "已删除此操作。"
     }
   ],
   "Zg3IjD": [
@@ -6276,13 +6266,13 @@
   "cZXqqf": [
     {
       "type": 0,
-      "value": "Change Connection"
+      "value": "更改连接"
     }
   ],
   "cZv9J0": [
     {
       "type": 0,
-      "value": "Connection is valid"
+      "value": "连接有效"
     }
   ],
   "ca/QIc": [
@@ -6581,6 +6571,12 @@
       "value": "斜体(⌘I)"
     }
   ],
+  "en/5A3": [
+    {
+      "type": 0,
+      "value": "重新分配"
+    }
+  ],
   "eo1YKX": [
     {
       "type": 0,
@@ -6602,7 +6598,7 @@
   "evyGYj": [
     {
       "type": 0,
-      "value": "Reassign all connected actions to a new connection"
+      "value": "将所有连接的操作重新分配到新连接"
     }
   ],
   "f/lWTW": [
@@ -6743,6 +6739,12 @@
     {
       "type": 0,
       "value": "运行测试"
+    }
+  ],
+  "gA1dde": [
+    {
+      "type": 0,
+      "value": "切换代码视图"
     }
   ],
   "gCXOd5": [
@@ -6952,12 +6954,6 @@
     {
       "type": 0,
       "value": "撤消"
-    }
-  ],
-  "hTZZr+": [
-    {
-      "type": 0,
-      "value": "Connected actions"
     }
   ],
   "hZqQdt": [
@@ -7802,7 +7798,7 @@
   "mUURJW": [
     {
       "type": 0,
-      "value": "Connection is invalid"
+      "value": "连接无效"
     }
   ],
   "mYQFtf": [
@@ -7850,7 +7846,7 @@
   "mlU+AC": [
     {
       "type": 0,
-      "value": "Connections"
+      "value": "连接"
     }
   ],
   "mvrlkP": [
@@ -7974,7 +7970,7 @@
   "nSUXtP": [
     {
       "type": 0,
-      "value": "Multiple actions will be modified by this change."
+      "value": "此更改将修改多个操作。"
     }
   ],
   "nSan4V": [
@@ -8237,12 +8233,6 @@
     {
       "type": 0,
       "value": "应用内"
-    }
-  ],
-  "p3K7eM": [
-    {
-      "type": 0,
-      "value": "Disconnected actions"
     }
   ],
   "p5ZID0": [
@@ -8800,6 +8790,12 @@
     {
       "type": 0,
       "value": "密钥"
+    }
+  ],
+  "snJFUi": [
+    {
+      "type": 0,
+      "value": "Ctrl+C"
     }
   ],
   "soqP+Z": [
@@ -9694,12 +9690,6 @@
       "value": "值"
     }
   ],
-  "xxeu75": [
-    {
-      "type": 0,
-      "value": "Reassign all disconnected actions to a new connection"
-    }
-  ],
   "y1e9yw": [
     {
       "type": 0,
@@ -9948,12 +9938,6 @@
     {
       "type": 0,
       "value": "停止"
-    }
-  ],
-  "ziXw25": [
-    {
-      "type": 0,
-      "value": "删除"
     }
   ],
   "ziYCiA": [

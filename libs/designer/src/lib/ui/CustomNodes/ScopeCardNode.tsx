@@ -6,14 +6,8 @@ import type { WorkflowNode } from '../../core/parsers/models/workflowNode';
 import { useMonitoringView, useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
 import { useParameterValidationErrors } from '../../core/state/operation/operationSelector';
 import { useIsNodeSelected } from '../../core/state/panel/panelSelectors';
-import { changePanelNode, showDefaultTabs } from '../../core/state/panel/panelSlice';
-import {
-  useAllOperations,
-  useBrandColor,
-  useIconUri,
-  useOperationInfo,
-  useOperationQuery,
-} from '../../core/state/selectors/actionMetadataSelector';
+import { changePanelNode } from '../../core/state/panel/panelSlice';
+import { useAllOperations, useBrandColor, useIconUri, useOperationQuery } from '../../core/state/selectors/actionMetadataSelector';
 import { useSettingValidationErrors } from '../../core/state/setting/settingSelector';
 import {
   useActionMetadata,
@@ -33,10 +27,11 @@ import type { AppDispatch } from '../../core/store';
 import { LoopsPager } from '../common/LoopsPager/LoopsPager';
 import { getRepetitionName } from '../common/LoopsPager/helper';
 import { DropZone } from '../connections/dropzone';
+import { DeleteMenuItem } from '../menuItems/deleteMenuItem';
+import { ResubmitMenuItem } from '../menuItems/resubmitMenuItem';
 import { MessageBarType } from '@fluentui/react';
 import { RunService, WorkflowService } from '@microsoft/designer-client-services-logic-apps';
-import type { MenuItemOption } from '@microsoft/designer-ui';
-import { DeleteNodeModal, MenuItemType, ScopeCard } from '@microsoft/designer-ui';
+import { DeleteNodeModal, ScopeCard } from '@microsoft/designer-ui';
 import type { LogicAppsV2 } from '@microsoft/utils-logic-apps';
 import { removeIdTag, WORKFLOW_NODE_TYPES } from '@microsoft/utils-logic-apps';
 import { memo, useCallback, useEffect, useMemo, useState } from 'react';
@@ -149,13 +144,11 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
   const brandColor = useBrandColor(scopeId);
   const iconUri = useIconUri(scopeId);
   const isLeaf = useIsLeafNode(id);
-  const isScopeNode = useOperationInfo(scopeId)?.type.toLowerCase() === constants.NODE.TYPE.SCOPE;
 
   const label = useNodeDisplayName(scopeId);
   const nodeClick = useCallback(() => {
     dispatch(changePanelNode(scopeId));
-    dispatch(showDefaultTabs({ isScopeNode, isMonitoringView }));
-  }, [dispatch, isScopeNode, scopeId, isMonitoringView]);
+  }, [dispatch, scopeId]);
 
   const graphCollapsed = useIsGraphCollapsed(scopeId);
   const handleGraphCollapse = useCallback(() => {
@@ -163,8 +156,20 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
   }, [dispatch, scopeId]);
 
   const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const handleDeleteClick = () => setShowDeleteModal(true);
   const handleDelete = () => dispatch(deleteGraphNode({ graphId: scopeId ?? '', graphNode }));
+
+  const deleteClick = useCallback(() => {
+    setShowDeleteModal(true);
+  }, []);
+
+  const resubmitClick = useCallback(() => {
+    WorkflowService().resubmitWorkflow?.(runInstance?.name ?? '', [id]);
+  }, [runInstance, id]);
+
+  const contextMenuItems: JSX.Element[] = [
+    <DeleteMenuItem key={'delete'} onClick={deleteClick} showKey />,
+    ...(runData?.canResubmit ? [<ResubmitMenuItem key={'resubmit'} onClick={resubmitClick} />] : []),
+  ];
 
   const opQuery = useOperationQuery(scopeId);
 
@@ -243,52 +248,6 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
   const isFooter = id.endsWith('#footer');
   const showEmptyGraphComponents = isLeaf && !graphCollapsed && !isFooter;
 
-  const getDeleteMenuItem = () => {
-    const deleteDescription = intl.formatMessage({
-      defaultMessage: 'Delete',
-      description: 'Delete text',
-    });
-    const canDelete = true;
-
-    return {
-      key: deleteDescription,
-      disabled: readOnly || !canDelete,
-      disabledReason: '',
-      iconName: 'Delete',
-      title: deleteDescription,
-      type: MenuItemType.Advanced,
-      onClick: handleDeleteClick,
-    };
-  };
-
-  const getResubmitMenuItem = () => {
-    const resubmitDescription = intl.formatMessage({
-      defaultMessage: 'Resubmit a workflow run from this action',
-      description: 'accessability text for the resubmit button',
-    });
-
-    const resubmitButtonText = intl.formatMessage({
-      defaultMessage: 'Submit from this action',
-      description: 'Button label for submitting a workflow to rerun from this action',
-    });
-
-    const handleResubmitClick = () => {
-      WorkflowService().resubmitWorkflow?.(runInstance?.name ?? '', [scopeId]);
-    };
-    return {
-      key: resubmitDescription,
-      disabled: false,
-      iconName: 'PlaybackRate1x',
-      title: resubmitButtonText,
-      type: MenuItemType.Advanced,
-      onClick: handleResubmitClick,
-    };
-  };
-
-  const contextMenuOptions: MenuItemOption[] = [getDeleteMenuItem()];
-  if (runData?.canResubmit) {
-    contextMenuOptions.push(getResubmitMenuItem());
-  }
   const implementedGraphTypes = [
     constants.NODE.TYPE.IF,
     constants.NODE.TYPE.SWITCH,
@@ -318,8 +277,9 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
             title={label}
             readOnly={readOnly}
             onClick={nodeClick}
+            onDeleteClick={deleteClick}
             selected={selected}
-            contextMenuOptions={contextMenuOptions}
+            contextMenuItems={contextMenuItems}
             runData={runData}
           />
           {isMonitoringView && normalizedType === constants.NODE.TYPE.FOREACH ? (
