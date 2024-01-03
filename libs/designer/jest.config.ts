@@ -7,9 +7,8 @@ export default {
     '^.+\\.[tj]sx?$': [
       'babel-jest',
       {
-        presets: ['@nx/react/babel'],
+        presets: ['@nrwl/react/babel'],
         plugins: [
-          ['@babel/plugin-transform-private-methods', { loose: true }],
           [
             'formatjs',
             {

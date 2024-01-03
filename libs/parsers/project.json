@@ -13,7 +13,7 @@
         "tsConfig": "libs/parsers/tsconfig.lib.json",
         "project": "libs/parsers/package.json",
         "entryFile": "libs/parsers/src/index.ts",
-        "rollupConfig": "@nx/react/plugins/bundle-rollup",
+        "rollupConfig": "@nrwl/react/plugins/bundle-rollup",
         "buildableProjectDepsInPackageJsonType": "dependencies",
         "format": ["cjs", "esm"],
         "assets": [
@@ -39,14 +39,14 @@
       }
     },
     "lint": {
-      "executor": "@nx/eslint:lint",
+      "executor": "@nrwl/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": ["libs/parsers/**/*.ts"]
       }
     },
     "test": {
-      "executor": "@nx/jest:jest",
+      "executor": "@nrwl/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/parsers"],
       "options": {
         "jestConfig": "libs/parsers/jest.config.ts",

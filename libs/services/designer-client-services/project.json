@@ -13,7 +13,7 @@
         "tsConfig": "libs/services/designer-client-services/tsconfig.lib.json",
         "project": "libs/services/designer-client-services/package.json",
         "entryFile": "libs/services/designer-client-services/src/index.ts",
-        "rollupConfig": "@nx/react/plugins/bundle-rollup",
+        "rollupConfig": "@nrwl/react/plugins/bundle-rollup",
         "buildableProjectDepsInPackageJsonType": "dependencies",
         "format": ["cjs", "esm"],
         "assets": [
@@ -39,14 +39,14 @@
       }
     },
     "lint": {
-      "executor": "@nx/eslint:lint",
+      "executor": "@nrwl/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
         "lintFilePatterns": ["libs/services/designer-client-services/**/*.ts"]
       }
     },
     "test": {
-      "executor": "@nx/jest:jest",
+      "executor": "@nrwl/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/services/designer-client-services"],
       "options": {
         "jestConfig": "libs/services/designer-client-services/jest.config.ts",
