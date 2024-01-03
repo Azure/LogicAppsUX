@@ -23,16 +23,6 @@
       "value": "Védett"
     }
   ],
-  "+7IA0V": [
-    {
-      "type": 1,
-      "value": "connectorName"
-    },
-    {
-      "type": 0,
-      "value": "-kapcsolatok"
-    }
-  ],
   "+FcXe9": [
     {
       "type": 0,
@@ -179,6 +169,12 @@
       "value": "Az Azure Copilot megnyitása"
     }
   ],
+  "/c1l10": [
+    {
+      "type": 0,
+      "value": "⌘+C"
+    }
+  ],
   "/doURb": [
     {
       "type": 0,
@@ -307,6 +303,12 @@
     {
       "type": 0,
       "value": "(UTC+05:30) Sri Jayawardenepura"
+    }
+  ],
+  "0CPsxh": [
+    {
+      "type": 0,
+      "value": "Del"
     }
   ],
   "0CvRZW": [
@@ -559,12 +561,6 @@
     {
       "type": 0,
       "value": "5"
-    }
-  ],
-  "1zgFh1": [
-    {
-      "type": 0,
-      "value": "Bezárás"
     }
   ],
   "20oqsp": [
@@ -1174,7 +1170,7 @@
   "5gOG+F": [
     {
       "type": 0,
-      "value": "Provide the values to compare and select the operator to use."
+      "value": "Adja meg az összehasonlítandó értékeket, és válassza ki a használandó operátort."
     }
   ],
   "5hWg4V": [
@@ -3939,12 +3935,6 @@
       "value": "OK"
     }
   ],
-  "OBKhVi": [
-    {
-      "type": 0,
-      "value": "Ez a művelet/trigger nem másolható."
-    }
-  ],
   "ODQCKj": [
     {
       "type": 0,
@@ -4473,12 +4463,6 @@
       "value": " ó"
     }
   ],
-  "Qy0Kha": [
-    {
-      "type": 0,
-      "value": "Az eseményindítók nem törölhetők."
-    }
-  ],
   "R/aiRy": [
     {
       "type": 0,
@@ -4567,12 +4551,6 @@
     {
       "type": 0,
       "value": "probléma"
-    }
-  ],
-  "Ro4+PC": [
-    {
-      "type": 0,
-      "value": "Csak akkor adhat hozzá jegyzeteket, ha szerkeszti egy lépés bemeneteit."
     }
   ],
   "Rp5pHU": [
@@ -4861,6 +4839,12 @@
     {
       "type": 0,
       "value": "Jegyzet"
+    }
+  ],
+  "TsJbGH": [
+    {
+      "type": 0,
+      "value": "Leválasztva"
     }
   ],
   "Ttc0SM": [
@@ -5413,6 +5397,12 @@
       "value": "Egy felügyelt identitás nincs konfigurálva a logikai alkalmazásban."
     }
   ],
+  "WvvJYw": [
+    {
+      "type": 0,
+      "value": "Műveletek"
+    }
+  ],
   "X/7je+": [
     {
       "type": 0,
@@ -5961,12 +5951,6 @@
     {
       "type": 0,
       "value": "További információ"
-    }
-  ],
-  "ZbX8xq": [
-    {
-      "type": 0,
-      "value": "Ezt a műveletet már törölték."
     }
   ],
   "Zg3IjD": [
@@ -6548,7 +6532,7 @@
   "eFnLWK": [
     {
       "type": 0,
-      "value": "(UTC-06:00) Közép-Amerika"
+      "value": "(UTC–06:00) Közép-Amerika"
     }
   ],
   "eHgfpz": [
@@ -6597,6 +6581,12 @@
     {
       "type": 0,
       "value": "Dőlt (⌘I)"
+    }
+  ],
+  "en/5A3": [
+    {
+      "type": 0,
+      "value": "Ismételt hozzárendelés"
     }
   ],
   "eo1YKX": [
@@ -6987,12 +6977,6 @@
     {
       "type": 0,
       "value": "Visszavonás"
-    }
-  ],
-  "hTZZr+": [
-    {
-      "type": 0,
-      "value": "Csatlakoztatott műveletek"
     }
   ],
   "hZqQdt": [
@@ -8269,12 +8253,6 @@
       "value": "Alkalmazáson belüli termék"
     }
   ],
-  "p3K7eM": [
-    {
-      "type": 0,
-      "value": "Leválasztott műveletek"
-    }
-  ],
   "p5ZID0": [
     {
       "type": 0,
@@ -8841,6 +8819,12 @@
     {
       "type": 0,
       "value": "Kulcs"
+    }
+  ],
+  "snJFUi": [
+    {
+      "type": 0,
+      "value": "Ctrl+C"
     }
   ],
   "soqP+Z": [
@@ -9735,12 +9719,6 @@
       "value": "Érték"
     }
   ],
-  "xxeu75": [
-    {
-      "type": 0,
-      "value": "Az összes leválasztott művelet hozzárendelése új kapcsolathoz"
-    }
-  ],
   "y1e9yw": [
     {
       "type": 0,
@@ -9989,12 +9967,6 @@
     {
       "type": 0,
       "value": "Leállítás"
-    }
-  ],
-  "ziXw25": [
-    {
-      "type": 0,
-      "value": "Törlés"
     }
   ],
   "ziYCiA": [

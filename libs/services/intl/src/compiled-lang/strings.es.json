@@ -23,16 +23,6 @@
       "value": "Protegido"
     }
   ],
-  "+7IA0V": [
-    {
-      "type": 1,
-      "value": "connectorName"
-    },
-    {
-      "type": 0,
-      "value": " conexiones"
-    }
-  ],
   "+FcXe9": [
     {
       "type": 0,
@@ -175,6 +165,12 @@
       "value": "Abrir Azure Copilot"
     }
   ],
+  "/c1l10": [
+    {
+      "type": 0,
+      "value": "⌘+C"
+    }
+  ],
   "/doURb": [
     {
       "type": 0,
@@ -303,6 +299,12 @@
     {
       "type": 0,
       "value": "(UTC+05:30) Sri Jayawardenapura"
+    }
+  ],
+  "0CPsxh": [
+    {
+      "type": 0,
+      "value": "Supr"
     }
   ],
   "0CvRZW": [
@@ -555,12 +557,6 @@
     {
       "type": 0,
       "value": "5"
-    }
-  ],
-  "1zgFh1": [
-    {
-      "type": 0,
-      "value": "Descartar"
     }
   ],
   "20oqsp": [
@@ -1166,7 +1162,7 @@
   "5gOG+F": [
     {
       "type": 0,
-      "value": "Provide the values to compare and select the operator to use."
+      "value": "Proporcione los valores que se van a comparar y seleccione el operador que se va a usar."
     }
   ],
   "5hWg4V": [
@@ -3964,12 +3960,6 @@
       "value": "Aceptar"
     }
   ],
-  "OBKhVi": [
-    {
-      "type": 0,
-      "value": "No se puede copiar esta acción o desencadenador."
-    }
-  ],
   "ODQCKj": [
     {
       "type": 0,
@@ -4490,12 +4480,6 @@
       "value": "h"
     }
   ],
-  "Qy0Kha": [
-    {
-      "type": 0,
-      "value": "No se pueden eliminar los desencadenadores."
-    }
-  ],
   "R/aiRy": [
     {
       "type": 0,
@@ -4595,12 +4579,6 @@
     {
       "type": 0,
       "value": "incidencia"
-    }
-  ],
-  "Ro4+PC": [
-    {
-      "type": 0,
-      "value": "Solo puede agregar notas al editar las entradas de un paso."
     }
   ],
   "Rp5pHU": [
@@ -4889,6 +4867,12 @@
     {
       "type": 0,
       "value": "Nota"
+    }
+  ],
+  "TsJbGH": [
+    {
+      "type": 0,
+      "value": "Desconectado"
     }
   ],
   "Ttc0SM": [
@@ -5461,6 +5445,12 @@
       "value": "Una identidad administrada no está configurada en la aplicación lógica."
     }
   ],
+  "WvvJYw": [
+    {
+      "type": 0,
+      "value": "Acciones"
+    }
+  ],
   "X/7je+": [
     {
       "type": 0,
@@ -6009,12 +5999,6 @@
     {
       "type": 0,
       "value": "Más información"
-    }
-  ],
-  "ZbX8xq": [
-    {
-      "type": 0,
-      "value": "Ya se eliminó la operación."
     }
   ],
   "Zg3IjD": [
@@ -6647,6 +6631,12 @@
       "value": "Cursiva (⌘I)"
     }
   ],
+  "en/5A3": [
+    {
+      "type": 0,
+      "value": "Reasignar"
+    }
+  ],
   "eo1YKX": [
     {
       "type": 0,
@@ -7046,12 +7036,6 @@
     {
       "type": 0,
       "value": "Deshacer"
-    }
-  ],
-  "hTZZr+": [
-    {
-      "type": 0,
-      "value": "Acciones conectadas"
     }
   ],
   "hZqQdt": [
@@ -8331,12 +8315,6 @@
       "value": "Desde la aplicación"
     }
   ],
-  "p3K7eM": [
-    {
-      "type": 0,
-      "value": "Acciones desconectadas"
-    }
-  ],
   "p5ZID0": [
     {
       "type": 0,
@@ -8914,6 +8892,12 @@
     {
       "type": 0,
       "value": "Clave"
+    }
+  ],
+  "snJFUi": [
+    {
+      "type": 0,
+      "value": "Ctrl+C"
     }
   ],
   "soqP+Z": [
@@ -9812,12 +9796,6 @@
       "value": "Valor"
     }
   ],
-  "xxeu75": [
-    {
-      "type": 0,
-      "value": "Reasignar todas las acciones desconectadas a una nueva conexión"
-    }
-  ],
   "y1e9yw": [
     {
       "type": 0,
@@ -10054,12 +10032,6 @@
     {
       "type": 0,
       "value": "Detener"
-    }
-  ],
-  "ziXw25": [
-    {
-      "type": 0,
-      "value": "Eliminar"
     }
   ],
   "ziYCiA": [

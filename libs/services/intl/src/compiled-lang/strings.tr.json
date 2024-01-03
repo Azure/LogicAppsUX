@@ -23,16 +23,6 @@
       "value": "Korumalı"
     }
   ],
-  "+7IA0V": [
-    {
-      "type": 1,
-      "value": "connectorName"
-    },
-    {
-      "type": 0,
-      "value": " bağlantıları"
-    }
-  ],
   "+FcXe9": [
     {
       "type": 0,
@@ -175,6 +165,12 @@
       "value": "Azure Copilot’u aç"
     }
   ],
+  "/c1l10": [
+    {
+      "type": 0,
+      "value": "⌘+C"
+    }
+  ],
   "/doURb": [
     {
       "type": 0,
@@ -303,6 +299,12 @@
     {
       "type": 0,
       "value": "(UTC+05:30) Sri Jayawardenepura"
+    }
+  ],
+  "0CPsxh": [
+    {
+      "type": 0,
+      "value": "Del"
     }
   ],
   "0CvRZW": [
@@ -555,12 +557,6 @@
     {
       "type": 0,
       "value": "5"
-    }
-  ],
-  "1zgFh1": [
-    {
-      "type": 0,
-      "value": "Kapat"
     }
   ],
   "20oqsp": [
@@ -1158,7 +1154,7 @@
   "5gOG+F": [
     {
       "type": 0,
-      "value": "Provide the values to compare and select the operator to use."
+      "value": "Karşılaştırılacak değerleri sağlayın ve kullanılacak operatörü seçin."
     }
   ],
   "5hWg4V": [
@@ -3919,12 +3915,6 @@
       "value": "Tamam"
     }
   ],
-  "OBKhVi": [
-    {
-      "type": 0,
-      "value": "Bu Eylem/Tetikleyici kopyalanamıyor."
-    }
-  ],
   "ODQCKj": [
     {
       "type": 0,
@@ -4449,12 +4439,6 @@
       "value": " sa"
     }
   ],
-  "Qy0Kha": [
-    {
-      "type": 0,
-      "value": "Tetikleyiciler silinemez."
-    }
-  ],
   "R/aiRy": [
     {
       "type": 0,
@@ -4543,12 +4527,6 @@
     {
       "type": 0,
       "value": "sorun"
-    }
-  ],
-  "Ro4+PC": [
-    {
-      "type": 0,
-      "value": "Yalnızca bir adımın girişlerini düzenlediğinizde not ekleyebilirsiniz."
     }
   ],
   "Rp5pHU": [
@@ -4833,6 +4811,12 @@
     {
       "type": 0,
       "value": "Not"
+    }
+  ],
+  "TsJbGH": [
+    {
+      "type": 0,
+      "value": "Bağlantı kesildi"
     }
   ],
   "Ttc0SM": [
@@ -5405,6 +5389,12 @@
       "value": "Mantıksal uygulamada yapılandırılmış bir yönetilen kimlik yok."
     }
   ],
+  "WvvJYw": [
+    {
+      "type": 0,
+      "value": "Eylemler"
+    }
+  ],
   "X/7je+": [
     {
       "type": 0,
@@ -5953,12 +5943,6 @@
     {
       "type": 0,
       "value": "Daha fazlasını oku"
-    }
-  ],
-  "ZbX8xq": [
-    {
-      "type": 0,
-      "value": "Bu işlem zaten silinmiş."
     }
   ],
   "Zg3IjD": [
@@ -6587,6 +6571,12 @@
       "value": "İtalik (⌘I)"
     }
   ],
+  "en/5A3": [
+    {
+      "type": 0,
+      "value": "Yeniden ata"
+    }
+  ],
   "eo1YKX": [
     {
       "type": 0,
@@ -6754,7 +6744,7 @@
   "gA1dde": [
     {
       "type": 0,
-      "value": "Toggle code view"
+      "value": "Kod görünümünü aç/kapat"
     }
   ],
   "gCXOd5": [
@@ -6967,12 +6957,6 @@
     {
       "type": 0,
       "value": "Geri Al"
-    }
-  ],
-  "hTZZr+": [
-    {
-      "type": 0,
-      "value": "Bağlı eylemler"
     }
   ],
   "hZqQdt": [
@@ -8245,12 +8229,6 @@
       "value": "Uygulama İçi"
     }
   ],
-  "p3K7eM": [
-    {
-      "type": 0,
-      "value": "Bağlantısı kesilmiş eylemler"
-    }
-  ],
   "p5ZID0": [
     {
       "type": 0,
@@ -8813,6 +8791,12 @@
     {
       "type": 0,
       "value": "Anahtar"
+    }
+  ],
+  "snJFUi": [
+    {
+      "type": 0,
+      "value": "Ctrl+C"
     }
   ],
   "soqP+Z": [
@@ -9707,12 +9691,6 @@
       "value": "Değer"
     }
   ],
-  "xxeu75": [
-    {
-      "type": 0,
-      "value": "Bağlantısı kesilmiş tüm eylemleri yeni bir bağlantıya yeniden atayın"
-    }
-  ],
   "y1e9yw": [
     {
       "type": 0,
@@ -9957,12 +9935,6 @@
     {
       "type": 0,
       "value": "Durdur"
-    }
-  ],
-  "ziXw25": [
-    {
-      "type": 0,
-      "value": "Sil"
     }
   ],
   "ziYCiA": [
