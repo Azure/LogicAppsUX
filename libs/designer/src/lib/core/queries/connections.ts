@@ -38,35 +38,25 @@ export const getConnectionsQuery = async (): Promise<void> => {
 };
 
 export const useConnectionById = (connectionId: string, connectorId: string) => {
-  const { data: connections, isLoading } = useConnectionsForConnector(connectorId);
+  const { data: connections, isLoading: areConnectionsLoading } = useConnectionsForConnector(connectorId);
   const { data: connection, isLoading: isConnectionLoading } = useConnectionResource(connectionId);
+  const isLoading = areConnectionsLoading || isConnectionLoading;
 
   return useMemo(() => {
-    if (!connectionId) {
-      return { isLoading: false, result: undefined };
-    }
+    if (!connectionId || !connectorId) return { isLoading: false, result: undefined };
 
-    if (connections) {
-      const foundConnection = connections.find((connection) => equals(connection.id, connectionId));
+    if (!connections)
+      return {
+        isLoading,
+        result: undefined,
+      };
 
-      if (foundConnection) {
-        return {
-          isLoading,
-          result: foundConnection,
-        };
-      } else {
-        return {
-          isLoading: isConnectionLoading,
-          result: connection,
-        };
-      }
-    }
-
+    const foundConnection = connections.find((connection) => equals(connection.id, connectionId));
     return {
-      isLoading: isLoading || isConnectionLoading,
-      result: undefined,
+      isLoading,
+      result: foundConnection ?? connection,
     };
-  }, [connection, connectionId, connections, isConnectionLoading, isLoading]);
+  }, [connection, connectionId, connections, connectorId, isLoading]);
 };
 
 export const useAllConnections = () => {
@@ -79,9 +69,9 @@ export const useAllConnections = () => {
 export const useConnectionsForConnector = (connectorId: string) => {
   return useQuery([connectionKey, connectorId?.toLowerCase()], () => ConnectionService().getConnections(connectorId), {
     enabled: !!connectorId,
-    refetchOnMount: true,
-    cacheTime: 0,
-    staleTime: 0,
+    refetchOnMount: false,
+    // cacheTime: 0,
+    // staleTime: 0,
   });
 };
 

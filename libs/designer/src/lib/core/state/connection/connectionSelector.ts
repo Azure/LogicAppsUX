@@ -1,7 +1,8 @@
 import type { ConnectionReference, ConnectionReferences } from '../../../common/models/workflow';
 import { getConnection } from '../../queries/connections';
 import type { RootState } from '../../store';
-import { getConnectionId, getConnectionReference, isConnectionMultiAuthManagedIdentityType } from '../../utils/connectors/connections';
+import { getConnectionReference, isConnectionMultiAuthManagedIdentityType } from '../../utils/connectors/connections';
+import { useNodeConnectorId } from '../operation/operationSelector';
 import { useOperationManifest, useOperationInfo } from '../selectors/actionMetadataSelector';
 import type { ConnectionMapping } from './connectionSlice';
 import {
@@ -51,7 +52,7 @@ export const useGatewayServiceConfig = () => useMemo(() => GatewayService().getC
 
 export const useConnectorByNodeId = (nodeId: string): Connector | undefined => {
   const connectorFromManifest = useOperationManifest(useOperationInfo(nodeId)).data?.properties.connector;
-  const storeConnectorId = useSelector((state: RootState) => state.operations.operationInfo[nodeId]?.connectorId);
+  const storeConnectorId = useNodeConnectorId(nodeId);
   const operationInfo = useOperationInfo(nodeId);
 
   // Connector data inside of operation manifests is missing some connection data currently (7/24/2023).
@@ -64,8 +65,14 @@ export const useConnectorByNodeId = (nodeId: string): Connector | undefined => {
   return connectorFromService ?? connectorFromManifest;
 };
 
-export const useNodeConnectionId = (nodeId: string): string =>
-  useSelector((state: RootState) => getConnectionId(state.connections, nodeId));
+export const useNodeConnectionId = (nodeId: string): string => {
+  const connectionsMapping = useConnectionMapping();
+  const connectionReferences = useConnectionRefs();
+  return useMemo(() => {
+    const reference = connectionReferences[connectionsMapping[nodeId] ?? ''];
+    return reference ? reference.connection.id : '';
+  }, [connectionsMapping, connectionReferences, nodeId]);
+};
 
 const useConnectionByNodeId = (nodeId: string) => {
   const operationInfo = useOperationInfo(nodeId);

@@ -1,9 +1,9 @@
 import { isConnectionRequiredForOperation } from '../../actions/bjsworkflow/connections';
 import { useConnectionById } from '../../queries/connections';
 import type { RootState } from '../../store';
-import { getConnectionId } from '../../utils/connectors/connections';
-import { useConnector, useConnectorAndSwagger } from '../connection/connectionSelector';
+import { useConnector, useConnectorAndSwagger, useNodeConnectionId } from '../connection/connectionSelector';
 import type { NodeOperation } from '../operation/operationMetadataSlice';
+import { useNodeConnectorId } from '../operation/operationSelector';
 import { OperationManifestService } from '@microsoft/designer-client-services-logic-apps';
 import { SwaggerParser } from '@microsoft/parsers-logic-apps';
 import { getObjectPropertyValue } from '@microsoft/utils-logic-apps';
@@ -29,20 +29,24 @@ export const useAllowUserToChangeConnection = (op: NodeOperation) => {
 };
 
 export const useNodeConnectionName = (nodeId: string): QueryResult => {
-  const connectorId = useSelector((state: RootState) => state.operations.operationInfo[nodeId]?.connectorId);
-  const connectionId = useSelector((state: RootState) => getConnectionId(state.connections, nodeId));
+  const connectorId = useNodeConnectorId(nodeId);
+  const connectionId = useNodeConnectionId(nodeId);
 
   const { result: connection, isLoading } = useConnectionById(connectionId, connectorId);
 
-  const result = useMemo(
-    () => ({
-      isLoading,
-      result: !isLoading && connectionId ? connection?.properties.displayName ?? connectionId.split('/').at(-1) : '',
-    }),
-    [connection?.properties.displayName, connectionId, isLoading]
+  return useMemo(
+    () =>
+      nodeId
+        ? {
+            isLoading,
+            result: !isLoading && connectionId ? connection?.properties?.displayName ?? connectionId.split('/').at(-1) : '',
+          }
+        : {
+            isLoading: false,
+            result: undefined,
+          },
+    [nodeId, connection?.properties?.displayName, connectionId, isLoading]
   );
-
-  return nodeId ? result : { isLoading: false, result: undefined };
 };
 
 export const useOperationInfo = (nodeId: string) => {

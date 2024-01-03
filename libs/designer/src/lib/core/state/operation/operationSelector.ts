@@ -144,3 +144,6 @@ export const useBrandColor = (nodeId: string) =>
 
 export const useIconUri = (nodeId: string) =>
   useSelector(createSelector(getOperationState, (state) => state.operationMetadata[nodeId]?.iconUri ?? ''));
+
+export const useNodeConnectorId = (nodeId: string) =>
+  useSelector(createSelector(getOperationState, (state) => state.operationInfo[nodeId]?.connectorId));
