@@ -224,14 +224,12 @@ const getAllChildren = (currNode: WorkflowNode, childrenNodes: string[]) => {
 
 // given a nodeId, return all operation nodes within if a scope
 export const useGetAllOperationNodesWithin = (nodeId: string) => {
-  return useSelector(
-    createSelector(getWorkflowState, (state: WorkflowState) => {
-      const graphNodes = state.graph;
-      const childrenNodes: string[] = [];
-      getChildrenOfNodeId(childrenNodes, nodeId, graphNodes ?? undefined);
-      return childrenNodes;
-    })
-  );
+  const graphNodes = useSelector(createSelector(getWorkflowState, (workflow) => workflow.graph));
+  return useMemo(() => {
+    const childrenNodes: string[] = [];
+    getChildrenOfNodeId(childrenNodes, nodeId, graphNodes ?? undefined);
+    return childrenNodes;
+  }, [graphNodes, nodeId]);
 };
 
 export const getWorkflowGraphPath = (graph: WorkflowNode, graphId: string) => {
