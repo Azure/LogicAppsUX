@@ -82,26 +82,25 @@ export const useSecureInputsOutputs = (nodeId: string): boolean =>
 export const useParameterStaticResult = (nodeId: string): NodeStaticResults =>
   useSelector(createSelector(getOperationState, (state) => state.staticResults[nodeId]));
 
-export const useTokenDependencies = (nodeId: string) =>
-  useSelector(
-    createSelector(getOperationState, (state) => {
-      const operationInputParameters = state.inputParameters[nodeId];
-      if (!operationInputParameters) {
-        return new Set();
-      }
-      const dependencies = new Set();
-      for (const group of Object.values(operationInputParameters.parameterGroups)) {
-        for (const parameter of group.parameters) {
-          for (const value of parameter.value) {
-            if (value.token?.actionName) {
-              dependencies.add(value.token.actionName);
-            }
+export const useTokenDependencies = (nodeId: string) => {
+  const operationInputParameters = useSelector(createSelector(getOperationState, (op) => op.inputParameters?.[nodeId]));
+  return useMemo(() => {
+    if (!operationInputParameters) {
+      return new Set();
+    }
+    const dependencies = new Set();
+    for (const group of Object.values(operationInputParameters.parameterGroups)) {
+      for (const parameter of group.parameters) {
+        for (const value of parameter.value) {
+          if (value.token?.actionName) {
+            dependencies.add(value.token.actionName);
           }
         }
       }
-      return dependencies;
-    })
-  );
+    }
+    return dependencies;
+  }, [operationInputParameters]);
+};
 
 export const useAllOperationErrors = () => useSelector(createSelector(getOperationState, (state) => state.errors));
 
