@@ -1,4 +1,14 @@
 # Logic Apps Designer
+## [2.100.0](https://github.com/Azure/LogicAppsUX/compare/v2.99.0...v2.100.0) (2024-01-04)
+
+
+### Bug Fixes
+
+* **Data Mapper:** Serialize and deserialize XSD to JSON arrays ([#3893](https://github.com/Azure/LogicAppsUX/issues/3893)) ([60ed813](https://github.com/Azure/LogicAppsUX/commit/60ed8139ef8ec9b9e22fb0aa2287d4a0794fcd04))
+* **Designer:** Canvas node rerender optimization ([#3932](https://github.com/Azure/LogicAppsUX/issues/3932)) ([a18c4ed](https://github.com/Azure/LogicAppsUX/commit/a18c4ed100ab3f50e370db12c5040f3c2cdd272e))
+* **Designer:** Re-added the scratch tab visibility check ([#3933](https://github.com/Azure/LogicAppsUX/issues/3933)) ([32cb45d](https://github.com/Azure/LogicAppsUX/commit/32cb45d42b974d9c48302f36624cde1c009503f1))
+* **vscode:** Add set function core tools command right after installing an update ([#3930](https://github.com/Azure/LogicAppsUX/issues/3930)) ([a3458cc](https://github.com/Azure/LogicAppsUX/commit/a3458cce64fd197c6b6d5a2461a491e374faee42))
+
 ## [2.99.0](https://github.com/Azure/LogicAppsUX/compare/v2.98.0...v2.99.0) (2024-01-02)
 
 
