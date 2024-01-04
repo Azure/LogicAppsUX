@@ -13,6 +13,7 @@ import {
 } from '../../../constants';
 import { localize } from '../../../localize';
 import { executeOnAzurite } from '../../azuriteExtension/executeOnAzuriteExt';
+import { validateEmulatorIsRunning } from '../../debug/validatePreDebug';
 import { tryGetLogicAppProjectRoot } from '../verifyIsProject';
 import { getWorkspaceSetting, updateGlobalSetting, updateWorkspaceSetting } from '../vsCodeConfig/settings';
 import { getWorkspaceFolder } from '../workspace';
@@ -82,7 +83,9 @@ export async function activateAzurite(context: IActionContext): Promise<void> {
         }
       }
 
-      if (autoStartAzurite) {
+      const isAzuriteRunning = await validateEmulatorIsRunning(context, projectPath, false);
+
+      if (autoStartAzurite && !isAzuriteRunning) {
         await updateWorkspaceSetting(azuriteLocationSetting, azuriteLocationExtSetting, projectPath, azuriteExtensionPrefix);
         await executeOnAzurite(context, extensionCommand.azureAzuriteStart);
         context.telemetry.properties.azuriteStart = 'true';
