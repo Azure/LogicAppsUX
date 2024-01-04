@@ -20,7 +20,7 @@ import {
 import { css } from '@fluentui/utilities';
 import { ActionButtonV2, convertUIElementNameToAutomationId } from '@microsoft/designer-ui';
 import { containsIdTag, guid, normalizeAutomationId, removeIdTag } from '@microsoft/utils-logic-apps';
-import { useCallback, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useDrop } from 'react-dnd';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
@@ -99,7 +99,7 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId, 
 
   const upstreamNodesOfChild = useUpstreamNodes(removeIdTag(childId ?? parentId ?? graphId));
   const immediateAncestor = useGetAllOperationNodesWithin(parentId && !containsIdTag(parentId) ? parentId : '');
-  const upstreamNodes = new Set([...upstreamNodesOfChild, ...immediateAncestor]);
+  const upstreamNodes = useMemo(() => new Set([...upstreamNodesOfChild, ...immediateAncestor]), [immediateAncestor, upstreamNodesOfChild]);
 
   const [{ isOver, canDrop }, drop] = useDrop(
     () => ({
@@ -118,7 +118,7 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId, 
       },
       collect: (monitor) => ({
         isOver: monitor.isOver(),
-        canDrop: monitor.canDrop(),
+        canDrop: monitor.isOver() && monitor.canDrop(), // Only calculate canDrop when isOver is true
       }),
     }),
     [graphId, parentId, childId, upstreamNodes]
@@ -159,16 +159,29 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId, 
         }
       );
 
-  const actionButtonClick = (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
-    setShowCallout(!showCallout);
-  };
+  const actionButtonClick = useCallback(
+    (e: React.MouseEvent<HTMLButtonElement>) => {
+      e.preventDefault();
+      setShowCallout(!showCallout);
+    },
+    [showCallout]
+  );
 
   const buttonId = normalizeAutomationId(
     `msla-edge-button-${convertUIElementNameToAutomationId(parentName)}-${convertUIElementNameToAutomationId(childName) || 'undefined'}`
   );
 
   const showParallelBranchButton = !isLeaf && parentId;
+
+  const automationId = useCallback(
+    (buttonName: string) =>
+      normalizeAutomationId(
+        `msla-${buttonName}-button-${convertUIElementNameToAutomationId(parentName)}-${
+          convertUIElementNameToAutomationId(childName) || 'undefined'
+        }`
+      ),
+    [parentName, childName]
+  );
 
   return (
     <div
@@ -192,41 +205,16 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId, 
         >
           <PopoverTrigger disableButtonEnhancement>
             <div tabIndex={-1}>
-              <ActionButtonV2
-                id={buttonId}
-                title={tooltipText}
-                dataAutomationId={normalizeAutomationId(
-                  `msla-plus-button-${convertUIElementNameToAutomationId(parentName)}-${
-                    convertUIElementNameToAutomationId(childName) || 'undefined'
-                  }`
-                )}
-                onClick={actionButtonClick}
-              />
+              <ActionButtonV2 id={buttonId} title={tooltipText} dataAutomationId={automationId('plus')} onClick={actionButtonClick} />
             </div>
           </PopoverTrigger>
           <PopoverSurface style={{ padding: '4px' }}>
             <MenuList>
-              <MenuItem
-                icon={<AddIcon />}
-                onClick={openAddNodePanel}
-                data-automation-id={normalizeAutomationId(
-                  `msla-add-action-${convertUIElementNameToAutomationId(parentName)}-${
-                    convertUIElementNameToAutomationId(childName) || 'undefined'
-                  }`
-                )}
-              >
+              <MenuItem icon={<AddIcon />} onClick={openAddNodePanel} data-automation-id={automationId('add')}>
                 {newActionText}
               </MenuItem>
               {showParallelBranchButton && (
-                <MenuItem
-                  icon={<ParallelIcon />}
-                  onClick={addParallelBranch}
-                  data-automation-id={normalizeAutomationId(
-                    `msla-add-parallel-branch-${convertUIElementNameToAutomationId(parentName)}-${
-                      convertUIElementNameToAutomationId(childName) || 'undefined'
-                    }`
-                  )}
-                >
+                <MenuItem icon={<ParallelIcon />} onClick={addParallelBranch} data-automation-id={automationId('add-parallel')}>
                   {newBranchText}
                 </MenuItem>
               )}

@@ -5,6 +5,7 @@ import { createSlice } from '@reduxjs/toolkit';
 const initialState: DesignerViewState = {
   showMinimap: false,
   clampPan: true,
+  showDeleteModal: false,
 };
 
 export const designerViewSlice = createSlice({
@@ -17,12 +18,15 @@ export const designerViewSlice = createSlice({
     toggleClampPan: (state: DesignerViewState) => {
       state.clampPan = !state.clampPan;
     },
+    setShowDeleteModal: (state: DesignerViewState, action) => {
+      state.showDeleteModal = action.payload;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(resetWorkflowState, () => initialState);
   },
 });
 
-export const { toggleMinimap, toggleClampPan } = designerViewSlice.actions;
+export const { toggleMinimap, toggleClampPan, setShowDeleteModal } = designerViewSlice.actions;
 
 export default designerViewSlice.reducer;
