@@ -82,12 +82,11 @@ export async function activateAzurite(context: IActionContext): Promise<void> {
         }
       }
 
-      if (getWorkspaceSetting<boolean>(autoStartAzuriteSetting)) {
-        const azuriteWorkspaceSetting = getWorkspaceSetting<string>(azuriteBinariesLocationSetting);
-        await updateWorkspaceSetting(azuriteLocationSetting, azuriteWorkspaceSetting, projectPath, azuriteExtensionPrefix);
+      if (autoStartAzurite) {
+        await updateWorkspaceSetting(azuriteLocationSetting, azuriteLocationExtSetting, projectPath, azuriteExtensionPrefix);
         await executeOnAzurite(context, extensionCommand.azureAzuriteStart);
         context.telemetry.properties.azuriteStart = 'true';
-        context.telemetry.properties.azuriteLocation = azuriteWorkspaceSetting;
+        context.telemetry.properties.azuriteLocation = azuriteLocationExtSetting;
       }
     }
   }
