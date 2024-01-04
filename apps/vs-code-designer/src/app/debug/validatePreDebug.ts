@@ -113,6 +113,7 @@ async function validateWorkerRuntime(context: IActionContext, projectLanguage: s
  * If AzureWebJobsStorage is set, pings the emulator to make sure it's actually running
  * @param {IActionContext} context - Command context.
  * @param {string} projectPath - Project path.
+ * @param {boolean} promptWarningMessage - Boolean to determine whether prompt a message to ask user if emulator is running.
  * @returns {boolean} Returns true if a valid emulator is running, otherwise returns false.
  */
 export async function validateEmulatorIsRunning(
