@@ -3,7 +3,8 @@ import { getConnectorCategoryString } from '../../utils';
 import type { OperationActionData } from './interfaces';
 import { OperationSearchCard } from './operationSearchCard';
 import { OperationSearchGroup } from './operationSearchGroup';
-import { List, Spinner, Text } from '@fluentui/react';
+import { List, Text } from '@fluentui/react';
+import { Spinner } from '@fluentui/react-components';
 import type { DiscoveryOperation, DiscoveryResultTypes } from '@microsoft/utils-logic-apps';
 import { isBuiltInConnector } from '@microsoft/utils-logic-apps';
 import type { PropsWithChildren } from 'react';
@@ -97,7 +98,7 @@ export const SearchResultsGrid: React.FC<PropsWithChildren<SearchResultsGridProp
   if (isLoadingSearch)
     return (
       <div>
-        <Spinner label={loadingText} labelPosition="right" />
+        <Spinner label={loadingText} size="extra-small" />
       </div>
     );
 
@@ -113,7 +114,7 @@ export const SearchResultsGrid: React.FC<PropsWithChildren<SearchResultsGridProp
     <div className="msla-result-list">
       {isLoadingMore && (
         <div style={{ marginBottom: '16px' }}>
-          <Spinner label={loadingText} ariaLive="assertive" labelPosition="right" />
+          <Spinner label={loadingText} size="extra-small" aria-live="assertive" />
         </div>
       )}
       {groupByConnector ? (
