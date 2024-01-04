@@ -12,7 +12,7 @@ export async function executeOnAzurite(context: IActionContext, command: string,
   const azuriteExtension = extensions.getExtension(azuriteExtensionId);
 
   if (azuriteExtension?.isActive) {
-    await vscode.commands.executeCommand(command, {
+    vscode.commands.executeCommand(command, {
       ...args,
     });
   } else {

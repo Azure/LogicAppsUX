@@ -2,7 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { Platform, defaultFuncPort, hostStartTaskName, pickProcessTimeoutSetting, showAutoStartAzuriteWarning } from '../../constants';
+import { Platform, autoStartAzuriteSetting, defaultFuncPort, hostStartTaskName, pickProcessTimeoutSetting } from '../../constants';
 import { ext } from '../../extensionVariables';
 import { localize } from '../../localize';
 import { preDebugValidate } from '../debug/validatePreDebug';
@@ -32,8 +32,8 @@ type OSAgnosticProcess = { command: string | undefined; pid: number | string };
 type ActualUnixPS = unixPsTree.PS & { COMM?: string };
 
 export async function pickFuncProcess(context: IActionContext, debugConfig: vscode.DebugConfiguration): Promise<string | undefined> {
-  await callWithTelemetryAndErrorHandling(showAutoStartAzuriteWarning, async (actionContext: IActionContext) => {
-    await runWithDurationTelemetry(actionContext, showAutoStartAzuriteWarning, async () => {
+  await callWithTelemetryAndErrorHandling(autoStartAzuriteSetting, async (actionContext: IActionContext) => {
+    await runWithDurationTelemetry(actionContext, autoStartAzuriteSetting, async () => {
       await activateAzurite(context);
     });
   });

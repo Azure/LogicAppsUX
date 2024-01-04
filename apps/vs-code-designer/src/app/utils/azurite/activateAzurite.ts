@@ -47,7 +47,7 @@ export async function activateAzurite(context: IActionContext): Promise<void> {
         const enableMessage: MessageItem = { title: localize('enableAutoStart', 'Enable AutoStart') };
 
         const result = await context.ui.showWarningMessage(
-          localize('autoStartAzuriteTitle', 'Configure Azurite to autostart on project launch?'),
+          localize('autoStartAzuriteTitle', 'Configure Azurite to autostart on project debug?'),
           enableMessage,
           DialogResponses.no,
           DialogResponses.dontWarnAgain
