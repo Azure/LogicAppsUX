@@ -13,6 +13,7 @@ import {
   splitKeyIntoChildren,
   isValidToMakeMapDefinition,
   amendSourceKeyForDirectAccessIfNeeded,
+  separateFunctions,
 } from '../DataMap.Utils';
 import { addSourceReactFlowPrefix } from '../ReactFlow.Util';
 import { convertSchemaToSchemaExtended, flattenSchemaIntoDictionary } from '../Schema.Utils';
@@ -873,7 +874,7 @@ describe('utils/DataMap', () => {
 
   describe('separateIntoTokens', () => {
     it('separates a loop and sequence target', () => {
-      const result = separateIntoTokens('/ns0:Root/Looping/$for(reverse(/ns0:Root/Looping/Employee))/Person/Name');
+      const result = separateFunctions('/$for(reverse(/ns0:Root/Looping/Employee))');
       expect(result[0]).toEqual('/ns0:Root/Looping/');
       expect(result[1]).toEqual(Separators.Dollar);
       expect(result[2]).toEqual(ReservedToken.for);

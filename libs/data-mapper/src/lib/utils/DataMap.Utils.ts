@@ -439,7 +439,82 @@ export const ReservedToken = {
 } as const;
 export type ReservedToken = (typeof ReservedToken)[keyof typeof ReservedToken];
 
+export const DReservedToken = {
+  for: '$for',
+  if: '$if',
+  backout: '../',
+} as const;
+export type DReservedToken = (typeof ReservedToken)[keyof typeof ReservedToken];
+
+export const dReservedToken: string[] = [ReservedToken.for, ReservedToken.if, ReservedToken.backout]; // danielle maybe ideally we separate evertything out, so we don't need to change these functions if the definition changes
+
+export const DSeparators = {
+  OpenParenthesis: '(',
+  CloseParenthesis: ')',
+  Comma: ',',
+} as const;
+export type DSeparators = (typeof Separators)[keyof typeof Separators];
+
+export const Dseparators: string[] = [Separators.OpenParenthesis, Separators.CloseParenthesis, Separators.Comma];
+
 export const reservedToken: string[] = [ReservedToken.for, ReservedToken.if, ReservedToken.backout];
+
+// const constructFunctionRepresentation = (tokens: string[]): FunctionInput => {
+//   if (tokens.length === 1) {
+//     return tokens[0];
+//   } else {
+//     const func: ParseFunc = { name: tokens[0], inputs: [] };
+//     let i = 2; // start of the function inputs
+//     let currentStart = 2;
+//     while (i < tokens.length-1) { // account for closing parenthesis
+//       if ()
+//         func.inputs.push(constructFunctionRepresentation());
+//       }
+//       i++;
+//     }
+//     return func;
+//   }
+// }
+
+export const separateFunctions = (targetKey: string): string[] => {
+  const tokens: string[] = [];
+
+  let i = 0;
+  let currentToken = '';
+  while (i < targetKey.length) {
+    const currentChar = targetKey[i];
+
+    if (Dseparators.includes(currentChar)) {
+      if (!currentToken) {
+        // if it is a Separator
+        tokens.push(currentChar);
+        i++;
+        continue;
+      } else {
+        // if it is a function or identifier token
+        tokens.push(currentToken);
+        currentToken = '';
+        tokens.push(currentChar);
+        i++;
+        continue;
+      }
+    }
+
+    currentToken = currentToken + currentChar;
+    if (dReservedToken.includes(currentToken)) {
+      tokens.push(currentToken);
+      currentToken = '';
+      i++;
+      continue;
+    }
+
+    if (i === targetKey.length - 1) {
+      tokens.push(currentToken);
+    }
+    i++;
+  }
+  return tokens;
+};
 
 export const lexThisThing = (targetKey: string): string[] => {
   const tokens: string[] = [];
@@ -488,7 +563,7 @@ interface ParseFunc {
 
 type FunctionInput = string | ParseFunc;
 
-const createTargetOrFunction = (tokens: string[]): { term: FunctionInput; nextIndex: number } => {
+export const createTargetOrFunction = (tokens: string[]): { term: FunctionInput; nextIndex: number } => {
   // determine if token is a function
   if (tokens[1] === Separators.OpenParenthesis) {
     const func: ParseFunc = { name: tokens[0], inputs: [] };
