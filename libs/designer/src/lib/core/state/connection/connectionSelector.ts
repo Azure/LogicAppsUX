@@ -79,7 +79,7 @@ const useConnectionByNodeId = (nodeId: string) => {
   const connectionId = useNodeConnectionId(nodeId);
   return useQuery(
     ['connection', { connectorId: operationInfo?.connectorId }, { connectionId }],
-    () => getConnection(connectionId, operationInfo.connectorId),
+    () => getConnection(connectionId, operationInfo?.connectorId),
     {
       enabled: !!connectionId && !!operationInfo?.connectorId,
       placeholderData: undefined,

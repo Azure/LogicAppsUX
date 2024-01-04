@@ -30,6 +30,11 @@ export const DeleteNodeModal = (props: DeleteNodeModalProps) => {
     description: 'Title for graph node',
   });
 
+  const switchCaseTitle = intl.formatMessage({
+    defaultMessage: 'Delete Switch Case',
+    description: 'Title for switch case',
+  });
+
   const otherNodeTitle = intl.formatMessage({
     defaultMessage: 'Node',
     description: 'Title for other node',
@@ -40,6 +45,8 @@ export const DeleteNodeModal = (props: DeleteNodeModalProps) => {
       ? operationNodeTitle
       : nodeType === WORKFLOW_NODE_TYPES['GRAPH_NODE']
       ? graphNodeTitle
+      : nodeType === WORKFLOW_NODE_TYPES['SUBGRAPH_NODE'] // This is only for switch cases
+      ? switchCaseTitle
       : otherNodeTitle;
 
   const confirmText = intl.formatMessage({
@@ -70,7 +77,7 @@ export const DeleteNodeModal = (props: DeleteNodeModalProps) => {
     description: 'Text for delete node modal body',
   });
 
-  const bodyMessage = nodeType === WORKFLOW_NODE_TYPES['GRAPH_NODE'] ? graphBodyMessage : operationBodyMessage;
+  const bodyMessage = nodeType === WORKFLOW_NODE_TYPES['OPERATION_NODE'] ? operationBodyMessage : graphBodyMessage;
 
   return (
     <Modal titleAriaId={title} isOpen={isOpen} onDismiss={onDismiss}>

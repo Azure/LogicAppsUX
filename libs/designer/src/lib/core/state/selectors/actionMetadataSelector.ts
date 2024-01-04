@@ -115,7 +115,7 @@ export const useOperationDescription = (operationInfo: NodeOperation) => {
   const operationManifestService = OperationManifestService();
   const useManifest = operationManifestService.isSupported(operationInfo?.type ?? '', operationInfo?.kind ?? '');
 
-  const { data: connectorData } = useConnectorAndSwagger(operationInfo.connectorId, !useManifest);
+  const { data: connectorData } = useConnectorAndSwagger(operationInfo?.connectorId, !useManifest);
 
   const { result, isLoading } = useNodeAttribute(operationInfo, ['description'], ['description']);
 
@@ -135,7 +135,7 @@ export const useOperationDocumentation = (operationInfo: NodeOperation) => {
   const operationManifestService = OperationManifestService();
   const useManifest = operationManifestService.isSupported(operationInfo?.type ?? '', operationInfo?.kind ?? '');
 
-  const { data: connectorData } = useConnectorAndSwagger(operationInfo.connectorId, !useManifest);
+  const { data: connectorData } = useConnectorAndSwagger(operationInfo?.connectorId, !useManifest);
   const { result, isLoading } = useNodeAttribute(operationInfo, ['connector', 'properties', 'externalDocs'], ['externalDocs']);
   const { swagger } = connectorData ?? {};
   if (swagger) {

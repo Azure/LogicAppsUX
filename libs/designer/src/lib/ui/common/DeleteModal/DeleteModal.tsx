@@ -13,7 +13,7 @@ import { useDispatch } from 'react-redux';
 const DeleteModal = () => {
   const dispatch = useDispatch<AppDispatch>();
 
-  const nodeId = useSelectedNodeId();
+  const nodeId = removeIdTag(useSelectedNodeId()) ?? '';
   const nodeData = useWorkflowNode(nodeId);
   const metadata = useNodeMetadata(nodeId);
   const graphId = useMemo(() => metadata?.graphId ?? '', [metadata]);
@@ -32,20 +32,20 @@ const DeleteModal = () => {
     } else if (type === WORKFLOW_NODE_TYPES.GRAPH_NODE) {
       dispatch(
         deleteGraphNode({
-          graphId: removeIdTag(nodeId) ?? '',
+          graphId: nodeId,
           graphNode: nodeData,
         })
       );
     } else if (type === WORKFLOW_NODE_TYPES.SUBGRAPH_NODE) {
       dispatch(
         deleteGraphNode({
-          graphId: removeIdTag(nodeId) ?? '',
+          graphId: nodeId,
           graphNode: nodeData,
         })
       );
       dispatch(
         deleteSwitchCase({
-          caseId: removeIdTag(nodeId) ?? '',
+          caseId: nodeId,
           nodeId: graphId,
         })
       );
