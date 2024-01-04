@@ -1,6 +1,7 @@
 import type { RelationshipIds, PanelState, PanelMode } from './panelInterfaces';
 import { LogEntryLevel, LoggerService } from '@microsoft/designer-client-services-logic-apps';
 import { PanelLocation } from '@microsoft/designer-ui';
+import { cleanConnectorId } from '@microsoft/utils-logic-apps';
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 
@@ -88,7 +89,7 @@ export const panelSlice = createSlice({
       });
     },
     selectOperationGroupId: (state, action: PayloadAction<string>) => {
-      state.selectedOperationGroupId = action.payload;
+      state.selectedOperationGroupId = cleanConnectorId(action.payload);
 
       LoggerService().log({
         level: LogEntryLevel.Verbose,
