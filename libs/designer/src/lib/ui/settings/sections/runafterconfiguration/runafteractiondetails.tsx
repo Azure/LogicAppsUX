@@ -1,5 +1,5 @@
 import constants from '../../../../common/constants';
-import { useIconUri } from '../../../../core/state/selectors/actionMetadataSelector';
+import { useOperationVisuals } from '../../../../core/state/operation/operationSelector';
 import { useNodeDisplayName } from '../../../../core/state/workflow/workflowSelectors';
 import { RunAfterActionStatuses } from './runafteractionstatuses';
 import { RunAfterTrafficLights } from './runaftertrafficlights';
@@ -82,7 +82,7 @@ export const RunAfterActionDetails = ({
     : undefined;
 
   const title = useNodeDisplayName(id);
-  const icon = useIconUri(id);
+  const { iconUri } = useOperationVisuals(id);
 
   return (
     <>
@@ -96,7 +96,7 @@ export const RunAfterActionDetails = ({
                 iconName={expanded ? 'ChevronDownMed' : 'ChevronRightMed'}
                 styles={{ root: { color: isInverted ? 'white' : constants.Settings.CHEVRON_ROOT_COLOR_LIGHT } }}
               />
-              <img alt="" className="msla-run-after-node-image" role="presentation" src={icon} />
+              <img alt="" className="msla-run-after-node-image" role="presentation" src={iconUri} />
               <Text weight="semibold" className="msla-run-after-node-title">
                 {title}
               </Text>

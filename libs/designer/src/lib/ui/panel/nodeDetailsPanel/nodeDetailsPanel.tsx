@@ -3,29 +3,27 @@ import {
   useSelectedNodeId,
   useNodeDisplayName,
   useNodeMetadata,
-  useOperationInfo,
   clearPanel,
   collapsePanel,
   validateParameter,
   updateParameterValidation,
 } from '../../../core';
-import { deleteGraphNode, deleteOperation } from '../../../core/actions/bjsworkflow/delete';
-import type { WorkflowNode } from '../../../core/parsers/models/workflowNode';
 import { useReadOnly } from '../../../core/state/designerOptions/designerOptionsSelectors';
+import { setShowDeleteModal } from '../../../core/state/designerView/designerViewSlice';
 import { ErrorLevel } from '../../../core/state/operation/operationMetadataSlice';
-import { useOperationErrorInfo } from '../../../core/state/operation/operationSelector';
+import { useIconUri, useOperationErrorInfo } from '../../../core/state/operation/operationSelector';
 import { useIsPanelCollapsed, useSelectedPanelTabId } from '../../../core/state/panel/panelSelectors';
-import { expandPanel, updatePanelLocation, selectPanelTab } from '../../../core/state/panel/panelSlice';
-import { useIconUri, useOperationQuery } from '../../../core/state/selectors/actionMetadataSelector';
-import { useWorkflowNode, useNodeDescription } from '../../../core/state/workflow/workflowSelectors';
-import { deleteSwitchCase, setNodeDescription, replaceId } from '../../../core/state/workflow/workflowSlice';
+import { expandPanel, updatePanelLocation, selectPanelTab, setSelectedNodeId } from '../../../core/state/panel/panelSlice';
+import { useOperationQuery } from '../../../core/state/selectors/actionMetadataSelector';
+import { useNodeDescription } from '../../../core/state/workflow/workflowSelectors';
+import { setNodeDescription, replaceId } from '../../../core/state/workflow/workflowSlice';
 import { isRootNodeInGraph, isOperationNameValid } from '../../../core/utils/graph';
 import { CommentMenuItem } from '../../menuItems/commentMenuItem';
 import { DeleteMenuItem } from '../../menuItems/deleteMenuItem';
 import { usePanelTabs } from './usePanelTabs';
 import type { CommonPanelProps, PageActionTelemetryData } from '@microsoft/designer-ui';
-import { DeleteNodeModal, PanelContainer, PanelLocation, PanelScope, PanelSize } from '@microsoft/designer-ui';
-import { isNullOrUndefined, isScopeOperation, isSubGraphNode } from '@microsoft/utils-logic-apps';
+import { PanelContainer, PanelLocation, PanelScope, PanelSize } from '@microsoft/designer-ui';
+import { isNullOrUndefined } from '@microsoft/utils-logic-apps';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -48,15 +46,12 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
   }));
   const selectedNodeDisplayName = useNodeDisplayName(selectedNode);
 
-  const graphNode = useWorkflowNode(selectedNode) as WorkflowNode;
-
   const [width, setWidth] = useState<PanelSize>(PanelSize.Auto);
 
   const inputs = useSelector((state: RootState) => state.operations.inputParameters[selectedNode]);
   const comment = useNodeDescription(selectedNode);
   const iconUri = useIconUri(selectedNode);
   const nodeMetaData = useNodeMetadata(selectedNode);
-  const operationInfo = useOperationInfo(selectedNode);
   let showCommentBox = !isNullOrUndefined(comment);
   const errorInfo = useOperationErrorInfo(selectedNode);
 
@@ -76,20 +71,10 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
     dispatch(expandPanel());
   }, [dispatch]);
 
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const handleDeleteClick = () => setShowDeleteModal(true);
-  const handleDelete = () => {
-    // TODO: 12798935 Analytics (event logging)
-    if (operationInfo && isScopeOperation(operationInfo.type)) {
-      dispatch(deleteGraphNode({ graphId: selectedNode, graphNode }));
-    } else if (isSubGraphNode(graphNode.type)) {
-      dispatch(deleteGraphNode({ graphId: selectedNode, graphNode: graphNode }));
-      dispatch(deleteSwitchCase({ caseId: selectedNode, nodeId: nodeMetaData?.graphId ?? '' }));
-    } else {
-      dispatch(deleteOperation({ nodeId: selectedNode, isTrigger: isTriggerNode }));
-    }
-    setShowDeleteModal(false);
-  };
+  const deleteClick = useCallback(() => {
+    dispatch(setSelectedNodeId(selectedNode));
+    dispatch(setShowDeleteModal(true));
+  }, [dispatch, selectedNode]);
 
   const handleCommentMenuClick = (_: React.MouseEvent<HTMLElement>): void => {
     showCommentBox = !showCommentBox;
@@ -98,7 +83,7 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
 
   const headerMenuItems = [
     <CommentMenuItem key={'comment'} onClick={handleCommentMenuClick} hasComment={showCommentBox} />,
-    <DeleteMenuItem key={'delete'} onClick={handleDeleteClick} />,
+    <DeleteMenuItem key={'delete'} onClick={deleteClick} />,
   ];
 
   const onTitleChange = (newId: string): { valid: boolean; oldValue?: string } => {
@@ -136,52 +121,41 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
   };
 
   return (
-    <>
-      <PanelContainer
-        {...commonPanelProps}
-        cardIcon={iconUri}
-        comment={comment}
-        noNodeSelected={!selectedNode}
-        isError={errorInfo?.level === ErrorLevel.Critical || opQuery?.isError}
-        errorMessage={errorInfo?.message}
-        isLoading={isLoading}
-        panelScope={PanelScope.CardLevel}
-        headerMenuItems={headerMenuItems}
-        showCommentBox={showCommentBox}
-        tabs={panelTabs}
-        selectedTab={selectedTab}
-        selectTab={(tabId: string) => dispatch(selectPanelTab(tabId))}
-        nodeId={selectedNode}
-        readOnlyMode={readOnly}
-        toggleCollapse={() => {
-          // Only run validation when collapsing the panel
-          if (!collapsed) {
-            Object.keys(inputs?.parameterGroups ?? {}).forEach((parameterGroup) => {
-              inputs.parameterGroups[parameterGroup].parameters.forEach((parameter: any) => {
-                const validationErrors = validateParameter(parameter, parameter.value);
-                dispatch(
-                  updateParameterValidation({ nodeId: selectedNode, groupId: parameterGroup, parameterId: parameter.id, validationErrors })
-                );
-              });
+    <PanelContainer
+      {...commonPanelProps}
+      cardIcon={iconUri}
+      comment={comment}
+      noNodeSelected={!selectedNode}
+      isError={errorInfo?.level === ErrorLevel.Critical || opQuery?.isError}
+      errorMessage={errorInfo?.message}
+      isLoading={isLoading}
+      panelScope={PanelScope.CardLevel}
+      headerMenuItems={headerMenuItems}
+      showCommentBox={showCommentBox}
+      tabs={panelTabs}
+      selectedTab={selectedTab}
+      selectTab={(tabId: string) => dispatch(selectPanelTab(tabId))}
+      nodeId={selectedNode}
+      readOnlyMode={readOnly}
+      toggleCollapse={() => {
+        // Only run validation when collapsing the panel
+        if (!collapsed) {
+          Object.keys(inputs?.parameterGroups ?? {}).forEach((parameterGroup) => {
+            inputs.parameterGroups[parameterGroup].parameters.forEach((parameter: any) => {
+              const validationErrors = validateParameter(parameter, parameter.value);
+              dispatch(
+                updateParameterValidation({ nodeId: selectedNode, groupId: parameterGroup, parameterId: parameter.id, validationErrors })
+              );
             });
-          }
-          togglePanel();
-        }}
-        trackEvent={handleTrackEvent}
-        onCommentChange={onCommentChange}
-        title={selectedNodeDisplayName}
-        onTitleChange={onTitleChange}
-      />
-      {graphNode?.type && (
-        <DeleteNodeModal
-          nodeId={selectedNode}
-          nodeType={graphNode.type}
-          isOpen={showDeleteModal}
-          onDismiss={() => setShowDeleteModal(false)}
-          onConfirm={handleDelete}
-        />
-      )}
-    </>
+          });
+        }
+        togglePanel();
+      }}
+      trackEvent={handleTrackEvent}
+      onCommentChange={onCommentChange}
+      title={selectedNodeDisplayName}
+      onTitleChange={onTitleChange}
+    />
   );
 };
 

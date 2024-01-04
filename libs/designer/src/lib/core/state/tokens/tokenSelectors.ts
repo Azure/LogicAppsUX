@@ -8,10 +8,8 @@ export const getTokenState = (state: RootState): TokensState => state.tokens;
 export const useUpstreamNodes = (id?: string) => {
   return useSelector(
     createSelector(getTokenState, (state: TokensState) => {
-      const nodeTokens = state.outputTokens[id ?? ''];
       // TODO: Support variables
-      const upstreamNodeIds = nodeTokens?.upstreamNodeIds ?? [];
-      return upstreamNodeIds;
+      return state.outputTokens[id ?? '']?.upstreamNodeIds ?? [];
     })
   );
 };

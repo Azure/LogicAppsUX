@@ -1,5 +1,5 @@
+import { useOperationVisuals } from '../../../core/state/operation/operationSelector';
 import { clearPanel } from '../../../core/state/panel/panelSlice';
-import { useBrandColor, useIconUri } from '../../../core/state/selectors/actionMetadataSelector';
 import { useNodeDisplayName, useNodeIds } from '../../../core/state/workflow/workflowSelectors';
 import { setFocusNode } from '../../../core/state/workflow/workflowSlice';
 import { SearchBox, Text, FocusTrapZone } from '@fluentui/react';
@@ -24,14 +24,13 @@ const fuseOptions: Fuse.IFuseOptions<{ id: string; text: string }> = {
 };
 
 const NodeSearchCard = ({ node, displayRuntimeInfo }: { node: string; displayRuntimeInfo: boolean }) => {
-  const brandColor = useBrandColor(node);
-  const icon = useIconUri(node);
   const dispatch = useDispatch();
   const displayName = useNodeDisplayName(node);
+  const { brandColor, iconUri } = useOperationVisuals(node);
   return (
     <div style={{ paddingBottom: 10 }}>
       <OperationSearchCard
-        operationActionData={{ id: node, title: displayName, isTrigger: false, brandColor, iconUri: icon }}
+        operationActionData={{ id: node, title: displayName, isTrigger: false, brandColor, iconUri }}
         showImage={true}
         onClick={(_: string) => {
           dispatch(setFocusNode(node));

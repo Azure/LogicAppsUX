@@ -3,6 +3,7 @@ import { ConnectionService } from '@microsoft/designer-client-services-logic-app
 import { SwaggerParser } from '@microsoft/parsers-logic-apps';
 import type { Connector } from '@microsoft/utils-logic-apps';
 import { equals } from '@microsoft/utils-logic-apps';
+import { useMemo } from 'react';
 import { useQuery } from 'react-query';
 
 const connectionKey = 'connections';
@@ -37,33 +38,25 @@ export const getConnectionsQuery = async (): Promise<void> => {
 };
 
 export const useConnectionById = (connectionId: string, connectorId: string) => {
-  const { data: connections, isLoading } = useConnectionsForConnector(connectorId);
+  const { data: connections, isLoading: areConnectionsLoading } = useConnectionsForConnector(connectorId);
   const { data: connection, isLoading: isConnectionLoading } = useConnectionResource(connectionId);
+  const isLoading = areConnectionsLoading || isConnectionLoading;
 
-  if (!connectionId) {
-    return { isLoading: false, result: undefined };
-  }
+  return useMemo(() => {
+    if (!connectionId || !connectorId) return { isLoading: false, result: undefined };
 
-  if (connections) {
-    const foundConnection = connections.find((connection) => equals(connection.id, connectionId));
-
-    if (foundConnection) {
+    if (!connections)
       return {
         isLoading,
-        result: foundConnection,
+        result: undefined,
       };
-    } else {
-      return {
-        isLoading: isConnectionLoading,
-        result: connection,
-      };
-    }
-  }
 
-  return {
-    isLoading: isLoading || isConnectionLoading,
-    result: undefined,
-  };
+    const foundConnection = connections.find((connection) => equals(connection.id, connectionId));
+    return {
+      isLoading,
+      result: foundConnection ?? connection,
+    };
+  }, [connection, connectionId, connections, connectorId, isLoading]);
 };
 
 export const useAllConnections = () => {
@@ -101,7 +94,7 @@ export const getUniqueConnectionName = async (connectorId: string): Promise<stri
   return ConnectionService().getUniqueConnectionName(connectorId, connectionNames, connectorName as string);
 };
 
-const useConnectionResource = (connectionId: string) => {
+export const useConnectionResource = (connectionId: string) => {
   return useQuery(['connection', connectionId?.toLowerCase()], () => ConnectionService().getConnection(connectionId), {
     enabled: !!connectionId,
     refetchOnMount: false,

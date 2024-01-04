@@ -17,6 +17,7 @@ import PlaceholderNode from './CustomNodes/PlaceholderNode';
 import ScopeCardNode from './CustomNodes/ScopeCardNode';
 import SubgraphCardNode from './CustomNodes/SubgraphCardNode';
 import Minimap from './Minimap';
+import DeleteModal from './common/DeleteModal/DeleteModal';
 import { ButtonEdge } from './connections/edge';
 import { HiddenEdge } from './connections/hiddenEdge';
 import { PanelRoot } from './panel/panelRoot';
@@ -136,7 +137,7 @@ export const Designer = (props: DesignerProps) => {
   const [nodes, edges, flowSize] = useLayout();
   const isEmpty = useIsGraphEmpty();
   const isReadOnly = useReadOnly();
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const onNodesChange = useCallback(
     (changes: NodeChange[]) => {
       dispatch(updateNodeSizes(changes));
@@ -222,6 +223,7 @@ export const Designer = (props: DesignerProps) => {
             nodes={nodesWithPlaceholder}
             edges={edges}
             onNodesChange={onNodesChange}
+            nodesConnectable={false}
             nodesDraggable={false}
             nodesFocusable={false}
             edgesFocusable={false}
@@ -239,6 +241,7 @@ export const Designer = (props: DesignerProps) => {
           >
             <PanelRoot panelLocation={panelLocation} customPanelLocations={customPanelLocations} />
             {backgroundProps ? <Background {...backgroundProps} /> : null}
+            <DeleteModal />
           </ReactFlow>
           <div className={css('msla-designer-tools', panelLocation === PanelLocation.Left && 'left-panel')} style={copilotPadding}>
             <Controls />

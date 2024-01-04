@@ -4,10 +4,11 @@ import { createLiteralValueSegment } from '@microsoft/logic-apps-designer';
 export class CustomEditorService implements IEditorService {
   public areCustomEditorsEnabled = false;
 
-  public getEditor = ({
-    operationInfo: { connectorId, operationId },
-    parameter: { parameterName, editor, editorOptions },
-  }: IEditorParameterInfo) => {
+  public getEditor = (props: IEditorParameterInfo) => {
+    const { operationInfo, parameter } = props;
+    const { connectorId, operationId } = operationInfo ?? {};
+    const { parameterName, editor, editorOptions } = parameter ?? {};
+
     if (!this.areCustomEditorsEnabled) {
       return undefined;
     }
