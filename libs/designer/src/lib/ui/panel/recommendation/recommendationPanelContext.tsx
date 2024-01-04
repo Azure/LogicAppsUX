@@ -128,6 +128,7 @@ export const RecommendationPanelContext = (props: RecommendationPanelContextProp
         if (!operation) return;
         dispatch(selectOperationId(operation.id));
         setSelectedOperation(operation);
+        dispatch(selectOperationGroupId(''));
         if (hasAzureResourceSelection(operation)) {
           startAzureResourceSelection();
           return;
