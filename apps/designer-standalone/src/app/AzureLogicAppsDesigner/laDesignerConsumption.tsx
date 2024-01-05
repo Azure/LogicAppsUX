@@ -313,16 +313,19 @@ const getDesignerServices = (
     },
     valuesClient: {
       getSwaggerOperations: (args: any) => {
-        const { nodeMetadata } = args;
-        const swaggerUrl = nodeMetadata?.['apiDefinitionUrl'];
-        return appServiceService.getOperations(swaggerUrl);
+        const { parameters } = args;
+        return appServiceService.getOperations(parameters.swaggerUrl);
       },
       getApimOperations: (args: any) => {
-        const { configuration } = args;
-        if (!configuration?.connection?.apiId) {
-          throw new Error('Missing api information to make dynamic call');
-        }
-        return apimService.getOperations(configuration?.connection?.apiId);
+        const { parameters } = args;
+        const { apiId } = parameters;
+        if (!apiId) throw new Error('Missing api information to make dynamic operations call');
+        return apimService.getOperations(apiId);
+      },
+      getSwaggerFunctionOperations: (args: any) => {
+        const { parameters } = args;
+        const functionAppId = parameters.functionAppId;
+        return functionService.getOperations(functionAppId);
       },
     },
     apiVersion: '2018-07-01-preview',
