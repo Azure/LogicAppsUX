@@ -761,6 +761,7 @@
   "V0le5X": "有効な JSON を入力してください。",
   "V3vpin": "''{parameterName}'' は、操作スキーマに存在しなくなりました。ワークフローを再保存する前に、削除する必要があります。",
   "V5f3ha": "週",
+  "V7k/GN": "Delete Switch Case",
   "V8A+1J": "間隔",
   "VA7M1u": "アプリ内",
   "VEbE93": "このフローで \"{selectedOperation}\" アクションが実行する内容を説明してください",
