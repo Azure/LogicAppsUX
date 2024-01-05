@@ -327,8 +327,6 @@ const getDesignerServices = (
         const functionAppId = parameters.functionAppId;
         return functionService.getOperations(functionAppId);
       },
-      // getSchemaArtifacts: () => integrationAccountService.getSchemaArtifacts(),
-      // getMapArtifacts: (args: any) => integrationAccountService.getMapArtifacts(args.parameters),
     },
     apiVersion: '2018-07-01-preview',
     workflowReferenceId: workflowId,

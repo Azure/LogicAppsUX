@@ -56,7 +56,7 @@ export const OperationGroupDetailsPage: React.FC<OperationGroupDetailsPageProps>
         ))}
         {isLoading ? (
           <div style={{ margin: '16px 0' }}>
-            <Spinner size={'tiny'} label={loadingText} aria-live="assertive" />
+            <Spinner size="tiny" label={loadingText} aria-live="assertive" />
           </div>
         ) : null}
       </ul>
