@@ -166,6 +166,9 @@ export class BaseApiManagementService implements IApiManagementService {
         schemaProperties[property].properties[name] = parameter;
         if (required) {
           schemaProperties[property].required.push(name);
+          if (!finalSchema.required.includes(property)) {
+            finalSchema.required.push(property);
+          }
         }
         break;
       case 'path':

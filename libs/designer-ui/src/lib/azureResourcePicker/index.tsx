@@ -1,4 +1,5 @@
-import { ChoiceGroup, css, Label, List, MessageBar, MessageBarType, SearchBox, Spinner, Text } from '@fluentui/react';
+import { ChoiceGroup, css, Label, List, MessageBar, MessageBarType, SearchBox, Text } from '@fluentui/react';
+import { Spinner } from '@fluentui/react-components';
 import { labelCase } from '@microsoft/utils-logic-apps';
 import Fuse from 'fuse.js';
 import { useMemo, useState } from 'react';
@@ -96,7 +97,7 @@ export const AzureResourcePicker = (props: AzureResourcePickerProps) => {
           ))}
         </div>
         {itemsQuery?.isLoading ? (
-          <Spinner label={loadingText} style={{ margin: '16px' }} />
+          <Spinner size="tiny" label={loadingText} style={{ margin: '16px' }} />
         ) : itemsQuery?.isSuccess ? (
           <div className="msla-azure-resources-list-container" style={{ gridTemplateColumns }} data-is-scrollable>
             <List
@@ -185,7 +186,7 @@ export const ResourceEntry = (props: ResourceEntryProps) => {
       {hasSubResources && expanded && (
         <div className="msla-azure-resource-entry-content">
           {subResourcesQuery?.isLoading ? (
-            <Spinner label={subResourceLoadingText} style={{ margin: '8px' }} />
+            <Spinner size="tiny" label={subResourceLoadingText} style={{ margin: '8px' }} />
           ) : subResourcesQuery?.isSuccess ? (
             <>
               {(subResourcesQuery?.data as any[])?.length === 0 ? (

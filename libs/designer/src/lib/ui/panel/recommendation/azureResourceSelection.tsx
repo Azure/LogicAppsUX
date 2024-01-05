@@ -2,7 +2,8 @@ import Constants from '../../../common/constants';
 import type { AppDispatch } from '../../../core';
 import { addOperation } from '../../../core/actions/bjsworkflow/add';
 import { useRelationshipIds, useIsParallelBranch, useIsAddingTrigger } from '../../../core/state/panel/panelSelectors';
-import { PrimaryButton, Text } from '@fluentui/react';
+import { Text } from '@fluentui/react';
+import { Button } from '@fluentui/react-components';
 import { ApiManagementService, FunctionService, SearchService, AppServiceService } from '@microsoft/designer-client-services-logic-apps';
 import { AzureResourcePicker } from '@microsoft/designer-ui';
 import type { DiscoveryOperation, DiscoveryResultTypes } from '@microsoft/utils-logic-apps';
@@ -267,7 +268,8 @@ export const AzureResourceSelection = (props: AzureResourceSelectionProps) => {
         fetchSubResourcesCallback={getResourcesCallbacks?.[1]}
         onSubResourceSelect={(subResource: any) => setResourceAtDepth(subResource, 1)}
       />
-      <PrimaryButton
+      <Button
+        appearance={'primary'}
         disabled={!readyToSubmit}
         onClick={() => {
           if (!readyToSubmit) return;
@@ -275,7 +277,7 @@ export const AzureResourceSelection = (props: AzureResourceSelectionProps) => {
         }}
       >
         {intl.formatMessage({ defaultMessage: 'Add Action', description: 'Add action button text' })}
-      </PrimaryButton>
+      </Button>
     </div>
   );
 };

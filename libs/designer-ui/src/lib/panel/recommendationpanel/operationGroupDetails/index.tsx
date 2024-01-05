@@ -2,7 +2,8 @@ import type { OperationActionData } from '../interfaces';
 import { OperationSearchCard } from '../operationSearchCard';
 import HybridNotice from './HybridNotice';
 import { OperationGroupHeader } from './operationGroupHeader';
-import { MessageBar, MessageBarType, Spinner } from '@fluentui/react';
+import { MessageBar, MessageBarType } from '@fluentui/react';
+import { Spinner } from '@fluentui/react-components';
 import type { Connector } from '@microsoft/utils-logic-apps';
 import { useIntl } from 'react-intl';
 
@@ -55,7 +56,7 @@ export const OperationGroupDetailsPage: React.FC<OperationGroupDetailsPageProps>
         ))}
         {isLoading ? (
           <div style={{ margin: '16px 0' }}>
-            <Spinner label={loadingText} ariaLive="assertive" labelPosition="right" />
+            <Spinner size="tiny" label={loadingText} aria-live="assertive" />
           </div>
         ) : null}
       </ul>

@@ -335,7 +335,7 @@ const Setting = ({ id, settings, isReadOnly }: { id?: string; settings: Settings
               appearance="subtle"
               onClick={removeParamCallback}
               icon={<ClearIcon />}
-              style={{ marginTop: '30px', color: 'var(--colorBrandForeground1)' }}
+              style={{ marginTop: '30px', color: 'var(--colorBrandForeground1)', height: '32px' }}
             />
           </Tooltip>
         ) : null}
