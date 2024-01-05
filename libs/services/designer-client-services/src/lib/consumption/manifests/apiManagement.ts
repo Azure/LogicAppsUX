@@ -96,7 +96,6 @@ export const apiManagementActionManifest = {
           },
         },
         operationDetails: {
-          title: 'Operation Parameters',
           description: 'Operation parameters for the above operation',
           'x-ms-dynamic-properties': {
             dynamicState: {
