@@ -113,9 +113,14 @@ async function validateWorkerRuntime(context: IActionContext, projectLanguage: s
  * If AzureWebJobsStorage is set, pings the emulator to make sure it's actually running
  * @param {IActionContext} context - Command context.
  * @param {string} projectPath - Project path.
+ * @param {boolean} promptWarningMessage - Boolean to determine whether prompt a message to ask user if emulator is running.
  * @returns {boolean} Returns true if a valid emulator is running, otherwise returns false.
  */
-async function validateEmulatorIsRunning(context: IActionContext, projectPath: string): Promise<boolean> {
+export async function validateEmulatorIsRunning(
+  context: IActionContext,
+  projectPath: string,
+  promptWarningMessage = true
+): Promise<boolean> {
   const azureWebJobsStorage: string | undefined = await getAzureWebJobsStorage(context, projectPath);
 
   if (azureWebJobsStorage && azureWebJobsStorage.toLowerCase() === localEmulatorConnectionString.toLowerCase()) {
@@ -128,6 +133,9 @@ async function validateEmulatorIsRunning(context: IActionContext, projectPath: s
         });
       });
     } catch (error) {
+      if (!promptWarningMessage) {
+        return false;
+      }
       const message: string = localize(
         'failedToConnectEmulator',
         'Failed to verify "{0}" connection specified in "{1}". Is the local emulator installed and running?',

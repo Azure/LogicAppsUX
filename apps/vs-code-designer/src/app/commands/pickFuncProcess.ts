@@ -2,15 +2,17 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { Platform, defaultFuncPort, hostStartTaskName, pickProcessTimeoutSetting } from '../../constants';
+import { Platform, autoStartAzuriteSetting, defaultFuncPort, hostStartTaskName, pickProcessTimeoutSetting } from '../../constants';
 import { ext } from '../../extensionVariables';
 import { localize } from '../../localize';
 import { preDebugValidate } from '../debug/validatePreDebug';
+import { activateAzurite } from '../utils/azurite/activateAzurite';
 import { getProjFiles } from '../utils/dotnet/dotnet';
 import { getFuncPortFromTaskOrProject, isFuncHostTask, runningFuncTaskMap } from '../utils/funcCoreTools/funcHostTask';
 import type { IRunningFuncTask } from '../utils/funcCoreTools/funcHostTask';
 import { isTimeoutError } from '../utils/requestUtils';
 import { executeIfNotActive } from '../utils/taskUtils';
+import { runWithDurationTelemetry } from '../utils/telemetry';
 import { getWorkspaceSetting } from '../utils/vsCodeConfig/settings';
 import { getWindowsProcess } from '../utils/windowsProcess';
 import type { HttpOperationResponse } from '@azure/ms-rest-js';
@@ -18,7 +20,7 @@ import { delay } from '@azure/ms-rest-js';
 import { HTTP_METHODS } from '@microsoft/utils-logic-apps';
 import type { AzExtRequestPrepareOptions } from '@microsoft/vscode-azext-azureutils';
 import { sendRequestWithTimeout } from '@microsoft/vscode-azext-azureutils';
-import { UserCancelledError } from '@microsoft/vscode-azext-utils';
+import { UserCancelledError, callWithTelemetryAndErrorHandling } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { ProjectLanguage } from '@microsoft/vscode-extension';
 import type { IPreDebugValidateResult, IProcessInfo } from '@microsoft/vscode-extension';
@@ -30,6 +32,12 @@ type OSAgnosticProcess = { command: string | undefined; pid: number | string };
 type ActualUnixPS = unixPsTree.PS & { COMM?: string };
 
 export async function pickFuncProcess(context: IActionContext, debugConfig: vscode.DebugConfiguration): Promise<string | undefined> {
+  await callWithTelemetryAndErrorHandling(autoStartAzuriteSetting, async (actionContext: IActionContext) => {
+    await runWithDurationTelemetry(actionContext, autoStartAzuriteSetting, async () => {
+      await activateAzurite(context);
+    });
+  });
+
   const result: IPreDebugValidateResult = await preDebugValidate(context, debugConfig);
 
   if (!result.shouldContinue) {
