@@ -178,6 +178,21 @@ export const useCurrentTenantId = () => {
   );
 };
 
+export const useCurrentObjectId = () => {
+  return useQuery(
+    ['objectId'],
+    async () => {
+      const jwt = jwt_decode<{ oid: string }>(environment.armToken ?? '');
+      return jwt.oid;
+    },
+    {
+      refetchOnMount: false,
+      refetchOnReconnect: false,
+      refetchOnWindowFocus: false,
+    }
+  );
+};
+
 export const getConnectionStandard = async (connectionId: string) => {
   const response = await axios.get(`${baseUrl}${connectionId}?api-version=2018-07-01-preview`, {
     headers: {
