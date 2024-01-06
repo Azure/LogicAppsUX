@@ -96,7 +96,7 @@ export const AuthenticationEditor = ({
   const [option, setOption] = useState<AuthenticationType>(type);
   const [collapsedValue, setCollapsedValue] = useState(initialValue);
   const [currentProps, setCurrentProps] = useState<AuthProps>(authenticationValue);
-  const [isValid, setIsValid] = useState(false);
+  const [toggleEnabled, setToggleEnabled] = useState(false);
   const { basic = {}, clientCertificate = {}, raw = {}, msi = {}, aadOAuth = {} } = currentProps;
 
   const serializeCollapsedValue = (value: ValueSegment[]): void => {
@@ -217,9 +217,9 @@ export const AuthenticationEditor = ({
       {codeView ? (
         <CollapsedAuthentication
           collapsedValue={collapsedValue}
-          isValid={isValid}
+          toggleEnabled={toggleEnabled}
+          setToggleEnabled={setToggleEnabled}
           setCollapsedValue={setCollapsedValue}
-          setIsValid={setIsValid}
           setCurrentProps={setCurrentProps}
           setOption={setOption}
           serializeValue={serializeCollapsedValue}
@@ -245,7 +245,7 @@ export const AuthenticationEditor = ({
           label={codeView ? collapsedLabel : expandedLabel}
           collapsed={codeView}
           toggleCollapsed={toggleCodeView}
-          disabled={codeView && !isValid}
+          disabled={codeView && !toggleEnabled}
         />
       </div>
     </div>

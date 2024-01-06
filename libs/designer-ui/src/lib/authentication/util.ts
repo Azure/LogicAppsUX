@@ -459,7 +459,7 @@ export const validateAuthentication = (s: string, setErrorMessage: (s: string) =
   return '';
 };
 
-export const validateAuthenticationString = (s: string): string => {
+const validateAuthenticationString = (s: string): string => {
   const intl = getIntl();
   let parsedSerializedValue = Object.create(null);
   try {
