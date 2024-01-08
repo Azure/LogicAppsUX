@@ -1,3 +1,4 @@
+import type CONSTANTS from '../../../common/constants';
 import type {
   IConnectionService,
   IConnectorService,
@@ -17,6 +18,8 @@ import type {
   IChatbotService,
 } from '@microsoft/designer-client-services-logic-apps';
 
+type PANEL_TAB_NAMES = keyof typeof CONSTANTS.PANEL_TAB_NAMES;
+
 export interface DesignerOptionsState {
   readOnly?: boolean;
   isMonitoringView?: boolean;
@@ -31,6 +34,7 @@ export interface DesignerOptionsState {
   };
   nodeSelectAdditionalCallback?: (nodeId: string) => any;
   showConnectionsPanel?: boolean;
+  hidePanelTabs?: PANEL_TAB_NAMES[];
 }
 
 export interface ServiceOptions {

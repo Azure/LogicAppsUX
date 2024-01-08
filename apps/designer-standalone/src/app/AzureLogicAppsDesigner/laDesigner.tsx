@@ -249,7 +249,14 @@ const DesignerEditor = () => {
     <div key={`${designerID}`} style={{ height: 'inherit', width: 'inherit' }}>
       <DesignerProvider
         locale={language}
-        options={{ services, isDarkMode, readOnly: isReadOnly, isMonitoringView, hostOptions, showConnectionsPanel }}
+        options={{
+          services,
+          isDarkMode,
+          readOnly: isReadOnly,
+          isMonitoringView,
+          hostOptions,
+          showConnectionsPanel,
+        }}
       >
         {workflow?.definition ? (
           <BJSWorkflowProvider
