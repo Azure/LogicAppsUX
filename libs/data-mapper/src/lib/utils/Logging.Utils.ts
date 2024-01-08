@@ -5,13 +5,15 @@ export interface LogMessage {
   data?: any;
 }
 
+const dmPrefix = 'data-mapper-vscode-extension';
+
 export class LogService {
   public static error(category: LogCategory, id: string, data: LogMessage) {
     LogService._validateCategory(category);
     LogService._validateId(id);
     LogService._validateData(data);
 
-    const errorId = `/errors/${category}/${id}`;
+    const errorId = `${dmPrefix}/errors/${category}/${id}`;
 
     if (LogService._logToAppInsights) {
       LogService._trackEvent(errorId, data);
@@ -27,7 +29,7 @@ export class LogService {
     LogService._validateId(id);
     LogService._validateData(data);
 
-    const warningId = `/warnings/${category}/${id}`;
+    const warningId = `${dmPrefix}/warnings/${category}/${id}`;
 
     if (LogService._logToAppInsights) {
       LogService._trackEvent(warningId, data);
@@ -43,7 +45,7 @@ export class LogService {
     LogService._validateId(id);
     LogService._validateData(data);
 
-    const logId = `/log/${category}/${id}`;
+    const logId = `${dmPrefix}/log/${category}/${id}`;
 
     if (LogService._logToAppInsights) {
       LogService._trackEvent(logId, data);
