@@ -761,7 +761,7 @@
   "V0le5X": "Ange en giltig JSON.",
   "V3vpin": "{parameterName} finns inte längre i åtgärdsschemat. Den bör tas bort innan arbetsflödet sparas på nytt.",
   "V5f3ha": "Vecka",
-  "V7k/GN": "Delete Switch Case",
+  "V7k/GN": "Ta bort växelfall",
   "V8A+1J": "Intervall",
   "VA7M1u": "I appen",
   "VEbE93": "Förklara vad åtgärden {selectedOperation} gör i det här flödet",
