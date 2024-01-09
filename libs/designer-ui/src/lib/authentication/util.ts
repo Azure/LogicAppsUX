@@ -4,14 +4,11 @@ import constants from '../constants';
 import type { ValueSegment } from '../editor';
 import { ValueSegmentType } from '../editor';
 import { convertStringToSegments } from '../editor/base/utils/editorToSegment';
-import { getChildrenNodes } from '../editor/base/utils/helper';
 import { convertKeyValueItemToSegments } from '../editor/base/utils/keyvalueitem';
 import { AuthenticationOAuthType } from './AADOAuth/AADOAuth';
 import { getIntl } from '@microsoft/intl-logic-apps';
 import type { ManagedIdentity } from '@microsoft/utils-logic-apps';
 import { guid, equals, ResourceIdentityType } from '@microsoft/utils-logic-apps';
-import { $getRoot } from 'lexical';
-import type { LexicalEditor } from 'lexical';
 
 export interface AuthProperty {
   displayName: string;
@@ -364,67 +361,64 @@ const updateValues = (values: CollapsedAuthEditorItems[], property: AuthProperty
 };
 
 export const serializeAuthentication = (
-  editor: LexicalEditor,
+  editorString: string,
   setCurrentProps: (items: AuthProps) => void,
   setOption: (s: AuthenticationType) => void
 ) => {
-  editor.getEditorState().read(() => {
-    const nodeMap = new Map<string, ValueSegment>();
-    const editorString = getChildrenNodes($getRoot(), nodeMap);
-    let jsonEditor = Object.create(null);
-    try {
-      jsonEditor = JSON.parse(editorString);
-    } catch (e) {
-      throw new Error(`Invalid Authentication value. ${e}`);
-    }
-    const returnItems: AuthProps = {};
-    setOption(jsonEditor.type);
-    switch (jsonEditor.type) {
-      case AuthenticationType.BASIC:
-        returnItems.basic = {
-          basicUsername: convertStringToSegments(jsonEditor.username, true, nodeMap),
-          basicPassword: convertStringToSegments(jsonEditor.password, true, nodeMap),
-        };
-        break;
-      case AuthenticationType.CERTIFICATE:
-        returnItems.clientCertificate = {
-          clientCertificatePfx: convertStringToSegments(jsonEditor.pfx, true, nodeMap),
-          clientCertificatePassword: convertStringToSegments(jsonEditor.password, true, nodeMap),
-        };
-        break;
-      case AuthenticationType.RAW:
-        returnItems.raw = {
-          rawValue: convertStringToSegments(jsonEditor.value, true, nodeMap),
-        };
-        break;
-      case AuthenticationType.MSI:
-        returnItems.msi = {
-          msiIdentity: jsonEditor.identity,
-          msiAudience: convertStringToSegments(jsonEditor.audience, true, nodeMap),
-        };
-        break;
-      case AuthenticationType.OAUTH:
-        returnItems.aadOAuth = {
-          oauthTenant: convertStringToSegments(jsonEditor.tenant, true, nodeMap),
-          oauthAudience: convertStringToSegments(jsonEditor.audience, true, nodeMap),
-          oauthClientId: convertStringToSegments(jsonEditor.clientId, true, nodeMap),
-        };
-        if (jsonEditor.authority) {
-          returnItems.aadOAuth.oauthAuthority = convertStringToSegments(jsonEditor.authority, true, nodeMap);
-        }
-        if (jsonEditor.secret) {
-          returnItems.aadOAuth.oauthType = AuthenticationOAuthType.SECRET;
-          returnItems.aadOAuth.oauthTypeSecret = convertStringToSegments(jsonEditor.secret, true, nodeMap);
-        }
-        if (jsonEditor.pfx && jsonEditor.password) {
-          returnItems.aadOAuth.oauthType = AuthenticationOAuthType.CERTIFICATE;
-          returnItems.aadOAuth.oauthTypeCertificatePfx = convertStringToSegments(jsonEditor.pfx, true, nodeMap);
-          returnItems.aadOAuth.oauthTypeCertificatePassword = convertStringToSegments(jsonEditor.password, true, nodeMap);
-        }
-        break;
-    }
-    setCurrentProps(returnItems);
-  });
+  const nodeMap = new Map<string, ValueSegment>();
+  let jsonEditor = Object.create(null);
+  try {
+    jsonEditor = JSON.parse(editorString);
+  } catch (e) {
+    throw new Error(`Invalid Authentication value. ${e}`);
+  }
+  const returnItems: AuthProps = {};
+  setOption(jsonEditor.type);
+  switch (jsonEditor.type) {
+    case AuthenticationType.BASIC:
+      returnItems.basic = {
+        basicUsername: convertStringToSegments(jsonEditor.username, true, nodeMap),
+        basicPassword: convertStringToSegments(jsonEditor.password, true, nodeMap),
+      };
+      break;
+    case AuthenticationType.CERTIFICATE:
+      returnItems.clientCertificate = {
+        clientCertificatePfx: convertStringToSegments(jsonEditor.pfx, true, nodeMap),
+        clientCertificatePassword: convertStringToSegments(jsonEditor.password, true, nodeMap),
+      };
+      break;
+    case AuthenticationType.RAW:
+      returnItems.raw = {
+        rawValue: convertStringToSegments(jsonEditor.value, true, nodeMap),
+      };
+      break;
+    case AuthenticationType.MSI:
+      returnItems.msi = {
+        msiIdentity: jsonEditor.identity,
+        msiAudience: convertStringToSegments(jsonEditor.audience, true, nodeMap),
+      };
+      break;
+    case AuthenticationType.OAUTH:
+      returnItems.aadOAuth = {
+        oauthTenant: convertStringToSegments(jsonEditor.tenant, true, nodeMap),
+        oauthAudience: convertStringToSegments(jsonEditor.audience, true, nodeMap),
+        oauthClientId: convertStringToSegments(jsonEditor.clientId, true, nodeMap),
+      };
+      if (jsonEditor.authority) {
+        returnItems.aadOAuth.oauthAuthority = convertStringToSegments(jsonEditor.authority, true, nodeMap);
+      }
+      if (jsonEditor.secret) {
+        returnItems.aadOAuth.oauthType = AuthenticationOAuthType.SECRET;
+        returnItems.aadOAuth.oauthTypeSecret = convertStringToSegments(jsonEditor.secret, true, nodeMap);
+      }
+      if (jsonEditor.pfx && jsonEditor.password) {
+        returnItems.aadOAuth.oauthType = AuthenticationOAuthType.CERTIFICATE;
+        returnItems.aadOAuth.oauthTypeCertificatePfx = convertStringToSegments(jsonEditor.pfx, true, nodeMap);
+        returnItems.aadOAuth.oauthTypeCertificatePassword = convertStringToSegments(jsonEditor.password, true, nodeMap);
+      }
+      break;
+  }
+  setCurrentProps(returnItems);
 };
 
 export function containsToken(value: string): boolean {
@@ -435,79 +429,39 @@ export function containsToken(value: string): boolean {
   }
 }
 
-export const validateAuthentication = (s: string, setErrorMessage: (s: string) => void): string => {
-  const intl = getIntl();
-  const invalidJsonErrorMessage = intl.formatMessage(
-    {
-      defaultMessage: 'Invalid json format. Missing beginning {openingBracket} or ending {closingBracket}.',
-      description: 'Invalid JSON format',
-    },
-    {
-      openingBracket: '{',
-      closingBracket: '}',
-    }
-  );
-  if (!(s.startsWith('{') && s.endsWith('}'))) {
-    setErrorMessage(invalidJsonErrorMessage);
-    return invalidJsonErrorMessage;
-  }
-  const errorMessage = validateAuthenticationString(s);
-  if (errorMessage) {
-    setErrorMessage(errorMessage);
-    return errorMessage;
-  }
-  return '';
-};
-
-const validateAuthenticationString = (s: string): string => {
+export const validateAuthenticationString = (s: string): string => {
   const intl = getIntl();
   let parsedSerializedValue = Object.create(null);
-  try {
-    parsedSerializedValue = JSON.parse(s);
-    if (parsedSerializedValue.type === undefined) {
-      return intl.formatMessage({
-        defaultMessage: "Missing authentication type property: 'type'.",
-        description: 'Invalid authentication without type property',
-      });
-    } else {
-      const authType = parsedSerializedValue.type;
-      if (!Object.values(AuthenticationType).find((val) => authType === val)) {
-        if (containsToken(authType)) {
-          return intl.formatMessage({
-            defaultMessage: "Missing authentication type property: 'type'.",
-            description: 'Invalid authentication without type property',
-          });
-        }
-        return intl.formatMessage(
-          {
-            defaultMessage: "Unsupported authentication type ''{authType}''.",
-            description: 'Invalid authentication type',
-          },
-          { authType }
-        );
-      } else {
-        let errorMessage = checkForMissingOrInvalidProperties(parsedSerializedValue, authType);
-        if (errorMessage) {
-          return errorMessage;
-        }
-        errorMessage = checkForUnknownProperties(parsedSerializedValue, authType);
-        if (errorMessage) {
-          return errorMessage;
-        }
-        errorMessage = checkForInvalidValues(parsedSerializedValue);
-        if (errorMessage) {
-          return errorMessage;
-        }
-      }
-    }
-  } catch {
+  parsedSerializedValue = JSON.parse(s);
+  if (parsedSerializedValue.type === undefined) {
     return intl.formatMessage({
-      defaultMessage: 'Enter a valid JSON.',
-      description: 'Invalid JSON',
+      defaultMessage: "Missing authentication type property: 'type'.",
+      description: 'Invalid authentication without type property',
     });
+  } else {
+    const authType = parsedSerializedValue.type;
+    if (!Object.values(AuthenticationType).find((val) => authType === val)) {
+      if (containsToken(authType)) {
+        return intl.formatMessage({
+          defaultMessage: "Missing authentication type property: 'type'.",
+          description: 'Invalid authentication without type property',
+        });
+      }
+      return intl.formatMessage(
+        {
+          defaultMessage: "Unsupported authentication type ''{authType}''.",
+          description: 'Invalid authentication type',
+        },
+        { authType }
+      );
+    } else {
+      const errorMessage =
+        checkForMissingOrInvalidProperties(parsedSerializedValue, authType) ||
+        checkForUnknownProperties(parsedSerializedValue, authType) ||
+        checkForInvalidValues(parsedSerializedValue);
+      return errorMessage;
+    }
   }
-
-  return '';
 };
 
 const authTypeConversion = (s: string): string => {

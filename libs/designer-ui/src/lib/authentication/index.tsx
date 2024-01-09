@@ -100,6 +100,7 @@ export const AuthenticationEditor = ({
   const { basic = {}, clientCertificate = {}, raw = {}, msi = {}, aadOAuth = {} } = currentProps;
 
   const serializeCollapsedValue = (value: ValueSegment[]): void => {
+    setCollapsedValue(value);
     if (isTokenValueSegment(value)) {
       onChange?.({
         value: value,
@@ -217,9 +218,7 @@ export const AuthenticationEditor = ({
       {codeView ? (
         <CollapsedAuthentication
           collapsedValue={collapsedValue}
-          toggleEnabled={toggleEnabled}
           setToggleEnabled={setToggleEnabled}
-          setCollapsedValue={setCollapsedValue}
           setCurrentProps={setCurrentProps}
           setOption={setOption}
           serializeValue={serializeCollapsedValue}

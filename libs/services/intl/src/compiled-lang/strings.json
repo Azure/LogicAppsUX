@@ -865,28 +865,6 @@
       "value": "The entered identity is not associated with this Logic App."
     }
   ],
-  "3jwMBm": [
-    {
-      "type": 0,
-      "value": "Invalid json format. Missing beginning "
-    },
-    {
-      "type": 1,
-      "value": "openingBracket"
-    },
-    {
-      "type": 0,
-      "value": " or ending "
-    },
-    {
-      "type": 1,
-      "value": "closingBracket"
-    },
-    {
-      "type": 0,
-      "value": "."
-    }
-  ],
   "3n5pnv": [
     {
       "type": 0,
@@ -1807,6 +1785,12 @@
     {
       "type": 0,
       "value": "Returns true if both parameters are true"
+    }
+  ],
+  "9v51yX": [
+    {
+      "type": 0,
+      "value": "Invalid JSON"
     }
   ],
   "9wX3u9": [
@@ -5099,12 +5083,6 @@
     {
       "type": 0,
       "value": "Show less"
-    }
-  ],
-  "V0le5X": [
-    {
-      "type": 0,
-      "value": "Enter a valid JSON."
     }
   ],
   "V3vpin": [

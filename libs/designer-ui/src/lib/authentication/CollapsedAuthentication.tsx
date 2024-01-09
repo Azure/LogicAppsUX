@@ -8,11 +8,8 @@ import type { Dispatch, SetStateAction } from 'react';
 
 interface CollapsedAuthenticationProps {
   collapsedValue: ValueSegment[];
-  toggleEnabled: boolean;
   setToggleEnabled: (b: boolean) => void;
-  setCollapsedValue: (value: ValueSegment[]) => void;
   setCurrentProps: Dispatch<SetStateAction<AuthProps>>;
-
   readonly?: boolean;
   tokenPickerButtonProps?: TokenPickerButtonEditorProps;
   setOption: (s: AuthenticationType) => void;
@@ -24,8 +21,6 @@ interface CollapsedAuthenticationProps {
 
 export const CollapsedAuthentication = ({
   collapsedValue,
-  toggleEnabled,
-  setCollapsedValue,
   setCurrentProps,
   setToggleEnabled,
   setOption,
@@ -37,10 +32,7 @@ export const CollapsedAuthentication = ({
       <EditorWrapper {...props} initialValue={collapsedValue} basePlugins={{ tabbable: true }}>
         <CollapsedAuthenticationSerialization
           className={'msla-auth-editor-validation'}
-          collapsedValue={collapsedValue}
-          toggleEnabled={toggleEnabled}
           setToggleEnabled={setToggleEnabled}
-          setCollapsedValue={setCollapsedValue}
           setCurrentProps={setCurrentProps}
           setOption={setOption}
           serializeValue={serializeValue}

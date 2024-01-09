@@ -1,85 +1,72 @@
-import type { AuthenticationType, AuthProps } from '..';
+import type { AuthProps } from '..';
+import { AuthenticationType } from '..';
 import type { ValueSegment } from '../../editor';
-import { ValueSegmentType } from '../../editor';
 import { serializeEditorState } from '../../editor/base/utils/editorToSegment';
-import { getChildrenNodes, isTokenValueSegment } from '../../editor/base/utils/helper';
-import { containsToken, serializeAuthentication, validateAuthentication } from '../util';
+import { getChildrenNodes } from '../../editor/base/utils/helper';
+import { serializeAuthentication, validateAuthenticationString } from '../util';
 import { css } from '@fluentui/react';
-import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
 import { isTemplateExpression } from '@microsoft/parsers-logic-apps';
-import { guid } from '@microsoft/utils-logic-apps';
 import type { EditorState } from 'lexical';
 import { $getRoot } from 'lexical';
 import type { Dispatch, SetStateAction } from 'react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useIntl } from 'react-intl';
 
 export interface CollapsedAuthenticationValidationProps {
   className?: string;
-  collapsedValue: ValueSegment[];
-  toggleEnabled: boolean;
   setToggleEnabled: (b: boolean) => void;
-  setCollapsedValue: (value: ValueSegment[]) => void;
   setCurrentProps: Dispatch<SetStateAction<AuthProps>>;
   setOption: (s: AuthenticationType) => void;
   serializeValue: (value: ValueSegment[]) => void;
 }
 
 export const CollapsedAuthenticationSerialization = ({
-  collapsedValue,
   className,
-  toggleEnabled,
   setToggleEnabled,
-  setCollapsedValue,
   setCurrentProps,
   setOption,
   serializeValue,
 }: CollapsedAuthenticationValidationProps): JSX.Element => {
   const intl = useIntl();
   const [errorMessage, setErrorMessage] = useState('');
-  const [editor] = useLexicalComposerContext();
-
-  // useEffect(() => {
-  //   try {
-  //     editor.getEditorState().read(() => {
-  //       const editorString = getChildrenNodes($getRoot());
-  //       // const validationErrorMessage = validateAuthentication(editorString, setErrorMessage);
-  //       // if (!validationErrorMessage) {
-  //       //   setIsValid(true);
-  //       // }
-  //       const parsedObj = JSON.parse(editorString);
-  //       setToggleEnabled(true);
-  //     });
-  //   } catch {
-  //     setToggleEnabled(false);
-  //   }
-  // }, [editor, setToggleEnabled]);
 
   const showError = (errorMessage: string) => {
     setToggleEnabled(false);
     setErrorMessage(errorMessage);
   };
 
-  const hideError = () => {
+  const resetAuthentication = () => {
     setErrorMessage('');
+    setCurrentProps({});
   };
 
   const onChange = (editorState: EditorState) => {
     editorState.read(() => {
       const editorString = getChildrenNodes($getRoot()).trim();
+      const newCollapsedValue = serializeEditorState(editorState);
+      serializeValue(newCollapsedValue);
       try {
+        // no collapsed value, update current Props to be empty
         if (editorString.trim().length === 0 || editorString.trim() === '{}') {
-          setCollapsedValue([{ id: guid(), type: ValueSegmentType.LITERAL, value: editorString }]);
+          resetAuthentication();
+          setOption(AuthenticationType.NONE);
+          setToggleEnabled(true);
         } else {
-          JSON.parse(editorString);
+          const validationErrorMessage = validateAuthenticationString(editorString);
+          if (validationErrorMessage) {
+            setToggleEnabled(false);
+            showError(validationErrorMessage);
+          } else {
+            serializeAuthentication(editorString, setCurrentProps, setOption);
+            setToggleEnabled(true);
+            setErrorMessage('');
+          }
         }
-        setToggleEnabled(true);
-        hideError();
       } catch {
-        console.log(editorString);
+        // if it is a template expression, we'll assume that it is valid
         if (isTemplateExpression(editorString)) {
-          hideError();
+          resetAuthentication();
         } else {
           showError(
             intl.formatMessage({
@@ -88,27 +75,8 @@ export const CollapsedAuthenticationSerialization = ({
             })
           );
         }
-
         setToggleEnabled(false);
       }
-
-      // JSON.parse(eidtorString);
-      // if (!editorString.trim().length || editorString === '{}') {
-      //   setIsValid(true);
-      //   setCurrentProps({});
-      //   setCollapsedValue([{ id: guid(), type: ValueSegmentType.LITERAL, value: editorString }]);
-      // } else {
-      //   const validationErrorMessage = validateAuthentication(editorString, setErrorMessage);
-      //   setIsValid(false);
-      //   if (!validationErrorMessage) {
-      //     setIsValid(true);
-      //     serializeAuthentication(editor, setCurrentProps, setOption);
-      //   } else {
-      //     const newCollapsedValue = serializeEditorState(editorState);
-      //     setCollapsedValue(newCollapsedValue);
-      //     serializeValue(newCollapsedValue);
-      //   }
-      // }
     });
   };
 
