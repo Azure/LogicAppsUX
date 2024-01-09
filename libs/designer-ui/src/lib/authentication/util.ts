@@ -363,9 +363,9 @@ const updateValues = (values: CollapsedAuthEditorItems[], property: AuthProperty
 export const serializeAuthentication = (
   editorString: string,
   setCurrentProps: (items: AuthProps) => void,
-  setOption: (s: AuthenticationType) => void
+  setOption: (s: AuthenticationType) => void,
+  nodeMap?: Map<string, ValueSegment>
 ) => {
-  const nodeMap = new Map<string, ValueSegment>();
   let jsonEditor = Object.create(null);
   try {
     jsonEditor = JSON.parse(editorString);
@@ -418,6 +418,7 @@ export const serializeAuthentication = (
       }
       break;
   }
+  console.log(returnItems);
   setCurrentProps(returnItems);
 };
 

@@ -93,13 +93,13 @@ export const AuthenticationEditor = ({
 }: AuthenticationEditorProps): JSX.Element => {
   const intl = useIntl();
   const [codeView, { toggle: toggleCodeView }] = useBoolean(initializeCollapsedView(initialValue));
+  const [toggleEnabled, setToggleEnabled] = useState(!initializeCollapsedView(initialValue));
   const [option, setOption] = useState<AuthenticationType>(type);
   const [collapsedValue, setCollapsedValue] = useState(initialValue);
   const [currentProps, setCurrentProps] = useState<AuthProps>(authenticationValue);
-  const [toggleEnabled, setToggleEnabled] = useState(false);
   const { basic = {}, clientCertificate = {}, raw = {}, msi = {}, aadOAuth = {} } = currentProps;
 
-  const serializeCollapsedValue = (value: ValueSegment[]): void => {
+  const serializeCodeCollapsedValue = (value: ValueSegment[]): void => {
     setCollapsedValue(value);
     if (isTokenValueSegment(value)) {
       onChange?.({
@@ -221,7 +221,7 @@ export const AuthenticationEditor = ({
           setToggleEnabled={setToggleEnabled}
           setCurrentProps={setCurrentProps}
           setOption={setOption}
-          serializeValue={serializeCollapsedValue}
+          serializeValue={serializeCodeCollapsedValue}
           readonly={readonly}
           getTokenPicker={getTokenPicker}
           tokenMapping={tokenMapping}

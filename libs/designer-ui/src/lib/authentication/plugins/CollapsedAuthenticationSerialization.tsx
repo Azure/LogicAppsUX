@@ -36,20 +36,17 @@ export const CollapsedAuthenticationSerialization = ({
     setErrorMessage(errorMessage);
   };
 
-  const resetAuthentication = () => {
-    setErrorMessage('');
-    setCurrentProps({});
-  };
-
   const onChange = (editorState: EditorState) => {
     editorState.read(() => {
-      const editorString = getChildrenNodes($getRoot()).trim();
+      const nodeMap = new Map<string, ValueSegment>();
+      const editorString = getChildrenNodes($getRoot(), nodeMap).trim();
       const newCollapsedValue = serializeEditorState(editorState);
       serializeValue(newCollapsedValue);
       try {
         // no collapsed value, update current Props to be empty
         if (editorString.trim().length === 0 || editorString.trim() === '{}') {
-          resetAuthentication();
+          setErrorMessage('');
+          setCurrentProps({});
           setOption(AuthenticationType.NONE);
           setToggleEnabled(true);
         } else {
@@ -58,7 +55,7 @@ export const CollapsedAuthenticationSerialization = ({
             setToggleEnabled(false);
             showError(validationErrorMessage);
           } else {
-            serializeAuthentication(editorString, setCurrentProps, setOption);
+            serializeAuthentication(editorString, setCurrentProps, setOption, nodeMap);
             setToggleEnabled(true);
             setErrorMessage('');
           }
@@ -66,7 +63,7 @@ export const CollapsedAuthenticationSerialization = ({
       } catch {
         // if it is a template expression, we'll assume that it is valid
         if (isTemplateExpression(editorString)) {
-          resetAuthentication();
+          setErrorMessage('');
         } else {
           showError(
             intl.formatMessage({
