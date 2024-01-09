@@ -8,7 +8,6 @@ import { applyConnectionValue, isConnectionUnit } from '../utils/Connection.Util
 import {
   ReservedToken,
   amendSourceKeyForDirectAccessIfNeeded,
-  createTargetOrFunction,
   flattenMapDefinitionValues,
   getDestinationNode,
   getSourceKeyOfLastLoop,
@@ -19,7 +18,6 @@ import {
   lexThisThing,
   qualifyLoopRelativeSourceKeys,
   removeSequenceFunction,
-  separateFunctions,
   splitKeyIntoChildren,
 } from '../utils/DataMap.Utils';
 import { isFunctionData, isKeyAnIndexValue } from '../utils/Function.Utils';
@@ -64,7 +62,6 @@ export class MapDefinitionDeserializer {
     const rootNodeKey = parsedYamlKeys.filter((key) => reservedMapDefinitionKeysArray.indexOf(key) < 0)[0];
 
     if (rootNodeKey) {
-      this.danielleTryParseDefinitionToConnection(this._mapDefinition[rootNodeKey], `/${rootNodeKey}`, undefined, 0, connections);
       this._parseDefinitionToConnection(this._mapDefinition[rootNodeKey], `/${rootNodeKey}`, 0, connections);
     }
 
@@ -88,40 +85,6 @@ export class MapDefinitionDeserializer {
         }
       }
     });
-  };
-
-  private danielleTryParseDefinitionToConnection = (
-    _sourceNodeObject: string | object,
-    leftSideKey: string,
-    parentTargetNode: SchemaNodeExtended | undefined,
-    _targetArrayDepth: number,
-    _connections: ConnectionDictionary
-  ) => {
-    if (this.isTargetKey(leftSideKey)) {
-      const currentTarget = leftSideKey; // target key can be either a target node- or a source side psuedofunction- for or if only?? Danielle confirm
-      let targetNode: SchemaNodeExtended | undefined = undefined;
-      if (parentTargetNode === undefined) {
-        targetNode = parentTargetNode;
-      } else {
-        targetNode = parentTargetNode.children.find((child) => child.name === currentTarget);
-      }
-      console.log(targetNode);
-    } else {
-      // for or if statement
-      const tokens = separateFunctions(leftSideKey);
-      const idk = createTargetOrFunction(tokens);
-      console.log(idk);
-    }
-    // this.danielleTryParseDefinitionToConnection(Object.values(sourceNodeObject as Object)[0], Object.keys(sourceNodeObject as Object)[0], parentTargetNode, targetArrayDepth, connections) // for testing only
-    // danielle maybe call same functions and see if having the target helps?
-  };
-
-  private isTargetKey = (key: string) => {
-    // danielle later combine this
-    if (!key.includes('for') && !key.includes('if')) {
-      return true;
-    }
-    return false;
   };
 
   private _parseDefinitionToConnection = (
@@ -289,6 +252,7 @@ export class MapDefinitionDeserializer {
       : sourceNodeString;
     const sourceEndOfFunctionName = amendedSourceKey.indexOf('(');
 
+    // danielle this is for direct access
     let mockDirectAccessFnKey = '';
     [amendedSourceKey, mockDirectAccessFnKey] = amendSourceKeyForDirectAccessIfNeeded(amendedSourceKey);
 
