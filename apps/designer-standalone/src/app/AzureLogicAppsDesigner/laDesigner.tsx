@@ -246,8 +246,9 @@ const DesignerEditor = () => {
   };
 
   return (
-    <div key={`${designerID}`} style={{ height: 'inherit', width: 'inherit' }}>
+    <div key={designerID} style={{ height: 'inherit', width: 'inherit' }}>
       <DesignerProvider
+        key={designerID}
         locale={language}
         options={{
           services,

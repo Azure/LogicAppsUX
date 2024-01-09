@@ -181,6 +181,7 @@ const DesignerEditorConsumption = () => {
   return (
     <div key={designerID} style={{ height: 'inherit', width: 'inherit' }}>
       <DesignerProvider
+        key={designerID}
         locale={'en-US'}
         options={{
           services,
