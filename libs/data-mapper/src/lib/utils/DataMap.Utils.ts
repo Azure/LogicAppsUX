@@ -556,7 +556,7 @@ export const lexThisThing = (targetKey: string): string[] => {
   return tokens;
 };
 
-interface ParseFunc {
+export interface ParseFunc {
   name: string;
   inputs: FunctionCreationMetadata[];
 }
