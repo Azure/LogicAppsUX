@@ -3,8 +3,9 @@ import { targetPrefix } from '../constants/ReactFlowConstants';
 import type { FunctionData } from '../models';
 import type { ConnectionDictionary } from '../models/Connection';
 import { applyConnectionValue } from '../utils/Connection.Utils';
+import { getSourceNode } from '../utils/DataMap.Utils';
 import { separateFunctions, createTargetOrFunction, DReservedToken } from '../utils/DataMap.Utils';
-import { addSourceReactFlowPrefix, addTargetReactFlowPrefix } from '../utils/ReactFlow.Util';
+import { addSourceReactFlowPrefix, addTargetReactFlowPrefix, createReactFlowFunctionKey } from '../utils/ReactFlow.Util';
 import { findNodeForKey, flattenSchemaIntoDictionary } from '../utils/Schema.Utils';
 import type { MapDefinitionEntry, SchemaExtended, SchemaNodeDictionary, SchemaNodeExtended } from '@microsoft/utils-logic-apps';
 import { SchemaType } from '@microsoft/utils-logic-apps';
@@ -68,6 +69,67 @@ export class MapDefinitionDeserializerRefactor {
     return targetNode;
   };
 
+  //   private handleFunction = (funcCreationMetadata: FunctionCreationMetadata) => {
+  //     if (typeof funcCreationMetadata !== 'string') {
+  //         getSourceNode()
+  //         //createReactFlowFunctionKey(funcCreationMetadata.name);
+  //     }
+  //   }
+
+  private handleSingleValue = (key: string, targetNode: SchemaNodeExtended, connections: ConnectionDictionary) => {
+    const tokens = separateFunctions(key);
+    const functionMetadata = createTargetOrFunction(tokens);
+
+    const sourceNode = findNodeForKey(key, this._sourceSchema.schemaTreeRoot, false) as SchemaNodeExtended;
+    if (!sourceNode) {
+      // get function node
+      if (typeof functionMetadata.term !== 'string') {
+        const func = getSourceNode(
+          functionMetadata.term.name,
+          this._sourceSchema,
+          functionMetadata.term.name.length + 1,
+          this._functions,
+          this._createdNodes
+        ) as FunctionData;
+        const funcKey = createReactFlowFunctionKey(func);
+
+        // function to target
+        applyConnectionValue(connections, {
+          targetNode: targetNode,
+          targetNodeReactFlowKey: addTargetReactFlowPrefix(targetNode.key),
+          findInputSlot: true,
+          input: {
+            reactFlowKey: funcKey,
+            node: func,
+          },
+        });
+
+        functionMetadata.term.inputs.forEach((input) => {
+          const src = findNodeForKey(input as string, this._sourceSchema.schemaTreeRoot, false) as SchemaNodeExtended;
+
+          applyConnectionValue(connections, {
+            targetNode: func,
+            targetNodeReactFlowKey: funcKey,
+            findInputSlot: true,
+            input: {
+              reactFlowKey: addSourceReactFlowPrefix(src.key),
+              node: src,
+            },
+          });
+        });
+      }
+      // custom value
+      else {
+        applyConnectionValue(connections, {
+          targetNode: targetNode,
+          targetNodeReactFlowKey: addTargetReactFlowPrefix(targetNode.key),
+          findInputSlot: true,
+          input: key,
+        });
+      }
+    }
+  };
+
   private danielleTryParseDefinitionToConnection = (
     sourceNodeObject: string | object,
     leftSideKey: string,
@@ -81,16 +143,56 @@ export class MapDefinitionDeserializerRefactor {
       const currentTarget = leftSideKey;
       const targetNode = this.getTargetNodeInContextOfParent(currentTarget, parentTargetNode);
       if (typeof sourceNodeObject === 'string') {
-        // const tokens = separateFunctions(sourceNodeObject);
+        const tokens = separateFunctions(sourceNodeObject);
+        const functionMetadata = createTargetOrFunction(tokens);
+
         const sourceNode = findNodeForKey(sourceNodeObject, this._sourceSchema.schemaTreeRoot, false) as SchemaNodeExtended;
         if (!sourceNode) {
+          // get function node
+          if (typeof functionMetadata.term !== 'string') {
+            const func = getSourceNode(
+              functionMetadata.term.name,
+              this._sourceSchema,
+              functionMetadata.term.name.length + 1,
+              this._functions,
+              this._createdNodes
+            ) as FunctionData;
+            const funcKey = createReactFlowFunctionKey(func);
+
+            // function to target
+            applyConnectionValue(connections, {
+              targetNode: targetNode,
+              targetNodeReactFlowKey: addTargetReactFlowPrefix(targetNode.key),
+              findInputSlot: true,
+              input: {
+                reactFlowKey: funcKey,
+                node: func,
+              },
+            });
+
+            functionMetadata.term.inputs.forEach((input) => {
+              const src = findNodeForKey(input as string, this._sourceSchema.schemaTreeRoot, false) as SchemaNodeExtended;
+
+              applyConnectionValue(connections, {
+                targetNode: func,
+                targetNodeReactFlowKey: funcKey,
+                findInputSlot: true,
+                input: {
+                  reactFlowKey: addSourceReactFlowPrefix(src.key),
+                  node: src,
+                },
+              });
+            });
+          }
           // custom value
-          applyConnectionValue(connections, {
-            targetNode: targetNode,
-            targetNodeReactFlowKey: addTargetReactFlowPrefix(targetNode.key),
-            findInputSlot: true,
-            input: sourceNodeObject,
-          });
+          else {
+            applyConnectionValue(connections, {
+              targetNode: targetNode,
+              targetNodeReactFlowKey: addTargetReactFlowPrefix(targetNode.key),
+              findInputSlot: true,
+              input: sourceNodeObject,
+            });
+          }
         } else {
           applyConnectionValue(connections, {
             // most basic case, just a source node

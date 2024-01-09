@@ -132,6 +132,7 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
         const result = mapDefinitionDeserializer.convertFromMapDefinition();
         const resultEntries = Object.entries(result);
         resultEntries.sort();
+
         expect(resultEntries.length).toEqual(2);
 
         expect(resultEntries[0][0]).toEqual('target-/ns0:Root/DirectTranslation/Employee/ID');
@@ -152,7 +153,7 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
           },
         };
 
-        const mapDefinitionDeserializer = new MapDefinitionDeserializer(simpleMap, extendedSource, extendedTarget, functionMock);
+        const mapDefinitionDeserializer = new MapDefinitionDeserializerRefactor(simpleMap, extendedSource, extendedTarget, functionMock);
         const result = mapDefinitionDeserializer.convertFromMapDefinition();
         const resultEntries = Object.entries(result);
         resultEntries.sort();
@@ -184,7 +185,7 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
           },
         };
 
-        const mapDefinitionDeserializer = new MapDefinitionDeserializer(simpleMap, extendedSource, extendedTarget, functionMock);
+        const mapDefinitionDeserializer = new MapDefinitionDeserializerRefactor(simpleMap, extendedSource, extendedTarget, functionMock);
         const result = mapDefinitionDeserializer.convertFromMapDefinition();
         const resultEntries = Object.entries(result);
         resultEntries.sort();

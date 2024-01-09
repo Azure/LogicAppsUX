@@ -558,12 +558,15 @@ export const lexThisThing = (targetKey: string): string[] => {
 
 interface ParseFunc {
   name: string;
-  inputs: FunctionInput[];
+  inputs: FunctionCreationMetadata[];
 }
 
-type FunctionInput = string | ParseFunc;
+export type FunctionCreationMetadata = string | ParseFunc;
 
-export const createTargetOrFunction = (tokens: string[]): { term: FunctionInput; nextIndex: number } => {
+export const createTargetOrFunction = (tokens: string[]): { term: FunctionCreationMetadata; nextIndex: number } => {
+  if (tokens.length === 1) {
+    return { term: tokens[0], nextIndex: 2 };
+  }
   // determine if token is a function
   if (tokens[1] === Separators.OpenParenthesis) {
     const func: ParseFunc = { name: tokens[0], inputs: [] };
@@ -602,7 +605,7 @@ export const removeSequenceFunction = (tokens: string[]): string => {
   return result;
 };
 
-const getInput = (term: FunctionInput) => {
+const getInput = (term: FunctionCreationMetadata) => {
   let currentTerm = term;
   while (typeof currentTerm !== 'string') {
     currentTerm = currentTerm.inputs[0];
