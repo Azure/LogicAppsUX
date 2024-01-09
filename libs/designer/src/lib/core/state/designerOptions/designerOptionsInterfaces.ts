@@ -34,7 +34,7 @@ export interface DesignerOptionsState {
   };
   nodeSelectAdditionalCallback?: (nodeId: string) => any;
   showConnectionsPanel?: boolean;
-  hidePanelTabs?: PANEL_TAB_NAMES[];
+  panelTabHideKeys?: PANEL_TAB_NAMES[];
 }
 
 export interface ServiceOptions {

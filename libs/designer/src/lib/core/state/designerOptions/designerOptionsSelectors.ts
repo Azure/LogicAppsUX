@@ -33,8 +33,8 @@ export const useNodeSelectAdditionalCallback = () => {
   return useSelector((state: RootState) => state.designerOptions.nodeSelectAdditionalCallback);
 };
 
-export const useHidePanelTabs = () => {
-  return useSelector((state: RootState) => state.designerOptions.hidePanelTabs ?? []);
+export const usePanelTabHideKeys = () => {
+  return useSelector((state: RootState) => state.designerOptions.panelTabHideKeys ?? []);
 };
 
 export const useShowConnectionsPanel = () => {

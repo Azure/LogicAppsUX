@@ -1,7 +1,7 @@
 import constants from '../../../common/constants';
 import type { RootState } from '../../../core';
 import { useNodeMetadata, useOperationInfo } from '../../../core';
-import { useHidePanelTabs, useMonitoringView } from '../../../core/state/designerOptions/designerOptionsSelectors';
+import { usePanelTabHideKeys, useMonitoringView } from '../../../core/state/designerOptions/designerOptionsSelectors';
 import { useParameterValidationErrors } from '../../../core/state/operation/operationSelector';
 import { useSelectedNodeId } from '../../../core/state/panel/panelSelectors';
 import { useSettingValidationErrors } from '../../../core/state/setting/settingSelector';
@@ -25,7 +25,7 @@ export const usePanelTabs = () => {
   const intl = useIntl();
 
   const isMonitoringView = useMonitoringView();
-  const hidePanelTabs = useHidePanelTabs();
+  const panelTabHideKeys = usePanelTabHideKeys();
 
   const selectedNode = useSelectedNodeId();
   const isTriggerNode = useSelector((state: RootState) => isRootNodeInGraph(selectedNode, 'root', state.workflow.nodesMetadata));
@@ -105,7 +105,7 @@ export const usePanelTabs = () => {
       scratchTabItem,
     ]
       .slice()
-      .filter((a) => !hidePanelTabs.includes(a.id as any))
+      .filter((a) => !panelTabHideKeys.includes(a.id as any))
       .filter((a) => a.visible)
       .sort((a, b) => a.order - b.order);
   }, [
@@ -118,7 +118,7 @@ export const usePanelTabs = () => {
     scratchTabItem,
     settingsTabItem,
     testingTabItem,
-    hidePanelTabs,
+    panelTabHideKeys,
   ]);
 
   return tabs;
