@@ -10,7 +10,7 @@ import {
   extensionBundleId,
 } from '../../constants';
 import { getLocalSettingsJson } from './appSettings/localSettings';
-import { downloadAndExtractBinaries } from './binaries';
+import { downloadAndExtractDependency } from './binaries';
 import { getJsonFeed } from './feed';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type { IBundleDependencyFeed, IBundleFeed, IBundleMetadata, IHostJsonV2 } from '@microsoft/vscode-extension';
@@ -177,6 +177,6 @@ export async function downloadExtensionBundle(context: IActionContext): Promise<
 
   if (semver.gt(latestFeedBundleVersion, latestLocalBundleVersion)) {
     const extensionBundleUrl = getExtensionBundleZip(context, latestFeedBundleVersion);
-    await downloadAndExtractBinaries(extensionBundleUrl, defaultExtensionBundlePathValue, latestFeedBundleVersion);
+    await downloadAndExtractDependency(extensionBundleUrl, defaultExtensionBundlePathValue, extensionBundleId, latestFeedBundleVersion);
   }
 }

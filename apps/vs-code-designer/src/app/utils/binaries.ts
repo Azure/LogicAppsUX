@@ -36,42 +36,45 @@ import AdmZip = require('adm-zip');
 import request = require('request');
 
 /**
- * Download and Extracts Binaries zip.
- * @param {string} binariesUrl - Binaries release url.
+ * Download and Extracts dependency zip.
+ * @param {string} downloadUrl - download url.
  * @param {string} targetFolder - Module name to check.
- * @param {string} dependencyName - The Dedepency name.
+ * @param {string} dependencyName - The Dedependency name.
+ * @param {string} folderName - Optional Folder name. Will default to dependency name if empty.
  * @param {string} dotNetVersion - The .NET Major Version from CDN.
  */
 
-export async function downloadAndExtractBinaries(
-  binariesUrl: string,
+export async function downloadAndExtractDependency(
+  downloadUrl: string,
   targetFolder: string,
   dependencyName: string,
+  folderName?: string,
   dotNetVersion?: string
 ): Promise<void> {
-  const tempFolderPath = path.join(os.tmpdir(), defaultLogicAppsFolder, dependencyName);
-  targetFolder = path.join(targetFolder, dependencyName);
+  folderName = folderName || dependencyName;
+  const tempFolderPath = path.join(os.tmpdir(), defaultLogicAppsFolder, folderName);
+  targetFolder = path.join(targetFolder, folderName);
   fs.mkdirSync(targetFolder, { recursive: true });
 
   // Read and write permissions
   fs.chmodSync(targetFolder, 0o777);
 
-  const binariesFileExtension = getCompressionFileExtension(binariesUrl);
-  const binariesFilePath = path.join(tempFolderPath, `${dependencyName}${binariesFileExtension}`);
+  const dependencyFileExtension = getCompressionFileExtension(downloadUrl);
+  const dependencyFilePath = path.join(tempFolderPath, `${dependencyName}${dependencyFileExtension}`);
 
   try {
     await executeCommand(ext.outputChannel, undefined, 'echo', `Creating temporary folder... ${tempFolderPath}`);
     fs.mkdirSync(tempFolderPath, { recursive: true });
     fs.chmodSync(tempFolderPath, 0o777);
 
-    // Download the compressed binaries
+    // Download the compressed dependency
     await new Promise<void>((resolve, reject) => {
-      executeCommand(ext.outputChannel, undefined, 'echo', `Downloading binaries from: ${binariesUrl}`);
-      const downloadStream = request(binariesUrl).pipe(fs.createWriteStream(binariesFilePath));
+      executeCommand(ext.outputChannel, undefined, 'echo', `Downloading dependency from: ${downloadUrl}`);
+      const downloadStream = request(downloadUrl).pipe(fs.createWriteStream(dependencyFilePath));
       downloadStream.on('finish', async () => {
-        await executeCommand(ext.outputChannel, undefined, 'echo', `Successfullly downloaded ${dependencyName} binaries.`);
+        await executeCommand(ext.outputChannel, undefined, 'echo', `Successfullly downloaded ${dependencyName} dependency.`);
 
-        fs.chmodSync(binariesFilePath, 0o777);
+        fs.chmodSync(dependencyFilePath, 0o777);
 
         // Extract to targetFolder
         if (dependencyName == dotnetDependencyName) {
@@ -81,15 +84,23 @@ export async function downloadAndExtractBinaries(
                 ext.outputChannel,
                 undefined,
                 'powershell -ExecutionPolicy Bypass -File',
-                binariesFilePath,
+                dependencyFilePath,
                 '-InstallDir',
                 targetFolder,
                 '-Channel',
                 `${version}.0`
               )
-            : await executeCommand(ext.outputChannel, undefined, binariesFilePath, '-InstallDir', targetFolder, '-Channel', `${version}.0`);
+            : await executeCommand(
+                ext.outputChannel,
+                undefined,
+                dependencyFilePath,
+                '-InstallDir',
+                targetFolder,
+                '-Channel',
+                `${version}.0`
+              );
         } else {
-          await extractBinaries(binariesFilePath, targetFolder, dependencyName);
+          await extractDependency(dependencyFilePath, targetFolder, dependencyName);
           vscode.window.showInformationMessage(localize('successInstall', `Successfully installed ${dependencyName}`));
         }
         resolve();
@@ -273,14 +284,14 @@ function getCompressionFileExtension(binariesUrl: string): string {
   throw new Error(localize('UnsupportedCompressionFileExtension', `Unsupported compression file extension: ${binariesUrl}`));
 }
 
-async function extractBinaries(binariesFilePath: string, targetFolder: string, dependencyName: string): Promise<void> {
-  await executeCommand(ext.outputChannel, undefined, 'echo', `Extracting ${binariesFilePath}`);
+async function extractDependency(dependencyFilePath: string, targetFolder: string, dependencyName: string): Promise<void> {
+  await executeCommand(ext.outputChannel, undefined, 'echo', `Extracting ${dependencyFilePath}`);
   try {
-    if (binariesFilePath.endsWith('.zip')) {
-      const zip = new AdmZip(binariesFilePath);
+    if (dependencyFilePath.endsWith('.zip')) {
+      const zip = new AdmZip(dependencyFilePath);
       await zip.extractAllTo(targetFolder, /* overwrite */ true, /* Permissions */ true);
     } else {
-      await executeCommand(ext.outputChannel, undefined, 'tar', `-xzvf`, binariesFilePath, '-C', targetFolder);
+      await executeCommand(ext.outputChannel, undefined, 'tar', `-xzvf`, dependencyFilePath, '-C', targetFolder);
     }
     cleanupContainerFolder(targetFolder);
     await executeCommand(ext.outputChannel, undefined, 'echo', `Extraction ${dependencyName} successfully completed.`);
