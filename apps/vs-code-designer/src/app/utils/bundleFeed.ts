@@ -123,11 +123,13 @@ export async function addDefaultBundle(context: IActionContext, hostJson: IHostJ
  * @param {string} extensionVersion - Bundle Extension Version.
  * @returns {string} Returns bundle extension zip url.
  */
-function getExtensionBundleZip(context: IActionContext, extensionVersion: string): string {
-  const envVarUri: string | undefined = process.env.FUNCTIONS_EXTENSIONBUNDLE_SOURCE_URI;
-  const envVarVer: string | undefined = process.env.AzureFunctionsJobHost_extensionBundle_version;
-  extensionVersion = envVarVer || extensionVersion;
-
+async function getExtensionBundleZip(context: IActionContext, extensionVersion: string): Promise<string> {
+  let envVarUri: string | undefined = process.env.FUNCTIONS_EXTENSIONBUNDLE_SOURCE_URI;
+  const projectPath: string | undefined = vscode.workspace.workspaceFolders ? vscode.workspace.workspaceFolders[0].uri.fsPath : null;
+  if (projectPath) {
+    envVarUri = (await getLocalSettingsJson(context, path.join(projectPath, localSettingsFileName)))?.Values
+      ?.FUNCTIONS_EXTENSIONBUNDLE_SOURCE_URI;
+  }
   const baseUrl: string = envVarUri || 'https://functionscdn.azureedge.net/public';
   const url = `${baseUrl}/ExtensionBundles/Microsoft.Azure.Functions.ExtensionBundle.Workflows/${extensionVersion}/Microsoft.Azure.Functions.ExtensionBundle.Workflows.${extensionVersion}_any-any.zip`;
 
@@ -158,6 +160,21 @@ function getExtensionBundleVersionFolders(directoryPath: string): string[] {
  * @returns {Promise<string>} Returns bundle extension zip url.
  */
 export async function downloadExtensionBundle(context: IActionContext): Promise<void> {
+  let envVarVer: string | undefined = process.env.AzureFunctionsJobHost_extensionBundle_version;
+  const projectPath: string | undefined = vscode.workspace.workspaceFolders ? vscode.workspace.workspaceFolders[0].uri.fsPath : null;
+  if (projectPath) {
+    envVarVer = (await getLocalSettingsJson(context, path.join(projectPath, localSettingsFileName)))?.Values
+      ?.AzureFunctionsJobHost_extensionBundle_version;
+  }
+
+  context.telemetry.properties.envVariableExtensionBundleVersion = envVarVer;
+
+  if (envVarVer) {
+    const extensionBundleUrl = await getExtensionBundleZip(context, envVarVer);
+    await downloadAndExtractDependency(extensionBundleUrl, defaultExtensionBundlePathValue, extensionBundleId, envVarVer);
+    return;
+  }
+
   // Check for latest version at directory.
   let latestLocalBundleVersion = '1.0.0';
   const localVersions = getExtensionBundleVersionFolders(defaultExtensionBundlePathValue);
@@ -176,7 +193,7 @@ export async function downloadExtensionBundle(context: IActionContext): Promise<
   context.telemetry.properties.latestFeedBundleVersion = latestFeedBundleVersion;
 
   if (semver.gt(latestFeedBundleVersion, latestLocalBundleVersion)) {
-    const extensionBundleUrl = getExtensionBundleZip(context, latestFeedBundleVersion);
+    const extensionBundleUrl = await getExtensionBundleZip(context, latestFeedBundleVersion);
     await downloadAndExtractDependency(extensionBundleUrl, defaultExtensionBundlePathValue, extensionBundleId, latestFeedBundleVersion);
   }
 }
