@@ -14,7 +14,7 @@ const defaultFilterConnector = (connector: Connector, runtimeFilter: string): bo
 };
 
 const defaultSortConnectors = (connectors: Connector[]): Connector[] => {
-  return connectors.sort((a, b) => a.properties.displayName.localeCompare(b.properties.displayName));
+  return connectors.sort((a, b) => a.properties.displayName?.localeCompare(b.properties.displayName));
 };
 
 export const BrowseView = ({
