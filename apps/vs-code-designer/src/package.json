@@ -364,7 +364,6 @@
         },
         {
           "command": "azureLogicAppsStandard.createNewCodeProject",
-          "when": "isWindows",
           "group": "1_create@2"
         },
         {
@@ -665,10 +664,6 @@
         {
           "command": "azureLogicAppsStandard.openDesigner",
           "when": "resourceFilename==workflow.json"
-        },
-        {
-          "command": "azureLogicAppsStandard.createNewCodeProject",
-          "when": "isWindows"
         },
         {
           "command": "azureLogicAppsStandard.viewContent",
