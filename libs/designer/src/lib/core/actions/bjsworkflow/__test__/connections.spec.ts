@@ -1,3 +1,4 @@
+import { MockHttpClient } from '../../../../__test__/mock-http-client';
 import Constants from '../../../../common/constants';
 import { getReactQueryClient } from '../../../ReactQueryProvider';
 import {
@@ -7,7 +8,6 @@ import {
 } from '../../../actions/bjsworkflow/connections';
 import type { OperationMetadataState } from '../../../state/operation/operationMetadataSlice';
 import type { RootState } from '../../../store';
-import type { IHttpClient } from '@microsoft/designer-client-services-logic-apps';
 import {
   InitOperationManifestService,
   StandardOperationManifestService,
@@ -16,28 +16,6 @@ import {
 import { createItem } from '@microsoft/parsers-logic-apps';
 import type { LogicAppsV2, OperationManifest } from '@microsoft/utils-logic-apps';
 import { ConnectionReferenceKeyFormat } from '@microsoft/utils-logic-apps';
-
-class MockHttpClient implements IHttpClient {
-  dispose() {
-    return;
-  }
-  get<ReturnType>() {
-    const a: unknown = {};
-    return a as ReturnType;
-  }
-  post<ReturnType>() {
-    const a: unknown = {};
-    return a as ReturnType;
-  }
-  put<ReturnType>() {
-    const a: unknown = {};
-    return a as ReturnType;
-  }
-  delete<ReturnType>() {
-    const a: unknown = {};
-    return a as ReturnType;
-  }
-}
 
 const nodeId = '1';
 const connectionName = 'name123';

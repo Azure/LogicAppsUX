@@ -10,7 +10,7 @@ import { UniversalConnectionParameter } from './formInputs/universalConnectionPa
 import type { IDropdownOption } from '@fluentui/react';
 import { MessageBarType, MessageBar, Label } from '@fluentui/react';
 import { Body1Strong, Button, Divider } from '@fluentui/react-components';
-import { ConnectionParameterEditorService } from '@microsoft/designer-client-services-logic-apps';
+import { ConnectionParameterEditorService, ConnectionService } from '@microsoft/designer-client-services-logic-apps';
 import type { GatewayServiceConfig, IConnectionCredentialMappingEditorProps } from '@microsoft/designer-client-services-logic-apps';
 import type { AzureResourcePickerProps } from '@microsoft/designer-ui';
 import { AzureResourcePicker } from '@microsoft/designer-ui';
@@ -80,7 +80,7 @@ export const CreateConnection = (props: CreateConnectionProps) => {
     connectorDisplayName,
     connectorCapabilities,
     connectionParameters,
-    connectionParameterSets,
+    connectionParameterSets: _connectionParameterSets,
     connectionAlternativeParameters,
     identity,
     isLoading = false,
@@ -111,6 +111,16 @@ export const CreateConnection = (props: CreateConnectionProps) => {
     },
     [selectedParamSetIndex]
   );
+
+  const isHiddenAuthKey = useCallback((key: string) => ConnectionService().getAuthSetHideKeys?.()?.includes(key) ?? false, []);
+
+  const connectionParameterSets: ConnectionParameterSets | undefined = useMemo(() => {
+    if (!_connectionParameterSets) return undefined;
+    return {
+      ..._connectionParameterSets,
+      values: _connectionParameterSets.values.filter((set) => !isHiddenAuthKey(set.name)),
+    };
+  }, [_connectionParameterSets, isHiddenAuthKey]);
 
   const singleAuthParams = useMemo(
     () => ({
@@ -146,14 +156,16 @@ export const CreateConnection = (props: CreateConnectionProps) => {
     if (hasOnlyOnPremGateway && !enabledCapabilities.includes(Capabilities.gateway)) toggleCapability(Capabilities.gateway);
   }, [enabledCapabilities, hasOnlyOnPremGateway, toggleCapability]);
 
+  const supportsOAuthConnection = useMemo(() => !isHiddenAuthKey('legacyoauth'), [isHiddenAuthKey]);
+
   const supportsServicePrincipalConnection = useMemo(
-    () => connectorContainsAllServicePrinicipalConnectionParameters(singleAuthParams),
-    [singleAuthParams]
+    () => connectorContainsAllServicePrinicipalConnectionParameters(singleAuthParams) && !isHiddenAuthKey('legacyserviceprincipal'),
+    [isHiddenAuthKey, singleAuthParams]
   );
 
   const supportsLegacyManagedIdentityConnection = useMemo(
-    () => usesLegacyManagedIdentity(connectionAlternativeParameters),
-    [connectionAlternativeParameters]
+    () => usesLegacyManagedIdentity(connectionAlternativeParameters) && !isHiddenAuthKey('legacymanagedidentity'),
+    [isHiddenAuthKey, connectionAlternativeParameters]
   );
 
   const showLegacyMultiAuth = useMemo(
@@ -514,6 +526,7 @@ export const CreateConnection = (props: CreateConnectionProps) => {
               isLoading={isLoading}
               value={selectedParamSetIndex}
               onChange={onAuthDropdownChange}
+              supportsOAuthConnection={supportsOAuthConnection}
               supportsServicePrincipalConnection={supportsServicePrincipalConnection}
               supportsLegacyManagedIdentityConnection={supportsLegacyManagedIdentityConnection}
             />

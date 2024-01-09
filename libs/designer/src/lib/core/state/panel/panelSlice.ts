@@ -1,3 +1,4 @@
+import { resetWorkflowState } from '../global';
 import type { RelationshipIds, PanelState, PanelMode } from './panelInterfaces';
 import { LogEntryLevel, LoggerService } from '@microsoft/designer-client-services-logic-apps';
 import { PanelLocation } from '@microsoft/designer-ui';
@@ -133,6 +134,9 @@ export const panelSlice = createSlice({
     setIsCreatingConnection: (state, action: PayloadAction<boolean>) => {
       state.creatingConnection = action.payload;
     },
+  },
+  extraReducers: (builder) => {
+    builder.addCase(resetWorkflowState, () => initialState);
   },
 });
 

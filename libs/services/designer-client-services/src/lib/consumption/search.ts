@@ -48,7 +48,7 @@ export class ConsumptionSearchService extends BaseSearchService {
       const uri = `/subscriptions/${subscriptionId}/providers/Microsoft.Web/locations/${location}/apiOperations`;
       const queryParameters: QueryParameters = {
         'api-version': apiVersion,
-        $filter: `properties/trigger eq null and type eq 'Microsoft.Web/customApis/apiOperations' and ${ISE_RESOURCE_ID} eq null`,
+        $filter: `type eq 'Microsoft.Web/customApis/apiOperations' and ${ISE_RESOURCE_ID} eq null`,
       };
       // const response = await this.pagedBatchAzureResourceRequests(page, uri, queryParameters, 1);
       const { value } = await this.getAzureResourceByPage(uri, queryParameters, page, 100);

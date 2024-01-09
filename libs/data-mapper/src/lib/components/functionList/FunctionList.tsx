@@ -130,7 +130,7 @@ export const FunctionList = () => {
       if (functionData) {
         const functionCategoryDictionary: { [key: string]: FunctionDataTreeItem } = {};
         let functionsList: FunctionData[] = [...functionData];
-        functionsList.sort((a, b) => a.displayName.localeCompare(b.displayName)); // Alphabetically sort Functions
+        functionsList.sort((a, b) => a.displayName?.localeCompare(b.displayName)); // Alphabetically sort Functions
 
         // Create dictionary for Function Categories
         Object.values(FunctionCategory).forEach((category) => {
