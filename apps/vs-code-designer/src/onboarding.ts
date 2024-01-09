@@ -4,7 +4,6 @@
  *--------------------------------------------------------------------------------------------*/
 import { validateAndInstallBinaries } from './app/commands/binaries/validateAndInstallBinaries';
 import { promptInstallBinariesOption } from './app/utils/binaries';
-import { downloadExtensionBundle } from './app/utils/bundleFeed';
 import { promptStartDesignTimeOption } from './app/utils/codeless/startDesignTimeApi';
 import { runWithDurationTelemetry } from './app/utils/telemetry';
 import { getGlobalSetting } from './app/utils/vsCodeConfig/settings';
@@ -49,7 +48,6 @@ export const startOnboarding = async (activateContext: IActionContext) => {
   });
 
   await onboardBinaries(activateContext);
-  await downloadExtensionBundle(activateContext);
 
   await callWithTelemetryAndErrorHandling(autoStartDesignTimeSetting, async (actionContext: IActionContext) => {
     await runWithDurationTelemetry(actionContext, showStartDesignTimeMessageSetting, async () => {
