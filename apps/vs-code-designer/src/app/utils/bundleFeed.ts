@@ -131,7 +131,7 @@ async function getExtensionBundleZip(context: IActionContext, extensionVersion: 
       ?.FUNCTIONS_EXTENSIONBUNDLE_SOURCE_URI;
   }
   const baseUrl: string = envVarUri || 'https://functionscdn.azureedge.net/public';
-  const url = `${baseUrl}/ExtensionBundles/Microsoft.Azure.Functions.ExtensionBundle.Workflows/${extensionVersion}/Microsoft.Azure.Functions.ExtensionBundle.Workflows.${extensionVersion}_any-any.zip`;
+  const url = `${baseUrl}/ExtensionBundles/${extensionBundleId}/${extensionVersion}/${extensionBundleId}.${extensionVersion}_any-any.zip`;
 
   return url;
 }
