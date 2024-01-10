@@ -1,4 +1,5 @@
 import { needsOAuth } from '../../../../core/actions/bjsworkflow/connections';
+import { isUserAssignedIdentitySupportedForInApp } from '../../../../core/utils/connectors/connections';
 import { ActionList } from '../actionList/actionList';
 import ConnectionMultiAuthInput from './formInputs/connectionMultiAuth';
 import ConnectionNameInput from './formInputs/connectionNameInput';
@@ -35,7 +36,6 @@ import {
   isServicePrinicipalConnectionParameter,
   usesLegacyManagedIdentity,
 } from '@microsoft/utils-logic-apps';
-import { isUserAssignedIdentitySupportedForInApp } from 'libs/designer/src/lib/core/utils/connectors/connections';
 import fromPairs from 'lodash.frompairs';
 import type { FormEvent } from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -186,10 +186,12 @@ export const CreateConnection = (props: CreateConnectionProps) => {
     [selectedParamSetIndex, showLegacyMultiAuth]
   );
 
-  const showIdentityPicker = useMemo(() =>
-    isMultiAuth &&
-    isUserAssignedIdentitySupportedForInApp(connectorCapabilities) && identity?.type?.toLowerCase()?.includes(ResourceIdentityType.USER_ASSIGNED.toLowerCase()) &&
-    equals(connectionParameterSets?.values[selectedParamSetIndex].name, 'ManagedServiceIdentity'),
+  const showIdentityPicker = useMemo(
+    () =>
+      isMultiAuth &&
+      isUserAssignedIdentitySupportedForInApp(connectorCapabilities) &&
+      identity?.type?.toLowerCase()?.includes(ResourceIdentityType.USER_ASSIGNED.toLowerCase()) &&
+      equals(connectionParameterSets?.values[selectedParamSetIndex].name, 'ManagedServiceIdentity'),
     [connectionParameterSets?.values, connectorCapabilities, identity?.type, isMultiAuth, selectedParamSetIndex]
   );
 
@@ -326,7 +328,22 @@ export const CreateConnection = (props: CreateConnectionProps) => {
       alternativeParameterValues,
       identitySelected
     );
-  }, [parameterValues, supportsServicePrincipalConnection, unfilteredParameters, legacyManagedIdentitySelected, showIdentityPicker, selectedManagedIdentity, createConnectionCallback, showNameInput, connectionDisplayName, connectionParameterSets?.values, selectedParamSetIndex, isUsingOAuth, capabilityEnabledParameters, servicePrincipalSelected]);
+  }, [
+    parameterValues,
+    supportsServicePrincipalConnection,
+    unfilteredParameters,
+    legacyManagedIdentitySelected,
+    showIdentityPicker,
+    selectedManagedIdentity,
+    createConnectionCallback,
+    showNameInput,
+    connectionDisplayName,
+    connectionParameterSets?.values,
+    selectedParamSetIndex,
+    isUsingOAuth,
+    capabilityEnabledParameters,
+    servicePrincipalSelected,
+  ]);
 
   // INTL STRINGS
 
