@@ -4,7 +4,12 @@
  *--------------------------------------------------------------------------------------------*/
 import { Platform, autoRuntimeDependenciesPathSettingKey, nodeJsDependencyName } from '../../../constants';
 import { ext } from '../../../extensionVariables';
-import { downloadAndExtractBinaries, getCpuArchitecture, getLatestNodeJsVersion, getNodeJsBinariesReleaseUrl } from '../../utils/binaries';
+import {
+  downloadAndExtractDependency,
+  getCpuArchitecture,
+  getLatestNodeJsVersion,
+  getNodeJsBinariesReleaseUrl,
+} from '../../utils/binaries';
 import { getGlobalSetting } from '../../utils/vsCodeConfig/settings';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 
@@ -32,5 +37,5 @@ export async function installNodeJs(context: IActionContext, majorVersion?: stri
   }
 
   context.telemetry.properties.lastStep = 'downloadAndExtractBinaries';
-  await downloadAndExtractBinaries(nodeJsReleaseUrl, targetDirectory, nodeJsDependencyName);
+  await downloadAndExtractDependency(nodeJsReleaseUrl, targetDirectory, nodeJsDependencyName);
 }

@@ -5,7 +5,7 @@
 import { PackageManager, Platform, autoRuntimeDependenciesPathSettingKey, funcDependencyName, funcPackageName } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import {
-  downloadAndExtractBinaries,
+  downloadAndExtractDependency,
   getCpuArchitecture,
   getFunctionCoreToolsBinariesReleaseUrl,
   getLatestFunctionCoreToolsVersion,
@@ -41,7 +41,7 @@ export async function installFuncCoreToolsBinaries(context: IActionContext, majo
       break;
   }
   context.telemetry.properties.lastStep = 'downloadAndExtractBinaries';
-  await downloadAndExtractBinaries(azureFunctionCoreToolsReleasesUrl, targetDirectory, funcDependencyName);
+  await downloadAndExtractDependency(azureFunctionCoreToolsReleasesUrl, targetDirectory, funcDependencyName);
 }
 
 export async function installFuncCoreToolsSystem(
