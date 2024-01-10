@@ -142,7 +142,7 @@ export const ParametersTab = () => {
           />
         </>
       ) : null}
-      {showIdentitySelector.data ? <IdentitySelector nodeId={selectedNodeId} readOnly={!!readOnly} /> : null}
+      {showIdentitySelector ? <IdentitySelector nodeId={selectedNodeId} readOnly={!!readOnly} /> : null}
     </>
   );
 };
