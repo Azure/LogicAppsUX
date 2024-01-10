@@ -1,4 +1,5 @@
 import { needsOAuth } from '../../../../core/actions/bjsworkflow/connections';
+import { isUserAssignedIdentitySupportedForInApp } from '../../../../core/utils/connectors/connections';
 import { ActionList } from '../actionList/actionList';
 import ConnectionMultiAuthInput from './formInputs/connectionMultiAuth';
 import ConnectionNameInput from './formInputs/connectionNameInput';
@@ -26,8 +27,10 @@ import type {
 import {
   Capabilities,
   ConnectionParameterTypes,
+  ResourceIdentityType,
   SERVICE_PRINCIPLE_CONSTANTS,
   connectorContainsAllServicePrinicipalConnectionParameters,
+  equals,
   filterRecord,
   getPropertyValue,
   isServicePrinicipalConnectionParameter,
@@ -183,6 +186,15 @@ export const CreateConnection = (props: CreateConnectionProps) => {
     [selectedParamSetIndex, showLegacyMultiAuth]
   );
 
+  const showIdentityPicker = useMemo(
+    () =>
+      isMultiAuth &&
+      isUserAssignedIdentitySupportedForInApp(connectorCapabilities) &&
+      identity?.type?.toLowerCase()?.includes(ResourceIdentityType.USER_ASSIGNED.toLowerCase()) &&
+      equals(connectionParameterSets?.values[selectedParamSetIndex].name, 'ManagedServiceIdentity'),
+    [connectionParameterSets?.values, connectorCapabilities, identity?.type, isMultiAuth, selectedParamSetIndex]
+  );
+
   const [selectedManagedIdentity, setSelectedManagedIdentity] = useState<string | undefined>(undefined);
 
   const onLegacyManagedIdentityChange = useCallback((_: any, option?: IDropdownOption<any>) => {
@@ -306,7 +318,7 @@ export const CreateConnection = (props: CreateConnectionProps) => {
     }
 
     const alternativeParameterValues = legacyManagedIdentitySelected ? {} : undefined;
-    const identitySelected = legacyManagedIdentitySelected ? selectedManagedIdentity : undefined;
+    const identitySelected = legacyManagedIdentitySelected || showIdentityPicker ? selectedManagedIdentity : undefined;
 
     return createConnectionCallback?.(
       showNameInput ? connectionDisplayName : undefined,
@@ -321,6 +333,7 @@ export const CreateConnection = (props: CreateConnectionProps) => {
     supportsServicePrincipalConnection,
     unfilteredParameters,
     legacyManagedIdentitySelected,
+    showIdentityPicker,
     selectedManagedIdentity,
     createConnectionCallback,
     showNameInput,
@@ -571,6 +584,16 @@ export const CreateConnection = (props: CreateConnectionProps) => {
               onChange={onAuthDropdownChange}
               connectionParameterSets={connectionParameterSets}
             />
+          )}
+
+          {/* Managed Identity Selection for In-App Connectors */}
+          {showIdentityPicker && (
+            <div className="param-row">
+              <Label className="label" required htmlFor={'connection-param-set-select'} disabled={isLoading}>
+                {legacyManagedIdentityLabelText}
+              </Label>
+              <LegacyManagedIdentityDropdown identity={identity} onChange={onLegacyManagedIdentityChange} disabled={isLoading} />
+            </div>
           )}
 
           {/* Connector Parameters */}
