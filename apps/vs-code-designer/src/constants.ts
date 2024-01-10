@@ -218,7 +218,7 @@ export const targetBundleKey = 'FUNCTIONS_EXTENSIONBUNDLE_SOURCE_URI';
 // Fallback Dependency Versions
 export const DependencyVersion = {
   dotnet6: '6.0.413',
-  funcCoreTools: '4.0.5198',
+  funcCoreTools: '4.0.5455',
   nodeJs: '18.17.1',
 } as const;
 export type DependencyVersion = (typeof DependencyVersion)[keyof typeof DependencyVersion];
