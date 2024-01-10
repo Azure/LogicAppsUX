@@ -23,16 +23,6 @@
       "value": "보호됨"
     }
   ],
-  "+7IA0V": [
-    {
-      "type": 1,
-      "value": "connectorName"
-    },
-    {
-      "type": 0,
-      "value": " connections"
-    }
-  ],
   "+FcXe9": [
     {
       "type": 0,
@@ -175,6 +165,12 @@
       "value": "Azure Copilot 열기"
     }
   ],
+  "/c1l10": [
+    {
+      "type": 0,
+      "value": "⌘+C"
+    }
+  ],
   "/doURb": [
     {
       "type": 0,
@@ -303,6 +299,12 @@
     {
       "type": 0,
       "value": "(UTC+05:30) 스리자야와르데네푸라"
+    }
+  ],
+  "0CPsxh": [
+    {
+      "type": 0,
+      "value": "Del"
     }
   ],
   "0CvRZW": [
@@ -555,12 +557,6 @@
     {
       "type": 0,
       "value": "5"
-    }
-  ],
-  "1zgFh1": [
-    {
-      "type": 0,
-      "value": "해제"
     }
   ],
   "20oqsp": [
@@ -924,7 +920,7 @@
   "41drjl": [
     {
       "type": 0,
-      "value": "Open connection"
+      "value": "열린 연결"
     }
   ],
   "41eMpW": [
@@ -1155,6 +1151,12 @@
       "value": "논리 앱에서 사용되는 매개 변수는 배포 템플릿 생성 중에 Azure Resource Manager 템플릿으로 변환됩니다."
     }
   ],
+  "5gOG+F": [
+    {
+      "type": 0,
+      "value": "비교할 값을 제공하고 사용할 연산자를 선택하세요."
+    }
+  ],
   "5hWg4V": [
     {
       "type": 0,
@@ -1360,7 +1362,7 @@
   "74e2xB": [
     {
       "type": 0,
-      "value": "Create a new connection"
+      "value": "새 연결을 만듦"
     }
   ],
   "78Vggn": [
@@ -2371,7 +2373,7 @@
   "DfXxoX": [
     {
       "type": 0,
-      "value": "Select an existing connection or create a new one"
+      "value": "기존 연결을 선택하거나 새 연결을 만드세요."
     }
   ],
   "Dhu3IS": [
@@ -3767,7 +3769,7 @@
   "NdOhXD": [
     {
       "type": 0,
-      "value": "Create Connection"
+      "value": "연결 만들기"
     }
   ],
   "Nh91qA": [
@@ -3870,12 +3872,6 @@
     {
       "type": 0,
       "value": "확인"
-    }
-  ],
-  "OBKhVi": [
-    {
-      "type": 0,
-      "value": "이 작업/트리거는 복사할 수 없습니다."
     }
   ],
   "ODQCKj": [
@@ -4402,12 +4398,6 @@
       "value": "시간"
     }
   ],
-  "Qy0Kha": [
-    {
-      "type": 0,
-      "value": "트리거를 삭제할 수 없습니다."
-    }
-  ],
   "R/aiRy": [
     {
       "type": 0,
@@ -4485,12 +4475,6 @@
     {
       "type": 0,
       "value": "문제"
-    }
-  ],
-  "Ro4+PC": [
-    {
-      "type": 0,
-      "value": "단계의 입력을 편집할 때만 메모를 추가할 수 있습니다."
     }
   ],
   "Rp5pHU": [
@@ -4781,6 +4765,12 @@
       "value": "참고 항목"
     }
   ],
+  "TsJbGH": [
+    {
+      "type": 0,
+      "value": "연결 끊김"
+    }
+  ],
   "Ttc0SM": [
     {
       "type": 0,
@@ -5069,6 +5059,12 @@
       "value": "주"
     }
   ],
+  "V7k/GN": [
+    {
+      "type": 0,
+      "value": "Switch Case 삭제"
+    }
+  ],
   "V8A+1J": [
     {
       "type": 0,
@@ -5345,6 +5341,12 @@
     {
       "type": 0,
       "value": "논리 앱에 관리 ID가 구성되어 있지 않습니다."
+    }
+  ],
+  "WvvJYw": [
+    {
+      "type": 0,
+      "value": "작업"
     }
   ],
   "X/7je+": [
@@ -5840,7 +5842,7 @@
   "ZAdaBl": [
     {
       "type": 0,
-      "value": "Select an existing connection reference or create a new one"
+      "value": "기존 연결 참조를 선택하거나 새 연결 참조를 만드세요."
     }
   ],
   "ZBJiuD": [
@@ -5895,12 +5897,6 @@
     {
       "type": 0,
       "value": "자세히 표시"
-    }
-  ],
-  "ZbX8xq": [
-    {
-      "type": 0,
-      "value": "이 작업은 이미 삭제되었습니다."
     }
   ],
   "Zg3IjD": [
@@ -6228,13 +6224,13 @@
   "cZXqqf": [
     {
       "type": 0,
-      "value": "Change Connection"
+      "value": "연결 변경"
     }
   ],
   "cZv9J0": [
     {
       "type": 0,
-      "value": "Connection is valid"
+      "value": "연결이 유효합니다."
     }
   ],
   "ca/QIc": [
@@ -6529,6 +6525,12 @@
       "value": "기울임꼴(⌘I)"
     }
   ],
+  "en/5A3": [
+    {
+      "type": 0,
+      "value": "재할당"
+    }
+  ],
   "eo1YKX": [
     {
       "type": 0,
@@ -6550,7 +6552,7 @@
   "evyGYj": [
     {
       "type": 0,
-      "value": "Reassign all connected actions to a new connection"
+      "value": "연결된 모든 작업을 새 연결에 다시 할당"
     }
   ],
   "f/lWTW": [
@@ -6691,6 +6693,12 @@
     {
       "type": 0,
       "value": "테스트 실행"
+    }
+  ],
+  "gA1dde": [
+    {
+      "type": 0,
+      "value": "코드 보기 토글"
     }
   ],
   "gCXOd5": [
@@ -6892,12 +6900,6 @@
     {
       "type": 0,
       "value": "실행 취소"
-    }
-  ],
-  "hTZZr+": [
-    {
-      "type": 0,
-      "value": "Connected actions"
     }
   ],
   "hZqQdt": [
@@ -7722,7 +7724,7 @@
   "mUURJW": [
     {
       "type": 0,
-      "value": "Connection is invalid"
+      "value": "연결이 잘못되었습니다."
     }
   ],
   "mYQFtf": [
@@ -7770,7 +7772,7 @@
   "mlU+AC": [
     {
       "type": 0,
-      "value": "Connections"
+      "value": "연결"
     }
   ],
   "mvrlkP": [
@@ -7894,7 +7896,7 @@
   "nSUXtP": [
     {
       "type": 0,
-      "value": "Multiple actions will be modified by this change."
+      "value": "이 변경으로 인해 여러 작업이 수정됩니다."
     }
   ],
   "nSan4V": [
@@ -8149,12 +8151,6 @@
     {
       "type": 0,
       "value": "앱 내"
-    }
-  ],
-  "p3K7eM": [
-    {
-      "type": 0,
-      "value": "Disconnected actions"
     }
   ],
   "p5ZID0": [
@@ -8708,6 +8704,12 @@
     {
       "type": 0,
       "value": "키"
+    }
+  ],
+  "snJFUi": [
+    {
+      "type": 0,
+      "value": "Ctrl+C"
     }
   ],
   "soqP+Z": [
@@ -9598,12 +9600,6 @@
       "value": "값"
     }
   ],
-  "xxeu75": [
-    {
-      "type": 0,
-      "value": "Reassign all disconnected actions to a new connection"
-    }
-  ],
   "y1e9yw": [
     {
       "type": 0,
@@ -9848,12 +9844,6 @@
     {
       "type": 0,
       "value": "중지"
-    }
-  ],
-  "ziXw25": [
-    {
-      "type": 0,
-      "value": "삭제"
     }
   ],
   "ziYCiA": [

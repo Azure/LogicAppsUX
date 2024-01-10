@@ -1,7 +1,8 @@
 import type { CardProps } from './index';
 import { getHeaderStyle } from './utils';
 import type { IIconProps } from '@fluentui/react';
-import { css, Icon, TooltipHost } from '@fluentui/react';
+import { css, Icon } from '@fluentui/react';
+import { Tooltip } from '@fluentui/react-components';
 import { useIntl } from 'react-intl';
 
 export type CardFooterProps = Pick<
@@ -134,14 +135,16 @@ const CardBadge: React.FC<CardBadgeProps> = ({ active, content, darkBackground =
     return null;
   } else if (active) {
     return (
-      <TooltipHost content={content}>
-        <Icon
-          className={css('panel-card-v2-badge', 'active', darkBackground && 'darkBackground')}
-          {...iconProps}
-          ariaLabel={`${title}: ${content}`}
-          tabIndex={0}
-        />
-      </TooltipHost>
+      <Tooltip relationship={'label'} withArrow={true} content={content}>
+        <div>
+          <Icon
+            className={css('panel-card-v2-badge', 'active', darkBackground && 'darkBackground')}
+            {...iconProps}
+            ariaLabel={`${title}: ${content}`}
+            tabIndex={0}
+          />
+        </div>
+      </Tooltip>
     );
   } else {
     return <Icon className="panel-card-v2-badge inactive" {...iconProps} ariaLabel={title} tabIndex={0} />;

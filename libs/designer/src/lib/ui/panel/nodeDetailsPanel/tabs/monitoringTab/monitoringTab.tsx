@@ -1,7 +1,7 @@
 import constants from '../../../../../common/constants';
 import { getMonitoringTabError } from '../../../../../common/utilities/error';
+import { useBrandColor } from '../../../../../core/state/operation/operationSelector';
 import { useSelectedNodeId } from '../../../../../core/state/panel/panelSelectors';
-import { useBrandColor } from '../../../../../core/state/selectors/actionMetadataSelector';
 import { useRunData } from '../../../../../core/state/workflow/workflowSelectors';
 import { InputsPanel } from './inputsPanel';
 import { OutputsPanel } from './outputsPanel';
@@ -64,11 +64,11 @@ export const MonitoringPanel: React.FC = () => {
 };
 
 export const monitoringTab: PanelTabFn = (intl) => ({
+  id: constants.PANEL_TAB_NAMES.MONITORING,
   title: intl.formatMessage({
     defaultMessage: 'Parameters',
     description: 'The tab label for the monitoring parameters tab on the operation panel',
   }),
-  name: constants.PANEL_TAB_NAMES.MONITORING,
   description: intl.formatMessage({
     defaultMessage: 'Monitoring Tab',
     description: 'An accessability label that describes the monitoring tab',

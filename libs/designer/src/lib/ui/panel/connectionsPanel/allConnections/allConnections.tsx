@@ -62,7 +62,7 @@ export const AllConnections = () => {
   }, [connectionsWithNodes, connectionReferences, groupedDisconnectedNodes]);
 
   const [openConnectors, setOpenConnectors] = useState<string[]>([]);
-  const handleToggle: AccordionToggleEventHandler = (_e, data) => {
+  const handleToggle: AccordionToggleEventHandler = (_e, data: any) => {
     setOpenConnectors((data?.openItems ?? []) as string[]);
   };
 

@@ -14,9 +14,9 @@ export const RunAfter = ({ items, readOnly = false }: RunAfterProps) => {
   return (
     <div>
       <RunAfterActionSelector readOnly={readOnly} />
-      {items.map((item, key) => {
-        return <RunAfterActionDetails {...item} key={key} readOnly={readOnly} />;
-      })}
+      {items.map((item, key) => (
+        <RunAfterActionDetails {...item} key={key} readOnly={readOnly} />
+      ))}
     </div>
   );
 };

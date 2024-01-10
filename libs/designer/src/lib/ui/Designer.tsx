@@ -4,6 +4,7 @@ import { usePreloadOperationsQuery, usePreloadConnectorsQuery } from '../core/qu
 import { useMonitoringView, useReadOnly } from '../core/state/designerOptions/designerOptionsSelectors';
 import { useClampPan } from '../core/state/designerView/designerViewSelectors';
 import { useIsPanelCollapsed } from '../core/state/panel/panelSelectors';
+import { clearPanel } from '../core/state/panel/panelSlice';
 import { useIsGraphEmpty } from '../core/state/workflow/workflowSelectors';
 import { buildEdgeIdsBySource, clearFocusNode, updateNodeSizes } from '../core/state/workflow/workflowSlice';
 import type { AppDispatch, RootState } from '../core/store';
@@ -16,6 +17,7 @@ import PlaceholderNode from './CustomNodes/PlaceholderNode';
 import ScopeCardNode from './CustomNodes/ScopeCardNode';
 import SubgraphCardNode from './CustomNodes/SubgraphCardNode';
 import Minimap from './Minimap';
+import DeleteModal from './common/DeleteModal/DeleteModal';
 import { ButtonEdge } from './connections/edge';
 import { HiddenEdge } from './connections/hiddenEdge';
 import { PanelRoot } from './panel/panelRoot';
@@ -135,7 +137,7 @@ export const Designer = (props: DesignerProps) => {
   const [nodes, edges, flowSize] = useLayout();
   const isEmpty = useIsGraphEmpty();
   const isReadOnly = useReadOnly();
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const onNodesChange = useCallback(
     (changes: NodeChange[]) => {
       dispatch(updateNodeSizes(changes));
@@ -221,6 +223,7 @@ export const Designer = (props: DesignerProps) => {
             nodes={nodesWithPlaceholder}
             edges={edges}
             onNodesChange={onNodesChange}
+            nodesConnectable={false}
             nodesDraggable={false}
             nodesFocusable={false}
             edgesFocusable={false}
@@ -230,6 +233,7 @@ export const Designer = (props: DesignerProps) => {
             zoomActivationKeyCode={['Ctrl', 'Meta', 'Alt', 'Control']}
             translateExtent={clampPan ? translateExtent : undefined}
             onMove={(_e, viewport) => setZoom(viewport.zoom)}
+            onPaneClick={() => dispatch(clearPanel())}
             proOptions={{
               account: 'paid-sponsor',
               hideAttribution: true,
@@ -237,6 +241,7 @@ export const Designer = (props: DesignerProps) => {
           >
             <PanelRoot panelLocation={panelLocation} customPanelLocations={customPanelLocations} />
             {backgroundProps ? <Background {...backgroundProps} /> : null}
+            <DeleteModal />
           </ReactFlow>
           <div className={css('msla-designer-tools', panelLocation === PanelLocation.Left && 'left-panel')} style={copilotPadding}>
             <Controls />

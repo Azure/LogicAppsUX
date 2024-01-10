@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 import { autoRuntimeDependenciesPathSettingKey, dotnetDependencyName } from '../../../constants';
 import { ext } from '../../../extensionVariables';
-import { downloadAndExtractBinaries, getDotNetBinariesReleaseUrl } from '../../utils/binaries';
+import { downloadAndExtractDependency, getDotNetBinariesReleaseUrl } from '../../utils/binaries';
 import { getGlobalSetting } from '../../utils/vsCodeConfig/settings';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 
@@ -17,5 +17,5 @@ export async function installDotNet(context: IActionContext, majorVersion?: stri
   const scriptUrl = getDotNetBinariesReleaseUrl();
 
   context.telemetry.properties.lastStep = 'downloadAndExtractBinaries';
-  await downloadAndExtractBinaries(scriptUrl, targetDirectory, dotnetDependencyName, majorVersion);
+  await downloadAndExtractDependency(scriptUrl, targetDirectory, dotnetDependencyName, null, majorVersion);
 }

@@ -457,7 +457,7 @@ getTokenPicker={GetTokenPicker}
 
 export const scratchTab: PanelTab = {
   title: 'Scratch',
-  name: constants.PANEL_TAB_NAMES.SCRATCH,
+  id: constants.PANEL_TAB_NAMES.SCRATCH,
   description: 'To be removed',
   visible: true,
   content: <ScratchTab />,

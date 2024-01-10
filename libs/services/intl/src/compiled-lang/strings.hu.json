@@ -23,16 +23,6 @@
       "value": "Védett"
     }
   ],
-  "+7IA0V": [
-    {
-      "type": 1,
-      "value": "connectorName"
-    },
-    {
-      "type": 0,
-      "value": " connections"
-    }
-  ],
   "+FcXe9": [
     {
       "type": 0,
@@ -179,6 +169,12 @@
       "value": "Az Azure Copilot megnyitása"
     }
   ],
+  "/c1l10": [
+    {
+      "type": 0,
+      "value": "⌘+C"
+    }
+  ],
   "/doURb": [
     {
       "type": 0,
@@ -307,6 +303,12 @@
     {
       "type": 0,
       "value": "(UTC+05:30) Sri Jayawardenepura"
+    }
+  ],
+  "0CPsxh": [
+    {
+      "type": 0,
+      "value": "Del"
     }
   ],
   "0CvRZW": [
@@ -559,12 +561,6 @@
     {
       "type": 0,
       "value": "5"
-    }
-  ],
-  "1zgFh1": [
-    {
-      "type": 0,
-      "value": "Bezárás"
     }
   ],
   "20oqsp": [
@@ -940,7 +936,7 @@
   "41drjl": [
     {
       "type": 0,
-      "value": "Open connection"
+      "value": "Kapcsolat megnyitása"
     }
   ],
   "41eMpW": [
@@ -1171,6 +1167,12 @@
       "value": "A logikai alkalmazásban használt paramétereket Azure Resource Manager-sablonná konvertálja a rendszer az üzembe helyezési sablon létrehozása során."
     }
   ],
+  "5gOG+F": [
+    {
+      "type": 0,
+      "value": "Adja meg az összehasonlítandó értékeket, és válassza ki a használandó operátort."
+    }
+  ],
   "5hWg4V": [
     {
       "type": 0,
@@ -1368,7 +1370,7 @@
   "74e2xB": [
     {
       "type": 0,
-      "value": "Create a new connection"
+      "value": "Új kapcsolat létrehozása"
     }
   ],
   "78Vggn": [
@@ -2402,7 +2404,7 @@
   "DfXxoX": [
     {
       "type": 0,
-      "value": "Select an existing connection or create a new one"
+      "value": "Válasszon ki egy meglévő kapcsolatot, vagy hozzon létre egy újat."
     }
   ],
   "Dhu3IS": [
@@ -3828,7 +3830,7 @@
   "NdOhXD": [
     {
       "type": 0,
-      "value": "Create Connection"
+      "value": "Kapcsolat létrehozása"
     }
   ],
   "Nh91qA": [
@@ -3931,12 +3933,6 @@
     {
       "type": 0,
       "value": "OK"
-    }
-  ],
-  "OBKhVi": [
-    {
-      "type": 0,
-      "value": "Ez a művelet/trigger nem másolható."
     }
   ],
   "ODQCKj": [
@@ -4467,12 +4463,6 @@
       "value": " ó"
     }
   ],
-  "Qy0Kha": [
-    {
-      "type": 0,
-      "value": "Az eseményindítók nem törölhetők."
-    }
-  ],
   "R/aiRy": [
     {
       "type": 0,
@@ -4561,12 +4551,6 @@
     {
       "type": 0,
       "value": "probléma"
-    }
-  ],
-  "Ro4+PC": [
-    {
-      "type": 0,
-      "value": "Csak akkor adhat hozzá jegyzeteket, ha szerkeszti egy lépés bemeneteit."
     }
   ],
   "Rp5pHU": [
@@ -4857,6 +4841,12 @@
       "value": "Jegyzet"
     }
   ],
+  "TsJbGH": [
+    {
+      "type": 0,
+      "value": "Leválasztva"
+    }
+  ],
   "Ttc0SM": [
     {
       "type": 0,
@@ -5127,6 +5117,12 @@
     {
       "type": 0,
       "value": "Hét"
+    }
+  ],
+  "V7k/GN": [
+    {
+      "type": 0,
+      "value": "Kapcsolóeset törlése"
     }
   ],
   "V8A+1J": [
@@ -5405,6 +5401,12 @@
     {
       "type": 0,
       "value": "Egy felügyelt identitás nincs konfigurálva a logikai alkalmazásban."
+    }
+  ],
+  "WvvJYw": [
+    {
+      "type": 0,
+      "value": "Műveletek"
     }
   ],
   "X/7je+": [
@@ -5900,7 +5902,7 @@
   "ZAdaBl": [
     {
       "type": 0,
-      "value": "Select an existing connection reference or create a new one"
+      "value": "Válasszon ki egy meglévő kapcsolati hivatkozást, vagy hozzon létre egy újat."
     }
   ],
   "ZBJiuD": [
@@ -5955,12 +5957,6 @@
     {
       "type": 0,
       "value": "További információ"
-    }
-  ],
-  "ZbX8xq": [
-    {
-      "type": 0,
-      "value": "Ezt a műveletet már törölték."
     }
   ],
   "Zg3IjD": [
@@ -6288,13 +6284,13 @@
   "cZXqqf": [
     {
       "type": 0,
-      "value": "Change Connection"
+      "value": "Kapcsolat megváltoztatása"
     }
   ],
   "cZv9J0": [
     {
       "type": 0,
-      "value": "Connection is valid"
+      "value": "A kapcsolat érvényes"
     }
   ],
   "ca/QIc": [
@@ -6542,7 +6538,7 @@
   "eFnLWK": [
     {
       "type": 0,
-      "value": "(UTC-06:00) Közép-Amerika"
+      "value": "(UTC–06:00) Közép-Amerika"
     }
   ],
   "eHgfpz": [
@@ -6593,6 +6589,12 @@
       "value": "Dőlt (⌘I)"
     }
   ],
+  "en/5A3": [
+    {
+      "type": 0,
+      "value": "Ismételt hozzárendelés"
+    }
+  ],
   "eo1YKX": [
     {
       "type": 0,
@@ -6614,7 +6616,7 @@
   "evyGYj": [
     {
       "type": 0,
-      "value": "Reassign all connected actions to a new connection"
+      "value": "Az összes csatlakoztatott művelet hozzárendelése új kapcsolathoz"
     }
   ],
   "f/lWTW": [
@@ -6755,6 +6757,12 @@
     {
       "type": 0,
       "value": "Teszt futtatása"
+    }
+  ],
+  "gA1dde": [
+    {
+      "type": 0,
+      "value": "Kódnézet be- és kikapcsolása"
     }
   ],
   "gCXOd5": [
@@ -6975,12 +6983,6 @@
     {
       "type": 0,
       "value": "Visszavonás"
-    }
-  ],
-  "hTZZr+": [
-    {
-      "type": 0,
-      "value": "Connected actions"
     }
   ],
   "hZqQdt": [
@@ -7828,7 +7830,7 @@
   "mUURJW": [
     {
       "type": 0,
-      "value": "Connection is invalid"
+      "value": "A kapcsolat érvénytelen"
     }
   ],
   "mYQFtf": [
@@ -7876,7 +7878,7 @@
   "mlU+AC": [
     {
       "type": 0,
-      "value": "Connections"
+      "value": "Kapcsolatok"
     }
   ],
   "mvrlkP": [
@@ -8000,7 +8002,7 @@
   "nSUXtP": [
     {
       "type": 0,
-      "value": "Multiple actions will be modified by this change."
+      "value": "Ez a változás több műveletet módosít."
     }
   ],
   "nSan4V": [
@@ -8255,12 +8257,6 @@
     {
       "type": 0,
       "value": "Alkalmazáson belüli termék"
-    }
-  ],
-  "p3K7eM": [
-    {
-      "type": 0,
-      "value": "Disconnected actions"
     }
   ],
   "p5ZID0": [
@@ -8829,6 +8825,12 @@
     {
       "type": 0,
       "value": "Kulcs"
+    }
+  ],
+  "snJFUi": [
+    {
+      "type": 0,
+      "value": "Ctrl+C"
     }
   ],
   "soqP+Z": [
@@ -9723,12 +9725,6 @@
       "value": "Érték"
     }
   ],
-  "xxeu75": [
-    {
-      "type": 0,
-      "value": "Reassign all disconnected actions to a new connection"
-    }
-  ],
   "y1e9yw": [
     {
       "type": 0,
@@ -9977,12 +9973,6 @@
     {
       "type": 0,
       "value": "Leállítás"
-    }
-  ],
-  "ziXw25": [
-    {
-      "type": 0,
-      "value": "Törlés"
     }
   ],
   "ziYCiA": [

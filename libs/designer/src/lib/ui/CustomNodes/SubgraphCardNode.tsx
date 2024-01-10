@@ -1,13 +1,13 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
 import constants from '../../common/constants';
-import type { AppDispatch } from '../../core';
+import { useOperationInfo, type AppDispatch } from '../../core';
 import { initializeSwitchCaseFromManifest } from '../../core/actions/bjsworkflow/add';
-import { deleteGraphNode } from '../../core/actions/bjsworkflow/delete';
 import { getOperationManifest } from '../../core/queries/operation';
 import { useMonitoringView, useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
+import { setShowDeleteModal } from '../../core/state/designerView/designerViewSlice';
+import { useIconUri } from '../../core/state/operation/operationSelector';
 import { useIsNodeSelected } from '../../core/state/panel/panelSelectors';
-import { changePanelNode, isolateTab, showDefaultTabs } from '../../core/state/panel/panelSlice';
-import { useIconUri, useOperationInfo } from '../../core/state/selectors/actionMetadataSelector';
+import { changePanelNode, setSelectedNodeId } from '../../core/state/panel/panelSlice';
 import {
   useActionMetadata,
   useIsGraphCollapsed,
@@ -17,13 +17,13 @@ import {
   useNodeMetadata,
   useWorkflowNode,
 } from '../../core/state/workflow/workflowSelectors';
-import { addSwitchCase, deleteSwitchCase, setFocusNode, toggleCollapsedGraphId } from '../../core/state/workflow/workflowSlice';
+import { addSwitchCase, setFocusNode, toggleCollapsedGraphId } from '../../core/state/workflow/workflowSlice';
 import { LoopsPager } from '../common/LoopsPager/LoopsPager';
 import { DropZone } from '../connections/dropzone';
-import type { MenuItemOption } from '@microsoft/designer-ui';
-import { DeleteNodeModal, MenuItemType, SubgraphCard } from '@microsoft/designer-ui';
-import { SUBGRAPH_TYPES, WORKFLOW_NODE_TYPES, removeIdTag } from '@microsoft/utils-logic-apps';
-import { memo, useCallback, useMemo, useState } from 'react';
+import { DeleteMenuItem } from '../menuItems/deleteMenuItem';
+import { SubgraphCard } from '@microsoft/designer-ui';
+import { SUBGRAPH_TYPES, removeIdTag } from '@microsoft/utils-logic-apps';
+import { memo, useCallback, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
 import { Handle, Position } from 'reactflow';
@@ -43,7 +43,6 @@ const SubgraphCardNode = ({ data, targetPosition = Position.Top, sourcePosition 
   const metadata = useNodeMetadata(subgraphId);
   const graphId = useMemo(() => metadata?.graphId ?? '', [metadata]);
   const graphNode = useWorkflowNode(graphId);
-  const subgraphNode = useWorkflowNode(subgraphId);
   const operationInfo = useOperationInfo(graphId);
   const isMonitoringView = useMonitoringView();
   const normalizedType = node?.type.toLowerCase();
@@ -67,15 +66,12 @@ const SubgraphCardNode = ({ data, targetPosition = Position.Top, sourcePosition 
         };
         initializeSwitchCaseFromManifest(newCaseId, subGraphManifest, dispatch);
         dispatch(changePanelNode(newCaseId));
-        dispatch(showDefaultTabs({ isMonitoringView }));
         dispatch(setFocusNode(newCaseId));
       } else {
         dispatch(changePanelNode(_id));
-        dispatch(isolateTab(constants.PANEL_TAB_NAMES.PARAMETERS));
-        dispatch(showDefaultTabs({ isMonitoringView }));
       }
     },
-    [isAddCase, graphNode, dispatch, newCaseId, subgraphId, operationInfo, iconUri, isMonitoringView]
+    [isAddCase, graphNode, dispatch, newCaseId, subgraphId, operationInfo, iconUri]
   );
 
   const graphCollapsed = useIsGraphCollapsed(subgraphId);
@@ -94,33 +90,19 @@ const SubgraphCardNode = ({ data, targetPosition = Position.Top, sourcePosition 
     { actionCount }
   );
 
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const handleDeleteClick = () => setShowDeleteModal(true);
-  const handleDelete = () => {
-    if (subgraphNode) {
-      dispatch(deleteGraphNode({ graphId: subgraphId, graphNode: subgraphNode }));
-      dispatch(deleteSwitchCase({ caseId: subgraphId, nodeId: graphId }));
-    }
-  };
+  const deleteClick = useCallback(() => {
+    dispatch(setSelectedNodeId(id));
+    dispatch(setShowDeleteModal(true));
+  }, [dispatch, id]);
 
-  const getDeleteMenuItem = () => {
-    const deleteDescription = intl.formatMessage({
-      defaultMessage: 'Delete',
-      description: 'Delete text',
-    });
-
-    return {
-      key: deleteDescription,
-      disabled: readOnly,
-      iconName: 'Delete',
-      title: deleteDescription,
-      type: MenuItemType.Advanced,
-      onClick: handleDeleteClick,
-    };
-  };
-
-  const contextMenuOptions: MenuItemOption[] = [];
-  if (metadata?.subgraphType === SUBGRAPH_TYPES['SWITCH_CASE']) contextMenuOptions.push(getDeleteMenuItem());
+  const contextMenuItems: JSX.Element[] = useMemo(
+    () => [
+      ...(metadata?.subgraphType === SUBGRAPH_TYPES['SWITCH_CASE']
+        ? [<DeleteMenuItem key={'delete'} onClick={deleteClick} showKey />]
+        : []),
+    ],
+    [deleteClick, metadata?.subgraphType]
+  );
 
   return (
     <div>
@@ -139,7 +121,7 @@ const SubgraphCardNode = ({ data, targetPosition = Position.Top, sourcePosition 
                 onClick={subgraphClick}
                 collapsed={graphCollapsed}
                 handleCollapse={handleGraphCollapse}
-                contextMenuOptions={contextMenuOptions}
+                contextMenuItems={contextMenuItems}
               />
               {isMonitoringView && normalizedType === constants.NODE.TYPE.UNTIL ? (
                 <LoopsPager metadata={metadata} scopeId={subgraphId} collapsed={graphCollapsed} />
@@ -159,13 +141,6 @@ const SubgraphCardNode = ({ data, targetPosition = Position.Top, sourcePosition 
           <p className="no-actions-text">No Actions</p>
         )
       ) : null}
-      <DeleteNodeModal
-        nodeId={id}
-        nodeType={WORKFLOW_NODE_TYPES.SUBGRAPH_NODE}
-        isOpen={showDeleteModal}
-        onDismiss={() => setShowDeleteModal(false)}
-        onConfirm={handleDelete}
-      />
     </div>
   );
 };

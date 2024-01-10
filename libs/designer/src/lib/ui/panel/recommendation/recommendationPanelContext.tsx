@@ -13,7 +13,9 @@ import { BrowseView } from './browseView';
 import { CustomSwaggerSelection } from './customSwaggerSelection';
 import { OperationGroupDetailView } from './operationGroupDetailView';
 import { SearchView } from './searchView';
-import { Link, Icon, IconButton, Text } from '@fluentui/react';
+import { Link, Icon, Text } from '@fluentui/react';
+import { Button } from '@fluentui/react-components';
+import { bundleIcon, Dismiss24Filled, Dismiss24Regular } from '@fluentui/react-icons';
 import { SearchService } from '@microsoft/designer-client-services-logic-apps';
 import { OperationSearchHeader } from '@microsoft/designer-ui';
 import type { CommonPanelProps } from '@microsoft/designer-ui';
@@ -22,6 +24,8 @@ import { equals, guid, areApiIdsEqual } from '@microsoft/utils-logic-apps';
 import { useCallback, useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
+
+const CloseIcon = bundleIcon(Dismiss24Filled, Dismiss24Regular);
 
 type SelectionState = (typeof SELECTION_STATES)[keyof typeof SELECTION_STATES];
 const SELECTION_STATES = {
@@ -124,6 +128,7 @@ export const RecommendationPanelContext = (props: RecommendationPanelContextProp
         if (!operation) return;
         dispatch(selectOperationId(operation.id));
         setSelectedOperation(operation);
+        dispatch(selectOperationGroupId(''));
         if (hasAzureResourceSelection(operation)) {
           startAzureResourceSelection();
           return;
@@ -163,7 +168,7 @@ export const RecommendationPanelContext = (props: RecommendationPanelContextProp
     <>
       <div className="msla-app-action-header">
         <Text variant="xLarge">{headingText}</Text>
-        <IconButton onClick={toggleCollapse} iconProps={{ iconName: 'Cancel' }} />
+        <Button appearance="subtle" onClick={toggleCollapse} icon={<CloseIcon />} />
       </div>
       {selectionState !== SELECTION_STATES.SEARCH || selectedOperationGroupId ? (
         <div className={'msla-sub-heading-container'}>

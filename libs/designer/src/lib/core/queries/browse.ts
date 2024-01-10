@@ -1,4 +1,5 @@
 import { SearchService } from '@microsoft/designer-client-services-logic-apps';
+import { cleanConnectorId } from '@microsoft/utils-logic-apps';
 import { useEffect, useMemo } from 'react';
 import { useInfiniteQuery, useQuery } from 'react-query';
 
@@ -84,7 +85,7 @@ export const useAllApiIdsWithTriggers = () => {
   return useMemo(
     () => ({
       ...allTriggers,
-      data: allTriggers.data.map((trigger) => trigger?.properties.api.id),
+      data: allTriggers.data.map((trigger) => cleanConnectorId(trigger?.properties.api.id)),
     }),
     [allTriggers]
   );
@@ -108,7 +109,7 @@ export const useAllApiIdsWithActions = () => {
   return useMemo(
     () => ({
       ...allActions,
-      data: allActions.data.map((action) => action?.properties.api.id),
+      data: allActions.data.map((action) => cleanConnectorId(action?.properties.api.id)),
     }),
     [allActions]
   );

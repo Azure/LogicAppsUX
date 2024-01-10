@@ -18,6 +18,7 @@ import {
 } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
+import { downloadExtensionBundle } from '../bundleFeed';
 import { updateFuncIgnore } from '../codeless/common';
 import { writeFormattedJson } from '../fs';
 import { getFunctionsCommand } from '../funcCoreTools/funcVersion';
@@ -86,7 +87,7 @@ export async function startDesignTimeApi(projectPath: string): Promise<void> {
       );
 
       const designTimeDirectory: Uri | undefined = await getOrCreateDesignTimeDirectory(designTimeDirectoryName, projectPath);
-      settingsFileContent.Values[ProjectDirectoryPath] = path.join(designTimeDirectory.fsPath);
+      settingsFileContent.Values[ProjectDirectoryPath] = path.join(projectPath);
 
       if (designTimeDirectory) {
         await createJsonFile(designTimeDirectory, hostFileName, hostFileContent);
@@ -114,6 +115,10 @@ export async function startDesignTimeApi(projectPath: string): Promise<void> {
 
 export async function getOrCreateDesignTimeDirectory(designTimeDirectory: string, projectRoot: string): Promise<Uri | undefined> {
   const directory: string = designTimeDirectory + path.sep;
+  if (projectRoot.includes(designTimeDirectoryName)) {
+    return Uri.file(projectRoot);
+  }
+
   const designTimeDirectoryUri: Uri = Uri.file(path.join(projectRoot, directory));
   if (!fs.existsSync(designTimeDirectoryUri.fsPath)) {
     await workspace.fs.createDirectory(designTimeDirectoryUri);
@@ -190,12 +195,13 @@ export function startDesignTimeProcess(
 }
 
 export function stopDesignTimeApi(): void {
+  ext.outputChannel.appendLog('Stopping Design Time Api');
   if (ext.designChildProcess === null || ext.designChildProcess === undefined) {
     return;
   }
 
   if (os.platform() === Platform.windows) {
-    cp.exec('taskkill /pid ' + `${ext.designChildProcess.pid}` + ' /T /F');
+    cp.exec('taskkill /pid ' + `${ext.designChildProcess.pid}` + ' /t /f');
   } else {
     ext.designChildProcess.kill();
   }
@@ -208,7 +214,9 @@ export async function promptStartDesignTimeOption(context: IActionContext) {
     const projectPath = await tryGetLogicAppProjectRoot(context, workspaceFolder);
     const autoStartDesignTime = !!getWorkspaceSetting<boolean>(autoStartDesignTimeSetting);
     const showStartDesignTimeMessage = !!getWorkspaceSetting<boolean>(showStartDesignTimeMessageSetting);
+
     if (projectPath) {
+      await downloadExtensionBundle(context);
       if (autoStartDesignTime) {
         startDesignTimeApi(projectPath);
       } else if (showStartDesignTimeMessage) {

@@ -23,16 +23,6 @@
       "value": "Korumalı"
     }
   ],
-  "+7IA0V": [
-    {
-      "type": 1,
-      "value": "connectorName"
-    },
-    {
-      "type": 0,
-      "value": " connections"
-    }
-  ],
   "+FcXe9": [
     {
       "type": 0,
@@ -175,6 +165,12 @@
       "value": "Azure Copilot’u aç"
     }
   ],
+  "/c1l10": [
+    {
+      "type": 0,
+      "value": "⌘+C"
+    }
+  ],
   "/doURb": [
     {
       "type": 0,
@@ -303,6 +299,12 @@
     {
       "type": 0,
       "value": "(UTC+05:30) Sri Jayawardenepura"
+    }
+  ],
+  "0CPsxh": [
+    {
+      "type": 0,
+      "value": "Del"
     }
   ],
   "0CvRZW": [
@@ -555,12 +557,6 @@
     {
       "type": 0,
       "value": "5"
-    }
-  ],
-  "1zgFh1": [
-    {
-      "type": 0,
-      "value": "Kapat"
     }
   ],
   "20oqsp": [
@@ -924,7 +920,7 @@
   "41drjl": [
     {
       "type": 0,
-      "value": "Open connection"
+      "value": "Bağlantıyı açın"
     }
   ],
   "41eMpW": [
@@ -1155,6 +1151,12 @@
       "value": "Mantıksal Uygulama'da kullanılan parametreler, dağıtım şablonu oluşturma sırasında Azure Resource Manager şablonuna dönüştürülür."
     }
   ],
+  "5gOG+F": [
+    {
+      "type": 0,
+      "value": "Karşılaştırılacak değerleri sağlayın ve kullanılacak operatörü seçin."
+    }
+  ],
   "5hWg4V": [
     {
       "type": 0,
@@ -1360,7 +1362,7 @@
   "74e2xB": [
     {
       "type": 0,
-      "value": "Create a new connection"
+      "value": "Yeni bağlantı oluştur"
     }
   ],
   "78Vggn": [
@@ -2390,7 +2392,7 @@
   "DfXxoX": [
     {
       "type": 0,
-      "value": "Select an existing connection or create a new one"
+      "value": "Mevcut bir bağlantıyı seçin veya yeni bir bağlantı oluşturun"
     }
   ],
   "Dhu3IS": [
@@ -3808,7 +3810,7 @@
   "NdOhXD": [
     {
       "type": 0,
-      "value": "Create Connection"
+      "value": "Bağlantı Oluştur"
     }
   ],
   "Nh91qA": [
@@ -3911,12 +3913,6 @@
     {
       "type": 0,
       "value": "Tamam"
-    }
-  ],
-  "OBKhVi": [
-    {
-      "type": 0,
-      "value": "Bu Eylem/Tetikleyici kopyalanamıyor."
     }
   ],
   "ODQCKj": [
@@ -4443,12 +4439,6 @@
       "value": " sa"
     }
   ],
-  "Qy0Kha": [
-    {
-      "type": 0,
-      "value": "Tetikleyiciler silinemez."
-    }
-  ],
   "R/aiRy": [
     {
       "type": 0,
@@ -4537,12 +4527,6 @@
     {
       "type": 0,
       "value": "sorun"
-    }
-  ],
-  "Ro4+PC": [
-    {
-      "type": 0,
-      "value": "Yalnızca bir adımın girişlerini düzenlediğinizde not ekleyebilirsiniz."
     }
   ],
   "Rp5pHU": [
@@ -4827,6 +4811,12 @@
     {
       "type": 0,
       "value": "Not"
+    }
+  ],
+  "TsJbGH": [
+    {
+      "type": 0,
+      "value": "Bağlantı kesildi"
     }
   ],
   "Ttc0SM": [
@@ -5121,6 +5111,12 @@
       "value": "Hafta"
     }
   ],
+  "V7k/GN": [
+    {
+      "type": 0,
+      "value": "Geçiş Servis Talebini Sil"
+    }
+  ],
   "V8A+1J": [
     {
       "type": 0,
@@ -5397,6 +5393,12 @@
     {
       "type": 0,
       "value": "Mantıksal uygulamada yapılandırılmış bir yönetilen kimlik yok."
+    }
+  ],
+  "WvvJYw": [
+    {
+      "type": 0,
+      "value": "Eylemler"
     }
   ],
   "X/7je+": [
@@ -5892,7 +5894,7 @@
   "ZAdaBl": [
     {
       "type": 0,
-      "value": "Select an existing connection reference or create a new one"
+      "value": "Mevcut bir bağlantı başvurusu seçin veya yeni bir başvuru oluşturun"
     }
   ],
   "ZBJiuD": [
@@ -5947,12 +5949,6 @@
     {
       "type": 0,
       "value": "Daha fazlasını oku"
-    }
-  ],
-  "ZbX8xq": [
-    {
-      "type": 0,
-      "value": "Bu işlem zaten silinmiş."
     }
   ],
   "Zg3IjD": [
@@ -6280,13 +6276,13 @@
   "cZXqqf": [
     {
       "type": 0,
-      "value": "Change Connection"
+      "value": "Bağlantıyı Değiştir"
     }
   ],
   "cZv9J0": [
     {
       "type": 0,
-      "value": "Connection is valid"
+      "value": "Bağlantı geçerli"
     }
   ],
   "ca/QIc": [
@@ -6581,6 +6577,12 @@
       "value": "İtalik (⌘I)"
     }
   ],
+  "en/5A3": [
+    {
+      "type": 0,
+      "value": "Yeniden ata"
+    }
+  ],
   "eo1YKX": [
     {
       "type": 0,
@@ -6602,7 +6604,7 @@
   "evyGYj": [
     {
       "type": 0,
-      "value": "Reassign all connected actions to a new connection"
+      "value": "Tüm bağlı eylemleri yeni bir bağlantıya yeniden atayın"
     }
   ],
   "f/lWTW": [
@@ -6743,6 +6745,12 @@
     {
       "type": 0,
       "value": "Testi çalıştır"
+    }
+  ],
+  "gA1dde": [
+    {
+      "type": 0,
+      "value": "Kod görünümünü aç/kapat"
     }
   ],
   "gCXOd5": [
@@ -6955,12 +6963,6 @@
     {
       "type": 0,
       "value": "Geri Al"
-    }
-  ],
-  "hTZZr+": [
-    {
-      "type": 0,
-      "value": "Connected actions"
     }
   ],
   "hZqQdt": [
@@ -7804,7 +7806,7 @@
   "mUURJW": [
     {
       "type": 0,
-      "value": "Connection is invalid"
+      "value": "Bağlantı geçersiz"
     }
   ],
   "mYQFtf": [
@@ -7852,7 +7854,7 @@
   "mlU+AC": [
     {
       "type": 0,
-      "value": "Connections"
+      "value": "Bağlantılar"
     }
   ],
   "mvrlkP": [
@@ -7976,7 +7978,7 @@
   "nSUXtP": [
     {
       "type": 0,
-      "value": "Multiple actions will be modified by this change."
+      "value": "Bu değiştirilecek birden çok eylem değiştirilir."
     }
   ],
   "nSan4V": [
@@ -8231,12 +8233,6 @@
     {
       "type": 0,
       "value": "Uygulama İçi"
-    }
-  ],
-  "p3K7eM": [
-    {
-      "type": 0,
-      "value": "Disconnected actions"
     }
   ],
   "p5ZID0": [
@@ -8801,6 +8797,12 @@
     {
       "type": 0,
       "value": "Anahtar"
+    }
+  ],
+  "snJFUi": [
+    {
+      "type": 0,
+      "value": "Ctrl+C"
     }
   ],
   "soqP+Z": [
@@ -9695,12 +9697,6 @@
       "value": "Değer"
     }
   ],
-  "xxeu75": [
-    {
-      "type": 0,
-      "value": "Reassign all disconnected actions to a new connection"
-    }
-  ],
   "y1e9yw": [
     {
       "type": 0,
@@ -9945,12 +9941,6 @@
     {
       "type": 0,
       "value": "Durdur"
-    }
-  ],
-  "ziXw25": [
-    {
-      "type": 0,
-      "value": "Sil"
     }
   ],
   "ziYCiA": [

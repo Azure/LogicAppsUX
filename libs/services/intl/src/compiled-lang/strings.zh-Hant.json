@@ -23,16 +23,6 @@
       "value": "受保護"
     }
   ],
-  "+7IA0V": [
-    {
-      "type": 1,
-      "value": "connectorName"
-    },
-    {
-      "type": 0,
-      "value": " connections"
-    }
-  ],
   "+FcXe9": [
     {
       "type": 0,
@@ -175,6 +165,12 @@
       "value": "開啟 Azure Copilot"
     }
   ],
+  "/c1l10": [
+    {
+      "type": 0,
+      "value": "⌘+C"
+    }
+  ],
   "/doURb": [
     {
       "type": 0,
@@ -303,6 +299,12 @@
     {
       "type": 0,
       "value": "(UTC+05:30) 斯里加亞渥登普拉"
+    }
+  ],
+  "0CPsxh": [
+    {
+      "type": 0,
+      "value": "Del"
     }
   ],
   "0CvRZW": [
@@ -555,12 +557,6 @@
     {
       "type": 0,
       "value": "5"
-    }
-  ],
-  "1zgFh1": [
-    {
-      "type": 0,
-      "value": "關閉"
     }
   ],
   "20oqsp": [
@@ -928,7 +924,7 @@
   "41drjl": [
     {
       "type": 0,
-      "value": "Open connection"
+      "value": "開啟連線"
     }
   ],
   "41eMpW": [
@@ -1163,6 +1159,12 @@
       "value": "在部署範本產生期間，Logic Apps 中使用的參數將會轉換成 Azure Resource Manager 範本。"
     }
   ],
+  "5gOG+F": [
+    {
+      "type": 0,
+      "value": "提供要比較的值，並選取要使用的運算子。"
+    }
+  ],
   "5hWg4V": [
     {
       "type": 0,
@@ -1368,7 +1370,7 @@
   "74e2xB": [
     {
       "type": 0,
-      "value": "Create a new connection"
+      "value": "建立新的連線"
     }
   ],
   "78Vggn": [
@@ -2375,7 +2377,7 @@
   "DfXxoX": [
     {
       "type": 0,
-      "value": "Select an existing connection or create a new one"
+      "value": "選取現有的連線或建立新的連線"
     }
   ],
   "Dhu3IS": [
@@ -3775,7 +3777,7 @@
   "NdOhXD": [
     {
       "type": 0,
-      "value": "Create Connection"
+      "value": "建立連線"
     }
   ],
   "Nh91qA": [
@@ -3878,12 +3880,6 @@
     {
       "type": 0,
       "value": "確定"
-    }
-  ],
-  "OBKhVi": [
-    {
-      "type": 0,
-      "value": "無法複製此動作/觸發程式。"
     }
   ],
   "ODQCKj": [
@@ -4398,12 +4394,6 @@
       "value": " 小時"
     }
   ],
-  "Qy0Kha": [
-    {
-      "type": 0,
-      "value": "無法刪除觸發。"
-    }
-  ],
   "R/aiRy": [
     {
       "type": 0,
@@ -4485,12 +4475,6 @@
     {
       "type": 0,
       "value": "問題"
-    }
-  ],
-  "Ro4+PC": [
-    {
-      "type": 0,
-      "value": "只有在編輯步驟的輸入時才可新增備註。"
     }
   ],
   "Rp5pHU": [
@@ -4779,6 +4763,12 @@
     {
       "type": 0,
       "value": "備註"
+    }
+  ],
+  "TsJbGH": [
+    {
+      "type": 0,
+      "value": "已中斷連線"
     }
   ],
   "Ttc0SM": [
@@ -5077,6 +5067,12 @@
       "value": "週"
     }
   ],
+  "V7k/GN": [
+    {
+      "type": 0,
+      "value": "刪除切換案例"
+    }
+  ],
   "V8A+1J": [
     {
       "type": 0,
@@ -5361,6 +5357,12 @@
     {
       "type": 0,
       "value": "邏輯應用程式上未設定受控識別。"
+    }
+  ],
+  "WvvJYw": [
+    {
+      "type": 0,
+      "value": "動作"
     }
   ],
   "X/7je+": [
@@ -5856,7 +5858,7 @@
   "ZAdaBl": [
     {
       "type": 0,
-      "value": "Select an existing connection reference or create a new one"
+      "value": "選取現有的連接參考或建立新的連接參考"
     }
   ],
   "ZBJiuD": [
@@ -5911,12 +5913,6 @@
     {
       "type": 0,
       "value": "閱讀更多"
-    }
-  ],
-  "ZbX8xq": [
-    {
-      "type": 0,
-      "value": "已刪除這項作業。"
     }
   ],
   "Zg3IjD": [
@@ -6244,13 +6240,13 @@
   "cZXqqf": [
     {
       "type": 0,
-      "value": "Change Connection"
+      "value": "變更連線"
     }
   ],
   "cZv9J0": [
     {
       "type": 0,
-      "value": "Connection is valid"
+      "value": "連線有效"
     }
   ],
   "ca/QIc": [
@@ -6549,6 +6545,12 @@
       "value": "斜體 (⌘I)"
     }
   ],
+  "en/5A3": [
+    {
+      "type": 0,
+      "value": "重新指派"
+    }
+  ],
   "eo1YKX": [
     {
       "type": 0,
@@ -6570,7 +6572,7 @@
   "evyGYj": [
     {
       "type": 0,
-      "value": "Reassign all connected actions to a new connection"
+      "value": "將所有已連線的動作重新指派至新的連線"
     }
   ],
   "f/lWTW": [
@@ -6711,6 +6713,12 @@
     {
       "type": 0,
       "value": "執行測試"
+    }
+  ],
+  "gA1dde": [
+    {
+      "type": 0,
+      "value": "切換程式碼檢視"
     }
   ],
   "gCXOd5": [
@@ -6912,12 +6920,6 @@
     {
       "type": 0,
       "value": "復原"
-    }
-  ],
-  "hTZZr+": [
-    {
-      "type": 0,
-      "value": "Connected actions"
     }
   ],
   "hZqQdt": [
@@ -7746,7 +7748,7 @@
   "mUURJW": [
     {
       "type": 0,
-      "value": "Connection is invalid"
+      "value": "連線無效"
     }
   ],
   "mYQFtf": [
@@ -7794,7 +7796,7 @@
   "mlU+AC": [
     {
       "type": 0,
-      "value": "Connections"
+      "value": "連線"
     }
   ],
   "mvrlkP": [
@@ -7918,7 +7920,7 @@
   "nSUXtP": [
     {
       "type": 0,
-      "value": "Multiple actions will be modified by this change."
+      "value": "此變更將修改多個動作。"
     }
   ],
   "nSan4V": [
@@ -8173,12 +8175,6 @@
     {
       "type": 0,
       "value": "應用程式內"
-    }
-  ],
-  "p3K7eM": [
-    {
-      "type": 0,
-      "value": "Disconnected actions"
     }
   ],
   "p5ZID0": [
@@ -8736,6 +8732,12 @@
     {
       "type": 0,
       "value": "索引鍵"
+    }
+  ],
+  "snJFUi": [
+    {
+      "type": 0,
+      "value": "Ctrl+C"
     }
   ],
   "soqP+Z": [
@@ -9634,12 +9636,6 @@
       "value": "值"
     }
   ],
-  "xxeu75": [
-    {
-      "type": 0,
-      "value": "Reassign all disconnected actions to a new connection"
-    }
-  ],
   "y1e9yw": [
     {
       "type": 0,
@@ -9888,12 +9884,6 @@
     {
       "type": 0,
       "value": "停止"
-    }
-  ],
-  "ziXw25": [
-    {
-      "type": 0,
-      "value": "刪除"
     }
   ],
   "ziYCiA": [

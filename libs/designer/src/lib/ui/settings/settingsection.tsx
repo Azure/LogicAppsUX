@@ -9,7 +9,9 @@ import { CustomizableMessageBar } from './validation/errorbar';
 import type { ValidationError } from './validation/validation';
 import { ValidationErrorType } from './validation/validation';
 import type { IDropdownOption } from '@fluentui/react';
-import { Separator, useTheme, Icon, IconButton, TooltipHost } from '@fluentui/react';
+import { Separator, useTheme, Icon } from '@fluentui/react';
+import { Button, Divider, Tooltip } from '@fluentui/react-components';
+import { bundleIcon, Dismiss24Filled, Dismiss24Regular } from '@fluentui/react-icons';
 import { MessageBarType } from '@fluentui/react/lib/MessageBar';
 import {
   isHighContrastBlack,
@@ -46,6 +48,8 @@ import type { FC } from 'react';
 import { useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
+
+const ClearIcon = bundleIcon(Dismiss24Filled, Dismiss24Regular);
 
 type SettingBase = {
   visible?: boolean;
@@ -315,17 +319,6 @@ const Setting = ({ id, settings, isReadOnly }: { id?: string; settings: Settings
       { parameterName: (settingProp as any).label }
     );
 
-    const RemoveConditionalParameter = () => {
-      const readOnly = useReadOnly();
-      return conditionalVisibility === true ? (
-        <div style={{ marginTop: '32px' }}>
-          <TooltipHost content={removeParamTooltip}>
-            <IconButton iconProps={{ iconName: 'Cancel' }} onClick={removeParamCallback} disabled={readOnly} />
-          </TooltipHost>
-        </div>
-      ) : null;
-    };
-
     return visible && conditionalVisibility !== false ? (
       <div key={i} style={{ display: 'flex', gap: '4px' }}>
         <div className={getClassName()} style={{ flex: '1 1 auto' }}>
@@ -336,7 +329,16 @@ const Setting = ({ id, settings, isReadOnly }: { id?: string; settings: Settings
             </span>
           )}
         </div>
-        <RemoveConditionalParameter />
+        {!readOnly && conditionalVisibility === true ? (
+          <Tooltip relationship="label" content={removeParamTooltip}>
+            <Button
+              appearance="subtle"
+              onClick={removeParamCallback}
+              icon={<ClearIcon />}
+              style={{ marginTop: '30px', color: 'var(--colorBrandForeground1)', height: '32px' }}
+            />
+          </Tooltip>
+        ) : null}
       </div>
     ) : null;
   };
@@ -347,8 +349,8 @@ const Setting = ({ id, settings, isReadOnly }: { id?: string; settings: Settings
       {settings?.filter((setting) => (setting.settingProp as any).conditionalVisibility === undefined).map(renderSetting)}
       {/* Render the dropdown list of advanced parameters */}
       {allConditionalSettings.length > 0 && !readOnly ? (
-        <div style={{ paddingTop: '32px' }}>
-          <hr />
+        <div style={{ padding: '24px 0px 16px' }}>
+          <Divider style={{ padding: '16px 0px' }} />
           <SearchableDropdownWithAddAll
             dropdownProps={{
               multiSelect: true,

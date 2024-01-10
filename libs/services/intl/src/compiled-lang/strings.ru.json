@@ -23,16 +23,6 @@
       "value": "Защищено"
     }
   ],
-  "+7IA0V": [
-    {
-      "type": 1,
-      "value": "connectorName"
-    },
-    {
-      "type": 0,
-      "value": " connections"
-    }
-  ],
   "+FcXe9": [
     {
       "type": 0,
@@ -175,6 +165,12 @@
       "value": "Открыть Azure Copilot"
     }
   ],
+  "/c1l10": [
+    {
+      "type": 0,
+      "value": "⌘+C"
+    }
+  ],
   "/doURb": [
     {
       "type": 0,
@@ -303,6 +299,12 @@
     {
       "type": 0,
       "value": "(UTC+05:30) Шри-Джаяварденепура"
+    }
+  ],
+  "0CPsxh": [
+    {
+      "type": 0,
+      "value": "DEL"
     }
   ],
   "0CvRZW": [
@@ -555,12 +557,6 @@
     {
       "type": 0,
       "value": "5"
-    }
-  ],
-  "1zgFh1": [
-    {
-      "type": 0,
-      "value": "Закрыть"
     }
   ],
   "20oqsp": [
@@ -932,7 +928,7 @@
   "41drjl": [
     {
       "type": 0,
-      "value": "Open connection"
+      "value": "Открыть подключение"
     }
   ],
   "41eMpW": [
@@ -1163,6 +1159,12 @@
       "value": "Параметры, используемые в приложении логики, будут преобразованы в шаблон Azure Resource Manager в ходе создания шаблона развертывания."
     }
   ],
+  "5gOG+F": [
+    {
+      "type": 0,
+      "value": "Укажите значения для сравнения и выберите оператор для использования."
+    }
+  ],
   "5hWg4V": [
     {
       "type": 0,
@@ -1368,7 +1370,7 @@
   "74e2xB": [
     {
       "type": 0,
-      "value": "Create a new connection"
+      "value": "Создание подключения"
     }
   ],
   "78Vggn": [
@@ -2420,7 +2422,7 @@
   "DfXxoX": [
     {
       "type": 0,
-      "value": "Select an existing connection or create a new one"
+      "value": "Выберите существующее подключение или создайте новое"
     }
   ],
   "Dhu3IS": [
@@ -3894,7 +3896,7 @@
   "NdOhXD": [
     {
       "type": 0,
-      "value": "Create Connection"
+      "value": "Создать подключение"
     }
   ],
   "Nh91qA": [
@@ -3997,12 +3999,6 @@
     {
       "type": 0,
       "value": "ОК"
-    }
-  ],
-  "OBKhVi": [
-    {
-      "type": 0,
-      "value": "Не удается скопировать это действие или триггер."
     }
   ],
   "ODQCKj": [
@@ -4525,12 +4521,6 @@
       "value": " ч"
     }
   ],
-  "Qy0Kha": [
-    {
-      "type": 0,
-      "value": "Триггеры удалить невозможно."
-    }
-  ],
   "R/aiRy": [
     {
       "type": 0,
@@ -4641,12 +4631,6 @@
     {
       "type": 0,
       "value": "проблема"
-    }
-  ],
-  "Ro4+PC": [
-    {
-      "type": 0,
-      "value": "Можно добавлять заметки только при редактировании входных данных какого-либо шага"
     }
   ],
   "Rp5pHU": [
@@ -4935,6 +4919,12 @@
     {
       "type": 0,
       "value": "Примечание"
+    }
+  ],
+  "TsJbGH": [
+    {
+      "type": 0,
+      "value": "Отключено"
     }
   ],
   "Ttc0SM": [
@@ -5229,6 +5219,12 @@
       "value": "Неделя"
     }
   ],
+  "V7k/GN": [
+    {
+      "type": 0,
+      "value": "Удалить вариант коммутатора"
+    }
+  ],
   "V8A+1J": [
     {
       "type": 0,
@@ -5505,6 +5501,12 @@
     {
       "type": 0,
       "value": "В приложении логики не настроено управляемое удостоверение"
+    }
+  ],
+  "WvvJYw": [
+    {
+      "type": 0,
+      "value": "Действия"
     }
   ],
   "X/7je+": [
@@ -6000,7 +6002,7 @@
   "ZAdaBl": [
     {
       "type": 0,
-      "value": "Select an existing connection reference or create a new one"
+      "value": "Выберите существующую ссылку на подключение или создайте новую"
     }
   ],
   "ZBJiuD": [
@@ -6055,12 +6057,6 @@
     {
       "type": 0,
       "value": "Подробнее"
-    }
-  ],
-  "ZbX8xq": [
-    {
-      "type": 0,
-      "value": "Эта операция уже удалена."
     }
   ],
   "Zg3IjD": [
@@ -6388,13 +6384,13 @@
   "cZXqqf": [
     {
       "type": 0,
-      "value": "Change Connection"
+      "value": "Изменить подключение"
     }
   ],
   "cZv9J0": [
     {
       "type": 0,
-      "value": "Connection is valid"
+      "value": "Подключение действительно"
     }
   ],
   "ca/QIc": [
@@ -6693,6 +6689,12 @@
       "value": "Курсив (⌘I)"
     }
   ],
+  "en/5A3": [
+    {
+      "type": 0,
+      "value": "Переназначить"
+    }
+  ],
   "eo1YKX": [
     {
       "type": 0,
@@ -6714,7 +6716,7 @@
   "evyGYj": [
     {
       "type": 0,
-      "value": "Reassign all connected actions to a new connection"
+      "value": "Переназначить все подключенные действия новому подключению"
     }
   ],
   "f/lWTW": [
@@ -6851,6 +6853,12 @@
     {
       "type": 0,
       "value": "Запустить тест"
+    }
+  ],
+  "gA1dde": [
+    {
+      "type": 0,
+      "value": "Переключить представление кода"
     }
   ],
   "gCXOd5": [
@@ -7093,12 +7101,6 @@
     {
       "type": 0,
       "value": "Отменить"
-    }
-  ],
-  "hTZZr+": [
-    {
-      "type": 0,
-      "value": "Connected actions"
     }
   ],
   "hZqQdt": [
@@ -7972,7 +7974,7 @@
   "mUURJW": [
     {
       "type": 0,
-      "value": "Connection is invalid"
+      "value": "Подключение недопустимо"
     }
   ],
   "mYQFtf": [
@@ -8020,7 +8022,7 @@
   "mlU+AC": [
     {
       "type": 0,
-      "value": "Connections"
+      "value": "Подключения"
     }
   ],
   "mvrlkP": [
@@ -8144,7 +8146,7 @@
   "nSUXtP": [
     {
       "type": 0,
-      "value": "Multiple actions will be modified by this change."
+      "value": "Это изменение приведет к изменению нескольких действий."
     }
   ],
   "nSan4V": [
@@ -8399,12 +8401,6 @@
     {
       "type": 0,
       "value": "В приложении"
-    }
-  ],
-  "p3K7eM": [
-    {
-      "type": 0,
-      "value": "Disconnected actions"
     }
   ],
   "p5ZID0": [
@@ -8995,6 +8991,12 @@
     {
       "type": 0,
       "value": "ключ"
+    }
+  ],
+  "snJFUi": [
+    {
+      "type": 0,
+      "value": "CTRL+C"
     }
   ],
   "soqP+Z": [
@@ -9893,12 +9895,6 @@
       "value": "Значение"
     }
   ],
-  "xxeu75": [
-    {
-      "type": 0,
-      "value": "Reassign all disconnected actions to a new connection"
-    }
-  ],
   "y1e9yw": [
     {
       "type": 0,
@@ -10143,12 +10139,6 @@
     {
       "type": 0,
       "value": "Остановить"
-    }
-  ],
-  "ziXw25": [
-    {
-      "type": 0,
-      "value": "Удалить"
     }
   ],
   "ziYCiA": [

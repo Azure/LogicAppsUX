@@ -23,16 +23,6 @@
       "value": "Protégé"
     }
   ],
-  "+7IA0V": [
-    {
-      "type": 1,
-      "value": "connectorName"
-    },
-    {
-      "type": 0,
-      "value": " connections"
-    }
-  ],
   "+FcXe9": [
     {
       "type": 0,
@@ -175,6 +165,12 @@
       "value": "Ouvrir Azure Copilot"
     }
   ],
+  "/c1l10": [
+    {
+      "type": 0,
+      "value": "⌘+C"
+    }
+  ],
   "/doURb": [
     {
       "type": 0,
@@ -303,6 +299,12 @@
     {
       "type": 0,
       "value": "(UTC+05:30) Sri Jayawardenapura"
+    }
+  ],
+  "0CPsxh": [
+    {
+      "type": 0,
+      "value": "Suppr"
     }
   ],
   "0CvRZW": [
@@ -555,12 +557,6 @@
     {
       "type": 0,
       "value": "5"
-    }
-  ],
-  "1zgFh1": [
-    {
-      "type": 0,
-      "value": "Ignorer"
     }
   ],
   "20oqsp": [
@@ -932,7 +928,7 @@
   "41drjl": [
     {
       "type": 0,
-      "value": "Open connection"
+      "value": "Ouvrir une connexion"
     }
   ],
   "41eMpW": [
@@ -1163,6 +1159,12 @@
       "value": "Les paramètres utilisés dans l'application logique sont convertis en modèle Azure Resource Manager pendant la génération du modèle de déploiement."
     }
   ],
+  "5gOG+F": [
+    {
+      "type": 0,
+      "value": "Indiquez les valeurs à comparer et sélectionnez l'opérateur à utiliser."
+    }
+  ],
   "5hWg4V": [
     {
       "type": 0,
@@ -1368,7 +1370,7 @@
   "74e2xB": [
     {
       "type": 0,
-      "value": "Create a new connection"
+      "value": "Créer une nouvelle connexion"
     }
   ],
   "78Vggn": [
@@ -2409,7 +2411,7 @@
   "DfXxoX": [
     {
       "type": 0,
-      "value": "Select an existing connection or create a new one"
+      "value": "Sélectionnez une connexion existante ou créez-en une."
     }
   ],
   "Dhu3IS": [
@@ -3853,7 +3855,7 @@
   "NdOhXD": [
     {
       "type": 0,
-      "value": "Create Connection"
+      "value": "Créer une connexion"
     }
   ],
   "Nh91qA": [
@@ -3956,12 +3958,6 @@
     {
       "type": 0,
       "value": "OK"
-    }
-  ],
-  "OBKhVi": [
-    {
-      "type": 0,
-      "value": "Impossible de copier cette action ou ce déclencheur."
     }
   ],
   "ODQCKj": [
@@ -4484,12 +4480,6 @@
       "value": " h"
     }
   ],
-  "Qy0Kha": [
-    {
-      "type": 0,
-      "value": "Les déclencheurs ne peuvent pas être supprimés."
-    }
-  ],
   "R/aiRy": [
     {
       "type": 0,
@@ -4589,12 +4579,6 @@
     {
       "type": 0,
       "value": "problème"
-    }
-  ],
-  "Ro4+PC": [
-    {
-      "type": 0,
-      "value": "Vous pouvez ajouter des notes uniquement lorsque vous modifiez les entrées d’une étape."
     }
   ],
   "Rp5pHU": [
@@ -4883,6 +4867,12 @@
     {
       "type": 0,
       "value": "Note"
+    }
+  ],
+  "TsJbGH": [
+    {
+      "type": 0,
+      "value": "Déconnecté"
     }
   ],
   "Ttc0SM": [
@@ -5177,6 +5167,12 @@
       "value": "Semaine"
     }
   ],
+  "V7k/GN": [
+    {
+      "type": 0,
+      "value": "Supprimer l’instruction switch case"
+    }
+  ],
   "V8A+1J": [
     {
       "type": 0,
@@ -5453,6 +5449,12 @@
     {
       "type": 0,
       "value": "Une identité managée n’est pas configurée sur l’application logique."
+    }
+  ],
+  "WvvJYw": [
+    {
+      "type": 0,
+      "value": "Actions"
     }
   ],
   "X/7je+": [
@@ -5948,7 +5950,7 @@
   "ZAdaBl": [
     {
       "type": 0,
-      "value": "Select an existing connection reference or create a new one"
+      "value": "Sélectionnez une référence de connexion existante ou créez-en une."
     }
   ],
   "ZBJiuD": [
@@ -6003,12 +6005,6 @@
     {
       "type": 0,
       "value": "En savoir plus"
-    }
-  ],
-  "ZbX8xq": [
-    {
-      "type": 0,
-      "value": "Cette opération a déjà été supprimée."
     }
   ],
   "Zg3IjD": [
@@ -6336,13 +6332,13 @@
   "cZXqqf": [
     {
       "type": 0,
-      "value": "Change Connection"
+      "value": "Changer la connexion"
     }
   ],
   "cZv9J0": [
     {
       "type": 0,
-      "value": "Connection is valid"
+      "value": "La connexion est valide"
     }
   ],
   "ca/QIc": [
@@ -6641,6 +6637,12 @@
       "value": "Italique (⌘I)"
     }
   ],
+  "en/5A3": [
+    {
+      "type": 0,
+      "value": "Réaffecter"
+    }
+  ],
   "eo1YKX": [
     {
       "type": 0,
@@ -6662,7 +6664,7 @@
   "evyGYj": [
     {
       "type": 0,
-      "value": "Reassign all connected actions to a new connection"
+      "value": "Réattribuer toutes les actions connectées à une nouvelle connexion"
     }
   ],
   "f/lWTW": [
@@ -6803,6 +6805,12 @@
     {
       "type": 0,
       "value": "Exécuter le test"
+    }
+  ],
+  "gA1dde": [
+    {
+      "type": 0,
+      "value": "Activer/désactiver l’affichage de code"
     }
   ],
   "gCXOd5": [
@@ -7034,12 +7042,6 @@
     {
       "type": 0,
       "value": "Annuler"
-    }
-  ],
-  "hTZZr+": [
-    {
-      "type": 0,
-      "value": "Connected actions"
     }
   ],
   "hZqQdt": [
@@ -7898,7 +7900,7 @@
   "mUURJW": [
     {
       "type": 0,
-      "value": "Connection is invalid"
+      "value": "La connexion n’est pas valide"
     }
   ],
   "mYQFtf": [
@@ -7946,7 +7948,7 @@
   "mlU+AC": [
     {
       "type": 0,
-      "value": "Connections"
+      "value": "Connexions"
     }
   ],
   "mvrlkP": [
@@ -8070,7 +8072,7 @@
   "nSUXtP": [
     {
       "type": 0,
-      "value": "Multiple actions will be modified by this change."
+      "value": "Plusieurs actions seront modifiées par cette modification."
     }
   ],
   "nSan4V": [
@@ -8325,12 +8327,6 @@
     {
       "type": 0,
       "value": "Dans l'application"
-    }
-  ],
-  "p3K7eM": [
-    {
-      "type": 0,
-      "value": "Disconnected actions"
     }
   ],
   "p5ZID0": [
@@ -8910,6 +8906,12 @@
     {
       "type": 0,
       "value": "Clé"
+    }
+  ],
+  "snJFUi": [
+    {
+      "type": 0,
+      "value": "Ctrl+C"
     }
   ],
   "soqP+Z": [
@@ -9808,12 +9810,6 @@
       "value": "Valeur"
     }
   ],
-  "xxeu75": [
-    {
-      "type": 0,
-      "value": "Reassign all disconnected actions to a new connection"
-    }
-  ],
   "y1e9yw": [
     {
       "type": 0,
@@ -10058,12 +10054,6 @@
     {
       "type": 0,
       "value": "Arrêter"
-    }
-  ],
-  "ziXw25": [
-    {
-      "type": 0,
-      "value": "Supprimer"
     }
   ],
   "ziYCiA": [

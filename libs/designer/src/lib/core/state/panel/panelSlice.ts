@@ -1,8 +1,8 @@
-import constants from '../../../common/constants';
+import { resetWorkflowState } from '../global';
 import type { RelationshipIds, PanelState, PanelMode } from './panelInterfaces';
 import { LogEntryLevel, LoggerService } from '@microsoft/designer-client-services-logic-apps';
-import type { PanelTab } from '@microsoft/designer-ui';
 import { PanelLocation } from '@microsoft/designer-ui';
+import { cleanConnectorId } from '@microsoft/utils-logic-apps';
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 
@@ -14,8 +14,7 @@ const initialState: PanelState = {
   },
   panelLocation: PanelLocation.Right,
   isParallelBranch: false,
-  registeredTabs: {},
-  selectedTabName: undefined,
+  selectedTabId: undefined,
   selectedOperationGroupId: '',
   selectedOperationId: '',
   addingTrigger: false,
@@ -44,6 +43,7 @@ export const panelSlice = createSlice({
       state.selectedOperationGroupId = '';
       state.addingTrigger = false;
       state.creatingConnection = false;
+      state.selectedTabId = undefined;
     },
     updatePanelLocation: (state, action: PayloadAction<PanelLocation | undefined>) => {
       if (action.payload && action.payload !== state.panelLocation) {
@@ -62,6 +62,7 @@ export const panelSlice = createSlice({
       if (state.collapsed) state.collapsed = false;
       state.selectedNodes = [action.payload];
       state.currentPanelMode = 'Operation';
+      state.selectedTabId = undefined;
 
       LoggerService().log({
         level: LogEntryLevel.Verbose,
@@ -89,7 +90,7 @@ export const panelSlice = createSlice({
       });
     },
     selectOperationGroupId: (state, action: PayloadAction<string>) => {
-      state.selectedOperationGroupId = action.payload;
+      state.selectedOperationGroupId = cleanConnectorId(action.payload);
 
       LoggerService().log({
         level: LogEntryLevel.Verbose,
@@ -117,87 +118,8 @@ export const panelSlice = createSlice({
       state.referencePanelMode = referencePanelMode;
       state.selectedNodes = nodeIds ? nodeIds : nodeId ? [nodeId] : [];
     },
-    registerPanelTabs: (state, action: PayloadAction<Array<PanelTab>>) => {
-      action.payload.forEach((tab) => {
-        state.registeredTabs[tab.name.toLowerCase()] = tab;
-      });
-    },
-    setTabError: (state, action: PayloadAction<{ tabName: string; hasErrors: boolean; nodeId: string }>) => {
-      const tabName = action.payload.tabName.toLowerCase();
-      const { nodeId, hasErrors } = action.payload;
-      if (tabName) {
-        state.registeredTabs[tabName] = {
-          ...state.registeredTabs[tabName],
-          tabErrors: {
-            ...state.registeredTabs?.[tabName]?.tabErrors,
-            [nodeId]: hasErrors,
-          },
-        };
-      }
-    },
-    unregisterPanelTab: (state, action: PayloadAction<string>) => {
-      delete state.registeredTabs[action.payload];
-    },
-    setTabVisibility: (state, action: PayloadAction<{ tabName: string; visible?: boolean }>) => {
-      const tabName = action.payload.tabName.toLowerCase();
-      if (tabName) {
-        state.registeredTabs[tabName] = {
-          ...state.registeredTabs[tabName],
-          visible: !!action.payload.visible,
-        };
-      }
-    },
-    showDefaultTabs: (
-      state,
-      action: PayloadAction<
-        { isScopeNode?: boolean; isMonitoringView?: boolean; hasSchema?: boolean; showRunHistory?: boolean } | undefined
-      >
-    ) => {
-      const isMonitoringView = action.payload?.isMonitoringView;
-      const isScopeNode = action.payload?.isScopeNode;
-      const hasSchema = action.payload?.hasSchema;
-      const defaultTabs = [
-        constants.PANEL_TAB_NAMES.ABOUT,
-        constants.PANEL_TAB_NAMES.CODE_VIEW,
-        constants.PANEL_TAB_NAMES.SETTINGS,
-        constants.PANEL_TAB_NAMES.SCRATCH,
-      ];
-
-      isMonitoringView
-        ? defaultTabs.unshift(constants.PANEL_TAB_NAMES.MONITORING)
-        : defaultTabs.unshift(constants.PANEL_TAB_NAMES.PARAMETERS);
-
-      if (isMonitoringView && action.payload?.showRunHistory) {
-        defaultTabs.unshift(constants.PANEL_TAB_NAMES.RETRY_HISTORY);
-      }
-      if (hasSchema && !isMonitoringView) {
-        defaultTabs.unshift(constants.PANEL_TAB_NAMES.TESTING);
-      }
-      if (isScopeNode && !isMonitoringView) {
-        defaultTabs.shift();
-      }
-
-      Object.values(state.registeredTabs as Record<string, PanelTab>).forEach((tab) => {
-        if (state.registeredTabs[tab.name.toLowerCase()]) {
-          state.registeredTabs[tab.name.toLowerCase()] = { ...tab, visible: defaultTabs.includes(tab.name) };
-        }
-      });
-    },
-    isolateTab: (state, action: PayloadAction<string>) => {
-      Object.values(state.registeredTabs as Record<string, PanelTab>).forEach((tab) => {
-        state.registeredTabs[tab.name.toLowerCase()] = { ...tab, visible: tab.name === action.payload };
-      });
-      state.selectedTabName = action.payload;
-
-      LoggerService().log({
-        level: LogEntryLevel.Verbose,
-        area: 'Designer:Panel Slice',
-        message: action.type,
-        args: [action.payload],
-      });
-    },
     selectPanelTab: (state, action: PayloadAction<string | undefined>) => {
-      state.selectedTabName = action.payload;
+      state.selectedTabId = action.payload;
 
       LoggerService().log({
         level: LogEntryLevel.Verbose,
@@ -212,6 +134,9 @@ export const panelSlice = createSlice({
     setIsCreatingConnection: (state, action: PayloadAction<boolean>) => {
       state.creatingConnection = action.payload;
     },
+  },
+  extraReducers: (builder) => {
+    builder.addCase(resetWorkflowState, () => initialState);
   },
 });
 
@@ -228,13 +153,7 @@ export const {
   selectOperationGroupId,
   selectOperationId,
   openPanel,
-  registerPanelTabs,
-  unregisterPanelTab,
-  showDefaultTabs,
-  setTabVisibility,
-  isolateTab,
   selectPanelTab,
-  setTabError,
   setIsPanelLoading,
   setIsCreatingConnection,
 } = panelSlice.actions;
