@@ -1,5 +1,13 @@
 # Logic Apps Designer
 
+## [2.102.0](https://github.com/Azure/LogicAppsUX/compare/v2.101.0...v2.102.0) (2024-01-10)
+
+### Bug Fixes
+
+- **Designer:** IM team enhacements ([#3959](https://github.com/Azure/LogicAppsUX/issues/3959)) ([b224446](https://github.com/Azure/LogicAppsUX/commit/b2244463e0d8f6c4c2c23d07726bdd508ceb6d53))
+
+## [2.101.0](https://github.com/Azure/LogicAppsUX/compare/v2.100.0...v2.101.0) (2024-01-09)
+
 ## [2.101.0](https://github.com/Azure/LogicAppsUX/compare/v2.100.0...v2.101.0) (2024-01-09)
 
 ### Features
