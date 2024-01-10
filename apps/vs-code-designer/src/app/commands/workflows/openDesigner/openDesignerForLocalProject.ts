@@ -127,10 +127,7 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
       async (event) => {
         const eventPanel: WebviewPanel = event.webviewPanel;
         if (eventPanel.visible) {
-          window.showInformationMessage(
-            localize('designer.restart', 'If changes were made to logic app files, restart designer to see the latest changes.'),
-            'OK'
-          );
+          await this.reloadWebviewPanel(eventPanel);
         }
       },
       undefined,
