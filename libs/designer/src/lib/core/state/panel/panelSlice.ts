@@ -1,6 +1,8 @@
+import { resetWorkflowState } from '../global';
 import type { RelationshipIds, PanelState, PanelMode } from './panelInterfaces';
 import { LogEntryLevel, LoggerService } from '@microsoft/designer-client-services-logic-apps';
 import { PanelLocation } from '@microsoft/designer-ui';
+import { cleanConnectorId } from '@microsoft/utils-logic-apps';
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 
@@ -88,7 +90,7 @@ export const panelSlice = createSlice({
       });
     },
     selectOperationGroupId: (state, action: PayloadAction<string>) => {
-      state.selectedOperationGroupId = action.payload;
+      state.selectedOperationGroupId = cleanConnectorId(action.payload);
 
       LoggerService().log({
         level: LogEntryLevel.Verbose,
@@ -132,6 +134,9 @@ export const panelSlice = createSlice({
     setIsCreatingConnection: (state, action: PayloadAction<boolean>) => {
       state.creatingConnection = action.payload;
     },
+  },
+  extraReducers: (builder) => {
+    builder.addCase(resetWorkflowState, () => initialState);
   },
 });
 

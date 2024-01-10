@@ -2,7 +2,7 @@ import { useAllApiIdsWithActions, useAllApiIdsWithTriggers, useAllConnectors } f
 import { selectOperationGroupId } from '../../../core/state/panel/panelSlice';
 import { SearchService } from '@microsoft/designer-client-services-logic-apps';
 import { BrowseGrid } from '@microsoft/designer-ui';
-import { isBuiltInConnector, type Connector, isCustomConnector } from '@microsoft/utils-logic-apps';
+import { isBuiltInConnector, type Connector, isCustomConnector, cleanConnectorId } from '@microsoft/utils-logic-apps';
 import { useCallback, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 
@@ -14,7 +14,7 @@ const defaultFilterConnector = (connector: Connector, runtimeFilter: string): bo
 };
 
 const defaultSortConnectors = (connectors: Connector[]): Connector[] => {
-  return connectors.sort((a, b) => a.properties.displayName.localeCompare(b.properties.displayName));
+  return connectors.sort((a, b) => a.properties.displayName?.localeCompare(b.properties.displayName));
 };
 
 export const BrowseView = ({
@@ -43,10 +43,10 @@ export const BrowseView = ({
       if (filters['actionType'] && (allApiIdsWithActions.data.length > 0 || allApiIdsWithTriggers.data.length > 0)) {
         const capabilities = connector.properties?.capabilities ?? [];
         const ignoreCapabilities = capabilities.length === 0;
-        const supportsActions =
-          (ignoreCapabilities || capabilities.includes('actions')) && allApiIdsWithActions.data.includes(connector.id);
+        const connectorId = cleanConnectorId(connector.id);
+        const supportsActions = (ignoreCapabilities || capabilities.includes('actions')) && allApiIdsWithActions.data.includes(connectorId);
         const supportsTriggers =
-          (ignoreCapabilities || capabilities.includes('triggers')) && allApiIdsWithTriggers.data.includes(connector.id);
+          (ignoreCapabilities || capabilities.includes('triggers')) && allApiIdsWithTriggers.data.includes(connectorId);
         if (filters['actionType'].toLowerCase() === 'triggers' && !supportsTriggers) return false;
         else if (filters['actionType'].toLowerCase() === 'actions' && !supportsActions) return false;
       }

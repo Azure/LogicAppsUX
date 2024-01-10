@@ -1,7 +1,7 @@
 import constants from '../../../../../common/constants';
 import { getMonitoringTabError } from '../../../../../common/utilities/error';
+import { useBrandColor } from '../../../../../core/state/operation/operationSelector';
 import { useSelectedNodeId } from '../../../../../core/state/panel/panelSelectors';
-import { useBrandColor } from '../../../../../core/state/selectors/actionMetadataSelector';
 import { useRunData } from '../../../../../core/state/workflow/workflowSelectors';
 import { InputsPanel } from './inputsPanel';
 import { OutputsPanel } from './outputsPanel';

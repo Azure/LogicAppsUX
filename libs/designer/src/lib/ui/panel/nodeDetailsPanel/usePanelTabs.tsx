@@ -1,7 +1,7 @@
 import constants from '../../../common/constants';
 import type { RootState } from '../../../core';
 import { useNodeMetadata, useOperationInfo } from '../../../core';
-import { useMonitoringView, useUnitTest } from '../../../core/state/designerOptions/designerOptionsSelectors';
+import { usePanelTabHideKeys, useUnitTest, useMonitoringView } from '../../../core/state/designerOptions/designerOptionsSelectors';
 import { useParameterValidationErrors } from '../../../core/state/operation/operationSelector';
 import { useSelectedNodeId } from '../../../core/state/panel/panelSelectors';
 import { useSettingValidationErrors } from '../../../core/state/setting/settingSelector';
@@ -27,6 +27,8 @@ export const usePanelTabs = () => {
 
   const isMonitoringView = useMonitoringView();
   const isUnitTestView = useUnitTest();
+  const panelTabHideKeys = usePanelTabHideKeys();
+
   const selectedNode = useSelectedNodeId();
   const isTriggerNode = useSelector((state: RootState) => isRootNodeInGraph(selectedNode, 'root', state.workflow.nodesMetadata));
   const operationInfo = useOperationInfo(selectedNode);
@@ -90,7 +92,13 @@ export const usePanelTabs = () => {
     [intl, isMonitoringView, runHistory]
   );
 
-  const scratchTabItem = useMemo(() => scratchTab, []);
+  const scratchTabItem = useMemo(
+    () => ({
+      ...scratchTab,
+      visible: process.env.NODE_ENV !== 'production',
+    }),
+    []
+  );
 
   const tabs = useMemo(() => {
     if (isUnitTestView) return [mockResultsTabItem];
@@ -108,6 +116,7 @@ export const usePanelTabs = () => {
       scratchTabItem,
     ]
       .slice()
+      .filter((a) => !panelTabHideKeys.includes(a.id as any))
       .filter((a) => a.visible)
       .sort((a, b) => a.order - b.order);
   }, [
@@ -122,6 +131,7 @@ export const usePanelTabs = () => {
     scratchTabItem,
     settingsTabItem,
     testingTabItem,
+    panelTabHideKeys,
   ]);
 
   return tabs;

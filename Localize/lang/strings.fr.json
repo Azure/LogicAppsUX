@@ -761,6 +761,7 @@
   "V0le5X": "Entrez un JSON valide.",
   "V3vpin": "« {parameterName} » n’est plus présent dans le schéma d’opération. Vous devez le supprimer avant de réenregistrer le workflow.",
   "V5f3ha": "Semaine",
+  "V7k/GN": "Supprimer l’instruction switch case",
   "V8A+1J": "Intervalle",
   "VA7M1u": "Dans l'application",
   "VEbE93": "Expliquez ce que fait l’action « {selectedOperation} » dans ce flux",

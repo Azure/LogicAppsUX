@@ -1,5 +1,5 @@
 import { Dropdown, type IDropdownOption, Label } from '@fluentui/react';
-import { useMemo, type FormEvent } from 'react';
+import { useMemo, type FormEvent, useEffect } from 'react';
 import { useIntl } from 'react-intl';
 
 export const LegacyMultiAuthOptions = {
@@ -13,6 +13,7 @@ export interface LegacyMultiAuthProps {
   isLoading: boolean;
   value: number;
   onChange: (_event: FormEvent<HTMLDivElement>, item: any) => void;
+  supportsOAuthConnection?: boolean;
   supportsServicePrincipalConnection: boolean;
   supportsLegacyManagedIdentityConnection: boolean;
 }
@@ -21,6 +22,7 @@ const LegacyMultiAuth = ({
   isLoading,
   value,
   onChange,
+  supportsOAuthConnection = true,
   supportsServicePrincipalConnection,
   supportsLegacyManagedIdentityConnection,
 }: LegacyMultiAuthProps) => {
@@ -46,10 +48,12 @@ const LegacyMultiAuth = ({
   const legacyMultiAuthOptions: IDropdownOption<any>[] = useMemo(
     () =>
       [
-        {
-          key: LegacyMultiAuthOptions.oauth,
-          text: oAuthDropdownText,
-        },
+        supportsOAuthConnection
+          ? {
+              key: LegacyMultiAuthOptions.oauth,
+              text: oAuthDropdownText,
+            }
+          : undefined,
         supportsServicePrincipalConnection
           ? {
               key: LegacyMultiAuthOptions.servicePrincipal,
@@ -67,10 +71,19 @@ const LegacyMultiAuth = ({
       legacyManagedIdentityDropdownText,
       oAuthDropdownText,
       servicePrincipalDropdownText,
+      supportsOAuthConnection,
       supportsLegacyManagedIdentityConnection,
       supportsServicePrincipalConnection,
     ]
   );
+
+  // Make sure a valid option is selected on startup
+  useEffect(() => {
+    if (legacyMultiAuthOptions.map((opt) => opt.key).includes(value)) return;
+    const firstOption = legacyMultiAuthOptions[0];
+    const event = {} as FormEvent<HTMLDivElement>;
+    if (firstOption) onChange(event, firstOption);
+  }, [legacyMultiAuthOptions, onChange, value]);
 
   return (
     <div className="param-row">

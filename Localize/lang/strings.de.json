@@ -761,6 +761,7 @@
   "V0le5X": "Geben Sie einen gültigen JSON-Wert ein.",
   "V3vpin": "Der „{parameterName}“ ist im Vorgangsschema nicht mehr vorhanden. Der Parameter muss entfernt werden, bevor der Workflow erneut gespeichert wird.",
   "V5f3ha": "Woche",
+  "V7k/GN": "Switch Case löschen",
   "V8A+1J": "Intervall",
   "VA7M1u": "In-App",
   "VEbE93": "Erläutern, was die Aktion \"{selectedOperation}\" in diesem Flow bewirkt",

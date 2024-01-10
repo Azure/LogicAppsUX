@@ -761,6 +761,7 @@
   "V0le5X": "Insira um JSON válido.",
   "V3vpin": "''{parameterName}'' não está mais presente no esquema de operação. Ele deve ser removido antes que o fluxo de trabalho seja salvo novamente.",
   "V5f3ha": "Semana",
+  "V7k/GN": "Excluir Caso de Comutador",
   "V8A+1J": "Intervalo",
   "VA7M1u": "No aplicativo",
   "VEbE93": "Explicar o que a ação \"{selectedOperation}\" faz neste fluxo",

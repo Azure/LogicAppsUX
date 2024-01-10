@@ -1,30 +1,57 @@
 # Logic Apps Designer
+
+## [2.101.0](https://github.com/Azure/LogicAppsUX/compare/v2.100.0...v2.101.0) (2024-01-09)
+
+### Features
+
+- **vscode:** Improve Azurite experience ([#3937](https://github.com/Azure/LogicAppsUX/issues/3937)) ([e9464d5](https://github.com/Azure/LogicAppsUX/commit/e9464d53c56aeff111ef3c75980a9a1775ba2d6a))
+
+### Bug Fixes
+
+- **Data Mapper:** added prefix to dm logging ([#3948](https://github.com/Azure/LogicAppsUX/issues/3948)) ([28bf949](https://github.com/Azure/LogicAppsUX/commit/28bf949d8ccc9ae32468e538a646b315af5241f2))
+- **Designer:** Fixed APIM action schema parameter issues ([#3941](https://github.com/Azure/LogicAppsUX/issues/3941)) ([b131fe3](https://github.com/Azure/LogicAppsUX/commit/b131fe3cd7e3bf410474e49105e24fdeb40b5d8b))
+- **Designer:** Fixed search issue in (stage) locations ([#3936](https://github.com/Azure/LogicAppsUX/issues/3936)) ([9bbf2bb](https://github.com/Azure/LogicAppsUX/commit/9bbf2bb966f3be9fcbe3fab8ae67719b3fba1e63))
+- **Designer:** OAuth in Standalone ([#3942](https://github.com/Azure/LogicAppsUX/issues/3942)) ([763d2f1](https://github.com/Azure/LogicAppsUX/commit/763d2f183130f81fbd2edf169e68c9c4b05b3487))
+
+## [2.100.0](https://github.com/Azure/LogicAppsUX/compare/v2.99.0...v2.100.0) (2024-01-04)
+
+### Bug Fixes
+
+- **Data Mapper:** Serialize and deserialize XSD to JSON arrays ([#3893](https://github.com/Azure/LogicAppsUX/issues/3893)) ([60ed813](https://github.com/Azure/LogicAppsUX/commit/60ed8139ef8ec9b9e22fb0aa2287d4a0794fcd04))
+- **Designer:** Canvas node rerender optimization ([#3932](https://github.com/Azure/LogicAppsUX/issues/3932)) ([a18c4ed](https://github.com/Azure/LogicAppsUX/commit/a18c4ed100ab3f50e370db12c5040f3c2cdd272e))
+- **Designer:** Re-added the scratch tab visibility check ([#3933](https://github.com/Azure/LogicAppsUX/issues/3933)) ([32cb45d](https://github.com/Azure/LogicAppsUX/commit/32cb45d42b974d9c48302f36624cde1c009503f1))
+- **vscode:** Add set function core tools command right after installing an update ([#3930](https://github.com/Azure/LogicAppsUX/issues/3930)) ([a3458cc](https://github.com/Azure/LogicAppsUX/commit/a3458cce64fd197c6b6d5a2461a491e374faee42))
+
+## [2.99.0](https://github.com/Azure/LogicAppsUX/compare/v2.98.0...v2.99.0) (2024-01-02)
+
+### Bug Fixes
+
+- **vscode:** Add validation for design-time folder ([#3910](https://github.com/Azure/LogicAppsUX/issues/3910)) ([0c48a29](https://github.com/Azure/LogicAppsUX/commit/0c48a297e39403351dc6cdc3aefe3e1735cff13c))
+
 ## [2.98.0](https://github.com/Azure/LogicAppsUX/compare/v2.97.0...v2.98.0) (2023-12-30)
 
 ## [2.97.0](https://github.com/Azure/LogicAppsUX/compare/v2.96.0...v2.97.0) (2023-12-28)
 
 ## [2.96.0](https://github.com/Azure/LogicAppsUX/compare/v2.95.0...v2.96.0) (2023-12-21)
 
-
 ### Features
 
-* **designer:** add support prevent casting in complex array editors ([#3873](https://github.com/Azure/LogicAppsUX/issues/3873)) ([5d96b77](https://github.com/Azure/LogicAppsUX/commit/5d96b77055776a3eb4a7067559fa03626d16a8a5))
-* **designer:** enable support prevent casting in complex array editors ([#3886](https://github.com/Azure/LogicAppsUX/issues/3886)) ([ff0af65](https://github.com/Azure/LogicAppsUX/commit/ff0af65796ae24d562674caf0b913206cc422313))
-
+- **designer:** add support prevent casting in complex array editors ([#3873](https://github.com/Azure/LogicAppsUX/issues/3873)) ([5d96b77](https://github.com/Azure/LogicAppsUX/commit/5d96b77055776a3eb4a7067559fa03626d16a8a5))
+- **designer:** enable support prevent casting in complex array editors ([#3886](https://github.com/Azure/LogicAppsUX/issues/3886)) ([ff0af65](https://github.com/Azure/LogicAppsUX/commit/ff0af65796ae24d562674caf0b913206cc422313))
 
 ### Bug Fixes
 
-* **designer:** Add description for Condition action ([#3865](https://github.com/Azure/LogicAppsUX/issues/3865)) ([aec1286](https://github.com/Azure/LogicAppsUX/commit/aec12861bcb485d293b75b3468b9be0deda39605))
-* **designer:** Changes not serializing when token deleted without editor being focused ([#3882](https://github.com/Azure/LogicAppsUX/issues/3882)) ([9f73a3c](https://github.com/Azure/LogicAppsUX/commit/9f73a3c331571ce897d847f7e2ffda49de8f38ec))
-* **Designer:** Converted many fluent8 components to fluent9 ([#3872](https://github.com/Azure/LogicAppsUX/issues/3872)) ([9d06a1e](https://github.com/Azure/LogicAppsUX/commit/9d06a1edff0445053ee09b6d7025871b5528b336))
-* **designer:** Fix regressions moving token parsing from  $[ ]$ to @{} ([#3881](https://github.com/Azure/LogicAppsUX/issues/3881)) ([e005c8d](https://github.com/Azure/LogicAppsUX/commit/e005c8d5116dcef3237a1948888d0dc200c0f98b))
-* **designer:** Fixed issue where lexicalPlainText did not have proper keyboard navigation for token nodes ([#3854](https://github.com/Azure/LogicAppsUX/issues/3854)) ([6d91c38](https://github.com/Azure/LogicAppsUX/commit/6d91c38450e4da7cc6f2482a8633dee5788035e9))
-* **designer:** Revert change "tokens with 'body/value' should use triggerBody rather than triggerOutput" ([#3875](https://github.com/Azure/LogicAppsUX/issues/3875)) ([a09c39a](https://github.com/Azure/LogicAppsUX/commit/a09c39a7687fba0ee57b6d734299542fcce04cf8)), closes [#3782](https://github.com/Azure/LogicAppsUX/issues/3782)
-* **designer:** Update condition on when to render monitoring view ([#3892](https://github.com/Azure/LogicAppsUX/issues/3892)) ([29cd1f8](https://github.com/Azure/LogicAppsUX/commit/29cd1f8f43b3611e5e2054c1381b52f5c3de5138))
-* **localization:** Adding Indonesian as a language to intl provider ([#3868](https://github.com/Azure/LogicAppsUX/issues/3868)) ([40bc6f8](https://github.com/Azure/LogicAppsUX/commit/40bc6f894e38e955ff19a8fd942e36a84d5fe0bd))
-* **vscode:** Add validate input for function name in workspace creation ([#3874](https://github.com/Azure/LogicAppsUX/issues/3874)) ([7abb3bf](https://github.com/Azure/LogicAppsUX/commit/7abb3bf663b79202cda4991252bf9e48137aa4d2))
-* **vscode:** Dependency timeout ([#3846](https://github.com/Azure/LogicAppsUX/issues/3846)) ([e87a557](https://github.com/Azure/LogicAppsUX/commit/e87a5574d9d7e77a42596a9615b37992e5fd9aba))
-* **vscode:** Fix project path in workflow-designtime folder ([#3867](https://github.com/Azure/LogicAppsUX/issues/3867)) ([712c4ff](https://github.com/Azure/LogicAppsUX/commit/712c4ff609ac8ea39b1231712121060e8a2a71d1))
+- **designer:** Add description for Condition action ([#3865](https://github.com/Azure/LogicAppsUX/issues/3865)) ([aec1286](https://github.com/Azure/LogicAppsUX/commit/aec12861bcb485d293b75b3468b9be0deda39605))
+- **designer:** Changes not serializing when token deleted without editor being focused ([#3882](https://github.com/Azure/LogicAppsUX/issues/3882)) ([9f73a3c](https://github.com/Azure/LogicAppsUX/commit/9f73a3c331571ce897d847f7e2ffda49de8f38ec))
+- **Designer:** Converted many fluent8 components to fluent9 ([#3872](https://github.com/Azure/LogicAppsUX/issues/3872)) ([9d06a1e](https://github.com/Azure/LogicAppsUX/commit/9d06a1edff0445053ee09b6d7025871b5528b336))
+- **designer:** Fix regressions moving token parsing from $[ ]$ to @{} ([#3881](https://github.com/Azure/LogicAppsUX/issues/3881)) ([e005c8d](https://github.com/Azure/LogicAppsUX/commit/e005c8d5116dcef3237a1948888d0dc200c0f98b))
+- **designer:** Fixed issue where lexicalPlainText did not have proper keyboard navigation for token nodes ([#3854](https://github.com/Azure/LogicAppsUX/issues/3854)) ([6d91c38](https://github.com/Azure/LogicAppsUX/commit/6d91c38450e4da7cc6f2482a8633dee5788035e9))
+- **designer:** Revert change "tokens with 'body/value' should use triggerBody rather than triggerOutput" ([#3875](https://github.com/Azure/LogicAppsUX/issues/3875)) ([a09c39a](https://github.com/Azure/LogicAppsUX/commit/a09c39a7687fba0ee57b6d734299542fcce04cf8)), closes [#3782](https://github.com/Azure/LogicAppsUX/issues/3782)
+- **designer:** Update condition on when to render monitoring view ([#3892](https://github.com/Azure/LogicAppsUX/issues/3892)) ([29cd1f8](https://github.com/Azure/LogicAppsUX/commit/29cd1f8f43b3611e5e2054c1381b52f5c3de5138))
+- **localization:** Adding Indonesian as a language to intl provider ([#3868](https://github.com/Azure/LogicAppsUX/issues/3868)) ([40bc6f8](https://github.com/Azure/LogicAppsUX/commit/40bc6f894e38e955ff19a8fd942e36a84d5fe0bd))
+- **vscode:** Add validate input for function name in workspace creation ([#3874](https://github.com/Azure/LogicAppsUX/issues/3874)) ([7abb3bf](https://github.com/Azure/LogicAppsUX/commit/7abb3bf663b79202cda4991252bf9e48137aa4d2))
+- **vscode:** Dependency timeout ([#3846](https://github.com/Azure/LogicAppsUX/issues/3846)) ([e87a557](https://github.com/Azure/LogicAppsUX/commit/e87a5574d9d7e77a42596a9615b37992e5fd9aba))
+- **vscode:** Fix project path in workflow-designtime folder ([#3867](https://github.com/Azure/LogicAppsUX/issues/3867)) ([712c4ff](https://github.com/Azure/LogicAppsUX/commit/712c4ff609ac8ea39b1231712121060e8a2a71d1))
 
 ## [2.95.0](https://github.com/Azure/LogicAppsUX/compare/v2.94.0...v2.95.0) (2023-12-15)
 

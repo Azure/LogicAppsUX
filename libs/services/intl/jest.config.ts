@@ -6,7 +6,7 @@ export default {
     '^.+\\.[tj]sx?$': [
       'babel-jest',
       {
-        presets: ['@nx/react/babel'],
+        presets: ['@nrwl/react/babel'],
         plugins: [
           [
             'formatjs',

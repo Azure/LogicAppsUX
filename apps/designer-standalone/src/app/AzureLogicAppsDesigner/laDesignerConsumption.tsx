@@ -14,9 +14,11 @@ import { DesignerCommandBar } from './DesignerCommandBar';
 import type { ParametersData } from './Models/Workflow';
 import { ChildWorkflowService } from './Services/ChildWorkflow';
 import { HttpClient } from './Services/HttpClient';
+import { StandaloneOAuthService } from './Services/OAuthService';
 import {
   listCallbackUrl,
   saveWorkflowConsumption,
+  useCurrentObjectId,
   useCurrentTenantId,
   useWorkflowAndArtifactsConsumption,
 } from './Services/WorkflowAndArtifacts';
@@ -28,7 +30,6 @@ import {
   BaseAppServiceService,
   BaseFunctionService,
   BaseGatewayService,
-  BaseOAuthService,
   ConsumptionConnectionService,
   ConsumptionConnectorService,
   ConsumptionOperationManifestService,
@@ -76,6 +77,7 @@ const DesignerEditorConsumption = () => {
     error: workflowAndArtifactsError,
   } = useWorkflowAndArtifactsConsumption(workflowId);
   const { data: tenantId } = useCurrentTenantId();
+  const { data: objectId } = useCurrentObjectId();
   const [designerID, setDesignerID] = React.useState(guid());
 
   const { workflow, connectionReferences, parameters } = React.useMemo(
@@ -89,7 +91,7 @@ const DesignerEditorConsumption = () => {
   };
   const canonicalLocation = WorkflowUtility.convertToCanonicalFormat(workflowAndArtifactsData?.location ?? '');
   const services = React.useMemo(
-    () => getDesignerServices(workflowId, workflow as any, tenantId, canonicalLocation, undefined, queryClient),
+    () => getDesignerServices(workflowId, workflow as any, tenantId, objectId, canonicalLocation, undefined, queryClient),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [workflowId, workflow, tenantId, canonicalLocation, designerID]
   );
@@ -179,6 +181,7 @@ const DesignerEditorConsumption = () => {
   return (
     <div key={designerID} style={{ height: 'inherit', width: 'inherit' }}>
       <DesignerProvider
+        key={designerID}
         locale={'en-US'}
         options={{
           services,
@@ -231,6 +234,7 @@ const getDesignerServices = (
   workflowId: string,
   workflow: any,
   tenantId: string | undefined,
+  objectId: string | undefined,
   location: string,
   loggerService?: any,
   queryClient?: any
@@ -314,16 +318,19 @@ const getDesignerServices = (
     },
     valuesClient: {
       getSwaggerOperations: (args: any) => {
-        const { nodeMetadata } = args;
-        const swaggerUrl = nodeMetadata?.['apiDefinitionUrl'];
-        return appServiceService.getOperations(swaggerUrl);
+        const { parameters } = args;
+        return appServiceService.getOperations(parameters.swaggerUrl);
       },
       getApimOperations: (args: any) => {
-        const { configuration } = args;
-        if (!configuration?.connection?.apiId) {
-          throw new Error('Missing api information to make dynamic call');
-        }
-        return apimService.getOperations(configuration?.connection?.apiId);
+        const { parameters } = args;
+        const { apiId } = parameters;
+        if (!apiId) throw new Error('Missing api information to make dynamic operations call');
+        return apimService.getOperations(apiId);
+      },
+      getSwaggerFunctionOperations: (args: any) => {
+        const { parameters } = args;
+        const functionAppId = parameters.functionAppId;
+        return functionService.getOperations(functionAppId);
       },
     },
     apiVersion: '2018-07-01-preview',
@@ -356,12 +363,14 @@ const getDesignerServices = (
     isDev: false,
   });
 
-  const oAuthService = new BaseOAuthService({
+  const oAuthService = new StandaloneOAuthService({
     ...defaultServiceParams,
     apiVersion: '2018-07-01-preview',
     subscriptionId,
     resourceGroup,
     location,
+    tenantId,
+    objectId,
   });
 
   const workflowService = {

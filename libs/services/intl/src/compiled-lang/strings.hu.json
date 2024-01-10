@@ -5119,6 +5119,12 @@
       "value": "Hét"
     }
   ],
+  "V7k/GN": [
+    {
+      "type": 0,
+      "value": "Kapcsolóeset törlése"
+    }
+  ],
   "V8A+1J": [
     {
       "type": 0,
@@ -6532,7 +6538,7 @@
   "eFnLWK": [
     {
       "type": 0,
-      "value": "(UTC-06:00) Közép-Amerika"
+      "value": "(UTC–06:00) Közép-Amerika"
     }
   ],
   "eHgfpz": [
