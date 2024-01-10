@@ -11,12 +11,6 @@
       "value": "Aviso: o tipo de nó de entrada não corresponde ao tipo do nó de esquema."
     }
   ],
-  "+0cO6t": [
-    {
-      "type": 0,
-      "value": "Criar referência de ligação"
-    }
-  ],
   "+0yxlR": [
     {
       "type": 0,
@@ -171,6 +165,12 @@
       "value": "Abrir o Azure Copilot"
     }
   ],
+  "/c1l10": [
+    {
+      "type": 0,
+      "value": "⌘+C"
+    }
+  ],
   "/doURb": [
     {
       "type": 0,
@@ -299,6 +299,12 @@
     {
       "type": 0,
       "value": "(UTC+05:30) Sri Jayawardenepura"
+    }
+  ],
+  "0CPsxh": [
+    {
+      "type": 0,
+      "value": "Del"
     }
   ],
   "0CvRZW": [
@@ -551,12 +557,6 @@
     {
       "type": 0,
       "value": "5"
-    }
-  ],
-  "1zgFh1": [
-    {
-      "type": 0,
-      "value": "Dispensar"
     }
   ],
   "20oqsp": [
@@ -925,6 +925,12 @@
       "value": "Obrigatório. Este valor é o número inteiro seguinte depois do maior número inteiro que pode ser devolvido."
     }
   ],
+  "41drjl": [
+    {
+      "type": 0,
+      "value": "Abrir ligação"
+    }
+  ],
   "41eMpW": [
     {
       "type": 0,
@@ -1115,12 +1121,6 @@
       "value": "Autoridade"
     }
   ],
-  "5WhTmH": [
-    {
-      "type": 0,
-      "value": "A carregar..."
-    }
-  ],
   "5akc1Q": [
     {
       "type": 0,
@@ -1157,6 +1157,12 @@
     {
       "type": 0,
       "value": "Os parâmetros utilizados no Logic App serão convertidos num modelo do Azure Resource Manager durante a geração do modelo de implementação."
+    }
+  ],
+  "5gOG+F": [
+    {
+      "type": 0,
+      "value": "Forneça os valores a comparar e selecione o operador a utilizar."
     }
   ],
   "5hWg4V": [
@@ -1241,12 +1247,6 @@
     {
       "type": 0,
       "value": "O valor do tempo limite é inválido, tem de corresponder ao formato de duração ISO 8601"
-    }
-  ],
-  "6ZviI7": [
-    {
-      "type": 0,
-      "value": "Selecionar referência de ligação"
     }
   ],
   "6fDYzG": [
@@ -1365,6 +1365,12 @@
     {
       "type": 0,
       "value": "Atualizar esquema de origem"
+    }
+  ],
+  "74e2xB": [
+    {
+      "type": 0,
+      "value": "Criar uma nova ligação"
     }
   ],
   "78Vggn": [
@@ -2182,12 +2188,6 @@
       "value": "Ligação necessária"
     }
   ],
-  "CPm+OG": [
-    {
-      "type": 0,
-      "value": "Criar ligação"
-    }
-  ],
   "CaajcD": [
     {
       "type": 0,
@@ -2408,6 +2408,12 @@
       "value": "Duração"
     }
   ],
+  "DfXxoX": [
+    {
+      "type": 0,
+      "value": "Selecione uma ligação existente ou crie uma nova"
+    }
+  ],
   "Dhu3IS": [
     {
       "type": 0,
@@ -2604,12 +2610,6 @@
     {
       "type": 0,
       "value": "Selecione sim ou não"
-    }
-  ],
-  "ExaACE": [
-    {
-      "type": 0,
-      "value": "Nome a apresentar da ligação"
     }
   ],
   "F3IDl8": [
@@ -3009,12 +3009,6 @@
     {
       "type": 0,
       "value": "Sair do ecrã inteiro"
-    }
-  ],
-  "HOchry": [
-    {
-      "type": 0,
-      "value": "Selecione uma referência de ligação existente ou crie uma nova."
     }
   ],
   "HSJLCu": [
@@ -3866,6 +3860,12 @@
       "value": "Introduza um nome de propriedade exclusivo"
     }
   ],
+  "NdOhXD": [
+    {
+      "type": 0,
+      "value": "Criar Ligação"
+    }
+  ],
   "Nh91qA": [
     {
       "type": 0,
@@ -3966,12 +3966,6 @@
     {
       "type": 0,
       "value": "OK"
-    }
-  ],
-  "OBKhVi": [
-    {
-      "type": 0,
-      "value": "Não é possível copiar este(a) Ação/Acionador."
     }
   ],
   "ODQCKj": [
@@ -4494,12 +4488,6 @@
       "value": "h"
     }
   ],
-  "Qy0Kha": [
-    {
-      "type": 0,
-      "value": "Os acionadores não podem ser eliminados."
-    }
-  ],
   "R/aiRy": [
     {
       "type": 0,
@@ -4599,12 +4587,6 @@
     {
       "type": 0,
       "value": "problema"
-    }
-  ],
-  "Ro4+PC": [
-    {
-      "type": 0,
-      "value": "Só pode adicionar notas quando editar as entradas de um passo."
     }
   ],
   "Rp5pHU": [
@@ -4893,6 +4875,12 @@
     {
       "type": 0,
       "value": "Nota"
+    }
+  ],
+  "TsJbGH": [
+    {
+      "type": 0,
+      "value": "Desligado"
     }
   ],
   "Ttc0SM": [
@@ -5187,6 +5175,12 @@
       "value": "Semana"
     }
   ],
+  "V7k/GN": [
+    {
+      "type": 0,
+      "value": "Eliminar Caso de Mudança"
+    }
+  ],
   "V8A+1J": [
     {
       "type": 0,
@@ -5463,6 +5457,12 @@
     {
       "type": 0,
       "value": "Uma identidade gerida não está configurada na aplicação lógica."
+    }
+  ],
+  "WvvJYw": [
+    {
+      "type": 0,
+      "value": "Ações"
     }
   ],
   "X/7je+": [
@@ -5955,6 +5955,12 @@
       "value": ")"
     }
   ],
+  "ZAdaBl": [
+    {
+      "type": 0,
+      "value": "Selecione uma referência de ligação existente ou crie uma nova"
+    }
+  ],
   "ZBJiuD": [
     {
       "type": 0,
@@ -6007,12 +6013,6 @@
     {
       "type": 0,
       "value": "Ler mais"
-    }
-  ],
-  "ZbX8xq": [
-    {
-      "type": 0,
-      "value": "Esta operação já foi eliminada."
     }
   ],
   "Zg3IjD": [
@@ -6337,10 +6337,16 @@
       "value": "Eliminar alterações"
     }
   ],
-  "cUW5m8": [
+  "cZXqqf": [
     {
       "type": 0,
-      "value": "Selecione a caixa de verificação para escolher esta ligação."
+      "value": "Alterar Ligação"
+    }
+  ],
+  "cZv9J0": [
+    {
+      "type": 0,
+      "value": "A ligação é válida"
     }
   ],
   "ca/QIc": [
@@ -6639,6 +6645,12 @@
       "value": "Itálico (⌘I)"
     }
   ],
+  "en/5A3": [
+    {
+      "type": 0,
+      "value": "Reatribuir"
+    }
+  ],
   "eo1YKX": [
     {
       "type": 0,
@@ -6655,6 +6667,12 @@
     {
       "type": 0,
       "value": "Quando um novo item"
+    }
+  ],
+  "evyGYj": [
+    {
+      "type": 0,
+      "value": "Reatribuir todas as ações ligadas a uma nova ligação"
     }
   ],
   "f/lWTW": [
@@ -6761,12 +6779,6 @@
       "value": "Lamentamos, mas ocorreu um erro. Tente novamente."
     }
   ],
-  "g/7QyT": [
-    {
-      "type": 0,
-      "value": "Selecionar ligação"
-    }
-  ],
   "g076bL": [
     {
       "type": 0,
@@ -6803,6 +6815,12 @@
       "value": "Executar teste"
     }
   ],
+  "gA1dde": [
+    {
+      "type": 0,
+      "value": "Alternar vista de código"
+    }
+  ],
   "gCXOd5": [
     {
       "type": 0,
@@ -6825,12 +6843,6 @@
     {
       "type": 0,
       "value": "Obrigatório. Um valor booleano que determina o valor que a expressão deve devolver."
-    }
-  ],
-  "gIc0YJ": [
-    {
-      "type": 0,
-      "value": "Nome da ligação"
     }
   ],
   "gIx5ys": [
@@ -7643,6 +7655,12 @@
       "value": "Introduza um json válido."
     }
   ],
+  "l/3yJr": [
+    {
+      "type": 0,
+      "value": "Ligação inválida"
+    }
+  ],
   "l/9YHQ": [
     {
       "type": 0,
@@ -7887,6 +7905,12 @@
       "value": "\"; a divisão não se encontra na matriz."
     }
   ],
+  "mUURJW": [
+    {
+      "type": 0,
+      "value": "A ligação é inválida"
+    }
+  ],
   "mYQFtf": [
     {
       "type": 0,
@@ -7927,6 +7951,12 @@
     {
       "type": 0,
       "value": "Limite o Logic Apps para não incluir cabeçalhos de metadados do fluxo de trabalho no pedido efetuado."
+    }
+  ],
+  "mlU+AC": [
+    {
+      "type": 0,
+      "value": "Ligações"
     }
   ],
   "mvrlkP": [
@@ -8045,6 +8075,12 @@
     {
       "type": 0,
       "value": "Personalizado"
+    }
+  ],
+  "nSUXtP": [
+    {
+      "type": 0,
+      "value": "Esta alteração modificará várias ações."
     }
   ],
   "nSan4V": [
@@ -8495,12 +8531,6 @@
       "value": "Verifica se a cadeia termina com um valor (sensível a maiúsculas e minúsculas, cultura invariante)"
     }
   ],
-  "qQoQFv": [
-    {
-      "type": 0,
-      "value": "Ligação inválida."
-    }
-  ],
   "qSejoi": [
     {
       "type": 0,
@@ -8704,12 +8734,6 @@
       "value": "Segredo"
     }
   ],
-  "rDt4Iu": [
-    {
-      "type": 0,
-      "value": "A ligação é inválida"
-    }
-  ],
   "rNi5Y3": [
     {
       "type": 0,
@@ -8890,6 +8914,12 @@
     {
       "type": 0,
       "value": "Chave"
+    }
+  ],
+  "snJFUi": [
+    {
+      "type": 0,
+      "value": "Ctrl+C"
     }
   ],
   "soqP+Z": [
@@ -9268,6 +9298,12 @@
       "value": "16"
     }
   ],
+  "unMG8m": [
+    {
+      "type": 0,
+      "value": "Tipo de conector"
+    }
+  ],
   "unMaeV": [
     {
       "type": 0,
@@ -9334,12 +9370,6 @@
     {
       "type": 0,
       "value": "Data do acionador"
-    }
-  ],
-  "v0ENVA": [
-    {
-      "type": 0,
-      "value": "A carregar"
     }
   ],
   "v39HKj": [
@@ -9892,12 +9922,6 @@
       "value": "Gerar XSLT"
     }
   ],
-  "yoCi15": [
-    {
-      "type": 0,
-      "value": "Selecione uma ligação existente ou crie uma nova."
-    }
-  ],
   "ypZV9w": [
     {
       "type": 0,
@@ -9932,12 +9956,6 @@
     {
       "type": 0,
       "value": "(UTC+01:00) Sarajevo, Skopje, Varsóvia, Zagreb"
-    }
-  ],
-  "yyYtZV": [
-    {
-      "type": 0,
-      "value": "Gateway de Ligação"
     }
   ],
   "yzqXMp": [
@@ -10044,12 +10062,6 @@
     {
       "type": 0,
       "value": "Parar"
-    }
-  ],
-  "ziXw25": [
-    {
-      "type": 0,
-      "value": "Eliminar"
     }
   ],
   "ziYCiA": [

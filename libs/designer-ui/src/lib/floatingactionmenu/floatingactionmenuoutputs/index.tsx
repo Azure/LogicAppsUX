@@ -33,7 +33,7 @@ type FloatingActionMenuOutputsProps = {
   initialValue: ValueSegment[];
   onChange?: ChangeHandler;
   editorViewModel: FloatingActionMenuOutputViewModel;
-  BasePlugins: BasePlugins;
+  basePlugins: BasePlugins;
   tokenPickerButtonProps: TokenPickerButtonEditorProps | undefined;
   getTokenPicker: GetTokenPickerHandler;
   hideValidationErrors: ChangeHandler | undefined;
@@ -90,7 +90,7 @@ export const FloatingActionMenuOutputs = (props: FloatingActionMenuOutputsProps)
       <StringEditor
         className="msla-setting-token-editor-container"
         placeholder={placeholder}
-        BasePlugins={props.BasePlugins}
+        basePlugins={props.basePlugins}
         readonly={false}
         initialValue={props.editorViewModel.outputValueSegmentsMap[schemaKey] || []}
         tokenPickerButtonProps={props.tokenPickerButtonProps}

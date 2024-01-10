@@ -2,7 +2,7 @@ import type { ArrayItemSchema, ComplexArrayItems, SimpleArrayItem } from '..';
 import type { ValueSegment } from '../../editor';
 import { ValueSegmentType } from '../../editor';
 import type { CastHandler } from '../../editor/base';
-import { convertStringToSegments } from '../../editor/base/utils/editorToSegement';
+import { convertStringToSegments } from '../../editor/base/utils/editorToSegment';
 import { getChildrenNodes, insertQutationForStringType } from '../../editor/base/utils/helper';
 import { convertSegmentsToString } from '../../editor/base/utils/parsesegments';
 import { convertComplexItemsToArray, validationAndSerializeComplexArray, validationAndSerializeSimpleArray } from './util';
@@ -85,7 +85,8 @@ export const parseSimpleItems = (
 export const parseComplexItems = (
   allItems: ComplexArrayItems[],
   itemSchema: ArrayItemSchema,
-  castParameter: CastHandler
+  castParameter: CastHandler,
+  suppressCastingForSerialize?: boolean
 ): { castedValue: ValueSegment[]; uncastedValue: ValueSegment[] } => {
   if (allItems.length === 0) {
     return { castedValue: emptyArrayValue, uncastedValue: emptyArrayValue };
@@ -95,7 +96,9 @@ export const parseComplexItems = (
   const nodeMap = new Map<string, ValueSegment>();
   allItems.forEach((currItem) => {
     const { items } = currItem;
-    castedArrayVal.push(convertComplexItemsToArray(itemSchema, items, nodeMap, /*suppress casting*/ false, castParameter));
+    castedArrayVal.push(
+      convertComplexItemsToArray(itemSchema, items, nodeMap, /*suppress casting*/ suppressCastingForSerialize ?? false, castParameter)
+    );
     uncastedArrayVal.push(convertComplexItemsToArray(itemSchema, items, nodeMap, /*suppress casting*/ true, castParameter));
   });
   return {

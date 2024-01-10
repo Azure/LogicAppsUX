@@ -1,7 +1,7 @@
 import type { AuthenticationType, AuthProps } from '.';
 import type { ValueSegment } from '../editor';
 import type { GetTokenPickerHandler } from '../editor/base';
-import { BaseEditor } from '../editor/base';
+import { EditorWrapper } from '../editor/base/EditorWrapper';
 import type { TokenPickerButtonEditorProps } from '../editor/base/plugins/tokenpickerbutton';
 import { CollapsedAuthenticationValidation } from './plugins/CollapsedAuthenticationValidation';
 import type { Dispatch, SetStateAction } from 'react';
@@ -14,9 +14,11 @@ interface CollapsedAuthenticationProps {
   setIsValid: (b: boolean) => void;
   readonly?: boolean;
   tokenPickerButtonProps?: TokenPickerButtonEditorProps;
-  getTokenPicker: GetTokenPickerHandler;
   setOption: (s: AuthenticationType) => void;
   serializeValue: (value: ValueSegment[]) => void;
+  getTokenPicker: GetTokenPickerHandler;
+  tokenMapping?: Record<string, ValueSegment>;
+  loadParameterValueFromString?: (value: string) => ValueSegment[];
 }
 
 export const CollapsedAuthentication = ({
@@ -31,7 +33,7 @@ export const CollapsedAuthentication = ({
 }: CollapsedAuthenticationProps): JSX.Element => {
   return (
     <div className="msla-authentication-editor-collapsed-container">
-      <BaseEditor {...props} initialValue={collapsedValue} BasePlugins={{ tokens: true, tabbable: true }}>
+      <EditorWrapper {...props} initialValue={collapsedValue} basePlugins={{ tabbable: true }}>
         <CollapsedAuthenticationValidation
           className={'msla-auth-editor-validation'}
           collapsedValue={collapsedValue}
@@ -42,7 +44,7 @@ export const CollapsedAuthentication = ({
           setOption={setOption}
           serializeValue={serializeValue}
         />
-      </BaseEditor>
+      </EditorWrapper>
     </div>
   );
 };

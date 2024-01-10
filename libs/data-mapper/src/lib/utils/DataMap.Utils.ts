@@ -1,7 +1,5 @@
 import { mapNodeParams } from '../constants/MapDefinitionConstants';
 import { sourcePrefix, targetPrefix } from '../constants/ReactFlowConstants';
-import type { MapDefinitionEntry, SchemaExtended, SchemaNodeDictionary, SchemaNodeExtended } from '../models';
-import { SchemaType } from '../models';
 import type { Connection, ConnectionDictionary } from '../models/Connection';
 import type { FunctionData } from '../models/Function';
 import {
@@ -30,7 +28,8 @@ import {
 } from './Function.Utils';
 import { addReactFlowPrefix, addSourceReactFlowPrefix } from './ReactFlow.Util';
 import { findNodeForKey, isSchemaNodeExtended } from './Schema.Utils';
-import { isAGuid } from '@microsoft/utils-logic-apps';
+import type { MapDefinitionEntry, SchemaExtended, SchemaNodeDictionary, SchemaNodeExtended } from '@microsoft/utils-logic-apps';
+import { isAGuid, SchemaType } from '@microsoft/utils-logic-apps';
 
 export type UnknownNode = SchemaNodeExtended | FunctionData | undefined;
 
@@ -175,11 +174,17 @@ export const isValidToMakeMapDefinition = (connections: ConnectionDictionary): b
   return allNodesTerminateIntoSource && allRequiredInputsFilledOut;
 };
 
+const isQuotedString = (value: string): boolean => {
+  return (
+    value.length > 0 && ((value[0] === '"' && value[value.length - 1] === '"') || (value[0] === "'" && value[value.length - 1] === "'"))
+  );
+};
+
 export const amendSourceKeyForDirectAccessIfNeeded = (sourceKey: string): [string, string] => {
   // Parse the outermost Direct Access (if present) into the typical Function format
   let mockDirectAccessFnKey: string | undefined = undefined;
   const [daOpenBracketIdx, daClosedBracketIdx] = [sourceKey.indexOf('['), sourceKey.lastIndexOf(']')];
-  if (daOpenBracketIdx > -1 && daClosedBracketIdx > -1) {
+  if (daOpenBracketIdx > -1 && daClosedBracketIdx > -1 && !isQuotedString(sourceKey)) {
     // Need to isolate the singular key the DA is apart of as it could be wrapped in a function, etc.
     let keyWithDaStartIdx = 0;
     let keyWithDaEndIdx = sourceKey.length;
@@ -198,19 +203,17 @@ export const amendSourceKeyForDirectAccessIfNeeded = (sourceKey: string): [strin
       }
     }
 
-    mockDirectAccessFnKey = `${directAccessPseudoFunctionKey}(`;
-    mockDirectAccessFnKey += `${sourceKey.substring(daOpenBracketIdx + 1, daClosedBracketIdx)}, `; // Index value
-    mockDirectAccessFnKey += `${sourceKey.substring(keyWithDaStartIdx, daOpenBracketIdx)}, `; // Scope (source loop element)
-    mockDirectAccessFnKey += `${sourceKey.substring(keyWithDaStartIdx, daOpenBracketIdx)}${sourceKey.substring(
-      daClosedBracketIdx + 1,
-      keyWithDaEndIdx
-    )}`; // Output value
-    mockDirectAccessFnKey += ')';
+    // Only amend DA if the expression is not wrapped in a function, etc.
+    // Otherwise a bracket in one parameter may be matched with a bracked in another parameter.
+    if (keyWithDaStartIdx === 0 && keyWithDaEndIdx === sourceKey.length) {
+      mockDirectAccessFnKey = `${directAccessPseudoFunctionKey}(`;
+      mockDirectAccessFnKey += `${sourceKey.substring(daOpenBracketIdx + 1, daClosedBracketIdx)}, `; // Index value
+      mockDirectAccessFnKey += `${sourceKey.substring(0, daOpenBracketIdx)}, `; // Scope (source loop element)
+      mockDirectAccessFnKey += `${sourceKey.substring(0, daOpenBracketIdx)}${sourceKey.substring(daClosedBracketIdx + 1)}`; // Output value
+      mockDirectAccessFnKey += ')';
 
-    return [
-      sourceKey.substring(0, keyWithDaStartIdx) + mockDirectAccessFnKey + sourceKey.substring(keyWithDaEndIdx),
-      mockDirectAccessFnKey,
-    ];
+      return [mockDirectAccessFnKey, mockDirectAccessFnKey];
+    }
   }
 
   return [sourceKey, ''];
@@ -380,9 +383,29 @@ export const getSourceValueFromLoop = (sourceKey: string, targetKey: string, sou
   if (relativeSrcKeyArr.length > 0) {
     relativeSrcKeyArr.forEach((relativeKeyMatch) => {
       if (!relativeKeyMatch.includes(srcKeyWithinFor)) {
-        // Replace './' to deal with relative attribute paths
+        let fullyQualifiedSourceKey = '';
 
-        const fullyQualifiedSourceKey = `${srcKeyWithinFor}/${relativeKeyMatch.replace('./', '')}`;
+        const srcTokens = lexThisThing(relativeKeyMatch);
+        let backoutCount = 0;
+
+        if (srcTokens.some((token) => token === ReservedToken.backout)) {
+          fullyQualifiedSourceKey = srcKeyWithinFor;
+          srcTokens.forEach((token) => {
+            if (token === ReservedToken.backout) {
+              backoutCount++;
+            }
+          });
+          const relativeKeyNoBackouts = relativeKeyMatch.substring(backoutCount * 3);
+          while (backoutCount > 0) {
+            const lastElem = fullyQualifiedSourceKey.lastIndexOf('/');
+            fullyQualifiedSourceKey = fullyQualifiedSourceKey.substring(0, lastElem);
+            backoutCount--;
+          }
+          fullyQualifiedSourceKey += '/' + relativeKeyNoBackouts;
+        } else {
+          // Replace './' to deal with relative attribute paths
+          fullyQualifiedSourceKey = `${srcKeyWithinFor}/${relativeKeyMatch.replace('./', '')}`;
+        }
         const isValidSrcNode = !!sourceSchemaFlattened[`${sourcePrefix}${fullyQualifiedSourceKey}`];
 
         constructedSourceKey = isValidSrcNode
@@ -403,6 +426,7 @@ export const Separators = {
   CloseParenthesis: ')',
   Comma: ',',
   Dollar: '$',
+  //ForwardSlash: '/'
 } as const;
 export type Separators = (typeof Separators)[keyof typeof Separators];
 
@@ -411,10 +435,11 @@ export const separators: string[] = [Separators.OpenParenthesis, Separators.Clos
 export const ReservedToken = {
   for: 'for',
   if: 'if',
+  backout: '../',
 } as const;
 export type ReservedToken = (typeof ReservedToken)[keyof typeof ReservedToken];
 
-export const reservedToken: string[] = [ReservedToken.for, ReservedToken.if];
+export const reservedToken: string[] = [ReservedToken.for, ReservedToken.if, ReservedToken.backout];
 
 export const lexThisThing = (targetKey: string): string[] => {
   const tokens: string[] = [];
@@ -423,6 +448,7 @@ export const lexThisThing = (targetKey: string): string[] => {
   let currentToken = '';
   while (i < targetKey.length) {
     const currentChar = targetKey[i];
+
     if (separators.includes(currentChar)) {
       if (!currentToken) {
         // if it is a Separator
@@ -446,6 +472,7 @@ export const lexThisThing = (targetKey: string): string[] => {
       i++;
       continue;
     }
+
     if (i === targetKey.length - 1) {
       tokens.push(currentToken);
     }

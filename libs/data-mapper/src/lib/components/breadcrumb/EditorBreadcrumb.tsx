@@ -1,11 +1,11 @@
 import { setCurrentTargetSchemaNode } from '../../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
-import type { SchemaExtended, SchemaNodeExtended } from '../../models/Schema';
 import { findNodeForKey } from '../../utils/Schema.Utils';
 import type { IBreadcrumbItem, IContextualMenuItem, IContextualMenuProps, IDividerAsProps } from '@fluentui/react';
 import { Breadcrumb, ContextualMenu, IconButton } from '@fluentui/react';
 import { Button, tokens, makeStyles, Text, typographyStyles } from '@fluentui/react-components';
 import { Code20Regular } from '@fluentui/react-icons';
+import type { SchemaExtended, SchemaNodeExtended } from '@microsoft/utils-logic-apps';
 import { useCallback, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';

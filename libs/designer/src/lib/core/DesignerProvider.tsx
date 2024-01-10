@@ -1,3 +1,4 @@
+import { resetWorkflowState } from '.';
 import { ProviderWrappedContext } from './ProviderWrappedContext';
 import { ReactQueryProvider } from './ReactQueryProvider';
 import type { DesignerOptionsState, ServiceOptions } from './state/designerOptions/designerOptionsInterfaces';
@@ -13,6 +14,7 @@ import React, { useCallback, useEffect, useMemo } from 'react';
 import { Provider as ReduxProvider, useDispatch } from 'react-redux';
 
 export interface DesignerProviderProps {
+  key?: string;
   locale?: string;
   options: Omit<DesignerOptionsState, 'servicesInitialized'> & { services: ServiceOptions };
   children: React.ReactNode;
@@ -27,7 +29,7 @@ const OptionsStateSet = ({ options, children }: any) => {
   return <>{children}</>;
 };
 
-export const DesignerProvider = ({ locale = 'en', options, children }: DesignerProviderProps) => {
+export const DesignerProvider = ({ key, locale = 'en', options, children }: DesignerProviderProps) => {
   const { isDarkMode } = options;
   const azTheme = !isDarkMode ? AzureThemeLight : AzureThemeDark;
   const webTheme = !isDarkMode ? webLightTheme : webDarkTheme;
@@ -49,6 +51,7 @@ export const DesignerProvider = ({ locale = 'en', options, children }: DesignerP
               <div data-color-scheme={themeName} className={`msla-theme-${themeName}`} style={{ height: '100vh', overflow: 'hidden' }}>
                 <ReactQueryProvider>
                   <IntlProvider locale={locale} defaultLocale={locale} onError={onError}>
+                    <ReduxReset key={key} />
                     {children}
                   </IntlProvider>
                 </ReactQueryProvider>
@@ -59,4 +62,13 @@ export const DesignerProvider = ({ locale = 'en', options, children }: DesignerP
       </OptionsStateSet>
     </ReduxProvider>
   );
+};
+
+// Redux state persists even through component re-mounts (like with changing the key prop in a parent), so we need to reset the state when the key changes manually
+const ReduxReset = ({ key }: { key?: string }) => {
+  const dispatch = useDispatch();
+  useEffect(() => {
+    dispatch(resetWorkflowState());
+  }, [key, dispatch]);
+  return null;
 };

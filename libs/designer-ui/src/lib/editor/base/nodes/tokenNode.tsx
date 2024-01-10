@@ -11,9 +11,10 @@ export interface TokenNodeProps {
   brandColor?: string;
   value?: string;
   description?: string;
+  readonly?: boolean;
 }
 
-export type SerailizedTokenNode = Spread<
+export type SerializedTokenNode = Spread<
   {
     title: string;
     data: ValueSegment;
@@ -33,16 +34,26 @@ export class TokenNode extends DecoratorNode<JSX.Element> {
   __brandColor?: string;
   __value?: string;
   __description?: string;
+  __readonly?: boolean;
 
   static getType() {
     return 'token';
   }
 
   static clone(node: TokenNode) {
-    return new TokenNode(node.__title, node.__data, node.__icon, node.__brandColor, node.__value, node.__description, node.__key);
+    return new TokenNode(
+      node.__title,
+      node.__data,
+      node.__icon,
+      node.__brandColor,
+      node.__value,
+      node.__description,
+      node.__readonly,
+      node.__key
+    );
   }
 
-  static importJSON(serializedTokenNode: SerailizedTokenNode): TokenNode {
+  static importJSON(serializedTokenNode: SerializedTokenNode): TokenNode {
     return new TokenNode(
       serializedTokenNode.title,
       serializedTokenNode.data,
@@ -53,7 +64,7 @@ export class TokenNode extends DecoratorNode<JSX.Element> {
     );
   }
 
-  exportJSON(): SerailizedTokenNode {
+  exportJSON(): SerializedTokenNode {
     return {
       title: this.__title,
       data: this.__data,
@@ -66,13 +77,15 @@ export class TokenNode extends DecoratorNode<JSX.Element> {
     };
   }
 
-  // This is to enable copy to clipboard, even though there are some cases where @{} isn't needed, for the time being it's easier to always include it when copying
+  // This is to enable copy to clipboard,
+  // even though there are some cases where @{} isn't needed,
+  // for the time being it's easier to always include it when copying
   getTextContent(_includeInert?: boolean | undefined, _includeDirectionless?: false | undefined): string {
-    return `@{${this.__data.value}}` ?? '';
+    return `@{${this.__data.value}}`;
   }
 
   toString(): string {
-    return `$[${this.__title},${this.__value},${this.__brandColor}]$`;
+    return this.getTextContent();
   }
 
   convertToSegment(): ValueSegment {
@@ -86,7 +99,16 @@ export class TokenNode extends DecoratorNode<JSX.Element> {
     writable.__data = data;
   }
 
-  constructor(title: string, data: ValueSegment, icon?: string, brandColor?: string, value?: string, description?: string, key?: string) {
+  constructor(
+    title: string,
+    data: ValueSegment,
+    icon?: string,
+    brandColor?: string,
+    value?: string,
+    description?: string,
+    readonly?: boolean,
+    key?: string
+  ) {
     super(key);
     this.__brandColor = brandColor;
     this.__value = value;
@@ -94,6 +116,7 @@ export class TokenNode extends DecoratorNode<JSX.Element> {
     this.__icon = icon;
     this.__title = title;
     this.__description = description;
+    this.__readonly = readonly;
   }
 
   createDOM() {
@@ -116,13 +139,14 @@ export class TokenNode extends DecoratorNode<JSX.Element> {
         nodeKey={this.__key}
         isSecure={this.__data.token?.isSecure}
         description={this.__description}
+        readonly={this.__readonly}
       />
     );
   }
 }
 
-export function $createTokenNode({ icon, title, data, value, brandColor, description }: TokenNodeProps) {
-  return new TokenNode(title, data, icon ? `url("${icon}")` : undefined, brandColor ?? 'black', value, description);
+export function $createTokenNode({ icon, title, data, value, brandColor, description, readonly }: TokenNodeProps) {
+  return new TokenNode(title, data, icon ? `url("${icon}")` : undefined, brandColor ?? 'black', value, description, readonly);
 }
 
 export function $isTokenNode(node: LexicalNode | null): node is TokenNode {

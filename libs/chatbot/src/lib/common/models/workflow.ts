@@ -1,13 +1,3 @@
-// TODO: Move this out to a common library so that we can share it between the designer and the chatbot.
-import type { LogicAppsV2 } from '@microsoft/utils-logic-apps';
-
-export interface Workflow {
-  definition: LogicAppsV2.WorkflowDefinition;
-  connectionReferences: ConnectionReferences;
-  parameters?: Record<string, WorkflowParameter>;
-  kind?: string;
-}
-
 export interface ConnectionReference {
   api: { id: string };
   connection: { id: string };

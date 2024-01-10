@@ -44,11 +44,23 @@ exports[`lib/card should render 1`] = `
             className="panel-card-content-icon-section"
           >
             <div
-              className="ms-Spinner msla-card-header-spinner root-110"
+              className="fui-Spinner msla-card-header-spinner ___p104zz0_oywd6f0 f22iagw f122n59 f4d9j23 fez10in f4px1ci fn67r4l f1063pyq"
+              role="progressbar"
             >
-              <div
-                className="ms-Spinner-circle ms-Spinner--medium circle-111"
-              />
+              <span
+                className="fui-Spinner__spinner ___1lv4f9l_18iydzw f1or16p5 f1grzc83 f19shzzi f5tbecn fn4mtlg f1y80fxs f1r2crtq f1wsi8sr f1bkm2qd f1urqz7h f1da2vov f11rfva0 f1exc66 f1j4wmu2 f1vppzuq fv1u54w fngtx1d f11ditju f1m9nikz fq8a5sv f1b4lwqj f1najlst fjxod4 fu3xdw0 f1ttdh6v f1eseayc folzdkc fhlfkde f13qeqtg flglbw1"
+              >
+                <svg
+                  className="fui-Spinner__Progressbar"
+                >
+                  <circle
+                    className="fui-Spinner__Track"
+                  />
+                  <circle
+                    className="fui-Spinner__Tail"
+                  />
+                </svg>
+              </span>
             </div>
           </div>
           <div
@@ -118,11 +130,23 @@ exports[`lib/card should render as cloned 1`] = `
             className="panel-card-content-icon-section"
           >
             <div
-              className="ms-Spinner msla-card-header-spinner root-110"
+              className="fui-Spinner msla-card-header-spinner ___p104zz0_oywd6f0 f22iagw f122n59 f4d9j23 fez10in f4px1ci fn67r4l f1063pyq"
+              role="progressbar"
             >
-              <div
-                className="ms-Spinner-circle ms-Spinner--medium circle-111"
-              />
+              <span
+                className="fui-Spinner__spinner ___1lv4f9l_18iydzw f1or16p5 f1grzc83 f19shzzi f5tbecn fn4mtlg f1y80fxs f1r2crtq f1wsi8sr f1bkm2qd f1urqz7h f1da2vov f11rfva0 f1exc66 f1j4wmu2 f1vppzuq fv1u54w fngtx1d f11ditju f1m9nikz fq8a5sv f1b4lwqj f1najlst fjxod4 fu3xdw0 f1ttdh6v f1eseayc folzdkc fhlfkde f13qeqtg flglbw1"
+              >
+                <svg
+                  className="fui-Spinner__Progressbar"
+                >
+                  <circle
+                    className="fui-Spinner__Track"
+                  />
+                  <circle
+                    className="fui-Spinner__Tail"
+                  />
+                </svg>
+              </span>
             </div>
           </div>
           <div
@@ -205,11 +229,23 @@ exports[`lib/card should render as draggable 1`] = `
             className="panel-card-content-icon-section"
           >
             <div
-              className="ms-Spinner msla-card-header-spinner root-110"
+              className="fui-Spinner msla-card-header-spinner ___p104zz0_oywd6f0 f22iagw f122n59 f4d9j23 fez10in f4px1ci fn67r4l f1063pyq"
+              role="progressbar"
             >
-              <div
-                className="ms-Spinner-circle ms-Spinner--medium circle-111"
-              />
+              <span
+                className="fui-Spinner__spinner ___1lv4f9l_18iydzw f1or16p5 f1grzc83 f19shzzi f5tbecn fn4mtlg f1y80fxs f1r2crtq f1wsi8sr f1bkm2qd f1urqz7h f1da2vov f11rfva0 f1exc66 f1j4wmu2 f1vppzuq fv1u54w fngtx1d f11ditju f1m9nikz fq8a5sv f1b4lwqj f1najlst fjxod4 fu3xdw0 f1ttdh6v f1eseayc folzdkc fhlfkde f13qeqtg flglbw1"
+              >
+                <svg
+                  className="fui-Spinner__Progressbar"
+                >
+                  <circle
+                    className="fui-Spinner__Track"
+                  />
+                  <circle
+                    className="fui-Spinner__Tail"
+                  />
+                </svg>
+              </span>
             </div>
           </div>
           <div
@@ -279,11 +315,23 @@ exports[`lib/card should render as inactive 1`] = `
             className="panel-card-content-icon-section"
           >
             <div
-              className="ms-Spinner msla-card-header-spinner root-110"
+              className="fui-Spinner msla-card-header-spinner ___p104zz0_oywd6f0 f22iagw f122n59 f4d9j23 fez10in f4px1ci fn67r4l f1063pyq"
+              role="progressbar"
             >
-              <div
-                className="ms-Spinner-circle ms-Spinner--medium circle-111"
-              />
+              <span
+                className="fui-Spinner__spinner ___1lv4f9l_18iydzw f1or16p5 f1grzc83 f19shzzi f5tbecn fn4mtlg f1y80fxs f1r2crtq f1wsi8sr f1bkm2qd f1urqz7h f1da2vov f11rfva0 f1exc66 f1j4wmu2 f1vppzuq fv1u54w fngtx1d f11ditju f1m9nikz fq8a5sv f1b4lwqj f1najlst fjxod4 fu3xdw0 f1ttdh6v f1eseayc folzdkc fhlfkde f13qeqtg flglbw1"
+              >
+                <svg
+                  className="fui-Spinner__Progressbar"
+                >
+                  <circle
+                    className="fui-Spinner__Track"
+                  />
+                  <circle
+                    className="fui-Spinner__Tail"
+                  />
+                </svg>
+              </span>
             </div>
           </div>
           <div
@@ -353,85 +401,23 @@ exports[`lib/card should render as selected 1`] = `
             className="panel-card-content-icon-section"
           >
             <div
-              className="ms-Spinner msla-card-header-spinner root-110"
+              className="fui-Spinner msla-card-header-spinner ___p104zz0_oywd6f0 f22iagw f122n59 f4d9j23 fez10in f4px1ci fn67r4l f1063pyq"
+              role="progressbar"
             >
-              <div
-                className="ms-Spinner-circle ms-Spinner--medium circle-111"
-              />
-            </div>
-          </div>
-          <div
-            className="panel-card-top-content"
-          >
-            <div
-              className="panel-msla-title"
-            >
-              title
-            </div>
-          </div>
-        </div>
-      </div>
-      <div
-        className="msla-card-v2-footer"
-      >
-        <div
-          className="msla-badges"
-        />
-      </div>
-    </div>
-  </div>
-</div>
-`;
-
-exports[`lib/card should render with a context menu 1`] = `
-<div
-  style={
-    Object {
-      "position": "relative",
-    }
-  }
->
-  <div
-    className="msla-panel-card-container"
-    data-automation-id="card-title"
-    data-testid="card-title"
-    onClick={[Function]}
-    onContextMenu={[Function]}
-    onKeyDown={[Function]}
-    onKeyUp={[Function]}
-    style={
-      Object {
-        "borderLeft": "4px solid rgba(71,71,71, 1)",
-        "borderRadius": "2px",
-      }
-    }
-    tabIndex={1}
-  >
-    <div
-      className="msla-selection-box"
-    />
-    <div
-      className="panel-card-main"
-    >
-      <div
-        className="panel-card-header"
-        role="button"
-      >
-        <div
-          className="panel-card-content-container"
-        >
-          <div
-            className="panel-card-content-gripper-section"
-          />
-          <div
-            className="panel-card-content-icon-section"
-          >
-            <div
-              className="ms-Spinner msla-card-header-spinner root-110"
-            >
-              <div
-                className="ms-Spinner-circle ms-Spinner--medium circle-111"
-              />
+              <span
+                className="fui-Spinner__spinner ___1lv4f9l_18iydzw f1or16p5 f1grzc83 f19shzzi f5tbecn fn4mtlg f1y80fxs f1r2crtq f1wsi8sr f1bkm2qd f1urqz7h f1da2vov f11rfva0 f1exc66 f1j4wmu2 f1vppzuq fv1u54w fngtx1d f11ditju f1m9nikz fq8a5sv f1b4lwqj f1najlst fjxod4 fu3xdw0 f1ttdh6v f1eseayc folzdkc fhlfkde f13qeqtg flglbw1"
+              >
+                <svg
+                  className="fui-Spinner__Progressbar"
+                >
+                  <circle
+                    className="fui-Spinner__Track"
+                  />
+                  <circle
+                    className="fui-Spinner__Tail"
+                  />
+                </svg>
+              </span>
             </div>
           </div>
           <div

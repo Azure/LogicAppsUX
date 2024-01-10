@@ -1,5 +1,5 @@
 import type { BaseEditorProps, ChangeHandler } from '../editor/base';
-import { BaseEditor } from '../editor/base';
+import { EditorWrapper } from '../editor/base/EditorWrapper';
 import { TokenPickerButtonLocation } from '../editor/base/plugins/tokenpickerbutton';
 import { notEqual } from '../editor/base/utils/helper';
 import type { ValueSegment } from '../editor/models/parameter';
@@ -7,7 +7,7 @@ import { ValueSegmentType } from '../editor/models/parameter';
 import { Picker } from './picker';
 import { PickerItemType } from './pickerItem';
 import { EditorValueChange } from './plugins/EditorValueChange';
-import { UpdateEditorFromPicker } from './plugins/UpdateEditorFromPicker';
+import { UpdateEditorFromFilePicker } from './plugins/UpdateEditorFromFilePicker';
 import type { IBreadcrumbItem, IIconProps, ITooltipHostStyles } from '@fluentui/react';
 import { TooltipHost, IconButton } from '@fluentui/react';
 import { useId } from '@fluentui/react-hooks';
@@ -119,10 +119,10 @@ export const FilePickerEditor = ({
   const openFolderLabel = intl.formatMessage({ defaultMessage: 'Open folder', description: 'Open folder label' });
   return (
     <div className="msla-filepicker-editor-container">
-      <BaseEditor
+      <EditorWrapper
         {...baseEditorProps}
         className="msla-filepicker-editor"
-        BasePlugins={{ ...baseEditorProps.BasePlugins }}
+        basePlugins={{ ...baseEditorProps.basePlugins }}
         initialValue={editorDisplayValue}
         onBlur={handleBlur}
         tokenPickerButtonProps={{ location: TokenPickerButtonLocation.Left }}
@@ -132,8 +132,8 @@ export const FilePickerEditor = ({
           setEditorDisplayValue={setEditorDisplayValue}
           clearPickerInfo={clearPickerInfo}
         />
-        <UpdateEditorFromPicker pickerDisplayValue={pickerDisplayValue} />
-      </BaseEditor>
+        <UpdateEditorFromFilePicker pickerDisplayValue={pickerDisplayValue} />
+      </EditorWrapper>
       <TooltipHost content={openFolderLabel} calloutProps={calloutProps} styles={hostStyles}>
         <IconButton iconProps={folderIcon} aria-label={openFolderLabel} onClick={openFolderPicker} id={pickerIconId} />
       </TooltipHost>

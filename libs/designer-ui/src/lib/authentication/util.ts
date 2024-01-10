@@ -3,7 +3,7 @@ import { AuthenticationType } from '.';
 import constants from '../constants';
 import type { ValueSegment } from '../editor';
 import { ValueSegmentType } from '../editor';
-import { convertStringToSegments } from '../editor/base/utils/editorToSegement';
+import { convertStringToSegments } from '../editor/base/utils/editorToSegment';
 import { getChildrenNodes } from '../editor/base/utils/helper';
 import { convertKeyValueItemToSegments } from '../editor/base/utils/keyvalueitem';
 import { AuthenticationOAuthType } from './AADOAuth/AADOAuth';
@@ -428,7 +428,7 @@ export const serializeAuthentication = (
 };
 
 export function containsToken(value: string): boolean {
-  if (value.indexOf('$[') !== -1 && value.indexOf(']$') !== -1) {
+  if (value.indexOf('@{') !== -1 && value.indexOf('}') !== -1) {
     return true;
   } else {
     return false;

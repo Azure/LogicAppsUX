@@ -1,11 +1,12 @@
-import type { MapDefinitionEntry } from '../../models';
 import { directAccessPseudoFunctionKey, functionMock, ifPseudoFunctionKey, indexPseudoFunctionKey } from '../../models';
 import type { Connection, ConnectionUnit } from '../../models/Connection';
 import { convertSchemaToSchemaExtended } from '../../utils/Schema.Utils';
-import { MapDefinitionDeserializer } from '../MapDefinitionDeserializer';
+import { getLoopTargetNodeWithJson, MapDefinitionDeserializer } from '../MapDefinitionDeserializer';
+import type { MapDefinitionEntry, Schema, SchemaExtended, SchemaNodeExtended } from '@microsoft/utils-logic-apps';
 import {
   comprehensiveSourceSchema,
   comprehensiveTargetSchema,
+  deepNestedSequenceAndObject,
   sourceMockJsonSchema,
   sourceMockSchema,
   targetMockJsonSchema,
@@ -1009,6 +1010,44 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
         expect(
           (result['target-/ns0:Root/NameValueTransforms/PO_Status/Product/ProductIdentifier'].inputs[0][0] as ConnectionUnit).reactFlowKey
         ).toBe('source-/ns0:Root/NameValueTransforms/PurchaseOrderStatus/ns0:LineItem');
+      });
+
+      it('creates a loop connection with backout access', () => {
+        const mockNestedTestSchema: Schema = deepNestedSequenceAndObject;
+        const extendedComprehensiveSourceSchema: SchemaExtended = convertSchemaToSchemaExtended(mockNestedTestSchema);
+        const mockComprehensiveTargetSchema: Schema = targetMockSchema;
+        const extendedComprehensiveTargetSchema: SchemaExtended = convertSchemaToSchemaExtended(mockComprehensiveTargetSchema);
+        simpleMap['ns0:Root'] = {
+          Looping: {
+            '$for(/ns0:bookstore/ns0:book)': {
+              '$for(ns0:book2)': {
+                '$for(ns0:book3)': {
+                  Person: {
+                    Address: 'ns0:name',
+                    Name: '../ns0:author/ns0:first-name',
+                  },
+                },
+              },
+            },
+          },
+        };
+        const mapDefinitionDeserializer = new MapDefinitionDeserializer(
+          simpleMap,
+          extendedComprehensiveSourceSchema,
+          extendedComprehensiveTargetSchema,
+          functionMock
+        );
+        const result = mapDefinitionDeserializer.convertFromMapDefinition();
+        const resultEntries = Object.entries(result);
+
+        // target-/ns0:Root/Looping/Person/Address
+        expect((resultEntries[4][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual(
+          'source-/ns0:bookstore/ns0:book/ns0:book2/ns0:book3/ns0:name'
+        );
+        // target-/ns0:Root/Looping/Person/Name
+        expect((resultEntries[6][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual(
+          'source-/ns0:bookstore/ns0:book/ns0:book2/ns0:author/ns0:first-name'
+        );
       });
 
       it('If-Else test', () => {
@@ -2075,5 +2114,51 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
         expect((resultEntries[2][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual('source-/root/generalData/address/telephone/*');
       });
     });
+  });
+
+  describe('XSD to JSON', () => {
+    const simpleMap: MapDefinitionEntry = {
+      $version: '1',
+      $input: 'XSD',
+      $output: 'JSON',
+      $sourceSchema: 'SourceSchemaJson.json',
+      $targetSchema: 'TargetSchemaJson.json',
+    };
+
+    const extendedSource = convertSchemaToSchemaExtended(sourceMockSchema);
+    const extendedTarget = convertSchemaToSchemaExtended(targetMockJsonSchema);
+
+    it('maps a looping XSD to JSON', () => {
+      simpleMap['root'] = {
+        ComplexArray1: {
+          '$for(/ns0:Root/Looping/Employee)': {
+            F1: 'TelephoneNumber',
+          },
+        },
+      };
+
+      const mapDefinitionDeserializer = new MapDefinitionDeserializer(simpleMap, extendedSource, extendedTarget, functionMock);
+      const result = mapDefinitionDeserializer.convertFromMapDefinition();
+      const resultEntries = Object.entries(result);
+      resultEntries.sort();
+
+      expect(resultEntries.length).toEqual(4);
+
+      expect(resultEntries[0][0]).toEqual('source-/ns0:Root/Looping/Employee');
+      expect(resultEntries[0][1]).toBeTruthy();
+      expect(resultEntries[0][1].outputs[0].reactFlowKey).toEqual('target-/root/ComplexArray1/*');
+
+      expect(resultEntries[1][0]).toEqual('source-/ns0:Root/Looping/Employee/TelephoneNumber');
+      expect(resultEntries[1][1]).toBeTruthy();
+      expect(resultEntries[1][1].outputs[0].reactFlowKey).toEqual('target-/root/ComplexArray1/*/F1');
+    });
+  });
+
+  it('gets correct target node for json schema', () => {
+    const extendedTarget = convertSchemaToSchemaExtended(targetMockJsonSchema);
+    const root = extendedTarget.schemaTreeRoot;
+    const matchingTarget = getLoopTargetNodeWithJson('root/ComplexArray1/F1', root);
+
+    expect((matchingTarget as SchemaNodeExtended).name).toEqual('F1');
   });
 });

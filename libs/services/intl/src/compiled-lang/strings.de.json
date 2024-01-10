@@ -11,12 +11,6 @@
       "value": "Warnung: Der Eingabeknotentyp stimmt nicht mit dem Typ des Schemaknotens überein."
     }
   ],
-  "+0cO6t": [
-    {
-      "type": 0,
-      "value": "Verbindungsreferenz erstellen"
-    }
-  ],
   "+0yxlR": [
     {
       "type": 0,
@@ -175,6 +169,12 @@
       "value": "Azure Copilot öffnen"
     }
   ],
+  "/c1l10": [
+    {
+      "type": 0,
+      "value": "⌘+C"
+    }
+  ],
   "/doURb": [
     {
       "type": 0,
@@ -303,6 +303,12 @@
     {
       "type": 0,
       "value": "(UTC+05:30) Sri Jayawardenepura"
+    }
+  ],
+  "0CPsxh": [
+    {
+      "type": 0,
+      "value": "ENTF"
     }
   ],
   "0CvRZW": [
@@ -555,12 +561,6 @@
     {
       "type": 0,
       "value": "5"
-    }
-  ],
-  "1zgFh1": [
-    {
-      "type": 0,
-      "value": "Schließen"
     }
   ],
   "20oqsp": [
@@ -933,6 +933,12 @@
       "value": "Erforderlich. Dieser Wert ist die nächste ganze Zahl nach der höchsten ganzen Zahl, die zurückgegeben werden kann."
     }
   ],
+  "41drjl": [
+    {
+      "type": 0,
+      "value": "Verbindung öffnen"
+    }
+  ],
   "41eMpW": [
     {
       "type": 0,
@@ -1127,12 +1133,6 @@
       "value": "Autorität"
     }
   ],
-  "5WhTmH": [
-    {
-      "type": 0,
-      "value": "Wird geladen..."
-    }
-  ],
   "5akc1Q": [
     {
       "type": 0,
@@ -1169,6 +1169,12 @@
     {
       "type": 0,
       "value": "In der Logik-App verwendete Parameter werden während der Generierung von Bereitstellungsvorlagen in eine Azure Resource Manager-Vorlage konvertiert."
+    }
+  ],
+  "5gOG+F": [
+    {
+      "type": 0,
+      "value": "Geben Sie die zu vergleichenden Werte an, und wählen Sie den zu verwendenden Operator aus."
     }
   ],
   "5hWg4V": [
@@ -1253,12 +1259,6 @@
     {
       "type": 0,
       "value": "Der Timeoutwert ist ungültig. Er muss mit dem ISO 8601-Dauerformat übereinstimmen."
-    }
-  ],
-  "6ZviI7": [
-    {
-      "type": 0,
-      "value": "Verbindungsreferenz auswählen"
     }
   ],
   "6fDYzG": [
@@ -1377,6 +1377,12 @@
     {
       "type": 0,
       "value": "Quellschema aktualisieren"
+    }
+  ],
+  "74e2xB": [
+    {
+      "type": 0,
+      "value": "Neue Verbindung erstellen"
     }
   ],
   "78Vggn": [
@@ -2187,12 +2193,6 @@
       "value": "Verbindung erforderlich"
     }
   ],
-  "CPm+OG": [
-    {
-      "type": 0,
-      "value": "Verbindung herstellen"
-    }
-  ],
   "CaajcD": [
     {
       "type": 0,
@@ -2417,6 +2417,12 @@
       "value": "Dauer"
     }
   ],
+  "DfXxoX": [
+    {
+      "type": 0,
+      "value": "Wählen Sie eine vorhandene Verbindung aus, oder erstellen Sie eine neue."
+    }
+  ],
   "Dhu3IS": [
     {
       "type": 0,
@@ -2613,12 +2619,6 @@
     {
       "type": 0,
       "value": "Wählen Sie \"Ja\" oder \"Nein\"."
-    }
-  ],
-  "ExaACE": [
-    {
-      "type": 0,
-      "value": "Anzeigename der Verbindung"
     }
   ],
   "F3IDl8": [
@@ -3011,12 +3011,6 @@
     {
       "type": 0,
       "value": "Vollbildmodus beenden"
-    }
-  ],
-  "HOchry": [
-    {
-      "type": 0,
-      "value": "Wählen Sie eine vorhandene Verbindungsreferenz aus, oder erstellen Sie eine neue."
     }
   ],
   "HSJLCu": [
@@ -3857,6 +3851,12 @@
       "value": "Geben Sie einen eindeutigen Eigenschaftennamen ein."
     }
   ],
+  "NdOhXD": [
+    {
+      "type": 0,
+      "value": "Verbindung erstellen"
+    }
+  ],
   "Nh91qA": [
     {
       "type": 0,
@@ -3957,12 +3957,6 @@
     {
       "type": 0,
       "value": "OK"
-    }
-  ],
-  "OBKhVi": [
-    {
-      "type": 0,
-      "value": "Diese Aktion/dieser Trigger kann nicht kopiert werden."
     }
   ],
   "ODQCKj": [
@@ -4493,12 +4487,6 @@
       "value": "h"
     }
   ],
-  "Qy0Kha": [
-    {
-      "type": 0,
-      "value": "Trigger können nicht gelöscht werden."
-    }
-  ],
   "R/aiRy": [
     {
       "type": 0,
@@ -4591,12 +4579,6 @@
     {
       "type": 0,
       "value": "Problem"
-    }
-  ],
-  "Ro4+PC": [
-    {
-      "type": 0,
-      "value": "Sie können nur Notizen hinzufügen, wenn Sie die Eingaben eines Schritts bearbeiten."
     }
   ],
   "Rp5pHU": [
@@ -4885,6 +4867,12 @@
     {
       "type": 0,
       "value": "Notiz"
+    }
+  ],
+  "TsJbGH": [
+    {
+      "type": 0,
+      "value": "Getrennt"
     }
   ],
   "Ttc0SM": [
@@ -5179,6 +5167,12 @@
       "value": "Woche"
     }
   ],
+  "V7k/GN": [
+    {
+      "type": 0,
+      "value": "Switch Case löschen"
+    }
+  ],
   "V8A+1J": [
     {
       "type": 0,
@@ -5463,6 +5457,12 @@
     {
       "type": 0,
       "value": "Eine verwaltete Identität ist in der Logik-App nicht konfiguriert."
+    }
+  ],
+  "WvvJYw": [
+    {
+      "type": 0,
+      "value": "Aktionen"
     }
   ],
   "X/7je+": [
@@ -5955,6 +5955,12 @@
       "value": " liegen)"
     }
   ],
+  "ZAdaBl": [
+    {
+      "type": 0,
+      "value": "Wählen Sie eine vorhandene Verbindungsreferenz aus, oder erstellen Sie eine neue."
+    }
+  ],
   "ZBJiuD": [
     {
       "type": 0,
@@ -6007,12 +6013,6 @@
     {
       "type": 0,
       "value": "Weitere Informationen"
-    }
-  ],
-  "ZbX8xq": [
-    {
-      "type": 0,
-      "value": "Dieser Vorgang wurde bereits gelöscht."
     }
   ],
   "Zg3IjD": [
@@ -6337,10 +6337,16 @@
       "value": "Änderungen verwerfen"
     }
   ],
-  "cUW5m8": [
+  "cZXqqf": [
     {
       "type": 0,
-      "value": "Aktivieren Sie das Kontrollkästchen, um diese Verbindung auszuwählen."
+      "value": "Verbindung ändern"
+    }
+  ],
+  "cZv9J0": [
+    {
+      "type": 0,
+      "value": "Verbindung ist gültig"
     }
   ],
   "ca/QIc": [
@@ -6639,6 +6645,12 @@
       "value": "Kursiv (⌘I)"
     }
   ],
+  "en/5A3": [
+    {
+      "type": 0,
+      "value": "Neu zuweisen"
+    }
+  ],
   "eo1YKX": [
     {
       "type": 0,
@@ -6655,6 +6667,12 @@
     {
       "type": 0,
       "value": "Wenn ein neues Element"
+    }
+  ],
+  "evyGYj": [
+    {
+      "type": 0,
+      "value": "Zuweisen aller verbundenen Aktionen zu einer neuen Verbindung"
     }
   ],
   "f/lWTW": [
@@ -6761,12 +6779,6 @@
       "value": "Es ist ein Fehler aufgetreten. Wiederholen Sie den Vorgang."
     }
   ],
-  "g/7QyT": [
-    {
-      "type": 0,
-      "value": "Verbindung auswählen"
-    }
-  ],
   "g076bL": [
     {
       "type": 0,
@@ -6803,6 +6815,12 @@
       "value": "Test ausführen"
     }
   ],
+  "gA1dde": [
+    {
+      "type": 0,
+      "value": "Codeansicht umschalten"
+    }
+  ],
   "gCXOd5": [
     {
       "type": 0,
@@ -6825,12 +6843,6 @@
     {
       "type": 0,
       "value": "Erforderlich. Ein boolescher Wert, der bestimmt, welchen Wert der Ausdruck zurückgeben soll."
-    }
-  ],
-  "gIc0YJ": [
-    {
-      "type": 0,
-      "value": "Verbindungsname"
     }
   ],
   "gIx5ys": [
@@ -7621,6 +7633,12 @@
       "value": "Geben Sie einen gültigen JSON-Wert ein."
     }
   ],
+  "l/3yJr": [
+    {
+      "type": 0,
+      "value": "Ungültige Verbindung"
+    }
+  ],
   "l/9YHQ": [
     {
       "type": 0,
@@ -7865,6 +7883,12 @@
       "value": "“. Die Aufteilung ist nicht innerhalb des Arrays."
     }
   ],
+  "mUURJW": [
+    {
+      "type": 0,
+      "value": "Verbindung ist ungültig"
+    }
+  ],
   "mYQFtf": [
     {
       "type": 0,
@@ -7905,6 +7929,12 @@
     {
       "type": 0,
       "value": "Durch diese Einstellung schließen Logik-Apps keine Workflow-Metadatenheader in ausgehenden Anforderungen ein."
+    }
+  ],
+  "mlU+AC": [
+    {
+      "type": 0,
+      "value": "Verbindungen"
     }
   ],
   "mvrlkP": [
@@ -8027,6 +8057,12 @@
     {
       "type": 0,
       "value": "Benutzerdefiniert"
+    }
+  ],
+  "nSUXtP": [
+    {
+      "type": 0,
+      "value": "Durch diese Änderung werden mehrere Aktionen geändert."
     }
   ],
   "nSan4V": [
@@ -8477,12 +8513,6 @@
       "value": "Prüft, ob die Zeichenfolge mit einem Wert endet (Groß-/Kleinschreibung nicht relevant, invariante Kultur)."
     }
   ],
-  "qQoQFv": [
-    {
-      "type": 0,
-      "value": "Ungültige Verbindung."
-    }
-  ],
   "qSejoi": [
     {
       "type": 0,
@@ -8675,12 +8705,6 @@
       "value": "Geheimnis"
     }
   ],
-  "rDt4Iu": [
-    {
-      "type": 0,
-      "value": "Verbindung ist ungültig"
-    }
-  ],
   "rNi5Y3": [
     {
       "type": 0,
@@ -8861,6 +8885,12 @@
     {
       "type": 0,
       "value": "Schlüssel"
+    }
+  ],
+  "snJFUi": [
+    {
+      "type": 0,
+      "value": "STRG+C"
     }
   ],
   "soqP+Z": [
@@ -9239,6 +9269,12 @@
       "value": "16"
     }
   ],
+  "unMG8m": [
+    {
+      "type": 0,
+      "value": "Connectortyp"
+    }
+  ],
   "unMaeV": [
     {
       "type": 0,
@@ -9305,12 +9341,6 @@
     {
       "type": 0,
       "value": "Triggerdatum"
-    }
-  ],
-  "v0ENVA": [
-    {
-      "type": 0,
-      "value": "Wird geladen"
     }
   ],
   "v39HKj": [
@@ -9863,12 +9893,6 @@
       "value": "XSLT generieren"
     }
   ],
-  "yoCi15": [
-    {
-      "type": 0,
-      "value": "Wählen Sie eine vorhandene Verbindung aus, oder erstellen Sie eine neue."
-    }
-  ],
   "ypZV9w": [
     {
       "type": 0,
@@ -9903,12 +9927,6 @@
     {
       "type": 0,
       "value": "(UTC+01:00) Sarajewo, Skopje, Warschau, Zagreb"
-    }
-  ],
-  "yyYtZV": [
-    {
-      "type": 0,
-      "value": "Verbindungsgateway"
     }
   ],
   "yzqXMp": [
@@ -10019,12 +10037,6 @@
     {
       "type": 0,
       "value": "Beenden"
-    }
-  ],
-  "ziXw25": [
-    {
-      "type": 0,
-      "value": "Löschen"
     }
   ],
   "ziYCiA": [

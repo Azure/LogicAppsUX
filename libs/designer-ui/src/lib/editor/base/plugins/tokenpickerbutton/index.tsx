@@ -1,6 +1,6 @@
 import { TokenPickerMode } from '../../../../tokenpicker';
 import type { IIconProps } from '@fluentui/react';
-import { css, IconButton } from '@fluentui/react';
+import { css, DirectionalHint, IconButton } from '@fluentui/react';
 import { TooltipHost } from '@fluentui/react/lib/Tooltip';
 import { Depths } from '@fluentui/theme';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
@@ -130,8 +130,8 @@ export const TokenPickerButton = ({
           onMouseDown={(e) => e.preventDefault()}
           style={{ boxShadow: Depths.depth4 }}
         >
-          <TooltipHost content={dynamicContentButtonText}>
-            {!hideDynamicContent ? (
+          {!hideDynamicContent ? (
+            <TooltipHost content={dynamicContentButtonText}>
               <IconButton
                 iconProps={dynamicContentIconProps}
                 styles={{ root: `top-root-button-style ${hideExpression ? 'top-root-button-style-single' : ''}` }}
@@ -139,13 +139,13 @@ export const TokenPickerButton = ({
                 data-automation-id="msla-token-picker-entrypoint-button-dynamic-content"
                 onClick={() => openTokenPicker(TokenPickerMode.TOKEN)}
               />
-            ) : null}
-          </TooltipHost>
+            </TooltipHost>
+          ) : null}
           {!hideExpression ? (
-            <TooltipHost content={expressionButtonText}>
+            <TooltipHost content={expressionButtonText} directionalHint={DirectionalHint.bottomCenter}>
               <IconButton
                 iconProps={expressionButtonProps}
-                styles={{ root: 'bottom-root-button-style' }}
+                styles={{ root: `bottom-root-button-style ${hideDynamicContent ? 'bottom-root-button-style-single' : ''}` }}
                 className="msla-token-picker-entrypoint-button-dynamic-content"
                 data-automation-id="msla-token-picker-entrypoint-button-expression"
                 onClick={() => openTokenPicker(TokenPickerMode.EXPRESSION)}

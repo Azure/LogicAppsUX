@@ -6,7 +6,7 @@ import { initEmptyConnectionMap } from '../../state/connection/connectionSlice';
 import type { NodeData, NodeOperation, OperationMetadataState } from '../../state/operation/operationMetadataSlice';
 import { initializeNodes, initializeOperationInfo } from '../../state/operation/operationMetadataSlice';
 import type { RelationshipIds } from '../../state/panel/panelInterfaces';
-import { changePanelNode, isolateTab, showDefaultTabs } from '../../state/panel/panelSlice';
+import { changePanelNode, openPanel, setIsPanelLoading } from '../../state/panel/panelSlice';
 import { addResultSchema } from '../../state/staticresultschema/staticresultsSlice';
 import type { NodeTokens, VariableDeclaration } from '../../state/tokens/tokensSlice';
 import { initializeTokensAndVariables } from '../../state/tokens/tokensSlice';
@@ -101,8 +101,8 @@ export const initializeOperationDetails = async (
   const operationManifestService = OperationManifestService();
   const staticResultService = StaticResultService();
 
+  dispatch(setIsPanelLoading(true));
   dispatch(changePanelNode(nodeId));
-  dispatch(isolateTab(Constants.PANEL_TAB_NAMES.LOADING));
 
   let initData: NodeData;
   let manifest: OperationManifest | undefined = undefined;
@@ -228,10 +228,8 @@ export const initializeOperationDetails = async (
   }
 
   const schemaService = staticResultService.getOperationResultSchema(connectorId, operationId, swagger || parsedManifest);
-  let hasSchema;
   schemaService.then((schema) => {
     if (schema) {
-      hasSchema = true;
       dispatch(addResultSchema({ id: `${connectorId}-${operationId}`, schema: schema }));
     }
   });
@@ -243,7 +241,7 @@ export const initializeOperationDetails = async (
   }
 
   updateAllUpstreamNodes(getState() as RootState, dispatch);
-  dispatch(showDefaultTabs({ isScopeNode: operationInfo?.type.toLowerCase() === Constants.NODE.TYPE.SCOPE, hasSchema: hasSchema }));
+  dispatch(setIsPanelLoading(false));
 };
 
 export const initializeSwitchCaseFromManifest = async (id: string, manifest: OperationManifest, dispatch: Dispatch): Promise<void> => {
@@ -280,7 +278,7 @@ export const trySetDefaultConnectionForNode = async (
     dispatch(updateNodeConnection({ nodeId, connection: connections[0], connector }));
   } else if (isConnectionRequired) {
     dispatch(initEmptyConnectionMap(nodeId));
-    dispatch(isolateTab(Constants.PANEL_TAB_NAMES.CONNECTION_CREATE));
+    dispatch(openPanel({ nodeId, panelMode: 'Connection', referencePanelMode: 'Operation' }));
   }
 };
 

@@ -106,6 +106,7 @@ export const MonacoEditor = forwardRef<editor.IStandaloneCodeEditor, MonacoProps
       onMouseDown,
       openTokenPicker,
       label,
+      wordWrap = 'on',
       ...options
     },
     ref
@@ -265,6 +266,7 @@ export const MonacoEditor = forwardRef<editor.IStandaloneCodeEditor, MonacoProps
               unicodeHighlight: { invisibleCharacters: false, nonBasicASCII: false, ambiguousCharacters: false },
               renderWhitespace: 'none',
               ariaLabel: label,
+              wordWrap,
               ...options,
             }}
             value={value}

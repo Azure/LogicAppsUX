@@ -7,7 +7,7 @@ import type { LogicAppsV2 } from '@microsoft/utils-logic-apps';
 import { containsIdTag, removeIdTag, getEdgeCenter, RUN_AFTER_STATUS } from '@microsoft/utils-logic-apps';
 import type { ElkExtendedEdge } from 'elkjs/lib/elk-api';
 import React, { useMemo } from 'react';
-import { getSmoothStepPath } from 'reactflow';
+import { getSmoothStepPath, useReactFlow } from 'reactflow';
 import type { EdgeProps } from 'reactflow';
 
 interface EdgeContentProps {
@@ -60,6 +60,7 @@ export const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
   style = {},
 }) => {
   const readOnly = useReadOnly();
+  const reactFlow = useReactFlow();
   const operationData = useActionMetadata(target) as LogicAppsV2.ActionDefinition;
   const edgeSources = Object.keys(operationData?.runAfter ?? {});
   const edgeTargets = useNodeEdgeTargets(source);
@@ -82,7 +83,13 @@ export const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
     [operationData?.runAfter]
   );
   const numRunAfters = Object.keys(filteredRunAfters).length;
-  const raIndex = useMemo(() => Object.entries(filteredRunAfters).findIndex(([key]) => key === source), [filteredRunAfters, source]);
+  const raIndex: number = useMemo(() => {
+    const sortedRunAfters = Object.keys(filteredRunAfters)
+      .slice(0)
+      .sort((id1, id2) => (reactFlow.getNode(id2)?.position?.x ?? 0) - (reactFlow.getNode(id1)?.position?.x ?? 0));
+
+    return sortedRunAfters?.findIndex((key) => key === source);
+  }, [filteredRunAfters, reactFlow, source]);
 
   const runAfterStatuses = useMemo(() => filteredRunAfters?.[source] ?? [], [filteredRunAfters, source]);
   const showRunAfter = runAfterStatuses.length;
@@ -95,10 +102,10 @@ export const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
   const onlyEdge = !multipleSources && !multipleTargets;
   const isLeaf = edgeTargets.length === 0;
 
-  const dynamicMidEdgeY =
+  let dynamicMidEdgeY =
     multipleSources && !multipleTargets ? targetY - 64 : multipleTargets && !multipleSources ? sourceY + 64 : edgeCenterY;
 
-  // if (numRunAfters !== 0) dynamicMidEdgeY -= 4;
+  if (numRunAfters !== 0) dynamicMidEdgeY -= 7;
 
   const [d] = useMemo(() => {
     return getSmoothStepPath({

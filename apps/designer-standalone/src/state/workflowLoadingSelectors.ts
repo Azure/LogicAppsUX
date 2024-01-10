@@ -17,6 +17,10 @@ export const useIsReadOnly = () => {
   return useSelector((state: RootState) => state.workflowLoader.isReadOnly);
 };
 
+export const useHostOptions = () => {
+  return useSelector((state: RootState) => state.workflowLoader.hostOptions);
+};
+
 export const useIsMonitoringView = () => {
   return useSelector((state: RootState) => state.workflowLoader.isMonitoringView);
 };
@@ -39,6 +43,10 @@ export const useRunId = () => {
 
 export const useShowChatBot = () => {
   return useSelector((state: RootState) => state.workflowLoader.showChatBot);
+};
+
+export const useShowConnectionsPanel = () => {
+  return useSelector((state: RootState) => state.workflowLoader?.showConnectionsPanel ?? false);
 };
 
 export const useAreCustomEditorsEnabled = () => {

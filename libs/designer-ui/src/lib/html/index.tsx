@@ -1,10 +1,17 @@
 import type { ValueSegment } from '../editor';
 import type { BaseEditorProps } from '../editor/base';
-import { BaseEditor } from '../editor/base';
-import { Change } from './plugins/toolbar/helper/Change';
+import { EditorWrapper } from '../editor/base/EditorWrapper';
+import { convertSegmentsToString } from '../editor/base/utils/parsesegments';
+import { HTMLChangePlugin } from './plugins/toolbar/helper/HTMLChangePlugin';
+import { isHtmlStringValueSafeForLexical } from './plugins/toolbar/helper/util';
 import { useState } from 'react';
 
 export const HTMLEditor = ({ initialValue, onChange, ...baseEditorProps }: BaseEditorProps): JSX.Element => {
+  const [isValuePlaintext, setIsValuePlaintext] = useState(() => {
+    const blankNodeMap = new Map<string, ValueSegment>();
+    const initialValueString = convertSegmentsToString(initialValue, blankNodeMap);
+    return !isHtmlStringValueSafeForLexical(initialValueString, blankNodeMap);
+  });
   const [value, setValue] = useState<ValueSegment[]>(initialValue);
 
   const onValueChange = (newValue: ValueSegment[]): void => {
@@ -16,18 +23,23 @@ export const HTMLEditor = ({ initialValue, onChange, ...baseEditorProps }: BaseE
   };
 
   return (
-    <BaseEditor
+    <EditorWrapper
       {...baseEditorProps}
       className="msla-html-editor"
       initialValue={initialValue}
-      BasePlugins={{ tokens: true, clearEditor: true, toolbar: true, ...baseEditorProps.BasePlugins }}
+      basePlugins={{
+        clearEditor: true,
+        htmlEditor: isValuePlaintext ? 'raw-html' : 'rich-html',
+        ...baseEditorProps.basePlugins,
+      }}
       tokenPickerButtonProps={{
         ...baseEditorProps.tokenPickerButtonProps,
         newlineVerticalOffset: 20,
       }}
       onBlur={handleBlur}
+      setIsValuePlaintext={setIsValuePlaintext}
     >
-      <Change setValue={onValueChange} />
-    </BaseEditor>
+      <HTMLChangePlugin isValuePlaintext={isValuePlaintext} setIsValuePlaintext={setIsValuePlaintext} setValue={onValueChange} />
+    </EditorWrapper>
   );
 };

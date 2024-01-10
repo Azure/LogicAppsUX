@@ -1,7 +1,8 @@
 import NoResultsSvg from '../../../assets/search/noResults.svg';
 import { ConnectorSummaryCard } from '../../connectorsummarycard';
 import { getConnectorCategoryString } from '../../utils';
-import { List, Spinner, Text } from '@fluentui/react';
+import { List, Text } from '@fluentui/react';
+import { Spinner } from '@fluentui/react-components';
 import type { Connector } from '@microsoft/utils-logic-apps';
 import { useCallback, useLayoutEffect, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -73,7 +74,7 @@ export const BrowseGrid = (props: BrowseGridProps) => {
     <div ref={ref} className="msla-browse-list">
       {isLoading && (
         <div style={{ marginBottom: '16px' }}>
-          <Spinner label={loadingText} ariaLive="assertive" labelPosition="right" />
+          <Spinner size="extra-small" label={loadingText} aria-live="assertive" />
         </div>
       )}
       <List onRenderCell={onRenderCell} items={connectors} getPageHeight={() => (forceSingleCol ? 80 * 10 : 80 * 5)} />

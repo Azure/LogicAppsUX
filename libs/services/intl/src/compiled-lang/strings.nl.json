@@ -11,12 +11,6 @@
       "value": "Waarschuwing: Het type invoerknooppunt komt niet overeen met het type van het schemaknooppunt"
     }
   ],
-  "+0cO6t": [
-    {
-      "type": 0,
-      "value": "Verbindingsverwijzing maken"
-    }
-  ],
   "+0yxlR": [
     {
       "type": 0,
@@ -171,6 +165,12 @@
       "value": "Azure Copilot openen"
     }
   ],
+  "/c1l10": [
+    {
+      "type": 0,
+      "value": "⌘+C"
+    }
+  ],
   "/doURb": [
     {
       "type": 0,
@@ -299,6 +299,12 @@
     {
       "type": 0,
       "value": "(UTC+05:30) Sri Jayawardenepura"
+    }
+  ],
+  "0CPsxh": [
+    {
+      "type": 0,
+      "value": "Del"
     }
   ],
   "0CvRZW": [
@@ -551,12 +557,6 @@
     {
       "type": 0,
       "value": "5"
-    }
-  ],
-  "1zgFh1": [
-    {
-      "type": 0,
-      "value": "Sluiten"
     }
   ],
   "20oqsp": [
@@ -925,6 +925,12 @@
       "value": "Vereist. Deze waarde is het volgende gehele getal na het hoogste gehele getal dat kan worden geretourneerd."
     }
   ],
+  "41drjl": [
+    {
+      "type": 0,
+      "value": "Verbinding openen"
+    }
+  ],
   "41eMpW": [
     {
       "type": 0,
@@ -1119,12 +1125,6 @@
       "value": "Instantie"
     }
   ],
-  "5WhTmH": [
-    {
-      "type": 0,
-      "value": "Laden..."
-    }
-  ],
   "5akc1Q": [
     {
       "type": 0,
@@ -1161,6 +1161,12 @@
     {
       "type": 0,
       "value": "De parameters die in de logische app worden gebruikt, worden tijdens het genereren van de implementatiesjabloon omgezet naar een Azure Resource Manager-sjabloon."
+    }
+  ],
+  "5gOG+F": [
+    {
+      "type": 0,
+      "value": "Geef de waarden op die u wilt vergelijken en selecteer de operator die u wilt gebruiken."
     }
   ],
   "5hWg4V": [
@@ -1245,12 +1251,6 @@
     {
       "type": 0,
       "value": "De time-outwaarde is ongeldig, deze moet overeenkomen met de ISO 8601-notatie voor duur"
-    }
-  ],
-  "6ZviI7": [
-    {
-      "type": 0,
-      "value": "Verbindingsverwijzing selecteren"
     }
   ],
   "6fDYzG": [
@@ -1369,6 +1369,12 @@
     {
       "type": 0,
       "value": "Bronschema bijwerken"
+    }
+  ],
+  "74e2xB": [
+    {
+      "type": 0,
+      "value": "Een nieuwe verbinding maken"
     }
   ],
   "78Vggn": [
@@ -2171,12 +2177,6 @@
       "value": "Een verbinding is vereist"
     }
   ],
-  "CPm+OG": [
-    {
-      "type": 0,
-      "value": "Verbinding maken"
-    }
-  ],
   "CaajcD": [
     {
       "type": 0,
@@ -2397,6 +2397,12 @@
       "value": "Duur"
     }
   ],
+  "DfXxoX": [
+    {
+      "type": 0,
+      "value": "Selecteer een bestaande verbinding of maak een nieuwe"
+    }
+  ],
   "Dhu3IS": [
     {
       "type": 0,
@@ -2593,12 +2599,6 @@
     {
       "type": 0,
       "value": "U moet Ja of Nee kiezen"
-    }
-  ],
-  "ExaACE": [
-    {
-      "type": 0,
-      "value": "Weergavenaam van verbinding"
     }
   ],
   "F3IDl8": [
@@ -2987,12 +2987,6 @@
     {
       "type": 0,
       "value": "Volledig scherm afsluiten"
-    }
-  ],
-  "HOchry": [
-    {
-      "type": 0,
-      "value": "Selecteer een bestaande verbindingsverwijzing of maak een nieuwe."
     }
   ],
   "HSJLCu": [
@@ -3829,6 +3823,12 @@
       "value": "Een unieke eigenschapsnaam invoeren"
     }
   ],
+  "NdOhXD": [
+    {
+      "type": 0,
+      "value": "Verbinding maken"
+    }
+  ],
   "Nh91qA": [
     {
       "type": 0,
@@ -3929,12 +3929,6 @@
     {
       "type": 0,
       "value": "OK"
-    }
-  ],
-  "OBKhVi": [
-    {
-      "type": 0,
-      "value": "Deze actie/trigger kan niet worden gekopieerd."
     }
   ],
   "ODQCKj": [
@@ -4453,12 +4447,6 @@
       "value": "h"
     }
   ],
-  "Qy0Kha": [
-    {
-      "type": 0,
-      "value": "Triggers kunnen niet worden verwijderd."
-    }
-  ],
   "R/aiRy": [
     {
       "type": 0,
@@ -4547,12 +4535,6 @@
     {
       "type": 0,
       "value": "probleem"
-    }
-  ],
-  "Ro4+PC": [
-    {
-      "type": 0,
-      "value": "U kunt alleen notities toevoegen wanneer u de invoer van een stap bewerkt."
     }
   ],
   "Rp5pHU": [
@@ -4837,6 +4819,12 @@
     {
       "type": 0,
       "value": "Notitie"
+    }
+  ],
+  "TsJbGH": [
+    {
+      "type": 0,
+      "value": "De verbinding is verbroken"
     }
   ],
   "Ttc0SM": [
@@ -5131,6 +5119,12 @@
       "value": "Week"
     }
   ],
+  "V7k/GN": [
+    {
+      "type": 0,
+      "value": "Schakelcassette verwijderen"
+    }
+  ],
   "V8A+1J": [
     {
       "type": 0,
@@ -5407,6 +5401,12 @@
     {
       "type": 0,
       "value": "Er is geen beheerde identiteit geconfigureerd in de logische app."
+    }
+  ],
+  "WvvJYw": [
+    {
+      "type": 0,
+      "value": "Acties"
     }
   ],
   "X/7je+": [
@@ -5899,6 +5899,12 @@
       "value": " zijn)"
     }
   ],
+  "ZAdaBl": [
+    {
+      "type": 0,
+      "value": "Selecteer een bestaande verbindingsverwijzing of maak een nieuwe"
+    }
+  ],
   "ZBJiuD": [
     {
       "type": 0,
@@ -5951,12 +5957,6 @@
     {
       "type": 0,
       "value": "Meer informatie"
-    }
-  ],
-  "ZbX8xq": [
-    {
-      "type": 0,
-      "value": "Deze bewerking is al verwijderd."
     }
   ],
   "Zg3IjD": [
@@ -6281,10 +6281,16 @@
       "value": "Wijzigingen negeren"
     }
   ],
-  "cUW5m8": [
+  "cZXqqf": [
     {
       "type": 0,
-      "value": "Schakel het selectievakje in om deze verbinding te kiezen."
+      "value": "Verbinding wijzigen"
+    }
+  ],
+  "cZv9J0": [
+    {
+      "type": 0,
+      "value": "Verbinding is geldig"
     }
   ],
   "ca/QIc": [
@@ -6583,6 +6589,12 @@
       "value": "Cursief (⌘I)"
     }
   ],
+  "en/5A3": [
+    {
+      "type": 0,
+      "value": "Opnieuw toewijzen"
+    }
+  ],
   "eo1YKX": [
     {
       "type": 0,
@@ -6599,6 +6611,12 @@
     {
       "type": 0,
       "value": "Wanneer een nieuw item"
+    }
+  ],
+  "evyGYj": [
+    {
+      "type": 0,
+      "value": "Alle verbonden acties opnieuw toewijzen aan een nieuwe verbinding"
     }
   ],
   "f/lWTW": [
@@ -6701,12 +6719,6 @@
       "value": "Er is iets verkeerd gegaan. Probeer het opnieuw."
     }
   ],
-  "g/7QyT": [
-    {
-      "type": 0,
-      "value": "Verbinding selecteren"
-    }
-  ],
   "g076bL": [
     {
       "type": 0,
@@ -6743,6 +6755,12 @@
       "value": "Test uitvoeren"
     }
   ],
+  "gA1dde": [
+    {
+      "type": 0,
+      "value": "Codeweergave in-/uitschakelen"
+    }
+  ],
   "gCXOd5": [
     {
       "type": 0,
@@ -6765,12 +6783,6 @@
     {
       "type": 0,
       "value": "Vereist. Een booleaanse waarde waarmee wordt bepaald welke waarde door de expressie moet worden opgehaald."
-    }
-  ],
-  "gIc0YJ": [
-    {
-      "type": 0,
-      "value": "Verbindingsnaam"
     }
   ],
   "gIx5ys": [
@@ -7561,6 +7573,12 @@
       "value": "Voer een geldige JSON in."
     }
   ],
+  "l/3yJr": [
+    {
+      "type": 0,
+      "value": "Ongeldige verbinding"
+    }
+  ],
   "l/9YHQ": [
     {
       "type": 0,
@@ -7805,6 +7823,12 @@
       "value": ", splits op 'niet in de matrix'."
     }
   ],
+  "mUURJW": [
+    {
+      "type": 0,
+      "value": "Verbinding is ongeldig"
+    }
+  ],
   "mYQFtf": [
     {
       "type": 0,
@@ -7845,6 +7869,12 @@
     {
       "type": 0,
       "value": "Een beperking voor Logic Apps instellen om te voorkomen dat de uitgaande aanvraag headers met metagegevens van de werkstroom bevat."
+    }
+  ],
+  "mlU+AC": [
+    {
+      "type": 0,
+      "value": "Verbindingen"
     }
   ],
   "mvrlkP": [
@@ -7963,6 +7993,12 @@
     {
       "type": 0,
       "value": "Aangepast"
+    }
+  ],
+  "nSUXtP": [
+    {
+      "type": 0,
+      "value": "Door deze wijziging worden meerdere acties gewijzigd."
     }
   ],
   "nSan4V": [
@@ -8409,12 +8445,6 @@
       "value": "Er wordt gecontroleerd of de tekenreeks eindigt op een waarde (niet-hoofdlettergevoelig, niet-cultuurgebonden)"
     }
   ],
-  "qQoQFv": [
-    {
-      "type": 0,
-      "value": "Ongeldige verbinding."
-    }
-  ],
   "qSejoi": [
     {
       "type": 0,
@@ -8607,12 +8637,6 @@
       "value": "Geheim"
     }
   ],
-  "rDt4Iu": [
-    {
-      "type": 0,
-      "value": "Is niet geldig voor verbinding"
-    }
-  ],
   "rNi5Y3": [
     {
       "type": 0,
@@ -8793,6 +8817,12 @@
     {
       "type": 0,
       "value": "Sleutel"
+    }
+  ],
+  "snJFUi": [
+    {
+      "type": 0,
+      "value": "Ctrl+C"
     }
   ],
   "soqP+Z": [
@@ -9163,6 +9193,12 @@
       "value": "16"
     }
   ],
+  "unMG8m": [
+    {
+      "type": 0,
+      "value": "Connectortype"
+    }
+  ],
   "unMaeV": [
     {
       "type": 0,
@@ -9229,12 +9265,6 @@
     {
       "type": 0,
       "value": "Triggerdatum"
-    }
-  ],
-  "v0ENVA": [
-    {
-      "type": 0,
-      "value": "Laden"
     }
   ],
   "v39HKj": [
@@ -9787,12 +9817,6 @@
       "value": "XSLT genereren"
     }
   ],
-  "yoCi15": [
-    {
-      "type": 0,
-      "value": "Selecteer een bestaande verbinding of maak een nieuwe."
-    }
-  ],
   "ypZV9w": [
     {
       "type": 0,
@@ -9827,12 +9851,6 @@
     {
       "type": 0,
       "value": "(UTC+01:00) Sarajevo, Skopje, Warschau, Zagreb"
-    }
-  ],
-  "yyYtZV": [
-    {
-      "type": 0,
-      "value": "Verbindingsgateway"
     }
   ],
   "yzqXMp": [
@@ -9939,12 +9957,6 @@
     {
       "type": 0,
       "value": "Stoppen"
-    }
-  ],
-  "ziXw25": [
-    {
-      "type": 0,
-      "value": "Verwijderen"
     }
   ],
   "ziYCiA": [

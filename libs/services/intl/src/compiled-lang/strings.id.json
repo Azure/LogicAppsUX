@@ -11,12 +11,6 @@
       "value": "Peringatan: tipe node input tidak cocok dengan tipe node skema"
     }
   ],
-  "+0cO6t": [
-    {
-      "type": 0,
-      "value": "Buat referensi koneksi"
-    }
-  ],
   "+0yxlR": [
     {
       "type": 0,
@@ -171,6 +165,12 @@
       "value": "Buka Azure Copilot"
     }
   ],
+  "/c1l10": [
+    {
+      "type": 0,
+      "value": "⌘+C"
+    }
+  ],
   "/doURb": [
     {
       "type": 0,
@@ -299,6 +299,12 @@
     {
       "type": 0,
       "value": "(UTC+05:30) Sri Jayawardenepura"
+    }
+  ],
+  "0CPsxh": [
+    {
+      "type": 0,
+      "value": "Del"
     }
   ],
   "0CvRZW": [
@@ -551,12 +557,6 @@
     {
       "type": 0,
       "value": "5"
-    }
-  ],
-  "1zgFh1": [
-    {
-      "type": 0,
-      "value": "Tutup"
     }
   ],
   "20oqsp": [
@@ -917,6 +917,12 @@
       "value": "Diperlukan. Nilai ini adalah bilangan bulat berikutnya setelah bilangan bulat tertinggi yang dapat ditampilkan."
     }
   ],
+  "41drjl": [
+    {
+      "type": 0,
+      "value": "Buka koneksi"
+    }
+  ],
   "41eMpW": [
     {
       "type": 0,
@@ -1107,12 +1113,6 @@
       "value": "Otoritas"
     }
   ],
-  "5WhTmH": [
-    {
-      "type": 0,
-      "value": "Memuat..."
-    }
-  ],
   "5akc1Q": [
     {
       "type": 0,
@@ -1149,6 +1149,12 @@
     {
       "type": 0,
       "value": "Parameter yang digunakan dalam Aplikasi Logika akan dikonversi menjadi templat Azure Resource Manager selama pembuatan templat penerapan."
+    }
+  ],
+  "5gOG+F": [
+    {
+      "type": 0,
+      "value": "Berikan nilai untuk dibandingkan dan pilih operator yang akan digunakan."
     }
   ],
   "5hWg4V": [
@@ -1233,12 +1239,6 @@
     {
       "type": 0,
       "value": "Nilai batas waktu tidak valid, harus cocok dengan format durasi ISO 8601"
-    }
-  ],
-  "6ZviI7": [
-    {
-      "type": 0,
-      "value": "Pilih referensi koneksi"
     }
   ],
   "6fDYzG": [
@@ -1357,6 +1357,12 @@
     {
       "type": 0,
       "value": "Perbarui skema sumber"
+    }
+  ],
+  "74e2xB": [
+    {
+      "type": 0,
+      "value": "Buat koneksi baru"
     }
   ],
   "78Vggn": [
@@ -2152,12 +2158,6 @@
       "value": "Koneksi diperlukan"
     }
   ],
-  "CPm+OG": [
-    {
-      "type": 0,
-      "value": "Buat koneksi"
-    }
-  ],
   "CaajcD": [
     {
       "type": 0,
@@ -2378,6 +2378,12 @@
       "value": "Durasi"
     }
   ],
+  "DfXxoX": [
+    {
+      "type": 0,
+      "value": "Pilih koneksi yang ada atau buat koneksi baru"
+    }
+  ],
   "Dhu3IS": [
     {
       "type": 0,
@@ -2574,12 +2580,6 @@
     {
       "type": 0,
       "value": "Silakan pilih ya atau tidak"
-    }
-  ],
-  "ExaACE": [
-    {
-      "type": 0,
-      "value": "Nama tampilan koneksi"
     }
   ],
   "F3IDl8": [
@@ -2949,12 +2949,6 @@
     {
       "type": 0,
       "value": "Keluar dari mode layar penuh"
-    }
-  ],
-  "HOchry": [
-    {
-      "type": 0,
-      "value": "Pilih referensi koneksi yang sudah ada atau buat baru."
     }
   ],
   "HSJLCu": [
@@ -3784,6 +3778,12 @@
       "value": "Masukkan nama properti unik"
     }
   ],
+  "NdOhXD": [
+    {
+      "type": 0,
+      "value": "Buat Koneksi"
+    }
+  ],
   "Nh91qA": [
     {
       "type": 0,
@@ -3884,12 +3884,6 @@
     {
       "type": 0,
       "value": "OK"
-    }
-  ],
-  "OBKhVi": [
-    {
-      "type": 0,
-      "value": "Tindakan/Pemicu ini tidak dapat disalin."
     }
   ],
   "ODQCKj": [
@@ -4412,12 +4406,6 @@
       "value": "j"
     }
   ],
-  "Qy0Kha": [
-    {
-      "type": 0,
-      "value": "Pemicu tidak dapat dihapus."
-    }
-  ],
   "R/aiRy": [
     {
       "type": 0,
@@ -4495,12 +4483,6 @@
     {
       "type": 0,
       "value": "masalah"
-    }
-  ],
-  "Ro4+PC": [
-    {
-      "type": 0,
-      "value": "Anda hanya dapat menambahkan catatan saat mengedit input langkah."
     }
   ],
   "Rp5pHU": [
@@ -4789,6 +4771,12 @@
     {
       "type": 0,
       "value": "Catatan"
+    }
+  ],
+  "TsJbGH": [
+    {
+      "type": 0,
+      "value": "Terputus"
     }
   ],
   "Ttc0SM": [
@@ -5083,6 +5071,12 @@
       "value": "Minggu"
     }
   ],
+  "V7k/GN": [
+    {
+      "type": 0,
+      "value": "Hapus Switch Case"
+    }
+  ],
   "V8A+1J": [
     {
       "type": 0,
@@ -5359,6 +5353,12 @@
     {
       "type": 0,
       "value": "Identitas terkelola tidak dikonfigurasi di aplikasi logika."
+    }
+  ],
+  "WvvJYw": [
+    {
+      "type": 0,
+      "value": "Tindakan"
     }
   ],
   "X/7je+": [
@@ -5851,6 +5851,12 @@
       "value": ")"
     }
   ],
+  "ZAdaBl": [
+    {
+      "type": 0,
+      "value": "Pilih referensi koneksi yang ada atau buat referensi koneksi baru"
+    }
+  ],
   "ZBJiuD": [
     {
       "type": 0,
@@ -5903,12 +5909,6 @@
     {
       "type": 0,
       "value": "Baca selengkapnya"
-    }
-  ],
-  "ZbX8xq": [
-    {
-      "type": 0,
-      "value": "Operasi ini sudah dihapus."
     }
   ],
   "Zg3IjD": [
@@ -6233,10 +6233,16 @@
       "value": "Buang perubahan"
     }
   ],
-  "cUW5m8": [
+  "cZXqqf": [
     {
       "type": 0,
-      "value": "Pilih kotak centang untuk memilih koneksi ini."
+      "value": "Ubah Koneksi"
+    }
+  ],
+  "cZv9J0": [
+    {
+      "type": 0,
+      "value": "Koneksi valid"
     }
   ],
   "ca/QIc": [
@@ -6535,6 +6541,12 @@
       "value": "Miring (⌘I)"
     }
   ],
+  "en/5A3": [
+    {
+      "type": 0,
+      "value": "Tetapkan ulang"
+    }
+  ],
   "eo1YKX": [
     {
       "type": 0,
@@ -6551,6 +6563,12 @@
     {
       "type": 0,
       "value": "Saat item baru"
+    }
+  ],
+  "evyGYj": [
+    {
+      "type": 0,
+      "value": "Menetapkan ulang semua tindakan yang terhubung ke koneksi baru"
     }
   ],
   "f/lWTW": [
@@ -6657,12 +6675,6 @@
       "value": "Maaf, ada yang tidak beres. Coba lagi."
     }
   ],
-  "g/7QyT": [
-    {
-      "type": 0,
-      "value": "Pilih koneksi"
-    }
-  ],
   "g076bL": [
     {
       "type": 0,
@@ -6699,6 +6711,12 @@
       "value": "Jalankan pengujian"
     }
   ],
+  "gA1dde": [
+    {
+      "type": 0,
+      "value": "Aktifkan/nonaktifkan tampilan kode"
+    }
+  ],
   "gCXOd5": [
     {
       "type": 0,
@@ -6721,12 +6739,6 @@
     {
       "type": 0,
       "value": "Harus diisi. Nilai boolean yang menentukan nilai ekspresi yang harus dikembalikan."
-    }
-  ],
-  "gIc0YJ": [
-    {
-      "type": 0,
-      "value": "Nama koneksi"
     }
   ],
   "gIx5ys": [
@@ -7487,6 +7499,12 @@
       "value": "Masukkan json yang valid."
     }
   ],
+  "l/3yJr": [
+    {
+      "type": 0,
+      "value": "Koneksi yang tidak valid"
+    }
+  ],
   "l/9YHQ": [
     {
       "type": 0,
@@ -7731,6 +7749,12 @@
       "value": "', pemisahan tidak dalam array."
     }
   ],
+  "mUURJW": [
+    {
+      "type": 0,
+      "value": "Koneksi tidak valid"
+    }
+  ],
   "mYQFtf": [
     {
       "type": 0,
@@ -7771,6 +7795,12 @@
     {
       "type": 0,
       "value": "Batasi Logic Apps agar tidak menyertakan header metadata alur kerja dalam permintaan keluar."
+    }
+  ],
+  "mlU+AC": [
+    {
+      "type": 0,
+      "value": "Koneksi"
     }
   ],
   "mvrlkP": [
@@ -7889,6 +7919,12 @@
     {
       "type": 0,
       "value": "Kustom"
+    }
+  ],
+  "nSUXtP": [
+    {
+      "type": 0,
+      "value": "Perubahan ini akan mengubah beberapa tindakan."
     }
   ],
   "nSan4V": [
@@ -8339,12 +8375,6 @@
       "value": "Memeriksa apakah string berakhir dengan nilai (tidak peka huruf besar/kecil, kultur invarian)"
     }
   ],
-  "qQoQFv": [
-    {
-      "type": 0,
-      "value": "Koneksi tidak valid."
-    }
-  ],
   "qSejoi": [
     {
       "type": 0,
@@ -8524,12 +8554,6 @@
     {
       "type": 0,
       "value": "Rahasia"
-    }
-  ],
-  "rDt4Iu": [
-    {
-      "type": 0,
-      "value": "Apakah koneksi tidak valid"
     }
   ],
   "rNi5Y3": [
@@ -8712,6 +8736,12 @@
     {
       "type": 0,
       "value": "Kunci"
+    }
+  ],
+  "snJFUi": [
+    {
+      "type": 0,
+      "value": "Ctrl+C"
     }
   ],
   "soqP+Z": [
@@ -9090,6 +9120,12 @@
       "value": "16"
     }
   ],
+  "unMG8m": [
+    {
+      "type": 0,
+      "value": "Tipe konektor"
+    }
+  ],
   "unMaeV": [
     {
       "type": 0,
@@ -9156,12 +9192,6 @@
     {
       "type": 0,
       "value": "Tanggal pemicu"
-    }
-  ],
-  "v0ENVA": [
-    {
-      "type": 0,
-      "value": "Memuat"
     }
   ],
   "v39HKj": [
@@ -9714,12 +9744,6 @@
       "value": "Buat XSLT"
     }
   ],
-  "yoCi15": [
-    {
-      "type": 0,
-      "value": "Pilih koneksi yang sudah ada atau buat yang baru."
-    }
-  ],
   "ypZV9w": [
     {
       "type": 0,
@@ -9754,12 +9778,6 @@
     {
       "type": 0,
       "value": "(UTC+01:00) Sarajevo, Skopje, Warsawa, Zagreb"
-    }
-  ],
-  "yyYtZV": [
-    {
-      "type": 0,
-      "value": "Gateway koneksi"
     }
   ],
   "yzqXMp": [
@@ -9866,12 +9884,6 @@
     {
       "type": 0,
       "value": "Berhenti"
-    }
-  ],
-  "ziXw25": [
-    {
-      "type": 0,
-      "value": "Hapus"
     }
   ],
   "ziYCiA": [

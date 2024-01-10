@@ -11,12 +11,6 @@
       "value": "Avviso: il tipo del nodo di input non corrisponde al tipo di nodo dello schema."
     }
   ],
-  "+0cO6t": [
-    {
-      "type": 0,
-      "value": "Creare riferimento alla connessione"
-    }
-  ],
   "+0yxlR": [
     {
       "type": 0,
@@ -171,6 +165,12 @@
       "value": "Apri Azure Copilot"
     }
   ],
+  "/c1l10": [
+    {
+      "type": 0,
+      "value": "⌘+C"
+    }
+  ],
   "/doURb": [
     {
       "type": 0,
@@ -299,6 +299,12 @@
     {
       "type": 0,
       "value": "(UTC + 05.30 h) Sri Jayawardenepura"
+    }
+  ],
+  "0CPsxh": [
+    {
+      "type": 0,
+      "value": "CANC"
     }
   ],
   "0CvRZW": [
@@ -551,12 +557,6 @@
     {
       "type": 0,
       "value": "5"
-    }
-  ],
-  "1zgFh1": [
-    {
-      "type": 0,
-      "value": "Ignora"
     }
   ],
   "20oqsp": [
@@ -917,6 +917,12 @@
       "value": "Obbligatorio. Valore corrispondente all'intero successivo dopo l’intero più elevato che è stato restituito."
     }
   ],
+  "41drjl": [
+    {
+      "type": 0,
+      "value": "Apri connessione"
+    }
+  ],
   "41eMpW": [
     {
       "type": 0,
@@ -1107,12 +1113,6 @@
       "value": "Autorità"
     }
   ],
-  "5WhTmH": [
-    {
-      "type": 0,
-      "value": "Caricamento..."
-    }
-  ],
   "5akc1Q": [
     {
       "type": 0,
@@ -1149,6 +1149,12 @@
     {
       "type": 0,
       "value": "I parametri usati nell'app per la logica verranno convertiti in un modello di Azure Resource Manager durante la generazione del modello di distribuzione."
+    }
+  ],
+  "5gOG+F": [
+    {
+      "type": 0,
+      "value": "Specificare i valori da confrontare e selezionare l'operatore da utilizzare."
     }
   ],
   "5hWg4V": [
@@ -1233,12 +1239,6 @@
     {
       "type": 0,
       "value": "Il valore del timeout non è valido. Deve corrispondere al formato di durata ISO 8601"
-    }
-  ],
-  "6ZviI7": [
-    {
-      "type": 0,
-      "value": "Selezionare il riferimento alla connessione"
     }
   ],
   "6fDYzG": [
@@ -1357,6 +1357,12 @@
     {
       "type": 0,
       "value": "Aggiorna schema di origine"
+    }
+  ],
+  "74e2xB": [
+    {
+      "type": 0,
+      "value": "Crea una nuova connessione"
     }
   ],
   "78Vggn": [
@@ -2174,12 +2180,6 @@
       "value": "Connessione richiesta"
     }
   ],
-  "CPm+OG": [
-    {
-      "type": 0,
-      "value": "Creare connessione"
-    }
-  ],
   "CaajcD": [
     {
       "type": 0,
@@ -2392,6 +2392,12 @@
       "value": "Durata"
     }
   ],
+  "DfXxoX": [
+    {
+      "type": 0,
+      "value": "Selezionare una connessione esistente o crearne una nuova"
+    }
+  ],
   "Dhu3IS": [
     {
       "type": 0,
@@ -2588,12 +2594,6 @@
     {
       "type": 0,
       "value": "Scegliere Sì o No"
-    }
-  ],
-  "ExaACE": [
-    {
-      "type": 0,
-      "value": "Nome visualizzato della connessione"
     }
   ],
   "F3IDl8": [
@@ -2985,12 +2985,6 @@
     {
       "type": 0,
       "value": "Esci dalla visualizzazione a schermo intero"
-    }
-  ],
-  "HOchry": [
-    {
-      "type": 0,
-      "value": "Seleziona un riferimento alla connessione esistente o creane uno nuovo."
     }
   ],
   "HSJLCu": [
@@ -3842,6 +3836,12 @@
       "value": "Immettere un nome proprietà univoco"
     }
   ],
+  "NdOhXD": [
+    {
+      "type": 0,
+      "value": "Crea connessione"
+    }
+  ],
   "Nh91qA": [
     {
       "type": 0,
@@ -3942,12 +3942,6 @@
     {
       "type": 0,
       "value": "OK"
-    }
-  ],
-  "OBKhVi": [
-    {
-      "type": 0,
-      "value": "Non è possibile copiare l'azione o il trigger."
     }
   ],
   "ODQCKj": [
@@ -4478,12 +4472,6 @@
       "value": " h"
     }
   ],
-  "Qy0Kha": [
-    {
-      "type": 0,
-      "value": "Non è possibile eliminare i trigger."
-    }
-  ],
   "R/aiRy": [
     {
       "type": 0,
@@ -4583,12 +4571,6 @@
     {
       "type": 0,
       "value": "problema"
-    }
-  ],
-  "Ro4+PC": [
-    {
-      "type": 0,
-      "value": "È possibile aggiungere note solo quando si modificano gli input di un passaggio."
     }
   ],
   "Rp5pHU": [
@@ -4877,6 +4859,12 @@
     {
       "type": 0,
       "value": "Nota"
+    }
+  ],
+  "TsJbGH": [
+    {
+      "type": 0,
+      "value": "Disconnessa"
     }
   ],
   "Ttc0SM": [
@@ -5171,6 +5159,12 @@
       "value": "Settimana"
     }
   ],
+  "V7k/GN": [
+    {
+      "type": 0,
+      "value": "Elimina switch case"
+    }
+  ],
   "V8A+1J": [
     {
       "type": 0,
@@ -5447,6 +5441,12 @@
     {
       "type": 0,
       "value": "Un'identità gestita non è configurata nell'app per la logica."
+    }
+  ],
+  "WvvJYw": [
+    {
+      "type": 0,
+      "value": "Azioni"
     }
   ],
   "X/7je+": [
@@ -5939,6 +5939,12 @@
       "value": ")"
     }
   ],
+  "ZAdaBl": [
+    {
+      "type": 0,
+      "value": "Selezionare un riferimento alla connessione esistente o creane uno nuovo."
+    }
+  ],
   "ZBJiuD": [
     {
       "type": 0,
@@ -5991,12 +5997,6 @@
     {
       "type": 0,
       "value": "Altre informazioni"
-    }
-  ],
-  "ZbX8xq": [
-    {
-      "type": 0,
-      "value": "Questa operazione è già stata eliminata."
     }
   ],
   "Zg3IjD": [
@@ -6321,10 +6321,16 @@
       "value": "Rimuovi le modifiche"
     }
   ],
-  "cUW5m8": [
+  "cZXqqf": [
     {
       "type": 0,
-      "value": "Seleziona la casella di controllo per scegliere questa connessione."
+      "value": "Cambia connessione"
+    }
+  ],
+  "cZv9J0": [
+    {
+      "type": 0,
+      "value": "La connessione è valida"
     }
   ],
   "ca/QIc": [
@@ -6623,6 +6629,12 @@
       "value": "Corsivo (⌘I)"
     }
   ],
+  "en/5A3": [
+    {
+      "type": 0,
+      "value": "Riassegna"
+    }
+  ],
   "eo1YKX": [
     {
       "type": 0,
@@ -6639,6 +6651,12 @@
     {
       "type": 0,
       "value": "Quando un nuovo elemento"
+    }
+  ],
+  "evyGYj": [
+    {
+      "type": 0,
+      "value": "Riassegna tutte le azioni connesse a una nuova connessione"
     }
   ],
   "f/lWTW": [
@@ -6745,12 +6763,6 @@
       "value": "Si è verificato un errore. Riprovare."
     }
   ],
-  "g/7QyT": [
-    {
-      "type": 0,
-      "value": "Selezionare la connessione"
-    }
-  ],
   "g076bL": [
     {
       "type": 0,
@@ -6787,6 +6799,12 @@
       "value": "Esegui test"
     }
   ],
+  "gA1dde": [
+    {
+      "type": 0,
+      "value": "Attiva/Disattiva visualizzazione codice"
+    }
+  ],
   "gCXOd5": [
     {
       "type": 0,
@@ -6809,12 +6827,6 @@
     {
       "type": 0,
       "value": "Obbligatorio. Valore booleano che determina il valore che deve essere restituito dall'espressione."
-    }
-  ],
-  "gIc0YJ": [
-    {
-      "type": 0,
-      "value": "Nome della connessione"
     }
   ],
   "gIx5ys": [
@@ -7619,6 +7631,12 @@
       "value": "Immetti un JSON valido."
     }
   ],
+  "l/3yJr": [
+    {
+      "type": 0,
+      "value": "La connessione non è valida"
+    }
+  ],
   "l/9YHQ": [
     {
       "type": 0,
@@ -7863,6 +7881,12 @@
       "value": "'. Il valore SplitOn non è presente nella matrice."
     }
   ],
+  "mUURJW": [
+    {
+      "type": 0,
+      "value": "La connessione non è valida"
+    }
+  ],
   "mYQFtf": [
     {
       "type": 0,
@@ -7903,6 +7927,12 @@
     {
       "type": 0,
       "value": "Limita le app per la logica per non includere le intestazioni dei metadati del flusso di lavoro nella richiesta in uscita."
+    }
+  ],
+  "mlU+AC": [
+    {
+      "type": 0,
+      "value": "Connessioni"
     }
   ],
   "mvrlkP": [
@@ -8017,6 +8047,12 @@
     {
       "type": 0,
       "value": "Personalizzata"
+    }
+  ],
+  "nSUXtP": [
+    {
+      "type": 0,
+      "value": "Questa modifica modificherà più azioni."
     }
   ],
   "nSan4V": [
@@ -8467,12 +8503,6 @@
       "value": "Verifica se la stringa termina con un valore (senza distinzione tra maiuscole/minuscole, impostazioni cultura inglese non dipendenti da paese/area geografica)"
     }
   ],
-  "qQoQFv": [
-    {
-      "type": 0,
-      "value": "La connessione non è valida."
-    }
-  ],
   "qSejoi": [
     {
       "type": 0,
@@ -8676,12 +8706,6 @@
       "value": "Segreto"
     }
   ],
-  "rDt4Iu": [
-    {
-      "type": 0,
-      "value": "Connessione non valida"
-    }
-  ],
   "rNi5Y3": [
     {
       "type": 0,
@@ -8862,6 +8886,12 @@
     {
       "type": 0,
       "value": "Chiave"
+    }
+  ],
+  "snJFUi": [
+    {
+      "type": 0,
+      "value": "CTRL+C"
     }
   ],
   "soqP+Z": [
@@ -9240,6 +9270,12 @@
       "value": "16"
     }
   ],
+  "unMG8m": [
+    {
+      "type": 0,
+      "value": "Tipo di connettore"
+    }
+  ],
   "unMaeV": [
     {
       "type": 0,
@@ -9306,12 +9342,6 @@
     {
       "type": 0,
       "value": "Data di attivazione"
-    }
-  ],
-  "v0ENVA": [
-    {
-      "type": 0,
-      "value": "Caricamento"
     }
   ],
   "v39HKj": [
@@ -9864,12 +9894,6 @@
       "value": "Genera XSLT"
     }
   ],
-  "yoCi15": [
-    {
-      "type": 0,
-      "value": "Selezionare una connessione esistente o crearne una nuova."
-    }
-  ],
   "ypZV9w": [
     {
       "type": 0,
@@ -9904,12 +9928,6 @@
     {
       "type": 0,
       "value": "(UTC + 1.00 h) Sarajevo, Skopje, Varsavia, Zagabria"
-    }
-  ],
-  "yyYtZV": [
-    {
-      "type": 0,
-      "value": "Gateway connessione"
     }
   ],
   "yzqXMp": [
@@ -10016,12 +10034,6 @@
     {
       "type": 0,
       "value": "Arresta"
-    }
-  ],
-  "ziXw25": [
-    {
-      "type": 0,
-      "value": "Elimina"
     }
   ],
   "ziYCiA": [

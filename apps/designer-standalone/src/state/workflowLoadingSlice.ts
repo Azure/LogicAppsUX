@@ -20,9 +20,13 @@ export interface WorkflowLoadingState {
   isConsumption: boolean;
   isLocal: boolean;
   showChatBot?: boolean;
+  showConnectionsPanel?: boolean;
   workflowKind?: string;
   language: string;
   areCustomEditorsEnabled?: boolean;
+  hostOptions: {
+    displayRuntimeInfo: boolean; // show info about where the action is run(i.e. InApp/Shared/Custom)
+  };
 }
 
 const initialState: WorkflowLoadingState = {
@@ -37,9 +41,13 @@ const initialState: WorkflowLoadingState = {
   isConsumption: false,
   isLocal: false,
   showChatBot: false,
+  showConnectionsPanel: false,
   workflowKind: 'stateful',
   language: 'en',
   areCustomEditorsEnabled: false,
+  hostOptions: {
+    displayRuntimeInfo: true,
+  },
 };
 
 type WorkflowPayload = {
@@ -125,6 +133,9 @@ export const workflowLoadingSlice = createSlice({
     setIsChatBotEnabled: (state, action: PayloadAction<boolean>) => {
       state.showChatBot = action.payload;
     },
+    setShowConnectionsPanel: (state, action: PayloadAction<boolean>) => {
+      state.showConnectionsPanel = action.payload;
+    },
     loadLastWorkflow: (state) => {
       const lastWorkflow = getStateHistory() as WorkflowLoadingState;
       if (!lastWorkflow) return;
@@ -146,6 +157,9 @@ export const workflowLoadingSlice = createSlice({
     },
     setAreCustomEditorsEnabled: (state, action: PayloadAction<boolean>) => {
       state.areCustomEditorsEnabled = action.payload;
+    },
+    setHostOptions: (state, action: PayloadAction<WorkflowLoadingState['hostOptions']>) => {
+      state.hostOptions = { ...state.hostOptions, ...action.payload };
     },
   },
   extraReducers: (builder) => {
@@ -178,10 +192,12 @@ export const {
   setConsumption,
   setIsLocalSelected,
   setIsChatBotEnabled,
+  setShowConnectionsPanel,
   changeRunId,
   setLanguage,
   loadLastWorkflow,
   setAreCustomEditorsEnabled,
+  setHostOptions,
 } = workflowLoadingSlice.actions;
 
 export default workflowLoadingSlice.reducer;

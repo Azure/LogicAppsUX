@@ -32,19 +32,10 @@ exports[`ui/workflowparameters/workflowparameter should construct. 1`] = `
   type={7}
 >
   <React.Fragment>
-    <div
-      className="msla-panel-page"
-    >
-      <PanelPivot
-        isCollapsed={false}
-        onTabChange={[Function]}
-        tabs={Object {}}
-        trackEvent={[MockFunction]}
-      />
-      <PanelContent
-        tabs={Object {}}
-      />
-    </div>
+    <PanelContent
+      tabs={Object {}}
+      trackEvent={[MockFunction]}
+    />
   </React.Fragment>
 </StyledPanelBase>
 `;

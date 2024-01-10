@@ -29,82 +29,34 @@ exports[`lib/searchabledropdownwithaddall should create a dropdown with an add a
     placeholder="Select an option"
     selectedKeys={Array []}
   />
-  <div
-    className="ms-TooltipHost root-110"
-    onBlurCapture={[Function]}
-    onFocusCapture={[Function]}
-    onKeyDown={[Function]}
-    onMouseEnter={[Function]}
-    onMouseLeave={[Function]}
-    role="none"
+  <button
+    aria-label="Add all tooltip"
+    className="fui-Button r1alrhcs ___93s59t0_1cia91x f1c21dwh fjxutwb fwiml72 fh7ncta f1khb0e9 f1vdfbxk f1jnq6q7 f1f5gg8d f1aa9q02 f16jpd5f f1jar5jt fyu767a fy9rknc figsok6 fwrc4pm fg3gtdo fwii5mg f1palphq f12nxie7"
+    data-automation-id="msla-add-all-button"
+    disabled={false}
+    onBlur={[Function]}
+    onClick={[Function]}
+    onFocus={[Function]}
+    onPointerEnter={[Function]}
+    onPointerLeave={[Function]}
+    type="button"
   >
-    <button
-      aria-disabled={false}
-      className="ms-Link msla-dropdown-control-button root-111"
-      data-automation-id="msla-add-all-button"
-      disabled={false}
-      onClick={[Function]}
-      type="button"
-    >
-      Add all
-    </button>
-    <div
-      hidden={true}
-      id="tooltip0"
-      style={
-        Object {
-          "border": 0,
-          "height": 1,
-          "margin": -1,
-          "overflow": "hidden",
-          "padding": 0,
-          "position": "absolute",
-          "whiteSpace": "nowrap",
-          "width": 1,
-        }
-      }
-    >
-      Add all tooltip
-    </div>
-  </div>
-  <div
-    className="ms-TooltipHost root-110"
-    onBlurCapture={[Function]}
-    onFocusCapture={[Function]}
-    onKeyDown={[Function]}
-    onMouseEnter={[Function]}
-    onMouseLeave={[Function]}
-    role="none"
+    Add all
+  </button>
+  <button
+    aria-label="Remove all tooltip"
+    className="fui-Button r1alrhcs ___93s59t0_1cia91x f1c21dwh fjxutwb fwiml72 fh7ncta f1khb0e9 f1vdfbxk f1jnq6q7 f1f5gg8d f1aa9q02 f16jpd5f f1jar5jt fyu767a fy9rknc figsok6 fwrc4pm fg3gtdo fwii5mg f1palphq f12nxie7"
+    data-automation-id="msla-remove-all-button"
+    disabled={false}
+    onBlur={[Function]}
+    onClick={[Function]}
+    onFocus={[Function]}
+    onPointerEnter={[Function]}
+    onPointerLeave={[Function]}
+    type="button"
   >
-    <button
-      aria-disabled={false}
-      className="ms-Link msla-dropdown-control-button root-111"
-      data-automation-id="msla-remove-all-button"
-      disabled={false}
-      onClick={[Function]}
-      type="button"
-    >
-      Remove all
-    </button>
-    <div
-      hidden={true}
-      id="tooltip1"
-      style={
-        Object {
-          "border": 0,
-          "height": 1,
-          "margin": -1,
-          "overflow": "hidden",
-          "padding": 0,
-          "position": "absolute",
-          "whiteSpace": "nowrap",
-          "width": 1,
-        }
-      }
-    >
-      Remove all tooltip
-    </div>
-  </div>
+    Remove all
+  </button>
 </div>
 `;
 
@@ -137,43 +89,19 @@ exports[`lib/searchabledropdownwithaddall should create a dropdown with an add a
     placeholder="Select an option"
     selectedKeys={Array []}
   />
-  <div
-    className="ms-TooltipHost root-110"
-    onBlurCapture={[Function]}
-    onFocusCapture={[Function]}
-    onKeyDown={[Function]}
-    onMouseEnter={[Function]}
-    onMouseLeave={[Function]}
-    role="none"
+  <button
+    aria-label="Add all tooltip"
+    className="fui-Button r1alrhcs ___93s59t0_1cia91x f1c21dwh fjxutwb fwiml72 fh7ncta f1khb0e9 f1vdfbxk f1jnq6q7 f1f5gg8d f1aa9q02 f16jpd5f f1jar5jt fyu767a fy9rknc figsok6 fwrc4pm fg3gtdo fwii5mg f1palphq f12nxie7"
+    data-automation-id="msla-add-all-button"
+    disabled={false}
+    onBlur={[Function]}
+    onClick={[Function]}
+    onFocus={[Function]}
+    onPointerEnter={[Function]}
+    onPointerLeave={[Function]}
+    type="button"
   >
-    <button
-      aria-disabled={false}
-      className="ms-Link msla-dropdown-control-button root-111"
-      data-automation-id="msla-add-all-button"
-      disabled={false}
-      onClick={[Function]}
-      type="button"
-    >
-      Add all
-    </button>
-    <div
-      hidden={true}
-      id="tooltip2"
-      style={
-        Object {
-          "border": 0,
-          "height": 1,
-          "margin": -1,
-          "overflow": "hidden",
-          "padding": 0,
-          "position": "absolute",
-          "whiteSpace": "nowrap",
-          "width": 1,
-        }
-      }
-    >
-      Add all tooltip
-    </div>
-  </div>
+    Add all
+  </button>
 </div>
 `;

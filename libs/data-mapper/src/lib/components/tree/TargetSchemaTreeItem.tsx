@@ -1,12 +1,12 @@
 import { setCurrentTargetSchemaNode } from '../../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
-import type { SchemaNodeExtended } from '../../models';
 import { iconForNormalizedDataType } from '../../utils/Icon.Utils';
 import { useSchemaTreeItemStyles } from './SourceSchemaTreeItem';
 import { TreeIndicator } from './TreeBranch';
 import { Stack } from '@fluentui/react';
 import { mergeClasses, Text, tokens } from '@fluentui/react-components';
 import { CheckmarkCircle12Filled, Circle12Regular, CircleHalfFill12Regular, Document20Regular } from '@fluentui/react-icons';
+import type { SchemaNodeExtended } from '@microsoft/utils-logic-apps';
 import { useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 

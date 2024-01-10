@@ -9,11 +9,13 @@ import { ArtifactService } from './Services/Artifact';
 import { ChildWorkflowService } from './Services/ChildWorkflow';
 import { FileSystemConnectionCreationClient } from './Services/FileSystemConnectionCreationClient';
 import { HttpClient, getExtraHeaders, getRequestUrl, isSuccessResponse } from './Services/HttpClient';
+import { StandaloneOAuthService } from './Services/OAuthService';
 import {
   getConnectionStandard,
   listCallbackUrl,
   saveWorkflowStandard,
   useAppSettings,
+  useCurrentObjectId,
   useCurrentTenantId,
   useRunInstanceStandard,
   useWorkflowAndArtifactsStandard,
@@ -28,7 +30,6 @@ import {
   BaseChatbotService,
   BaseFunctionService,
   BaseGatewayService,
-  BaseOAuthService,
   StandardConnectionService,
   StandardConnectorService,
   StandardOperationManifestService,
@@ -63,7 +64,7 @@ const DesignerEditor = () => {
   }));
 
   const dispatch = useDispatch<AppDispatch>();
-  const { isReadOnly, isDarkMode, isMonitoringView, runId, appId, showChatBot, language } = useSelector(
+  const { isReadOnly, isDarkMode, isMonitoringView, runId, appId, showChatBot, language, hostOptions, showConnectionsPanel } = useSelector(
     (state: RootState) => state.workflowLoader
   );
 
@@ -73,6 +74,7 @@ const DesignerEditor = () => {
   const { data: settingsData, isLoading: settingsLoading, isError: settingsIsError, error: settingsError } = useAppSettings(siteResourceId);
   const { data: workflowAppData, isLoading: appLoading } = useWorkflowApp(siteResourceId);
   const { data: tenantId } = useCurrentTenantId();
+  const { data: objectId } = useCurrentObjectId();
   const [designerID, setDesignerID] = useState(guid());
   const [workflow, setWorkflow] = useState(data?.properties.files[Artifact.WorkflowFile]);
   const originalConnectionsData = useMemo(() => data?.properties.files[Artifact.ConnectionsFile] ?? {}, [data?.properties.files]);
@@ -148,6 +150,7 @@ const DesignerEditor = () => {
         addConnectionData,
         getConnectionConfiguration,
         tenantId,
+        objectId,
         canonicalLocation,
         queryClient,
         dispatch
@@ -243,8 +246,19 @@ const DesignerEditor = () => {
   };
 
   return (
-    <div key={`${designerID}`} style={{ height: 'inherit', width: 'inherit' }}>
-      <DesignerProvider locale={language} options={{ services, isDarkMode, readOnly: isReadOnly, isMonitoringView }}>
+    <div key={designerID} style={{ height: 'inherit', width: 'inherit' }}>
+      <DesignerProvider
+        key={designerID}
+        locale={language}
+        options={{
+          services,
+          isDarkMode,
+          readOnly: isReadOnly,
+          isMonitoringView,
+          hostOptions,
+          showConnectionsPanel,
+        }}
+      >
         {workflow?.definition ? (
           <BJSWorkflowProvider
             workflow={{ definition: workflow?.definition, connectionReferences, parameters, kind: workflow?.kind }}
@@ -258,6 +272,11 @@ const DesignerEditor = () => {
                 location={canonicalLocation}
                 isReadOnly={isReadOnly}
                 isDarkMode={isDarkMode}
+                showConnectionsPanel={showConnectionsPanel}
+                rightShift={showChatBot ? chatbotPanelWidth : undefined}
+                enableCopilot={async () => {
+                  dispatch(setIsChatBotEnabled(!showChatBot));
+                }}
               />
               <Designer rightShift={showChatBot ? chatbotPanelWidth : undefined} />
               {showChatBot ? (
@@ -285,6 +304,7 @@ const getDesignerServices = (
   addConnection: (data: ConnectionAndAppSetting) => Promise<void>,
   getConfiguration: (connectionId: string) => Promise<any>,
   tenantId: string | undefined,
+  objectId: string | undefined,
   location: string,
   queryClient: QueryClient,
   dispatch: AppDispatch
@@ -418,12 +438,14 @@ const getDesignerServices = (
     isDev: false,
   });
 
-  const oAuthService = new BaseOAuthService({
+  const oAuthService = new StandaloneOAuthService({
     ...defaultServiceParams,
     apiVersion: '2018-07-01-preview',
     subscriptionId,
     resourceGroup,
     location,
+    tenantId,
+    objectId,
   });
 
   const workflowService: IWorkflowService = {
@@ -459,6 +481,7 @@ const getDesignerServices = (
   const hostService = {
     fetchAndDisplayContent: (title: string, url: string, type: ContentType) => console.log(title, url, type),
     openWorkflowParametersBlade: () => console.log('openWorkflowParametersBlade'),
+    openConnectionResource: (connectionId: string) => console.log('openConnectionResource:', connectionId),
   };
 
   const functionService = new BaseFunctionService({

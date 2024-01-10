@@ -18,7 +18,7 @@ import { getAccountCredentials } from '../../utils/credentials';
 import { getRandomHexString } from '../../utils/fs';
 import { delay } from '@azure/ms-rest-js';
 import type { ServiceClientCredentials } from '@azure/ms-rest-js';
-import { ExtensionCommand, getBaseGraphApi } from '@microsoft/vscode-extension';
+import { ExtensionCommand, ProjectName, getBaseGraphApi } from '@microsoft/vscode-extension';
 import axios from 'axios';
 import { writeFileSync } from 'fs';
 import * as fse from 'fs-extra';
@@ -332,7 +332,7 @@ export async function exportLogicApp(): Promise<void> {
             apiVersion,
             accessToken,
             cloudHost,
-            project: 'export',
+            project: ProjectName.export,
             hostVersion: ext.extensionVersion,
           },
         });

@@ -11,12 +11,6 @@
       "value": "Aviso: o tipo de nó de entrada não corresponde ao tipo do nó de esquema"
     }
   ],
-  "+0cO6t": [
-    {
-      "type": 0,
-      "value": "Criar referência de conexão"
-    }
-  ],
   "+0yxlR": [
     {
       "type": 0,
@@ -171,6 +165,12 @@
       "value": "Abrir o Azure Copilot"
     }
   ],
+  "/c1l10": [
+    {
+      "type": 0,
+      "value": "⌘+C"
+    }
+  ],
   "/doURb": [
     {
       "type": 0,
@@ -283,6 +283,12 @@
     {
       "type": 0,
       "value": "(UTC+05:30) Sri Jayawardenepura"
+    }
+  ],
+  "0CPsxh": [
+    {
+      "type": 0,
+      "value": "Del"
     }
   ],
   "0CvRZW": [
@@ -535,12 +541,6 @@
     {
       "type": 0,
       "value": "5"
-    }
-  ],
-  "1zgFh1": [
-    {
-      "type": 0,
-      "value": "Ignorar"
     }
   ],
   "20oqsp": [
@@ -909,6 +909,12 @@
       "value": "Necessário. Este valor é o próximo inteiro após o número inteiro mais alto que poderia ser retornado."
     }
   ],
+  "41drjl": [
+    {
+      "type": 0,
+      "value": "Abrir conexão"
+    }
+  ],
   "41eMpW": [
     {
       "type": 0,
@@ -1099,12 +1105,6 @@
       "value": "Autoridade"
     }
   ],
-  "5WhTmH": [
-    {
-      "type": 0,
-      "value": "Carregando..."
-    }
-  ],
   "5akc1Q": [
     {
       "type": 0,
@@ -1133,6 +1133,12 @@
     {
       "type": 0,
       "value": "Os parâmetros usados no Aplicativo Lógico serão convertidos no modelo do Azure Resource Manager durante a geração do modelo de implantação."
+    }
+  ],
+  "5gOG+F": [
+    {
+      "type": 0,
+      "value": "Forneça os valores a serem comparados e selecione o operador a ser utilizado."
     }
   ],
   "5hWg4V": [
@@ -1217,12 +1223,6 @@
     {
       "type": 0,
       "value": "O valor de tempo limite é inválido. Ele deve corresponder ao formato de duração ISO 8601"
-    }
-  ],
-  "6ZviI7": [
-    {
-      "type": 0,
-      "value": "Selecionar referência de conexão"
     }
   ],
   "6fDYzG": [
@@ -1341,6 +1341,12 @@
     {
       "type": 0,
       "value": "Atualizar esquema de origem"
+    }
+  ],
+  "74e2xB": [
+    {
+      "type": 0,
+      "value": "Criar uma nova conexão"
     }
   ],
   "78Vggn": [
@@ -2154,12 +2160,6 @@
       "value": "Conexão exigida"
     }
   ],
-  "CPm+OG": [
-    {
-      "type": 0,
-      "value": "Criar conexão"
-    }
-  ],
   "CaajcD": [
     {
       "type": 0,
@@ -2380,6 +2380,12 @@
       "value": "Duração"
     }
   ],
+  "DfXxoX": [
+    {
+      "type": 0,
+      "value": "Selecione uma conexão existente ou crie uma nova"
+    }
+  ],
   "Dhu3IS": [
     {
       "type": 0,
@@ -2576,12 +2582,6 @@
     {
       "type": 0,
       "value": "Selecione sim ou não"
-    }
-  ],
-  "ExaACE": [
-    {
-      "type": 0,
-      "value": "Nome de exibição da conexão"
     }
   ],
   "F3IDl8": [
@@ -2973,12 +2973,6 @@
     {
       "type": 0,
       "value": "Sair de tela inteira"
-    }
-  ],
-  "HOchry": [
-    {
-      "type": 0,
-      "value": "Selecione uma referência de conexão existente ou crie uma nova."
     }
   ],
   "HSJLCu": [
@@ -3830,6 +3824,12 @@
       "value": "Insira um nome de propriedade exclusivo"
     }
   ],
+  "NdOhXD": [
+    {
+      "type": 0,
+      "value": "Criar Conexão"
+    }
+  ],
   "Nh91qA": [
     {
       "type": 0,
@@ -3930,12 +3930,6 @@
     {
       "type": 0,
       "value": "OK"
-    }
-  ],
-  "OBKhVi": [
-    {
-      "type": 0,
-      "value": "Essa Ação/Gatilho não pode ser copiada."
     }
   ],
   "ODQCKj": [
@@ -4454,12 +4448,6 @@
       "value": "h"
     }
   ],
-  "Qy0Kha": [
-    {
-      "type": 0,
-      "value": "Os gatilhos não podem ser excluídos."
-    }
-  ],
   "R/aiRy": [
     {
       "type": 0,
@@ -4559,12 +4547,6 @@
     {
       "type": 0,
       "value": "problema"
-    }
-  ],
-  "Ro4+PC": [
-    {
-      "type": 0,
-      "value": "Você só pode adicionar anotações ao editar as entradas de uma etapa."
     }
   ],
   "Rp5pHU": [
@@ -4853,6 +4835,12 @@
     {
       "type": 0,
       "value": "Observação"
+    }
+  ],
+  "TsJbGH": [
+    {
+      "type": 0,
+      "value": "Desconectado"
     }
   ],
   "Ttc0SM": [
@@ -5147,6 +5135,12 @@
       "value": "Semana"
     }
   ],
+  "V7k/GN": [
+    {
+      "type": 0,
+      "value": "Excluir Caso de Comutador"
+    }
+  ],
   "V8A+1J": [
     {
       "type": 0,
@@ -5423,6 +5417,12 @@
     {
       "type": 0,
       "value": "Uma identidade gerenciada não está configurada no aplicativo lógico."
+    }
+  ],
+  "WvvJYw": [
+    {
+      "type": 0,
+      "value": "Ações"
     }
   ],
   "X/7je+": [
@@ -5915,6 +5915,12 @@
       "value": ")"
     }
   ],
+  "ZAdaBl": [
+    {
+      "type": 0,
+      "value": "Selecione uma referência de conexão existente ou crie uma nova"
+    }
+  ],
   "ZBJiuD": [
     {
       "type": 0,
@@ -5967,12 +5973,6 @@
     {
       "type": 0,
       "value": "Leia mais"
-    }
-  ],
-  "ZbX8xq": [
-    {
-      "type": 0,
-      "value": "Esta operação já foi excluída."
     }
   ],
   "Zg3IjD": [
@@ -6297,10 +6297,16 @@
       "value": "Descartar alterações"
     }
   ],
-  "cUW5m8": [
+  "cZXqqf": [
     {
       "type": 0,
-      "value": "Marque a caixa de seleção para escolher esta conexão."
+      "value": "Alterar Conexão"
+    }
+  ],
+  "cZv9J0": [
+    {
+      "type": 0,
+      "value": "A conexão é válida"
     }
   ],
   "ca/QIc": [
@@ -6599,6 +6605,12 @@
       "value": "Itálico (⌘I)"
     }
   ],
+  "en/5A3": [
+    {
+      "type": 0,
+      "value": "Reatribuir"
+    }
+  ],
   "eo1YKX": [
     {
       "type": 0,
@@ -6615,6 +6627,12 @@
     {
       "type": 0,
       "value": "Quando um novo item"
+    }
+  ],
+  "evyGYj": [
+    {
+      "type": 0,
+      "value": "Reatribuir todas as ações conectadas a uma nova conexão"
     }
   ],
   "f/lWTW": [
@@ -6721,12 +6739,6 @@
       "value": "Desculpe, algo deu errado. Tente novamente."
     }
   ],
-  "g/7QyT": [
-    {
-      "type": 0,
-      "value": "Selecionar a conexão"
-    }
-  ],
   "g076bL": [
     {
       "type": 0,
@@ -6763,6 +6775,12 @@
       "value": "Executar teste"
     }
   ],
+  "gA1dde": [
+    {
+      "type": 0,
+      "value": "Ativar/desativar modo de exibição de código"
+    }
+  ],
   "gCXOd5": [
     {
       "type": 0,
@@ -6785,12 +6803,6 @@
     {
       "type": 0,
       "value": "Necessário. Um valor booliano que determina qual valor a expressão deve retornar."
-    }
-  ],
-  "gIc0YJ": [
-    {
-      "type": 0,
-      "value": "Nome da conexão"
     }
   ],
   "gIx5ys": [
@@ -7603,6 +7615,12 @@
       "value": "Insira um json válido."
     }
   ],
+  "l/3yJr": [
+    {
+      "type": 0,
+      "value": "Conexão inválida"
+    }
+  ],
   "l/9YHQ": [
     {
       "type": 0,
@@ -7847,6 +7865,12 @@
       "value": "\", dividido em não na matriz."
     }
   ],
+  "mUURJW": [
+    {
+      "type": 0,
+      "value": "A conexão é inválida"
+    }
+  ],
   "mYQFtf": [
     {
       "type": 0,
@@ -7887,6 +7911,12 @@
     {
       "type": 0,
       "value": "Limite os Aplicativos Lógicos para não incluir cabeçalhos de metadados de fluxo de trabalho na solicitação de saída."
+    }
+  ],
+  "mlU+AC": [
+    {
+      "type": 0,
+      "value": "Conexões"
     }
   ],
   "mvrlkP": [
@@ -8005,6 +8035,12 @@
     {
       "type": 0,
       "value": "Personalizado"
+    }
+  ],
+  "nSUXtP": [
+    {
+      "type": 0,
+      "value": "Várias ações serão modificadas por essa alteração."
     }
   ],
   "nSan4V": [
@@ -8455,12 +8491,6 @@
       "value": "Verifica se a cadeia de caracteres termina com um valor (não diferencia maiúsculas de minúsculas, cultura invariável)"
     }
   ],
-  "qQoQFv": [
-    {
-      "type": 0,
-      "value": "Conexão inválida."
-    }
-  ],
   "qSejoi": [
     {
       "type": 0,
@@ -8664,12 +8694,6 @@
       "value": "Segredo"
     }
   ],
-  "rDt4Iu": [
-    {
-      "type": 0,
-      "value": "A conexão é inválida"
-    }
-  ],
   "rNi5Y3": [
     {
       "type": 0,
@@ -8850,6 +8874,12 @@
     {
       "type": 0,
       "value": "Chave"
+    }
+  ],
+  "snJFUi": [
+    {
+      "type": 0,
+      "value": "Ctrl+C"
     }
   ],
   "soqP+Z": [
@@ -9228,6 +9258,12 @@
       "value": "16"
     }
   ],
+  "unMG8m": [
+    {
+      "type": 0,
+      "value": "Tipo de conector"
+    }
+  ],
   "unMaeV": [
     {
       "type": 0,
@@ -9294,12 +9330,6 @@
     {
       "type": 0,
       "value": "Data de disparo"
-    }
-  ],
-  "v0ENVA": [
-    {
-      "type": 0,
-      "value": "Carregando"
     }
   ],
   "v39HKj": [
@@ -9852,12 +9882,6 @@
       "value": "Gerar XSLT"
     }
   ],
-  "yoCi15": [
-    {
-      "type": 0,
-      "value": "Selecione uma conexão existente ou crie uma nova."
-    }
-  ],
   "ypZV9w": [
     {
       "type": 0,
@@ -9892,12 +9916,6 @@
     {
       "type": 0,
       "value": "(UTC+01:00) Sarajevo, Skopje, Varsóvia, Zagreb"
-    }
-  ],
-  "yyYtZV": [
-    {
-      "type": 0,
-      "value": "Gateway de conexão"
     }
   ],
   "yzqXMp": [
@@ -10004,12 +10022,6 @@
     {
       "type": 0,
       "value": "Parar"
-    }
-  ],
-  "ziXw25": [
-    {
-      "type": 0,
-      "value": "Excluir"
     }
   ],
   "ziYCiA": [

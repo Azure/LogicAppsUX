@@ -11,12 +11,6 @@
       "value": "Uyarı: Giriş düğümü türü şema düğümünün türüyle eşleşmiyor"
     }
   ],
-  "+0cO6t": [
-    {
-      "type": 0,
-      "value": "Bağlantı başvurusu oluşturun"
-    }
-  ],
   "+0yxlR": [
     {
       "type": 0,
@@ -171,6 +165,12 @@
       "value": "Azure Copilot’u aç"
     }
   ],
+  "/c1l10": [
+    {
+      "type": 0,
+      "value": "⌘+C"
+    }
+  ],
   "/doURb": [
     {
       "type": 0,
@@ -299,6 +299,12 @@
     {
       "type": 0,
       "value": "(UTC+05:30) Sri Jayawardenepura"
+    }
+  ],
+  "0CPsxh": [
+    {
+      "type": 0,
+      "value": "Del"
     }
   ],
   "0CvRZW": [
@@ -551,12 +557,6 @@
     {
       "type": 0,
       "value": "5"
-    }
-  ],
-  "1zgFh1": [
-    {
-      "type": 0,
-      "value": "Kapat"
     }
   ],
   "20oqsp": [
@@ -917,6 +917,12 @@
       "value": "Gerekli. Bu değer, döndürülebilecek en yüksek tamsayıdan bir sonraki tamsayıdır."
     }
   ],
+  "41drjl": [
+    {
+      "type": 0,
+      "value": "Bağlantıyı açın"
+    }
+  ],
   "41eMpW": [
     {
       "type": 0,
@@ -1107,12 +1113,6 @@
       "value": "Yetkili"
     }
   ],
-  "5WhTmH": [
-    {
-      "type": 0,
-      "value": "Yükleniyor..."
-    }
-  ],
   "5akc1Q": [
     {
       "type": 0,
@@ -1149,6 +1149,12 @@
     {
       "type": 0,
       "value": "Mantıksal Uygulama'da kullanılan parametreler, dağıtım şablonu oluşturma sırasında Azure Resource Manager şablonuna dönüştürülür."
+    }
+  ],
+  "5gOG+F": [
+    {
+      "type": 0,
+      "value": "Karşılaştırılacak değerleri sağlayın ve kullanılacak operatörü seçin."
     }
   ],
   "5hWg4V": [
@@ -1233,12 +1239,6 @@
     {
       "type": 0,
       "value": "Zaman aşımı değeri geçersiz, ISO 8601 süre biçimiyle eşleşmelidir"
-    }
-  ],
-  "6ZviI7": [
-    {
-      "type": 0,
-      "value": "Bağlantı başvurusunu seçin"
     }
   ],
   "6fDYzG": [
@@ -1357,6 +1357,12 @@
     {
       "type": 0,
       "value": "Kaynak şemayı güncelleştir"
+    }
+  ],
+  "74e2xB": [
+    {
+      "type": 0,
+      "value": "Yeni bağlantı oluştur"
     }
   ],
   "78Vggn": [
@@ -2163,12 +2169,6 @@
       "value": "Bağlantı gerekli"
     }
   ],
-  "CPm+OG": [
-    {
-      "type": 0,
-      "value": "Bağlantı oluştur"
-    }
-  ],
   "CaajcD": [
     {
       "type": 0,
@@ -2389,6 +2389,12 @@
       "value": "Süre"
     }
   ],
+  "DfXxoX": [
+    {
+      "type": 0,
+      "value": "Mevcut bir bağlantıyı seçin veya yeni bir bağlantı oluşturun"
+    }
+  ],
   "Dhu3IS": [
     {
       "type": 0,
@@ -2581,12 +2587,6 @@
     {
       "type": 0,
       "value": "Lütfen Evet veya Hayır'ı seçin"
-    }
-  ],
-  "ExaACE": [
-    {
-      "type": 0,
-      "value": "Bağlantı görünen adı"
     }
   ],
   "F3IDl8": [
@@ -2967,12 +2967,6 @@
     {
       "type": 0,
       "value": "Tam ekrandan çık"
-    }
-  ],
-  "HOchry": [
-    {
-      "type": 0,
-      "value": "Mevcut bir bağlantı başvurusu seçin veya yeni bir başvuru oluşturun."
     }
   ],
   "HSJLCu": [
@@ -3813,6 +3807,12 @@
       "value": "Benzersiz özellik adı girin"
     }
   ],
+  "NdOhXD": [
+    {
+      "type": 0,
+      "value": "Bağlantı Oluştur"
+    }
+  ],
   "Nh91qA": [
     {
       "type": 0,
@@ -3913,12 +3913,6 @@
     {
       "type": 0,
       "value": "Tamam"
-    }
-  ],
-  "OBKhVi": [
-    {
-      "type": 0,
-      "value": "Bu Eylem/Tetikleyici kopyalanamıyor."
     }
   ],
   "ODQCKj": [
@@ -4445,12 +4439,6 @@
       "value": " sa"
     }
   ],
-  "Qy0Kha": [
-    {
-      "type": 0,
-      "value": "Tetikleyiciler silinemez."
-    }
-  ],
   "R/aiRy": [
     {
       "type": 0,
@@ -4539,12 +4527,6 @@
     {
       "type": 0,
       "value": "sorun"
-    }
-  ],
-  "Ro4+PC": [
-    {
-      "type": 0,
-      "value": "Yalnızca bir adımın girişlerini düzenlediğinizde not ekleyebilirsiniz."
     }
   ],
   "Rp5pHU": [
@@ -4829,6 +4811,12 @@
     {
       "type": 0,
       "value": "Not"
+    }
+  ],
+  "TsJbGH": [
+    {
+      "type": 0,
+      "value": "Bağlantı kesildi"
     }
   ],
   "Ttc0SM": [
@@ -5123,6 +5111,12 @@
       "value": "Hafta"
     }
   ],
+  "V7k/GN": [
+    {
+      "type": 0,
+      "value": "Geçiş Servis Talebini Sil"
+    }
+  ],
   "V8A+1J": [
     {
       "type": 0,
@@ -5399,6 +5393,12 @@
     {
       "type": 0,
       "value": "Mantıksal uygulamada yapılandırılmış bir yönetilen kimlik yok."
+    }
+  ],
+  "WvvJYw": [
+    {
+      "type": 0,
+      "value": "Eylemler"
     }
   ],
   "X/7je+": [
@@ -5891,6 +5891,12 @@
       "value": " arasında olmalıdır)"
     }
   ],
+  "ZAdaBl": [
+    {
+      "type": 0,
+      "value": "Mevcut bir bağlantı başvurusu seçin veya yeni bir başvuru oluşturun"
+    }
+  ],
   "ZBJiuD": [
     {
       "type": 0,
@@ -5943,12 +5949,6 @@
     {
       "type": 0,
       "value": "Daha fazlasını oku"
-    }
-  ],
-  "ZbX8xq": [
-    {
-      "type": 0,
-      "value": "Bu işlem zaten silinmiş."
     }
   ],
   "Zg3IjD": [
@@ -6273,10 +6273,16 @@
       "value": "Değişiklikleri at"
     }
   ],
-  "cUW5m8": [
+  "cZXqqf": [
     {
       "type": 0,
-      "value": "Bu bağlantıyı seçmek için onay kutusunu seçin."
+      "value": "Bağlantıyı Değiştir"
+    }
+  ],
+  "cZv9J0": [
+    {
+      "type": 0,
+      "value": "Bağlantı geçerli"
     }
   ],
   "ca/QIc": [
@@ -6571,6 +6577,12 @@
       "value": "İtalik (⌘I)"
     }
   ],
+  "en/5A3": [
+    {
+      "type": 0,
+      "value": "Yeniden ata"
+    }
+  ],
   "eo1YKX": [
     {
       "type": 0,
@@ -6587,6 +6599,12 @@
     {
       "type": 0,
       "value": "Yeni bir öğe şu durumda olduğunda:"
+    }
+  ],
+  "evyGYj": [
+    {
+      "type": 0,
+      "value": "Tüm bağlı eylemleri yeni bir bağlantıya yeniden atayın"
     }
   ],
   "f/lWTW": [
@@ -6693,12 +6711,6 @@
       "value": "Ne yazık ki bir sorun oluştu. Lütfen yeniden deneyin."
     }
   ],
-  "g/7QyT": [
-    {
-      "type": 0,
-      "value": "Bağlantı seçin"
-    }
-  ],
   "g076bL": [
     {
       "type": 0,
@@ -6735,6 +6747,12 @@
       "value": "Testi çalıştır"
     }
   ],
+  "gA1dde": [
+    {
+      "type": 0,
+      "value": "Kod görünümünü aç/kapat"
+    }
+  ],
   "gCXOd5": [
     {
       "type": 0,
@@ -6757,12 +6775,6 @@
     {
       "type": 0,
       "value": "Gerekli. İfadenin hangi değeri döndürmesi gerektiğini belirleyen bir boole değer."
-    }
-  ],
-  "gIc0YJ": [
-    {
-      "type": 0,
-      "value": "Bağlantı adı"
     }
   ],
   "gIx5ys": [
@@ -7541,6 +7553,12 @@
       "value": "Geçerli bir json girin."
     }
   ],
+  "l/3yJr": [
+    {
+      "type": 0,
+      "value": "Geçersiz bağlantı"
+    }
+  ],
   "l/9YHQ": [
     {
       "type": 0,
@@ -7785,6 +7803,12 @@
       "value": "' değerinde tür geçersiz, bölünme dizide değil."
     }
   ],
+  "mUURJW": [
+    {
+      "type": 0,
+      "value": "Bağlantı geçersiz"
+    }
+  ],
   "mYQFtf": [
     {
       "type": 0,
@@ -7825,6 +7849,12 @@
     {
       "type": 0,
       "value": "Logic Apps'i giden isteklerde iş akışı meta veri üst bilgileri eklememek için sınırlandırın."
+    }
+  ],
+  "mlU+AC": [
+    {
+      "type": 0,
+      "value": "Bağlantılar"
     }
   ],
   "mvrlkP": [
@@ -7943,6 +7973,12 @@
     {
       "type": 0,
       "value": "Özel"
+    }
+  ],
+  "nSUXtP": [
+    {
+      "type": 0,
+      "value": "Bu değiştirilecek birden çok eylem değiştirilir."
     }
   ],
   "nSan4V": [
@@ -8393,12 +8429,6 @@
       "value": "Dizenin bir değer ile bitip bitmediğini kontrol eder (büyük-küçük harf duyarsız, sabit kültür)"
     }
   ],
-  "qQoQFv": [
-    {
-      "type": 0,
-      "value": "Bağlantı geçersiz."
-    }
-  ],
   "qSejoi": [
     {
       "type": 0,
@@ -8591,12 +8621,6 @@
       "value": "Gizli dizi"
     }
   ],
-  "rDt4Iu": [
-    {
-      "type": 0,
-      "value": "Bağlantı geçersiz"
-    }
-  ],
   "rNi5Y3": [
     {
       "type": 0,
@@ -8773,6 +8797,12 @@
     {
       "type": 0,
       "value": "Anahtar"
+    }
+  ],
+  "snJFUi": [
+    {
+      "type": 0,
+      "value": "Ctrl+C"
     }
   ],
   "soqP+Z": [
@@ -9151,6 +9181,12 @@
       "value": "16"
     }
   ],
+  "unMG8m": [
+    {
+      "type": 0,
+      "value": "Bağlayıcı türü"
+    }
+  ],
   "unMaeV": [
     {
       "type": 0,
@@ -9217,12 +9253,6 @@
     {
       "type": 0,
       "value": "Tetikleyici tarihi"
-    }
-  ],
-  "v0ENVA": [
-    {
-      "type": 0,
-      "value": "Yükleniyor"
     }
   ],
   "v39HKj": [
@@ -9771,12 +9801,6 @@
       "value": "XSLT oluştur"
     }
   ],
-  "yoCi15": [
-    {
-      "type": 0,
-      "value": "Mevcut bir bağlantıyı seçin veya yeni bağlantı oluşturun."
-    }
-  ],
   "ypZV9w": [
     {
       "type": 0,
@@ -9811,12 +9835,6 @@
     {
       "type": 0,
       "value": "(UTC+01:00) Saraybosna, Üsküp, Varşova, Zagreb"
-    }
-  ],
-  "yyYtZV": [
-    {
-      "type": 0,
-      "value": "Bağlantı ağ geçidi"
     }
   ],
   "yzqXMp": [
@@ -9923,12 +9941,6 @@
     {
       "type": 0,
       "value": "Durdur"
-    }
-  ],
-  "ziXw25": [
-    {
-      "type": 0,
-      "value": "Sil"
     }
   ],
   "ziYCiA": [

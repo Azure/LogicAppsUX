@@ -1,6 +1,6 @@
 import type { RootState } from '../../core/state/Store';
-import { SchemaType } from '../../models';
 import { FileDropdown } from '../fileDropdown/fileDropdown';
+import { SchemaType } from '@microsoft/utils-logic-apps';
 import React, { useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useSelector } from 'react-redux';
@@ -47,7 +47,7 @@ export const SelectExistingSchema = (props: SelectExistingSchemaProps) => {
   return (
     <FileDropdown
       allPathOptions={dataMapDropdownOptions}
-      errorMessage={''}
+      errorMessage={props.errorMessage}
       setSelectedPath={setSelectedSchema}
       relativePathMessage={`${folderLocationLabel} ${schemaRelativePath}`}
       placeholder={schemaDropdownPlaceholder}

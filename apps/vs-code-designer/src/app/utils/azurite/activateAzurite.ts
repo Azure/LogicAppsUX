@@ -13,7 +13,8 @@ import {
 } from '../../../constants';
 import { localize } from '../../../localize';
 import { executeOnAzurite } from '../../azuriteExtension/executeOnAzuriteExt';
-import { tryGetFunctionProjectRoot } from '../verifyIsProject';
+import { validateEmulatorIsRunning } from '../../debug/validatePreDebug';
+import { tryGetLogicAppProjectRoot } from '../verifyIsProject';
 import { getWorkspaceSetting, updateGlobalSetting, updateWorkspaceSetting } from '../vsCodeConfig/settings';
 import { getWorkspaceFolder } from '../workspace';
 import { DialogResponses, type IActionContext } from '@microsoft/vscode-azext-utils';
@@ -29,7 +30,7 @@ import type { MessageItem } from 'vscode';
 export async function activateAzurite(context: IActionContext): Promise<void> {
   if (vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 0) {
     const workspaceFolder = await getWorkspaceFolder(context);
-    const projectPath = await tryGetFunctionProjectRoot(context, workspaceFolder);
+    const projectPath = await tryGetLogicAppProjectRoot(context, workspaceFolder);
 
     if (projectPath) {
       const globalAzuriteLocationSetting: string = getWorkspaceSetting<string>(azuriteLocationSetting, projectPath, azuriteExtensionPrefix);
@@ -46,7 +47,7 @@ export async function activateAzurite(context: IActionContext): Promise<void> {
         const enableMessage: MessageItem = { title: localize('enableAutoStart', 'Enable AutoStart') };
 
         const result = await context.ui.showWarningMessage(
-          localize('autoStartAzuriteTitle', 'Configure Azurite to autostart on project launch?'),
+          localize('autoStartAzuriteTitle', 'Configure Azurite to autostart on project debug?'),
           enableMessage,
           DialogResponses.no,
           DialogResponses.dontWarnAgain
@@ -82,12 +83,13 @@ export async function activateAzurite(context: IActionContext): Promise<void> {
         }
       }
 
-      if (getWorkspaceSetting<boolean>(autoStartAzuriteSetting)) {
-        const azuriteWorkspaceSetting = getWorkspaceSetting<string>(azuriteBinariesLocationSetting);
-        await updateWorkspaceSetting(azuriteLocationSetting, azuriteWorkspaceSetting, projectPath, azuriteExtensionPrefix);
+      const isAzuriteRunning = await validateEmulatorIsRunning(context, projectPath, false);
+
+      if (autoStartAzurite && !isAzuriteRunning) {
+        await updateWorkspaceSetting(azuriteLocationSetting, azuriteLocationExtSetting, projectPath, azuriteExtensionPrefix);
         await executeOnAzurite(context, extensionCommand.azureAzuriteStart);
         context.telemetry.properties.azuriteStart = 'true';
-        context.telemetry.properties.azuriteLocation = azuriteWorkspaceSetting;
+        context.telemetry.properties.azuriteLocation = azuriteLocationExtSetting;
       }
     }
   }

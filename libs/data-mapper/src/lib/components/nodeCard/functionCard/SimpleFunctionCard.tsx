@@ -9,10 +9,9 @@ import { errorCardStyles, getStylesForSharedState, highlightedCardStyles, select
 import type { FunctionCardProps } from './FunctionCard';
 import { inputsValid, shouldDisplaySourceHandle, shouldDisplayTargetHandle, useFunctionCardStyles } from './FunctionCard';
 import { Button, PresenceBadge, Text, Tooltip, mergeClasses, tokens } from '@fluentui/react-components';
-import type { MenuItemOption } from '@microsoft/designer-ui';
-import { CardContextMenu, MenuItemType, useCardContextMenu } from '@microsoft/designer-ui';
+import { CardContextMenu, useCardContextMenu } from '@microsoft/designer-ui';
+import { DeleteMenuItem } from '@microsoft/logic-apps-designer';
 import { useMemo, useState } from 'react';
-import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 import type { NodeProps } from 'reactflow';
 import { Position } from 'reactflow';
@@ -41,23 +40,7 @@ export const SimpleFunctionCard = (props: NodeProps<FunctionCardProps>) => {
     return isNodeHighlighted(isCurrentNodeSelected, reactFlowId, selectedItemConnectedNodes);
   }, [isCurrentNodeSelected, reactFlowId, selectedItemConnectedNodes]);
 
-  const intl = useIntl();
   const contextMenu = useCardContextMenu();
-  const getDeleteMenuItem = (): MenuItemOption => {
-    const deleteDescription = intl.formatMessage({
-      defaultMessage: 'Delete',
-      description: 'Delete text',
-    });
-
-    return {
-      key: deleteDescription,
-      disabled: false,
-      iconName: 'Delete',
-      title: deleteDescription,
-      type: MenuItemType.Advanced,
-      onClick: handleDeleteClick,
-    };
-  };
 
   const handleDeleteClick = () => {
     dispatch(setSelectedItem(reactFlowId));
@@ -143,9 +126,9 @@ export const SimpleFunctionCard = (props: NodeProps<FunctionCardProps>) => {
       <CardContextMenu
         title={'Delete'}
         contextMenuLocation={contextMenu.location}
-        contextMenuOptions={[getDeleteMenuItem()]}
-        showContextMenu={contextMenu.isShowing}
-        onSetShowContextMenu={contextMenu.setIsShowing}
+        menuItems={[<DeleteMenuItem key="delete" onClick={handleDeleteClick} />]}
+        open={contextMenu.isShowing}
+        setOpen={contextMenu.setIsShowing}
       />
     </div>
   );

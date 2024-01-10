@@ -446,6 +446,16 @@ const containsExpression = (operand: string): boolean => {
   return operand.includes('(') && operand.includes(')');
 };
 
+export const loadParameterValueFromString = (
+  value: string,
+  removeQuotesFromExpression?: boolean,
+  trimExpression?: boolean,
+  convertIfContainsExpression?: boolean
+) => {
+  const inputParameter = convertStringToInputParameter(value, removeQuotesFromExpression, trimExpression, convertIfContainsExpression);
+  return loadParameterValue(inputParameter);
+};
+
 const convertStringToInputParameter = (
   value: string,
   removeQuotesFromExpression?: boolean,
@@ -549,8 +559,8 @@ const toSimpleQueryBuilderViewModel = (
     const operandSubstring = stringValue.substring(stringValue.indexOf('(') + 1, nthLastIndexOf(stringValue, ')', negatory ? 2 : 1));
     const operand1String = removeQuotes(operandSubstring.substring(0, getOuterMostCommaIndex(operandSubstring)).trim());
     const operand2String = removeQuotes(operandSubstring.substring(getOuterMostCommaIndex(operandSubstring) + 1).trim());
-    operand1 = loadParameterValue(convertStringToInputParameter(operand1String, true, true, true))[0];
-    operand2 = loadParameterValue(convertStringToInputParameter(operand2String, true, true, true))[0];
+    operand1 = loadParameterValueFromString(operand1String, true, true, true)[0];
+    operand2 = loadParameterValueFromString(operand2String, true, true, true)[0];
     const separatorLiteral: ValueSegment = { id: guid(), type: ValueSegmentType.LITERAL, value: `,` };
     return {
       isOldFormat: true,
@@ -639,12 +649,8 @@ function recurseConditionalItems(input: any, selectedOption?: GroupDropdownOptio
         output.push({
           type: GroupType.ROW,
           operator: not + dropdownVal,
-          operand1: loadParameterValue(
-            convertStringToInputParameter(not ? item[not][dropdownVal][0] : item[dropdownVal][0], true, true, true)
-          ),
-          operand2: loadParameterValue(
-            convertStringToInputParameter(not ? item[not][dropdownVal][1] : item[dropdownVal][1], true, true, true)
-          ),
+          operand1: loadParameterValueFromString(not ? item[not][dropdownVal][0] : item[dropdownVal][0], true, true, true),
+          operand2: loadParameterValueFromString(not ? item[not][dropdownVal][1] : item[dropdownVal][1], true, true, true),
         });
       } else {
         output.push({ type: GroupType.GROUP, condition: condition, items: recurseConditionalItems(item, condition) });
@@ -665,8 +671,8 @@ function toDictionaryViewModel(value: any): { items: DictionaryEditorItemProps[]
     for (const itemKey of keys) {
       items.push({
         id: guid(),
-        key: loadParameterValue(convertStringToInputParameter(itemKey)),
-        value: loadParameterValue(convertStringToInputParameter(valueToParse[itemKey])),
+        key: loadParameterValueFromString(itemKey),
+        value: loadParameterValueFromString(valueToParse[itemKey]),
       });
     }
 
@@ -689,8 +695,8 @@ function toTableViewModel(value: any, editorOptions: any): { items: DictionaryEd
     for (const item of value) {
       items.push({
         id: guid(),
-        key: loadParameterValue(convertStringToInputParameter(item[keys[0]])),
-        value: loadParameterValue(convertStringToInputParameter(item[keys[1]])),
+        key: loadParameterValueFromString(item[keys[0]]),
+        value: loadParameterValueFromString(item[keys[1]]),
       });
     }
 
@@ -711,8 +717,8 @@ function toAuthenticationViewModel(value: any): { type: AuthenticationType; auth
           type: value.type,
           authenticationValue: {
             basic: {
-              basicUsername: loadParameterValue(convertStringToInputParameter(value.username)),
-              basicPassword: loadParameterValue(convertStringToInputParameter(value.password)),
+              basicUsername: loadParameterValueFromString(value.username),
+              basicPassword: loadParameterValueFromString(value.password),
             },
           },
         };
@@ -721,8 +727,8 @@ function toAuthenticationViewModel(value: any): { type: AuthenticationType; auth
           type: value.type,
           authenticationValue: {
             clientCertificate: {
-              clientCertificatePfx: loadParameterValue(convertStringToInputParameter(value.pfx)),
-              clientCertificatePassword: loadParameterValue(convertStringToInputParameter(value.password)),
+              clientCertificatePfx: loadParameterValueFromString(value.pfx),
+              clientCertificatePassword: loadParameterValueFromString(value.password),
             },
           },
         };
@@ -732,14 +738,14 @@ function toAuthenticationViewModel(value: any): { type: AuthenticationType; auth
           type: value.type,
           authenticationValue: {
             aadOAuth: {
-              oauthTenant: loadParameterValue(convertStringToInputParameter(value.tenant)),
-              oauthAudience: loadParameterValue(convertStringToInputParameter(value.audience)),
-              oauthAuthority: loadParameterValue(convertStringToInputParameter(value.authority)),
-              oauthClientId: loadParameterValue(convertStringToInputParameter(value.clientId)),
+              oauthTenant: loadParameterValueFromString(value.tenant),
+              oauthAudience: loadParameterValueFromString(value.audience),
+              oauthAuthority: loadParameterValueFromString(value.authority),
+              oauthClientId: loadParameterValueFromString(value.clientId),
               oauthType: loadOauthType(value),
-              oauthTypeSecret: loadParameterValue(convertStringToInputParameter(value.secret)),
-              oauthTypeCertificatePfx: loadParameterValue(convertStringToInputParameter(value.pfx)),
-              oauthTypeCertificatePassword: loadParameterValue(convertStringToInputParameter(value.password)),
+              oauthTypeSecret: loadParameterValueFromString(value.secret),
+              oauthTypeCertificatePfx: loadParameterValueFromString(value.pfx),
+              oauthTypeCertificatePassword: loadParameterValueFromString(value.password),
             },
           },
         };
@@ -749,7 +755,7 @@ function toAuthenticationViewModel(value: any): { type: AuthenticationType; auth
           type: value.type,
           authenticationValue: {
             raw: {
-              rawValue: loadParameterValue(convertStringToInputParameter(value.value)),
+              rawValue: loadParameterValueFromString(value.value),
             },
           },
         };
@@ -759,7 +765,7 @@ function toAuthenticationViewModel(value: any): { type: AuthenticationType; auth
           type: value.type,
           authenticationValue: {
             msi: {
-              msiAudience: loadParameterValue(convertStringToInputParameter(value.audience)),
+              msiAudience: loadParameterValueFromString(value.audience),
               msiIdentity: value.identity,
             },
           },
@@ -785,7 +791,7 @@ function toFloatingActionMenuOutputsViewModel(value: any) {
   const outputValueMap = clonedValue?.additionalProperties?.outputValueMap;
   if (outputValueMap) {
     Object.entries(outputValueMap).forEach(([key, outputValue]) => {
-      outputValueSegmentsMap[key] = loadParameterValue(convertStringToInputParameter(outputValue as string));
+      outputValueSegmentsMap[key] = loadParameterValueFromString(outputValue as string);
     });
 
     // So editor does not need to worry about keeping this in sync with outputValueSegmentsMap
@@ -2798,12 +2804,14 @@ export function updateTokenMetadata(
       token.brandColor = ParameterBrandColor;
       token.icon = ParameterIcon;
       token.type = convertWorkflowParameterTypeToSwaggerType(workflowParameters[token.title]?.type);
+      token.value = valueSegment.value;
       return valueSegment;
 
     case TokenType.FX:
       token.brandColor = FxBrandColor;
       token.icon = FxIcon;
       token.title = getExpressionTokenTitle(token.expression as Expression);
+      token.value = valueSegment.value;
       return valueSegment;
 
     case TokenType.ITERATIONINDEX:

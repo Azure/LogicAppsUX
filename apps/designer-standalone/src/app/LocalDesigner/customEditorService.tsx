@@ -4,10 +4,11 @@ import { createLiteralValueSegment } from '@microsoft/logic-apps-designer';
 export class CustomEditorService implements IEditorService {
   public areCustomEditorsEnabled = false;
 
-  public getEditor = ({
-    operationInfo: { connectorId, operationId },
-    parameter: { parameterName, editor, editorOptions },
-  }: IEditorParameterInfo) => {
+  public getEditor = (props: IEditorParameterInfo) => {
+    const { operationInfo, parameter } = props;
+    const { connectorId, operationId } = operationInfo ?? {};
+    const { parameterName, editor, editorOptions } = parameter ?? {};
+
     if (!this.areCustomEditorsEnabled) {
       return undefined;
     }
@@ -34,7 +35,7 @@ export class CustomEditorService implements IEditorService {
   };
 }
 
-const IncrementVariableEditor = ({ value, onValueChange, renderDefaultEditor, editor, editorOptions }: IEditorProps) => {
+const IncrementVariableEditor = ({ value, onValueChange, renderDefaultEditor, editor, editorOptions, disabled }: IEditorProps) => {
   const inputValue = +(value?.[0]?.value ?? 0);
   const onChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     onValueChange?.({
@@ -51,6 +52,8 @@ const IncrementVariableEditor = ({ value, onValueChange, renderDefaultEditor, ed
     });
   }
 
+  const color = disabled ? 'rgb(200, 200, 250)' : 'rgb(119, 11, 214)';
+
   return (
     <div
       style={{
@@ -61,10 +64,10 @@ const IncrementVariableEditor = ({ value, onValueChange, renderDefaultEditor, ed
       <div
         style={{
           textAlign: 'center',
-          color: 'rgb(119, 11, 214)',
+          color,
           fontSize: 'xxx-large',
           fontWeight: '600',
-          border: '6px solid rgb(119, 11, 214)',
+          border: `6px solid ${color}`,
           borderRadius: '16px',
           display: 'flex',
           alignItems: 'baseline',
@@ -79,10 +82,11 @@ const IncrementVariableEditor = ({ value, onValueChange, renderDefaultEditor, ed
           step={10}
           value={inputValue}
           onChange={onChange}
+          disabled={disabled}
           style={{
             height: '100px',
             width: '100px',
-            color: 'rgb(119, 11, 214)',
+            color,
             fontSize: 'xxx-large',
             fontWeight: '600',
             border: 'unset',
@@ -94,7 +98,8 @@ const IncrementVariableEditor = ({ value, onValueChange, renderDefaultEditor, ed
   );
 };
 
-const InitializeVariableEditor = ({ value, onValueChange, renderDefaultEditor, editor, editorOptions }: IEditorProps) => {
+const InitializeVariableEditor = ({ value, onValueChange, renderDefaultEditor, editor, editorOptions, disabled }: IEditorProps) => {
+  const color = disabled ? 'rgb(200, 200, 250)' : 'rgb(119, 11, 214)';
   return (
     <div
       style={{
@@ -106,7 +111,7 @@ const InitializeVariableEditor = ({ value, onValueChange, renderDefaultEditor, e
           textAlign: 'center',
           fontSize: 'xxx-large',
           fontWeight: '600',
-          border: '6px solid rgb(119, 11, 214)',
+          border: `6px solid ${color}`,
           display: 'flex',
           alignItems: 'baseline',
         }}

@@ -5,7 +5,7 @@ import type { SlotTreeItem } from '../../tree/slotsTree/SlotTreeItem';
 import { addOrUpdateLocalAppSettings } from '../appSettings/localSettings';
 import { writeFormattedJson } from '../fs';
 import { sendAzureRequest } from '../requestUtils';
-import { tryGetFunctionProjectRoot } from '../verifyIsProject';
+import { tryGetLogicAppProjectRoot } from '../verifyIsProject';
 import { getContainingWorkspace } from '../workspace';
 import { getWorkflowParameters } from './common';
 import { getAuthorizationToken } from './getAuthorizationToken';
@@ -30,12 +30,12 @@ import * as path from 'path';
 import * as vscode from 'vscode';
 
 export async function getConnectionsFromFile(context: IActionContext, workflowFilePath: string): Promise<string> {
-  const projectRoot: string = await getFunctionProjectRoot(context, workflowFilePath);
+  const projectRoot: string = await getLogicAppProjectRoot(context, workflowFilePath);
   return getConnectionsJson(projectRoot);
 }
 
 export async function getParametersFromFile(context: IActionContext, workflowFilePath: string): Promise<Record<string, Parameter>> {
-  const projectRoot: string = await getFunctionProjectRoot(context, workflowFilePath);
+  const projectRoot: string = await getLogicAppProjectRoot(context, workflowFilePath);
   return getParametersJson(projectRoot);
 }
 
@@ -56,8 +56,8 @@ export async function addConnectionData(
   filePath: string,
   ConnectionAndAppSetting: ConnectionAndAppSetting
 ): Promise<void> {
-  const projectPath = await getFunctionProjectRoot(context, filePath);
   const jsonParameters = await getParametersFromFile(context, filePath);
+  const projectPath = await getLogicAppProjectRoot(context, filePath);
 
   await addConnectionDataInJson(context, projectPath ?? '', ConnectionAndAppSetting, jsonParameters);
 
@@ -70,11 +70,11 @@ export async function addConnectionData(
   await vscode.window.showInformationMessage(localize('azureFunctions.addConnection', 'Connection added.'));
 }
 
-export async function getFunctionProjectRoot(context: IActionContext, workflowFilePath: string): Promise<string> {
+export async function getLogicAppProjectRoot(context: IActionContext, workflowFilePath: string): Promise<string> {
   const workspaceFolder = nonNullValue(getContainingWorkspace(workflowFilePath), 'workspaceFolder');
   const workspacePath: string = workspaceFolder.uri.fsPath;
 
-  const projectRoot: string | undefined = await tryGetFunctionProjectRoot(context, workspacePath);
+  const projectRoot: string | undefined = await tryGetLogicAppProjectRoot(context, workspacePath);
 
   if (projectRoot === undefined) {
     throw new Error('Error in determining project root. Please confirm project structure is correct.');
@@ -176,7 +176,7 @@ export async function getConnectionsAndSettingsToUpdate(
   workflowBaseManagementUri: string,
   parametersFromDefinition: any
 ): Promise<ConnectionAndSettings> {
-  const projectPath = await getFunctionProjectRoot(context, workflowFilePath);
+  const projectPath = await getLogicAppProjectRoot(context, workflowFilePath);
   const connectionsDataString = projectPath ? await getConnectionsJson(projectPath) : '';
   const connectionsData = connectionsDataString === '' ? {} : JSON.parse(connectionsDataString);
 
@@ -213,7 +213,7 @@ export async function saveConnectionReferences(
   workflowFilePath: string,
   connectionAndSettingsToUpdate: ConnectionAndSettings
 ): Promise<void> {
-  const projectPath = await getFunctionProjectRoot(context, workflowFilePath);
+  const projectPath = await getLogicAppProjectRoot(context, workflowFilePath);
   const { connections, settings } = connectionAndSettingsToUpdate;
   const connectionsFilePath = path.join(projectPath, connectionsFileName);
   const connectionsFileExists = fse.pathExistsSync(connectionsFilePath);

@@ -1,4 +1,4 @@
-import type { ComboboxItem, ComplexArrayItems, TokenPickerButtonEditorProps } from '..';
+import type { ComboboxItem, ComplexArrayItems, TokenPickerButtonEditorProps, ValueSegment } from '..';
 import { Combobox, StringEditor } from '..';
 import constants from '../constants';
 import type { ChangeState, GetTokenPickerHandler } from '../editor/base';
@@ -19,11 +19,13 @@ export interface ExpandedComplexArrayProps {
   canDeleteLastItem: boolean;
   readonly?: boolean;
   tokenPickerButtonProps?: TokenPickerButtonEditorProps;
-  getTokenPicker: GetTokenPickerHandler;
   setItems: (newItems: ComplexArrayItems[]) => void;
   itemKey?: string;
   isNested?: boolean;
   options?: ComboboxItem[];
+  getTokenPicker: GetTokenPickerHandler;
+  tokenMapping?: Record<string, ValueSegment>;
+  loadParameterValueFromString?: (value: string) => ValueSegment[];
 }
 
 export const ExpandedComplexArray = ({

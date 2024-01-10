@@ -1,9 +1,9 @@
-import constants from '../../../../../common/constants';
+import { openPanel } from '../../../../../core';
 import { useIsOperationMissingConnection } from '../../../../../core/state/connection/connectionSelector';
 import { useIsXrmConnectionReferenceMode } from '../../../../../core/state/designerOptions/designerOptionsSelectors';
-import { isolateTab } from '../../../../../core/state/panel/panelSlice';
 import { useIsConnectionRequired, useOperationInfo } from '../../../../../core/state/selectors/actionMetadataSelector';
-import { Label, Link, Spinner, SpinnerSize } from '@fluentui/react';
+import { Badge, Button, Label, Spinner } from '@fluentui/react-components';
+import { LinkMultiple16Regular, ErrorCircle16Filled } from '@fluentui/react-icons';
 import { useCallback, useEffect } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
@@ -13,6 +13,7 @@ interface ConnectionDisplayProps {
   nodeId: string;
   readOnly: boolean;
   isLoading?: boolean;
+  hasError: boolean;
 }
 
 export const ConnectionDisplay = (props: ConnectionDisplayProps) => {
@@ -25,8 +26,8 @@ export const ConnectionDisplay = (props: ConnectionDisplayProps) => {
   const isOperationMissingConnection = useIsOperationMissingConnection(nodeId);
 
   const openChangeConnectionCallback = useCallback(() => {
-    dispatch(isolateTab(constants.PANEL_TAB_NAMES.CONNECTION_SELECTOR));
-  }, [dispatch]);
+    dispatch(openPanel({ nodeId, panelMode: 'Connection' }));
+  }, [dispatch, nodeId]);
 
   const operationInfo = useOperationInfo(nodeId);
   const requiresConnection = useIsConnectionRequired(operationInfo);
@@ -64,17 +65,42 @@ export const ConnectionDisplay = (props: ConnectionDisplayProps) => {
 
   if (isLoading)
     return (
-      <div className="connection-info">
-        <Spinner size={SpinnerSize.small} label={loadingText} style={{ padding: '4px 0px' }} labelPosition="right" />
+      <div className="connection-display">
+        <Spinner size={'extra-tiny'} label={loadingText} labelPosition={'after'} />
       </div>
     );
 
+  const connectionErrorText = intl.formatMessage({
+    defaultMessage: 'Invalid connection',
+    description: 'Text to show when there is an error with the connection',
+  });
+
   return (
-    <div className="connection-info">
-      {connectionName && <Label className="label">{connectionDisplayText}</Label>}
-      <Link id="change-connection-button" onClick={openChangeConnectionCallback} disabled={readOnly}>
-        {openChangeConnectionText}
-      </Link>
+    <div className="connection-display">
+      {connectionName && (
+        <div className="connection-info">
+          <LinkMultiple16Regular />
+          <Label className="label">{connectionDisplayText}</Label>
+          {!readOnly ? (
+            <Button
+              id="change-connection-button"
+              size="small"
+              appearance="subtle"
+              onClick={openChangeConnectionCallback}
+              style={{ color: 'var(--colorBrandForeground1)' }}
+            >
+              {openChangeConnectionText}
+            </Button>
+          ) : null}
+        </div>
+      )}
+      {props.hasError ? (
+        <div className="connection-info-error">
+          <Badge appearance="ghost" color="danger" icon={<ErrorCircle16Filled />}>
+            {connectionErrorText}
+          </Badge>
+        </div>
+      ) : null}
     </div>
   );
 };

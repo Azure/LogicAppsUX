@@ -96,7 +96,7 @@ export const IdentitySelector = (props: IdentitySelectorProps) => {
   });
 
   return (
-    <div className="connection-info">
+    <div className="identity-selector">
       <Label className="label">{labelText}</Label>
       <Dropdown
         ariaLabel={labelText}

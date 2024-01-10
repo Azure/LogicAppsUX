@@ -15,7 +15,7 @@ import {
   containsApiHubConnectionReference,
   getConnectionsAndSettingsToUpdate,
   getConnectionsFromFile,
-  getFunctionProjectRoot,
+  getLogicAppProjectRoot,
   getParametersFromFile,
   saveConnectionReferences,
 } from '../../../utils/codeless/connection';
@@ -26,7 +26,7 @@ import { OpenDesignerBase } from './openDesignerBase';
 import { HTTP_METHODS } from '@microsoft/utils-logic-apps';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type { AzureConnectorDetails, FileSystemConnectionInfo, IDesignerPanelMetadata, Parameter } from '@microsoft/vscode-extension';
-import { ExtensionCommand } from '@microsoft/vscode-extension';
+import { ExtensionCommand, ProjectName } from '@microsoft/vscode-extension';
 import axios from 'axios';
 import { exec } from 'child_process';
 import { writeFileSync, readFileSync } from 'fs';
@@ -83,7 +83,7 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
       return;
     }
 
-    this.projectPath = await getFunctionProjectRoot(this.context, this.workflowFilePath);
+    this.projectPath = await getLogicAppProjectRoot(this.context, this.workflowFilePath);
     if (!this.projectPath) {
       throw new Error(localize('FunctionRootFolderError', 'Unable to determine function project root folder.'));
     }
@@ -126,7 +126,12 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
     this.panel.onDidChangeViewState(
       async (event) => {
         const eventPanel: WebviewPanel = event.webviewPanel;
-        await this.reloadWebviewPanel(eventPanel);
+        if (eventPanel.visible) {
+          window.showInformationMessage(
+            localize('designer.restart', 'If changes were made to logic app files, restart designer to see the latest changes.'),
+            'OK'
+          );
+        }
       },
       undefined,
       ext.context.subscriptions
@@ -150,6 +155,7 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
         this.sendMsgToWebview({
           command: ExtensionCommand.initialize_frame,
           data: {
+            project: ProjectName.designer,
             panelMetadata: this.panelMetadata,
             connectionData: this.connectionData,
             baseUrl: this.baseUrl,
@@ -390,7 +396,7 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
     const workflowContent: any = JSON.parse(readFileSync(this.workflowFilePath, 'utf8'));
     this._migrate(workflowContent, migrationOptions);
     const connectionsData: string = await getConnectionsFromFile(this.context, this.workflowFilePath);
-    const projectPath: string | undefined = await getFunctionProjectRoot(this.context, this.workflowFilePath);
+    const projectPath: string | undefined = await getLogicAppProjectRoot(this.context, this.workflowFilePath);
     const parametersData: Record<string, Parameter> = await getParametersFromFile(this.context, this.workflowFilePath);
     let localSettings: Record<string, string>;
     let azureDetails: AzureConnectorDetails;

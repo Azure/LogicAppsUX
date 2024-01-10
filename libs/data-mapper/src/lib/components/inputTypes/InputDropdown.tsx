@@ -1,7 +1,6 @@
 import { setConnectionInput, showNotification } from '../../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
-import type { SchemaNodeExtended } from '../../models';
-import { FunctionCategory, NormalizedDataType, numericalDataType } from '../../models';
+import { FunctionCategory } from '../../models';
 import type { ConnectionUnit, InputConnection } from '../../models/Connection';
 import type { FunctionData } from '../../models/Function';
 import { isValidConnectionByType, isValidCustomValueByType, newConnectionWillHaveCircularLogic } from '../../utils/Connection.Utils';
@@ -15,7 +14,8 @@ import { DMTooltip } from '../tooltip/tooltip';
 import { Stack } from '@fluentui/react';
 import type { ComboboxProps } from '@fluentui/react-components';
 import { Combobox, Option, Text, makeStyles, tokens, typographyStyles } from '@fluentui/react-components';
-import { isNullOrEmpty } from '@microsoft/utils-logic-apps';
+import type { SchemaNodeExtended } from '@microsoft/utils-logic-apps';
+import { isNullOrEmpty, NormalizedDataType, numericalDataType } from '@microsoft/utils-logic-apps';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';

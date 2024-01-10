@@ -14,7 +14,7 @@ import {
   removeWebviewPanelFromCache,
   tryGetWebviewPanel,
 } from '../../utils/codeless/common';
-import { getFunctionProjectRoot } from '../../utils/codeless/connection';
+import { getLogicAppProjectRoot } from '../../utils/codeless/connection';
 import { getAuthorizationToken } from '../../utils/codeless/getAuthorizationToken';
 import { getWebViewHTML } from '../../utils/codeless/getWebViewHTML';
 import { sendRequest } from '../../utils/requestUtils';
@@ -24,7 +24,7 @@ import { openMonitoringView } from './openMonitoringView/openMonitoringView';
 import type { ServiceClientCredentials } from '@azure/ms-rest-js';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type { ICallbackUrlResponse } from '@microsoft/vscode-extension';
-import { ExtensionCommand } from '@microsoft/vscode-extension';
+import { ExtensionCommand, ProjectName } from '@microsoft/vscode-extension';
 import { readFileSync } from 'fs';
 import { basename, dirname, join } from 'path';
 import * as path from 'path';
@@ -59,7 +59,7 @@ export async function openOverview(context: IAzureConnectorsContext, node: vscod
       `${baseUrl}/workflows/${workflowName}/triggers/${triggerName}/listCallbackUrl?api-version=${apiVersion}`
     );
 
-    const projectPath = await getFunctionProjectRoot(context, workflowFilePath);
+    const projectPath = await getLogicAppProjectRoot(context, workflowFilePath);
     localSettings = projectPath ? (await getLocalSettingsJson(context, join(projectPath, localSettingsFileName))).Values || {} : {};
   } else if (workflowNode instanceof RemoteWorkflowTreeItem) {
     workflowName = workflowNode.name;
@@ -125,7 +125,7 @@ export async function openOverview(context: IAzureConnectorsContext, node: vscod
             corsNotice,
             accessToken: accessToken,
             workflowProperties: workflowProps,
-            project: 'overview',
+            project: ProjectName.overview,
             hostVersion: ext.extensionVersion,
           },
         });

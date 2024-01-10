@@ -7,7 +7,6 @@ import {
   setInlineFunctionInputOutputKeys,
 } from '../../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
-import type { FunctionPositionMetadata } from '../../models';
 import type { FunctionData } from '../../models/Function';
 import { FunctionCategory } from '../../models/Function';
 import { inputFromHandleId } from '../../utils/Connection.Utils';
@@ -20,6 +19,7 @@ import FunctionListHeader from './FunctionListHeader';
 import FunctionListItem from './FunctionListItem';
 import { Button, Input, Tooltip } from '@fluentui/react-components';
 import { Dismiss20Regular } from '@fluentui/react-icons';
+import type { FunctionPositionMetadata } from '@microsoft/utils-logic-apps';
 import Fuse from 'fuse.js';
 import { useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -130,7 +130,7 @@ export const FunctionList = () => {
       if (functionData) {
         const functionCategoryDictionary: { [key: string]: FunctionDataTreeItem } = {};
         let functionsList: FunctionData[] = [...functionData];
-        functionsList.sort((a, b) => a.displayName.localeCompare(b.displayName)); // Alphabetically sort Functions
+        functionsList.sort((a, b) => a.displayName?.localeCompare(b.displayName)); // Alphabetically sort Functions
 
         // Create dictionary for Function Categories
         Object.values(FunctionCategory).forEach((category) => {

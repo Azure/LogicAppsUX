@@ -8,6 +8,7 @@ import { checkHeights, getGroupedItems } from './helper';
 import { guid } from '@microsoft/utils-logic-apps';
 import { useFunctionalState, useUpdateEffect } from '@react-hookz/web';
 import { useEffect, useRef, useState } from 'react';
+import { useIntl } from 'react-intl';
 
 export { GroupDropdownOptions, RowDropdownOptions };
 
@@ -41,13 +42,24 @@ export interface GroupItemProps {
 export interface QueryBuilderProps {
   readonly?: boolean;
   groupProps: GroupItemProps;
+  tokenMapping?: Record<string, ValueSegment>;
+  loadParameterValueFromString?: (value: string) => ValueSegment[];
   getTokenPicker: GetTokenPickerHandler;
   onChange?: ChangeHandler;
+  showDescription?: boolean;
 }
 
 const emptyValue = [{ id: guid(), type: ValueSegmentType.LITERAL, value: '' }];
 
-export const QueryBuilderEditor = ({ getTokenPicker, groupProps, readonly, onChange }: QueryBuilderProps) => {
+export const QueryBuilderEditor = ({
+  getTokenPicker,
+  groupProps,
+  readonly,
+  onChange,
+  showDescription,
+  ...baseEditorProps
+}: QueryBuilderProps) => {
+  const intl = useIntl();
   const containerRef = useRef<HTMLDivElement>(null);
   const [heights, setHeights] = useState<number[]>([]);
   const [groupedItems, setGroupedItems] = useState<GroupedItems[]>([]);
@@ -74,8 +86,21 @@ export const QueryBuilderEditor = ({ getTokenPicker, groupProps, readonly, onCha
     setRootProp(newProps);
   };
 
+  let description;
+  if (showDescription) {
+    description = intl.formatMessage({
+      defaultMessage: 'Provide the values to compare and select the operator to use.',
+      description: 'Text description for how to use the Condition action.',
+    });
+  }
+
   return (
     <div className="msla-querybuilder-container" ref={containerRef}>
+      {showDescription && (
+        <div className="msla-querybuilder-description" tabIndex={0}>
+          <span>{description}</span>
+        </div>
+      )}
       <Group
         readonly={readonly}
         isTop={true}
@@ -88,6 +113,7 @@ export const QueryBuilderEditor = ({ getTokenPicker, groupProps, readonly, onCha
         mustHaveItem={true}
         handleUpdateParent={handleUpdateParent}
         getTokenPicker={getTokenPicker}
+        {...baseEditorProps}
       />
     </div>
   );

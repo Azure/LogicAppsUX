@@ -1,7 +1,6 @@
 import { addSourceSchemaNodes, removeSourceSchemaNodes, setCanvasToolboxTabToDisplay } from '../../core/state/DataMapSlice';
 import { openAddSourceSchemaPanelView } from '../../core/state/PanelSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
-import type { SchemaNodeExtended } from '../../models';
 import { flattenSchemaNode, searchSchemaTreeFromRoot } from '../../utils/Schema.Utils';
 import type { ButtonPivotProps } from '../buttonPivot/ButtonPivot';
 import { ButtonPivot } from '../buttonPivot/ButtonPivot';
@@ -16,10 +15,9 @@ import type { ITreeNode } from '../tree/Tree';
 import Tree from '../tree/Tree';
 import { Stack } from '@fluentui/react';
 import type { SelectTabData, SelectTabEvent } from '@fluentui/react-components';
-import { Button, Text, mergeClasses, tokens, typographyStyles } from '@fluentui/react-components';
+import { Button, MenuItem, Text, mergeClasses, tokens, typographyStyles } from '@fluentui/react-components';
 import { CubeTree20Filled, CubeTree20Regular, MathFormula20Filled, MathFormula20Regular } from '@fluentui/react-icons';
-import type { MenuItemOption } from '@microsoft/designer-ui';
-import { MenuItemType } from '@microsoft/designer-ui';
+import type { SchemaNodeExtended } from '@microsoft/utils-logic-apps';
 import { useCallback, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
@@ -122,36 +120,42 @@ export const CanvasToolbox = ({ canvasBlockHeight }: CanvasToolboxProps) => {
     }
   };
 
-  const getAllContextMenuItems = (node: SchemaNodeExtended): MenuItemOption[] => {
+  const getAllContextMenuItems = (node: SchemaNodeExtended): JSX.Element[] => {
     return [getAddAllNodesMenuItem(node), getAddAllNodesRecursiveMenuItem(node)];
   };
 
-  const getAddAllNodesMenuItem = (node: SchemaNodeExtended): MenuItemOption => {
+  const getAddAllNodesMenuItem = (node: SchemaNodeExtended): JSX.Element => {
     const nodeList = [node, ...node.children];
-    return {
-      key: 'addAll',
-      title: intl.formatMessage({
-        defaultMessage: 'Add children',
-        description: 'Add the current node and its children to the map',
-      }),
-      type: MenuItemType.Advanced,
-      onClick: () => dispatch(addSourceSchemaNodes(nodeList)),
-      disabled: nodeList.every((node) => currentSourceSchemaNodes.find((curNode) => node.key === curNode.key)),
-    };
+    const text = intl.formatMessage({
+      defaultMessage: 'Add children',
+      description: 'Add the current node and its children to the map',
+    });
+    return (
+      <MenuItem
+        key="addAll"
+        onClick={() => dispatch(addSourceSchemaNodes(nodeList))}
+        disabled={nodeList.every((node) => currentSourceSchemaNodes.find((curNode) => node.key === curNode.key))}
+      >
+        {text}
+      </MenuItem>
+    );
   };
 
-  const getAddAllNodesRecursiveMenuItem = (node: SchemaNodeExtended): MenuItemOption => {
+  const getAddAllNodesRecursiveMenuItem = (node: SchemaNodeExtended): JSX.Element => {
     const nodeList = flattenSchemaNode(node);
-    return {
-      key: 'addAllRecursive',
-      title: intl.formatMessage({
-        defaultMessage: 'Add children (recursive)',
-        description: 'Add the current node and its children to the map',
-      }),
-      type: MenuItemType.Advanced,
-      onClick: () => dispatch(addSourceSchemaNodes(nodeList)),
-      disabled: nodeList.every((node) => currentSourceSchemaNodes.find((curNode) => node.key === curNode.key)),
-    };
+    const text = intl.formatMessage({
+      defaultMessage: 'Add children (recursive)',
+      description: 'Add the current node and its children to the map',
+    });
+    return (
+      <MenuItem
+        key="addAllRecursive"
+        onClick={() => dispatch(addSourceSchemaNodes(nodeList))}
+        disabled={nodeList.every((node) => currentSourceSchemaNodes.find((curNode) => node.key === curNode.key))}
+      >
+        {text}
+      </MenuItem>
+    );
   };
 
   const searchedSourceSchemaTreeRoot = useMemo<ITreeNode<SchemaNodeExtended> | undefined>(() => {

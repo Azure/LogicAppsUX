@@ -1,7 +1,7 @@
 import type { AppDispatch, RootState } from '../../../../core';
 import { addEdgeFromRunAfterOperation, removeEdgeFromRunAfterOperation } from '../../../../core/actions/bjsworkflow/runafter';
+import { useOperationVisuals } from '../../../../core/state/operation/operationSelector';
 import { useSelectedNodeId } from '../../../../core/state/panel/panelSelectors';
-import { useIconUri } from '../../../../core/state/selectors/actionMetadataSelector';
 import { useNodeDisplayName } from '../../../../core/state/workflow/workflowSelectors';
 import { Menu, MenuTrigger, MenuList, MenuPopover, MenuButton, Label, MenuItemCheckbox, Input, Button } from '@fluentui/react-components';
 import { bundleIcon, Add20Regular, Add20Filled, Search24Regular, DismissRegular } from '@fluentui/react-icons';
@@ -30,7 +30,7 @@ const getSuccessorNodes = (state: RootState, nodeId: string) => {
 };
 
 const ActionMenuItem = ({ id, readOnly }: { id: string; readOnly: boolean }) => {
-  const iconUri = useIconUri(id);
+  const { iconUri } = useOperationVisuals(id);
   const actionName = useNodeDisplayName(id);
   return (
     <MenuItemCheckbox
@@ -122,7 +122,7 @@ export const RunAfterActionSelector = ({ readOnly }: { readOnly: boolean }) => {
       }}
     >
       <MenuTrigger>
-        <MenuButton icon={<AddIcon />} size="large" appearance="transparent">
+        <MenuButton icon={<AddIcon />} size="large" appearance="subtle">
           {RUN_AFTER_CONFIGURATION_SELECT_ACTIONS_TITLE}
         </MenuButton>
       </MenuTrigger>

@@ -2,8 +2,6 @@ import { schemaNodeCardDefaultWidth, schemaNodeCardHeight } from '../../constant
 import { ReactFlowNodeType } from '../../constants/ReactFlowConstants';
 import { removeSourceSchemaNodes, setCurrentTargetSchemaNode } from '../../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
-import type { SchemaNodeExtended } from '../../models';
-import { SchemaNodeProperty, SchemaType } from '../../models';
 import { isTextUsingEllipsis } from '../../utils/Browser.Utils';
 import { collectSourceNodesForConnectionChain, collectTargetNodesForConnectionChain } from '../../utils/Connection.Utils';
 import { iconForNormalizedDataType } from '../../utils/Icon.Utils';
@@ -16,6 +14,7 @@ import { getStylesForSharedState, highlightedCardStyles, selectedCardStyles } fr
 import {
   Badge,
   Button,
+  MenuItem,
   Tooltip,
   createFocusOutlineStyle,
   makeStyles,
@@ -31,10 +30,13 @@ import {
   Circle12Regular,
   CircleHalfFill12Regular,
   Important12Filled,
+  Delete24Filled,
+  Delete24Regular,
   bundleIcon,
 } from '@fluentui/react-icons';
-import type { MenuItemOption } from '@microsoft/designer-ui';
-import { CardContextMenu, MenuItemType, useCardContextMenu } from '@microsoft/designer-ui';
+import { CardContextMenu, useCardContextMenu } from '@microsoft/designer-ui';
+import type { SchemaNodeExtended } from '@microsoft/utils-logic-apps';
+import { SchemaNodeProperty, SchemaType } from '@microsoft/utils-logic-apps';
 import { useMemo, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
@@ -251,30 +253,30 @@ export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
 
   const ExclamationIcon = bundleIcon(Important12Filled, Important12Filled);
   const ChevronIcon = bundleIcon(ChevronRight16Filled, ChevronRight16Regular);
+  const DeleteIcon = bundleIcon(Delete24Filled, Delete24Regular);
+
   const BundledTypeIcon = iconForNormalizedDataType(schemaNode.type, 24, false, schemaNode.nodeProperties);
   const contextMenu = useCardContextMenu();
   const ariaDescribeChevron = intl.formatMessage({
     defaultMessage: 'Navigate to element and view children',
     description: "Change context of the canvas to view that element's children",
   });
-  const getRemoveMenuItem = (): MenuItemOption => {
+
+  const RemoveMenuItem = () => {
     const deleteNode = intl.formatMessage({
       defaultMessage: 'Remove',
       description: 'Remove card from canvas',
     });
-
-    return {
-      key: deleteNode,
-      disabled: !isSourceSchemaNode,
-      iconName: 'Delete',
-      title: deleteNode,
-      type: MenuItemType.Advanced,
-      onClick: handleDeleteClick,
-    };
-  };
-
-  const handleDeleteClick = () => {
-    dispatch(removeSourceSchemaNodes([schemaNode]));
+    return (
+      <MenuItem
+        key={deleteNode}
+        disabled={!isSourceSchemaNode}
+        icon={<DeleteIcon />}
+        onClick={() => dispatch(removeSourceSchemaNodes([schemaNode]))}
+      >
+        {deleteNode}
+      </MenuItem>
+    );
   };
 
   const nodeStyles =
@@ -336,15 +338,13 @@ export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
             onMouseLeave={() => setIsChevronHovered(false)}
           />
         )}
-        {
-          <CardContextMenu
-            title={'remove'}
-            contextMenuLocation={contextMenu.location}
-            contextMenuOptions={disableContextMenu ? [] : [getRemoveMenuItem()]}
-            showContextMenu={contextMenu.isShowing}
-            onSetShowContextMenu={contextMenu.setIsShowing}
-          />
-        }
+        <CardContextMenu
+          title={'remove'}
+          contextMenuLocation={contextMenu.location}
+          menuItems={disableContextMenu ? [] : [<RemoveMenuItem key="remove" />]}
+          open={contextMenu.isShowing}
+          setOpen={contextMenu.setIsShowing}
+        />
       </div>
 
       {isNBadgeRequired && isSourceSchemaNode && <NBadge />}

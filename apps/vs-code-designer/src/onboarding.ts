@@ -3,7 +3,6 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { validateAndInstallBinaries } from './app/commands/binaries/validateAndInstallBinaries';
-import { activateAzurite } from './app/utils/azurite/activateAzurite';
 import { promptInstallBinariesOption } from './app/utils/binaries';
 import { promptStartDesignTimeOption } from './app/utils/codeless/startDesignTimeApi';
 import { runWithDurationTelemetry } from './app/utils/telemetry';
@@ -14,7 +13,6 @@ import {
   autoRuntimeDependenciesValidationAndInstallationSetting,
   autoStartDesignTimeSetting,
   showStartDesignTimeMessageSetting,
-  showAutoStartAzuriteWarning,
 } from './constants';
 import { callWithTelemetryAndErrorHandling, type IActionContext } from '@microsoft/vscode-azext-utils';
 import * as vscode from 'vscode';
@@ -54,13 +52,6 @@ export const startOnboarding = async (activateContext: IActionContext) => {
   await callWithTelemetryAndErrorHandling(autoStartDesignTimeSetting, async (actionContext: IActionContext) => {
     await runWithDurationTelemetry(actionContext, showStartDesignTimeMessageSetting, async () => {
       await promptStartDesignTimeOption(activateContext);
-    });
-  });
-
-  await callWithTelemetryAndErrorHandling(showAutoStartAzuriteWarning, async (actionContext: IActionContext) => {
-    await runWithDurationTelemetry(actionContext, showAutoStartAzuriteWarning, async () => {
-      activateContext.telemetry.properties.lastStep = showAutoStartAzuriteWarning;
-      activateAzurite(activateContext);
     });
   });
 };

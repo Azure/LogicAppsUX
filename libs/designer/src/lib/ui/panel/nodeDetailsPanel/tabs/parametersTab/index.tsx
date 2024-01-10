@@ -1,6 +1,6 @@
 import constants from '../../../../../common/constants';
 import { useShowIdentitySelectorQuery } from '../../../../../core/state/connection/connectionSelector';
-import { useReadOnly } from '../../../../../core/state/designerOptions/designerOptionsSelectors';
+import { useHostOptions, useReadOnly } from '../../../../../core/state/designerOptions/designerOptionsSelectors';
 import type { ParameterGroup } from '../../../../../core/state/operation/operationMetadataSlice';
 import { DynamicLoadStatus, ErrorLevel } from '../../../../../core/state/operation/operationMetadataSlice';
 import { useNodesInitialized, useOperationErrorInfo } from '../../../../../core/state/operation/operationSelector';
@@ -20,6 +20,7 @@ import { isRootNodeInGraph } from '../../../../../core/utils/graph';
 import {
   loadDynamicTreeItemsForParameter,
   loadDynamicValuesForParameter,
+  loadParameterValueFromString,
   parameterValueToString,
   remapValueSegmentsWithNewIds,
   shouldUseParameterInGroup,
@@ -33,6 +34,7 @@ import type { Settings } from '../../../../settings/settingsection';
 import { ConnectionDisplay } from './connectionDisplay';
 import { IdentitySelector } from './identityselector';
 import { MessageBar, MessageBarType, Spinner, SpinnerSize } from '@fluentui/react';
+import { Divider } from '@fluentui/react-components';
 import { EditorService } from '@microsoft/designer-client-services-logic-apps';
 import {
   DynamicCallStatus,
@@ -45,7 +47,7 @@ import {
 import type { ChangeState, ParameterInfo, ValueSegment, OutputToken, TokenPickerMode, PanelTabFn } from '@microsoft/designer-ui';
 import type { OperationInfo } from '@microsoft/utils-logic-apps';
 import { equals, getPropertyValue } from '@microsoft/utils-logic-apps';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -129,12 +131,16 @@ export const ParametersTab = () => {
         </div>
       ))}
       {operationInfo && showConnectionDisplay && connectionName.isLoading !== undefined ? (
-        <ConnectionDisplay
-          connectionName={connectionName.result}
-          nodeId={selectedNodeId}
-          isLoading={connectionName.isLoading}
-          readOnly={!!readOnly}
-        />
+        <>
+          <Divider style={{ padding: '16px 0px' }} />
+          <ConnectionDisplay
+            connectionName={connectionName.result}
+            nodeId={selectedNodeId}
+            isLoading={connectionName.isLoading}
+            readOnly={!!readOnly}
+            hasError={errorInfo?.level === ErrorLevel.Connection}
+          />
+        </>
       ) : null}
       {showIdentitySelector.data ? <IdentitySelector nodeId={selectedNodeId} readOnly={!!readOnly} /> : null}
     </>
@@ -186,6 +192,10 @@ const ParameterSection = ({
   const rootState = useSelector((state: RootState) => state);
   const displayNameResult = useConnectorName(operationInfo);
   const panelLocation = usePanelLocation();
+
+  const { suppressCastingForSerialize } = useHostOptions();
+
+  const [tokenMapping, setTokenMapping] = useState<Record<string, ValueSegment>>({});
 
   const onValueChange = useCallback(
     (id: string, newState: ChangeState) => {
@@ -286,14 +296,17 @@ const ParameterSection = ({
     },
   });
 
-  const getValueSegmentFromToken = async (
-    parameterId: string,
-    token: OutputToken,
-    addImplicitForeachIfNeeded: boolean,
-    addLatestActionName: boolean
-  ): Promise<ValueSegment> => {
-    return createValueSegmentFromToken(nodeId, parameterId, token, addImplicitForeachIfNeeded, addLatestActionName, rootState, dispatch);
-  };
+  const getValueSegmentFromToken = useCallback(
+    async (
+      parameterId: string,
+      token: OutputToken,
+      addImplicitForeachIfNeeded: boolean,
+      addLatestActionName: boolean
+    ): Promise<ValueSegment> => {
+      return createValueSegmentFromToken(nodeId, parameterId, token, addImplicitForeachIfNeeded, addLatestActionName, rootState, dispatch);
+    },
+    [dispatch, nodeId, rootState]
+  );
 
   const getTokenPicker = (
     parameterId: string,
@@ -346,6 +359,24 @@ const ParameterSection = ({
     );
   };
 
+  useEffect(() => {
+    const callback = async () => {
+      const mapping: Record<string, ValueSegment> = {};
+      for (const group of tokenGroup) {
+        for (const token of group.tokens) {
+          if (!token.value) {
+            continue;
+          }
+
+          mapping[token.value] = await getValueSegmentFromToken(nodeId, token, false, false);
+        }
+      }
+      setTokenMapping(mapping);
+    };
+
+    callback();
+  }, [getValueSegmentFromToken, nodeId, tokenGroup]);
+
   const onExpandSection = (sectionName: string) => {
     if (sectionName) {
       setSectionExpanded(!sectionExpanded);
@@ -373,12 +404,15 @@ const ParameterSection = ({
           isLoading: dynamicData?.status === DynamicCallStatus.STARTED,
           errorDetails: dynamicData?.error ? { message: dynamicData.error.message } : undefined,
           validationErrors,
+          tokenMapping,
+          loadParameterValueFromString: (value: string) => loadParameterValueFromString(value),
           onValueChange: (newState: ChangeState) => onValueChange(id, newState),
           onComboboxMenuOpen: () => onComboboxMenuOpen(param),
           pickerCallbacks: getPickerCallbacks(param),
           tokenpickerButtonProps: {
             location: panelLocation === PanelLocation.Left ? TokenPickerButtonLocation.Right : TokenPickerButtonLocation.Left,
           },
+          suppressCastingForSerialize: suppressCastingForSerialize ?? false,
           onCastParameter: (value: ValueSegment[], type?: string, format?: string, suppressCasting?: boolean) =>
             parameterValueToString(
               { value, type: type ?? 'string', info: { format }, suppressCasting } as ParameterInfo,
@@ -462,8 +496,8 @@ const hasParametersToAuthor = (parameterGroups: Record<string, ParameterGroup>):
 };
 
 export const parametersTab: PanelTabFn = (intl) => ({
+  id: constants.PANEL_TAB_NAMES.PARAMETERS,
   title: intl.formatMessage({ defaultMessage: 'Parameters', description: 'Parameters tab title' }),
-  name: constants.PANEL_TAB_NAMES.PARAMETERS,
   description: intl.formatMessage({ defaultMessage: 'Configure parameters for this node', description: 'Parameters tab description' }),
   visible: true,
   content: <ParametersTab />,

@@ -92,7 +92,7 @@ export const TokenPickerOptions = ({
   };
 
   const handleTokenExpressionClicked = async (token: OutputToken) => {
-    const expression = token.value ?? '';
+    const expression = (await getValueSegmentFromToken(token, !tokenClickedCallback)).value;
     insertExpressionText(expression, 0);
   };
 

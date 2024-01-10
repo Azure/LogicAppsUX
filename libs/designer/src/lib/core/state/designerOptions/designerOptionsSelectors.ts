@@ -13,6 +13,10 @@ export const useLegacyWorkflowParameters = () => {
   return useSelector((state: RootState) => state.designerOptions.useLegacyWorkflowParameters);
 };
 
+export const useHostOptions = () => {
+  return useSelector((state: RootState) => state.designerOptions.hostOptions);
+};
+
 export const useIsXrmConnectionReferenceMode = () => {
   return useSelector((state: RootState) => state.designerOptions.isXrmConnectionReferenceMode);
 };
@@ -27,4 +31,12 @@ export const useSuppressDefaultNodeSelectFunctionality = () => {
 
 export const useNodeSelectAdditionalCallback = () => {
   return useSelector((state: RootState) => state.designerOptions.nodeSelectAdditionalCallback);
+};
+
+export const usePanelTabHideKeys = () => {
+  return useSelector((state: RootState) => state.designerOptions.panelTabHideKeys ?? []);
+};
+
+export const useShowConnectionsPanel = () => {
+  return useSelector((state: RootState) => state.designerOptions?.showConnectionsPanel ?? false);
 };
