@@ -76,6 +76,7 @@ export class SwaggerParser {
       },
       validate: {
         schema: false,
+        spec: false,
       },
     });
   };
