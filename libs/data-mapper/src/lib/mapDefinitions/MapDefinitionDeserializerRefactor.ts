@@ -67,7 +67,10 @@ export class MapDefinitionDeserializerRefactor {
     if (parentTargetNode === undefined) {
       targetNode = this._targetSchemaFlattened[`${targetPrefix}${formattedTargetKey}`];
     } else {
-      targetNode = parentTargetNode.children.find((child) => child.name === formattedTargetKey); // danielle account for *
+      targetNode = parentTargetNode.children.find((child) => child.name === formattedTargetKey);
+      if (targetNode === undefined) {
+        // target node cannot be found so we look for array items
+      }
     }
     if (targetNode === undefined) {
       throw new Error(`Target node not found for key ${currentTargetKey}`);
@@ -82,7 +85,7 @@ export class MapDefinitionDeserializerRefactor {
   //     }
   //   }
 
-  private handleSingleValue = (
+  private handleSingleValueOrFunction = (
     key: string,
     funcMetadata: FunctionCreationMetadata | undefined,
     targetNode: SchemaNodeExtended | FunctionData,
@@ -92,7 +95,7 @@ export class MapDefinitionDeserializerRefactor {
     const functionMetadata = funcMetadata || createTargetOrFunction(tokens).term;
 
     let sourceNode = findNodeForKey(key, this._sourceSchema.schemaTreeRoot, false) as SchemaNodeExtended;
-    if (this._loop) {
+    if (this._loop || this._loopDest) {
       // danielle could make function called for loop relative key
       sourceNode = findNodeForKey(`${this._loop}/${key}`, this._sourceSchema.schemaTreeRoot, false) as SchemaNodeExtended;
     }
@@ -113,7 +116,7 @@ export class MapDefinitionDeserializerRefactor {
         // function to target
         applyConnectionValue(connections, {
           targetNode: targetNode,
-          targetNodeReactFlowKey: isFunctionData(targetNode) ? targetNode.key : addTargetReactFlowPrefix(targetNode.key),
+          targetNodeReactFlowKey: this.getTargetKey(targetNode),
           findInputSlot: true,
           input: {
             reactFlowKey: funcKey,
@@ -123,18 +126,31 @@ export class MapDefinitionDeserializerRefactor {
 
         functionMetadata.inputs.forEach((input) => {
           const srcStr = typeof input === 'string' ? input : input.name;
-          this.handleSingleValue(srcStr, input, func, connections);
+          this.handleSingleValueOrFunction(srcStr, input, func, connections);
         });
       }
       // custom value or index
       else {
-        if (key.startsWith('$')) {
+        if (key === '.') {
+          // current loop
+          const loopNode = findNodeForKey(this._loop, this._sourceSchema.schemaTreeRoot, false) as SchemaNodeExtended;
+          applyConnectionValue(connections, {
+            targetNode: targetNode,
+            targetNodeReactFlowKey: addTargetReactFlowPrefix(targetNode.key),
+            findInputSlot: true,
+            input: {
+              reactFlowKey: addSourceReactFlowPrefix(loopNode.key),
+              node: loopNode,
+            },
+          });
+        } else if (key.startsWith('$')) {
+          // custom value
           const indexFnKey = this._createdNodes[key];
           const indexFn = connections[indexFnKey];
           if (indexFn) {
             applyConnectionValue(connections, {
               targetNode: targetNode,
-              targetNodeReactFlowKey: isFunctionData(targetNode) ? targetNode.key : addTargetReactFlowPrefix(targetNode.key),
+              targetNodeReactFlowKey: this.getTargetKey(targetNode),
               findInputSlot: true,
               input: {
                 reactFlowKey: indexFn.self.reactFlowKey,
@@ -145,7 +161,7 @@ export class MapDefinitionDeserializerRefactor {
         } else {
           applyConnectionValue(connections, {
             targetNode: targetNode,
-            targetNodeReactFlowKey: addTargetReactFlowPrefix(targetNode.key),
+            targetNodeReactFlowKey: this.getTargetKey(targetNode),
             findInputSlot: true,
             input: key,
           });
@@ -155,7 +171,7 @@ export class MapDefinitionDeserializerRefactor {
       applyConnectionValue(connections, {
         // most basic case, just a source node
         targetNode: targetNode,
-        targetNodeReactFlowKey: isFunctionData(targetNode) ? targetNode.key : addTargetReactFlowPrefix(targetNode.key),
+        targetNodeReactFlowKey: this.getTargetKey(targetNode),
         findInputSlot: true,
         input: {
           reactFlowKey: addSourceReactFlowPrefix(sourceNode.key),
@@ -164,6 +180,9 @@ export class MapDefinitionDeserializerRefactor {
       });
     }
   };
+
+  private getTargetKey = (targetNode: SchemaNodeExtended | FunctionData) =>
+    isFunctionData(targetNode) ? targetNode.key : addTargetReactFlowPrefix(targetNode.key);
 
   private addLoopConnectionIfNeeded = (
     addLoopConnection: boolean,
@@ -203,7 +222,6 @@ export class MapDefinitionDeserializerRefactor {
     // eslint-disable-next-line @typescript-eslint/no-inferrable-types
     addLoopConnection: boolean = false
   ) => {
-    // target key can be either a target node- or a source side psuedofunction- for or if only?? Danielle confirm
     if (this.isTargetKey(leftSideKey)) {
       // process right side
 
@@ -213,10 +231,9 @@ export class MapDefinitionDeserializerRefactor {
       this.addLoopConnectionIfNeeded(addLoopConnection, connections, targetNode);
 
       if (typeof sourceNodeObject === 'string') {
-        this.handleSingleValue(sourceNodeObject, undefined, targetNode, connections);
+        this.handleSingleValueOrFunction(sourceNodeObject, undefined, targetNode, connections);
       } else {
         Object.entries(sourceNodeObject).forEach((child) => {
-          // eslint-disable-next-line @typescript-eslint/ban-types
           this.danielleTryParseDefinitionToConnection(child[1], child[0], targetNode, connections);
         });
       }
@@ -226,20 +243,25 @@ export class MapDefinitionDeserializerRefactor {
       const tokens = separateFunctions(leftSideKey);
       const idk = createTargetOrFunction(tokens);
       if (tokens[0] === DReservedToken.if) {
+        // add if function
+        if (parentTargetNode) {
+          this.handleSingleValueOrFunction('', idk.term, parentTargetNode, connections);
+        }
+
         // danielle how is 'if' different than any other function- see docs;
         // create a new node for the if statement
         // connect it to the input
         // input can only be like a function or a source node
+        Object.entries(sourceNodeObject).forEach((child) => {
+          this.danielleTryParseDefinitionToConnection(child[1], child[0], parentTargetNode, connections, true);
+        });
       } else {
         // for statement
         this.processForStatement(idk.term, parentTargetNode as SchemaNodeExtended, connections);
 
         Object.entries(sourceNodeObject).forEach((child) => {
-          // eslint-disable-next-line @typescript-eslint/ban-types
           this.danielleTryParseDefinitionToConnection(child[1], child[0], parentTargetNode, connections, true);
         });
-        // connect source and take into account possible sequence functions
-        // what is different? creating the index function if second parameter
       }
     }
   };
@@ -267,23 +289,82 @@ export class MapDefinitionDeserializerRefactor {
   };
 
   private processForStatement = (sourceFor: FunctionCreationMetadata, _target: SchemaNodeExtended, connections: ConnectionDictionary) => {
-    // take out for
+    // take out for statement to get to inner objects
     const forFunc = sourceFor as ParseFunc;
     const sourceLoopKey = forFunc.inputs[0];
     if (typeof sourceLoopKey === 'string') {
-      const loopSource = findNodeForKey(sourceLoopKey, this._sourceSchema.schemaTreeRoot, false) as SchemaNodeExtended;
+      let loopSource = findNodeForKey(sourceLoopKey, this._sourceSchema.schemaTreeRoot, false) as SchemaNodeExtended;
+      if (!loopSource) {
+        // loop is relative
+        loopSource = findNodeForKey(`${this._loop}/${sourceLoopKey}`, this._sourceSchema.schemaTreeRoot, false) as SchemaNodeExtended;
+      }
       this._loop = loopSource.key;
       this.handleIndexFuncCreation(forFunc, loopSource, connections);
 
       // this.handleSingleValue(source, undefined, target, connections);
-    } // else {
-    //       this.handleSingleValue("", source.inputs[0], target, connections);
-    //   }
+    } else {
+      // must be a sequence function
+    }
+  };
+
+  private handleSingleValue = (key: string, targetNode: SchemaNodeExtended | FunctionData, connections: ConnectionDictionary) => {
+    // ", Esq" can we count quotes to determine if custom value?
+    // "."
+    // ../ns0:author/ns0:first-name
+    // /ns0:SourceSchemaRoot/Looping/ManyToOne/Simple/SourceSimpleChild/SourceSimpleChildChild[$b]/SourceDirect
+    // /ns0:Root/LoopingWithIndex/WeatherReport[1]/@Pressure
+    // /ns0:Root/Looping/VehicleTrips/Vehicle[is-equal(VehicleId, /ns0:Root/Looping/VehicleTrips/Trips[$i]/VehicleId)]/VehicleRegistration
+    if (key === '.') {
+      // current loop
+      const loopNode = findNodeForKey(this._loop, this._sourceSchema.schemaTreeRoot, false) as SchemaNodeExtended;
+      applyConnectionValue(connections, {
+        targetNode: targetNode,
+        targetNodeReactFlowKey: addTargetReactFlowPrefix(targetNode.key),
+        findInputSlot: true,
+        input: {
+          reactFlowKey: addSourceReactFlowPrefix(loopNode.key),
+          node: loopNode,
+        },
+      });
+      if (key.startsWith('"')) {
+        // custom value danielle custom value can also be a number without quotes
+        applyConnectionValue(connections, {
+          targetNode: targetNode,
+          targetNodeReactFlowKey: addTargetReactFlowPrefix(targetNode.key),
+          findInputSlot: true,
+          input: key,
+        });
+      }
+      if (key.startsWith('$')) {
+        // custom value
+        const indexFnKey = this._createdNodes[key];
+        const indexFn = connections[indexFnKey];
+        if (indexFn) {
+          applyConnectionValue(connections, {
+            targetNode: targetNode,
+            targetNodeReactFlowKey: this.getTargetKey(targetNode),
+            findInputSlot: true,
+            input: {
+              reactFlowKey: indexFn.self.reactFlowKey,
+              node: indexFn.self.node,
+            },
+          });
+        }
+      } else if (key.includes('[')) {
+        // idk
+      } else {
+        applyConnectionValue(connections, {
+          targetNode: targetNode,
+          targetNodeReactFlowKey: addTargetReactFlowPrefix(targetNode.key),
+          findInputSlot: true,
+          input: key,
+        });
+      }
+    }
   };
 
   private isTargetKey = (key: string) => {
-    // danielle later combine this
-    if (!key.includes('for') && !key.includes('if')) {
+    if (!key.includes('$for') && !key.includes('$if')) {
       return true;
     }
     return false;

@@ -1,7 +1,7 @@
 import { directAccessPseudoFunctionKey, functionMock, ifPseudoFunctionKey, indexPseudoFunctionKey } from '../../models';
 import type { Connection, ConnectionUnit } from '../../models/Connection';
 import { convertSchemaToSchemaExtended } from '../../utils/Schema.Utils';
-import { getLoopTargetNodeWithJson, MapDefinitionDeserializer } from '../MapDefinitionDeserializer';
+import { getLoopTargetNodeWithJson } from '../MapDefinitionDeserializer';
 import { MapDefinitionDeserializerRefactor } from '../MapDefinitionDeserializerRefactor';
 import type { MapDefinitionEntry, Schema, SchemaExtended, SchemaNodeExtended } from '@microsoft/utils-logic-apps';
 import {
@@ -669,7 +669,7 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
           },
         };
 
-        const mapDefinitionDeserializer = new MapDefinitionDeserializer(simpleMap, extendedSource, extendedTarget, functionMock);
+        const mapDefinitionDeserializer = new MapDefinitionDeserializerRefactor(simpleMap, extendedSource, extendedTarget, functionMock);
         const result = mapDefinitionDeserializer.convertFromMapDefinition();
 
         expect(Object.entries(result).length).toEqual(9);
@@ -717,7 +717,7 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
           },
         };
 
-        const mapDefinitionDeserializer = new MapDefinitionDeserializer(simpleMap, extendedSource, extendedTarget, functionMock);
+        const mapDefinitionDeserializer = new MapDefinitionDeserializerRefactor(simpleMap, extendedSource, extendedTarget, functionMock);
         const result = mapDefinitionDeserializer.convertFromMapDefinition();
 
         expect(Object.entries(result).length).toEqual(12);
@@ -778,7 +778,7 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
           },
         };
 
-        const mapDefinitionDeserializer = new MapDefinitionDeserializer(simpleMap, extendedSource, extendedTarget, functionMock);
+        const mapDefinitionDeserializer = new MapDefinitionDeserializerRefactor(simpleMap, extendedSource, extendedTarget, functionMock);
         const result = mapDefinitionDeserializer.convertFromMapDefinition();
 
         expect(Object.entries(result).length).toEqual(9);
@@ -832,7 +832,7 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
           },
         };
 
-        const mapDefinitionDeserializer = new MapDefinitionDeserializer(simpleMap, extendedLoopSource, extendedLoopTarget, []);
+        const mapDefinitionDeserializer = new MapDefinitionDeserializerRefactor(simpleMap, extendedLoopSource, extendedLoopTarget, []);
         const result = mapDefinitionDeserializer.convertFromMapDefinition();
         expect(Object.entries(result).length).toEqual(8);
 
@@ -874,7 +874,7 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
           },
         };
 
-        const mapDefinitionDeserializer = new MapDefinitionDeserializer(
+        const mapDefinitionDeserializer = new MapDefinitionDeserializerRefactor(
           simpleMap,
           extendedComprehensiveSourceSchema,
           extendedComprehensiveTargetSchema,
@@ -944,7 +944,7 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
           },
         };
 
-        const mapDefinitionDeserializer = new MapDefinitionDeserializer(
+        const mapDefinitionDeserializer = new MapDefinitionDeserializerRefactor(
           simpleMap,
           extendedComprehensiveSourceSchema,
           extendedComprehensiveTargetSchema,
@@ -999,7 +999,7 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
           },
         };
 
-        const mapDefinitionDeserializer = new MapDefinitionDeserializer(simpleMap, extendedSource, extendedTarget, []);
+        const mapDefinitionDeserializer = new MapDefinitionDeserializerRefactor(simpleMap, extendedSource, extendedTarget, []);
         const result = mapDefinitionDeserializer.convertFromMapDefinition();
 
         expect(Object.entries(result).length).toEqual(3);
@@ -1031,7 +1031,7 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
             },
           },
         };
-        const mapDefinitionDeserializer = new MapDefinitionDeserializer(
+        const mapDefinitionDeserializer = new MapDefinitionDeserializerRefactor(
           simpleMap,
           extendedComprehensiveSourceSchema,
           extendedComprehensiveTargetSchema,
@@ -2040,7 +2040,7 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
           },
         };
 
-        const mapDefinitionDeserializer = new MapDefinitionDeserializer(
+        const mapDefinitionDeserializer = new MapDefinitionDeserializerRefactor(
           simpleMap,
           extendedComprehensiveSourceSchema,
           extendedComprehensiveTargetSchema,
@@ -2137,7 +2137,7 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
         },
       };
 
-      const mapDefinitionDeserializer = new MapDefinitionDeserializer(simpleMap, extendedSource, extendedTarget, functionMock);
+      const mapDefinitionDeserializer = new MapDefinitionDeserializerRefactor(simpleMap, extendedSource, extendedTarget, functionMock);
       const result = mapDefinitionDeserializer.convertFromMapDefinition();
       const resultEntries = Object.entries(result);
       resultEntries.sort();

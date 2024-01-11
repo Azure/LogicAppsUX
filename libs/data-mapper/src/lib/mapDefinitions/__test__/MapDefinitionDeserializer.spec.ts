@@ -577,7 +577,7 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
         expect((resultEntries[3][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual(indexId);
       });
 
-      it('creates a looping conditional connection', () => {
+      it('creates a looping  connection', () => {
         simpleMap['ns0:Root'] = {
           ConditionalLooping: {
             '$for(/ns0:Root/ConditionalLooping/FlatterCatalog/ns0:Product)': {

@@ -921,8 +921,8 @@ describe('utils/DataMap', () => {
       expect(result[8]).toEqual(Separators.CloseParenthesis);
     });
 
-    it('separates a loop and sequence target', () => {
-      const result = separateIntoTokens('int(concat(/ns0:PersonOrigin/FirstName,/ns0:PersonOrigin/LastName,"customString"))');
+    it('separates a nested function with a custom value', () => {
+      const result = separateIntoTokens('int(concat(/ns0:PersonOrigin/FirstName,/ns0:PersonOrigin/LastName, "customString"))');
       expect(result[0]).toEqual('int');
       expect(result[1]).toEqual(Separators.OpenParenthesis);
       expect(result[2]).toEqual('concat');
@@ -936,13 +936,13 @@ describe('utils/DataMap', () => {
       expect(result[10]).toEqual(Separators.CloseParenthesis);
     });
 
-    it('separates a loop and sequence target', () => {
-      const result = separateIntoTokens('int(concat("customString",/ns0:PersonOrigin/FirstName,/ns0:PersonOrigin/LastName))');
+    it('separates a custom value with a comma', () => {
+      const result = separateIntoTokens('int(concat("customString ," ,/ns0:PersonOrigin/FirstName,/ns0:PersonOrigin/LastName))');
       expect(result[0]).toEqual('int');
       expect(result[1]).toEqual(Separators.OpenParenthesis);
       expect(result[2]).toEqual('concat');
       expect(result[3]).toEqual(Separators.OpenParenthesis);
-      expect(result[4]).toEqual('"customString"');
+      expect(result[4]).toEqual('"customString ,"');
       expect(result[5]).toEqual(Separators.Comma);
       expect(result[6]).toEqual('/ns0:PersonOrigin/FirstName');
       expect(result[7]).toEqual(Separators.Comma);

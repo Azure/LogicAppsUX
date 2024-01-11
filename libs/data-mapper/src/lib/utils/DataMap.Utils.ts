@@ -452,10 +452,11 @@ export const DSeparators = {
   OpenParenthesis: '(',
   CloseParenthesis: ')',
   Comma: ',',
+  quote: '"',
 } as const;
 export type DSeparators = (typeof Separators)[keyof typeof Separators];
 
-export const Dseparators: string[] = [Separators.OpenParenthesis, Separators.CloseParenthesis, Separators.Comma];
+export const Dseparators: string[] = [Separators.OpenParenthesis, Separators.CloseParenthesis, Separators.Comma, DSeparators.quote];
 
 export const reservedToken: string[] = [ReservedToken.for, ReservedToken.if, ReservedToken.backout];
 
@@ -483,8 +484,18 @@ export const separateFunctions = (targetKey: string): string[] => {
   let currentToken = '';
   while (i < targetKey.length) {
     const currentChar = targetKey[i];
+    if (currentChar === ' ') {
+      i++;
+      continue;
+    }
 
     if (Dseparators.includes(currentChar)) {
+      if (currentChar === DSeparators.quote) {
+        const endOfQuote = targetKey.substring(i + 1).indexOf(DSeparators.quote) + 2 + i;
+        tokens.push(targetKey.substring(i, endOfQuote));
+        i = endOfQuote;
+        continue;
+      }
       if (!currentToken) {
         // if it is a Separator
         tokens.push(currentChar);
@@ -494,7 +505,7 @@ export const separateFunctions = (targetKey: string): string[] => {
         // if it is a function or identifier token
         tokens.push(currentToken);
         currentToken = '';
-        tokens.push(currentChar);
+        tokens.push(currentChar.trim());
         i++;
         continue;
       }
@@ -502,14 +513,14 @@ export const separateFunctions = (targetKey: string): string[] => {
 
     currentToken = currentToken + currentChar;
     if (dReservedToken.includes(currentToken)) {
-      tokens.push(currentToken);
+      tokens.push(currentToken.trim());
       currentToken = '';
       i++;
       continue;
     }
 
     if (i === targetKey.length - 1) {
-      tokens.push(currentToken);
+      tokens.push(currentToken.trim());
     }
     i++;
   }
@@ -523,8 +534,18 @@ export const lexThisThing = (targetKey: string): string[] => {
   let currentToken = '';
   while (i < targetKey.length) {
     const currentChar = targetKey[i];
+    if (currentChar === ' ') {
+      i++;
+      continue;
+    }
 
-    if (separators.includes(currentChar)) {
+    if (Dseparators.includes(currentChar)) {
+      if (currentChar === DSeparators.quote) {
+        const endOfQuote = targetKey.substring(i + 1).indexOf(DSeparators.quote) + 2 + i;
+        tokens.push(targetKey.substring(i, endOfQuote));
+        i = endOfQuote;
+        continue;
+      }
       if (!currentToken) {
         // if it is a Separator
         tokens.push(currentChar);
