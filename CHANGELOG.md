@@ -1,4 +1,17 @@
 # Logic Apps Designer
+## [2.103.0](https://github.com/Azure/LogicAppsUX/compare/v2.102.0...v2.103.0) (2024-01-11)
+
+
+### Features
+
+* **designer:** Add support for User Assigned identities for ServiceProviders ([#3907](https://github.com/Azure/LogicAppsUX/issues/3907)) ([01be309](https://github.com/Azure/LogicAppsUX/commit/01be3097dac188ba29e250514acd64c65f2717ec))
+* **vscode:** Microsoft.Azure.Functions.ExtensionBundle.Workflows download on project activate ([#3958](https://github.com/Azure/LogicAppsUX/issues/3958)) ([cccdd3d](https://github.com/Azure/LogicAppsUX/commit/cccdd3d4d4bc87f6055ebf20d4587c09fee78603))
+
+
+### Bug Fixes
+
+* **vscode:** Update fallback version of function core tools ([#3955](https://github.com/Azure/LogicAppsUX/issues/3955)) ([5b5d031](https://github.com/Azure/LogicAppsUX/commit/5b5d03188a69ef74a2ba1ba6ffc862c80abc31fa))
+
 ## [2.102.0](https://github.com/Azure/LogicAppsUX/compare/v2.101.0...v2.102.0) (2024-01-10)
 
 
