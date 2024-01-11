@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [2.101.1](https://github.com/Azure/LogicAppsUX/compare/v2.101.0...v2.101.1) (2024-01-11)
+
+
+### Features
+
+* **designer:** Add support for User Assigned identities for ServiceProviders ([#3907](https://github.com/Azure/LogicAppsUX/issues/3907)) ([1183b64](https://github.com/Azure/LogicAppsUX/commit/1183b64627c8afaf9f50138c8068fd3038d2c544))
+
 ## [2.101.0](https://github.com/Azure/LogicAppsUX/compare/v2.100.0...v2.101.0) (2024-01-09)
 
 
