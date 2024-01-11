@@ -9,3 +9,4 @@ export * from './xml';
 export * from './integrationAccount';
 export * from './inlineCode';
 export * from './operationgroups';
+export * from './as2';

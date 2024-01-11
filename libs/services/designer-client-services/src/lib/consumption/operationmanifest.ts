@@ -8,6 +8,7 @@ import {
 } from '../base/operationmanifest';
 import { apiManagementActionManifest, apiManagementTriggerManifest } from './manifests/apiManagement';
 import { appServiceActionManifest, appServiceTriggerManifest } from './manifests/appServices';
+import { as2EncodeManifest, as2DecodeManifest } from './manifests/as2';
 import { batchTriggerManifest, sendToBatchManifest } from './manifests/batchWorkflow';
 import { composeManifest } from './manifests/compose';
 import { flatFileDecodingManifest, flatFileEncodingManifest } from './manifests/flatfile';
@@ -132,6 +133,8 @@ const xmlvalidation = 'xmlvalidation';
 const inlinecode = 'javascriptcode';
 const flatfiledecoding = 'flatfiledecoding';
 const flatfileencoding = 'flatfileencoding';
+const as2encode = 'as2encode';
+const as2decode = 'as2decode';
 
 // Azure Resource Connectors
 const apimanagement = 'apimanagement';
@@ -172,4 +175,6 @@ const supportedConsumptionManifestObjects = new Map<string, OperationManifest>([
   [invokeworkflow, invokeWorkflowManifest],
   [sendtobatch, sendToBatchManifest],
   [batch, batchTriggerManifest],
+  [as2encode, as2EncodeManifest],
+  [as2decode, as2DecodeManifest],
 ]);
