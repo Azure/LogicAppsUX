@@ -17,6 +17,7 @@ import { inlineCodeManifest } from './manifests/inlinecode';
 import { integrationAccountArtifactLookupManifest } from './manifests/integrationaccountartifactlookup';
 import { invokeWorkflowManifest } from './manifests/invokeWorkflow';
 import { liquidJsonToJsonManifest, liquidJsonToTextManifest, liquidXmlToJsonManifest, liquidXmlToTextManifest } from './manifests/liquid';
+import { rosettaNetEncodeManifest, rosettaNetDecodeManifest, rosettaNetWaitForResponseManifest } from './manifests/rosettanet';
 import { selectSwaggerFunctionManifest } from './manifests/swaggerFunctions';
 import { xmlTransformManifest, xmlValidationManifest } from './manifests/xml';
 import { functionGroup, functionOperation, invokeWorkflowGroup, invokeWorkflowOperation, swaggerFunctionOperation } from './operations';
@@ -135,6 +136,9 @@ const flatfiledecoding = 'flatfiledecoding';
 const flatfileencoding = 'flatfileencoding';
 const as2encode = 'as2encode';
 const as2decode = 'as2decode';
+const rosettanetencode = 'rosettanetencode';
+const rosettanetdecode = 'rosettanetdecode';
+const rosettanetwaitforresponse = 'rosettanetwaitforresponse';
 
 // Azure Resource Connectors
 const apimanagement = 'apimanagement';
@@ -177,4 +181,7 @@ const supportedConsumptionManifestObjects = new Map<string, OperationManifest>([
   [batch, batchTriggerManifest],
   [as2encode, as2EncodeManifest],
   [as2decode, as2DecodeManifest],
+  [rosettanetencode, rosettaNetEncodeManifest],
+  [rosettanetdecode, rosettaNetDecodeManifest],
+  [rosettanetwaitforresponse, rosettaNetWaitForResponseManifest],
 ]);

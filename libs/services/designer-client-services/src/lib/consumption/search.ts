@@ -83,6 +83,9 @@ export class ConsumptionSearchService extends BaseSearchService {
       OperationsData.batchTriggerOperation,
       OperationsData.as2EncodeOperation,
       OperationsData.as2DecodeOperation,
+      OperationsData.rosettaNetEncodeOperation,
+      OperationsData.rosettaNetDecodeOperation,
+      OperationsData.rosettaNetWairForResponseOperation,
     ];
     return Promise.resolve([...clientBuiltInOperations, ...consumptionBuiltIn]);
   }
@@ -133,6 +136,7 @@ export class ConsumptionSearchService extends BaseSearchService {
       OperationsData.invokeWorkflowGroup,
       OperationsData.selectBatchWorkflowGroup,
       OperationsData.as2Group,
+      OperationsData.rosettaNetGroup,
     ];
     return Promise.resolve([...clientBuiltInConnectors, ...consumptionBuiltIn]);
   }

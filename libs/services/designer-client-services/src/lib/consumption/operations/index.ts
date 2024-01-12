@@ -10,3 +10,4 @@ export * from './integrationAccount';
 export * from './inlineCode';
 export * from './operationgroups';
 export * from './as2';
+export * from './rosettanet';
