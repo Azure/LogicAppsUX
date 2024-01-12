@@ -1,4 +1,4 @@
-import { openPanel } from '../core';
+import { openPanel, useNodesInitialized } from '../core';
 import { useLayout } from '../core/graphlayout';
 import { usePreloadOperationsQuery, usePreloadConnectorsQuery } from '../core/queries/browse';
 import { useMonitoringView, useReadOnly } from '../core/state/designerOptions/designerOptionsSelectors';
@@ -213,9 +213,12 @@ export const Designer = (props: DesignerProps) => {
     marginLeft: props.rightShift,
   };
 
+  const isInitialized = useNodesInitialized();
+  const preloadSearch = useMemo(() => (isMonitoringView || isReadOnly) && isInitialized, [isMonitoringView, isReadOnly, isInitialized]);
+
   return (
     <DndProvider options={DND_OPTIONS}>
-      {isMonitoringView || isReadOnly ? null : <SearchPreloader />}
+      {preloadSearch ? <SearchPreloader /> : null}
       <div className="msla-designer-canvas msla-panel-mode" style={copilotPadding}>
         <ReactFlowProvider>
           <ReactFlow
