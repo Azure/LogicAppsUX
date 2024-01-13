@@ -239,36 +239,22 @@ export const Toolbar = ({ isRawText, isSwitchToWysiwygBlocked, readonly = false,
             e.preventDefault();
           }}
           onClick={() => {
-            const enterRawHtmlMode = () => {
-              const nodeMap = new Map<string, ValueSegment>();
-              activeEditor.getEditorState().read(() => {
-                getChildrenNodes($getRoot(), nodeMap);
-              });
-
-              convertEditorState(activeEditor, nodeMap, { isValuePlaintext: false }).then((valueSegments) => {
-                activeEditor.update(() => {
-                  $getRoot().clear().select();
-                  parseSegments(valueSegments, { tokensEnabled: true, readonly });
-                  setIsRawText(true);
-                });
-              });
-            };
-
-            const exitRawHtmlMode = () => {
-              const nodeMap = new Map<string, ValueSegment>();
-              activeEditor.getEditorState().read(() => {
-                getChildrenNodes($getRoot(), nodeMap);
-              });
-              convertEditorState(activeEditor, nodeMap, { isValuePlaintext: true }).then((valueSegments) => {
-                activeEditor.update(() => {
-                  $getRoot().clear().select();
+            const nodeMap = new Map<string, ValueSegment>();
+            activeEditor.getEditorState().read(() => {
+              getChildrenNodes($getRoot(), nodeMap);
+            });
+            convertEditorState(activeEditor, nodeMap, { isValuePlaintext: !!isRawText }).then((valueSegments) => {
+              activeEditor.update(() => {
+                $getRoot().clear().select();
+                if (isRawText) {
                   parseHtmlSegments(valueSegments, { tokensEnabled: true, readonly });
                   setIsRawText(false);
-                });
+                } else {
+                  parseSegments(valueSegments, { tokensEnabled: true, readonly });
+                  setIsRawText(true);
+                }
               });
-            };
-
-            isRawText ? exitRawHtmlMode() : enterRawHtmlMode();
+            });
           }}
           title={toggleCodeViewMessage}
         >
