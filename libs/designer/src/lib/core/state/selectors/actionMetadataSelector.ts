@@ -148,6 +148,26 @@ export const useOperationDocumentation = (operationInfo: NodeOperation) => {
   return { result, isLoading };
 };
 
+export const useOperationSummary = (operationInfo: NodeOperation) => {
+  const operationManifestService = OperationManifestService();
+  const useManifest = operationManifestService.isSupported(operationInfo?.type ?? '', operationInfo?.kind ?? '');
+
+  const { data: connectorData } = useConnectorAndSwagger(operationInfo?.connectorId, !useManifest);
+
+  const { result, isLoading } = useNodeAttribute(operationInfo, ['summary'], ['summary']);
+
+  const { swagger } = connectorData ?? {};
+  if (swagger) {
+    const swaggerParsed = new SwaggerParser(swagger);
+    const swaggerResult = swaggerParsed.getOperationByOperationId(operationInfo.operationId)?.summary;
+    if (swaggerResult) {
+      return { isLoading, result: swaggerResult };
+    }
+  }
+
+  return { result, isLoading };
+};
+
 export const useConnectorDescription = (operationInfo: NodeOperation) => {
   return useNodeAttribute(operationInfo, ['connector', 'properties', 'description'], ['description']);
 };

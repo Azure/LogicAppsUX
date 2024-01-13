@@ -35,6 +35,7 @@ export interface CardProps {
   isDragging?: boolean;
   isMonitoringView?: boolean;
   isLoading?: boolean;
+  operationName?: string;
   readOnly?: boolean;
   rootRef?: React.RefObject<HTMLDivElement>;
   selected?: boolean;
@@ -79,6 +80,7 @@ export const Card: React.FC<CardProps> = ({
   isDragging,
   isMonitoringView,
   isLoading,
+  operationName,
   selected,
   staticResultsEnabled,
   title,
@@ -105,22 +107,32 @@ export const Card: React.FC<CardProps> = ({
 
   const intl = useIntl();
 
-  const connectorIconAltText = intl.formatMessage(
-    {
-      defaultMessage: '{connectorName} connector icon',
-      description: 'Alt text for connector image',
-    },
-    {
-      connectorName,
-    }
-  );
+  const cardIconAltText = connectorName
+    ? intl.formatMessage(
+        {
+          defaultMessage: '{connectorName} connector icon',
+          description: 'Alt text icon on action/trigger card when there is a connector name',
+        },
+        {
+          connectorName,
+        }
+      )
+    : intl.formatMessage(
+        {
+          defaultMessage: '{actionName} icon',
+          description: 'Alt text icon on action/trigger card when there is not a connector name',
+        },
+        {
+          actionName: operationName,
+        }
+      );
 
   const cardIcon = useMemo(
     () =>
       isLoading ? (
         <Spinner className="msla-card-header-spinner" size={'tiny'} />
       ) : icon ? (
-        <img className="panel-card-icon" src={icon} alt={connectorIconAltText} />
+        <img className="panel-card-icon" src={icon} alt={cardIconAltText} />
       ) : errorMessage ? (
         <div className="panel-card-icon default">
           <Icon iconName="PlugDisconnected" style={{ fontSize: '16px', textAlign: 'center' }} />
@@ -128,7 +140,7 @@ export const Card: React.FC<CardProps> = ({
       ) : (
         <Spinner className="msla-card-header-spinner" size={'tiny'} />
       ),
-    [icon, isLoading, errorMessage, connectorIconAltText]
+    [icon, isLoading, errorMessage, cardIconAltText]
   );
 
   return (
