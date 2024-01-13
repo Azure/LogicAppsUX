@@ -67,6 +67,7 @@ export interface BaseEditorProps {
   tokenPickerButtonProps?: TokenPickerButtonEditorProps;
   dataAutomationId?: string;
   tokenMapping?: Record<string, ValueSegment>;
+  isSwitchFromPlaintextBlocked?: boolean;
   loadParameterValueFromString?: (value: string) => ValueSegment[];
   onChange?: ChangeHandler;
   onBlur?: () => void;
@@ -98,6 +99,7 @@ export const BaseEditor = ({
   valueType,
   dataAutomationId,
   tokenMapping,
+  isSwitchFromPlaintextBlocked,
   loadParameterValueFromString,
   onFocus,
   onBlur,
@@ -182,7 +184,7 @@ export const BaseEditor = ({
         {htmlEditor ? (
           <Toolbar
             isRawText={htmlEditor === 'raw-html'}
-            isSwitchToWysiwygBlocked={false}
+            isSwitchFromPlaintextBlocked={isSwitchFromPlaintextBlocked}
             readonly={readonly}
             setIsRawText={setIsValuePlaintext}
           />
