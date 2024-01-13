@@ -56,11 +56,12 @@ export type blockTypeToBlockName = (typeof blockTypeToBlockName)[keyof typeof bl
 
 interface ToolbarProps {
   isRawText?: boolean;
+  isSwitchToWysiwygBlocked?: boolean;
   readonly?: boolean;
   setIsRawText?: (newValue: boolean) => void;
 }
 
-export const Toolbar = ({ isRawText, readonly = false, setIsRawText }: ToolbarProps): JSX.Element => {
+export const Toolbar = ({ isRawText, isSwitchToWysiwygBlocked, readonly = false, setIsRawText }: ToolbarProps): JSX.Element => {
   const [editor] = useLexicalComposerContext();
   const [activeEditor, setActiveEditor] = useState(editor);
   const { isInverted } = useTheme();
@@ -233,7 +234,7 @@ export const Toolbar = ({ isRawText, readonly = false, setIsRawText }: ToolbarPr
         <button
           aria-label="Raw code toggle"
           className={css('toolbar-item', isRawText && 'active')}
-          disabled={readonly}
+          disabled={readonly || (isRawText && isSwitchToWysiwygBlocked)}
           onMouseDown={(e) => {
             e.preventDefault();
           }}

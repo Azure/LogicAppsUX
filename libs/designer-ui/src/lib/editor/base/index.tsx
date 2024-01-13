@@ -179,7 +179,14 @@ export const BaseEditor = ({
         data-automation-id={dataAutomationId}
         title={placeholder}
       >
-        {htmlEditor ? <Toolbar isRawText={htmlEditor === 'raw-html'} readonly={readonly} setIsRawText={setIsValuePlaintext} /> : null}
+        {htmlEditor ? (
+          <Toolbar
+            isRawText={htmlEditor === 'raw-html'}
+            isSwitchToWysiwygBlocked={false}
+            readonly={readonly}
+            setIsRawText={setIsValuePlaintext}
+          />
+        ) : null}
         <TextPlugin
           contentEditable={
             <ContentEditable className={css('editor-input', readonly && 'readonly')} ariaLabelledBy={labelId} ariaDescribedBy={id} />
