@@ -74,7 +74,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
   const metadata = useNodeMetadata(id);
   const operationInfo = useOperationInfo(id);
   const connectorName = useConnectorName(operationInfo);
-  const operationName = useOperationSummary(operationInfo);
+  const operationSummary = useOperationSummary(operationInfo);
   const isTrigger = useMemo(() => metadata?.graphId === 'root' && metadata?.isRoot, [metadata]);
   const parentRunIndex = useParentRunIndex(id);
   const runInstance = useRunInstance();
@@ -336,7 +336,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
           onClick={nodeClick}
           onDeleteClick={deleteClick}
           onCopyClick={copyClick}
-          operationName={operationName?.result}
+          operationName={operationSummary?.result}
           selected={selected}
           contextMenuItems={contextMenuItems}
           setFocus={shouldFocus}

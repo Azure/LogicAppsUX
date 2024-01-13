@@ -119,11 +119,11 @@ export const Card: React.FC<CardProps> = ({
       )
     : intl.formatMessage(
         {
-          defaultMessage: '{actionName} icon',
+          defaultMessage: '{operationName} icon',
           description: 'Alt text icon on action/trigger card when there is not a connector name',
         },
         {
-          actionName: operationName,
+          operationName,
         }
       );
 
