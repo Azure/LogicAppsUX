@@ -55,6 +55,7 @@ export interface IConnectionService {
   ): Promise<CreateConnectionResult>;
   setupConnectionIfNeeded(connection: Connection, identityId?: string): Promise<void>;
   getUniqueConnectionName(connectorId: string, connectionNames: string[], connectorName: string): Promise<string>;
+  getAuthSetHideKeys?(): string[];
 }
 
 let service: IConnectionService;

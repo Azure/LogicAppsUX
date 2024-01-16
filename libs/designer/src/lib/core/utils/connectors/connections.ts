@@ -163,7 +163,8 @@ export async function getConnectionParametersForAzureConnection(connectionType?:
 
 export function getSupportedParameterSets(
   parameterSets: ConnectionParameterSets | undefined,
-  operationType: string
+  operationType: string,
+  connectorCapabilities: string[] | undefined
 ): ConnectionParameterSets | undefined {
   if (!parameterSets) {
     return undefined;
@@ -173,14 +174,9 @@ export function getSupportedParameterSets(
   return {
     ...parameterSets,
     values: parameterSets.values.filter((parameterSet) => {
-      if (containsManagedIdentityParameter(parameterSet)) {
-        return (
-          !isServiceProviderOperation(operationType) ||
-          identity?.type?.toLowerCase()?.includes(ResourceIdentityType.SYSTEM_ASSIGNED.toLowerCase())
-        );
-      }
-
-      return true;
+      return containsManagedIdentityParameter(parameterSet)
+        ? isManagedIdentitySupported(operationType, connectorCapabilities, identity)
+        : true;
     }),
   };
 }
@@ -226,6 +222,21 @@ const ALT_PARAMETER_VALUE_TYPE = 'Alternative';
 // NOTE: This method is specifically for Single-Auth type connectors.
 export function isConnectionSingleAuthManagedIdentityType(connection: Connection): boolean {
   return !!(connection?.properties?.parameterValueType === ALT_PARAMETER_VALUE_TYPE) && !isMultiAuthConnection(connection);
+}
+
+function isManagedIdentitySupported(operationType: string, connectorCapabilities: string[] = [], identity?: ManagedIdentity): boolean {
+  if (isServiceProviderOperation(operationType)) {
+    return (
+      isUserAssignedIdentitySupportedForInApp(connectorCapabilities) ||
+      !!identity?.type?.toLowerCase()?.includes(ResourceIdentityType.SYSTEM_ASSIGNED.toLowerCase())
+    );
+  }
+
+  return true;
+}
+
+export function isUserAssignedIdentitySupportedForInApp(connectorCapabilities: string[] = []) {
+  return !!connectorCapabilities?.find((capability) => equals(capability, 'supportsUserAssignedIdentity'));
 }
 
 function isMultiAuthConnection(connection: Connection | undefined): boolean {

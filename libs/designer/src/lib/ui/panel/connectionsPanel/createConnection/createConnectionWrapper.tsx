@@ -23,17 +23,19 @@ import {
   getAssistedConnectionProps,
   getConnectionParametersForAzureConnection,
   getSupportedParameterSets,
+  isUserAssignedIdentitySupportedForInApp,
 } from '../../../../core/utils/connectors/connections';
 import { CreateConnection } from './createConnection';
 import { Spinner } from '@fluentui/react-components';
 import type { ConnectionCreationInfo, ConnectionParametersMetadata } from '@microsoft/designer-client-services-logic-apps';
 import { ConnectionService, LogEntryLevel, LoggerService, WorkflowService } from '@microsoft/designer-client-services-logic-apps';
-import type {
-  Connection,
-  ConnectionParameterSet,
-  ConnectionParameterSetValues,
-  Connector,
-  ManagedIdentity,
+import {
+  safeSetObjectPropertyValue,
+  type Connection,
+  type ConnectionParameterSet,
+  type ConnectionParameterSetValues,
+  type Connector,
+  type ManagedIdentity,
 } from '@microsoft/utils-logic-apps';
 import { useCallback, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -156,6 +158,15 @@ export const CreateConnectionWrapper = () => {
           outputParameterValues = { ...outputParameterValues, ...assistedParams };
         }
 
+        // Assign identity selected in parameter values for in-app connectors
+        if (
+          isUserAssignedIdentitySupportedForInApp(connector.properties.capabilities) &&
+          identitySelected &&
+          identitySelected !== constants.SYSTEM_ASSIGNED_MANAGED_IDENTITY
+        ) {
+          safeSetObjectPropertyValue(outputParameterValues, ['identity'], identitySelected);
+        }
+
         // If oauth, find the oauth parameter and assign the redirect url
         if (isOAuthConnection && selectedParameterSet) {
           const oAuthParameter = Object.entries(selectedParameterSet?.parameters).find(
@@ -210,7 +221,9 @@ export const CreateConnectionWrapper = () => {
         }
 
         if (connection) {
-          for (const nodeId of nodeIds) applyNewConnection(nodeId, connection, identitySelected);
+          for (const nodeId of nodeIds) {
+            applyNewConnection(nodeId, connection, identitySelected);
+          }
           closeConnectionsFlow();
         } else if (err) {
           setErrorMessage(String(err));
@@ -263,7 +276,11 @@ export const CreateConnectionWrapper = () => {
       connectorDisplayName={connector.properties.displayName}
       connectorCapabilities={connector.properties.capabilities}
       connectionParameters={connector.properties.connectionParameters}
-      connectionParameterSets={getSupportedParameterSets(connector.properties.connectionParameterSets, operationInfo.type)}
+      connectionParameterSets={getSupportedParameterSets(
+        connector.properties.connectionParameterSets,
+        operationInfo.type,
+        connector.properties.capabilities
+      )}
       connectionAlternativeParameters={connector.properties?.connectionAlternativeParameters}
       identity={identity}
       createConnectionCallback={createConnectionCallback}

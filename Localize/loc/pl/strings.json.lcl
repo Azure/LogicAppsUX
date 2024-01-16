@@ -7123,7 +7123,7 @@
         <Str Cat="Text">
           <Val><![CDATA[No results found for {searchTerm}]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Nie znaleziono wyników dla {searchText}]]></Val>
+            <Val><![CDATA[Nie znaleziono wyników dla {searchTerm}]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
