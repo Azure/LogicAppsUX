@@ -56,11 +56,12 @@ export type blockTypeToBlockName = (typeof blockTypeToBlockName)[keyof typeof bl
 
 interface ToolbarProps {
   isRawText?: boolean;
+  isSwitchFromPlaintextBlocked?: boolean;
   readonly?: boolean;
   setIsRawText?: (newValue: boolean) => void;
 }
 
-export const Toolbar = ({ isRawText, readonly = false, setIsRawText }: ToolbarProps): JSX.Element => {
+export const Toolbar = ({ isRawText, isSwitchFromPlaintextBlocked, readonly = false, setIsRawText }: ToolbarProps): JSX.Element => {
   const [editor] = useLexicalComposerContext();
   const [activeEditor, setActiveEditor] = useState(editor);
   const { isInverted } = useTheme();
@@ -233,41 +234,27 @@ export const Toolbar = ({ isRawText, readonly = false, setIsRawText }: ToolbarPr
         <button
           aria-label="Raw code toggle"
           className={css('toolbar-item', isRawText && 'active')}
-          disabled={readonly}
+          disabled={readonly || (isRawText && isSwitchFromPlaintextBlocked)}
           onMouseDown={(e) => {
             e.preventDefault();
           }}
           onClick={() => {
-            const enterRawHtmlMode = () => {
-              const nodeMap = new Map<string, ValueSegment>();
-              activeEditor.getEditorState().read(() => {
-                getChildrenNodes($getRoot(), nodeMap);
-              });
-
-              convertEditorState(activeEditor, nodeMap, { isValuePlaintext: false }).then((valueSegments) => {
-                activeEditor.update(() => {
-                  $getRoot().clear().select();
-                  parseSegments(valueSegments, { tokensEnabled: true, readonly });
-                  setIsRawText(true);
-                });
-              });
-            };
-
-            const exitRawHtmlMode = () => {
-              const nodeMap = new Map<string, ValueSegment>();
-              activeEditor.getEditorState().read(() => {
-                getChildrenNodes($getRoot(), nodeMap);
-              });
-              convertEditorState(activeEditor, nodeMap, { isValuePlaintext: true }).then((valueSegments) => {
-                activeEditor.update(() => {
-                  $getRoot().clear().select();
+            const nodeMap = new Map<string, ValueSegment>();
+            activeEditor.getEditorState().read(() => {
+              getChildrenNodes($getRoot(), nodeMap);
+            });
+            convertEditorState(activeEditor, nodeMap, { isValuePlaintext: !!isRawText }).then((valueSegments) => {
+              activeEditor.update(() => {
+                $getRoot().clear().select();
+                if (isRawText) {
                   parseHtmlSegments(valueSegments, { tokensEnabled: true, readonly });
                   setIsRawText(false);
-                });
+                } else {
+                  parseSegments(valueSegments, { tokensEnabled: true, readonly });
+                  setIsRawText(true);
+                }
               });
-            };
-
-            isRawText ? exitRawHtmlMode() : enterRawHtmlMode();
+            });
           }}
           title={toggleCodeViewMessage}
         >
