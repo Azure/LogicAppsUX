@@ -98,10 +98,13 @@ export const Combobox = ({
   }, [isLoading]);
 
   // Sort newOptions array alphabetically based on the `displayName` property.
-  useMemo(() => {
-    if (shouldSort) {
-      options.sort((currentItem, nextItem) => currentItem.displayName?.localeCompare(nextItem.displayName));
-    }
+  useEffect(() => {
+    if (!shouldSort) return;
+    options.sort((currentItem, nextItem) => {
+      const stringA = currentItem.displayName?.toString() ?? '';
+      const stringB = nextItem.displayName?.toString() ?? '';
+      return stringA.localeCompare(stringB);
+    });
   }, [options, shouldSort]);
 
   const comboboxOptions = useMemo(() => {
