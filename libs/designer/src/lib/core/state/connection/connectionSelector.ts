@@ -124,5 +124,5 @@ export const useShowIdentitySelectorQuery = (nodeId: string) => {
       return isConnectionMultiAuthManagedIdentityType(connectionQuery.data, connector);
     }
     return false;
-  }, [connectionQuery, connectionReference, connector, operationInfo.type]);
+  }, [connectionQuery, connectionReference, connector, operationInfo?.type]);
 };
