@@ -12,6 +12,7 @@ export const HTMLEditor = ({ initialValue, onChange, ...baseEditorProps }: BaseE
     const initialValueString = convertSegmentsToString(initialValue, blankNodeMap);
     return !isHtmlStringValueSafeForLexical(initialValueString, blankNodeMap);
   });
+  const [isSwitchFromPlaintextBlocked, setIsSwitchFromPlaintextBlocked] = useState(() => isValuePlaintext);
   const [value, setValue] = useState<ValueSegment[]>(initialValue);
 
   const onValueChange = (newValue: ValueSegment[]): void => {
@@ -36,10 +37,16 @@ export const HTMLEditor = ({ initialValue, onChange, ...baseEditorProps }: BaseE
         ...baseEditorProps.tokenPickerButtonProps,
         newlineVerticalOffset: 20,
       }}
+      isSwitchFromPlaintextBlocked={isSwitchFromPlaintextBlocked}
       onBlur={handleBlur}
       setIsValuePlaintext={setIsValuePlaintext}
     >
-      <HTMLChangePlugin isValuePlaintext={isValuePlaintext} setIsValuePlaintext={setIsValuePlaintext} setValue={onValueChange} />
+      <HTMLChangePlugin
+        isValuePlaintext={isValuePlaintext}
+        setIsSwitchFromPlaintextBlocked={setIsSwitchFromPlaintextBlocked}
+        setIsValuePlaintext={setIsValuePlaintext}
+        setValue={onValueChange}
+      />
     </EditorWrapper>
   );
 };
