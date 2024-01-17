@@ -182,7 +182,7 @@ export function getIdentityDropdownOptions(managedIdentity: ManagedIdentity | un
   });
 
   if (equals(type, ResourceIdentityType.SYSTEM_ASSIGNED) || equals(type, ResourceIdentityType.SYSTEM_ASSIGNED_USER_ASSIGNED)) {
-    options.push({ key: 'System-assigned managed identity', text: systemAssigned });
+    options.push({ key: 'SystemAssigned_Managed_Identity', text: systemAssigned });
   }
 
   if (equals(type, ResourceIdentityType.USER_ASSIGNED) || equals(type, ResourceIdentityType.SYSTEM_ASSIGNED_USER_ASSIGNED)) {

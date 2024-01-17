@@ -1,4 +1,39 @@
 # Logic Apps Designer
+## [2.103.0](https://github.com/Azure/LogicAppsUX/compare/v2.102.0...v2.103.0) (2024-01-11)
+
+
+### Features
+
+* **designer:** Add support for User Assigned identities for ServiceProviders ([#3907](https://github.com/Azure/LogicAppsUX/issues/3907)) ([01be309](https://github.com/Azure/LogicAppsUX/commit/01be3097dac188ba29e250514acd64c65f2717ec))
+* **vscode:** Microsoft.Azure.Functions.ExtensionBundle.Workflows download on project activate ([#3958](https://github.com/Azure/LogicAppsUX/issues/3958)) ([cccdd3d](https://github.com/Azure/LogicAppsUX/commit/cccdd3d4d4bc87f6055ebf20d4587c09fee78603))
+
+
+### Bug Fixes
+
+* **vscode:** Update fallback version of function core tools ([#3955](https://github.com/Azure/LogicAppsUX/issues/3955)) ([5b5d031](https://github.com/Azure/LogicAppsUX/commit/5b5d03188a69ef74a2ba1ba6ffc862c80abc31fa))
+
+## [2.102.0](https://github.com/Azure/LogicAppsUX/compare/v2.101.0...v2.102.0) (2024-01-10)
+
+
+### Bug Fixes
+
+* **Designer:** IM team enhacements ([#3959](https://github.com/Azure/LogicAppsUX/issues/3959)) ([b224446](https://github.com/Azure/LogicAppsUX/commit/b2244463e0d8f6c4c2c23d07726bdd508ceb6d53))
+
+## [2.101.0](https://github.com/Azure/LogicAppsUX/compare/v2.100.0...v2.101.0) (2024-01-09)
+
+
+### Features
+
+* **vscode:** Improve Azurite experience ([#3937](https://github.com/Azure/LogicAppsUX/issues/3937)) ([e9464d5](https://github.com/Azure/LogicAppsUX/commit/e9464d53c56aeff111ef3c75980a9a1775ba2d6a))
+
+
+### Bug Fixes
+
+* **Data Mapper:** added prefix to dm logging ([#3948](https://github.com/Azure/LogicAppsUX/issues/3948)) ([28bf949](https://github.com/Azure/LogicAppsUX/commit/28bf949d8ccc9ae32468e538a646b315af5241f2))
+* **Designer:** Fixed APIM action schema parameter issues ([#3941](https://github.com/Azure/LogicAppsUX/issues/3941)) ([b131fe3](https://github.com/Azure/LogicAppsUX/commit/b131fe3cd7e3bf410474e49105e24fdeb40b5d8b))
+* **Designer:** Fixed search issue in (stage) locations ([#3936](https://github.com/Azure/LogicAppsUX/issues/3936)) ([9bbf2bb](https://github.com/Azure/LogicAppsUX/commit/9bbf2bb966f3be9fcbe3fab8ae67719b3fba1e63))
+* **Designer:** OAuth in Standalone ([#3942](https://github.com/Azure/LogicAppsUX/issues/3942)) ([763d2f1](https://github.com/Azure/LogicAppsUX/commit/763d2f183130f81fbd2edf169e68c9c4b05b3487))
+
 ## [2.100.0](https://github.com/Azure/LogicAppsUX/compare/v2.99.0...v2.100.0) (2024-01-04)
 
 
