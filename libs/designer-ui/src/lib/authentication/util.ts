@@ -265,8 +265,8 @@ export const AUTHENTICATION_PROPERTIES = {
 
 export const PROPERTY_NAMES_FOR_AUTHENTICATION_TYPE: Record<string, AuthProperty[]> = {
   Basic: [AUTHENTICATION_PROPERTIES.BASIC_USERNAME, AUTHENTICATION_PROPERTIES.BASIC_PASSWORD],
-  'Client Certificate': [AUTHENTICATION_PROPERTIES.CLIENT_CERTIFICATE_PFX, AUTHENTICATION_PROPERTIES.CLIENT_CERTIFICATE_PASSWORD],
-  'Active Directory OAuth': [
+  ClientCertificate: [AUTHENTICATION_PROPERTIES.CLIENT_CERTIFICATE_PFX, AUTHENTICATION_PROPERTIES.CLIENT_CERTIFICATE_PASSWORD],
+  ActiveDirectoryOAuth: [
     AUTHENTICATION_PROPERTIES.AAD_OAUTH_TENANT,
     AUTHENTICATION_PROPERTIES.AAD_OAUTH_AUDIENCE,
     AUTHENTICATION_PROPERTIES.AAD_OAUTH_AUTHORITY,
@@ -276,7 +276,7 @@ export const PROPERTY_NAMES_FOR_AUTHENTICATION_TYPE: Record<string, AuthProperty
     AUTHENTICATION_PROPERTIES.AAD_OAUTH_CERTIFICATE_PASSWORD,
   ],
   Raw: [AUTHENTICATION_PROPERTIES.RAW_VALUE],
-  'Managed Identity': [AUTHENTICATION_PROPERTIES.MSI_AUDIENCE, AUTHENTICATION_PROPERTIES.MSI_IDENTITY],
+  ManagedServiceIdentity: [AUTHENTICATION_PROPERTIES.MSI_AUDIENCE, AUTHENTICATION_PROPERTIES.MSI_IDENTITY],
   None: [],
 };
 
@@ -365,7 +365,7 @@ export const serializeAuthentication = (
   setCurrentProps: (items: AuthProps) => void,
   setOption: (s: AuthenticationType) => void,
   nodeMap?: Map<string, ValueSegment>
-) => {
+): boolean => {
   let jsonEditor = Object.create(null);
   try {
     jsonEditor = JSON.parse(editorString);
@@ -373,7 +373,6 @@ export const serializeAuthentication = (
     throw new Error(`Invalid Authentication value. ${e}`);
   }
   const returnItems: AuthProps = {};
-  setOption(jsonEditor.type);
   switch (jsonEditor.type) {
     case AuthenticationType.BASIC:
       returnItems.basic = {
@@ -417,9 +416,12 @@ export const serializeAuthentication = (
         returnItems.aadOAuth.oauthTypeCertificatePassword = convertStringToSegments(jsonEditor.password, true, nodeMap);
       }
       break;
+    default:
+      return false;
   }
-  console.log(returnItems);
+  setOption(jsonEditor.type);
   setCurrentProps(returnItems);
+  return true;
 };
 
 export function containsToken(value: string): boolean {
@@ -465,17 +467,6 @@ export const validateAuthenticationString = (s: string): string => {
   }
 };
 
-const authTypeConversion = (s: string): string => {
-  if (s === AuthenticationType.CERTIFICATE) {
-    return 'Client Certificate';
-  } else if (s === AuthenticationType.MSI) {
-    return 'Managed Service Identity';
-  } else if (s === AuthenticationType.OAUTH) {
-    return 'Active Directory OAuth';
-  }
-  return s;
-};
-
 /**
  * Checks if any required property is missing.
  * @arg {any} authentication -  The parsed authentication value.
@@ -485,8 +476,7 @@ const authTypeConversion = (s: string): string => {
 function checkForMissingOrInvalidProperties(authentication: any, authType: AuthenticationType): string {
   const intl = getIntl();
   let missingProperties: string[] = [];
-  const convertedAuthType = authTypeConversion(authType);
-  for (const key of PROPERTY_NAMES_FOR_AUTHENTICATION_TYPE[convertedAuthType]) {
+  for (const key of PROPERTY_NAMES_FOR_AUTHENTICATION_TYPE[authType]) {
     if (key.isRequired && authentication[key.name] === undefined) {
       missingProperties.push(key.name);
     }
@@ -523,17 +513,17 @@ function checkForMissingOrInvalidProperties(authentication: any, authType: Authe
       missingProperties.length === 1
         ? intl.formatMessage(
             {
-              defaultMessage: "Missing required property ''{missingProperties}'' for authentication type ''{convertedAuthType}''",
+              defaultMessage: "Missing required property ''{missingProperties}'' for authentication type ''{authType}''",
               description: 'Error message when missing a required authentication property',
             },
-            { missingProperties: missingProperties[0], convertedAuthType }
+            { missingProperties: missingProperties[0], authType }
           )
         : intl.formatMessage(
             {
-              defaultMessage: "Missing required properties ''{missingProperties}'' for authentication type ''{convertedAuthType}''",
+              defaultMessage: "Missing required properties ''{missingProperties}'' for authentication type ''{authType}''",
               description: 'Error message when missing multiple required authentication properties',
             },
-            { missingProperties: missingProperties.join(', '), convertedAuthType }
+            { missingProperties: missingProperties.join(', '), authType }
           );
 
     return errorMessage;
@@ -550,8 +540,7 @@ function checkForMissingOrInvalidProperties(authentication: any, authType: Authe
  */
 function checkForUnknownProperties(authentication: any, authType: AuthenticationType): string {
   const intl = getIntl();
-  const convertedAuthType = authTypeConversion(authType);
-  const validKeyNames = PROPERTY_NAMES_FOR_AUTHENTICATION_TYPE[convertedAuthType].map((key) => key.name);
+  const validKeyNames = PROPERTY_NAMES_FOR_AUTHENTICATION_TYPE[authType].map((key) => key.name);
   const authenticationKeys = Object.keys(authentication);
   const invalidProperties: string[] = [];
 
@@ -571,17 +560,17 @@ function checkForUnknownProperties(authentication: any, authType: Authentication
       invalidProperties.length === 1
         ? intl.formatMessage(
             {
-              defaultMessage: "Invalid property ''{invalidProperties}'' for authentication type ''{convertedAuthType}''.",
+              defaultMessage: "Invalid property ''{invalidProperties}'' for authentication type ''{authType}''.",
               description: 'Error message when having an invalid authentication property',
             },
-            { invalidProperties: invalidProperties[0], convertedAuthType }
+            { invalidProperties: invalidProperties[0], authType }
           )
         : intl.formatMessage(
             {
-              defaultMessage: "The ''{invalidProperties}'' properties are invalid for the ''{convertedAuthType}'' authentication type.",
+              defaultMessage: "The ''{invalidProperties}'' properties are invalid for the ''{authType}'' authentication type.",
               description: 'Error message when having multiple invalid authentication properties',
             },
-            { invalidProperties: invalidProperties.join(', '), convertedAuthType }
+            { invalidProperties: invalidProperties.join(', '), authType }
           );
 
     return errorMessage;
@@ -597,8 +586,7 @@ function checkForUnknownProperties(authentication: any, authType: Authentication
  */
 function checkForInvalidValues(authentication: any): string {
   const intl = getIntl();
-  const convertedAuthType = authTypeConversion(authentication.type);
-  const validProperties = PROPERTY_NAMES_FOR_AUTHENTICATION_TYPE[convertedAuthType];
+  const validProperties = PROPERTY_NAMES_FOR_AUTHENTICATION_TYPE[authentication.type];
   const errorMessages: string[] = [];
   const authenticationKeys = Object.keys(authentication);
   for (const authenticationKey of authenticationKeys) {
