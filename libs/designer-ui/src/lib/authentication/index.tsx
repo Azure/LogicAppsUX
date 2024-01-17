@@ -106,7 +106,6 @@ export const AuthenticationEditor = ({
   };
 
   useUpdateEffect(() => {
-    console.log('here');
     const collapsedValue = parseAuthEditor(option, currentProps);
     setCollapsedValue(collapsedValue);
     onChange?.({ value: collapsedValue, viewModel: { type: option, authenticationValue: currentProps } });
