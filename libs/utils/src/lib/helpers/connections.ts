@@ -5,11 +5,14 @@ import type { Connector, ConnectionParameter } from '../models/connector';
 import { equals, hasProperty } from './functions';
 import type { IntlShape } from 'react-intl';
 
+export const connectorsShownAsAzure = ['builtin/as2', 'builtin/rosettanet'];
+
 export function isArmResourceId(resourceId: string): boolean {
   return resourceId ? resourceId.startsWith('/subscriptions/') : false;
 }
 
 export const isBuiltInConnector = (connectorId: string) => {
+  if (connectorsShownAsAzure.includes(connectorId)) return false;
   return !isArmResourceId(connectorId);
 };
 
