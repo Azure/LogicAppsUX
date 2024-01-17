@@ -59,7 +59,7 @@ export const initializeGraphState = createAsyncThunk<
               parameters ?? {},
               thunkAPI.dispatch
             ),
-            getConnectionsApiAndMapping(deserializedWorkflow.actionData, thunkAPI.dispatch),
+            getConnectionsApiAndMapping(deserializedWorkflow, thunkAPI.dispatch),
           ]);
           await updateDynamicDataInNodes(thunkAPI.getState, thunkAPI.dispatch);
 
