@@ -63,11 +63,8 @@ export const CollapsedAuthentication = ({
           }
         }
       } catch (e) {
-        console.log(e);
-        console.log('here12');
         // if it is a template expression, we'll assume that it is valid
         if (isTokenValueSegment(newCollapsedValue)) {
-          console.log('here');
           setErrorMessage('');
           serializeValue(newCollapsedValue);
         } else {
