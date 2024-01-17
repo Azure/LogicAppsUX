@@ -43,7 +43,12 @@ export const convertStringToSegments = (value: string, tokensEnabled?: boolean, 
       if (value.substring(prevIndex, currIndex - 2)) {
         returnSegments.push({ id: guid(), type: ValueSegmentType.LITERAL, value: value.substring(prevIndex, currIndex - 2) });
       }
-      const newIndex = value.indexOf('}', currIndex) + 1;
+      const endIndex = value.indexOf('}', currIndex);
+      if (endIndex < 0) {
+        currIndex++;
+        continue;
+      }
+      const newIndex = endIndex + 1;
       if (nodeMap && tokensEnabled) {
         const token = nodeMap.get(value.substring(currIndex - 2, newIndex));
         if (token) {
