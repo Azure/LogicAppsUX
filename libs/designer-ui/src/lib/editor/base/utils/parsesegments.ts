@@ -170,7 +170,12 @@ const appendStringSegment = (
       if (textSegment) {
         paragraph.append($createExtendedTextNode(textSegment, childNodeStyles, childNodeFormat));
       }
-      const newIndex = value.indexOf('}', currIndex) + 2;
+      const endIndex = value.indexOf('}', currIndex);
+      if (endIndex < 0) {
+        currIndex++;
+        continue;
+      }
+      const newIndex = endIndex + 2;
       // token is found in the text
       if (nodeMap && tokensEnabled) {
         const tokenSegment = nodeMap.get(value.substring(currIndex - 2, newIndex));
