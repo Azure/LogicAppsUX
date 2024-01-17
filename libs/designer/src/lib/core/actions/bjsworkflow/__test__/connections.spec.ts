@@ -6,8 +6,6 @@ import {
   getLegacyConnectionReferenceKey,
   getManifestBasedConnectionMapping,
 } from '../../../actions/bjsworkflow/connections';
-import type { OperationMetadataState } from '../../../state/operation/operationMetadataSlice';
-import type { RootState } from '../../../store';
 import {
   InitOperationManifestService,
   StandardOperationManifestService,
@@ -45,7 +43,7 @@ describe('connection workflow mappings', () => {
     makeMockStdOperationManifestService(ConnectionReferenceKeyFormat.OpenApi);
     const mockStdOperationManifestService = OperationManifestService();
 
-    const res = await getConnectionMappingForNode(mockApiConnection, nodeId, mockStdOperationManifestService, mockGetState);
+    const res = await getConnectionMappingForNode(mockApiConnection, nodeId, false, mockStdOperationManifestService);
     if (res) {
       expect(res[nodeId]).toEqual(connectionName);
     } else {
@@ -55,7 +53,7 @@ describe('connection workflow mappings', () => {
 
   it('should return undefined when there is no referenceKeyFormat', async () => {
     makeMockStdOperationManifestService('');
-    const result = await getManifestBasedConnectionMapping(mockGetState, nodeId, mockOpenApiConnection);
+    const result = await getManifestBasedConnectionMapping(nodeId, false, mockOpenApiConnection);
     expect(result).toBeUndefined();
   });
 
@@ -66,7 +64,7 @@ describe('connection workflow mappings', () => {
       return true;
     });
 
-    const res = await getConnectionMappingForNode(mockApiConnection, nodeId, mockStdOperationManifestService, mockGetState);
+    const res = await getConnectionMappingForNode(mockApiConnection, nodeId, false, mockStdOperationManifestService);
     if (res) {
       expect(res[nodeId]).toEqual(connectionName);
     } else {
@@ -77,7 +75,7 @@ describe('connection workflow mappings', () => {
   it('should get the correct connectionId for the node with reference key', async () => {
     makeMockStdOperationManifestService(ConnectionReferenceKeyFormat.OpenApi);
 
-    const res = await getManifestBasedConnectionMapping(mockGetState, nodeId, mockOpenApiConnection);
+    const res = await getManifestBasedConnectionMapping(nodeId, false, mockOpenApiConnection);
     if (res) {
       expect(res[nodeId]).toEqual(connectionName);
     }
@@ -109,13 +107,6 @@ describe('connection workflow mappings', () => {
     expect(key).toEqual('123');
   });
 });
-
-const mockGetState = (): RootState => {
-  const state: Partial<OperationMetadataState> = {
-    operationInfo: { [nodeId]: { type: 'TODO:', connectorId: '1', operationId: '2' } },
-  };
-  return { operations: state as OperationMetadataState } as RootState;
-};
 
 const mockApiConnection: LogicAppsV2.OpenApiOperationAction = {
   type: Constants.NODE.TYPE.API_CONNECTION,

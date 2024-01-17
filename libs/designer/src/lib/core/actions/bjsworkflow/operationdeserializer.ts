@@ -120,7 +120,6 @@ export const initializeOperationMetadata = async (
     initializeNodes(
       allNodeData.map((data) => {
         const { id, nodeInputs, nodeOutputs, nodeDependencies, settings, operationMetadata, staticResult } = data;
-        const actionMetadata = nodesMetadata?.[id]?.actionMetadata;
         return {
           id,
           nodeInputs,
@@ -128,8 +127,8 @@ export const initializeOperationMetadata = async (
           nodeDependencies,
           settings,
           operationMetadata,
-          actionMetadata,
           staticResult,
+          actionMetadata: nodesMetadata?.[id]?.actionMetadata,
           repetitionInfo: repetitionInfos[id],
         };
       })
@@ -190,66 +189,63 @@ export const initializeOperationDetailsForManifest = async (
     const staticResultService = StaticResultService();
     const operationInfo = await getOperationInfo(nodeId, operation, isTrigger);
 
-    if (operationInfo) {
-      const nodeOperationInfo = { ...operationInfo, type: operation.type, kind: operation.kind };
-      const manifest = await getOperationManifest(operationInfo);
-      const { iconUri, brandColor } = manifest.properties;
+    if (!operationInfo) return;
+    const nodeOperationInfo = { ...operationInfo, type: operation.type, kind: operation.kind };
+    const manifest = await getOperationManifest(operationInfo);
+    const { iconUri, brandColor } = manifest.properties;
 
-      dispatch(initializeOperationInfo({ id: nodeId, ...nodeOperationInfo }));
+    dispatch(initializeOperationInfo({ id: nodeId, ...nodeOperationInfo }));
 
-      const { connectorId, operationId } = nodeOperationInfo;
-      const parsedManifest = new ManifestParser(manifest);
-      const schema = staticResultService.getOperationResultSchema(connectorId, operationId, parsedManifest);
-      schema.then((schema) => {
-        if (schema) {
-          dispatch(addResultSchema({ id: `${connectorId}-${operationId}`, schema: schema }));
-        }
-      });
-
-      const customSwagger = await getCustomSwaggerIfNeeded(manifest.properties, operation);
-      const { inputs: nodeInputs, dependencies: inputDependencies } = getInputParametersFromManifest(
-        nodeId,
-        manifest,
-        /* presetParameterValues */ undefined,
-        customSwagger,
-        operation
-      );
-
-      if (isTrigger) {
-        await updateCallbackUrlInInputs(nodeId, nodeOperationInfo, nodeInputs);
+    const { connectorId, operationId } = nodeOperationInfo;
+    const parsedManifest = new ManifestParser(manifest);
+    const schema = staticResultService.getOperationResultSchema(connectorId, operationId, parsedManifest);
+    schema.then((schema) => {
+      if (schema) {
+        dispatch(addResultSchema({ id: `${connectorId}-${operationId}`, schema: schema }));
       }
+    });
 
-      const { outputs: nodeOutputs, dependencies: outputDependencies } = getOutputParametersFromManifest(
-        manifest,
-        isTrigger,
-        nodeInputs,
-        isTrigger ? (operation as LogicAppsV2.TriggerDefinition).splitOn : undefined,
-        operationInfo,
-        nodeId
-      );
-      const nodeDependencies = { inputs: inputDependencies, outputs: outputDependencies };
+    const customSwagger = await getCustomSwaggerIfNeeded(manifest.properties, operation);
+    const { inputs: nodeInputs, dependencies: inputDependencies } = getInputParametersFromManifest(
+      nodeId,
+      manifest,
+      /* presetParameterValues */ undefined,
+      customSwagger,
+      operation
+    );
 
-      const settings = getOperationSettings(isTrigger, nodeOperationInfo, nodeOutputs, manifest, /* swagger */ undefined, operation);
-
-      const childGraphInputs = processChildGraphAndItsInputs(manifest, operation);
-
-      return [
-        {
-          id: nodeId,
-          nodeInputs,
-          nodeOutputs,
-          nodeDependencies,
-          settings,
-          operationInfo: nodeOperationInfo,
-          manifest,
-          operationMetadata: { iconUri, brandColor },
-          staticResult: operation?.runtimeConfiguration?.staticResult,
-        },
-        ...childGraphInputs,
-      ];
+    if (isTrigger) {
+      await updateCallbackUrlInInputs(nodeId, nodeOperationInfo, nodeInputs);
     }
 
-    return;
+    const { outputs: nodeOutputs, dependencies: outputDependencies } = getOutputParametersFromManifest(
+      manifest,
+      isTrigger,
+      nodeInputs,
+      isTrigger ? (operation as LogicAppsV2.TriggerDefinition).splitOn : undefined,
+      operationInfo,
+      nodeId
+    );
+    const nodeDependencies = { inputs: inputDependencies, outputs: outputDependencies };
+
+    const settings = getOperationSettings(isTrigger, nodeOperationInfo, nodeOutputs, manifest, /* swagger */ undefined, operation);
+
+    const childGraphInputs = processChildGraphAndItsInputs(manifest, operation);
+
+    return [
+      {
+        id: nodeId,
+        nodeInputs,
+        nodeOutputs,
+        nodeDependencies,
+        settings,
+        operationInfo: nodeOperationInfo,
+        manifest,
+        operationMetadata: { iconUri, brandColor },
+        staticResult: operation?.runtimeConfiguration?.staticResult,
+      },
+      ...childGraphInputs,
+    ];
   } catch (error: any) {
     const message = `Unable to initialize operation details for operation - ${nodeId}. Error details - ${error}`;
     LoggerService().log({
@@ -500,6 +496,7 @@ export const updateDynamicDataInNodes = async (getState: () => RootState, dispat
     tokens: { variables },
     connections,
   } = rootState;
+  console.log(rootState.operations.errors);
   const allVariables = getAllVariables(variables);
   for (const [nodeId, operation] of Object.entries(operations)) {
     if (nodeId === Constants.NODE.TYPE.PLACEHOLDER_TRIGGER) continue;

@@ -12,6 +12,7 @@ import type { WorkflowNode } from './models/workflowNode';
 import { LoggerService, Status } from '@microsoft/designer-client-services-logic-apps';
 import type { LogicAppsV2 } from '@microsoft/utils-logic-apps';
 import { createAsyncThunk } from '@reduxjs/toolkit';
+import { batch } from 'react-redux';
 
 interface InitWorkflowPayload {
   deserializedWorkflow: DeserializedWorkflow;
@@ -49,19 +50,26 @@ export const initializeGraphState = createAsyncThunk<
     updateWorkflowParameters(parameters ?? {}, thunkAPI.dispatch);
 
     const asyncInitialize = async () => {
-      await initializeOperationMetadata(
-        deserializedWorkflow,
-        thunkAPI.getState().connections.connectionReferences,
-        parameters ?? {},
-        thunkAPI.dispatch
-      );
-      const actionsAndTriggers = deserializedWorkflow.actionData;
-      await getConnectionsApiAndMapping(actionsAndTriggers, thunkAPI.getState, thunkAPI.dispatch);
-      await updateDynamicDataInNodes(thunkAPI.getState, thunkAPI.dispatch);
+      batch(async () => {
+        try {
+          await Promise.all([
+            initializeOperationMetadata(
+              deserializedWorkflow,
+              thunkAPI.getState().connections.connectionReferences,
+              parameters ?? {},
+              thunkAPI.dispatch
+            ),
+            getConnectionsApiAndMapping(deserializedWorkflow, thunkAPI.dispatch),
+          ]);
+          await updateDynamicDataInNodes(thunkAPI.getState, thunkAPI.dispatch);
+
+          LoggerService().endTrace(traceId, { status: Status.Success });
+        } catch (e) {
+          LoggerService().endTrace(traceId, { status: Status.Failure });
+        }
+      });
     };
-    asyncInitialize()
-      .then(() => LoggerService().endTrace(traceId, { status: Status.Success }))
-      .catch(() => LoggerService().endTrace(traceId, { status: Status.Failure }));
+    asyncInitialize();
 
     return { deserializedWorkflow, originalDefinition: definition };
   } else if (spec === 'CNCF') {
