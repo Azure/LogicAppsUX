@@ -67,6 +67,7 @@ export interface BaseEditorProps {
   tokenPickerButtonProps?: TokenPickerButtonEditorProps;
   dataAutomationId?: string;
   tokenMapping?: Record<string, ValueSegment>;
+  isSwitchFromPlaintextBlocked?: boolean;
   loadParameterValueFromString?: (value: string) => ValueSegment[];
   onChange?: ChangeHandler;
   onBlur?: () => void;
@@ -98,6 +99,7 @@ export const BaseEditor = ({
   valueType,
   dataAutomationId,
   tokenMapping,
+  isSwitchFromPlaintextBlocked,
   loadParameterValueFromString,
   onFocus,
   onBlur,
@@ -179,7 +181,14 @@ export const BaseEditor = ({
         data-automation-id={dataAutomationId}
         title={placeholder}
       >
-        {htmlEditor ? <Toolbar isRawText={htmlEditor === 'raw-html'} readonly={readonly} setIsRawText={setIsValuePlaintext} /> : null}
+        {htmlEditor ? (
+          <Toolbar
+            isRawText={htmlEditor === 'raw-html'}
+            isSwitchFromPlaintextBlocked={isSwitchFromPlaintextBlocked}
+            readonly={readonly}
+            setIsRawText={setIsValuePlaintext}
+          />
+        ) : null}
         <TextPlugin
           contentEditable={
             <ContentEditable className={css('editor-input', readonly && 'readonly')} ariaLabelledBy={labelId} ariaDescribedBy={id} />
