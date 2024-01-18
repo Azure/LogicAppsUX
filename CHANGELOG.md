@@ -1,5 +1,24 @@
 # Logic Apps Designer
 
+## [2.104.0](https://github.com/Azure/LogicAppsUX/compare/v2.103.0...v2.104.0) (2024-01-18)
+
+### Features
+
+- **Designer:** Search preload is now delayed until nodes are initialized ([#3981](https://github.com/Azure/LogicAppsUX/issues/3981)) ([090bc6b](https://github.com/Azure/LogicAppsUX/commit/090bc6b2792612450666348b2179e13547ab2b01))
+
+### Bug Fixes
+
+- **consumption:** Disabled Spec Validation for incoming Swagger ([#3970](https://github.com/Azure/LogicAppsUX/issues/3970)) ([7bf609c](https://github.com/Azure/LogicAppsUX/commit/7bf609c47d6bc1c49a909e2a85277f397e9e643b))
+- **designer-ui:** Prevent designer freezing when `@{` is typed into HTML editor ([#3999](https://github.com/Azure/LogicAppsUX/issues/3999)) ([d31de07](https://github.com/Azure/LogicAppsUX/commit/d31de072509e0f1ff1724dc88c4e2c765eff8a2f))
+- **designer-ui:** Prevent expression `<>`s from being parsed by DOM parser ([#4000](https://github.com/Azure/LogicAppsUX/issues/4000)) ([e025cc5](https://github.com/Azure/LogicAppsUX/commit/e025cc59a9db3367492929cbe87ccec11fc2b4b3))
+- **designer-ui:** Prevent users from switching to WYSIWYG view if raw HTML is not supported ([#3982](https://github.com/Azure/LogicAppsUX/issues/3982)) ([550c4b6](https://github.com/Azure/LogicAppsUX/commit/550c4b69d50a84f797c30f28506d5bc4c04d1605))
+- **Designer:** Added AS2(v2) and RosettaNet Consumption actions ([#3977](https://github.com/Azure/LogicAppsUX/issues/3977)) ([a0621fd](https://github.com/Azure/LogicAppsUX/commit/a0621fd0ead22745b542d4cabcce89125e76d235))
+- **Designer:** Create connection button appearance to primary ([#3980](https://github.com/Azure/LogicAppsUX/issues/3980)) ([40087e0](https://github.com/Azure/LogicAppsUX/commit/40087e0f16bd8b11cb7faf7e0a0b3e307a08b4da))
+- **Designer:** Fixed crash when adding switch case ([#3991](https://github.com/Azure/LogicAppsUX/issues/3991)) ([f9e2c85](https://github.com/Azure/LogicAppsUX/commit/f9e2c850f76e1b58202395fd9936168761a339a6))
+- **Designer:** Optimized some Redux intialization ([#3998](https://github.com/Azure/LogicAppsUX/issues/3998)) ([1e79196](https://github.com/Azure/LogicAppsUX/commit/1e79196c9a72953514320861168b11526b7e8bb6))
+
+## [2.103.0](https://github.com/Azure/LogicAppsUX/compare/v2.102.0...v2.103.0) (2024-01-11)
+
 ## [2.103.0](https://github.com/Azure/LogicAppsUX/compare/v2.102.0...v2.103.0) (2024-01-11)
 
 ### Features
