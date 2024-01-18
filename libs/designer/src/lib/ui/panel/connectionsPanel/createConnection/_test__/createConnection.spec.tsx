@@ -549,6 +549,12 @@ describe('ui/createConnection', () => {
 
       const parameters = findParameterComponents(createConnection, UniversalConnectionParameter);
       expect(parameters).toHaveLength(3);
+      expect(parameters[0].type).toEqual(UniversalConnectionParameter);
+      expect(parameters[0].props.parameterKey).toEqual('parameterA');
+      expect(parameters[1].type).toEqual(UniversalConnectionParameter);
+      expect(parameters[1].props.parameterKey).toEqual('parameterB');
+      expect(parameters[2].type).toEqual(UniversalConnectionParameter);
+      expect(parameters[2].props.parameterKey).toEqual('parameterD');
 
       const mappingEditors = findParameterComponents(createConnection, CustomCredentialMappingEditor);
       expect(mappingEditors).toHaveLength(0);
