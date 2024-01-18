@@ -621,16 +621,20 @@ export const createTargetOrFunctionRefactor = (tokens: string[]): { term: Functi
     while (i < tokens.length && parenCount !== 0) {
       if (tokens[i] === Separators.OpenParenthesis) {
         parenCount++;
-      } else if (tokens[i] === Separators.CloseParenthesis && parenCount % 2 === 1) {
-        func.inputs.push(createTargetOrFunction(tokens.slice(start, i)).term);
-        start = i + 1;
+      } else if (tokens[i] === Separators.CloseParenthesis && parenCount === 1) {
+        if (i === start) {
+          // function with no inputs
+          return { term: func, nextIndex: i + 1 };
+        }
+        func.inputs.push(createTargetOrFunctionRefactor(tokens.slice(start, i)).term);
+        start = i + 2;
         parenCount--;
       } else if (tokens[i] === Separators.CloseParenthesis) {
         parenCount--;
       } else if (tokens[i] !== Separators.Comma) {
         //func.inputs.push(createTargetOrFunction(tokens.slice(i)).term);
-      } else if (tokens[i] === Separators.Comma && parenCount % 2 === 1) {
-        func.inputs.push(createTargetOrFunction(tokens.slice(start, i)).term);
+      } else if (tokens[i] === Separators.Comma && parenCount === 1) {
+        func.inputs.push(createTargetOrFunctionRefactor(tokens.slice(start, i)).term);
         start = i + 1;
       }
       i++;

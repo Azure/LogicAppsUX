@@ -486,6 +486,7 @@ const getLoopTargetNode = (targetKeyPath: string[], ind: number, parentNode: Sch
       possibleNodes.push(getLoopTargetNode(targetKeyPath, ind + 1, child));
     }
     if (child.name === '<ArrayItem>') {
+      // danielle could there be multiple of these? yes so
       possibleNodes.push(getLoopTargetNode(targetKeyPath, ind, child));
     }
   });

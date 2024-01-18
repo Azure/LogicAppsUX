@@ -983,6 +983,42 @@ describe('utils/DataMap', () => {
       expect(count2.name).toEqual('count');
       expect(count2.inputs[0]).toEqual('/ns0:Root/DirectTranslation/EmployeeID');
     });
+
+    it('creates objects for multi-nested functions', () => {
+      const tokens = [
+        '$if',
+        '(',
+        'is-greater-than',
+        '(',
+        'multiply',
+        '(',
+        '/ns0:Root/ConditionalMapping/ItemPrice',
+        ',',
+        '/ns0:Root/ConditionalMapping/ItemQuantity',
+        ')',
+        ',',
+        '200',
+        ')',
+        ')',
+      ];
+      const functions = createTargetOrFunctionRefactor(tokens);
+
+      const ifFunc = functions.term as ParseFunc;
+      expect(ifFunc.name).toEqual('$if');
+
+      const isGreaterThan = ifFunc.inputs[0] as ParseFunc;
+      expect(isGreaterThan.name).toEqual('is-greater-than');
+
+      const multiply = isGreaterThan.inputs[0] as ParseFunc;
+      expect(multiply.name).toEqual('multiply');
+      const price = multiply.inputs[0] as string;
+      expect(price).toEqual('/ns0:Root/ConditionalMapping/ItemPrice');
+      const quantity = multiply.inputs[1] as string;
+      expect(quantity).toEqual('/ns0:Root/ConditionalMapping/ItemQuantity');
+
+      const twoHundred = isGreaterThan.inputs[1] as string;
+      expect(twoHundred).toEqual('200');
+    });
   });
 
   describe('amendSourceKeyForDirectAccessIfNeeded', () => {

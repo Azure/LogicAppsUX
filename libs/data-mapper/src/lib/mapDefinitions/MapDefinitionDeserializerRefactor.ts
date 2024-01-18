@@ -5,13 +5,7 @@ import { indexPseudoFunction } from '../models';
 import type { ConnectionDictionary } from '../models/Connection';
 import { applyConnectionValue } from '../utils/Connection.Utils';
 import type { FunctionCreationMetadata, ParseFunc } from '../utils/DataMap.Utils';
-import {
-  getSourceNode,
-  separateFunctions,
-  createTargetOrFunction,
-  DReservedToken,
-  createTargetOrFunctionRefactor,
-} from '../utils/DataMap.Utils';
+import { getSourceNode, separateFunctions, DReservedToken, createTargetOrFunctionRefactor } from '../utils/DataMap.Utils';
 import { isFunctionData } from '../utils/Function.Utils';
 import { addSourceReactFlowPrefix, addTargetReactFlowPrefix, createReactFlowFunctionKey } from '../utils/ReactFlow.Util';
 import { findNodeForKey, flattenSchemaIntoDictionary } from '../utils/Schema.Utils';
@@ -26,6 +20,7 @@ export class MapDefinitionDeserializerRefactor {
   private readonly _functions: FunctionData[];
   private _loop: string;
   private _loopDest: string;
+  private _conditional: string;
 
   private readonly _sourceSchemaFlattened: SchemaNodeDictionary;
   private readonly _targetSchemaFlattened: SchemaNodeDictionary;
@@ -42,6 +37,7 @@ export class MapDefinitionDeserializerRefactor {
     this._sourceSchema = sourceSchema;
     this._targetSchema = targetSchema;
     this._functions = functions;
+    this._conditional = '';
     this._loop = '';
     this._loopDest = '';
 
@@ -77,6 +73,7 @@ export class MapDefinitionDeserializerRefactor {
       targetNode = parentTargetNode.children.find((child) => child.name === formattedTargetKey);
       if (targetNode === undefined) {
         targetNode = getLoopTargetNodeWithJson(
+          // danielle eventually this can be simplified because we have the parent
           `${parentTargetNode.key}/${currentTargetKey}`,
           this._targetSchema.schemaTreeRoot
         ) as SchemaNodeExtended;
@@ -228,6 +225,21 @@ export class MapDefinitionDeserializerRefactor {
     }
   };
 
+  private addConditionalConnectionIfNeeded = (connections: ConnectionDictionary, targetNode: SchemaNodeExtended | FunctionData) => {
+    if (this._conditional) {
+      const ifFunction = this._functions.find((func) => func.key === this._conditional) as FunctionData;
+      applyConnectionValue(connections, {
+        targetNode: targetNode,
+        targetNodeReactFlowKey: addTargetReactFlowPrefix(targetNode.key),
+        findInputSlot: true,
+        input: {
+          reactFlowKey: this._conditional,
+          node: ifFunction,
+        },
+      });
+    }
+  };
+
   private danielleTryParseDefinitionToConnection = (
     sourceNodeObject: string | object,
     leftSideKey: string,
@@ -243,9 +255,15 @@ export class MapDefinitionDeserializerRefactor {
       const targetNode = this.getTargetNodeInContextOfParent(currentTarget, parentTargetNode);
 
       this.addLoopConnectionIfNeeded(addLoopConnection, connections, targetNode);
+      this.addConditionalConnectionIfNeeded(connections, targetNode);
 
       if (typeof sourceNodeObject === 'string') {
-        this.handleSingleValueOrFunction(sourceNodeObject, undefined, targetNode, connections);
+        if (this._conditional) {
+          const ifFunction = this._functions.find((func) => func.key === this._conditional) as FunctionData;
+          this.handleSingleValueOrFunction(sourceNodeObject, undefined, ifFunction, connections);
+        } else {
+          this.handleSingleValueOrFunction(sourceNodeObject, undefined, targetNode, connections);
+        }
       } else {
         Object.entries(sourceNodeObject).forEach((child) => {
           this.danielleTryParseDefinitionToConnection(child[1], child[0], targetNode, connections);
@@ -255,11 +273,11 @@ export class MapDefinitionDeserializerRefactor {
       // process left side
       // for or if statement
       const tokens = separateFunctions(leftSideKey);
-      const idk = createTargetOrFunction(tokens);
+      const idk = createTargetOrFunctionRefactor(tokens);
       if (tokens[0] === DReservedToken.if) {
         // add if function
         if (parentTargetNode) {
-          this.handleSingleValueOrFunction('', idk.term, parentTargetNode, connections);
+          this.handleIfFunction(idk.term as ParseFunc, parentTargetNode, connections);
         }
 
         // danielle how is 'if' different than any other function- see docs;
@@ -269,6 +287,7 @@ export class MapDefinitionDeserializerRefactor {
         Object.entries(sourceNodeObject).forEach((child) => {
           this.danielleTryParseDefinitionToConnection(child[1], child[0], parentTargetNode, connections, true);
         });
+        this._conditional = '';
       } else {
         // for statement
         this.processForStatement(idk.term, parentTargetNode as SchemaNodeExtended, connections);
@@ -280,6 +299,24 @@ export class MapDefinitionDeserializerRefactor {
     }
   };
 
+  private handleIfFunction = (
+    functionMetadata: ParseFunc,
+    _targetNode: SchemaNodeExtended | FunctionData,
+    connections: ConnectionDictionary
+  ) => {
+    const func = getSourceNode(
+      functionMetadata.name,
+      this._sourceSchema,
+      functionMetadata.name.length + 1,
+      this._functions,
+      this._createdNodes
+    ) as FunctionData;
+    const funcKey = createReactFlowFunctionKey(func);
+    func.key = funcKey;
+
+    this.handleSingleValueOrFunction('', functionMetadata.inputs[0], func, connections);
+    this._conditional = funcKey;
+  };
   private forHasIndex = (forSrc: ParseFunc) => forSrc.inputs.length > 1;
 
   private handleIndexFuncCreation = (forFunc: ParseFunc, loopSource: SchemaNodeExtended, connections: ConnectionDictionary) => {
