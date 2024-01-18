@@ -1,5 +1,6 @@
 import { FunctionCategory } from '../../models';
 import type { ConnectionDictionary, ConnectionUnit } from '../../models/Connection';
+import type { ParseFunc } from '../DataMap.Utils';
 import {
   ReservedToken,
   Separators,
@@ -14,6 +15,7 @@ import {
   isValidToMakeMapDefinition,
   amendSourceKeyForDirectAccessIfNeeded,
   separateFunctions,
+  createTargetOrFunctionRefactor,
 } from '../DataMap.Utils';
 import { addSourceReactFlowPrefix } from '../ReactFlow.Util';
 import { convertSchemaToSchemaExtended, flattenSchemaIntoDictionary } from '../Schema.Utils';
@@ -949,6 +951,37 @@ describe('utils/DataMap', () => {
       expect(result[8]).toEqual('/ns0:PersonOrigin/LastName');
       expect(result[9]).toEqual(Separators.CloseParenthesis);
       expect(result[10]).toEqual(Separators.CloseParenthesis);
+    });
+  });
+
+  describe('createTargetOrFunctionRefactor', () => {
+    it('creates objects for nested functions', () => {
+      const tokens = [
+        'concat',
+        '(',
+        'count',
+        '(',
+        '/ns0:Root/DirectTranslation/EmployeeName',
+        ')',
+        ',',
+        'count',
+        '(',
+        '/ns0:Root/DirectTranslation/EmployeeID',
+        ')',
+        ')',
+      ];
+      const functions = createTargetOrFunctionRefactor(tokens);
+
+      const concat = functions.term as ParseFunc;
+      expect(concat.name).toEqual('concat');
+
+      const count1 = concat.inputs[0] as ParseFunc;
+      expect(count1.name).toEqual('count');
+      expect(count1.inputs[0]).toEqual('/ns0:Root/DirectTranslation/EmployeeName');
+
+      const count2 = concat.inputs[1] as ParseFunc;
+      expect(count2.name).toEqual('count');
+      expect(count2.inputs[0]).toEqual('/ns0:Root/DirectTranslation/EmployeeID');
     });
   });
 

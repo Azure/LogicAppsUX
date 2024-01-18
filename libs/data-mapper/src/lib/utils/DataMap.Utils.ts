@@ -608,6 +608,38 @@ export const createTargetOrFunction = (tokens: string[]): { term: FunctionCreati
   return { term: tokens[0], nextIndex: 2 };
 };
 
+export const createTargetOrFunctionRefactor = (tokens: string[]): { term: FunctionCreationMetadata; nextIndex: number } => {
+  if (tokens.length === 1) {
+    return { term: tokens[0], nextIndex: 2 };
+  }
+  // determine if token is a function
+  if (tokens[1] === Separators.OpenParenthesis) {
+    const func: ParseFunc = { name: tokens[0], inputs: [] };
+    let i = 2; // start of the function inputs
+    let parenCount = 1;
+    let start = 2;
+    while (i < tokens.length && parenCount !== 0) {
+      if (tokens[i] === Separators.OpenParenthesis) {
+        parenCount++;
+      } else if (tokens[i] === Separators.CloseParenthesis && parenCount % 2 === 1) {
+        func.inputs.push(createTargetOrFunction(tokens.slice(start, i)).term);
+        start = i + 1;
+        parenCount--;
+      } else if (tokens[i] === Separators.CloseParenthesis) {
+        parenCount--;
+      } else if (tokens[i] !== Separators.Comma) {
+        //func.inputs.push(createTargetOrFunction(tokens.slice(i)).term);
+      } else if (tokens[i] === Separators.Comma && parenCount % 2 === 1) {
+        func.inputs.push(createTargetOrFunction(tokens.slice(start, i)).term);
+        start = i + 1;
+      }
+      i++;
+    }
+    return { term: func, nextIndex: i + 1 };
+  }
+  return { term: tokens[0], nextIndex: 2 };
+};
+
 export const removeSequenceFunction = (tokens: string[]): string => {
   let i = 0;
   const length = tokens.length;

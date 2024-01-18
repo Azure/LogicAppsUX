@@ -5,10 +5,17 @@ import { indexPseudoFunction } from '../models';
 import type { ConnectionDictionary } from '../models/Connection';
 import { applyConnectionValue } from '../utils/Connection.Utils';
 import type { FunctionCreationMetadata, ParseFunc } from '../utils/DataMap.Utils';
-import { getSourceNode, separateFunctions, createTargetOrFunction, DReservedToken } from '../utils/DataMap.Utils';
+import {
+  getSourceNode,
+  separateFunctions,
+  createTargetOrFunction,
+  DReservedToken,
+  createTargetOrFunctionRefactor,
+} from '../utils/DataMap.Utils';
 import { isFunctionData } from '../utils/Function.Utils';
 import { addSourceReactFlowPrefix, addTargetReactFlowPrefix, createReactFlowFunctionKey } from '../utils/ReactFlow.Util';
 import { findNodeForKey, flattenSchemaIntoDictionary } from '../utils/Schema.Utils';
+import { getLoopTargetNodeWithJson } from './MapDefinitionDeserializer';
 import type { MapDefinitionEntry, SchemaExtended, SchemaNodeDictionary, SchemaNodeExtended } from '@microsoft/utils-logic-apps';
 import { SchemaType } from '@microsoft/utils-logic-apps';
 
@@ -69,7 +76,11 @@ export class MapDefinitionDeserializerRefactor {
     } else {
       targetNode = parentTargetNode.children.find((child) => child.name === formattedTargetKey);
       if (targetNode === undefined) {
-        // target node cannot be found so we look for array items
+        targetNode = getLoopTargetNodeWithJson(
+          `${parentTargetNode.key}/${currentTargetKey}`,
+          this._targetSchema.schemaTreeRoot
+        ) as SchemaNodeExtended;
+        console.log(targetNode);
       }
     }
     if (targetNode === undefined) {
@@ -108,7 +119,7 @@ export class MapDefinitionDeserializerRefactor {
     connections: ConnectionDictionary
   ) => {
     const tokens = separateFunctions(key);
-    const functionMetadata = funcMetadata || createTargetOrFunction(tokens).term;
+    const functionMetadata = funcMetadata || createTargetOrFunctionRefactor(tokens).term;
 
     let sourceNode = findNodeForKey(key, this._sourceSchema.schemaTreeRoot, false) as SchemaNodeExtended | undefined;
     if ((this._loop || this._loopDest) && !sourceNode) {
@@ -301,10 +312,12 @@ export class MapDefinitionDeserializerRefactor {
         // loop is relative
         loopSource = findNodeForKey(`${this._loop}/${sourceLoopKey}`, this._sourceSchema.schemaTreeRoot, false) as SchemaNodeExtended;
       }
+      if (!loopSource) {
+        const idk = getLoopTargetNodeWithJson(sourceLoopKey, this._targetSchema.schemaTreeRoot);
+        console.log(idk);
+      }
       this._loop = loopSource.key;
       this.handleIndexFuncCreation(forFunc, loopSource, connections);
-
-      // this.handleSingleValue(source, undefined, target, connections);
     } else {
       // must be a sequence function
     }

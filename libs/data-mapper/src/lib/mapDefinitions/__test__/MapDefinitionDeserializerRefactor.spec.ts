@@ -239,6 +239,39 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
         expect((resultEntries[2][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual(concatId);
       });
 
+      it('creates connections for nested functions no loop', () => {
+        simpleMap['ns0:Root'] = {
+          DirectTranslation: {
+            Employee: {
+              Name: 'concat(count(/ns0:Root/DirectTranslation/EmployeeName), max(/ns0:Root/DirectTranslation/EmployeeID))',
+            },
+          },
+        };
+
+        const mapDefinitionDeserializer = new MapDefinitionDeserializerRefactor(simpleMap, extendedSource, extendedTarget, functionMock);
+        const result = mapDefinitionDeserializer.convertFromMapDefinition();
+        const resultEntries = Object.entries(result);
+        resultEntries.sort();
+
+        expect(resultEntries.length).toEqual(6);
+
+        const concatId = resultEntries[0][0];
+
+        expect(resultEntries[0][0]).toEqual(concatId);
+        expect(resultEntries[0][1]).toBeTruthy();
+        expect((resultEntries[0][1].inputs[0][0] as ConnectionUnit).reactFlowKey.includes('Count')).toBeTruthy();
+        expect((resultEntries[0][1].inputs[0][1] as ConnectionUnit).reactFlowKey.includes('Max')).toBeTruthy();
+        expect(resultEntries[0][1].outputs[0].reactFlowKey).toEqual('target-/ns0:Root/DirectTranslation/Employee/Name');
+
+        expect(resultEntries[1][0].includes('Count')).toBeTruthy();
+        expect((resultEntries[1][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual(
+          'source-/ns0:Root/DirectTranslation/EmployeeName'
+        );
+
+        expect(resultEntries[2][0].includes('Max')).toBeTruthy();
+        expect((resultEntries[2][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual('source-/ns0:Root/DirectTranslation/EmployeeID');
+      });
+
       it('creates connections for nested functions within a loop', () => {
         simpleMap['ns0:Root'] = {
           CumulativeExpression: {
@@ -274,10 +307,9 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
         );
 
         const count2RfKey = (result[divideRfKey].inputs[1][0] as ConnectionUnit).reactFlowKey;
-        expect(count2RfKey).toContain('Count');
-        expect((result[count2RfKey].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual(
-          'source-/ns0:Root/CumulativeExpression/Population/State/County/Person/Sex/Female'
-        );
+        expect(count2RfKey).toContain('Count-');
+        const count2Input = (result[count2RfKey].inputs[0][0] as ConnectionUnit).reactFlowKey;
+        expect(count2Input).toEqual('source-/ns0:Root/CumulativeExpression/Population/State/County/Person/Sex/Female');
       });
 
       it('creates a simple conditional property connection', () => {
@@ -1550,7 +1582,7 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
         expect((resultEntries[7][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual('source-/root/OrderNo');
       });
 
-      it('creates a loop connection', () => {
+      it('creates a loop connection for json', () => {
         simpleMap['root'] = {
           ComplexArray1: {
             '$for(/root/Nums/*)': {
