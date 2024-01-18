@@ -7,11 +7,14 @@ export const HTTP_METHODS = {
   DELETE: 'DELETE',
 } as const;
 
-export const parseErrorMessage = (error: any, defaultErrorMessage?: string): string =>
-  error?.message ??
-  error?.Message ??
-  error?.error?.message ??
-  error.content.message ??
-  error?.responseText ??
-  defaultErrorMessage ??
-  'Unknown error';
+export const parseErrorMessage = (error: any, defaultErrorMessage?: string): string => {
+  let message = error?.message ?? error?.Message ?? error?.error?.message ?? error?.content?.message ?? undefined;
+  if (message) return message;
+
+  // Response text needs to be parsed to get internal error message
+  if (error?.responseText) {
+    message = parseErrorMessage(JSON.parse(error.responseText), defaultErrorMessage);
+  }
+
+  return message ?? defaultErrorMessage ?? 'Unknown error';
+};
