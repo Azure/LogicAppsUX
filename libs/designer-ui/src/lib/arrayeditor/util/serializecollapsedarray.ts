@@ -71,11 +71,11 @@ export const parseSimpleItems = (
   // Beautify ValueSegment
   try {
     const nodeMap = new Map<string, ValueSegment>();
-    const stringValueUncasted = JSON.stringify(JSON.parse(convertSegmentsToString(uncastedArraySegments, nodeMap)), undefined, 4);
     const stringValueCasted = JSON.stringify(JSON.parse(convertSegmentsToString(castedArraySegments, nodeMap)), undefined, 4);
+    const stringValueUncasted = JSON.stringify(JSON.parse(convertSegmentsToString(uncastedArraySegments, nodeMap)), undefined, 4);
     return {
+      castedValue: convertStringToSegments(stringValueCasted, /*tokensEnabled*/ false, nodeMap),
       uncastedValue: convertStringToSegments(stringValueUncasted, /*tokensEnabled*/ true, nodeMap),
-      castedValue: convertStringToSegments(stringValueCasted, /*tokensEnabled*/ true, nodeMap),
     };
   } catch (e) {
     return { uncastedValue: uncastedArraySegments, castedValue: castedArraySegments };
