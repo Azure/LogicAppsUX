@@ -56,7 +56,10 @@ export const parseHtmlSegments = (value: ValueSegment[], options?: SegmentParser
   const nodeMap = new Map<string, ValueSegment>();
 
   const stringValue = convertSegmentsToString(value, nodeMap);
-  const encodedStringValue = encodeStringSegmentTokensInLexicalContext(stringValue, nodeMap);
+  const encodedStringValue = encodeStringSegmentTokensInDomContext(
+    encodeStringSegmentTokensInLexicalContext(stringValue, nodeMap),
+    nodeMap
+  );
 
   const dom = parser.parseFromString(encodedStringValue, 'text/html');
   const nodes = $generateNodesFromDOM(editor, dom);
@@ -126,7 +129,9 @@ const appendChildrenNode = (
   // if is a text node, parse for tokens
   if ($isTextNode(childNode)) {
     const textContent = childNode.getTextContent();
-    const decodedTextContent = tokensEnabled ? decodeSegmentValueInLexicalContext(textContent) : textContent;
+    const decodedTextContent = tokensEnabled
+      ? decodeStringSegmentTokensInDomContext(decodeSegmentValueInLexicalContext(textContent), nodeMap)
+      : textContent;
 
     // we need to pass in the styles and format of the parent node to the children node
     // because Lexical text nodes do not have styles or format
