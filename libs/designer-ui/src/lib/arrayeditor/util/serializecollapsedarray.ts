@@ -102,7 +102,7 @@ export const parseComplexItems = (
     uncastedArrayVal.push(convertComplexItemsToArray(itemSchema, items, nodeMap, /*suppress casting*/ true, castParameter));
   });
   return {
-    castedValue: convertStringToSegments(JSON.stringify(castedArrayVal, null, 4), /*tokensEnabled*/ true, nodeMap),
+    castedValue: convertStringToSegments(JSON.stringify(castedArrayVal, null, 4), /*tokensEnabled*/ false, nodeMap),
     uncastedValue: convertStringToSegments(JSON.stringify(uncastedArrayVal, null, 4), /*tokensEnabled*/ true, nodeMap),
   };
 };

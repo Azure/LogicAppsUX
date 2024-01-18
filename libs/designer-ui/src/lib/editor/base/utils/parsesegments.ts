@@ -234,10 +234,11 @@ export const convertSegmentsToString = (input: ValueSegment[], nodeMap?: Map<str
       text += segment.value;
     } else if (segment.token) {
       const { value } = segment.token;
-      // get a text-identifiable unique id for the token
-      const string = `@{${value}}`;
-      text += string;
-      nodeMap?.set(string, segment);
+      if (value) {
+        const string = wrapTokenValue(value);
+        text += string;
+        nodeMap?.set(string, segment);
+      }
     }
   });
   return text;
