@@ -1,6 +1,6 @@
 import type { ValueSegment } from '../editor';
 import { ValueSegmentType } from '../editor';
-import type { BaseEditorProps, CallbackHandler } from '../editor/base';
+import type { BaseEditorProps, CallbackHandler, ChangeHandler } from '../editor/base';
 import { EditorWrapper } from '../editor/base/EditorWrapper';
 import { EditorChangePlugin } from '../editor/base/plugins/EditorChange';
 import type { IComboBox, IComboBoxOption, IComboBoxOptionStyles, IComboBoxStyles } from '@fluentui/react';
@@ -10,6 +10,7 @@ import { bundleIcon, Dismiss24Filled, Dismiss24Regular } from '@fluentui/react-i
 import { getIntl } from '@microsoft/intl-logic-apps';
 import { guid } from '@microsoft/utils-logic-apps';
 import { useRef, useState, useCallback, useMemo, useEffect } from 'react';
+import type { FormEvent } from 'react';
 import { useIntl } from 'react-intl';
 
 const ClearIcon = bundleIcon(Dismiss24Filled, Dismiss24Regular);
@@ -47,6 +48,11 @@ const buttonStyles: any = {
   color: 'var(--colorBrandForeground1)',
 };
 
+interface SerializationOptions {
+  valueType: string;
+  separator?: string;
+}
+
 export interface ComboboxItem {
   disabled?: boolean;
   key: string;
@@ -62,6 +68,9 @@ export interface ComboboxProps extends BaseEditorProps {
   useOption?: boolean;
   onMenuOpen?: CallbackHandler;
   shouldSort?: boolean;
+  multiSelect?: boolean;
+  serialization?: SerializationOptions;
+  onChange?: ChangeHandler;
 }
 
 export const Combobox = ({
@@ -73,6 +82,8 @@ export const Combobox = ({
   onChange,
   onMenuOpen,
   labelId,
+  multiSelect = false,
+  serialization,
   label,
   shouldSort = true,
   ...baseEditorProps
@@ -83,6 +94,9 @@ export const Combobox = ({
   const [value, setValue] = useState<ValueSegment[]>(initialValue);
   const [mode, setMode] = useState<Mode>(getMode(optionKey, initialValue, isLoading));
   const [selectedKey, setSelectedKey] = useState<string>(optionKey);
+  const [selectedKeys, setSelectedKeys] = useState<string[] | undefined>(
+    multiSelect ? getSelectedKeys(options, initialValue, serialization) : undefined
+  );
   const [searchValue, setSearchValue] = useState<string>('');
   const [canAutoFocus, setCanAutoFocus] = useState(false);
   const firstLoad = useRef(true);
@@ -210,6 +224,24 @@ export const Combobox = ({
     }
   };
 
+  const handleOptionMultiSelect = (_event: FormEvent<IComboBox>, option?: IComboBoxOption): void => {
+    if (option && selectedKeys) {
+      const newKeys = option.selected ? [...selectedKeys, option.key as string] : selectedKeys.filter((key: string) => key !== option.key);
+      setSelectedKeys(newKeys);
+
+      const selectedValues = newKeys.map((key) => getSelectedValue(options, key));
+      onChange?.({
+        value: [
+          {
+            id: guid(),
+            value: serialization?.valueType === 'array' ? JSON.stringify(selectedValues) : selectedValues.join(serialization?.separator),
+            type: ValueSegmentType.LITERAL,
+          },
+        ],
+      });
+    }
+  };
+
   const clearEditor = intl.formatMessage({
     defaultMessage: 'Clear custom value',
     description: 'Label for button to clear the editor',
@@ -217,6 +249,7 @@ export const Combobox = ({
 
   const handleClearClick = () => {
     setSelectedKey('');
+    setSelectedKeys([]);
     setSearchValue('');
     comboBoxRef.current?.focus(true);
     setMode(Mode.Default);
@@ -268,7 +301,7 @@ export const Combobox = ({
         <ComboBox
           ariaLabel={label}
           className="msla-combobox"
-          selectedKey={selectedKey}
+          selectedKey={multiSelect ? selectedKeys : selectedKey}
           componentRef={comboBoxRef}
           useComboBoxAsMenuWidth
           allowFreeform
@@ -279,8 +312,10 @@ export const Combobox = ({
           onInputValueChange={updateOptions}
           onClick={toggleExpand}
           onRenderOption={onRenderOption}
+          multiSelect={multiSelect}
           styles={comboboxStyles}
           onItemClick={(_, o) => handleOptionSelect(o)}
+          onChange={handleOptionMultiSelect}
           onMenuOpen={handleMenuOpen}
         />
       )}
@@ -327,6 +362,30 @@ const getSelectedKey = (options: ComboboxItem[], initialValue?: ValueSegment[], 
     );
   }
   return '';
+};
+
+const getSelectedKeys = (options: ComboboxItem[], initialValue?: ValueSegment[], serialization?: SerializationOptions): string[] => {
+  const returnVal: string[] = [];
+  if (initialValue?.length === 1 && initialValue[0].type === ValueSegmentType.LITERAL) {
+    const value = initialValue[0].value;
+    const selectedValues =
+      serialization?.valueType === 'array'
+        ? Array.isArray(value)
+          ? value
+          : JSON.parse(value || '[]')
+        : value.split(serialization?.separator || ',');
+
+    for (const selectedValue of selectedValues) {
+      const option = options.find((option) => {
+        return option.value === selectedValue;
+      });
+
+      if (option) {
+        returnVal.push(option.key);
+      }
+    }
+  }
+  return returnVal;
 };
 
 const getSelectedValue = (options: ComboboxItem[], key: string): any => {
