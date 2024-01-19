@@ -182,7 +182,13 @@ export const CreateConnectionWrapper = () => {
           name: selectedParameterSet?.name ?? '',
           values: Object.keys(outputParameterValues).reduce((acc: any, key) => {
             // eslint-disable-next-line no-param-reassign
-            acc[key] = { value: outputParameterValues[key] };
+            acc[key] = {
+              value:
+                outputParameterValues[key] ??
+                // Avoid 'undefined', which causes the 'value' property to be removed when serializing as JSON object,
+                // and breaks contracts validation.
+                null,
+            };
             return acc;
           }, {}),
         };
