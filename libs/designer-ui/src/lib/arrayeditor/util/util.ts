@@ -158,7 +158,7 @@ export const validationAndSerializeSimpleArray = (
       for (const [, value] of Object.entries(jsonEditor)) {
         returnItems.push({
           value: convertStringToSegments(
-            valueType === constants.SWAGGER.TYPE.STRING ? (value as string) : JSON.stringify(value, undefined, 4),
+            valueType === constants.SWAGGER.TYPE.STRING ? (value as string) : JSON.stringify(value, null, 4),
             /*tokensEnabled*/ true,
             nodeMap
           ),

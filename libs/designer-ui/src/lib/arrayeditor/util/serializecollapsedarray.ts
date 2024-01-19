@@ -6,7 +6,7 @@ import { convertStringToSegments } from '../../editor/base/utils/editorToSegment
 import { getChildrenNodes, insertQutationForStringType } from '../../editor/base/utils/helper';
 import { convertSegmentsToString } from '../../editor/base/utils/parsesegments';
 import { convertComplexItemsToArray, validationAndSerializeComplexArray, validationAndSerializeSimpleArray } from './util';
-import { guid } from '@microsoft/utils-logic-apps';
+import { guid, prettifyJsonString } from '@microsoft/utils-logic-apps';
 import type { LexicalEditor } from 'lexical';
 import { $getRoot } from 'lexical';
 
@@ -71,11 +71,11 @@ export const parseSimpleItems = (
   // Beautify ValueSegment
   try {
     const nodeMap = new Map<string, ValueSegment>();
-    const stringValueUncasted = JSON.stringify(JSON.parse(convertSegmentsToString(uncastedArraySegments, nodeMap)), undefined, 4);
-    const stringValueCasted = JSON.stringify(JSON.parse(convertSegmentsToString(castedArraySegments, nodeMap)), undefined, 4);
+    const stringValueCasted = prettifyJsonString(convertSegmentsToString(castedArraySegments, nodeMap));
+    const stringValueUncasted = prettifyJsonString(convertSegmentsToString(uncastedArraySegments, nodeMap));
     return {
+      castedValue: convertStringToSegments(stringValueCasted, /*tokensEnabled*/ false, nodeMap),
       uncastedValue: convertStringToSegments(stringValueUncasted, /*tokensEnabled*/ true, nodeMap),
-      castedValue: convertStringToSegments(stringValueCasted, /*tokensEnabled*/ true, nodeMap),
     };
   } catch (e) {
     return { uncastedValue: uncastedArraySegments, castedValue: castedArraySegments };
@@ -102,7 +102,7 @@ export const parseComplexItems = (
     uncastedArrayVal.push(convertComplexItemsToArray(itemSchema, items, nodeMap, /*suppress casting*/ true, castParameter));
   });
   return {
-    castedValue: convertStringToSegments(JSON.stringify(castedArrayVal, null, 4), /*tokensEnabled*/ true, nodeMap),
+    castedValue: convertStringToSegments(JSON.stringify(castedArrayVal, null, 4), /*tokensEnabled*/ false, nodeMap),
     uncastedValue: convertStringToSegments(JSON.stringify(uncastedArrayVal, null, 4), /*tokensEnabled*/ true, nodeMap),
   };
 };
