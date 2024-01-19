@@ -159,9 +159,11 @@ export const CreateConnectionWrapper = () => {
         }
 
         // Assign identity selected in parameter values for in-app connectors
-        if (isUserAssignedIdentitySupportedForInApp(connector.properties.capabilities) &&
-            identitySelected &&
-            identitySelected !== constants.SYSTEM_ASSIGNED_MANAGED_IDENTITY) {
+        if (
+          isUserAssignedIdentitySupportedForInApp(connector.properties.capabilities) &&
+          identitySelected &&
+          identitySelected !== constants.SYSTEM_ASSIGNED_MANAGED_IDENTITY
+        ) {
           safeSetObjectPropertyValue(outputParameterValues, ['identity'], identitySelected);
         }
 
@@ -178,24 +180,11 @@ export const CreateConnectionWrapper = () => {
           }
         }
 
-        const connectionParameterSetValues: ConnectionParameterSetValues = {
-          name: selectedParameterSet?.name ?? '',
-          values: Object.keys(outputParameterValues).reduce((acc: any, key) => {
-            // eslint-disable-next-line no-param-reassign
-            acc[key] = {
-              value:
-                outputParameterValues[key] ??
-                // Avoid 'undefined', which causes the 'value' property to be removed when serializing as JSON object,
-                // and breaks contracts validation.
-                null,
-            };
-            return acc;
-          }, {}),
-        };
-
         const connectionInfo: ConnectionCreationInfo = {
           displayName,
-          connectionParametersSet: selectedParameterSet ? connectionParameterSetValues : undefined,
+          connectionParametersSet: selectedParameterSet
+            ? getConnectionParameterSetValues(selectedParameterSet.name, outputParameterValues)
+            : undefined,
           connectionParameters: outputParameterValues,
           alternativeParameterValues,
         };
@@ -244,7 +233,16 @@ export const CreateConnectionWrapper = () => {
       }
       setIsLoading(false);
     },
-    [connector, assistedConnectionProps, connectionMetadata, operationManifest?.properties.connection?.type, selectedSubResource, closeConnectionsFlow, nodeIds, applyNewConnection]
+    [
+      connector,
+      assistedConnectionProps,
+      connectionMetadata,
+      operationManifest?.properties.connection?.type,
+      selectedSubResource,
+      closeConnectionsFlow,
+      nodeIds,
+      applyNewConnection,
+    ]
   );
 
   const cancelCallback = useCallback(() => {
@@ -271,7 +269,11 @@ export const CreateConnectionWrapper = () => {
       connectorDisplayName={connector.properties.displayName}
       connectorCapabilities={connector.properties.capabilities}
       connectionParameters={connector.properties.connectionParameters}
-      connectionParameterSets={getSupportedParameterSets(connector.properties.connectionParameterSets, operationInfo.type, connector.properties.capabilities)}
+      connectionParameterSets={getSupportedParameterSets(
+        connector.properties.connectionParameterSets,
+        operationInfo.type,
+        connector.properties.capabilities
+      )}
       connectionAlternativeParameters={connector.properties?.connectionAlternativeParameters}
       identity={identity}
       createConnectionCallback={createConnectionCallback}
@@ -290,3 +292,23 @@ export const CreateConnectionWrapper = () => {
     />
   );
 };
+
+export function getConnectionParameterSetValues(
+  selectedParameterSetName: string,
+  outputParameterValues: Record<string, any>
+): ConnectionParameterSetValues {
+  return {
+    name: selectedParameterSetName,
+    values: Object.keys(outputParameterValues).reduce((acc: any, key) => {
+      // eslint-disable-next-line no-param-reassign
+      acc[key] = {
+        value:
+          outputParameterValues[key] ??
+          // Avoid 'undefined', which causes the 'value' property to be removed when serializing as JSON object,
+          // and breaks contracts validation.
+          null,
+      };
+      return acc;
+    }, {}),
+  };
+}
