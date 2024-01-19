@@ -39,6 +39,7 @@ export interface IConnectionCredentialMappingEditorProps {
   };
   setParameterValues: React.Dispatch<React.SetStateAction<Record<string, unknown>>>;
   renderParameter: (key: string, parameter: ConnectionParameterSetParameter | ConnectionParameter) => JSX.Element;
+  isLoading?: boolean;
 }
 
 export interface IConnectionCredentialMappingOptions {

@@ -510,7 +510,26 @@ describe('ui/createConnection', () => {
         },
         setParameterValues: expect.any(Function),
         renderParameter: expect.any(Function),
+        isLoading: false,
       });
+    });
+
+    it('should render CustomCredentialMappingEditor in loading state', () => {
+      const connectionParameterSets = getConnectionParameterSetsWithCredentialMapping();
+      const props: CreateConnectionProps = {
+        isLoading: true,
+        connectorId: 'myConnectorId',
+        connectorDisplayName: 'My Connector',
+        connectionParameterSets,
+        checkOAuthCallback: jest.fn(),
+      };
+      renderer.render(<CreateConnection {...props} />);
+      const createConnectionContainer = renderer.getRenderOutput();
+      const createConnection = findConnectionCreateDiv(createConnectionContainer);
+      const mappingEditors = findParameterComponents(createConnection, CustomCredentialMappingEditor);
+      expect(mappingEditors).toHaveLength(1);
+      expect(mappingEditors[0].type).toEqual(CustomCredentialMappingEditor);
+      expect(mappingEditors[0].props.isLoading).toEqual(true);
     });
 
     it.each([

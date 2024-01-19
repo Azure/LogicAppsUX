@@ -497,6 +497,7 @@ export const CreateConnection = (props: CreateConnectionProps) => {
           parameters,
           setParameterValues,
           renderParameter: renderConnectionParameter,
+          isLoading,
         };
         return <CredentialsMappingEditorComponent key={`mapping:${mappingName}`} {...props} />;
       }
