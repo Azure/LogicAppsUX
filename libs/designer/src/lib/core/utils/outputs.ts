@@ -49,6 +49,7 @@ import {
   AssertionException,
   clone,
   equals,
+  parseErrorMessage,
 } from '@microsoft/utils-logic-apps';
 import type { Dispatch } from '@reduxjs/toolkit';
 
@@ -494,15 +495,13 @@ export const loadDynamicOutputsInNode = async (
             })
           );
         } catch (error: any) {
-          const message = error.message as string;
+          const message = parseErrorMessage(error);
           const errorMessage = getIntl().formatMessage(
             {
               defaultMessage: `Failed to retrieve dynamic outputs. As a result, this operation's outputs might not be visible in subsequent actions. Error details: {message}`,
               description: 'Error message to show when loading dynamic outputs failed.',
             },
-            {
-              message,
-            }
+            { message }
           );
 
           dispatch(
