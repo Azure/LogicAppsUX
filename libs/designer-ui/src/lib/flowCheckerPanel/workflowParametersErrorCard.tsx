@@ -49,21 +49,21 @@ export const WorkflowParametersErrorCard: React.FC<WorkflowParametersErrorCardPr
   );
 
   return (
-    <div key="workflowParametersErrorCard" className="msla-error-card" onClick={handleClick} tabIndex={0} onKeyDown={handleKeyDown}>
-      <div className="msla-error-card-header">
-        <div className="msla-error-card-icon">
+    <div key="workflowParametersErrorCard" className="msla-message-card" onClick={handleClick} tabIndex={0} onKeyDown={handleKeyDown}>
+      <div className="msla-message-card-header">
+        <div className="msla-message-card-icon">
           <Icon iconName="Parameter" />
         </div>
-        <span className="msla-error-card-title">{title}</span>
-        <span className="msla-error-card-button-hint">
+        <span className="msla-message-card-title">{title}</span>
+        <span className="msla-message-card-button-hint">
           {wfpButtonHint}
           <Icon iconName="ChevronRight" style={{ marginLeft: '8px' }} />
         </span>
       </div>
-      <div className="msla-error-card-body">
+      <div className="msla-message-card-body">
         {Object.entries(errors ?? {}).map(([parameterId, errorValues]) => (
-          <div key={parameterId} className="msla-error-card-subsection">
-            <span className="msla-error-card-subtitle">{getParameterName(parameterId)}</span>
+          <div key={parameterId} className="msla-message-card-subsection">
+            <span className="msla-message-card-subtitle">{getParameterName(parameterId)}</span>
             {Object.values(errorValues)
               .filter((e) => !!e)
               .map((e) => (

@@ -2209,6 +2209,12 @@
       "value": "Connection required"
     }
   ],
+  "CIti4f": [
+    {
+      "type": 0,
+      "value": "Errors"
+    }
+  ],
   "CaajcD": [
     {
       "type": 0,
@@ -2675,12 +2681,6 @@
     {
       "type": 0,
       "value": "Returns a section of a string defined by the start index and the end index"
-    }
-  ],
-  "FOiBk/": [
-    {
-      "type": 0,
-      "value": "Errors"
     }
   ],
   "FT3jt6": [
@@ -3945,6 +3945,12 @@
     {
       "type": 0,
       "value": "Loading Files..."
+    }
+  ],
+  "O6VHe0": [
+    {
+      "type": 0,
+      "value": "Operation warnings"
     }
   ],
   "O7HhyP": [
@@ -5259,6 +5265,12 @@
       "value": "Error Type"
     }
   ],
+  "Vi5TIV": [
+    {
+      "type": 0,
+      "value": "No warnings found."
+    }
+  ],
   "VlvlX1": [
     {
       "type": 0,
@@ -6205,12 +6217,6 @@
       "value": "Clear all"
     }
   ],
-  "bwlAWn": [
-    {
-      "type": 0,
-      "value": "Open operation"
-    }
-  ],
   "byRkj+": [
     {
       "type": 0,
@@ -6885,6 +6891,12 @@
     {
       "type": 0,
       "value": "Returns a boolean that indicates whether a string is a floating-point number"
+    }
+  ],
+  "gtWDUN": [
+    {
+      "type": 0,
+      "value": "Flow Checker"
     }
   ],
   "gu9o9z": [
@@ -8641,6 +8653,12 @@
       "value": "Select this checkbox if you're setting up an on-premises connection."
     }
   ],
+  "rRPpoL": [
+    {
+      "type": 0,
+      "value": "Open operation"
+    }
+  ],
   "rSIBjh": [
     {
       "type": 0,
@@ -9693,6 +9711,12 @@
     {
       "type": 0,
       "value": "Parameters"
+    }
+  ],
+  "xjK6Rj": [
+    {
+      "type": 0,
+      "value": "Warnings"
     }
   ],
   "xt5TeT": [

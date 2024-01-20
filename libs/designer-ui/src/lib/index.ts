@@ -35,7 +35,7 @@ export * from './editor';
 export * from './editor/monaco';
 export * from './editor/string';
 export * from './errorboundary';
-export * from './errorsPanel';
+export * from './flowCheckerPanel';
 export * from './eventhandler';
 // export * from './featurefeedback';
 // export * from './floatingactionmenu';

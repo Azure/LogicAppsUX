@@ -24,6 +24,6 @@ export { validateParameter } from './utils/parameters/helper';
 export { createLiteralValueSegment, createTokenValueSegment } from './utils/parameters/segment';
 export { getOutputTokenSections, getExpressionTokenSections } from './utils/tokens';
 export { getTriggerNodeId } from './utils/graph';
-export { updateParameterValidation } from './state/operation/operationMetadataSlice';
+export { updateParameterValidation, setHostFlowCheckerMessages } from './state/operation/operationMetadataSlice';
 export { updateWorkflowParameters } from './actions/bjsworkflow/initialize';
 export { getBrandColorFromManifest, getIconUriFromManifest, getBrandColorFromConnector, getIconUriFromConnector } from './utils/card';
