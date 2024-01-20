@@ -97,7 +97,7 @@ export const parseHtmlSegments = (value: ValueSegment[], options?: SegmentParser
         }
       });
     } else {
-      paragraph.append(currNode);
+      appendChildrenNode(paragraph, currNode, nodeMap, options);
     }
   });
   if (paragraph.getChildren().length > 0) {
