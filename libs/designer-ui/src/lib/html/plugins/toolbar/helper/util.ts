@@ -124,7 +124,6 @@ export const isHtmlStringValueSafeForLexical = (htmlEditorString: string, nodeMa
   for (let i = 0; i < elements.length; i++) {
     const element = elements[i];
     if (!isTagNameSupportedByLexical(element.tagName)) {
-      console.log('unsupported1', `'${element.tagName.toLowerCase()}'`);
       return false;
     }
 
@@ -132,7 +131,6 @@ export const isHtmlStringValueSafeForLexical = (htmlEditorString: string, nodeMa
     for (let j = 0; j < attributes.length; j++) {
       const attribute = attributes[j];
       if (!isAttributeSupportedByLexical(element.tagName, attribute.name)) {
-        console.log('unsupported2', `'${element.tagName.toLowerCase()}'`, `'${attribute.name.toLowerCase()}'`);
         return false;
       }
     }
