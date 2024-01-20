@@ -464,6 +464,10 @@ export default {
     WORKFLOW_PARAMETERS: 'WORKFLOW_PARAMETERS',
     TESTING: 'TESTING',
   },
+  FLOW_CHECKER_PANEL_TAB_NAMES: {
+    ERRORS: 'ERRORS',
+    WARNINGS: 'WARNINGS',
+  },
   PROFILE_KEY_TYPE: {
     DESIGNER: 'designer:',
     INITIALIZE_NODES: 'designer:initializeNodes',

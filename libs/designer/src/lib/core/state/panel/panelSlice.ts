@@ -20,6 +20,7 @@ const initialState: PanelState = {
   creatingConnection: false,
   currentPanelMode: undefined,
   referencePanelMode: undefined,
+  selectedFlowCheckerTabId: undefined,
 };
 
 export const panelSlice = createSlice({
@@ -43,6 +44,7 @@ export const panelSlice = createSlice({
       state.addingTrigger = false;
       state.creatingConnection = false;
       state.selectedTabId = undefined;
+      state.selectedFlowCheckerTabId = undefined;
     },
     updatePanelLocation: (state, action: PayloadAction<PanelLocation | undefined>) => {
       if (action.payload && action.payload !== state.panelLocation) {
@@ -133,6 +135,16 @@ export const panelSlice = createSlice({
     setIsCreatingConnection: (state, action: PayloadAction<boolean>) => {
       state.creatingConnection = action.payload;
     },
+    selectFlowCheckerPanelTab: (state, action: PayloadAction<string>) => {
+      state.selectedFlowCheckerTabId = action.payload;
+
+      LoggerService().log({
+        level: LogEntryLevel.Verbose,
+        area: 'Designer:Panel Slice',
+        message: action.type,
+        args: [action.payload],
+      });
+    },
   },
 });
 
@@ -152,6 +164,7 @@ export const {
   selectPanelTab,
   setIsPanelLoading,
   setIsCreatingConnection,
+  selectFlowCheckerPanelTab,
 } = panelSlice.actions;
 
 export default panelSlice.reducer;

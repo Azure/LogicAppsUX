@@ -100,7 +100,7 @@ export const PseudoCommandBar = () => {
           style: haveErrors ? { color: RUN_AFTER_COLORS[isDarkMode ? 'dark' : 'light']['FAILED'] } : undefined,
         }}
         text="Errors"
-        onClick={() => dispatch(openPanel({ panelMode: 'Error' }))}
+        onClick={() => dispatch(openPanel({ panelMode: 'FlowChecker' }))}
         disabled={!haveErrors}
       />
 
