@@ -6,8 +6,10 @@ import {
   encodeSegmentValueInDomContext,
   encodeSegmentValueInLexicalContext,
   isAttributeSupportedByLexical,
+  isHtmlStringValueSafeForLexical,
   isTagNameSupportedByLexical,
 } from '../util';
+import type { ValueSegment } from '@microsoft/designer-client-services-logic-apps';
 
 describe('lib/html/plugins/toolbar/helper/util', () => {
   describe('cleanHtmlString', () => {
@@ -123,13 +125,28 @@ describe('lib/html/plugins/toolbar/helper/util', () => {
     });
   });
 
+  describe('isHtmlStringValueSafeForLexical', () => {
+    const case1 = `<h3>dfg<span style="background-color: rgb(184, 233, 134);">dfg</span><span style="background-color: rgb(184, 233, 134); font-size: 11px;">dfg</span><a href="https://www.bing.com"><span style="background-color: rgb(184, 233, 134); font-family: Georgia; font-size: 11px;">dfgdfg dfgdfg dg zd</span></a><span style="background-color: rgb(184, 233, 134); font-family: Georgia; font-size: 11px;"> </span><u>asa</u></h3>`;
+
+    it.each<[string, boolean, string]>([['large string using h3, links, and spans', true, case1]])(
+      'should return %p as supported=%p',
+      (_caseName, expected, inputString) => {
+        const nodeMap = new Map<string, ValueSegment>();
+        expect(isHtmlStringValueSafeForLexical(inputString, nodeMap)).toBe(expected);
+      }
+    );
+  });
+
   describe('isTagNameSupportedByLexical', () => {
     it.each<[string, boolean]>([
       ['', false],
       ['*', false],
+      ['SeCtIoN', false],
       ['section', false],
       ['script', false],
       ['style', false],
+      ['a', true],
+      ['A', true],
       ['b', true],
       ['br', true],
       ['em', true],
@@ -144,7 +161,9 @@ describe('lib/html/plugins/toolbar/helper/util', () => {
       ['ol', true],
       ['p', true],
       ['span', true],
+      ['sTrOnG', true],
       ['strong', true],
+      ['u', true],
       ['ul', true],
     ])('should return <%s /> as supported=%p', (inputTag, expected) => {
       expect(isTagNameSupportedByLexical(inputTag)).toBe(expected);
