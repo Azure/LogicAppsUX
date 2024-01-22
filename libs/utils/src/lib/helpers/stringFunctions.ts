@@ -18,3 +18,5 @@ export const wrapTokenValue = (s: string) => `@{${s}}`;
 // Some staging locations like `East US (stage)` show sometimes as `eastus(stage)` and sometimes as `eastusstage`
 // This function just removes the parentheses so they can be compared as equal
 export const cleanConnectorId = (id: string) => id.replace(/[()]/g, '');
+
+export const prettifyJsonString = (json: string) => JSON.stringify(JSON.parse(json), null, 4);

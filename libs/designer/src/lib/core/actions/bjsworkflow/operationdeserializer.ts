@@ -496,7 +496,6 @@ export const updateDynamicDataInNodes = async (getState: () => RootState, dispat
     tokens: { variables },
     connections,
   } = rootState;
-  console.log(rootState.operations.errors);
   const allVariables = getAllVariables(variables);
   for (const [nodeId, operation] of Object.entries(operations)) {
     if (nodeId === Constants.NODE.TYPE.PLACEHOLDER_TRIGGER) continue;
