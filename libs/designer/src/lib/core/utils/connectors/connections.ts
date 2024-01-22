@@ -224,20 +224,19 @@ export function isConnectionSingleAuthManagedIdentityType(connection: Connection
   return !!(connection?.properties?.parameterValueType === ALT_PARAMETER_VALUE_TYPE) && !isMultiAuthConnection(connection);
 }
 
-function isManagedIdentitySupported(
-  operationType: string,
-  connectorCapabilities: string[] = [],
-  identity?: ManagedIdentity): boolean {
+function isManagedIdentitySupported(operationType: string, connectorCapabilities: string[] = [], identity?: ManagedIdentity): boolean {
   if (isServiceProviderOperation(operationType)) {
-    return isUserAssignedIdentitySupportedForInApp(connectorCapabilities)
-      || !!identity?.type?.toLowerCase()?.includes(ResourceIdentityType.SYSTEM_ASSIGNED.toLowerCase())
+    return (
+      isUserAssignedIdentitySupportedForInApp(connectorCapabilities) ||
+      !!identity?.type?.toLowerCase()?.includes(ResourceIdentityType.SYSTEM_ASSIGNED.toLowerCase())
+    );
   }
 
   return true;
 }
 
 export function isUserAssignedIdentitySupportedForInApp(connectorCapabilities: string[] = []) {
-  return !!connectorCapabilities?.find(capability => equals(capability, 'supportsUserAssignedIdentity'))
+  return !!connectorCapabilities?.find((capability) => equals(capability, 'supportsUserAssignedIdentity'));
 }
 
 function isMultiAuthConnection(connection: Connection | undefined): boolean {

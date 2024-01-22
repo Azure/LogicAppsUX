@@ -39,12 +39,17 @@ export const convertStringToSegments = (value: string, tokensEnabled?: boolean, 
   let prevIndex = 0;
   const returnSegments: ValueSegment[] = [];
   while (currIndex < value.length) {
-    if (value.substring(currIndex - 2, currIndex) === '@{') {
+    if (value.substring(currIndex - 2, currIndex) === '@{' && tokensEnabled) {
       if (value.substring(prevIndex, currIndex - 2)) {
         returnSegments.push({ id: guid(), type: ValueSegmentType.LITERAL, value: value.substring(prevIndex, currIndex - 2) });
       }
-      const newIndex = value.indexOf('}', currIndex) + 1;
-      if (nodeMap && tokensEnabled) {
+      const endIndex = value.indexOf('}', currIndex);
+      if (endIndex < 0) {
+        currIndex++;
+        continue;
+      }
+      const newIndex = endIndex + 1;
+      if (nodeMap) {
         const token = nodeMap.get(value.substring(currIndex - 2, newIndex));
         if (token) {
           returnSegments.push(token);
