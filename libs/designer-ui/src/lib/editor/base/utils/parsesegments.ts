@@ -40,6 +40,10 @@ export interface SegmentParserOptions {
   tokensEnabled?: boolean;
 }
 
+export const isEmptySegments = (segments: ValueSegment[]): boolean => {
+  return !segments.length || (segments.length === 1 && segments[0].value === '');
+};
+
 export const parseHtmlSegments = (value: ValueSegment[], options?: SegmentParserOptions): RootNode => {
   const { tokensEnabled } = options ?? {};
   const editor = createEditor({ ...defaultInitialConfig, nodes: htmlNodes });
