@@ -150,6 +150,7 @@ import {
   ValidationErrorCode,
   ValidationException,
   nthLastIndexOf,
+  parseErrorMessage,
 } from '@microsoft/utils-logic-apps';
 import type { Dispatch } from '@reduxjs/toolkit';
 
@@ -1920,7 +1921,7 @@ async function loadDynamicContentForInputsInNode(
             addDynamicInputs({ nodeId, groupId: ParameterGroupKeys.DEFAULT, inputs: inputParameters, newInputs: schemaInputs, swagger })
           );
         } catch (error: any) {
-          const message = error.message ?? (error.content.message as string);
+          const message = parseErrorMessage(error);
           const errorMessage = getIntl().formatMessage(
             {
               defaultMessage: `Failed to retrieve dynamic inputs. Error details: ''{message}''`,
@@ -2047,61 +2048,35 @@ export async function loadDynamicValuesForParameter(
   }
 
   const dependencyInfo = dependencies.inputs[parameter.parameterKey];
-  if (dependencyInfo) {
-    if (isDynamicDataReadyToLoad(dependencyInfo)) {
-      dispatch(
-        updateNodeParameters({
-          nodeId,
-          parameters: [
-            {
-              parameterId,
-              groupId,
-              propertiesToUpdate: { dynamicData: { status: DynamicCallStatus.STARTED }, editorOptions: { options: [] } },
-            },
-          ],
-        })
-      );
-
-      try {
-        const dynamicValues = await getDynamicValues(
-          dependencyInfo,
-          nodeInputs,
-          operationInfo,
-          connectionReference,
-          idReplacements,
-          workflowParameters
-        );
-
-        dispatch(
-          updateNodeParameters({
-            nodeId,
-            parameters: [
-              {
-                parameterId,
-                groupId,
-                propertiesToUpdate: { dynamicData: { status: DynamicCallStatus.SUCCEEDED }, editorOptions: { options: dynamicValues } },
-              },
-            ],
-          })
-        );
-      } catch (error: any) {
-        dispatch(
-          updateNodeParameters({
-            nodeId,
-            parameters: [
-              {
-                parameterId,
-                groupId,
-                propertiesToUpdate: { dynamicData: { status: DynamicCallStatus.FAILED, error: { ...error, message: error.message } } },
-              },
-            ],
-          })
-        );
-      }
-    } else if (showErrorWhenNotReady) {
+  if (!dependencyInfo) return;
+  if (!isDynamicDataReadyToLoad(dependencyInfo)) {
+    if (showErrorWhenNotReady)
       showErrorWhenDependenciesNotReady(nodeId, groupId, parameterId, dependencyInfo, groupParameters, /* isTreeCall */ false, dispatch);
-    }
+    return;
   }
+
+  let propertiesToUpdate: any = { dynamicData: { status: DynamicCallStatus.STARTED }, editorOptions: { options: [] } };
+
+  dispatch(updateNodeParameters({ nodeId, parameters: [{ parameterId, groupId, propertiesToUpdate }] }));
+
+  try {
+    const dynamicValues = await getDynamicValues(
+      dependencyInfo,
+      nodeInputs,
+      operationInfo,
+      connectionReference,
+      idReplacements,
+      workflowParameters
+    );
+
+    propertiesToUpdate = { dynamicData: { status: DynamicCallStatus.SUCCEEDED }, editorOptions: { options: dynamicValues } };
+  } catch (error: any) {
+    const rootMessage = parseErrorMessage(error);
+    const message = error?.response?.data?.error?.message ?? rootMessage;
+    propertiesToUpdate = { dynamicData: { status: DynamicCallStatus.FAILED, error: { ...error, message } } };
+  }
+
+  dispatch(updateNodeParameters({ nodeId, parameters: [{ parameterId, groupId, propertiesToUpdate }] }));
 }
 
 export function shouldLoadDynamicInputs(nodeInputs: NodeInputs): boolean {
@@ -2138,7 +2113,7 @@ async function tryGetInputDynamicSchema(
       throw error;
     }
 
-    const message = error.message as string;
+    const message = parseErrorMessage(error);
     const errorMessage = getIntl().formatMessage(
       {
         defaultMessage: `Failed to retrieve dynamic inputs. Error details: ''{message}''`,

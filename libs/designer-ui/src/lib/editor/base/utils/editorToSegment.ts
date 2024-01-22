@@ -39,7 +39,7 @@ export const convertStringToSegments = (value: string, tokensEnabled?: boolean, 
   let prevIndex = 0;
   const returnSegments: ValueSegment[] = [];
   while (currIndex < value.length) {
-    if (value.substring(currIndex - 2, currIndex) === '@{') {
+    if (value.substring(currIndex - 2, currIndex) === '@{' && tokensEnabled) {
       if (value.substring(prevIndex, currIndex - 2)) {
         returnSegments.push({ id: guid(), type: ValueSegmentType.LITERAL, value: value.substring(prevIndex, currIndex - 2) });
       }
@@ -49,7 +49,7 @@ export const convertStringToSegments = (value: string, tokensEnabled?: boolean, 
         continue;
       }
       const newIndex = endIndex + 1;
-      if (nodeMap && tokensEnabled) {
+      if (nodeMap) {
         const token = nodeMap.get(value.substring(currIndex - 2, newIndex));
         if (token) {
           returnSegments.push(token);

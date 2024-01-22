@@ -180,18 +180,11 @@ export const CreateConnectionWrapper = () => {
           }
         }
 
-        const connectionParameterSetValues: ConnectionParameterSetValues = {
-          name: selectedParameterSet?.name ?? '',
-          values: Object.keys(outputParameterValues).reduce((acc: any, key) => {
-            // eslint-disable-next-line no-param-reassign
-            acc[key] = { value: outputParameterValues[key] };
-            return acc;
-          }, {}),
-        };
-
         const connectionInfo: ConnectionCreationInfo = {
           displayName,
-          connectionParametersSet: selectedParameterSet ? connectionParameterSetValues : undefined,
+          connectionParametersSet: selectedParameterSet
+            ? getConnectionParameterSetValues(selectedParameterSet.name, outputParameterValues)
+            : undefined,
           connectionParameters: outputParameterValues,
           alternativeParameterValues,
         };
@@ -299,3 +292,23 @@ export const CreateConnectionWrapper = () => {
     />
   );
 };
+
+export function getConnectionParameterSetValues(
+  selectedParameterSetName: string,
+  outputParameterValues: Record<string, any>
+): ConnectionParameterSetValues {
+  return {
+    name: selectedParameterSetName,
+    values: Object.keys(outputParameterValues).reduce((acc: any, key) => {
+      // eslint-disable-next-line no-param-reassign
+      acc[key] = {
+        value:
+          outputParameterValues[key] ??
+          // Avoid 'undefined', which causes the 'value' property to be removed when serializing as JSON object,
+          // and breaks contracts validation.
+          null,
+      };
+      return acc;
+    }, {}),
+  };
+}

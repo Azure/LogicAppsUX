@@ -1,9 +1,9 @@
 import constants from '../constants';
-import type { Token } from '../editor';
+import type { Token, ValueSegment } from '../editor';
 import { TokenType } from '../editor';
 import { getIntl } from '@microsoft/intl-logic-apps';
 import { decodePropertySegment, OutputKeys } from '@microsoft/parsers-logic-apps';
-import { ArgumentException, endsWith, equals, UnsupportedException } from '@microsoft/utils-logic-apps';
+import { ArgumentException, endsWith, equals, prettifyJsonString, UnsupportedException } from '@microsoft/utils-logic-apps';
 
 const OperationCategory = {
   Actions: 'actions',
@@ -109,3 +109,23 @@ function matchesOutputKey(tokenName: string): boolean {
     equals(tokenName, OutputKeys.PathParameters)
   );
 }
+
+export const getInitialValue = (initialValue: ValueSegment[]): string => {
+  if (initialValue[0]?.value) {
+    return formatValue(initialValue[0].value);
+  }
+  return '';
+};
+
+export const formatValue = (input: string): string => {
+  try {
+    return prettifyJsonString(input);
+  } catch {
+    return input;
+  }
+};
+
+// Monaco should be at least 3 rows high (19*3 px) but no more than 20 rows high (19*20 px).
+export const getEditorHeight = (input = ''): string => {
+  return Math.min(Math.max(input?.split('\n').length * 20, 120), 380) + 'px';
+};
