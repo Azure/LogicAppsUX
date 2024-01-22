@@ -276,6 +276,10 @@ export const Combobox = ({
     onChange?.({ value });
   };
 
+  const handleComboBoxBlur = () => {
+    setSearchValue('');
+  };
+
   return (
     <div className="msla-combobox-container">
       {mode === Mode.Custom ? (
@@ -324,6 +328,7 @@ export const Combobox = ({
           styles={comboboxStyles}
           onChange={multiSelect ? handleOptionMultiSelect : handleOptionSelect}
           onMenuOpen={handleMenuOpen}
+          onBlur={handleComboBoxBlur}
         />
       )}
     </div>
