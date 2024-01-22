@@ -467,7 +467,11 @@ export const CreateConnection = (props: CreateConnectionProps) => {
   // Keep track of encountered and active mappings to avoid rendering the same mapping multiple times, or rendering the included parameters.
   const allParameterMappings = new Set<string>();
   const activeParameterMappings = new Set<string>();
-  const renderCredentialsMappingParameter = (mappingName: string, parameter: ConnectionParameterSetParameter | ConnectionParameter) => {
+  const renderCredentialsMappingParameter = (
+    parameterKey: string,
+    parameter: ConnectionParameterSetParameter | ConnectionParameter,
+    mappingName: string
+  ) => {
     if (!allParameterMappings.has(mappingName)) {
       allParameterMappings.add(mappingName);
       // This is the first time this mapping has been encountered,
@@ -493,6 +497,7 @@ export const CreateConnection = (props: CreateConnectionProps) => {
           parameters,
           setParameterValues,
           renderParameter: renderConnectionParameter,
+          isLoading,
         };
         return <CredentialsMappingEditorComponent key={`mapping:${mappingName}`} {...props} />;
       }
@@ -505,7 +510,7 @@ export const CreateConnection = (props: CreateConnectionProps) => {
     }
 
     // Default case: render the parameter. No custom Editor was found for this mapping.
-    return renderConnectionParameter(mappingName, parameter);
+    return renderConnectionParameter(parameterKey, parameter);
   };
 
   // RENDER
@@ -603,7 +608,7 @@ export const CreateConnection = (props: CreateConnectionProps) => {
                 const mappingName = parameter?.uiDefinition?.credentialMapping?.mappingName;
                 if (mappingName) {
                   // This parameter belongs to a mapping - try to render a custom editor if supported.
-                  return renderCredentialsMappingParameter(mappingName, parameter);
+                  return renderCredentialsMappingParameter(key, parameter, mappingName);
                 }
                 return renderConnectionParameter(key, parameter);
               }

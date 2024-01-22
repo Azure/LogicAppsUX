@@ -865,28 +865,6 @@
       "value": "The entered identity is not associated with this Logic App."
     }
   ],
-  "3jwMBm": [
-    {
-      "type": 0,
-      "value": "Invalid json format. Missing beginning "
-    },
-    {
-      "type": 1,
-      "value": "openingBracket"
-    },
-    {
-      "type": 0,
-      "value": " or ending "
-    },
-    {
-      "type": 1,
-      "value": "closingBracket"
-    },
-    {
-      "type": 0,
-      "value": "."
-    }
-  ],
   "3n5pnv": [
     {
       "type": 0,
@@ -1101,6 +1079,28 @@
     {
       "type": 0,
       "value": "Tell Microsoft what you liked about this feature"
+    }
+  ],
+  "5LV34t": [
+    {
+      "type": 0,
+      "value": "The '"
+    },
+    {
+      "type": 1,
+      "value": "invalidProperties"
+    },
+    {
+      "type": 0,
+      "value": "' properties are invalid for the '"
+    },
+    {
+      "type": 1,
+      "value": "authType"
+    },
+    {
+      "type": 0,
+      "value": "' authentication type."
     }
   ],
   "5OvGgn": [
@@ -2019,6 +2019,28 @@
       "value": "Succeeded with retries"
     }
   ],
+  "BGw6eH": [
+    {
+      "type": 0,
+      "value": "Missing required properties '"
+    },
+    {
+      "type": 1,
+      "value": "missingProperties"
+    },
+    {
+      "type": 0,
+      "value": "' for authentication type '"
+    },
+    {
+      "type": 1,
+      "value": "authType"
+    },
+    {
+      "type": 0,
+      "value": "'"
+    }
+  ],
   "BHe7qY": [
     {
       "type": 0,
@@ -2185,28 +2207,6 @@
     {
       "type": 0,
       "value": "(UTC+13:00) Samoa"
-    }
-  ],
-  "CafOCn": [
-    {
-      "type": 0,
-      "value": "The '"
-    },
-    {
-      "type": 1,
-      "value": "invalidProperties"
-    },
-    {
-      "type": 0,
-      "value": "' properties are invalid for the '"
-    },
-    {
-      "type": 1,
-      "value": "convertedAuthType"
-    },
-    {
-      "type": 0,
-      "value": "' authentication type."
     }
   ],
   "Cb6IEq": [
@@ -3047,6 +3047,28 @@
     {
       "type": 0,
       "value": "Submit from this action"
+    }
+  ],
+  "I1CYNA": [
+    {
+      "type": 0,
+      "value": "Invalid property '"
+    },
+    {
+      "type": 1,
+      "value": "invalidProperties"
+    },
+    {
+      "type": 0,
+      "value": "' for authentication type '"
+    },
+    {
+      "type": 1,
+      "value": "authType"
+    },
+    {
+      "type": 0,
+      "value": "'."
     }
   ],
   "I3mifR": [
@@ -3931,6 +3953,12 @@
       "value": "OK"
     }
   ],
+  "OBO/HE": [
+    {
+      "type": 0,
+      "value": "Invalid Authentication Value"
+    }
+  ],
   "ODQCKj": [
     {
       "type": 0,
@@ -4081,10 +4109,10 @@
       "value": "Select a managed identity"
     }
   ],
-  "Os0h2Y": [
+  "Ov7Ckz": [
     {
       "type": 0,
-      "value": "Missing required properties '"
+      "value": "Missing required property '"
     },
     {
       "type": 1,
@@ -4096,7 +4124,7 @@
     },
     {
       "type": 1,
-      "value": "convertedAuthType"
+      "value": "authType"
     },
     {
       "type": 0,
@@ -4347,28 +4375,6 @@
     {
       "type": 0,
       "value": "Status code"
-    }
-  ],
-  "QKWoVr": [
-    {
-      "type": 0,
-      "value": "Missing required property '"
-    },
-    {
-      "type": 1,
-      "value": "missingProperties"
-    },
-    {
-      "type": 0,
-      "value": "' for authentication type '"
-    },
-    {
-      "type": 1,
-      "value": "convertedAuthType"
-    },
-    {
-      "type": 0,
-      "value": "'"
     }
   ],
   "QZBPUx": [
@@ -5099,12 +5105,6 @@
     {
       "type": 0,
       "value": "Show less"
-    }
-  ],
-  "V0le5X": [
-    {
-      "type": 0,
-      "value": "Enter a valid JSON."
     }
   ],
   "V3vpin": [
@@ -7807,6 +7807,12 @@
       "value": "Returns a string representation of a data URI"
     }
   ],
+  "mNaBPE": [
+    {
+      "type": 0,
+      "value": "Enter a valid JSON."
+    }
+  ],
   "mPakaD": [
     {
       "type": 0,
@@ -8555,28 +8561,6 @@
     {
       "type": 0,
       "value": "Asynchronous response allows a Logic App to respond with a 202 (Accepted) to indicate the request has been accepted for processing. A location header will be provided to retrieve the final state."
-    }
-  ],
-  "qs9D+A": [
-    {
-      "type": 0,
-      "value": "Invalid property '"
-    },
-    {
-      "type": 1,
-      "value": "invalidProperties"
-    },
-    {
-      "type": 0,
-      "value": "' for authentication type '"
-    },
-    {
-      "type": 1,
-      "value": "convertedAuthType"
-    },
-    {
-      "type": 0,
-      "value": "'."
     }
   ],
   "qy5WqY": [

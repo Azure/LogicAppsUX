@@ -4,14 +4,11 @@ import constants from '../constants';
 import type { ValueSegment } from '../editor';
 import { ValueSegmentType } from '../editor';
 import { convertStringToSegments } from '../editor/base/utils/editorToSegment';
-import { getChildrenNodes } from '../editor/base/utils/helper';
 import { convertKeyValueItemToSegments } from '../editor/base/utils/keyvalueitem';
 import { AuthenticationOAuthType } from './AADOAuth/AADOAuth';
 import { getIntl } from '@microsoft/intl-logic-apps';
 import type { ManagedIdentity } from '@microsoft/utils-logic-apps';
 import { guid, equals, ResourceIdentityType } from '@microsoft/utils-logic-apps';
-import { $getRoot } from 'lexical';
-import type { LexicalEditor } from 'lexical';
 
 export interface AuthProperty {
   displayName: string;
@@ -268,8 +265,8 @@ export const AUTHENTICATION_PROPERTIES = {
 
 export const PROPERTY_NAMES_FOR_AUTHENTICATION_TYPE: Record<string, AuthProperty[]> = {
   Basic: [AUTHENTICATION_PROPERTIES.BASIC_USERNAME, AUTHENTICATION_PROPERTIES.BASIC_PASSWORD],
-  'Client Certificate': [AUTHENTICATION_PROPERTIES.CLIENT_CERTIFICATE_PFX, AUTHENTICATION_PROPERTIES.CLIENT_CERTIFICATE_PASSWORD],
-  'Active Directory OAuth': [
+  ClientCertificate: [AUTHENTICATION_PROPERTIES.CLIENT_CERTIFICATE_PFX, AUTHENTICATION_PROPERTIES.CLIENT_CERTIFICATE_PASSWORD],
+  ActiveDirectoryOAuth: [
     AUTHENTICATION_PROPERTIES.AAD_OAUTH_TENANT,
     AUTHENTICATION_PROPERTIES.AAD_OAUTH_AUDIENCE,
     AUTHENTICATION_PROPERTIES.AAD_OAUTH_AUTHORITY,
@@ -279,7 +276,7 @@ export const PROPERTY_NAMES_FOR_AUTHENTICATION_TYPE: Record<string, AuthProperty
     AUTHENTICATION_PROPERTIES.AAD_OAUTH_CERTIFICATE_PASSWORD,
   ],
   Raw: [AUTHENTICATION_PROPERTIES.RAW_VALUE],
-  'Managed Identity': [AUTHENTICATION_PROPERTIES.MSI_AUDIENCE, AUTHENTICATION_PROPERTIES.MSI_IDENTITY],
+  ManagedServiceIdentity: [AUTHENTICATION_PROPERTIES.MSI_AUDIENCE, AUTHENTICATION_PROPERTIES.MSI_IDENTITY],
   None: [],
 };
 
@@ -364,67 +361,67 @@ const updateValues = (values: CollapsedAuthEditorItems[], property: AuthProperty
 };
 
 export const serializeAuthentication = (
-  editor: LexicalEditor,
+  editorString: string,
   setCurrentProps: (items: AuthProps) => void,
-  setOption: (s: AuthenticationType) => void
-) => {
-  editor.getEditorState().read(() => {
-    const nodeMap = new Map<string, ValueSegment>();
-    const editorString = getChildrenNodes($getRoot(), nodeMap);
-    let jsonEditor = Object.create(null);
-    try {
-      jsonEditor = JSON.parse(editorString);
-    } catch (e) {
-      throw new Error(`Invalid Authentication value. ${e}`);
-    }
-    const returnItems: AuthProps = {};
-    setOption(jsonEditor.type);
-    switch (jsonEditor.type) {
-      case AuthenticationType.BASIC:
-        returnItems.basic = {
-          basicUsername: convertStringToSegments(jsonEditor.username, true, nodeMap),
-          basicPassword: convertStringToSegments(jsonEditor.password, true, nodeMap),
-        };
-        break;
-      case AuthenticationType.CERTIFICATE:
-        returnItems.clientCertificate = {
-          clientCertificatePfx: convertStringToSegments(jsonEditor.pfx, true, nodeMap),
-          clientCertificatePassword: convertStringToSegments(jsonEditor.password, true, nodeMap),
-        };
-        break;
-      case AuthenticationType.RAW:
-        returnItems.raw = {
-          rawValue: convertStringToSegments(jsonEditor.value, true, nodeMap),
-        };
-        break;
-      case AuthenticationType.MSI:
-        returnItems.msi = {
-          msiIdentity: jsonEditor.identity,
-          msiAudience: convertStringToSegments(jsonEditor.audience, true, nodeMap),
-        };
-        break;
-      case AuthenticationType.OAUTH:
-        returnItems.aadOAuth = {
-          oauthTenant: convertStringToSegments(jsonEditor.tenant, true, nodeMap),
-          oauthAudience: convertStringToSegments(jsonEditor.audience, true, nodeMap),
-          oauthClientId: convertStringToSegments(jsonEditor.clientId, true, nodeMap),
-        };
-        if (jsonEditor.authority) {
-          returnItems.aadOAuth.oauthAuthority = convertStringToSegments(jsonEditor.authority, true, nodeMap);
-        }
-        if (jsonEditor.secret) {
-          returnItems.aadOAuth.oauthType = AuthenticationOAuthType.SECRET;
-          returnItems.aadOAuth.oauthTypeSecret = convertStringToSegments(jsonEditor.secret, true, nodeMap);
-        }
-        if (jsonEditor.pfx && jsonEditor.password) {
-          returnItems.aadOAuth.oauthType = AuthenticationOAuthType.CERTIFICATE;
-          returnItems.aadOAuth.oauthTypeCertificatePfx = convertStringToSegments(jsonEditor.pfx, true, nodeMap);
-          returnItems.aadOAuth.oauthTypeCertificatePassword = convertStringToSegments(jsonEditor.password, true, nodeMap);
-        }
-        break;
-    }
-    setCurrentProps(returnItems);
-  });
+  setOption: (s: AuthenticationType) => void,
+  nodeMap?: Map<string, ValueSegment>
+): boolean => {
+  let jsonEditor = Object.create(null);
+  try {
+    jsonEditor = JSON.parse(editorString);
+  } catch (e) {
+    throw new Error(`Invalid Authentication value. ${e}`);
+  }
+  const returnItems: AuthProps = {};
+  switch (jsonEditor.type) {
+    case AuthenticationType.BASIC:
+      returnItems.basic = {
+        basicUsername: convertStringToSegments(jsonEditor.username, true, nodeMap),
+        basicPassword: convertStringToSegments(jsonEditor.password, true, nodeMap),
+      };
+      break;
+    case AuthenticationType.CERTIFICATE:
+      returnItems.clientCertificate = {
+        clientCertificatePfx: convertStringToSegments(jsonEditor.pfx, true, nodeMap),
+        clientCertificatePassword: convertStringToSegments(jsonEditor.password, true, nodeMap),
+      };
+      break;
+    case AuthenticationType.RAW:
+      returnItems.raw = {
+        rawValue: convertStringToSegments(jsonEditor.value, true, nodeMap),
+      };
+      break;
+    case AuthenticationType.MSI:
+      returnItems.msi = {
+        msiIdentity: jsonEditor.identity,
+        msiAudience: convertStringToSegments(jsonEditor.audience, true, nodeMap),
+      };
+      break;
+    case AuthenticationType.OAUTH:
+      returnItems.aadOAuth = {
+        oauthTenant: convertStringToSegments(jsonEditor.tenant, true, nodeMap),
+        oauthAudience: convertStringToSegments(jsonEditor.audience, true, nodeMap),
+        oauthClientId: convertStringToSegments(jsonEditor.clientId, true, nodeMap),
+      };
+      if (jsonEditor.authority) {
+        returnItems.aadOAuth.oauthAuthority = convertStringToSegments(jsonEditor.authority, true, nodeMap);
+      }
+      if (jsonEditor.secret) {
+        returnItems.aadOAuth.oauthType = AuthenticationOAuthType.SECRET;
+        returnItems.aadOAuth.oauthTypeSecret = convertStringToSegments(jsonEditor.secret, true, nodeMap);
+      }
+      if (jsonEditor.pfx && jsonEditor.password) {
+        returnItems.aadOAuth.oauthType = AuthenticationOAuthType.CERTIFICATE;
+        returnItems.aadOAuth.oauthTypeCertificatePfx = convertStringToSegments(jsonEditor.pfx, true, nodeMap);
+        returnItems.aadOAuth.oauthTypeCertificatePassword = convertStringToSegments(jsonEditor.password, true, nodeMap);
+      }
+      break;
+    default:
+      return false;
+  }
+  setOption(jsonEditor.type);
+  setCurrentProps(returnItems);
+  return true;
 };
 
 export function containsToken(value: string): boolean {
@@ -435,90 +432,39 @@ export function containsToken(value: string): boolean {
   }
 }
 
-export const validateAuthentication = (s: string, setErrorMessage: (s: string) => void): string => {
-  const intl = getIntl();
-  const invalidJsonErrorMessage = intl.formatMessage(
-    {
-      defaultMessage: 'Invalid json format. Missing beginning {openingBracket} or ending {closingBracket}.',
-      description: 'Invalid JSON format',
-    },
-    {
-      openingBracket: '{',
-      closingBracket: '}',
-    }
-  );
-  if (!(s.startsWith('{') && s.endsWith('}'))) {
-    setErrorMessage(invalidJsonErrorMessage);
-    return invalidJsonErrorMessage;
-  }
-  const errorMessage = validateAuthenticationString(s);
-  if (errorMessage) {
-    setErrorMessage(errorMessage);
-    return errorMessage;
-  }
-  return '';
-};
-
 export const validateAuthenticationString = (s: string): string => {
   const intl = getIntl();
   let parsedSerializedValue = Object.create(null);
-  try {
-    parsedSerializedValue = JSON.parse(s);
-    if (parsedSerializedValue.type === undefined) {
-      return intl.formatMessage({
-        defaultMessage: "Missing authentication type property: 'type'.",
-        description: 'Invalid authentication without type property',
-      });
-    } else {
-      const authType = parsedSerializedValue.type;
-      if (!Object.values(AuthenticationType).find((val) => authType === val)) {
-        if (containsToken(authType)) {
-          return intl.formatMessage({
-            defaultMessage: "Missing authentication type property: 'type'.",
-            description: 'Invalid authentication without type property',
-          });
-        }
-        return intl.formatMessage(
-          {
-            defaultMessage: "Unsupported authentication type ''{authType}''.",
-            description: 'Invalid authentication type',
-          },
-          { authType }
-        );
-      } else {
-        let errorMessage = checkForMissingOrInvalidProperties(parsedSerializedValue, authType);
-        if (errorMessage) {
-          return errorMessage;
-        }
-        errorMessage = checkForUnknownProperties(parsedSerializedValue, authType);
-        if (errorMessage) {
-          return errorMessage;
-        }
-        errorMessage = checkForInvalidValues(parsedSerializedValue);
-        if (errorMessage) {
-          return errorMessage;
-        }
-      }
-    }
-  } catch {
+  parsedSerializedValue = JSON.parse(s);
+  if (parsedSerializedValue.type === undefined) {
     return intl.formatMessage({
-      defaultMessage: 'Enter a valid JSON.',
-      description: 'Invalid JSON',
+      defaultMessage: "Missing authentication type property: 'type'.",
+      description: 'Invalid authentication without type property',
     });
+  } else {
+    const authType = parsedSerializedValue.type;
+    if (!Object.values(AuthenticationType).find((val) => authType === val)) {
+      if (containsToken(authType)) {
+        return intl.formatMessage({
+          defaultMessage: "Missing authentication type property: 'type'.",
+          description: 'Invalid authentication without type property',
+        });
+      }
+      return intl.formatMessage(
+        {
+          defaultMessage: "Unsupported authentication type ''{authType}''.",
+          description: 'Invalid authentication type',
+        },
+        { authType }
+      );
+    } else {
+      const errorMessage =
+        checkForMissingOrInvalidProperties(parsedSerializedValue, authType) ||
+        checkForUnknownProperties(parsedSerializedValue, authType) ||
+        checkForInvalidValues(parsedSerializedValue);
+      return errorMessage;
+    }
   }
-
-  return '';
-};
-
-const authTypeConversion = (s: string): string => {
-  if (s === AuthenticationType.CERTIFICATE) {
-    return 'Client Certificate';
-  } else if (s === AuthenticationType.MSI) {
-    return 'Managed Service Identity';
-  } else if (s === AuthenticationType.OAUTH) {
-    return 'Active Directory OAuth';
-  }
-  return s;
 };
 
 /**
@@ -530,8 +476,7 @@ const authTypeConversion = (s: string): string => {
 function checkForMissingOrInvalidProperties(authentication: any, authType: AuthenticationType): string {
   const intl = getIntl();
   let missingProperties: string[] = [];
-  const convertedAuthType = authTypeConversion(authType);
-  for (const key of PROPERTY_NAMES_FOR_AUTHENTICATION_TYPE[convertedAuthType]) {
+  for (const key of PROPERTY_NAMES_FOR_AUTHENTICATION_TYPE[authType]) {
     if (key.isRequired && authentication[key.name] === undefined) {
       missingProperties.push(key.name);
     }
@@ -568,17 +513,17 @@ function checkForMissingOrInvalidProperties(authentication: any, authType: Authe
       missingProperties.length === 1
         ? intl.formatMessage(
             {
-              defaultMessage: "Missing required property ''{missingProperties}'' for authentication type ''{convertedAuthType}''",
+              defaultMessage: "Missing required property ''{missingProperties}'' for authentication type ''{authType}''",
               description: 'Error message when missing a required authentication property',
             },
-            { missingProperties: missingProperties[0], convertedAuthType }
+            { missingProperties: missingProperties[0], authType }
           )
         : intl.formatMessage(
             {
-              defaultMessage: "Missing required properties ''{missingProperties}'' for authentication type ''{convertedAuthType}''",
+              defaultMessage: "Missing required properties ''{missingProperties}'' for authentication type ''{authType}''",
               description: 'Error message when missing multiple required authentication properties',
             },
-            { missingProperties: missingProperties.join(', '), convertedAuthType }
+            { missingProperties: missingProperties.join(', '), authType }
           );
 
     return errorMessage;
@@ -595,8 +540,7 @@ function checkForMissingOrInvalidProperties(authentication: any, authType: Authe
  */
 function checkForUnknownProperties(authentication: any, authType: AuthenticationType): string {
   const intl = getIntl();
-  const convertedAuthType = authTypeConversion(authType);
-  const validKeyNames = PROPERTY_NAMES_FOR_AUTHENTICATION_TYPE[convertedAuthType].map((key) => key.name);
+  const validKeyNames = PROPERTY_NAMES_FOR_AUTHENTICATION_TYPE[authType].map((key) => key.name);
   const authenticationKeys = Object.keys(authentication);
   const invalidProperties: string[] = [];
 
@@ -616,17 +560,17 @@ function checkForUnknownProperties(authentication: any, authType: Authentication
       invalidProperties.length === 1
         ? intl.formatMessage(
             {
-              defaultMessage: "Invalid property ''{invalidProperties}'' for authentication type ''{convertedAuthType}''.",
+              defaultMessage: "Invalid property ''{invalidProperties}'' for authentication type ''{authType}''.",
               description: 'Error message when having an invalid authentication property',
             },
-            { invalidProperties: invalidProperties[0], convertedAuthType }
+            { invalidProperties: invalidProperties[0], authType }
           )
         : intl.formatMessage(
             {
-              defaultMessage: "The ''{invalidProperties}'' properties are invalid for the ''{convertedAuthType}'' authentication type.",
+              defaultMessage: "The ''{invalidProperties}'' properties are invalid for the ''{authType}'' authentication type.",
               description: 'Error message when having multiple invalid authentication properties',
             },
-            { invalidProperties: invalidProperties.join(', '), convertedAuthType }
+            { invalidProperties: invalidProperties.join(', '), authType }
           );
 
     return errorMessage;
@@ -642,8 +586,7 @@ function checkForUnknownProperties(authentication: any, authType: Authentication
  */
 function checkForInvalidValues(authentication: any): string {
   const intl = getIntl();
-  const convertedAuthType = authTypeConversion(authentication.type);
-  const validProperties = PROPERTY_NAMES_FOR_AUTHENTICATION_TYPE[convertedAuthType];
+  const validProperties = PROPERTY_NAMES_FOR_AUTHENTICATION_TYPE[authentication.type];
   const errorMessages: string[] = [];
   const authenticationKeys = Object.keys(authentication);
   for (const authenticationKey of authenticationKeys) {

@@ -1,3 +1,4 @@
+import { formatValue, getEditorHeight, getInitialValue } from '../code/util';
 import type { ValueSegment } from '../editor';
 import { ValueSegmentType } from '../editor';
 import type { ChangeHandler } from '../editor/base';
@@ -159,24 +160,4 @@ export function SchemaEditor({ readonly, label, initialValue, onChange, onFocus 
       </ModalDialog>
     </div>
   );
-}
-
-const getInitialValue = (initialValue: ValueSegment[]): string => {
-  if (initialValue[0]?.value) {
-    return formatValue(initialValue[0].value);
-  }
-  return '';
-};
-
-const formatValue = (input: string): string => {
-  try {
-    return JSON.stringify(JSON.parse(input), null, 4);
-  } catch {
-    return input;
-  }
-};
-
-// Monaco should be at least 3 rows high (19*3 px) but no more than 20 rows high (19*20 px).
-function getEditorHeight(input = ''): string {
-  return Math.min(Math.max(input?.split('\n').length * 20, 120), 380) + 'px';
 }
