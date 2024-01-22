@@ -422,7 +422,7 @@ export const updateCallbackUrlInInputs = async (
   { type, kind }: NodeOperation,
   nodeInputs: NodeInputs
 ): Promise<ParameterInfo | undefined> => {
-  if (equals(type, Constants.NODE.TYPE.REQUEST) && equals(kind, Constants.NODE.KIND.HTTP)) {
+  if (equals(type, Constants.NODE.TYPE.REQUEST) && (equals(kind, Constants.NODE.KIND.HTTP) || equals(kind, Constants.NODE.KIND.TEAMSWEBHOOK))) {
     try {
       const callbackInfo = await WorkflowService().getCallbackUrl(nodeId);
       const parameter = getParameterFromName(nodeInputs, 'callbackUrl');
