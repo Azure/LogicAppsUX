@@ -91,12 +91,11 @@ export const Combobox = ({
   const intl = useIntl();
   const comboBoxRef = useRef<IComboBox>(null);
   const optionKey = getSelectedKey(options, initialValue, isLoading);
+  const optionKeys = getSelectedKeys(options, initialValue, serialization);
   const [value, setValue] = useState<ValueSegment[]>(initialValue);
-  const [mode, setMode] = useState<Mode>(getMode(optionKey, initialValue, isLoading));
+  const [mode, setMode] = useState<Mode>(getMode(optionKey, optionKeys, initialValue, isLoading));
   const [selectedKey, setSelectedKey] = useState<string>(optionKey);
-  const [selectedKeys, setSelectedKeys] = useState<string[] | undefined>(
-    multiSelect ? getSelectedKeys(options, initialValue, serialization) : undefined
-  );
+  const [selectedKeys, setSelectedKeys] = useState<string[] | undefined>(multiSelect ? optionKeys : undefined);
   const [searchValue, setSearchValue] = useState<string>('');
   const [canAutoFocus, setCanAutoFocus] = useState(false);
   const firstLoad = useRef(true);
@@ -105,8 +104,9 @@ export const Combobox = ({
     if ((firstLoad.current || !errorDetails) && !isLoading) {
       firstLoad.current = false;
       const updatedOptionkey = getSelectedKey(options, initialValue, isLoading);
+      const updatedOptionKeys = getSelectedKeys(options, initialValue, serialization);
       setSelectedKey(updatedOptionkey);
-      setMode(getMode(updatedOptionkey, initialValue, isLoading));
+      setMode(getMode(updatedOptionkey, updatedOptionKeys, initialValue, isLoading));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoading]);
@@ -346,8 +346,15 @@ const getOptions = (options: ComboboxItem[]): IComboBoxOption[] => {
   ];
 };
 
-const getMode = (selectedKey: string, initialValue: ValueSegment[], isLoading?: boolean): Mode => {
+const getMode = (selectedKey: string, selectedKeys: string[], initialValue: ValueSegment[], isLoading?: boolean): Mode => {
   if (isLoading) return Mode.Default;
+  if (selectedKeys.length > 0) {
+    for (const key of selectedKeys) {
+      const hasValue = initialValue.length > 0 && initialValue[0].value;
+      if (hasValue && !key) return Mode.Custom;
+    }
+    return Mode.Default;
+  }
   const hasValue = initialValue.length > 0 && initialValue[0].value;
   return hasValue ? (selectedKey ? Mode.Default : Mode.Custom) : Mode.Default;
 };
