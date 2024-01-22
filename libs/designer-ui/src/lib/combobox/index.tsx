@@ -201,7 +201,7 @@ export const Combobox = ({
     }
   };
 
-  const handleOptionSelect = (option?: IComboBoxOption): void => {
+  const handleOptionSelect = (_event: FormEvent<IComboBox>, option?: IComboBoxOption): void => {
     if (option?.data === 'customrender') {
       setValue([{ id: guid(), type: ValueSegmentType.LITERAL, value: option.key === 'customValue' ? '' : option.key.toString() }]);
       setMode(Mode.Custom);
@@ -225,20 +225,28 @@ export const Combobox = ({
   };
 
   const handleOptionMultiSelect = (_event: FormEvent<IComboBox>, option?: IComboBoxOption): void => {
-    if (option && selectedKeys) {
-      const newKeys = option.selected ? [...selectedKeys, option.key as string] : selectedKeys.filter((key: string) => key !== option.key);
-      setSelectedKeys(newKeys);
-
-      const selectedValues = newKeys.map((key) => getSelectedValue(options, key));
-      onChange?.({
-        value: [
-          {
-            id: guid(),
-            value: serialization?.valueType === 'array' ? JSON.stringify(selectedValues) : selectedValues.join(serialization?.separator),
-            type: ValueSegmentType.LITERAL,
-          },
-        ],
-      });
+    if (option?.data === 'customrender') {
+      setValue([{ id: guid(), type: ValueSegmentType.LITERAL, value: option.key === 'customValue' ? '' : option.key.toString() }]);
+      setMode(Mode.Custom);
+      setCanAutoFocus(true);
+    } else {
+      if (option && selectedKeys) {
+        const newKeys = option.selected
+          ? [...selectedKeys, option.key as string]
+          : selectedKeys.filter((key: string) => key !== option.key);
+        setSelectedKeys(newKeys);
+        setMode(Mode.Default);
+        const selectedValues = newKeys.map((key) => getSelectedValue(options, key));
+        onChange?.({
+          value: [
+            {
+              id: guid(),
+              value: serialization?.valueType === 'array' ? JSON.stringify(selectedValues) : selectedValues.join(serialization?.separator),
+              type: ValueSegmentType.LITERAL,
+            },
+          ],
+        });
+      }
     }
   };
 
@@ -314,8 +322,7 @@ export const Combobox = ({
           onRenderOption={onRenderOption}
           multiSelect={multiSelect}
           styles={comboboxStyles}
-          onItemClick={(_, o) => handleOptionSelect(o)}
-          onChange={handleOptionMultiSelect}
+          onChange={multiSelect ? handleOptionMultiSelect : handleOptionSelect}
           onMenuOpen={handleMenuOpen}
         />
       )}
