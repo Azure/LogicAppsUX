@@ -1,5 +1,5 @@
 import constants from '../../../constants';
-import { isEmpty } from '../../../dictionary/util/helper';
+import { isEmpty } from '../../../dictionary/expandeddictionary';
 import { ValueSegmentType, type ValueSegment } from '../../models/parameter';
 import { insertQutationForStringType } from './helper';
 import { convertSegmentsToString } from './parsesegments';

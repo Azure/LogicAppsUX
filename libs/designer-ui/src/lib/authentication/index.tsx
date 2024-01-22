@@ -11,7 +11,6 @@ import { CollapsedAuthentication } from './CollapsedAuthentication';
 import { MSIAuthentication } from './MSIAuth/MSIAuth';
 import { RawAuthentication } from './RawAuth';
 import { parseAuthEditor } from './util';
-import { useBoolean } from '@fluentui/react-hooks';
 import type { IDropdownOption } from '@fluentui/react/lib/Dropdown';
 import { getIntl } from '@microsoft/intl-logic-apps';
 import type { ManagedIdentity } from '@microsoft/utils-logic-apps';
@@ -92,23 +91,18 @@ export const AuthenticationEditor = ({
   ...props
 }: AuthenticationEditorProps): JSX.Element => {
   const intl = useIntl();
-  const [codeView, { toggle: toggleCodeView }] = useBoolean(initializeCollapsedView(initialValue));
+  const [expandedView, setExpandedView] = useState<boolean>(!isTokenValueSegment(initialValue));
+  const [collapsedErrorMessage, setCollapsedErrorMessage] = useState('');
   const [option, setOption] = useState<AuthenticationType>(type);
   const [collapsedValue, setCollapsedValue] = useState(initialValue);
   const [currentProps, setCurrentProps] = useState<AuthProps>(authenticationValue);
-  const [isValid, setIsValid] = useState(false);
   const { basic = {}, clientCertificate = {}, raw = {}, msi = {}, aadOAuth = {} } = currentProps;
 
-  const serializeCollapsedValue = (value: ValueSegment[]): void => {
-    if (isTokenValueSegment(value)) {
-      onChange?.({
-        value: value,
-        viewModel: {
-          type: AuthenticationType.NONE,
-          authenticationValue: { basic: {}, clientCertificate: {}, raw: {}, msi: {}, aadOAuth: {} },
-        },
-      });
-    }
+  const serializeCodeCollapsedValue = (value: ValueSegment[]): void => {
+    setCollapsedValue(value);
+    onChange?.({
+      value: value,
+    });
   };
 
   useUpdateEffect(() => {
@@ -214,21 +208,7 @@ export const AuthenticationEditor = ({
 
   return (
     <div className="msla-authentication-editor-container">
-      {codeView ? (
-        <CollapsedAuthentication
-          collapsedValue={collapsedValue}
-          isValid={isValid}
-          setCollapsedValue={setCollapsedValue}
-          setIsValid={setIsValid}
-          setCurrentProps={setCurrentProps}
-          setOption={setOption}
-          serializeValue={serializeCollapsedValue}
-          readonly={readonly}
-          getTokenPicker={getTokenPicker}
-          tokenMapping={tokenMapping}
-          loadParameterValueFromString={loadParameterValueFromString}
-        />
-      ) : (
+      {expandedView ? (
         <div className="msla-authentication-editor-expanded-container">
           <AuthenticationDropdown
             readonly={readonly}
@@ -239,13 +219,28 @@ export const AuthenticationEditor = ({
           />
           {renderAuthentication()}
         </div>
+      ) : (
+        <>
+          <CollapsedAuthentication
+            collapsedValue={collapsedValue}
+            setErrorMessage={setCollapsedErrorMessage}
+            setCurrentProps={setCurrentProps}
+            setOption={setOption}
+            serializeValue={serializeCodeCollapsedValue}
+            readonly={readonly}
+            getTokenPicker={getTokenPicker}
+            tokenMapping={tokenMapping}
+            loadParameterValueFromString={loadParameterValueFromString}
+          />
+          <div className="msla-auth-editor-validation">{collapsedErrorMessage}</div>
+        </>
       )}
       <div className="msla-authentication-default-view-mode">
         <EditorCollapseToggle
-          label={codeView ? collapsedLabel : expandedLabel}
-          collapsed={codeView}
-          toggleCollapsed={toggleCodeView}
-          disabled={codeView && !isValid}
+          label={expandedView ? expandedLabel : collapsedLabel}
+          collapsed={!expandedView}
+          toggleCollapsed={() => setExpandedView(!expandedView)}
+          disabled={!expandedView && (isTokenValueSegment(collapsedValue) || collapsedErrorMessage.length > 0)}
         />
       </div>
     </div>
@@ -289,7 +284,4 @@ const getAuthenticationTypes = (supportedTypes: AuthenticationType[]): IDropdown
         return { key: type, text: type };
     }
   });
-};
-const initializeCollapsedView = (initialValue: ValueSegment[]): boolean => {
-  return isTokenValueSegment(initialValue);
 };
