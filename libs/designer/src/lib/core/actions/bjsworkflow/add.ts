@@ -124,7 +124,6 @@ export const initializeOperationDetails = async (
       operationInfo,
       nodeId
     );
-    let updatedOutputs = nodeOutputs;
     parsedManifest = new ManifestParser(manifest);
 
     const nodeDependencies = { inputs: inputDependencies, outputs: outputDependencies };
@@ -139,6 +138,7 @@ export const initializeOperationDetails = async (
     );
 
     // We should update the outputs when splitOn is enabled.
+    let updatedOutputs = nodeOutputs;
     if (isTrigger && settings.splitOn?.value?.value) {
       updatedOutputs = getOutputParametersFromManifest(
         manifest,
@@ -191,23 +191,29 @@ export const initializeOperationDetails = async (
       state.workflow.workflowKind
     );
 
+    // We should update the outputs when splitOn is enabled.
+    let updatedOutputs = nodeOutputs;
+    if (isTrigger && settings.splitOn?.value?.value) {
+      updatedOutputs = getOutputParametersFromSwagger(
+        isTrigger,
+        swagger,
+        operationInfo,
+        nodeInputs,
+        settings.splitOn?.value?.value
+      ).outputs;
+    }
+
     initData = {
       id: nodeId,
       nodeInputs,
-      actionMetadata,
-      nodeOutputs,
+      nodeOutputs: updatedOutputs,
       nodeDependencies,
       settings,
       operationMetadata: { iconUri, brandColor },
+      actionMetadata,
     };
     dispatch(initializeNodes([initData]));
-    addTokensAndVariables(
-      nodeId,
-      type,
-      { id: nodeId, nodeInputs, nodeOutputs, settings, operationMetadata: { iconUri, brandColor }, nodeDependencies },
-      state,
-      dispatch
-    );
+    addTokensAndVariables(nodeId, type, initData, state, dispatch);
   }
 
   if (!isConnectionRequired) {
