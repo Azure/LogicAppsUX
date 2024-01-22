@@ -4,6 +4,7 @@ import type { RootState } from '../../store';
 import { useConnector, useConnectorAndSwagger, useNodeConnectionId } from '../connection/connectionSelector';
 import type { NodeOperation } from '../operation/operationMetadataSlice';
 import { OperationManifestService } from '@microsoft/designer-client-services-logic-apps';
+import type { Operation } from '@microsoft/parsers-logic-apps';
 import { SwaggerParser } from '@microsoft/parsers-logic-apps';
 import { getObjectPropertyValue } from '@microsoft/utils-logic-apps';
 import { createSelector } from '@reduxjs/toolkit';
@@ -115,58 +116,41 @@ export const useOperationDescription = (operationInfo: NodeOperation) => {
   const operationManifestService = OperationManifestService();
   const useManifest = operationManifestService.isSupported(operationInfo?.type ?? '', operationInfo?.kind ?? '');
 
-  const { data: connectorData } = useConnectorAndSwagger(operationInfo?.connectorId, !useManifest);
-
-  const { result, isLoading } = useNodeAttribute(operationInfo, ['description'], ['description']);
-
-  const { swagger } = connectorData ?? {};
-  if (swagger) {
-    const swaggerParsed = new SwaggerParser(swagger);
-    const swaggerResult = swaggerParsed.getOperationByOperationId(operationInfo.operationId)?.description;
-    if (swaggerResult) {
-      return { isLoading, result: swaggerResult };
-    }
-  }
-
-  return { result, isLoading };
+  return useNodeAttributeOrSwagger(operationInfo, ['description'], 'description', { useManifest });
 };
 
-export const useOperationDocumentation = (operationInfo: NodeOperation) => {
+export const useOperationDocumentation = (operationInfo: NodeOperation): QueryResult => {
   const operationManifestService = OperationManifestService();
   const useManifest = operationManifestService.isSupported(operationInfo?.type ?? '', operationInfo?.kind ?? '');
 
-  const { data: connectorData } = useConnectorAndSwagger(operationInfo?.connectorId, !useManifest);
-  const { result, isLoading } = useNodeAttribute(operationInfo, ['connector', 'properties', 'externalDocs'], ['externalDocs']);
-  const { swagger } = connectorData ?? {};
-  if (swagger) {
-    const swaggerParsed = new SwaggerParser(swagger);
-    const swaggerResult = swaggerParsed.getOperationByOperationId(operationInfo.operationId)?.externalDocs;
-    if (swaggerResult) {
-      return { isLoading, result: swaggerResult };
-    }
-  }
-  return { result, isLoading };
+  return useNodeAttributeOrSwagger(operationInfo, ['connector', 'properties', 'externalDocs'], 'externalDocs', { useManifest });
 };
 
 export const useOperationSummary = (operationInfo: NodeOperation) => {
   const operationManifestService = OperationManifestService();
   const useManifest = operationManifestService.isSupported(operationInfo?.type ?? '', operationInfo?.kind ?? '');
 
-  const { data: connectorData } = useConnectorAndSwagger(operationInfo?.connectorId, !useManifest);
+  return useNodeAttributeOrSwagger(operationInfo, ['summary'], 'summary', { useManifest });
+};
 
-  const { result, isLoading } = useNodeAttribute(operationInfo, ['summary'], ['summary']);
-
+const useNodeAttributeOrSwagger = (
+  operationInfo: NodeOperation,
+  propertyInManifest: string[],
+  propertyInConnector: keyof Operation,
+  options: { useManifest: boolean }
+): QueryResult => {
+  const { data: connectorData } = useConnectorAndSwagger(operationInfo?.connectorId, !options.useManifest);
+  const { result, isLoading } = useNodeAttribute(operationInfo, propertyInManifest, [propertyInConnector]);
   const { swagger } = connectorData ?? {};
   if (swagger) {
     const swaggerParsed = new SwaggerParser(swagger);
-    const swaggerResult = swaggerParsed.getOperationByOperationId(operationInfo.operationId)?.summary;
+    const swaggerResult = swaggerParsed.getOperationByOperationId(operationInfo.operationId)?.[propertyInConnector];
     if (swaggerResult) {
       return { isLoading, result: swaggerResult };
     }
   }
-
   return { result, isLoading };
-};
+}
 
 export const useConnectorDescription = (operationInfo: NodeOperation) => {
   return useNodeAttribute(operationInfo, ['connector', 'properties', 'description'], ['description']);
