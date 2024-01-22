@@ -22,6 +22,7 @@ const lexicalUnsafeCharacterDecodingMap: Record<string, string> = lexicalUnsafeC
 );
 
 const lexicalSupportedTagNames = new Set([
+  'a',
   'b',
   'br',
   'em',
@@ -37,6 +38,7 @@ const lexicalSupportedTagNames = new Set([
   'p',
   'span',
   'strong',
+  'u',
   'ul',
 ]);
 const lexicalSupportedAttributes: { '*': string[] } & Record<string, string[]> = {
