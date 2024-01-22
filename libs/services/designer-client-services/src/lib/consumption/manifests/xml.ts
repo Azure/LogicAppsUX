@@ -79,20 +79,19 @@ export const xmlTransformManifest = {
           'x-ms-editor': 'dropdown',
           'x-ms-editor-options': {
             multiSelect: true,
-            titleSeparator: ';',
-            valueSeparator: ';',
-            items: [
+            titleSeparator: ',',
+            options: [
               {
-                title: '0',
-                value: 0,
+                displayName: 'Disable the byte order mark.',
+                value: 'DisableByteOrderMark',
               },
               {
-                title: '1',
-                value: 1,
+                displayName: 'Generate text output.',
+                value: 'GenerateTextOutput',
               },
               {
-                title: '24',
-                value: 24,
+                displayName: 'Apply XSLT output attributes.',
+                value: 'ApplyXsltOutputAttributes',
               },
             ],
           },
