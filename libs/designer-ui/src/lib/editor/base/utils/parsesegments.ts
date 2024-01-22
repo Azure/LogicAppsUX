@@ -40,6 +40,10 @@ export interface SegmentParserOptions {
   tokensEnabled?: boolean;
 }
 
+export const isEmptySegments = (segments: ValueSegment[]): boolean => {
+  return !segments.length || (segments.length === 1 && segments[0].value === '');
+};
+
 export const parseHtmlSegments = (value: ValueSegment[], options?: SegmentParserOptions): RootNode => {
   const { tokensEnabled } = options ?? {};
   const editor = createEditor({ ...defaultInitialConfig, nodes: htmlNodes });
@@ -97,7 +101,7 @@ export const parseHtmlSegments = (value: ValueSegment[], options?: SegmentParser
         }
       });
     } else {
-      paragraph.append(currNode);
+      appendChildrenNode(paragraph, currNode, nodeMap, options);
     }
   });
   if (paragraph.getChildren().length > 0) {
