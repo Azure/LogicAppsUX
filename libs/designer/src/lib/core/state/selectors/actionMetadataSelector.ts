@@ -116,41 +116,44 @@ export const useOperationDescription = (operationInfo: NodeOperation): QueryResu
   const operationManifestService = OperationManifestService();
   const useManifest = operationManifestService.isSupported(operationInfo?.type ?? '', operationInfo?.kind ?? '');
 
-  return useNodeAttributeOrSwagger(operationInfo, ['description'], 'description', { useManifest });
+  return useNodeAttributeOrSwagger(operationInfo, ['description'], ['description'], 'description', { useManifest });
 };
 
 export const useOperationDocumentation = (operationInfo: NodeOperation): QueryResult => {
   const operationManifestService = OperationManifestService();
   const useManifest = operationManifestService.isSupported(operationInfo?.type ?? '', operationInfo?.kind ?? '');
 
-  return useNodeAttributeOrSwagger(operationInfo, ['connector', 'properties', 'externalDocs'], 'externalDocs', { useManifest });
+  return useNodeAttributeOrSwagger(operationInfo, ['connector', 'properties', 'externalDocs'], ['externalDocs'], 'externalDocs', {
+    useManifest,
+  });
 };
 
 export const useOperationSummary = (operationInfo: NodeOperation): QueryResult => {
   const operationManifestService = OperationManifestService();
   const useManifest = operationManifestService.isSupported(operationInfo?.type ?? '', operationInfo?.kind ?? '');
 
-  return useNodeAttributeOrSwagger(operationInfo, ['summary'], 'summary', { useManifest });
+  return useNodeAttributeOrSwagger(operationInfo, ['summary'], ['summary'], 'summary', { useManifest });
 };
 
 const useNodeAttributeOrSwagger = (
   operationInfo: NodeOperation,
   propertyInManifest: string[],
-  propertyInConnector: keyof Operation,
+  propertyInConnector: string[],
+  propertyInSwagger: keyof Operation,
   options: { useManifest: boolean }
 ): QueryResult => {
   const { data: connectorData } = useConnectorAndSwagger(operationInfo?.connectorId, !options.useManifest);
-  const { result, isLoading } = useNodeAttribute(operationInfo, propertyInManifest, [propertyInConnector]);
+  const { result, isLoading } = useNodeAttribute(operationInfo, propertyInManifest, propertyInConnector);
   const { swagger } = connectorData ?? {};
   if (swagger) {
     const swaggerParsed = new SwaggerParser(swagger);
-    const swaggerResult = swaggerParsed.getOperationByOperationId(operationInfo.operationId)?.[propertyInConnector];
+    const swaggerResult = swaggerParsed.getOperationByOperationId(operationInfo.operationId)?.[propertyInSwagger];
     if (swaggerResult) {
       return { isLoading, result: swaggerResult };
     }
   }
   return { result, isLoading };
-}
+};
 
 export const useConnectorDescription = (operationInfo: NodeOperation) => {
   return useNodeAttribute(operationInfo, ['connector', 'properties', 'description'], ['description']);
