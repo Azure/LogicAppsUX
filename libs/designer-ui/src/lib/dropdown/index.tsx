@@ -131,7 +131,7 @@ const getSelectedKey = (options: DropdownItem[], initialValue?: ValueSegment[]):
   if (initialValue?.length === 1 && initialValue[0].type === ValueSegmentType.LITERAL) {
     return (
       options.find((option) => {
-        return option.value.toString() === initialValue[0].value.toString();
+        return option.value === initialValue[0].value;
       })?.key ?? ''
     );
   }
@@ -151,7 +151,7 @@ const getSelectedKeys = (options: DropdownItem[], initialValue?: ValueSegment[],
 
     for (const selectedValue of selectedValues) {
       const option = options.find((option) => {
-        return option.value.toString() === selectedValue;
+        return option.value === selectedValue;
       });
 
       if (option) {

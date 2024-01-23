@@ -443,16 +443,23 @@ export function getParameterEditorProps(
       return {
         disabled,
         key: key ?? displayName,
-        value,
+        value: value?.toString(),
         displayName,
         type,
+      };
+    });
+
+    const modifiedOptions = editorOptions?.options?.map((option: any) => {
+      return {
+        ...option,
+        value: option?.value?.toString(),
       };
     });
 
     editorOptions = {
       ...editorOptions,
       serialization: { ...editorOptions?.serialization, separator: editorOptions?.titleSeparator },
-      options: dropdownOptions.length > 0 ? dropdownOptions : editorOptions?.options ?? [],
+      options: dropdownOptions.length > 0 ? dropdownOptions : modifiedOptions ?? [],
     };
   } else if (editor === constants.EDITOR.FLOATINGACTIONMENU && editorOptions?.menuKind === FloatingActionMenuKind.outputs) {
     editorViewModel = toFloatingActionMenuOutputsViewModel(value);
