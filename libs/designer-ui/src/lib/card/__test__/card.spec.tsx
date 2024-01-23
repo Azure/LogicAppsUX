@@ -43,9 +43,28 @@ describe('lib/card', () => {
     expect(tree).toMatchSnapshot();
   });
 
-  it('should render with an icon', () => {
+  it('should render with an icon and connector name', () => {
     const tree = renderer
-      .create(<Card {...minimal} icon="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" />)
+      .create(
+        <Card
+          {...minimal}
+          connectorName="Connector Name"
+          icon="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
+        />
+      )
+      .toJSON();
+    expect(tree).toMatchSnapshot();
+  });
+
+  it('should render with an icon and operation name', () => {
+    const tree = renderer
+      .create(
+        <Card
+          {...minimal}
+          icon="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
+          operationName="Operation Name"
+        />
+      )
       .toJSON();
     expect(tree).toMatchSnapshot();
   });
