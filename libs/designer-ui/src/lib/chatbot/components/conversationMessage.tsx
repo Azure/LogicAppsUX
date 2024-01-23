@@ -1,4 +1,4 @@
-import { useAzureCopilotButton, useFeedbackMessage } from '../feedbackHelper';
+import { useAzureCopilotButton, useExternalLink, useFeedbackMessage } from '../feedbackHelper';
 import { AssistantError } from './assistantError';
 import { AssistantGreeting } from './assistantGreeting';
 import { AssistantReplyWithFlow } from './assistantReplyWithFlow';
@@ -44,8 +44,9 @@ const UserMessage = ({ item }: { item: UserQueryItem }) => {
 };
 
 const AssistantReply = ({ item }: { item: AssistantReplyItem }) => {
-  const { id, text, hideFooter, date, azureButtonCallback } = item;
+  const { id, text, hideFooter, date, additionalDocDes, additionalDocURL, azureButtonCallback } = item;
   const azureCopilotButton = useAzureCopilotButton(azureButtonCallback);
+  const additionalDocSection = useExternalLink(additionalDocDes, additionalDocURL);
   const { feedbackMessage, onMessageReactionClicked, reaction } = useFeedbackMessage(item);
   const textRef = useRef<HTMLDivElement | null>(null);
   return (
@@ -58,6 +59,7 @@ const AssistantReply = ({ item }: { item: AssistantReplyItem }) => {
         selectedReaction={reaction}
         onThumbsReactionClicked={(reaction) => onMessageReactionClicked(reaction)}
         disabled={false} //TODO: add isBlockingOperationInProgress}
+        additionalLinksSection={additionalDocURL ? additionalDocSection : undefined}
         additionalFooterActions={hideFooter ? [] : azureButtonCallback ? [azureCopilotButton] : []}
         hideFooter={hideFooter}
         textRef={textRef}
