@@ -224,7 +224,7 @@ export const Chatbot = ({
         }
         const queryResponse: string = response.data.properties.response;
         // commenting out usage of additionalParameters until Logic Apps backend is updated to include this response property
-        const additionalParameters: AdditionalParametersItem = response.data.properties.additionalParameters; //TODO: additional
+        const additionalParameters: AdditionalParametersItem = response.data.properties.additionalParameters;
         setConversation((current) => [
           {
             type: ConversationItemType.Reply,
