@@ -43,26 +43,18 @@ describe('lib/card', () => {
     expect(tree).toMatchSnapshot();
   });
 
-  it('should render with an icon and connector name', () => {
+  it.each<[string, string | undefined, string | undefined]>([
+    ['a connector name', 'SharePoint', undefined],
+    ['an operation name', undefined, 'Get an item'],
+    ['an operation name and connector name', 'SharePoint', 'Get an item'],
+  ])('should render with an icon and %s (%#)', (_caseName, connectorName, operationName) => {
     const tree = renderer
       .create(
         <Card
           {...minimal}
-          connectorName="Connector Name"
+          connectorName={connectorName}
           icon="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
-        />
-      )
-      .toJSON();
-    expect(tree).toMatchSnapshot();
-  });
-
-  it('should render with an icon and operation name', () => {
-    const tree = renderer
-      .create(
-        <Card
-          {...minimal}
-          icon="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
-          operationName="Operation Name"
+          operationName={operationName}
         />
       )
       .toJSON();
