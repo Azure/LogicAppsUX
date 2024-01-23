@@ -155,6 +155,7 @@ export const TokenField = ({
           onChange={onValueChange}
           onMenuOpen={onComboboxMenuOpen}
           multiSelect={editorOptions?.multiSelect}
+          serialization={editorOptions?.serialization}
           dataAutomationId={`msla-setting-token-editor-combobox-${labelForAutomationId}`}
           tokenMapping={tokenMapping}
           loadParameterValueFromString={loadParameterValueFromString}
