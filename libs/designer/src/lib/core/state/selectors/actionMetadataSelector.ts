@@ -1,3 +1,4 @@
+import { titleCase } from '../../../common/utilities/Utils';
 import { isConnectionRequiredForOperation } from '../../actions/bjsworkflow/connections';
 import { useConnectionResource } from '../../queries/connections';
 import type { RootState } from '../../store';
@@ -132,7 +133,14 @@ export const useOperationSummary = (operationInfo: NodeOperation): QueryResult =
   const operationManifestService = OperationManifestService();
   const useManifest = operationManifestService.isSupported(operationInfo?.type ?? '', operationInfo?.kind ?? '');
 
-  return useNodeAttributeOrSwagger(operationInfo, ['summary'], ['summary'], 'summary', { useManifest });
+  const result = useNodeAttributeOrSwagger(operationInfo, ['summary'], ['summary'], 'summary', { useManifest });
+  if (result.result === undefined && operationInfo?.operationId) {
+    result.result = titleCase(operationInfo.operationId);
+  }
+
+  console.log(operationInfo, result);
+
+  return result;
 };
 
 const useNodeAttributeOrSwagger = (

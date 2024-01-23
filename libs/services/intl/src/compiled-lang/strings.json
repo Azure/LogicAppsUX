@@ -1317,6 +1317,16 @@
       "value": "Create flow"
     }
   ],
+  "6sSPNb": [
+    {
+      "type": 1,
+      "value": "connectorName"
+    },
+    {
+      "type": 0,
+      "value": " connector"
+    }
+  ],
   "6u6CS+": [
     {
       "type": 0,
@@ -1699,6 +1709,16 @@
     {
       "type": 0,
       "value": "User identity is not supported when Logic App has system assigned managed identity enabled."
+    }
+  ],
+  "96JG8I": [
+    {
+      "type": 1,
+      "value": "operationName"
+    },
+    {
+      "type": 0,
+      "value": " operation"
     }
   ],
   "99vsJy": [
@@ -8025,6 +8045,24 @@
       "value": "Suppress workflow headers"
     }
   ],
+  "ncW1Sw": [
+    {
+      "type": 1,
+      "value": "operationName"
+    },
+    {
+      "type": 0,
+      "value": " operation, "
+    },
+    {
+      "type": 1,
+      "value": "connectorName"
+    },
+    {
+      "type": 0,
+      "value": " connector"
+    }
+  ],
   "ngsC44": [
     {
       "type": 0,
@@ -8219,16 +8257,6 @@
       "value": "Enter a valid Double number."
     }
   ],
-  "owct7i": [
-    {
-      "type": 1,
-      "value": "operationName"
-    },
-    {
-      "type": 0,
-      "value": " icon"
-    }
-  ],
   "ox2Ou7": [
     {
       "type": 0,
@@ -8305,16 +8333,6 @@
     {
       "type": 0,
       "value": "Enter a valid integer."
-    }
-  ],
-  "pVs8AU": [
-    {
-      "type": 1,
-      "value": "connectorName"
-    },
-    {
-      "type": 0,
-      "value": " connector icon"
     }
   ],
   "pXmFGf": [

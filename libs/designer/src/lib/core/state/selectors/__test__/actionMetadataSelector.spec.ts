@@ -86,13 +86,11 @@ describe('actionMetadataSelector', () => {
           .spyOn(designerClientServices, 'OperationManifestService')
           .mockReturnValue(partialOperationManifestService as designerClientServices.IOperationManifestService);
 
-        jest
-          .spyOn(reactQuery, 'useQuery')
-          .mockReturnValue({
-            data: undefined /* Force call to `useConnector`. */,
-            isLoading: false,
-            status: 'success',
-          } as reactQuery.UseQueryResult<OperationManifest | undefined, unknown>);
+        jest.spyOn(reactQuery, 'useQuery').mockReturnValue({
+          data: undefined /* Force call to `useConnector`. */,
+          isLoading: false,
+          status: 'success',
+        } as reactQuery.UseQueryResult<OperationManifest | undefined, unknown>);
 
         jest
           .spyOn(connectionSelector, 'useConnector')
@@ -187,13 +185,11 @@ describe('actionMetadataSelector', () => {
         .spyOn(designerClientServices, 'OperationManifestService')
         .mockReturnValue(partialOperationManifestService as designerClientServices.IOperationManifestService);
 
-      jest
-        .spyOn(reactQuery, 'useQuery')
-        .mockReturnValue({
-          data: undefined /* Force call to `useConnector`. */,
-          isLoading: false,
-          status: 'success',
-        } as reactQuery.UseQueryResult<OperationManifest | undefined, unknown>);
+      jest.spyOn(reactQuery, 'useQuery').mockReturnValue({
+        data: undefined /* Force call to `useConnector`. */,
+        isLoading: false,
+        status: 'success',
+      } as reactQuery.UseQueryResult<OperationManifest | undefined, unknown>);
 
       jest
         .spyOn(connectionSelector, 'useConnector')
@@ -253,5 +249,47 @@ describe('actionMetadataSelector', () => {
         });
       }
     );
+
+    it('should retrieve name/summary operation ID (%#)', async () => {
+      const connector: Connector = {
+        id: 'connectorId',
+        name: 'My Connector',
+        properties: {
+          displayName: 'My Operation',
+          iconUri: 'https://example.com/icon.png',
+        },
+        type: 'connector',
+      };
+
+      const operationManifest: OperationManifest = {
+        properties: {
+          brandColor: '#fff',
+          connector,
+          iconUri: 'https://example.com/icon.png',
+        },
+      };
+
+      const partialOperationManifestService: Partial<designerClientServices.IOperationManifestService> = {
+        getOperationManifest: () => Promise.resolve(operationManifest),
+        isSupported: () => true,
+      };
+
+      jest
+        .spyOn(designerClientServices, 'OperationManifestService')
+        .mockReturnValue(partialOperationManifestService as designerClientServices.IOperationManifestService);
+
+      jest
+        .spyOn(reactQuery, 'useQuery')
+        .mockReturnValue({ data: operationManifest, isLoading: false, status: 'success' } as reactQuery.UseQueryResult<
+          OperationManifest | undefined,
+          unknown
+        >);
+
+      const result = useOperationSummary({ connectorId: 'connectorId', operationId: 'operationId', type: 'operation' });
+      expect(result).toMatchObject({
+        isLoading: false,
+        result: 'OperationId',
+      });
+    });
   });
 });

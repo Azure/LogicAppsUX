@@ -107,32 +107,49 @@ export const Card: React.FC<CardProps> = ({
 
   const intl = useIntl();
 
-  const cardIconAltText = connectorName
-    ? intl.formatMessage(
+  const cardAltTexts = useMemo(() => {
+    const cardAltTextArgs = {
+      connectorName,
+      operationName,
+    };
+
+    return {
+      withConnectorOnly: intl.formatMessage(
         {
-          defaultMessage: '{connectorName} connector icon',
-          description: 'Alt text icon on action/trigger card when there is a connector name',
+          defaultMessage: '{connectorName} connector',
+          description: 'Alt text on action/trigger card when there is a connector name but no operation name',
         },
+        cardAltTextArgs
+      ),
+      withOperationOnly: intl.formatMessage(
         {
-          connectorName,
-        }
-      )
-    : intl.formatMessage(
-        {
-          defaultMessage: '{operationName} icon',
-          description: 'Alt text icon on action/trigger card when there is not a connector name',
+          defaultMessage: '{operationName} operation',
+          description: 'Alt text on action/trigger card when there is an operation name but no connector name',
         },
+        cardAltTextArgs
+      ),
+      withConnectorAndOperation: intl.formatMessage(
         {
-          operationName,
-        }
-      );
+          defaultMessage: '{operationName} operation, {connectorName} connector',
+          description: 'Alt text on action/trigger card when there are both an operation name and connector name',
+        },
+        cardAltTextArgs
+      ),
+    };
+  }, [connectorName, intl, operationName]);
+
+  const cardAltText = connectorName
+    ? operationName
+      ? cardAltTexts.withConnectorAndOperation
+      : cardAltTexts.withConnectorOnly
+    : cardAltTexts.withOperationOnly;
 
   const cardIcon = useMemo(
     () =>
       isLoading ? (
         <Spinner className="msla-card-header-spinner" size={'tiny'} />
       ) : icon ? (
-        <img className="panel-card-icon" src={icon} alt={cardIconAltText} />
+        <img className="panel-card-icon" src={icon} alt="" />
       ) : errorMessage ? (
         <div className="panel-card-icon default">
           <Icon iconName="PlugDisconnected" style={{ fontSize: '16px', textAlign: 'center' }} />
@@ -140,7 +157,7 @@ export const Card: React.FC<CardProps> = ({
       ) : (
         <Spinner className="msla-card-header-spinner" size={'tiny'} />
       ),
-    [icon, isLoading, errorMessage, cardIconAltText]
+    [icon, isLoading, errorMessage]
   );
 
   return (
@@ -151,6 +168,7 @@ export const Card: React.FC<CardProps> = ({
           drag(node);
         }}
         aria-describedby={describedBy}
+        aria-label={cardAltText}
         className={css(
           'msla-panel-card-container',
           selected && 'msla-panel-card-container-selected',
@@ -158,6 +176,7 @@ export const Card: React.FC<CardProps> = ({
           cloned && 'msla-card-ghost-image',
           isDragging && 'dragging'
         )}
+        role="button"
         style={getCardStyle(brandColor)}
         data-testid={`card-${title}`}
         data-automation-id={`card-${convertUIElementNameToAutomationId(title)}`}

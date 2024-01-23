@@ -9,6 +9,7 @@ exports[`lib/card should render 1`] = `
   }
 >
   <div
+    aria-label=" operation"
     className="msla-panel-card-container"
     data-automation-id="card-title"
     data-testid="card-title"
@@ -16,6 +17,7 @@ exports[`lib/card should render 1`] = `
     onContextMenu={[Function]}
     onKeyDown={[Function]}
     onKeyUp={[Function]}
+    role="button"
     style={
       Object {
         "borderLeft": "4px solid rgba(71,71,71, 1)",
@@ -95,6 +97,7 @@ exports[`lib/card should render as cloned 1`] = `
   }
 >
   <div
+    aria-label=" operation"
     className="msla-panel-card-container msla-card-ghost-image"
     data-automation-id="card-title"
     data-testid="card-title"
@@ -102,6 +105,7 @@ exports[`lib/card should render as cloned 1`] = `
     onContextMenu={[Function]}
     onKeyDown={[Function]}
     onKeyUp={[Function]}
+    role="button"
     style={
       Object {
         "borderLeft": "4px solid rgba(71,71,71, 1)",
@@ -181,6 +185,7 @@ exports[`lib/card should render as draggable 1`] = `
   }
 >
   <div
+    aria-label=" operation"
     className="msla-panel-card-container"
     data-automation-id="card-title"
     data-testid="card-title"
@@ -188,6 +193,7 @@ exports[`lib/card should render as draggable 1`] = `
     onContextMenu={[Function]}
     onKeyDown={[Function]}
     onKeyUp={[Function]}
+    role="button"
     style={
       Object {
         "borderLeft": "4px solid rgba(71,71,71, 1)",
@@ -280,6 +286,7 @@ exports[`lib/card should render as inactive 1`] = `
   }
 >
   <div
+    aria-label=" operation"
     className="msla-panel-card-container inactive"
     data-automation-id="card-title"
     data-testid="card-title"
@@ -287,6 +294,7 @@ exports[`lib/card should render as inactive 1`] = `
     onContextMenu={[Function]}
     onKeyDown={[Function]}
     onKeyUp={[Function]}
+    role="button"
     style={
       Object {
         "borderLeft": "4px solid rgba(71,71,71, 1)",
@@ -366,6 +374,7 @@ exports[`lib/card should render as selected 1`] = `
   }
 >
   <div
+    aria-label=" operation"
     className="msla-panel-card-container msla-panel-card-container-selected"
     data-automation-id="card-title"
     data-testid="card-title"
@@ -373,6 +382,7 @@ exports[`lib/card should render as selected 1`] = `
     onContextMenu={[Function]}
     onKeyDown={[Function]}
     onKeyUp={[Function]}
+    role="button"
     style={
       Object {
         "borderLeft": "4px solid rgba(71,71,71, 1)",
@@ -452,6 +462,7 @@ exports[`lib/card should render with an icon and connector name 1`] = `
   }
 >
   <div
+    aria-label="Connector Name connector"
     className="msla-panel-card-container"
     data-automation-id="card-title"
     data-testid="card-title"
@@ -459,6 +470,7 @@ exports[`lib/card should render with an icon and connector name 1`] = `
     onContextMenu={[Function]}
     onKeyDown={[Function]}
     onKeyUp={[Function]}
+    role="button"
     style={
       Object {
         "borderLeft": "4px solid rgba(71,71,71, 1)",
@@ -487,7 +499,7 @@ exports[`lib/card should render with an icon and connector name 1`] = `
             className="panel-card-content-icon-section"
           >
             <img
-              alt="Connector Name connector icon"
+              alt=""
               className="panel-card-icon"
               src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
             />
@@ -524,6 +536,7 @@ exports[`lib/card should render with an icon and operation name 1`] = `
   }
 >
   <div
+    aria-label="Operation Name operation"
     className="msla-panel-card-container"
     data-automation-id="card-title"
     data-testid="card-title"
@@ -531,6 +544,7 @@ exports[`lib/card should render with an icon and operation name 1`] = `
     onContextMenu={[Function]}
     onKeyDown={[Function]}
     onKeyUp={[Function]}
+    role="button"
     style={
       Object {
         "borderLeft": "4px solid rgba(71,71,71, 1)",
@@ -559,7 +573,7 @@ exports[`lib/card should render with an icon and operation name 1`] = `
             className="panel-card-content-icon-section"
           >
             <img
-              alt="Operation Name icon"
+              alt=""
               className="panel-card-icon"
               src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
             />
