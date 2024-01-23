@@ -76,7 +76,7 @@ export const xmlTransformManifest = {
           description: 'The transform options',
           type: 'string',
           visibility: 'advanced',
-          'x-ms-editor': 'dropdown',
+          'x-ms-editor': 'combobox',
           'x-ms-editor-options': {
             multiSelect: true,
             titleSeparator: ',',
