@@ -138,8 +138,6 @@ export const useOperationSummary = (operationInfo: NodeOperation): QueryResult =
     result.result = titleCase(operationInfo.operationId);
   }
 
-  console.log(operationInfo, result);
-
   return result;
 };
 

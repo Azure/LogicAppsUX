@@ -242,7 +242,7 @@ describe('actionMetadataSelector', () => {
             unknown
           >);
 
-        const result = useOperationSummary({ connectorId: 'connectorId', operationId: 'operationId', type: 'operation' });
+        const result = useOperationSummary({ connectorId: 'connectorId', operationId: '', type: 'operation' });
         expect(result).toMatchObject({
           isLoading: false,
           result: input,
@@ -288,7 +288,7 @@ describe('actionMetadataSelector', () => {
       const result = useOperationSummary({ connectorId: 'connectorId', operationId: 'operationId', type: 'operation' });
       expect(result).toMatchObject({
         isLoading: false,
-        result: 'OperationId',
+        result: 'Operation Id',
       });
     });
   });
