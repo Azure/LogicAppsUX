@@ -5,7 +5,13 @@ import { indexPseudoFunction } from '../models';
 import type { ConnectionDictionary } from '../models/Connection';
 import { applyConnectionValue } from '../utils/Connection.Utils';
 import type { FunctionCreationMetadata, ParseFunc } from '../utils/DataMap.Utils';
-import { getSourceNode, separateFunctions, DReservedToken, createTargetOrFunctionRefactor } from '../utils/DataMap.Utils';
+import {
+  getSourceNode,
+  separateFunctions,
+  DReservedToken,
+  createTargetOrFunctionRefactor,
+  amendSourceKeyForDirectAccessIfNeeded,
+} from '../utils/DataMap.Utils';
 import { isFunctionData } from '../utils/Function.Utils';
 import { addSourceReactFlowPrefix, addTargetReactFlowPrefix, createReactFlowFunctionKey } from '../utils/ReactFlow.Util';
 import { findNodeForKey, flattenSchemaIntoDictionary } from '../utils/Schema.Utils';
@@ -155,7 +161,7 @@ export class MapDefinitionDeserializerRefactor {
       // custom value or index
       else {
         if (key.startsWith('$')) {
-          // custom value
+          // index
           const indexFnKey = this._createdNodes[key];
           const indexFn = connections[indexFnKey];
           if (indexFn) {
@@ -169,6 +175,10 @@ export class MapDefinitionDeserializerRefactor {
               },
             });
           }
+        } else if (key.includes('[')) {
+          // direct access or index
+          const directAccessFunction = amendSourceKeyForDirectAccessIfNeeded(key);
+          this.handleSingleValueOrFunction(directAccessFunction[0], undefined, targetNode, connections);
         } else {
           applyConnectionValue(connections, {
             targetNode: targetNode,
