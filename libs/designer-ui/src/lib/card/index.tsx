@@ -168,7 +168,6 @@ export const Card: React.FC<CardProps> = ({
           drag(node);
         }}
         aria-describedby={describedBy}
-        aria-label={cardAltText}
         className={css(
           'msla-panel-card-container',
           selected && 'msla-panel-card-container-selected',
@@ -176,7 +175,6 @@ export const Card: React.FC<CardProps> = ({
           cloned && 'msla-card-ghost-image',
           isDragging && 'dragging'
         )}
-        role="button"
         style={getCardStyle(brandColor)}
         data-testid={`card-${title}`}
         data-automation-id={`card-${convertUIElementNameToAutomationId(title)}`}
@@ -198,7 +196,7 @@ export const Card: React.FC<CardProps> = ({
         ) : null}
         <div className={css('msla-selection-box', selected && 'selected')} />
         <div className="panel-card-main">
-          <div className="panel-card-header" role="button">
+          <div aria-label={cardAltText} className="panel-card-header" role="button">
             <div className="panel-card-content-container">
               <div className={css('panel-card-content-gripper-section', draggable && 'draggable')}>{draggable ? <Gripper /> : null}</div>
               <div className="panel-card-content-icon-section">{cardIcon}</div>
