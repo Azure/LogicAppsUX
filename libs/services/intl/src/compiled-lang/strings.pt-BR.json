@@ -845,28 +845,6 @@
       "value": "A identidade inserida não está associada a este Aplicativo Lógico."
     }
   ],
-  "3jwMBm": [
-    {
-      "type": 0,
-      "value": "Formato json inválido. Falta o início "
-    },
-    {
-      "type": 1,
-      "value": "openingBracket"
-    },
-    {
-      "type": 0,
-      "value": " ou final "
-    },
-    {
-      "type": 1,
-      "value": "closingBracket"
-    },
-    {
-      "type": 0,
-      "value": "."
-    }
-  ],
   "3n5pnv": [
     {
       "type": 0,
@@ -1081,6 +1059,28 @@
     {
       "type": 0,
       "value": "Conte à Microsoft o que você gostou neste recurso"
+    }
+  ],
+  "5LV34t": [
+    {
+      "type": 0,
+      "value": "The '"
+    },
+    {
+      "type": 1,
+      "value": "invalidProperties"
+    },
+    {
+      "type": 0,
+      "value": "' properties are invalid for the '"
+    },
+    {
+      "type": 1,
+      "value": "authType"
+    },
+    {
+      "type": 0,
+      "value": "' authentication type."
     }
   ],
   "5OvGgn": [
@@ -1998,6 +1998,28 @@
       "value": "Novas tentativas bem-sucedidas"
     }
   ],
+  "BGw6eH": [
+    {
+      "type": 0,
+      "value": "Missing required properties '"
+    },
+    {
+      "type": 1,
+      "value": "missingProperties"
+    },
+    {
+      "type": 0,
+      "value": "' for authentication type '"
+    },
+    {
+      "type": 1,
+      "value": "authType"
+    },
+    {
+      "type": 0,
+      "value": "'"
+    }
+  ],
   "BHe7qY": [
     {
       "type": 0,
@@ -2164,28 +2186,6 @@
     {
       "type": 0,
       "value": "(UTC+13:00) Samoa"
-    }
-  ],
-  "CafOCn": [
-    {
-      "type": 0,
-      "value": "As propriedades '"
-    },
-    {
-      "type": 1,
-      "value": "invalidProperties"
-    },
-    {
-      "type": 0,
-      "value": "' são inválidas para o tipo de autenticação '"
-    },
-    {
-      "type": 1,
-      "value": "convertAuthType"
-    },
-    {
-      "type": 0,
-      "value": "'."
     }
   ],
   "Cb6IEq": [
@@ -3037,6 +3037,28 @@
     {
       "type": 0,
       "value": "Enviar desta ação"
+    }
+  ],
+  "I1CYNA": [
+    {
+      "type": 0,
+      "value": "Invalid property '"
+    },
+    {
+      "type": 1,
+      "value": "invalidProperties"
+    },
+    {
+      "type": 0,
+      "value": "' for authentication type '"
+    },
+    {
+      "type": 1,
+      "value": "authType"
+    },
+    {
+      "type": 0,
+      "value": "'."
     }
   ],
   "I3mifR": [
@@ -3932,6 +3954,12 @@
       "value": "OK"
     }
   ],
+  "OBO/HE": [
+    {
+      "type": 0,
+      "value": "Invalid Authentication Value"
+    }
+  ],
   "ODQCKj": [
     {
       "type": 0,
@@ -4082,10 +4110,10 @@
       "value": "Selecionar uma identidade gerenciada"
     }
   ],
-  "Os0h2Y": [
+  "Ov7Ckz": [
     {
       "type": 0,
-      "value": "Propriedades necessárias ausentes '"
+      "value": "Missing required property '"
     },
     {
       "type": 1,
@@ -4093,11 +4121,11 @@
     },
     {
       "type": 0,
-      "value": "' para o tipo de autenticação '"
+      "value": "' for authentication type '"
     },
     {
       "type": 1,
-      "value": "convertAuthType"
+      "value": "authType"
     },
     {
       "type": 0,
@@ -4344,28 +4372,6 @@
     {
       "type": 0,
       "value": "Código de status"
-    }
-  ],
-  "QKWoVr": [
-    {
-      "type": 0,
-      "value": "Propriedade necessária ausente '"
-    },
-    {
-      "type": 1,
-      "value": "missingProperties"
-    },
-    {
-      "type": 0,
-      "value": "' para o tipo de autenticação '"
-    },
-    {
-      "type": 1,
-      "value": "convertAuthType"
-    },
-    {
-      "type": 0,
-      "value": "'"
     }
   ],
   "QZBPUx": [
@@ -5107,12 +5113,6 @@
     {
       "type": 0,
       "value": "Mostrar menos"
-    }
-  ],
-  "V0le5X": [
-    {
-      "type": 0,
-      "value": "Insira um JSON válido."
     }
   ],
   "V3vpin": [
@@ -7845,6 +7845,12 @@
       "value": "Retorna uma representação de cadeia de caracteres de um URI de dados"
     }
   ],
+  "mNaBPE": [
+    {
+      "type": 0,
+      "value": "Enter a valid JSON."
+    }
+  ],
   "mPakaD": [
     {
       "type": 0,
@@ -8604,28 +8610,6 @@
     {
       "type": 0,
       "value": "A resposta assíncrona permite que um Aplicativo Lógico responda com um 202 (Aceito) para indicar que a solicitação foi aceita para processamento. Um cabeçalho de localização será fornecido para recuperar o estado final."
-    }
-  ],
-  "qs9D+A": [
-    {
-      "type": 0,
-      "value": "Propriedade inválida '"
-    },
-    {
-      "type": 1,
-      "value": "invalidProperties"
-    },
-    {
-      "type": 0,
-      "value": "' para o tipo de autenticação '"
-    },
-    {
-      "type": 1,
-      "value": "convertAuthType"
-    },
-    {
-      "type": 0,
-      "value": "'."
     }
   ],
   "qy5WqY": [

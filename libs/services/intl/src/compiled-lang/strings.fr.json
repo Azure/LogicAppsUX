@@ -861,28 +861,6 @@
       "value": "L'identité entrée n'est pas associée à cette Application Logique."
     }
   ],
-  "3jwMBm": [
-    {
-      "type": 0,
-      "value": "Format JSON non valide. Début "
-    },
-    {
-      "type": 1,
-      "value": "openingBracst"
-    },
-    {
-      "type": 0,
-      "value": " ou fin "
-    },
-    {
-      "type": 1,
-      "value": "closingBraflt"
-    },
-    {
-      "type": 0,
-      "value": " manquants."
-    }
-  ],
   "3n5pnv": [
     {
       "type": 0,
@@ -1097,6 +1075,28 @@
     {
       "type": 0,
       "value": "Expliquez à Microsoft ce que vous avez apprécié dans cette fonctionnalité"
+    }
+  ],
+  "5LV34t": [
+    {
+      "type": 0,
+      "value": "The '"
+    },
+    {
+      "type": 1,
+      "value": "invalidProperties"
+    },
+    {
+      "type": 0,
+      "value": "' properties are invalid for the '"
+    },
+    {
+      "type": 1,
+      "value": "authType"
+    },
+    {
+      "type": 0,
+      "value": "' authentication type."
     }
   ],
   "5OvGgn": [
@@ -2026,6 +2026,28 @@
       "value": "Réussi avec nouvelles tentatives"
     }
   ],
+  "BGw6eH": [
+    {
+      "type": 0,
+      "value": "Missing required properties '"
+    },
+    {
+      "type": 1,
+      "value": "missingProperties"
+    },
+    {
+      "type": 0,
+      "value": "' for authentication type '"
+    },
+    {
+      "type": 1,
+      "value": "authType"
+    },
+    {
+      "type": 0,
+      "value": "'"
+    }
+  ],
   "BHe7qY": [
     {
       "type": 0,
@@ -2192,28 +2214,6 @@
     {
       "type": 0,
       "value": "(UTC+13:00) Samoa"
-    }
-  ],
-  "CafOCn": [
-    {
-      "type": 0,
-      "value": "Les propriétés « "
-    },
-    {
-      "type": 1,
-      "value": "invalidProperties"
-    },
-    {
-      "type": 0,
-      "value": " » ne sont pas valides pour le type d’authentification « "
-    },
-    {
-      "type": 1,
-      "value": "convertedAuthType"
-    },
-    {
-      "type": 0,
-      "value": " »."
     }
   ],
   "Cb6IEq": [
@@ -3065,6 +3065,28 @@
     {
       "type": 0,
       "value": "Envoyer à partir de cette action"
+    }
+  ],
+  "I1CYNA": [
+    {
+      "type": 0,
+      "value": "Invalid property '"
+    },
+    {
+      "type": 1,
+      "value": "invalidProperties"
+    },
+    {
+      "type": 0,
+      "value": "' for authentication type '"
+    },
+    {
+      "type": 1,
+      "value": "authType"
+    },
+    {
+      "type": 0,
+      "value": "'."
     }
   ],
   "I3mifR": [
@@ -3960,6 +3982,12 @@
       "value": "OK"
     }
   ],
+  "OBO/HE": [
+    {
+      "type": 0,
+      "value": "Invalid Authentication Value"
+    }
+  ],
   "ODQCKj": [
     {
       "type": 0,
@@ -4110,10 +4138,10 @@
       "value": "Sélectionner une identité managée"
     }
   ],
-  "Os0h2Y": [
+  "Ov7Ckz": [
     {
       "type": 0,
-      "value": "Propriétés obligatoires manquantes « "
+      "value": "Missing required property '"
     },
     {
       "type": 1,
@@ -4121,15 +4149,15 @@
     },
     {
       "type": 0,
-      "value": " » pour le type d’authentification « "
+      "value": "' for authentication type '"
     },
     {
       "type": 1,
-      "value": "convertedAuthType"
+      "value": "authType"
     },
     {
       "type": 0,
-      "value": " »"
+      "value": "'"
     }
   ],
   "P+7G62": [
@@ -4376,28 +4404,6 @@
     {
       "type": 0,
       "value": "Code d'état"
-    }
-  ],
-  "QKWoVr": [
-    {
-      "type": 0,
-      "value": "Propriété obligatoire manquante « "
-    },
-    {
-      "type": 1,
-      "value": "missingProperties"
-    },
-    {
-      "type": 0,
-      "value": " » pour le type d’authentification « "
-    },
-    {
-      "type": 1,
-      "value": "convertedAuthType"
-    },
-    {
-      "type": 0,
-      "value": " »"
     }
   ],
   "QZBPUx": [
@@ -5139,12 +5145,6 @@
     {
       "type": 0,
       "value": "Afficher moins"
-    }
-  ],
-  "V0le5X": [
-    {
-      "type": 0,
-      "value": "Entrez un JSON valide."
     }
   ],
   "V3vpin": [
@@ -7877,6 +7877,12 @@
       "value": "Retourne la représentation sous forme de chaîne d'un URI de données"
     }
   ],
+  "mNaBPE": [
+    {
+      "type": 0,
+      "value": "Enter a valid JSON."
+    }
+  ],
   "mPakaD": [
     {
       "type": 0,
@@ -8636,28 +8642,6 @@
     {
       "type": 0,
       "value": "Une réponse asynchrone permet à une application logique de répondre avec un état 202 (accepté) qui indique que le traitement de la demande a été accepté. Un en-tête d'emplacement est fourni pour récupérer l'état final."
-    }
-  ],
-  "qs9D+A": [
-    {
-      "type": 0,
-      "value": "Propriété non valide « "
-    },
-    {
-      "type": 1,
-      "value": "invalidProperties"
-    },
-    {
-      "type": 0,
-      "value": " » pour le type d’authentification « "
-    },
-    {
-      "type": 1,
-      "value": "convertedAuthType"
-    },
-    {
-      "type": 0,
-      "value": " »."
     }
   ],
   "qy5WqY": [

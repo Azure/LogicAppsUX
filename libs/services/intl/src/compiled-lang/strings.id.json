@@ -853,28 +853,6 @@
       "value": "Identitas yang dimasukkan tidak terkait dengan Aplikasi Logika ini."
     }
   ],
-  "3jwMBm": [
-    {
-      "type": 0,
-      "value": "Format json tidak valid. Tidak ada awalan "
-    },
-    {
-      "type": 1,
-      "value": "openingBracket"
-    },
-    {
-      "type": 0,
-      "value": " atau akhiran "
-    },
-    {
-      "type": 1,
-      "value": "closingBracket"
-    },
-    {
-      "type": 0,
-      "value": "."
-    }
-  ],
   "3n5pnv": [
     {
       "type": 0,
@@ -1089,6 +1067,28 @@
     {
       "type": 0,
       "value": "Beri tahu Microsoft apa yang Anda sukai dari fitur ini"
+    }
+  ],
+  "5LV34t": [
+    {
+      "type": 0,
+      "value": "The '"
+    },
+    {
+      "type": 1,
+      "value": "invalidProperties"
+    },
+    {
+      "type": 0,
+      "value": "' properties are invalid for the '"
+    },
+    {
+      "type": 1,
+      "value": "authType"
+    },
+    {
+      "type": 0,
+      "value": "' authentication type."
     }
   ],
   "5OvGgn": [
@@ -1996,6 +1996,28 @@
       "value": "Berhasil dengan percobaan ulang"
     }
   ],
+  "BGw6eH": [
+    {
+      "type": 0,
+      "value": "Missing required properties '"
+    },
+    {
+      "type": 1,
+      "value": "missingProperties"
+    },
+    {
+      "type": 0,
+      "value": "' for authentication type '"
+    },
+    {
+      "type": 1,
+      "value": "authType"
+    },
+    {
+      "type": 0,
+      "value": "'"
+    }
+  ],
   "BHe7qY": [
     {
       "type": 0,
@@ -2162,28 +2184,6 @@
     {
       "type": 0,
       "value": "(UTC+13.00) Samoa"
-    }
-  ],
-  "CafOCn": [
-    {
-      "type": 0,
-      "value": "Properti '"
-    },
-    {
-      "type": 1,
-      "value": "invalidProperties"
-    },
-    {
-      "type": 0,
-      "value": "' tidak valid untuk tipe autentikasi '"
-    },
-    {
-      "type": 1,
-      "value": "convertedAuthType"
-    },
-    {
-      "type": 0,
-      "value": "'."
     }
   ],
   "Cb6IEq": [
@@ -3013,6 +3013,28 @@
     {
       "type": 0,
       "value": "Kirim dari tindakan ini"
+    }
+  ],
+  "I1CYNA": [
+    {
+      "type": 0,
+      "value": "Invalid property '"
+    },
+    {
+      "type": 1,
+      "value": "invalidProperties"
+    },
+    {
+      "type": 0,
+      "value": "' for authentication type '"
+    },
+    {
+      "type": 1,
+      "value": "authType"
+    },
+    {
+      "type": 0,
+      "value": "'."
     }
   ],
   "I3mifR": [
@@ -3886,6 +3908,12 @@
       "value": "OK"
     }
   ],
+  "OBO/HE": [
+    {
+      "type": 0,
+      "value": "Invalid Authentication Value"
+    }
+  ],
   "ODQCKj": [
     {
       "type": 0,
@@ -4036,10 +4064,10 @@
       "value": "Tetapkan identitas terkelola"
     }
   ],
-  "Os0h2Y": [
+  "Ov7Ckz": [
     {
       "type": 0,
-      "value": "Properti '"
+      "value": "Missing required property '"
     },
     {
       "type": 1,
@@ -4047,15 +4075,15 @@
     },
     {
       "type": 0,
-      "value": "' yang diperlukan untuk tipe autentikasi '"
+      "value": "' for authentication type '"
     },
     {
       "type": 1,
-      "value": "convertedAuthType"
+      "value": "authType"
     },
     {
       "type": 0,
-      "value": "' tidak ada"
+      "value": "'"
     }
   ],
   "P+7G62": [
@@ -4302,28 +4330,6 @@
     {
       "type": 0,
       "value": "Kode status"
-    }
-  ],
-  "QKWoVr": [
-    {
-      "type": 0,
-      "value": "Properti '"
-    },
-    {
-      "type": 1,
-      "value": "missingProperties"
-    },
-    {
-      "type": 0,
-      "value": "' yang diperlukan untuk tipe autentikasi '"
-    },
-    {
-      "type": 1,
-      "value": "convertedAuthType"
-    },
-    {
-      "type": 0,
-      "value": "' tidak ada"
     }
   ],
   "QZBPUx": [
@@ -5043,12 +5049,6 @@
     {
       "type": 0,
       "value": "Tampilkan lebih sedikit"
-    }
-  ],
-  "V0le5X": [
-    {
-      "type": 0,
-      "value": "Masukkan JSON yang valid."
     }
   ],
   "V3vpin": [
@@ -7729,6 +7729,12 @@
       "value": "Menampilkan representasi string dari URI data"
     }
   ],
+  "mNaBPE": [
+    {
+      "type": 0,
+      "value": "Enter a valid JSON."
+    }
+  ],
   "mPakaD": [
     {
       "type": 0,
@@ -8466,28 +8472,6 @@
     {
       "type": 0,
       "value": "Respons asinkron memungkinkan Aplikasi Logika merespons dengan 202 (Diterima) untuk menunjukkan bahwa permintaan telah diterima untuk diproses. Header lokasi akan disediakan untuk menerima keadaan akhir."
-    }
-  ],
-  "qs9D+A": [
-    {
-      "type": 0,
-      "value": "Properti '"
-    },
-    {
-      "type": 1,
-      "value": "invalidProperties"
-    },
-    {
-      "type": 0,
-      "value": "' untuk tipe autentikasi '"
-    },
-    {
-      "type": 1,
-      "value": "convertedAuthType"
-    },
-    {
-      "type": 0,
-      "value": "' tidak valid."
     }
   ],
   "qy5WqY": [

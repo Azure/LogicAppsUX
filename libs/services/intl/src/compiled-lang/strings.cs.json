@@ -861,28 +861,6 @@
       "value": "Zadaná identita není přidružená k této aplikaci logiky."
     }
   ],
-  "3jwMBm": [
-    {
-      "type": 0,
-      "value": "Neplatný formát JSON. Chybí "
-    },
-    {
-      "type": 1,
-      "value": "openingBrahornt"
-    },
-    {
-      "type": 0,
-      "value": " na začátku nebo "
-    },
-    {
-      "type": 1,
-      "value": "closingBrahornt"
-    },
-    {
-      "type": 0,
-      "value": " na konci."
-    }
-  ],
   "3n5pnv": [
     {
       "type": 0,
@@ -1097,6 +1075,28 @@
     {
       "type": 0,
       "value": "Povězte Microsoftu, co se vám na této funkci líbilo"
+    }
+  ],
+  "5LV34t": [
+    {
+      "type": 0,
+      "value": "The '"
+    },
+    {
+      "type": 1,
+      "value": "invalidProperties"
+    },
+    {
+      "type": 0,
+      "value": "' properties are invalid for the '"
+    },
+    {
+      "type": 1,
+      "value": "authType"
+    },
+    {
+      "type": 0,
+      "value": "' authentication type."
     }
   ],
   "5OvGgn": [
@@ -2037,6 +2037,28 @@
       "value": "Proběhlo úspěšně s opakováním pokusů"
     }
   ],
+  "BGw6eH": [
+    {
+      "type": 0,
+      "value": "Missing required properties '"
+    },
+    {
+      "type": 1,
+      "value": "missingProperties"
+    },
+    {
+      "type": 0,
+      "value": "' for authentication type '"
+    },
+    {
+      "type": 1,
+      "value": "authType"
+    },
+    {
+      "type": 0,
+      "value": "'"
+    }
+  ],
   "BHe7qY": [
     {
       "type": 0,
@@ -2203,28 +2225,6 @@
     {
       "type": 0,
       "value": "(UTC+13:00) Samoa"
-    }
-  ],
-  "CafOCn": [
-    {
-      "type": 0,
-      "value": "Vlastnosti "
-    },
-    {
-      "type": 1,
-      "value": "invalidProperties"
-    },
-    {
-      "type": 0,
-      "value": " nejsou pro typ ověřování "
-    },
-    {
-      "type": 1,
-      "value": "convertedAuthType"
-    },
-    {
-      "type": 0,
-      "value": " platné."
     }
   ],
   "Cb6IEq": [
@@ -3095,6 +3095,28 @@
     {
       "type": 0,
       "value": "Odeslat z této akce"
+    }
+  ],
+  "I1CYNA": [
+    {
+      "type": 0,
+      "value": "Invalid property '"
+    },
+    {
+      "type": 1,
+      "value": "invalidProperties"
+    },
+    {
+      "type": 0,
+      "value": "' for authentication type '"
+    },
+    {
+      "type": 1,
+      "value": "authType"
+    },
+    {
+      "type": 0,
+      "value": "'."
     }
   ],
   "I3mifR": [
@@ -4001,6 +4023,12 @@
       "value": "OK"
     }
   ],
+  "OBO/HE": [
+    {
+      "type": 0,
+      "value": "Invalid Authentication Value"
+    }
+  ],
   "ODQCKj": [
     {
       "type": 0,
@@ -4151,10 +4179,10 @@
       "value": "Vyberte spravovanou identitu"
     }
   ],
-  "Os0h2Y": [
+  "Ov7Ckz": [
     {
       "type": 0,
-      "value": "Chybí požadované vlastnosti "
+      "value": "Missing required property '"
     },
     {
       "type": 1,
@@ -4162,11 +4190,15 @@
     },
     {
       "type": 0,
-      "value": " pro typ ověřování "
+      "value": "' for authentication type '"
     },
     {
       "type": 1,
-      "value": "convertedAuthType"
+      "value": "authType"
+    },
+    {
+      "type": 0,
+      "value": "'"
     }
   ],
   "P+7G62": [
@@ -4413,24 +4445,6 @@
     {
       "type": 0,
       "value": "Stavový kód"
-    }
-  ],
-  "QKWoVr": [
-    {
-      "type": 0,
-      "value": "Chybí požadovaná vlastnost "
-    },
-    {
-      "type": 1,
-      "value": "missingProperties"
-    },
-    {
-      "type": 0,
-      "value": " pro typ ověřování "
-    },
-    {
-      "type": 1,
-      "value": "convertedAuthType"
     }
   ],
   "QZBPUx": [
@@ -5183,12 +5197,6 @@
     {
       "type": 0,
       "value": "Zobrazit méně"
-    }
-  ],
-  "V0le5X": [
-    {
-      "type": 0,
-      "value": "Zadejte platný kód JSON."
     }
   ],
   "V3vpin": [
@@ -7943,6 +7951,12 @@
       "value": "Vrátí řetězcovou reprezentaci identifikátoru URI dat."
     }
   ],
+  "mNaBPE": [
+    {
+      "type": 0,
+      "value": "Enter a valid JSON."
+    }
+  ],
   "mPakaD": [
     {
       "type": 0,
@@ -8713,28 +8727,6 @@
     {
       "type": 0,
       "value": "Asynchronní odpověď umožní aplikaci Logic Apps odpovědět kódem 202 (Přijato) a dát tak vědět, že se požadavek přijal ke zpracování. Pomocí poskytnuté hlavičky umístění půjde načíst koncový stav."
-    }
-  ],
-  "qs9D+A": [
-    {
-      "type": 0,
-      "value": "Neplatná vlastnost "
-    },
-    {
-      "type": 1,
-      "value": "invalidProperties"
-    },
-    {
-      "type": 0,
-      "value": " pro typ ověřování "
-    },
-    {
-      "type": 1,
-      "value": "convertedAuthType"
-    },
-    {
-      "type": 0,
-      "value": "."
     }
   ],
   "qy5WqY": [

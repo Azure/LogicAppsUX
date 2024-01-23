@@ -865,28 +865,6 @@
       "value": "输入的标识未与此逻辑应用关联。"
     }
   ],
-  "3jwMBm": [
-    {
-      "type": 0,
-      "value": "json 格式无效。缺少开始 "
-    },
-    {
-      "type": 1,
-      "value": "openingBracket"
-    },
-    {
-      "type": 0,
-      "value": " 或结束 "
-    },
-    {
-      "type": 1,
-      "value": "closingBracket"
-    },
-    {
-      "type": 0,
-      "value": "。"
-    }
-  ],
   "3n5pnv": [
     {
       "type": 0,
@@ -1101,6 +1079,28 @@
     {
       "type": 0,
       "value": "告诉 Microsoft 你喜欢此功能的哪些方面"
+    }
+  ],
+  "5LV34t": [
+    {
+      "type": 0,
+      "value": "The '"
+    },
+    {
+      "type": 1,
+      "value": "invalidProperties"
+    },
+    {
+      "type": 0,
+      "value": "' properties are invalid for the '"
+    },
+    {
+      "type": 1,
+      "value": "authType"
+    },
+    {
+      "type": 0,
+      "value": "' authentication type."
     }
   ],
   "5OvGgn": [
@@ -2008,6 +2008,28 @@
       "value": "重试成功"
     }
   ],
+  "BGw6eH": [
+    {
+      "type": 0,
+      "value": "Missing required properties '"
+    },
+    {
+      "type": 1,
+      "value": "missingProperties"
+    },
+    {
+      "type": 0,
+      "value": "' for authentication type '"
+    },
+    {
+      "type": 1,
+      "value": "authType"
+    },
+    {
+      "type": 0,
+      "value": "'"
+    }
+  ],
   "BHe7qY": [
     {
       "type": 0,
@@ -2174,28 +2196,6 @@
     {
       "type": 0,
       "value": "(UTC+13:00)萨摩亚"
-    }
-  ],
-  "CafOCn": [
-    {
-      "type": 0,
-      "value": "“"
-    },
-    {
-      "type": 1,
-      "value": "invalidProperties"
-    },
-    {
-      "type": 0,
-      "value": "”属性对于“"
-    },
-    {
-      "type": 1,
-      "value": "convertedAuthType"
-    },
-    {
-      "type": 0,
-      "value": "”身份验证类型无效。"
     }
   ],
   "Cb6IEq": [
@@ -3029,6 +3029,28 @@
     {
       "type": 0,
       "value": "通过此操作提交"
+    }
+  ],
+  "I1CYNA": [
+    {
+      "type": 0,
+      "value": "Invalid property '"
+    },
+    {
+      "type": 1,
+      "value": "invalidProperties"
+    },
+    {
+      "type": 0,
+      "value": "' for authentication type '"
+    },
+    {
+      "type": 1,
+      "value": "authType"
+    },
+    {
+      "type": 0,
+      "value": "'."
     }
   ],
   "I3mifR": [
@@ -3902,6 +3924,12 @@
       "value": "确定"
     }
   ],
+  "OBO/HE": [
+    {
+      "type": 0,
+      "value": "Invalid Authentication Value"
+    }
+  ],
   "ODQCKj": [
     {
       "type": 0,
@@ -4052,18 +4080,10 @@
       "value": "选择托管标识"
     }
   ],
-  "Os0h2Y": [
+  "Ov7Ckz": [
     {
       "type": 0,
-      "value": "缺少身份验证类型“"
-    },
-    {
-      "type": 1,
-      "value": "convertedAuthType"
-    },
-    {
-      "type": 0,
-      "value": "”所需的属性“"
+      "value": "Missing required property '"
     },
     {
       "type": 1,
@@ -4071,7 +4091,15 @@
     },
     {
       "type": 0,
-      "value": "”"
+      "value": "' for authentication type '"
+    },
+    {
+      "type": 1,
+      "value": "authType"
+    },
+    {
+      "type": 0,
+      "value": "'"
     }
   ],
   "P+7G62": [
@@ -4322,28 +4350,6 @@
     {
       "type": 0,
       "value": "状态代码"
-    }
-  ],
-  "QKWoVr": [
-    {
-      "type": 0,
-      "value": "缺少身份验证类型“"
-    },
-    {
-      "type": 1,
-      "value": "convertedAuthType"
-    },
-    {
-      "type": 0,
-      "value": "”的必需属性“"
-    },
-    {
-      "type": 1,
-      "value": "missingProperties"
-    },
-    {
-      "type": 0,
-      "value": "”"
     }
   ],
   "QZBPUx": [
@@ -5067,12 +5073,6 @@
     {
       "type": 0,
       "value": "显示更少"
-    }
-  ],
-  "V0le5X": [
-    {
-      "type": 0,
-      "value": "输入有效的 JSON。"
     }
   ],
   "V3vpin": [
@@ -7781,6 +7781,12 @@
       "value": "返回数据 URI 的字符串表示形式"
     }
   ],
+  "mNaBPE": [
+    {
+      "type": 0,
+      "value": "Enter a valid JSON."
+    }
+  ],
   "mPakaD": [
     {
       "type": 0,
@@ -8526,28 +8532,6 @@
     {
       "type": 0,
       "value": "异步响应允许逻辑应用使用 202 (已接受)进行响应，指示已接受请求进行处理。将提供位置标头，用于检索最终状态。"
-    }
-  ],
-  "qs9D+A": [
-    {
-      "type": 0,
-      "value": "身份验证类型“"
-    },
-    {
-      "type": 1,
-      "value": "convertedAuthType"
-    },
-    {
-      "type": 0,
-      "value": "”的属性“"
-    },
-    {
-      "type": 1,
-      "value": "invalidProperties"
-    },
-    {
-      "type": 0,
-      "value": "”无效。"
     }
   ],
   "qy5WqY": [
