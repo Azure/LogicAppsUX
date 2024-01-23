@@ -810,6 +810,9 @@ export default {
       INPUTS: 'inputs',
       OUTPUTS: 'outputs',
     },
+    SPLITON: {
+      AUTOLOAD: '@autoload()',
+    },
   },
   SWAGGER,
   SYSTEM_ASSIGNED_MANAGED_IDENTITY: 'SystemAssigned_Managed_Identity',

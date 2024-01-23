@@ -120,7 +120,7 @@ export const getUpdatedManifestForSplitOn = (manifest: OperationManifest, splitO
     { splitOn }
   );
 
-  if (splitOn === undefined) {
+  if (splitOn === undefined || splitOn === Constants.SETTINGS.SPLITON.AUTOLOAD) {
     return manifest;
   } else if (typeof splitOn === 'string') {
     const updatedManifest = clone(manifest);
