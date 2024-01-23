@@ -6,7 +6,7 @@ import type { ITextField } from '@fluentui/react';
 import { useTheme, Panel, PanelType, css, getId } from '@fluentui/react';
 import { ShieldCheckmarkRegular } from '@fluentui/react-icons';
 import { LogEntryLevel, LoggerService, ChatbotService } from '@microsoft/designer-client-services-logic-apps';
-import type { ConversationItem, ChatEntryReaction } from '@microsoft/designer-ui';
+import type { ConversationItem, ChatEntryReaction, AdditionalParametersItem } from '@microsoft/designer-ui';
 import {
   PanelLocation,
   ChatInput,
@@ -224,7 +224,7 @@ export const Chatbot = ({
         }
         const queryResponse: string = response.data.properties.response;
         // commenting out usage of additionalParameters until Logic Apps backend is updated to include this response property
-        // const additionalParameters: string[] | undefined = response.data.properties.additionalParameters;
+        const additionalParameters: AdditionalParametersItem = response.data.properties.additionalParameters;
         setConversation((current) => [
           {
             type: ConversationItemType.Reply,
@@ -236,6 +236,7 @@ export const Chatbot = ({
             __rawRequest: requestPayload,
             __rawResponse: response,
             reaction: undefined,
+            additionalDocURL: additionalParameters?.url ?? undefined,
             azureButtonCallback:
               /*additionalParameters?.includes(constants.WorkflowResponseAdditionalParameters.SendToAzure)*/ queryResponse ===
                 constants.DefaultAzureResponseCallback && openAzureCopilotPanel

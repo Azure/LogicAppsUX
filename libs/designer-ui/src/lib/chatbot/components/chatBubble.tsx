@@ -20,6 +20,7 @@ type ChatBubbleProps = {
   isAIGenerated?: boolean;
   hideFooter?: boolean;
   isEmphasized?: boolean;
+  additionalLinksSection?: JSX.Element;
   additionalFooterActions?: IButtonProps[];
   className?: string;
   selectedReaction?: ChatEntryReaction;
@@ -32,6 +33,7 @@ export const ChatBubble: React.FC<ChatBubbleProps> = ({
   isUserMessage,
   children,
   isAIGenerated,
+  additionalLinksSection,
   additionalFooterActions,
   hideFooter,
   className,
@@ -82,6 +84,7 @@ export const ChatBubble: React.FC<ChatBubbleProps> = ({
       )}
     >
       <div className={css('msla-bubble', isUserMessage && USER_MESSAGE_CLASS)}>{children}</div>
+      {additionalLinksSection && additionalLinksSection}
       {(additionalFooterActions && additionalFooterActions.length > 0) || (isAIGenerated && !hideFooter) ? (
         <div className={'msla-bubble-footer'}>
           {additionalFooterActions && (
