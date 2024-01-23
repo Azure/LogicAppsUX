@@ -84,8 +84,7 @@ export type AssistantReplyItem = BaseAssistantMessageItem & {
   hideFooter?: boolean;
   __rawRequest: any;
   __rawResponse: any;
-  additionalDocDes?: string;
-  additionalDocURL?: string;
+  additionalDocURL?: string | undefined;
   azureButtonCallback?: (prompt?: string) => void;
 };
 
@@ -131,8 +130,7 @@ export type OperationsNeedingAttentionItem = BaseAssistantMessageItem & {
 };
 
 export type AdditionalParametersItem = {
-  sendToAzure: string | undefined; //TODO: Discuss about null | undefined
-  error: string | undefined;
-  url: string | undefined;
-  urlDes?: string | undefined;
+  sendToAzure: string | null;
+  error: string | null;
+  url: string | null;
 };

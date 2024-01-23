@@ -44,9 +44,9 @@ const UserMessage = ({ item }: { item: UserQueryItem }) => {
 };
 
 const AssistantReply = ({ item }: { item: AssistantReplyItem }) => {
-  const { id, text, hideFooter, date, additionalDocDes, additionalDocURL, azureButtonCallback } = item;
+  const { id, text, hideFooter, date, additionalDocURL, azureButtonCallback } = item;
   const azureCopilotButton = useAzureCopilotButton(azureButtonCallback);
-  const additionalDocSection = useExternalLink(additionalDocDes, additionalDocURL);
+  const additionalDocSection = useExternalLink(additionalDocURL ?? undefined);
   const { feedbackMessage, onMessageReactionClicked, reaction } = useFeedbackMessage(item);
   const textRef = useRef<HTMLDivElement | null>(null);
   return (

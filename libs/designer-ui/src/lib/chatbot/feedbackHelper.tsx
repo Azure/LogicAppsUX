@@ -29,7 +29,7 @@ export function useReportBugButton(disabled: boolean): IButtonProps {
   };
 }
 
-export function useExternalLink(additioanlDocDes?: string, additionalDocURL?: string) {
+export function useExternalLink(additionalDocURL?: string) {
   const intl = useIntl();
   const intlText = {
     guideMoreInfoText: intl.formatMessage({
@@ -42,9 +42,8 @@ export function useExternalLink(additioanlDocDes?: string, additionalDocURL?: st
       {`${intlText.guideMoreInfoText}:`}
       <ul>
         <li>
-          {' '}
           <Link href={additionalDocURL} target="_blank">
-            {additioanlDocDes ?? additionalDocURL}
+            {additionalDocURL}
           </Link>
         </li>
       </ul>

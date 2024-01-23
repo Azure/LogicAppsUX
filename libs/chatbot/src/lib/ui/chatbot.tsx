@@ -236,8 +236,7 @@ export const Chatbot = ({
             __rawRequest: requestPayload,
             __rawResponse: response,
             reaction: undefined,
-            additionalDocDes: additionalParameters?.urlDes, //TODO: discuss adding this to backend
-            additionalDocURL: additionalParameters?.url,
+            additionalDocURL: additionalParameters?.url ?? undefined,
             azureButtonCallback:
               /*additionalParameters?.includes(constants.WorkflowResponseAdditionalParameters.SendToAzure)*/ queryResponse ===
                 constants.DefaultAzureResponseCallback && openAzureCopilotPanel
