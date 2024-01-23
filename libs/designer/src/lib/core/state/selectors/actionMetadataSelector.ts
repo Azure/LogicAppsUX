@@ -108,11 +108,11 @@ const useNodeAttribute = (operationInfo: NodeOperation, propertyInManifest: stri
   };
 };
 
-export const useConnectorName = (operationInfo: NodeOperation) => {
+export const useConnectorName = (operationInfo: NodeOperation): QueryResult => {
   return useNodeAttribute(operationInfo, ['connector', 'properties', 'displayName'], ['displayName']);
 };
 
-export const useOperationDescription = (operationInfo: NodeOperation) => {
+export const useOperationDescription = (operationInfo: NodeOperation): QueryResult => {
   const operationManifestService = OperationManifestService();
   const useManifest = operationManifestService.isSupported(operationInfo?.type ?? '', operationInfo?.kind ?? '');
 
@@ -126,7 +126,7 @@ export const useOperationDocumentation = (operationInfo: NodeOperation): QueryRe
   return useNodeAttributeOrSwagger(operationInfo, ['connector', 'properties', 'externalDocs'], 'externalDocs', { useManifest });
 };
 
-export const useOperationSummary = (operationInfo: NodeOperation) => {
+export const useOperationSummary = (operationInfo: NodeOperation): QueryResult => {
   const operationManifestService = OperationManifestService();
   const useManifest = operationManifestService.isSupported(operationInfo?.type ?? '', operationInfo?.kind ?? '');
 
