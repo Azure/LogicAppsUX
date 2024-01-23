@@ -102,6 +102,7 @@ export const DropdownEditor = ({
         disabled={readonly}
         options={dropdownOptions}
         multiSelect={multiSelect}
+        multiSelectDelimiter={serialization?.separator}
         selectedKey={selectedKey}
         selectedKeys={selectedKeys}
         onChange={multiSelect ? handleOptionMultiSelect : handleOptionSelect}
