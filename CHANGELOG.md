@@ -1,4 +1,25 @@
 # Logic Apps Designer
+## [2.105.0](https://github.com/Azure/LogicAppsUX/compare/v2.104.0...v2.105.0) (2024-01-23)
+
+
+### Features
+
+* **Consumption:** Changing XML Transform Options to have Custom Option ([#4017](https://github.com/Azure/LogicAppsUX/issues/4017)) ([c7e9b25](https://github.com/Azure/LogicAppsUX/commit/c7e9b255e2ca00be38dd13f5031820831c36d30b))
+* **designer-ui:** Render Callback URL for new Teams Webhook Trigger Kind ([#4008](https://github.com/Azure/LogicAppsUX/issues/4008)) ([411c716](https://github.com/Azure/LogicAppsUX/commit/411c716a60284d636d2a54a1b689515643848519))
+
+
+### Bug Fixes
+
+* **designer-ui:** Indicate Lexical support for `<a>` and `<u>` tags ([#4019](https://github.com/Azure/LogicAppsUX/issues/4019)) ([dd6e1b1](https://github.com/Azure/LogicAppsUX/commit/dd6e1b1fd2d28692d85717fb45cb746a1ffc2a6d))
+* **designer:** Adding tokens outside of any HTML elements in raw HTML view causes a visual bug ([#4016](https://github.com/Azure/LogicAppsUX/issues/4016)) ([babb15f](https://github.com/Azure/LogicAppsUX/commit/babb15f3a48553817d332967c6c3d15146126311))
+* **Designer:** fix missing property in create connection payload JSON ([#4012](https://github.com/Azure/LogicAppsUX/issues/4012)) ([0354f1c](https://github.com/Azure/LogicAppsUX/commit/0354f1c302b8ef0dfe1d743c6ec4db865e7535ac))
+* **Designer:** Fixed dynamic data inputs/outputs error message propogation ([#4014](https://github.com/Azure/LogicAppsUX/issues/4014)) ([5d0367a](https://github.com/Azure/LogicAppsUX/commit/5d0367a3328000eaac5a6cea80079747f307a471))
+* **Designer:** Fixed split-on data bug when adding new trigger ([#4027](https://github.com/Azure/LogicAppsUX/issues/4027)) ([1d94343](https://github.com/Azure/LogicAppsUX/commit/1d943438c26ce89a920999e6a7c2a48f70d0c91e))
+* **Designer:** pass isLoading props to custom CredentialsMappingEditor component ([#4013](https://github.com/Azure/LogicAppsUX/issues/4013)) ([ea3fe79](https://github.com/Azure/LogicAppsUX/commit/ea3fe7917d25c970dbf202109ce04e67fbf21165))
+* **designer:** Regression where array editor no longer serialized casted value ([#4007](https://github.com/Azure/LogicAppsUX/issues/4007)) ([982aec2](https://github.com/Azure/LogicAppsUX/commit/982aec29b280d02d266d52d11f636df55b391590))
+* **designer:** Some cleanup of auth serialization  ([#3957](https://github.com/Azure/LogicAppsUX/issues/3957)) ([80a0a80](https://github.com/Azure/LogicAppsUX/commit/80a0a80f552bc67f8dca1fd665c2c15a08c66a57))
+* **designer:** Split On is off by default in V3 ([#4026](https://github.com/Azure/LogicAppsUX/issues/4026)) ([6b24461](https://github.com/Azure/LogicAppsUX/commit/6b2446197cb42b6e0d377d1c092e7b12bee9d6ce))
+* **Designer:** wrong parameter key for CreateConnection with Credentials enabled ([#4005](https://github.com/Azure/LogicAppsUX/issues/4005)) ([fc4cf66](https://github.com/Azure/LogicAppsUX/commit/fc4cf663f05252a2b6181148a36f113bfc6c1742))
 
 ## [2.104.0](https://github.com/Azure/LogicAppsUX/compare/v2.103.0...v2.104.0) (2024-01-18)
 
