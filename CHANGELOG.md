@@ -1,4 +1,18 @@
 # Logic Apps Designer
+## [2.106.0](https://github.com/Azure/LogicAppsUX/compare/v2.105.0...v2.106.0) (2024-01-24)
+
+
+### Features
+
+* **copilot:** Add Support for Additional Params URL ([#4029](https://github.com/Azure/LogicAppsUX/issues/4029)) ([480ebb5](https://github.com/Azure/LogicAppsUX/commit/480ebb5a85ca471672bfcc722f8bd39f2657898d))
+* **Designer:** Added two xml operation ids ([#4052](https://github.com/Azure/LogicAppsUX/issues/4052)) ([3c90a54](https://github.com/Azure/LogicAppsUX/commit/3c90a54254a5d0081719c5e527aff7eca727658a))
+
+
+### Bug Fixes
+
+* **designer-ui:** Action icons with no connector display name have bad ARIA text ([#4030](https://github.com/Azure/LogicAppsUX/issues/4030)) ([be01950](https://github.com/Azure/LogicAppsUX/commit/be01950a185196c8776d36800d3a7336a926166c)), closes [#1](https://github.com/Azure/LogicAppsUX/issues/1)
+* **Designer:** Multi select drop down is not showing options in new designer ([#4028](https://github.com/Azure/LogicAppsUX/issues/4028)) ([00e536a](https://github.com/Azure/LogicAppsUX/commit/00e536a476dcad56f8b9a29591b16e47c87f64fe))
+* **designer:** Small UI issues with Settings ([#4036](https://github.com/Azure/LogicAppsUX/issues/4036)) ([9397974](https://github.com/Azure/LogicAppsUX/commit/9397974e5cbc736e78bee5146b831240bfa432aa))
 
 ## [2.105.0](https://github.com/Azure/LogicAppsUX/compare/v2.104.0...v2.105.0) (2024-01-23)
 
