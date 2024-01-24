@@ -1821,6 +1821,12 @@
       "value": "Edit in basic mode"
     }
   ],
+  "9yLPwo": [
+    {
+      "type": 0,
+      "value": "For more detailed information, you can refer to the following resources"
+    }
+  ],
   "A5Ferh": [
     {
       "type": 0,
@@ -3903,6 +3909,12 @@
     {
       "type": 0,
       "value": "Tuesday"
+    }
+  ],
+  "NzPnFS": [
+    {
+      "type": 0,
+      "value": "Example:"
     }
   ],
   "O+3Y9f": [
@@ -6559,6 +6571,12 @@
     {
       "type": 0,
       "value": "Required. The name of the variable whose value you want."
+    }
+  ],
+  "eHsOsm": [
+    {
+      "type": 0,
+      "value": "Specify the duration in ISO 8601 format"
     }
   ],
   "eO1h/h": [

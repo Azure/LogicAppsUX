@@ -861,28 +861,6 @@
       "value": "De ingevoerde identiteit is niet gekoppeld aan deze logische app."
     }
   ],
-  "3jwMBm": [
-    {
-      "type": 0,
-      "value": "Ongeldige json-indeling. Begin van "
-    },
-    {
-      "type": 1,
-      "value": "openingBrarollt"
-    },
-    {
-      "type": 0,
-      "value": " ontbreekt of eindigt op "
-    },
-    {
-      "type": 1,
-      "value": "closingBrarollt"
-    },
-    {
-      "type": 0,
-      "value": "."
-    }
-  ],
   "3n5pnv": [
     {
       "type": 0,
@@ -1097,6 +1075,28 @@
     {
       "type": 0,
       "value": "Laat Microsoft weten wat u goed vindt aan deze functie"
+    }
+  ],
+  "5LV34t": [
+    {
+      "type": 0,
+      "value": "The '"
+    },
+    {
+      "type": 1,
+      "value": "invalidProperties"
+    },
+    {
+      "type": 0,
+      "value": "' properties are invalid for the '"
+    },
+    {
+      "type": 1,
+      "value": "authType"
+    },
+    {
+      "type": 0,
+      "value": "' authentication type."
     }
   ],
   "5OvGgn": [
@@ -1821,6 +1821,12 @@
       "value": "Bewerken in basismodus"
     }
   ],
+  "9yLPwo": [
+    {
+      "type": 0,
+      "value": "For more detailed information, you can refer to the following resources"
+    }
+  ],
   "A5Ferh": [
     {
       "type": 0,
@@ -2015,6 +2021,28 @@
       "value": "Voltooid met nieuwe pogingen"
     }
   ],
+  "BGw6eH": [
+    {
+      "type": 0,
+      "value": "Missing required properties '"
+    },
+    {
+      "type": 1,
+      "value": "missingProperties"
+    },
+    {
+      "type": 0,
+      "value": "' for authentication type '"
+    },
+    {
+      "type": 1,
+      "value": "authType"
+    },
+    {
+      "type": 0,
+      "value": "'"
+    }
+  ],
   "BHe7qY": [
     {
       "type": 0,
@@ -2181,28 +2209,6 @@
     {
       "type": 0,
       "value": "(UTC+13:00) Samoa"
-    }
-  ],
-  "CafOCn": [
-    {
-      "type": 0,
-      "value": "De eigenschappen "
-    },
-    {
-      "type": 1,
-      "value": "invalidProperties"
-    },
-    {
-      "type": 0,
-      "value": " zijn ongeldig voor het verificatietype "
-    },
-    {
-      "type": 1,
-      "value": "convertedAuthType"
-    },
-    {
-      "type": 0,
-      "value": "."
     }
   ],
   "Cb6IEq": [
@@ -3051,6 +3057,28 @@
     {
       "type": 0,
       "value": "Verzenden vanuit deze actie"
+    }
+  ],
+  "I1CYNA": [
+    {
+      "type": 0,
+      "value": "Invalid property '"
+    },
+    {
+      "type": 1,
+      "value": "invalidProperties"
+    },
+    {
+      "type": 0,
+      "value": "' for authentication type '"
+    },
+    {
+      "type": 1,
+      "value": "authType"
+    },
+    {
+      "type": 0,
+      "value": "'."
     }
   ],
   "I3mifR": [
@@ -3931,6 +3959,12 @@
       "value": "OK"
     }
   ],
+  "OBO/HE": [
+    {
+      "type": 0,
+      "value": "Invalid Authentication Value"
+    }
+  ],
   "ODQCKj": [
     {
       "type": 0,
@@ -4081,10 +4115,10 @@
       "value": "Een beheerde identiteit selecteren"
     }
   ],
-  "Os0h2Y": [
+  "Ov7Ckz": [
     {
       "type": 0,
-      "value": "Vereiste eigenschappen "
+      "value": "Missing required property '"
     },
     {
       "type": 1,
@@ -4092,11 +4126,15 @@
     },
     {
       "type": 0,
-      "value": " ontbreekt voor verificatietype "
+      "value": "' for authentication type '"
     },
     {
       "type": 1,
-      "value": "convertedAuthType"
+      "value": "authType"
+    },
+    {
+      "type": 0,
+      "value": "'"
     }
   ],
   "P+7G62": [
@@ -4347,24 +4385,6 @@
     {
       "type": 0,
       "value": "Statuscode"
-    }
-  ],
-  "QKWoVr": [
-    {
-      "type": 0,
-      "value": "Vereiste eigenschap "
-    },
-    {
-      "type": 1,
-      "value": "missingProperties"
-    },
-    {
-      "type": 0,
-      "value": " ontbreekt voor verificatietype "
-    },
-    {
-      "type": 1,
-      "value": "convertedAuthType"
     }
   ],
   "QZBPUx": [
@@ -5095,12 +5115,6 @@
     {
       "type": 0,
       "value": "Minder weergeven"
-    }
-  ],
-  "V0le5X": [
-    {
-      "type": 0,
-      "value": "Voer een geldige JSON in."
     }
   ],
   "V3vpin": [
@@ -7803,6 +7817,12 @@
       "value": "Er wordt een tekenreeksweergave van een gegevens-URI geretourneerd"
     }
   ],
+  "mNaBPE": [
+    {
+      "type": 0,
+      "value": "Enter a valid JSON."
+    }
+  ],
   "mPakaD": [
     {
       "type": 0,
@@ -8547,28 +8567,6 @@
     {
       "type": 0,
       "value": "Met een asynchroon antwoord kan de logische app antwoorden met een 202-melding (Geaccepteerd) om aan te geven dat het verzoek wordt verwerkt. Er wordt een locatieheader verstrekt om de eindstatus op te halen."
-    }
-  ],
-  "qs9D+A": [
-    {
-      "type": 0,
-      "value": "Ongeldige eigenschap "
-    },
-    {
-      "type": 1,
-      "value": "invalidProperties"
-    },
-    {
-      "type": 0,
-      "value": " voor verificatietype "
-    },
-    {
-      "type": 1,
-      "value": "convertedAuthType"
-    },
-    {
-      "type": 0,
-      "value": "."
     }
   ],
   "qy5WqY": [

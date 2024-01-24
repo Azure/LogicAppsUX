@@ -857,28 +857,6 @@
       "value": "輸入的身分識別未與此邏輯應用程式建立關聯。"
     }
   ],
-  "3jwMBm": [
-    {
-      "type": 0,
-      "value": "不正確 json 格式。缺少 "
-    },
-    {
-      "type": 1,
-      "value": "openingBracket"
-    },
-    {
-      "type": 0,
-      "value": " 開頭或 "
-    },
-    {
-      "type": 1,
-      "value": "closingBracket"
-    },
-    {
-      "type": 0,
-      "value": " 結尾。"
-    }
-  ],
   "3n5pnv": [
     {
       "type": 0,
@@ -1097,6 +1075,28 @@
     {
       "type": 0,
       "value": "告訴 Microsoft 您為什麼喜歡此功能"
+    }
+  ],
+  "5LV34t": [
+    {
+      "type": 0,
+      "value": "The '"
+    },
+    {
+      "type": 1,
+      "value": "invalidProperties"
+    },
+    {
+      "type": 0,
+      "value": "' properties are invalid for the '"
+    },
+    {
+      "type": 1,
+      "value": "authType"
+    },
+    {
+      "type": 0,
+      "value": "' authentication type."
     }
   ],
   "5OvGgn": [
@@ -1817,6 +1817,12 @@
       "value": "在基本模式中編輯"
     }
   ],
+  "9yLPwo": [
+    {
+      "type": 0,
+      "value": "For more detailed information, you can refer to the following resources"
+    }
+  ],
   "A5Ferh": [
     {
       "type": 0,
@@ -2004,6 +2010,28 @@
       "value": "重試後成功"
     }
   ],
+  "BGw6eH": [
+    {
+      "type": 0,
+      "value": "Missing required properties '"
+    },
+    {
+      "type": 1,
+      "value": "missingProperties"
+    },
+    {
+      "type": 0,
+      "value": "' for authentication type '"
+    },
+    {
+      "type": 1,
+      "value": "authType"
+    },
+    {
+      "type": 0,
+      "value": "'"
+    }
+  ],
   "BHe7qY": [
     {
       "type": 0,
@@ -2170,12 +2198,6 @@
     {
       "type": 0,
       "value": "(UTC+13:00) 薩摩亞"
-    }
-  ],
-  "CafOCn": [
-    {
-      "type": 0,
-      "value": "{invalidProperties} 屬性對 {convertedAuthType} 驗證類型無效。"
     }
   ],
   "Cb6IEq": [
@@ -3009,6 +3031,28 @@
     {
       "type": 0,
       "value": "從此動作提交"
+    }
+  ],
+  "I1CYNA": [
+    {
+      "type": 0,
+      "value": "Invalid property '"
+    },
+    {
+      "type": 1,
+      "value": "invalidProperties"
+    },
+    {
+      "type": 0,
+      "value": "' for authentication type '"
+    },
+    {
+      "type": 1,
+      "value": "authType"
+    },
+    {
+      "type": 0,
+      "value": "'."
     }
   ],
   "I3mifR": [
@@ -3882,6 +3926,12 @@
       "value": "確定"
     }
   ],
+  "OBO/HE": [
+    {
+      "type": 0,
+      "value": "Invalid Authentication Value"
+    }
+  ],
   "ODQCKj": [
     {
       "type": 0,
@@ -4032,18 +4082,26 @@
       "value": "選取受控身分識別"
     }
   ],
-  "Os0h2Y": [
+  "Ov7Ckz": [
     {
       "type": 0,
-      "value": "缺少驗證類型 '"
+      "value": "Missing required property '"
     },
     {
       "type": 1,
-      "value": "convertedAuthType"
+      "value": "missingProperties"
     },
     {
       "type": 0,
-      "value": "' 所需的屬性 {missingProperties}'"
+      "value": "' for authentication type '"
+    },
+    {
+      "type": 1,
+      "value": "authType"
+    },
+    {
+      "type": 0,
+      "value": "'"
     }
   ],
   "P+7G62": [
@@ -4298,20 +4356,6 @@
     {
       "type": 0,
       "value": "狀態碼"
-    }
-  ],
-  "QKWoVr": [
-    {
-      "type": 0,
-      "value": "缺少驗證類型 '"
-    },
-    {
-      "type": 1,
-      "value": "convertedAuthType"
-    },
-    {
-      "type": 0,
-      "value": "' 所需的屬性 {missingProperties}'"
     }
   ],
   "QZBPUx": [
@@ -5039,12 +5083,6 @@
     {
       "type": 0,
       "value": "顯示較少內容"
-    }
-  ],
-  "V0le5X": [
-    {
-      "type": 0,
-      "value": "請輸入有效的 JSON。"
     }
   ],
   "V3vpin": [
@@ -7725,6 +7763,12 @@
       "value": "傳回資料 URI 的字串表示法"
     }
   ],
+  "mNaBPE": [
+    {
+      "type": 0,
+      "value": "Enter a valid JSON."
+    }
+  ],
   "mPakaD": [
     {
       "type": 0,
@@ -8462,28 +8506,6 @@
     {
       "type": 0,
       "value": "非同步回應可讓邏輯應用程式回應 202 (已接受)，來表示已接受該要求進行處理。將會提供位置標頭來擷取最終狀態。"
-    }
-  ],
-  "qs9D+A": [
-    {
-      "type": 0,
-      "value": "驗證類型 '"
-    },
-    {
-      "type": 1,
-      "value": "convertedAuthType"
-    },
-    {
-      "type": 0,
-      "value": "' 的屬性 '"
-    },
-    {
-      "type": 1,
-      "value": "invalidProperties"
-    },
-    {
-      "type": 0,
-      "value": "' 無效。"
     }
   ],
   "qy5WqY": [

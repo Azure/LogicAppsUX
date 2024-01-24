@@ -861,28 +861,6 @@
       "value": "Введенное удостоверение не связано с этим приложением логики."
     }
   ],
-  "3jwMBm": [
-    {
-      "type": 0,
-      "value": "Недопустимый формат JSON. Отсутствует начало "
-    },
-    {
-      "type": 1,
-      "value": "openingBracket"
-    },
-    {
-      "type": 0,
-      "value": " или окончание "
-    },
-    {
-      "type": 1,
-      "value": "closingBracket"
-    },
-    {
-      "type": 0,
-      "value": "."
-    }
-  ],
   "3n5pnv": [
     {
       "type": 0,
@@ -1097,6 +1075,28 @@
     {
       "type": 0,
       "value": "Расскажите Майкрософт, что вам понравилось в этой функции"
+    }
+  ],
+  "5LV34t": [
+    {
+      "type": 0,
+      "value": "The '"
+    },
+    {
+      "type": 1,
+      "value": "invalidProperties"
+    },
+    {
+      "type": 0,
+      "value": "' properties are invalid for the '"
+    },
+    {
+      "type": 1,
+      "value": "authType"
+    },
+    {
+      "type": 0,
+      "value": "' authentication type."
     }
   ],
   "5OvGgn": [
@@ -1817,6 +1817,12 @@
       "value": "Изменить в простом режиме"
     }
   ],
+  "9yLPwo": [
+    {
+      "type": 0,
+      "value": "For more detailed information, you can refer to the following resources"
+    }
+  ],
   "A5Ferh": [
     {
       "type": 0,
@@ -2037,6 +2043,28 @@
       "value": "Выполнено после нескольких попыток"
     }
   ],
+  "BGw6eH": [
+    {
+      "type": 0,
+      "value": "Missing required properties '"
+    },
+    {
+      "type": 1,
+      "value": "missingProperties"
+    },
+    {
+      "type": 0,
+      "value": "' for authentication type '"
+    },
+    {
+      "type": 1,
+      "value": "authType"
+    },
+    {
+      "type": 0,
+      "value": "'"
+    }
+  ],
   "BHe7qY": [
     {
       "type": 0,
@@ -2203,28 +2231,6 @@
     {
       "type": 0,
       "value": "(UTC+13:00) Самоа"
-    }
-  ],
-  "CafOCn": [
-    {
-      "type": 0,
-      "value": "Свойства '"
-    },
-    {
-      "type": 1,
-      "value": "invalidProperties"
-    },
-    {
-      "type": 0,
-      "value": "' недопустимы для проверки подлинности '"
-    },
-    {
-      "type": 1,
-      "value": "convertedAuthType"
-    },
-    {
-      "type": 0,
-      "value": "'."
     }
   ],
   "Cb6IEq": [
@@ -3095,6 +3101,28 @@
     {
       "type": 0,
       "value": "Отправить из этого действия"
+    }
+  ],
+  "I1CYNA": [
+    {
+      "type": 0,
+      "value": "Invalid property '"
+    },
+    {
+      "type": 1,
+      "value": "invalidProperties"
+    },
+    {
+      "type": 0,
+      "value": "' for authentication type '"
+    },
+    {
+      "type": 1,
+      "value": "authType"
+    },
+    {
+      "type": 0,
+      "value": "'."
     }
   ],
   "I3mifR": [
@@ -4001,6 +4029,12 @@
       "value": "ОК"
     }
   ],
+  "OBO/HE": [
+    {
+      "type": 0,
+      "value": "Invalid Authentication Value"
+    }
+  ],
   "ODQCKj": [
     {
       "type": 0,
@@ -4151,10 +4185,10 @@
       "value": "Выберите управляемое удостоверение"
     }
   ],
-  "Os0h2Y": [
+  "Ov7Ckz": [
     {
       "type": 0,
-      "value": "Отсутствуют обязательные свойства \""
+      "value": "Missing required property '"
     },
     {
       "type": 1,
@@ -4162,15 +4196,15 @@
     },
     {
       "type": 0,
-      "value": "\" для типа проверки подлинности \""
+      "value": "' for authentication type '"
     },
     {
       "type": 1,
-      "value": "convertedAuthType"
+      "value": "authType"
     },
     {
       "type": 0,
-      "value": "\""
+      "value": "'"
     }
   ],
   "P+7G62": [
@@ -4417,28 +4451,6 @@
     {
       "type": 0,
       "value": "Код состояния"
-    }
-  ],
-  "QKWoVr": [
-    {
-      "type": 0,
-      "value": "Отсутствует обязательное свойство \""
-    },
-    {
-      "type": 1,
-      "value": "missingProperties"
-    },
-    {
-      "type": 0,
-      "value": "\" для типа проверки подлинности \""
-    },
-    {
-      "type": 1,
-      "value": "convertedAuthType"
-    },
-    {
-      "type": 0,
-      "value": "\""
     }
   ],
   "QZBPUx": [
@@ -5191,12 +5203,6 @@
     {
       "type": 0,
       "value": "Показать меньше"
-    }
-  ],
-  "V0le5X": [
-    {
-      "type": 0,
-      "value": "Введите допустимый объект JSON."
     }
   ],
   "V3vpin": [
@@ -7951,6 +7957,12 @@
       "value": "Возвращает строковое представление URI данных"
     }
   ],
+  "mNaBPE": [
+    {
+      "type": 0,
+      "value": "Enter a valid JSON."
+    }
+  ],
   "mPakaD": [
     {
       "type": 0,
@@ -8721,28 +8733,6 @@
     {
       "type": 0,
       "value": "При использовании асинхронного отклика приложение логики может отправлять ответ 202 (Принято), чтобы показать, что запрос принят к обработке. Для получения окончательного состояния будет предоставлен заголовок расположения."
-    }
-  ],
-  "qs9D+A": [
-    {
-      "type": 0,
-      "value": "Недопустимое свойство '"
-    },
-    {
-      "type": 1,
-      "value": "invalidProperties"
-    },
-    {
-      "type": 0,
-      "value": "' для типа проверки подлинности '"
-    },
-    {
-      "type": 1,
-      "value": "convertedAuthType"
-    },
-    {
-      "type": 0,
-      "value": "'."
     }
   ],
   "qy5WqY": [

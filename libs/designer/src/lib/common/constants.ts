@@ -391,6 +391,7 @@ export default {
       SECURITY_CENTER_ALERT: 'securitycenteralert',
       SUBTRACTFROMTIME: 'subtractfromtime',
       TEAMS: 'teams',
+      TEAMSWEBHOOK: 'teamswebhook',
       VIRTUALAGENT: 'virtualagent',
       XML_TO_JSON: 'xmltojson',
       XML_TO_TEXT: 'xmltotext',
@@ -808,6 +809,9 @@ export default {
     SECURE_DATA_PROPERTY_NAMES: {
       INPUTS: 'inputs',
       OUTPUTS: 'outputs',
+    },
+    SPLITON: {
+      AUTOLOAD: '@autoload()',
     },
   },
   SWAGGER,

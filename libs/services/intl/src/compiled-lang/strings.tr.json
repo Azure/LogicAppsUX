@@ -853,28 +853,6 @@
       "value": "Girilen kimlik bu Logic App ile ilişkili değil."
     }
   ],
-  "3jwMBm": [
-    {
-      "type": 0,
-      "value": "JSON biçimi geçersiz. Başlangıç "
-    },
-    {
-      "type": 1,
-      "value": "openingBracket"
-    },
-    {
-      "type": 0,
-      "value": " veya bitiş "
-    },
-    {
-      "type": 1,
-      "value": "closingBracket"
-    },
-    {
-      "type": 0,
-      "value": " eksik."
-    }
-  ],
   "3n5pnv": [
     {
       "type": 0,
@@ -1089,6 +1067,28 @@
     {
       "type": 0,
       "value": "Microsoft'a bu özellik hakkında beğendiklerinizi bildirin"
+    }
+  ],
+  "5LV34t": [
+    {
+      "type": 0,
+      "value": "The '"
+    },
+    {
+      "type": 1,
+      "value": "invalidProperties"
+    },
+    {
+      "type": 0,
+      "value": "' properties are invalid for the '"
+    },
+    {
+      "type": 1,
+      "value": "authType"
+    },
+    {
+      "type": 0,
+      "value": "' authentication type."
     }
   ],
   "5OvGgn": [
@@ -1809,6 +1809,12 @@
       "value": "Temel modda düzenle"
     }
   ],
+  "9yLPwo": [
+    {
+      "type": 0,
+      "value": "For more detailed information, you can refer to the following resources"
+    }
+  ],
   "A5Ferh": [
     {
       "type": 0,
@@ -2007,6 +2013,28 @@
       "value": "Yeniden denemeler ile başarılı oldu"
     }
   ],
+  "BGw6eH": [
+    {
+      "type": 0,
+      "value": "Missing required properties '"
+    },
+    {
+      "type": 1,
+      "value": "missingProperties"
+    },
+    {
+      "type": 0,
+      "value": "' for authentication type '"
+    },
+    {
+      "type": 1,
+      "value": "authType"
+    },
+    {
+      "type": 0,
+      "value": "'"
+    }
+  ],
   "BHe7qY": [
     {
       "type": 0,
@@ -2173,28 +2201,6 @@
     {
       "type": 0,
       "value": "(UTC+13:00) Samoa"
-    }
-  ],
-  "CafOCn": [
-    {
-      "type": 0,
-      "value": "'"
-    },
-    {
-      "type": 1,
-      "value": "invalidProperties"
-    },
-    {
-      "type": 0,
-      "value": "' özellikleri '"
-    },
-    {
-      "type": 1,
-      "value": "convertedAuthType"
-    },
-    {
-      "type": 0,
-      "value": "' kimlik doğrulama türü için geçersiz."
     }
   ],
   "Cb6IEq": [
@@ -3031,6 +3037,28 @@
     {
       "type": 0,
       "value": "Bu eylemden gönder"
+    }
+  ],
+  "I1CYNA": [
+    {
+      "type": 0,
+      "value": "Invalid property '"
+    },
+    {
+      "type": 1,
+      "value": "invalidProperties"
+    },
+    {
+      "type": 0,
+      "value": "' for authentication type '"
+    },
+    {
+      "type": 1,
+      "value": "authType"
+    },
+    {
+      "type": 0,
+      "value": "'."
     }
   ],
   "I3mifR": [
@@ -3915,6 +3943,12 @@
       "value": "Tamam"
     }
   ],
+  "OBO/HE": [
+    {
+      "type": 0,
+      "value": "Invalid Authentication Value"
+    }
+  ],
   "ODQCKj": [
     {
       "type": 0,
@@ -4065,18 +4099,10 @@
       "value": "Yönetilen kimlik seçin"
     }
   ],
-  "Os0h2Y": [
+  "Ov7Ckz": [
     {
       "type": 0,
-      "value": "'"
-    },
-    {
-      "type": 1,
-      "value": "convertedAuthType"
-    },
-    {
-      "type": 0,
-      "value": "' kimlik doğrulama türü için gerekli '"
+      "value": "Missing required property '"
     },
     {
       "type": 1,
@@ -4084,7 +4110,15 @@
     },
     {
       "type": 0,
-      "value": "' özellikleri eksik"
+      "value": "' for authentication type '"
+    },
+    {
+      "type": 1,
+      "value": "authType"
+    },
+    {
+      "type": 0,
+      "value": "'"
     }
   ],
   "P+7G62": [
@@ -4331,28 +4365,6 @@
     {
       "type": 0,
       "value": "Durum kodu"
-    }
-  ],
-  "QKWoVr": [
-    {
-      "type": 0,
-      "value": "'"
-    },
-    {
-      "type": 1,
-      "value": "convertedAuthType"
-    },
-    {
-      "type": 0,
-      "value": "' kimlik doğrulama türü için gerekli '"
-    },
-    {
-      "type": 1,
-      "value": "missingProperties"
-    },
-    {
-      "type": 0,
-      "value": "' özelliği eksik"
     }
   ],
   "QZBPUx": [
@@ -5083,12 +5095,6 @@
     {
       "type": 0,
       "value": "Daha az göster"
-    }
-  ],
-  "V0le5X": [
-    {
-      "type": 0,
-      "value": "Geçerli bir JSON girin."
     }
   ],
   "V3vpin": [
@@ -7783,6 +7789,12 @@
       "value": "Bir veri URI'sinin dize gösterimini döndürür"
     }
   ],
+  "mNaBPE": [
+    {
+      "type": 0,
+      "value": "Enter a valid JSON."
+    }
+  ],
   "mPakaD": [
     {
       "type": 0,
@@ -8531,28 +8543,6 @@
     {
       "type": 0,
       "value": "Zaman uyumsuz yanıt, bir mantıksal uygulamanın, isteğin işlenmek üzere kabul edildiğini göstermek için 202 (Kabul Edildi) yanıtı göndermesine olanak sağlar. Son durumun alınması için bir konum üst bilgisi sağlanır."
-    }
-  ],
-  "qs9D+A": [
-    {
-      "type": 0,
-      "value": "'"
-    },
-    {
-      "type": 1,
-      "value": "convertedAuthType"
-    },
-    {
-      "type": 0,
-      "value": "' kimlik doğrulama türü için geçersiz '"
-    },
-    {
-      "type": 1,
-      "value": "invalidProperties"
-    },
-    {
-      "type": 0,
-      "value": "' özelliği."
     }
   ],
   "qy5WqY": [
