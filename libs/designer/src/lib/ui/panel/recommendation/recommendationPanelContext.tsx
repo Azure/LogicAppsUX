@@ -164,11 +164,15 @@ export const RecommendationPanelContext = (props: RecommendationPanelContextProp
     ? intl.formatMessage({ defaultMessage: 'Add a trigger', description: 'Text for the "Add Trigger" page header' })
     : intl.formatMessage({ defaultMessage: 'Add an action', description: 'Text for the "Add Action" page header' });
 
+  const closeButtonAriaLabel = intl.formatMessage({
+    defaultMessage: 'Close Add Action Panel',
+    description: 'Aria label for the close button in the Add Action Panel',
+  });
   return (
     <>
       <div className="msla-app-action-header">
         <Text variant="xLarge">{headingText}</Text>
-        <Button appearance="subtle" onClick={toggleCollapse} icon={<CloseIcon />} />
+        <Button appearance="subtle" aria-label={closeButtonAriaLabel} onClick={toggleCollapse} icon={<CloseIcon />} />
       </div>
       {selectionState !== SELECTION_STATES.SEARCH || selectedOperationGroupId ? (
         <div className={'msla-sub-heading-container'}>
