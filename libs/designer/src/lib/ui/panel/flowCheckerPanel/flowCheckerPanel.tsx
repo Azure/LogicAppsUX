@@ -43,7 +43,9 @@ export const FlowCheckerPanel = (props: CommonPanelProps) => {
     count: totalNumWarnings,
   };
 
-  const selectedTabId = useSelectedFlowCheckerPanelTabId();
+  const visibleTabs = [errorsTab, warningsTab].filter((tab) => tab.visible);
+  const defaultTabId = visibleTabs.find((tab) => tab.count > 0)?.id || visibleTabs[0]?.id;
+  const selectedTabId = useSelectedFlowCheckerPanelTabId() || defaultTabId;
   const onTabSelected = (e?: SelectTabEvent, data?: SelectTabData): void => {
     if (data) {
       const tabId = data.value as string;
@@ -58,13 +60,11 @@ export const FlowCheckerPanel = (props: CommonPanelProps) => {
         <Button appearance="subtle" onClick={props.toggleCollapse} icon={<CloseIcon />} />
       </div>
       <TabList selectedValue={selectedTabId} onTabSelect={onTabSelected} style={{ margin: '0px -12px' }}>
-        {[errorsTab, warningsTab].map(({ id, visible, count, title }) =>
-          visible ? (
-            <Tab key={id} value={id} role={'tab'}>
-              {`${title} (${count})`}
-            </Tab>
-          ) : null
-        )}
+        {visibleTabs.map(({ id, count, title }) => (
+          <Tab key={id} value={id} role={'tab'}>
+            {`${title} (${count})`}
+          </Tab>
+        ))}
       </TabList>
       {selectedTabId === constants.FLOW_CHECKER_PANEL_TAB_NAMES.ERRORS && <ErrorsTab />}
       {selectedTabId === constants.FLOW_CHECKER_PANEL_TAB_NAMES.WARNINGS && <WarningsTab />}

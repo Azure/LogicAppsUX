@@ -7,6 +7,7 @@ import { WorkflowParameterErrors } from '../workflowParameterErrors';
 import {
   useAllInputErrors,
   useAllSettingErrors,
+  useHostCheckerErrors,
   useNumOperationErrors,
   useNumWorkflowParameterErrors,
   useTotalNumErrors,
@@ -58,6 +59,7 @@ export const ErrorsTab = () => {
   const allInputErrors = useAllInputErrors();
   const allSettingErrors = useAllSettingErrors();
   const allConnectionErrors = useAllConnectionErrors();
+  const hostCheckerErrors = useHostCheckerErrors();
 
   const workflowParameterNames: Record<string, string> = useSelector((state: RootState) =>
     Object.entries(state.workflowParameters.definitions).reduce((acc: any, curr: any) => {
@@ -69,9 +71,14 @@ export const ErrorsTab = () => {
 
   const allNodesWithErrors = useMemo(
     () => [
-      ...new Set([...Object.keys(allInputErrors ?? {}), ...Object.keys(allSettingErrors ?? {}), ...Object.keys(allConnectionErrors ?? {})]),
+      ...new Set([
+        ...Object.keys(allInputErrors ?? {}),
+        ...Object.keys(allSettingErrors ?? {}),
+        ...Object.keys(allConnectionErrors ?? {}),
+        ...Object.keys(hostCheckerErrors),
+      ]),
     ],
-    [allConnectionErrors, allInputErrors, allSettingErrors]
+    [allConnectionErrors, allInputErrors, allSettingErrors, hostCheckerErrors]
   );
 
   const toNodeMessageFromString = (content: string): NodeMessage => {
@@ -96,6 +103,7 @@ export const ErrorsTab = () => {
               [inputErrorsSubsectionHeader]: (allInputErrors?.[nodeId] || []).map(toNodeMessageFromString),
               [settingErrorsSubsectionHeader]: (allSettingErrors?.[nodeId] || []).map(toNodeMessageFromString),
               [connectionErrorsSubsectionHeader]: [allConnectionErrors?.[nodeId]].map(toNodeMessageFromString),
+              ...hostCheckerErrors[nodeId],
             }}
           />
         ))}

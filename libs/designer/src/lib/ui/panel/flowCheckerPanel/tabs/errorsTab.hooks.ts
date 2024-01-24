@@ -1,7 +1,9 @@
 import type { RootState } from '../../../../core';
 import { useAllConnectionErrors } from '../../../../core/state/operation/operationSelector';
 import { useAllSettingsValidationErrors } from '../../../../core/state/setting/settingSelector';
+import type { FlowCheckerMessage } from '../../../../core/state/workflow/workflowInterfaces';
 import { useWorkflowParameterValidationErrors } from '../../../../core/state/workflowparameters/workflowparametersselector';
+import { MessageLevel } from '@microsoft/designer-ui';
 import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 
@@ -65,13 +67,43 @@ export const useNumWorkflowParameterErrors = () => {
   }, [workflowParameterErrors]);
 };
 
+// Custom errors from host
+
+export const useHostCheckerErrors = () =>
+  useSelector((state: RootState): Record<string, Record<string, FlowCheckerMessage[]>> => {
+    const errorMessagesToShow: Record<string, Record<string, FlowCheckerMessage[]>> = {};
+
+    const errorMessages = state.workflow.hostData.flowCheckerMessages[MessageLevel.Error] || [];
+    errorMessages.forEach((message: FlowCheckerMessage) => {
+      // Check if a node with matching id at least exists
+      if (!(message.nodeId in state.workflow.nodesMetadata)) return;
+
+      const messagesBySubtitle = (errorMessagesToShow[message.nodeId] ||= {});
+      (messagesBySubtitle[message.subtitle] ||= []).push(message);
+    });
+    return errorMessagesToShow;
+  });
+
+const useNumHostCheckerErrors = () => {
+  const hostCheckerErrors = useHostCheckerErrors();
+  return useMemo(() => {
+    return Object.values(hostCheckerErrors).reduce((acc, curr) => {
+      return acc + Object.values(curr).reduce((acc2, curr2) => acc2 + curr2.length, 0);
+    }, 0);
+  }, [hostCheckerErrors]);
+};
+
 /// Aggregation
 
 export const useNumOperationErrors = () => {
   const numInputErrors = useNumInputErrors();
   const numSettingErrors = useNumSettingErrors();
   const numConnectionErrors = useNumConnectionErrors();
-  return useMemo(() => numInputErrors + numSettingErrors + numConnectionErrors, [numInputErrors, numSettingErrors, numConnectionErrors]);
+  const numHostCheckerErrors = useNumHostCheckerErrors();
+  return useMemo(
+    () => numInputErrors + numSettingErrors + numConnectionErrors + numHostCheckerErrors,
+    [numInputErrors, numSettingErrors, numConnectionErrors, numHostCheckerErrors]
+  );
 };
 
 export const useTotalNumErrors = () => {

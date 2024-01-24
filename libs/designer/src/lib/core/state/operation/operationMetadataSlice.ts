@@ -5,7 +5,7 @@ import { StaticResultOption } from '../../actions/bjsworkflow/staticresults';
 import type { RepetitionContext } from '../../utils/parameters/helper';
 import { resetNodesLoadStatus, resetWorkflowState } from '../global';
 import { LogEntryLevel, LoggerService } from '@microsoft/designer-client-services-logic-apps';
-import type { MessageLevel, ParameterInfo } from '@microsoft/designer-ui';
+import type { ParameterInfo } from '@microsoft/designer-ui';
 import type { FilePickerInfo, InputParameter, OutputParameter, SwaggerParser } from '@microsoft/parsers-logic-apps';
 import type { OpenAPIV2, OperationInfo } from '@microsoft/utils-logic-apps';
 import { createSlice } from '@reduxjs/toolkit';
@@ -98,14 +98,6 @@ export interface ErrorInfo {
   code?: number;
 }
 
-export type FlowCheckerMessage = {
-  nodeId: string;
-  level: MessageLevel;
-  subtitle: string; // ex. "Settings Errors"
-  content: string; // ex. "Trigger condition cannot be empty"
-  onRenderDetails?: () => React.ReactNode;
-};
-
 export interface OperationMetadataState {
   operationInfo: Record<string, NodeOperation>;
   inputParameters: Record<string, NodeInputs>;
@@ -118,9 +110,6 @@ export interface OperationMetadataState {
   repetitionInfos: Record<string, RepetitionContext>;
   errors: Record<string, Record<ErrorLevel, ErrorInfo | undefined>>;
   loadStatus: OperationMetadataLoadStatus;
-  hostData: {
-    flowCheckerMessages: Partial<Record<MessageLevel, FlowCheckerMessage[]>>;
-  };
 }
 
 interface OperationMetadataLoadStatus {
@@ -142,9 +131,6 @@ const initialState: OperationMetadataState = {
   loadStatus: {
     nodesInitialized: false,
     nodesAndDynamicDataInitialized: false,
-  },
-  hostData: {
-    flowCheckerMessages: {},
   },
 };
 
@@ -469,16 +455,6 @@ export const operationMetadataSlice = createSlice({
     updateDynamicDataLoadStatus: (state, action: PayloadAction<boolean>) => {
       state.loadStatus.nodesAndDynamicDataInitialized = action.payload;
     },
-    setHostFlowCheckerMessages: (
-      state,
-      action: PayloadAction<{ level: MessageLevel; checkerMessages: FlowCheckerMessage[] | undefined }>
-    ) => {
-      if (!action.payload.checkerMessages) {
-        delete state.hostData.flowCheckerMessages[action.payload.level];
-        return;
-      }
-      state.hostData.flowCheckerMessages[action.payload.level] = action.payload.checkerMessages;
-    },
   },
   extraReducers: (builder) => {
     builder.addCase(resetWorkflowState, () => initialState);
@@ -510,7 +486,6 @@ export const {
   deinitializeOperationInfo,
   deinitializeNodes,
   updateDynamicDataLoadStatus,
-  setHostFlowCheckerMessages,
 } = operationMetadataSlice.actions;
 
 export default operationMetadataSlice.reducer;

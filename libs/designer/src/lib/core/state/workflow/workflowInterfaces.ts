@@ -1,4 +1,5 @@
 import type { WorkflowNode } from '../../parsers/models/workflowNode';
+import type { MessageLevel } from '@microsoft/designer-ui';
 import type { LogicAppsV2, SubgraphType } from '@microsoft/utils-logic-apps';
 
 export type SpecTypes = 'BJS' | 'CNCF';
@@ -23,6 +24,14 @@ export const WorkflowKind = {
 } as const;
 export type WorkflowKind = (typeof WorkflowKind)[keyof typeof WorkflowKind];
 
+export type FlowCheckerMessage = {
+  nodeId: string;
+  level: MessageLevel;
+  subtitle: string; // ex. "Settings Errors"
+  content: string; // ex. "Trigger condition cannot be empty"
+  onRenderDetails?: () => React.ReactNode;
+};
+
 export interface WorkflowState {
   workflowSpec?: SpecTypes;
   graph: WorkflowNode | null;
@@ -37,4 +46,7 @@ export interface WorkflowState {
   isDirty: boolean;
   workflowKind: WorkflowKind;
   originalDefinition: LogicAppsV2.WorkflowDefinition;
+  hostData: {
+    flowCheckerMessages: Partial<Record<MessageLevel, FlowCheckerMessage[]>>;
+  };
 }

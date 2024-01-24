@@ -119,6 +119,7 @@ export const panelSlice = createSlice({
       state.currentPanelMode = panelMode;
       state.referencePanelMode = referencePanelMode;
       state.selectedNodes = nodeIds ? nodeIds : nodeId ? [nodeId] : [];
+      state.selectedFlowCheckerTabId = undefined;
     },
     selectPanelTab: (state, action: PayloadAction<string | undefined>) => {
       state.selectedTabId = action.payload;
