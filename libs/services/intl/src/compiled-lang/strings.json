@@ -3911,6 +3911,12 @@
       "value": "Tuesday"
     }
   ],
+  "NzPnFS": [
+    {
+      "type": 0,
+      "value": "Example:"
+    }
+  ],
   "O+3Y9f": [
     {
       "type": 0,
@@ -6565,6 +6571,12 @@
     {
       "type": 0,
       "value": "Required. The name of the variable whose value you want."
+    }
+  ],
+  "eHsOsm": [
+    {
+      "type": 0,
+      "value": "Specify the duration in ISO 8601 format"
     }
   ],
   "eO1h/h": [
