@@ -7,7 +7,7 @@ test('Sanity Check', async ({ page }) => {
   await page.getByText('Select an option').click();
   await page.getByRole('option', { name: 'Simple Big Workflow' }).click();
   await page.getByRole('button', { name: 'Toolbox' }).click();
-  await page.getByTestId('card-Increment variable').getByRole('button', { name: 'Variables connector icon Increment variable' }).click();
+  await page.getByTestId('card-Increment variable').getByRole('button').click();
   await page.getByLabel('Value').getByRole('paragraph').click();
   await page.getByLabel('Value').press('Escape');
   await page.getByRole('tab', { name: 'Code View' }).click();

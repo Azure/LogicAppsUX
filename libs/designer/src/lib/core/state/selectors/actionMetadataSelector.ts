@@ -1,9 +1,11 @@
+import { titleCase } from '../../../common/utilities/Utils';
 import { isConnectionRequiredForOperation } from '../../actions/bjsworkflow/connections';
 import { useConnectionResource } from '../../queries/connections';
 import type { RootState } from '../../store';
 import { useConnector, useConnectorAndSwagger, useNodeConnectionId } from '../connection/connectionSelector';
 import type { NodeOperation } from '../operation/operationMetadataSlice';
 import { OperationManifestService } from '@microsoft/designer-client-services-logic-apps';
+import type { Operation } from '@microsoft/parsers-logic-apps';
 import { SwaggerParser } from '@microsoft/parsers-logic-apps';
 import { getObjectPropertyValue } from '@microsoft/utils-logic-apps';
 import { createSelector } from '@reduxjs/toolkit';
@@ -107,40 +109,51 @@ const useNodeAttribute = (operationInfo: NodeOperation, propertyInManifest: stri
   };
 };
 
-export const useConnectorName = (operationInfo: NodeOperation) => {
+export const useConnectorName = (operationInfo: NodeOperation): QueryResult => {
   return useNodeAttribute(operationInfo, ['connector', 'properties', 'displayName'], ['displayName']);
 };
 
-export const useOperationDescription = (operationInfo: NodeOperation) => {
+export const useOperationDescription = (operationInfo: NodeOperation): QueryResult => {
   const operationManifestService = OperationManifestService();
   const useManifest = operationManifestService.isSupported(operationInfo?.type ?? '', operationInfo?.kind ?? '');
 
-  const { data: connectorData } = useConnectorAndSwagger(operationInfo?.connectorId, !useManifest);
-
-  const { result, isLoading } = useNodeAttribute(operationInfo, ['description'], ['description']);
-
-  const { swagger } = connectorData ?? {};
-  if (swagger) {
-    const swaggerParsed = new SwaggerParser(swagger);
-    const swaggerResult = swaggerParsed.getOperationByOperationId(operationInfo.operationId)?.description;
-    if (swaggerResult) {
-      return { isLoading, result: swaggerResult };
-    }
-  }
-
-  return { result, isLoading };
+  return useNodeAttributeOrSwagger(operationInfo, ['description'], ['description'], 'description', { useManifest });
 };
 
-export const useOperationDocumentation = (operationInfo: NodeOperation) => {
+export const useOperationDocumentation = (operationInfo: NodeOperation): QueryResult => {
   const operationManifestService = OperationManifestService();
   const useManifest = operationManifestService.isSupported(operationInfo?.type ?? '', operationInfo?.kind ?? '');
 
-  const { data: connectorData } = useConnectorAndSwagger(operationInfo?.connectorId, !useManifest);
-  const { result, isLoading } = useNodeAttribute(operationInfo, ['connector', 'properties', 'externalDocs'], ['externalDocs']);
+  return useNodeAttributeOrSwagger(operationInfo, ['connector', 'properties', 'externalDocs'], ['externalDocs'], 'externalDocs', {
+    useManifest,
+  });
+};
+
+export const useOperationSummary = (operationInfo: NodeOperation): QueryResult => {
+  const operationManifestService = OperationManifestService();
+  const useManifest = operationManifestService.isSupported(operationInfo?.type ?? '', operationInfo?.kind ?? '');
+
+  const result = useNodeAttributeOrSwagger(operationInfo, ['summary'], ['summary'], 'summary', { useManifest });
+  if (result.result === undefined && operationInfo?.operationId) {
+    result.result = titleCase(operationInfo.operationId);
+  }
+
+  return result;
+};
+
+const useNodeAttributeOrSwagger = (
+  operationInfo: NodeOperation,
+  propertyInManifest: string[],
+  propertyInConnector: string[],
+  propertyInSwagger: keyof Operation,
+  options: { useManifest: boolean }
+): QueryResult => {
+  const { data: connectorData } = useConnectorAndSwagger(operationInfo?.connectorId, !options.useManifest);
+  const { result, isLoading } = useNodeAttribute(operationInfo, propertyInManifest, propertyInConnector);
   const { swagger } = connectorData ?? {};
   if (swagger) {
     const swaggerParsed = new SwaggerParser(swagger);
-    const swaggerResult = swaggerParsed.getOperationByOperationId(operationInfo.operationId)?.externalDocs;
+    const swaggerResult = swaggerParsed.getOperationByOperationId(operationInfo.operationId)?.[propertyInSwagger];
     if (swaggerResult) {
       return { isLoading, result: swaggerResult };
     }

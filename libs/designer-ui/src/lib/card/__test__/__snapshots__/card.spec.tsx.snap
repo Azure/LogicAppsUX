@@ -31,6 +31,7 @@ exports[`lib/card should render 1`] = `
       className="panel-card-main"
     >
       <div
+        aria-label=" operation"
         className="panel-card-header"
         role="button"
       >
@@ -117,6 +118,7 @@ exports[`lib/card should render as cloned 1`] = `
       className="panel-card-main"
     >
       <div
+        aria-label=" operation"
         className="panel-card-header"
         role="button"
       >
@@ -203,6 +205,7 @@ exports[`lib/card should render as draggable 1`] = `
       className="panel-card-main"
     >
       <div
+        aria-label=" operation"
         className="panel-card-header"
         role="button"
       >
@@ -302,6 +305,7 @@ exports[`lib/card should render as inactive 1`] = `
       className="panel-card-main"
     >
       <div
+        aria-label=" operation"
         className="panel-card-header"
         role="button"
       >
@@ -388,6 +392,7 @@ exports[`lib/card should render as selected 1`] = `
       className="panel-card-main"
     >
       <div
+        aria-label=" operation"
         className="panel-card-header"
         role="button"
       >
@@ -443,7 +448,7 @@ exports[`lib/card should render as selected 1`] = `
 </div>
 `;
 
-exports[`lib/card should render with an icon 1`] = `
+exports[`lib/card should render with an icon and a connector name (0) 1`] = `
 <div
   style={
     Object {
@@ -474,6 +479,7 @@ exports[`lib/card should render with an icon 1`] = `
       className="panel-card-main"
     >
       <div
+        aria-label="SharePoint connector"
         className="panel-card-header"
         role="button"
       >
@@ -487,7 +493,153 @@ exports[`lib/card should render with an icon 1`] = `
             className="panel-card-content-icon-section"
           >
             <img
-              alt=" connector icon"
+              alt=""
+              className="panel-card-icon"
+              src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
+            />
+          </div>
+          <div
+            className="panel-card-top-content"
+          >
+            <div
+              className="panel-msla-title"
+            >
+              title
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        className="msla-card-v2-footer"
+      >
+        <div
+          className="msla-badges"
+        />
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`lib/card should render with an icon and an operation name (1) 1`] = `
+<div
+  style={
+    Object {
+      "position": "relative",
+    }
+  }
+>
+  <div
+    className="msla-panel-card-container"
+    data-automation-id="card-title"
+    data-testid="card-title"
+    onClick={[Function]}
+    onContextMenu={[Function]}
+    onKeyDown={[Function]}
+    onKeyUp={[Function]}
+    style={
+      Object {
+        "borderLeft": "4px solid rgba(71,71,71, 1)",
+        "borderRadius": "2px",
+      }
+    }
+    tabIndex={1}
+  >
+    <div
+      className="msla-selection-box"
+    />
+    <div
+      className="panel-card-main"
+    >
+      <div
+        aria-label="Get an item operation"
+        className="panel-card-header"
+        role="button"
+      >
+        <div
+          className="panel-card-content-container"
+        >
+          <div
+            className="panel-card-content-gripper-section"
+          />
+          <div
+            className="panel-card-content-icon-section"
+          >
+            <img
+              alt=""
+              className="panel-card-icon"
+              src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
+            />
+          </div>
+          <div
+            className="panel-card-top-content"
+          >
+            <div
+              className="panel-msla-title"
+            >
+              title
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        className="msla-card-v2-footer"
+      >
+        <div
+          className="msla-badges"
+        />
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`lib/card should render with an icon and an operation name and connector name (2) 1`] = `
+<div
+  style={
+    Object {
+      "position": "relative",
+    }
+  }
+>
+  <div
+    className="msla-panel-card-container"
+    data-automation-id="card-title"
+    data-testid="card-title"
+    onClick={[Function]}
+    onContextMenu={[Function]}
+    onKeyDown={[Function]}
+    onKeyUp={[Function]}
+    style={
+      Object {
+        "borderLeft": "4px solid rgba(71,71,71, 1)",
+        "borderRadius": "2px",
+      }
+    }
+    tabIndex={1}
+  >
+    <div
+      className="msla-selection-box"
+    />
+    <div
+      className="panel-card-main"
+    >
+      <div
+        aria-label="Get an item operation, SharePoint connector"
+        className="panel-card-header"
+        role="button"
+      >
+        <div
+          className="panel-card-content-container"
+        >
+          <div
+            className="panel-card-content-gripper-section"
+          />
+          <div
+            className="panel-card-content-icon-section"
+          >
+            <img
+              alt=""
               className="panel-card-icon"
               src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
             />
