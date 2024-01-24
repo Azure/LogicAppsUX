@@ -21,9 +21,11 @@ export function SettingLabel({
     <>
       <div className="msla-setting-label-container">
         <div className="msla-setting-label-title">{labelText}</div>
-        <Tooltip relationship="label" content={infoTooltipText ?? ''} aria-label={infoTooltipText}>
-          <Info16Regular className="msla-setting-label-tooltip-icon" />
-        </Tooltip>
+        {infoTooltipText ? (
+          <Tooltip relationship="label" content={infoTooltipText} aria-label={infoTooltipText}>
+            <Info16Regular className="msla-setting-label-tooltip-icon" />
+          </Tooltip>
+        ) : null}
       </div>
       {settingDescription ? <div className="msla-setting-label-description">{settingDescription}</div> : null}
       {subLabelText ? <div className={css('msla-setting-label-subLabel', isSubLabelToggle && 'isToggle')}>{subLabelText}</div> : null}

@@ -74,6 +74,10 @@ export const General = ({
       'Limit the maximum duration between the retries and asynchronous responses for this action. Note: This does not alter the request timeout of a single request',
     description: 'description of action timeout setting',
   });
+  const actionTimeoutFormatDescription = intl.formatMessage({
+    defaultMessage: 'Specify the duration in ISO 8601 format',
+    description: 'description of action timeout format description',
+  });
   const concurrencyTitle = intl.formatMessage({
     defaultMessage: 'Concurrency Control',
     description: 'title for concurrency setting',
@@ -119,6 +123,10 @@ export const General = ({
   const invokerConnectionTooltipText = intl.formatMessage({
     defaultMessage: 'When enabled, this action will run with the user from the "Run as" setting in the Dataverse trigger',
     description: 'Description of invoker connection setting',
+  });
+  const examplePlaceholderText = intl.formatMessage({
+    defaultMessage: 'Example:',
+    description: 'Placeholder text for an example input field',
   });
 
   const generalSectionProps: SettingsSectionProps = {
@@ -172,10 +180,11 @@ export const General = ({
         settingProp: {
           id: 'timeoutDuration',
           value: timeout?.value ?? '',
-          customLabel: getSettingLabel(actionTimeoutTitle, actionTimeoutTooltipText),
+          customLabel: getSettingLabel(actionTimeoutTitle, actionTimeoutTooltipText, actionTimeoutFormatDescription),
           readOnly,
           onValueChange: (_, newValue) => onTimeoutValueChange(newValue as string),
           ariaLabel: actionTimeoutTitle,
+          placeholder: `${examplePlaceholderText} P1D`,
         },
         visible: timeout?.isSupported,
       },
