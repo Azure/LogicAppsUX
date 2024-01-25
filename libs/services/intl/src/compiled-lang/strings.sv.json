@@ -1105,20 +1105,6 @@
       "value": "Brödtext"
     }
   ],
-  "5Ow9mX": [
-    {
-      "type": 0,
-      "value": "Ikon för "
-    },
-    {
-      "type": 1,
-      "value": "connectorName"
-    },
-    {
-      "type": 0,
-      "value": " anslutning"
-    }
-  ],
   "5SAQOb": [
     {
       "type": 0,
@@ -1325,6 +1311,16 @@
     {
       "type": 0,
       "value": "Skapa flöde"
+    }
+  ],
+  "6sSPNb": [
+    {
+      "type": 1,
+      "value": "connectorName"
+    },
+    {
+      "type": 0,
+      "value": " connector"
     }
   ],
   "6u6CS+": [
@@ -1709,6 +1705,16 @@
     {
       "type": 0,
       "value": "Användaridentiteten stöds inte när Logic-appen har en systemtilldelad hanterad identitet aktiverad."
+    }
+  ],
+  "96JG8I": [
+    {
+      "type": 1,
+      "value": "operationName"
+    },
+    {
+      "type": 0,
+      "value": " operation"
     }
   ],
   "99vsJy": [
@@ -3911,6 +3917,12 @@
       "value": "Tisdag"
     }
   ],
+  "NzPnFS": [
+    {
+      "type": 0,
+      "value": "Example:"
+    }
+  ],
   "O+3Y9f": [
     {
       "type": 0,
@@ -5829,6 +5841,12 @@
       "value": "Söktips"
     }
   ],
+  "Yg/vvm": [
+    {
+      "type": 0,
+      "value": "Close Add Action Panel"
+    }
+  ],
   "YgU88A": [
     {
       "type": 0,
@@ -6557,6 +6575,12 @@
     {
       "type": 0,
       "value": "Krävs. Namnet på variabeln vars värde du vill ha."
+    }
+  ],
+  "eHsOsm": [
+    {
+      "type": 0,
+      "value": "Specify the duration in ISO 8601 format"
     }
   ],
   "eO1h/h": [
@@ -7812,7 +7836,7 @@
   "mNaBPE": [
     {
       "type": 0,
-      "value": "Enter a valid JSON."
+      "value": "Ange en giltig JSON."
     }
   ],
   "mPakaD": [
@@ -8035,6 +8059,24 @@
     {
       "type": 0,
       "value": "Utelämna arbetsflödesrubriker"
+    }
+  ],
+  "ncW1Sw": [
+    {
+      "type": 1,
+      "value": "operationName"
+    },
+    {
+      "type": 0,
+      "value": " operation, "
+    },
+    {
+      "type": 1,
+      "value": "connectorName"
+    },
+    {
+      "type": 0,
+      "value": " connector"
     }
   ],
   "ngsC44": [
