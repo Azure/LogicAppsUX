@@ -198,7 +198,7 @@ export const TokenPickerOptions = ({
             {getReducedTokenList(!searchQuery ? section.tokens : filteredTokens, {
               hasSearchQuery: !!searchQuery,
               maxRowsShown,
-              moreOptions,
+              showAllOptions: !moreOptions,
             }).map((token, j) => (
               <button
                 className="msla-token-picker-section-option"

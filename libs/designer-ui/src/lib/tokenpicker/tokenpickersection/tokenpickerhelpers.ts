@@ -2,19 +2,16 @@ import type { OutputToken } from '..';
 
 export const getReducedTokenList = (
   tokens: OutputToken[],
-  options: { hasSearchQuery: boolean; maxRowsShown: number; moreOptions: boolean }
+  options: { hasSearchQuery: boolean; maxRowsShown: number; showAllOptions: boolean }
 ): OutputToken[] => {
-  const { hasSearchQuery, maxRowsShown, moreOptions } = options;
+  const { hasSearchQuery, maxRowsShown, showAllOptions } = options;
 
-  return tokens
-    .map((token, j) => {
-      if ((token.isAdvanced || j >= maxRowsShown) && moreOptions && !hasSearchQuery) {
-        return null;
-      }
+  let filteredTokens = tokens.filter((token) => !token.isAdvanced || showAllOptions || hasSearchQuery);
+  if (!showAllOptions) {
+    filteredTokens = filteredTokens.slice(0, maxRowsShown);
+  }
 
-      return token;
-    })
-    .filter(Boolean) as OutputToken[];
+  return filteredTokens;
 };
 
 export const hasAdvanced = (tokens: OutputToken[]): boolean => {
