@@ -280,6 +280,7 @@ export async function getDynamicInputsFromSchema(
     ...toInputParameter(schemaProperty),
     isDynamic: true,
     in: dynamicParameter.in,
+    required: (schemaProperty.schema?.required as any) ?? schemaProperty.required ?? false,
   }));
 
   // We are recieving some swagger parameters with keys in the following format, ex:
