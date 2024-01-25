@@ -1,4 +1,14 @@
 # Logic Apps Designer
+## [2.107.0](https://github.com/Azure/LogicAppsUX/compare/v2.106.0...v2.107.0) (2024-01-25)
+
+
+### Bug Fixes
+
+* **designer:** Add proper aria labeling to the close panel button for action search ([#4055](https://github.com/Azure/LogicAppsUX/issues/4055)) ([197d0bb](https://github.com/Azure/LogicAppsUX/commit/197d0bb1eb2f8a796d645f95c4d6fbf67b1e0f03))
+* **Designer:** Export styling for html editor to remediate Power Automate html editor rendering bugs ([#4058](https://github.com/Azure/LogicAppsUX/issues/4058)) ([d577657](https://github.com/Azure/LogicAppsUX/commit/d57765745886f82fc7df56612bcad8eb4b189e1d))
+* **designer:** Prevent collapsed left panel from hiding minimap ([#4056](https://github.com/Azure/LogicAppsUX/issues/4056)) ([6a129be](https://github.com/Azure/LogicAppsUX/commit/6a129bec97c090cc417b1fda8036b48413ebb96f))
+* **VSCode:** Validate foldername ([#4032](https://github.com/Azure/LogicAppsUX/issues/4032)) ([f4e23a8](https://github.com/Azure/LogicAppsUX/commit/f4e23a8950a3db0312c13b493aabe2c7b256a7e9))
+
 ## [2.106.0](https://github.com/Azure/LogicAppsUX/compare/v2.105.0...v2.106.0) (2024-01-24)
 
 
