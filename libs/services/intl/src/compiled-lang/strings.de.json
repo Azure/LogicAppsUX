@@ -1092,7 +1092,7 @@
   "5LV34t": [
     {
       "type": 0,
-      "value": "The '"
+      "value": "Die Eigenschaften „"
     },
     {
       "type": 1,
@@ -1100,7 +1100,7 @@
     },
     {
       "type": 0,
-      "value": "' properties are invalid for the '"
+      "value": "“ sind für den Authentifizierungstyp „"
     },
     {
       "type": 1,
@@ -1108,23 +1108,13 @@
     },
     {
       "type": 0,
-      "value": "' authentication type."
+      "value": "“ ungültig."
     }
   ],
   "5OvGgn": [
     {
       "type": 0,
       "value": "Textkörper"
-    }
-  ],
-  "5Ow9mX": [
-    {
-      "type": 1,
-      "value": "connectorName"
-    },
-    {
-      "type": 0,
-      "value": "-Connectorsymbol"
     }
   ],
   "5SAQOb": [
@@ -1333,6 +1323,16 @@
     {
       "type": 0,
       "value": "Flow erstellen"
+    }
+  ],
+  "6sSPNb": [
+    {
+      "type": 1,
+      "value": "connectorName"
+    },
+    {
+      "type": 0,
+      "value": " connector"
     }
   ],
   "6u6CS+": [
@@ -1723,6 +1723,16 @@
       "value": "Die Benutzeridentität wird nicht unterstützt, wenn für die Logik-App die systemseitig zugewiesene verwaltete Identität aktiviert ist."
     }
   ],
+  "96JG8I": [
+    {
+      "type": 1,
+      "value": "operationName"
+    },
+    {
+      "type": 0,
+      "value": " operation"
+    }
+  ],
   "99vsJy": [
     {
       "type": 0,
@@ -2040,7 +2050,7 @@
   "BGw6eH": [
     {
       "type": 0,
-      "value": "Missing required properties '"
+      "value": "Fehlende erforderliche Eigenschaften „"
     },
     {
       "type": 1,
@@ -2048,7 +2058,7 @@
     },
     {
       "type": 0,
-      "value": "' for authentication type '"
+      "value": "“ für den Authentifizierungstyp „"
     },
     {
       "type": 1,
@@ -2056,7 +2066,7 @@
     },
     {
       "type": 0,
-      "value": "'"
+      "value": "“"
     }
   ],
   "BHe7qY": [
@@ -3086,7 +3096,7 @@
   "I1CYNA": [
     {
       "type": 0,
-      "value": "Invalid property '"
+      "value": "Ungültige Eigenschaft „"
     },
     {
       "type": 1,
@@ -3094,7 +3104,7 @@
     },
     {
       "type": 0,
-      "value": "' for authentication type '"
+      "value": "“ für den Authentifizierungstyp „"
     },
     {
       "type": 1,
@@ -3102,7 +3112,7 @@
     },
     {
       "type": 0,
-      "value": "'."
+      "value": "“."
     }
   ],
   "I3mifR": [
@@ -3939,6 +3949,12 @@
       "value": "Dienstag"
     }
   ],
+  "NzPnFS": [
+    {
+      "type": 0,
+      "value": "Example:"
+    }
+  ],
   "O+3Y9f": [
     {
       "type": 0,
@@ -3990,7 +4006,7 @@
   "OBO/HE": [
     {
       "type": 0,
-      "value": "Invalid Authentication Value"
+      "value": "Ungültiger Authentifizierungswert"
     }
   ],
   "ODQCKj": [
@@ -4146,7 +4162,7 @@
   "Ov7Ckz": [
     {
       "type": 0,
-      "value": "Missing required property '"
+      "value": "Fehlende erforderliche Eigenschaft „"
     },
     {
       "type": 1,
@@ -4154,7 +4170,7 @@
     },
     {
       "type": 0,
-      "value": "' for authentication type '"
+      "value": "“ für den Authentifizierungstyp „"
     },
     {
       "type": 1,
@@ -4162,7 +4178,7 @@
     },
     {
       "type": 0,
-      "value": "'"
+      "value": "“"
     }
   ],
   "P+7G62": [
@@ -5885,6 +5901,12 @@
       "value": "Suchtipps"
     }
   ],
+  "Yg/vvm": [
+    {
+      "type": 0,
+      "value": "Close Add Action Panel"
+    }
+  ],
   "YgU88A": [
     {
       "type": 0,
@@ -6613,6 +6635,12 @@
     {
       "type": 0,
       "value": "Erforderlich. Der Name der Variable, deren Wert Sie abrufen möchten."
+    }
+  ],
+  "eHsOsm": [
+    {
+      "type": 0,
+      "value": "Specify the duration in ISO 8601 format"
     }
   ],
   "eO1h/h": [
@@ -7872,7 +7900,7 @@
   "mNaBPE": [
     {
       "type": 0,
-      "value": "Enter a valid JSON."
+      "value": "Geben Sie einen gültigen JSON-Wert ein."
     }
   ],
   "mPakaD": [
@@ -8099,6 +8127,24 @@
     {
       "type": 0,
       "value": "Workflowheader unterdrücken"
+    }
+  ],
+  "ncW1Sw": [
+    {
+      "type": 1,
+      "value": "operationName"
+    },
+    {
+      "type": 0,
+      "value": " operation, "
+    },
+    {
+      "type": 1,
+      "value": "connectorName"
+    },
+    {
+      "type": 0,
+      "value": " connector"
     }
   ],
   "ngsC44": [
