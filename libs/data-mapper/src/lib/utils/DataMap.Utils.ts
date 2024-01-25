@@ -608,6 +608,7 @@ export const createTargetOrFunction = (tokens: string[]): { term: FunctionCreati
   return { term: tokens[0], nextIndex: 2 };
 };
 
+// danielle how do we handle this? /ns0:Root/Looping/VehicleTrips/Vehicle[is-equal(VehicleId, /ns0:Root/Looping/VehicleTrips/Trips[$i]/VehicleId)]/VehicleRegistration'
 export const createTargetOrFunctionRefactor = (tokens: string[]): { term: FunctionCreationMetadata; nextIndex: number } => {
   if (tokens.length === 1) {
     return { term: tokens[0], nextIndex: 2 };
@@ -615,6 +616,9 @@ export const createTargetOrFunctionRefactor = (tokens: string[]): { term: Functi
   // determine if token is a function
   if (tokens[1] === Separators.OpenParenthesis) {
     const func: ParseFunc = { name: tokens[0], inputs: [] };
+    if (tokens[0].includes('/')) {
+      return { term: tokens[0], nextIndex: 2 };
+    }
     let i = 2; // start of the function inputs
     let parenCount = 1;
     let start = 2;

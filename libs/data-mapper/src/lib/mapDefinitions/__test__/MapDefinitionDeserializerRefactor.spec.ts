@@ -940,15 +940,17 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
 
         expect(resultEntries[4][0]).toEqual('target-/ns0:TargetSchemaRoot/Looping/ManyToOne/Simple');
         expect(resultEntries[4][1]).toBeTruthy();
-        expect((resultEntries[4][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual(
+
+        const loopInputs = resultEntries[4][1].inputs[0].sort((conn1, conn2) =>
+          (conn2 as ConnectionUnit).reactFlowKey.localeCompare((conn1 as ConnectionUnit).reactFlowKey)
+        );
+        expect((loopInputs[0] as ConnectionUnit).reactFlowKey).toEqual(
           'source-/ns0:SourceSchemaRoot/Looping/ManyToOne/Simple/SourceSimpleChild/SourceSimpleChildChild'
         );
-        expect((resultEntries[4][1].inputs[0][1] as ConnectionUnit).reactFlowKey).toEqual(
+        expect((loopInputs[1] as ConnectionUnit).reactFlowKey).toEqual(
           'source-/ns0:SourceSchemaRoot/Looping/ManyToOne/Simple/SourceSimpleChild'
         );
-        expect((resultEntries[4][1].inputs[0][2] as ConnectionUnit).reactFlowKey).toEqual(
-          'source-/ns0:SourceSchemaRoot/Looping/ManyToOne/Simple'
-        );
+        expect((loopInputs[2] as ConnectionUnit).reactFlowKey).toEqual('source-/ns0:SourceSchemaRoot/Looping/ManyToOne/Simple');
 
         expect(resultEntries[5][0]).toEqual('target-/ns0:TargetSchemaRoot/Looping/ManyToOne/Simple/Direct');
         expect(resultEntries[5][1]).toBeTruthy();
