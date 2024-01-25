@@ -1,7 +1,7 @@
 import { openPanel, useNodesInitialized } from '../core';
 import { useLayout } from '../core/graphlayout';
 import { usePreloadOperationsQuery, usePreloadConnectorsQuery } from '../core/queries/browse';
-import { useMonitoringView, useReadOnly } from '../core/state/designerOptions/designerOptionsSelectors';
+import { useMonitoringView, useReadOnly, useSku } from '../core/state/designerOptions/designerOptionsSelectors';
 import { useClampPan } from '../core/state/designerView/designerViewSelectors';
 import { useIsPanelCollapsed } from '../core/state/panel/panelSelectors';
 import { clearPanel } from '../core/state/panel/panelSlice';
@@ -32,6 +32,7 @@ import KeyboardBackendFactory, { isKeyboardDragTrigger } from 'react-dnd-accessi
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { DndProvider, createTransition, MouseTransition } from 'react-dnd-multi-backend';
 import { useHotkeys } from 'react-hotkeys-hook';
+import { useQuery } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import { Background, ReactFlow, ReactFlowProvider, useNodes, useReactFlow, useStore, BezierEdge } from 'reactflow';
 import type { BackgroundProps, NodeChange } from 'reactflow';
@@ -215,6 +216,9 @@ export const Designer = (props: DesignerProps) => {
 
   const isInitialized = useNodesInitialized();
   const preloadSearch = useMemo(() => (isMonitoringView || isReadOnly) && isInitialized, [isMonitoringView, isReadOnly, isInitialized]);
+
+  const sku = useSku();
+  useQuery({ queryKey: ['sku'], initialData: sku }); // adding the sku to the query to access outside of functional components
 
   return (
     <DndProvider options={DND_OPTIONS}>

@@ -26,6 +26,7 @@ export interface DesignerOptionsState {
   isDarkMode?: boolean;
   servicesInitialized?: boolean;
   useLegacyWorkflowParameters?: boolean;
+  sku?: string;
   isXrmConnectionReferenceMode?: boolean;
   suppressDefaultNodeSelectFunctionality?: boolean;
   hostOptions: {

@@ -257,6 +257,7 @@ const DesignerEditor = () => {
           isMonitoringView,
           hostOptions,
           showConnectionsPanel,
+          sku: 'standard',
         }}
       >
         {workflow?.definition ? (

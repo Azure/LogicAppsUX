@@ -191,6 +191,7 @@ const DesignerEditorConsumption = () => {
           useLegacyWorkflowParameters: true,
           showConnectionsPanel,
           hostOptions,
+          sku: 'consumption',
         }}
       >
         {workflow?.definition ? (

@@ -12,7 +12,9 @@ export const useMonitoringView = () => {
 export const useLegacyWorkflowParameters = () => {
   return useSelector((state: RootState) => state.designerOptions.useLegacyWorkflowParameters);
 };
-
+export const useSku = () => {
+  return useSelector((state: RootState) => state.designerOptions.sku);
+};
 export const useHostOptions = () => {
   return useSelector((state: RootState) => state.designerOptions.hostOptions);
 };
