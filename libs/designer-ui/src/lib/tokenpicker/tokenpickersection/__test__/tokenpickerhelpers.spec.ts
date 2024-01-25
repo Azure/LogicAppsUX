@@ -1,5 +1,5 @@
 import type { OutputToken } from '../..';
-import { getReducedTokenList } from '../tokenpickerhelpers';
+import { getReducedTokenList, hasAdvanced } from '../tokenpickerhelpers';
 
 describe('ui/tokenPicker/tokenPickerSection helpers', () => {
   describe('getReducedTokenList', () => {
@@ -68,6 +68,34 @@ describe('ui/tokenPicker/tokenPickerSection helpers', () => {
         { isAdvanced: false, value: 'Value 3' },
         { isAdvanced: true, value: 'Value 4' },
       ]);
+    });
+  });
+
+  describe('hasAdvanced', () => {
+    it('should return true if any of the tokens are advanced', () => {
+      const tokens: OutputToken[] = [
+        { isAdvanced: false, value: 'Value 1' } as OutputToken,
+        { isAdvanced: true, value: 'Value 2' } as OutputToken,
+        { isAdvanced: false, value: 'Value 3' } as OutputToken,
+        { isAdvanced: true, value: 'Value 4' } as OutputToken,
+      ];
+
+      const result = hasAdvanced(tokens);
+
+      expect(result).toEqual(true);
+    });
+
+    it('should return false if none of the tokens are advanced', () => {
+      const tokens: OutputToken[] = [
+        { isAdvanced: false, value: 'Value 1' } as OutputToken,
+        { isAdvanced: false, value: 'Value 2' } as OutputToken,
+        { isAdvanced: false, value: 'Value 3' } as OutputToken,
+        { isAdvanced: false, value: 'Value 4' } as OutputToken,
+      ];
+
+      const result = hasAdvanced(tokens);
+
+      expect(result).toEqual(false);
     });
   });
 });
