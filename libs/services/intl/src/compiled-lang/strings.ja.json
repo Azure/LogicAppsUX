@@ -1097,16 +1097,6 @@
       "value": "本文"
     }
   ],
-  "5Ow9mX": [
-    {
-      "type": 1,
-      "value": "connectorName"
-    },
-    {
-      "type": 0,
-      "value": " コネクタ アイコン"
-    }
-  ],
   "5SAQOb": [
     {
       "type": 0,
@@ -1313,6 +1303,16 @@
     {
       "type": 0,
       "value": "フローを作成します"
+    }
+  ],
+  "6sSPNb": [
+    {
+      "type": 1,
+      "value": "connectorName"
+    },
+    {
+      "type": 0,
+      "value": " connector"
     }
   ],
   "6u6CS+": [
@@ -1697,6 +1697,16 @@
     {
       "type": 0,
       "value": "ユーザー ID は、ロジック アプリでシステム割り当てマネージド ID が有効になっている場合はサポートされません。"
+    }
+  ],
+  "96JG8I": [
+    {
+      "type": 1,
+      "value": "operationName"
+    },
+    {
+      "type": 0,
+      "value": " operation"
     }
   ],
   "99vsJy": [
@@ -3862,6 +3872,12 @@
       "value": "火曜日"
     }
   ],
+  "NzPnFS": [
+    {
+      "type": 0,
+      "value": "Example:"
+    }
+  ],
   "O+3Y9f": [
     {
       "type": 0,
@@ -5773,6 +5789,12 @@
       "value": "検索のヒント:"
     }
   ],
+  "Yg/vvm": [
+    {
+      "type": 0,
+      "value": "Close Add Action Panel"
+    }
+  ],
   "YgU88A": [
     {
       "type": 0,
@@ -6497,6 +6519,12 @@
     {
       "type": 0,
       "value": "必須。値を求める対象の変数の名前。"
+    }
+  ],
+  "eHsOsm": [
+    {
+      "type": 0,
+      "value": "Specify the duration in ISO 8601 format"
     }
   ],
   "eO1h/h": [
@@ -7714,7 +7742,7 @@
   "mNaBPE": [
     {
       "type": 0,
-      "value": "Enter a valid JSON."
+      "value": "有効な JSON を入力してください。"
     }
   ],
   "mPakaD": [
@@ -7937,6 +7965,24 @@
     {
       "type": 0,
       "value": "ワークフロー ヘッダーの抑制"
+    }
+  ],
+  "ncW1Sw": [
+    {
+      "type": 1,
+      "value": "operationName"
+    },
+    {
+      "type": 0,
+      "value": " operation, "
+    },
+    {
+      "type": 1,
+      "value": "connectorName"
+    },
+    {
+      "type": 0,
+      "value": " connector"
     }
   ],
   "ngsC44": [
