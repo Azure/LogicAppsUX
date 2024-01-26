@@ -23,7 +23,7 @@ export function SettingLabel({
         <div className="msla-setting-label-title">{labelText}</div>
         {infoTooltipText ? (
           <Tooltip relationship="label" content={infoTooltipText} aria-label={infoTooltipText}>
-            <Info16Regular className="msla-setting-label-tooltip-icon" />
+            <Info16Regular className="msla-setting-label-tooltip-icon" tabIndex={0} />
           </Tooltip>
         ) : null}
       </div>

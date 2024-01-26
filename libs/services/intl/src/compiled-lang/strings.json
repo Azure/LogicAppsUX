@@ -2739,12 +2739,6 @@
       "value": "Enter an email address."
     }
   ],
-  "FaBEfQ": [
-    {
-      "type": 0,
-      "value": "Tracked properties"
-    }
-  ],
   "Fcvgvg": [
     {
       "type": 0,
@@ -3821,6 +3815,12 @@
       "value": "Copied!"
     }
   ],
+  "NFgfP4": [
+    {
+      "type": 0,
+      "value": "item"
+    }
+  ],
   "NGJ00e": [
     {
       "type": 0,
@@ -4189,6 +4189,12 @@
     {
       "type": 0,
       "value": "Input"
+    }
+  ],
+  "PDMP/Z": [
+    {
+      "type": 0,
+      "value": "Collapsed"
     }
   ],
   "PNk3n4": [
@@ -6953,6 +6959,12 @@
       "value": "Resubmit a workflow run from this action"
     }
   ],
+  "hJbr09": [
+    {
+      "type": 0,
+      "value": "Click to Collapse"
+    }
+  ],
   "hMf2TA": [
     {
       "type": 0,
@@ -8539,6 +8551,12 @@
       "value": "Returns the number of elements in an array or string"
     }
   ],
+  "qdUeUk": [
+    {
+      "type": 0,
+      "value": "Click to Expand"
+    }
+  ],
   "qiIs4V": [
     {
       "type": 0,
@@ -8603,6 +8621,12 @@
     {
       "type": 0,
       "value": "Undo"
+    }
+  ],
+  "r4zp7m": [
+    {
+      "type": 0,
+      "value": "Expanded"
     }
   ],
   "r7vZ5a": [
