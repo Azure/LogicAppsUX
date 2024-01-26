@@ -13,16 +13,23 @@ export interface MultiAddExpressionEditorProps extends SettingProps {
   onExpressionsChange: ExpressionChangeHandler;
 }
 
+// TODO: MultiAddExpressionEditor seems to be overfactored, and can be simplified
 export const MultiAddExpressionEditor = ({
   initialExpressions = [],
   readOnly = false,
   customLabel,
+  ariaLabel,
   onExpressionsChange,
 }: MultiAddExpressionEditorProps): JSX.Element | null => {
   return (
     <>
       {customLabel ? customLabel : null}
-      <ExpressionsEditor initialExpressions={initialExpressions ?? []} readOnly={readOnly} onChange={onExpressionsChange} />
+      <ExpressionsEditor
+        initialExpressions={initialExpressions ?? []}
+        readOnly={readOnly}
+        onChange={onExpressionsChange}
+        ariaLabel={ariaLabel}
+      />
     </>
   );
 };
@@ -116,6 +123,12 @@ export interface ExpressionsProps extends SettingProps {
 }
 
 export const Expressions = ({ expressions, readOnly = false, onChange, onDelete, ariaLabel }: ExpressionsProps): JSX.Element => {
+  const intl = useIntl();
+  const indexItem = intl.formatMessage({
+    defaultMessage: 'item',
+    description: 'Label for users to know which item they are on in the dictionary',
+  });
+
   return (
     <>
       {expressions.map((expression, index) => {
@@ -127,7 +140,7 @@ export const Expressions = ({ expressions, readOnly = false, onChange, onDelete,
             readOnly={readOnly}
             onChange={onChange}
             onDelete={onDelete}
-            ariaLabel={`${ariaLabel} ${index}`}
+            ariaLabel={`${ariaLabel} ${indexItem} ${index + 1}`}
           />
         );
       })}

@@ -205,7 +205,13 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId, 
         >
           <PopoverTrigger disableButtonEnhancement>
             <div tabIndex={-1}>
-              <ActionButtonV2 id={buttonId} title={tooltipText} dataAutomationId={automationId('plus')} onClick={actionButtonClick} />
+              <ActionButtonV2
+                tabIndex={1}
+                id={buttonId}
+                title={tooltipText}
+                dataAutomationId={automationId('plus')}
+                onClick={actionButtonClick}
+              />
             </div>
           </PopoverTrigger>
           <PopoverSurface style={{ padding: '4px' }}>

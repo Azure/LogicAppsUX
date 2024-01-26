@@ -186,7 +186,7 @@ export const Designer = (props: DesignerProps) => {
     return true;
   });
 
-  useHotkeys(['meta+shift+p'], (event) => {
+  useHotkeys(['meta+shift+p', 'ctrl+shift+p'], (event) => {
     event.preventDefault();
     dispatch(openPanel({ panelMode: 'NodeSearch' }));
   });

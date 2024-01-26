@@ -146,13 +146,21 @@ export const SettingsSection: FC<SettingsSectionProps> = ({
     root: { color: isInverted ? constants.Settings.SETTING_SEPARATOR_COLOR_DARK : constants.Settings.SETTING_SEPARATOR_COLOR_LIGHT },
   };
   const intl = useIntl();
+  const expandedLabel = intl.formatMessage({
+    defaultMessage: 'Expanded',
+    description: 'A label to represent setting section being expanded',
+  });
+  const collapsedLabel = intl.formatMessage({
+    defaultMessage: 'Collapsed',
+    description: 'A label to represent setting section being collapsed',
+  });
   const expandAriaLabel = intl.formatMessage({
-    defaultMessage: 'Expand',
-    description: 'An accessible label for expand toggle icon',
+    defaultMessage: 'Click to Collapse',
+    description: 'An accessible label for button to collapse setting section',
   });
   const collapseAriaLabel = intl.formatMessage({
-    defaultMessage: 'Collapse',
-    description: 'An accessible label for collapse toggle icon',
+    defaultMessage: 'Click to Expand',
+    description: 'An accessible label for button to expand setting section',
   });
   const internalSettings = (
     <>
@@ -187,7 +195,7 @@ export const SettingsSection: FC<SettingsSectionProps> = ({
         <button className="msla-setting-section-header" onClick={() => handleSectionClick(sectionName as SettingSectionName | undefined)}>
           <Icon
             className="msla-setting-section-header-icon"
-            aria-label={expanded ? `${collapseAriaLabel} ${title}` : `${expandAriaLabel} ${title}`}
+            aria-label={`${expanded ? expandedLabel : collapsedLabel} ${title}, ${expanded ? expandAriaLabel : collapseAriaLabel}`}
             iconName={expanded ? 'ChevronDownMed' : 'ChevronRightMed'}
             styles={{ root: { fontSize: 14, color: isInverted ? 'white' : constants.Settings.CHEVRON_ROOT_COLOR_LIGHT } }}
           />
