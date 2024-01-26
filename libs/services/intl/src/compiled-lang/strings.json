@@ -1109,16 +1109,6 @@
       "value": "Body"
     }
   ],
-  "5Ow9mX": [
-    {
-      "type": 1,
-      "value": "connectorName"
-    },
-    {
-      "type": 0,
-      "value": " connector icon"
-    }
-  ],
   "5SAQOb": [
     {
       "type": 0,
@@ -1325,6 +1315,16 @@
     {
       "type": 0,
       "value": "Create flow"
+    }
+  ],
+  "6sSPNb": [
+    {
+      "type": 1,
+      "value": "connectorName"
+    },
+    {
+      "type": 0,
+      "value": " connector"
     }
   ],
   "6u6CS+": [
@@ -1709,6 +1709,16 @@
     {
       "type": 0,
       "value": "User identity is not supported when Logic App has system assigned managed identity enabled."
+    }
+  ],
+  "96JG8I": [
+    {
+      "type": 1,
+      "value": "operationName"
+    },
+    {
+      "type": 0,
+      "value": " operation"
     }
   ],
   "99vsJy": [
@@ -5849,6 +5859,12 @@
       "value": "Search Tips"
     }
   ],
+  "Yg/vvm": [
+    {
+      "type": 0,
+      "value": "Close Add Action Panel"
+    }
+  ],
   "YgU88A": [
     {
       "type": 0,
@@ -8063,6 +8079,24 @@
     {
       "type": 0,
       "value": "Suppress workflow headers"
+    }
+  ],
+  "ncW1Sw": [
+    {
+      "type": 1,
+      "value": "operationName"
+    },
+    {
+      "type": 0,
+      "value": " operation, "
+    },
+    {
+      "type": 1,
+      "value": "connectorName"
+    },
+    {
+      "type": 0,
+      "value": " connector"
     }
   ],
   "ngsC44": [

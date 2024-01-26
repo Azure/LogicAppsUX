@@ -1,5 +1,27 @@
 # Logic Apps Designer
 
+## [2.107.0](https://github.com/Azure/LogicAppsUX/compare/v2.106.0...v2.107.0) (2024-01-25)
+
+### Bug Fixes
+
+- **designer:** Add proper aria labeling to the close panel button for action search ([#4055](https://github.com/Azure/LogicAppsUX/issues/4055)) ([197d0bb](https://github.com/Azure/LogicAppsUX/commit/197d0bb1eb2f8a796d645f95c4d6fbf67b1e0f03))
+- **Designer:** Export styling for html editor to remediate Power Automate html editor rendering bugs ([#4058](https://github.com/Azure/LogicAppsUX/issues/4058)) ([d577657](https://github.com/Azure/LogicAppsUX/commit/d57765745886f82fc7df56612bcad8eb4b189e1d))
+- **designer:** Prevent collapsed left panel from hiding minimap ([#4056](https://github.com/Azure/LogicAppsUX/issues/4056)) ([6a129be](https://github.com/Azure/LogicAppsUX/commit/6a129bec97c090cc417b1fda8036b48413ebb96f))
+- **VSCode:** Validate foldername ([#4032](https://github.com/Azure/LogicAppsUX/issues/4032)) ([f4e23a8](https://github.com/Azure/LogicAppsUX/commit/f4e23a8950a3db0312c13b493aabe2c7b256a7e9))
+
+## [2.106.0](https://github.com/Azure/LogicAppsUX/compare/v2.105.0...v2.106.0) (2024-01-24)
+
+### Features
+
+- **copilot:** Add Support for Additional Params URL ([#4029](https://github.com/Azure/LogicAppsUX/issues/4029)) ([480ebb5](https://github.com/Azure/LogicAppsUX/commit/480ebb5a85ca471672bfcc722f8bd39f2657898d))
+- **Designer:** Added two xml operation ids ([#4052](https://github.com/Azure/LogicAppsUX/issues/4052)) ([3c90a54](https://github.com/Azure/LogicAppsUX/commit/3c90a54254a5d0081719c5e527aff7eca727658a))
+
+### Bug Fixes
+
+- **designer-ui:** Action icons with no connector display name have bad ARIA text ([#4030](https://github.com/Azure/LogicAppsUX/issues/4030)) ([be01950](https://github.com/Azure/LogicAppsUX/commit/be01950a185196c8776d36800d3a7336a926166c)), closes [#1](https://github.com/Azure/LogicAppsUX/issues/1)
+- **Designer:** Multi select drop down is not showing options in new designer ([#4028](https://github.com/Azure/LogicAppsUX/issues/4028)) ([00e536a](https://github.com/Azure/LogicAppsUX/commit/00e536a476dcad56f8b9a29591b16e47c87f64fe))
+- **designer:** Small UI issues with Settings ([#4036](https://github.com/Azure/LogicAppsUX/issues/4036)) ([9397974](https://github.com/Azure/LogicAppsUX/commit/9397974e5cbc736e78bee5146b831240bfa432aa))
+
 ## [2.105.0](https://github.com/Azure/LogicAppsUX/compare/v2.104.0...v2.105.0) (2024-01-23)
 
 ## [2.104.0](https://github.com/Azure/LogicAppsUX/compare/v2.103.0...v2.104.0) (2024-01-18)
