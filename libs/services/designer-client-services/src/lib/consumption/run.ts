@@ -97,11 +97,9 @@ export class ConsumptionRunService implements IRunService {
    * @returns {Promise<Run>} Workflow runs.
    */
   async getRun(runId: string): Promise<Run> {
-    const { apiVersion, baseUrl, workflowId, httpClient } = this.options;
+    const { apiVersion, baseUrl, httpClient } = this.options;
 
-    // const testUrl = `https://management.azure.com/subscriptions/f34b22a3-2202-4fb1-b040-1332bd928c84/resourceGroups/Rile-RG-LogicApps/providers/Microsoft.Logic/workflows/riley-consumption-2/runs/08585002239804867494153042398CU53?api-version=2016-10-01`;
-    // TODO: Check if this is correct
-    const uri = `${baseUrl}${workflowId}/runs/${runId}?api-version=${apiVersion}&$expand=properties/actions,workflow/properties`;
+    const uri = `${baseUrl}${runId}?api-version=${apiVersion}&$expand=properties/actions,workflow/properties`;
 
     try {
       const response = await httpClient.get<Run>({
@@ -121,8 +119,6 @@ export class ConsumptionRunService implements IRunService {
     const { apiVersion, baseUrl, workflowId, httpClient } = this.options;
     const headers = this.getAccessTokenHeaders();
 
-    // const testUrl = `https://management.azure.com/subscriptions/f34b22a3-2202-4fb1-b040-1332bd928c84/resourceGroups/Rile-RG-LogicApps/providers/Microsoft.Logic/workflows/riley-consumption-2/runs?api-version=2016-10-01&_=1706132104968`;
-    // TODO: Check if this is correct
     const uri = `${baseUrl}${workflowId}/runs?api-version=${apiVersion}`;
     try {
       const response = await httpClient.get<ArmResources<Run>>({
@@ -153,11 +149,11 @@ export class ConsumptionRunService implements IRunService {
       return Promise.resolve({ value: [] });
     }
 
-    const { apiVersion, baseUrl, workflowId, httpClient } = this.options;
+    const { apiVersion, baseUrl, httpClient } = this.options;
     const headers = this.getAccessTokenHeaders();
 
     const filter = status ? `&$filter=status eq '${status}'` : '';
-    const uri = `${baseUrl}${workflowId}/runs/${runId}/actions/${nodeId}/scopeRepetitions?api-version=${apiVersion}${filter}`;
+    const uri = `${baseUrl}${runId}/actions/${nodeId}/scopeRepetitions?api-version=${apiVersion}${filter}`;
 
     try {
       const response = await httpClient.get<{ value: Array<LogicAppsV2.RunRepetition> }>({
@@ -178,11 +174,11 @@ export class ConsumptionRunService implements IRunService {
    * @return {Promise<any>}
    */
   async getRepetition(action: { nodeId: string; runId: string | undefined }, repetitionId: string): Promise<LogicAppsV2.RunRepetition> {
-    const { apiVersion, baseUrl, workflowId, httpClient } = this.options;
+    const { apiVersion, baseUrl, httpClient } = this.options;
     const { nodeId, runId } = action;
     const headers = this.getAccessTokenHeaders();
 
-    const uri = `${baseUrl}${workflowId}/runs/${runId}/actions/${nodeId}/repetitions/${repetitionId}?api-version=${apiVersion}`;
+    const uri = `${baseUrl}${runId}/actions/${nodeId}/repetitions/${repetitionId}?api-version=${apiVersion}`;
     try {
       const response = await httpClient.get<LogicAppsV2.RunRepetition>({
         uri,
