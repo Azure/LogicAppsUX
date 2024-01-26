@@ -1080,7 +1080,7 @@
   "5LV34t": [
     {
       "type": 0,
-      "value": "The '"
+      "value": "Egenskaperna "
     },
     {
       "type": 1,
@@ -1088,7 +1088,7 @@
     },
     {
       "type": 0,
-      "value": "' properties are invalid for the '"
+      "value": " är ogiltiga för autentiseringstypen "
     },
     {
       "type": 1,
@@ -1096,7 +1096,7 @@
     },
     {
       "type": 0,
-      "value": "' authentication type."
+      "value": "."
     }
   ],
   "5OvGgn": [
@@ -2030,7 +2030,7 @@
   "BGw6eH": [
     {
       "type": 0,
-      "value": "Missing required properties '"
+      "value": "De obligatoriska egenskaperna "
     },
     {
       "type": 1,
@@ -2038,15 +2038,11 @@
     },
     {
       "type": 0,
-      "value": "' for authentication type '"
+      "value": " saknas för autentiseringstypen "
     },
     {
       "type": 1,
       "value": "authType"
-    },
-    {
-      "type": 0,
-      "value": "'"
     }
   ],
   "BHe7qY": [
@@ -3064,7 +3060,7 @@
   "I1CYNA": [
     {
       "type": 0,
-      "value": "Invalid property '"
+      "value": "Egenskapen "
     },
     {
       "type": 1,
@@ -3072,7 +3068,7 @@
     },
     {
       "type": 0,
-      "value": "' for authentication type '"
+      "value": " är ogiltig för autentiseringstypen "
     },
     {
       "type": 1,
@@ -3080,7 +3076,7 @@
     },
     {
       "type": 0,
-      "value": "'."
+      "value": "."
     }
   ],
   "I3mifR": [
@@ -3974,7 +3970,7 @@
   "OBO/HE": [
     {
       "type": 0,
-      "value": "Invalid Authentication Value"
+      "value": "Ogiltigt autentiseringsvärde"
     }
   ],
   "ODQCKj": [
@@ -4130,7 +4126,7 @@
   "Ov7Ckz": [
     {
       "type": 0,
-      "value": "Missing required property '"
+      "value": "Den obligatoriska egenskapen "
     },
     {
       "type": 1,
@@ -4138,15 +4134,11 @@
     },
     {
       "type": 0,
-      "value": "' for authentication type '"
+      "value": " saknas för autentiseringstypen "
     },
     {
       "type": 1,
       "value": "authType"
-    },
-    {
-      "type": 0,
-      "value": "'"
     }
   ],
   "P+7G62": [

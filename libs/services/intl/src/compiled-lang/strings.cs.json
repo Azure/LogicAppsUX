@@ -1080,7 +1080,7 @@
   "5LV34t": [
     {
       "type": 0,
-      "value": "The '"
+      "value": "Vlastnosti "
     },
     {
       "type": 1,
@@ -1088,7 +1088,7 @@
     },
     {
       "type": 0,
-      "value": "' properties are invalid for the '"
+      "value": " nejsou pro typ ověřování "
     },
     {
       "type": 1,
@@ -1096,7 +1096,7 @@
     },
     {
       "type": 0,
-      "value": "' authentication type."
+      "value": " platné."
     }
   ],
   "5OvGgn": [
@@ -2056,7 +2056,7 @@
   "BGw6eH": [
     {
       "type": 0,
-      "value": "Missing required properties '"
+      "value": "Chybí požadované vlastnosti "
     },
     {
       "type": 1,
@@ -2064,7 +2064,7 @@
     },
     {
       "type": 0,
-      "value": "' for authentication type '"
+      "value": " pro typ ověřování "
     },
     {
       "type": 1,
@@ -2072,7 +2072,7 @@
     },
     {
       "type": 0,
-      "value": "'"
+      "value": "."
     }
   ],
   "BHe7qY": [
@@ -3116,7 +3116,7 @@
   "I1CYNA": [
     {
       "type": 0,
-      "value": "Invalid property '"
+      "value": "Neplatná vlastnost "
     },
     {
       "type": 1,
@@ -3124,15 +3124,11 @@
     },
     {
       "type": 0,
-      "value": "' for authentication type '"
+      "value": " pro typ ověřování "
     },
     {
       "type": 1,
       "value": "authType"
-    },
-    {
-      "type": 0,
-      "value": "'."
     }
   ],
   "I3mifR": [
@@ -4048,7 +4044,7 @@
   "OBO/HE": [
     {
       "type": 0,
-      "value": "Invalid Authentication Value"
+      "value": "Neplatná hodnota ověřování"
     }
   ],
   "ODQCKj": [
@@ -4204,7 +4200,7 @@
   "Ov7Ckz": [
     {
       "type": 0,
-      "value": "Missing required property '"
+      "value": "Chybí požadovaná vlastnost "
     },
     {
       "type": 1,
@@ -4212,7 +4208,7 @@
     },
     {
       "type": 0,
-      "value": "' for authentication type '"
+      "value": " pro typ ověřování "
     },
     {
       "type": 1,
@@ -4220,7 +4216,7 @@
     },
     {
       "type": 0,
-      "value": "'"
+      "value": "."
     }
   ],
   "P+7G62": [

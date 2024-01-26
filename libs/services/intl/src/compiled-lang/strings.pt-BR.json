@@ -1064,7 +1064,7 @@
   "5LV34t": [
     {
       "type": 0,
-      "value": "The '"
+      "value": "As propriedades '"
     },
     {
       "type": 1,
@@ -1072,7 +1072,7 @@
     },
     {
       "type": 0,
-      "value": "' properties are invalid for the '"
+      "value": "' são inválidas para o tipo de autenticação '"
     },
     {
       "type": 1,
@@ -1080,7 +1080,7 @@
     },
     {
       "type": 0,
-      "value": "' authentication type."
+      "value": "'."
     }
   ],
   "5OvGgn": [
@@ -2017,7 +2017,7 @@
   "BGw6eH": [
     {
       "type": 0,
-      "value": "Missing required properties '"
+      "value": "Propriedades necessárias ausentes '"
     },
     {
       "type": 1,
@@ -2025,7 +2025,7 @@
     },
     {
       "type": 0,
-      "value": "' for authentication type '"
+      "value": "' para o tipo de autenticação '"
     },
     {
       "type": 1,
@@ -3058,7 +3058,7 @@
   "I1CYNA": [
     {
       "type": 0,
-      "value": "Invalid property '"
+      "value": "Propriedade inválida '"
     },
     {
       "type": 1,
@@ -3066,7 +3066,7 @@
     },
     {
       "type": 0,
-      "value": "' for authentication type '"
+      "value": "' para o tipo de autenticação '"
     },
     {
       "type": 1,
@@ -3979,7 +3979,7 @@
   "OBO/HE": [
     {
       "type": 0,
-      "value": "Invalid Authentication Value"
+      "value": "Valor de Autenticação Inválido"
     }
   ],
   "ODQCKj": [
@@ -4135,7 +4135,7 @@
   "Ov7Ckz": [
     {
       "type": 0,
-      "value": "Missing required property '"
+      "value": "Propriedade necessária ausente '"
     },
     {
       "type": 1,
@@ -4143,7 +4143,7 @@
     },
     {
       "type": 0,
-      "value": "' for authentication type '"
+      "value": "' para o tipo de autenticação '"
     },
     {
       "type": 1,
