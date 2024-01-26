@@ -28,7 +28,7 @@ import { convertUIElementNameToAutomationId } from '../../utils';
 import { CustomTokenField, isCustomEditor } from './customTokenField';
 import type { SettingProps } from './settingtoggle';
 import { Label } from '@fluentui/react';
-import { equals } from '@microsoft/utils-logic-apps';
+import { equals, getPropertyValue } from '@microsoft/utils-logic-apps';
 
 export interface SettingTokenFieldProps extends SettingProps {
   id?: string;
@@ -119,7 +119,7 @@ export const TokenField = ({
           readonly={readOnly}
           initialValue={value}
           options={dropdownOptions.map((option: any, index: number) => ({ key: index.toString(), ...option }))}
-          multiSelect={!!editorOptions?.multiSelect}
+          multiSelect={!!getPropertyValue(editorOptions, 'multiSelect')}
           serialization={editorOptions?.serialization}
           onChange={onValueChange}
           dataAutomationId={`msla-setting-token-editor-dropdowneditor-${labelForAutomationId}`}
@@ -154,7 +154,7 @@ export const TokenField = ({
           getTokenPicker={getTokenPicker}
           onChange={onValueChange}
           onMenuOpen={onComboboxMenuOpen}
-          multiSelect={editorOptions?.multiSelect}
+          multiSelect={getPropertyValue(editorOptions, 'multiSelect')}
           serialization={editorOptions?.serialization}
           dataAutomationId={`msla-setting-token-editor-combobox-${labelForAutomationId}`}
           tokenMapping={tokenMapping}
