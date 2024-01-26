@@ -142,12 +142,12 @@ async function getExtensionBundleZip(context: IActionContext, extensionVersion: 
  * @returns {string[]} Returns the list of versions.
  */
 function getExtensionBundleVersionFolders(directoryPath: string): string[] {
-  const items = fs.readdirSync(directoryPath);
+  const directoryContents = fs.readdirSync(directoryPath);
 
-  // Filter only the folders
-  const folders = items.filter((item) => {
+  // Filter only the folders with valid version names.
+  const folders = directoryContents.filter((item) => {
     const itemPath = path.join(directoryPath, item);
-    return fs.statSync(itemPath).isDirectory();
+    return fs.statSync(itemPath).isDirectory() && semver.valid(item);
   });
 
   return folders;

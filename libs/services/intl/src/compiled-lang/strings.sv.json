@@ -1080,7 +1080,7 @@
   "5LV34t": [
     {
       "type": 0,
-      "value": "The '"
+      "value": "Egenskaperna "
     },
     {
       "type": 1,
@@ -1088,7 +1088,7 @@
     },
     {
       "type": 0,
-      "value": "' properties are invalid for the '"
+      "value": " är ogiltiga för autentiseringstypen "
     },
     {
       "type": 1,
@@ -1096,27 +1096,13 @@
     },
     {
       "type": 0,
-      "value": "' authentication type."
+      "value": "."
     }
   ],
   "5OvGgn": [
     {
       "type": 0,
       "value": "Brödtext"
-    }
-  ],
-  "5Ow9mX": [
-    {
-      "type": 0,
-      "value": "Ikon för "
-    },
-    {
-      "type": 1,
-      "value": "connectorName"
-    },
-    {
-      "type": 0,
-      "value": " anslutning"
     }
   ],
   "5SAQOb": [
@@ -1325,6 +1311,16 @@
     {
       "type": 0,
       "value": "Skapa flöde"
+    }
+  ],
+  "6sSPNb": [
+    {
+      "type": 1,
+      "value": "connectorName"
+    },
+    {
+      "type": 0,
+      "value": " connector"
     }
   ],
   "6u6CS+": [
@@ -1711,6 +1707,16 @@
       "value": "Användaridentiteten stöds inte när Logic-appen har en systemtilldelad hanterad identitet aktiverad."
     }
   ],
+  "96JG8I": [
+    {
+      "type": 1,
+      "value": "operationName"
+    },
+    {
+      "type": 0,
+      "value": " operation"
+    }
+  ],
   "99vsJy": [
     {
       "type": 0,
@@ -2024,7 +2030,7 @@
   "BGw6eH": [
     {
       "type": 0,
-      "value": "Missing required properties '"
+      "value": "De obligatoriska egenskaperna "
     },
     {
       "type": 1,
@@ -2032,15 +2038,11 @@
     },
     {
       "type": 0,
-      "value": "' for authentication type '"
+      "value": " saknas för autentiseringstypen "
     },
     {
       "type": 1,
       "value": "authType"
-    },
-    {
-      "type": 0,
-      "value": "'"
     }
   ],
   "BHe7qY": [
@@ -3058,7 +3060,7 @@
   "I1CYNA": [
     {
       "type": 0,
-      "value": "Invalid property '"
+      "value": "Egenskapen "
     },
     {
       "type": 1,
@@ -3066,7 +3068,7 @@
     },
     {
       "type": 0,
-      "value": "' for authentication type '"
+      "value": " är ogiltig för autentiseringstypen "
     },
     {
       "type": 1,
@@ -3074,7 +3076,7 @@
     },
     {
       "type": 0,
-      "value": "'."
+      "value": "."
     }
   ],
   "I3mifR": [
@@ -3911,6 +3913,12 @@
       "value": "Tisdag"
     }
   ],
+  "NzPnFS": [
+    {
+      "type": 0,
+      "value": "Example:"
+    }
+  ],
   "O+3Y9f": [
     {
       "type": 0,
@@ -3962,7 +3970,7 @@
   "OBO/HE": [
     {
       "type": 0,
-      "value": "Invalid Authentication Value"
+      "value": "Ogiltigt autentiseringsvärde"
     }
   ],
   "ODQCKj": [
@@ -4118,7 +4126,7 @@
   "Ov7Ckz": [
     {
       "type": 0,
-      "value": "Missing required property '"
+      "value": "Den obligatoriska egenskapen "
     },
     {
       "type": 1,
@@ -4126,15 +4134,11 @@
     },
     {
       "type": 0,
-      "value": "' for authentication type '"
+      "value": " saknas för autentiseringstypen "
     },
     {
       "type": 1,
       "value": "authType"
-    },
-    {
-      "type": 0,
-      "value": "'"
     }
   ],
   "P+7G62": [
@@ -5829,6 +5833,12 @@
       "value": "Söktips"
     }
   ],
+  "Yg/vvm": [
+    {
+      "type": 0,
+      "value": "Close Add Action Panel"
+    }
+  ],
   "YgU88A": [
     {
       "type": 0,
@@ -6557,6 +6567,12 @@
     {
       "type": 0,
       "value": "Krävs. Namnet på variabeln vars värde du vill ha."
+    }
+  ],
+  "eHsOsm": [
+    {
+      "type": 0,
+      "value": "Specify the duration in ISO 8601 format"
     }
   ],
   "eO1h/h": [
@@ -7812,7 +7828,7 @@
   "mNaBPE": [
     {
       "type": 0,
-      "value": "Enter a valid JSON."
+      "value": "Ange en giltig JSON."
     }
   ],
   "mPakaD": [
@@ -8035,6 +8051,24 @@
     {
       "type": 0,
       "value": "Utelämna arbetsflödesrubriker"
+    }
+  ],
+  "ncW1Sw": [
+    {
+      "type": 1,
+      "value": "operationName"
+    },
+    {
+      "type": 0,
+      "value": " operation, "
+    },
+    {
+      "type": 1,
+      "value": "connectorName"
+    },
+    {
+      "type": 0,
+      "value": " connector"
     }
   ],
   "ngsC44": [
