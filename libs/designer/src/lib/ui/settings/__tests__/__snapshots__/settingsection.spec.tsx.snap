@@ -12,7 +12,7 @@ exports[`ui/settings/settingsection should construct 1`] = `
       onClick={[Function]}
     >
       <Memo(Icon)
-        aria-label="Expand Sample Setting Section"
+        aria-label="CollapsedSample Setting Section, Click to Expand"
         className="msla-setting-section-header-icon"
         iconName="ChevronRightMed"
         styles={
