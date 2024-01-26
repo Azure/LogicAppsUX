@@ -1072,7 +1072,7 @@
   "5LV34t": [
     {
       "type": 0,
-      "value": "The '"
+      "value": "Properti '"
     },
     {
       "type": 1,
@@ -1080,7 +1080,7 @@
     },
     {
       "type": 0,
-      "value": "' properties are invalid for the '"
+      "value": "' tidak valid untuk tipe autentikasi '"
     },
     {
       "type": 1,
@@ -1088,7 +1088,7 @@
     },
     {
       "type": 0,
-      "value": "' authentication type."
+      "value": "'."
     }
   ],
   "5OvGgn": [
@@ -2015,7 +2015,7 @@
   "BGw6eH": [
     {
       "type": 0,
-      "value": "Missing required properties '"
+      "value": "Properti '"
     },
     {
       "type": 1,
@@ -2023,7 +2023,7 @@
     },
     {
       "type": 0,
-      "value": "' for authentication type '"
+      "value": "' yang diperlukan untuk tipe autentikasi '"
     },
     {
       "type": 1,
@@ -2031,7 +2031,7 @@
     },
     {
       "type": 0,
-      "value": "'"
+      "value": "' tidak ada"
     }
   ],
   "BHe7qY": [
@@ -3034,7 +3034,7 @@
   "I1CYNA": [
     {
       "type": 0,
-      "value": "Invalid property '"
+      "value": "Properti '"
     },
     {
       "type": 1,
@@ -3042,7 +3042,7 @@
     },
     {
       "type": 0,
-      "value": "' for authentication type '"
+      "value": "' untuk tipe autentikasi '"
     },
     {
       "type": 1,
@@ -3050,7 +3050,7 @@
     },
     {
       "type": 0,
-      "value": "'."
+      "value": "' tidak valid."
     }
   ],
   "I3mifR": [
@@ -3933,7 +3933,7 @@
   "OBO/HE": [
     {
       "type": 0,
-      "value": "Invalid Authentication Value"
+      "value": "Nilai Autentikasi Tidak Valid"
     }
   ],
   "ODQCKj": [
@@ -4089,7 +4089,7 @@
   "Ov7Ckz": [
     {
       "type": 0,
-      "value": "Missing required property '"
+      "value": "Properti '"
     },
     {
       "type": 1,
@@ -4097,7 +4097,7 @@
     },
     {
       "type": 0,
-      "value": "' for authentication type '"
+      "value": "' yang diperlukan untuk tipe autentikasi '"
     },
     {
       "type": 1,
@@ -4105,7 +4105,7 @@
     },
     {
       "type": 0,
-      "value": "'"
+      "value": "' tidak ada"
     }
   ],
   "P+7G62": [

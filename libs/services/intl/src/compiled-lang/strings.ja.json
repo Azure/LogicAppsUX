@@ -1072,7 +1072,7 @@
   "5LV34t": [
     {
       "type": 0,
-      "value": "The '"
+      "value": "'"
     },
     {
       "type": 1,
@@ -1080,7 +1080,7 @@
     },
     {
       "type": 0,
-      "value": "' properties are invalid for the '"
+      "value": "' プロパティは、'"
     },
     {
       "type": 1,
@@ -1088,7 +1088,7 @@
     },
     {
       "type": 0,
-      "value": "' authentication type."
+      "value": "' 認証の種類に対しては無効です。"
     }
   ],
   "5OvGgn": [
@@ -2015,15 +2015,7 @@
   "BGw6eH": [
     {
       "type": 0,
-      "value": "Missing required properties '"
-    },
-    {
-      "type": 1,
-      "value": "missingProperties"
-    },
-    {
-      "type": 0,
-      "value": "' for authentication type '"
+      "value": "認証の種類 '"
     },
     {
       "type": 1,
@@ -2031,7 +2023,15 @@
     },
     {
       "type": 0,
-      "value": "'"
+      "value": "' に必要なプロパティ '"
+    },
+    {
+      "type": 1,
+      "value": "missingProperties"
+    },
+    {
+      "type": 0,
+      "value": "' がありません"
     }
   ],
   "BHe7qY": [
@@ -3030,15 +3030,7 @@
   "I1CYNA": [
     {
       "type": 0,
-      "value": "Invalid property '"
-    },
-    {
-      "type": 1,
-      "value": "invalidProperties"
-    },
-    {
-      "type": 0,
-      "value": "' for authentication type '"
+      "value": "認証の種類 '"
     },
     {
       "type": 1,
@@ -3046,7 +3038,15 @@
     },
     {
       "type": 0,
-      "value": "'."
+      "value": "' のプロパティ '"
+    },
+    {
+      "type": 1,
+      "value": "invalidProperties"
+    },
+    {
+      "type": 0,
+      "value": "' が無効です。"
     }
   ],
   "I3mifR": [
@@ -3929,7 +3929,7 @@
   "OBO/HE": [
     {
       "type": 0,
-      "value": "Invalid Authentication Value"
+      "value": "認証値が無効です"
     }
   ],
   "ODQCKj": [
@@ -4085,15 +4085,7 @@
   "Ov7Ckz": [
     {
       "type": 0,
-      "value": "Missing required property '"
-    },
-    {
-      "type": 1,
-      "value": "missingProperties"
-    },
-    {
-      "type": 0,
-      "value": "' for authentication type '"
+      "value": "認証の種類 '"
     },
     {
       "type": 1,
@@ -4101,7 +4093,15 @@
     },
     {
       "type": 0,
-      "value": "'"
+      "value": "' に必要なプロパティ '"
+    },
+    {
+      "type": 1,
+      "value": "missingProperties"
+    },
+    {
+      "type": 0,
+      "value": "' がありません"
     }
   ],
   "P+7G62": [
