@@ -15,7 +15,7 @@
   overflow: hidden;
 
   &:focus {
-    outline: 0;
+    outline: 1px solid #605e5c;
   }
 
   &:focus,
@@ -65,6 +65,10 @@
 .msla-theme-dark {
   .msla-op-search-card-container {
     background-color: @ms-color-primaryBackground;
+
+    &:focus {
+      outline: 1px solid #fff;
+    }
 
     &:hover {
       background-color: @ms-color-primaryBackgroundHover;
