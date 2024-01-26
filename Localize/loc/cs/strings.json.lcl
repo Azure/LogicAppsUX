@@ -1551,6 +1551,9 @@
       <Item ItemId=";5LV34t" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[The ''{invalidProperties}'' properties are invalid for the ''{authType}'' authentication type.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Vlastnosti {invalidProperties} nejsou pro typ ověřování {authType} platné.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -2535,6 +2538,12 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";9yLPwo" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[For more detailed information, you can refer to the following resources]]></Val>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";A5Ferh" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Source element removed from view.]]></Val>
@@ -2826,6 +2835,9 @@
       <Item ItemId=";BGw6eH" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Missing required properties ''{missingProperties}'' for authentication type ''{authType}'']]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Chybí požadované vlastnosti {missingProperties} pro typ ověřování {authType}.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -4254,6 +4266,9 @@
       <Item ItemId=";I1CYNA" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Invalid property ''{invalidProperties}'' for authentication type ''{authType}''.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Neplatná vlastnost {invalidProperties} pro typ ověřování {authType}]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -5502,6 +5517,9 @@
       <Item ItemId=";OBO/HE" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Invalid Authentication Value]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Neplatná hodnota ověřování]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -5715,6 +5733,9 @@
       <Item ItemId=";Ov7Ckz" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Missing required property ''{missingProperties}'' for authentication type ''{authType}'']]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Chybí požadovaná vlastnost {missingProperties} pro typ ověřování {authType}.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>

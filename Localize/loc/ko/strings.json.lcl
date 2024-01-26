@@ -2538,6 +2538,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";9yLPwo" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[For more detailed information, you can refer to the following resources]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[자세한 내용은 다음 리소스를 참조하세요.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";A5Ferh" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Source element removed from view.]]></Val>
