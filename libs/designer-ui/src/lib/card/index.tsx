@@ -181,7 +181,7 @@ export const Card: React.FC<CardProps> = ({
         onClick={handleClick}
         onContextMenu={contextMenu.handle}
         onKeyDown={keyboardInteraction.keyDown}
-        tabIndex={0}
+        tabIndex={2}
         onKeyUp={keyboardInteraction.keyUp}
       >
         {isMonitoringView ? (
