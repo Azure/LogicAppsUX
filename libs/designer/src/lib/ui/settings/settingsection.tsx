@@ -195,7 +195,7 @@ export const SettingsSection: FC<SettingsSectionProps> = ({
         <button className="msla-setting-section-header" onClick={() => handleSectionClick(sectionName as SettingSectionName | undefined)}>
           <Icon
             className="msla-setting-section-header-icon"
-            aria-label={`${expanded ? expandedLabel : collapsedLabel}${title}, ${expanded ? expandAriaLabel : collapseAriaLabel}`}
+            aria-label={`${expanded ? expandedLabel : collapsedLabel} ${title}, ${expanded ? expandAriaLabel : collapseAriaLabel}`}
             iconName={expanded ? 'ChevronDownMed' : 'ChevronRightMed'}
             styles={{ root: { fontSize: 14, color: isInverted ? 'white' : constants.Settings.CHEVRON_ROOT_COLOR_LIGHT } }}
           />
