@@ -1315,12 +1315,12 @@
   ],
   "6sSPNb": [
     {
-      "type": 1,
-      "value": "connectorName"
+      "type": 0,
+      "value": "Konektor "
     },
     {
-      "type": 0,
-      "value": " connector"
+      "type": 1,
+      "value": "connectorName"
     }
   ],
   "6u6CS+": [
@@ -1709,12 +1709,12 @@
   ],
   "96JG8I": [
     {
-      "type": 1,
-      "value": "operationName"
+      "type": 0,
+      "value": "Operace "
     },
     {
-      "type": 0,
-      "value": " operation"
+      "type": 1,
+      "value": "operationName"
     }
   ],
   "99vsJy": [
@@ -1830,7 +1830,7 @@
   "9yLPwo": [
     {
       "type": 0,
-      "value": "For more detailed information, you can refer to the following resources"
+      "value": "Podrobnější informace najdete v následujících zdrojích informací."
     }
   ],
   "A5Ferh": [
@@ -2787,12 +2787,6 @@
     {
       "type": 0,
       "value": "Zadejte e-mailovou adresu."
-    }
-  ],
-  "FaBEfQ": [
-    {
-      "type": 0,
-      "value": "Sledované vlastnosti"
     }
   ],
   "Fcvgvg": [
@@ -3893,6 +3887,12 @@
       "value": "Zkopírováno!"
     }
   ],
+  "NFgfP4": [
+    {
+      "type": 0,
+      "value": "item"
+    }
+  ],
   "NGJ00e": [
     {
       "type": 0,
@@ -3990,7 +3990,7 @@
   "NzPnFS": [
     {
       "type": 0,
-      "value": "Example:"
+      "value": "Příklad:"
     }
   ],
   "O+3Y9f": [
@@ -4265,6 +4265,12 @@
     {
       "type": 0,
       "value": "Vstup"
+    }
+  ],
+  "PDMP/Z": [
+    {
+      "type": 0,
+      "value": "Collapsed"
     }
   ],
   "PNk3n4": [
@@ -5944,7 +5950,7 @@
   "Yg/vvm": [
     {
       "type": 0,
-      "value": "Close Add Action Panel"
+      "value": "Zavřít panel Přidat akci"
     }
   ],
   "YgU88A": [
@@ -6680,7 +6686,7 @@
   "eHsOsm": [
     {
       "type": 0,
-      "value": "Specify the duration in ISO 8601 format"
+      "value": "Uveďte dobu trvání ve formátu ISO 8601."
     }
   ],
   "eO1h/h": [
@@ -7059,6 +7065,12 @@
     {
       "type": 0,
       "value": "Znovu odeslat spuštění pracovního postupu z této akce"
+    }
+  ],
+  "hJbr09": [
+    {
+      "type": 0,
+      "value": "Click to Collapse"
     }
   ],
   "hMf2TA": [
@@ -8211,20 +8223,20 @@
   ],
   "ncW1Sw": [
     {
+      "type": 0,
+      "value": "Operace "
+    },
+    {
       "type": 1,
       "value": "operationName"
     },
     {
       "type": 0,
-      "value": " operation, "
+      "value": ", konektor "
     },
     {
       "type": 1,
       "value": "connectorName"
-    },
-    {
-      "type": 0,
-      "value": " connector"
     }
   ],
   "ngsC44": [
@@ -8735,6 +8747,12 @@
       "value": "Vrátí počet prvků v poli nebo řetězci."
     }
   ],
+  "qdUeUk": [
+    {
+      "type": 0,
+      "value": "Click to Expand"
+    }
+  ],
   "qiIs4V": [
     {
       "type": 0,
@@ -8799,6 +8817,12 @@
     {
       "type": 0,
       "value": "Zpět"
+    }
+  ],
+  "r4zp7m": [
+    {
+      "type": 0,
+      "value": "Expanded"
     }
   ],
   "r7vZ5a": [

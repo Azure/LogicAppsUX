@@ -1315,12 +1315,12 @@
   ],
   "6sSPNb": [
     {
-      "type": 1,
-      "value": "connectorName"
+      "type": 0,
+      "value": "Соединитель "
     },
     {
-      "type": 0,
-      "value": " connector"
+      "type": 1,
+      "value": "connectorName"
     }
   ],
   "6u6CS+": [
@@ -1709,12 +1709,12 @@
   ],
   "96JG8I": [
     {
-      "type": 1,
-      "value": "operationName"
+      "type": 0,
+      "value": "Операция "
     },
     {
-      "type": 0,
-      "value": " operation"
+      "type": 1,
+      "value": "operationName"
     }
   ],
   "99vsJy": [
@@ -1830,7 +1830,7 @@
   "9yLPwo": [
     {
       "type": 0,
-      "value": "For more detailed information, you can refer to the following resources"
+      "value": "Более детальные сведения см. на следующих ресурсах:"
     }
   ],
   "A5Ferh": [
@@ -2787,12 +2787,6 @@
     {
       "type": 0,
       "value": "Введите свой адрес электронной почты."
-    }
-  ],
-  "FaBEfQ": [
-    {
-      "type": 0,
-      "value": "Отслеживаемые свойства"
     }
   ],
   "Fcvgvg": [
@@ -3901,6 +3895,12 @@
       "value": "Скопировано."
     }
   ],
+  "NFgfP4": [
+    {
+      "type": 0,
+      "value": "item"
+    }
+  ],
   "NGJ00e": [
     {
       "type": 0,
@@ -3994,7 +3994,7 @@
   "NzPnFS": [
     {
       "type": 0,
-      "value": "Example:"
+      "value": "Пример:"
     }
   ],
   "O+3Y9f": [
@@ -4269,6 +4269,12 @@
     {
       "type": 0,
       "value": "Ввод"
+    }
+  ],
+  "PDMP/Z": [
+    {
+      "type": 0,
+      "value": "Collapsed"
     }
   ],
   "PNk3n4": [
@@ -5948,7 +5954,7 @@
   "Yg/vvm": [
     {
       "type": 0,
-      "value": "Close Add Action Panel"
+      "value": "Закрыть панель \"Добавление действия\""
     }
   ],
   "YgU88A": [
@@ -6684,7 +6690,7 @@
   "eHsOsm": [
     {
       "type": 0,
-      "value": "Specify the duration in ISO 8601 format"
+      "value": "Укажите длительность в формате ISO 8601"
     }
   ],
   "eO1h/h": [
@@ -7063,6 +7069,12 @@
     {
       "type": 0,
       "value": "Повторно отправить выполнение рабочего процесса из этого действия"
+    }
+  ],
+  "hJbr09": [
+    {
+      "type": 0,
+      "value": "Click to Collapse"
     }
   ],
   "hMf2TA": [
@@ -8215,20 +8227,20 @@
   ],
   "ncW1Sw": [
     {
+      "type": 0,
+      "value": "Операция "
+    },
+    {
       "type": 1,
       "value": "operationName"
     },
     {
       "type": 0,
-      "value": " operation, "
+      "value": ", соединитель "
     },
     {
       "type": 1,
       "value": "connectorName"
-    },
-    {
-      "type": 0,
-      "value": " connector"
     }
   ],
   "ngsC44": [
@@ -8739,6 +8751,12 @@
       "value": "Возвращает число элементов в массиве или строке"
     }
   ],
+  "qdUeUk": [
+    {
+      "type": 0,
+      "value": "Click to Expand"
+    }
+  ],
   "qiIs4V": [
     {
       "type": 0,
@@ -8803,6 +8821,12 @@
     {
       "type": 0,
       "value": "Отменить"
+    }
+  ],
+  "r4zp7m": [
+    {
+      "type": 0,
+      "value": "Expanded"
     }
   ],
   "r7vZ5a": [

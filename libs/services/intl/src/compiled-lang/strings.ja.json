@@ -1312,7 +1312,7 @@
     },
     {
       "type": 0,
-      "value": " connector"
+      "value": " コネクタ"
     }
   ],
   "6u6CS+": [
@@ -1706,7 +1706,7 @@
     },
     {
       "type": 0,
-      "value": " operation"
+      "value": " 操作"
     }
   ],
   "99vsJy": [
@@ -1822,7 +1822,7 @@
   "9yLPwo": [
     {
       "type": 0,
-      "value": "For more detailed information, you can refer to the following resources"
+      "value": "さらに詳細な情報については、次のリソースを参照してください。"
     }
   ],
   "A5Ferh": [
@@ -2709,12 +2709,6 @@
     {
       "type": 0,
       "value": "メール アドレスを入力してください。"
-    }
-  ],
-  "FaBEfQ": [
-    {
-      "type": 0,
-      "value": "追跡対象プロパティ"
     }
   ],
   "Fcvgvg": [
@@ -3782,6 +3776,12 @@
       "value": "コピーされました。"
     }
   ],
+  "NFgfP4": [
+    {
+      "type": 0,
+      "value": "item"
+    }
+  ],
   "NGJ00e": [
     {
       "type": 0,
@@ -3875,7 +3875,7 @@
   "NzPnFS": [
     {
       "type": 0,
-      "value": "Example:"
+      "value": "例:"
     }
   ],
   "O+3Y9f": [
@@ -4150,6 +4150,12 @@
     {
       "type": 0,
       "value": "入力"
+    }
+  ],
+  "PDMP/Z": [
+    {
+      "type": 0,
+      "value": "Collapsed"
     }
   ],
   "PNk3n4": [
@@ -5792,7 +5798,7 @@
   "Yg/vvm": [
     {
       "type": 0,
-      "value": "Close Add Action Panel"
+      "value": "アクションの追加パネルを閉じる"
     }
   ],
   "YgU88A": [
@@ -6524,7 +6530,7 @@
   "eHsOsm": [
     {
       "type": 0,
-      "value": "Specify the duration in ISO 8601 format"
+      "value": "ISO 8601 形式で期間を指定します"
     }
   ],
   "eO1h/h": [
@@ -6899,6 +6905,12 @@
     {
       "type": 0,
       "value": "このアクションからワークフローの実行を再送信する"
+    }
+  ],
+  "hJbr09": [
+    {
+      "type": 0,
+      "value": "Click to Collapse"
     }
   ],
   "hMf2TA": [
@@ -7974,7 +7986,7 @@
     },
     {
       "type": 0,
-      "value": " operation, "
+      "value": " 操作、"
     },
     {
       "type": 1,
@@ -7982,7 +7994,7 @@
     },
     {
       "type": 0,
-      "value": " connector"
+      "value": " コネクタ"
     }
   ],
   "ngsC44": [
@@ -8460,6 +8472,12 @@
       "value": "アレイまたは文字列内の要素の数を返します"
     }
   ],
+  "qdUeUk": [
+    {
+      "type": 0,
+      "value": "Click to Expand"
+    }
+  ],
   "qiIs4V": [
     {
       "type": 0,
@@ -8524,6 +8542,12 @@
     {
       "type": 0,
       "value": "元に戻す"
+    }
+  ],
+  "r4zp7m": [
+    {
+      "type": 0,
+      "value": "Expanded"
     }
   ],
   "r7vZ5a": [
