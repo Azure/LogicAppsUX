@@ -1312,7 +1312,7 @@
     },
     {
       "type": 0,
-      "value": " connector"
+      "value": " 커넥터"
     }
   ],
   "6u6CS+": [
@@ -1706,7 +1706,7 @@
     },
     {
       "type": 0,
-      "value": " operation"
+      "value": " 작업"
     }
   ],
   "99vsJy": [
@@ -2701,12 +2701,6 @@
     {
       "type": 0,
       "value": "메일 주소를 입력하세요."
-    }
-  ],
-  "FaBEfQ": [
-    {
-      "type": 0,
-      "value": "추적된 속성"
     }
   ],
   "Fcvgvg": [
@@ -3774,6 +3768,12 @@
       "value": "복사됨!"
     }
   ],
+  "NFgfP4": [
+    {
+      "type": 0,
+      "value": "item"
+    }
+  ],
   "NGJ00e": [
     {
       "type": 0,
@@ -3867,7 +3867,7 @@
   "NzPnFS": [
     {
       "type": 0,
-      "value": "Example:"
+      "value": "예:"
     }
   ],
   "O+3Y9f": [
@@ -4142,6 +4142,12 @@
     {
       "type": 0,
       "value": "입력"
+    }
+  ],
+  "PDMP/Z": [
+    {
+      "type": 0,
+      "value": "Collapsed"
     }
   ],
   "PNk3n4": [
@@ -5788,7 +5794,7 @@
   "Yg/vvm": [
     {
       "type": 0,
-      "value": "Close Add Action Panel"
+      "value": "작업 패널 추가 닫기"
     }
   ],
   "YgU88A": [
@@ -6520,7 +6526,7 @@
   "eHsOsm": [
     {
       "type": 0,
-      "value": "Specify the duration in ISO 8601 format"
+      "value": "ISO 8601 형식으로 기간을 지정합니다."
     }
   ],
   "eO1h/h": [
@@ -6895,6 +6901,12 @@
     {
       "type": 0,
       "value": "이 작업에서 워크플로 실행 다시 제출"
+    }
+  ],
+  "hJbr09": [
+    {
+      "type": 0,
+      "value": "Click to Collapse"
     }
   ],
   "hMf2TA": [
@@ -7970,7 +7982,7 @@
     },
     {
       "type": 0,
-      "value": " operation, "
+      "value": " 작업, "
     },
     {
       "type": 1,
@@ -7978,7 +7990,7 @@
     },
     {
       "type": 0,
-      "value": " connector"
+      "value": " 커넥터"
     }
   ],
   "ngsC44": [
@@ -8456,6 +8468,12 @@
       "value": "배열 또는 문자열의 요소 수를 반환합니다."
     }
   ],
+  "qdUeUk": [
+    {
+      "type": 0,
+      "value": "Click to Expand"
+    }
+  ],
   "qiIs4V": [
     {
       "type": 0,
@@ -8520,6 +8538,12 @@
     {
       "type": 0,
       "value": "실행 취소"
+    }
+  ],
+  "r4zp7m": [
+    {
+      "type": 0,
+      "value": "Expanded"
     }
   ],
   "r7vZ5a": [

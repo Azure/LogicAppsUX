@@ -1315,12 +1315,12 @@
   ],
   "6sSPNb": [
     {
-      "type": 1,
-      "value": "connectorName"
+      "type": 0,
+      "value": "Conector "
     },
     {
-      "type": 0,
-      "value": " connector"
+      "type": 1,
+      "value": "connectorName"
     }
   ],
   "6u6CS+": [
@@ -1709,12 +1709,12 @@
   ],
   "96JG8I": [
     {
-      "type": 1,
-      "value": "operationName"
+      "type": 0,
+      "value": "Operación "
     },
     {
-      "type": 0,
-      "value": " operation"
+      "type": 1,
+      "value": "operationName"
     }
   ],
   "99vsJy": [
@@ -1830,7 +1830,7 @@
   "9yLPwo": [
     {
       "type": 0,
-      "value": "For more detailed information, you can refer to the following resources"
+      "value": "Para obtener información más detallada, puede consultar los siguientes recursos"
     }
   ],
   "A5Ferh": [
@@ -2765,12 +2765,6 @@
     {
       "type": 0,
       "value": "Escribe una dirección de correo electrónico."
-    }
-  ],
-  "FaBEfQ": [
-    {
-      "type": 0,
-      "value": "Propiedades controladas"
     }
   ],
   "Fcvgvg": [
@@ -3860,6 +3854,12 @@
       "value": "Copia realizada."
     }
   ],
+  "NFgfP4": [
+    {
+      "type": 0,
+      "value": "item"
+    }
+  ],
   "NGJ00e": [
     {
       "type": 0,
@@ -3953,7 +3953,7 @@
   "NzPnFS": [
     {
       "type": 0,
-      "value": "Example:"
+      "value": "Ejemplo:"
     }
   ],
   "O+3Y9f": [
@@ -4228,6 +4228,12 @@
     {
       "type": 0,
       "value": "Entrada"
+    }
+  ],
+  "PDMP/Z": [
+    {
+      "type": 0,
+      "value": "Collapsed"
     }
   ],
   "PNk3n4": [
@@ -5896,7 +5902,7 @@
   "Yg/vvm": [
     {
       "type": 0,
-      "value": "Close Add Action Panel"
+      "value": "Cerrar Agregar panel de acciones"
     }
   ],
   "YgU88A": [
@@ -6632,7 +6638,7 @@
   "eHsOsm": [
     {
       "type": 0,
-      "value": "Specify the duration in ISO 8601 format"
+      "value": "Especifique la duración en formato ISO 8601"
     }
   ],
   "eO1h/h": [
@@ -7015,6 +7021,12 @@
     {
       "type": 0,
       "value": "Volver a enviar una ejecución de flujo de trabajo desde esta acción"
+    }
+  ],
+  "hJbr09": [
+    {
+      "type": 0,
+      "value": "Click to Collapse"
     }
   ],
   "hMf2TA": [
@@ -8133,20 +8145,20 @@
   ],
   "ncW1Sw": [
     {
+      "type": 0,
+      "value": "Operación "
+    },
+    {
       "type": 1,
       "value": "operationName"
     },
     {
       "type": 0,
-      "value": " operation, "
+      "value": ", conector "
     },
     {
       "type": 1,
       "value": "connectorName"
-    },
-    {
-      "type": 0,
-      "value": " connector"
     }
   ],
   "ngsC44": [
@@ -8646,6 +8658,12 @@
       "value": "Devuelve el número de elementos de una matriz o cadena."
     }
   ],
+  "qdUeUk": [
+    {
+      "type": 0,
+      "value": "Click to Expand"
+    }
+  ],
   "qiIs4V": [
     {
       "type": 0,
@@ -8710,6 +8728,12 @@
     {
       "type": 0,
       "value": "Deshacer"
+    }
+  ],
+  "r4zp7m": [
+    {
+      "type": 0,
+      "value": "Expanded"
     }
   ],
   "r7vZ5a": [
