@@ -1,4 +1,5 @@
 import NoResultsSvg from '../../../assets/search/noResults.svg';
+import { AriaSearchResultsAlert } from '../../ariaSearchResults/ariaSearchResultsAlert';
 import { getConnectorCategoryString } from '../../utils';
 import type { OperationActionData } from './interfaces';
 import { OperationSearchCard } from './operationSearchCard';
@@ -119,26 +120,17 @@ export const SearchResultsGrid: React.FC<PropsWithChildren<SearchResultsGridProp
       )}
       {groupByConnector ? (
         <>
-          {AriaSearchResultsAlert(apiIds.length)}
+          <AriaSearchResultsAlert resultCount={apiIds.length} resultDescription={'Connector'}></AriaSearchResultsAlert>
           <List items={apiIds} onRenderCell={onRenderOperationGroup} />
         </>
       ) : (
         <>
-          {AriaSearchResultsAlert(operationSearchResults.length)}
+          <AriaSearchResultsAlert resultCount={operationSearchResults.length} resultDescription={'action'}></AriaSearchResultsAlert>
           <List items={operationSearchResults} onRenderCell={onRenderOperationCell} />
         </>
       )}
     </div>
   );
-};
-
-const AriaSearchResultsAlert = (resultCount: number) => {
-  const intl = useIntl();
-  const ariaResultCount = intl.formatMessage({
-    defaultMessage: ' results found',
-    description: 'shows how many results are returned after search',
-  });
-  return <div className={'msla-aria-search-results'} role="alert">{`${resultCount} ${ariaResultCount}`}</div>;
 };
 
 export const OperationActionDataFromOperation = (operation: DiscoveryOperation<DiscoveryResultTypes>): OperationActionData => ({
