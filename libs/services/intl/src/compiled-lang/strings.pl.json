@@ -1080,7 +1080,7 @@
   "5LV34t": [
     {
       "type": 0,
-      "value": "The '"
+      "value": "Właściwości „"
     },
     {
       "type": 1,
@@ -1088,7 +1088,7 @@
     },
     {
       "type": 0,
-      "value": "' properties are invalid for the '"
+      "value": "” są nieprawidłowe dla typu uwierzytelniania „"
     },
     {
       "type": 1,
@@ -1096,23 +1096,13 @@
     },
     {
       "type": 0,
-      "value": "' authentication type."
+      "value": "”."
     }
   ],
   "5OvGgn": [
     {
       "type": 0,
       "value": "Treść"
-    }
-  ],
-  "5Ow9mX": [
-    {
-      "type": 0,
-      "value": "Ikona łącznika "
-    },
-    {
-      "type": 1,
-      "value": "connectorName"
     }
   ],
   "5SAQOb": [
@@ -1321,6 +1311,16 @@
     {
       "type": 0,
       "value": "Utwórz przepływ"
+    }
+  ],
+  "6sSPNb": [
+    {
+      "type": 0,
+      "value": "Łącznik "
+    },
+    {
+      "type": 1,
+      "value": "connectorName"
     }
   ],
   "6u6CS+": [
@@ -1707,6 +1707,16 @@
       "value": "Tożsamość użytkownika nie jest obsługiwana, gdy aplikacja logiki ma włączoną tożsamość zarządzaną przypisaną przez system."
     }
   ],
+  "96JG8I": [
+    {
+      "type": 0,
+      "value": "Operacja "
+    },
+    {
+      "type": 1,
+      "value": "operationName"
+    }
+  ],
   "99vsJy": [
     {
       "type": 0,
@@ -1815,6 +1825,12 @@
     {
       "type": 0,
       "value": "Edytuj w trybie podstawowym"
+    }
+  ],
+  "9yLPwo": [
+    {
+      "type": 0,
+      "value": "Aby uzyskać bardziej szczegółowe informacje, zapoznaj się z następującymi zasobami"
     }
   ],
   "A5Ferh": [
@@ -2040,7 +2056,7 @@
   "BGw6eH": [
     {
       "type": 0,
-      "value": "Missing required properties '"
+      "value": "Brak wymaganych właściwości „"
     },
     {
       "type": 1,
@@ -2048,7 +2064,7 @@
     },
     {
       "type": 0,
-      "value": "' for authentication type '"
+      "value": "” dla typu uwierzytelniania „"
     },
     {
       "type": 1,
@@ -2056,7 +2072,7 @@
     },
     {
       "type": 0,
-      "value": "'"
+      "value": "”"
     }
   ],
   "BHe7qY": [
@@ -2773,12 +2789,6 @@
       "value": "Wprowadź adres e-mail."
     }
   ],
-  "FaBEfQ": [
-    {
-      "type": 0,
-      "value": "Śledzone właściwości"
-    }
-  ],
   "Fcvgvg": [
     {
       "type": 0,
@@ -3100,7 +3110,7 @@
   "I1CYNA": [
     {
       "type": 0,
-      "value": "Invalid property '"
+      "value": "Nieprawidłowa właściwość „"
     },
     {
       "type": 1,
@@ -3108,7 +3118,7 @@
     },
     {
       "type": 0,
-      "value": "' for authentication type '"
+      "value": "” dla 'typu uwierzytelniania „"
     },
     {
       "type": 1,
@@ -3116,7 +3126,7 @@
     },
     {
       "type": 0,
-      "value": "'."
+      "value": "”."
     }
   ],
   "I3mifR": [
@@ -3885,6 +3895,12 @@
       "value": "Skopiowano!"
     }
   ],
+  "NFgfP4": [
+    {
+      "type": 0,
+      "value": "item"
+    }
+  ],
   "NGJ00e": [
     {
       "type": 0,
@@ -3975,6 +3991,12 @@
       "value": "Wtorek"
     }
   ],
+  "NzPnFS": [
+    {
+      "type": 0,
+      "value": "Przykład:"
+    }
+  ],
   "O+3Y9f": [
     {
       "type": 0,
@@ -4026,7 +4048,7 @@
   "OBO/HE": [
     {
       "type": 0,
-      "value": "Invalid Authentication Value"
+      "value": "Nieprawidłowa wartość uwierzytelniania"
     }
   ],
   "ODQCKj": [
@@ -4182,7 +4204,7 @@
   "Ov7Ckz": [
     {
       "type": 0,
-      "value": "Missing required property '"
+      "value": "Brak wymaganej właściwości „"
     },
     {
       "type": 1,
@@ -4190,7 +4212,7 @@
     },
     {
       "type": 0,
-      "value": "' for authentication type '"
+      "value": "” dla typu uwierzytelniania „"
     },
     {
       "type": 1,
@@ -4198,7 +4220,7 @@
     },
     {
       "type": 0,
-      "value": "'"
+      "value": "”"
     }
   ],
   "P+7G62": [
@@ -4247,6 +4269,12 @@
     {
       "type": 0,
       "value": "Dane wejściowe"
+    }
+  ],
+  "PDMP/Z": [
+    {
+      "type": 0,
+      "value": "Collapsed"
     }
   ],
   "PNk3n4": [
@@ -5274,7 +5302,7 @@
     },
     {
       "type": 1,
-      "value": "searchTerm"
+      "value": "searchText"
     }
   ],
   "VIN7lB": [
@@ -5925,6 +5953,12 @@
     {
       "type": 0,
       "value": "Porady dotyczące wyszukiwania"
+    }
+  ],
+  "Yg/vvm": [
+    {
+      "type": 0,
+      "value": "Zamknij panel dodawania akcji"
     }
   ],
   "YgU88A": [
@@ -6657,6 +6691,12 @@
       "value": "Wymagane. Nazwa zmiennej z żądanymi wartościami."
     }
   ],
+  "eHsOsm": [
+    {
+      "type": 0,
+      "value": "Określ czas trwania w formacie zgodnym ze standardem ISO 8601."
+    }
+  ],
   "eO1h/h": [
     {
       "type": 0,
@@ -7033,6 +7073,12 @@
     {
       "type": 0,
       "value": "Ponownie prześlij przebieg przepływu pracy z tej akcji"
+    }
+  ],
+  "hJbr09": [
+    {
+      "type": 0,
+      "value": "Click to Collapse"
     }
   ],
   "hMf2TA": [
@@ -7970,7 +8016,7 @@
   "mNaBPE": [
     {
       "type": 0,
-      "value": "Enter a valid JSON."
+      "value": "Wprowadź prawidłowy kod JSON."
     }
   ],
   "mPakaD": [
@@ -8193,6 +8239,24 @@
     {
       "type": 0,
       "value": "Pomijanie nagłówków przepływu pracy"
+    }
+  ],
+  "ncW1Sw": [
+    {
+      "type": 0,
+      "value": "Operacja "
+    },
+    {
+      "type": 1,
+      "value": "operationName"
+    },
+    {
+      "type": 0,
+      "value": ", łącznik "
+    },
+    {
+      "type": 1,
+      "value": "connectorName"
     }
   ],
   "ngsC44": [
@@ -8703,6 +8767,12 @@
       "value": "Zwraca liczbę elementów w tablicy lub ciągu"
     }
   ],
+  "qdUeUk": [
+    {
+      "type": 0,
+      "value": "Click to Expand"
+    }
+  ],
   "qiIs4V": [
     {
       "type": 0,
@@ -8767,6 +8837,12 @@
     {
       "type": 0,
       "value": "Cofnij"
+    }
+  ],
+  "r4zp7m": [
+    {
+      "type": 0,
+      "value": "Expanded"
     }
   ],
   "r7vZ5a": [

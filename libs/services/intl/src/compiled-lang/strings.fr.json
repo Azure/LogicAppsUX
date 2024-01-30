@@ -1080,7 +1080,7 @@
   "5LV34t": [
     {
       "type": 0,
-      "value": "The '"
+      "value": "Propriétés « "
     },
     {
       "type": 1,
@@ -1088,7 +1088,7 @@
     },
     {
       "type": 0,
-      "value": "' properties are invalid for the '"
+      "value": " » non valides pour le type d’authentification « "
     },
     {
       "type": 1,
@@ -1096,23 +1096,13 @@
     },
     {
       "type": 0,
-      "value": "' authentication type."
+      "value": " »."
     }
   ],
   "5OvGgn": [
     {
       "type": 0,
       "value": "Corps"
-    }
-  ],
-  "5Ow9mX": [
-    {
-      "type": 0,
-      "value": "Icône de connecteur "
-    },
-    {
-      "type": 1,
-      "value": "connectorName"
     }
   ],
   "5SAQOb": [
@@ -1321,6 +1311,16 @@
     {
       "type": 0,
       "value": "Créez un flux"
+    }
+  ],
+  "6sSPNb": [
+    {
+      "type": 0,
+      "value": "Connecteur "
+    },
+    {
+      "type": 1,
+      "value": "connectorName"
     }
   ],
   "6u6CS+": [
@@ -1707,6 +1707,16 @@
       "value": "L'identité de l'utilisateur n'est pas prise en charge quand l'identité managée affectée par le système est activée pour l'Application Logique."
     }
   ],
+  "96JG8I": [
+    {
+      "type": 0,
+      "value": "Opération "
+    },
+    {
+      "type": 1,
+      "value": "operationName"
+    }
+  ],
   "99vsJy": [
     {
       "type": 0,
@@ -1815,6 +1825,12 @@
     {
       "type": 0,
       "value": "Modifier en mode De base"
+    }
+  ],
+  "9yLPwo": [
+    {
+      "type": 0,
+      "value": "Pour plus d’informations, vous pouvez consulter les ressources suivantes"
     }
   ],
   "A5Ferh": [
@@ -2029,7 +2045,7 @@
   "BGw6eH": [
     {
       "type": 0,
-      "value": "Missing required properties '"
+      "value": "Propriétés obligatoires « "
     },
     {
       "type": 1,
@@ -2037,15 +2053,15 @@
     },
     {
       "type": 0,
-      "value": "' for authentication type '"
+      "value": " » manquantes pour le type d’authentification « "
     },
     {
       "type": 1,
-      "value": "authType"
+      "value": "convertedAuthType"
     },
     {
       "type": 0,
-      "value": "'"
+      "value": " »"
     }
   ],
   "BHe7qY": [
@@ -2751,12 +2767,6 @@
       "value": "Entrez une adresse de messagerie."
     }
   ],
-  "FaBEfQ": [
-    {
-      "type": 0,
-      "value": "Propriétés suivies"
-    }
-  ],
   "Fcvgvg": [
     {
       "type": 0,
@@ -3070,7 +3080,7 @@
   "I1CYNA": [
     {
       "type": 0,
-      "value": "Invalid property '"
+      "value": "Propriété « "
     },
     {
       "type": 1,
@@ -3078,15 +3088,15 @@
     },
     {
       "type": 0,
-      "value": "' for authentication type '"
+      "value": " » non valide pour le type d’authentification « "
     },
     {
       "type": 1,
-      "value": "authType"
+      "value": "convertedAuthType"
     },
     {
       "type": 0,
-      "value": "'."
+      "value": " »."
     }
   ],
   "I3mifR": [
@@ -3844,6 +3854,12 @@
       "value": "Copie effectuée."
     }
   ],
+  "NFgfP4": [
+    {
+      "type": 0,
+      "value": "item"
+    }
+  ],
   "NGJ00e": [
     {
       "type": 0,
@@ -3934,6 +3950,12 @@
       "value": "Mardi"
     }
   ],
+  "NzPnFS": [
+    {
+      "type": 0,
+      "value": "Exemple :"
+    }
+  ],
   "O+3Y9f": [
     {
       "type": 0,
@@ -3985,7 +4007,7 @@
   "OBO/HE": [
     {
       "type": 0,
-      "value": "Invalid Authentication Value"
+      "value": "Valeur d'authentification non valide"
     }
   ],
   "ODQCKj": [
@@ -4141,7 +4163,7 @@
   "Ov7Ckz": [
     {
       "type": 0,
-      "value": "Missing required property '"
+      "value": "Propriété obligatoire « "
     },
     {
       "type": 1,
@@ -4149,15 +4171,15 @@
     },
     {
       "type": 0,
-      "value": "' for authentication type '"
+      "value": " » manquante pour le type d’authentification « "
     },
     {
       "type": 1,
-      "value": "authType"
+      "value": "convertedAuthType"
     },
     {
       "type": 0,
-      "value": "'"
+      "value": " »"
     }
   ],
   "P+7G62": [
@@ -4206,6 +4228,12 @@
     {
       "type": 0,
       "value": "Entrée"
+    }
+  ],
+  "PDMP/Z": [
+    {
+      "type": 0,
+      "value": "Collapsed"
     }
   ],
   "PNk3n4": [
@@ -5871,6 +5899,12 @@
       "value": "Astuces pour la recherche"
     }
   ],
+  "Yg/vvm": [
+    {
+      "type": 0,
+      "value": "Fermer le panneau Ajouter une action"
+    }
+  ],
   "YgU88A": [
     {
       "type": 0,
@@ -6601,6 +6635,12 @@
       "value": "Obligatoire. Nom de la variable dont vous voulez la valeur."
     }
   ],
+  "eHsOsm": [
+    {
+      "type": 0,
+      "value": "Spécifier la durée au format ISO 8601"
+    }
+  ],
   "eO1h/h": [
     {
       "type": 0,
@@ -6981,6 +7021,12 @@
     {
       "type": 0,
       "value": "Renvoyer une exécution de workflow à partir de cette action"
+    }
+  ],
+  "hJbr09": [
+    {
+      "type": 0,
+      "value": "Click to Collapse"
     }
   ],
   "hMf2TA": [
@@ -7880,7 +7926,7 @@
   "mNaBPE": [
     {
       "type": 0,
-      "value": "Enter a valid JSON."
+      "value": "Entrez un JSON valide."
     }
   ],
   "mPakaD": [
@@ -8103,6 +8149,24 @@
     {
       "type": 0,
       "value": "Supprimer les en-têtes de workflow"
+    }
+  ],
+  "ncW1Sw": [
+    {
+      "type": 0,
+      "value": "Opération "
+    },
+    {
+      "type": 1,
+      "value": "operationName"
+    },
+    {
+      "type": 0,
+      "value": ", connecteur "
+    },
+    {
+      "type": 1,
+      "value": "connectorName"
     }
   ],
   "ngsC44": [
@@ -8602,6 +8666,12 @@
       "value": "Retourne le nombre d'éléments d'un tableau ou d'une chaîne"
     }
   ],
+  "qdUeUk": [
+    {
+      "type": 0,
+      "value": "Click to Expand"
+    }
+  ],
   "qiIs4V": [
     {
       "type": 0,
@@ -8666,6 +8736,12 @@
     {
       "type": 0,
       "value": "Annuler"
+    }
+  ],
+  "r4zp7m": [
+    {
+      "type": 0,
+      "value": "Expanded"
     }
   ],
   "r7vZ5a": [

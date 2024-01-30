@@ -1072,7 +1072,7 @@
   "5LV34t": [
     {
       "type": 0,
-      "value": "The '"
+      "value": "'"
     },
     {
       "type": 1,
@@ -1080,7 +1080,7 @@
     },
     {
       "type": 0,
-      "value": "' properties are invalid for the '"
+      "value": "' プロパティは、'"
     },
     {
       "type": 1,
@@ -1088,23 +1088,13 @@
     },
     {
       "type": 0,
-      "value": "' authentication type."
+      "value": "' 認証の種類に対しては無効です。"
     }
   ],
   "5OvGgn": [
     {
       "type": 0,
       "value": "本文"
-    }
-  ],
-  "5Ow9mX": [
-    {
-      "type": 1,
-      "value": "connectorName"
-    },
-    {
-      "type": 0,
-      "value": " コネクタ アイコン"
     }
   ],
   "5SAQOb": [
@@ -1313,6 +1303,16 @@
     {
       "type": 0,
       "value": "フローを作成します"
+    }
+  ],
+  "6sSPNb": [
+    {
+      "type": 1,
+      "value": "connectorName"
+    },
+    {
+      "type": 0,
+      "value": " コネクタ"
     }
   ],
   "6u6CS+": [
@@ -1699,6 +1699,16 @@
       "value": "ユーザー ID は、ロジック アプリでシステム割り当てマネージド ID が有効になっている場合はサポートされません。"
     }
   ],
+  "96JG8I": [
+    {
+      "type": 1,
+      "value": "operationName"
+    },
+    {
+      "type": 0,
+      "value": " 操作"
+    }
+  ],
   "99vsJy": [
     {
       "type": 0,
@@ -1807,6 +1817,12 @@
     {
       "type": 0,
       "value": "基本モードで編集"
+    }
+  ],
+  "9yLPwo": [
+    {
+      "type": 0,
+      "value": "さらに詳細な情報については、次のリソースを参照してください。"
     }
   ],
   "A5Ferh": [
@@ -1999,15 +2015,7 @@
   "BGw6eH": [
     {
       "type": 0,
-      "value": "Missing required properties '"
-    },
-    {
-      "type": 1,
-      "value": "missingProperties"
-    },
-    {
-      "type": 0,
-      "value": "' for authentication type '"
+      "value": "認証の種類 '"
     },
     {
       "type": 1,
@@ -2015,7 +2023,15 @@
     },
     {
       "type": 0,
-      "value": "'"
+      "value": "' に必要なプロパティ '"
+    },
+    {
+      "type": 1,
+      "value": "missingProperties"
+    },
+    {
+      "type": 0,
+      "value": "' がありません"
     }
   ],
   "BHe7qY": [
@@ -2695,12 +2711,6 @@
       "value": "メール アドレスを入力してください。"
     }
   ],
-  "FaBEfQ": [
-    {
-      "type": 0,
-      "value": "追跡対象プロパティ"
-    }
-  ],
   "Fcvgvg": [
     {
       "type": 0,
@@ -3014,15 +3024,7 @@
   "I1CYNA": [
     {
       "type": 0,
-      "value": "Invalid property '"
-    },
-    {
-      "type": 1,
-      "value": "invalidProperties"
-    },
-    {
-      "type": 0,
-      "value": "' for authentication type '"
+      "value": "認証の種類 '"
     },
     {
       "type": 1,
@@ -3030,7 +3032,15 @@
     },
     {
       "type": 0,
-      "value": "'."
+      "value": "' のプロパティ '"
+    },
+    {
+      "type": 1,
+      "value": "invalidProperties"
+    },
+    {
+      "type": 0,
+      "value": "' が無効です。"
     }
   ],
   "I3mifR": [
@@ -3766,6 +3776,12 @@
       "value": "コピーされました。"
     }
   ],
+  "NFgfP4": [
+    {
+      "type": 0,
+      "value": "item"
+    }
+  ],
   "NGJ00e": [
     {
       "type": 0,
@@ -3856,6 +3872,12 @@
       "value": "火曜日"
     }
   ],
+  "NzPnFS": [
+    {
+      "type": 0,
+      "value": "例:"
+    }
+  ],
   "O+3Y9f": [
     {
       "type": 0,
@@ -3907,7 +3929,7 @@
   "OBO/HE": [
     {
       "type": 0,
-      "value": "Invalid Authentication Value"
+      "value": "認証値が無効です"
     }
   ],
   "ODQCKj": [
@@ -4063,15 +4085,7 @@
   "Ov7Ckz": [
     {
       "type": 0,
-      "value": "Missing required property '"
-    },
-    {
-      "type": 1,
-      "value": "missingProperties"
-    },
-    {
-      "type": 0,
-      "value": "' for authentication type '"
+      "value": "認証の種類 '"
     },
     {
       "type": 1,
@@ -4079,7 +4093,15 @@
     },
     {
       "type": 0,
-      "value": "'"
+      "value": "' に必要なプロパティ '"
+    },
+    {
+      "type": 1,
+      "value": "missingProperties"
+    },
+    {
+      "type": 0,
+      "value": "' がありません"
     }
   ],
   "P+7G62": [
@@ -4128,6 +4150,12 @@
     {
       "type": 0,
       "value": "入力"
+    }
+  ],
+  "PDMP/Z": [
+    {
+      "type": 0,
+      "value": "Collapsed"
     }
   ],
   "PNk3n4": [
@@ -5767,6 +5795,12 @@
       "value": "検索のヒント:"
     }
   ],
+  "Yg/vvm": [
+    {
+      "type": 0,
+      "value": "アクションの追加パネルを閉じる"
+    }
+  ],
   "YgU88A": [
     {
       "type": 0,
@@ -6493,6 +6527,12 @@
       "value": "必須。値を求める対象の変数の名前。"
     }
   ],
+  "eHsOsm": [
+    {
+      "type": 0,
+      "value": "ISO 8601 形式で期間を指定します"
+    }
+  ],
   "eO1h/h": [
     {
       "type": 0,
@@ -6865,6 +6905,12 @@
     {
       "type": 0,
       "value": "このアクションからワークフローの実行を再送信する"
+    }
+  ],
+  "hJbr09": [
+    {
+      "type": 0,
+      "value": "Click to Collapse"
     }
   ],
   "hMf2TA": [
@@ -7708,7 +7754,7 @@
   "mNaBPE": [
     {
       "type": 0,
-      "value": "Enter a valid JSON."
+      "value": "有効な JSON を入力してください。"
     }
   ],
   "mPakaD": [
@@ -7931,6 +7977,24 @@
     {
       "type": 0,
       "value": "ワークフロー ヘッダーの抑制"
+    }
+  ],
+  "ncW1Sw": [
+    {
+      "type": 1,
+      "value": "operationName"
+    },
+    {
+      "type": 0,
+      "value": " 操作、"
+    },
+    {
+      "type": 1,
+      "value": "connectorName"
+    },
+    {
+      "type": 0,
+      "value": " コネクタ"
     }
   ],
   "ngsC44": [
@@ -8408,6 +8472,12 @@
       "value": "アレイまたは文字列内の要素の数を返します"
     }
   ],
+  "qdUeUk": [
+    {
+      "type": 0,
+      "value": "Click to Expand"
+    }
+  ],
   "qiIs4V": [
     {
       "type": 0,
@@ -8472,6 +8542,12 @@
     {
       "type": 0,
       "value": "元に戻す"
+    }
+  ],
+  "r4zp7m": [
+    {
+      "type": 0,
+      "value": "Expanded"
     }
   ],
   "r7vZ5a": [

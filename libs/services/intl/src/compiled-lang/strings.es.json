@@ -1080,7 +1080,7 @@
   "5LV34t": [
     {
       "type": 0,
-      "value": "The '"
+      "value": "Las propiedades \""
     },
     {
       "type": 1,
@@ -1088,7 +1088,7 @@
     },
     {
       "type": 0,
-      "value": "' properties are invalid for the '"
+      "value": "\" no son válidas para el tipo de autenticación \""
     },
     {
       "type": 1,
@@ -1096,23 +1096,13 @@
     },
     {
       "type": 0,
-      "value": "' authentication type."
+      "value": "\"."
     }
   ],
   "5OvGgn": [
     {
       "type": 0,
       "value": "Cuerpo"
-    }
-  ],
-  "5Ow9mX": [
-    {
-      "type": 0,
-      "value": "Icono del conector "
-    },
-    {
-      "type": 1,
-      "value": "connectorName"
     }
   ],
   "5SAQOb": [
@@ -1321,6 +1311,16 @@
     {
       "type": 0,
       "value": "Crear flujo"
+    }
+  ],
+  "6sSPNb": [
+    {
+      "type": 0,
+      "value": "Conector "
+    },
+    {
+      "type": 1,
+      "value": "connectorName"
     }
   ],
   "6u6CS+": [
@@ -1707,6 +1707,16 @@
       "value": "No se admite la identidad del usuario si la aplicación lógica tiene habilitada la identidad administrada asignada por el sistema."
     }
   ],
+  "96JG8I": [
+    {
+      "type": 0,
+      "value": "Operación "
+    },
+    {
+      "type": 1,
+      "value": "operationName"
+    }
+  ],
   "99vsJy": [
     {
       "type": 0,
@@ -1815,6 +1825,12 @@
     {
       "type": 0,
       "value": "Editar en modo básico"
+    }
+  ],
+  "9yLPwo": [
+    {
+      "type": 0,
+      "value": "Para obtener información más detallada, puede consultar los siguientes recursos"
     }
   ],
   "A5Ferh": [
@@ -2029,7 +2045,7 @@
   "BGw6eH": [
     {
       "type": 0,
-      "value": "Missing required properties '"
+      "value": "Faltan las propiedades necesarias \""
     },
     {
       "type": 1,
@@ -2037,7 +2053,7 @@
     },
     {
       "type": 0,
-      "value": "' for authentication type '"
+      "value": "\" para el tipo de autenticación \""
     },
     {
       "type": 1,
@@ -2045,7 +2061,7 @@
     },
     {
       "type": 0,
-      "value": "'"
+      "value": "\""
     }
   ],
   "BHe7qY": [
@@ -2751,12 +2767,6 @@
       "value": "Escribe una dirección de correo electrónico."
     }
   ],
-  "FaBEfQ": [
-    {
-      "type": 0,
-      "value": "Propiedades controladas"
-    }
-  ],
   "Fcvgvg": [
     {
       "type": 0,
@@ -3070,7 +3080,7 @@
   "I1CYNA": [
     {
       "type": 0,
-      "value": "Invalid property '"
+      "value": "Propiedad \""
     },
     {
       "type": 1,
@@ -3078,7 +3088,7 @@
     },
     {
       "type": 0,
-      "value": "' for authentication type '"
+      "value": "\" no válida para el tipo de autenticación \""
     },
     {
       "type": 1,
@@ -3086,7 +3096,7 @@
     },
     {
       "type": 0,
-      "value": "'."
+      "value": "\"."
     }
   ],
   "I3mifR": [
@@ -3844,6 +3854,12 @@
       "value": "Copia realizada."
     }
   ],
+  "NFgfP4": [
+    {
+      "type": 0,
+      "value": "item"
+    }
+  ],
   "NGJ00e": [
     {
       "type": 0,
@@ -3934,6 +3950,12 @@
       "value": "Martes"
     }
   ],
+  "NzPnFS": [
+    {
+      "type": 0,
+      "value": "Ejemplo:"
+    }
+  ],
   "O+3Y9f": [
     {
       "type": 0,
@@ -3985,7 +4007,7 @@
   "OBO/HE": [
     {
       "type": 0,
-      "value": "Invalid Authentication Value"
+      "value": "El valor de la autenticación no es válido"
     }
   ],
   "ODQCKj": [
@@ -4141,7 +4163,7 @@
   "Ov7Ckz": [
     {
       "type": 0,
-      "value": "Missing required property '"
+      "value": "Falta la propiedad necesaria \""
     },
     {
       "type": 1,
@@ -4149,7 +4171,7 @@
     },
     {
       "type": 0,
-      "value": "' for authentication type '"
+      "value": "\" para el tipo de autenticación \""
     },
     {
       "type": 1,
@@ -4157,7 +4179,7 @@
     },
     {
       "type": 0,
-      "value": "'"
+      "value": "\""
     }
   ],
   "P+7G62": [
@@ -4206,6 +4228,12 @@
     {
       "type": 0,
       "value": "Entrada"
+    }
+  ],
+  "PDMP/Z": [
+    {
+      "type": 0,
+      "value": "Collapsed"
     }
   ],
   "PNk3n4": [
@@ -5871,6 +5899,12 @@
       "value": "Sugerencias de búsqueda"
     }
   ],
+  "Yg/vvm": [
+    {
+      "type": 0,
+      "value": "Cerrar Agregar panel de acciones"
+    }
+  ],
   "YgU88A": [
     {
       "type": 0,
@@ -6601,6 +6635,12 @@
       "value": "Obligatorio. El nombre de la variable de la que quiere el valor."
     }
   ],
+  "eHsOsm": [
+    {
+      "type": 0,
+      "value": "Especifique la duración en formato ISO 8601"
+    }
+  ],
   "eO1h/h": [
     {
       "type": 0,
@@ -6981,6 +7021,12 @@
     {
       "type": 0,
       "value": "Volver a enviar una ejecución de flujo de trabajo desde esta acción"
+    }
+  ],
+  "hJbr09": [
+    {
+      "type": 0,
+      "value": "Click to Collapse"
     }
   ],
   "hMf2TA": [
@@ -7880,7 +7926,7 @@
   "mNaBPE": [
     {
       "type": 0,
-      "value": "Enter a valid JSON."
+      "value": "Especifica un nombre válido."
     }
   ],
   "mPakaD": [
@@ -8095,6 +8141,24 @@
     {
       "type": 0,
       "value": "Suprimir encabezados de flujo de trabajo"
+    }
+  ],
+  "ncW1Sw": [
+    {
+      "type": 0,
+      "value": "Operación "
+    },
+    {
+      "type": 1,
+      "value": "operationName"
+    },
+    {
+      "type": 0,
+      "value": ", conector "
+    },
+    {
+      "type": 1,
+      "value": "connectorName"
     }
   ],
   "ngsC44": [
@@ -8594,6 +8658,12 @@
       "value": "Devuelve el número de elementos de una matriz o cadena."
     }
   ],
+  "qdUeUk": [
+    {
+      "type": 0,
+      "value": "Click to Expand"
+    }
+  ],
   "qiIs4V": [
     {
       "type": 0,
@@ -8658,6 +8728,12 @@
     {
       "type": 0,
       "value": "Deshacer"
+    }
+  ],
+  "r4zp7m": [
+    {
+      "type": 0,
+      "value": "Expanded"
     }
   ],
   "r7vZ5a": [

@@ -1072,7 +1072,7 @@
   "5LV34t": [
     {
       "type": 0,
-      "value": "The '"
+      "value": "Properti '"
     },
     {
       "type": 1,
@@ -1080,7 +1080,7 @@
     },
     {
       "type": 0,
-      "value": "' properties are invalid for the '"
+      "value": "' tidak valid untuk tipe autentikasi '"
     },
     {
       "type": 1,
@@ -1088,23 +1088,13 @@
     },
     {
       "type": 0,
-      "value": "' authentication type."
+      "value": "'."
     }
   ],
   "5OvGgn": [
     {
       "type": 0,
       "value": "Isi"
-    }
-  ],
-  "5Ow9mX": [
-    {
-      "type": 0,
-      "value": "Ikon konektor "
-    },
-    {
-      "type": 1,
-      "value": "connectorName"
     }
   ],
   "5SAQOb": [
@@ -1313,6 +1303,16 @@
     {
       "type": 0,
       "value": "Buat alur"
+    }
+  ],
+  "6sSPNb": [
+    {
+      "type": 0,
+      "value": "Konektor "
+    },
+    {
+      "type": 1,
+      "value": "connectorName"
     }
   ],
   "6u6CS+": [
@@ -1699,6 +1699,16 @@
       "value": "Identitas pengguna tidak didukung bila Aplikasi Logika mengaktifkan identitas terkelola yang ditetapkan sistem."
     }
   ],
+  "96JG8I": [
+    {
+      "type": 0,
+      "value": "Operasi "
+    },
+    {
+      "type": 1,
+      "value": "operationName"
+    }
+  ],
   "99vsJy": [
     {
       "type": 0,
@@ -1807,6 +1817,12 @@
     {
       "type": 0,
       "value": "Edit di mode dasar"
+    }
+  ],
+  "9yLPwo": [
+    {
+      "type": 0,
+      "value": "Untuk informasi yang lebih mendetail, Anda dapat merujuk ke sumber daya berikut"
     }
   ],
   "A5Ferh": [
@@ -1999,7 +2015,7 @@
   "BGw6eH": [
     {
       "type": 0,
-      "value": "Missing required properties '"
+      "value": "Properti '"
     },
     {
       "type": 1,
@@ -2007,7 +2023,7 @@
     },
     {
       "type": 0,
-      "value": "' for authentication type '"
+      "value": "' yang diperlukan untuk tipe autentikasi '"
     },
     {
       "type": 1,
@@ -2015,7 +2031,7 @@
     },
     {
       "type": 0,
-      "value": "'"
+      "value": "' tidak ada"
     }
   ],
   "BHe7qY": [
@@ -2699,12 +2715,6 @@
       "value": "Masukkan alamat email."
     }
   ],
-  "FaBEfQ": [
-    {
-      "type": 0,
-      "value": "Properti yang dilacak"
-    }
-  ],
   "Fcvgvg": [
     {
       "type": 0,
@@ -3018,7 +3028,7 @@
   "I1CYNA": [
     {
       "type": 0,
-      "value": "Invalid property '"
+      "value": "Properti '"
     },
     {
       "type": 1,
@@ -3026,7 +3036,7 @@
     },
     {
       "type": 0,
-      "value": "' for authentication type '"
+      "value": "' untuk tipe autentikasi '"
     },
     {
       "type": 1,
@@ -3034,7 +3044,7 @@
     },
     {
       "type": 0,
-      "value": "'."
+      "value": "' tidak valid."
     }
   ],
   "I3mifR": [
@@ -3770,6 +3780,12 @@
       "value": "Disalin!"
     }
   ],
+  "NFgfP4": [
+    {
+      "type": 0,
+      "value": "item"
+    }
+  ],
   "NGJ00e": [
     {
       "type": 0,
@@ -3860,6 +3876,12 @@
       "value": "Selasa"
     }
   ],
+  "NzPnFS": [
+    {
+      "type": 0,
+      "value": "Contoh:"
+    }
+  ],
   "O+3Y9f": [
     {
       "type": 0,
@@ -3911,7 +3933,7 @@
   "OBO/HE": [
     {
       "type": 0,
-      "value": "Invalid Authentication Value"
+      "value": "Nilai Autentikasi Tidak Valid"
     }
   ],
   "ODQCKj": [
@@ -4067,7 +4089,7 @@
   "Ov7Ckz": [
     {
       "type": 0,
-      "value": "Missing required property '"
+      "value": "Properti '"
     },
     {
       "type": 1,
@@ -4075,7 +4097,7 @@
     },
     {
       "type": 0,
-      "value": "' for authentication type '"
+      "value": "' yang diperlukan untuk tipe autentikasi '"
     },
     {
       "type": 1,
@@ -4083,7 +4105,7 @@
     },
     {
       "type": 0,
-      "value": "'"
+      "value": "' tidak ada"
     }
   ],
   "P+7G62": [
@@ -4132,6 +4154,12 @@
     {
       "type": 0,
       "value": "Input"
+    }
+  ],
+  "PDMP/Z": [
+    {
+      "type": 0,
+      "value": "Collapsed"
     }
   ],
   "PNk3n4": [
@@ -5775,6 +5803,12 @@
       "value": "Tips Pencarian"
     }
   ],
+  "Yg/vvm": [
+    {
+      "type": 0,
+      "value": "Tutup Panel Tambahkan Tindakan"
+    }
+  ],
   "YgU88A": [
     {
       "type": 0,
@@ -6505,6 +6539,12 @@
       "value": "Diperlukan. Nama variabel yang nilainya Anda inginkan."
     }
   ],
+  "eHsOsm": [
+    {
+      "type": 0,
+      "value": "Tentukan durasinya dalam format ISO 8601"
+    }
+  ],
   "eO1h/h": [
     {
       "type": 0,
@@ -6877,6 +6917,12 @@
     {
       "type": 0,
       "value": "Kirim ulang eksekusi alur kerja dari tindakan ini"
+    }
+  ],
+  "hJbr09": [
+    {
+      "type": 0,
+      "value": "Click to Collapse"
     }
   ],
   "hMf2TA": [
@@ -7732,7 +7778,7 @@
   "mNaBPE": [
     {
       "type": 0,
-      "value": "Enter a valid JSON."
+      "value": "Masukkan JSON yang valid."
     }
   ],
   "mPakaD": [
@@ -7955,6 +8001,24 @@
     {
       "type": 0,
       "value": "Sembunyikan header alur kerja"
+    }
+  ],
+  "ncW1Sw": [
+    {
+      "type": 0,
+      "value": "Operasi "
+    },
+    {
+      "type": 1,
+      "value": "operationName"
+    },
+    {
+      "type": 0,
+      "value": ", konektor "
+    },
+    {
+      "type": 1,
+      "value": "connectorName"
     }
   ],
   "ngsC44": [
@@ -8432,6 +8496,12 @@
       "value": "Menampilkan jumlah elemen dalam array atau string"
     }
   ],
+  "qdUeUk": [
+    {
+      "type": 0,
+      "value": "Click to Expand"
+    }
+  ],
   "qiIs4V": [
     {
       "type": 0,
@@ -8496,6 +8566,12 @@
     {
       "type": 0,
       "value": "Batalkan"
+    }
+  ],
+  "r4zp7m": [
+    {
+      "type": 0,
+      "value": "Expanded"
     }
   ],
   "r7vZ5a": [

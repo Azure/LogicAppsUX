@@ -1080,15 +1080,7 @@
   "5LV34t": [
     {
       "type": 0,
-      "value": "The '"
-    },
-    {
-      "type": 1,
-      "value": "invalidProperties"
-    },
-    {
-      "type": 0,
-      "value": "' properties are invalid for the '"
+      "value": "驗證類型 '"
     },
     {
       "type": 1,
@@ -1096,23 +1088,21 @@
     },
     {
       "type": 0,
-      "value": "' authentication type."
+      "value": "' 的屬性 '"
+    },
+    {
+      "type": 1,
+      "value": "invalidProperties"
+    },
+    {
+      "type": 0,
+      "value": "' 無效。"
     }
   ],
   "5OvGgn": [
     {
       "type": 0,
       "value": "本文"
-    }
-  ],
-  "5Ow9mX": [
-    {
-      "type": 1,
-      "value": "connectorName"
-    },
-    {
-      "type": 0,
-      "value": " 連接器圖示"
     }
   ],
   "5SAQOb": [
@@ -1321,6 +1311,16 @@
     {
       "type": 0,
       "value": "建立流程"
+    }
+  ],
+  "6sSPNb": [
+    {
+      "type": 1,
+      "value": "connectorName"
+    },
+    {
+      "type": 0,
+      "value": " 連接器"
     }
   ],
   "6u6CS+": [
@@ -1707,6 +1707,16 @@
       "value": "當邏輯應用程式已啟用系統指派的受控識別時，不支援使用者識別。"
     }
   ],
+  "96JG8I": [
+    {
+      "type": 1,
+      "value": "operationName"
+    },
+    {
+      "type": 0,
+      "value": " 作業"
+    }
+  ],
   "99vsJy": [
     {
       "type": 0,
@@ -1815,6 +1825,12 @@
     {
       "type": 0,
       "value": "在基本模式中編輯"
+    }
+  ],
+  "9yLPwo": [
+    {
+      "type": 0,
+      "value": "如需詳細資訊，請參閱下列資源"
     }
   ],
   "A5Ferh": [
@@ -2007,19 +2023,19 @@
   "BGw6eH": [
     {
       "type": 0,
-      "value": "Missing required properties '"
-    },
-    {
-      "type": 1,
-      "value": "missingProperties"
-    },
-    {
-      "type": 0,
-      "value": "' for authentication type '"
+      "value": "遺漏驗證類型 '"
     },
     {
       "type": 1,
       "value": "authType"
+    },
+    {
+      "type": 0,
+      "value": "' 所需的屬性 '"
+    },
+    {
+      "type": 1,
+      "value": "missingProperties"
     },
     {
       "type": 0,
@@ -2711,12 +2727,6 @@
       "value": "輸入電子郵件地址。"
     }
   ],
-  "FaBEfQ": [
-    {
-      "type": 0,
-      "value": "追蹤的屬性"
-    }
-  ],
   "Fcvgvg": [
     {
       "type": 0,
@@ -3030,15 +3040,7 @@
   "I1CYNA": [
     {
       "type": 0,
-      "value": "Invalid property '"
-    },
-    {
-      "type": 1,
-      "value": "invalidProperties"
-    },
-    {
-      "type": 0,
-      "value": "' for authentication type '"
+      "value": "驗證類型 '"
     },
     {
       "type": 1,
@@ -3046,7 +3048,15 @@
     },
     {
       "type": 0,
-      "value": "'."
+      "value": "' 的屬性 '"
+    },
+    {
+      "type": 1,
+      "value": "invalidProperties"
+    },
+    {
+      "type": 0,
+      "value": "' 無效。"
     }
   ],
   "I3mifR": [
@@ -3782,6 +3792,12 @@
       "value": "已複製!"
     }
   ],
+  "NFgfP4": [
+    {
+      "type": 0,
+      "value": "item"
+    }
+  ],
   "NGJ00e": [
     {
       "type": 0,
@@ -3872,6 +3888,12 @@
       "value": "星期二"
     }
   ],
+  "NzPnFS": [
+    {
+      "type": 0,
+      "value": "範例:"
+    }
+  ],
   "O+3Y9f": [
     {
       "type": 0,
@@ -3923,7 +3945,7 @@
   "OBO/HE": [
     {
       "type": 0,
-      "value": "Invalid Authentication Value"
+      "value": "無效的驗證值"
     }
   ],
   "ODQCKj": [
@@ -4079,19 +4101,19 @@
   "Ov7Ckz": [
     {
       "type": 0,
-      "value": "Missing required property '"
-    },
-    {
-      "type": 1,
-      "value": "missingProperties"
-    },
-    {
-      "type": 0,
-      "value": "' for authentication type '"
+      "value": "遺漏驗證類型 '"
     },
     {
       "type": 1,
       "value": "authType"
+    },
+    {
+      "type": 0,
+      "value": "' 所需的屬性 '"
+    },
+    {
+      "type": 1,
+      "value": "missingProperties"
     },
     {
       "type": 0,
@@ -4144,6 +4166,12 @@
     {
       "type": 0,
       "value": "輸入"
+    }
+  ],
+  "PDMP/Z": [
+    {
+      "type": 0,
+      "value": "Collapsed"
     }
   ],
   "PNk3n4": [
@@ -5811,6 +5839,12 @@
       "value": "搜尋秘訣"
     }
   ],
+  "Yg/vvm": [
+    {
+      "type": 0,
+      "value": "關閉新增動作面板"
+    }
+  ],
   "YgU88A": [
     {
       "type": 0,
@@ -6541,6 +6575,12 @@
       "value": "必要。您需要的值所屬變數名稱。"
     }
   ],
+  "eHsOsm": [
+    {
+      "type": 0,
+      "value": "以 ISO 8601 格式指定持續時間"
+    }
+  ],
   "eO1h/h": [
     {
       "type": 0,
@@ -6913,6 +6953,12 @@
     {
       "type": 0,
       "value": "重新提交此動作執行的工作流程"
+    }
+  ],
+  "hJbr09": [
+    {
+      "type": 0,
+      "value": "Click to Collapse"
     }
   ],
   "hMf2TA": [
@@ -7760,7 +7806,7 @@
   "mNaBPE": [
     {
       "type": 0,
-      "value": "Enter a valid JSON."
+      "value": "請輸入有效的 JSON。"
     }
   ],
   "mPakaD": [
@@ -7983,6 +8029,24 @@
     {
       "type": 0,
       "value": "隱藏工作流程標頭"
+    }
+  ],
+  "ncW1Sw": [
+    {
+      "type": 1,
+      "value": "operationName"
+    },
+    {
+      "type": 0,
+      "value": " 作業、"
+    },
+    {
+      "type": 1,
+      "value": "connectorName"
+    },
+    {
+      "type": 0,
+      "value": " 連接器"
     }
   ],
   "ngsC44": [
@@ -8460,6 +8524,12 @@
       "value": "傳回陣列或字串中的元素數目"
     }
   ],
+  "qdUeUk": [
+    {
+      "type": 0,
+      "value": "Click to Expand"
+    }
+  ],
   "qiIs4V": [
     {
       "type": 0,
@@ -8524,6 +8594,12 @@
     {
       "type": 0,
       "value": "復原"
+    }
+  ],
+  "r4zp7m": [
+    {
+      "type": 0,
+      "value": "Expanded"
     }
   ],
   "r7vZ5a": [

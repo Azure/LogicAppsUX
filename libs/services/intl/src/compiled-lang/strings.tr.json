@@ -1072,7 +1072,7 @@
   "5LV34t": [
     {
       "type": 0,
-      "value": "The '"
+      "value": "'"
     },
     {
       "type": 1,
@@ -1080,7 +1080,7 @@
     },
     {
       "type": 0,
-      "value": "' properties are invalid for the '"
+      "value": "' özellikleri '"
     },
     {
       "type": 1,
@@ -1088,23 +1088,13 @@
     },
     {
       "type": 0,
-      "value": "' authentication type."
+      "value": "' kimlik doğrulama türü için geçersiz."
     }
   ],
   "5OvGgn": [
     {
       "type": 0,
       "value": "Gövde"
-    }
-  ],
-  "5Ow9mX": [
-    {
-      "type": 1,
-      "value": "connectorName"
-    },
-    {
-      "type": 0,
-      "value": " bağlayıcı simgesi"
     }
   ],
   "5SAQOb": [
@@ -1313,6 +1303,16 @@
     {
       "type": 0,
       "value": "Akış oluştur"
+    }
+  ],
+  "6sSPNb": [
+    {
+      "type": 1,
+      "value": "connectorName"
+    },
+    {
+      "type": 0,
+      "value": " bağlayıcısı"
     }
   ],
   "6u6CS+": [
@@ -1699,6 +1699,16 @@
       "value": "Logic App'te sistem tarafından atanan yönetilen kimlik etkinleştirildiğinde kullanıcı kimliği desteklenmez."
     }
   ],
+  "96JG8I": [
+    {
+      "type": 1,
+      "value": "operationName"
+    },
+    {
+      "type": 0,
+      "value": " işlemi"
+    }
+  ],
   "99vsJy": [
     {
       "type": 0,
@@ -1807,6 +1817,12 @@
     {
       "type": 0,
       "value": "Temel modda düzenle"
+    }
+  ],
+  "9yLPwo": [
+    {
+      "type": 0,
+      "value": "Daha ayrıntılı bilgi için aşağıdaki kaynaklara başvurabilirsiniz:"
     }
   ],
   "A5Ferh": [
@@ -2010,15 +2026,7 @@
   "BGw6eH": [
     {
       "type": 0,
-      "value": "Missing required properties '"
-    },
-    {
-      "type": 1,
-      "value": "missingProperties"
-    },
-    {
-      "type": 0,
-      "value": "' for authentication type '"
+      "value": "'"
     },
     {
       "type": 1,
@@ -2026,7 +2034,15 @@
     },
     {
       "type": 0,
-      "value": "'"
+      "value": "' kimlik doğrulama türü için gerekli '"
+    },
+    {
+      "type": 1,
+      "value": "missingProperties"
+    },
+    {
+      "type": 0,
+      "value": "' özellikleri eksik"
     }
   ],
   "BHe7qY": [
@@ -2717,12 +2733,6 @@
       "value": "Bir e-posta adresi girin."
     }
   ],
-  "FaBEfQ": [
-    {
-      "type": 0,
-      "value": "İzlenen özellikler"
-    }
-  ],
   "Fcvgvg": [
     {
       "type": 0,
@@ -3036,15 +3046,7 @@
   "I1CYNA": [
     {
       "type": 0,
-      "value": "Invalid property '"
-    },
-    {
-      "type": 1,
-      "value": "invalidProperties"
-    },
-    {
-      "type": 0,
-      "value": "' for authentication type '"
+      "value": "'"
     },
     {
       "type": 1,
@@ -3052,7 +3054,15 @@
     },
     {
       "type": 0,
-      "value": "'."
+      "value": "' kimlik doğrulama türü için geçersiz '"
+    },
+    {
+      "type": 1,
+      "value": "invalidProperties"
+    },
+    {
+      "type": 0,
+      "value": "' özelliği."
     }
   ],
   "I3mifR": [
@@ -3799,6 +3809,12 @@
       "value": "Kopyalandı!"
     }
   ],
+  "NFgfP4": [
+    {
+      "type": 0,
+      "value": "item"
+    }
+  ],
   "NGJ00e": [
     {
       "type": 0,
@@ -3889,6 +3905,12 @@
       "value": "Salı"
     }
   ],
+  "NzPnFS": [
+    {
+      "type": 0,
+      "value": "Örnek:"
+    }
+  ],
   "O+3Y9f": [
     {
       "type": 0,
@@ -3940,7 +3962,7 @@
   "OBO/HE": [
     {
       "type": 0,
-      "value": "Invalid Authentication Value"
+      "value": "Geçersiz Kimlik Doğrulama Değeri"
     }
   ],
   "ODQCKj": [
@@ -4096,15 +4118,7 @@
   "Ov7Ckz": [
     {
       "type": 0,
-      "value": "Missing required property '"
-    },
-    {
-      "type": 1,
-      "value": "missingProperties"
-    },
-    {
-      "type": 0,
-      "value": "' for authentication type '"
+      "value": "'"
     },
     {
       "type": 1,
@@ -4112,7 +4126,15 @@
     },
     {
       "type": 0,
-      "value": "'"
+      "value": "' kimlik doğrulama türü için gerekli '"
+    },
+    {
+      "type": 1,
+      "value": "missingProperties"
+    },
+    {
+      "type": 0,
+      "value": "' özelliği eksik"
     }
   ],
   "P+7G62": [
@@ -4161,6 +4183,12 @@
     {
       "type": 0,
       "value": "Giriş"
+    }
+  ],
+  "PDMP/Z": [
+    {
+      "type": 0,
+      "value": "Collapsed"
     }
   ],
   "PNk3n4": [
@@ -5815,6 +5843,12 @@
       "value": "Arama İpuçları"
     }
   ],
+  "Yg/vvm": [
+    {
+      "type": 0,
+      "value": "Eylem Ekleme Panelini Kapat"
+    }
+  ],
   "YgU88A": [
     {
       "type": 0,
@@ -6541,6 +6575,12 @@
       "value": "Gerekli. Değerini istediğiniz değişkenin adı."
     }
   ],
+  "eHsOsm": [
+    {
+      "type": 0,
+      "value": "Süreyi ISO 8601 biçiminde belirtin"
+    }
+  ],
   "eO1h/h": [
     {
       "type": 0,
@@ -6913,6 +6953,12 @@
     {
       "type": 0,
       "value": "Bu eylemden bir iş akışı çalıştırmasını yeniden gönder"
+    }
+  ],
+  "hJbr09": [
+    {
+      "type": 0,
+      "value": "Click to Collapse"
     }
   ],
   "hMf2TA": [
@@ -7786,7 +7832,7 @@
   "mNaBPE": [
     {
       "type": 0,
-      "value": "Enter a valid JSON."
+      "value": "Geçerli bir JSON girin."
     }
   ],
   "mPakaD": [
@@ -8009,6 +8055,24 @@
     {
       "type": 0,
       "value": "İş akışı üst bilgilerini gösterme"
+    }
+  ],
+  "ncW1Sw": [
+    {
+      "type": 1,
+      "value": "operationName"
+    },
+    {
+      "type": 0,
+      "value": " işlemi, "
+    },
+    {
+      "type": 1,
+      "value": "connectorName"
+    },
+    {
+      "type": 0,
+      "value": " bağlayıcısı"
     }
   ],
   "ngsC44": [
@@ -8497,6 +8561,12 @@
       "value": "Bir dizi veya dizedeki öğelerin sayısını döndürür"
     }
   ],
+  "qdUeUk": [
+    {
+      "type": 0,
+      "value": "Click to Expand"
+    }
+  ],
   "qiIs4V": [
     {
       "type": 0,
@@ -8561,6 +8631,12 @@
     {
       "type": 0,
       "value": "Geri Al"
+    }
+  ],
+  "r4zp7m": [
+    {
+      "type": 0,
+      "value": "Expanded"
     }
   ],
   "r7vZ5a": [

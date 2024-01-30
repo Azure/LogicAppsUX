@@ -1072,7 +1072,7 @@
   "5LV34t": [
     {
       "type": 0,
-      "value": "The '"
+      "value": "'"
     },
     {
       "type": 1,
@@ -1080,7 +1080,7 @@
     },
     {
       "type": 0,
-      "value": "' properties are invalid for the '"
+      "value": "' 속성은 '"
     },
     {
       "type": 1,
@@ -1088,23 +1088,13 @@
     },
     {
       "type": 0,
-      "value": "' authentication type."
+      "value": "' 인증 유형에 유효하지 않습니다."
     }
   ],
   "5OvGgn": [
     {
       "type": 0,
       "value": "본문"
-    }
-  ],
-  "5Ow9mX": [
-    {
-      "type": 1,
-      "value": "connectorName"
-    },
-    {
-      "type": 0,
-      "value": " 커넥터 아이콘"
     }
   ],
   "5SAQOb": [
@@ -1313,6 +1303,16 @@
     {
       "type": 0,
       "value": "흐름 만들기"
+    }
+  ],
+  "6sSPNb": [
+    {
+      "type": 1,
+      "value": "connectorName"
+    },
+    {
+      "type": 0,
+      "value": " 커넥터"
     }
   ],
   "6u6CS+": [
@@ -1699,6 +1699,16 @@
       "value": "논리 앱에 시스템 할당 관리 ID가 사용하도록 설정되어 있는 경우 사용자 ID가 지원되지 않습니다."
     }
   ],
+  "96JG8I": [
+    {
+      "type": 1,
+      "value": "operationName"
+    },
+    {
+      "type": 0,
+      "value": " 작업"
+    }
+  ],
   "99vsJy": [
     {
       "type": 0,
@@ -1799,6 +1809,12 @@
     {
       "type": 0,
       "value": "기본 모드에서 편집"
+    }
+  ],
+  "9yLPwo": [
+    {
+      "type": 0,
+      "value": "자세한 내용은 다음 리소스를 참조하세요."
     }
   ],
   "A5Ferh": [
@@ -1991,15 +2007,7 @@
   "BGw6eH": [
     {
       "type": 0,
-      "value": "Missing required properties '"
-    },
-    {
-      "type": 1,
-      "value": "missingProperties"
-    },
-    {
-      "type": 0,
-      "value": "' for authentication type '"
+      "value": "'"
     },
     {
       "type": 1,
@@ -2007,7 +2015,15 @@
     },
     {
       "type": 0,
-      "value": "'"
+      "value": "' 인증 유형에 대한 '"
+    },
+    {
+      "type": 1,
+      "value": "missingProperties"
+    },
+    {
+      "type": 0,
+      "value": "' 필수 속성이 없습니다."
     }
   ],
   "BHe7qY": [
@@ -2687,12 +2703,6 @@
       "value": "메일 주소를 입력하세요."
     }
   ],
-  "FaBEfQ": [
-    {
-      "type": 0,
-      "value": "추적된 속성"
-    }
-  ],
   "Fcvgvg": [
     {
       "type": 0,
@@ -3006,15 +3016,7 @@
   "I1CYNA": [
     {
       "type": 0,
-      "value": "Invalid property '"
-    },
-    {
-      "type": 1,
-      "value": "invalidProperties"
-    },
-    {
-      "type": 0,
-      "value": "' for authentication type '"
+      "value": "'"
     },
     {
       "type": 1,
@@ -3022,7 +3024,15 @@
     },
     {
       "type": 0,
-      "value": "'."
+      "value": "' 인증 유형에 대한 '"
+    },
+    {
+      "type": 1,
+      "value": "invalidProperties"
+    },
+    {
+      "type": 0,
+      "value": "' 속성이 잘못되었습니다."
     }
   ],
   "I3mifR": [
@@ -3758,6 +3768,12 @@
       "value": "복사됨!"
     }
   ],
+  "NFgfP4": [
+    {
+      "type": 0,
+      "value": "item"
+    }
+  ],
   "NGJ00e": [
     {
       "type": 0,
@@ -3848,6 +3864,12 @@
       "value": "화요일"
     }
   ],
+  "NzPnFS": [
+    {
+      "type": 0,
+      "value": "예:"
+    }
+  ],
   "O+3Y9f": [
     {
       "type": 0,
@@ -3899,7 +3921,7 @@
   "OBO/HE": [
     {
       "type": 0,
-      "value": "Invalid Authentication Value"
+      "value": "잘못된 인증 값"
     }
   ],
   "ODQCKj": [
@@ -4055,15 +4077,7 @@
   "Ov7Ckz": [
     {
       "type": 0,
-      "value": "Missing required property '"
-    },
-    {
-      "type": 1,
-      "value": "missingProperties"
-    },
-    {
-      "type": 0,
-      "value": "' for authentication type '"
+      "value": "'"
     },
     {
       "type": 1,
@@ -4071,7 +4085,15 @@
     },
     {
       "type": 0,
-      "value": "'"
+      "value": "' 인증 유형에 대한 '"
+    },
+    {
+      "type": 1,
+      "value": "missingProperties"
+    },
+    {
+      "type": 0,
+      "value": "' 필수 속성이 없습니다."
     }
   ],
   "P+7G62": [
@@ -4120,6 +4142,12 @@
     {
       "type": 0,
       "value": "입력"
+    }
+  ],
+  "PDMP/Z": [
+    {
+      "type": 0,
+      "value": "Collapsed"
     }
   ],
   "PNk3n4": [
@@ -5763,6 +5791,12 @@
       "value": "검색 팁"
     }
   ],
+  "Yg/vvm": [
+    {
+      "type": 0,
+      "value": "작업 패널 추가 닫기"
+    }
+  ],
   "YgU88A": [
     {
       "type": 0,
@@ -6489,6 +6523,12 @@
       "value": "필수 사항으로, 원하는 값의 변수 이름입니다."
     }
   ],
+  "eHsOsm": [
+    {
+      "type": 0,
+      "value": "ISO 8601 형식으로 기간을 지정합니다."
+    }
+  ],
   "eO1h/h": [
     {
       "type": 0,
@@ -6861,6 +6901,12 @@
     {
       "type": 0,
       "value": "이 작업에서 워크플로 실행 다시 제출"
+    }
+  ],
+  "hJbr09": [
+    {
+      "type": 0,
+      "value": "Click to Collapse"
     }
   ],
   "hMf2TA": [
@@ -7704,7 +7750,7 @@
   "mNaBPE": [
     {
       "type": 0,
-      "value": "Enter a valid JSON."
+      "value": "올바른 JSON을 입력하세요."
     }
   ],
   "mPakaD": [
@@ -7927,6 +7973,24 @@
     {
       "type": 0,
       "value": "워크플로 헤더 표시 안 함"
+    }
+  ],
+  "ncW1Sw": [
+    {
+      "type": 1,
+      "value": "operationName"
+    },
+    {
+      "type": 0,
+      "value": " 작업, "
+    },
+    {
+      "type": 1,
+      "value": "connectorName"
+    },
+    {
+      "type": 0,
+      "value": " 커넥터"
     }
   ],
   "ngsC44": [
@@ -8404,6 +8468,12 @@
       "value": "배열 또는 문자열의 요소 수를 반환합니다."
     }
   ],
+  "qdUeUk": [
+    {
+      "type": 0,
+      "value": "Click to Expand"
+    }
+  ],
   "qiIs4V": [
     {
       "type": 0,
@@ -8468,6 +8538,12 @@
     {
       "type": 0,
       "value": "실행 취소"
+    }
+  ],
+  "r4zp7m": [
+    {
+      "type": 0,
+      "value": "Expanded"
     }
   ],
   "r7vZ5a": [

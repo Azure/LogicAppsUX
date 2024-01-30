@@ -1088,7 +1088,7 @@
   "5LV34t": [
     {
       "type": 0,
-      "value": "The '"
+      "value": "A(z) „"
     },
     {
       "type": 1,
@@ -1096,7 +1096,7 @@
     },
     {
       "type": 0,
-      "value": "' properties are invalid for the '"
+      "value": "“ tulajdonságok a(z) „"
     },
     {
       "type": 1,
@@ -1104,23 +1104,13 @@
     },
     {
       "type": 0,
-      "value": "' authentication type."
+      "value": "“ hitelesítési típus esetében érvénytelenek."
     }
   ],
   "5OvGgn": [
     {
       "type": 0,
       "value": "Törzs"
-    }
-  ],
-  "5Ow9mX": [
-    {
-      "type": 1,
-      "value": "connectorName"
-    },
-    {
-      "type": 0,
-      "value": " összekötő ikonja"
     }
   ],
   "5SAQOb": [
@@ -1321,6 +1311,16 @@
     {
       "type": 0,
       "value": "Folyamat létrehozása"
+    }
+  ],
+  "6sSPNb": [
+    {
+      "type": 1,
+      "value": "connectorName"
+    },
+    {
+      "type": 0,
+      "value": " összekötő"
     }
   ],
   "6u6CS+": [
@@ -1707,6 +1707,16 @@
       "value": "A felhasználói identitás nem támogatott, ha a logikai alkalmazásban engedélyezve van a rendszer által hozzárendelt felügyelt identitás."
     }
   ],
+  "96JG8I": [
+    {
+      "type": 1,
+      "value": "operationName"
+    },
+    {
+      "type": 0,
+      "value": " művelet"
+    }
+  ],
   "99vsJy": [
     {
       "type": 0,
@@ -1815,6 +1825,12 @@
     {
       "type": 0,
       "value": "Szerkesztés egyszerű módban"
+    }
+  ],
+  "9yLPwo": [
+    {
+      "type": 0,
+      "value": "Részletesebb információért tekintse meg az alábbi erőforrásokat."
     }
   ],
   "A5Ferh": [
@@ -2018,15 +2034,7 @@
   "BGw6eH": [
     {
       "type": 0,
-      "value": "Missing required properties '"
-    },
-    {
-      "type": 1,
-      "value": "missingProperties"
-    },
-    {
-      "type": 0,
-      "value": "' for authentication type '"
+      "value": "Hiányoznak a(z) „"
     },
     {
       "type": 1,
@@ -2034,7 +2042,15 @@
     },
     {
       "type": 0,
-      "value": "'"
+      "value": "” hitelesítési típus „"
+    },
+    {
+      "type": 1,
+      "value": "missingProperties"
+    },
+    {
+      "type": 0,
+      "value": "” kötelező tulajdonságai"
     }
   ],
   "BHe7qY": [
@@ -2729,12 +2745,6 @@
       "value": "Adjon meg egy e-mail címet."
     }
   ],
-  "FaBEfQ": [
-    {
-      "type": 0,
-      "value": "Követett tulajdonságok"
-    }
-  ],
   "Fcvgvg": [
     {
       "type": 0,
@@ -3056,7 +3066,7 @@
   "I1CYNA": [
     {
       "type": 0,
-      "value": "Invalid property '"
+      "value": "Érvénytelen tulajdonság („"
     },
     {
       "type": 1,
@@ -3064,7 +3074,7 @@
     },
     {
       "type": 0,
-      "value": "' for authentication type '"
+      "value": "”) a(z) „"
     },
     {
       "type": 1,
@@ -3072,7 +3082,7 @@
     },
     {
       "type": 0,
-      "value": "'."
+      "value": "“ hitelesítési típushoz."
     }
   ],
   "I3mifR": [
@@ -3819,6 +3829,12 @@
       "value": "Másolva!"
     }
   ],
+  "NFgfP4": [
+    {
+      "type": 0,
+      "value": "item"
+    }
+  ],
   "NGJ00e": [
     {
       "type": 0,
@@ -3909,6 +3925,12 @@
       "value": "Kedd"
     }
   ],
+  "NzPnFS": [
+    {
+      "type": 0,
+      "value": "Példa:"
+    }
+  ],
   "O+3Y9f": [
     {
       "type": 0,
@@ -3960,7 +3982,7 @@
   "OBO/HE": [
     {
       "type": 0,
-      "value": "Invalid Authentication Value"
+      "value": "Érvénytelen hitelesítési érték"
     }
   ],
   "ODQCKj": [
@@ -4116,15 +4138,7 @@
   "Ov7Ckz": [
     {
       "type": 0,
-      "value": "Missing required property '"
-    },
-    {
-      "type": 1,
-      "value": "missingProperties"
-    },
-    {
-      "type": 0,
-      "value": "' for authentication type '"
+      "value": "Hiányzik a(z) „"
     },
     {
       "type": 1,
@@ -4132,7 +4146,15 @@
     },
     {
       "type": 0,
-      "value": "'"
+      "value": "” hitelesítési típus „"
+    },
+    {
+      "type": 1,
+      "value": "missingProperties"
+    },
+    {
+      "type": 0,
+      "value": "” kötelező tulajdonsága"
     }
   ],
   "P+7G62": [
@@ -4181,6 +4203,12 @@
     {
       "type": 0,
       "value": "Bemenet"
+    }
+  ],
+  "PDMP/Z": [
+    {
+      "type": 0,
+      "value": "Collapsed"
     }
   ],
   "PNk3n4": [
@@ -5823,6 +5851,12 @@
       "value": "Tippek a kereséshez"
     }
   ],
+  "Yg/vvm": [
+    {
+      "type": 0,
+      "value": "A Művelet hozzáadása panel bezárása"
+    }
+  ],
   "YgU88A": [
     {
       "type": 0,
@@ -6553,6 +6587,12 @@
       "value": "Kötelező megadni. Azon változó neve, melynek az értéke szükséges."
     }
   ],
+  "eHsOsm": [
+    {
+      "type": 0,
+      "value": "Az időtartamot az ISO 8601 formátumban kell megadni"
+    }
+  ],
   "eO1h/h": [
     {
       "type": 0,
@@ -6933,6 +6973,12 @@
     {
       "type": 0,
       "value": "Munkafolyamat-futtatás újraküldése ebből a műveletből"
+    }
+  ],
+  "hJbr09": [
+    {
+      "type": 0,
+      "value": "Click to Collapse"
     }
   ],
   "hMf2TA": [
@@ -7810,7 +7856,7 @@
   "mNaBPE": [
     {
       "type": 0,
-      "value": "Enter a valid JSON."
+      "value": "Érvényes JSON-t adjon meg."
     }
   ],
   "mPakaD": [
@@ -8033,6 +8079,24 @@
     {
       "type": 0,
       "value": "Munkafolyamat-fejlécek elrejtése"
+    }
+  ],
+  "ncW1Sw": [
+    {
+      "type": 1,
+      "value": "operationName"
+    },
+    {
+      "type": 0,
+      "value": " művelet, "
+    },
+    {
+      "type": 1,
+      "value": "connectorName"
+    },
+    {
+      "type": 0,
+      "value": " összekötő"
     }
   ],
   "ngsC44": [
@@ -8521,6 +8585,12 @@
       "value": "Egy tömb vagy sztring elemeinek számát adja vissza."
     }
   ],
+  "qdUeUk": [
+    {
+      "type": 0,
+      "value": "Click to Expand"
+    }
+  ],
   "qiIs4V": [
     {
       "type": 0,
@@ -8585,6 +8655,12 @@
     {
       "type": 0,
       "value": "Visszavonás"
+    }
+  ],
+  "r4zp7m": [
+    {
+      "type": 0,
+      "value": "Expanded"
     }
   ],
   "r7vZ5a": [

@@ -1080,7 +1080,7 @@
   "5LV34t": [
     {
       "type": 0,
-      "value": "The '"
+      "value": "De eigenschappen "
     },
     {
       "type": 1,
@@ -1088,7 +1088,7 @@
     },
     {
       "type": 0,
-      "value": "' properties are invalid for the '"
+      "value": " zijn ongeldig voor het verificatietype "
     },
     {
       "type": 1,
@@ -1096,27 +1096,13 @@
     },
     {
       "type": 0,
-      "value": "' authentication type."
+      "value": "."
     }
   ],
   "5OvGgn": [
     {
       "type": 0,
       "value": "Hoofdtekst"
-    }
-  ],
-  "5Ow9mX": [
-    {
-      "type": 0,
-      "value": "pictogram "
-    },
-    {
-      "type": 1,
-      "value": "connectorName"
-    },
-    {
-      "type": 0,
-      "value": "-connector"
     }
   ],
   "5SAQOb": [
@@ -1325,6 +1311,16 @@
     {
       "type": 0,
       "value": "Stroom maken"
+    }
+  ],
+  "6sSPNb": [
+    {
+      "type": 1,
+      "value": "connectorName"
+    },
+    {
+      "type": 0,
+      "value": "-connector"
     }
   ],
   "6u6CS+": [
@@ -1711,6 +1707,16 @@
       "value": "De gebruikersidentiteit wordt niet ondersteund wanneer een door het systeem toegewezen beheerde identiteit voor de logische app is ingeschakeld."
     }
   ],
+  "96JG8I": [
+    {
+      "type": 1,
+      "value": "operationName"
+    },
+    {
+      "type": 0,
+      "value": "-bewerking"
+    }
+  ],
   "99vsJy": [
     {
       "type": 0,
@@ -1819,6 +1825,12 @@
     {
       "type": 0,
       "value": "Bewerken in basismodus"
+    }
+  ],
+  "9yLPwo": [
+    {
+      "type": 0,
+      "value": "Raadpleeg de volgende bronnen voor meer gedetailleerde informatie"
     }
   ],
   "A5Ferh": [
@@ -2018,7 +2030,7 @@
   "BGw6eH": [
     {
       "type": 0,
-      "value": "Missing required properties '"
+      "value": "Vereiste eigenschappen "
     },
     {
       "type": 1,
@@ -2026,15 +2038,11 @@
     },
     {
       "type": 0,
-      "value": "' for authentication type '"
+      "value": " ontbreekt voor verificatietype "
     },
     {
       "type": 1,
       "value": "authType"
-    },
-    {
-      "type": 0,
-      "value": "'"
     }
   ],
   "BHe7qY": [
@@ -2729,12 +2737,6 @@
       "value": "Voer een e-mailadres in."
     }
   ],
-  "FaBEfQ": [
-    {
-      "type": 0,
-      "value": "Bijgehouden eigenschappen"
-    }
-  ],
   "Fcvgvg": [
     {
       "type": 0,
@@ -3056,7 +3058,7 @@
   "I1CYNA": [
     {
       "type": 0,
-      "value": "Invalid property '"
+      "value": "Ongeldige eigenschap "
     },
     {
       "type": 1,
@@ -3064,7 +3066,7 @@
     },
     {
       "type": 0,
-      "value": "' for authentication type '"
+      "value": " voor verificatietype "
     },
     {
       "type": 1,
@@ -3072,7 +3074,7 @@
     },
     {
       "type": 0,
-      "value": "'."
+      "value": "."
     }
   ],
   "I3mifR": [
@@ -3815,6 +3817,12 @@
       "value": "Gekopieerd."
     }
   ],
+  "NFgfP4": [
+    {
+      "type": 0,
+      "value": "item"
+    }
+  ],
   "NGJ00e": [
     {
       "type": 0,
@@ -3905,6 +3913,12 @@
       "value": "Dinsdag"
     }
   ],
+  "NzPnFS": [
+    {
+      "type": 0,
+      "value": "Voorbeeld:"
+    }
+  ],
   "O+3Y9f": [
     {
       "type": 0,
@@ -3956,7 +3970,7 @@
   "OBO/HE": [
     {
       "type": 0,
-      "value": "Invalid Authentication Value"
+      "value": "Ongeldige verificatiewaarde"
     }
   ],
   "ODQCKj": [
@@ -4112,7 +4126,7 @@
   "Ov7Ckz": [
     {
       "type": 0,
-      "value": "Missing required property '"
+      "value": "Vereiste eigenschap "
     },
     {
       "type": 1,
@@ -4120,15 +4134,11 @@
     },
     {
       "type": 0,
-      "value": "' for authentication type '"
+      "value": " ontbreekt voor verificatietype "
     },
     {
       "type": 1,
       "value": "authType"
-    },
-    {
-      "type": 0,
-      "value": "'"
     }
   ],
   "P+7G62": [
@@ -4177,6 +4187,12 @@
     {
       "type": 0,
       "value": "Invoer"
+    }
+  ],
+  "PDMP/Z": [
+    {
+      "type": 0,
+      "value": "Collapsed"
     }
   ],
   "PNk3n4": [
@@ -5831,6 +5847,12 @@
       "value": "Zoektips"
     }
   ],
+  "Yg/vvm": [
+    {
+      "type": 0,
+      "value": "Actiepaneel Toevoegen sluiten"
+    }
+  ],
   "YgU88A": [
     {
       "type": 0,
@@ -6561,6 +6583,12 @@
       "value": "Vereist. De naam van de variabele met de gewenste waarde."
     }
   ],
+  "eHsOsm": [
+    {
+      "type": 0,
+      "value": "Geef de duur op in de ISO 8601-indeling"
+    }
+  ],
   "eO1h/h": [
     {
       "type": 0,
@@ -6694,7 +6722,7 @@
     },
     {
       "type": 1,
-      "value": "method"
+      "value": "methode"
     }
   ],
   "fg/34o": [
@@ -6937,6 +6965,12 @@
     {
       "type": 0,
       "value": "Een werkstroomuitvoering opnieuw verzenden vanuit deze actie"
+    }
+  ],
+  "hJbr09": [
+    {
+      "type": 0,
+      "value": "Click to Collapse"
     }
   ],
   "hMf2TA": [
@@ -7814,7 +7848,7 @@
   "mNaBPE": [
     {
       "type": 0,
-      "value": "Enter a valid JSON."
+      "value": "Voer een geldige JSON in."
     }
   ],
   "mPakaD": [
@@ -8037,6 +8071,24 @@
     {
       "type": 0,
       "value": "Werkstroomheaders onderdrukken"
+    }
+  ],
+  "ncW1Sw": [
+    {
+      "type": 1,
+      "value": "operationName"
+    },
+    {
+      "type": 0,
+      "value": "-bewerking, "
+    },
+    {
+      "type": 1,
+      "value": "connectorName"
+    },
+    {
+      "type": 0,
+      "value": "-connector"
     }
   ],
   "ngsC44": [
@@ -8521,6 +8573,12 @@
       "value": "Het aantal elementen in een matrix of tekenreeks wordt geretourneerd"
     }
   ],
+  "qdUeUk": [
+    {
+      "type": 0,
+      "value": "Click to Expand"
+    }
+  ],
   "qiIs4V": [
     {
       "type": 0,
@@ -8585,6 +8643,12 @@
     {
       "type": 0,
       "value": "Ongedaan maken"
+    }
+  ],
+  "r4zp7m": [
+    {
+      "type": 0,
+      "value": "Expanded"
     }
   ],
   "r7vZ5a": [

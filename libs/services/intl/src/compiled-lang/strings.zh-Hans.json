@@ -1084,7 +1084,7 @@
   "5LV34t": [
     {
       "type": 0,
-      "value": "The '"
+      "value": "“"
     },
     {
       "type": 1,
@@ -1092,7 +1092,7 @@
     },
     {
       "type": 0,
-      "value": "' properties are invalid for the '"
+      "value": "”属性对于“"
     },
     {
       "type": 1,
@@ -1100,23 +1100,13 @@
     },
     {
       "type": 0,
-      "value": "' authentication type."
+      "value": "”身份验证类型无效。"
     }
   ],
   "5OvGgn": [
     {
       "type": 0,
       "value": "正文"
-    }
-  ],
-  "5Ow9mX": [
-    {
-      "type": 1,
-      "value": "connectorName"
-    },
-    {
-      "type": 0,
-      "value": " 连接器图标"
     }
   ],
   "5SAQOb": [
@@ -1325,6 +1315,16 @@
     {
       "type": 0,
       "value": "创建流"
+    }
+  ],
+  "6sSPNb": [
+    {
+      "type": 1,
+      "value": "connectorName"
+    },
+    {
+      "type": 0,
+      "value": " 连接器"
     }
   ],
   "6u6CS+": [
@@ -1711,6 +1711,16 @@
       "value": "当逻辑应用启用系统分配的托管标识时，不支持用户标识。"
     }
   ],
+  "96JG8I": [
+    {
+      "type": 1,
+      "value": "operationName"
+    },
+    {
+      "type": 0,
+      "value": " 操作"
+    }
+  ],
   "99vsJy": [
     {
       "type": 0,
@@ -1819,6 +1829,12 @@
     {
       "type": 0,
       "value": "在基本模式下编辑"
+    }
+  ],
+  "9yLPwo": [
+    {
+      "type": 0,
+      "value": "有关更多详细信息，可以参阅以下资源"
     }
   ],
   "A5Ferh": [
@@ -2011,15 +2027,7 @@
   "BGw6eH": [
     {
       "type": 0,
-      "value": "Missing required properties '"
-    },
-    {
-      "type": 1,
-      "value": "missingProperties"
-    },
-    {
-      "type": 0,
-      "value": "' for authentication type '"
+      "value": "缺少身份验证类型“"
     },
     {
       "type": 1,
@@ -2027,7 +2035,15 @@
     },
     {
       "type": 0,
-      "value": "'"
+      "value": "”所需的属性“"
+    },
+    {
+      "type": 1,
+      "value": "missingProperties"
+    },
+    {
+      "type": 0,
+      "value": "”"
     }
   ],
   "BHe7qY": [
@@ -2715,12 +2731,6 @@
       "value": "输入一个电子邮件地址。"
     }
   ],
-  "FaBEfQ": [
-    {
-      "type": 0,
-      "value": "跟踪的属性"
-    }
-  ],
   "Fcvgvg": [
     {
       "type": 0,
@@ -3034,15 +3044,7 @@
   "I1CYNA": [
     {
       "type": 0,
-      "value": "Invalid property '"
-    },
-    {
-      "type": 1,
-      "value": "invalidProperties"
-    },
-    {
-      "type": 0,
-      "value": "' for authentication type '"
+      "value": "身份验证类型“"
     },
     {
       "type": 1,
@@ -3050,7 +3052,15 @@
     },
     {
       "type": 0,
-      "value": "'."
+      "value": "”的属性“"
+    },
+    {
+      "type": 1,
+      "value": "invalidProperties"
+    },
+    {
+      "type": 0,
+      "value": "”无效。"
     }
   ],
   "I3mifR": [
@@ -3786,6 +3796,12 @@
       "value": "已复制!"
     }
   ],
+  "NFgfP4": [
+    {
+      "type": 0,
+      "value": "item"
+    }
+  ],
   "NGJ00e": [
     {
       "type": 0,
@@ -3876,6 +3892,12 @@
       "value": "星期二"
     }
   ],
+  "NzPnFS": [
+    {
+      "type": 0,
+      "value": "示例:"
+    }
+  ],
   "O+3Y9f": [
     {
       "type": 0,
@@ -3927,7 +3949,7 @@
   "OBO/HE": [
     {
       "type": 0,
-      "value": "Invalid Authentication Value"
+      "value": "身份验证值无效"
     }
   ],
   "ODQCKj": [
@@ -4083,15 +4105,7 @@
   "Ov7Ckz": [
     {
       "type": 0,
-      "value": "Missing required property '"
-    },
-    {
-      "type": 1,
-      "value": "missingProperties"
-    },
-    {
-      "type": 0,
-      "value": "' for authentication type '"
+      "value": "缺少身份验证类型“"
     },
     {
       "type": 1,
@@ -4099,7 +4113,15 @@
     },
     {
       "type": 0,
-      "value": "'"
+      "value": "”的必需属性“"
+    },
+    {
+      "type": 1,
+      "value": "missingProperties"
+    },
+    {
+      "type": 0,
+      "value": "”"
     }
   ],
   "P+7G62": [
@@ -4148,6 +4170,12 @@
     {
       "type": 0,
       "value": "输入"
+    }
+  ],
+  "PDMP/Z": [
+    {
+      "type": 0,
+      "value": "Collapsed"
     }
   ],
   "PNk3n4": [
@@ -5811,6 +5839,12 @@
       "value": "搜索提示"
     }
   ],
+  "Yg/vvm": [
+    {
+      "type": 0,
+      "value": "关闭“添加操作”面板"
+    }
+  ],
   "YgU88A": [
     {
       "type": 0,
@@ -6541,6 +6575,12 @@
       "value": "必需。需要获取其值的变量的名称。"
     }
   ],
+  "eHsOsm": [
+    {
+      "type": 0,
+      "value": "指定持续时间(按 ISO 8601 格式)"
+    }
+  ],
   "eO1h/h": [
     {
       "type": 0,
@@ -6921,6 +6961,12 @@
     {
       "type": 0,
       "value": "通过此操作重新提交工作流运行"
+    }
+  ],
+  "hJbr09": [
+    {
+      "type": 0,
+      "value": "Click to Collapse"
     }
   ],
   "hMf2TA": [
@@ -7784,7 +7830,7 @@
   "mNaBPE": [
     {
       "type": 0,
-      "value": "Enter a valid JSON."
+      "value": "输入有效的 JSON。"
     }
   ],
   "mPakaD": [
@@ -8007,6 +8053,24 @@
     {
       "type": 0,
       "value": "抑制工作流标头"
+    }
+  ],
+  "ncW1Sw": [
+    {
+      "type": 1,
+      "value": "operationName"
+    },
+    {
+      "type": 0,
+      "value": " 操作，"
+    },
+    {
+      "type": 1,
+      "value": "connectorName"
+    },
+    {
+      "type": 0,
+      "value": " 连接器"
     }
   ],
   "ngsC44": [
@@ -8492,6 +8556,12 @@
       "value": "返回数组或字符串中的元素数目"
     }
   ],
+  "qdUeUk": [
+    {
+      "type": 0,
+      "value": "Click to Expand"
+    }
+  ],
   "qiIs4V": [
     {
       "type": 0,
@@ -8556,6 +8626,12 @@
     {
       "type": 0,
       "value": "撤消"
+    }
+  ],
+  "r4zp7m": [
+    {
+      "type": 0,
+      "value": "Expanded"
     }
   ],
   "r7vZ5a": [

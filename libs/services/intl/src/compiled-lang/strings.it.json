@@ -1072,7 +1072,7 @@
   "5LV34t": [
     {
       "type": 0,
-      "value": "The '"
+      "value": "Le proprietà '"
     },
     {
       "type": 1,
@@ -1080,7 +1080,7 @@
     },
     {
       "type": 0,
-      "value": "' properties are invalid for the '"
+      "value": "' non sono valide per il tipo di autenticazione '"
     },
     {
       "type": 1,
@@ -1088,23 +1088,13 @@
     },
     {
       "type": 0,
-      "value": "' authentication type."
+      "value": "'."
     }
   ],
   "5OvGgn": [
     {
       "type": 0,
       "value": "Corpo"
-    }
-  ],
-  "5Ow9mX": [
-    {
-      "type": 0,
-      "value": "icona connettore "
-    },
-    {
-      "type": 1,
-      "value": "connectorName"
     }
   ],
   "5SAQOb": [
@@ -1313,6 +1303,16 @@
     {
       "type": 0,
       "value": "Crea flusso"
+    }
+  ],
+  "6sSPNb": [
+    {
+      "type": 0,
+      "value": "Connettore "
+    },
+    {
+      "type": 1,
+      "value": "connectorName"
     }
   ],
   "6u6CS+": [
@@ -1699,6 +1699,16 @@
       "value": "L'identità utente non è supportata quando per l'app per la logica è abilitata l'identità gestita assegnata dal sistema."
     }
   ],
+  "96JG8I": [
+    {
+      "type": 0,
+      "value": "Operazione "
+    },
+    {
+      "type": 1,
+      "value": "operationName"
+    }
+  ],
   "99vsJy": [
     {
       "type": 0,
@@ -1807,6 +1817,12 @@
     {
       "type": 0,
       "value": "Modifica in modalità di base"
+    }
+  ],
+  "9yLPwo": [
+    {
+      "type": 0,
+      "value": "Per informazioni più dettagliate, è possibile fare riferimento alle risorse seguenti"
     }
   ],
   "A5Ferh": [
@@ -2021,7 +2037,7 @@
   "BGw6eH": [
     {
       "type": 0,
-      "value": "Missing required properties '"
+      "value": "Proprietà obbligatorie '"
     },
     {
       "type": 1,
@@ -2029,7 +2045,7 @@
     },
     {
       "type": 0,
-      "value": "' for authentication type '"
+      "value": "' mancanti per il tipo di autenticazione '"
     },
     {
       "type": 1,
@@ -2735,12 +2751,6 @@
       "value": "Immetti un indirizzo e-mail."
     }
   ],
-  "FaBEfQ": [
-    {
-      "type": 0,
-      "value": "Proprietà rilevate"
-    }
-  ],
   "Fcvgvg": [
     {
       "type": 0,
@@ -3054,7 +3064,7 @@
   "I1CYNA": [
     {
       "type": 0,
-      "value": "Invalid property '"
+      "value": "Proprietà non valida '"
     },
     {
       "type": 1,
@@ -3062,7 +3072,7 @@
     },
     {
       "type": 0,
-      "value": "' for authentication type '"
+      "value": "' per il tipo di autenticazione '"
     },
     {
       "type": 1,
@@ -3828,6 +3838,12 @@
       "value": "Copia completata."
     }
   ],
+  "NFgfP4": [
+    {
+      "type": 0,
+      "value": "item"
+    }
+  ],
   "NGJ00e": [
     {
       "type": 0,
@@ -3918,6 +3934,12 @@
       "value": "Martedì"
     }
   ],
+  "NzPnFS": [
+    {
+      "type": 0,
+      "value": "Esempio:"
+    }
+  ],
   "O+3Y9f": [
     {
       "type": 0,
@@ -3969,7 +3991,7 @@
   "OBO/HE": [
     {
       "type": 0,
-      "value": "Invalid Authentication Value"
+      "value": "Valore di autenticazione non valido"
     }
   ],
   "ODQCKj": [
@@ -4133,7 +4155,7 @@
   "Ov7Ckz": [
     {
       "type": 0,
-      "value": "Missing required property '"
+      "value": "Proprietà obbligatoria '"
     },
     {
       "type": 1,
@@ -4141,7 +4163,7 @@
     },
     {
       "type": 0,
-      "value": "' for authentication type '"
+      "value": "' mancante per il tipo di autenticazione '"
     },
     {
       "type": 1,
@@ -4198,6 +4220,12 @@
     {
       "type": 0,
       "value": "Input"
+    }
+  ],
+  "PDMP/Z": [
+    {
+      "type": 0,
+      "value": "Collapsed"
     }
   ],
   "PNk3n4": [
@@ -5863,6 +5891,12 @@
       "value": "Suggerimenti per la ricerca"
     }
   ],
+  "Yg/vvm": [
+    {
+      "type": 0,
+      "value": "Chiudi pannello Aggiungi azione"
+    }
+  ],
   "YgU88A": [
     {
       "type": 0,
@@ -6593,6 +6627,12 @@
       "value": "Obbligatorio. Nome della variabile di cui si desidera ottenere il valore."
     }
   ],
+  "eHsOsm": [
+    {
+      "type": 0,
+      "value": "Specificare la durata nel formato ISO 8601"
+    }
+  ],
   "eO1h/h": [
     {
       "type": 0,
@@ -6965,6 +7005,12 @@
     {
       "type": 0,
       "value": "Invia di nuovo un flusso di lavoro eseguito da questa azione"
+    }
+  ],
+  "hJbr09": [
+    {
+      "type": 0,
+      "value": "Click to Collapse"
     }
   ],
   "hMf2TA": [
@@ -7864,7 +7910,7 @@
   "mNaBPE": [
     {
       "type": 0,
-      "value": "Enter a valid JSON."
+      "value": "Immettere un oggetto JSON valido."
     }
   ],
   "mPakaD": [
@@ -8083,6 +8129,24 @@
     {
       "type": 0,
       "value": "Elimina intestazioni del flusso di lavoro"
+    }
+  ],
+  "ncW1Sw": [
+    {
+      "type": 0,
+      "value": "Operazione "
+    },
+    {
+      "type": 1,
+      "value": "operationName"
+    },
+    {
+      "type": 0,
+      "value": ", connettore "
+    },
+    {
+      "type": 1,
+      "value": "connectorName"
     }
   ],
   "ngsC44": [
@@ -8582,6 +8646,12 @@
       "value": "Restituisce il numero di elementi in una matrice o in una stringa"
     }
   ],
+  "qdUeUk": [
+    {
+      "type": 0,
+      "value": "Click to Expand"
+    }
+  ],
   "qiIs4V": [
     {
       "type": 0,
@@ -8646,6 +8716,12 @@
     {
       "type": 0,
       "value": "Annulla"
+    }
+  ],
+  "r4zp7m": [
+    {
+      "type": 0,
+      "value": "Expanded"
     }
   ],
   "r7vZ5a": [
