@@ -2,7 +2,6 @@ import { openPanel, useNodesInitialized } from '../core';
 import { useLayout } from '../core/graphlayout';
 import { usePreloadOperationsQuery, usePreloadConnectorsQuery } from '../core/queries/browse';
 import { useMonitoringView, useReadOnly, useRecurrenceInterval } from '../core/state/designerOptions/designerOptionsSelectors';
-//useSku
 import { useClampPan } from '../core/state/designerView/designerViewSelectors';
 import { useIsPanelCollapsed } from '../core/state/panel/panelSelectors';
 import { clearPanel } from '../core/state/panel/panelSlice';
@@ -219,8 +218,8 @@ export const Designer = (props: DesignerProps) => {
   const preloadSearch = useMemo(() => (isMonitoringView || isReadOnly) && isInitialized, [isMonitoringView, isReadOnly, isInitialized]);
 
   const recurrenceInterval = useRecurrenceInterval();
-  useQuery({ queryKey: ['recurrenceInterval'], initialData: recurrenceInterval }); // adding the recurrence interval to the query to access outside of functional components
-
+  // Adding recurrence interval to the query to access outside of functional components
+  useQuery({ queryKey: ['recurrenceInterval'], initialData: recurrenceInterval });
   return (
     <DndProvider options={DND_OPTIONS}>
       {preloadSearch ? <SearchPreloader /> : null}
