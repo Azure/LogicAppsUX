@@ -47,20 +47,20 @@ export const NodeErrorCard: React.FC<NodeErrorCardProps> = ({ id, level, title, 
       </div>
       <div className="msla-error-card-body">
         {Object.entries(messagesBySubtitle ?? {}).map(([subtitle, values]) => (
-          <MessageSubsection key={subtitle} level={level} subtitle={subtitle} messages={values} />
+          <ErrorSubsection key={subtitle} level={level} subtitle={subtitle} messages={values} />
         ))}
       </div>
     </div>
   );
 };
 
-interface MessageSubsectionProps {
+interface ErrorSubsectionProps {
   level: MessageLevel;
   subtitle: string;
   messages: NodeMessage[];
 }
 
-const MessageSubsection = (props: MessageSubsectionProps) => {
+const ErrorSubsection = (props: ErrorSubsectionProps) => {
   const { level, subtitle, messages } = props;
 
   // create new messages array with no empty values

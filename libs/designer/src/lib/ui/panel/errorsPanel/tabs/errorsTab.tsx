@@ -88,7 +88,7 @@ export const ErrorsTab = () => {
   };
 
   return (
-    <div className="msla-errors-panel-body">
+    <div className="msla-error-panel-body">
       <ErrorCategory title={workflowParameterErrorsCategoryHeader} level={MessageLevel.Error} numMessages={numWorkflowParameterErrors}>
         <WorkflowParameterErrors parameterNames={workflowParameterNames} errors={workflowParameterErrors} />
       </ErrorCategory>
@@ -110,7 +110,7 @@ export const ErrorsTab = () => {
       </ErrorCategory>
 
       {totalNumErrors === 0 ? (
-        <div className="msla-errors-panel-no-messages">
+        <div className="msla-error-panel-no-messages">
           <Text variant="medium">{noErrorsText}</Text>
         </div>
       ) : null}

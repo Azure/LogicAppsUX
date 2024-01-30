@@ -400,12 +400,12 @@ export const workflowSlice = createSlice({
     setIsWorkflowDirty: (state: WorkflowState, action: PayloadAction<boolean>) => {
       state.isDirty = action.payload;
     },
-    setHostErrorMessages: (state, action: PayloadAction<{ level: MessageLevel; checkerMessages: ErrorMessage[] | undefined }>) => {
-      if (!action.payload.checkerMessages) {
+    setHostErrorMessages: (state, action: PayloadAction<{ level: MessageLevel; errorMessages: ErrorMessage[] | undefined }>) => {
+      if (!action.payload.errorMessages) {
         delete state.hostData.errorMessages[action.payload.level];
         return;
       }
-      state.hostData.errorMessages[action.payload.level] = action.payload.checkerMessages;
+      state.hostData.errorMessages[action.payload.level] = action.payload.errorMessages;
     },
   },
   extraReducers: (builder) => {

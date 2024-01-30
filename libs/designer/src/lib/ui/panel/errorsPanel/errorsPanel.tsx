@@ -27,7 +27,7 @@ export const ErrorsPanel = (props: CommonPanelProps) => {
 
   const totalNumErrors = useTotalNumErrors();
   const errorsTab = {
-    id: constants.FLOW_CHECKER_PANEL_TAB_NAMES.ERRORS,
+    id: constants.ERRORS_PANEL_TAB_NAMES.ERRORS,
     title: intl.formatMessage({ defaultMessage: 'Errors', description: 'The tab label for the errors tab on the errors panel' }),
     visible: true,
     order: 0,
@@ -36,7 +36,7 @@ export const ErrorsPanel = (props: CommonPanelProps) => {
 
   const totalNumWarnings = useTotalNumWarnings();
   const warningsTab = {
-    id: constants.FLOW_CHECKER_PANEL_TAB_NAMES.WARNINGS,
+    id: constants.ERRORS_PANEL_TAB_NAMES.WARNINGS,
     title: intl.formatMessage({ defaultMessage: 'Warnings', description: 'The tab label for the warnings tab on the errors panel' }),
     visible: true,
     order: 1,
@@ -66,8 +66,8 @@ export const ErrorsPanel = (props: CommonPanelProps) => {
           </Tab>
         ))}
       </TabList>
-      {selectedTabId === constants.FLOW_CHECKER_PANEL_TAB_NAMES.ERRORS && <ErrorsTab />}
-      {selectedTabId === constants.FLOW_CHECKER_PANEL_TAB_NAMES.WARNINGS && <WarningsTab />}
+      {selectedTabId === constants.ERRORS_PANEL_TAB_NAMES.ERRORS && <ErrorsTab />}
+      {selectedTabId === constants.ERRORS_PANEL_TAB_NAMES.WARNINGS && <WarningsTab />}
     </FocusTrapZone>
   );
 };

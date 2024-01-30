@@ -24,7 +24,7 @@ export const WarningsTab = () => {
   const totalNumWarnings = useTotalNumWarnings();
 
   return (
-    <div className="msla-errors-panel-body">
+    <div className="msla-error-panel-body">
       <ErrorCategory title={operationWarningsCategoryHeader} level={MessageLevel.Warning} numMessages={totalNumWarnings}>
         {allNodesWithWarnings.map((nodeId) => (
           <NodeErrors
@@ -39,7 +39,7 @@ export const WarningsTab = () => {
       </ErrorCategory>
 
       {totalNumWarnings === 0 ? (
-        <div className="msla-errors-panel-no-messages">
+        <div className="msla-error-panel-no-messages">
           <Text variant="medium">{noWarningsText}</Text>
         </div>
       ) : null}
