@@ -15,6 +15,7 @@ import { getConnectorWithSwagger } from '../../queries/connections';
 import type { DependencyInfo, NodeInputs, NodeOperation, OutputInfo } from '../../state/operation/operationMetadataSlice';
 import { ErrorLevel, updateErrorDetails, DynamicLoadStatus, initializeOperationInfo } from '../../state/operation/operationMetadataSlice';
 import { addResultSchema } from '../../state/staticresultschema/staticresultsSlice';
+import type { WorkflowKind } from '../../state/workflow/workflowInterfaces';
 import { getBrandColorFromConnector, getIconUriFromConnector } from '../card';
 import { toOutputInfo, updateOutputsForBatchingTrigger } from '../outputs';
 import {
@@ -54,6 +55,7 @@ export const initializeOperationDetailsForSwagger = async (
   operation: LogicAppsV2.ActionDefinition | LogicAppsV2.TriggerDefinition,
   references: ConnectionReferences,
   isTrigger: boolean,
+  workflowKind: WorkflowKind,
   dispatch: Dispatch
 ): Promise<NodeDataWithOperationMetadata[] | undefined> => {
   try {
@@ -89,7 +91,15 @@ export const initializeOperationDetailsForSwagger = async (
         isTrigger ? (operation as LogicAppsV2.TriggerDefinition).splitOn : undefined
       );
       const nodeDependencies = { inputs: inputDependencies, outputs: outputDependencies };
-      const settings = getOperationSettings(isTrigger, nodeOperationInfo, nodeOutputs, /* manifest */ undefined, parsedSwagger, operation);
+      const settings = getOperationSettings(
+        isTrigger,
+        nodeOperationInfo,
+        nodeOutputs,
+        /* manifest */ undefined,
+        parsedSwagger,
+        operation,
+        workflowKind
+      );
 
       return [
         {

@@ -1862,6 +1862,7 @@ async function loadDynamicData(
       nodeInputs,
       settings,
       rootState.workflowParameters.definitions,
+      rootState.workflow.workflowKind,
       dispatch
     );
   }
