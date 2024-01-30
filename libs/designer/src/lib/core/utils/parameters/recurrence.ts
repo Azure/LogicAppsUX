@@ -3,7 +3,7 @@ import { getReactQueryClient } from '../../ReactQueryProvider';
 import { loadParameterValuesFromDefault, toParameterInfoMap } from './helper';
 import type { ParameterInfo } from '@microsoft/designer-ui';
 import { OutputMapKey, SchemaProcessor, toInputParameter } from '@microsoft/parsers-logic-apps';
-import type { OpenAPIV2, RecurrenceSetting, LogicApps } from '@microsoft/utils-logic-apps';
+import type { OpenAPIV2, RecurrenceSetting } from '@microsoft/utils-logic-apps';
 import { map, RecurrenceType } from '@microsoft/utils-logic-apps';
 
 export interface Recurrence {
@@ -53,8 +53,8 @@ export const getRecurrenceParameters = (recurrence: RecurrenceSetting | undefine
     .map((item) => toInputParameter(item, true /* suppressCasting */));
 
   const queryClient = getReactQueryClient();
-  const sku = queryClient.getQueryData(['sku']) as string;
-  const defaultRecurrence = getRecurrenceBySku(sku);
+  const recurrenceInterval = queryClient.getQueryData(['recurrenceInterval']);
+  const defaultRecurrence = recurrenceInterval ? recurrenceInterval : constants.DEFAULT_RECURRENCE;
 
   for (const parameter of recurrenceParameters) {
     if (!parameter.default) {
@@ -72,18 +72,3 @@ export const getRecurrenceParameters = (recurrence: RecurrenceSetting | undefine
 
   return toParameterInfoMap(recurrenceParameters, operationDefinition);
 };
-
-function getRecurrenceBySku(sku: string): LogicApps.Recurrence {
-  switch (sku) {
-    case SKU.STANDARD:
-      return constants.DEFAULT_RECURRENCE.STANDARD;
-    case SKU.PREMIUM:
-      return constants.DEFAULT_RECURRENCE.PREMIUM;
-    case SKU.CONSUMPTION:
-      return constants.DEFAULT_RECURRENCE.CONSUMPTION;
-    default:
-      return constants.DEFAULT_RECURRENCE.FREE;
-  }
-}
-
-export const SKU = { STANDARD: 'standard', PREMIUM: 'premium', CONSUMPTION: 'consumption', FREE: 'free' };

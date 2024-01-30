@@ -28,7 +28,7 @@ const initialState: DesignerOptionsState = {
   isDarkMode: false,
   servicesInitialized: false,
   useLegacyWorkflowParameters: false,
-  sku: undefined,
+  recurrenceInterval: undefined,
   isXrmConnectionReferenceMode: false,
   showConnectionsPanel: false,
   panelTabHideKeys: [],
@@ -103,7 +103,7 @@ export const designerOptionsSlice = createSlice({
       state.isMonitoringView = action.payload.isMonitoringView;
       state.isDarkMode = action.payload.isDarkMode;
       state.useLegacyWorkflowParameters = action.payload.useLegacyWorkflowParameters;
-      state.sku = action.payload.sku;
+      state.recurrenceInterval = action.payload.recurrenceInterval;
       state.isXrmConnectionReferenceMode = action.payload.isXrmConnectionReferenceMode;
       state.suppressDefaultNodeSelectFunctionality = action.payload.suppressDefaultNodeSelectFunctionality;
       state.nodeSelectAdditionalCallback = action.payload.nodeSelectAdditionalCallback;

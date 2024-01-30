@@ -17,6 +17,7 @@ import type {
   IConnectionParameterEditorService,
   IChatbotService,
 } from '@microsoft/designer-client-services-logic-apps';
+import type { LogicApps } from '@microsoft/utils-logic-apps';
 
 type PANEL_TAB_NAMES = keyof typeof CONSTANTS.PANEL_TAB_NAMES;
 
@@ -26,7 +27,7 @@ export interface DesignerOptionsState {
   isDarkMode?: boolean;
   servicesInitialized?: boolean;
   useLegacyWorkflowParameters?: boolean;
-  sku?: string;
+  recurrenceInterval?: LogicApps.Recurrence;
   isXrmConnectionReferenceMode?: boolean;
   suppressDefaultNodeSelectFunctionality?: boolean;
   hostOptions: {

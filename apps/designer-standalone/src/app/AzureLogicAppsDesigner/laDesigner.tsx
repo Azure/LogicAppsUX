@@ -257,7 +257,7 @@ const DesignerEditor = () => {
           isMonitoringView,
           hostOptions,
           showConnectionsPanel,
-          sku: 'standard',
+          recurrenceInterval: { interval: 1, frequency: 'Minute' },
         }}
       >
         {workflow?.definition ? (

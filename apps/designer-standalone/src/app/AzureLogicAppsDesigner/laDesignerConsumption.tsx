@@ -191,7 +191,7 @@ const DesignerEditorConsumption = () => {
           useLegacyWorkflowParameters: true,
           showConnectionsPanel,
           hostOptions,
-          sku: 'consumption',
+          recurrenceInterval: { interval: 3, frequency: 'Minute' },
         }}
       >
         {workflow?.definition ? (
