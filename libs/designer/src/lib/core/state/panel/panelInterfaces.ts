@@ -1,6 +1,6 @@
 import type { PanelLocation } from '@microsoft/designer-ui';
 
-export type PanelMode = 'Operation' | 'Discovery' | 'WorkflowParameters' | 'NodeSearch' | 'FlowChecker' | 'Connection';
+export type PanelMode = 'Operation' | 'Discovery' | 'WorkflowParameters' | 'NodeSearch' | 'Error' | 'Connection';
 
 export interface PanelState {
   collapsed: boolean;
@@ -16,7 +16,7 @@ export interface PanelState {
   addingTrigger: boolean;
   isLoading?: boolean;
   creatingConnection?: boolean;
-  selectedFlowCheckerTabId: string | undefined; // undefined will select first tab with > 0 messages
+  selectedErrorsPanelTabId: string | undefined; // undefined will select first tab with > 0 messages
 }
 
 export interface RelationshipIds {

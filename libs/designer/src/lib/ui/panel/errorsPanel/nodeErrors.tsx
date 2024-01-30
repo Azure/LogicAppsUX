@@ -1,17 +1,17 @@
 import { openPanel, setFocusNode, useNodeDisplayName } from '../../../core';
 import { useOperationVisuals } from '../../../core/state/operation/operationSelector';
-import { NodeMessageCard } from '@microsoft/designer-ui';
+import { NodeErrorCard } from '@microsoft/designer-ui';
 import type { MessageLevel, NodeMessage } from '@microsoft/designer-ui';
 import { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 
-interface MessageCardProps {
+interface NodeErrorsProps {
   nodeId: string;
   level: MessageLevel;
   messagesBySubtitle?: Record<string, NodeMessage[]>;
 }
 
-export const NodeMessages = (props: MessageCardProps) => {
+export const NodeErrors = (props: NodeErrorsProps) => {
   const { nodeId, level, messagesBySubtitle } = props;
 
   const dispatch = useDispatch();
@@ -25,7 +25,7 @@ export const NodeMessages = (props: MessageCardProps) => {
   }, [dispatch, nodeId]);
 
   return (
-    <NodeMessageCard
+    <NodeErrorCard
       id={nodeId}
       level={level}
       title={nodeDisplayName}

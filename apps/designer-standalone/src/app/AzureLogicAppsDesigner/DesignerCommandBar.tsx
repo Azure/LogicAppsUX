@@ -170,7 +170,7 @@ export const DesignerCommandBar = ({
           iconName: haveErrors ? 'StatusErrorFull' : 'ErrorBadge',
           style: haveErrors ? { color: RUN_AFTER_COLORS[isDarkMode ? 'dark' : 'light']['FAILED'] } : undefined,
         },
-        onClick: () => !!dispatch(openPanel({ panelMode: 'FlowChecker' })),
+        onClick: () => !!dispatch(openPanel({ panelMode: 'Error' })),
       },
       {
         key: 'copilot',

@@ -20,7 +20,7 @@ import {
   updateStaticResults,
 } from '../operation/operationMetadataSlice';
 import type { RelationshipIds } from '../panel/panelInterfaces';
-import type { FlowCheckerMessage, SpecTypes, WorkflowState } from './workflowInterfaces';
+import type { ErrorMessage, SpecTypes, WorkflowState } from './workflowInterfaces';
 import { WorkflowKind } from './workflowInterfaces';
 import { getWorkflowNodeFromGraphState } from './workflowSelectors';
 import { LogEntryLevel, LoggerService } from '@microsoft/designer-client-services-logic-apps';
@@ -55,7 +55,7 @@ export const initialWorkflowState: WorkflowState = {
     contentVersion: '1.0.0.0',
   },
   hostData: {
-    flowCheckerMessages: {},
+    errorMessages: {},
   },
 };
 
@@ -400,15 +400,12 @@ export const workflowSlice = createSlice({
     setIsWorkflowDirty: (state: WorkflowState, action: PayloadAction<boolean>) => {
       state.isDirty = action.payload;
     },
-    setHostFlowCheckerMessages: (
-      state,
-      action: PayloadAction<{ level: MessageLevel; checkerMessages: FlowCheckerMessage[] | undefined }>
-    ) => {
+    setHostErrorMessages: (state, action: PayloadAction<{ level: MessageLevel; checkerMessages: ErrorMessage[] | undefined }>) => {
       if (!action.payload.checkerMessages) {
-        delete state.hostData.flowCheckerMessages[action.payload.level];
+        delete state.hostData.errorMessages[action.payload.level];
         return;
       }
-      state.hostData.flowCheckerMessages[action.payload.level] = action.payload.checkerMessages;
+      state.hostData.errorMessages[action.payload.level] = action.payload.checkerMessages;
     },
   },
   extraReducers: (builder) => {
@@ -483,7 +480,7 @@ export const {
   setRunIndex,
   setRepetitionRunData,
   setIsWorkflowDirty,
-  setHostFlowCheckerMessages,
+  setHostErrorMessages,
 } = workflowSlice.actions;
 
 export default workflowSlice.reducer;

@@ -21,7 +21,7 @@ const initialState: PanelState = {
   creatingConnection: false,
   currentPanelMode: undefined,
   referencePanelMode: undefined,
-  selectedFlowCheckerTabId: undefined,
+  selectedErrorsPanelTabId: undefined,
 };
 
 export const panelSlice = createSlice({
@@ -45,7 +45,7 @@ export const panelSlice = createSlice({
       state.addingTrigger = false;
       state.creatingConnection = false;
       state.selectedTabId = undefined;
-      state.selectedFlowCheckerTabId = undefined;
+      state.selectedErrorsPanelTabId = undefined;
     },
     updatePanelLocation: (state, action: PayloadAction<PanelLocation | undefined>) => {
       if (action.payload && action.payload !== state.panelLocation) {
@@ -119,7 +119,6 @@ export const panelSlice = createSlice({
       state.currentPanelMode = panelMode;
       state.referencePanelMode = referencePanelMode;
       state.selectedNodes = nodeIds ? nodeIds : nodeId ? [nodeId] : [];
-      state.selectedFlowCheckerTabId = undefined;
     },
     selectPanelTab: (state, action: PayloadAction<string | undefined>) => {
       state.selectedTabId = action.payload;
@@ -137,8 +136,8 @@ export const panelSlice = createSlice({
     setIsCreatingConnection: (state, action: PayloadAction<boolean>) => {
       state.creatingConnection = action.payload;
     },
-    selectFlowCheckerPanelTab: (state, action: PayloadAction<string>) => {
-      state.selectedFlowCheckerTabId = action.payload;
+    selectErrorsPanelTab: (state, action: PayloadAction<string>) => {
+      state.selectedErrorsPanelTabId = action.payload;
 
       LoggerService().log({
         level: LogEntryLevel.Verbose,
@@ -169,7 +168,7 @@ export const {
   selectPanelTab,
   setIsPanelLoading,
   setIsCreatingConnection,
-  selectFlowCheckerPanelTab,
+  selectErrorsPanelTab,
 } = panelSlice.actions;
 
 export default panelSlice.reducer;

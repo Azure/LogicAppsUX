@@ -1,10 +1,10 @@
 @import (reference) '../variables.less';
 
-.msla-flow-checker-panel-body {
+.msla-errors-panel-body {
   padding: 24px 0px;
 }
 
-.msla-message-category-container {
+.msla-error-category-container {
   .msla-dot() {
     width: 8px;
     height: 8px;
@@ -43,19 +43,19 @@
     background-color: @ms-color-warningLight;
   }
 
-  .msla-message-category-header {
+  .msla-error-category-header {
     display: flex;
     gap: 12px;
     align-items: center;
     margin-bottom: 12px;
 
-    .msla-message-category-title {
+    .msla-error-category-title {
       font: 18px/24px @semibold-font-family;
       text-align: left;
     }
   }
 
-  .msla-message-category-body {
+  .msla-error-category-body {
     display: flex;
     flex-direction: column;
     gap: 8px;
@@ -63,7 +63,7 @@
   }
 }
 
-.msla-message-card {
+.msla-error-card {
   padding: 12px 16px;
   border: 1px solid #c8c6c4;
   border-radius: 2px;
@@ -84,7 +84,7 @@
     box-shadow: 0 1.2px 3.6px rgba(0, 0, 0, 0.1), 0 6.4px 14.4px rgba(0, 0, 0, 0.13);
   }
 
-  .msla-message-card-header {
+  .msla-error-card-header {
     display: flex;
     gap: 12px;
     align-items: center;
@@ -95,14 +95,14 @@
       border-radius: 2px;
     }
 
-    .msla-message-card-title {
+    .msla-error-card-title {
       align-self: center;
       flex: 1;
       font: 14px/20px @semibold-font-family;
       text-align: left;
     }
 
-    .msla-message-card-icon {
+    .msla-error-card-icon {
       min-width: 24px;
       min-height: 24px;
       text-align: center;
@@ -110,24 +110,24 @@
     }
   }
 
-  .msla-message-card-body {
+  .msla-error-card-body {
     display: flex;
     flex-direction: column;
     gap: 4px;
 
-    .msla-message-card-subsection {
+    .msla-error-card-subsection {
       display: flex;
       flex-direction: column;
       gap: 4px;
     }
 
-    .msla-message-card-subtitle {
+    .msla-error-card-subtitle {
       font: 13px/24px @semibold-font-family;
       text-align: left;
     }
   }
 
-  .msla-message-card-button-hint {
+  .msla-error-card-button-hint {
     // align at flex end
     align-self: flex-end;
     font: 14px/20px @semibold-font-family;
@@ -137,7 +137,7 @@
 }
 
 .msla-theme-dark {
-  .msla-message-card {
+  .msla-error-card {
     background-color: @ms-color-white;
     box-shadow: 0 0px 0px rgba(255, 255, 255, 0), 0 0px 0px rgba(255, 255, 255, 0);
     color: @ms-color-black;
@@ -147,7 +147,7 @@
       box-shadow: 0 1.2px 3.6px rgba(255, 255, 255, 0.1), 0 6.4px 14.4px rgba(255, 255, 255, 0.13);
     }
 
-    .msla-message-card-button-hint {
+    .msla-error-card-button-hint {
       // align at flex end
       align-self: flex-end;
       font: 14px/20px @semibold-font-family;
@@ -156,7 +156,7 @@
     }
   }
 
-  .msla-message-category-container {
+  .msla-error-category-container {
     .msla-error-dot {
       background-color: @ms-color-errorDark;
     }
@@ -167,6 +167,6 @@
   }
 }
 
-.msla-panel-root-FlowChecker {
+.msla-panel-root-Error {
   z-index: 5;
 }

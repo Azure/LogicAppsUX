@@ -1,7 +1,7 @@
 import type { RootState } from '../../../../core';
 import { useAllConnectionErrors } from '../../../../core/state/operation/operationSelector';
 import { useAllSettingsValidationErrors } from '../../../../core/state/setting/settingSelector';
-import type { FlowCheckerMessage } from '../../../../core/state/workflow/workflowInterfaces';
+import type { ErrorMessage } from '../../../../core/state/workflow/workflowInterfaces';
 import { useWorkflowParameterValidationErrors } from '../../../../core/state/workflowparameters/workflowparametersselector';
 import { MessageLevel } from '@microsoft/designer-ui';
 import { useMemo } from 'react';
@@ -70,11 +70,11 @@ export const useNumWorkflowParameterErrors = () => {
 // Custom errors from host
 
 export const useHostCheckerErrors = () =>
-  useSelector((state: RootState): Record<string, Record<string, FlowCheckerMessage[]>> => {
-    const errorMessagesToShow: Record<string, Record<string, FlowCheckerMessage[]>> = {};
+  useSelector((state: RootState): Record<string, Record<string, ErrorMessage[]>> => {
+    const errorMessagesToShow: Record<string, Record<string, ErrorMessage[]>> = {};
 
-    const errorMessages = state.workflow.hostData.flowCheckerMessages[MessageLevel.Error] || [];
-    errorMessages.forEach((message: FlowCheckerMessage) => {
+    const errorMessages = state.workflow.hostData.errorMessages[MessageLevel.Error] || [];
+    errorMessages.forEach((message: ErrorMessage) => {
       // Check if a node with matching id at least exists
       if (!(message.nodeId in state.workflow.nodesMetadata)) return;
 

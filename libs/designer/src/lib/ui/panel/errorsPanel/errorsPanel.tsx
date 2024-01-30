@@ -1,7 +1,7 @@
 import constants from '../../../common/constants';
 import type { AppDispatch } from '../../../core';
-import { useSelectedFlowCheckerPanelTabId } from '../../../core/state/panel/panelSelectors';
-import { selectFlowCheckerPanelTab } from '../../../core/state/panel/panelSlice';
+import { useSelectedErrorsPanelTabId } from '../../../core/state/panel/panelSelectors';
+import { selectErrorsPanelTab } from '../../../core/state/panel/panelSlice';
 import { ErrorsTab } from './tabs/errorsTab';
 import { useTotalNumErrors } from './tabs/errorsTab.hooks';
 import { WarningsTab } from './tabs/warningsTab';
@@ -16,19 +16,19 @@ import { useDispatch } from 'react-redux';
 
 const CloseIcon = bundleIcon(Dismiss24Filled, Dismiss24Regular);
 
-export const FlowCheckerPanel = (props: CommonPanelProps) => {
+export const ErrorsPanel = (props: CommonPanelProps) => {
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
 
-  const flowCheckerPanelHeader = intl.formatMessage({
+  const errorsPanelHeader = intl.formatMessage({
     defaultMessage: 'Flow Checker',
-    description: 'Header for the flow checker panel',
+    description: 'Header for the errors panel',
   });
 
   const totalNumErrors = useTotalNumErrors();
   const errorsTab = {
     id: constants.FLOW_CHECKER_PANEL_TAB_NAMES.ERRORS,
-    title: intl.formatMessage({ defaultMessage: 'Errors', description: 'The tab label for the errors tab on the checker panel' }),
+    title: intl.formatMessage({ defaultMessage: 'Errors', description: 'The tab label for the errors tab on the errors panel' }),
     visible: true,
     order: 0,
     count: totalNumErrors,
@@ -37,7 +37,7 @@ export const FlowCheckerPanel = (props: CommonPanelProps) => {
   const totalNumWarnings = useTotalNumWarnings();
   const warningsTab = {
     id: constants.FLOW_CHECKER_PANEL_TAB_NAMES.WARNINGS,
-    title: intl.formatMessage({ defaultMessage: 'Warnings', description: 'The tab label for the warnings tab on the checker panel' }),
+    title: intl.formatMessage({ defaultMessage: 'Warnings', description: 'The tab label for the warnings tab on the errors panel' }),
     visible: true,
     order: 1,
     count: totalNumWarnings,
@@ -45,18 +45,18 @@ export const FlowCheckerPanel = (props: CommonPanelProps) => {
 
   const visibleTabs = [errorsTab, warningsTab].filter((tab) => tab.visible);
   const defaultTabId = visibleTabs.find((tab) => tab.count > 0)?.id || visibleTabs[0]?.id;
-  const selectedTabId = useSelectedFlowCheckerPanelTabId() || defaultTabId;
+  const selectedTabId = useSelectedErrorsPanelTabId() || defaultTabId;
   const onTabSelected = (e?: SelectTabEvent, data?: SelectTabData): void => {
     if (data) {
       const tabId = data.value as string;
-      dispatch(selectFlowCheckerPanelTab(tabId));
+      dispatch(selectErrorsPanelTab(tabId));
     }
   };
 
   return (
     <FocusTrapZone>
       <div className="msla-app-action-header">
-        <Text variant="xLarge">{flowCheckerPanelHeader}</Text>
+        <Text variant="xLarge">{errorsPanelHeader}</Text>
         <Button appearance="subtle" onClick={props.toggleCollapse} icon={<CloseIcon />} />
       </div>
       <TabList selectedValue={selectedTabId} onTabSelect={onTabSelected} style={{ margin: '0px -12px' }}>

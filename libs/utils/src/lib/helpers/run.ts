@@ -1,5 +1,5 @@
+import { isObject } from '../helpers';
 import type { CallbackInfo, CallbackInfoWithRelativePath } from '../models';
-import { isObject } from './functions';
 
 export function isCallbackInfoWithRelativePath(value: any): value is CallbackInfoWithRelativePath {
   return isObject(value) && typeof value.relativePath === 'string';

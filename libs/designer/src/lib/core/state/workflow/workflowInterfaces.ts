@@ -24,7 +24,7 @@ export const WorkflowKind = {
 } as const;
 export type WorkflowKind = (typeof WorkflowKind)[keyof typeof WorkflowKind];
 
-export type FlowCheckerMessage = {
+export type ErrorMessage = {
   nodeId: string;
   level: MessageLevel;
   subtitle: string; // ex. "Settings Errors"
@@ -47,6 +47,6 @@ export interface WorkflowState {
   workflowKind: WorkflowKind;
   originalDefinition: LogicAppsV2.WorkflowDefinition;
   hostData: {
-    flowCheckerMessages: Partial<Record<MessageLevel, FlowCheckerMessage[]>>;
+    errorMessages: Partial<Record<MessageLevel, ErrorMessage[]>>;
   };
 }

@@ -1,5 +1,5 @@
-import { MessageCategory } from '../messageCategory';
-import { NodeMessages } from '../nodeMessages';
+import { ErrorCategory } from '../errorCategory';
+import { NodeErrors } from '../nodeErrors';
 import { useHostCheckerWarnings, useTotalNumWarnings } from './warningsTab.hooks';
 import { Text } from '@fluentui/react';
 import { MessageLevel } from '@microsoft/designer-ui';
@@ -24,10 +24,10 @@ export const WarningsTab = () => {
   const totalNumWarnings = useTotalNumWarnings();
 
   return (
-    <div className="msla-flow-checker-panel-body">
-      <MessageCategory title={operationWarningsCategoryHeader} level={MessageLevel.Warning} numMessages={totalNumWarnings}>
+    <div className="msla-errors-panel-body">
+      <ErrorCategory title={operationWarningsCategoryHeader} level={MessageLevel.Warning} numMessages={totalNumWarnings}>
         {allNodesWithWarnings.map((nodeId) => (
-          <NodeMessages
+          <NodeErrors
             key={nodeId}
             level={MessageLevel.Warning}
             nodeId={nodeId}
@@ -36,10 +36,10 @@ export const WarningsTab = () => {
             }}
           />
         ))}
-      </MessageCategory>
+      </ErrorCategory>
 
       {totalNumWarnings === 0 ? (
-        <div className="msla-flow-checker-panel-no-messages">
+        <div className="msla-errors-panel-no-messages">
           <Text variant="medium">{noWarningsText}</Text>
         </div>
       ) : null}

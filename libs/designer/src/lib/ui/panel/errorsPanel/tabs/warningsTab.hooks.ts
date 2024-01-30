@@ -1,15 +1,15 @@
 import { type RootState } from '../../../../core';
-import type { FlowCheckerMessage } from '../../../../core/state/workflow/workflowInterfaces';
+import type { ErrorMessage } from '../../../../core/state/workflow/workflowInterfaces';
 import { MessageLevel } from '@microsoft/designer-ui';
 import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 
 export const useHostCheckerWarnings = () =>
-  useSelector((state: RootState): Record<string, Record<string, FlowCheckerMessage[]>> => {
-    const warningMessagesToShow: Record<string, Record<string, FlowCheckerMessage[]>> = {};
+  useSelector((state: RootState): Record<string, Record<string, ErrorMessage[]>> => {
+    const warningMessagesToShow: Record<string, Record<string, ErrorMessage[]>> = {};
 
-    const warningMessages = state.workflow.hostData.flowCheckerMessages[MessageLevel.Warning] || [];
-    warningMessages.forEach((message: FlowCheckerMessage) => {
+    const warningMessages = state.workflow.hostData.errorMessages[MessageLevel.Warning] || [];
+    warningMessages.forEach((message: ErrorMessage) => {
       // Check if a node with matching id at least exists
       if (!(message.nodeId in state.workflow.nodesMetadata)) return;
 

@@ -3,7 +3,7 @@ import { useHostOptions, useIsDarkMode } from '../../core/state/designerOptions/
 import { useCurrentPanelMode, useIsLoadingPanel, useIsPanelCollapsed } from '../../core/state/panel/panelSelectors';
 import { clearPanel } from '../../core/state/panel/panelSlice';
 import { ConnectionPanel } from './connectionsPanel/connectionsPanel';
-import { FlowCheckerPanel } from './flowCheckerPanel/flowCheckerPanel';
+import { ErrorsPanel } from './errorsPanel/errorsPanel';
 import { NodeDetailsPanel } from './nodeDetailsPanel/nodeDetailsPanel';
 import { NodeSearchPanel } from './nodeSearchPanel/nodeSearchPanel';
 import { RecommendationPanelContext } from './recommendation/recommendationPanelContext';
@@ -104,8 +104,8 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element => {
           <NodeSearchPanel {...commonPanelProps} displayRuntimeInfo={displayRuntimeInfo} />
         ) : currentPanelMode === 'Connection' ? (
           <ConnectionPanel {...commonPanelProps} />
-        ) : currentPanelMode === 'FlowChecker' ? (
-          <FlowCheckerPanel {...commonPanelProps} />
+        ) : currentPanelMode === 'Error' ? (
+          <ErrorsPanel {...commonPanelProps} />
         ) : null // Caught above
       }
     </Panel>

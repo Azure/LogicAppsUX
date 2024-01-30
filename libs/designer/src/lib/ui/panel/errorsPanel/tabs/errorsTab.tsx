@@ -1,8 +1,8 @@
 import type { RootState } from '../../../../core';
 import { useAllConnectionErrors } from '../../../../core/state/operation/operationSelector';
 import { useWorkflowParameterValidationErrors } from '../../../../core/state/workflowparameters/workflowparametersselector';
-import { MessageCategory } from '../messageCategory';
-import { NodeMessages } from '../nodeMessages';
+import { ErrorCategory } from '../errorCategory';
+import { NodeErrors } from '../nodeErrors';
 import { WorkflowParameterErrors } from '../workflowParameterErrors';
 import {
   useAllInputErrors,
@@ -88,14 +88,14 @@ export const ErrorsTab = () => {
   };
 
   return (
-    <div className="msla-flow-checker-panel-body">
-      <MessageCategory title={workflowParameterErrorsCategoryHeader} level={MessageLevel.Error} numMessages={numWorkflowParameterErrors}>
+    <div className="msla-errors-panel-body">
+      <ErrorCategory title={workflowParameterErrorsCategoryHeader} level={MessageLevel.Error} numMessages={numWorkflowParameterErrors}>
         <WorkflowParameterErrors parameterNames={workflowParameterNames} errors={workflowParameterErrors} />
-      </MessageCategory>
+      </ErrorCategory>
 
-      <MessageCategory title={operationErrorsCategoryHeader} level={MessageLevel.Error} numMessages={numOperationErrors}>
+      <ErrorCategory title={operationErrorsCategoryHeader} level={MessageLevel.Error} numMessages={numOperationErrors}>
         {allNodesWithErrors.map((nodeId: string) => (
-          <NodeMessages
+          <NodeErrors
             key={nodeId}
             level={MessageLevel.Error}
             nodeId={nodeId}
@@ -107,10 +107,10 @@ export const ErrorsTab = () => {
             }}
           />
         ))}
-      </MessageCategory>
+      </ErrorCategory>
 
       {totalNumErrors === 0 ? (
-        <div className="msla-flow-checker-panel-no-messages">
+        <div className="msla-errors-panel-no-messages">
           <Text variant="medium">{noErrorsText}</Text>
         </div>
       ) : null}

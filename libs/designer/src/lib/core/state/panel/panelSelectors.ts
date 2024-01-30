@@ -40,5 +40,5 @@ export const useIsLoadingPanel = () => useSelector(createSelector(getPanelState,
 
 export const useIsCreatingConnection = () => useSelector(createSelector(getPanelState, (state: PanelState) => state.creatingConnection));
 
-export const useSelectedFlowCheckerPanelTabId = () =>
-  useSelector(createSelector(getPanelState, (state: PanelState) => state.selectedFlowCheckerTabId));
+export const useSelectedErrorsPanelTabId = () =>
+  useSelector(createSelector(getPanelState, (state: PanelState) => state.selectedErrorsPanelTabId));

@@ -1,11 +1,11 @@
 import { isEnterKey, isSpaceKey } from '../utils';
-import type { NodeMessage } from './flowCheckerPanel.types';
-import { MessageLevel } from './flowCheckerPanel.types';
+import type { NodeMessage } from './errorsPanel.types';
+import { MessageLevel } from './errorsPanel.types';
 import { Text, Icon } from '@fluentui/react';
 import { fallbackConnectorIconUrl } from '@microsoft/utils-logic-apps';
 import { useIntl } from 'react-intl';
 
-interface NodeMessageCardProps {
+interface NodeErrorCardProps {
   id: string;
   level: MessageLevel;
   title: string;
@@ -15,7 +15,7 @@ interface NodeMessageCardProps {
   messagesBySubtitle?: Record<string, NodeMessage[]>;
 }
 
-export const NodeMessageCard: React.FC<NodeMessageCardProps> = ({ id, level, title, iconUri, onClick, messagesBySubtitle }) => {
+export const NodeErrorCard: React.FC<NodeErrorCardProps> = ({ id, level, title, iconUri, onClick, messagesBySubtitle }) => {
   const intl = useIntl();
 
   const handleClick: React.MouseEventHandler<HTMLElement> = (e) => {
@@ -32,20 +32,20 @@ export const NodeMessageCard: React.FC<NodeMessageCardProps> = ({ id, level, tit
 
   const buttonHint = intl.formatMessage({
     defaultMessage: 'Open operation',
-    description: 'Hint for the button on the message card',
+    description: 'Hint for the button on the error card',
   });
 
   return (
-    <div key={id} className="msla-message-card" onClick={handleClick} tabIndex={0} onKeyDown={handleKeyDown}>
-      <div className="msla-message-card-header">
+    <div key={id} className="msla-error-card" onClick={handleClick} tabIndex={0} onKeyDown={handleKeyDown}>
+      <div className="msla-error-card-header">
         <img className="panel-card-icon" src={fallbackConnectorIconUrl(iconUri)} alt="" />
-        <span className="msla-message-card-title">{title}</span>
-        <span className="msla-message-card-button-hint">
+        <span className="msla-error-card-title">{title}</span>
+        <span className="msla-error-card-button-hint">
           {buttonHint}
           <Icon iconName="ChevronRight" style={{ marginLeft: '8px' }} />
         </span>
       </div>
-      <div className="msla-message-card-body">
+      <div className="msla-error-card-body">
         {Object.entries(messagesBySubtitle ?? {}).map(([subtitle, values]) => (
           <MessageSubsection key={subtitle} level={level} subtitle={subtitle} messages={values} />
         ))}
@@ -68,8 +68,8 @@ const MessageSubsection = (props: MessageSubsectionProps) => {
   if (!filteredMessages?.length) return null;
 
   return (
-    <div className="msla-message-card-subsection">
-      <span className="msla-message-card-subtitle">{subtitle}</span>
+    <div className="msla-error-card-subsection">
+      <span className="msla-error-card-subtitle">{subtitle}</span>
       {messages.map((m: NodeMessage) => (
         <div key={m.content}>
           <div className={level === MessageLevel.Warning ? 'msla-warning-dot' : 'msla-error-dot'} />
