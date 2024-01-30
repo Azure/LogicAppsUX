@@ -57,6 +57,7 @@ export const initializeGraphState = createAsyncThunk<
               deserializedWorkflow,
               thunkAPI.getState().connections.connectionReferences,
               parameters ?? {},
+              workflow.workflowKind,
               thunkAPI.dispatch
             ),
             getConnectionsApiAndMapping(deserializedWorkflow, thunkAPI.dispatch),
