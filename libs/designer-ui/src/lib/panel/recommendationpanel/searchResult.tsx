@@ -1,4 +1,5 @@
 import NoResultsSvg from '../../../assets/search/noResults.svg';
+import { AriaSearchResultsAlert } from '../../ariaSearchResults/ariaSearchResultsAlert';
 import { getConnectorCategoryString } from '../../utils';
 import type { OperationActionData } from './interfaces';
 import { OperationSearchCard } from './operationSearchCard';
@@ -106,7 +107,7 @@ export const SearchResultsGrid: React.FC<PropsWithChildren<SearchResultsGridProp
     return (
       <div className="msla-no-results-container">
         <img src={NoResultsSvg} alt={noResultsText?.toString()} />
-        <Text>{noResultsText}</Text>
+        <Text role="alert">{noResultsText}</Text>
       </div>
     );
 
@@ -118,9 +119,15 @@ export const SearchResultsGrid: React.FC<PropsWithChildren<SearchResultsGridProp
         </div>
       )}
       {groupByConnector ? (
-        <List items={apiIds} onRenderCell={onRenderOperationGroup} />
+        <>
+          <AriaSearchResultsAlert resultCount={apiIds.length} resultDescription={'Connector'}></AriaSearchResultsAlert>
+          <List items={apiIds} onRenderCell={onRenderOperationGroup} />
+        </>
       ) : (
-        <List items={operationSearchResults} onRenderCell={onRenderOperationCell} />
+        <>
+          <AriaSearchResultsAlert resultCount={operationSearchResults.length} resultDescription={'action'}></AriaSearchResultsAlert>
+          <List items={operationSearchResults} onRenderCell={onRenderOperationCell} />
+        </>
       )}
     </div>
   );
