@@ -106,7 +106,7 @@ export const SearchResultsGrid: React.FC<PropsWithChildren<SearchResultsGridProp
     return (
       <div className="msla-no-results-container">
         <img src={NoResultsSvg} alt={noResultsText?.toString()} />
-        <Text>{noResultsText}</Text>
+        <Text role="alert">{noResultsText}</Text>
       </div>
     );
 
@@ -118,12 +118,27 @@ export const SearchResultsGrid: React.FC<PropsWithChildren<SearchResultsGridProp
         </div>
       )}
       {groupByConnector ? (
-        <List items={apiIds} onRenderCell={onRenderOperationGroup} />
+        <>
+          {AriaSearchResultsAlert(apiIds.length)}
+          <List items={apiIds} onRenderCell={onRenderOperationGroup} />
+        </>
       ) : (
-        <List items={operationSearchResults} onRenderCell={onRenderOperationCell} />
+        <>
+          {AriaSearchResultsAlert(operationSearchResults.length)}
+          <List items={operationSearchResults} onRenderCell={onRenderOperationCell} />
+        </>
       )}
     </div>
   );
+};
+
+const AriaSearchResultsAlert = (resultCount: number) => {
+  const intl = useIntl();
+  const ariaResultCount = intl.formatMessage({
+    defaultMessage: ' results found',
+    description: 'shows how many results are returned after search',
+  });
+  return <div className={'msla-aria-search-results'} role="alert">{`${resultCount} ${ariaResultCount}`}</div>;
 };
 
 export const OperationActionDataFromOperation = (operation: DiscoveryOperation<DiscoveryResultTypes>): OperationActionData => ({
