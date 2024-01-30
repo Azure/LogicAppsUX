@@ -523,20 +523,19 @@ const getSwaggerFromService = async (serviceDetails: CustomSwaggerServiceDetails
 
 export const updateInvokerSettings = (
   isTrigger: boolean,
-  tiggerNodeManifest: OperationManifest | undefined,
-  nodeId: string,
+  triggerNodeManifest: OperationManifest | undefined,
   settings: Settings,
-  dispatch: Dispatch,
+  updateNodeSettingsCallback: (invokerSettings: Settings) => void,
   references?: ConnectionReferences
 ): void => {
-  if (!isTrigger && tiggerNodeManifest?.properties?.settings?.invokerConnection) {
-    dispatch(updateNodeSettings({ id: nodeId, settings: { invokerConnection: { ...settings.invokerConnection, isSupported: true } } }));
+  if (!isTrigger && triggerNodeManifest?.properties?.settings?.invokerConnection) {
+    updateNodeSettingsCallback({ invokerConnection: { ...settings.invokerConnection, isSupported: true } });
   }
   if (references) {
     Object.keys(references).forEach((key) => {
       const impersonationSource = references[key].impersonation?.source;
       if (impersonationSource === ImpersonationSource.Invoker) {
-        dispatch(updateNodeSettings({ id: nodeId, settings: { invokerConnection: { isSupported: true, value: { enabled: true } } } }));
+        updateNodeSettingsCallback({ invokerConnection: { isSupported: true, value: { enabled: true } } });
       }
     });
   }
