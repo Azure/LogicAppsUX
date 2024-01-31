@@ -1,20 +1,19 @@
 # Logic Apps Designer
-## [2.108.0](https://github.com/Azure/LogicAppsUX/compare/v2.107.0...v2.108.0) (2024-01-26)
 
+## [2.108.0](https://github.com/Azure/LogicAppsUX/compare/v2.107.0...v2.108.0) (2024-01-26)
 
 ### Features
 
-* **Designer:** Added Consumption run service ([#4072](https://github.com/Azure/LogicAppsUX/issues/4072)) ([4a4e2ee](https://github.com/Azure/LogicAppsUX/commit/4a4e2ee96a01e90ae749dbd4a73b03deca44a787))
-
+- **Designer:** Added Consumption run service ([#4072](https://github.com/Azure/LogicAppsUX/issues/4072)) ([4a4e2ee](https://github.com/Azure/LogicAppsUX/commit/4a4e2ee96a01e90ae749dbd4a73b03deca44a787))
 
 ### Bug Fixes
 
-* **designer:** Accessibility Issues in Settings ([#4070](https://github.com/Azure/LogicAppsUX/issues/4070)) ([cad9330](https://github.com/Azure/LogicAppsUX/commit/cad93308535325f83dec8829247f3be8d39938b0))
-* **designer:** Add focus border to search cards for keyboard nav ([#4060](https://github.com/Azure/LogicAppsUX/issues/4060)) ([7931315](https://github.com/Azure/LogicAppsUX/commit/7931315746537c8523a98419b41d9b148c84ff3b))
-* **designer:** Fix tab order for cards ([#4059](https://github.com/Azure/LogicAppsUX/issues/4059)) ([8ed5787](https://github.com/Azure/LogicAppsUX/commit/8ed5787805876c20d846e907271daba9f468687e))
-* **Designer:** Fixed APIM required parameter issue in Standard ([#4065](https://github.com/Azure/LogicAppsUX/issues/4065)) ([b69cdfc](https://github.com/Azure/LogicAppsUX/commit/b69cdfcd95ede1606aa1fe653bd8b51738a584a2))
-* **Designer:** Multi-select showing as single-select ([#4071](https://github.com/Azure/LogicAppsUX/issues/4071)) ([678ebbf](https://github.com/Azure/LogicAppsUX/commit/678ebbfb47629bd75e50986d80c4853fd8d2ad8c))
-* **Designer:** String Expression Uncasting to Literal On Initialization ([#4073](https://github.com/Azure/LogicAppsUX/issues/4073)) ([9b9f623](https://github.com/Azure/LogicAppsUX/commit/9b9f62338e96c51b1c7ef24e5e5f34d4387ca106))
+- **designer:** Accessibility Issues in Settings ([#4070](https://github.com/Azure/LogicAppsUX/issues/4070)) ([cad9330](https://github.com/Azure/LogicAppsUX/commit/cad93308535325f83dec8829247f3be8d39938b0))
+- **designer:** Add focus border to search cards for keyboard nav ([#4060](https://github.com/Azure/LogicAppsUX/issues/4060)) ([7931315](https://github.com/Azure/LogicAppsUX/commit/7931315746537c8523a98419b41d9b148c84ff3b))
+- **designer:** Fix tab order for cards ([#4059](https://github.com/Azure/LogicAppsUX/issues/4059)) ([8ed5787](https://github.com/Azure/LogicAppsUX/commit/8ed5787805876c20d846e907271daba9f468687e))
+- **Designer:** Fixed APIM required parameter issue in Standard ([#4065](https://github.com/Azure/LogicAppsUX/issues/4065)) ([b69cdfc](https://github.com/Azure/LogicAppsUX/commit/b69cdfcd95ede1606aa1fe653bd8b51738a584a2))
+- **Designer:** Multi-select showing as single-select ([#4071](https://github.com/Azure/LogicAppsUX/issues/4071)) ([678ebbf](https://github.com/Azure/LogicAppsUX/commit/678ebbfb47629bd75e50986d80c4853fd8d2ad8c))
+- **Designer:** String Expression Uncasting to Literal On Initialization ([#4073](https://github.com/Azure/LogicAppsUX/issues/4073)) ([9b9f623](https://github.com/Azure/LogicAppsUX/commit/9b9f62338e96c51b1c7ef24e5e5f34d4387ca106))
 
 ## [2.107.0](https://github.com/Azure/LogicAppsUX/compare/v2.106.0...v2.107.0) (2024-01-25)
 
