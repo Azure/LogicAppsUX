@@ -2117,6 +2117,12 @@
       "value": "Wprowadź hasło w postaci zwykłego tekstu lub użyj parametru secure"
     }
   ],
+  "BQyLiu": [
+    {
+      "type": 0,
+      "value": "results found"
+    }
+  ],
   "BS3gy8": [
     {
       "type": 0,
@@ -3898,7 +3904,7 @@
   "NFgfP4": [
     {
       "type": 0,
-      "value": "item"
+      "value": "element"
     }
   ],
   "NGJ00e": [
@@ -4274,7 +4280,7 @@
   "PDMP/Z": [
     {
       "type": 0,
-      "value": "Collapsed"
+      "value": "Zwinięte"
     }
   ],
   "PNk3n4": [
@@ -7078,7 +7084,7 @@
   "hJbr09": [
     {
       "type": 0,
-      "value": "Click to Collapse"
+      "value": "Kliknij, aby zwinąć"
     }
   ],
   "hMf2TA": [
@@ -8770,7 +8776,7 @@
   "qdUeUk": [
     {
       "type": 0,
-      "value": "Click to Expand"
+      "value": "Kliknij, aby rozwinąć"
     }
   ],
   "qiIs4V": [
@@ -8842,7 +8848,7 @@
   "r4zp7m": [
     {
       "type": 0,
-      "value": "Expanded"
+      "value": "Rozwinięte"
     }
   ],
   "r7vZ5a": [

@@ -2098,6 +2098,12 @@
       "value": "Immettere la password come testo normale o usare un parametro protetto"
     }
   ],
+  "BQyLiu": [
+    {
+      "type": 0,
+      "value": "results found"
+    }
+  ],
   "BS3gy8": [
     {
       "type": 0,
@@ -3841,7 +3847,7 @@
   "NFgfP4": [
     {
       "type": 0,
-      "value": "item"
+      "value": "elemento"
     }
   ],
   "NGJ00e": [
@@ -4225,7 +4231,7 @@
   "PDMP/Z": [
     {
       "type": 0,
-      "value": "Collapsed"
+      "value": "Compressa"
     }
   ],
   "PNk3n4": [
@@ -7010,7 +7016,7 @@
   "hJbr09": [
     {
       "type": 0,
-      "value": "Click to Collapse"
+      "value": "Fare clic per comprimere"
     }
   ],
   "hMf2TA": [
@@ -8649,7 +8655,7 @@
   "qdUeUk": [
     {
       "type": 0,
-      "value": "Click to Expand"
+      "value": "Fare clic per espandere"
     }
   ],
   "qiIs4V": [
@@ -8721,7 +8727,7 @@
   "r4zp7m": [
     {
       "type": 0,
-      "value": "Expanded"
+      "value": "Espansa"
     }
   ],
   "r7vZ5a": [

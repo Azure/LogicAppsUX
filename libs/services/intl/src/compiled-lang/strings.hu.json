@@ -2095,6 +2095,12 @@
       "value": "Adja meg a jelszót egyszerű szövegként, vagy használjon biztonságos paramétert"
     }
   ],
+  "BQyLiu": [
+    {
+      "type": 0,
+      "value": "results found"
+    }
+  ],
   "BS3gy8": [
     {
       "type": 0,
@@ -3832,7 +3838,7 @@
   "NFgfP4": [
     {
       "type": 0,
-      "value": "item"
+      "value": "elem"
     }
   ],
   "NGJ00e": [
@@ -4208,7 +4214,7 @@
   "PDMP/Z": [
     {
       "type": 0,
-      "value": "Collapsed"
+      "value": "Összecsukva"
     }
   ],
   "PNk3n4": [
@@ -8660,7 +8666,7 @@
   "r4zp7m": [
     {
       "type": 0,
-      "value": "Expanded"
+      "value": "Kibontva"
     }
   ],
   "r7vZ5a": [

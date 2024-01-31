@@ -2117,6 +2117,12 @@
       "value": "Zadejte heslo jako prostý text nebo použijte zabezpečený parametr."
     }
   ],
+  "BQyLiu": [
+    {
+      "type": 0,
+      "value": "results found"
+    }
+  ],
   "BS3gy8": [
     {
       "type": 0,
@@ -3890,7 +3896,7 @@
   "NFgfP4": [
     {
       "type": 0,
-      "value": "item"
+      "value": "položka"
     }
   ],
   "NGJ00e": [
@@ -4270,7 +4276,7 @@
   "PDMP/Z": [
     {
       "type": 0,
-      "value": "Collapsed"
+      "value": "Sbaleno"
     }
   ],
   "PNk3n4": [
@@ -7070,7 +7076,7 @@
   "hJbr09": [
     {
       "type": 0,
-      "value": "Click to Collapse"
+      "value": "Kliknutím sbalíte."
     }
   ],
   "hMf2TA": [
@@ -8750,7 +8756,7 @@
   "qdUeUk": [
     {
       "type": 0,
-      "value": "Click to Expand"
+      "value": "Kliknutím rozbalte."
     }
   ],
   "qiIs4V": [
@@ -8822,7 +8828,7 @@
   "r4zp7m": [
     {
       "type": 0,
-      "value": "Expanded"
+      "value": "Rozbaleno"
     }
   ],
   "r7vZ5a": [

@@ -2087,6 +2087,12 @@
       "value": "Parolayı düz metin olarak girin veya güvenli bir parametre kullanın"
     }
   ],
+  "BQyLiu": [
+    {
+      "type": 0,
+      "value": "results found"
+    }
+  ],
   "BS3gy8": [
     {
       "type": 0,
@@ -3812,7 +3818,7 @@
   "NFgfP4": [
     {
       "type": 0,
-      "value": "item"
+      "value": "öğe"
     }
   ],
   "NGJ00e": [
@@ -4188,7 +4194,7 @@
   "PDMP/Z": [
     {
       "type": 0,
-      "value": "Collapsed"
+      "value": "Daraltıldı"
     }
   ],
   "PNk3n4": [
@@ -6958,7 +6964,7 @@
   "hJbr09": [
     {
       "type": 0,
-      "value": "Click to Collapse"
+      "value": "Daraltmak için Tıklayın"
     }
   ],
   "hMf2TA": [
@@ -8564,7 +8570,7 @@
   "qdUeUk": [
     {
       "type": 0,
-      "value": "Click to Expand"
+      "value": "Genişletmek için Tıklayın"
     }
   ],
   "qiIs4V": [
@@ -8636,7 +8642,7 @@
   "r4zp7m": [
     {
       "type": 0,
-      "value": "Expanded"
+      "value": "Genişletildi"
     }
   ],
   "r7vZ5a": [

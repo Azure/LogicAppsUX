@@ -2087,6 +2087,12 @@
       "value": "Wachtwoord invoeren als tekst zonder opmaak of een beveiligde parameter gebruiken"
     }
   ],
+  "BQyLiu": [
+    {
+      "type": 0,
+      "value": "results found"
+    }
+  ],
   "BS3gy8": [
     {
       "type": 0,
@@ -4192,7 +4198,7 @@
   "PDMP/Z": [
     {
       "type": 0,
-      "value": "Collapsed"
+      "value": "Samengevouwen"
     }
   ],
   "PNk3n4": [
@@ -8648,7 +8654,7 @@
   "r4zp7m": [
     {
       "type": 0,
-      "value": "Expanded"
+      "value": "Uitgevouwen"
     }
   ],
   "r7vZ5a": [

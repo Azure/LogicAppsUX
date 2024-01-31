@@ -2088,6 +2088,12 @@
       "value": "以纯文本形式输入密码或使用安全参数"
     }
   ],
+  "BQyLiu": [
+    {
+      "type": 0,
+      "value": "results found"
+    }
+  ],
   "BS3gy8": [
     {
       "type": 0,
@@ -3799,7 +3805,7 @@
   "NFgfP4": [
     {
       "type": 0,
-      "value": "item"
+      "value": "项"
     }
   ],
   "NGJ00e": [
@@ -4175,7 +4181,7 @@
   "PDMP/Z": [
     {
       "type": 0,
-      "value": "Collapsed"
+      "value": "已折叠"
     }
   ],
   "PNk3n4": [
@@ -6966,7 +6972,7 @@
   "hJbr09": [
     {
       "type": 0,
-      "value": "Click to Collapse"
+      "value": "单击以折叠"
     }
   ],
   "hMf2TA": [
@@ -8559,7 +8565,7 @@
   "qdUeUk": [
     {
       "type": 0,
-      "value": "Click to Expand"
+      "value": "单击以展开"
     }
   ],
   "qiIs4V": [
@@ -8631,7 +8637,7 @@
   "r4zp7m": [
     {
       "type": 0,
-      "value": "Expanded"
+      "value": "已展开"
     }
   ],
   "r7vZ5a": [
