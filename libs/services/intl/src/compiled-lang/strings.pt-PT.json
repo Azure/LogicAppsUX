@@ -2106,6 +2106,12 @@
       "value": "Introduzir palavra-passe como texto simples ou utilizar um parâmetro seguro"
     }
   ],
+  "BQyLiu": [
+    {
+      "type": 0,
+      "value": "results found"
+    }
+  ],
   "BS3gy8": [
     {
       "type": 0,
@@ -4241,7 +4247,7 @@
   "PDMP/Z": [
     {
       "type": 0,
-      "value": "Collapsed"
+      "value": "Fechada"
     }
   ],
   "PNk3n4": [
@@ -7034,7 +7040,7 @@
   "hJbr09": [
     {
       "type": 0,
-      "value": "Click to Collapse"
+      "value": "Clicar para Fechar"
     }
   ],
   "hMf2TA": [
@@ -8677,7 +8683,7 @@
   "qdUeUk": [
     {
       "type": 0,
-      "value": "Click to Expand"
+      "value": "Clicar para Expandir"
     }
   ],
   "qiIs4V": [
@@ -8749,7 +8755,7 @@
   "r4zp7m": [
     {
       "type": 0,
-      "value": "Expanded"
+      "value": "Expandida"
     }
   ],
   "r7vZ5a": [

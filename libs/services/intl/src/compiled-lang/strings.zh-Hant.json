@@ -2084,6 +2084,12 @@
       "value": "以純文字形式輸入密碼或使用安全參數"
     }
   ],
+  "BQyLiu": [
+    {
+      "type": 0,
+      "value": "results found"
+    }
+  ],
   "BS3gy8": [
     {
       "type": 0,
@@ -3795,7 +3801,7 @@
   "NFgfP4": [
     {
       "type": 0,
-      "value": "item"
+      "value": "項目"
     }
   ],
   "NGJ00e": [
@@ -4171,7 +4177,7 @@
   "PDMP/Z": [
     {
       "type": 0,
-      "value": "Collapsed"
+      "value": "已摺疊"
     }
   ],
   "PNk3n4": [
@@ -6958,7 +6964,7 @@
   "hJbr09": [
     {
       "type": 0,
-      "value": "Click to Collapse"
+      "value": "按一下以摺疊"
     }
   ],
   "hMf2TA": [
@@ -8527,7 +8533,7 @@
   "qdUeUk": [
     {
       "type": 0,
-      "value": "Click to Expand"
+      "value": "按一下以展開"
     }
   ],
   "qiIs4V": [
@@ -8599,7 +8605,7 @@
   "r4zp7m": [
     {
       "type": 0,
-      "value": "Expanded"
+      "value": "已展開"
     }
   ],
   "r7vZ5a": [

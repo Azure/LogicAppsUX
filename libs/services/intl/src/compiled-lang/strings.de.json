@@ -2111,6 +2111,12 @@
       "value": "Geben Sie das Kennwort in Nur-Text-Form oder als sicheren Parameter ein."
     }
   ],
+  "BQyLiu": [
+    {
+      "type": 0,
+      "value": "results found"
+    }
+  ],
   "BS3gy8": [
     {
       "type": 0,
@@ -3856,7 +3862,7 @@
   "NFgfP4": [
     {
       "type": 0,
-      "value": "item"
+      "value": "Element"
     }
   ],
   "NGJ00e": [
@@ -4232,7 +4238,7 @@
   "PDMP/Z": [
     {
       "type": 0,
-      "value": "Collapsed"
+      "value": "Reduziert"
     }
   ],
   "PNk3n4": [
@@ -7034,7 +7040,7 @@
   "hJbr09": [
     {
       "type": 0,
-      "value": "Click to Collapse"
+      "value": "Zum Reduzieren klicken"
     }
   ],
   "hMf2TA": [
@@ -8648,7 +8654,7 @@
   "qdUeUk": [
     {
       "type": 0,
-      "value": "Click to Expand"
+      "value": "Zum Erweitern klicken"
     }
   ],
   "qiIs4V": [
@@ -8720,7 +8726,7 @@
   "r4zp7m": [
     {
       "type": 0,
-      "value": "Expanded"
+      "value": "Erweitert"
     }
   ],
   "r7vZ5a": [

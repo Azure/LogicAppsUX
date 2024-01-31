@@ -2068,6 +2068,12 @@
       "value": "일반 텍스트로 암호 입력 또는 보안 매개 변수 사용"
     }
   ],
+  "BQyLiu": [
+    {
+      "type": 0,
+      "value": "results found"
+    }
+  ],
   "BS3gy8": [
     {
       "type": 0,
@@ -3771,7 +3777,7 @@
   "NFgfP4": [
     {
       "type": 0,
-      "value": "item"
+      "value": "항목"
     }
   ],
   "NGJ00e": [
@@ -4147,7 +4153,7 @@
   "PDMP/Z": [
     {
       "type": 0,
-      "value": "Collapsed"
+      "value": "축소됨"
     }
   ],
   "PNk3n4": [
@@ -6906,7 +6912,7 @@
   "hJbr09": [
     {
       "type": 0,
-      "value": "Click to Collapse"
+      "value": "클릭하여 축소"
     }
   ],
   "hMf2TA": [
@@ -8471,7 +8477,7 @@
   "qdUeUk": [
     {
       "type": 0,
-      "value": "Click to Expand"
+      "value": "클릭하여 확장"
     }
   ],
   "qiIs4V": [
@@ -8543,7 +8549,7 @@
   "r4zp7m": [
     {
       "type": 0,
-      "value": "Expanded"
+      "value": "확장됨"
     }
   ],
   "r7vZ5a": [

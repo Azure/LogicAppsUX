@@ -2106,6 +2106,12 @@
       "value": "Escribir la contraseña como texto sin formato o usar un parámetro seguro"
     }
   ],
+  "BQyLiu": [
+    {
+      "type": 0,
+      "value": "results found"
+    }
+  ],
   "BS3gy8": [
     {
       "type": 0,
@@ -3857,7 +3863,7 @@
   "NFgfP4": [
     {
       "type": 0,
-      "value": "item"
+      "value": "elemento"
     }
   ],
   "NGJ00e": [
@@ -4233,7 +4239,7 @@
   "PDMP/Z": [
     {
       "type": 0,
-      "value": "Collapsed"
+      "value": "Contraído"
     }
   ],
   "PNk3n4": [
@@ -8733,7 +8739,7 @@
   "r4zp7m": [
     {
       "type": 0,
-      "value": "Expanded"
+      "value": "Ampliado"
     }
   ],
   "r7vZ5a": [

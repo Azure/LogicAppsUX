@@ -2117,6 +2117,12 @@
       "value": "Введите пароль в виде обычного текста или используйте безопасный параметр."
     }
   ],
+  "BQyLiu": [
+    {
+      "type": 0,
+      "value": "results found"
+    }
+  ],
   "BS3gy8": [
     {
       "type": 0,
@@ -3898,7 +3904,7 @@
   "NFgfP4": [
     {
       "type": 0,
-      "value": "item"
+      "value": "элемент"
     }
   ],
   "NGJ00e": [
@@ -4274,7 +4280,7 @@
   "PDMP/Z": [
     {
       "type": 0,
-      "value": "Collapsed"
+      "value": "Свернуто"
     }
   ],
   "PNk3n4": [
@@ -7074,7 +7080,7 @@
   "hJbr09": [
     {
       "type": 0,
-      "value": "Click to Collapse"
+      "value": "Щелкните, чтобы свернуть"
     }
   ],
   "hMf2TA": [
@@ -8754,7 +8760,7 @@
   "qdUeUk": [
     {
       "type": 0,
-      "value": "Click to Expand"
+      "value": "Щелкните, чтобы развернуть"
     }
   ],
   "qiIs4V": [
@@ -8826,7 +8832,7 @@
   "r4zp7m": [
     {
       "type": 0,
-      "value": "Expanded"
+      "value": "Развернуто"
     }
   ],
   "r7vZ5a": [

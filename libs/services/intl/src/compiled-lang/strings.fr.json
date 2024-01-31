@@ -2106,6 +2106,12 @@
       "value": "Entrez le mot de passe en tant que texte brut ou utilisez un paramètre sécurisé"
     }
   ],
+  "BQyLiu": [
+    {
+      "type": 0,
+      "value": "results found"
+    }
+  ],
   "BS3gy8": [
     {
       "type": 0,
@@ -3857,7 +3863,7 @@
   "NFgfP4": [
     {
       "type": 0,
-      "value": "item"
+      "value": "élément"
     }
   ],
   "NGJ00e": [
@@ -4233,7 +4239,7 @@
   "PDMP/Z": [
     {
       "type": 0,
-      "value": "Collapsed"
+      "value": "Réduit"
     }
   ],
   "PNk3n4": [
@@ -7026,7 +7032,7 @@
   "hJbr09": [
     {
       "type": 0,
-      "value": "Click to Collapse"
+      "value": "Cliquer pour réduire"
     }
   ],
   "hMf2TA": [
@@ -8669,7 +8675,7 @@
   "qdUeUk": [
     {
       "type": 0,
-      "value": "Click to Expand"
+      "value": "Cliquer pour développer"
     }
   ],
   "qiIs4V": [
@@ -8741,7 +8747,7 @@
   "r4zp7m": [
     {
       "type": 0,
-      "value": "Expanded"
+      "value": "Développé"
     }
   ],
   "r7vZ5a": [
