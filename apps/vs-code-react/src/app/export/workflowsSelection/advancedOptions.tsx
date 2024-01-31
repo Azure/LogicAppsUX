@@ -42,6 +42,14 @@ export const AdvancedOptions: React.FC = () => {
       defaultMessage: 'Generate infrastructure templates',
       description: 'Generate infrastructure templates',
     }),
+    INTEGRATION_ACCOUNT_SOURCE: intl.formatMessage({
+      defaultMessage: 'Make Integration Account the default source for Transformations and Schema validation',
+      description: 'Make Integration Account the default source for Transformations and Schema validation',
+    }),
+    EXPORT_CUSTOM_API_ACTIONS_TO_API_MANAGEMENT_ACTIONS: intl.formatMessage({
+      defaultMessage: 'Export Custom Connector Actions as API Management Actions',
+      description: 'Export Custom Connector Actions as API Management Actions',
+    }),
   };
 
   const advancedOptions: IDropdownOption[] = [
@@ -51,6 +59,16 @@ export const AdvancedOptions: React.FC = () => {
       text: intlText.CLONE_CONNECTIONS,
       selected: false,
       disabled: isCloneConnectionsAvailable(selectedAdvanceOptions),
+    },
+    {
+      key: AdvancedOptionsTypes.integrationAccountSource,
+      text: intlText.INTEGRATION_ACCOUNT_SOURCE,
+      selected: false,
+    },
+    {
+      key: AdvancedOptionsTypes.exportCustomApiActionsToAPIManagementActions,
+      text: intlText.EXPORT_CUSTOM_API_ACTIONS_TO_API_MANAGEMENT_ACTIONS,
+      selected: false,
     },
   ];
 

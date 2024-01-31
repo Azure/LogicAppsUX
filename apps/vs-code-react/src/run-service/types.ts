@@ -346,5 +346,7 @@ export const AdvancedOptionsTypes = {
   off: 'Off',
   cloneConnections: 'cloneConnections',
   generateInfrastructureTemplates: 'generateInfrastructureTemplates',
+  integrationAccountSource: 'integrationAccountSource',
+  exportCustomApiActionsToAPIManagementActions: 'exportCustomApiActionsToAPIManagementActions',
 };
 export type AdvancedOptionsTypes = (typeof AdvancedOptionsTypes)[keyof typeof AdvancedOptionsTypes];
