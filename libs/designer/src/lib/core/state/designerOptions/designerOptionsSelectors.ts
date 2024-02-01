@@ -12,9 +12,6 @@ export const useMonitoringView = () => {
 export const useLegacyWorkflowParameters = () => {
   return useSelector((state: RootState) => state.designerOptions.useLegacyWorkflowParameters);
 };
-export const useRecurrenceInterval = () => {
-  return useSelector((state: RootState) => state.designerOptions.recurrenceInterval);
-};
 export const useHostOptions = () => {
   return useSelector((state: RootState) => state.designerOptions.hostOptions);
 };

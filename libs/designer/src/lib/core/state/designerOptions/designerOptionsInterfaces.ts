@@ -27,12 +27,12 @@ export interface DesignerOptionsState {
   isDarkMode?: boolean;
   servicesInitialized?: boolean;
   useLegacyWorkflowParameters?: boolean;
-  recurrenceInterval?: LogicApps.Recurrence;
   isXrmConnectionReferenceMode?: boolean;
   suppressDefaultNodeSelectFunctionality?: boolean;
   hostOptions: {
     displayRuntimeInfo: boolean; // show info about where the action is run(i.e. InApp/Shared/Custom)
     suppressCastingForSerialize?: boolean; // suppress casting for serialize
+    recurrenceInterval?: LogicApps.Recurrence;
   };
   nodeSelectAdditionalCallback?: (nodeId: string) => any;
   showConnectionsPanel?: boolean;

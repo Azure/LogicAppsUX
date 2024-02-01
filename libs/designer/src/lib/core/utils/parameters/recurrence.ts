@@ -54,7 +54,7 @@ export const getRecurrenceParameters = (recurrence: RecurrenceSetting | undefine
 
   const queryClient = getReactQueryClient();
   const recurrenceInterval = queryClient.getQueryData(['recurrenceInterval']);
-  const defaultRecurrence = recurrenceInterval ? recurrenceInterval : constants.DEFAULT_RECURRENCE;
+  const defaultRecurrence = recurrenceInterval ?? constants.DEFAULT_RECURRENCE;
 
   for (const parameter of recurrenceParameters) {
     if (!parameter.default) {
