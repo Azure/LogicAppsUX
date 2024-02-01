@@ -5809,7 +5809,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Collapsed]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Tertutup]]></Val>
+            <Val><![CDATA[Diciutkan]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -9624,6 +9624,9 @@
       <Item ItemId=";hJbr09" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Click to Collapse]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Klik untuk Menciutkan]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -11862,6 +11865,9 @@
       <Item ItemId=";qdUeUk" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Click to Expand]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Klik untuk Meluaskan]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
