@@ -1111,6 +1111,12 @@
       "value": "Autorita"
     }
   ],
+  "5WTRY8": [
+    {
+      "type": 0,
+      "value": "Errors"
+    }
+  ],
   "5akc1Q": [
     {
       "type": 0,
@@ -2117,6 +2123,12 @@
       "value": "Zadejte heslo jako prostý text nebo použijte zabezpečený parametr."
     }
   ],
+  "BQyLiu": [
+    {
+      "type": 0,
+      "value": "results found"
+    }
+  ],
   "BS3gy8": [
     {
       "type": 0,
@@ -2703,12 +2715,6 @@
     {
       "type": 0,
       "value": "Vrátí část řetězce definovanou počátečním a koncovým indexem."
-    }
-  ],
-  "FOiBk/": [
-    {
-      "type": 0,
-      "value": "Chyby"
     }
   ],
   "FT3jt6": [
@@ -3701,6 +3707,12 @@
       "value": "O aplikaci"
     }
   ],
+  "M0bbZk": [
+    {
+      "type": 0,
+      "value": "Flow Checker"
+    }
+  ],
   "M0xrm+": [
     {
       "type": 0,
@@ -3890,7 +3902,7 @@
   "NFgfP4": [
     {
       "type": 0,
-      "value": "item"
+      "value": "položka"
     }
   ],
   "NGJ00e": [
@@ -4027,6 +4039,12 @@
     {
       "type": 0,
       "value": "Načítají se soubory..."
+    }
+  ],
+  "O6VHe0": [
+    {
+      "type": 0,
+      "value": "Operation warnings"
     }
   ],
   "O7HhyP": [
@@ -4270,7 +4288,7 @@
   "PDMP/Z": [
     {
       "type": 0,
-      "value": "Collapsed"
+      "value": "Sbaleno"
     }
   ],
   "PNk3n4": [
@@ -5367,6 +5385,12 @@
     {
       "type": 0,
       "value": "Typ chyby"
+    }
+  ],
+  "Vi5TIV": [
+    {
+      "type": 0,
+      "value": "No warnings found."
     }
   ],
   "VlvlX1": [
@@ -7070,7 +7094,13 @@
   "hJbr09": [
     {
       "type": 0,
-      "value": "Click to Collapse"
+      "value": "Kliknutím sbalíte."
+    }
+  ],
+  "hLOIwp": [
+    {
+      "type": 0,
+      "value": "Warnings"
     }
   ],
   "hMf2TA": [
@@ -8750,7 +8780,7 @@
   "qdUeUk": [
     {
       "type": 0,
-      "value": "Click to Expand"
+      "value": "Kliknutím rozbalte."
     }
   ],
   "qiIs4V": [
@@ -8822,7 +8852,7 @@
   "r4zp7m": [
     {
       "type": 0,
-      "value": "Expanded"
+      "value": "Rozbaleno"
     }
   ],
   "r7vZ5a": [

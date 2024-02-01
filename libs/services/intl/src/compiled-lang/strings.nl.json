@@ -1111,6 +1111,12 @@
       "value": "Instantie"
     }
   ],
+  "5WTRY8": [
+    {
+      "type": 0,
+      "value": "Errors"
+    }
+  ],
   "5akc1Q": [
     {
       "type": 0,
@@ -2087,6 +2093,12 @@
       "value": "Wachtwoord invoeren als tekst zonder opmaak of een beveiligde parameter gebruiken"
     }
   ],
+  "BQyLiu": [
+    {
+      "type": 0,
+      "value": "results found"
+    }
+  ],
   "BS3gy8": [
     {
       "type": 0,
@@ -2673,12 +2685,6 @@
     {
       "type": 0,
       "value": "Retourneert een sectie van een tekenreeks die wordt gedefinieerd door de beginindex en de eindindex"
-    }
-  ],
-  "FOiBk/": [
-    {
-      "type": 0,
-      "value": "Fouten"
     }
   ],
   "FT3jt6": [
@@ -3631,6 +3637,12 @@
       "value": "Over"
     }
   ],
+  "M0bbZk": [
+    {
+      "type": 0,
+      "value": "Flow Checker"
+    }
+  ],
   "M0xrm+": [
     {
       "type": 0,
@@ -3955,6 +3967,12 @@
       "value": "Bestanden laden..."
     }
   ],
+  "O6VHe0": [
+    {
+      "type": 0,
+      "value": "Operation warnings"
+    }
+  ],
   "O7HhyP": [
     {
       "type": 0,
@@ -4192,7 +4210,7 @@
   "PDMP/Z": [
     {
       "type": 0,
-      "value": "Collapsed"
+      "value": "Samengevouwen"
     }
   ],
   "PNk3n4": [
@@ -5267,6 +5285,12 @@
     {
       "type": 0,
       "value": "Fouttype"
+    }
+  ],
+  "Vi5TIV": [
+    {
+      "type": 0,
+      "value": "No warnings found."
     }
   ],
   "VlvlX1": [
@@ -6970,7 +6994,13 @@
   "hJbr09": [
     {
       "type": 0,
-      "value": "Click to Collapse"
+      "value": "Klik om samen te vouwen"
+    }
+  ],
+  "hLOIwp": [
+    {
+      "type": 0,
+      "value": "Warnings"
     }
   ],
   "hMf2TA": [
@@ -8576,7 +8606,7 @@
   "qdUeUk": [
     {
       "type": 0,
-      "value": "Click to Expand"
+      "value": "Klik om uit te vouwen"
     }
   ],
   "qiIs4V": [
@@ -8648,7 +8678,7 @@
   "r4zp7m": [
     {
       "type": 0,
-      "value": "Expanded"
+      "value": "Uitgevouwen"
     }
   ],
   "r7vZ5a": [
