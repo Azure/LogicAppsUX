@@ -1111,6 +1111,12 @@
       "value": "Utfärdare"
     }
   ],
+  "5WTRY8": [
+    {
+      "type": 0,
+      "value": "Errors"
+    }
+  ],
   "5akc1Q": [
     {
       "type": 0,
@@ -2677,12 +2683,6 @@
       "value": "Returnerar ett avsnitt i en sträng som definieras av start- och slutindexet"
     }
   ],
-  "FOiBk/": [
-    {
-      "type": 0,
-      "value": "Fel"
-    }
-  ],
   "FT3jt6": [
     {
       "type": 0,
@@ -3637,6 +3637,12 @@
       "value": "Om"
     }
   ],
+  "M0bbZk": [
+    {
+      "type": 0,
+      "value": "Flow Checker"
+    }
+  ],
   "M0xrm+": [
     {
       "type": 0,
@@ -3961,6 +3967,12 @@
       "value": "Läser in filer..."
     }
   ],
+  "O6VHe0": [
+    {
+      "type": 0,
+      "value": "Operation warnings"
+    }
+  ],
   "O7HhyP": [
     {
       "type": 0,
@@ -4198,7 +4210,7 @@
   "PDMP/Z": [
     {
       "type": 0,
-      "value": "Dolt"
+      "value": "Komprimerat"
     }
   ],
   "PNk3n4": [
@@ -5265,6 +5277,12 @@
     {
       "type": 0,
       "value": "Feltyp"
+    }
+  ],
+  "Vi5TIV": [
+    {
+      "type": 0,
+      "value": "No warnings found."
     }
   ],
   "VlvlX1": [
@@ -6968,7 +6986,13 @@
   "hJbr09": [
     {
       "type": 0,
-      "value": "Click to Collapse"
+      "value": "Klicka för att dölja"
+    }
+  ],
+  "hLOIwp": [
+    {
+      "type": 0,
+      "value": "Warnings"
     }
   ],
   "hMf2TA": [
@@ -8574,7 +8598,7 @@
   "qdUeUk": [
     {
       "type": 0,
-      "value": "Click to Expand"
+      "value": "Klicka för att visa"
     }
   ],
   "qiIs4V": [
@@ -8646,7 +8670,7 @@
   "r4zp7m": [
     {
       "type": 0,
-      "value": "Utökat"
+      "value": "Expanderat"
     }
   ],
   "r7vZ5a": [
