@@ -26,7 +26,7 @@ export interface WorkflowLoadingState {
   areCustomEditorsEnabled?: boolean;
   hostOptions: {
     displayRuntimeInfo: boolean; // show info about where the action is run(i.e. InApp/Shared/Custom)
-    forceEnableSplitOn?: boolean; // force enable split on for all actions
+    forceEnableSplitOn?: boolean; // force enable split on (by default it is disabled on stateless workflows)
   };
 }
 
