@@ -101,6 +101,7 @@ export const AdvancedOptions: React.FC = () => {
         onChange={onChangeOptions}
         selectedKeys={selectedAdvanceOptions}
         multiSelect
+        className="msla-export-workflows-advanced-options-dropdown"
       />
     </div>
   );

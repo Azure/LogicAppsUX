@@ -96,7 +96,9 @@ export const getAdvanceOptionsSelection = (
   const updatedOptions = [...selectedAdvanceOptions];
 
   if (!!hasInfrastructureTemplates(updatedOptions) && selectedOption.key === AdvancedOptionsTypes.generateInfrastructureTemplates) {
-    return [];
+    return updatedOptions.filter(
+      (option) => option !== AdvancedOptionsTypes.cloneConnections && option !== AdvancedOptionsTypes.generateInfrastructureTemplates
+    );
   }
 
   const index = updatedOptions.indexOf(selectedOption.key as AdvancedOptionsTypes);
