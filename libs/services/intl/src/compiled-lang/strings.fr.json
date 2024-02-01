@@ -1111,6 +1111,12 @@
       "value": "Autorité"
     }
   ],
+  "5WTRY8": [
+    {
+      "type": 0,
+      "value": "Errors"
+    }
+  ],
   "5akc1Q": [
     {
       "type": 0,
@@ -2700,12 +2706,6 @@
       "value": "Retourne une section d’une chaîne définie par l’index de début et l’index de fin"
     }
   ],
-  "FOiBk/": [
-    {
-      "type": 0,
-      "value": "Erreurs"
-    }
-  ],
   "FT3jt6": [
     {
       "type": 0,
@@ -3674,6 +3674,12 @@
       "value": "À propos"
     }
   ],
+  "M0bbZk": [
+    {
+      "type": 0,
+      "value": "Flow Checker"
+    }
+  ],
   "M0xrm+": [
     {
       "type": 0,
@@ -3996,6 +4002,12 @@
     {
       "type": 0,
       "value": "Chargement des fichiers..."
+    }
+  ],
+  "O6VHe0": [
+    {
+      "type": 0,
+      "value": "Operation warnings"
     }
   ],
   "O7HhyP": [
@@ -5325,6 +5337,12 @@
     {
       "type": 0,
       "value": "Type d’erreur"
+    }
+  ],
+  "Vi5TIV": [
+    {
+      "type": 0,
+      "value": "No warnings found."
     }
   ],
   "VlvlX1": [
@@ -7033,6 +7051,12 @@
     {
       "type": 0,
       "value": "Cliquer pour réduire"
+    }
+  ],
+  "hLOIwp": [
+    {
+      "type": 0,
+      "value": "Warnings"
     }
   ],
   "hMf2TA": [

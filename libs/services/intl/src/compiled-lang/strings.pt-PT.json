@@ -1111,6 +1111,12 @@
       "value": "Autoridade"
     }
   ],
+  "5WTRY8": [
+    {
+      "type": 0,
+      "value": "Errors"
+    }
+  ],
   "5akc1Q": [
     {
       "type": 0,
@@ -2700,12 +2706,6 @@
       "value": "Devolve uma secção de uma cadeia definida pelo índice de início e pelo índice de fim"
     }
   ],
-  "FOiBk/": [
-    {
-      "type": 0,
-      "value": "Erros"
-    }
-  ],
   "FT3jt6": [
     {
       "type": 0,
@@ -3682,6 +3682,12 @@
       "value": "Acerca de"
     }
   ],
+  "M0bbZk": [
+    {
+      "type": 0,
+      "value": "Flow Checker"
+    }
+  ],
   "M0xrm+": [
     {
       "type": 0,
@@ -4004,6 +4010,12 @@
     {
       "type": 0,
       "value": "A carregar Ficheiros..."
+    }
+  ],
+  "O6VHe0": [
+    {
+      "type": 0,
+      "value": "Operation warnings"
     }
   ],
   "O7HhyP": [
@@ -5333,6 +5345,12 @@
     {
       "type": 0,
       "value": "Tipo de Erro"
+    }
+  ],
+  "Vi5TIV": [
+    {
+      "type": 0,
+      "value": "No warnings found."
     }
   ],
   "VlvlX1": [
@@ -7041,6 +7059,12 @@
     {
       "type": 0,
       "value": "Clicar para Fechar"
+    }
+  ],
+  "hLOIwp": [
+    {
+      "type": 0,
+      "value": "Warnings"
     }
   ],
   "hMf2TA": [

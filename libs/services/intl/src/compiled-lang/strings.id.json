@@ -1103,6 +1103,12 @@
       "value": "Otoritas"
     }
   ],
+  "5WTRY8": [
+    {
+      "type": 0,
+      "value": "Errors"
+    }
+  ],
   "5akc1Q": [
     {
       "type": 0,
@@ -2670,12 +2676,6 @@
       "value": "Menghasilkan bagian string yang ditentukan oleh indeks awal dan indeks akhir"
     }
   ],
-  "FOiBk/": [
-    {
-      "type": 0,
-      "value": "Kesalahan"
-    }
-  ],
   "FT3jt6": [
     {
       "type": 0,
@@ -3600,6 +3600,12 @@
       "value": "Tentang"
     }
   ],
+  "M0bbZk": [
+    {
+      "type": 0,
+      "value": "Flow Checker"
+    }
+  ],
   "M0xrm+": [
     {
       "type": 0,
@@ -3924,6 +3930,12 @@
       "value": "Memuat File..."
     }
   ],
+  "O6VHe0": [
+    {
+      "type": 0,
+      "value": "Operation warnings"
+    }
+  ],
   "O7HhyP": [
     {
       "type": 0,
@@ -4165,7 +4177,7 @@
   "PDMP/Z": [
     {
       "type": 0,
-      "value": "Tertutup"
+      "value": "Diciutkan"
     }
   ],
   "PNk3n4": [
@@ -5229,6 +5241,12 @@
     {
       "type": 0,
       "value": "Jenis Kesalahan"
+    }
+  ],
+  "Vi5TIV": [
+    {
+      "type": 0,
+      "value": "No warnings found."
     }
   ],
   "VlvlX1": [
@@ -6928,7 +6946,13 @@
   "hJbr09": [
     {
       "type": 0,
-      "value": "Click to Collapse"
+      "value": "Klik untuk Menciutkan"
+    }
+  ],
+  "hLOIwp": [
+    {
+      "type": 0,
+      "value": "Warnings"
     }
   ],
   "hMf2TA": [
@@ -8505,7 +8529,7 @@
   "qdUeUk": [
     {
       "type": 0,
-      "value": "Click to Expand"
+      "value": "Klik untuk Meluaskan"
     }
   ],
   "qiIs4V": [

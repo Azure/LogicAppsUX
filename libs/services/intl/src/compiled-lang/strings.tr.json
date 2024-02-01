@@ -1103,6 +1103,12 @@
       "value": "Yetkili"
     }
   ],
+  "5WTRY8": [
+    {
+      "type": 0,
+      "value": "Errors"
+    }
+  ],
   "5akc1Q": [
     {
       "type": 0,
@@ -2677,12 +2683,6 @@
       "value": "Başlangıç dizini ve bitiş dizini tarafından tanımlanan bir dize bölümü döndürür"
     }
   ],
-  "FOiBk/": [
-    {
-      "type": 0,
-      "value": "Hatalar"
-    }
-  ],
   "FT3jt6": [
     {
       "type": 0,
@@ -3629,6 +3629,12 @@
       "value": "Hakkında"
     }
   ],
+  "M0bbZk": [
+    {
+      "type": 0,
+      "value": "Flow Checker"
+    }
+  ],
   "M0xrm+": [
     {
       "type": 0,
@@ -3951,6 +3957,12 @@
     {
       "type": 0,
       "value": "Dosyalar Yükleniyor..."
+    }
+  ],
+  "O6VHe0": [
+    {
+      "type": 0,
+      "value": "Operation warnings"
     }
   ],
   "O7HhyP": [
@@ -5269,6 +5281,12 @@
     {
       "type": 0,
       "value": "Hata Türü"
+    }
+  ],
+  "Vi5TIV": [
+    {
+      "type": 0,
+      "value": "No warnings found."
     }
   ],
   "VlvlX1": [
@@ -6965,6 +6983,12 @@
     {
       "type": 0,
       "value": "Daraltmak için Tıklayın"
+    }
+  ],
+  "hLOIwp": [
+    {
+      "type": 0,
+      "value": "Warnings"
     }
   ],
   "hMf2TA": [

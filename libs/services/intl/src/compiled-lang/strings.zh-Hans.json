@@ -1115,6 +1115,12 @@
       "value": "机构"
     }
   ],
+  "5WTRY8": [
+    {
+      "type": 0,
+      "value": "Errors"
+    }
+  ],
   "5akc1Q": [
     {
       "type": 0,
@@ -2686,12 +2692,6 @@
       "value": "返回由开始索引和结束索引定义的字符串部分"
     }
   ],
-  "FOiBk/": [
-    {
-      "type": 0,
-      "value": "错误"
-    }
-  ],
   "FT3jt6": [
     {
       "type": 0,
@@ -3616,6 +3616,12 @@
       "value": "关于"
     }
   ],
+  "M0bbZk": [
+    {
+      "type": 0,
+      "value": "Flow Checker"
+    }
+  ],
   "M0xrm+": [
     {
       "type": 0,
@@ -3938,6 +3944,12 @@
     {
       "type": 0,
       "value": "正在加载文件..."
+    }
+  ],
+  "O6VHe0": [
+    {
+      "type": 0,
+      "value": "Operation warnings"
     }
   ],
   "O7HhyP": [
@@ -5257,6 +5269,12 @@
     {
       "type": 0,
       "value": "错误类型"
+    }
+  ],
+  "Vi5TIV": [
+    {
+      "type": 0,
+      "value": "No warnings found."
     }
   ],
   "VlvlX1": [
@@ -6973,6 +6991,12 @@
     {
       "type": 0,
       "value": "单击以折叠"
+    }
+  ],
+  "hLOIwp": [
+    {
+      "type": 0,
+      "value": "Warnings"
     }
   ],
   "hMf2TA": [

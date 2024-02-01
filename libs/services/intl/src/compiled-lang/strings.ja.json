@@ -1103,6 +1103,12 @@
       "value": "権限"
     }
   ],
+  "5WTRY8": [
+    {
+      "type": 0,
+      "value": "Errors"
+    }
+  ],
   "5akc1Q": [
     {
       "type": 0,
@@ -2666,12 +2672,6 @@
       "value": "開始インデックスと終了インデックスで定義される文字列のセクションを返します"
     }
   ],
-  "FOiBk/": [
-    {
-      "type": 0,
-      "value": "エラー"
-    }
-  ],
   "FT3jt6": [
     {
       "type": 0,
@@ -3596,6 +3596,12 @@
       "value": "情報"
     }
   ],
+  "M0bbZk": [
+    {
+      "type": 0,
+      "value": "Flow Checker"
+    }
+  ],
   "M0xrm+": [
     {
       "type": 0,
@@ -3918,6 +3924,12 @@
     {
       "type": 0,
       "value": "ファイルを読み込んでいます..."
+    }
+  ],
+  "O6VHe0": [
+    {
+      "type": 0,
+      "value": "Operation warnings"
     }
   ],
   "O7HhyP": [
@@ -5221,6 +5233,12 @@
     {
       "type": 0,
       "value": "エラーの種類"
+    }
+  ],
+  "Vi5TIV": [
+    {
+      "type": 0,
+      "value": "No warnings found."
     }
   ],
   "VlvlX1": [
@@ -6917,6 +6935,12 @@
     {
       "type": 0,
       "value": "クリックして折りたたむ"
+    }
+  ],
+  "hLOIwp": [
+    {
+      "type": 0,
+      "value": "Warnings"
     }
   ],
   "hMf2TA": [

@@ -1111,6 +1111,12 @@
       "value": "Urząd"
     }
   ],
+  "5WTRY8": [
+    {
+      "type": 0,
+      "value": "Errors"
+    }
+  ],
   "5akc1Q": [
     {
       "type": 0,
@@ -2711,12 +2717,6 @@
       "value": "Zwraca sekcję ciągu zdefiniowaną przez indeks początkowy i indeks końcowy"
     }
   ],
-  "FOiBk/": [
-    {
-      "type": 0,
-      "value": "Błędy"
-    }
-  ],
   "FT3jt6": [
     {
       "type": 0,
@@ -3715,6 +3715,12 @@
       "value": "Informacje"
     }
   ],
+  "M0bbZk": [
+    {
+      "type": 0,
+      "value": "Flow Checker"
+    }
+  ],
   "M0xrm+": [
     {
       "type": 0,
@@ -4037,6 +4043,12 @@
     {
       "type": 0,
       "value": "Trwa ładowanie plików..."
+    }
+  ],
+  "O6VHe0": [
+    {
+      "type": 0,
+      "value": "Operation warnings"
     }
   ],
   "O7HhyP": [
@@ -5381,6 +5393,12 @@
     {
       "type": 0,
       "value": "Typ błędu"
+    }
+  ],
+  "Vi5TIV": [
+    {
+      "type": 0,
+      "value": "No warnings found."
     }
   ],
   "VlvlX1": [
@@ -7085,6 +7103,12 @@
     {
       "type": 0,
       "value": "Kliknij, aby zwinąć"
+    }
+  ],
+  "hLOIwp": [
+    {
+      "type": 0,
+      "value": "Warnings"
     }
   ],
   "hMf2TA": [
