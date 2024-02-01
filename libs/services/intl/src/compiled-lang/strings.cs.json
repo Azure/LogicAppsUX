@@ -1111,6 +1111,12 @@
       "value": "Autorita"
     }
   ],
+  "5WTRY8": [
+    {
+      "type": 0,
+      "value": "Errors"
+    }
+  ],
   "5akc1Q": [
     {
       "type": 0,
@@ -2711,12 +2717,6 @@
       "value": "Vrátí část řetězce definovanou počátečním a koncovým indexem."
     }
   ],
-  "FOiBk/": [
-    {
-      "type": 0,
-      "value": "Chyby"
-    }
-  ],
   "FT3jt6": [
     {
       "type": 0,
@@ -3707,6 +3707,12 @@
       "value": "O aplikaci"
     }
   ],
+  "M0bbZk": [
+    {
+      "type": 0,
+      "value": "Flow Checker"
+    }
+  ],
   "M0xrm+": [
     {
       "type": 0,
@@ -4033,6 +4039,12 @@
     {
       "type": 0,
       "value": "Načítají se soubory..."
+    }
+  ],
+  "O6VHe0": [
+    {
+      "type": 0,
+      "value": "Operation warnings"
     }
   ],
   "O7HhyP": [
@@ -5373,6 +5385,12 @@
     {
       "type": 0,
       "value": "Typ chyby"
+    }
+  ],
+  "Vi5TIV": [
+    {
+      "type": 0,
+      "value": "No warnings found."
     }
   ],
   "VlvlX1": [
@@ -7077,6 +7095,12 @@
     {
       "type": 0,
       "value": "Kliknutím sbalíte."
+    }
+  ],
+  "hLOIwp": [
+    {
+      "type": 0,
+      "value": "Warnings"
     }
   ],
   "hMf2TA": [

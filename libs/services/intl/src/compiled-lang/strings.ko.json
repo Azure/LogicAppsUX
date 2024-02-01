@@ -1103,6 +1103,12 @@
       "value": "기관"
     }
   ],
+  "5WTRY8": [
+    {
+      "type": 0,
+      "value": "Errors"
+    }
+  ],
   "5akc1Q": [
     {
       "type": 0,
@@ -2658,12 +2664,6 @@
       "value": "시작 인덱스와 끝 인덱스로 정의된 문자열의 섹션을 반환합니다."
     }
   ],
-  "FOiBk/": [
-    {
-      "type": 0,
-      "value": "오류"
-    }
-  ],
   "FT3jt6": [
     {
       "type": 0,
@@ -3588,6 +3588,12 @@
       "value": "정보"
     }
   ],
+  "M0bbZk": [
+    {
+      "type": 0,
+      "value": "Flow Checker"
+    }
+  ],
   "M0xrm+": [
     {
       "type": 0,
@@ -3910,6 +3916,12 @@
     {
       "type": 0,
       "value": "파일을 로드하는 중..."
+    }
+  ],
+  "O6VHe0": [
+    {
+      "type": 0,
+      "value": "Operation warnings"
     }
   ],
   "O7HhyP": [
@@ -5217,6 +5229,12 @@
     {
       "type": 0,
       "value": "오류 유형"
+    }
+  ],
+  "Vi5TIV": [
+    {
+      "type": 0,
+      "value": "No warnings found."
     }
   ],
   "VlvlX1": [
@@ -6913,6 +6931,12 @@
     {
       "type": 0,
       "value": "클릭하여 축소"
+    }
+  ],
+  "hLOIwp": [
+    {
+      "type": 0,
+      "value": "Warnings"
     }
   ],
   "hMf2TA": [

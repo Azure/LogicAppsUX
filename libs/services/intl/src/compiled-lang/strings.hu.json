@@ -1119,6 +1119,12 @@
       "value": "Szolgáltató"
     }
   ],
+  "5WTRY8": [
+    {
+      "type": 0,
+      "value": "Errors"
+    }
+  ],
   "5akc1Q": [
     {
       "type": 0,
@@ -2689,12 +2695,6 @@
       "value": "Egy sztringnek a kezdőindex és a záróindex által meghatározott szakaszát adja vissza."
     }
   ],
-  "FOiBk/": [
-    {
-      "type": 0,
-      "value": "Hibák"
-    }
-  ],
   "FT3jt6": [
     {
       "type": 0,
@@ -3649,6 +3649,12 @@
       "value": "Névjegy"
     }
   ],
+  "M0bbZk": [
+    {
+      "type": 0,
+      "value": "Flow Checker"
+    }
+  ],
   "M0xrm+": [
     {
       "type": 0,
@@ -3971,6 +3977,12 @@
     {
       "type": 0,
       "value": "Fájlok betöltése..."
+    }
+  ],
+  "O6VHe0": [
+    {
+      "type": 0,
+      "value": "Operation warnings"
     }
   ],
   "O7HhyP": [
@@ -5277,6 +5289,12 @@
     {
       "type": 0,
       "value": "Hibatípus"
+    }
+  ],
+  "Vi5TIV": [
+    {
+      "type": 0,
+      "value": "No warnings found."
     }
   ],
   "VlvlX1": [
@@ -6984,7 +7002,13 @@
   "hJbr09": [
     {
       "type": 0,
-      "value": "Click to Collapse"
+      "value": "Kattintson ide az összecsukáshoz"
+    }
+  ],
+  "hLOIwp": [
+    {
+      "type": 0,
+      "value": "Warnings"
     }
   ],
   "hMf2TA": [
@@ -8594,7 +8618,7 @@
   "qdUeUk": [
     {
       "type": 0,
-      "value": "Click to Expand"
+      "value": "Kattintson ide a kibontáshoz"
     }
   ],
   "qiIs4V": [
