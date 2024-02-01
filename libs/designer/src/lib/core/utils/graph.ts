@@ -201,6 +201,9 @@ export const isOperationNameValid = (
     return false;
   }
 
+  // Check if the name is a prototype property (ex. 'toString').
+  if (name in {}) return false;
+
   if (!name || isTemplateExpression(name) || name.length > 80 || hasInvalidChars(name, [':', '#'])) {
     return false;
   }

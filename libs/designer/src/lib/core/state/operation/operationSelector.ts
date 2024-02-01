@@ -82,12 +82,14 @@ export const useSecureInputsOutputs = (nodeId: string): boolean =>
 export const useParameterStaticResult = (nodeId: string): NodeStaticResults =>
   useSelector(createSelector(getOperationState, (state) => state.staticResults[nodeId]));
 
+export const useRawOperationInputParameters = (nodeId: string) =>
+  useSelector(createSelector(getOperationState, (state) => state.inputParameters?.[nodeId]));
+
 export const useTokenDependencies = (nodeId: string) => {
-  const operationInputParameters = useSelector(createSelector(getOperationState, (op) => op.inputParameters?.[nodeId]));
+  const operationInputParameters = useRawOperationInputParameters(nodeId);
+
   return useMemo(() => {
-    if (!operationInputParameters) {
-      return new Set();
-    }
+    if (!operationInputParameters) return new Set();
     const dependencies = new Set();
     for (const group of Object.values(operationInputParameters.parameterGroups)) {
       for (const parameter of group.parameters) {
