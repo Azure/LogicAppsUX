@@ -109,7 +109,7 @@ export const WorkflowsSelection: React.FC = () => {
     if (!isNullOrUndefined(workflowsData)) {
       onWorkflowsSuccess(workflowsData);
     }
-  }, [workflowsData]);
+  }, [workflowsData, onWorkflowsSuccess]);
 
   useEffect(() => {
     const updatedItems = updateSelectedItems(allItemsSelected.current, renderWorkflows, selectedWorkflows);
