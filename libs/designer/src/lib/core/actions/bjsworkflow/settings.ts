@@ -119,7 +119,8 @@ export const getOperationSettings = (
   manifest?: OperationManifest,
   swagger?: SwaggerParser,
   operation?: LogicAppsV2.OperationDefinition,
-  workflowKind?: WorkflowKind
+  workflowKind?: WorkflowKind,
+  forceEnableSplitOn?: boolean
 ): Settings => {
   const { operationId, type: nodeType } = operationInfo;
   return {
@@ -148,7 +149,7 @@ export const getOperationSettings = (
       value: getDisableAutomaticDecompression(isTrigger, nodeType, manifest, operation),
     },
     splitOn: {
-      isSupported: isSplitOnSupported(isTrigger, nodeOutputs, manifest, swagger, operationId, operation, workflowKind),
+      isSupported: isSplitOnSupported(isTrigger, nodeOutputs, manifest, swagger, operationId, operation, workflowKind, forceEnableSplitOn),
       value: getSplitOn(manifest, swagger, operationId, operation, workflowKind),
     },
     retryPolicy: {
@@ -580,9 +581,10 @@ const isSplitOnSupported = (
   swagger?: SwaggerParser,
   operationId?: string,
   definition?: LogicAppsV2.OperationDefinition,
-  workflowKind?: WorkflowKind
+  workflowKind?: WorkflowKind,
+  forceEnableSplitOn?: boolean
 ): boolean => {
-  if (workflowKind === WorkflowKind.STATELESS) return false;
+  if (workflowKind === WorkflowKind.STATELESS && !forceEnableSplitOn) return false;
   const existingSplitOn = getSplitOn(manifest, swagger, operationId, definition);
   return isTrigger && (getSplitOnOptions(nodeOutputs, !!manifest).length > 0 || existingSplitOn.enabled);
 };

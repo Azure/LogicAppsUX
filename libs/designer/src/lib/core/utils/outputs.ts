@@ -440,6 +440,7 @@ export const loadDynamicOutputsInNode = async (
   settings: Settings,
   workflowParameters: Record<string, WorkflowParameterDefinition>,
   workflowKind: WorkflowKind | undefined,
+  forceEnableSplitOn: boolean,
   dispatch: Dispatch
 ): Promise<void> => {
   for (const outputKey of Object.keys(outputDependencies)) {
@@ -456,7 +457,8 @@ export const loadDynamicOutputsInNode = async (
           nodeInputs,
           settings,
           true /* shouldProcessSettings */,
-          workflowKind
+          workflowKind,
+          forceEnableSplitOn
         );
       } else {
         try {

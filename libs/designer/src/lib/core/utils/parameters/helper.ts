@@ -1863,6 +1863,7 @@ async function loadDynamicData(
       settings,
       rootState.workflowParameters.definitions,
       rootState.workflow.workflowKind,
+      rootState.designerOptions.hostOptions.forceEnableSplitOn ?? false,
       dispatch
     );
   }

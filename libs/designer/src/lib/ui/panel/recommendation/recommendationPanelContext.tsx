@@ -1,6 +1,7 @@
 import type { AppDispatch } from '../../../core';
 import { addOperation } from '../../../core/actions/bjsworkflow/add';
 import { useAllConnectors, useAllOperations } from '../../../core/queries/browse';
+import { useHostOptions } from '../../../core/state/designerOptions/designerOptionsSelectors';
 import {
   useIsAddingTrigger,
   useIsParallelBranch,
@@ -35,12 +36,9 @@ const SELECTION_STATES = {
   CUSTOM_SWAGGER: 'HTTP_SWAGGER',
 };
 
-export type RecommendationPanelContextProps = {
-  displayRuntimeInfo: boolean;
-} & CommonPanelProps;
-
-export const RecommendationPanelContext = (props: RecommendationPanelContextProps) => {
-  const { displayRuntimeInfo, toggleCollapse } = props;
+export const RecommendationPanelContext = (props: CommonPanelProps) => {
+  const { toggleCollapse } = props;
+  const { displayRuntimeInfo } = useHostOptions();
   const dispatch = useDispatch<AppDispatch>();
   const isTrigger = useIsAddingTrigger();
   const [searchTerm, setSearchTerm] = useState('');

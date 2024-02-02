@@ -1,5 +1,5 @@
 import type { AppDispatch } from '../../core';
-import { useHostOptions, useIsDarkMode } from '../../core/state/designerOptions/designerOptionsSelectors';
+import { useIsDarkMode } from '../../core/state/designerOptions/designerOptionsSelectors';
 import { useCurrentPanelMode, useIsLoadingPanel, useIsPanelCollapsed } from '../../core/state/panel/panelSelectors';
 import { clearPanel } from '../../core/state/panel/panelSlice';
 import { ConnectionPanel } from './connectionsPanel/connectionsPanel';
@@ -30,7 +30,6 @@ const layerProps = {
 export const PanelRoot = (props: PanelRootProps): JSX.Element => {
   const { panelLocation, customPanelLocations } = props;
   const dispatch = useDispatch<AppDispatch>();
-  const { displayRuntimeInfo } = useHostOptions();
   const isDarkMode = useIsDarkMode();
 
   const collapsed = useIsPanelCollapsed();
@@ -99,9 +98,9 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element => {
         ) : currentPanelMode === 'WorkflowParameters' ? (
           <WorkflowParametersPanel {...commonPanelProps} />
         ) : currentPanelMode === 'Discovery' ? (
-          <RecommendationPanelContext {...commonPanelProps} displayRuntimeInfo={displayRuntimeInfo} />
+          <RecommendationPanelContext {...commonPanelProps} />
         ) : currentPanelMode === 'NodeSearch' ? (
-          <NodeSearchPanel {...commonPanelProps} displayRuntimeInfo={displayRuntimeInfo} />
+          <NodeSearchPanel {...commonPanelProps} />
         ) : currentPanelMode === 'Connection' ? (
           <ConnectionPanel {...commonPanelProps} />
         ) : currentPanelMode === 'Error' ? (
