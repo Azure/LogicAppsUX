@@ -56,6 +56,7 @@ export const initializeOperationDetailsForSwagger = async (
   references: ConnectionReferences,
   isTrigger: boolean,
   workflowKind: WorkflowKind,
+  forceEnableSplitOn: boolean,
   dispatch: Dispatch
 ): Promise<NodeDataWithOperationMetadata[] | undefined> => {
   try {
@@ -98,7 +99,8 @@ export const initializeOperationDetailsForSwagger = async (
         /* manifest */ undefined,
         parsedSwagger,
         operation,
-        workflowKind
+        workflowKind,
+        forceEnableSplitOn
       );
 
       return [

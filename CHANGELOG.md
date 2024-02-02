@@ -1,4 +1,16 @@
 # Logic Apps Designer
+## [2.109.0](https://github.com/Azure/LogicAppsUX/compare/v2.108.0...v2.109.0) (2024-02-01)
+
+
+### Features
+
+* **designer:** Adding support for warnings and custom messages to ErrorsPanel ([#4053](https://github.com/Azure/LogicAppsUX/issues/4053)) ([6b07460](https://github.com/Azure/LogicAppsUX/commit/6b0746062fea3e1a4189c032b90ad68954d33c7a))
+
+
+### Bug Fixes
+
+* **Designer:** Accessibility fix announcing to screen reader search results ([#4082](https://github.com/Azure/LogicAppsUX/issues/4082)) ([06f46fb](https://github.com/Azure/LogicAppsUX/commit/06f46fb92c5249f737b26c10a03d27ac7da137a4))
+* **Designer:** Split on is now disabled for stateless workflows ([#4081](https://github.com/Azure/LogicAppsUX/issues/4081)) ([6971bca](https://github.com/Azure/LogicAppsUX/commit/6971bca1de14e19de7033a9433c1eff439deb4eb))
 
 ## [2.108.0](https://github.com/Azure/LogicAppsUX/compare/v2.107.0...v2.108.0) (2024-01-26)
 

@@ -90,6 +90,7 @@ export const initializeOperationMetadata = async (
   references: ConnectionReferences,
   workflowParameters: Record<string, WorkflowParameter>,
   workflowKind: WorkflowKind,
+  forceEnableSplitOn: boolean,
   dispatch: Dispatch
 ): Promise<void> => {
   initializeConnectorsForReferences(references);
@@ -108,15 +109,34 @@ export const initializeOperationMetadata = async (
       triggerNodeId = operationId;
     }
     if (operationManifestService.isSupported(operation.type, operation.kind)) {
-      promises.push(initializeOperationDetailsForManifest(operationId, operation, !!isTrigger, workflowKind, dispatch));
+      promises.push(initializeOperationDetailsForManifest(operationId, operation, !!isTrigger, workflowKind, forceEnableSplitOn, dispatch));
     } else {
-      promises.push(initializeOperationDetailsForSwagger(operationId, operation, references, !!isTrigger, workflowKind, dispatch));
+      promises.push(
+        initializeOperationDetailsForSwagger(operationId, operation, references, !!isTrigger, workflowKind, forceEnableSplitOn, dispatch)
+      );
     }
   }
 
   const allNodeData = aggregate((await Promise.all(promises)).filter((data) => !!data) as NodeDataWithOperationMetadata[][]);
   const repetitionInfos = await initializeRepetitionInfos(triggerNodeId, operations, allNodeData, nodesMetadata);
   updateTokenMetadataInParameters(allNodeData, operations, workflowParameters, nodesMetadata, triggerNodeId, repetitionInfos);
+
+  const triggerNodeManifest = allNodeData.find((nodeData) => nodeData.id === triggerNodeId)?.manifest;
+  if (triggerNodeManifest) {
+    for (const nodeData of allNodeData) {
+      const { id, settings } = nodeData;
+      if (settings) {
+        updateInvokerSettings(
+          id === triggerNodeId,
+          triggerNodeManifest,
+          settings,
+          (invokerSettings: Settings) => (nodeData.settings = { ...settings, ...invokerSettings }),
+          references
+        );
+      }
+    }
+  }
+
   dispatch(
     initializeNodes(
       allNodeData.map((data) => {
@@ -135,16 +155,6 @@ export const initializeOperationMetadata = async (
       })
     )
   );
-
-  const triggerNodeManifest = allNodeData.find((nodeData) => nodeData.id === triggerNodeId)?.manifest;
-  if (triggerNodeManifest) {
-    for (const nodeData of allNodeData) {
-      const { id, settings } = nodeData;
-      if (settings) {
-        updateInvokerSettings(id === triggerNodeId, triggerNodeManifest, id, settings, dispatch, references);
-      }
-    }
-  }
 
   const variables = initializeVariables(operations, allNodeData);
   dispatch(
@@ -184,6 +194,7 @@ export const initializeOperationDetailsForManifest = async (
   _operation: LogicAppsV2.ActionDefinition | LogicAppsV2.TriggerDefinition,
   isTrigger: boolean,
   workflowKind: WorkflowKind,
+  forceEnableSplitOn: boolean,
   dispatch: Dispatch
 ): Promise<NodeDataWithOperationMetadata[] | undefined> => {
   const operation = { ..._operation };
@@ -237,7 +248,8 @@ export const initializeOperationDetailsForManifest = async (
       manifest,
       undefined /* swagger */,
       operation,
-      workflowKind
+      workflowKind,
+      forceEnableSplitOn
     );
 
     const childGraphInputs = processChildGraphAndItsInputs(manifest, operation);
