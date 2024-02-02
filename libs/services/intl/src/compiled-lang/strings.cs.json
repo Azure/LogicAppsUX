@@ -861,28 +861,6 @@
       "value": "Zadaná identita není přidružená k této aplikaci logiky."
     }
   ],
-  "3jwMBm": [
-    {
-      "type": 0,
-      "value": "Neplatný formát JSON. Chybí "
-    },
-    {
-      "type": 1,
-      "value": "openingBrahornt"
-    },
-    {
-      "type": 0,
-      "value": " na začátku nebo "
-    },
-    {
-      "type": 1,
-      "value": "closingBrahornt"
-    },
-    {
-      "type": 0,
-      "value": " na konci."
-    }
-  ],
   "3n5pnv": [
     {
       "type": 0,
@@ -1099,26 +1077,44 @@
       "value": "Povězte Microsoftu, co se vám na této funkci líbilo"
     }
   ],
+  "5LV34t": [
+    {
+      "type": 0,
+      "value": "Vlastnosti "
+    },
+    {
+      "type": 1,
+      "value": "invalidProperties"
+    },
+    {
+      "type": 0,
+      "value": " nejsou pro typ ověřování "
+    },
+    {
+      "type": 1,
+      "value": "authType"
+    },
+    {
+      "type": 0,
+      "value": " platné."
+    }
+  ],
   "5OvGgn": [
     {
       "type": 0,
       "value": "Obsah"
     }
   ],
-  "5Ow9mX": [
-    {
-      "type": 0,
-      "value": "Ikona konektoru "
-    },
-    {
-      "type": 1,
-      "value": "connectorName"
-    }
-  ],
   "5SAQOb": [
     {
       "type": 0,
       "value": "Autorita"
+    }
+  ],
+  "5WTRY8": [
+    {
+      "type": 0,
+      "value": "Errors"
     }
   ],
   "5akc1Q": [
@@ -1321,6 +1317,16 @@
     {
       "type": 0,
       "value": "Vytvořit tok"
+    }
+  ],
+  "6sSPNb": [
+    {
+      "type": 0,
+      "value": "Konektor "
+    },
+    {
+      "type": 1,
+      "value": "connectorName"
     }
   ],
   "6u6CS+": [
@@ -1707,6 +1713,16 @@
       "value": "Když má aplikace logiky povolenou spravovanou identitu přiřazenou systémem, identita uživatele se nepodporuje."
     }
   ],
+  "96JG8I": [
+    {
+      "type": 0,
+      "value": "Operace "
+    },
+    {
+      "type": 1,
+      "value": "operationName"
+    }
+  ],
   "99vsJy": [
     {
       "type": 0,
@@ -1815,6 +1831,12 @@
     {
       "type": 0,
       "value": "Upravit v základním režimu"
+    }
+  ],
+  "9yLPwo": [
+    {
+      "type": 0,
+      "value": "Podrobnější informace najdete v následujících zdrojích informací."
     }
   ],
   "A5Ferh": [
@@ -2037,6 +2059,28 @@
       "value": "Proběhlo úspěšně s opakováním pokusů"
     }
   ],
+  "BGw6eH": [
+    {
+      "type": 0,
+      "value": "Chybí požadované vlastnosti "
+    },
+    {
+      "type": 1,
+      "value": "missingProperties"
+    },
+    {
+      "type": 0,
+      "value": " pro typ ověřování "
+    },
+    {
+      "type": 1,
+      "value": "authType"
+    },
+    {
+      "type": 0,
+      "value": "."
+    }
+  ],
   "BHe7qY": [
     {
       "type": 0,
@@ -2077,6 +2121,12 @@
     {
       "type": 0,
       "value": "Zadejte heslo jako prostý text nebo použijte zabezpečený parametr."
+    }
+  ],
+  "BQyLiu": [
+    {
+      "type": 0,
+      "value": "nalez. výsl."
     }
   ],
   "BS3gy8": [
@@ -2203,28 +2253,6 @@
     {
       "type": 0,
       "value": "(UTC+13:00) Samoa"
-    }
-  ],
-  "CafOCn": [
-    {
-      "type": 0,
-      "value": "Vlastnosti "
-    },
-    {
-      "type": 1,
-      "value": "invalidProperties"
-    },
-    {
-      "type": 0,
-      "value": " nejsou pro typ ověřování "
-    },
-    {
-      "type": 1,
-      "value": "convertedAuthType"
-    },
-    {
-      "type": 0,
-      "value": " platné."
     }
   ],
   "Cb6IEq": [
@@ -2689,12 +2717,6 @@
       "value": "Vrátí část řetězce definovanou počátečním a koncovým indexem."
     }
   ],
-  "FOiBk/": [
-    {
-      "type": 0,
-      "value": "Chyby"
-    }
-  ],
   "FT3jt6": [
     {
       "type": 0,
@@ -2771,12 +2793,6 @@
     {
       "type": 0,
       "value": "Zadejte e-mailovou adresu."
-    }
-  ],
-  "FaBEfQ": [
-    {
-      "type": 0,
-      "value": "Sledované vlastnosti"
     }
   ],
   "Fcvgvg": [
@@ -3095,6 +3111,24 @@
     {
       "type": 0,
       "value": "Odeslat z této akce"
+    }
+  ],
+  "I1CYNA": [
+    {
+      "type": 0,
+      "value": "Neplatná vlastnost "
+    },
+    {
+      "type": 1,
+      "value": "invalidProperties"
+    },
+    {
+      "type": 0,
+      "value": " pro typ ověřování "
+    },
+    {
+      "type": 1,
+      "value": "authType"
     }
   ],
   "I3mifR": [
@@ -3673,6 +3707,12 @@
       "value": "O aplikaci"
     }
   ],
+  "M0bbZk": [
+    {
+      "type": 0,
+      "value": "Flow Checker"
+    }
+  ],
   "M0xrm+": [
     {
       "type": 0,
@@ -3859,6 +3899,12 @@
       "value": "Zkopírováno!"
     }
   ],
+  "NFgfP4": [
+    {
+      "type": 0,
+      "value": "položka"
+    }
+  ],
   "NGJ00e": [
     {
       "type": 0,
@@ -3953,6 +3999,12 @@
       "value": "Úterý"
     }
   ],
+  "NzPnFS": [
+    {
+      "type": 0,
+      "value": "Příklad:"
+    }
+  ],
   "O+3Y9f": [
     {
       "type": 0,
@@ -3989,6 +4041,12 @@
       "value": "Načítají se soubory..."
     }
   ],
+  "O6VHe0": [
+    {
+      "type": 0,
+      "value": "Operation warnings"
+    }
+  ],
   "O7HhyP": [
     {
       "type": 0,
@@ -3999,6 +4057,12 @@
     {
       "type": 0,
       "value": "OK"
+    }
+  ],
+  "OBO/HE": [
+    {
+      "type": 0,
+      "value": "Neplatná hodnota ověřování"
     }
   ],
   "ODQCKj": [
@@ -4151,10 +4215,10 @@
       "value": "Vyberte spravovanou identitu"
     }
   ],
-  "Os0h2Y": [
+  "Ov7Ckz": [
     {
       "type": 0,
-      "value": "Chybí požadované vlastnosti "
+      "value": "Chybí požadovaná vlastnost "
     },
     {
       "type": 1,
@@ -4166,7 +4230,11 @@
     },
     {
       "type": 1,
-      "value": "convertedAuthType"
+      "value": "authType"
+    },
+    {
+      "type": 0,
+      "value": "."
     }
   ],
   "P+7G62": [
@@ -4215,6 +4283,12 @@
     {
       "type": 0,
       "value": "Vstup"
+    }
+  ],
+  "PDMP/Z": [
+    {
+      "type": 0,
+      "value": "Sbaleno"
     }
   ],
   "PNk3n4": [
@@ -4413,24 +4487,6 @@
     {
       "type": 0,
       "value": "Stavový kód"
-    }
-  ],
-  "QKWoVr": [
-    {
-      "type": 0,
-      "value": "Chybí požadovaná vlastnost "
-    },
-    {
-      "type": 1,
-      "value": "missingProperties"
-    },
-    {
-      "type": 0,
-      "value": " pro typ ověřování "
-    },
-    {
-      "type": 1,
-      "value": "convertedAuthType"
     }
   ],
   "QZBPUx": [
@@ -5185,12 +5241,6 @@
       "value": "Zobrazit méně"
     }
   ],
-  "V0le5X": [
-    {
-      "type": 0,
-      "value": "Zadejte platný kód JSON."
-    }
-  ],
   "V3vpin": [
     {
       "type": 0,
@@ -5335,6 +5385,12 @@
     {
       "type": 0,
       "value": "Typ chyby"
+    }
+  ],
+  "Vi5TIV": [
+    {
+      "type": 0,
+      "value": "No warnings found."
     }
   ],
   "VlvlX1": [
@@ -5913,6 +5969,12 @@
     {
       "type": 0,
       "value": "Tipy pro vyhledávání"
+    }
+  ],
+  "Yg/vvm": [
+    {
+      "type": 0,
+      "value": "Zavřít panel Přidat akci"
     }
   ],
   "YgU88A": [
@@ -6645,6 +6707,12 @@
       "value": "Povinný parametr. Název proměnné, jejíž hodnotu chcete získat."
     }
   ],
+  "eHsOsm": [
+    {
+      "type": 0,
+      "value": "Uveďte dobu trvání ve formátu ISO 8601."
+    }
+  ],
   "eO1h/h": [
     {
       "type": 0,
@@ -7021,6 +7089,18 @@
     {
       "type": 0,
       "value": "Znovu odeslat spuštění pracovního postupu z této akce"
+    }
+  ],
+  "hJbr09": [
+    {
+      "type": 0,
+      "value": "Kliknutím sbalíte."
+    }
+  ],
+  "hLOIwp": [
+    {
+      "type": 0,
+      "value": "Warnings"
     }
   ],
   "hMf2TA": [
@@ -7943,6 +8023,12 @@
       "value": "Vrátí řetězcovou reprezentaci identifikátoru URI dat."
     }
   ],
+  "mNaBPE": [
+    {
+      "type": 0,
+      "value": "Zadejte platný kód JSON."
+    }
+  ],
   "mPakaD": [
     {
       "type": 0,
@@ -8163,6 +8249,24 @@
     {
       "type": 0,
       "value": "Potlačit hlavičky pracovních postupů"
+    }
+  ],
+  "ncW1Sw": [
+    {
+      "type": 0,
+      "value": "Operace "
+    },
+    {
+      "type": 1,
+      "value": "operationName"
+    },
+    {
+      "type": 0,
+      "value": ", konektor "
+    },
+    {
+      "type": 1,
+      "value": "connectorName"
     }
   ],
   "ngsC44": [
@@ -8673,6 +8777,12 @@
       "value": "Vrátí počet prvků v poli nebo řetězci."
     }
   ],
+  "qdUeUk": [
+    {
+      "type": 0,
+      "value": "Kliknutím rozbalte."
+    }
+  ],
   "qiIs4V": [
     {
       "type": 0,
@@ -8715,28 +8825,6 @@
       "value": "Asynchronní odpověď umožní aplikaci Logic Apps odpovědět kódem 202 (Přijato) a dát tak vědět, že se požadavek přijal ke zpracování. Pomocí poskytnuté hlavičky umístění půjde načíst koncový stav."
     }
   ],
-  "qs9D+A": [
-    {
-      "type": 0,
-      "value": "Neplatná vlastnost "
-    },
-    {
-      "type": 1,
-      "value": "invalidProperties"
-    },
-    {
-      "type": 0,
-      "value": " pro typ ověřování "
-    },
-    {
-      "type": 1,
-      "value": "convertedAuthType"
-    },
-    {
-      "type": 0,
-      "value": "."
-    }
-  ],
   "qy5WqY": [
     {
       "type": 0,
@@ -8759,6 +8847,12 @@
     {
       "type": 0,
       "value": "Zpět"
+    }
+  ],
+  "r4zp7m": [
+    {
+      "type": 0,
+      "value": "Rozbaleno"
     }
   ],
   "r7vZ5a": [

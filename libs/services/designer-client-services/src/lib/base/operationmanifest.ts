@@ -65,6 +65,8 @@ const serviceprovider = 'serviceprovider';
 const workflow = 'workflow';
 const xmlvalidation = 'xmlvalidation';
 const xslt = 'xslt';
+const xmlcompose = 'xmlcompose';
+const xmlparse = 'xmlparse';
 export const flatfiledecoding = 'flatfiledecoding';
 export const flatfileencoding = 'flatfileencoding';
 const swiftdecode = 'swiftdecode';
@@ -179,6 +181,8 @@ export const supportedBaseManifestTypes = [
   workflow,
   xmlvalidation,
   xslt,
+  xmlcompose,
+  xmlparse,
   flatfiledecoding,
   flatfileencoding,
   scope,

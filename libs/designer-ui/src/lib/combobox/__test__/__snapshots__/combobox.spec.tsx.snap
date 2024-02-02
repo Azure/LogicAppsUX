@@ -6,6 +6,7 @@ exports[`lib/combobox should render 1`] = `
 >
   <div
     className="ms-ComboBox-container msla-combobox "
+    onBlur={[Function]}
     onClick={[Function]}
   >
     <div

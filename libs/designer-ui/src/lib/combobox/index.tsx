@@ -1,6 +1,6 @@
 import type { ValueSegment } from '../editor';
 import { ValueSegmentType } from '../editor';
-import type { BaseEditorProps, CallbackHandler } from '../editor/base';
+import type { BaseEditorProps, CallbackHandler, ChangeHandler } from '../editor/base';
 import { EditorWrapper } from '../editor/base/EditorWrapper';
 import { EditorChangePlugin } from '../editor/base/plugins/EditorChange';
 import type { IComboBox, IComboBoxOption, IComboBoxOptionStyles, IComboBoxStyles } from '@fluentui/react';
@@ -10,6 +10,7 @@ import { bundleIcon, Dismiss24Filled, Dismiss24Regular } from '@fluentui/react-i
 import { getIntl } from '@microsoft/intl-logic-apps';
 import { guid } from '@microsoft/utils-logic-apps';
 import { useRef, useState, useCallback, useMemo, useEffect } from 'react';
+import type { FormEvent } from 'react';
 import { useIntl } from 'react-intl';
 
 const ClearIcon = bundleIcon(Dismiss24Filled, Dismiss24Regular);
@@ -47,6 +48,11 @@ const buttonStyles: any = {
   color: 'var(--colorBrandForeground1)',
 };
 
+interface SerializationOptions {
+  valueType: string;
+  separator?: string;
+}
+
 export interface ComboboxItem {
   disabled?: boolean;
   key: string;
@@ -62,6 +68,9 @@ export interface ComboboxProps extends BaseEditorProps {
   useOption?: boolean;
   onMenuOpen?: CallbackHandler;
   shouldSort?: boolean;
+  multiSelect?: boolean;
+  serialization?: SerializationOptions;
+  onChange?: ChangeHandler;
 }
 
 export const Combobox = ({
@@ -73,6 +82,8 @@ export const Combobox = ({
   onChange,
   onMenuOpen,
   labelId,
+  multiSelect = false,
+  serialization,
   label,
   shouldSort = true,
   ...baseEditorProps
@@ -80,9 +91,11 @@ export const Combobox = ({
   const intl = useIntl();
   const comboBoxRef = useRef<IComboBox>(null);
   const optionKey = getSelectedKey(options, initialValue, isLoading);
+  const optionKeys = getSelectedKeys(options, initialValue, serialization);
   const [value, setValue] = useState<ValueSegment[]>(initialValue);
-  const [mode, setMode] = useState<Mode>(getMode(optionKey, initialValue, isLoading));
+  const [mode, setMode] = useState<Mode>(getMode(optionKey, optionKeys, initialValue, isLoading));
   const [selectedKey, setSelectedKey] = useState<string>(optionKey);
+  const [selectedKeys, setSelectedKeys] = useState<string[] | undefined>(multiSelect ? optionKeys : undefined);
   const [searchValue, setSearchValue] = useState<string>('');
   const [canAutoFocus, setCanAutoFocus] = useState(false);
   const firstLoad = useRef(true);
@@ -91,8 +104,9 @@ export const Combobox = ({
     if ((firstLoad.current || !errorDetails) && !isLoading) {
       firstLoad.current = false;
       const updatedOptionkey = getSelectedKey(options, initialValue, isLoading);
+      const updatedOptionKeys = getSelectedKeys(options, initialValue, serialization);
       setSelectedKey(updatedOptionkey);
-      setMode(getMode(updatedOptionkey, initialValue, isLoading));
+      setMode(getMode(updatedOptionkey, updatedOptionKeys, initialValue, isLoading));
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isLoading]);
@@ -100,7 +114,7 @@ export const Combobox = ({
   // Sort newOptions array alphabetically based on the `displayName` property.
   useMemo(() => {
     if (shouldSort) {
-      options.sort((currentItem, nextItem) => currentItem.displayName.localeCompare(nextItem.displayName));
+      options.sort((currentItem, nextItem) => currentItem.displayName?.localeCompare(nextItem.displayName));
     }
   }, [options, shouldSort]);
 
@@ -187,7 +201,7 @@ export const Combobox = ({
     }
   };
 
-  const handleOptionSelect = (option?: IComboBoxOption): void => {
+  const handleOptionSelect = (_event: FormEvent<IComboBox>, option?: IComboBoxOption): void => {
     if (option?.data === 'customrender') {
       setValue([{ id: guid(), type: ValueSegmentType.LITERAL, value: option.key === 'customValue' ? '' : option.key.toString() }]);
       setMode(Mode.Custom);
@@ -210,6 +224,32 @@ export const Combobox = ({
     }
   };
 
+  const handleOptionMultiSelect = (_event: FormEvent<IComboBox>, option?: IComboBoxOption): void => {
+    if (option?.data === 'customrender') {
+      setValue([{ id: guid(), type: ValueSegmentType.LITERAL, value: option.key === 'customValue' ? '' : option.key.toString() }]);
+      setMode(Mode.Custom);
+      setCanAutoFocus(true);
+    } else {
+      if (option && selectedKeys) {
+        const newKeys = option.selected
+          ? [...selectedKeys, option.key as string]
+          : selectedKeys.filter((key: string) => key !== option.key);
+        setSelectedKeys(newKeys);
+        setMode(Mode.Default);
+        const selectedValues = newKeys.map((key) => getSelectedValue(options, key));
+        onChange?.({
+          value: [
+            {
+              id: guid(),
+              value: serialization?.valueType === 'array' ? JSON.stringify(selectedValues) : selectedValues.join(serialization?.separator),
+              type: ValueSegmentType.LITERAL,
+            },
+          ],
+        });
+      }
+    }
+  };
+
   const clearEditor = intl.formatMessage({
     defaultMessage: 'Clear custom value',
     description: 'Label for button to clear the editor',
@@ -217,6 +257,7 @@ export const Combobox = ({
 
   const handleClearClick = () => {
     setSelectedKey('');
+    setSelectedKeys([]);
     setSearchValue('');
     comboBoxRef.current?.focus(true);
     setMode(Mode.Default);
@@ -233,6 +274,10 @@ export const Combobox = ({
 
   const handleBlur = () => {
     onChange?.({ value });
+  };
+
+  const handleComboBoxBlur = () => {
+    setSearchValue('');
   };
 
   return (
@@ -268,7 +313,7 @@ export const Combobox = ({
         <ComboBox
           ariaLabel={label}
           className="msla-combobox"
-          selectedKey={selectedKey}
+          selectedKey={multiSelect ? selectedKeys : selectedKey}
           componentRef={comboBoxRef}
           useComboBoxAsMenuWidth
           allowFreeform
@@ -279,9 +324,11 @@ export const Combobox = ({
           onInputValueChange={updateOptions}
           onClick={toggleExpand}
           onRenderOption={onRenderOption}
+          multiSelect={multiSelect}
           styles={comboboxStyles}
-          onItemClick={(_, o) => handleOptionSelect(o)}
+          onChange={multiSelect ? handleOptionMultiSelect : handleOptionSelect}
           onMenuOpen={handleMenuOpen}
+          onBlur={handleComboBoxBlur}
         />
       )}
     </div>
@@ -311,8 +358,15 @@ const getOptions = (options: ComboboxItem[]): IComboBoxOption[] => {
   ];
 };
 
-const getMode = (selectedKey: string, initialValue: ValueSegment[], isLoading?: boolean): Mode => {
+const getMode = (selectedKey: string, selectedKeys: string[], initialValue: ValueSegment[], isLoading?: boolean): Mode => {
   if (isLoading) return Mode.Default;
+  if (selectedKeys.length > 0) {
+    for (const key of selectedKeys) {
+      const hasValue = initialValue.length > 0 && initialValue[0].value;
+      if (hasValue && !key) return Mode.Custom;
+    }
+    return Mode.Default;
+  }
   const hasValue = initialValue.length > 0 && initialValue[0].value;
   return hasValue ? (selectedKey ? Mode.Default : Mode.Custom) : Mode.Default;
 };
@@ -327,6 +381,30 @@ const getSelectedKey = (options: ComboboxItem[], initialValue?: ValueSegment[], 
     );
   }
   return '';
+};
+
+const getSelectedKeys = (options: ComboboxItem[], initialValue?: ValueSegment[], serialization?: SerializationOptions): string[] => {
+  const returnVal: string[] = [];
+  if (initialValue?.length === 1 && initialValue[0].type === ValueSegmentType.LITERAL) {
+    const value = initialValue[0].value;
+    const selectedValues =
+      serialization?.valueType === 'array'
+        ? Array.isArray(value)
+          ? value
+          : JSON.parse(value || '[]')
+        : value.split(serialization?.separator || ',');
+
+    for (const selectedValue of selectedValues) {
+      const option = options.find((option) => {
+        return option.value === selectedValue;
+      });
+
+      if (option) {
+        returnVal.push(option.key);
+      }
+    }
+  }
+  return returnVal;
 };
 
 const getSelectedValue = (options: ComboboxItem[], key: string): any => {

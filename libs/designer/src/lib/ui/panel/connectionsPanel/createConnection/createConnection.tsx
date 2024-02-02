@@ -1,4 +1,5 @@
 import { needsOAuth } from '../../../../core/actions/bjsworkflow/connections';
+import { isUserAssignedIdentitySupportedForInApp } from '../../../../core/utils/connectors/connections';
 import { ActionList } from '../actionList/actionList';
 import ConnectionMultiAuthInput from './formInputs/connectionMultiAuth';
 import ConnectionNameInput from './formInputs/connectionNameInput';
@@ -10,7 +11,7 @@ import { UniversalConnectionParameter } from './formInputs/universalConnectionPa
 import type { IDropdownOption } from '@fluentui/react';
 import { MessageBarType, MessageBar, Label } from '@fluentui/react';
 import { Body1Strong, Button, Divider } from '@fluentui/react-components';
-import { ConnectionParameterEditorService } from '@microsoft/designer-client-services-logic-apps';
+import { ConnectionParameterEditorService, ConnectionService } from '@microsoft/designer-client-services-logic-apps';
 import type { GatewayServiceConfig, IConnectionCredentialMappingEditorProps } from '@microsoft/designer-client-services-logic-apps';
 import type { AzureResourcePickerProps } from '@microsoft/designer-ui';
 import { AzureResourcePicker } from '@microsoft/designer-ui';
@@ -26,8 +27,10 @@ import type {
 import {
   Capabilities,
   ConnectionParameterTypes,
+  ResourceIdentityType,
   SERVICE_PRINCIPLE_CONSTANTS,
   connectorContainsAllServicePrinicipalConnectionParameters,
+  equals,
   filterRecord,
   getPropertyValue,
   isServicePrinicipalConnectionParameter,
@@ -80,7 +83,7 @@ export const CreateConnection = (props: CreateConnectionProps) => {
     connectorDisplayName,
     connectorCapabilities,
     connectionParameters,
-    connectionParameterSets,
+    connectionParameterSets: _connectionParameterSets,
     connectionAlternativeParameters,
     identity,
     isLoading = false,
@@ -111,6 +114,16 @@ export const CreateConnection = (props: CreateConnectionProps) => {
     },
     [selectedParamSetIndex]
   );
+
+  const isHiddenAuthKey = useCallback((key: string) => ConnectionService().getAuthSetHideKeys?.()?.includes(key) ?? false, []);
+
+  const connectionParameterSets: ConnectionParameterSets | undefined = useMemo(() => {
+    if (!_connectionParameterSets) return undefined;
+    return {
+      ..._connectionParameterSets,
+      values: _connectionParameterSets.values.filter((set) => !isHiddenAuthKey(set.name)),
+    };
+  }, [_connectionParameterSets, isHiddenAuthKey]);
 
   const singleAuthParams = useMemo(
     () => ({
@@ -146,14 +159,16 @@ export const CreateConnection = (props: CreateConnectionProps) => {
     if (hasOnlyOnPremGateway && !enabledCapabilities.includes(Capabilities.gateway)) toggleCapability(Capabilities.gateway);
   }, [enabledCapabilities, hasOnlyOnPremGateway, toggleCapability]);
 
+  const supportsOAuthConnection = useMemo(() => !isHiddenAuthKey('legacyoauth'), [isHiddenAuthKey]);
+
   const supportsServicePrincipalConnection = useMemo(
-    () => connectorContainsAllServicePrinicipalConnectionParameters(singleAuthParams),
-    [singleAuthParams]
+    () => connectorContainsAllServicePrinicipalConnectionParameters(singleAuthParams) && !isHiddenAuthKey('legacyserviceprincipal'),
+    [isHiddenAuthKey, singleAuthParams]
   );
 
   const supportsLegacyManagedIdentityConnection = useMemo(
-    () => usesLegacyManagedIdentity(connectionAlternativeParameters),
-    [connectionAlternativeParameters]
+    () => usesLegacyManagedIdentity(connectionAlternativeParameters) && !isHiddenAuthKey('legacymanagedidentity'),
+    [isHiddenAuthKey, connectionAlternativeParameters]
   );
 
   const showLegacyMultiAuth = useMemo(
@@ -169,6 +184,15 @@ export const CreateConnection = (props: CreateConnectionProps) => {
   const legacyManagedIdentitySelected = useMemo(
     () => showLegacyMultiAuth && selectedParamSetIndex === LegacyMultiAuthOptions.managedIdentity,
     [selectedParamSetIndex, showLegacyMultiAuth]
+  );
+
+  const showIdentityPicker = useMemo(
+    () =>
+      isMultiAuth &&
+      isUserAssignedIdentitySupportedForInApp(connectorCapabilities) &&
+      identity?.type?.toLowerCase()?.includes(ResourceIdentityType.USER_ASSIGNED.toLowerCase()) &&
+      equals(connectionParameterSets?.values[selectedParamSetIndex].name, 'ManagedServiceIdentity'),
+    [connectionParameterSets?.values, connectorCapabilities, identity?.type, isMultiAuth, selectedParamSetIndex]
   );
 
   const [selectedManagedIdentity, setSelectedManagedIdentity] = useState<string | undefined>(undefined);
@@ -294,7 +318,7 @@ export const CreateConnection = (props: CreateConnectionProps) => {
     }
 
     const alternativeParameterValues = legacyManagedIdentitySelected ? {} : undefined;
-    const identitySelected = legacyManagedIdentitySelected ? selectedManagedIdentity : undefined;
+    const identitySelected = legacyManagedIdentitySelected || showIdentityPicker ? selectedManagedIdentity : undefined;
 
     return createConnectionCallback?.(
       showNameInput ? connectionDisplayName : undefined,
@@ -309,6 +333,7 @@ export const CreateConnection = (props: CreateConnectionProps) => {
     supportsServicePrincipalConnection,
     unfilteredParameters,
     legacyManagedIdentitySelected,
+    showIdentityPicker,
     selectedManagedIdentity,
     createConnectionCallback,
     showNameInput,
@@ -442,7 +467,11 @@ export const CreateConnection = (props: CreateConnectionProps) => {
   // Keep track of encountered and active mappings to avoid rendering the same mapping multiple times, or rendering the included parameters.
   const allParameterMappings = new Set<string>();
   const activeParameterMappings = new Set<string>();
-  const renderCredentialsMappingParameter = (mappingName: string, parameter: ConnectionParameterSetParameter | ConnectionParameter) => {
+  const renderCredentialsMappingParameter = (
+    parameterKey: string,
+    parameter: ConnectionParameterSetParameter | ConnectionParameter,
+    mappingName: string
+  ) => {
     if (!allParameterMappings.has(mappingName)) {
       allParameterMappings.add(mappingName);
       // This is the first time this mapping has been encountered,
@@ -468,6 +497,7 @@ export const CreateConnection = (props: CreateConnectionProps) => {
           parameters,
           setParameterValues,
           renderParameter: renderConnectionParameter,
+          isLoading,
         };
         return <CredentialsMappingEditorComponent key={`mapping:${mappingName}`} {...props} />;
       }
@@ -480,7 +510,7 @@ export const CreateConnection = (props: CreateConnectionProps) => {
     }
 
     // Default case: render the parameter. No custom Editor was found for this mapping.
-    return renderConnectionParameter(mappingName, parameter);
+    return renderConnectionParameter(parameterKey, parameter);
   };
 
   // RENDER
@@ -514,6 +544,7 @@ export const CreateConnection = (props: CreateConnectionProps) => {
               isLoading={isLoading}
               value={selectedParamSetIndex}
               onChange={onAuthDropdownChange}
+              supportsOAuthConnection={supportsOAuthConnection}
               supportsServicePrincipalConnection={supportsServicePrincipalConnection}
               supportsLegacyManagedIdentityConnection={supportsLegacyManagedIdentityConnection}
             />
@@ -560,6 +591,16 @@ export const CreateConnection = (props: CreateConnectionProps) => {
             />
           )}
 
+          {/* Managed Identity Selection for In-App Connectors */}
+          {showIdentityPicker && (
+            <div className="param-row">
+              <Label className="label" required htmlFor={'connection-param-set-select'} disabled={isLoading}>
+                {legacyManagedIdentityLabelText}
+              </Label>
+              <LegacyManagedIdentityDropdown identity={identity} onChange={onLegacyManagedIdentityChange} disabled={isLoading} />
+            </div>
+          )}
+
           {/* Connector Parameters */}
           {showConfigParameters &&
             Object.entries(capabilityEnabledParameters)?.map(
@@ -567,7 +608,7 @@ export const CreateConnection = (props: CreateConnectionProps) => {
                 const mappingName = parameter?.uiDefinition?.credentialMapping?.mappingName;
                 if (mappingName) {
                   // This parameter belongs to a mapping - try to render a custom editor if supported.
-                  return renderCredentialsMappingParameter(mappingName, parameter);
+                  return renderCredentialsMappingParameter(key, parameter, mappingName);
                 }
                 return renderConnectionParameter(key, parameter);
               }
@@ -584,7 +625,7 @@ export const CreateConnection = (props: CreateConnectionProps) => {
 
       {/* Action Buttons */}
       <div className="msla-edit-connection-actions-container">
-        <Button disabled={!canSubmit} aria-label={submitButtonAriaLabel} onClick={submitCallback}>
+        <Button appearance="primary" disabled={!canSubmit} aria-label={submitButtonAriaLabel} onClick={submitCallback}>
           {submitButtonText}
         </Button>
         {!hideCancelButton ? (

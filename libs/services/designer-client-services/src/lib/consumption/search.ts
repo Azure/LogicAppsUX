@@ -48,7 +48,7 @@ export class ConsumptionSearchService extends BaseSearchService {
       const uri = `/subscriptions/${subscriptionId}/providers/Microsoft.Web/locations/${location}/apiOperations`;
       const queryParameters: QueryParameters = {
         'api-version': apiVersion,
-        $filter: `properties/trigger eq null and type eq 'Microsoft.Web/customApis/apiOperations' and ${ISE_RESOURCE_ID} eq null`,
+        $filter: `type eq 'Microsoft.Web/customApis/apiOperations' and ${ISE_RESOURCE_ID} eq null`,
       };
       // const response = await this.pagedBatchAzureResourceRequests(page, uri, queryParameters, 1);
       const { value } = await this.getAzureResourceByPage(uri, queryParameters, page, 100);
@@ -81,6 +81,11 @@ export class ConsumptionSearchService extends BaseSearchService {
       OperationsData.invokeWorkflowOperation,
       OperationsData.sendToBatchOperation,
       OperationsData.batchTriggerOperation,
+      OperationsData.as2EncodeOperation,
+      OperationsData.as2DecodeOperation,
+      OperationsData.rosettaNetEncodeOperation,
+      OperationsData.rosettaNetDecodeOperation,
+      OperationsData.rosettaNetWairForResponseOperation,
     ];
     return Promise.resolve([...clientBuiltInOperations, ...consumptionBuiltIn]);
   }
@@ -130,6 +135,8 @@ export class ConsumptionSearchService extends BaseSearchService {
       OperationsData.functionGroup,
       OperationsData.invokeWorkflowGroup,
       OperationsData.selectBatchWorkflowGroup,
+      OperationsData.as2Group,
+      OperationsData.rosettaNetGroup,
     ];
     return Promise.resolve([...clientBuiltInConnectors, ...consumptionBuiltIn]);
   }

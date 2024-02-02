@@ -1,9 +1,12 @@
+import { MockHttpClient } from '../../../../../__test__/mock-http-client';
 import { CreateConnection, type CreateConnectionProps } from '../createConnection';
 import { UniversalConnectionParameter } from '../formInputs/universalConnectionParameter';
 import {
   InitConnectionParameterEditorService,
   type IConnectionParameterEditorService,
   type IConnectionParameterInfo,
+  InitConnectionService,
+  StandardConnectionService,
 } from '@microsoft/designer-client-services-logic-apps';
 import type { ConnectionParameter, ConnectionParameterSets } from '@microsoft/utils-logic-apps';
 import React, { type ReactElement } from 'react';
@@ -11,6 +14,24 @@ import * as ReactShallowRenderer from 'react-test-renderer/shallow';
 
 describe('ui/createConnection', () => {
   let renderer: ReactShallowRenderer.ShallowRenderer;
+
+  const httpClient = new MockHttpClient();
+  InitConnectionService(
+    new StandardConnectionService({
+      apiVersion: '2018-07-01-preview',
+      baseUrl: '/baseUrl',
+      httpClient,
+      apiHubServiceDetails: {
+        apiVersion: '2018-07-01-preview',
+        baseUrl: '/baseUrl',
+        subscriptionId: '',
+        resourceGroup: '',
+        location: '',
+        httpClient,
+      },
+      readConnections: jest.fn(),
+    })
+  );
 
   beforeEach(() => {
     renderer = ReactShallowRenderer.createRenderer();
@@ -489,7 +510,26 @@ describe('ui/createConnection', () => {
         },
         setParameterValues: expect.any(Function),
         renderParameter: expect.any(Function),
+        isLoading: false,
       });
+    });
+
+    it('should render CustomCredentialMappingEditor in loading state', () => {
+      const connectionParameterSets = getConnectionParameterSetsWithCredentialMapping();
+      const props: CreateConnectionProps = {
+        isLoading: true,
+        connectorId: 'myConnectorId',
+        connectorDisplayName: 'My Connector',
+        connectionParameterSets,
+        checkOAuthCallback: jest.fn(),
+      };
+      renderer.render(<CreateConnection {...props} />);
+      const createConnectionContainer = renderer.getRenderOutput();
+      const createConnection = findConnectionCreateDiv(createConnectionContainer);
+      const mappingEditors = findParameterComponents(createConnection, CustomCredentialMappingEditor);
+      expect(mappingEditors).toHaveLength(1);
+      expect(mappingEditors[0].type).toEqual(CustomCredentialMappingEditor);
+      expect(mappingEditors[0].props.isLoading).toEqual(true);
     });
 
     it.each([
@@ -528,6 +568,12 @@ describe('ui/createConnection', () => {
 
       const parameters = findParameterComponents(createConnection, UniversalConnectionParameter);
       expect(parameters).toHaveLength(3);
+      expect(parameters[0].type).toEqual(UniversalConnectionParameter);
+      expect(parameters[0].props.parameterKey).toEqual('parameterA');
+      expect(parameters[1].type).toEqual(UniversalConnectionParameter);
+      expect(parameters[1].props.parameterKey).toEqual('parameterB');
+      expect(parameters[2].type).toEqual(UniversalConnectionParameter);
+      expect(parameters[2].props.parameterKey).toEqual('parameterD');
 
       const mappingEditors = findParameterComponents(createConnection, CustomCredentialMappingEditor);
       expect(mappingEditors).toHaveLength(0);

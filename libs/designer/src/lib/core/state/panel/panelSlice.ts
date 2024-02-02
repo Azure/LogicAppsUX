@@ -1,3 +1,4 @@
+import { resetWorkflowState } from '../global';
 import type { RelationshipIds, PanelState, PanelMode } from './panelInterfaces';
 import { LogEntryLevel, LoggerService } from '@microsoft/designer-client-services-logic-apps';
 import { PanelLocation } from '@microsoft/designer-ui';
@@ -20,6 +21,7 @@ const initialState: PanelState = {
   creatingConnection: false,
   currentPanelMode: undefined,
   referencePanelMode: undefined,
+  selectedErrorsPanelTabId: undefined,
 };
 
 export const panelSlice = createSlice({
@@ -43,6 +45,7 @@ export const panelSlice = createSlice({
       state.addingTrigger = false;
       state.creatingConnection = false;
       state.selectedTabId = undefined;
+      state.selectedErrorsPanelTabId = undefined;
     },
     updatePanelLocation: (state, action: PayloadAction<PanelLocation | undefined>) => {
       if (action.payload && action.payload !== state.panelLocation) {
@@ -133,6 +136,19 @@ export const panelSlice = createSlice({
     setIsCreatingConnection: (state, action: PayloadAction<boolean>) => {
       state.creatingConnection = action.payload;
     },
+    selectErrorsPanelTab: (state, action: PayloadAction<string>) => {
+      state.selectedErrorsPanelTabId = action.payload;
+
+      LoggerService().log({
+        level: LogEntryLevel.Verbose,
+        area: 'Designer:Panel Slice',
+        message: action.type,
+        args: [action.payload],
+      });
+    },
+  },
+  extraReducers: (builder) => {
+    builder.addCase(resetWorkflowState, () => initialState);
   },
 });
 
@@ -152,6 +168,7 @@ export const {
   selectPanelTab,
   setIsPanelLoading,
   setIsCreatingConnection,
+  selectErrorsPanelTab,
 } = panelSlice.actions;
 
 export default panelSlice.reducer;

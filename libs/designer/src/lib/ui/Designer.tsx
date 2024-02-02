@@ -1,4 +1,4 @@
-import { openPanel } from '../core';
+import { openPanel, useNodesInitialized } from '../core';
 import { useLayout } from '../core/graphlayout';
 import { usePreloadOperationsQuery, usePreloadConnectorsQuery } from '../core/queries/browse';
 import { useMonitoringView, useReadOnly } from '../core/state/designerOptions/designerOptionsSelectors';
@@ -18,8 +18,8 @@ import ScopeCardNode from './CustomNodes/ScopeCardNode';
 import SubgraphCardNode from './CustomNodes/SubgraphCardNode';
 import Minimap from './Minimap';
 import DeleteModal from './common/DeleteModal/DeleteModal';
-import { ButtonEdge } from './connections/edge';
-import { HiddenEdge } from './connections/hiddenEdge';
+import ButtonEdge from './connections/edge';
+import HiddenEdge from './connections/hiddenEdge';
 import { PanelRoot } from './panel/panelRoot';
 import { css, setLayerHostSelector } from '@fluentui/react';
 import { PanelLocation } from '@microsoft/designer-ui';
@@ -186,7 +186,7 @@ export const Designer = (props: DesignerProps) => {
     return true;
   });
 
-  useHotkeys(['meta+shift+p'], (event) => {
+  useHotkeys(['meta+shift+p', 'ctrl+shift+p'], (event) => {
     event.preventDefault();
     dispatch(openPanel({ panelMode: 'NodeSearch' }));
   });
@@ -213,9 +213,12 @@ export const Designer = (props: DesignerProps) => {
     marginLeft: props.rightShift,
   };
 
+  const isInitialized = useNodesInitialized();
+  const preloadSearch = useMemo(() => (isMonitoringView || isReadOnly) && isInitialized, [isMonitoringView, isReadOnly, isInitialized]);
+
   return (
     <DndProvider options={DND_OPTIONS}>
-      {isMonitoringView || isReadOnly ? null : <SearchPreloader />}
+      {preloadSearch ? <SearchPreloader /> : null}
       <div className="msla-designer-canvas msla-panel-mode" style={copilotPadding}>
         <ReactFlowProvider>
           <ReactFlow

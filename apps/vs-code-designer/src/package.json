@@ -1,7 +1,7 @@
 {
   "name": "vscode-azurelogicapps",
   "displayName": "Azure Logic Apps (Standard)",
-  "version": "2.100.0",
+  "version": "2.109.0",
   "aiKey": "setInGitHubBuild",
   "repository": "https://github.com/Azure/LogicAppsUX",
   "main": "main.js",
@@ -92,6 +92,12 @@
         "category": "Azure Logic Apps",
         "icon": "$(cloud-upload)",
         "enablement": "!virtualWorkspace"
+      },
+      {
+        "command": "azureLogicAppsStandard.generateDeploymentScripts",
+        "title": "Generate deployment scripts...",
+        "category": "Azure Logic Apps",
+        "preview": true
       },
       {
         "command": "azureLogicAppsStandard.deploySlot",
@@ -615,6 +621,11 @@
           "group": "zzz_LogicApptools@1"
         },
         {
+          "command": "azureLogicAppsStandard.generateDeploymentScripts",
+          "when": "explorerResourceIsRoot == true",
+          "group": "zzz_LogicApptools@1"
+        },
+        {
           "command": "azureLogicAppsStandard.openOverview",
           "when": "resourceFilename==workflow.json",
           "group": "navigation@1"
@@ -922,6 +933,7 @@
     "onCommand:azureLogicAppsStandard.createNewCodeProject",
     "onCommand:azureLogicAppsStandard.createCodeless",
     "onCommand:azureLogicAppsStandard.deploy",
+    "onCommand: azureLogicAppsStandard.generateDeploymentScripts",
     "onCommand:azureLogicAppsStandard.deploySlot",
     "onCommand:azureLogicAppsStandard.createLogicApp",
     "onCommand:azureLogicAppsStandard.createLogicAppAdvanced",

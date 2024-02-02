@@ -853,28 +853,6 @@
       "value": "Girilen kimlik bu Logic App ile ilişkili değil."
     }
   ],
-  "3jwMBm": [
-    {
-      "type": 0,
-      "value": "JSON biçimi geçersiz. Başlangıç "
-    },
-    {
-      "type": 1,
-      "value": "openingBracket"
-    },
-    {
-      "type": 0,
-      "value": " veya bitiş "
-    },
-    {
-      "type": 1,
-      "value": "closingBracket"
-    },
-    {
-      "type": 0,
-      "value": " eksik."
-    }
-  ],
   "3n5pnv": [
     {
       "type": 0,
@@ -1091,26 +1069,44 @@
       "value": "Microsoft'a bu özellik hakkında beğendiklerinizi bildirin"
     }
   ],
+  "5LV34t": [
+    {
+      "type": 0,
+      "value": "'"
+    },
+    {
+      "type": 1,
+      "value": "invalidProperties"
+    },
+    {
+      "type": 0,
+      "value": "' özellikleri '"
+    },
+    {
+      "type": 1,
+      "value": "authType"
+    },
+    {
+      "type": 0,
+      "value": "' kimlik doğrulama türü için geçersiz."
+    }
+  ],
   "5OvGgn": [
     {
       "type": 0,
       "value": "Gövde"
     }
   ],
-  "5Ow9mX": [
-    {
-      "type": 1,
-      "value": "connectorName"
-    },
-    {
-      "type": 0,
-      "value": " bağlayıcı simgesi"
-    }
-  ],
   "5SAQOb": [
     {
       "type": 0,
       "value": "Yetkili"
+    }
+  ],
+  "5WTRY8": [
+    {
+      "type": 0,
+      "value": "Errors"
     }
   ],
   "5akc1Q": [
@@ -1313,6 +1309,16 @@
     {
       "type": 0,
       "value": "Akış oluştur"
+    }
+  ],
+  "6sSPNb": [
+    {
+      "type": 1,
+      "value": "connectorName"
+    },
+    {
+      "type": 0,
+      "value": " bağlayıcısı"
     }
   ],
   "6u6CS+": [
@@ -1699,6 +1705,16 @@
       "value": "Logic App'te sistem tarafından atanan yönetilen kimlik etkinleştirildiğinde kullanıcı kimliği desteklenmez."
     }
   ],
+  "96JG8I": [
+    {
+      "type": 1,
+      "value": "operationName"
+    },
+    {
+      "type": 0,
+      "value": " işlemi"
+    }
+  ],
   "99vsJy": [
     {
       "type": 0,
@@ -1807,6 +1823,12 @@
     {
       "type": 0,
       "value": "Temel modda düzenle"
+    }
+  ],
+  "9yLPwo": [
+    {
+      "type": 0,
+      "value": "Daha ayrıntılı bilgi için aşağıdaki kaynaklara başvurabilirsiniz:"
     }
   ],
   "A5Ferh": [
@@ -2007,6 +2029,28 @@
       "value": "Yeniden denemeler ile başarılı oldu"
     }
   ],
+  "BGw6eH": [
+    {
+      "type": 0,
+      "value": "'"
+    },
+    {
+      "type": 1,
+      "value": "authType"
+    },
+    {
+      "type": 0,
+      "value": "' kimlik doğrulama türü için gerekli '"
+    },
+    {
+      "type": 1,
+      "value": "missingProperties"
+    },
+    {
+      "type": 0,
+      "value": "' özellikleri eksik"
+    }
+  ],
   "BHe7qY": [
     {
       "type": 0,
@@ -2047,6 +2091,12 @@
     {
       "type": 0,
       "value": "Parolayı düz metin olarak girin veya güvenli bir parametre kullanın"
+    }
+  ],
+  "BQyLiu": [
+    {
+      "type": 0,
+      "value": "sonuç bulundu"
     }
   ],
   "BS3gy8": [
@@ -2173,28 +2223,6 @@
     {
       "type": 0,
       "value": "(UTC+13:00) Samoa"
-    }
-  ],
-  "CafOCn": [
-    {
-      "type": 0,
-      "value": "'"
-    },
-    {
-      "type": 1,
-      "value": "invalidProperties"
-    },
-    {
-      "type": 0,
-      "value": "' özellikleri '"
-    },
-    {
-      "type": 1,
-      "value": "convertedAuthType"
-    },
-    {
-      "type": 0,
-      "value": "' kimlik doğrulama türü için geçersiz."
     }
   ],
   "Cb6IEq": [
@@ -2655,12 +2683,6 @@
       "value": "Başlangıç dizini ve bitiş dizini tarafından tanımlanan bir dize bölümü döndürür"
     }
   ],
-  "FOiBk/": [
-    {
-      "type": 0,
-      "value": "Hatalar"
-    }
-  ],
   "FT3jt6": [
     {
       "type": 0,
@@ -2715,12 +2737,6 @@
     {
       "type": 0,
       "value": "Bir e-posta adresi girin."
-    }
-  ],
-  "FaBEfQ": [
-    {
-      "type": 0,
-      "value": "İzlenen özellikler"
     }
   ],
   "Fcvgvg": [
@@ -3031,6 +3047,28 @@
     {
       "type": 0,
       "value": "Bu eylemden gönder"
+    }
+  ],
+  "I1CYNA": [
+    {
+      "type": 0,
+      "value": "'"
+    },
+    {
+      "type": 1,
+      "value": "authType"
+    },
+    {
+      "type": 0,
+      "value": "' kimlik doğrulama türü için geçersiz '"
+    },
+    {
+      "type": 1,
+      "value": "invalidProperties"
+    },
+    {
+      "type": 0,
+      "value": "' özelliği."
     }
   ],
   "I3mifR": [
@@ -3591,6 +3629,12 @@
       "value": "Hakkında"
     }
   ],
+  "M0bbZk": [
+    {
+      "type": 0,
+      "value": "Flow Checker"
+    }
+  ],
   "M0xrm+": [
     {
       "type": 0,
@@ -3777,6 +3821,12 @@
       "value": "Kopyalandı!"
     }
   ],
+  "NFgfP4": [
+    {
+      "type": 0,
+      "value": "öğe"
+    }
+  ],
   "NGJ00e": [
     {
       "type": 0,
@@ -3867,6 +3917,12 @@
       "value": "Salı"
     }
   ],
+  "NzPnFS": [
+    {
+      "type": 0,
+      "value": "Örnek:"
+    }
+  ],
   "O+3Y9f": [
     {
       "type": 0,
@@ -3903,6 +3959,12 @@
       "value": "Dosyalar Yükleniyor..."
     }
   ],
+  "O6VHe0": [
+    {
+      "type": 0,
+      "value": "Operation warnings"
+    }
+  ],
   "O7HhyP": [
     {
       "type": 0,
@@ -3913,6 +3975,12 @@
     {
       "type": 0,
       "value": "Tamam"
+    }
+  ],
+  "OBO/HE": [
+    {
+      "type": 0,
+      "value": "Geçersiz Kimlik Doğrulama Değeri"
     }
   ],
   "ODQCKj": [
@@ -4065,14 +4133,14 @@
       "value": "Yönetilen kimlik seçin"
     }
   ],
-  "Os0h2Y": [
+  "Ov7Ckz": [
     {
       "type": 0,
       "value": "'"
     },
     {
       "type": 1,
-      "value": "convertedAuthType"
+      "value": "authType"
     },
     {
       "type": 0,
@@ -4084,7 +4152,7 @@
     },
     {
       "type": 0,
-      "value": "' özellikleri eksik"
+      "value": "' özelliği eksik"
     }
   ],
   "P+7G62": [
@@ -4133,6 +4201,12 @@
     {
       "type": 0,
       "value": "Giriş"
+    }
+  ],
+  "PDMP/Z": [
+    {
+      "type": 0,
+      "value": "Daraltıldı"
     }
   ],
   "PNk3n4": [
@@ -4331,28 +4405,6 @@
     {
       "type": 0,
       "value": "Durum kodu"
-    }
-  ],
-  "QKWoVr": [
-    {
-      "type": 0,
-      "value": "'"
-    },
-    {
-      "type": 1,
-      "value": "convertedAuthType"
-    },
-    {
-      "type": 0,
-      "value": "' kimlik doğrulama türü için gerekli '"
-    },
-    {
-      "type": 1,
-      "value": "missingProperties"
-    },
-    {
-      "type": 0,
-      "value": "' özelliği eksik"
     }
   ],
   "QZBPUx": [
@@ -5085,12 +5137,6 @@
       "value": "Daha az göster"
     }
   ],
-  "V0le5X": [
-    {
-      "type": 0,
-      "value": "Geçerli bir JSON girin."
-    }
-  ],
   "V3vpin": [
     {
       "type": 0,
@@ -5235,6 +5281,12 @@
     {
       "type": 0,
       "value": "Hata Türü"
+    }
+  ],
+  "Vi5TIV": [
+    {
+      "type": 0,
+      "value": "No warnings found."
     }
   ],
   "VlvlX1": [
@@ -5813,6 +5865,12 @@
     {
       "type": 0,
       "value": "Arama İpuçları"
+    }
+  ],
+  "Yg/vvm": [
+    {
+      "type": 0,
+      "value": "Eylem Ekleme Panelini Kapat"
     }
   ],
   "YgU88A": [
@@ -6541,6 +6599,12 @@
       "value": "Gerekli. Değerini istediğiniz değişkenin adı."
     }
   ],
+  "eHsOsm": [
+    {
+      "type": 0,
+      "value": "Süreyi ISO 8601 biçiminde belirtin"
+    }
+  ],
   "eO1h/h": [
     {
       "type": 0,
@@ -6913,6 +6977,18 @@
     {
       "type": 0,
       "value": "Bu eylemden bir iş akışı çalıştırmasını yeniden gönder"
+    }
+  ],
+  "hJbr09": [
+    {
+      "type": 0,
+      "value": "Daraltmak için Tıklayın"
+    }
+  ],
+  "hLOIwp": [
+    {
+      "type": 0,
+      "value": "Warnings"
     }
   ],
   "hMf2TA": [
@@ -7783,6 +7859,12 @@
       "value": "Bir veri URI'sinin dize gösterimini döndürür"
     }
   ],
+  "mNaBPE": [
+    {
+      "type": 0,
+      "value": "Geçerli bir JSON girin."
+    }
+  ],
   "mPakaD": [
     {
       "type": 0,
@@ -8003,6 +8085,24 @@
     {
       "type": 0,
       "value": "İş akışı üst bilgilerini gösterme"
+    }
+  ],
+  "ncW1Sw": [
+    {
+      "type": 1,
+      "value": "operationName"
+    },
+    {
+      "type": 0,
+      "value": " işlemi, "
+    },
+    {
+      "type": 1,
+      "value": "connectorName"
+    },
+    {
+      "type": 0,
+      "value": " bağlayıcısı"
     }
   ],
   "ngsC44": [
@@ -8491,6 +8591,12 @@
       "value": "Bir dizi veya dizedeki öğelerin sayısını döndürür"
     }
   ],
+  "qdUeUk": [
+    {
+      "type": 0,
+      "value": "Genişletmek için Tıklayın"
+    }
+  ],
   "qiIs4V": [
     {
       "type": 0,
@@ -8533,28 +8639,6 @@
       "value": "Zaman uyumsuz yanıt, bir mantıksal uygulamanın, isteğin işlenmek üzere kabul edildiğini göstermek için 202 (Kabul Edildi) yanıtı göndermesine olanak sağlar. Son durumun alınması için bir konum üst bilgisi sağlanır."
     }
   ],
-  "qs9D+A": [
-    {
-      "type": 0,
-      "value": "'"
-    },
-    {
-      "type": 1,
-      "value": "convertedAuthType"
-    },
-    {
-      "type": 0,
-      "value": "' kimlik doğrulama türü için geçersiz '"
-    },
-    {
-      "type": 1,
-      "value": "invalidProperties"
-    },
-    {
-      "type": 0,
-      "value": "' özelliği."
-    }
-  ],
   "qy5WqY": [
     {
       "type": 0,
@@ -8577,6 +8661,12 @@
     {
       "type": 0,
       "value": "Geri Al"
+    }
+  ],
+  "r4zp7m": [
+    {
+      "type": 0,
+      "value": "Genişletildi"
     }
   ],
   "r7vZ5a": [

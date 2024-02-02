@@ -1,6 +1,6 @@
 {
   "name": "@microsoft/logic-apps-chatbot",
-  "version": "2.100.0",
+  "version": "2.109.0",
   "scripts": {
     "yalcpush": "yalc push ../../dist/libs/chatbot"
   },

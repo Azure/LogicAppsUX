@@ -28,7 +28,11 @@ export async function getParametersJson(workflowFilePath: string): Promise<Recor
   return {};
 }
 
-export async function saveParameters(context: IActionContext, workflowFilePath: string, parameters: WorkflowParameter): Promise<void> {
+export async function saveWorkflowParameter(
+  context: IActionContext,
+  workflowFilePath: string,
+  parameters: WorkflowParameter
+): Promise<void> {
   const projectPath = await getLogicAppProjectRoot(context, workflowFilePath);
   const parametersFilePath = path.join(projectPath, parametersFileName);
   const parametersFileExists = fse.pathExistsSync(parametersFilePath);
@@ -41,4 +45,35 @@ export async function saveParameters(context: IActionContext, workflowFilePath: 
   } else if (parametersFileExists) {
     await writeFormattedJson(parametersFilePath, parameters);
   }
+}
+
+export async function saveWorkflowParameterRecords(
+  context: IActionContext,
+  workflowFilePath: string,
+  workflowParameterRecords: Record<string, WorkflowParameter>
+): Promise<void> {
+  const workflowParameterObject = getWorkflowParameterObject(workflowParameterRecords);
+  await saveWorkflowParameter(context, workflowFilePath, workflowParameterObject);
+}
+
+export function getStringParameter(value: any): Parameter {
+  return getParameter('String', value);
+}
+
+export function getParameter(type: string, value: any): Parameter {
+  return {
+    type: type,
+    value: value,
+  };
+}
+
+function getWorkflowParameterObject(workflowParameterRecords: Record<string, any>): any {
+  const workflowParameterObject = {};
+  Object.entries(workflowParameterRecords).forEach(([key, parameter]) => {
+    parameter.value = parameter.value ?? parameter.defaultValue;
+    delete parameter.defaultValue;
+    workflowParameterObject[key] = parameter;
+  });
+
+  return workflowParameterObject;
 }
