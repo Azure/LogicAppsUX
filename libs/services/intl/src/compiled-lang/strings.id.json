@@ -1103,6 +1103,12 @@
       "value": "Otoritas"
     }
   ],
+  "5WTRY8": [
+    {
+      "type": 0,
+      "value": "Errors"
+    }
+  ],
   "5akc1Q": [
     {
       "type": 0,
@@ -1307,12 +1313,12 @@
   ],
   "6sSPNb": [
     {
-      "type": 1,
-      "value": "connectorName"
+      "type": 0,
+      "value": "Konektor "
     },
     {
-      "type": 0,
-      "value": " connector"
+      "type": 1,
+      "value": "connectorName"
     }
   ],
   "6u6CS+": [
@@ -1701,12 +1707,12 @@
   ],
   "96JG8I": [
     {
-      "type": 1,
-      "value": "operationName"
+      "type": 0,
+      "value": "Operasi "
     },
     {
-      "type": 0,
-      "value": " operation"
+      "type": 1,
+      "value": "operationName"
     }
   ],
   "99vsJy": [
@@ -1822,7 +1828,7 @@
   "9yLPwo": [
     {
       "type": 0,
-      "value": "For more detailed information, you can refer to the following resources"
+      "value": "Untuk informasi yang lebih mendetail, Anda dapat merujuk ke sumber daya berikut"
     }
   ],
   "A5Ferh": [
@@ -2074,6 +2080,12 @@
     {
       "type": 0,
       "value": "Masukkan kata sandi sebagai teks biasa atau gunakan parameter yang aman"
+    }
+  ],
+  "BQyLiu": [
+    {
+      "type": 0,
+      "value": "results found"
     }
   ],
   "BS3gy8": [
@@ -2664,12 +2676,6 @@
       "value": "Menghasilkan bagian string yang ditentukan oleh indeks awal dan indeks akhir"
     }
   ],
-  "FOiBk/": [
-    {
-      "type": 0,
-      "value": "Kesalahan"
-    }
-  ],
   "FT3jt6": [
     {
       "type": 0,
@@ -2713,12 +2719,6 @@
     {
       "type": 0,
       "value": "Masukkan alamat email."
-    }
-  ],
-  "FaBEfQ": [
-    {
-      "type": 0,
-      "value": "Properti yang dilacak"
     }
   ],
   "Fcvgvg": [
@@ -3600,6 +3600,12 @@
       "value": "Tentang"
     }
   ],
+  "M0bbZk": [
+    {
+      "type": 0,
+      "value": "Flow Checker"
+    }
+  ],
   "M0xrm+": [
     {
       "type": 0,
@@ -3786,6 +3792,12 @@
       "value": "Disalin!"
     }
   ],
+  "NFgfP4": [
+    {
+      "type": 0,
+      "value": "item"
+    }
+  ],
   "NGJ00e": [
     {
       "type": 0,
@@ -3879,7 +3891,7 @@
   "NzPnFS": [
     {
       "type": 0,
-      "value": "Example:"
+      "value": "Contoh:"
     }
   ],
   "O+3Y9f": [
@@ -3916,6 +3928,12 @@
     {
       "type": 0,
       "value": "Memuat File..."
+    }
+  ],
+  "O6VHe0": [
+    {
+      "type": 0,
+      "value": "Operation warnings"
     }
   ],
   "O7HhyP": [
@@ -4154,6 +4172,12 @@
     {
       "type": 0,
       "value": "Input"
+    }
+  ],
+  "PDMP/Z": [
+    {
+      "type": 0,
+      "value": "Diciutkan"
     }
   ],
   "PNk3n4": [
@@ -5219,6 +5243,12 @@
       "value": "Jenis Kesalahan"
     }
   ],
+  "Vi5TIV": [
+    {
+      "type": 0,
+      "value": "No warnings found."
+    }
+  ],
   "VlvlX1": [
     {
       "type": 0,
@@ -5800,7 +5830,7 @@
   "Yg/vvm": [
     {
       "type": 0,
-      "value": "Close Add Action Panel"
+      "value": "Tutup Panel Tambahkan Tindakan"
     }
   ],
   "YgU88A": [
@@ -6536,7 +6566,7 @@
   "eHsOsm": [
     {
       "type": 0,
-      "value": "Specify the duration in ISO 8601 format"
+      "value": "Tentukan durasinya dalam format ISO 8601"
     }
   ],
   "eO1h/h": [
@@ -6911,6 +6941,18 @@
     {
       "type": 0,
       "value": "Kirim ulang eksekusi alur kerja dari tindakan ini"
+    }
+  ],
+  "hJbr09": [
+    {
+      "type": 0,
+      "value": "Klik untuk Menciutkan"
+    }
+  ],
+  "hLOIwp": [
+    {
+      "type": 0,
+      "value": "Warnings"
     }
   ],
   "hMf2TA": [
@@ -7993,20 +8035,20 @@
   ],
   "ncW1Sw": [
     {
+      "type": 0,
+      "value": "Operasi "
+    },
+    {
       "type": 1,
       "value": "operationName"
     },
     {
       "type": 0,
-      "value": " operation, "
+      "value": ", konektor "
     },
     {
       "type": 1,
       "value": "connectorName"
-    },
-    {
-      "type": 0,
-      "value": " connector"
     }
   ],
   "ngsC44": [
@@ -8484,6 +8526,12 @@
       "value": "Menampilkan jumlah elemen dalam array atau string"
     }
   ],
+  "qdUeUk": [
+    {
+      "type": 0,
+      "value": "Klik untuk Meluaskan"
+    }
+  ],
   "qiIs4V": [
     {
       "type": 0,
@@ -8548,6 +8596,12 @@
     {
       "type": 0,
       "value": "Batalkan"
+    }
+  ],
+  "r4zp7m": [
+    {
+      "type": 0,
+      "value": "Diluaskan"
     }
   ],
   "r7vZ5a": [

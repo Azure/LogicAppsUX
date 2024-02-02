@@ -105,8 +105,6 @@ export class UncastingUtility {
           return this._uncastSingleFunction(expression, 'byte');
         case 'BASE64TOSTRING':
           return this._uncastSingleFunction(expression, 'byte');
-        case 'STRING':
-          return this._uncastSingleFunction(expression, '');
         case 'ENCODEURICOMPONENT':
           return this._uncastSingleFunction(expression, '');
         case 'DECODEDATAURI':

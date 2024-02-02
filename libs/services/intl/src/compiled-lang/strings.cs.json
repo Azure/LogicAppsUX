@@ -1111,6 +1111,12 @@
       "value": "Autorita"
     }
   ],
+  "5WTRY8": [
+    {
+      "type": 0,
+      "value": "Errors"
+    }
+  ],
   "5akc1Q": [
     {
       "type": 0,
@@ -1315,12 +1321,12 @@
   ],
   "6sSPNb": [
     {
-      "type": 1,
-      "value": "connectorName"
+      "type": 0,
+      "value": "Konektor "
     },
     {
-      "type": 0,
-      "value": " connector"
+      "type": 1,
+      "value": "connectorName"
     }
   ],
   "6u6CS+": [
@@ -1709,12 +1715,12 @@
   ],
   "96JG8I": [
     {
-      "type": 1,
-      "value": "operationName"
+      "type": 0,
+      "value": "Operace "
     },
     {
-      "type": 0,
-      "value": " operation"
+      "type": 1,
+      "value": "operationName"
     }
   ],
   "99vsJy": [
@@ -1830,7 +1836,7 @@
   "9yLPwo": [
     {
       "type": 0,
-      "value": "For more detailed information, you can refer to the following resources"
+      "value": "Podrobnější informace najdete v následujících zdrojích informací."
     }
   ],
   "A5Ferh": [
@@ -2115,6 +2121,12 @@
     {
       "type": 0,
       "value": "Zadejte heslo jako prostý text nebo použijte zabezpečený parametr."
+    }
+  ],
+  "BQyLiu": [
+    {
+      "type": 0,
+      "value": "results found"
     }
   ],
   "BS3gy8": [
@@ -2705,12 +2717,6 @@
       "value": "Vrátí část řetězce definovanou počátečním a koncovým indexem."
     }
   ],
-  "FOiBk/": [
-    {
-      "type": 0,
-      "value": "Chyby"
-    }
-  ],
   "FT3jt6": [
     {
       "type": 0,
@@ -2787,12 +2793,6 @@
     {
       "type": 0,
       "value": "Zadejte e-mailovou adresu."
-    }
-  ],
-  "FaBEfQ": [
-    {
-      "type": 0,
-      "value": "Sledované vlastnosti"
     }
   ],
   "Fcvgvg": [
@@ -3707,6 +3707,12 @@
       "value": "O aplikaci"
     }
   ],
+  "M0bbZk": [
+    {
+      "type": 0,
+      "value": "Flow Checker"
+    }
+  ],
   "M0xrm+": [
     {
       "type": 0,
@@ -3893,6 +3899,12 @@
       "value": "Zkopírováno!"
     }
   ],
+  "NFgfP4": [
+    {
+      "type": 0,
+      "value": "položka"
+    }
+  ],
   "NGJ00e": [
     {
       "type": 0,
@@ -3990,7 +4002,7 @@
   "NzPnFS": [
     {
       "type": 0,
-      "value": "Example:"
+      "value": "Příklad:"
     }
   ],
   "O+3Y9f": [
@@ -4027,6 +4039,12 @@
     {
       "type": 0,
       "value": "Načítají se soubory..."
+    }
+  ],
+  "O6VHe0": [
+    {
+      "type": 0,
+      "value": "Operation warnings"
     }
   ],
   "O7HhyP": [
@@ -4265,6 +4283,12 @@
     {
       "type": 0,
       "value": "Vstup"
+    }
+  ],
+  "PDMP/Z": [
+    {
+      "type": 0,
+      "value": "Sbaleno"
     }
   ],
   "PNk3n4": [
@@ -5363,6 +5387,12 @@
       "value": "Typ chyby"
     }
   ],
+  "Vi5TIV": [
+    {
+      "type": 0,
+      "value": "No warnings found."
+    }
+  ],
   "VlvlX1": [
     {
       "type": 0,
@@ -5944,7 +5974,7 @@
   "Yg/vvm": [
     {
       "type": 0,
-      "value": "Close Add Action Panel"
+      "value": "Zavřít panel Přidat akci"
     }
   ],
   "YgU88A": [
@@ -6680,7 +6710,7 @@
   "eHsOsm": [
     {
       "type": 0,
-      "value": "Specify the duration in ISO 8601 format"
+      "value": "Uveďte dobu trvání ve formátu ISO 8601."
     }
   ],
   "eO1h/h": [
@@ -7059,6 +7089,18 @@
     {
       "type": 0,
       "value": "Znovu odeslat spuštění pracovního postupu z této akce"
+    }
+  ],
+  "hJbr09": [
+    {
+      "type": 0,
+      "value": "Kliknutím sbalíte."
+    }
+  ],
+  "hLOIwp": [
+    {
+      "type": 0,
+      "value": "Warnings"
     }
   ],
   "hMf2TA": [
@@ -8211,20 +8253,20 @@
   ],
   "ncW1Sw": [
     {
+      "type": 0,
+      "value": "Operace "
+    },
+    {
       "type": 1,
       "value": "operationName"
     },
     {
       "type": 0,
-      "value": " operation, "
+      "value": ", konektor "
     },
     {
       "type": 1,
       "value": "connectorName"
-    },
-    {
-      "type": 0,
-      "value": " connector"
     }
   ],
   "ngsC44": [
@@ -8735,6 +8777,12 @@
       "value": "Vrátí počet prvků v poli nebo řetězci."
     }
   ],
+  "qdUeUk": [
+    {
+      "type": 0,
+      "value": "Kliknutím rozbalte."
+    }
+  ],
   "qiIs4V": [
     {
       "type": 0,
@@ -8799,6 +8847,12 @@
     {
       "type": 0,
       "value": "Zpět"
+    }
+  ],
+  "r4zp7m": [
+    {
+      "type": 0,
+      "value": "Rozbaleno"
     }
   ],
   "r7vZ5a": [

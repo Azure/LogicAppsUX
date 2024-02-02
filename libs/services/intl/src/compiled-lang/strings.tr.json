@@ -1103,6 +1103,12 @@
       "value": "Yetkili"
     }
   ],
+  "5WTRY8": [
+    {
+      "type": 0,
+      "value": "Errors"
+    }
+  ],
   "5akc1Q": [
     {
       "type": 0,
@@ -1312,7 +1318,7 @@
     },
     {
       "type": 0,
-      "value": " connector"
+      "value": " bağlayıcısı"
     }
   ],
   "6u6CS+": [
@@ -1706,7 +1712,7 @@
     },
     {
       "type": 0,
-      "value": " operation"
+      "value": " işlemi"
     }
   ],
   "99vsJy": [
@@ -1822,7 +1828,7 @@
   "9yLPwo": [
     {
       "type": 0,
-      "value": "For more detailed information, you can refer to the following resources"
+      "value": "Daha ayrıntılı bilgi için aşağıdaki kaynaklara başvurabilirsiniz:"
     }
   ],
   "A5Ferh": [
@@ -2085,6 +2091,12 @@
     {
       "type": 0,
       "value": "Parolayı düz metin olarak girin veya güvenli bir parametre kullanın"
+    }
+  ],
+  "BQyLiu": [
+    {
+      "type": 0,
+      "value": "results found"
     }
   ],
   "BS3gy8": [
@@ -2671,12 +2683,6 @@
       "value": "Başlangıç dizini ve bitiş dizini tarafından tanımlanan bir dize bölümü döndürür"
     }
   ],
-  "FOiBk/": [
-    {
-      "type": 0,
-      "value": "Hatalar"
-    }
-  ],
   "FT3jt6": [
     {
       "type": 0,
@@ -2731,12 +2737,6 @@
     {
       "type": 0,
       "value": "Bir e-posta adresi girin."
-    }
-  ],
-  "FaBEfQ": [
-    {
-      "type": 0,
-      "value": "İzlenen özellikler"
     }
   ],
   "Fcvgvg": [
@@ -3629,6 +3629,12 @@
       "value": "Hakkında"
     }
   ],
+  "M0bbZk": [
+    {
+      "type": 0,
+      "value": "Flow Checker"
+    }
+  ],
   "M0xrm+": [
     {
       "type": 0,
@@ -3815,6 +3821,12 @@
       "value": "Kopyalandı!"
     }
   ],
+  "NFgfP4": [
+    {
+      "type": 0,
+      "value": "öğe"
+    }
+  ],
   "NGJ00e": [
     {
       "type": 0,
@@ -3908,7 +3920,7 @@
   "NzPnFS": [
     {
       "type": 0,
-      "value": "Example:"
+      "value": "Örnek:"
     }
   ],
   "O+3Y9f": [
@@ -3945,6 +3957,12 @@
     {
       "type": 0,
       "value": "Dosyalar Yükleniyor..."
+    }
+  ],
+  "O6VHe0": [
+    {
+      "type": 0,
+      "value": "Operation warnings"
     }
   ],
   "O7HhyP": [
@@ -4183,6 +4201,12 @@
     {
       "type": 0,
       "value": "Giriş"
+    }
+  ],
+  "PDMP/Z": [
+    {
+      "type": 0,
+      "value": "Daraltıldı"
     }
   ],
   "PNk3n4": [
@@ -5259,6 +5283,12 @@
       "value": "Hata Türü"
     }
   ],
+  "Vi5TIV": [
+    {
+      "type": 0,
+      "value": "No warnings found."
+    }
+  ],
   "VlvlX1": [
     {
       "type": 0,
@@ -5840,7 +5870,7 @@
   "Yg/vvm": [
     {
       "type": 0,
-      "value": "Close Add Action Panel"
+      "value": "Eylem Ekleme Panelini Kapat"
     }
   ],
   "YgU88A": [
@@ -6572,7 +6602,7 @@
   "eHsOsm": [
     {
       "type": 0,
-      "value": "Specify the duration in ISO 8601 format"
+      "value": "Süreyi ISO 8601 biçiminde belirtin"
     }
   ],
   "eO1h/h": [
@@ -6947,6 +6977,18 @@
     {
       "type": 0,
       "value": "Bu eylemden bir iş akışı çalıştırmasını yeniden gönder"
+    }
+  ],
+  "hJbr09": [
+    {
+      "type": 0,
+      "value": "Daraltmak için Tıklayın"
+    }
+  ],
+  "hLOIwp": [
+    {
+      "type": 0,
+      "value": "Warnings"
     }
   ],
   "hMf2TA": [
@@ -8052,7 +8094,7 @@
     },
     {
       "type": 0,
-      "value": " operation, "
+      "value": " işlemi, "
     },
     {
       "type": 1,
@@ -8060,7 +8102,7 @@
     },
     {
       "type": 0,
-      "value": " connector"
+      "value": " bağlayıcısı"
     }
   ],
   "ngsC44": [
@@ -8549,6 +8591,12 @@
       "value": "Bir dizi veya dizedeki öğelerin sayısını döndürür"
     }
   ],
+  "qdUeUk": [
+    {
+      "type": 0,
+      "value": "Genişletmek için Tıklayın"
+    }
+  ],
   "qiIs4V": [
     {
       "type": 0,
@@ -8613,6 +8661,12 @@
     {
       "type": 0,
       "value": "Geri Al"
+    }
+  ],
+  "r4zp7m": [
+    {
+      "type": 0,
+      "value": "Genişletildi"
     }
   ],
   "r7vZ5a": [

@@ -3,7 +3,7 @@ import { useHostOptions, useIsDarkMode } from '../../core/state/designerOptions/
 import { useCurrentPanelMode, useIsLoadingPanel, useIsPanelCollapsed } from '../../core/state/panel/panelSelectors';
 import { clearPanel } from '../../core/state/panel/panelSlice';
 import { ConnectionPanel } from './connectionsPanel/connectionsPanel';
-import { ErrorPanel } from './errorsPanel/errorsPanel';
+import { ErrorsPanel } from './errorsPanel/errorsPanel';
 import { NodeDetailsPanel } from './nodeDetailsPanel/nodeDetailsPanel';
 import { NodeSearchPanel } from './nodeSearchPanel/nodeSearchPanel';
 import { RecommendationPanelContext } from './recommendation/recommendationPanelContext';
@@ -105,7 +105,7 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element => {
         ) : currentPanelMode === 'Connection' ? (
           <ConnectionPanel {...commonPanelProps} />
         ) : currentPanelMode === 'Error' ? (
-          <ErrorPanel {...commonPanelProps} />
+          <ErrorsPanel {...commonPanelProps} />
         ) : null // Caught above
       }
     </Panel>
