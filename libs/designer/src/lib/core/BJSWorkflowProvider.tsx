@@ -1,17 +1,16 @@
 import type { Workflow } from '../common/models/workflow';
 import { ProviderWrappedContext } from './ProviderWrappedContext';
 import { initializeGraphState } from './parsers/ParseReduxAction';
-import type { DesignerOptionsState } from './state/designerOptions/designerOptionsInterfaces';
+import { useAreDesignerOptionsInitialized, useAreServicesInitialized } from './state/designerOptions/designerOptionsSelectors';
 import { initializeServices } from './state/designerOptions/designerOptionsSlice';
 import { WorkflowKind } from './state/workflow/workflowInterfaces';
 import { initWorkflowKind, initRunInstance, initWorkflowSpec } from './state/workflow/workflowSlice';
-import type { AppDispatch, RootState } from './store';
+import type { AppDispatch } from './store';
 import type { LogicAppsV2 } from '@microsoft/utils-logic-apps';
 import { equals } from '@microsoft/utils-logic-apps';
 import { useDeepCompareEffect } from '@react-hookz/web';
-import { createSelector } from '@reduxjs/toolkit';
 import React, { useContext } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
 export interface BJSWorkflowProviderProps {
   workflow: Workflow;
@@ -34,14 +33,14 @@ const DataProviderInner: React.FC<BJSWorkflowProviderProps> = ({ workflow, child
 export const BJSWorkflowProvider: React.FC<BJSWorkflowProviderProps> = (props) => {
   const wrapped = useContext(ProviderWrappedContext);
   const dispatch = useDispatch<AppDispatch>();
-  const servicesInitialized = useSelector(
-    createSelector(
-      (state: RootState) => state.designerOptions,
-      (state: DesignerOptionsState) => state.servicesInitialized
-    )
-  );
+  const designerOptionsInitialized = useAreDesignerOptionsInitialized();
+  const servicesInitialized = useAreServicesInitialized();
   if (!wrapped) {
     throw new Error('BJSWorkflowProvider must be used inside of a DesignerProvider');
+  }
+
+  if (!designerOptionsInitialized) {
+    return null;
   }
 
   if (!servicesInitialized) {

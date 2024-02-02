@@ -111,6 +111,7 @@ export const designerOptionsSlice = createSlice({
         ...state.hostOptions,
         ...action.payload.hostOptions,
       };
+      state.designerOptionsInitialized = true;
     },
   },
   extraReducers: (builder) => {
