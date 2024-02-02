@@ -241,6 +241,7 @@ export const Format = ({ activeEditor, readonly }: FormatProps) => {
         <img className={'format'} src={isInverted ? underlineDark : underlineLight} alt={'underline icon'} />
       </button>
       <button
+        onMouseDown={(e) => e.preventDefault()}
         disabled={readonly}
         onClick={insertLink}
         className={'toolbar-item spaced ' + (isLink ? 'active' : '')}

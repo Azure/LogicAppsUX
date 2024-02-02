@@ -1,5 +1,4 @@
 import { Toolbar } from '../../html/plugins/toolbar/Toolbar';
-import { DESELECT_NODE } from '../../token/inputToken';
 import type { TokenPickerMode } from '../../tokenpicker';
 import { useId } from '../../useId';
 import type { ValueSegment } from '../models/parameter';
@@ -22,7 +21,6 @@ import { TreeView } from './plugins/TreeView';
 import type { TokenPickerButtonEditorProps } from './plugins/tokenpickerbutton';
 import { TokenPickerButton } from './plugins/tokenpickerbutton';
 import { css } from '@fluentui/react';
-import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { ContentEditable } from '@lexical/react/LexicalContentEditable';
 import LexicalErrorBoundary from '@lexical/react/LexicalErrorBoundary';
 import { HistoryPlugin as History } from '@lexical/react/LexicalHistoryPlugin';
@@ -106,7 +104,6 @@ export const BaseEditor = ({
   getTokenPicker,
   setIsValuePlaintext,
 }: BaseEditorProps) => {
-  const [editor] = useLexicalComposerContext();
   const editorId = useId('msla-tokenpicker-callout-location');
   const intl = useIntl();
   const containerRef = useRef<HTMLDivElement>(null);
@@ -152,7 +149,6 @@ export const BaseEditor = ({
 
   const handleBlur = () => {
     if (!isTokenPickerOpened) {
-      editor.dispatchCommand(DESELECT_NODE, undefined);
       onBlur?.();
     }
     setIsEditorFocused(false);

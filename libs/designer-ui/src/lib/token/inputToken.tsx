@@ -7,12 +7,12 @@ import iconSvg from './icon/icon.svg';
 import { Icon, css } from '@fluentui/react';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { useLexicalNodeSelection } from '@lexical/react/useLexicalNodeSelection';
-import { $getNodeByKey, COMMAND_PRIORITY_EDITOR, createCommand } from 'lexical';
-import type { LexicalCommand, NodeKey } from 'lexical';
-import { useEffect, useRef } from 'react';
+import { mergeRegister } from '@lexical/utils';
+import { $getNodeByKey, BLUR_COMMAND, COMMAND_PRIORITY_EDITOR, FOCUS_COMMAND } from 'lexical';
+import type { NodeKey } from 'lexical';
+import { useEffect, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 
-export const DESELECT_NODE: LexicalCommand<undefined> = createCommand();
 export interface InputTokenProps {
   brandColor?: string;
   value?: string;
@@ -29,21 +29,32 @@ export interface InputTokenProps {
 
 export const DELETE = '\u00D7';
 export const InputToken: React.FC<InputTokenProps> = ({ value, brandColor, icon, isSecure, readonly, title, nodeKey }) => {
+  const [hasFocus, setFocus] = useState(true);
   const intl = useIntl();
   const [editor] = useLexicalComposerContext();
   const [isSelected, setSelected, clearSelection] = useLexicalNodeSelection(nodeKey);
   const tokenRef = useRef<null | HTMLDivElement>(null);
 
   useEffect(() => {
-    return editor.registerCommand(
-      DESELECT_NODE,
-      () => {
-        setSelected(false);
-        return true;
-      },
-      COMMAND_PRIORITY_EDITOR
+    return mergeRegister(
+      editor.registerCommand(
+        FOCUS_COMMAND,
+        () => {
+          setFocus(true);
+          return false;
+        },
+        COMMAND_PRIORITY_EDITOR
+      ),
+      editor.registerCommand(
+        BLUR_COMMAND,
+        () => {
+          setFocus(false);
+          return false;
+        },
+        COMMAND_PRIORITY_EDITOR
+      )
     );
-  }, [editor, setSelected]);
+  }, [editor]);
 
   const handleTokenClicked = (e: React.MouseEvent<HTMLSpanElement, MouseEvent>) => {
     if (nodeKey) {
@@ -112,7 +123,7 @@ export const InputToken: React.FC<InputTokenProps> = ({ value, brandColor, icon,
 
   return (
     <span
-      className={css('msla-token msla-input-token', isSelected && 'selected')}
+      className={css('msla-token msla-input-token', isSelected && hasFocus && 'selected')}
       data-automation-id={`msla-token msla-input-token-${title}`}
       onClick={(e) => {
         handleTokenClicked(e);
