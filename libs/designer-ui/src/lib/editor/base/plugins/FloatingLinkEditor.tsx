@@ -4,6 +4,7 @@ import type { IButtonStyles } from '@fluentui/react';
 import { $isAutoLinkNode, $isLinkNode, TOGGLE_LINK_COMMAND } from '@lexical/link';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { $findMatchingParent, mergeRegister } from '@lexical/utils';
+import { useOutsideClick } from '@microsoft/utils-logic-apps';
 import type { GridSelection, LexicalEditor, NodeSelection, RangeSelection } from 'lexical';
 import {
   $getSelection,
@@ -35,11 +36,13 @@ function FloatingLinkEditor({
   isLink,
   setIsLink,
   anchorElem,
+  isMainEditorFocused,
 }: {
   editor: LexicalEditor;
   isLink: boolean;
   setIsLink: Dispatch<boolean>;
   anchorElem: HTMLElement;
+  isMainEditorFocused: boolean;
 }): JSX.Element {
   const { isInverted } = useTheme();
   const editorRef = useRef<HTMLDivElement | null>(null);
@@ -48,6 +51,24 @@ function FloatingLinkEditor({
   const [editedLinkUrl, setEditedLinkUrl] = useState('');
   const [isEditMode, setEditMode] = useState(false);
   const [lastSelection, setLastSelection] = useState<RangeSelection | GridSelection | NodeSelection | null>(null);
+  const [showFloatingLink, setShowFloatingLink] = useState(false);
+
+  useOutsideClick([editorRef], () => {
+    if (!isMainEditorFocused && showFloatingLink) {
+      setShowFloatingLink(false);
+    }
+  });
+
+  useEffect(() => {
+    editor.registerCommand<boolean>(
+      TOGGLE_LINK_COMMAND,
+      (_) => {
+        setShowFloatingLink(true);
+        return false;
+      },
+      COMMAND_PRIORITY_CRITICAL
+    );
+  }, [editor, showFloatingLink]);
 
   const updateLinkEditor = useCallback(() => {
     const selection = $getSelection();
@@ -184,7 +205,7 @@ function FloatingLinkEditor({
 
   return (
     <div ref={editorRef} className={css('msla-html-link-editor', isInverted && 'inverted')}>
-      {!isLink ? null : isEditMode ? (
+      {!showFloatingLink || !isLink ? null : isEditMode ? (
         <div className="msla-html-link-view">
           <TextField
             styles={{ root: { padding: '4px', width: '80%' } }}
@@ -249,7 +270,15 @@ function FloatingLinkEditor({
   );
 }
 
-const FloatingLinkEditorToolbar = ({ editor, anchorElem }: { editor: LexicalEditor; anchorElem: HTMLElement }): JSX.Element => {
+const FloatingLinkEditorToolbar = ({
+  editor,
+  anchorElem,
+  isMainEditorFocused,
+}: {
+  editor: LexicalEditor;
+  anchorElem: HTMLElement;
+  isMainEditorFocused: boolean;
+}): JSX.Element => {
   const [activeEditor, setActiveEditor] = useState(editor);
   const [isLink, setIsLink] = useState(false);
 
@@ -285,13 +314,25 @@ const FloatingLinkEditorToolbar = ({ editor, anchorElem }: { editor: LexicalEdit
   }, [editor, updateToolbar]);
 
   return createPortal(
-    <FloatingLinkEditor editor={activeEditor} isLink={isLink} anchorElem={anchorElem} setIsLink={setIsLink} />,
+    <FloatingLinkEditor
+      editor={activeEditor}
+      isLink={isLink}
+      anchorElem={anchorElem}
+      isMainEditorFocused={isMainEditorFocused}
+      setIsLink={setIsLink}
+    />,
     anchorElem
   );
 };
 
-export default function FloatingLinkEditorPlugin({ anchorElem = document.body }: { anchorElem?: HTMLElement }): JSX.Element | null {
+export default function FloatingLinkEditorPlugin({
+  anchorElem = document.body,
+  isMainEditorFocused,
+}: {
+  anchorElem?: HTMLElement;
+  isMainEditorFocused: boolean;
+}): JSX.Element | null {
   const [editor] = useLexicalComposerContext();
 
-  return <FloatingLinkEditorToolbar editor={editor} anchorElem={anchorElem} />;
+  return <FloatingLinkEditorToolbar editor={editor} isMainEditorFocused={isMainEditorFocused} anchorElem={anchorElem} />;
 }
