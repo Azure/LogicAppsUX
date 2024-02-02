@@ -249,7 +249,7 @@ function FloatingLinkEditor({
   );
 }
 
-function useFloatingLinkEditorToolbar(editor: LexicalEditor, anchorElem: HTMLElement): JSX.Element | null {
+const FloatingLinkEditorToolbar = ({ editor, anchorElem }: { editor: LexicalEditor; anchorElem: HTMLElement }): JSX.Element => {
   const [activeEditor, setActiveEditor] = useState(editor);
   const [isLink, setIsLink] = useState(false);
 
@@ -288,9 +288,10 @@ function useFloatingLinkEditorToolbar(editor: LexicalEditor, anchorElem: HTMLEle
     <FloatingLinkEditor editor={activeEditor} isLink={isLink} anchorElem={anchorElem} setIsLink={setIsLink} />,
     anchorElem
   );
-}
+};
 
 export default function FloatingLinkEditorPlugin({ anchorElem = document.body }: { anchorElem?: HTMLElement }): JSX.Element | null {
   const [editor] = useLexicalComposerContext();
-  return useFloatingLinkEditorToolbar(editor, anchorElem);
+
+  return <FloatingLinkEditorToolbar editor={editor} anchorElem={anchorElem} />;
 }
