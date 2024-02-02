@@ -41,7 +41,7 @@ export const SearchableDropdownWithAddAll: FC<SearchableDropdownWithAddAllProps>
     ) : null;
   };
 
-  const labelId = `dropdown-label-${label ? label.replace(' ', '-').toLowerCase() : 'no-label'}`;
+  const labelId = label ? `dropdown-label-${label.replace(' ', '-').toLowerCase()}` : undefined;
 
   return (
     <>
