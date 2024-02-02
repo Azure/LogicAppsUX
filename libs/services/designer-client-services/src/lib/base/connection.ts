@@ -220,7 +220,10 @@ export abstract class BaseConnectionService implements IConnectionService {
 
     try {
       let response: HttpResponse<any> | undefined = undefined;
-      const requestOptions: HttpRequestOptions<any> = { uri };
+      const requestOptions: HttpRequestOptions<any> = {
+        headers: { noBatch: 'true' }, // Some requests fail specifically when run through batch
+        uri,
+      };
       if (equals(method, HTTP_METHODS.GET)) response = await httpClient.get<any>(requestOptions);
       else if (equals(method, HTTP_METHODS.POST)) response = await httpClient.post<any, any>(requestOptions);
       else if (equals(method, HTTP_METHODS.PUT)) response = await httpClient.put<any, any>(requestOptions);
