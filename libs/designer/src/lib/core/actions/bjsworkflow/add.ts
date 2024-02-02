@@ -134,7 +134,8 @@ export const initializeOperationDetails = async (
       manifest,
       /* swagger */ undefined,
       /* operation */ undefined,
-      state.workflow.workflowKind
+      state.workflow.workflowKind,
+      state.designerOptions.hostOptions.forceEnableSplitOn
     );
 
     // We should update the outputs when splitOn is enabled.
@@ -188,7 +189,8 @@ export const initializeOperationDetails = async (
       /* manifest */ undefined,
       parsedSwagger,
       /* operation */ undefined,
-      state.workflow.workflowKind
+      state.workflow.workflowKind,
+      state.designerOptions.hostOptions.forceEnableSplitOn
     );
 
     // We should update the outputs when splitOn is enabled.

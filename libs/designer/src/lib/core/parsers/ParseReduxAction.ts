@@ -25,7 +25,7 @@ export const initializeGraphState = createAsyncThunk<
   { state: RootState }
 >('parser/deserialize', async (graphState: { workflowDefinition: Workflow; runInstance: any }, thunkAPI): Promise<InitWorkflowPayload> => {
   const { workflowDefinition, runInstance } = graphState;
-  const { workflow } = thunkAPI.getState() as RootState;
+  const { workflow, designerOptions } = thunkAPI.getState() as RootState;
   const spec = workflow.workflowSpec;
 
   if (spec === undefined) {
@@ -58,6 +58,7 @@ export const initializeGraphState = createAsyncThunk<
               thunkAPI.getState().connections.connectionReferences,
               parameters ?? {},
               workflow.workflowKind,
+              designerOptions.hostOptions.forceEnableSplitOn ?? false,
               thunkAPI.dispatch
             ),
             getConnectionsApiAndMapping(deserializedWorkflow, thunkAPI.dispatch),

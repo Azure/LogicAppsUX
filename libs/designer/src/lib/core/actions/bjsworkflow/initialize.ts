@@ -296,7 +296,8 @@ export const updateOutputsAndTokens = async (
   inputs: NodeInputs,
   settings: Settings,
   shouldProcessSettings = false,
-  workflowKind?: WorkflowKind
+  workflowKind?: WorkflowKind,
+  forceEnableSplitOn?: boolean
 ): Promise<void> => {
   const { type, kind, connectorId } = operationInfo;
   const supportsManifest = OperationManifestService().isSupported(type, kind);
@@ -332,7 +333,7 @@ export const updateOutputsAndTokens = async (
   dispatch(updateTokens({ id: nodeId, tokens }));
 
   // NOTE: Split On setting changes as outputs of trigger changes, so we will be recalculating such settings in this block for triggers.
-  if (shouldProcessSettings && isTrigger && workflowKind !== WorkflowKind.STATELESS) {
+  if (shouldProcessSettings && isTrigger && (workflowKind !== WorkflowKind.STATELESS || forceEnableSplitOn)) {
     const isSplitOnSupported = getSplitOnOptions(nodeOutputs, supportsManifest).length > 0;
     if (settings.splitOn?.isSupported !== isSplitOnSupported) {
       dispatch(updateNodeSettings({ id: nodeId, settings: { splitOn: { ...settings.splitOn, isSupported: isSplitOnSupported } } }));
