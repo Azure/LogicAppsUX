@@ -342,7 +342,7 @@ export abstract class BaseConnectionService implements IConnectionService {
     connectorId: string,
     connectionName: string,
     i: number,
-    connectionNames: string[]
+    connectionNames: string[] = []
   ): Promise<string> {
     if (!connectionNames.includes(connectionName)) {
       const connectionId = this.getAzureConnectionRequestPath(connectionName);
