@@ -29,7 +29,7 @@ export class setWorkspaceName extends AzureWizardPromptStep<IProjectWizardContex
     }
   }
 
-  public shouldPrompt(_context: IProjectWizardContext): boolean {
+  public shouldPrompt(): boolean {
     return true;
   }
 }

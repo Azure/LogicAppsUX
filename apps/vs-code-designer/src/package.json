@@ -60,7 +60,7 @@
       },
       {
         "command": "azureLogicAppsStandard.createNewProject",
-        "title": "Create New Project...",
+        "title": "Create new project...",
         "category": "Azure Logic Apps",
         "icon": {
           "light": "assets/light/CreateNewProject.svg",
@@ -69,7 +69,7 @@
       },
       {
         "command": "azureLogicAppsStandard.createNewCodeProject",
-        "title": "Create new logic app workspace...",
+        "title": "Create new Logic App workspace...",
         "category": "Azure Logic Apps",
         "preview": true,
         "icon": {
@@ -370,7 +370,6 @@
         },
         {
           "command": "azureLogicAppsStandard.createNewCodeProject",
-          "when": "isWindows",
           "group": "1_create@2"
         },
         {
@@ -676,10 +675,6 @@
         {
           "command": "azureLogicAppsStandard.openDesigner",
           "when": "resourceFilename==workflow.json"
-        },
-        {
-          "command": "azureLogicAppsStandard.createNewCodeProject",
-          "when": "isWindows"
         },
         {
           "command": "azureLogicAppsStandard.viewContent",
