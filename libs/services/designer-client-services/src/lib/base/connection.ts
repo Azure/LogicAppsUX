@@ -336,7 +336,7 @@ export abstract class BaseConnectionService implements IConnectionService {
   async getUniqueConnectionName(connectorId: string, connectionNames: string[], connectorName: string): Promise<string> {
     const { name: connectionName, index } = getUniqueName(connectionNames, connectorName);
     return isArmResourceId(connectorId)
-      ? this._getUniqueConnectionNameInApiHub(connectorName, connectorId, connectionName, index)
+      ? this._getUniqueConnectionNameInApiHub(connectorName, connectorId, connectionName, index, connectionNames)
       : connectionName;
   }
 
@@ -344,17 +344,16 @@ export abstract class BaseConnectionService implements IConnectionService {
     connectorName: string,
     connectorId: string,
     connectionName: string,
-    i: number
+    i: number,
+    connectionNames: string[] = []
   ): Promise<string> {
-    const connectionId = this.getAzureConnectionRequestPath(connectionName);
-    const isUnique = await this._testConnectionIdUniquenessInApiHub(connectionId);
-
-    if (isUnique) {
-      return connectionName;
-    } else {
-      connectionName = `${connectorName}-${i++}`;
-      return this._getUniqueConnectionNameInApiHub(connectorName, connectorId, connectionName, i);
+    if (!connectionNames.includes(connectionName)) {
+      const connectionId = this.getAzureConnectionRequestPath(connectionName);
+      const isUnique = await this._testConnectionIdUniquenessInApiHub(connectionId);
+      if (isUnique) return connectionName;
     }
+    connectionName = `${connectorName}-${++i}`;
+    return this._getUniqueConnectionNameInApiHub(connectorName, connectorId, connectionName, i, connectionNames);
   }
 
   protected _testConnectionIdUniquenessInApiHub(id: string): Promise<boolean> {
