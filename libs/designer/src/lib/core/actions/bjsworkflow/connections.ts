@@ -1,11 +1,11 @@
 import Constants from '../../../common/constants';
 import type { ApiHubAuthentication } from '../../../common/models/workflow';
 import { isOpenApiSchemaVersion } from '../../../common/utilities/Utils';
+import type { DeserializedWorkflow } from '../../parsers/BJSWorkflow/BJSDeserializer';
 import { getConnection } from '../../queries/connections';
-import { getConnector, getOperationManifest } from '../../queries/operation';
+import { getConnector, getOperationInfo, getOperationManifest } from '../../queries/operation';
 import { changeConnectionMapping, initializeConnectionsMappings } from '../../state/connection/connectionSlice';
 import { updateErrorDetails } from '../../state/operation/operationMetadataSlice';
-import type { Operations } from '../../state/workflow/workflowInterfaces';
 import type { RootState } from '../../store';
 import {
   getConnectionReference,
@@ -181,14 +181,16 @@ export const updateIdentityChangeInConnection = createAsyncThunk(
   }
 );
 
-async function getConnectionsMappingForNodes(operations: Operations, getState: () => RootState): Promise<Record<string, string>> {
+async function getConnectionsMappingForNodes(deserializedWorkflow: DeserializedWorkflow): Promise<Record<string, string>> {
+  const { actionData, nodesMetadata } = deserializedWorkflow;
   let connectionsMapping: Record<string, string> = {};
   const operationManifestService = OperationManifestService();
 
   const tasks: Promise<Record<string, string> | undefined>[] = [];
 
-  for (const [nodeId, operation] of Object.entries(operations)) {
-    tasks.push(getConnectionMappingForNode(operation, nodeId, operationManifestService, getState));
+  for (const [nodeId, operation] of Object.entries(actionData)) {
+    const isTrigger = nodesMetadata?.[nodeId].isRoot ?? false;
+    tasks.push(getConnectionMappingForNode(operation, nodeId, isTrigger, operationManifestService));
   }
 
   const mappings = await Promise.all(tasks);
@@ -201,12 +203,12 @@ async function getConnectionsMappingForNodes(operations: Operations, getState: (
 export const getConnectionMappingForNode = (
   operation: LogicAppsV2.OperationDefinition,
   nodeId: string,
-  operationManifestService: IOperationManifestService,
-  getState: () => RootState
+  isTrigger: boolean,
+  operationManifestService: IOperationManifestService
 ): Promise<Record<string, string> | undefined> => {
   try {
     if (operationManifestService.isSupported(operation.type, operation.kind)) {
-      return getManifestBasedConnectionMapping(getState, nodeId, operation);
+      return getManifestBasedConnectionMapping(nodeId, isTrigger, operation);
     } else if (isApiConnectionType(operation.type)) {
       const connectionReferenceKey = getLegacyConnectionReferenceKey(operation);
       if (connectionReferenceKey !== undefined) {
@@ -237,20 +239,19 @@ export const isOpenApiConnectionType = (type: string): boolean => {
   );
 };
 
-export async function getConnectionsApiAndMapping(operations: Operations, getState: () => RootState, dispatch: Dispatch) {
-  const connectionsMappings = await getConnectionsMappingForNodes(operations, getState);
+export async function getConnectionsApiAndMapping(deserializedWorkflow: DeserializedWorkflow, dispatch: Dispatch) {
+  const connectionsMappings = await getConnectionsMappingForNodes(deserializedWorkflow);
   dispatch(initializeConnectionsMappings(connectionsMappings));
   return;
 }
 
 export async function getManifestBasedConnectionMapping(
-  getState: () => RootState,
   nodeId: string,
+  isTrigger: boolean,
   operationDefinition: LogicAppsV2.OperationDefinition
 ): Promise<Record<string, string> | undefined> {
   try {
-    const { operations } = getState();
-    const { connectorId, operationId } = operations.operationInfo[nodeId];
+    const { connectorId, operationId } = await getOperationInfo(nodeId, operationDefinition, isTrigger);
     const operationManifest = await getOperationManifest({ connectorId, operationId });
     const connectionReferenceKeyFormat =
       (operationManifest.properties.connectionReference && operationManifest.properties.connectionReference.referenceKeyFormat) ?? '';
@@ -258,13 +259,11 @@ export async function getManifestBasedConnectionMapping(
       return Promise.resolve(undefined);
     }
 
-    let connectionReferenceKey: string | undefined;
+    let connectionReferenceKey: string | undefined = undefined;
     if (isOpenApiConnectionType(operationDefinition.type) || connectionReferenceKeyFormat !== undefined) {
       connectionReferenceKey = getConnectionReferenceKeyForManifest(connectionReferenceKeyFormat, operationDefinition);
     } else if (isConnectionRequiredForOperation(operationManifest)) {
       connectionReferenceKey = getLegacyConnectionReferenceKey(operationDefinition);
-    } else {
-      connectionReferenceKey = undefined;
     }
 
     return connectionReferenceKey ? { [nodeId]: connectionReferenceKey } : undefined;

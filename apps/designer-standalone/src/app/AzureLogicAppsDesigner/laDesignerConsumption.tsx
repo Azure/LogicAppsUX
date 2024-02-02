@@ -35,6 +35,7 @@ import {
   ConsumptionOperationManifestService,
   ConsumptionSearchService,
   BaseChatbotService,
+  ConsumptionRunService,
 } from '@microsoft/designer-client-services-logic-apps';
 import type { Workflow } from '@microsoft/logic-apps-designer';
 import {
@@ -390,6 +391,13 @@ const getDesignerServices = (
     httpClient,
   });
 
+  const runService = new ConsumptionRunService({
+    apiVersion,
+    baseUrl,
+    workflowId,
+    httpClient,
+  });
+
   const chatbotService = new BaseChatbotService({
     // temporarily having brazilus as the baseUrl until deployment finishes in prod
     baseUrl: 'https://brazilus.management.azure.com',
@@ -411,6 +419,7 @@ const getDesignerServices = (
     workflowService,
     apimService,
     functionService,
+    runService,
     chatbotService,
   };
 };

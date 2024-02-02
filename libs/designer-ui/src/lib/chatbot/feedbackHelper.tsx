@@ -1,7 +1,7 @@
 import type { ChatEntryReaction, ReactionItem } from './components/conversationItem';
 import { FeedbackMessage } from './components/feedbackMessage';
 import Constants from './constants';
-import type { IButtonProps } from '@fluentui/react';
+import { Link, type IButtonProps } from '@fluentui/react';
 import { useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 
@@ -27,6 +27,28 @@ export function useReportBugButton(disabled: boolean): IButtonProps {
       },
     },
   };
+}
+
+export function useExternalLink(additionalDocURL?: string) {
+  const intl = useIntl();
+  const intlText = {
+    guideMoreInfoText: intl.formatMessage({
+      defaultMessage: 'For more detailed information, you can refer to the following resources',
+      description: 'Message instructing to follow below links for more detailed information',
+    }),
+  };
+  return (
+    <div>
+      {`${intlText.guideMoreInfoText}:`}
+      <ul>
+        <li>
+          <Link href={additionalDocURL} target="_blank">
+            {additionalDocURL}
+          </Link>
+        </li>
+      </ul>
+    </div>
+  );
 }
 
 export function useAzureCopilotButton(azureButtonCallback?: () => void): IButtonProps {
