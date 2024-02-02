@@ -41,11 +41,17 @@ export const SearchableDropdownWithAddAll: FC<SearchableDropdownWithAddAllProps>
     ) : null;
   };
 
+  const labelId = label ? `dropdown-label-${label.replace(' ', '-').toLowerCase()}` : undefined;
+
   return (
     <>
-      {label && <Label className="msla-searchable-dropdown-label">{label}</Label>}
+      {label && (
+        <Label id={labelId} className="msla-searchable-dropdown-label">
+          {label}
+        </Label>
+      )}
       <Stack horizontal tokens={{ childrenGap: '8px' }}>
-        <SearchableDropdown {...searchableDropdownProps} className="msla-searchable-dropdown-with-buttons" />
+        <SearchableDropdown {...searchableDropdownProps} labelId={labelId} className="msla-searchable-dropdown-with-buttons" />
         {renderButton(handleShowAll, addAllButtonText, addAllButtonTooltip, !(addAllButtonEnabled ?? true), 'msla-add-all-button')}
         {renderButton(
           handleRemoveAll,
