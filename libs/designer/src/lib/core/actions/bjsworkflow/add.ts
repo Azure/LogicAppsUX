@@ -4,7 +4,7 @@ import { getConnectionsForConnector, getConnectorWithSwagger } from '../../queri
 import { getOperationManifest } from '../../queries/operation';
 import { initEmptyConnectionMap } from '../../state/connection/connectionSlice';
 import type { NodeData, NodeOperation, OperationMetadataState } from '../../state/operation/operationMetadataSlice';
-import { initializeNodes, initializeOperationInfo } from '../../state/operation/operationMetadataSlice';
+import { initializeNodes, initializeOperationInfo, updateNodeSettings } from '../../state/operation/operationMetadataSlice';
 import type { RelationshipIds } from '../../state/panel/panelInterfaces';
 import { changePanelNode, openPanel, setIsPanelLoading } from '../../state/panel/panelSlice';
 import { addResultSchema } from '../../state/staticresultschema/staticresultsSlice';
@@ -245,7 +245,9 @@ export const initializeOperationDetails = async (
   const triggerNodeManifest = await getTriggerNodeManifest(state.workflow, state.operations);
 
   if (triggerNodeManifest) {
-    updateInvokerSettings(isTrigger, triggerNodeManifest, nodeId, initData.settings as Settings, dispatch);
+    updateInvokerSettings(isTrigger, triggerNodeManifest, initData.settings as Settings, (invokerSettings: Settings) =>
+      dispatch(updateNodeSettings({ id: nodeId, settings: invokerSettings }))
+    );
   }
 
   updateAllUpstreamNodes(getState() as RootState, dispatch);
