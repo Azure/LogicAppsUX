@@ -43,12 +43,12 @@ export const AdvancedOptions: React.FC = () => {
       description: 'Generate infrastructure templates',
     }),
     INTEGRATION_ACCOUNT_SOURCE: intl.formatMessage({
-      defaultMessage: 'Make Integration Account the default source for Transformations and Schema validation',
-      description: 'Make Integration Account the default source for Transformations and Schema validation',
+      defaultMessage: 'Default to integration account as source for transformations and schema validation',
+      description: 'Default to integration account as source for transformations and schema validation',
     }),
     EXPORT_CUSTOM_API_ACTIONS_TO_API_MANAGEMENT_ACTIONS: intl.formatMessage({
-      defaultMessage: 'Export Custom Connector Actions as API Management Actions',
-      description: 'Export Custom Connector Actions as API Management Actions',
+      defaultMessage: 'Export custom connector actions as API Management actions',
+      description: 'Export custom connector actions as API Management actions',
     }),
   };
 
