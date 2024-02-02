@@ -120,6 +120,23 @@ export const initializeOperationMetadata = async (
   const allNodeData = aggregate((await Promise.all(promises)).filter((data) => !!data) as NodeDataWithOperationMetadata[][]);
   const repetitionInfos = await initializeRepetitionInfos(triggerNodeId, operations, allNodeData, nodesMetadata);
   updateTokenMetadataInParameters(allNodeData, operations, workflowParameters, nodesMetadata, triggerNodeId, repetitionInfos);
+
+  const triggerNodeManifest = allNodeData.find((nodeData) => nodeData.id === triggerNodeId)?.manifest;
+  if (triggerNodeManifest) {
+    for (const nodeData of allNodeData) {
+      const { id, settings } = nodeData;
+      if (settings) {
+        updateInvokerSettings(
+          id === triggerNodeId,
+          triggerNodeManifest,
+          settings,
+          (invokerSettings: Settings) => (nodeData.settings = { ...settings, ...invokerSettings }),
+          references
+        );
+      }
+    }
+  }
+
   dispatch(
     initializeNodes(
       allNodeData.map((data) => {
@@ -138,16 +155,6 @@ export const initializeOperationMetadata = async (
       })
     )
   );
-
-  const triggerNodeManifest = allNodeData.find((nodeData) => nodeData.id === triggerNodeId)?.manifest;
-  if (triggerNodeManifest) {
-    for (const nodeData of allNodeData) {
-      const { id, settings } = nodeData;
-      if (settings) {
-        updateInvokerSettings(id === triggerNodeId, triggerNodeManifest, id, settings, dispatch, references);
-      }
-    }
-  }
 
   const variables = initializeVariables(operations, allNodeData);
   dispatch(
