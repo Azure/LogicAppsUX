@@ -1575,6 +1575,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";5WTRY8" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Errors]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Błędy]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";5akc1Q" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Unsupported 'in' value : ''{value}'' in Parameter]]></Val>
@@ -3735,15 +3744,6 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";FOiBk/" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Errors]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Błędy]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
       <Item ItemId=";FT3jt6" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Webhook reference information]]></Val>
@@ -5058,6 +5058,12 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";M0bbZk" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Flow Checker]]></Val>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";M0xrm+" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Code view]]></Val>
@@ -5523,6 +5529,12 @@
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Trwa ładowanie plików...]]></Val>
           </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";O6VHe0" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Operation warnings]]></Val>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -7278,6 +7290,12 @@
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Typ błędu]]></Val>
           </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";Vi5TIV" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[No warnings found.]]></Val>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -9671,6 +9689,15 @@
           <Val><![CDATA[Click to Collapse]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Kliknij, aby zwinąć]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";hLOIwp" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Warnings]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Ostrzeżenia]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
