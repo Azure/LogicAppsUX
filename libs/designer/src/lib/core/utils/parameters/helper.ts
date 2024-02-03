@@ -1705,7 +1705,7 @@ export async function updateParameterAndDependencies(
           LoggerService().log({
             level: LogEntryLevel.Verbose,
             area: 'UpdateParameterAndDependencies',
-            message: `Connection name: ${connectionReference.connectionName} - Parameter key: ${key}`,
+            message: `Dependent parameter was not set. Connection name: ${connectionReference.connectionName} - Parameter key: ${key}`,
           });
           continue;
         }
