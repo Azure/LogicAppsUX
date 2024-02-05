@@ -871,28 +871,6 @@
       "value": "The entered identity is not associated with this Logic App."
     }
   ],
-  "3jwMBm": [
-    {
-      "type": 0,
-      "value": "Invalid json format. Missing beginning "
-    },
-    {
-      "type": 1,
-      "value": "openingBracket"
-    },
-    {
-      "type": 0,
-      "value": " or ending "
-    },
-    {
-      "type": 1,
-      "value": "closingBracket"
-    },
-    {
-      "type": 0,
-      "value": "."
-    }
-  ],
   "3n5pnv": [
     {
       "type": 0,
@@ -1109,26 +1087,44 @@
       "value": "Tell Microsoft what you liked about this feature"
     }
   ],
+  "5LV34t": [
+    {
+      "type": 0,
+      "value": "The '"
+    },
+    {
+      "type": 1,
+      "value": "invalidProperties"
+    },
+    {
+      "type": 0,
+      "value": "' properties are invalid for the '"
+    },
+    {
+      "type": 1,
+      "value": "authType"
+    },
+    {
+      "type": 0,
+      "value": "' authentication type."
+    }
+  ],
   "5OvGgn": [
     {
       "type": 0,
       "value": "Body"
     }
   ],
-  "5Ow9mX": [
-    {
-      "type": 1,
-      "value": "connectorName"
-    },
-    {
-      "type": 0,
-      "value": " connector icon"
-    }
-  ],
   "5SAQOb": [
     {
       "type": 0,
       "value": "Authority"
+    }
+  ],
+  "5WTRY8": [
+    {
+      "type": 0,
+      "value": "Errors"
     }
   ],
   "5akc1Q": [
@@ -1331,6 +1327,16 @@
     {
       "type": 0,
       "value": "Create flow"
+    }
+  ],
+  "6sSPNb": [
+    {
+      "type": 1,
+      "value": "connectorName"
+    },
+    {
+      "type": 0,
+      "value": " connector"
     }
   ],
   "6u6CS+": [
@@ -1723,6 +1729,16 @@
       "value": "User identity is not supported when Logic App has system assigned managed identity enabled."
     }
   ],
+  "96JG8I": [
+    {
+      "type": 1,
+      "value": "operationName"
+    },
+    {
+      "type": 0,
+      "value": " operation"
+    }
+  ],
   "99vsJy": [
     {
       "type": 0,
@@ -1831,6 +1847,12 @@
     {
       "type": 0,
       "value": "Edit in basic mode"
+    }
+  ],
+  "9yLPwo": [
+    {
+      "type": 0,
+      "value": "For more detailed information, you can refer to the following resources"
     }
   ],
   "A5Ferh": [
@@ -2031,6 +2053,28 @@
       "value": "Succeeded with retries"
     }
   ],
+  "BGw6eH": [
+    {
+      "type": 0,
+      "value": "Missing required properties '"
+    },
+    {
+      "type": 1,
+      "value": "missingProperties"
+    },
+    {
+      "type": 0,
+      "value": "' for authentication type '"
+    },
+    {
+      "type": 1,
+      "value": "authType"
+    },
+    {
+      "type": 0,
+      "value": "'"
+    }
+  ],
   "BHe7qY": [
     {
       "type": 0,
@@ -2071,6 +2115,12 @@
     {
       "type": 0,
       "value": "Enter password as plain text or use a secure parameter"
+    }
+  ],
+  "BQyLiu": [
+    {
+      "type": 0,
+      "value": "results found"
     }
   ],
   "BS3gy8": [
@@ -2197,28 +2247,6 @@
     {
       "type": 0,
       "value": "(UTC+13:00) Samoa"
-    }
-  ],
-  "CafOCn": [
-    {
-      "type": 0,
-      "value": "The '"
-    },
-    {
-      "type": 1,
-      "value": "invalidProperties"
-    },
-    {
-      "type": 0,
-      "value": "' properties are invalid for the '"
-    },
-    {
-      "type": 1,
-      "value": "convertedAuthType"
-    },
-    {
-      "type": 0,
-      "value": "' authentication type."
     }
   ],
   "Cb6IEq": [
@@ -2683,12 +2711,6 @@
       "value": "Returns a section of a string defined by the start index and the end index"
     }
   ],
-  "FOiBk/": [
-    {
-      "type": 0,
-      "value": "Errors"
-    }
-  ],
   "FT3jt6": [
     {
       "type": 0,
@@ -2743,12 +2765,6 @@
     {
       "type": 0,
       "value": "Enter an email address."
-    }
-  ],
-  "FaBEfQ": [
-    {
-      "type": 0,
-      "value": "Tracked properties"
     }
   ],
   "Fcvgvg": [
@@ -3065,6 +3081,28 @@
     {
       "type": 0,
       "value": "Submit from this action"
+    }
+  ],
+  "I1CYNA": [
+    {
+      "type": 0,
+      "value": "Invalid property '"
+    },
+    {
+      "type": 1,
+      "value": "invalidProperties"
+    },
+    {
+      "type": 0,
+      "value": "' for authentication type '"
+    },
+    {
+      "type": 1,
+      "value": "authType"
+    },
+    {
+      "type": 0,
+      "value": "'."
     }
   ],
   "I3mifR": [
@@ -3631,6 +3669,12 @@
       "value": "About"
     }
   ],
+  "M0bbZk": [
+    {
+      "type": 0,
+      "value": "Flow Checker"
+    }
+  ],
   "M0xrm+": [
     {
       "type": 0,
@@ -3817,6 +3861,12 @@
       "value": "Copied!"
     }
   ],
+  "NFgfP4": [
+    {
+      "type": 0,
+      "value": "item"
+    }
+  ],
   "NGJ00e": [
     {
       "type": 0,
@@ -3907,6 +3957,12 @@
       "value": "Tuesday"
     }
   ],
+  "NzPnFS": [
+    {
+      "type": 0,
+      "value": "Example:"
+    }
+  ],
   "O+3Y9f": [
     {
       "type": 0,
@@ -3943,6 +3999,12 @@
       "value": "Loading Files..."
     }
   ],
+  "O6VHe0": [
+    {
+      "type": 0,
+      "value": "Operation warnings"
+    }
+  ],
   "O7HhyP": [
     {
       "type": 0,
@@ -3953,6 +4015,12 @@
     {
       "type": 0,
       "value": "OK"
+    }
+  ],
+  "OBO/HE": [
+    {
+      "type": 0,
+      "value": "Invalid Authentication Value"
     }
   ],
   "ODQCKj": [
@@ -4105,10 +4173,10 @@
       "value": "Select a managed identity"
     }
   ],
-  "Os0h2Y": [
+  "Ov7Ckz": [
     {
       "type": 0,
-      "value": "Missing required properties '"
+      "value": "Missing required property '"
     },
     {
       "type": 1,
@@ -4120,7 +4188,7 @@
     },
     {
       "type": 1,
-      "value": "convertedAuthType"
+      "value": "authType"
     },
     {
       "type": 0,
@@ -4173,6 +4241,12 @@
     {
       "type": 0,
       "value": "Input"
+    }
+  ],
+  "PDMP/Z": [
+    {
+      "type": 0,
+      "value": "Collapsed"
     }
   ],
   "PNk3n4": [
@@ -4377,28 +4451,6 @@
     {
       "type": 0,
       "value": "Status code"
-    }
-  ],
-  "QKWoVr": [
-    {
-      "type": 0,
-      "value": "Missing required property '"
-    },
-    {
-      "type": 1,
-      "value": "missingProperties"
-    },
-    {
-      "type": 0,
-      "value": "' for authentication type '"
-    },
-    {
-      "type": 1,
-      "value": "convertedAuthType"
-    },
-    {
-      "type": 0,
-      "value": "'"
     }
   ],
   "QZBPUx": [
@@ -5143,12 +5195,6 @@
       "value": "Show less"
     }
   ],
-  "V0le5X": [
-    {
-      "type": 0,
-      "value": "Enter a valid JSON."
-    }
-  ],
   "V3vpin": [
     {
       "type": 0,
@@ -5293,6 +5339,12 @@
     {
       "type": 0,
       "value": "Error Type"
+    }
+  ],
+  "Vi5TIV": [
+    {
+      "type": 0,
+      "value": "No warnings found."
     }
   ],
   "VlvlX1": [
@@ -5871,6 +5923,12 @@
     {
       "type": 0,
       "value": "Search Tips"
+    }
+  ],
+  "Yg/vvm": [
+    {
+      "type": 0,
+      "value": "Close Add Action Panel"
     }
   ],
   "YgU88A": [
@@ -6609,6 +6667,12 @@
       "value": "Required. The name of the variable whose value you want."
     }
   ],
+  "eHsOsm": [
+    {
+      "type": 0,
+      "value": "Specify the duration in ISO 8601 format"
+    }
+  ],
   "eO1h/h": [
     {
       "type": 0,
@@ -6981,6 +7045,18 @@
     {
       "type": 0,
       "value": "Resubmit a workflow run from this action"
+    }
+  ],
+  "hJbr09": [
+    {
+      "type": 0,
+      "value": "Click to Collapse"
+    }
+  ],
+  "hLOIwp": [
+    {
+      "type": 0,
+      "value": "Warnings"
     }
   ],
   "hMf2TA": [
@@ -7873,6 +7949,12 @@
       "value": "Returns a string representation of a data URI"
     }
   ],
+  "mNaBPE": [
+    {
+      "type": 0,
+      "value": "Enter a valid JSON."
+    }
+  ],
   "mPakaD": [
     {
       "type": 0,
@@ -8093,6 +8175,24 @@
     {
       "type": 0,
       "value": "Suppress workflow headers"
+    }
+  ],
+  "ncW1Sw": [
+    {
+      "type": 1,
+      "value": "operationName"
+    },
+    {
+      "type": 0,
+      "value": " operation, "
+    },
+    {
+      "type": 1,
+      "value": "connectorName"
+    },
+    {
+      "type": 0,
+      "value": " connector"
     }
   ],
   "ngsC44": [
@@ -8587,6 +8687,12 @@
       "value": "Returns the number of elements in an array or string"
     }
   ],
+  "qdUeUk": [
+    {
+      "type": 0,
+      "value": "Click to Expand"
+    }
+  ],
   "qiIs4V": [
     {
       "type": 0,
@@ -8629,28 +8735,6 @@
       "value": "Asynchronous response allows a Logic App to respond with a 202 (Accepted) to indicate the request has been accepted for processing. A location header will be provided to retrieve the final state."
     }
   ],
-  "qs9D+A": [
-    {
-      "type": 0,
-      "value": "Invalid property '"
-    },
-    {
-      "type": 1,
-      "value": "invalidProperties"
-    },
-    {
-      "type": 0,
-      "value": "' for authentication type '"
-    },
-    {
-      "type": 1,
-      "value": "convertedAuthType"
-    },
-    {
-      "type": 0,
-      "value": "'."
-    }
-  ],
   "qy5WqY": [
     {
       "type": 0,
@@ -8673,6 +8757,12 @@
     {
       "type": 0,
       "value": "Undo"
+    }
+  ],
+  "r4zp7m": [
+    {
+      "type": 0,
+      "value": "Expanded"
     }
   ],
   "r7vZ5a": [

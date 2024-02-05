@@ -5,7 +5,7 @@ import TokenPickerButtonLegacy from '../editor/base/plugins/TokenPickerButtonLeg
 import type { EditorContentChangedEventArgs, EditorLanguage } from '../editor/monaco';
 import { MonacoEditor as Editor } from '../editor/monaco';
 import { useId } from '../useId';
-import { buildInlineCodeTextFromToken } from './util';
+import { buildInlineCodeTextFromToken, getEditorHeight, getInitialValue } from './util';
 import { useFunctionalState } from '@react-hookz/web';
 import type { editor, IRange } from 'monaco-editor';
 import { useRef, useState } from 'react';
@@ -127,24 +127,4 @@ export function CodeEditor({
         : null}
     </div>
   );
-}
-
-const getInitialValue = (initialValue: ValueSegment[]): string => {
-  if (initialValue[0]?.value) {
-    return formatValue(initialValue[0].value);
-  }
-  return '';
-};
-
-const formatValue = (input: string): string => {
-  try {
-    return JSON.stringify(JSON.parse(input), null, 4);
-  } catch {
-    return input;
-  }
-};
-
-// Monaco should be at least 3 rows high (19*3 px) but no more than 20 rows high (19*20 px).
-function getEditorHeight(input = ''): string {
-  return Math.min(Math.max(input?.split('\n').length * 20, 120), 380) + 'px';
 }

@@ -3,6 +3,7 @@ import { RowDropdownOptions, GroupType } from '.';
 import type { ValueSegment } from '../editor';
 import { ValueSegmentType, removeQuotes } from '../editor';
 import type { ChangeHandler, ChangeState, GetTokenPickerHandler } from '../editor/base';
+import { isEmptySegments } from '../editor/base/utils/parsesegments';
 import { StringEditor } from '../editor/string';
 import { Row } from './Row';
 import { getOperationValue, getOuterMostCommaIndex } from './helper';
@@ -154,7 +155,7 @@ const convertRootPropToValue = (rootProps: RowItemProps): ValueSegment[] => {
 };
 
 const convertAdvancedValueToRootProp = (value: ValueSegment[]): RowItemProps | undefined => {
-  if (!value || value.length === 0 || value[0].value === '') {
+  if (isEmptySegments(value)) {
     return { operator: 'equals', operand1: [], operand2: [], type: GroupType.ROW };
   }
   const nodeMap = new Map<string, ValueSegment>();

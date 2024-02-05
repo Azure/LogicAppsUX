@@ -40,6 +40,10 @@ export interface SegmentParserOptions {
   tokensEnabled?: boolean;
 }
 
+export const isEmptySegments = (segments: ValueSegment[]): boolean => {
+  return !segments.length || (segments.length === 1 && segments[0].value === '');
+};
+
 export const parseHtmlSegments = (value: ValueSegment[], options?: SegmentParserOptions): RootNode => {
   const { tokensEnabled } = options ?? {};
   const editor = createEditor({ ...defaultInitialConfig, nodes: htmlNodes });
@@ -56,7 +60,10 @@ export const parseHtmlSegments = (value: ValueSegment[], options?: SegmentParser
   const nodeMap = new Map<string, ValueSegment>();
 
   const stringValue = convertSegmentsToString(value, nodeMap);
-  const encodedStringValue = encodeStringSegmentTokensInLexicalContext(stringValue, nodeMap);
+  const encodedStringValue = encodeStringSegmentTokensInDomContext(
+    encodeStringSegmentTokensInLexicalContext(stringValue, nodeMap),
+    nodeMap
+  );
 
   const dom = parser.parseFromString(encodedStringValue, 'text/html');
   const nodes = $generateNodesFromDOM(editor, dom);
@@ -94,7 +101,7 @@ export const parseHtmlSegments = (value: ValueSegment[], options?: SegmentParser
         }
       });
     } else {
-      paragraph.append(currNode);
+      appendChildrenNode(paragraph, currNode, nodeMap, options);
     }
   });
   if (paragraph.getChildren().length > 0) {
@@ -126,7 +133,9 @@ const appendChildrenNode = (
   // if is a text node, parse for tokens
   if ($isTextNode(childNode)) {
     const textContent = childNode.getTextContent();
-    const decodedTextContent = tokensEnabled ? decodeSegmentValueInLexicalContext(textContent) : textContent;
+    const decodedTextContent = tokensEnabled
+      ? decodeStringSegmentTokensInDomContext(decodeSegmentValueInLexicalContext(textContent), nodeMap)
+      : textContent;
 
     // we need to pass in the styles and format of the parent node to the children node
     // because Lexical text nodes do not have styles or format
@@ -170,7 +179,12 @@ const appendStringSegment = (
       if (textSegment) {
         paragraph.append($createExtendedTextNode(textSegment, childNodeStyles, childNodeFormat));
       }
-      const newIndex = value.indexOf('}', currIndex) + 2;
+      const endIndex = value.indexOf('}', currIndex);
+      if (endIndex < 0) {
+        currIndex++;
+        continue;
+      }
+      const newIndex = endIndex + 2;
       // token is found in the text
       if (nodeMap && tokensEnabled) {
         const tokenSegment = nodeMap.get(value.substring(currIndex - 2, newIndex));
@@ -229,10 +243,11 @@ export const convertSegmentsToString = (input: ValueSegment[], nodeMap?: Map<str
       text += segment.value;
     } else if (segment.token) {
       const { value } = segment.token;
-      // get a text-identifiable unique id for the token
-      const string = `@{${value}}`;
-      text += string;
-      nodeMap?.set(string, segment);
+      if (value) {
+        const string = wrapTokenValue(value);
+        text += string;
+        nodeMap?.set(string, segment);
+      }
     }
   });
   return text;

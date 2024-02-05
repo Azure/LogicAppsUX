@@ -55,11 +55,12 @@ import {
   isVariableToken,
   ValueSegmentConvertor,
 } from './segment';
-import { OperationManifestService, WorkflowService } from '@microsoft/designer-client-services-logic-apps';
+import { LogEntryLevel, LoggerService, OperationManifestService, WorkflowService } from '@microsoft/designer-client-services-logic-apps';
 import type {
   AuthProps,
   ComboboxItem,
   DictionaryEditorItemProps,
+  DropdownItem,
   FloatingActionMenuOutputViewModel,
   GroupItemProps,
   OutputToken,
@@ -150,6 +151,7 @@ import {
   ValidationErrorCode,
   ValidationException,
   nthLastIndexOf,
+  parseErrorMessage,
 } from '@microsoft/utils-logic-apps';
 import type { Dispatch } from '@reduxjs/toolkit';
 
@@ -434,6 +436,31 @@ export function getParameterEditorProps(
     if (parameterValue.some(isTokenValueSegment)) {
       editor = undefined;
     }
+  } else if (editor === constants.EDITOR.DROPDOWN) {
+    // making dropdown editor backwards compatible with old format
+    const dropdownOptions: DropdownItem[] = (editorOptions?.items ?? []).map((item: any) => {
+      const { disabled, key, value, title: displayName, type } = item;
+      return {
+        disabled,
+        key: key ?? displayName,
+        value: value?.toString(),
+        displayName,
+        type,
+      };
+    });
+
+    const modifiedOptions = editorOptions?.options?.map((option: any) => {
+      return {
+        ...option,
+        value: option?.value?.toString(),
+      };
+    });
+
+    editorOptions = {
+      ...editorOptions,
+      serialization: { ...editorOptions?.serialization, separator: editorOptions?.titleSeparator },
+      options: dropdownOptions.length > 0 ? dropdownOptions : modifiedOptions ?? [],
+    };
   } else if (editor === constants.EDITOR.FLOATINGACTIONMENU && editorOptions?.menuKind === FloatingActionMenuKind.outputs) {
     editorViewModel = toFloatingActionMenuOutputsViewModel(value);
   }
@@ -1673,9 +1700,15 @@ export async function updateParameterAndDependencies(
     const inputDependencies = dependenciesToUpdate.inputs;
     for (const key of Object.keys(inputDependencies)) {
       if (inputDependencies[key].dependencyType === 'ListValues' && inputDependencies[key].dependentParameters[parameterId]) {
-        const dependentParameter = nodeInputs.parameterGroups[groupId].parameters.find(
-          (param) => param.parameterKey === key
-        ) as ParameterInfo;
+        const dependentParameter = nodeInputs.parameterGroups[groupId].parameters.find((param) => param.parameterKey === key);
+        if (!dependentParameter) {
+          LoggerService().log({
+            level: LogEntryLevel.Verbose,
+            area: 'UpdateParameterAndDependencies',
+            message: `Dependent parameter was not set. Connection name: ${connectionReference.connectionName} - Parameter key: ${key}`,
+          });
+          continue;
+        }
         payload.parameters.push({
           groupId,
           parameterId: dependentParameter.id,
@@ -1835,6 +1868,8 @@ async function loadDynamicData(
       nodeInputs,
       settings,
       rootState.workflowParameters.definitions,
+      rootState.workflow.workflowKind,
+      rootState.designerOptions.hostOptions.forceEnableSplitOn ?? false,
       dispatch
     );
   }
@@ -1920,7 +1955,7 @@ async function loadDynamicContentForInputsInNode(
             addDynamicInputs({ nodeId, groupId: ParameterGroupKeys.DEFAULT, inputs: inputParameters, newInputs: schemaInputs, swagger })
           );
         } catch (error: any) {
-          const message = error.message ?? (error.content.message as string);
+          const message = parseErrorMessage(error);
           const errorMessage = getIntl().formatMessage(
             {
               defaultMessage: `Failed to retrieve dynamic inputs. Error details: ''{message}''`,
@@ -2047,61 +2082,35 @@ export async function loadDynamicValuesForParameter(
   }
 
   const dependencyInfo = dependencies.inputs[parameter.parameterKey];
-  if (dependencyInfo) {
-    if (isDynamicDataReadyToLoad(dependencyInfo)) {
-      dispatch(
-        updateNodeParameters({
-          nodeId,
-          parameters: [
-            {
-              parameterId,
-              groupId,
-              propertiesToUpdate: { dynamicData: { status: DynamicCallStatus.STARTED }, editorOptions: { options: [] } },
-            },
-          ],
-        })
-      );
-
-      try {
-        const dynamicValues = await getDynamicValues(
-          dependencyInfo,
-          nodeInputs,
-          operationInfo,
-          connectionReference,
-          idReplacements,
-          workflowParameters
-        );
-
-        dispatch(
-          updateNodeParameters({
-            nodeId,
-            parameters: [
-              {
-                parameterId,
-                groupId,
-                propertiesToUpdate: { dynamicData: { status: DynamicCallStatus.SUCCEEDED }, editorOptions: { options: dynamicValues } },
-              },
-            ],
-          })
-        );
-      } catch (error: any) {
-        dispatch(
-          updateNodeParameters({
-            nodeId,
-            parameters: [
-              {
-                parameterId,
-                groupId,
-                propertiesToUpdate: { dynamicData: { status: DynamicCallStatus.FAILED, error: { ...error, message: error.message } } },
-              },
-            ],
-          })
-        );
-      }
-    } else if (showErrorWhenNotReady) {
+  if (!dependencyInfo) return;
+  if (!isDynamicDataReadyToLoad(dependencyInfo)) {
+    if (showErrorWhenNotReady)
       showErrorWhenDependenciesNotReady(nodeId, groupId, parameterId, dependencyInfo, groupParameters, /* isTreeCall */ false, dispatch);
-    }
+    return;
   }
+
+  let propertiesToUpdate: any = { dynamicData: { status: DynamicCallStatus.STARTED }, editorOptions: { options: [] } };
+
+  dispatch(updateNodeParameters({ nodeId, parameters: [{ parameterId, groupId, propertiesToUpdate }] }));
+
+  try {
+    const dynamicValues = await getDynamicValues(
+      dependencyInfo,
+      nodeInputs,
+      operationInfo,
+      connectionReference,
+      idReplacements,
+      workflowParameters
+    );
+
+    propertiesToUpdate = { dynamicData: { status: DynamicCallStatus.SUCCEEDED }, editorOptions: { options: dynamicValues } };
+  } catch (error: any) {
+    const rootMessage = parseErrorMessage(error);
+    const message = error?.response?.data?.error?.message ?? rootMessage;
+    propertiesToUpdate = { dynamicData: { status: DynamicCallStatus.FAILED, error: { ...error, message } } };
+  }
+
+  dispatch(updateNodeParameters({ nodeId, parameters: [{ parameterId, groupId, propertiesToUpdate }] }));
 }
 
 export function shouldLoadDynamicInputs(nodeInputs: NodeInputs): boolean {
@@ -2138,7 +2147,7 @@ async function tryGetInputDynamicSchema(
       throw error;
     }
 
-    const message = error.message as string;
+    const message = parseErrorMessage(error);
     const errorMessage = getIntl().formatMessage(
       {
         defaultMessage: `Failed to retrieve dynamic inputs. Error details: ''{message}''`,

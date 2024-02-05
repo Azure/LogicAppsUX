@@ -119,12 +119,19 @@ export const getOperationSettings = (
   manifest?: OperationManifest,
   swagger?: SwaggerParser,
   operation?: LogicAppsV2.OperationDefinition,
-  workflowKind?: WorkflowKind
+  workflowKind?: WorkflowKind,
+  forceEnableSplitOn?: boolean
 ): Settings => {
   const { operationId, type: nodeType } = operationInfo;
   return {
-    asynchronous: { isSupported: isAsynchronousSupported(isTrigger, nodeType, manifest), value: getAsynchronous(operation) },
-    correlation: { isSupported: isCorrelationSupported(isTrigger, manifest), value: getCorrelationSettings(operation) },
+    asynchronous: {
+      isSupported: isAsynchronousSupported(isTrigger, nodeType, manifest),
+      value: getAsynchronous(operation),
+    },
+    correlation: {
+      isSupported: isCorrelationSupported(isTrigger, manifest),
+      value: getCorrelationSettings(operation),
+    },
     secureInputs: {
       isSupported: isInputsPropertySupportedInSecureDataSetting(nodeType, manifest),
       value: getSecureInputsSetting(operation),
@@ -142,14 +149,17 @@ export const getOperationSettings = (
       value: getDisableAutomaticDecompression(isTrigger, nodeType, manifest, operation),
     },
     splitOn: {
-      isSupported: isSplitOnSupported(isTrigger, nodeOutputs, manifest, swagger, operationId, operation),
-      value: getSplitOn(manifest, swagger, operationId, operation),
+      isSupported: isSplitOnSupported(isTrigger, nodeOutputs, manifest, swagger, operationId, operation, workflowKind, forceEnableSplitOn),
+      value: getSplitOn(manifest, swagger, operationId, operation, workflowKind),
     },
     retryPolicy: {
       isSupported: isRetryPolicySupported(isTrigger, operationInfo.type, manifest),
       value: getRetryPolicy(isTrigger, operationInfo.type, manifest, operation),
     },
-    requestOptions: { isSupported: areRequestOptionsSupported(isTrigger, nodeType), value: getRequestOptions(operation) },
+    requestOptions: {
+      isSupported: areRequestOptionsSupported(isTrigger, nodeType),
+      value: getRequestOptions(operation),
+    },
     sequential: getSequential(operation),
     suppressWorkflowHeaders: {
       isSupported: isSuppressWorkflowHeadersSupported(isTrigger, nodeType, manifest),
@@ -169,7 +179,10 @@ export const getOperationSettings = (
       isSupported: isTimeoutSupported(isTrigger, nodeType, manifest),
       value: getTimeout(nodeType, isTrigger, manifest, operation),
     },
-    paging: { isSupported: isPagingSupported(isTrigger, nodeType, manifest, swagger, operationId), value: getPaging(operation) },
+    paging: {
+      isSupported: isPagingSupported(isTrigger, nodeType, manifest, swagger, operationId),
+      value: getPaging(operation),
+    },
     uploadChunk: {
       isSupported: isChunkedTransferModeSupported(isTrigger, nodeType, manifest, swagger, operationId),
       value: getUploadChunk(isTrigger, nodeType, manifest, swagger, operationId, operation, workflowKind),
@@ -186,7 +199,10 @@ export const getOperationSettings = (
       isSupported: isRequestSchemaValidationSupported(isTrigger, manifest),
       value: getRequestSchemaValidation(operation),
     },
-    conditionExpressions: { isSupported: isTrigger, value: getConditionExpressions(operation) },
+    conditionExpressions: {
+      isSupported: isTrigger,
+      value: getConditionExpressions(operation),
+    },
     runAfter: {
       isSupported: getRunAfter(operation).length > 0,
       value: getRunAfter(operation),
@@ -500,8 +516,10 @@ const getSplitOn = (
   manifest?: OperationManifest,
   swagger?: SwaggerParser,
   operationId?: string,
-  definition?: LogicAppsV2.OperationDefinition
+  definition?: LogicAppsV2.OperationDefinition,
+  workflowKind?: WorkflowKind
 ): SimpleSetting<string> => {
+  if (workflowKind === WorkflowKind.STATELESS) return { enabled: false };
   const splitOnValue = getSplitOnValue(manifest, swagger, operationId, definition);
   return {
     enabled: !!splitOnValue,
@@ -515,7 +533,7 @@ const getSplitOnValue = (
   operationId?: string,
   definition?: LogicAppsV2.TriggerDefinition
 ): string | undefined => {
-  if (definition) {
+  if (definition && definition.splitOn !== Constants.SETTINGS.SPLITON.AUTOLOAD) {
     return definition.splitOn;
   } else {
     if (manifest) {
@@ -562,8 +580,11 @@ const isSplitOnSupported = (
   manifest?: OperationManifest,
   swagger?: SwaggerParser,
   operationId?: string,
-  definition?: LogicAppsV2.OperationDefinition
+  definition?: LogicAppsV2.OperationDefinition,
+  workflowKind?: WorkflowKind,
+  forceEnableSplitOn?: boolean
 ): boolean => {
+  if (workflowKind === WorkflowKind.STATELESS && !forceEnableSplitOn) return false;
   const existingSplitOn = getSplitOn(manifest, swagger, operationId, definition);
   return isTrigger && (getSplitOnOptions(nodeOutputs, !!manifest).length > 0 || existingSplitOn.enabled);
 };

@@ -10,6 +10,7 @@ import { filterWorkflows, getListColumns, getSelectedItems, parseResourceGroups,
 import { SelectedList } from './selectedList';
 import { Separator, ShimmeredDetailsList, Text, SelectionMode, Selection, MessageBar, MessageBarType } from '@fluentui/react';
 import type { IDropdownOption } from '@fluentui/react';
+import { isNullOrUndefined } from '@microsoft/utils-logic-apps';
 import { useMemo, useRef, useState, useEffect } from 'react';
 import { useIntl } from 'react-intl';
 import { useQuery } from 'react-query';
@@ -82,7 +83,6 @@ export const WorkflowsSelection: React.FC = () => {
 
   const onWorkflowsSuccess = (workflows: WorkflowsList[]) => {
     const resourceGroups: IDropdownOption[] = !workflows ? [] : parseResourceGroups(workflows);
-
     setRenderWorkflows(workflows);
     setResourceGroups(resourceGroups);
     allWorkflows.current = workflows;
@@ -97,10 +97,19 @@ export const WorkflowsSelection: React.FC = () => {
     });
   };
 
-  const { isLoading: isWorkflowsLoading } = useQuery<any>([QueryKeys.workflowsData, { location, iseId: selectedIse }], loadWorkflows, {
-    refetchOnWindowFocus: false,
-    onSuccess: onWorkflowsSuccess,
-  });
+  const { isLoading: isWorkflowsLoading, data: workflowsData } = useQuery<WorkflowsList[]>(
+    [QueryKeys.workflowsData, selectedSubscription, selectedIse, location],
+    loadWorkflows,
+    {
+      refetchOnWindowFocus: false,
+    }
+  );
+
+  useEffect(() => {
+    if (!isNullOrUndefined(workflowsData)) {
+      onWorkflowsSuccess(workflowsData);
+    }
+  }, [workflowsData, onWorkflowsSuccess]);
 
   useEffect(() => {
     const updatedItems = updateSelectedItems(allItemsSelected.current, renderWorkflows, selectedWorkflows);

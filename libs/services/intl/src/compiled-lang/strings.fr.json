@@ -861,28 +861,6 @@
       "value": "L'identité entrée n'est pas associée à cette Application Logique."
     }
   ],
-  "3jwMBm": [
-    {
-      "type": 0,
-      "value": "Format JSON non valide. Début "
-    },
-    {
-      "type": 1,
-      "value": "openingBracst"
-    },
-    {
-      "type": 0,
-      "value": " ou fin "
-    },
-    {
-      "type": 1,
-      "value": "closingBraflt"
-    },
-    {
-      "type": 0,
-      "value": " manquants."
-    }
-  ],
   "3n5pnv": [
     {
       "type": 0,
@@ -1099,26 +1077,44 @@
       "value": "Expliquez à Microsoft ce que vous avez apprécié dans cette fonctionnalité"
     }
   ],
+  "5LV34t": [
+    {
+      "type": 0,
+      "value": "Propriétés « "
+    },
+    {
+      "type": 1,
+      "value": "invalidProperties"
+    },
+    {
+      "type": 0,
+      "value": " » non valides pour le type d’authentification « "
+    },
+    {
+      "type": 1,
+      "value": "authType"
+    },
+    {
+      "type": 0,
+      "value": " »."
+    }
+  ],
   "5OvGgn": [
     {
       "type": 0,
       "value": "Corps"
     }
   ],
-  "5Ow9mX": [
-    {
-      "type": 0,
-      "value": "Icône de connecteur "
-    },
-    {
-      "type": 1,
-      "value": "connectorName"
-    }
-  ],
   "5SAQOb": [
     {
       "type": 0,
       "value": "Autorité"
+    }
+  ],
+  "5WTRY8": [
+    {
+      "type": 0,
+      "value": "Erreurs"
     }
   ],
   "5akc1Q": [
@@ -1321,6 +1317,16 @@
     {
       "type": 0,
       "value": "Créez un flux"
+    }
+  ],
+  "6sSPNb": [
+    {
+      "type": 0,
+      "value": "Connecteur "
+    },
+    {
+      "type": 1,
+      "value": "connectorName"
     }
   ],
   "6u6CS+": [
@@ -1707,6 +1713,16 @@
       "value": "L'identité de l'utilisateur n'est pas prise en charge quand l'identité managée affectée par le système est activée pour l'Application Logique."
     }
   ],
+  "96JG8I": [
+    {
+      "type": 0,
+      "value": "Opération "
+    },
+    {
+      "type": 1,
+      "value": "operationName"
+    }
+  ],
   "99vsJy": [
     {
       "type": 0,
@@ -1815,6 +1831,12 @@
     {
       "type": 0,
       "value": "Modifier en mode De base"
+    }
+  ],
+  "9yLPwo": [
+    {
+      "type": 0,
+      "value": "Pour plus d’informations, vous pouvez consulter les ressources suivantes"
     }
   ],
   "A5Ferh": [
@@ -2026,6 +2048,28 @@
       "value": "Réussi avec nouvelles tentatives"
     }
   ],
+  "BGw6eH": [
+    {
+      "type": 0,
+      "value": "Propriétés obligatoires « "
+    },
+    {
+      "type": 1,
+      "value": "missingProperties"
+    },
+    {
+      "type": 0,
+      "value": " » manquantes pour le type d’authentification « "
+    },
+    {
+      "type": 1,
+      "value": "convertedAuthType"
+    },
+    {
+      "type": 0,
+      "value": " »"
+    }
+  ],
   "BHe7qY": [
     {
       "type": 0,
@@ -2066,6 +2110,12 @@
     {
       "type": 0,
       "value": "Entrez le mot de passe en tant que texte brut ou utilisez un paramètre sécurisé"
+    }
+  ],
+  "BQyLiu": [
+    {
+      "type": 0,
+      "value": "résultats trouvés"
     }
   ],
   "BS3gy8": [
@@ -2192,28 +2242,6 @@
     {
       "type": 0,
       "value": "(UTC+13:00) Samoa"
-    }
-  ],
-  "CafOCn": [
-    {
-      "type": 0,
-      "value": "Les propriétés « "
-    },
-    {
-      "type": 1,
-      "value": "invalidProperties"
-    },
-    {
-      "type": 0,
-      "value": " » ne sont pas valides pour le type d’authentification « "
-    },
-    {
-      "type": 1,
-      "value": "convertedAuthType"
-    },
-    {
-      "type": 0,
-      "value": " »."
     }
   ],
   "Cb6IEq": [
@@ -2678,12 +2706,6 @@
       "value": "Retourne une section d’une chaîne définie par l’index de début et l’index de fin"
     }
   ],
-  "FOiBk/": [
-    {
-      "type": 0,
-      "value": "Erreurs"
-    }
-  ],
   "FT3jt6": [
     {
       "type": 0,
@@ -2749,12 +2771,6 @@
     {
       "type": 0,
       "value": "Entrez une adresse de messagerie."
-    }
-  ],
-  "FaBEfQ": [
-    {
-      "type": 0,
-      "value": "Propriétés suivies"
     }
   ],
   "Fcvgvg": [
@@ -3065,6 +3081,28 @@
     {
       "type": 0,
       "value": "Envoyer à partir de cette action"
+    }
+  ],
+  "I1CYNA": [
+    {
+      "type": 0,
+      "value": "Propriété « "
+    },
+    {
+      "type": 1,
+      "value": "invalidProperties"
+    },
+    {
+      "type": 0,
+      "value": " » non valide pour le type d’authentification « "
+    },
+    {
+      "type": 1,
+      "value": "convertedAuthType"
+    },
+    {
+      "type": 0,
+      "value": " »."
     }
   ],
   "I3mifR": [
@@ -3636,6 +3674,12 @@
       "value": "À propos"
     }
   ],
+  "M0bbZk": [
+    {
+      "type": 0,
+      "value": "Vérificateur de flux"
+    }
+  ],
   "M0xrm+": [
     {
       "type": 0,
@@ -3822,6 +3866,12 @@
       "value": "Copie effectuée."
     }
   ],
+  "NFgfP4": [
+    {
+      "type": 0,
+      "value": "élément"
+    }
+  ],
   "NGJ00e": [
     {
       "type": 0,
@@ -3912,6 +3962,12 @@
       "value": "Mardi"
     }
   ],
+  "NzPnFS": [
+    {
+      "type": 0,
+      "value": "Exemple :"
+    }
+  ],
   "O+3Y9f": [
     {
       "type": 0,
@@ -3948,6 +4004,12 @@
       "value": "Chargement des fichiers..."
     }
   ],
+  "O6VHe0": [
+    {
+      "type": 0,
+      "value": "Avertissements d’opération"
+    }
+  ],
   "O7HhyP": [
     {
       "type": 0,
@@ -3958,6 +4020,12 @@
     {
       "type": 0,
       "value": "OK"
+    }
+  ],
+  "OBO/HE": [
+    {
+      "type": 0,
+      "value": "Valeur d'authentification non valide"
     }
   ],
   "ODQCKj": [
@@ -4110,10 +4178,10 @@
       "value": "Sélectionner une identité managée"
     }
   ],
-  "Os0h2Y": [
+  "Ov7Ckz": [
     {
       "type": 0,
-      "value": "Propriétés obligatoires manquantes « "
+      "value": "Propriété obligatoire « "
     },
     {
       "type": 1,
@@ -4121,7 +4189,7 @@
     },
     {
       "type": 0,
-      "value": " » pour le type d’authentification « "
+      "value": " » manquante pour le type d’authentification « "
     },
     {
       "type": 1,
@@ -4178,6 +4246,12 @@
     {
       "type": 0,
       "value": "Entrée"
+    }
+  ],
+  "PDMP/Z": [
+    {
+      "type": 0,
+      "value": "Réduit"
     }
   ],
   "PNk3n4": [
@@ -4376,28 +4450,6 @@
     {
       "type": 0,
       "value": "Code d'état"
-    }
-  ],
-  "QKWoVr": [
-    {
-      "type": 0,
-      "value": "Propriété obligatoire manquante « "
-    },
-    {
-      "type": 1,
-      "value": "missingProperties"
-    },
-    {
-      "type": 0,
-      "value": " » pour le type d’authentification « "
-    },
-    {
-      "type": 1,
-      "value": "convertedAuthType"
-    },
-    {
-      "type": 0,
-      "value": " »"
     }
   ],
   "QZBPUx": [
@@ -5141,12 +5193,6 @@
       "value": "Afficher moins"
     }
   ],
-  "V0le5X": [
-    {
-      "type": 0,
-      "value": "Entrez un JSON valide."
-    }
-  ],
   "V3vpin": [
     {
       "type": 0,
@@ -5291,6 +5337,12 @@
     {
       "type": 0,
       "value": "Type d’erreur"
+    }
+  ],
+  "Vi5TIV": [
+    {
+      "type": 0,
+      "value": "Aucun avertissement n’a été trouvé."
     }
   ],
   "VlvlX1": [
@@ -5869,6 +5921,12 @@
     {
       "type": 0,
       "value": "Astuces pour la recherche"
+    }
+  ],
+  "Yg/vvm": [
+    {
+      "type": 0,
+      "value": "Fermer le panneau Ajouter une action"
     }
   ],
   "YgU88A": [
@@ -6601,6 +6659,12 @@
       "value": "Obligatoire. Nom de la variable dont vous voulez la valeur."
     }
   ],
+  "eHsOsm": [
+    {
+      "type": 0,
+      "value": "Spécifier la durée au format ISO 8601"
+    }
+  ],
   "eO1h/h": [
     {
       "type": 0,
@@ -6981,6 +7045,18 @@
     {
       "type": 0,
       "value": "Renvoyer une exécution de workflow à partir de cette action"
+    }
+  ],
+  "hJbr09": [
+    {
+      "type": 0,
+      "value": "Cliquer pour réduire"
+    }
+  ],
+  "hLOIwp": [
+    {
+      "type": 0,
+      "value": "Avertissements"
     }
   ],
   "hMf2TA": [
@@ -7877,6 +7953,12 @@
       "value": "Retourne la représentation sous forme de chaîne d'un URI de données"
     }
   ],
+  "mNaBPE": [
+    {
+      "type": 0,
+      "value": "Entrez un JSON valide."
+    }
+  ],
   "mPakaD": [
     {
       "type": 0,
@@ -8097,6 +8179,24 @@
     {
       "type": 0,
       "value": "Supprimer les en-têtes de workflow"
+    }
+  ],
+  "ncW1Sw": [
+    {
+      "type": 0,
+      "value": "Opération "
+    },
+    {
+      "type": 1,
+      "value": "operationName"
+    },
+    {
+      "type": 0,
+      "value": ", connecteur "
+    },
+    {
+      "type": 1,
+      "value": "connectorName"
     }
   ],
   "ngsC44": [
@@ -8596,6 +8696,12 @@
       "value": "Retourne le nombre d'éléments d'un tableau ou d'une chaîne"
     }
   ],
+  "qdUeUk": [
+    {
+      "type": 0,
+      "value": "Cliquer pour développer"
+    }
+  ],
   "qiIs4V": [
     {
       "type": 0,
@@ -8638,28 +8744,6 @@
       "value": "Une réponse asynchrone permet à une application logique de répondre avec un état 202 (accepté) qui indique que le traitement de la demande a été accepté. Un en-tête d'emplacement est fourni pour récupérer l'état final."
     }
   ],
-  "qs9D+A": [
-    {
-      "type": 0,
-      "value": "Propriété non valide « "
-    },
-    {
-      "type": 1,
-      "value": "invalidProperties"
-    },
-    {
-      "type": 0,
-      "value": " » pour le type d’authentification « "
-    },
-    {
-      "type": 1,
-      "value": "convertedAuthType"
-    },
-    {
-      "type": 0,
-      "value": " »."
-    }
-  ],
   "qy5WqY": [
     {
       "type": 0,
@@ -8682,6 +8766,12 @@
     {
       "type": 0,
       "value": "Annuler"
+    }
+  ],
+  "r4zp7m": [
+    {
+      "type": 0,
+      "value": "Développé"
     }
   ],
   "r7vZ5a": [

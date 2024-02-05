@@ -81,6 +81,11 @@ const ContextSettings = () => {
         checked={hostOptions.displayRuntimeInfo}
         onChange={(_, checked) => dispatch(setHostOptions({ displayRuntimeInfo: !!checked }))}
       />
+      <Checkbox
+        label="Force Enable Split-On"
+        checked={hostOptions.forceEnableSplitOn}
+        onChange={(_, checked) => dispatch(setHostOptions({ forceEnableSplitOn: !!checked }))}
+      />
     </div>
   );
 };

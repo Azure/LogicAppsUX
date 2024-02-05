@@ -5,11 +5,14 @@ import type { Connector, ConnectionParameter } from '../models/connector';
 import { equals, hasProperty } from './functions';
 import type { IntlShape } from 'react-intl';
 
+export const connectorsShownAsAzure = ['builtin/as2', 'builtin/rosettanet'];
+
 export function isArmResourceId(resourceId: string): boolean {
   return resourceId ? resourceId.startsWith('/subscriptions/') : false;
 }
 
 export const isBuiltInConnector = (connectorId: string) => {
+  if (connectorsShownAsAzure.includes(connectorId)) return false;
   return !isArmResourceId(connectorId);
 };
 
@@ -182,7 +185,7 @@ export function getIdentityDropdownOptions(managedIdentity: ManagedIdentity | un
   });
 
   if (equals(type, ResourceIdentityType.SYSTEM_ASSIGNED) || equals(type, ResourceIdentityType.SYSTEM_ASSIGNED_USER_ASSIGNED)) {
-    options.push({ key: 'System-assigned managed identity', text: systemAssigned });
+    options.push({ key: 'SystemAssigned_Managed_Identity', text: systemAssigned });
   }
 
   if (equals(type, ResourceIdentityType.USER_ASSIGNED) || equals(type, ResourceIdentityType.SYSTEM_ASSIGNED_USER_ASSIGNED)) {
@@ -201,7 +204,7 @@ function _isConnectionParameterHidden(connectionParameter: ConnectionParameter):
 export const getUniqueName = (keys: string[], prefix: string): { name: string; index: number } => {
   const set = new Set(keys.map((name) => name.split('::')[0]));
 
-  let index = 1;
+  let index = 0;
   let name = prefix;
   while (set.has(name)) {
     name = `${prefix}-${++index}`;

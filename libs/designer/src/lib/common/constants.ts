@@ -391,6 +391,7 @@ export default {
       SECURITY_CENTER_ALERT: 'securitycenteralert',
       SUBTRACTFROMTIME: 'subtractfromtime',
       TEAMS: 'teams',
+      TEAMSWEBHOOK: 'teamswebhook',
       VIRTUALAGENT: 'virtualagent',
       XML_TO_JSON: 'xmltojson',
       XML_TO_TEXT: 'xmltotext',
@@ -453,6 +454,10 @@ export default {
     SWAGGER_ENDPOINT: 'SWAGGER_ENDPOINT',
     TESTING: 'TESTING',
     MOCK_RESULTS: 'MOCK_RESULTS',
+  },
+  ERRORS_PANEL_TAB_NAMES: {
+    ERRORS: 'ERRORS',
+    WARNINGS: 'WARNINGS',
   },
   PROFILE_KEY_TYPE: {
     DESIGNER: 'designer:',
@@ -810,9 +815,12 @@ export default {
       INPUTS: 'inputs',
       OUTPUTS: 'outputs',
     },
+    SPLITON: {
+      AUTOLOAD: '@autoload()',
+    },
   },
   SWAGGER,
-  SYSTEM_ASSIGNED_MANAGED_IDENTITY: 'System-assigned managed identity',
+  SYSTEM_ASSIGNED_MANAGED_IDENTITY: 'SystemAssigned_Managed_Identity',
   TIP_LOGGING_KEYS: {
     ACTION_RECOMMENDATION: 'ACTION_RECOMMENDATION',
     AUTO_CASTING_TOKEN_FOR_PARAMETER: 'AUTO_CASTING_TOKEN_FOR_PARAMETER',

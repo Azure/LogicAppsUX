@@ -853,28 +853,6 @@
       "value": "Identitas yang dimasukkan tidak terkait dengan Aplikasi Logika ini."
     }
   ],
-  "3jwMBm": [
-    {
-      "type": 0,
-      "value": "Format json tidak valid. Tidak ada awalan "
-    },
-    {
-      "type": 1,
-      "value": "openingBracket"
-    },
-    {
-      "type": 0,
-      "value": " atau akhiran "
-    },
-    {
-      "type": 1,
-      "value": "closingBracket"
-    },
-    {
-      "type": 0,
-      "value": "."
-    }
-  ],
   "3n5pnv": [
     {
       "type": 0,
@@ -1091,26 +1069,44 @@
       "value": "Beri tahu Microsoft apa yang Anda sukai dari fitur ini"
     }
   ],
+  "5LV34t": [
+    {
+      "type": 0,
+      "value": "Properti '"
+    },
+    {
+      "type": 1,
+      "value": "invalidProperties"
+    },
+    {
+      "type": 0,
+      "value": "' tidak valid untuk tipe autentikasi '"
+    },
+    {
+      "type": 1,
+      "value": "authType"
+    },
+    {
+      "type": 0,
+      "value": "'."
+    }
+  ],
   "5OvGgn": [
     {
       "type": 0,
       "value": "Isi"
     }
   ],
-  "5Ow9mX": [
-    {
-      "type": 0,
-      "value": "Ikon konektor "
-    },
-    {
-      "type": 1,
-      "value": "connectorName"
-    }
-  ],
   "5SAQOb": [
     {
       "type": 0,
       "value": "Otoritas"
+    }
+  ],
+  "5WTRY8": [
+    {
+      "type": 0,
+      "value": "Kesalahan"
     }
   ],
   "5akc1Q": [
@@ -1313,6 +1309,16 @@
     {
       "type": 0,
       "value": "Buat alur"
+    }
+  ],
+  "6sSPNb": [
+    {
+      "type": 0,
+      "value": "Konektor "
+    },
+    {
+      "type": 1,
+      "value": "connectorName"
     }
   ],
   "6u6CS+": [
@@ -1699,6 +1705,16 @@
       "value": "Identitas pengguna tidak didukung bila Aplikasi Logika mengaktifkan identitas terkelola yang ditetapkan sistem."
     }
   ],
+  "96JG8I": [
+    {
+      "type": 0,
+      "value": "Operasi "
+    },
+    {
+      "type": 1,
+      "value": "operationName"
+    }
+  ],
   "99vsJy": [
     {
       "type": 0,
@@ -1807,6 +1823,12 @@
     {
       "type": 0,
       "value": "Edit di mode dasar"
+    }
+  ],
+  "9yLPwo": [
+    {
+      "type": 0,
+      "value": "Untuk informasi yang lebih mendetail, Anda dapat merujuk ke sumber daya berikut"
     }
   ],
   "A5Ferh": [
@@ -1996,6 +2018,28 @@
       "value": "Berhasil dengan percobaan ulang"
     }
   ],
+  "BGw6eH": [
+    {
+      "type": 0,
+      "value": "Properti '"
+    },
+    {
+      "type": 1,
+      "value": "missingProperties"
+    },
+    {
+      "type": 0,
+      "value": "' yang diperlukan untuk tipe autentikasi '"
+    },
+    {
+      "type": 1,
+      "value": "authType"
+    },
+    {
+      "type": 0,
+      "value": "' tidak ada"
+    }
+  ],
   "BHe7qY": [
     {
       "type": 0,
@@ -2036,6 +2080,12 @@
     {
       "type": 0,
       "value": "Masukkan kata sandi sebagai teks biasa atau gunakan parameter yang aman"
+    }
+  ],
+  "BQyLiu": [
+    {
+      "type": 0,
+      "value": "hasil ditemukan"
     }
   ],
   "BS3gy8": [
@@ -2162,28 +2212,6 @@
     {
       "type": 0,
       "value": "(UTC+13.00) Samoa"
-    }
-  ],
-  "CafOCn": [
-    {
-      "type": 0,
-      "value": "Properti '"
-    },
-    {
-      "type": 1,
-      "value": "invalidProperties"
-    },
-    {
-      "type": 0,
-      "value": "' tidak valid untuk tipe autentikasi '"
-    },
-    {
-      "type": 1,
-      "value": "convertedAuthType"
-    },
-    {
-      "type": 0,
-      "value": "'."
     }
   ],
   "Cb6IEq": [
@@ -2648,12 +2676,6 @@
       "value": "Menghasilkan bagian string yang ditentukan oleh indeks awal dan indeks akhir"
     }
   ],
-  "FOiBk/": [
-    {
-      "type": 0,
-      "value": "Kesalahan"
-    }
-  ],
   "FT3jt6": [
     {
       "type": 0,
@@ -2697,12 +2719,6 @@
     {
       "type": 0,
       "value": "Masukkan alamat email."
-    }
-  ],
-  "FaBEfQ": [
-    {
-      "type": 0,
-      "value": "Properti yang dilacak"
     }
   ],
   "Fcvgvg": [
@@ -3013,6 +3029,28 @@
     {
       "type": 0,
       "value": "Kirim dari tindakan ini"
+    }
+  ],
+  "I1CYNA": [
+    {
+      "type": 0,
+      "value": "Properti '"
+    },
+    {
+      "type": 1,
+      "value": "invalidProperties"
+    },
+    {
+      "type": 0,
+      "value": "' untuk tipe autentikasi '"
+    },
+    {
+      "type": 1,
+      "value": "authType"
+    },
+    {
+      "type": 0,
+      "value": "' tidak valid."
     }
   ],
   "I3mifR": [
@@ -3562,6 +3600,12 @@
       "value": "Tentang"
     }
   ],
+  "M0bbZk": [
+    {
+      "type": 0,
+      "value": "Pemeriksa Alur"
+    }
+  ],
   "M0xrm+": [
     {
       "type": 0,
@@ -3748,6 +3792,12 @@
       "value": "Disalin!"
     }
   ],
+  "NFgfP4": [
+    {
+      "type": 0,
+      "value": "item"
+    }
+  ],
   "NGJ00e": [
     {
       "type": 0,
@@ -3838,6 +3888,12 @@
       "value": "Selasa"
     }
   ],
+  "NzPnFS": [
+    {
+      "type": 0,
+      "value": "Contoh:"
+    }
+  ],
   "O+3Y9f": [
     {
       "type": 0,
@@ -3874,6 +3930,12 @@
       "value": "Memuat File..."
     }
   ],
+  "O6VHe0": [
+    {
+      "type": 0,
+      "value": "Peringatan operasi"
+    }
+  ],
   "O7HhyP": [
     {
       "type": 0,
@@ -3884,6 +3946,12 @@
     {
       "type": 0,
       "value": "OK"
+    }
+  ],
+  "OBO/HE": [
+    {
+      "type": 0,
+      "value": "Nilai Autentikasi Tidak Valid"
     }
   ],
   "ODQCKj": [
@@ -4036,7 +4104,7 @@
       "value": "Tetapkan identitas terkelola"
     }
   ],
-  "Os0h2Y": [
+  "Ov7Ckz": [
     {
       "type": 0,
       "value": "Properti '"
@@ -4051,7 +4119,7 @@
     },
     {
       "type": 1,
-      "value": "convertedAuthType"
+      "value": "authType"
     },
     {
       "type": 0,
@@ -4104,6 +4172,12 @@
     {
       "type": 0,
       "value": "Input"
+    }
+  ],
+  "PDMP/Z": [
+    {
+      "type": 0,
+      "value": "Diciutkan"
     }
   ],
   "PNk3n4": [
@@ -4302,28 +4376,6 @@
     {
       "type": 0,
       "value": "Kode status"
-    }
-  ],
-  "QKWoVr": [
-    {
-      "type": 0,
-      "value": "Properti '"
-    },
-    {
-      "type": 1,
-      "value": "missingProperties"
-    },
-    {
-      "type": 0,
-      "value": "' yang diperlukan untuk tipe autentikasi '"
-    },
-    {
-      "type": 1,
-      "value": "convertedAuthType"
-    },
-    {
-      "type": 0,
-      "value": "' tidak ada"
     }
   ],
   "QZBPUx": [
@@ -5045,12 +5097,6 @@
       "value": "Tampilkan lebih sedikit"
     }
   ],
-  "V0le5X": [
-    {
-      "type": 0,
-      "value": "Masukkan JSON yang valid."
-    }
-  ],
   "V3vpin": [
     {
       "type": 0,
@@ -5195,6 +5241,12 @@
     {
       "type": 0,
       "value": "Jenis Kesalahan"
+    }
+  ],
+  "Vi5TIV": [
+    {
+      "type": 0,
+      "value": "Tidak ditemukan peringatan."
     }
   ],
   "VlvlX1": [
@@ -5773,6 +5825,12 @@
     {
       "type": 0,
       "value": "Tips Pencarian"
+    }
+  ],
+  "Yg/vvm": [
+    {
+      "type": 0,
+      "value": "Tutup Panel Tambahkan Tindakan"
     }
   ],
   "YgU88A": [
@@ -6505,6 +6563,12 @@
       "value": "Diperlukan. Nama variabel yang nilainya Anda inginkan."
     }
   ],
+  "eHsOsm": [
+    {
+      "type": 0,
+      "value": "Tentukan durasinya dalam format ISO 8601"
+    }
+  ],
   "eO1h/h": [
     {
       "type": 0,
@@ -6877,6 +6941,18 @@
     {
       "type": 0,
       "value": "Kirim ulang eksekusi alur kerja dari tindakan ini"
+    }
+  ],
+  "hJbr09": [
+    {
+      "type": 0,
+      "value": "Klik untuk Menciutkan"
+    }
+  ],
+  "hLOIwp": [
+    {
+      "type": 0,
+      "value": "Peringatan"
     }
   ],
   "hMf2TA": [
@@ -7729,6 +7805,12 @@
       "value": "Menampilkan representasi string dari URI data"
     }
   ],
+  "mNaBPE": [
+    {
+      "type": 0,
+      "value": "Masukkan JSON yang valid."
+    }
+  ],
   "mPakaD": [
     {
       "type": 0,
@@ -7949,6 +8031,24 @@
     {
       "type": 0,
       "value": "Sembunyikan header alur kerja"
+    }
+  ],
+  "ncW1Sw": [
+    {
+      "type": 0,
+      "value": "Operasi "
+    },
+    {
+      "type": 1,
+      "value": "operationName"
+    },
+    {
+      "type": 0,
+      "value": ", konektor "
+    },
+    {
+      "type": 1,
+      "value": "connectorName"
     }
   ],
   "ngsC44": [
@@ -8426,6 +8526,12 @@
       "value": "Menampilkan jumlah elemen dalam array atau string"
     }
   ],
+  "qdUeUk": [
+    {
+      "type": 0,
+      "value": "Klik untuk Meluaskan"
+    }
+  ],
   "qiIs4V": [
     {
       "type": 0,
@@ -8468,28 +8574,6 @@
       "value": "Respons asinkron memungkinkan Aplikasi Logika merespons dengan 202 (Diterima) untuk menunjukkan bahwa permintaan telah diterima untuk diproses. Header lokasi akan disediakan untuk menerima keadaan akhir."
     }
   ],
-  "qs9D+A": [
-    {
-      "type": 0,
-      "value": "Properti '"
-    },
-    {
-      "type": 1,
-      "value": "invalidProperties"
-    },
-    {
-      "type": 0,
-      "value": "' untuk tipe autentikasi '"
-    },
-    {
-      "type": 1,
-      "value": "convertedAuthType"
-    },
-    {
-      "type": 0,
-      "value": "' tidak valid."
-    }
-  ],
   "qy5WqY": [
     {
       "type": 0,
@@ -8512,6 +8596,12 @@
     {
       "type": 0,
       "value": "Batalkan"
+    }
+  ],
+  "r4zp7m": [
+    {
+      "type": 0,
+      "value": "Diluaskan"
     }
   ],
   "r7vZ5a": [

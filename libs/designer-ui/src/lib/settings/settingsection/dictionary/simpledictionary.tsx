@@ -4,13 +4,12 @@ import { Label } from '../../../label';
 import { useId } from '../../../useId';
 import { SimpleDictionaryItem } from './simpledictionaryitem';
 import type { SimpleDictionaryRowModel, SimpleDictionaryChangeModel } from './simpledictionaryitem';
-import { useDebouncedEffect } from '@react-hookz/web';
 import React, { useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
 
 export interface SimpleDictionaryProps {
   disabled?: boolean;
-  title?: string;
+  customLabel?: JSX.Element;
   readOnly?: boolean;
   value?: Record<string, string>;
   ariaLabel?: string;
@@ -19,7 +18,7 @@ export interface SimpleDictionaryProps {
 
 export const SimpleDictionary: React.FC<SimpleDictionaryProps> = ({
   disabled,
-  title,
+  customLabel,
   readOnly,
   value,
   onChange,
@@ -74,24 +73,20 @@ export const SimpleDictionary: React.FC<SimpleDictionaryProps> = ({
 
   const dictionaryFieldID = useId('anInput');
 
-  //TODO: Move this to a proper setting
-  const trackedPropertiesString = intl.formatMessage({
-    defaultMessage: 'Tracked properties',
-    description: 'Label for the Tracked properties field in the settings section',
+  const indexItem = intl.formatMessage({
+    defaultMessage: 'item',
+    description: 'Label for users to know which item they are on in the dictionary',
   });
+
   return (
     <>
-      <div className="msla-input-parameter-label">
-        <div className="msla-dictionary-control-label">
-          <Label htmlFor={dictionaryFieldID} text={trackedPropertiesString} />
-        </div>
-      </div>
+      {customLabel ? customLabel : null}
       <div id={dictionaryFieldID}>
         {values.map((x) => (
           <SimpleDictionaryItem
             item={{ key: x.key, value: x.value, index: x.index }}
             key={x.index}
-            ariaLabel={`${ariaLabel} ${x.index}`}
+            ariaLabel={`${ariaLabel} ${indexItem} ${x.index + 1}`}
             allowDeletion={x.index + 1 !== values.length}
             disabled={disabled}
             readOnly={readOnly}

@@ -32,6 +32,7 @@ export interface DesignerOptionsState {
   hostOptions: {
     displayRuntimeInfo: boolean; // show info about where the action is run(i.e. InApp/Shared/Custom)
     suppressCastingForSerialize?: boolean; // suppress casting for serialize
+    forceEnableSplitOn?: boolean; // force enable split on (by default it is disabled on stateless workflows)
   };
   nodeSelectAdditionalCallback?: (nodeId: string) => any;
   showConnectionsPanel?: boolean;

@@ -865,28 +865,6 @@
       "value": "Den angivna identiteten är inte associerad med denna Logic-app."
     }
   ],
-  "3jwMBm": [
-    {
-      "type": 0,
-      "value": "Ogiltigt json-format. Start-"
-    },
-    {
-      "type": 1,
-      "value": "openingBracket"
-    },
-    {
-      "type": 0,
-      "value": " eller slut-"
-    },
-    {
-      "type": 1,
-      "value": "closingBracket"
-    },
-    {
-      "type": 0,
-      "value": " saknas."
-    }
-  ],
   "3n5pnv": [
     {
       "type": 0,
@@ -1099,30 +1077,44 @@
       "value": "Berätta för Microsoft vad du uppskattade med den här funktionen"
     }
   ],
+  "5LV34t": [
+    {
+      "type": 0,
+      "value": "Egenskaperna "
+    },
+    {
+      "type": 1,
+      "value": "invalidProperties"
+    },
+    {
+      "type": 0,
+      "value": " är ogiltiga för autentiseringstypen "
+    },
+    {
+      "type": 1,
+      "value": "authType"
+    },
+    {
+      "type": 0,
+      "value": "."
+    }
+  ],
   "5OvGgn": [
     {
       "type": 0,
       "value": "Brödtext"
     }
   ],
-  "5Ow9mX": [
-    {
-      "type": 0,
-      "value": "Ikon för "
-    },
-    {
-      "type": 1,
-      "value": "connectorName"
-    },
-    {
-      "type": 0,
-      "value": " anslutning"
-    }
-  ],
   "5SAQOb": [
     {
       "type": 0,
       "value": "Utfärdare"
+    }
+  ],
+  "5WTRY8": [
+    {
+      "type": 0,
+      "value": "Fel"
     }
   ],
   "5akc1Q": [
@@ -1325,6 +1317,16 @@
     {
       "type": 0,
       "value": "Skapa flöde"
+    }
+  ],
+  "6sSPNb": [
+    {
+      "type": 1,
+      "value": "connectorName"
+    },
+    {
+      "type": 0,
+      "value": "-anslutning"
     }
   ],
   "6u6CS+": [
@@ -1711,6 +1713,16 @@
       "value": "Användaridentiteten stöds inte när Logic-appen har en systemtilldelad hanterad identitet aktiverad."
     }
   ],
+  "96JG8I": [
+    {
+      "type": 1,
+      "value": "operationName"
+    },
+    {
+      "type": 0,
+      "value": "-åtgärd"
+    }
+  ],
   "99vsJy": [
     {
       "type": 0,
@@ -1819,6 +1831,12 @@
     {
       "type": 0,
       "value": "Redigera standardläge"
+    }
+  ],
+  "9yLPwo": [
+    {
+      "type": 0,
+      "value": "Mer detaljerad information hittar du i följande resurser"
     }
   ],
   "A5Ferh": [
@@ -2015,6 +2033,24 @@
       "value": "Lyckades med återförsök"
     }
   ],
+  "BGw6eH": [
+    {
+      "type": 0,
+      "value": "De obligatoriska egenskaperna "
+    },
+    {
+      "type": 1,
+      "value": "missingProperties"
+    },
+    {
+      "type": 0,
+      "value": " saknas för autentiseringstypen "
+    },
+    {
+      "type": 1,
+      "value": "authType"
+    }
+  ],
   "BHe7qY": [
     {
       "type": 0,
@@ -2055,6 +2091,12 @@
     {
       "type": 0,
       "value": "Ange lösenordet som oformaterad text eller använd en säker parameter"
+    }
+  ],
+  "BQyLiu": [
+    {
+      "type": 0,
+      "value": "resultat hittades"
     }
   ],
   "BS3gy8": [
@@ -2181,28 +2223,6 @@
     {
       "type": 0,
       "value": "(UTC+13:00) Samoa"
-    }
-  ],
-  "CafOCn": [
-    {
-      "type": 0,
-      "value": "Egenskaperna "
-    },
-    {
-      "type": 1,
-      "value": "invalidProperties"
-    },
-    {
-      "type": 0,
-      "value": " är ogiltiga för autentiseringstypen "
-    },
-    {
-      "type": 1,
-      "value": "convertedAuthType"
-    },
-    {
-      "type": 0,
-      "value": "."
     }
   ],
   "Cb6IEq": [
@@ -2663,12 +2683,6 @@
       "value": "Returnerar ett avsnitt i en sträng som definieras av start- och slutindexet"
     }
   ],
-  "FOiBk/": [
-    {
-      "type": 0,
-      "value": "Fel"
-    }
-  ],
   "FT3jt6": [
     {
       "type": 0,
@@ -2723,12 +2737,6 @@
     {
       "type": 0,
       "value": "Ange en e-postadress."
-    }
-  ],
-  "FaBEfQ": [
-    {
-      "type": 0,
-      "value": "Sparade egenskaper"
     }
   ],
   "Fcvgvg": [
@@ -3047,6 +3055,28 @@
     {
       "type": 0,
       "value": "Skicka från den här åtgärden"
+    }
+  ],
+  "I1CYNA": [
+    {
+      "type": 0,
+      "value": "Egenskapen "
+    },
+    {
+      "type": 1,
+      "value": "invalidProperties"
+    },
+    {
+      "type": 0,
+      "value": " är ogiltig för autentiseringstypen "
+    },
+    {
+      "type": 1,
+      "value": "authType"
+    },
+    {
+      "type": 0,
+      "value": "."
     }
   ],
   "I3mifR": [
@@ -3607,6 +3637,12 @@
       "value": "Om"
     }
   ],
+  "M0bbZk": [
+    {
+      "type": 0,
+      "value": "Flödeskontroll"
+    }
+  ],
   "M0xrm+": [
     {
       "type": 0,
@@ -3793,6 +3829,12 @@
       "value": "Kopierat!"
     }
   ],
+  "NFgfP4": [
+    {
+      "type": 0,
+      "value": "objekt"
+    }
+  ],
   "NGJ00e": [
     {
       "type": 0,
@@ -3883,6 +3925,12 @@
       "value": "Tisdag"
     }
   ],
+  "NzPnFS": [
+    {
+      "type": 0,
+      "value": "Exempel:"
+    }
+  ],
   "O+3Y9f": [
     {
       "type": 0,
@@ -3919,6 +3967,12 @@
       "value": "Läser in filer..."
     }
   ],
+  "O6VHe0": [
+    {
+      "type": 0,
+      "value": "Driftsvarningar"
+    }
+  ],
   "O7HhyP": [
     {
       "type": 0,
@@ -3929,6 +3983,12 @@
     {
       "type": 0,
       "value": "OK"
+    }
+  ],
+  "OBO/HE": [
+    {
+      "type": 0,
+      "value": "Ogiltigt autentiseringsvärde"
     }
   ],
   "ODQCKj": [
@@ -4081,10 +4141,10 @@
       "value": "Välj en hanterad identitet"
     }
   ],
-  "Os0h2Y": [
+  "Ov7Ckz": [
     {
       "type": 0,
-      "value": "De obligatoriska egenskaperna "
+      "value": "Den obligatoriska egenskapen "
     },
     {
       "type": 1,
@@ -4096,7 +4156,7 @@
     },
     {
       "type": 1,
-      "value": "convertedAuthType"
+      "value": "authType"
     }
   ],
   "P+7G62": [
@@ -4145,6 +4205,12 @@
     {
       "type": 0,
       "value": "Indata"
+    }
+  ],
+  "PDMP/Z": [
+    {
+      "type": 0,
+      "value": "Komprimerat"
     }
   ],
   "PNk3n4": [
@@ -4343,24 +4409,6 @@
     {
       "type": 0,
       "value": "Statuskod"
-    }
-  ],
-  "QKWoVr": [
-    {
-      "type": 0,
-      "value": "Den obligatoriska egenskapen "
-    },
-    {
-      "type": 1,
-      "value": "missingProperties"
-    },
-    {
-      "type": 0,
-      "value": " saknas för autentiseringstypen "
-    },
-    {
-      "type": 1,
-      "value": "convertedAuthType"
     }
   ],
   "QZBPUx": [
@@ -5089,12 +5137,6 @@
       "value": "Visa mindre"
     }
   ],
-  "V0le5X": [
-    {
-      "type": 0,
-      "value": "Ange en giltig JSON."
-    }
-  ],
   "V3vpin": [
     {
       "type": 1,
@@ -5235,6 +5277,12 @@
     {
       "type": 0,
       "value": "Feltyp"
+    }
+  ],
+  "Vi5TIV": [
+    {
+      "type": 0,
+      "value": "Inga varningar hittades."
     }
   ],
   "VlvlX1": [
@@ -5813,6 +5861,12 @@
     {
       "type": 0,
       "value": "Söktips"
+    }
+  ],
+  "Yg/vvm": [
+    {
+      "type": 0,
+      "value": "Stäng panelen Lägg till åtgärd"
     }
   ],
   "YgU88A": [
@@ -6545,6 +6599,12 @@
       "value": "Krävs. Namnet på variabeln vars värde du vill ha."
     }
   ],
+  "eHsOsm": [
+    {
+      "type": 0,
+      "value": "Ange varaktigheten i ISO 8601-format"
+    }
+  ],
   "eO1h/h": [
     {
       "type": 0,
@@ -6921,6 +6981,18 @@
     {
       "type": 0,
       "value": "Skicka en arbetsflödeskörning på nytt från den här åtgärden"
+    }
+  ],
+  "hJbr09": [
+    {
+      "type": 0,
+      "value": "Klicka för att dölja"
+    }
+  ],
+  "hLOIwp": [
+    {
+      "type": 0,
+      "value": "Varningar"
     }
   ],
   "hMf2TA": [
@@ -7795,6 +7867,12 @@
       "value": "Returnerar en strängrepresentation av ett data-URI"
     }
   ],
+  "mNaBPE": [
+    {
+      "type": 0,
+      "value": "Ange en giltig JSON."
+    }
+  ],
   "mPakaD": [
     {
       "type": 0,
@@ -8015,6 +8093,24 @@
     {
       "type": 0,
       "value": "Utelämna arbetsflödesrubriker"
+    }
+  ],
+  "ncW1Sw": [
+    {
+      "type": 1,
+      "value": "operationName"
+    },
+    {
+      "type": 0,
+      "value": "-åtgärd, "
+    },
+    {
+      "type": 1,
+      "value": "connectorName"
+    },
+    {
+      "type": 0,
+      "value": "-anslutning"
     }
   ],
   "ngsC44": [
@@ -8499,6 +8595,12 @@
       "value": "Returnerar antalet element i en matris eller sträng"
     }
   ],
+  "qdUeUk": [
+    {
+      "type": 0,
+      "value": "Klicka för att visa"
+    }
+  ],
   "qiIs4V": [
     {
       "type": 0,
@@ -8541,28 +8643,6 @@
       "value": "Det asynkrona svaret tillåter en logikapp att svara med 202 (godkänd) för att indikera att förfrågan har godkänts för bearbetning. En platsrubrik kommer att tillhandahållas för att hämta den slutliga statusen."
     }
   ],
-  "qs9D+A": [
-    {
-      "type": 0,
-      "value": "Ogiltig egenskap "
-    },
-    {
-      "type": 1,
-      "value": "invalidProperties"
-    },
-    {
-      "type": 0,
-      "value": " för autentiseringstypen "
-    },
-    {
-      "type": 1,
-      "value": "convertedAuthType"
-    },
-    {
-      "type": 0,
-      "value": "."
-    }
-  ],
   "qy5WqY": [
     {
       "type": 0,
@@ -8585,6 +8665,12 @@
     {
       "type": 0,
       "value": "Ångra"
+    }
+  ],
+  "r4zp7m": [
+    {
+      "type": 0,
+      "value": "Expanderat"
     }
   ],
   "r7vZ5a": [

@@ -6,7 +6,7 @@ import { RunAfterIndicator } from './runAfterIndicator';
 import type { LogicAppsV2 } from '@microsoft/utils-logic-apps';
 import { containsIdTag, removeIdTag, getEdgeCenter, RUN_AFTER_STATUS } from '@microsoft/utils-logic-apps';
 import type { ElkExtendedEdge } from 'elkjs/lib/elk-api';
-import React, { useMemo } from 'react';
+import React, { memo, useMemo } from 'react';
 import { getSmoothStepPath, useReactFlow } from 'reactflow';
 import type { EdgeProps } from 'reactflow';
 
@@ -47,7 +47,7 @@ const foreignObjectWidth = 200;
 const runAfterWidth = 36;
 const runAfterHeight = 12;
 
-export const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
+const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
   id,
   sourceX,
   sourceY,
@@ -190,3 +190,5 @@ export const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
     </>
   );
 };
+
+export default memo(ButtonEdge);

@@ -202,6 +202,13 @@ export const nodeJsBinaryPathSettingKey = 'nodeJsBinaryPath';
 export const funcCoreToolsBinaryPathSettingKey = 'funcCoreToolsBinaryPath';
 export const dependencyTimeoutSettingKey = 'dependencyTimeout';
 
+// host.json
+export const extensionBundleId = 'Microsoft.Azure.Functions.ExtensionBundle.Workflows';
+export const targetBundleKey = 'FUNCTIONS_EXTENSIONBUNDLE_SOURCE_URI';
+
+// local.settings.json
+export const localEmulatorConnectionString = 'UseDevelopmentStorage=true';
+
 // Project
 export const defaultBundleId = 'Microsoft.Azure.Functions.ExtensionBundle';
 export const defaultVersionRange = '[1.*, 2.0.0)'; // Might need to be changed
@@ -212,20 +219,21 @@ export const tasksVersion = '2.0.0';
 export const launchVersion = '0.2.0';
 export const dotnetPublishTaskLabel = 'publish';
 export const defaultLogicAppsFolder = '.azurelogicapps';
+export const defaultFunctionCoreToolsFolder = '.azure-functions-core-tools';
 export const defaultAzuritePathValue = path.join(os.homedir(), defaultLogicAppsFolder, '.azurite');
 export const defaultDependencyPathValue = path.join(os.homedir(), defaultLogicAppsFolder, 'dependencies');
-
-// local.settings.json
-export const localEmulatorConnectionString = 'UseDevelopmentStorage=true';
-
-// host.json
-export const extensionBundleId = 'Microsoft.Azure.Functions.ExtensionBundle.Workflows';
-export const targetBundleKey = 'FUNCTIONS_EXTENSIONBUNDLE_SOURCE_URI';
+export const defaultExtensionBundlePathValue = path.join(
+  os.homedir(),
+  defaultFunctionCoreToolsFolder,
+  'Functions',
+  'ExtensionBundles',
+  extensionBundleId
+);
 
 // Fallback Dependency Versions
 export const DependencyVersion = {
   dotnet6: '6.0.413',
-  funcCoreTools: '4.0.5198',
+  funcCoreTools: '4.0.5455',
   nodeJs: '18.17.1',
 } as const;
 export type DependencyVersion = (typeof DependencyVersion)[keyof typeof DependencyVersion];

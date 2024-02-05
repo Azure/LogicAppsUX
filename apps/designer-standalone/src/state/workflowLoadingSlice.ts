@@ -27,6 +27,7 @@ export interface WorkflowLoadingState {
   areCustomEditorsEnabled?: boolean;
   hostOptions: {
     displayRuntimeInfo: boolean; // show info about where the action is run(i.e. InApp/Shared/Custom)
+    forceEnableSplitOn?: boolean; // force enable split on for all actions
   };
 }
 
@@ -167,7 +168,7 @@ export const workflowLoadingSlice = createSlice({
     setAreCustomEditorsEnabled: (state, action: PayloadAction<boolean>) => {
       state.areCustomEditorsEnabled = action.payload;
     },
-    setHostOptions: (state, action: PayloadAction<WorkflowLoadingState['hostOptions']>) => {
+    setHostOptions: (state, action: PayloadAction<Partial<WorkflowLoadingState['hostOptions']>>) => {
       state.hostOptions = { ...state.hostOptions, ...action.payload };
     },
   },
