@@ -1111,6 +1111,12 @@
       "value": "Autorité"
     }
   ],
+  "5WTRY8": [
+    {
+      "type": 0,
+      "value": "Erreurs"
+    }
+  ],
   "5akc1Q": [
     {
       "type": 0,
@@ -1315,12 +1321,12 @@
   ],
   "6sSPNb": [
     {
-      "type": 1,
-      "value": "connectorName"
+      "type": 0,
+      "value": "Connecteur "
     },
     {
-      "type": 0,
-      "value": " connector"
+      "type": 1,
+      "value": "connectorName"
     }
   ],
   "6u6CS+": [
@@ -1709,12 +1715,12 @@
   ],
   "96JG8I": [
     {
-      "type": 1,
-      "value": "operationName"
+      "type": 0,
+      "value": "Opération "
     },
     {
-      "type": 0,
-      "value": " operation"
+      "type": 1,
+      "value": "operationName"
     }
   ],
   "99vsJy": [
@@ -1830,7 +1836,7 @@
   "9yLPwo": [
     {
       "type": 0,
-      "value": "For more detailed information, you can refer to the following resources"
+      "value": "Pour plus d’informations, vous pouvez consulter les ressources suivantes"
     }
   ],
   "A5Ferh": [
@@ -2104,6 +2110,12 @@
     {
       "type": 0,
       "value": "Entrez le mot de passe en tant que texte brut ou utilisez un paramètre sécurisé"
+    }
+  ],
+  "BQyLiu": [
+    {
+      "type": 0,
+      "value": "résultats trouvés"
     }
   ],
   "BS3gy8": [
@@ -2694,12 +2706,6 @@
       "value": "Retourne une section d’une chaîne définie par l’index de début et l’index de fin"
     }
   ],
-  "FOiBk/": [
-    {
-      "type": 0,
-      "value": "Erreurs"
-    }
-  ],
   "FT3jt6": [
     {
       "type": 0,
@@ -2765,12 +2771,6 @@
     {
       "type": 0,
       "value": "Entrez une adresse de messagerie."
-    }
-  ],
-  "FaBEfQ": [
-    {
-      "type": 0,
-      "value": "Propriétés suivies"
     }
   ],
   "Fcvgvg": [
@@ -3674,6 +3674,12 @@
       "value": "À propos"
     }
   ],
+  "M0bbZk": [
+    {
+      "type": 0,
+      "value": "Vérificateur de flux"
+    }
+  ],
   "M0xrm+": [
     {
       "type": 0,
@@ -3860,6 +3866,12 @@
       "value": "Copie effectuée."
     }
   ],
+  "NFgfP4": [
+    {
+      "type": 0,
+      "value": "élément"
+    }
+  ],
   "NGJ00e": [
     {
       "type": 0,
@@ -3953,7 +3965,7 @@
   "NzPnFS": [
     {
       "type": 0,
-      "value": "Example:"
+      "value": "Exemple :"
     }
   ],
   "O+3Y9f": [
@@ -3990,6 +4002,12 @@
     {
       "type": 0,
       "value": "Chargement des fichiers..."
+    }
+  ],
+  "O6VHe0": [
+    {
+      "type": 0,
+      "value": "Avertissements d’opération"
     }
   ],
   "O7HhyP": [
@@ -4228,6 +4246,12 @@
     {
       "type": 0,
       "value": "Entrée"
+    }
+  ],
+  "PDMP/Z": [
+    {
+      "type": 0,
+      "value": "Réduit"
     }
   ],
   "PNk3n4": [
@@ -5315,6 +5339,12 @@
       "value": "Type d’erreur"
     }
   ],
+  "Vi5TIV": [
+    {
+      "type": 0,
+      "value": "Aucun avertissement n’a été trouvé."
+    }
+  ],
   "VlvlX1": [
     {
       "type": 0,
@@ -5896,7 +5926,7 @@
   "Yg/vvm": [
     {
       "type": 0,
-      "value": "Close Add Action Panel"
+      "value": "Fermer le panneau Ajouter une action"
     }
   ],
   "YgU88A": [
@@ -6632,7 +6662,7 @@
   "eHsOsm": [
     {
       "type": 0,
-      "value": "Specify the duration in ISO 8601 format"
+      "value": "Spécifier la durée au format ISO 8601"
     }
   ],
   "eO1h/h": [
@@ -7015,6 +7045,18 @@
     {
       "type": 0,
       "value": "Renvoyer une exécution de workflow à partir de cette action"
+    }
+  ],
+  "hJbr09": [
+    {
+      "type": 0,
+      "value": "Cliquer pour réduire"
+    }
+  ],
+  "hLOIwp": [
+    {
+      "type": 0,
+      "value": "Avertissements"
     }
   ],
   "hMf2TA": [
@@ -8141,20 +8183,20 @@
   ],
   "ncW1Sw": [
     {
+      "type": 0,
+      "value": "Opération "
+    },
+    {
       "type": 1,
       "value": "operationName"
     },
     {
       "type": 0,
-      "value": " operation, "
+      "value": ", connecteur "
     },
     {
       "type": 1,
       "value": "connectorName"
-    },
-    {
-      "type": 0,
-      "value": " connector"
     }
   ],
   "ngsC44": [
@@ -8654,6 +8696,12 @@
       "value": "Retourne le nombre d'éléments d'un tableau ou d'une chaîne"
     }
   ],
+  "qdUeUk": [
+    {
+      "type": 0,
+      "value": "Cliquer pour développer"
+    }
+  ],
   "qiIs4V": [
     {
       "type": 0,
@@ -8718,6 +8766,12 @@
     {
       "type": 0,
       "value": "Annuler"
+    }
+  ],
+  "r4zp7m": [
+    {
+      "type": 0,
+      "value": "Développé"
     }
   ],
   "r7vZ5a": [

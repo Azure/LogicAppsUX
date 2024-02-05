@@ -26,6 +26,7 @@ export interface DesignerOptionsState {
   isMonitoringView?: boolean;
   isDarkMode?: boolean;
   servicesInitialized?: boolean;
+  designerOptionsInitialized?: boolean;
   useLegacyWorkflowParameters?: boolean;
   isXrmConnectionReferenceMode?: boolean;
   suppressDefaultNodeSelectFunctionality?: boolean;
@@ -33,6 +34,7 @@ export interface DesignerOptionsState {
     displayRuntimeInfo: boolean; // show info about where the action is run(i.e. InApp/Shared/Custom)
     suppressCastingForSerialize?: boolean; // suppress casting for serialize
     recurrenceInterval?: LogicApps.Recurrence;
+    forceEnableSplitOn?: boolean; // force enable split on (by default it is disabled on stateless workflows)
   };
   nodeSelectAdditionalCallback?: (nodeId: string) => any;
   showConnectionsPanel?: boolean;

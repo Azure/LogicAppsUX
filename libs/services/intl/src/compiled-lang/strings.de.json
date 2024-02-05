@@ -1123,6 +1123,12 @@
       "value": "Autorität"
     }
   ],
+  "5WTRY8": [
+    {
+      "type": 0,
+      "value": "Fehler"
+    }
+  ],
   "5akc1Q": [
     {
       "type": 0,
@@ -1332,7 +1338,7 @@
     },
     {
       "type": 0,
-      "value": " connector"
+      "value": "-Connector"
     }
   ],
   "6u6CS+": [
@@ -1730,7 +1736,7 @@
     },
     {
       "type": 0,
-      "value": " operation"
+      "value": "-Vorgang"
     }
   ],
   "99vsJy": [
@@ -1846,7 +1852,7 @@
   "9yLPwo": [
     {
       "type": 0,
-      "value": "For more detailed information, you can refer to the following resources"
+      "value": "Ausführlichere Informationen finden Sie in den folgenden Ressourcen:"
     }
   ],
   "A5Ferh": [
@@ -2109,6 +2115,12 @@
     {
       "type": 0,
       "value": "Geben Sie das Kennwort in Nur-Text-Form oder als sicheren Parameter ein."
+    }
+  ],
+  "BQyLiu": [
+    {
+      "type": 0,
+      "value": "Ergebnisse gefunden"
     }
   ],
   "BS3gy8": [
@@ -2703,12 +2715,6 @@
       "value": "Gibt einen Abschnitt einer Zeichenfolge zurück, die durch den Startindex und den Endindex definiert wird."
     }
   ],
-  "FOiBk/": [
-    {
-      "type": 0,
-      "value": "Fehler"
-    }
-  ],
   "FT3jt6": [
     {
       "type": 0,
@@ -2763,12 +2769,6 @@
     {
       "type": 0,
       "value": "Geben Sie eine E-Mail-Adresse ein."
-    }
-  ],
-  "FaBEfQ": [
-    {
-      "type": 0,
-      "value": "Nachverfolgte Eigenschaften"
     }
   ],
   "Fcvgvg": [
@@ -3673,6 +3673,12 @@
       "value": "Info"
     }
   ],
+  "M0bbZk": [
+    {
+      "type": 0,
+      "value": "Flowprüfung"
+    }
+  ],
   "M0xrm+": [
     {
       "type": 0,
@@ -3859,6 +3865,12 @@
       "value": "Kopiert!"
     }
   ],
+  "NFgfP4": [
+    {
+      "type": 0,
+      "value": "Element"
+    }
+  ],
   "NGJ00e": [
     {
       "type": 0,
@@ -3952,7 +3964,7 @@
   "NzPnFS": [
     {
       "type": 0,
-      "value": "Example:"
+      "value": "Beispiel:"
     }
   ],
   "O+3Y9f": [
@@ -3989,6 +4001,12 @@
     {
       "type": 0,
       "value": "Dateien werden geladen..."
+    }
+  ],
+  "O6VHe0": [
+    {
+      "type": 0,
+      "value": "Vorgangswarnungen"
     }
   ],
   "O7HhyP": [
@@ -4227,6 +4245,12 @@
     {
       "type": 0,
       "value": "Eingabe"
+    }
+  ],
+  "PDMP/Z": [
+    {
+      "type": 0,
+      "value": "Reduziert"
     }
   ],
   "PNk3n4": [
@@ -5319,6 +5343,12 @@
       "value": "Fehlertyp"
     }
   ],
+  "Vi5TIV": [
+    {
+      "type": 0,
+      "value": "Keine Warnungen gefunden."
+    }
+  ],
   "VlvlX1": [
     {
       "type": 0,
@@ -5904,7 +5934,7 @@
   "Yg/vvm": [
     {
       "type": 0,
-      "value": "Close Add Action Panel"
+      "value": "Bereich \"Aktion hinzufügen\" schließen"
     }
   ],
   "YgU88A": [
@@ -6640,7 +6670,7 @@
   "eHsOsm": [
     {
       "type": 0,
-      "value": "Specify the duration in ISO 8601 format"
+      "value": "Geben Sie die Dauer im ISO 8601-Format an."
     }
   ],
   "eO1h/h": [
@@ -7023,6 +7053,18 @@
     {
       "type": 0,
       "value": "Workflowausführung aus dieser Aktion erneut übermitteln"
+    }
+  ],
+  "hJbr09": [
+    {
+      "type": 0,
+      "value": "Zum Reduzieren klicken"
+    }
+  ],
+  "hLOIwp": [
+    {
+      "type": 0,
+      "value": "Warnungen"
     }
   ],
   "hMf2TA": [
@@ -8136,7 +8178,7 @@
     },
     {
       "type": 0,
-      "value": " operation, "
+      "value": "-Vorgang, "
     },
     {
       "type": 1,
@@ -8144,7 +8186,7 @@
     },
     {
       "type": 0,
-      "value": " connector"
+      "value": "-Connector"
     }
   ],
   "ngsC44": [
@@ -8633,6 +8675,12 @@
       "value": "Gibt die Anzahl von Elementen in einem Array oder einer Zeichenfolge zurück."
     }
   ],
+  "qdUeUk": [
+    {
+      "type": 0,
+      "value": "Zum Erweitern klicken"
+    }
+  ],
   "qiIs4V": [
     {
       "type": 0,
@@ -8697,6 +8745,12 @@
     {
       "type": 0,
       "value": "Rückgängig machen"
+    }
+  ],
+  "r4zp7m": [
+    {
+      "type": 0,
+      "value": "Erweitert"
     }
   ],
   "r7vZ5a": [

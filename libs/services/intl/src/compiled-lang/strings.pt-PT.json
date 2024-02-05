@@ -1111,6 +1111,12 @@
       "value": "Autoridade"
     }
   ],
+  "5WTRY8": [
+    {
+      "type": 0,
+      "value": "Erros"
+    }
+  ],
   "5akc1Q": [
     {
       "type": 0,
@@ -1315,12 +1321,12 @@
   ],
   "6sSPNb": [
     {
-      "type": 1,
-      "value": "connectorName"
+      "type": 0,
+      "value": "Conector "
     },
     {
-      "type": 0,
-      "value": " connector"
+      "type": 1,
+      "value": "connectorName"
     }
   ],
   "6u6CS+": [
@@ -1709,12 +1715,12 @@
   ],
   "96JG8I": [
     {
-      "type": 1,
-      "value": "operationName"
+      "type": 0,
+      "value": "Operação "
     },
     {
-      "type": 0,
-      "value": " operation"
+      "type": 1,
+      "value": "operationName"
     }
   ],
   "99vsJy": [
@@ -1830,7 +1836,7 @@
   "9yLPwo": [
     {
       "type": 0,
-      "value": "For more detailed information, you can refer to the following resources"
+      "value": "Para obter informações mais detalhadas, pode consultar os seguintes recursos"
     }
   ],
   "A5Ferh": [
@@ -2104,6 +2110,12 @@
     {
       "type": 0,
       "value": "Introduzir palavra-passe como texto simples ou utilizar um parâmetro seguro"
+    }
+  ],
+  "BQyLiu": [
+    {
+      "type": 0,
+      "value": "resultados encontrados"
     }
   ],
   "BS3gy8": [
@@ -2694,12 +2706,6 @@
       "value": "Devolve uma secção de uma cadeia definida pelo índice de início e pelo índice de fim"
     }
   ],
-  "FOiBk/": [
-    {
-      "type": 0,
-      "value": "Erros"
-    }
-  ],
   "FT3jt6": [
     {
       "type": 0,
@@ -2765,12 +2771,6 @@
     {
       "type": 0,
       "value": "Introduza um endereço de correio eletrónico."
-    }
-  ],
-  "FaBEfQ": [
-    {
-      "type": 0,
-      "value": "Propriedades monitorizadas"
     }
   ],
   "Fcvgvg": [
@@ -3682,6 +3682,12 @@
       "value": "Acerca de"
     }
   ],
+  "M0bbZk": [
+    {
+      "type": 0,
+      "value": "Verificador do Fluxo"
+    }
+  ],
   "M0xrm+": [
     {
       "type": 0,
@@ -3868,6 +3874,12 @@
       "value": "Copiado(a)!"
     }
   ],
+  "NFgfP4": [
+    {
+      "type": 0,
+      "value": "item"
+    }
+  ],
   "NGJ00e": [
     {
       "type": 0,
@@ -3961,7 +3973,7 @@
   "NzPnFS": [
     {
       "type": 0,
-      "value": "Example:"
+      "value": "Exemplo:"
     }
   ],
   "O+3Y9f": [
@@ -3998,6 +4010,12 @@
     {
       "type": 0,
       "value": "A carregar Ficheiros..."
+    }
+  ],
+  "O6VHe0": [
+    {
+      "type": 0,
+      "value": "Avisos de operação"
     }
   ],
   "O7HhyP": [
@@ -4236,6 +4254,12 @@
     {
       "type": 0,
       "value": "Entrada"
+    }
+  ],
+  "PDMP/Z": [
+    {
+      "type": 0,
+      "value": "Fechada"
     }
   ],
   "PNk3n4": [
@@ -5323,6 +5347,12 @@
       "value": "Tipo de Erro"
     }
   ],
+  "Vi5TIV": [
+    {
+      "type": 0,
+      "value": "Não foram encontrados avisos."
+    }
+  ],
   "VlvlX1": [
     {
       "type": 0,
@@ -5904,7 +5934,7 @@
   "Yg/vvm": [
     {
       "type": 0,
-      "value": "Close Add Action Panel"
+      "value": "Fechar Adicionar Painel de Ação"
     }
   ],
   "YgU88A": [
@@ -6640,7 +6670,7 @@
   "eHsOsm": [
     {
       "type": 0,
-      "value": "Specify the duration in ISO 8601 format"
+      "value": "Especifique a duração no formato ISO 8601"
     }
   ],
   "eO1h/h": [
@@ -7023,6 +7053,18 @@
     {
       "type": 0,
       "value": "Submeter novamente uma execução de fluxo de trabalho a partir desta ação"
+    }
+  ],
+  "hJbr09": [
+    {
+      "type": 0,
+      "value": "Clicar para Fechar"
+    }
+  ],
+  "hLOIwp": [
+    {
+      "type": 0,
+      "value": "Avisos"
     }
   ],
   "hMf2TA": [
@@ -8149,20 +8191,20 @@
   ],
   "ncW1Sw": [
     {
+      "type": 0,
+      "value": "Operação "
+    },
+    {
       "type": 1,
       "value": "operationName"
     },
     {
       "type": 0,
-      "value": " operation, "
+      "value": ", conector "
     },
     {
       "type": 1,
       "value": "connectorName"
-    },
-    {
-      "type": 0,
-      "value": " connector"
     }
   ],
   "ngsC44": [
@@ -8662,6 +8704,12 @@
       "value": "Devolve o número de elementos de uma matriz ou uma cadeia"
     }
   ],
+  "qdUeUk": [
+    {
+      "type": 0,
+      "value": "Clicar para Expandir"
+    }
+  ],
   "qiIs4V": [
     {
       "type": 0,
@@ -8726,6 +8774,12 @@
     {
       "type": 0,
       "value": "Anular"
+    }
+  ],
+  "r4zp7m": [
+    {
+      "type": 0,
+      "value": "Expandida"
     }
   ],
   "r7vZ5a": [

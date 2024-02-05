@@ -1111,6 +1111,12 @@
       "value": "Autoridad"
     }
   ],
+  "5WTRY8": [
+    {
+      "type": 0,
+      "value": "Errores"
+    }
+  ],
   "5akc1Q": [
     {
       "type": 0,
@@ -1315,12 +1321,12 @@
   ],
   "6sSPNb": [
     {
-      "type": 1,
-      "value": "connectorName"
+      "type": 0,
+      "value": "Conector "
     },
     {
-      "type": 0,
-      "value": " connector"
+      "type": 1,
+      "value": "connectorName"
     }
   ],
   "6u6CS+": [
@@ -1709,12 +1715,12 @@
   ],
   "96JG8I": [
     {
-      "type": 1,
-      "value": "operationName"
+      "type": 0,
+      "value": "Operación "
     },
     {
-      "type": 0,
-      "value": " operation"
+      "type": 1,
+      "value": "operationName"
     }
   ],
   "99vsJy": [
@@ -1830,7 +1836,7 @@
   "9yLPwo": [
     {
       "type": 0,
-      "value": "For more detailed information, you can refer to the following resources"
+      "value": "Para obtener información más detallada, puede consultar los siguientes recursos"
     }
   ],
   "A5Ferh": [
@@ -2104,6 +2110,12 @@
     {
       "type": 0,
       "value": "Escribir la contraseña como texto sin formato o usar un parámetro seguro"
+    }
+  ],
+  "BQyLiu": [
+    {
+      "type": 0,
+      "value": "resultados encontrados"
     }
   ],
   "BS3gy8": [
@@ -2694,12 +2706,6 @@
       "value": "Devuelve una sección de una cadena definida por el índice inicial y el índice final."
     }
   ],
-  "FOiBk/": [
-    {
-      "type": 0,
-      "value": "Errores"
-    }
-  ],
   "FT3jt6": [
     {
       "type": 0,
@@ -2765,12 +2771,6 @@
     {
       "type": 0,
       "value": "Escribe una dirección de correo electrónico."
-    }
-  ],
-  "FaBEfQ": [
-    {
-      "type": 0,
-      "value": "Propiedades controladas"
     }
   ],
   "Fcvgvg": [
@@ -3674,6 +3674,12 @@
       "value": "Acerca de"
     }
   ],
+  "M0bbZk": [
+    {
+      "type": 0,
+      "value": "Comprobador de flujo"
+    }
+  ],
   "M0xrm+": [
     {
       "type": 0,
@@ -3860,6 +3866,12 @@
       "value": "Copia realizada."
     }
   ],
+  "NFgfP4": [
+    {
+      "type": 0,
+      "value": "elemento"
+    }
+  ],
   "NGJ00e": [
     {
       "type": 0,
@@ -3953,7 +3965,7 @@
   "NzPnFS": [
     {
       "type": 0,
-      "value": "Example:"
+      "value": "Ejemplo:"
     }
   ],
   "O+3Y9f": [
@@ -3990,6 +4002,12 @@
     {
       "type": 0,
       "value": "Cargando archivos..."
+    }
+  ],
+  "O6VHe0": [
+    {
+      "type": 0,
+      "value": "Advertencias de operación"
     }
   ],
   "O7HhyP": [
@@ -4228,6 +4246,12 @@
     {
       "type": 0,
       "value": "Entrada"
+    }
+  ],
+  "PDMP/Z": [
+    {
+      "type": 0,
+      "value": "Contraído"
     }
   ],
   "PNk3n4": [
@@ -5315,6 +5339,12 @@
       "value": "Tipo de error"
     }
   ],
+  "Vi5TIV": [
+    {
+      "type": 0,
+      "value": "No se encontraron advertencias."
+    }
+  ],
   "VlvlX1": [
     {
       "type": 0,
@@ -5896,7 +5926,7 @@
   "Yg/vvm": [
     {
       "type": 0,
-      "value": "Close Add Action Panel"
+      "value": "Cerrar Agregar panel de acciones"
     }
   ],
   "YgU88A": [
@@ -6632,7 +6662,7 @@
   "eHsOsm": [
     {
       "type": 0,
-      "value": "Specify the duration in ISO 8601 format"
+      "value": "Especifique la duración en formato ISO 8601"
     }
   ],
   "eO1h/h": [
@@ -7015,6 +7045,18 @@
     {
       "type": 0,
       "value": "Volver a enviar una ejecución de flujo de trabajo desde esta acción"
+    }
+  ],
+  "hJbr09": [
+    {
+      "type": 0,
+      "value": "Haga clic para contraer"
+    }
+  ],
+  "hLOIwp": [
+    {
+      "type": 0,
+      "value": "Advertencias"
     }
   ],
   "hMf2TA": [
@@ -8133,20 +8175,20 @@
   ],
   "ncW1Sw": [
     {
+      "type": 0,
+      "value": "Operación "
+    },
+    {
       "type": 1,
       "value": "operationName"
     },
     {
       "type": 0,
-      "value": " operation, "
+      "value": ", conector "
     },
     {
       "type": 1,
       "value": "connectorName"
-    },
-    {
-      "type": 0,
-      "value": " connector"
     }
   ],
   "ngsC44": [
@@ -8646,6 +8688,12 @@
       "value": "Devuelve el número de elementos de una matriz o cadena."
     }
   ],
+  "qdUeUk": [
+    {
+      "type": 0,
+      "value": "Haga clic para ampliar"
+    }
+  ],
   "qiIs4V": [
     {
       "type": 0,
@@ -8710,6 +8758,12 @@
     {
       "type": 0,
       "value": "Deshacer"
+    }
+  ],
+  "r4zp7m": [
+    {
+      "type": 0,
+      "value": "Expandido"
     }
   ],
   "r7vZ5a": [

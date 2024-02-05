@@ -39,3 +39,11 @@ export const usePanelTabHideKeys = () => {
 export const useShowConnectionsPanel = () => {
   return useSelector((state: RootState) => state.designerOptions?.showConnectionsPanel ?? false);
 };
+
+export const useAreDesignerOptionsInitialized = () => {
+  return useSelector((state: RootState) => state.designerOptions?.designerOptionsInitialized ?? false);
+};
+
+export const useAreServicesInitialized = () => {
+  return useSelector((state: RootState) => state.designerOptions?.servicesInitialized ?? false);
+};

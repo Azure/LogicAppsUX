@@ -1111,6 +1111,12 @@
       "value": "Instantie"
     }
   ],
+  "5WTRY8": [
+    {
+      "type": 0,
+      "value": "Fouten"
+    }
+  ],
   "5akc1Q": [
     {
       "type": 0,
@@ -1320,7 +1326,7 @@
     },
     {
       "type": 0,
-      "value": " connector"
+      "value": "-connector"
     }
   ],
   "6u6CS+": [
@@ -1714,7 +1720,7 @@
     },
     {
       "type": 0,
-      "value": " operation"
+      "value": "-bewerking"
     }
   ],
   "99vsJy": [
@@ -1830,7 +1836,7 @@
   "9yLPwo": [
     {
       "type": 0,
-      "value": "For more detailed information, you can refer to the following resources"
+      "value": "Raadpleeg de volgende bronnen voor meer gedetailleerde informatie"
     }
   ],
   "A5Ferh": [
@@ -2085,6 +2091,12 @@
     {
       "type": 0,
       "value": "Wachtwoord invoeren als tekst zonder opmaak of een beveiligde parameter gebruiken"
+    }
+  ],
+  "BQyLiu": [
+    {
+      "type": 0,
+      "value": "resultaten gevonden"
     }
   ],
   "BS3gy8": [
@@ -2675,12 +2687,6 @@
       "value": "Retourneert een sectie van een tekenreeks die wordt gedefinieerd door de beginindex en de eindindex"
     }
   ],
-  "FOiBk/": [
-    {
-      "type": 0,
-      "value": "Fouten"
-    }
-  ],
   "FT3jt6": [
     {
       "type": 0,
@@ -2735,12 +2741,6 @@
     {
       "type": 0,
       "value": "Voer een e-mailadres in."
-    }
-  ],
-  "FaBEfQ": [
-    {
-      "type": 0,
-      "value": "Bijgehouden eigenschappen"
     }
   ],
   "Fcvgvg": [
@@ -3637,6 +3637,12 @@
       "value": "Over"
     }
   ],
+  "M0bbZk": [
+    {
+      "type": 0,
+      "value": "Stroomcontrole"
+    }
+  ],
   "M0xrm+": [
     {
       "type": 0,
@@ -3823,6 +3829,12 @@
       "value": "Gekopieerd."
     }
   ],
+  "NFgfP4": [
+    {
+      "type": 0,
+      "value": "item"
+    }
+  ],
   "NGJ00e": [
     {
       "type": 0,
@@ -3916,7 +3928,7 @@
   "NzPnFS": [
     {
       "type": 0,
-      "value": "Example:"
+      "value": "Voorbeeld:"
     }
   ],
   "O+3Y9f": [
@@ -3953,6 +3965,12 @@
     {
       "type": 0,
       "value": "Bestanden laden..."
+    }
+  ],
+  "O6VHe0": [
+    {
+      "type": 0,
+      "value": "Bewerkingswaarschuwingen"
     }
   ],
   "O7HhyP": [
@@ -4187,6 +4205,12 @@
     {
       "type": 0,
       "value": "Invoer"
+    }
+  ],
+  "PDMP/Z": [
+    {
+      "type": 0,
+      "value": "Samengevouwen"
     }
   ],
   "PNk3n4": [
@@ -5263,6 +5287,12 @@
       "value": "Fouttype"
     }
   ],
+  "Vi5TIV": [
+    {
+      "type": 0,
+      "value": "Geen waarschuwingen gevonden."
+    }
+  ],
   "VlvlX1": [
     {
       "type": 0,
@@ -5844,7 +5874,7 @@
   "Yg/vvm": [
     {
       "type": 0,
-      "value": "Close Add Action Panel"
+      "value": "Actiepaneel Toevoegen sluiten"
     }
   ],
   "YgU88A": [
@@ -6580,7 +6610,7 @@
   "eHsOsm": [
     {
       "type": 0,
-      "value": "Specify the duration in ISO 8601 format"
+      "value": "Geef de duur op in de ISO 8601-indeling"
     }
   ],
   "eO1h/h": [
@@ -6959,6 +6989,18 @@
     {
       "type": 0,
       "value": "Een werkstroomuitvoering opnieuw verzenden vanuit deze actie"
+    }
+  ],
+  "hJbr09": [
+    {
+      "type": 0,
+      "value": "Klik om samen te vouwen"
+    }
+  ],
+  "hLOIwp": [
+    {
+      "type": 0,
+      "value": "Waarschuwingen"
     }
   ],
   "hMf2TA": [
@@ -8068,7 +8110,7 @@
     },
     {
       "type": 0,
-      "value": " operation, "
+      "value": "-bewerking, "
     },
     {
       "type": 1,
@@ -8076,7 +8118,7 @@
     },
     {
       "type": 0,
-      "value": " connector"
+      "value": "-connector"
     }
   ],
   "ngsC44": [
@@ -8561,6 +8603,12 @@
       "value": "Het aantal elementen in een matrix of tekenreeks wordt geretourneerd"
     }
   ],
+  "qdUeUk": [
+    {
+      "type": 0,
+      "value": "Klik om uit te vouwen"
+    }
+  ],
   "qiIs4V": [
     {
       "type": 0,
@@ -8625,6 +8673,12 @@
     {
       "type": 0,
       "value": "Ongedaan maken"
+    }
+  ],
+  "r4zp7m": [
+    {
+      "type": 0,
+      "value": "Uitgevouwen"
     }
   ],
   "r7vZ5a": [

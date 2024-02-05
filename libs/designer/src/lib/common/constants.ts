@@ -454,6 +454,10 @@ export default {
     SWAGGER_ENDPOINT: 'SWAGGER_ENDPOINT',
     TESTING: 'TESTING',
   },
+  ERRORS_PANEL_TAB_NAMES: {
+    ERRORS: 'ERRORS',
+    WARNINGS: 'WARNINGS',
+  },
   PROFILE_KEY_TYPE: {
     DESIGNER: 'designer:',
     INITIALIZE_NODES: 'designer:initializeNodes',

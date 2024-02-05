@@ -27,6 +27,7 @@ const initialState: DesignerOptionsState = {
   isMonitoringView: false,
   isDarkMode: false,
   servicesInitialized: false,
+  designerOptionsInitialized: false,
   useLegacyWorkflowParameters: false,
   isXrmConnectionReferenceMode: false,
   showConnectionsPanel: false,
@@ -112,6 +113,7 @@ export const designerOptionsSlice = createSlice({
         ...state.hostOptions,
         ...action.payload.hostOptions,
       };
+      state.designerOptionsInitialized = true;
     },
   },
   extraReducers: (builder) => {

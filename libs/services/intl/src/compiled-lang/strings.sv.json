@@ -1080,7 +1080,7 @@
   "5LV34t": [
     {
       "type": 0,
-      "value": "The '"
+      "value": "Egenskaperna "
     },
     {
       "type": 1,
@@ -1088,7 +1088,7 @@
     },
     {
       "type": 0,
-      "value": "' properties are invalid for the '"
+      "value": " är ogiltiga för autentiseringstypen "
     },
     {
       "type": 1,
@@ -1096,7 +1096,7 @@
     },
     {
       "type": 0,
-      "value": "' authentication type."
+      "value": "."
     }
   ],
   "5OvGgn": [
@@ -1109,6 +1109,12 @@
     {
       "type": 0,
       "value": "Utfärdare"
+    }
+  ],
+  "5WTRY8": [
+    {
+      "type": 0,
+      "value": "Fel"
     }
   ],
   "5akc1Q": [
@@ -1320,7 +1326,7 @@
     },
     {
       "type": 0,
-      "value": " connector"
+      "value": "-anslutning"
     }
   ],
   "6u6CS+": [
@@ -1714,7 +1720,7 @@
     },
     {
       "type": 0,
-      "value": " operation"
+      "value": "-åtgärd"
     }
   ],
   "99vsJy": [
@@ -1830,7 +1836,7 @@
   "9yLPwo": [
     {
       "type": 0,
-      "value": "For more detailed information, you can refer to the following resources"
+      "value": "Mer detaljerad information hittar du i följande resurser"
     }
   ],
   "A5Ferh": [
@@ -2030,7 +2036,7 @@
   "BGw6eH": [
     {
       "type": 0,
-      "value": "Missing required properties '"
+      "value": "De obligatoriska egenskaperna "
     },
     {
       "type": 1,
@@ -2038,15 +2044,11 @@
     },
     {
       "type": 0,
-      "value": "' for authentication type '"
+      "value": " saknas för autentiseringstypen "
     },
     {
       "type": 1,
       "value": "authType"
-    },
-    {
-      "type": 0,
-      "value": "'"
     }
   ],
   "BHe7qY": [
@@ -2089,6 +2091,12 @@
     {
       "type": 0,
       "value": "Ange lösenordet som oformaterad text eller använd en säker parameter"
+    }
+  ],
+  "BQyLiu": [
+    {
+      "type": 0,
+      "value": "resultat hittades"
     }
   ],
   "BS3gy8": [
@@ -2675,12 +2683,6 @@
       "value": "Returnerar ett avsnitt i en sträng som definieras av start- och slutindexet"
     }
   ],
-  "FOiBk/": [
-    {
-      "type": 0,
-      "value": "Fel"
-    }
-  ],
   "FT3jt6": [
     {
       "type": 0,
@@ -2735,12 +2737,6 @@
     {
       "type": 0,
       "value": "Ange en e-postadress."
-    }
-  ],
-  "FaBEfQ": [
-    {
-      "type": 0,
-      "value": "Sparade egenskaper"
     }
   ],
   "Fcvgvg": [
@@ -3064,7 +3060,7 @@
   "I1CYNA": [
     {
       "type": 0,
-      "value": "Invalid property '"
+      "value": "Egenskapen "
     },
     {
       "type": 1,
@@ -3072,7 +3068,7 @@
     },
     {
       "type": 0,
-      "value": "' for authentication type '"
+      "value": " är ogiltig för autentiseringstypen "
     },
     {
       "type": 1,
@@ -3080,7 +3076,7 @@
     },
     {
       "type": 0,
-      "value": "'."
+      "value": "."
     }
   ],
   "I3mifR": [
@@ -3641,6 +3637,12 @@
       "value": "Om"
     }
   ],
+  "M0bbZk": [
+    {
+      "type": 0,
+      "value": "Flödeskontroll"
+    }
+  ],
   "M0xrm+": [
     {
       "type": 0,
@@ -3827,6 +3829,12 @@
       "value": "Kopierat!"
     }
   ],
+  "NFgfP4": [
+    {
+      "type": 0,
+      "value": "objekt"
+    }
+  ],
   "NGJ00e": [
     {
       "type": 0,
@@ -3920,7 +3928,7 @@
   "NzPnFS": [
     {
       "type": 0,
-      "value": "Example:"
+      "value": "Exempel:"
     }
   ],
   "O+3Y9f": [
@@ -3959,6 +3967,12 @@
       "value": "Läser in filer..."
     }
   ],
+  "O6VHe0": [
+    {
+      "type": 0,
+      "value": "Driftsvarningar"
+    }
+  ],
   "O7HhyP": [
     {
       "type": 0,
@@ -3974,7 +3988,7 @@
   "OBO/HE": [
     {
       "type": 0,
-      "value": "Invalid Authentication Value"
+      "value": "Ogiltigt autentiseringsvärde"
     }
   ],
   "ODQCKj": [
@@ -4130,7 +4144,7 @@
   "Ov7Ckz": [
     {
       "type": 0,
-      "value": "Missing required property '"
+      "value": "Den obligatoriska egenskapen "
     },
     {
       "type": 1,
@@ -4138,15 +4152,11 @@
     },
     {
       "type": 0,
-      "value": "' for authentication type '"
+      "value": " saknas för autentiseringstypen "
     },
     {
       "type": 1,
       "value": "authType"
-    },
-    {
-      "type": 0,
-      "value": "'"
     }
   ],
   "P+7G62": [
@@ -4195,6 +4205,12 @@
     {
       "type": 0,
       "value": "Indata"
+    }
+  ],
+  "PDMP/Z": [
+    {
+      "type": 0,
+      "value": "Komprimerat"
     }
   ],
   "PNk3n4": [
@@ -5263,6 +5279,12 @@
       "value": "Feltyp"
     }
   ],
+  "Vi5TIV": [
+    {
+      "type": 0,
+      "value": "Inga varningar hittades."
+    }
+  ],
   "VlvlX1": [
     {
       "type": 0,
@@ -5844,7 +5866,7 @@
   "Yg/vvm": [
     {
       "type": 0,
-      "value": "Close Add Action Panel"
+      "value": "Stäng panelen Lägg till åtgärd"
     }
   ],
   "YgU88A": [
@@ -6580,7 +6602,7 @@
   "eHsOsm": [
     {
       "type": 0,
-      "value": "Specify the duration in ISO 8601 format"
+      "value": "Ange varaktigheten i ISO 8601-format"
     }
   ],
   "eO1h/h": [
@@ -6959,6 +6981,18 @@
     {
       "type": 0,
       "value": "Skicka en arbetsflödeskörning på nytt från den här åtgärden"
+    }
+  ],
+  "hJbr09": [
+    {
+      "type": 0,
+      "value": "Klicka för att dölja"
+    }
+  ],
+  "hLOIwp": [
+    {
+      "type": 0,
+      "value": "Varningar"
     }
   ],
   "hMf2TA": [
@@ -8068,7 +8102,7 @@
     },
     {
       "type": 0,
-      "value": " operation, "
+      "value": "-åtgärd, "
     },
     {
       "type": 1,
@@ -8076,7 +8110,7 @@
     },
     {
       "type": 0,
-      "value": " connector"
+      "value": "-anslutning"
     }
   ],
   "ngsC44": [
@@ -8561,6 +8595,12 @@
       "value": "Returnerar antalet element i en matris eller sträng"
     }
   ],
+  "qdUeUk": [
+    {
+      "type": 0,
+      "value": "Klicka för att visa"
+    }
+  ],
   "qiIs4V": [
     {
       "type": 0,
@@ -8625,6 +8665,12 @@
     {
       "type": 0,
       "value": "Ångra"
+    }
+  ],
+  "r4zp7m": [
+    {
+      "type": 0,
+      "value": "Expanderat"
     }
   ],
   "r7vZ5a": [

@@ -20,10 +20,11 @@ import {
   updateStaticResults,
 } from '../operation/operationMetadataSlice';
 import type { RelationshipIds } from '../panel/panelInterfaces';
-import type { SpecTypes, WorkflowState } from './workflowInterfaces';
+import type { ErrorMessage, SpecTypes, WorkflowState } from './workflowInterfaces';
 import { WorkflowKind } from './workflowInterfaces';
 import { getWorkflowNodeFromGraphState } from './workflowSelectors';
 import { LogEntryLevel, LoggerService } from '@microsoft/designer-client-services-logic-apps';
+import type { MessageLevel } from '@microsoft/designer-ui';
 import { getDurationStringPanelMode } from '@microsoft/designer-ui';
 import type { LogicAppsV2 } from '@microsoft/utils-logic-apps';
 import { equals, RUN_AFTER_STATUS, WORKFLOW_EDGE_TYPES, WORKFLOW_NODE_TYPES } from '@microsoft/utils-logic-apps';
@@ -52,6 +53,9 @@ export const initialWorkflowState: WorkflowState = {
   originalDefinition: {
     $schema: constants.SCHEMA.GA_20160601.URL,
     contentVersion: '1.0.0.0',
+  },
+  hostData: {
+    errorMessages: {},
   },
 };
 
@@ -396,6 +400,13 @@ export const workflowSlice = createSlice({
     setIsWorkflowDirty: (state: WorkflowState, action: PayloadAction<boolean>) => {
       state.isDirty = action.payload;
     },
+    setHostErrorMessages: (state, action: PayloadAction<{ level: MessageLevel; errorMessages: ErrorMessage[] | undefined }>) => {
+      if (!action.payload.errorMessages) {
+        delete state.hostData.errorMessages[action.payload.level];
+        return;
+      }
+      state.hostData.errorMessages[action.payload.level] = action.payload.errorMessages;
+    },
   },
   extraReducers: (builder) => {
     // Add reducers for additional action types here, and handle loading state as needed
@@ -469,6 +480,7 @@ export const {
   setRunIndex,
   setRepetitionRunData,
   setIsWorkflowDirty,
+  setHostErrorMessages,
 } = workflowSlice.actions;
 
 export default workflowSlice.reducer;

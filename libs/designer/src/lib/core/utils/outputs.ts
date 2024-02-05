@@ -7,6 +7,7 @@ import { getOperationManifest } from '../queries/operation';
 import type { DependencyInfo, NodeInputs, NodeOperation, NodeOutputs, OutputInfo } from '../state/operation/operationMetadataSlice';
 import { ErrorLevel, updateErrorDetails, clearDynamicOutputs, addDynamicOutputs } from '../state/operation/operationMetadataSlice';
 import { addDynamicTokens } from '../state/tokens/tokensSlice';
+import type { WorkflowKind } from '../state/workflow/workflowInterfaces';
 import type { WorkflowParameterDefinition } from '../state/workflowparameters/workflowparametersSlice';
 import { getBrandColorFromConnector, getIconUriFromConnector } from './card';
 import { getTokenExpressionValueForManifestBasedOperation } from './loops';
@@ -438,6 +439,8 @@ export const loadDynamicOutputsInNode = async (
   nodeInputs: NodeInputs,
   settings: Settings,
   workflowParameters: Record<string, WorkflowParameterDefinition>,
+  workflowKind: WorkflowKind | undefined,
+  forceEnableSplitOn: boolean,
   dispatch: Dispatch
 ): Promise<void> => {
   for (const outputKey of Object.keys(outputDependencies)) {
@@ -446,7 +449,17 @@ export const loadDynamicOutputsInNode = async (
 
     if (isDynamicDataReadyToLoad(info)) {
       if (info.dependencyType === 'StaticSchema') {
-        updateOutputsAndTokens(nodeId, operationInfo, dispatch, isTrigger, nodeInputs, settings, /* shouldProcessSettings */ true);
+        updateOutputsAndTokens(
+          nodeId,
+          operationInfo,
+          dispatch,
+          isTrigger,
+          nodeInputs,
+          settings,
+          true /* shouldProcessSettings */,
+          workflowKind,
+          forceEnableSplitOn
+        );
       } else {
         try {
           const outputSchema = await getDynamicSchema(

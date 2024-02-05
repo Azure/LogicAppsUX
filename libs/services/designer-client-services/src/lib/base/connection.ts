@@ -220,7 +220,10 @@ export abstract class BaseConnectionService implements IConnectionService {
 
     try {
       let response: HttpResponse<any> | undefined = undefined;
-      const requestOptions: HttpRequestOptions<any> = { uri };
+      const requestOptions: HttpRequestOptions<any> = {
+        headers: { noBatch: 'true' }, // Some requests fail specifically when run through batch
+        uri,
+      };
       if (equals(method, HTTP_METHODS.GET)) response = await httpClient.get<any>(requestOptions);
       else if (equals(method, HTTP_METHODS.POST)) response = await httpClient.post<any, any>(requestOptions);
       else if (equals(method, HTTP_METHODS.PUT)) response = await httpClient.put<any, any>(requestOptions);
@@ -333,7 +336,7 @@ export abstract class BaseConnectionService implements IConnectionService {
   async getUniqueConnectionName(connectorId: string, connectionNames: string[], connectorName: string): Promise<string> {
     const { name: connectionName, index } = getUniqueName(connectionNames, connectorName);
     return isArmResourceId(connectorId)
-      ? this._getUniqueConnectionNameInApiHub(connectorName, connectorId, connectionName, index)
+      ? this._getUniqueConnectionNameInApiHub(connectorName, connectorId, connectionName, index, connectionNames)
       : connectionName;
   }
 
@@ -341,17 +344,16 @@ export abstract class BaseConnectionService implements IConnectionService {
     connectorName: string,
     connectorId: string,
     connectionName: string,
-    i: number
+    i: number,
+    connectionNames: string[] = []
   ): Promise<string> {
-    const connectionId = this.getAzureConnectionRequestPath(connectionName);
-    const isUnique = await this._testConnectionIdUniquenessInApiHub(connectionId);
-
-    if (isUnique) {
-      return connectionName;
-    } else {
-      connectionName = `${connectorName}-${i++}`;
-      return this._getUniqueConnectionNameInApiHub(connectorName, connectorId, connectionName, i);
+    if (!connectionNames.includes(connectionName)) {
+      const connectionId = this.getAzureConnectionRequestPath(connectionName);
+      const isUnique = await this._testConnectionIdUniquenessInApiHub(connectionId);
+      if (isUnique) return connectionName;
     }
+    connectionName = `${connectorName}-${++i}`;
+    return this._getUniqueConnectionNameInApiHub(connectorName, connectorId, connectionName, i, connectionNames);
   }
 
   protected _testConnectionIdUniquenessInApiHub(id: string): Promise<boolean> {

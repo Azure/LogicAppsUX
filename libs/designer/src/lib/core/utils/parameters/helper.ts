@@ -55,7 +55,7 @@ import {
   isVariableToken,
   ValueSegmentConvertor,
 } from './segment';
-import { OperationManifestService, WorkflowService } from '@microsoft/designer-client-services-logic-apps';
+import { LogEntryLevel, LoggerService, OperationManifestService, WorkflowService } from '@microsoft/designer-client-services-logic-apps';
 import type {
   AuthProps,
   ComboboxItem,
@@ -1700,9 +1700,15 @@ export async function updateParameterAndDependencies(
     const inputDependencies = dependenciesToUpdate.inputs;
     for (const key of Object.keys(inputDependencies)) {
       if (inputDependencies[key].dependencyType === 'ListValues' && inputDependencies[key].dependentParameters[parameterId]) {
-        const dependentParameter = nodeInputs.parameterGroups[groupId].parameters.find(
-          (param) => param.parameterKey === key
-        ) as ParameterInfo;
+        const dependentParameter = nodeInputs.parameterGroups[groupId].parameters.find((param) => param.parameterKey === key);
+        if (!dependentParameter) {
+          LoggerService().log({
+            level: LogEntryLevel.Verbose,
+            area: 'UpdateParameterAndDependencies',
+            message: `Dependent parameter was not set. Connection name: ${connectionReference.connectionName} - Parameter key: ${key}`,
+          });
+          continue;
+        }
         payload.parameters.push({
           groupId,
           parameterId: dependentParameter.id,
@@ -1862,6 +1868,8 @@ async function loadDynamicData(
       nodeInputs,
       settings,
       rootState.workflowParameters.definitions,
+      rootState.workflow.workflowKind,
+      rootState.designerOptions.hostOptions.forceEnableSplitOn ?? false,
       dispatch
     );
   }
