@@ -35,6 +35,7 @@ const initialState: DesignerOptionsState = {
   hostOptions: {
     displayRuntimeInfo: true,
     suppressCastingForSerialize: false,
+    recurrenceInterval: undefined,
   },
 };
 
