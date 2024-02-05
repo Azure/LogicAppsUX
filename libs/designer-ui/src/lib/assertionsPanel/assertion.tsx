@@ -16,6 +16,7 @@ export interface AssertionUpdateEvent {
   name: string;
   description: string;
   expression: Record<string, any>;
+  isEditable: boolean;
 }
 
 export interface AssertionDeleteEvent {
@@ -48,8 +49,8 @@ export interface AssertionProps {
 }
 
 export function Assertion({ assertion, onAssertionDelete, getTokenPicker }: AssertionProps): JSX.Element {
-  const [expanded, setExpanded] = useState(true);
-  const [isEditable, setIsEditable] = useState(true);
+  const [expanded, setExpanded] = useState(!!assertion.isEditable);
+  const [isEditable, setIsEditable] = useState(assertion.isEditable);
   const [name, setName] = useState(assertion.name);
   const [description, setDescription] = useState(assertion.description);
   const [expression, setExpression] = useState(assertion.expression);

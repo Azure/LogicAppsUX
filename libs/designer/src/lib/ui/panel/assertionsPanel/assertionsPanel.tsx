@@ -198,8 +198,8 @@ export const AssertionsPanel = (props: CommonPanelProps) => {
   };
 
   const onAssertionUpdate = (event: AssertionUpdateEvent) => {
-    const { name, description, id, expression } = event;
-    const assertionToUpdate = { name: name, description: description, id: id, expression: expression };
+    const { name, description, id, expression, isEditable } = event;
+    const assertionToUpdate = { name: name, description: description, id: id, expression: expression, isEditable: isEditable };
     dispatch(updateAssertion({ assertionToUpdate }));
 
     const newAssertions = { ...assertions };
@@ -214,6 +214,7 @@ export const AssertionsPanel = (props: CommonPanelProps) => {
       [id]: {
         id: id,
         name: event.name,
+        isEditable: true,
         description: event.description,
         expression: toConditionViewModel(event.expression),
       },

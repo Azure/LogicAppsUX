@@ -17,4 +17,5 @@ export interface UnitTestDefinition {
 
 export interface AssertionDefintion extends Assertion {
   id: string;
+  isEditable: boolean;
 }

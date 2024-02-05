@@ -1,13 +1,5 @@
 import { Button } from '@fluentui/react-components';
-import {
-  bundleIcon,
-  Delete24Filled,
-  Delete24Regular,
-  Edit24Filled,
-  Edit24Regular,
-  Save24Filled,
-  Save24Regular,
-} from '@fluentui/react-icons';
+import { bundleIcon, Delete24Filled, Delete24Regular, Edit24Filled, Edit24Regular } from '@fluentui/react-icons';
 import { useIntl } from 'react-intl';
 
 export interface assertionButtonProps {
@@ -17,12 +9,10 @@ export interface assertionButtonProps {
   onEdit: React.MouseEventHandler<HTMLButtonElement>;
 }
 
-export const AssertionButtons = ({ onDelete, isExpanded, onEdit }: assertionButtonProps): JSX.Element => {
+export const AssertionButtons = ({ onDelete, isEditable, onEdit }: assertionButtonProps): JSX.Element => {
   const intl = useIntl();
   const DeleteIcon = bundleIcon(Delete24Filled, Delete24Regular);
   const EditIcon = bundleIcon(Edit24Filled, Edit24Regular);
-  const SaveIcon = bundleIcon(Save24Filled, Save24Regular);
-  console.log(SaveIcon);
 
   const deleteAssertionText = intl.formatMessage({
     defaultMessage: 'Delete assertion',
@@ -34,12 +24,15 @@ export const AssertionButtons = ({ onDelete, isExpanded, onEdit }: assertionButt
     description: 'Edit Assertion Text',
   });
 
-  // const saveAssertionText = intl.formatMessage({
-  //   defaultMessage: 'Save assertion',
-  //   description: 'Save Assertion Text',
-  // });
-
-  const editButton = isExpanded ? null : (
+  const editButton = isEditable ? (
+    <Button
+      appearance="subtle"
+      data-testid="assertion-delete-icon-button"
+      aria-label={deleteAssertionText}
+      onClick={onDelete}
+      icon={<DeleteIcon style={{ color: 'var(--colorBrandForeground1)' }} />}
+    />
+  ) : (
     <Button
       appearance="subtle"
       data-testid="assertion-edit-icon-button"
@@ -49,16 +42,5 @@ export const AssertionButtons = ({ onDelete, isExpanded, onEdit }: assertionButt
     />
   );
 
-  return (
-    <div className="msla-workflow-assertion-header-buttons">
-      {editButton}
-      <Button
-        appearance="subtle"
-        data-testid="assertion-delete-icon-button"
-        aria-label={deleteAssertionText}
-        onClick={onDelete}
-        icon={<DeleteIcon style={{ color: 'var(--colorBrandForeground1)' }} />}
-      />
-    </div>
-  );
+  return <div className="msla-workflow-assertion-header-buttons">{editButton}</div>;
 };
