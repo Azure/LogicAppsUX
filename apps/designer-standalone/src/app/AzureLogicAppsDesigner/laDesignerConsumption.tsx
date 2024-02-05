@@ -191,7 +191,10 @@ const DesignerEditorConsumption = () => {
           isMonitoringView,
           useLegacyWorkflowParameters: true,
           showConnectionsPanel,
-          hostOptions,
+          hostOptions: {
+            ...hostOptions,
+            recurrenceInterval: { interval: 3, frequency: 'Minute' },
+          },
         }}
       >
         {workflow?.definition ? (

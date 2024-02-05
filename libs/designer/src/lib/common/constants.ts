@@ -488,6 +488,24 @@ export default {
     interval: 3,
     frequency: 'Minute',
   },
+  RECURRENCE_OPTIONS: {
+    FREE: {
+      interval: 1,
+      frequency: 'Hour',
+    },
+    STANDARD: {
+      interval: 1,
+      frequency: 'Minute',
+    },
+    PREMIUM: {
+      interval: 15,
+      frequency: 'Second',
+    },
+    CONSUMPTION: {
+      interval: 3,
+      frequency: 'Minute',
+    },
+  },
   RECURRENCE_FREQUENCY_VALUES: ['Month', 'Week', 'Day', 'Hour', 'Minute', 'Second'],
   RECURRENCE_TITLE_JOIN_SEPARATOR: ',',
   RECURRENCE_SCHEDULE_VALUES: {
