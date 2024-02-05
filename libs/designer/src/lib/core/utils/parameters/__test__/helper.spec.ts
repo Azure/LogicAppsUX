@@ -2301,6 +2301,7 @@ describe('core/utils/parameters/helper', () => {
       ['output', undefined, `triggerOutputs()`],
       ['outputs.$', undefined, `triggerOutputs()`],
       ['outputs.$.body', undefined, `triggerOutputs()`],
+      ['outputs.$.body/value', undefined, `triggerOutputs()`],
       ['outputs.$.headers', undefined, `triggerOutputs()`],
       ['outputs.$.relativePathParameters', undefined, `triggerOutputs()`],
 
@@ -2309,14 +2310,16 @@ describe('core/utils/parameters/helper', () => {
       ['outputs.$.body.Title', undefined, `triggerBody()`],
       ['outputs.$.body.Author.DisplayName', undefined, `triggerBody()`],
 
+      // For nested path properties (OpenAPI) within `outputs.$.body/*`, use BODY.
+      ['outputs.$.body/value.ID', undefined, `triggerBody()`],
+      ['outputs.$.body/value.Title', undefined, `triggerBody()`],
+      ['outputs.$.body/value.Author.DisplayName', undefined, `triggerBody()`],
+
       // For values using `body/*` syntax, use OUTPUTS.
       ['outputs.$.body/subject', 'Get_event_(V3)', `outputs('Get_event_(V3)')`],
-    ])(
-      'correctly gets the token expression for %p',
-      (key, actionName, expected) => {
-        expect(getTokenExpressionMethodFromKey(key, actionName)).toBe(expected);
-      }
-    )
+    ])('correctly gets the token expression for %p', (key, actionName, expected) => {
+      expect(getTokenExpressionMethodFromKey(key, actionName)).toBe(expected);
+    });
   });
 
   describe('updateParameterWithValues', () => {

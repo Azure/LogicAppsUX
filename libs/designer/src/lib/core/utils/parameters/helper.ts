@@ -1027,7 +1027,11 @@ function segmentsAreBodyReference(segments: Segment[]): boolean {
 
   // For tokens of format `outputs.$.body.Title`, where we are referring to a property within the body,
   // we have to reference the body rather than the outputs field.
-  return segments.length >= 4 && isString(segments[2].value) && segments[2].value === constants.OUTPUT_LOCATIONS.BODY;
+  return (
+    segments.length >= 4 &&
+    isString(segments[2].value) &&
+    (segments[2].value === constants.OUTPUT_LOCATIONS.BODY || segments[2].value.startsWith(`${constants.OUTPUT_LOCATIONS.BODY}/`))
+  );
 }
 
 // NOTE: For example, if tokenKey is outputs.$.foo.[*].bar, which means
