@@ -7,6 +7,7 @@ import { useIntl } from 'react-intl';
 export interface SearchableDropdownProps {
   dropdownProps: Pick<IDropdownProps, 'options'> & Partial<Omit<IDropdownProps, 'onChange' | 'onDismiss' | 'onRenderItem'>>;
   onItemSelectionChanged: (id: string, isSelected: boolean) => void;
+  labelId?: string;
   searchPlaceholderText?: string;
   showSearchItemThreshold?: number;
   className?: string;
@@ -18,6 +19,7 @@ export const SearchableDropdown: FC<SearchableDropdownProps> = ({
   searchPlaceholderText,
   showSearchItemThreshold: showFilterItemThreshold,
   className,
+  labelId,
 }): JSX.Element => {
   const showFilterInputItemThreshold = showFilterItemThreshold ?? 4;
   const headerKey = 'FilterHeader';
@@ -46,6 +48,7 @@ export const SearchableDropdown: FC<SearchableDropdownProps> = ({
   return (
     <Dropdown
       {...dropdownProps}
+      aria-labelledby={labelId}
       className={className ?? 'msla-searchable-dropdown'}
       options={options}
       selectedKeys={conditionalVisibilityTempArray}
