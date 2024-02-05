@@ -5,6 +5,7 @@ import { INSERT_TOKEN_NODE } from '../../editor/base/plugins/InsertTokenNode';
 import { SINGLE_VALUE_SEGMENT } from '../../editor/base/plugins/SingleValueSegment';
 import { convertUIElementNameToAutomationId } from '../../utils';
 import type { Token, TokenGroup } from '../models/token';
+import { getReducedTokenList, hasAdvanced } from './tokenpickerhelpers';
 import type { TokenPickerBaseProps } from './tokenpickersection';
 import { Icon } from '@fluentui/react';
 import { useBoolean } from '@fluentui/react-hooks';
@@ -194,36 +195,30 @@ export const TokenPickerOptions = ({
             )}
           </div>
           <div className="msla-token-picker-section-options">
-            {(!searchQuery ? section.tokens : filteredTokens).map((token, j) => {
-              if ((token.isAdvanced || j >= maxRowsShown) && moreOptions && !searchQuery) {
-                return null;
-              }
-
-              return (
-                <button
-                  className="msla-token-picker-section-option"
-                  data-automation-id={`msla-token-picker-section-option-${j}`}
-                  key={`token-picker-option-${j}`}
-                  onClick={() => handleTokenClicked(token)}
-                >
-                  <div className="msla-token-picker-section-option-text">
-                    <div className="msla-token-picker-option-inner">
-                      <div className="msla-token-picker-option-title">{token.title}</div>
-                      <div className="msla-token-picker-option-description" title={token.description}>
-                        {token.description}
-                      </div>
+            {getReducedTokenList(!searchQuery ? section.tokens : filteredTokens, {
+              hasSearchQuery: !!searchQuery,
+              maxRowsShown,
+              showAllOptions: !moreOptions,
+            }).map((token, j) => (
+              <button
+                className="msla-token-picker-section-option"
+                data-automation-id={`msla-token-picker-section-option-${j}`}
+                key={`token-picker-option-${j}`}
+                onClick={() => handleTokenClicked(token)}
+              >
+                <div className="msla-token-picker-section-option-text">
+                  <div className="msla-token-picker-option-inner">
+                    <div className="msla-token-picker-option-title">{token.title}</div>
+                    <div className="msla-token-picker-option-description" title={token.description}>
+                      {token.description}
                     </div>
                   </div>
-                </button>
-              );
-            })}
+                </div>
+              </button>
+            ))}
           </div>
         </>
       ) : null}
     </>
   );
 };
-
-function hasAdvanced(tokens: OutputToken[]): boolean {
-  return tokens.some((token) => token.isAdvanced);
-}
