@@ -7,6 +7,7 @@ import {
   updateParameterWithValues,
   toArrayViewModelSchema,
   toHybridConditionViewModel,
+  getTokenExpressionMethodFromKey,
 } from '../helper';
 import type { DictionaryEditorItemProps, ParameterInfo, ValueSegment, OutputToken } from '@microsoft/designer-ui';
 import { GroupDropdownOptions, GroupType, TokenType, ValueSegmentType } from '@microsoft/designer-ui';
@@ -2286,6 +2287,36 @@ describe('core/utils/parameters/helper', () => {
 
       expect(getExpressionValueForOutputToken(token, nodeType)).toEqual(`triggerOutputs()['message']['id']`);
     });
+  });
+
+  describe('getTokenExpressionMethodFromKey', () => {
+    it.each<[string, string | undefined, string]>([
+      // For `body.$` and its first-class properties, use BODY.
+      ['body.$', undefined, `triggerBody()`],
+      ['body.$.value', undefined, `triggerBody()`],
+      ['body.$', 'Create_item', `body('Create_item')`],
+      ['body.$.ID', 'Create_item', `body('Create_item')`],
+
+      // For `outputs.$` and its first-class properties, use OUTPUTS.
+      ['output', undefined, `triggerOutputs()`],
+      ['outputs.$', undefined, `triggerOutputs()`],
+      ['outputs.$.body', undefined, `triggerOutputs()`],
+      ['outputs.$.headers', undefined, `triggerOutputs()`],
+      ['outputs.$.relativePathParameters', undefined, `triggerOutputs()`],
+
+      // For nested properties (OpenAPI) within `outputs.$.body`, use BODY.
+      ['outputs.$.body.ID', undefined, `triggerBody()`],
+      ['outputs.$.body.Title', undefined, `triggerBody()`],
+      ['outputs.$.body.Author.DisplayName', undefined, `triggerBody()`],
+
+      // For values using `body/*` syntax, use OUTPUTS.
+      ['outputs.$.body/subject', 'Get_event_(V3)', `outputs('Get_event_(V3)')`],
+    ])(
+      'correctly gets the token expression for %p',
+      (key, actionName, expected) => {
+        expect(getTokenExpressionMethodFromKey(key, actionName)).toBe(expected);
+      }
+    )
   });
 
   describe('updateParameterWithValues', () => {
