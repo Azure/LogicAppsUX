@@ -44,6 +44,7 @@ const NodeSearchCard = ({ node, displayRuntimeInfo }: { node: string; displayRun
 
 export type NodeSearchPanelProps = {
   displayRuntimeInfo: boolean;
+  focusReturnElementId: string | undefined;
 } & CommonPanelProps;
 
 export const NodeSearchPanel = (props: NodeSearchPanelProps) => {
@@ -71,8 +72,10 @@ export const NodeSearchPanel = (props: NodeSearchPanelProps) => {
     description: 'Placeholder for search box that searches operations',
   });
 
+  const originalFocusElement = props.focusReturnElementId ? document.getElementById(props.focusReturnElementId) : undefined;
+
   return (
-    <FocusTrapZone>
+    <FocusTrapZone elementToFocusOnDismiss={originalFocusElement ? originalFocusElement : undefined}>
       <div className="msla-app-action-header">
         <Text variant="xLarge">{goToOperationHeader}</Text>
         <Button appearance="subtle" onClick={props.toggleCollapse} icon={<CloseIcon />} />

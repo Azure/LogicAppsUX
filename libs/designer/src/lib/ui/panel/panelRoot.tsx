@@ -1,6 +1,11 @@
 import type { AppDispatch } from '../../core';
 import { useHostOptions, useIsDarkMode } from '../../core/state/designerOptions/designerOptionsSelectors';
-import { useCurrentPanelMode, useIsLoadingPanel, useIsPanelCollapsed } from '../../core/state/panel/panelSelectors';
+import {
+  useCurrentPanelMode,
+  useFocusReturnElementId,
+  useIsLoadingPanel,
+  useIsPanelCollapsed,
+} from '../../core/state/panel/panelSelectors';
 import { clearPanel } from '../../core/state/panel/panelSlice';
 import { ConnectionPanel } from './connectionsPanel/connectionsPanel';
 import { ErrorPanel } from './errorsPanel/errorsPanel';
@@ -35,6 +40,7 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element => {
 
   const collapsed = useIsPanelCollapsed();
   const currentPanelMode = useCurrentPanelMode();
+  const focusReturnElementId = useFocusReturnElementId();
 
   const [width, setWidth] = useState<PanelSize>(PanelSize.Auto);
 
@@ -101,7 +107,7 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element => {
         ) : currentPanelMode === 'Discovery' ? (
           <RecommendationPanelContext {...commonPanelProps} displayRuntimeInfo={displayRuntimeInfo} />
         ) : currentPanelMode === 'NodeSearch' ? (
-          <NodeSearchPanel {...commonPanelProps} displayRuntimeInfo={displayRuntimeInfo} />
+          <NodeSearchPanel {...commonPanelProps} displayRuntimeInfo={displayRuntimeInfo} focusReturnElementId={focusReturnElementId} />
         ) : currentPanelMode === 'Connection' ? (
           <ConnectionPanel {...commonPanelProps} />
         ) : currentPanelMode === 'Error' ? (

@@ -15,6 +15,7 @@ export interface PanelState {
   selectedOperationId: string;
   addingTrigger: boolean;
   isLoading?: boolean;
+  focusReturnElementId?: string;
   creatingConnection?: boolean;
 }
 

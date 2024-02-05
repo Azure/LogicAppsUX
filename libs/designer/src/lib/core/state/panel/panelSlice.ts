@@ -73,7 +73,13 @@ export const panelSlice = createSlice({
     },
     expandDiscoveryPanel: (
       state,
-      action: PayloadAction<{ relationshipIds: RelationshipIds; nodeId: string; isParallelBranch?: boolean; addingTrigger?: boolean }>
+      action: PayloadAction<{
+        relationshipIds: RelationshipIds;
+        nodeId: string;
+        isParallelBranch?: boolean;
+        focusReturnElementId?: string;
+        addingTrigger?: boolean;
+      }>
     ) => {
       state.collapsed = false;
       state.currentPanelMode = 'Discovery';
@@ -81,6 +87,7 @@ export const panelSlice = createSlice({
       state.selectedNodes = [action.payload.nodeId];
       state.isParallelBranch = action.payload?.isParallelBranch ?? false;
       state.addingTrigger = !!action.payload?.addingTrigger;
+      state.focusReturnElementId = action.payload.focusReturnElementId;
 
       LoggerService().log({
         level: LogEntryLevel.Verbose,
@@ -109,6 +116,7 @@ export const panelSlice = createSlice({
         nodeIds?: string[];
         panelMode: PanelMode;
         referencePanelMode?: PanelMode;
+        focusReturnElementId?: string;
       }>
     ) => {
       const { nodeId, nodeIds, panelMode, referencePanelMode } = action?.payload ?? {};
@@ -117,6 +125,7 @@ export const panelSlice = createSlice({
       state.currentPanelMode = panelMode;
       state.referencePanelMode = referencePanelMode;
       state.selectedNodes = nodeIds ? nodeIds : nodeId ? [nodeId] : [];
+      state.focusReturnElementId = action?.payload.focusReturnElementId;
     },
     selectPanelTab: (state, action: PayloadAction<string | undefined>) => {
       state.selectedTabId = action.payload;
