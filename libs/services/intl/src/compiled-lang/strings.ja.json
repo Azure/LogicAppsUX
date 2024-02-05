@@ -1106,7 +1106,7 @@
   "5WTRY8": [
     {
       "type": 0,
-      "value": "Errors"
+      "value": "エラー"
     }
   ],
   "5akc1Q": [
@@ -3599,7 +3599,7 @@
   "M0bbZk": [
     {
       "type": 0,
-      "value": "Flow Checker"
+      "value": "フロー チェッカー"
     }
   ],
   "M0xrm+": [
@@ -3929,7 +3929,7 @@
   "O6VHe0": [
     {
       "type": 0,
-      "value": "Operation warnings"
+      "value": "操作に関する警告"
     }
   ],
   "O7HhyP": [
@@ -5238,7 +5238,7 @@
   "Vi5TIV": [
     {
       "type": 0,
-      "value": "No warnings found."
+      "value": "警告は見つかりませんでした。"
     }
   ],
   "VlvlX1": [
@@ -6940,7 +6940,7 @@
   "hLOIwp": [
     {
       "type": 0,
-      "value": "Warnings"
+      "value": "警告"
     }
   ],
   "hMf2TA": [
