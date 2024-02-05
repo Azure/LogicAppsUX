@@ -6,6 +6,7 @@ import { AssertionField } from './assertionField';
 import { Button } from '@fluentui/react-components';
 import { bundleIcon, ChevronRight24Regular, ChevronRight24Filled, ChevronDown24Regular, ChevronDown24Filled } from '@fluentui/react-icons';
 import type { AssertionDefintion } from '@microsoft/utils-logic-apps';
+import { type Assertion } from '@microsoft/utils-logic-apps';
 import { useState } from 'react';
 
 const ExpandIcon = bundleIcon(ChevronRight24Filled, ChevronRight24Regular);
@@ -48,8 +49,8 @@ export interface AssertionProps {
   getTokenPicker: GetAssertionTokenPickerHandler;
 }
 
-export function Assertion({ assertion, onAssertionDelete, getTokenPicker }: AssertionProps): JSX.Element {
-  const [expanded, setExpanded] = useState(!!assertion.isEditable);
+export function Assertion({ assertion, onAssertionDelete, getTokenPicker, onAssertionUpdate }: AssertionProps): JSX.Element {
+  const [expanded, setExpanded] = useState(assertion.isEditable);
   const [isEditable, setIsEditable] = useState(assertion.isEditable);
   const [name, setName] = useState(assertion.name);
   const [description, setDescription] = useState(assertion.description);
@@ -66,6 +67,10 @@ export function Assertion({ assertion, onAssertionDelete, getTokenPicker }: Asse
 
   const handleToggleExpand = (): void => {
     setExpanded(!expanded);
+  };
+
+  const handleUpdate = (newAssertion: Assertion) => {
+    onAssertionUpdate({ ...newAssertion, id: assertion.id, isEditable: isEditable });
   };
 
   return (
@@ -92,6 +97,7 @@ export function Assertion({ assertion, onAssertionDelete, getTokenPicker }: Asse
           isEditable={isEditable}
           isExpanded={expanded}
           getTokenPicker={getTokenPicker}
+          handleUpdate={handleUpdate}
         />
       </div>
     </div>

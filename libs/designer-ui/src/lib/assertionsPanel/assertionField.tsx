@@ -6,7 +6,7 @@ import type { TokenPickerMode } from '../tokenpicker';
 import type { GetAssertionTokenPickerHandler } from './assertion';
 import type { ILabelStyles, IStyle, ITextFieldStyles } from '@fluentui/react';
 import { Label, Text, TextField } from '@fluentui/react';
-import { isEmptyString } from '@microsoft/utils-logic-apps';
+import { type Assertion, isEmptyString } from '@microsoft/utils-logic-apps';
 import { useIntl } from 'react-intl';
 
 export const labelStyles: Partial<ILabelStyles> = {
@@ -46,9 +46,10 @@ export interface AssertionFieldProps {
   setName: React.Dispatch<React.SetStateAction<string>>;
   setDescription: React.Dispatch<React.SetStateAction<string>>;
   setExpression: React.Dispatch<React.SetStateAction<Record<string, any>>>;
-  isEditable?: boolean;
+  isEditable: boolean;
   isExpanded: boolean;
   getTokenPicker: GetAssertionTokenPickerHandler;
+  handleUpdate: (newAssertion: Assertion) => void;
 }
 
 export const AssertionField = ({
@@ -61,6 +62,7 @@ export const AssertionField = ({
   isEditable,
   isExpanded,
   getTokenPicker,
+  handleUpdate,
 }: AssertionFieldProps): JSX.Element => {
   const intl = useIntl();
 
@@ -102,14 +104,17 @@ export const AssertionField = ({
 
   const onDescriptionChange = (_event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string): void => {
     setDescription(newValue ?? '');
+    handleUpdate({ name, description: newValue ?? '', expression });
   };
 
   const onNameChange = (_event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string): void => {
     setName(newValue ?? '');
+    handleUpdate({ name: newValue ?? '', description, expression });
   };
 
   const onExpressionChange = (newState: ChangeState): void => {
     setExpression(newState.viewModel);
+    handleUpdate({ name, description, expression: newState.viewModel });
   };
 
   return (
