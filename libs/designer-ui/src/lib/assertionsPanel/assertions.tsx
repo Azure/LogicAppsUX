@@ -1,4 +1,3 @@
-import { isHighContrastBlack } from '../utils';
 import {
   type AssertionUpdateHandler,
   type AssertionDeleteHandler,
@@ -6,11 +5,15 @@ import {
   Assertion,
   type GetAssertionTokenPickerHandler,
 } from './assertion';
-import { IconButton, List, Text, useTheme, ActionButton } from '@fluentui/react';
+import { List, Text } from '@fluentui/react';
+import { Button } from '@fluentui/react-components';
+import { bundleIcon, Dismiss24Filled, Dismiss24Regular, Add24Filled, Add24Regular } from '@fluentui/react-icons';
 import type { AssertionDefintion } from '@microsoft/utils-logic-apps';
 import { useIntl } from 'react-intl';
 
 type OnClickHandler = () => void;
+const CreateIcon = bundleIcon(Add24Filled, Add24Regular);
+const CloseIcon = bundleIcon(Dismiss24Filled, Dismiss24Regular);
 
 export interface AssertionsProps {
   assertions: AssertionDefintion[];
@@ -30,8 +33,6 @@ export function Assertions({
   getTokenPicker,
 }: AssertionsProps): JSX.Element {
   const intl = useIntl();
-  const theme = useTheme();
-  const isInverted = isHighContrastBlack() || theme.isInverted;
 
   const titleText = intl.formatMessage({
     defaultMessage: 'Assertions',
@@ -65,7 +66,6 @@ export function Assertions({
         assertion={item}
         onAssertionDelete={onAssertionDelete}
         onAssertionUpdate={onAssertionUpdate}
-        isInverted={isInverted}
         getTokenPicker={getTokenPicker}
       />
     );
@@ -77,11 +77,13 @@ export function Assertions({
     <div className="msla-workflow-assertions">
       <div className="msla-workflow-assertions-heading">
         <Text variant="xLarge">{titleText}</Text>
-        <IconButton onClick={onClose} iconProps={{ iconName: 'Cancel' }} />
+        <Button appearance="subtle" onClick={onClose} icon={<CloseIcon />} />
       </div>
       {assertions.length > 0 ? <List items={assertions} onRenderCell={renderAssertion} /> : null}
       <div className="msla-workflow-assertions-footer">
-        <ActionButton text={`${addAssertionText} +`} allowDisabledFocus onClick={handleAddAssertion} />
+        <Button onClick={handleAddAssertion} icon={<CreateIcon />}>
+          {addAssertionText}
+        </Button>
       </div>
     </div>
   );

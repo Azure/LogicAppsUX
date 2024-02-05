@@ -47,7 +47,7 @@ export interface AssertionFieldProps {
   setDescription: React.Dispatch<React.SetStateAction<string>>;
   setExpression: React.Dispatch<React.SetStateAction<Record<string, any>>>;
   isEditable?: boolean;
-  isReadOnly?: boolean;
+  isExpanded: boolean;
   getTokenPicker: GetAssertionTokenPickerHandler;
 }
 
@@ -59,7 +59,7 @@ export const AssertionField = ({
   setExpression,
   expression,
   isEditable,
-  isReadOnly,
+  isExpanded,
   getTokenPicker,
 }: AssertionFieldProps): JSX.Element => {
   const intl = useIntl();
@@ -115,12 +115,12 @@ export const AssertionField = ({
   return (
     <>
       <div className="msla-assertion-field">
-        {isEditable ? (
+        {isExpanded ? (
           <Label styles={labelStyles} required={true} htmlFor={parameterDetails.name}>
             {nameTitle}
           </Label>
         ) : null}
-        {isEditable ? (
+        {isExpanded ? (
           <TextField
             data-testid={parameterDetails.name}
             styles={textFieldStyles}
@@ -129,17 +129,17 @@ export const AssertionField = ({
             placeholder={namePlaceholder}
             value={name}
             onChange={onNameChange}
-            disabled={isReadOnly}
+            disabled={!isEditable}
           />
         ) : null}
       </div>
       <div className="msla-assertion-field">
-        {isEditable ? (
+        {isExpanded ? (
           <Label styles={labelStyles} htmlFor={parameterDetails.description}>
             {descriptionTitle}
           </Label>
         ) : null}
-        {isEditable ? (
+        {isExpanded ? (
           <TextField
             data-testid={parameterDetails.description}
             styles={textFieldStyles}
@@ -148,7 +148,7 @@ export const AssertionField = ({
             placeholder={descriptionPlaceholder}
             value={description}
             onChange={onDescriptionChange}
-            disabled={isReadOnly}
+            disabled={!isEditable}
             multiline
             autoAdjustHeight
           />
@@ -159,17 +159,17 @@ export const AssertionField = ({
         )}
       </div>
       <div className="msla-assertion-condition">
-        {isEditable ? (
+        {isExpanded ? (
           <Label styles={labelStyles} required={true} htmlFor={parameterDetails.expression}>
             {conditionTitle}
           </Label>
         ) : null}
         <div className="msla-assertion-condition-editor">
-          {isEditable ? (
+          {isExpanded ? (
             <TokenField
               editor="condition"
               editorViewModel={expression ?? {}}
-              readOnly={false}
+              readOnly={!isEditable}
               label="Condition"
               labelId="condition-label"
               tokenEditor={true}
