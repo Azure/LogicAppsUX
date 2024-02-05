@@ -42,6 +42,14 @@ export const AdvancedOptions: React.FC = () => {
       defaultMessage: 'Generate infrastructure templates',
       description: 'Generate infrastructure templates',
     }),
+    INTEGRATION_ACCOUNT_SOURCE: intl.formatMessage({
+      defaultMessage: 'Default to integration account as source for transformations and schema validation',
+      description: 'Default to integration account as source for transformations and schema validation',
+    }),
+    EXPORT_CUSTOM_API_ACTIONS_TO_API_MANAGEMENT_ACTIONS: intl.formatMessage({
+      defaultMessage: 'Export custom connector actions as API Management actions',
+      description: 'Export custom connector actions as API Management actions',
+    }),
   };
 
   const advancedOptions: IDropdownOption[] = [
@@ -51,6 +59,16 @@ export const AdvancedOptions: React.FC = () => {
       text: intlText.CLONE_CONNECTIONS,
       selected: false,
       disabled: isCloneConnectionsAvailable(selectedAdvanceOptions),
+    },
+    {
+      key: AdvancedOptionsTypes.integrationAccountSource,
+      text: intlText.INTEGRATION_ACCOUNT_SOURCE,
+      selected: false,
+    },
+    {
+      key: AdvancedOptionsTypes.exportCustomApiActionsToAPIManagementActions,
+      text: intlText.EXPORT_CUSTOM_API_ACTIONS_TO_API_MANAGEMENT_ACTIONS,
+      selected: false,
     },
   ];
 
@@ -83,6 +101,7 @@ export const AdvancedOptions: React.FC = () => {
         onChange={onChangeOptions}
         selectedKeys={selectedAdvanceOptions}
         multiSelect
+        className="msla-export-workflows-advanced-options-dropdown"
       />
     </div>
   );
