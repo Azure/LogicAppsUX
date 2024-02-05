@@ -46,7 +46,7 @@ export const BJSWorkflowProvider: React.FC<BJSWorkflowProviderProps> = (props) =
     }
   }, [dispatch, servicesInitialized, wrapped]);
 
-  if (!designerOptionsInitialized) {
+  if (!designerOptionsInitialized || !servicesInitialized) {
     return null;
   }
 
