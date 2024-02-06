@@ -55,7 +55,7 @@ import {
   isVariableToken,
   ValueSegmentConvertor,
 } from './segment';
-import { OperationManifestService, WorkflowService } from '@microsoft/designer-client-services-logic-apps';
+import { LogEntryLevel, LoggerService, OperationManifestService, WorkflowService } from '@microsoft/designer-client-services-logic-apps';
 import type {
   AuthProps,
   ComboboxItem,
@@ -1009,11 +1009,29 @@ export function getExpressionValueForOutputToken(token: OutputToken, nodeType: s
 
 export function getTokenExpressionMethodFromKey(key: string, actionName: string | undefined): string {
   const segments = parseEx(key);
-  if (segments.length >= 2 && segments[0].value === OutputSource.Body && segments[1].value === '$') {
+  if (segmentsAreBodyReference(segments)) {
     return actionName ? `${OutputSource.Body}(${convertToStringLiteral(actionName)})` : constants.TRIGGER_BODY_OUTPUT;
   } else {
     return actionName ? `${constants.OUTPUTS}(${convertToStringLiteral(actionName)})` : constants.TRIGGER_OUTPUTS_OUTPUT;
   }
+}
+
+function segmentsAreBodyReference(segments: Segment[]): boolean {
+  if (segments.length < 2 || segments[1].value !== '$') {
+    return false;
+  }
+
+  if (segments[0].value === OutputSource.Body) {
+    return true;
+  }
+
+  // For tokens of format `outputs.$.body.Title` or `outputs.$.body/Title`, where we are referring to a property within
+  // the body, we have to reference the body rather than the outputs field.
+  return (
+    segments.length >= 4 &&
+    isString(segments[2].value) &&
+    (segments[2].value === constants.OUTPUT_LOCATIONS.BODY || segments[2].value.startsWith(`${constants.OUTPUT_LOCATIONS.BODY}/`))
+  );
 }
 
 // NOTE: For example, if tokenKey is outputs.$.foo.[*].bar, which means
@@ -1700,9 +1718,15 @@ export async function updateParameterAndDependencies(
     const inputDependencies = dependenciesToUpdate.inputs;
     for (const key of Object.keys(inputDependencies)) {
       if (inputDependencies[key].dependencyType === 'ListValues' && inputDependencies[key].dependentParameters[parameterId]) {
-        const dependentParameter = nodeInputs.parameterGroups[groupId].parameters.find(
-          (param) => param.parameterKey === key
-        ) as ParameterInfo;
+        const dependentParameter = nodeInputs.parameterGroups[groupId].parameters.find((param) => param.parameterKey === key);
+        if (!dependentParameter) {
+          LoggerService().log({
+            level: LogEntryLevel.Verbose,
+            area: 'UpdateParameterAndDependencies',
+            message: `Dependent parameter was not set. Connection name: ${connectionReference.connectionName} - Parameter key: ${key}`,
+          });
+          continue;
+        }
         payload.parameters.push({
           groupId,
           parameterId: dependentParameter.id,
@@ -1863,6 +1887,7 @@ async function loadDynamicData(
       settings,
       rootState.workflowParameters.definitions,
       rootState.workflow.workflowKind,
+      rootState.designerOptions.hostOptions.forceEnableSplitOn ?? false,
       dispatch
     );
   }

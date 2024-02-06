@@ -41,3 +41,6 @@ export const usePanelLocation = () => useSelector(createSelector(getPanelState, 
 export const useIsLoadingPanel = () => useSelector(createSelector(getPanelState, (state: PanelState) => !!state.isLoading));
 
 export const useIsCreatingConnection = () => useSelector(createSelector(getPanelState, (state: PanelState) => state.creatingConnection));
+
+export const useSelectedErrorsPanelTabId = () =>
+  useSelector(createSelector(getPanelState, (state: PanelState) => state.selectedErrorsPanelTabId));

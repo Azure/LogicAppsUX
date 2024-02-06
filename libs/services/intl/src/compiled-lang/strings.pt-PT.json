@@ -1111,6 +1111,12 @@
       "value": "Autoridade"
     }
   ],
+  "5WTRY8": [
+    {
+      "type": 0,
+      "value": "Erros"
+    }
+  ],
   "5akc1Q": [
     {
       "type": 0,
@@ -2106,6 +2112,12 @@
       "value": "Introduzir palavra-passe como texto simples ou utilizar um parâmetro seguro"
     }
   ],
+  "BQyLiu": [
+    {
+      "type": 0,
+      "value": "resultados encontrados"
+    }
+  ],
   "BS3gy8": [
     {
       "type": 0,
@@ -2692,12 +2704,6 @@
     {
       "type": 0,
       "value": "Devolve uma secção de uma cadeia definida pelo índice de início e pelo índice de fim"
-    }
-  ],
-  "FOiBk/": [
-    {
-      "type": 0,
-      "value": "Erros"
     }
   ],
   "FT3jt6": [
@@ -3676,6 +3682,12 @@
       "value": "Acerca de"
     }
   ],
+  "M0bbZk": [
+    {
+      "type": 0,
+      "value": "Verificador do Fluxo"
+    }
+  ],
   "M0xrm+": [
     {
       "type": 0,
@@ -4000,6 +4012,12 @@
       "value": "A carregar Ficheiros..."
     }
   ],
+  "O6VHe0": [
+    {
+      "type": 0,
+      "value": "Avisos de operação"
+    }
+  ],
   "O7HhyP": [
     {
       "type": 0,
@@ -4241,7 +4259,7 @@
   "PDMP/Z": [
     {
       "type": 0,
-      "value": "Collapsed"
+      "value": "Fechada"
     }
   ],
   "PNk3n4": [
@@ -5327,6 +5345,12 @@
     {
       "type": 0,
       "value": "Tipo de Erro"
+    }
+  ],
+  "Vi5TIV": [
+    {
+      "type": 0,
+      "value": "Não foram encontrados avisos."
     }
   ],
   "VlvlX1": [
@@ -7034,7 +7058,13 @@
   "hJbr09": [
     {
       "type": 0,
-      "value": "Click to Collapse"
+      "value": "Clicar para Fechar"
+    }
+  ],
+  "hLOIwp": [
+    {
+      "type": 0,
+      "value": "Avisos"
     }
   ],
   "hMf2TA": [
@@ -8677,7 +8707,7 @@
   "qdUeUk": [
     {
       "type": 0,
-      "value": "Click to Expand"
+      "value": "Clicar para Expandir"
     }
   ],
   "qiIs4V": [
@@ -8749,7 +8779,7 @@
   "r4zp7m": [
     {
       "type": 0,
-      "value": "Expanded"
+      "value": "Expandida"
     }
   ],
   "r7vZ5a": [

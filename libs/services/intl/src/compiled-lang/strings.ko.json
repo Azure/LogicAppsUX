@@ -1103,6 +1103,12 @@
       "value": "기관"
     }
   ],
+  "5WTRY8": [
+    {
+      "type": 0,
+      "value": "오류"
+    }
+  ],
   "5akc1Q": [
     {
       "type": 0,
@@ -2068,6 +2074,12 @@
       "value": "일반 텍스트로 암호 입력 또는 보안 매개 변수 사용"
     }
   ],
+  "BQyLiu": [
+    {
+      "type": 0,
+      "value": "찾은 결과"
+    }
+  ],
   "BS3gy8": [
     {
       "type": 0,
@@ -2650,12 +2662,6 @@
     {
       "type": 0,
       "value": "시작 인덱스와 끝 인덱스로 정의된 문자열의 섹션을 반환합니다."
-    }
-  ],
-  "FOiBk/": [
-    {
-      "type": 0,
-      "value": "오류"
     }
   ],
   "FT3jt6": [
@@ -3582,6 +3588,12 @@
       "value": "정보"
     }
   ],
+  "M0bbZk": [
+    {
+      "type": 0,
+      "value": "Flow 검사기"
+    }
+  ],
   "M0xrm+": [
     {
       "type": 0,
@@ -3771,7 +3783,7 @@
   "NFgfP4": [
     {
       "type": 0,
-      "value": "item"
+      "value": "항목"
     }
   ],
   "NGJ00e": [
@@ -3904,6 +3916,12 @@
     {
       "type": 0,
       "value": "파일을 로드하는 중..."
+    }
+  ],
+  "O6VHe0": [
+    {
+      "type": 0,
+      "value": "작업 경고"
     }
   ],
   "O7HhyP": [
@@ -4147,7 +4165,7 @@
   "PDMP/Z": [
     {
       "type": 0,
-      "value": "Collapsed"
+      "value": "축소됨"
     }
   ],
   "PNk3n4": [
@@ -5211,6 +5229,12 @@
     {
       "type": 0,
       "value": "오류 유형"
+    }
+  ],
+  "Vi5TIV": [
+    {
+      "type": 0,
+      "value": "경고 없음"
     }
   ],
   "VlvlX1": [
@@ -6906,7 +6930,13 @@
   "hJbr09": [
     {
       "type": 0,
-      "value": "Click to Collapse"
+      "value": "클릭하여 축소"
+    }
+  ],
+  "hLOIwp": [
+    {
+      "type": 0,
+      "value": "경고"
     }
   ],
   "hMf2TA": [
@@ -8471,7 +8501,7 @@
   "qdUeUk": [
     {
       "type": 0,
-      "value": "Click to Expand"
+      "value": "클릭하여 확장"
     }
   ],
   "qiIs4V": [
@@ -8543,7 +8573,7 @@
   "r4zp7m": [
     {
       "type": 0,
-      "value": "Expanded"
+      "value": "확장됨"
     }
   ],
   "r7vZ5a": [

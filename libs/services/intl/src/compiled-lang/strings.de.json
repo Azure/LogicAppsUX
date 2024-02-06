@@ -1123,6 +1123,12 @@
       "value": "Autorität"
     }
   ],
+  "5WTRY8": [
+    {
+      "type": 0,
+      "value": "Fehler"
+    }
+  ],
   "5akc1Q": [
     {
       "type": 0,
@@ -2111,6 +2117,12 @@
       "value": "Geben Sie das Kennwort in Nur-Text-Form oder als sicheren Parameter ein."
     }
   ],
+  "BQyLiu": [
+    {
+      "type": 0,
+      "value": "Ergebnisse gefunden"
+    }
+  ],
   "BS3gy8": [
     {
       "type": 0,
@@ -2701,12 +2713,6 @@
     {
       "type": 0,
       "value": "Gibt einen Abschnitt einer Zeichenfolge zurück, die durch den Startindex und den Endindex definiert wird."
-    }
-  ],
-  "FOiBk/": [
-    {
-      "type": 0,
-      "value": "Fehler"
     }
   ],
   "FT3jt6": [
@@ -3667,6 +3673,12 @@
       "value": "Info"
     }
   ],
+  "M0bbZk": [
+    {
+      "type": 0,
+      "value": "Flowprüfung"
+    }
+  ],
   "M0xrm+": [
     {
       "type": 0,
@@ -3856,7 +3868,7 @@
   "NFgfP4": [
     {
       "type": 0,
-      "value": "item"
+      "value": "Element"
     }
   ],
   "NGJ00e": [
@@ -3989,6 +4001,12 @@
     {
       "type": 0,
       "value": "Dateien werden geladen..."
+    }
+  ],
+  "O6VHe0": [
+    {
+      "type": 0,
+      "value": "Vorgangswarnungen"
     }
   ],
   "O7HhyP": [
@@ -4232,7 +4250,7 @@
   "PDMP/Z": [
     {
       "type": 0,
-      "value": "Collapsed"
+      "value": "Reduziert"
     }
   ],
   "PNk3n4": [
@@ -5323,6 +5341,12 @@
     {
       "type": 0,
       "value": "Fehlertyp"
+    }
+  ],
+  "Vi5TIV": [
+    {
+      "type": 0,
+      "value": "Keine Warnungen gefunden."
     }
   ],
   "VlvlX1": [
@@ -7034,7 +7058,13 @@
   "hJbr09": [
     {
       "type": 0,
-      "value": "Click to Collapse"
+      "value": "Zum Reduzieren klicken"
+    }
+  ],
+  "hLOIwp": [
+    {
+      "type": 0,
+      "value": "Warnungen"
     }
   ],
   "hMf2TA": [
@@ -8648,7 +8678,7 @@
   "qdUeUk": [
     {
       "type": 0,
-      "value": "Click to Expand"
+      "value": "Zum Erweitern klicken"
     }
   ],
   "qiIs4V": [
@@ -8720,7 +8750,7 @@
   "r4zp7m": [
     {
       "type": 0,
-      "value": "Expanded"
+      "value": "Erweitert"
     }
   ],
   "r7vZ5a": [

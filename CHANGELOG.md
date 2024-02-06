@@ -1,20 +1,51 @@
 # Logic Apps Designer
-## [2.108.0](https://github.com/Azure/LogicAppsUX/compare/v2.107.0...v2.108.0) (2024-01-26)
 
+## [2.110.0](https://github.com/Azure/LogicAppsUX/compare/v2.109.0...v2.110.0) (2024-02-05)
 
 ### Features
 
-* **Designer:** Added Consumption run service ([#4072](https://github.com/Azure/LogicAppsUX/issues/4072)) ([4a4e2ee](https://github.com/Azure/LogicAppsUX/commit/4a4e2ee96a01e90ae749dbd4a73b03deca44a787))
-
+- **vscode:** Add Integration account source and export custom API actions to export advance options ([#4097](https://github.com/Azure/LogicAppsUX/issues/4097)) ([6559428](https://github.com/Azure/LogicAppsUX/commit/655942836f8317af5ba321a9774346ebdf07841a))
 
 ### Bug Fixes
 
-* **designer:** Accessibility Issues in Settings ([#4070](https://github.com/Azure/LogicAppsUX/issues/4070)) ([cad9330](https://github.com/Azure/LogicAppsUX/commit/cad93308535325f83dec8829247f3be8d39938b0))
-* **designer:** Add focus border to search cards for keyboard nav ([#4060](https://github.com/Azure/LogicAppsUX/issues/4060)) ([7931315](https://github.com/Azure/LogicAppsUX/commit/7931315746537c8523a98419b41d9b148c84ff3b))
-* **designer:** Fix tab order for cards ([#4059](https://github.com/Azure/LogicAppsUX/issues/4059)) ([8ed5787](https://github.com/Azure/LogicAppsUX/commit/8ed5787805876c20d846e907271daba9f468687e))
-* **Designer:** Fixed APIM required parameter issue in Standard ([#4065](https://github.com/Azure/LogicAppsUX/issues/4065)) ([b69cdfc](https://github.com/Azure/LogicAppsUX/commit/b69cdfcd95ede1606aa1fe653bd8b51738a584a2))
-* **Designer:** Multi-select showing as single-select ([#4071](https://github.com/Azure/LogicAppsUX/issues/4071)) ([678ebbf](https://github.com/Azure/LogicAppsUX/commit/678ebbfb47629bd75e50986d80c4853fd8d2ad8c))
-* **Designer:** String Expression Uncasting to Literal On Initialization ([#4073](https://github.com/Azure/LogicAppsUX/issues/4073)) ([9b9f623](https://github.com/Azure/LogicAppsUX/commit/9b9f62338e96c51b1c7ef24e5e5f34d4387ca106))
+- **comsumption:** Setting Default Recurrence Interval based on Sku ([#4066](https://github.com/Azure/LogicAppsUX/issues/4066)) ([160d636](https://github.com/Azure/LogicAppsUX/commit/160d636c4b4e53935963363cfe55f9a5e8a23d02))
+- **designer-ui:** Ensure `isAdvanced: false` tokens are shown if far down in a list ([#4064](https://github.com/Azure/LogicAppsUX/issues/4064)) ([89ddb0b](https://github.com/Azure/LogicAppsUX/commit/89ddb0b3721c6f62ba6f4487aa742667027b3035))
+- **Designer:** added aria-labelledby for searchable dropdown ([#4090](https://github.com/Azure/LogicAppsUX/issues/4090)) ([213b5f0](https://github.com/Azure/LogicAppsUX/commit/213b5f0e0e3cbe326e608f8f52767eff7e45ff04))
+- **Designer:** Added catch for designer options race condition ([#4106](https://github.com/Azure/LogicAppsUX/issues/4106)) ([3373c32](https://github.com/Azure/LogicAppsUX/commit/3373c32490f5b6d508f90717e8ba2a75e44f8b98))
+- **Designer:** Added connection name check to avoid known connection name strings ([#4104](https://github.com/Azure/LogicAppsUX/issues/4104)) ([3fc73e5](https://github.com/Azure/LogicAppsUX/commit/3fc73e57344b41b0eafd8cef8fc3cfe45e3aacb0))
+- **Designer:** Added host option to force enable split-on ([#4098](https://github.com/Azure/LogicAppsUX/issues/4098)) ([54c133b](https://github.com/Azure/LogicAppsUX/commit/54c133bc02fbfbd9fa50fd832de86e04c106ab6e))
+- **Designer:** Changed test connection request to not run through batch api ([#4103](https://github.com/Azure/LogicAppsUX/issues/4103)) ([d342027](https://github.com/Azure/LogicAppsUX/commit/d342027e5462e8b1a034ed1adff35c6bf359b6d6))
+- **designer:** Fix issue where when token in htmleditor, link plugin not working ([#4099](https://github.com/Azure/LogicAppsUX/issues/4099)) ([6773fae](https://github.com/Azure/LogicAppsUX/commit/6773fae16065c26a200ebfa6cb39f05c5f7cf827))
+- **designer:** Fix stateless workflow check in `getSplitOn` ([#4121](https://github.com/Azure/LogicAppsUX/issues/4121)) ([b0d825d](https://github.com/Azure/LogicAppsUX/commit/b0d825df24f84bf5a79a4c25b65161f479b816d7))
+- **Designer:** Initializing invoker settings causes workflow to be dirty ([#4079](https://github.com/Azure/LogicAppsUX/issues/4079)) ([55109df](https://github.com/Azure/LogicAppsUX/commit/55109df6b36bfa2980e418d41351b2f2290c2ef7))
+- **Designer:** Skip non-dependent parameters in updateParameterAndDependencies ([#4112](https://github.com/Azure/LogicAppsUX/issues/4112)) ([c1cb6d3](https://github.com/Azure/LogicAppsUX/commit/c1cb6d38364abcea674af3f55e71abfb07be3f8f))
+- **vscode:** Update json file creation to overwrite values in workflow-designtime folder ([#4096](https://github.com/Azure/LogicAppsUX/issues/4096)) ([659a521](https://github.com/Azure/LogicAppsUX/commit/659a5215de07e016e60fb02e87a222747408b8f0))
+
+## [2.109.0](https://github.com/Azure/LogicAppsUX/compare/v2.108.0...v2.109.0) (2024-02-01)
+
+### Features
+
+- **designer:** Adding support for warnings and custom messages to ErrorsPanel ([#4053](https://github.com/Azure/LogicAppsUX/issues/4053)) ([6b07460](https://github.com/Azure/LogicAppsUX/commit/6b0746062fea3e1a4189c032b90ad68954d33c7a))
+
+### Bug Fixes
+
+- **Designer:** Accessibility fix announcing to screen reader search results ([#4082](https://github.com/Azure/LogicAppsUX/issues/4082)) ([06f46fb](https://github.com/Azure/LogicAppsUX/commit/06f46fb92c5249f737b26c10a03d27ac7da137a4))
+- **Designer:** Split on is now disabled for stateless workflows ([#4081](https://github.com/Azure/LogicAppsUX/issues/4081)) ([6971bca](https://github.com/Azure/LogicAppsUX/commit/6971bca1de14e19de7033a9433c1eff439deb4eb))
+
+## [2.108.0](https://github.com/Azure/LogicAppsUX/compare/v2.107.0...v2.108.0) (2024-01-26)
+
+### Features
+
+- **Designer:** Added Consumption run service ([#4072](https://github.com/Azure/LogicAppsUX/issues/4072)) ([4a4e2ee](https://github.com/Azure/LogicAppsUX/commit/4a4e2ee96a01e90ae749dbd4a73b03deca44a787))
+
+### Bug Fixes
+
+- **designer:** Accessibility Issues in Settings ([#4070](https://github.com/Azure/LogicAppsUX/issues/4070)) ([cad9330](https://github.com/Azure/LogicAppsUX/commit/cad93308535325f83dec8829247f3be8d39938b0))
+- **designer:** Add focus border to search cards for keyboard nav ([#4060](https://github.com/Azure/LogicAppsUX/issues/4060)) ([7931315](https://github.com/Azure/LogicAppsUX/commit/7931315746537c8523a98419b41d9b148c84ff3b))
+- **designer:** Fix tab order for cards ([#4059](https://github.com/Azure/LogicAppsUX/issues/4059)) ([8ed5787](https://github.com/Azure/LogicAppsUX/commit/8ed5787805876c20d846e907271daba9f468687e))
+- **Designer:** Fixed APIM required parameter issue in Standard ([#4065](https://github.com/Azure/LogicAppsUX/issues/4065)) ([b69cdfc](https://github.com/Azure/LogicAppsUX/commit/b69cdfcd95ede1606aa1fe653bd8b51738a584a2))
+- **Designer:** Multi-select showing as single-select ([#4071](https://github.com/Azure/LogicAppsUX/issues/4071)) ([678ebbf](https://github.com/Azure/LogicAppsUX/commit/678ebbfb47629bd75e50986d80c4853fd8d2ad8c))
+- **Designer:** String Expression Uncasting to Literal On Initialization ([#4073](https://github.com/Azure/LogicAppsUX/issues/4073)) ([9b9f623](https://github.com/Azure/LogicAppsUX/commit/9b9f62338e96c51b1c7ef24e5e5f34d4387ca106))
 
 ## [2.107.0](https://github.com/Azure/LogicAppsUX/compare/v2.106.0...v2.107.0) (2024-01-25)
 

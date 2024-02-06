@@ -1103,6 +1103,12 @@
       "value": "Autorità"
     }
   ],
+  "5WTRY8": [
+    {
+      "type": 0,
+      "value": "Errori"
+    }
+  ],
   "5akc1Q": [
     {
       "type": 0,
@@ -2098,6 +2104,12 @@
       "value": "Immettere la password come testo normale o usare un parametro protetto"
     }
   ],
+  "BQyLiu": [
+    {
+      "type": 0,
+      "value": "risultati trovati"
+    }
+  ],
   "BS3gy8": [
     {
       "type": 0,
@@ -2676,12 +2688,6 @@
     {
       "type": 0,
       "value": "Restituisce una sezione di una stringa definita dall'indice iniziale e dall'indice finale"
-    }
-  ],
-  "FOiBk/": [
-    {
-      "type": 0,
-      "value": "Errori"
     }
   ],
   "FT3jt6": [
@@ -3652,6 +3658,12 @@
       "value": "Informazioni su"
     }
   ],
+  "M0bbZk": [
+    {
+      "type": 0,
+      "value": "Verifica flusso"
+    }
+  ],
   "M0xrm+": [
     {
       "type": 0,
@@ -3841,7 +3853,7 @@
   "NFgfP4": [
     {
       "type": 0,
-      "value": "item"
+      "value": "elemento"
     }
   ],
   "NGJ00e": [
@@ -3974,6 +3986,12 @@
     {
       "type": 0,
       "value": "Caricamento file..."
+    }
+  ],
+  "O6VHe0": [
+    {
+      "type": 0,
+      "value": "Avvisi sull'operazione"
     }
   ],
   "O7HhyP": [
@@ -4225,7 +4243,7 @@
   "PDMP/Z": [
     {
       "type": 0,
-      "value": "Collapsed"
+      "value": "Compressa"
     }
   ],
   "PNk3n4": [
@@ -5311,6 +5329,12 @@
     {
       "type": 0,
       "value": "Tipo di errore"
+    }
+  ],
+  "Vi5TIV": [
+    {
+      "type": 0,
+      "value": "Non sono stati trovati avvisi."
     }
   ],
   "VlvlX1": [
@@ -7010,7 +7034,13 @@
   "hJbr09": [
     {
       "type": 0,
-      "value": "Click to Collapse"
+      "value": "Fare clic per comprimere"
+    }
+  ],
+  "hLOIwp": [
+    {
+      "type": 0,
+      "value": "Avvisi"
     }
   ],
   "hMf2TA": [
@@ -8649,7 +8679,7 @@
   "qdUeUk": [
     {
       "type": 0,
-      "value": "Click to Expand"
+      "value": "Fare clic per espandere"
     }
   ],
   "qiIs4V": [
@@ -8721,7 +8751,7 @@
   "r4zp7m": [
     {
       "type": 0,
-      "value": "Expanded"
+      "value": "Espansa"
     }
   ],
   "r7vZ5a": [

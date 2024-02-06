@@ -1111,6 +1111,12 @@
       "value": "Urząd"
     }
   ],
+  "5WTRY8": [
+    {
+      "type": 0,
+      "value": "Błędy"
+    }
+  ],
   "5akc1Q": [
     {
       "type": 0,
@@ -2117,6 +2123,12 @@
       "value": "Wprowadź hasło w postaci zwykłego tekstu lub użyj parametru secure"
     }
   ],
+  "BQyLiu": [
+    {
+      "type": 0,
+      "value": "znalezione wyniki"
+    }
+  ],
   "BS3gy8": [
     {
       "type": 0,
@@ -2703,12 +2715,6 @@
     {
       "type": 0,
       "value": "Zwraca sekcję ciągu zdefiniowaną przez indeks początkowy i indeks końcowy"
-    }
-  ],
-  "FOiBk/": [
-    {
-      "type": 0,
-      "value": "Błędy"
     }
   ],
   "FT3jt6": [
@@ -3709,6 +3715,12 @@
       "value": "Informacje"
     }
   ],
+  "M0bbZk": [
+    {
+      "type": 0,
+      "value": "Kontroler przepływów"
+    }
+  ],
   "M0xrm+": [
     {
       "type": 0,
@@ -3898,7 +3910,7 @@
   "NFgfP4": [
     {
       "type": 0,
-      "value": "item"
+      "value": "element"
     }
   ],
   "NGJ00e": [
@@ -4031,6 +4043,12 @@
     {
       "type": 0,
       "value": "Trwa ładowanie plików..."
+    }
+  ],
+  "O6VHe0": [
+    {
+      "type": 0,
+      "value": "Ostrzeżenia dotyczące operacji"
     }
   ],
   "O7HhyP": [
@@ -4274,7 +4292,7 @@
   "PDMP/Z": [
     {
       "type": 0,
-      "value": "Collapsed"
+      "value": "Zwinięte"
     }
   ],
   "PNk3n4": [
@@ -5375,6 +5393,12 @@
     {
       "type": 0,
       "value": "Typ błędu"
+    }
+  ],
+  "Vi5TIV": [
+    {
+      "type": 0,
+      "value": "Nie znaleziono ostrzeżeń."
     }
   ],
   "VlvlX1": [
@@ -7078,7 +7102,13 @@
   "hJbr09": [
     {
       "type": 0,
-      "value": "Click to Collapse"
+      "value": "Kliknij, aby zwinąć"
+    }
+  ],
+  "hLOIwp": [
+    {
+      "type": 0,
+      "value": "Ostrzeżenia"
     }
   ],
   "hMf2TA": [
@@ -8770,7 +8800,7 @@
   "qdUeUk": [
     {
       "type": 0,
-      "value": "Click to Expand"
+      "value": "Kliknij, aby rozwinąć"
     }
   ],
   "qiIs4V": [
@@ -8842,7 +8872,7 @@
   "r4zp7m": [
     {
       "type": 0,
-      "value": "Expanded"
+      "value": "Rozwinięte"
     }
   ],
   "r7vZ5a": [

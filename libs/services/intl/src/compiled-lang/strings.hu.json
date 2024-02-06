@@ -1119,6 +1119,12 @@
       "value": "Szolgáltató"
     }
   ],
+  "5WTRY8": [
+    {
+      "type": 0,
+      "value": "Hibák"
+    }
+  ],
   "5akc1Q": [
     {
       "type": 0,
@@ -2095,6 +2101,12 @@
       "value": "Adja meg a jelszót egyszerű szövegként, vagy használjon biztonságos paramétert"
     }
   ],
+  "BQyLiu": [
+    {
+      "type": 0,
+      "value": "találat"
+    }
+  ],
   "BS3gy8": [
     {
       "type": 0,
@@ -2681,12 +2693,6 @@
     {
       "type": 0,
       "value": "Egy sztringnek a kezdőindex és a záróindex által meghatározott szakaszát adja vissza."
-    }
-  ],
-  "FOiBk/": [
-    {
-      "type": 0,
-      "value": "Hibák"
     }
   ],
   "FT3jt6": [
@@ -3643,6 +3649,12 @@
       "value": "Névjegy"
     }
   ],
+  "M0bbZk": [
+    {
+      "type": 0,
+      "value": "Folyamatellenőrző"
+    }
+  ],
   "M0xrm+": [
     {
       "type": 0,
@@ -3832,7 +3844,7 @@
   "NFgfP4": [
     {
       "type": 0,
-      "value": "item"
+      "value": "elem"
     }
   ],
   "NGJ00e": [
@@ -3965,6 +3977,12 @@
     {
       "type": 0,
       "value": "Fájlok betöltése..."
+    }
+  ],
+  "O6VHe0": [
+    {
+      "type": 0,
+      "value": "Műveleti figyelmeztetések"
     }
   ],
   "O7HhyP": [
@@ -4208,7 +4226,7 @@
   "PDMP/Z": [
     {
       "type": 0,
-      "value": "Collapsed"
+      "value": "Összecsukva"
     }
   ],
   "PNk3n4": [
@@ -5271,6 +5289,12 @@
     {
       "type": 0,
       "value": "Hibatípus"
+    }
+  ],
+  "Vi5TIV": [
+    {
+      "type": 0,
+      "value": "Nem találhatók figyelmeztetések."
     }
   ],
   "VlvlX1": [
@@ -6978,7 +7002,13 @@
   "hJbr09": [
     {
       "type": 0,
-      "value": "Click to Collapse"
+      "value": "Kattintson ide az összecsukáshoz"
+    }
+  ],
+  "hLOIwp": [
+    {
+      "type": 0,
+      "value": "Figyelmeztetések"
     }
   ],
   "hMf2TA": [
@@ -8588,7 +8618,7 @@
   "qdUeUk": [
     {
       "type": 0,
-      "value": "Click to Expand"
+      "value": "Kattintson ide a kibontáshoz"
     }
   ],
   "qiIs4V": [
@@ -8660,7 +8690,7 @@
   "r4zp7m": [
     {
       "type": 0,
-      "value": "Expanded"
+      "value": "Kibontva"
     }
   ],
   "r7vZ5a": [
