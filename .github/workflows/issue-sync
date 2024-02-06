@@ -1,0 +1,23 @@
+name: Sync with Azure DevOps
+
+on:
+  schedule:
+    - cron: '*/15 * * * *'
+  issues:
+    types: [opened, closed, deleted, reopened, edited, labeled, unlabeled, assigned, unassigned]
+  issue_comment:
+    types: [created]
+  workflow_dispatch:
+    inputs:
+
+jobs:
+  alert:
+    runs-on: ubuntu-latest
+    name: Sync workflow
+    steps:       
+    - uses: actions/checkout@v3
+    - uses: a11smiles/GitSync@main
+      env:     
+        ado_token: '${{ secrets.ADO_SYNC_TOKEN }}'
+        github_token: '${{ secrets.GH_ACCESS_TOKEN_ISSUE_SYNC }}'
+        config_file: './.github/sync_config.json'
