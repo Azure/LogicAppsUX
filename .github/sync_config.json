@@ -13,6 +13,7 @@
     },
     "bypassRules": false,
     "autoCreate": true,
+    "assignee": "travisharris@microsoft.com",
     "areaPath": "One\\Azure\\LogicApps\\UX",
     "iterationPath": "One\\Custom\\Azure\\LogicApps",
     "mappings": {
