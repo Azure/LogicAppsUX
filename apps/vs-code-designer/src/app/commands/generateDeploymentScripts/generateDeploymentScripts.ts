@@ -291,15 +291,12 @@ async function callManagedConnectionsApi(
     const cloudHost = await getCloudHost(credentials);
     const baseGraphUri = getBaseGraphApi(cloudHost);
 
-    const targetLogicAppName = logicAppName;
-    const connectionReferenceName = connectionName;
-
     // Build the URL for the API call
     const apiUrl = `${baseGraphUri}/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Web/connections/${connectionId}/generateDeploymentArtifacts?api-version=${apiVersion}`;
     // Define the request body
     const requestBody = {
-      TargetLogicAppName: targetLogicAppName,
-      ConnectionReferenceName: connectionReferenceName,
+      TargetLogicAppName: logicAppName,
+      ConnectionReferenceName: connectionName,
     };
 
     // Execute the API call
@@ -380,9 +377,8 @@ async function gatherAndValidateInputs(scriptContext: IAzureScriptWizard, folder
       ext.outputChannel.appendLog(
         localize('AttemptingExecuteAzureWizardSuccess', 'One or more required values are missing. Launching Azure Wizard...')
       );
-      const wizard = createAzureWizard(scriptContext, folder.fsPath);
+      const wizard = createAzureWizard(scriptContext);
       await wizard.prompt();
-      await wizard.execute();
       ext.outputChannel.appendLog(localize('executeAzureWizardSuccess', 'Azure Wizard executed successfully.'));
     }
   } catch (error) {

@@ -2,24 +2,15 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import {
-  workflowLocationKey,
-  workflowManagementBaseURIKey,
-  workflowResourceGroupNameKey,
-  workflowSubscriptionIdKey,
-  workflowTenantIdKey,
-} from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
-import { addOrUpdateLocalAppSettings } from '../../utils/appSettings/localSettings';
 import { isMultiRootWorkspace, selectWorkspaceFolder } from '../../utils/workspace';
 import { ResourceGroupListStep } from '@microsoft/vscode-azext-azureutils';
-import { AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep } from '@microsoft/vscode-azext-utils';
+import { AzureWizard, AzureWizardPromptStep } from '@microsoft/vscode-azext-utils';
 import type { IActionContext, IWizardOptions } from '@microsoft/vscode-azext-utils';
 import { OpenBehavior, type IProjectWizardContext } from '@microsoft/vscode-extension';
 import * as fs from 'fs-extra';
 import * as path from 'path';
-import type { Progress } from 'vscode';
 import * as vscode from 'vscode';
 
 export interface IAzureScriptWizard extends IProjectWizardContext, IActionContext {
@@ -45,7 +36,7 @@ export interface IAzureScriptWizard extends IProjectWizardContext, IActionContex
  * @returns An instance of the Azure Wizard.
  */
 // Your existing function for creating the Azure Wizard
-export function createAzureWizard(wizardContext: IAzureScriptWizard, projectPath: string): AzureWizard<IAzureScriptWizard> {
+export function createAzureWizard(wizardContext: IAzureScriptWizard): AzureWizard<IAzureScriptWizard> {
   const promptSteps = [
     new ConfigureInitialLogicAppStep(),
     new setLogicappName(),
@@ -53,7 +44,6 @@ export function createAzureWizard(wizardContext: IAzureScriptWizard, projectPath
     new setAppPlantName(),
     new SourceControlPathListStep(),
   ];
-  const executeSteps: AzureWizardExecuteStep<IAzureScriptWizard>[] = [new SaveAzureContext(projectPath)];
 
   if (!isMultiRootWorkspace) {
     wizardContext.isValidWorkspace = false;
@@ -64,7 +54,6 @@ export function createAzureWizard(wizardContext: IAzureScriptWizard, projectPath
   // Create the Azure Wizard with the modified steps
   return new AzureWizard(wizardContext, {
     promptSteps,
-    executeSteps,
   });
 }
 
@@ -208,40 +197,5 @@ export class setAppPlantName extends AzureWizardPromptStep<IAzureScriptWizard> {
 
   public shouldPrompt(context: IAzureScriptWizard): boolean {
     return !context.appServicePlan;
-  }
-}
-
-// Define the SaveAzureContext class
-class SaveAzureContext extends AzureWizardExecuteStep<IAzureScriptWizard> {
-  public priority = 100;
-  private _projectPath: string;
-
-  constructor(projectPath: string) {
-    super();
-    this._projectPath = projectPath;
-  }
-
-  public async execute(
-    context: IAzureScriptWizard,
-    _progress: Progress<{ message?: string | undefined; increment?: number | undefined }>
-  ): Promise<void> {
-    const valuesToUpdateInSettings: Record<string, string> = {};
-
-    if (context.enabled === false) {
-      valuesToUpdateInSettings[workflowSubscriptionIdKey] = '';
-    } else {
-      const { resourceGroup, subscriptionId, tenantId, environment } = context;
-      valuesToUpdateInSettings[workflowTenantIdKey] = tenantId;
-      valuesToUpdateInSettings[workflowSubscriptionIdKey] = subscriptionId;
-      valuesToUpdateInSettings[workflowResourceGroupNameKey] = resourceGroup?.name || '';
-      valuesToUpdateInSettings[workflowLocationKey] = resourceGroup?.location || '';
-      valuesToUpdateInSettings[workflowManagementBaseURIKey] = environment.resourceManagerEndpointUrl;
-    }
-
-    await addOrUpdateLocalAppSettings(context, this._projectPath, valuesToUpdateInSettings);
-  }
-
-  public shouldExecute(context: IAzureScriptWizard): boolean {
-    return context.enabled === false || !!context.subscriptionId || !!context.resourceGroup;
   }
 }
