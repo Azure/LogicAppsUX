@@ -59,15 +59,13 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element => {
 
   const collapsed = useIsPanelCollapsed();
   const currentPanelMode = useCurrentPanelMode();
+
   const [isResizing, setIsResizing] = useState(false);
-  const [width, setWidth] = useState<any>(PanelSize.Auto);
-  const [mouseX, setMouseX] = useState(0);
-  const startResizing = useCallback((test: any) => {
-    setMouseX(test.clientX);
-    return setIsResizing(true);
-  }, []);
+  const [width, setWidth] = useState<PanelSize | string>(PanelSize.Auto);
+  const startResizing = useCallback(() => setIsResizing(true), []);
   const stopResizing = useCallback(() => setIsResizing(false), []);
   const animationFrame = useRef<number>(0);
+  const isResizable = currentPanelMode === 'Assertions';
 
   useEffect(() => {
     setWidth(collapsed ? PanelSize.Auto : PanelSize.Medium);
@@ -105,13 +103,12 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element => {
     ({ clientX }: MouseEvent) => {
       animationFrame.current = requestAnimationFrame(() => {
         if (isResizing) {
-          const newSize = mouseX - clientX;
-          console.log('charlie', newSize, mouseX);
-          setWidth(newSize.toString() + 'px');
+          const newWidth = window.innerWidth - clientX < 300 ? 300 : window.innerWidth - clientX;
+          setWidth(newWidth.toString() + 'px');
         }
       });
     },
-    [isResizing, mouseX]
+    [isResizing]
   );
 
   useEffect(() => {
@@ -132,7 +129,9 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element => {
       className={`msla-panel-root-${currentPanelMode}`}
       isLightDismiss
       isBlocking={!isLoadingPanel && !nonBlockingPanels.includes(currentPanelMode ?? '')}
-      type={commonPanelProps.panelLocation === PanelLocation.Right ? PanelType.custom : PanelType.customNear}
+      type={
+        commonPanelProps.panelLocation === PanelLocation.Right ? (isResizable ? PanelType.custom : PanelType.medium) : PanelType.customNear
+      }
       isOpen={!collapsed}
       onDismiss={dismissPanel}
       hasCloseButton={false}
@@ -148,7 +147,9 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element => {
         },
       })}
     >
-      <div className={mergeClasses(styles.resizer, isResizing && styles.resizerActive)} onMouseDown={startResizing} />
+      {isResizable ? (
+        <div className={mergeClasses(styles.resizer, isResizing && styles.resizerActive)} onMouseDown={startResizing} />
+      ) : null}
       {
         isLoadingPanel ? (
           <LoadingComponent />
