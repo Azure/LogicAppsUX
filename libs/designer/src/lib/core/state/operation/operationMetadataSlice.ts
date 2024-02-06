@@ -7,9 +7,10 @@ import { resetNodesLoadStatus, resetWorkflowState } from '../global';
 import { LogEntryLevel, LoggerService } from '@microsoft/designer-client-services-logic-apps';
 import type { ParameterInfo } from '@microsoft/designer-ui';
 import type { FilePickerInfo, InputParameter, OutputParameter, SwaggerParser } from '@microsoft/parsers-logic-apps';
-import type { OpenAPIV2, OperationInfo } from '@microsoft/utils-logic-apps';
+import { getRecordEntry, type OpenAPIV2, type OperationInfo } from '@microsoft/utils-logic-apps';
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
+import type { WritableDraft } from 'immer/dist/internal';
 
 export interface ParameterGroup {
   id: string;
@@ -234,8 +235,10 @@ export const operationMetadataSlice = createSlice({
     },
     addDynamicInputs: (state, action: PayloadAction<AddDynamicInputsPayload>) => {
       const { nodeId, groupId, inputs, newInputs: rawInputs, swagger } = action.payload;
-      if (state.inputParameters[nodeId] && state.inputParameters[nodeId].parameterGroups[groupId]) {
-        const { parameters } = state.inputParameters[nodeId].parameterGroups[groupId];
+      const inputParameters = getRecordEntry(state.inputParameters, nodeId) ?? { parameterGroups: {} };
+      const parameterGroups = getRecordEntry(inputParameters?.parameterGroups, groupId);
+      if (parameterGroups) {
+        const { parameters } = parameterGroups;
         const newParameters = [...parameters];
         for (const input of inputs) {
           const index = newParameters.findIndex((parameter) => parameter.parameterKey === input.parameterKey);
@@ -245,66 +248,60 @@ export const operationMetadataSlice = createSlice({
             newParameters.push(input);
           }
         }
-        state.inputParameters[nodeId].parameterGroups[groupId].parameters = newParameters;
+        parameterGroups.parameters = newParameters;
       }
 
-      const dependencies = getInputDependencies(state.inputParameters[nodeId], rawInputs, swagger);
+      const dependencies = getInputDependencies(inputParameters, rawInputs, swagger);
       if (dependencies) {
-        state.dependencies[nodeId].inputs = { ...state.dependencies[nodeId].inputs, ...dependencies };
+        dependencies.inputs = { ...dependencies.inputs, ...dependencies };
       }
     },
     addDynamicOutputs: (state, action: PayloadAction<AddDynamicOutputsPayload>) => {
       const { nodeId, outputs } = action.payload;
-      if (state.outputParameters[nodeId]) {
-        state.outputParameters[nodeId].outputs = { ...state.outputParameters[nodeId].outputs, ...outputs };
-      }
+      const outputParameters = getRecordEntry(state.outputParameters, nodeId);
+      if (outputParameters) outputParameters.outputs = { ...outputParameters.outputs, ...outputs };
     },
     clearDynamicInputs: (state, action: PayloadAction<string>) => {
       const nodeId = action.payload;
-      if (state.inputParameters[nodeId]) {
-        for (const groupId of Object.keys(state.inputParameters[nodeId].parameterGroups)) {
-          state.inputParameters[nodeId].parameterGroups[groupId].parameters = state.inputParameters[nodeId].parameterGroups[
-            groupId
-          ].parameters.filter((parameter) => !parameter.info.isDynamic);
+      const nodeInputParameters = getRecordEntry(state.inputParameters, nodeId);
+      if (nodeInputParameters) {
+        for (const groupId of Object.keys(nodeInputParameters.parameterGroups)) {
+          const filteredParams = nodeInputParameters.parameterGroups[groupId].parameters.filter((parameter) => !parameter.info.isDynamic);
+          nodeInputParameters.parameterGroups[groupId].parameters = filteredParams;
         }
       }
 
-      const inputDependencies = state.dependencies[nodeId]?.inputs;
+      const inputDependencies = getRecordEntry(state.dependencies, nodeId)?.inputs as WritableDraft<Record<string, DependencyInfo>>;
       for (const inputKey of Object.keys(inputDependencies ?? {})) {
         if (inputDependencies[inputKey].parameter?.isDynamic && inputDependencies[inputKey].dependencyType !== 'ApiSchema') {
-          delete state.dependencies[nodeId].inputs[inputKey];
+          delete getRecordEntry(state.dependencies, nodeId)?.inputs[inputKey];
         }
       }
 
-      if (state.errors[nodeId]?.[ErrorLevel.DynamicInputs]) {
-        delete state.errors[nodeId][ErrorLevel.DynamicInputs];
+      if (getRecordEntry(state.errors, nodeId)?.[ErrorLevel.DynamicInputs]) {
+        delete getRecordEntry(state.errors, nodeId)?.[ErrorLevel.DynamicInputs];
       }
     },
     clearDynamicOutputs: (state, action: PayloadAction<string>) => {
       const nodeId = action.payload;
-      if (state.outputParameters[nodeId]) {
-        state.outputParameters[nodeId].outputs = Object.keys(state.outputParameters[nodeId].outputs).reduce(
-          (result: Record<string, OutputInfo>, outputKey: string) => {
-            if (!state.outputParameters[nodeId].outputs[outputKey].isDynamic) {
-              return { [outputKey]: state.outputParameters[nodeId].outputs[outputKey] };
-            }
+      const outputParameters = getRecordEntry(state.outputParameters, nodeId);
+      if (outputParameters) {
+        outputParameters.outputs = Object.keys(outputParameters.outputs).reduce((result: Record<string, OutputInfo>, outputKey: string) => {
+          if (!outputParameters.outputs[outputKey].isDynamic) {
+            return { [outputKey]: outputParameters.outputs[outputKey] };
+          }
 
-            return result;
-          },
-          {}
-        ) as Record<string, OutputInfo>;
+          return result;
+        }, {}) as Record<string, OutputInfo>;
       }
 
-      if (state.errors[nodeId]?.[ErrorLevel.DynamicOutputs]) {
-        delete state.errors[nodeId][ErrorLevel.DynamicOutputs];
-      }
+      const nodeErrors = getRecordEntry(state.errors, nodeId);
+      delete nodeErrors?.[ErrorLevel.DynamicOutputs];
     },
     updateNodeSettings: (state, action: PayloadAction<AddSettingsPayload>) => {
       const { id, settings } = action.payload;
-      if (!state.settings[id]) {
-        state.settings[id] = {};
-      }
-
+      const nodeSettings = getRecordEntry(state.settings, id);
+      if (!nodeSettings) state.settings[id] = {};
       state.settings[id] = { ...state.settings[id], ...settings };
 
       LoggerService().log({
@@ -316,11 +313,9 @@ export const operationMetadataSlice = createSlice({
     },
     updateStaticResults: (state, action: PayloadAction<AddStaticResultsPayload>) => {
       const { id, staticResults } = action.payload;
-      if (!state.staticResults[id]) {
-        state.staticResults[id] = { name: '', staticResultOptions: StaticResultOption.DISABLED };
-      }
-
-      state.staticResults[id] = { ...state.staticResults[id], ...staticResults };
+      const nodeStaticResults = getRecordEntry(state.staticResults, id);
+      if (!nodeStaticResults) state.staticResults[id] = { name: '', staticResultOptions: StaticResultOption.DISABLED };
+      state.staticResults[id] = { ...nodeStaticResults, ...staticResults };
 
       LoggerService().log({
         level: LogEntryLevel.Verbose,
@@ -333,24 +328,24 @@ export const operationMetadataSlice = createSlice({
       const { nodeId, dependencies, parameters } = action.payload;
       for (const payload of parameters) {
         const { groupId, parameterId, propertiesToUpdate } = payload;
-        const nodeInputs = state.inputParameters[nodeId];
+        const nodeInputs = getRecordEntry(state.inputParameters, nodeId);
 
         if (nodeInputs) {
           const parameterGroup = nodeInputs.parameterGroups[groupId];
           const index = parameterGroup.parameters.findIndex((parameter) => parameter.id === parameterId);
           if (index > -1) {
             parameterGroup.parameters[index] = { ...parameterGroup.parameters[index], ...propertiesToUpdate };
-            state.inputParameters[nodeId].parameterGroups[groupId] = parameterGroup;
+            nodeInputs.parameterGroups[groupId] = parameterGroup;
           }
         }
       }
 
-      if (dependencies?.inputs) {
-        state.dependencies[nodeId].inputs = { ...state.dependencies[nodeId].inputs, ...dependencies.inputs };
+      const nodeDependencies = getRecordEntry(state.dependencies, nodeId);
+      if (nodeDependencies && dependencies?.inputs) {
+        nodeDependencies.inputs = { ...nodeDependencies.inputs, ...dependencies.inputs };
       }
-
-      if (dependencies?.outputs) {
-        state.dependencies[nodeId].outputs = { ...state.dependencies[nodeId].outputs, ...dependencies.outputs };
+      if (nodeDependencies && dependencies?.outputs) {
+        nodeDependencies.outputs = { ...nodeDependencies.outputs, ...dependencies.outputs };
       }
 
       LoggerService().log({
@@ -365,14 +360,15 @@ export const operationMetadataSlice = createSlice({
       action: PayloadAction<{ nodeId: string; groupId: string; parameterId: string; value?: boolean }>
     ) => {
       const { nodeId, groupId, parameterId, value } = action.payload;
-      const index = state.inputParameters[nodeId].parameterGroups[groupId].parameters.findIndex(
-        (parameter) => parameter.id === parameterId
-      );
+      const inputParameters = getRecordEntry(state.inputParameters, nodeId);
+      const parameterGroup = getRecordEntry(inputParameters?.parameterGroups, groupId);
+      if (!inputParameters || !parameterGroup) return;
+      const index = parameterGroup.parameters.findIndex((parameter) => parameter.id === parameterId);
       if (index > -1) {
-        state.inputParameters[nodeId].parameterGroups[groupId].parameters[index].conditionalVisibility = value;
+        parameterGroup.parameters[index].conditionalVisibility = value;
         if (value === false) {
-          state.inputParameters[nodeId].parameterGroups[groupId].parameters[index].value = [];
-          state.inputParameters[nodeId].parameterGroups[groupId].parameters[index].preservedValue = undefined;
+          parameterGroup.parameters[index].value = [];
+          parameterGroup.parameters[index].preservedValue = undefined;
         }
       }
 
@@ -388,11 +384,12 @@ export const operationMetadataSlice = createSlice({
       action: PayloadAction<{ nodeId: string; groupId: string; parameterId: string; validationErrors: string[] | undefined }>
     ) => {
       const { nodeId, groupId, parameterId, validationErrors } = action.payload;
-      const index = state.inputParameters[nodeId].parameterGroups[groupId].parameters.findIndex(
-        (parameter) => parameter.id === parameterId
-      );
+      const inputParameters = getRecordEntry(state.inputParameters, nodeId);
+      const parameterGroup = getRecordEntry(inputParameters?.parameterGroups, groupId);
+      if (!inputParameters || !parameterGroup) return;
+      const index = parameterGroup.parameters.findIndex((parameter) => parameter.id === parameterId);
       if (index > -1) {
-        state.inputParameters[nodeId].parameterGroups[groupId].parameters[index].validationErrors = validationErrors;
+        parameterGroup.parameters[index].validationErrors = validationErrors;
       }
     },
     removeParameterValidationError: (
@@ -400,13 +397,14 @@ export const operationMetadataSlice = createSlice({
       action: PayloadAction<{ nodeId: string; groupId: string; parameterId: string; validationError: string }>
     ) => {
       const { nodeId, groupId, parameterId, validationError } = action.payload;
-      const index = state.inputParameters[nodeId].parameterGroups[groupId].parameters.findIndex(
-        (parameter) => parameter.id === parameterId
-      );
+      const inputParameters = getRecordEntry(state.inputParameters, nodeId);
+      const parameterGroup = getRecordEntry(inputParameters?.parameterGroups, groupId);
+      if (!inputParameters || !parameterGroup) return;
+      const index = parameterGroup.parameters.findIndex((parameter) => parameter.id === parameterId);
       if (index > -1) {
-        state.inputParameters[nodeId].parameterGroups[groupId].parameters[index].validationErrors = state.inputParameters[
-          nodeId
-        ].parameterGroups[groupId].parameters[index].validationErrors?.filter((error) => error !== validationError);
+        parameterGroup.parameters[index].validationErrors = parameterGroup.parameters[index].validationErrors?.filter(
+          (error) => error !== validationError
+        );
       }
     },
     updateOutputs: (state, action: PayloadAction<{ id: string; nodeOutputs: NodeOutputs }>) => {
@@ -415,22 +413,18 @@ export const operationMetadataSlice = createSlice({
     },
     updateActionMetadata: (state, action: PayloadAction<{ id: string; actionMetadata: Record<string, any> }>) => {
       const { id, actionMetadata } = action.payload;
-      state.actionMetadata[id] = {
-        ...state.actionMetadata[id],
-        ...actionMetadata,
-      };
+      const nodeMetadata = getRecordEntry(state.actionMetadata, id);
+      state.actionMetadata[id] = { ...nodeMetadata, ...actionMetadata };
     },
     updateRepetitionContext: (state, action: PayloadAction<{ id: string; repetition: RepetitionContext }>) => {
       const { id, repetition } = action.payload;
-      state.repetitionInfos[id] = {
-        ...state.repetitionInfos[id],
-        ...repetition,
-      };
+      const nodeRepetition = getRecordEntry(state.repetitionInfos, id);
+      state.repetitionInfos[id] = { ...nodeRepetition, ...repetition };
     },
     updateErrorDetails: (state, action: PayloadAction<{ id: string; errorInfo?: ErrorInfo; clear?: boolean }>) => {
       const { id, errorInfo, clear } = action.payload;
       if (errorInfo) {
-        state.errors[id] = { ...state.errors[id], [errorInfo.level]: errorInfo };
+        state.errors[id] = { ...(getRecordEntry(state.errors, id) as any), [errorInfo.level]: errorInfo };
       } else if (clear) {
         delete state.errors[id];
       }

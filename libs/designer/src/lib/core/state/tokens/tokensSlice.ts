@@ -1,6 +1,7 @@
 import { resetWorkflowState } from '../global';
 import { clearDynamicOutputs } from '../operation/operationMetadataSlice';
 import type { OutputToken as Token } from '@microsoft/designer-ui';
+import { getRecordEntry } from '@microsoft/utils-logic-apps';
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 
@@ -83,30 +84,32 @@ export const tokensSlice = createSlice({
     },
     addDynamicTokens: (state, action: PayloadAction<AddDynamicTokensPayload>) => {
       const { nodeId, tokens } = action.payload;
-      if (state.outputTokens[nodeId]) {
-        const newTokens = [...state.outputTokens[nodeId].tokens];
-        for (const token of tokens) {
-          const index = newTokens.findIndex((t) => t.key === token.key);
-          if (index > -1) {
-            newTokens.splice(index, 1, token);
-          } else {
-            newTokens.push(token);
-          }
+      const outputTokens = getRecordEntry(state.outputTokens, nodeId);
+      if (!outputTokens) return;
+      const newTokens = [...outputTokens.tokens];
+      for (const token of tokens) {
+        const index = newTokens.findIndex((t) => t.key === token.key);
+        if (index > -1) {
+          newTokens.splice(index, 1, token);
+        } else {
+          newTokens.push(token);
         }
-        state.outputTokens[nodeId].tokens = newTokens;
       }
+      outputTokens.tokens = newTokens;
     },
     updateUpstreamNodes: (state, action: PayloadAction<UpdateUpstreamNodesPayload>) => {
       for (const nodeId of Object.keys(action.payload)) {
-        state.outputTokens[nodeId].upstreamNodeIds = action.payload[nodeId];
+        const outputTokens = getRecordEntry(state.outputTokens, nodeId);
+        if (outputTokens) outputTokens.upstreamNodeIds = getRecordEntry(action.payload, nodeId) ?? [];
       }
     },
   },
   extraReducers: (builder) => {
     builder.addCase(clearDynamicOutputs, (state, action: PayloadAction<string>) => {
       const nodeId = action.payload;
-      if (state.outputTokens[nodeId]) {
-        state.outputTokens[nodeId].tokens = state.outputTokens[nodeId].tokens.filter((token) => !token.outputInfo.isDynamic);
+      const outputTokens = getRecordEntry(state.outputTokens, nodeId);
+      if (outputTokens) {
+        outputTokens.tokens = outputTokens.tokens.filter((token) => !token.outputInfo.isDynamic);
       }
     });
     builder.addCase(resetWorkflowState, () => initialState);

@@ -30,7 +30,7 @@ const getSuccessorNodes = (state: RootState, nodeId: string) => {
 };
 
 const ActionMenuItem = ({ id, readOnly }: { id: string; readOnly: boolean }) => {
-  const { iconUri } = useOperationVisuals(id);
+  const iconUri = useOperationVisuals(id)?.iconUri;
   const actionName = useNodeDisplayName(id);
   return (
     <MenuItemCheckbox

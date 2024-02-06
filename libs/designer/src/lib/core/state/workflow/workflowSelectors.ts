@@ -4,7 +4,7 @@ import type { RootState } from '../../store';
 import { createWorkflowEdge, getAllParentsForNode } from '../../utils/graph';
 import type { NodesMetadata, WorkflowState } from './workflowInterfaces';
 import type { LogicAppsV2 } from '@microsoft/utils-logic-apps';
-import { labelCase, WORKFLOW_NODE_TYPES, WORKFLOW_EDGE_TYPES } from '@microsoft/utils-logic-apps';
+import { labelCase, WORKFLOW_NODE_TYPES, WORKFLOW_EDGE_TYPES, getRecordEntry } from '@microsoft/utils-logic-apps';
 import { createSelector } from '@reduxjs/toolkit';
 import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
@@ -12,38 +12,27 @@ import Queue from 'yocto-queue';
 
 export const getWorkflowState = (state: RootState): WorkflowState => state.workflow;
 
-export const useNodeDisplayName = (id?: string) => {
-  return useSelector(
+export const useNodeDisplayName = (id?: string) =>
+  useSelector(
     createSelector(getWorkflowState, (state: WorkflowState) => {
-      return id && state.idReplacements[id] ? labelCase(state.idReplacements[id]) : labelCase(id ?? '');
+      const newId = getRecordEntry(state.idReplacements, id);
+      return labelCase(newId ?? id ?? '');
     })
   );
-};
 
-export const useNodeReplacedId = (id?: string) => {
-  return useSelector(
-    createSelector(getWorkflowState, (state: WorkflowState) => {
-      return id && state.idReplacements[id] ? state.idReplacements[id] : id;
-    })
-  );
-};
+export const useNodeReplacedId = (id?: string) =>
+  useSelector(createSelector(getWorkflowState, (state: WorkflowState) => getRecordEntry(state.idReplacements, id)));
 
-export const useReplacedIds = () => {
-  return useSelector(
-    createSelector(getWorkflowState, (state: WorkflowState) => {
-      return state.idReplacements;
-    })
-  );
-};
+export const useReplacedIds = () => useSelector(createSelector(getWorkflowState, (state: WorkflowState) => state.idReplacements));
 
 export const useNodeMetadata = (id?: string) =>
-  useSelector(createSelector(getWorkflowState, (state: WorkflowState) => (id ? state.nodesMetadata?.[id] : undefined)));
+  useSelector(createSelector(getWorkflowState, (state: WorkflowState) => getRecordEntry(state.nodesMetadata, id)));
 
 export const useActionMetadata = (id?: string) =>
-  useSelector(createSelector(getWorkflowState, (state: WorkflowState) => (id ? state.operations?.[id] : undefined)));
+  useSelector(createSelector(getWorkflowState, (state: WorkflowState) => getRecordEntry(state.operations, id)));
 
 export const useNodeDescription = (id: string) =>
-  useSelector(createSelector(getWorkflowState, (state: WorkflowState) => (id ? state.operations?.[id]?.description : undefined)));
+  useSelector(createSelector(getWorkflowState, (state: WorkflowState) => getRecordEntry(state.operations, id)?.description));
 
 export const useShouldNodeFocus = (id: string) =>
   useSelector(createSelector(getWorkflowState, (state: WorkflowState) => state.focusedCanvasNodeId === id));
@@ -123,7 +112,7 @@ export const useNodeEdgeTargets = (nodeId?: string): string[] => {
   return useSelector(
     createSelector(getWorkflowState, (state: WorkflowState) => {
       if (!nodeId || !state.graph) return [];
-      return state.edgeIdsBySource?.[nodeId] ?? [];
+      return getRecordEntry(state.edgeIdsBySource, nodeId) ?? [];
     })
   );
 };
@@ -178,13 +167,8 @@ export const useAllGraphParents = (graphId: string): string[] => {
   );
 };
 
-export const useNodeGraphId = (nodeId: string): string => {
-  return useSelector(
-    createSelector(getWorkflowState, (state: WorkflowState) => {
-      return state.nodesMetadata[nodeId]?.graphId;
-    })
-  );
-};
+export const useNodeGraphId = (nodeId: string): string =>
+  useSelector(createSelector(getWorkflowState, (state: WorkflowState) => getRecordEntry(state.nodesMetadata, nodeId)?.graphId ?? ''));
 
 // BFS search for nodeId
 const getChildrenOfNodeId = (childrenNodes: string[], nodeId: string, rootNode?: WorkflowNode) => {
@@ -301,7 +285,7 @@ export const useParentRunId = (id: string | undefined): string | undefined => {
       if (!id) return undefined;
       const parentId = state.nodesMetadata[id]?.parentNodeId;
       if (parentId?.includes('elseActions') || parentId?.includes('actions')) {
-        return state.nodesMetadata[parentId]?.parentNodeId;
+        return getRecordEntry(state.nodesMetadata, parentId)?.parentNodeId;
       }
       return parentId;
     })

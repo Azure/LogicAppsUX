@@ -6,7 +6,14 @@ import { createWorkflowNode, createWorkflowEdge } from '../utils/graph';
 import type { WorkflowEdge, WorkflowNode } from './models/workflowNode';
 import { reassignEdgeSources, reassignEdgeTargets, addNewEdge, applyIsRootNode, removeEdge } from './restructuringHelpers';
 import type { DiscoveryOperation, DiscoveryResultTypes, SubgraphType } from '@microsoft/utils-logic-apps';
-import { removeIdTag, SUBGRAPH_TYPES, WORKFLOW_EDGE_TYPES, isScopeOperation, WORKFLOW_NODE_TYPES } from '@microsoft/utils-logic-apps';
+import {
+  removeIdTag,
+  SUBGRAPH_TYPES,
+  WORKFLOW_EDGE_TYPES,
+  isScopeOperation,
+  WORKFLOW_NODE_TYPES,
+  getRecordEntry,
+} from '@microsoft/utils-logic-apps';
 
 export interface AddNodePayload {
   operation: DiscoveryOperation<DiscoveryResultTypes>;
@@ -45,7 +52,7 @@ export const addNodeToWorkflow = (
   state.newlyAddedOperations[newNodeId] = newNodeId;
   state.isDirty = true;
 
-  const isAfterTrigger = nodesMetadata[parentId ?? '']?.isRoot && graphId === 'root';
+  const isAfterTrigger = getRecordEntry(nodesMetadata, parentId ?? '')?.isRoot && graphId === 'root';
   const shouldAddRunAfters = !isRoot && !isAfterTrigger;
   nodesMetadata[newNodeId] = { graphId, parentNodeId, isRoot };
   state.operations[newNodeId] = { ...state.operations[newNodeId], type: operation.type };
@@ -57,11 +64,13 @@ export const addNodeToWorkflow = (
   }
   // 1 parent, 1 child
   else if (parentId && childId) {
-    const childRunAfter = (state.operations?.[childId] as any)?.runAfter;
+    const childRunAfter = (getRecordEntry(state.operations, childId) as any)?.runAfter;
     addNewEdge(state, parentId, newNodeId, workflowGraph, shouldAddRunAfters);
     addNewEdge(state, newNodeId, childId, workflowGraph, true);
     removeEdge(state, parentId, childId, workflowGraph);
-    if (childRunAfter && shouldAddRunAfters) (state.operations?.[newNodeId] as any).runAfter[parentId] = childRunAfter[parentId];
+    if (childRunAfter && shouldAddRunAfters) {
+      (getRecordEntry(state.operations, newNodeId) as any).runAfter[parentId] = getRecordEntry(childRunAfter, parentId);
+    }
   }
   // X parents, 1 child
   else if (childId) {
