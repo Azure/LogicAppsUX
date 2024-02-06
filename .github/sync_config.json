@@ -11,7 +11,7 @@
             "deleted": "Removed",
             "active": "Active"
         },
-        "bypassRules": true,
+        "bypassRules": false,
         "autoCreate": true,
         "areaPath": "One\\Azure\\LogicApps\\UX",
         "iterationPath": "One\\Custom\\Azure\\LogicApps",
