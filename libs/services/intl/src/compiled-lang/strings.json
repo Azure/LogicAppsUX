@@ -2919,6 +2919,12 @@
       "value": "Cancel the selection"
     }
   ],
+  "GxiwDg": [
+    {
+      "type": 0,
+      "value": "The expression is invalid. Please use single quote."
+    }
+  ],
   "GyUe4C": [
     {
       "type": 0,

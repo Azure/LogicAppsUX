@@ -70,6 +70,10 @@ export function TokenPickerFooter({
     defaultMessage: 'The expression is invalid.',
     description: 'invalid expression alert',
   });
+  const invalidExpressionQuotations = intl.formatMessage({
+    defaultMessage: 'The expression is invalid. Please use single quote.',
+    description: 'invalid expression alert',
+  });
 
   const insertToken = (tokenProps: TokenNodeProps) => {
     const { brandColor, icon, title, description, value, data } = tokenProps;
@@ -96,7 +100,11 @@ export function TokenPickerFooter({
     try {
       currExpression = ExpressionParser.parseExpression(expression.value);
     } catch (ex) {
-      setExpressionEditorError(invalidExpression);
+      if (expression.value.includes('concat') && expression.value.includes('"')) {
+        setExpressionEditorError(invalidExpressionQuotations);
+      } else {
+        setExpressionEditorError(invalidExpression);
+      }
       return;
     }
     if (expression.value && window.localStorage.getItem('msla-tokenpicker-expression') !== expression.value) {
