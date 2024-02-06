@@ -1,12 +1,12 @@
 # Logic Apps Designer
-## [2.111.0](https://github.com/Azure/LogicAppsUX/compare/v2.110.0...v2.111.0) (2024-02-06)
 
+## [2.111.0](https://github.com/Azure/LogicAppsUX/compare/v2.110.0...v2.111.0) (2024-02-06)
 
 ### Bug Fixes
 
-* **Designer:** Focus returns to search button after closing side panel ([#4126](https://github.com/Azure/LogicAppsUX/issues/4126)) ([95aaccf](https://github.com/Azure/LogicAppsUX/commit/95aaccfa05060a1a5660f5bf497e7df2e3055b0f))
-* **designer:** OpenAPI tokens from SharePoint trigger use `triggerOutputs` instead of `triggerBody` ([#4122](https://github.com/Azure/LogicAppsUX/issues/4122)) ([1b54d75](https://github.com/Azure/LogicAppsUX/commit/1b54d752344ca2a1a28d52e71a6ca5c4ba4140b7))
-* **vscode:** Parse interpolated connections data as JSON ([#4135](https://github.com/Azure/LogicAppsUX/issues/4135)) ([c855aee](https://github.com/Azure/LogicAppsUX/commit/c855aee8c9a657f01e43e3e34d349dd857f0f7b7))
+- **Designer:** Focus returns to search button after closing side panel ([#4126](https://github.com/Azure/LogicAppsUX/issues/4126)) ([95aaccf](https://github.com/Azure/LogicAppsUX/commit/95aaccfa05060a1a5660f5bf497e7df2e3055b0f))
+- **designer:** OpenAPI tokens from SharePoint trigger use `triggerOutputs` instead of `triggerBody` ([#4122](https://github.com/Azure/LogicAppsUX/issues/4122)) ([1b54d75](https://github.com/Azure/LogicAppsUX/commit/1b54d752344ca2a1a28d52e71a6ca5c4ba4140b7))
+- **vscode:** Parse interpolated connections data as JSON ([#4135](https://github.com/Azure/LogicAppsUX/issues/4135)) ([c855aee](https://github.com/Azure/LogicAppsUX/commit/c855aee8c9a657f01e43e3e34d349dd857f0f7b7))
 
 ## [2.110.0](https://github.com/Azure/LogicAppsUX/compare/v2.109.0...v2.110.0) (2024-02-05)
 
