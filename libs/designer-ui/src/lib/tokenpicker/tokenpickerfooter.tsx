@@ -100,8 +100,8 @@ export function TokenPickerFooter({
     try {
       currExpression = ExpressionParser.parseExpression(expression.value);
     } catch (ex) {
-      const doubleQuoteRegex = /\(\s*".*"\s*\)/;
-      if (doubleQuoteRegex.test(expression.value)) {
+      if (expression.value.includes('"')) {
+        // if the expression contains double quotes, we'll show a different error message
         setExpressionEditorError(invalidExpressionQuotations);
       } else {
         setExpressionEditorError(invalidExpression);
