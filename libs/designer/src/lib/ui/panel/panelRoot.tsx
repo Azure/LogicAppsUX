@@ -103,7 +103,7 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element => {
     ({ clientX }: MouseEvent) => {
       animationFrame.current = requestAnimationFrame(() => {
         if (isResizing) {
-          const newWidth = window.innerWidth - clientX < 300 ? 300 : window.innerWidth - clientX;
+          const newWidth = Math.max(window.innerWidth - clientX, 300);
           setWidth(newWidth.toString() + 'px');
         }
       });
