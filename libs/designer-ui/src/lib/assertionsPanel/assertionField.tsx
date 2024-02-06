@@ -6,7 +6,7 @@ import type { TokenPickerMode } from '../tokenpicker';
 import type { GetAssertionTokenPickerHandler } from './assertion';
 import type { ILabelStyles, IStyle, ITextFieldStyles } from '@fluentui/react';
 import { Label, Text, TextField } from '@fluentui/react';
-import { isEmptyString } from '@microsoft/utils-logic-apps';
+import { type Assertion, isEmptyString } from '@microsoft/utils-logic-apps';
 import { useIntl } from 'react-intl';
 
 export const labelStyles: Partial<ILabelStyles> = {
@@ -46,9 +46,10 @@ export interface AssertionFieldProps {
   setName: React.Dispatch<React.SetStateAction<string>>;
   setDescription: React.Dispatch<React.SetStateAction<string>>;
   setExpression: React.Dispatch<React.SetStateAction<Record<string, any>>>;
-  isEditable?: boolean;
-  isReadOnly?: boolean;
+  isEditable: boolean;
+  isExpanded: boolean;
   getTokenPicker: GetAssertionTokenPickerHandler;
+  handleUpdate: (newAssertion: Assertion) => void;
 }
 
 export const AssertionField = ({
@@ -59,8 +60,9 @@ export const AssertionField = ({
   setExpression,
   expression,
   isEditable,
-  isReadOnly,
+  isExpanded,
   getTokenPicker,
+  handleUpdate,
 }: AssertionFieldProps): JSX.Element => {
   const intl = useIntl();
 
@@ -102,25 +104,28 @@ export const AssertionField = ({
 
   const onDescriptionChange = (_event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string): void => {
     setDescription(newValue ?? '');
+    handleUpdate({ name, description: newValue ?? '', expression });
   };
 
   const onNameChange = (_event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string): void => {
     setName(newValue ?? '');
+    handleUpdate({ name: newValue ?? '', description, expression });
   };
 
   const onExpressionChange = (newState: ChangeState): void => {
     setExpression(newState.viewModel);
+    handleUpdate({ name, description, expression: newState.viewModel });
   };
 
   return (
     <>
       <div className="msla-assertion-field">
-        {isEditable ? (
+        {isExpanded ? (
           <Label styles={labelStyles} required={true} htmlFor={parameterDetails.name}>
             {nameTitle}
           </Label>
         ) : null}
-        {isEditable ? (
+        {isExpanded ? (
           <TextField
             data-testid={parameterDetails.name}
             styles={textFieldStyles}
@@ -129,17 +134,17 @@ export const AssertionField = ({
             placeholder={namePlaceholder}
             value={name}
             onChange={onNameChange}
-            disabled={isReadOnly}
+            disabled={!isEditable}
           />
         ) : null}
       </div>
       <div className="msla-assertion-field">
-        {isEditable ? (
+        {isExpanded ? (
           <Label styles={labelStyles} htmlFor={parameterDetails.description}>
             {descriptionTitle}
           </Label>
         ) : null}
-        {isEditable ? (
+        {isExpanded ? (
           <TextField
             data-testid={parameterDetails.description}
             styles={textFieldStyles}
@@ -148,7 +153,7 @@ export const AssertionField = ({
             placeholder={descriptionPlaceholder}
             value={description}
             onChange={onDescriptionChange}
-            disabled={isReadOnly}
+            disabled={!isEditable}
             multiline
             autoAdjustHeight
           />
@@ -159,17 +164,17 @@ export const AssertionField = ({
         )}
       </div>
       <div className="msla-assertion-condition">
-        {isEditable ? (
+        {isExpanded ? (
           <Label styles={labelStyles} required={true} htmlFor={parameterDetails.expression}>
             {conditionTitle}
           </Label>
         ) : null}
         <div className="msla-assertion-condition-editor">
-          {isEditable ? (
+          {isExpanded ? (
             <TokenField
               editor="condition"
               editorViewModel={expression ?? {}}
-              readOnly={false}
+              readOnly={!isEditable}
               label="Condition"
               labelId="condition-label"
               tokenEditor={true}

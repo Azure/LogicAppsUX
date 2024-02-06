@@ -24,7 +24,7 @@ const parseAssertions = (assertions: Assertion[]): Record<string, AssertionDefin
   return assertions.reduce((acc, assertion) => {
     const { name, description, expression } = assertion;
     const id = guid();
-    return { ...acc, [id]: { id, name, description, expression } };
+    return { ...acc, [id]: { id, name, description, expression, isEditable: false } };
   }, {});
 };
 

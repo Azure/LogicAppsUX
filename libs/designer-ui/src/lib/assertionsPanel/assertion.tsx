@@ -3,22 +3,21 @@ import type { EventHandler } from '../eventhandler';
 import type { TokenPickerMode } from '../tokenpicker';
 import { AssertionButtons } from './assertionButtons';
 import { AssertionField } from './assertionField';
-import type { IButtonStyles, IIconProps } from '@fluentui/react';
-import { CommandBarButton, FontWeights } from '@fluentui/react';
+import { Button } from '@fluentui/react-components';
+import { bundleIcon, ChevronRight24Regular, ChevronRight24Filled, ChevronDown24Regular, ChevronDown24Filled } from '@fluentui/react-icons';
 import type { AssertionDefintion } from '@microsoft/utils-logic-apps';
+import { type Assertion } from '@microsoft/utils-logic-apps';
 import { useState } from 'react';
 
-const commandBarStyles: Partial<IButtonStyles> = {
-  label: {
-    fontWeight: FontWeights.semibold,
-  },
-};
+const ExpandIcon = bundleIcon(ChevronRight24Filled, ChevronRight24Regular);
+const CollapseIcon = bundleIcon(ChevronDown24Regular, ChevronDown24Filled);
 
 export interface AssertionUpdateEvent {
   id: string;
   name: string;
   description: string;
   expression: Record<string, any>;
+  isEditable: boolean;
 }
 
 export interface AssertionDeleteEvent {
@@ -47,13 +46,12 @@ export interface AssertionProps {
   assertion: AssertionDefintion;
   onAssertionDelete: AssertionDeleteHandler;
   onAssertionUpdate: AssertionUpdateHandler;
-  isInverted: boolean;
   getTokenPicker: GetAssertionTokenPickerHandler;
 }
 
-export function Assertion({ isInverted, assertion, onAssertionUpdate, onAssertionDelete, getTokenPicker }: AssertionProps): JSX.Element {
-  const [expanded, setExpanded] = useState(false);
-  const [isEditable, setIsEditable] = useState(false);
+export function Assertion({ assertion, onAssertionDelete, getTokenPicker, onAssertionUpdate }: AssertionProps): JSX.Element {
+  const [expanded, setExpanded] = useState(assertion.isEditable);
+  const [isEditable, setIsEditable] = useState(assertion.isEditable);
   const [name, setName] = useState(assertion.name);
   const [description, setDescription] = useState(assertion.description);
   const [expression, setExpression] = useState(assertion.expression);
@@ -63,54 +61,44 @@ export function Assertion({ isInverted, assertion, onAssertionUpdate, onAssertio
     setExpanded(true);
   };
 
-  const handleSave: React.MouseEventHandler<HTMLButtonElement> = (): void => {
-    setIsEditable(false);
-    onAssertionUpdate({ name: name, description: description, id: assertion.id, expression: expression });
-  };
-
   const handleDelete: React.MouseEventHandler<HTMLButtonElement> = (): void => {
     onAssertionDelete({ id: assertion.id });
-  };
-
-  const iconProps: IIconProps = {
-    iconName: expanded ? 'ChevronDownMed' : 'ChevronRightMed',
-    styles: {
-      root: {
-        fontSize: 14,
-        color: isInverted ? 'white' : '#514f4e',
-      },
-    },
   };
 
   const handleToggleExpand = (): void => {
     setExpanded(!expanded);
   };
 
+  const handleUpdate = (newAssertion: Assertion) => {
+    onAssertionUpdate({ ...newAssertion, id: assertion.id, isEditable: isEditable });
+  };
+
   return (
     <div className="msla-workflow-assertion">
       <div className="msla-workflow-assertion-header">
-        <CommandBarButton
+        <Button
+          appearance="subtle"
           data-testid={name + '-assertion-heading-button'}
-          iconProps={iconProps}
           onClick={handleToggleExpand}
-          styles={commandBarStyles}
-          text={name}
-        />
-        <AssertionButtons isEditable={isEditable} onEdit={handleEdit} onSave={handleSave} onDelete={handleDelete} />
+          icon={expanded ? <CollapseIcon /> : <ExpandIcon />}
+        >
+          {name}
+        </Button>
+        <AssertionButtons isExpanded={expanded} isEditable={isEditable} onEdit={handleEdit} onDelete={handleDelete} />
       </div>
       <div className="msla-workflow-assertion-content">
-        {expanded ? (
-          <AssertionField
-            name={name}
-            description={description}
-            expression={expression}
-            setName={setName}
-            setDescription={setDescription}
-            setExpression={setExpression}
-            isEditable={isEditable}
-            getTokenPicker={getTokenPicker}
-          />
-        ) : null}
+        <AssertionField
+          name={name}
+          description={description}
+          expression={expression}
+          setName={setName}
+          setDescription={setDescription}
+          setExpression={setExpression}
+          isEditable={isEditable}
+          isExpanded={expanded}
+          getTokenPicker={getTokenPicker}
+          handleUpdate={handleUpdate}
+        />
       </div>
     </div>
   );
