@@ -15,6 +15,7 @@ export interface PanelState {
   selectedOperationId: string;
   addingTrigger: boolean;
   isLoading?: boolean;
+  focusReturnElementId?: string;
   creatingConnection?: boolean;
   selectedErrorsPanelTabId: string | undefined; // undefined will select first tab with > 0 messages
 }
