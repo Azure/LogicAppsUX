@@ -19,7 +19,7 @@ on:
           - "false"
 
 concurrency:
-  group: issue-${{ github.event.issue.number }}
+  group: issue-sync
   cancel-in-progress: false
 
 jobs:
