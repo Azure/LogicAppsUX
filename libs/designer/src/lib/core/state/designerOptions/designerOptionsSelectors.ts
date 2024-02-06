@@ -16,7 +16,6 @@ export const useUnitTest = () => {
 export const useLegacyWorkflowParameters = () => {
   return useSelector((state: RootState) => state.designerOptions.useLegacyWorkflowParameters);
 };
-
 export const useHostOptions = () => {
   return useSelector((state: RootState) => state.designerOptions.hostOptions);
 };
@@ -43,4 +42,12 @@ export const usePanelTabHideKeys = () => {
 
 export const useShowConnectionsPanel = () => {
   return useSelector((state: RootState) => state.designerOptions?.showConnectionsPanel ?? false);
+};
+
+export const useAreDesignerOptionsInitialized = () => {
+  return useSelector((state: RootState) => state.designerOptions?.designerOptionsInitialized ?? false);
+};
+
+export const useAreServicesInitialized = () => {
+  return useSelector((state: RootState) => state.designerOptions?.servicesInitialized ?? false);
 };

@@ -28,6 +28,7 @@ const initialState: DesignerOptionsState = {
   isUnitTest: false,
   isDarkMode: false,
   servicesInitialized: false,
+  designerOptionsInitialized: false,
   useLegacyWorkflowParameters: false,
   isXrmConnectionReferenceMode: false,
   showConnectionsPanel: false,
@@ -35,6 +36,7 @@ const initialState: DesignerOptionsState = {
   hostOptions: {
     displayRuntimeInfo: true,
     suppressCastingForSerialize: false,
+    recurrenceInterval: undefined,
   },
 };
 
@@ -113,6 +115,7 @@ export const designerOptionsSlice = createSlice({
         ...state.hostOptions,
         ...action.payload.hostOptions,
       };
+      state.designerOptionsInitialized = true;
     },
   },
   extraReducers: (builder) => {

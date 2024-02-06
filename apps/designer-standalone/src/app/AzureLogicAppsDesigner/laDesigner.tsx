@@ -255,7 +255,10 @@ const DesignerEditor = () => {
           readOnly: isReadOnly,
           isMonitoringView,
           isUnitTest,
-          hostOptions,
+          hostOptions: {
+            ...hostOptions,
+            recurrenceInterval: { interval: 1, frequency: 'Minute' },
+          },
           showConnectionsPanel,
         }}
       >

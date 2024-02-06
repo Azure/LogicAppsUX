@@ -1,8 +1,29 @@
 # Logic Apps Designer
 
-## [2.109.0](https://github.com/Azure/LogicAppsUX/compare/v2.108.0...v2.109.0) (2024-02-01)
+## [2.110.0](https://github.com/Azure/LogicAppsUX/compare/v2.109.0...v2.110.0) (2024-02-05)
 
 ## [2.101.0](https://github.com/Azure/LogicAppsUX/compare/v2.100.0...v2.101.0) (2024-01-09)
+
+### Features
+
+- **vscode:** Add Integration account source and export custom API actions to export advance options ([#4097](https://github.com/Azure/LogicAppsUX/issues/4097)) ([6559428](https://github.com/Azure/LogicAppsUX/commit/655942836f8317af5ba321a9774346ebdf07841a))
+
+### Bug Fixes
+
+- **comsumption:** Setting Default Recurrence Interval based on Sku ([#4066](https://github.com/Azure/LogicAppsUX/issues/4066)) ([160d636](https://github.com/Azure/LogicAppsUX/commit/160d636c4b4e53935963363cfe55f9a5e8a23d02))
+- **designer-ui:** Ensure `isAdvanced: false` tokens are shown if far down in a list ([#4064](https://github.com/Azure/LogicAppsUX/issues/4064)) ([89ddb0b](https://github.com/Azure/LogicAppsUX/commit/89ddb0b3721c6f62ba6f4487aa742667027b3035))
+- **Designer:** added aria-labelledby for searchable dropdown ([#4090](https://github.com/Azure/LogicAppsUX/issues/4090)) ([213b5f0](https://github.com/Azure/LogicAppsUX/commit/213b5f0e0e3cbe326e608f8f52767eff7e45ff04))
+- **Designer:** Added catch for designer options race condition ([#4106](https://github.com/Azure/LogicAppsUX/issues/4106)) ([3373c32](https://github.com/Azure/LogicAppsUX/commit/3373c32490f5b6d508f90717e8ba2a75e44f8b98))
+- **Designer:** Added connection name check to avoid known connection name strings ([#4104](https://github.com/Azure/LogicAppsUX/issues/4104)) ([3fc73e5](https://github.com/Azure/LogicAppsUX/commit/3fc73e57344b41b0eafd8cef8fc3cfe45e3aacb0))
+- **Designer:** Added host option to force enable split-on ([#4098](https://github.com/Azure/LogicAppsUX/issues/4098)) ([54c133b](https://github.com/Azure/LogicAppsUX/commit/54c133bc02fbfbd9fa50fd832de86e04c106ab6e))
+- **Designer:** Changed test connection request to not run through batch api ([#4103](https://github.com/Azure/LogicAppsUX/issues/4103)) ([d342027](https://github.com/Azure/LogicAppsUX/commit/d342027e5462e8b1a034ed1adff35c6bf359b6d6))
+- **designer:** Fix issue where when token in htmleditor, link plugin not working ([#4099](https://github.com/Azure/LogicAppsUX/issues/4099)) ([6773fae](https://github.com/Azure/LogicAppsUX/commit/6773fae16065c26a200ebfa6cb39f05c5f7cf827))
+- **designer:** Fix stateless workflow check in `getSplitOn` ([#4121](https://github.com/Azure/LogicAppsUX/issues/4121)) ([b0d825d](https://github.com/Azure/LogicAppsUX/commit/b0d825df24f84bf5a79a4c25b65161f479b816d7))
+- **Designer:** Initializing invoker settings causes workflow to be dirty ([#4079](https://github.com/Azure/LogicAppsUX/issues/4079)) ([55109df](https://github.com/Azure/LogicAppsUX/commit/55109df6b36bfa2980e418d41351b2f2290c2ef7))
+- **Designer:** Skip non-dependent parameters in updateParameterAndDependencies ([#4112](https://github.com/Azure/LogicAppsUX/issues/4112)) ([c1cb6d3](https://github.com/Azure/LogicAppsUX/commit/c1cb6d38364abcea674af3f55e71abfb07be3f8f))
+- **vscode:** Update json file creation to overwrite values in workflow-designtime folder ([#4096](https://github.com/Azure/LogicAppsUX/issues/4096)) ([659a521](https://github.com/Azure/LogicAppsUX/commit/659a5215de07e016e60fb02e87a222747408b8f0))
+
+## [2.109.0](https://github.com/Azure/LogicAppsUX/compare/v2.108.0...v2.109.0) (2024-02-01)
 
 ### Features
 
