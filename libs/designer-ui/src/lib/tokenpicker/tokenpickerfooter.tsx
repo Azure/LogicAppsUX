@@ -100,7 +100,8 @@ export function TokenPickerFooter({
     try {
       currExpression = ExpressionParser.parseExpression(expression.value);
     } catch (ex) {
-      if (expression.value.includes('concat') && expression.value.includes('"')) {
+      const doubleQuoteRegex = /\(\s*".*"\s*\)/;
+      if (doubleQuoteRegex.test(expression.value)) {
         setExpressionEditorError(invalidExpressionQuotations);
       } else {
         setExpressionEditorError(invalidExpression);
