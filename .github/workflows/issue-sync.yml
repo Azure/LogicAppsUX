@@ -25,11 +25,14 @@ concurrency:
 jobs:
   alert:
     runs-on: ubuntu-latest
+    permissions:
+      issues: write
+      pull-requests: write
     name: Sync workflow
     steps:       
     - uses: actions/checkout@v3
     - uses: hartra344/GitSync@main
       env:     
         ado_token: '${{ secrets.ADO_SYNC_TOKEN }}'
-        github_token: '${{ secrets.GH_ACCESS_TOKEN_ISSUE_SYNC }}'
+        github_token: '${{ secrets.GITHUB_TOKEN }}'
         config_file: './.github/sync_config.json'
