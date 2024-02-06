@@ -61,7 +61,7 @@ export class SourceControlPathListStep extends AzureWizardPromptStep<IAzureScrip
   public hideStepCount = true;
 
   private async createDeploymentFolder(rootDir: string): Promise<string> {
-    const deploymentsDir = path.join(rootDir, 'Deployment');
+    const deploymentsDir = path.join(rootDir, 'deployment');
     if (!fs.existsSync(deploymentsDir)) {
       fs.mkdirSync(deploymentsDir);
     }
@@ -88,7 +88,7 @@ export class SourceControlPathListStep extends AzureWizardPromptStep<IAzureScrip
 
     let deploymentFolderExists = false;
     if (rootDir) {
-      deploymentFolderExists = fs.existsSync(path.join(rootDir, 'Deployment'));
+      deploymentFolderExists = fs.existsSync(path.join(rootDir, 'deployment'));
     }
 
     const deploymentLabel = deploymentFolderExists ? 'Deployment folder in current workspace' : 'New deployment folder';
