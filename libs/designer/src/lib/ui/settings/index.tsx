@@ -9,6 +9,7 @@ import { useSelectedNodeId } from '../../core/state/panel/panelSelectors';
 import { useExpandedSections } from '../../core/state/setting/settingSelector';
 import { setExpandedSections } from '../../core/state/setting/settingSlice';
 import { updateTokenSecureStatus } from '../../core/state/tokens/tokensSlice';
+import { useActionMetadata } from '../../core/state/workflow/workflowSelectors';
 import type { AppDispatch, RootState } from '../../core/store';
 import { isRootNodeInGraph } from '../../core/utils/graph';
 import { isSecureOutputsLinkedToInputs } from '../../core/utils/setting';
@@ -21,7 +22,8 @@ import { Tracking } from './sections/tracking';
 import type { ValidationError } from './validation/validation';
 import { ValidationErrorKeys, validateNodeSettings } from './validation/validation';
 import type { IDropdownOption } from '@fluentui/react';
-import { equals, getRecordEntry, isObject } from '@microsoft/utils-logic-apps';
+import { type LogicAppsV2, equals, getRecordEntry, isObject } from '@microsoft/utils-logic-apps';
+import { useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 export type ToggleHandler = (checked: boolean) => void;
@@ -575,11 +577,10 @@ function NetworkingSettings({
 }
 
 function RunAfterSettings({ nodeId, readOnly, isExpanded, validationErrors, dispatch }: SettingSectionProps): JSX.Element | null {
-  // const nodeData = useActionMetadata(nodeId) as LogicAppsV2.ActionDefinition;
-  // const showRunAfterSettings = useMemo(() => Object.keys(nodeData?.runAfter ?? {}).length > 0, [nodeData]);
+  const nodeData = useActionMetadata(nodeId) as LogicAppsV2.ActionDefinition;
+  const showRunAfterSettings = useMemo(() => Object.keys(nodeData?.runAfter ?? {}).length > 0, [nodeData]);
 
-  // return showRunAfterSettings ? (
-  return (
+  return showRunAfterSettings ? (
     <RunAfter
       nodeId={nodeId}
       readOnly={readOnly}
@@ -587,8 +588,7 @@ function RunAfterSettings({ nodeId, readOnly, isExpanded, validationErrors, disp
       validationErrors={validationErrors}
       onHeaderClick={(sectionName) => dispatch(setExpandedSections(sectionName))}
     />
-  );
-  // ) : null;
+  ) : null;
 }
 
 function SecuritySettings({
