@@ -4,9 +4,9 @@
  *--------------------------------------------------------------------------------------------*/
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
-import { isMultiRootWorkspace, selectWorkspaceFolder } from '../../utils/workspace';
+import { isMultiRootWorkspace } from '../../utils/workspace';
 import { ResourceGroupListStep } from '@microsoft/vscode-azext-azureutils';
-import { AzureWizard, AzureWizardPromptStep } from '@microsoft/vscode-azext-utils';
+import { AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep } from '@microsoft/vscode-azext-utils';
 import type { IActionContext, IWizardOptions } from '@microsoft/vscode-azext-utils';
 import { OpenBehavior, type IProjectWizardContext } from '@microsoft/vscode-extension';
 import * as fs from 'fs-extra';
@@ -37,13 +37,7 @@ export interface IAzureScriptWizard extends IProjectWizardContext, IActionContex
  */
 // Your existing function for creating the Azure Wizard
 export function createAzureWizard(wizardContext: IAzureScriptWizard): AzureWizard<IAzureScriptWizard> {
-  const promptSteps = [
-    new ConfigureInitialLogicAppStep(),
-    new setLogicappName(),
-    new setStorageAccountName(),
-    new setAppPlantName(),
-    new SourceControlPathListStep(),
-  ];
+  const promptSteps = [new ConfigureInitialLogicAppStep(), new setLogicappName(), new setStorageAccountName(), new setAppPlantName()];
 
   if (!isMultiRootWorkspace) {
     wizardContext.isValidWorkspace = false;
@@ -54,11 +48,13 @@ export function createAzureWizard(wizardContext: IAzureScriptWizard): AzureWizar
   // Create the Azure Wizard with the modified steps
   return new AzureWizard(wizardContext, {
     promptSteps,
+    executeSteps: [new SourceControlPathListStep()],
   });
 }
 
-export class SourceControlPathListStep extends AzureWizardPromptStep<IAzureScriptWizard> {
+export class SourceControlPathListStep extends AzureWizardExecuteStep<IAzureScriptWizard> {
   public hideStepCount = true;
+  public priority = 250;
 
   private async createDeploymentFolder(rootDir: string): Promise<string> {
     const deploymentsDir = path.join(rootDir, 'deployment');
@@ -76,7 +72,7 @@ export class SourceControlPathListStep extends AzureWizardPromptStep<IAzureScrip
     }
   }
 
-  public async prompt(context: IAzureScriptWizard): Promise<void> {
+  public async execute(context: IAzureScriptWizard): Promise<void> {
     const workspaceFileUri = vscode.workspace.workspaceFile;
     let rootDir = context.customWorkspaceFolderPath;
     //change the root directory if unable to locate workspace file
@@ -86,45 +82,11 @@ export class SourceControlPathListStep extends AzureWizardPromptStep<IAzureScrip
       rootDir = path.dirname(workspaceFileUri.fsPath);
     }
 
-    let deploymentFolderExists = false;
-    if (rootDir) {
-      deploymentFolderExists = fs.existsSync(path.join(rootDir, 'deployment'));
-    }
-
-    const deploymentLabel = deploymentFolderExists ? 'Deployment folder in current workspace' : 'New deployment folder';
-
-    const placeHolder = 'Select the folder to store your deployment artifacts';
-    const options: vscode.QuickPickItem[] = [
-      {
-        label: deploymentLabel,
-        description: deploymentFolderExists
-          ? 'Uses the existing deployment folder in the current workspace.'
-          : 'Creates a new deployment folder in the current workspace.',
-      },
-      {
-        label: 'Choose a different folder.',
-        description: 'Select a different folder in the current workspace.',
-      },
-    ];
-
-    const userChoice = await vscode.window.showQuickPick(options, { placeHolder });
-
-    if (userChoice) {
-      let selectedPath: string | undefined;
-
-      if (userChoice.label === deploymentLabel && rootDir) {
-        selectedPath = await this.createDeploymentFolder(rootDir);
-      } else if (userChoice.label === 'Choose a different folder.') {
-        selectedPath = await selectWorkspaceFolder(context, placeHolder);
-      }
-
-      if (selectedPath) {
-        SourceControlPathListStep.setSourceControlPath(context, selectedPath);
-      }
-    }
+    const selectedPath = await this.createDeploymentFolder(rootDir);
+    SourceControlPathListStep.setSourceControlPath(context, selectedPath);
   }
 
-  public shouldPrompt(_context: IAzureScriptWizard): boolean {
+  public shouldExecute(): boolean {
     return true;
   }
 }

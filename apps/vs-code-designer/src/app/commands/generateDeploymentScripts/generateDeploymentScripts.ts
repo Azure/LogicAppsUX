@@ -376,6 +376,7 @@ async function gatherAndValidateInputs(scriptContext: IAzureScriptWizard, folder
     ext.outputChannel.appendLog(localize('AttemptingExecuteAzureWizardSuccess', 'Launching Azure Wizard...'));
     const wizard = createAzureWizard(scriptContext);
     await wizard.prompt();
+    await wizard.execute();
     ext.outputChannel.appendLog(localize('executeAzureWizardSuccess', 'Azure Wizard executed successfully.'));
   } catch (error) {
     ext.outputChannel.appendLog(localize('executeAzureWizardError', `Error executing Azure Wizard: ${error}`));
