@@ -258,8 +258,8 @@ export const isSupportedSplitOnExpression = (expression: Expression): boolean =>
   return true;
 };
 
-export const getSplitOnOptions = (outputs: NodeOutputs, isManifestBasedOperation: boolean): string[] => {
-  let arrayOutputs = unmap(outputs.originalOutputs ?? outputs.outputs).filter((output) =>
+export const getSplitOnOptions = (outputs: NodeOutputs | undefined, isManifestBasedOperation: boolean): string[] => {
+  let arrayOutputs = unmap(outputs?.originalOutputs ?? outputs?.outputs).filter((output) =>
     equals(output.type, Constants.SWAGGER.TYPE.ARRAY)
   );
 

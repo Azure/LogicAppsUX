@@ -166,27 +166,21 @@ export const SettingsSection: FC<SettingsSectionProps> = ({
     <>
       {expanded || !showHeading ? <Setting id={id} isReadOnly={isReadOnly} settings={settings} /> : null}
       {expanded
-        ? (validationErrors ?? []).map(({ key: errorKey, errorType, message }, i) => {
-            return (
-              <CustomizableMessageBar
-                key={i}
-                type={matchErrorTypeToMessageBar(errorType)}
-                message={message}
-                onWarningDismiss={onDismiss ? () => onDismiss?.(errorKey) : undefined}
-              />
-            );
-          })
+        ? (validationErrors ?? []).map(({ key: errorKey, errorType, message }, i) => (
+            <CustomizableMessageBar
+              key={i}
+              type={matchErrorTypeToMessageBar(errorType)}
+              message={message}
+              onWarningDismiss={onDismiss ? () => onDismiss?.(errorKey) : undefined}
+            />
+          ))
         : null}
       {showSeparator ? <Separator className="msla-setting-section-separator" styles={separatorStyles} /> : null}
     </>
   );
-  if (!showHeading) {
-    return internalSettings;
-  }
+  if (!showHeading) return internalSettings;
   const handleSectionClick = (sectionName?: SettingSectionName): void => {
-    if (onHeaderClick && sectionName) {
-      onHeaderClick(sectionName);
-    }
+    if (onHeaderClick && sectionName) onHeaderClick(sectionName);
   };
 
   return (
@@ -410,7 +404,7 @@ const Setting = ({ id, settings, isReadOnly }: { id?: string; settings: Settings
         </div>
       ) : null}
       {/* Render all advanced parameters that are conditionally visible */}
-      {settings?.filter((setting) => (setting.settingProp as any).conditionalVisibility === true).map(renderSetting)}
+      {settings?.filter((setting) => (setting.settingProp as any)?.conditionalVisibility === true).map(renderSetting)}
     </div>
   );
 };
