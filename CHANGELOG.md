@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [2.108.2](https://github.com/Azure/LogicAppsUX/compare/v2.108.1...v2.108.2) (2024-02-07)
+
+
+### Bug Fixes
+
+* **vscode:** Update json file creation in workflow-designtime folder and parse interpolated connections data  ([#4149](https://github.com/Azure/LogicAppsUX/issues/4149)) ([771ef51](https://github.com/Azure/LogicAppsUX/commit/771ef51249b5dafdfd8d6731ceef8784f8cf95d0)), closes [#4096](https://github.com/Azure/LogicAppsUX/issues/4096) [#4135](https://github.com/Azure/LogicAppsUX/issues/4135)
+
 ### [2.108.1](https://github.com/Azure/LogicAppsUX/compare/v2.108.0...v2.108.1) (2024-02-07)
 
 
