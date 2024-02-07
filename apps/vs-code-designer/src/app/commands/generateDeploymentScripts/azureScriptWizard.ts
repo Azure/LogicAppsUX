@@ -32,13 +32,10 @@ export interface IAzureScriptWizard extends IProjectWizardContext, IActionContex
 /**
  * Creates an instance of the Azure Wizard for the Azure Script Wizard.
  * @param wizardContext - The wizard context.
- * @param projectPath - The path of the project.
  * @returns An instance of the Azure Wizard.
  */
 // Your existing function for creating the Azure Wizard
 export function createAzureWizard(wizardContext: IAzureScriptWizard): AzureWizard<IAzureScriptWizard> {
-  const promptSteps = [new ConfigureInitialLogicAppStep(), new setLogicappName(), new setStorageAccountName(), new setAppPlantName()];
-
   if (!isMultiRootWorkspace) {
     wizardContext.isValidWorkspace = false;
   } else {
@@ -47,8 +44,9 @@ export function createAzureWizard(wizardContext: IAzureScriptWizard): AzureWizar
 
   // Create the Azure Wizard with the modified steps
   return new AzureWizard(wizardContext, {
-    promptSteps,
+    promptSteps: [new ConfigureInitialLogicAppStep(), new setLogicappName(), new setStorageAccountName(), new setAppPlantName()],
     executeSteps: [new SourceControlPathListStep()],
+    showLoadingPrompt: true,
   });
 }
 
@@ -110,7 +108,7 @@ class ConfigureInitialLogicAppStep extends AzureWizardPromptStep<IAzureScriptWiz
     }
 
     azurePromptSteps.push(new ResourceGroupListStep());
-    return { promptSteps: azurePromptSteps };
+    return { promptSteps: azurePromptSteps, showLoadingPrompt: true };
   }
 }
 
