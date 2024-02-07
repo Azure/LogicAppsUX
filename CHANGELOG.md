@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [2.108.1](https://github.com/Azure/LogicAppsUX/compare/v2.108.0...v2.108.1) (2024-02-07)
+
+
+### Bug Fixes
+
+* **designer:** Fix the token merge for FAM and entity outputs for hybrid triggers ([#4144](https://github.com/Azure/LogicAppsUX/issues/4144)) ([f8029ee](https://github.com/Azure/LogicAppsUX/commit/f8029eee3ab4ad9379a7fcd2ba27f9a06fde6461))
+
 ## [2.108.0](https://github.com/Azure/LogicAppsUX/compare/v2.107.0...v2.108.0) (2024-01-26)
 
 
