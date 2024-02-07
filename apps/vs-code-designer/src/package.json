@@ -699,6 +699,10 @@
         {
           "command": "azureLogicAppsStandard.viewProperties",
           "when": "never"
+        },
+        {
+          "command": "azureLogicAppsStandard.generateDeploymentScripts",
+          "when": "never"
         }
       ],
       "azureLogicAppsStandard.dataMapperMenu": [
@@ -933,7 +937,7 @@
     "onCommand:azureLogicAppsStandard.createNewCodeProject",
     "onCommand:azureLogicAppsStandard.createCodeless",
     "onCommand:azureLogicAppsStandard.deploy",
-    "onCommand: azureLogicAppsStandard.generateDeploymentScripts",
+    "onCommand:azureLogicAppsStandard.generateDeploymentScripts",
     "onCommand:azureLogicAppsStandard.deploySlot",
     "onCommand:azureLogicAppsStandard.createLogicApp",
     "onCommand:azureLogicAppsStandard.createLogicAppAdvanced",

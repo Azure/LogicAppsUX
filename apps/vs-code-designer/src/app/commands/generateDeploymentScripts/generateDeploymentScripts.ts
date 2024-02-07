@@ -42,7 +42,7 @@ export async function generateDeploymentScripts(context: IActionContext, project
     const inputs = await gatherAndValidateInputs(scriptContext, projectRoot);
     const sourceControlPath = scriptContext.sourceControlPath;
     await callConsumptionApi(scriptContext, inputs);
-    const standardArtifactsContent = await callStandardApi(inputs);
+    const standardArtifactsContent = await callStandardApi(scriptContext, inputs);
     await handleApiResponse(standardArtifactsContent, sourceControlPath);
 
     const deploymentScriptLocation = `workspace/${scriptContext.sourceControlPath}`;
@@ -91,10 +91,19 @@ async function setupWizardScriptContext(context: IActionContext, projectRoot: vs
  * @param inputs - Object containing required inputs like subscriptionId, resourceGroup etc.
  * @returns - Promise<Buffer> containing the API response as a buffer.
  */
-async function callStandardApi(inputs: any): Promise<Buffer> {
+async function callStandardApi(context: IAzureScriptWizard, inputs: any): Promise<Buffer> {
   try {
     const { subscriptionId, resourceGroup, storageAccount, location, logicAppName, appServicePlan } = inputs;
-    return await callStandardResourcesApi(subscriptionId, resourceGroup, storageAccount, location, logicAppName, appServicePlan);
+    const { sourceControlPath } = context;
+    return await callStandardResourcesApi(
+      subscriptionId,
+      resourceGroup,
+      storageAccount,
+      location,
+      logicAppName,
+      appServicePlan,
+      sourceControlPath
+    );
   } catch (error) {
     await handleError(error, 'Error calling Standard Resources API');
   }
@@ -137,7 +146,8 @@ export async function callConsumptionApi(scriptContext: IAzureScriptWizard, inpu
           localResourceGroup,
           logicAppName,
           connectionObj.originalKey,
-          connectionObj.refEndPoint
+          connectionObj.refEndPoint,
+          scriptContext.sourceControlPath
         );
 
         if (!bufferData) {
@@ -211,7 +221,8 @@ async function callStandardResourcesApi(
   storageAccount: string,
   location: string,
   logicAppName: string,
-  appServicePlan: string
+  appServicePlan: string,
+  sourceControlPath: string
 ): Promise<Buffer> {
   try {
     ext.outputChannel.appendLog(localize('initApiWorkflowDesignerPort', 'Initiating API connection through workflow designer port...'));
@@ -239,6 +250,7 @@ async function callStandardResourcesApi(
       targetLocation: location,
       targetLogicAppName: logicAppName,
       targetAppServicePlanName: appServicePlan,
+      targetPath: sourceControlPath,
     };
 
     ext.outputChannel.appendLog(
@@ -282,7 +294,8 @@ async function callManagedConnectionsApi(
   resourceGroup: string,
   logicAppName: string,
   connectionName: string,
-  connectionId: string
+  connectionId: string,
+  sourceControlPath: string
 ): Promise<Buffer> {
   try {
     const apiVersion = '2018-07-01-preview';
@@ -297,6 +310,7 @@ async function callManagedConnectionsApi(
     const requestBody = {
       TargetLogicAppName: logicAppName,
       ConnectionReferenceName: connectionName,
+      TargetPath: sourceControlPath,
     };
 
     // Execute the API call
