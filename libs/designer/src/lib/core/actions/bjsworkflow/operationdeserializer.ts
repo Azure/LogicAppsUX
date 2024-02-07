@@ -48,7 +48,7 @@ import {
   updateCallbackUrlInInputs,
   updateInvokerSettings,
 } from './initialize';
-import { getOperationSettings } from './settings';
+import { getOperationSettings, getSplitOnValue } from './settings';
 import type { Settings } from './settings';
 import {
   LogEntryLevel,
@@ -235,7 +235,7 @@ export const initializeOperationDetailsForManifest = async (
       manifest,
       isTrigger,
       nodeInputs,
-      isTrigger ? (operation as LogicAppsV2.TriggerDefinition).splitOn : undefined,
+      isTrigger ? getSplitOnValue(manifest, undefined, undefined, operation) : undefined,
       operationInfo,
       nodeId
     );
