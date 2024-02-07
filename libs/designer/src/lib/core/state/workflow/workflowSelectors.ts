@@ -13,12 +13,7 @@ import Queue from 'yocto-queue';
 export const getWorkflowState = (state: RootState): WorkflowState => state.workflow;
 
 export const useNodeDisplayName = (id?: string) =>
-  useSelector(
-    createSelector(getWorkflowState, (state: WorkflowState) => {
-      const newId = getRecordEntry(state.idReplacements, id);
-      return labelCase(newId ?? id ?? '');
-    })
-  );
+  useSelector(createSelector(getWorkflowState, (state: WorkflowState) => labelCase(getRecordEntry(state.idReplacements, id) ?? id ?? '')));
 
 export const useNodeReplacedId = (id?: string) =>
   useSelector(createSelector(getWorkflowState, (state: WorkflowState) => getRecordEntry(state.idReplacements, id)));

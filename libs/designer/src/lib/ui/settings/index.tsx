@@ -21,9 +21,7 @@ import { Tracking } from './sections/tracking';
 import type { ValidationError } from './validation/validation';
 import { ValidationErrorKeys, validateNodeSettings } from './validation/validation';
 import type { IDropdownOption } from '@fluentui/react';
-import type { LogicAppsV2 } from '@microsoft/utils-logic-apps';
 import { equals, getRecordEntry, isObject } from '@microsoft/utils-logic-apps';
-import { useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 export type ToggleHandler = (checked: boolean) => void;
@@ -577,10 +575,11 @@ function NetworkingSettings({
 }
 
 function RunAfterSettings({ nodeId, readOnly, isExpanded, validationErrors, dispatch }: SettingSectionProps): JSX.Element | null {
-  const nodeData = useSelector((state: RootState) => getRecordEntry(state.workflow.operations, nodeId) as LogicAppsV2.ActionDefinition);
-  const showRunAfterSettings = useMemo(() => Object.keys(nodeData?.runAfter ?? {}).length > 0, [nodeData]);
+  // const nodeData = useActionMetadata(nodeId) as LogicAppsV2.ActionDefinition;
+  // const showRunAfterSettings = useMemo(() => Object.keys(nodeData?.runAfter ?? {}).length > 0, [nodeData]);
 
-  return showRunAfterSettings ? (
+  // return showRunAfterSettings ? (
+  return (
     <RunAfter
       nodeId={nodeId}
       readOnly={readOnly}
@@ -588,7 +587,8 @@ function RunAfterSettings({ nodeId, readOnly, isExpanded, validationErrors, disp
       validationErrors={validationErrors}
       onHeaderClick={(sectionName) => dispatch(setExpandedSections(sectionName))}
     />
-  ) : null;
+  );
+  // ) : null;
 }
 
 function SecuritySettings({

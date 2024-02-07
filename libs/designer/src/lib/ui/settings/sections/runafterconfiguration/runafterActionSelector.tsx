@@ -5,7 +5,7 @@ import { useSelectedNodeId } from '../../../../core/state/panel/panelSelectors';
 import { useNodeDisplayName } from '../../../../core/state/workflow/workflowSelectors';
 import { Menu, MenuTrigger, MenuList, MenuPopover, MenuButton, Label, MenuItemCheckbox, Input, Button } from '@fluentui/react-components';
 import { bundleIcon, Add20Regular, Add20Filled, Search24Regular, DismissRegular } from '@fluentui/react-icons';
-import type { LogicAppsV2 } from '@microsoft/utils-logic-apps';
+import { getRecordEntry, type LogicAppsV2 } from '@microsoft/utils-logic-apps';
 import Fuse from 'fuse.js';
 import { useState, useMemo } from 'react';
 import { useIntl } from 'react-intl';
@@ -21,7 +21,7 @@ const getSuccessorNodes = (state: RootState, nodeId: string) => {
     const node = nodes.shift();
     const newNodes = Object.entries(wfs.operations)
       // eslint-disable-next-line no-loop-func
-      .filter(([, op]: [string, LogicAppsV2.ActionDefinition]) => !!op.runAfter?.[node ?? ''])
+      .filter(([, op]: [string, LogicAppsV2.ActionDefinition]) => !!getRecordEntry(op.runAfter, node))
       .map(([key]) => key);
     successors = [...successors, ...newNodes];
     nodes = [...nodes, ...newNodes];
@@ -49,25 +49,18 @@ export const RunAfterActionSelector = ({ readOnly }: { readOnly: boolean }) => {
   const intl = useIntl();
   const [searchText, setSearchText] = useState<string>('');
   const currentNodeId = useSelectedNodeId();
-  const currentNodeRunAfter = useSelector((state: RootState) => {
-    return state.workflow.operations[currentNodeId];
-  });
+  const currentNodeRunAfter = useSelector((state: RootState) => getRecordEntry(state.workflow.operations, currentNodeId));
   const actions = useSelector((state: RootState) => {
-    if (!currentNodeRunAfter) {
-      return [];
-    }
+    if (!currentNodeRunAfter) return [];
     const subNodes = getSuccessorNodes(state, currentNodeId);
     return (Object.entries(state.workflow.operations) as [string, LogicAppsV2.ActionDefinition][])
-      .filter(([key]) => {
-        return state.workflow.nodesMetadata[currentNodeId].graphId === state.workflow.nodesMetadata[key].graphId;
-      })
+      .filter(
+        ([key]) =>
+          getRecordEntry(state.workflow.nodesMetadata, currentNodeId)?.graphId ===
+          getRecordEntry(state.workflow.nodesMetadata, key)?.graphId
+      )
       .filter(([key]) => !subNodes.includes(key) && key !== currentNodeId)
-      .map(([key, value]) => {
-        return {
-          ...value,
-          id: key,
-        };
-      });
+      .map(([key, value]) => ({ ...value, id: key }));
   });
   const RUN_AFTER_CONFIGURATION_FILTER_ACTIONS = intl.formatMessage({ defaultMessage: 'Filter Actions', description: 'Filter Actions' });
   const RUN_AFTER_CONFIGURATION_SELECT_ACTIONS_TITLE = intl.formatMessage({
@@ -76,15 +69,15 @@ export const RunAfterActionSelector = ({ readOnly }: { readOnly: boolean }) => {
   });
 
   const selectedValues = useSelector((state: RootState) => {
-    return { actions: Object.keys((state.workflow.operations[currentNodeId] as LogicAppsV2.ActionDefinition).runAfter ?? {}) };
+    return {
+      actions: Object.keys((getRecordEntry(state.workflow.operations, currentNodeId) as LogicAppsV2.ActionDefinition)?.runAfter ?? {}),
+    };
   });
 
   const dispatch = useDispatch<AppDispatch>();
 
   const searchResults = useMemo(() => {
-    if (!searchText) {
-      return [];
-    }
+    if (!searchText) return [];
     const options = {
       keys: ['id'],
       useExtendedSearch: true,
