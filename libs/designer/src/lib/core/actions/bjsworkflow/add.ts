@@ -39,7 +39,7 @@ import type {
   OperationManifest,
   SomeKindOfAzureOperationDiscovery,
 } from '@microsoft/utils-logic-apps';
-import { equals } from '@microsoft/utils-logic-apps';
+import { equals, getRecordEntry } from '@microsoft/utils-logic-apps';
 import type { Dispatch } from '@reduxjs/toolkit';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { batch } from 'react-redux';
@@ -60,7 +60,8 @@ export const addOperation = createAsyncThunk('addOperation', async (payload: Add
     if (!operation) throw new Error('Operation does not exist'); // Just an optional catch, should never happen
     let count = 1;
     let nodeId = actionId;
-    while ((getState() as RootState).workflow.nodesMetadata[nodeId]) {
+    const nodesMetadata = (getState() as RootState).workflow.nodesMetadata;
+    while (getRecordEntry(nodesMetadata, nodeId)) {
       nodeId = `${actionId}_${count}`;
       count++;
     }
@@ -325,8 +326,9 @@ export const addTokensAndVariables = (
     variables: {} as Record<string, VariableDeclaration[]>,
   };
 
-  tokensAndVariables.outputTokens[nodeId].tokens.push(...getBuiltInTokens(manifest));
-  tokensAndVariables.outputTokens[nodeId].tokens.push(
+  const outputTokens = getRecordEntry(tokensAndVariables.outputTokens, nodeId)?.tokens ?? [];
+  outputTokens.push(...getBuiltInTokens(manifest));
+  outputTokens.push(
     ...convertOutputsToTokens(
       isRootNodeInGraph(nodeId, 'root', nodesMetadata) ? undefined : nodeId,
       operationType,

@@ -30,6 +30,7 @@ import { Spinner } from '@fluentui/react-components';
 import type { ConnectionCreationInfo, ConnectionParametersMetadata } from '@microsoft/designer-client-services-logic-apps';
 import { ConnectionService, LogEntryLevel, LoggerService, WorkflowService } from '@microsoft/designer-client-services-logic-apps';
 import {
+  getRecordEntry,
   safeSetObjectPropertyValue,
   type Connection,
   type ConnectionParameterSet,
@@ -52,7 +53,7 @@ export const CreateConnectionWrapper = () => {
   const operationInfo = useOperationInfo(nodeId);
   const { data: operationManifest } = useOperationManifest(operationInfo);
   const connectionMetadata = getConnectionMetadata(operationManifest);
-  const hasExistingConnection = useSelector((state: RootState) => !!state.connections.connectionsMapping[nodeId]);
+  const hasExistingConnection = useSelector((state: RootState) => !!getRecordEntry(state.connections.connectionsMapping, nodeId));
 
   const subscriptionsQuery = useSubscriptions();
   const subscriptions = useMemo(() => subscriptionsQuery.data, [subscriptionsQuery.data]);

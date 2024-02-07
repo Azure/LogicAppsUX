@@ -12,11 +12,11 @@ on:
       manual_trigger:
         description: 'Manual Trigger'
         required: false
-        default: "true"
+        default: 'true'
         type: choice
         options:
-          - "true"
-          - "false"
+          - 'true'
+          - 'false'
 
 concurrency:
   group: issue-${{ github.event.issue.number }}
@@ -29,10 +29,10 @@ jobs:
       issues: write
       pull-requests: write
     name: Sync workflow
-    steps:       
-    - uses: actions/checkout@v3
-    - uses: hartra344/GitSync@main
-      env:     
-        ado_token: '${{ secrets.ADO_SYNC_TOKEN }}'
-        github_token: '${{ secrets.GITHUB_TOKEN }}'
-        config_file: './.github/sync_config.json'
+    steps:
+      - uses: actions/checkout@v3
+      - uses: hartra344/GitSync@main
+        env:
+          ado_token: '${{ secrets.ADO_SYNC_TOKEN }}'
+          github_token: '${{ secrets.GITHUB_TOKEN }}'
+          config_file: './.github/sync_config.json'

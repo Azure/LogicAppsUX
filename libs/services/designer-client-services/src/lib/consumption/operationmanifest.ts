@@ -71,9 +71,9 @@ export class ConsumptionOperationManifestService extends BaseOperationManifestSe
     throw new UnsupportedException(`Operation type: ${definition.type} does not support manifest.`);
   }
 
-  override isSupported(operationType: string, _operationKind?: string): boolean {
+  override isSupported(operationType?: string, _operationKind?: string): boolean {
     const { supportedTypes } = this.options;
-    const normalizedOperationType = operationType.toLowerCase();
+    const normalizedOperationType = operationType?.toLowerCase() ?? '';
     return supportedTypes
       ? supportedTypes.indexOf(normalizedOperationType) > -1
       : supportedConsumptionManifestTypes.indexOf(normalizedOperationType) > -1;
