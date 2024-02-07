@@ -52,31 +52,21 @@ export const tokensSlice = createSlice({
     },
     updateVariableInfo: (state, action: PayloadAction<{ id: string; name?: string; type?: string }>) => {
       const { id, name, type } = action.payload;
-      if (state.variables[id]) {
-        if (name) {
-          state.variables[id] = state.variables[id].map((variable) => ({
-            ...variable,
-            name: name,
-          }));
-        }
-        if (type) {
-          state.variables[id] = state.variables[id].map((variable) => ({
-            ...variable,
-            type: type,
-          }));
-        }
-      }
+      const variables = getRecordEntry(state.variables, id);
+      if (!variables) return;
+      if (name) state.variables[id] = variables.map((variable) => ({ ...variable, name }));
+      if (type) state.variables[id] = variables.map((variable) => ({ ...variable, type }));
     },
     updateTokens: (state, action: PayloadAction<{ id: string; tokens: Token[] }>) => {
       const { id, tokens } = action.payload;
-      if (state.outputTokens[id]) {
-        state.outputTokens[id].tokens = tokens;
-      }
+      const outputTokens = getRecordEntry(state.outputTokens, id);
+      if (outputTokens) outputTokens.tokens = tokens;
     },
     updateTokenSecureStatus: (state, action: PayloadAction<{ id: string; isSecure: boolean }>) => {
       const { id, isSecure } = action.payload;
-      if (state.outputTokens[id]) {
-        state.outputTokens[id].tokens = state.outputTokens[id].tokens.map((token) => ({
+      const outputTokens = getRecordEntry(state.outputTokens, id);
+      if (outputTokens) {
+        outputTokens.tokens = outputTokens.tokens.map((token) => ({
           ...token,
           outputInfo: { ...token.outputInfo, isSecure },
         }));

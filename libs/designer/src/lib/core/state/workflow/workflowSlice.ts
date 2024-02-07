@@ -358,10 +358,8 @@ export const workflowSlice = createSlice({
     addEdgeFromRunAfter: (state: WorkflowState, action: PayloadAction<{ childOperationId: string; parentOperationId: string }>) => {
       const { childOperationId, parentOperationId } = action.payload;
       const parentOperation = getRecordEntry(state.operations, parentOperationId);
-      const childOperation: LogicAppsV2.ActionDefinition = state.operations[childOperationId];
-      if (!parentOperation || !childOperation) {
-        return;
-      }
+      const childOperation: LogicAppsV2.ActionDefinition | undefined = getRecordEntry(state.operations, childOperationId);
+      if (!parentOperation || !childOperation) return;
       childOperation.runAfter = { ...(childOperation.runAfter ?? {}), [parentOperationId]: [RUN_AFTER_STATUS.SUCCEEDED] };
 
       const graphPath: string[] = [];

@@ -302,7 +302,7 @@ export const operationMetadataSlice = createSlice({
       const { id, settings } = action.payload;
       const nodeSettings = getRecordEntry(state.settings, id);
       if (!nodeSettings) state.settings[id] = {};
-      state.settings[id] = { ...state.settings[id], ...settings };
+      state.settings[id] = { ...nodeSettings, ...settings };
 
       LoggerService().log({
         level: LogEntryLevel.Verbose,
@@ -409,7 +409,8 @@ export const operationMetadataSlice = createSlice({
     },
     updateOutputs: (state, action: PayloadAction<{ id: string; nodeOutputs: NodeOutputs }>) => {
       const { id, nodeOutputs } = action.payload;
-      if (state.outputParameters[id]) state.outputParameters[id] = nodeOutputs;
+      const outputParameters = getRecordEntry(state.outputParameters, id);
+      if (outputParameters) state.outputParameters[id] = nodeOutputs;
     },
     updateActionMetadata: (state, action: PayloadAction<{ id: string; actionMetadata: Record<string, any> }>) => {
       const { id, actionMetadata } = action.payload;

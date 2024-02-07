@@ -46,7 +46,7 @@ export const getRootWorkflowGraphForLayout = createSelector(getWorkflowState, (d
   if (!rootNode) return undefined;
   const newGraph = {
     ...rootNode,
-    children: reduceCollapsed((node: WorkflowNode) => collapsedIds?.[node.id])(rootNode.children ?? []),
+    children: reduceCollapsed((node: WorkflowNode) => getRecordEntry(collapsedIds, node.id))(rootNode.children ?? []),
   };
   return newGraph;
 });
@@ -232,49 +232,33 @@ export const getWorkflowGraphPath = (graph: WorkflowNode, graphId: string) => {
   return [...(traverseGraph(graph) ?? []), graphId];
 };
 
-export const useRunInstance = (): LogicAppsV2.RunInstanceDefinition | null => {
-  return useSelector(
-    createSelector(getWorkflowState, (state: WorkflowState) => {
-      return state.runInstance;
-    })
-  );
-};
+export const useRunInstance = (): LogicAppsV2.RunInstanceDefinition | null =>
+  useSelector(createSelector(getWorkflowState, (state: WorkflowState) => state.runInstance));
 
-export const useRetryHistory = (id: string): LogicAppsV2.RetryHistory[] | undefined => {
-  return useSelector(
-    createSelector(getWorkflowState, (state: WorkflowState) => {
-      return state.runInstance?.properties.actions?.[id]?.retryHistory ?? state.runInstance?.properties.trigger?.retryHistory;
-    })
+export const useRetryHistory = (id: string): LogicAppsV2.RetryHistory[] | undefined =>
+  useSelector(
+    createSelector(
+      getWorkflowState,
+      (state: WorkflowState) =>
+        getRecordEntry(state.runInstance?.properties.actions, id)?.retryHistory ?? state.runInstance?.properties.trigger?.retryHistory
+    )
   );
-};
 
-export const useRunData = (id: string): LogicAppsV2.WorkflowRunAction | LogicAppsV2.WorkflowRunTrigger | undefined => {
-  return useSelector(
-    createSelector(getWorkflowState, (state: WorkflowState) => {
-      return state.nodesMetadata[id]?.runData;
-    })
-  );
-};
+export const useRunData = (id: string): LogicAppsV2.WorkflowRunAction | LogicAppsV2.WorkflowRunTrigger | undefined =>
+  useSelector(createSelector(getWorkflowState, (state: WorkflowState) => getRecordEntry(state.nodesMetadata, id)?.runData));
 
-export const useNodesMetadata = (): NodesMetadata => {
-  return useSelector(
-    createSelector(getWorkflowState, (state: WorkflowState) => {
-      return state.nodesMetadata;
-    })
-  );
-};
+export const useNodesMetadata = (): NodesMetadata =>
+  useSelector(createSelector(getWorkflowState, (state: WorkflowState) => state.nodesMetadata));
 
 export const useParentRunIndex = (id: string | undefined): number | undefined => {
   return useSelector(
     createSelector(getWorkflowState, (state: WorkflowState) => {
       if (!id) return undefined;
-      const parents = getAllParentsForNode(id, state.nodesMetadata).filter((x) =>
-        state.operations[x]?.type
-          ? state.operations[x].type.toLowerCase() === constants.NODE.TYPE.FOREACH ||
-            state.operations[x].type.toLowerCase() === constants.NODE.TYPE.UNTIL
-          : false
-      );
-      return parents.length ? state.nodesMetadata[parents[0]].runIndex : undefined;
+      const parents = getAllParentsForNode(id, state.nodesMetadata).filter((x) => {
+        const operationType = getRecordEntry(state.operations, x)?.type?.toLowerCase();
+        return operationType ? operationType === constants.NODE.TYPE.FOREACH || operationType === constants.NODE.TYPE.UNTIL : false;
+      });
+      return parents.length ? getRecordEntry(state.nodesMetadata, parents[0])?.runIndex : undefined;
     })
   );
 };
@@ -283,7 +267,7 @@ export const useParentRunId = (id: string | undefined): string | undefined => {
   return useSelector(
     createSelector(getWorkflowState, (state: WorkflowState) => {
       if (!id) return undefined;
-      const parentId = state.nodesMetadata[id]?.parentNodeId;
+      const parentId = getRecordEntry(state.nodesMetadata, id)?.parentNodeId;
       if (parentId?.includes('elseActions') || parentId?.includes('actions')) {
         return getRecordEntry(state.nodesMetadata, parentId)?.parentNodeId;
       }

@@ -144,7 +144,7 @@ const handleExtraScopeNodeSetup = (
     createSubgraphNode(node, `${node.id}-actions`, SUBGRAPH_TYPES.CONDITIONAL_TRUE, 'actions', nodesMetadata);
     createSubgraphNode(node, `${node.id}-elseActions`, SUBGRAPH_TYPES.CONDITIONAL_FALSE, 'else', nodesMetadata);
     state.operations[node.id] = {
-      ...state.operations[node.id],
+      ...(getRecordEntry(state.operations, node.id) ?? ({} as any)),
       actions: {},
       else: {},
       expression: '',
@@ -172,7 +172,7 @@ const handleExtraScopeNodeSetup = (
     createSubgraphNode(node, `${node.id}-defaultCase`, SUBGRAPH_TYPES.SWITCH_DEFAULT as any, 'default', nodesMetadata);
 
     state.operations[node.id] = {
-      ...state.operations[node.id],
+      ...(getRecordEntry(state.operations, node.id) ?? ({} as any)),
       cases: {},
       default: {},
       expression: '',

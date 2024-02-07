@@ -2687,9 +2687,9 @@ export function updateTokenMetadataInParameters(nodeId: string, parameters: Para
     (data: Record<string, Partial<NodeDataWithOperationMetadata>>, id: string) => ({
       ...data,
       [id]: {
-        settings: settings[id],
-        nodeOutputs: outputParameters[id],
-        operationMetadata: operationMetadata[id],
+        settings: getRecordEntry(settings, id),
+        nodeOutputs: getRecordEntry(outputParameters, id),
+        operationMetadata: getRecordEntry(operationMetadata, id),
       },
     }),
     {}
@@ -3318,7 +3318,7 @@ export function remapTokenSegmentValue(
       if (!didRemap && newSegmentValue?.includes(`'${id}`)) {
         didRemap = true;
       }
-      newSegmentValue = newSegmentValue?.replaceAll(`'${id}'`, `'${idReplacements[id]}'`);
+      newSegmentValue = newSegmentValue?.replaceAll(`'${id}'`, `'${getRecordEntry(idReplacements, id)}'`);
     }
 
     newSegment = { ...segment, value: newSegmentValue, token: { ...segment.token, value: newSegmentValue } } as ValueSegment;

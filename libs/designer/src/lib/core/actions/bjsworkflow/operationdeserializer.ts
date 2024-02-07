@@ -149,8 +149,8 @@ export const initializeOperationMetadata = async (
           settings,
           operationMetadata,
           staticResult,
-          actionMetadata: nodesMetadata?.[id]?.actionMetadata,
-          repetitionInfo: repetitionInfos[id],
+          actionMetadata: getRecordEntry(nodesMetadata, id)?.actionMetadata,
+          repetitionInfo: getRecordEntry(repetitionInfos, id),
         };
       })
     )
@@ -339,6 +339,7 @@ const updateTokenMetadataInParameters = (
   for (const nodeData of nodes) {
     const { id, nodeInputs } = nodeData;
     const allParameters = getAllInputParameters(nodeInputs);
+    const repetitionInfo = getRecordEntry(repetitionInfos, id) ?? { repetitionReferences: [] };
     for (const parameter of allParameters) {
       const segments = parameter.value;
 
@@ -347,7 +348,7 @@ const updateTokenMetadataInParameters = (
           if (isTokenValueSegment(segment)) {
             return updateTokenMetadata(
               segment,
-              repetitionInfos[id],
+              repetitionInfo,
               actionNodes,
               triggerNodeId,
               nodesData,
@@ -365,7 +366,7 @@ const updateTokenMetadataInParameters = (
       const viewModel = parameter.editorViewModel;
       if (viewModel) {
         flattenAndUpdateViewModel(
-          repetitionInfos[id],
+          repetitionInfo,
           viewModel,
           actionNodes,
           triggerNodeId,
@@ -445,7 +446,7 @@ const initializeVariables = (
 
   for (const nodeData of allNodesData) {
     const { id, nodeInputs, manifest } = nodeData;
-    if (equals(operations[id]?.type, Constants.NODE.TYPE.INITIALIZE_VARIABLE)) {
+    if (equals(getRecordEntry(operations, id)?.type, Constants.NODE.TYPE.INITIALIZE_VARIABLE)) {
       if (!detailsInitialized && manifest) {
         setVariableMetadata(manifest.properties.iconUri, manifest.properties.brandColor);
         detailsInitialized = true;
