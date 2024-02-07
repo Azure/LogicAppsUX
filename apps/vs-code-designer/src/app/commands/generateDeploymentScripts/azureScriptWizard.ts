@@ -2,24 +2,15 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import {
-  workflowLocationKey,
-  workflowManagementBaseURIKey,
-  workflowResourceGroupNameKey,
-  workflowSubscriptionIdKey,
-  workflowTenantIdKey,
-} from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
-import { addOrUpdateLocalAppSettings } from '../../utils/appSettings/localSettings';
-import { isMultiRootWorkspace, selectWorkspaceFolder } from '../../utils/workspace';
+import { isMultiRootWorkspace } from '../../utils/workspace';
 import { ResourceGroupListStep } from '@microsoft/vscode-azext-azureutils';
 import { AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep } from '@microsoft/vscode-azext-utils';
 import type { IActionContext, IWizardOptions } from '@microsoft/vscode-azext-utils';
 import { OpenBehavior, type IProjectWizardContext } from '@microsoft/vscode-extension';
 import * as fs from 'fs-extra';
 import * as path from 'path';
-import type { Progress } from 'vscode';
 import * as vscode from 'vscode';
 
 export interface IAzureScriptWizard extends IProjectWizardContext, IActionContext {
@@ -41,20 +32,10 @@ export interface IAzureScriptWizard extends IProjectWizardContext, IActionContex
 /**
  * Creates an instance of the Azure Wizard for the Azure Script Wizard.
  * @param wizardContext - The wizard context.
- * @param projectPath - The path of the project.
  * @returns An instance of the Azure Wizard.
  */
 // Your existing function for creating the Azure Wizard
-export function createAzureWizard(wizardContext: IAzureScriptWizard, projectPath: string): AzureWizard<IAzureScriptWizard> {
-  const promptSteps = [
-    new ConfigureInitialLogicAppStep(),
-    new setLogicappName(),
-    new setStorageAccountName(),
-    new setAppPlantName(),
-    new SourceControlPathListStep(),
-  ];
-  const executeSteps: AzureWizardExecuteStep<IAzureScriptWizard>[] = [new SaveAzureContext(projectPath)];
-
+export function createAzureWizard(wizardContext: IAzureScriptWizard): AzureWizard<IAzureScriptWizard> {
   if (!isMultiRootWorkspace) {
     wizardContext.isValidWorkspace = false;
   } else {
@@ -63,16 +44,19 @@ export function createAzureWizard(wizardContext: IAzureScriptWizard, projectPath
 
   // Create the Azure Wizard with the modified steps
   return new AzureWizard(wizardContext, {
-    promptSteps,
-    executeSteps,
+    promptSteps: [new ConfigureInitialLogicAppStep(), new setLogicappName(), new setStorageAccountName(), new setAppPlantName()],
+    executeSteps: [new SourceControlPathListStep()],
+    showLoadingPrompt: true,
+    title: localize('generateDeploymentScripts', 'Generate deployment scripts'),
   });
 }
 
-export class SourceControlPathListStep extends AzureWizardPromptStep<IAzureScriptWizard> {
+export class SourceControlPathListStep extends AzureWizardExecuteStep<IAzureScriptWizard> {
   public hideStepCount = true;
+  public priority = 250;
 
   private async createDeploymentFolder(rootDir: string): Promise<string> {
-    const deploymentsDir = path.join(rootDir, 'Deployment');
+    const deploymentsDir = path.join(rootDir, 'deployment');
     if (!fs.existsSync(deploymentsDir)) {
       fs.mkdirSync(deploymentsDir);
     }
@@ -87,7 +71,7 @@ export class SourceControlPathListStep extends AzureWizardPromptStep<IAzureScrip
     }
   }
 
-  public async prompt(context: IAzureScriptWizard): Promise<void> {
+  public async execute(context: IAzureScriptWizard): Promise<void> {
     const workspaceFileUri = vscode.workspace.workspaceFile;
     let rootDir = context.customWorkspaceFolderPath;
     //change the root directory if unable to locate workspace file
@@ -97,45 +81,11 @@ export class SourceControlPathListStep extends AzureWizardPromptStep<IAzureScrip
       rootDir = path.dirname(workspaceFileUri.fsPath);
     }
 
-    let deploymentFolderExists = false;
-    if (rootDir) {
-      deploymentFolderExists = fs.existsSync(path.join(rootDir, 'Deployment'));
-    }
-
-    const deploymentLabel = deploymentFolderExists ? 'Deployment folder in current workspace' : 'New deployment folder';
-
-    const placeHolder = 'Select the folder to store your deployment artifacts';
-    const options: vscode.QuickPickItem[] = [
-      {
-        label: deploymentLabel,
-        description: deploymentFolderExists
-          ? 'Uses the existing deployment folder in the current workspace.'
-          : 'Creates a new deployment folder in the current workspace.',
-      },
-      {
-        label: 'Choose a different folder.',
-        description: 'Select a different folder in the current workspace.',
-      },
-    ];
-
-    const userChoice = await vscode.window.showQuickPick(options, { placeHolder });
-
-    if (userChoice) {
-      let selectedPath: string | undefined;
-
-      if (userChoice.label === deploymentLabel && rootDir) {
-        selectedPath = await this.createDeploymentFolder(rootDir);
-      } else if (userChoice.label === 'Choose a different folder.') {
-        selectedPath = await selectWorkspaceFolder(context, placeHolder);
-      }
-
-      if (selectedPath) {
-        SourceControlPathListStep.setSourceControlPath(context, selectedPath);
-      }
-    }
+    const selectedPath = await this.createDeploymentFolder(rootDir);
+    SourceControlPathListStep.setSourceControlPath(context, selectedPath);
   }
 
-  public shouldPrompt(_context: IAzureScriptWizard): boolean {
+  public shouldExecute(): boolean {
     return true;
   }
 }
@@ -159,7 +109,7 @@ class ConfigureInitialLogicAppStep extends AzureWizardPromptStep<IAzureScriptWiz
     }
 
     azurePromptSteps.push(new ResourceGroupListStep());
-    return { promptSteps: azurePromptSteps };
+    return { promptSteps: azurePromptSteps, showLoadingPrompt: true };
   }
 }
 
@@ -208,40 +158,5 @@ export class setAppPlantName extends AzureWizardPromptStep<IAzureScriptWizard> {
 
   public shouldPrompt(context: IAzureScriptWizard): boolean {
     return !context.appServicePlan;
-  }
-}
-
-// Define the SaveAzureContext class
-class SaveAzureContext extends AzureWizardExecuteStep<IAzureScriptWizard> {
-  public priority = 100;
-  private _projectPath: string;
-
-  constructor(projectPath: string) {
-    super();
-    this._projectPath = projectPath;
-  }
-
-  public async execute(
-    context: IAzureScriptWizard,
-    _progress: Progress<{ message?: string | undefined; increment?: number | undefined }>
-  ): Promise<void> {
-    const valuesToUpdateInSettings: Record<string, string> = {};
-
-    if (context.enabled === false) {
-      valuesToUpdateInSettings[workflowSubscriptionIdKey] = '';
-    } else {
-      const { resourceGroup, subscriptionId, tenantId, environment } = context;
-      valuesToUpdateInSettings[workflowTenantIdKey] = tenantId;
-      valuesToUpdateInSettings[workflowSubscriptionIdKey] = subscriptionId;
-      valuesToUpdateInSettings[workflowResourceGroupNameKey] = resourceGroup?.name || '';
-      valuesToUpdateInSettings[workflowLocationKey] = resourceGroup?.location || '';
-      valuesToUpdateInSettings[workflowManagementBaseURIKey] = environment.resourceManagerEndpointUrl;
-    }
-
-    await addOrUpdateLocalAppSettings(context, this._projectPath, valuesToUpdateInSettings);
-  }
-
-  public shouldExecute(context: IAzureScriptWizard): boolean {
-    return context.enabled === false || !!context.subscriptionId || !!context.resourceGroup;
   }
 }

@@ -42,7 +42,7 @@ export async function generateDeploymentScripts(context: IActionContext, project
     const inputs = await gatherAndValidateInputs(scriptContext, projectRoot);
     const sourceControlPath = scriptContext.sourceControlPath;
     await callConsumptionApi(scriptContext, inputs);
-    const standardArtifactsContent = await callStandardApi(scriptContext, inputs);
+    const standardArtifactsContent = await callStandardApi(inputs);
     await handleApiResponse(standardArtifactsContent, sourceControlPath);
 
     const deploymentScriptLocation = `workspace/${scriptContext.sourceControlPath}`;
@@ -91,7 +91,7 @@ async function setupWizardScriptContext(context: IActionContext, projectRoot: vs
  * @param inputs - Object containing required inputs like subscriptionId, resourceGroup etc.
  * @returns - Promise<Buffer> containing the API response as a buffer.
  */
-async function callStandardApi(scriptContext: IAzureScriptWizard, inputs: any): Promise<Buffer> {
+async function callStandardApi(inputs: any): Promise<Buffer> {
   try {
     const { subscriptionId, resourceGroup, storageAccount, location, logicAppName, appServicePlan } = inputs;
     return await callStandardResourcesApi(subscriptionId, resourceGroup, storageAccount, location, logicAppName, appServicePlan);
@@ -110,13 +110,13 @@ export async function callConsumptionApi(scriptContext: IAzureScriptWizard, inpu
   try {
     ext.outputChannel.appendLog(localize('initCallConsumption', 'Initiating call to Consumption API for deployment artifacts.'));
 
-    const { subscriptionId, resourceGroup, logicAppName } = inputs;
+    const { localSubscriptionId, localResourceGroup, logicAppName } = inputs;
     ext.outputChannel.appendLog(
       localize(
         'operationalContext',
         'Operational context: Subscription ID: {0}, Resource Group: {1}, Logic App: {2}',
-        subscriptionId,
-        resourceGroup,
+        localSubscriptionId,
+        localResourceGroup,
         logicAppName
       )
     );
@@ -133,8 +133,8 @@ export async function callConsumptionApi(scriptContext: IAzureScriptWizard, inpu
 
         // The line below has been modified to pass both originalKey and refEndPoint
         const bufferData = await callManagedConnectionsApi(
-          subscriptionId,
-          resourceGroup,
+          localSubscriptionId,
+          localResourceGroup,
           logicAppName,
           connectionObj.originalKey,
           connectionObj.refEndPoint
@@ -291,15 +291,12 @@ async function callManagedConnectionsApi(
     const cloudHost = await getCloudHost(credentials);
     const baseGraphUri = getBaseGraphApi(cloudHost);
 
-    const targetLogicAppName = logicAppName;
-    const connectionReferenceName = connectionName;
-
     // Build the URL for the API call
     const apiUrl = `${baseGraphUri}/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Web/connections/${connectionId}/generateDeploymentArtifacts?api-version=${apiVersion}`;
     // Define the request body
     const requestBody = {
-      TargetLogicAppName: targetLogicAppName,
-      ConnectionReferenceName: connectionReferenceName,
+      TargetLogicAppName: logicAppName,
+      ConnectionReferenceName: connectionName,
     };
 
     // Execute the API call
@@ -376,15 +373,11 @@ async function gatherAndValidateInputs(scriptContext: IAzureScriptWizard, folder
   );
 
   try {
-    if (!subscriptionId || !resourceGroup.name || !logicAppName || !storageAccountName || !appServicePlan) {
-      ext.outputChannel.appendLog(
-        localize('AttemptingExecuteAzureWizardSuccess', 'One or more required values are missing. Launching Azure Wizard...')
-      );
-      const wizard = createAzureWizard(scriptContext, folder.fsPath);
-      await wizard.prompt();
-      await wizard.execute();
-      ext.outputChannel.appendLog(localize('executeAzureWizardSuccess', 'Azure Wizard executed successfully.'));
-    }
+    ext.outputChannel.appendLog(localize('AttemptingExecuteAzureWizardSuccess', 'Launching Azure Wizard...'));
+    const wizard = createAzureWizard(scriptContext);
+    await wizard.prompt();
+    await wizard.execute();
+    ext.outputChannel.appendLog(localize('executeAzureWizardSuccess', 'Azure Wizard executed successfully.'));
   } catch (error) {
     ext.outputChannel.appendLog(localize('executeAzureWizardError', `Error executing Azure Wizard: ${error}`));
     await handleError(error, localize('handleErrorExecuteAzureWizard', 'Error executing Azure Wizard'));
@@ -398,6 +391,8 @@ async function gatherAndValidateInputs(scriptContext: IAzureScriptWizard, folder
     storageAccount: scriptContext.storageAccountName || storageAccountName,
     location: scriptContext.resourceGroup.location || resourceGroup.location,
     appServicePlan: scriptContext.appServicePlan || appServicePlan,
+    localSubscriptionId: defaultSubscriptionId,
+    localResourceGroup: defaultResourceGroup,
   };
 }
 
