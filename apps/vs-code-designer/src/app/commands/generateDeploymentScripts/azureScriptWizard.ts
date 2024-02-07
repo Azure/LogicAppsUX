@@ -47,6 +47,7 @@ export function createAzureWizard(wizardContext: IAzureScriptWizard): AzureWizar
     promptSteps: [new ConfigureInitialLogicAppStep(), new setLogicappName(), new setStorageAccountName(), new setAppPlantName()],
     executeSteps: [new SourceControlPathListStep()],
     showLoadingPrompt: true,
+    title: localize('generateDeploymentScripts', 'Generate deployment scripts'),
   });
 }
 
