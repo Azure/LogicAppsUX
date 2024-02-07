@@ -356,9 +356,17 @@ export const getUpdatedManifestForSchemaDependency = (manifest: OperationManifes
       let schemaValue: Schema;
       let shouldMerge: boolean;
       // if schema contains static object returned from RP, merge the current schema value and new schema value
-      if (isRequestApiConnectionTrigger && schemaToReplace && 'rows' in schemaToReplace) {
+      if (
+        isRequestApiConnectionTrigger &&
+        schemaToReplace &&
+        ('rows' in schemaToReplace || (schemaToReplace.properties && 'rows' in schemaToReplace.properties))
+      ) {
         if ('rows' in currentSchemaValue) {
-          schemaValue = { ...currentSchemaValue, ...schemaToReplace };
+          if (schemaToReplace.properties && 'rows' in schemaToReplace.properties) {
+            schemaValue = { ...currentSchemaValue, ...schemaToReplace.properties };
+          } else {
+            schemaValue = { ...currentSchemaValue, ...schemaToReplace };
+          }
           shouldMerge = true;
         } else {
           continue;
