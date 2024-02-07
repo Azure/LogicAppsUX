@@ -94,15 +94,9 @@ export abstract class OpenDesignerBase {
     }
 
     const parametersResolutionService = new ResolutionService(parameters, localSettings);
+    const resolvedConnections: ConnectionsData = parametersResolutionService.resolve(JSON.parse(connectionsData));
 
-    const resolvedConnections = parametersResolutionService.resolve(connectionsData);
-    let parsedConnections: ConnectionsData = {};
-    try {
-      parsedConnections = JSON.parse(resolvedConnections);
-    } catch (e) {
-      console.log(e);
-    }
-    this.connectionData = parsedConnections;
+    this.connectionData = resolvedConnections;
     this.apiHubServiceDetails = this.getApiHubServiceDetails(azureDetails);
     this.mapArtifacts = mapArtifacts;
     this.schemaArtifacts = artifacts.schemas;
