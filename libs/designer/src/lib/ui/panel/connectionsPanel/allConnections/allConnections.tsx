@@ -8,6 +8,7 @@ import {
 import { useConnector } from '../../../../core/state/connection/connectionSelector';
 import { ConnectorConnectionsCard } from './connectorConnectionsCard';
 import { Accordion, AccordionItem, type AccordionToggleEventHandler } from '@fluentui/react-components';
+import { getRecordEntry } from '@microsoft/utils-logic-apps';
 import { useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 
@@ -38,7 +39,7 @@ export const AllConnections = () => {
     const groups: Record<string, string[]> = {};
     for (const [nodeId, connectionReference] of Object.entries(connectionMapping)) {
       if (!connectionReference) {
-        const apiId = allOperationInfo[nodeId]?.connectorId;
+        const apiId = getRecordEntry(allOperationInfo, nodeId)?.connectorId;
         if (!apiId) continue;
         groups[apiId] = groups?.[apiId] || [];
         groups[apiId].push(nodeId);

@@ -27,7 +27,7 @@ import { LogEntryLevel, LoggerService } from '@microsoft/designer-client-service
 import type { MessageLevel } from '@microsoft/designer-ui';
 import { getDurationStringPanelMode } from '@microsoft/designer-ui';
 import type { LogicAppsV2 } from '@microsoft/utils-logic-apps';
-import { equals, RUN_AFTER_STATUS, WORKFLOW_EDGE_TYPES, WORKFLOW_NODE_TYPES } from '@microsoft/utils-logic-apps';
+import { equals, getRecordEntry, RUN_AFTER_STATUS, WORKFLOW_EDGE_TYPES, WORKFLOW_NODE_TYPES } from '@microsoft/utils-logic-apps';
 import { createSlice, isAnyOf } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import type { NodeChange, NodeDimensionChange } from 'reactflow';
@@ -74,7 +74,9 @@ export const workflowSlice = createSlice({
     },
     setNodeDescription: (state: WorkflowState, action: PayloadAction<{ nodeId: string; description?: string }>) => {
       const { nodeId, description } = action.payload;
-      state.operations[nodeId].description = description;
+      const nodeOperation = getRecordEntry(state.operations, nodeId);
+      if (!nodeOperation) return;
+      nodeOperation.description = description;
     },
     addNode: (state: WorkflowState, action: PayloadAction<AddNodePayload>) => {
       if (!state.graph) {
@@ -111,7 +113,7 @@ export const workflowSlice = createSlice({
     addImplicitForeachNode: (state: WorkflowState, action: PayloadAction<AddImplicitForeachPayload>) => {
       const { nodeId, foreachNodeId, operation } = action.payload;
       const currentNodeToBeReplaced = getWorkflowNodeFromGraphState(state, nodeId) as WorkflowNode;
-      const graphId = state.nodesMetadata[nodeId].graphId;
+      const graphId = getRecordEntry(state.nodesMetadata, nodeId)?.graphId ?? '';
       const currentGraph = (graphId === 'root' ? state.graph : getWorkflowNodeFromGraphState(state, graphId)) as WorkflowNode;
       const parentIds = getImmediateSourceNodeIds(currentGraph, nodeId);
       const parentId = parentIds.length > 1 ? undefined : parentIds[0];
@@ -121,7 +123,7 @@ export const workflowSlice = createSlice({
         state.nodesMetadata,
         state
       );
-      state.operations[foreachNodeId] = { ...state.operations[foreachNodeId], ...operation };
+      state.operations[foreachNodeId] = { ...getRecordEntry(state.operations, foreachNodeId), ...operation };
       const foreachNode = getWorkflowNodeFromGraphState(state, foreachNodeId) as WorkflowNode;
       moveNodeInWorkflow(
         currentNodeToBeReplaced,
@@ -176,7 +178,7 @@ export const workflowSlice = createSlice({
         return; // log exception
       }
       const { nodeId, isTrigger } = action.payload;
-      const graphId = state.nodesMetadata[nodeId]?.graphId;
+      const graphId = getRecordEntry(state.nodesMetadata, nodeId)?.graphId ?? '';
       const graph = getWorkflowNodeFromGraphState(state, graphId);
       if (!graph) throw new Error('graph not set');
 
@@ -212,7 +214,7 @@ export const workflowSlice = createSlice({
       });
     },
     deleteSwitchCase: (state: WorkflowState, action: PayloadAction<{ caseId: string; nodeId: string }>) => {
-      delete (state.operations?.[action.payload.nodeId] as any).cases?.[action.payload.caseId];
+      delete (getRecordEntry(state.operations, action.payload.nodeId) as any).cases?.[action.payload.caseId];
 
       LoggerService().log({
         level: LogEntryLevel.Verbose,
@@ -244,7 +246,7 @@ export const workflowSlice = createSlice({
       }, {});
       while (stack.length) {
         const node = stack.shift();
-        const change = dimensionChangesById[node?.id ?? ''];
+        const change = getRecordEntry(dimensionChangesById, node?.id ?? '');
         if (change && node && isWorkflowNode(node)) {
           const c = change as NodeDimensionChange;
           node.height = c.dimensions?.height ?? 0;
@@ -257,7 +259,7 @@ export const workflowSlice = createSlice({
       state.collapsedGraphIds = action.payload;
     },
     toggleCollapsedGraphId: (state: WorkflowState, action: PayloadAction<string>) => {
-      if (state.collapsedGraphIds?.[action.payload] === true) delete state.collapsedGraphIds[action.payload];
+      if (getRecordEntry(state.collapsedGraphIds, action.payload) === true) delete state.collapsedGraphIds[action.payload];
       else state.collapsedGraphIds[action.payload] = true;
 
       LoggerService().log({
@@ -269,25 +271,30 @@ export const workflowSlice = createSlice({
     },
     setRunIndex: (state: WorkflowState, action: PayloadAction<{ page: number; nodeId: string }>) => {
       const { page, nodeId } = action.payload;
-      state.nodesMetadata[nodeId].runIndex = page;
+      const nodeMetadata = getRecordEntry(state.nodesMetadata, nodeId);
+      if (!nodeMetadata) return;
+      nodeMetadata.runIndex = page;
     },
     setRepetitionRunData: (state: WorkflowState, action: PayloadAction<{ nodeId: string; runData: LogicAppsV2.WorkflowRunAction }>) => {
       const { nodeId, runData } = action.payload;
+      const nodeMetadata = getRecordEntry(state.nodesMetadata, nodeId);
+      if (!nodeMetadata) return;
       const nodeRunData = {
-        ...state.nodesMetadata[nodeId].runData,
+        ...nodeMetadata.runData,
         ...runData,
         inputsLink: runData?.inputsLink ?? null,
         outputsLink: runData?.outputsLink ?? null,
         duration: getDurationStringPanelMode(Date.parse(runData.endTime) - Date.parse(runData.startTime), /* abbreviated */ true),
       };
-      state.nodesMetadata[nodeId].runData = nodeRunData as LogicAppsV2.WorkflowRunAction;
+      nodeMetadata.runData = nodeRunData as LogicAppsV2.WorkflowRunAction;
     },
     addSwitchCase: (state: WorkflowState, action: PayloadAction<{ caseId: string; nodeId: string }>) => {
       if (!state.graph) {
         return; // log exception
       }
       const { caseId, nodeId } = action.payload;
-      const node = getWorkflowNodeFromGraphState(state, state.nodesMetadata[nodeId].graphId);
+      const graphId = getRecordEntry(state.nodesMetadata, nodeId)?.graphId ?? '';
+      const node = getWorkflowNodeFromGraphState(state, graphId);
       if (!node) throw new Error('node not set');
       addSwitchCaseToWorkflow(caseId, node, state.nodesMetadata, state);
 
@@ -314,8 +321,8 @@ export const workflowSlice = createSlice({
         const edges = graph.edges?.filter((e) => e.type !== WORKFLOW_EDGE_TYPES.HIDDEN_EDGE);
         if (edges) {
           edges.forEach((edge) => {
-            if (!output[edge.source]) output[edge.source] = [];
-            output[edge.source].push(edge.target);
+            if (!getRecordEntry(output, edge.source)) output[edge.source] = [];
+            getRecordEntry(output, edge.source)?.push(edge.target);
           });
         }
         if (graph.children) graph.children.forEach((child) => traverseGraph(child));
@@ -325,19 +332,19 @@ export const workflowSlice = createSlice({
     },
     removeEdgeFromRunAfter: (state: WorkflowState, action: PayloadAction<{ childOperationId: string; parentOperationId: string }>) => {
       const { childOperationId, parentOperationId } = action.payload;
-      const parentOperation = state.operations[parentOperationId];
-      const childOperation: LogicAppsV2.ActionDefinition = state.operations[childOperationId];
+      const parentOperation = getRecordEntry(state.operations, parentOperationId);
+      const childOperation: LogicAppsV2.ActionDefinition | undefined = getRecordEntry(state.operations, childOperationId);
       if (!parentOperation || !childOperation) {
         return;
       }
       delete childOperation.runAfter?.[parentOperationId];
 
       const graphPath: string[] = [];
-      let operationGraph = state.nodesMetadata[childOperationId];
+      let operationGraph = getRecordEntry(state.nodesMetadata, childOperationId);
 
-      while (!equals(operationGraph.graphId, 'root')) {
+      while (operationGraph && !equals(operationGraph?.graphId, 'root')) {
         graphPath.push(operationGraph.graphId);
-        operationGraph = state.nodesMetadata[operationGraph.graphId];
+        operationGraph = getRecordEntry(state.nodesMetadata, operationGraph?.graphId);
       }
       let graph = state.graph;
       for (const id of graphPath.reverse()) {
@@ -350,17 +357,15 @@ export const workflowSlice = createSlice({
     },
     addEdgeFromRunAfter: (state: WorkflowState, action: PayloadAction<{ childOperationId: string; parentOperationId: string }>) => {
       const { childOperationId, parentOperationId } = action.payload;
-      const parentOperation = state.operations[parentOperationId];
-      const childOperation: LogicAppsV2.ActionDefinition = state.operations[childOperationId];
-      if (!parentOperation || !childOperation) {
-        return;
-      }
+      const parentOperation = getRecordEntry(state.operations, parentOperationId);
+      const childOperation: LogicAppsV2.ActionDefinition | undefined = getRecordEntry(state.operations, childOperationId);
+      if (!parentOperation || !childOperation) return;
       childOperation.runAfter = { ...(childOperation.runAfter ?? {}), [parentOperationId]: [RUN_AFTER_STATUS.SUCCEEDED] };
 
       const graphPath: string[] = [];
-      let operationGraph = state.nodesMetadata[childOperationId];
+      let operationGraph = getRecordEntry(state.nodesMetadata, childOperationId);
 
-      while (!equals(operationGraph.graphId, 'root')) {
+      while (operationGraph && !equals(operationGraph.graphId, 'root')) {
         graphPath.push(operationGraph.graphId);
         operationGraph = state.nodesMetadata[operationGraph.graphId];
       }
@@ -379,13 +384,9 @@ export const workflowSlice = createSlice({
       state: WorkflowState,
       action: PayloadAction<{ childOperation: string; parentOperation: string; statuses: string[] }>
     ) => {
-      const childOperation = state.operations[action.payload.childOperation] as LogicAppsV2.ActionDefinition;
-      if (!childOperation) {
-        return;
-      }
-      if (!childOperation.runAfter) {
-        childOperation.runAfter = {};
-      }
+      const childOperation = getRecordEntry(state.operations, action.payload.childOperation) as LogicAppsV2.ActionDefinition;
+      if (!childOperation) return;
+      if (!childOperation.runAfter) childOperation.runAfter = {};
       childOperation.runAfter[action.payload.parentOperation] = action.payload.statuses;
     },
     replaceId: (state: WorkflowState, action: PayloadAction<{ originalId: string; newId: string }>) => {

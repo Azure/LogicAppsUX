@@ -4,7 +4,7 @@ import { isWorkflowOperationNode } from '../actions/bjsworkflow/serializer';
 import type { NodesMetadata, WorkflowState } from '../state/workflow/workflowInterfaces';
 import type { WorkflowEdge, WorkflowNode } from './models/workflowNode';
 import type { LogicAppsV2 } from '@microsoft/utils-logic-apps';
-import { containsIdTag, RUN_AFTER_STATUS, WORKFLOW_EDGE_TYPES } from '@microsoft/utils-logic-apps';
+import { containsIdTag, getRecordEntry, RUN_AFTER_STATUS, WORKFLOW_EDGE_TYPES } from '@microsoft/utils-logic-apps';
 
 ///////////////////////////////////////////////////////////
 // EDGES
@@ -19,7 +19,7 @@ export const addNewEdge = (state: WorkflowState, source: string, target: string,
   if (!graph?.edges) graph.edges = [];
   graph?.edges.push(workflowEdge);
 
-  const targetOp = state.operations?.[target] as any;
+  const targetOp = getRecordEntry(state.operations, target) as any;
   if (targetOp && addRunAfter) {
     targetOp.runAfter = { ...targetOp.runAfter, [source]: [RUN_AFTER_STATUS.SUCCEEDED] };
   }
@@ -28,7 +28,7 @@ export const addNewEdge = (state: WorkflowState, source: string, target: string,
 export const removeEdge = (state: WorkflowState, sourceId: string, targetId: string, graph: WorkflowNode) => {
   if (!state) return;
   graph.edges = graph.edges?.filter((edge) => !(edge.source === sourceId && edge.target === targetId));
-  const targetRunAfter = (state.operations?.[targetId] as any)?.runAfter;
+  const targetRunAfter = (getRecordEntry(state.operations, targetId) as any)?.runAfter;
   if (targetRunAfter) delete targetRunAfter?.[sourceId as any];
 };
 
@@ -91,10 +91,10 @@ export const reassignEdgeTargets = (state: WorkflowState, oldTargetId: string, n
 
 export const moveRunAfterTarget = (state: WorkflowState | undefined, oldTargetId: string, newTargetId: string) => {
   if (!state) return;
-  const targetRunAfter = (state.operations?.[oldTargetId] as any)?.runAfter;
+  const targetRunAfter = (getRecordEntry(state.operations, oldTargetId) as any)?.runAfter;
   if (targetRunAfter) {
-    (state.operations[newTargetId] as LogicAppsV2.ActionDefinition).runAfter = targetRunAfter;
-    (state.operations[oldTargetId] as any).runAfter = {};
+    (getRecordEntry(state.operations, newTargetId) as LogicAppsV2.ActionDefinition).runAfter = targetRunAfter;
+    (getRecordEntry(state.operations, oldTargetId) as any).runAfter = {};
   }
 };
 
@@ -105,18 +105,18 @@ export const moveRunAfterSource = (
   newSourceId: string,
   shouldHaveRunAfters: boolean
 ) => {
-  if (!state?.operations?.[nodeId]) return;
-  const targetRunAfter = (state.operations[nodeId] as LogicAppsV2.ActionDefinition)?.runAfter ?? {};
-  if (shouldHaveRunAfters && !targetRunAfter?.[newSourceId]) {
-    targetRunAfter[newSourceId] = targetRunAfter[oldSourceId] ?? [RUN_AFTER_STATUS.SUCCEEDED];
+  if (!getRecordEntry(state?.operations, nodeId)) return;
+  const targetRunAfter = (getRecordEntry(state?.operations, nodeId) as LogicAppsV2.ActionDefinition)?.runAfter ?? {};
+  if (shouldHaveRunAfters && !getRecordEntry(targetRunAfter, newSourceId)) {
+    targetRunAfter[newSourceId] = getRecordEntry(targetRunAfter, oldSourceId) ?? [RUN_AFTER_STATUS.SUCCEEDED];
   }
 
   delete targetRunAfter[oldSourceId];
 
   if (Object.keys(targetRunAfter).length !== 0) {
-    (state.operations[nodeId] as LogicAppsV2.ActionDefinition).runAfter = targetRunAfter;
+    (getRecordEntry(state?.operations, nodeId) as LogicAppsV2.ActionDefinition).runAfter = targetRunAfter;
   } else {
-    delete (state.operations[nodeId] as LogicAppsV2.ActionDefinition).runAfter;
+    delete (getRecordEntry(state?.operations, nodeId) as LogicAppsV2.ActionDefinition).runAfter;
   }
 };
 
@@ -128,7 +128,8 @@ export const applyIsRootNode = (state: WorkflowState, graph: WorkflowNode, metad
 
   (graph.children ?? []).forEach((node) => {
     const isRoot = node.id === constants.NODE.TYPE.PLACEHOLDER_TRIGGER ? true : rootNodeIds?.includes(node.id) ?? false;
-    if (metadata[node.id]) metadata[node.id].isRoot = isRoot;
-    if (isRoot) delete (state.operations[node.id] as LogicAppsV2.ActionDefinition)?.runAfter;
+    const nodeMetadata = getRecordEntry(metadata, node.id);
+    if (nodeMetadata) nodeMetadata.isRoot = isRoot;
+    if (isRoot) delete (getRecordEntry(state.operations, node.id) as LogicAppsV2.ActionDefinition)?.runAfter;
   });
 };

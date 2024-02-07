@@ -152,6 +152,7 @@ import {
   ValidationException,
   nthLastIndexOf,
   parseErrorMessage,
+  getRecordEntry,
 } from '@microsoft/utils-logic-apps';
 import type { Dispatch } from '@reduxjs/toolkit';
 
@@ -1840,10 +1841,12 @@ export async function updateDynamicDataInNode(
   );
 
   const { operations, workflowParameters } = getState();
-  for (const parameterKey of Object.keys(operations.dependencies[nodeId]?.inputs ?? {})) {
-    const dependencyInfo = operations.dependencies[nodeId].inputs[parameterKey];
+  const nodeDependencies = getRecordEntry(operations.dependencies, nodeId) ?? { inputs: {}, outputs: {} };
+  const nodeInputParameters = getRecordEntry(operations.inputParameters, nodeId) ?? { parameterGroups: {} };
+  for (const parameterKey of Object.keys(nodeDependencies?.inputs ?? {})) {
+    const dependencyInfo = nodeDependencies.inputs[parameterKey];
     if (dependencyInfo.dependencyType === 'ListValues') {
-      const details = getGroupAndParameterFromParameterKey(operations.inputParameters[nodeId] ?? {}, parameterKey);
+      const details = getGroupAndParameterFromParameterKey(nodeInputParameters, parameterKey);
       if (details) {
         loadDynamicValuesForParameter(
           nodeId,
@@ -1851,8 +1854,8 @@ export async function updateDynamicDataInNode(
           details.parameter.id,
           operationInfo,
           connectionReference,
-          operations.inputParameters[nodeId],
-          operations.dependencies[nodeId],
+          nodeInputParameters,
+          nodeDependencies,
           false /* showErrorWhenNotReady */,
           dispatch,
           /* idReplacements */ undefined,
@@ -2702,15 +2705,15 @@ export function updateTokenMetadataInParameters(nodeId: string, parameters: Para
     (data: Record<string, Partial<NodeDataWithOperationMetadata>>, id: string) => ({
       ...data,
       [id]: {
-        settings: settings[id],
-        nodeOutputs: outputParameters[id],
-        operationMetadata: operationMetadata[id],
+        settings: getRecordEntry(settings, id),
+        nodeOutputs: getRecordEntry(outputParameters, id),
+        operationMetadata: getRecordEntry(operationMetadata, id),
       },
     }),
     {}
   );
 
-  const repetitionContext = rootState.operations.repetitionInfos[nodeId];
+  const repetitionContext = getRecordEntry(rootState.operations.repetitionInfos, nodeId) ?? { repetitionReferences: [] };
   for (const parameter of parameters) {
     const segments = parameter.value;
 
@@ -3333,7 +3336,7 @@ export function remapTokenSegmentValue(
       if (!didRemap && newSegmentValue?.includes(`'${id}`)) {
         didRemap = true;
       }
-      newSegmentValue = newSegmentValue?.replaceAll(`'${id}'`, `'${idReplacements[id]}'`);
+      newSegmentValue = newSegmentValue?.replaceAll(`'${id}'`, `'${getRecordEntry(idReplacements, id)}'`);
     }
 
     newSegment = { ...segment, value: newSegmentValue, token: { ...segment.token, value: newSegmentValue } } as ValueSegment;

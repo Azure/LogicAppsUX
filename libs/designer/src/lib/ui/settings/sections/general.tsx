@@ -1,15 +1,15 @@
 import type { SectionProps, ToggleHandler, TextChangeHandler, NumberChangeHandler } from '..';
 import { SettingSectionName } from '..';
 import constants from '../../../common/constants';
-import type { RootState } from '../../../core';
+import { useOperationInfo } from '../../../core';
 import { useSelectedNodeId } from '../../../core/state/panel/panelSelectors';
+import { useOutputParameters } from '../../../core/state/selectors/actionMetadataSelector';
 import { getSplitOnOptions } from '../../../core/utils/outputs';
 import type { SettingsSectionProps } from '../settingsection';
 import { SettingsSection } from '../settingsection';
 import { OperationManifestService } from '@microsoft/designer-client-services-logic-apps';
 import { getSettingLabel, type DropdownSelectionChangeHandler, type ExpressionChangeHandler } from '@microsoft/designer-ui';
 import { useIntl } from 'react-intl';
-import { useSelector } from 'react-redux';
 
 export interface GeneralSectionProps extends SectionProps {
   onConcurrencyToggle: ToggleHandler;
@@ -44,10 +44,9 @@ export const General = ({
 }: GeneralSectionProps): JSX.Element => {
   const intl = useIntl();
   const nodeId = useSelectedNodeId();
-  const { nodeOutputs, operationInfo } = useSelector((state: RootState) => ({
-    nodeOutputs: state.operations.outputParameters[nodeId],
-    operationInfo: state.operations.operationInfo[nodeId],
-  }));
+  const operationInfo = useOperationInfo(nodeId);
+  const nodeOutputs = useOutputParameters(nodeId);
+
   const generalTitle = intl.formatMessage({
     defaultMessage: 'General',
     description: 'title for general setting section',

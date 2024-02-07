@@ -1035,3 +1035,14 @@ export const filterRecord = <T>(data: Record<string, T>, filter: (_key: string, 
     .filter(([key, value]) => filter(key, value))
     .reduce((res: any, [key, value]: any) => ({ ...res, [key]: value }), {});
 };
+
+/**
+ * Returns the value of the key in the record, if found. Otherwise, undefined.
+ * @param record - The record to search.
+ * @param key - The key to search for in the record.
+ * @returns {T | undefined} - The value of the key in the record, if found. Otherwise, undefined.
+ */
+export const getRecordEntry = <T>(record: Record<string, T> | undefined, key: string | undefined) => {
+  if (!record || !key || !Object.hasOwn(record, key)) return undefined;
+  return record[key];
+};

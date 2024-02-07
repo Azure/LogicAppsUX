@@ -13,6 +13,7 @@ import {
   getCallbackUrl,
   isNullOrUndefined,
   isBoolean,
+  getRecordEntry,
 } from '@microsoft/utils-logic-apps';
 
 export interface RunServiceOptions {
@@ -223,8 +224,8 @@ export class StandardRunService implements IRunService {
     let outputs: Record<string, any> = {};
 
     if (this._isDev) {
-      inputs = inputsResponse[nodeId] ?? {};
-      outputs = outputsResponse[nodeId] ?? {};
+      inputs = getRecordEntry(inputsResponse, nodeId) ?? {};
+      outputs = getRecordEntry(outputsResponse, nodeId) ?? {};
       return Promise.resolve({ inputs: this.parseActionLink(inputs, true), outputs: this.parseActionLink(outputs, false) });
     }
 

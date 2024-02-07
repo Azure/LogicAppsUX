@@ -1,12 +1,15 @@
 import constants from '../../common/constants';
+import { useOperationInfo } from '../../core';
 import { updateOutputsAndTokens } from '../../core/actions/bjsworkflow/initialize';
 import type { Settings } from '../../core/actions/bjsworkflow/settings';
 import { useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
 import { updateNodeSettings } from '../../core/state/operation/operationMetadataSlice';
+import { useRawInputParameters } from '../../core/state/operation/operationSelector';
 import { useSelectedNodeId } from '../../core/state/panel/panelSelectors';
 import { useExpandedSections } from '../../core/state/setting/settingSelector';
 import { setExpandedSections } from '../../core/state/setting/settingSlice';
 import { updateTokenSecureStatus } from '../../core/state/tokens/tokensSlice';
+import { useActionMetadata } from '../../core/state/workflow/workflowSelectors';
 import type { AppDispatch, RootState } from '../../core/store';
 import { isRootNodeInGraph } from '../../core/utils/graph';
 import { isSecureOutputsLinkedToInputs } from '../../core/utils/setting';
@@ -19,8 +22,7 @@ import { Tracking } from './sections/tracking';
 import type { ValidationError } from './validation/validation';
 import { ValidationErrorKeys, validateNodeSettings } from './validation/validation';
 import type { IDropdownOption } from '@fluentui/react';
-import type { LogicAppsV2 } from '@microsoft/utils-logic-apps';
-import { equals, isObject } from '@microsoft/utils-logic-apps';
+import { type LogicAppsV2, equals, getRecordEntry, isObject } from '@microsoft/utils-logic-apps';
 import { useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -68,8 +70,8 @@ export const SettingsPanel = (): JSX.Element => {
 
   const { nodeSettings, nodeSettingValidationErrors } = useSelector((state: RootState) => {
     return {
-      nodeSettings: state.operations.settings?.[selectedNode] ?? {},
-      nodeSettingValidationErrors: state.settings.validationErrors?.[selectedNode] ?? [],
+      nodeSettings: getRecordEntry(state.operations.settings, selectedNode) ?? {},
+      nodeSettingValidationErrors: getRecordEntry(state.settings.validationErrors, selectedNode) ?? [],
     };
   });
 
@@ -213,17 +215,13 @@ function GeneralSettings({
   dispatch,
   updateSettings,
 }: SettingSectionProps): JSX.Element | null {
-  const { isTrigger, nodeInputs, operationInfo } = useSelector((state: RootState) => {
-    return {
-      isTrigger: isRootNodeInGraph(nodeId, 'root', state.workflow.nodesMetadata),
-      nodeInputs: state.operations.inputParameters[nodeId],
-      operationInfo: state.operations.operationInfo[nodeId],
-      operations: state.operations,
-    };
-  });
+  const isTrigger = useSelector((state: RootState) => isRootNodeInGraph(nodeId, 'root', state.workflow.nodesMetadata));
+
+  const operationInfo = useOperationInfo(nodeId) ?? ({} as any);
+  const nodeInputs = useRawInputParameters(nodeId) ?? ({} as any);
 
   const { timeout, splitOn, splitOnConfiguration, concurrency, conditionExpressions, invokerConnection } = useSelector(
-    (state: RootState) => state.operations.settings?.[nodeId] ?? {}
+    (state: RootState) => getRecordEntry(state.operations.settings, nodeId) ?? {}
   );
 
   const onConcurrencyToggle = (checked: boolean): void => {
@@ -579,7 +577,7 @@ function NetworkingSettings({
 }
 
 function RunAfterSettings({ nodeId, readOnly, isExpanded, validationErrors, dispatch }: SettingSectionProps): JSX.Element | null {
-  const nodeData = useSelector((state: RootState) => state.workflow.operations[nodeId] as LogicAppsV2.ActionDefinition);
+  const nodeData = useActionMetadata(nodeId) as LogicAppsV2.ActionDefinition;
   const showRunAfterSettings = useMemo(() => Object.keys(nodeData?.runAfter ?? {}).length > 0, [nodeData]);
 
   return showRunAfterSettings ? (
@@ -602,10 +600,10 @@ function SecuritySettings({
   updateSettings,
 }: SettingSectionProps): JSX.Element | null {
   const { secureInputs, secureOutputs } = nodeSettings;
-  const operationInfo = useSelector((state: RootState) => state.operations.operationInfo[nodeId]);
+  const operationInfo = useOperationInfo(nodeId);
   const onSecureInputsChange = (checked: boolean): void => {
     updateSettings({ secureInputs: { isSupported: !!secureInputs?.isSupported, value: checked } });
-    if (isSecureOutputsLinkedToInputs(operationInfo.type)) {
+    if (isSecureOutputsLinkedToInputs(operationInfo?.type)) {
       dispatch(updateTokenSecureStatus({ id: nodeId, isSecure: checked }));
     }
   };

@@ -60,7 +60,7 @@ import { getIntl } from '@microsoft/intl-logic-apps';
 import type { InputParameter, OutputParameter } from '@microsoft/parsers-logic-apps';
 import { ManifestParser } from '@microsoft/parsers-logic-apps';
 import type { LogicAppsV2, OperationManifest } from '@microsoft/utils-logic-apps';
-import { isArmResourceId, uniqueArray, getPropertyValue, map, aggregate, equals } from '@microsoft/utils-logic-apps';
+import { isArmResourceId, uniqueArray, getPropertyValue, map, aggregate, equals, getRecordEntry } from '@microsoft/utils-logic-apps';
 import type { Dispatch } from '@reduxjs/toolkit';
 
 export interface NodeDataWithOperationMetadata extends NodeData {
@@ -149,8 +149,8 @@ export const initializeOperationMetadata = async (
           settings,
           operationMetadata,
           staticResult,
-          actionMetadata: nodesMetadata?.[id]?.actionMetadata,
-          repetitionInfo: repetitionInfos[id],
+          actionMetadata: getRecordEntry(nodesMetadata, id)?.actionMetadata,
+          repetitionInfo: getRecordEntry(repetitionInfos, id),
         };
       })
     )
@@ -339,6 +339,7 @@ const updateTokenMetadataInParameters = (
   for (const nodeData of nodes) {
     const { id, nodeInputs } = nodeData;
     const allParameters = getAllInputParameters(nodeInputs);
+    const repetitionInfo = getRecordEntry(repetitionInfos, id) ?? { repetitionReferences: [] };
     for (const parameter of allParameters) {
       const segments = parameter.value;
 
@@ -347,7 +348,7 @@ const updateTokenMetadataInParameters = (
           if (isTokenValueSegment(segment)) {
             return updateTokenMetadata(
               segment,
-              repetitionInfos[id],
+              repetitionInfo,
               actionNodes,
               triggerNodeId,
               nodesData,
@@ -365,7 +366,7 @@ const updateTokenMetadataInParameters = (
       const viewModel = parameter.editorViewModel;
       if (viewModel) {
         flattenAndUpdateViewModel(
-          repetitionInfos[id],
+          repetitionInfo,
           viewModel,
           actionNodes,
           triggerNodeId,
@@ -445,7 +446,7 @@ const initializeVariables = (
 
   for (const nodeData of allNodesData) {
     const { id, nodeInputs, manifest } = nodeData;
-    if (equals(operations[id]?.type, Constants.NODE.TYPE.INITIALIZE_VARIABLE)) {
+    if (equals(getRecordEntry(operations, id)?.type, Constants.NODE.TYPE.INITIALIZE_VARIABLE)) {
       if (!detailsInitialized && manifest) {
         setVariableMetadata(manifest.properties.iconUri, manifest.properties.brandColor);
         detailsInitialized = true;
@@ -521,27 +522,29 @@ export const updateDynamicDataInNodes = async (getState: () => RootState, dispat
   const allVariables = getAllVariables(variables);
   for (const [nodeId, operation] of Object.entries(operations)) {
     if (nodeId === Constants.NODE.TYPE.PLACEHOLDER_TRIGGER) continue;
-    if (!errors[nodeId]?.[ErrorLevel.Critical]) {
-      const nodeDependencies = dependencies[nodeId];
-      const nodeInputs = inputParameters[nodeId];
-      const nodeSettings = settings[nodeId];
+    if (!getRecordEntry(errors, nodeId)?.[ErrorLevel.Critical]) {
+      const nodeDependencies = getRecordEntry(dependencies, nodeId);
+      const nodeInputs = getRecordEntry(inputParameters, nodeId);
+      const nodeSettings = getRecordEntry(settings, nodeId);
       const isTrigger = isRootNodeInGraph(nodeId, 'root', nodesMetadata);
-      const nodeOperationInfo = operationInfo[nodeId];
+      const nodeOperationInfo = getRecordEntry(operationInfo, nodeId);
       const connectionReference = getConnectionReference(connections, nodeId);
 
-      updateDynamicDataForValidConnection(
-        nodeId,
-        isTrigger,
-        nodeOperationInfo,
-        connectionReference,
-        nodeDependencies,
-        nodeInputs,
-        nodeSettings,
-        allVariables,
-        dispatch,
-        getState,
-        operation
-      );
+      if (nodeOperationInfo && nodeDependencies && nodeInputs && nodeSettings) {
+        updateDynamicDataForValidConnection(
+          nodeId,
+          isTrigger,
+          nodeOperationInfo,
+          connectionReference,
+          nodeDependencies,
+          nodeInputs,
+          nodeSettings,
+          allVariables,
+          dispatch,
+          getState,
+          operation
+        );
+      }
     }
   }
   dispatch(updateDynamicDataLoadStatus(true));
@@ -551,7 +554,7 @@ const updateDynamicDataForValidConnection = async (
   nodeId: string,
   isTrigger: boolean,
   operationInfo: NodeOperation,
-  reference: ConnectionReference,
+  reference: ConnectionReference | undefined,
   dependencies: NodeDependencies,
   nodeInputs: NodeInputs,
   settings: Settings,

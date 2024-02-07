@@ -30,6 +30,7 @@ export const AssertionErrorCode = {
   OPEN_API_OPERATION_CAN_NOT_FIND_PROPERTY_FOR_ALIAS: 'OpenApiOperationCanNotFindPropertyForAlias',
   OPEN_API_OPERATION_CAN_NOT_REFERENCE_SWAGGER: 'OpenApiOperationCanNotReferenceSwagger',
   OPERATION_NOT_IMPLEMENTED: 'OperationNotImplemented',
+  OPERATION_NOT_FOUND: 'OperationNotFound',
   OPERATION_MANIFEST_MISSING: 'OperationManifestMissing',
   PARAMETER_UPDATE_GROUP_ID_OR_PARAMETERS_FOR_NODE_UNDEFINED: 'ParameterUpdateGroupIdOrParametersForNodeUndefined',
   UNDEFINED_CONNECTOR_OR_CONNECTOR_PROPERTIES: 'UndefinedConnectorOrConnectorProperties',

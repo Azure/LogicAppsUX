@@ -17,6 +17,7 @@ import {
   isNullOrEmpty,
   isNullOrUndefined,
   getUniqueName,
+  getRecordEntry,
 } from '@microsoft/utils-logic-apps';
 
 const hasMultipleTriggers = (definition: LogicAppsV2.WorkflowDefinition): boolean => {
@@ -237,7 +238,9 @@ const processScopeActions = (
 
     // Connect graph header to all top level nodes
     for (const child of graph.children ?? []) {
-      if (metadata[child.id]?.isRoot) edges.push(createWorkflowEdge(headerId, child.id, WORKFLOW_EDGE_TYPES.HEADING_EDGE));
+      if (getRecordEntry(metadata, child.id)?.isRoot) {
+        edges.push(createWorkflowEdge(headerId, child.id, WORKFLOW_EDGE_TYPES.HEADING_EDGE));
+      }
     }
   };
 
@@ -268,7 +271,9 @@ const processScopeActions = (
     edges.push(createWorkflowEdge(headerId, subgraphId, isAddCase ? WORKFLOW_EDGE_TYPES.HIDDEN_EDGE : WORKFLOW_EDGE_TYPES.ONLY_EDGE));
     // Connect subgraph node to all top level nodes
     for (const child of graph.children ?? []) {
-      if (metadata[child.id]?.isRoot) graph.edges.push(createWorkflowEdge(rootId, child.id, WORKFLOW_EDGE_TYPES.HEADING_EDGE));
+      if (getRecordEntry(metadata, child.id)?.isRoot) {
+        graph.edges.push(createWorkflowEdge(rootId, child.id, WORKFLOW_EDGE_TYPES.HEADING_EDGE));
+      }
     }
 
     graph.children = [subgraphCardNode, ...(graph.children ?? [])];
@@ -314,7 +319,9 @@ const processScopeActions = (
 
     // Connect graph header to all top level nodes
     for (const child of graph.children ?? []) {
-      if (metadata[child.id]?.isRoot) edges.push(createWorkflowEdge(scopeCardNode.id, child.id, WORKFLOW_EDGE_TYPES.HEADING_EDGE));
+      if (getRecordEntry(metadata, child.id)?.isRoot) {
+        edges.push(createWorkflowEdge(scopeCardNode.id, child.id, WORKFLOW_EDGE_TYPES.HEADING_EDGE));
+      }
     }
 
     const footerId = `${graphId}-#footer`;
