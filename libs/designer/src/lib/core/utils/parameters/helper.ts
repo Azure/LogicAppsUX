@@ -197,11 +197,18 @@ export interface RepetitionReference {
 }
 
 export function getParametersSortedByVisibility(parameters: ParameterInfo[]): ParameterInfo[] {
-  // Sorted by ( Required, Important, Advanced, Other )
   return parameters.sort((a, b) => {
+    // Sort by dynamic data dependencies
+    const aDeps = Object.keys(a?.schema?.['x-ms-dynamic-values']?.parameters ?? {});
+    if (aDeps.includes(b.parameterName)) return 1;
+    const bDeps = Object.keys(b?.schema?.['x-ms-dynamic-values']?.parameters ?? {});
+    if (bDeps.includes(a.parameterName)) return -1;
+
+    // Sorted by Required first
     if (a.required && !b.required) return -1;
     if (!a.required && b.required) return 1;
 
+    // Sorted by visibility ( Important, Advanced, Other )
     const aVisibility = getVisibility(a);
     const bVisibility = getVisibility(b);
     if (aVisibility === bVisibility) return 0;
