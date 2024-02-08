@@ -479,6 +479,189 @@ describe('core/utils/parameters/helper', () => {
         '{"newUnb3_1":"@{xpath(xml(triggerBody()), \'string(/*[local-name()=\\"DynamicsSOCSV\\"])\')}"}'
       );
     });
+
+    it('should return key value input from dictionary editor without wrapping single token in @{}', () => {
+      const parameterValue = [
+          {
+            id: '1',
+            type: ValueSegmentType.LITERAL,
+            value: '{\n ',
+          },
+          {
+            id: '2',
+            type: ValueSegmentType.LITERAL,
+            value: '"',
+          },
+          {
+            id: '3',
+            type: ValueSegmentType.LITERAL,
+            value: 'Key of the row',
+          },
+          {
+            id: '4',
+            type: ValueSegmentType.LITERAL,
+            value: '"',
+          },
+          {
+            id: '5',
+            type: ValueSegmentType.LITERAL,
+            value: ' : ',
+          },
+          {
+            id: '6',
+            type: ValueSegmentType.TOKEN,
+            value: 'item()?[\'someItem\']',
+            token: {
+              key: 'outputs.$',
+              tokenType: TokenType.OUTPUTS,
+              type: 'string',
+              title: 'someItem',
+            },
+          },
+          {
+            id: '7',
+            type: ValueSegmentType.LITERAL,
+            value: '\n}',
+          },
+        ],
+        parameterJson = parameterValueToJSONString(parameterValue);
+
+      expect(parameterJson).toEqual(`{"Key of the row":"@item()?['someItem']"}`);
+    });
+
+    it('should return key value input from dictionary editor with wrapping token in @{} to honor the included string and stringify as a whole', () => {
+      const parameterValue = [
+          {
+            id: '1',
+            type: ValueSegmentType.LITERAL,
+            value: '{\n ',
+          },
+          {
+            id: '2',
+            type: ValueSegmentType.LITERAL,
+            value: '"',
+          },
+          {
+            id: '3',
+            type: ValueSegmentType.LITERAL,
+            value: 'Key of the row',
+          },
+          {
+            id: '4',
+            type: ValueSegmentType.LITERAL,
+            value: '"',
+          },
+          {
+            id: '5',
+            type: ValueSegmentType.LITERAL,
+            value: ' : ',
+          },
+          {
+            id: '6',
+            type: ValueSegmentType.LITERAL,
+            value: '"',
+          },
+          {
+            id: '7',
+            type: ValueSegmentType.LITERAL,
+            value: 'Value of the row:',
+          },
+          {
+            id: '8',
+            type: ValueSegmentType.TOKEN,
+            value: 'item()?[\'someItem\']',
+            token: {
+              key: 'outputs.$',
+              tokenType: TokenType.OUTPUTS,
+              type: 'string',
+              title: 'someItem',
+            },
+          },
+          {
+            id: '9',
+            type: ValueSegmentType.LITERAL,
+            value: '"',
+          },
+          {
+            id: '10',
+            type: ValueSegmentType.LITERAL,
+            value: '\n}',
+          },
+        ],
+        parameterJson = parameterValueToJSONString(parameterValue);
+
+      expect(parameterJson).toEqual(`{"Key of the row":"Value of the row:@{item()?['someItem']}"}`);
+    });
+
+    it('should return key value input from dictionary editor with wrapping token in @{} to honor the other token input and stringify as a whole', () => {
+      const parameterValue = [
+          {
+            id: '1',
+            type: ValueSegmentType.LITERAL,
+            value: '{\n ',
+          },
+          {
+            id: '2',
+            type: ValueSegmentType.LITERAL,
+            value: '"',
+          },
+          {
+            id: '3',
+            type: ValueSegmentType.LITERAL,
+            value: 'Key of the row',
+          },
+          {
+            id: '4',
+            type: ValueSegmentType.LITERAL,
+            value: '"',
+          },
+          {
+            id: '5',
+            type: ValueSegmentType.LITERAL,
+            value: ' : ',
+          },
+          {
+            id: '6',
+            type: ValueSegmentType.LITERAL,
+            value: '"',
+          },
+          {
+            id: '7',
+            type: ValueSegmentType.TOKEN,
+            value: 'item()?[\'someItem1\']',
+            token: {
+              key: 'outputs.$',
+              tokenType: TokenType.OUTPUTS,
+              type: 'string',
+              title: 'someItem1',
+            },
+          },
+          {
+            id: '8',
+            type: ValueSegmentType.TOKEN,
+            value: 'item()?[\'someItem2\']',
+            token: {
+              key: 'outputs.$',
+              tokenType: TokenType.OUTPUTS,
+              type: 'string',
+              title: 'someItem2',
+            },
+          },
+          {
+            id: '9',
+            type: ValueSegmentType.LITERAL,
+            value: '"',
+          },
+          {
+            id: '10',
+            type: ValueSegmentType.LITERAL,
+            value: '\n}',
+          },
+        ],
+        parameterJson = parameterValueToJSONString(parameterValue);
+
+      expect(parameterJson).toEqual(`{"Key of the row":"@{item()?['someItem1']}@{item()?['someItem2']}"}`);
+    });
   });
 
   describe('parameterValueToString', () => {
