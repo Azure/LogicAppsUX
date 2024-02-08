@@ -62,6 +62,6 @@ export class StandardOperationManifestService extends BaseOperationManifestServi
   }
 }
 
-export function isServiceProviderOperation(operationType: string): boolean {
+export function isServiceProviderOperation(operationType?: string): boolean {
   return equals(operationType, 'ServiceProvider');
 }

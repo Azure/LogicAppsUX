@@ -7,6 +7,7 @@ import type { RelationshipIds } from '../../state/panel/panelInterfaces';
 import { setIsPanelLoading } from '../../state/panel/panelSlice';
 import { pasteNode } from '../../state/workflow/workflowSlice';
 import { initializeOperationDetails } from './add';
+import { getRecordEntry } from '@microsoft/utils-logic-apps';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { batch } from 'react-redux';
 
@@ -21,26 +22,26 @@ export const copyOperation = createAsyncThunk('copyOperation', async (payload: C
     const state = getState() as RootState;
     const newNodeId = `${nodeId}_copy`;
 
-    const nodeOperationInfo = state.operations.operationInfo[nodeId];
+    const nodeOperationInfo = getRecordEntry(state.operations.operationInfo, nodeId);
 
-    const nodeData: NodeData = {
+    const nodeData = {
       id: newNodeId,
-      nodeInputs: state.operations.inputParameters[nodeId],
-      nodeOutputs: state.operations.outputParameters[nodeId],
-      nodeDependencies: state.operations.dependencies[nodeId],
-      operationMetadata: state.operations.operationMetadata[nodeId],
-      settings: state.operations.settings[nodeId],
-      staticResult: state.operations.staticResults[nodeId],
-      actionMetadata: state.operations.actionMetadata[nodeId],
-      repetitionInfo: state.operations.repetitionInfos[nodeId],
+      nodeInputs: getRecordEntry(state.operations.inputParameters, nodeId),
+      nodeOutputs: getRecordEntry(state.operations.outputParameters, nodeId),
+      nodeDependencies: getRecordEntry(state.operations.dependencies, nodeId),
+      operationMetadata: getRecordEntry(state.operations.operationMetadata, nodeId),
+      settings: getRecordEntry(state.operations.settings, nodeId),
+      staticResult: getRecordEntry(state.operations.staticResults, nodeId),
+      actionMetadata: getRecordEntry(state.operations.actionMetadata, nodeId),
+      repetitionInfo: getRecordEntry(state.operations.repetitionInfos, nodeId),
     };
-    const connectionReference = state.connections.connectionsMapping[nodeId];
+    const connectionReference = getRecordEntry(state.connections.connectionsMapping, nodeId);
     window.localStorage.setItem(
       'msla-clipboard',
       JSON.stringify({
         nodeId: newNodeId,
         operationInfo: nodeOperationInfo,
-        nodeData: nodeData,
+        nodeData,
         connectionData: connectionReference,
       })
     );
@@ -61,7 +62,8 @@ export const pasteOperation = createAsyncThunk('pasteOperation', async (payload:
   let count = 1;
   let nodeId = actionId;
 
-  while ((getState() as RootState).workflow.nodesMetadata[nodeId]) {
+  const nodesMetadata = (getState() as RootState).workflow.nodesMetadata;
+  while (getRecordEntry(nodesMetadata, nodeId)) {
     nodeId = `${actionId}_${count}`;
     count++;
   }

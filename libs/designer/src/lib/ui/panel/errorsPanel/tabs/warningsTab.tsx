@@ -3,6 +3,7 @@ import { NodeErrors } from '../nodeErrors';
 import { useHostCheckerWarnings, useTotalNumWarnings } from './warningsTab.hooks';
 import { Text } from '@fluentui/react';
 import { MessageLevel } from '@microsoft/designer-ui';
+import { getRecordEntry } from '@microsoft/utils-logic-apps';
 import { useIntl } from 'react-intl';
 
 export const WarningsTab = () => {
@@ -31,9 +32,7 @@ export const WarningsTab = () => {
             key={nodeId}
             level={MessageLevel.Warning}
             nodeId={nodeId}
-            messagesBySubtitle={{
-              ...hostCheckerWarnings[nodeId],
-            }}
+            messagesBySubtitle={{ ...getRecordEntry(hostCheckerWarnings, nodeId) }}
           />
         ))}
       </ErrorCategory>
