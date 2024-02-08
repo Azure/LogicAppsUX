@@ -28,7 +28,7 @@ import {
 } from './initialize';
 import type { NodeDataWithOperationMetadata } from './operationdeserializer';
 import type { Settings } from './settings';
-import { getOperationSettings } from './settings';
+import { getOperationSettings, getSplitOnValue } from './settings';
 import { ConnectionService, OperationManifestService, StaticResultService } from '@microsoft/designer-client-services-logic-apps';
 import type { SwaggerParser } from '@microsoft/parsers-logic-apps';
 import { ManifestParser } from '@microsoft/parsers-logic-apps';
@@ -121,7 +121,7 @@ export const initializeOperationDetails = async (
       manifest,
       isTrigger,
       nodeInputs,
-      /* splitOnValue */ undefined,
+      isTrigger ? getSplitOnValue(manifest, undefined, undefined, undefined) : undefined,
       operationInfo,
       nodeId
     );
