@@ -1,4 +1,19 @@
 # Logic Apps Designer
+## [2.112.0](https://github.com/Azure/LogicAppsUX/compare/v2.111.0...v2.112.0) (2024-02-08)
+
+
+### Features
+
+* **vscode:** Remove preview flags for onboarding experience ([#4147](https://github.com/Azure/LogicAppsUX/issues/4147)) ([1009c24](https://github.com/Azure/LogicAppsUX/commit/1009c24228d1f7103d764a9535e645b154c4a364))
+
+
+### Bug Fixes
+
+* **Designer:** Action card tooltip now read with screen reader ([#4138](https://github.com/Azure/LogicAppsUX/issues/4138)) ([b93b002](https://github.com/Azure/LogicAppsUX/commit/b93b00299b8cf5dea2146becfdd441631e933cbf))
+* **designer:** Allowing nodes to share names with built-in Object prototype functions ([#4140](https://github.com/Azure/LogicAppsUX/issues/4140)) ([bea0c7c](https://github.com/Azure/LogicAppsUX/commit/bea0c7cd826e4f2de24b721d711e770e6d078a9a))
+* **designer:** fix spliton token references for newly added triggers ([#4148](https://github.com/Azure/LogicAppsUX/issues/4148)) ([210b78c](https://github.com/Azure/LogicAppsUX/commit/210b78c8569f8db1e7e6e86545cea75a19370e84))
+* **designer:** Fix the token merge for FAM and entity outputs for hybrid triggers ([#4144](https://github.com/Azure/LogicAppsUX/issues/4144)) ([763c56b](https://github.com/Azure/LogicAppsUX/commit/763c56b93e9a1c418c18c19ae3a1b9a8319e4513))
+* **designer:** Prevent Key Stroke propagation in Lexical ([#4145](https://github.com/Azure/LogicAppsUX/issues/4145)) ([6b2064c](https://github.com/Azure/LogicAppsUX/commit/6b2064cbf43b9ca8578a3904efbd6db4d32acf31))
 
 ## [2.111.0](https://github.com/Azure/LogicAppsUX/compare/v2.110.0...v2.111.0) (2024-02-06)
 
