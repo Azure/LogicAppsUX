@@ -6,6 +6,7 @@ import { tryGetWebviewPanel } from '../../../utils/codeless/common';
 import { getWebViewHTML } from '../../../utils/codeless/getWebViewHTML';
 import type { IAzureConnectorsContext } from '../azureConnectorWizard';
 import { ResolutionService } from '@microsoft/parsers-logic-apps';
+import { isEmptyString } from '@microsoft/utils-logic-apps';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type { Artifacts, AzureConnectorDetails, ConnectionsData, FileDetails, Parameter } from '@microsoft/vscode-extension';
 import type { WebviewPanel, WebviewOptions, WebviewPanelOptions } from 'vscode';
@@ -94,7 +95,8 @@ export abstract class OpenDesignerBase {
     }
 
     const parametersResolutionService = new ResolutionService(parameters, localSettings);
-    const resolvedConnections: ConnectionsData = parametersResolutionService.resolve(JSON.parse(connectionsData));
+    const parsedConnections = isEmptyString(connectionsData) ? {} : JSON.parse(connectionsData);
+    const resolvedConnections: ConnectionsData = parametersResolutionService.resolve(parsedConnections);
 
     this.connectionData = resolvedConnections;
     this.apiHubServiceDetails = this.getApiHubServiceDetails(azureDetails);
