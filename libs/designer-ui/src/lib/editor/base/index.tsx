@@ -179,6 +179,7 @@ export const BaseEditor = ({
         ref={containerRef}
         data-automation-id={dataAutomationId}
         title={placeholder}
+        onFocus={() => handleFocus()}
       >
         {htmlEditor ? (
           <Toolbar
