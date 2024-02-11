@@ -1,6 +1,16 @@
 import { ResourceType } from '../types';
-import type { IApiService, WorkflowsList, ISummaryData, IRegion, GraphApiOptions, AdvancedOptionsTypes, ISubscription } from '../types';
+import type {
+  IApiService,
+  WorkflowsList,
+  ISummaryData,
+  IRegion,
+  GraphApiOptions,
+  AdvancedOptionsTypes,
+  ISubscription,
+  IIse,
+} from '../types';
 import { getValidationPayload, getExportUri } from './helper';
+import { HTTP_METHODS } from '@microsoft/utils-logic-apps';
 import { getBaseGraphApi } from '@microsoft/vscode-extension';
 
 export interface ApiServiceOptions {
@@ -96,7 +106,7 @@ export class ApiService implements IApiService {
         location,
         skipToken,
       });
-      const response = await fetch(this.graphApiUri, { headers, method: 'POST', body: JSON.stringify(payload) });
+      const response = await fetch(this.graphApiUri, { headers, method: HTTP_METHODS.POST, body: JSON.stringify(payload) });
 
       if (!response.ok) {
         throw new Error(`${response.status} ${response.statusText}`);
@@ -131,10 +141,14 @@ export class ApiService implements IApiService {
     return separators[resourceGroupLocation];
   }
 
+  /**
+   * Retrieves the list of subscriptions.
+   * @returns {Promise<Array<ISubscription>>}  A promise that resolves to an array of subscriptions.
+   */
   async getSubscriptions(): Promise<Array<ISubscription>> {
     const headers = this.getAccessTokenHeaders();
     const payload = this.getPayload(ResourceType.subscriptions);
-    const response = await fetch(this.graphApiUri, { headers, method: 'POST', body: JSON.stringify(payload) });
+    const response = await fetch(this.graphApiUri, { headers, method: HTTP_METHODS.POST, body: JSON.stringify(payload) });
 
     if (!response.ok) {
       throw new Error(`${response.status} ${response.statusText}`);
@@ -146,10 +160,15 @@ export class ApiService implements IApiService {
     return subscriptions;
   }
 
-  async getIse(selectedSubscription: string): Promise<any> {
+  /**
+   * Retrieves the list of Ise objects for the selected subscription.
+   * @param {string} selectedSubscription - The ID of the selected subscription.
+   * @returns {Promise<Array<IIse>>}A promise that resolves to an array of IIse objects.
+   */
+  async getIse(selectedSubscription: string): Promise<Array<IIse>> {
     const headers = this.getAccessTokenHeaders();
     const payload = this.getPayload(ResourceType.ise, { selectedSubscription: selectedSubscription });
-    const response = await fetch(this.graphApiUri, { headers, method: 'POST', body: JSON.stringify(payload) });
+    const response = await fetch(this.graphApiUri, { headers, method: HTTP_METHODS.POST, body: JSON.stringify(payload) });
 
     if (!response.ok) {
       throw new Error(`${response.status} ${response.statusText}`);
@@ -157,14 +176,13 @@ export class ApiService implements IApiService {
 
     const iseResponse: any = await response.json();
     const { data: ise } = iseResponse;
-
-    return { ise };
+    return ise;
   }
 
   async getAllRegionWithDisplayName(subscriptionId: string): Promise<any[]> {
     const headers = this.getAccessTokenHeaders();
     const url = `${this.baseGraphApi}/subscriptions/${subscriptionId}/locations?api-version=2022-05-01`;
-    const response = await fetch(url, { headers, method: 'GET' });
+    const response = await fetch(url, { headers, method: HTTP_METHODS.GET });
 
     if (!response.ok) {
       throw new Error(`${response.status} ${response.statusText}`);
