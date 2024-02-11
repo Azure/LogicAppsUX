@@ -1,9 +1,9 @@
-import { QueryKeys } from '../../../run-service';
+import { type ISubscription, QueryKeys } from '../../../run-service';
 import { ApiService } from '../../../run-service/export';
 import { updateSelectedLocation, updateSelectedSubscripton } from '../../../state/WorkflowSlice';
 import type { AppDispatch, RootState } from '../../../state/store';
 import { SearchableDropdown } from '../../components/searchableDropdown';
-import { getDropdownPlaceholder, parseIseData, parseRegionData, parseSubscriptionsData } from './helper';
+import { getDropdownPlaceholder, parseIseData, parseRegionData, parseSubscriptionsList } from './helper';
 import { Text, DropdownMenuItemType } from '@fluentui/react';
 import type { IDropdownOption } from '@fluentui/react';
 import { isEmptyString } from '@microsoft/utils-logic-apps';
@@ -79,7 +79,7 @@ export const InstanceSelection: React.FC = () => {
     });
   }, [accessToken, baseUrl, cloudHost]);
 
-  const loadSubscriptions = () => {
+  const loadSubscriptions = (): Promise<ISubscription[]> => {
     return apiService.getSubscriptions();
   };
 
@@ -91,11 +91,15 @@ export const InstanceSelection: React.FC = () => {
     return apiService.getRegions(selectedSubscription);
   };
 
-  const { data: subscriptionsData, isLoading: isSubscriptionsLoading } = useQuery<any>(QueryKeys.subscriptionData, loadSubscriptions, {
-    refetchOnWindowFocus: false,
-    enabled: accessToken !== undefined,
-    retry: 4,
-  });
+  const { data: subscriptionsList, isLoading: isSubscriptionsLoading } = useQuery<Array<ISubscription>>(
+    QueryKeys.subscriptionData,
+    loadSubscriptions,
+    {
+      refetchOnWindowFocus: false,
+      enabled: accessToken !== undefined,
+      retry: 4,
+    }
+  );
 
   const {
     data: regionData,
@@ -158,8 +162,7 @@ export const InstanceSelection: React.FC = () => {
     }
   };
 
-  const subscriptions: IDropdownOption[] = isSubscriptionsLoading || !subscriptionsData ? [] : parseSubscriptionsData(subscriptionsData);
-
+  const subscriptions: IDropdownOption[] = isSubscriptionsLoading || !subscriptionsList ? [] : parseSubscriptionsList(subscriptionsList);
   const ise: IDropdownOption[] = selectedSubscription !== '' && !isIseLoading && iseData ? parseIseData(iseData) : [];
   const regions: IDropdownOption[] = selectedSubscription !== '' && !isRegionLoading && regionData ? parseRegionData(regionData) : [];
 

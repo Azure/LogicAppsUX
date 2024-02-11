@@ -1,8 +1,11 @@
 import type { IIse, IRegion, ISubscription, IDropDownOption } from '../../../run-service';
 
-export const parseSubscriptionsData = (subscriptionsData: { subscriptions: Array<ISubscription> }): Array<IDropDownOption> => {
-  const { subscriptions } = subscriptionsData;
-
+/**
+ * Parse the subscriptions list as dropdown options.
+ * @param {Array<ISubscription>} subscriptions - List pf subscriptions.
+ * @returns {Array<IDropDownOption>} List of subscriptions as dropdown opton.
+ */
+export const parseSubscriptionsList = (subscriptions: Array<ISubscription>): Array<IDropDownOption> => {
   return subscriptions.map((subscription: ISubscription) => {
     return { key: subscription.subscriptionId, text: subscription.subscriptionName };
   });

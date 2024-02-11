@@ -1,5 +1,5 @@
 import { ResourceType } from '../types';
-import type { IApiService, WorkflowsList, ISummaryData, IRegion, GraphApiOptions, AdvancedOptionsTypes } from '../types';
+import type { IApiService, WorkflowsList, ISummaryData, IRegion, GraphApiOptions, AdvancedOptionsTypes, ISubscription } from '../types';
 import { getValidationPayload, getExportUri } from './helper';
 import { getBaseGraphApi } from '@microsoft/vscode-extension';
 
@@ -131,7 +131,7 @@ export class ApiService implements IApiService {
     return separators[resourceGroupLocation];
   }
 
-  async getSubscriptions(): Promise<any> {
+  async getSubscriptions(): Promise<Array<ISubscription>> {
     const headers = this.getAccessTokenHeaders();
     const payload = this.getPayload(ResourceType.subscriptions);
     const response = await fetch(this.graphApiUri, { headers, method: 'POST', body: JSON.stringify(payload) });
@@ -143,7 +143,7 @@ export class ApiService implements IApiService {
     const subscriptionsResponse: any = await response.json();
     const { data: subscriptions } = subscriptionsResponse;
 
-    return { subscriptions };
+    return subscriptions;
   }
 
   async getIse(selectedSubscription: string): Promise<any> {
