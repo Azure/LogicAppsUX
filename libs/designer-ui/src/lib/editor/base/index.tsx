@@ -179,7 +179,6 @@ export const BaseEditor = ({
         ref={containerRef}
         data-automation-id={dataAutomationId}
         title={placeholder}
-        onFocus={() => handleFocus()}
       >
         {htmlEditor ? (
           <Toolbar
@@ -216,7 +215,7 @@ export const BaseEditor = ({
         {htmlEditor === 'rich-html' ? null : <ArrowNavigation />}
         {tokens ? (
           <>
-            <InsertTokenNode />
+            <InsertTokenNode closeTokenPicker={() => setIsTokenPickerOpened(false)} />
             <DeleteTokenNode />
             <OpenTokenPicker openTokenPicker={openTokenPicker} />
             <CloseTokenPicker closeTokenPicker={() => setIsTokenPickerOpened(false)} />
