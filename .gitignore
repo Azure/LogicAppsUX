@@ -56,3 +56,6 @@ __azurite_db_queue_extent__.json
 # Generated Docusaurus files
 .docusaurus/
 .cache-loader/
+# moon
+.moon/cache
+.moon/docker
