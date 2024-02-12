@@ -11,6 +11,10 @@ import {
   dotnetDependencyName,
   funcPackageName,
   defaultLogicAppsFolder,
+  dotNetBinaryPathSettingKey,
+  DependencyDefaultPath,
+  nodeJsBinaryPathSettingKey,
+  funcCoreToolsBinaryPathSettingKey,
 } from '../../constants';
 import { ext } from '../../extensionVariables';
 import { localize } from '../../localize';
@@ -356,6 +360,10 @@ export async function installBinaries(context: IActionContext) {
     await onboardBinaries(context);
     context.telemetry.properties.autoRuntimeDependenciesValidationAndInstallationSetting = 'true';
   } else if (binariesInstallation === false) {
+    await updateGlobalSetting(autoRuntimeDependenciesValidationAndInstallationSetting, false);
+    await updateGlobalSetting(dotNetBinaryPathSettingKey, DependencyDefaultPath.dotnet);
+    await updateGlobalSetting(nodeJsBinaryPathSettingKey, DependencyDefaultPath.node);
+    await updateGlobalSetting(funcCoreToolsBinaryPathSettingKey, DependencyDefaultPath.funcCoreTools);
     context.telemetry.properties.autoRuntimeDependenciesValidationAndInstallationSetting = 'false';
   }
 }
