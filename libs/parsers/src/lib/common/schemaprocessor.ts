@@ -275,9 +275,7 @@ export class SchemaProcessor {
             : this.options.prefix
             ? `${this.options.prefix}.${encodedChildPropertyName}`
             : encodedChildPropertyName;
-        const required = isNullOrUndefined(this.options.required)
-          ? requiredProperties.indexOf(key) !== -1
-          : this.options.required && requiredProperties.indexOf(key) !== -1;
+        const required = requiredProperties.indexOf(key) !== -1;
         const parentProperty = { ...this.options.parentProperty, visibility: this._getVisibility(schema) };
 
         const processor = new SchemaProcessor({
