@@ -1,7 +1,6 @@
 import { connectionsFileName } from '../../../constants';
 import { localize } from '../../../localize';
 import { isCSharpProject } from '../../commands/initProjectForVSCode/detectProjectLanguage';
-import type { SlotTreeItem } from '../../tree/slotsTree/SlotTreeItem';
 import { addOrUpdateLocalAppSettings } from '../appSettings/localSettings';
 import { writeFormattedJson } from '../fs';
 import { sendAzureRequest } from '../requestUtils';
@@ -11,6 +10,7 @@ import { getAuthorizationToken } from './getAuthorizationToken';
 import { getParametersJson } from './parameter';
 import { addNewFileInCSharpProject } from './updateBuildFile';
 import { HTTP_METHODS, isString } from '@microsoft/utils-logic-apps';
+import type { ParsedSite } from '@microsoft/vscode-azext-azureappservice';
 import { nonNullValue } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type {
@@ -253,28 +253,25 @@ export function resolveSettingsInConnection(
  * Creates acknowledge connections to managed api connections.
  * @param {IIdentityWizardContext} identityWizardContext - Identity context.
  * @param {string} connectionId - Connection ID.
- * @param {SlotTreeItem} node - Logic app node structure.
+ * @param {ParsedSite} site - Logic app site.
  */
 export async function createAclInConnectionIfNeeded(
   identityWizardContext: IIdentityWizardContext,
   connectionId: string,
-  node: SlotTreeItem
+  site: ParsedSite
 ): Promise<void> {
-  if (
-    (!node.site || !node.site.rawSite.identity || node.site.rawSite.identity.type !== 'SystemAssigned') &&
-    !identityWizardContext?.useAdvancedIdentity
-  ) {
+  if ((!site || !site.rawSite.identity || site.rawSite.identity.type !== 'SystemAssigned') && !identityWizardContext?.useAdvancedIdentity) {
     return;
   }
 
   let connectionAcls: ConnectionAcl[];
   const identity = identityWizardContext?.useAdvancedIdentity
     ? { principalId: identityWizardContext.objectId, tenantId: identityWizardContext.tenantId }
-    : node.site.rawSite.identity;
+    : site.rawSite.identity;
   const url = `${connectionId}/accessPolicies?api-version=2018-07-01-preview`;
 
   try {
-    const response = await sendAzureRequest(url, identityWizardContext, HTTP_METHODS.GET, node.site.subscription);
+    const response = await sendAzureRequest(url, identityWizardContext, HTTP_METHODS.GET, site.subscription);
     connectionAcls = response.parsedBody.value;
   } catch (error) {
     connectionAcls = [];
@@ -287,14 +284,14 @@ export async function createAclInConnectionIfNeeded(
         acl.properties?.principal.identity.tenantId === identity?.tenantId
     )
   ) {
-    return createAccessPolicyInConnection(identityWizardContext, connectionId, node, identity);
+    return createAccessPolicyInConnection(identityWizardContext, connectionId, site, identity);
   }
 }
 
 async function createAccessPolicyInConnection(
   identityWizardContext: IIdentityWizardContext,
   connectionId: string,
-  node: SlotTreeItem,
+  site: ParsedSite,
   identity: any
 ): Promise<void> {
   const accessToken = await getAuthorizationToken(undefined, undefined);
@@ -302,14 +299,14 @@ async function createAccessPolicyInConnection(
   let connection: any;
 
   try {
-    const response = await sendAzureRequest(getUrl, identityWizardContext, HTTP_METHODS.GET, node.site.subscription);
+    const response = await sendAzureRequest(getUrl, identityWizardContext, HTTP_METHODS.GET, site.subscription);
     connection = response.parsedBody;
   } catch (error) {
     throw new Error(`Error in getting connection - ${connectionId}. ${error}`);
   }
 
   const { principalId: objectId, tenantId } = identity;
-  const name = `${node.site.fullName}-${objectId}`;
+  const name = `${site.fullName}-${objectId}`;
   const options = {
     headers: { authorization: accessToken },
     body: {
