@@ -1,9 +1,9 @@
-import { QueryKeys } from '../../../run-service';
+import { type ISubscription, QueryKeys, type IIse, type IRegion } from '../../../run-service';
 import { ApiService } from '../../../run-service/export';
 import { updateSelectedLocation, updateSelectedSubscripton } from '../../../state/WorkflowSlice';
 import type { AppDispatch, RootState } from '../../../state/store';
 import { SearchableDropdown } from '../../components/searchableDropdown';
-import { getDropdownPlaceholder, parseIseData, parseRegionData, parseSubscriptionsData } from './helper';
+import { getDropdownPlaceholder, parseIseList, parseRegionList, parseSubscriptionsList } from './helper';
 import { Text, DropdownMenuItemType } from '@fluentui/react';
 import type { IDropdownOption } from '@fluentui/react';
 import { isEmptyString } from '@microsoft/utils-logic-apps';
@@ -91,27 +91,31 @@ export const InstanceSelection: React.FC = () => {
     return apiService.getRegions(selectedSubscription);
   };
 
-  const { data: subscriptionsData, isLoading: isSubscriptionsLoading } = useQuery<any>(QueryKeys.subscriptionData, loadSubscriptions, {
-    refetchOnWindowFocus: false,
-    enabled: accessToken !== undefined,
-    retry: 4,
-  });
+  const { data: subscriptionsList, isLoading: isSubscriptionsLoading } = useQuery<Array<ISubscription>>(
+    QueryKeys.subscriptionData,
+    loadSubscriptions,
+    {
+      refetchOnWindowFocus: false,
+      enabled: accessToken !== undefined,
+      retry: 4,
+    }
+  );
 
   const {
     data: regionData,
     isLoading: isRegionLoading,
     refetch: refetchRegion,
-  } = useQuery<any>([QueryKeys.regionData, { subscriptionId: selectedSubscription }], loadRegion, {
+  } = useQuery<Array<IRegion>>([QueryKeys.regionData, { subscriptionId: selectedSubscription }], loadRegion, {
     refetchOnWindowFocus: false,
     enabled: !isEmptyString(selectedSubscription),
     retry: 4,
   });
 
   const {
-    data: iseData,
+    data: iseList,
     isLoading: isIseLoading,
     refetch: refetchIse,
-  } = useQuery<any>([QueryKeys.iseData, { subscriptionId: selectedSubscription }], loadIse, {
+  } = useQuery<Array<IIse>>([QueryKeys.iseData, { subscriptionId: selectedSubscription }], loadIse, {
     refetchOnWindowFocus: false,
     enabled: !isEmptyString(selectedSubscription),
     retry: 4,
@@ -158,10 +162,9 @@ export const InstanceSelection: React.FC = () => {
     }
   };
 
-  const subscriptions: IDropdownOption[] = isSubscriptionsLoading || !subscriptionsData ? [] : parseSubscriptionsData(subscriptionsData);
-
-  const ise: IDropdownOption[] = selectedSubscription !== '' && !isIseLoading && iseData ? parseIseData(iseData) : [];
-  const regions: IDropdownOption[] = selectedSubscription !== '' && !isRegionLoading && regionData ? parseRegionData(regionData) : [];
+  const subscriptions: IDropdownOption[] = isSubscriptionsLoading || !subscriptionsList ? [] : parseSubscriptionsList(subscriptionsList);
+  const ise: IDropdownOption[] = selectedSubscription !== '' && !isIseLoading && iseList ? parseIseList(iseList) : [];
+  const regions: IDropdownOption[] = selectedSubscription !== '' && !isRegionLoading && regionData ? parseRegionList(regionData) : [];
 
   const locations: IDropdownOption[] =
     ise.length || regions.length
@@ -184,7 +187,7 @@ export const InstanceSelection: React.FC = () => {
     intlText.LOADING
   );
 
-  const iseLoading = selectedSubscription === '' ? false : isIseLoading || isRegionLoading;
+  const iseLoading = isEmptyString(selectedSubscription) ? false : isIseLoading || isRegionLoading;
   const isePlaceholder = getDropdownPlaceholder(
     iseLoading,
     locations.length,
@@ -217,7 +220,11 @@ export const InstanceSelection: React.FC = () => {
         options={locations}
         placeholder={isePlaceholder}
         disabled={
-          isSubscriptionsLoading || isIseLoading || isRegionLoading || selectedSubscription === '' || !(ise.length || regions.length)
+          isSubscriptionsLoading ||
+          isIseLoading ||
+          isRegionLoading ||
+          isEmptyString(selectedSubscription) ||
+          !(ise.length || regions.length)
         }
         onChange={onChangeLocation}
         selectedKey={selectedIse !== '' ? `ise:${selectedIse}` : location ? `region:${location}` : null}
