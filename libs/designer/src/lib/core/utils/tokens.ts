@@ -40,7 +40,7 @@ import { UIConstants, TemplateFunctions, TokenType } from '@microsoft/designer-u
 import { getIntl } from '@microsoft/intl-logic-apps';
 import { getKnownTitles, OutputKeys } from '@microsoft/parsers-logic-apps';
 import type { BuiltInOutput, OperationManifest } from '@microsoft/utils-logic-apps';
-import { labelCase, unmap, equals, filterRecord } from '@microsoft/utils-logic-apps';
+import { labelCase, unmap, equals, filterRecord, getRecordEntry } from '@microsoft/utils-logic-apps';
 
 export interface TokenGroup {
   id: string;
@@ -59,7 +59,7 @@ export const getTokenNodeIds = (
   operationMap: Record<string, string>
 ): string[] => {
   let tokenNodeIds = getUpstreamNodeIds(nodeId, graph, nodesMetadata, operationMap);
-  const manifest = nodesManifest[nodeId]?.manifest;
+  const manifest = getRecordEntry(nodesManifest, nodeId)?.manifest;
 
   const preliminaryRepetitionNodeIds = getRepetitionNodeIds(nodeId, nodesMetadata, operationInfos);
   // Remove token nodes that have inaccessible outputs due to loop scope
@@ -76,7 +76,7 @@ export const getTokenNodeIds = (
     const repetitionNodeIds = getRepetitionNodeIds(nodeId, nodesMetadata, operationInfos, includeSelf);
 
     for (const repetitionNodeId of repetitionNodeIds) {
-      const nodeManifest = nodesManifest[repetitionNodeId]?.manifest;
+      const nodeManifest = getRecordEntry(nodesManifest, repetitionNodeId)?.manifest;
       // If repetition is set for a node but not set for self reference,
       // then nodes having this type as repetition can reference its outputs like Foreach and Until
       if (nodeManifest?.properties.repetition && !nodeManifest.properties.repetition.self) {
@@ -210,7 +210,7 @@ export const getOutputTokenSections = (
 ): TokenGroup[] => {
   const workflowParameters = filterRecord(workflowParametersState.definitions, (_, defintion) => defintion.name !== '');
   const { variables, outputTokens } = tokenState;
-  const nodeTokens = outputTokens[nodeId];
+  const nodeTokens = getRecordEntry(outputTokens, nodeId);
   const tokenGroups: TokenGroup[] = [];
 
   if (Object.keys(workflowParameters).length) {
@@ -236,7 +236,7 @@ export const getOutputTokenSections = (
     }
 
     const outputTokenGroups = nodeTokens.upstreamNodeIds.map((upstreamNodeId) => {
-      let tokens = outputTokens[upstreamNodeId]?.tokens ?? [];
+      let tokens = getRecordEntry(outputTokens, upstreamNodeId)?.tokens ?? [];
       tokens = tokens.map((token) => {
         return {
           ...token,
@@ -250,7 +250,7 @@ export const getOutputTokenSections = (
 
       return {
         id: upstreamNodeId,
-        label: labelCase(replacementIds[upstreamNodeId] ?? upstreamNodeId),
+        label: labelCase(getRecordEntry(replacementIds, upstreamNodeId) ?? upstreamNodeId),
         tokens,
         hasAdvanced: tokens.some((token) => token.isAdvanced),
         showAdvanced: false,
@@ -258,7 +258,7 @@ export const getOutputTokenSections = (
     });
 
     if (includeCurrentNodeTokens) {
-      let currentTokens = outputTokens[nodeId]?.tokens ?? [];
+      let currentTokens = getRecordEntry(outputTokens, nodeId)?.tokens ?? [];
       currentTokens = currentTokens.map((token) => {
         return {
           ...token,
@@ -269,7 +269,7 @@ export const getOutputTokenSections = (
       if (currentTokens.length) {
         const currentTokensGroup = {
           id: nodeId,
-          label: labelCase(replacementIds[nodeId] ?? nodeId),
+          label: labelCase(getRecordEntry(replacementIds, nodeId) ?? nodeId),
           tokens: currentTokens,
           hasAdvanced: currentTokens.some((token) => token.isAdvanced),
           showAdvanced: false,
@@ -295,12 +295,12 @@ export const createValueSegmentFromToken = async (
   dispatch: AppDispatch
 ): Promise<ValueSegment> => {
   const tokenOwnerNodeId = token.outputInfo.actionName ?? getTriggerNodeId(rootState.workflow);
-  const nodeType = rootState.operations.operationInfo[tokenOwnerNodeId].type;
+  const nodeType = getRecordEntry(rootState.operations.operationInfo, tokenOwnerNodeId)?.type ?? '';
   const idReplacements = rootState.workflow.idReplacements;
   const tokenValueSegment = convertTokenToValueSegment(token, nodeType, idReplacements);
 
   if (addLatestActionName && tokenValueSegment.token?.actionName) {
-    const newActionId = idReplacements[tokenValueSegment.token.actionName];
+    const newActionId = getRecordEntry(idReplacements, tokenValueSegment.token.actionName);
     if (newActionId && newActionId !== tokenValueSegment.token.actionName) {
       tokenValueSegment.token.actionName = newActionId;
     }
@@ -312,7 +312,7 @@ export const createValueSegmentFromToken = async (
 
   if (tokenValueSegment.token?.tokenType !== TokenType.PARAMETER && tokenValueSegment.token?.tokenType !== TokenType.VARIABLE) {
     const tokenOwnerActionName = token.outputInfo.actionName;
-    const tokenOwnerOperationInfo = rootState.operations.operationInfo[tokenOwnerNodeId];
+    const tokenOwnerOperationInfo = getRecordEntry(rootState.operations.operationInfo, tokenOwnerNodeId) as any;
     const { shouldAdd, arrayDetails, repetitionContext } = await shouldAddForeach(nodeId, parameterId, token, rootState);
     let newRootState = rootState;
     let newRepetitionContext = repetitionContext;
@@ -473,7 +473,7 @@ export const convertWorkflowParameterTypeToSwaggerType = (type: string | undefin
 };
 
 const rewriteValueId = (id: string, value: string, replacementIds: Record<string, string>): string => {
-  return value.replaceAll(id, replacementIds[id] ?? id);
+  return value.replaceAll(id, getRecordEntry(replacementIds, id) ?? id);
 };
 const getListCallbackUrlToken = (nodeId: string): TokenGroup => {
   const callbackUrlToken: OutputToken = {
