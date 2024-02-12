@@ -14,6 +14,7 @@ import {
   workflowAppAADTenantId,
   kubernetesKind,
   showDeployConfirmationSetting,
+  logicAppFilter,
 } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
@@ -68,7 +69,7 @@ async function deploy(
   actionContext: IActionContext,
   target: Uri | string | SlotTreeItem | undefined,
   functionAppId: string | Record<string, any> | undefined,
-  _expectedContextValue?: string | RegExp
+  expectedContextValue?: string | RegExp
 ): Promise<void> {
   addLocalFuncTelemetry(actionContext);
 
@@ -80,9 +81,21 @@ async function deploy(
 
   ext.deploymentFolderPath = originalDeployFsPath;
 
-  const node: SlotTreeItem = await getDeployNode(context, ext.rgApi.appResourceTree, target, functionAppId, async () =>
-    getDeployLogicAppNode(actionContext)
-  );
+  let node: SlotTreeItem;
+
+  if (!expectedContextValue) {
+    node = await getDeployNode(context, ext.rgApi.appResourceTree, target, functionAppId, async () => getDeployLogicAppNode(actionContext));
+  } else {
+    node = await getDeployNode(context, ext.rgApi.appResourceTree, target, functionAppId, async () =>
+      ext.rgApi.pickAppResource(
+        { ...context, suppressCreatePick: false },
+        {
+          filter: logicAppFilter,
+          expectedChildContextValue: expectedContextValue,
+        }
+      )
+    );
+  }
 
   const nodeKind = node.site.kind && node.site.kind.toLowerCase();
   const isWorkflowApp = nodeKind?.includes(logicAppKind);
@@ -301,7 +314,12 @@ async function getProjectPathToDeploy(
     for (const [referenceKey, managedConnection] of Object.entries(parametizedConnections.managedApiConnections)) {
       try {
         const connection = connectionsData.managedApiConnections[referenceKey].connection;
-        await createAclInConnectionIfNeeded(identityWizardContext, connection.id, node);
+        await createAclInConnectionIfNeeded(identityWizardContext, connection.id, node.site);
+
+        if (node.site.isSlot) {
+          const parentTreeItem = node.parent?.parent as SlotTreeItem;
+          await createAclInConnectionIfNeeded(identityWizardContext, connection.id, parentTreeItem.site);
+        }
       } catch (error) {
         throw new Error(`Error in creating access policy for connection in reference - '${referenceKey}'. ${error}`);
       }
