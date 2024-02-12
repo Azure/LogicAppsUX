@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { validateAndInstallBinaries } from './app/commands/binaries/validateAndInstallBinaries';
-import { promptInstallBinariesOption } from './app/utils/binaries';
+import { installBinaries } from './app/utils/binaries';
 import { promptStartDesignTimeOption } from './app/utils/codeless/startDesignTimeApi';
 import { runWithDurationTelemetry } from './app/utils/telemetry';
 import { getGlobalSetting } from './app/utils/vsCodeConfig/settings';
@@ -43,7 +43,7 @@ export const startOnboarding = async (activateContext: IActionContext) => {
   callWithTelemetryAndErrorHandling(autoRuntimeDependenciesValidationAndInstallationSetting, async (actionContext: IActionContext) => {
     await runWithDurationTelemetry(actionContext, autoRuntimeDependenciesValidationAndInstallationSetting, async () => {
       activateContext.telemetry.properties.lastStep = autoRuntimeDependenciesValidationAndInstallationSetting;
-      await promptInstallBinariesOption(actionContext);
+      await installBinaries(actionContext);
     });
   });
 
