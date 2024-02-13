@@ -437,6 +437,11 @@
           "group": "3@2"
         },
         {
+          "command": "azureLogicAppsStandard.openInPortal",
+          "when": "view == azureResourceGroups && viewItem =~ /azLogicAppsSlot(?!s)/",
+          "group": "3@3"
+        },
+        {
           "command": "azureLogicAppsStandard.startLogicApp",
           "when": "view == azureResourceGroups && viewItem =~ /azLogicApps(Production|)Slot(?!s)/",
           "group": "2@1"
