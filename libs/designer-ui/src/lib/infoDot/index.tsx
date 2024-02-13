@@ -19,7 +19,7 @@ export const InfoDot = (props: any) => {
 
   return (
     <TooltipHost tooltipProps={tooltipProps}>
-      <img className="msla-info-dot" alt={alt} src={InformationImage} style={style} />
+      <img className="msla-info-dot" alt={alt} src={InformationImage} style={style} tabIndex={0} />
     </TooltipHost>
   );
 };
