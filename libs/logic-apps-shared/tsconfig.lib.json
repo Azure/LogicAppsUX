@@ -1,0 +1,12 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "outDir": "../../dist/libs/logic-apps-shared",
+    "declaration": true,
+    "resolveJsonModule": true,
+    "jsx": "react-jsx",
+    "types": []
+  },
+  "include": ["**/*.ts"],
+  "exclude": ["**/*.spec.ts", "jest.config.ts"]
+}
