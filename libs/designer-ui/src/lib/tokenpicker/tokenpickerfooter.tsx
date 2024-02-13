@@ -68,11 +68,11 @@ export function TokenPickerFooter({
   });
   const invalidExpression = intl.formatMessage({
     defaultMessage: 'The expression is invalid.',
-    description: 'invalid expression alert',
+    description: 'Invalid expression alert',
   });
   const invalidExpressionQuotations = intl.formatMessage({
     defaultMessage: 'The expression is invalid. Please use single quotes.',
-    description: 'invalid expression alert',
+    description: 'Invalid expression due to misused double quotes',
   });
 
   const insertToken = (tokenProps: TokenNodeProps) => {
