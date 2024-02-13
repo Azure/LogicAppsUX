@@ -7,7 +7,7 @@ export default {
     output: 
         {
             format: 'cjs',
-            dir: '.',
+            dir: '../../dist/libs/utils',
         }
     ,
     plugins: [
