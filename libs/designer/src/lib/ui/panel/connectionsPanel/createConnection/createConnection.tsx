@@ -60,7 +60,8 @@ export interface CreateConnectionProps {
     parameterValues?: Record<string, any>,
     isOAuthConnection?: boolean,
     alternativeParameterValues?: Record<string, any>,
-    identitySelected?: string
+    identitySelected?: string,
+    additionalParameterValues?: Record<string, any>
   ) => void;
   cancelCallback?: () => void;
   hideCancelButton?: boolean;
@@ -304,6 +305,9 @@ export const CreateConnection = (props: CreateConnectionProps) => {
     const visibleParameterValues = Object.fromEntries(
       Object.entries(parameterValues).filter(([key]) => Object.keys(capabilityEnabledParameters).includes(key)) ?? []
     );
+    const additionalParameterValues = Object.fromEntries(
+      Object.entries(parameterValues).filter(([key]) => !Object.keys(capabilityEnabledParameters).includes(key)) ?? []
+    );
 
     // This value needs to be passed conditionally but the parameter is hidden, so we're manually inputting it here
     if (
@@ -326,7 +330,8 @@ export const CreateConnection = (props: CreateConnectionProps) => {
       visibleParameterValues,
       isUsingOAuth,
       alternativeParameterValues,
-      identitySelected
+      identitySelected,
+      additionalParameterValues
     );
   }, [
     parameterValues,
