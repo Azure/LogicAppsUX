@@ -263,6 +263,7 @@ export async function getDynamicInputsFromSchema(
   operationDefinition?: any
 ): Promise<InputParameter[]> {
   const isParameterNested = dynamicParameter.isNested;
+  const schemaHasRequiredParameters = schema?.required && schema.required.length > 0;
   const processorOptions: SchemaProcessorOptions = {
     prefix: isParameterNested ? dynamicParameter.name : '',
     currentKey: isParameterNested ? undefined : dynamicParameter.name,
@@ -270,7 +271,7 @@ export async function getDynamicInputsFromSchema(
     parentProperty: {
       visibility: dynamicParameter.visibility,
     },
-    required: dynamicParameter.required,
+    required: dynamicParameter.required || schemaHasRequiredParameters,
     useAliasedIndexing: true,
     excludeAdvanced: false,
     excludeInternal: false,
