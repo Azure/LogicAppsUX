@@ -36,6 +36,7 @@ export const ExtensionProperties = {
   SchedulerTrigger: 'x-ms-scheduler-trigger',
   Serialization: 'x-ms-serialization',
   Deserialization: 'x-ms-deserialization',
+  StatelessDefault: 'x-ms-stateless-default',
   Summary: 'x-ms-summary',
   SupportsPaging: 'x-ms-pageable',
   Trigger: 'x-ms-trigger',
