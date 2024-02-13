@@ -16,3 +16,4 @@ export * from './lib/resolution-service/resolution-service';
 export * from './lib/common/constants';
 export * from './lib/common/exceptions/expression';
 export * from './lib/common/exceptions/parser';
+export * from './lib/common/exceptions/scanner';

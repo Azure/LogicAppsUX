@@ -7,6 +7,7 @@ export const ExpressionExceptionCode = {
   STRING_LITERAL_NOT_TERMINATED: 'StringLiteralNotTerminated',
   TOKEN_NOT_FOUND: 'TokenNotFound',
   UNEXPECTED_CHARACTER: 'UnexpectedCharacter',
+  MISUSED_DOUBLE_QUOTES: 'MisusedDoubleQuotes',
 } as const;
 export type ExpressionExceptionCode = (typeof ExpressionExceptionCode)[keyof typeof ExpressionExceptionCode];
 
