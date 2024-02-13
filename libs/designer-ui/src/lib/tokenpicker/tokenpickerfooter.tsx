@@ -12,7 +12,7 @@ import { getExpressionTokenTitle, getExpressionOutput } from './util';
 import { PrimaryButton } from '@fluentui/react';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import type { Expression } from '@microsoft/parsers-logic-apps';
-import { ExpressionParser } from '@microsoft/parsers-logic-apps';
+import { ExpressionExceptionCode, ExpressionParser, ScannerException } from '@microsoft/parsers-logic-apps';
 import { guid } from '@microsoft/utils-logic-apps';
 import type { LexicalEditor, NodeKey } from 'lexical';
 import { useMemo } from 'react';
@@ -100,7 +100,7 @@ export function TokenPickerFooter({
     try {
       currExpression = ExpressionParser.parseExpression(expression.value);
     } catch (ex) {
-      if (expression.value.includes('"')) {
+      if (ex instanceof ScannerException && ex.message === ExpressionExceptionCode.MISUSED_DOUBLE_QUOTES) {
         // if the expression contains double quotes, we'll show a different error message
         setExpressionEditorError(invalidExpressionQuotations);
       } else {
