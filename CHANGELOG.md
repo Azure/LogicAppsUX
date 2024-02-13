@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [2.113.1](https://github.com/Azure/LogicAppsUX/compare/v2.113.0...v2.113.1) (2024-02-13)
+
+
+### Features
+
+* **vscode:** Onboarding GA and slots deployment ([#4187](https://github.com/Azure/LogicAppsUX/issues/4187)) ([cca78a1](https://github.com/Azure/LogicAppsUX/commit/cca78a11e5bb652e978a76ca3841ae9dc2fc27c1)), closes [#4175](https://github.com/Azure/LogicAppsUX/issues/4175) [#4181](https://github.com/Azure/LogicAppsUX/issues/4181) [#4185](https://github.com/Azure/LogicAppsUX/issues/4185)
+
 ## [2.113.0](https://github.com/Azure/LogicAppsUX/compare/v2.112.0...v2.113.0) (2024-02-13)
 
 
