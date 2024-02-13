@@ -58,11 +58,7 @@ export class WorkflowUtility {
     return references;
   }
 
-  public static resolveConnectionsReferences(
-    content: string,
-    parameters: ParametersData | undefined,
-    appsettings?: Record<string, string> | undefined
-  ): any {
+  public static resolveConnectionsReferences(content: string, parameters: ParametersData | undefined): any {
     let result = content;
 
     if (parameters) {
@@ -70,14 +66,6 @@ export class WorkflowUtility {
         const parameterValue = parameters[parameterName].value !== undefined ? parameters[parameterName].value : '';
         result = replaceAllOccurrences(result, `@parameters('${parameterName}')`, parameterValue);
         result = replaceAllOccurrences(result, `@{parameters('${parameterName}')}`, parameterValue);
-      }
-    }
-
-    if (appsettings) {
-      for (const settingName of Object.keys(appsettings)) {
-        const settingValue = appsettings[settingName] !== undefined ? appsettings[settingName] : '';
-        result = replaceAllOccurrences(result, `@appsetting('${settingName}')`, settingValue);
-        result = replaceAllOccurrences(result, `@{appsetting('${settingName}')}`, settingValue);
       }
     }
 
