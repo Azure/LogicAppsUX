@@ -152,6 +152,7 @@ import {
   ValidationException,
   nthLastIndexOf,
   parseErrorMessage,
+  getRecordEntry,
 } from '@microsoft/utils-logic-apps';
 import type { Dispatch } from '@reduxjs/toolkit';
 
@@ -196,11 +197,18 @@ export interface RepetitionReference {
 }
 
 export function getParametersSortedByVisibility(parameters: ParameterInfo[]): ParameterInfo[] {
-  // Sorted by ( Required, Important, Advanced, Other )
   return parameters.sort((a, b) => {
+    // Sort by dynamic data dependencies
+    const aDeps = Object.keys(a?.schema?.['x-ms-dynamic-values']?.parameters ?? {});
+    if (aDeps.includes(b.parameterName)) return 1;
+    const bDeps = Object.keys(b?.schema?.['x-ms-dynamic-values']?.parameters ?? {});
+    if (bDeps.includes(a.parameterName)) return -1;
+
+    // Sorted by Required first
     if (a.required && !b.required) return -1;
     if (!a.required && b.required) return 1;
 
+    // Sorted by visibility ( Important, Advanced, Other )
     const aVisibility = getVisibility(a);
     const bVisibility = getVisibility(b);
     if (aVisibility === bVisibility) return 0;
@@ -1021,17 +1029,7 @@ function segmentsAreBodyReference(segments: Segment[]): boolean {
     return false;
   }
 
-  if (segments[0].value === OutputSource.Body) {
-    return true;
-  }
-
-  // For tokens of format `outputs.$.body.Title` or `outputs.$.body/Title`, where we are referring to a property within
-  // the body, we have to reference the body rather than the outputs field.
-  return (
-    segments.length >= 4 &&
-    isString(segments[2].value) &&
-    (segments[2].value === constants.OUTPUT_LOCATIONS.BODY || segments[2].value.startsWith(`${constants.OUTPUT_LOCATIONS.BODY}/`))
-  );
+  return segments[0].value === OutputSource.Body;
 }
 
 // NOTE: For example, if tokenKey is outputs.$.foo.[*].bar, which means
@@ -1840,10 +1838,12 @@ export async function updateDynamicDataInNode(
   );
 
   const { operations, workflowParameters } = getState();
-  for (const parameterKey of Object.keys(operations.dependencies[nodeId]?.inputs ?? {})) {
-    const dependencyInfo = operations.dependencies[nodeId].inputs[parameterKey];
+  const nodeDependencies = getRecordEntry(operations.dependencies, nodeId) ?? { inputs: {}, outputs: {} };
+  const nodeInputParameters = getRecordEntry(operations.inputParameters, nodeId) ?? { parameterGroups: {} };
+  for (const parameterKey of Object.keys(nodeDependencies?.inputs ?? {})) {
+    const dependencyInfo = nodeDependencies.inputs[parameterKey];
     if (dependencyInfo.dependencyType === 'ListValues') {
-      const details = getGroupAndParameterFromParameterKey(operations.inputParameters[nodeId] ?? {}, parameterKey);
+      const details = getGroupAndParameterFromParameterKey(nodeInputParameters, parameterKey);
       if (details) {
         loadDynamicValuesForParameter(
           nodeId,
@@ -1851,8 +1851,8 @@ export async function updateDynamicDataInNode(
           details.parameter.id,
           operationInfo,
           connectionReference,
-          operations.inputParameters[nodeId],
-          operations.dependencies[nodeId],
+          nodeInputParameters,
+          nodeDependencies,
           false /* showErrorWhenNotReady */,
           dispatch,
           /* idReplacements */ undefined,
@@ -2702,15 +2702,15 @@ export function updateTokenMetadataInParameters(nodeId: string, parameters: Para
     (data: Record<string, Partial<NodeDataWithOperationMetadata>>, id: string) => ({
       ...data,
       [id]: {
-        settings: settings[id],
-        nodeOutputs: outputParameters[id],
-        operationMetadata: operationMetadata[id],
+        settings: getRecordEntry(settings, id),
+        nodeOutputs: getRecordEntry(outputParameters, id),
+        operationMetadata: getRecordEntry(operationMetadata, id),
       },
     }),
     {}
   );
 
-  const repetitionContext = rootState.operations.repetitionInfos[nodeId];
+  const repetitionContext = getRecordEntry(rootState.operations.repetitionInfos, nodeId) ?? { repetitionReferences: [] };
   for (const parameter of parameters) {
     const segments = parameter.value;
 
@@ -3333,7 +3333,7 @@ export function remapTokenSegmentValue(
       if (!didRemap && newSegmentValue?.includes(`'${id}`)) {
         didRemap = true;
       }
-      newSegmentValue = newSegmentValue?.replaceAll(`'${id}'`, `'${idReplacements[id]}'`);
+      newSegmentValue = newSegmentValue?.replaceAll(`'${id}'`, `'${getRecordEntry(idReplacements, id)}'`);
     }
 
     newSegment = { ...segment, value: newSegmentValue, token: { ...segment.token, value: newSegmentValue } } as ValueSegment;

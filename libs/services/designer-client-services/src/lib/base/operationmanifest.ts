@@ -223,9 +223,9 @@ export abstract class BaseOperationManifestService implements IOperationManifest
     }
   }
 
-  isSupported(operationType: string, _operationKind?: string): boolean {
+  isSupported(operationType?: string, _operationKind?: string): boolean {
     const { supportedTypes } = this.options;
-    const normalizedOperationType = operationType.toLowerCase();
+    const normalizedOperationType = operationType?.toLowerCase() ?? '';
     return supportedTypes
       ? supportedTypes.indexOf(normalizedOperationType) > -1
       : supportedBaseManifestTypes.indexOf(normalizedOperationType) > -1;

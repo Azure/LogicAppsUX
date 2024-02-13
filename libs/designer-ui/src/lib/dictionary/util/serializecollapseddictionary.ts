@@ -2,7 +2,7 @@ import type { DictionaryEditorItemProps } from '..';
 import constants from '../../constants';
 import type { ValueSegment } from '../../editor';
 import { convertStringToSegments } from '../../editor/base/utils/editorToSegment';
-import { getChildrenNodes, removeQuotes } from '../../editor/base/utils/helper';
+import { getChildrenNodesWithTokenInterpolation, removeQuotes } from '../../editor/base/utils/helper';
 import { guid } from '@microsoft/utils-logic-apps';
 import type { LexicalEditor } from 'lexical';
 import { $getRoot } from 'lexical';
@@ -16,7 +16,7 @@ export const serializeDictionary = (
 ) => {
   editor.getEditorState().read(() => {
     const nodeMap = new Map<string, ValueSegment>();
-    const editorString = getChildrenNodes($getRoot(), nodeMap);
+    const editorString = getChildrenNodesWithTokenInterpolation($getRoot(), nodeMap);
     let jsonEditor;
     try {
       jsonEditor = JSON.parse(editorString);

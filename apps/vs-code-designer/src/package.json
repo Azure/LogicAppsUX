@@ -1,7 +1,7 @@
 {
   "name": "vscode-azurelogicapps",
   "displayName": "Azure Logic Apps (Standard)",
-  "version": "2.111.0",
+  "version": "2.113.0",
   "aiKey": "setInGitHubBuild",
   "repository": "https://github.com/Azure/LogicAppsUX",
   "main": "main.js",
@@ -309,13 +309,16 @@
       {
         "command": "azureLogicAppsStandard.validateAndInstallBinaries",
         "title": "Validate and install dependency binaries",
-        "preview": true,
         "category": "Azure Logic Apps"
       },
       {
         "command": "azureLogicAppsStandard.resetValidateAndInstallBinaries",
         "title": "Reset binaries dependency settings",
-        "preview": true,
+        "category": "Azure Logic Apps"
+      },
+      {
+        "command": "azureLogicAppsStandard.disableValidateAndInstallBinaries",
+        "title": "Disable binaries dependency settings",
         "category": "Azure Logic Apps"
       },
       {
@@ -430,7 +433,7 @@
         },
         {
           "command": "azureLogicAppsStandard.deploySlot",
-          "when": "view == azureResourceGroups && viewItem =~ /azLogicAppsSlot/",
+          "when": "view == azureResourceGroups && viewItem =~ /azLogicAppsSlot(?!s)/",
           "group": "3@2"
         },
         {
@@ -751,7 +754,7 @@
           "azureLogicAppsStandard.autoRuntimeDependenciesPath": {
             "scope": "resource",
             "type": "string",
-            "description": "The path for Azure Logic Apps extension runtime dependencies. (Preview)"
+            "description": "The path for Azure Logic Apps extension runtime dependencies."
           },
           "azureLogicAppsStandard.dotnetBinaryPath": {
             "scope": "resource",
@@ -887,8 +890,8 @@
           },
           "azureLogicAppsStandard.autoRuntimeDependenciesValidationAndInstallation": {
             "type": "boolean",
-            "description": "Enable automatic validation and installation for runtime dependencies at the configured path. (Preview)",
-            "default": null
+            "description": "Enable automatic validation and installation for runtime dependencies at the configured path.",
+            "default": true
           },
           "azureLogicAppsStandard.showAutoStartAzuriteWarning": {
             "type": "boolean",
