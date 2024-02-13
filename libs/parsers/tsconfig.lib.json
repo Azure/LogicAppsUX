@@ -1,9 +1,11 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "outDir": "../../dist/out-tsc",
+    "outDir": "../../dist/libs/parsers",
     "declaration": true,
-    "types": []
+    "types": [],
+    "resolveJsonModule": true,
+    "jsx": "react-jsx"
   },
   "include": ["**/*.ts"],
   "exclude": ["**/*.spec.ts", "jest.config.ts"]
