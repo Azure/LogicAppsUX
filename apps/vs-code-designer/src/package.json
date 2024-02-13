@@ -1,7 +1,7 @@
 {
   "name": "vscode-azurelogicapps",
   "displayName": "Azure Logic Apps (Standard)",
-  "version": "2.112.0",
+  "version": "2.113.0",
   "aiKey": "setInGitHubBuild",
   "repository": "https://github.com/Azure/LogicAppsUX",
   "main": "main.js",
@@ -314,6 +314,11 @@
       {
         "command": "azureLogicAppsStandard.resetValidateAndInstallBinaries",
         "title": "Reset binaries dependency settings",
+        "category": "Azure Logic Apps"
+      },
+      {
+        "command": "azureLogicAppsStandard.disableValidateAndInstallBinaries",
+        "title": "Disable binaries dependency settings",
         "category": "Azure Logic Apps"
       },
       {
@@ -886,7 +891,7 @@
           "azureLogicAppsStandard.autoRuntimeDependenciesValidationAndInstallation": {
             "type": "boolean",
             "description": "Enable automatic validation and installation for runtime dependencies at the configured path.",
-            "default": null
+            "default": true
           },
           "azureLogicAppsStandard.showAutoStartAzuriteWarning": {
             "type": "boolean",
