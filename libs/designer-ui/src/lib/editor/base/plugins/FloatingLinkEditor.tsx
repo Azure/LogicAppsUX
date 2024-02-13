@@ -51,11 +51,18 @@ function FloatingLinkEditor({
   const [editedLinkUrl, setEditedLinkUrl] = useState('');
   const [isEditMode, setEditMode] = useState(false);
   const [lastSelection, setLastSelection] = useState<RangeSelection | GridSelection | NodeSelection | null>(null);
-  const [showFloatingLink, setShowFloatingLink] = useState(false);
+  const [showFloatingLink, setShowFloatingLink] = useState(isMainEditorFocused);
+
+  useEffect(() => {
+    if (isMainEditorFocused) {
+      setShowFloatingLink(isMainEditorFocused);
+    }
+  }, [isMainEditorFocused]);
 
   useOutsideClick([editorRef], () => {
     if (!isMainEditorFocused && showFloatingLink) {
       setShowFloatingLink(false);
+      setEditMode(false);
     }
   });
 
