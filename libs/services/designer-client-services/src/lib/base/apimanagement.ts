@@ -135,6 +135,13 @@ export class BaseApiManagementService implements IApiManagementService {
       }
     }
 
+    // APIM apis in portal do not allow marking the body as required, so we are doing it here
+    //     Users can mark body parameters as required,
+    //     and to show them as required the body needs to also be marked as required
+    if ((schema?.properties?.['body']?.required ?? []).length > 0) {
+      schema.required.push('body');
+    }
+
     return schema;
   }
 
