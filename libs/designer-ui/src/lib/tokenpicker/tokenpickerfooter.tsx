@@ -71,7 +71,7 @@ export function TokenPickerFooter({
     description: 'Invalid expression alert',
   });
   const invalidExpressionQuotations = intl.formatMessage({
-    defaultMessage: 'The expression is invalid. Please use single quotes.',
+    defaultMessage: 'The expression is invalid. Make sure to use single quotes.',
     description: 'Invalid expression due to misused double quotes',
   });
 
