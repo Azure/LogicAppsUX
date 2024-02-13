@@ -7,6 +7,7 @@ import {
   updateParameterWithValues,
   toArrayViewModelSchema,
   toHybridConditionViewModel,
+  getTokenExpressionMethodFromKey,
 } from '../helper';
 import type { DictionaryEditorItemProps, ParameterInfo, ValueSegment, OutputToken } from '@microsoft/designer-ui';
 import { GroupDropdownOptions, GroupType, TokenType, ValueSegmentType } from '@microsoft/designer-ui';
@@ -477,6 +478,189 @@ describe('core/utils/parameters/helper', () => {
       expect(parameterValueToJSONString(parameterValue, /* applyCasting */ false, /* forValidation */ true)).toBe(
         '{"newUnb3_1":"@{xpath(xml(triggerBody()), \'string(/*[local-name()=\\"DynamicsSOCSV\\"])\')}"}'
       );
+    });
+
+    it('should return key value input from dictionary editor without wrapping single token in @{}', () => {
+      const parameterValue = [
+          {
+            id: '1',
+            type: ValueSegmentType.LITERAL,
+            value: '{\n ',
+          },
+          {
+            id: '2',
+            type: ValueSegmentType.LITERAL,
+            value: '"',
+          },
+          {
+            id: '3',
+            type: ValueSegmentType.LITERAL,
+            value: 'Key of the row',
+          },
+          {
+            id: '4',
+            type: ValueSegmentType.LITERAL,
+            value: '"',
+          },
+          {
+            id: '5',
+            type: ValueSegmentType.LITERAL,
+            value: ' : ',
+          },
+          {
+            id: '6',
+            type: ValueSegmentType.TOKEN,
+            value: 'item()?[\'someItem\']',
+            token: {
+              key: 'outputs.$',
+              tokenType: TokenType.OUTPUTS,
+              type: 'string',
+              title: 'someItem',
+            },
+          },
+          {
+            id: '7',
+            type: ValueSegmentType.LITERAL,
+            value: '\n}',
+          },
+        ],
+        parameterJson = parameterValueToJSONString(parameterValue);
+
+      expect(parameterJson).toEqual(`{"Key of the row":"@item()?['someItem']"}`);
+    });
+
+    it('should return key value input from dictionary editor with wrapping token in @{} to honor the included string and stringify as a whole', () => {
+      const parameterValue = [
+          {
+            id: '1',
+            type: ValueSegmentType.LITERAL,
+            value: '{\n ',
+          },
+          {
+            id: '2',
+            type: ValueSegmentType.LITERAL,
+            value: '"',
+          },
+          {
+            id: '3',
+            type: ValueSegmentType.LITERAL,
+            value: 'Key of the row',
+          },
+          {
+            id: '4',
+            type: ValueSegmentType.LITERAL,
+            value: '"',
+          },
+          {
+            id: '5',
+            type: ValueSegmentType.LITERAL,
+            value: ' : ',
+          },
+          {
+            id: '6',
+            type: ValueSegmentType.LITERAL,
+            value: '"',
+          },
+          {
+            id: '7',
+            type: ValueSegmentType.LITERAL,
+            value: 'Value of the row:',
+          },
+          {
+            id: '8',
+            type: ValueSegmentType.TOKEN,
+            value: 'item()?[\'someItem\']',
+            token: {
+              key: 'outputs.$',
+              tokenType: TokenType.OUTPUTS,
+              type: 'string',
+              title: 'someItem',
+            },
+          },
+          {
+            id: '9',
+            type: ValueSegmentType.LITERAL,
+            value: '"',
+          },
+          {
+            id: '10',
+            type: ValueSegmentType.LITERAL,
+            value: '\n}',
+          },
+        ],
+        parameterJson = parameterValueToJSONString(parameterValue);
+
+      expect(parameterJson).toEqual(`{"Key of the row":"Value of the row:@{item()?['someItem']}"}`);
+    });
+
+    it('should return key value input from dictionary editor with wrapping token in @{} to honor the other token input and stringify as a whole', () => {
+      const parameterValue = [
+          {
+            id: '1',
+            type: ValueSegmentType.LITERAL,
+            value: '{\n ',
+          },
+          {
+            id: '2',
+            type: ValueSegmentType.LITERAL,
+            value: '"',
+          },
+          {
+            id: '3',
+            type: ValueSegmentType.LITERAL,
+            value: 'Key of the row',
+          },
+          {
+            id: '4',
+            type: ValueSegmentType.LITERAL,
+            value: '"',
+          },
+          {
+            id: '5',
+            type: ValueSegmentType.LITERAL,
+            value: ' : ',
+          },
+          {
+            id: '6',
+            type: ValueSegmentType.LITERAL,
+            value: '"',
+          },
+          {
+            id: '7',
+            type: ValueSegmentType.TOKEN,
+            value: 'item()?[\'someItem1\']',
+            token: {
+              key: 'outputs.$',
+              tokenType: TokenType.OUTPUTS,
+              type: 'string',
+              title: 'someItem1',
+            },
+          },
+          {
+            id: '8',
+            type: ValueSegmentType.TOKEN,
+            value: 'item()?[\'someItem2\']',
+            token: {
+              key: 'outputs.$',
+              tokenType: TokenType.OUTPUTS,
+              type: 'string',
+              title: 'someItem2',
+            },
+          },
+          {
+            id: '9',
+            type: ValueSegmentType.LITERAL,
+            value: '"',
+          },
+          {
+            id: '10',
+            type: ValueSegmentType.LITERAL,
+            value: '\n}',
+          },
+        ],
+        parameterJson = parameterValueToJSONString(parameterValue);
+
+      expect(parameterJson).toEqual(`{"Key of the row":"@{item()?['someItem1']}@{item()?['someItem2']}"}`);
     });
   });
 
@@ -2285,6 +2469,29 @@ describe('core/utils/parameters/helper', () => {
       token.outputInfo.actionName = undefined;
 
       expect(getExpressionValueForOutputToken(token, nodeType)).toEqual(`triggerOutputs()['message']['id']`);
+    });
+  });
+
+  describe('getTokenExpressionMethodFromKey', () => {
+    it.each<[string, string | undefined, string]>([
+      // For `body.$` and its first-class properties, use BODY.
+      ['body.$', undefined, `triggerBody()`],
+      ['body.$.value', undefined, `triggerBody()`],
+      ['body.$', 'Create_item', `body('Create_item')`],
+      ['body.$.ID', 'Create_item', `body('Create_item')`],
+
+      // For `outputs.$` and its first-class properties, use OUTPUTS.
+      ['output', undefined, `triggerOutputs()`],
+      ['outputs.$', undefined, `triggerOutputs()`],
+      ['outputs.$.body', undefined, `triggerOutputs()`],
+      ['outputs.$.body/value', undefined, `triggerOutputs()`],
+      ['outputs.$.headers', undefined, `triggerOutputs()`],
+      ['outputs.$.relativePathParameters', undefined, `triggerOutputs()`],
+
+      // For values using `body/*` syntax, use OUTPUTS.
+      ['outputs.$.body/subject', 'Get_event_(V3)', `outputs('Get_event_(V3)')`],
+    ])('correctly gets the token expression for %p', (key, actionName, expected) => {
+      expect(getTokenExpressionMethodFromKey(key, actionName)).toBe(expected);
     });
   });
 

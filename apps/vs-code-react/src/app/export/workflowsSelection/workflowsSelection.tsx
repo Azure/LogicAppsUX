@@ -10,7 +10,8 @@ import { filterWorkflows, getListColumns, getSelectedItems, parseResourceGroups,
 import { SelectedList } from './selectedList';
 import { Separator, ShimmeredDetailsList, Text, SelectionMode, Selection, MessageBar, MessageBarType } from '@fluentui/react';
 import type { IDropdownOption } from '@fluentui/react';
-import { useMemo, useRef, useState, useEffect } from 'react';
+import { isNullOrUndefined } from '@microsoft/utils-logic-apps';
+import { useMemo, useRef, useState, useEffect, useCallback } from 'react';
 import { useIntl } from 'react-intl';
 import { useQuery } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
@@ -80,27 +81,40 @@ export const WorkflowsSelection: React.FC = () => {
     return apiService.getWorkflows(selectedSubscription, selectedIse, location);
   };
 
-  const onWorkflowsSuccess = (workflows: WorkflowsList[]) => {
-    const resourceGroups: IDropdownOption[] = !workflows ? [] : parseResourceGroups(workflows);
+  const onWorkflowsSuccess = useCallback(
+    (workflows: WorkflowsList[]) => {
+      const resourceGroups: IDropdownOption[] = !workflows ? [] : parseResourceGroups(workflows);
+      setRenderWorkflows(workflows);
+      setResourceGroups(resourceGroups);
+      allWorkflows.current = workflows;
+      allItemsSelected.current = workflows.map((workflow) => {
+        return { ...workflow, selected: false, rendered: true };
+      });
+      selectedWorkflows.forEach((workflow: WorkflowsList) => {
+        const selectedIndex = allItemsSelected.current.findIndex(
+          (selectedItem: SelectedWorkflowsList) => selectedItem.key === workflow.key
+        );
+        if (selectedIndex !== -1) {
+          allItemsSelected.current[selectedIndex].selected = true;
+        }
+      });
+    },
+    [selectedWorkflows]
+  );
 
-    setRenderWorkflows(workflows);
-    setResourceGroups(resourceGroups);
-    allWorkflows.current = workflows;
-    allItemsSelected.current = workflows.map((workflow) => {
-      return { ...workflow, selected: false, rendered: true };
-    });
-    selectedWorkflows.forEach((workflow: WorkflowsList) => {
-      const selectedIndex = allItemsSelected.current.findIndex((selectedItem: SelectedWorkflowsList) => selectedItem.key === workflow.key);
-      if (selectedIndex !== -1) {
-        allItemsSelected.current[selectedIndex].selected = true;
-      }
-    });
-  };
+  const { isLoading: isWorkflowsLoading, data: workflowsData } = useQuery<WorkflowsList[]>(
+    [QueryKeys.workflowsData, selectedSubscription, selectedIse, location],
+    loadWorkflows,
+    {
+      refetchOnWindowFocus: false,
+    }
+  );
 
-  const { isLoading: isWorkflowsLoading } = useQuery<any>([QueryKeys.workflowsData, { location, iseId: selectedIse }], loadWorkflows, {
-    refetchOnWindowFocus: false,
-    onSuccess: onWorkflowsSuccess,
-  });
+  useEffect(() => {
+    if (!isNullOrUndefined(workflowsData)) {
+      onWorkflowsSuccess(workflowsData);
+    }
+  }, [workflowsData, onWorkflowsSuccess]);
 
   useEffect(() => {
     const updatedItems = updateSelectedItems(allItemsSelected.current, renderWorkflows, selectedWorkflows);

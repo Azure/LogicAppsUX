@@ -46,6 +46,8 @@ export type PanelContainerProps = {
   nodeId: string;
   title?: string;
   layerProps?: ILayerProps;
+  canResubmit?: boolean;
+  resubmitOperation?: () => void;
   trackEvent(data: PageActionTelemetryData): void;
   toggleCollapse: () => void;
   onCommentChange: (panelCommentChangeEvent?: string) => void;
@@ -66,6 +68,8 @@ export const PanelContainer = ({
   headerMenuItems,
   selectedTab,
   selectTab,
+  canResubmit,
+  resubmitOperation,
   showCommentBox,
   readOnlyMode,
   tabs,
@@ -99,6 +103,8 @@ export const PanelContainer = ({
           isError={isError}
           isLoading={isLoading}
           comment={comment}
+          canResubmit={canResubmit}
+          resubmitOperation={resubmitOperation}
           horizontalPadding={horizontalPadding}
           commentChange={onCommentChange}
           toggleCollapse={toggleCollapse}
@@ -120,6 +126,8 @@ export const PanelContainer = ({
       isError,
       isLoading,
       comment,
+      canResubmit,
+      resubmitOperation,
       onCommentChange,
       toggleCollapse,
       onTitleChange,

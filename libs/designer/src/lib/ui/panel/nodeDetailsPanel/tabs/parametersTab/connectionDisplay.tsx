@@ -9,7 +9,7 @@ import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
 
 interface ConnectionDisplayProps {
-  connectionName: string;
+  connectionName: string | undefined;
   nodeId: string;
   readOnly: boolean;
   isLoading?: boolean;
@@ -38,7 +38,7 @@ export const ConnectionDisplay = (props: ConnectionDisplayProps) => {
     }
   }, [isOperationMissingConnection, openChangeConnectionCallback, requiresConnection]);
 
-  const connectionDisplayText = intl.formatMessage(
+  const connectionDisplayTextWithName = intl.formatMessage(
     {
       defaultMessage: 'Connected to {connectionName}.',
       description: 'Text to show which connection is connected to the node',
@@ -47,6 +47,11 @@ export const ConnectionDisplay = (props: ConnectionDisplayProps) => {
       connectionName,
     }
   );
+
+  const connectionDisplayTextWithoutName = intl.formatMessage({
+    defaultMessage: 'Not connected.',
+    description: 'Text to show that no connection is connected to the node',
+  });
 
   const openChangeConnectionText = isXrmConnectionReferenceMode
     ? intl.formatMessage({
@@ -77,23 +82,21 @@ export const ConnectionDisplay = (props: ConnectionDisplayProps) => {
 
   return (
     <div className="connection-display">
-      {connectionName && (
-        <div className="connection-info">
-          <LinkMultiple16Regular />
-          <Label className="label">{connectionDisplayText}</Label>
-          {!readOnly ? (
-            <Button
-              id="change-connection-button"
-              size="small"
-              appearance="subtle"
-              onClick={openChangeConnectionCallback}
-              style={{ color: 'var(--colorBrandForeground1)' }}
-            >
-              {openChangeConnectionText}
-            </Button>
-          ) : null}
-        </div>
-      )}
+      <div className="connection-info">
+        <LinkMultiple16Regular />
+        <Label className="label">{connectionName ? connectionDisplayTextWithName : connectionDisplayTextWithoutName}</Label>
+        {!readOnly ? (
+          <Button
+            id="change-connection-button"
+            size="small"
+            appearance="subtle"
+            onClick={openChangeConnectionCallback}
+            style={{ color: 'var(--colorBrandForeground1)' }}
+          >
+            {openChangeConnectionText}
+          </Button>
+        ) : null}
+      </div>
       {props.hasError ? (
         <div className="connection-info-error">
           <Badge appearance="ghost" color="danger" icon={<ErrorCircle16Filled />}>

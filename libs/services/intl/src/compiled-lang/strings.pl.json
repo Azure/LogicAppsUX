@@ -1114,7 +1114,7 @@
   "5WTRY8": [
     {
       "type": 0,
-      "value": "Errors"
+      "value": "Błędy"
     }
   ],
   "5akc1Q": [
@@ -3718,7 +3718,7 @@
   "M0bbZk": [
     {
       "type": 0,
-      "value": "Flow Checker"
+      "value": "Kontroler przepływów"
     }
   ],
   "M0xrm+": [
@@ -4048,7 +4048,7 @@
   "O6VHe0": [
     {
       "type": 0,
-      "value": "Operation warnings"
+      "value": "Ostrzeżenia dotyczące operacji"
     }
   ],
   "O7HhyP": [
@@ -5398,7 +5398,7 @@
   "Vi5TIV": [
     {
       "type": 0,
-      "value": "No warnings found."
+      "value": "Nie znaleziono ostrzeżeń."
     }
   ],
   "VlvlX1": [
@@ -7108,7 +7108,7 @@
   "hLOIwp": [
     {
       "type": 0,
-      "value": "Warnings"
+      "value": "Ostrzeżenia"
     }
   ],
   "hMf2TA": [

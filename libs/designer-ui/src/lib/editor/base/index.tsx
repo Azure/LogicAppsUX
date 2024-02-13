@@ -14,6 +14,7 @@ import IgnoreTab from './plugins/IgnoreTab';
 import InsertTokenNode from './plugins/InsertTokenNode';
 import OpenTokenPicker from './plugins/OpenTokenPicker';
 import { PastePlugin } from './plugins/Paste';
+import { PreventPropagationPlugin } from './plugins/PreventPropagation';
 import { ReadOnly } from './plugins/ReadOnly';
 import SingleValueSegment from './plugins/SingleValueSegment';
 import { TokenTypeAheadPlugin } from './plugins/TokenTypeahead';
@@ -81,6 +82,7 @@ export interface BasePlugins {
   history?: boolean;
   tokens?: boolean;
   treeView?: boolean;
+  preventPropagation?: boolean;
   htmlEditor?: 'rich-html' | 'raw-html' | false;
   tabbable?: boolean;
   singleValueSegment?: boolean;
@@ -135,6 +137,7 @@ export const BaseEditor = ({
     htmlEditor = false,
     tabbable,
     singleValueSegment = false,
+    preventPropagation = true,
   } = basePlugins;
 
   const describedByMessage = intl.formatMessage({
@@ -205,13 +208,14 @@ export const BaseEditor = ({
         {autoLink ? <AutoLink /> : null}
         {clearEditor ? <ClearEditor showButton={false} /> : null}
         {singleValueSegment ? <SingleValueSegment /> : null}
+        {preventPropagation ? <PreventPropagationPlugin /> : null}
         <FocusChangePlugin onFocus={handleFocus} onBlur={handleBlur} onClick={handleClick} />
         <ReadOnly readonly={readonly} />
         {tabbable ? null : <IgnoreTab />}
         {htmlEditor === 'rich-html' ? null : <ArrowNavigation />}
         {tokens ? (
           <>
-            <InsertTokenNode />
+            <InsertTokenNode closeTokenPicker={() => setIsTokenPickerOpened(false)} />
             <DeleteTokenNode />
             <OpenTokenPicker openTokenPicker={openTokenPicker} />
             <CloseTokenPicker closeTokenPicker={() => setIsTokenPickerOpened(false)} />

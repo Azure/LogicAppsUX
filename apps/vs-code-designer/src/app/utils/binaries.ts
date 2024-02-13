@@ -3,18 +3,18 @@
  *  Licensed under the MIT License. See LICENSE.md in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import {
-  DependencyDefaultPath,
   DependencyVersion,
   Platform,
   autoRuntimeDependenciesValidationAndInstallationSetting,
   autoRuntimeDependenciesPathSettingKey,
   dependencyTimeoutSettingKey,
-  dotNetBinaryPathSettingKey,
   dotnetDependencyName,
-  funcCoreToolsBinaryPathSettingKey,
   funcPackageName,
-  nodeJsBinaryPathSettingKey,
   defaultLogicAppsFolder,
+  dotNetBinaryPathSettingKey,
+  DependencyDefaultPath,
+  nodeJsBinaryPathSettingKey,
+  funcCoreToolsBinaryPathSettingKey,
 } from '../../constants';
 import { ext } from '../../extensionVariables';
 import { localize } from '../../localize';
@@ -23,7 +23,7 @@ import { isNodeJsInstalled } from '../commands/nodeJs/validateNodeJsInstalled';
 import { executeCommand } from './funcCoreTools/cpUtils';
 import { getNpmCommand } from './nodeJs/nodeJsVersion';
 import { getGlobalSetting, getWorkspaceSetting, updateGlobalSetting } from './vsCodeConfig/settings';
-import { DialogResponses, type IActionContext } from '@microsoft/vscode-azext-utils';
+import { type IActionContext } from '@microsoft/vscode-azext-utils';
 import type { IGitHubReleaseInfo } from '@microsoft/vscode-extension';
 import axios from 'axios';
 import * as fs from 'fs';
@@ -352,26 +352,17 @@ export function getDependencyTimeout(): number {
  * Propmts warning message to decide the auto validation/installation of dependency binaries.
  * @param {IActionContext} context - Activation context.
  */
-export async function promptInstallBinariesOption(context: IActionContext) {
-  const message = localize('useBinaries', 'Allow auto runtime dependencies validation and installation at extension launch (Preview)');
-  const confirm = { title: localize('yesRecommended', 'Yes (Recommended)') };
-  let result: vscode.MessageItem;
+export async function installBinaries(context: IActionContext) {
+  const useBinaries = useBinariesDependencies();
 
-  const binariesInstallation = getGlobalSetting(autoRuntimeDependenciesValidationAndInstallationSetting);
-
-  if (binariesInstallation === null) {
-    result = await context.ui.showWarningMessage(message, confirm, DialogResponses.dontWarnAgain);
-    if (result === confirm) {
-      await updateGlobalSetting(autoRuntimeDependenciesValidationAndInstallationSetting, true);
-      await onboardBinaries(context);
-      context.telemetry.properties.autoRuntimeDependenciesValidationAndInstallationSetting = 'true';
-    } else if (result === DialogResponses.dontWarnAgain) {
-      await updateGlobalSetting(autoRuntimeDependenciesValidationAndInstallationSetting, false);
-      await updateGlobalSetting(dotNetBinaryPathSettingKey, DependencyDefaultPath.dotnet);
-      await updateGlobalSetting(nodeJsBinaryPathSettingKey, DependencyDefaultPath.node);
-      await updateGlobalSetting(funcCoreToolsBinaryPathSettingKey, DependencyDefaultPath.funcCoreTools);
-      context.telemetry.properties.autoRuntimeDependenciesValidationAndInstallationSetting = 'false';
-    }
+  if (useBinaries) {
+    await onboardBinaries(context);
+    context.telemetry.properties.autoRuntimeDependenciesValidationAndInstallationSetting = 'true';
+  } else {
+    await updateGlobalSetting(dotNetBinaryPathSettingKey, DependencyDefaultPath.dotnet);
+    await updateGlobalSetting(nodeJsBinaryPathSettingKey, DependencyDefaultPath.node);
+    await updateGlobalSetting(funcCoreToolsBinaryPathSettingKey, DependencyDefaultPath.funcCoreTools);
+    context.telemetry.properties.autoRuntimeDependenciesValidationAndInstallationSetting = 'false';
   }
 }
 

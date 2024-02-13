@@ -5,8 +5,8 @@ import type { MapDefinitionData, ExtensionCommand, ConnectionsData, IDesignerPan
 
 export interface IApiService {
   getWorkflows(subscriptionId: string, iseId?: string, location?: string): Promise<WorkflowsList[]>;
-  getSubscriptions(): Promise<any>;
-  getIse(selectedSubscription: string): Promise<any>;
+  getSubscriptions(): Promise<Array<ISubscription>>;
+  getIse(selectedSubscription: string): Promise<Array<IIse>>;
   getRegions(subscriptionId: string): Promise<IRegion[]>;
   validateWorkflows(
     selectedWorkflows: Array<WorkflowsList>,
@@ -346,5 +346,7 @@ export const AdvancedOptionsTypes = {
   off: 'Off',
   cloneConnections: 'cloneConnections',
   generateInfrastructureTemplates: 'generateInfrastructureTemplates',
+  integrationAccountSource: 'integrationAccountSource',
+  exportCustomApiActionsToAPIManagementActions: 'exportCustomApiActionsToAPIManagementActions',
 };
 export type AdvancedOptionsTypes = (typeof AdvancedOptionsTypes)[keyof typeof AdvancedOptionsTypes];

@@ -21,18 +21,28 @@ import type {
   ManagedIdentity,
   OperationManifest,
 } from '@microsoft/utils-logic-apps';
-import { ConnectionParameterTypes, ResourceIdentityType, equals, ConnectionType, getResourceName } from '@microsoft/utils-logic-apps';
+import {
+  ConnectionParameterTypes,
+  ResourceIdentityType,
+  equals,
+  ConnectionType,
+  getResourceName,
+  getRecordEntry,
+} from '@microsoft/utils-logic-apps';
 
 export function getConnectionId(state: ConnectionsStoreState, nodeId: string): string {
-  const { connectionsMapping, connectionReferences } = state;
-  const reference = connectionReferences[connectionsMapping[nodeId] ?? ''];
-  return reference ? reference.connection.id : '';
+  return getConnectionReference(state, nodeId)?.connection?.id ?? '';
 }
 
 export function getConnectionReference(state: ConnectionsStoreState, nodeId: string): ConnectionReference {
   const { connectionsMapping, connectionReferences } = state;
-  return connectionReferences[connectionsMapping[nodeId] ?? ''];
+  return getRecordEntry(connectionReferences, getRecordEntry(connectionsMapping, nodeId) ?? '') ?? mockConnectionReference;
 }
+
+const mockConnectionReference: ConnectionReference = {
+  api: { id: 'apiId' },
+  connection: { id: 'connectionId' },
+};
 
 export async function isConnectionReferenceValid(
   operationInfo: NodeOperation,

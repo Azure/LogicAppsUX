@@ -63,7 +63,7 @@ export const convertValueType = (value: ValueSegment[], type?: string): string |
   const stringSegments = convertSegmentsToString(value).trim();
   // checks for known types
   if (
-    (stringSegments.startsWith('{') && stringSegments.endsWith('}')) ||
+    (stringSegments.startsWith('@{') && stringSegments.indexOf('}') === stringSegments.length - 1) ||
     isNumber(stringSegments) ||
     isBoolean(stringSegments) ||
     /^\[.*\]$/.test(stringSegments)
