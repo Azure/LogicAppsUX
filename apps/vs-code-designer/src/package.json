@@ -317,6 +317,11 @@
         "category": "Azure Logic Apps"
       },
       {
+        "command": "azureLogicAppsStandard.disableValidateAndInstallBinaries",
+        "title": "Disable binaries dependency settings",
+        "category": "Azure Logic Apps"
+      },
+      {
         "command": "azureLogicAppsStandard.dataMap.createNewDataMap",
         "title": "Data Mapper: Create new data map",
         "icon": "$(add)"
@@ -428,8 +433,13 @@
         },
         {
           "command": "azureLogicAppsStandard.deploySlot",
-          "when": "view == azureResourceGroups && viewItem =~ /azLogicAppsSlot/",
+          "when": "view == azureResourceGroups && viewItem =~ /azLogicAppsSlot(?!s)/",
           "group": "3@2"
+        },
+        {
+          "command": "azureLogicAppsStandard.openInPortal",
+          "when": "view == azureResourceGroups && viewItem =~ /azLogicAppsSlot(?!s)/",
+          "group": "3@3"
         },
         {
           "command": "azureLogicAppsStandard.startLogicApp",
@@ -886,7 +896,7 @@
           "azureLogicAppsStandard.autoRuntimeDependenciesValidationAndInstallation": {
             "type": "boolean",
             "description": "Enable automatic validation and installation for runtime dependencies at the configured path.",
-            "default": null
+            "default": true
           },
           "azureLogicAppsStandard.showAutoStartAzuriteWarning": {
             "type": "boolean",
