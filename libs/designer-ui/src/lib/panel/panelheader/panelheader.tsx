@@ -38,6 +38,8 @@ export interface PanelHeaderProps {
   title?: string;
   nodeId: string;
   horizontalPadding: string;
+  canResubmit?: boolean;
+  resubmitOperation?: () => void;
   commentChange(panelCommentChangeEvent?: string): void;
   onRenderWarningMessage?(): JSX.Element;
   toggleCollapse: () => void;
@@ -64,6 +66,8 @@ export const PanelHeader = ({
   title,
   nodeId,
   horizontalPadding,
+  canResubmit,
+  resubmitOperation,
   commentChange,
   onRenderWarningMessage,
   toggleCollapse,
@@ -73,6 +77,10 @@ export const PanelHeader = ({
 
   const menuButtonRef = React.createRef<IButton>();
 
+  const resubmitButtonText = intl.formatMessage({
+    defaultMessage: 'Submit from this action',
+    description: 'Button label for submitting a workflow to rerun from this action',
+  });
   useEffect(() => {
     menuButtonRef.current?.focus();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -181,6 +189,15 @@ export const PanelHeader = ({
               readOnlyMode={readOnlyMode}
               commentChange={commentChange}
             />
+          ) : null}
+          {canResubmit ? (
+            <Button
+              style={{ marginLeft: '2rem', marginTop: '1rem', marginBottom: 0 }}
+              icon={<Icon iconName="PlaybackRate1x" />}
+              onClick={() => resubmitOperation?.()}
+            >
+              {resubmitButtonText}
+            </Button>
           ) : null}
         </>
       ) : null}
