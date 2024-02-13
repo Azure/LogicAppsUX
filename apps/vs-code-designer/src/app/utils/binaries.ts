@@ -353,14 +353,12 @@ export function getDependencyTimeout(): number {
  * @param {IActionContext} context - Activation context.
  */
 export async function installBinaries(context: IActionContext) {
-  const binariesInstallation = getGlobalSetting(autoRuntimeDependenciesValidationAndInstallationSetting);
+  const useBinaries = useBinariesDependencies();
 
-  if (binariesInstallation === null) {
-    await updateGlobalSetting(autoRuntimeDependenciesValidationAndInstallationSetting, true);
+  if (useBinaries) {
     await onboardBinaries(context);
     context.telemetry.properties.autoRuntimeDependenciesValidationAndInstallationSetting = 'true';
-  } else if (binariesInstallation === false) {
-    await updateGlobalSetting(autoRuntimeDependenciesValidationAndInstallationSetting, false);
+  } else {
     await updateGlobalSetting(dotNetBinaryPathSettingKey, DependencyDefaultPath.dotnet);
     await updateGlobalSetting(nodeJsBinaryPathSettingKey, DependencyDefaultPath.node);
     await updateGlobalSetting(funcCoreToolsBinaryPathSettingKey, DependencyDefaultPath.funcCoreTools);

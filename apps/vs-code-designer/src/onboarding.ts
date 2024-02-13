@@ -3,10 +3,9 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { validateAndInstallBinaries } from './app/commands/binaries/validateAndInstallBinaries';
-import { installBinaries } from './app/utils/binaries';
+import { installBinaries, useBinariesDependencies } from './app/utils/binaries';
 import { promptStartDesignTimeOption } from './app/utils/codeless/startDesignTimeApi';
 import { runWithDurationTelemetry } from './app/utils/telemetry';
-import { getGlobalSetting } from './app/utils/vsCodeConfig/settings';
 import { validateTasksJson } from './app/utils/vsCodeConfig/tasks';
 import {
   extensionCommand,
@@ -24,7 +23,7 @@ import * as vscode from 'vscode';
 export const onboardBinaries = async (activateContext: IActionContext) => {
   callWithTelemetryAndErrorHandling(extensionCommand.validateAndInstallBinaries, async (actionContext: IActionContext) => {
     await runWithDurationTelemetry(actionContext, extensionCommand.validateAndInstallBinaries, async () => {
-      const binariesInstallation = getGlobalSetting(autoRuntimeDependenciesValidationAndInstallationSetting);
+      const binariesInstallation = useBinariesDependencies();
       if (binariesInstallation) {
         activateContext.telemetry.properties.lastStep = extensionCommand.validateAndInstallBinaries;
         await validateAndInstallBinaries(actionContext);
