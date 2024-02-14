@@ -45,7 +45,6 @@ export const isEmptySegments = (segments: ValueSegment[]): boolean => {
 };
 
 export const parseHtmlSegments = (value: ValueSegment[], options?: SegmentParserOptions): RootNode => {
-  const { tokensEnabled } = options ?? {};
   const editor = createEditor({ ...defaultInitialConfig, nodes: htmlNodes });
   const parser = new DOMParser();
   const root = $getRoot().clear();
@@ -77,7 +76,7 @@ export const parseHtmlSegments = (value: ValueSegment[], options?: SegmentParser
       currNode.getChildren().forEach((childNode) => {
         // LinkNodes are a special case because they are within a paragraph node
         if ($isLinkNode(childNode)) {
-          const linkNode = $createLinkNode(getURL(childNode, tokensEnabled, nodeMap));
+          const linkNode = $createLinkNode(getURL(childNode, nodeMap, options));
           childNode.getChildren().forEach((listItemChildNode) => {
             appendChildrenNode(linkNode, listItemChildNode, nodeMap, options);
           });
@@ -113,9 +112,9 @@ export const parseHtmlSegments = (value: ValueSegment[], options?: SegmentParser
   return root;
 };
 
-const getURL = (node: LinkNode, tokensEnabled?: boolean, nodeMap?: Map<string, ValueSegment>): string => {
+const getURL = (node: LinkNode, nodeMap: Map<string, ValueSegment>, options?: SegmentParserOptions): string => {
   const valueUrl = node.getURL();
-  const urlSegments = convertStringToSegments(valueUrl, tokensEnabled, nodeMap);
+  const urlSegments = convertStringToSegments(valueUrl, nodeMap, options);
   return urlSegments
     .map((segment) => (segment.type === ValueSegmentType.LITERAL ? segment.value : `@{${segment.value}}`))
     .reduce((accumulator, current) => accumulator + current);
@@ -144,7 +143,7 @@ const appendChildrenNode = (
     const childNodeFormat = childNode.getFormat();
 
     if (tokensEnabled && nodeMap) {
-      const contentAsParameter = convertStringToSegments(decodedTextContent, true, nodeMap);
+      const contentAsParameter = convertStringToSegments(decodedTextContent, nodeMap, options);
       contentAsParameter.forEach((segment) => {
         const tokenNode = createTokenNodeFromSegment(segment, options, nodeMap);
         if (tokenNode) {
@@ -167,11 +166,11 @@ const appendStringSegment = (
   value: string,
   childNodeStyles: string | undefined,
   childNodeFormat: number | undefined,
-  nodeMap: Map<string, ValueSegment> | undefined,
+  nodeMap: Map<string, ValueSegment>,
   options: SegmentParserOptions | undefined
 ) => {
   const { tokensEnabled } = options ?? {};
-  const segments = convertStringToSegments(value, tokensEnabled, nodeMap);
+  const segments = convertStringToSegments(value, nodeMap, { tokensEnabled });
 
   for (const segment of segments) {
     if (segment.type === ValueSegmentType.LITERAL) {

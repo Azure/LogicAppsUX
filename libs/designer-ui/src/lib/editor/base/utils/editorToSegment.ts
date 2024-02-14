@@ -4,6 +4,7 @@ import { $isTokenNode } from '../nodes/tokenNode';
 import { guid } from '@microsoft/utils-logic-apps';
 import type { EditorState, ElementNode } from 'lexical';
 import { $getNodeByKey, $getRoot, $isElementNode, $isLineBreakNode, $isTextNode } from 'lexical';
+import type { SegmentParserOptions } from './parsesegments';
 
 export function serializeEditorState(editorState: EditorState, trimLiteral = false): ValueSegment[] {
   const segments: ValueSegment[] = [];
@@ -32,8 +33,11 @@ const getChildrenNodesToSegments = (node: ElementNode, segments: ValueSegment[],
   });
 };
 
-export const convertStringToSegments = (value: string, tokensEnabled?: boolean, nodeMap?: Map<string, ValueSegment>): ValueSegment[] => {
+export const convertStringToSegments = (value: string, nodeMap: Map<string, ValueSegment>, options?: SegmentParserOptions): ValueSegment[] => {
   if (!value) return [];
+
+  const { tokensEnabled } = options ?? {};
+
   if (typeof value !== 'string' || !tokensEnabled) {
     return [{ id: guid(), type: ValueSegmentType.LITERAL, value }];
   }

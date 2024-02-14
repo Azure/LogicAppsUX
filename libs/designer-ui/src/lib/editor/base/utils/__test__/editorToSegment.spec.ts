@@ -49,14 +49,14 @@ describe('lib/editor/base/utils/editorToSegment', () => {
       value: "body('Create_new_folder')?['{Link}']",
     };
 
-    it('does not parse tokens if tokensEnabled=false', () => {
+    it('does not parse segments into tokens if tokensEnabled is not set', () => {
       const nodeMap = new Map<string, ValueSegment>();
       nodeMap.set(`@{variables('abc')}`, { id: '', ...initializeVariableToken });
       nodeMap.set(`@{body('Create_new_folder')?['{Link}']}`, { id: '', ...createNewFolderToken });
 
       const input = `Text before @{variables('abc'} text after`;
 
-      const segments = convertStringToSegments(input, false, nodeMap);
+      const segments = convertStringToSegments(input, nodeMap);
       const simplifiedSegments = segments.map((segment): SimplifiedValueSegment => ({
         // Remove IDs for easier comparison.
         token: segment.token,
@@ -71,12 +71,30 @@ describe('lib/editor/base/utils/editorToSegment', () => {
       ['plain text', [{ type: ValueSegmentType.LITERAL, value: 'plain text' }]],
       [`Text before @{variables('abc')} text after`, [{ type: ValueSegmentType.LITERAL, value: 'Text before ' }, initializeVariableToken, { type: ValueSegmentType.LITERAL, value: ' text after' }]],
       // [`Text before @{body('Create_new_folder')?['{Link}']} text after`, [{ type: ValueSegmentType.LITERAL, value: 'Text before ' }, createNewFolderToken, { type: ValueSegmentType.LITERAL, value: ' text after' }]],
-    ])('parses tokens out of %p', (input, expectedTokens) => {
+    ])('parses segments out of %p with appropriate node map', (input, expectedTokens) => {
       const nodeMap = new Map<string, ValueSegment>();
       nodeMap.set(`@{variables('abc')}`, { id: '', ...initializeVariableToken });
       nodeMap.set(`@{body('Create_new_folder')?['{Link}']}`, { id: '', ...createNewFolderToken });
 
-      const segments = convertStringToSegments(input, true, nodeMap);
+      const segments = convertStringToSegments(input, nodeMap, { tokensEnabled: true });
+      const simplifiedSegments = segments.map((segment): SimplifiedValueSegment => ({
+        // Remove IDs for easier comparison.
+        token: segment.token,
+        type: segment.type,
+        value: segment.value,
+      }));
+
+      expect(simplifiedSegments).toEqual(expectedTokens);
+    });
+
+    it.each<[string, SimplifiedValueSegment[]]>([
+      ['plain text', [{ type: ValueSegmentType.LITERAL, value: 'plain text' }]],
+      [`Text before @{variables('abc')} text after`, [{ type: ValueSegmentType.LITERAL, value: 'Text before ' }, { type: ValueSegmentType.LITERAL, value: ' text after' }]],
+      // [`Text before @{body('Create_new_folder')?['{Link}']} text after`, [{ type: ValueSegmentType.LITERAL, value: 'Text before ' }, createNewFolderToken, { type: ValueSegmentType.LITERAL, value: ' text after' }]],
+    ])('parses segments out of %p with an empty node map', (input, expectedTokens) => {
+      const nodeMap = new Map<string, ValueSegment>();
+
+      const segments = convertStringToSegments(input, nodeMap, { tokensEnabled: true });
       const simplifiedSegments = segments.map((segment): SimplifiedValueSegment => ({
         // Remove IDs for easier comparison.
         token: segment.token,
