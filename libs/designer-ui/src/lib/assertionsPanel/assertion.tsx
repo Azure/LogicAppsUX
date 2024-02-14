@@ -47,9 +47,18 @@ export interface AssertionProps {
   onAssertionDelete: AssertionDeleteHandler;
   onAssertionUpdate: AssertionUpdateHandler;
   getTokenPicker: GetAssertionTokenPickerHandler;
+  tokenMapping: Record<string, ValueSegment>;
+  loadParameterValueFromString: (value: string) => ValueSegment[];
 }
 
-export function Assertion({ assertion, onAssertionDelete, getTokenPicker, onAssertionUpdate }: AssertionProps): JSX.Element {
+export function Assertion({
+  assertion,
+  onAssertionDelete,
+  getTokenPicker,
+  onAssertionUpdate,
+  tokenMapping,
+  loadParameterValueFromString,
+}: AssertionProps): JSX.Element {
   const [expanded, setExpanded] = useState(assertion.isEditable);
   const [isEditable, setIsEditable] = useState(assertion.isEditable);
   const [name, setName] = useState(assertion.name);
@@ -98,6 +107,8 @@ export function Assertion({ assertion, onAssertionDelete, getTokenPicker, onAsse
           isExpanded={expanded}
           getTokenPicker={getTokenPicker}
           handleUpdate={handleUpdate}
+          tokenMapping={tokenMapping}
+          loadParameterValueFromString={loadParameterValueFromString}
         />
       </div>
     </div>

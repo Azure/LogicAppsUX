@@ -1,3 +1,4 @@
+import type { ValueSegment } from '../editor';
 import {
   type AssertionUpdateHandler,
   type AssertionDeleteHandler,
@@ -22,6 +23,8 @@ export interface AssertionsProps {
   onAssertionUpdate: AssertionUpdateHandler;
   onAssertionDelete: AssertionDeleteHandler;
   getTokenPicker: GetAssertionTokenPickerHandler;
+  tokenMapping: Record<string, ValueSegment>;
+  loadParameterValueFromString: (value: string) => ValueSegment[];
 }
 
 export function Assertions({
@@ -31,6 +34,8 @@ export function Assertions({
   onAssertionUpdate,
   onAssertionDelete,
   getTokenPicker,
+  tokenMapping,
+  loadParameterValueFromString,
 }: AssertionsProps): JSX.Element {
   const intl = useIntl();
 
@@ -67,6 +72,8 @@ export function Assertions({
         onAssertionDelete={onAssertionDelete}
         onAssertionUpdate={onAssertionUpdate}
         getTokenPicker={getTokenPicker}
+        tokenMapping={tokenMapping}
+        loadParameterValueFromString={loadParameterValueFromString}
       />
     );
   };

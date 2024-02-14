@@ -50,6 +50,8 @@ export interface AssertionFieldProps {
   isExpanded: boolean;
   getTokenPicker: GetAssertionTokenPickerHandler;
   handleUpdate: (newAssertion: Assertion) => void;
+  tokenMapping: Record<string, ValueSegment>;
+  loadParameterValueFromString: (value: string) => ValueSegment[];
 }
 
 export const AssertionField = ({
@@ -63,6 +65,8 @@ export const AssertionField = ({
   isExpanded,
   getTokenPicker,
   handleUpdate,
+  tokenMapping,
+  loadParameterValueFromString,
 }: AssertionFieldProps): JSX.Element => {
   const intl = useIntl();
 
@@ -116,6 +120,8 @@ export const AssertionField = ({
     setExpression(newState.viewModel);
     handleUpdate({ name, description, expression: newState.viewModel });
   };
+
+  console.log('charlie: expression', expression);
 
   return (
     <>
@@ -179,7 +185,8 @@ export const AssertionField = ({
               labelId="condition-label"
               tokenEditor={true}
               value={[]}
-              tokenMapping={{}}
+              tokenMapping={tokenMapping}
+              loadParameterValueFromString={loadParameterValueFromString}
               getTokenPicker={(
                 editorId: string,
                 labelId: string,
