@@ -292,8 +292,8 @@ const processChildGraphAndItsInputs = (
   if (subGraphDetails) {
     for (const subGraphKey of Object.keys(subGraphDetails)) {
       const { inputs, inputsLocation, isAdditive } = subGraphDetails[subGraphKey];
-      const subOperation = getPropertyValue(operation, subGraphKey);
-      if (inputs && subOperation) {
+      const subOperation = getPropertyValue(operation, subGraphKey) || {};
+      if (inputs) {
         const subManifest = { properties: { inputs, inputsLocation } } as any;
         if (isAdditive) {
           for (const subNodeKey of Object.keys(subOperation)) {
