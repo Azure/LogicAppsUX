@@ -3025,6 +3025,12 @@
       "value": "Povinný parametr. Číslo, od kterého se odečte menšitel."
     }
   ],
+  "H9CZTr": [
+    {
+      "type": 0,
+      "value": "The expression is invalid. Make sure to use single quotes."
+    }
+  ],
   "HDqP2g": [
     {
       "type": 0,
@@ -6023,6 +6029,12 @@
     {
       "type": 0,
       "value": "Zakázat statický výsledek"
+    }
+  ],
+  "Yz9o1k": [
+    {
+      "type": 0,
+      "value": "Not connected."
     }
   ],
   "Z8tBFS": [
@@ -9149,6 +9161,12 @@
       "value": "Povinný parametr. Řetězec, který obsahuje název cílového časového pásma. Podrobnosti najdete tady: https://msdn.microsoft.com/en-us/library/gg154758.aspx"
     }
   ],
+  "t9RwOi": [
+    {
+      "type": 0,
+      "value": "The expression is invalid."
+    }
+  ],
   "tAbbH8": [
     {
       "type": 0,
@@ -9579,12 +9597,6 @@
     {
       "type": 0,
       "value": "Výstupy"
-    }
-  ],
-  "vVJuus": [
-    {
-      "type": 0,
-      "value": "Výraz je neplatný."
     }
   ],
   "vX9WYS": [

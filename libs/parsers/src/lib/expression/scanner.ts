@@ -95,7 +95,11 @@ export class ExpressionScanner {
     if (equals(ch, '+') || equals(ch, '-') || isNumeric(ch)) {
       return this._processAndGetTokenForNumber(currentPos);
     } else if (this._isSupportedIdentifierCharacter(ch)) {
-      return this._processAndGetTokenForIdentifier(currentPos);
+      const token = this._processAndGetTokenForIdentifier(currentPos);
+      if (token.value.startsWith('"') && token.value.endsWith('"')) {
+        throw new ScannerException(ExpressionExceptionCode.MISUSED_DOUBLE_QUOTES, ExpressionExceptionCode.MISUSED_DOUBLE_QUOTES);
+      }
+      return token;
     } else {
       throw new ScannerException(ExpressionExceptionCode.UNEXPECTED_CHARACTER, ExpressionExceptionCode.UNEXPECTED_CHARACTER);
     }

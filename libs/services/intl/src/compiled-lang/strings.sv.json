@@ -2969,6 +2969,12 @@
       "value": "Krävs. Talet som subtrahenden tas bort från."
     }
   ],
+  "H9CZTr": [
+    {
+      "type": 0,
+      "value": "The expression is invalid. Make sure to use single quotes."
+    }
+  ],
   "HDqP2g": [
     {
       "type": 0,
@@ -5915,6 +5921,12 @@
     {
       "type": 0,
       "value": "Inaktivera statiskt resultat"
+    }
+  ],
+  "Yz9o1k": [
+    {
+      "type": 0,
+      "value": "Not connected."
     }
   ],
   "Z8tBFS": [
@@ -8967,6 +8979,12 @@
       "value": "Krävs. En sträng som innehåller tidszonnamnet för måltidszonen. Se https://msdn.microsoft.com/sv-se/library/gg154758.aspx för Information."
     }
   ],
+  "t9RwOi": [
+    {
+      "type": 0,
+      "value": "The expression is invalid."
+    }
+  ],
   "tAbbH8": [
     {
       "type": 0,
@@ -9401,12 +9419,6 @@
     {
       "type": 0,
       "value": "Utdata"
-    }
-  ],
-  "vVJuus": [
-    {
-      "type": 0,
-      "value": "Uttrycket är ogiltigt."
     }
   ],
   "vX9WYS": [

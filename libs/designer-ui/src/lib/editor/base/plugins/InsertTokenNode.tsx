@@ -7,7 +7,11 @@ import { useEffect } from 'react';
 
 export const INSERT_TOKEN_NODE: LexicalCommand<TokenNodeProps> = createCommand();
 
-export default function InsertTokenNode(): null {
+export interface InsertTokenNodeProps {
+  closeTokenPicker: () => void;
+}
+
+export default function InsertTokenNode({ closeTokenPicker }: InsertTokenNodeProps): null {
   const [editor] = useLexicalComposerContext();
 
   useEffect(() => {
@@ -24,11 +28,12 @@ export default function InsertTokenNode(): null {
           const tokenNode = $createTokenNode({ ...payload, value, readonly: false });
           selection.insertNodes([tokenNode]);
         }
+        closeTokenPicker();
         return true;
       },
       COMMAND_PRIORITY_EDITOR
     );
-  }, [editor]);
+  }, [editor, closeTokenPicker]);
 
   return null;
 }

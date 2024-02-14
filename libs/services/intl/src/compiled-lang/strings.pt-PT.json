@@ -3003,6 +3003,12 @@
       "value": "Obrigatório. O número do qual o Subtraendo é removido."
     }
   ],
+  "H9CZTr": [
+    {
+      "type": 0,
+      "value": "The expression is invalid. Make sure to use single quotes."
+    }
+  ],
   "HDqP2g": [
     {
       "type": 0,
@@ -5983,6 +5989,12 @@
     {
       "type": 0,
       "value": "Desativar Resultado Estático"
+    }
+  ],
+  "Yz9o1k": [
+    {
+      "type": 0,
+      "value": "Not connected."
     }
   ],
   "Z8tBFS": [
@@ -9080,6 +9092,12 @@
       "value": "Obrigatório. Uma cadeia que contém o nome do fuso horário de destino. Veja https://msdn.microsoft.com/en-us/library/gg154758.aspx para obter detalhes."
     }
   ],
+  "t9RwOi": [
+    {
+      "type": 0,
+      "value": "The expression is invalid."
+    }
+  ],
   "tAbbH8": [
     {
       "type": 0,
@@ -9514,12 +9532,6 @@
     {
       "type": 0,
       "value": "Saídas"
-    }
-  ],
-  "vVJuus": [
-    {
-      "type": 0,
-      "value": "A expressão é inválida."
     }
   ],
   "vX9WYS": [

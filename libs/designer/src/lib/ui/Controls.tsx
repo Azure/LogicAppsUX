@@ -11,13 +11,14 @@ const CustomControls = () => {
   const dispatch = useDispatch();
   const showMinimap = useShowMinimap();
   const { isInverted } = useTheme();
+  const searchId = 'control-search-button';
 
   const minimapToggleClick = () => {
     dispatch(toggleMinimap());
   };
 
   const searchToggleClick = () => {
-    dispatch(openPanel({ panelMode: 'NodeSearch' }));
+    dispatch(openPanel({ panelMode: 'NodeSearch', focusReturnElementId: searchId }));
   };
 
   const minimapAria = intl.formatMessage({
@@ -34,7 +35,7 @@ const CustomControls = () => {
 
   return (
     <Controls showInteractive={false}>
-      <ControlButton aria-label={searchAria} title={searchAria} onClick={searchToggleClick}>
+      <ControlButton id={searchId} aria-label={searchAria} title={searchAria} onClick={searchToggleClick}>
         <Icon iconName={'Search'} styles={iconStyles} />
       </ControlButton>
       <ControlButton aria-label={minimapAria} title={minimapAria} onClick={minimapToggleClick}>

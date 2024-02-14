@@ -3005,6 +3005,12 @@
       "value": "Erforderlich. Die Zahl, von der der Subtrahend abgezogen wird."
     }
   ],
+  "H9CZTr": [
+    {
+      "type": 0,
+      "value": "The expression is invalid. Make sure to use single quotes."
+    }
+  ],
   "HDqP2g": [
     {
       "type": 0,
@@ -5983,6 +5989,12 @@
     {
       "type": 0,
       "value": "Statisches Ergebnis deaktivieren"
+    }
+  ],
+  "Yz9o1k": [
+    {
+      "type": 0,
+      "value": "Not connected."
     }
   ],
   "Z8tBFS": [
@@ -9051,6 +9063,12 @@
       "value": "Erforderlich. Hiermit wird eine Zeichenfolge angegeben, die den Namen der Zielzeitzone enthält. Weitere Informationen finden Sie unter https://msdn.microsoft.com/de-de/library/gg154758.aspx."
     }
   ],
+  "t9RwOi": [
+    {
+      "type": 0,
+      "value": "The expression is invalid."
+    }
+  ],
   "tAbbH8": [
     {
       "type": 0,
@@ -9485,12 +9503,6 @@
     {
       "type": 0,
       "value": "Ausgaben"
-    }
-  ],
-  "vVJuus": [
-    {
-      "type": 0,
-      "value": "Der Ausdruck ist ungültig."
     }
   ],
   "vX9WYS": [

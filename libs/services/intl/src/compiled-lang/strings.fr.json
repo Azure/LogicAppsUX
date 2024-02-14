@@ -2995,6 +2995,12 @@
       "value": "Obligatoire. Nombre dont le plus petit terme est supprimé."
     }
   ],
+  "H9CZTr": [
+    {
+      "type": 0,
+      "value": "The expression is invalid. Make sure to use single quotes."
+    }
+  ],
   "HDqP2g": [
     {
       "type": 0,
@@ -5975,6 +5981,12 @@
     {
       "type": 0,
       "value": "Désactiver le résultat statique"
+    }
+  ],
+  "Yz9o1k": [
+    {
+      "type": 0,
+      "value": "Not connected."
     }
   ],
   "Z8tBFS": [
@@ -9072,6 +9084,12 @@
       "value": "Obligatoire. Chaîne contenant le nom du fuseau horaire de destination. Pour plus d'informations, consultez https://msdn.microsoft.com/fr-fr/library/gg154758.aspx."
     }
   ],
+  "t9RwOi": [
+    {
+      "type": 0,
+      "value": "The expression is invalid."
+    }
+  ],
   "tAbbH8": [
     {
       "type": 0,
@@ -9506,12 +9524,6 @@
     {
       "type": 0,
       "value": "Sorties"
-    }
-  ],
-  "vVJuus": [
-    {
-      "type": 0,
-      "value": "L'expression n'est pas valide."
     }
   ],
   "vX9WYS": [

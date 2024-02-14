@@ -1,12 +1,11 @@
 import type { SectionProps, ToggleHandler } from '..';
 import { SettingSectionName } from '..';
-import type { RootState } from '../../../core';
+import { useOperationInfo } from '../../../core';
 import { isSecureOutputsLinkedToInputs } from '../../../core/utils/setting';
 import type { SettingsSectionProps } from '../settingsection';
 import { SettingsSection } from '../settingsection';
 import { getSettingLabel } from '@microsoft/designer-ui';
 import { useIntl } from 'react-intl';
-import { useSelector } from 'react-redux';
 
 export interface SecuritySectionProps extends SectionProps {
   onSecureInputsChange: ToggleHandler;
@@ -24,7 +23,7 @@ export const Security = ({
   onHeaderClick,
 }: SecuritySectionProps): JSX.Element | null => {
   const intl = useIntl();
-  const operationInfo = useSelector((state: RootState) => state.operations.operationInfo[nodeId]);
+  const operationInfo = useOperationInfo(nodeId);
   const onText = intl.formatMessage({
     defaultMessage: 'On',
     description: 'label when setting is on',

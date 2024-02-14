@@ -78,10 +78,11 @@ export const AddActionCard: React.FC<AddActionCardProps> = ({ addCardType, onCli
 
   const tooltipHeading = addCardType === ADD_CARD_TYPE.TRIGGER ? triggerTooltipHeading : actionTooltipHeading;
   const tooltipBody = addCardType === ADD_CARD_TYPE.TRIGGER ? triggerTooltipBody : actionTooltipBody;
+  const tooltipId = `placeholder-node-${addCardType}`;
 
   return (
     <TooltipHost
-      id={`placeholder-node-${addCardType}`}
+      id={tooltipId}
       delay={0}
       directionalHint={DirectionalHint.rightCenter}
       calloutProps={{ gapSpace: 8 }}
@@ -96,6 +97,7 @@ export const AddActionCard: React.FC<AddActionCardProps> = ({ addCardType, onCli
     >
       <div style={{ position: 'relative' }}>
         <div
+          aria-describedby={tooltipId}
           aria-label={title}
           className={css('msla-panel-card-container', selected && 'msla-panel-card-container-selected')}
           style={getCardStyle(brandColor)}
