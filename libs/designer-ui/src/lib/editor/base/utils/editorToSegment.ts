@@ -34,11 +34,36 @@ const getChildrenNodesToSegments = (node: ElementNode, segments: ValueSegment[],
 
 export const convertStringToSegments = (value: string, tokensEnabled?: boolean, nodeMap?: Map<string, ValueSegment>): ValueSegment[] => {
   if (!value) return [];
-  if (typeof value !== 'string') return [{ id: guid(), type: ValueSegmentType.LITERAL, value }];
+  if (typeof value !== 'string' || !tokensEnabled) {
+    return [{ id: guid(), type: ValueSegmentType.LITERAL, value }];
+  }
+
+  const returnSegments: ValueSegment[] = [];
+
   let currIndex = 0;
   let prevIndex = 0;
-  const returnSegments: ValueSegment[] = [];
+  // let currSegmentType: ValueSegmentType = ValueSegmentType.LITERAL;
+  // let segmentSoFar = '';
+
   while (currIndex < value.length) {
+    /*
+    const currChar = value[currIndex];
+    const nextChar = value[currIndex + 1];
+
+    if (currChar === '@' && nextChar === '{') {
+      if (segmentSoFar) {
+        returnSegments.push({ id: guid(), type: ValueSegmentType.LITERAL, value: segmentSoFar });
+        segmentSoFar = '';
+      }
+      currSegmentType = ValueSegmentType.TOKEN;
+    } else if (currChar === '}' && currSegmentType === ValueSegmentType.TOKEN) {
+
+    }
+
+    segmentSoFar += currChar;
+    currIndex++;
+    */
+
     if (value.substring(currIndex - 2, currIndex) === '@{' && tokensEnabled) {
       if (value.substring(prevIndex, currIndex - 2)) {
         returnSegments.push({ id: guid(), type: ValueSegmentType.LITERAL, value: value.substring(prevIndex, currIndex - 2) });
