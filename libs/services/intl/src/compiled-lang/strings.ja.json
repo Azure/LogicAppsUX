@@ -2939,6 +2939,12 @@
       "value": "必須。Subtrahend を減算する数値。"
     }
   ],
+  "H9CZTr": [
+    {
+      "type": 0,
+      "value": "The expression is invalid. Make sure to use single quotes."
+    }
+  ],
   "HDqP2g": [
     {
       "type": 0,
@@ -5871,6 +5877,12 @@
     {
       "type": 0,
       "value": "静的な結果の無効化"
+    }
+  ],
+  "Yz9o1k": [
+    {
+      "type": 0,
+      "value": "Not connected."
     }
   ],
   "Z8tBFS": [
@@ -8874,6 +8886,12 @@
       "value": "必須。変換先のタイム ゾーンのタイム ゾーン名を含む文字列です。詳しくは、https://msdn.microsoft.com/ja-jp/library/gg154758.aspx をご覧ください。"
     }
   ],
+  "t9RwOi": [
+    {
+      "type": 0,
+      "value": "The expression is invalid."
+    }
+  ],
   "tAbbH8": [
     {
       "type": 0,
@@ -9304,12 +9322,6 @@
     {
       "type": 0,
       "value": "出力"
-    }
-  ],
-  "vVJuus": [
-    {
-      "type": 0,
-      "value": "式が無効です。"
     }
   ],
   "vX9WYS": [

@@ -2981,6 +2981,12 @@
       "value": "Kötelező megadni. A szám, amelyből a rendszer kivonja a kivonandót."
     }
   ],
+  "H9CZTr": [
+    {
+      "type": 0,
+      "value": "The expression is invalid. Make sure to use single quotes."
+    }
+  ],
   "HDqP2g": [
     {
       "type": 0,
@@ -5927,6 +5933,12 @@
     {
       "type": 0,
       "value": "Statikus eredmény letiltása"
+    }
+  ],
+  "Yz9o1k": [
+    {
+      "type": 0,
+      "value": "Not connected."
     }
   ],
   "Z8tBFS": [
@@ -8991,6 +9003,12 @@
       "value": "Kötelező megadni. A célidőzóna nevét tartalmazó sztring. A részleteket lásd: https://msdn.microsoft.com/en-us/library/gg154758.aspx."
     }
   ],
+  "t9RwOi": [
+    {
+      "type": 0,
+      "value": "The expression is invalid."
+    }
+  ],
   "tAbbH8": [
     {
       "type": 0,
@@ -9421,12 +9439,6 @@
     {
       "type": 0,
       "value": "Kimenetek"
-    }
-  ],
-  "vVJuus": [
-    {
-      "type": 0,
-      "value": "A kifejezés érvénytelen."
     }
   ],
   "vX9WYS": [

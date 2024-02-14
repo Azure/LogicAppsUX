@@ -2955,6 +2955,12 @@
       "value": "必要。要移除減數的數字。"
     }
   ],
+  "H9CZTr": [
+    {
+      "type": 0,
+      "value": "The expression is invalid. Make sure to use single quotes."
+    }
+  ],
   "HDqP2g": [
     {
       "type": 0,
@@ -5915,6 +5921,12 @@
     {
       "type": 0,
       "value": "停用靜態結果"
+    }
+  ],
+  "Yz9o1k": [
+    {
+      "type": 0,
+      "value": "Not connected."
     }
   ],
   "Z8tBFS": [
@@ -8930,6 +8942,12 @@
       "value": "必要。包含目的地時區之時區名稱的字串。如需詳細資料，請參閱 https://msdn.microsoft.com/en-us/library/gg154758.aspx。"
     }
   ],
+  "t9RwOi": [
+    {
+      "type": 0,
+      "value": "The expression is invalid."
+    }
+  ],
   "tAbbH8": [
     {
       "type": 0,
@@ -9364,12 +9382,6 @@
     {
       "type": 0,
       "value": "輸出"
-    }
-  ],
-  "vVJuus": [
-    {
-      "type": 0,
-      "value": "運算式無效。"
     }
   ],
   "vX9WYS": [

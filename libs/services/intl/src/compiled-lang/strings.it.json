@@ -2979,6 +2979,12 @@
       "value": "Obbligatorio. Numero da cui viene sottratto il sottraendo."
     }
   ],
+  "H9CZTr": [
+    {
+      "type": 0,
+      "value": "The expression is invalid. Make sure to use single quotes."
+    }
+  ],
   "HDqP2g": [
     {
       "type": 0,
@@ -5967,6 +5973,12 @@
     {
       "type": 0,
       "value": "Disabilita risultato statico"
+    }
+  ],
+  "Yz9o1k": [
+    {
+      "type": 0,
+      "value": "Not connected."
     }
   ],
   "Z8tBFS": [
@@ -9052,6 +9064,12 @@
       "value": "Obbligatorio. Stringa contenente il nome del fuso orario del fuso orario di destinazione. Per informazioni dettagliate, vedere https://msdn.microsoft.com/en-us/library/gg154758.aspx."
     }
   ],
+  "t9RwOi": [
+    {
+      "type": 0,
+      "value": "The expression is invalid."
+    }
+  ],
   "tAbbH8": [
     {
       "type": 0,
@@ -9486,12 +9504,6 @@
     {
       "type": 0,
       "value": "Output"
-    }
-  ],
-  "vVJuus": [
-    {
-      "type": 0,
-      "value": "Espressione non valida."
     }
   ],
   "vX9WYS": [

@@ -2961,6 +2961,12 @@
       "value": "Gerekli. Çıkanın çıkarıldığı sayı."
     }
   ],
+  "H9CZTr": [
+    {
+      "type": 0,
+      "value": "The expression is invalid. Make sure to use single quotes."
+    }
+  ],
   "HDqP2g": [
     {
       "type": 0,
@@ -5919,6 +5925,12 @@
     {
       "type": 0,
       "value": "Statik Sonucu Devre Dışı Bırak"
+    }
+  ],
+  "Yz9o1k": [
+    {
+      "type": 0,
+      "value": "Not connected."
     }
   ],
   "Z8tBFS": [
@@ -8963,6 +8975,12 @@
       "value": "Zorunlu. Hedef saat diliminin saat dilimi adını içeren bir dize. Ayrıntılar için bkz. https://msdn.microsoft.com/en-us/library/gg154758.aspx."
     }
   ],
+  "t9RwOi": [
+    {
+      "type": 0,
+      "value": "The expression is invalid."
+    }
+  ],
   "tAbbH8": [
     {
       "type": 0,
@@ -9397,12 +9415,6 @@
     {
       "type": 0,
       "value": "Çıkışlar"
-    }
-  ],
-  "vVJuus": [
-    {
-      "type": 0,
-      "value": "İfade geçersiz."
     }
   ],
   "vX9WYS": [
