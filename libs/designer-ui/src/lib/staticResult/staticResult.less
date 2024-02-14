@@ -42,7 +42,7 @@
 .msla-static-result-container-header-root {
   display: flex;
   width: 100%;
-  vertical-align: middle;
+  align-items: end;
   border: none;
   .msla-static-result-container-header-text {
     border: none;
@@ -50,8 +50,12 @@
     font-size: 14px;
     font-weight: 600;
     font-family: @font-family;
-    min-width: 80%;
+    margin-right: 30px;
     line-height: 25px;
+  }
+  .static-result-info-icon {
+    height: 20px;
+    width: 20px;
   }
 }
 
@@ -127,4 +131,11 @@
       background-color: @ms-color-primaryBackgroundHover;
     }
   }
+}
+
+.msla-static-results-validation {
+  position: relative;
+  color: #e00202;
+  font-size: 14px;
+  top: 15px;
 }

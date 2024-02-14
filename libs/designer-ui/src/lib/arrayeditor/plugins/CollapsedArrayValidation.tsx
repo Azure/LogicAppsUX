@@ -7,7 +7,6 @@ import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
 import type { EditorState } from 'lexical';
 
 export interface CollapsedArrayValidationProps {
-  className?: string;
   itemSchema: ArrayItemSchema;
   isComplex: boolean;
   setIsValid: (b: boolean) => void;
@@ -16,7 +15,6 @@ export interface CollapsedArrayValidationProps {
 }
 
 export const CollapsedArrayValidation = ({
-  className,
   itemSchema,
   isComplex,
   setIsValid,
@@ -36,9 +34,5 @@ export const CollapsedArrayValidation = ({
     });
   };
 
-  return (
-    <div className={className ?? 'msla-base-editor-validation'}>
-      <OnChangePlugin ignoreSelectionChange onChange={onChange} />
-    </div>
-  );
+  return <OnChangePlugin ignoreSelectionChange onChange={onChange} />;
 };
