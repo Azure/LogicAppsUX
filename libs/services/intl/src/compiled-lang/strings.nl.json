@@ -2973,6 +2973,12 @@
       "value": "Vereist. Het getal waarvan de aftrekker wordt afgetrokken."
     }
   ],
+  "H9CZTr": [
+    {
+      "type": 0,
+      "value": "The expression is invalid. Make sure to use single quotes."
+    }
+  ],
   "HDqP2g": [
     {
       "type": 0,
@@ -5923,6 +5929,12 @@
     {
       "type": 0,
       "value": "Statisch resultaat uitschakelen"
+    }
+  ],
+  "Yz9o1k": [
+    {
+      "type": 0,
+      "value": "Not connected."
     }
   ],
   "Z8tBFS": [
@@ -8975,6 +8987,12 @@
       "value": "Vereist. Een tekenreeks die de tijdzonenaam van de doeltijdzone bevat. Zie https://msdn.microsoft.com/en-us/library/gg154758.aspx voor meer informatie."
     }
   ],
+  "t9RwOi": [
+    {
+      "type": 0,
+      "value": "The expression is invalid."
+    }
+  ],
   "tAbbH8": [
     {
       "type": 0,
@@ -9405,12 +9423,6 @@
     {
       "type": 0,
       "value": "Uitvoer"
-    }
-  ],
-  "vVJuus": [
-    {
-      "type": 0,
-      "value": "De expressie is ongeldig."
     }
   ],
   "vX9WYS": [

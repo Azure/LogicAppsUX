@@ -2943,6 +2943,12 @@
       "value": "Wajib. Nomor yang akan dihapus dari Subtrahend."
     }
   ],
+  "H9CZTr": [
+    {
+      "type": 0,
+      "value": "The expression is invalid. Make sure to use single quotes."
+    }
+  ],
   "HDqP2g": [
     {
       "type": 0,
@@ -5879,6 +5885,12 @@
     {
       "type": 0,
       "value": "Nonaktifkan Hasil Statik"
+    }
+  ],
+  "Yz9o1k": [
+    {
+      "type": 0,
+      "value": "Not connected."
     }
   ],
   "Z8tBFS": [
@@ -8902,6 +8914,12 @@
       "value": "Wajib. String berisi nama zona waktu dari zona waktu tempat tujuan. Lihat https://msdn.microsoft.com/en-us/library/gg154758.aspx untuk rinciannya."
     }
   ],
+  "t9RwOi": [
+    {
+      "type": 0,
+      "value": "The expression is invalid."
+    }
+  ],
   "tAbbH8": [
     {
       "type": 0,
@@ -9336,12 +9354,6 @@
     {
       "type": 0,
       "value": "Output"
-    }
-  ],
-  "vVJuus": [
-    {
-      "type": 0,
-      "value": "Ekspresi tidak valid."
     }
   ],
   "vX9WYS": [
