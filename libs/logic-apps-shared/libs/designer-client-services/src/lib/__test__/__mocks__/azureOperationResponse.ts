@@ -1,4 +1,4 @@
-import type { DiscoveryOperation, SomeKindOfAzureOperationDiscovery } from '@microsoft/utils-logic-apps';
+import type { DiscoveryOperation, SomeKindOfAzureOperationDiscovery } from '../../../../../utils/src';
 
 export const azureOperationsResponse: DiscoveryOperation<SomeKindOfAzureOperationDiscovery>[] = [
   {
