@@ -11,7 +11,7 @@ import {
   getParameterDynamicSchema,
   getParameterDynamicValues,
 } from './helpers/utils';
-import { getIntl } from '@microsoft/intl-logic-apps';
+import { getIntl } from '../../../../intl/src';
 import type { OpenAPIV2 } from '../../../../utils/src';
 import { aggregate, clone, equals, hasProperty, isNullOrUndefined } from '../../../../utils/src';
 

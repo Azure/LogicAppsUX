@@ -3,7 +3,7 @@ import { isDynamicTreeExtension, isLegacyDynamicValuesTreeExtension, DynamicSche
 import * as Constants from '../constants';
 import { OutputKeys } from '../constants';
 import { parseEx } from './keysutility';
-import { getIntl } from '@microsoft/intl-logic-apps';
+import { getIntl } from '../../../../../intl/src';
 import type { OpenAPIV2 } from '../../../../../utils/src';
 import { equals, isNullOrUndefined } from '../../../../../utils/src';
 
