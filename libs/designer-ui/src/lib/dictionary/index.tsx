@@ -80,7 +80,6 @@ export const DictionaryEditor: React.FC<DictionaryEditorProps> = ({
     <div className="msla-dictionary-editor-container" data-automation-id={baseEditorProps.dataAutomationId}>
       {collapsed && !(dictionaryType === DictionaryType.TABLE) ? (
         <CollapsedDictionary
-          isValid={isValid}
           readonly={baseEditorProps.readonly}
           collapsedValue={collapsedValue}
           keyType={keyType}

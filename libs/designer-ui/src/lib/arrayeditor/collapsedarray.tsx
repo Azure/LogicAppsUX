@@ -69,7 +69,6 @@ export const CollapsedArray = ({
           onBlur={onBlur}
         >
           <CollapsedArrayValidation
-            className={'msla-collapsed-editor-validation'}
             itemSchema={itemSchema}
             isComplex={isComplex}
             setCollapsedValue={setCollapsedValue}

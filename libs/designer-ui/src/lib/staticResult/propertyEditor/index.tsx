@@ -3,8 +3,8 @@ import type { IButtonStyles, IIconProps, ITextFieldStyles } from '@fluentui/reac
 import { DefaultButton, PrimaryButton, Callout, DirectionalHint, TextField } from '@fluentui/react';
 import type { OpenAPIV2 } from '@microsoft/utils-logic-apps';
 import { clone } from '@microsoft/utils-logic-apps';
-import isEqual from 'lodash.isequal';
-import { useEffect, useState } from 'react';
+import { useUpdateEffect } from '@react-hookz/web';
+import { useState } from 'react';
 import { useIntl } from 'react-intl';
 
 const directionalHint = DirectionalHint.leftCenter;
@@ -55,11 +55,9 @@ export const PropertyEditor = ({ properties, schema, updateProperties }: Propert
   const [newPropertyName, setNewPropertyName] = useState('');
   const [newPropertyNameErrorMessage, setNewPropertyNameErrorMessage] = useState('');
 
-  useEffect(() => {
-    if (!isEqual(currProperties, properties)) {
-      updateProperties(currProperties);
-    }
-  }, [currProperties, properties, updateProperties]);
+  useUpdateEffect(() => {
+    updateProperties(currProperties);
+  }, [currProperties]);
 
   const duplicatePropertyName = intl.formatMessage({
     defaultMessage: 'Duplicate property name',
@@ -160,6 +158,8 @@ export const PropertyEditor = ({ properties, schema, updateProperties }: Propert
     description: 'Label to add item to property editor',
   });
 
+  // todo: move currProperties to a Map so it keeps insertion order
+  // right now if we set a propertyName to a number it will add it to the top of this list
   return (
     <div className="msla-property-editor-container">
       <div className="msla-property-editors">

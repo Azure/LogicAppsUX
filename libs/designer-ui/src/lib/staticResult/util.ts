@@ -137,11 +137,11 @@ export const formatShownProperties = (propertiesSchema: Record<string, boolean>)
 export const getOptions = (propertiesSchema: StaticResultRootSchemaType, required: string[]): DropdownItem[] => {
   const options: DropdownItem[] = [];
   if (propertiesSchema) {
-    Object.keys(propertiesSchema).forEach((propertyName, i) => {
+    Object.keys(propertiesSchema).forEach((propertyName) => {
       options.push({
-        key: i.toString(),
-        displayName: `${capitalizeFirstLetter(propertyName)}`,
+        key: propertyName,
         value: propertyName,
+        displayName: `${capitalizeFirstLetter(propertyName)}`,
         disabled: required.includes(propertyName),
       });
     });
@@ -168,4 +168,18 @@ export const initializePropertyValueText = (
 ): string => {
   if (propertyType === SchemaPropertyValueType.OBJECT) return '';
   return propertyValue as string;
+};
+
+export const initializePropertyValueInput = (
+  currProperties: OpenAPIV2.SchemaObject,
+  schema: StaticResultRootSchemaType | OpenAPIV2.SchemaObject
+): string => {
+  const inputVal = (
+    typeof currProperties === 'string' || typeof currProperties === 'number' || typeof currProperties === 'boolean'
+      ? currProperties
+      : Object.keys(currProperties).length > 0
+      ? JSON.stringify(currProperties, null, 2)
+      : schema?.default ?? ''
+  ) as string;
+  return inputVal;
 };
