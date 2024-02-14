@@ -45,49 +45,61 @@ export const convertStringToSegments = (value: string, nodeMap: Map<string, Valu
   const returnSegments: ValueSegment[] = [];
 
   let currIndex = 0;
-  let prevIndex = 0;
-  // let currSegmentType: ValueSegmentType = ValueSegmentType.LITERAL;
-  // let segmentSoFar = '';
+  let currSegmentType: ValueSegmentType = ValueSegmentType.LITERAL;
+  let segmentSoFar = '';
 
   while (currIndex < value.length) {
-    /*
     const currChar = value[currIndex];
     const nextChar = value[currIndex + 1];
 
     if (currChar === '@' && nextChar === '{') {
       if (segmentSoFar) {
+        // If we found a new token, then even if `currSegmentType` is `ValueSegmentType.TOKEN`, we treat the
+        // value as a literal since the token did not close. Worth noting: This means that if a token has `@{`
+        // inside of it, we would not support it. (e.g., `@{variables('@{')}`)
         returnSegments.push({ id: guid(), type: ValueSegmentType.LITERAL, value: segmentSoFar });
         segmentSoFar = '';
       }
       currSegmentType = ValueSegmentType.TOKEN;
-    } else if (currChar === '}' && currSegmentType === ValueSegmentType.TOKEN) {
-
     }
 
     segmentSoFar += currChar;
-    currIndex++;
-    */
 
-    if (value.substring(currIndex - 2, currIndex) === '@{' && tokensEnabled) {
-      if (value.substring(prevIndex, currIndex - 2)) {
-        returnSegments.push({ id: guid(), type: ValueSegmentType.LITERAL, value: value.substring(prevIndex, currIndex - 2) });
+    if (currChar === '}' && currSegmentType === ValueSegmentType.TOKEN) {
+      const token = nodeMap.get(segmentSoFar);
+      if (token) {
+        returnSegments.push(token);
+        currSegmentType = ValueSegmentType.LITERAL;
+        segmentSoFar = '';
       }
-      const endIndex = value.indexOf('}', currIndex);
-      if (endIndex < 0) {
-        currIndex++;
-        continue;
-      }
-      const newIndex = endIndex + 1;
-      if (nodeMap) {
-        const token = nodeMap.get(value.substring(currIndex - 2, newIndex));
-        if (token) {
-          returnSegments.push(token);
-        }
-      }
-      prevIndex = currIndex = newIndex;
     }
+
     currIndex++;
   }
-  returnSegments.push({ id: guid(), type: ValueSegmentType.LITERAL, value: value.substring(prevIndex, currIndex) });
+
+  if (segmentSoFar) {
+    // Treat anything remaining as `ValueSegmentType.LITERAL`, even if `currSegmentType` is not; this is to
+    // ensure that if we opened a token with `@{`, but it has no end, we just treat the remaining text as a literal.
+    returnSegments.push({ id: guid(), type: ValueSegmentType.LITERAL, value: segmentSoFar });
+  }
+
+  collapseLiteralSegments(returnSegments);
+
   return returnSegments;
 };
+
+const collapseLiteralSegments = (segments: ValueSegment[]): void => {
+  let index = 0;
+  while (index < segments.length) {
+    const currSegment = segments[index];
+    const nextSegment = segments[index + 1];
+
+    if (currSegment?.type === ValueSegmentType.LITERAL && nextSegment?.type === ValueSegmentType.LITERAL) {
+      currSegment.value += nextSegment.value;
+      segments.splice(index + 1, 1);
+      continue;
+    }
+
+    index++;
+  }
+}
