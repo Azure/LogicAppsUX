@@ -433,8 +433,13 @@
         },
         {
           "command": "azureLogicAppsStandard.deploySlot",
-          "when": "view == azureResourceGroups && viewItem =~ /azLogicAppsSlot/",
+          "when": "view == azureResourceGroups && viewItem =~ /azLogicAppsSlot(?!s)/",
           "group": "3@2"
+        },
+        {
+          "command": "azureLogicAppsStandard.openInPortal",
+          "when": "view == azureResourceGroups && viewItem =~ /azLogicAppsSlot(?!s)/",
+          "group": "3@3"
         },
         {
           "command": "azureLogicAppsStandard.startLogicApp",
