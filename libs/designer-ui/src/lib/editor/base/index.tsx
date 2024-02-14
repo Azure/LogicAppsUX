@@ -215,7 +215,7 @@ export const BaseEditor = ({
         {htmlEditor === 'rich-html' ? null : <ArrowNavigation />}
         {tokens ? (
           <>
-            <InsertTokenNode />
+            <InsertTokenNode closeTokenPicker={() => setIsTokenPickerOpened(false)} />
             <DeleteTokenNode />
             <OpenTokenPicker openTokenPicker={openTokenPicker} />
             <CloseTokenPicker closeTokenPicker={() => setIsTokenPickerOpened(false)} />
@@ -229,7 +229,9 @@ export const BaseEditor = ({
         {tokens && !htmlEditor ? (
           <PastePlugin segmentMapping={tokenMapping} loadParameterValueFromString={loadParameterValueFromString} />
         ) : null}
-        {htmlEditor && floatingAnchorElem ? <FloatingLinkEditorPlugin anchorElem={floatingAnchorElem} /> : null}
+        {htmlEditor && floatingAnchorElem ? (
+          <FloatingLinkEditorPlugin anchorElem={floatingAnchorElem} isMainEditorFocused={isEditorFocused} />
+        ) : null}
         {children}
         {tokens && isTokenPickerOpened ? getTokenPicker(editorId, labelId ?? '', tokenPickerMode, valueType, setIsTokenPickerOpened) : null}
       </div>

@@ -1,4 +1,19 @@
 # Logic Apps Designer
+## [2.113.0](https://github.com/Azure/LogicAppsUX/compare/v2.112.0...v2.113.0) (2024-02-13)
+
+
+### Bug Fixes
+
+* **designer-ui:** Ensure "update connection" shows even if connection (name) is missing ([#4171](https://github.com/Azure/LogicAppsUX/issues/4171)) ([22677d9](https://github.com/Azure/LogicAppsUX/commit/22677d954d119f003cc59ba7ff8fd84fe7865ace))
+* **Designer:** Fixed issue causing schema parameters to not appear as required ([#4176](https://github.com/Azure/LogicAppsUX/issues/4176)) ([4a84d56](https://github.com/Azure/LogicAppsUX/commit/4a84d56da5612e4e1c8bee2b04f4625503ad8eb6))
+* **designer:** Make Info Bubbles in search accessible by keyboard nav… ([#4180](https://github.com/Azure/LogicAppsUX/issues/4180)) ([02c6d5a](https://github.com/Azure/LogicAppsUX/commit/02c6d5ae0c6a6f0b8d4a3ce02ee0bd556da6d959))
+* **Designer:** Operation parameters are now sorted by their dependent parameters ([#4159](https://github.com/Azure/LogicAppsUX/issues/4159)) ([ea22f54](https://github.com/Azure/LogicAppsUX/commit/ea22f54308d473f0104f3c8b088b5e9071c1da1a))
+* **designer:** Removed new OpenAPI token behavior added in [#4122](https://github.com/Azure/LogicAppsUX/issues/4122) ([#4158](https://github.com/Azure/LogicAppsUX/issues/4158)) ([c72e9e9](https://github.com/Azure/LogicAppsUX/commit/c72e9e9e4214eb67a11544cc00c4eb5af045f34d))
+* **Designer:** Update serialization handling for the dictionary editor with tokens ([#4124](https://github.com/Azure/LogicAppsUX/issues/4124)) ([60fe43a](https://github.com/Azure/LogicAppsUX/commit/60fe43ab3863bdc87df5d429ebec5425850e67f0))
+* **vscode:** Add validation for no connections ([#4155](https://github.com/Azure/LogicAppsUX/issues/4155)) ([5692086](https://github.com/Azure/LogicAppsUX/commit/56920868cfd4137240c802ea12cada3c57f8f80d))
+* **vscode:** Enable create/deploy slot commands ([#4172](https://github.com/Azure/LogicAppsUX/issues/4172)) ([6b20972](https://github.com/Azure/LogicAppsUX/commit/6b20972416c2d434a7aa2b07d7d3db389b81bb98)), closes [#4128](https://github.com/Azure/LogicAppsUX/issues/4128)
+* **vscode:** Export experience code and UI improvements ([#4168](https://github.com/Azure/LogicAppsUX/issues/4168)) ([7e3547e](https://github.com/Azure/LogicAppsUX/commit/7e3547e44ba4eedf9aa2ea5a85b63fe45b5f8a2c))
+
 ## [2.112.0](https://github.com/Azure/LogicAppsUX/compare/v2.111.0...v2.112.0) (2024-02-08)
 
 

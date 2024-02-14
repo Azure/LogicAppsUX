@@ -12,7 +12,7 @@ import { getExpressionTokenTitle, getExpressionOutput } from './util';
 import { PrimaryButton } from '@fluentui/react';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import type { Expression } from '@microsoft/parsers-logic-apps';
-import { ExpressionParser } from '@microsoft/parsers-logic-apps';
+import { ExpressionExceptionCode, ExpressionParser, ScannerException } from '@microsoft/parsers-logic-apps';
 import { guid } from '@microsoft/utils-logic-apps';
 import type { LexicalEditor, NodeKey } from 'lexical';
 import { useMemo } from 'react';
@@ -68,7 +68,11 @@ export function TokenPickerFooter({
   });
   const invalidExpression = intl.formatMessage({
     defaultMessage: 'The expression is invalid.',
-    description: 'invalid expression alert',
+    description: 'Invalid expression alert',
+  });
+  const invalidExpressionQuotations = intl.formatMessage({
+    defaultMessage: 'The expression is invalid. Make sure to use single quotes.',
+    description: 'Invalid expression due to misused double quotes',
   });
 
   const insertToken = (tokenProps: TokenNodeProps) => {
@@ -96,7 +100,12 @@ export function TokenPickerFooter({
     try {
       currExpression = ExpressionParser.parseExpression(expression.value);
     } catch (ex) {
-      setExpressionEditorError(invalidExpression);
+      if (ex instanceof ScannerException && ex.message === ExpressionExceptionCode.MISUSED_DOUBLE_QUOTES) {
+        // if the expression contains misused double quotes, we'll show a different error message
+        setExpressionEditorError(invalidExpressionQuotations);
+      } else {
+        setExpressionEditorError(invalidExpression);
+      }
       return;
     }
     if (expression.value && window.localStorage.getItem('msla-tokenpicker-expression') !== expression.value) {

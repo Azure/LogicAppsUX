@@ -3025,6 +3025,12 @@
       "value": "Wymagane. Liczba, od której odejmowany jest odjemnik."
     }
   ],
+  "H9CZTr": [
+    {
+      "type": 0,
+      "value": "The expression is invalid. Make sure to use single quotes."
+    }
+  ],
   "HDqP2g": [
     {
       "type": 0,
@@ -6031,6 +6037,12 @@
     {
       "type": 0,
       "value": "Wyłącz wynik statyczny"
+    }
+  ],
+  "Yz9o1k": [
+    {
+      "type": 0,
+      "value": "Not connected."
     }
   ],
   "Z8tBFS": [
@@ -9173,6 +9185,12 @@
       "value": "Wymagane. Ciąg zawierający nazwę docelowej strefy czasowej. Szczegółowe informacje można znaleźć na stronie https://msdn.microsoft.com/pl-pl/library/gg154758.aspx."
     }
   ],
+  "t9RwOi": [
+    {
+      "type": 0,
+      "value": "The expression is invalid."
+    }
+  ],
   "tAbbH8": [
     {
       "type": 0,
@@ -9607,12 +9625,6 @@
     {
       "type": 0,
       "value": "Dane wyjściowe"
-    }
-  ],
-  "vVJuus": [
-    {
-      "type": 0,
-      "value": "Wyrażenie jest nieprawidłowe."
     }
   ],
   "vX9WYS": [
