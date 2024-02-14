@@ -171,33 +171,15 @@ const appendStringSegment = (
   options: SegmentParserOptions | undefined
 ) => {
   const { tokensEnabled } = options ?? {};
-  let currIndex = 0;
-  let prevIndex = 0;
-  while (currIndex < value.length) {
-    if (value.substring(currIndex - 2, currIndex) === '@{') {
-      const textSegment = value.substring(prevIndex, currIndex - 2);
-      if (textSegment) {
-        paragraph.append($createExtendedTextNode(textSegment, childNodeStyles, childNodeFormat));
-      }
-      const endIndex = value.indexOf('}', currIndex);
-      if (endIndex < 0) {
-        currIndex++;
-        continue;
-      }
-      const newIndex = endIndex + 2;
-      // token is found in the text
-      if (nodeMap && tokensEnabled) {
-        const tokenSegment = nodeMap.get(value.substring(currIndex - 2, newIndex));
-        const token = createTokenNodeFromSegment(tokenSegment, options, nodeMap);
-        token && paragraph.append(token);
-      }
-      prevIndex = currIndex = newIndex;
+  const segments = convertStringToSegments(value, tokensEnabled, nodeMap);
+
+  for (const segment of segments) {
+    if (segment.type === ValueSegmentType.LITERAL) {
+      paragraph.append($createExtendedTextNode(segment.value, childNodeStyles, childNodeFormat));
+    } else if (segment.type === ValueSegmentType.TOKEN) {
+      const token = createTokenNodeFromSegment(segment, options, nodeMap);
+      token && paragraph.append(token);
     }
-    currIndex++;
-  }
-  const textSegment = value.substring(prevIndex, currIndex);
-  if (textSegment) {
-    paragraph.append($createExtendedTextNode(textSegment, childNodeStyles, childNodeFormat));
   }
 };
 
