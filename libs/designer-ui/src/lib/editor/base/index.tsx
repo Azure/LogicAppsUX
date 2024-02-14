@@ -226,9 +226,7 @@ export const BaseEditor = ({
             />
           </>
         ) : null}
-        {tokens && !htmlEditor ? (
-          <PastePlugin segmentMapping={tokenMapping} loadParameterValueFromString={loadParameterValueFromString} />
-        ) : null}
+        {tokens ? <PastePlugin segmentMapping={tokenMapping} loadParameterValueFromString={loadParameterValueFromString} /> : null}
         {htmlEditor && floatingAnchorElem ? (
           <FloatingLinkEditorPlugin anchorElem={floatingAnchorElem} isMainEditorFocused={isEditorFocused} />
         ) : null}
