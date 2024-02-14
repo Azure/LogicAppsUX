@@ -80,6 +80,13 @@ export const StaticResultContainer = ({
           description: 'Error message for when status is failed and error and error code are not provided',
         })
       );
+    } else if (serializedValue['status'] === constants.STATUS.FAILED && serializedValue['outputs']) {
+      setErrorMessage(
+        intl.formatMessage({
+          defaultMessage: 'Ouputs should not be provided when status is "Failed"',
+          description: 'Error message for when status is failed and outputs are provided',
+        })
+      );
     } else {
       setErrorMessage('');
     }
@@ -127,7 +134,12 @@ export const StaticResultContainer = ({
   };
 
   const isLabelDisabled = (): boolean => {
-    return (JSON.stringify(propertyValues) === JSON.stringify(initialPropertyValues) && showStaticResults === enabled) || !!errorMessage;
+    return (
+      // disable label if no change
+      (JSON.stringify(propertyValues) === JSON.stringify(initialPropertyValues) && showStaticResults === enabled) ||
+      // disable if there is an error
+      (!!errorMessage && showStaticResults)
+    );
   };
 
   const {
