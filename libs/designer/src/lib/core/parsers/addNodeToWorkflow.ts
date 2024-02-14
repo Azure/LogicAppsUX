@@ -5,7 +5,7 @@ import type { NodesMetadata, WorkflowState } from '../state/workflow/workflowInt
 import { createWorkflowNode, createWorkflowEdge } from '../utils/graph';
 import type { WorkflowEdge, WorkflowNode } from './models/workflowNode';
 import { reassignEdgeSources, reassignEdgeTargets, addNewEdge, applyIsRootNode, removeEdge } from './restructuringHelpers';
-import type { DiscoveryOperation, DiscoveryResultTypes, SubgraphType } from '@microsoft/utils-logic-apps';
+import type { DiscoveryOperation, DiscoveryResultTypes, LogicAppsV2, SubgraphType } from '@microsoft/utils-logic-apps';
 import {
   removeIdTag,
   SUBGRAPH_TYPES,
@@ -203,7 +203,12 @@ export const addSwitchCaseToWorkflow = (caseId: string, switchNode: WorkflowNode
   addChildEdge(switchNode, createWorkflowEdge(`${switchNode.id}-#scope`, caseId, WORKFLOW_EDGE_TYPES.ONLY_EDGE));
 
   // Add Case to Switch operation data
-  (state.operations[switchNode.id] as any).cases[caseId] = { actions: {}, case: '' };
+  const switchAction = state.operations[switchNode.id] as LogicAppsV2.SwitchAction;
+  switchAction.cases = {
+    ...switchAction.cases,
+    [caseId]: { actions: {}, case: '' },
+  };
+
   // Increase action count of graph
   if (nodesMetadata[switchNode.id]) {
     nodesMetadata[switchNode.id].actionCount = nodesMetadata[switchNode.id].actionCount ?? 0 + 1;
