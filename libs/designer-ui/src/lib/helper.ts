@@ -1,4 +1,4 @@
-import { isFirefox } from '@microsoft/utils-logic-apps';
+import { isFirefox } from '@microsoft/logic-apps-shared';
 
 /**
  * Returns an "onDragStart" event handler to use on Firefox when draggable is set to false.

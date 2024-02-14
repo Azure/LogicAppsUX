@@ -1,6 +1,9 @@
 {
   "name": "@microsoft/utils-logic-apps",
   "version": "2.112.0",
+  "module": "./index.esm.js",
+  "main": "index.js",
+  "type": "module",
   "scripts": {
     "yalcpush": "yalc push ../../dist/libs/utils"
   }

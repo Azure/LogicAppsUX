@@ -6,8 +6,11 @@ export default {
     input: 'src/index.ts',
     output: 
         {
-            format: 'cjs',
+            format: 'esm',
             dir: '../../dist/libs/utils',
+            entryFileNames: 'index.esm.js',
+            sourcemap: true,
+            name: "@microsoft/utils-logic-apps",
         }
     ,
     plugins: [

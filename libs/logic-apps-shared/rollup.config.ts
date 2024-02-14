@@ -4,11 +4,14 @@ import  commonjs  from '@rollup/plugin-commonjs';
 import json from '@rollup/plugin-json';
 
 export default {
-    input: 'libs/index.ts',
+    input: './index.ts',
     output: 
         {
-            format: 'cjs',
+            format: 'esm',
             dir: '../../dist/libs/logic-apps-shared',
+            entryFileNames: 'index.esm.js',
+            sourcemap: true,
+            name: "@microsoft/logic-apps-shared",
         }
     ,
     plugins: [
