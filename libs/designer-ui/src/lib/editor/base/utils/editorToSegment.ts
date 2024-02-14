@@ -1,10 +1,10 @@
 import type { ValueSegment } from '../../models/parameter';
 import { ValueSegmentType } from '../../models/parameter';
 import { $isTokenNode } from '../nodes/tokenNode';
+import type { SegmentParserOptions } from './parsesegments';
 import { guid } from '@microsoft/utils-logic-apps';
 import type { EditorState, ElementNode } from 'lexical';
 import { $getNodeByKey, $getRoot, $isElementNode, $isLineBreakNode, $isTextNode } from 'lexical';
-import type { SegmentParserOptions } from './parsesegments';
 
 export function serializeEditorState(editorState: EditorState, trimLiteral = false): ValueSegment[] {
   const segments: ValueSegment[] = [];
@@ -33,7 +33,11 @@ const getChildrenNodesToSegments = (node: ElementNode, segments: ValueSegment[],
   });
 };
 
-export const convertStringToSegments = (value: string, nodeMap: Map<string, ValueSegment>, options?: SegmentParserOptions): ValueSegment[] => {
+export const convertStringToSegments = (
+  value: string,
+  nodeMap: Map<string, ValueSegment>,
+  options?: SegmentParserOptions
+): ValueSegment[] => {
   if (!value) return [];
 
   const { tokensEnabled } = options ?? {};
@@ -44,19 +48,27 @@ export const convertStringToSegments = (value: string, nodeMap: Map<string, Valu
 
   const returnSegments: ValueSegment[] = [];
 
-  let currIndex = 0;
   let currSegmentType: ValueSegmentType = ValueSegmentType.LITERAL;
+  let isInQuotedString = false;
   let segmentSoFar = '';
 
-  while (currIndex < value.length) {
+  for (let currIndex = 0; currIndex < value.length; currIndex++) {
     const currChar = value[currIndex];
     const nextChar = value[currIndex + 1];
 
-    if (currChar === '@' && nextChar === '{') {
+    if (currChar === `'`) {
+      if (isInQuotedString) {
+        isInQuotedString = false;
+      } else {
+        isInQuotedString = true;
+      }
+    }
+
+    if (!isInQuotedString && currChar === '@' && nextChar === '{') {
       if (segmentSoFar) {
         // If we found a new token, then even if `currSegmentType` is `ValueSegmentType.TOKEN`, we treat the
         // value as a literal since the token did not close. Worth noting: This means that if a token has `@{`
-        // inside of it, we would not support it. (e.g., `@{variables('@{')}`)
+        // inside of it (outside of single-quotes), it will not be supported as a token. (e.g. `@{@{}`)
         returnSegments.push({ id: guid(), type: ValueSegmentType.LITERAL, value: segmentSoFar });
         segmentSoFar = '';
       }
@@ -65,7 +77,7 @@ export const convertStringToSegments = (value: string, nodeMap: Map<string, Valu
 
     segmentSoFar += currChar;
 
-    if (currChar === '}' && currSegmentType === ValueSegmentType.TOKEN) {
+    if (!isInQuotedString && currChar === '}' && currSegmentType === ValueSegmentType.TOKEN) {
       const token = nodeMap.get(segmentSoFar);
       if (token) {
         returnSegments.push(token);
@@ -73,8 +85,6 @@ export const convertStringToSegments = (value: string, nodeMap: Map<string, Valu
         segmentSoFar = '';
       }
     }
-
-    currIndex++;
   }
 
   if (segmentSoFar) {
@@ -102,4 +112,4 @@ const collapseLiteralSegments = (segments: ValueSegment[]): void => {
 
     index++;
   }
-}
+};

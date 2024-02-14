@@ -6,7 +6,7 @@ type SimplifiedValueSegment = Omit<ValueSegment, 'id'>;
 
 describe('lib/editor/base/utils/editorToSegment', () => {
   describe('convertStringToSegments', () => {
-    const initializeVariableToken: SimplifiedValueSegment = {
+    const getInitializeVariableAbcToken = (): SimplifiedValueSegment => ({
       type: 'token',
       token: {
         key: 'variables:abc',
@@ -19,8 +19,17 @@ describe('lib/editor/base/utils/editorToSegment', () => {
         value: "variables('abc')",
       },
       value: "variables('abc')",
-    };
-    const createNewFolderToken: SimplifiedValueSegment = {
+    });
+    const getInitializeVariableOpenBraceToken = (): SimplifiedValueSegment => ({
+      ...getInitializeVariableAbcToken(),
+      token: {
+        ...getInitializeVariableAbcToken().token,
+        key: 'variables:@{',
+        value: "variables('@{')",
+      },
+      value: "variables('@{')",
+    });
+    const getCreateNewFolderToken = (): SimplifiedValueSegment => ({
       type: 'token',
       token: {
         key: 'body.$.{Link}',
@@ -47,14 +56,14 @@ describe('lib/editor/base/utils/editorToSegment', () => {
         value: "body('Create_new_folder')?['{Link}']",
       },
       value: "body('Create_new_folder')?['{Link}']",
-    };
+    });
 
     it('does not parse segments into tokens if tokensEnabled is not set', () => {
       const nodeMap = new Map<string, ValueSegment>();
-      nodeMap.set(`@{variables('abc')}`, { id: '', ...initializeVariableToken });
-      nodeMap.set(`@{body('Create_new_folder')?['{Link}']}`, { id: '', ...createNewFolderToken });
+      nodeMap.set(`@{variables('abc')}`, { id: '', ...getInitializeVariableAbcToken() });
+      nodeMap.set(`@{body('Create_new_folder')?['{Link}']}`, { id: '', ...getCreateNewFolderToken() });
 
-      const input = `Text before @{variables('abc'} text after`;
+      const input = `Text before @{variables('abc')} text after`;
 
       const segments = convertStringToSegments(input, nodeMap);
       const simplifiedSegments = segments.map(
@@ -72,11 +81,12 @@ describe('lib/editor/base/utils/editorToSegment', () => {
     it.each<[string, SimplifiedValueSegment[]]>([
       ['plain text', [{ type: ValueSegmentType.LITERAL, value: 'plain text' }]],
       ['@{no closing brace', [{ type: ValueSegmentType.LITERAL, value: '@{no closing brace' }]],
+      [`Text before @{variables('abc')}`, [{ type: ValueSegmentType.LITERAL, value: 'Text before ' }, getInitializeVariableAbcToken()]],
       [
         `Text before @{variables('abc')} text after`,
         [
           { type: ValueSegmentType.LITERAL, value: 'Text before ' },
-          initializeVariableToken,
+          getInitializeVariableAbcToken(),
           { type: ValueSegmentType.LITERAL, value: ' text after' },
         ],
       ],
@@ -84,15 +94,24 @@ describe('lib/editor/base/utils/editorToSegment', () => {
         `Text before @{body('Create_new_folder')?['{Link}']} text after`,
         [
           { type: ValueSegmentType.LITERAL, value: 'Text before ' },
-          createNewFolderToken,
+          getCreateNewFolderToken(),
           { type: ValueSegmentType.LITERAL, value: ' text after' },
         ],
       ],
       [
+        `t1 @{variables('@{')} t2`,
+        [
+          { type: ValueSegmentType.LITERAL, value: 't1 ' },
+          getInitializeVariableOpenBraceToken(),
+          { type: ValueSegmentType.LITERAL, value: ' t2' },
+        ],
+      ],
+      [`t1 @{variables('@{')`, [{ type: ValueSegmentType.LITERAL, value: `t1 @{variables('@{')` }]],
+      [
         `t1 @{not a token t2 @{variables('abc')} t3`,
         [
           { type: ValueSegmentType.LITERAL, value: 't1 @{not a token t2 ' },
-          initializeVariableToken,
+          getInitializeVariableAbcToken(),
           { type: ValueSegmentType.LITERAL, value: ' t3' },
         ],
       ],
@@ -100,14 +119,15 @@ describe('lib/editor/base/utils/editorToSegment', () => {
         `t1 @{not a token} t2 @{variables('abc')} t3`,
         [
           { type: ValueSegmentType.LITERAL, value: 't1 @{not a token} t2 ' },
-          initializeVariableToken,
+          getInitializeVariableAbcToken(),
           { type: ValueSegmentType.LITERAL, value: ' t3' },
         ],
       ],
     ])('parses segments out of %p with appropriate node map', (input, expectedTokens) => {
       const nodeMap = new Map<string, ValueSegment>();
-      nodeMap.set(`@{variables('abc')}`, { id: '', ...initializeVariableToken });
-      nodeMap.set(`@{body('Create_new_folder')?['{Link}']}`, { id: '', ...createNewFolderToken });
+      nodeMap.set(`@{variables('abc')}`, { id: '', ...getInitializeVariableAbcToken() });
+      nodeMap.set(`@{variables('@{')}`, { id: '', ...getInitializeVariableOpenBraceToken() });
+      nodeMap.set(`@{body('Create_new_folder')?['{Link}']}`, { id: '', ...getCreateNewFolderToken() });
 
       const segments = convertStringToSegments(input, nodeMap, { tokensEnabled: true });
       const simplifiedSegments = segments.map(
