@@ -229,7 +229,9 @@ export const BaseEditor = ({
         {tokens && !htmlEditor ? (
           <PastePlugin segmentMapping={tokenMapping} loadParameterValueFromString={loadParameterValueFromString} />
         ) : null}
-        {htmlEditor && floatingAnchorElem ? <FloatingLinkEditorPlugin anchorElem={floatingAnchorElem} /> : null}
+        {htmlEditor && floatingAnchorElem ? (
+          <FloatingLinkEditorPlugin anchorElem={floatingAnchorElem} isMainEditorFocused={isEditorFocused} />
+        ) : null}
         {children}
         {tokens && isTokenPickerOpened ? getTokenPicker(editorId, labelId ?? '', tokenPickerMode, valueType, setIsTokenPickerOpened) : null}
       </div>
