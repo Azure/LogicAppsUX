@@ -25,7 +25,7 @@ import { css, setLayerHostSelector } from '@fluentui/react';
 import { PanelLocation } from '@microsoft/designer-ui';
 import type { CustomPanelLocation } from '@microsoft/designer-ui';
 import type { WorkflowNodeType } from '@microsoft/utils-logic-apps';
-import { useWindowDimensions, WORKFLOW_NODE_TYPES, useThrottledEffect } from '@microsoft/utils-logic-apps';
+import { useWindowDimensions, WORKFLOW_NODE_TYPES, useThrottledEffect, equals } from '@microsoft/utils-logic-apps';
 import type { CSSProperties } from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import KeyboardBackendFactory, { isKeyboardDragTrigger } from 'react-dnd-accessible-backend';
@@ -217,10 +217,14 @@ export const Designer = (props: DesignerProps) => {
   const isInitialized = useNodesInitialized();
   const preloadSearch = useMemo(() => (isMonitoringView || isReadOnly) && isInitialized, [isMonitoringView, isReadOnly, isInitialized]);
 
-  const recurrenceInterval = useHostOptions().recurrenceInterval;
-
   // Adding recurrence interval to the query to access outside of functional components
+  const recurrenceInterval = useHostOptions().recurrenceInterval;
   useQuery({ queryKey: ['recurrenceInterval'], initialData: recurrenceInterval });
+
+  // Adding isStateless to the query
+  const workflowKind = useSelector((state: RootState) => state.workflow.workflowKind);
+  useQuery({ queryKey: ['isStateful'], initialData: equals(workflowKind, 'stateful') });
+
   return (
     <DndProvider options={DND_OPTIONS}>
       {preloadSearch ? <SearchPreloader /> : null}

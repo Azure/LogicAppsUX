@@ -100,6 +100,7 @@ export const updateWorkflowParameters = (parameters: Record<string, WorkflowPara
 };
 
 export const getInputParametersFromManifest = (
+  // start here to see where the default gets set from the manifest
   _nodeId: string,
   manifest: OperationManifest,
   presetParameterValues?: Record<string, any>,
