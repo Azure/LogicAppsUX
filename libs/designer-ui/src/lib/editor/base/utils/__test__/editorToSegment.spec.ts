@@ -91,6 +91,14 @@ describe('lib/editor/base/utils/editorToSegment', () => {
         ],
       ],
       [
+        `Text quoted '@{variables('abc')}'`,
+        [
+          { type: ValueSegmentType.LITERAL, value: `Text quoted '` },
+          getInitializeVariableAbcToken(),
+          { type: ValueSegmentType.LITERAL, value: `'` },
+        ],
+      ],
+      [
         `Text before @{body('Create_new_folder')?['{Link}']} text after`,
         [
           { type: ValueSegmentType.LITERAL, value: 'Text before ' },

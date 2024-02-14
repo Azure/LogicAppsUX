@@ -59,7 +59,8 @@ export const convertStringToSegments = (
     if (currChar === `'`) {
       if (isInQuotedString) {
         isInQuotedString = false;
-      } else {
+      } else if (currSegmentType === ValueSegmentType.TOKEN) {
+        // Quoted strings should only be handled inside `@{}` contexts.
         isInQuotedString = true;
       }
     }
