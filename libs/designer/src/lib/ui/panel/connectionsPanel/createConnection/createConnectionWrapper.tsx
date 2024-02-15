@@ -129,7 +129,8 @@ export const CreateConnectionWrapper = () => {
       parameterValues: Record<string, any> = {},
       isOAuthConnection?: boolean,
       alternativeParameterValues?: Record<string, any>,
-      identitySelected?: string
+      identitySelected?: string,
+      additionalParameterValues?: Record<string, any>
     ) => {
       if (!connector?.id) return;
 
@@ -188,6 +189,7 @@ export const CreateConnectionWrapper = () => {
             : undefined,
           connectionParameters: outputParameterValues,
           alternativeParameterValues,
+          additionalParameterValues,
         };
 
         const parametersMetadata: ConnectionParametersMetadata = {
