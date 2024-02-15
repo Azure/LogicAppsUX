@@ -302,12 +302,7 @@ export const CreateConnection = (props: CreateConnectionProps) => {
   const canSubmit = useMemo(() => !isLoading && validParams, [isLoading, validParams]);
 
   const submitCallback = useCallback(() => {
-    const visibleParameterValues = Object.fromEntries(
-      Object.entries(parameterValues).filter(([key]) => Object.keys(capabilityEnabledParameters).includes(key)) ?? []
-    );
-    const additionalParameterValues = Object.fromEntries(
-      Object.entries(parameterValues).filter(([key]) => !Object.keys(capabilityEnabledParameters).includes(key)) ?? []
-    );
+    const { visibleParameterValues, additionalParameterValues } = parseParameterValues(parameterValues, capabilityEnabledParameters);
 
     // This value needs to be passed conditionally but the parameter is hidden, so we're manually inputting it here
     if (
@@ -659,3 +654,17 @@ const isServicePrincipalParameterVisible = (key: string, parameter: any): boolea
   if (constraints?.hidden === 'true' || constraints?.hideInUI === 'true') return false;
   return true;
 };
+
+export function parseParameterValues(
+  parameterValues: Record<string, any>,
+  capabilityEnabledParameters: Record<string, ConnectionParameter | ConnectionParameterSetParameter>
+) {
+  const visibleParameterValues = Object.fromEntries(
+    Object.entries(parameterValues).filter(([key]) => Object.keys(capabilityEnabledParameters).includes(key)) ?? []
+  );
+  const additionalParameterValues = Object.fromEntries(
+    Object.entries(parameterValues).filter(([key]) => !Object.keys(capabilityEnabledParameters).includes(key)) ?? []
+  );
+
+  return { visibleParameterValues, additionalParameterValues };
+}
