@@ -159,8 +159,8 @@ export const validationAndSerializeSimpleArray = (
         returnItems.push({
           value: convertStringToSegments(
             valueType === constants.SWAGGER.TYPE.STRING ? (value as string) : JSON.stringify(value, null, 4),
-            /*tokensEnabled*/ true,
-            nodeMap
+            nodeMap,
+            { tokensEnabled: true }
           ),
           key: guid(),
         });
@@ -232,7 +232,7 @@ const convertObjectToComplexArrayItemArray = (
         key: itemSchema.key,
         title: handleTitle(itemSchema.key, itemSchema.title),
         description: itemSchema.description ?? '',
-        value: convertStringToSegments(obj, /*tokensEnabled*/ true, nodeMap),
+        value: convertStringToSegments(obj, nodeMap, { tokensEnabled: true }),
       },
     ];
   }
@@ -267,7 +267,7 @@ const convertObjectToComplexArrayItemArray = (
         key: itemSchemaProperty.key,
         title: handleTitle(itemSchema.key, itemSchemaProperty.title),
         description: itemSchemaProperty.description ?? '',
-        value: convertStringToSegments(value, true, nodeMap),
+        value: convertStringToSegments(value, nodeMap, { tokensEnabled: true }),
       });
     }
   });

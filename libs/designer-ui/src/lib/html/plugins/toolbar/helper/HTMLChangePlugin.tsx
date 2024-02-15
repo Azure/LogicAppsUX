@@ -114,7 +114,7 @@ export const convertEditorState = (
           return match;
         }
       });
-      const valueSegments: ValueSegment[] = convertStringToSegments(noTokenSpansString, true, nodeMap);
+      const valueSegments: ValueSegment[] = convertStringToSegments(noTokenSpansString, nodeMap, { tokensEnabled: true });
       resolve(valueSegments);
     });
   });

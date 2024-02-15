@@ -27,8 +27,8 @@ export const serializeDictionary = (
         const newValue = valueType === constants.SWAGGER.TYPE.STRING ? (value as string) : removeQuotes(JSON.stringify(value));
         returnItems.push({
           id: guid(),
-          key: convertStringToSegments(newKey, true, nodeMap),
-          value: convertStringToSegments(newValue, true, nodeMap),
+          key: convertStringToSegments(newKey, nodeMap, { tokensEnabled: true }),
+          value: convertStringToSegments(newValue, nodeMap, { tokensEnabled: true }),
         });
       }
       setItems(returnItems);
