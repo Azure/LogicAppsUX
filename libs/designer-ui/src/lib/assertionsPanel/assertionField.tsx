@@ -121,8 +121,6 @@ export const AssertionField = ({
     handleUpdate({ name, description, expression: newState.viewModel });
   };
 
-  console.log('charlie: expression', expression);
-
   return (
     <>
       <div className="msla-assertion-field">

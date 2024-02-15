@@ -263,6 +263,7 @@ export const AssertionsPanel = (props: CommonPanelProps) => {
     },
     [tokens]
   );
+  console.log('charlie assertions', assertions);
 
   return (
     <Assertions

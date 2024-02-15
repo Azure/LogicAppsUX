@@ -235,6 +235,40 @@ const DesignerEditor = () => {
     return `Bearer ${environment.armToken}` ?? '';
   };
 
+  const unitTestDefinition = {
+    triggerMocks: {},
+    actionMocks: {},
+    assertions: [
+      {
+        name: 'Initialize it',
+        description: 'This is a just a test',
+        expression: {
+          and: [
+            {
+              equals: ['@triggerOutputs()', 2],
+            },
+            {
+              equals: ["@outputs('Execute_JavaScript_Code')", 2],
+            },
+            {
+              equals: ["@variables('array')", 2],
+            },
+            {
+              equals: ["@outputs('For_each')", 4],
+            },
+            {
+              and: [
+                {
+                  equals: [2, "@triggerOutputs()?['relativePathParameters']"],
+                },
+              ],
+            },
+          ],
+        },
+      },
+    ],
+  };
+
   return (
     <div key={designerID} style={{ height: 'inherit', width: 'inherit' }}>
       <DesignerProvider
@@ -257,6 +291,7 @@ const DesignerEditor = () => {
           <BJSWorkflowProvider
             workflow={{ definition: workflow?.definition, connectionReferences, parameters, kind: workflow?.kind }}
             runInstance={runInstanceData}
+            unitTestDefinition={unitTestDefinition}
           >
             <div style={{ height: 'inherit', width: 'inherit' }}>
               <DesignerCommandBar
