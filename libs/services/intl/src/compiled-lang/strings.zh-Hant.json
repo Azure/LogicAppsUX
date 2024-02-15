@@ -1361,6 +1361,12 @@
       "value": "資料類型"
     }
   ],
+  "6yFUar": [
+    {
+      "type": 0,
+      "value": "Outputs are required when status is \"Succeeded\""
+    }
+  ],
   "70eoQu": [
     {
       "type": 0,
@@ -1881,6 +1887,12 @@
     {
       "type": 0,
       "value": "篩選器動作"
+    }
+  ],
+  "ANGw2o": [
+    {
+      "type": 0,
+      "value": "Click for more information on Static Result"
     }
   ],
   "AO6T9u": [
@@ -2967,6 +2979,12 @@
       "value": "必要。要傳回之表單資料值的索引鍵名稱。"
     }
   ],
+  "HGA9iU": [
+    {
+      "type": 0,
+      "value": "The Error and its code is required when status is \"Failed\""
+    }
+  ],
   "HH970i": [
     {
       "type": 0,
@@ -3490,6 +3508,12 @@
     {
       "type": 0,
       "value": "正在建立..."
+    }
+  ],
+  "LPdGu/": [
+    {
+      "type": 0,
+      "value": "Ouputs should not be provided when status is \"Failed\""
     }
   ],
   "LR/3Lr": [
@@ -8902,6 +8926,12 @@
     {
       "type": 0,
       "value": "無法產生資料對應定義"
+    }
+  ],
+  "svaqnp": [
+    {
+      "type": 0,
+      "value": "Error should not be provided when status is \"Succeeded\""
     }
   ],
   "sw6EXK": [
