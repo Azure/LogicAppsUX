@@ -7,7 +7,7 @@ import type {
   ICustomEditorOptions,
   IEditorProps,
   IRenderDefaultEditorParams,
-} from '@microsoft/designer-client-services-logic-apps';
+} from '@microsoft/logic-apps-shared';
 import { equals } from '@microsoft/utils-logic-apps';
 import { useCallback } from 'react';
 

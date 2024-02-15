@@ -12,6 +12,7 @@
     "parsers": "libs/parsers",
     "plugins-playwright": "libs/plugins/playwright",
     "services-designer-client-services": "libs/services/designer-client-services",
+    "logic-apps-shared": "libs/logic-apps-shared",
     "services-intl": "libs/services/intl",
     "utils": "libs/utils",
     "vs-code-designer": "apps/vs-code-designer",
