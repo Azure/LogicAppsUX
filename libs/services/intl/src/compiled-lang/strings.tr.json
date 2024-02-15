@@ -1353,6 +1353,12 @@
       "value": "Veri türü"
     }
   ],
+  "6yFUar": [
+    {
+      "type": 0,
+      "value": "Outputs are required when status is \"Succeeded\""
+    }
+  ],
   "70eoQu": [
     {
       "type": 0,
@@ -1873,6 +1879,12 @@
     {
       "type": 0,
       "value": "Eylemleri Filtrele"
+    }
+  ],
+  "ANGw2o": [
+    {
+      "type": 0,
+      "value": "Click for more information on Static Result"
     }
   ],
   "AO6T9u": [
@@ -2973,6 +2985,12 @@
       "value": "Gerekli. Döndürülecek form verileri değerinin anahtar adı."
     }
   ],
+  "HGA9iU": [
+    {
+      "type": 0,
+      "value": "The Error and its code is required when status is \"Failed\""
+    }
+  ],
   "HH970i": [
     {
       "type": 0,
@@ -3507,6 +3525,12 @@
     {
       "type": 0,
       "value": "Oluşturuluyor..."
+    }
+  ],
+  "LPdGu/": [
+    {
+      "type": 0,
+      "value": "Ouputs should not be provided when status is \"Failed\""
     }
   ],
   "LR/3Lr": [
@@ -8935,6 +8959,12 @@
     {
       "type": 0,
       "value": "Veri eşleme tanımı oluşturulamıyor"
+    }
+  ],
+  "svaqnp": [
+    {
+      "type": 0,
+      "value": "Error should not be provided when status is \"Succeeded\""
     }
   ],
   "sw6EXK": [
