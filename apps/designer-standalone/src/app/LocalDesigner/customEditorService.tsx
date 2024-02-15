@@ -1,4 +1,4 @@
-import type { IEditorParameterInfo, IEditorProps, IEditorService } from '@microsoft/designer-client-services-logic-apps';
+import type { IEditorParameterInfo, IEditorProps, IEditorService } from '@microsoft/logic-apps-shared';
 import { createLiteralValueSegment } from '@microsoft/logic-apps-designer';
 
 export class CustomEditorService implements IEditorService {

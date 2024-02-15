@@ -1,4 +1,4 @@
-import type { ArmResource } from '@microsoft/utils-logic-apps';
+import type { ArmResource } from '@microsoft/logic-apps-shared';
 
 export const WorkflowState = {
   Disabled: 'Disabled',

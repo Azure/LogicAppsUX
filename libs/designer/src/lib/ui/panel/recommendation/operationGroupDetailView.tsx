@@ -1,6 +1,6 @@
 import type { OperationActionData } from '@microsoft/designer-ui';
 import { OperationActionDataFromOperation, OperationGroupDetailsPage } from '@microsoft/designer-ui';
-import type { Connector, DiscoveryOperation, DiscoveryResultTypes } from '@microsoft/utils-logic-apps';
+import type { Connector, DiscoveryOperation, DiscoveryResultTypes } from '@microsoft/logic-apps-shared';
 import { useCallback } from 'react';
 
 type OperationGroupDetailViewProps = {

@@ -1,5 +1,5 @@
 import { isRunError, mapToRunItem } from '../utils';
-import type { Run, RunError } from '@microsoft/utils-logic-apps';
+import type { Run, RunError } from '@microsoft/logic-apps-shared';
 
 describe('lib/overview/utils', () => {
   describe('isRunError', () => {

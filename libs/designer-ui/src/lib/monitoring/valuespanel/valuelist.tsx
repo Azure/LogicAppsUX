@@ -1,7 +1,7 @@
 import { Value } from '../values';
 import { DefaultButton } from '@fluentui/react';
-import type { BoundParameters } from '@microsoft/utils-logic-apps';
-import { equals } from '@microsoft/utils-logic-apps';
+import type { BoundParameters } from '@microsoft/logic-apps-shared';
+import { equals } from '@microsoft/logic-apps-shared';
 import { useIntl } from 'react-intl';
 
 export interface ValueListProps {

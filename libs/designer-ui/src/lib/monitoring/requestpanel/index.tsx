@@ -7,7 +7,7 @@ import { Request } from './request';
 import { Response } from './response';
 import { SecureDataSection } from './securedatasection';
 import type { RequestHistory } from './types';
-import { equals } from '@microsoft/utils-logic-apps';
+import { equals } from '@microsoft/logic-apps-shared';
 import React, { useState } from 'react';
 import { useIntl } from 'react-intl';
 

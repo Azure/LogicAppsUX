@@ -16,7 +16,7 @@ import { monitorRetryTab } from './tabs/retryTab';
 import { scratchTab } from './tabs/scratchTab';
 import { settingsTab } from './tabs/settingsTab';
 import { testingTab } from './tabs/testingTab';
-import { SUBGRAPH_TYPES } from '@microsoft/utils-logic-apps';
+import { SUBGRAPH_TYPES } from '@microsoft/logic-apps-shared';
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useSelector } from 'react-redux';

@@ -17,7 +17,7 @@ import { useTheme } from '@fluentui/react';
 import { $isLinkNode, TOGGLE_LINK_COMMAND } from '@lexical/link';
 import { $patchStyleText, $getSelectionStyleValueForProperty } from '@lexical/selection';
 import { mergeRegister } from '@lexical/utils';
-import { isApple } from '@microsoft/utils-logic-apps';
+import { isApple } from '@microsoft/logic-apps-shared';
 import type { LexicalEditor } from 'lexical';
 import {
   COMMAND_PRIORITY_NORMAL,

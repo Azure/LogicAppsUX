@@ -5,7 +5,7 @@ import { Group } from './Group';
 import { GroupDropdownOptions } from './GroupDropdown';
 import { RowDropdownOptions } from './RowDropdown';
 import { checkHeights, getGroupedItems } from './helper';
-import { guid } from '@microsoft/utils-logic-apps';
+import { guid } from '@microsoft/logic-apps-shared';
 import { useFunctionalState, useUpdateEffect } from '@react-hookz/web';
 import { useEffect, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';

@@ -10,7 +10,7 @@ import { getCardStyle } from './utils';
 import type { ISpinnerStyles, MessageBarType } from '@fluentui/react';
 import { Icon, css } from '@fluentui/react';
 import { Spinner } from '@fluentui/react-components';
-import type { LogicAppsV2 } from '@microsoft/utils-logic-apps';
+import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import { useEffect, useMemo, useRef } from 'react';
 import type { ConnectDragPreview, ConnectDragSource } from 'react-dnd';
 import { useIntl } from 'react-intl';

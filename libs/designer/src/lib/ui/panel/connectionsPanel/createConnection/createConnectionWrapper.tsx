@@ -27,8 +27,8 @@ import {
 } from '../../../../core/utils/connectors/connections';
 import { CreateConnection } from './createConnection';
 import { Spinner } from '@fluentui/react-components';
-import type { ConnectionCreationInfo, ConnectionParametersMetadata } from '@microsoft/designer-client-services-logic-apps';
-import { ConnectionService, LogEntryLevel, LoggerService, WorkflowService } from '@microsoft/designer-client-services-logic-apps';
+import type { ConnectionCreationInfo, ConnectionParametersMetadata } from '@microsoft/logic-apps-shared';
+import { ConnectionService, LogEntryLevel, LoggerService, WorkflowService } from '@microsoft/logic-apps-shared';
 import {
   getRecordEntry,
   safeSetObjectPropertyValue,
@@ -37,7 +37,7 @@ import {
   type ConnectionParameterSetValues,
   type Connector,
   type ManagedIdentity,
-} from '@microsoft/utils-logic-apps';
+} from '@microsoft/logic-apps-shared';
 import { useCallback, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';

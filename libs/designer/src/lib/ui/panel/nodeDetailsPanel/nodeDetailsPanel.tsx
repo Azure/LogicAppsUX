@@ -23,7 +23,7 @@ import { DeleteMenuItem } from '../../menuItems/deleteMenuItem';
 import { usePanelTabs } from './usePanelTabs';
 import type { CommonPanelProps, PageActionTelemetryData } from '@microsoft/designer-ui';
 import { PanelContainer, PanelLocation, PanelScope, PanelSize } from '@microsoft/designer-ui';
-import { isNullOrUndefined } from '@microsoft/utils-logic-apps';
+import { isNullOrUndefined } from '@microsoft/logic-apps-shared';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 

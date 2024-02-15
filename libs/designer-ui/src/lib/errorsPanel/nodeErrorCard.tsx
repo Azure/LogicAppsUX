@@ -2,7 +2,7 @@ import { isEnterKey, isSpaceKey } from '../utils';
 import type { NodeMessage } from './errorsPanel.types';
 import { MessageLevel } from './errorsPanel.types';
 import { Text, Icon } from '@fluentui/react';
-import { fallbackConnectorIconUrl } from '@microsoft/utils-logic-apps';
+import { fallbackConnectorIconUrl } from '@microsoft/logic-apps-shared';
 import { useIntl } from 'react-intl';
 
 interface NodeErrorCardProps {

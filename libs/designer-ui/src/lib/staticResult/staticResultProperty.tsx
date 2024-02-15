@@ -5,7 +5,7 @@ import { StaticResult } from './StaticResult';
 import { PropertyEditor } from './propertyEditor';
 import type { IDropdownOption, IDropdownStyles, ITextFieldStyles } from '@fluentui/react';
 import { Dropdown, TextField } from '@fluentui/react';
-import type { OpenAPIV2 } from '@microsoft/utils-logic-apps';
+import type { OpenAPIV2 } from '@microsoft/logic-apps-shared';
 import React, { useState } from 'react';
 import { useIntl } from 'react-intl';
 

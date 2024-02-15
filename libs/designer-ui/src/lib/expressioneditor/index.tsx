@@ -1,6 +1,6 @@
 import { MonacoEditor as Editor, EditorLanguage } from '../editor/monaco';
 import type { EventHandler } from '../eventhandler';
-import { clamp } from '@microsoft/utils-logic-apps';
+import { clamp } from '@microsoft/logic-apps-shared';
 import type { editor } from 'monaco-editor';
 import type { MutableRefObject } from 'react';
 import { useState, useEffect } from 'react';

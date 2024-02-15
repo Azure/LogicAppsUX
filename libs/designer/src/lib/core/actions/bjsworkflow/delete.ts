@@ -8,7 +8,7 @@ import { deinitializeStaticResultProperty } from '../../state/staticresultschema
 import { deinitializeTokensAndVariables } from '../../state/tokens/tokensSlice';
 import { clearFocusNode, deleteNode } from '../../state/workflow/workflowSlice';
 import { updateAllUpstreamNodes } from './initialize';
-import { WORKFLOW_NODE_TYPES } from '@microsoft/utils-logic-apps';
+import { WORKFLOW_NODE_TYPES } from '@microsoft/logic-apps-shared';
 import type { Dispatch } from '@reduxjs/toolkit';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { batch } from 'react-redux';

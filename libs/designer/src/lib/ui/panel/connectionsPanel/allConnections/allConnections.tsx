@@ -8,7 +8,7 @@ import {
 import { useConnector } from '../../../../core/state/connection/connectionSelector';
 import { ConnectorConnectionsCard } from './connectorConnectionsCard';
 import { Accordion, AccordionItem, type AccordionToggleEventHandler } from '@fluentui/react-components';
-import { getRecordEntry } from '@microsoft/utils-logic-apps';
+import { getRecordEntry } from '@microsoft/logic-apps-shared';
 import { useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 

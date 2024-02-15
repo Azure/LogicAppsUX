@@ -1,4 +1,6 @@
 tasks:
   build:
     command: 'rollup --config rollup.config.ts --configPlugin @rollup/plugin-typescript'
+dependsOn:
+  - 'logic-apps-shared'
 

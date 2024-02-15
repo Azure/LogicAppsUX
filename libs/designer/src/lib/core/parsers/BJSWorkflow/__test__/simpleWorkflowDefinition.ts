@@ -1,7 +1,7 @@
 import type { Operations, NodesMetadata } from '../../../state/workflow/workflowInterfaces';
 import { createWorkflowNode, createWorkflowEdge } from '../../../utils/graph';
 import type { WorkflowNode } from '../../models/workflowNode';
-import { WORKFLOW_NODE_TYPES } from '@microsoft/utils-logic-apps';
+import { WORKFLOW_NODE_TYPES } from '@microsoft/logic-apps-shared';
 
 export const simpleWorkflowDefinitionInput = {
   $schema: 'https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2016-06-01/workflowdefinition.json#',

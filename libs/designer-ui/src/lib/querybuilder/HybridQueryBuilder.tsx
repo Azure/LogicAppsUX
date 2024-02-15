@@ -2,7 +2,7 @@ import { ValueSegmentType } from '../editor';
 import { Group } from './Group';
 import { checkHeights, getGroupedItems } from './helper';
 import type { GroupedItems, GroupItemProps, QueryBuilderProps } from './index';
-import { guid } from '@microsoft/utils-logic-apps';
+import { guid } from '@microsoft/logic-apps-shared';
 import { useFunctionalState, useUpdateEffect } from '@react-hookz/web';
 import { useEffect, useRef, useState } from 'react';
 

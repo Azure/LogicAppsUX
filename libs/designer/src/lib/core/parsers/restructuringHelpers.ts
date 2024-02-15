@@ -3,8 +3,8 @@ import constants from '../../common/constants';
 import { isWorkflowOperationNode } from '../actions/bjsworkflow/serializer';
 import type { NodesMetadata, WorkflowState } from '../state/workflow/workflowInterfaces';
 import type { WorkflowEdge, WorkflowNode } from './models/workflowNode';
-import type { LogicAppsV2 } from '@microsoft/utils-logic-apps';
-import { containsIdTag, getRecordEntry, RUN_AFTER_STATUS, WORKFLOW_EDGE_TYPES } from '@microsoft/utils-logic-apps';
+import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
+import { containsIdTag, getRecordEntry, RUN_AFTER_STATUS, WORKFLOW_EDGE_TYPES } from '@microsoft/logic-apps-shared';
 
 ///////////////////////////////////////////////////////////
 // EDGES

@@ -9,7 +9,7 @@ import { SettingsSection } from '../settingsection';
 import type { ValidationError } from '../validation/validation';
 import { ValidationErrorKeys, ValidationErrorType } from '../validation/validation';
 import type { RunAfterActionDetailsProps } from './runafterconfiguration';
-import { getRecordEntry, type LogicAppsV2 } from '@microsoft/utils-logic-apps';
+import { getRecordEntry, type LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import { useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';

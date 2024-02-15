@@ -8,16 +8,16 @@ import {
   type ValueSegment,
   FloatingActionMenuKind,
 } from '@microsoft/designer-ui';
-import { getIntl } from '@microsoft/intl-logic-apps';
-import type { Expression, ExpressionLiteral } from '@microsoft/parsers-logic-apps';
+import { getIntl } from '@microsoft/logic-apps-shared';
+import type { Expression, ExpressionLiteral } from '@microsoft/logic-apps-shared';
 import {
   ExpressionParser,
   ExpressionType,
   isStringInterpolation,
   isStringLiteral,
   isTemplateExpression,
-} from '@microsoft/parsers-logic-apps';
-import { capitalizeFirstLetter, endsWith, equals, startsWith } from '@microsoft/utils-logic-apps';
+} from '@microsoft/logic-apps-shared';
+import { capitalizeFirstLetter, endsWith, equals, startsWith } from '@microsoft/logic-apps-shared';
 
 const regex = {
   datetime:

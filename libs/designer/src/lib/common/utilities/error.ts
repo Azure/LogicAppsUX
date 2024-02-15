@@ -1,6 +1,6 @@
 import constants from '../constants';
 import { MessageBarType } from '@fluentui/react/lib/MessageBar';
-import { isNullOrUndefined } from '@microsoft/utils-logic-apps';
+import { isNullOrUndefined } from '@microsoft/logic-apps-shared';
 
 export interface ErrorProps {
   errorLevel?: MessageBarType;

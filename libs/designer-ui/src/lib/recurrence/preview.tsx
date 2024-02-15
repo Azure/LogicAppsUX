@@ -1,8 +1,8 @@
 import type { Recurrence } from '.';
 import constants from '../constants';
 import { getIntervalValue } from './util';
-import { getIntl } from '@microsoft/intl-logic-apps';
-import { equals, getPropertyValue } from '@microsoft/utils-logic-apps';
+import { getIntl } from '@microsoft/logic-apps-shared';
+import { equals, getPropertyValue } from '@microsoft/logic-apps-shared';
 import { useIntl } from 'react-intl';
 
 interface PreviewProps {

@@ -6,7 +6,7 @@ import { AuthenticationDropdown } from '../AuthenticationDropdown';
 import { AuthenticationProperty } from '../AuthenticationProperty';
 import { AUTHENTICATION_PROPERTIES } from '../util';
 import type { IDropdownOption } from '@fluentui/react';
-import { ResourceIdentityType } from '@microsoft/utils-logic-apps';
+import { ResourceIdentityType } from '@microsoft/logic-apps-shared';
 import { useIntl } from 'react-intl';
 
 interface MSIAuthenticationDefaultProps {

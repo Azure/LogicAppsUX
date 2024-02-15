@@ -1,4 +1,4 @@
-import { Theme } from '@microsoft/utils-logic-apps';
+import { Theme } from '@microsoft/logic-apps-shared';
 import { useEffect } from 'react';
 
 export const getTheme = (element: HTMLElement): Theme => {

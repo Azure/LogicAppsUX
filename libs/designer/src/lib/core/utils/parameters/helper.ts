@@ -55,7 +55,7 @@ import {
   isVariableToken,
   ValueSegmentConvertor,
 } from './segment';
-import { LogEntryLevel, LoggerService, OperationManifestService, WorkflowService } from '@microsoft/designer-client-services-logic-apps';
+import { LogEntryLevel, LoggerService, OperationManifestService, WorkflowService } from '@microsoft/logic-apps-shared';
 import type {
   AuthProps,
   ComboboxItem,
@@ -85,7 +85,7 @@ import {
   TokenType,
   AuthenticationOAuthType,
 } from '@microsoft/designer-ui';
-import { getIntl } from '@microsoft/intl-logic-apps';
+import { getIntl } from '@microsoft/logic-apps-shared';
 import type {
   DependentParameterInfo,
   DynamicParameters,
@@ -99,7 +99,7 @@ import type {
   SchemaProperty,
   Segment,
   SwaggerParser,
-} from '@microsoft/parsers-logic-apps';
+} from '@microsoft/logic-apps-shared';
 import {
   isDynamicTreeExtension,
   isLegacyDynamicValuesTreeExtension,
@@ -124,8 +124,8 @@ import {
   SegmentType,
   Visibility,
   PropertyName,
-} from '@microsoft/parsers-logic-apps';
-import type { Exception, OpenAPIV2, OperationManifest, RecurrenceSetting } from '@microsoft/utils-logic-apps';
+} from '@microsoft/logic-apps-shared';
+import type { Exception, OpenAPIV2, OperationManifest, RecurrenceSetting } from '@microsoft/logic-apps-shared';
 import {
   createCopy,
   deleteObjectProperties,
@@ -153,7 +153,7 @@ import {
   nthLastIndexOf,
   parseErrorMessage,
   getRecordEntry,
-} from '@microsoft/utils-logic-apps';
+} from '@microsoft/logic-apps-shared';
 import type { Dispatch } from '@reduxjs/toolkit';
 
 // import { debounce } from 'lodash';

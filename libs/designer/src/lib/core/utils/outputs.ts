@@ -19,9 +19,9 @@ import {
   isDynamicDataReadyToLoad,
 } from './parameters/helper';
 import { convertOutputsToTokens } from './tokens';
-import { OperationManifestService } from '@microsoft/designer-client-services-logic-apps';
+import { OperationManifestService } from '@microsoft/logic-apps-shared';
 import { generateSchemaFromJsonString, ValueSegmentType } from '@microsoft/designer-ui';
-import { getIntl } from '@microsoft/intl-logic-apps';
+import { getIntl } from '@microsoft/logic-apps-shared';
 import type {
   Expression,
   ExpressionFunction,
@@ -29,7 +29,7 @@ import type {
   OutputParameter,
   OutputParameters,
   Schema,
-} from '@microsoft/parsers-logic-apps';
+} from '@microsoft/logic-apps-shared';
 import {
   create,
   OutputKeys,
@@ -39,8 +39,8 @@ import {
   isTemplateExpression,
   isFunction,
   isStringLiteral,
-} from '@microsoft/parsers-logic-apps';
-import type { OpenAPIV2, OperationManifest } from '@microsoft/utils-logic-apps';
+} from '@microsoft/logic-apps-shared';
+import type { OpenAPIV2, OperationManifest } from '@microsoft/logic-apps-shared';
 import {
   ConnectionReferenceKeyFormat,
   getObjectPropertyValue,
@@ -51,7 +51,7 @@ import {
   clone,
   equals,
   parseErrorMessage,
-} from '@microsoft/utils-logic-apps';
+} from '@microsoft/logic-apps-shared';
 import type { Dispatch } from '@reduxjs/toolkit';
 
 export const toOutputInfo = (output: OutputParameter): OutputInfo => {

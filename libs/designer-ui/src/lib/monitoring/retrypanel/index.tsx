@@ -3,7 +3,7 @@ import { Pager } from '../../pager';
 import { ErrorSection } from '../errorsection';
 import { calculateDuration } from '../utils';
 import { Value } from '../values';
-import type { LogicAppsV2 } from '@microsoft/utils-logic-apps';
+import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import { useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 

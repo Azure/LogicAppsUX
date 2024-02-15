@@ -20,10 +20,8 @@
     "compile:loc:psuedo": "formatjs compile \"Localize/lang/strings.json\" --ast --format ./format.js --out-file \"libs/services/intl/src/compiled-lang/strings.en-XA.json\" --pseudo-locale en-XA",
     "build:designer-client-services": "nx run services-designer-client-services:build",
     "build:chatbot": "nx run chatbot:build",
-    "build:parsers": "nx run parsers:build",
     "build:vscode-react": "nx run vs-code-react:build",
     "build:vscode-designer": "nx run vs-code-designer:build && nx run vs-code-react:build",
-    "build:utils": "nx run utils:build",
     "build:docs": "nx build logic-apps-ux-docs",
     "start:docs": "nx serve logic-apps-ux-docs",
     "bump": "standard-version --no-verify",
@@ -43,7 +41,8 @@
   },
   "workspaces": [
     "libs/logic-apps-shared",
-    "libs/designer-ui"
+    "libs/designer-ui",
+    "libs/designer"
   ],
   "private": true,
   "dependencies": {
@@ -126,8 +125,6 @@
     "reactflow": "^11.8.2",
     "redux-undo": "^1.1.0",
     "regenerator-runtime": "0.13.9",
-    "rollup": "^4.10.0",
-    "rollup-plugin-less": "^1.1.3",
     "stream-http": "^3.2.0",
     "tiny-invariant": "1.3.1",
     "to-title-case": "1.0.0",
@@ -162,6 +159,8 @@
     "@nrwl/workspace": "15.2.1",
     "@nx-plus/docusaurus": "^15.0.0-rc.0",
     "@playwright/test": "^1.37.1",
+    "rollup": "^3.29.4",
+    "rollup-plugin-less": "^1.1.3",
     "@rollup/plugin-image": "^3.0.3",
     "@svgr/webpack": "6.3.1",
     "@swc-node/register": "^1.4.2",

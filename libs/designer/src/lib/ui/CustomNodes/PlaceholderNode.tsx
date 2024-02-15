@@ -4,7 +4,7 @@ import { useReadOnly } from '../../core/state/designerOptions/designerOptionsSel
 import { useIsNodeSelected } from '../../core/state/panel/panelSelectors';
 import { expandDiscoveryPanel } from '../../core/state/panel/panelSlice';
 import { AddActionCard, ADD_CARD_TYPE, NoActionCard } from '@microsoft/designer-ui';
-import { guid } from '@microsoft/utils-logic-apps';
+import { guid } from '@microsoft/logic-apps-shared';
 import { memo, useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 import { Handle, Position } from 'reactflow';

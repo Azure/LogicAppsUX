@@ -6,7 +6,7 @@ import { Label } from '../label';
 import type { LabelProps } from '../label';
 import type { IContextualMenuProps, IIconProps, IIconStyles } from '@fluentui/react';
 import { IconButton, TooltipHost, DefaultButton } from '@fluentui/react';
-import { guid } from '@microsoft/utils-logic-apps';
+import { guid } from '@microsoft/logic-apps-shared';
 import { useIntl } from 'react-intl';
 
 const addItemButtonIconProps: IIconProps = {

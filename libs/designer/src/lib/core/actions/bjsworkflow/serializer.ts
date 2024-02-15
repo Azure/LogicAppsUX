@@ -19,11 +19,11 @@ import {
 import { buildOperationDetailsFromControls } from '../../utils/swagger/inputsbuilder';
 import type { Settings } from './settings';
 import type { NodeStaticResults } from './staticresults';
-import { LogEntryLevel, LoggerService, OperationManifestService, WorkflowService } from '@microsoft/designer-client-services-logic-apps';
+import { LogEntryLevel, LoggerService, OperationManifestService, WorkflowService } from '@microsoft/logic-apps-shared';
 import type { ParameterInfo } from '@microsoft/designer-ui';
 import { UIConstants } from '@microsoft/designer-ui';
-import { getIntl } from '@microsoft/intl-logic-apps';
-import type { Segment } from '@microsoft/parsers-logic-apps';
+import { getIntl } from '@microsoft/logic-apps-shared';
+import type { Segment } from '@microsoft/logic-apps-shared';
 import {
   create,
   removeConnectionPrefix,
@@ -33,8 +33,8 @@ import {
   SegmentType,
   DeserializationType,
   PropertySerializationType,
-} from '@microsoft/parsers-logic-apps';
-import type { LocationSwapMap, LogicAppsV2, OperationManifest, SubGraphDetail } from '@microsoft/utils-logic-apps';
+} from '@microsoft/logic-apps-shared';
+import type { LocationSwapMap, LogicAppsV2, OperationManifest, SubGraphDetail } from '@microsoft/logic-apps-shared';
 import {
   SerializationErrorCode,
   SerializationException,
@@ -57,7 +57,7 @@ import {
   filterRecord,
   excludePathValueFromTarget,
   getRecordEntry,
-} from '@microsoft/utils-logic-apps';
+} from '@microsoft/logic-apps-shared';
 import merge from 'lodash.merge';
 
 export interface SerializeOptions {

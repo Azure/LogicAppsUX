@@ -10,7 +10,7 @@ import type { TokenPickerBaseProps } from './tokenpickersection';
 import { Icon } from '@fluentui/react';
 import { useBoolean } from '@fluentui/react-hooks';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
-import { hex2rgb, lighten } from '@microsoft/utils-logic-apps';
+import { hex2rgb, lighten } from '@microsoft/logic-apps-shared';
 import Fuse from 'fuse.js';
 import type { LexicalEditor } from 'lexical';
 import type { Dispatch, SetStateAction } from 'react';

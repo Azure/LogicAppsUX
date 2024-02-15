@@ -7,7 +7,7 @@ import { serializeDictionary } from '../util/serializecollapseddictionary';
 import { css } from '@fluentui/react';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
-import { guid } from '@microsoft/utils-logic-apps';
+import { guid } from '@microsoft/logic-apps-shared';
 import type { EditorState } from 'lexical';
 import { $getRoot } from 'lexical';
 import { useEffect } from 'react';

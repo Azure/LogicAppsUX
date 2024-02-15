@@ -3,8 +3,8 @@ import NodeCollapseToggle from '../../nodeCollapseToggle';
 import { CardContextMenu } from '../cardcontextmenu';
 import { useCardContextMenu, useCardKeyboardInteraction } from '../hooks';
 import { css } from '@fluentui/react';
-import type { SubgraphType } from '@microsoft/utils-logic-apps';
-import { SUBGRAPH_TYPES } from '@microsoft/utils-logic-apps';
+import type { SubgraphType } from '@microsoft/logic-apps-shared';
+import { SUBGRAPH_TYPES } from '@microsoft/logic-apps-shared';
 import { useIntl } from 'react-intl';
 
 interface SubgraphCardProps {

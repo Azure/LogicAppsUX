@@ -3,9 +3,9 @@ import { getNormalizedName } from './helper';
 import { createOutputToken, createParameterToken, createTokenValueSegment, createVariableToken } from './segment';
 import { TokenType } from '@microsoft/designer-ui';
 import type { ValueSegment } from '@microsoft/designer-ui';
-import { encodePropertySegment, ExpressionType, isStringLiteral, OutputKeys, OutputSource } from '@microsoft/parsers-logic-apps';
-import type { Dereference, Expression, ExpressionFunction, ExpressionLiteral } from '@microsoft/parsers-logic-apps';
-import { equals } from '@microsoft/utils-logic-apps';
+import { encodePropertySegment, ExpressionType, isStringLiteral, OutputKeys, OutputSource } from '@microsoft/logic-apps-shared';
+import type { Dereference, Expression, ExpressionFunction, ExpressionLiteral } from '@microsoft/logic-apps-shared';
+import { equals } from '@microsoft/logic-apps-shared';
 
 /**
  * The token segment convertor.

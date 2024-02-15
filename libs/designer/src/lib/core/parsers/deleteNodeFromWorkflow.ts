@@ -2,7 +2,7 @@
 import type { NodesMetadata, WorkflowState } from '../state/workflow/workflowInterfaces';
 import type { WorkflowNode } from './models/workflowNode';
 import { removeEdge, reassignEdgeSources, reassignEdgeTargets } from './restructuringHelpers';
-import { getRecordEntry, type LogicAppsV2 } from '@microsoft/utils-logic-apps';
+import { getRecordEntry, type LogicAppsV2 } from '@microsoft/logic-apps-shared';
 
 export interface DeleteNodePayload {
   nodeId: string;

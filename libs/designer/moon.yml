@@ -1,8 +1,5 @@
 tasks:
   build:
     command: 'rollup --config rollup.config.ts --configPlugin @rollup/plugin-typescript'
-
 dependsOn:
-      - 'intl'
-      - 'utils'
-
+  - 'designer-ui'

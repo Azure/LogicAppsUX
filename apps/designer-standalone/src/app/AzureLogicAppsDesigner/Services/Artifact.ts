@@ -1,6 +1,6 @@
 import type { ArtifactProperties } from '../Models/Workflow';
 import type { DynamicCallServiceOptions } from './ChildWorkflow';
-import type { ListDynamicValue } from '@microsoft/designer-client-services-logic-apps';
+import type { ListDynamicValue } from '@microsoft/logic-apps-shared';
 
 interface ArtifactServiceOptions extends DynamicCallServiceOptions {
   integrationAccountCallbackUrl: string | undefined;

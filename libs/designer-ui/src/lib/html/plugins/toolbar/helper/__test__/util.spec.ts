@@ -9,7 +9,7 @@ import {
   isHtmlStringValueSafeForLexical,
   isTagNameSupportedByLexical,
 } from '../util';
-import type { ValueSegment } from '@microsoft/designer-client-services-logic-apps';
+import type { ValueSegment } from '@microsoft/logic-apps-shared';
 
 describe('lib/html/plugins/toolbar/helper/util', () => {
   describe('cleanHtmlString', () => {

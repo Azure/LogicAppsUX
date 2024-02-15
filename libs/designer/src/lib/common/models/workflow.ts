@@ -1,4 +1,4 @@
-import type { LogicAppsV2 } from '@microsoft/utils-logic-apps';
+import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
 
 export interface Workflow {
   definition: LogicAppsV2.WorkflowDefinition;
