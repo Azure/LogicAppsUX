@@ -2954,7 +2954,7 @@
   "H9CZTr": [
     {
       "type": 0,
-      "value": "The expression is invalid. Make sure to use single quotes."
+      "value": "式が無効です。単一引用符を使用してください。"
     }
   ],
   "HDqP2g": [
@@ -5906,7 +5906,7 @@
   "Yz9o1k": [
     {
       "type": 0,
-      "value": "Not connected."
+      "value": "接続されていません。"
     }
   ],
   "Z8tBFS": [
@@ -8919,7 +8919,7 @@
   "t9RwOi": [
     {
       "type": 0,
-      "value": "The expression is invalid."
+      "value": "式が無効です。"
     }
   ],
   "tAbbH8": [
