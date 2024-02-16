@@ -14,6 +14,7 @@ import { Theme as ThemeType } from '@microsoft/logic-apps-shared';
 import React from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { Provider as ReduxProvider } from 'react-redux';
+
 interface ExtendedTheme extends Theme {
   [key: string]: any;
 }
