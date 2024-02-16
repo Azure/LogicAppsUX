@@ -3,7 +3,7 @@ import type { OperationInfo } from '@microsoft/utils-logic-apps';
 /**
  * Compatible with `ValueSegment` from @microsoft/designer-ui but without circular dependencies.
  */
-export interface ValueSegment {
+export interface ServiceValueSegment {
   id: string;
   type: 'literal' | 'token';
   value: string;
@@ -13,7 +13,7 @@ export interface ValueSegment {
 /**
  * Compatible with `ChangeHandler` from @microsoft/designer-ui but without circular dependencies.
  */
-export type ChangeHandler = (change: { value: ValueSegment[]; viewModel?: any }) => void;
+export type ServicesChangeHandler = (change: { value: ServiceValueSegment[]; viewModel?: any }) => void;
 
 /**
  * Compatible with `ParameterInfo` from @microsoft/designer-ui but without circular dependencies.
@@ -44,26 +44,26 @@ export interface ParameterInfo {
   suppressCasting?: boolean;
   type: string;
   validationErrors?: string[];
-  value: ValueSegment[];
+  value: ServiceValueSegment[];
   visibility?: string;
 }
 
 export type IRenderDefaultEditorParams = {
   editor?: string;
   editorOptions?: Record<string, any>;
-  value: ValueSegment[];
-  onValueChange?: ChangeHandler;
+  value: ServiceValueSegment[];
+  onValueChange?: ServicesChangeHandler;
 };
 
 export interface IEditorProps {
   /**
    * Current value.
    */
-  value: ValueSegment[];
+  value: ServiceValueSegment[];
   /**
    * Callback when the value changes.
    */
-  onValueChange?: ChangeHandler;
+  onValueChange?: ServicesChangeHandler;
   /**
    * The original editor value.
    */

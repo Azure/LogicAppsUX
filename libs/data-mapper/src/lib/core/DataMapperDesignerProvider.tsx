@@ -9,7 +9,7 @@ import type { Theme } from '@fluentui/react-components';
 import { FluentProvider, themeToTokensObject, webDarkTheme, webLightTheme } from '@fluentui/react-components';
 import { PortalCompatProvider } from '@fluentui/react-portal-compat';
 import { AppInsightsContext } from '@microsoft/applicationinsights-react-js';
-import { IntlProvider } from '@microsoft/intl-logic-apps';
+import { IntlProvider } from 'libs/logic-apps-shared/src/intl/src';
 import { Theme as ThemeType } from '@microsoft/utils-logic-apps';
 import React from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';

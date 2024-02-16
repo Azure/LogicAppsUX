@@ -5,8 +5,8 @@ import type { RootState } from '../../store';
 import { useConnector, useConnectorAndSwagger, useNodeConnectionId } from '../connection/connectionSelector';
 import type { NodeOperation } from '../operation/operationMetadataSlice';
 import { OperationManifestService } from '@microsoft/designer-client-services-logic-apps';
-import type { Operation } from '@microsoft/parsers-logic-apps';
-import { SwaggerParser } from '@microsoft/parsers-logic-apps';
+import type { LAOperation } from 'libs/logic-apps-shared/src/parsers/src';
+import { SwaggerParser } from 'libs/logic-apps-shared/src/parsers/src';
 import { getObjectPropertyValue, getRecordEntry } from '@microsoft/utils-logic-apps';
 import { createSelector } from '@reduxjs/toolkit';
 import { useMemo } from 'react';
@@ -155,7 +155,7 @@ const useNodeAttributeOrSwagger = (
   operationInfo: NodeOperation,
   propertyInManifest: string[],
   propertyInConnector: string[],
-  propertyInSwagger: keyof Operation,
+  propertyInSwagger: keyof LAOperation,
   options: { useManifest: boolean }
 ): QueryResult => {
   const { data: connectorData } = useConnectorAndSwagger(operationInfo?.connectorId, !options.useManifest);

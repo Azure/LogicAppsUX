@@ -2,7 +2,7 @@ import constants from '../../../common/constants';
 import { getReactQueryClient } from '../../ReactQueryProvider';
 import { loadParameterValuesFromDefault, toParameterInfoMap } from './helper';
 import type { ParameterInfo } from '@microsoft/designer-ui';
-import { OutputMapKey, SchemaProcessor, toInputParameter } from '@microsoft/parsers-logic-apps';
+import { OutputMapKey, SchemaProcessor, toInputParameter } from 'libs/logic-apps-shared/src/parsers/src';
 import type { OpenAPIV2, RecurrenceSetting } from '@microsoft/utils-logic-apps';
 import { map, RecurrenceType } from '@microsoft/utils-logic-apps';
 

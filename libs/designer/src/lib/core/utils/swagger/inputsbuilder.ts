@@ -2,8 +2,8 @@ import Constants from '../../../common/constants';
 import type { SerializedParameter } from '../../actions/bjsworkflow/serializer';
 import { constructInputValues } from '../../actions/bjsworkflow/serializer';
 import { getAndEscapeSegment, transformInputParameter, updateParameterWithValues } from '../parameters/helper';
-import { getIntl } from '@microsoft/intl-logic-apps';
-import type { Expression, ExpressionFunction, InputParameter, Segment } from '@microsoft/parsers-logic-apps';
+import { getIntl } from 'libs/logic-apps-shared/src/intl/src';
+import type { ParserExpression, ExpressionFunction, InputParameter, Segment } from 'libs/logic-apps-shared/src/parsers/src';
 import {
   create,
   ExpressionBuilder,
@@ -16,7 +16,7 @@ import {
   ParameterLocations,
   parseEx,
   PropertyName,
-} from '@microsoft/parsers-logic-apps';
+} from 'libs/logic-apps-shared/src/parsers/src';
 import {
   AssertionErrorCode,
   AssertionException,
@@ -553,7 +553,7 @@ export function processPathInputs(pathValue: string, pathTemplate: string): Reco
       { pathValue, pathTemplate }
     );
     if (isTemplateExpression(pathValue)) {
-      let result: Expression;
+      let result: ParserExpression;
       try {
         result = ExpressionParser.parseTemplateExpression(pathValue);
       } catch (error: any) {

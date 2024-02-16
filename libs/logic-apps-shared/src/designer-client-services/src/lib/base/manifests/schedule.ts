@@ -1,5 +1,5 @@
 import { coreBadge } from '../../badges';
-import { getIntl } from '@microsoft/intl-logic-apps';
+import { getIntl } from 'libs/logic-apps-shared/src/intl/src';
 import type { OperationManifest } from '@microsoft/utils-logic-apps';
 import { getFrequencyValues, RecurrenceType, SettingScope } from '@microsoft/utils-logic-apps';
 

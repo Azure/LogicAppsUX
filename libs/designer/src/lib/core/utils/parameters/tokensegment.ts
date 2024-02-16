@@ -3,8 +3,8 @@ import { getNormalizedName } from './helper';
 import { createOutputToken, createParameterToken, createTokenValueSegment, createVariableToken } from './segment';
 import { TokenType } from '@microsoft/designer-ui';
 import type { ValueSegment } from '@microsoft/designer-ui';
-import { encodePropertySegment, ExpressionType, isStringLiteral, OutputKeys, OutputSource } from '@microsoft/parsers-logic-apps';
-import type { Dereference, Expression, ExpressionFunction, ExpressionLiteral } from '@microsoft/parsers-logic-apps';
+import { encodePropertySegment, ExpressionType, isStringLiteral, OutputKeys, OutputSource } from 'libs/logic-apps-shared/src/parsers/src';
+import type { Dereference, ParserExpression, ExpressionFunction, ExpressionLiteral } from 'libs/logic-apps-shared/src/parsers/src';
 import { equals } from '@microsoft/utils-logic-apps';
 
 /**
@@ -246,7 +246,7 @@ export class TokenSegmentConvertor {
     return true;
   }
 
-  public static getTokenStep(functionArguments: Expression[]): string | undefined {
+  public static getTokenStep(functionArguments: ParserExpression[]): string | undefined {
     if (functionArguments.length > 0) {
       return (functionArguments[0] as ExpressionLiteral).value;
     } else {

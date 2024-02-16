@@ -20,16 +20,16 @@ import {
 } from './parameters/helper';
 import { convertOutputsToTokens } from './tokens';
 import { OperationManifestService } from '@microsoft/designer-client-services-logic-apps';
-import { generateSchemaFromJsonString, ValueSegmentType } from '@microsoft/designer-ui';
-import { getIntl } from '@microsoft/intl-logic-apps';
+import { generateSchemaFromJsonString, ValueSegment } from '@microsoft/designer-ui';
+import { getIntl } from 'libs/logic-apps-shared/src/intl/src';
 import type {
-  Expression,
+  ParserExpression,
   ExpressionFunction,
   ExpressionLiteral,
   OutputParameter,
   OutputParameters,
-  Schema,
-} from '@microsoft/parsers-logic-apps';
+  OpenApiSchema,
+} from 'libs/logic-apps-shared/src/parsers/src';
 import {
   create,
   OutputKeys,
@@ -39,7 +39,7 @@ import {
   isTemplateExpression,
   isFunction,
   isStringLiteral,
-} from '@microsoft/parsers-logic-apps';
+} from 'libs/logic-apps-shared/src/parsers/src';
 import type { OpenAPIV2, OperationManifest } from '@microsoft/utils-logic-apps';
 import {
   ConnectionReferenceKeyFormat,
@@ -238,7 +238,7 @@ const convertSchemaAliasesForSplitOn = (schema: OpenAPIV2.SchemaObject): void =>
   }
 };
 
-export const isSupportedSplitOnExpression = (expression: Expression): boolean => {
+export const isSupportedSplitOnExpression = (expression: ParserExpression): boolean => {
   if (!isFunction(expression)) {
     return false;
   }
@@ -302,7 +302,7 @@ export const getUpdatedManifestForSchemaDependency = (manifest: OperationManifes
       let schemaToReplace: OpenAPIV2.SchemaObject | undefined;
       switch (schema) {
         case 'Value':
-          if (segment.type === ValueSegmentType.LITERAL) {
+          if (segment.type === ValueSegment.LITERAL) {
             try {
               schemaToReplace = JSON.parse(segment.value);
             } catch {} // eslint-disable-line no-empty
@@ -310,7 +310,7 @@ export const getUpdatedManifestForSchemaDependency = (manifest: OperationManifes
           break;
 
         case 'ValueSchema':
-          if (segment.type === ValueSegmentType.TOKEN) {
+          if (segment.type === ValueSegment.TOKEN) {
             // We only support getting schema from array tokens for now.
             if (segment.token?.type === Constants.SWAGGER.TYPE.ARRAY) {
               schemaToReplace = segment.token.schema ?? undefined;
@@ -324,7 +324,7 @@ export const getUpdatedManifestForSchemaDependency = (manifest: OperationManifes
           break;
 
         case 'UriTemplate':
-          if (segment.type === ValueSegmentType.LITERAL) {
+          if (segment.type === ValueSegment.LITERAL) {
             const parameterSegments = segment.value ? segment.value.match(/{(.*?)}/g) : undefined;
             if (parameterSegments) {
               const parameters = parameterSegments.map((parameter) => parameter.slice(1, -1));
@@ -354,7 +354,7 @@ export const getUpdatedManifestForSchemaDependency = (manifest: OperationManifes
       const isRequestApiConnectionTrigger =
         !!updatedManifest.properties?.inputs?.properties?.schema?.['x-ms-editor-options']?.isRequestApiConnectionTrigger;
 
-      let schemaValue: Schema;
+      let schemaValue: OpenApiSchema;
       let shouldMerge: boolean;
       // if schema contains static object returned from RP, merge the current schema value and new schema value
       if (

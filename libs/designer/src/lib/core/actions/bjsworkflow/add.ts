@@ -30,8 +30,8 @@ import type { NodeDataWithOperationMetadata } from './operationdeserializer';
 import type { Settings } from './settings';
 import { getOperationSettings, getSplitOnValue } from './settings';
 import { ConnectionService, OperationManifestService, StaticResultService } from '@microsoft/designer-client-services-logic-apps';
-import type { SwaggerParser } from '@microsoft/parsers-logic-apps';
-import { ManifestParser } from '@microsoft/parsers-logic-apps';
+import type { SwaggerParser } from 'libs/logic-apps-shared/src/parsers/src';
+import { ManifestParser } from 'libs/logic-apps-shared/src/parsers/src';
 import type {
   Connector,
   DiscoveryOperation,

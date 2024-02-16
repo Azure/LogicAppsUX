@@ -2,7 +2,7 @@ import { inputsResponse, outputsResponse } from '../__test__/__mocks__/monitorin
 import type { HttpRequestOptions, IHttpClient } from '../httpClient';
 import type { IRunService } from '../run';
 import type { CallbackInfo } from '../workflow';
-import { isNumber } from '@microsoft/parsers-logic-apps';
+import { isNumber } from 'libs/logic-apps-shared/src/parsers/src';
 import type { ArmResources, BoundParameters, ContentLink, LogicAppsV2, Run, Runs } from '@microsoft/utils-logic-apps';
 import {
   isCallbackInfoWithRelativePath,

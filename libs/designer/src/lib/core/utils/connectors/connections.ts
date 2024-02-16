@@ -12,7 +12,7 @@ import {
   isServiceProviderOperation,
 } from '@microsoft/designer-client-services-logic-apps';
 import type { AssistedConnectionProps } from '@microsoft/designer-ui';
-import { getIntl } from '@microsoft/intl-logic-apps';
+import { getIntl } from 'libs/logic-apps-shared/src/intl/src';
 import type {
   Connection,
   ConnectionParameterSet,

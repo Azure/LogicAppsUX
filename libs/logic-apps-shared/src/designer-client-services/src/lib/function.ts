@@ -1,4 +1,4 @@
-import type { SwaggerParser } from '@microsoft/parsers-logic-apps';
+import type { SwaggerParser } from 'libs/logic-apps-shared/src/parsers/src';
 import { AssertionErrorCode, AssertionException } from '@microsoft/utils-logic-apps';
 
 export interface IFunctionService {

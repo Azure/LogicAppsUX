@@ -17,7 +17,7 @@ import {
   // // GroupDropdownOptions,
   // // QueryBuilderEditor, // DictionaryType, // EditorLanguage,
   // SimpleQueryBuilder,
-  // ValueSegmentType, // CodeEditor,
+  // ValueSegment, // CodeEditor,
   // EditorLanguage,
   //HTMLEditor,
   // TokenPicker, // TokenType,
@@ -52,7 +52,7 @@ export const ScratchTab = () => {
   //   const { actionName, type: tokenType, required, format, source, isSecure, arrayDetails } = outputInfo;
   //   const segment = {
   //     id: guid(),
-  //     type: ValueSegmentType.TOKEN,
+  //     type: ValueSegment.TOKEN,
   //     value: value ?? '',
   //     token: {
   //       actionName,
@@ -179,7 +179,7 @@ getTokenPicker={GetTokenPicker}
           labelId=""
           initialValue={[
             {
-              type: ValueSegmentType.LITERAL,
+              type: ValueSegment.LITERAL,
               value: `function createTable(rows, cols) {
   var j = 1;
   var output = "<table>";
@@ -204,8 +204,8 @@ getTokenPicker={GetTokenPicker}
         {/* <DropdownEditor
           multiSelect={true}
           initialValue={[
-            { id: '0', type: ValueSegmentType.LITERAL, value: 'PUT' },
-            { id: '0', type: ValueSegmentType.LITERAL, value: 'GET' },
+            { id: '0', type: ValueSegment.LITERAL, value: 'PUT' },
+            { id: '0', type: ValueSegment.LITERAL, value: 'GET' },
           ]}
           options={[
             { displayName: 'GET', value: 'GET', key: 'GET', disabled: false },
@@ -237,15 +237,15 @@ getTokenPicker={GetTokenPicker}
           arrayType={ArrayType.SIMPLE}
           labelProps={{ text: 'Input Array', isRequiredField: true }}
           initialValue={[
-            { id: guid(), type: ValueSegmentType.LITERAL, value: '[\n  "' },
-            { id: guid(), type: ValueSegmentType.LITERAL, value: 'This is Text' },
+            { id: guid(), type: ValueSegment.LITERAL, value: '[\n  "' },
+            { id: guid(), type: ValueSegment.LITERAL, value: 'This is Text' },
             testTokenSegment,
-            { id: guid(), type: ValueSegmentType.LITERAL, value: 'Some Text' },
-            { id: guid(), type: ValueSegmentType.LITERAL, value: '",\n  "' },
+            { id: guid(), type: ValueSegment.LITERAL, value: 'Some Text' },
+            { id: guid(), type: ValueSegment.LITERAL, value: '",\n  "' },
             testTokenSegment,
             testTokenSegment,
-            { id: guid(), type: ValueSegmentType.LITERAL, value: 'More Text' },
-            { id: guid(), type: ValueSegmentType.LITERAL, value: '"\n , "Some Text"]' },
+            { id: guid(), type: ValueSegment.LITERAL, value: 'More Text' },
+            { id: guid(), type: ValueSegment.LITERAL, value: '"\n , "Some Text"]' },
           ]}
           getTokenPicker={GetTokenPicker}
           itemSchema={{ type: 'string', key: '', enum: ['This is Text', 'Some Text', 'More Text'] }}
@@ -265,12 +265,12 @@ getTokenPicker={GetTokenPicker}
           type={ArrayType.COMPLEX}
           labelProps={{ text: 'Input Array', isRequiredField: true }}
           initialValue={[
-            { id: guid(), type: ValueSegmentType.LITERAL, value: '[\n    {\n        "content": "test",\n        "name": "MoreTst' },
+            { id: guid(), type: ValueSegment.LITERAL, value: '[\n    {\n        "content": "test",\n        "name": "MoreTst' },
             testTokenSegment,
-            { id: guid(), type: ValueSegmentType.LITERAL, value: '",\n        "object": {\n            "p1": "' },
+            { id: guid(), type: ValueSegment.LITERAL, value: '",\n        "object": {\n            "p1": "' },
             testTokenSegment,
             testTokenSegment,
-            { id: guid(), type: ValueSegmentType.LITERAL, value: '",\n            "p2": ""\n        }\n    }\n]' },
+            { id: guid(), type: ValueSegment.LITERAL, value: '",\n            "p2": ""\n        }\n    }\n]' },
           ]}
           getTokenPicker={GetTokenPicker}
         /> */}
@@ -285,24 +285,24 @@ getTokenPicker={GetTokenPicker}
             { displayName: 'DELETE', value: 'DELETE', key: 'DELETE', disabled: false },
           ]}
           placeholder="Method is Required"
-          initialValue={[{ id: '0', type: ValueSegmentType.LITERAL, value: 'PUT' }]}
+          initialValue={[{ id: '0', type: ValueSegment.LITERAL, value: 'PUT' }]}
           getTokenPicker={GetTokenPicker}
           // readonly={true}
         /> */}
 
         {/* <SchemaEditor
-          initialValue={[{ id: '0', type: ValueSegmentType.LITERAL, value: '{\n"type": "object",\n"properties" : {}\n}' }]}
+          initialValue={[{ id: '0', type: ValueSegment.LITERAL, value: '{\n"type": "object",\n"properties" : {}\n}' }]}
           label="Request Body JSON Schema"
         /> */}
         {/* <DictionaryEditor
           initialItems={[
             {
               key: [
-                { id: guid(), type: ValueSegmentType.LITERAL, value: 'Key Text' },
+                { id: guid(), type: ValueSegment.LITERAL, value: 'Key Text' },
                 testTokenSegment,
                 {
                   id: guid(),
-                  type: ValueSegmentType.TOKEN,
+                  type: ValueSegment.TOKEN,
                   token: {
                     key: 'TOKEN',
                     brandColor: '#0000FF',
@@ -313,26 +313,26 @@ getTokenPicker={GetTokenPicker}
                   },
                   value: 'TOKEN',
                 },
-                { id: guid(), type: ValueSegmentType.LITERAL, value: 'More Text' },
+                { id: guid(), type: ValueSegment.LITERAL, value: 'More Text' },
               ],
               value: [
-                { id: guid(), type: ValueSegmentType.LITERAL, value: 'Value Text' },
+                { id: guid(), type: ValueSegment.LITERAL, value: 'Value Text' },
                 testTokenSegment,
-                { id: guid(), type: ValueSegmentType.LITERAL, value: 'Additional Text' },
+                { id: guid(), type: ValueSegment.LITERAL, value: 'Additional Text' },
               ],
             },
             {
-              key: [testTokenSegment, testTokenSegment, { id: guid(), type: ValueSegmentType.LITERAL, value: 'Key2 Text' }],
-              value: [testTokenSegment, testTokenSegment, { id: guid(), type: ValueSegmentType.LITERAL, value: 'Value2 Text' }],
+              key: [testTokenSegment, testTokenSegment, { id: guid(), type: ValueSegment.LITERAL, value: 'Key2 Text' }],
+              value: [testTokenSegment, testTokenSegment, { id: guid(), type: ValueSegment.LITERAL, value: 'Value2 Text' }],
             },
             { key: [], value: [] },
           ]}
           initialValue={[
-            { id: guid(), type: ValueSegmentType.LITERAL, value: '{\n    "' },
+            { id: guid(), type: ValueSegment.LITERAL, value: '{\n    "' },
             testTokenSegment,
             {
               id: guid(),
-              type: ValueSegmentType.TOKEN,
+              type: ValueSegment.TOKEN,
               token: {
                 key: 'TOKEN',
                 brandColor: '#0000FF',
@@ -343,21 +343,21 @@ getTokenPicker={GetTokenPicker}
               },
               value: 'TOKEN',
             },
-            { id: guid(), type: ValueSegmentType.LITERAL, value: 'More Text' },
-            { id: guid(), type: ValueSegmentType.LITERAL, value: '" : "' },
-            { id: guid(), type: ValueSegmentType.LITERAL, value: 'Value Text' },
+            { id: guid(), type: ValueSegment.LITERAL, value: 'More Text' },
+            { id: guid(), type: ValueSegment.LITERAL, value: '" : "' },
+            { id: guid(), type: ValueSegment.LITERAL, value: 'Value Text' },
             testTokenSegment,
-            { id: guid(), type: ValueSegmentType.LITERAL, value: 'Additional Text' },
-            { id: guid(), type: ValueSegmentType.LITERAL, value: '",\n  ' },
-            { id: guid(), type: ValueSegmentType.LITERAL, value: '  "' },
-            testTokenSegment,
-            testTokenSegment,
-            { id: guid(), type: ValueSegmentType.LITERAL, value: 'Key2 Text' },
-            { id: guid(), type: ValueSegmentType.LITERAL, value: '" : "' },
+            { id: guid(), type: ValueSegment.LITERAL, value: 'Additional Text' },
+            { id: guid(), type: ValueSegment.LITERAL, value: '",\n  ' },
+            { id: guid(), type: ValueSegment.LITERAL, value: '  "' },
             testTokenSegment,
             testTokenSegment,
-            { id: guid(), type: ValueSegmentType.LITERAL, value: 'Value2 Text' },
-            { id: guid(), type: ValueSegmentType.LITERAL, value: '"\n}' },
+            { id: guid(), type: ValueSegment.LITERAL, value: 'Key2 Text' },
+            { id: guid(), type: ValueSegment.LITERAL, value: '" : "' },
+            testTokenSegment,
+            testTokenSegment,
+            { id: guid(), type: ValueSegment.LITERAL, value: 'Value2 Text' },
+            { id: guid(), type: ValueSegment.LITERAL, value: '"\n}' },
           ]}
           getTokenPicker={GetTokenPicker}
         /> */}
@@ -365,11 +365,11 @@ getTokenPicker={GetTokenPicker}
           initialItems={[
             {
               key: [
-                { id: guid(), type: ValueSegmentType.LITERAL, value: 'Key Text' },
+                { id: guid(), type: ValueSegment.LITERAL, value: 'Key Text' },
                 testTokenSegment,
                 {
                   id: guid(),
-                  type: ValueSegmentType.TOKEN,
+                  type: ValueSegment.TOKEN,
                   token: {
                     key: 'TOKEN',
                     brandColor: '#0000FF',
@@ -380,26 +380,26 @@ getTokenPicker={GetTokenPicker}
                   },
                   value: 'TOKEN',
                 },
-                { id: guid(), type: ValueSegmentType.LITERAL, value: 'More Text' },
+                { id: guid(), type: ValueSegment.LITERAL, value: 'More Text' },
               ],
               value: [
-                { id: guid(), type: ValueSegmentType.LITERAL, value: 'Value Text' },
+                { id: guid(), type: ValueSegment.LITERAL, value: 'Value Text' },
                 testTokenSegment,
-                { id: guid(), type: ValueSegmentType.LITERAL, value: 'Additional Text' },
+                { id: guid(), type: ValueSegment.LITERAL, value: 'Additional Text' },
               ],
             },
             {
-              key: [testTokenSegment, testTokenSegment, { id: guid(), type: ValueSegmentType.LITERAL, value: 'Key2 Text' }],
-              value: [testTokenSegment, testTokenSegment, { id: guid(), type: ValueSegmentType.LITERAL, value: 'Value2 Text' }],
+              key: [testTokenSegment, testTokenSegment, { id: guid(), type: ValueSegment.LITERAL, value: 'Key2 Text' }],
+              value: [testTokenSegment, testTokenSegment, { id: guid(), type: ValueSegment.LITERAL, value: 'Value2 Text' }],
             },
             { key: [], value: [] },
           ]}
           initialValue={[
-            { id: guid(), type: ValueSegmentType.LITERAL, value: '{\n    "' },
+            { id: guid(), type: ValueSegment.LITERAL, value: '{\n    "' },
             testTokenSegment,
             {
               id: guid(),
-              type: ValueSegmentType.TOKEN,
+              type: ValueSegment.TOKEN,
               token: {
                 key: 'TOKEN',
                 brandColor: '#0000FF',
@@ -410,21 +410,21 @@ getTokenPicker={GetTokenPicker}
               },
               value: 'TOKEN',
             },
-            { id: guid(), type: ValueSegmentType.LITERAL, value: 'More Text' },
-            { id: guid(), type: ValueSegmentType.LITERAL, value: '" : "' },
-            { id: guid(), type: ValueSegmentType.LITERAL, value: 'Value Text' },
+            { id: guid(), type: ValueSegment.LITERAL, value: 'More Text' },
+            { id: guid(), type: ValueSegment.LITERAL, value: '" : "' },
+            { id: guid(), type: ValueSegment.LITERAL, value: 'Value Text' },
             testTokenSegment,
-            { id: guid(), type: ValueSegmentType.LITERAL, value: 'Additional Text' },
-            { id: guid(), type: ValueSegmentType.LITERAL, value: '",\n  ' },
-            { id: guid(), type: ValueSegmentType.LITERAL, value: '  "' },
-            testTokenSegment,
-            testTokenSegment,
-            { id: guid(), type: ValueSegmentType.LITERAL, value: 'Key2 Text' },
-            { id: guid(), type: ValueSegmentType.LITERAL, value: '" : "' },
+            { id: guid(), type: ValueSegment.LITERAL, value: 'Additional Text' },
+            { id: guid(), type: ValueSegment.LITERAL, value: '",\n  ' },
+            { id: guid(), type: ValueSegment.LITERAL, value: '  "' },
             testTokenSegment,
             testTokenSegment,
-            { id: guid(), type: ValueSegmentType.LITERAL, value: 'Value2 Text' },
-            { id: guid(), type: ValueSegmentType.LITERAL, value: '"\n}' },
+            { id: guid(), type: ValueSegment.LITERAL, value: 'Key2 Text' },
+            { id: guid(), type: ValueSegment.LITERAL, value: '" : "' },
+            testTokenSegment,
+            testTokenSegment,
+            { id: guid(), type: ValueSegment.LITERAL, value: 'Value2 Text' },
+            { id: guid(), type: ValueSegment.LITERAL, value: '"\n}' },
           ]}
           getTokenPicker={GetTokenPicker}
           dictionaryType={DictionaryType.TABLE}
@@ -435,7 +435,7 @@ getTokenPicker={GetTokenPicker}
         {/* <StringEditor
           initialValue={[
             testTokenSegment,
-            { id: guid(), type: ValueSegmentType.LITERAL, value: 'Value2 Text' },
+            { id: guid(), type: ValueSegment.LITERAL, value: 'Value2 Text' },
             testTokenSegment,
             testTokenSegment,
           ]}

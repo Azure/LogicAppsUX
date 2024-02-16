@@ -30,8 +30,8 @@ import {
 import type { ListDynamicValue, ManagedIdentityRequestProperties, TreeDynamicValue } from '@microsoft/designer-client-services-logic-apps';
 import { OperationManifestService } from '@microsoft/designer-client-services-logic-apps';
 import type { ParameterInfo } from '@microsoft/designer-ui';
-import { TokenType, ValueSegmentType } from '@microsoft/designer-ui';
-import { getIntl } from '@microsoft/intl-logic-apps';
+import { TokenType, ValueSegment } from '@microsoft/designer-ui';
+import { getIntl } from 'libs/logic-apps-shared/src/intl/src';
 import type {
   DynamicParameters,
   ExpressionEvaluatorOptions,
@@ -41,7 +41,7 @@ import type {
   ResolvedParameter,
   SchemaProcessorOptions,
   SwaggerParser,
-} from '@microsoft/parsers-logic-apps';
+} from 'libs/logic-apps-shared/src/parsers/src';
 import {
   ExpressionEvaluator,
   isTemplateExpression,
@@ -62,7 +62,7 @@ import {
   SchemaProcessor,
   WildIndexSegment,
   replaceSubsegmentSeparator,
-} from '@microsoft/parsers-logic-apps';
+} from 'libs/logic-apps-shared/src/parsers/src';
 import type { Connection, Connector, OpenAPIV2, OperationInfo, OperationManifest } from '@microsoft/utils-logic-apps';
 import {
   first,
@@ -478,7 +478,7 @@ function getParametersForDynamicInvoke(
       // We only replace single instance of parameters and appsettings but not when it is included in a combination of text.
       if (
         referencedParameter.value.some(
-          (segment) => segment.type === ValueSegmentType.TOKEN && segment.token?.tokenType !== TokenType.PARAMETER
+          (segment) => segment.type === ValueSegment.TOKEN && segment.token?.tokenType !== TokenType.PARAMETER
         )
       ) {
         throw new ValidationException(

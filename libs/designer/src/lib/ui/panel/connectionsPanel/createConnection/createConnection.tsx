@@ -25,7 +25,7 @@ import type {
   Subscription,
 } from '@microsoft/utils-logic-apps';
 import {
-  Capabilities,
+  ConnectorCapabilities,
   ConnectionParameterTypes,
   ResourceIdentityType,
   SERVICE_PRINCIPLE_CONSTANTS,
@@ -140,11 +140,11 @@ export const CreateConnection = (props: CreateConnectionProps) => {
   const isMultiAuth = useMemo(() => (connectionParameterSets?.values?.length ?? 0) > 0, [connectionParameterSets?.values]);
 
   const hasOnlyOnPremGateway = useMemo(
-    () => (connectorCapabilities?.includes(Capabilities.gateway) && !connectorCapabilities?.includes(Capabilities.cloud)) ?? false,
+    () => (connectorCapabilities?.includes(ConnectorCapabilities.gateway) && !connectorCapabilities?.includes(ConnectorCapabilities.cloud)) ?? false,
     [connectorCapabilities]
   );
 
-  const [enabledCapabilities, setEnabledCapabilities] = useState<Capabilities[]>([Capabilities.general, Capabilities.cloud]);
+  const [enabledCapabilities, setEnabledCapabilities] = useState<Capabilities[]>([ConnectorCapabilities.general, ConnectorCapabilities.cloud]);
   const toggleCapability = useCallback(
     (capability: Capabilities) => {
       if (enabledCapabilities.includes(capability)) {
@@ -157,7 +157,7 @@ export const CreateConnection = (props: CreateConnectionProps) => {
   );
 
   useEffect(() => {
-    if (hasOnlyOnPremGateway && !enabledCapabilities.includes(Capabilities.gateway)) toggleCapability(Capabilities.gateway);
+    if (hasOnlyOnPremGateway && !enabledCapabilities.includes(ConnectorCapabilities.gateway)) toggleCapability(ConnectorCapabilities.gateway);
   }, [enabledCapabilities, hasOnlyOnPremGateway, toggleCapability]);
 
   const supportsOAuthConnection = useMemo(() => !isHiddenAuthKey('legacyoauth'), [isHiddenAuthKey]);
@@ -245,14 +245,14 @@ export const CreateConnection = (props: CreateConnectionProps) => {
   }, [parameters]);
 
   const getParametersByCapability = useCallback(
-    (capability: Capabilities) => parametersByCapability?.[Capabilities[capability]] ?? {},
+    (capability: Capabilities) => parametersByCapability?.[ConnectorCapabilities[capability]] ?? {},
     [parametersByCapability]
   );
 
   const capabilityEnabledParameters = useMemo(() => {
     let output: Record<string, ConnectionParameterSetParameter | ConnectionParameter> = parametersByCapability['general'];
     Object.entries(parametersByCapability).forEach(([capabilityText, parameters]) => {
-      if (enabledCapabilities.map((c) => Capabilities[c]).includes(capabilityText as any))
+      if (enabledCapabilities.map((c) => ConnectorCapabilities[c]).includes(capabilityText as any))
         output = {
           ...output,
           ...parameters,
@@ -262,7 +262,7 @@ export const CreateConnection = (props: CreateConnectionProps) => {
   }, [enabledCapabilities, parametersByCapability]);
 
   const usingLegacyGatewayAuth = useMemo(
-    () => !hasOnlyOnPremGateway && enabledCapabilities.includes(Capabilities.gateway),
+    () => !hasOnlyOnPremGateway && enabledCapabilities.includes(ConnectorCapabilities.gateway),
     [enabledCapabilities, hasOnlyOnPremGateway]
   );
 
@@ -551,12 +551,12 @@ export const CreateConnection = (props: CreateConnectionProps) => {
           )}
 
           {/* OptionalGateway Checkbox */}
-          {!hasOnlyOnPremGateway && Object.entries(getParametersByCapability(Capabilities.gateway)).length > 0 && (
+          {!hasOnlyOnPremGateway && Object.entries(getParametersByCapability(ConnectorCapabilities.gateway)).length > 0 && (
             <LegacyGatewayCheckbox
               data-testId={'legacy-gateway-checkbox'}
               isLoading={isLoading}
-              value={enabledCapabilities.includes(Capabilities.gateway)}
-              onChange={() => toggleCapability(Capabilities.gateway)}
+              value={enabledCapabilities.includes(ConnectorCapabilities.gateway)}
+              onChange={() => toggleCapability(ConnectorCapabilities.gateway)}
             />
           )}
 

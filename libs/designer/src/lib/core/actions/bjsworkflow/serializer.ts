@@ -22,8 +22,8 @@ import type { NodeStaticResults } from './staticresults';
 import { LogEntryLevel, LoggerService, OperationManifestService, WorkflowService } from '@microsoft/designer-client-services-logic-apps';
 import type { ParameterInfo } from '@microsoft/designer-ui';
 import { UIConstants } from '@microsoft/designer-ui';
-import { getIntl } from '@microsoft/intl-logic-apps';
-import type { Segment } from '@microsoft/parsers-logic-apps';
+import { getIntl } from 'libs/logic-apps-shared/src/intl/src';
+import type { Segment } from 'libs/logic-apps-shared/src/parsers/src';
 import {
   create,
   removeConnectionPrefix,
@@ -33,7 +33,7 @@ import {
   SegmentType,
   DeserializationType,
   PropertySerializationType,
-} from '@microsoft/parsers-logic-apps';
+} from 'libs/logic-apps-shared/src/parsers/src';
 import type { LocationSwapMap, LogicAppsV2, OperationManifest, SubGraphDetail } from '@microsoft/utils-logic-apps';
 import {
   SerializationErrorCode,

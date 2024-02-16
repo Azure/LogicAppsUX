@@ -1,4 +1,4 @@
-import { ExtensionProperties as SwaggerExtensionProperties } from '@microsoft/parsers-logic-apps';
+import { ExtensionProperties as SwaggerExtensionProperties } from 'libs/logic-apps-shared/src/parsers/src';
 import type { OpenAPIV2 } from '@microsoft/utils-logic-apps';
 
 export const getTitleOrSummary = (schema: OpenAPIV2.SchemaObject): string | undefined => {

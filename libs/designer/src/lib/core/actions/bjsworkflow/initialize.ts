@@ -47,8 +47,8 @@ import {
   ApiManagementService,
 } from '@microsoft/designer-client-services-logic-apps';
 import type { OutputToken, ParameterInfo } from '@microsoft/designer-ui';
-import { getIntl } from '@microsoft/intl-logic-apps';
-import type { SchemaProperty, InputParameter, SwaggerParser, OutputParameter } from '@microsoft/parsers-logic-apps';
+import { getIntl } from 'libs/logic-apps-shared/src/intl/src';
+import type { SchemaProperty, InputParameter, SwaggerParser, OutputParameter } from 'libs/logic-apps-shared/src/parsers/src';
 import {
   isDynamicListExtension,
   isDynamicPropertiesExtension,
@@ -59,7 +59,7 @@ import {
   DynamicSchemaType,
   ManifestParser,
   PropertyName,
-} from '@microsoft/parsers-logic-apps';
+} from 'libs/logic-apps-shared/src/parsers/src';
 import {
   CustomSwaggerServiceNames,
   UnsupportedException,

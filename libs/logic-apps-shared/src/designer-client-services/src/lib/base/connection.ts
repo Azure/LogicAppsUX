@@ -8,7 +8,7 @@ import type {
   ConnectorWithSwagger,
 } from '../connection';
 import type { HttpRequestOptions, IHttpClient, QueryParameters } from '../httpClient';
-import { SwaggerParser } from '@microsoft/parsers-logic-apps';
+import { SwaggerParser } from 'libs/logic-apps-shared/src/parsers/src';
 import type { Connection, Connector, OpenAPIV2 } from '@microsoft/utils-logic-apps';
 import {
   isCustomConnector,

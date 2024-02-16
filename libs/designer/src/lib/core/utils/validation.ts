@@ -8,15 +8,15 @@ import {
   type ValueSegment,
   FloatingActionMenuKind,
 } from '@microsoft/designer-ui';
-import { getIntl } from '@microsoft/intl-logic-apps';
-import type { Expression, ExpressionLiteral } from '@microsoft/parsers-logic-apps';
+import { getIntl } from 'libs/logic-apps-shared/src/intl/src';
+import type { ParserExpression, ExpressionLiteral } from 'libs/logic-apps-shared/src/parsers/src';
 import {
   ExpressionParser,
   ExpressionType,
   isStringInterpolation,
   isStringLiteral,
   isTemplateExpression,
-} from '@microsoft/parsers-logic-apps';
+} from 'libs/logic-apps-shared/src/parsers/src';
 import { capitalizeFirstLetter, endsWith, equals, startsWith } from '@microsoft/utils-logic-apps';
 
 const regex = {
@@ -385,7 +385,7 @@ export function trimParameterValue(value: ValueSegment[]): ValueSegment[] {
 }
 
 function validateEmailLiteralsFromExpression(expressionString: string): string {
-  const emailfields: Expression[][] = [];
+  const emailfields: ParserExpression[][] = [];
   let currentField = 0;
   emailfields[currentField] = [];
 

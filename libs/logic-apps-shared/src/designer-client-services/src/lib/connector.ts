@@ -1,4 +1,4 @@
-import type { DynamicTreeExtension } from '@microsoft/parsers-logic-apps';
+import type { DynamicTreeExtension } from 'libs/logic-apps-shared/src/parsers/src';
 import type { OpenAPIV2 } from '@microsoft/utils-logic-apps';
 import { AssertionErrorCode, AssertionException } from '@microsoft/utils-logic-apps';
 

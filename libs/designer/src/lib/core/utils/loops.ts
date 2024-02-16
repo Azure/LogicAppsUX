@@ -29,7 +29,7 @@ import { getSplitOnValue } from './setting';
 import { foreachOperationInfo, OperationManifestService } from '@microsoft/designer-client-services-logic-apps';
 import type { OutputToken, Token } from '@microsoft/designer-ui';
 import { TokenType } from '@microsoft/designer-ui';
-import type { Dereference, Expression, ExpressionFunction, ExpressionLiteral, Segment } from '@microsoft/parsers-logic-apps';
+import type { Dereference, ParserExpression, ExpressionFunction, ExpressionLiteral, Segment } from 'libs/logic-apps-shared/src/parsers/src';
 import {
   OutputKeys,
   containsWildIndexSegment,
@@ -44,7 +44,7 @@ import {
   isTemplateExpression,
   parseEx,
   SegmentType,
-} from '@microsoft/parsers-logic-apps';
+} from 'libs/logic-apps-shared/src/parsers/src';
 import type { OperationManifest } from '@microsoft/utils-logic-apps';
 import { clone, equals, first, getRecordEntry, isNullOrUndefined } from '@microsoft/utils-logic-apps';
 import { createAsyncThunk } from '@reduxjs/toolkit';
@@ -502,8 +502,8 @@ export const parseForeach = (repetitionValue: string, repetitionContext: Repetit
   const foreach: Foreach = {};
 
   if (repetitionValue) {
-    let foreachExpression: Expression | undefined;
-    let splitOnExpression: Expression | undefined;
+    let foreachExpression: ParserExpression | undefined;
+    let splitOnExpression: ParserExpression | undefined;
     try {
       foreachExpression = ExpressionParser.parseTemplateExpression(repetitionValue);
     } catch {
@@ -647,7 +647,7 @@ export const getTokenExpressionValueForManifestBasedOperation = (
  * if the splitOn is not empty, and the expression is triggerBody(), then it would also append the splitOn path,
  * e.g, @triggerBody()?[attachements] with splitOn: @triggerBody()['value'], the result would be: body.$.value.attachments
  */
-const getFullPath = (expressionSegment: ExpressionFunction, splitOn?: Expression): string => {
+const getFullPath = (expressionSegment: ExpressionFunction, splitOn?: ParserExpression): string => {
   const segments = [equals(expressionSegment.name, 'outputs') ? 'outputs' : 'body', '$'];
 
   // handle the splitOn first

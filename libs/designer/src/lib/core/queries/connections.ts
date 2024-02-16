@@ -1,6 +1,6 @@
 import { getReactQueryClient } from '../ReactQueryProvider';
 import { ConnectionService } from '@microsoft/designer-client-services-logic-apps';
-import { SwaggerParser } from '@microsoft/parsers-logic-apps';
+import { SwaggerParser } from 'libs/logic-apps-shared/src/parsers/src';
 import type { Connector } from '@microsoft/utils-logic-apps';
 import { equals } from '@microsoft/utils-logic-apps';
 import { useMemo } from 'react';

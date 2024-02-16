@@ -56,9 +56,9 @@ import {
   OperationManifestService,
   StaticResultService,
 } from '@microsoft/designer-client-services-logic-apps';
-import { getIntl } from '@microsoft/intl-logic-apps';
-import type { InputParameter, OutputParameter } from '@microsoft/parsers-logic-apps';
-import { ManifestParser } from '@microsoft/parsers-logic-apps';
+import { getIntl } from 'libs/logic-apps-shared/src/intl/src';
+import type { InputParameter, OutputParameter } from 'libs/logic-apps-shared/src/parsers/src';
+import { ManifestParser } from 'libs/logic-apps-shared/src/parsers/src';
 import type { LogicAppsV2, OperationManifest } from '@microsoft/utils-logic-apps';
 import { isArmResourceId, uniqueArray, getPropertyValue, map, aggregate, equals, getRecordEntry } from '@microsoft/utils-logic-apps';
 import type { Dispatch } from '@reduxjs/toolkit';

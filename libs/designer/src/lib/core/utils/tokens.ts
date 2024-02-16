@@ -37,8 +37,8 @@ import { getVariableTokens } from './variables';
 import { OperationManifestService } from '@microsoft/designer-client-services-logic-apps';
 import type { FunctionDefinition, OutputToken, Token, ValueSegment } from '@microsoft/designer-ui';
 import { UIConstants, TemplateFunctions, TokenType } from '@microsoft/designer-ui';
-import { getIntl } from '@microsoft/intl-logic-apps';
-import { getKnownTitles, OutputKeys } from '@microsoft/parsers-logic-apps';
+import { getIntl } from 'libs/logic-apps-shared/src/intl/src';
+import { getKnownTitles, OutputKeys } from 'libs/logic-apps-shared/src/parsers/src';
 import type { BuiltInOutput, OperationManifest } from '@microsoft/utils-logic-apps';
 import { labelCase, unmap, equals, filterRecord, getRecordEntry } from '@microsoft/utils-logic-apps';
 

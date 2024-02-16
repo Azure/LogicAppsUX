@@ -81,15 +81,15 @@ import {
   AuthenticationType,
   ColumnMode,
   DynamicCallStatus,
-  ValueSegmentType,
+  ValueSegment,
   TokenType,
   AuthenticationOAuthType,
 } from '@microsoft/designer-ui';
-import { getIntl } from '@microsoft/intl-logic-apps';
+import { getIntl } from 'libs/logic-apps-shared/src/intl/src';
 import type {
   DependentParameterInfo,
   DynamicParameters,
-  Expression,
+  ParserExpression,
   ExpressionFunction,
   ExpressionLiteral,
   InputParameter,
@@ -99,7 +99,7 @@ import type {
   SchemaProperty,
   Segment,
   SwaggerParser,
-} from '@microsoft/parsers-logic-apps';
+} from 'libs/logic-apps-shared/src/parsers/src';
 import {
   isDynamicTreeExtension,
   isLegacyDynamicValuesTreeExtension,
@@ -124,7 +124,7 @@ import {
   SegmentType,
   Visibility,
   PropertyName,
-} from '@microsoft/parsers-logic-apps';
+} from 'libs/logic-apps-shared/src/parsers/src';
 import type { Exception, OpenAPIV2, OperationManifest, RecurrenceSetting } from '@microsoft/utils-logic-apps';
 import {
   createCopy,
@@ -563,7 +563,7 @@ const toSimpleQueryBuilderViewModel = (
   let operand1: ValueSegment, operand2: ValueSegment, operationLiteral: ValueSegment;
   // default value
   if (!input || input.length === 0) {
-    return { isOldFormat: true, isRowFormat: true, itemValue: [{ id: guid(), type: ValueSegmentType.LITERAL, value: "@equals('','')" }] };
+    return { isOldFormat: true, isRowFormat: true, itemValue: [{ id: guid(), type: ValueSegment.LITERAL, value: "@equals('','')" }] };
   }
 
   if (!input.includes('@') || !input.includes(',')) {
@@ -580,11 +580,11 @@ const toSimpleQueryBuilderViewModel = (
       stringValue = stringValue.replace('@not(', '@');
       const baseOperator = stringValue.substring(stringValue.indexOf('@') + 1, stringValue.indexOf('('));
       operator = 'not' + baseOperator;
-      operationLiteral = { id: guid(), type: ValueSegmentType.LITERAL, value: `@not(${baseOperator}(` };
-      endingLiteral = { id: guid(), type: ValueSegmentType.LITERAL, value: `))` };
+      operationLiteral = { id: guid(), type: ValueSegment.LITERAL, value: `@not(${baseOperator}(` };
+      endingLiteral = { id: guid(), type: ValueSegment.LITERAL, value: `))` };
     } else {
-      operationLiteral = { id: guid(), type: ValueSegmentType.LITERAL, value: `@${operator}(` };
-      endingLiteral = { id: guid(), type: ValueSegmentType.LITERAL, value: ')' };
+      operationLiteral = { id: guid(), type: ValueSegment.LITERAL, value: `@${operator}(` };
+      endingLiteral = { id: guid(), type: ValueSegment.LITERAL, value: ')' };
     }
 
     // if operator is not of the dropdownlist, it cannot be converted into row format
@@ -596,7 +596,7 @@ const toSimpleQueryBuilderViewModel = (
     const operand2String = removeQuotes(operandSubstring.substring(getOuterMostCommaIndex(operandSubstring) + 1).trim());
     operand1 = loadParameterValueFromString(operand1String, true, true, true)[0];
     operand2 = loadParameterValueFromString(operand2String, true, true, true)[0];
-    const separatorLiteral: ValueSegment = { id: guid(), type: ValueSegmentType.LITERAL, value: `,` };
+    const separatorLiteral: ValueSegment = { id: guid(), type: ValueSegment.LITERAL, value: `,` };
     return {
       isOldFormat: true,
       isRowFormat: true,
@@ -2391,8 +2391,8 @@ export const recurseSerializeCondition = (
         {
           type: GroupType.ROW,
           operator: RowDropdownOptions.EQUALS,
-          operand1: [{ id: guid(), type: ValueSegmentType.LITERAL, value: '' }],
-          operand2: [{ id: guid(), type: ValueSegmentType.LITERAL, value: '' }],
+          operand1: [{ id: guid(), type: ValueSegment.LITERAL, value: '' }],
+          operand2: [{ id: guid(), type: ValueSegment.LITERAL, value: '' }],
         },
       ];
     }
@@ -2837,7 +2837,7 @@ export function updateTokenMetadata(
     case TokenType.FX:
       token.brandColor = FxBrandColor;
       token.icon = FxIcon;
-      token.title = getExpressionTokenTitle(token.expression as Expression);
+      token.title = getExpressionTokenTitle(token.expression as ParserExpression);
       token.value = valueSegment.value;
       return valueSegment;
 
@@ -2952,7 +2952,7 @@ export function updateTokenMetadata(
   return valueSegment;
 }
 
-export function getExpressionTokenTitle(expression: Expression): string {
+export function getExpressionTokenTitle(expression: ParserExpression): string {
   switch (expression.type) {
     case ExpressionType.NullLiteral:
     case ExpressionType.BooleanLiteral:
@@ -3233,9 +3233,9 @@ export function parameterValueToJSONString(parameterValue: ValueSegment[], apply
         tokenExpression = `@{${stringifiedTokenExpression}}`;
       } else {
         // Add quotes around tokens. Tokens directly after a literal need a leading quote, and those before another literal need an ending quote.
-        const lastExpressionWasLiteral = i > 0 && updatedParameterValue[i - 1].type !== ValueSegmentType.TOKEN;
+        const lastExpressionWasLiteral = i > 0 && updatedParameterValue[i - 1].type !== ValueSegment.TOKEN;
         const nextExpressionIsLiteral =
-          i < updatedParameterValue.length - 1 && updatedParameterValue[i + 1].type !== ValueSegmentType.TOKEN;
+          i < updatedParameterValue.length - 1 && updatedParameterValue[i + 1].type !== ValueSegment.TOKEN;
 
         const stringifiedTokenExpression = JSON.stringify(tokenExpression).slice(1, -1);
         tokenExpression = `@${stringifiedTokenExpression}`;

@@ -6,11 +6,21 @@
     "noImplicitOverride": true,
     "noPropertyAccessFromIndexSignature": true,
     "noImplicitReturns": true,
+    "allowSyntheticDefaultImports": true,
     "noFallthroughCasesInSwitch": true,
-    "jsx": "react"
+    "resolveJsonModule": true,
+    "jsx": "react-jsx"
   },
   "files": [],
   "include": [],
+  "paths": {
+    "@microsoft/designer-ui": ["libs/logic-apps-shared/src/designer-ui/src/index.ts"],
+    "@microsoft/designer-client-services-logic-apps": ["libs/logic-apps-shared/src/designer-client-services/index.ts"],
+    "@microsoft/intl-logic-apps": ["libs/logic-apps-shared/src/intl/src/index.ts"],
+    "@microsoft/nx-playwright": ["libs/logic/apps/shared/src/plugins/playwright/src/index.ts"],
+    "@microsoft/parsers-logic-apps": ["libs/logic-apps-shared/src/parsers/src/index.ts"],
+    "@microsoft/utils-logic-apps": ["src/utils/src/index.ts"],
+  },
   "references": [
     {
       "path": "./tsconfig.lib.json"

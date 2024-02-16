@@ -1,6 +1,6 @@
 import { StaticResultRootSchema } from './baseactionresult';
-import { getIntl } from '@microsoft/intl-logic-apps';
-import type { Schema } from '@microsoft/parsers-logic-apps';
+import { getIntl } from 'libs/logic-apps-shared/src/intl/src';
+import type { OpenApiSchema } from 'libs/logic-apps-shared/src/parsers/src';
 import { clone } from '@microsoft/utils-logic-apps';
 
 const intl = getIntl();
@@ -102,8 +102,8 @@ const STATIC_RESULT_PARSE_JSON_CHILD_ERRORS_TITLE = intl.formatMessage({
   description: 'The title of the child errors field in the static result parseJson action',
 });
 
-function getValidationErrorSchema(): Schema {
-  const validationErrorSchema: Schema = {
+function getValidationErrorSchema(): OpenApiSchema {
+  const validationErrorSchema: OpenApiSchema = {
     type: 'object',
     title: STATIC_RESULT_VALIDATION_ERROR_TITLE,
     properties: {

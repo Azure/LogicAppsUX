@@ -9,7 +9,7 @@ import { AzureThemeLight } from '@fluentui/azure-themes/lib/azure/AzureThemeLigh
 import { ThemeProvider } from '@fluentui/react';
 import { FluentProvider, webDarkTheme, webLightTheme } from '@fluentui/react-components';
 import type { OnErrorFn as OnIntlErrorFn } from '@formatjs/intl';
-import { IntlProvider } from '@microsoft/intl-logic-apps';
+import { IntlProvider } from 'libs/logic-apps-shared/src/intl/src';
 import React, { useCallback, useEffect, useMemo } from 'react';
 import { Provider as ReduxProvider, useDispatch } from 'react-redux';
 

@@ -156,7 +156,7 @@ interface ConnectionStatus {
   target?: string;
 }
 
-export interface CallbackInfo {
+export interface Callback {
   method?: string;
   value: string;
 }

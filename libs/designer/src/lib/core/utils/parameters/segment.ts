@@ -2,9 +2,9 @@ import { VariableBrandColor, FxIcon, ParameterIcon, VariableIcon } from './helpe
 import { JsonSplitter } from './jsonsplitter';
 import { TokenSegmentConvertor } from './tokensegment';
 import { UncastingUtility } from './uncast';
-import { TokenType, ValueSegmentType } from '@microsoft/designer-ui';
+import { TokenType, ValueSegment } from '@microsoft/designer-ui';
 import type { Token, ValueSegment } from '@microsoft/designer-ui';
-import type { Expression, ExpressionFunction, ExpressionLiteral } from '@microsoft/parsers-logic-apps';
+import type { ParserExpression, ExpressionFunction, ExpressionLiteral } from 'libs/logic-apps-shared/src/parsers/src';
 import {
   ExpressionParser,
   ExpressionType,
@@ -12,7 +12,7 @@ import {
   isStringInterpolation,
   isStringLiteral,
   isTemplateExpression,
-} from '@microsoft/parsers-logic-apps';
+} from 'libs/logic-apps-shared/src/parsers/src';
 import { format, guid, isNullOrUndefined, startsWith, UnsupportedException } from '@microsoft/utils-logic-apps';
 
 /**
@@ -115,7 +115,7 @@ export class ValueSegmentConvertor {
     }
   }
 
-  private _convertTemplateExpressionToValueSegments(expression: Expression): ValueSegment[] {
+  private _convertTemplateExpressionToValueSegments(expression: ParserExpression): ValueSegment[] {
     if (isStringInterpolation(expression)) {
       const segments = [];
       for (const interpolatedExpression of expression.segments) {
@@ -138,7 +138,7 @@ export class ValueSegmentConvertor {
     }
   }
 
-  private _uncastAndConvertExpressionToValueSegments(expression: Expression): ValueSegment[] {
+  private _uncastAndConvertExpressionToValueSegments(expression: ParserExpression): ValueSegment[] {
     if (this._options.shouldUncast && isFunction(expression)) {
       return this._uncastAndConvertFunctionExpressionToValueSegments(expression);
     } else {
@@ -163,7 +163,7 @@ export class ValueSegmentConvertor {
     return [this._convertFunctionExpressionToValueSegment(expression)];
   }
 
-  private _convertExpressionToValueSegment(expression: Expression): ValueSegment {
+  private _convertExpressionToValueSegment(expression: ParserExpression): ValueSegment {
     switch (expression.type) {
       case ExpressionType.Function:
         return this._convertFunctionExpressionToValueSegment(expression as ExpressionFunction);
@@ -199,7 +199,7 @@ export class ValueSegmentConvertor {
     return createLiteralValueSegment(value);
   }
 
-  private _createExpressionTokenValueSegment(value: string, expression: Expression): ValueSegment {
+  private _createExpressionTokenValueSegment(value: string, expression: ParserExpression): ValueSegment {
     return createTokenValueSegment(createExpressionToken(expression), value);
   }
 }
@@ -211,7 +211,7 @@ export class ValueSegmentConvertor {
  */
 export function isValueSegment(object: any): boolean {
   return (
-    object?.id && !isNullOrUndefined(object.value) && (object.type === ValueSegmentType.LITERAL || object.type === ValueSegmentType.TOKEN)
+    object?.id && !isNullOrUndefined(object.value) && (object.type === ValueSegment.LITERAL || object.type === ValueSegment.TOKEN)
   );
 }
 
@@ -221,7 +221,7 @@ export function isValueSegment(object: any): boolean {
  * @return {boolean}
  */
 export function isLiteralValueSegment(segment: ValueSegment): boolean {
-  return segment.type === ValueSegmentType.LITERAL;
+  return segment.type === ValueSegment.LITERAL;
 }
 
 /**
@@ -230,17 +230,17 @@ export function isLiteralValueSegment(segment: ValueSegment): boolean {
  * @return {boolean}
  */
 export function isTokenValueSegment(segment: ValueSegment): boolean {
-  return segment.type === ValueSegmentType.TOKEN;
+  return segment.type === ValueSegment.TOKEN;
 }
 
 export function isOutputTokenValueSegment(segment: ValueSegment): boolean {
   return (
-    segment.type === ValueSegmentType.TOKEN && segment.token?.tokenType !== TokenType.FX && segment.token?.tokenType !== TokenType.PARAMETER
+    segment.type === ValueSegment.TOKEN && segment.token?.tokenType !== TokenType.FX && segment.token?.tokenType !== TokenType.PARAMETER
   );
 }
 
 export function isFunctionValueSegment(segment: ValueSegment): boolean {
-  return segment.type === ValueSegmentType.TOKEN && segment.token?.tokenType === TokenType.FX;
+  return segment.type === ValueSegment.TOKEN && segment.token?.tokenType === TokenType.FX;
 }
 
 /**
@@ -252,7 +252,7 @@ export function isFunctionValueSegment(segment: ValueSegment): boolean {
 export function createLiteralValueSegment(value: string, segmentId?: string): ValueSegment {
   return {
     id: segmentId ? segmentId : guid(),
-    type: ValueSegmentType.LITERAL,
+    type: ValueSegment.LITERAL,
     value,
   };
 }
@@ -266,7 +266,7 @@ export function createLiteralValueSegment(value: string, segmentId?: string): Va
 export function createTokenValueSegment(token: Token, value: string, _tokenFormat?: string): ValueSegment {
   return {
     id: guid(),
-    type: ValueSegmentType.TOKEN,
+    type: ValueSegment.TOKEN,
     token,
     value,
   };
@@ -362,10 +362,10 @@ export function createOutputToken(
 /**
  * Creates an expression token.
  * @arg {string} value - The value.
- * @arg {Expression} expression - The expression.
+ * @arg {ParserExpression} expression - The expression.
  * @return {Token}
  */
-export function createExpressionToken(expression: Expression): Token {
+export function createExpressionToken(expression: ParserExpression): Token {
   return {
     tokenType: TokenType.FX,
     expression,

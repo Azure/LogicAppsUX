@@ -1,9 +1,9 @@
-import type { Expression, ExpressionFunction } from '@microsoft/parsers-logic-apps';
-import { isFunction, isStringLiteral } from '@microsoft/parsers-logic-apps';
+import type { ParserExpression, ExpressionFunction } from 'libs/logic-apps-shared/src/parsers/src';
+import { isFunction, isStringLiteral } from 'libs/logic-apps-shared/src/parsers/src';
 import { equals } from '@microsoft/utils-logic-apps';
 
 export interface UncastResult {
-  expression: Expression;
+  expression: ParserExpression;
   format: string;
 }
 
@@ -65,9 +65,9 @@ export interface UncastResult {
  *  }
  */
 export class UncastingUtility {
-  private _expression: Expression;
+  private _expression: ParserExpression;
 
-  constructor(expression: Expression) {
+  constructor(expression: ParserExpression) {
     this._expression = expression;
   }
 
@@ -94,7 +94,7 @@ export class UncastingUtility {
     return result;
   }
 
-  private _uncastOnce(expression: Expression): UncastResult[] | null {
+  private _uncastOnce(expression: ParserExpression): UncastResult[] | null {
     if (isFunction(expression)) {
       switch (expression.name.toUpperCase()) {
         case 'BASE64':
