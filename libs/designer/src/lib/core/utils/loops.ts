@@ -26,10 +26,10 @@ import {
 import { isTokenValueSegment } from './parameters/segment';
 import { TokenSegmentConvertor } from './parameters/tokensegment';
 import { getSplitOnValue } from './setting';
-import { foreachOperationInfo, OperationManifestService } from '@microsoft/designer-client-services-logic-apps';
-import type { OutputToken, Token } from '@microsoft/designer-ui';
-import { TokenType } from '@microsoft/designer-ui';
-import type { Dereference, ParserExpression, ExpressionFunction, ExpressionLiteral, Segment } from 'libs/logic-apps-shared/src/parsers/src';
+import { foreachOperationInfo, OperationManifestService } from '@microsoft/logic-apps-shared';
+import type { OutputToken, Token } from '@microsoft/logic-apps-shared';
+import { TokenType } from '@microsoft/logic-apps-shared';
+import type { Dereference, ParserExpression, ExpressionFunction, ExpressionLiteral, Segment } from '@microsoft/logic-apps-shared';
 import {
   OutputKeys,
   containsWildIndexSegment,
@@ -44,9 +44,9 @@ import {
   isTemplateExpression,
   parseEx,
   SegmentType,
-} from 'libs/logic-apps-shared/src/parsers/src';
-import type { OperationManifest } from '@microsoft/utils-logic-apps';
-import { clone, equals, first, getRecordEntry, isNullOrUndefined } from '@microsoft/utils-logic-apps';
+} from '@microsoft/logic-apps-shared';
+import type { OperationManifest } from '@microsoft/logic-apps-shared';
+import { clone, equals, first, getRecordEntry, isNullOrUndefined } from '@microsoft/logic-apps-shared';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 
 interface ImplicitForeachArrayDetails {

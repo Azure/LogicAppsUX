@@ -3,7 +3,7 @@ import { SettingSectionName } from '..';
 import constants from '../../../common/constants';
 import type { Settings, SettingsSectionProps } from '../settingsection';
 import { SettingsSection } from '../settingsection';
-import { getSettingLabel } from '@microsoft/designer-ui';
+import { getSettingLabel } from '@microsoft/logic-apps-shared';
 import { useIntl } from 'react-intl';
 
 export interface NetworkingSectionProps extends SectionProps {

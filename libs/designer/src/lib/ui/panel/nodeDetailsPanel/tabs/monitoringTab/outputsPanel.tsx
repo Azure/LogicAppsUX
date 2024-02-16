@@ -1,7 +1,7 @@
-import { HostService, ContentType } from '@microsoft/designer-client-services-logic-apps';
-import { ValuesPanel, SecureDataSection } from '@microsoft/designer-ui';
-import type { LogicAppsV2 } from '@microsoft/utils-logic-apps';
-import { isNullOrUndefined } from '@microsoft/utils-logic-apps';
+import { HostService, ContentType } from '@microsoft/logic-apps-shared';
+import { ValuesPanel, SecureDataSection } from '@microsoft/logic-apps-shared';
+import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
+import { isNullOrUndefined } from '@microsoft/logic-apps-shared';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
 

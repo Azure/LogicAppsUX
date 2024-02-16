@@ -1,6 +1,6 @@
 import constants from '../../../../common/constants';
 import { SettingsPanel } from '../../../settings/';
-import type { PanelTabFn } from '@microsoft/designer-ui';
+import type { PanelTabFn } from '@microsoft/logic-apps-shared';
 
 export const settingsTab: PanelTabFn = (intl) => ({
   id: constants.PANEL_TAB_NAMES.SETTINGS,

@@ -40,7 +40,7 @@ import { ConnectionDisplay } from './connectionDisplay';
 import { IdentitySelector } from './identityselector';
 import { MessageBar, MessageBarType, Spinner, SpinnerSize } from '@fluentui/react';
 import { Divider } from '@fluentui/react-components';
-import { EditorService } from '@microsoft/designer-client-services-logic-apps';
+import { EditorService } from '@microsoft/logic-apps-shared';
 import {
   DynamicCallStatus,
   PanelLocation,
@@ -48,10 +48,10 @@ import {
   TokenPickerButtonLocation,
   TokenType,
   toCustomEditorAndOptions,
-} from '@microsoft/designer-ui';
-import type { ChangeState, Parameter, ValueSegment, OutputToken, TokenPickerMode, PanelTabFn } from '@microsoft/designer-ui';
-import type { OperationInfo } from '@microsoft/utils-logic-apps';
-import { equals, getPropertyValue, getRecordEntry } from '@microsoft/utils-logic-apps';
+} from '@microsoft/logic-apps-shared';
+import type { ChangeState, Parameter, ValueSegment, OutputToken, TokenPickerMode, PanelTabFn } from '@microsoft/logic-apps-shared';
+import type { OperationInfo } from '@microsoft/logic-apps-shared';
+import { equals, getPropertyValue, getRecordEntry } from '@microsoft/logic-apps-shared';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';

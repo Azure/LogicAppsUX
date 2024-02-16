@@ -1,5 +1,5 @@
-import { SearchService } from '@microsoft/designer-client-services-logic-apps';
-import { cleanConnectorId } from '@microsoft/utils-logic-apps';
+import { SearchService } from '@microsoft/logic-apps-shared';
+import { cleanConnectorId } from '@microsoft/logic-apps-shared';
 import { useEffect, useMemo } from 'react';
 import { useInfiniteQuery, useQuery } from 'react-query';
 

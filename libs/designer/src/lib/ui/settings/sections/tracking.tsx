@@ -2,7 +2,7 @@ import type { SectionProps, TextChangeHandler } from '..';
 import { SettingSectionName } from '..';
 import type { SettingsSectionProps } from '../settingsection';
 import { SettingsSection } from '../settingsection';
-import { getSettingLabel } from '@microsoft/designer-ui';
+import { getSettingLabel } from '@microsoft/logic-apps-shared';
 import { useCallback } from 'react';
 import { useIntl } from 'react-intl';
 

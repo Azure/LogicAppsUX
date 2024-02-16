@@ -19,9 +19,9 @@ import {
   isDynamicDataReadyToLoad,
 } from './parameters/helper';
 import { convertOutputsToTokens } from './tokens';
-import { OperationManifestService } from '@microsoft/designer-client-services-logic-apps';
-import { generateSchemaFromJsonString, ValueSegment } from '@microsoft/designer-ui';
-import { getIntl } from 'libs/logic-apps-shared/src/intl/src';
+import { OperationManifestService } from '@microsoft/logic-apps-shared';
+import { generateSchemaFromJsonString, ValueSegment, ValueSegmentType } from '@microsoft/logic-apps-shared';
+import { getIntl } from '@microsoft/logic-apps-shared';
 import type {
   ParserExpression,
   ExpressionFunction,
@@ -29,7 +29,7 @@ import type {
   OutputParameter,
   OutputParameters,
   OpenApiSchema,
-} from 'libs/logic-apps-shared/src/parsers/src';
+} from '@microsoft/logic-apps-shared';
 import {
   create,
   OutputKeys,
@@ -39,8 +39,8 @@ import {
   isTemplateExpression,
   isFunction,
   isStringLiteral,
-} from 'libs/logic-apps-shared/src/parsers/src';
-import type { OpenAPIV2, OperationManifest } from '@microsoft/utils-logic-apps';
+} from '@microsoft/logic-apps-shared';
+import type { OpenAPIV2, OperationManifest } from '@microsoft/logic-apps-shared';
 import {
   ConnectionReferenceKeyFormat,
   getObjectPropertyValue,
@@ -51,7 +51,7 @@ import {
   clone,
   equals,
   parseErrorMessage,
-} from '@microsoft/utils-logic-apps';
+} from '@microsoft/logic-apps-shared';
 import type { Dispatch } from '@reduxjs/toolkit';
 
 export const toOutputInfo = (output: OutputParameter): OutputInfo => {
@@ -302,7 +302,7 @@ export const getUpdatedManifestForSchemaDependency = (manifest: OperationManifes
       let schemaToReplace: OpenAPIV2.SchemaObject | undefined;
       switch (schema) {
         case 'Value':
-          if (segment.type === ValueSegment.LITERAL) {
+          if (segment.type === ValueSegmentType.LITERAL) {
             try {
               schemaToReplace = JSON.parse(segment.value);
             } catch {} // eslint-disable-line no-empty
@@ -310,7 +310,7 @@ export const getUpdatedManifestForSchemaDependency = (manifest: OperationManifes
           break;
 
         case 'ValueSchema':
-          if (segment.type === ValueSegment.TOKEN) {
+          if (segment.type === ValueSegmentType.TOKEN) {
             // We only support getting schema from array tokens for now.
             if (segment.token?.type === Constants.SWAGGER.TYPE.ARRAY) {
               schemaToReplace = segment.token.schema ?? undefined;
@@ -324,7 +324,7 @@ export const getUpdatedManifestForSchemaDependency = (manifest: OperationManifes
           break;
 
         case 'UriTemplate':
-          if (segment.type === ValueSegment.LITERAL) {
+          if (segment.type === ValueSegmentType.LITERAL) {
             const parameterSegments = segment.value ? segment.value.match(/{(.*?)}/g) : undefined;
             if (parameterSegments) {
               const parameters = parameterSegments.map((parameter) => parameter.slice(1, -1));

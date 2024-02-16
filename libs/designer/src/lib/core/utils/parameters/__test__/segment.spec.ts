@@ -1,8 +1,8 @@
 import { ParameterIcon, VariableIcon } from '../helper';
 import { ValueSegmentConvertor } from '../segment';
-import type { ValueSegment } from '@microsoft/designer-ui';
-import { TokenType, ValueSegment } from '@microsoft/designer-ui';
-import { convertToStringLiteral, OutputSource } from '@microsoft/parsers-logic-apps';
+import type { ValueSegment } from '@microsoft/logic-apps-shared';
+import { TokenType, ValueSegment } from '@microsoft/logic-apps-shared';
+import { convertToStringLiteral, OutputSource } from '@microsoft/logic-apps-shared';
 
 describe('core/utils/parameters/segment', () => {
   describe('ValueSegmentConvertor', () => {

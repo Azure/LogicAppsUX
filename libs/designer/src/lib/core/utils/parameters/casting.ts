@@ -1,8 +1,8 @@
 import Constants from '../../../common/constants';
 import { getInterpolatedExpression } from './helper';
 import { isTokenValueSegment } from './segment';
-import type { ValueSegment } from '@microsoft/designer-ui';
-import { equals, format } from '@microsoft/utils-logic-apps';
+import type { ValueSegment } from '@microsoft/logic-apps-shared';
+import { equals, format } from '@microsoft/logic-apps-shared';
 
 /**
  * @arg {string} fromFormat - A string with the original format of the expression being cast.

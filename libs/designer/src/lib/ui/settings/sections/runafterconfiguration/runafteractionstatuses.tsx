@@ -1,7 +1,7 @@
 import type { onChangeHandler } from './runafteractiondetails';
 import { Text, Checkbox } from '@fluentui/react-components';
-import { Failed, Skipped, Succeeded, TimedOut } from '@microsoft/designer-ui';
-import { RUN_AFTER_STATUS } from '@microsoft/utils-logic-apps';
+import { Failed, Skipped, Succeeded, TimedOut } from '@microsoft/logic-apps-shared';
+import { RUN_AFTER_STATUS } from '@microsoft/logic-apps-shared';
 import { useIntl } from 'react-intl';
 
 export interface RunAfterActionStatusesProps {

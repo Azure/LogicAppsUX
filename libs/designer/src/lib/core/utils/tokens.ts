@@ -34,13 +34,13 @@ import {
 import { createTokenValueSegment } from './parameters/segment';
 import { getSplitOnValue, hasSecureOutputs } from './setting';
 import { getVariableTokens } from './variables';
-import { OperationManifestService } from '@microsoft/designer-client-services-logic-apps';
-import type { FunctionDefinition, OutputToken, Token, ValueSegment } from '@microsoft/designer-ui';
-import { UIConstants, TemplateFunctions, TokenType } from '@microsoft/designer-ui';
-import { getIntl } from 'libs/logic-apps-shared/src/intl/src';
-import { getKnownTitles, OutputKeys } from 'libs/logic-apps-shared/src/parsers/src';
-import type { BuiltInOutput, OperationManifest } from '@microsoft/utils-logic-apps';
-import { labelCase, unmap, equals, filterRecord, getRecordEntry } from '@microsoft/utils-logic-apps';
+import { OperationManifestService } from '@microsoft/logic-apps-shared';
+import type { FunctionDefinition, OutputToken, Token, ValueSegment } from '@microsoft/logic-apps-shared';
+import { UIConstants, TemplateFunctions, TokenType } from '@microsoft/logic-apps-shared';
+import { getIntl } from '@microsoft/logic-apps-shared';
+import { getKnownTitles, OutputKeys } from '@microsoft/logic-apps-shared';
+import type { BuiltInOutput, OperationManifest } from '@microsoft/logic-apps-shared';
+import { labelCase, unmap, equals, filterRecord, getRecordEntry } from '@microsoft/logic-apps-shared';
 
 export interface TokenGroup {
   id: string;

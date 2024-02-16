@@ -9,10 +9,10 @@ import {
   toHybridConditionViewModel,
   getTokenExpressionMethodFromKey,
 } from '../helper';
-import type { DictionaryEditorItemProps, Parameter, ValueSegment, OutputToken } from '@microsoft/designer-ui';
-import { GroupDropdownOptions, GroupType, TokenType, ValueSegmentType } from '@microsoft/designer-ui';
-import type { DynamicListExtension, LegacyDynamicValuesExtension, InputParameter } from '@microsoft/parsers-logic-apps';
-import { DynamicValuesType, ExpressionType } from '@microsoft/parsers-logic-apps';
+import type { DictionaryEditorItemProps, Parameter, ValueSegment, OutputToken } from '@microsoft/logic-apps-shared';
+import { GroupDropdownOptions, GroupType, TokenType, ValueSegmentType } from '@microsoft/logic-apps-shared';
+import type { DynamicListExtension, LegacyDynamicValuesExtension, InputParameter } from '@microsoft/logic-apps-shared';
+import { DynamicValuesType, ExpressionType } from '@microsoft/logic-apps-shared';
 
 describe('core/utils/parameters/helper', () => {
   describe('parameterValueToJSONString', () => {

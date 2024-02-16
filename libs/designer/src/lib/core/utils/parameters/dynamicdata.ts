@@ -27,11 +27,11 @@ import {
   toParameterInfoMap,
   tryConvertStringToExpression,
 } from './helper';
-import type { ListDynamicValue, ManagedIdentityRequestProperties, TreeDynamicValue } from '@microsoft/designer-client-services-logic-apps';
-import { OperationManifestService } from '@microsoft/designer-client-services-logic-apps';
-import type { ParameterInfo } from '@microsoft/designer-ui';
-import { TokenType, ValueSegment } from '@microsoft/designer-ui';
-import { getIntl } from 'libs/logic-apps-shared/src/intl/src';
+import type { ListDynamicValue, ManagedIdentityRequestProperties, TreeDynamicValue } from '@microsoft/logic-apps-shared';
+import { OperationManifestService, ValueSegmentType } from '@microsoft/logic-apps-shared';
+import type { Parameter } from '@microsoft/logic-apps-shared';
+import { TokenType } from '@microsoft/logic-apps-shared';
+import { getIntl } from '@microsoft/logic-apps-shared';
 import type {
   DynamicParameters,
   ExpressionEvaluatorOptions,
@@ -41,7 +41,7 @@ import type {
   ResolvedParameter,
   SchemaProcessorOptions,
   SwaggerParser,
-} from 'libs/logic-apps-shared/src/parsers/src';
+} from '@microsoft/logic-apps-shared';
 import {
   ExpressionEvaluator,
   isTemplateExpression,
@@ -62,8 +62,8 @@ import {
   SchemaProcessor,
   WildIndexSegment,
   replaceSubsegmentSeparator,
-} from 'libs/logic-apps-shared/src/parsers/src';
-import type { Connection, Connector, OpenAPIV2, OperationInfo, OperationManifest } from '@microsoft/utils-logic-apps';
+} from '@microsoft/logic-apps-shared';
+import type { Connection, Connector, OpenAPIV2, OperationInfo, OperationManifest } from '@microsoft/logic-apps-shared';
 import {
   first,
   getObjectPropertyValue,
@@ -84,7 +84,7 @@ import {
   map,
   copy,
   unmap,
-} from '@microsoft/utils-logic-apps';
+} from '@microsoft/logic-apps-shared';
 
 export async function getDynamicValues(
   dependencyInfo: DependencyInfo,
@@ -440,7 +440,7 @@ function getParametersForDynamicInvoke(
   nodeInputs: NodeInputs,
   idReplacements: Record<string, string>,
   workflowParameters: Record<string, WorkflowParameterDefinition>,
-  operationInputs?: Record<string, ParameterInfo>
+  operationInputs?: Record<string, Parameter>
 ): SerializedParameter[] {
   const intl = getIntl();
   const operationParameters: SerializedParameter[] = [];
@@ -478,7 +478,7 @@ function getParametersForDynamicInvoke(
       // We only replace single instance of parameters and appsettings but not when it is included in a combination of text.
       if (
         referencedParameter.value.some(
-          (segment) => segment.type === ValueSegment.TOKEN && segment.token?.tokenType !== TokenType.PARAMETER
+          (segment) => segment.type === ValueSegmentType.TOKEN && segment.token?.tokenType !== TokenType.PARAMETER
         )
       ) {
         throw new ValidationException(

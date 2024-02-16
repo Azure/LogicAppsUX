@@ -1,8 +1,8 @@
 import { getEditorAndOptions } from '..';
 import type { VariableDeclaration } from '../../../../../../core/state/tokens/tokensSlice';
-import { InitEditorService } from '@microsoft/designer-client-services-logic-apps';
-import type { ParameterInfo } from '@microsoft/designer-ui';
-import type { OperationInfo } from '@microsoft/utils-logic-apps';
+import { InitEditorService } from '@microsoft/logic-apps-shared';
+import type { Parameter } from '@microsoft/logic-apps-shared';
+import type { OperationInfo } from '@microsoft/logic-apps-shared';
 
 describe('getEditorAndOptions', () => {
   const operationInfo: OperationInfo = {
@@ -10,7 +10,7 @@ describe('getEditorAndOptions', () => {
     operationId: 'operationId',
   };
 
-  const getParameterInfo = (): ParameterInfo => ({
+  const getParameterInfo = (): Parameter => ({
     id: 'parameter-id',
     label: 'parameter-label',
     parameterKey: 'parameter-key',

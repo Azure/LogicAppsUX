@@ -4,20 +4,20 @@ import { isParameterRequired, parameterValueToJSONString, recurseSerializeCondit
 import { isTokenValueSegment } from './parameters/segment';
 import {
   type FloatingActionMenuOutputViewModel,
-  type ParameterInfo,
+  type Parameter,
   type ValueSegment,
   FloatingActionMenuKind,
-} from '@microsoft/designer-ui';
-import { getIntl } from 'libs/logic-apps-shared/src/intl/src';
-import type { ParserExpression, ExpressionLiteral } from 'libs/logic-apps-shared/src/parsers/src';
+} from '@microsoft/logic-apps-shared';
+import { getIntl } from '@microsoft/logic-apps-shared';
+import type { ParserExpression, ExpressionLiteral } from '@microsoft/logic-apps-shared';
 import {
   ExpressionParser,
   ExpressionType,
   isStringInterpolation,
   isStringLiteral,
   isTemplateExpression,
-} from 'libs/logic-apps-shared/src/parsers/src';
-import { capitalizeFirstLetter, endsWith, equals, startsWith } from '@microsoft/utils-logic-apps';
+} from '@microsoft/logic-apps-shared';
+import { capitalizeFirstLetter, endsWith, equals, startsWith } from '@microsoft/logic-apps-shared';
 
 const regex = {
   datetime:
@@ -36,13 +36,13 @@ const regex = {
 
 /**
  * Checks that the entered expression meets requirements for the parameter specified by its type, format, and pattern
- * @arg {ParameterInfo} parameterMetadata - The metadata of the parameter as described by its swagger
+ * @arg {Parameter} parameterMetadata - The metadata of the parameter as described by its swagger
  * @arg {string} parameterValue - The current value of the expression entered for the parameter
  * @arg {string} shouldValidateUnknownParameterAsError - Flag indicating whether to consider unknown parameters as errors
  * @return {string[]} - An array of strings with validation error messages, if there are any
  */
 export function validateStaticParameterInfo(
-  parameterMetadata: ParameterInfo,
+  parameterMetadata: Parameter,
   parameterValue: string,
   shouldValidateUnknownParameterAsError: boolean
 ): string[] {
@@ -277,11 +277,11 @@ function validateStringFormat(parameterFormat: string, parameterValue: string, i
 }
 
 /**
- * @arg {ParameterInfo} parameterMetadata - An object with metadata describing a parameter
+ * @arg {Parameter} parameterMetadata - An object with metadata describing a parameter
  * @arg {ValueSegment[]} parameterValue - An array of valuesegments from a parameter value to validate
  * @return {string[]} - An array of validation error messages, if there are any
  */
-export function validateJSONParameter(parameterMetadata: ParameterInfo, parameterValue: ValueSegment[]): string[] {
+export function validateJSONParameter(parameterMetadata: Parameter, parameterValue: ValueSegment[]): string[] {
   const intl = getIntl();
   const { editor, editorOptions } = parameterMetadata;
   const isConditionEditor = editor === Constants.EDITOR.CONDITION && !editorOptions?.isOldFormat;

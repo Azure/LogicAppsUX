@@ -8,9 +8,9 @@ import { selectPanelTab } from '../../../../../core/state/panel/panelSlice';
 import { useOperationInfo } from '../../../../../core/state/selectors/actionMetadataSelector';
 import { useStaticResultProperties, useStaticResultSchema } from '../../../../../core/state/staticresultschema/staitcresultsSelector';
 import { updateStaticResultProperties } from '../../../../../core/state/staticresultschema/staticresultsSlice';
-import type { PanelTabFn } from '@microsoft/designer-ui';
-import { StaticResultContainer } from '@microsoft/designer-ui';
-import type { OpenAPIV2 } from '@microsoft/utils-logic-apps';
+import type { PanelTabFn } from '@microsoft/logic-apps-shared';
+import { StaticResultContainer } from '@microsoft/logic-apps-shared';
+import type { OpenAPIV2 } from '@microsoft/logic-apps-shared';
 import { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 

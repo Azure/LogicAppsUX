@@ -1,8 +1,8 @@
 import constants from '../../../../common/constants';
 import { useSelectedNodeId } from '../../../../core/state/panel/panelSelectors';
 import { useRetryHistory } from '../../../../core/state/workflow/workflowSelectors';
-import type { PanelTabFn } from '@microsoft/designer-ui';
-import { RetryPanel } from '@microsoft/designer-ui';
+import type { PanelTabFn } from '@microsoft/logic-apps-shared';
+import { RetryPanel } from '@microsoft/logic-apps-shared';
 
 export const RetryPanelTab = () => {
   const selectedNodeId = useSelectedNodeId();

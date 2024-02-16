@@ -28,7 +28,7 @@ import {
   SettingTokenField,
   SettingDropdown,
   SearchableDropdownWithAddAll,
-} from '@microsoft/designer-ui';
+} from '@microsoft/logic-apps-shared';
 import type {
   MultiSelectSettingProps,
   MultiAddExpressionEditorProps,
@@ -43,7 +43,7 @@ import type {
   SettingDictionaryProps,
   SettingDropdownProps,
   ChangeState,
-} from '@microsoft/designer-ui';
+} from '@microsoft/logic-apps-shared';
 import type { FC } from 'react';
 import { useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';

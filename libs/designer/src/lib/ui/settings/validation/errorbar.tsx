@@ -1,5 +1,5 @@
 import { MessageBar, type MessageBarType, type IMessageBarStyles } from '@fluentui/react/lib/MessageBar';
-import { isHighContrastBlack } from '@microsoft/designer-ui';
+import { isHighContrastBlack } from '@microsoft/logic-apps-shared';
 
 export interface MessageBarProps {
   type: MessageBarType;

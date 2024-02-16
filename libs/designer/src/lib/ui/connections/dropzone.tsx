@@ -18,8 +18,8 @@ import {
 // import AddBranchIcon from './edgeContextMenuSvgs/addBranchIcon.svg';
 // import AddNodeIcon from './edgeContextMenuSvgs/addNodeIcon.svg';
 import { css } from '@fluentui/utilities';
-import { ActionButtonV2, convertUIElementNameToAutomationId } from '@microsoft/designer-ui';
-import { containsIdTag, guid, normalizeAutomationId, removeIdTag } from '@microsoft/utils-logic-apps';
+import { ActionButtonV2, convertUIElementNameToAutomationId } from '@microsoft/logic-apps-shared';
+import { containsIdTag, guid, normalizeAutomationId, removeIdTag } from '@microsoft/logic-apps-shared';
 import { useCallback, useMemo, useState } from 'react';
 import { useDrop } from 'react-dnd';
 import { useIntl } from 'react-intl';

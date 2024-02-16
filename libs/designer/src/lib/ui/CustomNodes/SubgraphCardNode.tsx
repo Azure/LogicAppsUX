@@ -21,8 +21,8 @@ import { addSwitchCase, setFocusNode, toggleCollapsedGraphId } from '../../core/
 import { LoopsPager } from '../common/LoopsPager/LoopsPager';
 import { DropZone } from '../connections/dropzone';
 import { DeleteMenuItem } from '../menuItems/deleteMenuItem';
-import { SubgraphCard } from '@microsoft/designer-ui';
-import { SUBGRAPH_TYPES, removeIdTag } from '@microsoft/utils-logic-apps';
+import { SubgraphCard } from '@microsoft/logic-apps-shared';
+import { SUBGRAPH_TYPES, removeIdTag } from '@microsoft/logic-apps-shared';
 import { memo, useCallback, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';

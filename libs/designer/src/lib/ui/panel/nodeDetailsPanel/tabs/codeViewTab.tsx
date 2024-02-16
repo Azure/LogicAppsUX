@@ -3,9 +3,9 @@ import { serializeOperation } from '../../../../core/actions/bjsworkflow/seriali
 import { useSelectedNodeId } from '../../../../core/state/panel/panelSelectors';
 import { useActionMetadata } from '../../../../core/state/workflow/workflowSelectors';
 import type { RootState } from '../../../../core/store';
-import type { PanelTabFn } from '@microsoft/designer-ui';
-import { Peek } from '@microsoft/designer-ui';
-import { isNullOrEmpty } from '@microsoft/utils-logic-apps';
+import type { PanelTabFn } from '@microsoft/logic-apps-shared';
+import { Peek } from '@microsoft/logic-apps-shared';
+import { isNullOrEmpty } from '@microsoft/logic-apps-shared';
 import { useQuery } from 'react-query';
 import { useSelector } from 'react-redux';
 

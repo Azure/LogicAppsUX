@@ -4,10 +4,10 @@ import type { WorkflowParameter } from '../../../common/models/workflow';
 import { convertWorkflowParameterTypeToSwaggerType } from '../../utils/tokens';
 import { validateType } from '../../utils/validation';
 import { resetWorkflowState } from '../global';
-import type { WorkflowParameterUpdateEvent } from '@microsoft/designer-ui';
-import { UIConstants } from '@microsoft/designer-ui';
-import { getIntl } from 'libs/logic-apps-shared/src/intl/src';
-import { equals, getRecordEntry, guid } from '@microsoft/utils-logic-apps';
+import type { WorkflowParameterUpdateEvent } from '@microsoft/logic-apps-shared';
+import { UIConstants } from '@microsoft/logic-apps-shared';
+import { getIntl } from '@microsoft/logic-apps-shared';
+import { equals, getRecordEntry, guid } from '@microsoft/logic-apps-shared';
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 

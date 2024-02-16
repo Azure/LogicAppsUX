@@ -1,5 +1,5 @@
 import { StaticResultSchemaService } from './staticresultschema';
-import type { ManifestParser, OpenApiSchema, SwaggerParser } from 'libs/logic-apps-shared/src/parsers/src';
+import type { ManifestParser, OpenApiSchema, SwaggerParser } from '@microsoft/logic-apps-shared';
 
 /**
  * The operation result schema service.

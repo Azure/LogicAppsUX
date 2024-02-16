@@ -27,7 +27,7 @@
       "@microsoft/parsers-logic-apps": ["libs/logic-apps-shared/src/parsers/src/index.ts"],
       "@microsoft/designer-client-services-logic-apps": ["libs/logic-apps-shared/src/designer-client-services/index.ts"],
       "@microsoft/intl-logic-apps": ["libs/logic-apps-shared/src/intl/src/index.ts"],
-      "@microsoft/designer-ui": ["libs/logic-apps-shared/src/designer-ui/src/index.ts"]
+      "@microsoft/logic-apps-shared": ["libs/logic-apps-shared/src/index.ts"]
     }
   },
   "exclude": ["node_modules", "tmp"],

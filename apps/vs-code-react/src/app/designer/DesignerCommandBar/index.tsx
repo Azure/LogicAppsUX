@@ -1,7 +1,7 @@
 import { VSCodeContext } from '../../../webviewCommunication';
 import { FontIcon, mergeStyles, mergeStyleSets, Spinner, SpinnerSize, CommandBar } from '@fluentui/react';
 import type { ICommandBarItemProps } from '@fluentui/react';
-import { TrafficLightDot } from '@microsoft/designer-ui';
+import { TrafficLightDot } from '@microsoft/logic-apps-shared';
 import {
   serializeWorkflow as serializeBJSWorkflow,
   store as DesignerStore,
@@ -11,7 +11,7 @@ import {
   openPanel,
 } from '@microsoft/logic-apps-designer';
 import type { RootState } from '@microsoft/logic-apps-designer';
-import { RUN_AFTER_COLORS, isNullOrEmpty } from '@microsoft/utils-logic-apps';
+import { RUN_AFTER_COLORS, isNullOrEmpty } from '@microsoft/logic-apps-shared';
 import { ExtensionCommand } from '@microsoft/vscode-extension';
 import { createSelector } from '@reduxjs/toolkit';
 import { useContext, useMemo } from 'react';

@@ -4,12 +4,12 @@ import type {
   ManagedIdentityRequestProperties,
   TreeDynamicExtension,
   TreeDynamicValue,
-} from '@microsoft/designer-client-services-logic-apps';
-import { ConnectorService } from '@microsoft/designer-client-services-logic-apps';
-import type { FilePickerInfo, LegacyDynamicSchemaExtension, LegacyDynamicValuesExtension } from 'libs/logic-apps-shared/src/parsers/src';
-import { Types } from 'libs/logic-apps-shared/src/parsers/src';
-import type { OpenAPIV2 } from '@microsoft/utils-logic-apps';
-import { getPropertyValue, equals, getJSONValue, getObjectPropertyValue, isNullOrUndefined } from '@microsoft/utils-logic-apps';
+} from '@microsoft/logic-apps-shared';
+import { ConnectorService } from '@microsoft/logic-apps-shared';
+import type { FilePickerInfo, LegacyDynamicSchemaExtension, LegacyDynamicValuesExtension } from '@microsoft/logic-apps-shared';
+import { Types } from '@microsoft/logic-apps-shared';
+import type { OpenAPIV2 } from '@microsoft/logic-apps-shared';
+import { getPropertyValue, equals, getJSONValue, getObjectPropertyValue, isNullOrUndefined } from '@microsoft/logic-apps-shared';
 
 export const getLegacyDynamicValues = async (
   connectionId: string,

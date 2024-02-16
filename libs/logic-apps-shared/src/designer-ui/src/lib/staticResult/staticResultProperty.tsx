@@ -1,4 +1,4 @@
-import type { StaticResultRootSchemaType } from '..';
+import type { StaticResultRootSchemaType } from './index';
 import { RequiredMarkerSide, Label } from '..';
 import constants from '../constants';
 import { StaticResult } from './StaticResult';

@@ -37,7 +37,7 @@ import type {
   ISearchService,
   IOAuthService,
   IWorkflowService,
-} from '@microsoft/designer-client-services-logic-apps';
+} from '@microsoft/logic-apps-shared';
 import {
   WorkflowService,
   LoggerService,
@@ -45,10 +45,10 @@ import {
   OperationManifestService,
   FunctionService,
   ApiManagementService,
-} from '@microsoft/designer-client-services-logic-apps';
-import type { OutputToken, ParameterInfo } from '@microsoft/designer-ui';
-import { getIntl } from 'libs/logic-apps-shared/src/intl/src';
-import type { SchemaProperty, InputParameter, SwaggerParser, OutputParameter } from 'libs/logic-apps-shared/src/parsers/src';
+} from '@microsoft/logic-apps-shared';
+import type { OutputToken, Parameter } from '@microsoft/logic-apps-shared';
+import { getIntl } from '@microsoft/logic-apps-shared';
+import type { SchemaProperty, InputParameter, SwaggerParser, OutputParameter } from '@microsoft/logic-apps-shared';
 import {
   isDynamicListExtension,
   isDynamicPropertiesExtension,
@@ -59,7 +59,7 @@ import {
   DynamicSchemaType,
   ManifestParser,
   PropertyName,
-} from 'libs/logic-apps-shared/src/parsers/src';
+} from '@microsoft/logic-apps-shared';
 import {
   CustomSwaggerServiceNames,
   UnsupportedException,
@@ -68,13 +68,13 @@ import {
   ConnectionReferenceKeyFormat,
   unmap,
   getObjectPropertyValue,
-} from '@microsoft/utils-logic-apps';
+} from '@microsoft/logic-apps-shared';
 import type {
   CustomSwaggerServiceDetails,
   OperationInfo,
   OperationManifest,
   OperationManifestProperties,
-} from '@microsoft/utils-logic-apps';
+} from '@microsoft/logic-apps-shared';
 import type { Dispatch } from '@reduxjs/toolkit';
 
 export interface ServiceOptions {
@@ -424,7 +424,7 @@ export const updateCallbackUrlInInputs = async (
   nodeId: string,
   { type, kind }: NodeOperation,
   nodeInputs: NodeInputs
-): Promise<ParameterInfo | undefined> => {
+): Promise<Parameter | undefined> => {
   if (
     equals(type, Constants.NODE.TYPE.REQUEST) &&
     (equals(kind, Constants.NODE.KIND.HTTP) || equals(kind, Constants.NODE.KIND.TEAMSWEBHOOK))

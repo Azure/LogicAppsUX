@@ -11,10 +11,10 @@ import { UniversalConnectionParameter } from './formInputs/universalConnectionPa
 import type { IDropdownOption } from '@fluentui/react';
 import { MessageBarType, MessageBar, Label } from '@fluentui/react';
 import { Body1Strong, Button, Divider } from '@fluentui/react-components';
-import { ConnectionParameterEditorService, ConnectionService } from '@microsoft/designer-client-services-logic-apps';
-import type { GatewayServiceConfig, IConnectionCredentialMappingEditorProps } from '@microsoft/designer-client-services-logic-apps';
-import type { AzureResourcePickerProps } from '@microsoft/designer-ui';
-import { AzureResourcePicker } from '@microsoft/designer-ui';
+import { ConnectionParameterEditorService, ConnectionService } from '@microsoft/logic-apps-shared';
+import type { GatewayServiceConfig, IConnectionCredentialMappingEditorProps } from '@microsoft/logic-apps-shared';
+import type { AzureResourcePickerProps } from '@microsoft/logic-apps-shared';
+import { AzureResourcePicker } from '@microsoft/logic-apps-shared';
 import type {
   ConnectionParameter,
   ConnectionParameterSet,
@@ -23,7 +23,7 @@ import type {
   Gateway,
   ManagedIdentity,
   Subscription,
-} from '@microsoft/utils-logic-apps';
+} from '@microsoft/logic-apps-shared';
 import {
   ConnectorCapabilities,
   ConnectionParameterTypes,
@@ -35,7 +35,7 @@ import {
   getPropertyValue,
   isServicePrinicipalConnectionParameter,
   usesLegacyManagedIdentity,
-} from '@microsoft/utils-logic-apps';
+} from '@microsoft/logic-apps-shared';
 import fromPairs from 'lodash.frompairs';
 import type { FormEvent } from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -144,9 +144,9 @@ export const CreateConnection = (props: CreateConnectionProps) => {
     [connectorCapabilities]
   );
 
-  const [enabledCapabilities, setEnabledCapabilities] = useState<Capabilities[]>([ConnectorCapabilities.general, ConnectorCapabilities.cloud]);
+  const [enabledCapabilities, setEnabledCapabilities] = useState<ConnectorCapabilities[]>([ConnectorCapabilities.general, ConnectorCapabilities.cloud]);
   const toggleCapability = useCallback(
-    (capability: Capabilities) => {
+    (capability: ConnectorCapabilities) => {
       if (enabledCapabilities.includes(capability)) {
         setEnabledCapabilities(enabledCapabilities.filter((c) => c !== capability));
       } else {
@@ -245,7 +245,7 @@ export const CreateConnection = (props: CreateConnectionProps) => {
   }, [parameters]);
 
   const getParametersByCapability = useCallback(
-    (capability: Capabilities) => parametersByCapability?.[ConnectorCapabilities[capability]] ?? {},
+    (capability: ConnectorCapabilities) => parametersByCapability?.[ConnectorCapabilities[capability]] ?? {},
     [parametersByCapability]
   );
 

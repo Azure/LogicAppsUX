@@ -2,9 +2,9 @@ import Constants from '../../common/constants';
 import type { NodeInputs } from '../state/operation/operationMetadataSlice';
 import type { NodeTokens, VariableDeclaration } from '../state/tokens/tokensSlice';
 import { ParameterGroupKeys } from './parameters/helper';
-import type { OutputToken as Token } from '@microsoft/designer-ui';
-import { TokenType } from '@microsoft/designer-ui';
-import { aggregate, getRecordEntry } from '@microsoft/utils-logic-apps';
+import type { OutputToken as Token } from '@microsoft/logic-apps-shared';
+import { TokenType } from '@microsoft/logic-apps-shared';
+import { aggregate, getRecordEntry } from '@microsoft/logic-apps-shared';
 
 let variableIcon = '';
 let variableBrandColor = '';

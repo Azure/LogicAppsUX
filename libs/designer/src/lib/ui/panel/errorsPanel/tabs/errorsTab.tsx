@@ -13,9 +13,9 @@ import {
   useTotalNumErrors,
 } from './errorsTab.hooks';
 import { Text } from '@fluentui/react';
-import type { NodeMessage } from '@microsoft/designer-ui';
-import { MessageLevel } from '@microsoft/designer-ui';
-import { getRecordEntry } from '@microsoft/utils-logic-apps';
+import type { NodeMessage } from '@microsoft/logic-apps-shared';
+import { MessageLevel } from '@microsoft/logic-apps-shared';
+import { getRecordEntry } from '@microsoft/logic-apps-shared';
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useSelector } from 'react-redux';

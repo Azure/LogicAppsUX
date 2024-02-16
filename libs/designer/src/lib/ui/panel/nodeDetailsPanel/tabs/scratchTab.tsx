@@ -5,7 +5,7 @@ import type {
   /*OutputToken,*/
   PanelTab,
   /*TokenPickerMode, ValueSegment*/
-} from '@microsoft/designer-ui';
+} from '@microsoft/logic-apps-shared';
 import {
   // EditorWrapper,
   //testTokenSegment, // AuthenticationType,
@@ -33,11 +33,11 @@ import {
   SuggestedFlowsSection,
   ConversationMessage,
   ConversationItemType, // RowDropdownOptions,
-} from '@microsoft/designer-ui';
-import { guid } from '@microsoft/utils-logic-apps';
+} from '@microsoft/logic-apps-shared';
+import { guid } from '@microsoft/logic-apps-shared';
 import { useCallback, useState } from 'react';
 
-//import { guid } from '@microsoft/utils-logic-apps';
+//import { guid } from '@microsoft/logic-apps-shared';
 
 // const testTokenGroup: TokenGroup[] = [
 //   { id: guid(), label: 'Checks if Blob exists in Azure Storage', tokens: [outputToken, outputToken2] },

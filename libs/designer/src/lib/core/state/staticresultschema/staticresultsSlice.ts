@@ -1,5 +1,5 @@
 import { resetWorkflowState } from '../global';
-import type { OpenApiSchema } from 'libs/logic-apps-shared/src/parsers/src';
+import type { OpenApiSchema } from '@microsoft/logic-apps-shared';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 

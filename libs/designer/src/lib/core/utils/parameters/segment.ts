@@ -2,9 +2,9 @@ import { VariableBrandColor, FxIcon, ParameterIcon, VariableIcon } from './helpe
 import { JsonSplitter } from './jsonsplitter';
 import { TokenSegmentConvertor } from './tokensegment';
 import { UncastingUtility } from './uncast';
-import { TokenType, ValueSegment } from '@microsoft/designer-ui';
-import type { Token, ValueSegment } from '@microsoft/designer-ui';
-import type { ParserExpression, ExpressionFunction, ExpressionLiteral } from 'libs/logic-apps-shared/src/parsers/src';
+import { TokenType, ValueSegmentType } from '@microsoft/logic-apps-shared';
+import type { Token, ValueSegment } from '@microsoft/logic-apps-shared';
+import type { ParserExpression, ExpressionFunction, ExpressionLiteral } from '@microsoft/logic-apps-shared';
 import {
   ExpressionParser,
   ExpressionType,
@@ -12,8 +12,8 @@ import {
   isStringInterpolation,
   isStringLiteral,
   isTemplateExpression,
-} from 'libs/logic-apps-shared/src/parsers/src';
-import { format, guid, isNullOrUndefined, startsWith, UnsupportedException } from '@microsoft/utils-logic-apps';
+} from '@microsoft/logic-apps-shared';
+import { format, guid, isNullOrUndefined, startsWith, UnsupportedException } from '@microsoft/logic-apps-shared';
 
 /**
  * The options for value segment convertor.
@@ -211,7 +211,7 @@ export class ValueSegmentConvertor {
  */
 export function isValueSegment(object: any): boolean {
   return (
-    object?.id && !isNullOrUndefined(object.value) && (object.type === ValueSegment.LITERAL || object.type === ValueSegment.TOKEN)
+    object?.id && !isNullOrUndefined(object.value) && (object.type === ValueSegmentType.LITERAL || object.type === ValueSegmentType.TOKEN)
   );
 }
 
@@ -221,7 +221,7 @@ export function isValueSegment(object: any): boolean {
  * @return {boolean}
  */
 export function isLiteralValueSegment(segment: ValueSegment): boolean {
-  return segment.type === ValueSegment.LITERAL;
+  return segment.type === ValueSegmentType.LITERAL;
 }
 
 /**
@@ -230,17 +230,17 @@ export function isLiteralValueSegment(segment: ValueSegment): boolean {
  * @return {boolean}
  */
 export function isTokenValueSegment(segment: ValueSegment): boolean {
-  return segment.type === ValueSegment.TOKEN;
+  return segment.type === ValueSegmentType.TOKEN;
 }
 
 export function isOutputTokenValueSegment(segment: ValueSegment): boolean {
   return (
-    segment.type === ValueSegment.TOKEN && segment.token?.tokenType !== TokenType.FX && segment.token?.tokenType !== TokenType.PARAMETER
+    segment.type === ValueSegmentType.TOKEN && segment.token?.tokenType !== TokenType.FX && segment.token?.tokenType !== TokenType.PARAMETER
   );
 }
 
 export function isFunctionValueSegment(segment: ValueSegment): boolean {
-  return segment.type === ValueSegment.TOKEN && segment.token?.tokenType === TokenType.FX;
+  return segment.type === ValueSegmentType.TOKEN && segment.token?.tokenType === TokenType.FX;
 }
 
 /**
@@ -252,7 +252,7 @@ export function isFunctionValueSegment(segment: ValueSegment): boolean {
 export function createLiteralValueSegment(value: string, segmentId?: string): ValueSegment {
   return {
     id: segmentId ? segmentId : guid(),
-    type: ValueSegment.LITERAL,
+    type: ValueSegmentType.LITERAL,
     value,
   };
 }
@@ -266,7 +266,7 @@ export function createLiteralValueSegment(value: string, segmentId?: string): Va
 export function createTokenValueSegment(token: Token, value: string, _tokenFormat?: string): ValueSegment {
   return {
     id: guid(),
-    type: ValueSegment.TOKEN,
+    type: ValueSegmentType.TOKEN,
     token,
     value,
   };

@@ -1,8 +1,8 @@
 import { resetWorkflowState } from '../global';
 import type { RelationshipIds, PanelState, PanelMode } from './panelInterfaces';
-import { LogEntryLevel, LoggerService } from '@microsoft/designer-client-services-logic-apps';
-import { PanelLocation } from '@microsoft/designer-ui';
-import { cleanConnectorId } from '@microsoft/utils-logic-apps';
+import { LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
+import { PanelLocation } from '@microsoft/logic-apps-shared';
+import { cleanConnectorId } from '@microsoft/logic-apps-shared';
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 
