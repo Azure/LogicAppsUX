@@ -1,6 +1,6 @@
 import { simpleMockSchema, noChildrenMockSchema } from '../__mocks__';
 import { convertSchemaToSchemaExtended } from '../utils/Schema.Utils';
-import type { Schema } from '@microsoft/utils-logic-apps';
+import type { Schema } from '@microsoft/logic-apps-shared';
 
 describe('models/Schema', () => {
   describe('convertSchemaToSchemaExtended', () => {

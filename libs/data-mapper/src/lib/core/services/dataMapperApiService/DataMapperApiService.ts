@@ -1,7 +1,7 @@
 import type { GenerateXsltResponse, TestMapResponse } from '.';
 import { dataMapperApiVersions } from '.';
 import type { FunctionManifest } from '../../../models/Function';
-import type { Schema } from '@microsoft/utils-logic-apps';
+import type { Schema } from '@microsoft/logic-apps-shared';
 
 type DmErrorResponse = { code: string; message: string };
 

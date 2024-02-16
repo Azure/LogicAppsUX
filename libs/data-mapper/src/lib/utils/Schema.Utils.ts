@@ -6,8 +6,8 @@ import { sourcePrefix, targetPrefix } from '../constants/ReactFlowConstants';
 import { getLoopTargetNodeWithJson } from '../mapDefinitions';
 import type { FunctionData } from '../models/Function';
 import { LogCategory, LogService } from './Logging.Utils';
-import type { PathItem, Schema, SchemaExtended, SchemaNode, SchemaNodeDictionary, SchemaNodeExtended } from '@microsoft/utils-logic-apps';
-import { NormalizedDataType, SchemaNodeProperty, SchemaType } from '@microsoft/utils-logic-apps';
+import type { PathItem, Schema, SchemaExtended, SchemaNode, SchemaNodeDictionary, SchemaNodeExtended } from '@microsoft/logic-apps-shared';
+import { NormalizedDataType, SchemaNodeProperty, SchemaType } from '@microsoft/logic-apps-shared';
 import Fuse from 'fuse.js';
 
 export const convertSchemaToSchemaExtended = (schema: Schema): SchemaExtended => {

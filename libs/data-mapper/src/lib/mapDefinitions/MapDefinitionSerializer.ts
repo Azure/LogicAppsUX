@@ -17,8 +17,8 @@ import {
 import { formatDirectAccess, getIndexValueForCurrentConnection, isFunctionData } from '../utils/Function.Utils';
 import { addTargetReactFlowPrefix } from '../utils/ReactFlow.Util';
 import { isObjectType, isSchemaNodeExtended } from '../utils/Schema.Utils';
-import type { MapDefinitionEntry, PathItem, SchemaExtended, SchemaNodeExtended } from '@microsoft/utils-logic-apps';
-import { extend, SchemaNodeProperty } from '@microsoft/utils-logic-apps';
+import type { MapDefinitionEntry, PathItem, SchemaExtended, SchemaNodeExtended } from '@microsoft/logic-apps-shared';
+import { extend, SchemaNodeProperty } from '@microsoft/logic-apps-shared';
 import yaml from 'js-yaml';
 
 interface OutputPathItem {

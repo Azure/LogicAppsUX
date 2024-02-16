@@ -8,8 +8,8 @@ import { isFunctionData } from '../../../utils/Function.Utils';
 import { addSourceReactFlowPrefix } from '../../../utils/ReactFlow.Util';
 import { commonCodeEditorProps } from '../../testMapPanel/TestMapPanel';
 import { makeStyles, shorthands, tokens } from '@fluentui/react-components';
-import { EditorLanguage, MonacoEditor } from '@microsoft/designer-ui';
-import type { SchemaNodeExtended } from '@microsoft/utils-logic-apps';
+import { EditorLanguage, MonacoEditor } from '@microsoft/logic-apps-shared';
+import type { SchemaNodeExtended } from '@microsoft/logic-apps-shared';
 import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 

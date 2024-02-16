@@ -18,8 +18,8 @@ import {
   deleteNodeFromConnections,
   deleteParentRepeatingConnections,
 } from '../DataMapSlice';
-import type { FunctionMetadata, FunctionPositionMetadata, Schema, SchemaExtended } from '@microsoft/utils-logic-apps';
-import { NormalizedDataType, SchemaNodeProperty, SchemaType } from '@microsoft/utils-logic-apps';
+import type { FunctionMetadata, FunctionPositionMetadata, Schema, SchemaExtended } from '@microsoft/logic-apps-shared';
+import { NormalizedDataType, SchemaNodeProperty, SchemaType } from '@microsoft/logic-apps-shared';
 
 // NOTE: Functions with an unbounded input (like our concatFunction mock) will have two empty (undefined) values/fields by default
 describe('DataMapSlice', () => {

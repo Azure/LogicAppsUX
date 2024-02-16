@@ -6,7 +6,7 @@ export interface IConnectionParameterInfo {
 }
 
 /**
- * Compatible with `ConnectionParameterProps` from @microsoft/designer-ui but without circular dependencies.
+ * Compatible with `ConnectionParameterProps` from @microsoft/logic-apps-shared but without circular dependencies.
  */
 export interface IConnectionParameterEditorProps {
   parameterKey: string;

@@ -13,7 +13,7 @@ import { inputsValid, useFunctionCardStyles } from './FunctionCard';
 import { Stack, StackItem } from '@fluentui/react';
 import { Button, Divider, PresenceBadge, Text, Tooltip, mergeClasses, tokens } from '@fluentui/react-components';
 import { useBoolean } from '@fluentui/react-hooks';
-import { CardContextMenu, useCardContextMenu } from '@microsoft/designer-ui';
+import { CardContextMenu, useCardContextMenu } from '@microsoft/logic-apps-shared';
 import { DeleteMenuItem } from '@microsoft/logic-apps-designer';
 import { useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';

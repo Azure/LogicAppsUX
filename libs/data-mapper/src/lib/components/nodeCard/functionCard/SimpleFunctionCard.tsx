@@ -9,7 +9,7 @@ import { errorCardStyles, getStylesForSharedState, highlightedCardStyles, select
 import type { FunctionCardProps } from './FunctionCard';
 import { inputsValid, shouldDisplaySourceHandle, shouldDisplayTargetHandle, useFunctionCardStyles } from './FunctionCard';
 import { Button, PresenceBadge, Text, Tooltip, mergeClasses, tokens } from '@fluentui/react-components';
-import { CardContextMenu, useCardContextMenu } from '@microsoft/designer-ui';
+import { CardContextMenu, useCardContextMenu } from '@microsoft/logic-apps-shared';
 import { DeleteMenuItem } from '@microsoft/logic-apps-designer';
 import { useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';

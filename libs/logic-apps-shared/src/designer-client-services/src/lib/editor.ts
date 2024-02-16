@@ -1,7 +1,7 @@
 import type { OperationInfo } from '@microsoft/utils-logic-apps';
 
 /**
- * Compatible with `ValueSegment` from @microsoft/designer-ui but without circular dependencies.
+ * Compatible with `ValueSegment` from @microsoft/logic-apps-shared but without circular dependencies.
  */
 export interface ServiceValueSegment {
   id: string;
@@ -11,12 +11,12 @@ export interface ServiceValueSegment {
 }
 
 /**
- * Compatible with `ChangeHandler` from @microsoft/designer-ui but without circular dependencies.
+ * Compatible with `ChangeHandler` from @microsoft/logic-apps-shared but without circular dependencies.
  */
 export type ServicesChangeHandler = (change: { value: ServiceValueSegment[]; viewModel?: any }) => void;
 
 /**
- * Compatible with `ParameterInfo` from @microsoft/designer-ui but without circular dependencies.
+ * Compatible with `ParameterInfo` from @microsoft/logic-apps-shared but without circular dependencies.
  */
 export interface ParameterInfo {
   alternativeKey?: string;

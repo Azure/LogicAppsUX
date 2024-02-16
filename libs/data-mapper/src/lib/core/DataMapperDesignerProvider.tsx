@@ -9,12 +9,11 @@ import type { Theme } from '@fluentui/react-components';
 import { FluentProvider, themeToTokensObject, webDarkTheme, webLightTheme } from '@fluentui/react-components';
 import { PortalCompatProvider } from '@fluentui/react-portal-compat';
 import { AppInsightsContext } from '@microsoft/applicationinsights-react-js';
-import { IntlProvider } from 'libs/logic-apps-shared/src/intl/src';
-import { Theme as ThemeType } from '@microsoft/utils-logic-apps';
+import { IntlProvider } from '@microsoft/logic-apps-shared';
+import { Theme as ThemeType } from '@microsoft/logic-apps-shared';
 import React from 'react';
 import { QueryClient, QueryClientProvider } from 'react-query';
 import { Provider as ReduxProvider } from 'react-redux';
-
 interface ExtendedTheme extends Theme {
   [key: string]: any;
 }
