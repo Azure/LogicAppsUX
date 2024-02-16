@@ -207,7 +207,12 @@ export async function getManualWorkflowsInLocalProject(projectPath: string, work
   return workflowDetails;
 }
 
-export async function getWorkflowsInLocalProject(projectPath: string): Promise<Record<string, any>> {
+/**
+ * Retrieves the workflows in a local project.
+ * @param {string} projectPath - The path to the project.
+ * @returns A promise that resolves to a record of workflow names and their corresponding schemas.
+ */
+export async function getWorkflowsInLocalProject(projectPath: string): Promise<Record<string, StandardApp>> {
   if (!(await fse.pathExists(projectPath))) {
     return {};
   }

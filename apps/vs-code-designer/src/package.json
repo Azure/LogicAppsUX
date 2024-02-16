@@ -715,10 +715,6 @@
           "when": "resourceFilename==workflow.json"
         },
         {
-          "command": "azureLogicAppsStandard.createUnitTest",
-          "when": "always"
-        },
-        {
           "command": "azureLogicAppsStandard.createNewCodeProject",
           "when": "isWindows"
         },
