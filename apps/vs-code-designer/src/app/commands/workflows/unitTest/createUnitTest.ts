@@ -2,6 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
+import { workflowFileName } from '../../../../constants';
 import { localize } from '../../../../localize';
 import { getWorkflowsInLocalProject } from '../../../utils/codeless/common';
 import { tryGetLogicAppProjectRoot } from '../../../utils/verifyIsProject';
@@ -31,7 +32,6 @@ export async function createUnitTest(context: IAzureConnectorsContext, node: vsc
     const workflow = await pickWorkflow(context);
     workflowNode = vscode.Uri.file(workflow.data);
   }
-  console.log('charlie', workflowNode);
 
   const openDesignerObj = new OpenDesignerForLocalProject(context, workflowNode, unitTestName);
   await openDesignerObj?.createPanel();
@@ -57,7 +57,7 @@ const getWorkflowsPicks = async (context: IActionContext) => {
   const projectPath = await tryGetLogicAppProjectRoot(context, workspaceFolder);
   const listOfLogicApps = await getWorkflowsInLocalProject(projectPath);
   const picks: IAzureQuickPickItem<string>[] = Array.from(Object.keys(listOfLogicApps)).map((workflowName) => {
-    return { label: workflowName, data: path.join(projectPath, workflowName) };
+    return { label: workflowName, data: path.join(projectPath, workflowName, workflowFileName) };
   });
 
   picks.sort((a, b) => a.label.localeCompare(b.label));
