@@ -98,7 +98,7 @@ export class RemoteWorkflowTreeItem extends AzExtTreeItem {
     return appSettings.properties || {};
   }
 
-  public async getCallbackUrl(node: RemoteWorkflowTreeItem, triggerName: string): Promise<ICallbackUrlResponse | undefined> {
+  public async getWorkflowCallbackUrl(node: RemoteWorkflowTreeItem, triggerName: string): Promise<ICallbackUrlResponse | undefined> {
     const url = `${this.parent.parent.id}/hostruntime${managementApiPrefix}/workflows/${this.name}/triggers/${triggerName}/listCallbackUrl?api-version=${workflowAppApiVersion}`;
 
     try {

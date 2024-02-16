@@ -1,4 +1,4 @@
-import type { Recurrence } from '.';
+import type { RecurrenceDetails } from '.';
 import constants from '../constants';
 import { getIntervalValue } from './util';
 import { getIntl } from '@microsoft/intl-logic-apps';
@@ -6,7 +6,7 @@ import { equals, getPropertyValue } from '@microsoft/utils-logic-apps';
 import { useIntl } from 'react-intl';
 
 interface PreviewProps {
-  recurrence: Recurrence;
+  recurrence: RecurrenceDetails;
 }
 
 export const Preview = ({ recurrence }: PreviewProps): JSX.Element => {

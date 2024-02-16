@@ -29,7 +29,7 @@ import {
 } from './helper';
 import type { ListDynamicValue, ManagedIdentityRequestProperties, TreeDynamicValue } from '@microsoft/logic-apps-shared';
 import { OperationManifestService, ValueSegmentType } from '@microsoft/logic-apps-shared';
-import type { Parameter } from '@microsoft/logic-apps-shared';
+import type { OperationParameter } from '@microsoft/logic-apps-shared';
 import { TokenType } from '@microsoft/logic-apps-shared';
 import { getIntl } from '@microsoft/logic-apps-shared';
 import type {
@@ -440,7 +440,7 @@ function getParametersForDynamicInvoke(
   nodeInputs: NodeInputs,
   idReplacements: Record<string, string>,
   workflowParameters: Record<string, WorkflowParameterDefinition>,
-  operationInputs?: Record<string, Parameter>
+  operationInputs?: Record<string, OperationParameter>
 ): SerializedParameter[] {
   const intl = getIntl();
   const operationParameters: SerializedParameter[] = [];

@@ -46,7 +46,7 @@ import {
   FunctionService,
   ApiManagementService,
 } from '@microsoft/logic-apps-shared';
-import type { OutputToken, Parameter } from '@microsoft/logic-apps-shared';
+import type { OutputToken, OperationParameter } from '@microsoft/logic-apps-shared';
 import { getIntl } from '@microsoft/logic-apps-shared';
 import type { SchemaProperty, InputParameter, SwaggerParser, OutputParameter } from '@microsoft/logic-apps-shared';
 import {
@@ -424,13 +424,13 @@ export const updateCallbackUrlInInputs = async (
   nodeId: string,
   { type, kind }: NodeOperation,
   nodeInputs: NodeInputs
-): Promise<Parameter | undefined> => {
+): Promise<OperationParameter | undefined> => {
   if (
     equals(type, Constants.NODE.TYPE.REQUEST) &&
     (equals(kind, Constants.NODE.KIND.HTTP) || equals(kind, Constants.NODE.KIND.TEAMSWEBHOOK))
   ) {
     try {
-      const callbackInfo = await WorkflowService().getCallbackUrl(nodeId);
+      const callbackInfo = await WorkflowService().getWorkflowCallbackUrl(nodeId);
       const parameter = getParameterFromName(nodeInputs, 'callbackUrl');
 
       if (parameter && callbackInfo) {

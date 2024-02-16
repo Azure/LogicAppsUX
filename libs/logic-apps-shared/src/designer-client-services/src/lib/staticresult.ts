@@ -1,4 +1,4 @@
-import { ManifestParser, OpenApiSchema, SwaggerParser } from '@microsoft/parsers-logic-apps';
+import type { ManifestParser, OpenApiSchema, SwaggerParser } from '@microsoft/parsers-logic-apps';
 import { StaticResultSchemaService } from './staticresultschema';
 
 /**

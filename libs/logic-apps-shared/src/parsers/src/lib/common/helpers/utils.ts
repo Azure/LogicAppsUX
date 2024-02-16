@@ -8,12 +8,12 @@ import type { OpenAPIV2 } from '@microsoft/utils-logic-apps';
 import { equals, isNullOrUndefined } from '@microsoft/utils-logic-apps';
 
 type SchemaObject = OpenAPIV2.SchemaObject;
-type Parameter = OpenAPIV2.ParameterObject;
+type ParameterObject = OpenAPIV2.ParameterObject;
 
-export function toSwaggerSchema(parameter: Parameter | OpenAPIV2.ItemsObject): SchemaObject {
+export function toSwaggerSchema(parameter: ParameterObject | OpenAPIV2.ItemsObject): SchemaObject {
   const schema: SchemaObject = {
     format: parameter.format,
-    description: (parameter as Parameter).description,
+    description: (parameter as ParameterObject).description,
     default: parameter.default,
     multipleOf: parameter.multipleOf,
     maximum: parameter.maximum,
@@ -33,7 +33,7 @@ export function toSwaggerSchema(parameter: Parameter | OpenAPIV2.ItemsObject): S
 
   for (const propertyName of Object.getOwnPropertyNames(parameter)) {
     if (propertyName.startsWith('x-ms-')) {
-      schema[propertyName] = (parameter as Parameter)[propertyName];
+      schema[propertyName] = (parameter as ParameterObject)[propertyName];
     }
   }
 

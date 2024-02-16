@@ -34,7 +34,7 @@ export interface IWorkflowService {
   /**
    * Gets callback url for manual trigger.
    */
-  getCallbackUrl(triggerName: string): Promise<CallbackInfo>;
+  getWorkflowCallbackUrl(triggerName: string): Promise<CallbackInfo>;
 
   /**
    * Gets managed identity associated with workflow app.

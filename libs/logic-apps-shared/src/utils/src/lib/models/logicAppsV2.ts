@@ -525,7 +525,7 @@ export interface OutputValue {
 
 /* Parameter types */
 
-export interface Parameter {
+export interface ParameterV2 {
   type: string;
   description?: string;
   defaultValue?: any;
@@ -534,7 +534,7 @@ export interface Parameter {
 }
 
 export interface Parameters {
-  [parameter: string]: Parameter;
+  [parameter: string]: ParameterV2;
 }
 
 export interface Metadata {

@@ -4,7 +4,7 @@ import { isParameterRequired, parameterValueToJSONString, recurseSerializeCondit
 import { isTokenValueSegment } from './parameters/segment';
 import {
   type FloatingActionMenuOutputViewModel,
-  type Parameter,
+  type OperationParameter,
   type ValueSegment,
   FloatingActionMenuKind,
 } from '@microsoft/logic-apps-shared';
@@ -36,13 +36,13 @@ const regex = {
 
 /**
  * Checks that the entered expression meets requirements for the parameter specified by its type, format, and pattern
- * @arg {Parameter} parameterMetadata - The metadata of the parameter as described by its swagger
+ * @arg {OperationParameter} parameterMetadata - The metadata of the parameter as described by its swagger
  * @arg {string} parameterValue - The current value of the expression entered for the parameter
  * @arg {string} shouldValidateUnknownParameterAsError - Flag indicating whether to consider unknown parameters as errors
  * @return {string[]} - An array of strings with validation error messages, if there are any
  */
 export function validateStaticParameterInfo(
-  parameterMetadata: Parameter,
+  parameterMetadata: OperationParameter,
   parameterValue: string,
   shouldValidateUnknownParameterAsError: boolean
 ): string[] {
@@ -277,11 +277,11 @@ function validateStringFormat(parameterFormat: string, parameterValue: string, i
 }
 
 /**
- * @arg {Parameter} parameterMetadata - An object with metadata describing a parameter
+ * @arg {OperationParameter} parameterMetadata - An object with metadata describing a parameter
  * @arg {ValueSegment[]} parameterValue - An array of valuesegments from a parameter value to validate
  * @return {string[]} - An array of validation error messages, if there are any
  */
-export function validateJSONParameter(parameterMetadata: Parameter, parameterValue: ValueSegment[]): string[] {
+export function validateJSONParameter(parameterMetadata: OperationParameter, parameterValue: ValueSegment[]): string[] {
   const intl = getIntl();
   const { editor, editorOptions } = parameterMetadata;
   const isConditionEditor = editor === Constants.EDITOR.CONDITION && !editorOptions?.isOldFormat;

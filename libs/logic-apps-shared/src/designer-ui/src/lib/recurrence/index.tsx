@@ -19,7 +19,7 @@ import {
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
 
-export interface Recurrence {
+export interface RecurrenceDetails {
   frequency: string | undefined;
   interval: number | undefined;
   startTime?: string;
@@ -47,9 +47,9 @@ export const ScheduleEditor = ({
   onChange,
 }: ScheduleEditorProps): JSX.Element => {
   const intl = useIntl();
-  const [recurrence, setRecurrence] = useState<Recurrence>(getRecurrenceValue(initialValue));
+  const [recurrence, setRecurrence] = useState<RecurrenceDetails>(getRecurrenceValue(initialValue));
 
-  const updateRecurrence = (newRecurrence: Recurrence) => {
+  const updateRecurrence = (newRecurrence: RecurrenceDetails) => {
     setRecurrence(newRecurrence);
     onChange?.({ value: [{ id: guid(), type: ValueSegmentType.LITERAL, value: JSON.stringify(newRecurrence) }] });
   };

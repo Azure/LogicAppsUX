@@ -6,7 +6,7 @@ import type {
 } from '@microsoft/parsers-logic-apps';
 import type { Exception, OpenAPIV2 } from '@microsoft/utils-logic-apps';
 
-export interface Parameter {
+export interface OperationParameter {
   alternativeKey?: string;
   conditionalVisibility?: boolean;
   dynamicData?: {

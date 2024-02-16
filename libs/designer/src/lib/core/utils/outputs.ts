@@ -20,7 +20,7 @@ import {
 } from './parameters/helper';
 import { convertOutputsToTokens } from './tokens';
 import { OperationManifestService } from '@microsoft/logic-apps-shared';
-import { generateSchemaFromJsonString, ValueSegment, ValueSegmentType } from '@microsoft/logic-apps-shared';
+import { generateSchemaFromJsonString, ValueSegmentType } from '@microsoft/logic-apps-shared';
 import { getIntl } from '@microsoft/logic-apps-shared';
 import type {
   ParserExpression,

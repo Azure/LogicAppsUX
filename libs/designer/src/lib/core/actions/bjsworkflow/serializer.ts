@@ -20,7 +20,7 @@ import { buildOperationDetailsFromControls } from '../../utils/swagger/inputsbui
 import type { Settings } from './settings';
 import type { NodeStaticResults } from './staticresults';
 import { LogEntryLevel, LoggerService, OperationManifestService, WorkflowService } from '@microsoft/logic-apps-shared';
-import type { Parameter } from '@microsoft/logic-apps-shared';
+import type { OperationParameter } from '@microsoft/logic-apps-shared';
 import { UIConstants } from '@microsoft/logic-apps-shared';
 import { getIntl } from '@microsoft/logic-apps-shared';
 import type { Segment } from '@microsoft/logic-apps-shared';
@@ -108,7 +108,7 @@ export const serializeWorkflow = async (rootState: RootState, options?: Serializ
     const operationsWithParameterErrors = (Object.entries(rootState.operations.inputParameters) ?? []).filter(
       ([_id, nodeInputs]: [id: string, i: NodeInputs]) =>
         Object.values(nodeInputs.parameterGroups).some((parameterGroup: ParameterGroup) =>
-          parameterGroup.parameters.some((parameter: Parameter) => (parameter?.validationErrors?.length ?? 0) > 0)
+          parameterGroup.parameters.some((parameter: OperationParameter) => (parameter?.validationErrors?.length ?? 0) > 0)
         )
     );
     if (operationsWithParameterErrors.length > 0) {
@@ -377,7 +377,7 @@ const getRunAfter = (operation: LogicAppsV2.ActionDefinition, idReplacements: Re
 };
 
 //#region Parameters Serialization
-export interface SerializedParameter extends Parameter {
+export interface SerializedParameter extends OperationParameter {
   value: any;
 }
 

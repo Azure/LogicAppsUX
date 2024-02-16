@@ -49,7 +49,7 @@ import {
   TokenType,
   toCustomEditorAndOptions,
 } from '@microsoft/logic-apps-shared';
-import type { ChangeState, Parameter, ValueSegment, OutputToken, TokenPickerMode, PanelTabFn } from '@microsoft/logic-apps-shared';
+import type { ChangeState, OperationParameter, ValueSegment, OutputToken, TokenPickerMode, PanelTabFn } from '@microsoft/logic-apps-shared';
 import type { OperationInfo } from '@microsoft/logic-apps-shared';
 import { equals, getPropertyValue, getRecordEntry } from '@microsoft/logic-apps-shared';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -205,7 +205,7 @@ const ParameterSection = ({
       const { value, viewModel } = newState;
       const parameter = nodeInputs.parameterGroups[group.id].parameters.find((param: any) => param.id === id);
 
-      const propertiesToUpdate = { value, preservedValue: undefined } as Partial<Parameter>;
+      const propertiesToUpdate = { value, preservedValue: undefined } as Partial<OperationParameter>;
 
       if (viewModel !== undefined) {
         propertiesToUpdate.editorViewModel = viewModel;
@@ -251,7 +251,7 @@ const ParameterSection = ({
     ]
   );
 
-  const onComboboxMenuOpen = (parameter: Parameter): void => {
+  const onComboboxMenuOpen = (parameter: OperationParameter): void => {
     if (parameter.dynamicData?.status === DynamicCallStatus.FAILED || parameter.dynamicData?.status === DynamicCallStatus.NOTSTARTED) {
       loadDynamicValuesForParameter(
         nodeId,
@@ -269,7 +269,7 @@ const ParameterSection = ({
     }
   };
 
-  const getPickerCallbacks = (parameter: Parameter) => ({
+  const getPickerCallbacks = (parameter: OperationParameter) => ({
     getFileSourceName: (): string => {
       return displayNameResult.result;
     },
@@ -418,7 +418,7 @@ const ParameterSection = ({
           suppressCastingForSerialize: suppressCastingForSerialize ?? false,
           onCastParameter: (value: ValueSegment[], type?: string, format?: string, suppressCasting?: boolean) =>
             parameterValueToString(
-              { value, type: type ?? 'string', info: { format }, suppressCasting } as Parameter,
+              { value, type: type ?? 'string', info: { format }, suppressCasting } as OperationParameter,
               false,
               idReplacements
             ) ?? '',
@@ -460,7 +460,7 @@ const ParameterSection = ({
 
 export const getEditorAndOptions = (
   operationInfo: OperationInfo,
-  parameter: Parameter,
+  parameter: OperationParameter,
   upstreamNodeIds: string[],
   variables: Record<string, VariableDeclaration[]>
 ): { editor?: string; editorOptions?: any } => {

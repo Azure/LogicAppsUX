@@ -23,10 +23,10 @@ export interface ParametersProcessorOptions {
   expandArrayDepth?: number;
   includeParentObject?: boolean;
 }
-type Parameter = OpenAPIV2.Parameter;
+type OpenApiParameter = OpenAPIV2.Parameter;
 
 export class ParametersProcessor {
-  constructor(private parameters: Parameter[] = [], private options: ParametersProcessorOptions = {}) {
+  constructor(private parameters: OpenApiParameter[] = [], private options: ParametersProcessorOptions = {}) {
     this.options = {
       excludeAdvanced: false,
       excludeInternal: true,
@@ -34,7 +34,7 @@ export class ParametersProcessor {
       ...options,
     };
 
-    const sortedParameters: Parameter[] = [];
+    const sortedParameters: OpenApiParameter[] = [];
 
     parameters.forEach((parameter) => {
       if (parameter.required) {
@@ -100,7 +100,7 @@ export class ParametersProcessor {
     return parameters.some((parameter) => equals(parameter.visibility, Constants.Visibility.Advanced));
   }
 
-  private _getParameters(parameter: Parameter, keyProjectionOption: KeyProjectionOptions = {}): InputParameter[] {
+  private _getParameters(parameter: OpenApiParameter, keyProjectionOption: KeyProjectionOptions = {}): InputParameter[] {
     const { in: location, schema, required } = parameter;
     let type = parameter.type;
 
@@ -202,7 +202,7 @@ export class ParametersProcessor {
     }
   }
 
-  private _getParameterFromSchema(parameter: Parameter, keyProjectionOption: KeyProjectionOptions = {}): InputParameter {
+  private _getParameterFromSchema(parameter: OpenApiParameter, keyProjectionOption: KeyProjectionOptions = {}): InputParameter {
     const schema = parameter.schema;
     return {
       ...this._getScalarParameter(parameter, create(this._getMergedKeySegments(parameter.in, keyProjectionOption))),
@@ -217,7 +217,7 @@ export class ParametersProcessor {
     };
   }
 
-  private _getScalarParameter(parameter: Parameter, key?: string, keyProjectionOption: KeyProjectionOptions = {}): InputParameter {
+  private _getScalarParameter(parameter: OpenApiParameter, key?: string, keyProjectionOption: KeyProjectionOptions = {}): InputParameter {
     const dynamicValues = getParameterDynamicValues(parameter as unknown as OpenAPIV2.SchemaObject);
     const $default = parameter.default,
       description = parameter.description,
@@ -263,7 +263,7 @@ export class ParametersProcessor {
   //
   // TODO: Consider revisit UI to match the definition, thus given user ability
   // to edit every data that is editable via code view.
-  private _getFileParameters(parameter: Parameter, keyProjectionOption: KeyProjectionOptions = {}): InputParameter[] {
+  private _getFileParameters(parameter: OpenApiParameter, keyProjectionOption: KeyProjectionOptions = {}): InputParameter[] {
     // NOTE: We filter out the parameter whose name contains double quote.
     // It conflicts with the delimeter in Content-Disposition header.
     if (includes(parameter.name, '"')) {

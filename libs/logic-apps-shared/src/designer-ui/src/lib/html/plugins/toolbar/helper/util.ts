@@ -1,4 +1,4 @@
-import { ValueSegment } from '../../../../editor';
+import type { ValueSegment } from '../../../../editor';
 import { encodeStringSegmentTokensInDomContext } from '../../../../editor/base/utils/parsesegments';
 
 const htmlUnsafeCharacters = ['<', '>'];

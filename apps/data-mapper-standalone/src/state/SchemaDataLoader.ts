@@ -1,6 +1,6 @@
 import { LoadingMethod } from './DataMapDataLoader';
 import type { RootState } from './Store';
-import type { Schema } from '@microsoft/utils-logic-apps';
+import type { Schema } from '@microsoft/logic-apps-shared';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 

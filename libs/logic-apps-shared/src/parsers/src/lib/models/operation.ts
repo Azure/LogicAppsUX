@@ -10,7 +10,7 @@ export interface ResolvedParameter extends InputParameter {
   isUnknown?: boolean; // Whether the parameter is an unknown parameter (inferred to be 'any' type) sourced from the workflow definition
 }
 
-export interface InputParameter extends ParameterBase {
+export interface InputParameter extends SchemaParameterBase {
   in?: string;
   value?: any;
   // This defines a complex type for the object supported by the editors.
@@ -229,7 +229,7 @@ export interface InputDependencies {
   parameters: DependentParameterInfo[];
 }
 
-export interface ParameterBase {
+export interface SchemaParameterBase {
   key: string;
   name: string;
   type: string;
@@ -260,7 +260,7 @@ export interface ParameterBase {
   groupName?: string;
 }
 
-export interface SchemaProperty extends ParameterBase {
+export interface SchemaProperty extends SchemaParameterBase {
   isInsideArray?: boolean;
   parentArray?: string;
   schema?: OpenAPIV2.SchemaObject;

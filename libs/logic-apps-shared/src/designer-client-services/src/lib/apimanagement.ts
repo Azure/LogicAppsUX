@@ -1,5 +1,5 @@
 import type { ListDynamicValue } from './connector';
-import type { SwaggerParser } from 'libs/logic-apps-shared/src/parsers/src';
+import type { SwaggerParser } from '@microsoft/parsers-logic-apps';
 import { AssertionErrorCode, AssertionException } from '@microsoft/utils-logic-apps';
 
 export interface IApiManagementService {

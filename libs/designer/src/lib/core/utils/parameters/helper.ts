@@ -64,7 +64,7 @@ import type {
   FloatingActionMenuOutputViewModel,
   GroupItemProps,
   OutputToken,
-  Parameter,
+  OperationParameter,
   RowItemProps,
   Token as SegmentToken,
   Token,
@@ -196,7 +196,7 @@ export interface RepetitionReference {
   repetitionPath?: string; // NOTE: the full output path for repetition value if it coming from output
 }
 
-export function getParametersSortedByVisibility(parameters: Parameter[]): Parameter[] {
+export function getParametersSortedByVisibility(parameters: OperationParameter[]): OperationParameter[] {
   return parameters.sort((a, b) => {
     // Sort by dynamic data dependencies
     const aDeps = Object.keys(a?.schema?.['x-ms-dynamic-values']?.parameters ?? {});
@@ -274,9 +274,9 @@ export const getDependentParameters = (
  * @arg {InputParameter[]} inputParameters - The input parameters.
  * @arg {any} [stepDefinition] - The step definition.
  */
-export function toParameterInfoMap(inputParameters: InputParameter[], stepDefinition?: any): Parameter[] {
+export function toParameterInfoMap(inputParameters: InputParameter[], stepDefinition?: any): OperationParameter[] {
   const metadata = stepDefinition && stepDefinition.metadata;
-  const result: Parameter[] = [];
+  const result: OperationParameter[] = [];
   for (const inputParameter of inputParameters) {
     if (!inputParameter.dynamicSchema) {
       const parameter = createParameterInfo(inputParameter, metadata);
@@ -292,13 +292,13 @@ export function toParameterInfoMap(inputParameters: InputParameter[], stepDefini
  * @arg {ResolvedParameter} parameter - An object with metadata about a Swagger input parameter.
  * @arg {Record<string, string>} [metadata] - A hash mapping dynamic value lookup values to their display strings.
  * @arg {boolean} [shouldIgnoreDefaultValue=false] - True if should not populate with default value of dynamic parameter.
- * @return {Parameter} - An object with the view model for an input parameter field.
+ * @return {OperationParameter} - An object with the view model for an input parameter field.
  */
 export function createParameterInfo(
   parameter: ResolvedParameter,
   metadata?: Record<string, string>,
   shouldIgnoreDefaultValue = false
-): Parameter {
+): OperationParameter {
   const value = loadParameterValue(parameter);
   const { editor, editorOptions, editorViewModel, schema } = getParameterEditorProps(parameter, value, shouldIgnoreDefaultValue, metadata);
   const { alias, dependencies, encode, format, isDynamic, isUnknown, serialization, deserialization } = parameter;
@@ -314,7 +314,7 @@ export function createParameterInfo(
     deserialization,
   };
 
-  const parameterInfo: Parameter = {
+  const parameterInfo: OperationParameter = {
     alternativeKey: parameter.alternativeKey,
     id: guid(),
     dynamicData: parameter.dynamicValues ? { status: DynamicCallStatus.NOTSTARTED } : undefined,
@@ -922,7 +922,7 @@ export function convertToValueSegments(value: any, shouldUncast: boolean): Value
   }
 }
 
-export function getAllInputParameters(nodeInputs: NodeInputs): Parameter[] {
+export function getAllInputParameters(nodeInputs: NodeInputs): OperationParameter[] {
   const { parameterGroups } = nodeInputs;
   return aggregate(Object.keys(parameterGroups).map((groupKey) => parameterGroups[groupKey].parameters));
 }
@@ -931,7 +931,7 @@ interface Dependency extends DependentParameterInfo {
   actualValue: any;
 }
 
-export function shouldUseParameterInGroup(parameter: Parameter, allParameters: Parameter[]): boolean {
+export function shouldUseParameterInGroup(parameter: OperationParameter, allParameters: OperationParameter[]): boolean {
   const {
     info: { dependencies },
   } = parameter;
@@ -1679,7 +1679,7 @@ export async function updateParameterAndDependencies(
   nodeId: string,
   groupId: string,
   parameterId: string,
-  properties: Partial<Parameter>,
+  properties: Partial<OperationParameter>,
   isTrigger: boolean,
   operationInfo: NodeOperation,
   connectionReference: ConnectionReference,
@@ -1692,7 +1692,7 @@ export async function updateParameterAndDependencies(
   operationDefinition?: any
 ): Promise<void> {
   const parameter = nodeInputs.parameterGroups[groupId].parameters.find((param) => param.id === parameterId) ?? {};
-  const updatedParameter = { ...parameter, ...properties } as Parameter;
+  const updatedParameter = { ...parameter, ...properties } as OperationParameter;
   updatedParameter.validationErrors = validateParameter(updatedParameter, updatedParameter.value);
   const propertiesWithValidations = { ...properties, validationErrors: updatedParameter.validationErrors };
 
@@ -1762,7 +1762,7 @@ export async function updateParameterAndDependencies(
   }
 }
 
-function updateNodeMetadataOnParameterUpdate(nodeId: string, parameter: Parameter, dispatch: Dispatch): void {
+function updateNodeMetadataOnParameterUpdate(nodeId: string, parameter: OperationParameter, dispatch: Dispatch): void {
   // Updating action metadata when file picker parameters have different display values than parameter value.
   const { editor, editorViewModel, value } = parameter;
   if (editor === constants.EDITOR.FILEPICKER && value.length === 1 && isLiteralValueSegment(value[0])) {
@@ -1775,7 +1775,7 @@ function updateNodeMetadataOnParameterUpdate(nodeId: string, parameter: Paramete
 function getDependenciesToUpdate(
   dependencies: NodeDependencies,
   parameterId: string,
-  updatedParameter: Parameter
+  updatedParameter: OperationParameter
 ): NodeDependencies | undefined {
   let dependenciesToUpdate: NodeDependencies | undefined;
 
@@ -1959,7 +1959,7 @@ async function loadDynamicContentForInputsInNode(
           const inputParameters = schemaInputs.map((input) => ({
             ...createParameterInfo(input),
             schema: input,
-          })) as Parameter[];
+          })) as OperationParameter[];
 
           updateTokenMetadataInParameters(nodeId, inputParameters, rootState);
 
@@ -2009,7 +2009,7 @@ export async function loadDynamicTreeItemsForParameter(
   workflowParameters: Record<string, WorkflowParameterDefinition>
 ): Promise<void> {
   const groupParameters = nodeInputs.parameterGroups[groupId].parameters;
-  const parameter = groupParameters.find((parameter) => parameter.id === parameterId) as Parameter;
+  const parameter = groupParameters.find((parameter) => parameter.id === parameterId) as OperationParameter;
   if (!parameter) {
     return;
   }
@@ -2094,7 +2094,7 @@ export async function loadDynamicValuesForParameter(
   workflowParameters: Record<string, WorkflowParameterDefinition>
 ): Promise<void> {
   const groupParameters = nodeInputs.parameterGroups[groupId].parameters;
-  const parameter = groupParameters.find((parameter) => parameter.id === parameterId) as Parameter;
+  const parameter = groupParameters.find((parameter) => parameter.id === parameterId) as OperationParameter;
   if (!parameter) {
     return;
   }
@@ -2191,7 +2191,7 @@ function showErrorWhenDependenciesNotReady(
   groupId: string,
   parameterId: string,
   dependencyInfo: DependencyInfo,
-  groupParameters: Parameter[],
+  groupParameters: OperationParameter[],
   isTreeCall: boolean,
   dispatch: Dispatch
 ): void {
@@ -2229,7 +2229,7 @@ function showErrorWhenDependenciesNotReady(
 }
 
 function getStringifiedValueFromEditorViewModel(
-  parameter: Parameter,
+  parameter: OperationParameter,
   isDefinitionValue: boolean,
   idReplacements?: Record<string, string>
 ): string | undefined {
@@ -2278,7 +2278,7 @@ function getStringifiedValueFromEditorViewModel(
 }
 
 const getStringifiedValueFromFloatingActionMenuOutputsViewModel = (
-  parameter: Parameter,
+  parameter: OperationParameter,
   editorViewModel: FloatingActionMenuOutputViewModel
 ): string | undefined => {
   const value: typeof editorViewModel.schema & { additionalProperties?: { outputValueMap?: Record<string, unknown> } } = clone(
@@ -2333,7 +2333,7 @@ const iterateSimpleQueryBuilderEditor = (
 };
 
 export const recurseSerializeCondition = (
-  parameter: Parameter,
+  parameter: OperationParameter,
   editorViewModel: any,
   isDefinitionValue: boolean,
   idReplacements?: Record<string, string>,
@@ -2407,7 +2407,7 @@ function updateNodeInputsWithParameter(
   nodeInputs: NodeInputs,
   parameterId: string,
   groupId: string,
-  properties: Partial<Parameter>
+  properties: Partial<OperationParameter>
 ): NodeInputs {
   const inputs = clone(nodeInputs);
   const parameterGroup = inputs.parameterGroups[groupId];
@@ -2419,7 +2419,7 @@ function updateNodeInputsWithParameter(
   return inputs;
 }
 
-export function getParameterFromName(nodeInputs: NodeInputs, parameterName: string): Parameter | undefined {
+export function getParameterFromName(nodeInputs: NodeInputs, parameterName: string): OperationParameter | undefined {
   for (const groupId of Object.keys(nodeInputs.parameterGroups)) {
     const parameterGroup = nodeInputs.parameterGroups[groupId];
     const parameter = parameterGroup.parameters.find((parameter) => parameter.parameterName === parameterName);
@@ -2431,7 +2431,7 @@ export function getParameterFromName(nodeInputs: NodeInputs, parameterName: stri
   return undefined;
 }
 
-export function getParameterFromId(nodeInputs: NodeInputs, parameterId: string): Parameter | undefined {
+export function getParameterFromId(nodeInputs: NodeInputs, parameterId: string): OperationParameter | undefined {
   for (const groupId of Object.keys(nodeInputs.parameterGroups)) {
     const parameterGroup = nodeInputs.parameterGroups[groupId];
     const parameter = parameterGroup.parameters.find((parameter) => parameter.id === parameterId);
@@ -2443,7 +2443,7 @@ export function getParameterFromId(nodeInputs: NodeInputs, parameterId: string):
   return undefined;
 }
 
-export function parameterHasValue(parameter: Parameter): boolean {
+export function parameterHasValue(parameter: OperationParameter): boolean {
   const value = parameter.value;
 
   if (!isUndefinedOrEmptyString(parameter.preservedValue)) {
@@ -2453,14 +2453,14 @@ export function parameterHasValue(parameter: Parameter): boolean {
   return !!value && !!value.length && value.some((segment) => !!segment.value);
 }
 
-export function parameterValidForDynamicCall(parameter: Parameter): boolean {
+export function parameterValidForDynamicCall(parameter: OperationParameter): boolean {
   return !parameter.required || parameterHasValue(parameter);
 }
 
 export function getGroupAndParameterFromParameterKey(
   nodeInputs: NodeInputs,
   parameterKey: string
-): { groupId: string; parameter: Parameter } | undefined {
+): { groupId: string; parameter: OperationParameter } | undefined {
   for (const groupId of Object.keys(nodeInputs.parameterGroups)) {
     const parameter = nodeInputs.parameterGroups[groupId].parameters.find((param) => param.parameterKey === parameterKey);
     if (parameter) {
@@ -2687,7 +2687,7 @@ function getClosestRepetitionReference(repetitionContext: RepetitionContext): Re
   return undefined;
 }
 
-export function updateTokenMetadataInParameters(nodeId: string, parameters: Parameter[], rootState: RootState): void {
+export function updateTokenMetadataInParameters(nodeId: string, parameters: OperationParameter[], rootState: RootState): void {
   const {
     workflow: { operations, nodesMetadata },
     operations: { operationMetadata, outputParameters, settings },
@@ -3082,7 +3082,7 @@ export function getNormalizedTokenName(tokenName: string): string {
   return tokenName.replace(/\?/g, '');
 }
 
-export function getRepetitionValue(manifest: OperationManifest, nodeInputs: Parameter[]): any {
+export function getRepetitionValue(manifest: OperationManifest, nodeInputs: OperationParameter[]): any {
   const loopParameter = manifest.properties.repetition?.loopParameter;
 
   if (loopParameter) {
@@ -3104,7 +3104,7 @@ export function getInterpolatedExpression(expression: string, parameterType: str
 }
 
 export function parameterValueToString(
-  parameterInfo: Parameter,
+  parameterInfo: OperationParameter,
   isDefinitionValue: boolean,
   idReplacements?: Record<string, string>
 ): string | undefined {
@@ -3263,7 +3263,7 @@ export function parameterValueToJSONString(parameterValue: ValueSegment[], apply
   }
 }
 
-export function parameterValueWithoutCasting(parameter: Parameter): any {
+export function parameterValueWithoutCasting(parameter: OperationParameter): any {
   const stringifiedValue = parameterValueToStringWithoutCasting(parameter.value);
   return getJSONValueFromString(stringifiedValue, parameter.type);
 }
@@ -3530,12 +3530,12 @@ export function getArrayTypeForOutputs(parsedSwagger: SwaggerParser, operationId
   return itemKeyOutputParameter?.type ?? '';
 }
 
-export function isParameterRequired(parameterInfo: Parameter): boolean {
+export function isParameterRequired(parameterInfo: OperationParameter): boolean {
   return parameterInfo && parameterInfo.required && !(parameterInfo.info.parentProperty && parameterInfo.info.parentProperty.optional);
 }
 
 export function validateParameter(
-  parameter: Parameter,
+  parameter: OperationParameter,
   parameterValue: ValueSegment[],
   shouldValidateUnknownParameterAsError = false
 ): string[] {
@@ -3555,8 +3555,8 @@ export function validateUntilAction(
   nodeId: string,
   groupId: string,
   parameterId: string,
-  parameters: Parameter[],
-  changedParameter: Partial<Parameter>
+  parameters: OperationParameter[],
+  changedParameter: Partial<OperationParameter>
 ) {
   const errorMessage = 'Either limit count or timout must be specified.';
 
