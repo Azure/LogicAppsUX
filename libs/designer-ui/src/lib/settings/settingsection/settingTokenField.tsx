@@ -1,6 +1,7 @@
 import { ArrayEditor } from '../../arrayeditor';
 import { AuthenticationEditor } from '../../authentication';
 import { CodeEditor } from '../../code';
+import { CustomCodeEditor } from '../../code/customcodeeditor';
 import { Combobox } from '../../combobox';
 import { CopyInputControl } from '../../copyinputcontrol';
 import { DictionaryEditor } from '../../dictionary';
@@ -127,12 +128,26 @@ export const TokenField = ({
       );
 
     case 'code':
+      if (editorOptions?.language && editorOptions.language !== 'javascript') {
+        return (
+          <CustomCodeEditor
+            fileName={editorOptions.fileName}
+            labelId={labelId}
+            initialValue={value}
+            getTokenPicker={getTokenPicker}
+            language={editorOptions.language ?? EditorLanguage.javascript}
+            onChange={onValueChange}
+            readonly={readOnly}
+            placeholder={placeholder}
+          />
+        );
+      }
       return (
         <CodeEditor
           labelId={labelId}
           initialValue={value}
           getTokenPicker={getTokenPicker}
-          language={EditorLanguage.javascript}
+          language={editorOptions.language ?? EditorLanguage.javascript}
           onChange={onValueChange}
           readonly={readOnly}
           placeholder={placeholder}

@@ -2084,4 +2084,25 @@ export const almostAllBuiltInOperations: DiscoveryOperation<DiscoveryResultTypes
       },
     },
   },
+  {
+    name: 'cSharpCode',
+    id: 'cSharpCode',
+    type: 'cSharpCode',
+    properties: {
+      api: {
+        id: 'connectionProviders/inlineCode',
+        name: 'inlineCode',
+        displayName: 'Inline Code',
+        iconUri: 'https://logicappsv2resources.blob.core.windows.net/icons/inline_code.svg',
+        brandColor: '#ba5d00',
+        description: 'Inline C Sharp Code',
+      },
+      summary: 'Execute C Sharp Code',
+      description: 'Execute C Sharp Code',
+      visibility: 'Important',
+      operationType: 'CSharpCode',
+      brandColor: '#e68a00',
+      iconUri: 'https://logicappsv2resources.blob.core.windows.net/icons/flatfileencoding.svg',
+    },
+  },
 ];

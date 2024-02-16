@@ -3801,6 +3801,12 @@
       "value": "Search"
     }
   ],
+  "Mcvr0B": [
+    {
+      "type": 0,
+      "value": "To use modules or dependecies, please add at Custom Code Dependenncies in Portal TOC"
+    }
+  ],
   "MfAdfx": [
     {
       "type": 0,
@@ -4879,6 +4885,12 @@
     {
       "type": 0,
       "value": "(UTC-06:00) Easter Island"
+    }
+  ],
+  "TjkOzp": [
+    {
+      "type": 0,
+      "value": "Close"
     }
   ],
   "TlX98E": [
@@ -7943,6 +7955,12 @@
     {
       "type": 0,
       "value": "', split on not in array."
+    }
+  ],
+  "mRpI31": [
+    {
+      "type": 0,
+      "value": "The File Name will be generated after saving the workflow"
     }
   ],
   "mUURJW": [

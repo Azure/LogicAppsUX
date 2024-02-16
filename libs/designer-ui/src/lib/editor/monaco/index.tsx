@@ -16,6 +16,7 @@ export const EditorLanguage = {
   xml: 'xml',
   templateExpressionLanguage: 'TemplateExpressionLanguage',
   yaml: 'yaml',
+  csharp: 'csharp',
 } as const;
 export type EditorLanguage = (typeof EditorLanguage)[keyof typeof EditorLanguage];
 

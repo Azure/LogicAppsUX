@@ -20,6 +20,7 @@ import {
   httpWebhookManifest,
   httpWebhookTriggerManifest,
 } from './manifests/http';
+import { inlineCSharpManifest } from './manifests/inlineCode';
 import joinManifest from './manifests/join';
 import parsejsonManifest from './manifests/parsejson';
 import queryManifest from './manifests/query';
@@ -52,6 +53,7 @@ const rosettanetdecode = 'rosettanetdecode';
 const rosettanetwaitforresponse = 'rosettanetwaitforresponse';
 const invokefunction = 'invokefunction';
 const javascriptcode = 'javascriptcode';
+const csharpcode = 'csharpcode';
 const compose = 'compose';
 const csvtable = 'csvtable';
 const htmltable = 'htmltable';
@@ -135,6 +137,7 @@ const liquidConnectorId = 'connectionProviders/liquidOperations';
 const dataMapperConnectorId = 'connectionProviders/dataMapperOperations';
 const x12connectorId = 'connectionProviders/x12Operations';
 const edifactConnectorId = 'connectionProviders/edifactOperations';
+export const inlineCodeConnectorId = 'connectionProviders/inlineCode';
 
 const azurefunction = 'azurefunction';
 const appservice = 'appservice';
@@ -161,6 +164,7 @@ export const supportedBaseManifestTypes = [
   integrationaccountartifactlookup,
   invokefunction,
   javascriptcode,
+  csharpcode,
   join,
   liquid,
   parsejson,
@@ -200,6 +204,7 @@ export const supportedBaseManifestTypes = [
   edifactencode,
   edifactbatchencode,
   edifactdecode,
+  csharpcode,
 ];
 
 export type getAccessTokenType = () => Promise<string>;
@@ -293,6 +298,7 @@ export function isBuiltInOperation(definition: any): boolean {
     case edifactdecode:
     case edifactencode:
     case edifactbatchencode:
+    case csharpcode:
       return true;
 
     case appservice:
@@ -509,8 +515,12 @@ const builtInOperationsMetadata: Record<string, OperationInfo> = {
     operationId: 'invokeFunction',
   },
   [javascriptcode]: {
-    connectorId: 'connectionProviders/inlineCode',
+    connectorId: inlineCodeConnectorId,
     operationId: 'javaScriptCode',
+  },
+  [csharpcode]: {
+    connectorId: inlineCodeConnectorId,
+    operationId: csharpcode,
   },
   [join]: {
     connectorId: dataOperationConnectorId,
@@ -661,6 +671,7 @@ export const supportedBaseManifestObjects = new Map<string, OperationManifest>([
   [httpwebhooktrigger, httpWebhookTriggerManifest],
   [incrementvariable, incrementManifest],
   [initializevariable, initializeManifest],
+  [csharpcode, inlineCSharpManifest],
   [join, joinManifest],
   [parsejson, parsejsonManifest],
   [query, queryManifest],

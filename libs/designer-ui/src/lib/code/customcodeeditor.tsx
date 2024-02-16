@@ -1,0 +1,171 @@
+import constants from '../constants';
+import type { ValueSegment } from '../editor';
+import { ValueSegmentType } from '../editor';
+import type { BaseEditorProps } from '../editor/base';
+import TokenPickerButtonLegacy from '../editor/base/plugins/TokenPickerButtonLegacy';
+import type { EditorContentChangedEventArgs, EditorLanguage } from '../editor/monaco';
+import { MonacoEditor as Editor } from '../editor/monaco';
+import { useId } from '../useId';
+import { buildInlineCodeTextFromToken, getEditorHeight, getInitialValue } from './util';
+import { Icon, MessageBar, MessageBarType } from '@fluentui/react';
+import { useFunctionalState } from '@react-hookz/web';
+import type { editor, IRange } from 'monaco-editor';
+import { useRef, useState } from 'react';
+import { useIntl } from 'react-intl';
+
+const iconStyle = {
+  root: {
+    fontSize: 20,
+    padding: '8px',
+    color: constants.PANEL_HIGHLIGHT_COLOR,
+  },
+};
+interface CustomCodeEditorProps extends BaseEditorProps {
+  language: EditorLanguage;
+  fileName: string;
+}
+
+export function CustomCodeEditor({
+  readonly = false,
+  initialValue,
+  language,
+  onChange,
+  onFocus,
+  getTokenPicker,
+  label,
+  fileName,
+}: CustomCodeEditorProps): JSX.Element {
+  const intl = useIntl();
+  const codeEditorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
+  const editorId = useId('msla-tokenpicker-callout-location');
+  const callOutLabelId = useId('msla-tokenpicker-callout-label');
+  const [getCurrentValue, setCurrentValue] = useFunctionalState(getInitialValue(initialValue));
+  const [editorHeight, setEditorHeight] = useState(getEditorHeight(getInitialValue(initialValue)));
+  const [showTokenPickerButton, setShowTokenPickerButton] = useState(false);
+  const [getInTokenPicker, setInTokenPicker] = useFunctionalState(false);
+  const [showMessageBar, setShowMessageBar] = useState(true);
+
+  const handleContentChanged = (e: EditorContentChangedEventArgs): void => {
+    if (e.value !== undefined) {
+      setCurrentValue(e.value);
+      setEditorHeight(getEditorHeight(e.value));
+    }
+  };
+
+  const handleBlur = (): void => {
+    if (!getInTokenPicker()) {
+      setShowTokenPickerButton(false);
+    }
+    onChange?.({ value: [{ id: 'key', type: ValueSegmentType.LITERAL, value: getCurrentValue() }] });
+  };
+
+  const handleFocus = (): void => {
+    setShowTokenPickerButton(true);
+    setInTokenPicker(false);
+    onFocus?.();
+  };
+
+  const handleShowTokenPicker = () => {
+    setInTokenPicker(!getInTokenPicker());
+  };
+
+  const setIsInTokenpicker = (b: boolean) => {
+    setInTokenPicker(b);
+    if (!b) {
+      codeEditorRef.current?.focus();
+    }
+  };
+
+  const tokenClicked = (valueSegment: ValueSegment) => {
+    if (codeEditorRef.current && valueSegment.token) {
+      const newText = buildInlineCodeTextFromToken(valueSegment.token, language);
+      codeEditorRef.current.executeEdits(null, [{ range: codeEditorRef.current.getSelection() as IRange, text: newText }]);
+      const currSelection = codeEditorRef.current.getSelection();
+      if (currSelection) {
+        setTimeout(() => {
+          const { lineNumber, column } = currSelection.getEndPosition();
+          codeEditorRef.current?.setSelection(currSelection.setStartPosition(lineNumber, column));
+          codeEditorRef.current?.focus();
+        }, 50);
+      }
+    }
+  };
+
+  const getLabel = (label?: string): string => {
+    return intl.formatMessage(
+      {
+        defaultMessage: "{label} To add dynamic data, press the Alt + '/' keys.",
+        description: 'This is an a11y message meant to help screen reader users figure out how to insert dynamic data',
+      },
+      { label }
+    );
+  };
+
+  const messageBarText = intl.formatMessage({
+    defaultMessage: 'To use modules or dependecies, please add at Custom Code Dependenncies in Portal TOC',
+    description: 'This is a message to inform the user to add dependencies to use this action',
+  });
+
+  const closeButtonAriaLabel = intl.formatMessage({
+    defaultMessage: 'Close',
+    description: 'This is the aria label for the close button in the message bar',
+  });
+
+  const fileNameNotGenerated = intl.formatMessage({
+    defaultMessage: 'The File Name will be generated after saving the workflow',
+    description: 'This is a message to inform the user that the file name will be generated after saving the workflow',
+  });
+
+  return (
+    <div className="msla-custom-code-editor-body" id={editorId}>
+      <div className="msla-custom-code-editor-file">
+        <Icon iconName="FileCode" styles={iconStyle} />
+        <div className="msla-custom-code-editor-fileName">{fileName ?? fileNameNotGenerated}</div>
+      </div>
+      <Editor
+        label={getLabel(label)}
+        ref={codeEditorRef}
+        height={editorHeight}
+        value={getCurrentValue()}
+        fontSize={13}
+        readOnly={readonly}
+        lineNumbers="on"
+        language={language}
+        overviewRulerBorder={true}
+        scrollBeyondLastLine={false}
+        onContentChanged={handleContentChanged}
+        onFocus={handleFocus}
+        onBlur={handleBlur}
+        openTokenPicker={handleShowTokenPicker}
+      />
+      {showTokenPickerButton || getInTokenPicker() ? (
+        <TokenPickerButtonLegacy
+          labelId={callOutLabelId}
+          showTokenPicker={getInTokenPicker()}
+          setShowTokenPicker={handleShowTokenPicker}
+          codeEditor={codeEditorRef.current}
+        />
+      ) : null}
+      {getInTokenPicker()
+        ? getTokenPicker?.(
+            editorId,
+            callOutLabelId,
+            undefined /* TokenPickerMode: undefined uses legacy tokenpicker */,
+            undefined /* Editortype: undefined defaults to parameter type */,
+            setIsInTokenpicker,
+            tokenClicked
+          )
+        : null}
+      {showMessageBar ? (
+        <MessageBar
+          messageBarType={MessageBarType.info}
+          className="msla-custom-code-editor-message-bar"
+          dismissButtonAriaLabel={closeButtonAriaLabel}
+          onDismiss={() => setShowMessageBar(false)}
+        >
+          <div>{messageBarText}</div>
+        </MessageBar>
+      ) : null}
+    </div>
+  );
+}
