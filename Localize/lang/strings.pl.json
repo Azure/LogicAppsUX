@@ -1355,7 +1355,7 @@
   "sys5gu": "Certyfikat klienta",
   "sytRna": "Nie można pobrać dynamicznych danych wejściowych. Szczegóły błędu: „{message}”",
   "t+XCkg": "Wymagane. Ciąg zawierający nazwę docelowej strefy czasowej. Szczegółowe informacje można znaleźć na stronie https://msdn.microsoft.com/pl-pl/library/gg154758.aspx.",
-  "t9RwOi": "The expression is invalid.",
+  "t9RwOi": "Wyrażenie jest nieprawidłowe.",
   "tAbbH8": "Przypisano zbyt wiele danych wejściowych",
   "tAeKNh": "Prosta",
   "tE7Zam": "Zwraca adres URL do wywoływania wyzwalacza lub akcji",
