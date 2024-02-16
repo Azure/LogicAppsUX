@@ -5,8 +5,8 @@ import { StaticResultOption } from '../../actions/bjsworkflow/staticresults';
 import type { RepetitionContext } from '../../utils/parameters/helper';
 import { resetNodesLoadStatus, resetWorkflowState } from '../global';
 import { LogEntryLevel, LoggerService } from '@microsoft/designer-client-services-logic-apps';
-import type { ParameterInfo } from '@microsoft/designer-ui';
-import type { FilePickerInfo, InputParameter, OutputParameter, SwaggerParser } from 'libs/logic-apps-shared/src/parsers/src';
+import type { Parameter } from '@microsoft/designer-ui';
+import type { FilePickerInfo, InputParameter, OutputParameter, SwaggerParser } from '@microsoft/parsers-logic-apps';
 import { getRecordEntry, type OpenAPIV2, type OperationInfo } from '@microsoft/utils-logic-apps';
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
@@ -15,7 +15,7 @@ import type { WritableDraft } from 'immer/dist/internal';
 export interface ParameterGroup {
   id: string;
   description?: string;
-  parameters: ParameterInfo[];
+  parameters: Parameter[];
   showAdvancedParameters?: boolean;
   hasAdvancedParameters?: boolean;
 }
@@ -174,7 +174,7 @@ interface AddDynamicOutputsPayload {
 interface AddDynamicInputsPayload {
   nodeId: string;
   groupId: string;
-  inputs: ParameterInfo[];
+  inputs: Parameter[];
   newInputs: InputParameter[];
   swagger?: SwaggerParser;
 }
@@ -185,7 +185,7 @@ export interface UpdateParametersPayload {
   parameters: {
     groupId: string;
     parameterId: string;
-    propertiesToUpdate: Partial<ParameterInfo>;
+    propertiesToUpdate: Partial<Parameter>;
   }[];
   isUserAction?: boolean;
 }

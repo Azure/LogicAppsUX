@@ -4,8 +4,8 @@ import { WorkflowKind } from '../../state/workflow/workflowInterfaces';
 import { getSplitOnOptions } from '../../utils/outputs';
 import { getTokenExpressionValue } from '../../utils/parameters/helper';
 import { TokenType } from '@microsoft/designer-ui';
-import type { SwaggerParser } from 'libs/logic-apps-shared/src/parsers/src';
-import { convertToStringLiteral, getSplitOnArrayAliasMetadata } from 'libs/logic-apps-shared/src/parsers/src';
+import type { SwaggerParser } from '@microsoft/parsers-logic-apps';
+import { convertToStringLiteral, getSplitOnArrayAliasMetadata } from '@microsoft/parsers-logic-apps';
 import type {
   DownloadChunkMetadata,
   LogicApps,
@@ -15,7 +15,7 @@ import type {
   OperationManifestSettings,
   SecureDataOptions,
   UploadChunkMetadata,
-} from '@microsoft/utils-logic-apps';
+} from '@microsoft/logic-apps-shared';
 import {
   equals,
   getObjectPropertyValue,
@@ -24,7 +24,7 @@ import {
   SettingScope,
   ValidationErrorCode,
   ValidationException,
-} from '@microsoft/utils-logic-apps';
+} from '@microsoft/logic-apps-shared/utils-logic-apps';
 
 type OperationManifestSettingType = UploadChunkMetadata | DownloadChunkMetadata | SecureDataOptions | OperationOptions[] | void;
 

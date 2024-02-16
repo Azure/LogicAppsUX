@@ -8,7 +8,7 @@
       "executor": "@nrwl/rollup:rollup",
       "outputs": ["{options.outputPath}"],
       "options": {
-        "outputPath": "dist/libs/ç",
+        "outputPath": "dist/libs/logic-apps-shared",
         "main": "libs/logic-apps-shared/src/index.ts",
         "tsConfig": "libs/logic-apps-shared/tsconfig.lib.json",
         "project": "libs/logic-apps-shared/package.json",
