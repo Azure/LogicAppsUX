@@ -1,5 +1,28 @@
 # Logic Apps Designer
 
+## [2.115.0](https://github.com/Azure/LogicAppsUX/compare/v2.114.0...v2.115.0) (2024-02-15)
+
+## [2.114.0](https://github.com/Azure/LogicAppsUX/compare/v2.113.0...v2.114.0) (2024-02-14)
+
+### Features
+
+- **designer-ui:** Enable `PastePlugin` for HTML editor ([#4188](https://github.com/Azure/LogicAppsUX/issues/4188)) ([76c9549](https://github.com/Azure/LogicAppsUX/commit/76c9549c27590daad177373396c1352844a6da70))
+- **designer:** Add Resubmit from action to the action panel for easier visibility ([#4182](https://github.com/Azure/LogicAppsUX/issues/4182)) ([fd0a041](https://github.com/Azure/LogicAppsUX/commit/fd0a041693b70224321cd729dfa1539a64e79655))
+- **designer:** Added Validation to Static Results ([#4197](https://github.com/Azure/LogicAppsUX/issues/4197)) ([537256b](https://github.com/Azure/LogicAppsUX/commit/537256be49b43d320e8ec6bd1ed0879a63638ba9))
+- **vscode:** Add open in portal gesture for slots ([#4185](https://github.com/Azure/LogicAppsUX/issues/4185)) ([ca8ae91](https://github.com/Azure/LogicAppsUX/commit/ca8ae918f8924fef24766153db01f1e6b14db789))
+- **vscode:** Binaries dependencies opt-in by default ([#4175](https://github.com/Azure/LogicAppsUX/issues/4175)) ([7501571](https://github.com/Azure/LogicAppsUX/commit/75015718e96767759c0fc256ba3cc056feb05a94))
+
+### Bug Fixes
+
+- **Consumption:** Changing error message for invalid expression due to double quotes. ([#4141](https://github.com/Azure/LogicAppsUX/issues/4141)) ([cddc9a2](https://github.com/Azure/LogicAppsUX/commit/cddc9a293284e68508f6c9bf78545b978d8bd0a7))
+- **designer:** Fix two places where `undefined` switch `cases` caused fatal errors ([#4191](https://github.com/Azure/LogicAppsUX/issues/4191)) ([4031b05](https://github.com/Azure/LogicAppsUX/commit/4031b05dc274025b656c009bc6ea1835f0a1f17a))
+- **Designer:** Floating Link Doesn't Disappear On Outer Click ([#4108](https://github.com/Azure/LogicAppsUX/issues/4108)) ([2481280](https://github.com/Azure/LogicAppsUX/commit/24812803ce5e61592e70380adb437865e2168df1))
+- **Designer:** Keyboard Focus Moves Out of TokenPicker Navigating Using Keyboard ([#4160](https://github.com/Azure/LogicAppsUX/issues/4160)) ([609c4c5](https://github.com/Azure/LogicAppsUX/commit/609c4c5c1fa689db9e817fbe156b8daff9431343))
+- **Designer:** Removed resolving app settings within connection parameters during initialization ([#4184](https://github.com/Azure/LogicAppsUX/issues/4184)) ([4ba6a0c](https://github.com/Azure/LogicAppsUX/commit/4ba6a0c76ef7ec8a3b37803b8b4fafbdb5e73b9f))
+- **vscode:** Remove deploy slot action to only slot and not slots tree item ([#4181](https://github.com/Azure/LogicAppsUX/issues/4181)) ([1b86f03](https://github.com/Azure/LogicAppsUX/commit/1b86f0304420d0ab4cfe7274c0f0b75fba508257))
+
+## [2.113.0](https://github.com/Azure/LogicAppsUX/compare/v2.112.0...v2.113.0) (2024-02-13)
+
 ## [2.113.0](https://github.com/Azure/LogicAppsUX/compare/v2.112.0...v2.113.0) (2024-02-13)
 
 ### Bug Fixes

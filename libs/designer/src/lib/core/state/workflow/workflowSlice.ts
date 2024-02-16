@@ -20,8 +20,7 @@ import {
   updateStaticResults,
 } from '../operation/operationMetadataSlice';
 import type { RelationshipIds } from '../panel/panelInterfaces';
-import type { ErrorMessage, SpecTypes, WorkflowState } from './workflowInterfaces';
-import { WorkflowKind } from './workflowInterfaces';
+import type { ErrorMessage, SpecTypes, WorkflowState, WorkflowKind } from './workflowInterfaces';
 import { getWorkflowNodeFromGraphState } from './workflowSelectors';
 import { LogEntryLevel, LoggerService } from '@microsoft/designer-client-services-logic-apps';
 import type { MessageLevel } from '@microsoft/designer-ui';
@@ -40,7 +39,7 @@ export interface AddImplicitForeachPayload {
 
 export const initialWorkflowState: WorkflowState = {
   workflowSpec: 'BJS',
-  workflowKind: WorkflowKind.STATELESS,
+  workflowKind: undefined,
   graph: null,
   runInstance: null,
   operations: {},

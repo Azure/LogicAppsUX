@@ -2,9 +2,8 @@ import type { DictionaryEditorItemProps } from '..';
 import type { ValueSegment } from '../../editor';
 import { ValueSegmentType } from '../../editor';
 import { serializeEditorState } from '../../editor/base/utils/editorToSegment';
-import { getChildrenNodes, showCollapsedValidation } from '../../editor/base/utils/helper';
+import { getChildrenNodes } from '../../editor/base/utils/helper';
 import { serializeDictionary } from '../util/serializecollapseddictionary';
-import { css } from '@fluentui/react';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
 import { guid } from '@microsoft/utils-logic-apps';
@@ -13,9 +12,6 @@ import { $getRoot } from 'lexical';
 import { useEffect } from 'react';
 
 export interface CollapsedDictionaryValidationProps {
-  className?: string;
-  isValid?: boolean;
-  collapsedValue?: ValueSegment[];
   keyType?: string;
   valueType?: string;
   setIsValid: (b: boolean) => void;
@@ -24,13 +20,10 @@ export interface CollapsedDictionaryValidationProps {
 }
 
 export const CollapsedDictionaryValidation = ({
-  className,
-  isValid,
   keyType,
   valueType,
   setIsValid,
   setItems,
-  collapsedValue,
   setCollapsedValue,
 }: CollapsedDictionaryValidationProps): JSX.Element => {
   const [editor] = useLexicalComposerContext();
@@ -61,14 +54,5 @@ export const CollapsedDictionaryValidation = ({
     });
   };
 
-  return (
-    <div
-      className={css(
-        className ?? 'msla-base-editor-validation',
-        isValid || (collapsedValue && showCollapsedValidation(collapsedValue)) ? 'hidden' : undefined
-      )}
-    >
-      <OnChangePlugin ignoreSelectionChange onChange={onChange} />
-    </div>
-  );
+  return <OnChangePlugin ignoreSelectionChange onChange={onChange} />;
 };
