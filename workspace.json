@@ -7,10 +7,9 @@
     "designer": "libs/designer",
     "designer-e2e": "apps/designer-e2e",
     "designer-standalone": "apps/designer-standalone",
+    "logic-apps-shared": "libs/logic-apps-shared",
     "logic-apps-ux-docs": "apps/logic-apps-ux-docs",
     "plugins-playwright": "libs/plugins/playwright",
-    "logic-apps-shared": "libs/logic-apps-shared",
-
     "vs-code-designer": "apps/vs-code-designer",
     "vs-code-react": "apps/vs-code-react",
     "vscode-extension": "libs/vscode-extension"
