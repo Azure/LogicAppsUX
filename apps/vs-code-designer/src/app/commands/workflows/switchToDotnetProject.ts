@@ -2,7 +2,14 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { connectionsFileName, funcIgnoreFileName, funcVersionSetting, hostFileName, localSettingsFileName } from '../../../constants';
+import {
+  connectionsFileName,
+  funcIgnoreFileName,
+  funcVersionSetting,
+  hostFileName,
+  localSettingsFileName,
+  workflowFileName,
+} from '../../../constants';
 import { localize } from '../../../localize';
 import { initProjectForVSCode } from '../../commands/initProjectForVSCode/initProjectForVSCode';
 import { DotnetTemplateProvider } from '../../templates/dotnet/DotnetTemplateProvider';
@@ -256,7 +263,7 @@ async function getArtifactNamesFromProject(target: vscode.Uri): Promise<{ [key: 
     const filePath: string = path.join(target.fsPath, file);
     if (await (await fse.stat(filePath)).isDirectory()) {
       const workflowFiles: string[] = await fse.readdir(filePath);
-      if (workflowFiles.length == 1 && workflowFiles[0] == 'workflow.json') {
+      if (workflowFiles.length == 1 && workflowFiles[0] == workflowFileName) {
         artifactDict['workflows'].push(file);
       }
     }

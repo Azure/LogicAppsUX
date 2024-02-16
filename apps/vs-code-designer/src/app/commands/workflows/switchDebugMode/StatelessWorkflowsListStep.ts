@@ -2,6 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
+import { workflowFileName } from '../../.../../../../constants';
 import { localize } from '../../../../localize';
 import type { IAzureQuickPickItem } from '@microsoft/vscode-azext-utils';
 import { AzureWizardPromptStep } from '@microsoft/vscode-azext-utils';
@@ -43,7 +44,7 @@ export class StatelessWorkflowsListStep extends AzureWizardPromptStep<IDebugMode
 
       if (fileStats.isDirectory()) {
         try {
-          const workflowFilePath = path.join(fullPath, 'workflow.json');
+          const workflowFilePath = path.join(fullPath, workflowFileName);
 
           if (await pathExists(workflowFilePath)) {
             const workflowContent = JSON.parse(readFileSync(workflowFilePath, 'utf8'));

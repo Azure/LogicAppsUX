@@ -6,6 +6,7 @@ import {
   workflowLocationKey,
   workflowManagementBaseURIKey,
   managementApiPrefix,
+  workflowFileName,
 } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
@@ -187,7 +188,7 @@ export async function getManualWorkflowsInLocalProject(projectPath: string, work
 
     if (fileStats.isDirectory() && subPath !== workflowToExclude) {
       try {
-        const workflowFilePath = path.join(fullPath, 'workflow.json');
+        const workflowFilePath = path.join(fullPath, workflowFileName);
 
         if (await fse.pathExists(workflowFilePath)) {
           const schema = getRequestTriggerSchema(JSON.parse(readFileSync(workflowFilePath, 'utf8')));
@@ -199,6 +200,41 @@ export async function getManualWorkflowsInLocalProject(projectPath: string, work
       } catch {
         // If unable to load the workflow or read the definition we skip the workflow
         // in child workflow list.
+      }
+    }
+  }
+
+  return workflowDetails;
+}
+
+/**
+ * Retrieves the workflows in a local project.
+ * @param {string} projectPath - The path to the project.
+ * @returns A promise that resolves to a record of workflow names and their corresponding schemas.
+ */
+export async function getWorkflowsInLocalProject(projectPath: string): Promise<Record<string, StandardApp>> {
+  if (!(await fse.pathExists(projectPath))) {
+    return {};
+  }
+
+  const workflowDetails: Record<string, any> = {};
+  const subPaths: string[] = await fse.readdir(projectPath);
+  for (const subPath of subPaths) {
+    const fullPath: string = path.join(projectPath, subPath);
+    const fileStats = await fse.lstat(fullPath);
+
+    if (fileStats.isDirectory()) {
+      try {
+        const workflowFilePath = path.join(fullPath, workflowFileName);
+
+        if (await fse.pathExists(workflowFilePath)) {
+          const schema = JSON.parse(readFileSync(workflowFilePath, 'utf8'));
+          if (schema) {
+            workflowDetails[subPath] = schema;
+          }
+        }
+      } catch {
+        // If unable to load the workflow or read the definition we skip the workflow
       }
     }
   }
