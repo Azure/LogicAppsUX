@@ -1355,7 +1355,7 @@
   "sys5gu": "Certificato client",
   "sytRna": "Non è stato possibile recuperare gli input dinamici. Dettagli errore: ''{message}''",
   "t+XCkg": "Obbligatorio. Stringa contenente il nome del fuso orario del fuso orario di destinazione. Per informazioni dettagliate, vedere https://msdn.microsoft.com/en-us/library/gg154758.aspx.",
-  "t9RwOi": "The expression is invalid.",
+  "t9RwOi": "Espressione non valida.",
   "tAbbH8": "Troppi input assegnati",
   "tAeKNh": "Semplice",
   "tE7Zam": "Restituisce l'URL per richiamare il trigger o l'azione",

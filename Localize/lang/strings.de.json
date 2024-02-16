@@ -1355,7 +1355,7 @@
   "sys5gu": "Clientzertifikat",
   "sytRna": "Fehler beim Abrufen dynamischer Eingaben. Fehlerdetails: ''{message}''.",
   "t+XCkg": "Erforderlich. Hiermit wird eine Zeichenfolge angegeben, die den Namen der Zielzeitzone enthält. Weitere Informationen finden Sie unter https://msdn.microsoft.com/de-de/library/gg154758.aspx.",
-  "t9RwOi": "The expression is invalid.",
+  "t9RwOi": "Der Ausdruck ist ungültig.",
   "tAbbH8": "Zu viele Eingaben zugewiesen",
   "tAeKNh": "Einfach",
   "tE7Zam": "Gibt die URL zum Aufrufen des Triggers oder der Aktion zurück.",
