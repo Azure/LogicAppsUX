@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [2.113.2](https://github.com/Azure/LogicAppsUX/compare/v2.113.1...v2.113.2) (2024-02-16)
+
+
+### Bug Fixes
+
+* **vscode:** Remove double binaries validation & overwriting of JSON files ([#4212](https://github.com/Azure/LogicAppsUX/issues/4212)) ([ff84f61](https://github.com/Azure/LogicAppsUX/commit/ff84f61718a0869474da2a2bebfc927e4a2929bf)), closes [#4203](https://github.com/Azure/LogicAppsUX/issues/4203) [#4205](https://github.com/Azure/LogicAppsUX/issues/4205)
+
 ### [2.113.1](https://github.com/Azure/LogicAppsUX/compare/v2.113.0...v2.113.1) (2024-02-13)
 
 
