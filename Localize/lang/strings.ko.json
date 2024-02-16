@@ -1355,7 +1355,7 @@
   "sys5gu": "클라이언트 인증서",
   "sytRna": "동적 입력을 검색하지 못했습니다. 오류 세부 정보: ''{message}''",
   "t+XCkg": "필수 사항으로, 대상 표준 시간대의 표준 시간대 이름을 포함하는 문자열입니다. 자세한 내용은 https://msdn.microsoft.com/ko-kr/library/gg154758.aspx를 참조하세요.",
-  "t9RwOi": "The expression is invalid.",
+  "t9RwOi": "식이 잘못되었습니다.",
   "tAbbH8": "할당된 입력이 너무 많습니다.",
   "tAeKNh": "단순",
   "tE7Zam": "트리거 또는 작업을 호출하는 URL을 반환합니다.",
