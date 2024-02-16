@@ -6,6 +6,7 @@ import { developmentDirectoryName, saveUnitTestEvent, testsDirectoryName, unitTe
 import { localize } from '../../localize';
 import { callWithTelemetryAndErrorHandling } from '@microsoft/vscode-azext-utils';
 import * as fs from 'fs';
+import * as fse from 'fs-extra';
 import * as path from 'path';
 import * as vscode from 'vscode';
 
@@ -53,4 +54,45 @@ const getUnitTestsPath = (projectPath: string, workflowName: string, unitTestNam
 
 const getWorkflowTestsPath = (projectPath: string, workflowName: string) => {
   return path.join(projectPath, developmentDirectoryName, testsDirectoryName, workflowName);
+};
+
+/**
+ * Validates the unit test name.
+ * @param {string} projectPath - The path of the project.
+ * @param {string} workflowName - The name of the workflow.
+ * @param {string | undefined} name - The unit test name to validate.
+ * @returns A promise that resolves to a string if the unit test name is invalid, or undefined if it is valid.
+ */
+export const validateUnitTestName = async (
+  projectPath: string,
+  workflowName: string,
+  name: string | undefined
+): Promise<string | undefined> => {
+  if (!name) {
+    return localize('emptyUnitTestNameError', 'The unit test name cannot be empty.');
+  } else if (!/^[a-z][a-z\d_-]*$/i.test(name)) {
+    return localize(
+      'unitTestNameInvalidMessage',
+      'Unit test name must start with a letter and can only contain letters, digits, "_" and "-".'
+    );
+  } else {
+    return await validateUnitTestNameCore(projectPath, workflowName, name);
+  }
+};
+
+/**
+ * Validates the unit test name for a given project, workflow, and name.
+ * @param {string} projectPath - The path of the project.
+ * @param {string} workflowName - The name of the workflow.
+ * @param {string} name - The name of the unit test.
+ * @returns A string representing an error message if a unit test with the same name already exists, otherwise undefined.
+ */
+const validateUnitTestNameCore = async (projectPath: string, workflowName: string, name: string): Promise<string | undefined> => {
+  const workflowTestsPath = getWorkflowTestsPath(projectPath, workflowName);
+
+  if (await fse.pathExists(path.join(workflowTestsPath, `${name}${unitTestsFileName}`))) {
+    return localize('existingUnitTestError', 'A unit test with the name "{0}" already exists.', name);
+  } else {
+    return undefined;
+  }
 };
