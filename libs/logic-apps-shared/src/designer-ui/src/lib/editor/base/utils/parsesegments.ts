@@ -20,7 +20,7 @@ import type { ListNode, ListItemNode } from '@lexical/list';
 import { $isListNode, $isListItemNode, $createListItemNode } from '@lexical/list';
 import type { HeadingNode } from '@lexical/rich-text';
 import { $isHeadingNode } from '@lexical/rich-text';
-import { ExpressionParser } from '@microsoft/parsers-logic-apps';
+import { ExpressionParser, ParserExpression } from '@microsoft/parsers-logic-apps';
 import { wrapTokenValue } from '@microsoft/utils-logic-apps';
 import type { LexicalNode, ParagraphNode, RootNode } from 'lexical';
 import {
@@ -259,7 +259,7 @@ const createTokenNodeFromSegment = (
   const { brandColor, icon, title, name, value, tokenType } = segmentToken;
   // Expression token handling
   if (tokenType === TokenType.FX) {
-    const expressionValue: ExpressionParser = ExpressionParser.parseExpression(segmentValue);
+    const expressionValue: ParserExpression = ExpressionParser.parseExpression(segmentValue);
     return $createTokenNode({
       title: getExpressionTokenTitle(expressionValue) ?? title,
       data: segment,

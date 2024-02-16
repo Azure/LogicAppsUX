@@ -10,7 +10,7 @@ import {
   getTokenExpressionMethodFromKey,
 } from '../helper';
 import type { DictionaryEditorItemProps, Parameter, ValueSegment, OutputToken } from '@microsoft/designer-ui';
-import { GroupDropdownOptions, GroupType, TokenType, ValueSegment } from '@microsoft/designer-ui';
+import { GroupDropdownOptions, GroupType, TokenType, ValueSegmentType } from '@microsoft/designer-ui';
 import type { DynamicListExtension, LegacyDynamicValuesExtension, InputParameter } from '@microsoft/parsers-logic-apps';
 import { DynamicValuesType, ExpressionType } from '@microsoft/parsers-logic-apps';
 
@@ -20,7 +20,7 @@ describe('core/utils/parameters/helper', () => {
       const parameterValue = [
           {
             id: '1',
-            type: ValueSegment.LITERAL,
+            type: ValueSegmentType.LITERAL,
             value: '{"Key": null, "array": [1,2,3], "nesting": {"a": 1}}',
           },
         ],
@@ -33,7 +33,7 @@ describe('core/utils/parameters/helper', () => {
       const parameterValue = [
           {
             id: '1',
-            type: ValueSegment.LITERAL,
+            type: ValueSegmentType.LITERAL,
             value: '{}',
           },
         ],
@@ -46,27 +46,27 @@ describe('core/utils/parameters/helper', () => {
       const parameterValue = [
           {
             id: '1',
-            type: ValueSegment.LITERAL,
+            type: ValueSegmentType.LITERAL,
             value: '{"Key": ',
           },
           {
             id: '2',
-            type: ValueSegment.TOKEN,
+            type: ValueSegmentType.TOKEN,
             value: 'triggerBody()',
           },
           {
             id: '3',
-            type: ValueSegment.LITERAL,
+            type: ValueSegmentType.LITERAL,
             value: ', ',
           },
           {
             id: '4',
-            type: ValueSegment.TOKEN,
+            type: ValueSegmentType.TOKEN,
             value: "action('A')['id']",
           },
           {
             id: '5',
-            type: ValueSegment.LITERAL,
+            type: ValueSegmentType.LITERAL,
             value: ': "value"}',
           },
         ],
@@ -80,12 +80,12 @@ describe('core/utils/parameters/helper', () => {
           {
             value: '{ "',
             id: '0.1',
-            type: ValueSegment.LITERAL,
+            type: ValueSegmentType.LITERAL,
           },
           {
             value: 'triggerBody()?.ID',
             id: '0.2',
-            type: ValueSegment.TOKEN,
+            type: ValueSegmentType.TOKEN,
             token: {
               key: 'body.$.ID',
               tokenType: TokenType.OUTPUTS,
@@ -96,7 +96,7 @@ describe('core/utils/parameters/helper', () => {
           {
             value: '": "\\"Hello, world!\\"" }', // "Hello, world!"
             id: '0.3',
-            type: ValueSegment.LITERAL,
+            type: ValueSegmentType.LITERAL,
           },
         ],
         parameterJson = parameterValueToJSONString(parameterValue);
@@ -109,12 +109,12 @@ describe('core/utils/parameters/helper', () => {
           {
             value: '{ "',
             id: '0.1',
-            type: ValueSegment.LITERAL,
+            type: ValueSegmentType.LITERAL,
           },
           {
             value: 'triggerBody()?.ID',
             id: '0.2',
-            type: ValueSegment.TOKEN,
+            type: ValueSegmentType.TOKEN,
             token: {
               key: 'body.$.ID',
               tokenType: TokenType.OUTPUTS,
@@ -124,7 +124,7 @@ describe('core/utils/parameters/helper', () => {
           {
             value: '": "\\u0022Hello, world!\\u0022" }', // "Hello, world!"
             id: '0.3',
-            type: ValueSegment.LITERAL,
+            type: ValueSegmentType.LITERAL,
           },
         ],
         parameterJson = parameterValueToJSONString(parameterValue);
@@ -136,12 +136,12 @@ describe('core/utils/parameters/helper', () => {
       const parameterValue = [
           {
             id: '1',
-            type: ValueSegment.LITERAL,
+            type: ValueSegmentType.LITERAL,
             value: '{"Key": "',
           },
           {
             id: '2',
-            type: ValueSegment.TOKEN,
+            type: ValueSegmentType.TOKEN,
             value: 'triggerBody()',
             token: {
               key: 'body.$',
@@ -152,7 +152,7 @@ describe('core/utils/parameters/helper', () => {
           },
           {
             id: '3',
-            type: ValueSegment.LITERAL,
+            type: ValueSegmentType.LITERAL,
             value: '"}',
           },
         ],
@@ -165,12 +165,12 @@ describe('core/utils/parameters/helper', () => {
       const parameterValue = [
           {
             id: '1',
-            type: ValueSegment.LITERAL,
+            type: ValueSegmentType.LITERAL,
             value: '{"Key": ',
           },
           {
             id: '2',
-            type: ValueSegment.TOKEN,
+            type: ValueSegmentType.TOKEN,
             value: 'triggerBody()',
             token: {
               key: 'body.$',
@@ -181,7 +181,7 @@ describe('core/utils/parameters/helper', () => {
           },
           {
             id: '2',
-            type: ValueSegment.TOKEN,
+            type: ValueSegmentType.TOKEN,
             value: `body('A0')`,
             token: {
               key: 'body.$',
@@ -192,7 +192,7 @@ describe('core/utils/parameters/helper', () => {
           },
           {
             id: '3',
-            type: ValueSegment.LITERAL,
+            type: ValueSegmentType.LITERAL,
             value: '}',
           },
         ],
@@ -205,12 +205,12 @@ describe('core/utils/parameters/helper', () => {
       const parameterValue = [
           {
             id: '1',
-            type: ValueSegment.LITERAL,
+            type: ValueSegmentType.LITERAL,
             value: '{"Key": "',
           },
           {
             id: '2',
-            type: ValueSegment.TOKEN,
+            type: ValueSegmentType.TOKEN,
             value: 'triggerBody()',
             token: {
               key: 'body.$',
@@ -221,12 +221,12 @@ describe('core/utils/parameters/helper', () => {
           },
           {
             id: '3',
-            type: ValueSegment.LITERAL,
+            type: ValueSegmentType.LITERAL,
             value: ' intermediate text ',
           },
           {
             id: '4',
-            type: ValueSegment.TOKEN,
+            type: ValueSegmentType.TOKEN,
             value: 'triggerBody()',
             token: {
               key: 'body.$',
@@ -237,7 +237,7 @@ describe('core/utils/parameters/helper', () => {
           },
           {
             id: '3',
-            type: ValueSegment.LITERAL,
+            type: ValueSegmentType.LITERAL,
             value: '"}',
           },
         ],
@@ -251,12 +251,12 @@ describe('core/utils/parameters/helper', () => {
       const parameterValue = [
           {
             id: '1',
-            type: ValueSegment.LITERAL,
+            type: ValueSegmentType.LITERAL,
             value: '{"Key": ',
           },
           {
             id: '2',
-            type: ValueSegment.TOKEN,
+            type: ValueSegmentType.TOKEN,
             value: 'triggerBody()',
             token: {
               key: 'body.$',
@@ -267,12 +267,12 @@ describe('core/utils/parameters/helper', () => {
           },
           {
             id: '3',
-            type: ValueSegment.LITERAL,
+            type: ValueSegmentType.LITERAL,
             value: ' intermediate text ',
           },
           {
             id: '4',
-            type: ValueSegment.TOKEN,
+            type: ValueSegmentType.TOKEN,
             value: 'triggerBody()',
             token: {
               key: 'body.$',
@@ -291,12 +291,12 @@ describe('core/utils/parameters/helper', () => {
       const parameterValue = [
           {
             id: '1',
-            type: ValueSegment.LITERAL,
+            type: ValueSegmentType.LITERAL,
             value: '{"Key1": "',
           },
           {
             id: '2',
-            type: ValueSegment.TOKEN,
+            type: ValueSegmentType.TOKEN,
             value: 'triggerBody()',
             token: {
               key: 'body.$',
@@ -307,12 +307,12 @@ describe('core/utils/parameters/helper', () => {
           },
           {
             id: '3',
-            type: ValueSegment.LITERAL,
+            type: ValueSegmentType.LITERAL,
             value: ', "Key2": ',
           },
           {
             id: '4',
-            type: ValueSegment.TOKEN,
+            type: ValueSegmentType.TOKEN,
             value: 'triggerBody()',
             token: {
               key: 'body.$',
@@ -323,7 +323,7 @@ describe('core/utils/parameters/helper', () => {
           },
           {
             id: '5',
-            type: ValueSegment.LITERAL,
+            type: ValueSegmentType.LITERAL,
             value: ', "Key3": "Value" }',
           },
         ],
@@ -337,12 +337,12 @@ describe('core/utils/parameters/helper', () => {
         {
           value: '{\n',
           id: '1',
-          type: ValueSegment.LITERAL,
+          type: ValueSegmentType.LITERAL,
         },
         {
           value: '  "newUnb3_1": ',
           id: '3',
-          type: ValueSegment.LITERAL,
+          type: ValueSegmentType.LITERAL,
         },
         {
           token: {
@@ -387,17 +387,17 @@ describe('core/utils/parameters/helper', () => {
           },
           value: 'xpath(xml(triggerBody()), \'string(/*[local-name()="DynamicsSOCSV"])\')',
           id: '4',
-          type: ValueSegment.TOKEN,
+          type: ValueSegmentType.TOKEN,
         },
         {
           value: '\n',
           id: '5',
-          type: ValueSegment.LITERAL,
+          type: ValueSegmentType.LITERAL,
         },
         {
           value: '}',
           id: '7',
-          type: ValueSegment.LITERAL,
+          type: ValueSegmentType.LITERAL,
         },
       ];
 
@@ -411,12 +411,12 @@ describe('core/utils/parameters/helper', () => {
         {
           value: '{\n',
           id: '1',
-          type: ValueSegment.LITERAL,
+          type: ValueSegmentType.LITERAL,
         },
         {
           value: '  "newUnb3_1": "',
           id: '3',
-          type: ValueSegment.LITERAL,
+          type: ValueSegmentType.LITERAL,
         },
         {
           token: {
@@ -461,17 +461,17 @@ describe('core/utils/parameters/helper', () => {
           },
           value: 'xpath(xml(triggerBody()), \'string(/*[local-name()="DynamicsSOCSV"])\')',
           id: '4',
-          type: ValueSegment.TOKEN,
+          type: ValueSegmentType.TOKEN,
         },
         {
           value: '"\n',
           id: '5',
-          type: ValueSegment.LITERAL,
+          type: ValueSegmentType.LITERAL,
         },
         {
           value: '}',
           id: '7',
-          type: ValueSegment.LITERAL,
+          type: ValueSegmentType.LITERAL,
         },
       ];
 
@@ -484,32 +484,32 @@ describe('core/utils/parameters/helper', () => {
       const parameterValue = [
           {
             id: '1',
-            type: ValueSegment.LITERAL,
+            type: ValueSegmentType.LITERAL,
             value: '{\n ',
           },
           {
             id: '2',
-            type: ValueSegment.LITERAL,
+            type: ValueSegmentType.LITERAL,
             value: '"',
           },
           {
             id: '3',
-            type: ValueSegment.LITERAL,
+            type: ValueSegmentType.LITERAL,
             value: 'Key of the row',
           },
           {
             id: '4',
-            type: ValueSegment.LITERAL,
+            type: ValueSegmentType.LITERAL,
             value: '"',
           },
           {
             id: '5',
-            type: ValueSegment.LITERAL,
+            type: ValueSegmentType.LITERAL,
             value: ' : ',
           },
           {
             id: '6',
-            type: ValueSegment.TOKEN,
+            type: ValueSegmentType.TOKEN,
             value: 'item()?[\'someItem\']',
             token: {
               key: 'outputs.$',
@@ -520,7 +520,7 @@ describe('core/utils/parameters/helper', () => {
           },
           {
             id: '7',
-            type: ValueSegment.LITERAL,
+            type: ValueSegmentType.LITERAL,
             value: '\n}',
           },
         ],
@@ -533,42 +533,42 @@ describe('core/utils/parameters/helper', () => {
       const parameterValue = [
           {
             id: '1',
-            type: ValueSegment.LITERAL,
+            type: ValueSegmentType.LITERAL,
             value: '{\n ',
           },
           {
             id: '2',
-            type: ValueSegment.LITERAL,
+            type: ValueSegmentType.LITERAL,
             value: '"',
           },
           {
             id: '3',
-            type: ValueSegment.LITERAL,
+            type: ValueSegmentType.LITERAL,
             value: 'Key of the row',
           },
           {
             id: '4',
-            type: ValueSegment.LITERAL,
+            type: ValueSegmentType.LITERAL,
             value: '"',
           },
           {
             id: '5',
-            type: ValueSegment.LITERAL,
+            type: ValueSegmentType.LITERAL,
             value: ' : ',
           },
           {
             id: '6',
-            type: ValueSegment.LITERAL,
+            type: ValueSegmentType.LITERAL,
             value: '"',
           },
           {
             id: '7',
-            type: ValueSegment.LITERAL,
+            type: ValueSegmentType.LITERAL,
             value: 'Value of the row:',
           },
           {
             id: '8',
-            type: ValueSegment.TOKEN,
+            type: ValueSegmentType.TOKEN,
             value: 'item()?[\'someItem\']',
             token: {
               key: 'outputs.$',
@@ -579,12 +579,12 @@ describe('core/utils/parameters/helper', () => {
           },
           {
             id: '9',
-            type: ValueSegment.LITERAL,
+            type: ValueSegmentType.LITERAL,
             value: '"',
           },
           {
             id: '10',
-            type: ValueSegment.LITERAL,
+            type: ValueSegmentType.LITERAL,
             value: '\n}',
           },
         ],
@@ -597,37 +597,37 @@ describe('core/utils/parameters/helper', () => {
       const parameterValue = [
           {
             id: '1',
-            type: ValueSegment.LITERAL,
+            type: ValueSegmentType.LITERAL,
             value: '{\n ',
           },
           {
             id: '2',
-            type: ValueSegment.LITERAL,
+            type: ValueSegmentType.LITERAL,
             value: '"',
           },
           {
             id: '3',
-            type: ValueSegment.LITERAL,
+            type: ValueSegmentType.LITERAL,
             value: 'Key of the row',
           },
           {
             id: '4',
-            type: ValueSegment.LITERAL,
+            type: ValueSegmentType.LITERAL,
             value: '"',
           },
           {
             id: '5',
-            type: ValueSegment.LITERAL,
+            type: ValueSegmentType.LITERAL,
             value: ' : ',
           },
           {
             id: '6',
-            type: ValueSegment.LITERAL,
+            type: ValueSegmentType.LITERAL,
             value: '"',
           },
           {
             id: '7',
-            type: ValueSegment.TOKEN,
+            type: ValueSegmentType.TOKEN,
             value: 'item()?[\'someItem1\']',
             token: {
               key: 'outputs.$',
@@ -638,7 +638,7 @@ describe('core/utils/parameters/helper', () => {
           },
           {
             id: '8',
-            type: ValueSegment.TOKEN,
+            type: ValueSegmentType.TOKEN,
             value: 'item()?[\'someItem2\']',
             token: {
               key: 'outputs.$',
@@ -649,12 +649,12 @@ describe('core/utils/parameters/helper', () => {
           },
           {
             id: '9',
-            type: ValueSegment.LITERAL,
+            type: ValueSegmentType.LITERAL,
             value: '"',
           },
           {
             id: '10',
-            type: ValueSegment.LITERAL,
+            type: ValueSegmentType.LITERAL,
             value: '\n}',
           },
         ],
@@ -665,10 +665,10 @@ describe('core/utils/parameters/helper', () => {
   });
 
   describe('parameterValueToString', () => {
-    let parameter: ParameterInfo;
+    let parameter: Parameter;
     const emptyLiteral: ValueSegment = {
       id: 'key',
-      type: ValueSegment.LITERAL,
+      type: ValueSegmentType.LITERAL,
       value: '',
     };
 
@@ -689,12 +689,12 @@ describe('core/utils/parameters/helper', () => {
       parameter.value = [
         {
           id: '1',
-          type: ValueSegment.LITERAL,
+          type: ValueSegmentType.LITERAL,
           value: 'Test-',
         },
         {
           id: '2',
-          type: ValueSegment.TOKEN,
+          type: ValueSegmentType.TOKEN,
           value: 'triggerBody()',
           token: {
             key: 'body.$',
@@ -716,12 +716,12 @@ describe('core/utils/parameters/helper', () => {
       parameter.value = [
         {
           id: '1',
-          type: ValueSegment.LITERAL,
+          type: ValueSegmentType.LITERAL,
           value: 'Test-',
         },
         {
           id: '2',
-          type: ValueSegment.TOKEN,
+          type: ValueSegmentType.TOKEN,
           value: 'triggerBody()',
           token: {
             key: 'body.$',
@@ -742,7 +742,7 @@ describe('core/utils/parameters/helper', () => {
       parameter.value = [
         {
           id: '1',
-          type: ValueSegment.TOKEN,
+          type: ValueSegmentType.TOKEN,
           value: 'triggerBody()',
           token: {
             key: 'body.$',
@@ -763,7 +763,7 @@ describe('core/utils/parameters/helper', () => {
       parameter.value = [
         {
           id: '1',
-          type: ValueSegment.TOKEN,
+          type: ValueSegmentType.TOKEN,
           value: 'triggerBody()',
           token: {
             key: 'body.$',
@@ -785,7 +785,7 @@ describe('core/utils/parameters/helper', () => {
       parameter.value = [
         {
           id: '1',
-          type: ValueSegment.TOKEN,
+          type: ValueSegmentType.TOKEN,
           value: 'triggerBody()',
           token: {
             key: 'body.$',
@@ -806,12 +806,12 @@ describe('core/utils/parameters/helper', () => {
       parameter.value = [
         {
           id: '1',
-          type: ValueSegment.LITERAL,
+          type: ValueSegmentType.LITERAL,
           value: 'Test-',
         },
         {
           id: '2',
-          type: ValueSegment.TOKEN,
+          type: ValueSegmentType.TOKEN,
           value: 'triggerBody()',
           token: {
             key: 'body.$',
@@ -832,7 +832,7 @@ describe('core/utils/parameters/helper', () => {
       parameter.value = [
         {
           id: '1',
-          type: ValueSegment.TOKEN,
+          type: ValueSegmentType.TOKEN,
           value: 'triggerBody()',
           token: {
             key: 'body.$',
@@ -854,7 +854,7 @@ describe('core/utils/parameters/helper', () => {
       parameter.value = [
         {
           id: '1',
-          type: ValueSegment.TOKEN,
+          type: ValueSegmentType.TOKEN,
           value: 'triggerBody()',
           token: {
             key: 'body.$',
@@ -887,7 +887,7 @@ describe('core/utils/parameters/helper', () => {
       parameter.value = [
         {
           id: '1',
-          type: ValueSegment.TOKEN,
+          type: ValueSegmentType.TOKEN,
           value: 'triggerBody()',
           token: {
             key: 'body.$',
@@ -909,7 +909,7 @@ describe('core/utils/parameters/helper', () => {
       parameter.value = [
         {
           id: '1',
-          type: ValueSegment.TOKEN,
+          type: ValueSegmentType.TOKEN,
           value: 'triggerBody()',
           token: {
             key: 'body.$',
@@ -931,7 +931,7 @@ describe('core/utils/parameters/helper', () => {
       parameter.value = [
         {
           id: '1',
-          type: ValueSegment.TOKEN,
+          type: ValueSegmentType.TOKEN,
           value: 'triggerBody()',
           token: {
             key: 'body.$',
@@ -952,7 +952,7 @@ describe('core/utils/parameters/helper', () => {
       parameter.value = [
         {
           id: '1',
-          type: ValueSegment.TOKEN,
+          type: ValueSegmentType.TOKEN,
           value: 'triggerBody()',
           token: {
             key: 'body.$',
@@ -974,7 +974,7 @@ describe('core/utils/parameters/helper', () => {
       parameter.value = [
         {
           id: '1',
-          type: ValueSegment.TOKEN,
+          type: ValueSegmentType.TOKEN,
           value: 'triggerBody()',
           token: {
             key: 'body.$',
@@ -995,7 +995,7 @@ describe('core/utils/parameters/helper', () => {
       parameter.value = [
         {
           id: '1',
-          type: ValueSegment.TOKEN,
+          type: ValueSegmentType.TOKEN,
           value: 'triggerBody()',
           token: {
             key: 'body.$',
@@ -1017,7 +1017,7 @@ describe('core/utils/parameters/helper', () => {
       parameter.value = [
         {
           id: '1',
-          type: ValueSegment.TOKEN,
+          type: ValueSegmentType.TOKEN,
           value: 'triggerBody()',
           token: {
             key: 'body.$',
@@ -1038,7 +1038,7 @@ describe('core/utils/parameters/helper', () => {
       parameter.value = [
         {
           id: '1',
-          type: ValueSegment.TOKEN,
+          type: ValueSegmentType.TOKEN,
           value: 'triggerBody()',
           token: {
             key: 'body.$',
@@ -1060,7 +1060,7 @@ describe('core/utils/parameters/helper', () => {
       parameter.value = [
         {
           id: '1',
-          type: ValueSegment.TOKEN,
+          type: ValueSegmentType.TOKEN,
           value: 'triggerBody()',
           token: {
             key: 'body.$',
@@ -1081,7 +1081,7 @@ describe('core/utils/parameters/helper', () => {
       parameter.value = [
         {
           id: '1',
-          type: ValueSegment.LITERAL,
+          type: ValueSegmentType.LITERAL,
           value: 'A STRING',
         },
       ];
@@ -1096,7 +1096,7 @@ describe('core/utils/parameters/helper', () => {
       parameter.value = [
         {
           id: '1',
-          type: ValueSegment.LITERAL,
+          type: ValueSegmentType.LITERAL,
           value: 'A STRING',
         },
       ];
@@ -1111,7 +1111,7 @@ describe('core/utils/parameters/helper', () => {
       parameter.value = [
         {
           id: '1',
-          type: ValueSegment.LITERAL,
+          type: ValueSegmentType.LITERAL,
           value: 'A STRING',
         },
       ];
@@ -1127,7 +1127,7 @@ describe('core/utils/parameters/helper', () => {
       parameter.value = [
         {
           id: '1',
-          type: ValueSegment.LITERAL,
+          type: ValueSegmentType.LITERAL,
           value: 'A STRING',
         },
       ];
@@ -1142,7 +1142,7 @@ describe('core/utils/parameters/helper', () => {
       parameter.value = [
         {
           id: '1',
-          type: ValueSegment.LITERAL,
+          type: ValueSegmentType.LITERAL,
           value: 'A STRING',
         },
       ];
@@ -1157,7 +1157,7 @@ describe('core/utils/parameters/helper', () => {
       parameter.value = [
         {
           id: '1',
-          type: ValueSegment.TOKEN,
+          type: ValueSegmentType.TOKEN,
           value: '@guid()',
         },
       ];
@@ -1171,7 +1171,7 @@ describe('core/utils/parameters/helper', () => {
       parameter.value = [
         {
           id: '1',
-          type: ValueSegment.TOKEN,
+          type: ValueSegmentType.TOKEN,
           token: {
             key: 'userentered',
             tokenType: TokenType.OUTPUTS,
@@ -1190,7 +1190,7 @@ describe('core/utils/parameters/helper', () => {
       parameter.value = [
         {
           id: '1',
-          type: ValueSegment.LITERAL,
+          type: ValueSegmentType.LITERAL,
           value: '0',
         },
       ];
@@ -1204,7 +1204,7 @@ describe('core/utils/parameters/helper', () => {
       parameter.value = [
         {
           id: '1',
-          type: ValueSegment.LITERAL,
+          type: ValueSegmentType.LITERAL,
           value: `user entered text`,
         },
       ];
@@ -1218,7 +1218,7 @@ describe('core/utils/parameters/helper', () => {
       parameter.value = [
         {
           id: '1',
-          type: ValueSegment.LITERAL,
+          type: ValueSegmentType.LITERAL,
           value: `user entered text`,
         },
       ];
@@ -1232,7 +1232,7 @@ describe('core/utils/parameters/helper', () => {
       parameter.value = [
         {
           id: '1',
-          type: ValueSegment.TOKEN,
+          type: ValueSegmentType.TOKEN,
           value: `body('action')['path']`,
           token: {
             key: 'body.$.path',
@@ -1256,7 +1256,7 @@ describe('core/utils/parameters/helper', () => {
         parameter.value = [
           {
             id: '1',
-            type: ValueSegment.TOKEN,
+            type: ValueSegmentType.TOKEN,
             value: `body('action')['path']`,
             token: {
               key: 'body.$.path',
@@ -1279,7 +1279,7 @@ describe('core/utils/parameters/helper', () => {
       parameter.value = [
         {
           id: '1',
-          type: ValueSegment.TOKEN,
+          type: ValueSegmentType.TOKEN,
           value: `body('action')['path']`,
           token: {
             key: 'body.$.path',
@@ -1302,12 +1302,12 @@ describe('core/utils/parameters/helper', () => {
       parameter.value = [
         {
           id: '2',
-          type: ValueSegment.LITERAL,
+          type: ValueSegmentType.LITERAL,
           value: 'Hello, ',
         },
         {
           id: '1',
-          type: ValueSegment.TOKEN,
+          type: ValueSegmentType.TOKEN,
           value: `body('action')['name']`,
           token: {
             key: 'body.$.name',
@@ -1330,12 +1330,12 @@ describe('core/utils/parameters/helper', () => {
       parameter.value = [
         {
           id: '1',
-          type: ValueSegment.LITERAL,
+          type: ValueSegmentType.LITERAL,
           value: 'Blah blah',
         },
         {
           id: '2',
-          type: ValueSegment.TOKEN,
+          type: ValueSegmentType.TOKEN,
           value: `body('action')['name']`,
           token: {
             key: 'body.$.name',
@@ -1358,12 +1358,12 @@ describe('core/utils/parameters/helper', () => {
       parameter.value = [
         {
           id: '1',
-          type: ValueSegment.LITERAL,
+          type: ValueSegmentType.LITERAL,
           value: 'Blah blah',
         },
         {
           id: '2',
-          type: ValueSegment.TOKEN,
+          type: ValueSegmentType.TOKEN,
           value: `body('action')['name']`,
           token: {
             key: 'body.$.name',
@@ -1377,7 +1377,7 @@ describe('core/utils/parameters/helper', () => {
         },
         {
           id: '3',
-          type: ValueSegment.TOKEN,
+          type: ValueSegmentType.TOKEN,
           value: `body('action')['name']`,
           token: {
             key: 'body.$.name',
@@ -1400,7 +1400,7 @@ describe('core/utils/parameters/helper', () => {
       parameter.value = [
         {
           id: '1',
-          type: ValueSegment.LITERAL,
+          type: ValueSegmentType.LITERAL,
           value: 'Some url value',
         },
       ];
@@ -1416,7 +1416,7 @@ describe('core/utils/parameters/helper', () => {
       parameter.value = [
         {
           id: '1',
-          type: ValueSegment.TOKEN,
+          type: ValueSegmentType.TOKEN,
           value: `triggerBody()['name']`,
           token: {
             key: 'body.$.name',
@@ -1439,12 +1439,12 @@ describe('core/utils/parameters/helper', () => {
       parameter.value = [
         {
           id: '1',
-          type: ValueSegment.LITERAL,
+          type: ValueSegmentType.LITERAL,
           value: `Some value `,
         },
         {
           id: '1',
-          type: ValueSegment.TOKEN,
+          type: ValueSegmentType.TOKEN,
           value: `triggerBody()['name']`,
           token: {
             key: 'body.$.name',
@@ -1456,7 +1456,7 @@ describe('core/utils/parameters/helper', () => {
         },
         {
           id: '1',
-          type: ValueSegment.LITERAL,
+          type: ValueSegmentType.LITERAL,
           value: ` ending value`,
         },
       ];
@@ -1472,7 +1472,7 @@ describe('core/utils/parameters/helper', () => {
       parameter.value = [
         {
           id: '1',
-          type: ValueSegment.TOKEN,
+          type: ValueSegmentType.TOKEN,
           value: `triggerBody()`,
           token: {
             key: 'body.$',
@@ -1496,7 +1496,7 @@ describe('core/utils/parameters/helper', () => {
       parameter.value = [
         {
           id: '1',
-          type: ValueSegment.TOKEN,
+          type: ValueSegmentType.TOKEN,
           value: `triggerBody()`,
           token: {
             key: 'body.$',
@@ -1508,7 +1508,7 @@ describe('core/utils/parameters/helper', () => {
         },
         {
           id: '2',
-          type: ValueSegment.LITERAL,
+          type: ValueSegmentType.LITERAL,
           value: 'Blah',
         },
       ];
@@ -1525,7 +1525,7 @@ describe('core/utils/parameters/helper', () => {
       parameter.value = [
         {
           id: '1',
-          type: ValueSegment.TOKEN,
+          type: ValueSegmentType.TOKEN,
           value: `triggerBody()['id']`,
           token: {
             key: 'body.$.id',
@@ -1549,7 +1549,7 @@ describe('core/utils/parameters/helper', () => {
       parameter.value = [
         {
           id: '1',
-          type: ValueSegment.LITERAL,
+          type: ValueSegmentType.LITERAL,
           value: '2',
         },
       ];
@@ -1566,12 +1566,12 @@ describe('core/utils/parameters/helper', () => {
       parameter.value = [
         {
           id: '1',
-          type: ValueSegment.LITERAL,
+          type: ValueSegmentType.LITERAL,
           value: '',
         },
         {
           id: '1',
-          type: ValueSegment.TOKEN,
+          type: ValueSegmentType.TOKEN,
           value: `body('A1')['Id']`,
           token: {
             key: 'body.$.Id',
@@ -1607,7 +1607,7 @@ describe('core/utils/parameters/helper', () => {
       parameter.value = [
         {
           id: '1',
-          type: ValueSegment.LITERAL,
+          type: ValueSegmentType.LITERAL,
           value: '{"Accept-Language": "en-US"}',
         },
       ];
@@ -1621,12 +1621,12 @@ describe('core/utils/parameters/helper', () => {
       parameter.value = [
         {
           id: '1',
-          type: ValueSegment.LITERAL,
+          type: ValueSegmentType.LITERAL,
           value: '{"Accept-Language": ',
         },
         {
           id: '2',
-          type: ValueSegment.TOKEN,
+          type: ValueSegmentType.TOKEN,
           value: `triggerBody()['id']`,
           token: {
             key: 'body.$.id',
@@ -1637,12 +1637,12 @@ describe('core/utils/parameters/helper', () => {
         },
         {
           id: '3',
-          type: ValueSegment.LITERAL,
+          type: ValueSegmentType.LITERAL,
           value: ',"',
         },
         {
           id: '4',
-          type: ValueSegment.TOKEN,
+          type: ValueSegmentType.TOKEN,
           value: `body('A0')['id']`,
           token: {
             key: 'body.$.id',
@@ -1654,7 +1654,7 @@ describe('core/utils/parameters/helper', () => {
         },
         {
           id: '5',
-          type: ValueSegment.TOKEN,
+          type: ValueSegmentType.TOKEN,
           value: `body('A1')['id']`,
           token: {
             key: 'body.$.id',
@@ -1666,12 +1666,12 @@ describe('core/utils/parameters/helper', () => {
         },
         {
           id: '6',
-          type: ValueSegment.LITERAL,
+          type: ValueSegmentType.LITERAL,
           value: '": "gzip, ',
         },
         {
           id: '7',
-          type: ValueSegment.TOKEN,
+          type: ValueSegmentType.TOKEN,
           value: `body('A1')['property']`,
           token: {
             key: 'body.$.property',
@@ -1683,7 +1683,7 @@ describe('core/utils/parameters/helper', () => {
         },
         {
           id: '8',
-          type: ValueSegment.LITERAL,
+          type: ValueSegmentType.LITERAL,
           value: '"}',
         },
       ];
@@ -1700,7 +1700,7 @@ describe('core/utils/parameters/helper', () => {
       parameter.value = [
         {
           id: '1',
-          type: ValueSegment.LITERAL,
+          type: ValueSegmentType.LITERAL,
           value: '{"Invalid json}',
         },
       ];
@@ -1715,12 +1715,12 @@ describe('core/utils/parameters/helper', () => {
       parameter.value = [
         {
           id: '0.1',
-          type: ValueSegment.LITERAL,
+          type: ValueSegmentType.LITERAL,
           value: 'Random text ',
         },
         {
           id: '0.2',
-          type: ValueSegment.TOKEN,
+          type: ValueSegmentType.TOKEN,
           value: `triggerBody()['ID']`,
           token: {
             key: 'body.$.ID',
@@ -1744,12 +1744,12 @@ describe('core/utils/parameters/helper', () => {
       parameter.value = [
         {
           id: '0.1',
-          type: ValueSegment.LITERAL,
+          type: ValueSegmentType.LITERAL,
           value: '  { "Random text ',
         },
         {
           id: '0.2',
-          type: ValueSegment.TOKEN,
+          type: ValueSegmentType.TOKEN,
           value: `triggerBody()['ID']`,
           token: {
             key: 'body.$.ID',
@@ -1760,12 +1760,12 @@ describe('core/utils/parameters/helper', () => {
         },
         {
           id: '0.3',
-          type: ValueSegment.LITERAL,
+          type: ValueSegmentType.LITERAL,
           value: '": ',
         },
         {
           id: '0.4',
-          type: ValueSegment.TOKEN,
+          type: ValueSegmentType.TOKEN,
           value: `triggerBody()['Value']`,
           token: {
             key: 'body.$.Value',
@@ -1776,7 +1776,7 @@ describe('core/utils/parameters/helper', () => {
         },
         {
           id: '0.5',
-          type: ValueSegment.LITERAL,
+          type: ValueSegmentType.LITERAL,
           value: '}  ',
         },
       ];
@@ -1794,17 +1794,17 @@ describe('core/utils/parameters/helper', () => {
       parameter.value = [
         {
           id: '0.1',
-          type: ValueSegment.LITERAL,
+          type: ValueSegmentType.LITERAL,
           value: '  [{ "Name',
         },
         {
           id: '0.3',
-          type: ValueSegment.LITERAL,
+          type: ValueSegmentType.LITERAL,
           value: '": ',
         },
         {
           id: '0.4',
-          type: ValueSegment.TOKEN,
+          type: ValueSegmentType.TOKEN,
           value: `triggerBody()['Value']`,
           token: {
             key: 'body.$.Value',
@@ -1815,12 +1815,12 @@ describe('core/utils/parameters/helper', () => {
         },
         {
           id: '0.5',
-          type: ValueSegment.LITERAL,
+          type: ValueSegmentType.LITERAL,
           value: '}',
         },
         {
           id: '0.6',
-          type: ValueSegment.LITERAL,
+          type: ValueSegmentType.LITERAL,
           value: ']',
         },
       ];

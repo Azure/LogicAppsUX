@@ -36,11 +36,11 @@ export class TokenNode extends DecoratorNode<JSX.Element> {
   __description?: string;
   __readonly?: boolean;
 
-  static getType() {
+  static override getType() {
     return 'token';
   }
 
-  static clone(node: TokenNode) {
+  static override clone(node: TokenNode) {
     return new TokenNode(
       node.__title,
       node.__data,
@@ -53,7 +53,7 @@ export class TokenNode extends DecoratorNode<JSX.Element> {
     );
   }
 
-  static importJSON(serializedTokenNode: SerializedTokenNode): TokenNode {
+  static override importJSON(serializedTokenNode: SerializedTokenNode): TokenNode {
     return new TokenNode(
       serializedTokenNode.title,
       serializedTokenNode.data,
@@ -64,7 +64,7 @@ export class TokenNode extends DecoratorNode<JSX.Element> {
     );
   }
 
-  exportJSON(): SerializedTokenNode {
+  override exportJSON(): SerializedTokenNode {
     return {
       title: this.__title,
       data: this.__data,
@@ -80,11 +80,11 @@ export class TokenNode extends DecoratorNode<JSX.Element> {
   // This is to enable copy to clipboard,
   // even though there are some cases where @{} isn't needed,
   // for the time being it's easier to always include it when copying
-  getTextContent(_includeInert?: boolean | undefined, _includeDirectionless?: false | undefined): string {
+  override getTextContent(_includeInert?: boolean | undefined, _includeDirectionless?: false | undefined): string {
     return `@{${this.__data.value}}`;
   }
 
-  toString(): string {
+  override toString(): string {
     return this.getTextContent();
   }
 
@@ -119,17 +119,17 @@ export class TokenNode extends DecoratorNode<JSX.Element> {
     this.__readonly = readonly;
   }
 
-  createDOM() {
+  override createDOM() {
     const dom = document.createElement('span');
     dom.id = this.toString();
     return dom;
   }
 
-  updateDOM() {
+  override updateDOM() {
     return false;
   }
 
-  decorate() {
+  override decorate() {
     return (
       <InputToken
         value={this.__value}

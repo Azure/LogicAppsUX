@@ -1,9 +1,9 @@
 import type { Token } from './models/token';
-import type { Expression, ExpressionFunction, ExpressionLiteral } from '@microsoft/parsers-logic-apps';
+import type { ParserExpression, ExpressionFunction, ExpressionLiteral } from '@microsoft/parsers-logic-apps';
 import { ExpressionType } from '@microsoft/parsers-logic-apps';
 import { UnsupportedException } from '@microsoft/utils-logic-apps';
 
-export function getExpressionTokenTitle(expression: Expression): string {
+export function getExpressionTokenTitle(expression: ParserExpression): string {
   switch (expression.type) {
     case ExpressionType.NullLiteral:
     case ExpressionType.BooleanLiteral:
@@ -19,7 +19,7 @@ export function getExpressionTokenTitle(expression: Expression): string {
   }
 }
 
-export function getExpressionOutput(expression: Expression, outputTokenMap: Record<string, Token>): Token | undefined {
+export function getExpressionOutput(expression: ParserExpression, outputTokenMap: Record<string, Token>): Token | undefined {
   switch (expression.type) {
     case ExpressionType.NullLiteral:
     case ExpressionType.BooleanLiteral:

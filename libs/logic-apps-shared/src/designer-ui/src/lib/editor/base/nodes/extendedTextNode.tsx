@@ -16,15 +16,15 @@ export type SerializedExtendedTextNode = Spread<
 >;
 
 export class ExtentedTextNode extends TextNode {
-  static getType(): string {
+  static override getType(): string {
     return 'extended-text';
   }
 
-  static clone(node: ExtentedTextNode): ExtentedTextNode {
+  static override clone(node: ExtentedTextNode): ExtentedTextNode {
     return new ExtentedTextNode(node.__text, node.__key);
   }
 
-  static importDOM(): DOMConversionMap | null {
+  static override importDOM(): DOMConversionMap | null {
     const importers = TextNode.importDOM();
     return {
       ...importers,
@@ -55,11 +55,11 @@ export class ExtentedTextNode extends TextNode {
     };
   }
 
-  static importJSON(serializedNode: SerializedTextNode): TextNode {
+  static override importJSON(serializedNode: SerializedTextNode): TextNode {
     return TextNode.importJSON(serializedNode);
   }
 
-  exportJSON(): SerializedExtendedTextNode {
+  override exportJSON(): SerializedExtendedTextNode {
     return {
       text: this.__text,
       format: this.__format,

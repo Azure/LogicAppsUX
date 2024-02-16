@@ -11,8 +11,7 @@ import type { GetValueSegmentHandler } from './tokenpickersection/tokenpickeropt
 import { getExpressionTokenTitle, getExpressionOutput } from './util';
 import { PrimaryButton } from '@fluentui/react';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
-import type { Expression } from '@microsoft/parsers-logic-apps';
-import { ExpressionExceptionCode, ExpressionParser, ScannerException } from '@microsoft/parsers-logic-apps';
+import { ExpressionExceptionCode, ExpressionParser, ParserExpression, ScannerException } from '@microsoft/parsers-logic-apps';
 import { guid } from '@microsoft/utils-logic-apps';
 import type { LexicalEditor, NodeKey } from 'lexical';
 import { useMemo } from 'react';
@@ -96,7 +95,7 @@ export function TokenPickerFooter({
   };
 
   const onUpdateOrAddClicked = () => {
-    let currExpression: Expression | null = null;
+    let currExpression: ParserExpression | null = null;
     try {
       currExpression = ExpressionParser.parseExpression(expression.value);
     } catch (ex) {

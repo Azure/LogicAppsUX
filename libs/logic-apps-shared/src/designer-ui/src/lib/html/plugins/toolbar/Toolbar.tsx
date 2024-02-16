@@ -1,3 +1,4 @@
+import { ValueSegment } from '../../../editor';
 import { getChildrenNodes } from '../../../editor/base/utils/helper';
 import { parseHtmlSegments, parseSegments } from '../../../editor/base/utils/parsesegments';
 import clockWiseArrowDark from '../icons/dark/arrow-clockwise.svg';
@@ -20,7 +21,6 @@ import { ListPlugin } from '@lexical/react/LexicalListPlugin';
 import { $isHeadingNode } from '@lexical/rich-text';
 import { $getSelectionStyleValueForProperty } from '@lexical/selection';
 import { mergeRegister, $getNearestNodeOfType, $findMatchingParent } from '@lexical/utils';
-import type { ValueSegment } from '@microsoft/designer-client-services-logic-apps';
 import { isApple } from '@microsoft/utils-logic-apps';
 import {
   $getRoot,
