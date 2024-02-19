@@ -1,10 +1,10 @@
 import { getClientBuiltInConnectors, getClientBuiltInOperations, BaseSearchService } from '../base';
 import * as ClientOperationsData from '../base/operations';
-import type { BaseSearchServiceOptions, DiscoveryOpArray } from '../base/search';
+import type { BaseSearchServiceOptions } from '../base/search';
 import type { ContinuationTokenResponse } from '../common/azure';
 import type { QueryParameters } from '../httpClient';
 import * as OperationsData from './operations';
-import type { Connector, DiscoveryOperation, DiscoveryResultTypes, SomeKindOfAzureOperationDiscovery } from '@microsoft/utils-logic-apps';
+import type { Connector, DiscoveryOpArray, SomeKindOfAzureOperationDiscovery } from '@microsoft/utils-logic-apps';
 
 const ISE_RESOURCE_ID = 'properties/integrationServiceEnvironmentResourceId';
 
@@ -36,7 +36,12 @@ export class ConsumptionSearchService extends BaseSearchService {
     return this._updateOperationsIfNeeded(azureOperations);
   }
 
-  public async getCustomOperationsByPage(page: number): Promise<DiscoveryOperation<DiscoveryResultTypes>[]> {
+  public override async getActiveSearchOperations?(searchTerm: string): Promise<DiscoveryOpArray> {
+    const activeSearchOperations = (await super.getActiveSearchOperations?.(searchTerm)) ?? [];
+    return this._updateOperationsIfNeeded(activeSearchOperations);
+  }
+
+  public async getCustomOperationsByPage(page: number): Promise<DiscoveryOpArray> {
     if (this._isDev) return Promise.resolve([]);
 
     try {

@@ -6,7 +6,7 @@ import { OperationSearchCard } from './operationSearchCard';
 import { OperationSearchGroup } from './operationSearchGroup';
 import { List, Text } from '@fluentui/react';
 import { Spinner } from '@fluentui/react-components';
-import type { DiscoveryOperation, DiscoveryResultTypes } from '@microsoft/utils-logic-apps';
+import type { DiscoveryOperation, DiscoveryResultTypes, DiscoveryOpArray } from '@microsoft/utils-logic-apps';
 import { isBuiltInConnector } from '@microsoft/utils-logic-apps';
 import type { PropsWithChildren } from 'react';
 import React, { useMemo } from 'react';
@@ -16,7 +16,7 @@ export type SearchResultsGridProps = {
   isLoadingMore: boolean;
   isLoadingSearch: boolean;
   searchTerm: string;
-  operationSearchResults: DiscoveryOperation<DiscoveryResultTypes>[];
+  operationSearchResults: DiscoveryOpArray;
   onConnectorClick: (connectorId: string) => void;
   onOperationClick: (operationId: string, apiId?: string) => void;
   displayRuntimeInfo: boolean;

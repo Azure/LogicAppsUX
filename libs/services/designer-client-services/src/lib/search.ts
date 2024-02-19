@@ -5,6 +5,7 @@ import type {
   DiscoveryResultTypes,
   DiscoveryWorkflow,
   DiscoveryWorkflowTrigger,
+  DiscoveryOpArray,
 } from '@microsoft/utils-logic-apps';
 import { AssertionErrorCode, AssertionException } from '@microsoft/utils-logic-apps';
 
@@ -18,18 +19,19 @@ export interface ISearchService {
   getAzureConnectorsByPage(page: number): Promise<Connector[]>;
   getCustomConnectorsByNextlink(nextlink?: string): Promise<{ nextlink?: string; value: Connector[] }>;
   getBuiltInConnectors(): Promise<Connector[]>;
-  getAllOperations(): Promise<DiscoveryOperation<DiscoveryResultTypes>[]>;
+  getAllOperations(): Promise<DiscoveryOpArray>;
   getRequestWorkflows?(): Promise<ArmResource<DiscoveryWorkflow>[]>;
   getBatchWorkflows?(): Promise<ArmResource<DiscoveryWorkflow>[]>;
   getWorkflowTriggers?(workflowId: string): Promise<ArmResource<DiscoveryWorkflowTrigger>[]>;
-  getAzureOperationsByPage(page: number): Promise<DiscoveryOperation<DiscoveryResultTypes>[]>;
-  getCustomOperationsByPage(page: number): Promise<DiscoveryOperation<DiscoveryResultTypes>[]>;
-  getBuiltInOperations(): Promise<DiscoveryOperation<DiscoveryResultTypes>[]>;
-  searchOperations?(searchTerm: string, actionType?: string, runtimeFilter?: string): Promise<DiscoveryOperation<DiscoveryResultTypes>[]>;
+  getAzureOperationsByPage(page: number): Promise<DiscoveryOpArray>;
+  getCustomOperationsByPage(page: number): Promise<DiscoveryOpArray>;
+  getActiveSearchOperations?(searchTerm: string, actionType?: string, runtimeFilter?: string): Promise<DiscoveryOpArray>;
+  getBuiltInOperations(): Promise<DiscoveryOpArray>;
+  searchOperations?(searchTerm: string, actionType?: string, runtimeFilter?: string): Promise<DiscoveryOpArray>;
   getRuntimeCategories?(): OperationRuntimeCategory[];
   filterConnector?(connector: Connector, runtimeFilter: string): boolean;
   getOperationById?(operationId: string): Promise<DiscoveryOperation<DiscoveryResultTypes> | undefined>;
-  getOperationsByConnector?(connectorId: string, actionType?: string): Promise<DiscoveryOperation<DiscoveryResultTypes>[]>;
+  getOperationsByConnector?(connectorId: string, actionType?: string): Promise<DiscoveryOpArray>;
   sortConnectors?(connectors: Connector[]): Connector[];
 }
 
@@ -49,5 +51,5 @@ export const SearchService = (): ISearchService => {
 };
 
 export interface SearchResult {
-  searchOperations: DiscoveryOperation<DiscoveryResultTypes>[];
+  searchOperations: DiscoveryOpArray;
 }
