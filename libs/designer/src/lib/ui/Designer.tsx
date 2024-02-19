@@ -215,7 +215,7 @@ export const Designer = (props: DesignerProps) => {
   };
 
   const isInitialized = useNodesInitialized();
-  const preloadSearch = useMemo(() => (isMonitoringView || isReadOnly) && isInitialized, [isMonitoringView, isReadOnly, isInitialized]);
+  const preloadSearch = useMemo(() => !(isMonitoringView || isReadOnly) && isInitialized, [isMonitoringView, isReadOnly, isInitialized]);
 
   const recurrenceInterval = useHostOptions().recurrenceInterval;
 
