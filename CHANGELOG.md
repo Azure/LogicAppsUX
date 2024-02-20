@@ -1,4 +1,24 @@
 # Logic Apps Designer
+## [2.116.0](https://github.com/Azure/LogicAppsUX/compare/v2.115.0...v2.116.0) (2024-02-20)
+
+
+### Features
+
+* **designer:**  [ConnectionCreation] Adding hidden parameter field in ConnectionCreationInfo to pass selected credential id ([#4193](https://github.com/Azure/LogicAppsUX/issues/4193)) ([2d43902](https://github.com/Azure/LogicAppsUX/commit/2d43902c95b9eeb9ec9536939309c3224431e8e9))
+
+
+### Bug Fixes
+
+* **designer-ui:** Retain tokens inserted into HTML editor if they contain `}` ([#4198](https://github.com/Azure/LogicAppsUX/issues/4198)) ([04caeae](https://github.com/Azure/LogicAppsUX/commit/04caeaefb70a68dd678c8ff52487cde9bc498110))
+* **designer:** Fix issue in run history page where loops pager would only go to first error when clicking next failure ([#4216](https://github.com/Azure/LogicAppsUX/issues/4216)) ([94bcc06](https://github.com/Azure/LogicAppsUX/commit/94bcc06b171fa9c38bd629d8755ed4e23cd2e685))
+* **designer:** Fix issue where some strings wouldn't be localized in azure portal and power automate ([#4213](https://github.com/Azure/LogicAppsUX/issues/4213)) ([620ba95](https://github.com/Azure/LogicAppsUX/commit/620ba953f0d45b3b1edc2a761de3f5f8e273c65a))
+* **Designer:** Fixed Consumption split on issue ([#4206](https://github.com/Azure/LogicAppsUX/issues/4206)) ([547faaf](https://github.com/Azure/LogicAppsUX/commit/547faaf4978dda3630239a1435e8c211a2b4b411))
+* **designer:** Have better validaiton for array values in parameters ([#4217](https://github.com/Azure/LogicAppsUX/issues/4217)) ([4ea8d9d](https://github.com/Azure/LogicAppsUX/commit/4ea8d9d57a6ceef1ca01f4bcf0746faf23158176))
+* **designer:** Seperate values of degree of parallelism for triggers and actions ([#4224](https://github.com/Azure/LogicAppsUX/issues/4224)) ([b982008](https://github.com/Azure/LogicAppsUX/commit/b98200870d9c5eb85687da6c8c6e5caedad99d29))
+* **designer:** Update Existing Input Parameters For Subsequent Actions Once Dynamic Data is Fetched ([#4215](https://github.com/Azure/LogicAppsUX/issues/4215)) ([f02d814](https://github.com/Azure/LogicAppsUX/commit/f02d81499b0374831573deecf324e13f66203c66))
+* **vscode:** Fix total overwriting of host and local settings JSON files ([#4205](https://github.com/Azure/LogicAppsUX/issues/4205)) ([360405e](https://github.com/Azure/LogicAppsUX/commit/360405e3d2240db3c3ff968775e0ef77537ae658))
+* **vscode:** Remove double onboarding binaries validation ([#4203](https://github.com/Azure/LogicAppsUX/issues/4203)) ([15e0ea8](https://github.com/Azure/LogicAppsUX/commit/15e0ea8fd991da4fee15ba0c8ac313ccaac8d4e4))
+
 ## [2.115.0](https://github.com/Azure/LogicAppsUX/compare/v2.114.0...v2.115.0) (2024-02-15)
 
 ## [2.114.0](https://github.com/Azure/LogicAppsUX/compare/v2.113.0...v2.114.0) (2024-02-14)
