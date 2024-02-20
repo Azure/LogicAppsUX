@@ -1,3 +1,4 @@
+import { isHighContrastBlack } from '../utils';
 import {
   type AssertionUpdateHandler,
   type AssertionDeleteHandler,
@@ -5,7 +6,7 @@ import {
   Assertion,
   type GetAssertionTokenPickerHandler,
 } from './assertion';
-import { List, Text } from '@fluentui/react';
+import { List, Text, useTheme } from '@fluentui/react';
 import { Button } from '@fluentui/react-components';
 import { bundleIcon, Dismiss24Filled, Dismiss24Regular, Add24Filled, Add24Regular } from '@fluentui/react-icons';
 import type { AssertionDefintion } from '@microsoft/utils-logic-apps';
@@ -35,6 +36,8 @@ export function Assertions({
   validationErrors,
 }: AssertionsProps): JSX.Element {
   const intl = useIntl();
+  const theme = useTheme();
+  const isInverted = isHighContrastBlack() || theme.isInverted;
 
   const titleText = intl.formatMessage({
     defaultMessage: 'Assertions',
@@ -72,6 +75,7 @@ export function Assertions({
         onAssertionUpdate={onAssertionUpdate}
         getTokenPicker={getTokenPicker}
         validationErrors={parameterErrors}
+        isInverted={isInverted}
       />
     );
   };
