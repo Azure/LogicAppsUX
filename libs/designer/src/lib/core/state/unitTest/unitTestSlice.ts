@@ -91,7 +91,6 @@ export const unitTestSlice = createSlice({
       const validationErrors = {
         name: validateAssertion(id, { name }, 'name', state.assertions),
       };
-      console.log(validationErrors);
       state.assertions[id] = {
         ...state.assertions[id],
         name,
@@ -102,11 +101,7 @@ export const unitTestSlice = createSlice({
         ...(getRecordEntry(state.validationErrors, id) ?? {}),
         ...validationErrors,
       };
-      if (!newErrorObj.name) {
-        delete newErrorObj.name;
-      } else {
-        state.validationErrors[id] = newErrorObj;
-      }
+      state.validationErrors[id] = newErrorObj;
     },
   },
 });
