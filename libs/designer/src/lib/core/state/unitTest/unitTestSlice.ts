@@ -1,3 +1,4 @@
+import { recurseSerializeCondition } from '../../utils/parameters/helper';
 import type {
   UpdateAssertionsPayload,
   UpdateAssertionPayload,
@@ -5,6 +6,7 @@ import type {
   InitDefintionPayload,
   UnitTestState,
 } from './unitTestInterfaces';
+import { type ParameterInfo } from '@microsoft/designer-ui';
 import { getIntl } from '@microsoft/intl-logic-apps';
 import { type Assertion, type AssertionDefintion, guid, isNullOrUndefined, equals, getRecordEntry } from '@microsoft/utils-logic-apps';
 import { createSlice } from '@reduxjs/toolkit';
@@ -32,7 +34,7 @@ const parseAssertions = (assertions: Assertion[]): Record<string, AssertionDefin
 
 export const validateAssertion = (
   id: string,
-  data: { name?: string },
+  data: { name?: string; expression?: Record<string, any> },
   keyToValidate: string,
   allDefinitions: Record<string, AssertionDefintion>
 ): string | undefined => {
@@ -58,6 +60,24 @@ export const validateAssertion = (
             description: 'Error message when the workflow assertion name already exists.',
           })
         : undefined;
+    }
+    case 'expression': {
+      const { expression } = data;
+      const expresisonErrors: string[] = [];
+      recurseSerializeCondition(
+        {
+          suppressCasting: false,
+          info: {
+            isDynamic: false,
+          },
+        } as ParameterInfo,
+        expression?.items,
+        false,
+        {},
+        expresisonErrors
+      );
+
+      return expresisonErrors.length > 0 ? expresisonErrors[0] : undefined;
     }
 
     default: {
@@ -88,8 +108,10 @@ export const unitTestSlice = createSlice({
     updateAssertion: (state: UnitTestState, action: PayloadAction<UpdateAssertionPayload>) => {
       const { assertionToUpdate } = action.payload;
       const { name, id, description, expression } = assertionToUpdate;
+      console.log('charlie', assertionToUpdate);
       const validationErrors = {
         name: validateAssertion(id, { name }, 'name', state.assertions),
+        expression: validateAssertion(id, { expression }, 'expression', state.assertions),
       };
       state.assertions[id] = {
         ...state.assertions[id],

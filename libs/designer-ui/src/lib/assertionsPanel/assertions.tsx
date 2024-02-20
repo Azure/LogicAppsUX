@@ -66,7 +66,7 @@ export function Assertions({
       return null;
     }
     const parameterErrors = validationErrors && item ? validationErrors[item.id] : undefined;
-
+    console.log('charlie parameterErrors', parameterErrors);
     return (
       <Assertion
         key={item.id}
