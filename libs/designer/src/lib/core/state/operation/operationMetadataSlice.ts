@@ -259,7 +259,7 @@ export const operationMetadataSlice = createSlice({
 
       const dependencies = getInputDependencies(inputParameters, rawInputs, swagger);
       if (dependencies) {
-        dependencies.inputs = { ...dependencies.inputs, ...dependencies };
+        state.dependencies[nodeId].inputs = { ...state.dependencies[nodeId].inputs, ...dependencies };
       }
     },
     addDynamicOutputs: (state, action: PayloadAction<AddDynamicOutputsPayload>) => {
