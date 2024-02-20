@@ -24,6 +24,15 @@ import {
 import { ArmParser } from './Utilities/ArmParser';
 import { WorkflowUtility } from './Utilities/Workflow';
 import { Chatbot, chatbotPanelWidth } from '@microsoft/chatbot';
+import type { Workflow } from '@microsoft/logic-apps-designer';
+import {
+  DesignerProvider,
+  BJSWorkflowProvider,
+  Designer,
+  getReactQueryClient,
+  serializeBJSWorkflow,
+  store as DesignerStore,
+} from '@microsoft/logic-apps-designer';
 import {
   BaseApiManagementService,
   BaseAppServiceService,
@@ -37,15 +46,6 @@ import {
   StandardSearchService,
 } from '@microsoft/logic-apps-shared';
 import type { ContentType, IWorkflowService } from '@microsoft/logic-apps-shared';
-import type { Workflow } from '@microsoft/logic-apps-designer';
-import {
-  DesignerProvider,
-  BJSWorkflowProvider,
-  Designer,
-  getReactQueryClient,
-  serializeBJSWorkflow,
-  store as DesignerStore,
-} from '@microsoft/logic-apps-designer';
 import { clone, equals, guid, isArmResourceId, optional } from '@microsoft/logic-apps-shared';
 import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import axios from 'axios';
@@ -443,7 +443,7 @@ const getDesignerServices = (
   });
 
   const workflowService: IWorkflowService = {
-    getCallbackUrl: (triggerName: string) => listCallbackUrl(workflowIdWithHostRuntime, triggerName),
+    getWorkflowCallbackUrl: (triggerName: string) => listCallbackUrl(workflowIdWithHostRuntime, triggerName),
     getAppIdentity: () => workflowApp.identity as any,
     isExplicitAuthRequiredForManagedIdentity: () => true,
     resubmitWorkflow: async (runId, actionsToResubmit) => {

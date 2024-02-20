@@ -3,6 +3,7 @@ import { CustomConnectionParameterEditorService } from './customConnectionParame
 import { CustomEditorService } from './customEditorService';
 import { HttpClient } from './httpClient';
 import { PseudoCommandBar } from './pseudoCommandBar';
+import { DesignerProvider, BJSWorkflowProvider, Designer } from '@microsoft/logic-apps-designer';
 import {
   StandardConnectionService,
   StandardOperationManifestService,
@@ -17,7 +18,6 @@ import {
   ConsumptionConnectionService,
 } from '@microsoft/logic-apps-shared';
 import type { ContentType } from '@microsoft/logic-apps-shared';
-import { DesignerProvider, BJSWorkflowProvider, Designer } from '@microsoft/logic-apps-designer';
 import { ResourceIdentityType } from '@microsoft/logic-apps-shared';
 import { useSelector } from 'react-redux';
 
@@ -124,7 +124,7 @@ const runService = new StandardRunService({
   isDev: true,
 });
 
-const workflowService = { getCallbackUrl: () => Promise.resolve({ method: 'POST', value: 'Dummy url' }) };
+const workflowService = { getWorkflowCallbackUrl: () => Promise.resolve({ method: 'POST', value: 'Dummy url' }) };
 
 const hostService = {
   fetchAndDisplayContent: (title: string, url: string, type: ContentType) => console.log(title, url, type),

@@ -5,7 +5,7 @@
 import { Platform } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
-import { isString } from '@microsoft/utils-logic-apps';
+import { isString } from '@microsoft/logic-apps-shared';
 import type { IActionContext, IAzureQuickPickItem, IAzureQuickPickOptions } from '@microsoft/vscode-azext-utils';
 import { openUrl } from '@microsoft/vscode-azext-utils';
 import { FuncVersion, ProjectLanguage, WorkerRuntime } from '@microsoft/vscode-extension';

@@ -9,6 +9,9 @@ module.exports = (config, context) => {
     resolve: {
       aliasFields: ['browser', 'browser.esm'],
     },
+    module: {
+      rules: [{ test: /\.svg$/, loader: 'svg-inline-loader' }],
+    },
     plugins: [
       new webpack.ProvidePlugin({
         // Make a global `process` variable that points to the `process` package,
