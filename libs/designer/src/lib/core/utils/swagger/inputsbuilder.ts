@@ -3,7 +3,7 @@ import type { SerializedParameter } from '../../actions/bjsworkflow/serializer';
 import { constructInputValues } from '../../actions/bjsworkflow/serializer';
 import { getAndEscapeSegment, transformInputParameter, updateParameterWithValues } from '../parameters/helper';
 import { getIntl } from '@microsoft/intl-logic-apps';
-import type { Expression, ExpressionFunction, InputParameter, Segment } from '@microsoft/parsers-logic-apps';
+import type { Expression, ExpressionFunction, InputParameter, Segment } from '@microsoft/logic-apps-shared';
 import {
   create,
   ExpressionBuilder,
@@ -16,7 +16,7 @@ import {
   ParameterLocations,
   parseEx,
   PropertyName,
-} from '@microsoft/parsers-logic-apps';
+} from '@microsoft/logic-apps-shared';
 import {
   AssertionErrorCode,
   AssertionException,

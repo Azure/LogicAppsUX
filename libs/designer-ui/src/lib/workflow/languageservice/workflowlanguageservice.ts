@@ -2,8 +2,8 @@ import Constants from '../../constants';
 import { isHighContrastBlack } from '../../utils';
 import type { FunctionDefinition, SignatureInfo } from './templatefunctions';
 import { FunctionGroupDefinitions } from './templatefunctions';
-import { ExpressionScanner, ExpressionTokenType } from '@microsoft/parsers-logic-apps';
-import type { ExpressionToken } from '@microsoft/parsers-logic-apps';
+import { ExpressionScanner, ExpressionTokenType } from '@microsoft/logic-apps-shared';
+import type { ExpressionToken } from '@microsoft/logic-apps-shared';
 import { first, getPropertyValue, map } from '@microsoft/utils-logic-apps';
 import type { languages, editor, Position } from 'monaco-editor';
 

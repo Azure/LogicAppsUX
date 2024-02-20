@@ -4,7 +4,7 @@ import { TokenSegmentConvertor } from './tokensegment';
 import { UncastingUtility } from './uncast';
 import { TokenType, ValueSegmentType } from '@microsoft/designer-ui';
 import type { Token, ValueSegment } from '@microsoft/designer-ui';
-import type { Expression, ExpressionFunction, ExpressionLiteral } from '@microsoft/parsers-logic-apps';
+import type { Expression, ExpressionFunction, ExpressionLiteral } from '@microsoft/logic-apps-shared';
 import {
   ExpressionParser,
   ExpressionType,
@@ -12,7 +12,7 @@ import {
   isStringInterpolation,
   isStringLiteral,
   isTemplateExpression,
-} from '@microsoft/parsers-logic-apps';
+} from '@microsoft/logic-apps-shared';
 import { format, guid, isNullOrUndefined, startsWith, UnsupportedException } from '@microsoft/utils-logic-apps';
 
 /**

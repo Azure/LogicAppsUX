@@ -1,24 +1,25 @@
 {
-  "name": "parsers",
-  "$schema": "../../node_modules/nx/schemas/project-schema.json",
-  "sourceRoot": "libs/parsers/src",
+  "name": "logic-apps-shared",
+  "$schema": "../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/logic-apps-shared/src",
   "projectType": "library",
   "targets": {
     "build": {
       "executor": "@nrwl/rollup:rollup",
       "outputs": ["{options.outputPath}"],
       "options": {
-        "outputPath": "dist/libs/parsers",
-        "main": "libs/parsers/src/index.ts",
-        "tsConfig": "libs/parsers/tsconfig.lib.json",
-        "project": "libs/parsers/package.json",
-        "entryFile": "libs/parsers/src/index.ts",
+        "outputPath": "dist/libs/logic-apps-shared",
+        "main": "libs/logic-apps-shared/src/index.ts",
+        "tsConfig": "libs/logic-apps-shared/tsconfig.lib.json",
+        "project": "libs/logic-apps-shared/package.json",
+        "entryFile": "libs/logic-apps-shared/src/index.ts",
         "rollupConfig": "@nrwl/react/plugins/bundle-rollup",
+        "external": ["react/jsx-runtime"],
         "buildableProjectDepsInPackageJsonType": "dependencies",
         "format": ["cjs", "esm"],
         "assets": [
           {
-            "glob": "libs/parsers/README.md",
+            "glob": "libs/logic-apps-shared/README.md",
             "input": ".",
             "output": "."
           }
@@ -42,14 +43,14 @@
       "executor": "@nrwl/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": ["libs/parsers/**/*.ts"]
+        "lintFilePatterns": ["libs/logic-apps-shared/**/*.ts"]
       }
     },
     "test": {
       "executor": "@nrwl/jest:jest",
-      "outputs": ["{workspaceRoot}/coverage/libs/parsers"],
+      "outputs": ["{workspaceRoot}/coverage/libs/logic-apps-shared"],
       "options": {
-        "jestConfig": "libs/parsers/jest.config.ts",
+        "jestConfig": "libs/logic-apps-shared/jest.config.ts",
         "passWithNoTests": true
       }
     }
