@@ -1046,3 +1046,25 @@ export const getRecordEntry = <T>(record: Record<string, T> | undefined, key: st
   if (!record || !key || !Object.hasOwn(record, key)) return undefined;
   return record[key];
 };
+
+export const FindPreviousAndNextPage = (page: number, bookmarks: number[]) => {
+  let left = 0;
+  let right = bookmarks.length - 1;
+  let nextFailedRepetition = -1;
+  let prevFailedRepetition = -1;
+  while (left <= right) {
+    const mid = Math.floor((left + right) / 2);
+    if (bookmarks[mid] < page) {
+      prevFailedRepetition = bookmarks[mid];
+      left = mid + 1;
+    } else if (bookmarks[mid] > page) {
+      nextFailedRepetition = bookmarks[mid];
+      right = mid - 1;
+    } else {
+      prevFailedRepetition = bookmarks[mid];
+      nextFailedRepetition = bookmarks[mid];
+      break;
+    }
+  }
+  return { nextFailedRepetition, prevFailedRepetition };
+};
