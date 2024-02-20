@@ -1,7 +1,7 @@
 import type { SectionProps, ToggleHandler, TextChangeHandler, NumberChangeHandler } from '..';
 import { SettingSectionName } from '..';
 import constants from '../../../common/constants';
-import { useOperationInfo } from '../../../core';
+import { useNodeMetadata, useOperationInfo } from '../../../core';
 import { useSelectedNodeId } from '../../../core/state/panel/panelSelectors';
 import { useOutputParameters } from '../../../core/state/selectors/actionMetadataSelector';
 import { getSplitOnOptions } from '../../../core/utils/outputs';
@@ -44,9 +44,10 @@ export const General = ({
 }: GeneralSectionProps): JSX.Element => {
   const intl = useIntl();
   const nodeId = useSelectedNodeId();
+  const nodesMetadata = useNodeMetadata(nodeId);
   const operationInfo = useOperationInfo(nodeId);
   const nodeOutputs = useOutputParameters(nodeId);
-
+  const isTrigger = nodesMetadata?.isRoot ?? false;
   const generalTitle = intl.formatMessage({
     defaultMessage: 'General',
     description: 'title for general setting section',
@@ -207,9 +208,11 @@ export const General = ({
       {
         settingType: 'CustomValueSlider',
         settingProp: {
-          maxVal: constants.CONCURRENCY_ACTION_SLIDER_LIMITS.MAX,
-          minVal: constants.CONCURRENCY_ACTION_SLIDER_LIMITS.MIN,
-          value: concurrency?.value?.value ?? constants.CONCURRENCY_ACTION_SLIDER_LIMITS.DEFAULT,
+          maxVal: isTrigger ? constants.CONCURRENCY_TRIGGER_SLIDER_LIMITS.MAX : constants.CONCURRENCY_ACTION_SLIDER_LIMITS.MAX,
+          minVal: isTrigger ? constants.CONCURRENCY_TRIGGER_SLIDER_LIMITS.MIN : constants.CONCURRENCY_ACTION_SLIDER_LIMITS.MIN,
+          value:
+            concurrency?.value?.value ??
+            (isTrigger ? constants.CONCURRENCY_TRIGGER_SLIDER_LIMITS.DEFAULT : constants.CONCURRENCY_ACTION_SLIDER_LIMITS.DEFAULT),
           onValueChange: onConcurrencyValueChange,
           sliderLabel: degreeOfParallelism,
           readOnly,
