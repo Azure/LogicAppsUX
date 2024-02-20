@@ -224,6 +224,8 @@ export const Designer = (props: DesignerProps) => {
   // Adding isStateless to the query
   const workflowKind = useSelector((state: RootState) => state.workflow.workflowKind);
   useQuery({ queryKey: ['isStateful'], initialData: equals(workflowKind, 'stateful') });
+  console.log('### workflowKind', workflowKind);
+  console.log('### isStateful', equals(workflowKind, 'stateful'));
 
   return (
     <DndProvider options={DND_OPTIONS}>
