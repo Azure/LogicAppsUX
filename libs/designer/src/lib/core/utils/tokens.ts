@@ -227,7 +227,7 @@ export const getOutputTokenSections = (
       label: getIntl().formatMessage({ description: 'Heading section for Variable tokens', defaultMessage: 'Variables' }),
       tokens: getVariableTokens(variables, nodeTokens).map((token) => ({
         ...token,
-        value: rewriteValueId(token.outputInfo.actionName ?? '', getExpressionValueForOutputToken(token, nodeType) ?? '', replacementIds),
+        value: getTokenValue(token, nodeType, replacementIds),
       })),
     });
 
@@ -240,7 +240,7 @@ export const getOutputTokenSections = (
       tokens = tokens.map((token) => {
         return {
           ...token,
-          value: rewriteValueId(token.outputInfo.actionName ?? '', getExpressionValueForOutputToken(token, nodeType) ?? '', replacementIds),
+          value: getTokenValue(token, nodeType, replacementIds),
         };
       });
 
@@ -262,7 +262,7 @@ export const getOutputTokenSections = (
       currentTokens = currentTokens.map((token) => {
         return {
           ...token,
-          value: rewriteValueId(token.outputInfo.actionName ?? '', getExpressionValueForOutputToken(token, nodeType) ?? '', replacementIds),
+          value: getTokenValue(token, nodeType, replacementIds),
         };
       });
 
@@ -412,13 +412,13 @@ const convertTokenToValueSegment = (token: OutputToken, nodeType: string, replac
         }
       : undefined,
     schema,
-    value: rewriteValueId(token.outputInfo.actionName ?? '', getExpressionValueForOutputToken(token, nodeType) ?? '', replacementIds),
+    value: getTokenValue(token, nodeType, replacementIds),
   };
 
   return createTokenValueSegment(segmentToken, segmentToken.value as string, format);
 };
 
-const getTokenTitle = (output: OutputInfo): string => {
+export const getTokenTitle = (output: OutputInfo): string => {
   if (output.title) {
     return output.title;
   }
@@ -472,9 +472,18 @@ export const convertWorkflowParameterTypeToSwaggerType = (type: string | undefin
   }
 };
 
+export const normalizeKey = (key: string): string => {
+  return key.startsWith('outputs.$.body.') ? key.replace('outputs.$.body.', 'body.$.') : key;
+};
+
+export const getTokenValue = (token: OutputToken, nodeType: string, replacementIds: Record<string, string>): string => {
+  return rewriteValueId(token.outputInfo.actionName ?? '', getExpressionValueForOutputToken(token, nodeType) ?? '', replacementIds);
+};
+
 const rewriteValueId = (id: string, value: string, replacementIds: Record<string, string>): string => {
   return value.replaceAll(id, getRecordEntry(replacementIds, id) ?? id);
 };
+
 const getListCallbackUrlToken = (nodeId: string): TokenGroup => {
   const callbackUrlToken: OutputToken = {
     brandColor: httpWebhookBrandColor,
