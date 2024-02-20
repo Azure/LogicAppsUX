@@ -42,16 +42,34 @@ export const saveUnitTestDefinition = async (
   });
 };
 
+/**
+ * Retrieves the name of the unit test from the given file path.
+ * @param {string} filePath - The path of the unit test file.
+ * @returns The name of the unit test.
+ */
 export const getUnitTestName = (filePath: string) => {
   const unitTestFileName = path.basename(filePath);
   const fileNameItems = unitTestFileName.split('.');
   return fileNameItems[0];
 };
 
+/**
+ * Returns the path of a unit test file for a given project, workflow, and unit test name.
+ * @param {string} projectPath - The path of the project.
+ * @param {string} workflowName - The name of the workflow.
+ * @param {string} unitTestName - The name of the unit test.
+ * @returns The path of the unit test file.
+ */
 const getUnitTestsPath = (projectPath: string, workflowName: string, unitTestName: string) => {
   return path.join(projectPath, developmentDirectoryName, testsDirectoryName, workflowName, `${unitTestName}${unitTestsFileName}`);
 };
 
+/**
+ * Returns the path to the a workflow tests directory.
+ * @param {string} projectPath - The path to the project directory.
+ * @param {string} workflowName - The name of the workflow.
+ * @returns The path to the workflow tests directory.
+ */
 const getWorkflowTestsPath = (projectPath: string, workflowName: string) => {
   return path.join(projectPath, developmentDirectoryName, testsDirectoryName, workflowName);
 };
@@ -96,3 +114,39 @@ const validateUnitTestNameCore = async (projectPath: string, workflowName: strin
     return undefined;
   }
 };
+
+/**
+ * Retrieves the list of unit tests in a local project.
+ * @param {string} projectPath - The path to the project.
+ * @returns A promise that resolves to a record of unit test names and their corresponding file paths.
+ */
+export async function getUnitTestInLocalProject(projectPath: string): Promise<Record<string, string>> {
+  if (!(await fse.pathExists(projectPath))) {
+    return {};
+  }
+
+  const unitTests: Record<string, any> = {};
+  const subPaths: string[] = await fse.readdir(projectPath);
+  for (const subPath of subPaths) {
+    const fullPath: string = path.join(projectPath, subPath);
+    const fileStats = await fse.lstat(fullPath);
+
+    if (fileStats.isDirectory()) {
+      try {
+        const unitTestFiles = await fse.readdir(fullPath);
+        for (const unitTestFile of unitTestFiles) {
+          if (unitTestFile.endsWith(unitTestsFileName)) {
+            const unitTestFilePath = path.join(fullPath, unitTestFile);
+            const unitTestFileNameWithoutExtension = unitTestFile.replace('.unit-test.json', '');
+            const fileNameWithSubPath = `${subPath} - ${unitTestFileNameWithoutExtension}`;
+            unitTests[fileNameWithSubPath] = unitTestFilePath;
+          }
+        }
+      } catch {
+        // If unable to load the workflow or read the definition we skip the workflow
+      }
+    }
+  }
+
+  return unitTests;
+}

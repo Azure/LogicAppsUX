@@ -51,7 +51,7 @@ export async function createUnitTest(context: IAzureConnectorsContext, node: vsc
  */
 const pickWorkflow = async (context: IActionContext, projectPath: string) => {
   const placeHolder: string = localize('selectLogicApp', 'Select workflow to create unit test');
-  return await context.ui.showQuickPick(getUnitTestPicks(projectPath), { placeHolder });
+  return await context.ui.showQuickPick(getWorkflowsPick(projectPath), { placeHolder });
 };
 
 /**
@@ -59,9 +59,9 @@ const pickWorkflow = async (context: IActionContext, projectPath: string) => {
  * @param {string} projectPath - The path to the local project.
  * @returns An array of Azure Quick Pick items representing the logic apps in the project.
  */
-const getUnitTestPicks = async (projectPath: string) => {
-  const listOfLogicApps = await getWorkflowsInLocalProject(projectPath);
-  const picks: IAzureQuickPickItem<string>[] = Array.from(Object.keys(listOfLogicApps)).map((workflowName) => {
+const getWorkflowsPick = async (projectPath: string) => {
+  const listOfWorkflows = await getWorkflowsInLocalProject(projectPath);
+  const picks: IAzureQuickPickItem<string>[] = Array.from(Object.keys(listOfWorkflows)).map((workflowName) => {
     return { label: workflowName, data: path.join(projectPath, workflowName, workflowFileName) };
   });
 
