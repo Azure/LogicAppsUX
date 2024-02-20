@@ -20,6 +20,7 @@ import {
   openPanel,
   useNodesInitialized,
   serializeUnitTestDefinition,
+  useAssertionsValidationErrors,
 } from '@microsoft/logic-apps-designer';
 import { isNullOrEmpty, RUN_AFTER_COLORS } from '@microsoft/utils-logic-apps';
 import { useMemo } from 'react';
@@ -109,6 +110,8 @@ export const DesignerCommandBar = ({
   });
   const allWorkflowParameterErrors = useWorkflowParameterValidationErrors();
   const haveWorkflowParameterErrors = Object.keys(allWorkflowParameterErrors ?? {}).length > 0;
+  const allAssertionsErrors = useAssertionsValidationErrors();
+  const haveAssertionErrors = Object.keys(allAssertionsErrors ?? {}).length > 0;
   const allSettingsErrors = useAllSettingsValidationErrors();
   const haveSettingsErrors = Object.keys(allSettingsErrors ?? {}).length > 0;
   const allConnectionErrors = useAllConnectionErrors();
@@ -120,6 +123,9 @@ export const DesignerCommandBar = ({
   );
 
   const saveIsDisabled = isSaving || allInputErrors.length > 0 || haveWorkflowParameterErrors || haveSettingsErrors || !designerIsDirty;
+
+  const saveUnitTestIsDisabled = !isUnitTest || isSavingUnitTest || haveAssertionErrors;
+  console.log('charlie parameterErrors', saveUnitTestIsDisabled, allAssertionsErrors);
 
   const items: ICommandBarItemProps[] = useMemo(
     () => [
@@ -141,12 +147,12 @@ export const DesignerCommandBar = ({
       {
         key: 'saveUnitTest',
         text: 'Save Unit Test',
-        disabled: !isUnitTest,
+        disabled: saveUnitTestIsDisabled,
         onRenderIcon: () => {
           return isSavingUnitTest ? (
             <Spinner size={SpinnerSize.small} />
           ) : (
-            <FontIcon aria-label="Save" iconName="Save" className={isUnitTest ? classNames.azureBlue : classNames.azureGrey} />
+            <FontIcon aria-label="Save" iconName="Save" className={!saveUnitTestIsDisabled ? classNames.azureBlue : classNames.azureGrey} />
           );
         },
         onClick: () => {
@@ -244,6 +250,9 @@ export const DesignerCommandBar = ({
       enableCopilot,
       isCopilotReady,
       isUnitTest,
+      saveUnitTestMutate,
+      isSavingUnitTest,
+      saveUnitTestIsDisabled,
     ]
   );
 

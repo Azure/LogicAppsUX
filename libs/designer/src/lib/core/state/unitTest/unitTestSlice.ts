@@ -108,7 +108,6 @@ export const unitTestSlice = createSlice({
     updateAssertion: (state: UnitTestState, action: PayloadAction<UpdateAssertionPayload>) => {
       const { assertionToUpdate } = action.payload;
       const { name, id, description, expression } = assertionToUpdate;
-      console.log('charlie', assertionToUpdate);
       const validationErrors = {
         name: validateAssertion(id, { name }, 'name', state.assertions),
         expression: validateAssertion(id, { expression }, 'expression', state.assertions),
@@ -123,7 +122,13 @@ export const unitTestSlice = createSlice({
         ...(getRecordEntry(state.validationErrors, id) ?? {}),
         ...validationErrors,
       };
-      state.validationErrors[id] = newErrorObj;
+      if (!newErrorObj.name) delete newErrorObj.name;
+      if (!newErrorObj.expression) delete newErrorObj.expression;
+      if (Object.keys(newErrorObj).length === 0) {
+        delete state.validationErrors[id];
+      } else {
+        state.validationErrors[id] = newErrorObj;
+      }
     },
   },
 });
