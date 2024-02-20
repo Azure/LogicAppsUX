@@ -14,6 +14,12 @@ import { readFileSync } from 'fs';
 import * as path from 'path';
 import * as vscode from 'vscode';
 
+/**
+ * Edits a unit test for a Logic App workflow.
+ * @param {IAzureConnectorsContext} context - The Azure Connectors context.
+ * @param {vscode.Uri} node - The URI of the unit test file to edit. If not provided, the user will be prompted to select a unit test file.
+ * @returns A Promise that resolves when the unit test has been edited.
+ */
 export async function editUnitTest(context: IAzureConnectorsContext, node: vscode.Uri): Promise<void> {
   let unitTestNode: vscode.Uri;
   const workspaceFolder = await getWorkspaceFolder(context);
@@ -36,11 +42,22 @@ export async function editUnitTest(context: IAzureConnectorsContext, node: vscod
   await openDesignerObj?.createPanel();
 }
 
+/**
+ * Prompts the user to select a unit test to edit.
+ * @param {IActionContext} context - The action context.
+ * @param {string} projectPath - The path of the project.
+ * @returns A promise that resolves to the selected unit test.
+ */
 const pickUnitTest = async (context: IActionContext, projectPath: string) => {
-  const placeHolder: string = localize('selectLogicApp', 'Select unit test to edit');
+  const placeHolder: string = localize('selectUnitTest', 'Select unit test to edit');
   return await context.ui.showQuickPick(getUnitTestPick(projectPath), { placeHolder });
 };
 
+/**
+ * Retrieves a list of unit tests in the local project.
+ * @param {string} projectPath - The path to the project.
+ * @returns A promise that resolves to an array of unit test picks.
+ */
 const getUnitTestPick = async (projectPath: string) => {
   const listOfUnitTest = await getUnitTestInLocalProject(projectPath);
   const picks: IAzureQuickPickItem<string>[] = Array.from(Object.keys(listOfUnitTest)).map((unitTestName) => {
