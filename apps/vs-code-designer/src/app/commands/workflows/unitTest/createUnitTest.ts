@@ -44,7 +44,7 @@ export async function createUnitTest(context: IAzureConnectorsContext, node: vsc
 }
 
 /**
- * Prompts the user to select a workflow and creates a unit test for it.
+ * Prompts the user to select a workflow and returns the selected workflow.
  * @param {IActionContext} context - The action context.
  * @param {string} projectPath - The path of the project.
  * @returns A promise that resolves to the selected workflow.
@@ -55,7 +55,7 @@ const pickWorkflow = async (context: IActionContext, projectPath: string) => {
 };
 
 /**
- * Retrieves the list of logic apps in a local project and returns an array of Azure Quick Pick items.
+ * Retrieves the list of workflows in the local project.
  * @param {string} projectPath - The path to the local project.
  * @returns An array of Azure Quick Pick items representing the logic apps in the project.
  */
