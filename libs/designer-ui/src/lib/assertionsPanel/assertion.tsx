@@ -47,9 +47,16 @@ export interface AssertionProps {
   onAssertionDelete: AssertionDeleteHandler;
   onAssertionUpdate: AssertionUpdateHandler;
   getTokenPicker: GetAssertionTokenPickerHandler;
+  validationErrors?: Record<string, string | undefined>;
 }
 
-export function Assertion({ assertion, onAssertionDelete, getTokenPicker, onAssertionUpdate }: AssertionProps): JSX.Element {
+export function Assertion({
+  assertion,
+  onAssertionDelete,
+  getTokenPicker,
+  onAssertionUpdate,
+  validationErrors,
+}: AssertionProps): JSX.Element {
   const [expanded, setExpanded] = useState(assertion.isEditable);
   const [isEditable, setIsEditable] = useState(assertion.isEditable);
   const [name, setName] = useState(assertion.name);
@@ -98,6 +105,7 @@ export function Assertion({ assertion, onAssertionDelete, getTokenPicker, onAsse
           isExpanded={expanded}
           getTokenPicker={getTokenPicker}
           handleUpdate={handleUpdate}
+          validationErrors={validationErrors}
         />
       </div>
     </div>

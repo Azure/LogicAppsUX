@@ -22,6 +22,7 @@ export interface AssertionsProps {
   onAssertionUpdate: AssertionUpdateHandler;
   onAssertionDelete: AssertionDeleteHandler;
   getTokenPicker: GetAssertionTokenPickerHandler;
+  validationErrors?: Record<string, Record<string, string | undefined>>;
 }
 
 export function Assertions({
@@ -31,6 +32,7 @@ export function Assertions({
   onAssertionUpdate,
   onAssertionDelete,
   getTokenPicker,
+  validationErrors,
 }: AssertionsProps): JSX.Element {
   const intl = useIntl();
 
@@ -60,6 +62,8 @@ export function Assertions({
     if (!item) {
       return null;
     }
+    const parameterErrors = validationErrors && item ? validationErrors[item.id] : undefined;
+
     return (
       <Assertion
         key={item.id}
@@ -67,6 +71,7 @@ export function Assertions({
         onAssertionDelete={onAssertionDelete}
         onAssertionUpdate={onAssertionUpdate}
         getTokenPicker={getTokenPicker}
+        validationErrors={parameterErrors}
       />
     );
   };

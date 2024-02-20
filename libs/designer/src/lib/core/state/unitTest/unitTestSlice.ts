@@ -5,7 +5,8 @@ import type {
   InitDefintionPayload,
   UnitTestState,
 } from './unitTestInterfaces';
-import { type Assertion, type AssertionDefintion, guid, isNullOrUndefined } from '@microsoft/utils-logic-apps';
+import { getIntl } from '@microsoft/intl-logic-apps';
+import { type Assertion, type AssertionDefintion, guid, isNullOrUndefined, equals, getRecordEntry } from '@microsoft/utils-logic-apps';
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 
@@ -18,6 +19,7 @@ export interface AddImplicitForeachPayload {
 export const initialUnitTestState: UnitTestState = {
   mockResults: {},
   assertions: {},
+  validationErrors: {},
 };
 
 const parseAssertions = (assertions: Assertion[]): Record<string, AssertionDefintion> => {
@@ -26,6 +28,42 @@ const parseAssertions = (assertions: Assertion[]): Record<string, AssertionDefin
     const id = guid();
     return { ...acc, [id]: { id, name, description, expression, isEditable: false } };
   }, {});
+};
+
+export const validateAssertion = (
+  id: string,
+  data: { name?: string },
+  keyToValidate: string,
+  allDefinitions: Record<string, AssertionDefintion>
+): string | undefined => {
+  const intl = getIntl();
+
+  switch (keyToValidate?.toLowerCase()) {
+    case 'name': {
+      const { name } = data;
+      if (!name) {
+        return intl.formatMessage({
+          defaultMessage: 'Must provide the Assertion name.',
+          description: 'Error message when the workflow assertion name is empty.',
+        });
+      }
+
+      const duplicateParameters = Object.keys(allDefinitions).filter(
+        (assertionId) => assertionId !== id && equals(allDefinitions[assertionId].name, name)
+      );
+
+      return duplicateParameters.length > 0
+        ? intl.formatMessage({
+            defaultMessage: 'Assertion name already exists.',
+            description: 'Error message when the workflow assertion name already exists.',
+          })
+        : undefined;
+    }
+
+    default: {
+      return undefined;
+    }
+  }
 };
 
 export const unitTestSlice = createSlice({
@@ -50,12 +88,25 @@ export const unitTestSlice = createSlice({
     updateAssertion: (state: UnitTestState, action: PayloadAction<UpdateAssertionPayload>) => {
       const { assertionToUpdate } = action.payload;
       const { name, id, description, expression } = assertionToUpdate;
+      const validationErrors = {
+        name: validateAssertion(id, { name }, 'name', state.assertions),
+      };
+      console.log(validationErrors);
       state.assertions[id] = {
         ...state.assertions[id],
         name,
         description,
         expression,
       };
+      const newErrorObj = {
+        ...(getRecordEntry(state.validationErrors, id) ?? {}),
+        ...validationErrors,
+      };
+      if (!newErrorObj.name) {
+        delete newErrorObj.name;
+      } else {
+        state.validationErrors[id] = newErrorObj;
+      }
     },
   },
 });

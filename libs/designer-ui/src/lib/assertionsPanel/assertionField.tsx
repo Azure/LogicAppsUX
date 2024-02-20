@@ -50,6 +50,7 @@ export interface AssertionFieldProps {
   isExpanded: boolean;
   getTokenPicker: GetAssertionTokenPickerHandler;
   handleUpdate: (newAssertion: Assertion) => void;
+  validationErrors?: Record<string, string | undefined>;
 }
 
 export const AssertionField = ({
@@ -63,8 +64,11 @@ export const AssertionField = ({
   isExpanded,
   getTokenPicker,
   handleUpdate,
+  validationErrors,
 }: AssertionFieldProps): JSX.Element => {
   const intl = useIntl();
+
+  const errors = validationErrors ?? {};
 
   const parameterDetails: ParameterFieldDetails = {
     description: `${name}-${DESCRIPTION_KEY}`,
@@ -132,6 +136,7 @@ export const AssertionField = ({
             id={parameterDetails.name}
             ariaLabel={nameTitle}
             placeholder={namePlaceholder}
+            errorMessage={errors[NAME_KEY]}
             value={name}
             onChange={onNameChange}
             disabled={!isEditable}
