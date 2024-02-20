@@ -5,6 +5,7 @@
 import { workflowFileName } from '../../../../constants';
 import { localize } from '../../../../localize';
 import { getWorkflowsInLocalProject } from '../../../utils/codeless/common';
+import { validateUnitTestName } from '../../../utils/unitTests';
 import { tryGetLogicAppProjectRoot } from '../../../utils/verifyIsProject';
 import { getWorkflowNode, getWorkspaceFolder } from '../../../utils/workspace';
 import { type IAzureConnectorsContext } from '../azureConnectorWizard';
@@ -20,18 +21,23 @@ import * as vscode from 'vscode';
  * @returns A Promise that resolves when the unit test is created.
  */
 export async function createUnitTest(context: IAzureConnectorsContext, node: vscode.Uri | undefined): Promise<void> {
-  const unitTestName = await context.ui.showInputBox({
-    prompt: localize('unitTestNamePrompt', 'Provide Unit Test name'),
-  });
-
-  let workflowNode;
+  let workflowNode: vscode.Uri;
+  const workspaceFolder = await getWorkspaceFolder(context);
+  const projectPath = await tryGetLogicAppProjectRoot(context, workspaceFolder);
 
   if (node) {
     workflowNode = getWorkflowNode(node) as vscode.Uri;
   } else {
-    const workflow = await pickWorkflow(context);
-    workflowNode = vscode.Uri.file(workflow.data);
+    const workflow = await pickWorkflow(context, projectPath);
+    workflowNode = vscode.Uri.file(workflow.data) as vscode.Uri;
   }
+
+  const workflowName = path.basename(path.dirname(workflowNode.fsPath));
+  const unitTestName = await context.ui.showInputBox({
+    prompt: localize('unitTestNamePrompt', 'Provide a unit test name'),
+    placeHolder: localize('unitTestNamePlaceholder', 'Unit test name'),
+    validateInput: async (name: string): Promise<string | undefined> => await validateUnitTestName(projectPath, workflowName, name),
+  });
 
   const openDesignerObj = new OpenDesignerForLocalProject(context, workflowNode, unitTestName);
   await openDesignerObj?.createPanel();
@@ -40,23 +46,22 @@ export async function createUnitTest(context: IAzureConnectorsContext, node: vsc
 /**
  * Prompts the user to select a workflow and returns the selected workflow.
  * @param {IActionContext} context - The action context.
- * @returns A Promise that resolves to the selected workflow.
+ * @param {string} projectPath - The path of the project.
+ * @returns A promise that resolves to the selected workflow.
  */
-const pickWorkflow = async (context: IActionContext) => {
+const pickWorkflow = async (context: IActionContext, projectPath: string) => {
   const placeHolder: string = localize('selectLogicApp', 'Select workflow to create unit test');
-  return await context.ui.showQuickPick(getWorkflowsPicks(context), { placeHolder });
+  return await context.ui.showQuickPick(getWorkflowsPick(projectPath), { placeHolder });
 };
 
 /**
  * Retrieves the list of workflows in the local project.
- * @param {IActionContext} context - The action context.
- * @returns A promise that resolves to an array of Azure Quick Pick items representing the workflows.
+ * @param {string} projectPath - The path to the local project.
+ * @returns An array of Azure Quick Pick items representing the logic apps in the project.
  */
-const getWorkflowsPicks = async (context: IActionContext) => {
-  const workspaceFolder = await getWorkspaceFolder(context);
-  const projectPath = await tryGetLogicAppProjectRoot(context, workspaceFolder);
-  const listOfLogicApps = await getWorkflowsInLocalProject(projectPath);
-  const picks: IAzureQuickPickItem<string>[] = Array.from(Object.keys(listOfLogicApps)).map((workflowName) => {
+const getWorkflowsPick = async (projectPath: string) => {
+  const listOfWorkflows = await getWorkflowsInLocalProject(projectPath);
+  const picks: IAzureQuickPickItem<string>[] = Array.from(Object.keys(listOfWorkflows)).map((workflowName) => {
     return { label: workflowName, data: path.join(projectPath, workflowName, workflowFileName) };
   });
 
