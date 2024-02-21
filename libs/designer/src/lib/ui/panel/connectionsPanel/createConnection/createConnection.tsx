@@ -23,7 +23,7 @@ import type {
   Gateway,
   ManagedIdentity,
   Subscription,
-} from '@microsoft/utils-logic-apps';
+} from '@microsoft/logic-apps-shared';
 import {
   Capabilities,
   ConnectionParameterTypes,
@@ -35,7 +35,7 @@ import {
   getPropertyValue,
   isServicePrinicipalConnectionParameter,
   usesLegacyManagedIdentity,
-} from '@microsoft/utils-logic-apps';
+} from '@microsoft/logic-apps-shared';
 import fromPairs from 'lodash.frompairs';
 import type { FormEvent } from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';

@@ -4,7 +4,7 @@ import type { FunctionDefinition, SignatureInfo } from './templatefunctions';
 import { FunctionGroupDefinitions } from './templatefunctions';
 import { ExpressionScanner, ExpressionTokenType } from '@microsoft/logic-apps-shared';
 import type { ExpressionToken } from '@microsoft/logic-apps-shared';
-import { equals, first, getPropertyValue, map } from '@microsoft/utils-logic-apps';
+import { equals, first, getPropertyValue, map } from '@microsoft/logic-apps-shared';
 import type { languages, editor, Position } from 'monaco-editor';
 
 type CompletionList = languages.CompletionList;

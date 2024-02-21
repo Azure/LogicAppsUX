@@ -1,16 +1,16 @@
 import { resetWorkflowState } from '../global';
-import type { Schema } from '@microsoft/logic-apps-shared';
+import type { OpenApiSchema } from '@microsoft/logic-apps-shared';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 
 export interface StaticResultsState {
-  schemas: Record<string, Schema>; // { [connectorid-operationid]: Schema }
+  schemas: Record<string, OpenApiSchema>; // { [connectorid-operationid]: Schema }
   properties: Record<string, any>; // { [nodeId+0](propertyName): any
 }
 
 interface StaticResultsSchemaUpdateEvent {
   id: string;
-  schema: Schema;
+  schema: OpenApiSchema;
 }
 
 export const initialState: StaticResultsState = {

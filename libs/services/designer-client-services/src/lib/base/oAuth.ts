@@ -1,5 +1,5 @@
 import type { IOAuthPopup, LoginResult, IOAuthService, IOAuthServiceOptions, OAuthPopupOptions } from '../oAuth';
-import { ArgumentException } from '@microsoft/utils-logic-apps';
+import { ArgumentException } from '@microsoft/logic-apps-shared';
 
 export class OAuthPopup implements IOAuthPopup {
   public loginPromise: Promise<LoginResult>;

@@ -1,4 +1,4 @@
-import type { DiscoveryOperation, SomeKindOfAzureOperationDiscovery } from '@microsoft/utils-logic-apps';
+import type { DiscoveryOperation, SomeKindOfAzureOperationDiscovery } from '@microsoft/logic-apps-shared';
 
 export const azureOperationsResponse: DiscoveryOperation<SomeKindOfAzureOperationDiscovery>[] = [
   {

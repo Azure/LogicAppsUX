@@ -3,7 +3,7 @@ import constants from '../../constants';
 import type { ValueSegment } from '../../editor';
 import { convertStringToSegments } from '../../editor/base/utils/editorToSegment';
 import { getChildrenNodesWithTokenInterpolation, removeQuotes } from '../../editor/base/utils/helper';
-import { guid } from '@microsoft/utils-logic-apps';
+import { guid } from '@microsoft/logic-apps-shared';
 import type { LexicalEditor } from 'lexical';
 import { $getRoot } from 'lexical';
 

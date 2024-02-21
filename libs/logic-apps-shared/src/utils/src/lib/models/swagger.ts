@@ -92,7 +92,7 @@ export interface ParameterBase {
 }
 
 export interface BodyParameter extends ParameterBase {
-  schema: Schema;
+  schema: SwaggerSchema;
 }
 
 export interface NonBodyParameter extends ParameterBase {
@@ -146,7 +146,7 @@ export type ResponseOrReference = Response | Reference;
 
 export interface Response {
   description: string;
-  schema?: Schema;
+  schema?: SwaggerSchema;
   headers?: Headers;
   examples?: Example;
   [xdash: string]: any;
@@ -193,7 +193,7 @@ export interface Reference {
   $ref: string;
 }
 
-export interface Schema {
+export interface SwaggerSchema {
   $ref?: string;
   format?: string;
   title?: string;
@@ -215,10 +215,10 @@ export interface Schema {
   required?: string[];
   enum?: any[];
   type?: string; // Note: We might need to add support for string[] here later.
-  items?: Schema;
-  allOf?: Schema[];
-  properties?: Record<string, Schema>;
-  additionalProperties?: boolean | Schema;
+  items?: SwaggerSchema;
+  allOf?: SwaggerSchema[];
+  properties?: Record<string, SwaggerSchema>;
+  additionalProperties?: boolean | SwaggerSchema;
   discriminator?: string;
   readOnly?: boolean;
   xml?: Xml;
@@ -237,7 +237,7 @@ export interface Xml {
 }
 
 export interface Definitions {
-  [name: string]: Schema;
+  [name: string]: SwaggerSchema;
 }
 
 export interface ParametersDefinitions {

@@ -15,7 +15,7 @@ import {
   getTimezoneValues,
   guid,
   RecurrenceType,
-} from '@microsoft/utils-logic-apps';
+} from '@microsoft/logic-apps-shared';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
 

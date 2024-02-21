@@ -29,7 +29,7 @@ import {
 } from '../parameters/helper';
 import { loadInputValuesFromDefinition } from './inputsbuilder';
 import { LogEntryLevel, LoggerService, StaticResultService } from '@microsoft/designer-client-services-logic-apps';
-import type { Operation, OutputParameter, SwaggerParser } from '@microsoft/logic-apps-shared';
+import type { LAOperation, OutputParameter, SwaggerParser } from '@microsoft/logic-apps-shared';
 import {
   create,
   isDynamicSchemaExtension,
@@ -37,8 +37,8 @@ import {
   removeConnectionPrefix,
   isTemplateExpression,
 } from '@microsoft/logic-apps-shared';
-import type { LogicAppsV2, OperationInfo } from '@microsoft/utils-logic-apps';
-import { copyArray, map, RecurrenceType, equals, parsePathnameAndQueryKeyFromUri, startsWith, unmap } from '@microsoft/utils-logic-apps';
+import type { LogicAppsV2, OperationInfo } from '@microsoft/logic-apps-shared';
+import { copyArray, map, RecurrenceType, equals, parsePathnameAndQueryKeyFromUri, startsWith, unmap } from '@microsoft/logic-apps-shared';
 import type { Dispatch } from '@reduxjs/toolkit';
 
 interface OperationInputInfo {
@@ -333,8 +333,8 @@ export const getOperationIdFromDefinition = (operationInputInfo: OperationInputI
   return getOperationIdFromSwagger(operationInputInfo.method, path, operations);
 };
 
-function getOperationIdFromSwagger(operationMethod: string, operationPath: string, swaggerOperations: Operation[]): string | undefined {
-  const operations = copyArray(swaggerOperations) as Operation[];
+function getOperationIdFromSwagger(operationMethod: string, operationPath: string, swaggerOperations: LAOperation[]): string | undefined {
+  const operations = copyArray(swaggerOperations) as LAOperation[];
   let operationId: string | undefined;
 
   const filteredOperations: any = operations

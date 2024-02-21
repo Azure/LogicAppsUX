@@ -13,7 +13,7 @@ import {
   supportedSchemaFileExts,
   supportedCustomXsltFileExts,
 } from './extensionConfig';
-import type { SchemaType, MapMetadata } from '@microsoft/utils-logic-apps';
+import type { SchemaType, MapMetadata } from '@microsoft/logic-apps-shared';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { callWithTelemetryAndErrorHandlingSync } from '@microsoft/vscode-azext-utils';
 import type { MapDefinitionData, MessageToVsix, MessageToWebview } from '@microsoft/vscode-extension';

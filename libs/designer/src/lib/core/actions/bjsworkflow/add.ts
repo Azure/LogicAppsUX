@@ -38,8 +38,8 @@ import type {
   DiscoveryResultTypes,
   OperationManifest,
   SomeKindOfAzureOperationDiscovery,
-} from '@microsoft/utils-logic-apps';
-import { equals, getRecordEntry } from '@microsoft/utils-logic-apps';
+} from '@microsoft/logic-apps-shared';
+import { equals, getRecordEntry } from '@microsoft/logic-apps-shared';
 import type { Dispatch } from '@reduxjs/toolkit';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { batch } from 'react-redux';

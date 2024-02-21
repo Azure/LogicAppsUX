@@ -30,7 +30,7 @@ import {
   replaceTemplatePlaceholders,
   startsWith,
   UnsupportedException,
-} from '@microsoft/utils-logic-apps';
+} from '@microsoft/logic-apps-shared';
 
 const operationPathDelimiter = '<DELIMITER>';
 

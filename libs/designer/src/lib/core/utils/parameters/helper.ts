@@ -125,7 +125,7 @@ import {
   Visibility,
   PropertyName,
 } from '@microsoft/logic-apps-shared';
-import type { Exception, OpenAPIV2, OperationManifest, RecurrenceSetting } from '@microsoft/utils-logic-apps';
+import type { Exception, OpenAPIV2, OperationManifest, RecurrenceSetting } from '@microsoft/logic-apps-shared';
 import {
   createCopy,
   deleteObjectProperties,
@@ -153,7 +153,7 @@ import {
   nthLastIndexOf,
   parseErrorMessage,
   getRecordEntry,
-} from '@microsoft/utils-logic-apps';
+} from '@microsoft/logic-apps-shared';
 import type { Dispatch } from '@reduxjs/toolkit';
 
 // import { debounce } from 'lodash';

@@ -10,7 +10,7 @@ export function isNumber(ch: string) {
   return /^\d+$/.test(ch);
 }
 
-export function isBoolean(ch: string) {
+export function isStringBoolean(ch: string) {
   if (ch === 'true' || ch === 'false') {
     return true;
   }

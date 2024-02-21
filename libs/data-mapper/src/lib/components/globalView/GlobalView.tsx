@@ -5,7 +5,7 @@ import { SchemaCard } from '../nodeCard/SchemaCard';
 import { SimpleFunctionCard } from '../nodeCard/functionCard/SimpleFunctionCard';
 import { SchemaNameBadge } from '../schemaSelection/SchemaNameBadge';
 import { makeStyles, shorthands, tokens } from '@fluentui/react-components';
-import { SchemaType } from '@microsoft/utils-logic-apps';
+import { SchemaType } from '@microsoft/logic-apps-shared';
 import { useEffect, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 // eslint-disable-next-line import/no-named-as-default
