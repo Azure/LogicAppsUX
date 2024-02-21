@@ -4,7 +4,7 @@ import type { FunctionDefinition, SignatureInfo } from './templatefunctions';
 import { FunctionGroupDefinitions } from './templatefunctions';
 import { ExpressionScanner, ExpressionTokenType } from '@microsoft/parsers-logic-apps';
 import type { ExpressionToken } from '@microsoft/parsers-logic-apps';
-import { first, getPropertyValue, map } from '@microsoft/utils-logic-apps';
+import { equals, first, getPropertyValue, map } from '@microsoft/utils-logic-apps';
 import type { languages, editor, Position } from 'monaco-editor';
 
 type CompletionList = languages.CompletionList;
@@ -452,5 +452,5 @@ function signatureHasVariableParameters(signature: SignatureInfo): boolean {
 }
 
 export function removeUTFExpressions(functionGroupFunctions: FunctionDefinition[]): FunctionDefinition[] {
-  return functionGroupFunctions.filter((func) => func.name !== 'utf8Length' && func.name !== 'utf16Length');
+  return functionGroupFunctions.filter((func) => !equals(func.name, 'utf8Length') && !equals(func.name, 'utf16Length'));
 }
