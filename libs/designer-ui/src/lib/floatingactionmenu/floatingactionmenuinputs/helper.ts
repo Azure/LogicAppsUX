@@ -9,8 +9,8 @@ import {
 } from '../../dynamicallyaddedparameter/helper';
 import type { ValueSegment } from '../../editor';
 import { ValueSegmentType } from '../../editor';
-import type { Schema } from '@microsoft/logic-apps-shared';
-import { guid } from '@microsoft/utils-logic-apps';
+import type { OpenApiSchema } from '@microsoft/logic-apps-shared';
+import { guid } from '@microsoft/logic-apps-shared';
 
 type PartialDynamicallyAddedParameterInputsModel = Pick<
   DynamicallyAddedParameterInputsModel,
@@ -109,7 +109,7 @@ export function serialize(models: DynamicallyAddedParameterInputsModel[], isRequ
       return { ...resultPropertiesObj, [schemaKey]: propertyValue };
     }, {});
 
-  let rootObject: Schema;
+  let rootObject: OpenApiSchema;
 
   rootObject = {
     type: 'object',
@@ -140,7 +140,7 @@ export function serialize(models: DynamicallyAddedParameterInputsModel[], isRequ
 }
 
 export function getEmptySchemaValueSegmentForInitialization(useStaticInputs: boolean, isRequestApiConnectionTrigger = false) {
-  let rootObject: Schema;
+  let rootObject: OpenApiSchema;
 
   rootObject = {
     type: 'object',

@@ -1,6 +1,6 @@
 import { xmlGroup, xmlValidationOperation } from '../operations';
-import type { OperationManifest } from '@microsoft/utils-logic-apps';
-import { SettingScope } from '@microsoft/utils-logic-apps';
+import type { OperationManifest } from '@microsoft/logic-apps-shared';
+import { SettingScope } from '@microsoft/logic-apps-shared';
 
 const settings: any = {
   secureData: {},

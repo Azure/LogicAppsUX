@@ -1,5 +1,5 @@
-import type { Connector, OperationManifest } from '@microsoft/utils-logic-apps';
-import { fallbackConnectorIconUrl } from '@microsoft/utils-logic-apps';
+import type { Connector, OperationManifest } from '@microsoft/logic-apps-shared';
+import { fallbackConnectorIconUrl } from '@microsoft/logic-apps-shared';
 
 export function getBrandColorFromManifest(manifest: OperationManifest): string {
   return manifest.properties?.brandColor ?? getBrandColorFromConnector(manifest.properties?.connector);

@@ -20,8 +20,8 @@ import { bundleIcon, Dismiss24Filled, Dismiss24Regular } from '@fluentui/react-i
 import { SearchService } from '@microsoft/designer-client-services-logic-apps';
 import { OperationSearchHeader } from '@microsoft/designer-ui';
 import type { CommonPanelProps } from '@microsoft/designer-ui';
-import type { DiscoveryOperation, DiscoveryResultTypes } from '@microsoft/utils-logic-apps';
-import { equals, guid, areApiIdsEqual } from '@microsoft/utils-logic-apps';
+import type { DiscoveryOperation, DiscoveryResultTypes } from '@microsoft/logic-apps-shared';
+import { equals, guid, areApiIdsEqual } from '@microsoft/logic-apps-shared';
 import { useCallback, useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';

@@ -1,5 +1,5 @@
 import { css, Icon, Image, ImageFit, Link } from '@fluentui/react';
-import { fallbackConnectorIconUrl } from '@microsoft/utils-logic-apps';
+import { fallbackConnectorIconUrl } from '@microsoft/logic-apps-shared';
 import { useMeasure } from '@react-hookz/web';
 import { useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';

@@ -1,6 +1,6 @@
 import Constants from '../constants';
 import { ActionButton, FontSizes } from '@fluentui/react';
-import { hexToRgbA } from '@microsoft/utils-logic-apps';
+import { hexToRgbA } from '@microsoft/logic-apps-shared';
 import * as React from 'react';
 
 export interface IChatSuggestionGroupProps {

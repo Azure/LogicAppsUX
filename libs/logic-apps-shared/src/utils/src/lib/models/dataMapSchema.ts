@@ -1,4 +1,4 @@
-export interface Schema {
+export interface DataMapSchema {
   name: string;
   type: SchemaFileFormat;
   targetNamespace: string;
@@ -62,7 +62,7 @@ export const InputFormat = {
 } as const;
 export type InputFormat = (typeof InputFormat)[keyof typeof InputFormat];
 
-export interface SchemaExtended extends Schema {
+export interface SchemaExtended extends DataMapSchema {
   schemaTreeRoot: SchemaNodeExtended;
 }
 

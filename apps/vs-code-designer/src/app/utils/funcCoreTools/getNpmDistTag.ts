@@ -6,7 +6,7 @@ import { localize } from '../../../localize';
 import { parseJson } from '../parseJson';
 import { sendRequestWithExtTimeout } from '../requestUtils';
 import { tryGetMajorVersion } from './funcVersion';
-import { HTTP_METHODS } from '@microsoft/utils-logic-apps';
+import { HTTP_METHODS } from '@microsoft/logic-apps-shared';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type { FuncVersion, INpmDistTag, IPackageMetadata } from '@microsoft/vscode-extension';
 import * as semver from 'semver';

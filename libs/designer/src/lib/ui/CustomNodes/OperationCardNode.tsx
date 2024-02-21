@@ -54,7 +54,7 @@ import { MessageBarType } from '@fluentui/react';
 import { Tooltip } from '@fluentui/react-components';
 import { RunService, WorkflowService } from '@microsoft/designer-client-services-logic-apps';
 import { Card } from '@microsoft/designer-ui';
-import type { LogicAppsV2 } from '@microsoft/utils-logic-apps';
+import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { useDrag } from 'react-dnd';
 import { useIntl } from 'react-intl';

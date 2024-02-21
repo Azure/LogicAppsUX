@@ -1,13 +1,13 @@
 /* eslint-disable no-param-reassign */
-import { Capabilities, ExtensionProperties, PropertyName, Visibility } from '../common/constants';
+import { ChunkSizeCapabilities, ExtensionProperties, PropertyName, Visibility } from '../common/constants';
 import { create } from '../common/helpers/keysutility';
 import { OutputsProcessor } from '../common/outputprocessor';
-import type { Schema, SchemaProcessorOptions } from '../common/schemaprocessor';
+import type { OpenApiSchema, SchemaProcessorOptions } from '../common/schemaprocessor';
 import type {
   Annotation,
   InputParameter,
   InputParameters,
-  Operation,
+  LAOperation,
   Operations,
   OutputMetadata,
   OutputParameters,
@@ -269,7 +269,7 @@ export class SwaggerParser {
   getOperations(options?: GetOperationsOptions): Operations {
     options = { ...{ excludeInternalOperations: true }, ...options };
 
-    const operations: Operation[] = this._getOperations(options).map((operation) => ({
+    const operations: LAOperation[] = this._getOperations(options).map((operation) => ({
       operationId: operation.operationId as string,
       description: operation.description,
       method: operation[ExtensionProperties.Method],
@@ -289,12 +289,12 @@ export class SwaggerParser {
     return map(operations, 'operationId');
   }
 
-  getOperationByOperationId(operationId: string): Operation | undefined {
+  getOperationByOperationId(operationId: string): LAOperation | undefined {
     const operations = this.getOperations({ unsorted: true, excludeInternalOperations: false });
     return getPropertyValue(operations, operationId);
   }
 
-  getOperationByPathAndMethod(path: string, method: string): Operation | undefined {
+  getOperationByPathAndMethod(path: string, method: string): LAOperation | undefined {
     const operations = this.getOperations({ unsorted: true, excludeInternalOperations: false });
     return Object.values(operations).find((operation) => operation.path === path && operation.method === method);
   }
@@ -312,10 +312,10 @@ export class SwaggerParser {
    * Gets the output schema by operation Id.
    * @arg {string} operationId
    *    - The ID of the operation whose output schema is desired.
-   * @return {Schema}
+   * @return {OpenApiSchema}
    *    - The output schema.
    */
-  getOutputSchema(operationId: string): Schema {
+  getOutputSchema(operationId: string): OpenApiSchema {
     const processor = this._getResponsesProcessor(operationId);
     return processor.getOutputSchema();
   }
@@ -384,18 +384,18 @@ export class SwaggerParser {
 
   private _getUploadChunkMetadata(capabilities: Record<string, any>): UploadChunkMetadata {
     return {
-      chunkTransferSupported: !!capabilities && !!capabilities[Capabilities.ChunkTransfer],
-      acceptUploadSize: !!capabilities && !!capabilities[Capabilities.AcceptUploadChunkSize],
-      minimumSize: capabilities ? capabilities[Capabilities.MinimumUploadChunkSize] : undefined,
-      maximumSize: capabilities ? capabilities[Capabilities.MaximumUploadChunkSize] : undefined,
+      chunkTransferSupported: !!capabilities && !!capabilities[ChunkSizeCapabilities.ChunkTransfer],
+      acceptUploadSize: !!capabilities && !!capabilities[ChunkSizeCapabilities.AcceptUploadChunkSize],
+      minimumSize: capabilities ? capabilities[ChunkSizeCapabilities.MinimumUploadChunkSize] : undefined,
+      maximumSize: capabilities ? capabilities[ChunkSizeCapabilities.MaximumUploadChunkSize] : undefined,
     };
   }
 
   private _getDownloadChunkMetadata(capabilities: Record<string, any>): DownloadChunkMetadata {
     return {
-      acceptDownloadSize: !!capabilities && !!capabilities[Capabilities.AcceptDownloadChunkSize],
-      minimumSize: capabilities ? capabilities[Capabilities.MinimumDownloadChunkSize] : undefined,
-      maximumSize: capabilities ? capabilities[Capabilities.MaximumDownloadChunkSize] : undefined,
+      acceptDownloadSize: !!capabilities && !!capabilities[ChunkSizeCapabilities.AcceptDownloadChunkSize],
+      minimumSize: capabilities ? capabilities[ChunkSizeCapabilities.MinimumDownloadChunkSize] : undefined,
+      maximumSize: capabilities ? capabilities[ChunkSizeCapabilities.MaximumDownloadChunkSize] : undefined,
     };
   }
 

@@ -45,8 +45,8 @@ import {
   parseEx,
   SegmentType,
 } from '@microsoft/logic-apps-shared';
-import type { OperationManifest } from '@microsoft/utils-logic-apps';
-import { clone, equals, first, getRecordEntry, isNullOrUndefined } from '@microsoft/utils-logic-apps';
+import type { OperationManifest } from '@microsoft/logic-apps-shared';
+import { clone, equals, first, getRecordEntry, isNullOrUndefined } from '@microsoft/logic-apps-shared';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 
 interface ImplicitForeachArrayDetails {

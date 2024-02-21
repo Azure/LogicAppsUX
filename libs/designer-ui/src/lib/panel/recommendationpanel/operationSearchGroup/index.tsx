@@ -3,7 +3,7 @@ import { getConnectorCategoryString } from '../../../utils';
 import type { OperationActionData } from '../interfaces';
 import { OperationSearchCard } from '../operationSearchCard';
 import { Link } from '@fluentui/react';
-import type { OperationApi } from '@microsoft/utils-logic-apps';
+import type { OperationApi } from '@microsoft/logic-apps-shared';
 import { useIntl } from 'react-intl';
 
 export interface OperationSearchGroupProps {

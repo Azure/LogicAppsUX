@@ -4,7 +4,7 @@ import type { IFunctionService } from '../function';
 import { isFunctionContainer } from '../helpers';
 import type { IHttpClient } from '../httpClient';
 import { ResponseCodes, SwaggerParser } from '@microsoft/logic-apps-shared';
-import { ArgumentException, unmap } from '@microsoft/utils-logic-apps';
+import { ArgumentException, unmap } from '@microsoft/logic-apps-shared';
 
 export interface BaseFunctionServiceOptions {
   baseUrl: string;

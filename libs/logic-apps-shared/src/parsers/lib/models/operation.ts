@@ -24,7 +24,7 @@ export interface Annotation {
   status: string | undefined;
 }
 
-export interface Operation {
+export interface LAOperation {
   operationId: string;
   description: string | undefined;
   method: string;
@@ -229,7 +229,7 @@ export interface InputDependencies {
   parameters: DependentParameterInfo[];
 }
 
-export interface ParameterBase {
+interface ParameterBase {
   key: string;
   name: string;
   type: string;
@@ -291,7 +291,7 @@ export interface InputParameters {
   byName: Record<string, InputParameter>;
 }
 
-export type Operations = Record<string, Operation>;
+export type Operations = Record<string, LAOperation>;
 
 export const OperationInputType = {
   NOTSPECIFIED: 'NOTSPECIFIED',

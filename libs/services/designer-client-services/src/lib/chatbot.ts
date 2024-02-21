@@ -1,4 +1,4 @@
-import { AssertionErrorCode, AssertionException } from '@microsoft/utils-logic-apps';
+import { AssertionErrorCode, AssertionException } from '@microsoft/logic-apps-shared';
 import type { AxiosResponse } from 'axios';
 
 export interface IChatbotService {

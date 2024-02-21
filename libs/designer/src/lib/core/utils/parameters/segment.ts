@@ -13,7 +13,7 @@ import {
   isStringLiteral,
   isTemplateExpression,
 } from '@microsoft/logic-apps-shared';
-import { format, guid, isNullOrUndefined, startsWith, UnsupportedException } from '@microsoft/utils-logic-apps';
+import { format, guid, isNullOrUndefined, startsWith, UnsupportedException } from '@microsoft/logic-apps-shared';
 
 /**
  * The options for value segment convertor.

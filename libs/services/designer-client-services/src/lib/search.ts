@@ -5,8 +5,8 @@ import type {
   DiscoveryResultTypes,
   DiscoveryWorkflow,
   DiscoveryWorkflowTrigger,
-} from '@microsoft/utils-logic-apps';
-import { AssertionErrorCode, AssertionException } from '@microsoft/utils-logic-apps';
+} from '@microsoft/logic-apps-shared';
+import { AssertionErrorCode, AssertionException } from '@microsoft/logic-apps-shared';
 
 export type OperationRuntimeCategory = {
   key: string;

@@ -1,8 +1,8 @@
 import type { BaseConnectorServiceOptions } from '../base';
 import { BaseConnectorService } from '../base';
 import type { ListDynamicValue, ManagedIdentityRequestProperties, TreeDynamicExtension, TreeDynamicValue } from '../connector';
-import type { OpenAPIV2 } from '@microsoft/utils-logic-apps';
-import { ArgumentException, UnsupportedException } from '@microsoft/utils-logic-apps';
+import type { OpenAPIV2 } from '@microsoft/logic-apps-shared';
+import { ArgumentException, UnsupportedException } from '@microsoft/logic-apps-shared';
 
 type GetConfigurationFunction = (connectionId: string) => Promise<Record<string, any>>;
 

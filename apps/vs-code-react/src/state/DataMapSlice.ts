@@ -1,5 +1,5 @@
 import type { FunctionData } from '@microsoft/logic-apps-data-mapper';
-import type { MapDefinitionEntry, MapMetadata, Schema } from '@microsoft/utils-logic-apps';
+import type { MapDefinitionEntry, MapMetadata, Schema } from '@microsoft/logic-apps-shared';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 

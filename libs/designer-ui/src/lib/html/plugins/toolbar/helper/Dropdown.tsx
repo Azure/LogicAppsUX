@@ -2,7 +2,7 @@ import chevronDownDark from './../../icons/dark/chevron-down.svg';
 import chevronDownLight from './../../icons/light/chevron-down.svg';
 import { DropDownItems } from './DropdownItems';
 import { useTheme } from '@fluentui/react';
-import { useOutsideClick } from '@microsoft/utils-logic-apps';
+import { useOutsideClick } from '@microsoft/logic-apps-shared';
 import type { LexicalCommand, LexicalEditor } from 'lexical';
 import { COMMAND_PRIORITY_CRITICAL, createCommand } from 'lexical';
 import type { ReactNode } from 'react';

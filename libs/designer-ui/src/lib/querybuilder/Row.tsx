@@ -13,7 +13,7 @@ import { RowDropdown, RowDropdownOptions } from './RowDropdown';
 import { operandNotEmpty } from './helper';
 import type { ICalloutProps, IIconProps, IOverflowSetItemProps, IOverflowSetStyles } from '@fluentui/react';
 import { css, IconButton, DirectionalHint, TooltipHost, OverflowSet } from '@fluentui/react';
-import { guid } from '@microsoft/utils-logic-apps';
+import { guid } from '@microsoft/logic-apps-shared';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
 

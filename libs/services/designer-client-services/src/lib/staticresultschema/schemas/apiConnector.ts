@@ -1,9 +1,9 @@
 import type { StaticResultRootSchemaType } from './baseactionresult';
 import { HttpStaticResultSchema } from './httpresult';
-import type { ManifestParser, Schema, SwaggerParser } from '@microsoft/logic-apps-shared';
+import type { ManifestParser, OpenApiSchema, SwaggerParser } from '@microsoft/logic-apps-shared';
 import { ExtensionProperties } from '@microsoft/logic-apps-shared';
-import type { OpenAPIV2 } from '@microsoft/utils-logic-apps';
-import { clone } from '@microsoft/utils-logic-apps';
+import type { OpenAPIV2 } from '@microsoft/logic-apps-shared';
+import { clone } from '@microsoft/logic-apps-shared';
 
 /**
  * Returns the root schema for a connector operation.
@@ -20,10 +20,10 @@ export const getStaticResultSchemaForAPIConnector = (
 
 /**
  * Wraps the static output schema to the operation schema.
- * @arg {Schema} outputSchema - the operation output schema.
+ * @arg {OpenApiSchema} outputSchema - the operation output schema.
  * @return {StaticResultRootSchemaType} - The root schema for connector operation.
  */
-const wrapOutputsSchemaToOperationSchema = (outputSchema: Schema): Promise<StaticResultRootSchemaType> => {
+const wrapOutputsSchemaToOperationSchema = (outputSchema: OpenApiSchema): Promise<StaticResultRootSchemaType> => {
   const schema = clone(HttpStaticResultSchema);
   if (outputSchema) {
     const newSchema = cleanDynamicSchemaParameters(clone(outputSchema));
@@ -37,8 +37,8 @@ const wrapOutputsSchemaToOperationSchema = (outputSchema: Schema): Promise<Stati
 
 /**
  * Cleans the dynamic parameters and convert it to the any type schema.
- * @arg {Schema} schema - The schema to clean.
- * @return {Schema} - The cleaned schema.
+ * @arg {OpenApiSchema} schema - The schema to clean.
+ * @return {OpenApiSchema} - The cleaned schema.
  */
 const cleanDynamicSchemaParameters = (schema: OpenAPIV2.SchemaObject): OpenAPIV2.IJsonSchema => {
   if (!schema) {

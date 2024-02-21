@@ -68,13 +68,13 @@ import {
   ConnectionReferenceKeyFormat,
   unmap,
   getObjectPropertyValue,
-} from '@microsoft/utils-logic-apps';
+} from '@microsoft/logic-apps-shared';
 import type {
   CustomSwaggerServiceDetails,
   OperationInfo,
   OperationManifest,
   OperationManifestProperties,
-} from '@microsoft/utils-logic-apps';
+} from '@microsoft/logic-apps-shared';
 import type { Dispatch } from '@reduxjs/toolkit';
 
 export interface ServiceOptions {

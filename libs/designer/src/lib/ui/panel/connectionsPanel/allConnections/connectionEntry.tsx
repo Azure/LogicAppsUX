@@ -11,7 +11,7 @@ import {
   PlugDisconnected24Filled,
 } from '@fluentui/react-icons';
 import { HostService } from '@microsoft/designer-client-services-logic-apps';
-import { getConnectionErrors } from '@microsoft/utils-logic-apps';
+import { getConnectionErrors } from '@microsoft/logic-apps-shared';
 import { useCallback, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
