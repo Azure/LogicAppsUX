@@ -266,16 +266,16 @@ export abstract class BaseSearchService implements ISearchService {
   ///   - We're only searching Azure operations for now, built-in and custom both are quick to preload
 
   public async getActiveSearchOperations?(searchTerm: string, actionType?: string): Promise<DiscoveryOpArray> {
+    const {
+      apiHubServiceDetails: { location, subscriptionId, apiVersion },
+    } = this.options;
+    if (this._isDev) return Promise.resolve([]);
+
     const traceId = LoggerService().startTrace({
       name: 'Get Active Search Operations',
       action: 'getActiveSearchOperations',
       source: 'connection.ts',
     });
-
-    const {
-      apiHubServiceDetails: { location, subscriptionId, apiVersion },
-    } = this.options;
-    if (this._isDev) return Promise.resolve(azureOperationsResponse);
 
     const uri = `/subscriptions/${subscriptionId}/providers/Microsoft.Web/locations/${location}/apiOperations`;
     const filters = [
@@ -290,7 +290,6 @@ export abstract class BaseSearchService implements ISearchService {
       'api-version': apiVersion,
     };
 
-    // const operations = await this.batchAzureResourceRequests(uri, queryParameters);
     const operations = await this.getAzureResourceRecursive(uri, queryParameters);
 
     LoggerService().endTrace(traceId, { status: Status.Success });

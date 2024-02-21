@@ -29,12 +29,9 @@ export const SearchView: React.FC<SearchViewProps> = (props) => {
   const [isLoadingSearchResults, setIsLoadingSearchResults] = useState<boolean>(false);
 
   useEffect(() => {
-    if (searchTerm !== '') {
-      setIsLoadingSearchResults(true);
-    }
+    if (searchTerm !== '') setIsLoadingSearchResults(true);
   }, [searchTerm]);
 
-  // Search through local data to filter through all operations
   useDebouncedEffect(
     () => {
       const searchOperations = SearchService().searchOperations?.bind(SearchService());

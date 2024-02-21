@@ -58,21 +58,24 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
 
   // Searched terms, so we don't search the same term twice
   const [searchedTerms, setSearchedTerms] = useState(['']);
-  // Record of actively searched operations, to avoid duplicate data storage
+  // Array of actively searched operations, to avoid duplicate data storage
   const [activeSearchOperations, setActiveSearchOperations] = useState<DiscoveryOpArray>([]);
 
   // Remove duplicates from allOperations and activeSearchOperations
   const allOperations: DiscoveryOpArray = useMemo(
-    () => [...new Map([...preloadedOperations, ...activeSearchOperations].map((v) => [v.id, v])).values()],
+    () => joinAndDeduplicate(preloadedOperations, activeSearchOperations),
     [preloadedOperations, activeSearchOperations]
   );
+
+  const joinAndDeduplicate = (arr1: DiscoveryOpArray, arr2: DiscoveryOpArray) => [
+    ...new Map([...arr1, ...arr2].map((v) => [v.id, v])).values(),
+  ];
 
   // Active search
   useDebouncedEffect(
     () => {
       // if preload is complete, no need to actively search
       if (!isLoadingOperations) return;
-      if (searchTerm === '') return;
       if (searchedTerms.includes(searchTerm)) return;
       // We are still preloading, perform active search
       const activeSearchResults =
@@ -81,7 +84,7 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
       // Store results
       activeSearchResults.then((results) => {
         setSearchedTerms([...searchedTerms, searchTerm]);
-        setActiveSearchOperations([...new Map([...results, ...activeSearchOperations].map((v) => [v.id, v])).values()]); // Prevent storage of duplicate data
+        setActiveSearchOperations(joinAndDeduplicate(results, activeSearchOperations));
       });
     },
     [searchedTerms, isLoadingOperations, searchTerm, filters, activeSearchOperations],
