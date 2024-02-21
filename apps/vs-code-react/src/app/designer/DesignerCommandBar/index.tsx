@@ -246,6 +246,18 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({ isRefres
       text: Resources.UNIT_TEST_ASSERTIONS,
       ariaLabel: Resources.UNIT_TEST_ASSERTIONS,
       iconProps: { iconName: 'CheckMark' },
+      onRenderText: (item: { text: string }) => {
+        return (
+          <>
+            {item.text}
+            {haveAssertionErrors ? (
+              <div style={{ display: 'inline-block', marginLeft: 8 }}>
+                <TrafficLightDot fill={RUN_AFTER_COLORS[isDarkMode ? 'dark' : 'light']['FAILED']} />
+              </div>
+            ) : null}
+          </>
+        );
+      },
       onClick: () => !!dispatch(openPanel({ panelMode: 'Assertions' })),
     },
   ];

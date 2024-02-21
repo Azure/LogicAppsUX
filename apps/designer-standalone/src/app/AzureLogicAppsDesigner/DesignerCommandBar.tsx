@@ -181,6 +181,7 @@ export const DesignerCommandBar = ({
         iconProps: { iconName: 'CheckMark' },
         disabled: !isUnitTest,
         onClick: () => !!dispatch(openPanel({ panelMode: 'Assertions' })),
+        onRenderText: (item: { text: string }) => <CustomCommandBarButton text={item.text} showError={haveAssertionErrors} />,
       },
       {
         key: 'codeview',
@@ -252,6 +253,7 @@ export const DesignerCommandBar = ({
       saveUnitTestMutate,
       isSavingUnitTest,
       saveUnitTestIsDisabled,
+      haveAssertionErrors,
     ]
   );
 
