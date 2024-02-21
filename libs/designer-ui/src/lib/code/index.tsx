@@ -3,7 +3,7 @@ import { ValueSegmentType } from '../editor';
 import type { BaseEditorProps } from '../editor/base';
 import TokenPickerButtonLegacy from '../editor/base/plugins/TokenPickerButtonLegacy';
 import type { EditorContentChangedEventArgs, EditorLanguage } from '../editor/monaco';
-import { MonacoEditor as Editor } from '../editor/monaco';
+import { MonacoEditor } from '../editor/monaco';
 import { useId } from '../useId';
 import { buildInlineCodeTextFromToken, getEditorHeight, getInitialValue } from './util';
 import { useFunctionalState } from '@react-hookz/web';
@@ -91,7 +91,7 @@ export function CodeEditor({
 
   return (
     <div className="msla-code-editor-body" id={editorId}>
-      <Editor
+      <MonacoEditor
         label={getLabel(label)}
         ref={codeEditorRef}
         height={editorHeight}
