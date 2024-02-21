@@ -1216,10 +1216,10 @@ export function loadParameterValuesFromDefault(inputParameters: Record<string, I
 
 export function loadParameterValuesArrayFromDefault(inputParameters: InputParameter[]): void {
   const queryClient = getReactQueryClient();
-  const isStateful = queryClient.getQueryData(['isStateful']);
+  const workflowKind = queryClient.getQueryData(['workflowKind']);
   for (const inputParameter of inputParameters) {
     if (inputParameter.default !== undefined) {
-      if (inputParameter.default === 'PT1H' && isStateful) {
+      if (inputParameter.default === 'PT1H' && workflowKind === 'stateless') {
         inputParameter.value = inputParameter.schema?.['x-ms-stateless-default'] ?? inputParameter.default;
       } else {
         inputParameter.value = inputParameter.default;

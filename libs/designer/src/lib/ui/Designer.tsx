@@ -25,7 +25,7 @@ import { css, setLayerHostSelector } from '@fluentui/react';
 import { PanelLocation } from '@microsoft/designer-ui';
 import type { CustomPanelLocation } from '@microsoft/designer-ui';
 import type { WorkflowNodeType } from '@microsoft/utils-logic-apps';
-import { useWindowDimensions, WORKFLOW_NODE_TYPES, useThrottledEffect, equals } from '@microsoft/utils-logic-apps';
+import { useWindowDimensions, WORKFLOW_NODE_TYPES, useThrottledEffect } from '@microsoft/utils-logic-apps';
 import type { CSSProperties } from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import KeyboardBackendFactory, { isKeyboardDragTrigger } from 'react-dnd-accessible-backend';
@@ -221,11 +221,11 @@ export const Designer = (props: DesignerProps) => {
   const recurrenceInterval = useHostOptions().recurrenceInterval;
   useQuery({ queryKey: ['recurrenceInterval'], initialData: recurrenceInterval });
 
-  // Adding isStateless to the query
+  // Adding workflowKind (stateful or stateless) to the query to access outside of functional components
   const workflowKind = useSelector((state: RootState) => state.workflow.workflowKind);
-  useQuery({ queryKey: ['isStateful'], initialData: equals(workflowKind, 'stateful') });
+  // This delayes the query until the workflowKind is available
+  useQuery({ queryKey: ['workflowKind'], initialData: undefined, enabled: !!workflowKind, queryFn: () => workflowKind });
   console.log('### workflowKind', workflowKind);
-  console.log('### isStateful', equals(workflowKind, 'stateful'));
 
   return (
     <DndProvider options={DND_OPTIONS}>
