@@ -1,5 +1,5 @@
-import type { OperationManifest } from '@microsoft/utils-logic-apps';
-import { OperationOptions, SettingScope } from '@microsoft/utils-logic-apps';
+import type { OperationManifest } from '@microsoft/logic-apps-shared';
+import { OperationOptions, SettingScope } from '@microsoft/logic-apps-shared';
 
 export default {
   properties: {

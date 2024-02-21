@@ -1,7 +1,7 @@
 import { DataMapperApiServiceInstance } from '../services';
-import type { Schema } from '@microsoft/utils-logic-apps';
+import type { DataMapSchema } from '@microsoft/logic-apps-shared';
 
-export const getSelectedSchema = (fileName: string, schemaFilePath: string): Promise<Schema> => {
+export const getSelectedSchema = (fileName: string, schemaFilePath: string): Promise<DataMapSchema> => {
   const service = DataMapperApiServiceInstance();
 
   const response = service.getSchemaFile(fileName, schemaFilePath);

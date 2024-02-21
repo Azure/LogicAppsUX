@@ -5,7 +5,7 @@ import { useActionMetadata } from '../../../../core/state/workflow/workflowSelec
 import type { RootState } from '../../../../core/store';
 import type { PanelTabFn } from '@microsoft/designer-ui';
 import { Peek } from '@microsoft/designer-ui';
-import { isNullOrEmpty } from '@microsoft/utils-logic-apps';
+import { isNullOrEmpty } from '@microsoft/logic-apps-shared';
 import { useQuery } from 'react-query';
 import { useSelector } from 'react-redux';
 

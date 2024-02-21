@@ -419,8 +419,8 @@ export interface ManualTriggerInputs {
   parameters?: Record<string, any>;
   path?: string;
   relativePath?: string;
-  schema?: Swagger.Schema;
-  headersSchema?: Record<string, Swagger.Schema>;
+  schema?: Swagger.SwaggerSchema;
+  headersSchema?: Record<string, Swagger.SwaggerSchema>;
 }
 
 /* Geofence trigger types */

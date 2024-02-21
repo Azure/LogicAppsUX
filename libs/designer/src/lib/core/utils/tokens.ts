@@ -39,8 +39,8 @@ import type { FunctionDefinition, OutputToken, Token, ValueSegment } from '@micr
 import { UIConstants, TemplateFunctions, TokenType, removeUTFExpressions } from '@microsoft/designer-ui';
 import { getIntl } from '@microsoft/intl-logic-apps';
 import { getKnownTitles, OutputKeys } from '@microsoft/logic-apps-shared';
-import type { BuiltInOutput, OperationManifest } from '@microsoft/utils-logic-apps';
-import { labelCase, unmap, equals, filterRecord, getRecordEntry } from '@microsoft/utils-logic-apps';
+import type { BuiltInOutput, OperationManifest } from '@microsoft/logic-apps-shared';
+import { labelCase, unmap, equals, filterRecord, getRecordEntry } from '@microsoft/logic-apps-shared';
 
 export interface TokenGroup {
   id: string;

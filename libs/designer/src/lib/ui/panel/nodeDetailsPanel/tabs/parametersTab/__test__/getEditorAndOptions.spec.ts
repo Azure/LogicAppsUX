@@ -2,7 +2,7 @@ import { getEditorAndOptions } from '..';
 import type { VariableDeclaration } from '../../../../../../core/state/tokens/tokensSlice';
 import { InitEditorService } from '@microsoft/designer-client-services-logic-apps';
 import type { ParameterInfo } from '@microsoft/designer-ui';
-import type { OperationInfo } from '@microsoft/utils-logic-apps';
+import type { OperationInfo } from '@microsoft/logic-apps-shared';
 
 describe('getEditorAndOptions', () => {
   const operationInfo: OperationInfo = {

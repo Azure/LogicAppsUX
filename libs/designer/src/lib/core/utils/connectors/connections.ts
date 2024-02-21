@@ -20,7 +20,7 @@ import type {
   Connector,
   ManagedIdentity,
   OperationManifest,
-} from '@microsoft/utils-logic-apps';
+} from '@microsoft/logic-apps-shared';
 import {
   ConnectionParameterTypes,
   ResourceIdentityType,
@@ -28,7 +28,7 @@ import {
   ConnectionType,
   getResourceName,
   getRecordEntry,
-} from '@microsoft/utils-logic-apps';
+} from '@microsoft/logic-apps-shared';
 
 export function getConnectionId(state: ConnectionsStoreState, nodeId: string): string {
   return getConnectionReference(state, nodeId)?.connection?.id ?? '';

@@ -15,7 +15,8 @@ import { getIntl } from '@microsoft/intl-logic-apps';
 import type { OpenAPIV2 } from '@microsoft/utils-logic-apps';
 import { aggregate, clone, equals, hasProperty, isNullOrUndefined } from '@microsoft/utils-logic-apps';
 
-export type Schema = OpenAPIV2.Schema;
+export type OpenApiSchema = OpenAPIV2.Schema;
+
 type SchemaObject = OpenAPIV2.SchemaObject;
 
 export interface ParentPropertyInfo {
@@ -83,7 +84,7 @@ export class SchemaProcessor {
     };
   }
 
-  getSchemaProperties(schema: Schema): SchemaProperty[] {
+  getSchemaProperties(schema: OpenApiSchema): SchemaProperty[] {
     schema = this._dereferenceRefSchema(schema) as SchemaObject;
 
     let properties: SchemaProperty[];
@@ -128,7 +129,7 @@ export class SchemaProcessor {
 
   // TODO: Might have to redo for handling primitive arrays
   private _getArrayProperties(schema: SchemaObject, skipParent = false): SchemaProperty[] {
-    const itemsSchema = (this._dereferenceRefSchema(schema.items as Schema) || {}) as SchemaObject;
+    const itemsSchema = (this._dereferenceRefSchema(schema.items as OpenApiSchema) || {}) as SchemaObject;
     const itemsType = itemsSchema.type;
     const arrayOutputs = skipParent ? [] : this._getScalarProperties(schema);
     const isReadOnlyInputParameter = this.options.isInputSchema && this._isReadOnlyParameter(schema);
@@ -247,7 +248,7 @@ export class SchemaProcessor {
     titlePrefix: string | undefined,
     summaryPrefix: string | undefined
   ): SchemaProperty[] {
-    const properties: Record<string, Schema> = schema.properties || {};
+    const properties: Record<string, OpenApiSchema> = schema.properties || {};
     const requiredProperties = schema.required || [];
     const keys = Object.keys(properties);
     const permission = schema[SwaggerConstants.ExtensionProperties.Permission] || this.options.permission;
@@ -351,7 +352,7 @@ export class SchemaProcessor {
     return this._sortProperties(schemaProperties);
   }
 
-  private _getScalarProperties(schema: Schema, $schema?: Schema): SchemaProperty[] {
+  private _getScalarProperties(schema: OpenApiSchema, $schema?: OpenApiSchema): SchemaProperty[] {
     const schemaProperty = this._getPropertyDetails(schema, $schema);
     if (this.options.expandOneOf && schemaProperty) {
       return this._expandOneOfProperty(schemaProperty);
@@ -411,7 +412,7 @@ export class SchemaProcessor {
     return schemas[0];
   }
 
-  private _dereferenceRefSchema(schema: Schema | undefined): SchemaObject | undefined {
+  private _dereferenceRefSchema(schema: OpenApiSchema | undefined): SchemaObject | undefined {
     if (isNullOrUndefined(schema)) {
       return schema;
     }
@@ -479,7 +480,7 @@ export class SchemaProcessor {
     const encode = schema[SwaggerConstants.ExtensionProperties.Encode];
     const $enum = getEnum(schema, $required);
     const format = schema.format;
-    const itemSchema = this._dereferenceRefSchema(schema.items as Schema);
+    const itemSchema = this._dereferenceRefSchema(schema.items as OpenApiSchema);
     const isInsideArray = parentProperty && parentProperty.isArray;
     const isNested = this.options.isNested;
     const isNotificationUrl = schema[SwaggerConstants.ExtensionProperties.NotificationUrl];

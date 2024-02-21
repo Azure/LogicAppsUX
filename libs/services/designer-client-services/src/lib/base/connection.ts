@@ -9,7 +9,7 @@ import type {
 } from '../connection';
 import type { HttpRequestOptions, IHttpClient, QueryParameters } from '../httpClient';
 import { SwaggerParser } from '@microsoft/logic-apps-shared';
-import type { Connection, Connector, OpenAPIV2 } from '@microsoft/utils-logic-apps';
+import type { Connection, Connector, OpenAPIV2 } from '@microsoft/logic-apps-shared';
 import {
   isCustomConnector,
   getUniqueName,
@@ -19,7 +19,7 @@ import {
   isArmResourceId,
   ArgumentException,
   equals,
-} from '@microsoft/utils-logic-apps';
+} from '@microsoft/logic-apps-shared';
 
 export interface ApiHubServiceDetails {
   apiVersion: string;

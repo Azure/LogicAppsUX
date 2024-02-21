@@ -1,4 +1,4 @@
-import type { OperationInfo } from '@microsoft/utils-logic-apps';
+import type { OperationInfo } from '@microsoft/logic-apps-shared';
 
 /**
  * Compatible with `ValueSegment` from @microsoft/designer-ui but without circular dependencies.

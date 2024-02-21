@@ -12,7 +12,7 @@ import type { IBreadcrumbItem, IIconProps, ITooltipHostStyles } from '@fluentui/
 import { TooltipHost, IconButton } from '@fluentui/react';
 import { useId } from '@fluentui/react-hooks';
 import type { TreeDynamicValue } from '@microsoft/designer-client-services-logic-apps';
-import { equals, guid } from '@microsoft/utils-logic-apps';
+import { equals, guid } from '@microsoft/logic-apps-shared';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
 

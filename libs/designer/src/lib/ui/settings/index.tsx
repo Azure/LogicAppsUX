@@ -22,7 +22,7 @@ import { Tracking } from './sections/tracking';
 import type { ValidationError } from './validation/validation';
 import { ValidationErrorKeys, validateNodeSettings } from './validation/validation';
 import type { IDropdownOption } from '@fluentui/react';
-import { type LogicAppsV2, equals, getRecordEntry, isObject } from '@microsoft/utils-logic-apps';
+import { type LogicAppsV2, equals, getRecordEntry, isObject } from '@microsoft/logic-apps-shared';
 import { useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 

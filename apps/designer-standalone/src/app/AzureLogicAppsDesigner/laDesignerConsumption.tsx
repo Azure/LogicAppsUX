@@ -47,7 +47,7 @@ import {
   serializeBJSWorkflow,
   store as DesignerStore,
 } from '@microsoft/logic-apps-designer';
-import { guid, startsWith } from '@microsoft/utils-logic-apps';
+import { guid, startsWith } from '@microsoft/logic-apps-shared';
 import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 

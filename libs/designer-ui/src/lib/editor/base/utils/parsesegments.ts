@@ -22,7 +22,7 @@ import type { HeadingNode } from '@lexical/rich-text';
 import { $isHeadingNode } from '@lexical/rich-text';
 import type { Expression } from '@microsoft/logic-apps-shared';
 import { ExpressionParser } from '@microsoft/logic-apps-shared';
-import { wrapTokenValue } from '@microsoft/utils-logic-apps';
+import { wrapTokenValue } from '@microsoft/logic-apps-shared';
 import type { LexicalNode, ParagraphNode, RootNode } from 'lexical';
 import {
   $createParagraphNode,

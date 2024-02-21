@@ -1,7 +1,7 @@
 import type { DictionaryEditorItemProps } from '.';
 import type { IIconProps } from '@fluentui/react';
 import { css, IconButton, TooltipHost } from '@fluentui/react';
-import { guid } from '@microsoft/utils-logic-apps';
+import { guid } from '@microsoft/logic-apps-shared';
 import { useIntl } from 'react-intl';
 
 const deleteButtonIconProps: IIconProps = {

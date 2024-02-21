@@ -17,7 +17,7 @@ import {
   isStringLiteral,
   isTemplateExpression,
 } from '@microsoft/logic-apps-shared';
-import { capitalizeFirstLetter, endsWith, equals, startsWith } from '@microsoft/utils-logic-apps';
+import { capitalizeFirstLetter, endsWith, equals, startsWith } from '@microsoft/logic-apps-shared';
 
 const regex = {
   datetime:

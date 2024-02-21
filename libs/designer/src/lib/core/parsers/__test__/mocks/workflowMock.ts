@@ -1,6 +1,6 @@
 import type { WorkflowState } from '../../../state/workflow/workflowInterfaces';
 import type { WorkflowNode } from '../../models/workflowNode';
-import { WORKFLOW_NODE_TYPES, WORKFLOW_EDGE_TYPES } from '@microsoft/utils-logic-apps';
+import { WORKFLOW_NODE_TYPES, WORKFLOW_EDGE_TYPES } from '@microsoft/logic-apps-shared';
 
 export const initialState: WorkflowState = {
   graph: {

@@ -1,4 +1,4 @@
-import { BaseException } from '@microsoft/utils-logic-apps';
+import { BaseException } from '@microsoft/logic-apps-shared';
 
 export class InvalidJsonSchemaTypeException extends BaseException {
   constructor(message: string, data?: Record<string, any>, innerException?: any) {

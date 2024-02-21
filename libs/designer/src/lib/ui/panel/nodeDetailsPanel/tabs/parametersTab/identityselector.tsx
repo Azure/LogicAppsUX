@@ -7,8 +7,8 @@ import { getConnectionReference, isIdentityPresentInLogicApp } from '../../../..
 import type { IDropdownOption, IDropdownStyles } from '@fluentui/react';
 import { Dropdown, FontSizes, Label } from '@fluentui/react';
 import { WorkflowService } from '@microsoft/designer-client-services-logic-apps';
-import type { ManagedIdentity } from '@microsoft/utils-logic-apps';
-import { isIdentityAssociatedWithLogicApp, equals, getIdentityDropdownOptions } from '@microsoft/utils-logic-apps';
+import type { ManagedIdentity } from '@microsoft/logic-apps-shared';
+import { isIdentityAssociatedWithLogicApp, equals, getIdentityDropdownOptions } from '@microsoft/logic-apps-shared';
 import type { FormEvent } from 'react';
 import { useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';

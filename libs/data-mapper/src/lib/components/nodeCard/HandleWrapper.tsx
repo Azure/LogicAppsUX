@@ -3,7 +3,7 @@ import type { RootState } from '../../core/state/Store';
 import { store } from '../../core/state/Store';
 import { isFunctionInputSlotAvailable, newConnectionWillHaveCircularLogic } from '../../utils/Connection.Utils';
 import { makeStaticStyles, tokens } from '@fluentui/react-components';
-import { SchemaType } from '@microsoft/utils-logic-apps';
+import { SchemaType } from '@microsoft/logic-apps-shared';
 import { useCallback, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import type { Position as HandlePosition, HandleType, Connection as ReactFlowConnection } from 'reactflow';

@@ -26,7 +26,7 @@ import {
   isManagedConnector,
   isSharedManagedConnectorFromPApps,
   isSharedManagedConnector,
-} from '@microsoft/utils-logic-apps';
+} from '@microsoft/logic-apps-shared';
 
 /**
  * Factory method to provide the static result root schema for an operation

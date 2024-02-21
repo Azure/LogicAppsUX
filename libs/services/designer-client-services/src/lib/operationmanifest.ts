@@ -1,5 +1,5 @@
-import type { OperationInfo, OperationManifest } from '@microsoft/utils-logic-apps';
-import { AssertionErrorCode, AssertionException } from '@microsoft/utils-logic-apps';
+import type { OperationInfo, OperationManifest } from '@microsoft/logic-apps-shared';
+import { AssertionErrorCode, AssertionException } from '@microsoft/logic-apps-shared';
 
 /**
  * The operation manifest service.

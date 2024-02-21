@@ -1,5 +1,5 @@
 import type { ExtensionCommand } from './extensioncommand';
-import type { MapDefinitionEntry, MapMetadata, SchemaType } from '@microsoft/utils-logic-apps';
+import type { MapDefinitionEntry, MapMetadata, SchemaType } from '@microsoft/logic-apps-shared';
 
 type InitializeData = { project: string };
 type FetchSchemaData = { fileName: string; type: SchemaType };

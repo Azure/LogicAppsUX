@@ -9,7 +9,7 @@ import { Row } from './Row';
 import { getOperationValue, getOuterMostCommaIndex } from './helper';
 import type { IButtonStyles, IStyle } from '@fluentui/react';
 import { ActionButton, FontSizes } from '@fluentui/react';
-import { guid, nthLastIndexOf } from '@microsoft/utils-logic-apps';
+import { guid, nthLastIndexOf } from '@microsoft/logic-apps-shared';
 import { useFunctionalState } from '@react-hookz/web';
 import { useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';

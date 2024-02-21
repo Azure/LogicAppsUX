@@ -52,7 +52,7 @@ export const Permissions = {
   ReadWrite: 'read-write',
 };
 
-export const Capabilities = {
+export const ChunkSizeCapabilities = {
   ChunkTransfer: 'chunkTransfer',
   AcceptUploadChunkSize: 'acceptUploadChunkSizeInMB',
   MinimumUploadChunkSize: 'minimumUploadChunkSizeInMB',

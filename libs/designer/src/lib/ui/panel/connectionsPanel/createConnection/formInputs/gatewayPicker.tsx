@@ -1,6 +1,6 @@
 import type { IDropdownOption } from '@fluentui/react';
 import { Dropdown } from '@fluentui/react';
-import type { Gateway, Subscription } from '@microsoft/utils-logic-apps';
+import type { Gateway, Subscription } from '@microsoft/logic-apps-shared';
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
 

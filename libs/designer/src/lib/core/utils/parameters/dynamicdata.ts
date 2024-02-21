@@ -63,7 +63,7 @@ import {
   WildIndexSegment,
   replaceSubsegmentSeparator,
 } from '@microsoft/logic-apps-shared';
-import type { Connection, Connector, OpenAPIV2, OperationInfo, OperationManifest } from '@microsoft/utils-logic-apps';
+import type { Connection, Connector, OpenAPIV2, OperationInfo, OperationManifest } from '@microsoft/logic-apps-shared';
 import {
   first,
   getObjectPropertyValue,
@@ -84,7 +84,7 @@ import {
   map,
   copy,
   unmap,
-} from '@microsoft/utils-logic-apps';
+} from '@microsoft/logic-apps-shared';
 
 export async function getDynamicValues(
   dependencyInfo: DependencyInfo,

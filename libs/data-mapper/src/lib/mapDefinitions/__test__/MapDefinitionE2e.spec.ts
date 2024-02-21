@@ -3,7 +3,7 @@ import { loadMapDefinition } from '../../utils/MapDefinition.Utils';
 import { convertSchemaToSchemaExtended, flattenSchemaIntoSortArray } from '../../utils/Schema.Utils';
 import { MapDefinitionDeserializer } from '../MapDefinitionDeserializer';
 import { convertToMapDefinition } from '../MapDefinitionSerializer';
-import type { SchemaExtended } from '@microsoft/utils-logic-apps';
+import type { SchemaExtended } from '@microsoft/logic-apps-shared';
 import { comprehensiveMapDefinition, transcriptJsonMapDefinitionString } from '__mocks__/mapDefinitions';
 import { comprehensiveSourceSchema, comprehensiveTargetSchema, sourceMockJsonSchema, targetMockJsonSchema } from '__mocks__/schemas';
 

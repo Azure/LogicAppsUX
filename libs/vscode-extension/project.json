@@ -10,7 +10,7 @@
       "options": {
         "outputPath": "dist/libs/vscode-extension",
         "main": "libs/vscode-extension/src/index.ts",
-        "tsConfig": "libs/vscode-extension/tsconfig.lib.json",
+        "tsConfig": "libs/vscode-extension/tsconfig.json",
         "assets": ["libs/vscode-extension/*.md"]
       }
     },

@@ -1,6 +1,6 @@
 import { mapNodeParams } from '../constants/MapDefinitionConstants';
-import type { FunctionPositionMetadata, SchemaNodeExtended } from '@microsoft/utils-logic-apps';
-import { InputFormat as InputEntryType, NormalizedDataType } from '@microsoft/utils-logic-apps';
+import type { FunctionPositionMetadata, SchemaNodeExtended } from '@microsoft/logic-apps-shared';
+import { InputFormat as InputEntryType, NormalizedDataType } from '@microsoft/logic-apps-shared';
 
 export interface FunctionManifest {
   version: string;

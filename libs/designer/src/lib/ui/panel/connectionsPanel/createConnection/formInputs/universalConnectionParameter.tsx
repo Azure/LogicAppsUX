@@ -2,8 +2,8 @@ import { ConnectionParameterRow } from '../connectionParameterRow';
 import GatewayPicker from './gatewayPicker';
 import type { IDropdownOption } from '@fluentui/react';
 import { Checkbox, Dropdown, TextField } from '@fluentui/react';
-import type { ConnectionParameter, ConnectionParameterAllowedValue } from '@microsoft/utils-logic-apps';
-import { ConnectionParameterTypes } from '@microsoft/utils-logic-apps';
+import type { ConnectionParameter, ConnectionParameterAllowedValue } from '@microsoft/logic-apps-shared';
+import { ConnectionParameterTypes } from '@microsoft/logic-apps-shared';
 
 export interface ConnectionParameterProps {
   parameterKey: string;

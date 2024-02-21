@@ -34,7 +34,7 @@ import type {
   ExpressionLiteral,
   OutputParameter,
   OutputParameters,
-  Schema,
+  OpenApiSchema,
 } from '@microsoft/logic-apps-shared';
 import {
   create,
@@ -46,7 +46,7 @@ import {
   isFunction,
   isStringLiteral,
 } from '@microsoft/logic-apps-shared';
-import type { OpenAPIV2, OperationManifest } from '@microsoft/utils-logic-apps';
+import type { OpenAPIV2, OperationManifest } from '@microsoft/logic-apps-shared';
 import {
   ConnectionReferenceKeyFormat,
   getObjectPropertyValue,
@@ -57,7 +57,7 @@ import {
   clone,
   equals,
   parseErrorMessage,
-} from '@microsoft/utils-logic-apps';
+} from '@microsoft/logic-apps-shared';
 import type { Dispatch } from '@reduxjs/toolkit';
 
 export const toOutputInfo = (output: OutputParameter): OutputInfo => {
@@ -360,7 +360,7 @@ export const getUpdatedManifestForSchemaDependency = (manifest: OperationManifes
       const isRequestApiConnectionTrigger =
         !!updatedManifest.properties?.inputs?.properties?.schema?.['x-ms-editor-options']?.isRequestApiConnectionTrigger;
 
-      let schemaValue: Schema;
+      let schemaValue: OpenApiSchema;
       let shouldMerge: boolean;
       // if schema contains static object returned from RP, merge the current schema value and new schema value
       if (

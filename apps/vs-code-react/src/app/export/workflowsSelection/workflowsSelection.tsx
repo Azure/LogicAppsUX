@@ -10,7 +10,7 @@ import { filterWorkflows, getListColumns, getSelectedItems, parseResourceGroups,
 import { SelectedList } from './selectedList';
 import { Separator, ShimmeredDetailsList, Text, SelectionMode, Selection, MessageBar, MessageBarType } from '@fluentui/react';
 import type { IDropdownOption } from '@fluentui/react';
-import { isNullOrUndefined } from '@microsoft/utils-logic-apps';
+import { isNullOrUndefined } from '@microsoft/logic-apps-shared';
 import { useMemo, useRef, useState, useEffect, useCallback } from 'react';
 import { useIntl } from 'react-intl';
 import { useQuery } from 'react-query';

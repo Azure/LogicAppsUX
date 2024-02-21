@@ -6,7 +6,7 @@ import { initializeServices } from './state/designerOptions/designerOptionsSlice
 import { initWorkflowKind, initRunInstance, initWorkflowSpec } from './state/workflow/workflowSlice';
 import type { AppDispatch } from './store';
 import { parseWorkflowKind } from './utils/workflow';
-import type { LogicAppsV2 } from '@microsoft/utils-logic-apps';
+import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import { useDeepCompareEffect } from '@react-hookz/web';
 import React, { useContext, useEffect } from 'react';
 import { useDispatch } from 'react-redux';

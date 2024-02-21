@@ -6,7 +6,7 @@ import { setShowDeleteModal } from '../../../core/state/designerView/designerVie
 import { useWorkflowNode } from '../../../core/state/workflow/workflowSelectors';
 import { deleteSwitchCase } from '../../../core/state/workflow/workflowSlice';
 import { DeleteNodeModal } from '@microsoft/designer-ui';
-import { WORKFLOW_NODE_TYPES, removeIdTag } from '@microsoft/utils-logic-apps';
+import { WORKFLOW_NODE_TYPES, removeIdTag } from '@microsoft/logic-apps-shared';
 import { useCallback, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 

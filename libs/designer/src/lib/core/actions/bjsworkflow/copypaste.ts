@@ -7,7 +7,7 @@ import type { RelationshipIds } from '../../state/panel/panelInterfaces';
 import { setIsPanelLoading } from '../../state/panel/panelSlice';
 import { pasteNode } from '../../state/workflow/workflowSlice';
 import { initializeOperationDetails } from './add';
-import { getRecordEntry } from '@microsoft/utils-logic-apps';
+import { getRecordEntry } from '@microsoft/logic-apps-shared';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { batch } from 'react-redux';
 

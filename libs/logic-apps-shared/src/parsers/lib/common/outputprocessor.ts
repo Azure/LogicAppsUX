@@ -2,7 +2,7 @@ import type { OutputMetadata, OutputParameter, SchemaProperty } from '../models/
 import { OutputSource, ParameterLocations, ResponseCodes } from './constants';
 import * as ParameterKeyUtility from './helpers/keysutility';
 import { getArrayOutputMetadata } from './helpers/utils';
-import type { SchemaProcessorOptions, Schema } from './schemaprocessor';
+import type { SchemaProcessorOptions, OpenApiSchema } from './schemaprocessor';
 import { SchemaProcessor } from './schemaprocessor';
 import type { OpenAPIV2 } from '@microsoft/utils-logic-apps';
 import { equals, startsWith } from '@microsoft/utils-logic-apps';
@@ -18,7 +18,7 @@ export class OutputsProcessor {
     this._responses = responses;
   }
 
-  getOutputSchema(): Schema {
+  getOutputSchema(): OpenApiSchema {
     const response = this._getResponse();
     return response.schema;
   }

@@ -3,7 +3,7 @@ import { calloutContentStyles } from '../fabric';
 import type { FlyoutSelectedEventHandler } from './types';
 import type { Target } from '@fluentui/react';
 import { Callout, DirectionalHint } from '@fluentui/react';
-import type { OpenAPIV2 } from '@microsoft/utils-logic-apps';
+import type { OpenAPIV2 } from '@microsoft/logic-apps-shared';
 
 export interface FlyoutBalloonProps {
   documentationLink?: OpenAPIV2.ExternalDocumentationObject;

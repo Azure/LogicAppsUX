@@ -1,4 +1,4 @@
-import type { OperationManifest } from '@microsoft/utils-logic-apps';
+import type { OperationManifest } from '@microsoft/logic-apps-shared';
 
 export const mockGetMyOffice365ProfileOpenApiManifest: OperationManifest = {
   properties: {

@@ -1,6 +1,6 @@
 import type { FunctionDictionary } from '../models';
 import type { ConnectionDictionary } from '../models/Connection';
-import type { ConnectionAndOrder, FunctionMetadata, MapMetadata } from '@microsoft/utils-logic-apps';
+import type { ConnectionAndOrder, FunctionMetadata, MapMetadata } from '@microsoft/logic-apps-shared';
 
 export const generateMapMetadata = (functionDictionary: FunctionDictionary, connections: ConnectionDictionary): MapMetadata => {
   const functionMetadata: FunctionMetadata[] = [];

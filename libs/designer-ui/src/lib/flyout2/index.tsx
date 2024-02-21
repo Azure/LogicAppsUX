@@ -3,7 +3,7 @@ import Constants from '../constants';
 import { getDragStartHandlerWhenDisabled } from '../helper';
 import { FlyoutBalloon } from './flyoutballoon';
 import type { FlyoutSelectedEventHandler } from './types';
-import type { OpenAPIV2 } from '@microsoft/utils-logic-apps';
+import type { OpenAPIV2 } from '@microsoft/logic-apps-shared';
 import { useRef } from 'react';
 
 export interface Flyout2Props {

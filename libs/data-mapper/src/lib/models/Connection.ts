@@ -1,5 +1,5 @@
 import type { FunctionData } from './Function';
-import type { SchemaNodeExtended } from '@microsoft/utils-logic-apps';
+import type { SchemaNodeExtended } from '@microsoft/logic-apps-shared';
 
 export type ConnectionDictionary = { [key: string]: Connection }; // key = "{(target)||(source)}-{nodeId}"
 export type InputConnectionDictionary = { [inputNumber: string]: InputConnection[] };

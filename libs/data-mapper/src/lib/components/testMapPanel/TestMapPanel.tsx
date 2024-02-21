@@ -6,7 +6,7 @@ import { ChoiceGroup, DefaultButton, Panel, PanelType, Pivot, PivotItem, Primary
 import { makeStyles, shorthands, tokens } from '@fluentui/react-components';
 import type { MonacoProps } from '@microsoft/designer-ui';
 import { EditorLanguage, MonacoEditor } from '@microsoft/designer-ui';
-import { guid, isNullOrEmpty, SchemaFileFormat } from '@microsoft/utils-logic-apps';
+import { guid, isNullOrEmpty, SchemaFileFormat } from '@microsoft/logic-apps-shared';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useSelector } from 'react-redux';

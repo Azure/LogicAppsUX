@@ -4,7 +4,7 @@ import type { IButtonStyles } from '@fluentui/react';
 import { $isAutoLinkNode, $isLinkNode, TOGGLE_LINK_COMMAND } from '@lexical/link';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { $findMatchingParent, mergeRegister } from '@lexical/utils';
-import { useOutsideClick } from '@microsoft/utils-logic-apps';
+import { useOutsideClick } from '@microsoft/logic-apps-shared';
 import type { GridSelection, LexicalEditor, NodeSelection, RangeSelection } from 'lexical';
 import {
   $getSelection,

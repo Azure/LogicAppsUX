@@ -3,7 +3,7 @@ import type { Token, ValueSegment } from '../editor';
 import { TokenType } from '../editor';
 import { getIntl } from '@microsoft/intl-logic-apps';
 import { decodePropertySegment, OutputKeys } from '@microsoft/logic-apps-shared';
-import { ArgumentException, endsWith, equals, prettifyJsonString, UnsupportedException } from '@microsoft/utils-logic-apps';
+import { ArgumentException, endsWith, equals, prettifyJsonString, UnsupportedException } from '@microsoft/logic-apps-shared';
 
 const OperationCategory = {
   Actions: 'actions',

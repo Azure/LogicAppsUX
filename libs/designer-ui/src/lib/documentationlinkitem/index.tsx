@@ -1,4 +1,4 @@
-import type { OpenAPIV2 } from '@microsoft/utils-logic-apps';
+import type { OpenAPIV2 } from '@microsoft/logic-apps-shared';
 
 export interface DocumentationLinkItemProps extends OpenAPIV2.ExternalDocumentationObject {
   onClick?(): void;

@@ -2,7 +2,7 @@ import constants from '../../../common/constants';
 import type { NodeOperation } from '../../../core/state/operation/operationMetadataSlice';
 import type { NodesMetadata } from '../../../core/state/workflow/workflowInterfaces';
 import { getAllParentsForNode } from '../../../core/utils/graph';
-import { getRecordEntry, type LogicAppsV2 } from '@microsoft/utils-logic-apps';
+import { getRecordEntry, type LogicAppsV2 } from '@microsoft/logic-apps-shared';
 
 /**
  * Gets number of loops for loop nodes.

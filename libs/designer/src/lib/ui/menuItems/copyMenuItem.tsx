@@ -1,6 +1,6 @@
 import { MenuItem } from '@fluentui/react-components';
 import { bundleIcon, Clipboard24Filled, Clipboard24Regular } from '@fluentui/react-icons';
-import { isApple } from '@microsoft/utils-logic-apps';
+import { isApple } from '@microsoft/logic-apps-shared';
 import { useIntl } from 'react-intl';
 
 const CopyIcon = bundleIcon(Clipboard24Filled, Clipboard24Regular);

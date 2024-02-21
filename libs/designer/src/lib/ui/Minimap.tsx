@@ -1,6 +1,6 @@
 import { useShowMinimap } from '../core/state/designerView/designerViewSelectors';
 import { useTheme } from '@fluentui/react';
-import type { WorkflowNodeType } from '@microsoft/utils-logic-apps';
+import type { WorkflowNodeType } from '@microsoft/logic-apps-shared';
 import { useMemo, useCallback } from 'react';
 import type { XYPosition } from 'reactflow';
 import { MiniMap, useReactFlow } from 'reactflow';

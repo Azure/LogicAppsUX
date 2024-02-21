@@ -12,7 +12,7 @@ import { DevSerializationTester } from './DevSerializationTester';
 import type { IDropdownOption } from '@fluentui/react';
 import { Checkbox, Dropdown, Stack, StackItem, TextField } from '@fluentui/react';
 import { Accordion, AccordionHeader, AccordionItem, AccordionPanel, Tooltip, tokens } from '@fluentui/react-components';
-import { SchemaFileFormat, Theme as ThemeType } from '@microsoft/utils-logic-apps';
+import { SchemaFileFormat, Theme as ThemeType } from '@microsoft/logic-apps-shared';
 import { useCallback, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 

@@ -1,6 +1,6 @@
 import { LoadingMethod } from './DataMapDataLoader';
 import type { RootState } from './Store';
-import type { Schema } from '@microsoft/utils-logic-apps';
+import type { DataMapSchema } from '@microsoft/logic-apps-shared';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 
@@ -10,9 +10,9 @@ export interface SchemaLoadingState {
   outputResourcePath?: string;
   availableResourcesPaths?: string[];
   loadingMethod: LoadingMethod;
-  sourceSchema?: Schema;
-  targetSchema?: Schema;
-  availableSchemas?: Schema[];
+  sourceSchema?: DataMapSchema;
+  targetSchema?: DataMapSchema;
+  availableSchemas?: DataMapSchema[];
 }
 
 const initialState: SchemaLoadingState = {
@@ -94,9 +94,9 @@ export const schemaDataLoaderSlice = createSlice({
   },
 });
 
-const loadSchemaFromMock = async (resourcePath: string): Promise<Schema | undefined> => {
+const loadSchemaFromMock = async (resourcePath: string): Promise<DataMapSchema | undefined> => {
   try {
-    const schema: Schema = await import(`../../../../__mocks__/schemas/${resourcePath}`);
+    const schema: DataMapSchema = await import(`../../../../__mocks__/schemas/${resourcePath}`);
     return schema;
   } catch (ex) {
     console.error(ex);

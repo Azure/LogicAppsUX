@@ -3,7 +3,7 @@ import type { Settings } from '../actions/bjsworkflow/settings';
 import type { OperationMetadataState } from '../state/operation/operationMetadataSlice';
 import type { WorkflowState } from '../state/workflow/workflowInterfaces';
 import { getTriggerNodeId } from './graph';
-import type { LogicAppsV2 } from '@microsoft/utils-logic-apps';
+import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
 
 export function hasSecureOutputs(nodeType: string, allSettings: Settings | undefined): boolean {
   const { secureInputs, secureOutputs } = allSettings || {};

@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 import { Platform } from '../../../constants';
 import { localize } from '../../../localize';
-import { isString } from '@microsoft/utils-logic-apps';
+import { isString } from '@microsoft/logic-apps-shared';
 import type { IAzExtOutputChannel } from '@microsoft/vscode-azext-utils';
 import type { ICommandResult } from '@microsoft/vscode-extension';
 import * as cp from 'child_process';

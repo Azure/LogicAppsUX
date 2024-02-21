@@ -12,7 +12,7 @@ import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import { getGlobalSetting, getWorkspaceSettingFromAnyFolder, updateGlobalSetting } from '../vsCodeConfig/settings';
 import { executeCommand } from './cpUtils';
-import { isNullOrUndefined } from '@microsoft/utils-logic-apps';
+import { isNullOrUndefined } from '@microsoft/logic-apps-shared';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { FuncVersion, latestGAVersion } from '@microsoft/vscode-extension';
 import * as fs from 'fs';

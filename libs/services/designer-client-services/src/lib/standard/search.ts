@@ -4,8 +4,8 @@ import type { AzureOperationsFetchResponse, BaseSearchServiceOptions, DiscoveryO
 import { getClientBuiltInOperations, getClientBuiltInConnectors } from '../base/search';
 import type { ContinuationTokenResponse } from '../common/azure';
 import type { QueryParameters } from '../httpClient';
-import type { BuiltInOperation, Connector, DiscoveryOperation, SomeKindOfAzureOperationDiscovery } from '@microsoft/utils-logic-apps';
-import { ArgumentException, connectorsSearchResultsMock } from '@microsoft/utils-logic-apps';
+import type { BuiltInOperation, Connector, DiscoveryOperation, SomeKindOfAzureOperationDiscovery } from '@microsoft/logic-apps-shared';
+import { ArgumentException, connectorsSearchResultsMock } from '@microsoft/logic-apps-shared';
 
 const ISE_RESOURCE_ID = 'properties/integrationServiceEnvironmentResourceId';
 

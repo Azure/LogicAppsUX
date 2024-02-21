@@ -1,6 +1,6 @@
 import { StaticResultRootSchema } from './baseactionresult';
 import { getIntl } from '@microsoft/intl-logic-apps';
-import type { Schema } from '@microsoft/logic-apps-shared';
+import type { OpenApiSchema } from '@microsoft/logic-apps-shared';
 
 const intl = getIntl();
 
@@ -42,11 +42,11 @@ export const HttpStaticResultSchema = {
             type: 'string',
           },
           title: STATIC_RESULT_HTTP_HEADERS_TITLE,
-        } as Schema,
+        } as OpenApiSchema,
         body: {
           type: 'string',
           title: STATIC_RESULT_HTTP_BODY_TITLE,
-        } as Schema,
+        } as OpenApiSchema,
       },
       type: 'object',
       title: STATIC_RESULT_OPERATION_OUTPUT_TITLE,

@@ -6,7 +6,7 @@ import { convertStringToSegments } from '../../editor/base/utils/editorToSegment
 import { getChildrenNodes, insertQutationForStringType } from '../../editor/base/utils/helper';
 import { convertSegmentsToString } from '../../editor/base/utils/parsesegments';
 import { convertComplexItemsToArray, validationAndSerializeComplexArray, validationAndSerializeSimpleArray } from './util';
-import { guid, prettifyJsonString } from '@microsoft/utils-logic-apps';
+import { guid, prettifyJsonString } from '@microsoft/logic-apps-shared';
 import type { LexicalEditor } from 'lexical';
 import { $getRoot } from 'lexical';
 

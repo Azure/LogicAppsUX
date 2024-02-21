@@ -1,6 +1,6 @@
 import { integrationAccountGroup } from '../operations/operationgroups';
-import type { OperationManifest } from '@microsoft/utils-logic-apps';
-import { SettingScope } from '@microsoft/utils-logic-apps';
+import type { OperationManifest } from '@microsoft/logic-apps-shared';
+import { SettingScope } from '@microsoft/logic-apps-shared';
 
 export const integrationAccountArtifactLookupManifest = {
   properties: {

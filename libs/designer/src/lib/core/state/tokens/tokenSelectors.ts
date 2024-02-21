@@ -1,6 +1,6 @@
 import type { RootState } from '../../store';
 import type { TokensState } from './tokensSlice';
-import { getRecordEntry } from '@microsoft/utils-logic-apps';
+import { getRecordEntry } from '@microsoft/logic-apps-shared';
 import { createSelector } from '@reduxjs/toolkit';
 import { useSelector } from 'react-redux';
 

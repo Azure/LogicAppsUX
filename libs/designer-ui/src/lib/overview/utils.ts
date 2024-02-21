@@ -1,7 +1,7 @@
 import { getDurationString } from '../utils';
 import type { RunDisplayItem } from './types';
-import type { Run, RunError } from '@microsoft/utils-logic-apps';
-import { isObject } from '@microsoft/utils-logic-apps';
+import type { Run, RunError } from '@microsoft/logic-apps-shared';
+import { isObject } from '@microsoft/logic-apps-shared';
 
 export function isRunError(value: any): value is RunError {
   return isObject(value) && isObject(value.error) && typeof value.error.code === 'string' && typeof value.error.message === 'string';

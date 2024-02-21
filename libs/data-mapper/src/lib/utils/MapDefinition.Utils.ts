@@ -1,4 +1,4 @@
-import type { MapDefinitionEntry } from '@microsoft/utils-logic-apps';
+import type { MapDefinitionEntry } from '@microsoft/logic-apps-shared';
 import * as yaml from 'js-yaml';
 
 /*

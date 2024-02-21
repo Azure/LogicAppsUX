@@ -20,8 +20,8 @@ import type {
   IHostService,
   IWorkflowService,
 } from '@microsoft/designer-client-services-logic-apps';
-import type { ManagedIdentity } from '@microsoft/utils-logic-apps';
-import { HTTP_METHODS, clone } from '@microsoft/utils-logic-apps';
+import type { ManagedIdentity } from '@microsoft/logic-apps-shared';
+import { HTTP_METHODS, clone } from '@microsoft/logic-apps-shared';
 import type { ConnectionAndAppSetting, ConnectionsData, IDesignerPanelMetadata } from '@microsoft/vscode-extension';
 import { ExtensionCommand, HttpClient } from '@microsoft/vscode-extension';
 import type { QueryClient } from 'react-query';

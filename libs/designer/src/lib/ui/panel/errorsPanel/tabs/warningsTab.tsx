@@ -3,7 +3,7 @@ import { NodeErrors } from '../nodeErrors';
 import { useHostCheckerWarnings, useTotalNumWarnings } from './warningsTab.hooks';
 import { Text } from '@fluentui/react';
 import { MessageLevel } from '@microsoft/designer-ui';
-import { getRecordEntry } from '@microsoft/utils-logic-apps';
+import { getRecordEntry } from '@microsoft/logic-apps-shared';
 import { useIntl } from 'react-intl';
 
 export const WarningsTab = () => {

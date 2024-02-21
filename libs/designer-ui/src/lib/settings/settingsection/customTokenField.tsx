@@ -8,7 +8,7 @@ import type {
   IEditorProps,
   IRenderDefaultEditorParams,
 } from '@microsoft/designer-client-services-logic-apps';
-import { equals } from '@microsoft/utils-logic-apps';
+import { equals } from '@microsoft/logic-apps-shared';
 import { useCallback } from 'react';
 
 export type CustomTokenFieldProps = Omit<TokenFieldProps, 'editor' | 'editorOptions'> & ICustomEditorAndOptions;

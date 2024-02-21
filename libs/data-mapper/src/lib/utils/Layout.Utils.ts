@@ -11,7 +11,7 @@ import { generateInputHandleId, isConnectionUnit } from './Connection.Utils';
 import { isFunctionData } from './Function.Utils';
 import { LogCategory, LogService } from './Logging.Utils';
 import { addSourceReactFlowPrefix, addTargetReactFlowPrefix, functionPlaceholderPosition } from './ReactFlow.Util';
-import type { SchemaNodeDictionary, SchemaNodeExtended } from '@microsoft/utils-logic-apps';
+import type { SchemaNodeDictionary, SchemaNodeExtended } from '@microsoft/logic-apps-shared';
 
 const rootLayoutNodeId = 'root';
 const LayoutContainer = {

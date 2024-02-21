@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { defaultRoutePrefix } from '../../constants';
-import { isObject, isNullOrUndefined } from '@microsoft/utils-logic-apps';
+import { isObject, isNullOrUndefined } from '@microsoft/logic-apps-shared';
 import type { IBundleMetadata, IHostJsonV1, IHostJsonV2, IParsedHostJson } from '@microsoft/vscode-extension';
 import { FuncVersion } from '@microsoft/vscode-extension';
 

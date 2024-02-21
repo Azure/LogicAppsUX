@@ -1,6 +1,6 @@
 import { Label, Link, Pivot, PivotItem, Text } from '@fluentui/react';
-import { getCallbackUrl } from '@microsoft/utils-logic-apps';
-import type { CallbackInfo } from '@microsoft/utils-logic-apps';
+import { getCallbackUrl } from '@microsoft/logic-apps-shared';
+import type { CallbackInfo } from '@microsoft/logic-apps-shared';
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
 

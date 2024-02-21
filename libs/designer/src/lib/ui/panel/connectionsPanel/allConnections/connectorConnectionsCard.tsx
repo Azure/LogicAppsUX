@@ -2,7 +2,7 @@ import { useAllConnectionErrors } from '../../../../core';
 import { ConnectionEntry } from './connectionEntry';
 import { Text, AccordionHeader, AccordionPanel, Spinner, Badge } from '@fluentui/react-components';
 import { getConnectorCategoryString } from '@microsoft/designer-ui';
-import { fallbackConnectorIconUrl, isBuiltInConnector } from '@microsoft/utils-logic-apps';
+import { fallbackConnectorIconUrl, isBuiltInConnector } from '@microsoft/logic-apps-shared';
 import { useMemo } from 'react';
 
 export interface ConnectorConnectionsCardProps {

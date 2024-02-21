@@ -54,8 +54,8 @@ import type {
   SchemaExtended,
   SchemaNodeDictionary,
   SchemaNodeExtended,
-} from '@microsoft/utils-logic-apps';
-import { SchemaNodeProperty, SchemaType } from '@microsoft/utils-logic-apps';
+} from '@microsoft/logic-apps-shared';
+import { SchemaNodeProperty, SchemaType } from '@microsoft/logic-apps-shared';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 

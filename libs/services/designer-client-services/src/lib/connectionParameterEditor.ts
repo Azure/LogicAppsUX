@@ -1,4 +1,4 @@
-import type { ConnectionParameter, ConnectionParameterSetParameter } from '@microsoft/utils-logic-apps';
+import type { ConnectionParameter, ConnectionParameterSetParameter } from '@microsoft/logic-apps-shared';
 
 export interface IConnectionParameterInfo {
   connectorId: string;

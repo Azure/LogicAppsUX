@@ -8,7 +8,7 @@ import type {
 import { getClientRequestIdFromHeaders, pathCombine } from '../helpers';
 import type { IHttpClient } from '../httpClient';
 import { getIntl } from '@microsoft/intl-logic-apps';
-import type { OpenAPIV2, OperationInfo } from '@microsoft/utils-logic-apps';
+import type { OpenAPIV2, OperationInfo } from '@microsoft/logic-apps-shared';
 import {
   UnsupportedException,
   ArgumentException,
@@ -16,7 +16,7 @@ import {
   ConnectorServiceException,
   equals,
   isArmResourceId,
-} from '@microsoft/utils-logic-apps';
+} from '@microsoft/logic-apps-shared';
 import type { IntlShape } from 'react-intl';
 
 type GetSchemaFunction = (args: Record<string, any>) => Promise<OpenAPIV2.SchemaObject>;

@@ -2,7 +2,7 @@ import { ext } from '../../../extensionVariables';
 import DataMapperPanel from './DataMapperPanel';
 import { startBackendRuntime } from './FxWorkflowRuntime';
 import { webviewType } from './extensionConfig';
-import type { MapDefinitionEntry } from '@microsoft/utils-logic-apps';
+import type { MapDefinitionEntry } from '@microsoft/logic-apps-shared';
 import type { MapDefinitionData } from '@microsoft/vscode-extension';
 import * as yaml from 'js-yaml';
 import * as path from 'path';

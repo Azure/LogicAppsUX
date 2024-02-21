@@ -5,7 +5,7 @@ import { LoggerService } from '../logger';
 import { LogEntryLevel, Status } from '../logging/logEntry';
 import type { IOAuthPopup } from '../oAuth';
 import { OAuthService } from '../oAuth';
-import type { Connector, Connection } from '@microsoft/utils-logic-apps';
+import type { Connector, Connection } from '@microsoft/logic-apps-shared';
 
 export class ConsumptionConnectionService extends BaseConnectionService {
   constructor(options: BaseConnectionServiceOptions) {

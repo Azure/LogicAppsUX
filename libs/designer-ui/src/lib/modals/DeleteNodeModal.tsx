@@ -1,7 +1,7 @@
 import { Modal } from '@fluentui/react';
 import { Button, Spinner } from '@fluentui/react-components';
-import type { WorkflowNodeType } from '@microsoft/utils-logic-apps';
-import { idDisplayCase, WORKFLOW_NODE_TYPES } from '@microsoft/utils-logic-apps';
+import type { WorkflowNodeType } from '@microsoft/logic-apps-shared';
+import { idDisplayCase, WORKFLOW_NODE_TYPES } from '@microsoft/logic-apps-shared';
 import { useIntl } from 'react-intl';
 
 export interface DeleteNodeModalProps {

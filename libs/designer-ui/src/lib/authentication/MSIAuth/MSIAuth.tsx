@@ -8,8 +8,8 @@ import { AUTHENTICATION_PROPERTIES, containsUserAssignedIdentities } from '../ut
 import { MSIAuthenticationDefault } from './MSIAuthDefault';
 import type { IDropdownOption } from '@fluentui/react';
 import { isTemplateExpression } from '@microsoft/logic-apps-shared';
-import type { ManagedIdentity } from '@microsoft/utils-logic-apps';
-import { ResourceIdentityType, equals } from '@microsoft/utils-logic-apps';
+import type { ManagedIdentity } from '@microsoft/logic-apps-shared';
+import { ResourceIdentityType, equals } from '@microsoft/logic-apps-shared';
 import type { Dispatch, SetStateAction } from 'react';
 import { useState } from 'react';
 import type { IntlShape } from 'react-intl';

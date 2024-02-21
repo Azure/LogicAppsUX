@@ -17,7 +17,7 @@ import {
   type Schema,
   type SchemaExtended,
   type SchemaNodeDictionary,
-} from '@microsoft/utils-logic-apps';
+} from '@microsoft/logic-apps-shared';
 
 describe('utils/Functions', () => {
   describe('getFunctionOutputValue', () => {

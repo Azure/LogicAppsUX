@@ -28,7 +28,7 @@ import { tryGetLogicAppProjectRoot } from '../verifyIsProject';
 import { getWorkspaceSetting, updateGlobalSetting } from '../vsCodeConfig/settings';
 import { getWorkspaceFolder } from '../workspace';
 import { delay } from '@azure/ms-rest-js';
-import { extend } from '@microsoft/utils-logic-apps';
+import { extend } from '@microsoft/logic-apps-shared';
 import {
   DialogResponses,
   openUrl,

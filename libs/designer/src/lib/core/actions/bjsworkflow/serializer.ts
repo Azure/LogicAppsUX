@@ -34,7 +34,7 @@ import {
   DeserializationType,
   PropertySerializationType,
 } from '@microsoft/logic-apps-shared';
-import type { LocationSwapMap, LogicAppsV2, OperationManifest, SubGraphDetail } from '@microsoft/utils-logic-apps';
+import type { LocationSwapMap, LogicAppsV2, OperationManifest, SubGraphDetail } from '@microsoft/logic-apps-shared';
 import {
   SerializationErrorCode,
   SerializationException,
@@ -57,7 +57,7 @@ import {
   filterRecord,
   excludePathValueFromTarget,
   getRecordEntry,
-} from '@microsoft/utils-logic-apps';
+} from '@microsoft/logic-apps-shared';
 import merge from 'lodash.merge';
 
 export interface SerializeOptions {

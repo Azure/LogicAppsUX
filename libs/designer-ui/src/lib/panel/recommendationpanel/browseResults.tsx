@@ -3,7 +3,7 @@ import { ConnectorSummaryCard } from '../../connectorsummarycard';
 import { getConnectorCategoryString } from '../../utils';
 import { List, Text } from '@fluentui/react';
 import { Spinner } from '@fluentui/react-components';
-import type { Connector } from '@microsoft/utils-logic-apps';
+import type { Connector } from '@microsoft/logic-apps-shared';
 import { useCallback, useLayoutEffect, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 

@@ -10,7 +10,7 @@ import type {
   IIse,
 } from '../types';
 import { getValidationPayload, getExportUri } from './helper';
-import { HTTP_METHODS } from '@microsoft/utils-logic-apps';
+import { HTTP_METHODS } from '@microsoft/logic-apps-shared';
 import { getBaseGraphApi } from '@microsoft/vscode-extension';
 
 export interface ApiServiceOptions {

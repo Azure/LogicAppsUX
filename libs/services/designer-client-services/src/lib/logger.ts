@@ -1,5 +1,5 @@
 import type { LogEntry, TelemetryEvent } from './logging/logEntry';
-import { AssertionErrorCode, AssertionException, guid } from '@microsoft/utils-logic-apps';
+import { AssertionErrorCode, AssertionException, guid } from '@microsoft/logic-apps-shared';
 
 export interface ILoggerService {
   log: (entry: Omit<LogEntry, 'timestamp'>) => void;

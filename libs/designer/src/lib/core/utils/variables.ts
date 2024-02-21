@@ -4,7 +4,7 @@ import type { NodeTokens, VariableDeclaration } from '../state/tokens/tokensSlic
 import { ParameterGroupKeys } from './parameters/helper';
 import type { OutputToken as Token } from '@microsoft/designer-ui';
 import { TokenType } from '@microsoft/designer-ui';
-import { aggregate, getRecordEntry } from '@microsoft/utils-logic-apps';
+import { aggregate, getRecordEntry } from '@microsoft/logic-apps-shared';
 
 let variableIcon = '';
 let variableBrandColor = '';
