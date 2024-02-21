@@ -4,8 +4,8 @@ import { ValueSegmentType, type ValueSegment, TokenType } from '../../models/par
 import type { TokenNode } from '../nodes/tokenNode';
 import { $createTokenNode } from '../nodes/tokenNode';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
-import type { Expression } from '@microsoft/parsers-logic-apps';
-import { ExpressionParser } from '@microsoft/parsers-logic-apps';
+import type { Expression } from '@microsoft/logic-apps-shared';
+import { ExpressionParser } from '@microsoft/logic-apps-shared';
 import { $createParagraphNode, $createTextNode, $getSelection, COMMAND_PRIORITY_LOW, PASTE_COMMAND } from 'lexical';
 import { useEffect } from 'react';
 

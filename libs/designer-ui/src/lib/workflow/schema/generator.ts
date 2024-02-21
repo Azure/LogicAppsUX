@@ -1,5 +1,5 @@
 import { InvalidJsonSchemaTypeException } from '../exceptions/invalidjsonschematype';
-import { isTemplateExpression } from '@microsoft/parsers-logic-apps';
+import { isTemplateExpression } from '@microsoft/logic-apps-shared';
 import type { OpenAPIV2 } from '@microsoft/utils-logic-apps';
 import { createCopy, clone } from '@microsoft/utils-logic-apps';
 

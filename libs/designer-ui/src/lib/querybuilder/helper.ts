@@ -1,7 +1,7 @@
 import type { GroupItemProps, GroupedItems, RowItemProps } from '.';
 import { GroupType } from '.';
 import type { ValueSegment } from '../editor';
-import { isNumber, isBoolean } from '@microsoft/parsers-logic-apps';
+import { isNumber, isBoolean } from '@microsoft/logic-apps-shared';
 
 export const checkHeights = (item: GroupItemProps | RowItemProps, returnVal: number[], height: number): number[] => {
   if (item.checked) {

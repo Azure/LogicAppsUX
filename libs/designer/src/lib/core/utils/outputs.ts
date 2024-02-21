@@ -35,7 +35,7 @@ import type {
   OutputParameter,
   OutputParameters,
   Schema,
-} from '@microsoft/parsers-logic-apps';
+} from '@microsoft/logic-apps-shared';
 import {
   create,
   OutputKeys,
@@ -45,7 +45,7 @@ import {
   isTemplateExpression,
   isFunction,
   isStringLiteral,
-} from '@microsoft/parsers-logic-apps';
+} from '@microsoft/logic-apps-shared';
 import type { OpenAPIV2, OperationManifest } from '@microsoft/utils-logic-apps';
 import {
   ConnectionReferenceKeyFormat,

@@ -3,7 +3,7 @@ import { StaticResult } from './StaticResult';
 import { deserializePropertyValues, parseStaticResultSchema, serializePropertyValues } from './util';
 import type { IButtonStyles } from '@fluentui/react';
 import { DefaultButton, PrimaryButton, Toggle } from '@fluentui/react';
-import type { Schema } from '@microsoft/parsers-logic-apps';
+import type { Schema } from '@microsoft/logic-apps-shared';
 import type { OpenAPIV2 } from '@microsoft/utils-logic-apps';
 import { useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';

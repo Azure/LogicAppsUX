@@ -3,7 +3,7 @@ import type {
   InputDependencies,
   ParameterDeserializationOptions,
   ParameterSerializationOptions,
-} from '@microsoft/parsers-logic-apps';
+} from '@microsoft/logic-apps-shared';
 import type { Exception, OpenAPIV2 } from '@microsoft/utils-logic-apps';
 
 export interface ParameterInfo {

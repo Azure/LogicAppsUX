@@ -9,7 +9,7 @@ import {
 } from '../../dynamicallyaddedparameter/helper';
 import type { ValueSegment } from '../../editor';
 import { ValueSegmentType } from '../../editor';
-import type { Schema } from '@microsoft/parsers-logic-apps';
+import type { Schema } from '@microsoft/logic-apps-shared';
 import { guid } from '@microsoft/utils-logic-apps';
 
 type PartialDynamicallyAddedParameterInputsModel = Pick<
