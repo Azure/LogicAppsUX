@@ -225,7 +225,6 @@ export const Designer = (props: DesignerProps) => {
   const workflowKind = useSelector((state: RootState) => state.workflow.workflowKind);
   // This delayes the query until the workflowKind is available
   useQuery({ queryKey: ['workflowKind'], initialData: undefined, enabled: !!workflowKind, queryFn: () => workflowKind });
-  console.log('### workflowKind', workflowKind);
 
   return (
     <DndProvider options={DND_OPTIONS}>
