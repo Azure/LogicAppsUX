@@ -1,7 +1,7 @@
 import { Constants } from '../../..';
 import { getTriggerNodeId } from '../../../core';
 import type { VariableDeclaration } from '../../../core/state/tokens/tokensSlice';
-import { useAssertions } from '../../../core/state/unitTest/unitTestSelectors';
+import { useAssertions, useAssertionsValidationErrors } from '../../../core/state/unitTest/unitTestSelectors';
 import { updateAssertions, updateAssertion } from '../../../core/state/unitTest/unitTestSlice';
 import type { AppDispatch, RootState } from '../../../core/store';
 import {
@@ -182,6 +182,8 @@ const getTokenPicker = (
 export const AssertionsPanel = (props: CommonPanelProps) => {
   const workflowAssertions = useAssertions();
   const [assertions, setAssertions] = useState<Record<string, AssertionDefintion>>(workflowAssertions);
+  const assertionsValidationErrors = useAssertionsValidationErrors();
+
   const dispatch = useDispatch<AppDispatch>();
   const [tokenMapping, setTokenMapping] = useState<Record<string, ValueSegment>>({});
 
@@ -275,6 +277,7 @@ export const AssertionsPanel = (props: CommonPanelProps) => {
       getTokenPicker={onGetTokenPicker}
       tokenMapping={tokenMapping}
       loadParameterValueFromString={(value: string) => loadParameterValueFromString(value)}
+      validationErrors={assertionsValidationErrors}
     />
   );
 };

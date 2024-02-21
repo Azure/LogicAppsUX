@@ -1,3 +1,4 @@
+import { TrafficLightDot } from '../card/images/dynamicsvgs/trafficlightsvgs';
 import type { ValueSegment } from '../editor';
 import type { EventHandler } from '../eventhandler';
 import type { TokenPickerMode } from '../tokenpicker';
@@ -6,7 +7,7 @@ import { AssertionField } from './assertionField';
 import { Button } from '@fluentui/react-components';
 import { bundleIcon, ChevronRight24Regular, ChevronRight24Filled, ChevronDown24Regular, ChevronDown24Filled } from '@fluentui/react-icons';
 import type { AssertionDefintion } from '@microsoft/utils-logic-apps';
-import { type Assertion } from '@microsoft/utils-logic-apps';
+import { RUN_AFTER_COLORS, type Assertion } from '@microsoft/utils-logic-apps';
 import { useState } from 'react';
 
 const ExpandIcon = bundleIcon(ChevronRight24Filled, ChevronRight24Regular);
@@ -49,6 +50,8 @@ export interface AssertionProps {
   getTokenPicker: GetAssertionTokenPickerHandler;
   tokenMapping: Record<string, ValueSegment>;
   loadParameterValueFromString: (value: string) => ValueSegment[];
+  validationErrors?: Record<string, string | undefined>;
+  isInverted: boolean;
 }
 
 export function Assertion({
@@ -58,12 +61,16 @@ export function Assertion({
   onAssertionUpdate,
   tokenMapping,
   loadParameterValueFromString,
+  validationErrors,
+  isInverted,
 }: AssertionProps): JSX.Element {
   const [expanded, setExpanded] = useState(assertion.isEditable);
   const [isEditable, setIsEditable] = useState(assertion.isEditable);
   const [name, setName] = useState(assertion.name);
   const [description, setDescription] = useState(assertion.description);
   const [expression, setExpression] = useState(assertion.expression);
+
+  const themeName = isInverted ? 'dark' : 'light';
 
   const handleEdit: React.MouseEventHandler<HTMLButtonElement> = (): void => {
     setIsEditable(true);
@@ -93,6 +100,11 @@ export function Assertion({
         >
           {name}
         </Button>
+        {Object.values(validationErrors ?? {}).filter((x) => !!x).length > 0 ? (
+          <span className="msla-assertion-error-dot">
+            <TrafficLightDot fill={RUN_AFTER_COLORS[themeName]['FAILED']} />
+          </span>
+        ) : null}
         <AssertionButtons isExpanded={expanded} isEditable={isEditable} onEdit={handleEdit} onDelete={handleDelete} />
       </div>
       <div className="msla-workflow-assertion-content">
@@ -109,6 +121,7 @@ export function Assertion({
           handleUpdate={handleUpdate}
           tokenMapping={tokenMapping}
           loadParameterValueFromString={loadParameterValueFromString}
+          validationErrors={validationErrors}
         />
       </div>
     </div>

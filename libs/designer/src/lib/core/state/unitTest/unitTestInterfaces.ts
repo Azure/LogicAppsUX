@@ -21,4 +21,5 @@ export interface UpdateAssertionPayload {
 export interface UnitTestState {
   mockResults: { [key: string]: string };
   assertions: Record<string, AssertionDefintion>;
+  validationErrors: Record<string, Record<string, string | undefined>>;
 }

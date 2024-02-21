@@ -10,6 +10,7 @@ import {
   validateParameter,
   updateParameterValidation,
   openPanel,
+  useAssertionsValidationErrors,
 } from '@microsoft/logic-apps-designer';
 import type { RootState } from '@microsoft/logic-apps-designer';
 import { RUN_AFTER_COLORS, isNullOrEmpty } from '@microsoft/utils-logic-apps';
@@ -151,9 +152,11 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({ isRefres
   });
 
   const haveErrors = useMemo(() => allInputErrors.length > 0 || !!allWorkflowParameterErrors, [allInputErrors, allWorkflowParameterErrors]);
+  const allAssertionsErrors = useAssertionsValidationErrors();
+  const haveAssertionErrors = Object.keys(allAssertionsErrors ?? {}).length > 0;
 
   const isSaveWorkflowDisabled = isSaving || haveErrors || !designerIsDirty;
-  const isSaveUnitTestDisabled = isSavingUnitTest;
+  const isSaveUnitTestDisabled = isSavingUnitTest || haveAssertionErrors;
 
   const desingerItems: ICommandBarItemProps[] = [
     {
@@ -243,6 +246,18 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({ isRefres
       text: Resources.UNIT_TEST_ASSERTIONS,
       ariaLabel: Resources.UNIT_TEST_ASSERTIONS,
       iconProps: { iconName: 'CheckMark' },
+      onRenderText: (item: { text: string }) => {
+        return (
+          <>
+            {item.text}
+            {haveAssertionErrors ? (
+              <div style={{ display: 'inline-block', marginLeft: 8 }}>
+                <TrafficLightDot fill={RUN_AFTER_COLORS[isDarkMode ? 'dark' : 'light']['FAILED']} />
+              </div>
+            ) : null}
+          </>
+        );
+      },
       onClick: () => !!dispatch(openPanel({ panelMode: 'Assertions' })),
     },
   ];

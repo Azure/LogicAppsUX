@@ -1,4 +1,5 @@
 import type { ValueSegment } from '../editor';
+import { isHighContrastBlack } from '../utils';
 import {
   type AssertionUpdateHandler,
   type AssertionDeleteHandler,
@@ -6,7 +7,7 @@ import {
   Assertion,
   type GetAssertionTokenPickerHandler,
 } from './assertion';
-import { List, Text } from '@fluentui/react';
+import { List, Text, useTheme } from '@fluentui/react';
 import { Button } from '@fluentui/react-components';
 import { bundleIcon, Dismiss24Filled, Dismiss24Regular, Add24Filled, Add24Regular } from '@fluentui/react-icons';
 import type { AssertionDefintion } from '@microsoft/utils-logic-apps';
@@ -25,6 +26,7 @@ export interface AssertionsProps {
   getTokenPicker: GetAssertionTokenPickerHandler;
   tokenMapping: Record<string, ValueSegment>;
   loadParameterValueFromString: (value: string) => ValueSegment[];
+  validationErrors?: Record<string, Record<string, string | undefined>>;
 }
 
 export function Assertions({
@@ -36,8 +38,11 @@ export function Assertions({
   getTokenPicker,
   tokenMapping,
   loadParameterValueFromString,
+  validationErrors,
 }: AssertionsProps): JSX.Element {
   const intl = useIntl();
+  const theme = useTheme();
+  const isInverted = isHighContrastBlack() || theme.isInverted;
 
   const titleText = intl.formatMessage({
     defaultMessage: 'Assertions',
@@ -65,6 +70,7 @@ export function Assertions({
     if (!item) {
       return null;
     }
+    const parameterErrors = validationErrors && item ? validationErrors[item.id] : undefined;
     return (
       <Assertion
         key={item.id}
@@ -74,6 +80,8 @@ export function Assertions({
         getTokenPicker={getTokenPicker}
         tokenMapping={tokenMapping}
         loadParameterValueFromString={loadParameterValueFromString}
+        validationErrors={parameterErrors}
+        isInverted={isInverted}
       />
     );
   };
