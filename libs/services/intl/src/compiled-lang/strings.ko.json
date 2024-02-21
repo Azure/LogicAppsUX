@@ -1353,6 +1353,12 @@
       "value": "데이터 형식"
     }
   ],
+  "6yFUar": [
+    {
+      "type": 0,
+      "value": "Outputs are required when status is \"Succeeded\""
+    }
+  ],
   "70eoQu": [
     {
       "type": 0,
@@ -1865,6 +1871,12 @@
     {
       "type": 0,
       "value": "작업 필터링"
+    }
+  ],
+  "ANGw2o": [
+    {
+      "type": 0,
+      "value": "Click for more information on Static Result"
     }
   ],
   "AO6T9u": [
@@ -2931,10 +2943,22 @@
       "value": "필수 사항으로, 감수가 제거될 숫자입니다."
     }
   ],
+  "H9CZTr": [
+    {
+      "type": 0,
+      "value": "식이 잘못되었습니다. 작은따옴표를 사용해야 합니다."
+    }
+  ],
   "HDqP2g": [
     {
       "type": 0,
       "value": "필수 사항으로, 반환할 양식 데이터 값의 키 이름입니다."
+    }
+  ],
+  "HGA9iU": [
+    {
+      "type": 0,
+      "value": "The Error and its code is required when status is \"Failed\""
     }
   ],
   "HH970i": [
@@ -3460,6 +3484,12 @@
     {
       "type": 0,
       "value": "만드는 중..."
+    }
+  ],
+  "LPdGu/": [
+    {
+      "type": 0,
+      "value": "Ouputs should not be provided when status is \"Failed\""
     }
   ],
   "LR/3Lr": [
@@ -5867,6 +5897,12 @@
     {
       "type": 0,
       "value": "정적 결과 사용 안 함"
+    }
+  ],
+  "Yz9o1k": [
+    {
+      "type": 0,
+      "value": "연결되지 않았습니다."
     }
   ],
   "Z8tBFS": [
@@ -8832,6 +8868,12 @@
       "value": "데이터 맵 정의를 생성할 수 없습니다."
     }
   ],
+  "svaqnp": [
+    {
+      "type": 0,
+      "value": "Error should not be provided when status is \"Succeeded\""
+    }
+  ],
   "sw6EXK": [
     {
       "type": 0,
@@ -8868,6 +8910,12 @@
     {
       "type": 0,
       "value": "필수 사항으로, 대상 표준 시간대의 표준 시간대 이름을 포함하는 문자열입니다. 자세한 내용은 https://msdn.microsoft.com/ko-kr/library/gg154758.aspx를 참조하세요."
+    }
+  ],
+  "t9RwOi": [
+    {
+      "type": 0,
+      "value": "식이 잘못되었습니다."
     }
   ],
   "tAbbH8": [
@@ -9300,12 +9348,6 @@
     {
       "type": 0,
       "value": "출력"
-    }
-  ],
-  "vVJuus": [
-    {
-      "type": 0,
-      "value": "식이 잘못되었습니다."
     }
   ],
   "vX9WYS": [

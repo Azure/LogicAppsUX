@@ -1337,6 +1337,12 @@
       "value": "Tipo de dados"
     }
   ],
+  "6yFUar": [
+    {
+      "type": 0,
+      "value": "Outputs are required when status is \"Succeeded\""
+    }
+  ],
   "70eoQu": [
     {
       "type": 0,
@@ -1853,6 +1859,12 @@
     {
       "type": 0,
       "value": "Ações de Filtro"
+    }
+  ],
+  "ANGw2o": [
+    {
+      "type": 0,
+      "value": "Click for more information on Static Result"
     }
   ],
   "AO6T9u": [
@@ -2967,10 +2979,22 @@
       "value": "Necessário. O número do qual o Subtraendo é removido."
     }
   ],
+  "H9CZTr": [
+    {
+      "type": 0,
+      "value": "A expressão é inválida. Certifique-se de usar aspas simples."
+    }
+  ],
   "HDqP2g": [
     {
       "type": 0,
       "value": "Necessário. O nome da chave do valor de dados do formulário a retornar."
+    }
+  ],
+  "HGA9iU": [
+    {
+      "type": 0,
+      "value": "The Error and its code is required when status is \"Failed\""
     }
   ],
   "HH970i": [
@@ -3518,6 +3542,12 @@
     {
       "type": 0,
       "value": "Criando..."
+    }
+  ],
+  "LPdGu/": [
+    {
+      "type": 0,
+      "value": "Ouputs should not be provided when status is \"Failed\""
     }
   ],
   "LR/3Lr": [
@@ -5943,6 +5973,12 @@
     {
       "type": 0,
       "value": "Desabilitar Resultado Estático"
+    }
+  ],
+  "Yz9o1k": [
+    {
+      "type": 0,
+      "value": "Não conectado."
     }
   ],
   "Z8tBFS": [
@@ -9002,6 +9038,12 @@
       "value": "Não é possível gerar a definição do mapa de dados"
     }
   ],
+  "svaqnp": [
+    {
+      "type": 0,
+      "value": "Error should not be provided when status is \"Succeeded\""
+    }
+  ],
   "sw6EXK": [
     {
       "type": 0,
@@ -9038,6 +9080,12 @@
     {
       "type": 0,
       "value": "Necessário. Uma cadeia de caracteres que contém o nome do fuso horário de destino. Consulte https://msdn.microsoft.com/en-us/library/gg154758.aspx para obter detalhes."
+    }
+  ],
+  "t9RwOi": [
+    {
+      "type": 0,
+      "value": "A expressão é inválida."
     }
   ],
   "tAbbH8": [
@@ -9474,12 +9522,6 @@
     {
       "type": 0,
       "value": "Saídas"
-    }
-  ],
-  "vVJuus": [
-    {
-      "type": 0,
-      "value": "A expressão é inválida."
     }
   ],
   "vX9WYS": [

@@ -1,4 +1,64 @@
 # Logic Apps Designer
+## [2.119.0](https://github.com/Azure/LogicAppsUX/compare/v2.118.0...v2.119.0) (2024-02-21)
+
+
+### Bug Fixes
+
+* **designer:** Parameter default value from manifest should be honored at load time ([#4204](https://github.com/Azure/LogicAppsUX/issues/4204)) ([50e0d92](https://github.com/Azure/LogicAppsUX/commit/50e0d92a621022555672f528efe18da7367205f1))
+* **desinger:** made utfLength Expressions optional based on host options ([#4231](https://github.com/Azure/LogicAppsUX/issues/4231)) ([136a81d](https://github.com/Azure/LogicAppsUX/commit/136a81d1f8eb577275d8a836b5b6fe74f00efe69))
+
+## [2.118.0](https://github.com/Azure/LogicAppsUX/compare/v2.117.0...v2.118.0) (2024-02-21)
+
+## [2.117.0](https://github.com/Azure/LogicAppsUX/compare/v2.116.0...v2.117.0) (2024-02-21)
+
+
+### Bug Fixes
+
+* **designer:** Replace missing state reassignment ([#4228](https://github.com/Azure/LogicAppsUX/issues/4228)) ([1b03f5f](https://github.com/Azure/LogicAppsUX/commit/1b03f5f88f597211605c723487fa577a30a8132b)), closes [#4227](https://github.com/Azure/LogicAppsUX/issues/4227)
+
+## [2.116.0](https://github.com/Azure/LogicAppsUX/compare/v2.115.0...v2.116.0) (2024-02-20)
+
+
+### Features
+
+* **designer:**  [ConnectionCreation] Adding hidden parameter field in ConnectionCreationInfo to pass selected credential id ([#4193](https://github.com/Azure/LogicAppsUX/issues/4193)) ([2d43902](https://github.com/Azure/LogicAppsUX/commit/2d43902c95b9eeb9ec9536939309c3224431e8e9))
+
+
+### Bug Fixes
+
+* **designer-ui:** Retain tokens inserted into HTML editor if they contain `}` ([#4198](https://github.com/Azure/LogicAppsUX/issues/4198)) ([04caeae](https://github.com/Azure/LogicAppsUX/commit/04caeaefb70a68dd678c8ff52487cde9bc498110))
+* **designer:** Fix issue in run history page where loops pager would only go to first error when clicking next failure ([#4216](https://github.com/Azure/LogicAppsUX/issues/4216)) ([94bcc06](https://github.com/Azure/LogicAppsUX/commit/94bcc06b171fa9c38bd629d8755ed4e23cd2e685))
+* **designer:** Fix issue where some strings wouldn't be localized in azure portal and power automate ([#4213](https://github.com/Azure/LogicAppsUX/issues/4213)) ([620ba95](https://github.com/Azure/LogicAppsUX/commit/620ba953f0d45b3b1edc2a761de3f5f8e273c65a))
+* **Designer:** Fixed Consumption split on issue ([#4206](https://github.com/Azure/LogicAppsUX/issues/4206)) ([547faaf](https://github.com/Azure/LogicAppsUX/commit/547faaf4978dda3630239a1435e8c211a2b4b411))
+* **designer:** Have better validaiton for array values in parameters ([#4217](https://github.com/Azure/LogicAppsUX/issues/4217)) ([4ea8d9d](https://github.com/Azure/LogicAppsUX/commit/4ea8d9d57a6ceef1ca01f4bcf0746faf23158176))
+* **designer:** Seperate values of degree of parallelism for triggers and actions ([#4224](https://github.com/Azure/LogicAppsUX/issues/4224)) ([b982008](https://github.com/Azure/LogicAppsUX/commit/b98200870d9c5eb85687da6c8c6e5caedad99d29))
+* **designer:** Update Existing Input Parameters For Subsequent Actions Once Dynamic Data is Fetched ([#4215](https://github.com/Azure/LogicAppsUX/issues/4215)) ([f02d814](https://github.com/Azure/LogicAppsUX/commit/f02d81499b0374831573deecf324e13f66203c66))
+* **vscode:** Fix total overwriting of host and local settings JSON files ([#4205](https://github.com/Azure/LogicAppsUX/issues/4205)) ([360405e](https://github.com/Azure/LogicAppsUX/commit/360405e3d2240db3c3ff968775e0ef77537ae658))
+* **vscode:** Remove double onboarding binaries validation ([#4203](https://github.com/Azure/LogicAppsUX/issues/4203)) ([15e0ea8](https://github.com/Azure/LogicAppsUX/commit/15e0ea8fd991da4fee15ba0c8ac313ccaac8d4e4))
+
+## [2.115.0](https://github.com/Azure/LogicAppsUX/compare/v2.114.0...v2.115.0) (2024-02-15)
+
+## [2.114.0](https://github.com/Azure/LogicAppsUX/compare/v2.113.0...v2.114.0) (2024-02-14)
+
+
+### Features
+
+* **designer-ui:** Enable `PastePlugin` for HTML editor ([#4188](https://github.com/Azure/LogicAppsUX/issues/4188)) ([76c9549](https://github.com/Azure/LogicAppsUX/commit/76c9549c27590daad177373396c1352844a6da70))
+* **designer:** Add Resubmit from action to the action panel for easier visibility ([#4182](https://github.com/Azure/LogicAppsUX/issues/4182)) ([fd0a041](https://github.com/Azure/LogicAppsUX/commit/fd0a041693b70224321cd729dfa1539a64e79655))
+* **designer:** Added Validation to Static Results ([#4197](https://github.com/Azure/LogicAppsUX/issues/4197)) ([537256b](https://github.com/Azure/LogicAppsUX/commit/537256be49b43d320e8ec6bd1ed0879a63638ba9))
+* **vscode:** Add open in portal gesture for slots ([#4185](https://github.com/Azure/LogicAppsUX/issues/4185)) ([ca8ae91](https://github.com/Azure/LogicAppsUX/commit/ca8ae918f8924fef24766153db01f1e6b14db789))
+* **vscode:** Binaries dependencies opt-in  by default ([#4175](https://github.com/Azure/LogicAppsUX/issues/4175)) ([7501571](https://github.com/Azure/LogicAppsUX/commit/75015718e96767759c0fc256ba3cc056feb05a94))
+
+
+### Bug Fixes
+
+* **Consumption:** Changing error message for invalid expression due to double quotes. ([#4141](https://github.com/Azure/LogicAppsUX/issues/4141)) ([cddc9a2](https://github.com/Azure/LogicAppsUX/commit/cddc9a293284e68508f6c9bf78545b978d8bd0a7))
+* **designer:** Fix two places where `undefined` switch `cases` caused fatal errors ([#4191](https://github.com/Azure/LogicAppsUX/issues/4191)) ([4031b05](https://github.com/Azure/LogicAppsUX/commit/4031b05dc274025b656c009bc6ea1835f0a1f17a))
+* **Designer:** Floating Link Doesn't Disappear On Outer Click ([#4108](https://github.com/Azure/LogicAppsUX/issues/4108)) ([2481280](https://github.com/Azure/LogicAppsUX/commit/24812803ce5e61592e70380adb437865e2168df1))
+* **Designer:** Keyboard Focus Moves Out of TokenPicker Navigating Using Keyboard ([#4160](https://github.com/Azure/LogicAppsUX/issues/4160)) ([609c4c5](https://github.com/Azure/LogicAppsUX/commit/609c4c5c1fa689db9e817fbe156b8daff9431343))
+* **Designer:** Removed resolving app settings within connection parameters during initialization ([#4184](https://github.com/Azure/LogicAppsUX/issues/4184)) ([4ba6a0c](https://github.com/Azure/LogicAppsUX/commit/4ba6a0c76ef7ec8a3b37803b8b4fafbdb5e73b9f))
+* **vscode:** Remove deploy slot action to only slot and not slots tree item ([#4181](https://github.com/Azure/LogicAppsUX/issues/4181)) ([1b86f03](https://github.com/Azure/LogicAppsUX/commit/1b86f0304420d0ab4cfe7274c0f0b75fba508257))
+
 ## [2.113.0](https://github.com/Azure/LogicAppsUX/compare/v2.112.0...v2.113.0) (2024-02-13)
 
 

@@ -1353,6 +1353,12 @@
       "value": "Veri türü"
     }
   ],
+  "6yFUar": [
+    {
+      "type": 0,
+      "value": "Outputs are required when status is \"Succeeded\""
+    }
+  ],
   "70eoQu": [
     {
       "type": 0,
@@ -1873,6 +1879,12 @@
     {
       "type": 0,
       "value": "Eylemleri Filtrele"
+    }
+  ],
+  "ANGw2o": [
+    {
+      "type": 0,
+      "value": "Click for more information on Static Result"
     }
   ],
   "AO6T9u": [
@@ -2961,10 +2973,22 @@
       "value": "Gerekli. Çıkanın çıkarıldığı sayı."
     }
   ],
+  "H9CZTr": [
+    {
+      "type": 0,
+      "value": "İfade geçersiz. Tek tırnak işareti kullanmayı unutmayın."
+    }
+  ],
   "HDqP2g": [
     {
       "type": 0,
       "value": "Gerekli. Döndürülecek form verileri değerinin anahtar adı."
+    }
+  ],
+  "HGA9iU": [
+    {
+      "type": 0,
+      "value": "The Error and its code is required when status is \"Failed\""
     }
   ],
   "HH970i": [
@@ -3501,6 +3525,12 @@
     {
       "type": 0,
       "value": "Oluşturuluyor..."
+    }
+  ],
+  "LPdGu/": [
+    {
+      "type": 0,
+      "value": "Ouputs should not be provided when status is \"Failed\""
     }
   ],
   "LR/3Lr": [
@@ -5919,6 +5949,12 @@
     {
       "type": 0,
       "value": "Statik Sonucu Devre Dışı Bırak"
+    }
+  ],
+  "Yz9o1k": [
+    {
+      "type": 0,
+      "value": "Bağlı değil."
     }
   ],
   "Z8tBFS": [
@@ -8925,6 +8961,12 @@
       "value": "Veri eşleme tanımı oluşturulamıyor"
     }
   ],
+  "svaqnp": [
+    {
+      "type": 0,
+      "value": "Error should not be provided when status is \"Succeeded\""
+    }
+  ],
   "sw6EXK": [
     {
       "type": 0,
@@ -8961,6 +9003,12 @@
     {
       "type": 0,
       "value": "Zorunlu. Hedef saat diliminin saat dilimi adını içeren bir dize. Ayrıntılar için bkz. https://msdn.microsoft.com/en-us/library/gg154758.aspx."
+    }
+  ],
+  "t9RwOi": [
+    {
+      "type": 0,
+      "value": "İfade geçersiz."
     }
   ],
   "tAbbH8": [
@@ -9397,12 +9445,6 @@
     {
       "type": 0,
       "value": "Çıkışlar"
-    }
-  ],
-  "vVJuus": [
-    {
-      "type": 0,
-      "value": "İfade geçersiz."
     }
   ],
   "vX9WYS": [

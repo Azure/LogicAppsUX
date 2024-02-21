@@ -22,7 +22,7 @@ export const WorkflowKind = {
   STATEFUL: 'stateful',
   STATELESS: 'stateless',
 } as const;
-export type WorkflowKind = (typeof WorkflowKind)[keyof typeof WorkflowKind];
+export type WorkflowKind = (typeof WorkflowKind)[keyof typeof WorkflowKind] | undefined;
 
 export type ErrorMessage = {
   nodeId: string;

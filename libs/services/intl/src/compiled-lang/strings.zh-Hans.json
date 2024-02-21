@@ -1365,6 +1365,12 @@
       "value": "数据类型"
     }
   ],
+  "6yFUar": [
+    {
+      "type": 0,
+      "value": "Outputs are required when status is \"Succeeded\""
+    }
+  ],
   "70eoQu": [
     {
       "type": 0,
@@ -1885,6 +1891,12 @@
     {
       "type": 0,
       "value": "筛选器操作"
+    }
+  ],
+  "ANGw2o": [
+    {
+      "type": 0,
+      "value": "Click for more information on Static Result"
     }
   ],
   "AO6T9u": [
@@ -2959,10 +2971,22 @@
       "value": "必需。要从中减除减数的数字。"
     }
   ],
+  "H9CZTr": [
+    {
+      "type": 0,
+      "value": "表达式无效。请确保使用单引号。"
+    }
+  ],
   "HDqP2g": [
     {
       "type": 0,
       "value": "必需。要返回的表单数据值的键名称。"
+    }
+  ],
+  "HGA9iU": [
+    {
+      "type": 0,
+      "value": "The Error and its code is required when status is \"Failed\""
     }
   ],
   "HH970i": [
@@ -3488,6 +3512,12 @@
     {
       "type": 0,
       "value": "正在创建..."
+    }
+  ],
+  "LPdGu/": [
+    {
+      "type": 0,
+      "value": "Ouputs should not be provided when status is \"Failed\""
     }
   ],
   "LR/3Lr": [
@@ -5915,6 +5945,12 @@
     {
       "type": 0,
       "value": "禁用静态结果"
+    }
+  ],
+  "Yz9o1k": [
+    {
+      "type": 0,
+      "value": "未连接。"
     }
   ],
   "Z8tBFS": [
@@ -8924,6 +8960,12 @@
       "value": "无法生成数据映射定义"
     }
   ],
+  "svaqnp": [
+    {
+      "type": 0,
+      "value": "Error should not be provided when status is \"Succeeded\""
+    }
+  ],
   "sw6EXK": [
     {
       "type": 0,
@@ -8960,6 +9002,12 @@
     {
       "type": 0,
       "value": "必需。一个字符串，它包含目标时区的时区名称。请访问 https://msdn.microsoft.com/en-us/library/gg154758.aspx 查看详细信息。"
+    }
+  ],
+  "t9RwOi": [
+    {
+      "type": 0,
+      "value": "表达式无效。"
     }
   ],
   "tAbbH8": [
@@ -9392,12 +9440,6 @@
     {
       "type": 0,
       "value": "输出"
-    }
-  ],
-  "vVJuus": [
-    {
-      "type": 0,
-      "value": "表达式无效。"
     }
   ],
   "vX9WYS": [

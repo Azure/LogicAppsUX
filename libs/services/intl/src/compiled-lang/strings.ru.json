@@ -1361,6 +1361,12 @@
       "value": "Тип данных"
     }
   ],
+  "6yFUar": [
+    {
+      "type": 0,
+      "value": "Outputs are required when status is \"Succeeded\""
+    }
+  ],
   "70eoQu": [
     {
       "type": 0,
@@ -1881,6 +1887,12 @@
     {
       "type": 0,
       "value": "Фильтровать действия"
+    }
+  ],
+  "ANGw2o": [
+    {
+      "type": 0,
+      "value": "Click for more information on Static Result"
     }
   ],
   "AO6T9u": [
@@ -3025,10 +3037,22 @@
       "value": "Требуется. Число, из которого вычитается вычитаемое."
     }
   ],
+  "H9CZTr": [
+    {
+      "type": 0,
+      "value": "Недопустимое выражение. Обязательно используйте одинарные кавычки."
+    }
+  ],
   "HDqP2g": [
     {
       "type": 0,
       "value": "Требуется. Имя ключа возвращаемого значения данных форм."
+    }
+  ],
+  "HGA9iU": [
+    {
+      "type": 0,
+      "value": "The Error and its code is required when status is \"Failed\""
     }
   ],
   "HH970i": [
@@ -3587,6 +3611,12 @@
     {
       "type": 0,
       "value": "Создание..."
+    }
+  ],
+  "LPdGu/": [
+    {
+      "type": 0,
+      "value": "Ouputs should not be provided when status is \"Failed\""
     }
   ],
   "LR/3Lr": [
@@ -6027,6 +6057,12 @@
     {
       "type": 0,
       "value": "Отключить статический результат"
+    }
+  ],
+  "Yz9o1k": [
+    {
+      "type": 0,
+      "value": "Не установлено."
     }
   ],
   "Z8tBFS": [
@@ -9119,6 +9155,12 @@
       "value": "Не удалось создать определение карты данных"
     }
   ],
+  "svaqnp": [
+    {
+      "type": 0,
+      "value": "Error should not be provided when status is \"Succeeded\""
+    }
+  ],
   "sw6EXK": [
     {
       "type": 0,
@@ -9155,6 +9197,12 @@
     {
       "type": 0,
       "value": "Обязательно. Строка, содержащая название часового пояса назначения. Дополнительные сведения: https://msdn.microsoft.com/en-us/library/gg154758.aspx."
+    }
+  ],
+  "t9RwOi": [
+    {
+      "type": 0,
+      "value": "Недопустимое выражение."
     }
   ],
   "tAbbH8": [
@@ -9591,12 +9639,6 @@
     {
       "type": 0,
       "value": "Выходные данные"
-    }
-  ],
-  "vVJuus": [
-    {
-      "type": 0,
-      "value": "Недопустимое выражение."
     }
   ],
   "vX9WYS": [
