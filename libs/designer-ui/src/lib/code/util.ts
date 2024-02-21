@@ -2,7 +2,7 @@ import constants from '../constants';
 import type { Token, ValueSegment } from '../editor';
 import { TokenType } from '../editor';
 import { getIntl } from '@microsoft/intl-logic-apps';
-import { decodePropertySegment, OutputKeys } from '@microsoft/parsers-logic-apps';
+import { decodePropertySegment, OutputKeys } from '@microsoft/logic-apps-shared';
 import { ArgumentException, endsWith, equals, prettifyJsonString, UnsupportedException } from '@microsoft/utils-logic-apps';
 
 const OperationCategory = {

@@ -23,7 +23,7 @@ import { LogEntryLevel, LoggerService, OperationManifestService, WorkflowService
 import type { ParameterInfo } from '@microsoft/designer-ui';
 import { UIConstants } from '@microsoft/designer-ui';
 import { getIntl } from '@microsoft/intl-logic-apps';
-import type { Segment } from '@microsoft/parsers-logic-apps';
+import type { Segment } from '@microsoft/logic-apps-shared';
 import {
   create,
   removeConnectionPrefix,
@@ -33,7 +33,7 @@ import {
   SegmentType,
   DeserializationType,
   PropertySerializationType,
-} from '@microsoft/parsers-logic-apps';
+} from '@microsoft/logic-apps-shared';
 import type { LocationSwapMap, LogicAppsV2, OperationManifest, SubGraphDetail } from '@microsoft/utils-logic-apps';
 import {
   SerializationErrorCode,
