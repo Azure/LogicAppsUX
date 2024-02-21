@@ -60,6 +60,7 @@ export interface MonacoOptions {
   lineHeight?: number;
   minimapEnabled?: boolean;
   scrollBeyondLastLine?: boolean;
+  hideUTFExpressions?: boolean;
   wordWrap?: 'off' | 'on' | 'wordWrapColumn' | 'bounded';
   wordWrapColumn?: number;
   contextMenu?: boolean;
@@ -82,6 +83,7 @@ export const MonacoEditor = forwardRef<editor.IStandaloneCodeEditor, MonacoProps
       minimapEnabled = false,
       value,
       scrollBeyondLastLine = false,
+      hideUTFExpressions,
       height,
       width,
       lineNumbersMinChars,
@@ -115,21 +117,21 @@ export const MonacoEditor = forwardRef<editor.IStandaloneCodeEditor, MonacoProps
     const [canRender, setCanRender] = useState(false);
     const currentRef = useRef<editor.IStandaloneCodeEditor>();
 
-    const initTemplateLanguage = async () => {
-      const { languages, editor } = await loader.init();
-      if (!languages.getLanguages().some((lang: any) => lang.id === Constants.LANGUAGE_NAMES.WORKFLOW)) {
-        registerWorkflowLanguageProviders(languages, editor);
-      }
-      setCanRender(true);
-    };
-
     useEffect(() => {
+      const initTemplateLanguage = async () => {
+        const { languages, editor } = await loader.init();
+        if (!languages.getLanguages().some((lang: any) => lang.id === Constants.LANGUAGE_NAMES.WORKFLOW)) {
+          registerWorkflowLanguageProviders(languages, editor, hideUTFExpressions);
+        }
+        setCanRender(true);
+      };
+
       if (language === EditorLanguage.templateExpressionLanguage) {
         initTemplateLanguage();
       } else {
         setCanRender(true);
       }
-    }, [language]);
+    }, [hideUTFExpressions, language]);
 
     const handleContextMenu = (e: editor.IEditorMouseEvent) => {
       onContextMenu?.(e);

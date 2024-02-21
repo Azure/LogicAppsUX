@@ -70,9 +70,13 @@ interface IdentifierTokenInfo {
   argumentsCovered: number;
 }
 
-export function registerWorkflowLanguageProviders(monacoLanguages: typeof languages, monacoEditor: typeof editor): void {
+export function registerWorkflowLanguageProviders(
+  monacoLanguages: typeof languages,
+  monacoEditor: typeof editor,
+  hideUTFExpressions?: boolean
+): void {
   const languageName = Constants.LANGUAGE_NAMES.WORKFLOW;
-  const templateFunctions = getTemplateFunctions();
+  const templateFunctions = getTemplateFunctions(hideUTFExpressions);
 
   monacoLanguages.register({ id: languageName });
 
@@ -434,10 +438,10 @@ function parseExpression(value: string, position: Position, templateFunctions: R
   };
 }
 
-export function getTemplateFunctions(): FunctionDefinition[] {
+export function getTemplateFunctions(hideUTFExpressions?: boolean): FunctionDefinition[] {
   const templateFunctions: FunctionDefinition[] = [];
   for (const functionGroup of FunctionGroupDefinitions) {
-    templateFunctions.push(...functionGroup.functions);
+    templateFunctions.push(...(hideUTFExpressions ? removeUTFExpressions(functionGroup.functions) : functionGroup.functions));
   }
 
   return templateFunctions;
@@ -445,4 +449,8 @@ export function getTemplateFunctions(): FunctionDefinition[] {
 
 function signatureHasVariableParameters(signature: SignatureInfo): boolean {
   return signature.parameters.some((parameter) => !!parameter.isVariable);
+}
+
+export function removeUTFExpressions(functionGroupFunctions: FunctionDefinition[]): FunctionDefinition[] {
+  return functionGroupFunctions.filter((func) => func.name !== 'utf8Length' && func.name !== 'utf16Length');
 }
