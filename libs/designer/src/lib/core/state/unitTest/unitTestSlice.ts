@@ -32,6 +32,14 @@ const parseAssertions = (assertions: Assertion[]): Record<string, AssertionDefin
   }, {});
 };
 
+/**
+ * Validates an assertion based on the provided parameters.
+ * @param {string} id - The ID of the assertion.
+ * @param  {{ name?: string; expression?: Record<string, any> }} data - The data object containing the assertion name and expression.
+ * @param {string} keyToValidate - The key to validate ('name' or 'expression').
+ * @param  {Record<string, AssertionDefintion>} allDefinitions - The record of all assertion definitions.
+ * @returns A string with an error message if the assertion is invalid, otherwise undefined.
+ */
 export const validateAssertion = (
   id: string,
   data: { name?: string; expression?: Record<string, any> },

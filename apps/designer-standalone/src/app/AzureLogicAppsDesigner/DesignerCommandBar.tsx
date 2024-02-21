@@ -125,7 +125,6 @@ export const DesignerCommandBar = ({
   const saveIsDisabled = isSaving || allInputErrors.length > 0 || haveWorkflowParameterErrors || haveSettingsErrors || !designerIsDirty;
 
   const saveUnitTestIsDisabled = !isUnitTest || isSavingUnitTest || haveAssertionErrors;
-  console.log('charlie parameterErrors', saveUnitTestIsDisabled, allAssertionsErrors);
 
   const items: ICommandBarItemProps[] = useMemo(
     () => [

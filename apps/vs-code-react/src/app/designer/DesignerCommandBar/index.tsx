@@ -10,6 +10,7 @@ import {
   validateParameter,
   updateParameterValidation,
   openPanel,
+  useAssertionsValidationErrors,
 } from '@microsoft/logic-apps-designer';
 import type { RootState } from '@microsoft/logic-apps-designer';
 import { RUN_AFTER_COLORS, isNullOrEmpty } from '@microsoft/utils-logic-apps';
@@ -151,9 +152,11 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({ isRefres
   });
 
   const haveErrors = useMemo(() => allInputErrors.length > 0 || !!allWorkflowParameterErrors, [allInputErrors, allWorkflowParameterErrors]);
+  const allAssertionsErrors = useAssertionsValidationErrors();
+  const haveAssertionErrors = Object.keys(allAssertionsErrors ?? {}).length > 0;
 
   const isSaveWorkflowDisabled = isSaving || haveErrors || !designerIsDirty;
-  const isSaveUnitTestDisabled = isSavingUnitTest;
+  const isSaveUnitTestDisabled = isSavingUnitTest || haveAssertionErrors;
 
   const desingerItems: ICommandBarItemProps[] = [
     {
