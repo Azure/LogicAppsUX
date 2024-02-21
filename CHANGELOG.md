@@ -1,5 +1,12 @@
 # Logic Apps Designer
 
+## [2.119.0](https://github.com/Azure/LogicAppsUX/compare/v2.118.0...v2.119.0) (2024-02-21)
+
+### Bug Fixes
+
+- **designer:** Parameter default value from manifest should be honored at load time ([#4204](https://github.com/Azure/LogicAppsUX/issues/4204)) ([50e0d92](https://github.com/Azure/LogicAppsUX/commit/50e0d92a621022555672f528efe18da7367205f1))
+- **desinger:** made utfLength Expressions optional based on host options ([#4231](https://github.com/Azure/LogicAppsUX/issues/4231)) ([136a81d](https://github.com/Azure/LogicAppsUX/commit/136a81d1f8eb577275d8a836b5b6fe74f00efe69))
+
 ## [2.118.0](https://github.com/Azure/LogicAppsUX/compare/v2.117.0...v2.118.0) (2024-02-21)
 
 ## [2.117.0](https://github.com/Azure/LogicAppsUX/compare/v2.116.0...v2.117.0) (2024-02-21)
