@@ -28,3 +28,4 @@ export { getTriggerNodeId } from './utils/graph';
 export { updateParameterValidation } from './state/operation/operationMetadataSlice';
 export { updateWorkflowParameters } from './actions/bjsworkflow/initialize';
 export { getBrandColorFromManifest, getIconUriFromManifest, getBrandColorFromConnector, getIconUriFromConnector } from './utils/card';
+export { useAssertionsValidationErrors } from './state/unitTest/unitTestSelectors';

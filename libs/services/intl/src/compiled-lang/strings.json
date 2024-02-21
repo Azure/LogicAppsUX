@@ -5967,6 +5967,12 @@
       "value": "(UTC+01:00) Brussels, Copenhagen, Madrid, Paris"
     }
   ],
+  "YjSqtf": [
+    {
+      "type": 0,
+      "value": "Must provide the Assertion name."
+    }
+  ],
   "YlesUQ": [
     {
       "type": 0,
@@ -7753,6 +7759,12 @@
     {
       "type": 0,
       "value": "(UTC+01:00) Windhoek"
+    }
+  ],
+  "l0hO5f": [
+    {
+      "type": 0,
+      "value": "Assertion name already exists."
     }
   ],
   "l2YXln": [

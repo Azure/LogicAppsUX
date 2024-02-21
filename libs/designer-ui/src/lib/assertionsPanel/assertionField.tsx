@@ -50,6 +50,7 @@ export interface AssertionFieldProps {
   isExpanded: boolean;
   getTokenPicker: GetAssertionTokenPickerHandler;
   handleUpdate: (newAssertion: Assertion) => void;
+  validationErrors?: Record<string, string | undefined>;
 }
 
 export const AssertionField = ({
@@ -63,8 +64,11 @@ export const AssertionField = ({
   isExpanded,
   getTokenPicker,
   handleUpdate,
+  validationErrors,
 }: AssertionFieldProps): JSX.Element => {
   const intl = useIntl();
+
+  const errors = validationErrors ?? {};
 
   const parameterDetails: ParameterFieldDetails = {
     description: `${name}-${DESCRIPTION_KEY}`,
@@ -132,6 +136,7 @@ export const AssertionField = ({
             id={parameterDetails.name}
             ariaLabel={nameTitle}
             placeholder={namePlaceholder}
+            errorMessage={errors[NAME_KEY]}
             value={name}
             onChange={onNameChange}
             disabled={!isEditable}
@@ -171,35 +176,43 @@ export const AssertionField = ({
         ) : null}
         <div className="msla-assertion-condition-editor">
           {isExpanded ? (
-            <TokenField
-              editor="condition"
-              editorViewModel={expression ?? {}}
-              readOnly={!isEditable}
-              label="Condition"
-              labelId="condition-label"
-              tokenEditor={true}
-              value={[]}
-              tokenMapping={{}}
-              getTokenPicker={(
-                editorId: string,
-                labelId: string,
-                tokenPickerMode?: TokenPickerMode,
-                editorType?: string,
-                setIsInTokenPicker?: (b: boolean) => void,
-                tokenClickedCallback?: (token: ValueSegment) => void
-              ) =>
-                getTokenPicker(
-                  editorId,
-                  labelId,
-                  editorType ?? constants.SWAGGER.TYPE.ANY,
-                  tokenPickerMode,
-                  setIsInTokenPicker,
-                  tokenClickedCallback
-                )
-              }
-              onCastParameter={() => ''}
-              onValueChange={onExpressionChange}
-            />
+            <>
+              <TokenField
+                editor="condition"
+                editorViewModel={expression ?? {}}
+                readOnly={!isEditable}
+                label="Condition"
+                labelId="condition-label"
+                tokenEditor={true}
+                value={[]}
+                tokenMapping={{}}
+                // errorDetails={{message:  ?? ''}}
+                getTokenPicker={(
+                  editorId: string,
+                  labelId: string,
+                  tokenPickerMode?: TokenPickerMode,
+                  editorType?: string,
+                  setIsInTokenPicker?: (b: boolean) => void,
+                  tokenClickedCallback?: (token: ValueSegment) => void
+                ) =>
+                  getTokenPicker(
+                    editorId,
+                    labelId,
+                    editorType ?? constants.SWAGGER.TYPE.ANY,
+                    tokenPickerMode,
+                    setIsInTokenPicker,
+                    tokenClickedCallback
+                  )
+                }
+                onCastParameter={() => ''}
+                onValueChange={onExpressionChange}
+              />
+              {errors[EXPRESSION_KEY] && (
+                <span className="msla-input-parameter-error" role="alert">
+                  {errors[EXPRESSION_KEY]}
+                </span>
+              )}
+            </>
           ) : null}
         </div>
       </div>
