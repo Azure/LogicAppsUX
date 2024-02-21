@@ -9,14 +9,14 @@ import {
   FloatingActionMenuKind,
 } from '@microsoft/designer-ui';
 import { getIntl } from '@microsoft/intl-logic-apps';
-import type { Expression, ExpressionLiteral } from '@microsoft/parsers-logic-apps';
+import type { Expression, ExpressionLiteral } from '@microsoft/logic-apps-shared';
 import {
   ExpressionParser,
   ExpressionType,
   isStringInterpolation,
   isStringLiteral,
   isTemplateExpression,
-} from '@microsoft/parsers-logic-apps';
+} from '@microsoft/logic-apps-shared';
 import { capitalizeFirstLetter, endsWith, equals, startsWith } from '@microsoft/utils-logic-apps';
 
 const regex = {
@@ -459,8 +459,12 @@ function isValidJSONObjectFormat(value: string): boolean {
 }
 
 function isValidArrayFormat(value: string): boolean {
-  const trimmedValue = (value || '').trim();
-  return startsWith(trimmedValue, '[') && endsWith(trimmedValue, ']');
+  try {
+    const v = JSON.parse(value);
+    return typeof v === 'object' && Array.isArray(v) && v.every((item) => item !== undefined && item !== null);
+  } catch (e) {
+    return false;
+  }
 }
 
 export const isISO8601 = (s: string) => {

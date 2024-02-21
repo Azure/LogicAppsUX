@@ -44,6 +44,7 @@ import {
   trim,
   uniqueArray,
   unmap,
+  FindPreviousAndNextPage,
 } from './../functions';
 
 describe('lib/helpers/functions', () => {
@@ -1010,6 +1011,43 @@ describe('lib/helpers/functions', () => {
     it('returns true if a value is a valid icon or icon URL', () => {
       expect(isValidIcon('https://microsoft.com/icon.png')).toBe(true);
       expect(isValidIcon('data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==')).toBe(true);
+    });
+  });
+
+  describe('FindPreviousAndNextPage', () => {
+    it('should return correct previous and next page', () => {
+      const bookmarks = [1, 2, 3, 4, 5];
+      const page = 3;
+      const result = FindPreviousAndNextPage(page, bookmarks);
+      expect(result).toEqual({ nextFailedRepetition: 3, prevFailedRepetition: 3 });
+    });
+
+    it('should return correct previous and next page when page is not in bookmarks', () => {
+      const bookmarks = [1, 2, 4, 5];
+      const page = 3;
+      const result = FindPreviousAndNextPage(page, bookmarks);
+      expect(result).toEqual({ nextFailedRepetition: 4, prevFailedRepetition: 2 });
+    });
+
+    it('should return -1 for both previous and next page when bookmarks is empty', () => {
+      const bookmarks: number[] = [];
+      const page = 3;
+      const result = FindPreviousAndNextPage(page, bookmarks);
+      expect(result).toEqual({ nextFailedRepetition: -1, prevFailedRepetition: -1 });
+    });
+
+    it('should return correct previous and next page when page is less than all bookmarks', () => {
+      const bookmarks = [2, 3, 4, 5];
+      const page = 1;
+      const result = FindPreviousAndNextPage(page, bookmarks);
+      expect(result).toEqual({ nextFailedRepetition: 2, prevFailedRepetition: -1 });
+    });
+
+    it('should return correct previous and next page when page is greater than all bookmarks', () => {
+      const bookmarks = [1, 2, 3, 4];
+      const page = 5;
+      const result = FindPreviousAndNextPage(page, bookmarks);
+      expect(result).toEqual({ nextFailedRepetition: -1, prevFailedRepetition: 4 });
     });
   });
 

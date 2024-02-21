@@ -1,4 +1,4 @@
-import { MonacoEditor as Editor, EditorLanguage } from '../editor/monaco';
+import { MonacoEditor, EditorLanguage } from '../editor/monaco';
 import type { EventHandler } from '../eventhandler';
 import { clamp } from '@microsoft/utils-logic-apps';
 import type { editor } from 'monaco-editor';
@@ -14,6 +14,7 @@ export interface ExpressionEditorEvent {
 export interface ExpressionEditorProps {
   initialValue: string;
   editorRef?: MutableRefObject<editor.IStandaloneCodeEditor | null>;
+  hideUTFExpressions?: boolean;
   isDragging: boolean;
   dragDistance?: number;
   currentHeight: number;
@@ -26,11 +27,12 @@ export interface ExpressionEditorProps {
 export function ExpressionEditor({
   initialValue,
   editorRef,
-  onBlur,
+  hideUTFExpressions,
   isDragging,
   dragDistance,
   currentHeight,
   setCurrentHeight,
+  onBlur,
   setIsDragging,
   setExpressionEditorError,
 }: ExpressionEditorProps): JSX.Element {
@@ -62,9 +64,10 @@ export function ExpressionEditor({
 
   return (
     <div className="msla-expression-editor-container" style={{ height: currentHeight }}>
-      <Editor
+      <MonacoEditor
         ref={editorRef}
         language={EditorLanguage.templateExpressionLanguage}
+        hideUTFExpressions={hideUTFExpressions}
         lineNumbers="off"
         value={initialValue}
         scrollbar={{ horizontal: 'hidden', vertical: 'hidden' }}

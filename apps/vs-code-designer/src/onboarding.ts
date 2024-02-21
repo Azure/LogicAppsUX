@@ -46,8 +46,6 @@ export const startOnboarding = async (activateContext: IActionContext) => {
     });
   });
 
-  await onboardBinaries(activateContext);
-
   await callWithTelemetryAndErrorHandling(autoStartDesignTimeSetting, async (actionContext: IActionContext) => {
     await runWithDurationTelemetry(actionContext, showStartDesignTimeMessageSetting, async () => {
       await promptStartDesignTimeOption(activateContext);

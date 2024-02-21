@@ -72,7 +72,9 @@ const loadLocaleData = async (locale: string): Promise<Record<string, string> | 
       messages = await import('./compiled-lang/strings.json');
       break;
   }
-  return { ...messages };
+  //any strings with a key that has symbols gets compiled to be in the default object rather than exported individually as a module
+  const defaultMessages = messages.default ?? {};
+  return { ...messages, ...defaultMessages };
 };
 
 export const IntlProvider: React.FC<IntlProviderProps> = ({ locale, defaultLocale, children, onError }) => {

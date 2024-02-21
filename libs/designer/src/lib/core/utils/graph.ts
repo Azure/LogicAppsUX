@@ -1,7 +1,7 @@
 import { isWorkflowGraph } from '../parsers/models/workflowNode';
 import type { WorkflowEdge, WorkflowNode } from '../parsers/models/workflowNode';
 import type { NodesMetadata, Operations, WorkflowState } from '../state/workflow/workflowInterfaces';
-import { isTemplateExpression } from '@microsoft/parsers-logic-apps';
+import { isTemplateExpression } from '@microsoft/logic-apps-shared';
 import type { WorkflowEdgeType, WorkflowNodeType } from '@microsoft/utils-logic-apps';
 import { hasInvalidChars, startsWith, equals, WORKFLOW_EDGE_TYPES, WORKFLOW_NODE_TYPES, getRecordEntry } from '@microsoft/utils-logic-apps';
 import type { ElkExtendedEdge, ElkNode } from 'elkjs';

@@ -3,7 +3,7 @@ import type { ValueSegment } from '../editor';
 import { ValueSegmentType } from '../editor';
 import type { ChangeHandler } from '../editor/base';
 import type { EditorContentChangedEventArgs } from '../editor/monaco';
-import { MonacoEditor as Editor, EditorLanguage } from '../editor/monaco';
+import { MonacoEditor, EditorLanguage } from '../editor/monaco';
 import { ModalDialog } from '../modaldialog';
 import { generateSchemaFromJsonString } from '../workflow/schema/generator';
 import type { IDialogStyles, IStyle } from '@fluentui/react';
@@ -121,7 +121,7 @@ export function SchemaEditor({ readonly, label, initialValue, onChange, onFocus 
 
   return (
     <div className="msla-schema-editor-body">
-      <Editor
+      <MonacoEditor
         label={label}
         height={editorHeight}
         value={getCurrentValue()}
@@ -149,7 +149,7 @@ export function SchemaEditor({ readonly, label, initialValue, onChange, onFocus 
         onDismiss={closeModal}
       >
         <div className="msla-schema-editor-modal-body">
-          <Editor
+          <MonacoEditor
             ref={modalEditorRef}
             fontSize={13}
             language={EditorLanguage.json}

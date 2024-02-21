@@ -1,7 +1,7 @@
 import type { StaticResultRootSchemaType } from './baseactionresult';
 import { HttpStaticResultSchema } from './httpresult';
-import type { ManifestParser, Schema, SwaggerParser } from '@microsoft/parsers-logic-apps';
-import { ExtensionProperties } from '@microsoft/parsers-logic-apps';
+import type { ManifestParser, Schema, SwaggerParser } from '@microsoft/logic-apps-shared';
+import { ExtensionProperties } from '@microsoft/logic-apps-shared';
 import type { OpenAPIV2 } from '@microsoft/utils-logic-apps';
 import { clone } from '@microsoft/utils-logic-apps';
 

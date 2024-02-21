@@ -6,6 +6,7 @@ import {
   getOrCreateDesignTimeDirectory,
   isDesignTimeUp,
   startDesignTimeProcess,
+  updateProjectPath,
   waitForDesignTimeStartUp,
 } from '../../utils/codeless/startDesignTimeApi';
 import { getFunctionsCommand } from '../../utils/funcCoreTools/funcVersion';
@@ -41,6 +42,7 @@ export async function startBackendRuntime(projectPath: string): Promise<void> {
       if (designTimeDirectory) {
         await createJsonFile(designTimeDirectory, hostFileName, hostFileContent);
         await createJsonFile(designTimeDirectory, localSettingsFileName, modifiedSettingsFileContent);
+        await updateProjectPath(designTimeDirectory, localSettingsFileName, projectPath);
 
         const cwd: string = designTimeDirectory.fsPath;
         const portArgs = `--port ${ext.designTimePort}`;

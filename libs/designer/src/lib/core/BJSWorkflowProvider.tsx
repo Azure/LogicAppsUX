@@ -3,11 +3,10 @@ import { ProviderWrappedContext } from './ProviderWrappedContext';
 import { initializeGraphState } from './parsers/ParseReduxAction';
 import { useAreDesignerOptionsInitialized, useAreServicesInitialized } from './state/designerOptions/designerOptionsSelectors';
 import { initializeServices } from './state/designerOptions/designerOptionsSlice';
-import { WorkflowKind } from './state/workflow/workflowInterfaces';
 import { initWorkflowKind, initRunInstance, initWorkflowSpec } from './state/workflow/workflowSlice';
 import type { AppDispatch } from './store';
+import { parseWorkflowKind } from './utils/workflow';
 import type { LogicAppsV2 } from '@microsoft/utils-logic-apps';
-import { equals } from '@microsoft/utils-logic-apps';
 import { useDeepCompareEffect } from '@react-hookz/web';
 import React, { useContext, useEffect } from 'react';
 import { useDispatch } from 'react-redux';
@@ -22,7 +21,7 @@ const DataProviderInner: React.FC<BJSWorkflowProviderProps> = ({ workflow, child
   const dispatch = useDispatch<AppDispatch>();
   useDeepCompareEffect(() => {
     dispatch(initWorkflowSpec('BJS'));
-    dispatch(initWorkflowKind(equals(workflow?.kind, 'stateful') ? WorkflowKind.STATEFUL : WorkflowKind.STATELESS));
+    dispatch(initWorkflowKind(parseWorkflowKind(workflow?.kind)));
     dispatch(initRunInstance(runInstance ?? null));
     dispatch(initializeGraphState({ workflowDefinition: workflow, runInstance }));
   }, [runInstance, workflow]);

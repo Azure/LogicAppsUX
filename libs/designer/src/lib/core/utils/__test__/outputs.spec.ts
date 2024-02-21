@@ -1,5 +1,5 @@
 import { getUpdatedManifestForSplitOn } from '../outputs';
-import { onNewEmail } from '@microsoft/parsers-logic-apps';
+import { onNewEmail } from '@microsoft/logic-apps-shared';
 import type { OperationManifest } from '@microsoft/utils-logic-apps';
 import { ConnectionReferenceKeyFormat } from '@microsoft/utils-logic-apps';
 

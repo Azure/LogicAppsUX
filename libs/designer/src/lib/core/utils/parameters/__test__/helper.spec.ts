@@ -11,8 +11,8 @@ import {
 } from '../helper';
 import type { DictionaryEditorItemProps, ParameterInfo, ValueSegment, OutputToken } from '@microsoft/designer-ui';
 import { GroupDropdownOptions, GroupType, TokenType, ValueSegmentType } from '@microsoft/designer-ui';
-import type { DynamicListExtension, LegacyDynamicValuesExtension, InputParameter } from '@microsoft/parsers-logic-apps';
-import { DynamicValuesType, ExpressionType } from '@microsoft/parsers-logic-apps';
+import type { DynamicListExtension, LegacyDynamicValuesExtension, InputParameter } from '@microsoft/logic-apps-shared';
+import { DynamicValuesType, ExpressionType } from '@microsoft/logic-apps-shared';
 
 describe('core/utils/parameters/helper', () => {
   describe('parameterValueToJSONString', () => {
@@ -510,7 +510,7 @@ describe('core/utils/parameters/helper', () => {
           {
             id: '6',
             type: ValueSegmentType.TOKEN,
-            value: 'item()?[\'someItem\']',
+            value: "item()?['someItem']",
             token: {
               key: 'outputs.$',
               tokenType: TokenType.OUTPUTS,
@@ -569,7 +569,7 @@ describe('core/utils/parameters/helper', () => {
           {
             id: '8',
             type: ValueSegmentType.TOKEN,
-            value: 'item()?[\'someItem\']',
+            value: "item()?['someItem']",
             token: {
               key: 'outputs.$',
               tokenType: TokenType.OUTPUTS,
@@ -628,7 +628,7 @@ describe('core/utils/parameters/helper', () => {
           {
             id: '7',
             type: ValueSegmentType.TOKEN,
-            value: 'item()?[\'someItem1\']',
+            value: "item()?['someItem1']",
             token: {
               key: 'outputs.$',
               tokenType: TokenType.OUTPUTS,
@@ -639,7 +639,7 @@ describe('core/utils/parameters/helper', () => {
           {
             id: '8',
             type: ValueSegmentType.TOKEN,
-            value: 'item()?[\'someItem2\']',
+            value: "item()?['someItem2']",
             token: {
               key: 'outputs.$',
               tokenType: TokenType.OUTPUTS,

@@ -1353,6 +1353,12 @@
       "value": "Tipe data"
     }
   ],
+  "6yFUar": [
+    {
+      "type": 0,
+      "value": "Outputs are required when status is \"Succeeded\""
+    }
+  ],
   "70eoQu": [
     {
       "type": 0,
@@ -1873,6 +1879,12 @@
     {
       "type": 0,
       "value": "Filter Tindakan"
+    }
+  ],
+  "ANGw2o": [
+    {
+      "type": 0,
+      "value": "Click for more information on Static Result"
     }
   ],
   "AO6T9u": [
@@ -2946,13 +2958,19 @@
   "H9CZTr": [
     {
       "type": 0,
-      "value": "The expression is invalid. Make sure to use single quotes."
+      "value": "Ekspresi tidak valid. Pastikan untuk menggunakan tanda kutip tunggal."
     }
   ],
   "HDqP2g": [
     {
       "type": 0,
       "value": "Wajib. Nama kunci nilai data formulir yang akan ditampilkan."
+    }
+  ],
+  "HGA9iU": [
+    {
+      "type": 0,
+      "value": "The Error and its code is required when status is \"Failed\""
     }
   ],
   "HH970i": [
@@ -3478,6 +3496,12 @@
     {
       "type": 0,
       "value": "Membuat..."
+    }
+  ],
+  "LPdGu/": [
+    {
+      "type": 0,
+      "value": "Ouputs should not be provided when status is \"Failed\""
     }
   ],
   "LR/3Lr": [
@@ -5890,7 +5914,7 @@
   "Yz9o1k": [
     {
       "type": 0,
-      "value": "Not connected."
+      "value": "Tidak terhubung."
     }
   ],
   "Z8tBFS": [
@@ -8876,6 +8900,12 @@
       "value": "Tidak dapat membuat definisi peta data"
     }
   ],
+  "svaqnp": [
+    {
+      "type": 0,
+      "value": "Error should not be provided when status is \"Succeeded\""
+    }
+  ],
   "sw6EXK": [
     {
       "type": 0,
@@ -8917,7 +8947,7 @@
   "t9RwOi": [
     {
       "type": 0,
-      "value": "The expression is invalid."
+      "value": "Ekspresi tidak valid."
     }
   ],
   "tAbbH8": [
