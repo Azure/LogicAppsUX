@@ -38,7 +38,7 @@ import { OperationManifestService } from '@microsoft/designer-client-services-lo
 import type { FunctionDefinition, OutputToken, Token, ValueSegment } from '@microsoft/designer-ui';
 import { UIConstants, TemplateFunctions, TokenType, removeUTFExpressions } from '@microsoft/designer-ui';
 import { getIntl } from '@microsoft/intl-logic-apps';
-import { getKnownTitles, OutputKeys } from '@microsoft/parsers-logic-apps';
+import { getKnownTitles, OutputKeys } from '@microsoft/logic-apps-shared';
 import type { BuiltInOutput, OperationManifest } from '@microsoft/utils-logic-apps';
 import { labelCase, unmap, equals, filterRecord, getRecordEntry } from '@microsoft/utils-logic-apps';
 

@@ -11,8 +11,8 @@ import type { GetValueSegmentHandler } from './tokenpickersection/tokenpickeropt
 import { getExpressionTokenTitle, getExpressionOutput } from './util';
 import { PrimaryButton } from '@fluentui/react';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
-import type { Expression } from '@microsoft/parsers-logic-apps';
-import { ExpressionExceptionCode, ExpressionParser, ScannerException } from '@microsoft/parsers-logic-apps';
+import type { Expression } from '@microsoft/logic-apps-shared';
+import { ExpressionExceptionCode, ExpressionParser, ScannerException } from '@microsoft/logic-apps-shared';
 import { guid } from '@microsoft/utils-logic-apps';
 import type { LexicalEditor, NodeKey } from 'lexical';
 import { useMemo } from 'react';

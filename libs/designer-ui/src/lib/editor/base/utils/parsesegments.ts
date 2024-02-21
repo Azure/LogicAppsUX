@@ -20,8 +20,8 @@ import type { ListNode, ListItemNode } from '@lexical/list';
 import { $isListNode, $isListItemNode, $createListItemNode } from '@lexical/list';
 import type { HeadingNode } from '@lexical/rich-text';
 import { $isHeadingNode } from '@lexical/rich-text';
-import type { Expression } from '@microsoft/parsers-logic-apps';
-import { ExpressionParser } from '@microsoft/parsers-logic-apps';
+import type { Expression } from '@microsoft/logic-apps-shared';
+import { ExpressionParser } from '@microsoft/logic-apps-shared';
 import { wrapTokenValue } from '@microsoft/utils-logic-apps';
 import type { LexicalNode, ParagraphNode, RootNode } from 'lexical';
 import {

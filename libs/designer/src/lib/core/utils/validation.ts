@@ -9,14 +9,14 @@ import {
   FloatingActionMenuKind,
 } from '@microsoft/designer-ui';
 import { getIntl } from '@microsoft/intl-logic-apps';
-import type { Expression, ExpressionLiteral } from '@microsoft/parsers-logic-apps';
+import type { Expression, ExpressionLiteral } from '@microsoft/logic-apps-shared';
 import {
   ExpressionParser,
   ExpressionType,
   isStringInterpolation,
   isStringLiteral,
   isTemplateExpression,
-} from '@microsoft/parsers-logic-apps';
+} from '@microsoft/logic-apps-shared';
 import { capitalizeFirstLetter, endsWith, equals, startsWith } from '@microsoft/utils-logic-apps';
 
 const regex = {
