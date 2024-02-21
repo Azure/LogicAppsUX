@@ -36,7 +36,7 @@ import { getSplitOnValue, hasSecureOutputs } from './setting';
 import { getVariableTokens } from './variables';
 import { OperationManifestService } from '@microsoft/designer-client-services-logic-apps';
 import type { FunctionDefinition, OutputToken, Token, ValueSegment } from '@microsoft/designer-ui';
-import { UIConstants, TemplateFunctions, TokenType } from '@microsoft/designer-ui';
+import { UIConstants, TemplateFunctions, TokenType, removeUTFExpressions } from '@microsoft/designer-ui';
 import { getIntl } from '@microsoft/intl-logic-apps';
 import { getKnownTitles, OutputKeys } from '@microsoft/logic-apps-shared';
 import type { BuiltInOutput, OperationManifest } from '@microsoft/utils-logic-apps';
@@ -171,11 +171,12 @@ export const convertOutputsToTokens = (
   });
 };
 
-export const getExpressionTokenSections = (): TokenGroup[] => {
+export const getExpressionTokenSections = (hideUTFExpressions?: boolean): TokenGroup[] => {
   return TemplateFunctions.map((functionGroup) => {
     const { id, name, functions } = functionGroup;
     const hasAdvanced = functions.some((func) => func.isAdvanced);
-    const tokens = functions.map(({ name, defaultSignature, description, isAdvanced }: FunctionDefinition) => ({
+    const filteredFunctions = hideUTFExpressions ? removeUTFExpressions(functions) : functions;
+    const tokens = filteredFunctions.map(({ name, defaultSignature, description, isAdvanced }: FunctionDefinition) => ({
       key: name,
       brandColor: FxBrandColor,
       icon: FxIcon,
