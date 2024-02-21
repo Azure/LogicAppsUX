@@ -855,7 +855,15 @@ export function shouldIncludeSelfForRepetitionReference(manifest: OperationManif
 }
 
 export function loadParameterValue(parameter: InputParameter): ValueSegment[] {
-  const valueObject = parameter.isNotificationUrl ? `@${constants.HTTP_WEBHOOK_LIST_CALLBACK_URL_NAME}` : parameter.value;
+  let valueObject: unknown = undefined;
+
+  if (parameter.isNotificationUrl) {
+    valueObject = `@${constants.HTTP_WEBHOOK_LIST_CALLBACK_URL_NAME}`;
+  } else if (parameter.value) {
+    valueObject = parameter.value;
+  } else if (parameter.default) {
+    valueObject = parameter.default;
+  }
 
   let valueSegments = convertToValueSegments(valueObject, !parameter.suppressCasting /* shouldUncast */);
 
