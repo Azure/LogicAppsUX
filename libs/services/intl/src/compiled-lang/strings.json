@@ -3221,6 +3221,12 @@
       "value": "(UTC+09:00) Yakutsk"
     }
   ],
+  "IgwfcY": [
+    {
+      "type": 0,
+      "value": "This operation does not support mocking. Mocking is only supported for operations that are connected to a service, function, or API Management."
+    }
+  ],
   "IsVhkH": [
     {
       "type": 0,
