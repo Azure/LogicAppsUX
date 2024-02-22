@@ -28,6 +28,7 @@ export default {
               type: 'string',
               default: 'PT1H',
               title: 'Timeout',
+              'x-ms-stateless-default': 'PT5M',
             },
           },
         },
