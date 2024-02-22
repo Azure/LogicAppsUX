@@ -9,6 +9,7 @@ import {
   useNodeSelectAdditionalCallback,
   useReadOnly,
   useSuppressDefaultNodeSelectFunctionality,
+  useUnitTest,
 } from '../../core/state/designerOptions/designerOptionsSelectors';
 import { setShowDeleteModal } from '../../core/state/designerView/designerViewSlice';
 import { ErrorLevel } from '../../core/state/operation/operationMetadataSlice';
@@ -66,6 +67,8 @@ import type { NodeProps } from 'reactflow';
 const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.Bottom, id }: NodeProps) => {
   const readOnly = useReadOnly();
   const isMonitoringView = useMonitoringView();
+  const isUnitTest = useUnitTest();
+
   const intl = useIntl();
 
   const dispatch = useDispatch<AppDispatch>();
@@ -331,6 +334,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
           isDragging={isDragging}
           isLoading={isLoading}
           isMonitoringView={isMonitoringView}
+          isUnitTest={isUnitTest}
           runData={runData}
           readOnly={readOnly}
           onClick={nodeClick}

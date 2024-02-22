@@ -1,8 +1,8 @@
-import constants from '../constants';
-import type { ValueSegment } from '../editor';
-import type { ChangeState } from '../editor/base';
-import { TokenField } from '../settings/settingsection/settingTokenField';
-import type { TokenPickerMode } from '../tokenpicker';
+import constants from '../../constants';
+import type { ValueSegment } from '../../editor';
+import type { ChangeState } from '../../editor/base';
+import { TokenField } from '../../settings/settingsection/settingTokenField';
+import type { TokenPickerMode } from '../../tokenpicker';
 import type { GetAssertionTokenPickerHandler } from './assertion';
 import type { ILabelStyles, IStyle, ITextFieldStyles } from '@fluentui/react';
 import { Label, Text, TextField } from '@fluentui/react';

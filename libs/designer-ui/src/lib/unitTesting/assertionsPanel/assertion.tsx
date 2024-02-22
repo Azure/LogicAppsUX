@@ -1,7 +1,7 @@
-import { TrafficLightDot } from '../card/images/dynamicsvgs/trafficlightsvgs';
-import type { ValueSegment } from '../editor';
-import type { EventHandler } from '../eventhandler';
-import type { TokenPickerMode } from '../tokenpicker';
+import { TrafficLightDot } from '../../card/images/dynamicsvgs/trafficlightsvgs';
+import type { ValueSegment } from '../../editor';
+import type { EventHandler } from '../../eventhandler';
+import type { TokenPickerMode } from '../../tokenpicker';
 import { AssertionButtons } from './assertionButtons';
 import { AssertionField } from './assertionField';
 import { Button } from '@fluentui/react-components';

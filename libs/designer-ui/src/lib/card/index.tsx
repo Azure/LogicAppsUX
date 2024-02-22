@@ -34,6 +34,7 @@ export interface CardProps {
   id: string;
   isDragging?: boolean;
   isMonitoringView?: boolean;
+  isUnitTest?: boolean;
   isLoading?: boolean;
   operationName?: string;
   readOnly?: boolean;
@@ -79,6 +80,7 @@ export const Card: React.FC<CardProps> = ({
   icon,
   isDragging,
   isMonitoringView,
+  isUnitTest,
   isLoading,
   operationName,
   selected,
@@ -185,6 +187,16 @@ export const Card: React.FC<CardProps> = ({
         onKeyUp={keyboardInteraction.keyUp}
       >
         {isMonitoringView ? (
+          <StatusPill
+            id={`${title}-status`}
+            status={runData?.status}
+            duration={runData?.duration}
+            startTime={runData?.startTime}
+            endTime={runData?.endTime}
+            resubmittedResults={runData?.executionMode === 'ResubmittedResults'}
+          />
+        ) : null}
+        {isUnitTest ? (
           <StatusPill
             id={`${title}-status`}
             status={runData?.status}

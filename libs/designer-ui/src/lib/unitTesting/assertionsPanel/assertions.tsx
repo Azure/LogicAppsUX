@@ -1,5 +1,5 @@
-import type { ValueSegment } from '../editor';
-import { isHighContrastBlack } from '../utils';
+import type { ValueSegment } from '../../editor';
+import { isHighContrastBlack } from '../../utils';
 import {
   type AssertionUpdateHandler,
   type AssertionDeleteHandler,
