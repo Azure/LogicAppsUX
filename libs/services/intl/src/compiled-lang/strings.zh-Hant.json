@@ -1364,7 +1364,7 @@
   "6yFUar": [
     {
       "type": 0,
-      "value": "Outputs are required when status is \"Succeeded\""
+      "value": "當狀態為 [成功] 時，需要輸出"
     }
   ],
   "70eoQu": [
@@ -1892,7 +1892,7 @@
   "ANGw2o": [
     {
       "type": 0,
-      "value": "Click for more information on Static Result"
+      "value": "按一下以取得 [靜態結果] 的詳細資訊"
     }
   ],
   "AO6T9u": [
@@ -2982,7 +2982,7 @@
   "HGA9iU": [
     {
       "type": 0,
-      "value": "The Error and its code is required when status is \"Failed\""
+      "value": "當狀態為 [失敗] 時，需要錯誤及其程式碼"
     }
   ],
   "HH970i": [
@@ -3513,7 +3513,7 @@
   "LPdGu/": [
     {
       "type": 0,
-      "value": "Ouputs should not be provided when status is \"Failed\""
+      "value": "當狀態為 [失敗] 時，不應提供輸出"
     }
   ],
   "LR/3Lr": [
@@ -8931,7 +8931,7 @@
   "svaqnp": [
     {
       "type": 0,
-      "value": "Error should not be provided when status is \"Succeeded\""
+      "value": "當狀態為 [成功] 時，不應提供錯誤"
     }
   ],
   "sw6EXK": [
