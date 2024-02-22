@@ -4,9 +4,9 @@ import { UnsupportedException, UnsupportedExceptionCode } from '../../../common/
 import type { Operations, NodesMetadata } from '../../state/workflow/workflowInterfaces';
 import { createWorkflowNode, createWorkflowEdge } from '../../utils/graph';
 import type { WorkflowNode, WorkflowEdge } from '../models/workflowNode';
-import { LoggerService, Status } from '@microsoft/designer-client-services-logic-apps';
 import { getDurationStringPanelMode } from '@microsoft/designer-ui';
-import { getIntl } from '@microsoft/intl-logic-apps';
+import { LoggerService, Status } from '@microsoft/logic-apps-shared';
+import { getIntl } from '@microsoft/logic-apps-shared';
 import type { LogicAppsV2, SubgraphType } from '@microsoft/logic-apps-shared';
 import {
   containsIdTag,

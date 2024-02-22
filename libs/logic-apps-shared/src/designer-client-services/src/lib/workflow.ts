@@ -1,7 +1,7 @@
-import type { LogicAppsV2, ManagedIdentity, OpenAPIV2 } from '@microsoft/logic-apps-shared';
-import { AssertionErrorCode, AssertionException } from '@microsoft/logic-apps-shared';
+import type { LogicAppsV2, ManagedIdentity, OpenAPIV2 } from '@microsoft/utils-logic-apps';
+import { AssertionErrorCode, AssertionException } from '@microsoft/utils-logic-apps';
 
-export interface CallbackInfo {
+export interface Callback {
   method?: string;
   value: string;
 }
@@ -34,7 +34,7 @@ export interface IWorkflowService {
   /**
    * Gets callback url for manual trigger.
    */
-  getCallbackUrl(triggerName: string): Promise<CallbackInfo>;
+  getCallbackUrl(triggerName: string): Promise<Callback>;
 
   /**
    * Gets managed identity associated with workflow app.

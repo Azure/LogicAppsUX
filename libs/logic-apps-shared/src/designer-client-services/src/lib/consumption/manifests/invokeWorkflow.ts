@@ -1,6 +1,6 @@
 import { coreBadge } from '../../badges';
 import { invokeWorkflowGroup } from '../operations';
-import type { OperationManifest } from '@microsoft/logic-apps-shared';
+import type { OperationManifest } from '@microsoft/utils-logic-apps';
 
 export const invokeWorkflowManifest = {
   properties: {

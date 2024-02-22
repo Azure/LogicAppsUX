@@ -1,4 +1,4 @@
-import { equals } from '@microsoft/logic-apps-shared';
+import { equals } from '@microsoft/utils-logic-apps';
 
 export function pathCombine(url: string, path: string): string {
   let pathUrl: string;

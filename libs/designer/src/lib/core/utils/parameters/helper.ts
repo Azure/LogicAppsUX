@@ -55,7 +55,6 @@ import {
   isVariableToken,
   ValueSegmentConvertor,
 } from './segment';
-import { LogEntryLevel, LoggerService, OperationManifestService, WorkflowService } from '@microsoft/designer-client-services-logic-apps';
 import type {
   AuthProps,
   ComboboxItem,
@@ -85,7 +84,8 @@ import {
   TokenType,
   AuthenticationOAuthType,
 } from '@microsoft/designer-ui';
-import { getIntl } from '@microsoft/intl-logic-apps';
+import { LogEntryLevel, LoggerService, OperationManifestService, WorkflowService } from '@microsoft/logic-apps-shared';
+import { getIntl } from '@microsoft/logic-apps-shared';
 import type {
   DependentParameterInfo,
   DynamicParameters,

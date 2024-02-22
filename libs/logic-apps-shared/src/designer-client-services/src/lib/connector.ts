@@ -1,6 +1,6 @@
-import type { DynamicTreeExtension } from '@microsoft/logic-apps-shared';
-import type { OpenAPIV2 } from '@microsoft/logic-apps-shared';
-import { AssertionErrorCode, AssertionException } from '@microsoft/logic-apps-shared';
+import type { DynamicTreeExtension } from '@microsoft/parsers-logic-apps';
+import type { OpenAPIV2 } from '@microsoft/utils-logic-apps';
+import { AssertionErrorCode, AssertionException } from '@microsoft/utils-logic-apps';
 
 export interface ListDynamicValue {
   value: any;

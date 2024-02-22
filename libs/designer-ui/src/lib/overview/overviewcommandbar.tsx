@@ -1,12 +1,12 @@
 import type { ICommandBarItemProps } from '@fluentui/react';
 import { CommandBar } from '@fluentui/react';
 import { getCallbackUrl } from '@microsoft/logic-apps-shared';
-import type { CallbackInfo } from '@microsoft/logic-apps-shared';
+import type { Callback } from '@microsoft/logic-apps-shared';
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
 
 export interface OverviewCommandBarProps {
-  callbackInfo?: CallbackInfo;
+  callbackInfo?: Callback;
   isRefreshing?: boolean;
   onRefresh(): void;
   onRunTrigger(): void;

@@ -24,6 +24,15 @@ import {
 import { ArmParser } from './Utilities/ArmParser';
 import { WorkflowUtility } from './Utilities/Workflow';
 import { Chatbot, chatbotPanelWidth } from '@microsoft/chatbot';
+import type { Workflow } from '@microsoft/logic-apps-designer';
+import {
+  DesignerProvider,
+  BJSWorkflowProvider,
+  Designer,
+  getReactQueryClient,
+  serializeBJSWorkflow,
+  store as DesignerStore,
+} from '@microsoft/logic-apps-designer';
 import {
   BaseApiManagementService,
   BaseAppServiceService,
@@ -35,17 +44,8 @@ import {
   StandardOperationManifestService,
   StandardRunService,
   StandardSearchService,
-} from '@microsoft/designer-client-services-logic-apps';
-import type { ContentType, IWorkflowService } from '@microsoft/designer-client-services-logic-apps';
-import type { Workflow } from '@microsoft/logic-apps-designer';
-import {
-  DesignerProvider,
-  BJSWorkflowProvider,
-  Designer,
-  getReactQueryClient,
-  serializeBJSWorkflow,
-  store as DesignerStore,
-} from '@microsoft/logic-apps-designer';
+} from '@microsoft/logic-apps-shared';
+import type { ContentType, IWorkflowService } from '@microsoft/logic-apps-shared';
 import { clone, equals, guid, isArmResourceId, optional } from '@microsoft/logic-apps-shared';
 import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import axios from 'axios';

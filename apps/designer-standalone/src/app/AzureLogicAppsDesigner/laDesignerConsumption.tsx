@@ -25,6 +25,16 @@ import {
 import { ArmParser } from './Utilities/ArmParser';
 import { WorkflowUtility } from './Utilities/Workflow';
 import { Chatbot, chatbotPanelWidth } from '@microsoft/chatbot';
+import type { Workflow } from '@microsoft/logic-apps-designer';
+import {
+  DesignerProvider,
+  BJSWorkflowProvider,
+  Designer,
+  isOpenApiSchemaVersion,
+  getReactQueryClient,
+  serializeBJSWorkflow,
+  store as DesignerStore,
+} from '@microsoft/logic-apps-designer';
 import {
   BaseApiManagementService,
   BaseAppServiceService,
@@ -36,17 +46,7 @@ import {
   ConsumptionSearchService,
   BaseChatbotService,
   ConsumptionRunService,
-} from '@microsoft/designer-client-services-logic-apps';
-import type { Workflow } from '@microsoft/logic-apps-designer';
-import {
-  DesignerProvider,
-  BJSWorkflowProvider,
-  Designer,
-  isOpenApiSchemaVersion,
-  getReactQueryClient,
-  serializeBJSWorkflow,
-  store as DesignerStore,
-} from '@microsoft/logic-apps-designer';
+} from '@microsoft/logic-apps-shared';
 import { guid, startsWith } from '@microsoft/logic-apps-shared';
 import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';

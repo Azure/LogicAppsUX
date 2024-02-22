@@ -5,7 +5,6 @@ import { CopilotPanelHeader } from './panelheader';
 import type { ITextField } from '@fluentui/react';
 import { useTheme, Panel, PanelType, css, getId } from '@fluentui/react';
 import { ShieldCheckmarkRegular } from '@fluentui/react-icons';
-import { LogEntryLevel, LoggerService, ChatbotService } from '@microsoft/designer-client-services-logic-apps';
 import type { ConversationItem, ChatEntryReaction, AdditionalParametersItem } from '@microsoft/designer-ui';
 import {
   PanelLocation,
@@ -18,6 +17,7 @@ import {
   ChatSuggestion,
 } from '@microsoft/designer-ui';
 import type { Workflow } from '@microsoft/logic-apps-designer';
+import { LogEntryLevel, LoggerService, ChatbotService } from '@microsoft/logic-apps-shared';
 import { guid } from '@microsoft/logic-apps-shared';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';

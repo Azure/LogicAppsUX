@@ -1,8 +1,8 @@
 import { getAzureResourceRecursive } from '../common/azure';
 import type { IGatewayService } from '../gateway';
 import type { IHttpClient } from '../httpClient';
-import type { Gateway, Subscription } from '@microsoft/logic-apps-shared';
-import { ArgumentException } from '@microsoft/logic-apps-shared';
+import type { Gateway, Subscription } from '@microsoft/utils-logic-apps';
+import { ArgumentException } from '@microsoft/utils-logic-apps';
 
 export interface BaseGatewayServiceOptions {
   baseUrl: string;

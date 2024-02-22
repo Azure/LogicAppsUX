@@ -50,13 +50,8 @@ import {
 } from './initialize';
 import { getOperationSettings, getSplitOnValue } from './settings';
 import type { Settings } from './settings';
-import {
-  LogEntryLevel,
-  LoggerService,
-  OperationManifestService,
-  StaticResultService,
-} from '@microsoft/designer-client-services-logic-apps';
-import { getIntl } from '@microsoft/intl-logic-apps';
+import { LogEntryLevel, LoggerService, OperationManifestService, StaticResultService } from '@microsoft/logic-apps-shared';
+import { getIntl } from '@microsoft/logic-apps-shared';
 import type { InputParameter, OutputParameter } from '@microsoft/logic-apps-shared';
 import { ManifestParser } from '@microsoft/logic-apps-shared';
 import type { LogicAppsV2, OperationManifest } from '@microsoft/logic-apps-shared';

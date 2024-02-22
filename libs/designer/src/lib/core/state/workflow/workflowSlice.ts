@@ -22,9 +22,9 @@ import {
 import type { RelationshipIds } from '../panel/panelInterfaces';
 import type { ErrorMessage, SpecTypes, WorkflowState, WorkflowKind } from './workflowInterfaces';
 import { getWorkflowNodeFromGraphState } from './workflowSelectors';
-import { LogEntryLevel, LoggerService } from '@microsoft/designer-client-services-logic-apps';
 import type { MessageLevel } from '@microsoft/designer-ui';
 import { getDurationStringPanelMode } from '@microsoft/designer-ui';
+import { LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
 import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import { equals, getRecordEntry, RUN_AFTER_STATUS, WORKFLOW_EDGE_TYPES, WORKFLOW_NODE_TYPES } from '@microsoft/logic-apps-shared';
 import { createSlice, isAnyOf } from '@reduxjs/toolkit';

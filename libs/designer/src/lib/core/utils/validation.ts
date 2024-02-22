@@ -8,7 +8,7 @@ import {
   type ValueSegment,
   FloatingActionMenuKind,
 } from '@microsoft/designer-ui';
-import { getIntl } from '@microsoft/intl-logic-apps';
+import { getIntl } from '@microsoft/logic-apps-shared';
 import type { Expression, ExpressionLiteral } from '@microsoft/logic-apps-shared';
 import {
   ExpressionParser,

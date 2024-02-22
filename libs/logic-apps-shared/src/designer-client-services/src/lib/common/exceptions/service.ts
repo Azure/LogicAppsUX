@@ -1,4 +1,4 @@
-import { BaseException } from '@microsoft/logic-apps-shared';
+import { BaseException } from '@microsoft/utils-logic-apps';
 
 export const ServiceExceptionName = 'Host.ServiceException';
 

@@ -1,9 +1,9 @@
 import { inputsResponse, outputsResponse } from '../__test__/__mocks__/monitoringInputsOutputsResponse';
 import type { HttpRequestOptions, IHttpClient } from '../httpClient';
 import type { IRunService } from '../run';
-import type { CallbackInfo } from '../workflow';
-import { isNumber } from '@microsoft/logic-apps-shared';
-import type { ArmResources, BoundParameters, ContentLink, LogicAppsV2, Run, Runs } from '@microsoft/logic-apps-shared';
+import type { Callback } from '../workflow';
+import { isNumber } from '@microsoft/parsers-logic-apps';
+import type { ArmResources, BoundParameters, ContentLink, LogicAppsV2, Run, Runs } from '@microsoft/utils-logic-apps';
 import {
   isCallbackInfoWithRelativePath,
   ArgumentException,
@@ -14,7 +14,7 @@ import {
   isNullOrUndefined,
   isBoolean,
   getRecordEntry,
-} from '@microsoft/logic-apps-shared';
+} from '@microsoft/utils-logic-apps';
 
 export interface ConsumptionRunServiceOptions {
   apiVersion: string;
@@ -194,9 +194,9 @@ export class ConsumptionRunService implements IRunService {
 
   /**
    * Triggers a workflow run
-   * @param {CallbackInfo} callbackInfo - Information to call Api to trigger workflow.
+   * @param {Callback} callbackInfo - Information to call Api to trigger workflow.
    */
-  async runTrigger(callbackInfo: CallbackInfo): Promise<void> {
+  async runTrigger(callbackInfo: Callback): Promise<void> {
     const { httpClient } = this.options;
     const method = isCallbackInfoWithRelativePath(callbackInfo) ? callbackInfo.method : HTTP_METHODS.POST;
     const uri = getCallbackUrl(callbackInfo);

@@ -4,15 +4,15 @@ import { getConnection } from '../../queries/connections';
 import { getOperationManifest } from '../../queries/operation';
 import type { ConnectionsStoreState } from '../../state/connection/connectionSlice';
 import type { NodeOperation } from '../../state/operation/operationMetadataSlice';
+import type { AssistedConnectionProps } from '@microsoft/designer-ui';
 import {
   ApiManagementService,
   FunctionService,
   OperationManifestService,
   WorkflowService,
   isServiceProviderOperation,
-} from '@microsoft/designer-client-services-logic-apps';
-import type { AssistedConnectionProps } from '@microsoft/designer-ui';
-import { getIntl } from '@microsoft/intl-logic-apps';
+} from '@microsoft/logic-apps-shared';
+import { getIntl } from '@microsoft/logic-apps-shared';
 import type {
   Connection,
   ConnectionParameterSet,

@@ -20,13 +20,13 @@ import { FlatFileEncodingStaticResultSchema } from './schemas/flatfileencoding';
 import { HttpStaticResultSchema } from './schemas/httpresult';
 import { ParseJsonStaticResultSchema } from './schemas/parseJson';
 import { QueryStaticResultSchema } from './schemas/query';
-import type { ManifestParser, SwaggerParser } from '@microsoft/logic-apps-shared';
+import type { ManifestParser, SwaggerParser } from '@microsoft/parsers-logic-apps';
 import {
   isCustomConnector,
   isManagedConnector,
   isSharedManagedConnectorFromPApps,
   isSharedManagedConnector,
-} from '@microsoft/logic-apps-shared';
+} from '@microsoft/utils-logic-apps';
 
 /**
  * Factory method to provide the static result root schema for an operation

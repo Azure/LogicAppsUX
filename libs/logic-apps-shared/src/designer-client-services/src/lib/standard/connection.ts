@@ -9,7 +9,7 @@ import { LogEntryLevel, Status } from '../logging/logEntry';
 import type { IOAuthPopup } from '../oAuth';
 import { OAuthService } from '../oAuth';
 import { getIntl } from '@microsoft/intl-logic-apps';
-import type { Connection, ConnectionParameter, Connector, ManagedIdentity } from '@microsoft/logic-apps-shared';
+import type { Connection, ConnectionParameter, Connector, ManagedIdentity } from '@microsoft/utils-logic-apps';
 import {
   ArgumentException,
   AssertionErrorCode,
@@ -23,7 +23,7 @@ import {
   isIdentityAssociatedWithLogicApp,
   safeSetObjectPropertyValue,
   createCopy,
-} from '@microsoft/logic-apps-shared';
+} from '@microsoft/utils-logic-apps';
 
 interface ConnectionAcl {
   id: string;

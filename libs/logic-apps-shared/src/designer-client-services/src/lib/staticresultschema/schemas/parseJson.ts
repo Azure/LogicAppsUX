@@ -1,7 +1,7 @@
 import { StaticResultRootSchema } from './baseactionresult';
 import { getIntl } from '@microsoft/intl-logic-apps';
-import type { OpenApiSchema } from '@microsoft/logic-apps-shared';
-import { clone } from '@microsoft/logic-apps-shared';
+import type { OpenApiSchema } from '@microsoft/parsers-logic-apps';
+import { clone } from '@microsoft/utils-logic-apps';
 
 const intl = getIntl();
 

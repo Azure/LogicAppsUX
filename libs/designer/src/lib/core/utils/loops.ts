@@ -26,9 +26,9 @@ import {
 import { isTokenValueSegment } from './parameters/segment';
 import { TokenSegmentConvertor } from './parameters/tokensegment';
 import { getSplitOnValue } from './setting';
-import { foreachOperationInfo, OperationManifestService } from '@microsoft/designer-client-services-logic-apps';
 import type { OutputToken, Token } from '@microsoft/designer-ui';
 import { TokenType } from '@microsoft/designer-ui';
+import { foreachOperationInfo, OperationManifestService } from '@microsoft/logic-apps-shared';
 import type { Dereference, Expression, ExpressionFunction, ExpressionLiteral, Segment } from '@microsoft/logic-apps-shared';
 import {
   OutputKeys,

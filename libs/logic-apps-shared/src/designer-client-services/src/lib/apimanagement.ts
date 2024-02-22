@@ -1,6 +1,6 @@
 import type { ListDynamicValue } from './connector';
-import type { SwaggerParser } from '@microsoft/logic-apps-shared';
-import { AssertionErrorCode, AssertionException } from '@microsoft/logic-apps-shared';
+import type { SwaggerParser } from '@microsoft/parsers-logic-apps';
+import { AssertionErrorCode, AssertionException } from '@microsoft/utils-logic-apps';
 
 export interface IApiManagementService {
   fetchApiManagementInstances(): Promise<any>;

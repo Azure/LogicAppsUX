@@ -31,13 +31,14 @@ import { getOutputParametersFromSwagger } from '../../utils/swagger/operation';
 import { convertOutputsToTokens, getBuiltInTokens, getTokenNodeIds } from '../../utils/tokens';
 import type { NodeInputsWithDependencies, NodeOutputsWithDependencies } from './operationdeserializer';
 import type { Settings } from './settings';
+import type { OutputToken, ParameterInfo } from '@microsoft/designer-ui';
 import type {
   IConnectionService,
   IOperationManifestService,
   ISearchService,
   IOAuthService,
   IWorkflowService,
-} from '@microsoft/designer-client-services-logic-apps';
+} from '@microsoft/logic-apps-shared';
 import {
   WorkflowService,
   LoggerService,
@@ -45,9 +46,8 @@ import {
   OperationManifestService,
   FunctionService,
   ApiManagementService,
-} from '@microsoft/designer-client-services-logic-apps';
-import type { OutputToken, ParameterInfo } from '@microsoft/designer-ui';
-import { getIntl } from '@microsoft/intl-logic-apps';
+} from '@microsoft/logic-apps-shared';
+import { getIntl } from '@microsoft/logic-apps-shared';
 import type { SchemaProperty, InputParameter, SwaggerParser, OutputParameter } from '@microsoft/logic-apps-shared';
 import {
   isDynamicListExtension,

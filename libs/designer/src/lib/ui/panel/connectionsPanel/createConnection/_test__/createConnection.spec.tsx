@@ -7,7 +7,7 @@ import {
   type IConnectionParameterInfo,
   InitConnectionService,
   StandardConnectionService,
-} from '@microsoft/designer-client-services-logic-apps';
+} from '@microsoft/logic-apps-shared';
 import type { ConnectionParameter, ConnectionParameterSets } from '@microsoft/logic-apps-shared';
 import React, { type ReactElement } from 'react';
 import * as ReactShallowRenderer from 'react-test-renderer/shallow';

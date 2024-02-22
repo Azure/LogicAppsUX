@@ -1,11 +1,11 @@
 import { Label, Link, Pivot, PivotItem, Text } from '@fluentui/react';
 import { getCallbackUrl } from '@microsoft/logic-apps-shared';
-import type { CallbackInfo } from '@microsoft/logic-apps-shared';
+import type { Callback } from '@microsoft/logic-apps-shared';
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
 
 export interface OverviewPropertiesProps {
-  callbackInfo?: CallbackInfo;
+  callbackInfo?: Callback;
   name: string;
   operationOptions?: string;
   statelessRunMode?: string;
