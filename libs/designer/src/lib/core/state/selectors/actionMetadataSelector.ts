@@ -4,7 +4,7 @@ import { useConnectionResource } from '../../queries/connections';
 import type { RootState } from '../../store';
 import { useConnector, useConnectorAndSwagger, useNodeConnectionId } from '../connection/connectionSelector';
 import type { NodeOperation } from '../operation/operationMetadataSlice';
-import { OperationManifestService } from '@microsoft/designer-client-services-logic-apps';
+import { OperationManifestService } from '@microsoft/logic-apps-shared';
 import type { LAOperation } from '@microsoft/logic-apps-shared';
 import { SwaggerParser } from '@microsoft/logic-apps-shared';
 import { getObjectPropertyValue, getRecordEntry } from '@microsoft/logic-apps-shared';

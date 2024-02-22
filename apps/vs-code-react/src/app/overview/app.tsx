@@ -2,8 +2,8 @@ import { QueryKeys } from '../../run-service';
 import type { RunDisplayItem } from '../../run-service';
 import type { RootState } from '../../state/store';
 import { VSCodeContext } from '../../webviewCommunication';
-import { StandardRunService } from '@microsoft/designer-client-services-logic-apps';
-import type { CallbackInfo } from '@microsoft/designer-client-services-logic-apps';
+import { StandardRunService } from '@microsoft/logic-apps-shared';
+import type { Callback } from '@microsoft/logic-apps-shared';
 import { Overview, isRunError, mapToRunItem } from '@microsoft/designer-ui';
 import type { Runs } from '@microsoft/logic-apps-shared';
 import { ExtensionCommand, HttpClient } from '@microsoft/vscode-extension';
@@ -70,7 +70,7 @@ export const OverviewApp = () => {
     error: runTriggerError,
   } = useMutation(async () => {
     invariant(workflowState.workflowProperties.callbackInfo, 'Run Trigger should not be runable unless callbackInfo has information');
-    await runService.runTrigger(workflowState.workflowProperties.callbackInfo as CallbackInfo);
+    await runService.runTrigger(workflowState.workflowProperties.callbackInfo as Callback);
     return refetch();
   });
 

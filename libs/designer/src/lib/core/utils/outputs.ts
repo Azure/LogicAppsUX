@@ -25,7 +25,7 @@ import {
   isDynamicDataReadyToLoad,
 } from './parameters/helper';
 import { convertOutputsToTokens, getTokenTitle } from './tokens';
-import { OperationManifestService } from '@microsoft/designer-client-services-logic-apps';
+import { OperationManifestService } from '@microsoft/logic-apps-shared';
 import { generateSchemaFromJsonString, ValueSegmentType } from '@microsoft/designer-ui';
 import { getIntl } from '@microsoft/logic-apps-shared';
 import type {

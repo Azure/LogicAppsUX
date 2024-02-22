@@ -1,4 +1,4 @@
-import { HostService, ContentType } from '@microsoft/designer-client-services-logic-apps';
+import { HostService, ContentType } from '@microsoft/logic-apps-shared';
 import { SecureDataSection, ValuesPanel } from '@microsoft/designer-ui';
 import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import { isNullOrUndefined } from '@microsoft/logic-apps-shared';

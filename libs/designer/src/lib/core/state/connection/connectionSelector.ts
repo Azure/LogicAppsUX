@@ -10,7 +10,7 @@ import {
   GatewayService,
   OperationManifestService,
   isServiceProviderOperation,
-} from '@microsoft/designer-client-services-logic-apps';
+} from '@microsoft/logic-apps-shared';
 import { getRecordEntry, type Connector } from '@microsoft/logic-apps-shared';
 import { useMemo } from 'react';
 import { useQuery } from 'react-query';

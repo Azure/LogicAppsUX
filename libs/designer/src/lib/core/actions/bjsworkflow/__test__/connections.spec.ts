@@ -10,7 +10,7 @@ import {
   InitOperationManifestService,
   StandardOperationManifestService,
   OperationManifestService,
-} from '@microsoft/designer-client-services-logic-apps';
+} from '@microsoft/logic-apps-shared';
 import { createItem } from '@microsoft/logic-apps-shared';
 import type { LogicAppsV2, OperationManifest } from '@microsoft/logic-apps-shared';
 import { ConnectionReferenceKeyFormat } from '@microsoft/logic-apps-shared';

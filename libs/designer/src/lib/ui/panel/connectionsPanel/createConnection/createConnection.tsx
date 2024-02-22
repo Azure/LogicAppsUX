@@ -11,8 +11,8 @@ import { UniversalConnectionParameter } from './formInputs/universalConnectionPa
 import type { IDropdownOption } from '@fluentui/react';
 import { MessageBarType, MessageBar, Label } from '@fluentui/react';
 import { Body1Strong, Button, Divider } from '@fluentui/react-components';
-import { ConnectionParameterEditorService, ConnectionService } from '@microsoft/designer-client-services-logic-apps';
-import type { GatewayServiceConfig, IConnectionCredentialMappingEditorProps } from '@microsoft/designer-client-services-logic-apps';
+import { ConnectionParameterEditorService, ConnectionService } from '@microsoft/logic-apps-shared';
+import type { GatewayServiceConfig, IConnectionCredentialMappingEditorProps } from '@microsoft/logic-apps-shared';
 import type { AzureResourcePickerProps } from '@microsoft/designer-ui';
 import { AzureResourcePicker } from '@microsoft/designer-ui';
 import type {

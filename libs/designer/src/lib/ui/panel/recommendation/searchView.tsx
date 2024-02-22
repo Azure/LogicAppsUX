@@ -1,6 +1,6 @@
 import type { AppDispatch } from '../../../core';
 import { selectOperationGroupId } from '../../../core/state/panel/panelSlice';
-import { SearchService, type ISearchService } from '@microsoft/designer-client-services-logic-apps';
+import { SearchService, type ISearchService } from '@microsoft/logic-apps-shared';
 import { SearchResultsGrid } from '@microsoft/designer-ui';
 import { isBuiltInConnector, type DiscoveryOperation, type DiscoveryResultTypes, isCustomConnector } from '@microsoft/logic-apps-shared';
 import { useDebouncedEffect } from '@react-hookz/web';

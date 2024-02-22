@@ -37,7 +37,7 @@ import type {
   ISearchService,
   IOAuthService,
   IWorkflowService,
-} from '@microsoft/designer-client-services-logic-apps';
+} from '@microsoft/logic-apps-shared';
 import {
   WorkflowService,
   LoggerService,
@@ -45,7 +45,7 @@ import {
   OperationManifestService,
   FunctionService,
   ApiManagementService,
-} from '@microsoft/designer-client-services-logic-apps';
+} from '@microsoft/logic-apps-shared';
 import type { OutputToken, ParameterInfo } from '@microsoft/designer-ui';
 import { getIntl } from '@microsoft/logic-apps-shared';
 import type { SchemaProperty, InputParameter, SwaggerParser, OutputParameter } from '@microsoft/logic-apps-shared';

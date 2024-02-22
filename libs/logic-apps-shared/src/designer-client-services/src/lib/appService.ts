@@ -1,4 +1,4 @@
-import { AssertionErrorCode, AssertionException } from '@microsoft/logic-apps-shared';
+import { AssertionErrorCode, AssertionException } from '@microsoft/utils-logic-apps';
 
 export interface IAppServiceService {
   fetchAppServices(): Promise<any>;
