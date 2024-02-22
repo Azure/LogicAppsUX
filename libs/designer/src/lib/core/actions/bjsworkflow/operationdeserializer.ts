@@ -56,7 +56,7 @@ import {
   OperationManifestService,
   StaticResultService,
 } from '@microsoft/designer-client-services-logic-apps';
-import { getIntl } from '@microsoft/intl-logic-apps';
+import { getIntl } from '@microsoft/logic-apps-shared';
 import type { InputParameter, OutputParameter } from '@microsoft/logic-apps-shared';
 import { ManifestParser } from '@microsoft/logic-apps-shared';
 import type { LogicAppsV2, OperationManifest } from '@microsoft/logic-apps-shared';

@@ -1,6 +1,6 @@
 import type { Recurrence } from '.';
 import type { ValueSegment } from '../editor';
-import { getIntl } from '@microsoft/intl-logic-apps';
+import { getIntl } from '@microsoft/logic-apps-shared';
 
 export const getRecurrenceValue = (value: ValueSegment[]): Recurrence => {
   const recurrenceValue = value[0].value;

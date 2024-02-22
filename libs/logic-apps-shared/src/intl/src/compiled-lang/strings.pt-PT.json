@@ -1,0 +1,10235 @@
+{
+  "++ZVe/": [
+    {
+      "type": 0,
+      "value": "Testes"
+    }
+  ],
+  "+0H8Or": [
+    {
+      "type": 0,
+      "value": "Aviso: o tipo de nó de entrada não corresponde ao tipo do nó de esquema."
+    }
+  ],
+  "+0yxlR": [
+    {
+      "type": 0,
+      "value": "Ecrã de função"
+    }
+  ],
+  "+3rROX": [
+    {
+      "type": 0,
+      "value": "Protegida"
+    }
+  ],
+  "+FcXe9": [
+    {
+      "type": 0,
+      "value": "Com falhas"
+    }
+  ],
+  "+HcevX": [
+    {
+      "type": 0,
+      "value": "Introduza um valor booleano válido."
+    }
+  ],
+  "+Jryh+": [
+    {
+      "type": 0,
+      "value": "Acionador"
+    }
+  ],
+  "+M72+a": [
+    {
+      "type": 0,
+      "value": "Vista Geral"
+    }
+  ],
+  "+Uvo/p": [
+    {
+      "type": 0,
+      "value": "Texto alternativo para divisas para baixo"
+    }
+  ],
+  "+ZSBrq": [
+    {
+      "type": 0,
+      "value": "Menu de contexto do cartão "
+    },
+    {
+      "type": 1,
+      "value": "title"
+    }
+  ],
+  "+ijo/2": [
+    {
+      "type": 0,
+      "value": "Colar a última expressão utilizada"
+    }
+  ],
+  "+mAJR3": [
+    {
+      "type": 0,
+      "value": "(UTC+08:00) Kuala Lumpur, Singapura"
+    }
+  ],
+  "+oelX4": [
+    {
+      "type": 0,
+      "value": "Necessário. A cadeia a examinar."
+    }
+  ],
+  "+powfX": [
+    {
+      "type": 0,
+      "value": "Fuso horário"
+    }
+  ],
+  "+v1RlQ": [
+    {
+      "type": 0,
+      "value": "Suprimir Cabeçalhos do Fluxo de Trabalho na Resposta"
+    }
+  ],
+  "+xXHdp": [
+    {
+      "type": 0,
+      "value": "Sem saídas"
+    }
+  ],
+  "/2V8bQ": [
+    {
+      "type": 0,
+      "value": "Tempo limite excedido"
+    }
+  ],
+  "/EU/oJ": [
+    {
+      "type": 0,
+      "value": "Necessário. Uma cadeia que contém o nome do fuso horário do fuso horário de origem. Consulte \"Fusos Horário Predefinidos\" em \"https://go.microsoft.com/fwlink/?linkid=2238292\"."
+    }
+  ],
+  "/I/U8L": [
+    {
+      "type": 0,
+      "value": "Corpo"
+    }
+  ],
+  "/KRvvg": [
+    {
+      "type": 0,
+      "value": "Nenhum valor corresponde à sua pesquisa."
+    }
+  ],
+  "/NtebP": [
+    {
+      "type": 0,
+      "value": "(UTC+05:00) Islamabade, Carachi"
+    }
+  ],
+  "/QqADs": [
+    {
+      "type": 0,
+      "value": "Devolve os elementos da matriz começando no índice de Contagem"
+    }
+  ],
+  "/RS9F7": [
+    {
+      "type": 0,
+      "value": "(UTC-06:00) Saskatchewan"
+    }
+  ],
+  "/ULFwg": [
+    {
+      "type": 0,
+      "value": "Alterar ligação"
+    }
+  ],
+  "/VcZ9g": [
+    {
+      "type": 0,
+      "value": "Este conector tem várias versões, incorporada e alojada no Azure. Utilize a versão incorporada para obter o melhor desempenho, autenticação de cadeia de ligação e outras funcionalidades. Utilize a versão alojada no Azure para obter outras opções de autenticação."
+    }
+  ],
+  "/WW7If": [
+    {
+      "type": 0,
+      "value": "Verdadeiro"
+    }
+  ],
+  "/X2+cq": [
+    {
+      "type": 0,
+      "value": "Abrir o Azure Copilot"
+    }
+  ],
+  "/c1l10": [
+    {
+      "type": 0,
+      "value": "⌘+C"
+    }
+  ],
+  "/doURb": [
+    {
+      "type": 0,
+      "value": "Converter a entrada em uma matriz"
+    }
+  ],
+  "/km5eO": [
+    {
+      "type": 0,
+      "value": "(UTC-04:00) Assunção"
+    }
+  ],
+  "/mjH84": [
+    {
+      "type": 0,
+      "value": "Mostrar saídas em bruto"
+    }
+  ],
+  "/n13VL": [
+    {
+      "type": 0,
+      "value": "Propriedades"
+    }
+  ],
+  "/qchXQ": [
+    {
+      "type": 0,
+      "value": "Obrigatório. A coleção a partir da qual se deve associar itens."
+    }
+  ],
+  "/qu3zt": [
+    {
+      "type": 0,
+      "value": "0"
+    }
+  ],
+  "/ut0u7": [
+    {
+      "type": 0,
+      "value": "Devolve os primeiros elementos de Contagem da matriz ou da cadeia transmitida"
+    }
+  ],
+  "/vWMKW": [
+    {
+      "type": 0,
+      "value": "Entradas necessárias em falta"
+    }
+  ],
+  "/yYyOq": [
+    {
+      "type": 0,
+      "value": "Grupo de Recursos"
+    }
+  ],
+  "00xlpa": [
+    {
+      "type": 0,
+      "value": "Partilhado"
+    }
+  ],
+  "02vyBk": [
+    {
+      "type": 0,
+      "value": "Acionador"
+    }
+  ],
+  "03RO5d": [
+    {
+      "type": 0,
+      "value": "Editar parâmetro"
+    }
+  ],
+  "04AwK7": [
+    {
+      "type": 0,
+      "value": "Código de erro: \""
+    },
+    {
+      "type": 1,
+      "value": "errorCode"
+    },
+    {
+      "type": 0,
+      "value": "\", Mensagem: \""
+    },
+    {
+      "type": 1,
+      "value": "message"
+    },
+    {
+      "type": 0,
+      "value": "\"."
+    }
+  ],
+  "06zKZg": [
+    {
+      "type": 0,
+      "value": "(UTC+04:00) Tbilisi"
+    }
+  ],
+  "07ZsoY": [
+    {
+      "type": 0,
+      "value": "Devolve o início da hora a um carimbo de data/hora de cadeia transmitido"
+    }
+  ],
+  "07oZoX": [
+    {
+      "type": 0,
+      "value": "(UTC+12:00) Anadyr, Petropavlovsk-Kamchatsky"
+    }
+  ],
+  "08e2rO": [
+    {
+      "type": 0,
+      "value": "A identidade gerida utilizada nesta operação já não existe. Para continuar, crie uma identidade ou altere a ligação."
+    }
+  ],
+  "09B9CU": [
+    {
+      "type": 0,
+      "value": "Devolve o URL para invocar o acionador ou a ação. Nota: esta função apenas pode ser utilizada num httpWebhook e apiConnectionWebhook, não em manual, periódico, http ou apiConnection."
+    }
+  ],
+  "0B5xDu": [
+    {
+      "type": 0,
+      "value": "(UTC+05:30) Sri Jayawardenepura"
+    }
+  ],
+  "0CPsxh": [
+    {
+      "type": 0,
+      "value": "Del"
+    }
+  ],
+  "0CvRZW": [
+    {
+      "type": 0,
+      "value": "Guardar"
+    }
+  ],
+  "0F6jmK": [
+    {
+      "type": 0,
+      "value": "Entradas ou saídas seguras ativadas."
+    }
+  ],
+  "0FzNJV": [
+    {
+      "type": 0,
+      "value": "Obrigatório. A cadeia codificada em base64."
+    }
+  ],
+  "0GT0SI": [
+    {
+      "type": 0,
+      "value": "Cancelar"
+    }
+  ],
+  "0GqNGo": [
+    {
+      "type": 0,
+      "value": "URL descodifica a cadeia de entrada"
+    }
+  ],
+  "0IRUjM": [
+    {
+      "type": 0,
+      "value": "Selecione um nó de esquema de destino para iniciar o mapeamento"
+    }
+  ],
+  "0JTHTZ": [
+    {
+      "type": 0,
+      "value": "Mostrar menu da execução"
+    }
+  ],
+  "0KMjv6": [
+    {
+      "type": 0,
+      "value": "Rastreio"
+    }
+  ],
+  "0R2D5l": [
+    {
+      "type": 0,
+      "value": "Devolve uma representação binária de uma cadeia codificada de URI"
+    }
+  ],
+  "0SSwxD": [
+    {
+      "type": 0,
+      "value": "Fechar painel"
+    }
+  ],
+  "0Vzp0l": [
+    {
+      "type": 0,
+      "value": "Fechar"
+    }
+  ],
+  "0i/6TR": [
+    {
+      "type": 0,
+      "value": "Obrigatório. A cadeia a converter em maiúsculas. Se um caráter na cadeia não tiver um equivalente em maiúsculas, o caráter é incluído inalterado na cadeia devolvida."
+    }
+  ],
+  "0m2Y1/": [
+    {
+      "type": 0,
+      "value": "Valor"
+    }
+  ],
+  "0oebOm": [
+    {
+      "type": 0,
+      "value": "Saídas"
+    }
+  ],
+  "0p+pJq": [
+    {
+      "type": 0,
+      "value": "Devolve o restante depois de dividir os dois números (módulo)"
+    }
+  ],
+  "0qV0Qe": [
+    {
+      "type": 0,
+      "value": "Obrigatório. A cadeia que poderá conter o valor."
+    }
+  ],
+  "0uj1Li": [
+    {
+      "type": 0,
+      "value": "Devolve uma representação binária de uma cadeia URI de dados de entrada"
+    }
+  ],
+  "0upuCv": [
+    {
+      "type": 0,
+      "value": "Hora"
+    }
+  ],
+  "0vfdFS": [
+    {
+      "type": 0,
+      "value": "todos os dias"
+    }
+  ],
+  "0xLWzG": [
+    {
+      "type": 0,
+      "value": "O nome já existe ou é inválido. Atualize o nome antes de continuar."
+    }
+  ],
+  "0y5eia": [
+    {
+      "type": 0,
+      "value": "Mais comandos"
+    }
+  ],
+  "1+Z8n9": [
+    {
+      "type": 0,
+      "value": "Obrigatório. O URI de dados a converter em representação de Cadeia."
+    }
+  ],
+  "109OPL": [
+    {
+      "type": 0,
+      "value": "Devolve a porta de um URI. Se a porta não for especificada, devolve a porta predefinida para o protocolo"
+    }
+  ],
+  "14lYtE": [
+    {
+      "type": 0,
+      "value": "18"
+    }
+  ],
+  "1A1P5b": [
+    {
+      "type": 0,
+      "value": "Comentário"
+    }
+  ],
+  "1D047X": [
+    {
+      "type": 0,
+      "value": "Obrigatório. O valor a converter em XML."
+    }
+  ],
+  "1Fn5n+": [
+    {
+      "type": 0,
+      "value": "Obrigatório. A cadeia codificada do URI."
+    }
+  ],
+  "1KFpTX": [
+    {
+      "type": 0,
+      "value": "(UTC+03:00) Minsk"
+    }
+  ],
+  "1NBvKu": [
+    {
+      "type": 0,
+      "value": "Converta o argumento do parâmetro num número de vírgula flutuante"
+    }
+  ],
+  "1ZSzl6": [
+    {
+      "type": 0,
+      "value": "Cada execução após a configuração tem de ter, pelo menos, um estado verificado"
+    }
+  ],
+  "1dlfUe": [
+    {
+      "type": 0,
+      "value": "As ações executam operações em dados, comunicam entre sistemas ou executam outras tarefas."
+    }
+  ],
+  "1eKQwo": [
+    {
+      "type": 0,
+      "value": "(UTC+08:00) Perth"
+    }
+  ],
+  "1ejxkP": [
+    {
+      "type": 0,
+      "value": "Entradas Seguras"
+    }
+  ],
+  "1hHFdx": [
+    {
+      "type": 0,
+      "value": "(UTC-01:00) Açores"
+    }
+  ],
+  "1hPZqe": [
+    {
+      "type": 0,
+      "value": "O número de vezes a tentar o pedido novamente"
+    }
+  ],
+  "1htSs7": [
+    {
+      "type": 0,
+      "value": "Desativado"
+    }
+  ],
+  "1jhzOM": [
+    {
+      "type": 0,
+      "value": "Obrigatório. O objeto a verificar se é inferior ao valor com que está a ser comparado."
+    }
+  ],
+  "1nODUD": [
+    {
+      "type": 0,
+      "value": "Ocultar funções"
+    }
+  ],
+  "1nvvw1": [
+    {
+      "type": 0,
+      "value": "Introduzir o valor do cabeçalho de Autorização"
+    }
+  ],
+  "1pjO9s": [
+    {
+      "type": 0,
+      "value": "Ocultar esquema de origem"
+    }
+  ],
+  "1r9ljA": [
+    {
+      "type": 0,
+      "value": "Introduza um URI válido."
+    }
+  ],
+  "1uGBLP": [
+    {
+      "type": 0,
+      "value": "5"
+    }
+  ],
+  "20oqsp": [
+    {
+      "type": 0,
+      "value": "Adicionar subordinados (recursivo)"
+    }
+  ],
+  "23fENy": [
+    {
+      "type": 0,
+      "value": "Devolve uma representação binária de uma cadeia codificada de base 64"
+    }
+  ],
+  "23szE+": [
+    {
+      "type": 0,
+      "value": "Obrigatório. O valor a converter em URI de dados."
+    }
+  ],
+  "23uZn1": [
+    {
+      "type": 0,
+      "value": "Pesquisa global"
+    }
+  ],
+  "27Nhhv": [
+    {
+      "type": 0,
+      "value": "Selecione uma API a partir de uma instância de Gestão de API"
+    }
+  ],
+  "2CXCOt": [
+    {
+      "type": 0,
+      "value": "Selecione um ficheiro para carregar"
+    }
+  ],
+  "2Gh+Gd": [
+    {
+      "type": 0,
+      "value": "Assistente de fluxo de trabalho"
+    }
+  ],
+  "2JA3gY": [
+    {
+      "type": 0,
+      "value": "Expandir nó de árvore"
+    }
+  ],
+  "2K2fAj": [
+    {
+      "type": 0,
+      "value": "Hora de fim"
+    }
+  ],
+  "2MOA1x": [
+    {
+      "type": 0,
+      "value": "Controle a forma como as novas execuções são colocadas em fila"
+    }
+  ],
+  "2NXYYu": [
+    {
+      "type": 0,
+      "value": "Pesquisar"
+    }
+  ],
+  "2Noh96": [
+    {
+      "type": 0,
+      "value": "17"
+    }
+  ],
+  "2TMGk7": [
+    {
+      "type": 0,
+      "value": "Identidade gerida"
+    }
+  ],
+  "2ZfzaY": [
+    {
+      "type": 0,
+      "value": "Selecionar existente"
+    }
+  ],
+  "2cVEMV": [
+    {
+      "type": 0,
+      "value": "Devolve um valor único que corresponde ao nome da chave a partir de dados do formulário ou de saída de ação de formulário codificado"
+    }
+  ],
+  "2gOfQI": [
+    {
+      "type": 0,
+      "value": "Esquemas existentes de"
+    }
+  ],
+  "2gzGrJ": [
+    {
+      "type": 0,
+      "value": "Obrigatório. O nome da ação com uma resposta de dados de formulário ou de formulário codificado."
+    }
+  ],
+  "2hrQOL": [
+    {
+      "type": 0,
+      "value": "(UTC+00:00) Dublin, Edimburgo, Lisboa, Londres"
+    }
+  ],
+  "2kWLLc": [
+    {
+      "type": 0,
+      "value": "Hora de Início"
+    }
+  ],
+  "2pCFsW": [
+    {
+      "type": 0,
+      "value": "Contagem de paginação inválida. O valor tem de ser um número superior a 0"
+    }
+  ],
+  "2pRsUf": [
+    {
+      "type": 0,
+      "value": "Introduza uma matriz válida."
+    }
+  ],
+  "2r30S9": [
+    {
+      "type": 0,
+      "value": "Introduza um novo passo após "
+    },
+    {
+      "type": 1,
+      "value": "parentName"
+    }
+  ],
+  "2tTQ0A": [
+    {
+      "type": 0,
+      "value": "Ativado"
+    }
+  ],
+  "2uINs9": [
+    {
+      "type": 0,
+      "value": "Predefinição"
+    }
+  ],
+  "2vnYre": [
+    {
+      "type": 0,
+      "value": "Adicionar Ação"
+    }
+  ],
+  "2y24a/": [
+    {
+      "type": 0,
+      "value": "Guardar"
+    }
+  ],
+  "2z5HGT": [
+    {
+      "type": 0,
+      "value": "Opcional. O código de região RFC 4646 a utilizar. Se não for especificado, é utilizada a região predefinida. Se a região não for um valor válido, é gerado um erro a indicar que a região fornecida não é válida ou não tem uma região associada."
+    }
+  ],
+  "3+TQMa": [
+    {
+      "type": 0,
+      "value": "A carregar ligação..."
+    }
+  ],
+  "33+WHG": [
+    {
+      "type": 0,
+      "value": "Identificador"
+    }
+  ],
+  "34Nt/B": [
+    {
+      "type": 0,
+      "value": "texto alternativo para ícone de botão"
+    }
+  ],
+  "36RiST": [
+    {
+      "type": 0,
+      "value": "Identidade gerida atribuída pelo sistema"
+    }
+  ],
+  "3AWwVl": [
+    {
+      "type": 0,
+      "value": "Código"
+    }
+  ],
+  "3BZnxY": [
+    {
+      "type": 0,
+      "value": "Adicionar conteúdo dinâmico"
+    }
+  ],
+  "3ERi+E": [
+    {
+      "type": 0,
+      "value": "Termos do Serviço"
+    }
+  ],
+  "3GINhd": [
+    {
+      "type": 0,
+      "value": "Acionadores"
+    }
+  ],
+  "3KPLpx": [
+    {
+      "type": 0,
+      "value": "Remova primeiro todos os mapeamentos no elemento de origem \""
+    },
+    {
+      "type": 1,
+      "value": "nodeName"
+    },
+    {
+      "type": 0,
+      "value": "\" primeiro."
+    }
+  ],
+  "3MTSYZ": [
+    {
+      "type": 0,
+      "value": "(UTC-03:00) Salvador"
+    }
+  ],
+  "3NhwIJ": [
+    {
+      "type": 0,
+      "value": "Obrigatório. O separador."
+    }
+  ],
+  "3O0i4j": [
+    {
+      "type": 0,
+      "value": "Não existe conteúdo dinâmico disponível"
+    }
+  ],
+  "3PJZH0": [
+    {
+      "type": 0,
+      "value": "Necessário. A cadeia a examinar."
+    }
+  ],
+  "3QXY3z": [
+    {
+      "type": 0,
+      "value": "Substituir um esquema existente por um esquema incompatível pode criar erros no seu mapa."
+    }
+  ],
+  "3RoD4h": [
+    {
+      "type": 0,
+      "value": "Devolve a coleção por ordem inversa"
+    }
+  ],
+  "3X4FHS": [
+    {
+      "type": 0,
+      "value": "Escolha o tipo de entrada de utilizador"
+    }
+  ],
+  "3Y8a6G": [
+    {
+      "type": 0,
+      "value": "Os parâmetros necessários "
+    },
+    {
+      "type": 1,
+      "value": "parameters"
+    },
+    {
+      "type": 0,
+      "value": " não foram definidos ou são inválidos"
+    }
+  ],
+  "3cZZKj": [
+    {
+      "type": 0,
+      "value": "Divisor"
+    }
+  ],
+  "3eeli7": [
+    {
+      "type": 0,
+      "value": "Selecionar um esquema de origem"
+    }
+  ],
+  "3ewBbk": [
+    {
+      "type": 0,
+      "value": "A identidade introduzida não está associada a esta Aplicação Lógica."
+    }
+  ],
+  "3n5pnv": [
+    {
+      "type": 0,
+      "value": "(UTC+10:30) Ilha de Lord Howe"
+    }
+  ],
+  "3rzrWf": [
+    {
+      "type": 0,
+      "value": "Necessário. O objeto do qual remover a propriedade."
+    }
+  ],
+  "3sJlV+": [
+    {
+      "type": 0,
+      "value": "Fechar vista de código"
+    }
+  ],
+  "3uA4ml": [
+    {
+      "type": 0,
+      "value": "Introduza um datetime válido."
+    }
+  ],
+  "3vCCY7": [
+    {
+      "type": 0,
+      "value": "Obrigatório. O número de uma unidade de tempo especificada para subtrair."
+    }
+  ],
+  "3vqfeV": [
+    {
+      "type": 0,
+      "value": "3"
+    }
+  ],
+  "3z6rhG": [
+    {
+      "type": 0,
+      "value": "Obrigatório. Este valor é o número inteiro seguinte depois do maior número inteiro que pode ser devolvido."
+    }
+  ],
+  "41drjl": [
+    {
+      "type": 0,
+      "value": "Abrir ligação"
+    }
+  ],
+  "41eMpW": [
+    {
+      "type": 0,
+      "value": "A aguardar"
+    }
+  ],
+  "43xObP": [
+    {
+      "type": 0,
+      "value": "(UTC+10:00) Camberra, Melbourne, Sydney"
+    }
+  ],
+  "45ubha": [
+    {
+      "type": 0,
+      "value": "Autenticação"
+    }
+  ],
+  "47kOXr": [
+    {
+      "type": 0,
+      "value": "Obrigatório. O menor número inteiro que pode ser devolvido."
+    }
+  ],
+  "49YUXK": [
+    {
+      "type": 0,
+      "value": "O parâmetro \""
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "\" é obrigatório."
+    }
+  ],
+  "4BH9uU": [
+    {
+      "type": 0,
+      "value": "Erros"
+    }
+  ],
+  "4BrA0z": [
+    {
+      "type": 0,
+      "value": "Obrigatório. O número de dias a adicionar. Pode ser negativo para subtrair dias."
+    }
+  ],
+  "4D7H4R": [
+    {
+      "type": 0,
+      "value": "Executa "
+    },
+    {
+      "type": 1,
+      "value": "onDays"
+    }
+  ],
+  "4Ekn9t": [
+    {
+      "type": 0,
+      "value": "Anular"
+    }
+  ],
+  "4IS4yp": [
+    {
+      "type": 0,
+      "value": "Política de Repetição"
+    }
+  ],
+  "4Q7WzU": [
+    {
+      "type": 0,
+      "value": "Adicionar uma nova ligação"
+    }
+  ],
+  "4YKQAF": [
+    {
+      "type": 0,
+      "value": "Obrigatório. A unidade de tempo especificada no intervalo."
+    }
+  ],
+  "4aaixN": [
+    {
+      "type": 0,
+      "value": "Tour"
+    }
+  ],
+  "4c0uPQ": [
+    {
+      "type": 0,
+      "value": "Obrigatório. O nome do parâmetro cujos valores quer."
+    }
+  ],
+  "4hi3ks": [
+    {
+      "type": 0,
+      "value": "O seu fluxo foi atualizado."
+    }
+  ],
+  "4iyEAY": [
+    {
+      "type": 0,
+      "value": "💾 A guardar este fluxo..."
+    }
+  ],
+  "4izAMi": [
+    {
+      "type": 0,
+      "value": "Introduzir um valor para responder com"
+    }
+  ],
+  "4j2MEv": [
+    {
+      "type": 0,
+      "value": "Alternar Minimap"
+    }
+  ],
+  "4vcnOA": [
+    {
+      "type": 0,
+      "value": "Devolve o valor mínimo na matriz de entrada de números"
+    }
+  ],
+  "4vmGh0": [
+    {
+      "type": 0,
+      "value": "ID de pedido de serviço"
+    }
+  ],
+  "4wjJs0": [
+    {
+      "type": 0,
+      "value": "14"
+    }
+  ],
+  "5+P3ef": [
+    {
+      "type": 0,
+      "value": "(UTC+08:45) Eucla"
+    }
+  ],
+  "50W8FI": [
+    {
+      "type": 0,
+      "value": "Explicar ação"
+    }
+  ],
+  "53MgCQ": [
+    {
+      "type": 0,
+      "value": "Abrir painel"
+    }
+  ],
+  "595Baw": [
+    {
+      "type": 0,
+      "value": "(UTC+09:00) Osaca, Sapporo, Tóquio"
+    }
+  ],
+  "5J9jne": [
+    {
+      "type": 0,
+      "value": "Diga à Microsoft o que gostou nesta funcionalidade"
+    }
+  ],
+  "5LV34t": [
+    {
+      "type": 0,
+      "value": "As propriedades '"
+    },
+    {
+      "type": 1,
+      "value": "invalidProperties"
+    },
+    {
+      "type": 0,
+      "value": "' são inválidas para o tipo de autenticação '"
+    },
+    {
+      "type": 1,
+      "value": "authType"
+    },
+    {
+      "type": 0,
+      "value": "'."
+    }
+  ],
+  "5OvGgn": [
+    {
+      "type": 0,
+      "value": "Corpo"
+    }
+  ],
+  "5SAQOb": [
+    {
+      "type": 0,
+      "value": "Autoridade"
+    }
+  ],
+  "5WTRY8": [
+    {
+      "type": 0,
+      "value": "Erros"
+    }
+  ],
+  "5akc1Q": [
+    {
+      "type": 0,
+      "value": "Valor \"in\" não suportado: \""
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "\" no Parâmetro"
+    }
+  ],
+  "5b0sKi": [
+    {
+      "type": 0,
+      "value": "Devolve verdadeiro se um objeto, uma matriz ou uma cadeia estiver vazia"
+    }
+  ],
+  "5cPiWA": [
+    {
+      "type": 0,
+      "value": "Obrigatório. O nome do ciclo do item que pretende."
+    }
+  ],
+  "5dCAjy": [
+    {
+      "type": 0,
+      "value": "Dia"
+    }
+  ],
+  "5fmV2Q": [
+    {
+      "type": 0,
+      "value": "Os parâmetros utilizados no Logic App serão convertidos num modelo do Azure Resource Manager durante a geração do modelo de implementação."
+    }
+  ],
+  "5gOG+F": [
+    {
+      "type": 0,
+      "value": "Forneça os valores a comparar e selecione o operador a utilizar."
+    }
+  ],
+  "5hWg4V": [
+    {
+      "type": 0,
+      "value": "Selecionar elemento"
+    }
+  ],
+  "5qzZMo": [
+    {
+      "type": 0,
+      "value": "A carregar..."
+    }
+  ],
+  "5rkegy": [
+    {
+      "type": 0,
+      "value": "Eliminar Parâmetro"
+    }
+  ],
+  "5ytHcK": [
+    {
+      "type": 0,
+      "value": "A carregar..."
+    }
+  ],
+  "6+RwRp": [
+    {
+      "type": 0,
+      "value": "Conector Híbrido"
+    }
+  ],
+  "61iT9C": [
+    {
+      "type": 0,
+      "value": "Insira dados do passo anterior (também pode adicionar ao escrever Alt + / no editor)"
+    }
+  ],
+  "62Ypnr": [
+    {
+      "type": 0,
+      "value": "Erro ao carregar dados da operação"
+    }
+  ],
+  "63/zYN": [
+    {
+      "type": 0,
+      "value": "Obrigatório. O objeto a verificar se é superior ao valor com que está a ser comparado."
+    }
+  ],
+  "632t9E": [
+    {
+      "type": 0,
+      "value": "Entradas seguras da operação"
+    }
+  ],
+  "63CC7M": [
+    {
+      "type": 0,
+      "value": "Erro ao carregar entradas"
+    }
+  ],
+  "63fQWE": [
+    {
+      "type": 0,
+      "value": "Mostrar todos os parâmetros avançados"
+    }
+  ],
+  "6OSgRP": [
+    {
+      "type": 0,
+      "value": "Testar mapa"
+    }
+  ],
+  "6PdOcy": [
+    {
+      "type": 0,
+      "value": "Cancelar"
+    }
+  ],
+  "6VV7OY": [
+    {
+      "type": 0,
+      "value": "O valor do tempo limite é inválido, tem de corresponder ao formato de duração ISO 8601"
+    }
+  ],
+  "6fDYzG": [
+    {
+      "type": 0,
+      "value": "Falha ao carregar o esquema. Tente novamente."
+    }
+  ],
+  "6gZ4I3": [
+    {
+      "type": 0,
+      "value": "A função \""
+    },
+    {
+      "type": 1,
+      "value": "functionName"
+    },
+    {
+      "type": 0,
+      "value": "\" tem demasiadas entradas atribuídas"
+    }
+  ],
+  "6gblzt": [
+    {
+      "type": 0,
+      "value": "Atualizou esta ação"
+    }
+  ],
+  "6jiO7t": [
+    {
+      "type": 0,
+      "value": "Mostrar execução"
+    }
+  ],
+  "6jsWn/": [
+    {
+      "type": 0,
+      "value": "Obrigatório. A coleção em que procurar."
+    }
+  ],
+  "6kSpHL": [
+    {
+      "type": 0,
+      "value": "Obrigatório. O nome da ação com uma resposta em várias partes."
+    }
+  ],
+  "6lLsi+": [
+    {
+      "type": 0,
+      "value": "Este passo vai ser removido da Aplicação Lógica."
+    }
+  ],
+  "6oqk+A": [
+    {
+      "type": 0,
+      "value": "Anterior"
+    }
+  ],
+  "6pISgk": [
+    {
+      "type": 0,
+      "value": "Para preparar este fluxo de trabalho, conclua a configuração destas ações:"
+    }
+  ],
+  "6qkBwz": [
+    {
+      "type": 0,
+      "value": "Obrigatório. O número com o qual se multiplica o Multiplicando 2."
+    }
+  ],
+  "6sGj3J": [
+    {
+      "type": 0,
+      "value": "Criar fluxo"
+    }
+  ],
+  "6sSPNb": [
+    {
+      "type": 0,
+      "value": "Conector "
+    },
+    {
+      "type": 1,
+      "value": "connectorName"
+    }
+  ],
+  "6u6CS+": [
+    {
+      "type": 0,
+      "value": "Necessário. O valor para o qual encontrar o índice."
+    }
+  ],
+  "6uCEoM": [
+    {
+      "type": 0,
+      "value": "Introduza um valor válido para \""
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "\"."
+    }
+  ],
+  "6ueRYm": [
+    {
+      "type": 0,
+      "value": "Hora de início"
+    }
+  ],
+  "6xRvni": [
+    {
+      "type": 0,
+      "value": "Tipo de dados"
+    }
+  ],
+  "6yFUar": [
+    {
+      "type": 0,
+      "value": "Outputs are required when status is \"Succeeded\""
+    }
+  ],
+  "70eoQu": [
+    {
+      "type": 0,
+      "value": "Selecionar função a partir de"
+    }
+  ],
+  "73iM9+": [
+    {
+      "type": 0,
+      "value": "Atualizar esquema de origem"
+    }
+  ],
+  "74e2xB": [
+    {
+      "type": 0,
+      "value": "Criar uma nova ligação"
+    }
+  ],
+  "78Vggn": [
+    {
+      "type": 0,
+      "value": "Introduzir nome de utilizador"
+    }
+  ],
+  "7EZ2oY": [
+    {
+      "type": 0,
+      "value": "(UTC-04:00) Ilhas Turcas e Caicos"
+    }
+  ],
+  "7Fyq1F": [
+    {
+      "type": 0,
+      "value": "Sem entradas"
+    }
+  ],
+  "7GSk99": [
+    {
+      "type": 0,
+      "value": "OK"
+    }
+  ],
+  "7LmpNN": [
+    {
+      "type": 0,
+      "value": "Parâmetro \""
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "\" não é possível encontrar esta operação"
+    }
+  ],
+  "7PtWvu": [
+    {
+      "type": 0,
+      "value": "(UTC-05:00) Hora do Leste (E.U.A. e Canadá)"
+    }
+  ],
+  "7QymrD": [
+    {
+      "type": 0,
+      "value": "Obrigatório. A cadeia da qual a subcadeia é retirada."
+    }
+  ],
+  "7S2wtE": [
+    {
+      "type": 0,
+      "value": "Validação de Esquema"
+    }
+  ],
+  "7ZR1xr": [
+    {
+      "type": 0,
+      "value": "Adicionar uma ação"
+    }
+  ],
+  "7aJqIH": [
+    {
+      "type": 0,
+      "value": "Opcional. A região a utilizar ao formatar (a predefinição é \"en-us\")."
+    }
+  ],
+  "7gUE8h": [
+    {
+      "type": 0,
+      "value": "Esta ação irá reverter o seu fluxo de trabalho para o estado em que estava antes da edição do Copilot. Se tiver efetuado edições adicionais ao fluxo de trabalho após o Copilot, irá perdê-las. Esta ação não pode ser anulada. Pretende continuar?"
+    }
+  ],
+  "7jcTNd": [
+    {
+      "type": 0,
+      "value": "Introduza um e-mail válido."
+    }
+  ],
+  "7k9jXx": [
+    {
+      "type": 0,
+      "value": "Código de estado"
+    }
+  ],
+  "7lnElz": [
+    {
+      "type": 0,
+      "value": "Devolve o número de tiques (intervalo de 100 nanossegundos) desde 1 de janeiro de 0001 00:00:00 UT de um carimbo de data/hora de cadeia"
+    }
+  ],
+  "7lvqST": [
+    {
+      "type": 0,
+      "value": "Inválido"
+    }
+  ],
+  "7yEdSt": [
+    {
+      "type": 0,
+      "value": "Mostrar mais"
+    }
+  ],
+  "7yFLpB": [
+    {
+      "type": 0,
+      "value": "Copiar URL"
+    }
+  ],
+  "7zDk9N": [
+    {
+      "type": 0,
+      "value": "Intervalo exponencial"
+    }
+  ],
+  "7zsUT3": [
+    {
+      "type": 0,
+      "value": "Tipo de autenticação “"
+    },
+    {
+      "type": 1,
+      "value": "authType"
+    },
+    {
+      "type": 0,
+      "value": "” não suportado."
+    }
+  ],
+  "7zzPsK": [
+    {
+      "type": 0,
+      "value": "Obrigatório. A cadeia que poderá conter o valor."
+    }
+  ],
+  "8+0teU": [
+    {
+      "type": 0,
+      "value": "O nome do parâmetro já existe."
+    }
+  ],
+  "83G5rr": [
+    {
+      "type": 0,
+      "value": "Especifique o intervalo."
+    }
+  ],
+  "83PYuA": [
+    {
+      "type": 0,
+      "value": "(UTC-06:00) Hora Central (E.U.A. e Canadá)"
+    }
+  ],
+  "84D91Y": [
+    {
+      "type": 0,
+      "value": "Pfx"
+    }
+  ],
+  "8BoVtZ": [
+    {
+      "type": 0,
+      "value": "Erro ao executar a API - "
+    },
+    {
+      "type": 1,
+      "value": "url"
+    }
+  ],
+  "8CWFEh": [
+    {
+      "type": 0,
+      "value": "Obrigatório. O valor a devolver se a expressão for \"verdadeira\"."
+    }
+  ],
+  "8DFwxH": [
+    {
+      "type": 0,
+      "value": "Devolve uma cadeia de número formatada"
+    }
+  ],
+  "8FjOSh": [
+    {
+      "type": 0,
+      "value": "Obrigatório. O objeto a verificar se é igual ou superior ao objeto com que está a ser comparado."
+    }
+  ],
+  "8JEHiY": [
+    {
+      "type": 0,
+      "value": "Sábado"
+    }
+  ],
+  "8L+oIz": [
+    {
+      "type": 0,
+      "value": "Não é possível compor o estruturador devido a vários acionadores na definição."
+    }
+  ],
+  "8LhQeL": [
+    {
+      "type": 0,
+      "value": "Mudar para o modo de visualização de código"
+    }
+  ],
+  "8ND+Yc": [
+    {
+      "type": 0,
+      "value": "Ative a identidade gerida para a aplicação lógica."
+    }
+  ],
+  "8NFfuB": [
+    {
+      "type": 0,
+      "value": "Ações"
+    }
+  ],
+  "8NUqpR": [
+    {
+      "type": 0,
+      "value": "Descreva como o seu fluxo deve ser alterado. Adicione detalhes sempre que possível, incluindo o conector a utilizar e se algum conteúdo deve ser incluído."
+    }
+  ],
+  "8Q7ns/": [
+    {
+      "type": 0,
+      "value": "Edite este fluxo para"
+    }
+  ],
+  "8U0KPg": [
+    {
+      "type": 0,
+      "value": "Obrigatório. A cadeia a ser codificada por URI."
+    }
+  ],
+  "8UfIAk": [
+    {
+      "type": 0,
+      "value": "Introduzir segredo como texto simples ou utilizar um parâmetro seguro"
+    }
+  ],
+  "8Y5xpK": [
+    {
+      "type": 0,
+      "value": "Quinta-feira"
+    }
+  ],
+  "8ZfbyZ": [
+    {
+      "type": 0,
+      "value": "(UTC+06:00) Astana"
+    }
+  ],
+  "8baaNC": [
+    {
+      "type": 0,
+      "value": "Tipo de Token Não Suportado: "
+    },
+    {
+      "type": 1,
+      "value": "expressions"
+    }
+  ],
+  "8eKf/c": [
+    {
+      "type": 0,
+      "value": "(UTC+08:00) Irkutsk"
+    }
+  ],
+  "8eTWaf": [
+    {
+      "type": 0,
+      "value": "Mudar o Nome"
+    }
+  ],
+  "8j+a0n": [
+    {
+      "type": 0,
+      "value": "Com o padrão assíncrono, se o servidor remoto indicar que o pedido foi aceite para processamento com uma resposta 202 (Aceite), o motor do Logic Apps continuará a consultar o URL especificado no cabeçalho de localização da resposta até atingir um estado terminal."
+    }
+  ],
+  "8mDG0V": [
+    {
+      "type": 0,
+      "value": "O fluxo de trabalho tem erros de validação de parâmetros nas seguintes operações: "
+    },
+    {
+      "type": 1,
+      "value": "invalidNodes"
+    }
+  ],
+  "8wr0zO": [
+    {
+      "type": 0,
+      "value": "Adiciona um número inteiro de dias a um carimbo de data/hora de cadeia"
+    }
+  ],
+  "8zkvmc": [
+    {
+      "type": 0,
+      "value": "Teste"
+    }
+  ],
+  "9/UeTh": [
+    {
+      "type": 0,
+      "value": "Devolve uma matriz simples ou objeto que tem elementos comuns entre matrizes ou objetos transmitidos"
+    }
+  ],
+  "90Q7Pw": [
+    {
+      "type": 0,
+      "value": "Valor"
+    }
+  ],
+  "90o7sB": [
+    {
+      "type": 0,
+      "value": "Ficheiro"
+    }
+  ],
+  "93Gj/n": [
+    {
+      "type": 0,
+      "value": "Posição na Linha"
+    }
+  ],
+  "93svjx": [
+    {
+      "type": 0,
+      "value": "A identidade do utilizador não é suportada quando a Aplicação Lógica tem a identidade gerida atribuída ao sistema ativada."
+    }
+  ],
+  "96JG8I": [
+    {
+      "type": 0,
+      "value": "Operação "
+    },
+    {
+      "type": 1,
+      "value": "operationName"
+    }
+  ],
+  "99vsJy": [
+    {
+      "type": 0,
+      "value": "Conector"
+    }
+  ],
+  "9EmN2M": [
+    {
+      "type": 0,
+      "value": "Cancelar"
+    }
+  ],
+  "9IDWMU": [
+    {
+      "type": 0,
+      "value": "Fechar"
+    }
+  ],
+  "9JuvQ4": [
+    {
+      "type": 0,
+      "value": "Devolve um URI de dados de um valor"
+    }
+  ],
+  "9Jv3+1": [
+    {
+      "type": 0,
+      "value": "Devolve um objeto com um par de valores de propriedade adicionais"
+    }
+  ],
+  "9LLnyJ": [
+    {
+      "type": 0,
+      "value": "(UTC-03:00) Brasília"
+    }
+  ],
+  "9QNZSj": [
+    {
+      "type": 0,
+      "value": "Reverter o seu fluxo"
+    }
+  ],
+  "9SuA/E": [
+    {
+      "type": 0,
+      "value": "12"
+    }
+  ],
+  "9W0lck": [
+    {
+      "type": 0,
+      "value": "Divisão inválida no valor \""
+    },
+    {
+      "type": 1,
+      "value": "splitOn"
+    },
+    {
+      "type": 0,
+      "value": "\"; não se encontra nas saídas."
+    }
+  ],
+  "9YGcT2": [
+    {
+      "type": 0,
+      "value": "ChildErrors"
+    }
+  ],
+  "9YZ873": [
+    {
+      "type": 0,
+      "value": "Texto"
+    }
+  ],
+  "9aj+el": [
+    {
+      "type": 0,
+      "value": "Predefinição"
+    }
+  ],
+  "9atGYe": [
+    {
+      "type": 0,
+      "value": "Adicionar"
+    }
+  ],
+  "9djnqI": [
+    {
+      "type": 0,
+      "value": "Devolve o resultado da adição dos dois números"
+    }
+  ],
+  "9u/Ae3": [
+    {
+      "type": 0,
+      "value": "Devolve verdadeiro se ambos os parâmetros forem verdadeiros"
+    }
+  ],
+  "9wX3u9": [
+    {
+      "type": 0,
+      "value": "Enviar comentário"
+    }
+  ],
+  "9x8hg8": [
+    {
+      "type": 0,
+      "value": "Editar no modo básico"
+    }
+  ],
+  "9yLPwo": [
+    {
+      "type": 0,
+      "value": "Para obter informações mais detalhadas, pode consultar os seguintes recursos"
+    }
+  ],
+  "A5Ferh": [
+    {
+      "type": 0,
+      "value": "Elemento de origem removido da vista."
+    }
+  ],
+  "A8l+k7": [
+    {
+      "type": 0,
+      "value": "Ocorreu um erro ao executar os seguintes parâmetros de API: \""
+    },
+    {
+      "type": 1,
+      "value": "parameters"
+    },
+    {
+      "type": 0,
+      "value": "\""
+    }
+  ],
+  "ADM1Z8": [
+    {
+      "type": 0,
+      "value": "Tipo de Autenticação"
+    }
+  ],
+  "AEguAy": [
+    {
+      "type": 0,
+      "value": "Valor vazio"
+    }
+  ],
+  "AGCm1p": [
+    {
+      "type": 0,
+      "value": "Nome"
+    }
+  ],
+  "AHB418": [
+    {
+      "type": 0,
+      "value": "Filtrar Ações"
+    }
+  ],
+  "ANGw2o": [
+    {
+      "type": 0,
+      "value": "Click for more information on Static Result"
+    }
+  ],
+  "AO6T9u": [
+    {
+      "type": 0,
+      "value": "Concluído"
+    }
+  ],
+  "AQ7Zxc": [
+    {
+      "type": 0,
+      "value": "Devolve o índice da n.ª ocorrência de um valor numa cadeia (não sensível a maiúsculas e minúsculas, cultura invariável)."
+    }
+  ],
+  "Af+Ve0": [
+    {
+      "type": 0,
+      "value": "(UTC+11:00) Ilha de Bougainville"
+    }
+  ],
+  "AheXMN": [
+    {
+      "type": 0,
+      "value": "Selecione a frequência."
+    }
+  ],
+  "AhvQ7r": [
+    {
+      "type": 0,
+      "value": "Remover e limpar todos os parâmetros avançados e os seus valores"
+    }
+  ],
+  "Ak2Lka": [
+    {
+      "type": 0,
+      "value": "Não ligado a"
+    }
+  ],
+  "AnX5yC": [
+    {
+      "type": 0,
+      "value": "Nome de utilizador"
+    }
+  ],
+  "AoalgS": [
+    {
+      "type": 0,
+      "value": "A carregar mais resultados..."
+    }
+  ],
+  "ArTh0/": [
+    {
+      "type": 0,
+      "value": "Obrigatório. A cadeia a codificar numa representação base64."
+    }
+  ],
+  "AsqIUa": [
+    {
+      "type": 0,
+      "value": "Intervalo Máximo"
+    }
+  ],
+  "Az0QvG": [
+    {
+      "type": 0,
+      "value": "Automática"
+    }
+  ],
+  "B/JzwK": [
+    {
+      "offset": 0,
+      "options": {
+        "=0": {
+          "value": [
+            {
+              "type": 0,
+              "value": "0 Ações"
+            }
+          ]
+        },
+        "many": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " Ações"
+            }
+          ]
+        },
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " Ação"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " Ações"
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "actionCount"
+    }
+  ],
+  "B/gCWM": [
+    {
+      "type": 0,
+      "value": "Erro"
+    }
+  ],
+  "B2s0iG": [
+    {
+      "type": 0,
+      "value": "Obrigatório. O índice da parte a obter."
+    }
+  ],
+  "B59BCg": [
+    {
+      "type": 0,
+      "value": "Sem conteúdo dinâmico disponível"
+    }
+  ],
+  "B999mz": [
+    {
+      "type": 0,
+      "value": "Linha eliminada."
+    }
+  ],
+  "BBD8Em": [
+    {
+      "type": 0,
+      "value": "Chave"
+    }
+  ],
+  "BCAnZP": [
+    {
+      "type": 0,
+      "value": "Um caráter especificador de formato único ou um padrão de formato personalizado que indica como formatar o valor deste carimbo de data/hora. Se não fornecer o formato, é utilizado o formato ISO 8601 (\"o\")."
+    }
+  ],
+  "BCgiRh": [
+    {
+      "type": 0,
+      "value": "Aviso: o valor personalizado não corresponde a um dos tipos permitidos para esta entrada"
+    }
+  ],
+  "BFTwRN": [
+    {
+      "type": 0,
+      "value": "Êxito após novas tentativas"
+    }
+  ],
+  "BGw6eH": [
+    {
+      "type": 0,
+      "value": "As propriedades necessárias \""
+    },
+    {
+      "type": 1,
+      "value": "missingProperties"
+    },
+    {
+      "type": 0,
+      "value": "\" estão em falta para o tipo de autenticação '"
+    },
+    {
+      "type": 1,
+      "value": "authType"
+    },
+    {
+      "type": 0,
+      "value": "'"
+    }
+  ],
+  "BHe7qY": [
+    {
+      "type": 0,
+      "value": "Obrigatório. A cadeia codificada do URI."
+    }
+  ],
+  "BIzX3S": [
+    {
+      "type": 0,
+      "value": "Saiba mais sobre as operações de anular"
+    }
+  ],
+  "BJNUxN": [
+    {
+      "type": 0,
+      "value": "Parâmetros de Caminho"
+    }
+  ],
+  "BKL0ZG": [
+    {
+      "type": 0,
+      "value": "Hora de início"
+    }
+  ],
+  "BPYdTX": [
+    {
+      "type": 0,
+      "value": "Não especificado"
+    }
+  ],
+  "BQCPY7": [
+    {
+      "type": 0,
+      "value": "Obrigatório. A cadeia a partir da qual se descodificam carateres não seguros de URL."
+    }
+  ],
+  "BQSRV0": [
+    {
+      "type": 0,
+      "value": "Introduzir palavra-passe como texto simples ou utilizar um parâmetro seguro"
+    }
+  ],
+  "BQyLiu": [
+    {
+      "type": 0,
+      "value": "resultados encontrados"
+    }
+  ],
+  "BS3gy8": [
+    {
+      "type": 0,
+      "value": "Lamentamos, mas ocorreu um erro. Tente novamente."
+    }
+  ],
+  "BSgavq": [
+    {
+      "type": 0,
+      "value": "Exemplo: segunda-feira, sexta-feira"
+    }
+  ],
+  "BUutcC": [
+    {
+      "type": 0,
+      "value": "Expandir lista de elementos colaterais"
+    }
+  ],
+  "BYrP8F": [
+    {
+      "type": 0,
+      "value": "Número"
+    }
+  ],
+  "BeqBP7": [
+    {
+      "type": 0,
+      "value": "Descompressão Automática"
+    }
+  ],
+  "Bewmet": [
+    {
+      "type": 0,
+      "value": "Matriz"
+    }
+  ],
+  "Bl4Iv0": [
+    {
+      "type": 0,
+      "value": "(UTC+08:00) Ulan Bator"
+    }
+  ],
+  "Bn8iTS": [
+    {
+      "type": 0,
+      "value": "Tipo de estado:"
+    }
+  ],
+  "BoMvF2": [
+    {
+      "type": 0,
+      "value": "Fechar"
+    }
+  ],
+  "BogxJl": [
+    {
+      "type": 0,
+      "value": "(UTC+04:00) Izhevsk, Samara"
+    }
+  ],
+  "BrWQ0Z": [
+    {
+      "type": 0,
+      "value": "Selecionar uma identidade gerida"
+    }
+  ],
+  "BtL7UI": [
+    {
+      "type": 0,
+      "value": "Não são necessárias informações adicionais para este passo. Vai ser possível utilizar as saídas nos passos seguintes."
+    }
+  ],
+  "BuYrD3": [
+    {
+      "type": 0,
+      "value": "Um especificador de formato único que indica como formatar o valor deste GUID."
+    }
+  ],
+  "BvCnOv": [
+    {
+      "type": 0,
+      "value": "Defina o ID de rastreio para a execução. Para a divisão, este ID de rastreio é para o pedido de início"
+    }
+  ],
+  "BxITRH": [
+    {
+      "type": 0,
+      "value": "Obrigatório. O objeto a verificar se é superior ao objeto com que está a ser comparado."
+    }
+  ],
+  "BynK4X": [
+    {
+      "type": 0,
+      "value": "Fazer uma pergunta"
+    }
+  ],
+  "C1cy54": [
+    {
+      "type": 0,
+      "value": "Corpo"
+    }
+  ],
+  "C4NQ1J": [
+    {
+      "type": 0,
+      "value": "Obter os itens para satisfazer o limiar especificado seguindo o token de continuação. Devido ao tamanho da página do conector, o número devolvido pode exceder o limiar."
+    }
+  ],
+  "CBzSJo": [
+    {
+      "type": 0,
+      "value": "Verdadeiro"
+    }
+  ],
+  "CG772M": [
+    {
+      "type": 0,
+      "value": "Ligação necessária"
+    }
+  ],
+  "CaajcD": [
+    {
+      "type": 0,
+      "value": "(UTC+13:00) Samoa"
+    }
+  ],
+  "Cb6IEq": [
+    {
+      "type": 0,
+      "value": "(UTC-05:00) Havana"
+    }
+  ],
+  "Cb8pv0": [
+    {
+      "type": 0,
+      "value": "(UTC-02:00) Atlântico Central - Antigo"
+    }
+  ],
+  "Ci41Od": [
+    {
+      "type": 0,
+      "value": "(UTC+12:00) Auckland, Wellington"
+    }
+  ],
+  "Ciol6I": [
+    {
+      "type": 0,
+      "value": "Resultado"
+    }
+  ],
+  "Cj3/LJ": [
+    {
+      "type": 0,
+      "value": "Tem de fornecer o nome do parâmetro."
+    }
+  ],
+  "ClZW2r": [
+    {
+      "type": 0,
+      "value": "Valor"
+    }
+  ],
+  "CsPY74": [
+    {
+      "type": 0,
+      "value": "Tipo de Credencial"
+    }
+  ],
+  "CvoqQ6": [
+    {
+      "type": 0,
+      "value": "Introduza ou selecione uma data (AAAA-MM-DD)"
+    }
+  ],
+  "Cy0pyB": [
+    {
+      "type": 0,
+      "value": "(UTC+09:30) Adelaide"
+    }
+  ],
+  "CyT8H7": [
+    {
+      "type": 0,
+      "value": "Aceita os tipos “Número”, “Número Inteiro” e “Decimal”."
+    }
+  ],
+  "CypYLs": [
+    {
+      "type": 0,
+      "value": "Insira um novo passo entre "
+    },
+    {
+      "type": 1,
+      "value": "parentName"
+    },
+    {
+      "type": 0,
+      "value": " e "
+    },
+    {
+      "type": 1,
+      "value": "childName"
+    }
+  ],
+  "Czt6YV": [
+    {
+      "type": 0,
+      "value": "em "
+    },
+    {
+      "type": 1,
+      "value": "times"
+    }
+  ],
+  "D+Ptnq": [
+    {
+      "type": 0,
+      "value": "Devolve o caminho e a consulta de um URI"
+    }
+  ],
+  "D/xTXV": [
+    {
+      "type": 0,
+      "value": "Mostrar esquema de origem"
+    }
+  ],
+  "D1lgsT": [
+    {
+      "type": 0,
+      "value": "Necessário. A cadeia a partir da qual pretende remover os espaços em branco à esquerda e à direita."
+    }
+  ],
+  "D5FIKL": [
+    {
+      "type": 0,
+      "value": "Colar a partir de exemplo"
+    }
+  ],
+  "DDIIAQ": [
+    {
+      "type": 0,
+      "value": "Nó"
+    }
+  ],
+  "DEKsll": [
+    {
+      "type": 0,
+      "value": "O Intervalo de Política de Repetição é inválido, tem de corresponder ao formato de duração ISO 8601"
+    }
+  ],
+  "DEu7oK": [
+    {
+      "type": 0,
+      "value": "(UTC-07:00) Arizona"
+    }
+  ],
+  "DGMwU4": [
+    {
+      "type": 0,
+      "value": "Utilizar o payload de exemplo para gerar esquema"
+    }
+  ],
+  "DJW8RE": [
+    {
+      "type": 0,
+      "value": "Selecionar um valor"
+    }
+  ],
+  "DMuwuJ": [
+    {
+      "type": 0,
+      "value": "Data"
+    }
+  ],
+  "DQV7aK": [
+    {
+      "type": 0,
+      "value": "Alt/Opção + clique para transferir “"
+    },
+    {
+      "type": 1,
+      "value": "displayName"
+    },
+    {
+      "type": 0,
+      "value": "”"
+    }
+  ],
+  "DS/WmZ": [
+    {
+      "type": 0,
+      "value": "Funções Adicionadas"
+    }
+  ],
+  "DWd9vy": [
+    {
+      "type": 0,
+      "value": "todas as semanas"
+    }
+  ],
+  "DWsh56": [
+    {
+      "type": 0,
+      "value": "Introduzir ID de cliente"
+    }
+  ],
+  "DYXoEM": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Chisinau"
+    }
+  ],
+  "DZZ3fj": [
+    {
+      "type": 0,
+      "value": "Duração"
+    }
+  ],
+  "DfXxoX": [
+    {
+      "type": 0,
+      "value": "Selecione uma ligação existente ou crie uma nova"
+    }
+  ],
+  "Dhu3IS": [
+    {
+      "type": 0,
+      "value": "Mostrar mini-mapa"
+    }
+  ],
+  "DjbVKU": [
+    {
+      "type": 0,
+      "value": "OAuth"
+    }
+  ],
+  "DkF25I": [
+    {
+      "type": 0,
+      "value": "Expandir Resultado Estático"
+    }
+  ],
+  "Dm0zAO": [
+    {
+      "type": 0,
+      "value": "A duração máxima de um único pedido de saída desta ação. Se o pedido não terminar dentro deste limite após a execução de novas tentativas, a ação falha"
+    }
+  ],
+  "DsPDVB": [
+    {
+      "type": 0,
+      "value": "A condição do acionador não pode estar vazia"
+    }
+  ],
+  "DuoHXI": [
+    {
+      "type": 0,
+      "value": "Adicionar uma entrada"
+    }
+  ],
+  "DyYcJZ": [
+    {
+      "type": 0,
+      "value": "Executar Após"
+    }
+  ],
+  "DysO/Q": [
+    {
+      "type": 0,
+      "value": "Ctrl + Y"
+    }
+  ],
+  "E+HsWF": [
+    {
+      "type": 0,
+      "value": "A iniciar sessão..."
+    }
+  ],
+  "E+iim4": [
+    {
+      "type": 0,
+      "value": "Selecionar fuso horário."
+    }
+  ],
+  "E3+TAA": [
+    {
+      "type": 0,
+      "value": "O nó de esquema \""
+    },
+    {
+      "type": 1,
+      "value": "nodeName"
+    },
+    {
+      "type": 0,
+      "value": "\" tem uma entrada com um tipo sem correspondência"
+    }
+  ],
+  "E7NzDN": [
+    {
+      "type": 0,
+      "value": "Definições"
+    }
+  ],
+  "E8iqLl": [
+    {
+      "type": 0,
+      "value": "(UTC+11:00) Sakhalin"
+    }
+  ],
+  "ECZC6Y": [
+    {
+      "type": 0,
+      "value": "Converte o parâmetro num número decimal"
+    }
+  ],
+  "ERAWZA": [
+    {
+      "type": 0,
+      "value": "Resposta"
+    }
+  ],
+  "ERVorY": [
+    {
+      "type": 0,
+      "value": "Criar grupo"
+    }
+  ],
+  "ESZXfC": [
+    {
+      "type": 0,
+      "value": "A estes minutos"
+    }
+  ],
+  "EUQDM6": [
+    {
+      "type": 0,
+      "value": "Adicionar uma ação"
+    }
+  ],
+  "EZz5q7": [
+    {
+      "type": 0,
+      "value": "Necessário. O índice de onde começar a extrair a subcadeia."
+    }
+  ],
+  "Ea/fr+": [
+    {
+      "type": 0,
+      "value": "A cada "
+    },
+    {
+      "type": 1,
+      "value": "interval"
+    },
+    {
+      "type": 0,
+      "value": " dias"
+    }
+  ],
+  "EaTGcN": [
+    {
+      "type": 0,
+      "value": "(UTC+01:00) África Centro Oeste"
+    }
+  ],
+  "EdeHLs": [
+    {
+      "type": 0,
+      "value": "Mudar para entrada da matriz completa"
+    }
+  ],
+  "EdzoIs": [
+    {
+      "type": 0,
+      "value": "1"
+    }
+  ],
+  "EiRMD4": [
+    {
+      "type": 0,
+      "value": "Inicie sessão para criar uma ligação para "
+    },
+    {
+      "type": 1,
+      "value": "connectorDisplayName"
+    },
+    {
+      "type": 0,
+      "value": "."
+    }
+  ],
+  "EjXdAm": [
+    {
+      "type": 0,
+      "value": "Palavra-passe"
+    }
+  ],
+  "Ek0mSE": [
+    {
+      "type": 0,
+      "value": "Ver o histórico de pedidos para esta operação"
+    }
+  ],
+  "EptZhD": [
+    {
+      "type": 0,
+      "value": "Introduza uma tabela válida."
+    }
+  ],
+  "EqX3Mi": [
+    {
+      "type": 0,
+      "value": "Configure estas ligações para as utilizar no seu fluxo."
+    }
+  ],
+  "EurkzL": [
+    {
+      "type": 0,
+      "value": "Selecione sim ou não"
+    }
+  ],
+  "F3IDl8": [
+    {
+      "type": 0,
+      "value": "Obrigatório. O número de uma unidade de tempo especificada para adicionar."
+    }
+  ],
+  "F6+icQ": [
+    {
+      "type": 0,
+      "value": "O Intervalo Máximo de Política de Repetição é inválido, tem de corresponder ao formato de duração ISO 8601"
+    }
+  ],
+  "F9dR1Q": [
+    {
+      "type": 0,
+      "value": "Adicionar"
+    }
+  ],
+  "FBNevf": [
+    {
+      "type": 0,
+      "value": "Ir Para a Operação"
+    }
+  ],
+  "FDF4Qb": [
+    {
+      "type": 0,
+      "value": "Devolve um valor de parâmetro que é definido na definição"
+    }
+  ],
+  "FDWfqM": [
+    {
+      "type": 0,
+      "value": "Saídas Seguras"
+    }
+  ],
+  "FIL1Nt": [
+    {
+      "type": 0,
+      "value": "A condição é demasiado complexa ou inválida. Não é possível mudar para o modo básico."
+    }
+  ],
+  "FIT7i0": [
+    {
+      "type": 0,
+      "value": "20"
+    }
+  ],
+  "FL/0Zp": [
+    {
+      "type": 0,
+      "value": "(UTC-07:00) Chihuahua, La Paz, Mazatlan"
+    }
+  ],
+  "FMA0Q0": [
+    {
+      "type": 0,
+      "value": "O seu fluxo foi atualizado."
+    }
+  ],
+  "FN5zHQ": [
+    {
+      "type": 0,
+      "value": "Devolve uma secção de uma cadeia definida pelo índice de início e pelo índice de fim"
+    }
+  ],
+  "FT3jt6": [
+    {
+      "type": 0,
+      "value": "Informação de referência do Webhook"
+    }
+  ],
+  "FUhNu4": [
+    {
+      "type": 0,
+      "value": "Dividir Em"
+    }
+  ],
+  "FUuFlC": [
+    {
+      "type": 0,
+      "value": "Predefinição"
+    }
+  ],
+  "FXLR5M": [
+    {
+      "offset": 0,
+      "options": {
+        "many": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " horas"
+            }
+          ]
+        },
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " hora"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " horas"
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "hours"
+    }
+  ],
+  "FYtDP0": [
+    {
+      "type": 0,
+      "value": "Introduza um endereço de correio eletrónico."
+    }
+  ],
+  "Fcvgvg": [
+    {
+      "type": 0,
+      "value": "Pesquisar"
+    }
+  ],
+  "FiyQjU": [
+    {
+      "type": 0,
+      "value": "2"
+    }
+  ],
+  "FslNgF": [
+    {
+      "type": 0,
+      "value": "Estado"
+    }
+  ],
+  "FxQ2Ts": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Trípoli"
+    }
+  ],
+  "G+XvKn": [
+    {
+      "type": 0,
+      "value": "Devolve uma cadeia com cada item de uma matriz associada por um delimitador"
+    }
+  ],
+  "G/CC5/": [
+    {
+      "type": 0,
+      "value": "Divisão inválida no formato em \""
+    },
+    {
+      "type": 1,
+      "value": "splitOn"
+    },
+    {
+      "type": 0,
+      "value": "\"."
+    }
+  ],
+  "G0XYrd": [
+    {
+      "type": 0,
+      "value": "Obrigatório. A cadeia que poderá conter o valor."
+    }
+  ],
+  "GAY7b8": [
+    {
+      "type": 0,
+      "value": "Devolve a consulta de um URI"
+    }
+  ],
+  "GD3m4X": [
+    {
+      "type": 0,
+      "value": "Expandido"
+    }
+  ],
+  "GDUGlm": [
+    {
+      "type": 0,
+      "value": "Introduzir autoridade"
+    }
+  ],
+  "GE14Xd": [
+    {
+      "type": 0,
+      "value": "(UTC-03:00) Cidade de Buenos Aires"
+    }
+  ],
+  "GEB1on": [
+    {
+      "type": 0,
+      "value": "Contém um valor que não está situado entre 0 e 59"
+    }
+  ],
+  "GIUSQs": [
+    {
+      "type": 0,
+      "value": "Filtrar por tipo de dados"
+    }
+  ],
+  "GLd3MU": [
+    {
+      "type": 0,
+      "value": "Obrigatório. O objeto a encontrar na coleção Dentro."
+    }
+  ],
+  "GQnN3U": [
+    {
+      "type": 0,
+      "value": "Explicar fluxo"
+    }
+  ],
+  "GXXLuT": [
+    {
+      "type": 0,
+      "value": "Introduza um valor booleano válido."
+    }
+  ],
+  "GYvF54": [
+    {
+      "type": 0,
+      "value": "Funções de referência"
+    }
+  ],
+  "GZ8MDP": [
+    {
+      "type": 1,
+      "value": "s1"
+    },
+    {
+      "type": 0,
+      "value": " de "
+    },
+    {
+      "type": 1,
+      "value": "s2"
+    }
+  ],
+  "GcG0qf": [
+    {
+      "type": 0,
+      "value": "Devolve verdadeiro se os parâmetros forem falsos"
+    }
+  ],
+  "GdGm4T": [
+    {
+      "type": 0,
+      "value": "Mais comandos"
+    }
+  ],
+  "Ggkf4s": [
+    {
+      "type": 0,
+      "value": "Começar"
+    }
+  ],
+  "Gi7czD": [
+    {
+      "type": 0,
+      "value": "Elemento de esquema de origem"
+    }
+  ],
+  "Gl5khw": [
+    {
+      "type": 0,
+      "value": "A estas horas"
+    }
+  ],
+  "Gmya+V": [
+    {
+      "type": 0,
+      "value": "Não disponível"
+    }
+  ],
+  "GreYWQ": [
+    {
+      "type": 0,
+      "value": "Introduza o nome do parâmetro."
+    }
+  ],
+  "GtDOFg": [
+    {
+      "type": 0,
+      "value": "Cancelar a seleção"
+    }
+  ],
+  "GyUe4C": [
+    {
+      "type": 0,
+      "value": "Modificar opções relativas a funções"
+    }
+  ],
+  "GzQQqH": [
+    {
+      "type": 0,
+      "value": "Matriz"
+    }
+  ],
+  "Gziyq8": [
+    {
+      "type": 0,
+      "value": "Conteúdo do Ficheiro"
+    }
+  ],
+  "H/QVod": [
+    {
+      "type": 0,
+      "value": "O fluxo de trabalho tem erros de validação de definições nas seguintes operações: "
+    },
+    {
+      "type": 1,
+      "value": "invalidNodes"
+    }
+  ],
+  "H17jEE": [
+    {
+      "type": 0,
+      "value": "Funções de análise do URI"
+    }
+  ],
+  "H1wnHr": [
+    {
+      "type": 0,
+      "value": "Necessário. A cadeia a dividir."
+    }
+  ],
+  "H2WdiZ": [
+    {
+      "type": 0,
+      "value": "Introduza os valores de minutos válidos (de 0 a 59) separados por vírgula. Por exemplo: 15,30"
+    }
+  ],
+  "H5VikC": [
+    {
+      "type": 0,
+      "value": "Ligação inválida; o mapeamento não pode formar um ciclo fechado."
+    }
+  ],
+  "H8bEUn": [
+    {
+      "type": 0,
+      "value": "Obrigatório. O número do qual o Subtraendo é removido."
+    }
+  ],
+  "H9CZTr": [
+    {
+      "type": 0,
+      "value": "A expressão é inválida. Certifique-se de que utiliza aspas simples."
+    }
+  ],
+  "HDqP2g": [
+    {
+      "type": 0,
+      "value": "Obrigatório. O nome da chave do valor dos dados de formulário a devolver."
+    }
+  ],
+  "HGA9iU": [
+    {
+      "type": 0,
+      "value": "The Error and its code is required when status is \"Failed\""
+    }
+  ],
+  "HH970i": [
+    {
+      "type": 0,
+      "value": "Mês"
+    }
+  ],
+  "HILmmE": [
+    {
+      "type": 0,
+      "value": "Necessário. A coleção a ordenar."
+    }
+  ],
+  "HMiE+4": [
+    {
+      "type": 0,
+      "value": "Sair do ecrã inteiro"
+    }
+  ],
+  "HSJLCu": [
+    {
+      "type": 0,
+      "value": "Cabeçalhos"
+    }
+  ],
+  "HYhDYB": [
+    {
+      "type": 0,
+      "value": "(UTC-02:00) Hora Universal Coordenada -02"
+    }
+  ],
+  "Hbqlzk": [
+    {
+      "type": 0,
+      "value": "Inserir Expressão"
+    }
+  ],
+  "HfinO2": [
+    {
+      "type": 0,
+      "value": "Mudar para entradas de detalhe do item de matriz"
+    }
+  ],
+  "HfmDk9": [
+    {
+      "type": 0,
+      "value": "Editar Fluxo"
+    }
+  ],
+  "HfrUId": [
+    {
+      "type": 0,
+      "value": "Selecione um cartão para ver o conteúdo"
+    }
+  ],
+  "HmcHoE": [
+    {
+      "type": 0,
+      "value": "Erro ao obter manifesto"
+    }
+  ],
+  "HsO1Rd": [
+    {
+      "type": 1,
+      "value": "addIcon"
+    },
+    {
+      "type": 0,
+      "value": " Instalar Gateway"
+    }
+  ],
+  "HzS2gJ": [
+    {
+      "type": 0,
+      "value": "O conteúdo dinâmico não é suportado como propriedades na autenticação."
+    }
+  ],
+  "I+85NV": [
+    {
+      "type": 0,
+      "value": "Submeter a partir desta ação"
+    }
+  ],
+  "I1CYNA": [
+    {
+      "type": 0,
+      "value": "Propriedade inválida \""
+    },
+    {
+      "type": 1,
+      "value": "invalidProperties"
+    },
+    {
+      "type": 0,
+      "value": "\" para o tipo de autenticação '"
+    },
+    {
+      "type": 1,
+      "value": "authType"
+    },
+    {
+      "type": 0,
+      "value": "'."
+    }
+  ],
+  "I3mifR": [
+    {
+      "type": 0,
+      "value": "Foi omitida"
+    }
+  ],
+  "I41vZ/": [
+    {
+      "type": 0,
+      "value": "(UTC-11:00) Hora Universal Coordenada -11"
+    }
+  ],
+  "IA+Ogm": [
+    {
+      "type": 0,
+      "value": "22"
+    }
+  ],
+  "IAmvpa": [
+    {
+      "type": 0,
+      "value": "(UTC-08:00) Hora Universal Coordenada-08"
+    }
+  ],
+  "IHMd3X": [
+    {
+      "type": 0,
+      "value": "Exemplo: "
+    },
+    {
+      "type": 1,
+      "value": "url"
+    }
+  ],
+  "IPbMdl": [
+    {
+      "type": 0,
+      "value": "Vista de Código"
+    }
+  ],
+  "IPwWgu": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Jerusalém"
+    }
+  ],
+  "IQyOth": [
+    {
+      "type": 0,
+      "value": "Se estiver disponível, o conteúdo dinâmico é gerado automaticamente a partir dos conectores e ações que escolher para o seu fluxo."
+    }
+  ],
+  "IS4vNX": [
+    {
+      "type": 0,
+      "value": "(UTC-12:00) Oeste da Linha de Data Internacional"
+    }
+  ],
+  "ISaPr+": [
+    {
+      "type": 0,
+      "value": "Criar, gerir os parâmetros Logic Apps, atribuir-lhe um valor predefinido."
+    }
+  ],
+  "IW2MjQ": [
+    {
+      "type": 0,
+      "value": "Converte um carimbo de data/hora de cadeia transmitido de um UTC para um fuso horário de destino"
+    }
+  ],
+  "IXy91L": [
+    {
+      "type": 0,
+      "value": "Adicione um esquema de destino"
+    }
+  ],
+  "IdOhPY": [
+    {
+      "type": 1,
+      "value": "label"
+    },
+    {
+      "type": 0,
+      "value": " Para adicionar dados dinâmicos, prima as teclas Alt + \"/\"."
+    }
+  ],
+  "If+p6C": [
+    {
+      "type": 0,
+      "value": "(UTC+09:00) Yakutsk"
+    }
+  ],
+  "IsVhkH": [
+    {
+      "type": 0,
+      "value": "Sem propriedades"
+    }
+  ],
+  "IxWip7": [
+    {
+      "type": 0,
+      "value": "(UTC+03:00) Moscovo, São Petersburgo, Volgogrado"
+    }
+  ],
+  "J/Kz1j": [
+    {
+      "type": 0,
+      "value": "Padrão Assíncrono"
+    }
+  ],
+  "J2Su6x": [
+    {
+      "type": 0,
+      "value": "Opções de formatação para o tamanho do tipo de letra"
+    }
+  ],
+  "J5/7vN": [
+    {
+      "type": 0,
+      "value": "Converte uma cadeia em minúsculas com as regras de sensível a maiúsculas/minúsculas da cultura invariante"
+    }
+  ],
+  "J55HA9": [
+    {
+      "type": 0,
+      "value": "Operação inválida. Número de itens: "
+    },
+    {
+      "type": 1,
+      "value": "length"
+    },
+    {
+      "type": 0,
+      "value": "."
+    }
+  ],
+  "J5TTF6": [
+    {
+      "type": 0,
+      "value": "Tipos de dados aceites: "
+    },
+    {
+      "type": 1,
+      "value": "type"
+    }
+  ],
+  "J62n9E": [
+    {
+      "type": 0,
+      "value": "Falhou"
+    }
+  ],
+  "J9wWry": [
+    {
+      "type": 0,
+      "value": "Parâmetros"
+    }
+  ],
+  "JAIV0h": [
+    {
+      "type": 0,
+      "value": "O mapa atual contém "
+    },
+    {
+      "type": 1,
+      "value": "numOfIssues"
+    },
+    {
+      "type": 0,
+      "value": " "
+    },
+    {
+      "type": 1,
+      "value": "issue"
+    },
+    {
+      "type": 0,
+      "value": "."
+    }
+  ],
+  "JErLDT": [
+    {
+      "type": 0,
+      "value": "Eliminar"
+    }
+  ],
+  "JJyT88": [
+    {
+      "type": 0,
+      "value": "Ação anulada"
+    }
+  ],
+  "JKZpcd": [
+    {
+      "type": 0,
+      "value": "Conversa do Copilot cancelada"
+    }
+  ],
+  "JNQHws": [
+    {
+      "type": 0,
+      "value": "Obrigatório. Uma cadeia que contém a hora."
+    }
+  ],
+  "JSfWJ0": [
+    {
+      "type": 0,
+      "value": "Obrigatório. O valor que é convertido para booleano."
+    }
+  ],
+  "JWl/LD": [
+    {
+      "type": 0,
+      "value": "Adicionar novo item"
+    }
+  ],
+  "Jaz3EC": [
+    {
+      "type": 0,
+      "value": "Converte um carimbo de data/hora de cadeia transmitido a partir de um fuso horário de origem para um de destino"
+    }
+  ],
+  "JbgTET": [
+    {
+      "type": 0,
+      "value": "Método"
+    }
+  ],
+  "Ji6663": [
+    {
+      "type": 0,
+      "value": "Devolve verdadeiro se um dicionário tiver uma chave, se uma matriz tiver um valor ou se uma cadeia tiver uma subcadeia"
+    }
+  ],
+  "Jil/Wa": [
+    {
+      "type": 0,
+      "value": "Definições inválidas"
+    }
+  ],
+  "JjTfC7": [
+    {
+      "type": 0,
+      "value": "Obrigatório. O número a ser formatado."
+    }
+  ],
+  "JnlcZQ": [
+    {
+      "type": 0,
+      "value": "Nome:"
+    }
+  ],
+  "Jq2Y/o": [
+    {
+      "type": 0,
+      "value": "Obrigatório. A cadeia de formato numérico."
+    }
+  ],
+  "JzRzVp": [
+    {
+      "type": 0,
+      "value": "(UTC-09:00) Alasca"
+    }
+  ],
+  "K50znc": [
+    {
+      "type": 0,
+      "value": "Necessário. O objeto para o qual adicionar uma nova propriedade."
+    }
+  ],
+  "K7/DnZ": [
+    {
+      "type": 0,
+      "value": "Resultado"
+    }
+  ],
+  "KBaGkS": [
+    {
+      "type": 0,
+      "value": "Alterar referência de ligação"
+    }
+  ],
+  "KNDVnN": [
+    {
+      "type": 0,
+      "value": "Substituir \""
+    },
+    {
+      "type": 1,
+      "value": "selectedOperation"
+    },
+    {
+      "type": 0,
+      "value": "\" por"
+    }
+  ],
+  "KV4uky": [
+    {
+      "type": 0,
+      "value": "Quando um novo item..."
+    }
+  ],
+  "KX1poC": [
+    {
+      "offset": 0,
+      "options": {
+        "=0": {
+          "value": [
+            {
+              "type": 0,
+              "value": "0 Casos"
+            }
+          ]
+        },
+        "many": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " Casos"
+            }
+          ]
+        },
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " Caso"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " Casos"
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "actionCount"
+    }
+  ],
+  "KYX5Do": [
+    {
+      "type": 0,
+      "value": "Sublinhado (⌘S)"
+    }
+  ],
+  "KZOa5l": [
+    {
+      "type": 0,
+      "value": "Cancelar"
+    }
+  ],
+  "KlDW+5": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Beirute"
+    }
+  ],
+  "KnjcUV": [
+    {
+      "type": 0,
+      "value": "Ignorado"
+    }
+  ],
+  "KwGA+K": [
+    {
+      "type": 0,
+      "value": "Selecionar um recurso da Aplicação de Funções"
+    }
+  ],
+  "L+PY+j": [
+    {
+      "type": 0,
+      "value": "Obrigatório. O número de objetos a retirar da Coleção. Tem de ser um número inteiro positivo."
+    }
+  ],
+  "L0UAzs": [
+    {
+      "type": 0,
+      "value": "Devolve o dia do componente da semana de um carimbo de data/hora de cadeia"
+    }
+  ],
+  "L0hujG": [
+    {
+      "type": 0,
+      "value": "Botão para adicionar conteúdo dinâmico se o Seletor de Tokens estiver apresentado"
+    }
+  ],
+  "L4RJF0": [
+    {
+      "type": 0,
+      "value": "Não existem resultados para a pesquisa"
+    }
+  ],
+  "LBH8UV": [
+    {
+      "type": 0,
+      "value": "Expandir"
+    }
+  ],
+  "LBbhCu": [
+    {
+      "type": 0,
+      "value": "Eliminar Grafo de Fluxo de Trabalho"
+    }
+  ],
+  "LCRHQ9": [
+    {
+      "type": 0,
+      "value": "(UTC+12:00) Fiji"
+    }
+  ],
+  "LCXZLM": [
+    {
+      "type": 0,
+      "value": "A carregar Aplicações de Funções..."
+    }
+  ],
+  "LElaX3": [
+    {
+      "type": 0,
+      "value": "Sugestão de fluxo seguinte"
+    }
+  ],
+  "LMB8am": [
+    {
+      "type": 0,
+      "value": "A criar..."
+    }
+  ],
+  "LPdGu/": [
+    {
+      "type": 0,
+      "value": "Ouputs should not be provided when status is \"Failed\""
+    }
+  ],
+  "LR/3Lr": [
+    {
+      "type": 0,
+      "value": "Configurar"
+    }
+  ],
+  "LRAhSA": [
+    {
+      "type": 0,
+      "value": "Quando ativada, esta ação será executada com o utilizador a partir da definição “Executar como” no acionador do Dataverse"
+    }
+  ],
+  "LS8rfZ": [
+    {
+      "type": 0,
+      "value": "Devolve o esquema de um URI"
+    }
+  ],
+  "LTTgWN": [
+    {
+      "type": 0,
+      "value": "Necessário. A coleção de onde obter o primeiro objeto."
+    }
+  ],
+  "LV/BTE": [
+    {
+      "type": 0,
+      "value": "A carregar instâncias do serviço de Gestão de API..."
+    }
+  ],
+  "LV3k48": [
+    {
+      "type": 0,
+      "value": "(UTC+01:00) Belgrado, Bratislava, Budapeste, Liubliana, Praga"
+    }
+  ],
+  "LZm3ze": [
+    {
+      "type": 0,
+      "value": "Adicionar um ramo paralelo"
+    }
+  ],
+  "LaFlFh": [
+    {
+      "type": 0,
+      "value": "Removeu esta ação"
+    }
+  ],
+  "LdITnG": [
+    {
+      "type": 0,
+      "value": "(UTC-03:00) Caiena, Fortaleza"
+    }
+  ],
+  "Lft/is": [
+    {
+      "type": 0,
+      "value": "Adicionar novo"
+    }
+  ],
+  "LlYz9c": [
+    {
+      "type": 0,
+      "value": "Ver mais"
+    }
+  ],
+  "Lm9bnN": [
+    {
+      "type": 0,
+      "value": "Lista com Marcas"
+    }
+  ],
+  "Lnqh6h": [
+    {
+      "type": 0,
+      "value": "Negrito (Ctrl+N)"
+    }
+  ],
+  "LoGUT3": [
+    {
+      "type": 0,
+      "value": "Quando utilizada em cada ciclo, esta função devolve o item atual do ciclo especificado."
+    }
+  ],
+  "LpPNAD": [
+    {
+      "type": 0,
+      "value": "Adicionar"
+    }
+  ],
+  "LtbkS7": [
+    {
+      "type": 0,
+      "value": "Devolve o início do dia para o carimbo de data/hora da cadeia passada."
+    }
+  ],
+  "Lub7NN": [
+    {
+      "type": 0,
+      "value": "Necessário. As expressões que podem ser verdadeiras."
+    }
+  ],
+  "LvLksz": [
+    {
+      "type": 0,
+      "value": "A carregar saídas"
+    }
+  ],
+  "LvpxiA": [
+    {
+      "type": 0,
+      "value": "Gateway"
+    }
+  ],
+  "Lx8HRl": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Damasco"
+    }
+  ],
+  "M/gUE8": [
+    {
+      "type": 0,
+      "value": "Acerca de"
+    }
+  ],
+  "M0bbZk": [
+    {
+      "type": 0,
+      "value": "Verificador do Fluxo"
+    }
+  ],
+  "M0xrm+": [
+    {
+      "type": 0,
+      "value": "Vista de código"
+    }
+  ],
+  "M3kJsI": [
+    {
+      "type": 0,
+      "value": "Todas as semanas à segunda-feira"
+    }
+  ],
+  "M4H0gh": [
+    {
+      "type": 0,
+      "value": "Remover"
+    }
+  ],
+  "M6U2LE": [
+    {
+      "type": 0,
+      "value": "Os parâmetros serão guardados quando o fluxo de trabalho for guardado. Pode editá-lo aqui antes de o guardar ou na página de parâmetros após guardar."
+    }
+  ],
+  "M8Aqm4": [
+    {
+      "type": 0,
+      "value": "Opcional. O nome da ação com âmbito onde pretende que residam as entradas e saídas das ações de nível superior dentro desse âmbito."
+    }
+  ],
+  "MCzWDc": [
+    {
+      "type": 0,
+      "value": "Pré-visualização"
+    }
+  ],
+  "MDbmMw": [
+    {
+      "type": 0,
+      "value": "Obrigatório. As coleções a avaliar. Um objeto tem de existir em todas as coleções transmitidas para aparecer no resultado."
+    }
+  ],
+  "MGZRu4": [
+    {
+      "type": 0,
+      "value": "Adicionar uma ação"
+    }
+  ],
+  "MIX4f9": [
+    {
+      "type": 0,
+      "value": "Linguagem de programação não suportada."
+    }
+  ],
+  "MKTdNk": [
+    {
+      "type": 0,
+      "value": "Obrigatório. O URI de dados a converter em representação binária."
+    }
+  ],
+  "MLCQzX": [
+    {
+      "type": 0,
+      "value": "Identidade gerida"
+    }
+  ],
+  "MLckJz": [
+    {
+      "type": 0,
+      "value": "Obrigatório. Uma cadeia que contenha a hora de início."
+    }
+  ],
+  "MOsuw2": [
+    {
+      "type": 0,
+      "value": "(UTC+10:00) Guame, Port Moresby"
+    }
+  ],
+  "MPPyI6": [
+    {
+      "type": 0,
+      "value": "(UTC+04:00) Baku"
+    }
+  ],
+  "MTR4Vg": [
+    {
+      "type": 0,
+      "value": "Devolve o carimbo de data/hora atual como uma cadeia"
+    }
+  ],
+  "MVrv+N": [
+    {
+      "type": 0,
+      "value": "Introduza uma matriz válida."
+    }
+  ],
+  "MYgKHu": [
+    {
+      "type": 0,
+      "value": "Ações"
+    }
+  ],
+  "Mb+Eaq": [
+    {
+      "type": 0,
+      "value": "Booleano"
+    }
+  ],
+  "Mb/Vp8": [
+    {
+      "type": 0,
+      "value": "O seguinte falhou"
+    }
+  ],
+  "Mc6ITJ": [
+    {
+      "type": 0,
+      "value": "Pesquisar"
+    }
+  ],
+  "MfAdfx": [
+    {
+      "type": 0,
+      "value": "Editar em modo avançado"
+    }
+  ],
+  "MirIsS": [
+    {
+      "type": 0,
+      "value": "Mostrar código"
+    }
+  ],
+  "MmBfD1": [
+    {
+      "type": 0,
+      "value": "Erro inesperado"
+    }
+  ],
+  "MnThTq": [
+    {
+      "type": 0,
+      "value": "Inserir função"
+    }
+  ],
+  "MsCHhQ": [
+    {
+      "type": 0,
+      "value": "Tempo Limite Excedido"
+    }
+  ],
+  "N0pS6Y": [
+    {
+      "type": 0,
+      "value": "Esquema de destino"
+    }
+  ],
+  "N2CF0J": [
+    {
+      "type": 0,
+      "value": "Obrigatório. O nome da chave dos valores dos dados de formulário a devolver."
+    }
+  ],
+  "N4dEVo": [
+    {
+      "type": 0,
+      "value": "Cabeçalhos"
+    }
+  ],
+  "N7E9hd": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Helsínquia, Kiev, Riga, Sófia, Tallin, Vilnius"
+    }
+  ],
+  "N7zEUZ": [
+    {
+      "type": 0,
+      "value": "Copiar"
+    }
+  ],
+  "NE54Uu": [
+    {
+      "type": 0,
+      "value": "Copiado(a)!"
+    }
+  ],
+  "NFgfP4": [
+    {
+      "type": 0,
+      "value": "item"
+    }
+  ],
+  "NGJ00e": [
+    {
+      "type": 0,
+      "value": "(UTC-04:00) Georgetown, La Paz, Manaus, São João"
+    }
+  ],
+  "NHnG2S": [
+    {
+      "type": 0,
+      "value": "O XSLT gerado não corresponde ao mapeamento atual."
+    }
+  ],
+  "NMpFs6": [
+    {
+      "type": 0,
+      "value": "(UTC-03:00) Araguaina"
+    }
+  ],
+  "NPUFgH": [
+    {
+      "type": 0,
+      "value": "Estado"
+    }
+  ],
+  "NWxGWN": [
+    {
+      "type": 0,
+      "value": "Introduza um nome de propriedade exclusivo"
+    }
+  ],
+  "NdOhXD": [
+    {
+      "type": 0,
+      "value": "Criar Ligação"
+    }
+  ],
+  "Nh91qA": [
+    {
+      "type": 0,
+      "value": "Devolve o valor da variável especificada."
+    }
+  ],
+  "NhJPUn": [
+    {
+      "type": 0,
+      "value": "Como posso chamar um ponto final externo?"
+    }
+  ],
+  "NnD8gF": [
+    {
+      "type": 0,
+      "value": "Valor de entrada de caminho de operação inválido. Valor do caminho - "
+    },
+    {
+      "type": 1,
+      "value": "pathValue"
+    },
+    {
+      "type": 0,
+      "value": " Modelo de caminho - "
+    },
+    {
+      "type": 1,
+      "value": "pathTemplate"
+    }
+  ],
+  "NnrHK3": [
+    {
+      "type": 0,
+      "value": "(UTC+10:00) Vladivostok"
+    }
+  ],
+  "No6CS+": [
+    {
+      "type": 0,
+      "value": "Introduzir inquilino"
+    }
+  ],
+  "NoXs0l": [
+    {
+      "type": 0,
+      "value": "Selecione uma identidade"
+    }
+  ],
+  "NvJDn/": [
+    {
+      "type": 0,
+      "value": "Terça-feira"
+    }
+  ],
+  "NzPnFS": [
+    {
+      "type": 0,
+      "value": "Exemplo:"
+    }
+  ],
+  "O+3Y9f": [
+    {
+      "type": 0,
+      "value": "Falhou"
+    }
+  ],
+  "O+8vRv": [
+    {
+      "type": 0,
+      "value": "Devolve uma representação binária de um valor"
+    }
+  ],
+  "O/fh9A": [
+    {
+      "type": 0,
+      "value": "Principal de Serviço"
+    }
+  ],
+  "O0tSvb": [
+    {
+      "type": 0,
+      "value": "🖊️ A processar..."
+    }
+  ],
+  "O1tedM": [
+    {
+      "type": 0,
+      "value": "Nenhum erro encontrado."
+    }
+  ],
+  "O27gKq": [
+    {
+      "type": 0,
+      "value": "A carregar Ficheiros..."
+    }
+  ],
+  "O6VHe0": [
+    {
+      "type": 0,
+      "value": "Avisos de operação"
+    }
+  ],
+  "O7HhyP": [
+    {
+      "type": 0,
+      "value": "para configurá-lo"
+    }
+  ],
+  "O9ZExg": [
+    {
+      "type": 0,
+      "value": "OK"
+    }
+  ],
+  "OBO/HE": [
+    {
+      "type": 0,
+      "value": "Valor de Autenticação Inválido"
+    }
+  ],
+  "ODQCKj": [
+    {
+      "type": 0,
+      "value": "Converter a entrada num valor de tipo JSON."
+    }
+  ],
+  "OEEuUu": [
+    {
+      "type": 0,
+      "value": "Segredo"
+    }
+  ],
+  "OFKZzQ": [
+    {
+      "type": 0,
+      "value": "Opções de operação:"
+    }
+  ],
+  "OH9xlX": [
+    {
+      "type": 0,
+      "value": "10"
+    }
+  ],
+  "OIOexo": [
+    {
+      "type": 0,
+      "value": "Nestes dias"
+    }
+  ],
+  "OKszbi": [
+    {
+      "type": 0,
+      "value": "Nome da Ligação"
+    }
+  ],
+  "OOUSLP": [
+    {
+      "type": 0,
+      "value": "Esta função não requer qualquer entrada."
+    }
+  ],
+  "OOUTdW": [
+    {
+      "type": 0,
+      "value": "A carregar todos os conectores..."
+    }
+  ],
+  "OQud51": [
+    {
+      "type": 0,
+      "value": "Quero saber mais sobre"
+    }
+  ],
+  "OSHNZ2": [
+    {
+      "type": 0,
+      "value": "Comentário"
+    }
+  ],
+  "OSP9JY": [
+    {
+      "type": 0,
+      "value": "Introduza a audiência."
+    }
+  ],
+  "OVDEFP": [
+    {
+      "type": 0,
+      "value": "Comunicar um erro"
+    }
+  ],
+  "OVvieE": [
+    {
+      "type": 0,
+      "value": "Devolve os resultados das ações de nível superior na ação com âmbito especificada, como uma ação For_each, Até ou Âmbito."
+    }
+  ],
+  "OYWZE4": [
+    {
+      "type": 0,
+      "value": "Guardar este fluxo de trabalho"
+    }
+  ],
+  "OdNhwc": [
+    {
+      "type": 0,
+      "value": "Desagrupar"
+    }
+  ],
+  "OdoUEu": [
+    {
+      "type": 0,
+      "value": "Ativar Resultado Estático"
+    }
+  ],
+  "Oep6va": [
+    {
+      "type": 0,
+      "value": "Submeter"
+    }
+  ],
+  "OgJ9eG": [
+    {
+      "type": 0,
+      "value": "(UTC+08:00) Taipé"
+    }
+  ],
+  "OhbvXz": [
+    {
+      "type": 0,
+      "value": "(UTC+11:00) Ilha de Norfolk"
+    }
+  ],
+  "Oib1mL": [
+    {
+      "type": 1,
+      "value": "hours"
+    },
+    {
+      "type": 0,
+      "value": "h "
+    },
+    {
+      "type": 1,
+      "value": "minutes"
+    },
+    {
+      "type": 0,
+      "value": "m"
+    }
+  ],
+  "OihxQE": [
+    {
+      "type": 0,
+      "value": "Opcional. A região a utilizar ao analisar a cadeia de data e hora."
+    }
+  ],
+  "OjGJ8Y": [
+    {
+      "type": 0,
+      "value": "Devolve o anfitrião de um URI"
+    }
+  ],
+  "OnrO5/": [
+    {
+      "type": 0,
+      "value": "Selecionar uma identidade gerida"
+    }
+  ],
+  "Ov7Ckz": [
+    {
+      "type": 0,
+      "value": "A propriedade necessária \""
+    },
+    {
+      "type": 1,
+      "value": "missingProperties"
+    },
+    {
+      "type": 0,
+      "value": "\" está em falta para o tipo de autenticação '"
+    },
+    {
+      "type": 1,
+      "value": "authType"
+    },
+    {
+      "type": 0,
+      "value": "'"
+    }
+  ],
+  "P+7G62": [
+    {
+      "type": 0,
+      "value": "Cabeçalho 3"
+    }
+  ],
+  "P+mWgV": [
+    {
+      "type": 0,
+      "value": "Pfx"
+    }
+  ],
+  "P/S+q5": [
+    {
+      "type": 0,
+      "value": "Obrigatório. Uma das cadeias a combinar numa única cadeia."
+    }
+  ],
+  "P/dnfK": [
+    {
+      "type": 0,
+      "value": "(UTC+06:00) Daca"
+    }
+  ],
+  "P2A5dB": [
+    {
+      "type": 0,
+      "value": "Obrigatório. Este valor é o número de números inteiros que existe na matriz."
+    }
+  ],
+  "P4XUjW": [
+    {
+      "type": 0,
+      "value": "Os espaços em branco têm de ser codificados para URIs"
+    }
+  ],
+  "P4rEwD": [
+    {
+      "type": 0,
+      "value": "Funções de coleção"
+    }
+  ],
+  "P6I90y": [
+    {
+      "type": 0,
+      "value": "Entrada"
+    }
+  ],
+  "PDMP/Z": [
+    {
+      "type": 0,
+      "value": "Fechada"
+    }
+  ],
+  "PNk3n4": [
+    {
+      "type": 0,
+      "value": "É executado "
+    },
+    {
+      "type": 1,
+      "value": "onTime"
+    }
+  ],
+  "PORNMZ": [
+    {
+      "type": 0,
+      "value": "Entradas"
+    }
+  ],
+  "PP63jY": [
+    {
+      "type": 0,
+      "value": "mais painéis"
+    }
+  ],
+  "PQOiAc": [
+    {
+      "type": 0,
+      "value": "Fechar"
+    }
+  ],
+  "PRnqYA": [
+    {
+      "type": 0,
+      "value": "Obrigatório. O número de segundos a adicionar. Pode ser negativo para subtrair segundos."
+    }
+  ],
+  "PSrCNL": [
+    {
+      "type": 0,
+      "value": "Função"
+    }
+  ],
+  "PXa0D4": [
+    {
+      "type": 0,
+      "value": "Falso"
+    }
+  ],
+  "PZgHf/": [
+    {
+      "type": 0,
+      "value": "URI de esquema"
+    }
+  ],
+  "Pa+UkC": [
+    {
+      "type": 0,
+      "value": "Devolve o comprimento de bytes UTF-8 de uma cadeia de entrada"
+    }
+  ],
+  "Peg6ZT": [
+    {
+      "type": 0,
+      "value": "Erros de definição"
+    }
+  ],
+  "PfCJlN": [
+    {
+      "type": 0,
+      "value": "Funções de fluxo de trabalho"
+    }
+  ],
+  "PjBcG3": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Amã"
+    }
+  ],
+  "Pk4cb+": [
+    {
+      "type": 0,
+      "value": "Propriedades monitorizadas"
+    }
+  ],
+  "Pl/fcn": [
+    {
+      "type": 0,
+      "value": "ID de Rastreio de Divisão"
+    }
+  ],
+  "Pnt0Xj": [
+    {
+      "type": 0,
+      "value": "Explique como receber ficheiros do servidor SFTP."
+    }
+  ],
+  "Pq+4a+": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Cairo"
+    }
+  ],
+  "PqUAbF": [
+    {
+      "type": 0,
+      "value": "Descomprimir o corpo do pedido se for comprimido através de GZip ou Deflate. Esta definição só é aplicável para o acionador HTTP"
+    }
+  ],
+  "PsmHyH": [
+    {
+      "type": 0,
+      "value": "Erros de ligação"
+    }
+  ],
+  "Pudllg": [
+    {
+      "type": 0,
+      "value": "(UTC+07:00) Hovd­"
+    }
+  ],
+  "PvWTxR": [
+    {
+      "type": 0,
+      "value": "Mostrar funções"
+    }
+  ],
+  "Pvm0xB": [
+    {
+      "type": 0,
+      "value": "Devolve a representação da base 64 da cadeia de entrada"
+    }
+  ],
+  "PytMJ0": [
+    {
+      "type": 0,
+      "value": "Executar após "
+    },
+    {
+      "type": 1,
+      "value": "sourceNodeId"
+    }
+  ],
+  "Q+ZZHI": [
+    {
+      "type": 0,
+      "value": "(UTC-10:00) Havai"
+    }
+  ],
+  "Q/7unA": [
+    {
+      "type": 0,
+      "value": "Objeto"
+    }
+  ],
+  "Q0xpPQ": [
+    {
+      "type": 0,
+      "value": "Obrigatório. O objeto a verificar se é inferior ou igual ao objeto com que está a ser comparado."
+    }
+  ],
+  "Q4TUFX": [
+    {
+      "type": 0,
+      "value": "Eliminar"
+    }
+  ],
+  "Q5Fh2R": [
+    {
+      "type": 0,
+      "value": "Obrigatório. A cadeia a partir de onde calcular o comprimento UTF-16."
+    }
+  ],
+  "Q5w4Do": [
+    {
+      "type": 0,
+      "value": "Adicione dados dinâmicos ou expressões ao inserir uma /"
+    }
+  ],
+  "Q8HCYK": [
+    {
+      "type": 0,
+      "value": "Sem itens"
+    }
+  ],
+  "Q8zxeb": [
+    {
+      "type": 0,
+      "value": "Chave de "
+    },
+    {
+      "type": 1,
+      "value": "name"
+    }
+  ],
+  "QGbUXX": [
+    {
+      "type": 0,
+      "value": "Código de estado"
+    }
+  ],
+  "QZBPUx": [
+    {
+      "type": 0,
+      "value": "Devolve um valor único que corresponde ao nome da chave a partir de dados do formulário ou de saída de acionador de formulário codificado"
+    }
+  ],
+  "QZrxUk": [
+    {
+      "type": 0,
+      "value": "Funções de cadeia"
+    }
+  ],
+  "QbJDi7": [
+    {
+      "type": 0,
+      "value": "Item"
+    }
+  ],
+  "QdJUaS": [
+    {
+      "type": 0,
+      "value": "Ícone de lápis"
+    }
+  ],
+  "QdhS3y": [
+    {
+      "type": 0,
+      "value": "Parâmetros de Fluxo de Trabalho"
+    }
+  ],
+  "QhKk80": [
+    {
+      "type": 0,
+      "value": "A contagem de paginação excede o valor máximo de "
+    },
+    {
+      "type": 1,
+      "value": "max"
+    }
+  ],
+  "Qn8qxn": [
+    {
+      "type": 0,
+      "value": "Devolve uma cadeia no formato de data"
+    }
+  ],
+  "QoPTod": [
+    {
+      "type": 0,
+      "value": "Isto é o que o fluxo fará"
+    }
+  ],
+  "QpRRt3": [
+    {
+      "type": 0,
+      "value": "Obrigatório. A cadeia com a qual se deve delimitar itens."
+    }
+  ],
+  "QpX2+j": [
+    {
+      "type": 0,
+      "value": "Localização"
+    }
+  ],
+  "QrQDdp": [
+    {
+      "type": 0,
+      "value": "Obrigatório. Uma cadeia com a unidade de tempo especificada no intervalo para subtrair."
+    }
+  ],
+  "Qu1HkA": [
+    {
+      "type": 1,
+      "value": "hours"
+    },
+    {
+      "type": 0,
+      "value": "h"
+    }
+  ],
+  "R/aiRy": [
+    {
+      "type": 0,
+      "value": "(UTC+12:00) Hora Universal Coordenada +12"
+    }
+  ],
+  "RFjYpH": [
+    {
+      "type": 0,
+      "value": "Nome"
+    }
+  ],
+  "RJ3DuE": [
+    {
+      "type": 0,
+      "value": "Pré-visualização"
+    }
+  ],
+  "RJes1w": [
+    {
+      "type": 0,
+      "value": "(UTC+04:00) Erevan"
+    }
+  ],
+  "RX2Shm": [
+    {
+      "type": 0,
+      "value": "Obrigatório. A cadeia que é dividida."
+    }
+  ],
+  "RbJNVk": [
+    {
+      "type": 0,
+      "value": "Esquema"
+    }
+  ],
+  "RhH4pF": [
+    {
+      "offset": 0,
+      "options": {
+        "many": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " minutos"
+            }
+          ]
+        },
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " minuto"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " minutos"
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "minutes"
+    }
+  ],
+  "RjvpD+": [
+    {
+      "type": 0,
+      "value": "Inserir um novo passo em "
+    },
+    {
+      "type": 1,
+      "value": "parentSubgraphName"
+    }
+  ],
+  "RkgScy": [
+    {
+      "type": 0,
+      "value": "6"
+    }
+  ],
+  "RnBddN": [
+    {
+      "type": 0,
+      "value": "problema"
+    }
+  ],
+  "Rp5pHU": [
+    {
+      "type": 0,
+      "value": "(UTC+00:00) Monróvia, Reiquiavique"
+    }
+  ],
+  "Rq2U5n": [
+    {
+      "type": 0,
+      "value": "Expressão não reconhecida: \""
+    },
+    {
+      "type": 1,
+      "value": "expression"
+    },
+    {
+      "type": 0,
+      "value": "\""
+    }
+  ],
+  "Rs7j3V": [
+    {
+      "type": 0,
+      "value": "Necessário. As expressões que têm de ser verdadeiras."
+    }
+  ],
+  "RvpHdu": [
+    {
+      "type": 0,
+      "value": "(UTC+11:00) Ilhas Salomão, Nova Caledónia"
+    }
+  ],
+  "RxGxr+": [
+    {
+      "type": 0,
+      "value": "Número de linha"
+    }
+  ],
+  "S138/4": [
+    {
+      "type": 0,
+      "value": "Formatar texto como negrito. Atalho: ⌘N"
+    }
+  ],
+  "SCCE6s": [
+    {
+      "type": 0,
+      "value": "Palavra-passe"
+    }
+  ],
+  "SGnTpt": [
+    {
+      "type": 0,
+      "value": "Cabeçalho 2"
+    }
+  ],
+  "SHXdzU": [
+    {
+      "type": 0,
+      "value": "Os conteúdos gerados pela IA podem estar incorretos"
+    }
+  ],
+  "SJFVxf": [
+    {
+      "type": 0,
+      "value": "problemas"
+    }
+  ],
+  "SKXopi": [
+    {
+      "type": 0,
+      "value": "Converter o parâmetro em um número inteiro"
+    }
+  ],
+  "SLJkRn": [
+    {
+      "type": 0,
+      "value": "Remover entrada"
+    }
+  ],
+  "SLZ0n4": [
+    {
+      "type": 0,
+      "value": "Verifica se a cadeia começa com um valor (sensível a maiúsculas e minúsculas, cultura invariante)"
+    }
+  ],
+  "SToblZ": [
+    {
+      "type": 0,
+      "value": "Configurar parâmetros para este nó"
+    }
+  ],
+  "SXb47U": [
+    {
+      "type": 1,
+      "value": "minutes"
+    },
+    {
+      "type": 0,
+      "value": "m"
+    }
+  ],
+  "SY04wn": [
+    {
+      "type": 0,
+      "value": "Obrigatório. O nome da ação com uma resposta de dados de formulário ou de formulário codificado."
+    }
+  ],
+  "SenWwt": [
+    {
+      "type": 0,
+      "value": "Especifique o comportamento e as capacidades para a transferência de conteúdo por HTTP. As mensagens grandes podem ser divididas em pedidos mais pequenos para o conector para permitir o carregamento de mensagens grandes."
+    }
+  ],
+  "SgiTAh": [
+    {
+      "type": 0,
+      "value": "Introduzir os dados introduzidos"
+    }
+  ],
+  "Sh10cw": [
+    {
+      "type": 0,
+      "value": "Guardar"
+    }
+  ],
+  "SmCQys": [
+    {
+      "type": 0,
+      "value": "ID de Rastreio Personalizado"
+    }
+  ],
+  "Smo/VO": [
+    {
+      "type": 0,
+      "value": "Introduzir um nome"
+    }
+  ],
+  "Sr8PcK": [
+    {
+      "type": 0,
+      "value": "Não foram encontradas operações"
+    }
+  ],
+  "SvQyvs": [
+    {
+      "type": 0,
+      "value": "Concluído"
+    }
+  ],
+  "SyFXM3": [
+    {
+      "type": 0,
+      "value": "Ler menos"
+    }
+  ],
+  "Sz8KN3": [
+    {
+      "type": 0,
+      "value": "Testar"
+    }
+  ],
+  "T6VIym": [
+    {
+      "type": 0,
+      "value": "Nome"
+    }
+  ],
+  "TEN+cR": [
+    {
+      "type": 0,
+      "value": "Fornecer feedback"
+    }
+  ],
+  "TNEttQ": [
+    {
+      "type": 0,
+      "value": "Sexta-feira"
+    }
+  ],
+  "TNH/nK": [
+    {
+      "type": 0,
+      "value": "Procurar Ações de Fluxo de Trabalho"
+    }
+  ],
+  "TO7qos": [
+    {
+      "type": 0,
+      "value": "Devolve o início do mês de um carimbo de data/hora de cadeia"
+    }
+  ],
+  "TRpSCQ": [
+    {
+      "type": 0,
+      "value": "Tipo de Ação"
+    }
+  ],
+  "TX4Kdr": [
+    {
+      "type": 0,
+      "value": "Criar uma nova ligação"
+    }
+  ],
+  "TY4HzZ": [
+    {
+      "type": 0,
+      "value": "Adicione ou substitua os seus esquemas."
+    }
+  ],
+  "TZh8nV": [
+    {
+      "type": 0,
+      "value": "nos "
+    },
+    {
+      "type": 1,
+      "value": "weekDays"
+    },
+    {
+      "type": 0,
+      "value": " "
+    },
+    {
+      "type": 1,
+      "value": "frequencyDesc"
+    }
+  ],
+  "Tayrub": [
+    {
+      "type": 0,
+      "value": "Não processada"
+    }
+  ],
+  "Tb2QLA": [
+    {
+      "type": 0,
+      "value": "ID de pedido do cliente"
+    }
+  ],
+  "TgcgXE": [
+    {
+      "type": 0,
+      "value": "Etiquetas"
+    }
+  ],
+  "Tiqnir": [
+    {
+      "type": 0,
+      "value": "Personalizada"
+    }
+  ],
+  "TjMkDP": [
+    {
+      "type": 0,
+      "value": "(UTC-06:00) Ilha da Páscoa"
+    }
+  ],
+  "TlX98E": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Kaliningrado"
+    }
+  ],
+  "Tla33B": [
+    {
+      "type": 0,
+      "value": "Necessário. O valor para o qual encontrar o índice."
+    }
+  ],
+  "Tmr/9e": [
+    {
+      "type": 0,
+      "value": "Parâmetros inválidos"
+    }
+  ],
+  "To3RNy": [
+    {
+      "type": 0,
+      "value": "Erros de parâmetros de fluxo de trabalho"
+    }
+  ],
+  "Ts5Pzr": [
+    {
+      "type": 0,
+      "value": "Nota"
+    }
+  ],
+  "TsJbGH": [
+    {
+      "type": 0,
+      "value": "Desligado"
+    }
+  ],
+  "Ttc0SM": [
+    {
+      "type": 0,
+      "value": "Cabeçalho 1"
+    }
+  ],
+  "TvPOXI": [
+    {
+      "type": 0,
+      "value": "Aqui está o seu fluxo."
+    }
+  ],
+  "Twfck/": [
+    {
+      "type": 0,
+      "value": "Obrigatório. O número com o qual se multiplica o Multiplicando 1."
+    }
+  ],
+  "U086AA": [
+    {
+      "type": 0,
+      "value": "Elemento de esquema de destino"
+    }
+  ],
+  "U0I10w": [
+    {
+      "type": 0,
+      "value": "(UTC+05:00) Ecaterimburgo"
+    }
+  ],
+  "U3guPp": [
+    {
+      "type": 0,
+      "value": "Agrupar por Conector"
+    }
+  ],
+  "U3iWVd": [
+    {
+      "type": 0,
+      "value": "Gere uma matriz de números inteiros a partir de um determinado número"
+    }
+  ],
+  "U4zovj": [
+    {
+      "type": 0,
+      "value": "Executa "
+    },
+    {
+      "type": 1,
+      "value": "onTime"
+    },
+    {
+      "type": 0,
+      "value": " "
+    },
+    {
+      "type": 1,
+      "value": "onDays"
+    }
+  ],
+  "U7yRwM": [
+    {
+      "type": 0,
+      "value": "Erro de Validação"
+    }
+  ],
+  "UCNM4L": [
+    {
+      "type": 0,
+      "value": "Para referenciar um parâmetro, utilize a lista de conteúdo dinâmico."
+    }
+  ],
+  "UEryJE": [
+    {
+      "type": 0,
+      "value": "Eliminar Ação de Fluxo de Trabalho"
+    }
+  ],
+  "UF3KjL": [
+    {
+      "type": 0,
+      "value": "Experimente utilizar uma função de Conversão, como: "
+    },
+    {
+      "type": 1,
+      "value": "conversionFunctions"
+    }
+  ],
+  "UHCVNK": [
+    {
+      "type": 0,
+      "value": "Substitui uma cadeia por uma determinada cadeia"
+    }
+  ],
+  "UIWX6p": [
+    {
+      "type": 0,
+      "value": "Nome Lógico"
+    }
+  ],
+  "UMPuUJ": [
+    {
+      "type": 0,
+      "value": "Eliminar "
+    },
+    {
+      "type": 1,
+      "value": "expressionValue"
+    }
+  ],
+  "UR1CS5": [
+    {
+      "type": 0,
+      "value": "Ocultar código"
+    }
+  ],
+  "USVffu": [
+    {
+      "type": 0,
+      "value": "O conteúdo não foi apresentado devido à configuração de segurança."
+    }
+  ],
+  "UT2ozj": [
+    {
+      "type": 0,
+      "value": "(UTC-07:00) Hora das Regiões Montanhosas (E.U.A. e Canadá)"
+    }
+  ],
+  "UVAfYj": [
+    {
+      "type": 0,
+      "value": "Obrigatório. A coleção da qual se deve tirar o último objeto."
+    }
+  ],
+  "UW+fkB": [
+    {
+      "type": 0,
+      "value": "Enviar-me um e-mail quando"
+    }
+  ],
+  "UYRIS/": [
+    {
+      "type": 1,
+      "value": "fileName"
+    },
+    {
+      "type": 0,
+      "value": " (nome de ficheiro)"
+    }
+  ],
+  "UZiXVh": [
+    {
+      "type": 0,
+      "value": "Saída"
+    }
+  ],
+  "Ufv5m9": [
+    {
+      "type": 0,
+      "value": "O nó de esquema \""
+    },
+    {
+      "type": 1,
+      "value": "nodeName"
+    },
+    {
+      "type": 0,
+      "value": "\" tem uma cadeia de ligação sem terminação"
+    }
+  ],
+  "Ug4sWZ": [
+    {
+      "type": 0,
+      "value": "Expandir"
+    }
+  ],
+  "UgaIRz": [
+    {
+      "type": 0,
+      "value": "Necessário. O comprimento de cada segmento."
+    }
+  ],
+  "Umpr3z": [
+    {
+      "type": 0,
+      "value": "A cada "
+    },
+    {
+      "type": 1,
+      "value": "interval"
+    },
+    {
+      "type": 0,
+      "value": " semanas"
+    }
+  ],
+  "Unc2tG": [
+    {
+      "type": 0,
+      "value": "Devolve verdadeiro se dois valores forem iguais."
+    }
+  ],
+  "UnrrzF": [
+    {
+      "type": 0,
+      "value": "Esquema de origem"
+    }
+  ],
+  "UnytRl": [
+    {
+      "type": 0,
+      "value": "O tipo para “"
+    },
+    {
+      "type": 1,
+      "value": "authenticationKey"
+    },
+    {
+      "type": 0,
+      "value": "” é “"
+    },
+    {
+      "type": 1,
+      "value": "propertyType"
+    },
+    {
+      "type": 0,
+      "value": "”."
+    }
+  ],
+  "Ur+wph": [
+    {
+      "type": 0,
+      "value": "Clicar para eliminar o item"
+    }
+  ],
+  "UtyRCH": [
+    {
+      "type": 0,
+      "value": "Insira um nome para a ligação"
+    }
+  ],
+  "Uxckds": [
+    {
+      "type": 0,
+      "value": "Fluxo sugerido"
+    }
+  ],
+  "V+/c21": [
+    {
+      "type": 0,
+      "value": "Geral"
+    }
+  ],
+  "V+xi3c": [
+    {
+      "type": 0,
+      "value": "Pode encontrar mais detalhes em http://aka.ms/logicapps-chunk#upload-content-in-chunks"
+    }
+  ],
+  "V0ZbQO": [
+    {
+      "type": 0,
+      "value": "Mostrar menos"
+    }
+  ],
+  "V3vpin": [
+    {
+      "type": 0,
+      "value": "O \""
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "\" já não está presente no esquema da operação. Deverá remover o mesmo antes de guardar novamente o fluxo de trabalho."
+    }
+  ],
+  "V5f3ha": [
+    {
+      "type": 0,
+      "value": "Semana"
+    }
+  ],
+  "V7k/GN": [
+    {
+      "type": 0,
+      "value": "Eliminar Caso de Mudança"
+    }
+  ],
+  "V8A+1J": [
+    {
+      "type": 0,
+      "value": "Intervalo"
+    }
+  ],
+  "VA7M1u": [
+    {
+      "type": 0,
+      "value": "Na Aplicação"
+    }
+  ],
+  "VEbE93": [
+    {
+      "type": 0,
+      "value": "Explique o que a ação \""
+    },
+    {
+      "type": 1,
+      "value": "selectedOperation"
+    },
+    {
+      "type": 0,
+      "value": "\" executa neste fluxo"
+    }
+  ],
+  "VHm1Sr": [
+    {
+      "type": 0,
+      "value": "Selecione um recurso Serviço de Aplicações"
+    }
+  ],
+  "VI5Sa8": [
+    {
+      "type": 0,
+      "value": "Expandir"
+    }
+  ],
+  "VI7EqG": [
+    {
+      "type": 0,
+      "value": "Não foram encontrados resultados para "
+    },
+    {
+      "type": 1,
+      "value": "searchTerm"
+    }
+  ],
+  "VIN7lB": [
+    {
+      "type": 0,
+      "value": "O fluxo é iniciado quando isto acontece"
+    }
+  ],
+  "VKAk5g": [
+    {
+      "type": 0,
+      "value": "O nome da execução de fluxo de trabalho fornecido não é válido."
+    }
+  ],
+  "VL9wOu": [
+    {
+      "type": 0,
+      "value": "Tem de fornecer o valor do parâmetro."
+    }
+  ],
+  "VLc3FV": [
+    {
+      "type": 0,
+      "value": "Esquema de origem"
+    }
+  ],
+  "VPh9Jo": [
+    {
+      "type": 0,
+      "value": "(UTC+06:00) Novosibirsk"
+    }
+  ],
+  "VUH9aj": [
+    {
+      "type": 0,
+      "value": "23"
+    }
+  ],
+  "VVfYvq": [
+    {
+      "type": 0,
+      "value": "Obrigatório. O número a dividir pelo Divisor."
+    }
+  ],
+  "VXBWrq": [
+    {
+      "type": 0,
+      "value": "Comentário"
+    }
+  ],
+  "VZHick": [
+    {
+      "type": 0,
+      "value": "Duração"
+    }
+  ],
+  "Vaacox": [
+    {
+      "type": 0,
+      "value": "Histórico de Execuções"
+    }
+  ],
+  "VbMYd8": [
+    {
+      "type": 0,
+      "value": "Os acionadores dizem à sua aplicação quando começar a executar. Cada fluxo de trabalho precisa de, pelo menos, um acionador."
+    }
+  ],
+  "Vfce7b": [
+    {
+      "type": 0,
+      "value": "Tipo de Erro"
+    }
+  ],
+  "Vi5TIV": [
+    {
+      "type": 0,
+      "value": "Não foram encontrados avisos."
+    }
+  ],
+  "VlvlX1": [
+    {
+      "type": 0,
+      "value": "Certificado"
+    }
+  ],
+  "VptXzY": [
+    {
+      "type": 0,
+      "value": "Utilizar \""
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "\" como valor personalizado"
+    }
+  ],
+  "Vqs8hE": [
+    {
+      "type": 0,
+      "value": "Ações"
+    }
+  ],
+  "Vx6fwP": [
+    {
+      "type": 0,
+      "value": "Adicionou esta ação"
+    }
+  ],
+  "W+mUyI": [
+    {
+      "type": 0,
+      "value": "Seguinte"
+    }
+  ],
+  "W070M2": [
+    {
+      "type": 0,
+      "value": "de "
+    },
+    {
+      "type": 1,
+      "value": "max"
+    }
+  ],
+  "W6FdMh": [
+    {
+      "type": 0,
+      "value": "Necessário. O nome da nova propriedade."
+    }
+  ],
+  "WCASt1": [
+    {
+      "type": 0,
+      "value": "Descreva algo no seu fluxo que deve ser substituído, bem como o que deve substituí-lo. Adicione detalhes sempre que possível, incluindo o conector a utilizar e se algum conteúdo deve ser incluído."
+    }
+  ],
+  "WGwH45": [
+    {
+      "type": 0,
+      "value": "Limpar"
+    }
+  ],
+  "WK6hZX": [
+    {
+      "type": 0,
+      "value": "Selecionar todo o texto em "
+    },
+    {
+      "type": 1,
+      "value": "label"
+    }
+  ],
+  "WMX2ig": [
+    {
+      "type": 0,
+      "value": "Qual é a definição de simultaneidade deste fluxo de trabalho?"
+    }
+  ],
+  "WR1K3z": [
+    {
+      "type": 0,
+      "value": "(UTC+04:00) Astrakhan, Ulyanovsk"
+    }
+  ],
+  "WS55UF": [
+    {
+      "type": 0,
+      "value": "Especifique a duração no formato ISO 8601"
+    }
+  ],
+  "WS9kXD": [
+    {
+      "type": 0,
+      "value": "Obrigatório. O primeiro número inteiro na matriz."
+    }
+  ],
+  "WTZvGW": [
+    {
+      "type": 0,
+      "value": "O fluxo de trabalho tem ligações inválidas nas seguintes operações: "
+    },
+    {
+      "type": 1,
+      "value": "invalidNodes"
+    }
+  ],
+  "WToL/O": [
+    {
+      "type": 0,
+      "value": "Introduza uma condição de instrução válida."
+    }
+  ],
+  "WUe3DY": [
+    {
+      "type": 0,
+      "value": "Forma abreviada do acionador ().outputs"
+    }
+  ],
+  "WaTsxR": [
+    {
+      "type": 0,
+      "value": "Histórico de Pedidos"
+    }
+  ],
+  "Wb/cBR": [
+    {
+      "type": 0,
+      "value": "Intervalo Fixo"
+    }
+  ],
+  "WcnIF8": [
+    {
+      "type": 0,
+      "value": "Remover"
+    }
+  ],
+  "WgChTm": [
+    {
+      "type": 0,
+      "value": "(Valor personalizado)"
+    }
+  ],
+  "WgoP7R": [
+    {
+      "type": 0,
+      "value": "Devolve o resultado da multiplicação dos dois números"
+    }
+  ],
+  "WnU9v0": [
+    {
+      "type": 0,
+      "value": "Uma identidade gerida não está configurada na aplicação lógica."
+    }
+  ],
+  "WvvJYw": [
+    {
+      "type": 0,
+      "value": "Ações"
+    }
+  ],
+  "X/7je+": [
+    {
+      "type": 0,
+      "value": "Minuto"
+    }
+  ],
+  "X2idLs": [
+    {
+      "type": 0,
+      "value": "(UTC-03:00) Montevidéu"
+    }
+  ],
+  "X4SuNU": [
+    {
+      "type": 0,
+      "value": "O Intervalo Mínimo de Política de Repetição é inválido, tem de corresponder ao formato de duração ISO 8601"
+    }
+  ],
+  "X4gDhV": [
+    {
+      "type": 0,
+      "value": "Inquilino"
+    }
+  ],
+  "X7X5ew": [
+    {
+      "type": 0,
+      "value": "Parâmetros"
+    }
+  ],
+  "X8JjjT": [
+    {
+      "type": 1,
+      "value": "days"
+    },
+    {
+      "type": 0,
+      "value": " dias "
+    },
+    {
+      "type": 1,
+      "value": "hours"
+    },
+    {
+      "type": 0,
+      "value": " horas"
+    }
+  ],
+  "XCunbR": [
+    {
+      "type": 0,
+      "value": "Forma abreviada de ações (\"actionName\").outputs"
+    }
+  ],
+  "XEuptL": [
+    {
+      "type": 0,
+      "value": "Combina qualquer número de cadeias em conjunto"
+    }
+  ],
+  "XFFpu/": [
+    {
+      "type": 0,
+      "value": "Tentar novamente"
+    }
+  ],
+  "XFzzaw": [
+    {
+      "type": 0,
+      "value": "Parâmetros avançados"
+    }
+  ],
+  "XH94im": [
+    {
+      "type": 0,
+      "value": "Assegure-se de que todas as palavras são escritas corretamente."
+    }
+  ],
+  "XJkBrZ": [
+    {
+      "type": 0,
+      "value": "Especifique uma ou mais expressões que têm de ser verdadeiras para que o acionador seja ativado"
+    }
+  ],
+  "XKDZXi": [
+    {
+      "type": 0,
+      "value": "Tempo Limite da Ação"
+    }
+  ],
+  "XLUs2P": [
+    {
+      "type": 0,
+      "value": "Tipo de Token Não Suportado: "
+    },
+    {
+      "type": 1,
+      "value": "var"
+    }
+  ],
+  "XOAcjQ": [
+    {
+      "type": 0,
+      "value": "(UTC+03:00) Nairobi"
+    }
+  ],
+  "XOzn/3": [
+    {
+      "type": 0,
+      "value": "Nome da ligação"
+    }
+  ],
+  "XQ4OCV": [
+    {
+      "type": 0,
+      "value": "(UTC+03:00) Bagdade"
+    }
+  ],
+  "XR4Sd/": [
+    {
+      "type": 0,
+      "value": "Gosto"
+    }
+  ],
+  "XRK+gt": [
+    {
+      "type": 0,
+      "value": "A função \""
+    },
+    {
+      "type": 1,
+      "value": "functionName"
+    },
+    {
+      "type": 0,
+      "value": "\" tem uma cadeia de ligação sem terminação"
+    }
+  ],
+  "XTeLIw": [
+    {
+      "type": 0,
+      "value": "(UTC+07:00) Krasnoyarsk"
+    }
+  ],
+  "XTuxmH": [
+    {
+      "type": 1,
+      "value": "minutes"
+    },
+    {
+      "type": 0,
+      "value": " minutos "
+    },
+    {
+      "type": 1,
+      "value": "seconds"
+    },
+    {
+      "type": 0,
+      "value": " segundos"
+    }
+  ],
+  "XVTQT6": [
+    {
+      "type": 0,
+      "value": "Intervalo"
+    }
+  ],
+  "XbtEq9": [
+    {
+      "type": 0,
+      "value": "Contagem"
+    }
+  ],
+  "Xew1Df": [
+    {
+      "type": 0,
+      "value": "Mais informações de diagnóstico: x-ms-client-request-id é \""
+    },
+    {
+      "type": 1,
+      "value": "clientRequestId"
+    },
+    {
+      "type": 0,
+      "value": "\"."
+    }
+  ],
+  "Xj0Gr/": [
+    {
+      "type": 0,
+      "value": "Não é possível eliminar o elemento de esquema de destino."
+    }
+  ],
+  "Xj4xwI": [
+    {
+      "type": 0,
+      "value": "A identidade gerida utilizada nesta operação já não existe. Para continuar, selecione uma identidade disponível ou altere a ligação."
+    }
+  ],
+  "XkBxv5": [
+    {
+      "type": 0,
+      "value": "Selecionar um esquema de destino"
+    }
+  ],
+  "Xkt2vD": [
+    {
+      "type": 0,
+      "value": "Selecionar uma função de aplicação de funções"
+    }
+  ],
+  "Xnn0uj": [
+    {
+      "type": 0,
+      "value": "Pedido"
+    }
+  ],
+  "XqamWZ": [
+    {
+      "type": 0,
+      "value": "Eliminar"
+    }
+  ],
+  "XsktQ/": [
+    {
+      "type": 0,
+      "value": "Limite o Logic Apps para não incluir cabeçalhos de metadados do fluxo de trabalho na resposta."
+    }
+  ],
+  "XtuP5e": [
+    {
+      "type": 0,
+      "value": "Funções matemáticas"
+    }
+  ],
+  "Xv5CGN": [
+    {
+      "type": 0,
+      "value": "(UTC-05:00) Indiana (Leste)"
+    }
+  ],
+  "Xx/naD": [
+    {
+      "type": 0,
+      "value": "Obrigatório. O nome da ação cujas saídas do corpo quer."
+    }
+  ],
+  "Y/bcmG": [
+    {
+      "type": 0,
+      "value": "Palavra-passe"
+    }
+  ],
+  "Y04+GH": [
+    {
+      "type": 0,
+      "value": "Adicionar uma ação"
+    }
+  ],
+  "Y0H9aX": [
+    {
+      "type": 0,
+      "value": "Mais Informações"
+    }
+  ],
+  "Y5XAbg": [
+    {
+      "type": 0,
+      "value": "Selecionar um recurso da Aplicação de Funções do Swagger"
+    }
+  ],
+  "Y9kBz5": [
+    {
+      "type": 0,
+      "value": "Devolve uma representação binária de um URI de dados"
+    }
+  ],
+  "YABOLz": [
+    {
+      "type": 0,
+      "value": "Item de corpo"
+    }
+  ],
+  "YCDF7A": [
+    {
+      "type": 0,
+      "value": "Todos os parâmetros necessários estão definidos"
+    }
+  ],
+  "YCFhzp": [
+    {
+      "type": 0,
+      "value": "Adicionar subordinados"
+    }
+  ],
+  "YDoc9z": [
+    {
+      "type": 0,
+      "value": "Condições do acionador"
+    }
+  ],
+  "YEHutH": [
+    {
+      "type": 0,
+      "value": "Limpar Editor"
+    }
+  ],
+  "YF1yZk": [
+    {
+      "type": 0,
+      "value": "chat-session-id:"
+    }
+  ],
+  "YHsAKl": [
+    {
+      "type": 0,
+      "value": "Nota de operação"
+    }
+  ],
+  "YIBDSH": [
+    {
+      "type": 1,
+      "value": "days"
+    },
+    {
+      "type": 0,
+      "value": "d"
+    }
+  ],
+  "YJJ+gQ": [
+    {
+      "type": 0,
+      "value": "Cadeia"
+    }
+  ],
+  "YJlS8E": [
+    {
+      "type": 0,
+      "value": "Formatar texto como sublinhado. Atalho: Ctrl+S"
+    }
+  ],
+  "YKXmKD": [
+    {
+      "type": 0,
+      "value": "Permite que uma expressão derive o respetivo valor de outro nome JSON e pares de valor ou o resultado do acionador de runtime"
+    }
+  ],
+  "YOUfNf": [
+    {
+      "type": 0,
+      "value": "Introduzir Pfx"
+    }
+  ],
+  "YR1uWE": [
+    {
+      "type": 0,
+      "value": "Formatar texto como negrito. Atalho: Ctrl+N"
+    }
+  ],
+  "YRk271": [
+    {
+      "type": 0,
+      "value": "Autenticação"
+    }
+  ],
+  "YUbSFS": [
+    {
+      "type": 0,
+      "value": "Sim/Não"
+    }
+  ],
+  "YWOKlU": [
+    {
+      "type": 0,
+      "value": "Lista Numerada"
+    }
+  ],
+  "YWws/r": [
+    {
+      "type": 0,
+      "value": "Os nomes de saída não devem estar vazios."
+    }
+  ],
+  "YZ5Kwe": [
+    {
+      "type": 0,
+      "value": "(UTC-04:00) Hora do Atlântico (Canadá)"
+    }
+  ],
+  "YaFjJQ": [
+    {
+      "type": 0,
+      "value": "Devolve uma matriz ou um objeto únicos com todos os elementos que existem na matriz ou no objeto transmitidos a esta função. Os parâmetros da função podem ser um conjunto de objetos ou um conjunto de matrizes (não uma mistura de ambos). Se existirem dois objetos com o mesmo nome no resultado final, o último objeto com esse nome aparece no objeto final."
+    }
+  ],
+  "Ybzoim": [
+    {
+      "type": 0,
+      "value": "Obrigatório. O nome da ação que tem os valores que pretende."
+    }
+  ],
+  "YdQw4/": [
+    {
+      "type": 0,
+      "value": "Formatar texto como itálico. Atalho: ⌘I"
+    }
+  ],
+  "YfwZJO": [
+    {
+      "type": 0,
+      "value": "Sugestões de Pesquisa"
+    }
+  ],
+  "Yg/vvm": [
+    {
+      "type": 0,
+      "value": "Fechar Adicionar Painel de Ação"
+    }
+  ],
+  "YgU88A": [
+    {
+      "type": 0,
+      "value": "(UTC+05:30) Chennai, Kolkata (Calcutá), Mumbai, Nova Deli"
+    }
+  ],
+  "YiOybp": [
+    {
+      "type": 0,
+      "value": "(UTC+01:00) Bruxelas, Copenhaga, Madrid, Paris"
+    }
+  ],
+  "YlesUQ": [
+    {
+      "type": 0,
+      "value": "O seu mapa está em perfeitas condições"
+    }
+  ],
+  "YoQara": [
+    {
+      "type": 0,
+      "value": "Nenhuma"
+    }
+  ],
+  "Yrw/Qt": [
+    {
+      "type": 0,
+      "value": "Os seus dados pessoais e da empresa estão protegidos neste chat"
+    }
+  ],
+  "Yuu5CD": [
+    {
+      "type": 0,
+      "value": "Reduzir"
+    }
+  ],
+  "Yuxprm": [
+    {
+      "type": 0,
+      "value": "Damos-lhe as boas-vindas ao assistente de fluxo de trabalho!"
+    }
+  ],
+  "Yw7Nfl": [
+    {
+      "type": 0,
+      "value": "Desativar Resultado Estático"
+    }
+  ],
+  "Yz9o1k": [
+    {
+      "type": 0,
+      "value": "Não ligado."
+    }
+  ],
+  "Z8tBFS": [
+    {
+      "type": 0,
+      "value": "O assistente de fluxo de trabalho foi concebido apenas para fornecer ajuda e não suporta a criação ou edição de fluxos de trabalho."
+    }
+  ],
+  "Z9PWl/": [
+    {
+      "type": 0,
+      "value": "A contagem de Políticas de Repetição é inválida (tem de ser de "
+    },
+    {
+      "type": 1,
+      "value": "min"
+    },
+    {
+      "type": 0,
+      "value": " a "
+    },
+    {
+      "type": 1,
+      "value": "max"
+    },
+    {
+      "type": 0,
+      "value": ")"
+    }
+  ],
+  "ZAdaBl": [
+    {
+      "type": 0,
+      "value": "Selecione uma referência de ligação existente ou crie uma nova"
+    }
+  ],
+  "ZBJiuD": [
+    {
+      "type": 0,
+      "value": "Estado"
+    }
+  ],
+  "ZCFMoe": [
+    {
+      "type": 0,
+      "value": "Corpo"
+    }
+  ],
+  "ZM1mRy": [
+    {
+      "type": 0,
+      "value": "Controlo de Simultaneidade"
+    }
+  ],
+  "ZME5hh": [
+    {
+      "type": 0,
+      "value": "Devolve o dia do componente do mês de um carimbo de data/hora de cadeia"
+    }
+  ],
+  "ZRdkFN": [
+    {
+      "type": 0,
+      "value": "Fechar Resultado Estático"
+    }
+  ],
+  "ZUCTVP": [
+    {
+      "type": 0,
+      "value": "Colar uma ação"
+    }
+  ],
+  "ZUaz3Y": [
+    {
+      "type": 0,
+      "value": "Forma abreviada do acionador ().outputs.body"
+    }
+  ],
+  "ZaIeDG": [
+    {
+      "type": 0,
+      "value": "Obrigatório. O valor pelo qual a cadeia poderá começar."
+    }
+  ],
+  "ZbCS4a": [
+    {
+      "type": 0,
+      "value": "Ler mais"
+    }
+  ],
+  "Zg3IjD": [
+    {
+      "type": 0,
+      "value": "Fechar"
+    }
+  ],
+  "Zi9gQK": [
+    {
+      "type": 0,
+      "value": "Adicionar novo item"
+    }
+  ],
+  "ZihyUf": [
+    {
+      "type": 0,
+      "value": "Fechar"
+    }
+  ],
+  "ZkjTbp": [
+    {
+      "type": 0,
+      "value": "Saiba mais sobre conteúdos dinâmicos."
+    }
+  ],
+  "ZyDq4/": [
+    {
+      "type": 0,
+      "value": "Mostrar uma sugestão diferente"
+    }
+  ],
+  "a7j3gS": [
+    {
+      "type": 0,
+      "value": "Obrigatório. O número a dividir pelo Divisor."
+    }
+  ],
+  "aAXnqw": [
+    {
+      "type": 0,
+      "value": "Necessário. O número da ocorrência da subcadeia a encontrar."
+    }
+  ],
+  "aE+2gr": [
+    {
+      "type": 0,
+      "value": "Falso"
+    }
+  ],
+  "aGyVJT": [
+    {
+      "type": 0,
+      "value": "Obrigatório. O número de objetos a remover da frente da Coleção. Tem de ser um número inteiro positivo."
+    }
+  ],
+  "aK4iLW": [
+    {
+      "type": 0,
+      "value": "Processamento de Dados"
+    }
+  ],
+  "aP1wk9": [
+    {
+      "type": 0,
+      "value": "Devolve o primeiro índice de um valor numa cadeia (sensível a maiúsculas e minúsculas, cultura invariante)"
+    }
+  ],
+  "aSnCCB": [
+    {
+      "type": 0,
+      "value": "Localização"
+    }
+  ],
+  "aV/nLS": [
+    {
+      "type": 0,
+      "value": "Segundo"
+    }
+  ],
+  "aYTy7X": [
+    {
+      "type": 0,
+      "value": "Cancelado"
+    }
+  ],
+  "ae7W0a": [
+    {
+      "type": 0,
+      "value": "Ecrã Inteiro"
+    }
+  ],
+  "ahFd/S": [
+    {
+      "type": 0,
+      "value": "ID de Rastreio distinto para cada instância de divisão"
+    }
+  ],
+  "ahsVI/": [
+    {
+      "type": 0,
+      "value": "Introduzir Pfx"
+    }
+  ],
+  "aoUT/3": [
+    {
+      "type": 0,
+      "value": "A carregar recursos..."
+    }
+  ],
+  "auUI93": [
+    {
+      "type": 0,
+      "value": "Adicione ou selecione um esquema de origem a utilizar para o seu mapa."
+    }
+  ],
+  "b9/1dK": [
+    {
+      "type": 0,
+      "value": "Valor"
+    }
+  ],
+  "b9P8SA": [
+    {
+      "type": 0,
+      "value": "Tipo de Token Não Suportado: "
+    },
+    {
+      "type": 1,
+      "value": "controls"
+    }
+  ],
+  "b9Rvl9": [
+    {
+      "type": 0,
+      "value": "Corpo"
+    }
+  ],
+  "bG9rjv": [
+    {
+      "type": 0,
+      "value": "Ações"
+    }
+  ],
+  "bGtEPd": [
+    {
+      "type": 0,
+      "value": "Eliminar"
+    }
+  ],
+  "bIyTi7": [
+    {
+      "type": 0,
+      "value": "Subscrição"
+    }
+  ],
+  "bJ7DWe": [
+    {
+      "type": 0,
+      "value": "Obrigatório. O valor que é convertido num binário."
+    }
+  ],
+  "bJEJoL": [
+    {
+      "type": 0,
+      "value": "Opcional. Uma chave a utilizar para ordenar objetos na coleção."
+    }
+  ],
+  "bSZ0lL": [
+    {
+      "type": 0,
+      "value": "URL de retorno"
+    }
+  ],
+  "bTrk+S": [
+    {
+      "type": 0,
+      "value": "Obrigatório. O objeto a verificar se é igual ou superior ao valor com que está a ser comparado."
+    }
+  ],
+  "bWBMhe": [
+    {
+      "type": 0,
+      "value": "Por predefinição, as instâncias da Aplicação Lógica são executadas ao mesmo tempo ou em paralelo. Este controlo altera a forma como as novas execuções são colocadas em fila e não pode ser alterado após a ativação. Para executar o máximo de instâncias paralelas possível, deixe este controlo desativado. Para limitar o número de execuções paralelas, ative este controlo e selecione um limite. Para executar sequencialmente, selecione 1 como limite."
+    }
+  ],
+  "bWOsvo": [
+    {
+      "type": 0,
+      "value": "Utilizar a Ligação do Invocador"
+    }
+  ],
+  "bXFGpe": [
+    {
+      "type": 0,
+      "value": "Informações"
+    }
+  ],
+  "bYwqkV": [
+    {
+      "type": 0,
+      "value": "Introduza um json válido."
+    }
+  ],
+  "ba9yGJ": [
+    {
+      "type": 0,
+      "value": "Carregar mais"
+    }
+  ],
+  "bf7078": [
+    {
+      "type": 0,
+      "value": "Devolve o valor máximo na matriz de entrada de números"
+    }
+  ],
+  "blRFVt": [
+    {
+      "type": 0,
+      "value": "Configure estas ligações para as utilizar no seu fluxo."
+    }
+  ],
+  "bldzuj": [
+    {
+      "type": 0,
+      "value": "Histórico de Novas Tentativas"
+    }
+  ],
+  "bt2CaQ": [
+    {
+      "type": 0,
+      "value": "Limpar tudo"
+    }
+  ],
+  "bwlAWn": [
+    {
+      "type": 0,
+      "value": "Abrir operação"
+    }
+  ],
+  "byRkj+": [
+    {
+      "type": 0,
+      "value": "Esta operação tem entradas ou saídas seguras ativadas."
+    }
+  ],
+  "byTBrn": [
+    {
+      "type": 0,
+      "value": "Personalizado"
+    }
+  ],
+  "c/+j08": [
+    {
+      "type": 0,
+      "value": "Fazer"
+    }
+  ],
+  "c2XklE": [
+    {
+      "type": 0,
+      "value": "Pesquisar"
+    }
+  ],
+  "c3FLox": [
+    {
+      "type": 0,
+      "value": "(UTC+10:00) Hobart"
+    }
+  ],
+  "c3G/zq": [
+    {
+      "type": 0,
+      "value": "Devolve um objeto com uma propriedade definida para o valor fornecido"
+    }
+  ],
+  "c4GQZE": [
+    {
+      "type": 0,
+      "value": "Selecione o esquema para o menu suspenso"
+    }
+  ],
+  "c6XbVI": [
+    {
+      "type": 0,
+      "value": "painel"
+    }
+  ],
+  "c7kfkV": [
+    {
+      "type": 0,
+      "value": "Introduza um JSON válido."
+    }
+  ],
+  "c8UPLp": [
+    {
+      "type": 0,
+      "value": "O conteúdo dinâmico também pode ser adicionado a partir de outras origens."
+    }
+  ],
+  "cHiBAn": [
+    {
+      "type": 0,
+      "value": "(UTC+09:00) Seul"
+    }
+  ],
+  "cJkSrD": [
+    {
+      "type": 0,
+      "value": "Obtenha mais resultados até ao limite de paginação"
+    }
+  ],
+  "cK2A/V": [
+    {
+      "type": 0,
+      "value": "Ver Documentação"
+    }
+  ],
+  "cR9RtV": [
+    {
+      "type": 0,
+      "value": "Eliminar alterações"
+    }
+  ],
+  "cZXqqf": [
+    {
+      "type": 0,
+      "value": "Alterar Ligação"
+    }
+  ],
+  "cZv9J0": [
+    {
+      "type": 0,
+      "value": "A ligação é válida"
+    }
+  ],
+  "ca/QIc": [
+    {
+      "type": 0,
+      "value": "Mensagem de Erro"
+    }
+  ],
+  "ceVB5l": [
+    {
+      "type": 0,
+      "value": "Devolve o corpo de uma parte numa saída de várias partes a partir de uma ação."
+    }
+  ],
+  "cfUHfs": [
+    {
+      "type": 0,
+      "value": "Devolve a diferença entre duas datas como uma cadeia de intervalo de tempo"
+    }
+  ],
+  "cgq/+y": [
+    {
+      "type": 0,
+      "value": "Selecione uma identidade"
+    }
+  ],
+  "ciLkfU": [
+    {
+      "type": 0,
+      "value": "Negrito (⌘N)"
+    }
+  ],
+  "cmTCsW": [
+    {
+      "type": 0,
+      "value": "Erro ao carregar componente."
+    }
+  ],
+  "cqiqcf": [
+    {
+      "type": 0,
+      "value": "Hora de início"
+    }
+  ],
+  "cr0UnG": [
+    {
+      "type": 0,
+      "value": "9"
+    }
+  ],
+  "cscezV": [
+    {
+      "type": 0,
+      "value": "Obrigatório. A coleção a partir da qual se deve ignorar os primeiros objetos de Contagem."
+    }
+  ],
+  "ctI9Pp": [
+    {
+      "type": 0,
+      "value": "Gere o ficheiro XSLT primeiro antes de tentar testar mapeamentos."
+    }
+  ],
+  "cvp9VP": [
+    {
+      "type": 0,
+      "value": "Código de erro"
+    }
+  ],
+  "cyEBus": [
+    {
+      "type": 0,
+      "value": "(UTC-04:00) Cuiabá"
+    }
+  ],
+  "d020eg": [
+    {
+      "type": 0,
+      "value": "Devolve o primeiro elemento a partir da matriz ou cadeia transmitida."
+    }
+  ],
+  "d4Ddhp": [
+    {
+      "type": 0,
+      "value": "Transferir (Alt ou Opção + selecionar)"
+    }
+  ],
+  "dBWIjR": [
+    {
+      "type": 0,
+      "value": "Faltam entradas necessárias no esquema"
+    }
+  ],
+  "dBxX0M": [
+    {
+      "type": 0,
+      "value": "Adicionar um acionador"
+    }
+  ],
+  "dD8y1n": [
+    {
+      "type": 0,
+      "value": "Mudar para o modo de valor de chave"
+    }
+  ],
+  "dDYCuU": [
+    {
+      "type": 0,
+      "value": "Saber mais"
+    }
+  ],
+  "dL9V5t": [
+    {
+      "type": 0,
+      "value": "Identidade gerida"
+    }
+  ],
+  "dMAC4C": [
+    {
+      "type": 0,
+      "value": "Substituir ação"
+    }
+  ],
+  "dOpdsP": [
+    {
+      "type": 0,
+      "value": "Atualizar"
+    }
+  ],
+  "dQmi91": [
+    {
+      "type": 0,
+      "value": "Frequência"
+    }
+  ],
+  "dUbKuK": [
+    {
+      "type": 0,
+      "value": "Ignorar"
+    }
+  ],
+  "daoo3l": [
+    {
+      "type": 0,
+      "value": "Ligada a "
+    },
+    {
+      "type": 1,
+      "value": "connectionName"
+    },
+    {
+      "type": 0,
+      "value": "."
+    }
+  ],
+  "dfKsgg": [
+    {
+      "type": 0,
+      "value": "Desculpe, não percebi o seu pedido. Reformule-o e tente novamente."
+    }
+  ],
+  "dfNjw1": [
+    {
+      "type": 0,
+      "value": "Fechar"
+    }
+  ],
+  "dfmH55": [
+    {
+      "type": 0,
+      "value": "Itálico (Ctrl+I)"
+    }
+  ],
+  "dhvk0u": [
+    {
+      "type": 0,
+      "value": "Devolve uma representação de cadeia de uma cadeia codificada de base 64"
+    }
+  ],
+  "dqgt9y": [
+    {
+      "type": 0,
+      "value": "Converter o parâmetro para um valor Booleano"
+    }
+  ],
+  "drM9Sl": [
+    {
+      "type": 0,
+      "value": "Devolve uma matriz de valores que correspondem ao nome da chave a partir de dados do formulário ou de saída de ação de formulário codificado"
+    }
+  ],
+  "dsz+Ae": [
+    {
+      "type": 0,
+      "value": "Divide a cadeia com um separador"
+    }
+  ],
+  "dwrqEc": [
+    {
+      "type": 0,
+      "value": "Avisos"
+    }
+  ],
+  "e+GuGo": [
+    {
+      "type": 0,
+      "value": "Entrada"
+    }
+  ],
+  "e00zot": [
+    {
+      "type": 0,
+      "value": "Com que frequência pretende procurar itens?"
+    }
+  ],
+  "e4JZEY": [
+    {
+      "type": 0,
+      "value": "(UTC+07:00) Tomsk"
+    }
+  ],
+  "e9OvzW": [
+    {
+      "type": 0,
+      "value": "Limpar"
+    }
+  ],
+  "e9bIKh": [
+    {
+      "type": 0,
+      "value": "Falha ao gerar o ficheiro XSLT."
+    }
+  ],
+  "eESljX": [
+    {
+      "type": 0,
+      "value": "Reverter"
+    }
+  ],
+  "eFet4K": [
+    {
+      "type": 0,
+      "value": "ID de Rastreio de Ação"
+    }
+  ],
+  "eFnLWK": [
+    {
+      "type": 0,
+      "value": "(UTC-06:00) América Central"
+    }
+  ],
+  "eHgfpz": [
+    {
+      "type": 0,
+      "value": "Introduza um URL válido"
+    }
+  ],
+  "eHgi14": [
+    {
+      "type": 0,
+      "value": "Obrigatório. O nome da variável do valor que pretende."
+    }
+  ],
+  "eHsOsm": [
+    {
+      "type": 0,
+      "value": "Especifique a duração no formato ISO 8601"
+    }
+  ],
+  "eO1h/h": [
+    {
+      "type": 0,
+      "value": "Este assistente pode ajudá-lo(a) a saber mais sobre os seus fluxos de trabalho e as capacidades e os conectores da plataforma Azure Logic Apps."
+    }
+  ],
+  "eRvRWs": [
+    {
+      "type": 0,
+      "value": "Hora de início"
+    }
+  ],
+  "eT+b9W": [
+    {
+      "type": 0,
+      "value": "Obrigatório. O número pelo qual se divide o Dividendo."
+    }
+  ],
+  "egLI8P": [
+    {
+      "type": 0,
+      "value": "Obrigatório. O índice a partir do qual a subcadeia começa no parâmetro 1."
+    }
+  ],
+  "ehIBkh": [
+    {
+      "type": 0,
+      "value": "Introduza um número inteiro"
+    }
+  ],
+  "elD6+N": [
+    {
+      "type": 0,
+      "value": "Itálico (⌘I)"
+    }
+  ],
+  "en/5A3": [
+    {
+      "type": 0,
+      "value": "Reatribuir"
+    }
+  ],
+  "eo1YKX": [
+    {
+      "type": 0,
+      "value": "Ative a divisão para iniciar uma instância do fluxo de trabalho por item na matriz selecionada. Cada instância também pode ter um ID de rastreio distinto"
+    }
+  ],
+  "epOMnV": [
+    {
+      "type": 0,
+      "value": "Partilhada"
+    }
+  ],
+  "eqAUdj": [
+    {
+      "type": 0,
+      "value": "Quando um novo item"
+    }
+  ],
+  "evyGYj": [
+    {
+      "type": 0,
+      "value": "Reatribuir todas as ações ligadas a uma nova ligação"
+    }
+  ],
+  "f/lWTW": [
+    {
+      "type": 0,
+      "value": "Obrigatório. Os objetos a verificar se são nulos."
+    }
+  ],
+  "f1j0to": [
+    {
+      "type": 0,
+      "value": "Opcional. O índice de onde parar a extração da subcadeia."
+    }
+  ],
+  "f7Janv": [
+    {
+      "type": 0,
+      "value": "Exemplo: PT1S"
+    }
+  ],
+  "f81ClO": [
+    {
+      "type": 0,
+      "value": "Ícone de conteúdo dinâmico vazio"
+    }
+  ],
+  "fBQBw/": [
+    {
+      "type": 0,
+      "value": "Devolve verdadeiro se o primeiro argumento for maior ou igual ao segundo"
+    }
+  ],
+  "fDisLL": [
+    {
+      "type": 0,
+      "value": "A criação da ACL falhou para a ligação. A eliminar a ligação."
+    }
+  ],
+  "fElufw": [
+    {
+      "type": 0,
+      "value": "Selecione um recurso Gestão de API"
+    }
+  ],
+  "fKYuwf": [
+    {
+      "type": 0,
+      "value": "Selecione o ficheiro ou imagem"
+    }
+  ],
+  "fVG5aD": [
+    {
+      "type": 0,
+      "value": "(UTC-05:00) Haiti"
+    }
+  ],
+  "faUrud": [
+    {
+      "type": 0,
+      "value": "A carregar dados de ligação..."
+    }
+  ],
+  "fc1AV8": [
+    {
+      "type": 0,
+      "value": "HTTP "
+    },
+    {
+      "type": 1,
+      "value": "method"
+    },
+    {
+      "type": 0,
+      "value": " URL"
+    }
+  ],
+  "fg/34o": [
+    {
+      "type": 0,
+      "value": "Funções lógicas"
+    }
+  ],
+  "fifSPb": [
+    {
+      "type": 0,
+      "value": "(UTC-03:30) Terra Nova"
+    }
+  ],
+  "fmm7Ik": [
+    {
+      "type": 0,
+      "value": "Função"
+    }
+  ],
+  "fp8Ry3": [
+    {
+      "type": 0,
+      "value": "(UTC+08:00) Pequim, Chongqing, Hong Kong, Urumqi"
+    }
+  ],
+  "fvGvnA": [
+    {
+      "type": 0,
+      "value": "Lamentamos, mas ocorreu um erro. Tente novamente."
+    }
+  ],
+  "g076bL": [
+    {
+      "type": 0,
+      "value": "E-mail"
+    }
+  ],
+  "g1zwch": [
+    {
+      "type": 0,
+      "value": "Ampliar"
+    }
+  ],
+  "g4igOR": [
+    {
+      "type": 0,
+      "value": "Publicar"
+    }
+  ],
+  "g5A6Bn": [
+    {
+      "type": 0,
+      "value": "Runtime"
+    }
+  ],
+  "g7/EKC": [
+    {
+      "type": 0,
+      "value": "Limitar"
+    }
+  ],
+  "g7my78": [
+    {
+      "type": 0,
+      "value": "Executar teste"
+    }
+  ],
+  "gA1dde": [
+    {
+      "type": 0,
+      "value": "Alternar vista de código"
+    }
+  ],
+  "gCXOd5": [
+    {
+      "type": 0,
+      "value": "URI"
+    }
+  ],
+  "gDDfek": [
+    {
+      "type": 0,
+      "value": "Devolve um carimbo de data/hora que é a hora atual mais o intervalo de tempo especificado."
+    }
+  ],
+  "gDY9xk": [
+    {
+      "type": 0,
+      "value": "Devolve o resultado da divisão dos dois números"
+    }
+  ],
+  "gIK0WG": [
+    {
+      "type": 0,
+      "value": "Obrigatório. Um valor booleano que determina o valor que a expressão deve devolver."
+    }
+  ],
+  "gIx5ys": [
+    {
+      "type": 0,
+      "value": "Formatar texto como itálico. Atalho: Ctrl+I"
+    }
+  ],
+  "gKEaXI": [
+    {
+      "type": 0,
+      "value": "Copiar o valor de \""
+    },
+    {
+      "type": 1,
+      "value": "label"
+    },
+    {
+      "type": 0,
+      "value": "\" para a área de transferência"
+    }
+  ],
+  "gKq3Jv": [
+    {
+      "type": 0,
+      "value": "O anterior falhou"
+    }
+  ],
+  "gL4rVQ": [
+    {
+      "type": 0,
+      "value": "Nenhuma"
+    }
+  ],
+  "gQt/0f": [
+    {
+      "type": 0,
+      "value": "Funções de conversão"
+    }
+  ],
+  "gRUmiA": [
+    {
+      "type": 0,
+      "value": "Informações"
+    }
+  ],
+  "gWyYg0": [
+    {
+      "type": 0,
+      "value": "(UTC+05:00) Achgabat, Tashkent"
+    }
+  ],
+  "gYaVvl": [
+    {
+      "type": 0,
+      "value": "Introduza um flutuante válido."
+    }
+  ],
+  "gc6v4X": [
+    {
+      "type": 0,
+      "value": "Identidade gerida atribuída pelo sistema"
+    }
+  ],
+  "gfBWfH": [
+    {
+      "type": 0,
+      "value": "E-mail"
+    }
+  ],
+  "ginGIZ": [
+    {
+      "type": 0,
+      "value": "(UTC-06:00) Guadalajara, Cidade do México, Monterrey"
+    }
+  ],
+  "gkY5ya": [
+    {
+      "type": 0,
+      "value": "Eliminar"
+    }
+  ],
+  "gpUphl": [
+    {
+      "type": 0,
+      "value": "Introduza a audiência."
+    }
+  ],
+  "gtQYgr": [
+    {
+      "type": 0,
+      "value": "Devolve um booleano que indica se uma cadeia é um número de vírgula flutuante"
+    }
+  ],
+  "gu9o9z": [
+    {
+      "type": 0,
+      "value": "Quando utilizada dentro até ao ciclo, esta função devolve o índex de iteração atual do ciclo especificado."
+    }
+  ],
+  "gusZw5": [
+    {
+      "type": 0,
+      "value": "Os nomes de saída devem ser exclusivos."
+    }
+  ],
+  "gvDMuq": [
+    {
+      "type": 0,
+      "value": "Selecionar um recurso de Fluxo de Trabalho do Lote"
+    }
+  ],
+  "gwEKLM": [
+    {
+      "type": 0,
+      "value": "A carregar..."
+    }
+  ],
+  "h+W3VW": [
+    {
+      "type": 0,
+      "value": "Número"
+    }
+  ],
+  "h1lQDa": [
+    {
+      "type": 0,
+      "value": "Introduzir ou colar um payload JSON de exemplo."
+    }
+  ],
+  "h40rpg": [
+    {
+      "type": 0,
+      "value": "Especificar intervalo no formato ISO 8601."
+    }
+  ],
+  "h6vVbX": [
+    {
+      "type": 0,
+      "value": "Adicione primeiro um esquema de origem e, em seguida, selecione elementos para criar o seu mapa"
+    }
+  ],
+  "hH/wAd": [
+    {
+      "type": 0,
+      "value": "Submeter novamente uma execução de fluxo de trabalho a partir desta ação"
+    }
+  ],
+  "hJbr09": [
+    {
+      "type": 0,
+      "value": "Clicar para Fechar"
+    }
+  ],
+  "hLOIwp": [
+    {
+      "type": 0,
+      "value": "Avisos"
+    }
+  ],
+  "hMf2TA": [
+    {
+      "type": 0,
+      "value": "Permitir segmentação"
+    }
+  ],
+  "hN7iBP": [
+    {
+      "offset": 0,
+      "options": {
+        "many": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " segundos"
+            }
+          ]
+        },
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " segundo"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " segundos"
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "seconds"
+    }
+  ],
+  "hPM6iC": [
+    {
+      "type": 0,
+      "value": "Devolve o resultado da subtração dos dois números"
+    }
+  ],
+  "hRVVdR": [
+    {
+      "type": 0,
+      "value": "Anular"
+    }
+  ],
+  "hZqQdt": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Gaza, Hebron"
+    }
+  ],
+  "hbOvB4": [
+    {
+      "type": 0,
+      "value": "Não é disto que estou à procura"
+    }
+  ],
+  "hihfHd": [
+    {
+      "type": 0,
+      "value": "O valor é demasiado grande."
+    }
+  ],
+  "hq1mk6": [
+    {
+      "type": 0,
+      "value": "O valor do caminho da operação não é igual ao modelo do segmento. Caminho "
+    },
+    {
+      "type": 1,
+      "value": "pathValue"
+    },
+    {
+      "type": 0,
+      "value": ", Modelo "
+    },
+    {
+      "type": 1,
+      "value": "pathTemplate"
+    }
+  ],
+  "hrbDu6": [
+    {
+      "type": 0,
+      "value": "Duração"
+    }
+  ],
+  "htj+eZ": [
+    {
+      "type": 0,
+      "value": "Atualizar esquema de destino"
+    }
+  ],
+  "hvbclb": [
+    {
+      "type": 0,
+      "value": "Audiência"
+    }
+  ],
+  "hwj1Ht": [
+    {
+      "type": 0,
+      "value": "Editar fluxo"
+    }
+  ],
+  "hza/cT": [
+    {
+      "type": 0,
+      "value": "(UTC+00:00) Casablanca"
+    }
+  ],
+  "i/SguY": [
+    {
+      "type": 0,
+      "value": "Identidade gerida atribuída pelo sistema"
+    }
+  ],
+  "i/b3Ko": [
+    {
+      "type": 0,
+      "value": "Resposta Assíncrona"
+    }
+  ],
+  "i0XjL5": [
+    {
+      "type": 0,
+      "value": "Procurar operação"
+    }
+  ],
+  "i1EQYm": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Harare, Pretória"
+    }
+  ],
+  "i1Tufp": [
+    {
+      "type": 0,
+      "value": "Forneça dados de entrada para testar o mapa com"
+    }
+  ],
+  "i1cwra": [
+    {
+      "type": 0,
+      "value": "Refazer"
+    }
+  ],
+  "i1vHaT": [
+    {
+      "type": 0,
+      "value": "Copiar Ação"
+    }
+  ],
+  "i4C4aB": [
+    {
+      "type": 0,
+      "value": "Rede"
+    }
+  ],
+  "i4Om5O": [
+    {
+      "type": 0,
+      "value": "Contém um valor inválido"
+    }
+  ],
+  "i8xPfO": [
+    {
+      "type": 0,
+      "value": "Nenhuma ação"
+    }
+  ],
+  "iB8YKD": [
+    {
+      "type": 0,
+      "value": "Separador Acerca de"
+    }
+  ],
+  "iCSHJG": [
+    {
+      "type": 0,
+      "value": "Converte uma cadeia em maiúsculas com as regras de sensível a maiúsculas/minúsculas da cultura invariante"
+    }
+  ],
+  "iE2+sy": [
+    {
+      "type": 0,
+      "value": "Escolher o tipo de saída"
+    }
+  ],
+  "iEy9pT": [
+    {
+      "type": 0,
+      "value": "Conteúdo dinâmico"
+    }
+  ],
+  "iHVVTl": [
+    {
+      "type": 0,
+      "value": "Tem a certeza de que pretende eliminar "
+    },
+    {
+      "type": 1,
+      "value": "nodeId"
+    },
+    {
+      "type": 0,
+      "value": "?"
+    }
+  ],
+  "iJOIca": [
+    {
+      "type": 0,
+      "value": "Seguinte"
+    }
+  ],
+  "iMicOQ": [
+    {
+      "type": 0,
+      "value": "Necessário. O URI a analisar."
+    }
+  ],
+  "iRe/g7": [
+    {
+      "type": 0,
+      "value": "21"
+    }
+  ],
+  "iRjBf4": [
+    {
+      "type": 0,
+      "value": "Esta Ação tem os testes ativados."
+    }
+  ],
+  "iSb/hp": [
+    {
+      "type": 0,
+      "value": "Identidade Gerida"
+    }
+  ],
+  "iSiVB0": [
+    {
+      "type": 0,
+      "value": "Saídas seguras da operação e referências das propriedades de saída"
+    }
+  ],
+  "iTKrs8": [
+    {
+      "type": 0,
+      "value": "Paginação"
+    }
+  ],
+  "iU1OJh": [
+    {
+      "type": 0,
+      "value": "Expandir"
+    }
+  ],
+  "iU5Fdh": [
+    {
+      "type": 0,
+      "value": "Funções de manipulação"
+    }
+  ],
+  "iUs7pv": [
+    {
+      "type": 0,
+      "value": "Cancelar"
+    }
+  ],
+  "iVMVAt": [
+    {
+      "type": 0,
+      "value": "Exemplo: 0, 10"
+    }
+  ],
+  "id4DBb": [
+    {
+      "type": 0,
+      "value": "Após rever esta sugestão de fluxo gerada por IA, selecione"
+    }
+  ],
+  "idQjOP": [
+    {
+      "type": 0,
+      "value": "Propriedades"
+    }
+  ],
+  "ifnOUI": [
+    {
+      "type": 0,
+      "value": "Separador Vista de Código"
+    }
+  ],
+  "ihCdw4": [
+    {
+      "type": 0,
+      "value": "Obrigatório. O número a adicionar à Parcela 2."
+    }
+  ],
+  "iq+tiv": [
+    {
+      "type": 0,
+      "value": "11"
+    }
+  ],
+  "iql+jn": [
+    {
+      "type": 1,
+      "value": "seconds"
+    },
+    {
+      "type": 0,
+      "value": "s"
+    }
+  ],
+  "iy8rNf": [
+    {
+      "type": 0,
+      "value": "Testar"
+    }
+  ],
+  "j5z8Vd": [
+    {
+      "type": 0,
+      "value": "A repetir"
+    }
+  ],
+  "jA6Wrp": [
+    {
+      "type": 0,
+      "value": "Adicione ou selecione um esquema de destino a utilizar para o seu mapa."
+    }
+  ],
+  "jHHF/u": [
+    {
+      "type": 0,
+      "value": "Devolve um número inteiro aleatório de um intervalo especificado que é inclusivo apenas no início."
+    }
+  ],
+  "jHKc3w": [
+    {
+      "type": 0,
+      "value": "Outro"
+    }
+  ],
+  "jKsMS6": [
+    {
+      "type": 0,
+      "value": "Obrigatório. A expressão que será negada."
+    }
+  ],
+  "jMLmag": [
+    {
+      "type": 0,
+      "value": "Criar Novo"
+    }
+  ],
+  "jN0YES": [
+    {
+      "type": 0,
+      "value": "Diga à Microsoft como esta funcionalidade pode ser melhorada"
+    }
+  ],
+  "jO5Fet": [
+    {
+      "type": 0,
+      "value": "Opções de Pedido - Tempo Limite"
+    }
+  ],
+  "jQ0Aqj": [
+    {
+      "type": 0,
+      "value": "Obrigatório. O valor que é convertido numa cadeia."
+    }
+  ],
+  "jQ7UzV": [
+    {
+      "type": 0,
+      "value": "(UTC-10:00) Ilhas Aleutian"
+    }
+  ],
+  "jQjteB": [
+    {
+      "type": 0,
+      "value": "Adicionar um esquema de origem"
+    }
+  ],
+  "jTHUFb": [
+    {
+      "type": 0,
+      "value": "A mostrar "
+    },
+    {
+      "type": 1,
+      "value": "countShowing"
+    },
+    {
+      "type": 0,
+      "value": " de "
+    },
+    {
+      "type": 1,
+      "value": "countTotal"
+    }
+  ],
+  "jUDhbs": [
+    {
+      "type": 0,
+      "value": "Esquema de destino"
+    }
+  ],
+  "jVIgz1": [
+    {
+      "type": 0,
+      "value": "Necessário. A cadeia ou matriz a dividir."
+    }
+  ],
+  "jVpanH": [
+    {
+      "type": 0,
+      "value": "Obrigatório. Uma cadeia de entrada base64."
+    }
+  ],
+  "jZjgYZ": [
+    {
+      "type": 0,
+      "value": "Não existem recursos deste tipo nesta subscrição."
+    }
+  ],
+  "jcA3Ig": [
+    {
+      "type": 0,
+      "value": "Obrigatório. O nome da chave dos valores dos dados de formulário a devolver."
+    }
+  ],
+  "jfInxm": [
+    {
+      "type": 0,
+      "value": "Editar em JSON"
+    }
+  ],
+  "jfU6pn": [
+    {
+      "type": 0,
+      "value": "Ativar as entradas seguras vai proteger automaticamente as saídas."
+    }
+  ],
+  "jgOaTX": [
+    {
+      "type": 0,
+      "value": "Não é possível gerar o esquema"
+    }
+  ],
+  "jlcMGg": [
+    {
+      "type": 0,
+      "value": "Descreva algo que o seu fluxo deve fazer. Adicione detalhes sempre que possível, incluindo o conector a utilizar e se algum conteúdo deve ser incluído."
+    }
+  ],
+  "juvF+0": [
+    {
+      "type": 0,
+      "value": "Gateway"
+    }
+  ],
+  "k/oqFL": [
+    {
+      "type": 0,
+      "value": "Obrigatório. A cadeia codificada em base64."
+    }
+  ],
+  "k5tGEr": [
+    {
+      "type": 0,
+      "value": "Sim"
+    }
+  ],
+  "k8cbQ1": [
+    {
+      "type": 0,
+      "value": "Erros de parâmetros"
+    }
+  ],
+  "kBOAkT": [
+    {
+      "type": 0,
+      "value": "Selecionar Campos"
+    }
+  ],
+  "kBSLfu": [
+    {
+      "type": 0,
+      "value": "Duplicar nome de propriedade"
+    }
+  ],
+  "kEI2xx": [
+    {
+      "type": 0,
+      "value": "Mensagem"
+    }
+  ],
+  "kEjmTx": [
+    {
+      "type": 0,
+      "value": "Algumas coisas que pode perguntar:"
+    }
+  ],
+  "kHcCxH": [
+    {
+      "type": 1,
+      "value": "minutes"
+    },
+    {
+      "type": 0,
+      "value": "m "
+    },
+    {
+      "type": 1,
+      "value": "seconds"
+    },
+    {
+      "type": 0,
+      "value": "s"
+    }
+  ],
+  "kHs5R4": [
+    {
+      "type": 0,
+      "value": "Verifique estas ações para ver se é necessário definir parâmetros."
+    }
+  ],
+  "kKJMeM": [
+    {
+      "type": 0,
+      "value": "Todas as semanas à segunda-feira..."
+    }
+  ],
+  "kM+Mr0": [
+    {
+      "type": 0,
+      "value": "A carregar..."
+    }
+  ],
+  "kN6kce": [
+    {
+      "type": 0,
+      "value": "Devolve uma representação de cadeia de uma cadeia based64 de entrada"
+    }
+  ],
+  "kSK9Pq": [
+    {
+      "type": 0,
+      "value": "(UTC-05:00) Bogotá, Lima, Quito, Rio Branco"
+    }
+  ],
+  "kVwJXt": [
+    {
+      "type": 0,
+      "value": "(UTC+04:00) Abu Dhabi, Mascate"
+    }
+  ],
+  "kXn5e0": [
+    {
+      "type": 0,
+      "value": "Faça uma pergunta sobre este fluxo de trabalho ou sobre o Azure Logic Apps como um todo..."
+    }
+  ],
+  "kZCX7t": [
+    {
+      "type": 0,
+      "value": "Segunda-feira"
+    }
+  ],
+  "kcOhfh": [
+    {
+      "type": 0,
+      "value": "Os elementos e mapeamentos que não estão ligados a um elemento de destino são removidos."
+    }
+  ],
+  "klY9UN": [
+    {
+      "offset": 0,
+      "options": {
+        "=0": {
+          "value": [
+            {
+              "type": 0,
+              "value": "nenhum item com correspondência."
+            }
+          ]
+        },
+        "many": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " itens com correspondência."
+            }
+          ]
+        },
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " item com correspondência."
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " itens com correspondência."
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "count"
+    }
+  ],
+  "kq+I5o": [
+    {
+      "type": 0,
+      "value": "Adicionar uma saída"
+    }
+  ],
+  "kuFK3E": [
+    {
+      "type": 0,
+      "value": "Propriedade do tipo de autenticação em falta: \"type\"."
+    }
+  ],
+  "kxMDyM": [
+    {
+      "type": 0,
+      "value": "Introduza um json válido."
+    }
+  ],
+  "l/3yJr": [
+    {
+      "type": 0,
+      "value": "Ligação inválida"
+    }
+  ],
+  "l/9YHQ": [
+    {
+      "type": 0,
+      "value": "(UTC+01:00) Windhoek"
+    }
+  ],
+  "l2YXln": [
+    {
+      "type": 0,
+      "value": "Substituir ação por"
+    }
+  ],
+  "l36V56": [
+    {
+      "type": 1,
+      "value": "hours"
+    },
+    {
+      "type": 0,
+      "value": " horas "
+    },
+    {
+      "type": 1,
+      "value": "minutes"
+    },
+    {
+      "type": 0,
+      "value": " minutos"
+    }
+  ],
+  "l536iI": [
+    {
+      "type": 0,
+      "value": "Separador Monitorização"
+    }
+  ],
+  "l72gf4": [
+    {
+      "type": 0,
+      "value": "Identidade Gerida"
+    }
+  ],
+  "lB56l2": [
+    {
+      "type": 0,
+      "value": "Introduza um número válido."
+    }
+  ],
+  "lM9qrG": [
+    {
+      "type": 0,
+      "value": "(UTC+13:00) Nuku'alofa"
+    }
+  ],
+  "lPTdSf": [
+    {
+      "type": 0,
+      "value": "Executar acionador"
+    }
+  ],
+  "lQNKUB": [
+    {
+      "type": 0,
+      "value": "É adicionada automaticamente uma linha para o elemento principal."
+    }
+  ],
+  "lR7V87": [
+    {
+      "type": 0,
+      "value": "Funções"
+    }
+  ],
+  "lX30/R": [
+    {
+      "type": 0,
+      "value": "Fechar"
+    }
+  ],
+  "lZT0JI": [
+    {
+      "type": 0,
+      "value": "Adicionar Grupo"
+    }
+  ],
+  "lckgnb": [
+    {
+      "type": 0,
+      "value": "Necessário. A coleção a inverter."
+    }
+  ],
+  "lexzgJ": [
+    {
+      "type": 0,
+      "value": "Remova todas as referências ao elemento \""
+    },
+    {
+      "type": 1,
+      "value": "nodeName"
+    },
+    {
+      "type": 0,
+      "value": "\" antes de remover o elemento."
+    }
+  ],
+  "lgs5sf": [
+    {
+      "type": 0,
+      "value": "Modo de execução sem estado:"
+    }
+  ],
+  "lh0TuF": [
+    {
+      "type": 0,
+      "value": "Lista pendente para selecionar caminho de ficheiro"
+    }
+  ],
+  "lhL/KL": [
+    {
+      "type": 0,
+      "value": "Normal"
+    }
+  ],
+  "ljAOR6": [
+    {
+      "type": 0,
+      "value": "Forma abreviada de ações (\"actionName\").outputs.body"
+    }
+  ],
+  "lkgjxD": [
+    {
+      "type": 0,
+      "value": "Obrigatório. Uma cadeia que contenha a hora de fim."
+    }
+  ],
+  "loxzZD": [
+    {
+      "type": 0,
+      "value": "Inserir Expressão (também pode adicionar ao escrever / no editor)"
+    }
+  ],
+  "lsH37F": [
+    {
+      "type": 0,
+      "value": "Valide o corpo do pedido em relação ao esquema fornecido. Caso exista um erro de correspondência, será devolvido HTTP 400"
+    }
+  ],
+  "lsKVU6": [
+    {
+      "type": 0,
+      "value": "Selecione um tipo de ação"
+    }
+  ],
+  "lwlg2K": [
+    {
+      "type": 0,
+      "value": "Sublinhar (Ctrl+S)"
+    }
+  ],
+  "lztiwS": [
+    {
+      "type": 0,
+      "value": "Valor Real"
+    }
+  ],
+  "m/jJ/5": [
+    {
+      "type": 0,
+      "value": "Verificador de mapas"
+    }
+  ],
+  "m7Y6Qf": [
+    {
+      "type": 0,
+      "value": "Testes"
+    }
+  ],
+  "m8Q61y": [
+    {
+      "type": 0,
+      "value": "Nome"
+    }
+  ],
+  "m8z4Yr": [
+    {
+      "type": 0,
+      "value": "Limiar de itens a devolver"
+    }
+  ],
+  "mAuMD+": [
+    {
+      "type": 0,
+      "value": "Introduza uma Matriz"
+    }
+  ],
+  "mCKsFw": [
+    {
+      "type": 0,
+      "value": "(UTC+07:00) Barnaul, Gorno-Altaysk"
+    }
+  ],
+  "mCzkXX": [
+    {
+      "type": 0,
+      "value": "Adicionar uma ação"
+    }
+  ],
+  "mE7w9G": [
+    {
+      "type": 0,
+      "value": "Função eliminada."
+    }
+  ],
+  "mGUdCO": [
+    {
+      "type": 0,
+      "value": "Devolve um carimbo de data/hora que é a hora atual menos o intervalo de tempo especificado."
+    }
+  ],
+  "mGpKsl": [
+    {
+      "type": 0,
+      "value": "Devolve uma representação de cadeia de um URI de dados"
+    }
+  ],
+  "mNaBPE": [
+    {
+      "type": 0,
+      "value": "Introduza um JSON válido."
+    }
+  ],
+  "mPakaD": [
+    {
+      "type": 0,
+      "value": "URL codifica a cadeia de entrada"
+    }
+  ],
+  "mPuXlv": [
+    {
+      "type": 0,
+      "value": "Tipo inválido na divisão do valor \""
+    },
+    {
+      "type": 1,
+      "value": "splitOn"
+    },
+    {
+      "type": 0,
+      "value": "\"; a divisão não se encontra na matriz."
+    }
+  ],
+  "mUURJW": [
+    {
+      "type": 0,
+      "value": "A ligação é inválida"
+    }
+  ],
+  "mYQFtf": [
+    {
+      "type": 0,
+      "value": "As propriedades obrigatórias \"secret\" ou \"pfx\" e \"password\" estão em falta para o tipo de autenticação \"ActiveDirectoryOAuth\"."
+    }
+  ],
+  "mZQYLv": [
+    {
+      "type": 0,
+      "value": "Obrigatório. A expressão XPath a avaliar."
+    }
+  ],
+  "mZRMD9": [
+    {
+      "type": 0,
+      "value": "Obrigatório. A cadeia a converter em minúsculas. Se um caráter na cadeia não tiver um equivalente em minúsculas, o caráter é incluído inalterado na cadeia devolvida."
+    }
+  ],
+  "mca3Ml": [
+    {
+      "type": 0,
+      "value": "Iniciar sessão no conector"
+    }
+  ],
+  "meVkB6": [
+    {
+      "type": 0,
+      "value": "Nome da propriedade vazio"
+    }
+  ],
+  "mej02C": [
+    {
+      "type": 0,
+      "value": "(UTC+08:30) Pyongyang"
+    }
+  ],
+  "mjS/k1": [
+    {
+      "type": 0,
+      "value": "Limite o Logic Apps para não incluir cabeçalhos de metadados do fluxo de trabalho no pedido efetuado."
+    }
+  ],
+  "mlU+AC": [
+    {
+      "type": 0,
+      "value": "Ligações"
+    }
+  ],
+  "mvrlkP": [
+    {
+      "type": 0,
+      "value": "Introduzir palavra-passe como texto simples ou utilizar um parâmetro seguro"
+    }
+  ],
+  "mvu5xN": [
+    {
+      "type": 0,
+      "value": "Valor de "
+    },
+    {
+      "type": 1,
+      "value": "name"
+    }
+  ],
+  "mwEHSX": [
+    {
+      "type": 0,
+      "value": "Função"
+    }
+  ],
+  "mx2IMJ": [
+    {
+      "type": 0,
+      "value": "13"
+    }
+  ],
+  "n+F7e2": [
+    {
+      "type": 0,
+      "value": "15"
+    }
+  ],
+  "n20T2h": [
+    {
+      "type": 0,
+      "value": "7"
+    }
+  ],
+  "n35O/+": [
+    {
+      "type": 0,
+      "value": "Obrigatório. O valor que é convertido num número de vírgula flutuante."
+    }
+  ],
+  "n42uAO": [
+    {
+      "type": 0,
+      "value": "(UTC-04:00) Santiago"
+    }
+  ],
+  "n4V2Hi": [
+    {
+      "type": 0,
+      "value": "Active Directory OAuth"
+    }
+  ],
+  "n7wxxN": [
+    {
+      "type": 0,
+      "value": "Experimente com palavras-chave menos específicas."
+    }
+  ],
+  "nCa0KG": [
+    {
+      "type": 0,
+      "value": "Erros Internos"
+    }
+  ],
+  "nGds/r": [
+    {
+      "type": 0,
+      "value": "Obrigatório. O objeto a verificar se é inferior ou igual ao valor com que está a ser comparado."
+    }
+  ],
+  "nHIeXp": [
+    {
+      "type": 0,
+      "value": "Omitido"
+    }
+  ],
+  "nHseED": [
+    {
+      "type": 0,
+      "value": "Obrigatório. O número de unidades de tempo que o tempo pretendido é no futuro."
+    }
+  ],
+  "nNWAAh": [
+    {
+      "type": 0,
+      "value": "Não foi adicionado nenhum esquema."
+    }
+  ],
+  "nOWGAV": [
+    {
+      "type": 0,
+      "value": "Hora de fim"
+    }
+  ],
+  "nOhve4": [
+    {
+      "type": 0,
+      "value": "Sim/Não"
+    }
+  ],
+  "nPgYuI": [
+    {
+      "type": 0,
+      "value": "Novo parâmetro"
+    }
+  ],
+  "nRpM02": [
+    {
+      "type": 0,
+      "value": "Personalizado"
+    }
+  ],
+  "nSUXtP": [
+    {
+      "type": 0,
+      "value": "Esta alteração modificará várias ações."
+    }
+  ],
+  "nSan4V": [
+    {
+      "type": 0,
+      "value": "Repor"
+    }
+  ],
+  "nTA155": [
+    {
+      "type": 0,
+      "value": "Necessário. O nome da propriedade a remover."
+    }
+  ],
+  "nVDG00": [
+    {
+      "type": 0,
+      "value": "(UTC+14:00) Ilha de Kiritimati"
+    }
+  ],
+  "nZ4nLn": [
+    {
+      "type": 0,
+      "value": "Suprimir cabeçalhos do fluxo de trabalho"
+    }
+  ],
+  "ncW1Sw": [
+    {
+      "type": 0,
+      "value": "Operação "
+    },
+    {
+      "type": 1,
+      "value": "operationName"
+    },
+    {
+      "type": 0,
+      "value": ", conector "
+    },
+    {
+      "type": 1,
+      "value": "connectorName"
+    }
+  ],
+  "ngsC44": [
+    {
+      "type": 0,
+      "value": "Obrigatório. O objeto a verificar se é inferior ao objeto com que está a ser comparado."
+    }
+  ],
+  "njGstq": [
+    {
+      "type": 0,
+      "value": "(UTC+05:45) Catmandu"
+    }
+  ],
+  "nkk1mu": [
+    {
+      "type": 0,
+      "value": "Adiciona um número inteiro de minutos a um carimbo de data/hora de cadeia"
+    }
+  ],
+  "nmFupX": [
+    {
+      "type": 0,
+      "value": "Excedeu o tempo limite"
+    }
+  ],
+  "no/SMg": [
+    {
+      "type": 0,
+      "value": "(UTC+10:00) Brisbane"
+    }
+  ],
+  "nx25nq": [
+    {
+      "type": 0,
+      "value": "19"
+    }
+  ],
+  "ny75Ly": [
+    {
+      "type": 0,
+      "value": "Introduza o valor predefinido para o parâmetro."
+    }
+  ],
+  "o/0SEj": [
+    {
+      "type": 0,
+      "value": "Devolve o último elemento na matriz ou cadeia transmitida"
+    }
+  ],
+  "o/FgET": [
+    {
+      "type": 0,
+      "value": "A função foi removida da localização atual e existe atualmente noutro local."
+    }
+  ],
+  "o14STH": [
+    {
+      "type": 0,
+      "value": "Obrigatório. O XML no qual se deve avaliar a expressão XPath."
+    }
+  ],
+  "o1HOyf": [
+    {
+      "type": 1,
+      "value": "current_page"
+    },
+    {
+      "type": 0,
+      "value": " de "
+    },
+    {
+      "type": 1,
+      "value": "max_page"
+    }
+  ],
+  "o3SfI4": [
+    {
+      "type": 0,
+      "value": "Aplicar zoom até ajustar"
+    }
+  ],
+  "o5fYVy": [
+    {
+      "type": 0,
+      "value": "Descreva este fluxo de trabalho."
+    }
+  ],
+  "o7bd1o": [
+    {
+      "type": 0,
+      "value": "(UTC+03:30) Teerão"
+    }
+  ],
+  "o8ohVV": [
+    {
+      "type": 0,
+      "value": "ID de esquema"
+    }
+  ],
+  "oAFcW6": [
+    {
+      "type": 0,
+      "value": "Obrigatório. O URI de dados a descodificar para uma representação binária."
+    }
+  ],
+  "oDHXKh": [
+    {
+      "type": 0,
+      "value": "Item"
+    }
+  ],
+  "oLtwMw": [
+    {
+      "type": 0,
+      "value": "Transferência de Conteúdo"
+    }
+  ],
+  "oMphsh": [
+    {
+      "type": 0,
+      "value": "Definições"
+    }
+  ],
+  "oO12r6": [
+    {
+      "type": 0,
+      "value": "(UTC-08:00) Baja California"
+    }
+  ],
+  "oQjIWf": [
+    {
+      "type": 0,
+      "value": "Erros"
+    }
+  ],
+  "oR2x4N": [
+    {
+      "type": 0,
+      "value": "Valor de número inteiro inválido"
+    }
+  ],
+  "oRxmXb": [
+    {
+      "type": 0,
+      "value": "Copiar Acionador"
+    }
+  ],
+  "oTBkbU": [
+    {
+      "type": 0,
+      "value": "Saída"
+    }
+  ],
+  "oV0xQ9": [
+    {
+      "type": 0,
+      "value": "Introduza o identificador da execução para abrir a execução"
+    }
+  ],
+  "oVVPst": [
+    {
+      "type": 0,
+      "value": "Pretende eliminar todas as alterações não guardadas?"
+    }
+  ],
+  "oWGaw9": [
+    {
+      "type": 0,
+      "value": "Ver Menos"
+    }
+  ],
+  "oZMhX/": [
+    {
+      "type": 0,
+      "value": "Expandir"
+    }
+  ],
+  "odQ554": [
+    {
+      "type": 0,
+      "value": "Corpo de resposta"
+    }
+  ],
+  "onXUu0": [
+    {
+      "type": 0,
+      "value": "Adicionar uma nota"
+    }
+  ],
+  "osKNnl": [
+    {
+      "type": 0,
+      "value": "Introduza um número Duplo válido."
+    }
+  ],
+  "ox2Ou7": [
+    {
+      "type": 0,
+      "value": "Introduza um JSON válido"
+    }
+  ],
+  "oxXV4+": [
+    {
+      "type": 0,
+      "value": "Devolve o primeiro objeto não nulo nos valores de argumento transmitidos."
+    }
+  ],
+  "p/0r2N": [
+    {
+      "type": 0,
+      "value": "Obrigatório. O nome da chave do valor dos dados de formulário a devolver."
+    }
+  ],
+  "p16/4S": [
+    {
+      "type": 0,
+      "value": "Cabeçalhos"
+    }
+  ],
+  "p1IEXb": [
+    {
+      "type": 0,
+      "value": "Introduza os dados do passo anterior. Também pode adicionar dados ao introduzir o caráter \"/\"."
+    }
+  ],
+  "p1Qtm5": [
+    {
+      "type": 0,
+      "value": "Na Aplicação"
+    }
+  ],
+  "p5ZID0": [
+    {
+      "type": 0,
+      "value": "(UTC+03:00) Koweit, Riade"
+    }
+  ],
+  "pC2nr2": [
+    {
+      "type": 0,
+      "value": "Introduzir chave"
+    }
+  ],
+  "pH2uak": [
+    {
+      "type": 0,
+      "value": "Fechar"
+    }
+  ],
+  "pIczsS": [
+    {
+      "type": 0,
+      "value": "Hora de fim"
+    }
+  ],
+  "pMms92": [
+    {
+      "type": 0,
+      "value": "Inserir Conteúdo Dinâmico"
+    }
+  ],
+  "pOTcUO": [
+    {
+      "type": 0,
+      "value": "Obrigatório. Os valores a combinar numa matriz."
+    }
+  ],
+  "pOVDll": [
+    {
+      "type": 0,
+      "value": "Introduza um número inteiro válido."
+    }
+  ],
+  "pXmFGf": [
+    {
+      "type": 0,
+      "value": "Converter a entrada num valor de tipo Xml"
+    }
+  ],
+  "pYNzbj": [
+    {
+      "type": 0,
+      "value": "Caminho"
+    }
+  ],
+  "pYtSyE": [
+    {
+      "type": 0,
+      "value": "Obrigatório. O número pelo qual se divide o Dividendo. Após a divisão, o resto é retirado."
+    }
+  ],
+  "pc0FCg": [
+    {
+      "type": 0,
+      "value": "Botão para adicionar conteúdo dinâmico se o Seletor de Tokens estiver oculto"
+    }
+  ],
+  "pcGqoB": [
+    {
+      "type": 0,
+      "value": "Erro ao carregar saídas"
+    }
+  ],
+  "pcuZKB": [
+    {
+      "type": 0,
+      "value": "Devolve uma matriz ou um objeto únicos que tem elementos comuns entre matrizes ou objetos transmitidos. Os parâmetros da função podem ser um conjunto de objetos ou um conjunto de matrizes (não uma mistura de ambos). Se existirem dois objetos com o mesmo nome, o último objeto com esse nome aparece no objeto final."
+    }
+  ],
+  "piaRy6": [
+    {
+      "type": 0,
+      "value": "Acionadores"
+    }
+  ],
+  "pozypE": [
+    {
+      "type": 0,
+      "value": "Corta os espaços em branco à esquerda e à direita da cadeia"
+    }
+  ],
+  "pr9GwA": [
+    {
+      "type": 0,
+      "value": "Atualizar"
+    }
+  ],
+  "ptkf0D": [
+    {
+      "type": 0,
+      "value": "Segurança"
+    }
+  ],
+  "q+ZZjX": [
+    {
+      "type": 0,
+      "value": "Histórico de Novas Tentativas"
+    }
+  ],
+  "q/+Uex": [
+    {
+      "type": 0,
+      "value": "Devolve um nó XML, conjunto de nós ou valor como JSON a partir da expressão XPath fornecida"
+    }
+  ],
+  "q/DRBW": [
+    {
+      "type": 0,
+      "value": "Obrigatório. A cadeia a partir de onde calcular o comprimento UTF-8."
+    }
+  ],
+  "q1gfIs": [
+    {
+      "type": 0,
+      "value": "Adicionar um acionador"
+    }
+  ],
+  "q2OCEx": [
+    {
+      "type": 0,
+      "value": "Necessário. O valor a atribuir à propriedade."
+    }
+  ],
+  "q2w8Sk": [
+    {
+      "type": 0,
+      "value": "Converter o parâmetro para uma cadeia"
+    }
+  ],
+  "q4ChjK": [
+    {
+      "type": 0,
+      "value": "Selecionar fluxo de trabalho com acionador \"manual\""
+    }
+  ],
+  "q5TkqE": [
+    {
+      "type": 0,
+      "value": "Obrigatório. O valor a devolver se a expressão for falsa."
+    }
+  ],
+  "q87X20": [
+    {
+      "type": 0,
+      "value": "Adiciona um número inteiro de segundos a um carimbo de data/hora de cadeia"
+    }
+  ],
+  "qAlTD5": [
+    {
+      "type": 0,
+      "value": "Formato de referência de ligação de manifesto não compatível: \""
+    },
+    {
+      "type": 1,
+      "value": "referenceKeyFormat"
+    },
+    {
+      "type": 0,
+      "value": "\"."
+    }
+  ],
+  "qBNM3e": [
+    {
+      "type": 0,
+      "value": "A ligar a aplicações e serviços"
+    }
+  ],
+  "qBkxGU": [
+    {
+      "type": 0,
+      "value": "Formatar texto como sublinhado. Atalho: ⌘S"
+    }
+  ],
+  "qGfwxW": [
+    {
+      "type": 0,
+      "value": "Identidade gerida"
+    }
+  ],
+  "qJpnIL": [
+    {
+      "type": 0,
+      "value": "Verifica se a cadeia termina com um valor (sensível a maiúsculas e minúsculas, cultura invariante)"
+    }
+  ],
+  "qSejoi": [
+    {
+      "type": 0,
+      "value": "Devolve verdadeiro se o primeiro argumento for mais pequeno ou igual ao segundo"
+    }
+  ],
+  "qSt0Sb": [
+    {
+      "type": 0,
+      "value": "Obrigatório"
+    }
+  ],
+  "qUMXpq": [
+    {
+      "type": 0,
+      "value": "Ponto Final de Swagger"
+    }
+  ],
+  "qUWBUX": [
+    {
+      "offset": 0,
+      "options": {
+        "many": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " dias"
+            }
+          ]
+        },
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " dia"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " dias"
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "days"
+    }
+  ],
+  "qVgQfW": [
+    {
+      "type": 0,
+      "value": "Pesquisar"
+    }
+  ],
+  "qc5S69": [
+    {
+      "type": 0,
+      "value": "Devolve o número de elementos de uma matriz ou uma cadeia"
+    }
+  ],
+  "qdUeUk": [
+    {
+      "type": 0,
+      "value": "Clicar para Expandir"
+    }
+  ],
+  "qiIs4V": [
+    {
+      "type": 0,
+      "value": "Exemplo: "
+    },
+    {
+      "type": 1,
+      "value": "example"
+    }
+  ],
+  "qij+Vf": [
+    {
+      "type": 0,
+      "value": "Mudar para modo de visualização predefinido"
+    }
+  ],
+  "qnI4Y1": [
+    {
+      "type": 0,
+      "value": "Obrigatório. O valor que é convertido num número inteiro."
+    }
+  ],
+  "qr1lLG": [
+    {
+      "type": 0,
+      "value": "A função \""
+    },
+    {
+      "type": 1,
+      "value": "nodeName"
+    },
+    {
+      "type": 0,
+      "value": "\" tem uma entrada com um tipo sem correspondência"
+    }
+  ],
+  "qrxi0L": [
+    {
+      "type": 0,
+      "value": "A resposta assíncrona permite que uma Aplicação Lógica responda com um 202 (Aceite) para indicar que o pedido foi aceite para processamento. Será fornecido um cabeçalho de localização para obter o estado final."
+    }
+  ],
+  "qy5WqY": [
+    {
+      "type": 0,
+      "value": "Sugestão de fluxo anterior"
+    }
+  ],
+  "qzaoRR": [
+    {
+      "type": 0,
+      "value": "Limite a duração máxima entre novas tentativas e as respostas assíncronas para esta ação. Nota: esta ação não altera o tempo limite de um pedido único"
+    }
+  ],
+  "r/n6/9": [
+    {
+      "type": 0,
+      "value": "Introduza um valor"
+    }
+  ],
+  "r43nMc": [
+    {
+      "type": 0,
+      "value": "Anular"
+    }
+  ],
+  "r4zp7m": [
+    {
+      "type": 0,
+      "value": "Expandida"
+    }
+  ],
+  "r7vZ5a": [
+    {
+      "type": 0,
+      "value": "Intervalo mínimo"
+    }
+  ],
+  "r8aZXs": [
+    {
+      "type": 0,
+      "value": "Permite que uma expressão derive o respetivo valor de outro nome JSON e pares de valor ou o resultado da ação de runtime"
+    }
+  ],
+  "r9SVE4": [
+    {
+      "type": 0,
+      "value": "Número Inteiro"
+    }
+  ],
+  "rAwCdh": [
+    {
+      "type": 0,
+      "value": "Ligar através do gateway de dados no local"
+    }
+  ],
+  "rAyuzv": [
+    {
+      "type": 0,
+      "value": "Não"
+    }
+  ],
+  "rCl53e": [
+    {
+      "type": 0,
+      "value": "Título do Cartão"
+    }
+  ],
+  "rDDPpJ": [
+    {
+      "type": 0,
+      "value": "Segredo"
+    }
+  ],
+  "rNi5Y3": [
+    {
+      "type": 0,
+      "value": "Selecione esta caixa de verificação se estiver a configurar uma ligação no local."
+    }
+  ],
+  "rSIBjh": [
+    {
+      "type": 0,
+      "value": "Introduza o valor para o parâmetro."
+    }
+  ],
+  "rSa1Id": [
+    {
+      "type": 0,
+      "value": "Não foram encontrados ficheiros no caminho "
+    },
+    {
+      "type": 1,
+      "value": "filePath"
+    },
+    {
+      "type": 0,
+      "value": ". Guarde o ficheiro XSLT no caminho especificado para utilizar esta função"
+    }
+  ],
+  "raBiud": [
+    {
+      "type": 0,
+      "value": "Obrigatório. Uma matriz de valores para encontrar o valor máximo ou o primeiro valor de um conjunto."
+    }
+  ],
+  "rcz4w4": [
+    {
+      "type": 0,
+      "value": "Devolve uma representação codificada de URI de um valor"
+    }
+  ],
+  "rd6fai": [
+    {
+      "type": 0,
+      "value": "Utilizar as teclas de seta para a esquerda e direita para navegar entre os comandos"
+    }
+  ],
+  "rh5g4p": [
+    {
+      "type": 0,
+      "value": "Teve êxito"
+    }
+  ],
+  "rsdJcV": [
+    {
+      "type": 0,
+      "value": "Selecione elementos de esquema de origem para criar o seu mapa"
+    }
+  ],
+  "rv0Pn+": [
+    {
+      "type": 0,
+      "value": "Adicionar novo"
+    }
+  ],
+  "rxIJfD": [
+    {
+      "type": 0,
+      "value": "(UTC+09:30) Darwin"
+    }
+  ],
+  "rxMXmZ": [
+    {
+      "type": 0,
+      "value": "(UTC+04:00) Port Louis"
+    }
+  ],
+  "s+4LEa": [
+    {
+      "type": 0,
+      "value": "Abrir pasta"
+    }
+  ],
+  "s5RV9B": [
+    {
+      "type": 0,
+      "value": "Devolve o dia do componente do ano de um carimbo de data/hora de cadeia"
+    }
+  ],
+  "s7nGyC": [
+    {
+      "type": 0,
+      "value": "Eliminar"
+    }
+  ],
+  "sBBLuh": [
+    {
+      "type": 0,
+      "value": "Para guardar este fluxo de trabalho, conclua a configuração destas ações:"
+    }
+  ],
+  "sDkAVZ": [
+    {
+      "type": 0,
+      "value": "Devolve uma matriz de valores que correspondem ao nome da chave a partir de dados do formulário ou de saída de acionador de formulário codificado"
+    }
+  ],
+  "sEqLTV": [
+    {
+      "type": 0,
+      "value": "Separador Teste"
+    }
+  ],
+  "sFbnCs": [
+    {
+      "type": 0,
+      "value": "(UTC-05:00) Chetumal"
+    }
+  ],
+  "sFwHQc": [
+    {
+      "type": 0,
+      "value": "Cancelar a criação de uma ligação"
+    }
+  ],
+  "sQ2vRs": [
+    {
+      "type": 0,
+      "value": "Adicionar Incidente"
+    }
+  ],
+  "sRpETS": [
+    {
+      "type": 0,
+      "value": "Aviso: o valor personalizado não corresponde ao tipo do nó de esquema"
+    }
+  ],
+  "sVQe34": [
+    {
+      "type": 0,
+      "value": "Forneça parâmetros para testar a saída."
+    }
+  ],
+  "sW47JR": [
+    {
+      "type": 0,
+      "value": "Grau de Paralelismo"
+    }
+  ],
+  "sYQDN+": [
+    {
+      "type": 0,
+      "value": "Opções de formatação para a família de tipos de letra"
+    }
+  ],
+  "sZ0G/Z": [
+    {
+      "type": 0,
+      "value": "Obrigatório. Uma cadeia com a unidade de tempo especificada no intervalo para adicionar."
+    }
+  ],
+  "sZHTQV": [
+    {
+      "type": 0,
+      "value": "(UTC+09:00) Chita"
+    }
+  ],
+  "sbPZ9S": [
+    {
+      "type": 0,
+      "value": "Obrigatório. A coleção a verificar para saber se está vazia."
+    }
+  ],
+  "sfJTHV": [
+    {
+      "type": 0,
+      "value": "Obrigatório. O número a remover do Minuendo."
+    }
+  ],
+  "shF9tZ": [
+    {
+      "type": 0,
+      "value": "Chave"
+    }
+  ],
+  "snJFUi": [
+    {
+      "type": 0,
+      "value": "Ctrl+C"
+    }
+  ],
+  "soqP+Z": [
+    {
+      "type": 0,
+      "value": "Devolve verdadeiro se qualquer um destes parâmetros for verdadeiro"
+    }
+  ],
+  "srMbm9": [
+    {
+      "type": 0,
+      "value": "Cancelar"
+    }
+  ],
+  "srpZD2": [
+    {
+      "type": 0,
+      "value": "ID de Cliente"
+    }
+  ],
+  "ss5JPH": [
+    {
+      "type": 0,
+      "value": "Novo parâmetro"
+    }
+  ],
+  "sv+IcU": [
+    {
+      "type": 0,
+      "value": "Não é possível gerar a definição do mapa de dados"
+    }
+  ],
+  "svaqnp": [
+    {
+      "type": 0,
+      "value": "Error should not be provided when status is \"Succeeded\""
+    }
+  ],
+  "sw6EXK": [
+    {
+      "type": 0,
+      "value": "Estado"
+    }
+  ],
+  "syiNc+": [
+    {
+      "type": 0,
+      "value": "Procurar"
+    }
+  ],
+  "sys5gu": [
+    {
+      "type": 0,
+      "value": "Certificado de Cliente"
+    }
+  ],
+  "sytRna": [
+    {
+      "type": 0,
+      "value": "Falha ao obter entradas dinâmicas. Detalhes do erro: \""
+    },
+    {
+      "type": 1,
+      "value": "message"
+    },
+    {
+      "type": 0,
+      "value": "\""
+    }
+  ],
+  "t+XCkg": [
+    {
+      "type": 0,
+      "value": "Obrigatório. Uma cadeia que contém o nome do fuso horário de destino. Veja https://msdn.microsoft.com/en-us/library/gg154758.aspx para obter detalhes."
+    }
+  ],
+  "t9RwOi": [
+    {
+      "type": 0,
+      "value": "A expressão é inválida."
+    }
+  ],
+  "tAbbH8": [
+    {
+      "type": 0,
+      "value": "Demasiadas entradas atribuídas"
+    }
+  ],
+  "tAeKNh": [
+    {
+      "type": 0,
+      "value": "Simples"
+    }
+  ],
+  "tE7Zam": [
+    {
+      "type": 0,
+      "value": "Devolve o URL para invocar o acionador ou a ação"
+    }
+  ],
+  "tH2pT1": [
+    {
+      "type": 0,
+      "value": "Regressar à pesquisa"
+    }
+  ],
+  "tImHz/": [
+    {
+      "type": 1,
+      "value": "days"
+    },
+    {
+      "type": 0,
+      "value": "d "
+    },
+    {
+      "type": 1,
+      "value": "hours"
+    },
+    {
+      "type": 0,
+      "value": "h"
+    }
+  ],
+  "tLZ9Sh": [
+    {
+      "type": 0,
+      "value": "Obrigatório. O índice da parte a obter."
+    }
+  ],
+  "tMRPnG": [
+    {
+      "type": 0,
+      "value": "Esta função fornece detalhes sobre o fluxo de trabalho no runtime"
+    }
+  ],
+  "tMdcE1": [
+    {
+      "type": 0,
+      "value": "Ligação inválida. Atualize a sua ligação para carregar os detalhes completos"
+    }
+  ],
+  "tNoZx2": [
+    {
+      "type": 0,
+      "value": "Tipo"
+    }
+  ],
+  "tTIsTX": [
+    {
+      "type": 0,
+      "value": "Testar este fluxo de trabalho"
+    }
+  ],
+  "tUCptx": [
+    {
+      "type": 0,
+      "value": "Inserir Ligação"
+    }
+  ],
+  "tUU4ak": [
+    {
+      "type": 0,
+      "value": "(UTC+11:00) Chokurdakh"
+    }
+  ],
+  "tUYXRA": [
+    {
+      "type": 0,
+      "value": "Exemplo: 2017-03-24T15:00:00Z"
+    }
+  ],
+  "tUlRzr": [
+    {
+      "type": 0,
+      "value": "Básica"
+    }
+  ],
+  "tWV2mC": [
+    {
+      "type": 0,
+      "value": "às "
+    },
+    {
+      "type": 1,
+      "value": "times"
+    },
+    {
+      "type": 0,
+      "value": " a cada hora"
+    }
+  ],
+  "tZIlCA": [
+    {
+      "type": 0,
+      "value": "(UTC-08:00) Hora do Pacífico (E.U.A. e Canadá)"
+    }
+  ],
+  "tZj2Xn": [
+    {
+      "type": 0,
+      "value": "Devolve verdadeiro se o primeiro argumento for maior do que o segundo"
+    }
+  ],
+  "taPCmY": [
+    {
+      "type": 0,
+      "value": "Obrigatório. O número de horas a adicionar. Pode ser negativo para subtrair horas."
+    }
+  ],
+  "tarDYT": [
+    {
+      "type": 0,
+      "value": "Devolve verdadeiro se o primeiro argumento for mais pequeno do que o segundo."
+    }
+  ],
+  "td5//c": [
+    {
+      "type": 0,
+      "value": "Fechar nó de árvore"
+    }
+  ],
+  "ti5TEd": [
+    {
+      "type": 0,
+      "value": "Cancelar"
+    }
+  ],
+  "tqqUHX": [
+    {
+      "type": 0,
+      "value": "(UTC+12:45) Ilhas Chatham"
+    }
+  ],
+  "tsmuoF": [
+    {
+      "type": 0,
+      "value": "Nome a Apresentar"
+    }
+  ],
+  "tu4TTM": [
+    {
+      "type": 0,
+      "value": "Pré-visualização"
+    }
+  ],
+  "u81zB9": [
+    {
+      "type": 0,
+      "value": "(UTC-09:00) Hora Universal Coordenada-09"
+    }
+  ],
+  "u9tr3k": [
+    {
+      "type": 0,
+      "value": "Selecione um elemento para começar a configurar"
+    }
+  ],
+  "uDI1Um": [
+    {
+      "type": 0,
+      "value": "Código de Estado"
+    }
+  ],
+  "uE0A0s": [
+    {
+      "type": 0,
+      "value": "(UTC) Hora Universal Coordenada"
+    }
+  ],
+  "uIurld": [
+    {
+      "type": 0,
+      "value": "Guardar"
+    }
+  ],
+  "uM1i27": [
+    {
+      "type": 0,
+      "value": "Especificar uma contagem de novas tentativas de 1 a 90"
+    }
+  ],
+  "uN4zFU": [
+    {
+      "type": 0,
+      "value": "OK"
+    }
+  ],
+  "uNHpGB": [
+    {
+      "type": 0,
+      "value": "(UTC+07:00) Banguecoque, Hanói, Jacarta"
+    }
+  ],
+  "uOWkHS": [
+    {
+      "type": 0,
+      "value": "Falha ao obter saídas dinâmicas. Como resultado, as saídas desta operação poderão não estar visíveis em ações subsequentes. Detalhes do erro: "
+    },
+    {
+      "type": 1,
+      "value": "message"
+    }
+  ],
+  "uR9WuI": [
+    {
+      "type": 0,
+      "value": "Obrigatório. As coleções a avaliar. Um objeto que apareça em qualquer uma das coleções também aparece no resultado."
+    }
+  ],
+  "uTnqzQ": [
+    {
+      "type": 0,
+      "value": "Ver Mais ("
+    },
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": ")"
+    }
+  ],
+  "uUlBZ8": [
+    {
+      "type": 0,
+      "value": "Adiciona um número inteiro de horas a um carimbo de data/hora de cadeia"
+    }
+  ],
+  "uWf/I5": [
+    {
+      "type": 0,
+      "value": "Mostrar-me"
+    }
+  ],
+  "uZpzqY": [
+    {
+      "type": 0,
+      "value": "Lamentamos, mas o Copilot está temporariamente indisponível. Tente novamente dentro de momentos."
+    }
+  ],
+  "uanMWm": [
+    {
+      "type": 0,
+      "value": "Com êxito"
+    }
+  ],
+  "uc/PoD": [
+    {
+      "type": 0,
+      "value": "Obrigatório. O número de unidades de tempo que o tempo pretendido é no passado."
+    }
+  ],
+  "uc3ytS": [
+    {
+      "type": 0,
+      "value": "Selecionar um runtime"
+    }
+  ],
+  "uczA5c": [
+    {
+      "type": 0,
+      "value": "Obrigatório. A cadeia que poderá conter o valor."
+    }
+  ],
+  "uesaee": [
+    {
+      "type": 0,
+      "value": "Expressão"
+    }
+  ],
+  "uh/+ZN": [
+    {
+      "type": 0,
+      "value": "(UTC-03:00) Gronelândia"
+    }
+  ],
+  "ui3KuP": [
+    {
+      "type": 0,
+      "value": "Erros de operação"
+    }
+  ],
+  "ui7GCl": [
+    {
+      "type": 0,
+      "value": "16"
+    }
+  ],
+  "unMG8m": [
+    {
+      "type": 0,
+      "value": "Tipo de conector"
+    }
+  ],
+  "unMaeV": [
+    {
+      "type": 0,
+      "value": "Variáveis"
+    }
+  ],
+  "urAHv1": [
+    {
+      "type": 0,
+      "value": "4"
+    }
+  ],
+  "usCZ7R": [
+    {
+      "type": 0,
+      "value": "(UTC+11:00) Magadan"
+    }
+  ],
+  "ut5Med": [
+    {
+      "type": 0,
+      "value": "Valor Predefinido"
+    }
+  ],
+  "uwuGU0": [
+    {
+      "type": 0,
+      "value": "(UTC+06:30) Yangon (Rangum)"
+    }
+  ],
+  "uxKRO/": [
+    {
+      "type": 0,
+      "value": "Parâmetros"
+    }
+  ],
+  "uxQ143": [
+    {
+      "type": 0,
+      "value": "Faça uma pergunta relacionada com o seu fluxo de trabalho ou Logic Apps."
+    }
+  ],
+  "uxt1xW": [
+    {
+      "type": 0,
+      "value": "Remover parâmetro \""
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "\" e o respetivo valor"
+    }
+  ],
+  "uzsleE": [
+    {
+      "type": 0,
+      "value": "Cria uma matriz a partir dos parâmetros"
+    }
+  ],
+  "v+keTP": [
+    {
+      "type": 0,
+      "value": "Data do acionador"
+    }
+  ],
+  "v39HKj": [
+    {
+      "type": 0,
+      "value": "Gera uma cadeia de carateres exclusiva global (GUID)"
+    }
+  ],
+  "v7ipqH": [
+    {
+      "type": 0,
+      "value": "Cada ação tem de ter uma ou mais execução após as configurações"
+    }
+  ],
+  "vDYFIF": [
+    {
+      "type": 0,
+      "value": "Devolve o comprimento de bytes UTF-16 de uma cadeia de entrada"
+    }
+  ],
+  "vEBhDX": [
+    {
+      "type": 0,
+      "value": "Devolve o último índice de um valor numa cadeia (sensível a maiúsculas e minúsculas, cultura invariante)"
+    }
+  ],
+  "vF+gWH": [
+    {
+      "type": 0,
+      "value": "Explicar o que este fluxo faz"
+    }
+  ],
+  "vLereV": [
+    {
+      "type": 0,
+      "value": "Obrigatório. A cadeia da qual se deve retirar os primeiros objetos de Contagem."
+    }
+  ],
+  "vQcQkU": [
+    {
+      "type": 0,
+      "value": "Obrigatório. O valor com o qual a cadeia poderá terminar."
+    }
+  ],
+  "vSlNPe": [
+    {
+      "type": 0,
+      "value": "Eliminar"
+    }
+  ],
+  "vT0DCP": [
+    {
+      "type": 0,
+      "value": "Saídas"
+    }
+  ],
+  "vX9WYS": [
+    {
+      "type": 0,
+      "value": "Audiência"
+    }
+  ],
+  "va40BJ": [
+    {
+      "type": 0,
+      "value": "Obrigatório. O nome da ação cujas saídas quer."
+    }
+  ],
+  "vdKLiR": [
+    {
+      "type": 0,
+      "value": "Definições de Pedidos"
+    }
+  ],
+  "vdtKjT": [
+    {
+      "type": 0,
+      "value": "Para criar e utilizar uma ligação à API, tem de ter uma identidade gerida configurada nesta aplicação lógica."
+    }
+  ],
+  "viee6C": [
+    {
+      "type": 0,
+      "value": "Duração"
+    }
+  ],
+  "vlDynP": [
+    {
+      "type": 0,
+      "value": "Descartar"
+    }
+  ],
+  "vmlhVB": [
+    {
+      "type": 0,
+      "value": "Para preparar este fluxo de trabalho, conclua a configuração desta ação:"
+    }
+  ],
+  "vr70Gn": [
+    {
+      "type": 0,
+      "value": "Crie uma ligação para "
+    },
+    {
+      "type": 1,
+      "value": "connectorName"
+    },
+    {
+      "type": 0,
+      "value": "."
+    }
+  ],
+  "vrYqUF": [
+    {
+      "type": 0,
+      "value": "Introduzir valor personalizado"
+    }
+  ],
+  "vvSHR8": [
+    {
+      "type": 0,
+      "value": "Navegar para elemento e ver subordinados"
+    }
+  ],
+  "vwH/XV": [
+    {
+      "type": 0,
+      "value": "Criar parâmetro"
+    }
+  ],
+  "vxOc/M": [
+    {
+      "type": 0,
+      "value": "Contém um valor duplicado"
+    }
+  ],
+  "vz2gZC": [
+    {
+      "type": 0,
+      "value": "Propriedades do Fluxo de Trabalho"
+    }
+  ],
+  "w0pI5M": [
+    {
+      "type": 0,
+      "value": "Não foram encontrados resultados para os filtros especificados"
+    }
+  ],
+  "w16qh+": [
+    {
+      "type": 0,
+      "value": "Consultas"
+    }
+  ],
+  "w5Hhig": [
+    {
+      "type": 0,
+      "value": "Domingo"
+    }
+  ],
+  "w8ijDZ": [
+    {
+      "type": 0,
+      "value": "Fechar"
+    }
+  ],
+  "wEaGWn": [
+    {
+      "type": 0,
+      "value": "Subtrai um número inteiro de uma unidade de tempo especificada a partir de um carimbo de data/hora de cadeia transmitido"
+    }
+  ],
+  "wF7C+h": [
+    {
+      "type": 0,
+      "value": "Cancelar"
+    }
+  ],
+  "wFCkpM": [
+    {
+      "type": 0,
+      "value": "Obrigatório. Uma matriz de valores para encontrar o valor mínimo ou o primeiro valor de um conjunto."
+    }
+  ],
+  "wGYmui": [
+    {
+      "type": 0,
+      "value": "Incluir conteúdo dinâmico"
+    }
+  ],
+  "wP0/uB": [
+    {
+      "type": 0,
+      "value": "Parar de gerar"
+    }
+  ],
+  "wPlTDB": [
+    {
+      "type": 0,
+      "value": "Caminho completo"
+    }
+  ],
+  "wQcEXt": [
+    {
+      "type": 0,
+      "value": "Obrigatório. A cadeia que é procurada para o parâmetro 2 e atualizada com o parâmetro 3 quando o parâmetro 2 é encontrado no parâmetro 1."
+    }
+  ],
+  "wQsEwc": [
+    {
+      "type": 0,
+      "value": "Obrigatório. O comprimento da subcadeia."
+    }
+  ],
+  "wV3Lmd": [
+    {
+      "type": 0,
+      "value": "Clicar para eliminar o item"
+    }
+  ],
+  "wWVQuK": [
+    {
+      "type": 0,
+      "value": "Devolve um valor especificado baseado se o resultado da expressão for verdadeiro ou falso"
+    }
+  ],
+  "wXJALc": [
+    {
+      "type": 0,
+      "value": "Menu"
+    }
+  ],
+  "wkiETV": [
+    {
+      "type": 0,
+      "value": "ID de Rastreio de Cliente"
+    }
+  ],
+  "wkvUUA": [
+    {
+      "type": 0,
+      "value": "Erro de correspondência do tipo de entrada"
+    }
+  ],
+  "wl7X0l": [
+    {
+      "type": 0,
+      "value": "Ocultar mini-mapa"
+    }
+  ],
+  "wmDUGV": [
+    {
+      "type": 0,
+      "value": "Converte um carimbo de data/hora de cadeia transmitido a partir de um fuso horário de origem para UTC"
+    }
+  ],
+  "wmw/ai": [
+    {
+      "type": 0,
+      "value": "Devolve uma matriz ou um objeto único com todos os elementos que estão na matriz ou no objeto transmitido para esta função"
+    }
+  ],
+  "woJQhv": [
+    {
+      "type": 0,
+      "value": "URL de retorno:"
+    }
+  ],
+  "wtj07J": [
+    {
+      "type": 0,
+      "value": "(UTC-09:30) Ilhas Marquesas"
+    }
+  ],
+  "ww1mN/": [
+    {
+      "type": 0,
+      "value": "Tela"
+    }
+  ],
+  "wxaQwD": [
+    {
+      "type": 0,
+      "value": "(UTC+04:30) Cabul"
+    }
+  ],
+  "wzEneQ": [
+    {
+      "type": 0,
+      "value": "Fechar"
+    }
+  ],
+  "x+6ccf": [
+    {
+      "type": 0,
+      "value": "Quarta-feira"
+    }
+  ],
+  "x0or2o": [
+    {
+      "type": 0,
+      "value": "Obrigatório. A coleção para a qual se deve obter o comprimento."
+    }
+  ],
+  "x10E1p": [
+    {
+      "type": 0,
+      "value": "Código de Estado"
+    }
+  ],
+  "x2JTW5": [
+    {
+      "type": 0,
+      "value": "Devolve um objeto com a propriedade especificada removida."
+    }
+  ],
+  "x3dWOL": [
+    {
+      "type": 0,
+      "value": "(UTC+01:00) Amesterdão, Berlim, Berna, Roma, Estocolmo, Viena"
+    }
+  ],
+  "x7IYBg": [
+    {
+      "type": 0,
+      "value": "Abortado"
+    }
+  ],
+  "x8kTAX": [
+    {
+      "type": 0,
+      "value": "Eliminar nota"
+    }
+  ],
+  "xC1zg3": [
+    {
+      "type": 0,
+      "value": "Esquemas"
+    }
+  ],
+  "xFQXAI": [
+    {
+      "type": 0,
+      "value": "Ctrl + Z"
+    }
+  ],
+  "xJ6vjn": [
+    {
+      "type": 0,
+      "value": "Devolve uma representação de cadeia de uma cadeia codificada de URI"
+    }
+  ],
+  "xJQeeC": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Istambul"
+    }
+  ],
+  "xLF2Zr": [
+    {
+      "type": 0,
+      "value": "Adicionar Linha"
+    }
+  ],
+  "xN3GEX": [
+    {
+      "type": 0,
+      "value": "Introduzir palavra-passe como texto simples ou utilizar um parâmetro seguro"
+    }
+  ],
+  "xQQ9ko": [
+    {
+      "type": 0,
+      "value": "Limiar"
+    }
+  ],
+  "xSMbKr": [
+    {
+      "type": 0,
+      "value": "Mostrar entradas em bruto"
+    }
+  ],
+  "xSSfKC": [
+    {
+      "type": 0,
+      "value": "(UTC-03:00) São Pedro e Miquelão"
+    }
+  ],
+  "xV/oyK": [
+    {
+      "type": 0,
+      "value": "Necessário. O nome da propriedade nova ou existente."
+    }
+  ],
+  "xV4Koe": [
+    {
+      "type": 0,
+      "value": "Código"
+    }
+  ],
+  "xXVu2y": [
+    {
+      "type": 0,
+      "value": "Mudar para o modo de texto"
+    }
+  ],
+  "xYyPR8": [
+    {
+      "type": 0,
+      "value": "Devolve o caminho de um URI. Se o caminho não for especificado, devolve \"/\""
+    }
+  ],
+  "xi2tn6": [
+    {
+      "type": 0,
+      "value": "Parâmetros"
+    }
+  ],
+  "xt5TeT": [
+    {
+      "type": 0,
+      "value": "Os parâmetros são partilhados entre fluxos de trabalho numa Aplicação Lógica."
+    }
+  ],
+  "xvav7+": [
+    {
+      "type": 0,
+      "value": "Ligado a"
+    }
+  ],
+  "xwD1VZ": [
+    {
+      "type": 0,
+      "value": "A carregar entradas"
+    }
+  ],
+  "xwEX2/": [
+    {
+      "type": 0,
+      "value": "Valor"
+    }
+  ],
+  "y1e9yw": [
+    {
+      "type": 0,
+      "value": "Iniciar sessão"
+    }
+  ],
+  "y3AZQB": [
+    {
+      "type": 0,
+      "value": "Necessário. O objeto para comparar a igualdade."
+    }
+  ],
+  "y6BcVN": [
+    {
+      "type": 0,
+      "value": "Obrigatório. A cadeia a partir da qual se escapam carateres não seguros de URL."
+    }
+  ],
+  "yB6PB/": [
+    {
+      "type": 0,
+      "value": "O valor contém expressões de função que não podem ser resolvidas. Apenas são suportados valores constantes"
+    }
+  ],
+  "yBrsFJ": [
+    {
+      "type": 0,
+      "value": "Obrigatório. O valor que é convertido numa matriz."
+    }
+  ],
+  "yF2R//": [
+    {
+      "type": 0,
+      "value": "Devolve um subconjunto de carateres a partir de uma cadeia."
+    }
+  ],
+  "yKOsmK": [
+    {
+      "type": 0,
+      "value": "Devolve uma matriz ordenada por ordem crescente"
+    }
+  ],
+  "yNtBUV": [
+    {
+      "type": 0,
+      "value": "Aviso: o tipo de nó de entrada não corresponde a nenhum dos tipos permitidos para esta entrada."
+    }
+  ],
+  "yRDuqj": [
+    {
+      "type": 0,
+      "value": "Mostrar tudo"
+    }
+  ],
+  "yVFIAQ": [
+    {
+      "type": 0,
+      "value": "(UTC-01:00) Cabo Verde"
+    }
+  ],
+  "yVh9kr": [
+    {
+      "type": 0,
+      "value": "8"
+    }
+  ],
+  "yc0GcM": [
+    {
+      "type": 0,
+      "value": "Dividir uma cadeia ou matriz em segmentos de comprimento igual"
+    }
+  ],
+  "ydqOly": [
+    {
+      "type": 0,
+      "value": "Selecionar um valor"
+    }
+  ],
+  "yjierd": [
+    {
+      "type": 0,
+      "value": "Tipo de expressão \""
+    },
+    {
+      "type": 1,
+      "value": "type"
+    },
+    {
+      "type": 0,
+      "value": "\" inválido."
+    }
+  ],
+  "yk7L+4": [
+    {
+      "type": 0,
+      "value": "Não gosto"
+    }
+  ],
+  "ylfgv1": [
+    {
+      "type": 0,
+      "value": "Gerar XSLT"
+    }
+  ],
+  "ypZV9w": [
+    {
+      "type": 0,
+      "value": "Devolve o corpo de uma parte numa saída de várias partes do acionador"
+    }
+  ],
+  "yqRrQ/": [
+    {
+      "type": 0,
+      "value": "Funções de data e hora"
+    }
+  ],
+  "yrYEmk": [
+    {
+      "type": 0,
+      "value": "Enviar-me um e-mail quando..."
+    }
+  ],
+  "ysoumb": [
+    {
+      "type": 0,
+      "value": "Adicionar campo"
+    }
+  ],
+  "yuJBmK": [
+    {
+      "type": 0,
+      "value": "Introduza um número"
+    }
+  ],
+  "yucvJE": [
+    {
+      "type": 0,
+      "value": "(UTC+01:00) Sarajevo, Skopje, Varsóvia, Zagreb"
+    }
+  ],
+  "yzqXMp": [
+    {
+      "type": 0,
+      "value": "Saber mais"
+    }
+  ],
+  "z/UY4k": [
+    {
+      "type": 0,
+      "value": "Navegar para a pasta "
+    },
+    {
+      "type": 1,
+      "value": "folderName"
+    }
+  ],
+  "z3VuE+": [
+    {
+      "type": 0,
+      "value": "Menu"
+    }
+  ],
+  "z9kH+0": [
+    {
+      "type": 0,
+      "value": "Isto também removerá todos os passos subordinados."
+    }
+  ],
+  "zBMVKg": [
+    {
+      "type": 0,
+      "value": "Obrigatório. O valor que é convertido num número decimal."
+    }
+  ],
+  "zCsGWP": [
+    {
+      "type": 0,
+      "value": "Introduzir valor"
+    }
+  ],
+  "zEv8dd": [
+    {
+      "type": 0,
+      "value": "Editor de Expressões"
+    }
+  ],
+  "zIDVd9": [
+    {
+      "type": 0,
+      "value": "Obrigatório. A cadeia que é convertida num valor de tipo nativo."
+    }
+  ],
+  "zNesUZ": [
+    {
+      "type": 0,
+      "value": "Uma política de repetição aplica-se a falhas intermitentes, caracterizadas como códigos de estado HTTP 408, 429 e 5xx, para além de quaisquer exceções de conectividade. A predefinição é uma política de intervalo exponencial definida para tentar novamente 4 vezes."
+    }
+  ],
+  "zOvGF8": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Atenas, Bucareste"
+    }
+  ],
+  "zTKAc9": [
+    {
+      "type": 0,
+      "value": "Selecionar Ações"
+    }
+  ],
+  "zUWAsJ": [
+    {
+      "type": 0,
+      "value": "Devolve um booleano que indica se uma cadeia é um número inteiro"
+    }
+  ],
+  "zUgja+": [
+    {
+      "type": 0,
+      "value": "Limpar valor personalizado"
+    }
+  ],
+  "zViEGr": [
+    {
+      "type": 0,
+      "value": "(UTC+12:00) Petropavlovsk-Kamchatsky - Antigo"
+    }
+  ],
+  "zb3lE6": [
+    {
+      "type": 0,
+      "value": "Para guardar este fluxo de trabalho, conclua a configuração desta ação:"
+    }
+  ],
+  "zcZpHT": [
+    {
+      "type": 0,
+      "value": "Converte uma cadeia, com, opcionalmente, uma região e um formato para uma data"
+    }
+  ],
+  "zec5Ay": [
+    {
+      "type": 0,
+      "value": "Parar"
+    }
+  ],
+  "ziYCiA": [
+    {
+      "type": 0,
+      "value": "Resumo"
+    }
+  ],
+  "zjDJwP": [
+    {
+      "type": 0,
+      "value": "Flutuante"
+    }
+  ],
+  "zkeKWE": [
+    {
+      "type": 0,
+      "value": "(UTC-04:00) Caracas"
+    }
+  ],
+  "znGyyU": [
+    {
+      "type": 0,
+      "value": "Adiciona um número inteiro de uma unidade especificada de tempo num carimbo de data/hora de cadeia transmitido"
+    }
+  ],
+  "zsPNYN": [
+    {
+      "type": 0,
+      "value": "Obrigatório. O número a adicionar à Parcela 1."
+    }
+  ],
+  "zxe9hh": [
+    {
+      "type": 0,
+      "value": "Obrigatório. O número de minutos a adicionar. Pode ser negativo para subtrair minutos."
+    }
+  ]
+}

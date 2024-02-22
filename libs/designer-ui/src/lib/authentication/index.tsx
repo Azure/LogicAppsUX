@@ -12,7 +12,7 @@ import { MSIAuthentication } from './MSIAuth/MSIAuth';
 import { RawAuthentication } from './RawAuth';
 import { parseAuthEditor } from './util';
 import type { IDropdownOption } from '@fluentui/react/lib/Dropdown';
-import { getIntl } from '@microsoft/intl-logic-apps';
+import { getIntl } from '@microsoft/logic-apps-shared';
 import type { ManagedIdentity } from '@microsoft/logic-apps-shared';
 import { AssertionErrorCode, AssertionException, format } from '@microsoft/logic-apps-shared';
 import { useUpdateEffect } from '@react-hookz/web';

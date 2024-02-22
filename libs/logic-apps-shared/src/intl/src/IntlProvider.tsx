@@ -1,5 +1,6 @@
 import { IntlGlobalProvider } from './intl';
 import type { OnErrorFn } from '@formatjs/intl';
+import React from 'react';
 import type { MessageFormatElement } from 'react-intl';
 import { IntlProvider as ReactIntlProvider } from 'react-intl';
 import { useQuery } from 'react-query';
