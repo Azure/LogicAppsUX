@@ -1,4 +1,16 @@
 # Logic Apps Designer
+## [2.120.0](https://github.com/Azure/LogicAppsUX/compare/v2.119.0...v2.120.0) (2024-02-22)
+
+
+### Features
+
+* **Designer:**  moved utils into new library ([#4236](https://github.com/Azure/LogicAppsUX/issues/4236)) ([9c8c883](https://github.com/Azure/LogicAppsUX/commit/9c8c883fd6b8310cb18e231822f6cd50463e8651))
+* **Designer:** Moving first lib into shared folder ([#4229](https://github.com/Azure/LogicAppsUX/issues/4229)) ([671689d](https://github.com/Azure/LogicAppsUX/commit/671689d22bf2cf686762d64d280b9f27200e681f))
+
+
+### Bug Fixes
+
+* **consumption:** Changing until timeout default based on Stateful vs Stateless ([#4235](https://github.com/Azure/LogicAppsUX/issues/4235)) ([c1e26ec](https://github.com/Azure/LogicAppsUX/commit/c1e26ecd26719cce6052a8c7d7817c55f38da194))
 
 ## [2.119.0](https://github.com/Azure/LogicAppsUX/compare/v2.118.0...v2.119.0) (2024-02-21)
 
