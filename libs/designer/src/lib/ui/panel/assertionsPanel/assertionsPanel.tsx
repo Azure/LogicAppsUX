@@ -4,6 +4,7 @@ import type { VariableDeclaration } from '../../../core/state/tokens/tokensSlice
 import { useAssertions, useAssertionsValidationErrors } from '../../../core/state/unitTest/unitTestSelectors';
 import { updateAssertions, updateAssertion } from '../../../core/state/unitTest/unitTestSlice';
 import type { AppDispatch, RootState } from '../../../core/store';
+import { updateTokenMetadataInAssertions } from '../../../core/utils/assertions';
 import {
   VariableBrandColor,
   VariableIcon,
@@ -27,11 +28,9 @@ import {
   TokenPicker,
   type TokenPickerMode,
   ValueSegmentType,
-  GroupType,
-  type GroupItems,
 } from '@microsoft/designer-ui';
 import { getIntl } from '@microsoft/intl-logic-apps';
-import { guid, type AssertionDefintion, aggregate, getPropertyValue, labelCase, isNullOrEmpty, clone } from '@microsoft/utils-logic-apps';
+import { guid, type AssertionDefintion, aggregate, getPropertyValue, labelCase, isNullOrEmpty } from '@microsoft/utils-logic-apps';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -179,47 +178,6 @@ const getTokenPicker = (
       tokenClickedCallback={tokenClickedCallback}
     />
   );
-};
-
-const loadTokenMetaData = (operand: ValueSegment[], tokenMapping: Record<string, ValueSegment>) => {
-  let newOperand: ValueSegment[] = [];
-  newOperand = [...operand].map((segment: ValueSegment) => {
-    if (segment.type === ValueSegmentType.TOKEN && tokenMapping[segment.value]) {
-      const newToken = { ...segment.token, ...tokenMapping[segment.value].token };
-      return { ...segment, token: newToken };
-    }
-    return segment;
-  }) as ValueSegment[];
-
-  return newOperand;
-};
-
-function recurseAssertions(items: GroupItems, tokenMapping: Record<string, ValueSegment>): GroupItems {
-  const newItems = { ...items };
-  if (newItems.type === GroupType.GROUP) {
-    const test = newItems.items.map((item) => {
-      return recurseAssertions(item, tokenMapping);
-    });
-    newItems.items = test;
-    return newItems;
-  } else {
-    newItems.operand1 = loadTokenMetaData(newItems.operand1, tokenMapping);
-    newItems.operand2 = loadTokenMetaData(newItems.operand2, tokenMapping);
-    return newItems;
-  }
-}
-
-const updateTokenMetadataInAssertions = (tokenMapping: Record<string, ValueSegment>, assertions: Record<string, AssertionDefintion>) => {
-  const newAssertions = clone(assertions);
-  Object.keys(newAssertions).forEach((assertionKey) => {
-    const { items } = newAssertions[assertionKey].expression;
-    if (items) {
-      const test = recurseAssertions(items, tokenMapping);
-      newAssertions[assertionKey].expression.items = test;
-    }
-  });
-
-  return newAssertions;
 };
 
 export const AssertionsPanel = (props: CommonPanelProps) => {

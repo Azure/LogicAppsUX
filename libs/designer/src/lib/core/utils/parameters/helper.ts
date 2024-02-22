@@ -666,7 +666,6 @@ const getConditionalSelectedOption = (input: any): GroupDropdownOptions | undefi
   return undefined;
 };
 
-//here
 function recurseConditionalItems(input: any, selectedOption?: GroupDropdownOptions): (RowItemProps | GroupItemProps)[] {
   const output: (RowItemProps | GroupItemProps)[] = [];
   if (selectedOption) {
@@ -2810,7 +2809,6 @@ export const flattenAndUpdateViewModel = (
     : replacedItems;
 };
 
-//here
 export function updateTokenMetadata(
   valueSegment: ValueSegment,
   repetitionContext: RepetitionContext,
