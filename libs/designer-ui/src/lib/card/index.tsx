@@ -1,4 +1,5 @@
 import { StatusPill } from '../monitoring';
+import { MockStatusIcon } from '../unitTesting/mockStatusIcon';
 import { convertUIElementNameToAutomationId } from '../utils';
 import { CardContextMenu } from './cardcontextmenu';
 import { CardFooter } from './cardfooter';
@@ -196,16 +197,7 @@ export const Card: React.FC<CardProps> = ({
             resubmittedResults={runData?.executionMode === 'ResubmittedResults'}
           />
         ) : null}
-        {isUnitTest ? (
-          <StatusPill
-            id={`${title}-status`}
-            status={runData?.status}
-            duration={runData?.duration}
-            startTime={runData?.startTime}
-            endTime={runData?.endTime}
-            resubmittedResults={runData?.executionMode === 'ResubmittedResults'}
-          />
-        ) : null}
+        {isUnitTest ? <MockStatusIcon id={`${title}-status`} status={'Succeeded'} /> : null}
         <div className={css('msla-selection-box', selected && 'selected')} />
         <div className="panel-card-main">
           <div aria-label={cardAltText} className="panel-card-header" role="button">
