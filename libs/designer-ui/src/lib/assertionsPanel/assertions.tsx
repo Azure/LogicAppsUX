@@ -1,3 +1,4 @@
+import type { ValueSegment } from '../editor';
 import { isHighContrastBlack } from '../utils';
 import {
   type AssertionUpdateHandler,
@@ -23,6 +24,8 @@ export interface AssertionsProps {
   onAssertionUpdate: AssertionUpdateHandler;
   onAssertionDelete: AssertionDeleteHandler;
   getTokenPicker: GetAssertionTokenPickerHandler;
+  tokenMapping: Record<string, ValueSegment>;
+  loadParameterValueFromString: (value: string) => ValueSegment[];
   validationErrors?: Record<string, Record<string, string | undefined>>;
 }
 
@@ -33,6 +36,8 @@ export function Assertions({
   onAssertionUpdate,
   onAssertionDelete,
   getTokenPicker,
+  tokenMapping,
+  loadParameterValueFromString,
   validationErrors,
 }: AssertionsProps): JSX.Element {
   const intl = useIntl();
@@ -73,6 +78,8 @@ export function Assertions({
         onAssertionDelete={onAssertionDelete}
         onAssertionUpdate={onAssertionUpdate}
         getTokenPicker={getTokenPicker}
+        tokenMapping={tokenMapping}
+        loadParameterValueFromString={loadParameterValueFromString}
         validationErrors={parameterErrors}
         isInverted={isInverted}
       />

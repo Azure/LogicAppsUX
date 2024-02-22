@@ -48,6 +48,8 @@ export interface AssertionProps {
   onAssertionDelete: AssertionDeleteHandler;
   onAssertionUpdate: AssertionUpdateHandler;
   getTokenPicker: GetAssertionTokenPickerHandler;
+  tokenMapping: Record<string, ValueSegment>;
+  loadParameterValueFromString: (value: string) => ValueSegment[];
   validationErrors?: Record<string, string | undefined>;
   isInverted: boolean;
 }
@@ -57,6 +59,8 @@ export function Assertion({
   onAssertionDelete,
   getTokenPicker,
   onAssertionUpdate,
+  tokenMapping,
+  loadParameterValueFromString,
   validationErrors,
   isInverted,
 }: AssertionProps): JSX.Element {
@@ -115,6 +119,8 @@ export function Assertion({
           isExpanded={expanded}
           getTokenPicker={getTokenPicker}
           handleUpdate={handleUpdate}
+          tokenMapping={tokenMapping}
+          loadParameterValueFromString={loadParameterValueFromString}
           validationErrors={validationErrors}
         />
       </div>

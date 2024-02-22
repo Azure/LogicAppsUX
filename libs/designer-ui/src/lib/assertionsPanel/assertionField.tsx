@@ -50,6 +50,8 @@ export interface AssertionFieldProps {
   isExpanded: boolean;
   getTokenPicker: GetAssertionTokenPickerHandler;
   handleUpdate: (newAssertion: Assertion) => void;
+  tokenMapping: Record<string, ValueSegment>;
+  loadParameterValueFromString: (value: string) => ValueSegment[];
   validationErrors?: Record<string, string | undefined>;
 }
 
@@ -64,6 +66,8 @@ export const AssertionField = ({
   isExpanded,
   getTokenPicker,
   handleUpdate,
+  tokenMapping,
+  loadParameterValueFromString,
   validationErrors,
 }: AssertionFieldProps): JSX.Element => {
   const intl = useIntl();
@@ -185,8 +189,8 @@ export const AssertionField = ({
                 labelId="condition-label"
                 tokenEditor={true}
                 value={[]}
-                tokenMapping={{}}
-                // errorDetails={{message:  ?? ''}}
+                tokenMapping={tokenMapping}
+                loadParameterValueFromString={loadParameterValueFromString}
                 getTokenPicker={(
                   editorId: string,
                   labelId: string,

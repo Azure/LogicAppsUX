@@ -4,12 +4,14 @@ import type { VariableDeclaration } from '../../../core/state/tokens/tokensSlice
 import { useAssertions, useAssertionsValidationErrors } from '../../../core/state/unitTest/unitTestSelectors';
 import { updateAssertions, updateAssertion } from '../../../core/state/unitTest/unitTestSlice';
 import type { AppDispatch, RootState } from '../../../core/store';
+import { updateTokenMetadataInAssertions } from '../../../core/utils/assertions';
 import {
   VariableBrandColor,
   VariableIcon,
   generateExpressionFromKey,
   getTokenExpressionMethodFromKey,
   getTokenValueFromToken,
+  loadParameterValueFromString,
   toConditionViewModel,
 } from '../../../core/utils/parameters/helper';
 import { type TokenGroup, getExpressionTokenSections } from '../../../core/utils/tokens';
@@ -28,8 +30,8 @@ import {
   ValueSegmentType,
 } from '@microsoft/designer-ui';
 import { getIntl } from '@microsoft/intl-logic-apps';
-import { guid, type AssertionDefintion, aggregate, getPropertyValue, labelCase } from '@microsoft/utils-logic-apps';
-import { useCallback, useMemo, useState } from 'react';
+import { guid, type AssertionDefintion, aggregate, getPropertyValue, labelCase, isNullOrEmpty } from '@microsoft/utils-logic-apps';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 const getVariableTokens = (variables: Record<string, VariableDeclaration[]>): OutputToken[] => {
@@ -180,13 +182,13 @@ const getTokenPicker = (
 
 export const AssertionsPanel = (props: CommonPanelProps) => {
   const workflowAssertions = useAssertions();
-  const [assertions, setAssertions] = useState<Record<string, AssertionDefintion>>(workflowAssertions);
+  const [assertions, setAssertions] = useState<Record<string, AssertionDefintion>>({});
   const assertionsValidationErrors = useAssertionsValidationErrors();
 
   const dispatch = useDispatch<AppDispatch>();
+  const [tokenMapping, setTokenMapping] = useState<Record<string, ValueSegment>>({});
 
   const tokens = useTokens();
-
   const onClose = () => {
     props.toggleCollapse?.();
   };
@@ -225,6 +227,29 @@ export const AssertionsPanel = (props: CommonPanelProps) => {
     dispatch(updateAssertions({ assertions: newAssertions }));
   };
 
+  useEffect(() => {
+    if (!isNullOrEmpty(tokenMapping)) {
+      setAssertions(updateTokenMetadataInAssertions(tokenMapping, workflowAssertions));
+    }
+  }, [tokenMapping, workflowAssertions]);
+
+  useEffect(() => {
+    const callback = async () => {
+      const mapping: Record<string, ValueSegment> = {};
+      for (const group of [...tokens.outputTokensWithValues, ...tokens.variableTokens]) {
+        for (const token of group.tokens) {
+          if (!token.value) {
+            continue;
+          }
+          mapping[token.value] = await getValueSegmentFromToken(token);
+        }
+      }
+      setTokenMapping(mapping);
+    };
+
+    callback();
+  }, [tokens]);
+
   const onGetTokenPicker = useCallback(
     (
       editorId: string,
@@ -256,6 +281,8 @@ export const AssertionsPanel = (props: CommonPanelProps) => {
       onAssertionDelete={onAssertionDelete}
       onAssertionUpdate={onAssertionUpdate}
       getTokenPicker={onGetTokenPicker}
+      tokenMapping={tokenMapping}
+      loadParameterValueFromString={(value: string) => loadParameterValueFromString(value)}
       validationErrors={assertionsValidationErrors}
     />
   );
