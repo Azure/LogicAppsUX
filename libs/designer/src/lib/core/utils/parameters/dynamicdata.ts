@@ -31,7 +31,7 @@ import type { ListDynamicValue, ManagedIdentityRequestProperties, TreeDynamicVal
 import { OperationManifestService } from '@microsoft/designer-client-services-logic-apps';
 import type { ParameterInfo } from '@microsoft/designer-ui';
 import { TokenType, ValueSegmentType } from '@microsoft/designer-ui';
-import { getIntl } from '@microsoft/intl-logic-apps';
+import { getIntl } from '@microsoft/logic-apps-shared';
 import type {
   DynamicParameters,
   ExpressionEvaluatorOptions,

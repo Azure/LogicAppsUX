@@ -27,7 +27,7 @@ import {
 import { convertOutputsToTokens, getTokenTitle } from './tokens';
 import { OperationManifestService } from '@microsoft/designer-client-services-logic-apps';
 import { generateSchemaFromJsonString, ValueSegmentType } from '@microsoft/designer-ui';
-import { getIntl } from '@microsoft/intl-logic-apps';
+import { getIntl } from '@microsoft/logic-apps-shared';
 import type {
   Expression,
   ExpressionFunction,

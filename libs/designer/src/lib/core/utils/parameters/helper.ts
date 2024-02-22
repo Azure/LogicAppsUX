@@ -86,7 +86,7 @@ import {
   TokenType,
   AuthenticationOAuthType,
 } from '@microsoft/designer-ui';
-import { getIntl } from '@microsoft/intl-logic-apps';
+import { getIntl } from '@microsoft/logic-apps-shared';
 import type {
   DependentParameterInfo,
   DynamicParameters,
