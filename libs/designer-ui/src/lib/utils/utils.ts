@@ -355,11 +355,6 @@ export function getMockStatusString(status: string): string {
         defaultMessage: 'Succeeded',
         description: 'Succeeded status message in mock card.',
       });
-      return intl.formatMessage({
-        defaultMessage: 'Waiting',
-        description: 'The status message to show in monitoring view.',
-      });
-
     case Constants.MOCKSTATUS.EMPTY:
     default:
       return intl.formatMessage({

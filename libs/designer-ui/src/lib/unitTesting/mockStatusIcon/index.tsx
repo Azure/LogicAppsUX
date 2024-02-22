@@ -10,6 +10,11 @@ export interface MockStatusIconProps {
   id: string;
 }
 
+/**
+ * Renders a mock status icon based on the provided node mock results and ID.
+ * @param {MockStatusIconProps} props - The component props.
+ * @returns {React.ReactElement} The rendered mock status icon.
+ */
 export const MockStatusIcon: React.FC<MockStatusIconProps> = ({ nodeMockResults, id }) => {
   const status = nodeMockResults && !isEmptyString(nodeMockResults) ? Constants.MOCKSTATUS.SUCCEEDED : Constants.MOCKSTATUS.EMPTY;
   const tooltipLabel = getMockStatusString(status);
