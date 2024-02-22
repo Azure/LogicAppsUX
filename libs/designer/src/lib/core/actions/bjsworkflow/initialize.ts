@@ -47,7 +47,7 @@ import {
   ApiManagementService,
 } from '@microsoft/designer-client-services-logic-apps';
 import type { OutputToken, ParameterInfo } from '@microsoft/designer-ui';
-import { getIntl } from '@microsoft/intl-logic-apps';
+import { getIntl } from '@microsoft/logic-apps-shared';
 import type { SchemaProperty, InputParameter, SwaggerParser, OutputParameter } from '@microsoft/logic-apps-shared';
 import {
   isDynamicListExtension,

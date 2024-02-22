@@ -7,7 +7,7 @@ import type {
 } from '../connector';
 import { getClientRequestIdFromHeaders, pathCombine } from '../helpers';
 import type { IHttpClient } from '../httpClient';
-import { getIntl } from '@microsoft/intl-logic-apps';
+import { getIntl } from '@microsoft/logic-apps-shared';
 import type { OpenAPIV2, OperationInfo } from '@microsoft/logic-apps-shared';
 import {
   UnsupportedException,

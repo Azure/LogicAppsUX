@@ -1,4 +1,4 @@
-import { getIntl } from '@microsoft/intl-logic-apps';
+import { getIntl } from '@microsoft/logic-apps-shared';
 import type { OpenApiSchema } from '@microsoft/logic-apps-shared';
 import type { OpenAPIV2 } from '@microsoft/logic-apps-shared';
 
