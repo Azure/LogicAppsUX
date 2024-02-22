@@ -1,7 +1,7 @@
 import { inputsResponse, outputsResponse } from '../__test__/__mocks__/monitoringInputsOutputsResponse';
 import type { HttpRequestOptions, IHttpClient } from '../httpClient';
 import type { IRunService } from '../run';
-import type { CallbackInfo } from '../workflow';
+import type { Callback } from '../workflow';
 import { isNumber } from '@microsoft/logic-apps-shared';
 import type { ArmResources, BoundParameters, ContentLink, LogicAppsV2, Run, Runs } from '@microsoft/logic-apps-shared';
 import {
@@ -16,20 +16,20 @@ import {
   getRecordEntry,
 } from '@microsoft/logic-apps-shared';
 
-export interface RunServiceOptions {
+export interface ConsumptionRunServiceOptions {
   apiVersion: string;
   baseUrl: string;
   httpClient: IHttpClient;
   updateCors?: () => void;
   accessToken?: string;
-  workflowName: string;
+  workflowId: string;
   isDev?: boolean;
 }
 
-export class StandardRunService implements IRunService {
+export class ConsumptionRunService implements IRunService {
   _isDev = false;
 
-  constructor(public readonly options: RunServiceOptions) {
+  constructor(public readonly options: ConsumptionRunServiceOptions) {
     const { apiVersion, baseUrl, isDev } = options;
     if (!baseUrl) {
       throw new ArgumentException('baseUrl required');
@@ -98,9 +98,9 @@ export class StandardRunService implements IRunService {
    * @returns {Promise<Run>} Workflow runs.
    */
   async getRun(runId: string): Promise<Run> {
-    const { apiVersion, baseUrl, httpClient, workflowName } = this.options;
+    const { apiVersion, baseUrl, httpClient } = this.options;
 
-    const uri = `${baseUrl}/workflows/${workflowName}/runs/${runId}?api-version=${apiVersion}&$expand=properties/actions,workflow/properties`;
+    const uri = `${baseUrl}${runId}?api-version=${apiVersion}&$expand=properties/actions,workflow/properties`;
 
     try {
       const response = await httpClient.get<Run>({
@@ -117,10 +117,10 @@ export class StandardRunService implements IRunService {
    * @returns {Promise<Runs>} Workflow runs.
    */
   async getRuns(): Promise<Runs> {
-    const { apiVersion, baseUrl, workflowName, httpClient } = this.options;
+    const { apiVersion, baseUrl, workflowId, httpClient } = this.options;
     const headers = this.getAccessTokenHeaders();
 
-    const uri = `${baseUrl}/workflows/${workflowName}/runs?api-version=${apiVersion}`;
+    const uri = `${baseUrl}${workflowId}/runs?api-version=${apiVersion}`;
     try {
       const response = await httpClient.get<ArmResources<Run>>({
         uri,
@@ -194,9 +194,9 @@ export class StandardRunService implements IRunService {
 
   /**
    * Triggers a workflow run
-   * @param {CallbackInfo} callbackInfo - Information to call Api to trigger workflow.
+   * @param {Callback} callbackInfo - Information to call Api to trigger workflow.
    */
-  async runTrigger(callbackInfo: CallbackInfo): Promise<void> {
+  async runTrigger(callbackInfo: Callback): Promise<void> {
     const { httpClient } = this.options;
     const method = isCallbackInfoWithRelativePath(callbackInfo) ? callbackInfo.method : HTTP_METHODS.POST;
     const uri = getCallbackUrl(callbackInfo);

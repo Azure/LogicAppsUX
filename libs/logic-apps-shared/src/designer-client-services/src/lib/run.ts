@@ -1,4 +1,4 @@
-import type { CallbackInfo } from './workflow';
+import type { Callback } from './workflow';
 import type { ContentLink, LogicAppsV2, Run, RunError, Runs } from '@microsoft/logic-apps-shared';
 import { AssertionErrorCode, AssertionException } from '@microsoft/logic-apps-shared';
 
@@ -7,7 +7,7 @@ export interface IRunService {
   getMoreRuns(continuationToken: string): Promise<Runs>;
   getRun(runId: string): Promise<Run | RunError>;
   getRuns(workflowId: string): Promise<Runs>;
-  runTrigger(callbackInfo: CallbackInfo): Promise<any>;
+  runTrigger(callbackInfo: Callback): Promise<any>;
   getActionLinks(action: any, nodeId: string): Promise<any>;
   getScopeRepetitions(
     action: { nodeId: string; runId: string | undefined },
