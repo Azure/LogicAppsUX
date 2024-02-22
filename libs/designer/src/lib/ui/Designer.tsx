@@ -217,10 +217,15 @@ export const Designer = (props: DesignerProps) => {
   const isInitialized = useNodesInitialized();
   const preloadSearch = useMemo(() => (isMonitoringView || isReadOnly) && isInitialized, [isMonitoringView, isReadOnly, isInitialized]);
 
-  const recurrenceInterval = useHostOptions().recurrenceInterval;
-
   // Adding recurrence interval to the query to access outside of functional components
+  const recurrenceInterval = useHostOptions().recurrenceInterval;
   useQuery({ queryKey: ['recurrenceInterval'], initialData: recurrenceInterval });
+
+  // Adding workflowKind (stateful or stateless) to the query to access outside of functional components
+  const workflowKind = useSelector((state: RootState) => state.workflow.workflowKind);
+  // This delayes the query until the workflowKind is available
+  useQuery({ queryKey: ['workflowKind'], initialData: undefined, enabled: !!workflowKind, queryFn: () => workflowKind });
+
   return (
     <DndProvider options={DND_OPTIONS}>
       {preloadSearch ? <SearchPreloader /> : null}
