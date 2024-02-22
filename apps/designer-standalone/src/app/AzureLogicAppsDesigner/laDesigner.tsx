@@ -245,10 +245,10 @@ const DesignerEditor = () => {
         expression: {
           and: [
             {
-              equals: ['@triggerOutputs()', 2],
+              equals: ["@{triggerOutputs()}@{triggerBody()}@{body('Check_whether_blob_exists')?['isBlobExists']}", 2],
             },
             {
-              equals: ["@outputs('Execute_JavaScript_Code')", 2],
+              equals: ["@body('Check_whether_blob_exists')?['properties']?['contentDisposition']", 2],
             },
             {
               equals: ["@variables('array')", 2],

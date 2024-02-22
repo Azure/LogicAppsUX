@@ -27,9 +27,11 @@ import {
   TokenPicker,
   type TokenPickerMode,
   ValueSegmentType,
+  GroupType,
+  type GroupItems,
 } from '@microsoft/designer-ui';
 import { getIntl } from '@microsoft/intl-logic-apps';
-import { guid, type AssertionDefintion, aggregate, getPropertyValue, labelCase } from '@microsoft/utils-logic-apps';
+import { guid, type AssertionDefintion, aggregate, getPropertyValue, labelCase, isNullOrEmpty, clone } from '@microsoft/utils-logic-apps';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -179,9 +181,50 @@ const getTokenPicker = (
   );
 };
 
+const loadTokenMetaData = (operand: ValueSegment[], tokenMapping: Record<string, ValueSegment>) => {
+  let newOperand: ValueSegment[] = [];
+  newOperand = [...operand].map((segment: ValueSegment) => {
+    if (segment.type === ValueSegmentType.TOKEN && tokenMapping[segment.value]) {
+      const newToken = { ...segment.token, ...tokenMapping[segment.value].token };
+      return { ...segment, token: newToken };
+    }
+    return segment;
+  }) as ValueSegment[];
+
+  return newOperand;
+};
+
+function recurseAssertions(items: GroupItems, tokenMapping: Record<string, ValueSegment>): GroupItems {
+  const newItems = { ...items };
+  if (newItems.type === GroupType.GROUP) {
+    const test = newItems.items.map((item) => {
+      return recurseAssertions(item, tokenMapping);
+    });
+    newItems.items = test;
+    return newItems;
+  } else {
+    newItems.operand1 = loadTokenMetaData(newItems.operand1, tokenMapping);
+    newItems.operand2 = loadTokenMetaData(newItems.operand2, tokenMapping);
+    return newItems;
+  }
+}
+
+const updateTokenMetadataInAssertions = (tokenMapping: Record<string, ValueSegment>, assertions: Record<string, AssertionDefintion>) => {
+  const newAssertions = clone(assertions);
+  Object.keys(newAssertions).forEach((assertionKey) => {
+    const { items } = newAssertions[assertionKey].expression;
+    if (items) {
+      const test = recurseAssertions(items, tokenMapping);
+      newAssertions[assertionKey].expression.items = test;
+    }
+  });
+
+  return newAssertions;
+};
+
 export const AssertionsPanel = (props: CommonPanelProps) => {
   const workflowAssertions = useAssertions();
-  const [assertions, setAssertions] = useState<Record<string, AssertionDefintion>>(workflowAssertions);
+  const [assertions, setAssertions] = useState<Record<string, AssertionDefintion>>({});
   const assertionsValidationErrors = useAssertionsValidationErrors();
 
   const dispatch = useDispatch<AppDispatch>();
@@ -227,6 +270,12 @@ export const AssertionsPanel = (props: CommonPanelProps) => {
   };
 
   useEffect(() => {
+    if (!isNullOrEmpty(tokenMapping)) {
+      setAssertions(updateTokenMetadataInAssertions(tokenMapping, workflowAssertions));
+    }
+  }, [tokenMapping, workflowAssertions]);
+
+  useEffect(() => {
     const callback = async () => {
       const mapping: Record<string, ValueSegment> = {};
       for (const group of [...tokens.outputTokensWithValues, ...tokens.variableTokens]) {
@@ -265,7 +314,6 @@ export const AssertionsPanel = (props: CommonPanelProps) => {
     },
     [tokens]
   );
-  console.log('charlie assertions', assertions);
 
   return (
     <Assertions
