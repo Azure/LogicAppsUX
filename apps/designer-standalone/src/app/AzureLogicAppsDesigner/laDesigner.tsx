@@ -235,40 +235,6 @@ const DesignerEditor = () => {
     return `Bearer ${environment.armToken}` ?? '';
   };
 
-  const unitTestDefinition = {
-    triggerMocks: {},
-    actionMocks: {},
-    assertions: [
-      {
-        name: 'Initialize it',
-        description: 'This is a just a test',
-        expression: {
-          and: [
-            {
-              equals: ["@{triggerOutputs()}@{triggerBody()}@{body('Check_whether_blob_exists')?['isBlobExists']}", 2],
-            },
-            {
-              equals: ["@body('Check_whether_blob_exists')?['properties']?['contentDisposition']", 2],
-            },
-            {
-              equals: ["@variables('array')", 2],
-            },
-            {
-              equals: ["@outputs('For_each')", 4],
-            },
-            {
-              and: [
-                {
-                  equals: [2, "@triggerOutputs()?['relativePathParameters']"],
-                },
-              ],
-            },
-          ],
-        },
-      },
-    ],
-  };
-
   return (
     <div key={designerID} style={{ height: 'inherit', width: 'inherit' }}>
       <DesignerProvider
@@ -291,7 +257,6 @@ const DesignerEditor = () => {
           <BJSWorkflowProvider
             workflow={{ definition: workflow?.definition, connectionReferences, parameters, kind: workflow?.kind }}
             runInstance={runInstanceData}
-            unitTestDefinition={unitTestDefinition}
           >
             <div style={{ height: 'inherit', width: 'inherit' }}>
               <DesignerCommandBar
