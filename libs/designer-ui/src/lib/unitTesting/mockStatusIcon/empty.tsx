@@ -1,5 +1,8 @@
 import { useTheme } from '@fluentui/react';
 
+/**
+ * Renders an empty status icon.
+ */
 export const Empty: React.FC = () => {
   const { isInverted } = useTheme();
   const circleFill = isInverted ? '#A19F9D' : '#605E5C';

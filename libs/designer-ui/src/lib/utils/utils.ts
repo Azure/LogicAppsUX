@@ -342,6 +342,33 @@ export function getStatusString(status: string, hasRetries: boolean): string {
   }
 }
 
+/**
+ * Returns the corresponding status string based on the provided status value.
+ * @param {string} status - The status value.
+ * @returns The status string.
+ */
+export function getMockStatusString(status: string): string {
+  const intl = getIntl();
+  switch (status) {
+    case Constants.MOCKSTATUS.SUCCEEDED:
+      return intl.formatMessage({
+        defaultMessage: 'Succeeded',
+        description: 'Succeeded status message in mock card.',
+      });
+      return intl.formatMessage({
+        defaultMessage: 'Waiting',
+        description: 'The status message to show in monitoring view.',
+      });
+
+    case Constants.MOCKSTATUS.EMPTY:
+    default:
+      return intl.formatMessage({
+        defaultMessage: 'Empty',
+        description: 'Empty status message in mock card.',
+      });
+  }
+}
+
 export const filterRecord = <T>(data: Record<string, T>, filter: (_key: string, _val: any) => boolean): Record<string, T> => {
   return Object.entries(data)
     .filter(([key, value]) => filter(key, value))

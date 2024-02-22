@@ -6217,6 +6217,12 @@
       "value": "Add or select a source schema to use for your map."
     }
   ],
+  "b5UhzV": [
+    {
+      "type": 0,
+      "value": "Succeeded"
+    }
+  ],
   "b9/1dK": [
     {
       "type": 0,
@@ -6707,6 +6713,12 @@
     {
       "type": 0,
       "value": "Specify the duration in ISO 8601 format"
+    }
+  ],
+  "eIzHIR": [
+    {
+      "type": 0,
+      "value": "Empty"
     }
   ],
   "eO1h/h": [

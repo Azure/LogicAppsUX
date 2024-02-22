@@ -1,5 +1,8 @@
 import { useTheme } from '@fluentui/react';
 
+/**
+ * Component for rendering a succeeded status icon.
+ */
 export const Succeeded: React.FC = () => {
   const { isInverted } = useTheme();
   const circleFill = isInverted ? '#92C353' : '#428000';
