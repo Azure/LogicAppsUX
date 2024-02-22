@@ -11,7 +11,7 @@ import { getCardStyle } from './utils';
 import type { ISpinnerStyles, MessageBarType } from '@fluentui/react';
 import { Icon, css } from '@fluentui/react';
 import { Spinner } from '@fluentui/react-components';
-import type { LogicAppsV2 } from '@microsoft/utils-logic-apps';
+import { type LogicAppsV2 } from '@microsoft/utils-logic-apps';
 import { useEffect, useMemo, useRef } from 'react';
 import type { ConnectDragPreview, ConnectDragSource } from 'react-dnd';
 import { useIntl } from 'react-intl';
@@ -49,6 +49,8 @@ export interface CardProps {
   runData?: LogicAppsV2.WorkflowRunAction | LogicAppsV2.WorkflowRunTrigger;
   setFocus?: boolean;
   isSecureInputsOutputs?: boolean;
+  nodeMockResults?: string;
+  isMockSupported?: boolean;
 }
 
 export interface BadgeProps {
@@ -82,6 +84,8 @@ export const Card: React.FC<CardProps> = ({
   isDragging,
   isMonitoringView,
   isUnitTest,
+  nodeMockResults,
+  isMockSupported,
   isLoading,
   operationName,
   selected,
@@ -197,7 +201,7 @@ export const Card: React.FC<CardProps> = ({
             resubmittedResults={runData?.executionMode === 'ResubmittedResults'}
           />
         ) : null}
-        {isUnitTest ? <MockStatusIcon id={`${title}-status`} status={'Succeeded'} /> : null}
+        {isUnitTest && isMockSupported ? <MockStatusIcon id={`${title}-status`} nodeMockResults={nodeMockResults} /> : null}
         <div className={css('msla-selection-box', selected && 'selected')} />
         <div className="panel-card-main">
           <div aria-label={cardAltText} className="panel-card-header" role="button">

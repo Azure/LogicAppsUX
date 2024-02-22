@@ -33,6 +33,7 @@ import {
   useOperationSummary,
 } from '../../core/state/selectors/actionMetadataSelector';
 import { useSettingValidationErrors } from '../../core/state/setting/settingSelector';
+import { useIsMockSupported, useMockResultsByOperation } from '../../core/state/unitTest/unitTestSelectors';
 import {
   useNodeDescription,
   useNodeDisplayName,
@@ -82,6 +83,8 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
   const parentRunIndex = useParentRunIndex(id);
   const runInstance = useRunInstance();
   const runData = useRunData(id);
+  const nodeMockResults = useMockResultsByOperation(isTrigger ? `&${id}` : id);
+  const isMockSupported = useIsMockSupported(id);
   const parentRunId = useParentRunId(id);
   const parenRunData = useRunData(parentRunId ?? '');
   const nodesMetaData = useNodesMetadata();
@@ -335,6 +338,8 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
           isLoading={isLoading}
           isMonitoringView={isMonitoringView}
           isUnitTest={isUnitTest}
+          nodeMockResults={nodeMockResults}
+          isMockSupported={isMockSupported}
           runData={runData}
           readOnly={readOnly}
           onClick={nodeClick}
