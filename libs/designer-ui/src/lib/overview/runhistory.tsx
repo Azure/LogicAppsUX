@@ -9,6 +9,7 @@ export interface RunHistoryProps {
   loading?: boolean;
   onOpenRun(run: RunDisplayItem): void;
   supportsUnitTest: boolean;
+  onCreateUnitTest?(run: RunDisplayItem): void;
 }
 
 const ContextMenuKeys = {
@@ -35,7 +36,7 @@ const options: FormatDateOptions = {
   year: 'numeric',
 };
 
-export const RunHistory: React.FC<RunHistoryProps> = ({ items, loading = false, onOpenRun, supportsUnitTest }) => {
+export const RunHistory: React.FC<RunHistoryProps> = ({ items, loading = false, onOpenRun, supportsUnitTest, onCreateUnitTest }) => {
   const intl = useIntl();
   const Resources = {
     CONTEXT_MENU: intl.formatMessage({
@@ -123,8 +124,8 @@ export const RunHistory: React.FC<RunHistoryProps> = ({ items, loading = false, 
               onItemClick: (_, menuItem?: IContextualMenuItem) => {
                 if (menuItem?.key === ContextMenuKeys.SHOW_RUN) {
                   onOpenRun(item);
-                } else if (menuItem?.key === ContextMenuKeys.CREATE_UNIT_TEST) {
-                  console.log('Create unit test');
+                } else if (menuItem?.key === ContextMenuKeys.CREATE_UNIT_TEST && onCreateUnitTest) {
+                  onCreateUnitTest(item);
                 }
               },
             }}

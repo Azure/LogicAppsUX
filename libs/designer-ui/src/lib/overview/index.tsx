@@ -26,6 +26,7 @@ export interface OverviewProps {
   onOpenRun(run: RunDisplayItem): void;
   onRunTrigger(): void;
   onVerifyRunId(runId: string): Promise<Run | RunError>;
+  onCreateUnitTest?(run: RunDisplayItem): void;
 }
 
 const filterTextFieldStyles: Pick<ITextFieldStyles, 'root'> = {
@@ -50,6 +51,7 @@ export const Overview: React.FC<OverviewProps> = ({
   onOpenRun,
   onRunTrigger,
   onVerifyRunId,
+  onCreateUnitTest,
 }: OverviewProps) => {
   const intl = useIntl();
   const [navigateDisabled, setNavigateDisabled] = useState(true);
@@ -148,7 +150,13 @@ export const Overview: React.FC<OverviewProps> = ({
               </div>
             }
           >
-            <RunHistory items={runItems} loading={loading} onOpenRun={onOpenRun} supportsUnitTest={supportsUnitTest} />
+            <RunHistory
+              items={runItems}
+              loading={loading}
+              onOpenRun={onOpenRun}
+              onCreateUnitTest={onCreateUnitTest}
+              supportsUnitTest={supportsUnitTest}
+            />
           </InfiniteScroll>
           {errorMessage ? (
             <MessageBar data-testid="msla-overview-error-message" isMultiline={false} messageBarType={MessageBarType.error}>

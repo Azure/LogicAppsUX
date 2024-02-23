@@ -123,6 +123,12 @@ export const OverviewApp = () => {
       onRunTrigger={runTriggerCall}
       onVerifyRunId={onVerifyRunId}
       supportsUnitTest={true}
+      onCreateUnitTest={(run: RunDisplayItem) => {
+        vscode.postMessage({
+          command: ExtensionCommand.createUnitTest,
+          item: run,
+        });
+      }}
     />
   );
 };
