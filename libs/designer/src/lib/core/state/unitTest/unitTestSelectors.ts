@@ -42,7 +42,12 @@ export const useIsMockSupported = (nodeId: string) => {
   return useSelector(
     createSelector(getOperationsState, (state: OperationMetadataState) => {
       const type = (getRecordEntry(state.operationInfo, nodeId)?.type ?? '').toLowerCase();
-      return type === ConnectionType.ServiceProvider || type === ConnectionType.Function || type === ConnectionType.ApiManagement;
+      return (
+        type === ConnectionType.ServiceProvider ||
+        type === ConnectionType.Function ||
+        type === ConnectionType.ApiManagement ||
+        type === ConnectionType.ApiConnection
+      );
     })
   );
 };

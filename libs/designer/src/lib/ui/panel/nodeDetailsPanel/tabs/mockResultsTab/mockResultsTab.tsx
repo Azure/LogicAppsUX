@@ -51,7 +51,7 @@ export const MockResultsTab = () => {
     <Text>
       {intl.formatMessage({
         defaultMessage:
-          'This operation does not support mocking. Mocking is only supported for operations that are connected to a service, function, or API Management.',
+          'This operation does not support mocking. Mocking is only supported for operations that are connected to a service provider, function, API connection, or API Management.',
         description: 'Unsupported message for mock results tab',
       })}
     </Text>
