@@ -1364,7 +1364,7 @@
   "6yFUar": [
     {
       "type": 0,
-      "value": "Outputs are required when status is \"Succeeded\""
+      "value": "Uitvoer is vereist wanneer de status Geslaagd is"
     }
   ],
   "70eoQu": [
@@ -1888,7 +1888,7 @@
   "ANGw2o": [
     {
       "type": 0,
-      "value": "Click for more information on Static Result"
+      "value": "Klik voor meer informatie over statisch resultaat"
     }
   ],
   "AO6T9u": [
@@ -3000,7 +3000,7 @@
   "HGA9iU": [
     {
       "type": 0,
-      "value": "The Error and its code is required when status is \"Failed\""
+      "value": "De fout en de bijbehorende code zijn vereist wanneer de status Mislukt is"
     }
   ],
   "HH970i": [
@@ -3538,7 +3538,7 @@
   "LPdGu/": [
     {
       "type": 0,
-      "value": "Ouputs should not be provided when status is \"Failed\""
+      "value": "Uitvoer mag niet worden opgegeven wanneer de status Mislukt is"
     }
   ],
   "LR/3Lr": [
@@ -8980,7 +8980,7 @@
   "svaqnp": [
     {
       "type": 0,
-      "value": "Error should not be provided when status is \"Succeeded\""
+      "value": "Er mag geen fout worden opgegeven wanneer de status Geslaagd is"
     }
   ],
   "sw6EXK": [

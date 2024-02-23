@@ -1364,7 +1364,7 @@
   "6yFUar": [
     {
       "type": 0,
-      "value": "Outputs are required when status is \"Succeeded\""
+      "value": "Výstupy se vyžadují, pokud je stav „Úspěšné“"
     }
   ],
   "70eoQu": [
@@ -1892,7 +1892,7 @@
   "ANGw2o": [
     {
       "type": 0,
-      "value": "Click for more information on Static Result"
+      "value": "Kliknutím získáte další informace o statickém výsledku"
     }
   ],
   "AO6T9u": [
@@ -3052,7 +3052,7 @@
   "HGA9iU": [
     {
       "type": 0,
-      "value": "The Error and its code is required when status is \"Failed\""
+      "value": "Pokud je stav „Neúspěšné“, jsou chyba a její kód povinné"
     }
   ],
   "HH970i": [
@@ -3608,7 +3608,7 @@
   "LPdGu/": [
     {
       "type": 0,
-      "value": "Ouputs should not be provided when status is \"Failed\""
+      "value": "Pokud je stav „Neúspěšné“, neměly by se uvádět výstupy"
     }
   ],
   "LR/3Lr": [
@@ -9154,7 +9154,7 @@
   "svaqnp": [
     {
       "type": 0,
-      "value": "Error should not be provided when status is \"Succeeded\""
+      "value": "Pokud je stav „Úspěšné“, neměla by se uvádět chyba"
     }
   ],
   "sw6EXK": [
