@@ -5,7 +5,13 @@ import type { Settings } from '../actions/bjsworkflow/settings';
 import { getConnectorWithSwagger } from '../queries/connections';
 import { getOperationManifest } from '../queries/operation';
 import type { DependencyInfo, NodeInputs, NodeOperation, NodeOutputs, OutputInfo } from '../state/operation/operationMetadataSlice';
-import { ErrorLevel, updateErrorDetails, clearDynamicOutputs, addDynamicOutputs } from '../state/operation/operationMetadataSlice';
+import {
+  ErrorLevel,
+  updateErrorDetails,
+  clearDynamicOutputs,
+  addDynamicOutputs,
+  updateExisitingInputTokenTitles,
+} from '../state/operation/operationMetadataSlice';
 import { addDynamicTokens } from '../state/tokens/tokensSlice';
 import type { WorkflowKind } from '../state/workflow/workflowInterfaces';
 import type { WorkflowParameterDefinition } from '../state/workflowparameters/workflowparametersSlice';
@@ -18,18 +24,18 @@ import {
   getTokenExpressionMethodFromKey,
   isDynamicDataReadyToLoad,
 } from './parameters/helper';
-import { convertOutputsToTokens } from './tokens';
+import { convertOutputsToTokens, getTokenTitle } from './tokens';
 import { OperationManifestService } from '@microsoft/designer-client-services-logic-apps';
 import { generateSchemaFromJsonString, ValueSegmentType } from '@microsoft/designer-ui';
-import { getIntl } from '@microsoft/intl-logic-apps';
+import { getIntl } from '@microsoft/logic-apps-shared';
 import type {
   Expression,
   ExpressionFunction,
   ExpressionLiteral,
   OutputParameter,
   OutputParameters,
-  Schema,
-} from '@microsoft/parsers-logic-apps';
+  OpenApiSchema,
+} from '@microsoft/logic-apps-shared';
 import {
   create,
   OutputKeys,
@@ -39,8 +45,8 @@ import {
   isTemplateExpression,
   isFunction,
   isStringLiteral,
-} from '@microsoft/parsers-logic-apps';
-import type { OpenAPIV2, OperationManifest } from '@microsoft/utils-logic-apps';
+} from '@microsoft/logic-apps-shared';
+import type { OpenAPIV2, OperationManifest } from '@microsoft/logic-apps-shared';
 import {
   ConnectionReferenceKeyFormat,
   getObjectPropertyValue,
@@ -51,7 +57,7 @@ import {
   clone,
   equals,
   parseErrorMessage,
-} from '@microsoft/utils-logic-apps';
+} from '@microsoft/logic-apps-shared';
 import type { Dispatch } from '@reduxjs/toolkit';
 
 export const toOutputInfo = (output: OutputParameter): OutputInfo => {
@@ -354,7 +360,7 @@ export const getUpdatedManifestForSchemaDependency = (manifest: OperationManifes
       const isRequestApiConnectionTrigger =
         !!updatedManifest.properties?.inputs?.properties?.schema?.['x-ms-editor-options']?.isRequestApiConnectionTrigger;
 
-      let schemaValue: Schema;
+      let schemaValue: OpenApiSchema;
       let shouldMerge: boolean;
       // if schema contains static object returned from RP, merge the current schema value and new schema value
       if (
@@ -485,12 +491,16 @@ export const loadDynamicOutputsInNode = async (
             schemaOutputs = updateOutputsForBatchingTrigger(schemaOutputs, settings.splitOn?.value?.value);
           }
 
+          const dynamicOutputTitles: Record<string, string> = {};
           const dynamicOutputs = Object.keys(schemaOutputs).reduce((result: Record<string, OutputInfo>, outputKey: string) => {
             const outputInfo = toOutputInfo(schemaOutputs[outputKey]);
+            dynamicOutputTitles[outputInfo.key] = getTokenTitle(outputInfo);
             return { ...result, [outputInfo.key]: outputInfo };
           }, {});
 
           dispatch(addDynamicOutputs({ nodeId, outputs: dynamicOutputs }));
+
+          dispatch(updateExisitingInputTokenTitles({ tokenTitles: dynamicOutputTitles }));
 
           let iconUri: string, brandColor: string;
           if (OperationManifestService().isSupported(operationInfo.type, operationInfo.kind)) {

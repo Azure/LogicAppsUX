@@ -36,11 +36,11 @@ import { getSplitOnValue, hasSecureOutputs } from './setting';
 import { getVariableTokens } from './variables';
 import { OperationManifestService } from '@microsoft/designer-client-services-logic-apps';
 import type { FunctionDefinition, OutputToken, Token, ValueSegment } from '@microsoft/designer-ui';
-import { UIConstants, TemplateFunctions, TokenType } from '@microsoft/designer-ui';
-import { getIntl } from '@microsoft/intl-logic-apps';
-import { getKnownTitles, OutputKeys } from '@microsoft/parsers-logic-apps';
-import type { BuiltInOutput, OperationManifest } from '@microsoft/utils-logic-apps';
-import { labelCase, unmap, equals, filterRecord, getRecordEntry } from '@microsoft/utils-logic-apps';
+import { UIConstants, TemplateFunctions, TokenType, removeUTFExpressions } from '@microsoft/designer-ui';
+import { getIntl } from '@microsoft/logic-apps-shared';
+import { getKnownTitles, OutputKeys } from '@microsoft/logic-apps-shared';
+import type { BuiltInOutput, OperationManifest } from '@microsoft/logic-apps-shared';
+import { labelCase, unmap, equals, filterRecord, getRecordEntry } from '@microsoft/logic-apps-shared';
 
 export interface TokenGroup {
   id: string;
@@ -171,11 +171,12 @@ export const convertOutputsToTokens = (
   });
 };
 
-export const getExpressionTokenSections = (): TokenGroup[] => {
+export const getExpressionTokenSections = (hideUTFExpressions?: boolean): TokenGroup[] => {
   return TemplateFunctions.map((functionGroup) => {
     const { id, name, functions } = functionGroup;
     const hasAdvanced = functions.some((func) => func.isAdvanced);
-    const tokens = functions.map(({ name, defaultSignature, description, isAdvanced }: FunctionDefinition) => ({
+    const filteredFunctions = hideUTFExpressions ? removeUTFExpressions(functions) : functions;
+    const tokens = filteredFunctions.map(({ name, defaultSignature, description, isAdvanced }: FunctionDefinition) => ({
       key: name,
       brandColor: FxBrandColor,
       icon: FxIcon,
@@ -227,7 +228,7 @@ export const getOutputTokenSections = (
       label: getIntl().formatMessage({ description: 'Heading section for Variable tokens', defaultMessage: 'Variables' }),
       tokens: getVariableTokens(variables, nodeTokens).map((token) => ({
         ...token,
-        value: rewriteValueId(token.outputInfo.actionName ?? '', getExpressionValueForOutputToken(token, nodeType) ?? '', replacementIds),
+        value: getTokenValue(token, nodeType, replacementIds),
       })),
     });
 
@@ -240,7 +241,7 @@ export const getOutputTokenSections = (
       tokens = tokens.map((token) => {
         return {
           ...token,
-          value: rewriteValueId(token.outputInfo.actionName ?? '', getExpressionValueForOutputToken(token, nodeType) ?? '', replacementIds),
+          value: getTokenValue(token, nodeType, replacementIds),
         };
       });
 
@@ -262,7 +263,7 @@ export const getOutputTokenSections = (
       currentTokens = currentTokens.map((token) => {
         return {
           ...token,
-          value: rewriteValueId(token.outputInfo.actionName ?? '', getExpressionValueForOutputToken(token, nodeType) ?? '', replacementIds),
+          value: getTokenValue(token, nodeType, replacementIds),
         };
       });
 
@@ -412,13 +413,13 @@ const convertTokenToValueSegment = (token: OutputToken, nodeType: string, replac
         }
       : undefined,
     schema,
-    value: rewriteValueId(token.outputInfo.actionName ?? '', getExpressionValueForOutputToken(token, nodeType) ?? '', replacementIds),
+    value: getTokenValue(token, nodeType, replacementIds),
   };
 
   return createTokenValueSegment(segmentToken, segmentToken.value as string, format);
 };
 
-const getTokenTitle = (output: OutputInfo): string => {
+export const getTokenTitle = (output: OutputInfo): string => {
   if (output.title) {
     return output.title;
   }
@@ -472,9 +473,18 @@ export const convertWorkflowParameterTypeToSwaggerType = (type: string | undefin
   }
 };
 
+export const normalizeKey = (key: string): string => {
+  return key.startsWith('outputs.$.body.') ? key.replace('outputs.$.body.', 'body.$.') : key;
+};
+
+export const getTokenValue = (token: OutputToken, nodeType: string, replacementIds: Record<string, string>): string => {
+  return rewriteValueId(token.outputInfo.actionName ?? '', getExpressionValueForOutputToken(token, nodeType) ?? '', replacementIds);
+};
+
 const rewriteValueId = (id: string, value: string, replacementIds: Record<string, string>): string => {
   return value.replaceAll(id, getRecordEntry(replacementIds, id) ?? id);
 };
+
 const getListCallbackUrlToken = (nodeId: string): TokenGroup => {
   const callbackUrlToken: OutputToken = {
     brandColor: httpWebhookBrandColor,

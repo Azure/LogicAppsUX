@@ -1,5 +1,5 @@
-import type { OperationManifest } from '@microsoft/utils-logic-apps';
-import { SettingScope } from '@microsoft/utils-logic-apps';
+import type { OperationManifest } from '@microsoft/logic-apps-shared';
+import { SettingScope } from '@microsoft/logic-apps-shared';
 
 export default {
   properties: {
@@ -28,6 +28,7 @@ export default {
               type: 'string',
               default: 'PT1H',
               title: 'Timeout',
+              'x-ms-stateless-default': 'PT5M',
             },
           },
         },

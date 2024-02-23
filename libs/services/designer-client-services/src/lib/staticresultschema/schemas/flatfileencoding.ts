@@ -1,5 +1,5 @@
 import { StaticResultRootSchema } from './baseactionresult';
-import { getIntl } from '@microsoft/intl-logic-apps';
+import { getIntl } from '@microsoft/logic-apps-shared';
 
 const intl = getIntl();
 

@@ -35,8 +35,8 @@ import {
   bundleIcon,
 } from '@fluentui/react-icons';
 import { CardContextMenu, useCardContextMenu } from '@microsoft/designer-ui';
-import type { SchemaNodeExtended } from '@microsoft/utils-logic-apps';
-import { SchemaNodeProperty, SchemaType } from '@microsoft/utils-logic-apps';
+import type { SchemaNodeExtended } from '@microsoft/logic-apps-shared';
+import { SchemaNodeProperty, SchemaType } from '@microsoft/logic-apps-shared';
 import { useMemo, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';

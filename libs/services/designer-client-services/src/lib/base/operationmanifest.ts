@@ -39,8 +39,8 @@ import {
   initializeManifest,
   setManifest,
 } from './manifests/variables';
-import type { OperationInfo, OperationManifest } from '@microsoft/utils-logic-apps';
-import { ArgumentException, equals, UnsupportedException } from '@microsoft/utils-logic-apps';
+import type { OperationInfo, OperationManifest } from '@microsoft/logic-apps-shared';
+import { ArgumentException, equals, UnsupportedException } from '@microsoft/logic-apps-shared';
 
 const apimanagement = 'apimanagement';
 const apimanagementtrigger = 'apimanagementtrigger';

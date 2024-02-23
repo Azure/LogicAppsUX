@@ -8,8 +8,8 @@ import type { SchemaFile } from './AddOrUpdateSchemaView';
 import { AddOrUpdateSchemaView, UploadSchemaTypes } from './AddOrUpdateSchemaView';
 import { DefaultConfigView } from './DefaultConfigView';
 import { DefaultButton, Panel, PrimaryButton } from '@fluentui/react';
-import type { Schema } from '@microsoft/utils-logic-apps';
-import { SchemaType } from '@microsoft/utils-logic-apps';
+import type { DataMapSchema } from '@microsoft/logic-apps-shared';
+import { SchemaType } from '@microsoft/logic-apps-shared';
 import { useCallback, useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useQuery } from 'react-query';
@@ -117,7 +117,7 @@ export const ConfigPanel = ({
   }, [dispatch, setErrorMessage]);
 
   const onSubmitSchema = useCallback(
-    (schema: Schema) => {
+    (schema: DataMapSchema) => {
       if (schemaType) {
         const extendedSchema = convertSchemaToSchemaExtended(schema);
         dispatch(setInitialSchema({ schema: extendedSchema, schemaType: schemaType }));
@@ -156,7 +156,8 @@ export const ConfigPanel = ({
         return;
       }
 
-      const selectedSchema = schemaType === SchemaType.Source ? (fetchedSourceSchema.data as Schema) : (fetchedTargetSchema.data as Schema);
+      const selectedSchema =
+        schemaType === SchemaType.Source ? (fetchedSourceSchema.data as DataMapSchema) : (fetchedTargetSchema.data as DataMapSchema);
 
       if (uploadType === UploadSchemaTypes.SelectFrom && selectedSchema) {
         onSubmitSchema(selectedSchema);

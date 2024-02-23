@@ -9,8 +9,8 @@ import {
   DataGridRow,
   createTableColumn,
 } from '@fluentui/react-components';
-import type { Connection } from '@microsoft/utils-logic-apps';
-import { getConnectionErrors, getIdLeaf } from '@microsoft/utils-logic-apps';
+import type { Connection } from '@microsoft/logic-apps-shared';
+import { getConnectionErrors, getIdLeaf } from '@microsoft/logic-apps-shared';
 import { useCallback, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 

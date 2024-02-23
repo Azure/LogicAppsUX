@@ -1,5 +1,5 @@
 import { environment } from '../../../environments/environment';
-import { format } from '@microsoft/utils-logic-apps';
+import { format } from '@microsoft/logic-apps-shared';
 import axios from 'axios';
 
 export const validateResourceId = (resourceId: string): string => {

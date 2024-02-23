@@ -6,7 +6,7 @@ import { PropertyEditor } from './propertyEditor';
 import { initializePropertyValueInput } from './util';
 import type { IDropdownOption, IDropdownStyles, ITextFieldStyles } from '@fluentui/react';
 import { Dropdown, TextField } from '@fluentui/react';
-import type { OpenAPIV2 } from '@microsoft/utils-logic-apps';
+import type { OpenAPIV2 } from '@microsoft/logic-apps-shared';
 import { useMountEffect, useUpdateEffect } from '@react-hookz/web';
 import React, { useState } from 'react';
 import { useIntl } from 'react-intl';

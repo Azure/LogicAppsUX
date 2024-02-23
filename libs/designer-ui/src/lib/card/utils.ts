@@ -1,6 +1,6 @@
 import Constants from '../constants';
 import type { IButtonStyles } from '@fluentui/react';
-import { hexToRgbA } from '@microsoft/utils-logic-apps';
+import { hexToRgbA } from '@microsoft/logic-apps-shared';
 
 export function getCardStyle(brandColor?: string): React.CSSProperties {
   return {

@@ -3,7 +3,7 @@ import { Label, DropdownEditor } from '..';
 import { StaticResultProperty } from './staticResultProperty';
 import { formatShownProperties, getOptions, initializeShownProperties } from './util';
 import type { IDropdownOption } from '@fluentui/react';
-import { type OpenAPIV2 } from '@microsoft/utils-logic-apps';
+import { type OpenAPIV2 } from '@microsoft/logic-apps-shared';
 import type { Dispatch, SetStateAction } from 'react';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';

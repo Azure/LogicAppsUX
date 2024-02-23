@@ -26,8 +26,8 @@ import {
   manyToOneConnectionSourceName,
   manyToOneConnectionTargetName,
 } from '../__mocks__';
-import type { Schema, SchemaExtended, SchemaNodeExtended } from '@microsoft/utils-logic-apps';
-import { NormalizedDataType, SchemaNodeProperty, SchemaType } from '@microsoft/utils-logic-apps';
+import type { Schema, SchemaExtended, SchemaNodeExtended } from '@microsoft/logic-apps-shared';
+import { NormalizedDataType, SchemaNodeProperty, SchemaType } from '@microsoft/logic-apps-shared';
 import { comprehensiveSourceSchema, comprehensiveTargetSchema, sourceMockSchema } from '__mocks__/schemas';
 
 describe('utils/DataMap', () => {

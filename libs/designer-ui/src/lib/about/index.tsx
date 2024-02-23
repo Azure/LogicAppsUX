@@ -3,7 +3,7 @@ import { DocumentationItem } from '../recommendation/documentationItem';
 import { Spinner, SpinnerSize } from '@fluentui/react';
 import type { ILabelStyles } from '@fluentui/react/lib/Label';
 import { Label } from '@fluentui/react/lib/Label';
-import type { OpenAPIV2 } from '@microsoft/utils-logic-apps';
+import type { OpenAPIV2 } from '@microsoft/logic-apps-shared';
 import { useIntl } from 'react-intl';
 
 const labelStyles: Partial<ILabelStyles> = {

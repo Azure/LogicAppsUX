@@ -15,8 +15,8 @@ import type {
   DiscoveryWorkflow,
   DiscoveryWorkflowTrigger,
   SomeKindOfAzureOperationDiscovery,
-} from '@microsoft/utils-logic-apps';
-import { equals, ArgumentException } from '@microsoft/utils-logic-apps';
+} from '@microsoft/logic-apps-shared';
+import { equals, ArgumentException } from '@microsoft/logic-apps-shared';
 
 export type AzureOperationsFetchResponse = ContinuationTokenResponse<DiscoveryOperation<SomeKindOfAzureOperationDiscovery>[]>;
 

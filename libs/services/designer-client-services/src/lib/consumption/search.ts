@@ -4,7 +4,7 @@ import type { BaseSearchServiceOptions } from '../base/search';
 import type { ContinuationTokenResponse } from '../common/azure';
 import type { QueryParameters } from '../httpClient';
 import * as OperationsData from './operations';
-import type { Connector, DiscoveryOpArray, SomeKindOfAzureOperationDiscovery } from '@microsoft/utils-logic-apps';
+import type { Connector, DiscoveryOpArray, SomeKindOfAzureOperationDiscovery } from '@microsoft/logic-apps-shared';
 
 const ISE_RESOURCE_ID = 'properties/integrationServiceEnvironmentResourceId';
 

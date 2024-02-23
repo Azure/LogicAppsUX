@@ -1364,7 +1364,7 @@
   "6yFUar": [
     {
       "type": 0,
-      "value": "Outputs are required when status is \"Succeeded\""
+      "value": "As saídas são necessárias quando o estado é “Com êxito”"
     }
   ],
   "70eoQu": [
@@ -1892,7 +1892,7 @@
   "ANGw2o": [
     {
       "type": 0,
-      "value": "Click for more information on Static Result"
+      "value": "Clique para obter mais informações sobre o Resultado Estático"
     }
   ],
   "AO6T9u": [
@@ -3030,7 +3030,7 @@
   "HGA9iU": [
     {
       "type": 0,
-      "value": "The Error and its code is required when status is \"Failed\""
+      "value": "O Erro e o respetivo código são necessários quando o estado é “Falhado”"
     }
   ],
   "HH970i": [
@@ -3583,7 +3583,7 @@
   "LPdGu/": [
     {
       "type": 0,
-      "value": "Ouputs should not be provided when status is \"Failed\""
+      "value": "As saídas não devem ser fornecidas quando o estado é “Falhado”"
     }
   ],
   "LR/3Lr": [
@@ -9081,7 +9081,7 @@
   "svaqnp": [
     {
       "type": 0,
-      "value": "Error should not be provided when status is \"Succeeded\""
+      "value": "O erro não deve ser fornecido quando o estado é “Com êxito”"
     }
   ],
   "sw6EXK": [

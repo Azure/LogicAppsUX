@@ -3,8 +3,8 @@ import { StaticResult } from './StaticResult';
 import { deserializePropertyValues, parseStaticResultSchema, serializePropertyValues } from './util';
 import type { IButtonStyles } from '@fluentui/react';
 import { DefaultButton, PrimaryButton, Toggle } from '@fluentui/react';
-import type { Schema } from '@microsoft/parsers-logic-apps';
-import type { OpenAPIV2 } from '@microsoft/utils-logic-apps';
+import type { OpenApiSchema } from '@microsoft/logic-apps-shared';
+import type { OpenAPIV2 } from '@microsoft/logic-apps-shared';
 import { useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 
@@ -35,10 +35,10 @@ export interface StaticResultContainerProps {
 
 export type StaticResultRootSchemaType = OpenAPIV2.SchemaObject & {
   properties: {
-    status: Schema;
-    code: Schema;
-    error: Schema;
-    outputs?: Schema;
+    status: OpenApiSchema;
+    code: OpenApiSchema;
+    error: OpenApiSchema;
+    outputs?: OpenApiSchema;
   };
 };
 

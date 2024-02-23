@@ -7,7 +7,7 @@ import { FileDropdown } from '../../fileDropdown/fileDropdown';
 import { InputDropdown } from '../../inputTypes/InputDropdown';
 import { InputTextbox } from '../../inputTypes/InputTextbox';
 import { Tooltip } from '@fluentui/react-components';
-import { InputFormat } from '@microsoft/utils-logic-apps';
+import { InputFormat } from '@microsoft/logic-apps-shared';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 

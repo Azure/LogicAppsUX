@@ -50,8 +50,8 @@ import {
   toCustomEditorAndOptions,
 } from '@microsoft/designer-ui';
 import type { ChangeState, ParameterInfo, ValueSegment, OutputToken, TokenPickerMode, PanelTabFn } from '@microsoft/designer-ui';
-import type { OperationInfo } from '@microsoft/utils-logic-apps';
-import { equals, getPropertyValue, getRecordEntry } from '@microsoft/utils-logic-apps';
+import type { OperationInfo } from '@microsoft/logic-apps-shared';
+import { equals, getPropertyValue, getRecordEntry } from '@microsoft/logic-apps-shared';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
@@ -73,7 +73,7 @@ export const ParametersTab = () => {
   const showConnectionDisplay = useAllowUserToChangeConnection(operationInfo);
   const showIdentitySelector = useShowIdentitySelectorQuery(selectedNodeId);
   const errorInfo = useOperationErrorInfo(selectedNodeId);
-
+  const { hideUTFExpressions } = useHostOptions();
   const replacedIds = useReplacedIds();
 
   const emptyParametersMessage = useIntl().formatMessage({
@@ -105,7 +105,7 @@ export const ParametersTab = () => {
   }
 
   const tokenGroup = getOutputTokenSections(selectedNodeId, nodeType, tokenState, workflowParametersState, replacedIds);
-  const expressionGroup = getExpressionTokenSections();
+  const expressionGroup = getExpressionTokenSections(hideUTFExpressions);
 
   return (
     <>
@@ -196,7 +196,7 @@ const ParameterSection = ({
   const displayNameResult = useConnectorName(operationInfo);
   const panelLocation = usePanelLocation();
 
-  const { suppressCastingForSerialize } = useHostOptions();
+  const { suppressCastingForSerialize, hideUTFExpressions } = useHostOptions();
 
   const [tokenMapping, setTokenMapping] = useState<Record<string, ValueSegment>>({});
 
@@ -352,6 +352,7 @@ const ParameterSection = ({
         tokenGroup={tokenGroup}
         filteredTokenGroup={filteredTokenGroup}
         expressionGroup={expressionGroup}
+        hideUTFExpressions={hideUTFExpressions}
         setIsTokenPickerOpened={setIsTokenPickerOpened}
         initialMode={tokenPickerMode}
         getValueSegmentFromToken={(token: OutputToken, addImplicitForeach: boolean) =>

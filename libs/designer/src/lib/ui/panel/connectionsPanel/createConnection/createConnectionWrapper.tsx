@@ -37,7 +37,7 @@ import {
   type ConnectionParameterSetValues,
   type Connector,
   type ManagedIdentity,
-} from '@microsoft/utils-logic-apps';
+} from '@microsoft/logic-apps-shared';
 import { useCallback, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';

@@ -1,6 +1,7 @@
 /* eslint-disable no-case-declarations  */
 import constants from '../../../common/constants';
 import type { ConnectionReference, WorkflowParameter } from '../../../common/models/workflow';
+import { getReactQueryClient } from '../../ReactQueryProvider';
 import type { NodeDataWithOperationMetadata } from '../../actions/bjsworkflow/operationdeserializer';
 import type { Settings } from '../../actions/bjsworkflow/settings';
 import { getConnectorWithSwagger } from '../../queries/connections';
@@ -85,7 +86,7 @@ import {
   TokenType,
   AuthenticationOAuthType,
 } from '@microsoft/designer-ui';
-import { getIntl } from '@microsoft/intl-logic-apps';
+import { getIntl } from '@microsoft/logic-apps-shared';
 import type {
   DependentParameterInfo,
   DynamicParameters,
@@ -99,7 +100,7 @@ import type {
   SchemaProperty,
   Segment,
   SwaggerParser,
-} from '@microsoft/parsers-logic-apps';
+} from '@microsoft/logic-apps-shared';
 import {
   isDynamicTreeExtension,
   isLegacyDynamicValuesTreeExtension,
@@ -124,8 +125,8 @@ import {
   SegmentType,
   Visibility,
   PropertyName,
-} from '@microsoft/parsers-logic-apps';
-import type { Exception, OpenAPIV2, OperationManifest, RecurrenceSetting } from '@microsoft/utils-logic-apps';
+} from '@microsoft/logic-apps-shared';
+import type { Exception, OpenAPIV2, OperationManifest, RecurrenceSetting } from '@microsoft/logic-apps-shared';
 import {
   createCopy,
   deleteObjectProperties,
@@ -153,7 +154,7 @@ import {
   nthLastIndexOf,
   parseErrorMessage,
   getRecordEntry,
-} from '@microsoft/utils-logic-apps';
+} from '@microsoft/logic-apps-shared';
 import type { Dispatch } from '@reduxjs/toolkit';
 
 // import { debounce } from 'lodash';
@@ -855,7 +856,15 @@ export function shouldIncludeSelfForRepetitionReference(manifest: OperationManif
 }
 
 export function loadParameterValue(parameter: InputParameter): ValueSegment[] {
-  const valueObject = parameter.isNotificationUrl ? `@${constants.HTTP_WEBHOOK_LIST_CALLBACK_URL_NAME}` : parameter.value;
+  let valueObject: unknown = undefined;
+
+  if (parameter.isNotificationUrl) {
+    valueObject = `@${constants.HTTP_WEBHOOK_LIST_CALLBACK_URL_NAME}`;
+  } else if (parameter.value) {
+    valueObject = parameter.value;
+  } else if (parameter.default) {
+    valueObject = parameter.default;
+  }
 
   let valueSegments = convertToValueSegments(valueObject, !parameter.suppressCasting /* shouldUncast */);
 
@@ -1214,7 +1223,17 @@ export function loadParameterValuesFromDefault(inputParameters: Record<string, I
 }
 
 export function loadParameterValuesArrayFromDefault(inputParameters: InputParameter[]): void {
-  for (const inputParameter of inputParameters) if (inputParameter.default !== undefined) inputParameter.value = inputParameter.default;
+  const queryClient = getReactQueryClient();
+  const workflowKind = queryClient.getQueryData(['workflowKind']);
+  for (const inputParameter of inputParameters) {
+    if (inputParameter.default !== undefined) {
+      if (inputParameter.default === 'PT1H' && workflowKind === 'stateless') {
+        inputParameter.value = inputParameter.schema?.['x-ms-stateless-default'] ?? inputParameter.default;
+      } else {
+        inputParameter.value = inputParameter.default;
+      }
+    }
+  }
 }
 
 export function updateParameterWithValues(

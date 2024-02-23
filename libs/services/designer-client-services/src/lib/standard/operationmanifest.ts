@@ -1,7 +1,7 @@
 import { BaseOperationManifestService } from '../base';
 import { getBuiltInOperationInfo, isBuiltInOperation, supportedBaseManifestObjects } from '../base/operationmanifest';
-import type { OperationInfo, OperationManifest } from '@microsoft/utils-logic-apps';
-import { equals, ConnectionType } from '@microsoft/utils-logic-apps';
+import type { OperationInfo, OperationManifest } from '@microsoft/logic-apps-shared';
+import { equals, ConnectionType } from '@microsoft/logic-apps-shared';
 
 export class StandardOperationManifestService extends BaseOperationManifestService {
   override async getOperationInfo(definition: any, isTrigger: boolean): Promise<OperationInfo> {

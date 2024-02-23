@@ -4,7 +4,7 @@ import { useActionMetadata, useIsLeafNode, useNodeMetadata } from '../../core/st
 import { DropZone } from '../connections/dropzone';
 import { css } from '@fluentui/react';
 import { GraphContainer } from '@microsoft/designer-ui';
-import { SUBGRAPH_TYPES } from '@microsoft/utils-logic-apps';
+import { SUBGRAPH_TYPES } from '@microsoft/logic-apps-shared';
 import { memo } from 'react';
 import { Handle, Position } from 'reactflow';
 import type { NodeProps } from 'reactflow';
