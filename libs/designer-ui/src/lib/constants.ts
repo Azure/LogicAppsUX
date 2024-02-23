@@ -131,7 +131,7 @@ export default {
 
   // Mock status
   MOCKSTATUS: {
-    SUCCEEDED: 'Succeeded',
+    COMPLETED: 'Completed',
     EMPTY: 'Empty',
   },
 

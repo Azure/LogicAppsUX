@@ -6223,12 +6223,6 @@
       "value": "Add or select a source schema to use for your map."
     }
   ],
-  "b5UhzV": [
-    {
-      "type": 0,
-      "value": "Succeeded"
-    }
-  ],
   "b9/1dK": [
     {
       "type": 0,
@@ -6617,6 +6611,12 @@
     {
       "type": 0,
       "value": "Italic (Ctrl+I)"
+    }
+  ],
+  "dgPMsl": [
+    {
+      "type": 0,
+      "value": "Completed"
     }
   ],
   "dhvk0u": [

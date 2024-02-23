@@ -1,8 +1,8 @@
 import Constants from '../../constants';
 import { getMockStatusString } from '../../utils';
+import { Completed } from './completed';
 import { Empty } from './empty';
 import './mockStatusIcon.less';
-import { Succeeded } from './succeeded';
 import { isEmptyString } from '@microsoft/utils-logic-apps';
 
 export interface MockStatusIconProps {
@@ -16,13 +16,13 @@ export interface MockStatusIconProps {
  * @returns {React.ReactElement} The rendered mock status icon.
  */
 export const MockStatusIcon: React.FC<MockStatusIconProps> = ({ nodeMockResults, id }) => {
-  const status = nodeMockResults && !isEmptyString(nodeMockResults) ? Constants.MOCKSTATUS.SUCCEEDED : Constants.MOCKSTATUS.EMPTY;
+  const status = nodeMockResults && !isEmptyString(nodeMockResults) ? Constants.MOCKSTATUS.COMPLETED : Constants.MOCKSTATUS.EMPTY;
   const tooltipLabel = getMockStatusString(status);
 
   const getIcon = (status: string) => {
     switch (status) {
-      case Constants.MOCKSTATUS.SUCCEEDED:
-        return <Succeeded />;
+      case Constants.MOCKSTATUS.COMPLETED:
+        return <Completed />;
       case Constants.MOCKSTATUS.EMPTY:
       default:
         return <Empty />;

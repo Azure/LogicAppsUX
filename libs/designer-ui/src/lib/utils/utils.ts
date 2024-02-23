@@ -350,10 +350,10 @@ export function getStatusString(status: string, hasRetries: boolean): string {
 export function getMockStatusString(status: string): string {
   const intl = getIntl();
   switch (status) {
-    case Constants.MOCKSTATUS.SUCCEEDED:
+    case Constants.MOCKSTATUS.COMPLETED:
       return intl.formatMessage({
-        defaultMessage: 'Succeeded',
-        description: 'Succeeded status message in mock card.',
+        defaultMessage: 'Completed',
+        description: 'Completed status message in mock card.',
       });
     case Constants.MOCKSTATUS.EMPTY:
     default:
