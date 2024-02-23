@@ -18,6 +18,7 @@ export interface OverviewProps {
   isRefreshing?: boolean;
   hasMoreRuns?: boolean;
   loading?: boolean;
+  supportsUnitTest?: boolean;
   runItems: RunDisplayItem[];
   workflowProperties: OverviewPropertiesProps;
   onLoadMoreRuns(): void;
@@ -40,6 +41,7 @@ export const Overview: React.FC<OverviewProps> = ({
   errorMessage,
   loading = false,
   hasMoreRuns = false,
+  supportsUnitTest = false,
   runItems,
   workflowProperties,
   isRefreshing,
@@ -146,7 +148,7 @@ export const Overview: React.FC<OverviewProps> = ({
               </div>
             }
           >
-            <RunHistory items={runItems} loading={loading} onOpenRun={onOpenRun} />
+            <RunHistory items={runItems} loading={loading} onOpenRun={onOpenRun} supportsUnitTest={supportsUnitTest} />
           </InfiniteScroll>
           {errorMessage ? (
             <MessageBar data-testid="msla-overview-error-message" isMultiline={false} messageBarType={MessageBarType.error}>

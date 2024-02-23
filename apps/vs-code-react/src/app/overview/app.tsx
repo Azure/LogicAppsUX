@@ -122,6 +122,7 @@ export const OverviewApp = () => {
       }}
       onRunTrigger={runTriggerCall}
       onVerifyRunId={onVerifyRunId}
+      supportsUnitTest={true}
     />
   );
 };
