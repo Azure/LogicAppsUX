@@ -110,3 +110,5 @@ export interface DiscoveryWorkflowTrigger {
   provisioningState?: string;
   workflow?: any;
 }
+
+export type DiscoveryOpArray = DiscoveryOperation<DiscoveryResultTypes>[];
