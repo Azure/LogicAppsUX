@@ -63,13 +63,9 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
 
   // Remove duplicates from allOperations and activeSearchOperations
   const allOperations: DiscoveryOpArray = useMemo(
-    () => joinAndDeduplicate(preloadedOperations, activeSearchOperations),
+    () => joinAndDeduplicateById(preloadedOperations, activeSearchOperations),
     [preloadedOperations, activeSearchOperations]
   );
-
-  const joinAndDeduplicate = (arr1: DiscoveryOpArray, arr2: DiscoveryOpArray) => [
-    ...new Map([...arr1, ...arr2].map((v) => [v.id, v])).values(),
-  ];
 
   // Active search
   useDebouncedEffect(
@@ -84,7 +80,7 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
       // Store results
       activeSearchResults.then((results) => {
         setSearchedTerms([...searchedTerms, searchTerm]);
-        setActiveSearchOperations(joinAndDeduplicate(results, activeSearchOperations));
+        setActiveSearchOperations(joinAndDeduplicateById(results, activeSearchOperations));
       });
     },
     [searchedTerms, isLoadingOperations, searchTerm, filters, activeSearchOperations],
@@ -265,3 +261,7 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
     </>
   );
 };
+
+const joinAndDeduplicateById = (arr1: DiscoveryOpArray, arr2: DiscoveryOpArray) => [
+  ...new Map([...arr1, ...arr2].map((v) => [v.id, v])).values(),
+];
