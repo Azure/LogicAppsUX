@@ -1,4 +1,4 @@
-import messages from '../services/intl/src/compiled-lang/strings.json';
+import messages from '../logic-apps-shared/src/src/compiled-lang/strings.json';
 import { createIntl, createIntlCache } from 'react-intl';
 import * as Intl from 'react-intl';
 
