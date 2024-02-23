@@ -6,7 +6,15 @@ import { updateSelectedWorkFlows } from '../../../state/WorkflowSlice';
 import type { AppDispatch, RootState } from '../../../state/store';
 import { AdvancedOptions } from './advancedOptions';
 import { Filters } from './filters';
-import { filterWorkflows, getListColumns, getSelectedItems, parseResourceGroups, updateSelectedItems } from './helper';
+import {
+  filterWorkflows,
+  getListColumns,
+  getSelectedItems,
+  parsePreviousSelectedWorkflows,
+  parseResourceGroups,
+  parseSelectedWorkflows,
+  updateSelectedItems,
+} from './helper';
 import { SelectedList } from './selectedList';
 import { Separator, ShimmeredDetailsList, Text, SelectionMode, Selection, MessageBar, MessageBarType } from '@fluentui/react';
 import type { IDropdownOption } from '@fluentui/react';
@@ -25,7 +33,7 @@ export const WorkflowsSelection: React.FC = () => {
   const [resourceGroups, setResourceGroups] = useState<IDropdownOption[]>([]);
   const [searchString, setSearchString] = useState<string>('');
   const allWorkflows = useRef<Array<WorkflowsList>>([]);
-  const allItemsSelected = useRef<SelectedWorkflowsList[]>([]);
+  const allItemsSelected = useRef<SelectedWorkflowsList[]>(parsePreviousSelectedWorkflows(selectedWorkflows));
 
   const intl = useIntl();
   const dispatch: AppDispatch = useDispatch();
@@ -94,9 +102,7 @@ export const WorkflowsSelection: React.FC = () => {
       setRenderWorkflows(workflowsData);
       setResourceGroups(parseResourceGroups(workflowsData));
       allWorkflows.current = workflowsData;
-      allItemsSelected.current = workflowsData.map((workflow) => {
-        return { ...workflow, selected: false, rendered: true };
-      });
+      allItemsSelected.current = parseSelectedWorkflows(workflowsData, allItemsSelected.current);
     } else {
       setRenderWorkflows([]);
       setResourceGroups([]);
@@ -107,7 +113,6 @@ export const WorkflowsSelection: React.FC = () => {
 
   useEffect(() => {
     const updatedItems = updateSelectedItems(allItemsSelected.current, renderWorkflows, selectedWorkflows);
-
     allItemsSelected.current = updatedItems;
   }, [selectedWorkflows, renderWorkflows, allWorkflows]);
 
