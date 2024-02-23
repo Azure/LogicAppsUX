@@ -91,13 +91,17 @@ export const WorkflowsSelection: React.FC = () => {
 
   useEffect(() => {
     if (!isNullOrUndefined(workflowsData)) {
-      const resourceGroups: IDropdownOption[] = !workflowsData ? [] : parseResourceGroups(workflowsData);
       setRenderWorkflows(workflowsData);
-      setResourceGroups(resourceGroups);
+      setResourceGroups(parseResourceGroups(workflowsData));
       allWorkflows.current = workflowsData;
       allItemsSelected.current = workflowsData.map((workflow) => {
         return { ...workflow, selected: false, rendered: true };
       });
+    } else {
+      setRenderWorkflows([]);
+      setResourceGroups([]);
+      allWorkflows.current = [];
+      allItemsSelected.current = [];
     }
   }, [workflowsData]);
 
