@@ -2,7 +2,13 @@ import type { AppDispatch } from '../../../core';
 import { selectOperationGroupId } from '../../../core/state/panel/panelSlice';
 import { SearchService, type ISearchService } from '@microsoft/designer-client-services-logic-apps';
 import { SearchResultsGrid } from '@microsoft/designer-ui';
-import { isBuiltInConnector, type DiscoveryOperation, type DiscoveryResultTypes, isCustomConnector } from '@microsoft/utils-logic-apps';
+import {
+  isBuiltInConnector,
+  type DiscoveryOperation,
+  type DiscoveryResultTypes,
+  isCustomConnector,
+  type DiscoveryOpArray,
+} from '@microsoft/utils-logic-apps';
 import { useDebouncedEffect } from '@react-hookz/web';
 import Fuse from 'fuse.js';
 import React, { useEffect, useState } from 'react';
@@ -10,7 +16,8 @@ import { useDispatch } from 'react-redux';
 
 type SearchViewProps = {
   searchTerm: string;
-  allOperations: DiscoveryOperation<DiscoveryResultTypes>[];
+  allOperations: DiscoveryOpArray;
+  isLoadingOperations?: boolean;
   groupByConnector: boolean;
   isLoading: boolean;
   filters: Record<string, string>;
@@ -23,7 +30,7 @@ export const SearchView: React.FC<SearchViewProps> = (props) => {
 
   const dispatch = useDispatch<AppDispatch>();
 
-  const [searchResults, setSearchResults] = useState<DiscoveryOperation<DiscoveryResultTypes>[]>([]);
+  const [searchResults, setSearchResults] = useState<DiscoveryOpArray>([]);
   const [isLoadingSearchResults, setIsLoadingSearchResults] = useState<boolean>(false);
 
   useEffect(() => {
@@ -44,7 +51,7 @@ export const SearchView: React.FC<SearchViewProps> = (props) => {
       });
     },
     [searchTerm, allOperations, filters],
-    300
+    200
   );
 
   const onConnectorClick = (connectorId: string) => {
@@ -66,7 +73,7 @@ export const SearchView: React.FC<SearchViewProps> = (props) => {
 };
 
 class DefaultSearchOperationsService implements Pick<ISearchService, 'searchOperations'> {
-  constructor(private allOperations: DiscoveryOperation<DiscoveryResultTypes>[]) {}
+  constructor(private allOperations: DiscoveryOpArray) {}
 
   private compareItems(
     a: Fuse.FuseResult<DiscoveryOperation<DiscoveryResultTypes>>,
@@ -120,7 +127,7 @@ class DefaultSearchOperationsService implements Pick<ISearchService, 'searchOper
     searchTerm: string,
     actionType?: string | undefined,
     runtimeFilter?: string | undefined
-  ): Promise<DiscoveryOperation<DiscoveryResultTypes>[]> {
+  ): Promise<DiscoveryOpArray> {
     type FuseSearchResult = Fuse.FuseResult<DiscoveryOperation<DiscoveryResultTypes>>;
 
     const filterItems = (searchResult: FuseSearchResult): boolean => {
