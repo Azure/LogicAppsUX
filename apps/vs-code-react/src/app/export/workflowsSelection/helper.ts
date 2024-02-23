@@ -135,9 +135,6 @@ export const parseSelectedWorkflows = (workflowsData: WorkflowsList[], allItemsS
   const currentSelection = [...allItemsSelected];
   return workflowsData.map((workflow: WorkflowsList) => {
     const selectedIndex = currentSelection.findIndex((selectedItem: SelectedWorkflowsList) => selectedItem.key === workflow.key);
-    if (selectedIndex !== -1) {
-      return { ...workflow, selected: true, rendered: true };
-    }
-    return { ...workflow, selected: false, rendered: true };
+    return { ...workflow, selected: selectedIndex !== -1, rendered: true };
   });
 };
