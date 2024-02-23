@@ -1,7 +1,7 @@
 import type {
   BuiltInOperation,
+  DiscoveryOpArray,
   DiscoveryOperation,
-  DiscoveryResultTypes,
   SomeKindOfAzureOperationDiscovery,
 } from '../models/operationDiscoveryResults';
 
@@ -401,4 +401,4 @@ export const MockAzureOperation: DiscoveryOperation<SomeKindOfAzureOperationDisc
   },
 ];
 
-export const MockSearchOperations: DiscoveryOperation<DiscoveryResultTypes>[] = [...MockSearchOperationsBuiltIn, ...MockAzureOperation];
+export const MockSearchOperations: DiscoveryOpArray = [...MockSearchOperationsBuiltIn, ...MockAzureOperation];

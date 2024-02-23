@@ -20,9 +20,10 @@ import { bundleIcon, Dismiss24Filled, Dismiss24Regular } from '@fluentui/react-i
 import { SearchService } from '@microsoft/designer-client-services-logic-apps';
 import { OperationSearchHeader } from '@microsoft/designer-ui';
 import type { CommonPanelProps } from '@microsoft/designer-ui';
-import type { DiscoveryOperation, DiscoveryResultTypes } from '@microsoft/logic-apps-shared';
+import type { DiscoveryOpArray, DiscoveryOperation, DiscoveryResultTypes } from '@microsoft/logic-apps-shared';
 import { equals, guid, areApiIdsEqual } from '@microsoft/logic-apps-shared';
-import { useCallback, useEffect, useState } from 'react';
+import { useDebouncedEffect } from '@react-hookz/web';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
 
@@ -45,15 +46,46 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
   const [filters, setFilters] = useState<Record<string, string>>({
     actionType: isTrigger ? 'triggers' : 'actions',
   });
-  const [allOperationsForGroup, setAllOperationsForGroup] = useState<DiscoveryOperation<DiscoveryResultTypes>[]>([]);
+  const [allOperationsForGroup, setAllOperationsForGroup] = useState<DiscoveryOpArray>([]);
 
   const [isGrouped, setIsGrouped] = useState(true);
 
   const [selectionState, setSelectionState] = useState<SelectionState>(SELECTION_STATES.SEARCH);
 
-  const { data: allOperations, isLoading: isLoadingOperations } = useAllOperations();
+  const { data: preloadedOperations, isLoading: isLoadingOperations } = useAllOperations();
   const [selectedOperation, setSelectedOperation] = useState<DiscoveryOperation<DiscoveryResultTypes> | undefined>(undefined);
   const [isLoadingOperationGroup, setIsLoadingOperationGroup] = useState<boolean>(false);
+
+  // Searched terms, so we don't search the same term twice
+  const [searchedTerms, setSearchedTerms] = useState(['']);
+  // Array of actively searched operations, to avoid duplicate data storage
+  const [activeSearchOperations, setActiveSearchOperations] = useState<DiscoveryOpArray>([]);
+
+  // Remove duplicates from allOperations and activeSearchOperations
+  const allOperations: DiscoveryOpArray = useMemo(
+    () => joinAndDeduplicateById(preloadedOperations, activeSearchOperations),
+    [preloadedOperations, activeSearchOperations]
+  );
+
+  // Active search
+  useDebouncedEffect(
+    () => {
+      // if preload is complete, no need to actively search
+      if (!isLoadingOperations) return;
+      if (searchedTerms.includes(searchTerm)) return;
+      // We are still preloading, perform active search
+      const activeSearchResults =
+        SearchService().getActiveSearchOperations?.(searchTerm, filters['actionType'], filters['runtime']) ??
+        Promise.resolve([] as DiscoveryOpArray);
+      // Store results
+      activeSearchResults.then((results) => {
+        setSearchedTerms([...searchedTerms, searchTerm]);
+        setActiveSearchOperations(joinAndDeduplicateById(results, activeSearchOperations));
+      });
+    },
+    [searchedTerms, isLoadingOperations, searchTerm, filters, activeSearchOperations],
+    300
+  );
 
   const selectedOperationGroupId = useSelectedSearchOperationGroupId();
   const { data: allConnectors } = useAllConnectors();
@@ -212,6 +244,7 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
                 <SearchView
                   searchTerm={searchTerm}
                   allOperations={allOperations ?? []}
+                  isLoadingOperations={isLoadingOperations}
                   groupByConnector={isGrouped}
                   isLoading={isLoadingOperations}
                   filters={filters}
@@ -228,3 +261,7 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
     </>
   );
 };
+
+const joinAndDeduplicateById = (arr1: DiscoveryOpArray, arr2: DiscoveryOpArray) => [
+  ...new Map([...arr1, ...arr2].map((v) => [v.id, v])).values(),
+];

@@ -1,11 +1,11 @@
 import type { OperationActionData } from '@microsoft/designer-ui';
 import { OperationActionDataFromOperation, OperationGroupDetailsPage } from '@microsoft/designer-ui';
-import type { Connector, DiscoveryOperation, DiscoveryResultTypes } from '@microsoft/logic-apps-shared';
+import type { Connector, DiscoveryOpArray } from '@microsoft/logic-apps-shared';
 import { useCallback } from 'react';
 
 type OperationGroupDetailViewProps = {
   connector: Connector;
-  groupOperations: DiscoveryOperation<DiscoveryResultTypes>[];
+  groupOperations: DiscoveryOpArray;
   filters: Record<string, string>;
   onOperationClick: (id: string, apiId?: string) => void;
   isLoading: boolean;
