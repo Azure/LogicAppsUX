@@ -11,7 +11,7 @@ import { SelectedList } from './selectedList';
 import { Separator, ShimmeredDetailsList, Text, SelectionMode, Selection, MessageBar, MessageBarType } from '@fluentui/react';
 import type { IDropdownOption } from '@fluentui/react';
 import { isNullOrUndefined } from '@microsoft/logic-apps-shared';
-import { useMemo, useRef, useState, useEffect, useCallback } from 'react';
+import { useMemo, useRef, useState, useEffect } from 'react';
 import { useIntl } from 'react-intl';
 import { useQuery } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
@@ -81,27 +81,6 @@ export const WorkflowsSelection: React.FC = () => {
     return apiService.getWorkflows(selectedSubscription, selectedIse, location);
   };
 
-  const onWorkflowsSuccess = useCallback(
-    (workflows: WorkflowsList[]) => {
-      const resourceGroups: IDropdownOption[] = !workflows ? [] : parseResourceGroups(workflows);
-      setRenderWorkflows(workflows);
-      setResourceGroups(resourceGroups);
-      allWorkflows.current = workflows;
-      allItemsSelected.current = workflows.map((workflow) => {
-        return { ...workflow, selected: false, rendered: true };
-      });
-      selectedWorkflows.forEach((workflow: WorkflowsList) => {
-        const selectedIndex = allItemsSelected.current.findIndex(
-          (selectedItem: SelectedWorkflowsList) => selectedItem.key === workflow.key
-        );
-        if (selectedIndex !== -1) {
-          allItemsSelected.current[selectedIndex].selected = true;
-        }
-      });
-    },
-    [selectedWorkflows]
-  );
-
   const { isLoading: isWorkflowsLoading, data: workflowsData } = useQuery<WorkflowsList[]>(
     [QueryKeys.workflowsData, selectedSubscription, selectedIse, location],
     loadWorkflows,
@@ -112,9 +91,15 @@ export const WorkflowsSelection: React.FC = () => {
 
   useEffect(() => {
     if (!isNullOrUndefined(workflowsData)) {
-      onWorkflowsSuccess(workflowsData);
+      const resourceGroups: IDropdownOption[] = !workflowsData ? [] : parseResourceGroups(workflowsData);
+      setRenderWorkflows(workflowsData);
+      setResourceGroups(resourceGroups);
+      allWorkflows.current = workflowsData;
+      allItemsSelected.current = workflowsData.map((workflow) => {
+        return { ...workflow, selected: false, rendered: true };
+      });
     }
-  }, [workflowsData, onWorkflowsSuccess]);
+  }, [workflowsData]);
 
   useEffect(() => {
     const updatedItems = updateSelectedItems(allItemsSelected.current, renderWorkflows, selectedWorkflows);
