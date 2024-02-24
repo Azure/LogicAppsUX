@@ -21,6 +21,7 @@ import { sendRequest } from '../../utils/requestUtils';
 import { getWorkflowNode } from '../../utils/workspace';
 import type { IAzureConnectorsContext } from './azureConnectorWizard';
 import { openMonitoringView } from './openMonitoringView/openMonitoringView';
+import { createUnitTest } from './unitTest/createUnitTest';
 import type { ServiceClientCredentials } from '@azure/ms-rest-js';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type { ICallbackUrlResponse } from '@microsoft/vscode-extension';
@@ -144,6 +145,9 @@ export async function openOverview(context: IAzureConnectorsContext, node: vscod
             });
           }
         }, 5000);
+        break;
+      case ExtensionCommand.createUnitTest:
+        await createUnitTest(context, workflowNode as vscode.Uri);
         break;
       default:
         break;

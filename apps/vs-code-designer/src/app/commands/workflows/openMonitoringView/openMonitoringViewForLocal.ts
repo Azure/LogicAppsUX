@@ -127,6 +127,10 @@ export default class OpenMonitoringViewForLocal extends OpenMonitoringViewBase {
         await this.resubmitRun();
         break;
       }
+      case ExtensionCommand.createUnitTest: {
+        await this.resubmitRun();
+        break;
+      }
       default:
         break;
     }
