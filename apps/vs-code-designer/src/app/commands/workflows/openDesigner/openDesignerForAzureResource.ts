@@ -1,6 +1,5 @@
 import { workflowAppApiVersion } from '../../../../constants';
 import { ext } from '../../../../extensionVariables';
-import { localize } from '../../../../localize';
 import type { RemoteWorkflowTreeItem } from '../../../tree/remoteWorkflowsTree/RemoteWorkflowTreeItem';
 import {
   removeWebviewPanelFromCache,
@@ -45,7 +44,6 @@ export class OpenDesignerForAzureResource extends OpenDesignerBase {
       }
     }
 
-    vscode.window.showInformationMessage(localize('logicApps.designer', 'Starting workflow designer. It might take a few seconds.'), 'OK');
     this.panel = vscode.window.createWebviewPanel(this.panelGroupKey, this.workflowName, vscode.ViewColumn.Active, this.getPanelOptions());
     this.panel.iconPath = {
       light: Uri.file(path.join(ext.context.extensionPath, 'assets', 'dark', 'workflow.svg')),
