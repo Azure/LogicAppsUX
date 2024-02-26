@@ -22,9 +22,9 @@ import { HTTP_METHODS } from '@microsoft/utils-logic-apps';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type { IDesignerPanelMetadata, IWorkflowFileContent } from '@microsoft/vscode-extension';
 import { ExtensionCommand, ProjectName } from '@microsoft/vscode-extension';
+import * as path from 'path';
 import * as vscode from 'vscode';
-import type { WebviewPanel } from 'vscode';
-import { ViewColumn } from 'vscode';
+import { ViewColumn, Uri, type WebviewPanel } from 'vscode';
 
 export default class openMonitoringViewForAzureResource extends OpenMonitoringViewBase {
   private node: RemoteWorkflowTreeItem;
@@ -50,13 +50,16 @@ export default class openMonitoringViewForAzureResource extends OpenMonitoringVi
       return;
     }
 
-    vscode.window.showInformationMessage(localize('logicApps.designer', 'Starting workflow designer. It might take a few seconds.'), 'OK');
     this.panel = vscode.window.createWebviewPanel(
       this.panelGroupKey, // Key used to reference the panel
       this.panelName, // Title display in the tab
       ViewColumn.Active, // Editor column to show the new webview panel in.
       this.getPanelOptions()
     );
+    this.panel.iconPath = {
+      light: Uri.file(path.join(ext.context.extensionPath, 'assets', 'light', 'workflow.svg')),
+      dark: Uri.file(path.join(ext.context.extensionPath, 'assets', 'dark', 'workflow.svg')),
+    };
     this.panelMetadata = await this.getDesignerPanelMetadata();
 
     this.baseUrl = getWorkflowManagementBaseURI(this.node);

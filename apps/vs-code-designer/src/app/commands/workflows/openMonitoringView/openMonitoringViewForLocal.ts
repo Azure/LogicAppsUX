@@ -16,6 +16,8 @@ import {
 } from '../../../utils/codeless/common';
 import { getConnectionsFromFile, getLogicAppProjectRoot, getParametersFromFile } from '../../../utils/codeless/connection';
 import { sendRequest } from '../../../utils/requestUtils';
+import { type IAzureConnectorsContext } from '../azureConnectorWizard';
+import { createUnitTest } from '../unitTest/createUnitTest';
 import { OpenMonitoringViewBase } from './openMonitoringViewBase';
 import { HTTP_METHODS } from '@microsoft/utils-logic-apps';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
@@ -24,8 +26,7 @@ import { ExtensionCommand, ProjectName } from '@microsoft/vscode-extension';
 import { promises, readFileSync } from 'fs';
 import * as path from 'path';
 import * as vscode from 'vscode';
-import type { WebviewPanel } from 'vscode';
-import { ViewColumn } from 'vscode';
+import { ViewColumn, Uri, type WebviewPanel } from 'vscode';
 
 export default class OpenMonitoringViewForLocal extends OpenMonitoringViewBase {
   private projectPath: string | undefined;
@@ -55,6 +56,11 @@ export default class OpenMonitoringViewForLocal extends OpenMonitoringViewBase {
       ViewColumn.Active, // Editor column to show the new webview panel in.
       this.getPanelOptions()
     );
+
+    this.panel.iconPath = {
+      light: Uri.file(path.join(ext.context.extensionPath, 'assets', 'light', 'workflow.svg')),
+      dark: Uri.file(path.join(ext.context.extensionPath, 'assets', 'dark', 'workflow.svg')),
+    };
 
     this.projectPath = await getLogicAppProjectRoot(this.context, this.workflowFilePath);
     const connectionsData = await getConnectionsFromFile(this.context, this.workflowFilePath);
@@ -125,6 +131,10 @@ export default class OpenMonitoringViewForLocal extends OpenMonitoringViewBase {
       }
       case ExtensionCommand.resubmitRun: {
         await this.resubmitRun();
+        break;
+      }
+      case ExtensionCommand.createUnitTest: {
+        await createUnitTest(this.context as IAzureConnectorsContext, vscode.Uri.file(this.workflowFilePath));
         break;
       }
       default:

@@ -39,6 +39,7 @@ export const ExtensionCommand = {
   webviewLoaded: 'webviewLoaded',
   webviewRscLoadError: 'webviewRscLoadError',
   saveUnitTest: 'saveUnitTest',
+  createUnitTest: 'createUnitTest',
 } as const;
 export type ExtensionCommand = (typeof ExtensionCommand)[keyof typeof ExtensionCommand];
 

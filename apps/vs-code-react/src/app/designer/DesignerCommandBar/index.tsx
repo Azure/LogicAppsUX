@@ -27,9 +27,17 @@ export interface DesignerCommandBarProps {
   onRefresh(): void;
   isDarkMode: boolean;
   isUnitTest: boolean;
+  isLocal: boolean;
 }
 
-export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({ isRefreshing, isDisabled, onRefresh, isDarkMode, isUnitTest }) => {
+export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
+  isRefreshing,
+  isDisabled,
+  onRefresh,
+  isDarkMode,
+  isUnitTest,
+  isLocal,
+}) => {
   const intl = useIntl();
   const vscode = useContext(VSCodeContext);
   const dispatch = useDispatch();
@@ -77,7 +85,6 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({ isRefres
     const designerState = DesignerStore.getState();
     const definition = await serializeUnitTestDefinition(designerState);
 
-    // TODO(ccastrotrejo): We need to check for unit test errors
     await vscode.postMessage({
       command: ExtensionCommand.saveUnitTest,
       definition,
@@ -87,6 +94,12 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({ isRefres
   const onResubmit = async () => {
     vscode.postMessage({
       command: ExtensionCommand.resubmitRun,
+    });
+  };
+
+  const onCreateUnitTest = async () => {
+    vscode.postMessage({
+      command: ExtensionCommand.createUnitTest,
     });
   };
 
@@ -106,6 +119,10 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({ isRefres
     MONITORING_VIEW_RESUBMIT: intl.formatMessage({
       defaultMessage: 'Resubmit',
       description: 'Button text for resubmit',
+    }),
+    CREATE_UNIT_TEST: intl.formatMessage({
+      defaultMessage: 'Create unit test',
+      description: 'Button text for create unit test',
     }),
     UNIT_TEST_SAVE: intl.formatMessage({
       defaultMessage: 'Save unit test definition',
@@ -218,6 +235,20 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({ isRefres
         onResubmit();
       },
     },
+    ...(isLocal
+      ? [
+          {
+            ariaLabel: Resources.CREATE_UNIT_TEST,
+            iconProps: { iconName: 'TestBeaker' },
+            key: 'CreateUnitTest',
+            disabled: isDisabled,
+            text: Resources.CREATE_UNIT_TEST,
+            onClick: () => {
+              onCreateUnitTest();
+            },
+          },
+        ]
+      : []),
   ];
 
   const unitTestItems: ICommandBarItemProps[] = [
