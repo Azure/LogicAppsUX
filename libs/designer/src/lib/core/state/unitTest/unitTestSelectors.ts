@@ -1,6 +1,8 @@
 import type { RootState } from '../../store';
+import { type OperationMetadataState } from '../operation/operationMetadataSlice';
+import { getOperationsState } from '../selectors/actionMetadataSelector';
 import type { UnitTestState } from './unitTestInterfaces';
-import type { AssertionDefintion } from '@microsoft/utils-logic-apps';
+import { getRecordEntry, type AssertionDefintion, ConnectionType } from '@microsoft/utils-logic-apps';
 import { createSelector } from '@reduxjs/toolkit';
 import { useSelector } from 'react-redux';
 
@@ -27,6 +29,25 @@ export const useMockResultsByOperation = (operationName: string): string | undef
   return useSelector(
     createSelector(getUnitTestState, (state: UnitTestState) => {
       return state.mockResults[operationName] ?? undefined;
+    })
+  );
+};
+
+/**
+ * Returns a boolean indicating whether mock is supported for the given nodeId.
+ * @param {string} nodeId - The ID of the node.
+ * @returns A boolean indicating whether mock is supported.
+ */
+export const useIsMockSupported = (nodeId: string) => {
+  return useSelector(
+    createSelector(getOperationsState, (state: OperationMetadataState) => {
+      const type = (getRecordEntry(state.operationInfo, nodeId)?.type ?? '').toLowerCase();
+      return (
+        type === ConnectionType.ServiceProvider ||
+        type === ConnectionType.Function ||
+        type === ConnectionType.ApiManagement ||
+        type === ConnectionType.ApiConnection
+      );
     })
   );
 };

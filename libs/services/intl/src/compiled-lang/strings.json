@@ -6181,6 +6181,12 @@
       "value": "Second"
     }
   ],
+  "aWkG01": [
+    {
+      "type": 0,
+      "value": "This operation does not support mocking. Mocking is only supported for operations that are connected to a service provider, function, API connection, or API Management."
+    }
+  ],
   "aYTy7X": [
     {
       "type": 0,
@@ -6607,6 +6613,12 @@
       "value": "Italic (Ctrl+I)"
     }
   ],
+  "dgPMsl": [
+    {
+      "type": 0,
+      "value": "Completed"
+    }
+  ],
   "dhvk0u": [
     {
       "type": 0,
@@ -6707,6 +6719,12 @@
     {
       "type": 0,
       "value": "Specify the duration in ISO 8601 format"
+    }
+  ],
+  "eIzHIR": [
+    {
+      "type": 0,
+      "value": "Empty"
     }
   ],
   "eO1h/h": [

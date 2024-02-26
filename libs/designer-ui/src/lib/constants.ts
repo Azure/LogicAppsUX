@@ -129,6 +129,12 @@ export default {
     WAITING: 'Waiting',
   },
 
+  // Mock status
+  MOCKSTATUS: {
+    COMPLETED: 'Completed',
+    EMPTY: 'Empty',
+  },
+
   CONDITIONCONTROLPROPS: {
     NAME: 0,
     RELATIONSHIP: 1,

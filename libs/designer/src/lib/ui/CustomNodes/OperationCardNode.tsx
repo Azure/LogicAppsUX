@@ -9,6 +9,7 @@ import {
   useNodeSelectAdditionalCallback,
   useReadOnly,
   useSuppressDefaultNodeSelectFunctionality,
+  useUnitTest,
 } from '../../core/state/designerOptions/designerOptionsSelectors';
 import { setShowDeleteModal } from '../../core/state/designerView/designerViewSlice';
 import { ErrorLevel } from '../../core/state/operation/operationMetadataSlice';
@@ -32,6 +33,7 @@ import {
   useOperationSummary,
 } from '../../core/state/selectors/actionMetadataSelector';
 import { useSettingValidationErrors } from '../../core/state/setting/settingSelector';
+import { useIsMockSupported, useMockResultsByOperation } from '../../core/state/unitTest/unitTestSelectors';
 import {
   useNodeDescription,
   useNodeDisplayName,
@@ -66,6 +68,8 @@ import type { NodeProps } from 'reactflow';
 const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.Bottom, id }: NodeProps) => {
   const readOnly = useReadOnly();
   const isMonitoringView = useMonitoringView();
+  const isUnitTest = useUnitTest();
+
   const intl = useIntl();
 
   const dispatch = useDispatch<AppDispatch>();
@@ -79,6 +83,8 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
   const parentRunIndex = useParentRunIndex(id);
   const runInstance = useRunInstance();
   const runData = useRunData(id);
+  const nodeMockResults = useMockResultsByOperation(isTrigger ? `&${id}` : id);
+  const isMockSupported = useIsMockSupported(id);
   const parentRunId = useParentRunId(id);
   const parenRunData = useRunData(parentRunId ?? '');
   const nodesMetaData = useNodesMetadata();
@@ -331,6 +337,9 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
           isDragging={isDragging}
           isLoading={isLoading}
           isMonitoringView={isMonitoringView}
+          isUnitTest={isUnitTest}
+          nodeMockResults={nodeMockResults}
+          isMockSupported={isMockSupported}
           runData={runData}
           readOnly={readOnly}
           onClick={nodeClick}
