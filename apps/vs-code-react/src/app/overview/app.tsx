@@ -122,6 +122,13 @@ export const OverviewApp = () => {
       }}
       onRunTrigger={runTriggerCall}
       onVerifyRunId={onVerifyRunId}
+      supportsUnitTest={workflowState.isLocal}
+      onCreateUnitTest={(run: RunDisplayItem) => {
+        vscode.postMessage({
+          command: ExtensionCommand.createUnitTest,
+          item: run,
+        });
+      }}
     />
   );
 };

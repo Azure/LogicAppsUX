@@ -21,6 +21,7 @@ import { sendRequest } from '../../utils/requestUtils';
 import { getWorkflowNode } from '../../utils/workspace';
 import type { IAzureConnectorsContext } from './azureConnectorWizard';
 import { openMonitoringView } from './openMonitoringView/openMonitoringView';
+import { createUnitTest } from './unitTest/createUnitTest';
 import type { ServiceClientCredentials } from '@azure/ms-rest-js';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type { ICallbackUrlResponse } from '@microsoft/vscode-extension';
@@ -37,6 +38,7 @@ export async function openOverview(context: IAzureConnectorsContext, node: vscod
   let baseUrl: string;
   let apiVersion: string;
   let accessToken: string;
+  let isLocal: boolean;
   let callbackInfo: ICallbackUrlResponse | undefined;
   let panelName = '';
   let corsNotice: string | undefined;
@@ -58,6 +60,7 @@ export async function openOverview(context: IAzureConnectorsContext, node: vscod
       context,
       `${baseUrl}/workflows/${workflowName}/triggers/${triggerName}/listCallbackUrl?api-version=${apiVersion}`
     );
+    isLocal = true;
 
     const projectPath = await getLogicAppProjectRoot(context, workflowFilePath);
     localSettings = projectPath ? (await getLocalSettingsJson(context, join(projectPath, localSettingsFileName))).Values || {} : {};
@@ -71,6 +74,7 @@ export async function openOverview(context: IAzureConnectorsContext, node: vscod
     apiVersion = workflowAppApiVersion;
     callbackInfo = await workflowNode.getCallbackUrl(workflowNode, getRequestTriggerName(workflowContent.definition));
     corsNotice = localize('CorsNotice', 'To view runs, set "*" to allowed origins in the CORS setting.');
+    isLocal = false;
   }
 
   const existingPanel: vscode.WebviewPanel | undefined = tryGetWebviewPanel(panelGroupKey, panelName);
@@ -127,6 +131,7 @@ export async function openOverview(context: IAzureConnectorsContext, node: vscod
             workflowProperties: workflowProps,
             project: ProjectName.overview,
             hostVersion: ext.extensionVersion,
+            isLocal: isLocal,
           },
         });
         // Just shipping the access Token every 5 seconds is easier and more
@@ -144,6 +149,9 @@ export async function openOverview(context: IAzureConnectorsContext, node: vscod
             });
           }
         }, 5000);
+        break;
+      case ExtensionCommand.createUnitTest:
+        await createUnitTest(context, workflowNode as vscode.Uri);
         break;
       default:
         break;

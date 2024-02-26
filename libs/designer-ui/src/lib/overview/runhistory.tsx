@@ -8,10 +8,13 @@ export interface RunHistoryProps {
   items: RunDisplayItem[];
   loading?: boolean;
   onOpenRun(run: RunDisplayItem): void;
+  supportsUnitTest: boolean;
+  onCreateUnitTest?(run: RunDisplayItem): void;
 }
 
 const ContextMenuKeys = {
   SHOW_RUN: 'SHOW_RUN',
+  CREATE_UNIT_TEST: 'CREATE_UNIT_TEST',
 } as const;
 type ContextMenuKeys = (typeof ContextMenuKeys)[keyof typeof ContextMenuKeys];
 const RunHistoryColumnKeys = {
@@ -33,7 +36,7 @@ const options: FormatDateOptions = {
   year: 'numeric',
 };
 
-export const RunHistory: React.FC<RunHistoryProps> = ({ items, loading = false, onOpenRun }) => {
+export const RunHistory: React.FC<RunHistoryProps> = ({ items, loading = false, onOpenRun, supportsUnitTest, onCreateUnitTest }) => {
   const intl = useIntl();
   const Resources = {
     CONTEXT_MENU: intl.formatMessage({
@@ -51,6 +54,10 @@ export const RunHistory: React.FC<RunHistoryProps> = ({ items, loading = false, 
     SHOW_RUN: intl.formatMessage({
       defaultMessage: 'Show run',
       description: 'Menu item text for show run',
+    }),
+    CREATE_UNIT_TEST: intl.formatMessage({
+      defaultMessage: 'Create unit test',
+      description: 'Menu item text for create unit test',
     }),
     START_TIME: intl.formatMessage({
       defaultMessage: 'Start time',
@@ -101,6 +108,11 @@ export const RunHistory: React.FC<RunHistoryProps> = ({ items, loading = false, 
     },
   ];
 
+  const contextMenuOptions = [
+    { key: ContextMenuKeys.SHOW_RUN, name: Resources.SHOW_RUN },
+    ...(supportsUnitTest ? [{ key: ContextMenuKeys.CREATE_UNIT_TEST, name: Resources.CREATE_UNIT_TEST }] : []),
+  ];
+
   const handleRenderItemColumn = (item: RunDisplayItem, _?: number, column?: IColumn): React.ReactNode | undefined => {
     switch (column?.key) {
       case RunHistoryColumnKeys.CONTEXT_MENU:
@@ -108,10 +120,12 @@ export const RunHistory: React.FC<RunHistoryProps> = ({ items, loading = false, 
           <DefaultButton
             aria-label={Resources.CONTEXT_MENU}
             menuProps={{
-              items: [{ key: ContextMenuKeys.SHOW_RUN, name: Resources.SHOW_RUN }],
+              items: contextMenuOptions,
               onItemClick: (_, menuItem?: IContextualMenuItem) => {
                 if (menuItem?.key === ContextMenuKeys.SHOW_RUN) {
                   onOpenRun(item);
+                } else if (menuItem?.key === ContextMenuKeys.CREATE_UNIT_TEST && onCreateUnitTest) {
+                  onCreateUnitTest(item);
                 }
               },
             }}

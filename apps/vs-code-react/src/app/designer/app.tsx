@@ -158,6 +158,7 @@ export const DesignerApp = () => {
         onRefresh={refetch}
         isDarkMode={theme === Theme.Dark}
         isUnitTest={isUnitTest}
+        isLocal={isLocal}
       />
     );
 
