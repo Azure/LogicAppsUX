@@ -15,7 +15,7 @@ export interface IStaticResultSchemaService {
   getOperationResultSchema(
     connectorId: string,
     operationId: string,
-    parser?: SwaggerParser | ManifestParser
+    parser?: SwaggerParser | ManifestParser | any
   ): Promise<OpenApiSchema | undefined>;
 }
 

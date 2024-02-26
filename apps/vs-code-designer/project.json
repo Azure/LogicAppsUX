@@ -21,10 +21,12 @@
             "input": "node_modules/@microsoft/vscode-azext-azureutils/resources",
             "output": "node_modules/@microsoft/vscode-azext-azureutils/resources"
           }
+
         ],
         "externalDependencies": ["vscode", "commonjs"],
+        "compiler": "tsc",
         "target": "node",
-        "compiler": "tsc"
+        "webpackConfig": "custom-webpack.config.js"
       },
       "configurations": {
         "production": {

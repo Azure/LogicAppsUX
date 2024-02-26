@@ -1,5 +1,6 @@
 const ReactConfig = require('@nrwl/react/plugins/webpack');
 const { merge } = require('webpack-merge');
+const {transform} = require('@formatjs/ts-transformer');
 const webpack = require('webpack');
 module.exports = (config, context) => {
   const webpackConfig = ReactConfig(config, context);
@@ -17,5 +18,30 @@ module.exports = (config, context) => {
         process: 'process/browser',
       }),
     ],
+    module: {
+      rules: [
+        {
+          test: /\.tsx?$/,
+          use: [
+            {
+              loader: 'ts-loader',
+              options: {
+                getCustomTransformers() {
+                  return {
+                    before: [
+                      transform({
+                        overrideIdFn: '[sha512:contenthash:base64:6]',
+                        ast: true
+                      }),
+                    ],
+                  };
+                },
+              },
+            },
+          ],
+          exclude: /node_modules/,
+        },
+      ],
+    },
   });
 };
