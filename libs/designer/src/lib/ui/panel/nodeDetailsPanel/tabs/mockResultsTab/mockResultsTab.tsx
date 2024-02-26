@@ -1,14 +1,27 @@
 import constants from '../../../../../common/constants';
 import { useSelectedNodeId } from '../../../../../core/state/panel/panelSelectors';
 import { useIsMockSupported } from '../../../../../core/state/unitTest/unitTestSelectors';
-import type { PanelTabFn } from '@microsoft/designer-ui';
+import type { RootState } from '../../../../../core/store';
+import { isRootNodeInGraph } from '../../../../../core/utils/graph';
 import { OutputMocks } from '@microsoft/designer-ui';
+import type { MockUpdateEvent, PanelTabFn } from '@microsoft/designer-ui';
+import { useCallback } from 'react';
+import { useSelector } from 'react-redux';
 
 export const MockResultsTab = () => {
   const nodeId = useSelectedNodeId();
   const isMockSupported = useIsMockSupported(nodeId);
+  const isTriggerNode = useSelector((state: RootState) => isRootNodeInGraph(nodeId, 'root', state.workflow.nodesMetadata));
+  const nodeName = isTriggerNode ? `&${nodeId}` : nodeId;
 
-  return <OutputMocks isMockSupported={isMockSupported} />;
+  const onMockUpdate = useCallback(
+    (newState: MockUpdateEvent): void => {
+      console.log('newState', newState, nodeName);
+    },
+    [nodeName]
+  );
+
+  return <OutputMocks isMockSupported={isMockSupported} nodeId={nodeId} onMockUpdate={onMockUpdate} />;
 };
 
 export const mockResultsTab: PanelTabFn = (intl) => ({

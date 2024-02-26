@@ -1,7 +1,13 @@
+import { type MockUpdateHandler } from './outputMocks';
 import { Label, Dropdown, type IDropdownOption } from '@fluentui/react';
 import { useIntl } from 'react-intl';
 
-export const ActionResult = (): JSX.Element => {
+export interface ActionResultProps {
+  nodeId: string;
+  onMockUpdate: MockUpdateHandler;
+}
+
+export const ActionResult: React.FC<ActionResultProps> = ({ nodeId, onMockUpdate }): JSX.Element => {
   const intl = useIntl();
 
   const intlText = {
@@ -27,7 +33,7 @@ export const ActionResult = (): JSX.Element => {
     }),
   };
 
-  const labelId = 'dropdown-label-action-result';
+  const labelId = `dropdown-label-action-result-${nodeId}`;
   const options: IDropdownOption[] = [
     { key: 'success', text: intlText.SUCCEEDED_STATUS },
     { key: 'timedOut', text: intlText.TIMEDOUT_STATUS },
@@ -35,10 +41,22 @@ export const ActionResult = (): JSX.Element => {
     { key: 'failed', text: intlText.FAILED_STATUS },
   ];
 
+  const onChangeActionResult = (_event: React.FormEvent<HTMLDivElement>, selectedOption?: IDropdownOption) => {
+    if (selectedOption) {
+      onMockUpdate({ id: nodeId, actionResult: selectedOption.key as string });
+    }
+  };
+
   return (
     <>
       <Label id={labelId}>{intlText.ACTION_RESULT}</Label>
-      <Dropdown aria-labelledby={labelId} className={'msla-output-mocks-actions-dropdown'} options={options} />
+      <Dropdown
+        aria-labelledby={labelId}
+        className={'msla-output-mocks-actions-dropdown'}
+        options={options}
+        defaultSelectedKey={'success'}
+        onChange={onChangeActionResult}
+      />
     </>
   );
 };
