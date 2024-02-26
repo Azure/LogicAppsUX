@@ -59,6 +59,8 @@ import { useDispatch, useSelector } from 'react-redux';
 export const ParametersTab = () => {
   const selectedNodeId = useSelectedNodeId();
   const nodeMetadata = useNodeMetadata(selectedNodeId);
+  const outputsTest = useSelector((state: RootState) => state.operations.outputParameters[selectedNodeId]);
+  console.log('outputsTest', outputsTest);
   const inputs = useSelector((state: RootState) => state.operations.inputParameters[selectedNodeId]);
   const { tokenState, workflowParametersState } = useSelector((state: RootState) => ({
     tokenState: state.tokens,
