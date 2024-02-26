@@ -147,6 +147,11 @@ export const as2EncodeManifest = {
               title: 'MDN type',
               description: 'The MDN(acknowledgment) type - NotConfigured, Sync, Async.',
             },
+            receiverUri: {
+              type: 'string',
+              title: 'Receiver URI',
+              description: 'The receiver URI.',
+            },
           },
         },
       },
