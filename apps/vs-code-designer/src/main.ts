@@ -41,15 +41,6 @@ export async function activate(context: vscode.ExtensionContext) {
     ...supportedSchemaFileExts,
   ]);
 
-  // temporary fix to uninstall the old DM extension if it exists
-  const legacyExtension = vscode.extensions.getExtension('ms-azuretools.data-mapper-vscode-extension');
-  if (legacyExtension !== undefined) {
-    vscode.commands.executeCommand('workbench.extensions.uninstallExtension', legacyExtension.id);
-    vscode.window.showWarningMessage(
-      'The Azure Logic Apps (Standard) extension now includes the Data Mapper capabilities. To avoid conflicts, the standalone Data Mapper extension has been removed. Please restart Visual Studio Code to complete this update.'
-    );
-  }
-
   ext.context = context;
 
   ext.outputChannel = createAzExtOutputChannel('Azure Logic Apps (Standard)', ext.prefix);

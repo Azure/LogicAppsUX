@@ -1,7 +1,7 @@
+import { addInitVSCodeSteps } from '../../initProjectForVSCode/InitVSCodeLanguageStep';
 import { WorkflowCodeProjectCreateStep } from './WorkflowCodeProjectCreateStep';
 import { InvokeFunctionProjectSetup } from './createFunction/InvokeFunctionProjectSetup';
 import { CodeProjectWorkflowStateTypeStep } from './createLogicApp/CodeProjectWorkflowStateTypeStep';
-import { addInitVSCodeSteps } from './createLogicApp/initLogicAppCodeProjectVScode/InitVSCode';
 import { DesignerConfig } from './createLogicApp/workflowDesigner/DesignerConfig';
 import type { AzureWizardExecuteStep, IWizardOptions } from '@microsoft/vscode-azext-utils';
 import { AzureWizardPromptStep, nonNullProp } from '@microsoft/vscode-azext-utils';
@@ -87,7 +87,7 @@ export class NewCodeProjectTypeStep extends AzureWizardPromptStep<IProjectWizard
     executeSteps.push(new WorkflowCodeProjectCreateStep(workflowProjectPath));
 
     // Add any necessary steps to initialize the project for Visual Studio Code.
-    await addInitVSCodeSteps(context, executeSteps);
+    await addInitVSCodeSteps(context, executeSteps, true);
 
     // Create the sub-wizard options object
     const wizardOptions: IWizardOptions<IProjectWizardContext> = { promptSteps, executeSteps };
