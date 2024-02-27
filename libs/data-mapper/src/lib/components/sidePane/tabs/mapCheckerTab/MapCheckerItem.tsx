@@ -58,9 +58,9 @@ export const MapCheckerItem = ({ title, description, severity, reactFlowId, onCl
             childrenGap: '4px',
           }}
         >
-          <Text style={{ ...typographyStyles.body1Strong }}>{intl.formatMessage(title.message, title.value)}</Text>
+          <Text style={{ ...typographyStyles.body1Strong }}>{"trying"}</Text>
           <Text style={{ ...typographyStyles.body1, wordBreak: 'break-word' }}>
-            {intl.formatMessage(description.message, description.value)}
+            {"try"}
           </Text>
         </Stack>
       </Stack>

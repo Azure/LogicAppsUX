@@ -6,6 +6,7 @@ module.exports = (config, context) => {
   const webpackConfig = ReactConfig(config, context);
   webpackConfig.resolve.alias['https'] = false;
   webpackConfig.resolve.alias['http'] = false;
+  console.log(webpackConfig);
   return merge(webpackConfig, {
     resolve: {
       aliasFields: ['browser', 'browser.esm'],
@@ -18,30 +19,5 @@ module.exports = (config, context) => {
         process: 'process/browser',
       }),
     ],
-    module: {
-      rules: [
-        {
-          test: /\.tsx?$/,
-          use: [
-            {
-              loader: 'ts-loader',
-              options: {
-                getCustomTransformers() {
-                  return {
-                    before: [
-                      transform({
-                        overrideIdFn: '[sha512:contenthash:base64:6]',
-                        ast: true
-                      }),
-                    ],
-                  };
-                },
-              },
-            },
-          ],
-          exclude: /node_modules/,
-        },
-      ],
-    },
   });
 };

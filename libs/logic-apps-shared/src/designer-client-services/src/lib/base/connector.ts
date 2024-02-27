@@ -117,10 +117,7 @@ export abstract class BaseConnectorService implements IConnectorService {
       return connectorResponse.body;
     } else {
       const clientRequestId = getClientRequestIdFromHeaders(connectorResponse.headers);
-      const defaultErrorMessage = intl.formatMessage(
-        { defaultMessage: 'Error executing the api - {url}', description: 'Error message to show on dynamic call failure' },
-        { url: requestUrl }
-      );
+      const defaultErrorMessage = "1231230"
       const errorMessage = this._getErrorMessageFromConnectorResponse(connectorResponse, defaultErrorMessage, intl, clientRequestId);
 
       throw new ConnectorServiceException(ConnectorServiceErrorCode.API_EXECUTION_FAILED_WITH_ERROR, errorMessage, { connectorResponse });
@@ -140,28 +137,14 @@ export abstract class BaseConnectorService implements IConnectorService {
     let errorMessage: string;
 
     if (statusCode !== undefined && message) {
-      const errorCode = statusCode;
-      errorMessage = intl.formatMessage(
-        {
-          defaultMessage: `Error code: ''{errorCode}'', Message: ''{message}''.`,
-          description:
-            'Dynamic call error message. Do not remove the double single quotes around the placeholder texts, as it is needed to wrap the placeholder text in single quotes.',
-        },
-        { errorCode, message }
-      );
+      //const errorCode = statusCode;
+      errorMessage = "abc";
     } else {
       errorMessage = error?.message ?? defaultErrorMessage;
     }
 
     return clientRequestId
-      ? `${errorMessage} ${intl.formatMessage(
-          {
-            defaultMessage: "More diagnostic information: x-ms-client-request-id is ''{clientRequestId}''.",
-            description:
-              'Diagnostics information on error message. Do not remove the double single quotes around the placeholder texts, as it is needed to wrap the placeholder text in single quotes.',
-          },
-          { clientRequestId }
-        )}`
+      ? "abc"
       : errorMessage;
   }
 
@@ -222,14 +205,7 @@ export abstract class BaseConnectorService implements IConnectorService {
       throw new ConnectorServiceException(
         ConnectorServiceErrorCode.API_EXECUTION_FAILED,
         ex.message ??
-          intl.formatMessage(
-            {
-              defaultMessage: "Error occurred while executing the following API parameters: ''{parameters}''",
-              description:
-                'Error message when execute dynamic api in managed connector. Do not remove the double single quotes around the placeholder text, as it is needed to wrap the placeholder text in single quotes.',
-            },
-            { parameters: parameters['path'] }
-          ),
+          "dfasdfsd",
         {
           requestMethod: method,
           uri,
