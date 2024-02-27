@@ -48,7 +48,6 @@ interface ServiceProviderConnectionModel {
   };
   parameterSetName?: string;
   displayName?: string;
-  additionalParameterValues?: Record<string, string>;
 }
 
 interface FunctionsConnectionModel {
@@ -606,7 +605,6 @@ function convertToServiceProviderConnectionsData(
     displayName,
     connectionParameters: connectionParameterValues,
     connectionParametersSet: connectionParametersSetValues,
-    additionalParameterValues,
   } = connectionInfo;
   const connectionParameters = connectionParametersSetValues
     ? connectionParameterMetadata.connectionParameterSet?.parameters
@@ -628,7 +626,6 @@ function convertToServiceProviderConnectionsData(
       ...optional('parameterSetName', connectionParametersSetValues?.name),
       serviceProvider: { id: connectorId },
       displayName,
-      ...optional('additionalParameterValues', additionalParameterValues),
     },
     settings: connectionInfo.appSettings ?? {},
     pathLocation: [serviceProviderLocation],
