@@ -13,15 +13,16 @@ export const MockResultsTab = () => {
   const isMockSupported = useIsMockSupported(nodeId);
   const isTriggerNode = useSelector((state: RootState) => isRootNodeInGraph(nodeId, 'root', state.workflow.nodesMetadata));
   const nodeName = isTriggerNode ? `&${nodeId}` : nodeId;
+  const outputs = useSelector((state: RootState) => state.operations.outputParameters[nodeId]);
 
   const onMockUpdate = useCallback(
     (newState: MockUpdateEvent): void => {
-      console.log('newState', newState, nodeName);
+      console.log('charlie', newState, nodeName);
     },
     [nodeName]
   );
 
-  return <OutputMocks isMockSupported={isMockSupported} nodeId={nodeId} onMockUpdate={onMockUpdate} />;
+  return <OutputMocks isMockSupported={isMockSupported} nodeId={nodeId} onMockUpdate={onMockUpdate} outputs={outputs.outputs} />;
 };
 
 export const mockResultsTab: PanelTabFn = (intl) => ({
