@@ -101,7 +101,7 @@ export const convertEditorState = (
       }
 
       // Clean the HTML string and decode the token nodes since `nodeMap` keys are always decoded.
-      const cleanedHtmlString = cleanHtmlString(tempElement.innerHTML);
+      const cleanedHtmlString = cleanHtmlString(tempElement.innerHTML, isValuePlaintext);
       const decodedHtmlString = decodeStringSegmentTokensInDomContext(cleanedHtmlString, nodeMap);
       const decodedLexicalString = decodeStringSegmentTokensInLexicalContext(decodedHtmlString, nodeMap);
 

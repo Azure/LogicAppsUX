@@ -51,11 +51,13 @@ export interface Position {
   y: number;
 }
 
-export const cleanHtmlString = (html: string): string => {
+export const cleanHtmlString = (html: string, isValuePlaintext: boolean): string => {
   let cleanedHtmlString = html;
 
   // Ensure that all newlines are treated as HTML line breaks.
-  cleanedHtmlString = cleanedHtmlString.replace(/\n/g, '<br>');
+  if (!isValuePlaintext) {
+    cleanedHtmlString = cleanedHtmlString.replace(/\n/g, '<br>');
+  }
 
   // Remove extraneous <span> tags.
   cleanedHtmlString = cleanedHtmlString.replace(/<span>(.*?)<\/span>/g, '$1');
