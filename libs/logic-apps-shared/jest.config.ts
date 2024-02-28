@@ -1,6 +1,6 @@
 /* eslint-disable */
 export default {
-  displayName: 'parsers',
+  displayName: 'shared',
   preset: '../../jest.preset.js',
   setupFilesAfterEnv: ['./jest.setup.js'],
   transform: {
@@ -25,5 +25,5 @@ export default {
     '@fluentui/react/lib/(.*)$': '@fluentui/react/lib-commonjs/$1',
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
-  coverageDirectory: '../../coverage/libs/parsers',
+  coverageDirectory: '../../coverage/libs/logic-apps-shared',
 };

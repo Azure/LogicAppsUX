@@ -15,14 +15,6 @@
       "type": "json"
     },
     {
-      "filename": "libs/utils/package.json",
-      "type": "json"
-    },
-    {
-      "filename": "libs/services/intl/package.json",
-      "type": "json"
-    },
-    {
       "filename": "apps/vs-code-designer/src/package.json",
       "type": "json"
     },
@@ -31,7 +23,7 @@
       "type": "json"
     },
     {
-      "filename": "libs/parsers/package.json",
+      "filename": "libs/logic-apps-shared/package.json",
       "type": "json"
     },
     {
