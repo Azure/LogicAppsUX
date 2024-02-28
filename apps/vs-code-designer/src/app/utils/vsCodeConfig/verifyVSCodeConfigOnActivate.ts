@@ -52,7 +52,7 @@ export async function verifyVSCodeConfigOnActivate(
               break;
             default:
           }
-        } else {
+        } else if (version === undefined) {
           await promptToInitializeProject(workspacePath, context);
         }
       }
