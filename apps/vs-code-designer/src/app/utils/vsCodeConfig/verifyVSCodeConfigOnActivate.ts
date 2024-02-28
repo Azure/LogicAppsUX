@@ -10,6 +10,7 @@ import { tryParseFuncVersion } from '../funcCoreTools/funcVersion';
 import { tryGetLogicAppProjectRoot } from '../verifyIsProject';
 import { getWorkspaceSetting, updateGlobalSetting } from './settings';
 import { verifyTargetFramework } from './verifyTargetFramework';
+import { isEmptyString } from '@microsoft/utils-logic-apps';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { callWithTelemetryAndErrorHandling, DialogResponses } from '@microsoft/vscode-azext-utils';
 import type { FuncVersion } from '@microsoft/vscode-extension';
@@ -34,10 +35,10 @@ export async function verifyVSCodeConfigOnActivate(
         ext.logicAppWorkspace = projectPath;
         context.telemetry.suppressIfSuccessful = false;
 
-        const language: ProjectLanguage | undefined = getWorkspaceSetting(projectLanguageSetting, projectPath);
+        const language: ProjectLanguage | string = getWorkspaceSetting(projectLanguageSetting, projectPath);
         const version: FuncVersion | undefined = tryParseFuncVersion(getWorkspaceSetting(funcVersionSetting, projectPath));
 
-        if (language !== undefined && version !== undefined) {
+        if (isEmptyString(language) && version !== undefined) {
           callWithTelemetryAndErrorHandling('initializeTemplates', async (templatesContext: IActionContext) => {
             templatesContext.telemetry.properties.isActivationEvent = 'true';
             templatesContext.errorHandling.suppressDisplay = true;
@@ -63,7 +64,7 @@ async function promptToInitializeProject(workspacePath: string, context: IAction
   if (getWorkspaceSetting<boolean>(showProjectWarningSetting)) {
     context.telemetry.properties.verifyConfigPrompt = 'initProject';
 
-    const learnMoreLink = 'https://aka.ms/azFuncProject';
+    const learnMoreLink = 'https://aka.ms/lalearn';
     const message: string = localize(
       'uninitializedWarning',
       'Detected an Azure Logic App Project in folder "{0}" that may have been created outside of VS Code. Initialize for optimal use with VS Code?',

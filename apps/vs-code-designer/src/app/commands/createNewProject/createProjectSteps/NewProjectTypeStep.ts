@@ -42,7 +42,7 @@ export class NewProjectTypeStep extends AzureWizardPromptStep<IProjectWizardCont
         break;
     }
 
-    await addInitVSCodeSteps(context, executeSteps);
+    await addInitVSCodeSteps(context, executeSteps, false);
 
     const wizardOptions: IWizardOptions<IProjectWizardContext> = { promptSteps, executeSteps };
 
