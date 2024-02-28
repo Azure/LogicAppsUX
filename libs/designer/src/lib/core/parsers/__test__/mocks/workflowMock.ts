@@ -1,5 +1,6 @@
-import type { WorkflowState } from '../../../state/workflow/workflowInterfaces';
+import { WorkflowKind, type WorkflowState } from '../../../state/workflow/workflowInterfaces';
 import type { WorkflowNode } from '../../models/workflowNode';
+import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import { WORKFLOW_NODE_TYPES, WORKFLOW_EDGE_TYPES } from '@microsoft/logic-apps-shared';
 
 export const initialState: WorkflowState = {
@@ -12,6 +13,11 @@ export const initialState: WorkflowState = {
   operations: {},
   nodesMetadata: {},
   collapsedGraphIds: {},
+  workflowKind: WorkflowKind.STATEFUL,
+  originalDefinition: {} as LogicAppsV2.WorkflowDefinition,
+  hostData: {
+    errorMessages: {},
+  },
   edgeIdsBySource: {},
   idReplacements: {},
   newlyAddedOperations: {},
