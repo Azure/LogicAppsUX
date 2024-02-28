@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [2.119.2](https://github.com/Azure/LogicAppsUX/compare/v2.119.1...v2.119.2) (2024-02-28)
+
+
+### Bug Fixes
+
+* **vscode:** Fix useEffect on workflows success data & Revert - Adding hidden parameter field ([#4273](https://github.com/Azure/LogicAppsUX/issues/4273)) ([94edf2a](https://github.com/Azure/LogicAppsUX/commit/94edf2a40c54427b6b0142d2ea5e443c70229056)), closes [#4249](https://github.com/Azure/LogicAppsUX/issues/4249) [#4193](https://github.com/Azure/LogicAppsUX/issues/4193) [#4265](https://github.com/Azure/LogicAppsUX/issues/4265) [#4193](https://github.com/Azure/LogicAppsUX/issues/4193)
+
 ### [2.119.1](https://github.com/Azure/LogicAppsUX/compare/v2.119.0...v2.119.1) (2024-02-26)
 
 ## [2.119.0](https://github.com/Azure/LogicAppsUX/compare/v2.118.0...v2.119.0) (2024-02-21)
