@@ -6,7 +6,6 @@ import { Stack } from '@fluentui/react';
 import { Button, Text, tokens, typographyStyles } from '@fluentui/react-components';
 import type { CSSProperties } from 'react';
 import { useMemo } from 'react';
-import { useIntl } from 'react-intl';
 import { useSelector } from 'react-redux';
 
 export const MapCheckerItemSeverity = {
@@ -28,8 +27,7 @@ export interface MapCheckerItemProps extends MapCheckerEntry {
   onClick: () => void;
 }
 
-export const MapCheckerItem = ({ title, description, severity, reactFlowId, onClick }: MapCheckerItemProps) => {
-  const intl = useIntl();
+export const MapCheckerItem = ({ severity, reactFlowId, onClick }: MapCheckerItemProps) => {
   const selectedItemKey = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.selectedItemKey);
 
   const isCurrentNodeSelected = useMemo<boolean>(() => selectedItemKey === reactFlowId, [reactFlowId, selectedItemKey]);
@@ -58,10 +56,8 @@ export const MapCheckerItem = ({ title, description, severity, reactFlowId, onCl
             childrenGap: '4px',
           }}
         >
-          <Text style={{ ...typographyStyles.body1Strong }}>{"trying"}</Text>
-          <Text style={{ ...typographyStyles.body1, wordBreak: 'break-word' }}>
-            {"try"}
-          </Text>
+          <Text style={{ ...typographyStyles.body1Strong }}>{'trying'}</Text>
+          <Text style={{ ...typographyStyles.body1, wordBreak: 'break-word' }}>{'try'}</Text>
         </Stack>
       </Stack>
     </Button>

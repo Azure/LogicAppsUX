@@ -110,14 +110,14 @@ export abstract class BaseConnectorService implements IConnectorService {
     return invokeParameters;
   }
 
-  protected _getResponseFromDynamicApi(responseJson: any, requestUrl: string): any {
+  protected _getResponseFromDynamicApi(responseJson: any, _requestUrl: string): any {
     const intl = getIntl();
     const connectorResponse = responseJson.response ?? responseJson;
     if (connectorResponse.statusCode === 'OK') {
       return connectorResponse.body;
     } else {
       const clientRequestId = getClientRequestIdFromHeaders(connectorResponse.headers);
-      const defaultErrorMessage = "1231230"
+      const defaultErrorMessage = '1231230';
       const errorMessage = this._getErrorMessageFromConnectorResponse(connectorResponse, defaultErrorMessage, intl, clientRequestId);
 
       throw new ConnectorServiceException(ConnectorServiceErrorCode.API_EXECUTION_FAILED_WITH_ERROR, errorMessage, { connectorResponse });
@@ -138,14 +138,12 @@ export abstract class BaseConnectorService implements IConnectorService {
 
     if (statusCode !== undefined && message) {
       //const errorCode = statusCode;
-      errorMessage = "abc";
+      errorMessage = 'abc';
     } else {
       errorMessage = error?.message ?? defaultErrorMessage;
     }
 
-    return clientRequestId
-      ? "abc"
-      : errorMessage;
+    return clientRequestId ? 'abc' : errorMessage;
   }
 
   protected async _executeAzureDynamicApi(
@@ -156,7 +154,6 @@ export abstract class BaseConnectorService implements IConnectorService {
     managedIdentityProperties?: ManagedIdentityRequestProperties | { workflowReference: { id: string } }
   ): Promise<any> {
     const { baseUrl, apiVersion: _apiVersion, httpClient, apiHubServiceDetails } = this.options;
-    const intl = getIntl();
     const method = parameters['method'];
     const isManagedIdentityTypeConnection = !!managedIdentityProperties;
 
@@ -204,8 +201,7 @@ export abstract class BaseConnectorService implements IConnectorService {
     } catch (ex: any) {
       throw new ConnectorServiceException(
         ConnectorServiceErrorCode.API_EXECUTION_FAILED,
-        ex.message ??
-          "dfasdfsd",
+        ex.message ?? 'dfasdfsd',
         {
           requestMethod: method,
           uri,
