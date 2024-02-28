@@ -3,5 +3,6 @@
   "version": "2.116.0",
   "scripts": {
     "yalcpush": "yalc push ../../../dist/libs/logic-apps-shared"
-  }
+  },
+  "module": "./index.esm.js"
 }
