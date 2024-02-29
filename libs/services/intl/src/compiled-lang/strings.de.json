@@ -1126,7 +1126,7 @@
   "5WTRY8": [
     {
       "type": 0,
-      "value": "Errors"
+      "value": "Fehler"
     }
   ],
   "5akc1Q": [
@@ -1371,6 +1371,12 @@
     {
       "type": 0,
       "value": "Datentyp"
+    }
+  ],
+  "6yFUar": [
+    {
+      "type": 0,
+      "value": "Ausgaben sind erforderlich, wenn der Status „Erfolgreich“ lautet"
     }
   ],
   "70eoQu": [
@@ -1897,6 +1903,12 @@
     {
       "type": 0,
       "value": "Filteraktionen"
+    }
+  ],
+  "ANGw2o": [
+    {
+      "type": 0,
+      "value": "Klicken Sie für weitere Informationen zum statischen Ergebnis"
     }
   ],
   "AO6T9u": [
@@ -3005,10 +3017,22 @@
       "value": "Erforderlich. Die Zahl, von der der Subtrahend abgezogen wird."
     }
   ],
+  "H9CZTr": [
+    {
+      "type": 0,
+      "value": "Der Ausdruck ist ungültig. Stellen Sie sicher, dass Sie einfache Anführungszeichen verwenden."
+    }
+  ],
   "HDqP2g": [
     {
       "type": 0,
       "value": "Erforderlich. Der Schlüsselname des zurückzugebenden Formulardatenwerts."
+    }
+  ],
+  "HGA9iU": [
+    {
+      "type": 0,
+      "value": "Der Fehler und sein Code sind erforderlich, wenn der Status „Fehlgeschlagen“ lautet"
     }
   ],
   "HH970i": [
@@ -3547,6 +3571,12 @@
       "value": "Wird erstellt..."
     }
   ],
+  "LPdGu/": [
+    {
+      "type": 0,
+      "value": "Ausgaben sollten nicht angegeben werden, wenn der Status „Fehlerhaft“ lautet"
+    }
+  ],
   "LR/3Lr": [
     {
       "type": 0,
@@ -3676,7 +3706,7 @@
   "M0bbZk": [
     {
       "type": 0,
-      "value": "Flow Checker"
+      "value": "Flowprüfung"
     }
   ],
   "M0xrm+": [
@@ -4006,7 +4036,7 @@
   "O6VHe0": [
     {
       "type": 0,
-      "value": "Operation warnings"
+      "value": "Vorgangswarnungen"
     }
   ],
   "O7HhyP": [
@@ -5346,7 +5376,7 @@
   "Vi5TIV": [
     {
       "type": 0,
-      "value": "No warnings found."
+      "value": "Keine Warnungen gefunden."
     }
   ],
   "VlvlX1": [
@@ -5983,6 +6013,12 @@
     {
       "type": 0,
       "value": "Statisches Ergebnis deaktivieren"
+    }
+  ],
+  "Yz9o1k": [
+    {
+      "type": 0,
+      "value": "Nicht verbunden."
     }
   ],
   "Z8tBFS": [
@@ -7064,7 +7100,7 @@
   "hLOIwp": [
     {
       "type": 0,
-      "value": "Warnings"
+      "value": "Warnungen"
     }
   ],
   "hMf2TA": [
@@ -9013,6 +9049,12 @@
       "value": "Die Datenzuordnungsdefinition kann nicht generiert werden."
     }
   ],
+  "svaqnp": [
+    {
+      "type": 0,
+      "value": "Fehler sollte nicht angegeben werden, wenn der Status „Erfolgreich“ lautet"
+    }
+  ],
   "sw6EXK": [
     {
       "type": 0,
@@ -9049,6 +9091,12 @@
     {
       "type": 0,
       "value": "Erforderlich. Hiermit wird eine Zeichenfolge angegeben, die den Namen der Zielzeitzone enthält. Weitere Informationen finden Sie unter https://msdn.microsoft.com/de-de/library/gg154758.aspx."
+    }
+  ],
+  "t9RwOi": [
+    {
+      "type": 0,
+      "value": "Der Ausdruck ist ungültig."
     }
   ],
   "tAbbH8": [
@@ -9485,12 +9533,6 @@
     {
       "type": 0,
       "value": "Ausgaben"
-    }
-  ],
-  "vVJuus": [
-    {
-      "type": 0,
-      "value": "Der Ausdruck ist ungültig."
     }
   ],
   "vX9WYS": [

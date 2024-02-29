@@ -1,5 +1,5 @@
 import { Dropdown, type IDropdownOption } from '@fluentui/react';
-import { getIdentityDropdownOptions, type ManagedIdentity } from '@microsoft/utils-logic-apps';
+import { getIdentityDropdownOptions, type ManagedIdentity } from '@microsoft/logic-apps-shared';
 import { useEffect, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 

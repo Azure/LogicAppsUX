@@ -2,7 +2,7 @@ import type { ArmResources } from '../Models/Arm';
 import type { Workflow } from '../Models/Workflow';
 import type { HttpClient } from './HttpClient';
 import type { ListDynamicValue } from '@microsoft/designer-client-services-logic-apps';
-import { hasProperty, getPropertyValue } from '@microsoft/utils-logic-apps';
+import { hasProperty, getPropertyValue } from '@microsoft/logic-apps-shared';
 
 export interface DynamicCallServiceOptions {
   apiVersion: string;

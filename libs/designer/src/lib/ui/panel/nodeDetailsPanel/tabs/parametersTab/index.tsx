@@ -3,7 +3,12 @@ import { useShowIdentitySelectorQuery } from '../../../../../core/state/connecti
 import { useHostOptions, useReadOnly } from '../../../../../core/state/designerOptions/designerOptionsSelectors';
 import type { ParameterGroup } from '../../../../../core/state/operation/operationMetadataSlice';
 import { DynamicLoadStatus, ErrorLevel } from '../../../../../core/state/operation/operationMetadataSlice';
-import { useNodesInitialized, useOperationErrorInfo } from '../../../../../core/state/operation/operationSelector';
+import {
+  useDependencies,
+  useNodesInitialized,
+  useOperationErrorInfo,
+  useRawInputParameters,
+} from '../../../../../core/state/operation/operationSelector';
 import { usePanelLocation, useSelectedNodeId } from '../../../../../core/state/panel/panelSelectors';
 import {
   useAllowUserToChangeConnection,
@@ -45,8 +50,8 @@ import {
   toCustomEditorAndOptions,
 } from '@microsoft/designer-ui';
 import type { ChangeState, ParameterInfo, ValueSegment, OutputToken, TokenPickerMode, PanelTabFn } from '@microsoft/designer-ui';
-import type { OperationInfo } from '@microsoft/utils-logic-apps';
-import { equals, getPropertyValue } from '@microsoft/utils-logic-apps';
+import type { OperationInfo } from '@microsoft/logic-apps-shared';
+import { equals, getPropertyValue, getRecordEntry } from '@microsoft/logic-apps-shared';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
@@ -68,7 +73,7 @@ export const ParametersTab = () => {
   const showConnectionDisplay = useAllowUserToChangeConnection(operationInfo);
   const showIdentitySelector = useShowIdentitySelectorQuery(selectedNodeId);
   const errorInfo = useOperationErrorInfo(selectedNodeId);
-
+  const { hideUTFExpressions } = useHostOptions();
   const replacedIds = useReplacedIds();
 
   const emptyParametersMessage = useIntl().formatMessage({
@@ -100,7 +105,7 @@ export const ParametersTab = () => {
   }
 
   const tokenGroup = getOutputTokenSections(selectedNodeId, nodeType, tokenState, workflowParametersState, replacedIds);
-  const expressionGroup = getExpressionTokenSections();
+  const expressionGroup = getExpressionTokenSections(hideUTFExpressions);
 
   return (
     <>
@@ -162,11 +167,11 @@ const ParameterSection = ({
 }) => {
   const dispatch = useDispatch<AppDispatch>();
   const [sectionExpanded, setSectionExpanded] = useState<boolean>(false);
+  const isTrigger = useSelector((state: RootState) => isRootNodeInGraph(nodeId, 'root', state.workflow.nodesMetadata));
+  const nodeInputs = useRawInputParameters(nodeId) ?? { parameterGroups: {} };
+  const operationInfo = useOperationInfo(nodeId);
+  const dependencies = useDependencies(nodeId);
   const {
-    isTrigger,
-    nodeInputs,
-    operationInfo,
-    dependencies,
     settings: nodeSettings,
     variables,
     upstreamNodeIds,
@@ -176,14 +181,12 @@ const ParameterSection = ({
     workflowParameters,
   } = useSelector((state: RootState) => {
     return {
-      isTrigger: isRootNodeInGraph(nodeId, 'root', state.workflow.nodesMetadata),
-      nodeInputs: state.operations.inputParameters[nodeId],
-      operationInfo: state.operations.operationInfo[nodeId],
-      dependencies: state.operations.dependencies[nodeId],
-      settings: state.operations.settings[nodeId],
-      upstreamNodeIds: state.tokens.outputTokens[nodeId]?.upstreamNodeIds,
+      settings: getRecordEntry(state.operations.settings, nodeId) ?? {},
+      upstreamNodeIds: getRecordEntry(state.tokens.outputTokens, nodeId)?.upstreamNodeIds,
       variables: state.tokens.variables,
-      operationDefinition: state.workflow.newlyAddedOperations[nodeId] ? undefined : state.workflow.operations[nodeId],
+      operationDefinition: getRecordEntry(state.workflow.newlyAddedOperations, nodeId)
+        ? undefined
+        : getRecordEntry(state.workflow.operations, nodeId),
       connectionReference: getConnectionReference(state.connections, nodeId),
       idReplacements: state.workflow.idReplacements,
       workflowParameters: state.workflowParameters.definitions,
@@ -193,7 +196,7 @@ const ParameterSection = ({
   const displayNameResult = useConnectorName(operationInfo);
   const panelLocation = usePanelLocation();
 
-  const { suppressCastingForSerialize } = useHostOptions();
+  const { suppressCastingForSerialize, hideUTFExpressions } = useHostOptions();
 
   const [tokenMapping, setTokenMapping] = useState<Record<string, ValueSegment>>({});
 
@@ -207,7 +210,7 @@ const ParameterSection = ({
       if (viewModel !== undefined) {
         propertiesToUpdate.editorViewModel = viewModel;
       }
-      if (variables[nodeId]) {
+      if (getRecordEntry(variables, nodeId)) {
         if (parameter?.parameterKey === 'inputs.$.name') {
           dispatch(updateVariableInfo({ id: nodeId, name: value[0]?.value }));
         } else if (parameter?.parameterKey === 'inputs.$.type') {
@@ -349,6 +352,7 @@ const ParameterSection = ({
         tokenGroup={tokenGroup}
         filteredTokenGroup={filteredTokenGroup}
         expressionGroup={expressionGroup}
+        hideUTFExpressions={hideUTFExpressions}
         setIsTokenPickerOpened={setIsTokenPickerOpened}
         initialMode={tokenPickerMode}
         getValueSegmentFromToken={(token: OutputToken, addImplicitForeach: boolean) =>

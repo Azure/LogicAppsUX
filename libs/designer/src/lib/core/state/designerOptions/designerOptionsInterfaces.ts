@@ -17,6 +17,7 @@ import type {
   IConnectionParameterEditorService,
   IChatbotService,
 } from '@microsoft/designer-client-services-logic-apps';
+import type { LogicApps } from '@microsoft/logic-apps-shared';
 
 type PANEL_TAB_NAMES = keyof typeof CONSTANTS.PANEL_TAB_NAMES;
 
@@ -25,13 +26,16 @@ export interface DesignerOptionsState {
   isMonitoringView?: boolean;
   isDarkMode?: boolean;
   servicesInitialized?: boolean;
+  designerOptionsInitialized?: boolean;
   useLegacyWorkflowParameters?: boolean;
   isXrmConnectionReferenceMode?: boolean;
   suppressDefaultNodeSelectFunctionality?: boolean;
   hostOptions: {
     displayRuntimeInfo: boolean; // show info about where the action is run(i.e. InApp/Shared/Custom)
     suppressCastingForSerialize?: boolean; // suppress casting for serialize
+    recurrenceInterval?: LogicApps.Recurrence;
     forceEnableSplitOn?: boolean; // force enable split on (by default it is disabled on stateless workflows)
+    hideUTFExpressions?: boolean; // hide UTF expressions in template functions
   };
   nodeSelectAdditionalCallback?: (nodeId: string) => any;
   showConnectionsPanel?: boolean;

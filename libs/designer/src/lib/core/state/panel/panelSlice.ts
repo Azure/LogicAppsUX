@@ -2,7 +2,7 @@ import { resetWorkflowState } from '../global';
 import type { RelationshipIds, PanelState, PanelMode } from './panelInterfaces';
 import { LogEntryLevel, LoggerService } from '@microsoft/designer-client-services-logic-apps';
 import { PanelLocation } from '@microsoft/designer-ui';
-import { cleanConnectorId } from '@microsoft/utils-logic-apps';
+import { cleanConnectorId } from '@microsoft/logic-apps-shared';
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 
@@ -75,7 +75,13 @@ export const panelSlice = createSlice({
     },
     expandDiscoveryPanel: (
       state,
-      action: PayloadAction<{ relationshipIds: RelationshipIds; nodeId: string; isParallelBranch?: boolean; addingTrigger?: boolean }>
+      action: PayloadAction<{
+        relationshipIds: RelationshipIds;
+        nodeId: string;
+        isParallelBranch?: boolean;
+        focusReturnElementId?: string;
+        addingTrigger?: boolean;
+      }>
     ) => {
       state.collapsed = false;
       state.currentPanelMode = 'Discovery';
@@ -83,6 +89,7 @@ export const panelSlice = createSlice({
       state.selectedNodes = [action.payload.nodeId];
       state.isParallelBranch = action.payload?.isParallelBranch ?? false;
       state.addingTrigger = !!action.payload?.addingTrigger;
+      state.focusReturnElementId = action.payload.focusReturnElementId;
 
       LoggerService().log({
         level: LogEntryLevel.Verbose,
@@ -111,6 +118,7 @@ export const panelSlice = createSlice({
         nodeIds?: string[];
         panelMode: PanelMode;
         referencePanelMode?: PanelMode;
+        focusReturnElementId?: string;
       }>
     ) => {
       const { nodeId, nodeIds, panelMode, referencePanelMode } = action?.payload ?? {};
@@ -119,6 +127,7 @@ export const panelSlice = createSlice({
       state.currentPanelMode = panelMode;
       state.referencePanelMode = referencePanelMode;
       state.selectedNodes = nodeIds ? nodeIds : nodeId ? [nodeId] : [];
+      state.focusReturnElementId = action?.payload.focusReturnElementId;
     },
     selectPanelTab: (state, action: PayloadAction<string | undefined>) => {
       state.selectedTabId = action.payload;

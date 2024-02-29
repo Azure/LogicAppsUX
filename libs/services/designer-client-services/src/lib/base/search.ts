@@ -11,15 +11,14 @@ import type {
   BuiltInOperation,
   Connector,
   DiscoveryOperation,
-  DiscoveryResultTypes,
+  DiscoveryOpArray,
   DiscoveryWorkflow,
   DiscoveryWorkflowTrigger,
   SomeKindOfAzureOperationDiscovery,
-} from '@microsoft/utils-logic-apps';
-import { equals, ArgumentException } from '@microsoft/utils-logic-apps';
+} from '@microsoft/logic-apps-shared';
+import { equals, ArgumentException } from '@microsoft/logic-apps-shared';
 
 export type AzureOperationsFetchResponse = ContinuationTokenResponse<DiscoveryOperation<SomeKindOfAzureOperationDiscovery>[]>;
-export type DiscoveryOpArray = DiscoveryOperation<DiscoveryResultTypes>[];
 
 export interface BaseSearchServiceOptions {
   apiHubServiceDetails: {
@@ -259,6 +258,42 @@ export abstract class BaseSearchService implements ISearchService {
     const queryParameters: QueryParameters = { 'api-version': apiVersion };
     const response = await httpClient.get<any>({ uri, queryParameters });
     return response?.value ?? [];
+  }
+
+  /// Active search ///
+  ///   - This is called when making a search and we haven't finished preloading
+  ///   - Won't be a fuzzy search but if we haven't finished preloading it will get the user some data to work with
+  ///   - We're only searching Azure operations for now, built-in and custom both are quick to preload
+
+  public async getActiveSearchOperations?(searchTerm: string, actionType?: string): Promise<DiscoveryOpArray> {
+    const {
+      apiHubServiceDetails: { location, subscriptionId, apiVersion },
+    } = this.options;
+    if (this._isDev) return Promise.resolve([]);
+
+    const traceId = LoggerService().startTrace({
+      name: 'Get Active Search Operations',
+      action: 'getActiveSearchOperations',
+      source: 'connection.ts',
+    });
+
+    const uri = `/subscriptions/${subscriptionId}/providers/Microsoft.Web/locations/${location}/apiOperations`;
+    const filters = [
+      "type eq 'Microsoft.Web/locations/managedApis/apiOperations'",
+      'properties/integrationServiceEnvironmentResourceId eq null',
+      ...(actionType == 'trigger' ? [`properties/trigger ne null`] : []),
+      ...(actionType == 'action' ? [`properties/trigger eq null`] : []),
+    ];
+    const queryParameters: QueryParameters = {
+      $filter: filters.join(' and '),
+      $search: `"${searchTerm}"`,
+      'api-version': apiVersion,
+    };
+
+    const operations = await this.getAzureResourceRecursive(uri, queryParameters);
+
+    LoggerService().endTrace(traceId, { status: Status.Success });
+    return operations;
   }
 }
 

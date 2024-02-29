@@ -1,5 +1,5 @@
 import { Label, Dropdown } from '@fluentui/react';
-import type { ConnectionParameterSets } from '@microsoft/utils-logic-apps';
+import type { ConnectionParameterSets } from '@microsoft/logic-apps-shared';
 import type { FormEvent } from 'react';
 
 export interface ConnectionMultiAuthInputProps {

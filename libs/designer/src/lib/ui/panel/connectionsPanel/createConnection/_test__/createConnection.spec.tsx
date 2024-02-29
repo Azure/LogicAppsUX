@@ -1,5 +1,5 @@
 import { MockHttpClient } from '../../../../../__test__/mock-http-client';
-import { CreateConnection, type CreateConnectionProps } from '../createConnection';
+import { CreateConnection, parseParameterValues, type CreateConnectionProps } from '../createConnection';
 import { UniversalConnectionParameter } from '../formInputs/universalConnectionParameter';
 import {
   InitConnectionParameterEditorService,
@@ -8,7 +8,7 @@ import {
   InitConnectionService,
   StandardConnectionService,
 } from '@microsoft/designer-client-services-logic-apps';
-import type { ConnectionParameter, ConnectionParameterSets } from '@microsoft/utils-logic-apps';
+import type { ConnectionParameter, ConnectionParameterSets } from '@microsoft/logic-apps-shared';
 import React, { type ReactElement } from 'react';
 import * as ReactShallowRenderer from 'react-test-renderer/shallow';
 
@@ -577,6 +577,35 @@ describe('ui/createConnection', () => {
 
       const mappingEditors = findParameterComponents(createConnection, CustomCredentialMappingEditor);
       expect(mappingEditors).toHaveLength(0);
+    });
+
+    test('parseParameterValues', () => {
+      const parameterValues: Record<string, any> = {
+        a: 'foobar',
+        b: 42,
+        c: null,
+        d: undefined,
+        e: { foo: 'bar' },
+        f: ['id', 66],
+      };
+      const capabilityEnabledParameters: Record<string, ConnectionParameter> = {
+        a: { type: 'connection' },
+        z: { type: 'other' },
+      };
+
+      const { visibleParameterValues, additionalParameterValues } = parseParameterValues(parameterValues, capabilityEnabledParameters);
+      expect(visibleParameterValues).toStrictEqual({ a: 'foobar' });
+      expect(additionalParameterValues).toStrictEqual({
+        b: 42,
+        c: null,
+        d: undefined,
+        e: { foo: 'bar' },
+        f: ['id', 66],
+      });
+
+      const emptyParameters = parseParameterValues({}, capabilityEnabledParameters);
+      expect(emptyParameters.visibleParameterValues).toStrictEqual({});
+      expect(emptyParameters.additionalParameterValues).toBeUndefined();
     });
   });
 

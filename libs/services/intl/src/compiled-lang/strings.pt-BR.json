@@ -1098,7 +1098,7 @@
   "5WTRY8": [
     {
       "type": 0,
-      "value": "Errors"
+      "value": "Erros"
     }
   ],
   "5akc1Q": [
@@ -1335,6 +1335,12 @@
     {
       "type": 0,
       "value": "Tipo de dados"
+    }
+  ],
+  "6yFUar": [
+    {
+      "type": 0,
+      "value": "Os Resultados são obrigatórios quando o status for \"Bem-sucedido\""
     }
   ],
   "70eoQu": [
@@ -1853,6 +1859,12 @@
     {
       "type": 0,
       "value": "Ações de Filtro"
+    }
+  ],
+  "ANGw2o": [
+    {
+      "type": 0,
+      "value": "Clique para obter mais informações sobre Resultado Estático"
     }
   ],
   "AO6T9u": [
@@ -2967,10 +2979,22 @@
       "value": "Necessário. O número do qual o Subtraendo é removido."
     }
   ],
+  "H9CZTr": [
+    {
+      "type": 0,
+      "value": "A expressão é inválida. Certifique-se de usar aspas simples."
+    }
+  ],
   "HDqP2g": [
     {
       "type": 0,
       "value": "Necessário. O nome da chave do valor de dados do formulário a retornar."
+    }
+  ],
+  "HGA9iU": [
+    {
+      "type": 0,
+      "value": "O Erro e seu código são obrigatórios quando o status for \"Falha\""
     }
   ],
   "HH970i": [
@@ -3520,6 +3544,12 @@
       "value": "Criando..."
     }
   ],
+  "LPdGu/": [
+    {
+      "type": 0,
+      "value": "Não devem ser fornecidos Resultados quando o status for \"Falha\""
+    }
+  ],
   "LR/3Lr": [
     {
       "type": 0,
@@ -3649,7 +3679,7 @@
   "M0bbZk": [
     {
       "type": 0,
-      "value": "Flow Checker"
+      "value": "Verificador de Fluxo"
     }
   ],
   "M0xrm+": [
@@ -3979,7 +4009,7 @@
   "O6VHe0": [
     {
       "type": 0,
-      "value": "Operation warnings"
+      "value": "Avisos de operação"
     }
   ],
   "O7HhyP": [
@@ -5310,7 +5340,7 @@
   "Vi5TIV": [
     {
       "type": 0,
-      "value": "No warnings found."
+      "value": "Nenhum aviso foi encontrado."
     }
   ],
   "VlvlX1": [
@@ -5943,6 +5973,12 @@
     {
       "type": 0,
       "value": "Desabilitar Resultado Estático"
+    }
+  ],
+  "Yz9o1k": [
+    {
+      "type": 0,
+      "value": "Não conectado."
     }
   ],
   "Z8tBFS": [
@@ -7024,7 +7060,7 @@
   "hLOIwp": [
     {
       "type": 0,
-      "value": "Warnings"
+      "value": "Avisos"
     }
   ],
   "hMf2TA": [
@@ -9002,6 +9038,12 @@
       "value": "Não é possível gerar a definição do mapa de dados"
     }
   ],
+  "svaqnp": [
+    {
+      "type": 0,
+      "value": "Não deve ser fornecido um Erro quando o status for \"Bem-sucedido\""
+    }
+  ],
   "sw6EXK": [
     {
       "type": 0,
@@ -9038,6 +9080,12 @@
     {
       "type": 0,
       "value": "Necessário. Uma cadeia de caracteres que contém o nome do fuso horário de destino. Consulte https://msdn.microsoft.com/en-us/library/gg154758.aspx para obter detalhes."
+    }
+  ],
+  "t9RwOi": [
+    {
+      "type": 0,
+      "value": "A expressão é inválida."
     }
   ],
   "tAbbH8": [
@@ -9474,12 +9522,6 @@
     {
       "type": 0,
       "value": "Saídas"
-    }
-  ],
-  "vVJuus": [
-    {
-      "type": 0,
-      "value": "A expressão é inválida."
     }
   ],
   "vX9WYS": [

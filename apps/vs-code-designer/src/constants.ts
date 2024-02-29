@@ -142,6 +142,7 @@ export const extensionCommand = {
   reportIssue: 'azureLogicAppsStandard.reportIssue',
   validateAndInstallBinaries: 'azureLogicAppsStandard.validateAndInstallBinaries',
   resetValidateAndInstallBinaries: 'azureLogicAppsStandard.resetValidateAndInstallBinaries',
+  disableValidateAndInstallBinaries: 'azureLogicAppsStandard.disableValidateAndInstallBinaries',
   azureAzuriteStart: 'azurite.start',
   loadDataMapFile: 'azureLogicAppsStandard.dataMap.loadDataMapFile',
   dataMapAddSchemaFromFile: 'azureLogicAppsStandard.dataMap.addSchemaFromFile',

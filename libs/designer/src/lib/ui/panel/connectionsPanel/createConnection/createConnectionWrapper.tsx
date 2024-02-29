@@ -30,13 +30,14 @@ import { Spinner } from '@fluentui/react-components';
 import type { ConnectionCreationInfo, ConnectionParametersMetadata } from '@microsoft/designer-client-services-logic-apps';
 import { ConnectionService, LogEntryLevel, LoggerService, WorkflowService } from '@microsoft/designer-client-services-logic-apps';
 import {
+  getRecordEntry,
   safeSetObjectPropertyValue,
   type Connection,
   type ConnectionParameterSet,
   type ConnectionParameterSetValues,
   type Connector,
   type ManagedIdentity,
-} from '@microsoft/utils-logic-apps';
+} from '@microsoft/logic-apps-shared';
 import { useCallback, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
@@ -52,7 +53,7 @@ export const CreateConnectionWrapper = () => {
   const operationInfo = useOperationInfo(nodeId);
   const { data: operationManifest } = useOperationManifest(operationInfo);
   const connectionMetadata = getConnectionMetadata(operationManifest);
-  const hasExistingConnection = useSelector((state: RootState) => !!state.connections.connectionsMapping[nodeId]);
+  const hasExistingConnection = useSelector((state: RootState) => !!getRecordEntry(state.connections.connectionsMapping, nodeId));
 
   const subscriptionsQuery = useSubscriptions();
   const subscriptions = useMemo(() => subscriptionsQuery.data, [subscriptionsQuery.data]);
@@ -128,7 +129,8 @@ export const CreateConnectionWrapper = () => {
       parameterValues: Record<string, any> = {},
       isOAuthConnection?: boolean,
       alternativeParameterValues?: Record<string, any>,
-      identitySelected?: string
+      identitySelected?: string,
+      additionalParameterValues?: Record<string, any>
     ) => {
       if (!connector?.id) return;
 
@@ -187,6 +189,7 @@ export const CreateConnectionWrapper = () => {
             : undefined,
           connectionParameters: outputParameterValues,
           alternativeParameterValues,
+          additionalParameterValues,
         };
 
         const parametersMetadata: ConnectionParametersMetadata = {

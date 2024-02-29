@@ -28,18 +28,18 @@ import {
 } from './initialize';
 import type { NodeDataWithOperationMetadata } from './operationdeserializer';
 import type { Settings } from './settings';
-import { getOperationSettings } from './settings';
+import { getOperationSettings, getSplitOnValue } from './settings';
 import { ConnectionService, OperationManifestService, StaticResultService } from '@microsoft/designer-client-services-logic-apps';
-import type { SwaggerParser } from '@microsoft/parsers-logic-apps';
-import { ManifestParser } from '@microsoft/parsers-logic-apps';
+import type { SwaggerParser } from '@microsoft/logic-apps-shared';
+import { ManifestParser } from '@microsoft/logic-apps-shared';
 import type {
   Connector,
   DiscoveryOperation,
   DiscoveryResultTypes,
   OperationManifest,
   SomeKindOfAzureOperationDiscovery,
-} from '@microsoft/utils-logic-apps';
-import { equals } from '@microsoft/utils-logic-apps';
+} from '@microsoft/logic-apps-shared';
+import { equals, getRecordEntry } from '@microsoft/logic-apps-shared';
 import type { Dispatch } from '@reduxjs/toolkit';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { batch } from 'react-redux';
@@ -60,7 +60,8 @@ export const addOperation = createAsyncThunk('addOperation', async (payload: Add
     if (!operation) throw new Error('Operation does not exist'); // Just an optional catch, should never happen
     let count = 1;
     let nodeId = actionId;
-    while ((getState() as RootState).workflow.nodesMetadata[nodeId]) {
+    const nodesMetadata = (getState() as RootState).workflow.nodesMetadata;
+    while (getRecordEntry(nodesMetadata, nodeId)) {
       nodeId = `${actionId}_${count}`;
       count++;
     }
@@ -120,7 +121,7 @@ export const initializeOperationDetails = async (
       manifest,
       isTrigger,
       nodeInputs,
-      /* splitOnValue */ undefined,
+      isTrigger ? getSplitOnValue(manifest, undefined, undefined, undefined) : undefined,
       operationInfo,
       nodeId
     );
@@ -325,8 +326,9 @@ export const addTokensAndVariables = (
     variables: {} as Record<string, VariableDeclaration[]>,
   };
 
-  tokensAndVariables.outputTokens[nodeId].tokens.push(...getBuiltInTokens(manifest));
-  tokensAndVariables.outputTokens[nodeId].tokens.push(
+  const outputTokens = getRecordEntry(tokensAndVariables.outputTokens, nodeId)?.tokens ?? [];
+  outputTokens.push(...getBuiltInTokens(manifest));
+  outputTokens.push(
     ...convertOutputsToTokens(
       isRootNodeInGraph(nodeId, 'root', nodesMetadata) ? undefined : nodeId,
       operationType,

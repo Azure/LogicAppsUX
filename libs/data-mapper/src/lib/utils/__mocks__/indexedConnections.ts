@@ -1,6 +1,6 @@
 import { FunctionCategory } from '../../models';
 import type { ConnectionDictionary } from '../../models/Connection';
-import { NormalizedDataType, SchemaNodeProperty } from '@microsoft/utils-logic-apps';
+import { NormalizedDataType, SchemaNodeProperty } from '@microsoft/logic-apps-shared';
 
 export const indexedConnections: ConnectionDictionary = {
   'target-/ns0:Root/Looping/Person/Name': {

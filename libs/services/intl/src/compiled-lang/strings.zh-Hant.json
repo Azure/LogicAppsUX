@@ -1114,7 +1114,7 @@
   "5WTRY8": [
     {
       "type": 0,
-      "value": "Errors"
+      "value": "錯誤"
     }
   ],
   "5akc1Q": [
@@ -1359,6 +1359,12 @@
     {
       "type": 0,
       "value": "資料類型"
+    }
+  ],
+  "6yFUar": [
+    {
+      "type": 0,
+      "value": "當狀態為 [成功] 時，需要輸出"
     }
   ],
   "70eoQu": [
@@ -1881,6 +1887,12 @@
     {
       "type": 0,
       "value": "篩選器動作"
+    }
+  ],
+  "ANGw2o": [
+    {
+      "type": 0,
+      "value": "按一下以取得 [靜態結果] 的詳細資訊"
     }
   ],
   "AO6T9u": [
@@ -2955,10 +2967,22 @@
       "value": "必要。要移除減數的數字。"
     }
   ],
+  "H9CZTr": [
+    {
+      "type": 0,
+      "value": "運算式無效。請務必使用單引號。"
+    }
+  ],
   "HDqP2g": [
     {
       "type": 0,
       "value": "必要。要傳回之表單資料值的索引鍵名稱。"
+    }
+  ],
+  "HGA9iU": [
+    {
+      "type": 0,
+      "value": "當狀態為 [失敗] 時，需要錯誤及其程式碼"
     }
   ],
   "HH970i": [
@@ -3486,6 +3510,12 @@
       "value": "正在建立..."
     }
   ],
+  "LPdGu/": [
+    {
+      "type": 0,
+      "value": "當狀態為 [失敗] 時，不應提供輸出"
+    }
+  ],
   "LR/3Lr": [
     {
       "type": 0,
@@ -3615,7 +3645,7 @@
   "M0bbZk": [
     {
       "type": 0,
-      "value": "Flow Checker"
+      "value": "流程檢查程式"
     }
   ],
   "M0xrm+": [
@@ -3945,7 +3975,7 @@
   "O6VHe0": [
     {
       "type": 0,
-      "value": "Operation warnings"
+      "value": "作業警告"
     }
   ],
   "O7HhyP": [
@@ -5278,7 +5308,7 @@
   "Vi5TIV": [
     {
       "type": 0,
-      "value": "No warnings found."
+      "value": "找不到警告。"
     }
   ],
   "VlvlX1": [
@@ -5915,6 +5945,12 @@
     {
       "type": 0,
       "value": "停用靜態結果"
+    }
+  ],
+  "Yz9o1k": [
+    {
+      "type": 0,
+      "value": "未連接。"
     }
   ],
   "Z8tBFS": [
@@ -6988,7 +7024,7 @@
   "hLOIwp": [
     {
       "type": 0,
-      "value": "Warnings"
+      "value": "警告"
     }
   ],
   "hMf2TA": [
@@ -8892,6 +8928,12 @@
       "value": "無法產生資料對應定義"
     }
   ],
+  "svaqnp": [
+    {
+      "type": 0,
+      "value": "當狀態為 [成功] 時，不應提供錯誤"
+    }
+  ],
   "sw6EXK": [
     {
       "type": 0,
@@ -8928,6 +8970,12 @@
     {
       "type": 0,
       "value": "必要。包含目的地時區之時區名稱的字串。如需詳細資料，請參閱 https://msdn.microsoft.com/en-us/library/gg154758.aspx。"
+    }
+  ],
+  "t9RwOi": [
+    {
+      "type": 0,
+      "value": "運算式無效。"
     }
   ],
   "tAbbH8": [
@@ -9364,12 +9412,6 @@
     {
       "type": 0,
       "value": "輸出"
-    }
-  ],
-  "vVJuus": [
-    {
-      "type": 0,
-      "value": "運算式無效。"
     }
   ],
   "vX9WYS": [

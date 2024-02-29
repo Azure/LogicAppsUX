@@ -3,9 +3,11 @@ import { RequiredMarkerSide, Label } from '..';
 import constants from '../constants';
 import { StaticResult } from './StaticResult';
 import { PropertyEditor } from './propertyEditor';
+import { initializePropertyValueInput } from './util';
 import type { IDropdownOption, IDropdownStyles, ITextFieldStyles } from '@fluentui/react';
 import { Dropdown, TextField } from '@fluentui/react';
-import type { OpenAPIV2 } from '@microsoft/utils-logic-apps';
+import type { OpenAPIV2 } from '@microsoft/logic-apps-shared';
+import { useMountEffect, useUpdateEffect } from '@react-hookz/web';
 import React, { useState } from 'react';
 import { useIntl } from 'react-intl';
 
@@ -61,19 +63,27 @@ function WrappedStaticResultProperty({
   isRoot = false,
   required = false,
   schema,
-  properties = {},
+  properties,
   updateParentProperties,
 }: StaticResultPropertyProps): JSX.Element {
   const intl = useIntl();
-  const [inputValue, setInputValue] = useState(
-    (typeof properties === 'string' || typeof properties === 'number' || typeof properties === 'boolean'
-      ? properties
-      : Object.keys(properties).length > 0
-      ? JSON.stringify(properties, null, 2)
-      : schema?.default ?? '') as string
-  );
-
+  const [inputValue, setInputValue] = useState<string>('');
   const [errorMessage, setErrorMessage] = useState<string>('');
+  const [currProperties, setCurrProperties] = useState<OpenAPIV2.SchemaObject>(properties ?? {});
+
+  // only done on initialization - when a dropdown is selected and a component is rendered, to update
+  // the parent with required/default value
+  useMountEffect(() => {
+    if (schema.type !== constants.SWAGGER.TYPE.ARRAY && schema.type !== constants.SWAGGER.TYPE.OBJECT) {
+      const inputVal = initializePropertyValueInput(currProperties, schema);
+      setInputValue(inputVal);
+      updateParentProperties(inputVal);
+    }
+  });
+  // only done when the properties are updated (ignore mount)
+  useUpdateEffect(() => {
+    updateParentProperties(currProperties);
+  }, [currProperties]);
 
   const getEnumValues = (): IDropdownOption[] => {
     if (!schema.enum) return [];
@@ -126,10 +136,6 @@ function WrappedStaticResultProperty({
         updateParentProperties(inputValue);
       }
     }
-  };
-
-  const updateParentPropsWithObject = (input: any) => {
-    updateParentProperties(input);
   };
 
   const renderItems = (): JSX.Element => {
@@ -185,14 +191,14 @@ function WrappedStaticResultProperty({
           return (
             <>
               <Label text={schema.title ?? ''} isRequiredField={required} requiredMarkerSide={RequiredMarkerSide.RIGHT} />
-              <PropertyEditor schema={schema.items} properties={properties} updateProperties={updateParentPropsWithObject} />
+              <PropertyEditor schema={schema.items} properties={currProperties} updateProperties={setCurrProperties} />
             </>
           );
         } else if (schema.additionalProperties) {
           return (
             <>
               <Label text={schema.title ?? ''} isRequiredField={required} requiredMarkerSide={RequiredMarkerSide.RIGHT} />
-              <PropertyEditor properties={properties} updateProperties={updateParentPropsWithObject} />
+              <PropertyEditor properties={currProperties} updateProperties={setCurrProperties} />
             </>
           );
         } else {
@@ -202,8 +208,8 @@ function WrappedStaticResultProperty({
                 propertiesSchema={schema.properties}
                 title={schema?.title ?? ''}
                 required={schema.required}
-                propertyValues={properties}
-                setPropertyValues={updateParentPropsWithObject}
+                propertyValues={currProperties}
+                setPropertyValues={setCurrProperties}
               />
             </div>
           );

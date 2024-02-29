@@ -1,5 +1,5 @@
 import { StaticResultSchemaService } from './staticresultschema';
-import type { ManifestParser, Schema, SwaggerParser } from '@microsoft/parsers-logic-apps';
+import type { ManifestParser, OpenApiSchema, SwaggerParser } from '@microsoft/logic-apps-shared';
 
 /**
  * The operation result schema service.
@@ -10,9 +10,13 @@ export interface IStaticResultSchemaService {
    * @arg {string} connectorId - The connector id.
    * @arg {string} operationId - The operation id.
    * @arg {SwaggerParser | ManifestParser} [parser] - The supported parser for the node type.
-   * @return {Promise<Schema>}
+   * @return {Promise<OpenApiSchema>}
    */
-  getOperationResultSchema(connectorId: string, operationId: string, parser?: SwaggerParser | ManifestParser): Promise<Schema | undefined>;
+  getOperationResultSchema(
+    connectorId: string,
+    operationId: string,
+    parser?: SwaggerParser | ManifestParser
+  ): Promise<OpenApiSchema | undefined>;
 }
 
 let service: IStaticResultSchemaService;

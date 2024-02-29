@@ -15,15 +15,16 @@ import { useIconUri, useOperationErrorInfo } from '../../../core/state/operation
 import { useIsPanelCollapsed, useSelectedPanelTabId } from '../../../core/state/panel/panelSelectors';
 import { expandPanel, updatePanelLocation, selectPanelTab, setSelectedNodeId } from '../../../core/state/panel/panelSlice';
 import { useOperationQuery } from '../../../core/state/selectors/actionMetadataSelector';
-import { useNodeDescription } from '../../../core/state/workflow/workflowSelectors';
+import { useNodeDescription, useRunData, useRunInstance } from '../../../core/state/workflow/workflowSelectors';
 import { setNodeDescription, replaceId } from '../../../core/state/workflow/workflowSlice';
 import { isRootNodeInGraph, isOperationNameValid } from '../../../core/utils/graph';
 import { CommentMenuItem } from '../../menuItems/commentMenuItem';
 import { DeleteMenuItem } from '../../menuItems/deleteMenuItem';
 import { usePanelTabs } from './usePanelTabs';
+import { WorkflowService } from '@microsoft/designer-client-services-logic-apps';
 import type { CommonPanelProps, PageActionTelemetryData } from '@microsoft/designer-ui';
 import { PanelContainer, PanelLocation, PanelScope, PanelSize } from '@microsoft/designer-ui';
-import { isNullOrUndefined } from '@microsoft/utils-logic-apps';
+import { isNullOrUndefined } from '@microsoft/logic-apps-shared';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -39,6 +40,7 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
 
   const collapsed = useIsPanelCollapsed();
   const selectedNode = useSelectedNodeId();
+  const runData = useRunData(selectedNode);
   const { isTriggerNode, nodesMetadata, idReplacements } = useSelector((state: RootState) => ({
     isTriggerNode: isRootNodeInGraph(selectedNode, 'root', state.workflow.nodesMetadata),
     nodesMetadata: state.workflow.nodesMetadata,
@@ -107,6 +109,14 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
     return opQuery.isLoading;
   }, [nodeMetaData?.subgraphType, opQuery.isLoading]);
 
+  const runInstance = useRunInstance();
+
+  const resubmitClick = useCallback(() => {
+    if (!runInstance) return;
+    WorkflowService().resubmitWorkflow?.(runInstance?.name ?? '', [selectedNode]);
+    dispatch(clearPanel());
+  }, [dispatch, runInstance, selectedNode]);
+
   const layerProps = {
     hostId: 'msla-layer-host',
     eventBubblingEnabled: true,
@@ -137,6 +147,8 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
       selectTab={(tabId: string) => dispatch(selectPanelTab(tabId))}
       nodeId={selectedNode}
       readOnlyMode={readOnly}
+      canResubmit={runData?.canResubmit ?? false}
+      resubmitOperation={resubmitClick}
       toggleCollapse={() => {
         // Only run validation when collapsing the panel
         if (!collapsed) {

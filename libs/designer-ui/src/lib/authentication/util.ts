@@ -6,9 +6,9 @@ import { ValueSegmentType } from '../editor';
 import { convertStringToSegments } from '../editor/base/utils/editorToSegment';
 import { convertKeyValueItemToSegments } from '../editor/base/utils/keyvalueitem';
 import { AuthenticationOAuthType } from './AADOAuth/AADOAuth';
-import { getIntl } from '@microsoft/intl-logic-apps';
-import type { ManagedIdentity } from '@microsoft/utils-logic-apps';
-import { guid, equals, ResourceIdentityType } from '@microsoft/utils-logic-apps';
+import { getIntl } from '@microsoft/logic-apps-shared';
+import type { ManagedIdentity } from '@microsoft/logic-apps-shared';
+import { guid, equals, ResourceIdentityType } from '@microsoft/logic-apps-shared';
 
 export interface AuthProperty {
   displayName: string;
@@ -364,7 +364,7 @@ export const serializeAuthentication = (
   editorString: string,
   setCurrentProps: (items: AuthProps) => void,
   setOption: (s: AuthenticationType) => void,
-  nodeMap?: Map<string, ValueSegment>
+  nodeMap: Map<string, ValueSegment>
 ): boolean => {
   let jsonEditor = Object.create(null);
   try {
@@ -376,44 +376,44 @@ export const serializeAuthentication = (
   switch (jsonEditor.type) {
     case AuthenticationType.BASIC:
       returnItems.basic = {
-        basicUsername: convertStringToSegments(jsonEditor.username, true, nodeMap),
-        basicPassword: convertStringToSegments(jsonEditor.password, true, nodeMap),
+        basicUsername: convertStringToSegments(jsonEditor.username, nodeMap, { tokensEnabled: true }),
+        basicPassword: convertStringToSegments(jsonEditor.password, nodeMap, { tokensEnabled: true }),
       };
       break;
     case AuthenticationType.CERTIFICATE:
       returnItems.clientCertificate = {
-        clientCertificatePfx: convertStringToSegments(jsonEditor.pfx, true, nodeMap),
-        clientCertificatePassword: convertStringToSegments(jsonEditor.password, true, nodeMap),
+        clientCertificatePfx: convertStringToSegments(jsonEditor.pfx, nodeMap, { tokensEnabled: true }),
+        clientCertificatePassword: convertStringToSegments(jsonEditor.password, nodeMap, { tokensEnabled: true }),
       };
       break;
     case AuthenticationType.RAW:
       returnItems.raw = {
-        rawValue: convertStringToSegments(jsonEditor.value, true, nodeMap),
+        rawValue: convertStringToSegments(jsonEditor.value, nodeMap, { tokensEnabled: true }),
       };
       break;
     case AuthenticationType.MSI:
       returnItems.msi = {
         msiIdentity: jsonEditor.identity,
-        msiAudience: convertStringToSegments(jsonEditor.audience, true, nodeMap),
+        msiAudience: convertStringToSegments(jsonEditor.audience, nodeMap, { tokensEnabled: true }),
       };
       break;
     case AuthenticationType.OAUTH:
       returnItems.aadOAuth = {
-        oauthTenant: convertStringToSegments(jsonEditor.tenant, true, nodeMap),
-        oauthAudience: convertStringToSegments(jsonEditor.audience, true, nodeMap),
-        oauthClientId: convertStringToSegments(jsonEditor.clientId, true, nodeMap),
+        oauthTenant: convertStringToSegments(jsonEditor.tenant, nodeMap, { tokensEnabled: true }),
+        oauthAudience: convertStringToSegments(jsonEditor.audience, nodeMap, { tokensEnabled: true }),
+        oauthClientId: convertStringToSegments(jsonEditor.clientId, nodeMap, { tokensEnabled: true }),
       };
       if (jsonEditor.authority) {
-        returnItems.aadOAuth.oauthAuthority = convertStringToSegments(jsonEditor.authority, true, nodeMap);
+        returnItems.aadOAuth.oauthAuthority = convertStringToSegments(jsonEditor.authority, nodeMap, { tokensEnabled: true });
       }
       if (jsonEditor.secret) {
         returnItems.aadOAuth.oauthType = AuthenticationOAuthType.SECRET;
-        returnItems.aadOAuth.oauthTypeSecret = convertStringToSegments(jsonEditor.secret, true, nodeMap);
+        returnItems.aadOAuth.oauthTypeSecret = convertStringToSegments(jsonEditor.secret, nodeMap, { tokensEnabled: true });
       }
       if (jsonEditor.pfx && jsonEditor.password) {
         returnItems.aadOAuth.oauthType = AuthenticationOAuthType.CERTIFICATE;
-        returnItems.aadOAuth.oauthTypeCertificatePfx = convertStringToSegments(jsonEditor.pfx, true, nodeMap);
-        returnItems.aadOAuth.oauthTypeCertificatePassword = convertStringToSegments(jsonEditor.password, true, nodeMap);
+        returnItems.aadOAuth.oauthTypeCertificatePfx = convertStringToSegments(jsonEditor.pfx, nodeMap, { tokensEnabled: true });
+        returnItems.aadOAuth.oauthTypeCertificatePassword = convertStringToSegments(jsonEditor.password, nodeMap, { tokensEnabled: true });
       }
       break;
     default:

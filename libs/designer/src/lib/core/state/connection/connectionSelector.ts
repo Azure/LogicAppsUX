@@ -11,19 +11,21 @@ import {
   OperationManifestService,
   isServiceProviderOperation,
 } from '@microsoft/designer-client-services-logic-apps';
-import { type Connector } from '@microsoft/utils-logic-apps';
+import { getRecordEntry, type Connector } from '@microsoft/logic-apps-shared';
 import { useMemo } from 'react';
 import { useQuery } from 'react-query';
 import { useSelector } from 'react-redux';
 
-export const useConnector = (connectorId: string, enabled = true) => {
+export const useConnector = (connectorId: string | undefined, enabled = true) => {
   const { data, ...rest } = useConnectorAndSwagger(connectorId, enabled);
   return { data: data?.connector, ...rest };
 };
-export const useConnectorAndSwagger = (connectorId: string, enabled = true) => {
+
+export const useConnectorAndSwagger = (connectorId: string | undefined, enabled = true) => {
   return useQuery(
     ['apiWithSwaggers', { connectorId }],
     async () => {
+      if (!connectorId) return;
       return await ConnectionService().getConnectorAndSwagger(connectorId);
     },
     {
@@ -69,8 +71,9 @@ export const useNodeConnectionId = (nodeId: string): string => {
   const connectionsMapping = useConnectionMapping();
   const connectionReferences = useConnectionRefs();
   return useMemo(() => {
-    const reference = connectionReferences[connectionsMapping[nodeId] ?? ''];
-    return reference ? reference.connection.id : '';
+    const mapping = getRecordEntry(connectionsMapping, nodeId) ?? '';
+    const reference = getRecordEntry(connectionReferences, mapping);
+    return reference?.connection?.id ?? '';
   }, [connectionsMapping, connectionReferences, nodeId]);
 };
 
@@ -79,7 +82,10 @@ const useConnectionByNodeId = (nodeId: string) => {
   const connectionId = useNodeConnectionId(nodeId);
   return useQuery(
     ['connection', { connectorId: operationInfo?.connectorId }, { connectionId }],
-    () => getConnection(connectionId, operationInfo?.connectorId),
+    () => {
+      if (!connectionId || !operationInfo?.connectorId) return;
+      return getConnection(connectionId, operationInfo.connectorId);
+    },
     {
       enabled: !!connectionId && !!operationInfo?.connectorId,
       placeholderData: undefined,
@@ -110,7 +116,7 @@ export const useConnectionRefsByConnectorId = (connectorId?: string) => {
 
 export const useIsOperationMissingConnection = (nodeId: string) => {
   const connectionsMapping = useSelector((state: RootState) => state.connections.connectionsMapping);
-  return Object.keys(connectionsMapping).includes(nodeId) && connectionsMapping[nodeId] === null;
+  return Object.keys(connectionsMapping).includes(nodeId) && getRecordEntry(connectionsMapping, nodeId) === null;
 };
 
 export const useShowIdentitySelectorQuery = (nodeId: string) => {

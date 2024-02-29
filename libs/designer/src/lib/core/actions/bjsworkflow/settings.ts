@@ -4,8 +4,8 @@ import { WorkflowKind } from '../../state/workflow/workflowInterfaces';
 import { getSplitOnOptions } from '../../utils/outputs';
 import { getTokenExpressionValue } from '../../utils/parameters/helper';
 import { TokenType } from '@microsoft/designer-ui';
-import type { SwaggerParser } from '@microsoft/parsers-logic-apps';
-import { convertToStringLiteral, getSplitOnArrayAliasMetadata } from '@microsoft/parsers-logic-apps';
+import type { SwaggerParser } from '@microsoft/logic-apps-shared';
+import { convertToStringLiteral, getSplitOnArrayAliasMetadata } from '@microsoft/logic-apps-shared';
 import type {
   DownloadChunkMetadata,
   LogicApps,
@@ -15,7 +15,7 @@ import type {
   OperationManifestSettings,
   SecureDataOptions,
   UploadChunkMetadata,
-} from '@microsoft/utils-logic-apps';
+} from '@microsoft/logic-apps-shared';
 import {
   equals,
   getObjectPropertyValue,
@@ -24,7 +24,7 @@ import {
   SettingScope,
   ValidationErrorCode,
   ValidationException,
-} from '@microsoft/utils-logic-apps';
+} from '@microsoft/logic-apps-shared';
 
 type OperationManifestSettingType = UploadChunkMetadata | DownloadChunkMetadata | SecureDataOptions | OperationOptions[] | void;
 
@@ -150,7 +150,7 @@ export const getOperationSettings = (
     },
     splitOn: {
       isSupported: isSplitOnSupported(isTrigger, nodeOutputs, manifest, swagger, operationId, operation, workflowKind, forceEnableSplitOn),
-      value: getSplitOn(manifest, swagger, operationId, operation, workflowKind),
+      value: getSplitOn(manifest, swagger, operationId, operation, workflowKind, forceEnableSplitOn),
     },
     retryPolicy: {
       isSupported: isRetryPolicySupported(isTrigger, operationInfo.type, manifest),
@@ -166,7 +166,7 @@ export const getOperationSettings = (
       value: getSuppressWorkflowHeaders(isTrigger, nodeType, manifest, operation),
     },
     suppressWorkflowHeadersOnResponse: {
-      isSupported: isSuppressWorklowHeadersOnResponseSupported(isTrigger, manifest),
+      isSupported: isSuppressWorkflowHeadersOnResponseSupported(isTrigger, manifest),
       value: getSuppressWorkflowHeadersOnResponse(operation),
     },
     concurrency: {
@@ -344,7 +344,7 @@ const getSuppressWorkflowHeadersOnResponse = (definition?: LogicAppsV2.Operation
   return isOperationOptionSet(Constants.SETTINGS.OPERATION_OPTIONS.SUPPRESS_WORKFLOW_HEADERS_ON_RESPONSE, operationOptions);
 };
 
-const isSuppressWorklowHeadersOnResponseSupported = (isTrigger: boolean, manifest?: OperationManifest): boolean => {
+const isSuppressWorkflowHeadersOnResponseSupported = (isTrigger: boolean, manifest?: OperationManifest): boolean => {
   if (manifest) {
     const operationOptionsSetting = getOperationSettingFromManifest(manifest, 'operationOptions') as
       | OperationManifestSetting<OperationOptions[]>
@@ -517,9 +517,12 @@ const getSplitOn = (
   swagger?: SwaggerParser,
   operationId?: string,
   definition?: LogicAppsV2.OperationDefinition,
-  workflowKind?: WorkflowKind
+  workflowKind?: WorkflowKind,
+  forceEnableSplitOn?: boolean
 ): SimpleSetting<string> => {
-  if (workflowKind === WorkflowKind.STATELESS) return { enabled: false };
+  if (workflowKind === WorkflowKind.STATELESS && !forceEnableSplitOn) {
+    return { enabled: false };
+  }
   const splitOnValue = getSplitOnValue(manifest, swagger, operationId, definition);
   return {
     enabled: !!splitOnValue,
@@ -527,7 +530,7 @@ const getSplitOn = (
   };
 };
 
-const getSplitOnValue = (
+export const getSplitOnValue = (
   manifest?: OperationManifest,
   swagger?: SwaggerParser,
   operationId?: string,

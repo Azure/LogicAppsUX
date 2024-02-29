@@ -1122,7 +1122,7 @@
   "5WTRY8": [
     {
       "type": 0,
-      "value": "Errors"
+      "value": "Hibák"
     }
   ],
   "5akc1Q": [
@@ -1359,6 +1359,12 @@
     {
       "type": 0,
       "value": "Adattípus"
+    }
+  ],
+  "6yFUar": [
+    {
+      "type": 0,
+      "value": "A kimenetek megadása kötelező, ha az állapot „Sikeres”"
     }
   ],
   "70eoQu": [
@@ -1881,6 +1887,12 @@
     {
       "type": 0,
       "value": "Szűrési műveletek"
+    }
+  ],
+  "ANGw2o": [
+    {
+      "type": 0,
+      "value": "Kattintson ide a statikus eredményre vonatkozó további információkért"
     }
   ],
   "AO6T9u": [
@@ -2981,10 +2993,22 @@
       "value": "Kötelező megadni. A szám, amelyből a rendszer kivonja a kivonandót."
     }
   ],
+  "H9CZTr": [
+    {
+      "type": 0,
+      "value": "A kifejezés érvénytelen. Ügyeljen arra, hogy szimpla idézőjeleket használjon."
+    }
+  ],
   "HDqP2g": [
     {
       "type": 0,
       "value": "Kötelező megadni. A visszaadandó űrlapadatérték kulcsneve."
+    }
+  ],
+  "HGA9iU": [
+    {
+      "type": 0,
+      "value": "A hiba és a kódjának megadása kötelező, ha az állapot „Sikertelen”"
     }
   ],
   "HH970i": [
@@ -3523,6 +3547,12 @@
       "value": "Létrehozás..."
     }
   ],
+  "LPdGu/": [
+    {
+      "type": 0,
+      "value": "A kimeneteket nem szabad megadni, ha az állapot „Sikertelen”"
+    }
+  ],
   "LR/3Lr": [
     {
       "type": 0,
@@ -3652,7 +3682,7 @@
   "M0bbZk": [
     {
       "type": 0,
-      "value": "Flow Checker"
+      "value": "Folyamatellenőrző"
     }
   ],
   "M0xrm+": [
@@ -3982,7 +4012,7 @@
   "O6VHe0": [
     {
       "type": 0,
-      "value": "Operation warnings"
+      "value": "Műveleti figyelmeztetések"
     }
   ],
   "O7HhyP": [
@@ -5294,7 +5324,7 @@
   "Vi5TIV": [
     {
       "type": 0,
-      "value": "No warnings found."
+      "value": "Nem találhatók figyelmeztetések."
     }
   ],
   "VlvlX1": [
@@ -5927,6 +5957,12 @@
     {
       "type": 0,
       "value": "Statikus eredmény letiltása"
+    }
+  ],
+  "Yz9o1k": [
+    {
+      "type": 0,
+      "value": "Nincs csatlakoztatva."
     }
   ],
   "Z8tBFS": [
@@ -7008,7 +7044,7 @@
   "hLOIwp": [
     {
       "type": 0,
-      "value": "Warnings"
+      "value": "Figyelmeztetések"
     }
   ],
   "hMf2TA": [
@@ -8953,6 +8989,12 @@
       "value": "Nem sikerült létrehozni az adattérkép definícióját"
     }
   ],
+  "svaqnp": [
+    {
+      "type": 0,
+      "value": "A hibát nem szabad megadni, ha az állapot „Sikeres”"
+    }
+  ],
   "sw6EXK": [
     {
       "type": 0,
@@ -8989,6 +9031,12 @@
     {
       "type": 0,
       "value": "Kötelező megadni. A célidőzóna nevét tartalmazó sztring. A részleteket lásd: https://msdn.microsoft.com/en-us/library/gg154758.aspx."
+    }
+  ],
+  "t9RwOi": [
+    {
+      "type": 0,
+      "value": "A kifejezés érvénytelen."
     }
   ],
   "tAbbH8": [
@@ -9421,12 +9469,6 @@
     {
       "type": 0,
       "value": "Kimenetek"
-    }
-  ],
-  "vVJuus": [
-    {
-      "type": 0,
-      "value": "A kifejezés érvénytelen."
     }
   ],
   "vX9WYS": [

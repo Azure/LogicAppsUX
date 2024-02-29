@@ -1106,7 +1106,7 @@
   "5WTRY8": [
     {
       "type": 0,
-      "value": "Errors"
+      "value": "Kesalahan"
     }
   ],
   "5akc1Q": [
@@ -1351,6 +1351,12 @@
     {
       "type": 0,
       "value": "Tipe data"
+    }
+  ],
+  "6yFUar": [
+    {
+      "type": 0,
+      "value": "Output diperlukan saat status adalah \"Berhasil\""
     }
   ],
   "70eoQu": [
@@ -1873,6 +1879,12 @@
     {
       "type": 0,
       "value": "Filter Tindakan"
+    }
+  ],
+  "ANGw2o": [
+    {
+      "type": 0,
+      "value": "Klik untuk informasi selengkapnya tentang Hasil Statis"
     }
   ],
   "AO6T9u": [
@@ -2943,10 +2955,22 @@
       "value": "Wajib. Nomor yang akan dihapus dari Subtrahend."
     }
   ],
+  "H9CZTr": [
+    {
+      "type": 0,
+      "value": "Ekspresi tidak valid. Pastikan untuk menggunakan tanda kutip tunggal."
+    }
+  ],
   "HDqP2g": [
     {
       "type": 0,
       "value": "Wajib. Nama kunci nilai data formulir yang akan ditampilkan."
+    }
+  ],
+  "HGA9iU": [
+    {
+      "type": 0,
+      "value": "Kesalahan dan kodenya diperlukan saat status adalah \"Gagal\""
     }
   ],
   "HH970i": [
@@ -3474,6 +3498,12 @@
       "value": "Membuat..."
     }
   ],
+  "LPdGu/": [
+    {
+      "type": 0,
+      "value": "Ouput tidak boleh diberikan saat status adalah \"Gagal\""
+    }
+  ],
   "LR/3Lr": [
     {
       "type": 0,
@@ -3603,7 +3633,7 @@
   "M0bbZk": [
     {
       "type": 0,
-      "value": "Flow Checker"
+      "value": "Pemeriksa Alur"
     }
   ],
   "M0xrm+": [
@@ -3933,7 +3963,7 @@
   "O6VHe0": [
     {
       "type": 0,
-      "value": "Operation warnings"
+      "value": "Peringatan operasi"
     }
   ],
   "O7HhyP": [
@@ -5246,7 +5276,7 @@
   "Vi5TIV": [
     {
       "type": 0,
-      "value": "No warnings found."
+      "value": "Tidak ditemukan peringatan."
     }
   ],
   "VlvlX1": [
@@ -5879,6 +5909,12 @@
     {
       "type": 0,
       "value": "Nonaktifkan Hasil Statik"
+    }
+  ],
+  "Yz9o1k": [
+    {
+      "type": 0,
+      "value": "Tidak terhubung."
     }
   ],
   "Z8tBFS": [
@@ -6952,7 +6988,7 @@
   "hLOIwp": [
     {
       "type": 0,
-      "value": "Warnings"
+      "value": "Peringatan"
     }
   ],
   "hMf2TA": [
@@ -8864,6 +8900,12 @@
       "value": "Tidak dapat membuat definisi peta data"
     }
   ],
+  "svaqnp": [
+    {
+      "type": 0,
+      "value": "Kesalahan tidak boleh diberikan saat status adalah \"Berhasil\""
+    }
+  ],
   "sw6EXK": [
     {
       "type": 0,
@@ -8900,6 +8942,12 @@
     {
       "type": 0,
       "value": "Wajib. String berisi nama zona waktu dari zona waktu tempat tujuan. Lihat https://msdn.microsoft.com/en-us/library/gg154758.aspx untuk rinciannya."
+    }
+  ],
+  "t9RwOi": [
+    {
+      "type": 0,
+      "value": "Ekspresi tidak valid."
     }
   ],
   "tAbbH8": [
@@ -9336,12 +9384,6 @@
     {
       "type": 0,
       "value": "Output"
-    }
-  ],
-  "vVJuus": [
-    {
-      "type": 0,
-      "value": "Ekspresi tidak valid."
     }
   ],
   "vX9WYS": [

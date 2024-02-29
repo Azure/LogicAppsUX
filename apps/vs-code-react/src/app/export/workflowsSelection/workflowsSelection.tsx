@@ -6,10 +6,19 @@ import { updateSelectedWorkFlows } from '../../../state/WorkflowSlice';
 import type { AppDispatch, RootState } from '../../../state/store';
 import { AdvancedOptions } from './advancedOptions';
 import { Filters } from './filters';
-import { filterWorkflows, getListColumns, getSelectedItems, parseResourceGroups, updateSelectedItems } from './helper';
+import {
+  filterWorkflows,
+  getListColumns,
+  getSelectedItems,
+  parsePreviousSelectedWorkflows,
+  parseResourceGroups,
+  parseSelectedWorkflows,
+  updateSelectedItems,
+} from './helper';
 import { SelectedList } from './selectedList';
 import { Separator, ShimmeredDetailsList, Text, SelectionMode, Selection, MessageBar, MessageBarType } from '@fluentui/react';
 import type { IDropdownOption } from '@fluentui/react';
+import { isNullOrUndefined } from '@microsoft/logic-apps-shared';
 import { useMemo, useRef, useState, useEffect } from 'react';
 import { useIntl } from 'react-intl';
 import { useQuery } from 'react-query';
@@ -24,7 +33,7 @@ export const WorkflowsSelection: React.FC = () => {
   const [resourceGroups, setResourceGroups] = useState<IDropdownOption[]>([]);
   const [searchString, setSearchString] = useState<string>('');
   const allWorkflows = useRef<Array<WorkflowsList>>([]);
-  const allItemsSelected = useRef<SelectedWorkflowsList[]>([]);
+  const allItemsSelected = useRef<SelectedWorkflowsList[]>(parsePreviousSelectedWorkflows(selectedWorkflows));
 
   const intl = useIntl();
   const dispatch: AppDispatch = useDispatch();
@@ -80,31 +89,30 @@ export const WorkflowsSelection: React.FC = () => {
     return apiService.getWorkflows(selectedSubscription, selectedIse, location);
   };
 
-  const onWorkflowsSuccess = (workflows: WorkflowsList[]) => {
-    const resourceGroups: IDropdownOption[] = !workflows ? [] : parseResourceGroups(workflows);
+  const { isLoading: isWorkflowsLoading, data: workflowsData } = useQuery<WorkflowsList[]>(
+    [QueryKeys.workflowsData, selectedSubscription, selectedIse, location],
+    loadWorkflows,
+    {
+      refetchOnWindowFocus: false,
+    }
+  );
 
-    setRenderWorkflows(workflows);
-    setResourceGroups(resourceGroups);
-    allWorkflows.current = workflows;
-    allItemsSelected.current = workflows.map((workflow) => {
-      return { ...workflow, selected: false, rendered: true };
-    });
-    selectedWorkflows.forEach((workflow: WorkflowsList) => {
-      const selectedIndex = allItemsSelected.current.findIndex((selectedItem: SelectedWorkflowsList) => selectedItem.key === workflow.key);
-      if (selectedIndex !== -1) {
-        allItemsSelected.current[selectedIndex].selected = true;
-      }
-    });
-  };
-
-  const { isLoading: isWorkflowsLoading } = useQuery<any>([QueryKeys.workflowsData, { location, iseId: selectedIse }], loadWorkflows, {
-    refetchOnWindowFocus: false,
-    onSuccess: onWorkflowsSuccess,
-  });
+  useEffect(() => {
+    if (!isNullOrUndefined(workflowsData)) {
+      setRenderWorkflows(workflowsData);
+      setResourceGroups(parseResourceGroups(workflowsData));
+      allWorkflows.current = workflowsData;
+      allItemsSelected.current = parseSelectedWorkflows(workflowsData, allItemsSelected.current);
+    } else {
+      setRenderWorkflows([]);
+      setResourceGroups([]);
+      allWorkflows.current = [];
+      allItemsSelected.current = [];
+    }
+  }, [workflowsData]);
 
   useEffect(() => {
     const updatedItems = updateSelectedItems(allItemsSelected.current, renderWorkflows, selectedWorkflows);
-
     allItemsSelected.current = updatedItems;
   }, [selectedWorkflows, renderWorkflows, allWorkflows]);
 

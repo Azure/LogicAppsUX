@@ -1,5 +1,5 @@
-import type { OperationInfo, OperationManifest } from '@microsoft/utils-logic-apps';
-import { AssertionErrorCode, AssertionException } from '@microsoft/utils-logic-apps';
+import type { OperationInfo, OperationManifest } from '@microsoft/logic-apps-shared';
+import { AssertionErrorCode, AssertionException } from '@microsoft/logic-apps-shared';
 
 /**
  * The operation manifest service.
@@ -7,11 +7,11 @@ import { AssertionErrorCode, AssertionException } from '@microsoft/utils-logic-a
 export interface IOperationManifestService {
   /**
    * Checks if the operation type is supported.
-   * @arg {string} operationType - The operation type.
+   * @arg [string] operationType - The operation type.
    * @arg [string] operationKind - The operation kind.
    * @return {boolean}
    */
-  isSupported(operationType: string, operationKind?: string): boolean;
+  isSupported(operationType?: string, operationKind?: string): boolean;
 
   /**
    * Gets the operation info.

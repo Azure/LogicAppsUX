@@ -29,7 +29,7 @@ import { getSplitOnValue } from './setting';
 import { foreachOperationInfo, OperationManifestService } from '@microsoft/designer-client-services-logic-apps';
 import type { OutputToken, Token } from '@microsoft/designer-ui';
 import { TokenType } from '@microsoft/designer-ui';
-import type { Dereference, Expression, ExpressionFunction, ExpressionLiteral, Segment } from '@microsoft/parsers-logic-apps';
+import type { Dereference, Expression, ExpressionFunction, ExpressionLiteral, Segment } from '@microsoft/logic-apps-shared';
 import {
   OutputKeys,
   containsWildIndexSegment,
@@ -44,9 +44,9 @@ import {
   isTemplateExpression,
   parseEx,
   SegmentType,
-} from '@microsoft/parsers-logic-apps';
-import type { OperationManifest } from '@microsoft/utils-logic-apps';
-import { clone, equals, first, isNullOrUndefined } from '@microsoft/utils-logic-apps';
+} from '@microsoft/logic-apps-shared';
+import type { OperationManifest } from '@microsoft/logic-apps-shared';
+import { clone, equals, first, getRecordEntry, isNullOrUndefined } from '@microsoft/logic-apps-shared';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 
 interface ImplicitForeachArrayDetails {
@@ -70,8 +70,11 @@ export const shouldAddForeach = async (
     return { shouldAdd: false };
   }
 
-  const operationInfo = state.operations.operationInfo[nodeId];
-  const parameter = getParameterFromId(state.operations.inputParameters[nodeId], parameterId);
+  const operationInfo = getRecordEntry(state.operations.operationInfo, nodeId);
+  if (!operationInfo) return { shouldAdd: false };
+
+  const inputParameters = getRecordEntry(state.operations.inputParameters, nodeId) ?? { parameterGroups: {} };
+  const parameter = getParameterFromId(inputParameters, parameterId);
   const manifest = OperationManifestService().isSupported(operationInfo.type, operationInfo.kind)
     ? await getOperationManifest(operationInfo)
     : undefined;
@@ -405,7 +408,7 @@ const checkArrayInRepetition = (
 // Directly checking the node type, because cannot make async calls while adding token from picker to editor.
 // TODO - See if this can be made async and looked at manifest.
 export const isLoopingNode = (nodeId: string, operationInfos: Record<string, NodeOperation>): boolean => {
-  const nodeType = operationInfos[nodeId]?.type;
+  const nodeType = getRecordEntry(operationInfos, nodeId)?.type;
   return equals(nodeType, Constants.NODE.TYPE.FOREACH) || equals(nodeType, Constants.NODE.TYPE.UNTIL);
 };
 
@@ -465,12 +468,14 @@ const getRepetitionReference = async (
   allInputs: Record<string, NodeInputs>,
   idReplacements?: Record<string, string>
 ): Promise<RepetitionReference | undefined> => {
-  const operationInfo = operationInfos[nodeId];
+  const operationInfo = getRecordEntry(operationInfos, nodeId);
+  if (!operationInfo) return undefined;
   const service = OperationManifestService();
   if (service.isSupported(operationInfo.type, operationInfo.kind)) {
     const manifest = await getOperationManifest(operationInfo);
     const parameterName = manifest.properties.repetition?.loopParameter;
-    const parameter = parameterName ? getParameterFromName(allInputs[nodeId], parameterName) : undefined;
+    const nodeInputs = getRecordEntry(allInputs, nodeId) ?? { parameterGroups: {} };
+    const parameter = parameterName ? getParameterFromName(nodeInputs, parameterName) : undefined;
     if (parameter) {
       const repetitionValue = getJSONValueFromString(
         parameterValueToString(parameter, /* isDefinitionValue */ true, idReplacements),

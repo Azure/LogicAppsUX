@@ -21,8 +21,8 @@ import { rosettaNetEncodeManifest, rosettaNetDecodeManifest, rosettaNetWaitForRe
 import { selectSwaggerFunctionManifest } from './manifests/swaggerFunctions';
 import { xmlTransformManifest, xmlValidationManifest } from './manifests/xml';
 import { functionGroup, functionOperation, invokeWorkflowGroup, invokeWorkflowOperation, swaggerFunctionOperation } from './operations';
-import type { OperationInfo, OperationManifest } from '@microsoft/utils-logic-apps';
-import { ArgumentException, UnsupportedException, startsWith } from '@microsoft/utils-logic-apps';
+import type { OperationInfo, OperationManifest } from '@microsoft/logic-apps-shared';
+import { ArgumentException, UnsupportedException, startsWith } from '@microsoft/logic-apps-shared';
 
 interface ConsumptionOperationManifestServiceOptions extends BaseOperationManifestServiceOptions {
   subscriptionId: string;
@@ -71,9 +71,9 @@ export class ConsumptionOperationManifestService extends BaseOperationManifestSe
     throw new UnsupportedException(`Operation type: ${definition.type} does not support manifest.`);
   }
 
-  override isSupported(operationType: string, _operationKind?: string): boolean {
+  override isSupported(operationType?: string, _operationKind?: string): boolean {
     const { supportedTypes } = this.options;
-    const normalizedOperationType = operationType.toLowerCase();
+    const normalizedOperationType = operationType?.toLowerCase() ?? '';
     return supportedTypes
       ? supportedTypes.indexOf(normalizedOperationType) > -1
       : supportedConsumptionManifestTypes.indexOf(normalizedOperationType) > -1;

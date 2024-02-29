@@ -11,7 +11,7 @@ import { TokenPickerPivot } from './tokenpickerpivot';
 import type { GetValueSegmentHandler } from './tokenpickersection/tokenpickeroption';
 import { TokenPickerSection } from './tokenpickersection/tokenpickersection';
 import type { ICalloutContentStyles, ISearchBox, PivotItem } from '@fluentui/react';
-import { SearchBox, Callout, DirectionalHint } from '@fluentui/react';
+import { SearchBox, Callout, DirectionalHint, FocusTrapZone } from '@fluentui/react';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import type { LexicalEditor, NodeKey } from 'lexical';
 import type { editor } from 'monaco-editor';
@@ -51,6 +51,7 @@ export interface TokenPickerProps {
   setIsTokenPickerOpened?: (b: boolean) => void;
   // tokenClickedCallback is used for the code Editor TokenPicker(Legacy Token Picker)
   tokenClickedCallback?: (token: ValueSegment) => void;
+  hideUTFExpressions?: boolean;
 }
 export function TokenPicker({
   editorId,
@@ -59,12 +60,14 @@ export function TokenPicker({
   filteredTokenGroup,
   expressionGroup,
   initialMode,
+  hideUTFExpressions,
   setIsTokenPickerOpened,
   getValueSegmentFromToken,
   tokenClickedCallback,
 }: TokenPickerProps): JSX.Element {
   const intl = useIntl();
   const [windowDimensions, setWindowDimensions] = useState(getWindowDimensions());
+  const [isTokenPickerVisible, setIsTokenPickerVisible] = useState(true);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedKey, setSelectedKey] = useState<TokenPickerMode>(initialMode ?? TokenPickerMode.TOKEN);
   const [expressionToBeUpdated, setExpressionToBeUpdated] = useState<NodeKey | null>(null);
@@ -177,9 +180,11 @@ export function TokenPicker({
           }
         }}
         onDismiss={(e) => {
+          setIsTokenPickerVisible(false);
           if (e?.type === 'keydown' && (e as React.KeyboardEvent<HTMLElement>).key === 'Escape') {
             editor?.focus();
           }
+
           closeTokenPicker();
         }}
         onRestoreFocus={() => {
@@ -190,88 +195,91 @@ export function TokenPicker({
           hostId: 'msla-layer-host',
         }}
       >
-        <div
-          className="msla-token-picker-container-v3"
-          style={
-            fullScreen
-              ? {
-                  height: Math.max(windowDimensions.height - 100, Math.min(windowDimensions.height, 550)),
-                  width: Math.max(
-                    windowDimensions.width - (parseInt(PanelSize.Medium, 10) + 40),
-                    Math.min(windowDimensions.width - 16, 400)
-                  ),
-                }
-              : { maxHeight: Math.min(windowDimensions.height, 550), width: Math.min(windowDimensions.width - 16, 400) }
-          }
-        >
-          <div className="msla-token-picker">
-            {initialMode ? (
-              <TokenPickerHeader
-                fullScreen={fullScreen}
-                isExpression={isExpression}
-                closeTokenPicker={closeTokenPicker}
-                setFullScreen={setFullScreen}
-                pasteLastUsedExpression={pasteLastUsedExpression}
-              />
-            ) : null}
-
-            {isExpression ? (
-              <div className="msla-token-picker-expression-subheader">
-                <ExpressionEditor
-                  initialValue={expression.value}
-                  editorRef={expressionEditorRef}
-                  onBlur={onExpressionEditorBlur}
-                  isDragging={isDraggingExpressionEditor}
-                  dragDistance={expressionEditorDragDistance}
-                  setIsDragging={setIsDraggingExpressionEditor}
-                  currentHeight={expressionEditorCurrentHeight}
-                  setCurrentHeight={setExpressionEditorCurrentHeight}
-                  setExpressionEditorError={setExpressionEditorError}
+        <FocusTrapZone isClickableOutsideFocusTrap disabled={!isTokenPickerVisible}>
+          <div
+            className="msla-token-picker-container-v3"
+            style={
+              fullScreen
+                ? {
+                    height: Math.max(windowDimensions.height - 100, Math.min(windowDimensions.height, 550)),
+                    width: Math.max(
+                      windowDimensions.width - (parseInt(PanelSize.Medium, 10) + 40),
+                      Math.min(windowDimensions.width - 16, 400)
+                    ),
+                  }
+                : { maxHeight: Math.min(windowDimensions.height, 550), width: Math.min(windowDimensions.width - 16, 400) }
+            }
+          >
+            <div className="msla-token-picker">
+              {initialMode ? (
+                <TokenPickerHeader
+                  fullScreen={fullScreen}
+                  isExpression={isExpression}
+                  closeTokenPicker={closeTokenPicker}
+                  setFullScreen={setFullScreen}
+                  pasteLastUsedExpression={pasteLastUsedExpression}
                 />
-                <div className="msla-token-picker-expression-editor-error">{expressionEditorError}</div>
-                <TokenPickerPivot selectedKey={selectedKey} selectKey={handleSelectKey} hideExpressions={!!tokenClickedCallback} />
+              ) : null}
+
+              {isExpression ? (
+                <div className="msla-token-picker-expression-subheader">
+                  <ExpressionEditor
+                    initialValue={expression.value}
+                    editorRef={expressionEditorRef}
+                    onBlur={onExpressionEditorBlur}
+                    isDragging={isDraggingExpressionEditor}
+                    dragDistance={expressionEditorDragDistance}
+                    setIsDragging={setIsDraggingExpressionEditor}
+                    currentHeight={expressionEditorCurrentHeight}
+                    setCurrentHeight={setExpressionEditorCurrentHeight}
+                    setExpressionEditorError={setExpressionEditorError}
+                    hideUTFExpressions={hideUTFExpressions}
+                  />
+                  <div className="msla-token-picker-expression-editor-error">{expressionEditorError}</div>
+                  <TokenPickerPivot selectedKey={selectedKey} selectKey={handleSelectKey} hideExpressions={!!tokenClickedCallback} />
+                </div>
+              ) : null}
+              <div className="msla-token-picker-search-container">
+                <SearchBox
+                  className="msla-token-picker-search"
+                  componentRef={(e) => {
+                    searchBoxRef.current = e;
+                  }}
+                  placeholder={tokenPickerPlaceHolderText}
+                  onChange={(_, newValue) => {
+                    setSearchQuery(newValue ?? '');
+                  }}
+                  data-automation-id="msla-token-picker-search"
+                />
               </div>
-            ) : null}
-            <div className="msla-token-picker-search-container">
-              <SearchBox
-                className="msla-token-picker-search"
-                componentRef={(e) => {
-                  searchBoxRef.current = e;
-                }}
-                placeholder={tokenPickerPlaceHolderText}
-                onChange={(_, newValue) => {
-                  setSearchQuery(newValue ?? '');
-                }}
-                data-automation-id="msla-token-picker-search"
-              />
-            </div>
-            <TokenPickerSection
-              tokenGroup={(selectedKey === TokenPickerMode.TOKEN ? filteredTokenGroup : tokenGroup) ?? []}
-              expressionGroup={expressionGroup ?? []}
-              expressionEditorRef={expressionEditorRef}
-              selectedKey={selectedKey}
-              searchQuery={searchQuery}
-              fullScreen={fullScreen}
-              expression={expression}
-              setExpression={setExpression}
-              getValueSegmentFromToken={getValueSegmentFromToken}
-              tokenClickedCallback={tokenClickedCallback}
-              noDynamicContent={!isDynamicContentAvailable(filteredTokenGroup ?? [])}
-              closeTokenPicker={closeTokenPicker}
-              expressionEditorCurrentHeight={expressionEditorCurrentHeight}
-            />
-            {isExpression ? (
-              <TokenPickerFooter
-                tokenGroup={tokenGroup ?? []}
+              <TokenPickerSection
+                tokenGroup={(selectedKey === TokenPickerMode.TOKEN ? filteredTokenGroup : tokenGroup) ?? []}
+                expressionGroup={expressionGroup ?? []}
+                expressionEditorRef={expressionEditorRef}
+                selectedKey={selectedKey}
+                searchQuery={searchQuery}
+                fullScreen={fullScreen}
                 expression={expression}
-                expressionToBeUpdated={expressionToBeUpdated}
+                setExpression={setExpression}
                 getValueSegmentFromToken={getValueSegmentFromToken}
-                setExpressionEditorError={setExpressionEditorError}
+                tokenClickedCallback={tokenClickedCallback}
+                noDynamicContent={!isDynamicContentAvailable(filteredTokenGroup ?? [])}
                 closeTokenPicker={closeTokenPicker}
+                expressionEditorCurrentHeight={expressionEditorCurrentHeight}
               />
-            ) : null}
+              {isExpression ? (
+                <TokenPickerFooter
+                  tokenGroup={tokenGroup ?? []}
+                  expression={expression}
+                  expressionToBeUpdated={expressionToBeUpdated}
+                  getValueSegmentFromToken={getValueSegmentFromToken}
+                  setExpressionEditorError={setExpressionEditorError}
+                  closeTokenPicker={closeTokenPicker}
+                />
+              ) : null}
+            </div>
           </div>
-        </div>
+        </FocusTrapZone>
       </Callout>
       {tokenClickedCallback ? null : <TokenPickerHandler handleUpdateExpressionToken={handleUpdateExpressionToken} />}
       {tokenClickedCallback ? null : <UpdateTokenNode />}

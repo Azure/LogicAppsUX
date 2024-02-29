@@ -1,9 +1,10 @@
 import constants from '../../../common/constants';
+import { getReactQueryClient } from '../../ReactQueryProvider';
 import { loadParameterValuesFromDefault, toParameterInfoMap } from './helper';
 import type { ParameterInfo } from '@microsoft/designer-ui';
-import { OutputMapKey, SchemaProcessor, toInputParameter } from '@microsoft/parsers-logic-apps';
-import type { OpenAPIV2, RecurrenceSetting } from '@microsoft/utils-logic-apps';
-import { map, RecurrenceType } from '@microsoft/utils-logic-apps';
+import { OutputMapKey, SchemaProcessor, toInputParameter } from '@microsoft/logic-apps-shared';
+import type { OpenAPIV2, RecurrenceSetting } from '@microsoft/logic-apps-shared';
+import { map, RecurrenceType } from '@microsoft/logic-apps-shared';
 
 export interface Recurrence {
   frequency: string | undefined;
@@ -51,7 +52,9 @@ export const getRecurrenceParameters = (recurrence: RecurrenceSetting | undefine
     .getSchemaProperties(schema)
     .map((item) => toInputParameter(item, true /* suppressCasting */));
 
-  const defaultRecurrence = constants.DEFAULT_RECURRENCE;
+  const queryClient = getReactQueryClient();
+  const recurrenceInterval = queryClient.getQueryData(['recurrenceInterval']);
+  const defaultRecurrence = recurrenceInterval ?? constants.DEFAULT_RECURRENCE;
 
   for (const parameter of recurrenceParameters) {
     if (!parameter.default) {

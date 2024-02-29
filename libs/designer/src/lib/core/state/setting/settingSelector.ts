@@ -1,4 +1,5 @@
 import type { RootState } from '../../store';
+import { getRecordEntry } from '@microsoft/logic-apps-shared';
 import { createSelector } from '@reduxjs/toolkit';
 import { useSelector } from 'react-redux';
 
@@ -13,5 +14,5 @@ export const useAllSettingsValidationErrors = () => {
 };
 
 export const useSettingValidationErrors = (nodeId: string) => {
-  return useSelector(createSelector(getSettingsState, (settings) => settings.validationErrors?.[nodeId] ?? []));
+  return useSelector(createSelector(getSettingsState, (settings) => getRecordEntry(settings.validationErrors, nodeId) ?? []));
 };

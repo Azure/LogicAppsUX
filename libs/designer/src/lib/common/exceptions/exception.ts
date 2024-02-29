@@ -1,6 +1,6 @@
-import { getIntl } from '@microsoft/intl-logic-apps';
-import type { Exception } from '@microsoft/utils-logic-apps';
-import { isException } from '@microsoft/utils-logic-apps';
+import { getIntl } from '@microsoft/logic-apps-shared';
+import type { Exception } from '@microsoft/logic-apps-shared';
+import { isException } from '@microsoft/logic-apps-shared';
 
 export function includeInnerExceptionMessage(error: Error | Exception): string {
   const intl = getIntl();

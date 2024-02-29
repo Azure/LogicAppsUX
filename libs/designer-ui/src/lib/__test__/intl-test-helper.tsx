@@ -5,7 +5,7 @@
  * English-locale intl context around them.
  */
 // eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
-import messages from '../../../../services/intl/src/compiled-lang/strings.json';
+import messages from '../../../../logic-apps-shared/src/intl/src/compiled-lang/strings.json';
 import { createIntl, createIntlCache } from 'react-intl';
 import * as Intl from 'react-intl';
 

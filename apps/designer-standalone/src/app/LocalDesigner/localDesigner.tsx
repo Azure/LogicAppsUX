@@ -18,7 +18,7 @@ import {
 } from '@microsoft/designer-client-services-logic-apps';
 import type { ContentType } from '@microsoft/designer-client-services-logic-apps';
 import { DesignerProvider, BJSWorkflowProvider, Designer } from '@microsoft/logic-apps-designer';
-import { ResourceIdentityType } from '@microsoft/utils-logic-apps';
+import { ResourceIdentityType } from '@microsoft/logic-apps-shared';
 import { useSelector } from 'react-redux';
 
 const httpClient = new HttpClient();

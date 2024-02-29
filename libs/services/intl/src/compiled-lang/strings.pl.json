@@ -1114,7 +1114,7 @@
   "5WTRY8": [
     {
       "type": 0,
-      "value": "Errors"
+      "value": "Błędy"
     }
   ],
   "5akc1Q": [
@@ -1359,6 +1359,12 @@
     {
       "type": 0,
       "value": "Typ danych"
+    }
+  ],
+  "6yFUar": [
+    {
+      "type": 0,
+      "value": "Dane wyjściowe są wymagane, gdy stan to „Powodzenie”"
     }
   ],
   "70eoQu": [
@@ -1881,6 +1887,12 @@
     {
       "type": 0,
       "value": "Akcje filtru"
+    }
+  ],
+  "ANGw2o": [
+    {
+      "type": 0,
+      "value": "Kliknij, aby uzyskać więcej informacji na temat wyniku statycznego"
     }
   ],
   "AO6T9u": [
@@ -3025,10 +3037,22 @@
       "value": "Wymagane. Liczba, od której odejmowany jest odjemnik."
     }
   ],
+  "H9CZTr": [
+    {
+      "type": 0,
+      "value": "Wyrażenie jest nieprawidłowe. Pamiętaj, aby używać pojedynczych cudzysłowów."
+    }
+  ],
   "HDqP2g": [
     {
       "type": 0,
       "value": "Wymagane. Nazwa klucza zwracanej wartości danych formularza."
+    }
+  ],
+  "HGA9iU": [
+    {
+      "type": 0,
+      "value": "Błąd i jego kod są wymagane, gdy stan to „Niepowodzenie”"
     }
   ],
   "HH970i": [
@@ -3589,6 +3613,12 @@
       "value": "Tworzenie w toku..."
     }
   ],
+  "LPdGu/": [
+    {
+      "type": 0,
+      "value": "Nie należy podawać przepływności, gdy stan to „Niepowodzenie”"
+    }
+  ],
   "LR/3Lr": [
     {
       "type": 0,
@@ -3718,7 +3748,7 @@
   "M0bbZk": [
     {
       "type": 0,
-      "value": "Flow Checker"
+      "value": "Kontroler przepływów"
     }
   ],
   "M0xrm+": [
@@ -4048,7 +4078,7 @@
   "O6VHe0": [
     {
       "type": 0,
-      "value": "Operation warnings"
+      "value": "Ostrzeżenia dotyczące operacji"
     }
   ],
   "O7HhyP": [
@@ -5398,7 +5428,7 @@
   "Vi5TIV": [
     {
       "type": 0,
-      "value": "No warnings found."
+      "value": "Nie znaleziono ostrzeżeń."
     }
   ],
   "VlvlX1": [
@@ -6031,6 +6061,12 @@
     {
       "type": 0,
       "value": "Wyłącz wynik statyczny"
+    }
+  ],
+  "Yz9o1k": [
+    {
+      "type": 0,
+      "value": "Nie połączono."
     }
   ],
   "Z8tBFS": [
@@ -7108,7 +7144,7 @@
   "hLOIwp": [
     {
       "type": 0,
-      "value": "Warnings"
+      "value": "Ostrzeżenia"
     }
   ],
   "hMf2TA": [
@@ -9135,6 +9171,12 @@
       "value": "Nie można wygenerować definicji mapy danych"
     }
   ],
+  "svaqnp": [
+    {
+      "type": 0,
+      "value": "Nie należy podawać błędu, gdy stan to „Powodzenie”"
+    }
+  ],
   "sw6EXK": [
     {
       "type": 0,
@@ -9171,6 +9213,12 @@
     {
       "type": 0,
       "value": "Wymagane. Ciąg zawierający nazwę docelowej strefy czasowej. Szczegółowe informacje można znaleźć na stronie https://msdn.microsoft.com/pl-pl/library/gg154758.aspx."
+    }
+  ],
+  "t9RwOi": [
+    {
+      "type": 0,
+      "value": "Wyrażenie jest nieprawidłowe."
     }
   ],
   "tAbbH8": [
@@ -9607,12 +9655,6 @@
     {
       "type": 0,
       "value": "Dane wyjściowe"
-    }
-  ],
-  "vVJuus": [
-    {
-      "type": 0,
-      "value": "Wyrażenie jest nieprawidłowe."
     }
   ],
   "vX9WYS": [

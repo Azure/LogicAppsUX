@@ -96,7 +96,9 @@ export const getAdvanceOptionsSelection = (
   const updatedOptions = [...selectedAdvanceOptions];
 
   if (!!hasInfrastructureTemplates(updatedOptions) && selectedOption.key === AdvancedOptionsTypes.generateInfrastructureTemplates) {
-    return [];
+    return updatedOptions.filter(
+      (option) => option !== AdvancedOptionsTypes.cloneConnections && option !== AdvancedOptionsTypes.generateInfrastructureTemplates
+    );
   }
 
   const index = updatedOptions.indexOf(selectedOption.key as AdvancedOptionsTypes);
@@ -110,4 +112,29 @@ export const getAdvanceOptionsSelection = (
 
 export const isCloneConnectionsAvailable = (selectedAdvanceOptions: AdvancedOptionsTypes[]): boolean => {
   return !hasInfrastructureTemplates(selectedAdvanceOptions);
+};
+
+/**
+ * Parses the selected workflows and returns an array of selected workflows with additional properties.
+ * @param selectedWorkflows - The array of workflows to be parsed.
+ * @returns An array of selected workflows with additional properties.
+ */
+export const parsePreviousSelectedWorkflows = (selectedWorkflows: WorkflowsList[]): SelectedWorkflowsList[] => {
+  return selectedWorkflows.map((workflow: WorkflowsList) => {
+    return { ...workflow, selected: true, rendered: true };
+  });
+};
+
+/**
+ * Parses the selected workflows based on the provided workflows data and the list of all items selected.
+ * @param workflowsData - The array of workflows data.
+ * @param allItemsSelected - The array of all selected items.
+ * @returns An array of workflows with updated selection and rendering status.
+ */
+export const parseSelectedWorkflows = (workflowsData: WorkflowsList[], allItemsSelected: SelectedWorkflowsList[]) => {
+  const currentSelection = [...allItemsSelected];
+  return workflowsData.map((workflow: WorkflowsList) => {
+    const selectedIndex = currentSelection.findIndex((selectedItem: SelectedWorkflowsList) => selectedItem.key === workflow.key);
+    return { ...workflow, selected: selectedIndex !== -1, rendered: true };
+  });
 };

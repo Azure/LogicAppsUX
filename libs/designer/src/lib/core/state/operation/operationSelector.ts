@@ -1,9 +1,11 @@
 import type { NodeStaticResults } from '../../actions/bjsworkflow/staticresults';
 import type { RootState } from '../../store';
 import { shouldUseParameterInGroup } from '../../utils/parameters/helper';
-import type { ErrorInfo, NodeInputs } from './operationMetadataSlice';
+import type { ErrorInfo, NodeDependencies, NodeInputs } from './operationMetadataSlice';
 import { ErrorLevel } from './operationMetadataSlice';
+import type { NodeOutputs } from '@microsoft/designer-client-services-logic-apps';
 import type { ParameterInfo } from '@microsoft/designer-ui';
+import { getRecordEntry } from '@microsoft/logic-apps-shared';
 import { createSelector } from '@reduxjs/toolkit';
 import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
@@ -11,10 +13,12 @@ import { useSelector } from 'react-redux';
 const getOperationState = (state: RootState) => state.operations;
 
 export const useOperationVisuals = (nodeId: string) =>
-  useSelector(createSelector(getOperationState, (state) => state.operationMetadata[nodeId] ?? {}));
+  useSelector(
+    createSelector(getOperationState, (state) => getRecordEntry(state.operationMetadata, nodeId) ?? { brandColor: '', iconUri: '' })
+  );
 
 export const getOperationInputParameters = (rootState: RootState, nodeId: string): ParameterInfo[] => {
-  const nodeInputs = rootState.operations.inputParameters[nodeId];
+  const nodeInputs = getRecordEntry(rootState.operations.inputParameters, nodeId);
   const allParameters: ParameterInfo[] = [];
 
   if (nodeInputs) {
@@ -34,7 +38,7 @@ export const getOperationInputParameters = (rootState: RootState, nodeId: string
 };
 
 export const useOperationInputParameters = (nodeId: string): ParameterInfo[] => {
-  const nodeInputs = useSelector((rootState: RootState) => rootState.operations.inputParameters[nodeId]);
+  const nodeInputs = useSelector((rootState: RootState) => getRecordEntry(rootState.operations.inputParameters, nodeId));
   return useMemo(() => {
     const allParameters: ParameterInfo[] = [];
     if (nodeInputs) {
@@ -54,7 +58,7 @@ export const useOperationInputParameters = (nodeId: string): ParameterInfo[] => 
 };
 
 export const useOperationErrorInfo = (nodeId: string): ErrorInfo | undefined =>
-  useSelector(createSelector(getOperationState, (state) => getTopErrorInOperation(state.errors[nodeId])));
+  useSelector(createSelector(getOperationState, (state) => getTopErrorInOperation(getRecordEntry(state.errors, nodeId))));
 
 export const useAllConnectionErrors = (): Record<string, string> =>
   useSelector(
@@ -73,17 +77,27 @@ export const useOperationsInputParameters = (): Record<string, NodeInputs> =>
 
 export const useSecureInputsOutputs = (nodeId: string): boolean =>
   useSelector(
-    createSelector(
-      getOperationState,
-      (state) => !!(state.settings?.[nodeId]?.secureInputs?.value || state.settings?.[nodeId]?.secureOutputs?.value)
-    )
+    createSelector(getOperationState, (state) => {
+      const nodeSettings = getRecordEntry(state.settings, nodeId);
+      return !!(nodeSettings?.secureInputs?.value || nodeSettings?.secureOutputs?.value);
+    })
   );
 
-export const useParameterStaticResult = (nodeId: string): NodeStaticResults =>
-  useSelector(createSelector(getOperationState, (state) => state.staticResults[nodeId]));
+export const useParameterStaticResult = (nodeId: string): NodeStaticResults | undefined =>
+  useSelector(createSelector(getOperationState, (state) => getRecordEntry(state.staticResults, nodeId)));
+
+export const useRawInputParameters = (nodeId: string): NodeInputs | undefined =>
+  useSelector(createSelector(getOperationState, (state) => getRecordEntry(state.inputParameters, nodeId)));
+
+export const useRawOutputParameters = (nodeId: string): NodeOutputs | undefined =>
+  useSelector(createSelector(getOperationState, (state) => getRecordEntry(state.outputParameters, nodeId)));
+
+const mockDeps: NodeDependencies = { inputs: {}, outputs: {} };
+export const useDependencies = (nodeId: string) =>
+  useSelector(createSelector(getOperationState, (state) => getRecordEntry(state.dependencies, nodeId) ?? mockDeps));
 
 export const useTokenDependencies = (nodeId: string) => {
-  const operationInputParameters = useSelector(createSelector(getOperationState, (op) => op.inputParameters?.[nodeId]));
+  const operationInputParameters = useRawInputParameters(nodeId);
   return useMemo(() => {
     if (!operationInputParameters) {
       return new Set();
@@ -121,7 +135,7 @@ export const useNodesInitialized = () => useSelector(createSelector(getOperation
 export const useNodesAndDynamicDataInitialized = () =>
   useSelector(createSelector(getOperationState, (state) => state.loadStatus.nodesAndDynamicDataInitialized));
 
-const getTopErrorInOperation = (errors: Record<ErrorLevel, ErrorInfo | undefined>): ErrorInfo | undefined => {
+const getTopErrorInOperation = (errors?: Record<ErrorLevel, ErrorInfo | undefined>): ErrorInfo | undefined => {
   if (!errors) {
     return undefined;
   } else if (errors[ErrorLevel.Critical]) {
@@ -140,10 +154,10 @@ const getTopErrorInOperation = (errors: Record<ErrorLevel, ErrorInfo | undefined
 };
 
 export const useBrandColor = (nodeId: string) =>
-  useSelector(createSelector(getOperationState, (state) => state.operationMetadata[nodeId]?.brandColor ?? ''));
+  useSelector(createSelector(getOperationState, (state) => getRecordEntry(state.operationMetadata, nodeId)?.brandColor ?? ''));
 
 export const useIconUri = (nodeId: string) =>
-  useSelector(createSelector(getOperationState, (state) => state.operationMetadata[nodeId]?.iconUri ?? ''));
+  useSelector(createSelector(getOperationState, (state) => getRecordEntry(state.operationMetadata, nodeId)?.iconUri ?? ''));
 
 export const useNodeConnectorId = (nodeId: string) =>
-  useSelector(createSelector(getOperationState, (state) => state.operationInfo[nodeId]?.connectorId));
+  useSelector(createSelector(getOperationState, (state) => getRecordEntry(state.operationInfo, nodeId)?.connectorId));

@@ -39,8 +39,8 @@ import {
   initializeManifest,
   setManifest,
 } from './manifests/variables';
-import type { OperationInfo, OperationManifest } from '@microsoft/utils-logic-apps';
-import { ArgumentException, equals, UnsupportedException } from '@microsoft/utils-logic-apps';
+import type { OperationInfo, OperationManifest } from '@microsoft/logic-apps-shared';
+import { ArgumentException, equals, UnsupportedException } from '@microsoft/logic-apps-shared';
 
 const apimanagement = 'apimanagement';
 const apimanagementtrigger = 'apimanagementtrigger';
@@ -223,9 +223,9 @@ export abstract class BaseOperationManifestService implements IOperationManifest
     }
   }
 
-  isSupported(operationType: string, _operationKind?: string): boolean {
+  isSupported(operationType?: string, _operationKind?: string): boolean {
     const { supportedTypes } = this.options;
-    const normalizedOperationType = operationType.toLowerCase();
+    const normalizedOperationType = operationType?.toLowerCase() ?? '';
     return supportedTypes
       ? supportedTypes.indexOf(normalizedOperationType) > -1
       : supportedBaseManifestTypes.indexOf(normalizedOperationType) > -1;

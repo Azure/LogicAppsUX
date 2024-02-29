@@ -4,7 +4,7 @@ import { useTheme } from '@fluentui/react';
 import Editor, { loader } from '@monaco-editor/react';
 import type { IScrollEvent, editor } from 'monaco-editor';
 import type { MutableRefObject } from 'react';
-import { useState, useEffect, forwardRef, useRef } from 'react';
+import { useState, useEffect, forwardRef, useRef, useCallback } from 'react';
 
 export interface EditorContentChangedEventArgs extends editor.IModelContentChangedEvent {
   value?: string;
@@ -60,6 +60,7 @@ export interface MonacoOptions {
   lineHeight?: number;
   minimapEnabled?: boolean;
   scrollBeyondLastLine?: boolean;
+  hideUTFExpressions?: boolean;
   wordWrap?: 'off' | 'on' | 'wordWrapColumn' | 'bounded';
   wordWrapColumn?: number;
   contextMenu?: boolean;
@@ -82,6 +83,7 @@ export const MonacoEditor = forwardRef<editor.IStandaloneCodeEditor, MonacoProps
       minimapEnabled = false,
       value,
       scrollBeyondLastLine = false,
+      hideUTFExpressions,
       height,
       width,
       lineNumbersMinChars,
@@ -115,13 +117,13 @@ export const MonacoEditor = forwardRef<editor.IStandaloneCodeEditor, MonacoProps
     const [canRender, setCanRender] = useState(false);
     const currentRef = useRef<editor.IStandaloneCodeEditor>();
 
-    const initTemplateLanguage = async () => {
+    const initTemplateLanguage = useCallback(async () => {
       const { languages, editor } = await loader.init();
       if (!languages.getLanguages().some((lang: any) => lang.id === Constants.LANGUAGE_NAMES.WORKFLOW)) {
-        registerWorkflowLanguageProviders(languages, editor);
+        registerWorkflowLanguageProviders(languages, editor, hideUTFExpressions);
       }
       setCanRender(true);
-    };
+    }, [hideUTFExpressions]);
 
     useEffect(() => {
       if (language === EditorLanguage.templateExpressionLanguage) {
@@ -129,7 +131,7 @@ export const MonacoEditor = forwardRef<editor.IStandaloneCodeEditor, MonacoProps
       } else {
         setCanRender(true);
       }
-    }, [language]);
+    }, [initTemplateLanguage, language]);
 
     const handleContextMenu = (e: editor.IEditorMouseEvent) => {
       onContextMenu?.(e);

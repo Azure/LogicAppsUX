@@ -7,7 +7,7 @@ import { localize } from '../../../localize';
 import type { SlotTreeItem } from '../../tree/slotsTree/SlotTreeItem';
 import { SubscriptionTreeItem } from '../../tree/subscriptionTree/SubscriptionTreeItem';
 import { notifyCreateLogicAppComplete } from './notifyCreateLogicAppComplete';
-import { isString } from '@microsoft/utils-logic-apps';
+import { isString } from '@microsoft/logic-apps-shared';
 import type { AzExtParentTreeItem, IActionContext } from '@microsoft/vscode-azext-utils';
 import type { ICreateLogicAppContext } from '@microsoft/vscode-extension';
 

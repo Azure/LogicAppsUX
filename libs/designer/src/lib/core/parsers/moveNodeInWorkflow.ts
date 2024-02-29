@@ -3,8 +3,8 @@ import type { RelationshipIds } from '../state/panel/panelInterfaces';
 import type { NodesMetadata, WorkflowState } from '../state/workflow/workflowInterfaces';
 import type { WorkflowNode } from './models/workflowNode';
 import { addNewEdge, reassignEdgeSources, reassignEdgeTargets, removeEdge, applyIsRootNode } from './restructuringHelpers';
-import type { LogicAppsV2 } from '@microsoft/utils-logic-apps';
-import { containsIdTag } from '@microsoft/utils-logic-apps';
+import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
+import { containsIdTag, getRecordEntry } from '@microsoft/logic-apps-shared';
 
 export interface MoveNodePayload {
   nodeId: string;
@@ -27,7 +27,7 @@ export const moveNodeInWorkflow = (
 
   const { parentId, childId } = relationshipIds;
 
-  const currentRunAfter = (state.operations[nodeId] as LogicAppsV2.ActionDefinition)?.runAfter;
+  const currentRunAfter = (getRecordEntry(state.operations, nodeId) as LogicAppsV2.ActionDefinition)?.runAfter;
   const multipleParents = Object.keys(currentRunAfter ?? {}).length > 1;
   const multipleChildren = (oldWorkflowGraph.edges ?? []).filter((edge) => edge.source === nodeId).length > 1;
 
@@ -44,12 +44,13 @@ export const moveNodeInWorkflow = (
   // Remove node from its current position in the graph
 
   // Set correct isRoot props
-  const isOldRoot = nodesMetadata[nodeId]?.isRoot;
+  const isOldRoot = getRecordEntry(nodesMetadata, nodeId)?.isRoot;
   if (isOldRoot) {
     const childIds = (oldWorkflowGraph.edges ?? []).filter((edge) => edge.source === nodeId).map((edge) => edge.target);
     childIds.forEach((childId) => {
-      if (nodesMetadata[childId]) nodesMetadata[childId].isRoot = true;
-      delete (state.operations[childId] as any)?.runAfter;
+      const childMetadata = getRecordEntry(nodesMetadata, childId);
+      if (childMetadata) childMetadata.isRoot = true;
+      delete (getRecordEntry(state.operations, childId) as any)?.runAfter;
     });
   }
 
@@ -67,7 +68,8 @@ export const moveNodeInWorkflow = (
   } else {
     const parentId = (oldWorkflowGraph.edges ?? []).find((edge) => edge.target === nodeId)?.source ?? '';
     const graphId = oldWorkflowGraph.id;
-    const isAfterTrigger = nodesMetadata[parentId ?? '']?.isRoot && graphId === 'root';
+    const parentMetadata = getRecordEntry(nodesMetadata, parentId);
+    const isAfterTrigger = parentMetadata?.isRoot && graphId === 'root';
     const shouldAddRunAfters = !isOldRoot && !isAfterTrigger;
     reassignEdgeSources(state, nodeId, parentId, oldWorkflowGraph, shouldAddRunAfters);
     removeEdge(state, parentId, nodeId, oldWorkflowGraph);
@@ -92,19 +94,22 @@ export const moveNodeInWorkflow = (
   const isNewRoot = containsIdTag(parentId ?? '');
   const parentNodeId = newGraphId !== 'root' ? newGraphId : undefined;
 
-  nodesMetadata[nodeId] = { ...nodesMetadata[nodeId], graphId: newGraphId, parentNodeId, isRoot: isNewRoot };
-  if (nodesMetadata[nodeId].isRoot === false) delete nodesMetadata[nodeId].isRoot;
+  nodesMetadata[nodeId] = { ...getRecordEntry(nodesMetadata, nodeId), graphId: newGraphId, parentNodeId, isRoot: isNewRoot };
+  if (getRecordEntry(nodesMetadata, nodeId)?.isRoot === false) delete nodesMetadata[nodeId].isRoot;
 
-  const isAfterTrigger = (nodesMetadata[parentId ?? '']?.isRoot && newGraphId === 'root') ?? false;
+  const parentMetadata = getRecordEntry(nodesMetadata, parentId);
+  const isAfterTrigger = (parentMetadata?.isRoot && newGraphId === 'root') ?? false;
   const shouldAddRunAfters = !isNewRoot && !isAfterTrigger;
 
   // 1 parent, 1 child
   if (parentId && childId) {
-    const childRunAfter = (state.operations?.[childId] as any)?.runAfter;
+    const childRunAfter = (getRecordEntry(state.operations, childId) as any)?.runAfter;
     addNewEdge(state, parentId, nodeId, newWorkflowGraph, shouldAddRunAfters);
     addNewEdge(state, nodeId, childId, newWorkflowGraph, true);
     removeEdge(state, parentId, childId, newWorkflowGraph);
-    if (childRunAfter && shouldAddRunAfters) (state.operations?.[nodeId] as any).runAfter[parentId] = childRunAfter[parentId];
+    if (childRunAfter && shouldAddRunAfters) {
+      (getRecordEntry(state.operations, nodeId) as any).runAfter[parentId] = getRecordEntry(childRunAfter, parentId);
+    }
   }
   // X parents, 1 child
   else if (childId) {
@@ -117,7 +122,7 @@ export const moveNodeInWorkflow = (
     addNewEdge(state, parentId, nodeId, newWorkflowGraph, shouldAddRunAfters);
   }
 
-  if (isNewRoot && (state.operations[nodeId] as any)) delete (state.operations[nodeId] as any).runAfter;
+  if (isNewRoot && (getRecordEntry(state.operations, nodeId) as any)) delete (getRecordEntry(state.operations, nodeId) as any)?.runAfter;
   applyIsRootNode(state, newWorkflowGraph, nodesMetadata);
 
   state.isDirty = true;

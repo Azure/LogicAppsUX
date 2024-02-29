@@ -9,7 +9,6 @@ import { InvokeFunctionProjectSetup } from '../createCodeProjectSteps/createFunc
 import { setMethodName } from '../createCodeProjectSteps/createFunction/setMethodName';
 import { setNamespace } from '../createCodeProjectSteps/createFunction/setNamepSpace';
 import { CodeProjectWorkflowStateTypeStep } from '../createCodeProjectSteps/createLogicApp/CodeProjectWorkflowStateTypeStep';
-import { addInitVSCustomCodeSteps } from '../createCodeProjectSteps/createLogicApp/initLogicAppCodeProjectVScode/InitVSCode';
 import { WorkflowCodeProjectCreateStep } from './WorkflowCodeProjectCreateStep';
 import type { AzureWizardExecuteStep, IWizardOptions } from '@microsoft/vscode-azext-utils';
 import { AzureWizardPromptStep, nonNullProp } from '@microsoft/vscode-azext-utils';
@@ -127,7 +126,7 @@ export class NewCodeProjectTypeStep extends AzureWizardPromptStep<IProjectWizard
   ): Promise<void> {
     const projectPath = nonNullProp(context, 'logicAppFolderPath');
     executeSteps.push(new WorkflowCodeProjectCreateStep(projectPath));
-    await addInitVSCustomCodeSteps(context, executeSteps);
+    await addInitVSCodeSteps(context, executeSteps, true);
 
     promptSteps.push(
       new setMethodName(),
@@ -153,7 +152,7 @@ export class NewCodeProjectTypeStep extends AzureWizardPromptStep<IProjectWizard
     promptSteps: AzureWizardPromptStep<IProjectWizardContext>[]
   ): Promise<void> {
     executeSteps.push(new WorkflowProjectCreateStep());
-    await addInitVSCodeSteps(context, executeSteps);
+    await addInitVSCodeSteps(context, executeSteps, false);
 
     promptSteps.push(
       await WorkflowStateTypeStep.create(context, {

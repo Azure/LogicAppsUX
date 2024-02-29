@@ -28,7 +28,7 @@ import { convertUIElementNameToAutomationId } from '../../utils';
 import { CustomTokenField, isCustomEditor } from './customTokenField';
 import type { SettingProps } from './settingtoggle';
 import { Label } from '@fluentui/react';
-import { equals, getPropertyValue } from '@microsoft/utils-logic-apps';
+import { equals, getPropertyValue } from '@microsoft/logic-apps-shared';
 
 export interface SettingTokenFieldProps extends SettingProps {
   id?: string;

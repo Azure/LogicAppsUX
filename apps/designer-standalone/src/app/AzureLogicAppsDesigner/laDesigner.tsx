@@ -46,8 +46,8 @@ import {
   serializeBJSWorkflow,
   store as DesignerStore,
 } from '@microsoft/logic-apps-designer';
-import { clone, equals, guid, isArmResourceId, optional } from '@microsoft/utils-logic-apps';
-import type { LogicAppsV2 } from '@microsoft/utils-logic-apps';
+import { clone, equals, guid, isArmResourceId, optional } from '@microsoft/logic-apps-shared';
+import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import axios from 'axios';
 import isEqual from 'lodash.isequal';
 import { useEffect, useMemo, useState } from 'react';
@@ -93,13 +93,8 @@ const DesignerEditor = () => {
   const { data: runInstanceData } = useRunInstanceStandard(workflowName, onRunInstanceSuccess, appId, runId);
 
   const connectionsData = useMemo(
-    () =>
-      WorkflowUtility.resolveConnectionsReferences(
-        JSON.stringify(clone(originalConnectionsData ?? {})),
-        parameters,
-        settingsData?.properties ?? {}
-      ),
-    [originalConnectionsData, parameters, settingsData?.properties]
+    () => WorkflowUtility.resolveConnectionsReferences(JSON.stringify(clone(originalConnectionsData ?? {})), parameters),
+    [originalConnectionsData, parameters]
   );
 
   const addConnectionData = async (connectionAndSetting: ConnectionAndAppSetting): Promise<void> => {
@@ -118,11 +113,7 @@ const DesignerEditor = () => {
 
     if (connectionInfo) {
       // TODO(psamband): Add new settings in this blade so that we do not resolve all the appsettings in the connectionInfo.
-      const resolvedConnectionInfo = WorkflowUtility.resolveConnectionsReferences(
-        JSON.stringify(connectionInfo),
-        {},
-        settingsData?.properties
-      );
+      const resolvedConnectionInfo = WorkflowUtility.resolveConnectionsReferences(JSON.stringify(connectionInfo), {});
       delete resolvedConnectionInfo.displayName;
 
       return {
@@ -255,7 +246,10 @@ const DesignerEditor = () => {
           isDarkMode,
           readOnly: isReadOnly,
           isMonitoringView,
-          hostOptions,
+          hostOptions: {
+            ...hostOptions,
+            recurrenceInterval: { interval: 1, frequency: 'Minute' },
+          },
           showConnectionsPanel,
         }}
       >

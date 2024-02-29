@@ -52,9 +52,9 @@ export async function createNewCodeProjectFromCommand(
 
 export async function createNewCodeProjectInternal(context: IActionContext, options: ICreateFunctionOptions): Promise<void> {
   addLocalFuncTelemetry(context);
-  const commandIdentifier = extensionCommand.createNewCodeProject;
-  showPreviewWarning(commandIdentifier);
-  const language: ProjectLanguage | undefined = (options.language as ProjectLanguage) || getGlobalSetting(projectLanguageSetting);
+  showPreviewWarning(extensionCommand.createNewCodeProject); //Show warning if command is set to preview
+
+  const language: ProjectLanguage | string = (options.language as ProjectLanguage) || getGlobalSetting(projectLanguageSetting);
   const version: string = options.version || getGlobalSetting(funcVersionSetting) || (await tryGetLocalFuncVersion()) || latestGAVersion;
   const projectTemplateKey: string | undefined = getGlobalSetting(projectTemplateKeySetting);
   const wizardContext: Partial<IFunctionWizardContext> & IActionContext = Object.assign(context, options, {

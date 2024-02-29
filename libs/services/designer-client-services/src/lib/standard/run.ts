@@ -2,8 +2,8 @@ import { inputsResponse, outputsResponse } from '../__test__/__mocks__/monitorin
 import type { HttpRequestOptions, IHttpClient } from '../httpClient';
 import type { IRunService } from '../run';
 import type { CallbackInfo } from '../workflow';
-import { isNumber } from '@microsoft/parsers-logic-apps';
-import type { ArmResources, BoundParameters, ContentLink, LogicAppsV2, Run, Runs } from '@microsoft/utils-logic-apps';
+import { isNumber } from '@microsoft/logic-apps-shared';
+import type { ArmResources, BoundParameters, ContentLink, LogicAppsV2, Run, Runs } from '@microsoft/logic-apps-shared';
 import {
   isCallbackInfoWithRelativePath,
   ArgumentException,
@@ -13,7 +13,8 @@ import {
   getCallbackUrl,
   isNullOrUndefined,
   isBoolean,
-} from '@microsoft/utils-logic-apps';
+  getRecordEntry,
+} from '@microsoft/logic-apps-shared';
 
 export interface RunServiceOptions {
   apiVersion: string;
@@ -223,8 +224,8 @@ export class StandardRunService implements IRunService {
     let outputs: Record<string, any> = {};
 
     if (this._isDev) {
-      inputs = inputsResponse[nodeId] ?? {};
-      outputs = outputsResponse[nodeId] ?? {};
+      inputs = getRecordEntry(inputsResponse, nodeId) ?? {};
+      outputs = getRecordEntry(outputsResponse, nodeId) ?? {};
       return Promise.resolve({ inputs: this.parseActionLink(inputs, true), outputs: this.parseActionLink(outputs, false) });
     }
 

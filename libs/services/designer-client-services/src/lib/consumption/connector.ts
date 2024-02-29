@@ -1,8 +1,8 @@
 import type { BaseConnectorServiceOptions } from '../base';
 import { BaseConnectorService } from '../base';
 import type { ListDynamicValue, ManagedIdentityRequestProperties, TreeDynamicExtension, TreeDynamicValue } from '../connector';
-import type { OpenAPIV2 } from '@microsoft/utils-logic-apps';
-import { ArgumentException, UnsupportedException, equals, getResourceName, optional } from '@microsoft/utils-logic-apps';
+import type { OpenAPIV2 } from '@microsoft/logic-apps-shared';
+import { ArgumentException, UnsupportedException, equals, getResourceName, optional } from '@microsoft/logic-apps-shared';
 
 interface ConsumptionConnectorServiceOptions extends BaseConnectorServiceOptions {
   workflowReferenceId: string;

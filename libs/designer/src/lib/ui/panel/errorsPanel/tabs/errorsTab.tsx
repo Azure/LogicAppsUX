@@ -15,6 +15,7 @@ import {
 import { Text } from '@fluentui/react';
 import type { NodeMessage } from '@microsoft/designer-ui';
 import { MessageLevel } from '@microsoft/designer-ui';
+import { getRecordEntry } from '@microsoft/logic-apps-shared';
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useSelector } from 'react-redux';
@@ -100,10 +101,10 @@ export const ErrorsTab = () => {
             level={MessageLevel.Error}
             nodeId={nodeId}
             messagesBySubtitle={{
-              [inputErrorsSubsectionHeader]: (allInputErrors?.[nodeId] || []).map(toNodeMessageFromString),
-              [settingErrorsSubsectionHeader]: (allSettingErrors?.[nodeId] || []).map(toNodeMessageFromString),
-              [connectionErrorsSubsectionHeader]: [allConnectionErrors?.[nodeId]].map(toNodeMessageFromString),
-              ...hostCheckerErrors[nodeId],
+              [inputErrorsSubsectionHeader]: (getRecordEntry(allInputErrors, nodeId) || []).map(toNodeMessageFromString),
+              [settingErrorsSubsectionHeader]: (getRecordEntry(allSettingErrors, nodeId) || []).map(toNodeMessageFromString),
+              [connectionErrorsSubsectionHeader]: [getRecordEntry(allConnectionErrors, nodeId) ?? ''].map(toNodeMessageFromString),
+              ...getRecordEntry(hostCheckerErrors, nodeId),
             }}
           />
         ))}

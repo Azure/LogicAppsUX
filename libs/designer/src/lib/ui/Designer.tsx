@@ -1,7 +1,7 @@
 import { openPanel, useNodesInitialized } from '../core';
 import { useLayout } from '../core/graphlayout';
 import { usePreloadOperationsQuery, usePreloadConnectorsQuery } from '../core/queries/browse';
-import { useMonitoringView, useReadOnly } from '../core/state/designerOptions/designerOptionsSelectors';
+import { useMonitoringView, useReadOnly, useHostOptions } from '../core/state/designerOptions/designerOptionsSelectors';
 import { useClampPan } from '../core/state/designerView/designerViewSelectors';
 import { useIsPanelCollapsed } from '../core/state/panel/panelSelectors';
 import { clearPanel } from '../core/state/panel/panelSlice';
@@ -24,14 +24,15 @@ import { PanelRoot } from './panel/panelRoot';
 import { css, setLayerHostSelector } from '@fluentui/react';
 import { PanelLocation } from '@microsoft/designer-ui';
 import type { CustomPanelLocation } from '@microsoft/designer-ui';
-import type { WorkflowNodeType } from '@microsoft/utils-logic-apps';
-import { useWindowDimensions, WORKFLOW_NODE_TYPES, useThrottledEffect } from '@microsoft/utils-logic-apps';
+import type { WorkflowNodeType } from '@microsoft/logic-apps-shared';
+import { useWindowDimensions, WORKFLOW_NODE_TYPES, useThrottledEffect } from '@microsoft/logic-apps-shared';
 import type { CSSProperties } from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import KeyboardBackendFactory, { isKeyboardDragTrigger } from 'react-dnd-accessible-backend';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { DndProvider, createTransition, MouseTransition } from 'react-dnd-multi-backend';
 import { useHotkeys } from 'react-hotkeys-hook';
+import { useQuery } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import { Background, ReactFlow, ReactFlowProvider, useNodes, useReactFlow, useStore, BezierEdge } from 'reactflow';
 import type { BackgroundProps, NodeChange } from 'reactflow';
@@ -214,7 +215,16 @@ export const Designer = (props: DesignerProps) => {
   };
 
   const isInitialized = useNodesInitialized();
-  const preloadSearch = useMemo(() => (isMonitoringView || isReadOnly) && isInitialized, [isMonitoringView, isReadOnly, isInitialized]);
+  const preloadSearch = useMemo(() => !(isMonitoringView || isReadOnly) && isInitialized, [isMonitoringView, isReadOnly, isInitialized]);
+
+  // Adding recurrence interval to the query to access outside of functional components
+  const recurrenceInterval = useHostOptions().recurrenceInterval;
+  useQuery({ queryKey: ['recurrenceInterval'], initialData: recurrenceInterval });
+
+  // Adding workflowKind (stateful or stateless) to the query to access outside of functional components
+  const workflowKind = useSelector((state: RootState) => state.workflow.workflowKind);
+  // This delayes the query until the workflowKind is available
+  useQuery({ queryKey: ['workflowKind'], initialData: undefined, enabled: !!workflowKind, queryFn: () => workflowKind });
 
   return (
     <DndProvider options={DND_OPTIONS}>

@@ -11,7 +11,7 @@ import { editAppSetting } from './appSettings/editAppSetting';
 import { renameAppSetting } from './appSettings/renameAppSetting';
 import { toggleSlotSetting } from './appSettings/toggleSlotSetting';
 import { uploadAppSettings } from './appSettings/uploadAppSettings';
-import { resetValidateAndInstallBinaries } from './binaries/resetValidateAndInstallBinaries';
+import { disableValidateAndInstallBinaries, resetValidateAndInstallBinaries } from './binaries/resetValidateAndInstallBinaries';
 import { validateAndInstallBinaries } from './binaries/validateAndInstallBinaries';
 import { browseWebsite } from './browseWebsite';
 import { configureDeploymentSource } from './configureDeploymentSource';
@@ -135,6 +135,7 @@ export function registerCommands(): void {
     validateAndInstallBinaries(context)
   );
   registerCommandWithTreeNodeUnwrapping(extensionCommand.resetValidateAndInstallBinaries, resetValidateAndInstallBinaries);
+  registerCommandWithTreeNodeUnwrapping(extensionCommand.disableValidateAndInstallBinaries, disableValidateAndInstallBinaries);
   // Data Mapper Commands
   registerCommand(extensionCommand.createNewDataMap, (context: IActionContext) => createNewDataMapCmd(context));
   registerCommand(extensionCommand.loadDataMapFile, (context: IActionContext, uri: Uri) => loadDataMapFileCmd(context, uri));

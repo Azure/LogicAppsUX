@@ -36,11 +36,11 @@ import { getSplitOnValue, hasSecureOutputs } from './setting';
 import { getVariableTokens } from './variables';
 import { OperationManifestService } from '@microsoft/designer-client-services-logic-apps';
 import type { FunctionDefinition, OutputToken, Token, ValueSegment } from '@microsoft/designer-ui';
-import { UIConstants, TemplateFunctions, TokenType } from '@microsoft/designer-ui';
-import { getIntl } from '@microsoft/intl-logic-apps';
-import { getKnownTitles, OutputKeys } from '@microsoft/parsers-logic-apps';
-import type { BuiltInOutput, OperationManifest } from '@microsoft/utils-logic-apps';
-import { labelCase, unmap, equals, filterRecord } from '@microsoft/utils-logic-apps';
+import { UIConstants, TemplateFunctions, TokenType, removeUTFExpressions } from '@microsoft/designer-ui';
+import { getIntl } from '@microsoft/logic-apps-shared';
+import { getKnownTitles, OutputKeys } from '@microsoft/logic-apps-shared';
+import type { BuiltInOutput, OperationManifest } from '@microsoft/logic-apps-shared';
+import { labelCase, unmap, equals, filterRecord, getRecordEntry } from '@microsoft/logic-apps-shared';
 
 export interface TokenGroup {
   id: string;
@@ -59,7 +59,7 @@ export const getTokenNodeIds = (
   operationMap: Record<string, string>
 ): string[] => {
   let tokenNodeIds = getUpstreamNodeIds(nodeId, graph, nodesMetadata, operationMap);
-  const manifest = nodesManifest[nodeId]?.manifest;
+  const manifest = getRecordEntry(nodesManifest, nodeId)?.manifest;
 
   const preliminaryRepetitionNodeIds = getRepetitionNodeIds(nodeId, nodesMetadata, operationInfos);
   // Remove token nodes that have inaccessible outputs due to loop scope
@@ -76,7 +76,7 @@ export const getTokenNodeIds = (
     const repetitionNodeIds = getRepetitionNodeIds(nodeId, nodesMetadata, operationInfos, includeSelf);
 
     for (const repetitionNodeId of repetitionNodeIds) {
-      const nodeManifest = nodesManifest[repetitionNodeId]?.manifest;
+      const nodeManifest = getRecordEntry(nodesManifest, repetitionNodeId)?.manifest;
       // If repetition is set for a node but not set for self reference,
       // then nodes having this type as repetition can reference its outputs like Foreach and Until
       if (nodeManifest?.properties.repetition && !nodeManifest.properties.repetition.self) {
@@ -171,11 +171,12 @@ export const convertOutputsToTokens = (
   });
 };
 
-export const getExpressionTokenSections = (): TokenGroup[] => {
+export const getExpressionTokenSections = (hideUTFExpressions?: boolean): TokenGroup[] => {
   return TemplateFunctions.map((functionGroup) => {
     const { id, name, functions } = functionGroup;
     const hasAdvanced = functions.some((func) => func.isAdvanced);
-    const tokens = functions.map(({ name, defaultSignature, description, isAdvanced }: FunctionDefinition) => ({
+    const filteredFunctions = hideUTFExpressions ? removeUTFExpressions(functions) : functions;
+    const tokens = filteredFunctions.map(({ name, defaultSignature, description, isAdvanced }: FunctionDefinition) => ({
       key: name,
       brandColor: FxBrandColor,
       icon: FxIcon,
@@ -210,7 +211,7 @@ export const getOutputTokenSections = (
 ): TokenGroup[] => {
   const workflowParameters = filterRecord(workflowParametersState.definitions, (_, defintion) => defintion.name !== '');
   const { variables, outputTokens } = tokenState;
-  const nodeTokens = outputTokens[nodeId];
+  const nodeTokens = getRecordEntry(outputTokens, nodeId);
   const tokenGroups: TokenGroup[] = [];
 
   if (Object.keys(workflowParameters).length) {
@@ -227,7 +228,7 @@ export const getOutputTokenSections = (
       label: getIntl().formatMessage({ description: 'Heading section for Variable tokens', defaultMessage: 'Variables' }),
       tokens: getVariableTokens(variables, nodeTokens).map((token) => ({
         ...token,
-        value: rewriteValueId(token.outputInfo.actionName ?? '', getExpressionValueForOutputToken(token, nodeType) ?? '', replacementIds),
+        value: getTokenValue(token, nodeType, replacementIds),
       })),
     });
 
@@ -236,11 +237,11 @@ export const getOutputTokenSections = (
     }
 
     const outputTokenGroups = nodeTokens.upstreamNodeIds.map((upstreamNodeId) => {
-      let tokens = outputTokens[upstreamNodeId]?.tokens ?? [];
+      let tokens = getRecordEntry(outputTokens, upstreamNodeId)?.tokens ?? [];
       tokens = tokens.map((token) => {
         return {
           ...token,
-          value: rewriteValueId(token.outputInfo.actionName ?? '', getExpressionValueForOutputToken(token, nodeType) ?? '', replacementIds),
+          value: getTokenValue(token, nodeType, replacementIds),
         };
       });
 
@@ -250,7 +251,7 @@ export const getOutputTokenSections = (
 
       return {
         id: upstreamNodeId,
-        label: labelCase(replacementIds[upstreamNodeId] ?? upstreamNodeId),
+        label: labelCase(getRecordEntry(replacementIds, upstreamNodeId) ?? upstreamNodeId),
         tokens,
         hasAdvanced: tokens.some((token) => token.isAdvanced),
         showAdvanced: false,
@@ -258,18 +259,18 @@ export const getOutputTokenSections = (
     });
 
     if (includeCurrentNodeTokens) {
-      let currentTokens = outputTokens[nodeId]?.tokens ?? [];
+      let currentTokens = getRecordEntry(outputTokens, nodeId)?.tokens ?? [];
       currentTokens = currentTokens.map((token) => {
         return {
           ...token,
-          value: rewriteValueId(token.outputInfo.actionName ?? '', getExpressionValueForOutputToken(token, nodeType) ?? '', replacementIds),
+          value: getTokenValue(token, nodeType, replacementIds),
         };
       });
 
       if (currentTokens.length) {
         const currentTokensGroup = {
           id: nodeId,
-          label: labelCase(replacementIds[nodeId] ?? nodeId),
+          label: labelCase(getRecordEntry(replacementIds, nodeId) ?? nodeId),
           tokens: currentTokens,
           hasAdvanced: currentTokens.some((token) => token.isAdvanced),
           showAdvanced: false,
@@ -295,12 +296,12 @@ export const createValueSegmentFromToken = async (
   dispatch: AppDispatch
 ): Promise<ValueSegment> => {
   const tokenOwnerNodeId = token.outputInfo.actionName ?? getTriggerNodeId(rootState.workflow);
-  const nodeType = rootState.operations.operationInfo[tokenOwnerNodeId].type;
+  const nodeType = getRecordEntry(rootState.operations.operationInfo, tokenOwnerNodeId)?.type ?? '';
   const idReplacements = rootState.workflow.idReplacements;
   const tokenValueSegment = convertTokenToValueSegment(token, nodeType, idReplacements);
 
   if (addLatestActionName && tokenValueSegment.token?.actionName) {
-    const newActionId = idReplacements[tokenValueSegment.token.actionName];
+    const newActionId = getRecordEntry(idReplacements, tokenValueSegment.token.actionName);
     if (newActionId && newActionId !== tokenValueSegment.token.actionName) {
       tokenValueSegment.token.actionName = newActionId;
     }
@@ -312,7 +313,7 @@ export const createValueSegmentFromToken = async (
 
   if (tokenValueSegment.token?.tokenType !== TokenType.PARAMETER && tokenValueSegment.token?.tokenType !== TokenType.VARIABLE) {
     const tokenOwnerActionName = token.outputInfo.actionName;
-    const tokenOwnerOperationInfo = rootState.operations.operationInfo[tokenOwnerNodeId];
+    const tokenOwnerOperationInfo = getRecordEntry(rootState.operations.operationInfo, tokenOwnerNodeId) as any;
     const { shouldAdd, arrayDetails, repetitionContext } = await shouldAddForeach(nodeId, parameterId, token, rootState);
     let newRootState = rootState;
     let newRepetitionContext = repetitionContext;
@@ -412,13 +413,13 @@ const convertTokenToValueSegment = (token: OutputToken, nodeType: string, replac
         }
       : undefined,
     schema,
-    value: rewriteValueId(token.outputInfo.actionName ?? '', getExpressionValueForOutputToken(token, nodeType) ?? '', replacementIds),
+    value: getTokenValue(token, nodeType, replacementIds),
   };
 
   return createTokenValueSegment(segmentToken, segmentToken.value as string, format);
 };
 
-const getTokenTitle = (output: OutputInfo): string => {
+export const getTokenTitle = (output: OutputInfo): string => {
   if (output.title) {
     return output.title;
   }
@@ -472,9 +473,18 @@ export const convertWorkflowParameterTypeToSwaggerType = (type: string | undefin
   }
 };
 
-const rewriteValueId = (id: string, value: string, replacementIds: Record<string, string>): string => {
-  return value.replaceAll(id, replacementIds[id] ?? id);
+export const normalizeKey = (key: string): string => {
+  return key.startsWith('outputs.$.body.') ? key.replace('outputs.$.body.', 'body.$.') : key;
 };
+
+export const getTokenValue = (token: OutputToken, nodeType: string, replacementIds: Record<string, string>): string => {
+  return rewriteValueId(token.outputInfo.actionName ?? '', getExpressionValueForOutputToken(token, nodeType) ?? '', replacementIds);
+};
+
+const rewriteValueId = (id: string, value: string, replacementIds: Record<string, string>): string => {
+  return value.replaceAll(id, getRecordEntry(replacementIds, id) ?? id);
+};
+
 const getListCallbackUrlToken = (nodeId: string): TokenGroup => {
   const callbackUrlToken: OutputToken = {
     brandColor: httpWebhookBrandColor,

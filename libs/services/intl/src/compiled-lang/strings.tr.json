@@ -1106,7 +1106,7 @@
   "5WTRY8": [
     {
       "type": 0,
-      "value": "Errors"
+      "value": "Hatalar"
     }
   ],
   "5akc1Q": [
@@ -1351,6 +1351,12 @@
     {
       "type": 0,
       "value": "Veri türü"
+    }
+  ],
+  "6yFUar": [
+    {
+      "type": 0,
+      "value": "Durum “Başarılı” olduğunda çıkışlar gereklidir"
     }
   ],
   "70eoQu": [
@@ -1873,6 +1879,12 @@
     {
       "type": 0,
       "value": "Eylemleri Filtrele"
+    }
+  ],
+  "ANGw2o": [
+    {
+      "type": 0,
+      "value": "Statik Sonuç hakkında daha fazla bilgi için tıklayın"
     }
   ],
   "AO6T9u": [
@@ -2961,10 +2973,22 @@
       "value": "Gerekli. Çıkanın çıkarıldığı sayı."
     }
   ],
+  "H9CZTr": [
+    {
+      "type": 0,
+      "value": "İfade geçersiz. Tek tırnak işareti kullanmayı unutmayın."
+    }
+  ],
   "HDqP2g": [
     {
       "type": 0,
       "value": "Gerekli. Döndürülecek form verileri değerinin anahtar adı."
+    }
+  ],
+  "HGA9iU": [
+    {
+      "type": 0,
+      "value": "Durum “Başarısız” olduğunda Hata ve kodu gereklidir"
     }
   ],
   "HH970i": [
@@ -3503,6 +3527,12 @@
       "value": "Oluşturuluyor..."
     }
   ],
+  "LPdGu/": [
+    {
+      "type": 0,
+      "value": "Durum “Başarısız” olduğunda çıkışlar gösterilmemelidir"
+    }
+  ],
   "LR/3Lr": [
     {
       "type": 0,
@@ -3632,7 +3662,7 @@
   "M0bbZk": [
     {
       "type": 0,
-      "value": "Flow Checker"
+      "value": "Akış Denetleyicisi"
     }
   ],
   "M0xrm+": [
@@ -3962,7 +3992,7 @@
   "O6VHe0": [
     {
       "type": 0,
-      "value": "Operation warnings"
+      "value": "İşlem uyarıları"
     }
   ],
   "O7HhyP": [
@@ -5286,7 +5316,7 @@
   "Vi5TIV": [
     {
       "type": 0,
-      "value": "No warnings found."
+      "value": "Uyarı bulunamadı."
     }
   ],
   "VlvlX1": [
@@ -5919,6 +5949,12 @@
     {
       "type": 0,
       "value": "Statik Sonucu Devre Dışı Bırak"
+    }
+  ],
+  "Yz9o1k": [
+    {
+      "type": 0,
+      "value": "Bağlı değil."
     }
   ],
   "Z8tBFS": [
@@ -6988,7 +7024,7 @@
   "hLOIwp": [
     {
       "type": 0,
-      "value": "Warnings"
+      "value": "Uyarılar"
     }
   ],
   "hMf2TA": [
@@ -8925,6 +8961,12 @@
       "value": "Veri eşleme tanımı oluşturulamıyor"
     }
   ],
+  "svaqnp": [
+    {
+      "type": 0,
+      "value": "Durum “Başarılı” olduğunda hata gösterilmemelidir"
+    }
+  ],
   "sw6EXK": [
     {
       "type": 0,
@@ -8961,6 +9003,12 @@
     {
       "type": 0,
       "value": "Zorunlu. Hedef saat diliminin saat dilimi adını içeren bir dize. Ayrıntılar için bkz. https://msdn.microsoft.com/en-us/library/gg154758.aspx."
+    }
+  ],
+  "t9RwOi": [
+    {
+      "type": 0,
+      "value": "İfade geçersiz."
     }
   ],
   "tAbbH8": [
@@ -9397,12 +9445,6 @@
     {
       "type": 0,
       "value": "Çıkışlar"
-    }
-  ],
-  "vVJuus": [
-    {
-      "type": 0,
-      "value": "İfade geçersiz."
     }
   ],
   "vX9WYS": [

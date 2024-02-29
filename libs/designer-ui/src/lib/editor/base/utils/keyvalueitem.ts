@@ -3,8 +3,8 @@ import { isEmpty } from '../../../dictionary/expandeddictionary';
 import { ValueSegmentType, type ValueSegment } from '../../models/parameter';
 import { insertQutationForStringType } from './helper';
 import { convertSegmentsToString } from './parsesegments';
-import { isNumber } from '@microsoft/parsers-logic-apps';
-import { guid, isBoolean } from '@microsoft/utils-logic-apps';
+import { isNumber } from '@microsoft/logic-apps-shared';
+import { guid, isBoolean } from '@microsoft/logic-apps-shared';
 
 export interface KeyValueItem {
   id: string;
@@ -63,7 +63,7 @@ export const convertValueType = (value: ValueSegment[], type?: string): string |
   const stringSegments = convertSegmentsToString(value).trim();
   // checks for known types
   if (
-    (stringSegments.startsWith('{') && stringSegments.endsWith('}')) ||
+    (stringSegments.startsWith('@{') && stringSegments.indexOf('}') === stringSegments.length - 1) ||
     isNumber(stringSegments) ||
     isBoolean(stringSegments) ||
     /^\[.*\]$/.test(stringSegments)

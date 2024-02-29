@@ -17,7 +17,7 @@ import { updateDynamicDataInNode } from '../../utils/parameters/helper';
 import { getAllVariables } from '../../utils/variables';
 import type { IOperationManifestService } from '@microsoft/designer-client-services-logic-apps';
 import { ConnectionService, WorkflowService, OperationManifestService } from '@microsoft/designer-client-services-logic-apps';
-import type { Connection, ConnectionParameter, Connector, OperationManifest, LogicAppsV2 } from '@microsoft/utils-logic-apps';
+import type { Connection, ConnectionParameter, Connector, OperationManifest, LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import {
   ResourceIdentityType,
   optional,
@@ -25,7 +25,8 @@ import {
   ConnectionParameterTypes,
   equals,
   ConnectionReferenceKeyFormat,
-} from '@microsoft/utils-logic-apps';
+  getRecordEntry,
+} from '@microsoft/logic-apps-shared';
 import type { Dispatch } from '@reduxjs/toolkit';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 
@@ -78,18 +79,30 @@ const updateNodeConnectionAndProperties = async (
   dispatch(changeConnectionMapping(payload));
 
   const newState = getState() as RootState;
+  const operationInfo = getRecordEntry(newState.operations.operationInfo, nodeId);
+  const dependencies = getRecordEntry(newState.operations.dependencies, nodeId);
+  const inputParameters = getRecordEntry(newState.operations.inputParameters, nodeId);
+  const settings = getRecordEntry(newState.operations.settings, nodeId);
+  const newlyAddedOperations = getRecordEntry(newState.workflow.newlyAddedOperations, nodeId);
+  const operation = getRecordEntry(newState.workflow.operations, nodeId);
+
+  // Shouldn't happen, but required for type checking
+  if (!operationInfo || !dependencies || !inputParameters || !settings) {
+    return;
+  }
+
   return updateDynamicDataInNode(
     nodeId,
     isRootNodeInGraph(nodeId, 'root', newState.workflow.nodesMetadata),
-    newState.operations.operationInfo[nodeId],
+    operationInfo,
     getConnectionReference(newState.connections, nodeId),
-    newState.operations.dependencies[nodeId],
-    newState.operations.inputParameters[nodeId],
-    newState.operations.settings[nodeId],
+    dependencies,
+    inputParameters,
+    settings,
     getAllVariables(newState.tokens.variables),
     dispatch,
     getState,
-    newState.workflow.newlyAddedOperations[nodeId] ? undefined : newState.workflow.operations[nodeId]
+    newlyAddedOperations ? undefined : operation
   );
 };
 
@@ -189,7 +202,7 @@ async function getConnectionsMappingForNodes(deserializedWorkflow: DeserializedW
   const tasks: Promise<Record<string, string> | undefined>[] = [];
 
   for (const [nodeId, operation] of Object.entries(actionData)) {
-    const isTrigger = nodesMetadata?.[nodeId].isRoot ?? false;
+    const isTrigger = getRecordEntry(nodesMetadata, nodeId)?.isRoot ?? false;
     tasks.push(getConnectionMappingForNode(operation, nodeId, isTrigger, operationManifestService));
   }
 

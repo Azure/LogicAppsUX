@@ -5,9 +5,9 @@ import type { RootState } from '../../store';
 import { useConnector, useConnectorAndSwagger, useNodeConnectionId } from '../connection/connectionSelector';
 import type { NodeOperation } from '../operation/operationMetadataSlice';
 import { OperationManifestService } from '@microsoft/designer-client-services-logic-apps';
-import type { Operation } from '@microsoft/parsers-logic-apps';
-import { SwaggerParser } from '@microsoft/parsers-logic-apps';
-import { getObjectPropertyValue } from '@microsoft/utils-logic-apps';
+import type { LAOperation } from '@microsoft/logic-apps-shared';
+import { SwaggerParser } from '@microsoft/logic-apps-shared';
+import { getObjectPropertyValue, getRecordEntry } from '@microsoft/logic-apps-shared';
 import { createSelector } from '@reduxjs/toolkit';
 import { useMemo } from 'react';
 import { useQuery } from 'react-query';
@@ -47,26 +47,36 @@ export const useNodeConnectionName = (nodeId: string): QueryResult => {
   );
 };
 
+export const useAllOperations = () => useSelector((state: RootState) => state.operations.operationInfo);
 export const useOperationInfo = (nodeId: string) => {
   const selector = createSelector(
     [(state: RootState) => state.operations.operationInfo, (_, nodeId: string) => nodeId],
-    (operationInfo, id) => operationInfo[id]
+    (operationInfo, id) => getRecordEntry(operationInfo, id) ?? ({ type: '' } as NodeOperation)
   );
   return useSelector((state: RootState) => selector(state, nodeId));
 };
 
-export const useAllOperations = () => useSelector((state: RootState) => state.operations.operationInfo);
+export const useAllOutputParameters = () => useSelector((state: RootState) => state.operations.outputParameters);
+export const useOutputParameters = (nodeId: string) => {
+  const selector = createSelector(
+    [(state: RootState) => state.operations.outputParameters, (_, nodeId: string) => nodeId],
+    (outputParameters, id) => getRecordEntry(outputParameters, id)
+  );
+  return useSelector((state: RootState) => selector(state, nodeId));
+};
 
-export const useOperationManifest = (operationInfo: NodeOperation, enabled = true) => {
+export const useOperationManifest = (operationInfo?: NodeOperation, enabled = true) => {
   const operationManifestService = OperationManifestService();
   const connectorId = operationInfo?.connectorId?.toLowerCase();
   const operationId = operationInfo?.operationId?.toLowerCase();
   return useQuery(
     ['manifest', { connectorId }, { operationId }],
-    () =>
-      operationManifestService.isSupported(operationInfo.type, operationInfo.kind)
+    () => {
+      if (!operationInfo || !connectorId || !operationId) return;
+      return operationManifestService.isSupported(operationInfo.type, operationInfo.kind)
         ? operationManifestService.getOperationManifest(connectorId, operationId)
-        : undefined,
+        : undefined;
+    },
     {
       enabled: !!connectorId && !!operationId && enabled,
       placeholderData: undefined,
@@ -145,7 +155,7 @@ const useNodeAttributeOrSwagger = (
   operationInfo: NodeOperation,
   propertyInManifest: string[],
   propertyInConnector: string[],
-  propertyInSwagger: keyof Operation,
+  propertyInSwagger: keyof LAOperation,
   options: { useManifest: boolean }
 ): QueryResult => {
   const { data: connectorData } = useConnectorAndSwagger(operationInfo?.connectorId, !options.useManifest);

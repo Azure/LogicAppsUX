@@ -8,8 +8,8 @@ import { LoggerService } from '../logger';
 import { LogEntryLevel, Status } from '../logging/logEntry';
 import type { IOAuthPopup } from '../oAuth';
 import { OAuthService } from '../oAuth';
-import { getIntl } from '@microsoft/intl-logic-apps';
-import type { Connection, ConnectionParameter, Connector, ManagedIdentity } from '@microsoft/utils-logic-apps';
+import { getIntl } from '@microsoft/logic-apps-shared';
+import type { Connection, ConnectionParameter, Connector, ManagedIdentity } from '@microsoft/logic-apps-shared';
 import {
   ArgumentException,
   AssertionErrorCode,
@@ -23,7 +23,7 @@ import {
   isIdentityAssociatedWithLogicApp,
   safeSetObjectPropertyValue,
   createCopy,
-} from '@microsoft/utils-logic-apps';
+} from '@microsoft/logic-apps-shared';
 
 interface ConnectionAcl {
   id: string;
@@ -48,6 +48,7 @@ interface ServiceProviderConnectionModel {
   };
   parameterSetName?: string;
   displayName?: string;
+  additionalParameterValues?: Record<string, string>;
 }
 
 interface FunctionsConnectionModel {
@@ -605,6 +606,7 @@ function convertToServiceProviderConnectionsData(
     displayName,
     connectionParameters: connectionParameterValues,
     connectionParametersSet: connectionParametersSetValues,
+    additionalParameterValues,
   } = connectionInfo;
   const connectionParameters = connectionParametersSetValues
     ? connectionParameterMetadata.connectionParameterSet?.parameters
@@ -626,6 +628,7 @@ function convertToServiceProviderConnectionsData(
       ...optional('parameterSetName', connectionParametersSetValues?.name),
       serviceProvider: { id: connectorId },
       displayName,
+      ...optional('additionalParameterValues', additionalParameterValues),
     },
     settings: connectionInfo.appSettings ?? {},
     pathLocation: [serviceProviderLocation],

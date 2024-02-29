@@ -6,8 +6,8 @@ import { validateType } from '../../utils/validation';
 import { resetWorkflowState } from '../global';
 import type { WorkflowParameterUpdateEvent } from '@microsoft/designer-ui';
 import { UIConstants } from '@microsoft/designer-ui';
-import { getIntl } from '@microsoft/intl-logic-apps';
-import { equals, guid } from '@microsoft/utils-logic-apps';
+import { getIntl } from '@microsoft/logic-apps-shared';
+import { equals, getRecordEntry, guid } from '@microsoft/logic-apps-shared';
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 
@@ -151,14 +151,14 @@ export const workflowParametersSlice = createSlice({
       };
 
       state.definitions[id] = {
-        ...state.definitions[id],
+        ...(getRecordEntry(state.definitions, id) ?? ({} as any)),
         type,
         value,
         name: name ?? '',
         ...(useLegacy ? { defaultValue } : {}),
       };
       const newErrorObj = {
-        ...(state.validationErrors?.[id] ?? {}),
+        ...(getRecordEntry(state.validationErrors, id) ?? {}),
         ...validationErrors,
       };
       if (!newErrorObj.name) delete newErrorObj.name;

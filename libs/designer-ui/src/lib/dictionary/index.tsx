@@ -5,7 +5,7 @@ import type { BaseEditorProps } from '../editor/base';
 import { convertKeyValueItemToSegments } from '../editor/base/utils/keyvalueitem';
 import { CollapsedDictionary } from './collapsedDictionary';
 import { ExpandedDictionary } from './expandeddictionary';
-import { guid } from '@microsoft/utils-logic-apps';
+import { guid } from '@microsoft/logic-apps-shared';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
 
@@ -80,7 +80,6 @@ export const DictionaryEditor: React.FC<DictionaryEditorProps> = ({
     <div className="msla-dictionary-editor-container" data-automation-id={baseEditorProps.dataAutomationId}>
       {collapsed && !(dictionaryType === DictionaryType.TABLE) ? (
         <CollapsedDictionary
-          isValid={isValid}
           readonly={baseEditorProps.readonly}
           collapsedValue={collapsedValue}
           keyType={keyType}

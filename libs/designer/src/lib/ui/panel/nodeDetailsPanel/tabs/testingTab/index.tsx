@@ -10,7 +10,7 @@ import { useStaticResultProperties, useStaticResultSchema } from '../../../../..
 import { updateStaticResultProperties } from '../../../../../core/state/staticresultschema/staticresultsSlice';
 import type { PanelTabFn } from '@microsoft/designer-ui';
 import { StaticResultContainer } from '@microsoft/designer-ui';
-import type { OpenAPIV2 } from '@microsoft/utils-logic-apps';
+import type { OpenAPIV2 } from '@microsoft/logic-apps-shared';
 import { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 
@@ -20,9 +20,10 @@ export const TestingPanel: React.FC = () => {
   const operationInfo = useOperationInfo(selectedNode);
   const { connectorId, operationId } = operationInfo;
   const staticResultSchema = useStaticResultSchema(connectorId, operationId);
-  const parameterStaticResult = useParameterStaticResult(selectedNode) ?? {};
+  const parameterStaticResult = useParameterStaticResult(selectedNode);
 
-  const { name = selectedNode + 0, staticResultOptions } = parameterStaticResult;
+  const name = parameterStaticResult?.name ?? selectedNode + 0;
+  const staticResultOptions = parameterStaticResult?.staticResultOptions;
   const properties = useStaticResultProperties(name);
 
   const savePropertiesCallback = useCallback(

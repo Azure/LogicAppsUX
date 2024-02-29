@@ -2,8 +2,8 @@ import type { IApiManagementService } from '../apimanagement';
 import { getAzureResourceRecursive } from '../common/azure';
 import type { ListDynamicValue } from '../connector';
 import type { IHttpClient } from '../httpClient';
-import { ResponseCodes, SwaggerParser } from '@microsoft/parsers-logic-apps';
-import { ArgumentException, equals, unmap } from '@microsoft/utils-logic-apps';
+import { ResponseCodes, SwaggerParser } from '@microsoft/logic-apps-shared';
+import { ArgumentException, equals, unmap } from '@microsoft/logic-apps-shared';
 import type { QueryClient } from 'react-query';
 
 export interface ApiManagementServiceOptions {
@@ -133,6 +133,13 @@ export class BaseApiManagementService implements IApiManagementService {
       if (response.headers) {
         schema.properties['headers'] = response.headers;
       }
+    }
+
+    // APIM apis in portal do not allow marking the body as required, so we are doing it here
+    //     Users can mark body parameters as required,
+    //     and to show them as required the body needs to also be marked as required
+    if ((schema?.properties?.['body']?.required ?? []).length > 0) {
+      schema.required.push('body');
     }
 
     return schema;

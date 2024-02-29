@@ -1114,7 +1114,7 @@
   "5WTRY8": [
     {
       "type": 0,
-      "value": "Errors"
+      "value": "Fel"
     }
   ],
   "5akc1Q": [
@@ -1359,6 +1359,12 @@
     {
       "type": 0,
       "value": "Datatyp"
+    }
+  ],
+  "6yFUar": [
+    {
+      "type": 0,
+      "value": "Utdata krävs när statusen är Slutfört"
     }
   ],
   "70eoQu": [
@@ -1877,6 +1883,12 @@
     {
       "type": 0,
       "value": "Filteråtgärder"
+    }
+  ],
+  "ANGw2o": [
+    {
+      "type": 0,
+      "value": "Klicka om du vill ha mer information om Statiskt resultat"
     }
   ],
   "AO6T9u": [
@@ -2969,10 +2981,22 @@
       "value": "Krävs. Talet som subtrahenden tas bort från."
     }
   ],
+  "H9CZTr": [
+    {
+      "type": 0,
+      "value": "Uttrycket är ogiltigt. Se till att använda enkla citattecken."
+    }
+  ],
   "HDqP2g": [
     {
       "type": 0,
       "value": "Krävs. Nyckelnamnet för formulärdatavärdet att returnera."
+    }
+  ],
+  "HGA9iU": [
+    {
+      "type": 0,
+      "value": "Felet och dess kod måste anges när statusen är Misslyckades"
     }
   ],
   "HH970i": [
@@ -3511,6 +3535,12 @@
       "value": "Skapar..."
     }
   ],
+  "LPdGu/": [
+    {
+      "type": 0,
+      "value": "Några utdata ska inte tillhandahållas när statusen är Misslyckades"
+    }
+  ],
   "LR/3Lr": [
     {
       "type": 0,
@@ -3640,7 +3670,7 @@
   "M0bbZk": [
     {
       "type": 0,
-      "value": "Flow Checker"
+      "value": "Flödeskontroll"
     }
   ],
   "M0xrm+": [
@@ -3970,7 +4000,7 @@
   "O6VHe0": [
     {
       "type": 0,
-      "value": "Operation warnings"
+      "value": "Driftsvarningar"
     }
   ],
   "O7HhyP": [
@@ -5282,7 +5312,7 @@
   "Vi5TIV": [
     {
       "type": 0,
-      "value": "No warnings found."
+      "value": "Inga varningar hittades."
     }
   ],
   "VlvlX1": [
@@ -5915,6 +5945,12 @@
     {
       "type": 0,
       "value": "Inaktivera statiskt resultat"
+    }
+  ],
+  "Yz9o1k": [
+    {
+      "type": 0,
+      "value": "Inte ansluten."
     }
   ],
   "Z8tBFS": [
@@ -6992,7 +7028,7 @@
   "hLOIwp": [
     {
       "type": 0,
-      "value": "Warnings"
+      "value": "Varningar"
     }
   ],
   "hMf2TA": [
@@ -8933,6 +8969,12 @@
       "value": "Det gick inte att generera definition av datamappning"
     }
   ],
+  "svaqnp": [
+    {
+      "type": 0,
+      "value": "Något fel ska inte tillhandahållas när statusen är Slutfört"
+    }
+  ],
   "sw6EXK": [
     {
       "type": 0,
@@ -8965,6 +9007,12 @@
     {
       "type": 0,
       "value": "Krävs. En sträng som innehåller tidszonnamnet för måltidszonen. Se https://msdn.microsoft.com/sv-se/library/gg154758.aspx för Information."
+    }
+  ],
+  "t9RwOi": [
+    {
+      "type": 0,
+      "value": "Uttrycket är ogiltigt."
     }
   ],
   "tAbbH8": [
@@ -9401,12 +9449,6 @@
     {
       "type": 0,
       "value": "Utdata"
-    }
-  ],
-  "vVJuus": [
-    {
-      "type": 0,
-      "value": "Uttrycket är ogiltigt."
     }
   ],
   "vX9WYS": [

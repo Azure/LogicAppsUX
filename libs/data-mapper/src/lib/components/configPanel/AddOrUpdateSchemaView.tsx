@@ -5,7 +5,7 @@ import { UploadNewSchema } from './UploadNewSchema';
 import { ChoiceGroup, MessageBar, MessageBarType } from '@fluentui/react';
 import type { IChoiceGroupOption } from '@fluentui/react';
 import { Text } from '@fluentui/react-components';
-import { SchemaType } from '@microsoft/utils-logic-apps';
+import { SchemaType } from '@microsoft/logic-apps-shared';
 import { useCallback, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useSelector } from 'react-redux';

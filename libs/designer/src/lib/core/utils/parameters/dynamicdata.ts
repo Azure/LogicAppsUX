@@ -31,7 +31,7 @@ import type { ListDynamicValue, ManagedIdentityRequestProperties, TreeDynamicVal
 import { OperationManifestService } from '@microsoft/designer-client-services-logic-apps';
 import type { ParameterInfo } from '@microsoft/designer-ui';
 import { TokenType, ValueSegmentType } from '@microsoft/designer-ui';
-import { getIntl } from '@microsoft/intl-logic-apps';
+import { getIntl } from '@microsoft/logic-apps-shared';
 import type {
   DynamicParameters,
   ExpressionEvaluatorOptions,
@@ -41,7 +41,7 @@ import type {
   ResolvedParameter,
   SchemaProcessorOptions,
   SwaggerParser,
-} from '@microsoft/parsers-logic-apps';
+} from '@microsoft/logic-apps-shared';
 import {
   ExpressionEvaluator,
   isTemplateExpression,
@@ -62,8 +62,8 @@ import {
   SchemaProcessor,
   WildIndexSegment,
   replaceSubsegmentSeparator,
-} from '@microsoft/parsers-logic-apps';
-import type { Connection, Connector, OpenAPIV2, OperationInfo, OperationManifest } from '@microsoft/utils-logic-apps';
+} from '@microsoft/logic-apps-shared';
+import type { Connection, Connector, OpenAPIV2, OperationInfo, OperationManifest } from '@microsoft/logic-apps-shared';
 import {
   first,
   getObjectPropertyValue,
@@ -84,7 +84,7 @@ import {
   map,
   copy,
   unmap,
-} from '@microsoft/utils-logic-apps';
+} from '@microsoft/logic-apps-shared';
 
 export async function getDynamicValues(
   dependencyInfo: DependencyInfo,
@@ -263,6 +263,7 @@ export async function getDynamicInputsFromSchema(
   operationDefinition?: any
 ): Promise<InputParameter[]> {
   const isParameterNested = dynamicParameter.isNested;
+  const schemaHasRequiredParameters = schema?.required && schema.required.length > 0;
   const processorOptions: SchemaProcessorOptions = {
     prefix: isParameterNested ? dynamicParameter.name : '',
     currentKey: isParameterNested ? undefined : dynamicParameter.name,
@@ -270,7 +271,7 @@ export async function getDynamicInputsFromSchema(
     parentProperty: {
       visibility: dynamicParameter.visibility,
     },
-    required: dynamicParameter.required,
+    required: dynamicParameter.required || schemaHasRequiredParameters,
     useAliasedIndexing: true,
     excludeAdvanced: false,
     excludeInternal: false,

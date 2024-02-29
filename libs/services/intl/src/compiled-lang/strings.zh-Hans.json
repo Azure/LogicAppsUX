@@ -1118,7 +1118,7 @@
   "5WTRY8": [
     {
       "type": 0,
-      "value": "Errors"
+      "value": "错误"
     }
   ],
   "5akc1Q": [
@@ -1363,6 +1363,12 @@
     {
       "type": 0,
       "value": "数据类型"
+    }
+  ],
+  "6yFUar": [
+    {
+      "type": 0,
+      "value": "当状态为“成功”时需要提供输出"
     }
   ],
   "70eoQu": [
@@ -1885,6 +1891,12 @@
     {
       "type": 0,
       "value": "筛选器操作"
+    }
+  ],
+  "ANGw2o": [
+    {
+      "type": 0,
+      "value": "单击以获取有关静态结果的详细信息"
     }
   ],
   "AO6T9u": [
@@ -2959,10 +2971,22 @@
       "value": "必需。要从中减除减数的数字。"
     }
   ],
+  "H9CZTr": [
+    {
+      "type": 0,
+      "value": "表达式无效。请确保使用单引号。"
+    }
+  ],
   "HDqP2g": [
     {
       "type": 0,
       "value": "必需。要返回的表单数据值的键名称。"
+    }
+  ],
+  "HGA9iU": [
+    {
+      "type": 0,
+      "value": "当状态为“失败”时需要提供错误及其代码"
     }
   ],
   "HH970i": [
@@ -3490,6 +3514,12 @@
       "value": "正在创建..."
     }
   ],
+  "LPdGu/": [
+    {
+      "type": 0,
+      "value": "当状态为“失败”时不应提供输出"
+    }
+  ],
   "LR/3Lr": [
     {
       "type": 0,
@@ -3619,7 +3649,7 @@
   "M0bbZk": [
     {
       "type": 0,
-      "value": "Flow Checker"
+      "value": "流检查器"
     }
   ],
   "M0xrm+": [
@@ -3949,7 +3979,7 @@
   "O6VHe0": [
     {
       "type": 0,
-      "value": "Operation warnings"
+      "value": "操作警告"
     }
   ],
   "O7HhyP": [
@@ -5274,7 +5304,7 @@
   "Vi5TIV": [
     {
       "type": 0,
-      "value": "No warnings found."
+      "value": "未找到警告。"
     }
   ],
   "VlvlX1": [
@@ -5915,6 +5945,12 @@
     {
       "type": 0,
       "value": "禁用静态结果"
+    }
+  ],
+  "Yz9o1k": [
+    {
+      "type": 0,
+      "value": "未连接。"
     }
   ],
   "Z8tBFS": [
@@ -6996,7 +7032,7 @@
   "hLOIwp": [
     {
       "type": 0,
-      "value": "Warnings"
+      "value": "警告"
     }
   ],
   "hMf2TA": [
@@ -8924,6 +8960,12 @@
       "value": "无法生成数据映射定义"
     }
   ],
+  "svaqnp": [
+    {
+      "type": 0,
+      "value": "当状态为“成功”时不应提供错误"
+    }
+  ],
   "sw6EXK": [
     {
       "type": 0,
@@ -8960,6 +9002,12 @@
     {
       "type": 0,
       "value": "必需。一个字符串，它包含目标时区的时区名称。请访问 https://msdn.microsoft.com/en-us/library/gg154758.aspx 查看详细信息。"
+    }
+  ],
+  "t9RwOi": [
+    {
+      "type": 0,
+      "value": "表达式无效。"
     }
   ],
   "tAbbH8": [
@@ -9392,12 +9440,6 @@
     {
       "type": 0,
       "value": "输出"
-    }
-  ],
-  "vVJuus": [
-    {
-      "type": 0,
-      "value": "表达式无效。"
     }
   ],
   "vX9WYS": [

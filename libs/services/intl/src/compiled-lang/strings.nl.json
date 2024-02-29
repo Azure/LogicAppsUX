@@ -1114,7 +1114,7 @@
   "5WTRY8": [
     {
       "type": 0,
-      "value": "Errors"
+      "value": "Fouten"
     }
   ],
   "5akc1Q": [
@@ -1359,6 +1359,12 @@
     {
       "type": 0,
       "value": "Gegevenstype"
+    }
+  ],
+  "6yFUar": [
+    {
+      "type": 0,
+      "value": "Uitvoer is vereist wanneer de status Geslaagd is"
     }
   ],
   "70eoQu": [
@@ -1877,6 +1883,12 @@
     {
       "type": 0,
       "value": "Filteracties"
+    }
+  ],
+  "ANGw2o": [
+    {
+      "type": 0,
+      "value": "Klik voor meer informatie over statisch resultaat"
     }
   ],
   "AO6T9u": [
@@ -2973,10 +2985,22 @@
       "value": "Vereist. Het getal waarvan de aftrekker wordt afgetrokken."
     }
   ],
+  "H9CZTr": [
+    {
+      "type": 0,
+      "value": "De expressie is ongeldig. Gebruik enkele aanhalingstekens."
+    }
+  ],
   "HDqP2g": [
     {
       "type": 0,
       "value": "Vereist. De sleutelnaam van de formuliergegevenswaarde die moeten worden geretourneerd."
+    }
+  ],
+  "HGA9iU": [
+    {
+      "type": 0,
+      "value": "De fout en de bijbehorende code zijn vereist wanneer de status Mislukt is"
     }
   ],
   "HH970i": [
@@ -3511,6 +3535,12 @@
       "value": "Maken..."
     }
   ],
+  "LPdGu/": [
+    {
+      "type": 0,
+      "value": "Uitvoer mag niet worden opgegeven wanneer de status Mislukt is"
+    }
+  ],
   "LR/3Lr": [
     {
       "type": 0,
@@ -3640,7 +3670,7 @@
   "M0bbZk": [
     {
       "type": 0,
-      "value": "Flow Checker"
+      "value": "Stroomcontrole"
     }
   ],
   "M0xrm+": [
@@ -3970,7 +4000,7 @@
   "O6VHe0": [
     {
       "type": 0,
-      "value": "Operation warnings"
+      "value": "Bewerkingswaarschuwingen"
     }
   ],
   "O7HhyP": [
@@ -5290,7 +5320,7 @@
   "Vi5TIV": [
     {
       "type": 0,
-      "value": "No warnings found."
+      "value": "Geen waarschuwingen gevonden."
     }
   ],
   "VlvlX1": [
@@ -5923,6 +5953,12 @@
     {
       "type": 0,
       "value": "Statisch resultaat uitschakelen"
+    }
+  ],
+  "Yz9o1k": [
+    {
+      "type": 0,
+      "value": "Niet verbonden."
     }
   ],
   "Z8tBFS": [
@@ -7000,7 +7036,7 @@
   "hLOIwp": [
     {
       "type": 0,
-      "value": "Warnings"
+      "value": "Waarschuwingen"
     }
   ],
   "hMf2TA": [
@@ -8941,6 +8977,12 @@
       "value": "Kan geen gegevenstoewijzingsdefinitie genereren"
     }
   ],
+  "svaqnp": [
+    {
+      "type": 0,
+      "value": "Er mag geen fout worden opgegeven wanneer de status Geslaagd is"
+    }
+  ],
   "sw6EXK": [
     {
       "type": 0,
@@ -8973,6 +9015,12 @@
     {
       "type": 0,
       "value": "Vereist. Een tekenreeks die de tijdzonenaam van de doeltijdzone bevat. Zie https://msdn.microsoft.com/en-us/library/gg154758.aspx voor meer informatie."
+    }
+  ],
+  "t9RwOi": [
+    {
+      "type": 0,
+      "value": "De expressie is ongeldig."
     }
   ],
   "tAbbH8": [
@@ -9405,12 +9453,6 @@
     {
       "type": 0,
       "value": "Uitvoer"
-    }
-  ],
-  "vVJuus": [
-    {
-      "type": 0,
-      "value": "De expressie is ongeldig."
     }
   ],
   "vX9WYS": [

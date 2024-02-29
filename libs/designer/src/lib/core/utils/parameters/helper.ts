@@ -1,6 +1,7 @@
 /* eslint-disable no-case-declarations  */
 import constants from '../../../common/constants';
 import type { ConnectionReference, WorkflowParameter } from '../../../common/models/workflow';
+import { getReactQueryClient } from '../../ReactQueryProvider';
 import type { NodeDataWithOperationMetadata } from '../../actions/bjsworkflow/operationdeserializer';
 import type { Settings } from '../../actions/bjsworkflow/settings';
 import { getConnectorWithSwagger } from '../../queries/connections';
@@ -55,7 +56,7 @@ import {
   isVariableToken,
   ValueSegmentConvertor,
 } from './segment';
-import { OperationManifestService, WorkflowService } from '@microsoft/designer-client-services-logic-apps';
+import { LogEntryLevel, LoggerService, OperationManifestService, WorkflowService } from '@microsoft/designer-client-services-logic-apps';
 import type {
   AuthProps,
   ComboboxItem,
@@ -85,7 +86,7 @@ import {
   TokenType,
   AuthenticationOAuthType,
 } from '@microsoft/designer-ui';
-import { getIntl } from '@microsoft/intl-logic-apps';
+import { getIntl } from '@microsoft/logic-apps-shared';
 import type {
   DependentParameterInfo,
   DynamicParameters,
@@ -99,7 +100,7 @@ import type {
   SchemaProperty,
   Segment,
   SwaggerParser,
-} from '@microsoft/parsers-logic-apps';
+} from '@microsoft/logic-apps-shared';
 import {
   isDynamicTreeExtension,
   isLegacyDynamicValuesTreeExtension,
@@ -124,8 +125,8 @@ import {
   SegmentType,
   Visibility,
   PropertyName,
-} from '@microsoft/parsers-logic-apps';
-import type { Exception, OpenAPIV2, OperationManifest, RecurrenceSetting } from '@microsoft/utils-logic-apps';
+} from '@microsoft/logic-apps-shared';
+import type { Exception, OpenAPIV2, OperationManifest, RecurrenceSetting } from '@microsoft/logic-apps-shared';
 import {
   createCopy,
   deleteObjectProperties,
@@ -152,7 +153,8 @@ import {
   ValidationException,
   nthLastIndexOf,
   parseErrorMessage,
-} from '@microsoft/utils-logic-apps';
+  getRecordEntry,
+} from '@microsoft/logic-apps-shared';
 import type { Dispatch } from '@reduxjs/toolkit';
 
 // import { debounce } from 'lodash';
@@ -196,11 +198,18 @@ export interface RepetitionReference {
 }
 
 export function getParametersSortedByVisibility(parameters: ParameterInfo[]): ParameterInfo[] {
-  // Sorted by ( Required, Important, Advanced, Other )
   return parameters.sort((a, b) => {
+    // Sort by dynamic data dependencies
+    const aDeps = Object.keys(a?.schema?.['x-ms-dynamic-values']?.parameters ?? {});
+    if (aDeps.includes(b.parameterName)) return 1;
+    const bDeps = Object.keys(b?.schema?.['x-ms-dynamic-values']?.parameters ?? {});
+    if (bDeps.includes(a.parameterName)) return -1;
+
+    // Sorted by Required first
     if (a.required && !b.required) return -1;
     if (!a.required && b.required) return 1;
 
+    // Sorted by visibility ( Important, Advanced, Other )
     const aVisibility = getVisibility(a);
     const bVisibility = getVisibility(b);
     if (aVisibility === bVisibility) return 0;
@@ -847,7 +856,15 @@ export function shouldIncludeSelfForRepetitionReference(manifest: OperationManif
 }
 
 export function loadParameterValue(parameter: InputParameter): ValueSegment[] {
-  const valueObject = parameter.isNotificationUrl ? `@${constants.HTTP_WEBHOOK_LIST_CALLBACK_URL_NAME}` : parameter.value;
+  let valueObject: unknown = undefined;
+
+  if (parameter.isNotificationUrl) {
+    valueObject = `@${constants.HTTP_WEBHOOK_LIST_CALLBACK_URL_NAME}`;
+  } else if (parameter.value) {
+    valueObject = parameter.value;
+  } else if (parameter.default) {
+    valueObject = parameter.default;
+  }
 
   let valueSegments = convertToValueSegments(valueObject, !parameter.suppressCasting /* shouldUncast */);
 
@@ -1009,11 +1026,19 @@ export function getExpressionValueForOutputToken(token: OutputToken, nodeType: s
 
 export function getTokenExpressionMethodFromKey(key: string, actionName: string | undefined): string {
   const segments = parseEx(key);
-  if (segments.length >= 2 && segments[0].value === OutputSource.Body && segments[1].value === '$') {
+  if (segmentsAreBodyReference(segments)) {
     return actionName ? `${OutputSource.Body}(${convertToStringLiteral(actionName)})` : constants.TRIGGER_BODY_OUTPUT;
   } else {
     return actionName ? `${constants.OUTPUTS}(${convertToStringLiteral(actionName)})` : constants.TRIGGER_OUTPUTS_OUTPUT;
   }
+}
+
+function segmentsAreBodyReference(segments: Segment[]): boolean {
+  if (segments.length < 2 || segments[1].value !== '$') {
+    return false;
+  }
+
+  return segments[0].value === OutputSource.Body;
 }
 
 // NOTE: For example, if tokenKey is outputs.$.foo.[*].bar, which means
@@ -1198,7 +1223,17 @@ export function loadParameterValuesFromDefault(inputParameters: Record<string, I
 }
 
 export function loadParameterValuesArrayFromDefault(inputParameters: InputParameter[]): void {
-  for (const inputParameter of inputParameters) if (inputParameter.default !== undefined) inputParameter.value = inputParameter.default;
+  const queryClient = getReactQueryClient();
+  const workflowKind = queryClient.getQueryData(['workflowKind']);
+  for (const inputParameter of inputParameters) {
+    if (inputParameter.default !== undefined) {
+      if (inputParameter.default === 'PT1H' && workflowKind === 'stateless') {
+        inputParameter.value = inputParameter.schema?.['x-ms-stateless-default'] ?? inputParameter.default;
+      } else {
+        inputParameter.value = inputParameter.default;
+      }
+    }
+  }
 }
 
 export function updateParameterWithValues(
@@ -1700,9 +1735,15 @@ export async function updateParameterAndDependencies(
     const inputDependencies = dependenciesToUpdate.inputs;
     for (const key of Object.keys(inputDependencies)) {
       if (inputDependencies[key].dependencyType === 'ListValues' && inputDependencies[key].dependentParameters[parameterId]) {
-        const dependentParameter = nodeInputs.parameterGroups[groupId].parameters.find(
-          (param) => param.parameterKey === key
-        ) as ParameterInfo;
+        const dependentParameter = nodeInputs.parameterGroups[groupId].parameters.find((param) => param.parameterKey === key);
+        if (!dependentParameter) {
+          LoggerService().log({
+            level: LogEntryLevel.Verbose,
+            area: 'UpdateParameterAndDependencies',
+            message: `Dependent parameter was not set. Connection name: ${connectionReference.connectionName} - Parameter key: ${key}`,
+          });
+          continue;
+        }
         payload.parameters.push({
           groupId,
           parameterId: dependentParameter.id,
@@ -1816,10 +1857,12 @@ export async function updateDynamicDataInNode(
   );
 
   const { operations, workflowParameters } = getState();
-  for (const parameterKey of Object.keys(operations.dependencies[nodeId]?.inputs ?? {})) {
-    const dependencyInfo = operations.dependencies[nodeId].inputs[parameterKey];
+  const nodeDependencies = getRecordEntry(operations.dependencies, nodeId) ?? { inputs: {}, outputs: {} };
+  const nodeInputParameters = getRecordEntry(operations.inputParameters, nodeId) ?? { parameterGroups: {} };
+  for (const parameterKey of Object.keys(nodeDependencies?.inputs ?? {})) {
+    const dependencyInfo = nodeDependencies.inputs[parameterKey];
     if (dependencyInfo.dependencyType === 'ListValues') {
-      const details = getGroupAndParameterFromParameterKey(operations.inputParameters[nodeId] ?? {}, parameterKey);
+      const details = getGroupAndParameterFromParameterKey(nodeInputParameters, parameterKey);
       if (details) {
         loadDynamicValuesForParameter(
           nodeId,
@@ -1827,8 +1870,8 @@ export async function updateDynamicDataInNode(
           details.parameter.id,
           operationInfo,
           connectionReference,
-          operations.inputParameters[nodeId],
-          operations.dependencies[nodeId],
+          nodeInputParameters,
+          nodeDependencies,
           false /* showErrorWhenNotReady */,
           dispatch,
           /* idReplacements */ undefined,
@@ -2678,15 +2721,15 @@ export function updateTokenMetadataInParameters(nodeId: string, parameters: Para
     (data: Record<string, Partial<NodeDataWithOperationMetadata>>, id: string) => ({
       ...data,
       [id]: {
-        settings: settings[id],
-        nodeOutputs: outputParameters[id],
-        operationMetadata: operationMetadata[id],
+        settings: getRecordEntry(settings, id),
+        nodeOutputs: getRecordEntry(outputParameters, id),
+        operationMetadata: getRecordEntry(operationMetadata, id),
       },
     }),
     {}
   );
 
-  const repetitionContext = rootState.operations.repetitionInfos[nodeId];
+  const repetitionContext = getRecordEntry(rootState.operations.repetitionInfos, nodeId) ?? { repetitionReferences: [] };
   for (const parameter of parameters) {
     const segments = parameter.value;
 
@@ -3309,7 +3352,7 @@ export function remapTokenSegmentValue(
       if (!didRemap && newSegmentValue?.includes(`'${id}`)) {
         didRemap = true;
       }
-      newSegmentValue = newSegmentValue?.replaceAll(`'${id}'`, `'${idReplacements[id]}'`);
+      newSegmentValue = newSegmentValue?.replaceAll(`'${id}'`, `'${getRecordEntry(idReplacements, id)}'`);
     }
 
     newSegment = { ...segment, value: newSegmentValue, token: { ...segment.token, value: newSegmentValue } } as ValueSegment;

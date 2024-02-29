@@ -7,7 +7,7 @@ import { localize } from '../../../localize';
 import type { RemoteWorkflowTreeItem } from '../../tree/remoteWorkflowsTree/RemoteWorkflowTreeItem';
 import type { SlotTreeItem } from '../../tree/slotsTree/SlotTreeItem';
 import { sendAzureRequest } from '../requestUtils';
-import { HTTP_METHODS } from '@microsoft/utils-logic-apps';
+import { HTTP_METHODS } from '@microsoft/logic-apps-shared';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type {
   IParametersFileContent,

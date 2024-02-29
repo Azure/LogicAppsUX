@@ -1114,7 +1114,7 @@
   "5WTRY8": [
     {
       "type": 0,
-      "value": "Errors"
+      "value": "Errores"
     }
   ],
   "5akc1Q": [
@@ -1359,6 +1359,12 @@
     {
       "type": 0,
       "value": "Tipo de datos"
+    }
+  ],
+  "6yFUar": [
+    {
+      "type": 0,
+      "value": "Las salidas son necesarias cuando el estado es \"Correcto\""
     }
   ],
   "70eoQu": [
@@ -1881,6 +1887,12 @@
     {
       "type": 0,
       "value": "Acciones de filtrado"
+    }
+  ],
+  "ANGw2o": [
+    {
+      "type": 0,
+      "value": "Haga clic para obtener más información sobre el resultado estático"
     }
   ],
   "AO6T9u": [
@@ -2995,10 +3007,22 @@
       "value": "Obligatorio. El número del cual se restará el sustraendo."
     }
   ],
+  "H9CZTr": [
+    {
+      "type": 0,
+      "value": "La expresión no es válida. Asegúrese de usar comillas simples."
+    }
+  ],
   "HDqP2g": [
     {
       "type": 0,
       "value": "Obligatorio. El nombre de clave del valor de los datos de formulario que se devolverá."
+    }
+  ],
+  "HGA9iU": [
+    {
+      "type": 0,
+      "value": "El error y su código son necesarios cuando el estado es \"Error\""
     }
   ],
   "HH970i": [
@@ -3548,6 +3572,12 @@
       "value": "Creando..."
     }
   ],
+  "LPdGu/": [
+    {
+      "type": 0,
+      "value": "No se deben proporcionar salidas cuando el estado es \"Error\""
+    }
+  ],
   "LR/3Lr": [
     {
       "type": 0,
@@ -3677,7 +3707,7 @@
   "M0bbZk": [
     {
       "type": 0,
-      "value": "Flow Checker"
+      "value": "Comprobador de flujo"
     }
   ],
   "M0xrm+": [
@@ -4007,7 +4037,7 @@
   "O6VHe0": [
     {
       "type": 0,
-      "value": "Operation warnings"
+      "value": "Advertencias de operación"
     }
   ],
   "O7HhyP": [
@@ -5342,7 +5372,7 @@
   "Vi5TIV": [
     {
       "type": 0,
-      "value": "No warnings found."
+      "value": "No se encontraron advertencias."
     }
   ],
   "VlvlX1": [
@@ -5975,6 +6005,12 @@
     {
       "type": 0,
       "value": "Deshabilitar resultado estático"
+    }
+  ],
+  "Yz9o1k": [
+    {
+      "type": 0,
+      "value": "Sin conexión."
     }
   ],
   "Z8tBFS": [
@@ -7056,7 +7092,7 @@
   "hLOIwp": [
     {
       "type": 0,
-      "value": "Warnings"
+      "value": "Advertencias"
     }
   ],
   "hMf2TA": [
@@ -9026,6 +9062,12 @@
       "value": "No se puede generar la definición del mapa de datos"
     }
   ],
+  "svaqnp": [
+    {
+      "type": 0,
+      "value": "No se debe proporcionar un error cuando el estado es \"Correcto\"."
+    }
+  ],
   "sw6EXK": [
     {
       "type": 0,
@@ -9062,6 +9104,12 @@
     {
       "type": 0,
       "value": "Obligatorio. Cadena que contiene el nombre de la zona horaria de destino. Para obtener más detalles, consulte https://msdn.microsoft.com/en-us/library/gg154758.aspx."
+    }
+  ],
+  "t9RwOi": [
+    {
+      "type": 0,
+      "value": "La expresión no es válida."
     }
   ],
   "tAbbH8": [
@@ -9498,12 +9546,6 @@
     {
       "type": 0,
       "value": "Salidas"
-    }
-  ],
-  "vVJuus": [
-    {
-      "type": 0,
-      "value": "La expresión no es válida."
     }
   ],
   "vX9WYS": [

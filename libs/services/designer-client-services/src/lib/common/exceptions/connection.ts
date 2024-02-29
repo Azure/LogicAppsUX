@@ -1,5 +1,5 @@
-import type { Exception } from '@microsoft/utils-logic-apps';
-import { BaseException } from '@microsoft/utils-logic-apps';
+import type { Exception } from '@microsoft/logic-apps-shared';
+import { BaseException } from '@microsoft/logic-apps-shared';
 
 export const ConnectorConnectionExceptionName = 'Core.ConnectorConnectionException';
 

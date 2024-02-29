@@ -1,6 +1,6 @@
 import type { WorkflowNode } from '../../parsers/models/workflowNode';
 import type { MessageLevel } from '@microsoft/designer-ui';
-import type { LogicAppsV2, SubgraphType } from '@microsoft/utils-logic-apps';
+import type { LogicAppsV2, SubgraphType } from '@microsoft/logic-apps-shared';
 
 export type SpecTypes = 'BJS' | 'CNCF';
 
@@ -22,7 +22,7 @@ export const WorkflowKind = {
   STATEFUL: 'stateful',
   STATELESS: 'stateless',
 } as const;
-export type WorkflowKind = (typeof WorkflowKind)[keyof typeof WorkflowKind];
+export type WorkflowKind = (typeof WorkflowKind)[keyof typeof WorkflowKind] | undefined;
 
 export type ErrorMessage = {
   nodeId: string;

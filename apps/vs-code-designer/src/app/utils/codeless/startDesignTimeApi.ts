@@ -28,7 +28,7 @@ import { tryGetLogicAppProjectRoot } from '../verifyIsProject';
 import { getWorkspaceSetting, updateGlobalSetting } from '../vsCodeConfig/settings';
 import { getWorkspaceFolder } from '../workspace';
 import { delay } from '@azure/ms-rest-js';
-import { extend } from '@microsoft/utils-logic-apps';
+import { extend } from '@microsoft/logic-apps-shared';
 import {
   DialogResponses,
   openUrl,
@@ -90,11 +90,12 @@ export async function startDesignTimeApi(projectPath: string): Promise<void> {
       );
 
       const designTimeDirectory: Uri | undefined = await getOrCreateDesignTimeDirectory(designTimeDirectoryName, projectPath);
-      settingsFileContent.Values[ProjectDirectoryPath] = path.join(projectPath);
+      settingsFileContent.Values[ProjectDirectoryPath] = projectPath;
 
       if (designTimeDirectory) {
         await createJsonFile(designTimeDirectory, hostFileName, hostFileContent);
         await createJsonFile(designTimeDirectory, localSettingsFileName, settingsFileContent);
+        await updateProjectPath(designTimeDirectory, localSettingsFileName, projectPath);
         await updateFuncIgnore(projectPath, [`${designTimeDirectoryName}/`]);
         const cwd: string = designTimeDirectory.fsPath;
         const portArgs = `--port ${ext.designTimePort}`;
@@ -238,6 +239,14 @@ export async function promptStartDesignTimeOption(context: IActionContext) {
   }
 }
 
+/**
+ * Creates a JSON file in the specified directory with the given file name and content.
+ * If the file already exists, it will not be overwritten.
+ * @param {Uri} directory - The directory where the file will be created.
+ * @param {string} fileName - The name of the file to be created.
+ * @param {hostFileContent | settingsFileContent}fileContent - The content of the file to be created.
+ * @returns A Promise that resolves when the file is created successfully.
+ */
 export async function createJsonFile(
   directory: Uri,
   fileName: string,
@@ -249,10 +258,21 @@ export async function createJsonFile(
   if (!fs.existsSync(filePath.fsPath)) {
     await writeFormattedJson(filePath.fsPath, fileContent);
   }
-  // Else merge new settings into existing file
-  else {
-    const fileJson = JSON.parse(await fse.readFile(filePath.fsPath, 'utf-8'));
+}
 
-    await fse.writeFile(filePath.fsPath, JSON.stringify(extend({}, fileJson, fileContent), null, 2), 'utf-8');
+/**
+ * Updates the project path in a settings file.
+ * @param {Uri} directory - The directory where the settings file is located.
+ * @param {string} fileName - The name of the settings file.
+ * @param {string} projectDirectoryPath - The new project directory path to be updated in the settings file.
+ */
+export async function updateProjectPath(directory: Uri, fileName: string, projectDirectoryPath: string) {
+  const filePath: Uri = Uri.file(path.join(directory.fsPath, fileName));
+
+  // Overwrite file
+  if (fs.existsSync(filePath.fsPath)) {
+    const fileJson: typeof settingsFileContent = JSON.parse(await fse.readFile(filePath.fsPath, 'utf-8'));
+    fileJson.Values[ProjectDirectoryPath] = projectDirectoryPath;
+    await fse.writeFile(filePath.fsPath, JSON.stringify(extend({}, fileJson), null, 2), 'utf-8');
   }
 }
