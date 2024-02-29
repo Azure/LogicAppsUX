@@ -69,7 +69,7 @@
       },
       {
         "command": "azureLogicAppsStandard.createNewCodeProject",
-        "title": "Create new Logic App workspace...",
+        "title": "Create new logic app workspace...",
         "category": "Azure Logic Apps",
         "preview": true,
         "icon": {

@@ -9,6 +9,7 @@ import {
   workflowSubscriptionIdKey,
   localSettingsFileName,
   extensionCommand,
+  COMMON_ERRORS,
 } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
@@ -59,10 +60,15 @@ export async function generateDeploymentScripts(context: IActionContext, project
       FileManagement.convertToValidWorkspace(sourceControlPath);
     }
   } catch (error) {
-    const localizedErrorMessage = localize('errorScriptGen', '[Error] generateDeploymentScripts failed: {0}', error);
-    ext.outputChannel.appendLog(localizedErrorMessage);
-    ext.outputChannel.appendLog(`[Error] generateDeploymentScripts failed: ${error}`);
-    await handleError(error, 'Error during deployment script generation');
+    if (error?.message === COMMON_ERRORS.OPERATION_CANCELLED) {
+      const errorMessage = localize('errorScriptGen', 'Error during deployment script generation: {0}', error?.message);
+      throw new Error(errorMessage);
+    } else {
+      const localizedErrorMessage = localize('errorScriptGen', '[Error] generateDeploymentScripts failed: {0}', error);
+      ext.outputChannel.appendLog(localizedErrorMessage);
+      ext.outputChannel.appendLog(`[Error] generateDeploymentScripts failed: ${error}`);
+      await handleError(error, 'Error during deployment script generation');
+    }
   }
 }
 
@@ -380,7 +386,11 @@ async function gatherAndValidateInputs(scriptContext: IAzureScriptWizard, folder
     ext.outputChannel.appendLog(localize('executeAzureWizardSuccess', 'Azure Wizard executed successfully.'));
   } catch (error) {
     ext.outputChannel.appendLog(localize('executeAzureWizardError', `Error executing Azure Wizard: ${error}`));
-    await handleError(error, localize('handleErrorExecuteAzureWizard', 'Error executing Azure Wizard'));
+    if (error?.message === COMMON_ERRORS.OPERATION_CANCELLED) {
+      throw new Error(localize('handleError.error', error.message));
+    } else {
+      await handleError(error, localize('handleErrorExecuteAzureWizard', 'Error executing Azure Wizard'));
+    }
     return;
   }
 

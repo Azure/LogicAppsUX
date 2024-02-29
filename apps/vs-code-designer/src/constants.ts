@@ -290,3 +290,8 @@ export const logicAppFilter = {
   type: 'microsoft.web/sites',
   kind: 'functionapp,workflowapp',
 };
+
+export const COMMON_ERRORS = {
+  OPERATION_CANCELLED: 'Operation cancelled.',
+} as const;
+export type COMMON_ERRORS = (typeof COMMON_ERRORS)[keyof typeof COMMON_ERRORS];
