@@ -1,4 +1,24 @@
 # Logic Apps Designer
+## [2.121.0](https://github.com/Azure/LogicAppsUX/compare/v2.120.0...v2.121.0) (2024-02-29)
+
+
+### Features
+
+* **designer:** Expose receiver URI on AS2 encode output ([#4247](https://github.com/Azure/LogicAppsUX/issues/4247)) ([495973f](https://github.com/Azure/LogicAppsUX/commit/495973f72c200b8fd08638a189108c013c7b0daf))
+* **Designer:** Hybrid preload / active search ([#4233](https://github.com/Azure/LogicAppsUX/issues/4233)) ([94b168f](https://github.com/Azure/LogicAppsUX/commit/94b168f66bfee831b1778082418ef48957d37cfe))
+* **designer:** moved intl ([#4245](https://github.com/Azure/LogicAppsUX/issues/4245)) ([d343bb9](https://github.com/Azure/LogicAppsUX/commit/d343bb96e11fcb2ac49060a6b5cdc2b90f07fa94))
+
+
+### Bug Fixes
+
+* **Designer:** Fixed connection reference bug for MI connections ([#4262](https://github.com/Azure/LogicAppsUX/issues/4262)) ([eefe252](https://github.com/Azure/LogicAppsUX/commit/eefe25226a2c6da6753e316cc2e7d71f3689503b))
+* **Designer:** fixed some scripts related to moving libs ([#4268](https://github.com/Azure/LogicAppsUX/issues/4268)) ([48c61bf](https://github.com/Azure/LogicAppsUX/commit/48c61bfd93f54c8d2e8735d5788aec84672a0846))
+* **designer:** Revert - Adding hidden parameter field in ConnectionCreationInfo to pass selected credential id ([#4193](https://github.com/Azure/LogicAppsUX/issues/4193)) ([#4265](https://github.com/Azure/LogicAppsUX/issues/4265)) ([2d57d57](https://github.com/Azure/LogicAppsUX/commit/2d57d57ac35e11e2554e5b34a1723873f1907d81))
+* **designer:** Update to make connections name case-insensitive ([#4279](https://github.com/Azure/LogicAppsUX/issues/4279)) ([498fef9](https://github.com/Azure/LogicAppsUX/commit/498fef92d9d7c8e7abddf7c6b4c4af93bf92ce15))
+* **vscode:** Add conditional clause for already initialized projects ([#4280](https://github.com/Azure/LogicAppsUX/issues/4280)) ([b464f64](https://github.com/Azure/LogicAppsUX/commit/b464f6486c6085e21b14f781a7ff69da9c0351dc))
+* **vscode:** Add padding to overview page ([#4253](https://github.com/Azure/LogicAppsUX/issues/4253)) ([5105754](https://github.com/Azure/LogicAppsUX/commit/51057543e423563cf1a1b63fd97ae02716dd7771))
+* **vscode:** Fix useEffect on workflows success data - export tool ([#4249](https://github.com/Azure/LogicAppsUX/issues/4249)) ([75bed99](https://github.com/Azure/LogicAppsUX/commit/75bed9978e73d0b8aa59d266732a97c17318fab7))
+* **vscode:** Initialize vscode project correctly when project is created outside of vscode ([#4267](https://github.com/Azure/LogicAppsUX/issues/4267)) ([2a3ee91](https://github.com/Azure/LogicAppsUX/commit/2a3ee9159463ed14c5c8a87cb9d991ad52c08a4c))
 
 ## [2.120.0](https://github.com/Azure/LogicAppsUX/compare/v2.119.0...v2.120.0) (2024-02-22)
 
