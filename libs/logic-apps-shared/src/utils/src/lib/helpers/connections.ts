@@ -202,10 +202,10 @@ function _isConnectionParameterHidden(connectionParameter: ConnectionParameter):
 }
 
 export const getUniqueName = (keys: string[], prefix: string): { name: string; index: number } => {
-  const set = new Set(keys.map((name) => name.split('::')[0].toLowerCase()));
+  const set = new Set(keys.map((name) => name.split('::')[0]));
 
   let index = 0;
-  let name = prefix.toLowerCase();
+  let name = prefix;
   while (set.has(name)) {
     name = `${prefix}-${++index}`;
   }
