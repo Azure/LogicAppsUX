@@ -5,7 +5,7 @@ import { CommandBar } from '@fluentui/react/lib/CommandBar';
 import { Spinner, SpinnerSize } from '@fluentui/react/lib/Spinner';
 import type { ILoggerService } from '@microsoft/designer-client-services-logic-apps';
 import { LogEntryLevel, LoggerService } from '@microsoft/designer-client-services-logic-apps';
-import type { RootState, Workflow } from '@microsoft/logic-apps-designer';
+import type { CustomCode, RootState, Workflow } from '@microsoft/logic-apps-designer';
 import {
   store as DesignerStore,
   serializeBJSWorkflow,
@@ -49,7 +49,7 @@ export const DesignerCommandBar = ({
   location: string;
   isReadOnly: boolean;
   discard: () => unknown;
-  saveWorkflow: (workflow: Workflow) => Promise<void>;
+  saveWorkflow: (workflow: Workflow, customCode?: Record<string, CustomCode>) => Promise<void>;
   isDarkMode: boolean;
   isConsumption?: boolean;
   showConnectionsPanel?: boolean;
@@ -65,6 +65,8 @@ export const DesignerCommandBar = ({
       skipValidation: false,
       ignoreNonCriticalErrors: true,
     });
+
+    const customCodeToUpdate = designerState.operations.customCode;
 
     const validationErrorsList = Object.entries(designerState.operations.inputParameters).reduce((acc, [id, nodeInputs]) => {
       const hasValidationErrors = Object.values(nodeInputs.parameterGroups).some((parameterGroup) => {
@@ -82,7 +84,7 @@ export const DesignerCommandBar = ({
     const hasParametersErrors = !isNullOrEmpty(validationErrorsList);
 
     if (!hasParametersErrors) {
-      await saveWorkflow(serializedWorkflow);
+      await saveWorkflow(serializedWorkflow, customCodeToUpdate);
       updateCallbackUrl(designerState, DesignerStore.dispatch);
     }
   });

@@ -45,6 +45,7 @@ import {
   OperationManifestService,
   FunctionService,
   ApiManagementService,
+  CustomCodeService,
 } from '@microsoft/designer-client-services-logic-apps';
 import type { OutputToken, ParameterInfo } from '@microsoft/designer-ui';
 import { getIntl } from '@microsoft/intl-logic-apps';
@@ -452,6 +453,19 @@ export const updateCallbackUrlInInputs = async (
   }
 
   return;
+};
+
+export const updateCustomCodeInInputs = async (nodeId: string, fileExtension: string, nodeInputs: NodeInputs) => {
+  try {
+    const customCodeValue = await CustomCodeService().getCustomCodeFile(nodeId);
+    const parameter = getParameterFromName(nodeInputs, 'CodeFile');
+
+    if (parameter && customCodeValue) {
+      parameter.value = [createLiteralValueSegment(customCodeValue)];
+    }
+  } catch (e) {
+    console.log(e);
+  }
 };
 
 export const updateAllUpstreamNodes = (state: RootState, dispatch: Dispatch): void => {

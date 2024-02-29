@@ -20,7 +20,7 @@ import {
   httpWebhookManifest,
   httpWebhookTriggerManifest,
 } from './manifests/http';
-import { inlineCSharpManifest } from './manifests/inlineCode';
+import { inlineCSharpManifest } from './manifests/inlinecode';
 import joinManifest from './manifests/join';
 import parsejsonManifest from './manifests/parsejson';
 import queryManifest from './manifests/query';
@@ -53,6 +53,7 @@ const rosettanetdecode = 'rosettanetdecode';
 const rosettanetwaitforresponse = 'rosettanetwaitforresponse';
 const invokefunction = 'invokefunction';
 const javascriptcode = 'javascriptcode';
+const powershellcode = 'powershellcode';
 const csharpcode = 'csharpcode';
 const compose = 'compose';
 const csvtable = 'csvtable';
@@ -164,6 +165,7 @@ export const supportedBaseManifestTypes = [
   integrationaccountartifactlookup,
   invokefunction,
   javascriptcode,
+  powershellcode,
   csharpcode,
   join,
   liquid,
@@ -204,7 +206,6 @@ export const supportedBaseManifestTypes = [
   edifactencode,
   edifactbatchencode,
   edifactdecode,
-  csharpcode,
 ];
 
 export type getAccessTokenType = () => Promise<string>;
@@ -265,6 +266,7 @@ export function isBuiltInOperation(definition: any): boolean {
     case incrementvariable:
     case invokefunction:
     case javascriptcode:
+    case powershellcode:
     case join:
     case liquid:
     case parsejson:
@@ -517,6 +519,10 @@ const builtInOperationsMetadata: Record<string, OperationInfo> = {
   [javascriptcode]: {
     connectorId: inlineCodeConnectorId,
     operationId: 'javaScriptCode',
+  },
+  [powershellcode]: {
+    connectorId: inlineCodeConnectorId,
+    operationId: powershellcode,
   },
   [csharpcode]: {
     connectorId: inlineCodeConnectorId,

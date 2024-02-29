@@ -3,7 +3,10 @@ import type { CallbackInfo, ConnectionsData, ParametersData, Workflow } from '..
 import { Artifact } from '../Models/Workflow';
 import { validateResourceId } from '../Utilities/resourceUtilities';
 import { convertDesignerWorkflowToConsumptionWorkflow } from './ConsumptionSerializationHelpers';
-import type { LogicAppsV2 } from '@microsoft/utils-logic-apps';
+import { CustomCodeService } from '@microsoft/designer-client-services-logic-apps';
+import type { CustomCode } from '@microsoft/logic-apps-designer';
+import { store as DesignerStore } from '@microsoft/logic-apps-designer';
+import { replaceWhiteSpaceWithUnderscore, type LogicAppsV2 } from '@microsoft/utils-logic-apps';
 import axios from 'axios';
 import jwt_decode from 'jwt-decode';
 import { useQuery } from 'react-query';
@@ -211,6 +214,24 @@ export const getConnectionConsumption = async (connectionId: string) => {
   });
 
   return response.data;
+};
+
+export const saveCustomCodeStandard = async (customCode?: Record<string, CustomCode>) => {
+  if (!customCode) return;
+  try {
+    const idReplacements = DesignerStore.getState().workflow.idReplacements;
+    Object.values(customCode).forEach(async ({ nodeId, fileData, fileExtension }: CustomCode) => {
+      const fileName = replaceWhiteSpaceWithUnderscore(idReplacements[nodeId] ?? nodeId);
+      console.log(fileName);
+      await CustomCodeService().uploadCustomCode({
+        fileData,
+        fileName,
+        fileExtension,
+      });
+    });
+  } catch (error) {
+    console.log(error);
+  }
 };
 
 export const saveWorkflowStandard = async (

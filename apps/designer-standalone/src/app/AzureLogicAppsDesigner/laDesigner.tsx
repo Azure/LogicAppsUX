@@ -13,6 +13,7 @@ import { StandaloneOAuthService } from './Services/OAuthService';
 import {
   getConnectionStandard,
   listCallbackUrl,
+  saveCustomCodeStandard,
   saveWorkflowStandard,
   useAppSettings,
   useCurrentObjectId,
@@ -32,12 +33,13 @@ import {
   BaseGatewayService,
   StandardConnectionService,
   StandardConnectorService,
+  StandardCustomCodeService,
   StandardOperationManifestService,
   StandardRunService,
   StandardSearchService,
 } from '@microsoft/designer-client-services-logic-apps';
 import type { ContentType, IWorkflowService } from '@microsoft/designer-client-services-logic-apps';
-import type { Workflow } from '@microsoft/logic-apps-designer';
+import type { CustomCode, Workflow } from '@microsoft/logic-apps-designer';
 import {
   DesignerProvider,
   BJSWorkflowProvider,
@@ -175,7 +177,7 @@ const DesignerEditor = () => {
     throw error ?? settingsError;
   }
 
-  const saveWorkflowFromDesigner = async (workflowFromDesigner: Workflow): Promise<void> => {
+  const saveWorkflowFromDesigner = async (workflowFromDesigner: Workflow, customCode?: Record<string, CustomCode>): Promise<void> => {
     const { definition, connectionReferences, parameters } = workflowFromDesigner;
     const workflowToSave = {
       ...workflow,
@@ -214,7 +216,7 @@ const DesignerEditor = () => {
     const connectionsToUpdate = getConnectionsToUpdate(originalConnectionsData, connectionsData ?? {});
     const parametersToUpdate = !isEqual(originalParametersData, parameters) ? (parameters as ParametersData) : undefined;
     const settingsToUpdate = !isEqual(settingsData?.properties, originalSettings) ? settingsData?.properties : undefined;
-
+    await saveCustomCodeStandard(customCode);
     return saveWorkflowStandard(siteResourceId, workflowName, workflowToSave, connectionsToUpdate, parametersToUpdate, settingsToUpdate);
   };
 
@@ -493,12 +495,19 @@ const getDesignerServices = (
   });
 
   const chatbotService = new BaseChatbotService({
-    // temporarily having brazilus as the baseUrl until deployment finishes in prod
-    baseUrl: 'https://brazilus.management.azure.com',
+    baseUrl: armUrl,
     apiVersion: '2022-09-01-preview',
     subscriptionId,
-    // temporarily hardcoding location until we have deployed to all regions
-    location: 'westcentralus',
+    location,
+  });
+
+  const customCodeService = new StandardCustomCodeService({
+    apiVersion: '2018-11-01',
+    baseUrl: armUrl,
+    subscriptionId,
+    resourceGroup,
+    appName: siteResourceId.split('/').splice(-1)[0],
+    httpClient,
   });
 
   return {
@@ -516,6 +525,7 @@ const getDesignerServices = (
     runService,
     hostService,
     chatbotService,
+    customCodeService,
   };
 };
 

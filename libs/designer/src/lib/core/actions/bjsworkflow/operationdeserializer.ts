@@ -46,6 +46,7 @@ import {
   getInputParametersFromManifest,
   getOutputParametersFromManifest,
   updateCallbackUrlInInputs,
+  updateCustomCodeInInputs,
   updateInvokerSettings,
 } from './initialize';
 import { getOperationSettings, getSplitOnValue } from './settings';
@@ -229,6 +230,10 @@ export const initializeOperationDetailsForManifest = async (
 
     if (isTrigger) {
       await updateCallbackUrlInInputs(nodeId, nodeOperationInfo, nodeInputs);
+    }
+    // Populate Customcode with values gotten from file system
+    if (equals(operationInfo.connectorId, Constants.INLINECODE) && !equals(operationInfo.operationId, 'javascriptcode')) {
+      await updateCustomCodeInInputs(nodeId, 'ps1', nodeInputs);
     }
 
     const { outputs: nodeOutputs, dependencies: outputDependencies } = getOutputParametersFromManifest(

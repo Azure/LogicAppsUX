@@ -3,14 +3,16 @@ import type { ValueSegment } from '../editor';
 import { ValueSegmentType } from '../editor';
 import type { BaseEditorProps } from '../editor/base';
 import TokenPickerButtonLegacy from '../editor/base/plugins/TokenPickerButtonLegacy';
-import type { EditorContentChangedEventArgs, EditorLanguage } from '../editor/monaco';
+import type { EditorContentChangedEventArgs } from '../editor/monaco';
 import { MonacoEditor as Editor } from '../editor/monaco';
 import { useId } from '../useId';
 import { buildInlineCodeTextFromToken, getEditorHeight, getInitialValue } from './util';
 import { Icon, MessageBar, MessageBarType } from '@fluentui/react';
+import type { EditorLanguage } from '@microsoft/utils-logic-apps';
+import { getFileExtensionName, guid } from '@microsoft/utils-logic-apps';
 import { useFunctionalState } from '@react-hookz/web';
 import type { editor, IRange } from 'monaco-editor';
-import { useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 
 const iconStyle = {
@@ -22,7 +24,7 @@ const iconStyle = {
 };
 interface CustomCodeEditorProps extends BaseEditorProps {
   language: EditorLanguage;
-  fileName: string;
+  nodeTitle?: string;
 }
 
 export function CustomCodeEditor({
@@ -33,7 +35,7 @@ export function CustomCodeEditor({
   onFocus,
   getTokenPicker,
   label,
-  fileName,
+  nodeTitle,
 }: CustomCodeEditorProps): JSX.Element {
   const intl = useIntl();
   const codeEditorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
@@ -44,6 +46,15 @@ export function CustomCodeEditor({
   const [showTokenPickerButton, setShowTokenPickerButton] = useState(false);
   const [getInTokenPicker, setInTokenPicker] = useFunctionalState(false);
   const [showMessageBar, setShowMessageBar] = useState(true);
+  const [getFileName, setFileName] = useFunctionalState('');
+
+  const fileExtensionName = useMemo(() => {
+    return getFileExtensionName(language);
+  }, [language]);
+
+  useEffect(() => {
+    setFileName(nodeTitle + fileExtensionName);
+  }, [nodeTitle, fileExtensionName, setFileName]);
 
   const handleContentChanged = (e: EditorContentChangedEventArgs): void => {
     if (e.value !== undefined) {
@@ -56,7 +67,10 @@ export function CustomCodeEditor({
     if (!getInTokenPicker()) {
       setShowTokenPickerButton(false);
     }
-    onChange?.({ value: [{ id: 'key', type: ValueSegmentType.LITERAL, value: getCurrentValue() }] });
+    onChange?.({
+      value: [{ id: guid(), type: ValueSegmentType.LITERAL, value: JSON.stringify({ fileName: getFileName() }) }],
+      viewModel: { customCodeData: { fileData: getCurrentValue(), fileExtension: getFileExtensionName(language) } },
+    });
   };
 
   const handleFocus = (): void => {
@@ -111,16 +125,11 @@ export function CustomCodeEditor({
     description: 'This is the aria label for the close button in the message bar',
   });
 
-  const fileNameNotGenerated = intl.formatMessage({
-    defaultMessage: 'The File Name will be generated after saving the workflow',
-    description: 'This is a message to inform the user that the file name will be generated after saving the workflow',
-  });
-
   return (
     <div className="msla-custom-code-editor-body" id={editorId}>
       <div className="msla-custom-code-editor-file">
         <Icon iconName="FileCode" styles={iconStyle} />
-        <div className="msla-custom-code-editor-fileName">{fileName ?? fileNameNotGenerated}</div>
+        <div className="msla-custom-code-editor-fileName">{getFileName()}</div>
       </div>
       <Editor
         label={getLabel(label)}

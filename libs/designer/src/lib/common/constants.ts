@@ -188,6 +188,15 @@ export default {
     HTML: 'html',
     RECURRENCE: 'recurrence',
   },
+  EDITOR_OPTIONS: {
+    LANGUAGE: {
+      CSHARP: 'csharp',
+      JAVASCRIPT: 'javascript',
+      JSON: 'json',
+      POWERSHELL: 'powershell',
+    },
+  },
+  INLINECODE: 'connectionProviders/inlineCode',
   EVENT_AUTH_COMPLETED: 'MSLA_AUTH_COMPLETED',
   ERROR_MESSAGES: {
     FAILED_TO_FETCH: 'Failed to fetch',

@@ -60,3 +60,71 @@ export const inlineCSharpManifest = {
     },
   },
 } as OperationManifest;
+
+export const inlinePowershellManifest = {
+  properties: {
+    iconUri: 'https://logicapps.azureedge.net/icons/javascript.svg',
+    brandColor: '#ba5d00',
+    summary: 'Execute Powershell Code',
+    description: 'Execute Powershell Code',
+    visibility: 'Important',
+    operationType: 'PowershellCode',
+    api: {
+      id: 'connectionProviders/inlineCode',
+      name: 'inlineCode',
+      displayName: 'Inline Code',
+      iconUri: 'https://logicapps.azureedge.net/icons/inline_code.svg',
+      brandColor: '#ba5d00',
+      description: 'Inline Code',
+    },
+    inputs: {
+      type: 'object',
+      properties: {
+        CodeFile: {
+          title: 'Code File',
+          description: 'The powershell script to execute',
+          'x-ms-editor': 'code',
+          'x-ms-editor-options': {
+            language: 'powershell',
+            rawValue: true,
+          },
+        },
+      },
+      required: ['CodeFile'],
+    },
+    isInputsOptional: false,
+    outputs: {
+      type: 'object',
+      required: ['body'],
+      properties: {
+        body: {
+          type: 'object',
+          title: 'Result',
+          description: 'The return value of the powershell code execution',
+        },
+      },
+    },
+    isOutputsOptional: false,
+    settings: {
+      secureData: {
+        options: {
+          outputsMode: 'LinkedToInputs',
+        },
+      },
+      trackedProperties: {
+        scopes: ['Action'],
+      },
+    },
+    includeRootOutputs: true,
+    connector: {
+      name: 'inlineCode',
+      id: 'connectionProviders/inlineCode',
+      properties: {
+        displayName: 'Inline Code',
+        iconUri: 'https://logicapps.azureedge.net/icons/inline_code.svg',
+        brandColor: '#ba5d00',
+        description: 'Inline Code',
+      },
+    } as any,
+  },
+} as OperationManifest;

@@ -2,7 +2,7 @@ import constants from '../../../../../common/constants';
 import { useShowIdentitySelectorQuery } from '../../../../../core/state/connection/connectionSelector';
 import { useHostOptions, useReadOnly } from '../../../../../core/state/designerOptions/designerOptionsSelectors';
 import type { ParameterGroup } from '../../../../../core/state/operation/operationMetadataSlice';
-import { DynamicLoadStatus, ErrorLevel } from '../../../../../core/state/operation/operationMetadataSlice';
+import { DynamicLoadStatus, ErrorLevel, addOrUpdateCustomCode } from '../../../../../core/state/operation/operationMetadataSlice';
 import {
   useDependencies,
   useNodesInitialized,
@@ -18,7 +18,7 @@ import {
 } from '../../../../../core/state/selectors/actionMetadataSelector';
 import type { VariableDeclaration } from '../../../../../core/state/tokens/tokensSlice';
 import { updateVariableInfo } from '../../../../../core/state/tokens/tokensSlice';
-import { useNodeMetadata, useReplacedIds } from '../../../../../core/state/workflow/workflowSelectors';
+import { useNodeDisplayName, useNodeMetadata, useReplacedIds } from '../../../../../core/state/workflow/workflowSelectors';
 import type { AppDispatch, RootState } from '../../../../../core/store';
 import { getConnectionReference } from '../../../../../core/utils/connectors/connections';
 import { isRootNodeInGraph } from '../../../../../core/utils/graph';
@@ -51,7 +51,7 @@ import {
 } from '@microsoft/designer-ui';
 import type { ChangeState, ParameterInfo, ValueSegment, OutputToken, TokenPickerMode, PanelTabFn } from '@microsoft/designer-ui';
 import type { OperationInfo } from '@microsoft/utils-logic-apps';
-import { equals, getPropertyValue, getRecordEntry } from '@microsoft/utils-logic-apps';
+import { equals, getPropertyValue, getRecordEntry, replaceWhiteSpaceWithUnderscore } from '@microsoft/utils-logic-apps';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
@@ -195,6 +195,7 @@ const ParameterSection = ({
   const rootState = useSelector((state: RootState) => state);
   const displayNameResult = useConnectorName(operationInfo);
   const panelLocation = usePanelLocation();
+  const nodeTitle = replaceWhiteSpaceWithUnderscore(useNodeDisplayName(nodeId));
 
   const { suppressCastingForSerialize, hideUTFExpressions } = useHostOptions();
 
@@ -216,6 +217,13 @@ const ParameterSection = ({
         } else if (parameter?.parameterKey === 'inputs.$.type') {
           dispatch(updateVariableInfo({ id: nodeId, type: value[0]?.value }));
         }
+      }
+      if (
+        equals(parameter?.editor, constants.EDITOR.CODE) &&
+        !equals(parameter?.editorOptions?.language, constants.EDITOR_OPTIONS.LANGUAGE.JAVASCRIPT)
+      ) {
+        const { fileData, fileExtension } = viewModel.customCodeData;
+        dispatch(addOrUpdateCustomCode({ nodeId, fileData, fileExtension }));
       }
 
       updateParameterAndDependencies(
@@ -409,6 +417,7 @@ const ParameterSection = ({
           errorDetails: dynamicData?.error ? { message: dynamicData.error.message } : undefined,
           validationErrors,
           tokenMapping,
+          nodeTitle: nodeTitle,
           loadParameterValueFromString: (value: string) => loadParameterValueFromString(value),
           onValueChange: (newState: ChangeState) => onValueChange(id, newState),
           onComboboxMenuOpen: () => onComboboxMenuOpen(param),

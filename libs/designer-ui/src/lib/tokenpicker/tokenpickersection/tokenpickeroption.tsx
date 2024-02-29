@@ -3,14 +3,13 @@ import { TokenPickerMode } from '../';
 import type { ValueSegment } from '../../editor';
 import { INSERT_TOKEN_NODE } from '../../editor/base/plugins/InsertTokenNode';
 import { SINGLE_VALUE_SEGMENT } from '../../editor/base/plugins/SingleValueSegment';
-import { convertUIElementNameToAutomationId } from '../../utils';
 import type { Token, TokenGroup } from '../models/token';
 import { getReducedTokenList, hasAdvanced } from './tokenpickerhelpers';
 import type { TokenPickerBaseProps } from './tokenpickersection';
 import { Icon, useTheme } from '@fluentui/react';
 import { useBoolean } from '@fluentui/react-hooks';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
-import { darken, hex2rgb, lighten } from '@microsoft/utils-logic-apps';
+import { darken, hex2rgb, lighten, replaceWhiteSpaceWithUnderscore } from '@microsoft/utils-logic-apps';
 import Fuse from 'fuse.js';
 import type { LexicalEditor } from 'lexical';
 import type { Dispatch, SetStateAction } from 'react';
@@ -194,7 +193,7 @@ export const TokenPickerOptions = ({
               <button
                 className="msla-token-picker-section-header-button"
                 onClick={handleMoreLess}
-                data-automation-id={`msla-token-picker-section-header-button-${convertUIElementNameToAutomationId(section.label)}`}
+                data-automation-id={`msla-token-picker-section-header-button-${replaceWhiteSpaceWithUnderscore(section.label)}`}
               >
                 <span>{moreOptions ? buttonTextMore : buttonTextLess}</span>
               </button>

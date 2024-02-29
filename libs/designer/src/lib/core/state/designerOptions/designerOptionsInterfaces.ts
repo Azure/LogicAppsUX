@@ -16,6 +16,7 @@ import type {
   IEditorService,
   IConnectionParameterEditorService,
   IChatbotService,
+  ICustomCodeService,
 } from '@microsoft/designer-client-services-logic-apps';
 import type { LogicApps } from '@microsoft/utils-logic-apps';
 
@@ -59,4 +60,5 @@ export interface ServiceOptions {
   editorService?: IEditorService;
   connectionParameterEditorService?: IConnectionParameterEditorService;
   chatbotService?: IChatbotService;
+  customCodeService?: ICustomCodeService;
 }

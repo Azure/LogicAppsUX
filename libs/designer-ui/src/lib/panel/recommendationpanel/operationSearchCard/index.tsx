@@ -1,8 +1,9 @@
 import { InfoDot } from '../../../infoDot';
-import { convertUIElementNameToAutomationId, getPreviewTag } from '../../../utils';
+import { getPreviewTag } from '../../../utils';
 import type { OperationActionData } from '../interfaces';
 import { Text, Image } from '@fluentui/react';
 import { Badge } from '@fluentui/react-components';
+import { replaceWhiteSpaceWithUnderscore } from '@microsoft/utils-logic-apps';
 import { useIntl } from 'react-intl';
 
 export type OperationSearchCardProps = {
@@ -39,7 +40,7 @@ export const OperationSearchCard = (props: OperationSearchCardProps) => {
       className="msla-op-search-card-container"
       onClick={() => onCardClick()}
       style={style}
-      data-automation-id={`msla-op-search-result-${convertUIElementNameToAutomationId(operationActionData.id)}`}
+      data-automation-id={`msla-op-search-result-${replaceWhiteSpaceWithUnderscore(operationActionData.id)}`}
       aria-label={`${title} ${description}`}
     >
       <div className="msla-op-search-card-color-line" style={{ background: brandColor }} />

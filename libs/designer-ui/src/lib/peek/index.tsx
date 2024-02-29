@@ -1,5 +1,6 @@
-import { MonacoEditor, EditorLanguage } from '../editor/monaco';
+import { MonacoEditor } from '../editor/monaco';
 import { PrimaryButton } from '@fluentui/react/lib/Button';
+import { EditorLanguage } from '@microsoft/utils-logic-apps';
 import { useIntl } from 'react-intl';
 
 export interface PeekProps {

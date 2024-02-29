@@ -15,7 +15,7 @@ export interface HttpRequestOptions<ContentType> {
   uri: string;
   type?: BatchHttpMethod;
   content?: ContentType;
-  headers?: Record<string, string>;
+  headers?: Record<string, string | string[]>;
   queryParameters?: QueryParameters;
   noAuth?: boolean;
   returnHeaders?: boolean;

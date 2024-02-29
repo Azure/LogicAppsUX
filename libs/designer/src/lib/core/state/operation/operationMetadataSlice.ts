@@ -1,3 +1,4 @@
+import type { CustomCode } from '../../../common/models/workflow';
 import { getInputDependencies } from '../../actions/bjsworkflow/initialize';
 import type { Settings } from '../../actions/bjsworkflow/settings';
 import type { NodeStaticResults } from '../../actions/bjsworkflow/staticresults';
@@ -110,6 +111,7 @@ export interface OperationMetadataState {
   settings: Record<string, Settings>;
   actionMetadata: Record<string, any>;
   staticResults: Record<string, NodeStaticResults>;
+  customCode: Record<string, CustomCode>;
   repetitionInfos: Record<string, RepetitionContext>;
   errors: Record<string, Record<ErrorLevel, ErrorInfo | undefined>>;
   loadStatus: OperationMetadataLoadStatus;
@@ -130,6 +132,7 @@ const initialState: OperationMetadataState = {
   actionMetadata: {},
   staticResults: {},
   repetitionInfos: {},
+  customCode: {},
   errors: {},
   loadStatus: {
     nodesInitialized: false,
@@ -418,6 +421,10 @@ export const operationMetadataSlice = createSlice({
         parameterGroup.parameters[index].validationErrors = validationErrors;
       }
     },
+    addOrUpdateCustomCode: (state, action: PayloadAction<CustomCode>) => {
+      const { nodeId, fileData, fileExtension } = action.payload;
+      state.customCode[nodeId] = { nodeId, fileData, fileExtension };
+    },
     removeParameterValidationError: (
       state,
       action: PayloadAction<{ nodeId: string; groupId: string; parameterId: string; validationError: string }>
@@ -499,6 +506,7 @@ export const {
   updateStaticResults,
   updateParameterConditionalVisibility,
   updateParameterValidation,
+  addOrUpdateCustomCode,
   updateExisitingInputTokenTitles,
   removeParameterValidationError,
   updateOutputs,
