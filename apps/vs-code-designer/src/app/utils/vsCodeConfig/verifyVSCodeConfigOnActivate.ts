@@ -10,7 +10,7 @@ import { tryParseFuncVersion } from '../funcCoreTools/funcVersion';
 import { tryGetLogicAppProjectRoot } from '../verifyIsProject';
 import { getWorkspaceSetting, updateGlobalSetting } from './settings';
 import { verifyTargetFramework } from './verifyTargetFramework';
-import { isEmptyString } from '@microsoft/utils-logic-apps';
+import { isEmptyString, isNullOrUndefined } from '@microsoft/utils-logic-apps';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { callWithTelemetryAndErrorHandling, DialogResponses } from '@microsoft/vscode-azext-utils';
 import type { FuncVersion } from '@microsoft/vscode-extension';
@@ -52,7 +52,7 @@ export async function verifyVSCodeConfigOnActivate(
               break;
             default:
           }
-        } else {
+        } else if (isNullOrUndefined(version)) {
           await promptToInitializeProject(workspacePath, context);
         }
       }
