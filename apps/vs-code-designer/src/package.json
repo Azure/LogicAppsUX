@@ -69,7 +69,7 @@
       },
       {
         "command": "azureLogicAppsStandard.createNewCodeProject",
-        "title": "Create new Logic App workspace...",
+        "title": "Create new logic app workspace...",
         "category": "Azure Logic Apps",
         "preview": true,
         "icon": {
@@ -88,7 +88,7 @@
       },
       {
         "command": "azureLogicAppsStandard.deploy",
-        "title": "Deploy to Logic App...",
+        "title": "Deploy to logic app...",
         "category": "Azure Logic Apps",
         "icon": "$(cloud-upload)",
         "enablement": "!virtualWorkspace"
@@ -146,7 +146,7 @@
       },
       {
         "command": "azureLogicAppsStandard.exportLogicApp",
-        "title": "Export Logic App...",
+        "title": "Export logic app...",
         "category": "Azure Logic Apps",
         "icon": {
           "light": "assets/light/export.svg",
