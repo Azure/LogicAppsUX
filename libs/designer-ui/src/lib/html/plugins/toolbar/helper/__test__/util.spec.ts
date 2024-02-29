@@ -13,20 +13,63 @@ import type { ValueSegment } from '@microsoft/designer-client-services-logic-app
 
 describe('lib/html/plugins/toolbar/helper/util', () => {
   describe('cleanHtmlString', () => {
-    it.each([
-      ['<p>text1<span>\n</span>text2</p>', '<p>text1<br>text2</p>'],
-      ['<p>text</p>', '<p>text</p>'],
-      ['<p>text1</p><p><br></p><p>text2</p>', '<p>text1</p><br><p>text2</p>'],
-      ['<p>text1<br></p><p><br></p><p>text2</p>', '<p>text1</p><br><br><p>text2</p>'],
-      ['<span>text</span>', 'text'],
-      ['<span id="$[abc,variables(\'abc\'),#770bd6]$">text</span>', '<span id="$[abc,variables(\'abc\'),#770bd6]$">text</span>'],
-      ['<span id="$[concat(),concat(\'&lt;\'),#ad008c]$">text</span>', '<span id="$[concat(),concat(\'&lt;\'),#ad008c]$">text</span>'],
-      ['<span id="$[concat(),concat(\'%26lt;\'),#ad008c]$">text</span>', '<span id="$[concat(),concat(\'%26lt;\'),#ad008c]$">text</span>'],
-      ['<span id="@{variables(\'abc\')}">text</span>', '<span id="@{variables(\'abc\')}">text</span>'],
-      ['<span id="@{concat(\'&lt;\')}">text</span>', '<span id="@{concat(\'&lt;\')}">text</span>'],
-      ['<span id="@{concat(\'%26lt;\')}">text</span>', '<span id="@{concat(\'%26lt;\')}">text</span>'],
-    ])('should properly convert HTML: %p', (input, expected) => {
-      expect(cleanHtmlString(input)).toBe(expected);
+    describe('when isValuePlaintext is true', () => {
+      it.each([
+        ['<p><br></p>', '<br>'],
+        ['Hello\nWorld', 'Hello\nWorld'],
+        ['<span>Hello</span> World', 'Hello World'],
+        ['<p><br><br></p>', '<br><br>'],
+        ['<br></p>', '</p><br>'],
+        ['<p>Hello<br>World</p>', '<p>Hello<br>World</p>'],
+        ['<h1><br></h1>', '<br>'],
+        ['<h2><br><br></h2>', '<br><br>'],
+        ['<h3><br><br><br></h3>', '<br><br><br>'],
+        ['<h4><br><br><br><br></h4>', '<br><br><br><br>'],
+        ['<p>text1<br>text2</p>', '<p>text1<br>text2</p>'],
+        ['<p>text</p>', '<p>text</p>'],
+        ['<p>text1</p><p><br></p><p>text2</p>', '<p>text1</p><br><p>text2</p>'],
+        ['<p>text1<br></p><p><br></p><p>text2</p>', '<p>text1</p><br><br><p>text2</p>'],
+        ['<span>text</span>', 'text'],
+        ['<span id="$[abc,variables(\'abc\'),#770bd6]$">text</span>', '<span id="$[abc,variables(\'abc\'),#770bd6]$">text</span>'],
+        ['<span id="$[concat(),concat(\'&lt;\'),#ad008c]$">text</span>', '<span id="$[concat(),concat(\'&lt;\'),#ad008c]$">text</span>'],
+        [
+          '<span id="$[concat(),concat(\'%26lt;\'),#ad008c]$">text</span>',
+          '<span id="$[concat(),concat(\'%26lt;\'),#ad008c]$">text</span>',
+        ],
+        ['<span id="@{variables(\'abc\')}">text</span>', '<span id="@{variables(\'abc\')}">text</span>'],
+        ['<span id="@{concat(\'&lt;\')}">text</span>', '<span id="@{concat(\'&lt;\')}">text</span>'],
+        ['<span id="@{concat(\'%26lt;\')}">text</span>', '<span id="@{concat(\'%26lt;\')}">text</span>'],
+      ])('should properly convert HTML: %p', (input, expected) => {
+        expect(cleanHtmlString(input, /* isValuePlaintext */ true)).toBe(expected);
+      });
+    });
+    describe('when isValuePlaintext is false', () => {
+      it.each([
+        ['Hello\nWorld', 'Hello<br>World'],
+        ['<span>Hello</span> World', 'Hello World'],
+        ['<p><br></p>', '<br>'],
+        ['<p><br><br></p>', '<br><br>'],
+        ['<br></p>', '</p><br>'],
+        ['<p>Hello<br>World</p>', '<p>Hello<br>World</p>'],
+        ['<h1><br></h1>', '<br>'],
+        ['<h2><br><br></h2>', '<br><br>'],
+        ['<h3><br><br><br></h3>', '<br><br><br>'],
+        ['<h4><br><br><br><br></h4>', '<br><br><br><br>'],
+        ['<span id="$[abc,variables(\'abc\'),#770bd6]$">text\n</span>', '<span id="$[abc,variables(\'abc\'),#770bd6]$">text<br></span>'],
+        [
+          '<span id="$[concat(),concat(\'&lt;\'),#ad008c]$">text\n</span>',
+          '<span id="$[concat(),concat(\'&lt;\'),#ad008c]$">text<br></span>',
+        ],
+        [
+          '<span id="$[concat(),concat(\'%26lt;\'),#ad008c]$">text\n</span>',
+          '<span id="$[concat(),concat(\'%26lt;\'),#ad008c]$">text<br></span>',
+        ],
+        ['<span id="@{variables(\'abc\')}">text\n</span>', '<span id="@{variables(\'abc\')}">text<br></span>'],
+        ['<span id="@{concat(\'&lt;\')}">text\n</span>', '<span id="@{concat(\'&lt;\')}">text<br></span>'],
+        ['<span id="@{concat(\'%26lt;\')}">text\n</span>', '<span id="@{concat(\'%26lt;\')}">text<br></span>'],
+      ])('should properly convert Plaintext: %p', (input, expected) => {
+        expect(cleanHtmlString(input, /* isValuePlaintext */ false)).toBe(expected);
+      });
     });
   });
 
