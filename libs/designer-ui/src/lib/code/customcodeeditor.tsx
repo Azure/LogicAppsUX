@@ -1,15 +1,15 @@
 import constants from '../constants';
 import type { ValueSegment } from '../editor';
-import { ValueSegmentType } from '../editor';
 import type { BaseEditorProps } from '../editor/base';
 import TokenPickerButtonLegacy from '../editor/base/plugins/TokenPickerButtonLegacy';
+import { createLiteralValueSegment } from '../editor/base/utils/helper';
 import type { EditorContentChangedEventArgs } from '../editor/monaco';
 import { MonacoEditor as Editor } from '../editor/monaco';
 import { useId } from '../useId';
 import { buildInlineCodeTextFromToken, getEditorHeight, getInitialValue } from './util';
 import { Icon, MessageBar, MessageBarType } from '@fluentui/react';
 import type { EditorLanguage } from '@microsoft/utils-logic-apps';
-import { getFileExtensionName, guid } from '@microsoft/utils-logic-apps';
+import { getFileExtensionName } from '@microsoft/utils-logic-apps';
 import { useFunctionalState } from '@react-hookz/web';
 import type { editor, IRange } from 'monaco-editor';
 import { useEffect, useMemo, useRef, useState } from 'react';
@@ -68,7 +68,7 @@ export function CustomCodeEditor({
       setShowTokenPickerButton(false);
     }
     onChange?.({
-      value: [{ id: guid(), type: ValueSegmentType.LITERAL, value: JSON.stringify({ fileName: getFileName() }) }],
+      value: [createLiteralValueSegment(JSON.stringify({ fileName: getFileName() }))],
       viewModel: { customCodeData: { fileData: getCurrentValue(), fileExtension: getFileExtensionName(language) } },
     });
   };

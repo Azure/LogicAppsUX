@@ -457,11 +457,13 @@ export const updateCallbackUrlInInputs = async (
 
 export const updateCustomCodeInInputs = async (nodeId: string, fileExtension: string, nodeInputs: NodeInputs) => {
   try {
-    const customCodeValue = await CustomCodeService().getCustomCodeFile(nodeId);
+    const customCodeValue = await CustomCodeService().getCustomCodeFile(`${nodeId}${fileExtension}`);
     const parameter = getParameterFromName(nodeInputs, 'CodeFile');
 
     if (parameter && customCodeValue) {
-      parameter.value = [createLiteralValueSegment(customCodeValue)];
+      parameter.editorViewModel = {
+        customCodeData: { fileData: customCodeValue, fileExtension },
+      };
     }
   } catch (e) {
     console.log(e);

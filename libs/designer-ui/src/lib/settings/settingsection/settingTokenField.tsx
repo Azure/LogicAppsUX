@@ -10,6 +10,7 @@ import { DropdownEditor } from '../../dropdown';
 import type { ValueSegment } from '../../editor';
 import type { CallbackHandler, CastHandler, ChangeHandler, GetTokenPickerHandler } from '../../editor/base';
 import type { TokenPickerButtonEditorProps } from '../../editor/base/plugins/tokenpickerbutton';
+import { createLiteralValueSegment } from '../../editor/base/utils/helper';
 import { StringEditor } from '../../editor/string';
 import { FloatingActionMenuKind } from '../../floatingactionmenu/constants';
 import { FloatingActionMenuInputs } from '../../floatingactionmenu/floatingactionmenuinputs';
@@ -163,7 +164,7 @@ export const TokenField = ({
           <CustomCodeEditor
             nodeTitle={nodeTitle}
             labelId={labelId}
-            initialValue={value}
+            initialValue={[createLiteralValueSegment(editorViewModel?.customCodeData?.fileData)]}
             getTokenPicker={getTokenPicker}
             language={editorOptions.language}
             onChange={onValueChange}

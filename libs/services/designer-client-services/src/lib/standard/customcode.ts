@@ -7,12 +7,13 @@ export interface CustomCodeServiceOptions {
   subscriptionId: string;
   resourceGroup: string;
   appName: string;
+  workflowName: string;
   httpClient: IHttpClient;
 }
 
 export class StandardCustomCodeService implements ICustomCodeService {
   constructor(public readonly options: CustomCodeServiceOptions) {
-    const { apiVersion, baseUrl, subscriptionId, resourceGroup, appName, httpClient } = this.options;
+    const { apiVersion, baseUrl, subscriptionId, resourceGroup, appName, workflowName, httpClient } = this.options;
     if (!apiVersion) {
       throw new Error('apiVersion required');
     } else if (!baseUrl) {
@@ -23,13 +24,15 @@ export class StandardCustomCodeService implements ICustomCodeService {
       throw new Error('resourceGroup required');
     } else if (!appName) {
       throw new Error('appName required');
+    } else if (!workflowName) {
+      throw new Error('workflowName required');
     } else if (!httpClient) {
       throw new Error('httpClient required');
     }
   }
   async getCustomCodeFile(fileName: string): Promise<string> {
-    const { apiVersion, baseUrl, subscriptionId, resourceGroup, appName, httpClient } = this.options;
-    const uri = `${baseUrl}/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Web/sites/${appName}/hostruntime/admin/vfs/Artifacts/CustomCode/${fileName}`;
+    const { apiVersion, baseUrl, subscriptionId, resourceGroup, appName, workflowName, httpClient } = this.options;
+    const uri = `${baseUrl}/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Web/sites/${appName}/hostruntime/admin/vfs/${workflowName}/${fileName}`;
     const headers: Record<string, string | string[]> = {
       'If-Match': ['*'],
     };
@@ -52,19 +55,17 @@ export class StandardCustomCodeService implements ICustomCodeService {
   }
 
   async uploadCustomCode({ fileData, fileName, fileExtension }: UploadCustomCode): Promise<void> {
-    const { apiVersion, baseUrl, subscriptionId, resourceGroup, appName, httpClient } = this.options;
-    const uri = `${baseUrl}/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Web/sites/${appName}/hostruntime/admin/vfs/Artifacts/CustomCode/${fileName}.${fileExtension}`;
+    const { apiVersion, baseUrl, subscriptionId, resourceGroup, appName, workflowName, httpClient } = this.options;
+    const uri = `${baseUrl}/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Web/sites/${appName}/hostruntime/admin/vfs/${workflowName}/${fileName}`;
 
     const queryParameters = {
       relativePath: 1,
       'api-version': apiVersion,
     };
 
-    console.log(fileData, fileName, fileExtension);
-
     const headers = {
       'Cache-Control': 'no-cache',
-      'Content-Type': fileExtension ?? 'plain/text',
+      'Content-Type': fileExtension.substring(fileExtension.indexOf('.') + 1) ?? 'plain/text',
       'If-Match': '*',
     };
 

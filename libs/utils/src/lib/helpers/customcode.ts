@@ -24,3 +24,14 @@ export const getFileExtensionName = (language: EditorLanguage): string => {
       return '.txt';
   }
 };
+
+export const getFileExtensionNameFromOperationId = (operationId: string): string => {
+  switch (operationId) {
+    case 'csharpcode':
+      return '.cs';
+    case 'powershellcode':
+      return '.ps1';
+    default:
+      return '.txt';
+  }
+};

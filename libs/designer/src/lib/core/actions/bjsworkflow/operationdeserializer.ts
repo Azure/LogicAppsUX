@@ -61,7 +61,16 @@ import { getIntl } from '@microsoft/intl-logic-apps';
 import type { InputParameter, OutputParameter } from '@microsoft/logic-apps-shared';
 import { ManifestParser } from '@microsoft/logic-apps-shared';
 import type { LogicAppsV2, OperationManifest } from '@microsoft/utils-logic-apps';
-import { isArmResourceId, uniqueArray, getPropertyValue, map, aggregate, equals, getRecordEntry } from '@microsoft/utils-logic-apps';
+import {
+  isArmResourceId,
+  uniqueArray,
+  getPropertyValue,
+  map,
+  aggregate,
+  equals,
+  getRecordEntry,
+  getFileExtensionNameFromOperationId,
+} from '@microsoft/utils-logic-apps';
 import type { Dispatch } from '@reduxjs/toolkit';
 
 export interface NodeDataWithOperationMetadata extends NodeData {
@@ -233,7 +242,7 @@ export const initializeOperationDetailsForManifest = async (
     }
     // Populate Customcode with values gotten from file system
     if (equals(operationInfo.connectorId, Constants.INLINECODE) && !equals(operationInfo.operationId, 'javascriptcode')) {
-      await updateCustomCodeInInputs(nodeId, 'ps1', nodeInputs);
+      await updateCustomCodeInInputs(nodeId, getFileExtensionNameFromOperationId(operationInfo.operationId), nodeInputs);
     }
 
     const { outputs: nodeOutputs, dependencies: outputDependencies } = getOutputParametersFromManifest(

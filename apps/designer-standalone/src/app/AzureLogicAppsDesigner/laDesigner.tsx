@@ -310,6 +310,7 @@ const getDesignerServices = (
   const baseUrl = `${armUrl}${siteResourceId}/hostruntime/runtime/webhooks/workflow/api/management`;
   const workflowName = workflowId.split('/').splice(-1)[0];
   const workflowIdWithHostRuntime = `${siteResourceId}/hostruntime/runtime/webhooks/workflow/api/management/workflows/${workflowName}`;
+  const appName = siteResourceId.split('/').splice(-1)[0];
   const { subscriptionId, resourceGroup } = new ArmParser(workflowId);
 
   const defaultServiceParams = { baseUrl, httpClient, apiVersion };
@@ -326,7 +327,7 @@ const getDesignerServices = (
       tenantId,
       httpClient,
     },
-    workflowAppDetails: { appName: siteResourceId.split('/').splice(-1)[0], identity: workflowApp?.identity as any },
+    workflowAppDetails: { appName, identity: workflowApp?.identity as any },
     readConnections: () => Promise.resolve(connectionsData),
     writeConnection: addConnection as any,
     connectionCreationClients: {
@@ -334,7 +335,7 @@ const getDesignerServices = (
         baseUrl: armUrl,
         subscriptionId,
         resourceGroup,
-        appName: siteResourceId.split('/').splice(-1)[0],
+        appName,
         apiVersion: '2022-03-01',
         httpClient,
       }),
@@ -506,7 +507,8 @@ const getDesignerServices = (
     baseUrl: armUrl,
     subscriptionId,
     resourceGroup,
-    appName: siteResourceId.split('/').splice(-1)[0],
+    appName,
+    workflowName,
     httpClient,
   });
 

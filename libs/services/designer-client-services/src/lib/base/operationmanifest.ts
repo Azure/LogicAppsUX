@@ -20,7 +20,6 @@ import {
   httpWebhookManifest,
   httpWebhookTriggerManifest,
 } from './manifests/http';
-import { inlineCSharpManifest } from './manifests/inlinecode';
 import joinManifest from './manifests/join';
 import parsejsonManifest from './manifests/parsejson';
 import queryManifest from './manifests/query';
@@ -54,7 +53,7 @@ const rosettanetwaitforresponse = 'rosettanetwaitforresponse';
 const invokefunction = 'invokefunction';
 const javascriptcode = 'javascriptcode';
 const powershellcode = 'powershellcode';
-const csharpcode = 'csharpcode';
+const csharpcode = 'csharpscriptcode';
 const compose = 'compose';
 const csvtable = 'csvtable';
 const htmltable = 'htmltable';
@@ -267,6 +266,7 @@ export function isBuiltInOperation(definition: any): boolean {
     case invokefunction:
     case javascriptcode:
     case powershellcode:
+    case csharpcode:
     case join:
     case liquid:
     case parsejson:
@@ -300,7 +300,6 @@ export function isBuiltInOperation(definition: any): boolean {
     case edifactdecode:
     case edifactencode:
     case edifactbatchencode:
-    case csharpcode:
       return true;
 
     case appservice:
@@ -526,7 +525,7 @@ const builtInOperationsMetadata: Record<string, OperationInfo> = {
   },
   [csharpcode]: {
     connectorId: inlineCodeConnectorId,
-    operationId: csharpcode,
+    operationId: 'cSharpScriptCode',
   },
   [join]: {
     connectorId: dataOperationConnectorId,
@@ -677,7 +676,6 @@ export const supportedBaseManifestObjects = new Map<string, OperationManifest>([
   [httpwebhooktrigger, httpWebhookTriggerManifest],
   [incrementvariable, incrementManifest],
   [initializevariable, initializeManifest],
-  [csharpcode, inlineCSharpManifest],
   [join, joinManifest],
   [parsejson, parsejsonManifest],
   [query, queryManifest],

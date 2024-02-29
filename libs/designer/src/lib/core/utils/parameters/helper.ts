@@ -563,7 +563,7 @@ const toSimpleQueryBuilderViewModel = (
   let operand1: ValueSegment, operand2: ValueSegment, operationLiteral: ValueSegment;
   // default value
   if (!input || input.length === 0) {
-    return { isOldFormat: true, isRowFormat: true, itemValue: [{ id: guid(), type: ValueSegmentType.LITERAL, value: "@equals('','')" }] };
+    return { isOldFormat: true, isRowFormat: true, itemValue: [createLiteralValueSegment("@equals('','')")] };
   }
 
   if (!input.includes('@') || !input.includes(',')) {
@@ -580,11 +580,11 @@ const toSimpleQueryBuilderViewModel = (
       stringValue = stringValue.replace('@not(', '@');
       const baseOperator = stringValue.substring(stringValue.indexOf('@') + 1, stringValue.indexOf('('));
       operator = 'not' + baseOperator;
-      operationLiteral = { id: guid(), type: ValueSegmentType.LITERAL, value: `@not(${baseOperator}(` };
-      endingLiteral = { id: guid(), type: ValueSegmentType.LITERAL, value: `))` };
+      operationLiteral = createLiteralValueSegment(`@not(${baseOperator}(`);
+      endingLiteral = createLiteralValueSegment(`))`);
     } else {
-      operationLiteral = { id: guid(), type: ValueSegmentType.LITERAL, value: `@${operator}(` };
-      endingLiteral = { id: guid(), type: ValueSegmentType.LITERAL, value: ')' };
+      operationLiteral = createLiteralValueSegment(`@${operator}(`);
+      endingLiteral = createLiteralValueSegment(')');
     }
 
     // if operator is not of the dropdownlist, it cannot be converted into row format
@@ -596,7 +596,7 @@ const toSimpleQueryBuilderViewModel = (
     const operand2String = removeQuotes(operandSubstring.substring(getOuterMostCommaIndex(operandSubstring) + 1).trim());
     operand1 = loadParameterValueFromString(operand1String, true, true, true)[0];
     operand2 = loadParameterValueFromString(operand2String, true, true, true)[0];
-    const separatorLiteral: ValueSegment = { id: guid(), type: ValueSegmentType.LITERAL, value: `,` };
+    const separatorLiteral: ValueSegment = createLiteralValueSegment(`,`);
     return {
       isOldFormat: true,
       isRowFormat: true,
@@ -2399,8 +2399,8 @@ export const recurseSerializeCondition = (
         {
           type: GroupType.ROW,
           operator: RowDropdownOptions.EQUALS,
-          operand1: [{ id: guid(), type: ValueSegmentType.LITERAL, value: '' }],
-          operand2: [{ id: guid(), type: ValueSegmentType.LITERAL, value: '' }],
+          operand1: [createLiteralValueSegment('')],
+          operand2: [createLiteralValueSegment('')],
         },
       ];
     }

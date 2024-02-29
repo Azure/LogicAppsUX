@@ -1,7 +1,7 @@
 import type { ValueSegment } from '../editor';
-import { ValueSegmentType } from '../editor';
 import type { BaseEditorProps } from '../editor/base';
 import TokenPickerButtonLegacy from '../editor/base/plugins/TokenPickerButtonLegacy';
+import { createLiteralValueSegment } from '../editor/base/utils/helper';
 import type { EditorContentChangedEventArgs } from '../editor/monaco';
 import { MonacoEditor } from '../editor/monaco';
 import { useId } from '../useId';
@@ -45,7 +45,7 @@ export function CodeEditor({
     if (!getInTokenPicker()) {
       setShowTokenPickerButton(false);
     }
-    onChange?.({ value: [{ id: 'key', type: ValueSegmentType.LITERAL, value: getCurrentValue() }] });
+    onChange?.({ value: [createLiteralValueSegment(getCurrentValue())] });
   };
 
   const handleFocus = (): void => {

@@ -222,10 +222,9 @@ export const saveCustomCodeStandard = async (customCode?: Record<string, CustomC
     const idReplacements = DesignerStore.getState().workflow.idReplacements;
     Object.values(customCode).forEach(async ({ nodeId, fileData, fileExtension }: CustomCode) => {
       const fileName = replaceWhiteSpaceWithUnderscore(idReplacements[nodeId] ?? nodeId);
-      console.log(fileName);
       await CustomCodeService().uploadCustomCode({
         fileData,
-        fileName,
+        fileName: `${fileName}${fileExtension}`,
         fileExtension,
       });
     });
