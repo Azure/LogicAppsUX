@@ -1,5 +1,5 @@
 import type { AppDispatch } from '../../../core';
-import { useSelectedNodeId, useNodeMetadata } from '../../../core';
+import { useSelectedNodeId, useNodeMetadata, useNodeDisplayName } from '../../../core';
 import { deleteOperation, deleteGraphNode } from '../../../core/actions/bjsworkflow/delete';
 import { useShowDeleteModal } from '../../../core/state/designerView/designerViewSelectors';
 import { setShowDeleteModal } from '../../../core/state/designerView/designerViewSlice';
@@ -14,6 +14,7 @@ const DeleteModal = () => {
   const dispatch = useDispatch<AppDispatch>();
 
   const nodeId = removeIdTag(useSelectedNodeId()) ?? '';
+  const nodeName = useNodeDisplayName(nodeId);
   const nodeData = useWorkflowNode(nodeId);
   const metadata = useNodeMetadata(nodeId);
   const graphId = useMemo(() => metadata?.graphId ?? '', [metadata]);
@@ -55,7 +56,14 @@ const DeleteModal = () => {
   }, [nodeData, dispatch, nodeId, isTrigger, graphId, onDismiss]);
 
   return (
-    <DeleteNodeModal nodeId={nodeId} nodeType={nodeData?.type} isOpen={showDeleteModal} onDismiss={onDismiss} onConfirm={handleDelete} />
+    <DeleteNodeModal
+      nodeId={nodeId}
+      nodeName={nodeName}
+      nodeType={nodeData?.type}
+      isOpen={showDeleteModal}
+      onDismiss={onDismiss}
+      onConfirm={handleDelete}
+    />
   );
 };
 
