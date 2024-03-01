@@ -182,12 +182,16 @@ const DesignerEditor = () => {
       definition,
     };
 
-    const referencesToAdd = { ...(connectionsData?.managedApiConnections ?? {}) };
-    if (Object.keys(connectionReferences ?? {}).length) {
+    const newManagedApiConnections = { ...(connectionsData?.managedApiConnections ?? {}) };
+    const newServiceProviderConnections: Record<string, any> = {};
+
+    const referenceKeys = Object.keys(connectionReferences ?? {});
+    if (referenceKeys.length) {
       await Promise.all(
-        Object.keys(connectionReferences).map(async (referenceKey) => {
+        referenceKeys.map(async (referenceKey) => {
           const reference = connectionReferences[referenceKey];
-          if (isArmResourceId(reference.connection.id) && !referencesToAdd[referenceKey]) {
+          if (isArmResourceId(reference?.connection?.id) && !newManagedApiConnections[referenceKey]) {
+            // Managed API Connection
             const {
               api: { id: apiId },
               connection: { id: connectionId },
@@ -195,7 +199,7 @@ const DesignerEditor = () => {
             } = reference;
             const connection = await getConnectionStandard(connectionId);
             const userIdentity = connectionProperties?.authentication?.identity;
-            referencesToAdd[referenceKey] = {
+            const newConnectionObj = {
               api: { id: apiId },
               connection: { id: connectionId },
               authentication: {
@@ -205,10 +209,22 @@ const DesignerEditor = () => {
               connectionRuntimeUrl: connection?.properties?.connectionRuntimeUrl ?? '',
               connectionProperties,
             };
+            newManagedApiConnections[referenceKey] = newConnectionObj;
+          } else if (reference?.connection?.id.startsWith('/serviceProviders/')) {
+            // Service Provider Connection
+            const connectionKey = reference.connection.id.split('/').splice(-1)[0];
+            // We can't apply this directly in case there is a temporary key overlap
+            // We need to move the data out to a new object, delete the old data, then apply the new data at the end
+            newServiceProviderConnections[referenceKey] = connectionsData?.serviceProviderConnections?.[connectionKey];
+            delete connectionsData?.serviceProviderConnections?.[connectionKey];
           }
         })
       );
-      (connectionsData as ConnectionsData).managedApiConnections = referencesToAdd;
+      (connectionsData as ConnectionsData).managedApiConnections = newManagedApiConnections;
+      (connectionsData as ConnectionsData).serviceProviderConnections = {
+        ...connectionsData?.serviceProviderConnections,
+        ...newServiceProviderConnections,
+      };
     }
 
     const connectionsToUpdate = getConnectionsToUpdate(originalConnectionsData, connectionsData ?? {});
@@ -556,57 +572,63 @@ const addOrUpdateAppSettings = (settings: Record<string, string>, originalSettin
   return originalSettings;
 };
 
+const hasNewKeys = (original: Record<string, any> = {}, updated: Record<string, any> = {}) => {
+  return !Object.keys(updated).some((key) => !Object.keys(original).includes(key));
+};
+
 const getConnectionsToUpdate = (
   originalConnectionsJson: ConnectionsData,
   connectionsJson: ConnectionsData
 ): ConnectionsData | undefined => {
-  const originalKeys = Object.keys({
-    ...(originalConnectionsJson.functionConnections ?? {}),
-    ...(originalConnectionsJson.apiManagementConnections ?? {}),
-    ...(originalConnectionsJson.managedApiConnections ?? {}),
-    ...(originalConnectionsJson.serviceProviderConnections ?? {}),
-  });
+  const hasNewFunctionKeys = hasNewKeys(originalConnectionsJson.functionConnections, connectionsJson.functionConnections);
+  const hasNewApimKeys = hasNewKeys(originalConnectionsJson.apiManagementConnections, connectionsJson.apiManagementConnections);
+  const hasNewManagedApiKeys = hasNewKeys(originalConnectionsJson.managedApiConnections, connectionsJson.managedApiConnections);
+  const hasNewServiceProviderKeys = hasNewKeys(
+    originalConnectionsJson.serviceProviderConnections,
+    connectionsJson.serviceProviderConnections
+  );
 
-  const updatedKeys = Object.keys({
-    ...(connectionsJson.functionConnections ?? {}),
-    ...(connectionsJson.apiManagementConnections ?? {}),
-    ...(connectionsJson.managedApiConnections ?? {}),
-    ...(connectionsJson.serviceProviderConnections ?? {}),
-  });
-
-  // NOTE: We don't edit connections from the workflow, so existing connections should not be changed. If no new connections are added, there was no change.
-  if (!updatedKeys.some((conn) => !originalKeys.includes(conn))) {
+  if (!hasNewFunctionKeys && !hasNewApimKeys && !hasNewManagedApiKeys && !hasNewServiceProviderKeys) {
     return undefined;
   }
 
   const connectionsToUpdate = { ...connectionsJson };
-  for (const functionConnectionName of Object.keys(connectionsJson.functionConnections ?? {})) {
-    if (originalConnectionsJson.functionConnections?.[functionConnectionName]) {
-      (connectionsToUpdate.functionConnections as any)[functionConnectionName] =
-        originalConnectionsJson.functionConnections[functionConnectionName];
+
+  if (hasNewFunctionKeys) {
+    for (const functionConnectionName of Object.keys(connectionsJson.functionConnections ?? {})) {
+      if (originalConnectionsJson.functionConnections?.[functionConnectionName]) {
+        (connectionsToUpdate.functionConnections as any)[functionConnectionName] =
+          originalConnectionsJson.functionConnections[functionConnectionName];
+      }
     }
   }
 
-  for (const apimConnectionName of Object.keys(connectionsJson.apiManagementConnections ?? {})) {
-    if (originalConnectionsJson.apiManagementConnections?.[apimConnectionName]) {
-      (connectionsToUpdate.apiManagementConnections as any)[apimConnectionName] =
-        originalConnectionsJson.apiManagementConnections[apimConnectionName];
+  if (hasNewApimKeys) {
+    for (const apimConnectionName of Object.keys(connectionsJson.apiManagementConnections ?? {})) {
+      if (originalConnectionsJson.apiManagementConnections?.[apimConnectionName]) {
+        (connectionsToUpdate.apiManagementConnections as any)[apimConnectionName] =
+          originalConnectionsJson.apiManagementConnections[apimConnectionName];
+      }
     }
   }
 
-  for (const managedApiConnectionName of Object.keys(connectionsJson.managedApiConnections ?? {})) {
-    if (originalConnectionsJson.managedApiConnections?.[managedApiConnectionName]) {
-      // eslint-disable-next-line no-param-reassign
-      (connectionsJson.managedApiConnections as any)[managedApiConnectionName] =
-        originalConnectionsJson.managedApiConnections[managedApiConnectionName];
+  if (hasNewManagedApiKeys) {
+    for (const managedApiConnectionName of Object.keys(connectionsJson.managedApiConnections ?? {})) {
+      if (originalConnectionsJson.managedApiConnections?.[managedApiConnectionName]) {
+        // eslint-disable-next-line no-param-reassign
+        (connectionsJson.managedApiConnections as any)[managedApiConnectionName] =
+          originalConnectionsJson.managedApiConnections[managedApiConnectionName];
+      }
     }
   }
 
-  for (const serviceProviderConnectionName of Object.keys(connectionsJson.serviceProviderConnections ?? {})) {
-    if (originalConnectionsJson.serviceProviderConnections?.[serviceProviderConnectionName]) {
-      // eslint-disable-next-line no-param-reassign
-      (connectionsJson.serviceProviderConnections as any)[serviceProviderConnectionName] =
-        originalConnectionsJson.serviceProviderConnections[serviceProviderConnectionName];
+  if (hasNewServiceProviderKeys) {
+    for (const serviceProviderConnectionName of Object.keys(connectionsJson.serviceProviderConnections ?? {})) {
+      if (originalConnectionsJson.serviceProviderConnections?.[serviceProviderConnectionName]) {
+        // eslint-disable-next-line no-param-reassign
+        (connectionsJson.serviceProviderConnections as any)[serviceProviderConnectionName] =
+          originalConnectionsJson.serviceProviderConnections[serviceProviderConnectionName];
+      }
     }
   }
 
