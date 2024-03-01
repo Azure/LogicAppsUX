@@ -8,6 +8,8 @@ export type ContentType = (typeof ContentType)[keyof typeof ContentType];
 
 export interface IHostService {
   fetchAndDisplayContent(title: string, url: string, type: ContentType): void;
+  isBuiltInConnector?(connectorId: string): boolean;
+  isCustomConnector?(connectorId: string): boolean;
   openWorkflowParametersBlade?(): void;
   openConnectionResource?(connectionId: string): void;
 }
