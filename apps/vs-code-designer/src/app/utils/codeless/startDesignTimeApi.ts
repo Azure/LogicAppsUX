@@ -20,7 +20,6 @@ import {
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import { type settingsFileContent } from '../../commands/dataMapper/extensionConfig';
-import { downloadExtensionBundle } from '../bundleFeed';
 import { updateFuncIgnore } from '../codeless/common';
 import { writeFormattedJson } from '../fs';
 import { getFunctionsCommand } from '../funcCoreTools/funcVersion';
@@ -213,7 +212,6 @@ export async function promptStartDesignTimeOption(context: IActionContext) {
     const showStartDesignTimeMessage = !!getWorkspaceSetting<boolean>(showStartDesignTimeMessageSetting);
 
     if (projectPath) {
-      await downloadExtensionBundle(context);
       if (autoStartDesignTime) {
         startDesignTimeApi(projectPath);
       } else if (showStartDesignTimeMessage) {
