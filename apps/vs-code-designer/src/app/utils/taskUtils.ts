@@ -2,12 +2,9 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { ext } from '../../extensionVariables';
-import { localize } from '../../localize';
 import * as packageJson from '../../package.json';
 import { isPathEqual } from './fs';
 import * as AdmZip from 'adm-zip';
-import * as vscode from 'vscode';
 import type { Task, WorkspaceFolder } from 'vscode';
 import { tasks as codeTasks, window } from 'vscode';
 
@@ -110,31 +107,4 @@ export function showPreviewWarning(commandIdentifier: string): void {
     const commandTitle = targetCommand.title;
     window.showInformationMessage(`The "${commandTitle}" command is a preview feature and might be subject to change.`);
   }
-}
-/**
- * Handles errors by showing a localized error message in the Visual Studio Code UI
- * @param error - The error object containing details about the error that occurred.
- * @param messagePrefix - A string prefix that will be prepended to the error message.
- * @throws {Error} - Throws a new Error with a localized message including the prefix and error details.
- */
-export async function handleError(error: Error, messagePrefix: string): Promise<void> {
-  const errorMessage: string = error.message || 'Unknown Error';
-  let errorDetails: string = error.message || 'Unknown Error';
-
-  if (error.stack) {
-    errorDetails += `\nStack Trace: ${error.stack}`;
-  }
-
-  // Serializing other potential properties on the error object
-  const additionalErrorInfo: string = JSON.stringify(error, Object.getOwnPropertyNames(error));
-  if (additionalErrorInfo && additionalErrorInfo !== '{}') {
-    errorDetails += `\nAdditional Info: ${additionalErrorInfo}`;
-  }
-
-  ext.outputChannel.appendLog(localize('Error details', `${messagePrefix}: ${errorDetails}`));
-  const fullErrorMessage = `${messagePrefix}: ${errorMessage}`;
-  vscode.window.showErrorMessage(fullErrorMessage);
-
-  // Throwing a new error with the composed message for consistency and clarity
-  throw new Error(localize('handleError.error', fullErrorMessage));
 }
