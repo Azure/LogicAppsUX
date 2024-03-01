@@ -16,7 +16,6 @@ import type { DependencyInfo, NodeInputs, NodeOperation, OutputInfo } from '../.
 import { ErrorLevel, updateErrorDetails, DynamicLoadStatus, initializeOperationInfo } from '../../state/operation/operationMetadataSlice';
 import { addResultSchema } from '../../state/staticresultschema/staticresultsSlice';
 import type { WorkflowKind } from '../../state/workflow/workflowInterfaces';
-import { getBrandColorFromConnector, getIconUriFromConnector } from '../card';
 import { toOutputInfo, updateOutputsForBatchingTrigger } from '../outputs';
 import {
   addRecurrenceParametersInGroup,
@@ -29,16 +28,22 @@ import {
 } from '../parameters/helper';
 import { loadInputValuesFromDefinition } from './inputsbuilder';
 import { LogEntryLevel, LoggerService, StaticResultService } from '@microsoft/designer-client-services-logic-apps';
-import type { LAOperation, OutputParameter, SwaggerParser } from '@microsoft/logic-apps-shared';
+import { getBrandColorFromConnector, getIconUriFromConnector } from '@microsoft/designer-ui';
+import type { LAOperation, OutputParameter, SwaggerParser, LogicAppsV2, OperationInfo } from '@microsoft/logic-apps-shared';
 import {
   create,
   isDynamicSchemaExtension,
   ParameterLocations,
   removeConnectionPrefix,
   isTemplateExpression,
+  copyArray,
+  map,
+  RecurrenceType,
+  equals,
+  parsePathnameAndQueryKeyFromUri,
+  startsWith,
+  unmap,
 } from '@microsoft/logic-apps-shared';
-import type { LogicAppsV2, OperationInfo } from '@microsoft/logic-apps-shared';
-import { copyArray, map, RecurrenceType, equals, parsePathnameAndQueryKeyFromUri, startsWith, unmap } from '@microsoft/logic-apps-shared';
 import type { Dispatch } from '@reduxjs/toolkit';
 
 interface OperationInputInfo {

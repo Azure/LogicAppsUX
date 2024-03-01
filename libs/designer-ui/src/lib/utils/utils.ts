@@ -1,5 +1,6 @@
-import { isDesignerBuiltInConnector, isDesignerCustomConnector } from '../connections';
+import { isBuiltInConnector, isCustomConnector } from '../connectors';
 import Constants from '../constants';
+import type { Connector, OperationApi } from '@microsoft/logic-apps-shared';
 import { getIntl, equals } from '@microsoft/logic-apps-shared';
 
 /**
@@ -348,7 +349,7 @@ export const filterRecord = <T>(data: Record<string, T>, filter: (_key: string, 
     .reduce((res: any, [key, value]: any) => ({ ...res, [key]: value }), {});
 };
 
-export const getConnectorCategoryString = (connectorId: string): string => {
+export const getConnectorCategoryString = (connector: Connector | OperationApi | string): string => {
   const intl = getIntl();
   const builtInText = intl.formatMessage({
     defaultMessage: 'In App',
@@ -363,7 +364,7 @@ export const getConnectorCategoryString = (connectorId: string): string => {
     description: 'Custom category name text',
   });
 
-  return isDesignerBuiltInConnector(connectorId) ? builtInText : isDesignerCustomConnector(connectorId) ? customText : azureText;
+  return isBuiltInConnector(connector) ? builtInText : isCustomConnector(connector) ? customText : azureText;
 };
 
 export const convertUIElementNameToAutomationId = (uiElementName: string): string => {

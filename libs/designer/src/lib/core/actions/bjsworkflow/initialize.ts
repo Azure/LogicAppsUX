@@ -11,7 +11,6 @@ import { WorkflowKind } from '../../state/workflow/workflowInterfaces';
 import type { WorkflowParameterDefinition } from '../../state/workflowparameters/workflowparametersSlice';
 import { initializeParameters } from '../../state/workflowparameters/workflowparametersSlice';
 import type { RootState } from '../../store';
-import { getBrandColorFromConnector, getIconUriFromConnector } from '../../utils/card';
 import { getTriggerNodeId, isRootNodeInGraph } from '../../utils/graph';
 import { getSplitOnOptions, getUpdatedManifestForSchemaDependency, getUpdatedManifestForSplitOn, toOutputInfo } from '../../utils/outputs';
 import {
@@ -46,10 +45,9 @@ import {
   FunctionService,
   ApiManagementService,
 } from '@microsoft/designer-client-services-logic-apps';
-import type { OutputToken, ParameterInfo } from '@microsoft/designer-ui';
-import { getIntl } from '@microsoft/logic-apps-shared';
-import type { SchemaProperty, InputParameter, SwaggerParser, OutputParameter } from '@microsoft/logic-apps-shared';
+import { getBrandColorFromConnector, getIconUriFromConnector, type OutputToken, type ParameterInfo } from '@microsoft/designer-ui';
 import {
+  getIntl,
   isDynamicListExtension,
   isDynamicPropertiesExtension,
   isDynamicSchemaExtension,
@@ -59,8 +57,6 @@ import {
   DynamicSchemaType,
   ManifestParser,
   PropertyName,
-} from '@microsoft/logic-apps-shared';
-import {
   CustomSwaggerServiceNames,
   UnsupportedException,
   clone,
@@ -70,6 +66,10 @@ import {
   getObjectPropertyValue,
 } from '@microsoft/logic-apps-shared';
 import type {
+  SchemaProperty,
+  InputParameter,
+  SwaggerParser,
+  OutputParameter,
   CustomSwaggerServiceDetails,
   OperationInfo,
   OperationManifest,

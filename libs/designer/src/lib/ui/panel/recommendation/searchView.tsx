@@ -1,7 +1,7 @@
 import type { AppDispatch } from '../../../core';
 import { selectOperationGroupId } from '../../../core/state/panel/panelSlice';
 import { SearchService, type ISearchService } from '@microsoft/designer-client-services-logic-apps';
-import { SearchResultsGrid, isDesignerBuiltInConnector, isDesignerCustomConnector } from '@microsoft/designer-ui';
+import { SearchResultsGrid, isBuiltInConnector, isCustomConnector } from '@microsoft/designer-ui';
 import type { DiscoveryOpArray, DiscoveryOperation, DiscoveryResultTypes } from '@microsoft/logic-apps-shared';
 import { useDebouncedEffect } from '@react-hookz/web';
 import Fuse from 'fuse.js';
@@ -126,14 +126,10 @@ class DefaultSearchOperationsService implements Pick<ISearchService, 'searchOper
 
     const filterItems = (searchResult: FuseSearchResult): boolean => {
       if (runtimeFilter) {
-        if (runtimeFilter === 'inapp' && !isDesignerBuiltInConnector(searchResult.item.properties.api.id)) return false;
-        else if (runtimeFilter === 'custom' && !isDesignerCustomConnector(searchResult.item.properties.api.id)) return false;
+        if (runtimeFilter === 'inapp' && !isBuiltInConnector(searchResult.item.properties.api)) return false;
+        else if (runtimeFilter === 'custom' && !isCustomConnector(searchResult.item.properties.api)) return false;
         else if (runtimeFilter === 'shared')
-          if (
-            isDesignerBuiltInConnector(searchResult.item.properties.api.id) ||
-            isDesignerCustomConnector(searchResult.item.properties.api.id)
-          )
-            return false;
+          if (isBuiltInConnector(searchResult.item.properties.api) || isCustomConnector(searchResult.item.properties.api)) return false;
       }
 
       if (actionType) {

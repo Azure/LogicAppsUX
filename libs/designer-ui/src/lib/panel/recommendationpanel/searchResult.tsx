@@ -1,6 +1,6 @@
 import NoResultsSvg from '../../../assets/search/noResults.svg';
 import { AriaSearchResultsAlert } from '../../ariaSearchResults/ariaSearchResultsAlert';
-import { isDesignerBuiltInConnector } from '../../connections';
+import { isBuiltInConnector } from '../../connectors';
 import { getConnectorCategoryString } from '../../utils';
 import type { OperationActionData } from './interfaces';
 import { OperationSearchCard } from './operationSearchCard';
@@ -140,9 +140,9 @@ export const OperationActionDataFromOperation = (operation: DiscoveryOperation<D
   brandColor: operation.properties.api.brandColor,
   iconUri: operation.properties.api.iconUri,
   connectorName: operation.properties.api.displayName,
-  category: getConnectorCategoryString(operation.properties.api.id),
+  category: getConnectorCategoryString(operation.properties.api),
   isTrigger: !!operation.properties?.trigger,
-  isBuiltIn: isDesignerBuiltInConnector(operation.properties.api.id),
+  isBuiltIn: isBuiltInConnector(operation.properties.api),
   apiId: operation.properties.api.id,
   releaseStatus: operation.properties.annotation?.status,
 });

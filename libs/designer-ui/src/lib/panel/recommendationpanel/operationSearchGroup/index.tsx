@@ -16,7 +16,7 @@ export interface OperationSearchGroupProps {
 
 export const OperationSearchGroup = (props: OperationSearchGroupProps) => {
   const { operationApi, operationActionsData, onConnectorClick, onOperationClick, displayRuntimeInfo } = props;
-  const { id, displayName, description, iconUri } = operationApi;
+  const { id } = operationApi;
 
   const intl = useIntl();
 
@@ -29,15 +29,7 @@ export const OperationSearchGroup = (props: OperationSearchGroupProps) => {
 
   return (
     <div style={{ position: 'relative' }}>
-      <ConnectorSummaryCard
-        id={id}
-        connectorName={displayName}
-        description={description}
-        iconUrl={iconUri}
-        category={category}
-        isCard={false}
-        displayRuntimeInfo={displayRuntimeInfo}
-      />
+      <ConnectorSummaryCard connector={operationApi} category={category} isCard={false} displayRuntimeInfo={displayRuntimeInfo} />
       <Link className="msla-op-search-group-see-more" onClick={() => onConnectorClick(id)}>
         {seeMoreText}
       </Link>

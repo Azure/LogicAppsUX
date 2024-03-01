@@ -1,4 +1,4 @@
-import { type AppDispatch, getIconUriFromConnector } from '../../../../core';
+import { type AppDispatch } from '../../../../core';
 import { updateNodeConnection } from '../../../../core/actions/bjsworkflow/connections';
 import { useConnectionsForConnector } from '../../../../core/queries/connections';
 import { useNodeConnectionId, useConnectorByNodeId } from '../../../../core/state/connection/connectionSelector';
@@ -10,6 +10,7 @@ import { ConnectionTable } from './connectionTable';
 import { MessageBar, MessageBarType } from '@fluentui/react';
 import { Body1Strong, Button, Divider, Spinner } from '@fluentui/react-components';
 import { ConnectionService } from '@microsoft/designer-client-services-logic-apps';
+import { getIconUriFromConnector } from '@microsoft/designer-ui';
 import { type Connection, type Connector } from '@microsoft/logic-apps-shared';
 import { useCallback, useEffect, useMemo } from 'react';
 import { useIntl } from 'react-intl';

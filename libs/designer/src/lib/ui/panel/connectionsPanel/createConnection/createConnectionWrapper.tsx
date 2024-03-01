@@ -1,6 +1,6 @@
 import constants from '../../../../common/constants';
 import type { AppDispatch, RootState } from '../../../../core';
-import { getIconUriFromConnector, useOperationInfo, useSelectedNodeId, useSelectedNodeIds } from '../../../../core';
+import { useOperationInfo, useSelectedNodeId, useSelectedNodeIds } from '../../../../core';
 import type { ConnectionPayload } from '../../../../core/actions/bjsworkflow/connections';
 import {
   getConnectionMetadata,
@@ -29,6 +29,7 @@ import { CreateConnection } from './createConnection';
 import { Spinner } from '@fluentui/react-components';
 import type { ConnectionCreationInfo, ConnectionParametersMetadata } from '@microsoft/designer-client-services-logic-apps';
 import { ConnectionService, LogEntryLevel, LoggerService, WorkflowService } from '@microsoft/designer-client-services-logic-apps';
+import { getIconUriFromConnector } from '@microsoft/designer-ui';
 import {
   getRecordEntry,
   safeSetObjectPropertyValue,
