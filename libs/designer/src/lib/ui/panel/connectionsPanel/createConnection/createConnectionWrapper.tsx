@@ -62,6 +62,8 @@ export const CreateConnectionWrapper = () => {
   const availableGateways = useMemo(() => gatewaysQuery.data, [gatewaysQuery]);
   const gatewayServiceConfig = useGatewayServiceConfig();
 
+  const existingReferences = useSelector((state: RootState) => Object.keys(state.connections.connectionReferences));
+
   const identity = WorkflowService().getAppIdentity?.() as ManagedIdentity;
 
   const [isLoading, setIsLoading] = useState(false);
@@ -200,7 +202,7 @@ export const CreateConnectionWrapper = () => {
 
         let connection, err;
 
-        const newName = await getUniqueConnectionName(connector.id);
+        const newName = await getUniqueConnectionName(connector.id, existingReferences);
         if (isOAuthConnection) {
           await ConnectionService()
             .createAndAuthorizeOAuthConnection(newName, connector?.id ?? '', connectionInfo, parametersMetadata)
@@ -245,6 +247,7 @@ export const CreateConnectionWrapper = () => {
       closeConnectionsFlow,
       nodeIds,
       applyNewConnection,
+      existingReferences,
     ]
   );
 
