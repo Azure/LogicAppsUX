@@ -9,7 +9,6 @@ import {
   workflowSubscriptionIdKey,
   localSettingsFileName,
   extensionCommand,
-  COMMON_ERRORS,
 } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
@@ -18,7 +17,7 @@ import { getConnectionsJson } from '../../utils/codeless/connection';
 import { getAuthorizationToken, getCloudHost } from '../../utils/codeless/getAuthorizationToken';
 import { getAccountCredentials } from '../../utils/credentials';
 import { addLocalFuncTelemetry } from '../../utils/funcCoreTools/funcVersion';
-import { handleError, showPreviewWarning, unzipLogicAppArtifacts } from '../../utils/taskUtils';
+import { showPreviewWarning, unzipLogicAppArtifacts } from '../../utils/taskUtils';
 import type { IAzureScriptWizard } from './azureScriptWizard';
 import { createAzureWizard } from './azureScriptWizard';
 import { FileManagement } from './iacGestureHelperFunctions';
@@ -60,15 +59,10 @@ export async function generateDeploymentScripts(context: IActionContext, project
       FileManagement.convertToValidWorkspace(sourceControlPath);
     }
   } catch (error) {
-    if (error?.message === COMMON_ERRORS.OPERATION_CANCELLED) {
-      const errorMessage = localize('errorScriptGen', 'Error during deployment script generation: {0}', error?.message);
-      throw new Error(errorMessage);
-    } else {
-      const localizedErrorMessage = localize('errorScriptGen', '[Error] generateDeploymentScripts failed: {0}', error);
-      ext.outputChannel.appendLog(localizedErrorMessage);
-      ext.outputChannel.appendLog(`[Error] generateDeploymentScripts failed: ${error}`);
-      await handleError(error, 'Error during deployment script generation');
-    }
+    const errorMessage = localize('errorScriptGen', 'Error during deployment script generation: {0}', error.message ?? error);
+    ext.outputChannel.appendLog(errorMessage);
+    context.telemetry.properties.error = errorMessage;
+    throw new Error(errorMessage);
   }
 }
 
@@ -87,8 +81,9 @@ async function setupWizardScriptContext(context: IActionContext, projectRoot: vs
     scriptContext.projectPath = parentDirPath;
     return scriptContext;
   } catch (error) {
-    await handleError(error, 'Error in setupWizardScriptContext');
-    throw error;
+    const errorMessage = localize('executeAzureWizardError', `Error in setupWizardScriptContext`, error.message ?? error);
+    ext.outputChannel.appendLog(errorMessage);
+    throw new Error(errorMessage);
   }
 }
 
@@ -102,7 +97,7 @@ async function callStandardApi(inputs: any): Promise<Buffer> {
     const { subscriptionId, resourceGroup, storageAccount, location, logicAppName, appServicePlan } = inputs;
     return await callStandardResourcesApi(subscriptionId, resourceGroup, storageAccount, location, logicAppName, appServicePlan);
   } catch (error) {
-    await handleError(error, 'Error calling Standard Resources API');
+    throw new Error(localize('Error calling Standard Resources API', error));
   }
 }
 
@@ -158,7 +153,7 @@ export async function callConsumptionApi(scriptContext: IAzureScriptWizard, inpu
         );
         await handleApiResponse(bufferData, unzipPath);
       } catch (error) {
-        const errorString = JSON.stringify(error, Object.getOwnPropertyNames(error));
+        const errorString = JSON.stringify(error.message);
         ext.outputChannel.appendLog(
           localize(
             'failedApiCallForConnectionWithError',
@@ -167,15 +162,18 @@ export async function callConsumptionApi(scriptContext: IAzureScriptWizard, inpu
             errorString
           )
         );
-        vscode.window.showErrorMessage(localize('apiCallFailedWithError', 'API call failed: {0}', errorString));
         throw new Error(localize('apiCallToConsumptionResourcesFailed', 'API call to Consumption Resources failed: {0}', errorString));
       }
     }
   } catch (error) {
     ext.outputChannel.appendLog(
-      localize('failedAllConsumptionCalls', 'Failed to complete Consumption API calls for all managed connections.')
+      localize(
+        'failedAllConsumptionCalls',
+        'Failed to complete Consumption API calls for all managed connections: {0}',
+        error.message ?? error
+      )
     );
-    await handleError(error, localize('errorConsumptionResources', 'Error calling Consumption Resources API Connections'));
+    throw new Error(localize('errorConsumptionResources', error));
   }
 }
 
@@ -196,8 +194,9 @@ async function handleApiResponse(zipContent: Buffer | Buffer[], targetDirectory:
     await unzipLogicAppArtifacts(zipContent, targetDirectory);
     ext.outputChannel.appendLog(localize('artifactsSuccessfullyUnzipped', 'Artifacts successfully unzipped.'));
   } catch (error) {
-    ext.outputChannel.appendLog(localize('errorHandlingApiResponse', 'Error occurred while handling API response.'));
-    await handleError(error, localize('errorInHandleApiResponse', 'Error in handleApiResponse'));
+    const errorMessage = localize('errorHandlingApiResponse', 'Error occurred while handling API response: {0}', error.message ?? error);
+    ext.outputChannel.appendLog(errorMessage);
+    throw new Error(errorMessage);
   }
 }
 
@@ -254,6 +253,7 @@ async function callStandardResourcesApi(
       )
     );
     ext.outputChannel.appendLog(localize('initiatingStandardResourcesApiCall', 'Initiating Standard Resources API call...'));
+
     const response = await axios.post(apiUrl, deploymentArtifactsInput, {
       headers: {
         Accept: 'application/zip',
@@ -261,16 +261,14 @@ async function callStandardResourcesApi(
       },
       responseType: 'arraybuffer',
     });
+
     ext.outputChannel.appendLog(localize('apiCallSuccessful', 'API call successful, processing response...'));
     return Buffer.from(response.data, 'binary');
   } catch (error) {
-    ext.outputChannel.appendLog(
-      localize('failedStandardResourcesApiCall', `Failed to call Standard Resources API. Error: ${error.message || error}`)
-    );
-    if (error.stack) {
-      ext.outputChannel.appendLog(localize('errorStack', `Error Stack: ${error.stack}`));
-    }
-    await handleError(error, localize('errorStandardResourcesApi', 'Error calling Standard Resources API'));
+    const responseData = JSON.parse(new TextDecoder().decode(error.response.data));
+    const { message = '', code = '' } = responseData?.error ?? {};
+    ext.outputChannel.appendLog(localize('failedStandardResourcesApiCall', `Failed to call Standard Resources API: ${code} - ${message}`));
+    throw new Error(localize('errorStandardResourcesApi', message));
   }
 }
 
@@ -321,13 +319,10 @@ async function callManagedConnectionsApi(
     );
     return buffer;
   } catch (error) {
-    ext.outputChannel.appendLog(
-      localize(
-        'errorManagedConnectionsApi',
-        `Error encountered while calling Managed Connections API: ${JSON.stringify(error, Object.getOwnPropertyNames(error))}`
-      )
-    );
-    await handleError(error, localize('handleErrorManagedConnectionsApi', 'Error calling Managed Connections API'));
+    const responseData = JSON.parse(new TextDecoder().decode(error.response.data));
+    const { message = '', code = '' } = responseData?.error ?? {};
+    ext.outputChannel.appendLog(localize('errorManagedConnectionsApi', `Failed to call Managed Connections API: ${code} - ${message}`));
+    throw new Error(localize('errorManagedConnectionsApi', message));
   }
 }
 
@@ -341,13 +336,11 @@ async function gatherAndValidateInputs(scriptContext: IAzureScriptWizard, folder
   let localSettings;
 
   try {
-    ext.outputChannel.appendLog(localize('fetchLocalSettingsAttempt', 'Attempting to fetch local settings...'));
     localSettings = await getLocalSettings(scriptContext, folder);
-    ext.outputChannel.appendLog(localize('fetchLocalSettingsSuccess', `Successfully fetched local settings from ${localSettings}`));
   } catch (error) {
-    ext.outputChannel.appendLog(localize('fetchLocalSettingsError', `Error fetching local settings: ${error}`));
-    await handleError(error, localize('handleErrorFetchLocalSettings', 'Error fetching local settings'));
-    return;
+    const errorMessage = localize('errorFetchLocalSettings', 'Error fetching local settings: {0}', error.message ?? error);
+    ext.outputChannel.appendLog(errorMessage);
+    throw new Error(errorMessage);
   }
 
   const {
@@ -385,13 +378,9 @@ async function gatherAndValidateInputs(scriptContext: IAzureScriptWizard, folder
     await wizard.execute();
     ext.outputChannel.appendLog(localize('executeAzureWizardSuccess', 'Azure Wizard executed successfully.'));
   } catch (error) {
-    ext.outputChannel.appendLog(localize('executeAzureWizardError', `Error executing Azure Wizard: ${error}`));
-    if (error?.message === COMMON_ERRORS.OPERATION_CANCELLED) {
-      throw new Error(localize('handleError.error', error.message));
-    } else {
-      await handleError(error, localize('handleErrorExecuteAzureWizard', 'Error executing Azure Wizard'));
-    }
-    return;
+    const errorMessage = localize('executeAzureWizardError', `Error executing Azure Wizard: {0}`, error.message ?? error);
+    ext.outputChannel.appendLog(errorMessage);
+    throw new Error(errorMessage);
   }
 
   return {

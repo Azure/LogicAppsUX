@@ -44,10 +44,10 @@ export function createAzureWizard(wizardContext: IAzureScriptWizard): AzureWizar
 
   // Create the Azure Wizard with the modified steps
   return new AzureWizard(wizardContext, {
+    title: localize('generateDeploymentScripts', 'Generate deployment scripts'),
     promptSteps: [new ConfigureInitialLogicAppStep(), new setLogicappName(), new setStorageAccountName(), new setAppPlantName()],
     executeSteps: [new SourceControlPathListStep()],
     showLoadingPrompt: true,
-    title: localize('generateDeploymentScripts', 'Generate deployment scripts'),
   });
 }
 
@@ -119,8 +119,14 @@ export class setLogicappName extends AzureWizardPromptStep<IAzureScriptWizard> {
 
   public async prompt(context: IAzureScriptWizard): Promise<void> {
     context.logicAppName = await context.ui.showInputBox({
-      placeHolder: localize('setLogicappName', 'logicappName'),
-      prompt: localize('logicappNamePrompt', 'Provide a unique name for the logic app.'),
+      placeHolder: localize('setLogicAppName', 'Logic app name'),
+      prompt: localize('logicAppNamePrompt', 'Provide a unique name for the logic app.'),
+      validateInput: (value: string): string | undefined => {
+        if (!value || value.length === 0) {
+          return localize('logicAppNameEmpty', 'Logic app name cannot be empty');
+        }
+        return undefined;
+      },
     });
   }
 
@@ -135,8 +141,14 @@ export class setStorageAccountName extends AzureWizardPromptStep<IAzureScriptWiz
 
   public async prompt(context: IAzureScriptWizard): Promise<void> {
     context.storageAccountName = await context.ui.showInputBox({
-      placeHolder: localize('setStorageAccountName', 'storageAccountName'),
+      placeHolder: localize('setStorageAccountName', 'Storage account name'),
       prompt: localize('storageAccountNamePrompt', 'Provide a unique name for the storage account.'),
+      validateInput: (value: string): string | undefined => {
+        if (!value || value.length === 0) {
+          return localize('storageAccountNameEmpty', 'Storage account name cannot be empty');
+        }
+        return undefined;
+      },
     });
   }
 
@@ -151,8 +163,14 @@ export class setAppPlantName extends AzureWizardPromptStep<IAzureScriptWizard> {
 
   public async prompt(context: IAzureScriptWizard): Promise<void> {
     context.appServicePlan = await context.ui.showInputBox({
-      placeHolder: localize('setAppPlantName', 'appPlanName'),
+      placeHolder: localize('setAppPlanName', 'App Service plan name'),
       prompt: localize('appPlanNamePrompt', 'Provide a unique name for the App Service plan.'),
+      validateInput: (value: string): string | undefined => {
+        if (!value || value.length === 0) {
+          return localize('appPlanNameEmpty', 'App Service plan name cannot be empty');
+        }
+        return undefined;
+      },
     });
   }
 
