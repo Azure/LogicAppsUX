@@ -2,6 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
+import { ext } from '../../extensionVariables';
 import { localize } from '../../localize';
 import * as packageJson from '../../package.json';
 import { isPathEqual } from './fs';
@@ -117,6 +118,7 @@ export function showPreviewWarning(commandIdentifier: string): void {
  * @throws {Error} - Throws a new Error with a localized message including the prefix and error details.
  */
 export async function handleError(error: Error, messagePrefix: string): Promise<void> {
+  const errorMessage: string = error.message || 'Unknown Error';
   let errorDetails: string = error.message || 'Unknown Error';
 
   if (error.stack) {
@@ -129,7 +131,8 @@ export async function handleError(error: Error, messagePrefix: string): Promise<
     errorDetails += `\nAdditional Info: ${additionalErrorInfo}`;
   }
 
-  const fullErrorMessage = `${messagePrefix}: ${errorDetails}`;
+  ext.outputChannel.appendLog(localize('Error details', `${messagePrefix}: ${errorDetails}`));
+  const fullErrorMessage = `${messagePrefix}: ${errorMessage}`;
   vscode.window.showErrorMessage(fullErrorMessage);
 
   // Throwing a new error with the composed message for consistency and clarity

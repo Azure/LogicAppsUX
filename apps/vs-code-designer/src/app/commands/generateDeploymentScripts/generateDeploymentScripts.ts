@@ -254,6 +254,7 @@ async function callStandardResourcesApi(
       )
     );
     ext.outputChannel.appendLog(localize('initiatingStandardResourcesApiCall', 'Initiating Standard Resources API call...'));
+
     const response = await axios.post(apiUrl, deploymentArtifactsInput, {
       headers: {
         Accept: 'application/zip',
@@ -261,16 +262,17 @@ async function callStandardResourcesApi(
       },
       responseType: 'arraybuffer',
     });
+
     ext.outputChannel.appendLog(localize('apiCallSuccessful', 'API call successful, processing response...'));
     return Buffer.from(response.data, 'binary');
   } catch (error) {
-    ext.outputChannel.appendLog(
-      localize('failedStandardResourcesApiCall', `Failed to call Standard Resources API. Error: ${error.message || error}`)
-    );
+    const responseData = JSON.parse(new TextDecoder().decode(error.response.data));
+    const { message = '', code = '' } = responseData?.error ?? {};
+    ext.outputChannel.appendLog(localize('failedStandardResourcesApiCall', `Failed to call Standard Resources API: ${code} - ${message}`));
     if (error.stack) {
       ext.outputChannel.appendLog(localize('errorStack', `Error Stack: ${error.stack}`));
     }
-    await handleError(error, localize('errorStandardResourcesApi', 'Error calling Standard Resources API'));
+    throw new Error(localize('errorStandardResourcesApi', message));
   }
 }
 
@@ -321,13 +323,10 @@ async function callManagedConnectionsApi(
     );
     return buffer;
   } catch (error) {
-    ext.outputChannel.appendLog(
-      localize(
-        'errorManagedConnectionsApi',
-        `Error encountered while calling Managed Connections API: ${JSON.stringify(error, Object.getOwnPropertyNames(error))}`
-      )
-    );
-    await handleError(error, localize('handleErrorManagedConnectionsApi', 'Error calling Managed Connections API'));
+    const responseData = JSON.parse(new TextDecoder().decode(error.response.data));
+    const { message = '', code = '' } = responseData?.error ?? {};
+    ext.outputChannel.appendLog(localize('errorManagedConnectionsApi', `Failed to call Managed Connections API: ${code} - ${message}`));
+    throw new Error(localize('errorManagedConnectionsApi', message));
   }
 }
 
