@@ -1,6 +1,6 @@
+import { isDesignerBuiltInConnector, isDesignerCustomConnector } from '../connections';
 import Constants from '../constants';
-import { getIntl } from '@microsoft/logic-apps-shared';
-import { equals, isBuiltInConnector, isCustomConnector } from '@microsoft/logic-apps-shared';
+import { getIntl, equals } from '@microsoft/logic-apps-shared';
 
 /**
  * Returns a string with a duration, possibly abbreviated, e.g., 15s or 15 second(s)
@@ -363,7 +363,7 @@ export const getConnectorCategoryString = (connectorId: string): string => {
     description: 'Custom category name text',
   });
 
-  return isBuiltInConnector(connectorId) ? builtInText : isCustomConnector(connectorId) ? customText : azureText;
+  return isDesignerBuiltInConnector(connectorId) ? builtInText : isDesignerCustomConnector(connectorId) ? customText : azureText;
 };
 
 export const convertUIElementNameToAutomationId = (uiElementName: string): string => {

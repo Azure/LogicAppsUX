@@ -1,8 +1,8 @@
 import { useAllConnectionErrors } from '../../../../core';
 import { ConnectionEntry } from './connectionEntry';
 import { Text, AccordionHeader, AccordionPanel, Spinner, Badge } from '@fluentui/react-components';
-import { getConnectorCategoryString } from '@microsoft/designer-ui';
-import { fallbackConnectorIconUrl, isBuiltInConnector } from '@microsoft/logic-apps-shared';
+import { getConnectorCategoryString, isDesignerBuiltInConnector } from '@microsoft/designer-ui';
+import { fallbackConnectorIconUrl } from '@microsoft/logic-apps-shared';
 import { useMemo } from 'react';
 
 export interface ConnectorConnectionsCardProps {
@@ -24,7 +24,7 @@ export const ConnectorConnectionsCard: React.FC<ConnectorConnectionsCardProps> =
   disconnectedNodes = [],
   isLoading = false,
 }) => {
-  const isBuiltIn = isBuiltInConnector(connectorId);
+  const isBuiltIn = isDesignerBuiltInConnector(connectorId);
   const category = getConnectorCategoryString(connectorId);
 
   const allErrors = useAllConnectionErrors();

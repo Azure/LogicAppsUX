@@ -1,5 +1,6 @@
 import NoResultsSvg from '../../../assets/search/noResults.svg';
 import { AriaSearchResultsAlert } from '../../ariaSearchResults/ariaSearchResultsAlert';
+import { isDesignerBuiltInConnector } from '../../connections';
 import { getConnectorCategoryString } from '../../utils';
 import type { OperationActionData } from './interfaces';
 import { OperationSearchCard } from './operationSearchCard';
@@ -7,7 +8,6 @@ import { OperationSearchGroup } from './operationSearchGroup';
 import { List, Text } from '@fluentui/react';
 import { Spinner } from '@fluentui/react-components';
 import type { DiscoveryOpArray, DiscoveryOperation, DiscoveryResultTypes } from '@microsoft/logic-apps-shared';
-import { isBuiltInConnector } from '@microsoft/logic-apps-shared';
 import type { PropsWithChildren } from 'react';
 import React, { useMemo } from 'react';
 import { useIntl } from 'react-intl';
@@ -142,7 +142,7 @@ export const OperationActionDataFromOperation = (operation: DiscoveryOperation<D
   connectorName: operation.properties.api.displayName,
   category: getConnectorCategoryString(operation.properties.api.id),
   isTrigger: !!operation.properties?.trigger,
-  isBuiltIn: isBuiltInConnector(operation.properties.api.id),
+  isBuiltIn: isDesignerBuiltInConnector(operation.properties.api.id),
   apiId: operation.properties.api.id,
   releaseStatus: operation.properties.annotation?.status,
 });
