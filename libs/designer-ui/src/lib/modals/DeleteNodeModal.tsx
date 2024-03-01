@@ -1,11 +1,12 @@
 import { Modal } from '@fluentui/react';
 import { Button, Spinner } from '@fluentui/react-components';
 import type { WorkflowNodeType } from '@microsoft/logic-apps-shared';
-import { idDisplayCase, WORKFLOW_NODE_TYPES } from '@microsoft/logic-apps-shared';
+import { WORKFLOW_NODE_TYPES } from '@microsoft/logic-apps-shared';
 import { useIntl } from 'react-intl';
 
 export interface DeleteNodeModalProps {
   nodeId: string;
+  nodeName: string;
   nodeType?: WorkflowNodeType;
   isOpen: boolean;
   isLoading?: boolean;
@@ -14,11 +15,9 @@ export interface DeleteNodeModalProps {
 }
 
 export const DeleteNodeModal = (props: DeleteNodeModalProps) => {
-  const { nodeId, nodeType, isOpen, onDismiss, onConfirm } = props;
+  const { nodeId, nodeName, nodeType, isOpen, onDismiss, onConfirm } = props;
 
   const intl = useIntl();
-
-  const nodeName = idDisplayCase(nodeId);
 
   const operationNodeTitle = intl.formatMessage({
     defaultMessage: 'Delete Workflow Action',
