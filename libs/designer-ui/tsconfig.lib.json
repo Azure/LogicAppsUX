@@ -1,8 +1,8 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "outDir": "../../dist/libs/designer-ui",
-    "composite": true,
+    "declaration": true,
+    "declarationDir": "../../dist/libs/designer-ui",
     "types": ["node"]
   },
   "exclude": [
