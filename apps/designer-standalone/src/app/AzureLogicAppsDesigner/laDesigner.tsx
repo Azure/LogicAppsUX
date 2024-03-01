@@ -190,7 +190,8 @@ const DesignerEditor = () => {
       await Promise.all(
         referenceKeys.map(async (referenceKey) => {
           const reference = connectionReferences[referenceKey];
-          if (isArmResourceId(reference.connection.id) && !newManagedApiConnections[referenceKey]) {
+          if (!reference) return;
+          if (isArmResourceId(reference.connection?.id) && !newManagedApiConnections[referenceKey]) {
             // Managed API Connection
             const {
               api: { id: apiId },
@@ -210,7 +211,7 @@ const DesignerEditor = () => {
               connectionProperties,
             };
             newManagedApiConnections[referenceKey] = newConnectionObj;
-          } else if (reference.connection.id.startsWith('/serviceProviders/')) {
+          } else if (reference.connection?.id.startsWith('/serviceProviders/')) {
             // Service Provider Connection
             const connectionKey = reference.connection.id.split('/').splice(-1)[0];
             newServiceProviderConnections[referenceKey] = connectionsData?.serviceProviderConnections?.[connectionKey];
