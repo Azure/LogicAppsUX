@@ -9,8 +9,7 @@
     "noFallthroughCasesInSwitch": true,
     "jsx": "react",
     "esModuleInterop": true,
-    "resolveJsonModule": true,
-    "composite": true
+    "resolveJsonModule": true
   },
   "files": [],
   "include": [],
