@@ -1,8 +1,7 @@
 {
   "name": "@microsoft/logic-apps-shared",
-  "version": "2.116.0",
+  "version": "2.121.0",
   "scripts": {
-    "yalcpush": "yalc push ../../../dist/libs/logic-apps-shared"
-  },
-  "module": "./index.esm.js"
+    "yalcpush": "yalc push ../../dist/libs/logic-apps-shared"
+  }
 }
