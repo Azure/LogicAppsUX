@@ -190,8 +190,7 @@ const DesignerEditor = () => {
       await Promise.all(
         referenceKeys.map(async (referenceKey) => {
           const reference = connectionReferences[referenceKey];
-          if (!reference) return;
-          if (isArmResourceId(reference.connection?.id) && !newManagedApiConnections[referenceKey]) {
+          if (isArmResourceId(reference?.connection?.id) && !newManagedApiConnections[referenceKey]) {
             // Managed API Connection
             const {
               api: { id: apiId },
@@ -211,15 +210,21 @@ const DesignerEditor = () => {
               connectionProperties,
             };
             newManagedApiConnections[referenceKey] = newConnectionObj;
-          } else if (reference.connection?.id.startsWith('/serviceProviders/')) {
+          } else if (reference?.connection?.id.startsWith('/serviceProviders/')) {
             // Service Provider Connection
             const connectionKey = reference.connection.id.split('/').splice(-1)[0];
+            // We can't apply this directly in case there is a temporary key overlap
+            // We need to move the data out to a new object, delete the old data, then apply the new data at the end
             newServiceProviderConnections[referenceKey] = connectionsData?.serviceProviderConnections?.[connectionKey];
+            delete connectionsData?.serviceProviderConnections?.[connectionKey];
           }
         })
       );
       (connectionsData as ConnectionsData).managedApiConnections = newManagedApiConnections;
-      (connectionsData as ConnectionsData).serviceProviderConnections = newServiceProviderConnections;
+      (connectionsData as ConnectionsData).serviceProviderConnections = {
+        ...connectionsData?.serviceProviderConnections,
+        ...newServiceProviderConnections,
+      };
     }
 
     const connectionsToUpdate = getConnectionsToUpdate(originalConnectionsData, connectionsData ?? {});
