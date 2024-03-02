@@ -17,8 +17,8 @@ import { getBrandColorFromManifest, getIconUriFromManifest } from '../../utils/c
 import { getTriggerNodeId, isRootNodeInGraph } from '../../utils/graph';
 import { updateDynamicDataInNode } from '../../utils/parameters/helper';
 import { getInputParametersFromSwagger, getOutputParametersFromSwagger } from '../../utils/swagger/operation';
-import { getTokenNodeIds, getBuiltInTokens, convertOutputsToTokens } from '../../utils/tokens';
-import { setVariableMetadata, getVariableDeclarations, getAllVariables } from '../../utils/variables';
+import { convertOutputsToTokens, getBuiltInTokens, getTokenNodeIds } from '../../utils/tokens';
+import { getAllVariables, getVariableDeclarations, setVariableMetadata } from '../../utils/variables';
 import { isConnectionRequiredForOperation, updateNodeConnection } from './connections';
 import {
   getInputParametersFromManifest,
@@ -32,12 +32,12 @@ import { getOperationSettings, getSplitOnValue } from './settings';
 import { ConnectionService, OperationManifestService, StaticResultService } from '@microsoft/designer-client-services-logic-apps';
 import { getBrandColorFromConnector, getIconUriFromConnector } from '@microsoft/designer-ui';
 import type {
-  SwaggerParser,
   Connector,
   DiscoveryOperation,
   DiscoveryResultTypes,
   OperationManifest,
   SomeKindOfAzureOperationDiscovery,
+  SwaggerParser,
 } from '@microsoft/logic-apps-shared';
 import { ManifestParser, equals, getRecordEntry } from '@microsoft/logic-apps-shared';
 import type { Dispatch } from '@reduxjs/toolkit';

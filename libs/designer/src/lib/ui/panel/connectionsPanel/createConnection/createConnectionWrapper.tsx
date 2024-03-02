@@ -3,11 +3,11 @@ import type { AppDispatch, RootState } from '../../../../core';
 import { useOperationInfo, useSelectedNodeId, useSelectedNodeIds } from '../../../../core';
 import type { ConnectionPayload } from '../../../../core/actions/bjsworkflow/connections';
 import {
+  getApiHubAuthentication,
   getConnectionMetadata,
   getConnectionProperties,
-  getApiHubAuthentication,
-  updateNodeConnection,
   needsOAuth,
+  updateNodeConnection,
 } from '../../../../core/actions/bjsworkflow/connections';
 import { getUniqueConnectionName } from '../../../../core/queries/connections';
 import {

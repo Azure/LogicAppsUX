@@ -1,7 +1,7 @@
 import { type AppDispatch } from '../../../../core';
 import { updateNodeConnection } from '../../../../core/actions/bjsworkflow/connections';
 import { useConnectionsForConnector } from '../../../../core/queries/connections';
-import { useNodeConnectionId, useConnectorByNodeId } from '../../../../core/state/connection/connectionSelector';
+import { useConnectorByNodeId, useNodeConnectionId } from '../../../../core/state/connection/connectionSelector';
 import { useIsXrmConnectionReferenceMode } from '../../../../core/state/designerOptions/designerOptionsSelectors';
 import { useReferencePanelMode, useSelectedNodeIds } from '../../../../core/state/panel/panelSelectors';
 import { openPanel, setIsCreatingConnection } from '../../../../core/state/panel/panelSlice';

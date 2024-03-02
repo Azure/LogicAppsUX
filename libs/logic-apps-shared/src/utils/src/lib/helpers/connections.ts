@@ -1,7 +1,7 @@
 import type { Connection, ConnectionStatus, ManagedIdentity } from '../models';
 import { ResourceIdentityType } from '../models';
+import type { ConnectionParameter, Connector } from '../models/connector';
 import { ConnectionParameterTypes } from '../models/connector';
-import type { Connector, ConnectionParameter } from '../models/connector';
 import { equals, hasProperty } from './functions';
 import type { IntlShape } from 'react-intl';
 

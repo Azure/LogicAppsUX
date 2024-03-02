@@ -24,8 +24,8 @@ import type { ManifestParser, SwaggerParser } from '@microsoft/logic-apps-shared
 import {
   isCustomConnectorId,
   isManagedConnectorId,
-  isSharedManagedConnectorIdFromPApps,
   isSharedManagedConnectorId,
+  isSharedManagedConnectorIdFromPApps,
 } from '@microsoft/logic-apps-shared';
 
 /**

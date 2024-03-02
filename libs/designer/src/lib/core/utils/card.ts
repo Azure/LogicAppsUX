@@ -1,5 +1,5 @@
 import { getBrandColorFromConnector, getIconUriFromConnector } from '@microsoft/designer-ui';
-import type { OperationManifest } from '@microsoft/utils-logic-apps';
+import type { OperationManifest } from '@microsoft/logic-apps-shared';
 
 export function getBrandColorFromManifest(manifest: OperationManifest): string {
   return manifest.properties?.brandColor ?? getBrandColorFromConnector(manifest.properties?.connector);

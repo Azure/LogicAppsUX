@@ -1,4 +1,4 @@
-import { type RootState, useConnectionMapping, useConnectionRefs } from '../../../../core';
+import { useConnectionMapping, useConnectionRefs, type RootState } from '../../../../core';
 import { useConnector } from '../../../../core/state/connection/connectionSelector';
 import { ConnectorConnectionsCard } from './connectorConnectionsCard';
 import { Accordion, AccordionItem, type AccordionToggleEventHandler } from '@fluentui/react-components';

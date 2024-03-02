@@ -4,7 +4,7 @@ import type { WorkflowNode } from '../../parsers/models/workflowNode';
 import { getConnectorWithSwagger, getSwaggerFromEndpoint } from '../../queries/connections';
 import { getOperationManifest } from '../../queries/operation';
 import type { DependencyInfo, NodeInputs, NodeOperation, NodeOutputs, OutputInfo } from '../../state/operation/operationMetadataSlice';
-import { updateNodeSettings, updateNodeParameters, DynamicLoadStatus, updateOutputs } from '../../state/operation/operationMetadataSlice';
+import { DynamicLoadStatus, updateNodeParameters, updateNodeSettings, updateOutputs } from '../../state/operation/operationMetadataSlice';
 import type { UpdateUpstreamNodesPayload } from '../../state/tokens/tokensSlice';
 import { updateTokens, updateUpstreamNodes } from '../../state/tokens/tokensSlice';
 import { WorkflowKind } from '../../state/workflow/workflowInterfaces';
@@ -14,6 +14,7 @@ import type { RootState } from '../../store';
 import { getTriggerNodeId, isRootNodeInGraph } from '../../utils/graph';
 import { getSplitOnOptions, getUpdatedManifestForSchemaDependency, getUpdatedManifestForSplitOn, toOutputInfo } from '../../utils/outputs';
 import {
+  ParameterGroupKeys,
   addRecurrenceParametersInGroup,
   getAllInputParameters,
   getDependentParameters,
@@ -21,7 +22,6 @@ import {
   getParameterFromName,
   getParametersSortedByVisibility,
   loadParameterValuesArrayFromDefault,
-  ParameterGroupKeys,
   toParameterInfoMap,
   updateParameterWithValues,
 } from '../../utils/parameters/helper';
@@ -32,48 +32,48 @@ import type { NodeInputsWithDependencies, NodeOutputsWithDependencies } from './
 import type { Settings } from './settings';
 import type {
   IConnectionService,
+  IOAuthService,
   IOperationManifestService,
   ISearchService,
-  IOAuthService,
   IWorkflowService,
 } from '@microsoft/designer-client-services-logic-apps';
 import {
-  WorkflowService,
-  LoggerService,
-  LogEntryLevel,
-  OperationManifestService,
-  FunctionService,
   ApiManagementService,
+  FunctionService,
+  LogEntryLevel,
+  LoggerService,
+  OperationManifestService,
+  WorkflowService,
 } from '@microsoft/designer-client-services-logic-apps';
 import { getBrandColorFromConnector, getIconUriFromConnector, type OutputToken, type ParameterInfo } from '@microsoft/designer-ui';
+import type {
+  CustomSwaggerServiceDetails,
+  InputParameter,
+  OperationInfo,
+  OperationManifest,
+  OperationManifestProperties,
+  OutputParameter,
+  SchemaProperty,
+  SwaggerParser,
+} from '@microsoft/logic-apps-shared';
 import {
+  ConnectionReferenceKeyFormat,
+  CustomSwaggerServiceNames,
+  DynamicSchemaType,
+  ManifestParser,
+  PropertyName,
+  UnsupportedException,
+  clone,
+  equals,
   getIntl,
+  getObjectPropertyValue,
   isDynamicListExtension,
   isDynamicPropertiesExtension,
   isDynamicSchemaExtension,
   isDynamicTreeExtension,
   isLegacyDynamicValuesExtension,
   isLegacyDynamicValuesTreeExtension,
-  DynamicSchemaType,
-  ManifestParser,
-  PropertyName,
-  CustomSwaggerServiceNames,
-  UnsupportedException,
-  clone,
-  equals,
-  ConnectionReferenceKeyFormat,
   unmap,
-  getObjectPropertyValue,
-} from '@microsoft/logic-apps-shared';
-import type {
-  SchemaProperty,
-  InputParameter,
-  SwaggerParser,
-  OutputParameter,
-  CustomSwaggerServiceDetails,
-  OperationInfo,
-  OperationManifest,
-  OperationManifestProperties,
 } from '@microsoft/logic-apps-shared';
 import type { Dispatch } from '@reduxjs/toolkit';
 

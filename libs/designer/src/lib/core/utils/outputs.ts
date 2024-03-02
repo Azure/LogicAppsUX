@@ -7,9 +7,9 @@ import { getOperationManifest } from '../queries/operation';
 import type { DependencyInfo, NodeInputs, NodeOperation, NodeOutputs, OutputInfo } from '../state/operation/operationMetadataSlice';
 import {
   ErrorLevel,
-  updateErrorDetails,
-  clearDynamicOutputs,
   addDynamicOutputs,
+  clearDynamicOutputs,
+  updateErrorDetails,
   updateExisitingInputTokenTitles,
 } from '../state/operation/operationMetadataSlice';
 import { addDynamicTokens } from '../state/tokens/tokensSlice';
@@ -26,40 +26,40 @@ import {
 import { convertOutputsToTokens, getTokenTitle } from './tokens';
 import { OperationManifestService } from '@microsoft/designer-client-services-logic-apps';
 import {
+  ValueSegmentType,
   generateSchemaFromJsonString,
   getBrandColorFromConnector,
   getIconUriFromConnector,
-  ValueSegmentType,
 } from '@microsoft/designer-ui';
 import type {
   Expression,
   ExpressionFunction,
   ExpressionLiteral,
+  OpenAPIV2,
+  OpenApiSchema,
+  OperationManifest,
   OutputParameter,
   OutputParameters,
-  OpenApiSchema,
-  OpenAPIV2,
-  OperationManifest,
 } from '@microsoft/logic-apps-shared';
 import {
-  create,
-  getIntl,
-  OutputKeys,
-  OutputSource,
-  ExpressionParser,
-  ExtensionProperties,
-  isTemplateExpression,
-  isFunction,
-  isStringLiteral,
-  ConnectionReferenceKeyFormat,
-  getObjectPropertyValue,
-  safeSetObjectPropertyValue,
-  unmap,
   AssertionErrorCode,
   AssertionException,
+  ConnectionReferenceKeyFormat,
+  ExpressionParser,
+  ExtensionProperties,
+  OutputKeys,
+  OutputSource,
   clone,
+  create,
   equals,
+  getIntl,
+  getObjectPropertyValue,
+  isFunction,
+  isStringLiteral,
+  isTemplateExpression,
   parseErrorMessage,
+  safeSetObjectPropertyValue,
+  unmap,
 } from '@microsoft/logic-apps-shared';
 import type { Dispatch } from '@reduxjs/toolkit';
 

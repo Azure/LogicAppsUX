@@ -1,6 +1,6 @@
 import { useAllConnectionErrors } from '../../../../core';
 import { ConnectionEntry } from './connectionEntry';
-import { Text, AccordionHeader, AccordionPanel, Spinner, Badge } from '@fluentui/react-components';
+import { AccordionHeader, AccordionPanel, Badge, Spinner, Text } from '@fluentui/react-components';
 import {
   getBrandColorFromConnector,
   getConnectorCategoryString,

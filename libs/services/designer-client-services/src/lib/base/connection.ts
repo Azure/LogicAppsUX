@@ -3,22 +3,22 @@ import type { HttpResponse } from '../common/exceptions/service';
 import type {
   ConnectionCreationInfo,
   ConnectionParametersMetadata,
+  ConnectorWithSwagger,
   CreateConnectionResult,
   IConnectionService,
-  ConnectorWithSwagger,
 } from '../connection';
 import type { HttpRequestOptions, IHttpClient, QueryParameters } from '../httpClient';
 import type { Connection, Connector, OpenAPIV2 } from '@microsoft/logic-apps-shared';
 import {
-  isCustomConnectorId,
-  getUniqueName,
+  ArgumentException,
   HTTP_METHODS,
+  SwaggerParser,
   UserErrorCode,
   UserException,
-  isArmResourceId,
-  ArgumentException,
   equals,
-  SwaggerParser,
+  getUniqueName,
+  isArmResourceId,
+  isCustomConnectorId,
 } from '@microsoft/logic-apps-shared';
 
 export interface ApiHubServiceDetails {
