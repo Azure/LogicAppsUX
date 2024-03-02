@@ -14,7 +14,6 @@ export const getAllConnectorProperties = (connector: Connector | OperationApi | 
 };
 
 export const getBrandColorFromConnector = (connector: Connector | OperationApi | undefined): string => {
-  console.log(connector, getAllConnectorProperties(connector), getAllConnectorProperties(connector)?.brandColor);
   return getAllConnectorProperties(connector)?.brandColor ?? '#000000';
 };
 
