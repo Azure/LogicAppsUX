@@ -250,6 +250,8 @@ export const AssertionsPanel = (props: CommonPanelProps) => {
     callback();
   }, [tokens]);
 
+  console.log('charlie tokens', tokens);
+
   const onGetTokenPicker = useCallback(
     (
       editorId: string,

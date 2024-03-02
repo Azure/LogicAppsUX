@@ -3,7 +3,6 @@ import { ActionResult } from './actionResult';
 import { OutputsSettings } from './ouputsSettings';
 import './outputMocks.less';
 import { Divider, Text } from '@fluentui/react-components';
-import { type OutputInfo } from '@microsoft/designer-client-services-logic-apps';
 import { useIntl } from 'react-intl';
 
 export interface MockUpdateEvent {
@@ -17,11 +16,12 @@ export interface OutputMocksProps {
   isMockSupported: boolean;
   nodeId: string;
   onMockUpdate: MockUpdateHandler;
-  outputs: Record<string, OutputInfo>;
+  outputs: any[];
 }
 
 export const OutputMocks = ({ isMockSupported, nodeId, onMockUpdate, outputs }: OutputMocksProps) => {
   const intl = useIntl();
+  console.log('charlie parseOutput', outputs);
 
   const intlText = {
     UNSUPPORTED_MOCKS: intl.formatMessage({

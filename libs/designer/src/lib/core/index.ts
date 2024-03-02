@@ -29,3 +29,4 @@ export { updateParameterValidation } from './state/operation/operationMetadataSl
 export { updateWorkflowParameters } from './actions/bjsworkflow/initialize';
 export { getBrandColorFromManifest, getIconUriFromManifest, getBrandColorFromConnector, getIconUriFromConnector } from './utils/card';
 export { useAssertionsValidationErrors } from './state/unitTest/unitTestSelectors';
+export {convertVariableTypeToSwaggerType} from './utils/variables';
