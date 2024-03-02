@@ -17,9 +17,9 @@ export const Status: React.FC = () => {
     }),
   };
 
-  const renderStatus = (status?: string, index?: number): JSX.Element => {
+  const renderStatus = (status?: string, index?: number, final?: string): JSX.Element => {
     const icon =
-      index === statuses.length - 1 && finalStatus !== FinalStatus.Succeeded ? (
+      index === statuses.length - 1 && final !== FinalStatus.Succeeded ? (
         <Spinner size={SpinnerSize.small} />
       ) : (
         <Icon iconName={'SkypeCheck'} />
@@ -38,7 +38,7 @@ export const Status: React.FC = () => {
       <Text variant="xLarge" block>
         {intlText.EXPORT_STATUS_TITLE}
       </Text>
-      <List items={statuses} onRenderCell={renderStatus} />
+      <List items={statuses} onRenderCell={(status, index) => renderStatus(status, index, finalStatus)} />
       <FinalStatusGadget finalStatus={finalStatus} />
     </div>
   );
@@ -63,7 +63,7 @@ const FinalStatusGadget: React.FC<FinalStatusGadgetProps> = ({ finalStatus }) =>
       return (
         <div className="msla-export-status--item">
           <Icon iconName={'SkypeCheck'} />
-          <Text block>
+          <Text style={{ marginLeft: '5px' }}>
             {message} {targetDirectory.path}/.logs/export/README.md
           </Text>
         </div>
