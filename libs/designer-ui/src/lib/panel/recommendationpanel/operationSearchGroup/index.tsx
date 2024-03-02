@@ -20,7 +20,7 @@ export const OperationSearchGroup = (props: OperationSearchGroupProps) => {
 
   const intl = useIntl();
 
-  const category = getConnectorCategoryString(id);
+  const category = getConnectorCategoryString(operationApi);
 
   const seeMoreText = intl.formatMessage({
     defaultMessage: 'See more',

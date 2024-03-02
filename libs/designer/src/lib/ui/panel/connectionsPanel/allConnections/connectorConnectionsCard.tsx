@@ -31,8 +31,8 @@ export const ConnectorConnectionsCard: React.FC<ConnectorConnectionsCardProps> =
   const iconUri = getIconUriFromConnector(connector);
   const brandColor = getBrandColorFromConnector(connector);
 
-  const isBuiltIn = isBuiltInConnector(connectorId);
-  const category = getConnectorCategoryString(connectorId);
+  const isBuiltIn = isBuiltInConnector(connector ?? connectorId);
+  const category = getConnectorCategoryString(connector ?? connectorId);
 
   const allErrors = useAllConnectionErrors();
   const hasErrors = useMemo(() => {

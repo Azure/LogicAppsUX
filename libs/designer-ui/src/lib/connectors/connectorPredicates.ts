@@ -1,21 +1,24 @@
-import type { IsConnectorFn } from '@microsoft/designer-client-services-logic-apps';
 import { HostService } from '@microsoft/designer-client-services-logic-apps';
+import type { Connector, OperationApi} from '@microsoft/logic-apps-shared';
 import { isBuiltInConnectorId, isCustomConnectorId, isString } from '@microsoft/logic-apps-shared';
+import { getAllConnectorProperties } from './connectorProperties';
 
-export const isBuiltInConnector: IsConnectorFn = (connector) => {
+export const isBuiltInConnector = (connector: Connector | OperationApi | string): boolean => {
   const hostIsBuiltInConnectorFn = HostService()?.isBuiltInConnector;
   if (hostIsBuiltInConnectorFn) {
-    return hostIsBuiltInConnectorFn(connector);
+    const connectorParameter = isString(connector) ? connector : getAllConnectorProperties(connector);
+    return hostIsBuiltInConnectorFn(connectorParameter);
   }
 
   const connectorId = isString(connector) ? connector : connector.id;
   return isBuiltInConnectorId(connectorId);
 };
 
-export const isCustomConnector: IsConnectorFn = (connector) => {
+export const isCustomConnector = (connector: Connector | OperationApi | string): boolean => {
   const hostIsCustomConnectorFn = HostService()?.isCustomConnector;
   if (hostIsCustomConnectorFn) {
-    return hostIsCustomConnectorFn(connector);
+    const connectorParameter = isString(connector) ? connector : getAllConnectorProperties(connector);
+    return hostIsCustomConnectorFn(connectorParameter);
   }
 
   const connectorId = isString(connector) ? connector : connector.id;

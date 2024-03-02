@@ -35,9 +35,9 @@ export const BrowseGrid = (props: BrowseGridProps) => {
           <div className="msla-browse-list-tile" style={{ width: forceSingleCol ? '100%' : '50%' }}>
             <ConnectorSummaryCard
               key={connector.id}
-              connector={{ id: connector.id, ...connector.properties }}
+              connector={connector}
               onClick={onConnectorSelected}
-              category={getConnectorCategoryString(connector.id)}
+              category={getConnectorCategoryString(connector)}
               displayRuntimeInfo={displayRuntimeInfo}
             />
           </div>
