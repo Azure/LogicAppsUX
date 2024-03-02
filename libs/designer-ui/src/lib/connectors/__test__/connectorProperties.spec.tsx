@@ -39,13 +39,38 @@ describe('lib/connectors/connectorProperties', () => {
   });
 
   describe('getBrandColorFromConnector', () => {
-    test('works for a Connector', () => {
-      const connector = {
-        properties: {
-          brandColor: 'red',
-        },
-      } as Connector;
-      expect(getBrandColorFromConnector(connector)).toBe('red');
+    describe('works for a Connector with', () => {
+      test('standard field only', () => {
+        const connector = {
+          properties: {
+            brandColor: 'red',
+          },
+        } as Connector;
+        expect(getBrandColorFromConnector(connector)).toBe('red');
+      });
+
+      test('metadata field only', () => {
+        const connector = {
+          properties: {
+            metadata: {
+              brandColor: 'red',
+            },
+          },
+        } as Connector;
+        expect(getBrandColorFromConnector(connector)).toBe('red');
+      });
+
+      test('standard field and metadata field', () => {
+        const connector = {
+          properties: {
+            brandColor: 'red',
+            metadata: {
+              brandColor: 'blue',
+            },
+          },
+        } as Connector;
+        expect(getBrandColorFromConnector(connector)).toBe('red');
+      });
     });
 
     test('works for an OperationApi', () => {
