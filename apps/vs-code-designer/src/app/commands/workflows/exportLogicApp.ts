@@ -83,6 +83,7 @@ class ExportEngine {
       const templateExists = await fse.pathExists(templatePath);
       if (!this.resourceGroupName || !templateExists) {
         this.setFinalStatus('Succeeded');
+        this.addStatus(localize('workflowsExportedSuccessfully', 'The selected workflows exported successfully.'));
         const uri: vscode.Uri = vscode.Uri.file(this.targetDirectory);
         vscode.commands.executeCommand('vscode.openFolder', uri, { forceNewWindow: true });
         return;
@@ -107,6 +108,7 @@ class ExportEngine {
       await this.updateParametersAndSettings(output, parametersFile, localSettingsFile);
 
       this.setFinalStatus('Succeeded');
+      this.addStatus(localize('workflowsExportedSuccessfully', 'The selected workflows exported successfully.'));
       const uri: vscode.Uri = vscode.Uri.file(this.targetDirectory);
       vscode.commands.executeCommand('vscode.openFolder', uri, { forceNewWindow: true });
     } catch (error) {

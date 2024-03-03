@@ -17,16 +17,16 @@ export const Status: React.FC = () => {
     }),
   };
 
-  const renderStatus = (status?: string, index?: number, final?: string): JSX.Element => {
+  const renderStatus = (status?: string, index?: number): JSX.Element => {
     const icon =
-      index === statuses.length - 1 && final !== FinalStatus.Succeeded ? (
+      index === statuses.length - 1 && finalStatus !== FinalStatus.Succeeded ? (
         <Spinner size={SpinnerSize.small} />
       ) : (
         <Icon iconName={'SkypeCheck'} />
       );
 
     return (
-      <div className="msla-export-status--item">
+      <div key={`index-${finalStatus}`} className="msla-export-status--item">
         {icon}
         <Text style={{ marginLeft: '5px' }}>{status}</Text>
       </div>
@@ -38,7 +38,7 @@ export const Status: React.FC = () => {
       <Text variant="xLarge" block>
         {intlText.EXPORT_STATUS_TITLE}
       </Text>
-      <List items={statuses} onRenderCell={(status, index) => renderStatus(status, index, finalStatus)} />
+      <List items={statuses} onRenderCell={renderStatus} />
       <FinalStatusGadget finalStatus={finalStatus} />
     </div>
   );
@@ -54,7 +54,7 @@ const FinalStatusGadget: React.FC<FinalStatusGadgetProps> = ({ finalStatus }) =>
   const { targetDirectory } = workflowState.exportData;
 
   const message = intl.formatMessage({
-    defaultMessage: 'The selected workflows exported successfully. For next steps, review the ',
+    defaultMessage: 'For next steps, review the ',
     description: 'The success message.',
   });
 
