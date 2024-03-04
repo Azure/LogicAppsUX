@@ -33,7 +33,7 @@
       "commands": [
         {
           "command": "azureLogicAppsStandard.createLogicApp",
-          "title": "Create Logic App in Azure...",
+          "title": "Create logic app in Azure...",
           "type": "LogicApp",
           "detail": "To create and run automated workflows with little to no code."
         }
@@ -106,12 +106,12 @@
       },
       {
         "command": "azureLogicAppsStandard.createLogicApp",
-        "title": "Create Logic App in Azure...",
+        "title": "Create logic app in Azure...",
         "category": "Azure Logic Apps"
       },
       {
         "command": "azureLogicAppsStandard.createLogicAppAdvanced",
-        "title": "Create Logic App in Azure... (Advanced)",
+        "title": "Create logic app in Azure... (Advanced)",
         "category": "Azure Logic Apps"
       },
       {
@@ -131,7 +131,7 @@
       },
       {
         "command": "azureLogicAppsStandard.deleteLogicApp",
-        "title": "Delete Logic App...",
+        "title": "Delete logic app...",
         "category": "Azure Logic Apps"
       },
       {
@@ -155,7 +155,7 @@
       },
       {
         "command": "azureLogicAppsStandard.switchToDotnetProject",
-        "title": "Convert to NuGet-based Logic App project",
+        "title": "Convert to NuGet-based logic app project",
         "category": "Azure Logic Apps"
       },
       {
@@ -264,7 +264,7 @@
       },
       {
         "command": "azureLogicAppsStandard.useSQLStorage",
-        "title": "Use SQL storage for your Logic App project",
+        "title": "Use SQL storage for your logic app project",
         "category": "Azure Logic Apps"
       },
       {
@@ -737,7 +737,7 @@
               "~4",
               "~3"
             ],
-            "description": "The default version of the Azure Functions runtime to use when performing operations like \"Create New Logic App\".",
+            "description": "The default version of the Azure Functions runtime to use when performing operations like \"Create new logic app\".",
             "enumDescriptions": [
               "Azure Functions v4",
               "Azure Functions v3 (.NET Core)"
