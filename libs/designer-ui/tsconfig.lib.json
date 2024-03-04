@@ -2,7 +2,7 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "declaration": true,
-    "declarationDir": "../../dist/libs/designer-ui",
+    "declarationDir": "../../dist/rollup/lib/designer-ui",
     "types": ["node"]
   },
   "exclude": [
