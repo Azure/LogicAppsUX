@@ -1,8 +1,23 @@
 # Logic Apps Designer
 
+## [2.122.0](https://github.com/Azure/LogicAppsUX/compare/v2.121.0...v2.122.0) (2024-03-01)
+
 ## [2.121.0](https://github.com/Azure/LogicAppsUX/compare/v2.120.0...v2.121.0) (2024-02-29)
 
 ## [2.101.0](https://github.com/Azure/LogicAppsUX/compare/v2.100.0...v2.101.0) (2024-01-09)
+
+### Features
+
+- **designer:** Adding hidden parameter field in ConnectionCreationIn… ([#4275](https://github.com/Azure/LogicAppsUX/issues/4275)) ([49b2c9c](https://github.com/Azure/LogicAppsUX/commit/49b2c9c0098a97e8832d3f0b682c47c7b7d7c025))
+- **vscode:** Download extension bundle in extension activation instead of project initialization ([#4287](https://github.com/Azure/LogicAppsUX/issues/4287)) ([a663771](https://github.com/Azure/LogicAppsUX/commit/a6637712e9b46eb87f24bcfae44ea1237abc9899))
+
+### Bug Fixes
+
+- **Consumption:** Adding node name to props to account for change ([#4286](https://github.com/Azure/LogicAppsUX/issues/4286)) ([e61a878](https://github.com/Azure/LogicAppsUX/commit/e61a8788070cdf5bc64e8622a3a10cdd49195688))
+- **Designer:** Fixed issue where connection references would sometimes overlap ([#4290](https://github.com/Azure/LogicAppsUX/issues/4290)) ([01e8768](https://github.com/Azure/LogicAppsUX/commit/01e876871cdf421ee3c9653d66107b8cc35e089e))
+- **designer:** Revert - Update to make connections name case-insensitive ([#4283](https://github.com/Azure/LogicAppsUX/issues/4283)) ([7fc19f7](https://github.com/Azure/LogicAppsUX/commit/7fc19f72329c00decf1064a112a9f40626a7cbc3)), closes [#4279](https://github.com/Azure/LogicAppsUX/issues/4279)
+
+## [2.121.0](https://github.com/Azure/LogicAppsUX/compare/v2.120.0...v2.121.0) (2024-02-29)
 
 ### Features
 
