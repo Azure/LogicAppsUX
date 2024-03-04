@@ -145,7 +145,6 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
       tabs={panelTabs}
       selectedTab={selectedTab}
       selectTab={(tabId: string) => {
-        // TODO Log telemetry
         dispatch(selectPanelTab(tabId));
       }}
       nodeId={selectedNode}

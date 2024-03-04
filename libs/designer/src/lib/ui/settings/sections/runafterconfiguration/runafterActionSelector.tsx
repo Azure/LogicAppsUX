@@ -5,6 +5,7 @@ import { useSelectedNodeId } from '../../../../core/state/panel/panelSelectors';
 import { useNodeDisplayName } from '../../../../core/state/workflow/workflowSelectors';
 import { Button, Input, Label, Menu, MenuButton, MenuItemCheckbox, MenuList, MenuPopover, MenuTrigger } from '@fluentui/react-components';
 import { Add20Filled, Add20Regular, DismissRegular, Search24Regular, bundleIcon } from '@fluentui/react-icons';
+import { LogEntryLevel, LoggerService } from '@microsoft/designer-client-services-logic-apps';
 import { getRecordEntry, type LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import Fuse from 'fuse.js';
 import { useMemo, useState } from 'react';
@@ -91,9 +92,13 @@ export const RunAfterActionSelector = ({ readOnly }: { readOnly: boolean }) => {
       hasIcons
       hasCheckmarks
       checkedValues={selectedValues}
-      onOpenChange={() => {
+      onOpenChange={(_e, data) => {
         setSearchText('');
-        // TODO Log telemetry
+        LoggerService()?.log({
+          area: `RunAfterActionSelector:onOpenChange:${data.open}`,
+          level: LogEntryLevel.Verbose,
+          message: `Run after action selector ${data.open ? 'opened' : 'closed'}.`,
+        });
       }}
       onCheckedValueChange={(e, data) => {
         if (data.checkedItems.length === 0) return;
@@ -115,7 +120,11 @@ export const RunAfterActionSelector = ({ readOnly }: { readOnly: boolean }) => {
             })
           );
         });
-        // TODO Log telemetry
+        LoggerService()?.log({
+          area: `RunAfterActionSelector:onCheckedValueChange`,
+          level: LogEntryLevel.Verbose,
+          message: `Run after action selector set to ${data.checkedItems.length} items.`,
+        });
       }}
     >
       <MenuTrigger>

@@ -11,6 +11,7 @@ import type { GetValueSegmentHandler } from './tokenpickersection/tokenpickeropt
 import { getExpressionOutput, getExpressionTokenTitle } from './util';
 import { PrimaryButton } from '@fluentui/react';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
+import { LogEntryLevel, LoggerService } from '@microsoft/designer-client-services-logic-apps';
 import type { Expression } from '@microsoft/logic-apps-shared';
 import { ExpressionExceptionCode, ExpressionParser, ScannerException, guid } from '@microsoft/logic-apps-shared';
 import type { LexicalEditor, NodeKey } from 'lexical';
@@ -95,7 +96,6 @@ export function TokenPickerFooter({
   };
 
   const onUpdateOrAddClicked = () => {
-    // TODO Log telemetry
     let currExpression: Expression | null = null;
     try {
       currExpression = ExpressionParser.parseExpression(expression.value);
@@ -106,8 +106,19 @@ export function TokenPickerFooter({
       } else {
         setExpressionEditorError(invalidExpression);
       }
+    }
+
+    LoggerService()?.log({
+      area: 'TokenPickerFooter:onUpdateOrAddClicked',
+      args: [expressionToBeUpdated ? 'update' : 'add', currExpression ? 'valid' : 'invalid'],
+      level: LogEntryLevel.Verbose,
+      message: 'Expression add/update button clicked.',
+    });
+
+    if (!currExpression) {
       return;
     }
+
     if (expression.value && window.localStorage.getItem('msla-tokenpicker-expression') !== expression.value) {
       window.localStorage.setItem('msla-tokenpicker-expression', expression.value);
     }

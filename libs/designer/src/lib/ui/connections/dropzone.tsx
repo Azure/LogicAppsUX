@@ -18,6 +18,7 @@ import {
 // import AddBranchIcon from './edgeContextMenuSvgs/addBranchIcon.svg';
 // import AddNodeIcon from './edgeContextMenuSvgs/addNodeIcon.svg';
 import { css } from '@fluentui/utilities';
+import { LogEntryLevel, LoggerService } from '@microsoft/designer-client-services-logic-apps';
 import { ActionButtonV2, convertUIElementNameToAutomationId } from '@microsoft/designer-ui';
 import { containsIdTag, guid, normalizeAutomationId, removeIdTag } from '@microsoft/logic-apps-shared';
 import { useCallback, useMemo, useState } from 'react';
@@ -70,15 +71,18 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId, 
   const openAddNodePanel = useCallback(() => {
     const newId = guid();
     const relationshipIds = { graphId, childId, parentId };
-    // TODO Log telemetry
     dispatch(expandDiscoveryPanel({ nodeId: newId, relationshipIds }));
     setShowCallout(false);
+    LoggerService()?.log({
+      area: 'DropZone:openAddNodePanel',
+      level: LogEntryLevel.Verbose,
+      message: 'Side-panel opened to add a new node.',
+    });
   }, [dispatch, graphId, childId, parentId]);
 
   const handlePasteClicked = useCallback(() => {
     const relationshipIds = { graphId, childId, parentId };
     if (copiedNode) {
-      // TODO Log telemetry
       dispatch(
         pasteOperation({
           relationshipIds,
@@ -88,6 +92,11 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId, 
           connectionData: copiedNode.connectionData,
         })
       );
+      LoggerService()?.log({
+        area: 'DropZone:handlePasteClicked',
+        level: LogEntryLevel.Verbose,
+        message: 'New node added via paste.',
+      });
     }
     setShowCallout(false);
   }, [graphId, childId, parentId, dispatch, copiedNode]);
@@ -95,8 +104,12 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId, 
   const addParallelBranch = useCallback(() => {
     const newId = guid();
     const relationshipIds = { graphId, childId: undefined, parentId };
-    // TODO Log telemetry
     dispatch(expandDiscoveryPanel({ nodeId: newId, relationshipIds, isParallelBranch: true }));
+    LoggerService()?.log({
+      area: 'DropZone:addParallelBranch',
+      level: LogEntryLevel.Verbose,
+      message: 'Side-panel opened to add a new parallel branch node.',
+    });
     setShowCallout(false);
   }, [dispatch, graphId, parentId]);
 

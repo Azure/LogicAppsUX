@@ -3,7 +3,7 @@ import { Checkbox } from '@fluentui/react';
 import type { IDropdownOption } from '@fluentui/react/lib/Dropdown';
 import { Dropdown } from '@fluentui/react/lib/Dropdown';
 import type { OperationRuntimeCategory } from '@microsoft/designer-client-services-logic-apps';
-import { SearchService } from '@microsoft/designer-client-services-logic-apps';
+import { LogEntryLevel, LoggerService, SearchService } from '@microsoft/designer-client-services-logic-apps';
 import type { IntlShape } from 'react-intl';
 import { useIntl } from 'react-intl';
 
@@ -82,14 +82,20 @@ export const OperationSearchHeader = (props: OperationSearchHeaderProps) => {
   const onChange = (_event: React.FormEvent<HTMLDivElement>, item?: IDropdownOption): void => {
     if (item) {
       const [k, v] = (item.key as string).split('-');
+      let newFilters: Record<string, string>;
       if (item.selected) {
-        setFilters?.({ ...filters, [k]: v });
+        newFilters = { ...filters, [k]: v };
       } else {
-        const newFilters = { ...filters };
+        newFilters = { ...filters };
         delete newFilters[k];
-        setFilters?.(newFilters);
       }
-      // TODO Log telemetry
+      setFilters?.(newFilters);
+      LoggerService()?.log({
+        area: 'OperationSearchHeader:onChange',
+        args: [newFilters],
+        level: LogEntryLevel.Verbose,
+        message: 'Search filters updated.',
+      });
     }
   };
 

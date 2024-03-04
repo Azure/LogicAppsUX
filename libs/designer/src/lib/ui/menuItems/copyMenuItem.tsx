@@ -1,5 +1,6 @@
 import { MenuItem } from '@fluentui/react-components';
 import { bundleIcon, Clipboard24Filled, Clipboard24Regular } from '@fluentui/react-icons';
+import { LogEntryLevel, LoggerService } from '@microsoft/designer-client-services-logic-apps';
 import { isApple } from '@microsoft/logic-apps-shared';
 import { useCallback } from 'react';
 import { useIntl } from 'react-intl';
@@ -39,10 +40,15 @@ export const CopyMenuItem = (props: CopyMenuItemProps) => {
 
   const onCopyClick = useCallback<CopyMenuItemProps['onClick']>(
     (e) => {
-      // TODO Log telemetry
       onClick(e);
+      LoggerService()?.log({
+        area: 'CopyMenuItem:onCopyClick',
+        args: [isTrigger ? 'trigger' : 'action'],
+        level: LogEntryLevel.Verbose,
+        message: 'Action copied.',
+      });
     },
-    [onClick]
+    [isTrigger, onClick]
   );
 
   return (
