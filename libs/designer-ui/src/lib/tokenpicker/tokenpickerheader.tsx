@@ -2,6 +2,7 @@ import constants from '../constants';
 import type { IButtonStyles } from '@fluentui/react';
 import { IconButton } from '@fluentui/react';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
+import { LogEntryLevel, LoggerService } from '@microsoft/designer-client-services-logic-apps';
 import type { LexicalEditor } from 'lexical';
 import { useIntl } from 'react-intl';
 
@@ -65,9 +66,17 @@ export function TokenPickerHeader({
     description: "Token picker for 'Paste last used expression'",
   });
 
+  const isExpressionString = isExpression ? 'expression' : 'token';
+
   const handleCloseTokenPicker = () => {
     editor?.focus();
     closeTokenPicker?.();
+    LoggerService().log({
+      area: 'TokenPickerHeader:handleCloseTokenPicker',
+      args: [isExpressionString],
+      level: LogEntryLevel.Verbose,
+      message: 'Token picker close button clicked.',
+    });
   };
 
   return (
@@ -86,7 +95,16 @@ export function TokenPickerHeader({
           iconProps={{ iconName: fullScreen ? 'BackToWindow' : 'FullScreen' }}
           title={fullScreen ? fullScreenExitMessage : fullScreenMessage}
           ariaLabel={fullScreen ? fullScreenExitMessage : fullScreenMessage}
-          onClick={() => setFullScreen(!fullScreen)}
+          onClick={() => {
+            const newValue = !fullScreen;
+            setFullScreen(newValue);
+            LoggerService().log({
+              area: 'TokenPickerHeader:onIconButtonClick',
+              args: ['fullScreen', `${newValue}`, isExpressionString],
+              level: LogEntryLevel.Verbose,
+              message: `Token picker set to fullscreen=${newValue}.`,
+            });
+          }}
           styles={buttonStyles}
         />
       </div>
@@ -96,7 +114,15 @@ export function TokenPickerHeader({
             iconProps={{ iconName: 'Paste' }}
             title={pasteLastUsedExpressionMessage}
             ariaLabel={pasteLastUsedExpressionMessage}
-            onClick={pasteLastUsedExpression}
+            onClick={() => {
+              pasteLastUsedExpression?.();
+              LoggerService().log({
+                area: 'TokenPickerHeader:onIconButtonClick',
+                args: ['pasteLastUsed', isExpressionString],
+                level: LogEntryLevel.Verbose,
+                message: 'Last used expression pasted into expression editor.',
+              });
+            }}
             styles={buttonStyles}
           />
         </div>
@@ -106,9 +132,15 @@ export function TokenPickerHeader({
           iconProps={{ iconName: 'Info' }}
           title={infoMessage}
           ariaLabel={infoMessage}
-          onClick={() =>
-            window.open('https://learn.microsoft.com/en-us/azure/logic-apps/workflow-definition-language-functions-reference', '_blank')
-          }
+          onClick={() => {
+            window.open('https://learn.microsoft.com/en-us/azure/logic-apps/workflow-definition-language-functions-reference', '_blank');
+            LoggerService().log({
+              area: 'TokenPickerHeader:onIconButtonClick',
+              args: ['info', isExpressionString],
+              level: LogEntryLevel.Verbose,
+              message: 'Token picker button clicked.',
+            });
+          }}
           styles={buttonStyles}
         />
       </div>
