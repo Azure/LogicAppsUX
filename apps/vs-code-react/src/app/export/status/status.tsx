@@ -53,19 +53,22 @@ const FinalStatusGadget: React.FC<FinalStatusGadgetProps> = ({ finalStatus }) =>
   const workflowState = useSelector((state: RootState) => state.workflow);
   const { targetDirectory } = workflowState.exportData;
 
-  const message = intl.formatMessage({
-    defaultMessage: 'For next steps, review the ',
-    description: 'The success message.',
-  });
+  const exportNextStepsPath = intl.formatMessage(
+    {
+      defaultMessage: 'For next steps, review the {path} file.',
+      description: 'The success message.',
+    },
+    {
+      path: `${targetDirectory.path}/.logs/export/README.md`,
+    }
+  );
 
   switch (finalStatus) {
     case FinalStatus.Succeeded:
       return (
         <div className="msla-export-status--item">
           <Icon iconName={'SkypeCheck'} />
-          <Text style={{ marginLeft: '5px' }}>
-            {message} {targetDirectory.path}/.logs/export/README.md
-          </Text>
+          <Text style={{ marginLeft: '5px' }}>{exportNextStepsPath}</Text>
         </div>
       );
     default:
