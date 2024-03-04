@@ -45,7 +45,7 @@ export function createAzureWizard(wizardContext: IAzureScriptWizard): AzureWizar
   // Create the Azure Wizard with the modified steps
   return new AzureWizard(wizardContext, {
     title: localize('generateDeploymentScripts', 'Generate deployment scripts'),
-    promptSteps: [new ConfigureInitialLogicAppStep(), new setLogicappName(), new setStorageAccountName(), new setAppPlantName()],
+    promptSteps: [new ConfigureInitialLogicAppStep(), new setLogicappName(), new setStorageAccountName(), new setAppPlanName()],
     executeSteps: [new SourceControlPathListStep()],
     showLoadingPrompt: true,
   });
@@ -157,8 +157,8 @@ export class setStorageAccountName extends AzureWizardPromptStep<IAzureScriptWiz
   }
 }
 
-// Define the setAppPlantName class
-export class setAppPlantName extends AzureWizardPromptStep<IAzureScriptWizard> {
+// Define the setAppPlanName class
+export class setAppPlanName extends AzureWizardPromptStep<IAzureScriptWizard> {
   public hideStepCount = true;
 
   public async prompt(context: IAzureScriptWizard): Promise<void> {

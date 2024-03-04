@@ -2,6 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
+import { localize } from '../../../../localize';
 import { AzureWizardPromptStep } from '@microsoft/vscode-azext-utils';
 import type { IAzureQuickPickItem } from '@microsoft/vscode-azext-utils';
 import type { IProjectWizardContext } from '@microsoft/vscode-extension';
@@ -13,9 +14,8 @@ export class SetLogicAppType extends AzureWizardPromptStep<IProjectWizardContext
       { label: 'Logic app with custom code project', data: true },
     ];
 
-    const placeHolder = 'Select a project template for your logic app workspace';
-    const selectedType = (await context.ui.showQuickPick(picks, { placeHolder })).data;
-    context.isCustomCodeLogicApp = selectedType;
+    const placeHolder = localize('logicAppProjectTemplatePlaceHolder', 'Select a project template for your logic app workspace');
+    context.isCustomCodeLogicApp = (await context.ui.showQuickPick(picks, { placeHolder })).data;
   }
 
   public shouldPrompt(context: IProjectWizardContext): boolean {

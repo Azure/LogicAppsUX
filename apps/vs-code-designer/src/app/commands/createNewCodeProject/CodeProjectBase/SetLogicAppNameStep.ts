@@ -20,13 +20,8 @@ export class SetLogicAppName extends AzureWizardPromptStep<IProjectWizardContext
       },
     });
 
-    if (logicAppName) {
-      context.logicAppName = logicAppName;
-      ext.outputChannel.appendLog(localize('logicAppNameSet', `Logic App project name set to ${logicAppName}`));
-    } else {
-      ext.outputChannel.appendLog(localize('logicAppNameRequired', 'Error: Logic App project name is required.'));
-      throw new Error(localize('logicAppNameError', 'Logic App project name is required.'));
-    }
+    context.logicAppName = logicAppName;
+    ext.outputChannel.appendLog(localize('logicAppNameSet', `Logic App project name set to ${logicAppName}`));
   }
 
   public shouldPrompt(context: IProjectWizardContext): boolean {
