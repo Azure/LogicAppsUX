@@ -75,10 +75,10 @@
     "@react-hookz/web": "22.0.0",
     "@reduxjs/toolkit": "1.8.5",
     "@rollup/plugin-commonjs": "^25.0.7",
+    "@rollup/plugin-image": "^3.0.3",
     "@rollup/plugin-json": "^6.1.0",
     "@rollup/plugin-node-resolve": "^15.2.3",
     "@rollup/plugin-typescript": "^11.1.6",
-    "@rollup/plugin-image": "^3.0.3",
     "@swc/helpers": "~0.3.17",
     "@use-it/event-listener": "0.1.7",
     "axios": "^1.6.0",
@@ -225,6 +225,7 @@
     "url-loader": "4.1.1",
     "vsce": "^2.11.0",
     "webpack-cli": "4.10.0",
+    "webpack-dev-server": "^5.0.2",
     "worker-loader": "3.0.8",
     "yalc": "1.0.0-pre.53"
   }
