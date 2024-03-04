@@ -1,3 +1,4 @@
+import { babel } from '@rollup/plugin-babel';
 import commonjs from '@rollup/plugin-commonjs';
 import json from '@rollup/plugin-json';
 import { nodeResolve } from '@rollup/plugin-node-resolve';
@@ -21,5 +22,11 @@ export default {
 
     name: '@microsoft/logic-apps-shared',
   },
-  plugins: [typescript({ tsconfig: './tsconfig.lib.json' }), nodeResolve({ modulePaths: ['../../node_modules'] }), commonjs(), json()],
+  plugins: [
+    babel(),
+    typescript({ tsconfig: './tsconfig.lib.json' }),
+    nodeResolve({ modulePaths: ['../../node_modules'] }),
+    commonjs(),
+    json(),
+  ],
 };

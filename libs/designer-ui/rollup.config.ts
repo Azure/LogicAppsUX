@@ -6,7 +6,7 @@ import typescript from '@rollup/plugin-typescript';
 import postcss from 'rollup-plugin-postcss';
 
 const externalFn = (str, parent, _isResolved) => {
-  if (str.includes('logic-apps-shared')) {
+  if (str.includes('logic-apps-shared') || str.includes('designer-client-services')) {
     //console.log(`Parent: ${parent} ${str}`);
     return true;
   }
@@ -25,5 +25,14 @@ export default {
     format: 'esm',
     dir: '../../dist/rollup/libs/designer-ui',
   },
-  plugins: [typescript({ tsconfig: './tsconfig.lib.json' }), postcss(), image(), nodeResolve(), commonjs(), json()],
+  plugins: [
+    typescript({ tsconfig: './tsconfig.lib.json' }),
+    postcss({
+      extract: true,
+    }),
+    image(),
+    nodeResolve(),
+    commonjs(),
+    json(),
+  ],
 };
