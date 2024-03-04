@@ -5,11 +5,13 @@ import {
   getConnectorCategoryString,
 } from '@microsoft/designer-ui';
 import type { Connector } from '@microsoft/logic-apps-shared';
-import { fallbackConnectorIconUrl,
+import {
+  fallbackConnectorIconUrl,
   getBrandColorFromConnector,
   getDisplayNameFromConnector,
   getIconUriFromConnector,
-  isBuiltInConnector, } from '@microsoft/logic-apps-shared';
+  isBuiltInConnector,
+} from '@microsoft/logic-apps-shared';
 import { useMemo } from 'react';
 
 export interface ConnectorConnectionsCardProps {

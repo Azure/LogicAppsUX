@@ -1,9 +1,16 @@
 import constants from '../constants';
 import type { Token, ValueSegment } from '../editor';
 import { TokenType } from '../editor';
-import { getIntl } from '@microsoft/logic-apps-shared';
-import { decodePropertySegment, OutputKeys } from '@microsoft/logic-apps-shared';
-import { ArgumentException, endsWith, equals, prettifyJsonString, UnsupportedException } from '@microsoft/logic-apps-shared';
+import {
+  ArgumentException,
+  OutputKeys,
+  UnsupportedException,
+  decodePropertySegment,
+  endsWith,
+  equals,
+  getIntl,
+  prettifyJsonString,
+} from '@microsoft/logic-apps-shared';
 
 const OperationCategory = {
   Actions: 'actions',

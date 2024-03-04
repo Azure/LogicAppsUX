@@ -6,9 +6,8 @@ import { ValueSegmentType } from '../editor';
 import { convertStringToSegments } from '../editor/base/utils/editorToSegment';
 import { convertKeyValueItemToSegments } from '../editor/base/utils/keyvalueitem';
 import { AuthenticationOAuthType } from './AADOAuth/AADOAuth';
-import { getIntl } from '@microsoft/logic-apps-shared';
 import type { ManagedIdentity } from '@microsoft/logic-apps-shared';
-import { guid, equals, ResourceIdentityType } from '@microsoft/logic-apps-shared';
+import { getIntl, guid, equals, ResourceIdentityType } from '@microsoft/logic-apps-shared';
 
 export interface AuthProperty {
   displayName: string;
