@@ -1,3 +1,4 @@
+import type { Connector, OperationApi } from '../../../models';
 import {
   getAllConnectorProperties,
   getBrandColorFromConnector,
@@ -5,7 +6,6 @@ import {
   getDisplayNameFromConnector,
   getIconUriFromConnector,
 } from '../index';
-import type { Connector, OperationApi } from '@microsoft/logic-apps-shared';
 
 describe('lib/connectors/connectorProperties', () => {
   describe('getAllConnectorProperties', () => {

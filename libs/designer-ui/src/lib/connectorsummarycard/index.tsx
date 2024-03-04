@@ -1,7 +1,7 @@
-import { getDescriptionFromConnector, getDisplayNameFromConnector, getIconUriFromConnector, isBuiltInConnector } from '../connectors';
 import { InfoDot } from '../infoDot';
 import { Text, css } from '@fluentui/react';
 import type { Connector, OperationApi } from '@microsoft/logic-apps-shared';
+import { getDescriptionFromConnector, getDisplayNameFromConnector, getIconUriFromConnector, isBuiltInConnector } from '@microsoft/logic-apps-shared';
 import { useCallback } from 'react';
 
 export interface ConnectorSummaryCardProps {

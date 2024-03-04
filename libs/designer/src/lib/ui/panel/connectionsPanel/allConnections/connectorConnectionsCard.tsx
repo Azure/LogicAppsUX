@@ -2,14 +2,14 @@ import { useAllConnectionErrors } from '../../../../core';
 import { ConnectionEntry } from './connectionEntry';
 import { AccordionHeader, AccordionPanel, Badge, Spinner, Text } from '@fluentui/react-components';
 import {
-  getBrandColorFromConnector,
   getConnectorCategoryString,
-  getDisplayNameFromConnector,
-  getIconUriFromConnector,
-  isBuiltInConnector,
 } from '@microsoft/designer-ui';
 import type { Connector } from '@microsoft/logic-apps-shared';
-import { fallbackConnectorIconUrl } from '@microsoft/logic-apps-shared';
+import { fallbackConnectorIconUrl,
+  getBrandColorFromConnector,
+  getDisplayNameFromConnector,
+  getIconUriFromConnector,
+  isBuiltInConnector, } from '@microsoft/logic-apps-shared';
 import { useMemo } from 'react';
 
 export interface ConnectorConnectionsCardProps {

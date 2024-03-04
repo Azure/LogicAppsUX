@@ -28,8 +28,6 @@ import { OperationManifestService } from '@microsoft/designer-client-services-lo
 import {
   ValueSegmentType,
   generateSchemaFromJsonString,
-  getBrandColorFromConnector,
-  getIconUriFromConnector,
 } from '@microsoft/designer-ui';
 import type {
   Expression,
@@ -52,6 +50,8 @@ import {
   clone,
   create,
   equals,
+  getBrandColorFromConnector,
+  getIconUriFromConnector,
   getIntl,
   getObjectPropertyValue,
   isFunction,

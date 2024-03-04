@@ -29,8 +29,8 @@ import { CreateConnection } from './createConnection';
 import { Spinner } from '@fluentui/react-components';
 import type { ConnectionCreationInfo, ConnectionParametersMetadata } from '@microsoft/designer-client-services-logic-apps';
 import { ConnectionService, LogEntryLevel, LoggerService, WorkflowService } from '@microsoft/designer-client-services-logic-apps';
-import { getIconUriFromConnector } from '@microsoft/designer-ui';
 import {
+  getIconUriFromConnector,
   getRecordEntry,
   safeSetObjectPropertyValue,
   type Connection,

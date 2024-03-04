@@ -28,7 +28,6 @@ import {
 } from '../parameters/helper';
 import { loadInputValuesFromDefinition } from './inputsbuilder';
 import { LogEntryLevel, LoggerService, StaticResultService } from '@microsoft/designer-client-services-logic-apps';
-import { getBrandColorFromConnector, getIconUriFromConnector } from '@microsoft/designer-ui';
 import type { LAOperation, LogicAppsV2, OperationInfo, OutputParameter, SwaggerParser } from '@microsoft/logic-apps-shared';
 import {
   ParameterLocations,
@@ -36,6 +35,8 @@ import {
   copyArray,
   create,
   equals,
+  getBrandColorFromConnector,
+  getIconUriFromConnector,
   isDynamicSchemaExtension,
   isTemplateExpression,
   map,

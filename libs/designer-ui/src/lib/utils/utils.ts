@@ -1,7 +1,6 @@
-import { isBuiltInConnector, isCustomConnector } from '../connectors';
 import Constants from '../constants';
 import type { Connector, OperationApi } from '@microsoft/logic-apps-shared';
-import { equals, getIntl } from '@microsoft/logic-apps-shared';
+import { equals, getIntl, isBuiltInConnector, isCustomConnector } from '@microsoft/logic-apps-shared';
 
 /**
  * Returns a string with a duration, possibly abbreviated, e.g., 15s or 15 second(s)

@@ -1,8 +1,9 @@
 import type { AppDispatch } from '../../../core';
 import { selectOperationGroupId } from '../../../core/state/panel/panelSlice';
 import { SearchService, type ISearchService } from '@microsoft/designer-client-services-logic-apps';
-import { SearchResultsGrid, isBuiltInConnector, isCustomConnector } from '@microsoft/designer-ui';
+import { SearchResultsGrid } from '@microsoft/designer-ui';
 import type { DiscoveryOpArray, DiscoveryOperation, DiscoveryResultTypes } from '@microsoft/logic-apps-shared';
+import { isBuiltInConnector, isCustomConnector } from '@microsoft/logic-apps-shared';
 import { useDebouncedEffect } from '@react-hookz/web';
 import Fuse from 'fuse.js';
 import React, { useEffect, useState } from 'react';

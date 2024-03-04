@@ -1,3 +1,51 @@
+import type {
+  IConnectionService,
+  IOAuthService,
+  IOperationManifestService,
+  ISearchService,
+  IWorkflowService,
+} from '@microsoft/designer-client-services-logic-apps';
+import {
+  ApiManagementService,
+  FunctionService,
+  LogEntryLevel,
+  LoggerService,
+  OperationManifestService,
+  WorkflowService,
+} from '@microsoft/designer-client-services-logic-apps';
+import type { OutputToken, ParameterInfo } from '@microsoft/designer-ui';
+import type {
+  CustomSwaggerServiceDetails,
+  InputParameter,
+  OperationInfo,
+  OperationManifest,
+  OperationManifestProperties,
+  OutputParameter,
+  SchemaProperty,
+  SwaggerParser,
+} from '@microsoft/logic-apps-shared';
+import {
+  ConnectionReferenceKeyFormat,
+  CustomSwaggerServiceNames,
+  DynamicSchemaType,
+  ManifestParser,
+  PropertyName,
+  UnsupportedException,
+  clone,
+  equals,
+  getBrandColorFromConnector,
+  getIconUriFromConnector,
+  getIntl,
+  getObjectPropertyValue,
+  isDynamicListExtension,
+  isDynamicPropertiesExtension,
+  isDynamicSchemaExtension,
+  isDynamicTreeExtension,
+  isLegacyDynamicValuesExtension,
+  isLegacyDynamicValuesTreeExtension,
+  unmap,
+} from '@microsoft/logic-apps-shared';
+import type { Dispatch } from '@reduxjs/toolkit';
 import Constants from '../../../common/constants';
 import { ImpersonationSource, type ConnectionReferences, type WorkflowParameter } from '../../../common/models/workflow';
 import type { WorkflowNode } from '../../parsers/models/workflowNode';
@@ -30,52 +78,6 @@ import { getOutputParametersFromSwagger } from '../../utils/swagger/operation';
 import { convertOutputsToTokens, getBuiltInTokens, getTokenNodeIds } from '../../utils/tokens';
 import type { NodeInputsWithDependencies, NodeOutputsWithDependencies } from './operationdeserializer';
 import type { Settings } from './settings';
-import type {
-  IConnectionService,
-  IOAuthService,
-  IOperationManifestService,
-  ISearchService,
-  IWorkflowService,
-} from '@microsoft/designer-client-services-logic-apps';
-import {
-  ApiManagementService,
-  FunctionService,
-  LogEntryLevel,
-  LoggerService,
-  OperationManifestService,
-  WorkflowService,
-} from '@microsoft/designer-client-services-logic-apps';
-import { getBrandColorFromConnector, getIconUriFromConnector, type OutputToken, type ParameterInfo } from '@microsoft/designer-ui';
-import type {
-  CustomSwaggerServiceDetails,
-  InputParameter,
-  OperationInfo,
-  OperationManifest,
-  OperationManifestProperties,
-  OutputParameter,
-  SchemaProperty,
-  SwaggerParser,
-} from '@microsoft/logic-apps-shared';
-import {
-  ConnectionReferenceKeyFormat,
-  CustomSwaggerServiceNames,
-  DynamicSchemaType,
-  ManifestParser,
-  PropertyName,
-  UnsupportedException,
-  clone,
-  equals,
-  getIntl,
-  getObjectPropertyValue,
-  isDynamicListExtension,
-  isDynamicPropertiesExtension,
-  isDynamicSchemaExtension,
-  isDynamicTreeExtension,
-  isLegacyDynamicValuesExtension,
-  isLegacyDynamicValuesTreeExtension,
-  unmap,
-} from '@microsoft/logic-apps-shared';
-import type { Dispatch } from '@reduxjs/toolkit';
 
 export interface ServiceOptions {
   connectionService: IConnectionService;

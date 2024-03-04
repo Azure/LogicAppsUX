@@ -1,3 +1,22 @@
+import { ConnectionService, OperationManifestService, StaticResultService } from '@microsoft/designer-client-services-logic-apps';
+import type {
+  Connector,
+  DiscoveryOperation,
+  DiscoveryResultTypes,
+  OperationManifest,
+  SomeKindOfAzureOperationDiscovery,
+  SwaggerParser,
+} from '@microsoft/logic-apps-shared';
+import {
+  ManifestParser,
+  equals,
+  getBrandColorFromConnector,
+  getIconUriFromConnector,
+  getRecordEntry,
+} from '@microsoft/logic-apps-shared';
+import type { Dispatch } from '@reduxjs/toolkit';
+import { createAsyncThunk } from '@reduxjs/toolkit';
+import { batch } from 'react-redux';
 import Constants from '../../../common/constants';
 import type { WorkflowNode } from '../../parsers/models/workflowNode';
 import { getConnectionsForConnector, getConnectorWithSwagger } from '../../queries/connections';
@@ -29,20 +48,6 @@ import {
 import type { NodeDataWithOperationMetadata } from './operationdeserializer';
 import type { Settings } from './settings';
 import { getOperationSettings, getSplitOnValue } from './settings';
-import { ConnectionService, OperationManifestService, StaticResultService } from '@microsoft/designer-client-services-logic-apps';
-import { getBrandColorFromConnector, getIconUriFromConnector } from '@microsoft/designer-ui';
-import type {
-  Connector,
-  DiscoveryOperation,
-  DiscoveryResultTypes,
-  OperationManifest,
-  SomeKindOfAzureOperationDiscovery,
-  SwaggerParser,
-} from '@microsoft/logic-apps-shared';
-import { ManifestParser, equals, getRecordEntry } from '@microsoft/logic-apps-shared';
-import type { Dispatch } from '@reduxjs/toolkit';
-import { createAsyncThunk } from '@reduxjs/toolkit';
-import { batch } from 'react-redux';
 
 type AddOperationPayload = {
   operation: DiscoveryOperation<DiscoveryResultTypes> | undefined;
