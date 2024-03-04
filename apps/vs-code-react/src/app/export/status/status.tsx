@@ -56,7 +56,7 @@ const FinalStatusGadget: React.FC<FinalStatusGadgetProps> = ({ finalStatus }) =>
   const exportNextStepsPath = intl.formatMessage(
     {
       defaultMessage: 'For next steps, review the {path} file.',
-      description: 'The success message.',
+      description: 'Message for next steps after export',
     },
     {
       path: `${targetDirectory.path}/.logs/export/README.md`,
