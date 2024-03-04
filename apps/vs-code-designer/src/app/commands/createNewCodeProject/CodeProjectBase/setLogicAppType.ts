@@ -10,8 +10,8 @@ import type { IProjectWizardContext } from '@microsoft/vscode-extension';
 export class SetLogicAppType extends AzureWizardPromptStep<IProjectWizardContext> {
   public async prompt(context: IProjectWizardContext): Promise<void> {
     const picks: IAzureQuickPickItem<boolean>[] = [
-      { label: 'Logic app', data: false },
-      { label: 'Logic app with custom code project', data: true },
+      { label: localize('logicApp', 'Logic app'), data: false },
+      { label: localize('logicAppCustomCode', 'Logic app with custom code project'), data: true },
     ];
 
     const placeHolder = localize('logicAppProjectTemplatePlaceHolder', 'Select a project template for your logic app workspace');
