@@ -90,7 +90,7 @@ export const OperationSearchHeader = (props: OperationSearchHeaderProps) => {
         delete newFilters[k];
       }
       setFilters?.(newFilters);
-      LoggerService()?.log({
+      LoggerService().log({
         area: 'OperationSearchHeader:onChange',
         args: [newFilters],
         level: LogEntryLevel.Verbose,

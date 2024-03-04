@@ -41,7 +41,7 @@ export const CopyMenuItem = (props: CopyMenuItemProps) => {
   const onCopyClick = useCallback<CopyMenuItemProps['onClick']>(
     (e) => {
       onClick(e);
-      LoggerService()?.log({
+      LoggerService().log({
         area: 'CopyMenuItem:onCopyClick',
         args: [isTrigger ? 'trigger' : 'action'],
         level: LogEntryLevel.Verbose,

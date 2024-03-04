@@ -94,7 +94,7 @@ export const RunAfterActionSelector = ({ readOnly }: { readOnly: boolean }) => {
       checkedValues={selectedValues}
       onOpenChange={(_e, data) => {
         setSearchText('');
-        LoggerService()?.log({
+        LoggerService().log({
           area: `RunAfterActionSelector:onOpenChange:${data.open}`,
           level: LogEntryLevel.Verbose,
           message: `Run after action selector ${data.open ? 'opened' : 'closed'}.`,
@@ -120,7 +120,7 @@ export const RunAfterActionSelector = ({ readOnly }: { readOnly: boolean }) => {
             })
           );
         });
-        LoggerService()?.log({
+        LoggerService().log({
           area: `RunAfterActionSelector:onCheckedValueChange`,
           level: LogEntryLevel.Verbose,
           message: `Run after action selector set to ${data.checkedItems.length} items.`,

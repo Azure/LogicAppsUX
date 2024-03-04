@@ -139,7 +139,7 @@ export const TokenPickerButton = ({
                 className="msla-token-picker-entrypoint-button-dynamic-content"
                 data-automation-id="msla-token-picker-entrypoint-button-dynamic-content"
                 onClick={() => {
-                  LoggerService()?.log({
+                  LoggerService().log({
                     area: 'TokenPickerButton:openTokenPicker',
                     args: [TokenPickerMode.TOKEN],
                     level: LogEntryLevel.Verbose,
@@ -158,7 +158,7 @@ export const TokenPickerButton = ({
                 className="msla-token-picker-entrypoint-button-dynamic-content"
                 data-automation-id="msla-token-picker-entrypoint-button-expression"
                 onClick={() => {
-                  LoggerService()?.log({
+                  LoggerService().log({
                     area: 'TokenPickerButton:openTokenPicker',
                     args: [TokenPickerMode.EXPRESSION],
                     level: LogEntryLevel.Verbose,

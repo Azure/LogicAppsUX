@@ -73,7 +73,7 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId, 
     const relationshipIds = { graphId, childId, parentId };
     dispatch(expandDiscoveryPanel({ nodeId: newId, relationshipIds }));
     setShowCallout(false);
-    LoggerService()?.log({
+    LoggerService().log({
       area: 'DropZone:openAddNodePanel',
       level: LogEntryLevel.Verbose,
       message: 'Side-panel opened to add a new node.',
@@ -92,7 +92,7 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId, 
           connectionData: copiedNode.connectionData,
         })
       );
-      LoggerService()?.log({
+      LoggerService().log({
         area: 'DropZone:handlePasteClicked',
         level: LogEntryLevel.Verbose,
         message: 'New node added via paste.',
@@ -105,7 +105,7 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId, 
     const newId = guid();
     const relationshipIds = { graphId, childId: undefined, parentId };
     dispatch(expandDiscoveryPanel({ nodeId: newId, relationshipIds, isParallelBranch: true }));
-    LoggerService()?.log({
+    LoggerService().log({
       area: 'DropZone:addParallelBranch',
       level: LogEntryLevel.Verbose,
       message: 'Side-panel opened to add a new parallel branch node.',

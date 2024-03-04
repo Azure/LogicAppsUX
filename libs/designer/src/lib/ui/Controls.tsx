@@ -15,7 +15,7 @@ const CustomControls = () => {
   const searchId = 'control-search-button';
 
   const minimapToggleClick = () => {
-    LoggerService()?.log({
+    LoggerService().log({
       area: 'CustomControls:onToggleMiniMapClick',
       level: LogEntryLevel.Verbose,
       message: 'Minimap toggled.',
@@ -24,7 +24,7 @@ const CustomControls = () => {
   };
 
   const searchToggleClick = () => {
-    LoggerService()?.log({
+    LoggerService().log({
       area: 'CustomControls:searchToggleClick',
       level: LogEntryLevel.Verbose,
       message: 'Node search opened.',
@@ -47,21 +47,21 @@ const CustomControls = () => {
   return (
     <Controls
       onFitView={() => {
-        LoggerService()?.log({
+        LoggerService().log({
           area: 'CustomControls:onFitWindowClick',
           level: LogEntryLevel.Verbose,
           message: 'Canvas control clicked.',
         });
       }}
       onZoomIn={() => {
-        LoggerService()?.log({
+        LoggerService().log({
           area: 'CustomControls:onZoomInClick',
           level: LogEntryLevel.Verbose,
           message: 'Canvas control clicked.',
         });
       }}
       onZoomOut={() => {
-        LoggerService()?.log({
+        LoggerService().log({
           area: 'CustomControls:onZoomOutClick',
           level: LogEntryLevel.Verbose,
           message: 'Canvas control clicked.',

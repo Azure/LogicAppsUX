@@ -108,7 +108,7 @@ export function TokenPickerFooter({
       }
     }
 
-    LoggerService()?.log({
+    LoggerService().log({
       area: 'TokenPickerFooter:onUpdateOrAddClicked',
       args: [expressionToBeUpdated ? 'update' : 'add', currExpression ? 'valid' : 'invalid'],
       level: LogEntryLevel.Verbose,

@@ -71,7 +71,7 @@ export function TokenPickerHeader({
   const handleCloseTokenPicker = () => {
     editor?.focus();
     closeTokenPicker?.();
-    LoggerService()?.log({
+    LoggerService().log({
       area: 'TokenPickerHeader:handleCloseTokenPicker',
       args: [isExpressionString],
       level: LogEntryLevel.Verbose,
@@ -98,7 +98,7 @@ export function TokenPickerHeader({
           onClick={() => {
             const newValue = !fullScreen;
             setFullScreen(newValue);
-            LoggerService()?.log({
+            LoggerService().log({
               area: 'TokenPickerHeader:onIconButtonClick',
               args: ['fullScreen', `${newValue}`, isExpressionString],
               level: LogEntryLevel.Verbose,
@@ -116,7 +116,7 @@ export function TokenPickerHeader({
             ariaLabel={pasteLastUsedExpressionMessage}
             onClick={() => {
               pasteLastUsedExpression?.();
-              LoggerService()?.log({
+              LoggerService().log({
                 area: 'TokenPickerHeader:onIconButtonClick',
                 args: ['pasteLastUsed', isExpressionString],
                 level: LogEntryLevel.Verbose,
@@ -134,7 +134,7 @@ export function TokenPickerHeader({
           ariaLabel={infoMessage}
           onClick={() => {
             window.open('https://learn.microsoft.com/en-us/azure/logic-apps/workflow-definition-language-functions-reference', '_blank');
-            LoggerService()?.log({
+            LoggerService().log({
               area: 'TokenPickerHeader:onIconButtonClick',
               args: ['info', isExpressionString],
               level: LogEntryLevel.Verbose,
