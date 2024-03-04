@@ -11,7 +11,7 @@ const externalFn = (str, parent, _isResolved) => {
     return true;
   }
   if (str.includes('node_modules')) {
-    console.log(`Parent: ${parent} ${str}`);
+    //console.log(`Parent: ${parent} ${str}`);
     return true;
   }
   return false;
@@ -19,17 +19,11 @@ const externalFn = (str, parent, _isResolved) => {
 
 export default {
   input: 'src/index.ts',
+  cache: false, // temporarily disable cache for testing
   external: externalFn, //['@microsoft/logic-apps-shared', 'libs/logic-apps-shared/src/index.ts', '/node_modules/'],
   output: {
     format: 'esm',
-    dir: '../../dist/rollup/lib/designer-ui',
+    dir: '../../dist/rollup/libs/designer-ui',
   },
-  plugins: [
-    typescript({ tsconfig: './tsconfig.lib.json', include: ['**/designer-ui/src/**'], exclude: ['**/logic-apps-shared/**'] }),
-    postcss(),
-    image(),
-    nodeResolve(),
-    commonjs(),
-    json(),
-  ],
+  plugins: [typescript({ tsconfig: './tsconfig.lib.json' }), postcss(), image(), nodeResolve(), commonjs(), json()],
 };

@@ -1,6 +1,6 @@
 {
   "root": true,
-  "ignorePatterns": ["**/*", "**/.rollup.cache/**"],
+  "ignorePatterns": ["**/*", ".rollup.cache", "**/rollup.config.ts"],
   "plugins": ["@nrwl/nx", "formatjs", "react", "react-hooks"],
   "overrides": [
     {

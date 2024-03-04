@@ -1,8 +1,11 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
+    "rootDir": ".",
     "declaration": true,
-    "declarationDir": "../../dist/rollup/lib/designer-ui",
+    "declarationDir": "../../dist/rollup/libs/designer-ui",
+    "outDir": "../../dist/rollup/libs/designer-ui",
+    "composite": true,
     "types": ["node"]
   },
   "exclude": [
@@ -17,5 +20,6 @@
     "jest.config.ts",
     "rollup.config.ts"
   ],
+  "references": [{ "path": "../logic-apps-shared" }, { "path": "../services/designer-client-services" }],
   "include": ["**/*.js", "**/*.jsx", "**/*.ts", "**/*.tsx"]
 }

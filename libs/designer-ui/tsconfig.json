@@ -10,7 +10,9 @@
     "noPropertyAccessFromIndexSignature": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "declarationDir": "../../dist/rollup/libs/designer-ui",
+    "outDir": "../../dist/rollup/libs/designer-ui"
   },
   "files": [],
   "include": [],
