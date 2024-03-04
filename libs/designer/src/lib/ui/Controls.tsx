@@ -36,7 +36,7 @@ const CustomControls = () => {
   return (
     <Controls showInteractive={false}>
       <ControlButton id={searchId} aria-label={searchAria} title={searchAria} onClick={searchToggleClick}>
-        <Icon iconName={'Search'} styles={iconStyles} />
+        <Icon iconName={'Search'} />
       </ControlButton>
       <ControlButton aria-label={minimapAria} title={minimapAria} onClick={minimapToggleClick}>
         <Icon iconName={'Nav2DMapView'} styles={iconStyles} />
