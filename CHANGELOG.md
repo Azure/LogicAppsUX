@@ -2,10 +2,6 @@
 
 ## [2.122.0](https://github.com/Azure/LogicAppsUX/compare/v2.121.0...v2.122.0) (2024-03-01)
 
-## [2.121.0](https://github.com/Azure/LogicAppsUX/compare/v2.120.0...v2.121.0) (2024-02-29)
-
-## [2.101.0](https://github.com/Azure/LogicAppsUX/compare/v2.100.0...v2.101.0) (2024-01-09)
-
 ### Features
 
 - **designer:** Adding hidden parameter field in ConnectionCreationIn… ([#4275](https://github.com/Azure/LogicAppsUX/issues/4275)) ([49b2c9c](https://github.com/Azure/LogicAppsUX/commit/49b2c9c0098a97e8832d3f0b682c47c7b7d7c025))
