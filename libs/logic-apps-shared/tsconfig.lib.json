@@ -2,10 +2,9 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "outDir": "../../dist/rollup/libs/logic-apps-shared",
-    "composite": true,
     "declaration": true,
     "types": []
   },
-  "include": ["**/*.ts", "**/*.tsx"],
+  "include": ["**/*.ts", "**/*.tsx", "**/*.json", "**/compiled-lang/*.json"],
   "exclude": ["**/*.spec.ts", "jest.config.ts", "rollup.config.ts"]
 }
