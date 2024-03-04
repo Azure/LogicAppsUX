@@ -3,11 +3,11 @@ import { addEdgeFromRunAfterOperation, removeEdgeFromRunAfterOperation } from '.
 import { useOperationVisuals } from '../../../../core/state/operation/operationSelector';
 import { useSelectedNodeId } from '../../../../core/state/panel/panelSelectors';
 import { useNodeDisplayName } from '../../../../core/state/workflow/workflowSelectors';
-import { Menu, MenuTrigger, MenuList, MenuPopover, MenuButton, Label, MenuItemCheckbox, Input, Button } from '@fluentui/react-components';
-import { bundleIcon, Add20Regular, Add20Filled, Search24Regular, DismissRegular } from '@fluentui/react-icons';
+import { Button, Input, Label, Menu, MenuButton, MenuItemCheckbox, MenuList, MenuPopover, MenuTrigger } from '@fluentui/react-components';
+import { Add20Filled, Add20Regular, DismissRegular, Search24Regular, bundleIcon } from '@fluentui/react-icons';
 import { getRecordEntry, type LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import Fuse from 'fuse.js';
-import { useState, useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -91,7 +91,10 @@ export const RunAfterActionSelector = ({ readOnly }: { readOnly: boolean }) => {
       hasIcons
       hasCheckmarks
       checkedValues={selectedValues}
-      onOpenChange={() => setSearchText('')}
+      onOpenChange={() => {
+        setSearchText('');
+        // TODO Log telemetry
+      }}
       onCheckedValueChange={(e, data) => {
         if (data.checkedItems.length === 0) return;
         const newItems = data.checkedItems.filter((x) => !selectedValues.actions.includes(x));
@@ -112,6 +115,7 @@ export const RunAfterActionSelector = ({ readOnly }: { readOnly: boolean }) => {
             })
           );
         });
+        // TODO Log telemetry
       }}
     >
       <MenuTrigger>

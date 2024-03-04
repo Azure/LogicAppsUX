@@ -1,6 +1,6 @@
 import constants from '../constants';
 import type { Token } from '../editor';
-import { ValueSegmentType, TokenType } from '../editor';
+import { TokenType, ValueSegmentType } from '../editor';
 import type { TokenNodeProps } from '../editor/base/nodes/tokenNode';
 import { INSERT_TOKEN_NODE } from '../editor/base/plugins/InsertTokenNode';
 import { SINGLE_VALUE_SEGMENT } from '../editor/base/plugins/SingleValueSegment';
@@ -8,12 +8,11 @@ import type { ExpressionEditorEvent } from '../expressioneditor';
 import type { TokenGroup, Token as TokenGroupToken } from './models/token';
 import { UPDATE_TOKEN_NODE } from './plugins/UpdateTokenNode';
 import type { GetValueSegmentHandler } from './tokenpickersection/tokenpickeroption';
-import { getExpressionTokenTitle, getExpressionOutput } from './util';
+import { getExpressionOutput, getExpressionTokenTitle } from './util';
 import { PrimaryButton } from '@fluentui/react';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import type { Expression } from '@microsoft/logic-apps-shared';
-import { ExpressionExceptionCode, ExpressionParser, ScannerException } from '@microsoft/logic-apps-shared';
-import { guid } from '@microsoft/logic-apps-shared';
+import { ExpressionExceptionCode, ExpressionParser, ScannerException, guid } from '@microsoft/logic-apps-shared';
 import type { LexicalEditor, NodeKey } from 'lexical';
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
@@ -96,6 +95,7 @@ export function TokenPickerFooter({
   };
 
   const onUpdateOrAddClicked = () => {
+    // TODO Log telemetry
     let currExpression: Expression | null = null;
     try {
       currExpression = ExpressionParser.parseExpression(expression.value);

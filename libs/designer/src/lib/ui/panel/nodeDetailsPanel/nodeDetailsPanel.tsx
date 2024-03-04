@@ -1,23 +1,23 @@
 import type { AppDispatch, RootState } from '../../../core';
 import {
-  useSelectedNodeId,
-  useNodeDisplayName,
-  useNodeMetadata,
   clearPanel,
   collapsePanel,
-  validateParameter,
   updateParameterValidation,
+  useNodeDisplayName,
+  useNodeMetadata,
+  useSelectedNodeId,
+  validateParameter,
 } from '../../../core';
 import { useReadOnly } from '../../../core/state/designerOptions/designerOptionsSelectors';
 import { setShowDeleteModal } from '../../../core/state/designerView/designerViewSlice';
 import { ErrorLevel } from '../../../core/state/operation/operationMetadataSlice';
 import { useIconUri, useOperationErrorInfo } from '../../../core/state/operation/operationSelector';
 import { useIsPanelCollapsed, useSelectedPanelTabId } from '../../../core/state/panel/panelSelectors';
-import { expandPanel, updatePanelLocation, selectPanelTab, setSelectedNodeId } from '../../../core/state/panel/panelSlice';
+import { expandPanel, selectPanelTab, setSelectedNodeId, updatePanelLocation } from '../../../core/state/panel/panelSlice';
 import { useOperationQuery } from '../../../core/state/selectors/actionMetadataSelector';
 import { useNodeDescription, useRunData, useRunInstance } from '../../../core/state/workflow/workflowSelectors';
-import { setNodeDescription, replaceId } from '../../../core/state/workflow/workflowSlice';
-import { isRootNodeInGraph, isOperationNameValid } from '../../../core/utils/graph';
+import { replaceId, setNodeDescription } from '../../../core/state/workflow/workflowSlice';
+import { isOperationNameValid, isRootNodeInGraph } from '../../../core/utils/graph';
 import { CommentMenuItem } from '../../menuItems/commentMenuItem';
 import { DeleteMenuItem } from '../../menuItems/deleteMenuItem';
 import { usePanelTabs } from './usePanelTabs';
@@ -144,7 +144,10 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
       showCommentBox={showCommentBox}
       tabs={panelTabs}
       selectedTab={selectedTab}
-      selectTab={(tabId: string) => dispatch(selectPanelTab(tabId))}
+      selectTab={(tabId: string) => {
+        // TODO Log telemetry
+        dispatch(selectPanelTab(tabId));
+      }}
       nodeId={selectedNode}
       readOnlyMode={readOnly}
       canResubmit={runData?.canResubmit ?? false}

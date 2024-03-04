@@ -89,6 +89,7 @@ export const OperationSearchHeader = (props: OperationSearchHeaderProps) => {
         delete newFilters[k];
         setFilters?.(newFilters);
       }
+      // TODO Log telemetry
     }
   };
 

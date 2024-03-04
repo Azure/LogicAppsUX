@@ -86,7 +86,10 @@ export function TokenPickerHeader({
           iconProps={{ iconName: fullScreen ? 'BackToWindow' : 'FullScreen' }}
           title={fullScreen ? fullScreenExitMessage : fullScreenMessage}
           ariaLabel={fullScreen ? fullScreenExitMessage : fullScreenMessage}
-          onClick={() => setFullScreen(!fullScreen)}
+          onClick={() => {
+            // TODO Log telemetry
+            setFullScreen(!fullScreen);
+          }}
           styles={buttonStyles}
         />
       </div>
@@ -96,7 +99,10 @@ export function TokenPickerHeader({
             iconProps={{ iconName: 'Paste' }}
             title={pasteLastUsedExpressionMessage}
             ariaLabel={pasteLastUsedExpressionMessage}
-            onClick={pasteLastUsedExpression}
+            onClick={() => {
+              // TODO Log telemetry
+              pasteLastUsedExpression?.();
+            }}
             styles={buttonStyles}
           />
         </div>
@@ -107,6 +113,7 @@ export function TokenPickerHeader({
           title={infoMessage}
           ariaLabel={infoMessage}
           onClick={() =>
+            // TODO Log telemetry
             window.open('https://learn.microsoft.com/en-us/azure/logic-apps/workflow-definition-language-functions-reference', '_blank')
           }
           styles={buttonStyles}

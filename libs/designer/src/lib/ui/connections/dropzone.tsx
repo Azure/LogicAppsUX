@@ -2,18 +2,18 @@ import type { AppDispatch } from '../../core';
 import { pasteOperation } from '../../core/actions/bjsworkflow/copypaste';
 import { expandDiscoveryPanel } from '../../core/state/panel/panelSlice';
 import { useUpstreamNodes } from '../../core/state/tokens/tokenSelectors';
-import { useNodeDisplayName, useGetAllOperationNodesWithin } from '../../core/state/workflow/workflowSelectors';
+import { useGetAllOperationNodesWithin, useNodeDisplayName } from '../../core/state/workflow/workflowSelectors';
 import { AllowDropTarget } from './dynamicsvgs/allowdroptarget';
 import { BlockDropTarget } from './dynamicsvgs/blockdroptarget';
 import { MenuDivider, MenuItem, MenuList, Popover, PopoverSurface, PopoverTrigger } from '@fluentui/react-components';
 import {
-  bundleIcon,
   ArrowBetweenDown24Filled,
   ArrowBetweenDown24Regular,
   ArrowSplit24Filled,
   ArrowSplit24Regular,
   ClipboardPasteFilled,
   ClipboardPasteRegular,
+  bundleIcon,
 } from '@fluentui/react-icons';
 // import AddBranchIcon from './edgeContextMenuSvgs/addBranchIcon.svg';
 // import AddNodeIcon from './edgeContextMenuSvgs/addNodeIcon.svg';
@@ -70,6 +70,7 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId, 
   const openAddNodePanel = useCallback(() => {
     const newId = guid();
     const relationshipIds = { graphId, childId, parentId };
+    // TODO Log telemetry
     dispatch(expandDiscoveryPanel({ nodeId: newId, relationshipIds }));
     setShowCallout(false);
   }, [dispatch, graphId, childId, parentId]);
@@ -77,6 +78,7 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId, 
   const handlePasteClicked = useCallback(() => {
     const relationshipIds = { graphId, childId, parentId };
     if (copiedNode) {
+      // TODO Log telemetry
       dispatch(
         pasteOperation({
           relationshipIds,
@@ -93,6 +95,7 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId, 
   const addParallelBranch = useCallback(() => {
     const newId = guid();
     const relationshipIds = { graphId, childId: undefined, parentId };
+    // TODO Log telemetry
     dispatch(expandDiscoveryPanel({ nodeId: newId, relationshipIds, isParallelBranch: true }));
     setShowCallout(false);
   }, [dispatch, graphId, parentId]);
