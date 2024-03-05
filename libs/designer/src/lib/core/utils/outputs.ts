@@ -27,16 +27,8 @@ import {
 import { convertOutputsToTokens, getTokenTitle } from './tokens';
 import { OperationManifestService } from '@microsoft/designer-client-services-logic-apps';
 import { generateSchemaFromJsonString, ValueSegmentType } from '@microsoft/designer-ui';
-import { getIntl } from '@microsoft/logic-apps-shared';
-import type {
-  Expression,
-  ExpressionFunction,
-  ExpressionLiteral,
-  OutputParameter,
-  OutputParameters,
-  OpenApiSchema,
-} from '@microsoft/logic-apps-shared';
 import {
+  getIntl,
   create,
   OutputKeys,
   OutputSource,
@@ -45,9 +37,6 @@ import {
   isTemplateExpression,
   isFunction,
   isStringLiteral,
-} from '@microsoft/logic-apps-shared';
-import type { OpenAPIV2, OperationManifest } from '@microsoft/logic-apps-shared';
-import {
   ConnectionReferenceKeyFormat,
   getObjectPropertyValue,
   safeSetObjectPropertyValue,
@@ -57,6 +46,16 @@ import {
   clone,
   equals,
   parseErrorMessage,
+} from '@microsoft/logic-apps-shared';
+import type {
+  Expression,
+  ExpressionFunction,
+  ExpressionLiteral,
+  OutputParameter,
+  OutputParameters,
+  OpenApiSchema,
+  OpenAPIV2,
+  OperationManifest,
 } from '@microsoft/logic-apps-shared';
 import type { Dispatch } from '@reduxjs/toolkit';
 
