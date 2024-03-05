@@ -101,6 +101,7 @@ export const unitTestSlice = createSlice({
     initUnitTestDefinition: (state: UnitTestState, action: PayloadAction<InitDefintionPayload | null>) => {
       if (!isNullOrUndefined(action.payload)) {
         const { mockResults, assertions } = action.payload;
+        console.log('charlie mockResults', mockResults);
         state.assertions = parseAssertions(assertions);
         state.mockResults = mockResults;
       }

@@ -1,4 +1,4 @@
-import { type MockUpdateHandler } from './outputMocks';
+import { ActionResults, type MockUpdateHandler } from './outputMocks';
 import { Label, Dropdown, type IDropdownOption } from '@fluentui/react';
 import { useIntl } from 'react-intl';
 
@@ -7,13 +7,6 @@ export interface ActionResultProps {
   onMockUpdate: MockUpdateHandler;
   mockResult: string | undefined;
 }
-
-export const ActionResults = {
-  SUCCESS: 'success',
-  TIMEDOUT: 'timedOut',
-  SKIPPED: 'skipped',
-  FAILED: 'failed',
-};
 
 export const ActionResult: React.FC<ActionResultProps> = ({ nodeId, onMockUpdate, mockResult }): JSX.Element => {
   const intl = useIntl();

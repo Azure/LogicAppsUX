@@ -25,6 +25,13 @@ export interface OutputMocksProps {
   outputsMock: OutputMock | undefined;
 }
 
+export const ActionResults = {
+  SUCCESS: 'success',
+  TIMEDOUT: 'timedOut',
+  SKIPPED: 'skipped',
+  FAILED: 'failed',
+};
+
 export const OutputMocks = ({ isMockSupported, nodeId, onMockUpdate, outputs, outputsMock }: OutputMocksProps) => {
   const intl = useIntl();
   console.log('charlie parseOutput', outputs);

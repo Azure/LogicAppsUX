@@ -1,12 +1,13 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import constants from '../../../common/constants';
 import { UnsupportedException, UnsupportedExceptionCode } from '../../../common/exceptions/unsupported';
+import { type OutputMock } from '../../state/unitTest/unitTestInterfaces';
 import type { Operations, NodesMetadata } from '../../state/workflow/workflowInterfaces';
 import { createWorkflowNode, createWorkflowEdge } from '../../utils/graph';
 import { toConditionViewModel } from '../../utils/parameters/helper';
 import type { WorkflowNode, WorkflowEdge } from '../models/workflowNode';
 import { LoggerService, Status } from '@microsoft/designer-client-services-logic-apps';
-import { getDurationStringPanelMode } from '@microsoft/designer-ui';
+import { getDurationStringPanelMode, ActionResults } from '@microsoft/designer-ui';
 import { getIntl } from '@microsoft/intl-logic-apps';
 import type { Assertion, LogicAppsV2, SubgraphType, UnitTestDefinition } from '@microsoft/utils-logic-apps';
 import {
@@ -116,18 +117,24 @@ export const deserializeUnitTestDefinition = (
   unitTestDefinition: UnitTestDefinition | null
 ): {
   assertions: Assertion[];
-  mockResults: { [key: string]: string };
+  mockResults: Record<string, OutputMock>;
 } | null => {
   if (isNullOrUndefined(unitTestDefinition)) return null;
   // deserialize mocks
-  const mockResults: { [key: string]: string } = {};
+  const mockResults: Record<string, OutputMock> = {};
   const triggerName = Object.keys(unitTestDefinition.triggerMocks)[0]; // only 1 trigger
 
   if (triggerName) {
-    mockResults[`&${triggerName}`] = JSON.stringify(unitTestDefinition.triggerMocks[triggerName], null, 4);
+    mockResults[`&${triggerName}`] = {
+      actionResult: ActionResults.SUCCESS,
+      output: JSON.stringify(unitTestDefinition.triggerMocks[triggerName], null, 4),
+    };
   }
   Object.keys(unitTestDefinition.actionMocks).forEach((actionName) => {
-    mockResults[actionName] = JSON.stringify(unitTestDefinition.actionMocks[actionName], null, 4);
+    mockResults[actionName] = {
+      actionResult: ActionResults.SUCCESS,
+      output: JSON.stringify(unitTestDefinition.actionMocks[actionName], null, 4),
+    };
   });
 
   // deserialize assertions

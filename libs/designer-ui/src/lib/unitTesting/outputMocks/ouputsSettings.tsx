@@ -1,5 +1,5 @@
 import { SettingTokenField } from '../../settings/settingsection';
-import { ActionResults } from './actionResult';
+import { ActionResults } from './outputMocks';
 import { Text } from '@fluentui/react-components';
 import { useIntl } from 'react-intl';
 
