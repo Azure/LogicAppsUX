@@ -1,7 +1,9 @@
 import { ActionButtonV2 } from '../../actionbuttonv2';
 import NodeCollapseToggle from '../../nodeCollapseToggle';
 import { CardContextMenu } from '../cardcontextmenu';
+import { ErrorBanner } from '../errorbanner';
 import { useCardContextMenu, useCardKeyboardInteraction } from '../hooks';
+import type { MessageBarType } from '@fluentui/react';
 import { css } from '@fluentui/react';
 import type { SubgraphType } from '@microsoft/logic-apps-shared';
 import { SUBGRAPH_TYPES } from '@microsoft/logic-apps-shared';
@@ -20,6 +22,8 @@ interface SubgraphCardProps {
   onDeleteClick?(): void;
   showAddButton?: boolean;
   contextMenuItems?: JSX.Element[];
+  errorLevel?: MessageBarType;
+  errorMessage?: string;
 }
 
 export const SubgraphCard: React.FC<SubgraphCardProps> = ({
@@ -34,6 +38,8 @@ export const SubgraphCard: React.FC<SubgraphCardProps> = ({
   onClick,
   onDeleteClick,
   contextMenuItems = [],
+  errorLevel,
+  errorMessage,
 }) => {
   const intl = useIntl();
 
@@ -120,7 +126,8 @@ export const SubgraphCard: React.FC<SubgraphCardProps> = ({
           onKeyDown={keyboardInteraction.keyUp}
           onKeyUp={keyboardInteraction.keyDown}
         >
-          {data.title}
+          <div className="msla-subgraph-title-text">{data.title}</div>
+          {errorMessage ? <ErrorBanner errorLevel={errorLevel} errorMessage={errorMessage} /> : null}
         </button>
         <NodeCollapseToggle collapsed={collapsed} handleCollapse={handleCollapse} />
         {contextMenuItems?.length > 0 ? (
@@ -148,7 +155,7 @@ export const SubgraphCard: React.FC<SubgraphCardProps> = ({
           onKeyUp={keyboardInteraction.keyDown}
         >
           <div className={css('msla-selection-box', 'white-outline', selected && 'selected')} tabIndex={-1} />
-          <div className="msla-subgraph-title">{data.title}</div>
+          <div className="msla-subgraph-title msla-subgraph-title-text">{data.title}</div>
           <NodeCollapseToggle disabled collapsed={collapsed} onSmallCard />
         </div>
       </div>
