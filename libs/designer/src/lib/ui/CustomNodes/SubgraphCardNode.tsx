@@ -5,7 +5,7 @@ import { initializeSwitchCaseFromManifest } from '../../core/actions/bjsworkflow
 import { getOperationManifest } from '../../core/queries/operation';
 import { useMonitoringView, useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
 import { setShowDeleteModal } from '../../core/state/designerView/designerViewSlice';
-import { useIconUri } from '../../core/state/operation/operationSelector';
+import { useIconUri, useParameterValidationErrors } from '../../core/state/operation/operationSelector';
 import { useIsNodeSelected } from '../../core/state/panel/panelSelectors';
 import { changePanelNode, setSelectedNodeId } from '../../core/state/panel/panelSlice';
 import {
@@ -21,6 +21,7 @@ import { addSwitchCase, setFocusNode, toggleCollapsedGraphId } from '../../core/
 import { LoopsPager } from '../common/LoopsPager/LoopsPager';
 import { DropZone } from '../connections/dropzone';
 import { DeleteMenuItem } from '../menuItems/deleteMenuItem';
+import { MessageBarType } from '@fluentui/react';
 import { SubgraphCard } from '@microsoft/designer-ui';
 import { SUBGRAPH_TYPES, removeIdTag } from '@microsoft/logic-apps-shared';
 import { memo, useCallback, useMemo } from 'react';
@@ -104,6 +105,18 @@ const SubgraphCardNode = ({ data, targetPosition = Position.Top, sourcePosition 
     [deleteClick, metadata?.subgraphType]
   );
 
+  const parameterValidationErrors = useParameterValidationErrors(subgraphId);
+  const parameterValidationErrorText = intl.formatMessage({
+    defaultMessage: 'Invalid parameters',
+    description: 'Text to explain that there are invalid parameters for this node',
+  });
+
+  const { errorMessage, errorLevel } = useMemo(() => {
+    if (parameterValidationErrors?.length > 0)
+      return { errorMessage: parameterValidationErrorText, errorLevel: MessageBarType.severeWarning };
+    return { errorMessage: undefined, errorLevel: undefined };
+  }, [parameterValidationErrors?.length, parameterValidationErrorText]);
+
   return (
     <div>
       <div style={{ display: 'flex', alignItems: 'center' }}>
@@ -122,6 +135,8 @@ const SubgraphCardNode = ({ data, targetPosition = Position.Top, sourcePosition 
                 collapsed={graphCollapsed}
                 handleCollapse={handleGraphCollapse}
                 contextMenuItems={contextMenuItems}
+                errorLevel={errorLevel}
+                errorMessage={errorMessage}
               />
               {isMonitoringView && normalizedType === constants.NODE.TYPE.UNTIL ? (
                 <LoopsPager metadata={metadata} scopeId={subgraphId} collapsed={graphCollapsed} />
