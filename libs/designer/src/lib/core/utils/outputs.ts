@@ -25,10 +25,7 @@ import {
 } from './parameters/helper';
 import { convertOutputsToTokens, getTokenTitle } from './tokens';
 import { OperationManifestService } from '@microsoft/designer-client-services-logic-apps';
-import {
-  ValueSegmentType,
-  generateSchemaFromJsonString,
-} from '@microsoft/designer-ui';
+import { ValueSegmentType, generateSchemaFromJsonString } from '@microsoft/designer-ui';
 import type {
   Expression,
   ExpressionFunction,

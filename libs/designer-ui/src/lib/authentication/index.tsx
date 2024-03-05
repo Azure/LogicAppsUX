@@ -13,7 +13,7 @@ import { RawAuthentication } from './RawAuth';
 import { parseAuthEditor } from './util';
 import type { IDropdownOption } from '@fluentui/react/lib/Dropdown';
 import type { ManagedIdentity } from '@microsoft/logic-apps-shared';
-import { getIntl, AssertionErrorCode, AssertionException, format } from '@microsoft/logic-apps-shared';
+import { AssertionErrorCode, AssertionException, format, getIntl } from '@microsoft/logic-apps-shared';
 import { useUpdateEffect } from '@react-hookz/web';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';

@@ -2,14 +2,14 @@ import constants from '../constants';
 import type { Token, ValueSegment } from '../editor';
 import { TokenType } from '../editor';
 import {
-  ArgumentException,
-  OutputKeys,
-  UnsupportedException,
+  getIntl,
   decodePropertySegment,
+  OutputKeys,
+  ArgumentException,
   endsWith,
   equals,
-  getIntl,
   prettifyJsonString,
+  UnsupportedException,
 } from '@microsoft/logic-apps-shared';
 
 const OperationCategory = {

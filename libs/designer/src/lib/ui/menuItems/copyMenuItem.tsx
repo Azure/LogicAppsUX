@@ -1,12 +1,14 @@
 import { MenuItem } from '@fluentui/react-components';
 import { bundleIcon, Clipboard24Filled, Clipboard24Regular } from '@fluentui/react-icons';
+import { LogEntryLevel, LoggerService } from '@microsoft/designer-client-services-logic-apps';
 import { isApple } from '@microsoft/logic-apps-shared';
+import { useCallback } from 'react';
 import { useIntl } from 'react-intl';
 
 const CopyIcon = bundleIcon(Clipboard24Filled, Clipboard24Regular);
 
 export interface CopyMenuItemProps {
-  onClick: (e: any) => void;
+  onClick: (e: unknown) => void;
   isTrigger?: boolean;
   showKey?: boolean;
 }
@@ -36,8 +38,21 @@ export const CopyMenuItem = (props: CopyMenuItemProps) => {
 
   const titleText = isTrigger ? copyTrigger : copyAction;
 
+  const onCopyClick = useCallback<CopyMenuItemProps['onClick']>(
+    (e) => {
+      onClick(e);
+      LoggerService().log({
+        area: 'CopyMenuItem:onCopyClick',
+        args: [isTrigger ? 'trigger' : 'action'],
+        level: LogEntryLevel.Verbose,
+        message: 'Action copied.',
+      });
+    },
+    [isTrigger, onClick]
+  );
+
   return (
-    <MenuItem key={titleText} icon={<CopyIcon />} secondaryContent={showKey ? copyKeyboardText : undefined} onClick={onClick}>
+    <MenuItem key={titleText} icon={<CopyIcon />} secondaryContent={showKey ? copyKeyboardText : undefined} onClick={onCopyClick}>
       {titleText}
     </MenuItem>
   );
