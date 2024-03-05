@@ -5,9 +5,17 @@ import { useIntl } from 'react-intl';
 export interface ActionResultProps {
   nodeId: string;
   onMockUpdate: MockUpdateHandler;
+  mockResult: string | undefined;
 }
 
-export const ActionResult: React.FC<ActionResultProps> = ({ nodeId, onMockUpdate }): JSX.Element => {
+export const ActionResults = {
+  SUCCESS: 'success',
+  TIMEDOUT: 'timedOut',
+  SKIPPED: 'skipped',
+  FAILED: 'failed',
+};
+
+export const ActionResult: React.FC<ActionResultProps> = ({ nodeId, onMockUpdate, mockResult }): JSX.Element => {
   const intl = useIntl();
 
   const intlText = {
@@ -35,10 +43,10 @@ export const ActionResult: React.FC<ActionResultProps> = ({ nodeId, onMockUpdate
 
   const labelId = `dropdown-label-action-result-${nodeId}`;
   const options: IDropdownOption[] = [
-    { key: 'success', text: intlText.SUCCEEDED_STATUS },
-    { key: 'timedOut', text: intlText.TIMEDOUT_STATUS },
-    { key: 'skipped', text: intlText.SKIPPED_STATUS },
-    { key: 'failed', text: intlText.FAILED_STATUS },
+    { key: ActionResults.SUCCESS, text: intlText.SUCCEEDED_STATUS },
+    { key: ActionResults.TIMEDOUT, text: intlText.TIMEDOUT_STATUS },
+    { key: ActionResults.SKIPPED, text: intlText.SKIPPED_STATUS },
+    { key: ActionResults.FAILED, text: intlText.FAILED_STATUS },
   ];
 
   const onChangeActionResult = (_event: React.FormEvent<HTMLDivElement>, selectedOption?: IDropdownOption) => {
@@ -54,8 +62,9 @@ export const ActionResult: React.FC<ActionResultProps> = ({ nodeId, onMockUpdate
         aria-labelledby={labelId}
         className={'msla-output-mocks-actions-dropdown'}
         options={options}
-        defaultSelectedKey={'success'}
+        defaultSelectedKey={ActionResults.SUCCESS}
         onChange={onChangeActionResult}
+        selectedKey={mockResult}
       />
     </>
   );

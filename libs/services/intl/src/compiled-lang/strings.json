@@ -4809,6 +4809,12 @@
       "value": "Save"
     }
   ],
+  "Sm3qmB": [
+    {
+      "type": 0,
+      "value": "Skipped, timed out, or failed actions do not support mocking outputs. Mocking is only supported for successful actions."
+    }
+  ],
   "SmCQys": [
     {
       "type": 0,

@@ -2,7 +2,7 @@ import { Constants } from '../../../../../../../src/lib';
 import { convertVariableTypeToSwaggerType } from '../../../../../../lib/core/utils/variables';
 import constants from '../../../../../common/constants';
 import { useSelectedNodeId } from '../../../../../core/state/panel/panelSelectors';
-import { useIsMockSupported } from '../../../../../core/state/unitTest/unitTestSelectors';
+import { useIsMockSupported, useMockResultsByOperation } from '../../../../../core/state/unitTest/unitTestSelectors';
 import { updateOutputMock } from '../../../../../core/state/unitTest/unitTestSlice';
 import type { AppDispatch, RootState } from '../../../../../core/store';
 import { isRootNodeInGraph } from '../../../../../core/utils/graph';
@@ -19,6 +19,7 @@ export const MockResultsTab = () => {
   const nodeName = isTrigger ? `&${nodeId}` : nodeId;
   const rawOutputs = useSelector((state: RootState) => state.operations.outputParameters[nodeId]);
   const dispatch = useDispatch<AppDispatch>();
+  const outputsMock = useMockResultsByOperation(nodeName);
 
   const outputs = Object.values(rawOutputs.outputs).map((output: OutputInfo) => {
     const { key: id, title: label, required, type } = output;
@@ -49,7 +50,15 @@ export const MockResultsTab = () => {
     [nodeName, dispatch]
   );
 
-  return <OutputMocks isMockSupported={isMockSupported} nodeId={nodeId} onMockUpdate={onMockUpdate} outputs={outputs} />;
+  return (
+    <OutputMocks
+      isMockSupported={isMockSupported}
+      nodeId={nodeId}
+      onMockUpdate={onMockUpdate}
+      outputs={outputs}
+      outputsMock={outputsMock}
+    />
+  );
 };
 
 export const mockResultsTab: PanelTabFn = (intl) => ({

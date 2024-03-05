@@ -22,9 +22,10 @@ export interface OutputMocksProps {
   nodeId: string;
   onMockUpdate: MockUpdateHandler;
   outputs: any[];
+  outputsMock: OutputMock | undefined;
 }
 
-export const OutputMocks = ({ isMockSupported, nodeId, onMockUpdate, outputs }: OutputMocksProps) => {
+export const OutputMocks = ({ isMockSupported, nodeId, onMockUpdate, outputs, outputsMock }: OutputMocksProps) => {
   const intl = useIntl();
   console.log('charlie parseOutput', outputs);
 
@@ -38,9 +39,9 @@ export const OutputMocks = ({ isMockSupported, nodeId, onMockUpdate, outputs }: 
 
   return isMockSupported ? (
     <>
-      <ActionResult nodeId={nodeId} onMockUpdate={onMockUpdate} />
+      <ActionResult nodeId={nodeId} onMockUpdate={onMockUpdate} mockResult={outputsMock?.actionResult} />
       <Divider style={{ padding: '16px 0px' }} />
-      <OutputsSettings outputs={outputs} />
+      <OutputsSettings outputs={outputs} mockResult={outputsMock?.actionResult} />
     </>
   ) : (
     <Text>{intlText.UNSUPPORTED_MOCKS}</Text>
