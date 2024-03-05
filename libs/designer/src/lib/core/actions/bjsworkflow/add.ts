@@ -30,16 +30,15 @@ import type { NodeDataWithOperationMetadata } from './operationdeserializer';
 import type { Settings } from './settings';
 import { getOperationSettings, getSplitOnValue } from './settings';
 import { ConnectionService, OperationManifestService, StaticResultService } from '@microsoft/designer-client-services-logic-apps';
-import type { SwaggerParser } from '@microsoft/logic-apps-shared';
-import { ManifestParser } from '@microsoft/logic-apps-shared';
 import type {
+  SwaggerParser,
   Connector,
   DiscoveryOperation,
   DiscoveryResultTypes,
   OperationManifest,
   SomeKindOfAzureOperationDiscovery,
 } from '@microsoft/logic-apps-shared';
-import { equals, getRecordEntry } from '@microsoft/logic-apps-shared';
+import { ManifestParser, equals, getRecordEntry } from '@microsoft/logic-apps-shared';
 import type { Dispatch } from '@reduxjs/toolkit';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { batch } from 'react-redux';
