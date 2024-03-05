@@ -29,16 +29,21 @@ import {
 } from '../parameters/helper';
 import { loadInputValuesFromDefinition } from './inputsbuilder';
 import { LogEntryLevel, LoggerService, StaticResultService } from '@microsoft/designer-client-services-logic-apps';
-import type { LAOperation, OutputParameter, SwaggerParser } from '@microsoft/logic-apps-shared';
+import type { LAOperation, OutputParameter, SwaggerParser, LogicAppsV2, OperationInfo } from '@microsoft/logic-apps-shared';
 import {
   create,
   isDynamicSchemaExtension,
   ParameterLocations,
   removeConnectionPrefix,
   isTemplateExpression,
+  copyArray,
+  map,
+  RecurrenceType,
+  equals,
+  parsePathnameAndQueryKeyFromUri,
+  startsWith,
+  unmap,
 } from '@microsoft/logic-apps-shared';
-import type { LogicAppsV2, OperationInfo } from '@microsoft/logic-apps-shared';
-import { copyArray, map, RecurrenceType, equals, parsePathnameAndQueryKeyFromUri, startsWith, unmap } from '@microsoft/logic-apps-shared';
 import type { Dispatch } from '@reduxjs/toolkit';
 
 interface OperationInputInfo {

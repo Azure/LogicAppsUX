@@ -6,9 +6,8 @@ import { createWorkflowNode, createWorkflowEdge } from '../../utils/graph';
 import type { WorkflowNode, WorkflowEdge } from '../models/workflowNode';
 import { LoggerService, Status } from '@microsoft/designer-client-services-logic-apps';
 import { getDurationStringPanelMode } from '@microsoft/designer-ui';
-import { getIntl } from '@microsoft/logic-apps-shared';
-import type { LogicAppsV2, SubgraphType } from '@microsoft/logic-apps-shared';
 import {
+  getIntl,
   containsIdTag,
   WORKFLOW_NODE_TYPES,
   WORKFLOW_EDGE_TYPES,
@@ -19,6 +18,7 @@ import {
   getUniqueName,
   getRecordEntry,
 } from '@microsoft/logic-apps-shared';
+import type { LogicAppsV2, SubgraphType } from '@microsoft/logic-apps-shared';
 
 const hasMultipleTriggers = (definition: LogicAppsV2.WorkflowDefinition): boolean => {
   return definition && definition.triggers ? Object.keys(definition.triggers).length > 1 : false;

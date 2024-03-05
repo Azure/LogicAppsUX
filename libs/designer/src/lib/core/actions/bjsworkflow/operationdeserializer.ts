@@ -56,11 +56,18 @@ import {
   OperationManifestService,
   StaticResultService,
 } from '@microsoft/designer-client-services-logic-apps';
-import { getIntl } from '@microsoft/logic-apps-shared';
-import type { InputParameter, OutputParameter } from '@microsoft/logic-apps-shared';
-import { ManifestParser } from '@microsoft/logic-apps-shared';
-import type { LogicAppsV2, OperationManifest } from '@microsoft/logic-apps-shared';
-import { isArmResourceId, uniqueArray, getPropertyValue, map, aggregate, equals, getRecordEntry } from '@microsoft/logic-apps-shared';
+import {
+  getIntl,
+  ManifestParser,
+  isArmResourceId,
+  uniqueArray,
+  getPropertyValue,
+  map,
+  aggregate,
+  equals,
+  getRecordEntry,
+} from '@microsoft/logic-apps-shared';
+import type { InputParameter, OutputParameter, LogicAppsV2, OperationManifest } from '@microsoft/logic-apps-shared';
 import type { Dispatch } from '@reduxjs/toolkit';
 
 export interface NodeDataWithOperationMetadata extends NodeData {
