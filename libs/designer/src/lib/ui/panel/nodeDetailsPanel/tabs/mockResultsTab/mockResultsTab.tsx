@@ -21,7 +21,16 @@ export const MockResultsTab = () => {
   const dispatch = useDispatch<AppDispatch>();
   const outputsMock = useMockResultsByOperation(nodeName);
 
-  const outputs = Object.values(rawOutputs.outputs).map((output: OutputInfo) => {
+  let filteredOutputs = Object.values(rawOutputs.outputs).filter((output: OutputInfo) => {
+    return !output.isInsideArray ?? true;
+  });
+
+  filteredOutputs = filteredOutputs.filter((output: OutputInfo) => {
+    const hasChildren = filteredOutputs.some((o: OutputInfo) => (o.key === output.key ? false : o.key.includes(output.key)));
+    return !hasChildren;
+  });
+
+  const outputs = filteredOutputs.map((output: OutputInfo) => {
     const { key: id, title: label, required, type } = output;
     const { editor, editorOptions, editorViewModel, schema } = getParameterEditorProps(output, [], true);
 
@@ -42,6 +51,9 @@ export const MockResultsTab = () => {
       suppressCastingForSerialize: false,
     };
   });
+
+  console.log('charlie rawOutputs.outputs', filteredOutputs);
+  console.log('charlie parseOutput', outputs);
 
   const onMockUpdate = useCallback(
     (newState: MockUpdateEvent): void => {
