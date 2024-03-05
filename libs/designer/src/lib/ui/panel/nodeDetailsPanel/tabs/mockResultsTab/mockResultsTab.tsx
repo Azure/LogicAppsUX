@@ -1,52 +1,52 @@
-import { type OutputInfo } from '@microsoft/designer-client-services-logic-apps';
+import { Constants } from '../../../../../../../src/lib';
+import { convertVariableTypeToSwaggerType } from '../../../../../../lib/core/utils/variables';
 import constants from '../../../../../common/constants';
 import { useSelectedNodeId } from '../../../../../core/state/panel/panelSelectors';
 import { useIsMockSupported } from '../../../../../core/state/unitTest/unitTestSelectors';
-import type { RootState } from '../../../../../core/store';
+import { updateOutputMock } from '../../../../../core/state/unitTest/unitTestSlice';
+import type { AppDispatch, RootState } from '../../../../../core/store';
 import { isRootNodeInGraph } from '../../../../../core/utils/graph';
-import { OutputMocks } from '@microsoft/designer-ui';
-import type { ChangeState, MockUpdateEvent, PanelTabFn } from '@microsoft/designer-ui';
-import { useCallback } from 'react';
-import { useSelector } from 'react-redux';
-import { Constants, convertVariableTypeToSwaggerType } from '@microsoft/logic-apps-designer';
 import { getParameterEditorProps } from '../../../../../core/utils/parameters/helper';
+import { type OutputInfo } from '@microsoft/designer-client-services-logic-apps';
+import { type MockUpdateEvent, OutputMocks, type PanelTabFn } from '@microsoft/designer-ui';
+import { useCallback } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
 export const MockResultsTab = () => {
   const nodeId = useSelectedNodeId();
-  const isMockSupported = useIsMockSupported(nodeId);
-  const isTriggerNode = useSelector((state: RootState) => isRootNodeInGraph(nodeId, 'root', state.workflow.nodesMetadata));
-  const nodeName = isTriggerNode ? `&${nodeId}` : nodeId;
+  const isTrigger = useSelector((state: RootState) => isRootNodeInGraph(nodeId, 'root', state.workflow.nodesMetadata));
+  const isMockSupported = useIsMockSupported(nodeId, isTrigger);
+  const nodeName = isTrigger ? `&${nodeId}` : nodeId;
   const rawOutputs = useSelector((state: RootState) => state.operations.outputParameters[nodeId]);
+  const dispatch = useDispatch<AppDispatch>();
 
-  console.log('charlie', rawOutputs);
-  
   const outputs = Object.values(rawOutputs.outputs).map((output: OutputInfo) => {
-    const { key: id, title:label, required, type } = output;
+    const { key: id, title: label, required, type } = output;
     const { editor, editorOptions, editorViewModel, schema } = getParameterEditorProps(output, [], true);
 
     return {
-        id,
-        label,
-        required,
-        readOnly: false,
-        value: [],
-        editor: editor ?? convertVariableTypeToSwaggerType(type) ?? Constants.SWAGGER.TYPE.ANY,
-        editorOptions,
-        schema,
-        tokenEditor: false,
-        isLoading: false,
-        editorViewModel,
-        showTokens: false,
-        tokenMapping: [],
-        suppressCastingForSerialize: false,
+      id,
+      label,
+      required,
+      readOnly: false,
+      value: [],
+      editor: editor ?? convertVariableTypeToSwaggerType(type) ?? Constants.SWAGGER.TYPE.ANY,
+      editorOptions,
+      schema,
+      tokenEditor: false,
+      isLoading: false,
+      editorViewModel,
+      showTokens: false,
+      tokenMapping: [],
+      suppressCastingForSerialize: false,
     };
   });
 
   const onMockUpdate = useCallback(
     (newState: MockUpdateEvent): void => {
-      console.log('charlie', newState, nodeName);
+      dispatch(updateOutputMock({ operationName: nodeName, mockResult: { output: newState.id, actionResult: newState.actionResult } }));
     },
-    [nodeName]
+    [nodeName, dispatch]
   );
 
   return <OutputMocks isMockSupported={isMockSupported} nodeId={nodeId} onMockUpdate={onMockUpdate} outputs={outputs} />;

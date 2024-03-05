@@ -1,13 +1,18 @@
 import type { Assertion, AssertionDefintion } from '@microsoft/utils-logic-apps';
 
-export interface AddMockResultPayload {
+export interface updateOutputMockPayload {
   operationName: string;
-  mockResult: string;
+  mockResult: OutputMock;
+}
+
+export interface OutputMock {
+  output: string;
+  actionResult: string;
 }
 
 export interface InitDefintionPayload {
   assertions: Assertion[];
-  mockResults: { [key: string]: string };
+  mockResults: Record<string, OutputMock>;
 }
 
 export interface UpdateAssertionsPayload {
@@ -19,7 +24,7 @@ export interface UpdateAssertionPayload {
 }
 
 export interface UnitTestState {
-  mockResults: { [key: string]: string };
+  mockResults: Record<string, OutputMock>;
   assertions: Record<string, AssertionDefintion>;
   validationErrors: Record<string, Record<string, string | undefined>>;
 }

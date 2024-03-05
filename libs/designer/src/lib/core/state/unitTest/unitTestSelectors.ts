@@ -1,7 +1,7 @@
 import type { RootState } from '../../store';
 import { type OperationMetadataState } from '../operation/operationMetadataSlice';
 import { getOperationsState } from '../selectors/actionMetadataSelector';
-import type { UnitTestState } from './unitTestInterfaces';
+import type { OutputMock, UnitTestState } from './unitTestInterfaces';
 import { getRecordEntry, type AssertionDefintion, ConnectionType } from '@microsoft/utils-logic-apps';
 import { createSelector } from '@reduxjs/toolkit';
 import { useSelector } from 'react-redux';
@@ -12,7 +12,7 @@ export const getUnitTestState = (state: RootState): UnitTestState => state.unitT
  * Custom hook that returns an object containing mock results.
  * @returns {Object} An object with key-value pairs representing the mock results.
  */
-export const useMockResults = (): { [key: string]: string } => {
+export const useMockResults = (): Record<string, OutputMock> => {
   return useSelector(
     createSelector(getUnitTestState, (state: UnitTestState) => {
       return state.mockResults;
@@ -25,7 +25,7 @@ export const useMockResults = (): { [key: string]: string } => {
  * @param {string} operationName - The name of the operation.
  * @returns The mock results for the specified operation, or undefined if not found.
  */
-export const useMockResultsByOperation = (operationName: string): string | undefined => {
+export const useMockResultsByOperation = (operationName: string): OutputMock | undefined => {
   return useSelector(
     createSelector(getUnitTestState, (state: UnitTestState) => {
       return state.mockResults[operationName] ?? undefined;
@@ -34,15 +34,17 @@ export const useMockResultsByOperation = (operationName: string): string | undef
 };
 
 /**
- * Returns a boolean indicating whether mock is supported for the given nodeId.
- * @param {string} nodeId - The ID of the node.
- * @returns A boolean indicating whether mock is supported.
+ * Custom hook to check if mock is supported for a given node.
+ * @param nodeId - The ID of the node.
+ * @param isTrigger - Indicates whether the node is a trigger.
+ * @returns A boolean indicating whether mock is supported for the node.
  */
-export const useIsMockSupported = (nodeId: string) => {
+export const useIsMockSupported = (nodeId: string, isTrigger: boolean) => {
   return useSelector(
     createSelector(getOperationsState, (state: OperationMetadataState) => {
       const type = (getRecordEntry(state.operationInfo, nodeId)?.type ?? '').toLowerCase();
       return (
+        isTrigger ||
         type === ConnectionType.ServiceProvider ||
         type === ConnectionType.Function ||
         type === ConnectionType.ApiManagement ||

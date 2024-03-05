@@ -10,6 +10,11 @@ export interface MockUpdateEvent {
   actionResult: string;
 }
 
+export interface OutputMock {
+  output: string;
+  actionResult: string;
+}
+
 export type MockUpdateHandler = EventHandler<MockUpdateEvent>;
 
 export interface OutputMocksProps {

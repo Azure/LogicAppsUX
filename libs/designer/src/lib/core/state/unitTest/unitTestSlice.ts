@@ -2,7 +2,7 @@ import { recurseSerializeCondition } from '../../utils/parameters/helper';
 import type {
   UpdateAssertionsPayload,
   UpdateAssertionPayload,
-  AddMockResultPayload,
+  updateOutputMockPayload,
   InitDefintionPayload,
   UnitTestState,
 } from './unitTestInterfaces';
@@ -105,7 +105,7 @@ export const unitTestSlice = createSlice({
         state.mockResults = mockResults;
       }
     },
-    addMockResult: (state: UnitTestState, action: PayloadAction<AddMockResultPayload>) => {
+    updateOutputMock: (state: UnitTestState, action: PayloadAction<updateOutputMockPayload>) => {
       const { operationName, mockResult } = action.payload;
       state.mockResults[operationName] = mockResult;
     },
@@ -141,6 +141,6 @@ export const unitTestSlice = createSlice({
   },
 });
 
-export const { updateAssertions, addMockResult, updateAssertion, initUnitTestDefinition } = unitTestSlice.actions;
+export const { updateAssertions, updateAssertion, initUnitTestDefinition, updateOutputMock } = unitTestSlice.actions;
 
 export default unitTestSlice.reducer;

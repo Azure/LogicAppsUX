@@ -1,5 +1,6 @@
 import { StatusPill } from '../monitoring';
 import { MockStatusIcon } from '../unitTesting/mockStatusIcon';
+import { type OutputMock } from '../unitTesting/outputMocks';
 import { convertUIElementNameToAutomationId } from '../utils';
 import { CardContextMenu } from './cardcontextmenu';
 import { CardFooter } from './cardfooter';
@@ -49,7 +50,7 @@ export interface CardProps {
   runData?: LogicAppsV2.WorkflowRunAction | LogicAppsV2.WorkflowRunTrigger;
   setFocus?: boolean;
   isSecureInputsOutputs?: boolean;
-  nodeMockResults?: string;
+  nodeMockResults?: OutputMock;
   isMockSupported?: boolean;
 }
 
