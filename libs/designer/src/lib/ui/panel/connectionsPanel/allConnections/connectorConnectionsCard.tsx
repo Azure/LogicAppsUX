@@ -1,8 +1,7 @@
-import { useAllConnectionErrors } from '../../../../core';
-import { ConnectionEntry } from './connectionEntry';
 import { AccordionHeader, AccordionPanel, Badge, Spinner, Text } from '@fluentui/react-components';
 import {
   getConnectorCategoryString,
+  isBuiltInConnector,
 } from '@microsoft/designer-ui';
 import type { Connector } from '@microsoft/logic-apps-shared';
 import {
@@ -10,9 +9,10 @@ import {
   getBrandColorFromConnector,
   getDisplayNameFromConnector,
   getIconUriFromConnector,
-  isBuiltInConnector,
 } from '@microsoft/logic-apps-shared';
 import { useMemo } from 'react';
+import { useAllConnectionErrors } from '../../../../core';
+import { ConnectionEntry } from './connectionEntry';
 
 export interface ConnectorConnectionsCardProps {
   connectorId: string;

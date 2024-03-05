@@ -1,4 +1,4 @@
-import type { Connector, OperationApi } from '../../../models';
+import { Connector, OperationApi } from '../../models';
 import {
   getAllConnectorProperties,
   getBrandColorFromConnector,
@@ -7,7 +7,7 @@ import {
   getIconUriFromConnector,
 } from '../index';
 
-describe('lib/connectors/connectorProperties', () => {
+describe('utils/src/lib/helpers/connectors', () => {
   describe('getAllConnectorProperties', () => {
     test('works for a Connector', () => {
       const connector = {

@@ -1,5 +1,6 @@
-import type { Connector, ConnectorProperty, OperationApi } from "../../models";
-import { fallbackConnectorIconUrl } from "../connections";
+import type { Connector, ConnectorProperty, OperationApi } from "../models";
+import { fallbackConnectorIconUrl } from "./connections";
+
 
 export const getAllConnectorProperties = (connector: Connector | OperationApi | undefined): Partial<ConnectorProperty & OperationApi> => {
   if (!connector) {
