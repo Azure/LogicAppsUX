@@ -155,7 +155,7 @@ export const SubgraphCard: React.FC<SubgraphCardProps> = ({
           onKeyUp={keyboardInteraction.keyDown}
         >
           <div className={css('msla-selection-box', 'white-outline', selected && 'selected')} tabIndex={-1} />
-          <div className="msla-subgraph-title">{data.title}</div>
+          <div className="msla-subgraph-title msla-subgraph-title-text">{data.title}</div>
           <NodeCollapseToggle disabled collapsed={collapsed} onSmallCard />
         </div>
       </div>
