@@ -1,4 +1,19 @@
 # Logic Apps Designer
+## [2.123.0](https://github.com/Azure/LogicAppsUX/compare/v2.122.0...v2.123.0) (2024-03-06)
+
+
+### Features
+
+* **designer:** Add verbose telemetry for a number of scenarios ([#4307](https://github.com/Azure/LogicAppsUX/issues/4307)) ([4c93053](https://github.com/Azure/LogicAppsUX/commit/4c9305382f915e07de7cb609a3b5817e99be0ace))
+* **designer:** Allow host to define conditions for built-in and custom connectors ([#4299](https://github.com/Azure/LogicAppsUX/issues/4299)) ([d6f81de](https://github.com/Azure/LogicAppsUX/commit/d6f81deeae7c667e31ffb8f80fad677b29a4544e))
+* **vscode:**  Improve status step indicator for export experience ([#4305](https://github.com/Azure/LogicAppsUX/issues/4305)) ([19473ee](https://github.com/Azure/LogicAppsUX/commit/19473ee32c84f161b0914a24600d0942c19814ea))
+
+
+### Bug Fixes
+
+* **consumption:** Adding 'Invalid Parameter' message to Subgraph nodes ([#4314](https://github.com/Azure/LogicAppsUX/issues/4314)) ([97e26d7](https://github.com/Azure/LogicAppsUX/commit/97e26d7c2c4efebc7243eca69803ffcfee9652fe))
+* **designer:** Fix linter errors happening on PRs from library consolodation ([#4315](https://github.com/Azure/LogicAppsUX/issues/4315)) ([96e0fff](https://github.com/Azure/LogicAppsUX/commit/96e0fff70a04b5a0797c571951685b259bf09c1d))
+
 ## [2.122.0](https://github.com/Azure/LogicAppsUX/compare/v2.121.0...v2.122.0) (2024-03-01)
 
 
