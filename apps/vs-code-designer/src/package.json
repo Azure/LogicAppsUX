@@ -338,7 +338,7 @@
       },
       {
         "command": "azureLogicAppsStandard.parameterizeConnections",
-        "title": "Parameterize existing connections",
+        "title": "Parameterize connections",
         "category": "Azure Logic Apps",
         "when": "config.myExtension.enableCommand"
       }
