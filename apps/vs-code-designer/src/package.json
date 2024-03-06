@@ -717,10 +717,6 @@
         {
           "command": "azureLogicAppsStandard.generateDeploymentScripts",
           "when": "never"
-        },
-        {
-          "command": "azureLogicAppsStandard.parameterizeConnections",
-          "when": "config.azureLogicAppsStandard.parameterizeConnectionsInProjectLoad != true"
         }
       ],
       "azureLogicAppsStandard.dataMapperMenu": [
