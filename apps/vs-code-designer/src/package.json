@@ -720,7 +720,7 @@
         },
         {
           "command": "azureLogicAppsStandard.parameterizeConnections",
-          "when": "config.azureLogicAppsStandard.parameterizeConnectionsInProjectLoad == false"
+          "when": "config.azureLogicAppsStandard.parameterizeConnectionsInProjectLoad != true"
         }
       ],
       "azureLogicAppsStandard.dataMapperMenu": [

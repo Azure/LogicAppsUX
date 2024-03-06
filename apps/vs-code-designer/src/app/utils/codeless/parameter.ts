@@ -40,7 +40,7 @@ export async function getParametersJson(workflowFilePath: string): Promise<Recor
 export async function saveWorkflowParameter(
   context: IActionContext,
   workflowFilePath: string,
-  parameters: WorkflowParameter
+  parameters: Record<string, Parameter>
 ): Promise<void> {
   const projectPath = await getLogicAppProjectRoot(context, workflowFilePath);
   const parametersFilePath = path.join(projectPath, parametersFileName);

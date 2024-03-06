@@ -3,10 +3,11 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { localSettingsFileName, parameterizeConnectionsInProjectLoadSetting } from '../../constants';
+import { ext } from '../../extensionVariables';
 import { localize } from '../../localize';
 import { getLocalSettingsJson } from '../utils/appSettings/localSettings';
-import { getConnectionsJson } from '../utils/codeless/connection';
-import { getParametersJson } from '../utils/codeless/parameter';
+import { getConnectionsJson, saveConnectionReferences } from '../utils/codeless/connection';
+import { getParametersJson, saveWorkflowParameter } from '../utils/codeless/parameter';
 import { parameterizeConnection } from '../utils/codeless/parameterizer';
 import { tryGetLogicAppProjectRoot } from '../utils/verifyIsProject';
 import { getGlobalSetting, updateGlobalSetting } from '../utils/vsCodeConfig/settings';
@@ -57,8 +58,10 @@ export async function parameterizeConnections(context: IActionContext): Promise<
       try {
         const connectionsJson: ConnectionsData = JSON.parse(await getConnectionsJson(projectPath));
         const parametersJson = await getParametersJson(projectPath);
-        const localSettingsJson = await getLocalSettingsJson(context, path.join(projectPath, localSettingsFileName));
-        console.log(connectionsJson, parametersJson, localSettingsJson);
+        const localSettingsJson = (await getLocalSettingsJson(context, path.join(projectPath, localSettingsFileName))) as Record<
+          string,
+          any
+        >;
 
         Object.keys(connectionsJson).forEach((connectionType) => {
           if (connectionType !== 'serviceProviderConnections') {
@@ -73,10 +76,18 @@ export async function parameterizeConnections(context: IActionContext): Promise<
             });
           }
         });
-
-        window.showInformationMessage(localize('finishedParameterizingConnections', 'Finished parameterizing connections.'));
+        await saveWorkflowParameter(context, projectPath, parametersJson);
+        await saveConnectionReferences(context, projectPath, { connections: connectionsJson, settings: localSettingsJson.Values });
+        window.showInformationMessage(localize('finishedParameterizingConnections', 'Finished parameterizing existing connections.'));
       } catch (error) {
-        console.log(error);
+        const errorMessage = localize(
+          'errorParameterizeConnections',
+          'Error during while parameterizing exiting connections: {0}',
+          error.message ?? error
+        );
+        ext.outputChannel.appendLog(errorMessage);
+        context.telemetry.properties.error = errorMessage;
+        throw new Error(errorMessage);
       }
     }
   }
