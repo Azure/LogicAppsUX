@@ -19,7 +19,6 @@ import { window, workspace } from 'vscode';
 
 /**
  * Prompts the user to parameterize connections at project load.
- *
  * @param {IActionContext} context - The action context.
  * @returns A promise that resolves when the operation is complete.
  */
@@ -49,6 +48,11 @@ export async function promptParameterizeConnections(context: IActionContext): Pr
   }
 }
 
+/**
+ * Parameterizes the connections in the Logic Apps project.
+ * @param {IActionContext} context - The action context.
+ * @returns A promise that resolves when the connections have been parameterized.
+ */
 export async function parameterizeConnections(context: IActionContext): Promise<void> {
   if (workspace.workspaceFolders && workspace.workspaceFolders.length > 0) {
     const workspaceFolder = await getWorkspaceFolder(context);
