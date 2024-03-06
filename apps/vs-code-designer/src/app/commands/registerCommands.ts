@@ -36,6 +36,7 @@ import { startStreamingLogs } from './logstream/startStreamingLogs';
 import { stopStreamingLogs } from './logstream/stopStreamingLogs';
 import { openFile } from './openFile';
 import { openInPortal } from './openInPortal';
+import { parameterizeConnections } from './parameterizeConnections';
 import { pickFuncProcess } from './pickFuncProcess';
 import { startRemoteDebug } from './remoteDebug/startRemoteDebug';
 import { restartLogicApp } from './restartLogicApp';
@@ -130,10 +131,8 @@ export function registerCommands(): void {
   registerCommand(extensionCommand.initProjectForVSCode, initProjectForVSCode);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.configureDeploymentSource, configureDeploymentSource);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.startRemoteDebug, startRemoteDebug);
-
-  registerCommandWithTreeNodeUnwrapping(extensionCommand.validateAndInstallBinaries, async (context: IActionContext) =>
-    validateAndInstallBinaries(context)
-  );
+  registerCommand(extensionCommand.parameterizeConnections, parameterizeConnections);
+  registerCommandWithTreeNodeUnwrapping(extensionCommand.validateAndInstallBinaries, validateAndInstallBinaries);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.resetValidateAndInstallBinaries, resetValidateAndInstallBinaries);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.disableValidateAndInstallBinaries, disableValidateAndInstallBinaries);
   // Data Mapper Commands
