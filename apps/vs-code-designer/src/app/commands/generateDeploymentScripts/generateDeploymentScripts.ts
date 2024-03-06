@@ -10,6 +10,7 @@ import {
   localSettingsFileName,
   extensionCommand,
   parameterizeConnectionsInProjectLoadSetting,
+  COMMON_ERRORS,
 } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
@@ -81,7 +82,9 @@ export async function generateDeploymentScripts(context: IActionContext, project
     const errorMessage = localize('errorScriptGen', 'Error during deployment script generation: {0}', error.message ?? error);
     ext.outputChannel.appendLog(errorMessage);
     context.telemetry.properties.error = errorMessage;
-    throw new Error(errorMessage);
+    if (!errorMessage.includes(COMMON_ERRORS.OPERATION_CANCELLED)) {
+      throw new Error(errorMessage);
+    }
   }
 }
 
