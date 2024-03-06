@@ -417,7 +417,7 @@ const ParameterSection = ({
           errorDetails: dynamicData?.error ? { message: dynamicData.error.message } : undefined,
           validationErrors,
           tokenMapping,
-          nodeTitle: nodeTitle,
+          nodeTitle,
           loadParameterValueFromString: (value: string) => loadParameterValueFromString(value),
           onValueChange: (newState: ChangeState) => onValueChange(id, newState),
           onComboboxMenuOpen: () => onComboboxMenuOpen(param),

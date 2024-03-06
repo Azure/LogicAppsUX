@@ -178,6 +178,7 @@ const DesignerEditor = () => {
   }
 
   const saveWorkflowFromDesigner = async (workflowFromDesigner: Workflow, customCode?: Record<string, CustomCode>): Promise<void> => {
+    await saveCustomCodeStandard(customCode);
     const { definition, connectionReferences, parameters } = workflowFromDesigner;
     const workflowToSave = {
       ...workflow,
@@ -216,7 +217,6 @@ const DesignerEditor = () => {
     const connectionsToUpdate = getConnectionsToUpdate(originalConnectionsData, connectionsData ?? {});
     const parametersToUpdate = !isEqual(originalParametersData, parameters) ? (parameters as ParametersData) : undefined;
     const settingsToUpdate = !isEqual(settingsData?.properties, originalSettings) ? settingsData?.properties : undefined;
-    await saveCustomCodeStandard(customCode);
     return saveWorkflowStandard(siteResourceId, workflowName, workflowToSave, connectionsToUpdate, parametersToUpdate, settingsToUpdate);
   };
 

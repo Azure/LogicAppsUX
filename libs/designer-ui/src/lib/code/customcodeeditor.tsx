@@ -68,7 +68,7 @@ export function CustomCodeEditor({
       setShowTokenPickerButton(false);
     }
     onChange?.({
-      value: [createLiteralValueSegment(JSON.stringify({ fileName: getFileName() }))],
+      value: [createLiteralValueSegment(getFileName())],
       viewModel: { customCodeData: { fileData: getCurrentValue(), fileExtension: getFileExtensionName(language) } },
     });
   };

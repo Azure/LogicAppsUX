@@ -1,4 +1,4 @@
-import type { CustomCode } from '../../../common/models/workflow';
+import { CustomCodeOperation, type CustomCode } from '../../../common/models/customcode';
 import { getInputDependencies } from '../../actions/bjsworkflow/initialize';
 import type { Settings } from '../../actions/bjsworkflow/settings';
 import type { NodeStaticResults } from '../../actions/bjsworkflow/staticresults';
@@ -197,6 +197,19 @@ export interface UpdateParametersPayload {
     propertiesToUpdate: Partial<ParameterInfo>;
   }[];
   isUserAction?: boolean;
+}
+
+export interface AddCustomCodePayload {
+  nodeId: string;
+  fileData: string;
+  fileExtension: string;
+}
+
+export interface DeleteCustomCodePayload {
+  // the file name of deleted nodes may be unabled to be inferred from nodeId
+  // so must be included in payload
+  nodeId: string;
+  fileName: string;
 }
 
 export const operationMetadataSlice = createSlice({
@@ -421,9 +434,13 @@ export const operationMetadataSlice = createSlice({
         parameterGroup.parameters[index].validationErrors = validationErrors;
       }
     },
-    addOrUpdateCustomCode: (state, action: PayloadAction<CustomCode>) => {
+    addOrUpdateCustomCode: (state, action: PayloadAction<AddCustomCodePayload>) => {
       const { nodeId, fileData, fileExtension } = action.payload;
-      state.customCode[nodeId] = { nodeId, fileData, fileExtension };
+      state.customCode[nodeId] = { operation: CustomCodeOperation.ADD, operationProps: { nodeId, fileData, fileExtension } };
+    },
+    deleteCustomCode: (state, action: PayloadAction<DeleteCustomCodePayload>) => {
+      const { nodeId, fileName } = action.payload;
+      state.customCode[nodeId] = { operation: CustomCodeOperation.DELETE, operationProps: { nodeId, fileName } };
     },
     removeParameterValidationError: (
       state,
@@ -507,6 +524,7 @@ export const {
   updateParameterConditionalVisibility,
   updateParameterValidation,
   addOrUpdateCustomCode,
+  deleteCustomCode,
   updateExisitingInputTokenTitles,
   removeParameterValidationError,
   updateOutputs,

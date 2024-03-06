@@ -1,14 +1,15 @@
-import type { RootState } from '../../..';
+import { type RootState } from '../../..';
 import type { WorkflowNode } from '../../parsers/models/workflowNode';
 import { removeNodeConnectionData } from '../../state/connection/connectionSlice';
-import { deinitializeNodes, deinitializeOperationInfo } from '../../state/operation/operationMetadataSlice';
+import { deinitializeNodes, deinitializeOperationInfo, deleteCustomCode } from '../../state/operation/operationMetadataSlice';
 import { clearPanel } from '../../state/panel/panelSlice';
 import { setValidationError } from '../../state/setting/settingSlice';
 import { deinitializeStaticResultProperty } from '../../state/staticresultschema/staticresultsSlice';
 import { deinitializeTokensAndVariables } from '../../state/tokens/tokensSlice';
 import { clearFocusNode, deleteNode } from '../../state/workflow/workflowSlice';
+import { getParameterFromName } from '../../utils/parameters/helper';
 import { updateAllUpstreamNodes } from './initialize';
-import { WORKFLOW_NODE_TYPES } from '@microsoft/utils-logic-apps';
+import { WORKFLOW_NODE_TYPES, getRecordEntry, replaceWhiteSpaceWithUnderscore } from '@microsoft/utils-logic-apps';
 import type { Dispatch } from '@reduxjs/toolkit';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { batch } from 'react-redux';
@@ -33,6 +34,7 @@ export const deleteOperation = createAsyncThunk(
       dispatch(clearPanel());
 
       dispatch(deleteNode(deletePayload));
+      deleteCustomCodeInfo(nodeId, dispatch, getState() as RootState);
       deleteOperationDetails(nodeId, dispatch);
       updateAllUpstreamNodes(getState() as RootState, dispatch);
     });
@@ -46,6 +48,16 @@ const deleteOperationDetails = async (nodeId: string, dispatch: Dispatch): Promi
   dispatch(deinitializeOperationInfo({ id: nodeId }));
   dispatch(setValidationError({ nodeId, errors: [] }));
   dispatch(deinitializeStaticResultProperty({ id: nodeId + 0 }));
+};
+
+const deleteCustomCodeInfo = (nodeId: string, dispatch: Dispatch, state: RootState): void => {
+  let fileName = replaceWhiteSpaceWithUnderscore(getRecordEntry(state.workflow.idReplacements, nodeId) ?? nodeId);
+  const nodeInputs = getRecordEntry(state.operations.inputParameters, nodeId);
+  if (nodeInputs) {
+    const fileExtension = getParameterFromName(nodeInputs, 'CodeFile')?.editorViewModel?.customCodeData?.fileExtension;
+    fileName += fileExtension;
+    dispatch(deleteCustomCode({ nodeId, fileName }));
+  }
 };
 
 export const deleteGraphNode = createAsyncThunk('deleteGraph', async (deletePayload: DeleteGraphPayload, { dispatch }) => {

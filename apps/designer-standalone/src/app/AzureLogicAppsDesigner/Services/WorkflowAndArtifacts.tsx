@@ -3,9 +3,9 @@ import type { CallbackInfo, ConnectionsData, ParametersData, Workflow } from '..
 import { Artifact } from '../Models/Workflow';
 import { validateResourceId } from '../Utilities/resourceUtilities';
 import { convertDesignerWorkflowToConsumptionWorkflow } from './ConsumptionSerializationHelpers';
-import { CustomCodeService } from '@microsoft/designer-client-services-logic-apps';
+import { CustomCodeService, LogEntryLevel, LoggerService } from '@microsoft/designer-client-services-logic-apps';
 import type { CustomCode } from '@microsoft/logic-apps-designer';
-import { store as DesignerStore } from '@microsoft/logic-apps-designer';
+import { store as DesignerStore, CustomCodeOperation } from '@microsoft/logic-apps-designer';
 import { replaceWhiteSpaceWithUnderscore, type LogicAppsV2 } from '@microsoft/utils-logic-apps';
 import axios from 'axios';
 import jwt_decode from 'jwt-decode';
@@ -216,20 +216,39 @@ export const getConnectionConsumption = async (connectionId: string) => {
   return response.data;
 };
 
-export const saveCustomCodeStandard = async (customCode?: Record<string, CustomCode>) => {
+export const saveCustomCodeStandard = async (customCode?: Record<string, CustomCode>): Promise<void> => {
   if (!customCode) return;
   try {
+    // to prevent 404's we first check which custom code files are already present
+    const existingFiles = (await CustomCodeService().getAllCustomCodeFiles()).map((file) => file.name);
     const idReplacements = DesignerStore.getState().workflow.idReplacements;
-    Object.values(customCode).forEach(async ({ nodeId, fileData, fileExtension }: CustomCode) => {
-      const fileName = replaceWhiteSpaceWithUnderscore(idReplacements[nodeId] ?? nodeId);
-      await CustomCodeService().uploadCustomCode({
-        fileData,
-        fileName: `${fileName}${fileExtension}`,
-        fileExtension,
-      });
-    });
+    for (const { operation, operationProps } of Object.values(customCode)) {
+      console.log(operation, operationProps);
+      if (operation === CustomCodeOperation.ADD) {
+        const { nodeId, fileData, fileExtension } = operationProps;
+        const fileName = replaceWhiteSpaceWithUnderscore(idReplacements[nodeId] ?? nodeId);
+        await CustomCodeService().uploadCustomCode({
+          fileData,
+          fileName: `${fileName}${fileExtension}`,
+          fileExtension,
+        });
+      } else if (operation === CustomCodeOperation.DELETE) {
+        const { fileName } = operationProps;
+        if (existingFiles.includes(fileName)) {
+          await CustomCodeService().deleteCustomCode(fileName);
+        }
+      }
+    }
+    return;
   } catch (error) {
-    console.log(error);
+    const errorMessage = `Failed to save custom code: ${error}`;
+    LoggerService().log({
+      level: LogEntryLevel.Error,
+      area: 'serializeCustomcode',
+      message: errorMessage,
+      error: error instanceof Error ? error : undefined,
+    });
+    return;
   }
 };
 

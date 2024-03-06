@@ -44,9 +44,3 @@ export interface WorkflowParameter {
   description?: string;
   allowedValues?: any[];
 }
-
-export interface CustomCode {
-  nodeId: string;
-  fileData: string;
-  fileExtension: string;
-}

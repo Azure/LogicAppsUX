@@ -456,8 +456,9 @@ export const updateCallbackUrlInInputs = async (
 };
 
 export const updateCustomCodeInInputs = async (nodeId: string, fileExtension: string, nodeInputs: NodeInputs) => {
+  const fileName = `${nodeId}${fileExtension}`;
   try {
-    const customCodeValue = await CustomCodeService().getCustomCodeFile(`${nodeId}${fileExtension}`);
+    const customCodeValue = await CustomCodeService().getCustomCodeFile(fileName);
     const parameter = getParameterFromName(nodeInputs, 'CodeFile');
 
     if (parameter && customCodeValue) {
@@ -465,8 +466,15 @@ export const updateCustomCodeInInputs = async (nodeId: string, fileExtension: st
         customCodeData: { fileData: customCodeValue, fileExtension },
       };
     }
-  } catch (e) {
-    console.log(e);
+  } catch (error) {
+    const errorMessage = `Failed to fetch custom code file ${fileName}: ${error}`;
+    LoggerService().log({
+      level: LogEntryLevel.Error,
+      area: 'fetchCustomCode',
+      message: errorMessage,
+      error: error instanceof Error ? error : undefined,
+    });
+    return;
   }
 };
 
