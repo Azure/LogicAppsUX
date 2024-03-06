@@ -5,7 +5,8 @@ import { ErrorBanner } from '../errorbanner';
 import { useCardContextMenu, useCardKeyboardInteraction } from '../hooks';
 import { Gripper } from '../images/dynamicsvgs/gripper';
 import type { CardProps } from '../index';
-import { css, Icon, Spinner, SpinnerSize, TooltipHost } from '@fluentui/react';
+import { css, Icon, TooltipHost } from '@fluentui/react';
+import { Spinner } from '@fluentui/react-components';
 
 export interface ScopeCardProps extends CardProps {
   collapsed?: boolean;
@@ -50,8 +51,9 @@ export const ScopeCard: React.FC<ScopeCardProps> = ({
 
   const colorVars = { ['--brand-color' as any]: brandColor };
   const cardIcon = isLoading ? (
-    <Spinner className="msla-card-header-spinner" size={SpinnerSize.small} />
-  ) : icon ? (
+    <Spinner className="msla-card-header-spinner" size={'tiny'} />
+  ) : // <Spinner className="msla-card-header-spinner" size={SpinnerSize.small} />
+  icon ? (
     <img className="scope-icon" alt="" role="presentation" src={icon} />
   ) : null;
 
