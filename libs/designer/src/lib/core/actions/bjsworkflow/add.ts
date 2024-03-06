@@ -233,7 +233,11 @@ export const initializeOperationDetails = async (
       getState
     );
   } else if (connector) {
-    await trySetDefaultConnectionForNode(nodeId, connector, dispatch, isConnectionRequired);
+    try {
+      await trySetDefaultConnectionForNode(nodeId, connector, dispatch, isConnectionRequired);
+    } catch (e) {
+      dispatch(setIsPanelLoading(false));
+    }
   }
 
   const schemaService = staticResultService.getOperationResultSchema(connectorId, operationId, swagger || parsedManifest);
