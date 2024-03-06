@@ -41,6 +41,7 @@ import {
   isTemplateExpression,
   map,
   parsePathnameAndQueryKeyFromUri,
+  removeConnectionPrefix,
   startsWith,
   unmap,
 } from '@microsoft/logic-apps-shared';

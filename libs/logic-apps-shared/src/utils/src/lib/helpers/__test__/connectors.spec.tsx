@@ -1,4 +1,4 @@
-import { Connector, OperationApi } from '../../models';
+import type { Connector, OperationApi } from '../../models';
 import {
   getAllConnectorProperties,
   getBrandColorFromConnector,
