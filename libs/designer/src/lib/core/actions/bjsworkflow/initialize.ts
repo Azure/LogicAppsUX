@@ -1,37 +1,56 @@
+import Constants from '../../../common/constants';
+import { ImpersonationSource, type ConnectionReferences, type WorkflowParameter } from '../../../common/models/workflow';
+import type { WorkflowNode } from '../../parsers/models/workflowNode';
+import { getConnectorWithSwagger, getSwaggerFromEndpoint } from '../../queries/connections';
+import { getOperationManifest } from '../../queries/operation';
+import type { DependencyInfo, NodeInputs, NodeOperation, NodeOutputs, OutputInfo } from '../../state/operation/operationMetadataSlice';
+import { updateNodeSettings, updateNodeParameters, DynamicLoadStatus, updateOutputs } from '../../state/operation/operationMetadataSlice';
+import type { UpdateUpstreamNodesPayload } from '../../state/tokens/tokensSlice';
+import { updateTokens, updateUpstreamNodes } from '../../state/tokens/tokensSlice';
+import { WorkflowKind } from '../../state/workflow/workflowInterfaces';
+import type { WorkflowParameterDefinition } from '../../state/workflowparameters/workflowparametersSlice';
+import { initializeParameters } from '../../state/workflowparameters/workflowparametersSlice';
+import type { RootState } from '../../store';
+import { getTriggerNodeId, isRootNodeInGraph } from '../../utils/graph';
+import { getSplitOnOptions, getUpdatedManifestForSchemaDependency, getUpdatedManifestForSplitOn, toOutputInfo } from '../../utils/outputs';
+import {
+  addRecurrenceParametersInGroup,
+  getAllInputParameters,
+  getDependentParameters,
+  getInputsValueFromDefinitionForManifest,
+  getParameterFromName,
+  getParametersSortedByVisibility,
+  loadParameterValuesArrayFromDefault,
+  ParameterGroupKeys,
+  toParameterInfoMap,
+  updateParameterWithValues,
+} from '../../utils/parameters/helper';
+import { createLiteralValueSegment } from '../../utils/parameters/segment';
+import { getOutputParametersFromSwagger } from '../../utils/swagger/operation';
+import { convertOutputsToTokens, getBuiltInTokens, getTokenNodeIds } from '../../utils/tokens';
+import type { NodeInputsWithDependencies, NodeOutputsWithDependencies } from './operationdeserializer';
+import type { Settings } from './settings';
 import type {
   IConnectionService,
-  IOAuthService,
   IOperationManifestService,
   ISearchService,
+  IOAuthService,
   IWorkflowService,
 } from '@microsoft/designer-client-services-logic-apps';
 import {
-  ApiManagementService,
-  FunctionService,
-  LogEntryLevel,
-  LoggerService,
-  OperationManifestService,
   WorkflowService,
+  LoggerService,
+  LogEntryLevel,
+  OperationManifestService,
+  FunctionService,
+  ApiManagementService,
 } from '@microsoft/designer-client-services-logic-apps';
 import type { OutputToken, ParameterInfo } from '@microsoft/designer-ui';
-import type {
-  CustomSwaggerServiceDetails,
-  InputParameter,
-  OperationInfo,
-  OperationManifest,
-  OperationManifestProperties,
-  OutputParameter,
-  SchemaProperty,
-  SwaggerParser,
-} from '@microsoft/logic-apps-shared';
 import {
+  clone,
   ConnectionReferenceKeyFormat,
   CustomSwaggerServiceNames,
   DynamicSchemaType,
-  ManifestParser,
-  PropertyName,
-  UnsupportedException,
-  clone,
   equals,
   getBrandColorFromConnector,
   getIconUriFromConnector,
@@ -43,41 +62,22 @@ import {
   isDynamicTreeExtension,
   isLegacyDynamicValuesExtension,
   isLegacyDynamicValuesTreeExtension,
+  ManifestParser,
+  PropertyName,
   unmap,
+  UnsupportedException,
+} from '@microsoft/logic-apps-shared';
+import type {
+  CustomSwaggerServiceDetails,
+  InputParameter,
+  OperationInfo,
+  OperationManifest,
+  OperationManifestProperties,
+  OutputParameter,
+  SchemaProperty,
+  SwaggerParser,
 } from '@microsoft/logic-apps-shared';
 import type { Dispatch } from '@reduxjs/toolkit';
-import Constants from '../../../common/constants';
-import { ImpersonationSource, type ConnectionReferences, type WorkflowParameter } from '../../../common/models/workflow';
-import type { WorkflowNode } from '../../parsers/models/workflowNode';
-import { getConnectorWithSwagger, getSwaggerFromEndpoint } from '../../queries/connections';
-import { getOperationManifest } from '../../queries/operation';
-import type { DependencyInfo, NodeInputs, NodeOperation, NodeOutputs, OutputInfo } from '../../state/operation/operationMetadataSlice';
-import { DynamicLoadStatus, updateNodeParameters, updateNodeSettings, updateOutputs } from '../../state/operation/operationMetadataSlice';
-import type { UpdateUpstreamNodesPayload } from '../../state/tokens/tokensSlice';
-import { updateTokens, updateUpstreamNodes } from '../../state/tokens/tokensSlice';
-import { WorkflowKind } from '../../state/workflow/workflowInterfaces';
-import type { WorkflowParameterDefinition } from '../../state/workflowparameters/workflowparametersSlice';
-import { initializeParameters } from '../../state/workflowparameters/workflowparametersSlice';
-import type { RootState } from '../../store';
-import { getTriggerNodeId, isRootNodeInGraph } from '../../utils/graph';
-import { getSplitOnOptions, getUpdatedManifestForSchemaDependency, getUpdatedManifestForSplitOn, toOutputInfo } from '../../utils/outputs';
-import {
-  ParameterGroupKeys,
-  addRecurrenceParametersInGroup,
-  getAllInputParameters,
-  getDependentParameters,
-  getInputsValueFromDefinitionForManifest,
-  getParameterFromName,
-  getParametersSortedByVisibility,
-  loadParameterValuesArrayFromDefault,
-  toParameterInfoMap,
-  updateParameterWithValues,
-} from '../../utils/parameters/helper';
-import { createLiteralValueSegment } from '../../utils/parameters/segment';
-import { getOutputParametersFromSwagger } from '../../utils/swagger/operation';
-import { convertOutputsToTokens, getBuiltInTokens, getTokenNodeIds } from '../../utils/tokens';
-import type { NodeInputsWithDependencies, NodeOutputsWithDependencies } from './operationdeserializer';
-import type { Settings } from './settings';
 
 export interface ServiceOptions {
   connectionService: IConnectionService;
