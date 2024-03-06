@@ -28,12 +28,11 @@ export async function promptParameterizeConnections(context: IActionContext): Pr
     const projectPath = await tryGetLogicAppProjectRoot(context, workspaceFolder);
     if (projectPath) {
       const message = localize('allowParameterizeConnections', 'Allow connections to be parameterized at project load.');
-      const confirm = { title: localize('yesRecommended', 'Yes (Recommended)') };
       const parameterizeConnectionsSetting = getGlobalSetting(parameterizeConnectionsInProjectLoadSetting);
 
       if (parameterizeConnectionsSetting === null) {
-        const result = await window.showInformationMessage(message, confirm, DialogResponses.no, DialogResponses.dontWarnAgain);
-        if (result === confirm) {
+        const result = await window.showInformationMessage(message, DialogResponses.yes, DialogResponses.no, DialogResponses.dontWarnAgain);
+        if (result === DialogResponses.yes) {
           await updateGlobalSetting(parameterizeConnectionsInProjectLoadSetting, true);
           context.telemetry.properties.parameterizeConnectionsInProjectLoadSetting = 'true';
           parameterizeConnections(context);
@@ -42,7 +41,7 @@ export async function promptParameterizeConnections(context: IActionContext): Pr
           context.telemetry.properties.parameterizeConnectionsInProjectLoadSetting = 'false';
         }
       } else if (parameterizeConnectionsSetting) {
-        parameterizeConnections(context);
+        await parameterizeConnections(context);
       }
     }
   }

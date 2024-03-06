@@ -9,6 +9,7 @@ import {
   workflowSubscriptionIdKey,
   localSettingsFileName,
   extensionCommand,
+  parameterizeConnectionsInProjectLoadSetting,
 } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
@@ -18,11 +19,13 @@ import { getAuthorizationToken, getCloudHost } from '../../utils/codeless/getAut
 import { getAccountCredentials } from '../../utils/credentials';
 import { addLocalFuncTelemetry } from '../../utils/funcCoreTools/funcVersion';
 import { showPreviewWarning, unzipLogicAppArtifacts } from '../../utils/taskUtils';
+import { getGlobalSetting } from '../../utils/vsCodeConfig/settings';
+import { parameterizeConnections } from '../parameterizeConnections';
 import type { IAzureScriptWizard } from './azureScriptWizard';
 import { createAzureWizard } from './azureScriptWizard';
 import { FileManagement } from './iacGestureHelperFunctions';
 import type { ServiceClientCredentials } from '@azure/ms-rest-js';
-import type { IActionContext } from '@microsoft/vscode-azext-utils';
+import { DialogResponses, type IActionContext } from '@microsoft/vscode-azext-utils';
 import { getBaseGraphApi, type ILocalSettingsJson } from '@microsoft/vscode-extension';
 import axios from 'axios';
 import * as path from 'path';
@@ -36,8 +39,24 @@ export async function generateDeploymentScripts(context: IActionContext, project
     ext.outputChannel.appendLog(localize('initScriptGen', 'Initiating script generation...'));
 
     addLocalFuncTelemetry(context);
-    const commandIdentifier = extensionCommand.generateDeploymentScripts;
-    showPreviewWarning(commandIdentifier);
+    showPreviewWarning(extensionCommand.generateDeploymentScripts);
+    const parameterizeConnectionsSetting = getGlobalSetting(parameterizeConnectionsInProjectLoadSetting);
+
+    if (!parameterizeConnectionsSetting) {
+      const message = localize(
+        'parameterizeInDeploymentScripts',
+        'Allow connections to be parameterized? Otherwise the generation of deployment scripts will be cancelled.'
+      );
+      const result = await window.showInformationMessage(message, { modal: true }, DialogResponses.yes, DialogResponses.no);
+      if (result === DialogResponses.yes) {
+        await parameterizeConnections(context);
+        context.telemetry.properties.parameterizeConnectionsInDeploymentScripts = 'true';
+      } else {
+        context.telemetry.properties.parameterizeConnectionsInDeploymentScripts = 'false';
+        return;
+      }
+    }
+
     const scriptContext = await setupWizardScriptContext(context, projectRoot);
     const inputs = await gatherAndValidateInputs(scriptContext, projectRoot);
     const sourceControlPath = scriptContext.sourceControlPath;
