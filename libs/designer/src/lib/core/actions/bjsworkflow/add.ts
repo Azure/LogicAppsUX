@@ -13,12 +13,12 @@ import { initializeTokensAndVariables } from '../../state/tokens/tokensSlice';
 import type { WorkflowState } from '../../state/workflow/workflowInterfaces';
 import { addNode, setFocusNode } from '../../state/workflow/workflowSlice';
 import type { AppDispatch, RootState } from '../../store';
-import { getBrandColorFromConnector, getBrandColorFromManifest, getIconUriFromConnector, getIconUriFromManifest } from '../../utils/card';
+import { getBrandColorFromManifest, getIconUriFromManifest } from '../../utils/card';
 import { getTriggerNodeId, isRootNodeInGraph } from '../../utils/graph';
 import { updateDynamicDataInNode } from '../../utils/parameters/helper';
 import { getInputParametersFromSwagger, getOutputParametersFromSwagger } from '../../utils/swagger/operation';
-import { getTokenNodeIds, getBuiltInTokens, convertOutputsToTokens } from '../../utils/tokens';
-import { setVariableMetadata, getVariableDeclarations, getAllVariables } from '../../utils/variables';
+import { convertOutputsToTokens, getBuiltInTokens, getTokenNodeIds } from '../../utils/tokens';
+import { getAllVariables, getVariableDeclarations, setVariableMetadata } from '../../utils/variables';
 import { isConnectionRequiredForOperation, updateNodeConnection } from './connections';
 import {
   getInputParametersFromManifest,
@@ -31,14 +31,14 @@ import type { Settings } from './settings';
 import { getOperationSettings, getSplitOnValue } from './settings';
 import { ConnectionService, OperationManifestService, StaticResultService } from '@microsoft/designer-client-services-logic-apps';
 import type {
-  SwaggerParser,
   Connector,
   DiscoveryOperation,
   DiscoveryResultTypes,
   OperationManifest,
   SomeKindOfAzureOperationDiscovery,
+  SwaggerParser,
 } from '@microsoft/logic-apps-shared';
-import { ManifestParser, equals, getRecordEntry } from '@microsoft/logic-apps-shared';
+import { ManifestParser, equals, getBrandColorFromConnector, getIconUriFromConnector, getRecordEntry } from '@microsoft/logic-apps-shared';
 import type { Dispatch } from '@reduxjs/toolkit';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { batch } from 'react-redux';

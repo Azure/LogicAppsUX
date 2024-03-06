@@ -1,10 +1,4 @@
-import {
-  type RootState,
-  useConnectionMapping,
-  useConnectionRefs,
-  getIconUriFromConnector,
-  getBrandColorFromConnector,
-} from '../../../../core';
+import { useConnectionMapping, useConnectionRefs, type RootState } from '../../../../core';
 import { useConnector } from '../../../../core/state/connection/connectionSelector';
 import { ConnectorConnectionsCard } from './connectorConnectionsCard';
 import { Accordion, AccordionItem, type AccordionToggleEventHandler } from '@fluentui/react-components';
@@ -93,9 +87,7 @@ const ConnectorCardWrapper = ({ apiId, connectionRefs, disconnectedNodes }: Conn
       <ConnectorConnectionsCard
         isLoading={connectorQuery.isLoading}
         connectorId={apiId}
-        title={connector?.properties?.displayName ?? apiId}
-        iconUri={getIconUriFromConnector(connector)}
-        brandColor={getBrandColorFromConnector(connector)}
+        connector={connector}
         connectionRefs={connectionRefs}
         disconnectedNodes={disconnectedNodes}
       />

@@ -30,19 +30,14 @@ export const BrowseGrid = (props: BrowseGridProps) => {
   const onRenderCell = useCallback(
     (connector?: Connector, _index?: number) => {
       if (!connector) return;
-      const { displayName, description, iconUri, brandColor, generalInformation } = connector.properties;
       return (
         <div className="mlsa-browse-list-tile-wrapper">
           <div className="msla-browse-list-tile" style={{ width: forceSingleCol ? '100%' : '50%' }}>
             <ConnectorSummaryCard
               key={connector.id}
-              id={connector.id}
-              connectorName={displayName}
-              description={description || generalInformation?.description}
-              iconUrl={iconUri}
-              brandColor={brandColor}
+              connector={connector}
               onClick={onConnectorSelected}
-              category={getConnectorCategoryString(connector.id)}
+              category={getConnectorCategoryString(connector)}
               displayRuntimeInfo={displayRuntimeInfo}
             />
           </div>

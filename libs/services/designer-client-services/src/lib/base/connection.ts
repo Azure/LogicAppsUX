@@ -3,22 +3,22 @@ import type { HttpResponse } from '../common/exceptions/service';
 import type {
   ConnectionCreationInfo,
   ConnectionParametersMetadata,
+  ConnectorWithSwagger,
   CreateConnectionResult,
   IConnectionService,
-  ConnectorWithSwagger,
 } from '../connection';
 import type { HttpRequestOptions, IHttpClient, QueryParameters } from '../httpClient';
-import { SwaggerParser } from '@microsoft/logic-apps-shared';
 import type { Connection, Connector, OpenAPIV2 } from '@microsoft/logic-apps-shared';
 import {
-  isCustomConnector,
-  getUniqueName,
+  ArgumentException,
   HTTP_METHODS,
+  SwaggerParser,
   UserErrorCode,
   UserException,
-  isArmResourceId,
-  ArgumentException,
   equals,
+  getUniqueName,
+  isArmResourceId,
+  isCustomConnectorId,
 } from '@microsoft/logic-apps-shared';
 
 export interface ApiHubServiceDetails {
@@ -252,7 +252,7 @@ export abstract class BaseConnectionService implements IConnectionService {
   protected async getConnectionsForConnector(connectorId: string): Promise<Connection[]> {
     if (isArmResourceId(connectorId)) {
       // Right now there isn't a name $filter for custom connections, so we need to filter them manually
-      if (isCustomConnector(connectorId)) {
+      if (isCustomConnectorId(connectorId)) {
         const { location, apiVersion, httpClient } = this.options;
         const response = await httpClient.get<ConnectionsResponse>({
           uri: `${this._subscriptionResourceGroupWebUrl}/connections`,
