@@ -85,7 +85,7 @@ export async function parameterizeConnections(context: IActionContext): Promise<
       } catch (error) {
         const errorMessage = localize(
           'errorParameterizeConnections',
-          'Error during while parameterizing exiting connections: {0}',
+          'Error while parameterizing exiting connections: {0}',
           error.message ?? error
         );
         ext.outputChannel.appendLog(errorMessage);
