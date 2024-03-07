@@ -51,9 +51,8 @@ export const ScopeCard: React.FC<ScopeCardProps> = ({
 
   const colorVars = { ['--brand-color' as any]: brandColor };
   const cardIcon = isLoading ? (
-    <Spinner className="msla-card-header-spinner" size={'tiny'} />
-  ) : // <Spinner className="msla-card-header-spinner" size={SpinnerSize.small} />
-  icon ? (
+    <Spinner className="msla-card-header-spinner" size={'tiny'} appearance="inverted" />
+  ) : icon ? (
     <img className="scope-icon" alt="" role="presentation" src={icon} />
   ) : null;
 
@@ -83,7 +82,7 @@ export const ScopeCard: React.FC<ScopeCardProps> = ({
             <button className="msla-scope-card-title-button" onClick={handleClick}>
               <div className="msla-scope-card-title-box">
                 <div className={css('gripper-section', draggable && 'draggable')}>{draggable ? <Gripper /> : null}</div>
-                {cardIcon}
+                <div className="panel-card-content-icon-section">{cardIcon}</div>
                 <div className="msla-scope-title">{title}</div>
               </div>
               {errorMessage ? <ErrorBanner errorLevel={errorLevel} errorMessage={errorMessage} /> : null}
