@@ -5,8 +5,8 @@ import { ErrorBanner } from '../errorbanner';
 import { useCardContextMenu, useCardKeyboardInteraction } from '../hooks';
 import { Gripper } from '../images/dynamicsvgs/gripper';
 import type { CardProps } from '../index';
-import { css, Icon, TooltipHost } from '@fluentui/react';
-import { Spinner } from '@fluentui/react-components';
+import { css, Icon } from '@fluentui/react';
+import { Spinner, Tooltip } from '@fluentui/react-components';
 
 export interface ScopeCardProps extends CardProps {
   collapsed?: boolean;
@@ -93,14 +93,16 @@ export const ScopeCard: React.FC<ScopeCardProps> = ({
           <div>
             <div className="msla-badges">
               {badges.map(({ title, content, darkBackground, iconProps }) => (
-                <TooltipHost key={title} content={content}>
-                  <Icon
-                    className={css('panel-card-v2-badge', 'active', darkBackground && 'darkBackground')}
-                    {...iconProps}
-                    ariaLabel={`${title}: ${content}`}
-                    tabIndex={0}
-                  />
-                </TooltipHost>
+                <Tooltip key={title} relationship={'label'} withArrow={true} content={content}>
+                  <div>
+                    <Icon
+                      className={css('panel-card-v2-badge', 'active', darkBackground && 'darkBackground')}
+                      {...iconProps}
+                      ariaLabel={`${title}: ${content}`}
+                      tabIndex={0}
+                    />
+                  </div>
+                </Tooltip>
               ))}
             </div>
           </div>
