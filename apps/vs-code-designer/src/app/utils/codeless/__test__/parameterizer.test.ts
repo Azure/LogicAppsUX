@@ -27,7 +27,7 @@ describe('parameterizeConnection for ConnectionReferenceModel', () => {
 
     const parameters: any = {};
     const settings: Record<string, string> = {};
-    connection = parameterizeConnection(connection, 'applicationinsights', parameters, settings);
+    connection = parameterizeConnection(connection, 'applicationinsights', parameters, settings) as ConnectionReferenceModel;
 
     const expected = {
       api: {
@@ -69,7 +69,7 @@ describe('parameterizeConnection for FunctionConnectionModel', () => {
 
     const parameters: any = {};
     const settings: Record<string, string> = {};
-    connection = parameterizeConnection(connection, 'azureFunctionOperation', parameters, settings);
+    connection = parameterizeConnection(connection, 'azureFunctionOperation', parameters, settings) as FunctionConnectionModel;
 
     const expected = {
       function: {
@@ -107,7 +107,7 @@ describe('parameterizeConnection for APIManagementConnectionModel', () => {
 
     const parameters: any = {};
     const settings: Record<string, string> = {};
-    connection = parameterizeConnection(connection, 'apiManagementOperation', parameters, settings);
+    connection = parameterizeConnection(connection, 'apiManagementOperation', parameters, settings) as APIManagementConnectionModel;
 
     const expected = {
       apiId:
