@@ -96,8 +96,8 @@ class ConfigureInitialLogicAppStep extends AzureWizardPromptStep<IAzureScriptWiz
     context.enabled = true;
   }
 
-  public shouldPrompt(context: IAzureScriptWizard): boolean {
-    return context.enabled === undefined;
+  public shouldPrompt(): boolean {
+    return true;
   }
 
   public async getSubWizard(context: IAzureScriptWizard): Promise<IWizardOptions<IAzureScriptWizard> | undefined> {

@@ -46,7 +46,7 @@ export async function generateDeploymentScripts(context: IActionContext, project
     if (!parameterizeConnectionsSetting) {
       const message = localize(
         'parameterizeInDeploymentScripts',
-        'Allow connections to be parameterized? Otherwise the generation of deployment scripts will be cancelled.'
+        'Allow parameterization for connections? Declining cancels generation for deployment scripts.'
       );
       const result = await window.showInformationMessage(message, { modal: true }, DialogResponses.yes, DialogResponses.no);
       if (result === DialogResponses.yes) {

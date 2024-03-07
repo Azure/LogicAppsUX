@@ -936,7 +936,7 @@
           "azureLogicAppsStandard.parameterizeConnectionsInProjectLoad": {
             "type": "boolean",
             "default": null,
-            "description": "Parameterize existing connections in project load."
+            "description": "Parameterize connections when your project loads."
           }
         }
       }

@@ -27,7 +27,7 @@ export async function promptParameterizeConnections(context: IActionContext): Pr
     const workspaceFolder = await getWorkspaceFolder(context);
     const projectPath = await tryGetLogicAppProjectRoot(context, workspaceFolder);
     if (projectPath) {
-      const message = localize('allowParameterizeConnections', 'Allow connections to be parameterized at project load.');
+      const message = localize('allowParameterizeConnections', 'Allow parameterization for connections when your project loads.');
       const parameterizeConnectionsSetting = getGlobalSetting(parameterizeConnectionsInProjectLoadSetting);
 
       if (parameterizeConnectionsSetting === null) {
@@ -81,7 +81,7 @@ export async function parameterizeConnections(context: IActionContext): Promise<
         });
         await saveWorkflowParameter(context, projectPath, parametersJson);
         await saveConnectionReferences(context, projectPath, { connections: connectionsJson, settings: localSettingsJson.Values });
-        window.showInformationMessage(localize('finishedParameterizingConnections', 'Finished parameterizing existing connections.'));
+        window.showInformationMessage(localize('finishedParameterizingConnections', 'Finished parameterizing connections.'));
       } catch (error) {
         const errorMessage = localize(
           'errorParameterizeConnections',
