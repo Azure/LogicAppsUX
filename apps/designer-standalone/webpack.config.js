@@ -1,20 +1,20 @@
 const webpack = require('webpack');
 const path = require('path');
-const newpath = path.resolve(__dirname, '../../libs/logic-apps-shared/src/index.ts');
-const distPath = path.resolve(__dirname, '../../dist/libs/logic-apps-shared/index.js');
-console.log(distPath);
+var htmlWebpackPlugin = require('html-webpack-plugin');
+
+const libsRelativePath = '../../dist/libs/';
+
+const createLibPath = (lib) => path.resolve(__dirname, libsRelativePath + lib);
+
 module.exports = {
   resolve: {
     extensions: ['.ts', '.tsx', '.mjs', '.js', '.jsx'],
     alias: {
-      '@microsoft/logic-apps-shared': distPath,
-      '@microsoft/logic-apps-designer': path.resolve(__dirname, '../../dist/libs/designer/index.js'),
-      '@microsoft/designer-client-services-logic-apps': path.resolve(
-        __dirname,
-        '../../dist/libs/services/designer-client-services/index.js'
-      ),
-      '@microsoft/designer-ui': path.resolve(__dirname, '../../dist/libs/designer-ui/index.js'),
-      '@microsoft/chatbot': path.resolve(__dirname, '../../dist/libs/chatbot/index.js'),
+      '@microsoft/logic-apps-shared': createLibPath('logic-apps-shared/index.js'),
+      '@microsoft/logic-apps-designer': createLibPath('designer/index.js'),
+      '@microsoft/designer-client-services-logic-apps': createLibPath('services/designer-client-services/index.js'),
+      '@microsoft/designer-ui': createLibPath('designer-ui/index.js'),
+      '@microsoft/chatbot': createLibPath('chatbot/index.js'),
       https: false,
       http: false,
     },
@@ -47,8 +47,13 @@ module.exports = {
           fullySpecified: false,
         },
       },
+      {
+        test: /\.html$/,
+        use: 'html-loader',
+      },
     ],
   },
+  cache: false,
   resolveLoader: {
     modules: [
       'node_modules',
@@ -59,6 +64,7 @@ module.exports = {
   target: 'web',
   entry: {
     main: ['./src/main.tsx'],
+    index: './src/index.html',
     polyfills: [
       '/Users/daniellecogburn/code/logic_apps_designer/node_modules/@nrwl/webpack/src/utils/webpack/safari-nomodule.js',
       './src/polyfills.ts',
@@ -82,6 +88,13 @@ module.exports = {
   //   {},
   //   LicenseWebpackPlugin { pluginOptions: [Object] }
   // ],
+  devServer: {
+    compress: true,
+    port: 4200,
+    static: {
+      serveIndex: true,
+    },
+  },
   devtool: false,
   mode: 'production',
   output: {
@@ -90,16 +103,22 @@ module.exports = {
     chunkFilename: '[name].[chunkhash:20].js',
     hashFunction: 'xxhash64',
     pathinfo: false,
-    scriptType: 'module',
-    publicPath: undefined,
+    scriptType: 'text/javascript',
+    publicPath: '',
     crossOriginLoading: false,
   },
+
   plugins: [
     new webpack.ProvidePlugin({
       // Make a global `process` variable that points to the `process` package,
       // because the `util` package expects there to be a global variable named `process`.
       // Thanks to https://stackoverflow.com/a/65018686/14239942
       process: 'process/browser',
+      React: 'react',
+    }),
+    new htmlWebpackPlugin({
+      inject: true,
+      template: 'src/index.html',
     }),
   ],
 };
