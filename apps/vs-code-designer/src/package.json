@@ -335,6 +335,12 @@
       {
         "command": "azureLogicAppsStandard.dataMap.loadDataMapFile",
         "title": "Data Mapper: Load existing data map"
+      },
+      {
+        "command": "azureLogicAppsStandard.parameterizeConnections",
+        "title": "Parameterize connections",
+        "category": "Azure Logic Apps",
+        "when": "config.myExtension.enableCommand"
       }
     ],
     "submenus": [
@@ -926,6 +932,11 @@
             "type": "boolean",
             "default": true,
             "description": "Default the data mapper to use the expanded function cards."
+          },
+          "azureLogicAppsStandard.parameterizeConnectionsInProjectLoad": {
+            "type": "boolean",
+            "default": null,
+            "description": "Parameterize connections when your project loads."
           }
         }
       }

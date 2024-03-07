@@ -42,7 +42,7 @@ export function parameterizeConnection(
   referenceKey: string,
   parametersObject: any,
   settingsRecord: Record<string, string>
-): any {
+): ConnectionReferenceModel | ServiceProviderConnectionModel | FunctionConnectionModel | APIManagementConnectionModel {
   if (isConnectionReferenceModel(connection)) {
     connection = getParameterizedConnectionReferenceModel(connection, referenceKey, parametersObject, settingsRecord);
   } else if (isFunctionConnectionModel(connection)) {
