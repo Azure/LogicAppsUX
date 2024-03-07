@@ -12,6 +12,7 @@ import { parameterizeConnection } from '../utils/codeless/parameterizer';
 import { tryGetLogicAppProjectRoot } from '../utils/verifyIsProject';
 import { getGlobalSetting, updateGlobalSetting } from '../utils/vsCodeConfig/settings';
 import { getWorkspaceFolder } from '../utils/workspace';
+import { isEmptyString } from '@microsoft/utils-logic-apps';
 import { DialogResponses, type IActionContext } from '@microsoft/vscode-azext-utils';
 import { type ConnectionsData } from '@microsoft/vscode-extension';
 import * as path from 'path';
@@ -59,16 +60,20 @@ export async function parameterizeConnections(context: IActionContext): Promise<
 
     if (projectPath) {
       try {
-        const connectionsJson: ConnectionsData = JSON.parse(await getConnectionsJson(projectPath));
+        const connectionsJson = await getConnectionsJson(projectPath);
+        if (isEmptyString(connectionsJson)) {
+          return;
+        }
+        const connectionsData: ConnectionsData = JSON.parse(connectionsJson);
         const parametersJson = await getParametersJson(projectPath);
         const localSettingsJson = (await getLocalSettingsJson(context, path.join(projectPath, localSettingsFileName))) as Record<
           string,
           any
         >;
 
-        Object.keys(connectionsJson).forEach((connectionType) => {
+        Object.keys(connectionsData).forEach((connectionType) => {
           if (connectionType !== 'serviceProviderConnections') {
-            const connectionTypeJson = connectionsJson[connectionType];
+            const connectionTypeJson = connectionsData[connectionType];
             Object.keys(connectionTypeJson).forEach((connectionKey) => {
               connectionTypeJson[connectionKey] = parameterizeConnection(
                 connectionTypeJson[connectionKey],
@@ -80,12 +85,12 @@ export async function parameterizeConnections(context: IActionContext): Promise<
           }
         });
         await saveWorkflowParameter(context, projectPath, parametersJson);
-        await saveConnectionReferences(context, projectPath, { connections: connectionsJson, settings: localSettingsJson.Values });
+        await saveConnectionReferences(context, projectPath, { connections: connectionsData, settings: localSettingsJson.Values });
         window.showInformationMessage(localize('finishedParameterizingConnections', 'Finished parameterizing connections.'));
       } catch (error) {
         const errorMessage = localize(
           'errorParameterizeConnections',
-          'Error while parameterizing exiting connections: {0}',
+          'Error while parameterizing existing connections: {0}',
           error.message ?? error
         );
         ext.outputChannel.appendLog(errorMessage);
