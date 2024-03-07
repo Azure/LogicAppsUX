@@ -10,7 +10,7 @@ import type {
   ITextStyles,
 } from '@fluentui/react';
 import { Dropdown, FontWeights, getTheme, Label, Text, TextField } from '@fluentui/react';
-import { equals, format } from '@microsoft/logic-apps-shared';
+import { equals } from '@microsoft/logic-apps-shared';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
 
@@ -89,7 +89,6 @@ export const WorkflowparameterField = ({
   isReadOnly,
   useLegacy,
 }: WorkflowparameterFieldProps): JSX.Element => {
-  const [valueWarningMessage, setValueWarningMessage] = useState(getValueWarningMessage(definition.value, definition.type));
   const [type, setType] = useState(definition.type);
   const [value, setValue] = useState<string | undefined>(stringifyValue(definition.value));
   const [defaultValue, setDefaultValue] = useState<string | undefined>(stringifyValue(definition.defaultValue));
@@ -148,6 +147,24 @@ export const WorkflowparameterField = ({
         description: 'This is an option in a dropdown where users can select type String for their parameter.',
       }),
     },
+    ...(useLegacy
+      ? [
+          {
+            key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.SECURE_STRING,
+            text: intl.formatMessage({
+              defaultMessage: 'Secure String',
+              description: 'This is an option in a dropdown where users can select type Secure String for their parameter.',
+            }),
+          },
+          {
+            key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.SECURE_OBJECT,
+            text: intl.formatMessage({
+              defaultMessage: 'Secure Object',
+              description: 'This is an option in a dropdown where users can select type Secure Object for their parameter.',
+            }),
+          },
+        ]
+      : []),
   ];
   const nameTitle = intl.formatMessage({
     defaultMessage: 'Name',
@@ -181,6 +198,7 @@ export const WorkflowparameterField = ({
     defaultMessage: 'Enter default value for parameter.',
     description: 'Parameter Field Value Placeholder Text',
   });
+
   const onNameChange = (_event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string): void => {
     setName(newValue);
     onChange?.({
@@ -189,6 +207,21 @@ export const WorkflowparameterField = ({
       useLegacy,
     });
   };
+
+  const getDefaultValueWarningMessage = (value?: string, type?: string) => {
+    const secureParameterWarningMessage = intl.formatMessage(
+      {
+        defaultMessage: "It is not recommended to set a default value for type ''{type}'' because it will be stored as plain text.",
+        description: 'Warning message for secure string parameter default value',
+      },
+      { type }
+    );
+    return isSecureParameter(type) && !!value ? secureParameterWarningMessage : undefined;
+  };
+
+  const [defaultValueWarningMessage, setDefaultValueWarningMessage] = useState(
+    getDefaultValueWarningMessage(definition.defaultValue, definition.type)
+  );
 
   const onTypeChange = (_event?: React.FormEvent<HTMLDivElement>, item?: IDropdownOption): void => {
     const newType = item?.key.toString() as string;
@@ -200,7 +233,7 @@ export const WorkflowparameterField = ({
     });
 
     setType(newType);
-    setValueWarningMessage(getValueWarningMessage(defaultValue, newType));
+    setDefaultValueWarningMessage(getDefaultValueWarningMessage(defaultValue, newType));
   };
 
   const onValueChange = (_event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string): void => {
@@ -209,7 +242,6 @@ export const WorkflowparameterField = ({
 
   const handleValueChange = (value?: string) => {
     setValue(value);
-    setValueWarningMessage(getValueWarningMessage(value, type));
 
     onChange?.({
       id: definition.id,
@@ -224,7 +256,7 @@ export const WorkflowparameterField = ({
 
   const handleDefaultValueChange = (defaultValue?: string) => {
     setDefaultValue(defaultValue);
-    setValueWarningMessage(getValueWarningMessage(defaultValue, type));
+    setDefaultValueWarningMessage(getDefaultValueWarningMessage(defaultValue, type));
 
     onChange?.({
       id: definition.id,
@@ -293,12 +325,10 @@ export const WorkflowparameterField = ({
               id={parameterDetails.value}
               ariaLabel={valueTitle}
               placeholder={valueDescription}
-              description={valueWarningMessage}
               value={value}
               errorMessage={errors[VALUE_KEY]}
-              styles={valueWarningMessage ? textFieldWithWarningStyles : textFieldStyles}
+              styles={textFieldStyles}
               onChange={onValueChange}
-              onRenderDescription={valueWarningMessage ? onRenderDescription : undefined}
               disabled={isReadOnly}
             />
           ) : (
@@ -317,12 +347,12 @@ export const WorkflowparameterField = ({
                 id={parameterDetails.defaultValue}
                 ariaLabel={defaultValueTitle}
                 placeholder={defaultValueDescription}
-                description={valueWarningMessage}
+                description={defaultValueWarningMessage}
                 value={defaultValue}
                 errorMessage={errors[DEFAULT_VALUE_KEY]}
-                styles={valueWarningMessage ? textFieldWithWarningStyles : textFieldStyles}
+                styles={defaultValueWarningMessage ? textFieldWithWarningStyles : textFieldStyles}
                 onChange={onDefaultValueChange}
-                onRenderDescription={valueWarningMessage ? onRenderDescription : undefined}
+                onRenderDescription={defaultValueWarningMessage ? onRenderDescription : undefined}
                 disabled={isReadOnly}
               />
             ) : (
@@ -338,10 +368,10 @@ export const WorkflowparameterField = ({
                 data-testid={parameterDetails.value}
                 id={parameterDetails.value}
                 ariaLabel={valueTitle}
-                description={valueWarningMessage}
                 value={value}
                 styles={textFieldStyles}
                 disabled={true}
+                type={isSecureParameter(type) ? 'password' : undefined}
               />
             ) : (
               <Text className="msla-workflow-parameter-read-only">{value}</Text>
@@ -355,10 +385,6 @@ export const WorkflowparameterField = ({
 
 function isSecureParameter(type?: string): boolean {
   return equals(type, Constants.WORKFLOW_PARAMETER_TYPE.SECURE_STRING) || equals(type, Constants.WORKFLOW_PARAMETER_TYPE.SECURE_OBJECT);
-}
-
-function getValueWarningMessage(value?: string, type?: string): string | undefined {
-  return isSecureParameter(type) && !!value ? format('Warning Message', type) : undefined;
 }
 
 function stringifyValue(value: any): string {
