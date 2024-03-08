@@ -76,13 +76,18 @@ export const DeleteNodeModal = (props: DeleteNodeModalProps) => {
     description: 'Text for delete node modal body',
   });
 
+  const deleteLoadingMessage = intl.formatMessage({
+    defaultMessage: 'Deleting...',
+    description: 'Text for loading state of delete modal',
+  });
+
   const bodyMessage = nodeType === WORKFLOW_NODE_TYPES['OPERATION_NODE'] ? operationBodyMessage : graphBodyMessage;
 
   return (
     <Modal titleAriaId={title} isOpen={isOpen} onDismiss={onDismiss}>
       <div className="msla-modal-container">
         {!nodeId ? (
-          <Spinner label={'Deleting...'} />
+          <Spinner label={deleteLoadingMessage} />
         ) : (
           <>
             <h2>{title}</h2>
