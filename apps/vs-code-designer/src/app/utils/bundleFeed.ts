@@ -14,7 +14,7 @@ import { downloadAndExtractDependency } from './binaries';
 import { getJsonFeed } from './feed';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type { IBundleDependencyFeed, IBundleFeed, IBundleMetadata, IHostJsonV2 } from '@microsoft/vscode-extension';
-import * as fse from 'fs-extra';
+import * as fs from 'fs';
 import * as path from 'path';
 import * as semver from 'semver';
 import * as vscode from 'vscode';
@@ -141,16 +141,13 @@ async function getExtensionBundleZip(context: IActionContext, extensionVersion: 
  * @param {string} directoryPath - extension bundle path directory.
  * @returns {string[]} Returns the list of versions.
  */
-async function getExtensionBundleVersionFolders(directoryPath: string): Promise<string[]> {
-  if (!(await fse.pathExists(directoryPath))) {
-    return [];
-  }
-  const directoryContents = fse.readdirSync(directoryPath);
+function getExtensionBundleVersionFolders(directoryPath: string): string[] {
+  const directoryContents = fs.readdirSync(directoryPath);
 
   // Filter only the folders with valid version names.
   const folders = directoryContents.filter((item) => {
     const itemPath = path.join(directoryPath, item);
-    return fse.statSync(itemPath).isDirectory() && semver.valid(item);
+    return fs.statSync(itemPath).isDirectory() && semver.valid(item);
   });
 
   return folders;
@@ -180,7 +177,7 @@ export async function downloadExtensionBundle(context: IActionContext): Promise<
 
   // Check for latest version at directory.
   let latestLocalBundleVersion = '1.0.0';
-  const localVersions = await getExtensionBundleVersionFolders(defaultExtensionBundlePathValue);
+  const localVersions = getExtensionBundleVersionFolders(defaultExtensionBundlePathValue);
   for (const localVersion of localVersions) {
     latestLocalBundleVersion = semver.gt(latestLocalBundleVersion, localVersion) ? latestLocalBundleVersion : localVersion;
   }
