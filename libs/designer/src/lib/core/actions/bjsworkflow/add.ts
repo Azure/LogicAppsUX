@@ -4,7 +4,13 @@ import { getConnectionsForConnector, getConnectorWithSwagger } from '../../queri
 import { getOperationManifest } from '../../queries/operation';
 import { initEmptyConnectionMap } from '../../state/connection/connectionSlice';
 import type { NodeData, NodeOperation, OperationMetadataState } from '../../state/operation/operationMetadataSlice';
-import { initializeNodes, initializeOperationInfo, updateNodeSettings } from '../../state/operation/operationMetadataSlice';
+import {
+  ErrorLevel,
+  initializeNodes,
+  initializeOperationInfo,
+  updateErrorDetails,
+  updateNodeSettings,
+} from '../../state/operation/operationMetadataSlice';
 import type { RelationshipIds } from '../../state/panel/panelInterfaces';
 import { changePanelNode, openPanel, setIsPanelLoading } from '../../state/panel/panelSlice';
 import { addResultSchema } from '../../state/staticresultschema/staticresultsSlice';
@@ -235,7 +241,16 @@ export const initializeOperationDetails = async (
   } else if (connector) {
     try {
       await trySetDefaultConnectionForNode(nodeId, connector, dispatch, isConnectionRequired);
-    } catch (e) {
+    } catch (e: any) {
+      dispatch(
+        updateErrorDetails({
+          id: nodeId,
+          errorInfo: {
+            level: ErrorLevel.Connection,
+            message: e?.message,
+          },
+        })
+      );
       dispatch(setIsPanelLoading(false));
     }
   }
