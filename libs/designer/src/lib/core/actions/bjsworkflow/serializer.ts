@@ -22,9 +22,8 @@ import type { NodeStaticResults } from './staticresults';
 import { LogEntryLevel, LoggerService, OperationManifestService, WorkflowService } from '@microsoft/designer-client-services-logic-apps';
 import type { ParameterInfo } from '@microsoft/designer-ui';
 import { UIConstants } from '@microsoft/designer-ui';
-import { getIntl } from '@microsoft/logic-apps-shared';
-import type { Segment } from '@microsoft/logic-apps-shared';
 import {
+  getIntl,
   create,
   removeConnectionPrefix,
   cleanIndexedValue,
@@ -33,9 +32,6 @@ import {
   SegmentType,
   DeserializationType,
   PropertySerializationType,
-} from '@microsoft/logic-apps-shared';
-import type { LocationSwapMap, LogicAppsV2, OperationManifest, SubGraphDetail } from '@microsoft/logic-apps-shared';
-import {
   SerializationErrorCode,
   SerializationException,
   clone,
@@ -58,6 +54,7 @@ import {
   excludePathValueFromTarget,
   getRecordEntry,
 } from '@microsoft/logic-apps-shared';
+import type { Segment, LocationSwapMap, LogicAppsV2, OperationManifest, SubGraphDetail } from '@microsoft/logic-apps-shared';
 import merge from 'lodash.merge';
 
 export interface SerializeOptions {
