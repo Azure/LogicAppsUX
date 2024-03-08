@@ -6,7 +6,8 @@ import { useConnector, useConnectorAndSwagger, useNodeConnectionId } from '../co
 import type { NodeOperation } from '../operation/operationMetadataSlice';
 import { OperationManifestService } from '@microsoft/designer-client-services-logic-apps';
 import type { LAOperation } from '@microsoft/logic-apps-shared';
-import { SwaggerParser, getObjectPropertyValue, getRecordEntry } from '@microsoft/logic-apps-shared';
+import { SwaggerParser } from '@microsoft/logic-apps-shared';
+import { getObjectPropertyValue, getRecordEntry } from '@microsoft/logic-apps-shared';
 import { createSelector } from '@reduxjs/toolkit';
 import { useMemo } from 'react';
 import { useQuery } from 'react-query';

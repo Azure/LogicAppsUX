@@ -31,8 +31,18 @@ import type { ListDynamicValue, ManagedIdentityRequestProperties, TreeDynamicVal
 import { OperationManifestService } from '@microsoft/designer-client-services-logic-apps';
 import type { ParameterInfo } from '@microsoft/designer-ui';
 import { TokenType, ValueSegmentType } from '@microsoft/designer-ui';
+import { getIntl } from '@microsoft/logic-apps-shared';
+import type {
+  DynamicParameters,
+  ExpressionEvaluatorOptions,
+  InputParameter,
+  OutputParameter,
+  OutputParameters,
+  ResolvedParameter,
+  SchemaProcessorOptions,
+  SwaggerParser,
+} from '@microsoft/logic-apps-shared';
 import {
-  getIntl,
   ExpressionEvaluator,
   isTemplateExpression,
   isLegacyDynamicValuesTreeExtension,
@@ -52,6 +62,9 @@ import {
   SchemaProcessor,
   WildIndexSegment,
   replaceSubsegmentSeparator,
+} from '@microsoft/logic-apps-shared';
+import type { Connection, Connector, OpenAPIV2, OperationInfo, OperationManifest } from '@microsoft/logic-apps-shared';
+import {
   first,
   getObjectPropertyValue,
   safeSetObjectPropertyValue,
@@ -71,21 +84,6 @@ import {
   map,
   copy,
   unmap,
-} from '@microsoft/logic-apps-shared';
-import type {
-  DynamicParameters,
-  ExpressionEvaluatorOptions,
-  InputParameter,
-  OutputParameter,
-  OutputParameters,
-  ResolvedParameter,
-  SchemaProcessorOptions,
-  SwaggerParser,
-  Connection,
-  Connector,
-  OpenAPIV2,
-  OperationInfo,
-  OperationManifest,
 } from '@microsoft/logic-apps-shared';
 
 export async function getDynamicValues(

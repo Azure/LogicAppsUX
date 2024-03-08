@@ -2,8 +2,9 @@ import Constants from '../../constants';
 import { isHighContrastBlack } from '../../utils';
 import type { FunctionDefinition, SignatureInfo } from './templatefunctions';
 import { FunctionGroupDefinitions } from './templatefunctions';
-import { ExpressionScanner, ExpressionTokenType, equals, first, getPropertyValue, map } from '@microsoft/logic-apps-shared';
+import { ExpressionScanner, ExpressionTokenType } from '@microsoft/logic-apps-shared';
 import type { ExpressionToken } from '@microsoft/logic-apps-shared';
+import { equals, first, getPropertyValue, map } from '@microsoft/logic-apps-shared';
 import type { languages, editor, Position } from 'monaco-editor';
 
 type CompletionList = languages.CompletionList;

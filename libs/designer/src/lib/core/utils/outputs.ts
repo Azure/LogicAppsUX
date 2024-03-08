@@ -7,14 +7,15 @@ import { getOperationManifest } from '../queries/operation';
 import type { DependencyInfo, NodeInputs, NodeOperation, NodeOutputs, OutputInfo } from '../state/operation/operationMetadataSlice';
 import {
   ErrorLevel,
-  addDynamicOutputs,
-  clearDynamicOutputs,
   updateErrorDetails,
+  clearDynamicOutputs,
+  addDynamicOutputs,
   updateExisitingInputTokenTitles,
 } from '../state/operation/operationMetadataSlice';
 import { addDynamicTokens } from '../state/tokens/tokensSlice';
 import type { WorkflowKind } from '../state/workflow/workflowInterfaces';
 import type { WorkflowParameterDefinition } from '../state/workflowparameters/workflowparametersSlice';
+import { getBrandColorFromConnector, getIconUriFromConnector } from './card';
 import { getTokenExpressionValueForManifestBasedOperation } from './loops';
 import { getDynamicOutputsFromSchema, getDynamicSchema } from './parameters/dynamicdata';
 import {
@@ -25,38 +26,37 @@ import {
 } from './parameters/helper';
 import { convertOutputsToTokens, getTokenTitle } from './tokens';
 import { OperationManifestService } from '@microsoft/designer-client-services-logic-apps';
-import { ValueSegmentType, generateSchemaFromJsonString } from '@microsoft/designer-ui';
+import { generateSchemaFromJsonString, ValueSegmentType } from '@microsoft/designer-ui';
+import { getIntl } from '@microsoft/logic-apps-shared';
 import type {
   Expression,
   ExpressionFunction,
   ExpressionLiteral,
-  OpenAPIV2,
-  OpenApiSchema,
-  OperationManifest,
   OutputParameter,
   OutputParameters,
+  OpenApiSchema,
 } from '@microsoft/logic-apps-shared';
 import {
-  AssertionErrorCode,
-  AssertionException,
-  ConnectionReferenceKeyFormat,
-  ExpressionParser,
-  ExtensionProperties,
+  create,
   OutputKeys,
   OutputSource,
-  clone,
-  create,
-  equals,
-  getBrandColorFromConnector,
-  getIconUriFromConnector,
-  getIntl,
-  getObjectPropertyValue,
+  ExpressionParser,
+  ExtensionProperties,
+  isTemplateExpression,
   isFunction,
   isStringLiteral,
-  isTemplateExpression,
-  parseErrorMessage,
+} from '@microsoft/logic-apps-shared';
+import type { OpenAPIV2, OperationManifest } from '@microsoft/logic-apps-shared';
+import {
+  ConnectionReferenceKeyFormat,
+  getObjectPropertyValue,
   safeSetObjectPropertyValue,
   unmap,
+  AssertionErrorCode,
+  AssertionException,
+  clone,
+  equals,
+  parseErrorMessage,
 } from '@microsoft/logic-apps-shared';
 import type { Dispatch } from '@reduxjs/toolkit';
 

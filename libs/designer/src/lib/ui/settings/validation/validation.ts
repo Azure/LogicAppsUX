@@ -4,7 +4,8 @@ import type { AppDispatch } from '../../../core';
 import type { Settings } from '../../../core/actions/bjsworkflow/settings';
 import { setValidationError } from '../../../core/state/setting/settingSlice';
 import { isISO8601 } from '../../../core/utils/validation';
-import { getIntl, isTemplateExpression } from '@microsoft/logic-apps-shared';
+import { getIntl } from '@microsoft/logic-apps-shared';
+import { isTemplateExpression } from '@microsoft/logic-apps-shared';
 
 export const ValidationErrorKeys = {
   CHUNK_SIZE_INVALID: 'ChunkSizeInvalid',

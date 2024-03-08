@@ -1,13 +1,13 @@
 import constants from '../../../../common/constants';
 import type { AppDispatch, RootState } from '../../../../core';
-import { useOperationInfo, useSelectedNodeId, useSelectedNodeIds } from '../../../../core';
+import { getIconUriFromConnector, useOperationInfo, useSelectedNodeId, useSelectedNodeIds } from '../../../../core';
 import type { ConnectionPayload } from '../../../../core/actions/bjsworkflow/connections';
 import {
-  getApiHubAuthentication,
   getConnectionMetadata,
   getConnectionProperties,
-  needsOAuth,
+  getApiHubAuthentication,
   updateNodeConnection,
+  needsOAuth,
 } from '../../../../core/actions/bjsworkflow/connections';
 import { getUniqueConnectionName } from '../../../../core/queries/connections';
 import {
@@ -30,7 +30,6 @@ import { Spinner } from '@fluentui/react-components';
 import type { ConnectionCreationInfo, ConnectionParametersMetadata } from '@microsoft/designer-client-services-logic-apps';
 import { ConnectionService, LogEntryLevel, LoggerService, WorkflowService } from '@microsoft/designer-client-services-logic-apps';
 import {
-  getIconUriFromConnector,
   getRecordEntry,
   safeSetObjectPropertyValue,
   type Connection,

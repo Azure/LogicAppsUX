@@ -1,19 +1,15 @@
 import { useAllConnectionErrors } from '../../../../core';
 import { ConnectionEntry } from './connectionEntry';
-import { AccordionHeader, AccordionPanel, Badge, Spinner, Text } from '@fluentui/react-components';
-import { getConnectorCategoryString, isBuiltInConnector } from '@microsoft/designer-ui';
-import type { Connector } from '@microsoft/logic-apps-shared';
-import {
-  fallbackConnectorIconUrl,
-  getBrandColorFromConnector,
-  getDisplayNameFromConnector,
-  getIconUriFromConnector,
-} from '@microsoft/logic-apps-shared';
+import { Text, AccordionHeader, AccordionPanel, Spinner, Badge } from '@fluentui/react-components';
+import { getConnectorCategoryString } from '@microsoft/designer-ui';
+import { fallbackConnectorIconUrl, isBuiltInConnector } from '@microsoft/logic-apps-shared';
 import { useMemo } from 'react';
 
 export interface ConnectorConnectionsCardProps {
   connectorId: string;
-  connector: Connector | undefined;
+  title: string;
+  brandColor?: string;
+  iconUri?: string;
   connectionRefs?: Record<string, any>;
   disconnectedNodes?: string[];
   isLoading?: boolean;
@@ -21,17 +17,15 @@ export interface ConnectorConnectionsCardProps {
 
 export const ConnectorConnectionsCard: React.FC<ConnectorConnectionsCardProps> = ({
   connectorId,
-  connector,
+  title,
+  brandColor,
+  iconUri,
   connectionRefs = {},
   disconnectedNodes = [],
   isLoading = false,
 }) => {
-  const title = getDisplayNameFromConnector(connector) ?? connectorId;
-  const iconUri = getIconUriFromConnector(connector);
-  const brandColor = getBrandColorFromConnector(connector);
-
-  const isBuiltIn = isBuiltInConnector(connector ?? connectorId);
-  const category = getConnectorCategoryString(connector ?? connectorId);
+  const isBuiltIn = isBuiltInConnector(connectorId);
+  const category = getConnectorCategoryString(connectorId);
 
   const allErrors = useAllConnectionErrors();
   const hasErrors = useMemo(() => {
