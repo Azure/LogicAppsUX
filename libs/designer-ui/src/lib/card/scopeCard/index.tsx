@@ -89,7 +89,7 @@ export const ScopeCard: React.FC<ScopeCardProps> = ({
             </button>
             <NodeCollapseToggle collapsed={collapsed} handleCollapse={handleCollapse} />
           </div>
-          <div>
+          <div className="msla-card-v2-footer" onClick={handleClick}>
             <div className="msla-badges">
               {badges.map(({ title, content, darkBackground, iconProps }) => (
                 <Tooltip key={title} relationship={'label'} withArrow={true} content={content}>
