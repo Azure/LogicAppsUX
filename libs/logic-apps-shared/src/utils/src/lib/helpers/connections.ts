@@ -1,7 +1,7 @@
 import type { Connection, ConnectionStatus, ManagedIdentity } from '../models';
 import { ResourceIdentityType } from '../models';
+import type { ConnectionParameter, Connector } from '../models/connector';
 import { ConnectionParameterTypes } from '../models/connector';
-import type { Connector, ConnectionParameter } from '../models/connector';
 import { equals, hasProperty } from './functions';
 import type { IntlShape } from 'react-intl';
 
@@ -11,14 +11,14 @@ export function isArmResourceId(resourceId: string): boolean {
   return resourceId ? resourceId.startsWith('/subscriptions/') : false;
 }
 
-export const isBuiltInConnector = (connectorId: string) => {
+export const isBuiltInConnectorId = (connectorId: string) => {
   if (connectorsShownAsAzure.includes(connectorId)) return false;
   return !isArmResourceId(connectorId);
 };
 
 export const getConnectorName = (connectorId: string): string => connectorId?.split('/').at(-1) ?? '';
 
-export const isCustomConnector = (connectorId: string) => {
+export const isCustomConnectorId = (connectorId: string) => {
   // Note: connectorId format: /subscriptions/{sub}/resourceGroups/{rg}/providers/Microsoft.Web/customApis/{connector}
   const fields = connectorId.split('/');
   if (fields.length !== 9) return false;
@@ -32,7 +32,7 @@ export const isCustomConnector = (connectorId: string) => {
   return true;
 };
 
-export const isManagedConnector = (connectorId: string) => {
+export const isManagedConnectorId = (connectorId: string) => {
   // Note: connectorId format: /subscriptions/{sub}/resourceGroups/{rg}/providers/Microsoft.Logic/integrationServiceEnvironments/{ise}/managedApis/{connector}
   const fields = connectorId.split('/');
   if (fields.length !== 11) return false;
@@ -47,7 +47,7 @@ export const isManagedConnector = (connectorId: string) => {
   return true;
 };
 
-export const isSharedManagedConnector = (connectorId: string) => {
+export const isSharedManagedConnectorId = (connectorId: string) => {
   // Note: connectorId format: /subscriptions/{sub}/providers/Microsoft.Web/locations/{location}/managedApis/{connector}
   const fields = connectorId.split('/');
   if (fields.length !== 9) return false;
@@ -61,7 +61,7 @@ export const isSharedManagedConnector = (connectorId: string) => {
   return true;
 };
 
-export const isSharedManagedConnectorFromPApps = (connectorId: string) => {
+export const isSharedManagedConnectorIdFromPApps = (connectorId: string) => {
   // Note: connectorId format: /providers/Microsoft.PowerApps/apis/{connector}
   const fields = connectorId.split('/');
   if (fields.length !== 5) return false;
@@ -202,11 +202,11 @@ function _isConnectionParameterHidden(connectionParameter: ConnectionParameter):
 }
 
 export const getUniqueName = (keys: string[], prefix: string): { name: string; index: number } => {
-  const set = new Set(keys.map((name) => name.split('::')[0]));
+  const set = new Set(keys.map((name) => name.split('::')[0].toLowerCase()));
 
   let index = 0;
   let name = prefix;
-  while (set.has(name)) {
+  while (set.has(name.toLowerCase())) {
     name = `${prefix}-${++index}`;
   }
 

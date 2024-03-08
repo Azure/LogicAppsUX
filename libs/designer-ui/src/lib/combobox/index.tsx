@@ -7,8 +7,7 @@ import type { IComboBox, IComboBoxOption, IComboBoxOptionStyles, IComboBoxStyles
 import { SelectableOptionMenuItemType, ComboBox } from '@fluentui/react';
 import { Button, Spinner, Tooltip } from '@fluentui/react-components';
 import { bundleIcon, Dismiss24Filled, Dismiss24Regular } from '@fluentui/react-icons';
-import { getIntl } from '@microsoft/logic-apps-shared';
-import { guid } from '@microsoft/logic-apps-shared';
+import { getIntl, guid } from '@microsoft/logic-apps-shared';
 import { useRef, useState, useCallback, useMemo, useEffect } from 'react';
 import type { FormEvent } from 'react';
 import { useIntl } from 'react-intl';

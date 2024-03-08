@@ -10,6 +10,8 @@ export interface OperationApi {
   iconUri: string;
   category?: 'Standard'; // could be consumption too
   id: string;
+  isBuiltIn?: boolean;
+  isCustomApi?: boolean;
   location?: string;
   name?: string;
   tier?: string;
