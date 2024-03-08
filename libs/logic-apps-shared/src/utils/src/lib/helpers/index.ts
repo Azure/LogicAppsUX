@@ -1,6 +1,5 @@
 export * from './color';
 export * from './connections';
-export * from './connectors';
 export * from './functions';
 export * from './guid';
 export * from './stringFunctions';

@@ -22,10 +22,10 @@ import { ParseJsonStaticResultSchema } from './schemas/parseJson';
 import { QueryStaticResultSchema } from './schemas/query';
 import type { ManifestParser, SwaggerParser } from '@microsoft/logic-apps-shared';
 import {
-  isCustomConnectorId,
-  isManagedConnectorId,
-  isSharedManagedConnectorId,
-  isSharedManagedConnectorIdFromPApps,
+  isCustomConnector,
+  isManagedConnector,
+  isSharedManagedConnectorFromPApps,
+  isSharedManagedConnector,
 } from '@microsoft/logic-apps-shared';
 
 /**
@@ -76,10 +76,10 @@ export class StaticResultSchemaService implements IStaticResultSchemaService {
         break;
       default:
         if (
-          (isSharedManagedConnectorId(connectorId) ||
-            isSharedManagedConnectorIdFromPApps(connectorId) ||
-            isCustomConnectorId(connectorId) ||
-            isManagedConnectorId(connectorId)) &&
+          (isSharedManagedConnector(connectorId) ||
+            isSharedManagedConnectorFromPApps(connectorId) ||
+            isCustomConnector(connectorId) ||
+            isManagedConnector(connectorId)) &&
           parser
         ) {
           return getStaticResultSchemaForAPIConnector(operationId, parser);

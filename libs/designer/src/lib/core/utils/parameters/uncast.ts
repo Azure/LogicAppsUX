@@ -1,5 +1,6 @@
 import type { Expression, ExpressionFunction } from '@microsoft/logic-apps-shared';
-import { isFunction, isStringLiteral, equals } from '@microsoft/logic-apps-shared';
+import { isFunction, isStringLiteral } from '@microsoft/logic-apps-shared';
+import { equals } from '@microsoft/logic-apps-shared';
 
 export interface UncastResult {
   expression: Expression;

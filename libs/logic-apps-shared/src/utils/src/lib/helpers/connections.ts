@@ -1,7 +1,7 @@
 import type { Connection, ConnectionStatus, ManagedIdentity } from '../models';
 import { ResourceIdentityType } from '../models';
-import type { ConnectionParameter, Connector } from '../models/connector';
 import { ConnectionParameterTypes } from '../models/connector';
+import type { Connector, ConnectionParameter } from '../models/connector';
 import { equals, hasProperty } from './functions';
 import type { IntlShape } from 'react-intl';
 
@@ -11,14 +11,14 @@ export function isArmResourceId(resourceId: string): boolean {
   return resourceId ? resourceId.startsWith('/subscriptions/') : false;
 }
 
-export const isBuiltInConnectorId = (connectorId: string) => {
+export const isBuiltInConnector = (connectorId: string) => {
   if (connectorsShownAsAzure.includes(connectorId)) return false;
   return !isArmResourceId(connectorId);
 };
 
 export const getConnectorName = (connectorId: string): string => connectorId?.split('/').at(-1) ?? '';
 
-export const isCustomConnectorId = (connectorId: string) => {
+export const isCustomConnector = (connectorId: string) => {
   // Note: connectorId format: /subscriptions/{sub}/resourceGroups/{rg}/providers/Microsoft.Web/customApis/{connector}
   const fields = connectorId.split('/');
   if (fields.length !== 9) return false;
@@ -32,7 +32,7 @@ export const isCustomConnectorId = (connectorId: string) => {
   return true;
 };
 
-export const isManagedConnectorId = (connectorId: string) => {
+export const isManagedConnector = (connectorId: string) => {
   // Note: connectorId format: /subscriptions/{sub}/resourceGroups/{rg}/providers/Microsoft.Logic/integrationServiceEnvironments/{ise}/managedApis/{connector}
   const fields = connectorId.split('/');
   if (fields.length !== 11) return false;
@@ -47,7 +47,7 @@ export const isManagedConnectorId = (connectorId: string) => {
   return true;
 };
 
-export const isSharedManagedConnectorId = (connectorId: string) => {
+export const isSharedManagedConnector = (connectorId: string) => {
   // Note: connectorId format: /subscriptions/{sub}/providers/Microsoft.Web/locations/{location}/managedApis/{connector}
   const fields = connectorId.split('/');
   if (fields.length !== 9) return false;
@@ -61,7 +61,7 @@ export const isSharedManagedConnectorId = (connectorId: string) => {
   return true;
 };
 
-export const isSharedManagedConnectorIdFromPApps = (connectorId: string) => {
+export const isSharedManagedConnectorFromPApps = (connectorId: string) => {
   // Note: connectorId format: /providers/Microsoft.PowerApps/apis/{connector}
   const fields = connectorId.split('/');
   if (fields.length !== 5) return false;

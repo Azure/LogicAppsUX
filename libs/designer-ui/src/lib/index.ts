@@ -19,7 +19,6 @@ export * from './checkbox';
 // export * from './colorizer'
 export * from './code';
 export * from './combobox';
-export * from './connectors';
 export { default as UIConstants } from './constants';
 export * from './html';
 // export * from './conditioncontrol';

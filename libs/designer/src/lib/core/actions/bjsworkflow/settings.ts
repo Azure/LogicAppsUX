@@ -4,8 +4,9 @@ import { WorkflowKind } from '../../state/workflow/workflowInterfaces';
 import { getSplitOnOptions } from '../../utils/outputs';
 import { getTokenExpressionValue } from '../../utils/parameters/helper';
 import { TokenType } from '@microsoft/designer-ui';
+import type { SwaggerParser } from '@microsoft/logic-apps-shared';
+import { convertToStringLiteral, getSplitOnArrayAliasMetadata } from '@microsoft/logic-apps-shared';
 import type {
-  SwaggerParser,
   DownloadChunkMetadata,
   LogicApps,
   LogicAppsV2,
@@ -16,8 +17,6 @@ import type {
   UploadChunkMetadata,
 } from '@microsoft/logic-apps-shared';
 import {
-  convertToStringLiteral,
-  getSplitOnArrayAliasMetadata,
   equals,
   getObjectPropertyValue,
   getPropertyValue,

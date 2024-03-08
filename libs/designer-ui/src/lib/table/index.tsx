@@ -4,7 +4,8 @@ import { ValueSegmentType } from '../editor';
 import type { ChangeState } from '../editor/base';
 import type { IDropdownOption, IDropdownStyles } from '@fluentui/react';
 import { Dropdown } from '@fluentui/react';
-import { getIntl, guid } from '@microsoft/logic-apps-shared';
+import { getIntl } from '@microsoft/logic-apps-shared';
+import { guid } from '@microsoft/logic-apps-shared';
 import type { FormEvent } from 'react';
 import { useState } from 'react';
 

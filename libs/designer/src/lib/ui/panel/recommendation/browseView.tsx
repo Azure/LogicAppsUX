@@ -1,15 +1,15 @@
 import { SearchService } from '@microsoft/designer-client-services-logic-apps';
-import { BrowseGrid, isBuiltInConnector, isCustomConnector } from '@microsoft/designer-ui';
-import { cleanConnectorId, type Connector } from '@microsoft/logic-apps-shared';
+import { BrowseGrid } from '@microsoft/designer-ui';
+import { isBuiltInConnector, type Connector, isCustomConnector, cleanConnectorId } from '@microsoft/logic-apps-shared';
 import { useCallback, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 import { useAllApiIdsWithActions, useAllApiIdsWithTriggers, useAllConnectors } from '../../../core/queries/browse';
 import { selectOperationGroupId } from '../../../core/state/panel/panelSlice';
 
 const defaultFilterConnector = (connector: Connector, runtimeFilter: string): boolean => {
-  if (runtimeFilter === 'inapp' && !isBuiltInConnector(connector)) return false;
-  else if (runtimeFilter === 'custom' && !isCustomConnector(connector)) return false;
-  else if (runtimeFilter === 'shared') if (isBuiltInConnector(connector) || isCustomConnector(connector)) return false;
+  if (runtimeFilter === 'inapp' && !isBuiltInConnector(connector.id)) return false;
+  else if (runtimeFilter === 'custom' && !isCustomConnector(connector.id)) return false;
+  else if (runtimeFilter === 'shared') if (isBuiltInConnector(connector.id) || isCustomConnector(connector.id)) return false;
   return true;
 };
 

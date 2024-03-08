@@ -11,8 +11,9 @@ import {
   StandardOperationManifestService,
   OperationManifestService,
 } from '@microsoft/designer-client-services-logic-apps';
-import { createItem, ConnectionReferenceKeyFormat } from '@microsoft/logic-apps-shared';
+import { createItem } from '@microsoft/logic-apps-shared';
 import type { LogicAppsV2, OperationManifest } from '@microsoft/logic-apps-shared';
+import { ConnectionReferenceKeyFormat } from '@microsoft/logic-apps-shared';
 
 const nodeId = '1';
 const connectionName = 'name123';
