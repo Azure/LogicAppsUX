@@ -1,10 +1,10 @@
+import { useAllApiIdsWithActions, useAllApiIdsWithTriggers, useAllConnectors } from '../../../core/queries/browse';
+import { selectOperationGroupId } from '../../../core/state/panel/panelSlice';
 import { SearchService } from '@microsoft/designer-client-services-logic-apps';
 import { BrowseGrid } from '@microsoft/designer-ui';
 import { isBuiltInConnector, type Connector, isCustomConnector, cleanConnectorId } from '@microsoft/logic-apps-shared';
 import { useCallback, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
-import { useAllApiIdsWithActions, useAllApiIdsWithTriggers, useAllConnectors } from '../../../core/queries/browse';
-import { selectOperationGroupId } from '../../../core/state/panel/panelSlice';
 
 const defaultFilterConnector = (connector: Connector, runtimeFilter: string): boolean => {
   if (runtimeFilter === 'inapp' && !isBuiltInConnector(connector.id)) return false;

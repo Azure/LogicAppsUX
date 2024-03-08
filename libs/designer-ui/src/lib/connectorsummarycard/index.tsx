@@ -2,8 +2,6 @@ import { InfoDot } from '../infoDot';
 import { Text, css } from '@fluentui/react';
 import { fallbackConnectorIconUrl, isBuiltInConnector } from '@microsoft/logic-apps-shared';
 import { useCallback } from 'react';
-import { isBuiltInConnector } from '../connectors/predicates';
-import { InfoDot } from '../infoDot';
 
 export interface ConnectorSummaryCardProps {
   id: string;
