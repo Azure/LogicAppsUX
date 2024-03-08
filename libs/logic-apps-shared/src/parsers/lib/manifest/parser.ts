@@ -131,7 +131,11 @@ export class ManifestParser {
       OutputsProcessor.convertSchemaPropertyToOutputParameter(item, SwaggerConstants.OutputSource.Outputs, 'outputs')
     );
 
-    return map(outputParameters, SwaggerConstants.OutputMapKey);
+    const filteredOutputParameters = !this._operationManifest.properties.includeRootOutputs
+      ? outputParameters.filter((parameter) => parameter.key !== 'outputs.$')
+      : outputParameters;
+
+    return map(filteredOutputParameters, SwaggerConstants.OutputMapKey);
   }
 
   /**
