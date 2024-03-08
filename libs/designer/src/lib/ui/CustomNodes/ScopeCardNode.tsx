@@ -19,6 +19,7 @@ import {
   useParentRunIndex,
   useRunInstance,
   useParentRunId,
+  useNodeDescription,
 } from '../../core/state/workflow/workflowSelectors';
 import { setRepetitionRunData, toggleCollapsedGraphId } from '../../core/state/workflow/workflowSlice';
 import type { AppDispatch } from '../../core/store';
@@ -43,6 +44,7 @@ import type { NodeProps } from 'reactflow';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = Position.Bottom, id }: NodeProps) => {
   const scopeId = removeIdTag(id);
+  const nodeComment = useNodeDescription(scopeId);
 
   const node = useActionMetadata(scopeId);
   const operationsInfo = useAllOperations();
@@ -176,6 +178,19 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
     [brandColor, iconUri, opQuery.isLoading, isRepetitionLoading, isRepetitionRefetching]
   );
 
+  const comment = useMemo(
+    () =>
+      nodeComment
+        ? {
+            brandColor,
+            comment: nodeComment,
+            isDismissed: false,
+            isEditing: false,
+          }
+        : undefined,
+    [brandColor, nodeComment]
+  );
+
   const opManifestErrorText = intl.formatMessage({
     defaultMessage: 'Error fetching manifest',
     description: 'Error message when manifest fails to load',
@@ -279,6 +294,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
             selected={selected}
             contextMenuItems={contextMenuItems}
             runData={runData}
+            commentBox={comment}
           />
           {isMonitoringView && normalizedType === constants.NODE.TYPE.FOREACH ? (
             <LoopsPager metadata={metadata} scopeId={scopeId} collapsed={graphCollapsed} />
