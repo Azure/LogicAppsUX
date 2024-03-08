@@ -3079,12 +3079,6 @@
       "value": "Nagłówki"
     }
   ],
-  "HX3Xmx": [
-    {
-      "type": 0,
-      "value": "Deleting..."
-    }
-  ],
   "HYhDYB": [
     {
       "type": 0,
@@ -4923,12 +4917,6 @@
       "value": "Typ akcji"
     }
   ],
-  "TUdPdI": [
-    {
-      "type": 0,
-      "value": "Secure Object"
-    }
-  ],
   "TX4Kdr": [
     {
       "type": 0,
@@ -6127,12 +6115,6 @@
       "value": "Treść"
     }
   ],
-  "ZKnJnh": [
-    {
-      "type": 0,
-      "value": "Secure String"
-    }
-  ],
   "ZM1mRy": [
     {
       "type": 0,
@@ -6309,20 +6291,6 @@
     {
       "type": 0,
       "value": "Treść"
-    }
-  ],
-  "bC2LBK": [
-    {
-      "type": 0,
-      "value": "It is not recommended to set a default value for type '"
-    },
-    {
-      "type": 1,
-      "value": "type"
-    },
-    {
-      "type": 0,
-      "value": "' because it will be stored as plain text."
     }
   ],
   "bG9rjv": [
