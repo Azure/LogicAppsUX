@@ -2988,7 +2988,7 @@
   "HX3Xmx": [
     {
       "type": 0,
-      "value": "Deleting..."
+      "value": "삭제 중…"
     }
   ],
   "HYhDYB": [
@@ -4766,7 +4766,7 @@
   "TUdPdI": [
     {
       "type": 0,
-      "value": "Secure Object"
+      "value": "보안 개체"
     }
   ],
   "TX4Kdr": [
@@ -5966,7 +5966,7 @@
   "ZKnJnh": [
     {
       "type": 0,
-      "value": "Secure String"
+      "value": "보안 문자열"
     }
   ],
   "ZM1mRy": [
@@ -6150,15 +6150,7 @@
   "bC2LBK": [
     {
       "type": 0,
-      "value": "It is not recommended to set a default value for type '"
-    },
-    {
-      "type": 1,
-      "value": "type"
-    },
-    {
-      "type": 0,
-      "value": "' because it will be stored as plain text."
+      "value": "일반 텍스트로 저장되지 않으므로 {type} 유형의 기본값으로 설정하지 않는 것이 좋습니다."
     }
   ],
   "bG9rjv": [

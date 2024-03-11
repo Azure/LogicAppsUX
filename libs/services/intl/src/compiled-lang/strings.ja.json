@@ -2996,7 +2996,7 @@
   "HX3Xmx": [
     {
       "type": 0,
-      "value": "Deleting..."
+      "value": "削除しています..."
     }
   ],
   "HYhDYB": [
@@ -4774,7 +4774,7 @@
   "TUdPdI": [
     {
       "type": 0,
-      "value": "Secure Object"
+      "value": "セキュリティで保護されたオブジェクト"
     }
   ],
   "TX4Kdr": [
@@ -5970,7 +5970,7 @@
   "ZKnJnh": [
     {
       "type": 0,
-      "value": "Secure String"
+      "value": "安全な文字列"
     }
   ],
   "ZM1mRy": [
