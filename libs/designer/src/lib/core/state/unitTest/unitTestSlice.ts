@@ -2,13 +2,22 @@ import { recurseSerializeCondition } from '../../utils/parameters/helper';
 import type {
   UpdateAssertionsPayload,
   UpdateAssertionPayload,
-  AddMockResultPayload,
+  updateOutputMockPayload,
   InitDefintionPayload,
   UnitTestState,
+  updateOutputMockResultPayload,
 } from './unitTestInterfaces';
-import { type ParameterInfo } from '@microsoft/designer-ui';
+import { ActionResults, type ParameterInfo } from '@microsoft/designer-ui';
 import { getIntl } from '@microsoft/intl-logic-apps';
-import { type Assertion, type AssertionDefintion, guid, isNullOrUndefined, equals, getRecordEntry } from '@microsoft/utils-logic-apps';
+import {
+  type Assertion,
+  type AssertionDefintion,
+  guid,
+  isNullOrUndefined,
+  equals,
+  getRecordEntry,
+  isNullOrEmpty,
+} from '@microsoft/utils-logic-apps';
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 
@@ -105,9 +114,23 @@ export const unitTestSlice = createSlice({
         state.mockResults = mockResults;
       }
     },
-    addMockResult: (state: UnitTestState, action: PayloadAction<AddMockResultPayload>) => {
-      const { operationName, mockResult } = action.payload;
-      state.mockResults[operationName] = mockResult;
+    updateOutputMock: (state: UnitTestState, action: PayloadAction<updateOutputMockPayload>) => {
+      const { operationName, outputs, outputId, completed } = action.payload;
+      const operationOutputs = state.mockResults[operationName].output;
+      if (isNullOrEmpty(operationOutputs)) {
+        state.mockResults[operationName].output = { [outputId]: outputs };
+      } else {
+        state.mockResults[operationName].output[outputId] = outputs;
+      }
+      state.mockResults[operationName].isCompleted = completed;
+    },
+    updateActionResult: (state: UnitTestState, action: PayloadAction<updateOutputMockResultPayload>) => {
+      const { operationName, actionResult, completed } = action.payload;
+      state.mockResults[operationName].actionResult = actionResult;
+      state.mockResults[operationName].isCompleted = completed;
+      if (actionResult !== ActionResults.SUCCESS) {
+        state.mockResults[operationName].output = {};
+      }
     },
     updateAssertions: (state: UnitTestState, action: PayloadAction<UpdateAssertionsPayload>) => {
       const { assertions } = action.payload;
@@ -141,6 +164,6 @@ export const unitTestSlice = createSlice({
   },
 });
 
-export const { updateAssertions, addMockResult, updateAssertion, initUnitTestDefinition } = unitTestSlice.actions;
+export const { updateAssertions, updateAssertion, initUnitTestDefinition, updateOutputMock, updateActionResult } = unitTestSlice.actions;
 
 export default unitTestSlice.reducer;

@@ -84,7 +84,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
   const runInstance = useRunInstance();
   const runData = useRunData(id);
   const nodeMockResults = useMockResultsByOperation(isTrigger ? `&${id}` : id);
-  const isMockSupported = useIsMockSupported(id);
+  const isMockSupported = useIsMockSupported(id, isTrigger ?? false);
   const parentRunId = useParentRunId(id);
   const parenRunData = useRunData(parentRunId ?? '');
   const nodesMetaData = useNodesMetadata();

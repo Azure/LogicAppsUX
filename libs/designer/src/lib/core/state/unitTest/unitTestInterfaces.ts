@@ -1,13 +1,28 @@
+import { type ValueSegment } from '@microsoft/designer-client-services-logic-apps';
 import type { Assertion, AssertionDefintion } from '@microsoft/utils-logic-apps';
 
-export interface AddMockResultPayload {
+export interface updateOutputMockResultPayload {
   operationName: string;
-  mockResult: string;
+  actionResult: string;
+  completed: boolean;
+}
+
+export interface updateOutputMockPayload {
+  operationName: string;
+  outputs: ValueSegment[];
+  outputId: string;
+  completed: boolean;
+}
+
+export interface OutputMock {
+  output: Record<string, ValueSegment[]>;
+  actionResult: string;
+  isCompleted?: boolean;
 }
 
 export interface InitDefintionPayload {
   assertions: Assertion[];
-  mockResults: { [key: string]: string };
+  mockResults: Record<string, OutputMock>;
 }
 
 export interface UpdateAssertionsPayload {
@@ -19,7 +34,7 @@ export interface UpdateAssertionPayload {
 }
 
 export interface UnitTestState {
-  mockResults: { [key: string]: string };
+  mockResults: Record<string, OutputMock>;
   assertions: Record<string, AssertionDefintion>;
   validationErrors: Record<string, Record<string, string | undefined>>;
 }

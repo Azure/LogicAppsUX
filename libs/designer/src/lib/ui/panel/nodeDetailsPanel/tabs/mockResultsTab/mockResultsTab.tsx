@@ -1,63 +1,89 @@
+import { Constants } from '../../../../../../../src/lib';
+import { convertVariableTypeToSwaggerType } from '../../../../../../lib/core/utils/variables';
 import constants from '../../../../../common/constants';
 import { useSelectedNodeId } from '../../../../../core/state/panel/panelSelectors';
 import { useIsMockSupported, useMockResultsByOperation } from '../../../../../core/state/unitTest/unitTestSelectors';
-import { addMockResult } from '../../../../../core/state/unitTest/unitTestSlice';
+import { updateActionResult, updateOutputMock } from '../../../../../core/state/unitTest/unitTestSlice';
 import type { AppDispatch, RootState } from '../../../../../core/store';
 import { isRootNodeInGraph } from '../../../../../core/utils/graph';
-import { Text } from '@fluentui/react-components';
-import type { ChangeState, PanelTabFn } from '@microsoft/designer-ui';
-import { CodeEditor, EditorLanguage } from '@microsoft/designer-ui';
-import { getIntl } from '@microsoft/intl-logic-apps';
+import { getParameterEditorProps } from '../../../../../core/utils/parameters/helper';
+import { type OutputInfo } from '@microsoft/designer-client-services-logic-apps';
+import { OutputMocks, type PanelTabFn, type ActionResultUpdateEvent, type ChangeState, ArrayType } from '@microsoft/designer-ui';
 import { isNullOrUndefined } from '@microsoft/utils-logic-apps';
-import { useCallback, useMemo } from 'react';
+import { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 export const MockResultsTab = () => {
-  const intl = getIntl();
   const nodeId = useSelectedNodeId();
-  const isMockSupported = useIsMockSupported(nodeId);
-  const isTriggerNode = useSelector((state: RootState) => isRootNodeInGraph(nodeId, 'root', state.workflow.nodesMetadata));
-  const nodeName = isTriggerNode ? `&${nodeId}` : nodeId;
-  const nodeMockResults = useMockResultsByOperation(nodeName);
-  const mockResults = isNullOrUndefined(nodeMockResults) ? '' : nodeMockResults;
-
+  const isTrigger = useSelector((state: RootState) => isRootNodeInGraph(nodeId, 'root', state.workflow.nodesMetadata));
+  const isMockSupported = useIsMockSupported(nodeId, isTrigger);
+  const nodeName = isTrigger ? `&${nodeId}` : nodeId;
+  const rawOutputs = useSelector((state: RootState) => state.operations.outputParameters[nodeId]);
   const dispatch = useDispatch<AppDispatch>();
+  const mockResults = useMockResultsByOperation(nodeName);
 
-  const handleMockResultChange = useCallback(
-    (newState: ChangeState): void => {
-      dispatch(addMockResult({ operationName: nodeName, mockResult: newState.value[0].value }));
+  const filteredOutputs: OutputInfo[] = Object.values(rawOutputs.outputs)
+    .filter((output: OutputInfo) => {
+      return !output.isInsideArray ?? true;
+    })
+    .filter((output: OutputInfo, _index: number, outputArray: OutputInfo[]) => {
+      const hasChildren = outputArray.some((o: OutputInfo) => (o.key === output.key ? false : o.key.includes(output.key)));
+      return !hasChildren;
+    });
+
+  const onMockUpdate = useCallback(
+    (id: string, newState: ChangeState) => {
+      const { value, viewModel } = newState;
+      const propertiesToUpdate = { value };
+      if (!isNullOrUndefined(viewModel) && viewModel.arrayType === ArrayType.COMPLEX) {
+        propertiesToUpdate.value = viewModel.uncastedValue;
+      }
+      dispatch(updateOutputMock({ operationName: nodeName, outputs: propertiesToUpdate.value ?? [], outputId: id, completed: true }));
     },
     [nodeName, dispatch]
   );
 
-  const getTokenPicker: any = () => {
-    console.log('getTockerPicker'); // TODO(ccastrotrejo): Remove this as this is just used for first iteration
-  };
-
-  const resultsEditor = useMemo(() => {
-    return (
-      <CodeEditor
-        key={nodeName}
-        initialValue={[{ id: nodeName, type: 'literal', value: mockResults }]}
-        language={EditorLanguage.json}
-        onChange={handleMockResultChange}
-        readonly={false}
-        getTokenPicker={getTokenPicker}
-      />
-    );
-  }, [mockResults, handleMockResultChange, nodeName]);
-
-  const unsupportedMessage = (
-    <Text>
-      {intl.formatMessage({
-        defaultMessage:
-          'This operation does not support mocking. Mocking is only supported for operations that are connected to a service provider, function, API connection, or API Management.',
-        description: 'Unsupported message for mock results tab',
-      })}
-    </Text>
+  const onActionResultUpdate = useCallback(
+    (newState: ActionResultUpdateEvent): void => {
+      dispatch(updateActionResult({ operationName: nodeName, actionResult: newState.actionResult, completed: true }));
+    },
+    [nodeName, dispatch]
   );
 
-  return isMockSupported ? resultsEditor : unsupportedMessage;
+  const outputs = filteredOutputs.map((output: OutputInfo) => {
+    const { key: id, title: label, type } = output;
+    const { editor, editorOptions, editorViewModel, schema } = getParameterEditorProps(output, [], true);
+    const value = mockResults?.output[id] ?? [];
+    const valueViewModel = { ...editorViewModel, uncastedValue: value };
+
+    return {
+      id,
+      label,
+      required: false,
+      readOnly: false,
+      value: value,
+      editor: editor ?? convertVariableTypeToSwaggerType(type) ?? Constants.SWAGGER.TYPE.ANY,
+      editorOptions,
+      schema,
+      tokenEditor: false,
+      isLoading: false,
+      editorViewModel: valueViewModel,
+      showTokens: false,
+      tokenMapping: [],
+      suppressCastingForSerialize: false,
+      onValueChange: (newState: ChangeState) => onMockUpdate(id, newState),
+    };
+  });
+
+  return (
+    <OutputMocks
+      isMockSupported={isMockSupported}
+      nodeId={nodeId}
+      onActionResultUpdate={onActionResultUpdate}
+      outputs={outputs}
+      mocks={mockResults}
+    />
+  );
 };
 
 export const mockResultsTab: PanelTabFn = (intl) => ({

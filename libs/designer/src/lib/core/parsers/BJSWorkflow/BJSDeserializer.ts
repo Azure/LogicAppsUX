@@ -1,12 +1,14 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import constants from '../../../common/constants';
 import { UnsupportedException, UnsupportedExceptionCode } from '../../../common/exceptions/unsupported';
+import { type Workflow } from '../../../common/models/workflow';
+import { type OutputMock } from '../../state/unitTest/unitTestInterfaces';
 import type { Operations, NodesMetadata } from '../../state/workflow/workflowInterfaces';
 import { createWorkflowNode, createWorkflowEdge } from '../../utils/graph';
 import { toConditionViewModel } from '../../utils/parameters/helper';
 import type { WorkflowNode, WorkflowEdge } from '../models/workflowNode';
 import { LoggerService, Status } from '@microsoft/designer-client-services-logic-apps';
-import { getDurationStringPanelMode } from '@microsoft/designer-ui';
+import { getDurationStringPanelMode, ActionResults } from '@microsoft/designer-ui';
 import { getIntl } from '@microsoft/intl-logic-apps';
 import type { Assertion, LogicAppsV2, SubgraphType, UnitTestDefinition } from '@microsoft/utils-logic-apps';
 import {
@@ -19,6 +21,7 @@ import {
   isNullOrUndefined,
   getUniqueName,
   getRecordEntry,
+  ConnectionType,
 } from '@microsoft/utils-logic-apps';
 
 const hasMultipleTriggers = (definition: LogicAppsV2.WorkflowDefinition): boolean => {
@@ -113,21 +116,66 @@ export const Deserialize = (
 };
 
 export const deserializeUnitTestDefinition = (
-  unitTestDefinition: UnitTestDefinition | null
+  unitTestDefinition: UnitTestDefinition | null,
+  workflowDefinition: Workflow
 ): {
   assertions: Assertion[];
-  mockResults: { [key: string]: string };
+  mockResults: Record<string, OutputMock>;
 } | null => {
-  if (isNullOrUndefined(unitTestDefinition)) return null;
+  const { definition } = workflowDefinition;
+  const actionsKeys = Object.keys(definition.actions ?? {});
+  const triggersKeys = Object.keys(definition.triggers ?? {});
+
+  const mockActions: Record<string, OutputMock> = actionsKeys.reduce((acc, key) => {
+    const action = definition.actions && definition.actions[key];
+    const type = action?.type?.toLowerCase();
+    const supportedAction =
+      type === ConnectionType.ServiceProvider ||
+      type === ConnectionType.Function ||
+      type === ConnectionType.ApiManagement ||
+      type === ConnectionType.ApiConnection;
+
+    return supportedAction
+      ? {
+          ...acc,
+          [key]: {
+            actionResult: ActionResults.SUCCESS,
+            output: {},
+          },
+        }
+      : { ...acc };
+  }, {});
+
+  const mockTriggers: Record<string, OutputMock> = triggersKeys.reduce((acc, key) => {
+    return {
+      ...acc,
+      [`&${key}`]: {
+        actionResult: ActionResults.SUCCESS,
+        output: {},
+      },
+    };
+  }, {});
+
+  const mockResults = { ...mockActions, ...mockTriggers };
+
+  if (isNullOrUndefined(unitTestDefinition)) {
+    return { assertions: [], mockResults };
+  }
   // deserialize mocks
-  const mockResults: { [key: string]: string } = {};
-  const triggerName = Object.keys(unitTestDefinition.triggerMocks)[0]; // only 1 trigger
+  const triggerName = triggersKeys[0]; // only 1 trigger
 
   if (triggerName) {
-    mockResults[`&${triggerName}`] = JSON.stringify(unitTestDefinition.triggerMocks[triggerName], null, 4);
+    mockResults[`&${triggerName}`] = {
+      actionResult: unitTestDefinition.triggerMocks[triggerName].actionResult ?? ActionResults.SUCCESS,
+      output: unitTestDefinition.triggerMocks[triggerName].outputs ?? {},
+    };
   }
+
   Object.keys(unitTestDefinition.actionMocks).forEach((actionName) => {
-    mockResults[actionName] = JSON.stringify(unitTestDefinition.actionMocks[actionName], null, 4);
+    mockResults[actionName] = {
+      actionResult: unitTestDefinition.actionMocks[actionName].actionResult ?? ActionResults.SUCCESS,
+      output: unitTestDefinition.actionMocks[actionName].outputs ?? {},
+    };
   });
 
   // deserialize assertions
