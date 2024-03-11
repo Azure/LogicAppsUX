@@ -162,17 +162,19 @@ export const deserializeUnitTestDefinition = (
     return { assertions: [], mockResults };
   }
   // deserialize mocks
-  const triggerName = Object.keys(unitTestDefinition.triggerMocks)[0]; // only 1 trigger
+  const triggerName = triggersKeys[0]; // only 1 trigger
+
   if (triggerName) {
     mockResults[`&${triggerName}`] = {
-      actionResult: ActionResults.SUCCESS,
-      output: {},
+      actionResult: unitTestDefinition.triggerMocks[triggerName].actionResult ?? ActionResults.SUCCESS,
+      output: unitTestDefinition.triggerMocks[triggerName].outputs ?? {},
     };
   }
+
   Object.keys(unitTestDefinition.actionMocks).forEach((actionName) => {
     mockResults[actionName] = {
-      actionResult: ActionResults.SUCCESS,
-      output: {},
+      actionResult: unitTestDefinition.actionMocks[actionName].actionResult ?? ActionResults.SUCCESS,
+      output: unitTestDefinition.actionMocks[actionName].outputs ?? {},
     };
   });
 

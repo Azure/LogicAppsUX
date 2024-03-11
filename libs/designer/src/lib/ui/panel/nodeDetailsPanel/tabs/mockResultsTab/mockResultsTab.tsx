@@ -8,7 +8,7 @@ import type { AppDispatch, RootState } from '../../../../../core/store';
 import { isRootNodeInGraph } from '../../../../../core/utils/graph';
 import { getParameterEditorProps } from '../../../../../core/utils/parameters/helper';
 import { type OutputInfo } from '@microsoft/designer-client-services-logic-apps';
-import { OutputMocks, type PanelTabFn, type ActionResultUpdateEvent, type ChangeState, type ParameterInfo } from '@microsoft/designer-ui';
+import { OutputMocks, type PanelTabFn, type ActionResultUpdateEvent, type ChangeState, ArrayType } from '@microsoft/designer-ui';
 import { isNullOrUndefined } from '@microsoft/utils-logic-apps';
 import { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -34,9 +34,9 @@ export const MockResultsTab = () => {
   const onMockUpdate = useCallback(
     (id: string, newState: ChangeState) => {
       const { value, viewModel } = newState;
-      const propertiesToUpdate = { value, preservedValue: undefined } as Partial<ParameterInfo>;
-      if (!isNullOrUndefined(viewModel)) {
-        propertiesToUpdate.editorViewModel = viewModel;
+      const propertiesToUpdate = { value };
+      if (!isNullOrUndefined(viewModel) && viewModel.arrayType === ArrayType.COMPLEX) {
+        propertiesToUpdate.value = viewModel.uncastedValue;
       }
       dispatch(updateOutputMock({ operationName: nodeName, outputs: propertiesToUpdate.value ?? [], outputId: id, completed: true }));
     },
@@ -54,6 +54,7 @@ export const MockResultsTab = () => {
     const { key: id, title: label, type } = output;
     const { editor, editorOptions, editorViewModel, schema } = getParameterEditorProps(output, [], true);
     const value = mockResults?.output[id] ?? [];
+    const valueViewModel = { ...editorViewModel, uncastedValue: value };
 
     return {
       id,
@@ -66,7 +67,7 @@ export const MockResultsTab = () => {
       schema,
       tokenEditor: false,
       isLoading: false,
-      editorViewModel,
+      editorViewModel: valueViewModel,
       showTokens: false,
       tokenMapping: [],
       suppressCastingForSerialize: false,

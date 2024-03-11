@@ -55,7 +55,6 @@ export const ActionResult: React.FC<ActionResultProps> = ({ nodeId, onActionResu
         aria-labelledby={labelId}
         className={'msla-output-mocks-actions-dropdown'}
         options={options}
-        defaultSelectedKey={ActionResults.SUCCESS}
         onChange={onChangeActionResult}
         selectedKey={actionResult}
       />

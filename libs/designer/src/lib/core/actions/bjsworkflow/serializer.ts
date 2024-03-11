@@ -1111,15 +1111,15 @@ const getTriggerActionMocks = (
 ): { triggerMocks: Record<string, OperationMock>; actionMocks: Record<string, OperationMock> } => {
   const triggerMocks: Record<string, OperationMock> = {};
   const actionMocks: Record<string, OperationMock> = {};
+
   Object.keys(mockResults).forEach((key) => {
-    const value = mockResults[key];
-    if (value) {
-      const mockResultJson = value.output;
+    const outputMock = mockResults[key];
+    if (outputMock) {
       if (key.charAt(0) === '&') {
         const triggerName = key.substring(1);
-        triggerMocks[triggerName] = mockResultJson;
+        triggerMocks[triggerName] = { actionResult: outputMock.actionResult, outputs: outputMock.output };
       } else {
-        actionMocks[key] = mockResultJson;
+        actionMocks[key] = { actionResult: outputMock.actionResult, outputs: outputMock.output };
       }
     }
   });

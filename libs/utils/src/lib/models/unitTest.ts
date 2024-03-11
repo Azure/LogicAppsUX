@@ -1,6 +1,6 @@
 export interface OperationMock {
-  outputs?: string;
-  properties?: Record<string, string>;
+  outputs?: any;
+  actionResult?: string;
 }
 
 export interface Assertion {
