@@ -3038,7 +3038,7 @@
   "HX3Xmx": [
     {
       "type": 0,
-      "value": "Deleting..."
+      "value": "Törlés folyamatban..."
     }
   ],
   "HYhDYB": [
@@ -4842,7 +4842,7 @@
   "TUdPdI": [
     {
       "type": 0,
-      "value": "Secure Object"
+      "value": "Biztonságos objektum"
     }
   ],
   "TX4Kdr": [
@@ -6026,7 +6026,7 @@
   "ZKnJnh": [
     {
       "type": 0,
-      "value": "Secure String"
+      "value": "Biztonságos sztring"
     }
   ],
   "ZM1mRy": [
@@ -6210,7 +6210,7 @@
   "bC2LBK": [
     {
       "type": 0,
-      "value": "It is not recommended to set a default value for type '"
+      "value": "A(z) „"
     },
     {
       "type": 1,
@@ -6218,7 +6218,7 @@
     },
     {
       "type": 0,
-      "value": "' because it will be stored as plain text."
+      "value": "” típus alapértelmezett értékének beállítása nem javasolt, mert egyszerű szövegként lesz tárolva."
     }
   ],
   "bG9rjv": [

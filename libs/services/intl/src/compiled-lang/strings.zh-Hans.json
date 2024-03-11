@@ -3016,7 +3016,7 @@
   "HX3Xmx": [
     {
       "type": 0,
-      "value": "Deleting..."
+      "value": "正在删除..."
     }
   ],
   "HYhDYB": [
@@ -4798,7 +4798,7 @@
   "TUdPdI": [
     {
       "type": 0,
-      "value": "Secure Object"
+      "value": "安全对象"
     }
   ],
   "TX4Kdr": [
@@ -6014,7 +6014,7 @@
   "ZKnJnh": [
     {
       "type": 0,
-      "value": "Secure String"
+      "value": "安全字符串"
     }
   ],
   "ZM1mRy": [
@@ -6198,7 +6198,7 @@
   "bC2LBK": [
     {
       "type": 0,
-      "value": "It is not recommended to set a default value for type '"
+      "value": "不建议为类型“"
     },
     {
       "type": 1,
@@ -6206,7 +6206,7 @@
     },
     {
       "type": 0,
-      "value": "' because it will be stored as plain text."
+      "value": "”设置默认值，因为它将存储为纯文本。"
     }
   ],
   "bG9rjv": [

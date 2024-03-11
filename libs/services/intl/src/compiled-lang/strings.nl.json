@@ -3030,7 +3030,7 @@
   "HX3Xmx": [
     {
       "type": 0,
-      "value": "Deleting..."
+      "value": "Verwijderen..."
     }
   ],
   "HYhDYB": [
@@ -4818,7 +4818,7 @@
   "TUdPdI": [
     {
       "type": 0,
-      "value": "Secure Object"
+      "value": "Object beveiligen"
     }
   ],
   "TX4Kdr": [
@@ -6022,7 +6022,7 @@
   "ZKnJnh": [
     {
       "type": 0,
-      "value": "Secure String"
+      "value": "Beveiligde tekenreeks"
     }
   ],
   "ZM1mRy": [
@@ -6206,7 +6206,7 @@
   "bC2LBK": [
     {
       "type": 0,
-      "value": "It is not recommended to set a default value for type '"
+      "value": "Het wordt niet aanbevolen om een standaardwaarde in te stellen voor het type "
     },
     {
       "type": 1,
@@ -6214,7 +6214,7 @@
     },
     {
       "type": 0,
-      "value": "' because it will be stored as plain text."
+      "value": " omdat deze wordt opgeslagen als tekst zonder opmaak."
     }
   ],
   "bG9rjv": [

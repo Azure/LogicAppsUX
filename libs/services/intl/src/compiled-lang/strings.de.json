@@ -3062,7 +3062,7 @@
   "HX3Xmx": [
     {
       "type": 0,
-      "value": "Deleting..."
+      "value": "Wird gelöscht..."
     }
   ],
   "HYhDYB": [
@@ -4870,7 +4870,7 @@
   "TUdPdI": [
     {
       "type": 0,
-      "value": "Secure Object"
+      "value": "Sicheres Objekt"
     }
   ],
   "TX4Kdr": [
@@ -6082,7 +6082,7 @@
   "ZKnJnh": [
     {
       "type": 0,
-      "value": "Secure String"
+      "value": "Sichere Zeichenfolge"
     }
   ],
   "ZM1mRy": [
@@ -6266,7 +6266,7 @@
   "bC2LBK": [
     {
       "type": 0,
-      "value": "It is not recommended to set a default value for type '"
+      "value": "Es wird nicht empfohlen, einen Standardwert für den Typ „"
     },
     {
       "type": 1,
@@ -6274,7 +6274,7 @@
     },
     {
       "type": 0,
-      "value": "' because it will be stored as plain text."
+      "value": "“ festzulegen, da er als Nur-Text gespeichert wird."
     }
   ],
   "bG9rjv": [
