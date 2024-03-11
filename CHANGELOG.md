@@ -1,4 +1,16 @@
 # Logic Apps Designer
+## [2.125.0](https://github.com/Azure/LogicAppsUX/compare/v2.124.0...v2.125.0) (2024-03-11)
+
+
+### Bug Fixes
+
+* **Consumption:** Multiple minor changes to scope and subgraph nodes ([#4331](https://github.com/Azure/LogicAppsUX/issues/4331)) ([fd62aaa](https://github.com/Azure/LogicAppsUX/commit/fd62aaab26b6251171f5b76c2bfc34520a190ed3))
+* **Designer:** Fixed issue where some service provider operations would not appear in search / browse ([#4345](https://github.com/Azure/LogicAppsUX/issues/4345)) ([96d2cf5](https://github.com/Azure/LogicAppsUX/commit/96d2cf52c346d9de1a82499842e0c506c6afdbac))
+* **Designer:** Showing secure workflow parameters in consumption ([#4325](https://github.com/Azure/LogicAppsUX/issues/4325)) ([ab07b14](https://github.com/Azure/LogicAppsUX/commit/ab07b14d24af81eb9a2d1380697c016dbfdc8f28))
+* **Designer:** Stuck on loading after making Manage Identity Issue Action ([#4332](https://github.com/Azure/LogicAppsUX/issues/4332)) ([1a366aa](https://github.com/Azure/LogicAppsUX/commit/1a366aadd9c0e7f3c8a12c2f1fa7670cf93ab1c7))
+* **desinger:** Remove Outputs if includeRootOutputs is not set ([#4333](https://github.com/Azure/LogicAppsUX/issues/4333)) ([2ae577d](https://github.com/Azure/LogicAppsUX/commit/2ae577d1f43b61ac9312aae43f1574189c2afd76))
+* **vscode:** Add validation for extension bundle workflows folder ([#4326](https://github.com/Azure/LogicAppsUX/issues/4326)) ([fe7dc9c](https://github.com/Azure/LogicAppsUX/commit/fe7dc9cd2c4daabbada0112b4abeea956b35f006))
+
 ## [2.124.0](https://github.com/Azure/LogicAppsUX/compare/v2.123.0...v2.124.0) (2024-03-07)
 
 ## [2.123.0](https://github.com/Azure/LogicAppsUX/compare/v2.122.0...v2.123.0) (2024-03-06)
