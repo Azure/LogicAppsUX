@@ -22,14 +22,14 @@ export const MockResultsTab = () => {
   const dispatch = useDispatch<AppDispatch>();
   const mockResults = useMockResultsByOperation(nodeName);
 
-  let filteredOutputs = Object.values(rawOutputs.outputs).filter((output: OutputInfo) => {
-    return !output.isInsideArray ?? true;
-  });
-
-  filteredOutputs = filteredOutputs.filter((output: OutputInfo) => {
-    const hasChildren = filteredOutputs.some((o: OutputInfo) => (o.key === output.key ? false : o.key.includes(output.key)));
-    return !hasChildren;
-  });
+  const filteredOutputs: OutputInfo[] = Object.values(rawOutputs.outputs)
+    .filter((output: OutputInfo) => {
+      return !output.isInsideArray ?? true;
+    })
+    .filter((output: OutputInfo, _index: number, outputArray: OutputInfo[]) => {
+      const hasChildren = outputArray.some((o: OutputInfo) => (o.key === output.key ? false : o.key.includes(output.key)));
+      return !hasChildren;
+    });
 
   const onMockUpdate = useCallback(
     (id: string, newState: ChangeState) => {
@@ -38,27 +38,27 @@ export const MockResultsTab = () => {
       if (!isNullOrUndefined(viewModel)) {
         propertiesToUpdate.editorViewModel = viewModel;
       }
-      dispatch(updateOutputMock({ operationName: nodeName, outputs: propertiesToUpdate.value ?? [], outputId: id }));
+      dispatch(updateOutputMock({ operationName: nodeName, outputs: propertiesToUpdate.value ?? [], outputId: id, completed: true }));
     },
     [nodeName, dispatch]
   );
 
   const onActionResultUpdate = useCallback(
     (newState: ActionResultUpdateEvent): void => {
-      dispatch(updateActionResult({ operationName: nodeName, actionResult: newState.actionResult }));
+      dispatch(updateActionResult({ operationName: nodeName, actionResult: newState.actionResult, completed: true }));
     },
     [nodeName, dispatch]
   );
 
   const outputs = filteredOutputs.map((output: OutputInfo) => {
-    const { key: id, title: label, required, type } = output;
+    const { key: id, title: label, type } = output;
     const { editor, editorOptions, editorViewModel, schema } = getParameterEditorProps(output, [], true);
     const value = mockResults?.output[id] ?? [];
 
     return {
       id,
       label,
-      required,
+      required: false,
       readOnly: false,
       value: value,
       editor: editor ?? convertVariableTypeToSwaggerType(type) ?? Constants.SWAGGER.TYPE.ANY,

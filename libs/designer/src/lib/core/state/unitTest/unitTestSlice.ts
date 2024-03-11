@@ -115,17 +115,19 @@ export const unitTestSlice = createSlice({
       }
     },
     updateOutputMock: (state: UnitTestState, action: PayloadAction<updateOutputMockPayload>) => {
-      const { operationName, outputs, outputId } = action.payload;
+      const { operationName, outputs, outputId, completed } = action.payload;
       const operationOutputs = state.mockResults[operationName].output;
       if (isNullOrEmpty(operationOutputs)) {
         state.mockResults[operationName].output = { [outputId]: outputs };
       } else {
         state.mockResults[operationName].output[outputId] = outputs;
       }
+      state.mockResults[operationName].isCompleted = completed;
     },
     updateActionResult: (state: UnitTestState, action: PayloadAction<updateOutputMockResultPayload>) => {
-      const { operationName, actionResult } = action.payload;
+      const { operationName, actionResult, completed } = action.payload;
       state.mockResults[operationName].actionResult = actionResult;
+      state.mockResults[operationName].isCompleted = completed;
     },
     updateAssertions: (state: UnitTestState, action: PayloadAction<UpdateAssertionsPayload>) => {
       const { assertions } = action.payload;

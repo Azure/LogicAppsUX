@@ -21,6 +21,7 @@ import {
   isNullOrUndefined,
   getUniqueName,
   getRecordEntry,
+  ConnectionType,
 } from '@microsoft/utils-logic-apps';
 
 const hasMultipleTriggers = (definition: LogicAppsV2.WorkflowDefinition): boolean => {
@@ -126,13 +127,23 @@ export const deserializeUnitTestDefinition = (
   const triggersKeys = Object.keys(definition.triggers ?? {});
 
   const mockActions: Record<string, OutputMock> = actionsKeys.reduce((acc, key) => {
-    return {
-      ...acc,
-      [key]: {
-        actionResult: ActionResults.SUCCESS,
-        output: {},
-      },
-    };
+    const action = definition.actions && definition.actions[key];
+    const type = action?.type?.toLowerCase();
+    const supportedAction =
+      type === ConnectionType.ServiceProvider ||
+      type === ConnectionType.Function ||
+      type === ConnectionType.ApiManagement ||
+      type === ConnectionType.ApiConnection;
+
+    return supportedAction
+      ? {
+          ...acc,
+          [key]: {
+            actionResult: ActionResults.SUCCESS,
+            output: {},
+          },
+        }
+      : { ...acc };
   }, {});
 
   const mockTriggers: Record<string, OutputMock> = triggersKeys.reduce((acc, key) => {

@@ -4,12 +4,14 @@ import type { Assertion, AssertionDefintion } from '@microsoft/utils-logic-apps'
 export interface updateOutputMockResultPayload {
   operationName: string;
   actionResult: string;
+  completed: boolean;
 }
 
 export interface updateOutputMockPayload {
   operationName: string;
   outputs: ValueSegment[];
   outputId: string;
+  completed: boolean;
 }
 
 export interface OutputMock {
