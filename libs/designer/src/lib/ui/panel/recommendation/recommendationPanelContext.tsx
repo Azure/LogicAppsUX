@@ -62,17 +62,10 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
   const [activeSearchOperations, setActiveSearchOperations] = useState<DiscoveryOpArray>([]);
 
   // Remove duplicates from allOperations and activeSearchOperations
-  const allOperations: DiscoveryOpArray = useMemo(() => {
-    console.log(
-      '### aso:',
-      activeSearchOperations.filter((op) => op.properties.summary === 'Send message')
-    );
-    console.log(
-      '### po:',
-      preloadedOperations.filter((op) => op.properties.summary === 'Send message')
-    );
-    return joinAndDeduplicateById(preloadedOperations, activeSearchOperations);
-  }, [preloadedOperations, activeSearchOperations]);
+  const allOperations: DiscoveryOpArray = useMemo(
+    () => joinAndDeduplicateById(preloadedOperations, activeSearchOperations),
+    [preloadedOperations, activeSearchOperations]
+  );
 
   // Active search
   useDebouncedEffect(
