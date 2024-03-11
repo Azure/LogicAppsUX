@@ -7,7 +7,7 @@ import type {
   UnitTestState,
   updateOutputMockResultPayload,
 } from './unitTestInterfaces';
-import { type ParameterInfo } from '@microsoft/designer-ui';
+import { ActionResults, type ParameterInfo } from '@microsoft/designer-ui';
 import { getIntl } from '@microsoft/intl-logic-apps';
 import {
   type Assertion,
@@ -128,6 +128,9 @@ export const unitTestSlice = createSlice({
       const { operationName, actionResult, completed } = action.payload;
       state.mockResults[operationName].actionResult = actionResult;
       state.mockResults[operationName].isCompleted = completed;
+      if (actionResult !== ActionResults.SUCCESS) {
+        state.mockResults[operationName].output = {};
+      }
     },
     updateAssertions: (state: UnitTestState, action: PayloadAction<UpdateAssertionsPayload>) => {
       const { assertions } = action.payload;
