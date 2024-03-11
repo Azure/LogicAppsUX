@@ -5,10 +5,10 @@ import { useIntl } from 'react-intl';
 export interface ActionResultProps {
   nodeId: string;
   onActionResultUpdate: ActionResultUpdateHandler;
-  mockResult: string | undefined;
+  actionResult: string;
 }
 
-export const ActionResult: React.FC<ActionResultProps> = ({ nodeId, onActionResultUpdate, mockResult }): JSX.Element => {
+export const ActionResult: React.FC<ActionResultProps> = ({ nodeId, onActionResultUpdate, actionResult }): JSX.Element => {
   const intl = useIntl();
 
   const intlText = {
@@ -57,7 +57,7 @@ export const ActionResult: React.FC<ActionResultProps> = ({ nodeId, onActionResu
         options={options}
         defaultSelectedKey={ActionResults.SUCCESS}
         onChange={onChangeActionResult}
-        selectedKey={mockResult}
+        selectedKey={actionResult}
       />
     </>
   );

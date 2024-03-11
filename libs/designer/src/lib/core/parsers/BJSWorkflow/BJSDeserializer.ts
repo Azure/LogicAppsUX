@@ -122,15 +122,30 @@ export const deserializeUnitTestDefinition = (
   mockResults: Record<string, OutputMock>;
 } | null => {
   const { definition } = workflowDefinition;
-  const actionKeys = Object.keys(definition.actions ?? {});
+  const actionsKeys = Object.keys(definition.actions ?? {});
+  const triggersKeys = Object.keys(definition.triggers ?? {});
 
-  const mockResults: Record<string, OutputMock> = actionKeys.reduce((acc, key) => {
-    const action: OutputMock = {
-      actionResult: ActionResults.SUCCESS,
-      output: {},
+  const mockActions: Record<string, OutputMock> = actionsKeys.reduce((acc, key) => {
+    return {
+      ...acc,
+      [key]: {
+        actionResult: ActionResults.SUCCESS,
+        output: {},
+      },
     };
-    return { ...acc, [key]: action };
   }, {});
+
+  const mockTriggers: Record<string, OutputMock> = triggersKeys.reduce((acc, key) => {
+    return {
+      ...acc,
+      [`&${key}`]: {
+        actionResult: ActionResults.SUCCESS,
+        output: {},
+      },
+    };
+  }, {});
+
+  const mockResults = { ...mockActions, ...mockTriggers };
 
   if (isNullOrUndefined(unitTestDefinition)) {
     return { assertions: [], mockResults };

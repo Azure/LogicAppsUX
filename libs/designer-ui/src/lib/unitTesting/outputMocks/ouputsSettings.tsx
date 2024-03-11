@@ -5,12 +5,13 @@ import { useIntl } from 'react-intl';
 
 export interface OutputsSettingsProps {
   outputs: any[];
-  mockResult: string | undefined;
+  nodeId: string;
+  actionResult: string;
 }
 
-export const OutputsSettings: React.FC<OutputsSettingsProps> = ({ outputs, mockResult = ActionResults.SUCCESS }): JSX.Element => {
+export const OutputsSettings: React.FC<OutputsSettingsProps> = ({ nodeId, outputs, actionResult }): JSX.Element => {
   const intl = useIntl();
-  const hasMockOutputs = mockResult === ActionResults.SUCCESS;
+  const hasMockOutputs = actionResult === ActionResults.SUCCESS;
 
   const intlText = {
     NO_OUTPUTS: intl.formatMessage({
@@ -23,9 +24,7 @@ export const OutputsSettings: React.FC<OutputsSettingsProps> = ({ outputs, mockR
   return hasMockOutputs ? (
     <>
       {outputs.map((output: any) => (
-        <div key={output.id}>
-          <SettingTokenField {...output} />
-        </div>
+        <SettingTokenField key={`${nodeId}-${output.id}`} {...output} />
       ))}
     </>
   ) : (

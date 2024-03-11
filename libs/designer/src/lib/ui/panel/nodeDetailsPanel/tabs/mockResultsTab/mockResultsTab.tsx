@@ -22,8 +22,6 @@ export const MockResultsTab = () => {
   const dispatch = useDispatch<AppDispatch>();
   const mockResults = useMockResultsByOperation(nodeName);
 
-  console.log('charlie', mockResults);
-
   let filteredOutputs = Object.values(rawOutputs.outputs).filter((output: OutputInfo) => {
     return !output.isInsideArray ?? true;
   });
@@ -82,7 +80,7 @@ export const MockResultsTab = () => {
       nodeId={nodeId}
       onActionResultUpdate={onActionResultUpdate}
       outputs={outputs}
-      outputsMock={mockResults}
+      mocks={mockResults}
     />
   );
 };

@@ -25,10 +25,10 @@ export const useMockResults = (): Record<string, OutputMock> => {
  * @param {string} operationName - The name of the operation.
  * @returns The mock results for the specified operation, or undefined if not found.
  */
-export const useMockResultsByOperation = (operationName: string): OutputMock | undefined => {
+export const useMockResultsByOperation = (operationName: string): OutputMock => {
   return useSelector(
     createSelector(getUnitTestState, (state: UnitTestState) => {
-      return state.mockResults[operationName] ?? undefined;
+      return state.mockResults[operationName];
     })
   );
 };

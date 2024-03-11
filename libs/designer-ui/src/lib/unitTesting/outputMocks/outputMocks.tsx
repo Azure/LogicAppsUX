@@ -18,6 +18,7 @@ export interface ActionResultUpdateEvent {
 export interface OutputMock {
   output: Record<string, ValueSegment[]>;
   actionResult: string;
+  isCompleted?: boolean;
 }
 
 export type MockUpdateHandler = EventHandler<MockUpdateEvent>;
@@ -29,7 +30,7 @@ export interface OutputMocksProps {
   nodeId: string;
   onActionResultUpdate: ActionResultUpdateHandler;
   outputs: any[];
-  outputsMock: OutputMock | undefined;
+  mocks: OutputMock;
 }
 
 export const ActionResults = {
@@ -39,7 +40,7 @@ export const ActionResults = {
   FAILED: 'failed',
 };
 
-export const OutputMocks = ({ isMockSupported, nodeId, onActionResultUpdate, outputs, outputsMock }: OutputMocksProps) => {
+export const OutputMocks = ({ isMockSupported, nodeId, onActionResultUpdate, outputs, mocks }: OutputMocksProps) => {
   const intl = useIntl();
 
   const intlText = {
@@ -52,9 +53,9 @@ export const OutputMocks = ({ isMockSupported, nodeId, onActionResultUpdate, out
 
   return isMockSupported ? (
     <>
-      <ActionResult nodeId={nodeId} onActionResultUpdate={onActionResultUpdate} mockResult={outputsMock?.actionResult} />
+      <ActionResult nodeId={nodeId} onActionResultUpdate={onActionResultUpdate} actionResult={mocks.actionResult} />
       <Divider style={{ padding: '16px 0px' }} />
-      <OutputsSettings outputs={outputs} mockResult={outputsMock?.actionResult} />
+      <OutputsSettings nodeId={nodeId} outputs={outputs} actionResult={mocks.actionResult} />
     </>
   ) : (
     <Text>{intlText.UNSUPPORTED_MOCKS}</Text>

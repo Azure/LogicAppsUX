@@ -13,8 +13,9 @@ export interface updateOutputMockPayload {
 }
 
 export interface OutputMock {
-  output: Record<string, any>;
+  output: Record<string, ValueSegment[]>;
   actionResult: string;
+  isCompleted?: boolean;
 }
 
 export interface InitDefintionPayload {
