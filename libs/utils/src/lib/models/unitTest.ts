@@ -1,5 +1,5 @@
 export interface OperationMock {
-  outputs?: any;
+  outputs?: Record<string, any>;
   actionResult?: string;
 }
 
