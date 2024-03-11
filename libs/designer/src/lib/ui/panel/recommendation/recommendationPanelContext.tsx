@@ -263,5 +263,5 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
 };
 
 const joinAndDeduplicateById = (arr1: DiscoveryOpArray, arr2: DiscoveryOpArray) => [
-  ...new Map([...arr1, ...arr2].map((v) => [v.id, v])).values(),
+  ...new Map([...arr1, ...arr2].map((v) => [`${v?.properties?.api?.id}/${v.id}`, v])).values(),
 ];
