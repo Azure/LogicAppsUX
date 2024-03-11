@@ -4,7 +4,7 @@ import { type OutputMock } from '../outputMocks';
 import { Completed } from './completed';
 import { Empty } from './empty';
 import './mockStatusIcon.less';
-import { isEmptyString } from '@microsoft/utils-logic-apps';
+import { isNullOrEmpty } from '@microsoft/utils-logic-apps';
 
 export interface MockStatusIconProps {
   nodeMockResults?: OutputMock;
@@ -17,7 +17,7 @@ export interface MockStatusIconProps {
  * @returns {React.ReactElement} The rendered mock status icon.
  */
 export const MockStatusIcon: React.FC<MockStatusIconProps> = ({ nodeMockResults, id }) => {
-  const status = nodeMockResults && !isEmptyString(nodeMockResults.output) ? Constants.MOCKSTATUS.COMPLETED : Constants.MOCKSTATUS.EMPTY;
+  const status = nodeMockResults && !isNullOrEmpty(nodeMockResults.output) ? Constants.MOCKSTATUS.COMPLETED : Constants.MOCKSTATUS.EMPTY;
   const tooltipLabel = getMockStatusString(status);
 
   const getIcon = (status: string) => {

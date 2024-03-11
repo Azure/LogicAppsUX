@@ -1,14 +1,14 @@
-import { ActionResults, type MockUpdateHandler } from './outputMocks';
+import { ActionResults, type ActionResultUpdateHandler } from './outputMocks';
 import { Label, Dropdown, type IDropdownOption } from '@fluentui/react';
 import { useIntl } from 'react-intl';
 
 export interface ActionResultProps {
   nodeId: string;
-  onMockUpdate: MockUpdateHandler;
+  onActionResultUpdate: ActionResultUpdateHandler;
   mockResult: string | undefined;
 }
 
-export const ActionResult: React.FC<ActionResultProps> = ({ nodeId, onMockUpdate, mockResult }): JSX.Element => {
+export const ActionResult: React.FC<ActionResultProps> = ({ nodeId, onActionResultUpdate, mockResult }): JSX.Element => {
   const intl = useIntl();
 
   const intlText = {
@@ -44,7 +44,7 @@ export const ActionResult: React.FC<ActionResultProps> = ({ nodeId, onMockUpdate
 
   const onChangeActionResult = (_event: React.FormEvent<HTMLDivElement>, selectedOption?: IDropdownOption) => {
     if (selectedOption) {
-      onMockUpdate({ id: nodeId, actionResult: selectedOption.key as string });
+      onActionResultUpdate({ actionResult: selectedOption.key as string });
     }
   };
 

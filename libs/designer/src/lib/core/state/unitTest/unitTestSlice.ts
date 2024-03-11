@@ -5,10 +5,19 @@ import type {
   updateOutputMockPayload,
   InitDefintionPayload,
   UnitTestState,
+  updateOutputMockResultPayload,
 } from './unitTestInterfaces';
 import { type ParameterInfo } from '@microsoft/designer-ui';
 import { getIntl } from '@microsoft/intl-logic-apps';
-import { type Assertion, type AssertionDefintion, guid, isNullOrUndefined, equals, getRecordEntry } from '@microsoft/utils-logic-apps';
+import {
+  type Assertion,
+  type AssertionDefintion,
+  guid,
+  isNullOrUndefined,
+  equals,
+  getRecordEntry,
+  isNullOrEmpty,
+} from '@microsoft/utils-logic-apps';
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 
@@ -101,14 +110,22 @@ export const unitTestSlice = createSlice({
     initUnitTestDefinition: (state: UnitTestState, action: PayloadAction<InitDefintionPayload | null>) => {
       if (!isNullOrUndefined(action.payload)) {
         const { mockResults, assertions } = action.payload;
-        console.log('charlie mockResults', mockResults);
         state.assertions = parseAssertions(assertions);
         state.mockResults = mockResults;
       }
     },
     updateOutputMock: (state: UnitTestState, action: PayloadAction<updateOutputMockPayload>) => {
-      const { operationName, mockResult } = action.payload;
-      state.mockResults[operationName] = mockResult;
+      const { operationName, outputs, outputId } = action.payload;
+      const operationOutputs = state.mockResults[operationName].output;
+      if (isNullOrEmpty(operationOutputs)) {
+        state.mockResults[operationName].output = { [outputId]: outputs };
+      } else {
+        state.mockResults[operationName].output[outputId] = outputs;
+      }
+    },
+    updateActionResult: (state: UnitTestState, action: PayloadAction<updateOutputMockResultPayload>) => {
+      const { operationName, actionResult } = action.payload;
+      state.mockResults[operationName].actionResult = actionResult;
     },
     updateAssertions: (state: UnitTestState, action: PayloadAction<UpdateAssertionsPayload>) => {
       const { assertions } = action.payload;
@@ -142,6 +159,6 @@ export const unitTestSlice = createSlice({
   },
 });
 
-export const { updateAssertions, updateAssertion, initUnitTestDefinition, updateOutputMock } = unitTestSlice.actions;
+export const { updateAssertions, updateAssertion, initUnitTestDefinition, updateOutputMock, updateActionResult } = unitTestSlice.actions;
 
 export default unitTestSlice.reducer;

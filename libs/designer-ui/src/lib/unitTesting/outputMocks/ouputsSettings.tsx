@@ -8,9 +8,9 @@ export interface OutputsSettingsProps {
   mockResult: string | undefined;
 }
 
-export const OutputsSettings: React.FC<OutputsSettingsProps> = ({ outputs, mockResult }): JSX.Element => {
+export const OutputsSettings: React.FC<OutputsSettingsProps> = ({ outputs, mockResult = ActionResults.SUCCESS }): JSX.Element => {
   const intl = useIntl();
-  const hasMockOutputs = mockResult === ActionResults.SUCCESS || mockResult === undefined;
+  const hasMockOutputs = mockResult === ActionResults.SUCCESS;
 
   const intlText = {
     NO_OUTPUTS: intl.formatMessage({

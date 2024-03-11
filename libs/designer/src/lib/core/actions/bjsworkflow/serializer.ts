@@ -6,6 +6,7 @@ import { getOperationManifest } from '../../queries/operation';
 import type { NodeInputs, NodeOperation, ParameterGroup } from '../../state/operation/operationMetadataSlice';
 import { ErrorLevel } from '../../state/operation/operationMetadataSlice';
 import { getOperationInputParameters } from '../../state/operation/operationSelector';
+import { type OutputMock } from '../../state/unitTest/unitTestInterfaces';
 import type { WorkflowParameterDefinition } from '../../state/workflowparameters/workflowparametersSlice';
 import type { RootState } from '../../store';
 import { getNode, getTriggerNodeId, isRootNode, isRootNodeInGraph } from '../../utils/graph';
@@ -1073,10 +1074,11 @@ const getSplitOn = (
 
 export const serializeUnitTestDefinition = async (rootState: RootState): Promise<any> => {
   const { mockResults, assertions } = rootState.unitTest;
+  const { triggerMocks, actionMocks } = getTriggerActionMocks(mockResults);
 
   return {
-    triggerMocks: getTriggerMocks(mockResults),
-    actionMocks: getActionMocks(mockResults),
+    triggerMocks: triggerMocks,
+    actionMocks: actionMocks,
     assertions: getAssertions(assertions),
   };
 };
@@ -1104,34 +1106,23 @@ const getAssertions = (assertions: Record<string, AssertionDefintion>): Assertio
   });
 };
 
-const getTriggerMocks = (mockResults: { [key: string]: string }): Record<string, OperationMock> => {
-  const result: Record<string, OperationMock> = {};
+const getTriggerActionMocks = (
+  mockResults: Record<string, OutputMock>
+): { triggerMocks: Record<string, OperationMock>; actionMocks: Record<string, OperationMock> } => {
+  const triggerMocks: Record<string, OperationMock> = {};
+  const actionMocks: Record<string, OperationMock> = {};
   Object.keys(mockResults).forEach((key) => {
-    if (key.charAt(0) === '&') {
-      const value = mockResults[key];
-      if (value) {
-        // return trigger
-        const mockTriggerJson = JSON.parse(value);
-        const triggerName = key.substring(1); // take off meta data
-        result[triggerName] = mockTriggerJson;
+    const value = mockResults[key];
+    if (value) {
+      const mockResultJson = value.output;
+      if (key.charAt(0) === '&') {
+        const triggerName = key.substring(1);
+        triggerMocks[triggerName] = mockResultJson;
+      } else {
+        actionMocks[key] = mockResultJson;
       }
     }
   });
-  return result;
+  return { triggerMocks, actionMocks };
 };
-
-const getActionMocks = (mockResults: { [key: string]: string }): Record<string, OperationMock> => {
-  const result: Record<string, OperationMock> = {};
-  Object.keys(mockResults).forEach((key) => {
-    if (key.charAt(0) !== '&') {
-      const value = mockResults[key];
-      if (value) {
-        const mockResultJson = JSON.parse(value);
-        result[key] = mockResultJson;
-      }
-    }
-  });
-  return result;
-};
-
 //#endregion

@@ -3,12 +3,13 @@ import { convertVariableTypeToSwaggerType } from '../../../../../../lib/core/uti
 import constants from '../../../../../common/constants';
 import { useSelectedNodeId } from '../../../../../core/state/panel/panelSelectors';
 import { useIsMockSupported, useMockResultsByOperation } from '../../../../../core/state/unitTest/unitTestSelectors';
-import { updateOutputMock } from '../../../../../core/state/unitTest/unitTestSlice';
+import { updateActionResult, updateOutputMock } from '../../../../../core/state/unitTest/unitTestSlice';
 import type { AppDispatch, RootState } from '../../../../../core/store';
 import { isRootNodeInGraph } from '../../../../../core/utils/graph';
 import { getParameterEditorProps } from '../../../../../core/utils/parameters/helper';
 import { type OutputInfo } from '@microsoft/designer-client-services-logic-apps';
-import { type MockUpdateEvent, OutputMocks, type PanelTabFn } from '@microsoft/designer-ui';
+import { OutputMocks, type PanelTabFn, type ActionResultUpdateEvent, type ChangeState, type ParameterInfo } from '@microsoft/designer-ui';
+import { isNullOrUndefined } from '@microsoft/utils-logic-apps';
 import { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -19,7 +20,9 @@ export const MockResultsTab = () => {
   const nodeName = isTrigger ? `&${nodeId}` : nodeId;
   const rawOutputs = useSelector((state: RootState) => state.operations.outputParameters[nodeId]);
   const dispatch = useDispatch<AppDispatch>();
-  const outputsMock = useMockResultsByOperation(nodeName);
+  const mockResults = useMockResultsByOperation(nodeName);
+
+  console.log('charlie', mockResults);
 
   let filteredOutputs = Object.values(rawOutputs.outputs).filter((output: OutputInfo) => {
     return !output.isInsideArray ?? true;
@@ -30,16 +33,36 @@ export const MockResultsTab = () => {
     return !hasChildren;
   });
 
+  const onMockUpdate = useCallback(
+    (id: string, newState: ChangeState) => {
+      const { value, viewModel } = newState;
+      const propertiesToUpdate = { value, preservedValue: undefined } as Partial<ParameterInfo>;
+      if (!isNullOrUndefined(viewModel)) {
+        propertiesToUpdate.editorViewModel = viewModel;
+      }
+      dispatch(updateOutputMock({ operationName: nodeName, outputs: propertiesToUpdate.value ?? [], outputId: id }));
+    },
+    [nodeName, dispatch]
+  );
+
+  const onActionResultUpdate = useCallback(
+    (newState: ActionResultUpdateEvent): void => {
+      dispatch(updateActionResult({ operationName: nodeName, actionResult: newState.actionResult }));
+    },
+    [nodeName, dispatch]
+  );
+
   const outputs = filteredOutputs.map((output: OutputInfo) => {
     const { key: id, title: label, required, type } = output;
     const { editor, editorOptions, editorViewModel, schema } = getParameterEditorProps(output, [], true);
+    const value = mockResults?.output[id] ?? [];
 
     return {
       id,
       label,
       required,
       readOnly: false,
-      value: [],
+      value: value,
       editor: editor ?? convertVariableTypeToSwaggerType(type) ?? Constants.SWAGGER.TYPE.ANY,
       editorOptions,
       schema,
@@ -49,26 +72,17 @@ export const MockResultsTab = () => {
       showTokens: false,
       tokenMapping: [],
       suppressCastingForSerialize: false,
+      onValueChange: (newState: ChangeState) => onMockUpdate(id, newState),
     };
   });
-
-  console.log('charlie rawOutputs.outputs', filteredOutputs);
-  console.log('charlie parseOutput', outputs);
-
-  const onMockUpdate = useCallback(
-    (newState: MockUpdateEvent): void => {
-      dispatch(updateOutputMock({ operationName: nodeName, mockResult: { output: newState.id, actionResult: newState.actionResult } }));
-    },
-    [nodeName, dispatch]
-  );
 
   return (
     <OutputMocks
       isMockSupported={isMockSupported}
       nodeId={nodeId}
-      onMockUpdate={onMockUpdate}
+      onActionResultUpdate={onActionResultUpdate}
       outputs={outputs}
-      outputsMock={outputsMock}
+      outputsMock={mockResults}
     />
   );
 };

@@ -3,24 +3,31 @@ import { ActionResult } from './actionResult';
 import { OutputsSettings } from './ouputsSettings';
 import './outputMocks.less';
 import { Divider, Text } from '@fluentui/react-components';
+import { type ValueSegment } from '@microsoft/designer-client-services-logic-apps';
 import { useIntl } from 'react-intl';
 
 export interface MockUpdateEvent {
-  id: string;
+  outputId: string;
+  outputValue: ValueSegment[];
+}
+
+export interface ActionResultUpdateEvent {
   actionResult: string;
 }
 
 export interface OutputMock {
-  output: string;
+  output: Record<string, ValueSegment[]>;
   actionResult: string;
 }
 
 export type MockUpdateHandler = EventHandler<MockUpdateEvent>;
 
+export type ActionResultUpdateHandler = EventHandler<ActionResultUpdateEvent>;
+
 export interface OutputMocksProps {
   isMockSupported: boolean;
   nodeId: string;
-  onMockUpdate: MockUpdateHandler;
+  onActionResultUpdate: ActionResultUpdateHandler;
   outputs: any[];
   outputsMock: OutputMock | undefined;
 }
@@ -32,9 +39,8 @@ export const ActionResults = {
   FAILED: 'failed',
 };
 
-export const OutputMocks = ({ isMockSupported, nodeId, onMockUpdate, outputs, outputsMock }: OutputMocksProps) => {
+export const OutputMocks = ({ isMockSupported, nodeId, onActionResultUpdate, outputs, outputsMock }: OutputMocksProps) => {
   const intl = useIntl();
-  console.log('charlie parseOutput', outputs);
 
   const intlText = {
     UNSUPPORTED_MOCKS: intl.formatMessage({
@@ -46,7 +52,7 @@ export const OutputMocks = ({ isMockSupported, nodeId, onMockUpdate, outputs, ou
 
   return isMockSupported ? (
     <>
-      <ActionResult nodeId={nodeId} onMockUpdate={onMockUpdate} mockResult={outputsMock?.actionResult} />
+      <ActionResult nodeId={nodeId} onActionResultUpdate={onActionResultUpdate} mockResult={outputsMock?.actionResult} />
       <Divider style={{ padding: '16px 0px' }} />
       <OutputsSettings outputs={outputs} mockResult={outputsMock?.actionResult} />
     </>

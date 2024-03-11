@@ -27,7 +27,7 @@ const DataProviderInner: React.FC<BJSWorkflowProviderProps> = ({ workflow, child
     dispatch(initWorkflowKind(parseWorkflowKind(workflow?.kind)));
     dispatch(initRunInstance(runInstance ?? null));
     dispatch(initializeGraphState({ workflowDefinition: workflow, runInstance }));
-    dispatch(initUnitTestDefinition(deserializeUnitTestDefinition(unitTestDefinition ?? null)));
+    dispatch(initUnitTestDefinition(deserializeUnitTestDefinition(unitTestDefinition ?? null, workflow)));
   }, [runInstance, workflow]);
 
   return <>{children}</>;

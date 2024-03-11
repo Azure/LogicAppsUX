@@ -1,6 +1,7 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import constants from '../../../common/constants';
 import { UnsupportedException, UnsupportedExceptionCode } from '../../../common/exceptions/unsupported';
+import { type Workflow } from '../../../common/models/workflow';
 import { type OutputMock } from '../../state/unitTest/unitTestInterfaces';
 import type { Operations, NodesMetadata } from '../../state/workflow/workflowInterfaces';
 import { createWorkflowNode, createWorkflowEdge } from '../../utils/graph';
@@ -114,26 +115,38 @@ export const Deserialize = (
 };
 
 export const deserializeUnitTestDefinition = (
-  unitTestDefinition: UnitTestDefinition | null
+  unitTestDefinition: UnitTestDefinition | null,
+  workflowDefinition: Workflow
 ): {
   assertions: Assertion[];
   mockResults: Record<string, OutputMock>;
 } | null => {
-  if (isNullOrUndefined(unitTestDefinition)) return null;
-  // deserialize mocks
-  const mockResults: Record<string, OutputMock> = {};
-  const triggerName = Object.keys(unitTestDefinition.triggerMocks)[0]; // only 1 trigger
+  const { definition } = workflowDefinition;
+  const actionKeys = Object.keys(definition.actions ?? {});
 
+  const mockResults: Record<string, OutputMock> = actionKeys.reduce((acc, key) => {
+    const action: OutputMock = {
+      actionResult: ActionResults.SUCCESS,
+      output: {},
+    };
+    return { ...acc, [key]: action };
+  }, {});
+
+  if (isNullOrUndefined(unitTestDefinition)) {
+    return { assertions: [], mockResults };
+  }
+  // deserialize mocks
+  const triggerName = Object.keys(unitTestDefinition.triggerMocks)[0]; // only 1 trigger
   if (triggerName) {
     mockResults[`&${triggerName}`] = {
       actionResult: ActionResults.SUCCESS,
-      output: JSON.stringify(unitTestDefinition.triggerMocks[triggerName], null, 4),
+      output: {},
     };
   }
   Object.keys(unitTestDefinition.actionMocks).forEach((actionName) => {
     mockResults[actionName] = {
       actionResult: ActionResults.SUCCESS,
-      output: JSON.stringify(unitTestDefinition.actionMocks[actionName], null, 4),
+      output: {},
     };
   });
 
