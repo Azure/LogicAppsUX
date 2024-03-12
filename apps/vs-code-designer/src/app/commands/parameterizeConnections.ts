@@ -8,7 +8,7 @@ import { localize } from '../../localize';
 import { getLocalSettingsJson } from '../utils/appSettings/localSettings';
 import { getConnectionsJson, saveConnectionReferences } from '../utils/codeless/connection';
 import { getParametersJson, saveWorkflowParameter } from '../utils/codeless/parameter';
-import { parameterizeConnection } from '../utils/codeless/parameterizer';
+import { isConnectionsParameterized, parameterizeConnection } from '../utils/codeless/parameterizer';
 import { tryGetLogicAppProjectRoot } from '../utils/verifyIsProject';
 import { getGlobalSetting, updateGlobalSetting } from '../utils/vsCodeConfig/settings';
 import { getWorkspaceFolder } from '../utils/workspace';
@@ -70,6 +70,11 @@ export async function parameterizeConnections(context: IActionContext): Promise<
           string,
           any
         >;
+
+        if (isConnectionsParameterized(connectionsData)) {
+          window.showInformationMessage(localize('connectionsAlreadyParameterized', 'Connections are already parameterized.'));
+          return;
+        }
 
         Object.keys(connectionsData).forEach((connectionType) => {
           if (connectionType !== 'serviceProviderConnections') {

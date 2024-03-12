@@ -6,6 +6,7 @@ import type {
   FunctionConnectionModel,
   APIManagementConnectionModel,
   Parameter,
+  ConnectionsData,
 } from '@microsoft/vscode-extension';
 
 const DELIMITER = '/';
@@ -56,6 +57,36 @@ export function parameterizeConnection(
   }
 
   return connection;
+}
+
+/**
+ * Checks if the connections data is parameterized.
+ * @param {ConnectionsData} connectionsData - The connections data object.
+ * @returns A boolean indicating whether the connections data is parameterized or not.
+ */
+export function isConnectionsParameterized(connectionsData: ConnectionsData): boolean {
+  for (const connectionType in connectionsData) {
+    if (connectionType !== 'serviceProviderConnections') {
+      const connectionTypeJson = connectionsData[connectionType];
+      for (const connectionKey in connectionTypeJson) {
+        const connection = connectionTypeJson[connectionKey];
+        if (isConnectionReferenceModel(connection)) {
+          if (connection.api.id.includes('@appsetting') || connection.connectionRuntimeUrl.includes('@parameters')) {
+            return true;
+          }
+        } else if (isFunctionConnectionModel(connection)) {
+          if (connection.function.id.includes('@parameters') || connection.triggerUrl.includes('@parameters')) {
+            return true;
+          }
+        } else if (isAPIManagementConnectionModel(connection)) {
+          if (connection.apiId.includes('@parameters') || connection.baseUrl.includes('@parameters')) {
+            return true;
+          }
+        }
+      }
+    }
+  }
+  return false;
 }
 
 /**
