@@ -76,8 +76,12 @@ export class WorkflowUtility {
     if (appsettings) {
       for (const settingName of Object.keys(appsettings)) {
         const settingValue = appsettings[settingName] !== undefined ? appsettings[settingName] : '';
-        result = replaceAllOccurrences(result, `@appsetting('${settingName}')`, settingValue);
-        result = replaceAllOccurrences(result, `@{appsetting('${settingName}')}`, settingValue);
+        // Only if an app setting comes after "/subscriptions/" should it be resolved
+        //     Leaving the subscription as an appsetting causes issues
+        //     Resolving other appsettings also causes issues
+        const subscriptionSearchValue = `/subscriptions/@appsetting('${settingName}')/`;
+        const subscriptionSettingValue = `/subscriptions/${settingValue}/`;
+        result = replaceAllOccurrences(result, subscriptionSearchValue, subscriptionSettingValue);
       }
     }
 
