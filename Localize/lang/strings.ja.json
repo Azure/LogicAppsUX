@@ -925,7 +925,7 @@
   "b9/1dK": "値",
   "b9P8SA": "サポートされていないトークンの種類: {controls}",
   "b9Rvl9": "本文",
-  "bC2LBK": "It is not recommended to set a default value for type ''{type}'' because it will be stored as plain text.",
+  "bC2LBK": "種類 \"{type}\" の既定値はプレーンテキストとして保存されるため、設定しないことをお勧めします。",
   "bG9rjv": "アクション",
   "bGtEPd": "削除",
   "bIyTi7": "サブスクリプション",
