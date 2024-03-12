@@ -8532,6 +8532,9 @@
       <Item ItemId=";bC2LBK" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[It is not recommended to set a default value for type ''{type}'' because it will be stored as plain text.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Non è consigliabile impostare un valore predefinito per il tipo ''{type}'' perché verrà archiviato come testo normale.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
