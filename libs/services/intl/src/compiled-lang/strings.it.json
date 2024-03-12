@@ -6250,7 +6250,7 @@
   "bC2LBK": [
     {
       "type": 0,
-      "value": "It is not recommended to set a default value for type '"
+      "value": "Non è consigliabile impostare un valore predefinito per il tipo '"
     },
     {
       "type": 1,
@@ -6258,7 +6258,7 @@
     },
     {
       "type": 0,
-      "value": "' because it will be stored as plain text."
+      "value": "' perché verrà archiviato come testo normale."
     }
   ],
   "bG9rjv": [
