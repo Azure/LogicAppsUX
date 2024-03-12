@@ -126,6 +126,7 @@ export const deserializeUnitTestDefinition = (
   const actionsKeys = Object.keys(definition.actions ?? {});
   const triggersKeys = Object.keys(definition.triggers ?? {});
 
+  // Build mock output for all actions and triggers
   const mockActions: Record<string, OutputMock> = actionsKeys.reduce((acc, key) => {
     const action = definition.actions && definition.actions[key];
     const type = action?.type?.toLowerCase();
