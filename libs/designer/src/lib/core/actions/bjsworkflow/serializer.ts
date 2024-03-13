@@ -22,7 +22,7 @@ import { buildOperationDetailsFromControls } from '../../utils/swagger/inputsbui
 import type { Settings } from './settings';
 import type { NodeStaticResults } from './staticresults';
 import { LogEntryLevel, LoggerService, OperationManifestService, WorkflowService } from '@microsoft/designer-client-services-logic-apps';
-import type { ParameterInfo } from '@microsoft/designer-ui';
+import type { ParameterInfo, ValueSegment } from '@microsoft/designer-ui';
 import { UIConstants } from '@microsoft/designer-ui';
 import { getIntl } from '@microsoft/intl-logic-apps';
 import type { Segment } from '@microsoft/parsers-logic-apps';
@@ -1106,6 +1106,26 @@ const getAssertions = (assertions: Record<string, AssertionDefintion>): Assertio
   });
 };
 
+/**
+ * Parses the output of a workflow into a more structured format.
+ * @param {Record<string, ValueSegment[]>} outputs - The outputs of the workflow.
+ * @returns The parsed outputs in a more structured format.
+ */
+const parseOutputMock = (outputs: Record<string, ValueSegment[]>): Record<string, any[]> => {
+  return Object.entries(outputs).reduce((acc: Record<string, any[]>, [key, value]) => {
+    const parsedValueSegment = value.reduce((accumulator: any[], valueObject) => {
+      // Explicitly define the type of the accumulator array
+      return [...accumulator, { type: valueObject.type, value: valueObject.value }];
+    }, []);
+    return { ...acc, [key]: parsedValueSegment };
+  }, {});
+};
+
+/**
+ * Retrieves the trigger and action mocks from the provided mock results.
+ * @param {Record<string, OutputMock>} mockResults - The mock results containing the trigger and action mocks.
+ * @returns An object containing the trigger mocks and action mocks.
+ */
 const getTriggerActionMocks = (
   mockResults: Record<string, OutputMock>
 ): { triggerMocks: Record<string, OperationMock>; actionMocks: Record<string, OperationMock> } => {
@@ -1115,11 +1135,12 @@ const getTriggerActionMocks = (
   Object.keys(mockResults).forEach((key) => {
     const outputMock = mockResults[key];
     if (outputMock) {
+      const outputsValue = parseOutputMock(outputMock.output);
       if (key.charAt(0) === '&') {
         const triggerName = key.substring(1);
-        triggerMocks[triggerName] = { actionResult: outputMock.actionResult, outputs: outputMock.output };
+        triggerMocks[triggerName] = { actionResult: outputMock.actionResult, outputs: outputsValue };
       } else {
-        actionMocks[key] = { actionResult: outputMock.actionResult, outputs: outputMock.output };
+        actionMocks[key] = { actionResult: outputMock.actionResult, outputs: outputsValue };
       }
     }
   });

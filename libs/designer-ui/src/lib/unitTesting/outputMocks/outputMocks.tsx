@@ -1,4 +1,6 @@
+import { type ChangeHandler } from '../../editor/base';
 import { type EventHandler } from '../../eventhandler';
+import { type SettingProps } from '../../settings/settingsection/settingtoggle';
 import { ActionResult } from './actionResult';
 import { OutputsSettings } from './ouputsSettings';
 import './outputMocks.less';
@@ -29,7 +31,7 @@ export interface OutputMocksProps {
   isMockSupported: boolean;
   nodeId: string;
   onActionResultUpdate: ActionResultUpdateHandler;
-  outputs: any[];
+  outputs: OutputsField[];
   mocks: OutputMock;
 }
 
@@ -39,6 +41,25 @@ export const ActionResults = {
   SKIPPED: 'skipped',
   FAILED: 'failed',
 };
+
+export interface OutputsField extends SettingProps {
+  id?: string;
+  label: string;
+  required?: boolean;
+  readOnly?: boolean;
+  value: ValueSegment[];
+  editor?: string;
+  editorOptions?: any;
+  schema: any;
+  tokenEditor: boolean;
+  isLoading?: boolean;
+  editorViewModel?: any;
+  showTokens?: boolean;
+  tokenMapping: Record<string, ValueSegment>;
+  validationErrors: Record<string, string | undefined>;
+  suppressCastingForSerialize?: boolean;
+  onValueChange?: ChangeHandler;
+}
 
 export const OutputMocks = ({ isMockSupported, nodeId, onActionResultUpdate, outputs, mocks }: OutputMocksProps) => {
   const intl = useIntl();

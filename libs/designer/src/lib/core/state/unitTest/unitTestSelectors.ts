@@ -25,7 +25,7 @@ export const useMockResults = (): Record<string, OutputMock> => {
  * @param {string} operationName - The name of the operation.
  * @returns The mock results for the specified operation, or undefined if not found.
  */
-export const useMockResultsByOperation = (operationName: string): OutputMock => {
+export const useMocksByOperation = (operationName: string): OutputMock => {
   return useSelector(
     createSelector(getUnitTestState, (state: UnitTestState) => {
       return state.mockResults[operationName];
@@ -73,7 +73,19 @@ export const useAssertions = (): Record<string, AssertionDefintion> => {
 export const useAssertionsValidationErrors = (): Record<string, Record<string, string | undefined>> => {
   return useSelector(
     createSelector(getUnitTestState, (state: UnitTestState) => {
-      return state.validationErrors;
+      return state.validationErrors.assertions;
+    })
+  );
+};
+
+/**
+ * Custom hook that returns the mocks errors for mocks.
+ * @returns An object containing the validation errors for mocks.
+ */
+export const useMocksValidationErrors = (): Record<string, Record<string, string | undefined>> => {
+  return useSelector(
+    createSelector(getUnitTestState, (state: UnitTestState) => {
+      return state.validationErrors.mocks;
     })
   );
 };

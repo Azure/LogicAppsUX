@@ -1,11 +1,12 @@
 import { recurseSerializeCondition } from '../../utils/parameters/helper';
+import { validateParameter } from '../workflowparameters/workflowparametersSlice';
 import type {
   UpdateAssertionsPayload,
   UpdateAssertionPayload,
-  updateOutputMockPayload,
+  updateMockPayload,
   InitDefintionPayload,
   UnitTestState,
-  updateOutputMockResultPayload,
+  updateMockResultPayload,
 } from './unitTestInterfaces';
 import { ActionResults, type ParameterInfo } from '@microsoft/designer-ui';
 import { getIntl } from '@microsoft/intl-logic-apps';
@@ -30,7 +31,10 @@ export interface AddImplicitForeachPayload {
 export const initialUnitTestState: UnitTestState = {
   mockResults: {},
   assertions: {},
-  validationErrors: {},
+  validationErrors: {
+    assertions: {},
+    mocks: {},
+  },
 };
 
 const parseAssertions = (assertions: Assertion[]): Record<string, AssertionDefintion> => {
@@ -114,9 +118,25 @@ export const unitTestSlice = createSlice({
         state.mockResults = mockResults;
       }
     },
-    updateOutputMock: (state: UnitTestState, action: PayloadAction<updateOutputMockPayload>) => {
-      const { operationName, outputs, outputId, completed } = action.payload;
+    updateMock: (state: UnitTestState, action: PayloadAction<updateMockPayload>) => {
+      const { operationName, outputs, outputId, completed, type } = action.payload;
       const operationOutputs = state.mockResults[operationName].output;
+      const operationOutputId = `${operationName}-${outputId}`;
+      const validationErrors = {
+        value: validateParameter(outputId, { type: type, value: outputs[0]?.value ?? undefined }, 'value', {}, false),
+      };
+
+      const newErrorObj = {
+        ...(getRecordEntry(state.validationErrors.mocks, operationOutputId) ?? {}),
+        ...validationErrors,
+      };
+      if (!newErrorObj.value) delete newErrorObj.value;
+      if (Object.keys(newErrorObj).length === 0) {
+        delete state.validationErrors.mocks[operationOutputId];
+      } else {
+        state.validationErrors.mocks[operationOutputId] = newErrorObj;
+      }
+
       if (isNullOrEmpty(operationOutputs)) {
         state.mockResults[operationName].output = { [outputId]: outputs };
       } else {
@@ -124,7 +144,7 @@ export const unitTestSlice = createSlice({
       }
       state.mockResults[operationName].isCompleted = completed;
     },
-    updateActionResult: (state: UnitTestState, action: PayloadAction<updateOutputMockResultPayload>) => {
+    updateActionResult: (state: UnitTestState, action: PayloadAction<updateMockResultPayload>) => {
       const { operationName, actionResult, completed } = action.payload;
       state.mockResults[operationName].actionResult = actionResult;
       state.mockResults[operationName].isCompleted = completed;
@@ -150,20 +170,20 @@ export const unitTestSlice = createSlice({
         expression,
       };
       const newErrorObj = {
-        ...(getRecordEntry(state.validationErrors, id) ?? {}),
+        ...(getRecordEntry(state.validationErrors.assertions, id) ?? {}),
         ...validationErrors,
       };
       if (!newErrorObj.name) delete newErrorObj.name;
       if (!newErrorObj.expression) delete newErrorObj.expression;
       if (Object.keys(newErrorObj).length === 0) {
-        delete state.validationErrors[id];
+        delete state.validationErrors.assertions[id];
       } else {
-        state.validationErrors[id] = newErrorObj;
+        state.validationErrors.assertions[id] = newErrorObj;
       }
     },
   },
 });
 
-export const { updateAssertions, updateAssertion, initUnitTestDefinition, updateOutputMock, updateActionResult } = unitTestSlice.actions;
+export const { updateAssertions, updateAssertion, initUnitTestDefinition, updateMock, updateActionResult } = unitTestSlice.actions;
 
 export default unitTestSlice.reducer;

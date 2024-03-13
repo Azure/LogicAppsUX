@@ -33,7 +33,7 @@ import {
   useOperationSummary,
 } from '../../core/state/selectors/actionMetadataSelector';
 import { useSettingValidationErrors } from '../../core/state/setting/settingSelector';
-import { useIsMockSupported, useMockResultsByOperation } from '../../core/state/unitTest/unitTestSelectors';
+import { useIsMockSupported, useMocksByOperation } from '../../core/state/unitTest/unitTestSelectors';
 import {
   useNodeDescription,
   useNodeDisplayName,
@@ -83,7 +83,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
   const parentRunIndex = useParentRunIndex(id);
   const runInstance = useRunInstance();
   const runData = useRunData(id);
-  const nodeMockResults = useMockResultsByOperation(isTrigger ? `&${id}` : id);
+  const nodeMockResults = useMocksByOperation(isTrigger ? `&${id}` : id);
   const isMockSupported = useIsMockSupported(id, isTrigger ?? false);
   const parentRunId = useParentRunId(id);
   const parenRunData = useRunData(parentRunId ?? '');
