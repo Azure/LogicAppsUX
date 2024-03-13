@@ -137,6 +137,7 @@ import {
   nthLastIndexOf,
   parseErrorMessage,
   getRecordEntry,
+  isBoolean,
 } from '@microsoft/logic-apps-shared';
 import type {
   DependentParameterInfo,
@@ -861,7 +862,7 @@ export function loadParameterValue(parameter: InputParameter): ValueSegment[] {
 
   if (parameter.isNotificationUrl) {
     valueObject = `@${constants.HTTP_WEBHOOK_LIST_CALLBACK_URL_NAME}`;
-  } else if (parameter.value || (parameter.type === 'boolean' && parameter.value === false)) {
+  } else if (parameter.value || isBoolean(parameter.value)) {
     valueObject = parameter.value;
   } else if (parameter.default) {
     valueObject = parameter.default;
