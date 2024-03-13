@@ -6,7 +6,7 @@ import type { TokenPickerMode } from '../../tokenpicker';
 import type { GetAssertionTokenPickerHandler } from './assertion';
 import type { ILabelStyles, IStyle, ITextFieldStyles } from '@fluentui/react';
 import { Label, Text, TextField } from '@fluentui/react';
-import { type Assertion, isEmptyString } from '@microsoft/utils-logic-apps';
+import { type Assertion, isEmptyString, isNullOrUndefined } from '@microsoft/utils-logic-apps';
 import { useIntl } from 'react-intl';
 
 export const labelStyles: Partial<ILabelStyles> = {
@@ -71,8 +71,6 @@ export const AssertionField = ({
   validationErrors,
 }: AssertionFieldProps): JSX.Element => {
   const intl = useIntl();
-
-  const errors = validationErrors ?? {};
 
   const parameterDetails: ParameterFieldDetails = {
     description: `${name}-${DESCRIPTION_KEY}`,
@@ -140,7 +138,7 @@ export const AssertionField = ({
             id={parameterDetails.name}
             ariaLabel={nameTitle}
             placeholder={namePlaceholder}
-            errorMessage={errors[NAME_KEY]}
+            errorMessage={validationErrors && validationErrors[NAME_KEY]}
             value={name}
             onChange={onNameChange}
             disabled={!isEditable}
@@ -211,9 +209,9 @@ export const AssertionField = ({
                 onCastParameter={() => ''}
                 onValueChange={onExpressionChange}
               />
-              {errors[EXPRESSION_KEY] && (
+              {!isNullOrUndefined(validationErrors) && validationErrors[EXPRESSION_KEY] && (
                 <span className="msla-input-parameter-error" role="alert">
-                  {errors[EXPRESSION_KEY]}
+                  {validationErrors[EXPRESSION_KEY]}
                 </span>
               )}
             </>

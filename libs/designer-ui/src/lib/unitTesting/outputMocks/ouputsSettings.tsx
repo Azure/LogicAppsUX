@@ -1,6 +1,7 @@
 import { SettingTokenField } from '../../settings/settingsection';
 import { ActionResults } from './outputMocks';
 import { Text } from '@fluentui/react-components';
+import { isNullOrUndefined } from '@microsoft/utils-logic-apps';
 import { useIntl } from 'react-intl';
 
 export interface OutputsSettingsProps {
@@ -8,6 +9,8 @@ export interface OutputsSettingsProps {
   nodeId: string;
   actionResult: string;
 }
+
+const VALUE_KEY = 'value';
 
 export const OutputsSettings: React.FC<OutputsSettingsProps> = ({ nodeId, outputs, actionResult }): JSX.Element => {
   const intl = useIntl();
@@ -24,7 +27,14 @@ export const OutputsSettings: React.FC<OutputsSettingsProps> = ({ nodeId, output
   return hasMockOutputs ? (
     <>
       {outputs.map((output: any) => (
-        <SettingTokenField key={`${nodeId}-${output.id}`} {...output} />
+        <div key={`${nodeId}-${output.id}`}>
+          <SettingTokenField {...output} />
+          {!isNullOrUndefined(output.validationErrors) && output.validationErrors[VALUE_KEY] && (
+            <span className="msla-input-parameter-error" role="alert">
+              {output.validationErrors[VALUE_KEY]}
+            </span>
+          )}
+        </div>
       ))}
     </>
   ) : (

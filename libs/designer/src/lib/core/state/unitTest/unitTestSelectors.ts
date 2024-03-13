@@ -73,7 +73,19 @@ export const useAssertions = (): Record<string, AssertionDefintion> => {
 export const useAssertionsValidationErrors = (): Record<string, Record<string, string | undefined>> => {
   return useSelector(
     createSelector(getUnitTestState, (state: UnitTestState) => {
-      return state.validationErrors;
+      return state.validationErrors.assertions;
+    })
+  );
+};
+
+/**
+ * Custom hook that returns the mocks errors for mocks.
+ * @returns An object containing the validation errors for mocks.
+ */
+export const useMocksValidationErrors = (): Record<string, Record<string, string | undefined>> => {
+  return useSelector(
+    createSelector(getUnitTestState, (state: UnitTestState) => {
+      return state.validationErrors.mocks;
     })
   );
 };

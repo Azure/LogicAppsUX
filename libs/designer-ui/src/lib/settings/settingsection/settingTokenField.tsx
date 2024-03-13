@@ -215,6 +215,7 @@ export const TokenField = ({
           initialValue={editorViewModel.uncastedValue}
           tokenPickerButtonProps={tokenpickerButtonProps}
           getTokenPicker={getTokenPicker}
+          basePlugins={{ tokens: showTokens }}
           itemSchema={editorViewModel.itemSchema}
           castParameter={onCastParameter}
           onChange={onValueChange}
