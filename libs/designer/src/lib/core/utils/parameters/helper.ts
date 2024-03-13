@@ -861,10 +861,8 @@ export function loadParameterValue(parameter: InputParameter): ValueSegment[] {
 
   if (parameter.isNotificationUrl) {
     valueObject = `@${constants.HTTP_WEBHOOK_LIST_CALLBACK_URL_NAME}`;
-  } else if (parameter.value) {
-    valueObject = parameter.value;
-  } else if (parameter.default) {
-    valueObject = parameter.default;
+  } else {
+    valueObject = parameter?.value ?? parameter?.default;
   }
 
   let valueSegments = convertToValueSegments(valueObject, !parameter.suppressCasting /* shouldUncast */);
