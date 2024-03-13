@@ -1,11 +1,11 @@
 import { SettingTokenField } from '../../settings/settingsection';
-import { ActionResults } from './outputMocks';
+import { ActionResults, type OutputsField } from './outputMocks';
 import { Text } from '@fluentui/react-components';
 import { isNullOrUndefined } from '@microsoft/utils-logic-apps';
 import { useIntl } from 'react-intl';
 
 export interface OutputsSettingsProps {
-  outputs: any[];
+  outputs: OutputsField[];
   nodeId: string;
   actionResult: string;
 }

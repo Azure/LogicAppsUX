@@ -1,13 +1,13 @@
 import { type ValueSegment } from '@microsoft/designer-client-services-logic-apps';
 import type { Assertion, AssertionDefintion } from '@microsoft/utils-logic-apps';
 
-export interface updateOutputMockResultPayload {
+export interface updateMockResultPayload {
   operationName: string;
   actionResult: string;
   completed: boolean;
 }
 
-export interface updateOutputMockPayload {
+export interface updateMockPayload {
   operationName: string;
   outputs: ValueSegment[];
   outputId: string;

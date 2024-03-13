@@ -3,10 +3,10 @@ import { validateParameter } from '../workflowparameters/workflowparametersSlice
 import type {
   UpdateAssertionsPayload,
   UpdateAssertionPayload,
-  updateOutputMockPayload,
+  updateMockPayload,
   InitDefintionPayload,
   UnitTestState,
-  updateOutputMockResultPayload,
+  updateMockResultPayload,
 } from './unitTestInterfaces';
 import { ActionResults, type ParameterInfo } from '@microsoft/designer-ui';
 import { getIntl } from '@microsoft/intl-logic-apps';
@@ -118,12 +118,12 @@ export const unitTestSlice = createSlice({
         state.mockResults = mockResults;
       }
     },
-    updateOutputMock: (state: UnitTestState, action: PayloadAction<updateOutputMockPayload>) => {
+    updateMock: (state: UnitTestState, action: PayloadAction<updateMockPayload>) => {
       const { operationName, outputs, outputId, completed, type } = action.payload;
       const operationOutputs = state.mockResults[operationName].output;
       const operationOutputId = `${operationName}-${outputId}`;
       const validationErrors = {
-        value: validateParameter(outputId, { type: type, value: outputs[0].value }, 'value', {}),
+        value: validateParameter(outputId, { type: type, value: outputs[0]?.value ?? undefined }, 'value', {}, false),
       };
 
       const newErrorObj = {
@@ -144,7 +144,7 @@ export const unitTestSlice = createSlice({
       }
       state.mockResults[operationName].isCompleted = completed;
     },
-    updateActionResult: (state: UnitTestState, action: PayloadAction<updateOutputMockResultPayload>) => {
+    updateActionResult: (state: UnitTestState, action: PayloadAction<updateMockResultPayload>) => {
       const { operationName, actionResult, completed } = action.payload;
       state.mockResults[operationName].actionResult = actionResult;
       state.mockResults[operationName].isCompleted = completed;
@@ -184,6 +184,6 @@ export const unitTestSlice = createSlice({
   },
 });
 
-export const { updateAssertions, updateAssertion, initUnitTestDefinition, updateOutputMock, updateActionResult } = unitTestSlice.actions;
+export const { updateAssertions, updateAssertion, initUnitTestDefinition, updateMock, updateActionResult } = unitTestSlice.actions;
 
 export default unitTestSlice.reducer;
