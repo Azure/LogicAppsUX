@@ -7,10 +7,10 @@ export default {
   input: './src/index.ts',
   output: {
     format: 'esm',
-    dir: '../../../dist/libs/designer-client-services',
+    dir: '../../../dist/rollup/libs/designer-client-services',
     entryFileNames: 'index.esm.js',
 
-    name: '@microsoft/designer-client-servicesc',
+    name: '@microsoft/designer-client-services',
   },
   plugins: [typescript({ tsconfig: './tsconfig.lib.json' }), nodeResolve({ modulePaths: ['../../node_modules'] }), commonjs(), json()],
 };
