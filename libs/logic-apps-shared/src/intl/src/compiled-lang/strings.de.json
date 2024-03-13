@@ -3059,6 +3059,12 @@
       "value": "Header"
     }
   ],
+  "HX3Xmx": [
+    {
+      "type": 0,
+      "value": "Wird gelöscht..."
+    }
+  ],
   "HYhDYB": [
     {
       "type": 0,
@@ -4861,6 +4867,12 @@
       "value": "Aktionstyp"
     }
   ],
+  "TUdPdI": [
+    {
+      "type": 0,
+      "value": "Sicheres Objekt"
+    }
+  ],
   "TX4Kdr": [
     {
       "type": 0,
@@ -6067,6 +6079,12 @@
       "value": "Textkörper"
     }
   ],
+  "ZKnJnh": [
+    {
+      "type": 0,
+      "value": "Sichere Zeichenfolge"
+    }
+  ],
   "ZM1mRy": [
     {
       "type": 0,
@@ -6243,6 +6261,20 @@
     {
       "type": 0,
       "value": "Textkörper"
+    }
+  ],
+  "bC2LBK": [
+    {
+      "type": 0,
+      "value": "Es wird nicht empfohlen, einen Standardwert für den Typ „"
+    },
+    {
+      "type": 1,
+      "value": "type"
+    },
+    {
+      "type": 0,
+      "value": "“ festzulegen, da er als Nur-Text gespeichert wird."
     }
   ],
   "bG9rjv": [

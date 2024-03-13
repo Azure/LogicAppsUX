@@ -1,8 +1,7 @@
 import { getReactQueryClient } from '../ReactQueryProvider';
 import { ConnectionService } from '@microsoft/designer-client-services-logic-apps';
-import { SwaggerParser } from '@microsoft/logic-apps-shared';
+import { SwaggerParser, equals } from '@microsoft/logic-apps-shared';
 import type { Connector } from '@microsoft/logic-apps-shared';
-import { equals } from '@microsoft/logic-apps-shared';
 import { useMemo } from 'react';
 import { useQuery } from 'react-query';
 
@@ -88,10 +87,10 @@ export const getConnection = async (connectionId: string, connectorId: string, f
   return !connection && fetchResourceIfNeeded ? getConnectionFromResource(connectionId) : connection;
 };
 
-export const getUniqueConnectionName = async (connectorId: string): Promise<string> => {
+export const getUniqueConnectionName = async (connectorId: string, existingKeys: string[] = []): Promise<string> => {
   const connectionNames = (await getConnectionsForConnector(connectorId)).map((connection) => connection.name);
   const connectorName = connectorId.split('/').at(-1);
-  return ConnectionService().getUniqueConnectionName(connectorId, connectionNames, connectorName as string);
+  return ConnectionService().getUniqueConnectionName(connectorId, [...connectionNames, ...existingKeys], connectorName as string);
 };
 
 export const useConnectionResource = (connectionId: string) => {

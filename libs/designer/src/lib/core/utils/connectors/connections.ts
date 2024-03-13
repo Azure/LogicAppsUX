@@ -12,7 +12,15 @@ import {
   isServiceProviderOperation,
 } from '@microsoft/designer-client-services-logic-apps';
 import type { AssistedConnectionProps } from '@microsoft/designer-ui';
-import { getIntl } from '@microsoft/logic-apps-shared';
+import {
+  getIntl,
+  ConnectionParameterTypes,
+  ResourceIdentityType,
+  equals,
+  ConnectionType,
+  getResourceName,
+  getRecordEntry,
+} from '@microsoft/logic-apps-shared';
 import type {
   Connection,
   ConnectionParameterSet,
@@ -20,14 +28,6 @@ import type {
   Connector,
   ManagedIdentity,
   OperationManifest,
-} from '@microsoft/logic-apps-shared';
-import {
-  ConnectionParameterTypes,
-  ResourceIdentityType,
-  equals,
-  ConnectionType,
-  getResourceName,
-  getRecordEntry,
 } from '@microsoft/logic-apps-shared';
 
 export function getConnectionId(state: ConnectionsStoreState, nodeId: string): string {
@@ -191,15 +191,15 @@ export function getSupportedParameterSets(
   };
 }
 
-export function isIdentityPresentInLogicApp(identity: string, managedIdentity: ManagedIdentity): boolean {
+export function isIdentityPresentInLogicApp(identity: string, managedIdentity: ManagedIdentity | undefined): boolean {
   const identitiesInLogicApp = [];
-  const type = managedIdentity.type;
+  const type = managedIdentity?.type;
   if (equals(type, ResourceIdentityType.SYSTEM_ASSIGNED) || equals(type, ResourceIdentityType.SYSTEM_ASSIGNED_USER_ASSIGNED)) {
     identitiesInLogicApp.push(constants.SYSTEM_ASSIGNED_MANAGED_IDENTITY);
   }
 
   if (equals(type, ResourceIdentityType.USER_ASSIGNED) || equals(type, ResourceIdentityType.SYSTEM_ASSIGNED_USER_ASSIGNED)) {
-    for (const identity of Object.keys(managedIdentity.userAssignedIdentities ?? {})) {
+    for (const identity of Object.keys(managedIdentity?.userAssignedIdentities ?? {})) {
       identitiesInLogicApp.push(identity);
     }
   }

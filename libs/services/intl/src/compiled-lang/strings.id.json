@@ -2997,6 +2997,12 @@
       "value": "Header"
     }
   ],
+  "HX3Xmx": [
+    {
+      "type": 0,
+      "value": "Menghapus..."
+    }
+  ],
   "HYhDYB": [
     {
       "type": 0,
@@ -4765,6 +4771,12 @@
       "value": "Tipe Tindakan"
     }
   ],
+  "TUdPdI": [
+    {
+      "type": 0,
+      "value": "Objek Aman"
+    }
+  ],
   "TX4Kdr": [
     {
       "type": 0,
@@ -5963,6 +5975,12 @@
       "value": "Isi"
     }
   ],
+  "ZKnJnh": [
+    {
+      "type": 0,
+      "value": "String Aman"
+    }
+  ],
   "ZM1mRy": [
     {
       "type": 0,
@@ -6139,6 +6157,20 @@
     {
       "type": 0,
       "value": "Isi"
+    }
+  ],
+  "bC2LBK": [
+    {
+      "type": 0,
+      "value": "Tidak disarankan untuk mengatur nilai default untuk tipe '"
+    },
+    {
+      "type": 1,
+      "value": "type"
+    },
+    {
+      "type": 0,
+      "value": "' karena akan disimpan sebagai teks biasa."
     }
   ],
   "bG9rjv": [

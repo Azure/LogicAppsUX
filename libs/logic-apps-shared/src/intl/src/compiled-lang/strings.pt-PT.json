@@ -3057,6 +3057,12 @@
       "value": "Cabeçalhos"
     }
   ],
+  "HX3Xmx": [
+    {
+      "type": 0,
+      "value": "A eliminar..."
+    }
+  ],
   "HYhDYB": [
     {
       "type": 0,
@@ -4869,6 +4875,12 @@
       "value": "Tipo de Ação"
     }
   ],
+  "TUdPdI": [
+    {
+      "type": 0,
+      "value": "Objeto Seguro"
+    }
+  ],
   "TX4Kdr": [
     {
       "type": 0,
@@ -6067,6 +6079,12 @@
       "value": "Corpo"
     }
   ],
+  "ZKnJnh": [
+    {
+      "type": 0,
+      "value": "Cadeia Segura"
+    }
+  ],
   "ZM1mRy": [
     {
       "type": 0,
@@ -6243,6 +6261,20 @@
     {
       "type": 0,
       "value": "Corpo"
+    }
+  ],
+  "bC2LBK": [
+    {
+      "type": 0,
+      "value": "Não é recomendado definir um valor predefinido para o tipo “"
+    },
+    {
+      "type": 1,
+      "value": "type"
+    },
+    {
+      "type": 0,
+      "value": "” porque será armazenado como texto simples."
     }
   ],
   "bG9rjv": [

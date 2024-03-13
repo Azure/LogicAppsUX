@@ -3015,6 +3015,12 @@
       "value": "Üstbilgiler"
     }
   ],
+  "HX3Xmx": [
+    {
+      "type": 0,
+      "value": "Siliniyor..."
+    }
+  ],
   "HYhDYB": [
     {
       "type": 0,
@@ -4809,6 +4815,12 @@
       "value": "Eylem Türü"
     }
   ],
+  "TUdPdI": [
+    {
+      "type": 0,
+      "value": "Güvenli Nesne"
+    }
+  ],
   "TX4Kdr": [
     {
       "type": 0,
@@ -6003,6 +6015,12 @@
       "value": "Gövde"
     }
   ],
+  "ZKnJnh": [
+    {
+      "type": 0,
+      "value": "Güvenli Dize"
+    }
+  ],
   "ZM1mRy": [
     {
       "type": 0,
@@ -6179,6 +6197,20 @@
     {
       "type": 0,
       "value": "Gövde"
+    }
+  ],
+  "bC2LBK": [
+    {
+      "type": 0,
+      "value": "Düz metin olarak depolandığından, '"
+    },
+    {
+      "type": 1,
+      "value": "type"
+    },
+    {
+      "type": 0,
+      "value": "' türü için bir varsayılan değer ayarlanması önerilmez."
     }
   ],
   "bG9rjv": [

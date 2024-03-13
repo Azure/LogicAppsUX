@@ -3035,6 +3035,12 @@
       "value": "Fejlécek"
     }
   ],
+  "HX3Xmx": [
+    {
+      "type": 0,
+      "value": "Törlés folyamatban..."
+    }
+  ],
   "HYhDYB": [
     {
       "type": 0,
@@ -4833,6 +4839,12 @@
       "value": "Művelet típusa"
     }
   ],
+  "TUdPdI": [
+    {
+      "type": 0,
+      "value": "Biztonságos objektum"
+    }
+  ],
   "TX4Kdr": [
     {
       "type": 0,
@@ -6011,6 +6023,12 @@
       "value": "Törzs"
     }
   ],
+  "ZKnJnh": [
+    {
+      "type": 0,
+      "value": "Biztonságos sztring"
+    }
+  ],
   "ZM1mRy": [
     {
       "type": 0,
@@ -6187,6 +6205,20 @@
     {
       "type": 0,
       "value": "Törzs"
+    }
+  ],
+  "bC2LBK": [
+    {
+      "type": 0,
+      "value": "A(z) „"
+    },
+    {
+      "type": 1,
+      "value": "type"
+    },
+    {
+      "type": 0,
+      "value": "” típus alapértelmezett értékének beállítása nem javasolt, mert egyszerű szövegként lesz tárolva."
     }
   ],
   "bG9rjv": [

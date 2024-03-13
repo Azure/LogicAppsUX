@@ -58,7 +58,11 @@ export class WorkflowUtility {
     return references;
   }
 
-  public static resolveConnectionsReferences(content: string, parameters: ParametersData | undefined): any {
+  public static resolveConnectionsReferences(
+    content: string,
+    parameters: ParametersData | undefined,
+    appsettings?: Record<string, string> | undefined
+  ): any {
     let result = content;
 
     if (parameters) {
@@ -66,6 +70,14 @@ export class WorkflowUtility {
         const parameterValue = parameters[parameterName].value !== undefined ? parameters[parameterName].value : '';
         result = replaceAllOccurrences(result, `@parameters('${parameterName}')`, parameterValue);
         result = replaceAllOccurrences(result, `@{parameters('${parameterName}')}`, parameterValue);
+      }
+    }
+
+    if (appsettings) {
+      for (const settingName of Object.keys(appsettings)) {
+        const settingValue = appsettings[settingName] !== undefined ? appsettings[settingName] : '';
+        result = replaceOccurrenceInResourceIds(result, `@appsetting('${settingName}')`, settingValue);
+        result = replaceOccurrenceInResourceIds(result, `@{appsetting('${settingName}')}`, settingValue);
       }
     }
 
@@ -103,4 +115,22 @@ function replaceIfFoundAndVerifyJson(stringifiedJson: string, searchValue: strin
   } catch {
     return undefined;
   }
+}
+
+function replaceOccurrenceInResourceIds(_inputString: string, settingName: string, settingValue: string): string {
+  let inputString = _inputString;
+  const resourceIdRegex = /\/subscriptions\/[^"]+"/g;
+  const resourceIds = inputString.match(resourceIdRegex);
+
+  // If no resource ids are found, return the original string
+  if (!resourceIds) return inputString;
+
+  for (const resourceId of resourceIds) {
+    if (resourceId.includes(settingName)) {
+      const replacedString = resourceId.replace(settingName, settingValue);
+      // Replace the original resource id in the input string with the replaced string
+      inputString = inputString.replace(resourceId, replacedString);
+    }
+  }
+  return inputString;
 }

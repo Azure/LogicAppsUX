@@ -86,22 +86,8 @@ import {
   TokenType,
   AuthenticationOAuthType,
 } from '@microsoft/designer-ui';
-import { getIntl } from '@microsoft/logic-apps-shared';
-import type {
-  DependentParameterInfo,
-  DynamicParameters,
-  Expression,
-  ExpressionFunction,
-  ExpressionLiteral,
-  InputParameter,
-  OutputParameter,
-  ResolvedParameter,
-  SchemaProcessorOptions,
-  SchemaProperty,
-  Segment,
-  SwaggerParser,
-} from '@microsoft/logic-apps-shared';
 import {
+  getIntl,
   isDynamicTreeExtension,
   isLegacyDynamicValuesTreeExtension,
   DeserializationType,
@@ -125,9 +111,6 @@ import {
   SegmentType,
   Visibility,
   PropertyName,
-} from '@microsoft/logic-apps-shared';
-import type { Exception, OpenAPIV2, OperationManifest, RecurrenceSetting } from '@microsoft/logic-apps-shared';
-import {
   createCopy,
   deleteObjectProperties,
   deleteObjectProperty,
@@ -154,6 +137,24 @@ import {
   nthLastIndexOf,
   parseErrorMessage,
   getRecordEntry,
+} from '@microsoft/logic-apps-shared';
+import type {
+  DependentParameterInfo,
+  DynamicParameters,
+  Expression,
+  ExpressionFunction,
+  ExpressionLiteral,
+  InputParameter,
+  OutputParameter,
+  ResolvedParameter,
+  SchemaProcessorOptions,
+  SchemaProperty,
+  Segment,
+  SwaggerParser,
+  Exception,
+  OpenAPIV2,
+  OperationManifest,
+  RecurrenceSetting,
 } from '@microsoft/logic-apps-shared';
 import type { Dispatch } from '@reduxjs/toolkit';
 
@@ -860,10 +861,8 @@ export function loadParameterValue(parameter: InputParameter): ValueSegment[] {
 
   if (parameter.isNotificationUrl) {
     valueObject = `@${constants.HTTP_WEBHOOK_LIST_CALLBACK_URL_NAME}`;
-  } else if (parameter.value) {
-    valueObject = parameter.value;
-  } else if (parameter.default) {
-    valueObject = parameter.default;
+  } else {
+    valueObject = parameter?.value ?? parameter?.default;
   }
 
   let valueSegments = convertToValueSegments(valueObject, !parameter.suppressCasting /* shouldUncast */);

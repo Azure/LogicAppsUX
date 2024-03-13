@@ -3079,6 +3079,12 @@
       "value": "Záhlaví"
     }
   ],
+  "HX3Xmx": [
+    {
+      "type": 0,
+      "value": "Odstraňování..."
+    }
+  ],
   "HYhDYB": [
     {
       "type": 0,
@@ -4909,6 +4915,12 @@
       "value": "Typ akce"
     }
   ],
+  "TUdPdI": [
+    {
+      "type": 0,
+      "value": "Zabezpečený objekt"
+    }
+  ],
   "TX4Kdr": [
     {
       "type": 0,
@@ -6107,6 +6119,12 @@
       "value": "Obsah"
     }
   ],
+  "ZKnJnh": [
+    {
+      "type": 0,
+      "value": "Zabezpečený řetězec"
+    }
+  ],
   "ZM1mRy": [
     {
       "type": 0,
@@ -6283,6 +6301,20 @@
     {
       "type": 0,
       "value": "Obsah"
+    }
+  ],
+  "bC2LBK": [
+    {
+      "type": 0,
+      "value": "Nastavení výchozí hodnoty pro typ "
+    },
+    {
+      "type": 1,
+      "value": "type"
+    },
+    {
+      "type": 0,
+      "value": " se nedoporučuje, protože se uloží jako prostý text."
     }
   ],
   "bG9rjv": [

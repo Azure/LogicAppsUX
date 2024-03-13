@@ -3027,6 +3027,12 @@
       "value": "Headers"
     }
   ],
+  "HX3Xmx": [
+    {
+      "type": 0,
+      "value": "Verwijderen..."
+    }
+  ],
   "HYhDYB": [
     {
       "type": 0,
@@ -4809,6 +4815,12 @@
       "value": "Actietype"
     }
   ],
+  "TUdPdI": [
+    {
+      "type": 0,
+      "value": "Object beveiligen"
+    }
+  ],
   "TX4Kdr": [
     {
       "type": 0,
@@ -6007,6 +6019,12 @@
       "value": "Hoofdtekst"
     }
   ],
+  "ZKnJnh": [
+    {
+      "type": 0,
+      "value": "Beveiligde tekenreeks"
+    }
+  ],
   "ZM1mRy": [
     {
       "type": 0,
@@ -6183,6 +6201,20 @@
     {
       "type": 0,
       "value": "Hoofdtekst"
+    }
+  ],
+  "bC2LBK": [
+    {
+      "type": 0,
+      "value": "Het wordt niet aanbevolen om een standaardwaarde in te stellen voor het type "
+    },
+    {
+      "type": 1,
+      "value": "type"
+    },
+    {
+      "type": 0,
+      "value": " omdat deze wordt opgeslagen als tekst zonder opmaak."
     }
   ],
   "bG9rjv": [

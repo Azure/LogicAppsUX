@@ -1,5 +1,46 @@
 # Logic Apps Designer
 
+## [2.125.0](https://github.com/Azure/LogicAppsUX/compare/v2.124.0...v2.125.0) (2024-03-11)
+
+### Bug Fixes
+
+- **Consumption:** Multiple minor changes to scope and subgraph nodes ([#4331](https://github.com/Azure/LogicAppsUX/issues/4331)) ([fd62aaa](https://github.com/Azure/LogicAppsUX/commit/fd62aaab26b6251171f5b76c2bfc34520a190ed3))
+- **Designer:** Fixed issue where some service provider operations would not appear in search / browse ([#4345](https://github.com/Azure/LogicAppsUX/issues/4345)) ([96d2cf5](https://github.com/Azure/LogicAppsUX/commit/96d2cf52c346d9de1a82499842e0c506c6afdbac))
+- **Designer:** Showing secure workflow parameters in consumption ([#4325](https://github.com/Azure/LogicAppsUX/issues/4325)) ([ab07b14](https://github.com/Azure/LogicAppsUX/commit/ab07b14d24af81eb9a2d1380697c016dbfdc8f28))
+- **Designer:** Stuck on loading after making Manage Identity Issue Action ([#4332](https://github.com/Azure/LogicAppsUX/issues/4332)) ([1a366aa](https://github.com/Azure/LogicAppsUX/commit/1a366aadd9c0e7f3c8a12c2f1fa7670cf93ab1c7))
+- **desinger:** Remove Outputs if includeRootOutputs is not set ([#4333](https://github.com/Azure/LogicAppsUX/issues/4333)) ([2ae577d](https://github.com/Azure/LogicAppsUX/commit/2ae577d1f43b61ac9312aae43f1574189c2afd76))
+- **vscode:** Add validation for extension bundle workflows folder ([#4326](https://github.com/Azure/LogicAppsUX/issues/4326)) ([fe7dc9c](https://github.com/Azure/LogicAppsUX/commit/fe7dc9cd2c4daabbada0112b4abeea956b35f006))
+
+## [2.124.0](https://github.com/Azure/LogicAppsUX/compare/v2.123.0...v2.124.0) (2024-03-07)
+
+## [2.123.0](https://github.com/Azure/LogicAppsUX/compare/v2.122.0...v2.123.0) (2024-03-06)
+
+### Features
+
+- **designer:** Add verbose telemetry for a number of scenarios ([#4307](https://github.com/Azure/LogicAppsUX/issues/4307)) ([4c93053](https://github.com/Azure/LogicAppsUX/commit/4c9305382f915e07de7cb609a3b5817e99be0ace))
+- **designer:** Allow host to define conditions for built-in and custom connectors ([#4299](https://github.com/Azure/LogicAppsUX/issues/4299)) ([d6f81de](https://github.com/Azure/LogicAppsUX/commit/d6f81deeae7c667e31ffb8f80fad677b29a4544e))
+- **vscode:** Improve status step indicator for export experience ([#4305](https://github.com/Azure/LogicAppsUX/issues/4305)) ([19473ee](https://github.com/Azure/LogicAppsUX/commit/19473ee32c84f161b0914a24600d0942c19814ea))
+
+### Bug Fixes
+
+- **consumption:** Adding 'Invalid Parameter' message to Subgraph nodes ([#4314](https://github.com/Azure/LogicAppsUX/issues/4314)) ([97e26d7](https://github.com/Azure/LogicAppsUX/commit/97e26d7c2c4efebc7243eca69803ffcfee9652fe))
+- **designer:** Fix linter errors happening on PRs from library consolodation ([#4315](https://github.com/Azure/LogicAppsUX/issues/4315)) ([96e0fff](https://github.com/Azure/LogicAppsUX/commit/96e0fff70a04b5a0797c571951685b259bf09c1d))
+
+## [2.122.0](https://github.com/Azure/LogicAppsUX/compare/v2.121.0...v2.122.0) (2024-03-01)
+
+### Features
+
+- **designer:** Adding hidden parameter field in ConnectionCreationIn… ([#4275](https://github.com/Azure/LogicAppsUX/issues/4275)) ([49b2c9c](https://github.com/Azure/LogicAppsUX/commit/49b2c9c0098a97e8832d3f0b682c47c7b7d7c025))
+- **vscode:** Download extension bundle in extension activation instead of project initialization ([#4287](https://github.com/Azure/LogicAppsUX/issues/4287)) ([a663771](https://github.com/Azure/LogicAppsUX/commit/a6637712e9b46eb87f24bcfae44ea1237abc9899))
+
+### Bug Fixes
+
+- **Consumption:** Adding node name to props to account for change ([#4286](https://github.com/Azure/LogicAppsUX/issues/4286)) ([e61a878](https://github.com/Azure/LogicAppsUX/commit/e61a8788070cdf5bc64e8622a3a10cdd49195688))
+- **Designer:** Fixed issue where connection references would sometimes overlap ([#4290](https://github.com/Azure/LogicAppsUX/issues/4290)) ([01e8768](https://github.com/Azure/LogicAppsUX/commit/01e876871cdf421ee3c9653d66107b8cc35e089e))
+- **designer:** Revert - Update to make connections name case-insensitive ([#4283](https://github.com/Azure/LogicAppsUX/issues/4283)) ([7fc19f7](https://github.com/Azure/LogicAppsUX/commit/7fc19f72329c00decf1064a112a9f40626a7cbc3)), closes [#4279](https://github.com/Azure/LogicAppsUX/issues/4279)
+
+## [2.121.0](https://github.com/Azure/LogicAppsUX/compare/v2.120.0...v2.121.0) (2024-02-29)
+
 ## [2.121.0](https://github.com/Azure/LogicAppsUX/compare/v2.120.0...v2.121.0) (2024-02-29)
 
 ### Features

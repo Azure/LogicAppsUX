@@ -13,32 +13,39 @@ import type {
 import { getOperationSettings } from '../../actions/bjsworkflow/settings';
 import { getConnectorWithSwagger } from '../../queries/connections';
 import type { DependencyInfo, NodeInputs, NodeOperation, OutputInfo } from '../../state/operation/operationMetadataSlice';
-import { ErrorLevel, updateErrorDetails, DynamicLoadStatus, initializeOperationInfo } from '../../state/operation/operationMetadataSlice';
+import { DynamicLoadStatus, ErrorLevel, initializeOperationInfo, updateErrorDetails } from '../../state/operation/operationMetadataSlice';
 import { addResultSchema } from '../../state/staticresultschema/staticresultsSlice';
 import type { WorkflowKind } from '../../state/workflow/workflowInterfaces';
-import { getBrandColorFromConnector, getIconUriFromConnector } from '../card';
 import { toOutputInfo, updateOutputsForBatchingTrigger } from '../outputs';
 import {
+  ParameterGroupKeys,
   addRecurrenceParametersInGroup,
   getDependentParameters,
   getParametersSortedByVisibility,
   loadParameterValuesFromDefault,
-  ParameterGroupKeys,
   toParameterInfoMap,
   updateParameterWithValues,
 } from '../parameters/helper';
 import { loadInputValuesFromDefinition } from './inputsbuilder';
 import { LogEntryLevel, LoggerService, StaticResultService } from '@microsoft/designer-client-services-logic-apps';
-import type { LAOperation, OutputParameter, SwaggerParser } from '@microsoft/logic-apps-shared';
+import type { LAOperation, LogicAppsV2, OperationInfo, OutputParameter, SwaggerParser } from '@microsoft/logic-apps-shared';
 import {
-  create,
-  isDynamicSchemaExtension,
   ParameterLocations,
-  removeConnectionPrefix,
+  RecurrenceType,
+  copyArray,
+  create,
+  equals,
+  getBrandColorFromConnector,
+  getIconUriFromConnector,
+  isDynamicSchemaExtension,
   isTemplateExpression,
+  map,
+  parseErrorMessage,
+  parsePathnameAndQueryKeyFromUri,
+  removeConnectionPrefix,
+  startsWith,
+  unmap,
 } from '@microsoft/logic-apps-shared';
-import type { LogicAppsV2, OperationInfo } from '@microsoft/logic-apps-shared';
-import { copyArray, map, RecurrenceType, equals, parsePathnameAndQueryKeyFromUri, startsWith, unmap } from '@microsoft/logic-apps-shared';
 import type { Dispatch } from '@reduxjs/toolkit';
 
 interface OperationInputInfo {
@@ -118,12 +125,7 @@ export const initializeOperationDetailsForSwagger = async (
 
     throw new Error('Operation info could not be found for a swagger operation');
   } catch (error: any) {
-    let errorString = '';
-    try {
-      errorString = error?.toString() ?? error;
-    } catch (_: any) {
-      errorString = 'Could not convert error to string';
-    }
+    const errorString = parseErrorMessage(error);
     const message = `Unable to initialize operation details for swagger based operation - ${nodeId}. Error details - ${errorString}`;
     LoggerService().log({
       level: LogEntryLevel.Error,

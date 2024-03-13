@@ -3033,6 +3033,12 @@
       "value": "Intestazioni"
     }
   ],
+  "HX3Xmx": [
+    {
+      "type": 0,
+      "value": "Eliminazione in corso..."
+    }
+  ],
   "HYhDYB": [
     {
       "type": 0,
@@ -4853,6 +4859,12 @@
       "value": "Tipo di azione"
     }
   ],
+  "TUdPdI": [
+    {
+      "type": 0,
+      "value": "Oggetto sicuro"
+    }
+  ],
   "TX4Kdr": [
     {
       "type": 0,
@@ -6051,6 +6063,12 @@
       "value": "Corpo"
     }
   ],
+  "ZKnJnh": [
+    {
+      "type": 0,
+      "value": "Stringa sicura"
+    }
+  ],
   "ZM1mRy": [
     {
       "type": 0,
@@ -6227,6 +6245,20 @@
     {
       "type": 0,
       "value": "Corpo"
+    }
+  ],
+  "bC2LBK": [
+    {
+      "type": 0,
+      "value": "Non è consigliabile impostare un valore predefinito per il tipo '"
+    },
+    {
+      "type": 1,
+      "value": "type"
+    },
+    {
+      "type": 0,
+      "value": "' perché verrà archiviato come testo normale."
     }
   ],
   "bG9rjv": [

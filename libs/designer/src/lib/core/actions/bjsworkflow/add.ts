@@ -4,7 +4,13 @@ import { getConnectionsForConnector, getConnectorWithSwagger } from '../../queri
 import { getOperationManifest } from '../../queries/operation';
 import { initEmptyConnectionMap } from '../../state/connection/connectionSlice';
 import type { NodeData, NodeOperation, OperationMetadataState } from '../../state/operation/operationMetadataSlice';
-import { initializeNodes, initializeOperationInfo, updateNodeSettings } from '../../state/operation/operationMetadataSlice';
+import {
+  ErrorLevel,
+  initializeNodes,
+  initializeOperationInfo,
+  updateErrorDetails,
+  updateNodeSettings,
+} from '../../state/operation/operationMetadataSlice';
 import type { RelationshipIds } from '../../state/panel/panelInterfaces';
 import { changePanelNode, openPanel, setIsPanelLoading } from '../../state/panel/panelSlice';
 import { addResultSchema } from '../../state/staticresultschema/staticresultsSlice';
@@ -13,12 +19,12 @@ import { initializeTokensAndVariables } from '../../state/tokens/tokensSlice';
 import type { WorkflowState } from '../../state/workflow/workflowInterfaces';
 import { addNode, setFocusNode } from '../../state/workflow/workflowSlice';
 import type { AppDispatch, RootState } from '../../store';
-import { getBrandColorFromConnector, getBrandColorFromManifest, getIconUriFromConnector, getIconUriFromManifest } from '../../utils/card';
+import { getBrandColorFromManifest, getIconUriFromManifest } from '../../utils/card';
 import { getTriggerNodeId, isRootNodeInGraph } from '../../utils/graph';
 import { updateDynamicDataInNode } from '../../utils/parameters/helper';
 import { getInputParametersFromSwagger, getOutputParametersFromSwagger } from '../../utils/swagger/operation';
-import { getTokenNodeIds, getBuiltInTokens, convertOutputsToTokens } from '../../utils/tokens';
-import { setVariableMetadata, getVariableDeclarations, getAllVariables } from '../../utils/variables';
+import { convertOutputsToTokens, getBuiltInTokens, getTokenNodeIds } from '../../utils/tokens';
+import { getAllVariables, getVariableDeclarations, setVariableMetadata } from '../../utils/variables';
 import { isConnectionRequiredForOperation, updateNodeConnection } from './connections';
 import {
   getInputParametersFromManifest,
@@ -30,16 +36,15 @@ import type { NodeDataWithOperationMetadata } from './operationdeserializer';
 import type { Settings } from './settings';
 import { getOperationSettings, getSplitOnValue } from './settings';
 import { ConnectionService, OperationManifestService, StaticResultService } from '@microsoft/designer-client-services-logic-apps';
-import type { SwaggerParser } from '@microsoft/logic-apps-shared';
-import { ManifestParser } from '@microsoft/logic-apps-shared';
 import type {
   Connector,
   DiscoveryOperation,
   DiscoveryResultTypes,
   OperationManifest,
   SomeKindOfAzureOperationDiscovery,
+  SwaggerParser,
 } from '@microsoft/logic-apps-shared';
-import { equals, getRecordEntry } from '@microsoft/logic-apps-shared';
+import { ManifestParser, equals, getBrandColorFromConnector, getIconUriFromConnector, getRecordEntry } from '@microsoft/logic-apps-shared';
 import type { Dispatch } from '@reduxjs/toolkit';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { batch } from 'react-redux';
@@ -233,7 +238,20 @@ export const initializeOperationDetails = async (
       getState
     );
   } else if (connector) {
-    await trySetDefaultConnectionForNode(nodeId, connector, dispatch, isConnectionRequired);
+    try {
+      await trySetDefaultConnectionForNode(nodeId, connector, dispatch, isConnectionRequired);
+    } catch (e: any) {
+      dispatch(
+        updateErrorDetails({
+          id: nodeId,
+          errorInfo: {
+            level: ErrorLevel.Connection,
+            message: e?.message,
+          },
+        })
+      );
+      dispatch(setIsPanelLoading(false));
+    }
   }
 
   const schemaService = staticResultService.getOperationResultSchema(connectorId, operationId, swagger || parsedManifest);
