@@ -66,6 +66,7 @@ import {
   aggregate,
   equals,
   getRecordEntry,
+  parseErrorMessage,
 } from '@microsoft/logic-apps-shared';
 import type { InputParameter, OutputParameter, LogicAppsV2, OperationManifest } from '@microsoft/logic-apps-shared';
 import type { Dispatch } from '@reduxjs/toolkit';
@@ -276,7 +277,8 @@ export const initializeOperationDetailsForManifest = async (
       ...childGraphInputs,
     ];
   } catch (error: any) {
-    const message = `Unable to initialize operation details for operation - ${nodeId}. Error details - ${error}`;
+    const errorMessage = parseErrorMessage(error);
+    const message = `Unable to initialize operation details for operation - ${nodeId}. Error details - ${errorMessage}`;
     LoggerService().log({
       level: LogEntryLevel.Error,
       area: 'operation deserializer',
