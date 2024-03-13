@@ -76,12 +76,8 @@ export class WorkflowUtility {
     if (appsettings) {
       for (const settingName of Object.keys(appsettings)) {
         const settingValue = appsettings[settingName] !== undefined ? appsettings[settingName] : '';
-        // Only if an app setting comes after "/subscriptions/" should it be resolved
-        //     Leaving the subscription as an appsetting causes issues
-        //     Resolving other appsettings also causes issues
-        const subscriptionSearchValue = `/subscriptions/@appsetting('${settingName}')/`;
-        const subscriptionSettingValue = `/subscriptions/${settingValue}/`;
-        result = replaceAllOccurrences(result, subscriptionSearchValue, subscriptionSettingValue);
+        result = replaceOccurrenceInResourceIds(result, `@appsetting('${settingName}')`, settingValue);
+        result = replaceOccurrenceInResourceIds(result, `@{appsetting('${settingName}')}`, settingValue);
       }
     }
 
@@ -119,4 +115,22 @@ function replaceIfFoundAndVerifyJson(stringifiedJson: string, searchValue: strin
   } catch {
     return undefined;
   }
+}
+
+function replaceOccurrenceInResourceIds(_inputString: string, settingName: string, settingValue: string): string {
+  let inputString = _inputString;
+  const resourceIdRegex = /\/subscriptions\/[^"]+"/g;
+  const resourceIds = inputString.match(resourceIdRegex);
+
+  // If no resource ids are found, return the original string
+  if (!resourceIds) return inputString;
+
+  for (const resourceId of resourceIds) {
+    if (resourceId.includes(settingName)) {
+      const replacedString = resourceId.replace(settingName, settingValue);
+      // Replace the original resource id in the input string with the replaced string
+      inputString = inputString.replace(resourceId, replacedString);
+    }
+  }
+  return inputString;
 }
