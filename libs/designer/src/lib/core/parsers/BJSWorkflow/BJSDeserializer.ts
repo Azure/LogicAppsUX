@@ -115,6 +115,12 @@ export const Deserialize = (
   };
 };
 
+/**
+ * Deserializes a unit test definition and a workflow definition into assertions and mock results.
+ * @param {UnitTestDefinition | null} unitTestDefinition - The unit test definition to deserialize.
+ * @param {Workflow} workflowDefinition - The workflow definition to deserialize.
+ * @returns An object containing the assertions and mock results, or null if the unit test definition is null.
+ */
 export const deserializeUnitTestDefinition = (
   unitTestDefinition: UnitTestDefinition | null,
   workflowDefinition: Workflow
@@ -166,16 +172,20 @@ export const deserializeUnitTestDefinition = (
   const triggerName = triggersKeys[0]; // only 1 trigger
 
   if (triggerName) {
+    const mockOutputs = unitTestDefinition.triggerMocks[triggerName].outputs ?? {};
     mockResults[`&${triggerName}`] = {
       actionResult: unitTestDefinition.triggerMocks[triggerName].actionResult ?? ActionResults.SUCCESS,
-      output: unitTestDefinition.triggerMocks[triggerName].outputs ?? {},
+      output: mockOutputs,
+      isCompleted: !isNullOrEmpty(mockOutputs),
     };
   }
 
   Object.keys(unitTestDefinition.actionMocks).forEach((actionName) => {
+    const mockOutputs = unitTestDefinition.actionMocks[actionName].outputs ?? {};
     mockResults[actionName] = {
       actionResult: unitTestDefinition.actionMocks[actionName].actionResult ?? ActionResults.SUCCESS,
-      output: unitTestDefinition.actionMocks[actionName].outputs ?? {},
+      output: mockOutputs,
+      isCompleted: !isNullOrEmpty(mockOutputs),
     };
   });
 
