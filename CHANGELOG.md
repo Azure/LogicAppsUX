@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [2.125.2](https://github.com/Azure/LogicAppsUX/compare/v2.125.1...v2.125.2) (2024-03-13)
+
+
+### Bug Fixes
+
+* **Designer:** Only resolve app settings if they are used in resource ids ([#4354](https://github.com/Azure/LogicAppsUX/issues/4354)) ([efb5b89](https://github.com/Azure/LogicAppsUX/commit/efb5b8901ae1faec3eb3e8c1a847fd0a0894dd5c))
+
 ### [2.125.1](https://github.com/Azure/LogicAppsUX/compare/v2.125.0...v2.125.1) (2024-03-12)
 
 ## [2.125.0](https://github.com/Azure/LogicAppsUX/compare/v2.124.0...v2.125.0) (2024-03-11)
