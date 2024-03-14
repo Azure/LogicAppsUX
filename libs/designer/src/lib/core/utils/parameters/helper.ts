@@ -1,9 +1,10 @@
 /* eslint-disable no-case-declarations  */
 import constants from '../../../common/constants';
-import type { ConnectionReference, WorkflowParameter } from '../../../common/models/workflow';
+import type { ConnectionReference, CustomCodeWithData, WorkflowParameter } from '../../../common/models/workflow';
 import type { NodeDataWithOperationMetadata } from '../../actions/bjsworkflow/operationdeserializer';
 import type { Settings } from '../../actions/bjsworkflow/settings';
 import { getConnectorWithSwagger } from '../../queries/connections';
+import type { CustomCodeState } from '../../state/customcode/customcodeInterfaces';
 import type {
   DependencyInfo,
   NodeDependencies,
@@ -153,6 +154,7 @@ import {
   nthLastIndexOf,
   parseErrorMessage,
   getRecordEntry,
+  replaceWhiteSpaceWithUnderscore,
 } from '@microsoft/utils-logic-apps';
 import type { Dispatch } from '@reduxjs/toolkit';
 
@@ -2478,6 +2480,36 @@ export function getGroupAndParameterFromParameterKey(
 
   return undefined;
 }
+
+export const getCustomCodeFileName = (nodeId: string, nodeInputs?: NodeInputs, idReplacements?: Record<string, string>): string => {
+  const updatedNodeId = idReplacements?.[nodeId] || nodeId;
+  let fileName = replaceWhiteSpaceWithUnderscore(updatedNodeId);
+
+  if (nodeInputs) {
+    const parameter = getParameterFromName(nodeInputs, constants.DEFAULT_CUSTOM_CODE_INPUT);
+    const fileExtension = parameter?.editorViewModel?.customCodeData?.fileExtension;
+    if (fileExtension) {
+      fileName = `${fileName}${fileExtension}`;
+    }
+  }
+  return fileName;
+};
+
+export const getCustomCodeFilesWithData = (state: CustomCodeState): Record<string, CustomCodeWithData> => {
+  const { files, fileData } = state;
+  const customCodeFileWithData: Record<string, CustomCodeWithData> = {};
+  Object.entries(files).forEach(([fileName, fileInfo]) => {
+    const { nodeId } = fileInfo;
+    const fileDataInfo = getRecordEntry(fileData, nodeId);
+    if (fileDataInfo) {
+      customCodeFileWithData[fileName] = {
+        ...fileInfo,
+        fileData: fileDataInfo,
+      };
+    }
+  });
+  return customCodeFileWithData;
+};
 
 export function getInputsValueFromDefinitionForManifest(
   inputsLocation: string[],

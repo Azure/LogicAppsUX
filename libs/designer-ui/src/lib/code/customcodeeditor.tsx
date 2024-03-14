@@ -69,7 +69,7 @@ export function CustomCodeEditor({
     }
     onChange?.({
       value: [createLiteralValueSegment(getFileName())],
-      viewModel: { customCodeData: { fileData: getCurrentValue(), fileExtension: getFileExtensionName(language) } },
+      viewModel: { customCodeData: { fileData: getCurrentValue(), fileExtension: getFileExtensionName(language), fileName: getFileName() } },
     });
   };
 

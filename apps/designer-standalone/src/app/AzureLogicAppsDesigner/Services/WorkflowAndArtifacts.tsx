@@ -1,12 +1,12 @@
 import { environment } from '../../../environments/environment';
+import type { CustomCodeWithData } from '../Models/CustomCode';
 import type { CallbackInfo, ConnectionsData, ParametersData, Workflow } from '../Models/Workflow';
 import { Artifact } from '../Models/Workflow';
 import { validateResourceId } from '../Utilities/resourceUtilities';
 import { convertDesignerWorkflowToConsumptionWorkflow } from './ConsumptionSerializationHelpers';
+import type { VFSObject } from '@microsoft/designer-client-services-logic-apps';
 import { CustomCodeService, LogEntryLevel, LoggerService } from '@microsoft/designer-client-services-logic-apps';
-import type { CustomCode } from '@microsoft/logic-apps-designer';
-import { store as DesignerStore, CustomCodeOperation } from '@microsoft/logic-apps-designer';
-import { replaceWhiteSpaceWithUnderscore, type LogicAppsV2 } from '@microsoft/utils-logic-apps';
+import type { LogicAppsV2 } from '@microsoft/utils-logic-apps';
 import axios from 'axios';
 import jwt_decode from 'jwt-decode';
 import { useQuery } from 'react-query';
@@ -35,6 +35,53 @@ export const useWorkflowAndArtifactsStandard = (workflowId: string) => {
       refetchOnWindowFocus: false,
     }
   );
+};
+
+export const useAllCustomCodeFiles = (appId?: string, workflowName?: string) => {
+  return useQuery(['workflowCustomCode', workflowName], async () => await getAllCustomCodeFiles(appId, workflowName), {
+    enabled: !!appId && !!workflowName,
+    refetchOnMount: false,
+    refetchOnReconnect: false,
+    refetchOnWindowFocus: false,
+  });
+};
+
+const getAllCustomCodeFiles = async (appId?: string, workflowName?: string) => {
+  const customCodeFiles: Record<string, string> = {};
+  const uri = `${baseUrl}${appId}/hostruntime/admin/vfs/${workflowName}`;
+  const vfsObjects: VFSObject[] = (
+    await axios.get<VFSObject[]>(uri, {
+      headers: {
+        Authorization: `Bearer ${environment.armToken}`,
+      },
+      params: {
+        relativePath: 1,
+        'api-version': '2018-11-01',
+      },
+    })
+  ).data.filter((file) => file.name !== Artifact.WorkflowFile);
+
+  const filesData = await Promise.all(
+    vfsObjects.map(async (file) => {
+      const response = await axios.get<string>(`${uri}/${file.name}`, {
+        headers: {
+          Authorization: `Bearer ${environment.armToken}`,
+          'If-Match': ['*'],
+        },
+        params: {
+          relativePath: 1,
+          'api-version': '2018-11-01',
+        },
+      });
+      return { name: file.name, data: response.data };
+    })
+  );
+
+  filesData.forEach((file) => {
+    customCodeFiles[file.name] = file.data;
+  });
+
+  return customCodeFiles;
 };
 
 export const useWorkflowAndArtifactsConsumption = (workflowId: string) => {
@@ -216,29 +263,35 @@ export const getConnectionConsumption = async (connectionId: string) => {
   return response.data;
 };
 
-export const saveCustomCodeStandard = async (customCode?: Record<string, CustomCode>): Promise<void> => {
+export const saveCustomCodeStandard = async (customCode?: Record<string, CustomCodeWithData>): Promise<void> => {
   if (!customCode) return;
   try {
-    // to prevent 404's we first check which custom code files are already present
     const existingFiles = (await CustomCodeService().getAllCustomCodeFiles()).map((file) => file.name);
-    const idReplacements = DesignerStore.getState().workflow.idReplacements;
-    for (const { operation, operationProps } of Object.values(customCode)) {
-      console.log(operation, operationProps);
-      if (operation === CustomCodeOperation.ADD) {
-        const { nodeId, fileData, fileExtension } = operationProps;
-        const fileName = replaceWhiteSpaceWithUnderscore(idReplacements[nodeId] ?? nodeId);
-        await CustomCodeService().uploadCustomCode({
+    // to prevent 404's we first check which custom code files are already present before deleting
+    Object.entries(customCode).forEach(([fileName, customCodeData]) => {
+      const { fileExtension, isModified, isDeleted, fileData } = customCodeData;
+      if (isDeleted && existingFiles.includes(fileName)) {
+        CustomCodeService().deleteCustomCode(fileName);
+        LoggerService().log({
+          level: LogEntryLevel.Verbose,
+          area: 'serializeCustomcode',
+          message: `Deleting custom code file: ${fileName}`,
+        });
+      } else if (isModified) {
+        // const fileNameWithoutExtension = replaceWhiteSpaceWithUnderscore(idReplacements[nodeId] ?? nodeId);
+        LoggerService().log({
+          level: LogEntryLevel.Verbose,
+          area: 'serializeCustomcode',
+          message: `Uploading/Updating custom code file: ${fileName}`,
+        });
+
+        CustomCodeService().uploadCustomCode({
           fileData,
-          fileName: `${fileName}${fileExtension}`,
+          fileName,
           fileExtension,
         });
-      } else if (operation === CustomCodeOperation.DELETE) {
-        const { fileName } = operationProps;
-        if (existingFiles.includes(fileName)) {
-          await CustomCodeService().deleteCustomCode(fileName);
-        }
       }
-    }
+    });
     return;
   } catch (error) {
     const errorMessage = `Failed to save custom code: ${error}`;
@@ -258,7 +311,8 @@ export const saveWorkflowStandard = async (
   workflow: any,
   connectionsData: ConnectionsData | undefined,
   parametersData: ParametersData | undefined,
-  settings: Record<string, string> | undefined
+  settings: Record<string, string> | undefined,
+  customCodeData: Record<string, CustomCodeWithData> | undefined
 ): Promise<any> => {
   const data: any = {
     files: {
@@ -287,6 +341,9 @@ export const saveWorkflowStandard = async (
       }
     }
 
+    // saving custom code must happen synchronously with deploying the workflow artifacts as they both cause
+    // the host to go soft restart. We may need to look into if there's a race case where this may still happen
+    saveCustomCodeStandard(customCodeData);
     await axios.post(`${baseUrl}${siteResourceId}/deployWorkflowArtifacts?api-version=${standardApiVersion}`, data, {
       headers: {
         'If-Match': '*',

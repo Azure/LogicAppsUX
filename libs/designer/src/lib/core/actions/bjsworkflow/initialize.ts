@@ -1,5 +1,6 @@
 import Constants from '../../../common/constants';
-import { ImpersonationSource, type ConnectionReferences, type WorkflowParameter } from '../../../common/models/workflow';
+import type { CustomCodeWithData, ConnectionReferences, WorkflowParameter } from '../../../common/models/workflow';
+import { ImpersonationSource } from '../../../common/models/workflow';
 import type { WorkflowNode } from '../../parsers/models/workflowNode';
 import { getConnectorWithSwagger, getSwaggerFromEndpoint } from '../../queries/connections';
 import { getOperationManifest } from '../../queries/operation';
@@ -17,6 +18,7 @@ import { getSplitOnOptions, getUpdatedManifestForSchemaDependency, getUpdatedMan
 import {
   addRecurrenceParametersInGroup,
   getAllInputParameters,
+  getCustomCodeFileName,
   getDependentParameters,
   getInputsValueFromDefinitionForManifest,
   getParameterFromName,
@@ -45,7 +47,6 @@ import {
   OperationManifestService,
   FunctionService,
   ApiManagementService,
-  CustomCodeService,
 } from '@microsoft/designer-client-services-logic-apps';
 import type { OutputToken, ParameterInfo } from '@microsoft/designer-ui';
 import { getIntl } from '@microsoft/intl-logic-apps';
@@ -69,6 +70,7 @@ import {
   ConnectionReferenceKeyFormat,
   unmap,
   getObjectPropertyValue,
+  getRecordEntry,
 } from '@microsoft/utils-logic-apps';
 import type {
   CustomSwaggerServiceDetails,
@@ -455,11 +457,17 @@ export const updateCallbackUrlInInputs = async (
   return;
 };
 
-export const updateCustomCodeInInputs = async (nodeId: string, fileExtension: string, nodeInputs: NodeInputs) => {
-  const fileName = `${nodeId}${fileExtension}`;
+export const updateCustomCodeInInputs = async (
+  nodeId: string,
+  fileExtension: string,
+  nodeInputs: NodeInputs,
+  customCode: Record<string, CustomCodeWithData>
+) => {
+  // getCustomCodeFileName does not return the file extension because the editor view model is not populated yet
+  const fileName = getCustomCodeFileName(nodeId, nodeInputs) + fileExtension;
   try {
-    const customCodeValue = await CustomCodeService().getCustomCodeFile(fileName);
-    const parameter = getParameterFromName(nodeInputs, 'CodeFile');
+    const customCodeValue = getRecordEntry(customCode, fileName)?.fileData;
+    const parameter = getParameterFromName(nodeInputs, Constants.DEFAULT_CUSTOM_CODE_INPUT);
 
     if (parameter && customCodeValue) {
       parameter.editorViewModel = {
@@ -467,7 +475,7 @@ export const updateCustomCodeInInputs = async (nodeId: string, fileExtension: st
       };
     }
   } catch (error) {
-    const errorMessage = `Failed to fetch custom code file ${fileName}: ${error}`;
+    const errorMessage = `Failed to populate code file ${fileName}: ${error}`;
     LoggerService().log({
       level: LogEntryLevel.Error,
       area: 'fetchCustomCode',

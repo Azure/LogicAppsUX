@@ -2,6 +2,7 @@ import { environment } from '../../environments/environment';
 import type { AppDispatch, RootState } from '../../state/store';
 import { changeRunId, setIsChatBotEnabled } from '../../state/workflowLoadingSlice';
 import { DesignerCommandBar } from './DesignerCommandBar';
+import type { CustomCodeWithData } from './Models/CustomCode';
 import type { ConnectionAndAppSetting, ConnectionsData, ParametersData } from './Models/Workflow';
 import { Artifact } from './Models/Workflow';
 import type { WorkflowApp } from './Models/WorkflowApp';
@@ -13,8 +14,8 @@ import { StandaloneOAuthService } from './Services/OAuthService';
 import {
   getConnectionStandard,
   listCallbackUrl,
-  saveCustomCodeStandard,
   saveWorkflowStandard,
+  useAllCustomCodeFiles,
   useAppSettings,
   useCurrentObjectId,
   useCurrentTenantId,
@@ -39,7 +40,7 @@ import {
   StandardSearchService,
 } from '@microsoft/designer-client-services-logic-apps';
 import type { ContentType, IWorkflowService } from '@microsoft/designer-client-services-logic-apps';
-import type { CustomCode, Workflow } from '@microsoft/logic-apps-designer';
+import type { Workflow } from '@microsoft/logic-apps-designer';
 import {
   DesignerProvider,
   BJSWorkflowProvider,
@@ -72,6 +73,7 @@ const DesignerEditor = () => {
 
   const workflowName = workflowId.split('/').splice(-1)[0];
   const siteResourceId = new ArmParser(workflowId).topmostResourceId;
+  const { data: customCodeData, isLoading: customCodeLoading } = useAllCustomCodeFiles(appId, workflowName);
   const { data, isLoading, isError, error } = useWorkflowAndArtifactsStandard(workflowId);
   const { data: settingsData, isLoading: settingsLoading, isError: settingsIsError, error: settingsError } = useAppSettings(siteResourceId);
   const { data: workflowAppData, isLoading: appLoading } = useWorkflowApp(siteResourceId);
@@ -165,7 +167,8 @@ const DesignerEditor = () => {
     setWorkflow(data?.properties.files[Artifact.WorkflowFile]);
   }, [data?.properties.files]);
 
-  if (isLoading || appLoading || settingsLoading) {
+
+  if (isLoading || appLoading || settingsLoading || customCodeLoading) {
     // eslint-disable-next-line react/jsx-no-useless-fragment
     return <></>;
   }
@@ -177,8 +180,10 @@ const DesignerEditor = () => {
     throw error ?? settingsError;
   }
 
-  const saveWorkflowFromDesigner = async (workflowFromDesigner: Workflow, customCode?: Record<string, CustomCode>): Promise<void> => {
-    await saveCustomCodeStandard(customCode);
+  const saveWorkflowFromDesigner = async (
+    workflowFromDesigner: Workflow,
+    customCode: Record<string, CustomCodeWithData> | undefined
+  ): Promise<void> => {
     const { definition, connectionReferences, parameters } = workflowFromDesigner;
     const workflowToSave = {
       ...workflow,
@@ -217,7 +222,15 @@ const DesignerEditor = () => {
     const connectionsToUpdate = getConnectionsToUpdate(originalConnectionsData, connectionsData ?? {});
     const parametersToUpdate = !isEqual(originalParametersData, parameters) ? (parameters as ParametersData) : undefined;
     const settingsToUpdate = !isEqual(settingsData?.properties, originalSettings) ? settingsData?.properties : undefined;
-    return saveWorkflowStandard(siteResourceId, workflowName, workflowToSave, connectionsToUpdate, parametersToUpdate, settingsToUpdate);
+    return saveWorkflowStandard(
+      siteResourceId,
+      workflowName,
+      workflowToSave,
+      connectionsToUpdate,
+      parametersToUpdate,
+      settingsToUpdate,
+      customCode
+    );
   };
 
   const getUpdatedWorkflow = async (): Promise<Workflow> => {
@@ -258,6 +271,7 @@ const DesignerEditor = () => {
         {workflow?.definition ? (
           <BJSWorkflowProvider
             workflow={{ definition: workflow?.definition, connectionReferences, parameters, kind: workflow?.kind }}
+            customCode={customCodeData}
             runInstance={runInstanceData}
           >
             <div style={{ height: 'inherit', width: 'inherit' }}>

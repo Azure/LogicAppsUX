@@ -1,4 +1,3 @@
-import { CustomCodeOperation, type CustomCode } from '../../../common/models/customcode';
 import { getInputDependencies } from '../../actions/bjsworkflow/initialize';
 import type { Settings } from '../../actions/bjsworkflow/settings';
 import type { NodeStaticResults } from '../../actions/bjsworkflow/staticresults';
@@ -10,7 +9,8 @@ import { resetNodesLoadStatus, resetWorkflowState } from '../global';
 import { LogEntryLevel, LoggerService } from '@microsoft/designer-client-services-logic-apps';
 import type { ParameterInfo, Token } from '@microsoft/designer-ui';
 import type { FilePickerInfo, InputParameter, OutputParameter, SwaggerParser } from '@microsoft/logic-apps-shared';
-import { getRecordEntry, type OpenAPIV2, type OperationInfo } from '@microsoft/utils-logic-apps';
+import type { OpenAPIV2, OperationInfo } from '@microsoft/utils-logic-apps';
+import { getRecordEntry } from '@microsoft/utils-logic-apps';
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import type { WritableDraft } from 'immer/dist/internal';
@@ -111,7 +111,6 @@ export interface OperationMetadataState {
   settings: Record<string, Settings>;
   actionMetadata: Record<string, any>;
   staticResults: Record<string, NodeStaticResults>;
-  customCode: Record<string, CustomCode>;
   repetitionInfos: Record<string, RepetitionContext>;
   errors: Record<string, Record<ErrorLevel, ErrorInfo | undefined>>;
   loadStatus: OperationMetadataLoadStatus;
@@ -132,7 +131,6 @@ const initialState: OperationMetadataState = {
   actionMetadata: {},
   staticResults: {},
   repetitionInfos: {},
-  customCode: {},
   errors: {},
   loadStatus: {
     nodesInitialized: false,
@@ -197,19 +195,6 @@ export interface UpdateParametersPayload {
     propertiesToUpdate: Partial<ParameterInfo>;
   }[];
   isUserAction?: boolean;
-}
-
-export interface AddCustomCodePayload {
-  nodeId: string;
-  fileData: string;
-  fileExtension: string;
-}
-
-export interface DeleteCustomCodePayload {
-  // the file name of deleted nodes may be unabled to be inferred from nodeId
-  // so must be included in payload
-  nodeId: string;
-  fileName: string;
 }
 
 export const operationMetadataSlice = createSlice({
@@ -434,14 +419,6 @@ export const operationMetadataSlice = createSlice({
         parameterGroup.parameters[index].validationErrors = validationErrors;
       }
     },
-    addOrUpdateCustomCode: (state, action: PayloadAction<AddCustomCodePayload>) => {
-      const { nodeId, fileData, fileExtension } = action.payload;
-      state.customCode[nodeId] = { operation: CustomCodeOperation.ADD, operationProps: { nodeId, fileData, fileExtension } };
-    },
-    deleteCustomCode: (state, action: PayloadAction<DeleteCustomCodePayload>) => {
-      const { nodeId, fileName } = action.payload;
-      state.customCode[nodeId] = { operation: CustomCodeOperation.DELETE, operationProps: { nodeId, fileName } };
-    },
     removeParameterValidationError: (
       state,
       action: PayloadAction<{ nodeId: string; groupId: string; parameterId: string; validationError: string }>
@@ -523,8 +500,6 @@ export const {
   updateStaticResults,
   updateParameterConditionalVisibility,
   updateParameterValidation,
-  addOrUpdateCustomCode,
-  deleteCustomCode,
   updateExisitingInputTokenTitles,
   removeParameterValidationError,
   updateOutputs,

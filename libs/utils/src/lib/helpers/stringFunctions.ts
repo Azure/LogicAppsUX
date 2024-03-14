@@ -24,3 +24,8 @@ export const wrapTokenValue = (s: string) => `@{${s}}`;
 export const cleanConnectorId = (id: string) => id.replace(/[()]/g, '');
 
 export const prettifyJsonString = (json: string) => JSON.stringify(JSON.parse(json), null, 4);
+
+export const splitFileName = (fileName: string) => {
+  const splitFileName = fileName.lastIndexOf('.');
+  return [fileName.slice(0, splitFileName), fileName.slice(splitFileName)];
+};

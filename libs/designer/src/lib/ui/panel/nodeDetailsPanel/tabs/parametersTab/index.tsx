@@ -1,8 +1,9 @@
 import constants from '../../../../../common/constants';
 import { useShowIdentitySelectorQuery } from '../../../../../core/state/connection/connectionSelector';
+import { addOrUpdateCustomCode } from '../../../../../core/state/customcode/customcodeSlice';
 import { useHostOptions, useReadOnly } from '../../../../../core/state/designerOptions/designerOptionsSelectors';
 import type { ParameterGroup } from '../../../../../core/state/operation/operationMetadataSlice';
-import { DynamicLoadStatus, ErrorLevel, addOrUpdateCustomCode } from '../../../../../core/state/operation/operationMetadataSlice';
+import { DynamicLoadStatus, ErrorLevel } from '../../../../../core/state/operation/operationMetadataSlice';
 import {
   useDependencies,
   useNodesInitialized,
@@ -40,7 +41,7 @@ import { ConnectionDisplay } from './connectionDisplay';
 import { IdentitySelector } from './identityselector';
 import { MessageBar, MessageBarType, Spinner, SpinnerSize } from '@fluentui/react';
 import { Divider } from '@fluentui/react-components';
-import { EditorService } from '@microsoft/designer-client-services-logic-apps';
+import { CustomCodeService, EditorService } from '@microsoft/designer-client-services-logic-apps';
 import {
   DynamicCallStatus,
   PanelLocation,
@@ -218,12 +219,9 @@ const ParameterSection = ({
           dispatch(updateVariableInfo({ id: nodeId, type: value[0]?.value }));
         }
       }
-      if (
-        equals(parameter?.editor, constants.EDITOR.CODE) &&
-        !equals(parameter?.editorOptions?.language, constants.EDITOR_OPTIONS.LANGUAGE.JAVASCRIPT)
-      ) {
-        const { fileData, fileExtension } = viewModel.customCodeData;
-        dispatch(addOrUpdateCustomCode({ nodeId, fileData, fileExtension }));
+      if (CustomCodeService().isCustomCode(parameter?.editor, parameter?.editorOptions?.language)) {
+        const { fileData, fileExtension, fileName } = viewModel.customCodeData;
+        dispatch(addOrUpdateCustomCode({ nodeId, fileData, fileExtension, fileName }));
       }
 
       updateParameterAndDependencies(
@@ -404,6 +402,8 @@ const ParameterSection = ({
       const { editor, editorOptions } = getEditorAndOptions(operationInfo, param, upstreamNodeIds ?? [], variables);
 
       const { value: remappedValues } = remapValueSegmentsWithNewIds(value, idReplacements);
+      const isCodeEditor = editor?.toLowerCase() === constants.EDITOR.CODE;
+
       return {
         settingType: 'SettingTokenField',
         settingProp: {
@@ -439,17 +439,7 @@ const ParameterSection = ({
             editorType?: string,
             setIsInTokenPicker?: (b: boolean) => void,
             tokenClickedCallback?: (token: ValueSegment) => void
-          ) =>
-            getTokenPicker(
-              id,
-              editorId,
-              labelId,
-              tokenPickerMode,
-              editorType,
-              editor?.toLowerCase() === constants.EDITOR.CODE,
-              setIsInTokenPicker,
-              tokenClickedCallback
-            ),
+          ) => getTokenPicker(id, editorId, labelId, tokenPickerMode, editorType, isCodeEditor, setIsInTokenPicker, tokenClickedCallback),
         },
       };
     });

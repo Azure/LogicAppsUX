@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
 import Constants from '../../../common/constants';
-import type { ConnectionReference, ConnectionReferences, WorkflowParameter } from '../../../common/models/workflow';
+import type { ConnectionReference, ConnectionReferences, CustomCodeWithData, WorkflowParameter } from '../../../common/models/workflow';
 import type { DeserializedWorkflow } from '../../parsers/BJSWorkflow/BJSDeserializer';
 import type { WorkflowNode } from '../../parsers/models/workflowNode';
 import type { ConnectorWithParsedSwagger } from '../../queries/connections';
@@ -99,6 +99,7 @@ export const initializeOperationMetadata = async (
   deserializedWorkflow: DeserializedWorkflow,
   references: ConnectionReferences,
   workflowParameters: Record<string, WorkflowParameter>,
+  customCode: Record<string, CustomCodeWithData>,
   workflowKind: WorkflowKind,
   forceEnableSplitOn: boolean,
   dispatch: Dispatch
@@ -119,7 +120,9 @@ export const initializeOperationMetadata = async (
       triggerNodeId = operationId;
     }
     if (operationManifestService.isSupported(operation.type, operation.kind)) {
-      promises.push(initializeOperationDetailsForManifest(operationId, operation, !!isTrigger, workflowKind, forceEnableSplitOn, dispatch));
+      promises.push(
+        initializeOperationDetailsForManifest(operationId, operation, customCode, !!isTrigger, workflowKind, forceEnableSplitOn, dispatch)
+      );
     } else {
       promises.push(
         initializeOperationDetailsForSwagger(operationId, operation, references, !!isTrigger, workflowKind, forceEnableSplitOn, dispatch)
@@ -202,6 +205,7 @@ const initializeConnectorsForReferences = async (references: ConnectionReference
 export const initializeOperationDetailsForManifest = async (
   nodeId: string,
   _operation: LogicAppsV2.ActionDefinition | LogicAppsV2.TriggerDefinition,
+  customCode: Record<string, CustomCodeWithData>,
   isTrigger: boolean,
   workflowKind: WorkflowKind,
   forceEnableSplitOn: boolean,
@@ -242,7 +246,7 @@ export const initializeOperationDetailsForManifest = async (
     }
     // Populate Customcode with values gotten from file system
     if (equals(operationInfo.connectorId, Constants.INLINECODE) && !equals(operationInfo.operationId, 'javascriptcode')) {
-      await updateCustomCodeInInputs(nodeId, getFileExtensionNameFromOperationId(operationInfo.operationId), nodeInputs);
+      updateCustomCodeInInputs(nodeId, getFileExtensionNameFromOperationId(operationInfo.operationId), nodeInputs, customCode);
     }
 
     const { outputs: nodeOutputs, dependencies: outputDependencies } = getOutputParametersFromManifest(

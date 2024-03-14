@@ -44,3 +44,13 @@ export interface WorkflowParameter {
   description?: string;
   allowedValues?: any[];
 }
+export interface CustomCode {
+  nodeId: string;
+  fileExtension: string;
+  isModified?: boolean;
+  isDeleted?: boolean;
+}
+
+export interface CustomCodeWithData extends CustomCode {
+  fileData: string;
+}

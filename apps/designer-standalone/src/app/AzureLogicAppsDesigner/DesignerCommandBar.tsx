@@ -1,3 +1,4 @@
+import type { CustomCodeWithData } from './Models/CustomCode';
 import { FontIcon, mergeStyles, mergeStyleSets } from '@fluentui/react';
 import { Badge } from '@fluentui/react-components';
 import type { ICommandBarItemProps } from '@fluentui/react/lib/CommandBar';
@@ -5,7 +6,7 @@ import { CommandBar } from '@fluentui/react/lib/CommandBar';
 import { Spinner, SpinnerSize } from '@fluentui/react/lib/Spinner';
 import type { ILoggerService } from '@microsoft/designer-client-services-logic-apps';
 import { LogEntryLevel, LoggerService } from '@microsoft/designer-client-services-logic-apps';
-import type { CustomCode, RootState, Workflow } from '@microsoft/logic-apps-designer';
+import type { RootState, Workflow } from '@microsoft/logic-apps-designer';
 import {
   store as DesignerStore,
   serializeBJSWorkflow,
@@ -19,6 +20,7 @@ import {
   updateParameterValidation,
   openPanel,
   useNodesInitialized,
+  getCustomCodeFilesWithData,
 } from '@microsoft/logic-apps-designer';
 import { isNullOrEmpty, RUN_AFTER_COLORS } from '@microsoft/utils-logic-apps';
 import { useMemo } from 'react';
@@ -49,7 +51,7 @@ export const DesignerCommandBar = ({
   location: string;
   isReadOnly: boolean;
   discard: () => unknown;
-  saveWorkflow: (workflow: Workflow, customCode?: Record<string, CustomCode>) => Promise<void>;
+  saveWorkflow: (workflow: Workflow, customCodeData: Record<string, CustomCodeWithData> | undefined) => Promise<void>;
   isDarkMode: boolean;
   isConsumption?: boolean;
   showConnectionsPanel?: boolean;
@@ -66,8 +68,6 @@ export const DesignerCommandBar = ({
       ignoreNonCriticalErrors: true,
     });
 
-    const customCodeToUpdate = designerState.operations.customCode;
-
     const validationErrorsList = Object.entries(designerState.operations.inputParameters).reduce((acc, [id, nodeInputs]) => {
       const hasValidationErrors = Object.values(nodeInputs.parameterGroups).some((parameterGroup) => {
         return parameterGroup.parameters.some((parameter) => {
@@ -83,8 +83,10 @@ export const DesignerCommandBar = ({
 
     const hasParametersErrors = !isNullOrEmpty(validationErrorsList);
 
+    const customCodeFilesWithData = getCustomCodeFilesWithData(designerState.customCode);
+
     if (!hasParametersErrors) {
-      await saveWorkflow(serializedWorkflow, customCodeToUpdate);
+      await saveWorkflow(serializedWorkflow, customCodeFilesWithData);
       updateCallbackUrl(designerState, DesignerStore.dispatch);
     }
   });

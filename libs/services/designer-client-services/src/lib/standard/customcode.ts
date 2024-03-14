@@ -1,5 +1,7 @@
 import type { ICustomCodeService, UploadCustomCode, VFSObject } from '../customcode';
+import { CustomCodeConstants } from '../customcode';
 import type { IHttpClient } from '../httpClient';
+import { equals } from '@microsoft/utils-logic-apps';
 
 export interface CustomCodeServiceOptions {
   apiVersion: string;
@@ -30,6 +32,11 @@ export class StandardCustomCodeService implements ICustomCodeService {
       throw new Error('httpClient required');
     }
   }
+
+  isCustomCode(editor?: string, language?: string): boolean {
+    return equals(editor, CustomCodeConstants.EDITOR.CODE) && !equals(language, CustomCodeConstants.EDITOR_OPTIONS.LANGUAGE.JAVASCRIPT);
+  }
+
   async getAllCustomCodeFiles(): Promise<VFSObject[]> {
     const { apiVersion, baseUrl, subscriptionId, resourceGroup, appName, workflowName, httpClient } = this.options;
     const uri = `${baseUrl}/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Web/sites/${appName}/hostruntime/admin/vfs/${workflowName}`;
@@ -54,6 +61,7 @@ export class StandardCustomCodeService implements ICustomCodeService {
       }
     }
   }
+
   async getCustomCodeFile(fileName: string): Promise<string> {
     const { apiVersion, baseUrl, subscriptionId, resourceGroup, appName, workflowName, httpClient } = this.options;
     const uri = `${baseUrl}/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Web/sites/${appName}/hostruntime/admin/vfs/${workflowName}/${fileName}`;

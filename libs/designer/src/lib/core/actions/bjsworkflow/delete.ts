@@ -1,15 +1,18 @@
 import { type RootState } from '../../..';
+import constants from '../../../common/constants';
 import type { WorkflowNode } from '../../parsers/models/workflowNode';
 import { removeNodeConnectionData } from '../../state/connection/connectionSlice';
-import { deinitializeNodes, deinitializeOperationInfo, deleteCustomCode } from '../../state/operation/operationMetadataSlice';
+import { deleteCustomCode } from '../../state/customcode/customcodeSlice';
+import { deinitializeNodes, deinitializeOperationInfo } from '../../state/operation/operationMetadataSlice';
 import { clearPanel } from '../../state/panel/panelSlice';
 import { setValidationError } from '../../state/setting/settingSlice';
 import { deinitializeStaticResultProperty } from '../../state/staticresultschema/staticresultsSlice';
 import { deinitializeTokensAndVariables } from '../../state/tokens/tokensSlice';
 import { clearFocusNode, deleteNode } from '../../state/workflow/workflowSlice';
-import { getParameterFromName } from '../../utils/parameters/helper';
+import { getCustomCodeFileName, getParameterFromName } from '../../utils/parameters/helper';
 import { updateAllUpstreamNodes } from './initialize';
-import { WORKFLOW_NODE_TYPES, getRecordEntry, replaceWhiteSpaceWithUnderscore } from '@microsoft/utils-logic-apps';
+import { CustomCodeService } from '@microsoft/designer-client-services-logic-apps';
+import { WORKFLOW_NODE_TYPES, getRecordEntry } from '@microsoft/utils-logic-apps';
 import type { Dispatch } from '@reduxjs/toolkit';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { batch } from 'react-redux';
@@ -51,12 +54,14 @@ const deleteOperationDetails = async (nodeId: string, dispatch: Dispatch): Promi
 };
 
 const deleteCustomCodeInfo = (nodeId: string, dispatch: Dispatch, state: RootState): void => {
-  let fileName = replaceWhiteSpaceWithUnderscore(getRecordEntry(state.workflow.idReplacements, nodeId) ?? nodeId);
   const nodeInputs = getRecordEntry(state.operations.inputParameters, nodeId);
+  const idReplacements = state.workflow.idReplacements;
   if (nodeInputs) {
-    const fileExtension = getParameterFromName(nodeInputs, 'CodeFile')?.editorViewModel?.customCodeData?.fileExtension;
-    fileName += fileExtension;
-    dispatch(deleteCustomCode({ nodeId, fileName }));
+    const parameter = getParameterFromName(nodeInputs, constants.DEFAULT_CUSTOM_CODE_INPUT);
+    if (CustomCodeService().isCustomCode(parameter?.editor, parameter?.editorOptions?.language)) {
+      const fileName = getCustomCodeFileName(nodeId, nodeInputs, idReplacements);
+      dispatch(deleteCustomCode({ nodeId, fileName }));
+    }
   }
 };
 
