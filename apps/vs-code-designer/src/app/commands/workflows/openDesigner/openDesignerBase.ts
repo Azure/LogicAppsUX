@@ -42,6 +42,7 @@ export abstract class OpenDesignerBase {
   protected unitTestName: string;
   protected isUnitTest: boolean;
   protected unitTestDefinition: any;
+  protected runId?: string;
 
   protected constructor(
     context: IActionContext | IAzureConnectorsContext,

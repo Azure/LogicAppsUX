@@ -134,7 +134,7 @@ export default class OpenMonitoringViewForLocal extends OpenMonitoringViewBase {
         break;
       }
       case ExtensionCommand.createUnitTest: {
-        await createUnitTest(this.context as IAzureConnectorsContext, vscode.Uri.file(this.workflowFilePath));
+        await createUnitTest(this.context as IAzureConnectorsContext, vscode.Uri.file(this.workflowFilePath), message.runId);
         break;
       }
       default:

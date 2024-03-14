@@ -104,7 +104,7 @@ export const DesignerApp = () => {
   }, [connectionData]);
 
   const getRunInstance = () => {
-    if (isMonitoringView && !isEmptyString(runId) && panelMetaData !== null) {
+    if ((isMonitoringView || isUnitTest) && !isEmptyString(runId) && panelMetaData !== null) {
       return services.runService.getRun(runId);
     }
     return;
@@ -118,6 +118,18 @@ export const DesignerApp = () => {
       } as StandardApp;
       setRunInstance(runDefinition);
       setStandardApp(standardAppInstance);
+    } else if (isUnitTest) {
+      const actionOutputs = Object.keys(runDefinition.properties.actions).reduce((acc, actionName) => {
+        return {
+          ...acc,
+          [actionName]: {
+            status: runDefinition.properties.actions[actionName].status,
+            outputsLink: runDefinition.properties.actions[actionName].outputsLink,
+          },
+        };
+      }, {});
+
+      console.log('charlie', runDefinition, actionOutputs);
     }
   };
 
@@ -126,6 +138,7 @@ export const DesignerApp = () => {
     setStandardApp(undefined);
   };
 
+  /// NEED TO UPDATE THIS
   const { refetch, isError, isFetching, isLoading, isRefetching } = useQuery<any>(['runInstance', { runId }], getRunInstance, {
     refetchOnWindowFocus: false,
     refetchOnMount: true,
@@ -159,6 +172,7 @@ export const DesignerApp = () => {
         isDarkMode={theme === Theme.Dark}
         isUnitTest={isUnitTest}
         isLocal={isLocal}
+        runId={runId}
       />
     );
 
