@@ -36,10 +36,10 @@ export interface OutputMocksProps {
 }
 
 export const ActionResults = {
-  SUCCESS: 'success',
-  TIMEDOUT: 'timedOut',
-  SKIPPED: 'skipped',
-  FAILED: 'failed',
+  SUCCESS: 'Succeeded',
+  TIMEDOUT: 'TimedOut',
+  SKIPPED: 'Skipped',
+  FAILED: 'Failed',
 };
 
 export interface OutputsField extends SettingProps {

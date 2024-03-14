@@ -1138,9 +1138,9 @@ const getTriggerActionMocks = (
       const outputsValue = parseOutputMock(outputMock.output);
       if (key.charAt(0) === '&') {
         const triggerName = key.substring(1);
-        triggerMocks[triggerName] = { actionResult: outputMock.actionResult, outputs: outputsValue };
+        triggerMocks[triggerName] = { properties: { status: outputMock.actionResult }, outputs: outputsValue };
       } else {
-        actionMocks[key] = { actionResult: outputMock.actionResult, outputs: outputsValue };
+        actionMocks[key] = { properties: { status: outputMock.actionResult }, outputs: outputsValue };
       }
     }
   });

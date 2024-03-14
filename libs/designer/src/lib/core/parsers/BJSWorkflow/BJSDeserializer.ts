@@ -174,7 +174,7 @@ export const deserializeUnitTestDefinition = (
   if (triggerName) {
     const mockOutputs = unitTestDefinition.triggerMocks[triggerName].outputs ?? {};
     mockResults[`&${triggerName}`] = {
-      actionResult: unitTestDefinition.triggerMocks[triggerName].actionResult ?? ActionResults.SUCCESS,
+      actionResult: unitTestDefinition.triggerMocks[triggerName].properties?.status ?? ActionResults.SUCCESS,
       output: mockOutputs,
       isCompleted: !isNullOrEmpty(mockOutputs),
     };
@@ -183,7 +183,7 @@ export const deserializeUnitTestDefinition = (
   Object.keys(unitTestDefinition.actionMocks).forEach((actionName) => {
     const mockOutputs = unitTestDefinition.actionMocks[actionName].outputs ?? {};
     mockResults[actionName] = {
-      actionResult: unitTestDefinition.actionMocks[actionName].actionResult ?? ActionResults.SUCCESS,
+      actionResult: unitTestDefinition.actionMocks[actionName].properties?.status ?? ActionResults.SUCCESS,
       output: mockOutputs,
       isCompleted: !isNullOrEmpty(mockOutputs),
     };
