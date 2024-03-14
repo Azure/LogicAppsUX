@@ -36,6 +36,7 @@ export const DesignerApp = () => {
     hostVersion,
     isUnitTest,
     unitTestDefinition,
+    workflowRuntimeBaseUrl,
   } = vscodeState;
   const [standardApp, setStandardApp] = useState<StandardApp | undefined>(panelMetaData?.standardApp);
   const [runInstance, setRunInstance] = useState<LogicAppsV2.RunInstanceDefinition | null>(null);
@@ -74,6 +75,7 @@ export const DesignerApp = () => {
     };
     return getDesignerServices(
       baseUrl,
+      workflowRuntimeBaseUrl,
       apiVersion,
       apiHubServiceDetails ?? {},
       isLocal,
@@ -87,6 +89,7 @@ export const DesignerApp = () => {
     );
   }, [
     baseUrl,
+    workflowRuntimeBaseUrl,
     apiVersion,
     apiHubServiceDetails,
     isLocal,
@@ -123,7 +126,9 @@ export const DesignerApp = () => {
         return {
           ...acc,
           [actionName]: {
-            status: runDefinition.properties.actions[actionName].status,
+            properties: {
+              status: runDefinition.properties.actions[actionName].status,
+            },
             outputsLink: runDefinition.properties.actions[actionName].outputsLink,
           },
         };
@@ -138,7 +143,7 @@ export const DesignerApp = () => {
     setStandardApp(undefined);
   };
 
-  /// NEED TO UPDATE THIS
+  /// TODO(ccastrotrejo): NEED TO UPDATE THIS
   const { refetch, isError, isFetching, isLoading, isRefetching } = useQuery<any>(['runInstance', { runId }], getRunInstance, {
     refetchOnWindowFocus: false,
     refetchOnMount: true,

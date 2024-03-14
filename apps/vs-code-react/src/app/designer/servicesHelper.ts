@@ -21,7 +21,7 @@ import type {
   IWorkflowService,
 } from '@microsoft/designer-client-services-logic-apps';
 import type { ManagedIdentity } from '@microsoft/utils-logic-apps';
-import { HTTP_METHODS, clone } from '@microsoft/utils-logic-apps';
+import { HTTP_METHODS, clone, isEmptyString } from '@microsoft/utils-logic-apps';
 import type { ConnectionAndAppSetting, ConnectionsData, IDesignerPanelMetadata } from '@microsoft/vscode-extension';
 import { ExtensionCommand, HttpClient } from '@microsoft/vscode-extension';
 import type { QueryClient } from 'react-query';
@@ -29,6 +29,7 @@ import type { WebviewApi } from 'vscode-webview';
 
 export const getDesignerServices = (
   baseUrl: string,
+  workflowRuntimeBaseUrl: string,
   apiVersion: string,
   apiHubDetails: ApiHubServiceDetails,
   isLocal: boolean,
@@ -278,7 +279,7 @@ export const getDesignerServices = (
 
   const runService = new StandardRunService({
     apiVersion,
-    baseUrl,
+    baseUrl: isEmptyString(workflowRuntimeBaseUrl) ? baseUrl : workflowRuntimeBaseUrl,
     workflowName: panelMetadata?.workflowName ?? '',
     httpClient,
   });

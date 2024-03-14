@@ -8,6 +8,7 @@ export interface DesignerState {
   panelMetaData: IDesignerPanelMetadata | null;
   connectionData: ConnectionsData;
   baseUrl: string;
+  workflowRuntimeBaseUrl: string;
   apiVersion: string;
   apiHubServiceDetails: ApiHubServiceDetails;
   readOnly: boolean;
@@ -26,6 +27,7 @@ export interface DesignerState {
 const initialState: DesignerState = {
   panelMetaData: null,
   baseUrl: '/url',
+  workflowRuntimeBaseUrl: '',
   apiVersion: '2018-11-01',
   connectionData: {},
   apiHubServiceDetails: {
@@ -57,6 +59,7 @@ export const designerSlice = createSlice({
   name: 'designer',
   initialState,
   reducers: {
+    /// TODO(ccastrotrejo): Update missing types
     initializeDesigner: (state, action: PayloadAction<any>) => {
       const {
         panelMetadata,
@@ -72,11 +75,13 @@ export const designerSlice = createSlice({
         hostVersion,
         isUnitTest,
         unitTestDefinition,
+        workflowRuntimeBaseUrl,
       } = action.payload;
 
       state.panelMetaData = panelMetadata;
       state.connectionData = connectionData;
       state.baseUrl = baseUrl;
+      state.workflowRuntimeBaseUrl = workflowRuntimeBaseUrl ?? '';
       state.apiVersion = apiVersion;
       state.apiHubServiceDetails = apiHubServiceDetails;
       state.readOnly = readOnly;

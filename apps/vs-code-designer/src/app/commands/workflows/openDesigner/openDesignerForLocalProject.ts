@@ -46,11 +46,10 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
     const apiVersion = '2018-11-01';
     const panelName = `${workspace.name}-${workflowName}${unitTestName ? `-${unitTestName}` : ''}`;
     const panelGroupKey = ext.webViewKey.designerLocal;
-    const runWorflowId = runId && runId.endsWith('/') ? runId.substring(0, runId.length - 1) : runId;
+    const runName = runId ? runId.split('/').slice(-1)[0] : '';
 
-    super(context, workflowName, panelName, apiVersion, panelGroupKey, !!unitTestName, true, false);
+    super(context, workflowName, panelName, apiVersion, panelGroupKey, !!unitTestName, true, false, runName);
 
-    this.runId = runWorflowId;
     this.unitTestName = unitTestName;
     this.isUnitTest = !!unitTestName;
     this.unitTestDefinition = unitTestDefinition ?? null;
@@ -97,6 +96,7 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
     await startDesignTimeApi(this.projectPath);
 
     this.baseUrl = `http://localhost:${ext.designTimePort}${managementApiPrefix}`;
+    this.workflowRuntimeBaseUrl = `http://localhost:${ext.workflowRuntimePort}${managementApiPrefix}`;
 
     this.panel = window.createWebviewPanel(
       this.panelGroupKey, // Key used to reference the panel
@@ -165,6 +165,7 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
             panelMetadata: this.panelMetadata,
             connectionData: this.connectionData,
             baseUrl: this.baseUrl,
+            workflowRuntimeBaseUrl: this.workflowRuntimeBaseUrl,
             apiVersion: this.apiVersion,
             apiHubServiceDetails: this.apiHubServiceDetails,
             readOnly: this.readOnly,
