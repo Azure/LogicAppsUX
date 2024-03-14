@@ -1,4 +1,14 @@
 # Logic Apps Designer
+## [2.126.0](https://github.com/Azure/LogicAppsUX/compare/v2.125.0...v2.126.0) (2024-03-14)
+
+
+### Bug Fixes
+
+* **Consumption:** Adding check for valid 'false' value ([#4360](https://github.com/Azure/LogicAppsUX/issues/4360)) ([4791743](https://github.com/Azure/LogicAppsUX/commit/4791743f840bd68d6789801490fb25f492f41005))
+* **Consumption:** Changing 'undefined' check for value ([#4361](https://github.com/Azure/LogicAppsUX/issues/4361)) ([b4e0212](https://github.com/Azure/LogicAppsUX/commit/b4e0212690c16190629e0d0b352908965a30d02f))
+* **Designer:** Only resolve app settings if they are used in resource ids ([#4354](https://github.com/Azure/LogicAppsUX/issues/4354)) ([04b6f29](https://github.com/Azure/LogicAppsUX/commit/04b6f29e694ef9dc2e87971162bd5275f2dbd66b))
+* **Designer:** Reverted app settings resolve change ([#4353](https://github.com/Azure/LogicAppsUX/issues/4353)) ([38e3959](https://github.com/Azure/LogicAppsUX/commit/38e3959adf6189633fd1f5b133ebe55d704d0cf9))
+
 ## [2.125.0](https://github.com/Azure/LogicAppsUX/compare/v2.124.0...v2.125.0) (2024-03-11)
 
 
