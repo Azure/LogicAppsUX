@@ -9,7 +9,7 @@ import { Spinner, SpinnerSize, Text } from '@fluentui/react';
 import type { ConnectionCreationInfo } from '@microsoft/designer-client-services-logic-apps';
 import type { ConnectionReferences } from '@microsoft/logic-apps-designer';
 import { DesignerProvider, BJSWorkflowProvider, Designer, getTheme, useThemeObserver } from '@microsoft/logic-apps-designer';
-import type { LogicAppsV2 } from '@microsoft/utils-logic-apps';
+import type { ContentLink, LogicAppsV2 } from '@microsoft/utils-logic-apps';
 import { isEmptyString, Theme } from '@microsoft/utils-logic-apps';
 import type { FileSystemConnectionInfo, StandardApp } from '@microsoft/vscode-extension';
 import { ExtensionCommand } from '@microsoft/vscode-extension';
@@ -40,6 +40,7 @@ export const DesignerApp = () => {
   } = vscodeState;
   const [standardApp, setStandardApp] = useState<StandardApp | undefined>(panelMetaData?.standardApp);
   const [runInstance, setRunInstance] = useState<LogicAppsV2.RunInstanceDefinition | null>(null);
+
   const [theme, setTheme] = useState<Theme>(getTheme(document.body));
   const intl = useIntl();
   const queryClient = useQueryClient();
@@ -122,19 +123,37 @@ export const DesignerApp = () => {
       setRunInstance(runDefinition);
       setStandardApp(standardAppInstance);
     } else if (isUnitTest) {
-      const actionOutputs = Object.keys(runDefinition.properties.actions).reduce((acc, actionName) => {
-        return {
-          ...acc,
-          [actionName]: {
+      const triggerOutputs = await services.runService.getActionLinks({
+        outputsLink: runDefinition.properties.trigger.outputsLink as ContentLink,
+      });
+      const triggerMocks = {
+        properties: {
+          status: runDefinition.properties.trigger.status,
+        },
+        outputs: triggerOutputs.outputs,
+      };
+
+      const actionMocks: Record<string, any> = {};
+      await Promise.all(
+        Object.keys(runDefinition.properties.actions).map(async (actionName) => {
+          const outputsLink = runDefinition.properties.actions[actionName].outputsLink as ContentLink;
+          const actionOutputs = await services.runService.getActionLinks({ outputsLink });
+          actionMocks[actionName] = {
             properties: {
               status: runDefinition.properties.actions[actionName].status,
             },
-            outputsLink: runDefinition.properties.actions[actionName].outputsLink,
-          },
-        };
-      }, {});
+            outputs: actionOutputs.outputs,
+          };
+        })
+      );
 
-      console.log('charlie', runDefinition, actionOutputs);
+      const unitTestDefinition2 = {
+        triggerMocks: triggerMocks,
+        actionMocks: actionMocks,
+        assertions: {},
+      };
+
+      console.log('charlie', runDefinition, unitTestDefinition2);
     }
   };
 
