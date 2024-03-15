@@ -1,6 +1,22 @@
 {
   "name": "@microsoft/designer-client-services-logic-apps",
   "version": "2.125.0",
+  "module": "./index.js",
+  "main": "./index.cjs",
+  "type": "module",
+  "types": "./index.d.ts",
+  "devDependencies": {
+    "@rollup/plugin-commonjs": "25.0.7",
+    "@rollup/plugin-json": "6.1.0",
+    "@rollup/plugin-node-resolve": "15.2.3",
+    "@rollup/plugin-typescript": "11.1.6"
+  },
+  "dependencies": {
+    "@microsoft/logic-apps-shared": "2.121.0",
+    "react-query": "3.39.3",
+    "axios": "1.6.0",
+    "react-intl": "6.3.0"
+  },
   "scripts": {
     "yalcpush": "yalc push ../../../dist/libs/services/designer-client-services"
   }

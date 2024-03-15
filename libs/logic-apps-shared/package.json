@@ -1,6 +1,10 @@
 {
   "name": "@microsoft/logic-apps-shared",
   "version": "2.125.0",
+  "module": "./index.js",
+  "main": "./index.cjs",
+  "type": "module",
+  "types": "./index.d.ts",
   "scripts": {
     "yalcpush": "yalc push ../../dist/libs/logic-apps-shared"
   },
@@ -10,8 +14,7 @@
     "@rollup/plugin-json": "6.1.0",
     "@rollup/plugin-node-resolve": "15.2.3",
     "@rollup/plugin-typescript": "11.1.6",
-    "rollup-plugin-copy":  "^3.5.0",
-    
+    "rollup-plugin-copy": "^3.5.0"
   },
   "dependencies": {
     "react-intl": "6.3.0",
