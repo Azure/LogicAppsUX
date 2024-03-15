@@ -6,6 +6,7 @@ import { type OutputMock } from '../../state/unitTest/unitTestInterfaces';
 import type { Operations, NodesMetadata } from '../../state/workflow/workflowInterfaces';
 import { createWorkflowNode, createWorkflowEdge } from '../../utils/graph';
 import { toConditionViewModel } from '../../utils/parameters/helper';
+import { createLiteralValueSegment } from '../../utils/parameters/segment';
 import type { WorkflowNode, WorkflowEdge } from '../models/workflowNode';
 import { LoggerService, Status } from '@microsoft/designer-client-services-logic-apps';
 import { getDurationStringPanelMode, ActionResults } from '@microsoft/designer-ui';
@@ -116,6 +117,18 @@ export const Deserialize = (
 };
 
 /**
+ * Parses the mock outputs to a value segment.
+ * @param {Record<string,any>} mockOutputs - The mock outputs to be parsed.
+ * @returns The parsed value segment.
+ */
+const parseOutputsToValueSegment = (mockOutputs: Record<string, any>) => {
+  return Object.keys(mockOutputs).reduce((acc, key) => {
+    const value = typeof mockOutputs[key].value === 'object' ? JSON.stringify(mockOutputs[key].value) : mockOutputs[key].value;
+    return { ...acc, [key]: [createLiteralValueSegment(value)] };
+  }, {});
+};
+
+/**
  * Deserializes a unit test definition and a workflow definition into assertions and mock results.
  * @param {UnitTestDefinition | null} unitTestDefinition - The unit test definition to deserialize.
  * @param {Workflow} workflowDefinition - The workflow definition to deserialize.
@@ -172,11 +185,11 @@ export const deserializeUnitTestDefinition = (
   const triggerName = triggersKeys[0]; // only 1 trigger
 
   if (triggerName) {
-    const mockOutputs = unitTestDefinition.triggerMocks[triggerName].outputs ?? {};
+    const mocksTrigger = unitTestDefinition.triggerMocks[triggerName].outputs ?? {};
     mockResults[`&${triggerName}`] = {
       actionResult: unitTestDefinition.triggerMocks[triggerName].properties?.status ?? ActionResults.SUCCESS,
-      output: mockOutputs,
-      isCompleted: !isNullOrEmpty(mockOutputs),
+      output: parseOutputsToValueSegment(mocksTrigger),
+      isCompleted: !isNullOrEmpty(mocksTrigger),
     };
   }
 
@@ -184,7 +197,7 @@ export const deserializeUnitTestDefinition = (
     const mockOutputs = unitTestDefinition.actionMocks[actionName].outputs ?? {};
     mockResults[actionName] = {
       actionResult: unitTestDefinition.actionMocks[actionName].properties?.status ?? ActionResults.SUCCESS,
-      output: mockOutputs,
+      output: parseOutputsToValueSegment(mockOutputs),
       isCompleted: !isNullOrEmpty(mockOutputs),
     };
   });
