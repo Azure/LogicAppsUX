@@ -218,6 +218,7 @@
     "react-dom": "18.2.0",
     "react-test-renderer": "18.2.0",
     "recursive-copy": "^2.0.14",
+    "rollup-plugin-copy": "^3.5.0",
     "rollup-plugin-peer-deps-external": "2.2.4",
     "standard-version": "9.5.0",
     "style-loader": "3.3.1",

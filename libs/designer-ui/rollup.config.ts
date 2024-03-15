@@ -7,11 +7,9 @@ import postcss from 'rollup-plugin-postcss';
 
 const externalFn = (str, parent, _isResolved) => {
   if (str.includes('logic-apps-shared') || str.includes('designer-client-services')) {
-    //console.log(`Parent: ${parent} ${str}`);
     return true;
   }
   if (str.includes('node_modules')) {
-    //console.log(`Parent: ${parent} ${str}`);
     return true;
   }
   return false;
@@ -20,7 +18,7 @@ const externalFn = (str, parent, _isResolved) => {
 export default {
   input: 'src/index.ts',
   cache: false, // temporarily disable cache for testing
-  external: externalFn, //['@microsoft/logic-apps-shared', 'libs/logic-apps-shared/src/index.ts', '/node_modules/'],
+  external: externalFn,
   output: {
     format: 'esm',
     dir: '../../dist/rollup/libs/designer-ui',

@@ -6,5 +6,5 @@
     "types": []
   },
   "include": ["**/*.ts", "**/*.tsx", "**/*.json", "**/compiled-lang/*.json"],
-  "exclude": ["**/*.spec.ts", "jest.config.ts", "rollup.config.ts"]
+  "exclude": ["**/*.spec.ts","**/*.spec.tsx", "jest.config.ts", "rollup.config.ts"]
 }

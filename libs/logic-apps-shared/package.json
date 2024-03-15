@@ -3,5 +3,20 @@
   "version": "2.125.0",
   "scripts": {
     "yalcpush": "yalc push ../../dist/libs/logic-apps-shared"
+  },
+  "devDependencies": {
+    "@rollup/plugin-babel": "5.3.1",
+    "@rollup/plugin-commonjs": "25.0.7",
+    "@rollup/plugin-json": "6.1.0",
+    "@rollup/plugin-node-resolve": "15.2.3",
+    "@rollup/plugin-typescript": "11.1.6",
+    "rollup-plugin-copy":  "^3.5.0",
+    
+  },
+  "dependencies": {
+    "react-intl": "6.3.0",
+    "react-query": "3.39.3",
+    "@apidevtools/swagger-parser": "10.0.3",
+    "reactflow": "11.8.2"
   }
 }
