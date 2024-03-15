@@ -339,9 +339,9 @@ const serializeSwaggerBasedOperation = async (rootState: RootState, operationId:
       ? constructInputValues('recurrence.$.recurrence', inputsToSerialize, false /* encodePathComponents */)
       : undefined;
   const retryPolicy = getRetryPolicy(nodeSettings);
-  const inputPathValue = await serializeParametersFromSwagger(inputsToSerialize, operationInfo);
+  const inputValues = await serializeParametersFromSwagger(inputsToSerialize, operationInfo);
   const hostInfo = { host: { connection: { referenceName: getRecordEntry(rootState.connections.connectionsMapping, operationId) } } };
-  const inputs = { ...hostInfo, ...inputPathValue, retryPolicy };
+  const inputs = { ...hostInfo, ...inputValues, retryPolicy };
   const serializedType = equals(type, Constants.NODE.TYPE.API_CONNECTION)
     ? Constants.SERIALIZED_TYPE.API_CONNECTION
     : equals(type, Constants.NODE.TYPE.API_CONNECTION_NOTIFICATION)
