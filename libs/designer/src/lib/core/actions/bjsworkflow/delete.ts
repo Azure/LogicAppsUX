@@ -9,7 +9,7 @@ import { setValidationError } from '../../state/setting/settingSlice';
 import { deinitializeStaticResultProperty } from '../../state/staticresultschema/staticresultsSlice';
 import { deinitializeTokensAndVariables } from '../../state/tokens/tokensSlice';
 import { clearFocusNode, deleteNode } from '../../state/workflow/workflowSlice';
-import { getCustomCodeFileName, getParameterFromName } from '../../utils/parameters/helper';
+import { getParameterFromName } from '../../utils/parameters/helper';
 import { updateAllUpstreamNodes } from './initialize';
 import { CustomCodeService } from '@microsoft/designer-client-services-logic-apps';
 import { WORKFLOW_NODE_TYPES, getRecordEntry } from '@microsoft/logic-apps-shared';
@@ -55,11 +55,10 @@ const deleteOperationDetails = async (nodeId: string, dispatch: Dispatch): Promi
 
 const deleteCustomCodeInfo = (nodeId: string, dispatch: Dispatch, state: RootState): void => {
   const nodeInputs = getRecordEntry(state.operations.inputParameters, nodeId);
-  const idReplacements = state.workflow.idReplacements;
   if (nodeInputs) {
     const parameter = getParameterFromName(nodeInputs, constants.DEFAULT_CUSTOM_CODE_INPUT);
     if (CustomCodeService().isCustomCode(parameter?.editor, parameter?.editorOptions?.language)) {
-      const fileName = getCustomCodeFileName(nodeId, nodeInputs, idReplacements);
+      const fileName = parameter?.editorViewModel?.customCodeData?.fileName;
       dispatch(deleteCustomCode({ nodeId, fileName }));
     }
   }

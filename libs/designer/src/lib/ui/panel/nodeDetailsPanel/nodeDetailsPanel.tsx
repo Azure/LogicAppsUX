@@ -27,7 +27,7 @@ import { usePanelTabs } from './usePanelTabs';
 import { CustomCodeService, WorkflowService } from '@microsoft/designer-client-services-logic-apps';
 import type { CommonPanelProps, PageActionTelemetryData } from '@microsoft/designer-ui';
 import { PanelContainer, PanelLocation, PanelScope, PanelSize } from '@microsoft/designer-ui';
-import { SUBGRAPH_TYPES, isNullOrUndefined } from '@microsoft/logic-apps-shared';
+import { SUBGRAPH_TYPES, isNullOrUndefined, replaceWhiteSpaceWithUnderscore, splitFileName } from '@microsoft/logic-apps-shared';
 import type { ReactElement } from 'react';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -104,14 +104,16 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
 
   // if is customcode file, on blur title,
   // delete the existing custom code file name and upload the new file with updated name
-  const onTitleBlur = () => {
+  const onTitleBlur = (prevTitle: string) => {
     const parameter = getParameterFromName(inputs, constants.DEFAULT_CUSTOM_CODE_INPUT);
     if (CustomCodeService().isCustomCode(parameter?.editor, parameter?.editorOptions?.language)) {
+      const newFileName = getCustomCodeFileName(selectedNode, inputs, idReplacements);
+      const [, fileExtension] = splitFileName(newFileName);
       dispatch(
         renameCustomCode({
           nodeId: selectedNode,
           newFileName: getCustomCodeFileName(selectedNode, inputs, idReplacements),
-          oldFileName: getCustomCodeFileName(selectedNode, inputs),
+          oldFileName: replaceWhiteSpaceWithUnderscore(prevTitle) + fileExtension,
         })
       );
     }

@@ -53,7 +53,7 @@ export type PanelContainerProps = {
   onCommentChange: (panelCommentChangeEvent?: string) => void;
   renderHeader?: (props?: IPanelProps, defaultrender?: IPanelHeaderRenderer, headerTextId?: string) => JSX.Element;
   onTitleChange: TitleChangeHandler;
-  onTitleBlur?: () => void;
+  onTitleBlur?: (prevTitle: string) => void;
 } & CommonPanelProps;
 
 export const PanelContainer = ({

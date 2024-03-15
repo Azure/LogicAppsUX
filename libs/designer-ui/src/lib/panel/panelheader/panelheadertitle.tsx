@@ -25,7 +25,7 @@ export interface PanelHeaderTitleProps {
   titleValue?: string;
   titleId?: string;
   onChange: TitleChangeHandler;
-  onBlur?: () => void;
+  onBlur?: (prevTitle: string) => void;
 }
 
 export const PanelHeaderTitle = ({
@@ -42,6 +42,7 @@ export const PanelHeaderTitle = ({
 
   const [newTitleValue, setNewTitleValue] = useState(titleValue);
   const [validValue, setValidValue] = useState(titleValue);
+  const [titleBeforeBlur, setTitleBeforeBlur] = useState(titleValue ?? '');
   const [errorMessage, setErrorMessage] = useState('');
 
   const onTitleChange = (_: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string): void => {
@@ -67,7 +68,8 @@ export const PanelHeaderTitle = ({
       setNewTitleValue(validValue);
       setErrorMessage('');
     } else {
-      onBlur?.();
+      onBlur?.(titleBeforeBlur);
+      setTitleBeforeBlur(newTitleValue ?? '');
     }
   };
 

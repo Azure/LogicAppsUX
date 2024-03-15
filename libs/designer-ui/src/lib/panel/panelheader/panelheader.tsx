@@ -44,7 +44,7 @@ export interface PanelHeaderProps {
   onRenderWarningMessage?(): JSX.Element;
   toggleCollapse: () => void;
   onTitleChange: TitleChangeHandler;
-  onTitleBlur?: () => void;
+  onTitleBlur?: (prevtitle: string) => void;
 }
 
 const DismissIcon = bundleIcon(ChevronRight24Filled, ChevronRight24Regular);
