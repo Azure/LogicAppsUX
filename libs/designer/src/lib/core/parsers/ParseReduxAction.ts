@@ -1,3 +1,4 @@
+import { getCustomCodeFilesWithData } from '../.';
 import type { Workflow } from '../../common/models/workflow';
 import { getConnectionsApiAndMapping } from '../actions/bjsworkflow/connections';
 import { updateWorkflowParameters } from '../actions/bjsworkflow/initialize';
@@ -49,14 +50,18 @@ export const initializeGraphState = createAsyncThunk<
     thunkAPI.dispatch(initializeStaticResultProperties(deserializedWorkflow.staticResults ?? {}));
     updateWorkflowParameters(parameters ?? {}, thunkAPI.dispatch);
 
+    const { connections, customCode } = thunkAPI.getState();
+    const customCodeWithData = getCustomCodeFilesWithData(customCode);
+
     const asyncInitialize = async () => {
       batch(async () => {
         try {
           await Promise.all([
             initializeOperationMetadata(
               deserializedWorkflow,
-              thunkAPI.getState().connections.connectionReferences,
+              connections.connectionReferences,
               parameters ?? {},
+              customCodeWithData,
               workflow.workflowKind,
               designerOptions.hostOptions.forceEnableSplitOn ?? false,
               thunkAPI.dispatch

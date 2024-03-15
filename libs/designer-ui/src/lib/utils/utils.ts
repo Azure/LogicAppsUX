@@ -367,10 +367,6 @@ export const getConnectorCategoryString = (connector: Connector | OperationApi |
   return isBuiltInConnector(connector) ? builtInText : isCustomConnector(connector) ? customText : azureText;
 };
 
-export const convertUIElementNameToAutomationId = (uiElementName: string): string => {
-  return uiElementName?.replace(/\W/g, '_')?.toLowerCase();
-};
-
 export const getPreviewTag = (status: string | undefined): string | undefined => {
   return equals(status, 'preview')
     ? getIntl().formatMessage({

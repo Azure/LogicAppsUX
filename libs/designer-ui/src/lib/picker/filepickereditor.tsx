@@ -1,9 +1,8 @@
 import type { BaseEditorProps, ChangeHandler } from '../editor/base';
 import { EditorWrapper } from '../editor/base/EditorWrapper';
 import { TokenPickerButtonLocation } from '../editor/base/plugins/tokenpickerbutton';
-import { notEqual } from '../editor/base/utils/helper';
+import { createLiteralValueSegment, notEqual } from '../editor/base/utils/helper';
 import type { ValueSegment } from '../editor/models/parameter';
-import { ValueSegmentType } from '../editor/models/parameter';
 import { Picker } from './picker';
 import { PickerItemType } from './pickerItem';
 import { EditorValueChange } from './plugins/EditorValueChange';
@@ -12,7 +11,7 @@ import type { IBreadcrumbItem, IIconProps, ITooltipHostStyles } from '@fluentui/
 import { TooltipHost, IconButton } from '@fluentui/react';
 import { useId } from '@fluentui/react-hooks';
 import type { TreeDynamicValue } from '@microsoft/designer-client-services-logic-apps';
-import { equals, guid } from '@microsoft/logic-apps-shared';
+import { equals } from '@microsoft/logic-apps-shared';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
 
@@ -53,7 +52,7 @@ export const FilePickerEditor = ({
   const pickerIconId = useId();
   const intl = useIntl();
   const [selectedItem, setSelectedItem] = useState<any>();
-  const initialDisplayValue = displayValue ? [{ id: guid(), value: displayValue, type: ValueSegmentType.LITERAL }] : initialValue;
+  const initialDisplayValue = displayValue ? [createLiteralValueSegment(displayValue)] : initialValue;
   const [editorDisplayValue, setEditorDisplayValue] = useState<ValueSegment[]>(initialDisplayValue);
   const [pickerDisplayValue, setPickerDisplayValue] = useState<ValueSegment[]>(initialDisplayValue);
   const [showPicker, setShowPicker] = useState(false);
@@ -88,16 +87,14 @@ export const FilePickerEditor = ({
     }
     if (showPicker) {
       setSelectedItem(selectedItem.value);
-      setPickerDisplayValue([{ id: guid(), value: getDisplayValueFromSelectedItem(selectedItem.value), type: ValueSegmentType.LITERAL }]);
+      setPickerDisplayValue([createLiteralValueSegment(getDisplayValueFromSelectedItem(selectedItem.value))]);
       setShowPicker(false);
     }
   };
 
   const handleBlur = () => {
     if (selectedItem) {
-      const valueSegmentValue: ValueSegment[] = [
-        { id: guid(), type: ValueSegmentType.LITERAL, value: getValueFromSelectedItem(selectedItem) },
-      ];
+      const valueSegmentValue: ValueSegment[] = [createLiteralValueSegment(getValueFromSelectedItem(selectedItem))];
 
       editorBlur?.({
         value: valueSegmentValue,

@@ -5,7 +5,7 @@ import { CommandBar } from '@fluentui/react/lib/CommandBar';
 import { Spinner, SpinnerSize } from '@fluentui/react/lib/Spinner';
 import type { ILoggerService } from '@microsoft/designer-client-services-logic-apps';
 import { LogEntryLevel, LoggerService } from '@microsoft/designer-client-services-logic-apps';
-import type { RootState, Workflow } from '@microsoft/logic-apps-designer';
+import type { CustomCodeFileNameMapping, RootState, Workflow } from '@microsoft/logic-apps-designer';
 import {
   store as DesignerStore,
   serializeBJSWorkflow,
@@ -19,6 +19,7 @@ import {
   updateParameterValidation,
   openPanel,
   useNodesInitialized,
+  getCustomCodeFilesWithData,
 } from '@microsoft/logic-apps-designer';
 import { isNullOrEmpty, RUN_AFTER_COLORS } from '@microsoft/logic-apps-shared';
 import { useMemo } from 'react';
@@ -49,7 +50,7 @@ export const DesignerCommandBar = ({
   location: string;
   isReadOnly: boolean;
   discard: () => unknown;
-  saveWorkflow: (workflow: Workflow) => Promise<void>;
+  saveWorkflow: (workflow: Workflow, customCodeData: CustomCodeFileNameMapping | undefined) => Promise<void>;
   isDarkMode: boolean;
   isConsumption?: boolean;
   showConnectionsPanel?: boolean;
@@ -81,8 +82,10 @@ export const DesignerCommandBar = ({
 
     const hasParametersErrors = !isNullOrEmpty(validationErrorsList);
 
+    const customCodeFilesWithData = getCustomCodeFilesWithData(designerState.customCode);
+
     if (!hasParametersErrors) {
-      await saveWorkflow(serializedWorkflow);
+      await saveWorkflow(serializedWorkflow, customCodeFilesWithData);
       updateCallbackUrl(designerState, DesignerStore.dispatch);
     }
   });

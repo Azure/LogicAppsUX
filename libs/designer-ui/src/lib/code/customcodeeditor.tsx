@@ -1,22 +1,32 @@
+import { getFileExtensionName, type EditorLanguage } from '@microsoft/logic-apps-shared';
+import constants from '../constants';
 import type { ValueSegment } from '../editor';
 import type { BaseEditorProps } from '../editor/base';
 import TokenPickerButtonLegacy from '../editor/base/plugins/TokenPickerButtonLegacy';
 import { createLiteralValueSegment } from '../editor/base/utils/helper';
 import type { EditorContentChangedEventArgs } from '../editor/monaco';
-import { MonacoEditor } from '../editor/monaco';
+import { MonacoEditor as Editor } from '../editor/monaco';
 import { useId } from '../useId';
 import { buildInlineCodeTextFromToken, getEditorHeight, getInitialValue } from './util';
-import type { EditorLanguage } from '@microsoft/logic-apps-shared';
+import { Icon, MessageBar, MessageBarType } from '@fluentui/react';
 import { useFunctionalState } from '@react-hookz/web';
 import type { editor, IRange } from 'monaco-editor';
-import { useRef, useState } from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 
-interface CodeEditorProps extends BaseEditorProps {
+const iconStyle = {
+  root: {
+    fontSize: 20,
+    padding: '8px',
+    color: constants.PANEL_HIGHLIGHT_COLOR,
+  },
+};
+interface CustomCodeEditorProps extends BaseEditorProps {
   language: EditorLanguage;
+  nodeTitle?: string;
 }
 
-export function CodeEditor({
+export function CustomCodeEditor({
   readonly = false,
   initialValue,
   language,
@@ -24,7 +34,8 @@ export function CodeEditor({
   onFocus,
   getTokenPicker,
   label,
-}: CodeEditorProps): JSX.Element {
+  nodeTitle,
+}: CustomCodeEditorProps): JSX.Element {
   const intl = useIntl();
   const codeEditorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
   const editorId = useId('msla-tokenpicker-callout-location');
@@ -33,6 +44,16 @@ export function CodeEditor({
   const [editorHeight, setEditorHeight] = useState(getEditorHeight(getInitialValue(initialValue)));
   const [showTokenPickerButton, setShowTokenPickerButton] = useState(false);
   const [getInTokenPicker, setInTokenPicker] = useFunctionalState(false);
+  const [showMessageBar, setShowMessageBar] = useState(true);
+  const [getFileName, setFileName] = useFunctionalState('');
+
+  const fileExtensionName = useMemo(() => {
+    return getFileExtensionName(language);
+  }, [language]);
+
+  useEffect(() => {
+    setFileName(nodeTitle + fileExtensionName);
+  }, [nodeTitle, fileExtensionName, setFileName]);
 
   const handleContentChanged = (e: EditorContentChangedEventArgs): void => {
     if (e.value !== undefined) {
@@ -45,7 +66,10 @@ export function CodeEditor({
     if (!getInTokenPicker()) {
       setShowTokenPickerButton(false);
     }
-    onChange?.({ value: [createLiteralValueSegment(getCurrentValue())] });
+    onChange?.({
+      value: [createLiteralValueSegment(getFileName())],
+      viewModel: { customCodeData: { fileData: getCurrentValue(), fileExtension: getFileExtensionName(language), fileName: getFileName() } },
+    });
   };
 
   const handleFocus = (): void => {
@@ -90,9 +114,23 @@ export function CodeEditor({
     );
   };
 
+  const messageBarText = intl.formatMessage({
+    defaultMessage: 'To use modules or dependecies, please add at Custom Code Dependenncies in Portal TOC',
+    description: 'This is a message to inform the user to add dependencies to use this action',
+  });
+
+  const closeButtonAriaLabel = intl.formatMessage({
+    defaultMessage: 'Close',
+    description: 'This is the aria label for the close button in the message bar',
+  });
+
   return (
-    <div className="msla-code-editor-body" id={editorId}>
-      <MonacoEditor
+    <div className="msla-custom-code-editor-body" id={editorId}>
+      <div className="msla-custom-code-editor-file">
+        <Icon iconName="FileCode" styles={iconStyle} />
+        <div className="msla-custom-code-editor-fileName">{getFileName()}</div>
+      </div>
+      <Editor
         label={getLabel(label)}
         ref={codeEditorRef}
         height={editorHeight}
@@ -126,6 +164,16 @@ export function CodeEditor({
             tokenClicked
           )
         : null}
+      {showMessageBar ? (
+        <MessageBar
+          messageBarType={MessageBarType.info}
+          className="msla-custom-code-editor-message-bar"
+          dismissButtonAriaLabel={closeButtonAriaLabel}
+          onDismiss={() => setShowMessageBar(false)}
+        >
+          <div>{messageBarText}</div>
+        </MessageBar>
+      ) : null}
     </div>
   );
 }

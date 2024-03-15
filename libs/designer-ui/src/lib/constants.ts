@@ -433,7 +433,28 @@ export default {
     VALUE_OFFSET: -7,
   },
   DROPDOWN_CALLOUT_MAX_HEIGHT: 380,
+  
+  PARAMETER: {
+    EDITOR: {
+      ARRAY: 'array',
+      AUTHENTICATION: 'authentication',
+      CODE: 'code',
+      COMBOBOX: 'combobox',
+      COPYABLE: 'copyable',
+      CONDITION: 'condition',
+      DICTIONARY: 'dictionary',
+      DROPDOWN: 'dropdown',
+      FLOATINGACTIONMENU: 'floatingactionmenu',
+      FILEPICKER: 'filepicker',
+      HTML: 'html',
+      RECURRENCE: 'recurrence',
+      SCHEMA: 'schema',
+      STRING: 'string',
+      TABLE: 'table',
+    },
+  },
 };
+
 
 export const FxBrandColor = '#AD008C';
 export const FxIcon =

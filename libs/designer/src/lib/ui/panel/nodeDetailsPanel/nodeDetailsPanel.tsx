@@ -1,3 +1,4 @@
+import constants from '../../../common/constants';
 import type { AppDispatch, RootState } from '../../../core';
 import {
   clearPanel,
@@ -8,6 +9,7 @@ import {
   useSelectedNodeId,
   validateParameter,
 } from '../../../core';
+import { renameCustomCode } from '../../../core/state/customcode/customcodeSlice';
 import { useReadOnly } from '../../../core/state/designerOptions/designerOptionsSelectors';
 import { setShowDeleteModal } from '../../../core/state/designerView/designerViewSlice';
 import { ErrorLevel } from '../../../core/state/operation/operationMetadataSlice';
@@ -18,10 +20,11 @@ import { useOperationQuery } from '../../../core/state/selectors/actionMetadataS
 import { useNodeDescription, useRunData, useRunInstance } from '../../../core/state/workflow/workflowSelectors';
 import { replaceId, setNodeDescription } from '../../../core/state/workflow/workflowSlice';
 import { isOperationNameValid, isRootNodeInGraph } from '../../../core/utils/graph';
+import { getCustomCodeFileName, getParameterFromName } from '../../../core/utils/parameters/helper';
 import { CommentMenuItem } from '../../menuItems/commentMenuItem';
 import { DeleteMenuItem } from '../../menuItems/deleteMenuItem';
 import { usePanelTabs } from './usePanelTabs';
-import { WorkflowService } from '@microsoft/designer-client-services-logic-apps';
+import { CustomCodeService, WorkflowService } from '@microsoft/designer-client-services-logic-apps';
 import type { CommonPanelProps, PageActionTelemetryData } from '@microsoft/designer-ui';
 import { PanelContainer, PanelLocation, PanelScope, PanelSize } from '@microsoft/designer-ui';
 import { SUBGRAPH_TYPES, isNullOrUndefined } from '@microsoft/logic-apps-shared';
@@ -99,6 +102,21 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
     return { valid: isValid, oldValue: isValid ? newId : selectedNode };
   };
 
+  // if is customcode file, on blur title,
+  // delete the existing custom code file name and upload the new file with updated name
+  const onTitleBlur = () => {
+    const parameter = getParameterFromName(inputs, constants.DEFAULT_CUSTOM_CODE_INPUT);
+    if (CustomCodeService().isCustomCode(parameter?.editor, parameter?.editorOptions?.language)) {
+      dispatch(
+        renameCustomCode({
+          nodeId: selectedNode,
+          newFileName: getCustomCodeFileName(selectedNode, inputs, idReplacements),
+          oldFileName: getCustomCodeFileName(selectedNode, inputs),
+        })
+      );
+    }
+  };
+
   const onCommentChange = (newDescription?: string) => {
     dispatch(setNodeDescription({ nodeId: selectedNode, description: newDescription }));
   };
@@ -173,6 +191,7 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
       onCommentChange={onCommentChange}
       title={selectedNodeDisplayName}
       onTitleChange={onTitleChange}
+      onTitleBlur={onTitleBlur}
     />
   );
 };

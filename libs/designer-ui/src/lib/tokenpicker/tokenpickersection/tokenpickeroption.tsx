@@ -3,14 +3,13 @@ import { TokenPickerMode } from '../';
 import type { ValueSegment } from '../../editor';
 import { INSERT_TOKEN_NODE } from '../../editor/base/plugins/InsertTokenNode';
 import { SINGLE_VALUE_SEGMENT } from '../../editor/base/plugins/SingleValueSegment';
-import { convertUIElementNameToAutomationId } from '../../utils';
 import type { Token, TokenGroup } from '../models/token';
 import { getReducedTokenList, hasAdvanced } from './tokenpickerhelpers';
 import type { TokenPickerBaseProps } from './tokenpickersection';
-import { Icon } from '@fluentui/react';
+import { Icon, useTheme } from '@fluentui/react';
 import { useBoolean } from '@fluentui/react-hooks';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
-import { hex2rgb, lighten } from '@microsoft/logic-apps-shared';
+import { darken, hex2rgb, lighten, replaceWhiteSpaceWithUnderscore } from '@microsoft/logic-apps-shared';
 import Fuse from 'fuse.js';
 import type { LexicalEditor } from 'lexical';
 import type { Dispatch, SetStateAction } from 'react';
@@ -41,6 +40,8 @@ export const TokenPickerOptions = ({
   tokenClickedCallback,
 }: TokenPickerOptionsProps): JSX.Element => {
   const intl = useIntl();
+  const { isInverted } = useTheme();
+
   let editor: LexicalEditor | null;
   try {
     [editor] = useLexicalComposerContext();
@@ -167,7 +168,9 @@ export const TokenPickerOptions = ({
 
   const sectionBrandColorRgb = hex2rgb(getSectionBrandColor());
   const sectionHeaderColorRgb = lighten(sectionBrandColorRgb, 0.9);
+  const sectionHeaderColorRgbDark = darken(sectionBrandColorRgb, 0.5);
   const sectionHeaderColorCss = `rgb(${sectionHeaderColorRgb.red}, ${sectionHeaderColorRgb.green}, ${sectionHeaderColorRgb.blue})`;
+  const sectionHeaderColorCssDark = `rgb(${sectionHeaderColorRgbDark.red}, ${sectionHeaderColorRgbDark.green}, ${sectionHeaderColorRgbDark.blue})`;
 
   const maxRowsShown = selectedKey === TokenPickerMode.EXPRESSION ? section.tokens.length : maxTokensPerSection;
   const showSeeMoreOrLessButton = !searchQuery && (hasAdvanced(section.tokens) || section.tokens.length > maxRowsShown);
@@ -176,7 +179,10 @@ export const TokenPickerOptions = ({
     <>
       {(searchQuery && filteredTokens.length > 0) || !searchQuery ? (
         <>
-          <div className="msla-token-picker-section-header" style={{ backgroundColor: sectionHeaderColorCss }}>
+          <div
+            className="msla-token-picker-section-header"
+            style={{ backgroundColor: isInverted ? sectionHeaderColorCssDark : sectionHeaderColorCss }}
+          >
             <img src={getSectionIcon()} alt="token icon" />
             {getSectionSecurity() ? (
               <div className="msla-token-picker-secure-token">
@@ -188,7 +194,7 @@ export const TokenPickerOptions = ({
               <button
                 className="msla-token-picker-section-header-button"
                 onClick={handleMoreLess}
-                data-automation-id={`msla-token-picker-section-header-button-${convertUIElementNameToAutomationId(section.label)}`}
+                data-automation-id={`msla-token-picker-section-header-button-${replaceWhiteSpaceWithUnderscore(section.label)}`}
               >
                 <span>{moreOptions ? buttonTextMore : buttonTextLess}</span>
               </button>

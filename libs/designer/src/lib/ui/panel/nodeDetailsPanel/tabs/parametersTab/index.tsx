@@ -1,5 +1,6 @@
 import constants from '../../../../../common/constants';
 import { useShowIdentitySelectorQuery } from '../../../../../core/state/connection/connectionSelector';
+import { addOrUpdateCustomCode } from '../../../../../core/state/customcode/customcodeSlice';
 import { useHostOptions, useReadOnly } from '../../../../../core/state/designerOptions/designerOptionsSelectors';
 import type { ParameterGroup } from '../../../../../core/state/operation/operationMetadataSlice';
 import { DynamicLoadStatus, ErrorLevel } from '../../../../../core/state/operation/operationMetadataSlice';
@@ -18,7 +19,7 @@ import {
 } from '../../../../../core/state/selectors/actionMetadataSelector';
 import type { VariableDeclaration } from '../../../../../core/state/tokens/tokensSlice';
 import { updateVariableInfo } from '../../../../../core/state/tokens/tokensSlice';
-import { useNodeMetadata, useReplacedIds } from '../../../../../core/state/workflow/workflowSelectors';
+import { useNodeDisplayName, useNodeMetadata, useReplacedIds } from '../../../../../core/state/workflow/workflowSelectors';
 import type { AppDispatch, RootState } from '../../../../../core/store';
 import { getConnectionReference } from '../../../../../core/utils/connectors/connections';
 import { isRootNodeInGraph } from '../../../../../core/utils/graph';
@@ -40,7 +41,7 @@ import { ConnectionDisplay } from './connectionDisplay';
 import { IdentitySelector } from './identityselector';
 import { MessageBar, MessageBarType, Spinner, SpinnerSize } from '@fluentui/react';
 import { Divider } from '@fluentui/react-components';
-import { EditorService } from '@microsoft/designer-client-services-logic-apps';
+import { CustomCodeService, EditorService } from '@microsoft/designer-client-services-logic-apps';
 import {
   DynamicCallStatus,
   PanelLocation,
@@ -51,7 +52,7 @@ import {
 } from '@microsoft/designer-ui';
 import type { ChangeState, ParameterInfo, ValueSegment, OutputToken, TokenPickerMode, PanelTabFn } from '@microsoft/designer-ui';
 import type { OperationInfo } from '@microsoft/logic-apps-shared';
-import { equals, getPropertyValue, getRecordEntry } from '@microsoft/logic-apps-shared';
+import { equals, getPropertyValue, getRecordEntry, replaceWhiteSpaceWithUnderscore } from '@microsoft/logic-apps-shared';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
@@ -195,6 +196,7 @@ const ParameterSection = ({
   const rootState = useSelector((state: RootState) => state);
   const displayNameResult = useConnectorName(operationInfo);
   const panelLocation = usePanelLocation();
+  const nodeTitle = replaceWhiteSpaceWithUnderscore(useNodeDisplayName(nodeId));
 
   const { suppressCastingForSerialize, hideUTFExpressions } = useHostOptions();
 
@@ -210,12 +212,18 @@ const ParameterSection = ({
       if (viewModel !== undefined) {
         propertiesToUpdate.editorViewModel = viewModel;
       }
+
       if (getRecordEntry(variables, nodeId)) {
         if (parameter?.parameterKey === 'inputs.$.name') {
           dispatch(updateVariableInfo({ id: nodeId, name: value[0]?.value }));
         } else if (parameter?.parameterKey === 'inputs.$.type') {
           dispatch(updateVariableInfo({ id: nodeId, type: value[0]?.value }));
         }
+      }
+
+      if (CustomCodeService().isCustomCode(parameter?.editor, parameter?.editorOptions?.language)) {
+        const { fileData, fileExtension, fileName } = viewModel.customCodeData;
+        dispatch(addOrUpdateCustomCode({ nodeId, fileData, fileExtension, fileName }));
       }
 
       updateParameterAndDependencies(
@@ -396,6 +404,8 @@ const ParameterSection = ({
       const { editor, editorOptions } = getEditorAndOptions(operationInfo, param, upstreamNodeIds ?? [], variables);
 
       const { value: remappedValues } = remapValueSegmentsWithNewIds(value, idReplacements);
+      const isCodeEditor = editor?.toLowerCase() === constants.EDITOR.CODE;
+
       return {
         settingType: 'SettingTokenField',
         settingProp: {
@@ -409,6 +419,7 @@ const ParameterSection = ({
           errorDetails: dynamicData?.error ? { message: dynamicData.error.message } : undefined,
           validationErrors,
           tokenMapping,
+          nodeTitle,
           loadParameterValueFromString: (value: string) => loadParameterValueFromString(value),
           onValueChange: (newState: ChangeState) => onValueChange(id, newState),
           onComboboxMenuOpen: () => onComboboxMenuOpen(param),
@@ -430,17 +441,7 @@ const ParameterSection = ({
             editorType?: string,
             setIsInTokenPicker?: (b: boolean) => void,
             tokenClickedCallback?: (token: ValueSegment) => void
-          ) =>
-            getTokenPicker(
-              id,
-              editorId,
-              labelId,
-              tokenPickerMode,
-              editorType,
-              editor?.toLowerCase() === constants.EDITOR.CODE,
-              setIsInTokenPicker,
-              tokenClickedCallback
-            ),
+          ) => getTokenPicker(id, editorId, labelId, tokenPickerMode, editorType, isCodeEditor, setIsInTokenPicker, tokenClickedCallback),
         },
       };
     });

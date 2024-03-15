@@ -1,3 +1,4 @@
+import { EditorLanguage } from '@microsoft/logic-apps-shared';
 import Constants from '../../constants';
 import { registerWorkflowLanguageProviders } from '../../workflow/languageservice/workflowlanguageservice';
 import { useTheme } from '@fluentui/react';
@@ -9,15 +10,6 @@ import { useState, useEffect, forwardRef, useRef, useCallback } from 'react';
 export interface EditorContentChangedEventArgs extends editor.IModelContentChangedEvent {
   value?: string;
 }
-// TODO: Add more languages
-export const EditorLanguage = {
-  javascript: 'javascript',
-  json: 'json',
-  xml: 'xml',
-  templateExpressionLanguage: 'TemplateExpressionLanguage',
-  yaml: 'yaml',
-} as const;
-export type EditorLanguage = (typeof EditorLanguage)[keyof typeof EditorLanguage];
 
 export interface MonacoProps extends MonacoOptions {
   className?: string;

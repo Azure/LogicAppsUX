@@ -1,5 +1,7 @@
+import type { CustomCodeFileNameMapping } from '../../..';
 import Constants from '../../../common/constants';
-import { ImpersonationSource, type ConnectionReferences, type WorkflowParameter } from '../../../common/models/workflow';
+import type { ConnectionReferences, WorkflowParameter } from '../../../common/models/workflow';
+import { ImpersonationSource } from '../../../common/models/workflow';
 import type { WorkflowNode } from '../../parsers/models/workflowNode';
 import { getConnectorWithSwagger, getSwaggerFromEndpoint } from '../../queries/connections';
 import { getOperationManifest } from '../../queries/operation';
@@ -16,6 +18,7 @@ import { getSplitOnOptions, getUpdatedManifestForSchemaDependency, getUpdatedMan
 import {
   addRecurrenceParametersInGroup,
   getAllInputParameters,
+  getCustomCodeFileName,
   getDependentParameters,
   getInputsValueFromDefinitionForManifest,
   getParameterFromName,
@@ -56,6 +59,7 @@ import {
   getIconUriFromConnector,
   getIntl,
   getObjectPropertyValue,
+  getRecordEntry,
   isDynamicListExtension,
   isDynamicPropertiesExtension,
   isDynamicSchemaExtension,
@@ -454,6 +458,36 @@ export const updateCallbackUrlInInputs = async (
   }
 
   return;
+};
+
+export const updateCustomCodeInInputs = async (
+  nodeId: string,
+  fileExtension: string,
+  nodeInputs: NodeInputs,
+  customCode: CustomCodeFileNameMapping
+) => {
+  if (!customCode || Object.keys(customCode).length === 0) return;
+  // getCustomCodeFileName does not return the file extension because the editor view model is not populated yet
+  const fileName = getCustomCodeFileName(nodeId, nodeInputs) + fileExtension;
+  try {
+    const customCodeValue = getRecordEntry(customCode, fileName)?.fileData;
+    const parameter = getParameterFromName(nodeInputs, Constants.DEFAULT_CUSTOM_CODE_INPUT);
+
+    if (parameter && customCodeValue) {
+      parameter.editorViewModel = {
+        customCodeData: { fileData: customCodeValue, fileExtension },
+      };
+    }
+  } catch (error) {
+    const errorMessage = `Failed to populate code file ${fileName}: ${error}`;
+    LoggerService().log({
+      level: LogEntryLevel.Error,
+      area: 'fetchCustomCode',
+      message: errorMessage,
+      error: error instanceof Error ? error : undefined,
+    });
+    return;
+  }
 };
 
 export const updateAllUpstreamNodes = (state: RootState, dispatch: Dispatch): void => {

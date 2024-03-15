@@ -1,4 +1,4 @@
-import type { SettingProps } from './settingtoggle';
+import type { SettingProps } from './';
 import { ActionButton, IconButton } from '@fluentui/react/lib/Button';
 import type { IIconProps } from '@fluentui/react/lib/Icon';
 import { TextField } from '@fluentui/react/lib/TextField';

@@ -1,4 +1,4 @@
-import type { SettingProps } from './settingtoggle';
+import type { SettingProps } from './';
 import { Slider, TextField } from '@fluentui/react';
 import { useCallback, useState } from 'react';
 

@@ -14,6 +14,7 @@ import {
   getConnectionStandard,
   listCallbackUrl,
   saveWorkflowStandard,
+  useAllCustomCodeFiles,
   useAppSettings,
   useCurrentObjectId,
   useCurrentTenantId,
@@ -32,12 +33,13 @@ import {
   BaseGatewayService,
   StandardConnectionService,
   StandardConnectorService,
+  StandardCustomCodeService,
   StandardOperationManifestService,
   StandardRunService,
   StandardSearchService,
 } from '@microsoft/designer-client-services-logic-apps';
 import type { ContentType, IWorkflowService } from '@microsoft/designer-client-services-logic-apps';
-import type { Workflow } from '@microsoft/logic-apps-designer';
+import type { CustomCodeFileNameMapping, Workflow } from '@microsoft/logic-apps-designer';
 import {
   DesignerProvider,
   BJSWorkflowProvider,
@@ -70,6 +72,7 @@ const DesignerEditor = () => {
 
   const workflowName = workflowId.split('/').splice(-1)[0];
   const siteResourceId = new ArmParser(workflowId).topmostResourceId;
+  const { data: customCodeData, isLoading: customCodeLoading } = useAllCustomCodeFiles(appId, workflowName);
   const { data, isLoading, isError, error } = useWorkflowAndArtifactsStandard(workflowId);
   const { data: settingsData, isLoading: settingsLoading, isError: settingsIsError, error: settingsError } = useAppSettings(siteResourceId);
   const { data: workflowAppData, isLoading: appLoading } = useWorkflowApp(siteResourceId);
@@ -172,7 +175,7 @@ const DesignerEditor = () => {
     setWorkflow(data?.properties.files[Artifact.WorkflowFile]);
   }, [data?.properties.files]);
 
-  if (isLoading || appLoading || settingsLoading) {
+  if (isLoading || appLoading || settingsLoading || customCodeLoading) {
     // eslint-disable-next-line react/jsx-no-useless-fragment
     return <></>;
   }
@@ -184,7 +187,10 @@ const DesignerEditor = () => {
     throw error ?? settingsError;
   }
 
-  const saveWorkflowFromDesigner = async (workflowFromDesigner: Workflow): Promise<void> => {
+  const saveWorkflowFromDesigner = async (
+    workflowFromDesigner: Workflow,
+    customCode: CustomCodeFileNameMapping | undefined
+  ): Promise<void> => {
     const { definition, connectionReferences, parameters } = workflowFromDesigner;
     const workflowToSave = {
       ...workflow,
@@ -240,7 +246,15 @@ const DesignerEditor = () => {
     const parametersToUpdate = !isEqual(originalParametersData, parameters) ? (parameters as ParametersData) : undefined;
     const settingsToUpdate = !isEqual(settingsData?.properties, originalSettings) ? settingsData?.properties : undefined;
 
-    return saveWorkflowStandard(siteResourceId, workflowName, workflowToSave, connectionsToUpdate, parametersToUpdate, settingsToUpdate);
+    return saveWorkflowStandard(
+      siteResourceId,
+      workflowName,
+      workflowToSave,
+      connectionsToUpdate,
+      parametersToUpdate,
+      settingsToUpdate,
+      customCode
+    );
   };
 
   const getUpdatedWorkflow = async (): Promise<Workflow> => {
@@ -281,6 +295,7 @@ const DesignerEditor = () => {
         {workflow?.definition ? (
           <BJSWorkflowProvider
             workflow={{ definition: workflow?.definition, connectionReferences, parameters, kind: workflow?.kind }}
+            customCode={customCodeData}
             runInstance={runInstanceData}
           >
             <div style={{ height: 'inherit', width: 'inherit' }}>
@@ -333,6 +348,7 @@ const getDesignerServices = (
   const baseUrl = `${armUrl}${siteResourceId}/hostruntime/runtime/webhooks/workflow/api/management`;
   const workflowName = workflowId.split('/').splice(-1)[0];
   const workflowIdWithHostRuntime = `${siteResourceId}/hostruntime/runtime/webhooks/workflow/api/management/workflows/${workflowName}`;
+  const appName = siteResourceId.split('/').splice(-1)[0];
   const { subscriptionId, resourceGroup } = new ArmParser(workflowId);
 
   const defaultServiceParams = { baseUrl, httpClient, apiVersion };
@@ -349,7 +365,7 @@ const getDesignerServices = (
       tenantId,
       httpClient,
     },
-    workflowAppDetails: { appName: siteResourceId.split('/').splice(-1)[0], identity: workflowApp?.identity as any },
+    workflowAppDetails: { appName, identity: workflowApp?.identity as any },
     readConnections: () => Promise.resolve(connectionsData),
     writeConnection: addConnection as any,
     connectionCreationClients: {
@@ -357,7 +373,7 @@ const getDesignerServices = (
         baseUrl: armUrl,
         subscriptionId,
         resourceGroup,
-        appName: siteResourceId.split('/').splice(-1)[0],
+        appName,
         apiVersion: '2022-03-01',
         httpClient,
       }),
@@ -518,12 +534,20 @@ const getDesignerServices = (
   });
 
   const chatbotService = new BaseChatbotService({
-    // temporarily having brazilus as the baseUrl until deployment finishes in prod
-    baseUrl: 'https://brazilus.management.azure.com',
+    baseUrl: armUrl,
     apiVersion: '2022-09-01-preview',
     subscriptionId,
-    // temporarily hardcoding location until we have deployed to all regions
-    location: 'westcentralus',
+    location,
+  });
+
+  const customCodeService = new StandardCustomCodeService({
+    apiVersion: '2018-11-01',
+    baseUrl: armUrl,
+    subscriptionId,
+    resourceGroup,
+    appName,
+    workflowName,
+    httpClient,
   });
 
   return {
@@ -541,6 +565,7 @@ const getDesignerServices = (
     runService,
     hostService,
     chatbotService,
+    customCodeService,
   };
 };
 

@@ -53,6 +53,7 @@ const ClearIcon = bundleIcon(Dismiss24Filled, Dismiss24Regular);
 
 type SettingBase = {
   visible?: boolean;
+  nodeTitle?: string;
 };
 
 export type Settings = SettingBase &

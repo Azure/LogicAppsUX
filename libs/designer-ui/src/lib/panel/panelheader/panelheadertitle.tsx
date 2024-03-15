@@ -25,14 +25,16 @@ export interface PanelHeaderTitleProps {
   titleValue?: string;
   titleId?: string;
   onChange: TitleChangeHandler;
+  onBlur?: () => void;
 }
 
 export const PanelHeaderTitle = ({
   titleValue,
-  onChange,
   titleId,
   readOnlyMode,
   renameTitleDisabled,
+  onChange,
+  onBlur,
 }: PanelHeaderTitleProps): JSX.Element => {
   const intl = useIntl();
 
@@ -64,6 +66,8 @@ export const PanelHeaderTitle = ({
       onChange(validValue || '');
       setNewTitleValue(validValue);
       setErrorMessage('');
+    } else {
+      onBlur?.();
     }
   };
 

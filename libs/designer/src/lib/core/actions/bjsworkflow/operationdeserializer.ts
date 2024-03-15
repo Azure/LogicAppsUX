@@ -1,4 +1,5 @@
 /* eslint-disable no-param-reassign */
+import type { CustomCodeFileNameMapping } from '../../..';
 import Constants from '../../../common/constants';
 import type { ConnectionReference, ConnectionReferences, WorkflowParameter } from '../../../common/models/workflow';
 import type { DeserializedWorkflow } from '../../parsers/BJSWorkflow/BJSDeserializer';
@@ -46,6 +47,7 @@ import {
   getInputParametersFromManifest,
   getOutputParametersFromManifest,
   updateCallbackUrlInInputs,
+  updateCustomCodeInInputs,
   updateInvokerSettings,
 } from './initialize';
 import { getOperationSettings, getSplitOnValue } from './settings';
@@ -66,6 +68,7 @@ import {
   aggregate,
   equals,
   getRecordEntry,
+  getFileExtensionNameFromOperationId,
   parseErrorMessage,
 } from '@microsoft/logic-apps-shared';
 import type { InputParameter, OutputParameter, LogicAppsV2, OperationManifest } from '@microsoft/logic-apps-shared';
@@ -97,6 +100,7 @@ export const initializeOperationMetadata = async (
   deserializedWorkflow: DeserializedWorkflow,
   references: ConnectionReferences,
   workflowParameters: Record<string, WorkflowParameter>,
+  customCode: CustomCodeFileNameMapping,
   workflowKind: WorkflowKind,
   forceEnableSplitOn: boolean,
   dispatch: Dispatch
@@ -117,7 +121,9 @@ export const initializeOperationMetadata = async (
       triggerNodeId = operationId;
     }
     if (operationManifestService.isSupported(operation.type, operation.kind)) {
-      promises.push(initializeOperationDetailsForManifest(operationId, operation, !!isTrigger, workflowKind, forceEnableSplitOn, dispatch));
+      promises.push(
+        initializeOperationDetailsForManifest(operationId, operation, customCode, !!isTrigger, workflowKind, forceEnableSplitOn, dispatch)
+      );
     } else {
       promises.push(
         initializeOperationDetailsForSwagger(operationId, operation, references, !!isTrigger, workflowKind, forceEnableSplitOn, dispatch)
@@ -200,6 +206,7 @@ const initializeConnectorsForReferences = async (references: ConnectionReference
 export const initializeOperationDetailsForManifest = async (
   nodeId: string,
   _operation: LogicAppsV2.ActionDefinition | LogicAppsV2.TriggerDefinition,
+  customCode: CustomCodeFileNameMapping,
   isTrigger: boolean,
   workflowKind: WorkflowKind,
   forceEnableSplitOn: boolean,
@@ -237,6 +244,11 @@ export const initializeOperationDetailsForManifest = async (
 
     if (isTrigger) {
       await updateCallbackUrlInInputs(nodeId, nodeOperationInfo, nodeInputs);
+    }
+
+    // Populate Customcode with values gotten from file system
+    if (equals(operationInfo.connectorId, Constants.INLINECODE) && !equals(operationInfo.operationId, 'javascriptcode')) {
+      updateCustomCodeInInputs(nodeId, getFileExtensionNameFromOperationId(operationInfo.operationId), nodeInputs, customCode);
     }
 
     const { outputs: nodeOutputs, dependencies: outputDependencies } = getOutputParametersFromManifest(

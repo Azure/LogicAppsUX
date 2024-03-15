@@ -19,8 +19,8 @@ import {
 // import AddNodeIcon from './edgeContextMenuSvgs/addNodeIcon.svg';
 import { css } from '@fluentui/utilities';
 import { LogEntryLevel, LoggerService } from '@microsoft/designer-client-services-logic-apps';
-import { ActionButtonV2, convertUIElementNameToAutomationId } from '@microsoft/designer-ui';
-import { containsIdTag, guid, normalizeAutomationId, removeIdTag } from '@microsoft/logic-apps-shared';
+import { ActionButtonV2 } from '@microsoft/designer-ui';
+import { containsIdTag, guid, normalizeAutomationId, removeIdTag, replaceWhiteSpaceWithUnderscore } from '@microsoft/logic-apps-shared';
 import { useCallback, useMemo, useState } from 'react';
 import { useDrop } from 'react-dnd';
 import { useIntl } from 'react-intl';
@@ -184,7 +184,7 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId, 
   );
 
   const buttonId = normalizeAutomationId(
-    `msla-edge-button-${convertUIElementNameToAutomationId(parentName)}-${convertUIElementNameToAutomationId(childName) || 'undefined'}`
+    `msla-edge-button-${replaceWhiteSpaceWithUnderscore(parentName)}-${replaceWhiteSpaceWithUnderscore(childName) || 'undefined'}`
   );
 
   const showParallelBranchButton = !isLeaf && parentId;
@@ -192,8 +192,8 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId, 
   const automationId = useCallback(
     (buttonName: string) =>
       normalizeAutomationId(
-        `msla-${buttonName}-button-${convertUIElementNameToAutomationId(parentName)}-${
-          convertUIElementNameToAutomationId(childName) || 'undefined'
+        `msla-${buttonName}-button-${replaceWhiteSpaceWithUnderscore(parentName)}-${
+          replaceWhiteSpaceWithUnderscore(childName) || 'undefined'
         }`
       ),
     [parentName, childName]
