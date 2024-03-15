@@ -1,6 +1,10 @@
 {
   "name": "@microsoft/designer-ui",
   "version": "2.125.0",
+  "module": "./index.js",
+  "main": "./index.js",
+  "type": "module",
+  "types": "./index.d.ts",
   "scripts": {
     "yalcpush": "yalc push ../../dist/libs/designer-ui"
   },

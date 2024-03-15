@@ -3,7 +3,10 @@ import image from '@rollup/plugin-image';
 import json from '@rollup/plugin-json';
 import { nodeResolve } from '@rollup/plugin-node-resolve';
 import typescript from '@rollup/plugin-typescript';
+import copy from 'rollup-plugin-copy';
 import postcss from 'rollup-plugin-postcss';
+
+const distFolder = '../../dist/rollup/libs/designer-ui';
 
 const externalFn = (str, parent, _isResolved) => {
   if (str.includes('logic-apps-shared') || str.includes('designer-client-services')) {
@@ -21,7 +24,7 @@ export default {
   external: externalFn,
   output: {
     format: 'esm',
-    dir: '../../dist/rollup/libs/designer-ui',
+    dir: distFolder,
   },
   plugins: [
     typescript({ tsconfig: './tsconfig.lib.json' }),
@@ -32,5 +35,6 @@ export default {
     nodeResolve(),
     commonjs(),
     json(),
+    copy({ targets: [{ src: './package.json', dest: distFolder }] }),
   ],
 };
