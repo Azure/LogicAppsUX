@@ -124,8 +124,18 @@ export const designerSlice = createSlice({
       }
       delete state.fileSystemConnections[connectionName];
     },
+    updateUnitTestDefinition: (state, action: PayloadAction<{ unitTestDefinition: UnitTestDefinition }>) => {
+      const { unitTestDefinition } = action.payload;
+      state.unitTestDefinition = unitTestDefinition;
+    },
   },
 });
 
-export const { initializeDesigner, updateCallbackUrl, createFileSystemConnection, updateFileSystemConnection, updatePanelMetadata } =
-  designerSlice.actions;
+export const {
+  initializeDesigner,
+  updateCallbackUrl,
+  createFileSystemConnection,
+  updateFileSystemConnection,
+  updatePanelMetadata,
+  updateUnitTestDefinition,
+} = designerSlice.actions;

@@ -1,4 +1,4 @@
-import { createFileSystemConnection } from '../../state/DesignerSlice';
+import { createFileSystemConnection, updateUnitTestDefinition } from '../../state/DesignerSlice';
 import type { AppDispatch, RootState } from '../../state/store';
 import { VSCodeContext } from '../../webviewCommunication';
 import { DesignerCommandBar } from './DesignerCommandBar';
@@ -127,11 +127,15 @@ export const DesignerApp = () => {
         outputsLink: runDefinition.properties.trigger.outputsLink as ContentLink,
       });
       const triggerMocks = {
-        properties: {
-          status: runDefinition.properties.trigger.status,
+        [runDefinition.properties.trigger.name]: {
+          properties: {
+            status: runDefinition.properties.trigger.status,
+          },
+          outputs: triggerOutputs.outputs,
         },
-        outputs: triggerOutputs.outputs,
       };
+
+      console.log('charlie', runDefinition);
 
       const actionMocks: Record<string, any> = {};
       await Promise.all(
@@ -147,13 +151,15 @@ export const DesignerApp = () => {
         })
       );
 
-      const unitTestDefinition2 = {
-        triggerMocks: triggerMocks,
-        actionMocks: actionMocks,
-        assertions: {},
-      };
-
-      console.log('charlie', runDefinition, unitTestDefinition2);
+      dispatch(
+        updateUnitTestDefinition({
+          unitTestDefinition: {
+            triggerMocks: triggerMocks,
+            actionMocks: actionMocks,
+            assertions: [],
+          },
+        })
+      );
     }
   };
 
@@ -199,6 +205,8 @@ export const DesignerApp = () => {
         runId={runId}
       />
     );
+
+  console.log('charlie', unitTestDefinition);
 
   const designerApp = standardApp ? (
     <BJSWorkflowProvider
