@@ -31,6 +31,7 @@ export default {
   output: {
     format: 'esm',
     dir: distFolder,
+    sourcemap: true,
   },
   plugins: [
     typescript({ tsconfig: './tsconfig.lib.json' }),

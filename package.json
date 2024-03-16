@@ -220,6 +220,7 @@
     "recursive-copy": "^2.0.14",
     "rollup-plugin-copy": "^3.5.0",
     "rollup-plugin-peer-deps-external": "2.2.4",
+    "source-map-loader": "^5.0.0",
     "standard-version": "9.5.0",
     "style-loader": "3.3.1",
     "ts-jest": "28.0.8",

@@ -25,6 +25,11 @@ module.exports = {
   },
   module: {
     rules: [
+      // { //daniele follow up- look into function filterSourceMappingUrl
+      //   test: /\.js$/,
+      //   enforce: "pre",
+      //   use: ["source-map-loader"],
+      // },
       {
         test: /\.(ts|tsx)$/,
         exclude: /node_modules/,
@@ -74,10 +79,10 @@ module.exports = {
       serveIndex: true,
     },
   },
-  devtool: false,
+  devtool: 'eval-source-map',
   mode: 'production',
   output: {
-    path: '/Users/daniellecogburn/code/logic_apps_designer/dist/webpack/apps/designer-standalone',
+    path: path.resolve(__dirname, '../../dist/webpack/apps/designer-standalone'),
     filename: '[name].[contenthash:20].js',
     chunkFilename: '[name].[chunkhash:20].js',
     hashFunction: 'xxhash64',

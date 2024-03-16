@@ -28,6 +28,7 @@ export default {
       dir: distFolder,
       entryFileNames: 'index.esm.js',
       name: '@microsoft/logic-apps-shared',
+      sourcemap: true,
     },
   ],
   plugins: [

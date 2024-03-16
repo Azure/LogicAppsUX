@@ -5,6 +5,7 @@
     "declaration": true,
     "types": []
   },
+  "sourceMap": true,
   "include": ["**/*.ts"],
   "exclude": ["**/*.spec.ts", "jest.config.ts", "rollup.config.ts"]
 }

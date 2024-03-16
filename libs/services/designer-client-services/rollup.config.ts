@@ -29,7 +29,7 @@ export default {
     format: 'esm',
     dir: distFolder,
     entryFileNames: 'index.esm.js',
-
+    sourcemap: true,
     name: '@microsoft/designer-client-services',
   },
   plugins: [
