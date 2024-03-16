@@ -59,6 +59,7 @@ const deleteCustomCodeInfo = (nodeId: string, dispatch: Dispatch, state: RootSta
     const parameter = getParameterFromName(nodeInputs, constants.DEFAULT_CUSTOM_CODE_INPUT);
     if (CustomCodeService().isCustomCode(parameter?.editor, parameter?.editorOptions?.language)) {
       const fileName = parameter?.editorViewModel?.customCodeData?.fileName;
+      // if the file name is not present, then it is a new custom code and we just need to remove the file data
       dispatch(deleteCustomCode({ nodeId, fileName }));
     }
   }

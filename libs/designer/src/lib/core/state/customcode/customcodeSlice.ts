@@ -29,24 +29,32 @@ export const customCodeSlice = createSlice({
         return;
       }
       state.files[fileName] = { nodeId, fileExtension, isModified: true };
+      // cycle through the old files, and mark as deleted to all that share the same nodeId
+      Object.entries(state.files).forEach(([existingFileName, file]) => {
+        if (file.nodeId === nodeId && existingFileName !== fileName) {
+          state.files[existingFileName] = { ...file, isDeleted: true };
+        }
+      });
       state.fileData[nodeId] = fileData;
     },
     deleteCustomCode: (state, action: PayloadAction<DeleteCustomCodePayload>) => {
       const { nodeId, fileName } = action.payload;
-      state.files[fileName] = { nodeId, fileExtension: '', isDeleted: true };
+      if (fileName) {
+        state.files[fileName] = { nodeId, fileExtension: '', isDeleted: true };
+      }
       delete state.fileData[nodeId];
     },
     renameCustomCode: (state, action: PayloadAction<RenameCustomCodePayload>) => {
       const { nodeId, oldFileName, newFileName } = action.payload;
       if (state.files[oldFileName]) {
         state.files[newFileName] = { ...state.files[oldFileName], isModified: true, isDeleted: false };
-        // cycle through the old files, and mark as deleted to all that share the same nodeId
-        Object.entries(state.files).forEach(([fileName, file]) => {
-          if (file.nodeId === nodeId && fileName !== newFileName) {
-            state.files[fileName] = { ...file, isDeleted: true };
-          }
-        });
       }
+      // cycle through the existing files, and mark as deleted to all that share the same nodeId
+      Object.entries(state.files).forEach(([fileName, file]) => {
+        if (file.nodeId === nodeId && fileName !== newFileName) {
+          state.files[fileName] = { ...file, isDeleted: true };
+        }
+      });
     },
   },
   extraReducers: (builder) => {

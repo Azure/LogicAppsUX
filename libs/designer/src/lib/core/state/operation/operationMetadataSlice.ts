@@ -412,6 +412,19 @@ export const operationMetadataSlice = createSlice({
         args: [action.payload],
       });
     },
+    updateParameterEditorViewModel: (
+      state,
+      action: PayloadAction<{ nodeId: string; groupId: string; parameterId: string; editorViewModel: any }>
+    ) => {
+      const { nodeId, groupId, parameterId, editorViewModel } = action.payload;
+      const inputParameters = getRecordEntry(state.inputParameters, nodeId);
+      const parameterGroup = getRecordEntry(inputParameters?.parameterGroups, groupId);
+      if (!inputParameters || !parameterGroup) return;
+      const index = parameterGroup.parameters.findIndex((parameter) => parameter.id === parameterId);
+      if (index > -1) {
+        parameterGroup.parameters[index].editorViewModel = editorViewModel;
+      }
+    },
     updateParameterValidation: (
       state,
       action: PayloadAction<{ nodeId: string; groupId: string; parameterId: string; validationErrors: string[] | undefined }>
@@ -506,6 +519,7 @@ export const {
   updateStaticResults,
   updateParameterConditionalVisibility,
   updateParameterValidation,
+  updateParameterEditorViewModel,
   updateExisitingInputTokenTitles,
   removeParameterValidationError,
   updateOutputs,

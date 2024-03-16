@@ -475,7 +475,7 @@ export const updateCustomCodeInInputs = async (
 
     if (parameter && customCodeValue) {
       parameter.editorViewModel = {
-        customCodeData: { fileData: customCodeValue, fileExtension },
+        customCodeData: { fileData: customCodeValue, fileExtension, fileName },
       };
     }
   } catch (error) {

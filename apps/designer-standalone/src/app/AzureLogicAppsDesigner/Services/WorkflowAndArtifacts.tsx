@@ -270,15 +270,16 @@ export const saveCustomCodeStandard = async (customCode?: CustomCodeFileNameMapp
     // to prevent 404's we first check which custom code files are already present before deleting
     Object.entries(customCode).forEach(([fileName, customCodeData]) => {
       const { fileExtension, isModified, isDeleted, fileData } = customCodeData;
-      if (isDeleted && existingFiles.includes(fileName)) {
-        CustomCodeService().deleteCustomCode(fileName);
-        LoggerService().log({
-          level: LogEntryLevel.Verbose,
-          area: 'serializeCustomcode',
-          message: `Deleting custom code file: ${fileName}`,
-        });
+      if (isDeleted) {
+        if (existingFiles.includes(fileName)) {
+          CustomCodeService().deleteCustomCode(fileName);
+          LoggerService().log({
+            level: LogEntryLevel.Verbose,
+            area: 'serializeCustomcode',
+            message: `Deleting custom code file: ${fileName}`,
+          });
+        }
       } else if (isModified) {
-        // const fileNameWithoutExtension = replaceWhiteSpaceWithUnderscore(idReplacements[nodeId] ?? nodeId);
         LoggerService().log({
           level: LogEntryLevel.Verbose,
           area: 'serializeCustomcode',

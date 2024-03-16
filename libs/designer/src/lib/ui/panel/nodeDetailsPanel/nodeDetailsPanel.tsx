@@ -12,7 +12,7 @@ import {
 import { renameCustomCode } from '../../../core/state/customcode/customcodeSlice';
 import { useReadOnly } from '../../../core/state/designerOptions/designerOptionsSelectors';
 import { setShowDeleteModal } from '../../../core/state/designerView/designerViewSlice';
-import { ErrorLevel } from '../../../core/state/operation/operationMetadataSlice';
+import { ErrorLevel, updateParameterEditorViewModel } from '../../../core/state/operation/operationMetadataSlice';
 import { useIconUri, useOperationErrorInfo } from '../../../core/state/operation/operationSelector';
 import { useIsPanelCollapsed, useSelectedPanelTabId } from '../../../core/state/panel/panelSelectors';
 import { expandPanel, selectPanelTab, setSelectedNodeId, updatePanelLocation } from '../../../core/state/panel/panelSlice';
@@ -20,7 +20,7 @@ import { useOperationQuery } from '../../../core/state/selectors/actionMetadataS
 import { useNodeDescription, useRunData, useRunInstance } from '../../../core/state/workflow/workflowSelectors';
 import { replaceId, setNodeDescription } from '../../../core/state/workflow/workflowSlice';
 import { isOperationNameValid, isRootNodeInGraph } from '../../../core/utils/graph';
-import { getCustomCodeFileName, getParameterFromName } from '../../../core/utils/parameters/helper';
+import { ParameterGroupKeys, getCustomCodeFileName, getParameterFromName } from '../../../core/utils/parameters/helper';
 import { CommentMenuItem } from '../../menuItems/commentMenuItem';
 import { DeleteMenuItem } from '../../menuItems/deleteMenuItem';
 import { usePanelTabs } from './usePanelTabs';
@@ -106,14 +106,29 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
   // delete the existing custom code file name and upload the new file with updated name
   const onTitleBlur = (prevTitle: string) => {
     const parameter = getParameterFromName(inputs, constants.DEFAULT_CUSTOM_CODE_INPUT);
-    if (CustomCodeService().isCustomCode(parameter?.editor, parameter?.editorOptions?.language)) {
+    if (parameter && CustomCodeService().isCustomCode(parameter?.editor, parameter?.editorOptions?.language)) {
       const newFileName = getCustomCodeFileName(selectedNode, inputs, idReplacements);
       const [, fileExtension] = splitFileName(newFileName);
+      const oldFileName = replaceWhiteSpaceWithUnderscore(prevTitle) + fileExtension;
+      if (newFileName === oldFileName) return;
+      // update the view model with the latest file name
+      dispatch(
+        updateParameterEditorViewModel({
+          nodeId: selectedNode,
+          groupId: ParameterGroupKeys.DEFAULT,
+          parameterId: parameter.id,
+          editorViewModel: {
+            ...(parameter.editorViewModel ?? {}),
+            customCodeData: { ...(parameter.editorViewModel?.customCodeData ?? {}), fileName: newFileName },
+          },
+        })
+      );
+
       dispatch(
         renameCustomCode({
           nodeId: selectedNode,
-          newFileName: getCustomCodeFileName(selectedNode, inputs, idReplacements),
-          oldFileName: replaceWhiteSpaceWithUnderscore(prevTitle) + fileExtension,
+          newFileName,
+          oldFileName,
         })
       );
     }
