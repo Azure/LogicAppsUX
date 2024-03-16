@@ -10,7 +10,7 @@ import {
   addDynamicOutputs,
   clearDynamicOutputs,
   updateErrorDetails,
-  updateExisitingInputTokenTitles,
+  updateExistingInputTokenTitles,
 } from '../state/operation/operationMetadataSlice';
 import { addDynamicTokens } from '../state/tokens/tokensSlice';
 import type { WorkflowKind } from '../state/workflow/workflowInterfaces';
@@ -500,7 +500,7 @@ export const loadDynamicOutputsInNode = async (
 
           dispatch(addDynamicOutputs({ nodeId, outputs: dynamicOutputs }));
 
-          dispatch(updateExisitingInputTokenTitles({ tokenTitles: dynamicOutputTitles }));
+          dispatch(updateExistingInputTokenTitles({ tokenTitles: dynamicOutputTitles }));
 
           let iconUri: string, brandColor: string;
           if (OperationManifestService().isSupported(operationInfo.type, operationInfo.kind)) {
