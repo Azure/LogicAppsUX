@@ -1,6 +1,6 @@
 {
   "extends": ["plugin:@nrwl/nx/react", "../../.eslintrc.json"],
-  "ignorePatterns": ["!**/*", "rollup.config.ts", "**/.rollup.cache/**"],
+  "ignorePatterns": ["!**/*", "rollup.config.ts", "**/.rollup.cache/**", "node_modules/**"],
   "rules": {
     "react/jsx-no-literals": [2]
   },

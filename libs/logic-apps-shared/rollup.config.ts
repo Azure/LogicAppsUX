@@ -1,9 +1,12 @@
 import { babel } from '@rollup/plugin-babel';
+import { getBabelOutputPlugin } from '@rollup/plugin-babel';
 import commonjs from '@rollup/plugin-commonjs';
 import json from '@rollup/plugin-json';
 import { nodeResolve } from '@rollup/plugin-node-resolve';
 import typescript from '@rollup/plugin-typescript';
+import path from 'path';
 import copy from 'rollup-plugin-copy';
+import { fileURLToPath } from 'url';
 
 const externalFn = (str, parent, _isResolved) => {
   if (str.includes('node_modules')) {
@@ -13,6 +16,8 @@ const externalFn = (str, parent, _isResolved) => {
 };
 
 const distFolder = '../../dist/rollup/libs/logic-apps-shared';
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 export default {
   input: ['./src/index.ts'],
@@ -23,17 +28,20 @@ export default {
       dir: distFolder,
       entryFileNames: 'index.esm.js',
       name: '@microsoft/logic-apps-shared',
-    }
+    },
   ],
   plugins: [
     babel(),
     typescript({ tsconfig: './tsconfig.lib.json' }),
     nodeResolve({ modulePaths: ['../../node_modules'] }),
     commonjs(),
+    getBabelOutputPlugin({
+      presets: ['@babel/preset-env'],
+      configFile: path.resolve(__dirname, '../../babel.config.json'),
+    }),
     json(),
     copy({
-      targets: [
-        { src: './package.json', dest: distFolder },
-      ]})
+      targets: [{ src: './package.json', dest: distFolder }],
+    }),
   ],
 };

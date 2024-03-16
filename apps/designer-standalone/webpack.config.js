@@ -10,11 +10,14 @@ module.exports = {
   resolve: {
     extensions: ['.ts', '.tsx', '.mjs', '.js', '.jsx'],
     alias: {
-      '@microsoft/logic-apps-shared': createLibPath('logic-apps-shared/index.js'),
-      '@microsoft/logic-apps-designer': createLibPath('designer/index.js'),
-      '@microsoft/designer-client-services-logic-apps': createLibPath('services/designer-client-services/index.js'),
-      '@microsoft/designer-ui': createLibPath('designer-ui/index.js'),
-      '@microsoft/chatbot': createLibPath('chatbot/index.js'),
+      '@microsoft/logic-apps-shared': path.resolve(__dirname, '../../dist/rollup/libs/logic-apps-shared/index.esm.js'), //createLibPath('rollup/logic-apps-shared/index.esm.js'),
+      '@microsoft/logic-apps-designer': path.resolve(__dirname, '../../dist/rollup/libs/designer'),
+      '@microsoft/designer-client-services-logic-apps': path.resolve(
+        __dirname,
+        '../../dist/rollup/libs/designer-client-services/index.esm.js'
+      ),
+      '@microsoft/designer-ui': path.resolve(__dirname, '../../dist/rollup/libs/designer-ui/index.js'),
+      '@microsoft/chatbot': path.resolve(__dirname, '../../dist/libs/chatbot/index.js'),
       https: false,
       http: false,
     },
@@ -55,17 +58,13 @@ module.exports = {
   },
   cache: false,
   resolveLoader: {
-    modules: [
-      'node_modules',
-    ],
+    modules: ['node_modules'],
   },
   target: 'web',
   entry: {
     main: ['./src/main.tsx'],
     index: './src/index.html',
-    polyfills: [
-      './src/polyfills.ts',
-    ],
+    polyfills: ['./src/polyfills.ts'],
     styles: ['./src/styles.less'],
   },
   devServer: {

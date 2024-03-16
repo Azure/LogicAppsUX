@@ -18,7 +18,8 @@
     "@rollup/plugin-json": "6.1.0",
     "@rollup/plugin-node-resolve": "15.2.3",
     "@rollup/plugin-typescript": "11.1.6",
-    "rollup-plugin-postcss": "4.0.2"
+    "rollup-plugin-postcss": "4.0.2",
+    "@rollup/plugin-babel": "6.0.4"
   },
   "dependencies": {
     "@fluentui/react": "8.110.2",
