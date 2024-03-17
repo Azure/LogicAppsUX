@@ -1,6 +1,7 @@
 import {
   collectionBranding,
   conversionBranding,
+  customBranding,
   dateTimeBranding,
   logicalBranding,
   mathBranding,
@@ -24,7 +25,7 @@ export const getFunctionBrandingForCategory = (functionCategory: FunctionCategor
       return collectionBranding;
     }
     case FunctionCategory.Custom: {
-      return collectionBranding;
+      return customBranding;
     }
     case FunctionCategory.DateTime: {
       return dateTimeBranding;
