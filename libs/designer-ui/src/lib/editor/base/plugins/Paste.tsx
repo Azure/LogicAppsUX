@@ -24,6 +24,9 @@ export const PastePlugin = ({ segmentMapping, loadParameterValueFromString }: Pa
         const clipboardData = event instanceof InputEvent || event instanceof KeyboardEvent ? null : event.clipboardData;
         const lexicalString = clipboardData?.getData('text/plain').replace(/\r\n/g, '\n');
         if (lexicalString && segmentMapping && loadParameterValueFromString) {
+          // normally we can overwrite default paste behavior by returning true
+          // however on firefox this doesn't happen, so we've manually called preventDefault
+          event.preventDefault();
           const valueSegments = loadParameterValueFromString(lexicalString);
           editor.update(() => {
             // Get the selection from the EditorState
