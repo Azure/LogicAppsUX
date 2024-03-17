@@ -6,7 +6,7 @@ import { type OutputMock } from '../../state/unitTest/unitTestInterfaces';
 import type { Operations, NodesMetadata } from '../../state/workflow/workflowInterfaces';
 import { createWorkflowNode, createWorkflowEdge } from '../../utils/graph';
 import { toConditionViewModel } from '../../utils/parameters/helper';
-import { createLiteralValueSegment } from '../../utils/parameters/segment';
+import { createLiteralValueSegment, isValueSegment } from '../../utils/parameters/segment';
 import type { WorkflowNode, WorkflowEdge } from '../models/workflowNode';
 import { LoggerService, Status } from '@microsoft/designer-client-services-logic-apps';
 import { getDurationStringPanelMode, ActionResults } from '@microsoft/designer-ui';
@@ -23,6 +23,7 @@ import {
   getUniqueName,
   getRecordEntry,
   ConnectionType,
+  guid,
 } from '@microsoft/utils-logic-apps';
 
 const hasMultipleTriggers = (definition: LogicAppsV2.WorkflowDefinition): boolean => {
@@ -123,6 +124,10 @@ export const Deserialize = (
  */
 const parseOutputsToValueSegment = (mockOutputs: Record<string, any>) => {
   return Object.keys(mockOutputs).reduce((acc, key) => {
+    const id = guid();
+    if (isValueSegment({ id, ...mockOutputs[key][0] })) {
+      return { ...acc, [key]: [{ id, ...mockOutputs[key][0] }] };
+    }
     const value = typeof mockOutputs[key].value === 'object' ? JSON.stringify(mockOutputs[key].value) : mockOutputs[key].value;
     return { ...acc, [key]: [createLiteralValueSegment(value)] };
   }, {});

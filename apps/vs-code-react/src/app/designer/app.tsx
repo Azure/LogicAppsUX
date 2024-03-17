@@ -10,7 +10,7 @@ import type { ConnectionCreationInfo } from '@microsoft/designer-client-services
 import type { ConnectionReferences } from '@microsoft/logic-apps-designer';
 import { DesignerProvider, BJSWorkflowProvider, Designer, getTheme, useThemeObserver } from '@microsoft/logic-apps-designer';
 import type { ContentLink, LogicAppsV2 } from '@microsoft/utils-logic-apps';
-import { isEmptyString, Theme } from '@microsoft/utils-logic-apps';
+import { isEmptyString, isNullOrUndefined, Theme } from '@microsoft/utils-logic-apps';
 import type { FileSystemConnectionInfo, StandardApp } from '@microsoft/vscode-extension';
 import { ExtensionCommand } from '@microsoft/vscode-extension';
 import { useContext, useMemo, useState, useEffect } from 'react';
@@ -122,7 +122,7 @@ export const DesignerApp = () => {
       } as StandardApp;
       setRunInstance(runDefinition);
       setStandardApp(standardAppInstance);
-    } else if (isUnitTest) {
+    } else if (isUnitTest && isNullOrUndefined(unitTestDefinition)) {
       const triggerOutputs = await services.runService.getActionLinks({
         outputsLink: runDefinition.properties.trigger.outputsLink as ContentLink,
       });
@@ -134,8 +134,6 @@ export const DesignerApp = () => {
           outputs: triggerOutputs.outputs,
         },
       };
-
-      console.log('charlie', runDefinition);
 
       const actionMocks: Record<string, any> = {};
       await Promise.all(
@@ -205,8 +203,6 @@ export const DesignerApp = () => {
         runId={runId}
       />
     );
-
-  console.log('charlie', unitTestDefinition);
 
   const designerApp = standardApp ? (
     <BJSWorkflowProvider
