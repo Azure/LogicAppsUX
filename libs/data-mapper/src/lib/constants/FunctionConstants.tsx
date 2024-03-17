@@ -17,7 +17,7 @@ export interface FunctionGroupBranding {
 export const customBranding: FunctionGroupBranding = {
   displayName: 'Custom',
   colorTokenName: 'colorFnCategoryCollection',
-  icon: <Collection20Regular />,
+  icon: <Wrench20Regular />,
 };
 
 export const collectionBranding: FunctionGroupBranding = {

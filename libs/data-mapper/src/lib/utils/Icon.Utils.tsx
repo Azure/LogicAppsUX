@@ -186,6 +186,9 @@ export const iconForFunctionCategory = (functionCategory: FunctionCategory) => {
     case FunctionCategory.Conversion: {
       return ArrowSwap20Regular;
     }
+    case FunctionCategory.Custom: {
+      return Wrench20Regular;
+    }
     case FunctionCategory.DateTime: {
       return CalendarClock20Regular;
     }
