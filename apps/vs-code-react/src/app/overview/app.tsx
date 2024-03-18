@@ -126,7 +126,7 @@ export const OverviewApp = () => {
       onCreateUnitTest={(run: RunDisplayItem) => {
         vscode.postMessage({
           command: ExtensionCommand.createUnitTest,
-          item: run,
+          runId: run.id,
         });
       }}
     />

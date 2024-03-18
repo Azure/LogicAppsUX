@@ -27,7 +27,7 @@ export class OpenDesignerForAzureResource extends OpenDesignerBase {
     const panelName = `${vscode.workspace.name}-${workflowName}`;
     const panelGroupKey = ext.webViewKey.designerAzure;
 
-    super(context, workflowName, panelName, workflowAppApiVersion, panelGroupKey, true, false, false);
+    super(context, workflowName, panelName, workflowAppApiVersion, panelGroupKey, true, false, false, '');
 
     this.node = node;
     this.workflow = node.workflowFileContent;

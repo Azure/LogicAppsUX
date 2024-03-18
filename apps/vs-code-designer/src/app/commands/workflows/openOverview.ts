@@ -151,7 +151,7 @@ export async function openOverview(context: IAzureConnectorsContext, node: vscod
         }, 5000);
         break;
       case ExtensionCommand.createUnitTest:
-        await createUnitTest(context, workflowNode as vscode.Uri);
+        await createUnitTest(context, workflowNode as vscode.Uri, message.runId);
         break;
       default:
         break;

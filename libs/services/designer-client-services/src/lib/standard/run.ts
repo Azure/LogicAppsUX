@@ -217,7 +217,7 @@ export class StandardRunService implements IRunService {
    * @param {string} nodeId - Action ID.
    * @returns {Promise<any>} Action inputs and outputs.
    */
-  async getActionLinks(actionMetadata: { inputsLink?: ContentLink; outputsLink?: ContentLink }, nodeId: string): Promise<any> {
+  async getActionLinks(actionMetadata: { inputsLink?: ContentLink; outputsLink?: ContentLink }, nodeId?: string): Promise<any> {
     const { inputsLink, outputsLink } = actionMetadata ?? {};
     const { updateCors } = this.options;
     let inputs: Record<string, any> = {};

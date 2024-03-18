@@ -119,7 +119,7 @@ export default class OpenMonitoringViewForLocal extends OpenMonitoringViewBase {
             readOnly: this.readOnly,
             isLocal: this.isLocal,
             isMonitoringView: this.isMonitoringView,
-            runId: this.runName,
+            runId: this.runId,
             hostVersion: ext.extensionVersion,
           },
         });
@@ -134,7 +134,7 @@ export default class OpenMonitoringViewForLocal extends OpenMonitoringViewBase {
         break;
       }
       case ExtensionCommand.createUnitTest: {
-        await createUnitTest(this.context as IAzureConnectorsContext, vscode.Uri.file(this.workflowFilePath));
+        await createUnitTest(this.context as IAzureConnectorsContext, vscode.Uri.file(this.workflowFilePath), message.runId);
         break;
       }
       default:
@@ -153,7 +153,7 @@ export default class OpenMonitoringViewForLocal extends OpenMonitoringViewBase {
         const fileContent = await promises.readFile(this.workflowFilePath, 'utf8');
         const workflowContent: any = JSON.parse(fileContent);
         const triggerName = getTriggerName(workflowContent.definition);
-        const url = `${this.baseUrl}/workflows/${this.workflowName}/triggers/${triggerName}/histories/${this.runName}/resubmit?api-version=${this.apiVersion}`;
+        const url = `${this.baseUrl}/workflows/${this.workflowName}/triggers/${triggerName}/histories/${this.runId}/resubmit?api-version=${this.apiVersion}`;
 
         await sendRequest(this.context, { url, method: HTTP_METHODS.POST });
       } catch (error) {

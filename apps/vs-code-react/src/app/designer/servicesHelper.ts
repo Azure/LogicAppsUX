@@ -21,25 +21,13 @@ import type {
   IWorkflowService,
 } from '@microsoft/designer-client-services-logic-apps';
 import type { ManagedIdentity } from '@microsoft/utils-logic-apps';
-import { HTTP_METHODS, clone } from '@microsoft/utils-logic-apps';
+import { HTTP_METHODS, clone, isEmptyString } from '@microsoft/utils-logic-apps';
 import type { ConnectionAndAppSetting, ConnectionsData, IDesignerPanelMetadata } from '@microsoft/vscode-extension';
 import { ExtensionCommand, HttpClient } from '@microsoft/vscode-extension';
 import type { QueryClient } from 'react-query';
 import type { WebviewApi } from 'vscode-webview';
 
-export const getDesignerServices = (
-  baseUrl: string,
-  apiVersion: string,
-  apiHubDetails: ApiHubServiceDetails,
-  isLocal: boolean,
-  connectionData: ConnectionsData,
-  panelMetadata: IDesignerPanelMetadata | null,
-  createFileSystemConnection: (connectionInfo: ConnectionCreationInfo, connectionName: string) => Promise<ConnectionCreationInfo>,
-  vscode: WebviewApi<unknown>,
-  oauthRedirectUrl: string,
-  hostVersion: string,
-  queryClient: QueryClient
-): {
+export interface DesignerServices {
   connectionService: StandardConnectionService;
   connectorService: StandardConnectorService;
   operationManifestService: StandardOperationManifestService;
@@ -51,7 +39,22 @@ export const getDesignerServices = (
   runService: StandardRunService;
   apimService: BaseApiManagementService;
   functionService: BaseFunctionService;
-} => {
+}
+
+export const getDesignerServices = (
+  baseUrl: string,
+  workflowRuntimeBaseUrl: string,
+  apiVersion: string,
+  apiHubDetails: ApiHubServiceDetails,
+  isLocal: boolean,
+  connectionData: ConnectionsData,
+  panelMetadata: IDesignerPanelMetadata | null,
+  createFileSystemConnection: (connectionInfo: ConnectionCreationInfo, connectionName: string) => Promise<ConnectionCreationInfo>,
+  vscode: WebviewApi<unknown>,
+  oauthRedirectUrl: string,
+  hostVersion: string,
+  queryClient: QueryClient
+): DesignerServices => {
   let authToken = '',
     panelId = '',
     workflowDetails: Record<string, any> = {},
@@ -278,7 +281,7 @@ export const getDesignerServices = (
 
   const runService = new StandardRunService({
     apiVersion,
-    baseUrl,
+    baseUrl: isEmptyString(workflowRuntimeBaseUrl) ? baseUrl : workflowRuntimeBaseUrl,
     workflowName: panelMetadata?.workflowName ?? '',
     httpClient,
   });

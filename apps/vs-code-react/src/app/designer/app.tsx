@@ -1,16 +1,17 @@
-import { createFileSystemConnection } from '../../state/DesignerSlice';
+import { createFileSystemConnection, updateUnitTestDefinition } from '../../state/DesignerSlice';
 import type { AppDispatch, RootState } from '../../state/store';
 import { VSCodeContext } from '../../webviewCommunication';
 import { DesignerCommandBar } from './DesignerCommandBar';
 import './app.less';
 import { getDesignerServices } from './servicesHelper';
+import { getRunInstanceMocks } from './utilities/runInstance';
 import { convertConnectionsDataToReferences } from './utilities/workflow';
 import { Spinner, SpinnerSize, Text } from '@fluentui/react';
 import type { ConnectionCreationInfo } from '@microsoft/designer-client-services-logic-apps';
 import type { ConnectionReferences } from '@microsoft/logic-apps-designer';
 import { DesignerProvider, BJSWorkflowProvider, Designer, getTheme, useThemeObserver } from '@microsoft/logic-apps-designer';
 import type { LogicAppsV2 } from '@microsoft/utils-logic-apps';
-import { isEmptyString, Theme } from '@microsoft/utils-logic-apps';
+import { isEmptyString, isNullOrUndefined, Theme } from '@microsoft/utils-logic-apps';
 import type { FileSystemConnectionInfo, StandardApp } from '@microsoft/vscode-extension';
 import { ExtensionCommand } from '@microsoft/vscode-extension';
 import { useContext, useMemo, useState, useEffect } from 'react';
@@ -36,9 +37,11 @@ export const DesignerApp = () => {
     hostVersion,
     isUnitTest,
     unitTestDefinition,
+    workflowRuntimeBaseUrl,
   } = vscodeState;
   const [standardApp, setStandardApp] = useState<StandardApp | undefined>(panelMetaData?.standardApp);
   const [runInstance, setRunInstance] = useState<LogicAppsV2.RunInstanceDefinition | null>(null);
+
   const [theme, setTheme] = useState<Theme>(getTheme(document.body));
   const intl = useIntl();
   const queryClient = useQueryClient();
@@ -74,6 +77,7 @@ export const DesignerApp = () => {
     };
     return getDesignerServices(
       baseUrl,
+      workflowRuntimeBaseUrl,
       apiVersion,
       apiHubServiceDetails ?? {},
       isLocal,
@@ -87,6 +91,7 @@ export const DesignerApp = () => {
     );
   }, [
     baseUrl,
+    workflowRuntimeBaseUrl,
     apiVersion,
     apiHubServiceDetails,
     isLocal,
@@ -104,7 +109,7 @@ export const DesignerApp = () => {
   }, [connectionData]);
 
   const getRunInstance = () => {
-    if (isMonitoringView && !isEmptyString(runId) && panelMetaData !== null) {
+    if ((isMonitoringView || isUnitTest) && !isEmptyString(runId) && panelMetaData !== null) {
       return services.runService.getRun(runId);
     }
     return;
@@ -118,6 +123,18 @@ export const DesignerApp = () => {
       } as StandardApp;
       setRunInstance(runDefinition);
       setStandardApp(standardAppInstance);
+    } else if (isUnitTest && isNullOrUndefined(unitTestDefinition)) {
+      const { triggerMocks, actionMocks } = await getRunInstanceMocks(runDefinition, services);
+
+      dispatch(
+        updateUnitTestDefinition({
+          unitTestDefinition: {
+            triggerMocks: triggerMocks,
+            actionMocks: actionMocks,
+            assertions: [],
+          },
+        })
+      );
     }
   };
 
@@ -159,6 +176,7 @@ export const DesignerApp = () => {
         isDarkMode={theme === Theme.Dark}
         isUnitTest={isUnitTest}
         isLocal={isLocal}
+        runId={runId}
       />
     );
 

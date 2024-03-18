@@ -18,9 +18,10 @@ import * as vscode from 'vscode';
  * Creates a unit test for a Logic App workflow.
  * @param {IAzureConnectorsContext} context - The context object for Azure Connectors.
  * @param {vscode.Uri | undefined} node - The URI of the workflow node, if available.
+ * @param {string | undefined} runId - The ID of the run, if available.
  * @returns A Promise that resolves when the unit test is created.
  */
-export async function createUnitTest(context: IAzureConnectorsContext, node: vscode.Uri | undefined): Promise<void> {
+export async function createUnitTest(context: IAzureConnectorsContext, node: vscode.Uri | undefined, runId?: string): Promise<void> {
   let workflowNode: vscode.Uri;
   const workspaceFolder = await getWorkspaceFolder(context);
   const projectPath = await tryGetLogicAppProjectRoot(context, workspaceFolder);
@@ -39,7 +40,7 @@ export async function createUnitTest(context: IAzureConnectorsContext, node: vsc
     validateInput: async (name: string): Promise<string | undefined> => await validateUnitTestName(projectPath, workflowName, name),
   });
 
-  const openDesignerObj = new OpenDesignerForLocalProject(context, workflowNode, unitTestName);
+  const openDesignerObj = new OpenDesignerForLocalProject(context, workflowNode, unitTestName, null, runId);
   await openDesignerObj?.createPanel();
 }
 
