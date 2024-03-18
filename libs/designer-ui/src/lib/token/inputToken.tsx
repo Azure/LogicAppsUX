@@ -129,12 +129,11 @@ export const InputToken: React.FC<InputTokenProps> = ({ value, brandColor, icon,
         handleTokenClicked(e);
         e.stopPropagation();
       }}
+      title={value}
       style={tokenStyle}
       ref={tokenRef}
     >
-      <div className="msla-token-title" title={value}>
-        {title}
-      </div>
+      <div className="msla-token-title">{title}</div>
       {renderTokenDeleteButton()}
     </span>
   );

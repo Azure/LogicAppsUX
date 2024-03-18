@@ -2371,6 +2371,7 @@ export const recurseSerializeCondition = (
       operator = RowDropdownOptions.EQUALS;
     }
 
+    console.log(operand1, operand2, idReplacements);
     const operand1String = parameterValueToString(
       { type: 'any', value: operand1, ...commonProperties } as any,
       isDefinitionValue,
