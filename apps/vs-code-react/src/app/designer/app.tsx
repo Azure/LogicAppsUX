@@ -4,12 +4,13 @@ import { VSCodeContext } from '../../webviewCommunication';
 import { DesignerCommandBar } from './DesignerCommandBar';
 import './app.less';
 import { getDesignerServices } from './servicesHelper';
+import { getRunInstanceMocks } from './utilities/runInstance';
 import { convertConnectionsDataToReferences } from './utilities/workflow';
 import { Spinner, SpinnerSize, Text } from '@fluentui/react';
 import type { ConnectionCreationInfo } from '@microsoft/designer-client-services-logic-apps';
 import type { ConnectionReferences } from '@microsoft/logic-apps-designer';
 import { DesignerProvider, BJSWorkflowProvider, Designer, getTheme, useThemeObserver } from '@microsoft/logic-apps-designer';
-import type { ContentLink, LogicAppsV2 } from '@microsoft/utils-logic-apps';
+import type { LogicAppsV2 } from '@microsoft/utils-logic-apps';
 import { isEmptyString, isNullOrUndefined, Theme } from '@microsoft/utils-logic-apps';
 import type { FileSystemConnectionInfo, StandardApp } from '@microsoft/vscode-extension';
 import { ExtensionCommand } from '@microsoft/vscode-extension';
@@ -123,31 +124,7 @@ export const DesignerApp = () => {
       setRunInstance(runDefinition);
       setStandardApp(standardAppInstance);
     } else if (isUnitTest && isNullOrUndefined(unitTestDefinition)) {
-      const triggerOutputs = await services.runService.getActionLinks({
-        outputsLink: runDefinition.properties.trigger.outputsLink as ContentLink,
-      });
-      const triggerMocks = {
-        [runDefinition.properties.trigger.name]: {
-          properties: {
-            status: runDefinition.properties.trigger.status,
-          },
-          outputs: triggerOutputs.outputs,
-        },
-      };
-
-      const actionMocks: Record<string, any> = {};
-      await Promise.all(
-        Object.keys(runDefinition.properties.actions).map(async (actionName) => {
-          const outputsLink = runDefinition.properties.actions[actionName].outputsLink as ContentLink;
-          const actionOutputs = await services.runService.getActionLinks({ outputsLink });
-          actionMocks[actionName] = {
-            properties: {
-              status: runDefinition.properties.actions[actionName].status,
-            },
-            outputs: actionOutputs.outputs,
-          };
-        })
-      );
+      const { triggerMocks, actionMocks } = await getRunInstanceMocks(runDefinition, services);
 
       dispatch(
         updateUnitTestDefinition({
@@ -166,7 +143,6 @@ export const DesignerApp = () => {
     setStandardApp(undefined);
   };
 
-  /// TODO(ccastrotrejo): NEED TO UPDATE THIS
   const { refetch, isError, isFetching, isLoading, isRefetching } = useQuery<any>(['runInstance', { runId }], getRunInstance, {
     refetchOnWindowFocus: false,
     refetchOnMount: true,

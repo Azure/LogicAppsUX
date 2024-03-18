@@ -27,6 +27,20 @@ import { ExtensionCommand, HttpClient } from '@microsoft/vscode-extension';
 import type { QueryClient } from 'react-query';
 import type { WebviewApi } from 'vscode-webview';
 
+export interface DesignerServices {
+  connectionService: StandardConnectionService;
+  connectorService: StandardConnectorService;
+  operationManifestService: StandardOperationManifestService;
+  searchService: StandardSearchService;
+  oAuthService: BaseOAuthService;
+  gatewayService: BaseGatewayService;
+  workflowService: IWorkflowService;
+  hostService: IHostService;
+  runService: StandardRunService;
+  apimService: BaseApiManagementService;
+  functionService: BaseFunctionService;
+}
+
 export const getDesignerServices = (
   baseUrl: string,
   workflowRuntimeBaseUrl: string,
@@ -40,19 +54,7 @@ export const getDesignerServices = (
   oauthRedirectUrl: string,
   hostVersion: string,
   queryClient: QueryClient
-): {
-  connectionService: StandardConnectionService;
-  connectorService: StandardConnectorService;
-  operationManifestService: StandardOperationManifestService;
-  searchService: StandardSearchService;
-  oAuthService: BaseOAuthService;
-  gatewayService: BaseGatewayService;
-  workflowService: IWorkflowService;
-  hostService: IHostService;
-  runService: StandardRunService;
-  apimService: BaseApiManagementService;
-  functionService: BaseFunctionService;
-} => {
+): DesignerServices => {
   let authToken = '',
     panelId = '',
     workflowDetails: Record<string, any> = {},
