@@ -4,7 +4,7 @@ import { supportedDataMapDefinitionFileExts, supportedSchemaFileExts } from './a
 import { registerCommands } from './app/commands/registerCommands';
 import { getResourceGroupsApi } from './app/resourcesExtension/getExtensionApi';
 import type { AzureAccountTreeItemWithProjects } from './app/tree/AzureAccountTreeItemWithProjects';
-import { findInitialFiles, getWorkspaceTestPatterns } from './app/tree/unitTestTree/helper';
+import { getTestFiles, unitTestResolveHandler, runHandler } from './app/tree/unitTestTree/helpers';
 import { stopDesignTimeApi } from './app/utils/codeless/startDesignTimeApi';
 import { UriHandler } from './app/utils/codeless/urihandler';
 import { getExtensionVersion } from './app/utils/extension';
@@ -104,10 +104,16 @@ export async function activate(context: vscode.ExtensionContext) {
     const ctrl = vscode.tests.createTestController('LogicAppStandardTests', 'Logic App Standard Tests');
     context.subscriptions.push(ctrl);
 
-    // Find and load initial files
+    // Refresh handler when click in refresh button in the test explorer
     ctrl.refreshHandler = async () => {
-      await Promise.all(getWorkspaceTestPatterns().map(({ pattern }) => findInitialFiles(ctrl, pattern)));
+      await getTestFiles(ctrl);
     };
+
+    // Run profile when click in run button in the test explorer
+    ctrl.createRunProfile('Run logic apps standard unit tests', vscode.TestRunProfileKind.Run, runHandler, true, undefined);
+
+    // Handler to load unit test folders and files when load the test explorer
+    ctrl.resolveHandler = async (item: vscode.TestItem) => unitTestResolveHandler(context, ctrl, item);
   });
 }
 

@@ -3,9 +3,9 @@ import { workspace, type TestController, type TestItem, type Uri, type TestRun, 
 
 const textDecoder = new TextDecoder('utf-8');
 
-export type MarkdownTestData = TestFile | TestCase;
+export type TestData = TestFile | TestCase;
 
-export const testData = new WeakMap<TestItem, MarkdownTestData>();
+export const testData = new WeakMap<TestItem, TestData>();
 
 export const getContentFromFilesystem = async (uri: Uri) => {
   try {
@@ -18,6 +18,8 @@ export const getContentFromFilesystem = async (uri: Uri) => {
 };
 
 export class TestFile {
+  public didResolve = false;
+
   public async updateFromDisk(controller: TestController, item: TestItem) {
     try {
       const content = await getContentFromFilesystem(item.uri);
