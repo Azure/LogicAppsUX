@@ -4,6 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 import type DataMapperPanel from './app/commands/dataMapper/DataMapperPanel';
 import type { AzureAccountTreeItemWithProjects } from './app/tree/AzureAccountTreeItemWithProjects';
+import { type TestData } from './app/tree/unitTestTree/testTree';
 import { dotnet, func, node, npm } from './constants';
 import type { Site } from '@azure/arm-appservice';
 import type { IAzExtOutputChannel } from '@microsoft/vscode-azext-utils';
@@ -88,6 +89,7 @@ export namespace ext {
   // Unit Test
   export const watchingTests = new Map<TestItem | 'ALL', TestRunProfile | undefined>();
   export const testFileChangedEmitter = new EventEmitter<Uri>();
+  export const testData = new WeakMap<TestItem, TestData>();
 }
 
 export const ExtensionCommand = {

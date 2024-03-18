@@ -1,8 +1,8 @@
 import { ext } from '../../../extensionVariables';
-import { TestFile, testData } from './testTree';
+import { type TestFile, TestWorkspace } from './testTree';
 import { isNullOrUndefined } from '@microsoft/utils-logic-apps';
 import {
-  type GlobPattern,
+  type WorkspaceFolder,
   RelativePattern,
   type TestController,
   workspace,
@@ -14,20 +14,25 @@ import {
   type ExtensionContext,
 } from 'vscode';
 
+interface TestInWorkspace {
+  workspaceFolder: WorkspaceFolder;
+  pattern: RelativePattern;
+}
+
 /**
  * Retrieves the test files asynchronously.
  * @param {TestController} controller The test controller.
  * @returns A promise that resolves to an array of test files.
  */
 export const getTestFiles = async (controller: TestController) => {
-  return await Promise.all(getWorkspaceTestPatterns().map(({ pattern }) => findInitialFiles(controller, pattern)));
+  return await Promise.all(getWorkspaceTestPatterns().map((testInWorkspace) => findInitialFiles(controller, testInWorkspace)));
 };
 
 /**
  * Retrieves the workspace test patterns.
  * @returns An array of workspace test patterns.
  */
-export const getWorkspaceTestPatterns = () => {
+export const getWorkspaceTestPatterns = (): TestInWorkspace[] => {
   if (!workspace.workspaceFolders) {
     return [];
   }
@@ -65,9 +70,9 @@ export const unitTestResolveHandler = async (context: ExtensionContext, ctrl: Te
     return;
   }
 
-  const data = testData.get(item);
-  if (data instanceof TestFile) {
-    await data.updateFromDisk(ctrl, item);
+  const data = ext.testData.get(item);
+  if (data instanceof TestWorkspace) {
+    await data.updateFromDisk(ctrl);
   }
 };
 
@@ -76,19 +81,19 @@ const testsWorkspaceWatcher = (controller: TestController, fileChangedEmitter: E
     const watcher = workspace.createFileSystemWatcher(test.pattern);
 
     watcher.onDidCreate((uri) => {
-      getOrCreateFile(controller, uri);
+      // getOrCreateFile(controller, uri);
       fileChangedEmitter.fire(uri);
     });
-    watcher.onDidChange(async (uri) => {
-      const { file, data } = getOrCreateFile(controller, uri);
-      if (data.didResolve) {
-        await data.updateFromDisk(controller, file);
-      }
-      fileChangedEmitter.fire(uri);
+    watcher.onDidChange(async (_uri) => {
+      // const { file, data } = getOrCreateFile(controller, uri);
+      // if (data.didResolve) {
+      //   await data.updateFromDisk(controller, file);
+      // }
+      // fileChangedEmitter.fire(uri);
     });
     watcher.onDidDelete((uri) => controller.items.delete(uri.toString()));
 
-    findInitialFiles(controller, test.pattern);
+    findInitialFiles(controller, test);
 
     return watcher;
   });
@@ -99,24 +104,54 @@ const testsWorkspaceWatcher = (controller: TestController, fileChangedEmitter: E
  * @param {TestController} controller The test controller.
  * @param {GlobPattern} pattern The glob pattern used to find files.
  */
-const findInitialFiles = async (controller: TestController, pattern: GlobPattern) => {
-  for (const file of await workspace.findFiles(pattern)) {
-    getOrCreateFile(controller, file);
+const findInitialFiles = async (controller: TestController, testInWorkspace: TestInWorkspace) => {
+  const unitTestFiles = await workspace.findFiles(testInWorkspace.pattern);
+  const map = new Map();
+
+  unitTestFiles.forEach((uri) => {
+    const workspaceName = uri.path.split('/').slice(-5)[0];
+    if (!map.has(workspaceName)) {
+      map.set(workspaceName, []);
+    }
+    map.get(workspaceName).push(uri);
+  });
+
+  for (const workspace of Array.from(map)) {
+    getOrCreateWorkspace(controller, workspace);
   }
 };
 
-const getOrCreateFile = (controller: TestController, uri: Uri) => {
-  const existing = controller.items.get(uri.toString());
+const getOrCreateWorkspace = (controller: TestController, workspace: [string, Uri[]]) => {
+  const workspaceName = workspace[0];
+  const existing = controller.items.get(workspace[0]);
   if (existing) {
-    return { file: existing, data: testData.get(existing) as TestFile };
+    return { file: existing, data: ext.testData.get(existing) as TestFile };
   }
 
-  const file = controller.createTestItem(uri.toString(), uri.path.split('/').pop(), uri);
-  controller.items.add(file);
+  const workspaceTestItem = controller.createTestItem(workspaceName, workspaceName);
+  controller.items.add(workspaceTestItem);
 
-  const data = new TestFile();
-  testData.set(file, data);
+  const data = new TestWorkspace(workspace[0], workspace[1]);
+  ext.testData.set(workspaceTestItem, data);
 
-  file.canResolveChildren = true;
-  return { file, data };
+  workspaceTestItem.canResolveChildren = true;
+  return { workspaceTestItem, data };
 };
+
+// const getOrCreateFile = (controller: TestController, uri: Uri) => {
+//   const existing = controller.items.get(uri.toString());
+//   if (existing) {
+//     return { file: existing, data: testData.get(existing) as TestFile };
+//   }
+
+//   const workspaceName = uri.path.split('/').pop();
+
+//   const file = controller.createTestItem(uri.toString(), workspaceName, uri);
+//   controller.items.add(file);
+
+//   const data = new TestFile();
+//   testData.set(file, data);
+
+//   file.canResolveChildren = true;
+//   return { file, data };
+// };
