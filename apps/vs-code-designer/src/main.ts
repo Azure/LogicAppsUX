@@ -4,6 +4,7 @@ import { supportedDataMapDefinitionFileExts, supportedSchemaFileExts } from './a
 import { registerCommands } from './app/commands/registerCommands';
 import { getResourceGroupsApi } from './app/resourcesExtension/getExtensionApi';
 import type { AzureAccountTreeItemWithProjects } from './app/tree/AzureAccountTreeItemWithProjects';
+import { findInitialFiles, getWorkspaceTestPatterns } from './app/tree/unitTestTree/helper';
 import { stopDesignTimeApi } from './app/utils/codeless/startDesignTimeApi';
 import { UriHandler } from './app/utils/codeless/urihandler';
 import { getExtensionVersion } from './app/utils/extension';
@@ -98,6 +99,15 @@ export async function activate(context: vscode.ExtensionContext) {
     ext.rgApi.registerApplicationResourceResolver(getAzExtResourceType(logicAppFilter), new LogicAppResolver());
 
     vscode.window.registerUriHandler(new UriHandler());
+
+    // Unit tests controller
+    const ctrl = vscode.tests.createTestController('LogicAppStandardTests', 'Logic App Standard Tests');
+    context.subscriptions.push(ctrl);
+
+    // Find and load initial files
+    ctrl.refreshHandler = async () => {
+      await Promise.all(getWorkspaceTestPatterns().map(({ pattern }) => findInitialFiles(ctrl, pattern)));
+    };
   });
 }
 
