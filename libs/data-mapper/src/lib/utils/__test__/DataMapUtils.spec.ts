@@ -1,10 +1,12 @@
 import { FunctionCategory } from '../../models';
+import type { FunctionData } from '../../models';
 import type { ConnectionDictionary, ConnectionUnit } from '../../models/Connection';
 import {
   ReservedToken,
   Separators,
   addAncestorNodesToCanvas,
   addParentConnectionForRepeatingElementsNested,
+  getDestinationNode,
   getSourceValueFromLoop,
   getTargetValueWithoutLoops,
   lexThisThing as separateIntoTokens,
@@ -978,6 +980,59 @@ describe('utils/DataMap', () => {
         'directAccess(/root/Array2/*[1], /root/Array/*, /root/Array/*/Property)',
         'directAccess(/root/Array2/*[1], /root/Array/*, /root/Array/*/Property)',
       ]);
+    });
+  });
+
+  describe('getDestinationNode', () => {
+    const mockSchemaNodeExtended: SchemaNodeExtended = {
+      key: '/root',
+      name: 'root',
+      qName: 'root',
+      type: NormalizedDataType.String,
+      properties: SchemaNodeProperty.None,
+      nodeProperties: [SchemaNodeProperty.None],
+      children: [
+        {
+          key: '/root/Some-String-Property-With-A-Dash-And-Longer-Than-A-Guid',
+          name: 'Some-String-Property-With-A-Dash-And-Longer-Than-A-Guid',
+          qName: 'Some-String-Property-With-A-Dash-And-Longer-Than-A-Guid',
+          type: NormalizedDataType.String,
+          properties: SchemaNodeProperty.None,
+          nodeProperties: [SchemaNodeProperty.None],
+          children: [],
+          pathToRoot: [],
+          arrayItemIndex: undefined,
+          parentKey: '/root',
+        },
+      ],
+      pathToRoot: [],
+      arrayItemIndex: undefined,
+      parentKey: undefined,
+    };
+
+    const mockFunctionData: FunctionData = {
+      key: 'some-function',
+      functionName: 'Some',
+      displayName: 'Some',
+      category: FunctionCategory.Custom,
+      description: 'Some',
+      inputs: [],
+      maxNumberOfInputs: 0,
+      outputValueType: NormalizedDataType.String,
+    };
+
+    it('returns function data for function target key', () => {
+      const result = getDestinationNode('some-function-4C117648-E570-4CDA-BA8E-DAFC66ECD402', [mockFunctionData], mockSchemaNodeExtended);
+      expect(result).toBe(mockFunctionData);
+    });
+
+    it('returns schema node for node target key', () => {
+      const result = getDestinationNode(
+        '/root/Some-String-Property-With-A-Dash-And-Longer-Than-A-Guid',
+        [mockFunctionData],
+        mockSchemaNodeExtended
+      );
+      expect(result).toBe(mockSchemaNodeExtended.children[0]);
     });
   });
 });
