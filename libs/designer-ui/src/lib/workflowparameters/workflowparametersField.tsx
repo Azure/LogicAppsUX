@@ -109,6 +109,7 @@ export const WorkflowparameterField = ({
       key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.ARRAY,
       text: intl.formatMessage({
         defaultMessage: 'Array',
+        id: 'GzQQqH',
         description: 'This is an option in a dropdown where users can select type Array for their parameter.',
       }),
     },
@@ -116,6 +117,7 @@ export const WorkflowparameterField = ({
       key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.BOOL,
       text: intl.formatMessage({
         defaultMessage: 'Bool',
+        id: 'Mb+Eaq',
         description: 'This is an option in a dropdown where users can select type Boolean for their parameter.',
       }),
     },
@@ -123,6 +125,7 @@ export const WorkflowparameterField = ({
       key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.FLOAT,
       text: intl.formatMessage({
         defaultMessage: 'Float',
+        id: 'zjDJwP',
         description: 'This is an option in a dropdown where users can select type Float for their parameter.',
       }),
     },
@@ -130,6 +133,7 @@ export const WorkflowparameterField = ({
       key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.INT,
       text: intl.formatMessage({
         defaultMessage: 'Int',
+        id: 'r9SVE4',
         description: 'This is an option in a dropdown where users can select type Integer for their parameter.',
       }),
     },
@@ -137,6 +141,7 @@ export const WorkflowparameterField = ({
       key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.OBJECT,
       text: intl.formatMessage({
         defaultMessage: 'Object',
+        id: 'Q/7unA',
         description: 'This is an option in a dropdown where users can select type Object for their parameter.',
       }),
     },
@@ -144,6 +149,7 @@ export const WorkflowparameterField = ({
       key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.STRING,
       text: intl.formatMessage({
         defaultMessage: 'String',
+        id: 'YJJ+gQ',
         description: 'This is an option in a dropdown where users can select type String for their parameter.',
       }),
     },
@@ -153,6 +159,7 @@ export const WorkflowparameterField = ({
             key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.SECURE_STRING,
             text: intl.formatMessage({
               defaultMessage: 'Secure String',
+              id: 'ZKnJnh',
               description: 'This is an option in a dropdown where users can select type Secure String for their parameter.',
             }),
           },
@@ -160,6 +167,7 @@ export const WorkflowparameterField = ({
             key: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.SECURE_OBJECT,
             text: intl.formatMessage({
               defaultMessage: 'Secure Object',
+              id: 'TUdPdI',
               description: 'This is an option in a dropdown where users can select type Secure Object for their parameter.',
             }),
           },
@@ -168,34 +176,42 @@ export const WorkflowparameterField = ({
   ];
   const nameTitle = intl.formatMessage({
     defaultMessage: 'Name',
+    id: 'm8Q61y',
     description: 'Parameter Field Name Title',
   });
   const nameDescription = intl.formatMessage({
     defaultMessage: 'Enter parameter name.',
+    id: 'GreYWQ',
     description: 'Parameter Field Name Description',
   });
   const typeTitle = intl.formatMessage({
     defaultMessage: 'Type',
+    id: 'tNoZx2',
     description: 'Parameter Field Type Title',
   });
   const valueTitle = intl.formatMessage({
     defaultMessage: 'Value',
+    id: 'ClZW2r',
     description: 'Parameter Field Value Title',
   });
   const valueDescription = intl.formatMessage({
     defaultMessage: 'Enter value for parameter.',
+    id: 'rSIBjh',
     description: 'Parameter Field Value Placeholder Text',
   });
   const actualValueTitle = intl.formatMessage({
     defaultMessage: 'Actual Value',
+    id: 'lztiwS',
     description: 'Parameter Field Actual Value Title',
   });
   const defaultValueTitle = intl.formatMessage({
     defaultMessage: 'Default Value',
+    id: 'ut5Med',
     description: 'Parameter Field Default Value Title',
   });
   const defaultValueDescription = intl.formatMessage({
     defaultMessage: 'Enter default value for parameter.',
+    id: 'ny75Ly',
     description: 'Parameter Field Value Placeholder Text',
   });
 
@@ -211,7 +227,8 @@ export const WorkflowparameterField = ({
   const getDefaultValueWarningMessage = (value?: string, type?: string) => {
     const secureParameterWarningMessage = intl.formatMessage(
       {
-        defaultMessage: "It is not recommended to set a default value for type ''{type}'' because it will be stored as plain text.",
+        defaultMessage: `It is not recommended to set a default value for type ''{type}'' because it will be stored as plain text.`,
+        id: 'bC2LBK',
         description: 'Warning message for secure string parameter default value',
       },
       { type }

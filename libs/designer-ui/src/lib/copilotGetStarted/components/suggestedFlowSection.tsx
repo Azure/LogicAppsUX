@@ -18,23 +18,28 @@ export const SuggestedFlowsSection: React.FC = () => {
   const intlText = {
     suggestedFlow: intl.formatMessage({
       defaultMessage: 'Suggested flow',
+      id: 'Uxckds',
       description: 'Title for the suggested flow section',
     }),
     suggestedFlowDescriptionPart1: intl.formatMessage({
       defaultMessage: 'After you review this AI generated flow suggestion, select',
+      id: 'id4DBb',
       description: 'First part of the Copilot Get Started description for Suggested Flow section',
     }),
     suggestedFlowDescriptionPart2: intl.formatMessage({
       defaultMessage: 'to configure it',
+      id: 'O7HhyP',
       description: 'Second part of the Copilot Get Started description for Suggested Flow section',
     }),
     nextButtonText: intl.formatMessage({
       defaultMessage: 'Next',
+      id: 'W+mUyI',
       description: 'Placeholder text for the Next button in the suggested workflow description',
     }),
     suggestedFlowNavigationPagination: intl.formatMessage(
       {
         defaultMessage: '{s1} of {s2}',
+        id: 'GZ8MDP',
         description: 'Shows how many suggested flows there are',
       },
       {
@@ -44,18 +49,22 @@ export const SuggestedFlowsSection: React.FC = () => {
     ),
     showDifferentSuggestion: intl.formatMessage({
       defaultMessage: 'Show a different suggestion',
+      id: 'ZyDq4/',
       description: 'Text for the show different suggestion flow button',
     }),
     automationSuggestionDoesNotWork: intl.formatMessage({
       defaultMessage: `This isn't what I'm looking for`,
+      id: 'hbOvB4',
       description: 'Dislike button text for suggested flow',
     }),
     previousSuggestedFlow: intl.formatMessage({
       defaultMessage: 'Previous flow suggestion',
+      id: 'qy5WqY',
       description: 'Text for button that shows the previous flow suggestion',
     }),
     nextSuggestedFlow: intl.formatMessage({
       defaultMessage: 'Next flow suggestion',
+      id: 'LElaX3',
       description: 'Text for button that shows the next flow suggestion',
     }),
   };

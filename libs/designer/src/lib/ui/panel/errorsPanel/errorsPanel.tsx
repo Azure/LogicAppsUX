@@ -22,13 +22,18 @@ export const ErrorsPanel = (props: CommonPanelProps) => {
 
   const errorsPanelHeader = intl.formatMessage({
     defaultMessage: 'Flow Checker',
+    id: 'M0bbZk',
     description: 'Header for the errors panel',
   });
 
   const totalNumErrors = useTotalNumErrors();
   const errorsTab = {
     id: constants.ERRORS_PANEL_TAB_NAMES.ERRORS,
-    title: intl.formatMessage({ defaultMessage: 'Errors', description: 'The tab label for the errors tab on the errors panel' }),
+    title: intl.formatMessage({
+      defaultMessage: 'Errors',
+      id: '5WTRY8',
+      description: 'The tab label for the errors tab on the errors panel',
+    }),
     visible: true,
     order: 0,
     count: totalNumErrors,
@@ -37,7 +42,11 @@ export const ErrorsPanel = (props: CommonPanelProps) => {
   const totalNumWarnings = useTotalNumWarnings();
   const warningsTab = {
     id: constants.ERRORS_PANEL_TAB_NAMES.WARNINGS,
-    title: intl.formatMessage({ defaultMessage: 'Warnings', description: 'The tab label for the warnings tab on the errors panel' }),
+    title: intl.formatMessage({
+      defaultMessage: 'Warnings',
+      id: 'hLOIwp',
+      description: 'The tab label for the warnings tab on the errors panel',
+    }),
     visible: true,
     order: 1,
     count: totalNumWarnings,

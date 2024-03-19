@@ -46,21 +46,25 @@ export const SidePane = ({ isExpanded, setIsExpanded, sidePaneTab, setSidePaneTa
 
   const targetSchemaLoc = intl.formatMessage({
     defaultMessage: 'Target schema',
+    id: 'N0pS6Y',
     description: 'Target schema',
   });
 
   const mapCheckerLoc = intl.formatMessage({
     defaultMessage: 'Map checker',
+    id: 'm/jJ/5',
     description: 'Map checker',
   });
 
   const expandLoc = intl.formatMessage({
     defaultMessage: 'Expand',
+    id: 'LBH8UV',
     description: 'Button to expand a pane',
   });
 
   const collapseLoc = intl.formatMessage({
     defaultMessage: 'Collapse',
+    id: 'w8ijDZ',
     description: 'Button to collapse a pane',
   });
 

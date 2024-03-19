@@ -63,9 +63,14 @@ export const RunAfterActionSelector = ({ readOnly }: { readOnly: boolean }) => {
       .filter(([key]) => !subNodes.includes(key) && key !== currentNodeId)
       .map(([key, value]) => ({ ...value, id: key }));
   });
-  const RUN_AFTER_CONFIGURATION_FILTER_ACTIONS = intl.formatMessage({ defaultMessage: 'Filter Actions', description: 'Filter Actions' });
+  const RUN_AFTER_CONFIGURATION_FILTER_ACTIONS = intl.formatMessage({
+    defaultMessage: 'Filter Actions',
+    id: 'AHB418',
+    description: 'Filter Actions',
+  });
   const RUN_AFTER_CONFIGURATION_SELECT_ACTIONS_TITLE = intl.formatMessage({
     defaultMessage: 'Select Actions',
+    id: 'zTKAc9',
     description: 'Select Actions',
   });
 

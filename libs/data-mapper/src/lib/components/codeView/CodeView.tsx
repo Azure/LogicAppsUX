@@ -96,16 +96,19 @@ export const CodeView = ({
 
   const codeViewLoc = intl.formatMessage({
     defaultMessage: 'Code view',
+    id: 'M0xrm+',
     description: 'Code view title',
   });
 
   const closeCodeViewLoc = intl.formatMessage({
     defaultMessage: 'Close code view',
+    id: '3sJlV+',
     description: 'Close code view button',
   });
 
   const noMapDefLoc = intl.formatMessage({
     defaultMessage: 'Unable to generate data map definition',
+    id: 'sv+IcU',
     description: `Message to display when the data map definition can't be generated`,
   });
 

@@ -55,16 +55,19 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId, 
 
   const newActionText = intl.formatMessage({
     defaultMessage: 'Add an action',
+    id: 'mCzkXX',
     description: 'Text for button to add a new action',
   });
 
   const newBranchText = intl.formatMessage({
     defaultMessage: 'Add a parallel branch',
+    id: 'LZm3ze',
     description: 'Text for button to add a parallel branch',
   });
 
   const pasteFromClipboard = intl.formatMessage({
     defaultMessage: 'Paste an action',
+    id: 'ZUCTVP',
     description: 'Text for button to paste an action from clipboard',
   });
 
@@ -148,6 +151,7 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId, 
     ? intl.formatMessage(
         {
           defaultMessage: 'Insert a new step between {parentName} and {childName}',
+          id: 'CypYLs',
           description: 'Tooltip for the button to add a new step (action or branch)',
         },
         {
@@ -159,6 +163,7 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId, 
     ? intl.formatMessage(
         {
           defaultMessage: 'Insert a new step in {parentSubgraphName}',
+          id: 'RjvpD+',
           description: 'Tooltip for the button to add a new step under subgraph',
         },
         {
@@ -168,6 +173,7 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId, 
     : intl.formatMessage(
         {
           defaultMessage: 'Insert a new step after {parentName}',
+          id: '2r30S9',
           description: 'Tooltip for the button to add a new step (action or branch)',
         },
         {

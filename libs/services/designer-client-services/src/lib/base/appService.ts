@@ -3,8 +3,7 @@ import { getAzureResourceRecursive } from '../common/azure';
 import type { ListDynamicValue } from '../connector';
 import { isFunctionContainer } from '../helpers';
 import type { IHttpClient } from '../httpClient';
-import { ResponseCodes, SwaggerParser } from '@microsoft/logic-apps-shared';
-import { ArgumentException, unmap } from '@microsoft/logic-apps-shared';
+import { ResponseCodes, SwaggerParser, ArgumentException, unmap } from '@microsoft/logic-apps-shared';
 
 export interface BaseAppServiceServiceOptions {
   baseUrl: string;

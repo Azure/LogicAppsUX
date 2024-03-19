@@ -8,9 +8,8 @@ import { LoggerService } from '../logger';
 import { LogEntryLevel, Status } from '../logging/logEntry';
 import type { IOAuthPopup } from '../oAuth';
 import { OAuthService } from '../oAuth';
-import { getIntl } from '@microsoft/logic-apps-shared';
-import type { Connection, ConnectionParameter, Connector, ManagedIdentity } from '@microsoft/logic-apps-shared';
 import {
+  getIntl,
   ArgumentException,
   AssertionErrorCode,
   AssertionException,
@@ -24,6 +23,7 @@ import {
   safeSetObjectPropertyValue,
   createCopy,
 } from '@microsoft/logic-apps-shared';
+import type { Connection, ConnectionParameter, Connector, ManagedIdentity } from '@microsoft/logic-apps-shared';
 
 interface ConnectionAcl {
   id: string;
@@ -264,6 +264,7 @@ export class StandardConnectionService extends BaseConnectionService implements 
       throw new Error(
         intl.formatMessage({
           defaultMessage: 'To create and use an API connection, you must have a managed identity configured on this logic app.',
+          id: 'vdtKjT',
           description: 'Error message to show when logic app does not have managed identity when creating azure connection',
         })
       );
@@ -280,6 +281,7 @@ export class StandardConnectionService extends BaseConnectionService implements 
       const error = new Error(
         intl.formatMessage({
           defaultMessage: 'Acl creation failed for connection. Deleting the connection.',
+          id: 'fDisLL',
           description: 'Error while creating acl',
         })
       );
@@ -313,6 +315,7 @@ export class StandardConnectionService extends BaseConnectionService implements 
       throw new Error(
         intl.formatMessage({
           defaultMessage: 'A managed identity is not configured on the logic app.',
+          id: 'WnU9v0',
           description: 'Error message when no identity is associated',
         })
       );

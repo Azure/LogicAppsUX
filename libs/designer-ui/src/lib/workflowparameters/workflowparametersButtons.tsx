@@ -51,6 +51,7 @@ function DeleteButton({ onClick }: ButtonProps): JSX.Element {
 
   const deleteTitle = intl.formatMessage({
     defaultMessage: 'Delete Parameter',
+    id: '5rkegy',
     description: 'Delete Button Tooltip Text',
   });
 
@@ -71,6 +72,7 @@ function EditButton({ onClick }: ButtonProps): JSX.Element {
 
   const editTitle = intl.formatMessage({
     defaultMessage: 'Edit parameter',
+    id: '03RO5d',
     description: 'Edit Button Tooltip Text',
   });
 

@@ -16,14 +16,17 @@ export const FeedbackMessage = ({ id, date, reaction, askFeedback, openFeedback 
   const intlText = {
     feedbackCardPanelTitle: intl.formatMessage({
       defaultMessage: 'Send feedback',
+      id: '9wX3u9',
       description: 'Chatbot feedback card title',
     }),
     feedbackCardThumbsDownLinkText: intl.formatMessage({
       defaultMessage: 'Tell Microsoft how this feature could be improved',
+      id: 'jN0YES',
       description: 'Chatbot feedback card link asking how we can improve this feature',
     }),
     feedbackCardThumbsUpLinkText: intl.formatMessage({
       defaultMessage: 'Tell Microsoft what you liked about this feature',
+      id: '5J9jne',
       description: 'Chatbot feedback card link asking what user liked about the feature',
     }),
   };

@@ -258,6 +258,7 @@ export const CreateConnectionWrapper = () => {
 
   const loadingText = intl.formatMessage({
     defaultMessage: 'Loading connection data...',
+    id: 'faUrud',
     description: 'Message to show under the loading icon when loading connection parameters',
   });
 

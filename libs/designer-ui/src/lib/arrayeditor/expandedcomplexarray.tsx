@@ -41,6 +41,7 @@ export const ExpandedComplexArray = ({
 
   const addItemButtonLabel = intl.formatMessage({
     defaultMessage: 'Add new item',
+    id: 'JWl/LD',
     description: 'Label to add item to array editor',
   });
 

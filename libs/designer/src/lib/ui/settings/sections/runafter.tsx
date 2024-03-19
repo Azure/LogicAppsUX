@@ -25,14 +25,17 @@ export const RunAfter = ({ nodeId, readOnly = false, expanded, onHeaderClick }: 
 
   const runAfterTitle = intl.formatMessage({
     defaultMessage: 'Run After',
+    id: 'DyYcJZ',
     description: 'title for run after setting section',
   });
   const lastActionErrorMessage = intl.formatMessage({
     defaultMessage: 'Each action must have one or more run after configurations',
+    id: 'v7ipqH',
     description: 'error message for deselection of last run after action',
   });
   const lastStatusErrorMessage = intl.formatMessage({
     defaultMessage: 'Each run after configuration must have at least one status checked',
+    id: '1ZSzl6',
     description: 'error message for deselection of last run after status',
   });
 

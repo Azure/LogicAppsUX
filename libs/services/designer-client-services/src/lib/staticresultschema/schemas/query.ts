@@ -4,14 +4,17 @@ import { getIntl } from '@microsoft/logic-apps-shared';
 const intl = getIntl();
 const QUERY_OUTPUT_TITLE = intl.formatMessage({
   defaultMessage: 'Body',
+  id: '5OvGgn',
   description: 'The title of the body field in the static result query action',
 });
 const STATIC_RESULT_OPERATION_OUTPUT_TITLE = intl.formatMessage({
   defaultMessage: 'Output',
+  id: 'oTBkbU',
   description: 'The title of the output field in the static result query action',
 });
 const STATIC_RESULT_OPERATION_BODY_ITEM = intl.formatMessage({
   defaultMessage: 'Body Item',
+  id: 'YABOLz',
   description: 'The title of the child item field in the static result query action',
 });
 

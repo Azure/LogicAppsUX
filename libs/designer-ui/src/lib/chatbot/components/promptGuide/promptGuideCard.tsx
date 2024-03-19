@@ -12,37 +12,45 @@ export const PromptGuideCard = ({ itemKey }: PromptGuideCardProps) => {
   const intlText = {
     addAction: intl.formatMessage({
       defaultMessage: 'Add an action',
+      id: 'MGZRu4',
       description: 'Chatbot prompt to add action',
     }),
     addActionDescription: intl.formatMessage({
       defaultMessage:
         'Describe something your flow should do. Add details where possible, including the connector to use and if any content should be included.',
+      id: 'jlcMGg',
       description: 'Chatbot prompt to add action description',
     }),
     replaceAction: intl.formatMessage({
       defaultMessage: 'Replace action',
+      id: 'dMAC4C',
       description: 'Chatbot prompt to replace an action',
     }),
     replaceActionDescription: intl.formatMessage({
       defaultMessage:
         'Describe something in your flow that should be replaced, as well as what should replace it. Add details where possible, including the connector to use and if any content should be included.',
+      id: 'WCASt1',
       description: 'Chatbot prompt to replace an action description',
     }),
     editFlow: intl.formatMessage({
       defaultMessage: 'Edit Flow',
+      id: 'HfmDk9',
       description: 'Chatbot prompt to edit the workflow',
     }),
     editFlowDescription: intl.formatMessage({
       defaultMessage:
         'Describe how your flow should be changed. Add details where possible, including the connector to use and if any content should be included.',
+      id: '8NUqpR',
       description: 'Chatbot prompt to edit the workflow description',
     }),
     question: intl.formatMessage({
       defaultMessage: 'Ask a question',
+      id: 'BynK4X',
       description: 'Chatbot prompt to ask a question',
     }),
     questionDescription: intl.formatMessage({
       defaultMessage: 'Ask question related to your workflow or Logic Apps.',
+      id: 'uxQ143',
       description: 'Chatbot prompt to ask a question description',
     }),
   };

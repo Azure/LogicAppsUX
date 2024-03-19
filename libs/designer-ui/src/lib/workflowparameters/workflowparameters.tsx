@@ -16,6 +16,7 @@ const InfoBar = () => {
   const text = intl.formatMessage({
     defaultMessage:
       'The parameters will be saved when the workflow is saved. You can edit it here before save or edit it in the parameter page after save.',
+    id: 'M6U2LE',
     description: 'Text for Info Bar',
   });
   return (
@@ -73,20 +74,24 @@ export function WorkflowParameters({
     const description1 = useLegacy
       ? intl.formatMessage({
           defaultMessage: 'Create, manage Logic Apps parameters, give it a default value.',
+          id: 'ISaPr+',
           description: 'Description for Workflow Parameters Part 1 for Legacy Parameters mode.',
         })
       : intl.formatMessage({
           defaultMessage: 'Parameters are shared across workflows in a Logic App.',
+          id: 'xt5TeT',
           description: 'Description for Workflow Parameters Part 1',
         });
     const description2 = useLegacy
       ? intl.formatMessage({
           defaultMessage:
             'Parameters used in Logic App will be converted into Azure Resource Manager template during deployment template generation.',
+          id: '5fmV2Q',
           description: 'Description for Workflow Parameters Part 2 for Legacy Parameters mode.',
         })
       : intl.formatMessage({
           defaultMessage: 'To reference a parameter, use the dynamic content list.',
+          id: 'UCNM4L',
           description: 'Description for Workflow Parameters Part 2',
         });
 
@@ -121,10 +126,12 @@ export function WorkflowParameters({
 
   const createText = intl.formatMessage({
     defaultMessage: 'Create parameter',
+    id: 'vwH/XV',
     description: 'Create Parameter Text',
   });
   const titleText = intl.formatMessage({
     defaultMessage: 'Parameters',
+    id: 'X7X5ew',
     description: 'Workflow Parameters Title',
   });
   const onClose = () => onDismiss?.();

@@ -61,11 +61,19 @@ export const TableEditor: React.FC<TableEditorProps> = ({
   const columnOptions = [
     {
       key: ColumnMode.Automatic,
-      text: intl.formatMessage({ defaultMessage: 'Automatic', description: 'Option text for table column type in table editor' }),
+      text: intl.formatMessage({
+        defaultMessage: 'Automatic',
+        id: 'Az0QvG',
+        description: 'Option text for table column type in table editor',
+      }),
     },
     {
       key: ColumnMode.Custom,
-      text: intl.formatMessage({ defaultMessage: 'Custom', description: 'Option text for table column type in table editor' }),
+      text: intl.formatMessage({
+        defaultMessage: 'Custom',
+        id: 'Tiqnir',
+        description: 'Option text for table column type in table editor',
+      }),
     },
   ];
   const emptyValue = [{ id: guid(), type: ValueSegmentType.LITERAL, value: '' }];

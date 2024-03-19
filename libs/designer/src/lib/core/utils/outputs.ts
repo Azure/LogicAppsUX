@@ -121,7 +121,8 @@ export const getUpdatedManifestForSplitOn = (manifest: OperationManifest, splitO
   const intl = getIntl();
   const invalidSplitOn = intl.formatMessage(
     {
-      defaultMessage: `Invalid split on format in '{splitOn}'.`,
+      defaultMessage: `Invalid split on format in ''{splitOn}''.`,
+      id: 'OrPVcU',
       description: 'Error message for invalid split on value.',
     },
     { splitOn }
@@ -164,6 +165,7 @@ export const getUpdatedManifestForSplitOn = (manifest: OperationManifest, splitO
           intl.formatMessage(
             {
               defaultMessage: `Invalid split on value ''{splitOn}'', cannot find in outputs.`,
+              id: '9W0lck',
               description:
                 'Error message for when split on value not found in operation outputs. Do not remove the double single quotes around the placeholder text, as it is needed to wrap the placeholder text in single quotes.',
             },
@@ -187,6 +189,7 @@ export const getUpdatedManifestForSplitOn = (manifest: OperationManifest, splitO
         intl.formatMessage(
           {
             defaultMessage: `Invalid type on split on value ''{splitOn}'', split on not in array.`,
+            id: 'mPuXlv',
             description:
               'Error message for when split on array is invalid. Do not remove the double single quotes around the placeholder text, as it is needed to wrap the placeholder text in single quotes.',
           },
@@ -526,10 +529,12 @@ export const loadDynamicOutputsInNode = async (
             })
           );
         } catch (error: any) {
+          const intl = getIntl();
           const message = parseErrorMessage(error);
-          const errorMessage = getIntl().formatMessage(
+          const errorMessage = intl.formatMessage(
             {
               defaultMessage: `Failed to retrieve dynamic outputs. As a result, this operation's outputs might not be visible in subsequent actions. Error details: {message}`,
+              id: 'uOWkHS',
               description: 'Error message to show when loading dynamic outputs failed.',
             },
             { message }

@@ -56,26 +56,32 @@ export const Overview: React.FC<OverviewProps> = ({
   const Resources = {
     LOAD_MORE: intl.formatMessage({
       defaultMessage: 'Load more',
+      id: 'ba9yGJ',
       description: 'Button text for loading more runs',
     }),
     RUN_HISTORY: intl.formatMessage({
       defaultMessage: 'Run History',
+      id: 'Vaacox',
       description: 'Pivot item header text for run history',
     }),
     SUMMARY: intl.formatMessage({
       defaultMessage: 'Summary',
+      id: 'ziYCiA',
       description: 'Header text for summary',
     }),
     WORKFLOW_OVERVIEW_FILTER_TEXT: intl.formatMessage({
       defaultMessage: 'Enter the run identifier to open the run',
+      id: 'oV0xQ9',
       description: 'Placeholder text for workflow overview filter input',
     }),
     WORKFLOW_OVERVIEW_NAVIGATE_EMPTY: intl.formatMessage({
       defaultMessage: 'The provided workflow run name is not valid.',
+      id: 'VKAk5g',
       description: 'Message text for an invalid run ID',
     }),
     LOADING_BOTTOM: intl.formatMessage({
       defaultMessage: 'Loading...',
+      id: '5qzZMo',
       description: 'A message shown at the bottom of a list when the next set of data is loading',
     }),
   };

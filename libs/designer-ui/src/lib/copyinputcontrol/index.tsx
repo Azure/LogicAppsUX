@@ -40,6 +40,7 @@ export const CopyInputControl = React.forwardRef<Pick<HTMLElement, 'focus' | 'sc
 
     const DISPLAY_TEXT_COPY_URL = intl.formatMessage({
       defaultMessage: 'Copy URL',
+      id: '7yFLpB',
       description: 'ARIA label and tooltip text for the copy button',
     });
 

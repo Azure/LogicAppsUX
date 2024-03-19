@@ -51,6 +51,7 @@ export const CollapsedArray = ({
 
   const editorPlaceHolder = intl.formatMessage({
     defaultMessage: 'Enter an Array',
+    id: 'mAuMD+',
     description: 'Placeholder for empty collapsed array',
   });
 

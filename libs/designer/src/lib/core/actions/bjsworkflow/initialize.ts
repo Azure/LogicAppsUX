@@ -435,9 +435,10 @@ export const updateCallbackUrlInInputs = async (
       const callbackInfo = await WorkflowService().getCallbackUrl(nodeId);
       const parameter = getParameterFromName(nodeInputs, 'callbackUrl');
 
+      const intl = getIntl();
       if (parameter && callbackInfo) {
-        parameter.label = getIntl().formatMessage(
-          { defaultMessage: 'HTTP {method} URL', description: 'Callback url method' },
+        parameter.label = intl.formatMessage(
+          { defaultMessage: 'HTTP {method} URL', id: 'fc1AV8', description: 'Callback url method' },
           { method: callbackInfo.method }
         );
         parameter.value = [createLiteralValueSegment(callbackInfo.value)];

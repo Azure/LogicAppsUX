@@ -27,30 +27,37 @@ export const RetryPanel: React.FC<RetryPanelProps> = ({ retryHistories, visible 
   const Resources = {
     RETRY_HISTORY_CLIENT_REQUEST_ID: intl.formatMessage({
       defaultMessage: 'Client request ID',
+      id: 'Tb2QLA',
       description: 'Label text for retry client request ID',
     }),
     RETRY_HISTORY_DURATION: intl.formatMessage({
       defaultMessage: 'Duration',
+      id: 'hrbDu6',
       description: 'Label text for retry duration',
     }),
     RETRY_HISTORY_END_TIME: intl.formatMessage({
       defaultMessage: 'End time',
+      id: '2K2fAj',
       description: 'Label text for retry end time',
     }),
     RETRY_HISTORY_SERVICE_REQUEST_ID: intl.formatMessage({
       defaultMessage: 'Service request ID',
+      id: '4vmGh0',
       description: 'Label text for retry service request ID',
     }),
     RETRY_HISTORY_START_TIME: intl.formatMessage({
       defaultMessage: 'Start time',
+      id: 'cqiqcf',
       description: 'Label text for retry start time',
     }),
     RETRY_HISTORY_STATUS: intl.formatMessage({
       defaultMessage: 'Status',
+      id: 'NPUFgH',
       description: 'Label text for retry status',
     }),
     RETRY_PAGER_TITLE: intl.formatMessage({
       defaultMessage: 'Retry',
+      id: 'XFFpu/',
       description: 'Header text for retry history',
     }),
   };

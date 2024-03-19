@@ -224,7 +224,7 @@ Array [
                   </span>
                 </button>
                 <button
-                  aria-label="Copy the value of {label} to the clipboard"
+                  aria-label="Copy the value of 'Duration' to the clipboard"
                   className="ms-Button ms-Button--icon root-121"
                   data-is-focusable={true}
                   onClick={[Function]}
@@ -334,7 +334,7 @@ Array [
                   </span>
                 </button>
                 <button
-                  aria-label="Copy the value of {label} to the clipboard"
+                  aria-label="Copy the value of 'Start time' to the clipboard"
                   className="ms-Button ms-Button--icon root-121"
                   data-is-focusable={true}
                   onClick={[Function]}
@@ -549,7 +549,7 @@ Array [
                   </span>
                 </button>
                 <button
-                  aria-label="Copy the value of {label} to the clipboard"
+                  aria-label="Copy the value of 'Status' to the clipboard"
                   className="ms-Button ms-Button--icon root-121"
                   data-is-focusable={true}
                   onClick={[Function]}
@@ -659,7 +659,7 @@ Array [
                   </span>
                 </button>
                 <button
-                  aria-label="Copy the value of {label} to the clipboard"
+                  aria-label="Copy the value of 'Client request ID' to the clipboard"
                   className="ms-Button ms-Button--icon root-121"
                   data-is-focusable={true}
                   onClick={[Function]}
@@ -947,7 +947,7 @@ Array [
                   </span>
                 </button>
                 <button
-                  aria-label="Copy the value of {label} to the clipboard"
+                  aria-label="Copy the value of 'Duration' to the clipboard"
                   className="ms-Button ms-Button--icon root-121"
                   data-is-focusable={true}
                   onClick={[Function]}
@@ -1057,7 +1057,7 @@ Array [
                   </span>
                 </button>
                 <button
-                  aria-label="Copy the value of {label} to the clipboard"
+                  aria-label="Copy the value of 'Start time' to the clipboard"
                   className="ms-Button ms-Button--icon root-121"
                   data-is-focusable={true}
                   onClick={[Function]}
@@ -1272,7 +1272,7 @@ Array [
                   </span>
                 </button>
                 <button
-                  aria-label="Copy the value of {label} to the clipboard"
+                  aria-label="Copy the value of 'Status' to the clipboard"
                   className="ms-Button ms-Button--icon root-121"
                   data-is-focusable={true}
                   onClick={[Function]}
@@ -1382,7 +1382,7 @@ Array [
                   </span>
                 </button>
                 <button
-                  aria-label="Copy the value of {label} to the clipboard"
+                  aria-label="Copy the value of 'Client request ID' to the clipboard"
                   className="ms-Button ms-Button--icon root-121"
                   data-is-focusable={true}
                   onClick={[Function]}
@@ -1492,7 +1492,7 @@ Array [
                   </span>
                 </button>
                 <button
-                  aria-label="Copy the value of {label} to the clipboard"
+                  aria-label="Copy the value of 'Service request ID' to the clipboard"
                   className="ms-Button ms-Button--icon root-121"
                   data-is-focusable={true}
                   onClick={[Function]}
@@ -1780,7 +1780,7 @@ Array [
                   </span>
                 </button>
                 <button
-                  aria-label="Copy the value of {label} to the clipboard"
+                  aria-label="Copy the value of 'Duration' to the clipboard"
                   className="ms-Button ms-Button--icon root-121"
                   data-is-focusable={true}
                   onClick={[Function]}
@@ -1900,7 +1900,7 @@ Array [
                   </span>
                 </button>
                 <button
-                  aria-label="Copy the value of {label} to the clipboard"
+                  aria-label="Copy the value of 'Start time' to the clipboard"
                   className="ms-Button ms-Button--icon root-121"
                   data-is-focusable={true}
                   onClick={[Function]}
@@ -2115,7 +2115,7 @@ Array [
                   </span>
                 </button>
                 <button
-                  aria-label="Copy the value of {label} to the clipboard"
+                  aria-label="Copy the value of 'End time' to the clipboard"
                   className="ms-Button ms-Button--icon root-121"
                   data-is-focusable={true}
                   onClick={[Function]}
@@ -2330,7 +2330,7 @@ Array [
                   </span>
                 </button>
                 <button
-                  aria-label="Copy the value of {label} to the clipboard"
+                  aria-label="Copy the value of 'Status' to the clipboard"
                   className="ms-Button ms-Button--icon root-121"
                   data-is-focusable={true}
                   onClick={[Function]}
@@ -2440,7 +2440,7 @@ Array [
                   </span>
                 </button>
                 <button
-                  aria-label="Copy the value of {label} to the clipboard"
+                  aria-label="Copy the value of 'Client request ID' to the clipboard"
                   className="ms-Button ms-Button--icon root-121"
                   data-is-focusable={true}
                   onClick={[Function]}
@@ -2728,7 +2728,7 @@ Array [
                   </span>
                 </button>
                 <button
-                  aria-label="Copy the value of {label} to the clipboard"
+                  aria-label="Copy the value of 'Duration' to the clipboard"
                   className="ms-Button ms-Button--icon root-121"
                   data-is-focusable={true}
                   onClick={[Function]}
@@ -2838,7 +2838,7 @@ Array [
                   </span>
                 </button>
                 <button
-                  aria-label="Copy the value of {label} to the clipboard"
+                  aria-label="Copy the value of 'Start time' to the clipboard"
                   className="ms-Button ms-Button--icon root-121"
                   data-is-focusable={true}
                   onClick={[Function]}
@@ -3053,7 +3053,7 @@ Array [
                   </span>
                 </button>
                 <button
-                  aria-label="Copy the value of {label} to the clipboard"
+                  aria-label="Copy the value of 'Status' to the clipboard"
                   className="ms-Button ms-Button--icon root-121"
                   data-is-focusable={true}
                   onClick={[Function]}
@@ -3163,7 +3163,7 @@ Array [
                   </span>
                 </button>
                 <button
-                  aria-label="Copy the value of {label} to the clipboard"
+                  aria-label="Copy the value of 'Client request ID' to the clipboard"
                   className="ms-Button ms-Button--icon root-121"
                   data-is-focusable={true}
                   onClick={[Function]}

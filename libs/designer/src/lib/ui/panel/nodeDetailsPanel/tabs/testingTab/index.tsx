@@ -53,8 +53,16 @@ export const TestingPanel: React.FC = () => {
 
 export const testingTab: PanelTabFn = (intl) => ({
   id: constants.PANEL_TAB_NAMES.TESTING,
-  title: intl.formatMessage({ defaultMessage: 'Testing', description: 'The tab label for the testing tab on the operation panel' }),
-  description: intl.formatMessage({ defaultMessage: 'Testing Tab', description: 'An accessability label that describes the testing tab' }),
+  title: intl.formatMessage({
+    defaultMessage: 'Testing',
+    id: '8zkvmc',
+    description: 'The tab label for the testing tab on the operation panel',
+  }),
+  description: intl.formatMessage({
+    defaultMessage: 'Testing Tab',
+    id: 'sEqLTV',
+    description: 'An accessability label that describes the testing tab',
+  }),
   visible: true,
   content: <TestingPanel />,
   order: 5,

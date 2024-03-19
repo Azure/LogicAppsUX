@@ -43,10 +43,12 @@ export const ExpandedDictionary = ({
 
   const keyPlaceholder = intl.formatMessage({
     defaultMessage: 'Enter key',
+    id: 'pC2nr2',
     description: 'Placeholder text for Key',
   });
   const valuePlaceholder = intl.formatMessage({
     defaultMessage: 'Enter value',
+    id: 'zCsGWP',
     description: 'Placeholder text for Value',
   });
 

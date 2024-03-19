@@ -45,6 +45,7 @@ export const PickerHeader = ({ onCancel, currentPathSegments }: Pick<PickerProps
 
   const closeText = intl.formatMessage({
     defaultMessage: 'Close',
+    id: 'dfNjw1',
     description: 'Label for a button that closes a dialog callout',
   });
   return (

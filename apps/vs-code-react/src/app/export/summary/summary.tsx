@@ -24,35 +24,42 @@ export const Summary: React.FC = () => {
   const intlText = {
     COMPLETE_EXPORT_TITLE: intl.formatMessage({
       defaultMessage: 'Finish export',
+      id: 'K7KJ+a',
       description: 'Finish export title',
     }),
     SELECT_LOCATION: intl.formatMessage({
       defaultMessage: 'Select a destination to export your logic apps',
+      id: 'LzXRBP',
       description: 'Select a location description',
     }),
     OPEN_FILE_EXPLORER: intl.formatMessage({
       defaultMessage: 'Browse',
+      id: 'GIoHnS',
       description: 'Browse with file explorer text',
     }),
     EXPORT_LOCATION: intl.formatMessage({
       defaultMessage: 'Export location',
+      id: 'POHdG+',
       description: 'Export location text',
     }),
     NO_DETAILS: intl.formatMessage({
       defaultMessage: 'No more details',
+      id: 'eSQI+e',
       description: 'No more details text',
     }),
     AFTER_EXPORT: intl.formatMessage({
       defaultMessage: 'After export steps',
+      id: 'uWEWvx',
       description: 'After export steps title',
     }),
     ADDITIONAL_STEPS: intl.formatMessage({
-      defaultMessage:
-        "After export, the following workflows require more steps to reestablish connections. You can find these steps in the following list or by reviewing the README file that's exported with the package.",
+      defaultMessage: `After export, the following workflows require more steps to reestablish connections. You can find these steps in the following list or by reviewing the README file that's exported with the package.`,
+      id: 'AlO/m6',
       description: 'Post export required steps text',
     }),
     PACKAGE_WARNING: intl.formatMessage({
       defaultMessage: 'The export package URL experienced an unknown problem.',
+      id: 'YvBfGx',
       description: 'Package warning text',
     }),
   };

@@ -31,38 +31,47 @@ export const NewResourceGroup: React.FC<INewResourceGroupProps> = ({ onAddNewRes
   const intlText = {
     CREATE_NEW: intl.formatMessage({
       defaultMessage: 'Create new',
+      id: 'XKQ/Lw',
       description: 'Create new text',
     }),
     RESOURCE_GROUP_DESCRIPTION: intl.formatMessage({
       defaultMessage: 'A resource group is a container that holds related resources for an Azure solution.',
+      id: 'fU98Nt',
       description: 'Deploy managed connections warning text',
     }),
     OK: intl.formatMessage({
       defaultMessage: 'OK',
+      id: '70cHmm',
       description: 'OK button',
     }),
     CANCEL: intl.formatMessage({
       defaultMessage: 'Cancel',
+      id: 'qz9XeG',
       description: 'Cancel button',
     }),
     NAME: intl.formatMessage({
       defaultMessage: 'Name',
+      id: '1kGBdP',
       description: 'Name button',
     }),
     INVALID_CHARS: intl.formatMessage({
       defaultMessage: 'The name can contain only alphanumeric characters or the following symbols: . _ - ( )',
+      id: '9vOq5B',
       description: 'RResource group name - invalid characters error',
     }),
     INVALID_ENDING_CHAR: intl.formatMessage({
-      defaultMessage: "The name can't end with a period.",
+      defaultMessage: `The name can't end with a period.`,
+      id: 'Pe0eMX',
       description: 'Resource group name ending error',
     }),
     INVALID_EXISTING_NAME: intl.formatMessage({
       defaultMessage: 'A resource group with the same name already exists in the selected subscription.',
+      id: 'KtGlzI',
       description: 'Resource group existing name error',
     }),
     NEW: intl.formatMessage({
       defaultMessage: 'New',
+      id: 'm3H+gL',
       description: 'New text',
     }),
   };

@@ -31,22 +31,27 @@ export const RequestPanel: React.FC<RequestPanelProps> = ({ requestHistory, visi
   const Resources = {
     REQUEST_HISTORY_LABEL_DURATION_TEXT: intl.formatMessage({
       defaultMessage: 'Duration',
+      id: 'VZHick',
       description: 'Label text for request duration',
     }),
     REQUEST_HISTORY_LABEL_END_TIME_TEXT: intl.formatMessage({
       defaultMessage: 'End time',
+      id: 'pIczsS',
       description: 'Label text for request end time',
     }),
     REQUEST_HISTORY_LABEL_REQUEST_TEXT: intl.formatMessage({
       defaultMessage: 'Request',
+      id: 'Xnn0uj',
       description: 'Header text for request',
     }),
     REQUEST_HISTORY_LABEL_RESPONSE_TEXT: intl.formatMessage({
       defaultMessage: 'Response',
+      id: 'ERAWZA',
       description: 'Header text for response',
     }),
     REQUEST_HISTORY_LABEL_START_TIME_TEXT: intl.formatMessage({
       defaultMessage: 'Start time',
+      id: 'eRvRWs',
       description: 'Label text for request start time',
     }),
   };

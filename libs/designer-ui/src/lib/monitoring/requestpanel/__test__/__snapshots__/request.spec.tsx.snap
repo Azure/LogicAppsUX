@@ -68,7 +68,7 @@ exports[`lib/monitoring/requestpanel/request should render 1`] = `
               </span>
             </button>
             <button
-              aria-label="Copy the value of {label} to the clipboard"
+              aria-label="Copy the value of 'Method' to the clipboard"
               className="ms-Button ms-Button--icon root-109"
               data-is-focusable={true}
               onClick={[Function]}
@@ -178,7 +178,7 @@ exports[`lib/monitoring/requestpanel/request should render 1`] = `
               </span>
             </button>
             <button
-              aria-label="Copy the value of {label} to the clipboard"
+              aria-label="Copy the value of 'URI' to the clipboard"
               className="ms-Button ms-Button--icon root-109"
               data-is-focusable={true}
               onClick={[Function]}
@@ -506,7 +506,7 @@ exports[`lib/monitoring/requestpanel/request should render a body 1`] = `
               </span>
             </button>
             <button
-              aria-label="Copy the value of {label} to the clipboard"
+              aria-label="Copy the value of 'Method' to the clipboard"
               className="ms-Button ms-Button--icon root-109"
               data-is-focusable={true}
               onClick={[Function]}
@@ -616,7 +616,7 @@ exports[`lib/monitoring/requestpanel/request should render a body 1`] = `
               </span>
             </button>
             <button
-              aria-label="Copy the value of {label} to the clipboard"
+              aria-label="Copy the value of 'URI' to the clipboard"
               className="ms-Button ms-Button--icon root-109"
               data-is-focusable={true}
               onClick={[Function]}
@@ -924,7 +924,7 @@ exports[`lib/monitoring/requestpanel/request should render a body 1`] = `
               </span>
             </button>
             <button
-              aria-label="Copy the value of {label} to the clipboard"
+              aria-label="Copy the value of 'Body' to the clipboard"
               className="ms-Button ms-Button--icon root-109"
               data-is-focusable={true}
               onClick={[Function]}
@@ -1133,7 +1133,7 @@ exports[`lib/monitoring/requestpanel/request should render a body link 1`] = `
               </span>
             </button>
             <button
-              aria-label="Copy the value of {label} to the clipboard"
+              aria-label="Copy the value of 'Method' to the clipboard"
               className="ms-Button ms-Button--icon root-109"
               data-is-focusable={true}
               onClick={[Function]}
@@ -1243,7 +1243,7 @@ exports[`lib/monitoring/requestpanel/request should render a body link 1`] = `
               </span>
             </button>
             <button
-              aria-label="Copy the value of {label} to the clipboard"
+              aria-label="Copy the value of 'URI' to the clipboard"
               className="ms-Button ms-Button--icon root-109"
               data-is-focusable={true}
               onClick={[Function]}

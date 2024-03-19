@@ -86,70 +86,87 @@ export const EditorCommandBar = (props: EditorCommandBarProps) => {
     () => ({
       COMMAND_BAR_ARIA: intl.formatMessage({
         defaultMessage: 'Use left and right arrow keys to navigate between commands',
+        id: 'rd6fai',
         description: 'Aria describing the way to control the keyboard navigation',
       }),
       SAVE: intl.formatMessage({
         defaultMessage: 'Save',
+        id: 'Sh10cw',
         description: 'Button text for save the changes',
       }),
       GENERATE: intl.formatMessage({
         defaultMessage: 'Generate XSLT',
+        id: 'ylfgv1',
         description: 'Button text for generate the map xslt',
       }),
       UNDO: intl.formatMessage({
         defaultMessage: 'Undo',
+        id: 'r43nMc',
         description: 'Button text for undo the last action',
       }),
       REDO: intl.formatMessage({
         defaultMessage: 'Redo',
+        id: 'i1cwra',
         description: 'Button text for redo the last undone action',
       }),
       CTR_Z: intl.formatMessage({
         defaultMessage: 'Ctrl + Z',
+        id: 'xFQXAI',
         description: 'Button text for the control-Z button combination to undo the last action',
       }),
       CTR_Y: intl.formatMessage({
         defaultMessage: 'Ctrl + Y',
+        id: 'DysO/Q',
         description: 'Button text for the control-Y button combination to redo the last undone action',
       }),
       DISCARD: intl.formatMessage({
         defaultMessage: 'Discard',
+        id: 'Q4TUFX',
         description: 'Button text for discard the unsaved changes',
       }),
       RUN_TEST: intl.formatMessage({
         defaultMessage: 'Test',
+        id: 'iy8rNf',
         description: 'Button text for running test',
       }),
       SETTINGS: intl.formatMessage({
         defaultMessage: 'Settings',
+        id: 'E7NzDN',
         description: 'Button text for opening the settings',
       }),
       TOUR_TUTORIAL: intl.formatMessage({
         defaultMessage: 'Tour',
+        id: '4aaixN',
         description: 'Button text for tour and tutorial',
       }),
       GIVE_FEEDBACK: intl.formatMessage({
         defaultMessage: 'Give feedback',
+        id: 'TEN+cR',
         description: 'Button text for submitting feedback',
       }),
       GLOBAL_SEARCH: intl.formatMessage({
         defaultMessage: 'Global search',
+        id: '23uZn1',
         description: 'Button text for global search',
       }),
       PUBLISH: intl.formatMessage({
         defaultMessage: 'Publish',
+        id: 'g4igOR',
         description: 'Button text for publish',
       }),
       GLOBAL_VIEW: intl.formatMessage({
         defaultMessage: 'Overview',
+        id: '+M72+a',
         description: 'Button text for whole overview',
       }),
       CANVAS: intl.formatMessage({
         defaultMessage: 'Canvas',
+        id: 'ww1mN/',
         description: 'Button text for showing the canvas view',
       }),
       DIVIDER: intl.formatMessage({
         defaultMessage: 'Divider',
+        id: '3cZZKj',
         description: 'Aria label for divider',
       }),
     }),

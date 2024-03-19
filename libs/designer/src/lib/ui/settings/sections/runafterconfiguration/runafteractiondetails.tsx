@@ -60,10 +60,12 @@ export const RunAfterActionDetails = ({
 
   const expandAriaLabel = intl.formatMessage({
     defaultMessage: 'Expand',
+    id: 'iU1OJh',
     description: 'An accessible label for expand toggle icon',
   });
   const collapseAriaLabel = intl.formatMessage({
     defaultMessage: 'Collapse',
+    id: 'PQOiAc',
     description: 'An accessible label for collapse toggle icon',
   });
 
@@ -122,6 +124,7 @@ const DeleteButton = ({ visible, onDelete }: DeleteButtonProps): JSX.Element | n
 
   const MENU_DELETE = intl.formatMessage({
     defaultMessage: 'Delete',
+    id: 's7nGyC',
     description: 'Delete Button',
   });
   function handleDelete(e: MouseEvent<unknown>): void {

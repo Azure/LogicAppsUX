@@ -19,14 +19,17 @@ export const CommentMenuItem = (props: CommentMenuItemProps) => {
 
   const commentDescription = intl.formatMessage({
     defaultMessage: 'Note',
+    id: 'Ts5Pzr',
     description: 'Note text',
   });
   const commentAdd = intl.formatMessage({
     defaultMessage: 'Add a note',
+    id: 'onXUu0',
     description: 'Text to tell users to click to add comments',
   });
   const commentDelete = intl.formatMessage({
     defaultMessage: 'Delete note',
+    id: 'x8kTAX',
     description: 'Text to tell users to click to delete comments',
   });
 

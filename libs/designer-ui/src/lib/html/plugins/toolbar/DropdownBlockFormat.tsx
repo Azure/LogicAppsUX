@@ -70,12 +70,12 @@ export const BlockFormatDropDown = ({ editor, blockType, disabled = false }: Blo
   };
 
   const TextNames = {
-    paragraphText: intl.formatMessage({ defaultMessage: 'Normal', description: 'Normal text' }),
-    h1Text: intl.formatMessage({ defaultMessage: 'Heading 1', description: 'Heading 1 text' }),
-    h2Text: intl.formatMessage({ defaultMessage: 'Heading 2', description: 'Heading 2 text' }),
-    h3Text: intl.formatMessage({ defaultMessage: 'Heading 3', description: 'Heading 3 text' }),
-    bulletListText: intl.formatMessage({ defaultMessage: 'Bullet List', description: 'Bullet List text' }),
-    numberListText: intl.formatMessage({ defaultMessage: 'Numbered List', description: 'Numbered List text' }),
+    paragraphText: intl.formatMessage({ defaultMessage: 'Normal', id: 'lhL/KL', description: 'Normal text' }),
+    h1Text: intl.formatMessage({ defaultMessage: 'Heading 1', id: 'Ttc0SM', description: 'Heading 1 text' }),
+    h2Text: intl.formatMessage({ defaultMessage: 'Heading 2', id: 'SGnTpt', description: 'Heading 2 text' }),
+    h3Text: intl.formatMessage({ defaultMessage: 'Heading 3', id: 'P+7G62', description: 'Heading 3 text' }),
+    bulletListText: intl.formatMessage({ defaultMessage: 'Bullet List', id: 'Lm9bnN', description: 'Bullet List text' }),
+    numberListText: intl.formatMessage({ defaultMessage: 'Numbered List', id: 'YWOKlU', description: 'Numbered List text' }),
   };
 
   return (

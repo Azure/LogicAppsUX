@@ -76,20 +76,22 @@ export function getAssistedConnectionProps(connector: Connector, manifest?: Oper
 
   const intl = getIntl();
   const headers = [
-    intl.formatMessage({ defaultMessage: 'Name', description: 'Header for resource name' }),
-    intl.formatMessage({ defaultMessage: 'Resource Group', description: 'Header for resource group name' }),
-    intl.formatMessage({ defaultMessage: 'Location', description: 'Header for resource lcoation' }),
+    intl.formatMessage({ defaultMessage: 'Name', id: 'AGCm1p', description: 'Header for resource name' }),
+    intl.formatMessage({ defaultMessage: 'Resource Group', id: '/yYyOq', description: 'Header for resource group name' }),
+    intl.formatMessage({ defaultMessage: 'Location', id: 'aSnCCB', description: 'Header for resource lcoation' }),
   ];
   if (manifest?.properties.connection?.type === ConnectionType.Function) {
     const functionAppsCallback = () => FunctionService().fetchFunctionApps();
     const fetchSubResourcesCallback = (functionApp?: any) => FunctionService().fetchFunctionAppsFunctions(functionApp.id ?? '');
     const functionAppsLoadingText = intl.formatMessage({
       defaultMessage: 'Loading Function Apps...',
+      id: 'LCXZLM',
       description: 'Text for loading function apps',
     });
 
     const functionAppsLabel = intl.formatMessage({
       defaultMessage: 'Select a function app function',
+      id: 'Xkt2vD',
       description: 'Label for function app selection',
     });
 
@@ -113,11 +115,13 @@ export function getAssistedConnectionProps(connector: Connector, manifest?: Oper
     const apisCallback = (apim?: any) => ApiManagementService().fetchApisInApiM(apim.id ?? '');
     const apimInstancesLoadingText = intl.formatMessage({
       defaultMessage: 'Loading Api Management service instances...',
+      id: 'LV/BTE',
       description: 'Text for loading apim service instances',
     });
 
     const apisLabel = intl.formatMessage({
       defaultMessage: 'Select an API from an API Management instance',
+      id: '27Nhhv',
       description: 'Label for API selection',
     });
 

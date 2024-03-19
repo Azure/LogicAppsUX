@@ -212,10 +212,11 @@ export const getOutputTokenSections = (
   const nodeTokens = getRecordEntry(outputTokens, nodeId);
   const tokenGroups: TokenGroup[] = [];
 
+  const intl = getIntl();
   if (Object.keys(workflowParameters).length) {
     tokenGroups.push({
       id: 'workflowparameters',
-      label: getIntl().formatMessage({ description: 'Heading section for Parameter tokens', defaultMessage: 'Parameters' }),
+      label: intl.formatMessage({ description: 'Heading section for Parameter tokens', defaultMessage: 'Parameters', id: 'J9wWry' }),
       tokens: getWorkflowParameterTokens(workflowParameters),
     });
   }
@@ -223,7 +224,7 @@ export const getOutputTokenSections = (
   if (nodeTokens) {
     tokenGroups.push({
       id: 'variables',
-      label: getIntl().formatMessage({ description: 'Heading section for Variable tokens', defaultMessage: 'Variables' }),
+      label: intl.formatMessage({ description: 'Heading section for Variable tokens', defaultMessage: 'Variables', id: 'unMaeV' }),
       tokens: getVariableTokens(variables, nodeTokens).map((token) => ({
         ...token,
         value: getTokenValue(token, nodeType, replacementIds),
@@ -484,11 +485,13 @@ const rewriteValueId = (id: string, value: string, replacementIds: Record<string
 };
 
 const getListCallbackUrlToken = (nodeId: string): TokenGroup => {
+  const intl = getIntl();
   const callbackUrlToken: OutputToken = {
     brandColor: httpWebhookBrandColor,
     key: Constants.HTTP_WEBHOOK_LIST_CALLBACK_URL_KEY,
-    title: getIntl().formatMessage({
+    title: intl.formatMessage({
       defaultMessage: 'Callback url',
+      id: 'bSZ0lL',
       description: 'Callback url token title',
     }),
     type: Constants.SWAGGER.TYPE.STRING,
@@ -506,8 +509,9 @@ const getListCallbackUrlToken = (nodeId: string): TokenGroup => {
 
   return {
     hasAdvanced: false,
-    label: getIntl().formatMessage({
+    label: intl.formatMessage({
       defaultMessage: 'Webhook reference information',
+      id: 'FT3jt6',
       description: 'httpwebhook callback url section title',
     }),
     id: nodeId,

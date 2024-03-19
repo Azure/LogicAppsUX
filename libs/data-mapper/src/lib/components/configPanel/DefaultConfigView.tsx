@@ -23,56 +23,67 @@ export const DefaultConfigView = ({ setFunctionDisplayExpanded, useExpandedFunct
 
   const schemasSectionTitleLoc = intl.formatMessage({
     defaultMessage: 'Schemas',
+    id: 'xC1zg3',
     description: 'Section header for the schema section',
   });
 
   const schemasSectionDescLoc = intl.formatMessage({
     defaultMessage: 'Add or replace your schemas.',
+    id: 'TY4HzZ',
     description: 'Description for the schema section',
   });
 
   const sourceSchemaLabel = intl.formatMessage({
     defaultMessage: 'Source schema',
+    id: 'UnrrzF',
     description: 'Label to inform the below schema name is for source schema',
   });
 
   const targetSchemaLabel = intl.formatMessage({
     defaultMessage: 'Target schema',
+    id: 'jUDhbs',
     description: 'Label to inform the below schema name is for target schema',
   });
 
   const noSchemaAddedLoc = intl.formatMessage({
     defaultMessage: 'No schema is added.',
+    id: 'nNWAAh',
     description: 'Placeholder when no schema has been added',
   });
 
   const pencilIconLoc = intl.formatMessage({
     defaultMessage: 'Pencil icon',
+    id: 'QdJUaS',
     description: 'Pencil icon aria label',
   });
 
   const functionsSectionTitleLoc = intl.formatMessage({
     defaultMessage: 'Functions',
+    id: 'lR7V87',
     description: 'Section header for the functions section',
   });
 
   const functionsSectionDescriptionLoc = intl.formatMessage({
     defaultMessage: 'Modify options regarding functions',
+    id: 'GyUe4C',
     description: 'Description for the functions section',
   });
 
   const functionDisplayLoc = intl.formatMessage({
     defaultMessage: 'Function display',
+    id: '+0yxlR',
     description: 'Label for the function display radio group',
   });
 
   const functionDisplaySimpleLoc = intl.formatMessage({
     defaultMessage: 'Simple',
+    id: 'tAeKNh',
     description: 'Function display radio group option for simple',
   });
 
   const functionDisplayExpandedLoc = intl.formatMessage({
     defaultMessage: 'Expanded',
+    id: 'GD3m4X',
     description: 'Function display radio group option for expanded',
   });
 

@@ -50,30 +50,37 @@ export const CardFooter: React.FC<CardFooterProps> = ({
 
   const CONNECTION_NAME_DISPLAY = intl.formatMessage({
     defaultMessage: 'Connection name',
+    id: 'XOzn/3',
     description: 'This is for a label for a badge, it is used for screen readers and not shown on the screen.',
   });
   const CONNECTION_CONTAINER_CONNECTION_REQUIRED = intl.formatMessage({
     defaultMessage: 'Connection required',
+    id: 'CG772M',
     description: 'This is for a label for a badge, it is used for screen readers and not shown on the screen.',
   });
   const PANEL_STATIC_RESULT_TITLE = intl.formatMessage({
     defaultMessage: 'Testing',
+    id: 'm7Y6Qf',
     description: 'Title for a tab panel',
   });
   const MENU_STATIC_RESULT_ICON_TOOLTIP = intl.formatMessage({
     defaultMessage: 'This Action has testing configured.',
+    id: 'iRjBf4',
     description: "This is a tooltip for the Status results badge shown on a card. It's shown when the baged is hovered over.",
   });
   const COMMENT = intl.formatMessage({
     defaultMessage: 'Comment',
+    id: 'VXBWrq',
     description: 'This is for a label for a badge, it is used for screen readers and not shown on the screen.',
   });
   const SECURE_INPUTS_OUTPUTS_TITLE = intl.formatMessage({
     defaultMessage: 'Secure inputs or outputs enabled.',
+    id: '0F6jmK',
     description: 'Secure inputs or outputs enabled.',
   });
   const SECURE_INPUTS_OUTPUTS_TOOLTIP = intl.formatMessage({
     defaultMessage: 'This operation has secure inputs or outputs enabled.',
+    id: 'byRkj+',
     description: 'This operation has secure inputs or outputs enabled.',
   });
 

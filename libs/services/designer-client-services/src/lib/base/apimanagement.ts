@@ -2,8 +2,7 @@ import type { IApiManagementService } from '../apimanagement';
 import { getAzureResourceRecursive } from '../common/azure';
 import type { ListDynamicValue } from '../connector';
 import type { IHttpClient } from '../httpClient';
-import { ResponseCodes, SwaggerParser } from '@microsoft/logic-apps-shared';
-import { ArgumentException, equals, unmap } from '@microsoft/logic-apps-shared';
+import { ResponseCodes, SwaggerParser, ArgumentException, equals, unmap } from '@microsoft/logic-apps-shared';
 import type { QueryClient } from 'react-query';
 
 export interface ApiManagementServiceOptions {

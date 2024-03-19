@@ -9,6 +9,7 @@ export const TechnicalErrorMessage = ({ message, chatSessionId }: TechnicalError
   const intl = useIntl();
   const chatSessionText = intl.formatMessage({
     defaultMessage: 'chat-session-id:',
+    id: 'YF1yZk',
     description: 'Chatbot session id',
   });
   return (

@@ -26,16 +26,19 @@ export const WorkflowParametersErrorCard: React.FC<WorkflowParametersErrorCardPr
 
   const title = intl.formatMessage({
     defaultMessage: 'Workflow Parameters',
+    id: 'QdhS3y',
     description: 'Title for the workflow parameters error card',
   });
 
   const wfpButtonHint = intl.formatMessage({
     defaultMessage: 'Open panel',
+    id: '53MgCQ',
     description: 'Hint for the button on the error card',
   });
 
   const noNameFallback = intl.formatMessage({
     defaultMessage: 'New parameter',
+    id: 'nPgYuI',
     description: "The default to use when a parameter doesn't have a name.",
   });
 
