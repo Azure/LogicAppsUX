@@ -70,7 +70,8 @@ export function validateStaticParameterInfo(
     parameterErrorMessages.push(
       intl.formatMessage(
         {
-          defaultMessage: "Enter a valid value for ''{parameterName}''.",
+          defaultMessage: `Enter a valid value for ''{parameterName}''.`,
+          id: '6uCEoM',
           description:
             'Invalid Pattern error message. Do not remove the double single quotes around the display name, as it is needed to wrap the placeholder text.',
         },
@@ -83,7 +84,8 @@ export function validateStaticParameterInfo(
     parameterErrorMessages.push(
       intl.formatMessage(
         {
-          defaultMessage: "''{parameterName}'' is required.",
+          defaultMessage: `''{parameterName}'' is required.`,
+          id: '49YUXK',
           description:
             'Required Parameter error message. Do not remove the double single quotes around the display name, as it is needed to wrap the placeholder text.',
         },
@@ -96,8 +98,8 @@ export function validateStaticParameterInfo(
     parameterErrorMessages.push(
       intl.formatMessage(
         {
-          defaultMessage:
-            "''{parameterName}'' is no longer present in the operation schema. It should be removed before the workflow is re-saved.",
+          defaultMessage: `''{parameterName}'' is no longer present in the operation schema. It should be removed before the workflow is re-saved.`,
+          id: 'V3vpin',
           description:
             'Unknown Parameter error message. Do not remove the double single quotes around the display name, as it is needed to wrap the placeholder text.',
         },
@@ -127,7 +129,11 @@ export function validateType(type: string, parameterFormat: string, parameterVal
       return;
     }
     if (!isValidJSONObjectFormat(parameterValue)) {
-      return intl.formatMessage({ defaultMessage: 'Enter a valid table.', description: 'Error validation message for JSONs' });
+      return intl.formatMessage({
+        defaultMessage: 'Enter a valid table.',
+        id: 'EptZhD',
+        description: 'Error validation message for JSONs',
+      });
     }
     return;
   }
@@ -137,7 +143,11 @@ export function validateType(type: string, parameterFormat: string, parameterVal
         return;
       }
       if (!regex.integer.test(parameterValue)) {
-        return intl.formatMessage({ defaultMessage: 'Enter a valid integer.', description: 'Error validation message for Integers' });
+        return intl.formatMessage({
+          defaultMessage: 'Enter a valid integer.',
+          id: 'pOVDll',
+          description: 'Error validation message for Integers',
+        });
       }
       return validateIntegerFormat(parameterFormat, parameterValue);
 
@@ -146,7 +156,11 @@ export function validateType(type: string, parameterFormat: string, parameterVal
         return;
       }
       if (isNaN(Number(parameterValue))) {
-        return intl.formatMessage({ defaultMessage: 'Enter a valid number.', description: 'Error validation message for Numbers' });
+        return intl.formatMessage({
+          defaultMessage: 'Enter a valid number.',
+          id: 'lB56l2',
+          description: 'Error validation message for Numbers',
+        });
       }
       return validateNumberFormat(parameterFormat, parameterValue);
 
@@ -155,7 +169,11 @@ export function validateType(type: string, parameterFormat: string, parameterVal
         return;
       }
       if (!(equals(parameterValue, 'true') || equals(parameterValue, 'false') || !parameterValue)) {
-        return intl.formatMessage({ defaultMessage: 'Enter a valid boolean.', description: 'Error validation message for Booleans' });
+        return intl.formatMessage({
+          defaultMessage: 'Enter a valid boolean.',
+          id: '+HcevX',
+          description: 'Error validation message for Booleans',
+        });
       }
       return;
 
@@ -164,7 +182,11 @@ export function validateType(type: string, parameterFormat: string, parameterVal
         return;
       }
       if (!isValidJSONObjectFormat(parameterValue)) {
-        return intl.formatMessage({ defaultMessage: 'Enter a valid json.', description: 'Error validation message for Objects' });
+        return intl.formatMessage({
+          defaultMessage: 'Enter a valid json.',
+          id: 'bYwqkV',
+          description: 'Error validation message for Objects',
+        });
       }
       return;
 
@@ -173,7 +195,11 @@ export function validateType(type: string, parameterFormat: string, parameterVal
         return;
       }
       if (!isValidArrayFormat(parameterValue)) {
-        return intl.formatMessage({ defaultMessage: 'Enter a valid array.', description: 'Error validation message for the array type' });
+        return intl.formatMessage({
+          defaultMessage: 'Enter a valid array.',
+          id: '2pRsUf',
+          description: 'Error validation message for the array type',
+        });
       }
       return;
     case Constants.SWAGGER.TYPE.STRING:
@@ -207,13 +233,21 @@ function validateNumberFormat(parameterFormat: string, parameterValue: string): 
   switch (parameterFormat.toLowerCase()) {
     case Constants.SWAGGER.FORMAT.DOUBLE:
       if (!regex.double.test(parameterValue)) {
-        return intl.formatMessage({ defaultMessage: 'Enter a valid Double number.', description: 'Error validation message for doubles' });
+        return intl.formatMessage({
+          defaultMessage: 'Enter a valid Double number.',
+          id: 'osKNnl',
+          description: 'Error validation message for doubles',
+        });
       }
       break;
 
     case Constants.SWAGGER.FORMAT.FLOAT:
       if (!regex.double.test(parameterValue)) {
-        return intl.formatMessage({ defaultMessage: 'Enter a valid float.', description: 'Error validation message for floats' });
+        return intl.formatMessage({
+          defaultMessage: 'Enter a valid float.',
+          id: 'gYaVvl',
+          description: 'Error validation message for floats',
+        });
       }
       break;
 
@@ -238,7 +272,11 @@ function validateStringFormat(parameterFormat: string, parameterValue: string, i
       }
       // RFC 3339
       if (isNaN(Date.parse(parameterValue)) || !regex.datetime.test(parameterValue)) {
-        return intl.formatMessage({ defaultMessage: 'Enter a valid datetime.', description: 'Error validation message for date times' });
+        return intl.formatMessage({
+          defaultMessage: 'Enter a valid datetime.',
+          id: '3uA4ml',
+          description: 'Error validation message for date times',
+        });
       }
       break;
 
@@ -264,11 +302,12 @@ function validateStringFormat(parameterFormat: string, parameterValue: string, i
       if (regex.whiteSpace.test(parameterValue)) {
         return intl.formatMessage({
           defaultMessage: 'Whitespaces must be encoded for URIs',
+          id: 'P4XUjW',
           description: 'Error validation message for URIs with whitespace',
         });
       }
       if (!regex.url.test(parameterValue)) {
-        return intl.formatMessage({ defaultMessage: 'Enter a valid URI.', description: 'Error validation message for URIs' });
+        return intl.formatMessage({ defaultMessage: 'Enter a valid URI.', id: '1r9ljA', description: 'Error validation message for URIs' });
       }
       break;
 
@@ -306,7 +345,8 @@ export function validateJSONParameter(parameterMetadata: ParameterInfo, paramete
     return [
       intl.formatMessage(
         {
-          defaultMessage: "''{parameterName}'' is required.",
+          defaultMessage: `''{parameterName}'' is required.`,
+          id: '49YUXK',
           description:
             'Required Parameter error message. Do not remove the double single quotes around the display name, as it is needed to wrap the placeholder text.',
         },
@@ -323,6 +363,7 @@ export function validateJSONParameter(parameterMetadata: ParameterInfo, paramete
         errors.push(
           intl.formatMessage({
             defaultMessage: 'Enter a valid JSON.',
+            id: 'c7kfkV',
             description: 'Error validation message for invalid JSON',
           })
         );
@@ -343,6 +384,7 @@ const validateFloatingActionMenuOutputsEditor = (editorViewModel: FloatingAction
     errors.push(
       intl.formatMessage({
         defaultMessage: 'Output names should not be empty.',
+        id: 'YWws/r',
         description: 'Invalid output names',
       })
     );
@@ -354,6 +396,7 @@ const validateFloatingActionMenuOutputsEditor = (editorViewModel: FloatingAction
     errors.push(
       intl.formatMessage({
         defaultMessage: 'Output names should be unique.',
+        id: 'gusZw5',
         description: 'Duplicate output names',
       })
     );

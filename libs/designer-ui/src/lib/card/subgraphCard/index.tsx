@@ -48,6 +48,7 @@ export const SubgraphCard: React.FC<SubgraphCardProps> = ({
 
   const addCaseLabel = intl.formatMessage({
     defaultMessage: 'Add Case',
+    id: 'sQ2vRs',
     description: 'add a case to switch statement',
   });
 
@@ -65,6 +66,7 @@ export const SubgraphCard: React.FC<SubgraphCardProps> = ({
       color: '#428000',
       title: intl.formatMessage({
         defaultMessage: 'True',
+        id: '/WW7If',
         description: 'True',
       }),
       size: 'small',
@@ -74,6 +76,7 @@ export const SubgraphCard: React.FC<SubgraphCardProps> = ({
       color: '#A4262C',
       title: intl.formatMessage({
         defaultMessage: 'False',
+        id: 'PXa0D4',
         description: 'False',
       }),
       size: 'small',
@@ -89,6 +92,7 @@ export const SubgraphCard: React.FC<SubgraphCardProps> = ({
       color: '#484F58',
       title: intl.formatMessage({
         defaultMessage: 'Default',
+        id: 'FUuFlC',
         description: 'Default, the backup option if none other apply',
       }),
       size: 'small',
@@ -98,6 +102,7 @@ export const SubgraphCard: React.FC<SubgraphCardProps> = ({
       color: '#486991',
       title: intl.formatMessage({
         defaultMessage: 'Do',
+        id: 'c/+j08',
         description: 'Do, as in "to do an action"',
       }),
       size: 'small',

@@ -28,11 +28,13 @@ export const TokenPickerPivot = ({ selectedKey, hideExpressions, selectKey }: To
 
   const tokenMode = intl.formatMessage({
     defaultMessage: 'Dynamic content',
+    id: 'iEy9pT',
     description: 'Token picker mode to insert dynamic content',
   });
 
   const expressionMode = intl.formatMessage({
     defaultMessage: 'Function',
+    id: 'fmm7Ik',
     description: 'Token picker mode to insert expressions',
   });
 

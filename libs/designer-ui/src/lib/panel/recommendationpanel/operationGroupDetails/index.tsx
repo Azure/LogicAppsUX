@@ -27,11 +27,13 @@ export const OperationGroupDetailsPage: React.FC<OperationGroupDetailsPageProps>
 
   const noOperationsText = intl.formatMessage({
     defaultMessage: 'No operations found',
+    id: 'Sr8PcK',
     description: 'Message to show when no operations are found',
   });
 
   const loadingText = intl.formatMessage({
     defaultMessage: 'Loading...',
+    id: '5ytHcK',
     description: 'Loading text for spinner',
   });
 

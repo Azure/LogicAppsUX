@@ -501,8 +501,12 @@ const hasParametersToAuthor = (parameterGroups: Record<string, ParameterGroup>):
 
 export const parametersTab: PanelTabFn = (intl) => ({
   id: constants.PANEL_TAB_NAMES.PARAMETERS,
-  title: intl.formatMessage({ defaultMessage: 'Parameters', description: 'Parameters tab title' }),
-  description: intl.formatMessage({ defaultMessage: 'Configure parameters for this node', description: 'Parameters tab description' }),
+  title: intl.formatMessage({ defaultMessage: 'Parameters', id: 'uxKRO/', description: 'Parameters tab title' }),
+  description: intl.formatMessage({
+    defaultMessage: 'Configure parameters for this node',
+    id: 'SToblZ',
+    description: 'Parameters tab description',
+  }),
   visible: true,
   content: <ParametersTab />,
   order: 0,

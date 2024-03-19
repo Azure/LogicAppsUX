@@ -88,6 +88,7 @@ export function buildOperationDetailsFromControls(
           intl.formatMessage(
             {
               defaultMessage: `Unsupported 'in' value : ''{value}'' in Parameter`,
+              id: '5akc1Q',
               description:
                 'Error message for unsupported values. Do not remove the double single quotes around the placeholder text, as it is needed to wrap the placeholder text in single quotes.',
             },
@@ -545,7 +546,8 @@ export function processPathInputs(pathValue: string, pathTemplate: string): Reco
 
     const errorMessage = intl.formatMessage(
       {
-        defaultMessage: `Invalid operation path input value. Path value - {pathValue} Path template - {pathTemplate}`,
+        defaultMessage: 'Invalid operation path input value. Path value - {pathValue} Path template - {pathTemplate}',
+        id: 'NnD8gF',
         description: 'Error message while parsing ',
       },
       { pathValue, pathTemplate }
@@ -587,7 +589,8 @@ export function processPathInputs(pathValue: string, pathTemplate: string): Reco
 
     const errorMismatchSegments = intl.formatMessage(
       {
-        defaultMessage: `Operation path value does not match the template for segment. Path {pathValue}, Template {pathTemplate}`,
+        defaultMessage: 'Operation path value does not match the template for segment. Path {pathValue}, Template {pathTemplate}',
+        id: 'hq1mk6',
         description: 'Error while parsing expression for path value',
       },
       { pathValue, pathTemplate }
