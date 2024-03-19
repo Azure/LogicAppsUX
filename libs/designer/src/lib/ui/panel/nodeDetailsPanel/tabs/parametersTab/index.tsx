@@ -76,8 +76,10 @@ export const ParametersTab = () => {
   const { hideUTFExpressions } = useHostOptions();
   const replacedIds = useReplacedIds();
 
-  const emptyParametersMessage = useIntl().formatMessage({
+  const intl = useIntl();
+  const emptyParametersMessage = intl.formatMessage({
     defaultMessage: 'No additional information is needed for this step. You will be able to use the outputs in subsequent steps.',
+    id: 'BtL7UI',
     description: 'Message to show when there are no parameters to author in operation.',
   });
 
