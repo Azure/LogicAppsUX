@@ -7,7 +7,7 @@ import { parseJson } from '../../utils/parseJson';
 import { type UnitTestDefinition } from '@microsoft/utils-logic-apps';
 import { parseError } from '@microsoft/vscode-azext-utils';
 import * as fse from 'fs-extra';
-import { type TestItem, type Uri } from 'vscode';
+import { TestMessage, type TestItem, type Uri, type TestRun } from 'vscode';
 
 /**
  * Represents a test file.
@@ -49,6 +49,22 @@ export class TestFile {
         triggerMocks: {},
         assertions: [],
       };
+    }
+  }
+
+  async run(item: TestItem, options: TestRun): Promise<void> {
+    const start = Date.now();
+    await new Promise((resolve) => setTimeout(resolve, 1000 + Math.random() * 1000));
+    const duration = Date.now() - start;
+
+    // This is where we are going to run the unit test from extension bundle
+
+    // Just put a random decision here in the meantime
+    if (start % 2 === 0) {
+      options.passed(item, duration);
+    } else {
+      const message = TestMessage.diff(`Expected ${item.label}`, '1', '2');
+      options.failed(item, message, duration);
     }
   }
 }

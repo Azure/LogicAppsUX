@@ -34,7 +34,7 @@ export class TestWorkflow {
    * @returns {Promise<void>} - A promise that resolves when all child test items are created.
    */
   public async createChild(controller: TestController): Promise<void> {
-    this.testFiles.forEach(async (testFile) => {
+    for (const testFile of this.testFiles) {
       const testName = testFile.path.split('/').slice(-1)[0];
       const id = `${this.name}/${testName}`;
 
@@ -43,7 +43,7 @@ export class TestWorkflow {
       await data.parseUnitTest();
       ext.testData.set(fileTestItem, data);
       this.children.push(fileTestItem);
-    });
+    }
 
     this.workflowTestItem.children.replace(this.children);
   }

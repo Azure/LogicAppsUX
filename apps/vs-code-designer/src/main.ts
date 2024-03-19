@@ -101,19 +101,25 @@ export async function activate(context: vscode.ExtensionContext) {
     vscode.window.registerUriHandler(new UriHandler());
 
     // Unit tests controller
-    const ctrl = vscode.tests.createTestController('LogicAppStandardTests', 'Logic App Standard Tests');
-    context.subscriptions.push(ctrl);
+    const unitTestController = vscode.tests.createTestController('LogicAppStandardTests', 'Logic App Standard Tests');
+    context.subscriptions.push(unitTestController);
 
     // Refresh handler when click in refresh button in the test explorer
-    ctrl.refreshHandler = async () => {
-      await getTestFiles(ctrl);
+    unitTestController.refreshHandler = async () => {
+      await getTestFiles(unitTestController);
     };
 
     // Run profile when click in run button in the test explorer
-    ctrl.createRunProfile('Run logic apps standard unit tests', vscode.TestRunProfileKind.Run, runHandler, true, undefined);
+    unitTestController.createRunProfile(
+      'Run logic apps standard unit tests',
+      vscode.TestRunProfileKind.Run,
+      (request, cancellation) => runHandler(request, cancellation, unitTestController),
+      true,
+      undefined
+    );
 
     // Handler to load unit test folders and files when load the test explorer
-    ctrl.resolveHandler = async (item: vscode.TestItem) => unitTestResolveHandler(context, ctrl, item);
+    unitTestController.resolveHandler = async (item: vscode.TestItem) => unitTestResolveHandler(context, unitTestController, item);
   });
 }
 

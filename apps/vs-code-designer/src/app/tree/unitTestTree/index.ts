@@ -3,10 +3,10 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { ext } from '../../../extensionVariables';
-import type { TestFile } from './testFile';
+import { TestFile } from './testFile';
 import { TestWorkflow } from './testWorkflow';
 import { TestWorkspace } from './testWorkspace';
-import { isEmptyString, isNullOrUndefined } from '@microsoft/utils-logic-apps';
+import { isEmptyString } from '@microsoft/utils-logic-apps';
 import {
   RelativePattern,
   type TestController,
@@ -17,6 +17,7 @@ import {
   type EventEmitter,
   type TestItem,
   type ExtensionContext,
+  type TestItemCollection,
 } from 'vscode';
 
 export type TestData = TestWorkspace | TestWorkflow | TestFile;
@@ -50,18 +51,9 @@ export const getWorkspaceTestPatterns = () => {
  * @param {TestRunRequest} request - The test run request.
  * @param {CancellationToken} cancellation - The cancellation token.
  */
-export const runHandler = (request: TestRunRequest, cancellation: CancellationToken) => {
-  // if (!request.continuous) {
-  //   return startTestRun(request);
-  // }
-
-  if (isNullOrUndefined(request.include)) {
-    ext.watchingTests.set('ALL', request.profile);
-    cancellation.onCancellationRequested(() => ext.watchingTests.delete('ALL'));
-  } else {
-    request.include.forEach((item) => ext.watchingTests.set(item, request.profile));
-    cancellation.onCancellationRequested(() => request.include.forEach((item) => ext.watchingTests.delete(item)));
-  }
+export const runHandler = (request: TestRunRequest, cancellation: CancellationToken, unitTestController: TestController) => {
+  cancellation.onCancellationRequested(() => request.include.forEach((item) => ext.watchingTests.delete(item)));
+  return startTestRun(request, unitTestController);
 };
 
 /**
@@ -151,4 +143,56 @@ const getOrCreateWorkspace = (controller: TestController, workspaceName: string,
 
   workspaceTestItem.canResolveChildren = true;
   return { workspaceTestItem, data };
+};
+
+const startTestRun = (request: TestRunRequest, unitTestController: TestController) => {
+  const queue: { test: TestItem; data: TestFile }[] = [];
+  const run = unitTestController.createTestRun(request);
+
+  const discoverTests = async (tests: Iterable<TestItem>) => {
+    for (const test of tests) {
+      if (request.exclude?.includes(test)) {
+        continue;
+      }
+
+      const data = ext.testData.get(test);
+      if (data instanceof TestFile) {
+        run.enqueued(test);
+        queue.push({ test, data });
+      } else {
+        if (data instanceof TestWorkflow || data instanceof TestWorkspace) {
+          if (test.children.size === 0) {
+            await data.createChild(unitTestController);
+          }
+        }
+
+        await discoverTests(gatherTestItems(test.children));
+      }
+    }
+  };
+
+  const runTestQueue = async () => {
+    for (const { test, data } of queue) {
+      run.appendOutput(`Running ${test.id}\r\n`);
+      if (run.token.isCancellationRequested) {
+        run.skipped(test);
+      } else {
+        run.started(test);
+        await data.run(test, run);
+      }
+
+      run.appendOutput(`Completed ${test.id}\r\n`);
+    }
+
+    run.end();
+  };
+
+  discoverTests(request.include ?? gatherTestItems(unitTestController.items)).then(runTestQueue);
+};
+
+const gatherTestItems = (collection: TestItemCollection) => {
+  const items: TestItem[] = [];
+  collection.forEach((item: TestItem) => items.push(item));
+
+  return items;
 };
