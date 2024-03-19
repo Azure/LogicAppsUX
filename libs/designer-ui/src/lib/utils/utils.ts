@@ -404,9 +404,11 @@ export const convertUIElementNameToAutomationId = (uiElementName: string): strin
 };
 
 export const getPreviewTag = (status: string | undefined): string | undefined => {
+  const intl = getIntl();
   return equals(status, 'preview')
-    ? getIntl().formatMessage({
+    ? intl.formatMessage({
         defaultMessage: 'Preview',
+        id: 'RJ3DuE',
         description: 'The preview tag for a preview connector.',
       })
     : undefined;

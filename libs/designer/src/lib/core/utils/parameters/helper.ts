@@ -1993,9 +1993,11 @@ async function loadDynamicContentForInputsInNode(
           );
         } catch (error: any) {
           const message = parseErrorMessage(error);
-          const errorMessage = getIntl().formatMessage(
+          const intl = getIntl();
+          const errorMessage = intl.formatMessage(
             {
               defaultMessage: `Failed to retrieve dynamic inputs. Error details: ''{message}''`,
+              id: 'sytRna',
               description: 'Error message to show when loading dynamic inputs failed',
             },
             { message }
@@ -2185,9 +2187,11 @@ async function tryGetInputDynamicSchema(
     }
 
     const message = parseErrorMessage(error);
-    const errorMessage = getIntl().formatMessage(
+    const intl = getIntl();
+    const errorMessage = intl.formatMessage(
       {
         defaultMessage: `Failed to retrieve dynamic inputs. Error details: ''{message}''`,
+        id: 'sytRna',
         description: 'Error message to show when loading dynamic inputs failed',
       },
       { message }
@@ -2385,9 +2389,11 @@ export const recurseSerializeCondition = (
     );
     if (errors && errors.length === 0 && (operand1String || operand2String)) {
       if (!operand1String) {
+        const intl = getIntl();
         errors.push(
-          getIntl().formatMessage({
+          intl.formatMessage({
             defaultMessage: 'Enter a valid condition statement.',
+            id: 'WToL/O',
             description: 'Error validation message for invalid condition statement',
           })
         );

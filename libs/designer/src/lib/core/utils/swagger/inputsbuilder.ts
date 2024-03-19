@@ -280,11 +280,13 @@ function serializeFormData(formDataParameters: SerializedParameter[]): Partial<O
         const fileNameItem = firstItemIsContent ? items[1] : items[0];
         return createMultipart(name, fileContentItem.value, fileNameItem.value);
       } else {
+        const intl = getIntl();
         throw new AssertionException(
           AssertionErrorCode.UNSPECIFIED,
-          getIntl().formatMessage(
+          intl.formatMessage(
             {
-              defaultMessage: `Invalid operation. Number of items: {length}.`,
+              defaultMessage: 'Invalid operation. Number of items: {length}.',
+              id: 'J55HA9',
               description: 'Exception message for invalid formdata operation.',
             },
             { length: items.length }

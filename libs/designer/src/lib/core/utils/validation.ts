@@ -215,9 +215,14 @@ function validateIntegerFormat(parameterFormat: string, parameterValue: string):
     return '';
   }
 
+  const intl = getIntl();
   if (parameterFormat.toLowerCase() === 'int32') {
     if (Number(parameterValue) > Constants.INT_MAX || Number(parameterValue) < Constants.INT_MIN) {
-      return getIntl().formatMessage({ defaultMessage: 'The value is too large.', description: 'Error validation message integers' });
+      return intl.formatMessage({
+        defaultMessage: 'The value is too large.',
+        id: 'hihfHd',
+        description: 'Error validation message integers',
+      });
     }
   }
 
@@ -481,9 +486,10 @@ function validateStringEmails(parameterValue: string): string {
     .split(';')
     .map((email) => email.trim())
     .filter((email) => email !== '');
-
-  const errorMessage = getIntl().formatMessage({
+  const intl = getIntl();
+  const errorMessage = intl.formatMessage({
     defaultMessage: 'Enter a valid email.',
+    id: '7jcTNd',
     description: 'Error validation message for emails',
   });
   if (emails.length > 0) {
