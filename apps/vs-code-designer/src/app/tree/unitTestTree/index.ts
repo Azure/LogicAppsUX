@@ -4,7 +4,6 @@ import { TestWorkflow } from './testWorkflow';
 import { TestWorkspace } from './testWorkspace';
 import { isNullOrUndefined } from '@microsoft/utils-logic-apps';
 import {
-  type WorkspaceFolder,
   RelativePattern,
   type TestController,
   workspace,
@@ -18,25 +17,20 @@ import {
 
 export type TestData = TestWorkspace | TestWorkflow | TestFile;
 
-interface TestInWorkspace {
-  workspaceFolder: WorkspaceFolder;
-  pattern: RelativePattern;
-}
-
 /**
  * Retrieves the test files asynchronously.
  * @param {TestController} controller The test controller.
  * @returns A promise that resolves to an array of test files.
  */
 export const getTestFiles = async (controller: TestController) => {
-  return await Promise.all(getWorkspaceTestPatterns().map((testInWorkspace) => findInitialFiles(controller, testInWorkspace)));
+  return await Promise.all(getWorkspaceTestPatterns().map(({ pattern }) => findInitialFiles(controller, pattern)));
 };
 
 /**
  * Retrieves the workspace test patterns.
  * @returns An array of workspace test patterns.
  */
-export const getWorkspaceTestPatterns = (): TestInWorkspace[] => {
+export const getWorkspaceTestPatterns = () => {
   if (!workspace.workspaceFolders) {
     return [];
   }
@@ -53,6 +47,10 @@ export const getWorkspaceTestPatterns = (): TestInWorkspace[] => {
  * @param {CancellationToken} cancellation - The cancellation token.
  */
 export const runHandler = (request: TestRunRequest, cancellation: CancellationToken) => {
+  // if (!request.continuous) {
+  //   return startTestRun(request);
+  // }
+
   if (isNullOrUndefined(request.include)) {
     ext.watchingTests.set('ALL', request.profile);
     cancellation.onCancellationRequested(() => ext.watchingTests.delete('ALL'));
@@ -76,13 +74,13 @@ export const unitTestResolveHandler = async (context: ExtensionContext, ctrl: Te
 
   const data = ext.testData.get(item);
   if (data instanceof TestWorkspace || data instanceof TestWorkflow) {
-    await data.updateFromDisk(ctrl);
+    await data.createChild(ctrl);
   }
 };
 
 const testsWorkspaceWatcher = (controller: TestController, fileChangedEmitter: EventEmitter<Uri>) => {
-  return getWorkspaceTestPatterns().map((test) => {
-    const watcher = workspace.createFileSystemWatcher(test.pattern);
+  return getWorkspaceTestPatterns().map(({ pattern }) => {
+    const watcher = workspace.createFileSystemWatcher(pattern);
 
     watcher.onDidCreate((uri) => {
       // getOrCreateFile(controller, uri);
@@ -97,7 +95,7 @@ const testsWorkspaceWatcher = (controller: TestController, fileChangedEmitter: E
     });
     watcher.onDidDelete((uri) => controller.items.delete(uri.toString()));
 
-    findInitialFiles(controller, test);
+    findInitialFiles(controller, pattern);
 
     return watcher;
   });
@@ -108,26 +106,33 @@ const testsWorkspaceWatcher = (controller: TestController, fileChangedEmitter: E
  * @param {TestController} controller The test controller.
  * @param {GlobPattern} pattern The glob pattern used to find files.
  */
-const findInitialFiles = async (controller: TestController, testInWorkspace: TestInWorkspace) => {
-  const unitTestFiles = await workspace.findFiles(testInWorkspace.pattern);
-  const map = new Map();
+const findInitialFiles = async (controller: TestController, pattern: RelativePattern) => {
+  const unitTestFiles = await workspace.findFiles(pattern);
 
-  unitTestFiles.forEach((uri) => {
-    const workspaceName = uri.path.split('/').slice(-5)[0];
-    if (!map.has(workspaceName)) {
-      map.set(workspaceName, []);
+  const workspacesTestFiles = unitTestFiles.reduce((acc, file: Uri) => {
+    const workspaceName = file.path.split('/').slice(-5)[0];
+
+    if (!acc[workspaceName]) {
+      acc[workspaceName] = [];
     }
-    map.get(workspaceName).push(uri);
-  });
+    acc[workspaceName].push(file);
+    return acc;
+  }, {});
 
-  for (const workspace of Array.from(map)) {
-    getOrCreateWorkspace(controller, workspace);
+  for (const workspace of Object.keys(workspacesTestFiles)) {
+    getOrCreateWorkspace(controller, workspace, workspacesTestFiles[workspace]);
   }
 };
 
-const getOrCreateWorkspace = (controller: TestController, workspace: [string, Uri[]]) => {
-  const workspaceName = workspace[0];
-  const existing = controller.items.get(workspace[0]);
+/**
+ * Gets or creates a workspace for unit testing.
+ * @param {TestController} controller - The test controller.
+ * @param {string} workspaceName - The name of the workspace.
+ * @param {Uri[]} files - An array of URIs representing the files in the workspace.
+ * @returns An object containing the workspace test item and its associated data.
+ */
+const getOrCreateWorkspace = (controller: TestController, workspaceName: string, files: Uri[]) => {
+  const existing = controller.items.get(workspaceName);
   if (existing) {
     return { file: existing, data: ext.testData.get(existing) as TestFile };
   }
@@ -135,7 +140,7 @@ const getOrCreateWorkspace = (controller: TestController, workspace: [string, Ur
   const workspaceTestItem = controller.createTestItem(workspaceName, workspaceName);
   controller.items.add(workspaceTestItem);
 
-  const data = new TestWorkspace(workspace[0], workspace[1], workspaceTestItem);
+  const data = new TestWorkspace(workspaceName, files, workspaceTestItem);
   ext.testData.set(workspaceTestItem, data);
 
   workspaceTestItem.canResolveChildren = true;

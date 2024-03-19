@@ -1,26 +1,27 @@
 import { ext } from '../../../extensionVariables';
 import { TestFile } from './testFile';
-import { type TestController, type TestItem } from 'vscode';
+import { type TestController, type TestItem, type Uri } from 'vscode';
 
 export class TestWorkflow {
   private children: TestItem[];
   private readonly name: string;
-  private readonly testFiles: any[];
+  private readonly testFiles: Uri[];
   private workflowTestItem: TestItem;
 
-  constructor(name: string, workflows: any[], workflowTestItem: TestItem) {
+  constructor(name: string, files: Uri[], workflowTestItem: TestItem) {
     this.children = [];
     this.name = name;
-    this.testFiles = workflows;
+    this.testFiles = files;
     this.workflowTestItem = workflowTestItem;
   }
 
-  public async updateFromDisk(controller: TestController) {
+  public async createChild(controller: TestController) {
     this.testFiles.forEach((testFile) => {
       const testName = testFile.path.split('/').slice(-1)[0];
       const data = new TestFile();
       const id = `${this.name}/${testName}`;
-      const fileTestItem = controller.createTestItem(id, testName);
+
+      const fileTestItem = controller.createTestItem(id, testName, testFile);
       ext.testData.set(fileTestItem, data);
       this.children.push(fileTestItem);
     });
