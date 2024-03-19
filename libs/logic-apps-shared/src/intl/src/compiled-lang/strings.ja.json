@@ -1356,7 +1356,7 @@
   "6yFUar": [
     {
       "type": 0,
-      "value": "Outputs are required when status is \"Succeeded\""
+      "value": "状態が \"成功\" の場合には、出力が必要です"
     }
   ],
   "70eoQu": [
@@ -1884,7 +1884,7 @@
   "ANGw2o": [
     {
       "type": 0,
-      "value": "Click for more information on Static Result"
+      "value": "クリックすると、静的な結果に関する詳細情報が表示されます"
     }
   ],
   "AO6T9u": [
@@ -2966,7 +2966,7 @@
   "HGA9iU": [
     {
       "type": 0,
-      "value": "The Error and its code is required when status is \"Failed\""
+      "value": "状態が \"失敗\" の場合には、エラーとそのコードが必要です"
     }
   ],
   "HH970i": [
@@ -2991,6 +2991,12 @@
     {
       "type": 0,
       "value": "ヘッダー"
+    }
+  ],
+  "HX3Xmx": [
+    {
+      "type": 0,
+      "value": "削除しています..."
     }
   ],
   "HYhDYB": [
@@ -3497,7 +3503,7 @@
   "LPdGu/": [
     {
       "type": 0,
-      "value": "Ouputs should not be provided when status is \"Failed\""
+      "value": "状態が \"失敗\" の場合には、出力を提供しないでください"
     }
   ],
   "LR/3Lr": [
@@ -4765,6 +4771,12 @@
       "value": "アクションの種類"
     }
   ],
+  "TUdPdI": [
+    {
+      "type": 0,
+      "value": "セキュリティで保護されたオブジェクト"
+    }
+  ],
   "TX4Kdr": [
     {
       "type": 0,
@@ -5955,6 +5967,12 @@
       "value": "本文"
     }
   ],
+  "ZKnJnh": [
+    {
+      "type": 0,
+      "value": "安全な文字列"
+    }
+  ],
   "ZM1mRy": [
     {
       "type": 0,
@@ -6131,6 +6149,20 @@
     {
       "type": 0,
       "value": "本文"
+    }
+  ],
+  "bC2LBK": [
+    {
+      "type": 0,
+      "value": "種類 \""
+    },
+    {
+      "type": 1,
+      "value": "type"
+    },
+    {
+      "type": 0,
+      "value": "\" の既定値はプレーンテキストとして保存されるため、設定しないことをお勧めします。"
     }
   ],
   "bG9rjv": [
@@ -8875,7 +8907,7 @@
   "svaqnp": [
     {
       "type": 0,
-      "value": "Error should not be provided when status is \"Succeeded\""
+      "value": "状態が \"成功\" の場合には、エラーを提供しないでください"
     }
   ],
   "sw6EXK": [

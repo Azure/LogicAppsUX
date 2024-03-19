@@ -1376,7 +1376,7 @@
   "6yFUar": [
     {
       "type": 0,
-      "value": "Outputs are required when status is \"Succeeded\""
+      "value": "Ausgaben sind erforderlich, wenn der Status „Erfolgreich“ lautet"
     }
   ],
   "70eoQu": [
@@ -1908,7 +1908,7 @@
   "ANGw2o": [
     {
       "type": 0,
-      "value": "Click for more information on Static Result"
+      "value": "Klicken Sie für weitere Informationen zum statischen Ergebnis"
     }
   ],
   "AO6T9u": [
@@ -3032,7 +3032,7 @@
   "HGA9iU": [
     {
       "type": 0,
-      "value": "The Error and its code is required when status is \"Failed\""
+      "value": "Der Fehler und sein Code sind erforderlich, wenn der Status „Fehlgeschlagen“ lautet"
     }
   ],
   "HH970i": [
@@ -3057,6 +3057,12 @@
     {
       "type": 0,
       "value": "Header"
+    }
+  ],
+  "HX3Xmx": [
+    {
+      "type": 0,
+      "value": "Wird gelöscht..."
     }
   ],
   "HYhDYB": [
@@ -3574,7 +3580,7 @@
   "LPdGu/": [
     {
       "type": 0,
-      "value": "Ouputs should not be provided when status is \"Failed\""
+      "value": "Ausgaben sollten nicht angegeben werden, wenn der Status „Fehlerhaft“ lautet"
     }
   ],
   "LR/3Lr": [
@@ -4861,6 +4867,12 @@
       "value": "Aktionstyp"
     }
   ],
+  "TUdPdI": [
+    {
+      "type": 0,
+      "value": "Sicheres Objekt"
+    }
+  ],
   "TX4Kdr": [
     {
       "type": 0,
@@ -6067,6 +6079,12 @@
       "value": "Textkörper"
     }
   ],
+  "ZKnJnh": [
+    {
+      "type": 0,
+      "value": "Sichere Zeichenfolge"
+    }
+  ],
   "ZM1mRy": [
     {
       "type": 0,
@@ -6243,6 +6261,20 @@
     {
       "type": 0,
       "value": "Textkörper"
+    }
+  ],
+  "bC2LBK": [
+    {
+      "type": 0,
+      "value": "Es wird nicht empfohlen, einen Standardwert für den Typ „"
+    },
+    {
+      "type": 1,
+      "value": "type"
+    },
+    {
+      "type": 0,
+      "value": "“ festzulegen, da er als Nur-Text gespeichert wird."
     }
   ],
   "bG9rjv": [
@@ -9052,7 +9084,7 @@
   "svaqnp": [
     {
       "type": 0,
-      "value": "Error should not be provided when status is \"Succeeded\""
+      "value": "Fehler sollte nicht angegeben werden, wenn der Status „Erfolgreich“ lautet"
     }
   ],
   "sw6EXK": [

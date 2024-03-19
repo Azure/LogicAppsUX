@@ -1364,7 +1364,7 @@
   "6yFUar": [
     {
       "type": 0,
-      "value": "Outputs are required when status is \"Succeeded\""
+      "value": "Les sorties sont requises lorsque l’état est « Réussite »"
     }
   ],
   "70eoQu": [
@@ -1892,7 +1892,7 @@
   "ANGw2o": [
     {
       "type": 0,
-      "value": "Click for more information on Static Result"
+      "value": "Cliquez pour plus d’informations sur le résultat statique"
     }
   ],
   "AO6T9u": [
@@ -3022,7 +3022,7 @@
   "HGA9iU": [
     {
       "type": 0,
-      "value": "The Error and its code is required when status is \"Failed\""
+      "value": "L’erreur et son code sont requis lorsque l’état est « Échec »"
     }
   ],
   "HH970i": [
@@ -3047,6 +3047,12 @@
     {
       "type": 0,
       "value": "En-têtes"
+    }
+  ],
+  "HX3Xmx": [
+    {
+      "type": 0,
+      "value": "Suppression en cours..."
     }
   ],
   "HYhDYB": [
@@ -3575,7 +3581,7 @@
   "LPdGu/": [
     {
       "type": 0,
-      "value": "Ouputs should not be provided when status is \"Failed\""
+      "value": "Les sorties ne doivent pas être indiquée lorsque l’état est « Réussite »"
     }
   ],
   "LR/3Lr": [
@@ -4861,6 +4867,12 @@
       "value": "Type d’action"
     }
   ],
+  "TUdPdI": [
+    {
+      "type": 0,
+      "value": "Objet sécurisé"
+    }
+  ],
   "TX4Kdr": [
     {
       "type": 0,
@@ -6059,6 +6071,12 @@
       "value": "Corps"
     }
   ],
+  "ZKnJnh": [
+    {
+      "type": 0,
+      "value": "Chaîne sécurisée"
+    }
+  ],
   "ZM1mRy": [
     {
       "type": 0,
@@ -6235,6 +6253,20 @@
     {
       "type": 0,
       "value": "Corps"
+    }
+  ],
+  "bC2LBK": [
+    {
+      "type": 0,
+      "value": "Nous vous déconseillons de définir une valeur par défaut pour le type « "
+    },
+    {
+      "type": 1,
+      "value": "type"
+    },
+    {
+      "type": 0,
+      "value": " », car il est stocké en texte brut."
     }
   ],
   "bG9rjv": [
@@ -9073,7 +9105,7 @@
   "svaqnp": [
     {
       "type": 0,
-      "value": "Error should not be provided when status is \"Succeeded\""
+      "value": "L’erreur ne doit pas être indiquée lorsque l’état est « Réussite »"
     }
   ],
   "sw6EXK": [

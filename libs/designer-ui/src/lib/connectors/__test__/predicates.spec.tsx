@@ -1,6 +1,6 @@
+import { isBuiltInConnector } from '../index';
 import * as DesignerClientServices from '@microsoft/designer-client-services-logic-apps';
 import type { Connector, OperationApi } from '@microsoft/logic-apps-shared';
-import { isBuiltInConnector } from '../index';
 
 const getMinimalHostService = (): DesignerClientServices.IHostService => ({
   fetchAndDisplayContent: jest.fn(),

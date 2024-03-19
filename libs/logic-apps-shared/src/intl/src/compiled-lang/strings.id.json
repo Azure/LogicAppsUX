@@ -1356,7 +1356,7 @@
   "6yFUar": [
     {
       "type": 0,
-      "value": "Outputs are required when status is \"Succeeded\""
+      "value": "Output diperlukan saat status adalah \"Berhasil\""
     }
   ],
   "70eoQu": [
@@ -1884,7 +1884,7 @@
   "ANGw2o": [
     {
       "type": 0,
-      "value": "Click for more information on Static Result"
+      "value": "Klik untuk informasi selengkapnya tentang Hasil Statis"
     }
   ],
   "AO6T9u": [
@@ -2970,7 +2970,7 @@
   "HGA9iU": [
     {
       "type": 0,
-      "value": "The Error and its code is required when status is \"Failed\""
+      "value": "Kesalahan dan kodenya diperlukan saat status adalah \"Gagal\""
     }
   ],
   "HH970i": [
@@ -2995,6 +2995,12 @@
     {
       "type": 0,
       "value": "Header"
+    }
+  ],
+  "HX3Xmx": [
+    {
+      "type": 0,
+      "value": "Menghapus..."
     }
   ],
   "HYhDYB": [
@@ -3501,7 +3507,7 @@
   "LPdGu/": [
     {
       "type": 0,
-      "value": "Ouputs should not be provided when status is \"Failed\""
+      "value": "Ouput tidak boleh diberikan saat status adalah \"Gagal\""
     }
   ],
   "LR/3Lr": [
@@ -4765,6 +4771,12 @@
       "value": "Tipe Tindakan"
     }
   ],
+  "TUdPdI": [
+    {
+      "type": 0,
+      "value": "Objek Aman"
+    }
+  ],
   "TX4Kdr": [
     {
       "type": 0,
@@ -5963,6 +5975,12 @@
       "value": "Isi"
     }
   ],
+  "ZKnJnh": [
+    {
+      "type": 0,
+      "value": "String Aman"
+    }
+  ],
   "ZM1mRy": [
     {
       "type": 0,
@@ -6139,6 +6157,20 @@
     {
       "type": 0,
       "value": "Isi"
+    }
+  ],
+  "bC2LBK": [
+    {
+      "type": 0,
+      "value": "Tidak disarankan untuk mengatur nilai default untuk tipe '"
+    },
+    {
+      "type": 1,
+      "value": "type"
+    },
+    {
+      "type": 0,
+      "value": "' karena akan disimpan sebagai teks biasa."
     }
   ],
   "bG9rjv": [
@@ -8903,7 +8935,7 @@
   "svaqnp": [
     {
       "type": 0,
-      "value": "Error should not be provided when status is \"Succeeded\""
+      "value": "Kesalahan tidak boleh diberikan saat status adalah \"Berhasil\""
     }
   ],
   "sw6EXK": [

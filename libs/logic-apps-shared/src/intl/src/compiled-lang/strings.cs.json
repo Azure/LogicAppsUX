@@ -1364,7 +1364,7 @@
   "6yFUar": [
     {
       "type": 0,
-      "value": "Outputs are required when status is \"Succeeded\""
+      "value": "Výstupy se vyžadují, pokud je stav „Úspěšné“"
     }
   ],
   "70eoQu": [
@@ -1892,7 +1892,7 @@
   "ANGw2o": [
     {
       "type": 0,
-      "value": "Click for more information on Static Result"
+      "value": "Kliknutím získáte další informace o statickém výsledku"
     }
   ],
   "AO6T9u": [
@@ -3052,7 +3052,7 @@
   "HGA9iU": [
     {
       "type": 0,
-      "value": "The Error and its code is required when status is \"Failed\""
+      "value": "Pokud je stav „Neúspěšné“, jsou chyba a její kód povinné"
     }
   ],
   "HH970i": [
@@ -3077,6 +3077,12 @@
     {
       "type": 0,
       "value": "Záhlaví"
+    }
+  ],
+  "HX3Xmx": [
+    {
+      "type": 0,
+      "value": "Odstraňování..."
     }
   ],
   "HYhDYB": [
@@ -3608,7 +3614,7 @@
   "LPdGu/": [
     {
       "type": 0,
-      "value": "Ouputs should not be provided when status is \"Failed\""
+      "value": "Pokud je stav „Neúspěšné“, neměly by se uvádět výstupy"
     }
   ],
   "LR/3Lr": [
@@ -4909,6 +4915,12 @@
       "value": "Typ akce"
     }
   ],
+  "TUdPdI": [
+    {
+      "type": 0,
+      "value": "Zabezpečený objekt"
+    }
+  ],
   "TX4Kdr": [
     {
       "type": 0,
@@ -6107,6 +6119,12 @@
       "value": "Obsah"
     }
   ],
+  "ZKnJnh": [
+    {
+      "type": 0,
+      "value": "Zabezpečený řetězec"
+    }
+  ],
   "ZM1mRy": [
     {
       "type": 0,
@@ -6283,6 +6301,20 @@
     {
       "type": 0,
       "value": "Obsah"
+    }
+  ],
+  "bC2LBK": [
+    {
+      "type": 0,
+      "value": "Nastavení výchozí hodnoty pro typ "
+    },
+    {
+      "type": 1,
+      "value": "type"
+    },
+    {
+      "type": 0,
+      "value": " se nedoporučuje, protože se uloží jako prostý text."
     }
   ],
   "bG9rjv": [
@@ -9154,7 +9186,7 @@
   "svaqnp": [
     {
       "type": 0,
-      "value": "Error should not be provided when status is \"Succeeded\""
+      "value": "Pokud je stav „Úspěšné“, neměla by se uvádět chyba"
     }
   ],
   "sw6EXK": [
