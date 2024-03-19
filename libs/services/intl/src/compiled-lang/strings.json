@@ -2811,12 +2811,6 @@
       "value": "Returns a string with each item of an array joined by a delimiter"
     }
   ],
-  "G/CC5/": [
-    {
-      "type": 0,
-      "value": "Invalid split on format in {splitOn}."
-    }
-  ],
   "G0XYrd": [
     {
       "type": 0,
@@ -4177,6 +4171,20 @@
     {
       "type": 0,
       "value": "Select a managed identity"
+    }
+  ],
+  "OrPVcU": [
+    {
+      "type": 0,
+      "value": "Invalid split on format in '"
+    },
+    {
+      "type": 1,
+      "value": "splitOn"
+    },
+    {
+      "type": 0,
+      "value": "'."
     }
   ],
   "Ov7Ckz": [
@@ -6913,12 +6921,6 @@
       "value": "Format text as italic. Shortcut: Ctrl+I"
     }
   ],
-  "gKEaXI": [
-    {
-      "type": 0,
-      "value": "Copy the value of {label} to the clipboard"
-    }
-  ],
   "gKq3Jv": [
     {
       "type": 0,
@@ -7751,6 +7753,20 @@
     {
       "type": 0,
       "value": "Managed Identity"
+    }
+  ],
+  "lA/sHA": [
+    {
+      "type": 0,
+      "value": "Copy the value of '"
+    },
+    {
+      "type": 1,
+      "value": "label"
+    },
+    {
+      "type": 0,
+      "value": "' to the clipboard"
     }
   ],
   "lB56l2": [
