@@ -41,6 +41,12 @@
       "value": "Trigger"
     }
   ],
+  "+KXX+O": [
+    {
+      "type": 0,
+      "value": "Select function from"
+    }
+  ],
   "+M72+a": [
     {
       "type": 0,
@@ -985,6 +991,12 @@
       "value": "Retry Policy"
     }
   ],
+  "4Levd5": [
+    {
+      "type": 0,
+      "value": "Send me an email when"
+    }
+  ],
   "4Q7WzU": [
     {
       "type": 0,
@@ -1219,6 +1231,12 @@
       "value": "Secure inputs of the operation"
     }
   ],
+  "635Koz": [
+    {
+      "type": 0,
+      "value": "Every week on Monday"
+    }
+  ],
   "63CC7M": [
     {
       "type": 0,
@@ -1369,12 +1387,6 @@
     {
       "type": 0,
       "value": "Outputs are required when status is \"Succeeded\""
-    }
-  ],
-  "70eoQu": [
-    {
-      "type": 0,
-      "value": "Select function from"
     }
   ],
   "73iM9+": [
@@ -1613,12 +1625,6 @@
       "value": "Describe how your flow should be changed. Add details where possible, including the connector to use and if any content should be included."
     }
   ],
-  "8Q7ns/": [
-    {
-      "type": 0,
-      "value": "Edit this flow to"
-    }
-  ],
   "8U0KPg": [
     {
       "type": 0,
@@ -1773,6 +1779,20 @@
     {
       "type": 0,
       "value": "Revert your flow"
+    }
+  ],
+  "9QS9a3": [
+    {
+      "type": 0,
+      "value": "Replace \""
+    },
+    {
+      "type": 1,
+      "value": "selectedOperation"
+    },
+    {
+      "type": 0,
+      "value": "\" with"
     }
   ],
   "9SuA/E": [
@@ -2115,12 +2135,6 @@
     {
       "type": 0,
       "value": "Enter password as plain text or use a secure parameter"
-    }
-  ],
-  "BQyLiu": [
-    {
-      "type": 0,
-      "value": "results found"
     }
   ],
   "BS3gy8": [
@@ -2797,12 +2811,6 @@
       "value": "Returns a string with each item of an array joined by a delimiter"
     }
   ],
-  "G/CC5/": [
-    {
-      "type": 0,
-      "value": "Invalid split on format in {splitOn}."
-    }
-  ],
   "G0XYrd": [
     {
       "type": 0,
@@ -3215,6 +3223,12 @@
       "value": "No properties"
     }
   ],
+  "IsbbsG": [
+    {
+      "type": 0,
+      "value": "When a new item"
+    }
+  ],
   "IxWip7": [
     {
       "type": 0,
@@ -3397,20 +3411,6 @@
     {
       "type": 0,
       "value": "Change connection reference"
-    }
-  ],
-  "KNDVnN": [
-    {
-      "type": 0,
-      "value": "Replace \""
-    },
-    {
-      "type": 1,
-      "value": "selectedOperation"
-    },
-    {
-      "type": 0,
-      "value": "\" with"
     }
   ],
   "KV4uky": [
@@ -3691,12 +3691,6 @@
     {
       "type": 0,
       "value": "Code view"
-    }
-  ],
-  "M3kJsI": [
-    {
-      "type": 0,
-      "value": "Every week on Monday"
     }
   ],
   "M4H0gh": [
@@ -4083,12 +4077,6 @@
       "value": "Loading all connectors..."
     }
   ],
-  "OQud51": [
-    {
-      "type": 0,
-      "value": "Tell me more about"
-    }
-  ],
   "OSHNZ2": [
     {
       "type": 0,
@@ -4183,6 +4171,20 @@
     {
       "type": 0,
       "value": "Select a managed identity"
+    }
+  ],
+  "OrPVcU": [
+    {
+      "type": 0,
+      "value": "Invalid split on format in '"
+    },
+    {
+      "type": 1,
+      "value": "splitOn"
+    },
+    {
+      "type": 0,
+      "value": "'."
     }
   ],
   "Ov7Ckz": [
@@ -5007,16 +5009,6 @@
       "value": "Delete Workflow Action"
     }
   ],
-  "UF3KjL": [
-    {
-      "type": 0,
-      "value": "Try using a Conversion function such as: "
-    },
-    {
-      "type": 1,
-      "value": "conversionFunctions"
-    }
-  ],
   "UHCVNK": [
     {
       "type": 0,
@@ -5061,12 +5053,6 @@
     {
       "type": 0,
       "value": "Required. The collection to take the last object from."
-    }
-  ],
-  "UW+fkB": [
-    {
-      "type": 0,
-      "value": "Send me an email when"
     }
   ],
   "UYRIS/": [
@@ -5763,12 +5749,6 @@
     {
       "type": 0,
       "value": "Password"
-    }
-  ],
-  "Y04+GH": [
-    {
-      "type": 0,
-      "value": "Add an action"
     }
   ],
   "Y0H9aX": [
@@ -6535,6 +6515,12 @@
       "value": "Learn more"
     }
   ],
+  "dKCp2j": [
+    {
+      "type": 0,
+      "value": "Tell me more about"
+    }
+  ],
   "dL9V5t": [
     {
       "type": 0,
@@ -6693,6 +6679,12 @@
       "value": "Specify the duration in ISO 8601 format"
     }
   ],
+  "eI00kb": [
+    {
+      "type": 0,
+      "value": "Edit this flow to"
+    }
+  ],
   "eO1h/h": [
     {
       "type": 0,
@@ -6745,12 +6737,6 @@
     {
       "type": 0,
       "value": "Shared"
-    }
-  ],
-  "eqAUdj": [
-    {
-      "type": 0,
-      "value": "When a new item"
     }
   ],
   "evyGYj": [
@@ -6933,12 +6919,6 @@
     {
       "type": 0,
       "value": "Format text as italic. Shortcut: Ctrl+I"
-    }
-  ],
-  "gKEaXI": [
-    {
-      "type": 0,
-      "value": "Copy the value of {label} to the clipboard"
     }
   ],
   "gKq3Jv": [
@@ -7359,6 +7339,12 @@
       "value": "Example: 0, 10"
     }
   ],
+  "iXW+2l": [
+    {
+      "type": 0,
+      "value": "Add an action"
+    }
+  ],
   "id4DBb": [
     {
       "type": 0,
@@ -7769,6 +7755,20 @@
       "value": "Managed Identity"
     }
   ],
+  "lA/sHA": [
+    {
+      "type": 0,
+      "value": "Copy the value of '"
+    },
+    {
+      "type": 1,
+      "value": "label"
+    },
+    {
+      "type": 0,
+      "value": "' to the clipboard"
+    }
+  ],
   "lB56l2": [
     {
       "type": 0,
@@ -7835,12 +7835,6 @@
     {
       "type": 0,
       "value": "Stateless run mode:"
-    }
-  ],
-  "lh0TuF": [
-    {
-      "type": 0,
-      "value": "Dropdown to select filepath"
     }
   ],
   "lhL/KL": [
@@ -8225,6 +8219,12 @@
     {
       "type": 0,
       "value": "(UTC+10:00) Brisbane"
+    }
+  ],
+  "nwLd4b": [
+    {
+      "type": 0,
+      "value": "Dropdown to select filepath"
     }
   ],
   "nx25nq": [
@@ -9065,6 +9065,12 @@
       "value": "Required. A string that contains the time zone name of the destination time zone. See https://msdn.microsoft.com/en-us/library/gg154758.aspx for details."
     }
   ],
+  "t/RPwA": [
+    {
+      "type": 0,
+      "value": "results found"
+    }
+  ],
   "t9RwOi": [
     {
       "type": 0,
@@ -9389,6 +9395,16 @@
     {
       "type": 0,
       "value": "Variables"
+    }
+  ],
+  "ur3P27": [
+    {
+      "type": 0,
+      "value": "Try using a Conversion function such as: "
+    },
+    {
+      "type": 1,
+      "value": "conversionFunctions"
     }
   ],
   "urAHv1": [

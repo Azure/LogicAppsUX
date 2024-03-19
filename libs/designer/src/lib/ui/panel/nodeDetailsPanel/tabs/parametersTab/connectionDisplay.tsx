@@ -41,6 +41,7 @@ export const ConnectionDisplay = (props: ConnectionDisplayProps) => {
   const connectionDisplayTextWithName = intl.formatMessage(
     {
       defaultMessage: 'Connected to {connectionName}.',
+      id: 'daoo3l',
       description: 'Text to show which connection is connected to the node',
     },
     {
@@ -50,21 +51,25 @@ export const ConnectionDisplay = (props: ConnectionDisplayProps) => {
 
   const connectionDisplayTextWithoutName = intl.formatMessage({
     defaultMessage: 'Not connected.',
+    id: 'Yz9o1k',
     description: 'Text to show that no connection is connected to the node',
   });
 
   const openChangeConnectionText = isXrmConnectionReferenceMode
     ? intl.formatMessage({
         defaultMessage: 'Change connection reference',
+        id: 'KBaGkS',
         description: "Button text to take the user to the 'change connection' component while in xrm connection reference mode",
       })
     : intl.formatMessage({
         defaultMessage: 'Change connection',
+        id: '/ULFwg',
         description: "Button text to take the user to the 'change connection' component",
       });
 
   const loadingText = intl.formatMessage({
     defaultMessage: 'Loading connection...',
+    id: '3+TQMa',
     description: 'Text to show when the connection is loading',
   });
 
@@ -77,6 +82,7 @@ export const ConnectionDisplay = (props: ConnectionDisplayProps) => {
 
   const connectionErrorText = intl.formatMessage({
     defaultMessage: 'Invalid connection',
+    id: 'l/3yJr',
     description: 'Text to show when there is an error with the connection',
   });
 

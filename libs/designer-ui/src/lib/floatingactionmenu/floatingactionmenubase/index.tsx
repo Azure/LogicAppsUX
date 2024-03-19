@@ -52,6 +52,7 @@ export const FloatingActionMenuBase = (props: PropsWithChildren<FloatingActionMe
   const renderMenuItemsHeader = (): JSX.Element => {
     const closeErrorButtonAriaLabel = intl.formatMessage({
       defaultMessage: 'Close',
+      id: '9IDWMU',
       description: 'Close button aria label',
     });
 

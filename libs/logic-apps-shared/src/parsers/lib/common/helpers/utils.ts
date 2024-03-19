@@ -59,10 +59,12 @@ export function getEnum(parameter: SchemaObject, required: boolean | undefined):
     const intl = getIntl();
     const TrueDisplayName = intl.formatMessage({
       defaultMessage: 'Yes',
+      id: 'k5tGEr',
       description: 'This is the boolean value for Yes',
     });
     const FalseDisplayName = intl.formatMessage({
       defaultMessage: 'No',
+      id: 'rAyuzv',
       description: 'This is the boolean value for No',
     });
 
@@ -240,20 +242,21 @@ export function getKnownTitles(name: string): string {
   const intl = getIntl();
   switch (name) {
     case OutputKeys.Body:
-      return intl.formatMessage({ defaultMessage: 'Body', description: 'Display name for body outputs' });
+      return intl.formatMessage({ defaultMessage: 'Body', id: 'ZCFMoe', description: 'Display name for body outputs' });
     case OutputKeys.Headers:
-      return intl.formatMessage({ defaultMessage: 'Headers', description: 'Display name for headers in outputs' });
+      return intl.formatMessage({ defaultMessage: 'Headers', id: 'N4dEVo', description: 'Display name for headers in outputs' });
     case OutputKeys.Outputs:
-      return intl.formatMessage({ defaultMessage: 'Outputs', description: 'Display name for operation outputs' });
+      return intl.formatMessage({ defaultMessage: 'Outputs', id: 'vT0DCP', description: 'Display name for operation outputs' });
     case OutputKeys.Queries:
-      return intl.formatMessage({ defaultMessage: 'Queries', description: 'Display name for queries in outputs' });
+      return intl.formatMessage({ defaultMessage: 'Queries', id: 'w16qh+', description: 'Display name for queries in outputs' });
     case OutputKeys.StatusCode:
-      return intl.formatMessage({ defaultMessage: 'Status Code', description: 'Display name for status code in outputs' });
+      return intl.formatMessage({ defaultMessage: 'Status Code', id: 'x10E1p', description: 'Display name for status code in outputs' });
     case OutputKeys.Item:
-      return intl.formatMessage({ defaultMessage: 'Item', description: 'Display name for item output' });
+      return intl.formatMessage({ defaultMessage: 'Item', id: 'oDHXKh', description: 'Display name for item output' });
     case OutputKeys.PathParameters:
       return intl.formatMessage({
         defaultMessage: 'Path Parameters',
+        id: 'BJNUxN',
         description: 'Display name for relative path parameters in trigger outputs',
       });
     default:

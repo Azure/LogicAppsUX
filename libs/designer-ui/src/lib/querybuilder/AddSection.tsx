@@ -17,11 +17,13 @@ export const AddSection = ({ readonly, handleUpdateParent, index, addEmptyRow }:
   const intl = useIntl();
   const addRowText = intl.formatMessage({
     defaultMessage: 'Add Row',
+    id: 'xLF2Zr',
     description: 'Button to add row',
   });
 
   const addGroupText = intl.formatMessage({
     defaultMessage: 'Add Group',
+    id: 'lZT0JI',
     description: 'Button to add group',
   });
 

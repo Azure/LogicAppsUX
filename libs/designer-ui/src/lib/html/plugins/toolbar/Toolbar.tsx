@@ -176,6 +176,7 @@ export const Toolbar = ({ isRawText, isSwitchFromPlaintextBlocked, readonly = fa
 
   const toggleCodeViewMessage = intl.formatMessage({
     defaultMessage: 'Toggle code view',
+    id: 'gA1dde',
     description: 'Label used for the toolbar button which switches between raw HTML (code) view and WYSIWIG (rich text) view',
   });
 
