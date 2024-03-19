@@ -4,7 +4,7 @@ import { supportedDataMapDefinitionFileExts, supportedSchemaFileExts } from './a
 import { registerCommands } from './app/commands/registerCommands';
 import { getResourceGroupsApi } from './app/resourcesExtension/getExtensionApi';
 import type { AzureAccountTreeItemWithProjects } from './app/tree/AzureAccountTreeItemWithProjects';
-import { getTestFiles, unitTestResolveHandler, runHandler } from './app/tree/unitTestTree/helpers';
+import { getTestFiles, unitTestResolveHandler, runHandler } from './app/tree/unitTestTree';
 import { stopDesignTimeApi } from './app/utils/codeless/startDesignTimeApi';
 import { UriHandler } from './app/utils/codeless/urihandler';
 import { getExtensionVersion } from './app/utils/extension';

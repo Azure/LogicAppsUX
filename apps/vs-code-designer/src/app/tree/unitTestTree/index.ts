@@ -1,5 +1,7 @@
 import { ext } from '../../../extensionVariables';
-import { type TestFile, TestWorkspace } from './testTree';
+import type { TestFile } from './testFile';
+import { TestWorkflow } from './testWorkflow';
+import { TestWorkspace } from './testWorkspace';
 import { isNullOrUndefined } from '@microsoft/utils-logic-apps';
 import {
   type WorkspaceFolder,
@@ -13,6 +15,8 @@ import {
   type TestItem,
   type ExtensionContext,
 } from 'vscode';
+
+export type TestData = TestWorkspace | TestWorkflow | TestFile;
 
 interface TestInWorkspace {
   workspaceFolder: WorkspaceFolder;
@@ -71,7 +75,7 @@ export const unitTestResolveHandler = async (context: ExtensionContext, ctrl: Te
   }
 
   const data = ext.testData.get(item);
-  if (data instanceof TestWorkspace) {
+  if (data instanceof TestWorkspace || data instanceof TestWorkflow) {
     await data.updateFromDisk(ctrl);
   }
 };
@@ -131,27 +135,9 @@ const getOrCreateWorkspace = (controller: TestController, workspace: [string, Ur
   const workspaceTestItem = controller.createTestItem(workspaceName, workspaceName);
   controller.items.add(workspaceTestItem);
 
-  const data = new TestWorkspace(workspace[0], workspace[1]);
+  const data = new TestWorkspace(workspace[0], workspace[1], workspaceTestItem);
   ext.testData.set(workspaceTestItem, data);
 
   workspaceTestItem.canResolveChildren = true;
   return { workspaceTestItem, data };
 };
-
-// const getOrCreateFile = (controller: TestController, uri: Uri) => {
-//   const existing = controller.items.get(uri.toString());
-//   if (existing) {
-//     return { file: existing, data: testData.get(existing) as TestFile };
-//   }
-
-//   const workspaceName = uri.path.split('/').pop();
-
-//   const file = controller.createTestItem(uri.toString(), workspaceName, uri);
-//   controller.items.add(file);
-
-//   const data = new TestFile();
-//   testData.set(file, data);
-
-//   file.canResolveChildren = true;
-//   return { file, data };
-// };
