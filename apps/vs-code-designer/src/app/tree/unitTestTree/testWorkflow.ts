@@ -16,12 +16,13 @@ export class TestWorkflow {
   }
 
   public async createChild(controller: TestController) {
-    this.testFiles.forEach((testFile) => {
+    this.testFiles.forEach(async (testFile) => {
       const testName = testFile.path.split('/').slice(-1)[0];
-      const data = new TestFile();
       const id = `${this.name}/${testName}`;
 
       const fileTestItem = controller.createTestItem(id, testName, testFile);
+      const data = new TestFile(testName, testFile, fileTestItem);
+      await data.parseUnitTest();
       ext.testData.set(fileTestItem, data);
       this.children.push(fileTestItem);
     });

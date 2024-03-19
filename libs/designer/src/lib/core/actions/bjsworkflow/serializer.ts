@@ -44,6 +44,7 @@ import type {
   OperationManifest,
   OperationMock,
   SubGraphDetail,
+  UnitTestDefinition,
 } from '@microsoft/utils-logic-apps';
 import {
   SerializationErrorCode,
@@ -1072,7 +1073,7 @@ const getSplitOn = (
   };
 };
 
-export const serializeUnitTestDefinition = async (rootState: RootState): Promise<any> => {
+export const serializeUnitTestDefinition = async (rootState: RootState): Promise<UnitTestDefinition> => {
   const { mockResults, assertions } = rootState.unitTest;
   const { triggerMocks, actionMocks } = getTriggerActionMocks(mockResults);
 

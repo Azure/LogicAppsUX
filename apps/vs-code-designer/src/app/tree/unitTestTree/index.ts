@@ -2,12 +2,12 @@ import { ext } from '../../../extensionVariables';
 import type { TestFile } from './testFile';
 import { TestWorkflow } from './testWorkflow';
 import { TestWorkspace } from './testWorkspace';
-import { isNullOrUndefined } from '@microsoft/utils-logic-apps';
+import { isEmptyString, isNullOrUndefined } from '@microsoft/utils-logic-apps';
 import {
   RelativePattern,
   type TestController,
   workspace,
-  type Uri,
+  Uri,
   type CancellationToken,
   type TestRunRequest,
   type EventEmitter,
@@ -136,8 +136,10 @@ const getOrCreateWorkspace = (controller: TestController, workspaceName: string,
   if (existing) {
     return { file: existing, data: ext.testData.get(existing) as TestFile };
   }
+  const filePath = files.length > 0 ? files[0].path : '';
+  const workspaceUri = isEmptyString(filePath) ? undefined : Uri.file(filePath.split('/').slice(0, -4).join('/'));
 
-  const workspaceTestItem = controller.createTestItem(workspaceName, workspaceName);
+  const workspaceTestItem = controller.createTestItem(workspaceName, workspaceName, workspaceUri);
   controller.items.add(workspaceTestItem);
 
   const data = new TestWorkspace(workspaceName, files, workspaceTestItem);
