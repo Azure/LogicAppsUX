@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 import type DataMapperPanel from './app/commands/dataMapper/DataMapperPanel';
 import type { AzureAccountTreeItemWithProjects } from './app/tree/AzureAccountTreeItemWithProjects';
-import { type TestData } from './app/tree/unitTestTree/testTree';
+import { type TestData } from './app/tree/unitTestTree';
 import { dotnet, func, node, npm } from './constants';
 import type { Site } from '@azure/arm-appservice';
 import type { IAzExtOutputChannel } from '@microsoft/vscode-azext-utils';
