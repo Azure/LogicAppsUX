@@ -69,7 +69,7 @@ export const InputToken: React.FC<InputTokenProps> = ({ value, brandColor, icon,
         } else {
           clearSelection();
           setSelected(true);
-          editor.dispatchCommand(CLOSE_TOKENPICKER, undefined);
+          editor.dispatchCommand(CLOSE_TOKENPICKER, { focusEditorAfter: true });
         }
       });
     }

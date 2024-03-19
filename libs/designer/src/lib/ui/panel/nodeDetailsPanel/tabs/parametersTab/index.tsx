@@ -318,7 +318,6 @@ const ParameterSection = ({
     tokenPickerMode?: TokenPickerMode,
     editorType?: string,
     isCodeEditor?: boolean,
-    setIsTokenPickerOpened?: (b: boolean) => void,
     tokenClickedCallback?: (token: ValueSegment) => void
   ): JSX.Element => {
     const parameterType =
@@ -353,7 +352,6 @@ const ParameterSection = ({
         filteredTokenGroup={filteredTokenGroup}
         expressionGroup={expressionGroup}
         hideUTFExpressions={hideUTFExpressions}
-        setIsTokenPickerOpened={setIsTokenPickerOpened}
         initialMode={tokenPickerMode}
         getValueSegmentFromToken={(token: OutputToken, addImplicitForeach: boolean) =>
           getValueSegmentFromToken(parameterId, token, addImplicitForeach, !!isCodeEditor)
@@ -428,7 +426,6 @@ const ParameterSection = ({
             labelId: string,
             tokenPickerMode?: TokenPickerMode,
             editorType?: string,
-            setIsInTokenPicker?: (b: boolean) => void,
             tokenClickedCallback?: (token: ValueSegment) => void
           ) =>
             getTokenPicker(
@@ -438,7 +435,6 @@ const ParameterSection = ({
               tokenPickerMode,
               editorType,
               editor?.toLowerCase() === constants.EDITOR.CODE,
-              setIsInTokenPicker,
               tokenClickedCallback
             ),
         },

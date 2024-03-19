@@ -1,4 +1,5 @@
 import constants from '../constants';
+import { CLOSE_TOKENPICKER } from '../editor/base/plugins/CloseTokenPicker';
 import type { IButtonStyles } from '@fluentui/react';
 import { IconButton } from '@fluentui/react';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
@@ -22,18 +23,11 @@ const buttonStyles: IButtonStyles = {
 interface TokenPickerHeaderProps {
   fullScreen: boolean;
   isExpression: boolean;
-  closeTokenPicker?: () => void;
   setFullScreen: (fullScreen: boolean) => void;
   pasteLastUsedExpression?: () => void;
 }
 
-export function TokenPickerHeader({
-  fullScreen,
-  isExpression,
-  closeTokenPicker,
-  setFullScreen,
-  pasteLastUsedExpression,
-}: TokenPickerHeaderProps) {
+export function TokenPickerHeader({ fullScreen, isExpression, setFullScreen, pasteLastUsedExpression }: TokenPickerHeaderProps) {
   let editor: LexicalEditor | null;
   try {
     [editor] = useLexicalComposerContext();
@@ -69,8 +63,7 @@ export function TokenPickerHeader({
   const isExpressionString = isExpression ? 'expression' : 'token';
 
   const handleCloseTokenPicker = () => {
-    editor?.focus();
-    closeTokenPicker?.();
+    editor?.dispatchCommand(CLOSE_TOKENPICKER, { focusEditorAfter: true });
     LoggerService().log({
       area: 'TokenPickerHeader:handleCloseTokenPicker',
       args: [isExpressionString],
