@@ -39,14 +39,17 @@ export const ConnectionPanel = (props: CommonPanelProps) => {
   const intl = useIntl();
   const connectionsPanelDefaultHeader = intl.formatMessage({
     defaultMessage: 'Connections',
+    id: 'mlU+AC',
     description: 'Header for the connections panel',
   });
   const selectConnectionPanelHeader = intl.formatMessage({
     defaultMessage: 'Change Connection',
+    id: 'cZXqqf',
     description: 'Header for the change connection panel',
   });
   const createConnectionPanelHeader = intl.formatMessage({
     defaultMessage: 'Create Connection',
+    id: 'NdOhXD',
     description: 'Header for the create connection panel',
   });
 

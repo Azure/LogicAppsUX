@@ -32,16 +32,19 @@ export const StaticResult = ({
 
   const expandLabel = intl.formatMessage({
     defaultMessage: 'Expand Static Result',
+    id: 'DkF25I',
     description: 'An accessible label for expand toggle icon',
   });
 
   const collapseLabel = intl.formatMessage({
     defaultMessage: 'Collapse Static Result',
+    id: 'ZRdkFN',
     description: 'An accessible label for collapse toggle icon',
   });
 
   const infoButtonLabel = intl.formatMessage({
     defaultMessage: 'Click for more information on Static Result',
+    id: 'ANGw2o',
     description: 'button label to show more information on static result',
   });
   return (

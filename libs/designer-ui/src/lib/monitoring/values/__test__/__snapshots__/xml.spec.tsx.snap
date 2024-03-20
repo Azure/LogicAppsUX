@@ -55,7 +55,7 @@ exports[`ui/monitoring/values/xml should render XML 1`] = `
           </span>
         </button>
         <button
-          aria-label="Copy the value of {label} to the clipboard"
+          aria-label="Copy the value of 'XML' to the clipboard"
           className="ms-Button ms-Button--icon root-109"
           data-is-focusable={true}
           onClick={[Function]}
@@ -168,7 +168,7 @@ exports[`ui/monitoring/values/xml should render XML with encoded UTF-8 Chinese c
           </span>
         </button>
         <button
-          aria-label="Copy the value of {label} to the clipboard"
+          aria-label="Copy the value of 'XML' to the clipboard"
           className="ms-Button ms-Button--icon root-109"
           data-is-focusable={true}
           onClick={[Function]}
@@ -341,7 +341,7 @@ exports[`ui/monitoring/values/xml should render XML without the UTF-8 byte order
           </span>
         </button>
         <button
-          aria-label="Copy the value of {label} to the clipboard"
+          aria-label="Copy the value of 'XML' to the clipboard"
           className="ms-Button ms-Button--icon root-109"
           data-is-focusable={true}
           onClick={[Function]}
@@ -454,7 +454,7 @@ exports[`ui/monitoring/values/xml should render a zero-width space if value is e
           </span>
         </button>
         <button
-          aria-label="Copy the value of {label} to the clipboard"
+          aria-label="Copy the value of 'XML' to the clipboard"
           className="ms-Button ms-Button--icon root-109"
           data-is-focusable={true}
           onClick={[Function]}

@@ -44,6 +44,7 @@ export const FloatingPanel = (props: FloatingPanelProps) => {
 
   const xLabel = intl.formatMessage({
     defaultMessage: 'Close panel',
+    id: '0SSwxD',
     description: 'Label on button that closes floating panel',
   });
 

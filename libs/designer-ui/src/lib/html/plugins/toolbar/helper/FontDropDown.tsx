@@ -38,8 +38,16 @@ export function FontDropDown({ editor, value, fontDropdownType, disabled = false
 
   const buttonAriaLabel =
     fontDropdownType === FontDropDownType.FONTFAMILY
-      ? intl.formatMessage({ defaultMessage: 'Formatting options for font family', description: 'Label for Font family dropdown' })
-      : intl.formatMessage({ defaultMessage: 'Formatting options for font size', description: 'Label for Font size dropdown' });
+      ? intl.formatMessage({
+          defaultMessage: 'Formatting options for font family',
+          id: 'sYQDN+',
+          description: 'Label for Font family dropdown',
+        })
+      : intl.formatMessage({
+          defaultMessage: 'Formatting options for font size',
+          id: 'J2Su6x',
+          description: 'Label for Font size dropdown',
+        });
 
   return (
     <DropDown

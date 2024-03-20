@@ -49,10 +49,12 @@ export const MSIAuthentication = ({ identity, msiProps, setCurrentProps, ...prop
 
   const MSIAuthLabel = intl.formatMessage({
     defaultMessage: 'Managed identity',
+    id: '2TMGk7',
     description: 'Managed Identity Label',
   });
   const MSIAuthPlaceholder = intl.formatMessage({
     defaultMessage: 'Please select an identity',
+    id: 'cgq/+y',
     description: 'Placehodler text for dropdown',
   });
 
@@ -100,14 +102,17 @@ const getManagedIdentityData = (
 
   const invalidUserAssignedManagedIdentity = intl.formatMessage({
     defaultMessage: 'The entered identity is not associated with this Logic App.',
+    id: '3ewBbk',
     description: 'error message for invalid user',
   });
   const systemAssignedManagedIdentity = intl.formatMessage({
     defaultMessage: 'System-assigned managed identity',
+    id: 'i/SguY',
     description: 'Text for dropdown of system-assigned managed identity',
   });
   const userIdentityNotSupported = intl.formatMessage({
     defaultMessage: 'User identity is not supported when Logic App has system assigned managed identity enabled.',
+    id: '93svjx',
     description: 'error message for unspported identity',
   });
   const userAssignedIdentities = containsUserAssignedIdentities(identity) ? getUserAssignedIdentities(identity) : undefined;

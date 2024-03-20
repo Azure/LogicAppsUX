@@ -11,10 +11,12 @@ const ConnectionNameInput = ({ isLoading, value, onChange }: ConnectionNameInput
   const intl = useIntl();
   const inputConnectionDisplayNameLabel = intl.formatMessage({
     defaultMessage: 'Connection Name',
+    id: 'OKszbi',
     description: 'Connection Name',
   });
   const inputConnectionDisplayNamePlaceholder = intl.formatMessage({
     defaultMessage: 'Enter a name for the connection',
+    id: 'UtyRCH',
     description: 'Placeholder text for connection name input',
   });
 

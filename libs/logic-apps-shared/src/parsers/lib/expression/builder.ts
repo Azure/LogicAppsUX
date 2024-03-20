@@ -57,6 +57,7 @@ export class ExpressionBuilder {
    * @return {string}
    */
   public buildExpression(expression: Expression): string {
+    const intl = getIntl();
     switch (expression.type) {
       case ExpressionType.NullLiteral:
       case ExpressionType.BooleanLiteral:
@@ -71,9 +72,10 @@ export class ExpressionBuilder {
 
       default:
         throw new ExpressionBuilderException(
-          getIntl().formatMessage(
+          intl.formatMessage(
             {
               defaultMessage: `Invalid expression type ''{type}''.`,
+              id: 'yjierd',
               description:
                 'Error message on invalid expression type during building. Do not remove the double single quotes around the placeholder text, as it is needed to wrap the placeholder text in single quotes.',
             },

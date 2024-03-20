@@ -78,31 +78,37 @@ export const ConfigPanel = ({
 
   const addLoc = intl.formatMessage({
     defaultMessage: 'Add',
+    id: 'F9dR1Q',
     description: 'Add',
   });
 
   const saveLoc = intl.formatMessage({
     defaultMessage: 'Save',
+    id: '0CvRZW',
     description: 'Save',
   });
 
   const cancelLoc = intl.formatMessage({
     defaultMessage: 'Cancel',
+    id: '6PdOcy',
     description: 'Cancel',
   });
 
   const configureLoc = intl.formatMessage({
     defaultMessage: 'Configure',
+    id: 'LR/3Lr',
     description: 'Configure',
   });
 
   const closeLoc = intl.formatMessage({
     defaultMessage: 'Close',
+    id: 'wzEneQ',
     description: 'Close',
   });
 
   const genericErrorMsg = intl.formatMessage({
     defaultMessage: 'Failed to load the schema. Please try again.',
+    id: '6fDYzG',
     description: 'Load schema error message',
   });
 

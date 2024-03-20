@@ -11,11 +11,13 @@ export const WarningsTab = () => {
 
   const operationWarningsCategoryHeader = intl.formatMessage({
     defaultMessage: 'Operation warnings',
+    id: 'O6VHe0',
     description: 'Header for the operation warnings category',
   });
 
   const noWarningsText = intl.formatMessage({
     defaultMessage: 'No warnings found.',
+    id: 'Vi5TIV',
     description: 'Text to show when no warnings exist',
   });
 

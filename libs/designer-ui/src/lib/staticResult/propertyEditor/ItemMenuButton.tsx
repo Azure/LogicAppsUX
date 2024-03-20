@@ -29,16 +29,19 @@ export const ItemMenuButton = ({ disabled, hideRename, onDeleteClicked, onRename
 
   const deleteButton = intl.formatMessage({
     defaultMessage: 'Delete',
+    id: 'JErLDT',
     description: 'Delete label',
   });
 
   const renameButton = intl.formatMessage({
     defaultMessage: 'Rename',
+    id: '8eTWaf',
     description: 'Rename label',
   });
 
   const menuLabel = intl.formatMessage({
     defaultMessage: 'Menu',
+    id: 'z3VuE+',
     description: 'Menu label',
   });
 

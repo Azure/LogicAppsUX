@@ -84,6 +84,7 @@ export class ErrorBoundaryInternal extends React.Component<ErrorBoundaryProps & 
           <span style={spanStyle}>
             {intl.formatMessage({
               defaultMessage: 'Error loading component.',
+              id: 'cmTCsW',
               description: 'This is a generic error message shown when something in the app fails to load.',
             })}
           </span>

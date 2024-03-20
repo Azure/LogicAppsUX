@@ -20,6 +20,7 @@ export const SelectedList: React.FC<ISelectedListProps> = ({ isLoading, deselect
   const intlText = {
     SELECTED_APPS: intl.formatMessage({
       defaultMessage: 'Selected logic apps',
+      id: 'fDpDnc',
       description: 'Selected logic apps title',
     }),
   };

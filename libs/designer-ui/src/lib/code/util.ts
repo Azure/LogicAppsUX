@@ -26,6 +26,7 @@ export function buildInlineCodeTextFromToken(inputToken: Token, language: string
       intl.formatMessage(
         {
           defaultMessage: 'Unsupported Token Type: {var}',
+          id: 'XLUs2P',
           description: 'Exception for unsupported token types',
         },
         { var: 'Variables' }
@@ -38,6 +39,7 @@ export function buildInlineCodeTextFromToken(inputToken: Token, language: string
       intl.formatMessage(
         {
           defaultMessage: 'Unsupported Token Type: {controls}',
+          id: 'b9P8SA',
           description: 'Exception for unsupported token types',
         },
         { controls: 'Controls' }
@@ -50,6 +52,7 @@ export function buildInlineCodeTextFromToken(inputToken: Token, language: string
       intl.formatMessage(
         {
           defaultMessage: 'Unsupported Token Type: {expressions}',
+          id: '8baaNC',
           description: 'Exception for unsupported token types',
         },
         { expressions: 'Expressions' }
@@ -75,6 +78,7 @@ export function buildInlineCodeTextFromToken(inputToken: Token, language: string
       throw new ArgumentException(
         intl.formatMessage({
           defaultMessage: 'Unsupported programming language.',
+          id: 'MIX4f9',
           description: 'The exception for an unsupported programming language.',
         })
       );

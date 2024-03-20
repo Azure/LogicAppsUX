@@ -48,6 +48,7 @@ describe('ui/workflowparameters/workflowparameters', () => {
 
     const headerTitle = intl.formatMessage({
       defaultMessage: 'Parameters',
+      id: 'pRUJff',
       description: 'Create Title',
     });
     expect(header.props.className).toBe('msla-workflow-parameters-heading');
@@ -59,6 +60,7 @@ describe('ui/workflowparameters/workflowparameters', () => {
 
     const addMessage = intl.formatMessage({
       defaultMessage: 'Create parameter',
+      id: 'vwH/XV',
       description: 'Create Parameter Text',
     });
     expect(add.props.className).toBe('msla-workflow-parameters-add');

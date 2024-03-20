@@ -1,9 +1,7 @@
 import type { StaticResultRootSchemaType } from './baseactionresult';
 import { HttpStaticResultSchema } from './httpresult';
-import type { ManifestParser, OpenApiSchema, SwaggerParser } from '@microsoft/logic-apps-shared';
-import { ExtensionProperties } from '@microsoft/logic-apps-shared';
-import type { OpenAPIV2 } from '@microsoft/logic-apps-shared';
-import { clone } from '@microsoft/logic-apps-shared';
+import type { ManifestParser, OpenApiSchema, SwaggerParser, OpenAPIV2 } from '@microsoft/logic-apps-shared';
+import { ExtensionProperties, clone } from '@microsoft/logic-apps-shared';
 
 /**
  * Returns the root schema for a connector operation.

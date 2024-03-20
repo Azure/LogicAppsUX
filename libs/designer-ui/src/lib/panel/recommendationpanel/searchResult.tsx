@@ -84,6 +84,7 @@ export const SearchResultsGrid: React.FC<PropsWithChildren<SearchResultsGridProp
   const noResultsText = intl.formatMessage(
     {
       defaultMessage: 'No results found for {searchTerm}',
+      id: 'VI7EqG',
       description: 'Text to show when there are no search results',
     },
     {
@@ -93,6 +94,7 @@ export const SearchResultsGrid: React.FC<PropsWithChildren<SearchResultsGridProp
 
   const loadingText = intl.formatMessage({
     defaultMessage: 'Loading more results...',
+    id: 'AoalgS',
     description: 'Message to show when loading search results',
   });
 

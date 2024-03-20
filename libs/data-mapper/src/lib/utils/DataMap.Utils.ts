@@ -254,7 +254,8 @@ export const getDestinationNode = (targetKey: string, functions: FunctionData[],
     return findFunctionForFunctionName(mapNodeParams.if, functions);
   }
 
-  const dashIndex = targetKey.indexOf('-');
+  const guidLength = 36;
+  const dashIndex = targetKey.lastIndexOf('-', targetKey.length - guidLength);
   const destinationFunctionKey = dashIndex === -1 ? targetKey : targetKey.slice(0, dashIndex);
   const destinationFunctionGuid = targetKey.slice(dashIndex + 1);
 

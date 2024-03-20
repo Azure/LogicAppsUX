@@ -150,6 +150,7 @@ export function TokenPicker({
 
   const tokenPickerPlaceHolderText = intl.formatMessage({
     defaultMessage: 'Search',
+    id: 'Mc6ITJ',
     description: 'Placeholder text to search token picker',
   });
 

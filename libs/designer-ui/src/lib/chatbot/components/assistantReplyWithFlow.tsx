@@ -18,37 +18,45 @@ export const AssistantReplyWithFlow: React.FC<AssistantReplyWithFlowProps> = ({ 
   const intlText = {
     actionUndone: intl.formatMessage({
       defaultMessage: 'Action undone',
+      id: 'JJyT88',
       description: 'Chatbot action was undone text',
     }),
     undo: intl.formatMessage({
       defaultMessage: 'Undo',
+      id: 'hRVVdR',
       description: 'Chatbot undo button for undoing assistant change to flow',
     }),
     undoDialog: {
       title: intl.formatMessage({
         defaultMessage: 'Revert your flow',
+        id: '9QNZSj',
         description: 'Chatbot undo operation confirmation title',
       }),
       learnMoreAriaLabel: intl.formatMessage({
         defaultMessage: 'Learn more about undo operations',
+        id: 'BIzX3S',
         description: 'Aria label for undo operations in chatbot',
       }),
       primaryButtonActionText: intl.formatMessage({
         defaultMessage: 'Revert',
+        id: 'eESljX',
         description: 'Chatbot undo operation confirm button text',
       }),
       secondaryButtonActionText: intl.formatMessage({
         defaultMessage: 'Cancel',
+        id: 'srMbm9',
         description: 'Chatbot undo operation cancel button text',
       }),
       warningMessage: intl.formatMessage({
         defaultMessage: `This will revert your workflow to the state it was in before Copilot's edit. If you made additional edits to the workflow after Copilot's, you will lose them. This action cannot be undone. Do you want to continue?`,
+        id: '7gUE8h',
         description: 'Warning description of what undoing operation will do to the workflow',
       }),
     },
     defaultMessages: {
       flowUpdatedWithNoDiff: intl.formatMessage({
-        defaultMessage: `Your flow has been updated.`,
+        defaultMessage: 'Your flow has been updated.',
+        id: '4hi3ks',
         description: 'Chatbot workflow has been updated message',
       }),
     },

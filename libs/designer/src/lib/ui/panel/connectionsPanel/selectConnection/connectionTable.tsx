@@ -68,6 +68,7 @@ export const ConnectionTable = (props: ConnectionTableProps): JSX.Element => {
       renderHeaderCell: () =>
         intl.formatMessage({
           defaultMessage: 'Invalid',
+          id: '7lvqST',
           description: 'Column header for invalid connections',
         }),
       renderCell: (item) => item.invalid,
@@ -77,6 +78,7 @@ export const ConnectionTable = (props: ConnectionTableProps): JSX.Element => {
       renderHeaderCell: () =>
         intl.formatMessage({
           defaultMessage: 'Display Name',
+          id: 'tsmuoF',
           description: 'Column header for connection display name',
         }),
       renderCell: (item) => item.displayName,
@@ -87,10 +89,12 @@ export const ConnectionTable = (props: ConnectionTableProps): JSX.Element => {
         isXrmConnectionReferenceMode
           ? intl.formatMessage({
               defaultMessage: 'Logical Name',
+              id: 'UIWX6p',
               description: 'Column header for connection reference logical name',
             })
           : intl.formatMessage({
               defaultMessage: 'Name',
+              id: 'T6VIym',
               description: 'Column header for connection name',
             }),
       renderCell: (item) => item.name,
@@ -100,6 +104,7 @@ export const ConnectionTable = (props: ConnectionTableProps): JSX.Element => {
       renderHeaderCell: () =>
         intl.formatMessage({
           defaultMessage: 'Gateway',
+          id: 'LvpxiA',
           description: 'Column header for connection gateway',
         }),
       renderCell: (item) => item.gateway,

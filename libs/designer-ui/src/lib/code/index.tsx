@@ -82,7 +82,8 @@ export function CodeEditor({
   const getLabel = (label?: string): string => {
     return intl.formatMessage(
       {
-        defaultMessage: "{label} To add dynamic data, press the Alt + '/' keys.",
+        defaultMessage: `{label} To add dynamic data, press the Alt + '/' keys.`,
+        id: 'IdOhPY',
         description: 'This is an a11y message meant to help screen reader users figure out how to insert dynamic data',
       },
       { label }

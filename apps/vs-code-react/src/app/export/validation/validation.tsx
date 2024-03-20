@@ -22,15 +22,17 @@ export const Validation: React.FC = () => {
   const intlText = {
     WORKFLOW_GROUP_DISPLAY_NAME: intl.formatMessage({
       defaultMessage: 'Workflow',
+      id: '42jhB0',
       description: 'Review export status title',
     }),
     REVIEW_TITLE: intl.formatMessage({
       defaultMessage: 'Review export status',
+      id: 'Z1yTm5',
       description: 'Review export status title',
     }),
     REVIEW_DESCRIPTION: intl.formatMessage({
-      defaultMessage:
-        "This section shows the export status for elements in your selected logic apps. For example, some parameters types aren't supported, and some connections might not successfully export. For guidance to resolve these issues, review the following steps.",
+      defaultMessage: `This section shows the export status for elements in your selected logic apps. For example, some parameters types aren't supported, and some connections might not successfully export. For guidance to resolve these issues, review the following steps.`,
+      id: 'bv6P+5',
       description: 'Review export description',
     }),
   };

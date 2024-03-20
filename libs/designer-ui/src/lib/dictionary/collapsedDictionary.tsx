@@ -35,6 +35,7 @@ export const CollapsedDictionary = ({
 
   const editorPlaceHolder = intl.formatMessage({
     defaultMessage: 'Enter a valid JSON',
+    id: 'ox2Ou7',
     description: 'Placeholder for empty collapsed dictionary',
   });
 

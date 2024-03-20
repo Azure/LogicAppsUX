@@ -181,6 +181,7 @@ export function getIdentityDropdownOptions(managedIdentity: ManagedIdentity | un
   const { type, userAssignedIdentities } = managedIdentity;
   const systemAssigned = intl.formatMessage({
     defaultMessage: 'System-assigned managed identity',
+    id: 'gc6v4X',
     description: 'Text for system assigned managed identity',
   });
 

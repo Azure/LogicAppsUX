@@ -23,50 +23,62 @@ export const InstanceSelection: React.FC = () => {
   const intlText = {
     DIVIDER_REGIONS: intl.formatMessage({
       defaultMessage: 'Regions',
+      id: 'w+aIAc',
       description: 'Divider title for azure regions',
     }),
     DIVIDER_ISE: intl.formatMessage({
       defaultMessage: 'Integration service environments',
+      id: 'BbQXF+',
       description: 'Divider title for ISE',
     }),
     SELECT_TITLE: intl.formatMessage({
       defaultMessage: 'Select logic app instance',
+      id: 'aIgACb',
       description: 'Select logic app instance title',
     }),
     SELECT_DESCRIPTION: intl.formatMessage({
       defaultMessage: 'Select the logic apps that you want to export and combine into a single logic app instance.',
+      id: 'rQtQpJ',
       description: 'Select apps to export description',
     }),
     SELECTION_SUBSCRIPTION: intl.formatMessage({
       defaultMessage: 'Select a subscription',
+      id: '4fP2Ko',
       description: 'Select a subscription',
     }),
     SELECTION_LOCATION: intl.formatMessage({
       defaultMessage: 'Select a region or an integration service environment (ISE) instance',
+      id: 'e7LAHT',
       description: 'Select a region or an ISE instance',
     }),
     SELECT_OPTION: intl.formatMessage({
       defaultMessage: 'Select an option',
+      id: '//Icb/',
       description: 'Select an option placeholder',
     }),
     EMPTY_SUBSCRIPTION: intl.formatMessage({
       defaultMessage: 'No subscriptions available',
+      id: 'bUIrND',
       description: 'No subscriptions available',
     }),
     EMPTY_LOCATION: intl.formatMessage({
       defaultMessage: 'No regions and integration service environment (ISE) instances available',
+      id: 'xxZDTu',
       description: 'No regions and ISE instances available text',
     }),
     SEARCH_SUBSCRIPTION: intl.formatMessage({
       defaultMessage: 'Find and select subscription',
+      id: 'bGPcRT',
       description: 'Find and select subscription text',
     }),
     SEARCH_LOCATION: intl.formatMessage({
       defaultMessage: 'Find and select region or integration service environment (ISE)',
+      id: 'gBRTE5',
       description: 'Find region or ISE text',
     }),
     LOADING: intl.formatMessage({
       defaultMessage: 'Loading...',
+      id: '2EZWf6',
       description: 'Loading text',
     }),
   };

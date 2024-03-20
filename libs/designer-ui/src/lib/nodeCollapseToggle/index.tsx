@@ -15,11 +15,13 @@ const NodeCollapseToggle = (props: NodeCollapseToggleProps) => {
   const intl = useIntl();
   const EXPAND_TEXT = intl.formatMessage({
     defaultMessage: 'Expand',
+    id: 'Ug4sWZ',
     description: 'Expand to make the node bigger and show the contents.',
   });
 
   const COLLAPSE_TEXT = intl.formatMessage({
     defaultMessage: 'Collapse',
+    id: '0Vzp0l',
     description: 'Collapse, making the node smaller, hiding the contents',
   });
 

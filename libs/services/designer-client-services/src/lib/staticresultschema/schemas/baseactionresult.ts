@@ -1,6 +1,5 @@
 import { getIntl } from '@microsoft/logic-apps-shared';
-import type { OpenApiSchema } from '@microsoft/logic-apps-shared';
-import type { OpenAPIV2 } from '@microsoft/logic-apps-shared';
+import type { OpenApiSchema, OpenAPIV2 } from '@microsoft/logic-apps-shared';
 
 export type StaticResultRootSchemaType = OpenAPIV2.SchemaObject & {
   properties: {
@@ -548,23 +547,28 @@ const ValidResponseCodes = [
 const intl = getIntl();
 const STATIC_RESULT_OPERATION_STATUS_TITLE = intl.formatMessage({
   defaultMessage: 'Status',
+  id: 'sw6EXK',
   description: 'The title of the status property in the static result schema',
 });
 const STATIC_RESULT_OPERATION_CODE_TITLE = intl.formatMessage({
   defaultMessage: 'Code',
+  id: '3AWwVl',
   description: 'The title of the code property in the static result schema',
 });
 const STATIC_RESULT_OPERATION_ERROR_TITLE = intl.formatMessage({
   defaultMessage: 'Error',
+  id: 'B/gCWM',
   description: 'The title of the error property in the static result schema',
 });
 const STATIC_RESULT_ERROR_OBJECT_CODE_TITLE = intl.formatMessage({
   defaultMessage: 'Error code',
+  id: 'cvp9VP',
   description: 'The title of the error code property within Error in the static result schema',
 });
 
 const STATIC_RESULT_ERROR_OBJECT_MESSAGE_TITLE = intl.formatMessage({
   defaultMessage: 'Error Message',
+  id: 'ca/QIc',
   description: 'The title of the error message property within Error in the static result schema',
 });
 

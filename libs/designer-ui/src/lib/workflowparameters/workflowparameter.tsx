@@ -59,6 +59,7 @@ export function WorkflowParameter({ definition, isReadOnly, useLegacy, isInverte
 
   const headingTitle = intl.formatMessage({
     defaultMessage: 'New parameter',
+    id: 'ss5JPH',
     description: 'Heading Title for a Parameter Without Name',
   });
 

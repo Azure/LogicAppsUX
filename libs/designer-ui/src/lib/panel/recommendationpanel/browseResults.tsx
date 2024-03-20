@@ -49,11 +49,13 @@ export const BrowseGrid = (props: BrowseGridProps) => {
 
   const noResultsText = intl.formatMessage({
     defaultMessage: 'No results found for the specified filters',
+    id: 'w0pI5M',
     description: 'Text to show when there are no browse results with the given filters',
   });
 
   const loadingText = intl.formatMessage({
     defaultMessage: 'Loading all connectors...',
+    id: 'OOUTdW',
     description: 'Message to show under the loading icon when loading connectors',
   });
 

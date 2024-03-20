@@ -92,6 +92,7 @@ export const ConnectionEdge = (props: EdgeProps) => {
 
   const insertFnLoc = intl.formatMessage({
     defaultMessage: 'Insert function',
+    id: 'MnThTq',
     description: 'Message to insert function',
   });
 

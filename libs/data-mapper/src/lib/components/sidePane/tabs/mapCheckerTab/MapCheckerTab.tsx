@@ -31,26 +31,31 @@ export const MapCheckerTab = () => {
 
   const errorTitleLoc = intl.formatMessage({
     defaultMessage: 'Errors',
+    id: '4BH9uU',
     description: 'Error section title',
   });
 
   const warningTitleLoc = intl.formatMessage({
     defaultMessage: 'Warnings',
+    id: 'dwrqEc',
     description: 'Warnings section title',
   });
 
   const infoTitleLoc = intl.formatMessage({
     defaultMessage: 'Info',
+    id: 'bXFGpe',
     description: 'Info section title',
   });
 
   const otherTitleLoc = intl.formatMessage({
     defaultMessage: 'Other',
+    id: 'jHKc3w',
     description: 'Other section title',
   });
 
   const noItemsLoc = intl.formatMessage({
     defaultMessage: 'Your map is in perfect condition',
+    id: 'YlesUQ',
     description: 'Message displayed when map checker has no errors or warnings',
   });
 

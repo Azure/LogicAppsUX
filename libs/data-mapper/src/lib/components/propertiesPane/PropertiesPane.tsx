@@ -81,26 +81,31 @@ export const PropertiesPane = (props: PropertiesPaneProps) => {
 
   const sourceSchemaNodeLoc = intl.formatMessage({
     defaultMessage: 'Source schema element',
+    id: 'Gi7czD',
     description: 'Label for source schema node',
   });
 
   const targetSchemaNodeLoc = intl.formatMessage({
     defaultMessage: 'Target schema element',
+    id: 'U086AA',
     description: 'Label for target schema node',
   });
 
   const functionLoc = intl.formatMessage({
     defaultMessage: 'Function',
+    id: 'mwEHSX',
     description: 'Label for function node',
   });
 
   const propertiesLoc = intl.formatMessage({
     defaultMessage: 'Properties',
+    id: 'idQjOP',
     description: 'Label for properties tab',
   });
 
   const codeLoc = intl.formatMessage({
     defaultMessage: 'Code',
+    id: 'xV4Koe',
     description: 'Label for code tab',
   });
 
@@ -111,21 +116,25 @@ export const PropertiesPane = (props: PropertiesPaneProps) => {
 
   const selectElementLoc = intl.formatMessage({
     defaultMessage: 'Select an element to start configuring',
+    id: 'u9tr3k',
     description: 'Label for default message when no node selected',
   });
 
   const expandLoc = intl.formatMessage({
     defaultMessage: 'Expand',
+    id: 'VI5Sa8',
     description: 'Label to expand',
   });
 
   const collapseLoc = intl.formatMessage({
     defaultMessage: 'Collapse',
+    id: 'pH2uak',
     description: 'Label to collapse',
   });
 
   const removeLoc = intl.formatMessage({
     defaultMessage: 'Remove',
+    id: 'M4H0gh',
     description: 'Label to remove',
   });
 

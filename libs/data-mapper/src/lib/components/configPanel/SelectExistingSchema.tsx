@@ -18,21 +18,25 @@ export const SelectExistingSchema = (props: SelectExistingSchemaProps) => {
   const intl = useIntl();
   const folderLocationLabel = intl.formatMessage({
     defaultMessage: 'Existing schemas from',
+    id: '2gOfQI',
     description: 'Schema dropdown aria label',
   });
   const dropdownAriaLabel = intl.formatMessage({
     defaultMessage: 'Select the schema for dropdown',
+    id: 'c4GQZE',
     description: 'Schema dropdown aria label',
   });
   const schemaDropdownPlaceholder = useMemo(() => {
     if (props.schemaType === SchemaType.Source) {
       return intl.formatMessage({
         defaultMessage: 'Select a source schema',
+        id: '3eeli7',
         description: 'Source schema dropdown placeholder',
       });
     } else {
       return intl.formatMessage({
         defaultMessage: 'Select a target schema',
+        id: 'XkBxv5',
         description: 'Target schema dropdown placeholder',
       });
     }

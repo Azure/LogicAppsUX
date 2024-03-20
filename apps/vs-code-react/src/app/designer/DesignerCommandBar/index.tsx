@@ -79,18 +79,22 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({ isRefres
   const Resources = {
     DESIGNER_SAVE: intl.formatMessage({
       defaultMessage: 'Save',
+      id: 'ZvAp7m',
       description: 'Button text for save',
     }),
     DESIGNER_PARAMETERS: intl.formatMessage({
       defaultMessage: 'Parameters',
+      id: '+0ua83',
       description: 'Button text for parameters',
     }),
     MONITORING_VIEW_REFRESH: intl.formatMessage({
       defaultMessage: 'Refresh',
+      id: 'pr9GwA',
       description: 'Button text for refresh',
     }),
     MONITORING_VIEW_RESUBMIT: intl.formatMessage({
       defaultMessage: 'Resubmit',
+      id: 'sOnphB',
       description: 'Button text for resubmit',
     }),
   };

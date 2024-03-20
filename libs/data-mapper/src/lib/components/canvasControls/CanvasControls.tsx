@@ -38,26 +38,31 @@ export const CanvasControls = ({ displayMiniMap, toggleDisplayMiniMap }: CanvasC
 
   const zoomOutLoc = intl.formatMessage({
     defaultMessage: 'Zoom out',
+    id: 'Yuu5CD',
     description: 'Label to zoom the canvas out',
   });
 
   const zoomInLoc = intl.formatMessage({
     defaultMessage: 'Zoom in',
+    id: 'g1zwch',
     description: 'Label to zoom the canvas in',
   });
 
   const fitViewLoc = intl.formatMessage({
     defaultMessage: 'Zoom to fit',
+    id: 'o3SfI4',
     description: 'Label to fit the whole canvas in view',
   });
 
   const showMiniMapLoc = intl.formatMessage({
     defaultMessage: 'Show mini-map',
+    id: 'Dhu3IS',
     description: 'Label to show the mini-map',
   });
 
   const hideMiniMapLoc = intl.formatMessage({
     defaultMessage: 'Hide mini-map',
+    id: 'wl7X0l',
     description: 'Label to hide the mini-map',
   });
 

@@ -27,6 +27,7 @@ export const AddedFunctionPlaceholder = () => {
 
   const placeholderMsgLoc = intl.formatMessage({
     defaultMessage: 'Added Functions',
+    id: 'DS/WmZ',
     description: 'Main message displayed in the function placeholder',
   });
 

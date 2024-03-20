@@ -19,10 +19,12 @@ export const OverviewCommandBar: React.FC<OverviewCommandBarProps> = ({ callback
   const Resources = {
     OVERVIEW_REFRESH: intl.formatMessage({
       defaultMessage: 'Refresh',
+      id: 'pr9GwA',
       description: 'Button text for refresh',
     }),
     OVERVIEW_RUN_TRIGGER: intl.formatMessage({
       defaultMessage: 'Run trigger',
+      id: 'lPTdSf',
       description: 'Button text for run trigger',
     }),
   };

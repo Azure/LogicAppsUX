@@ -29,11 +29,13 @@ export const DynamicallyAddedParameter = (props: DynamicallyAddedParameterProps)
   const renderMenuButton = (): JSX.Element => {
     const menuButtonTitle = intl.formatMessage({
       defaultMessage: 'Menu',
+      id: 'wXJALc',
       description: 'Open dynamically added parameter options menu',
     });
 
     const deleteText = intl.formatMessage({
       defaultMessage: 'Delete',
+      id: 'gkY5ya',
       description: 'Delete dynamic parameter corresponding to this row',
     });
 
