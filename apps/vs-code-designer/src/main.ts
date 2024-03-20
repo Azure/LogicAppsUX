@@ -4,7 +4,7 @@ import { supportedDataMapDefinitionFileExts, supportedSchemaFileExts } from './a
 import { registerCommands } from './app/commands/registerCommands';
 import { getResourceGroupsApi } from './app/resourcesExtension/getExtensionApi';
 import type { AzureAccountTreeItemWithProjects } from './app/tree/AzureAccountTreeItemWithProjects';
-import { updateTestTree, unitTestResolveHandler, runHandler } from './app/tree/unitTestTree';
+import { prepareTestExplorer } from './app/tree/unitTestTree';
 import { stopDesignTimeApi } from './app/utils/codeless/startDesignTimeApi';
 import { UriHandler } from './app/utils/codeless/urihandler';
 import { getExtensionVersion } from './app/utils/extension';
@@ -65,6 +65,7 @@ export async function activate(context: vscode.ExtensionContext) {
     runPostWorkflowCreateStepsFromCache();
 
     await startOnboarding(activateContext);
+    await prepareTestExplorer(context);
 
     ext.extensionVersion = getExtensionVersion();
     ext.rgApi = await getResourceGroupsApi();
@@ -99,28 +100,6 @@ export async function activate(context: vscode.ExtensionContext) {
     ext.rgApi.registerApplicationResourceResolver(getAzExtResourceType(logicAppFilter), new LogicAppResolver());
 
     vscode.window.registerUriHandler(new UriHandler());
-
-    // Unit tests controller
-    const unitTestController = vscode.tests.createTestController('LogicAppStandardTests', 'Logic App Standard Tests');
-    context.subscriptions.push(unitTestController);
-    ext.unitTestController = unitTestController;
-
-    // Refresh handler when click in refresh button in the test explorer
-    unitTestController.refreshHandler = async () => {
-      await updateTestTree(unitTestController);
-    };
-
-    // Run profile when click in run button in the test explorer
-    unitTestController.createRunProfile(
-      'Run logic apps standard unit tests',
-      vscode.TestRunProfileKind.Run,
-      (request, cancellation) => runHandler(request, cancellation, unitTestController),
-      true,
-      undefined
-    );
-
-    // Handler to load unit test folders and files when load the test explorer
-    unitTestController.resolveHandler = async (item: vscode.TestItem) => unitTestResolveHandler(context, unitTestController, item);
   });
 }
 

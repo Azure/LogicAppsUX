@@ -2,11 +2,14 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
+import { unitTestExplorer } from '../../../constants';
 import { ext } from '../../../extensionVariables';
+import { hasLogicAppProject } from '../../utils/workspace';
 import { TestFile } from './testFile';
 import { TestWorkflow } from './testWorkflow';
 import { TestWorkspace } from './testWorkspace';
 import { isEmptyString } from '@microsoft/utils-logic-apps';
+import { type IActionContext, callWithTelemetryAndErrorHandling } from '@microsoft/vscode-azext-utils';
 import {
   RelativePattern,
   type TestController,
@@ -18,9 +21,47 @@ import {
   type TestItem,
   type ExtensionContext,
   type TestItemCollection,
+  tests,
+  TestRunProfileKind,
 } from 'vscode';
 
 export type TestData = TestWorkspace | TestWorkflow | TestFile;
+
+/**
+ * Prepares the test explorer for unit tests.
+ * @param {ExtensionContext} context - The extension context.
+ */
+export const prepareTestExplorer = async (context: ExtensionContext) => {
+  callWithTelemetryAndErrorHandling(unitTestExplorer, async (actionContext: IActionContext) => {
+    if (workspace.workspaceFolders && workspace.workspaceFolders.length > 0) {
+      const isLogicAppProject = await hasLogicAppProject(actionContext);
+
+      if (isLogicAppProject) {
+        // Unit tests controller
+        const unitTestController = tests.createTestController('LogicAppStandardTests', 'Logic App Standard Tests');
+        context.subscriptions.push(unitTestController);
+        ext.unitTestController = unitTestController;
+
+        // Refresh handler when click in refresh button in the test explorer
+        unitTestController.refreshHandler = async () => {
+          await updateTestTree(unitTestController);
+        };
+
+        // Run profile when click in run button in the test explorer
+        unitTestController.createRunProfile(
+          'Run logic apps standard unit tests',
+          TestRunProfileKind.Run,
+          (request, cancellation) => runHandler(request, cancellation, unitTestController),
+          true,
+          undefined
+        );
+
+        // Handler to load unit test folders and files when load the test explorer
+        unitTestController.resolveHandler = async (item: TestItem) => unitTestResolveHandler(context, unitTestController, item);
+      }
+    }
+  });
+};
 
 /**
  * Retrieves the test files asynchronously.
@@ -28,7 +69,7 @@ export type TestData = TestWorkspace | TestWorkflow | TestFile;
  * @returns A promise that resolves to an array of test files.
  */
 export const updateTestTree = async (controller: TestController) => {
-  return await Promise.all(getWorkspaceTestPatterns().map(({ pattern }) => findInitialFiles(controller, pattern)));
+  await Promise.all(getWorkspaceTestPatterns().map(({ pattern }) => findInitialFiles(controller, pattern)));
 };
 
 /**
