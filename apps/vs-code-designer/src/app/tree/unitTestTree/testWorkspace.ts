@@ -55,6 +55,7 @@ export class TestWorkspace {
       const id = `${this.name}/${workflow}`;
       const workflowTestItem = controller.createTestItem(id, workflow, workflowUri);
       workflowTestItem.canResolveChildren = true;
+      controller.items.add(workflowTestItem);
 
       const data = new TestWorkflow(id, this.workflows[workflow], workflowTestItem);
       ext.testData.set(workflowTestItem, data);

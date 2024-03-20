@@ -79,15 +79,15 @@ const testsWorkspaceWatcher = (controller: TestController, fileChangedEmitter: E
     const watcher = workspace.createFileSystemWatcher(pattern);
 
     watcher.onDidCreate((uri) => {
-      // getOrCreateFile(controller, uri);
+      getOrCreateFile(controller, uri);
       fileChangedEmitter.fire(uri);
     });
-    watcher.onDidChange(async (_uri) => {
-      // const { file, data } = getOrCreateFile(controller, uri);
-      // if (data.didResolve) {
-      //   await data.updateFromDisk(controller, file);
-      // }
-      // fileChangedEmitter.fire(uri);
+    watcher.onDidChange(async (uri) => {
+      const { data } = await getOrCreateFile(controller, uri);
+      if (data instanceof TestFile) {
+        await data.parseUnitTest();
+      }
+      fileChangedEmitter.fire(uri);
     });
     watcher.onDidDelete((uri) => controller.items.delete(uri.toString()));
 
@@ -130,7 +130,7 @@ const findInitialFiles = async (controller: TestController, pattern: RelativePat
 const getOrCreateWorkspace = (controller: TestController, workspaceName: string, files: Uri[]) => {
   const existing = controller.items.get(workspaceName);
   if (existing) {
-    return { file: existing, data: ext.testData.get(existing) as TestFile };
+    return { file: existing, data: ext.testData.get(existing) as TestWorkspace };
   }
   const filePath = files.length > 0 ? files[0].path : '';
   const workspaceUri = isEmptyString(filePath) ? undefined : Uri.file(filePath.split('/').slice(0, -4).join('/'));
@@ -145,10 +145,47 @@ const getOrCreateWorkspace = (controller: TestController, workspaceName: string,
   return { workspaceTestItem, data };
 };
 
+const getOrCreateFile = async (controller: TestController, uri: Uri) => {
+  const workspaceName = uri.path.split('/').slice(-5)[0];
+  const testName = uri.path.split('/').slice(-1)[0];
+  const workflowName = uri.path.split('/').slice(-2)[0];
+
+  const existingWorkspaceTest = controller.items.get(workspaceName);
+
+  if (existingWorkspaceTest) {
+    const existingWorkflowTest = existingWorkspaceTest.children.get(`${workspaceName}/${workflowName}`);
+
+    if (existingWorkflowTest) {
+      const existingFileTest = existingWorkflowTest.children.get(`${workspaceName}/${workflowName}/${testName}`);
+      return { file: existingFileTest, data: ext.testData.get(existingFileTest) as TestFile };
+    } else {
+      const workflowTestItem = controller.createTestItem(`${workspaceName}/${workflowName}`, workflowName, uri);
+      workflowTestItem.canResolveChildren = true;
+      controller.items.add(workflowTestItem);
+
+      const data = new TestWorkflow(`${workspaceName}/${workflowName}`, [uri], workflowTestItem);
+      data.createChild(controller);
+      ext.testData.set(workflowTestItem, data);
+      existingWorkspaceTest.children.add(workflowTestItem);
+    }
+  }
+
+  return {};
+};
+
+/**
+ * Starts a test run based on the provided request and unit test controller.
+ * @param {TestRunRequest} request - The test run request.
+ * @param {TestController} unitTestController - The unit test controller.
+ */
 const startTestRun = (request: TestRunRequest, unitTestController: TestController) => {
   const queue: { test: TestItem; data: TestFile }[] = [];
   const run = unitTestController.createTestRun(request);
 
+  /**
+   * Discovers tests recursively and enqueues them for execution.
+   * @param {Iterable<TestItem>} tests - An iterable of TestItem objects representing the tests to discover.
+   */
   const discoverTests = async (tests: Iterable<TestItem>) => {
     for (const test of tests) {
       if (request.exclude?.includes(test)) {
@@ -171,6 +208,9 @@ const startTestRun = (request: TestRunRequest, unitTestController: TestControlle
     }
   };
 
+  /**
+   * Runs the test queue asynchronously.
+   */
   const runTestQueue = async () => {
     for (const { test, data } of queue) {
       run.appendOutput(`Running ${test.id}\r\n`);
@@ -190,6 +230,11 @@ const startTestRun = (request: TestRunRequest, unitTestController: TestControlle
   discoverTests(request.include ?? gatherTestItems(unitTestController.items)).then(runTestQueue);
 };
 
+/**
+ * Gathers all the test items from a TestItemCollection.
+ * @param {TestItemCollection} collection - The TestItemCollection to gather the test items from.
+ * @returns An array of TestItem objects.
+ */
 const gatherTestItems = (collection: TestItemCollection) => {
   const items: TestItem[] = [];
   collection.forEach((item: TestItem) => items.push(item));

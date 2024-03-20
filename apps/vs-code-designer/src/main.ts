@@ -106,6 +106,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
     // Refresh handler when click in refresh button in the test explorer
     unitTestController.refreshHandler = async () => {
+      console.log('test', unitTestController.items);
       await getTestFiles(unitTestController);
     };
 

@@ -39,6 +39,7 @@ export class TestWorkflow {
       const id = `${this.name}/${testName}`;
 
       const fileTestItem = controller.createTestItem(id, testName, testFile);
+      controller.items.add(fileTestItem);
       const data = new TestFile(testName, testFile, fileTestItem);
       await data.parseUnitTest();
       ext.testData.set(fileTestItem, data);
