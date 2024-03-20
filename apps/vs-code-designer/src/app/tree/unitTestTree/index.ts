@@ -111,7 +111,9 @@ export const unitTestResolveHandler = async (context: ExtensionContext, ctrl: Te
 
   const data = ext.testData.get(item);
   if (data instanceof TestWorkspace || data instanceof TestWorkflow) {
-    await data.createChild(ctrl);
+    if (!data.hasChildren()) {
+      await data.createChild(ctrl);
+    }
   }
 };
 

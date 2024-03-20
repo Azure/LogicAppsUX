@@ -48,4 +48,12 @@ export class TestWorkflow {
 
     this.workflowTestItem.children.replace(this.children);
   }
+
+  /**
+   * Checks if the current node has any children.
+   * @returns {boolean} Returns true if the node has children, otherwise returns false.
+   */
+  public hasChildren(): boolean {
+    return this.children.length > 0;
+  }
 }
