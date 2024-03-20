@@ -19,6 +19,7 @@ import { useOutputTokens } from '../../../core/state/tokens/tokenSelectors';
 import { useNodeDescription, useRunData, useRunInstance } from '../../../core/state/workflow/workflowSelectors';
 import { replaceId, setNodeDescription } from '../../../core/state/workflow/workflowSlice';
 import { isOperationNameValid, isRootNodeInGraph } from '../../../core/utils/graph';
+import { getTokenValue } from '../../../core/utils/tokens';
 import { CommentMenuItem } from '../../menuItems/commentMenuItem';
 import { DeleteMenuItem } from '../../menuItems/deleteMenuItem';
 import { usePanelTabs } from './usePanelTabs';
@@ -29,7 +30,6 @@ import { SUBGRAPH_TYPES, getRecordEntry, isNullOrUndefined } from '@microsoft/lo
 import type { ReactElement } from 'react';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { getTokenValue } from '../../../core/utils/tokens';
 
 export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
   const { panelLocation } = props;
@@ -52,7 +52,6 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
   const selectedNodeDisplayName = useNodeDisplayName(selectedNode);
   const outputTokens = useOutputTokens(selectedNode);
   const nodeType = useSelector((state: RootState) => state.operations.operationInfo[selectedNode]?.type);
-  const replacementIds = useSelector((state: RootState) => state.workflow.idReplacements);
 
   const [width, setWidth] = useState<PanelSize>(PanelSize.Auto);
 
@@ -113,7 +112,7 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
       const tokenValue = getTokenValue(token, nodeType, idReplacements);
       console.log(tokenValue);
       console.log(token);
-    })
+    });
   };
 
   const onCommentChange = (newDescription?: string) => {

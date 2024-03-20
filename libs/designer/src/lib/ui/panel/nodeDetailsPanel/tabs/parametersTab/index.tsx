@@ -27,6 +27,7 @@ import {
   loadDynamicValuesForParameter,
   loadParameterValueFromString,
   parameterValueToString,
+  remapEditorViewModelWithNewIds,
   remapValueSegmentsWithNewIds,
   shouldUseParameterInGroup,
   updateParameterAndDependencies,
@@ -390,10 +391,12 @@ const ParameterSection = ({
     .map((param) => {
       const { id, label, value, required, showTokens, placeholder, editorViewModel, dynamicData, conditionalVisibility, validationErrors } =
         param;
-      const paramSubset = { id, label, required, showTokens, placeholder, editorViewModel, conditionalVisibility };
+      const { value: remappedEditorViewModel } = remapEditorViewModelWithNewIds(editorViewModel, idReplacements);
+      const paramSubset = { id, label, required, showTokens, placeholder, editorViewModel: remappedEditorViewModel, conditionalVisibility };
       const { editor, editorOptions } = getEditorAndOptions(operationInfo, param, upstreamNodeIds ?? [], variables);
 
       const { value: remappedValues } = remapValueSegmentsWithNewIds(value, idReplacements);
+      console.log(remappedEditorViewModel);
       return {
         settingType: 'SettingTokenField',
         settingProp: {

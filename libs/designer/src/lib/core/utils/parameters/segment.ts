@@ -209,6 +209,15 @@ export class ValueSegmentConvertor {
 }
 
 /**
+ * Checks whether the array is a value segment.
+ * @arg {any[]} array - The value segment array.
+ * @return {boolean}
+ */
+export function isValueSegmentArray(array: any[]): boolean {
+  return array.every((item) => isValueSegment(item));
+}
+
+/**
  * Checks whether the segment is a value segment.
  * @arg {any} object - The value segment.
  * @return {boolean}

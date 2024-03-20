@@ -330,12 +330,13 @@ export const operationMetadataSlice = createSlice({
     },
     updateExistingInputTokens: (state, action: PayloadAction<UpdateExistingInputTokensPayload>) => {
       const { nodeId, newTokenTitle } = action.payload;
+      console.log(state.dependencies)
       Object.entries(state.inputParameters).forEach(([nodeId, nodeInputs]) => {
         Object.entries(nodeInputs.parameterGroups).forEach(([parameterId, parameterGroup]) => {
           parameterGroup.parameters.forEach((parameter, parameterIndex) => {
             parameter.value.forEach((segment, segmentIndex) => {
-              if (isTokenValueSegment(segment) && segment.token?.key) {
-                const normalizedKey = normalizeKey(segment.token.key);
+              if (isTokenValueSegment(segment) && segment.token?.value) {
+                console.log(segment.token?.value);
                 // console.log('normalizedKey', normalizedKey, segment.token.value);
                 // if (normalizedKey in tokenTitles) {
                 //   state.inputParameters[nodeId].parameterGroups[parameterId].parameters[parameterIndex].value[segmentIndex] =

@@ -53,6 +53,7 @@ import {
   isParameterToken,
   isTokenValueSegment,
   isValueSegment,
+  isValueSegmentArray,
   isVariableToken,
   ValueSegmentConvertor,
 } from './segment';
@@ -3305,6 +3306,27 @@ export function getJSONValueFromString(value: any, type: string): any {
   }
 
   return parameterValue;
+}
+
+export function remapEditorViewModelWithNewIds(editorViewModel: any, idReplacements: Record<string, string>): any {
+  if (!editorViewModel) return editorViewModel;
+  console.log(editorViewModel);
+  if (isObject(editorViewModel)) {
+    if (Array.isArray(editorViewModel)) {
+      if (isValueSegmentArray(editorViewModel)) {
+        return remapValueSegmentsWithNewIds(editorViewModel, idReplacements).value;
+      }
+      return editorViewModel.map((value: any) => {
+        return remapEditorViewModelWithNewIds(value, idReplacements);
+      });
+    }
+    const updatedEditorViewModel = { ...editorViewModel };
+    Object.entries(editorViewModel).forEach(([key, value]) => {
+      updatedEditorViewModel[key] = remapEditorViewModelWithNewIds(value, idReplacements);
+    });
+    return updatedEditorViewModel;
+  }
+  return editorViewModel;
 }
 
 export function remapValueSegmentsWithNewIds(
