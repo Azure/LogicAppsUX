@@ -114,7 +114,7 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId, 
   }, [dispatch, graphId, parentId]);
 
   const nodeMetadata = useNodeMetadata(removeIdTag(parentId ?? ''));
-  // For subgraph nodes, we want to use the id of the scope node as thr parentId to get the dependancies
+  // For subgraph nodes, we want to use the id of the scope node as the parentId to get the dependancies
   const newParentId = useMemo(() => {
     if (nodeMetadata?.subgraphType) {
       return nodeMetadata.parentNodeId;
