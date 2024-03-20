@@ -10,7 +10,16 @@ import type { Site } from '@azure/arm-appservice';
 import type { IAzExtOutputChannel } from '@microsoft/vscode-azext-utils';
 import type { AzureHostExtensionApi } from '@microsoft/vscode-azext-utils/hostapi';
 import type * as cp from 'child_process';
-import { window, type ExtensionContext, type WebviewPanel, type TestItem, type TestRunProfile, EventEmitter, type Uri } from 'vscode';
+import {
+  window,
+  type ExtensionContext,
+  type WebviewPanel,
+  type TestItem,
+  type TestRunProfile,
+  EventEmitter,
+  type Uri,
+  type TestController,
+} from 'vscode';
 
 /**
  * Namespace for common variables used throughout the extension. They must be initialized in the activate() method of extension.ts
@@ -90,6 +99,7 @@ export namespace ext {
   export const watchingTests = new Map<TestItem | 'ALL', TestRunProfile | undefined>();
   export const testFileChangedEmitter = new EventEmitter<Uri>();
   export const testData = new WeakMap<TestItem, TestData>();
+  export let unitTestController: TestController;
 }
 
 export const ExtensionCommand = {

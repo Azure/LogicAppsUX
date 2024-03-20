@@ -27,7 +27,7 @@ export type TestData = TestWorkspace | TestWorkflow | TestFile;
  * @param {TestController} controller The test controller.
  * @returns A promise that resolves to an array of test files.
  */
-export const getTestFiles = async (controller: TestController) => {
+export const updateTestTree = async (controller: TestController) => {
   return await Promise.all(getWorkspaceTestPatterns().map(({ pattern }) => findInitialFiles(controller, pattern)));
 };
 

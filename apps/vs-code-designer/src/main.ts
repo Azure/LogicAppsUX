@@ -4,7 +4,7 @@ import { supportedDataMapDefinitionFileExts, supportedSchemaFileExts } from './a
 import { registerCommands } from './app/commands/registerCommands';
 import { getResourceGroupsApi } from './app/resourcesExtension/getExtensionApi';
 import type { AzureAccountTreeItemWithProjects } from './app/tree/AzureAccountTreeItemWithProjects';
-import { getTestFiles, unitTestResolveHandler, runHandler } from './app/tree/unitTestTree';
+import { updateTestTree, unitTestResolveHandler, runHandler } from './app/tree/unitTestTree';
 import { stopDesignTimeApi } from './app/utils/codeless/startDesignTimeApi';
 import { UriHandler } from './app/utils/codeless/urihandler';
 import { getExtensionVersion } from './app/utils/extension';
@@ -103,11 +103,11 @@ export async function activate(context: vscode.ExtensionContext) {
     // Unit tests controller
     const unitTestController = vscode.tests.createTestController('LogicAppStandardTests', 'Logic App Standard Tests');
     context.subscriptions.push(unitTestController);
+    ext.unitTestController = unitTestController;
 
     // Refresh handler when click in refresh button in the test explorer
     unitTestController.refreshHandler = async () => {
-      console.log('test', unitTestController.items);
-      await getTestFiles(unitTestController);
+      await updateTestTree(unitTestController);
     };
 
     // Run profile when click in run button in the test explorer
@@ -126,6 +126,7 @@ export async function activate(context: vscode.ExtensionContext) {
 
 export function deactivate(): Promise<any> {
   stopDesignTimeApi();
+  ext.unitTestController?.dispose();
   return undefined;
 }
 

@@ -46,7 +46,7 @@ export class TestWorkspace {
 
   /**
    * Creates a child test item for each workflow in the test workspace.
-   * @param controller The test controller used to create the test items.
+   * @param controller - The test controller used to create the test items.
    */
   public async createChild(controller: TestController) {
     Object.keys(this.workflows).forEach((workflow) => {

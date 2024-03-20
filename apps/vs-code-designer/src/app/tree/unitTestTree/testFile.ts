@@ -52,6 +52,12 @@ export class TestFile {
     }
   }
 
+  /**
+   * Runs a unit test for a specific test item.
+   * @param {TestItem} item - The test item to run the unit test for.
+   * @param {TestRun} options - The options for running the unit test.
+   * @returns A promise that resolves when the unit test is completed.
+   */
   async run(item: TestItem, options: TestRun): Promise<void> {
     const start = Date.now();
     await new Promise((resolve) => setTimeout(resolve, 1000 + Math.random() * 1000));
