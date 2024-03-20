@@ -74,6 +74,13 @@ export const unitTestResolveHandler = async (context: ExtensionContext, ctrl: Te
   }
 };
 
+/**
+ * Creates and returns an array of file system watchers for the specified test patterns in the workspace.
+ * Whenever a file is created, changed, or deleted, the corresponding actions are performed and the fileChangedEmitter is fired.
+ * @param {TestController} controller - The test controller to associate the file system watchers with.
+ * @param {EventEmitter<Uri>} fileChangedEmitter - The event emitter to notify when a file is created, changed, or deleted.
+ * @returns An array of file system watchers.
+ */
 const testsWorkspaceWatcher = (controller: TestController, fileChangedEmitter: EventEmitter<Uri>) => {
   return getWorkspaceTestPatterns().map(({ pattern }) => {
     const watcher = workspace.createFileSystemWatcher(pattern);
