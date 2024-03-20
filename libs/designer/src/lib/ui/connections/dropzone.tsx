@@ -132,7 +132,6 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId, 
       drop: () => ({ graphId, parentId, childId }),
       canDrop: (item: { id: string; dependencies?: string[]; graphId?: string }) => {
         // This supports preventing moving a node with a dependency above its upstream node
-        console.log('### id', { dependency: item.dependencies, upstreamNodes, parentId, childId, graphId });
         for (const dec of item.dependencies ?? []) {
           if (!upstreamNodes.has(dec)) {
             return false;
