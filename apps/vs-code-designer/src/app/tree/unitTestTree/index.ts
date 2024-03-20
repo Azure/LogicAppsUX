@@ -145,6 +145,12 @@ const getOrCreateWorkspace = (controller: TestController, workspaceName: string,
   return { workspaceTestItem, data };
 };
 
+/**
+ * Retrieves an existing file test or creates a new one based on the provided URI.
+ * @param {TestController} controller - The test controller.
+ * @param {Uri} uri - The URI of the file.
+ * @returns An object containing the file test and its associated data, if it exists.
+ */
 const getOrCreateFile = async (controller: TestController, uri: Uri) => {
   const workspaceName = uri.path.split('/').slice(-5)[0];
   const testName = uri.path.split('/').slice(-1)[0];
@@ -163,11 +169,20 @@ const getOrCreateFile = async (controller: TestController, uri: Uri) => {
       workflowTestItem.canResolveChildren = true;
       controller.items.add(workflowTestItem);
 
-      const data = new TestWorkflow(`${workspaceName}/${workflowName}`, [uri], workflowTestItem);
-      data.createChild(controller);
-      ext.testData.set(workflowTestItem, data);
+      const testWorkflow = new TestWorkflow(`${workspaceName}/${workflowName}`, [uri], workflowTestItem);
+      testWorkflow.createChild(controller);
+      ext.testData.set(workflowTestItem, testWorkflow);
       existingWorkspaceTest.children.add(workflowTestItem);
     }
+  } else {
+    const workspaceUri = Uri.file(uri.path.split('/').slice(0, -4).join('/'));
+    const workspaceTestItem = controller.createTestItem(workspaceName, workspaceName, workspaceUri);
+    workspaceTestItem.canResolveChildren = true;
+    controller.items.add(workspaceTestItem);
+
+    const testWorkspace = new TestWorkspace(workspaceName, [uri], workspaceTestItem);
+    testWorkspace.createChild(controller);
+    ext.testData.set(workspaceTestItem, testWorkspace);
   }
 
   return {};
