@@ -2,7 +2,7 @@ import type { AppDispatch } from '../../core';
 import { pasteOperation } from '../../core/actions/bjsworkflow/copypaste';
 import { expandDiscoveryPanel } from '../../core/state/panel/panelSlice';
 import { useUpstreamNodes } from '../../core/state/tokens/tokenSelectors';
-import { useGetAllOperationNodesWithin, useNodeDisplayName } from '../../core/state/workflow/workflowSelectors';
+import { useGetAllOperationNodesWithin, useNodeDisplayName, useNodeMetadata } from '../../core/state/workflow/workflowSelectors';
 import { AllowDropTarget } from './dynamicsvgs/allowdroptarget';
 import { BlockDropTarget } from './dynamicsvgs/blockdroptarget';
 import { MenuDivider, MenuItem, MenuList, Popover, PopoverSurface, PopoverTrigger } from '@fluentui/react-components';
@@ -116,7 +116,16 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId, 
     setShowCallout(false);
   }, [dispatch, graphId, parentId]);
 
-  const upstreamNodesOfChild = useUpstreamNodes(removeIdTag(childId ?? parentId ?? graphId));
+  const nodeMetadata = useNodeMetadata(removeIdTag(parentId ?? ''));
+  // For subgraph nodes, we want to use the id of the scope node as the parentId to get the dependancies
+  const newParentId = useMemo(() => {
+    if (nodeMetadata?.subgraphType) {
+      return nodeMetadata.parentNodeId;
+    } else {
+      return parentId;
+    }
+  }, [nodeMetadata, parentId]);
+  const upstreamNodesOfChild = useUpstreamNodes(removeIdTag(childId ?? newParentId ?? graphId));
   const immediateAncestor = useGetAllOperationNodesWithin(parentId && !containsIdTag(parentId) ? parentId : '');
   const upstreamNodes = useMemo(() => new Set([...upstreamNodesOfChild, ...immediateAncestor]), [immediateAncestor, upstreamNodesOfChild]);
 
