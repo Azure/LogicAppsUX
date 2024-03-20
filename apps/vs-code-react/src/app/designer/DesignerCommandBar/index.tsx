@@ -28,6 +28,7 @@ export interface DesignerCommandBarProps {
   isDarkMode: boolean;
   isUnitTest: boolean;
   isLocal: boolean;
+  runId: string;
 }
 
 export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
@@ -37,6 +38,7 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
   isDarkMode,
   isUnitTest,
   isLocal,
+  runId,
 }) => {
   const intl = useIntl();
   const vscode = useContext(VSCodeContext);
@@ -100,6 +102,7 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
   const onCreateUnitTest = async () => {
     vscode.postMessage({
       command: ExtensionCommand.createUnitTest,
+      runId: runId,
     });
   };
 

@@ -120,7 +120,7 @@ export default class openMonitoringViewForAzureResource extends OpenMonitoringVi
             readOnly: this.readOnly,
             isLocal: this.isLocal,
             isMonitoringView: this.isMonitoringView,
-            runId: this.runName,
+            runId: this.runId,
             hostVersion: ext.extensionVersion,
           },
         });
@@ -147,7 +147,7 @@ export default class openMonitoringViewForAzureResource extends OpenMonitoringVi
 
     await vscode.window.withProgress(options, async () => {
       const triggerName = getTriggerName(this.node.workflowFileContent.definition);
-      const url = `${this.baseUrl}/workflows/${this.workflowName}/triggers/${triggerName}/histories/${this.runName}/resubmit?api-version=${this.apiVersion}`;
+      const url = `${this.baseUrl}/workflows/${this.workflowName}/triggers/${triggerName}/histories/${this.runId}/resubmit?api-version=${this.apiVersion}`;
 
       try {
         await sendAzureRequest(url, this.context, HTTP_METHODS.POST, this.node.subscription);

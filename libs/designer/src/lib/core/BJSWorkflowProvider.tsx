@@ -22,13 +22,14 @@ export interface BJSWorkflowProviderProps {
 
 const DataProviderInner: React.FC<BJSWorkflowProviderProps> = ({ workflow, children, runInstance, unitTestDefinition }) => {
   const dispatch = useDispatch<AppDispatch>();
+
   useDeepCompareEffect(() => {
     dispatch(initWorkflowSpec('BJS'));
     dispatch(initWorkflowKind(parseWorkflowKind(workflow?.kind)));
     dispatch(initRunInstance(runInstance ?? null));
     dispatch(initializeGraphState({ workflowDefinition: workflow, runInstance }));
     dispatch(initUnitTestDefinition(deserializeUnitTestDefinition(unitTestDefinition ?? null, workflow)));
-  }, [runInstance, workflow]);
+  }, [runInstance, workflow, unitTestDefinition]);
 
   return <>{children}</>;
 };

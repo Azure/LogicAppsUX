@@ -14,9 +14,7 @@ import * as vscode from 'vscode';
 export abstract class OpenMonitoringViewBase extends OpenDesignerBase {
   protected panel: WebviewPanel;
   protected panelGroupKey: ext.webViewKey;
-  protected runId: string;
   protected baseUrl: string;
-  protected runName: string;
   protected workflowName: string;
   protected workflowFilePath: string;
   protected localSettings: Record<string, string>;
@@ -28,17 +26,14 @@ export abstract class OpenMonitoringViewBase extends OpenDesignerBase {
     isLocal: boolean,
     apiVersion: string
   ) {
-    const runWorflowId = runId.endsWith('/') ? runId.substring(0, runId.length - 1) : runId;
-    const runName = runId.split('/').slice(-1)[0];
+    const runName = runId ? runId.split('/').slice(-1)[0] : '';
     const workflowName = runId.split('/').slice(-3)[0];
     const panelNamePrefix = isLocal ? `${vscode.workspace.name}-` : '';
     const panelName = `${panelNamePrefix}${workflowName}-${runName}`;
     const panelGroupKey = ext.webViewKey.monitoring;
 
-    super(context, workflowName, panelName, apiVersion, panelGroupKey, true, isLocal, true);
+    super(context, workflowName, panelName, apiVersion, panelGroupKey, true, isLocal, true, runName);
 
-    this.runId = runWorflowId;
-    this.runName = runName;
     this.workflowFilePath = workflowFilePath;
   }
 
