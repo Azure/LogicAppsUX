@@ -187,11 +187,13 @@ export const FunctionList = () => {
 
   const searchLoc = intl.formatMessage({
     defaultMessage: 'Search',
+    id: '2NXYYu',
     description: 'Search',
   });
 
   const clearLoc = intl.formatMessage({
     defaultMessage: 'Clear',
+    id: 'e9OvzW',
     description: 'Clear',
   });
 

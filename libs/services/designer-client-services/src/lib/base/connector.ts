@@ -7,9 +7,8 @@ import type {
 } from '../connector';
 import { getClientRequestIdFromHeaders, pathCombine } from '../helpers';
 import type { IHttpClient } from '../httpClient';
-import { getIntl } from '@microsoft/logic-apps-shared';
-import type { OpenAPIV2, OperationInfo } from '@microsoft/logic-apps-shared';
 import {
+  getIntl,
   UnsupportedException,
   ArgumentException,
   ConnectorServiceErrorCode,
@@ -17,6 +16,7 @@ import {
   equals,
   isArmResourceId,
 } from '@microsoft/logic-apps-shared';
+import type { OpenAPIV2, OperationInfo } from '@microsoft/logic-apps-shared';
 import type { IntlShape } from 'react-intl';
 
 type GetSchemaFunction = (args: Record<string, any>) => Promise<OpenAPIV2.SchemaObject>;
@@ -118,7 +118,7 @@ export abstract class BaseConnectorService implements IConnectorService {
     } else {
       const clientRequestId = getClientRequestIdFromHeaders(connectorResponse.headers);
       const defaultErrorMessage = intl.formatMessage(
-        { defaultMessage: 'Error executing the api - {url}', description: 'Error message to show on dynamic call failure' },
+        { defaultMessage: 'Error executing the api - {url}', id: '8BoVtZ', description: 'Error message to show on dynamic call failure' },
         { url: requestUrl }
       );
       const errorMessage = this._getErrorMessageFromConnectorResponse(connectorResponse, defaultErrorMessage, intl, clientRequestId);
@@ -144,6 +144,7 @@ export abstract class BaseConnectorService implements IConnectorService {
       errorMessage = intl.formatMessage(
         {
           defaultMessage: `Error code: ''{errorCode}'', Message: ''{message}''.`,
+          id: '04AwK7',
           description:
             'Dynamic call error message. Do not remove the double single quotes around the placeholder texts, as it is needed to wrap the placeholder text in single quotes.',
         },
@@ -156,7 +157,8 @@ export abstract class BaseConnectorService implements IConnectorService {
     return clientRequestId
       ? `${errorMessage} ${intl.formatMessage(
           {
-            defaultMessage: "More diagnostic information: x-ms-client-request-id is ''{clientRequestId}''.",
+            defaultMessage: `More diagnostic information: x-ms-client-request-id is ''{clientRequestId}''.`,
+            id: 'Xew1Df',
             description:
               'Diagnostics information on error message. Do not remove the double single quotes around the placeholder texts, as it is needed to wrap the placeholder text in single quotes.',
           },
@@ -224,7 +226,8 @@ export abstract class BaseConnectorService implements IConnectorService {
         ex.message ??
           intl.formatMessage(
             {
-              defaultMessage: "Error occurred while executing the following API parameters: ''{parameters}''",
+              defaultMessage: `Error occurred while executing the following API parameters: ''{parameters}''`,
+              id: 'A8l+k7',
               description:
                 'Error message when execute dynamic api in managed connector. Do not remove the double single quotes around the placeholder text, as it is needed to wrap the placeholder text in single quotes.',
             },

@@ -13,6 +13,7 @@ export const Status: React.FC = () => {
   const intlText = {
     EXPORT_STATUS_TITLE: intl.formatMessage({
       defaultMessage: 'Export status',
+      id: '3rpbrs',
       description: 'Export status title',
     }),
   };
@@ -56,6 +57,7 @@ const FinalStatusGadget: React.FC<FinalStatusGadgetProps> = ({ finalStatus }) =>
   const exportNextStepsPath = intl.formatMessage(
     {
       defaultMessage: 'For next steps, review the {path} file.',
+      id: 's78iEA',
       description: 'Message for next steps after export',
     },
     {

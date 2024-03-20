@@ -195,38 +195,47 @@ export const functionConnectionHasTooManyInputs = (functionData: FunctionData, c
 const mapCheckerResources = defineMessages({
   inputTypeMismatchTitle: {
     defaultMessage: 'Input type mismatch',
+    id: 'wkvUUA',
     description: 'Title for the input type mismatch card',
   },
   functionInputTypeMismatchBody: {
     defaultMessage: `Function ''{nodeName}'' has an input with a mismatched type`,
+    id: 'qr1lLG',
     description: 'Body text for the input type mismatch card',
   },
   schemaInputTypeMismatchBody: {
     defaultMessage: `Schema node ''{nodeName}'' has an input with a mismatched type`,
+    id: 'E3+TAA',
     description: 'Body text for the input type mismatch card',
   },
   functionMissingInputsTitle: {
     defaultMessage: 'Missing required inputs',
+    id: '/vWMKW',
     description: 'Title for a function missing a required input card',
   },
   functionMissingInputsBody: {
     defaultMessage: `Function ''{functionName}'' has an non-terminating connection chain`,
+    id: 'XRK+gt',
     description: 'Body text for a function missing a required input card',
   },
   requiredSchemaNodeTitle: {
     defaultMessage: 'Schema is missing required inputs',
+    id: 'dBWIjR',
     description: 'Title for an unconnected required schema card',
   },
   requiredSchemaNodeBody: {
     defaultMessage: `Schema node ''{nodeName}'' has an non-terminating connection chain`,
+    id: 'Ufv5m9',
     description: 'Body text for an unconnected required schema card',
   },
   functionExceedsMaxInputsTitle: {
     defaultMessage: 'Too many inputs assigned',
+    id: 'tAbbH8',
     description: 'Title for a too many inputs card',
   },
   functionExceedsMaxInputsBody: {
     defaultMessage: `Function ''{functionName}'' has too many inputs assigned to it`,
+    id: '6gZ4I3',
     description: 'Body text for a too many inputs card',
   },
 });

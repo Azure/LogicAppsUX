@@ -41,6 +41,12 @@
       "value": "Pemicu"
     }
   ],
+  "+KXX+O": [
+    {
+      "type": 0,
+      "value": "Select function from"
+    }
+  ],
   "+M72+a": [
     {
       "type": 0,
@@ -973,6 +979,12 @@
       "value": "Kebijakan Percobaan Kembali"
     }
   ],
+  "4Levd5": [
+    {
+      "type": 0,
+      "value": "Send me an email when"
+    }
+  ],
   "4Q7WzU": [
     {
       "type": 0,
@@ -1207,6 +1219,12 @@
       "value": "Mengamankan input operasi"
     }
   ],
+  "635Koz": [
+    {
+      "type": 0,
+      "value": "Every week on Monday"
+    }
+  ],
   "63CC7M": [
     {
       "type": 0,
@@ -1357,12 +1375,6 @@
     {
       "type": 0,
       "value": "Output diperlukan saat status adalah \"Berhasil\""
-    }
-  ],
-  "70eoQu": [
-    {
-      "type": 0,
-      "value": "Pilih fungsi dari"
     }
   ],
   "73iM9+": [
@@ -1601,12 +1613,6 @@
       "value": "Jelaskan bagaimana alur Anda harus diubah. Tambahkan detail jika memungkinkan, termasuk konektor yang akan digunakan dan jika ada konten yang harus disertakan."
     }
   ],
-  "8Q7ns/": [
-    {
-      "type": 0,
-      "value": "Edit alur ini untuk"
-    }
-  ],
   "8U0KPg": [
     {
       "type": 0,
@@ -1761,6 +1767,20 @@
     {
       "type": 0,
       "value": "Kembalikan alur Anda"
+    }
+  ],
+  "9QS9a3": [
+    {
+      "type": 0,
+      "value": "Replace \""
+    },
+    {
+      "type": 1,
+      "value": "selectedOperation"
+    },
+    {
+      "type": 0,
+      "value": "\" with"
     }
   ],
   "9SuA/E": [
@@ -2092,12 +2112,6 @@
     {
       "type": 0,
       "value": "Masukkan kata sandi sebagai teks biasa atau gunakan parameter yang aman"
-    }
-  ],
-  "BQyLiu": [
-    {
-      "type": 0,
-      "value": "hasil ditemukan"
     }
   ],
   "BS3gy8": [
@@ -2763,12 +2777,6 @@
       "value": "Menampilkan string dengan setiap item dari array yang bergabung dengan pemisah"
     }
   ],
-  "G/CC5/": [
-    {
-      "type": 0,
-      "value": "pemisahan tidak valid pada format {splitOn}."
-    }
-  ],
   "G0XYrd": [
     {
       "type": 0,
@@ -3181,6 +3189,12 @@
       "value": "Tidak ada properti"
     }
   ],
+  "IsbbsG": [
+    {
+      "type": 0,
+      "value": "When a new item"
+    }
+  ],
   "IxWip7": [
     {
       "type": 0,
@@ -3363,20 +3377,6 @@
     {
       "type": 0,
       "value": "Ubah referensi koneksi"
-    }
-  ],
-  "KNDVnN": [
-    {
-      "type": 0,
-      "value": "Ganti \""
-    },
-    {
-      "type": 1,
-      "value": "selectedOperation"
-    },
-    {
-      "type": 0,
-      "value": "\" dengan"
     }
   ],
   "KV4uky": [
@@ -3646,12 +3646,6 @@
     {
       "type": 0,
       "value": "Tampilan kode"
-    }
-  ],
-  "M3kJsI": [
-    {
-      "type": 0,
-      "value": "Setiap minggu pada hari Senin"
     }
   ],
   "M4H0gh": [
@@ -4038,12 +4032,6 @@
       "value": "Memuat semua konektor..."
     }
   ],
-  "OQud51": [
-    {
-      "type": 0,
-      "value": "Beri tahu saya selengkapnya tentang"
-    }
-  ],
   "OSHNZ2": [
     {
       "type": 0,
@@ -4138,6 +4126,20 @@
     {
       "type": 0,
       "value": "Tetapkan identitas terkelola"
+    }
+  ],
+  "OrPVcU": [
+    {
+      "type": 0,
+      "value": "Invalid split on format in '"
+    },
+    {
+      "type": 1,
+      "value": "splitOn"
+    },
+    {
+      "type": 0,
+      "value": "'."
     }
   ],
   "Ov7Ckz": [
@@ -4951,16 +4953,6 @@
       "value": "Hapus Tindakan Alur Kerja"
     }
   ],
-  "UF3KjL": [
-    {
-      "type": 0,
-      "value": "Coba gunakan fungsi Konversi seperti: "
-    },
-    {
-      "type": 1,
-      "value": "conversionFunctions"
-    }
-  ],
   "UHCVNK": [
     {
       "type": 0,
@@ -5005,12 +4997,6 @@
     {
       "type": 0,
       "value": "Harus diisi. Koleksi untuk mengambil objek terakhir."
-    }
-  ],
-  "UW+fkB": [
-    {
-      "type": 0,
-      "value": "Kirimi saya email juga saat"
     }
   ],
   "UYRIS/": [
@@ -5707,12 +5693,6 @@
     {
       "type": 0,
       "value": "Kata Sandi"
-    }
-  ],
-  "Y04+GH": [
-    {
-      "type": 0,
-      "value": "Tambahkan tindakan"
     }
   ],
   "Y0H9aX": [
@@ -6479,6 +6459,12 @@
       "value": "Pelajari selengkapnya"
     }
   ],
+  "dKCp2j": [
+    {
+      "type": 0,
+      "value": "Tell me more about"
+    }
+  ],
   "dL9V5t": [
     {
       "type": 0,
@@ -6637,6 +6623,12 @@
       "value": "Tentukan durasinya dalam format ISO 8601"
     }
   ],
+  "eI00kb": [
+    {
+      "type": 0,
+      "value": "Edit this flow to"
+    }
+  ],
   "eO1h/h": [
     {
       "type": 0,
@@ -6689,12 +6681,6 @@
     {
       "type": 0,
       "value": "Dibagikan"
-    }
-  ],
-  "eqAUdj": [
-    {
-      "type": 0,
-      "value": "Saat item baru"
     }
   ],
   "evyGYj": [
@@ -6877,12 +6863,6 @@
     {
       "type": 0,
       "value": "Format teks sebagai miring. Pintasan: Ctrl+I"
-    }
-  ],
-  "gKEaXI": [
-    {
-      "type": 0,
-      "value": "Salin nilai {label} ke clipboard"
     }
   ],
   "gKq3Jv": [
@@ -7292,6 +7272,12 @@
       "value": "Contoh: 0, 10"
     }
   ],
+  "iXW+2l": [
+    {
+      "type": 0,
+      "value": "Add an action"
+    }
+  ],
   "id4DBb": [
     {
       "type": 0,
@@ -7691,6 +7677,20 @@
       "value": "Identitas Terkelola"
     }
   ],
+  "lA/sHA": [
+    {
+      "type": 0,
+      "value": "Copy the value of '"
+    },
+    {
+      "type": 1,
+      "value": "label"
+    },
+    {
+      "type": 0,
+      "value": "' to the clipboard"
+    }
+  ],
   "lB56l2": [
     {
       "type": 0,
@@ -7757,12 +7757,6 @@
     {
       "type": 0,
       "value": "Mode eksekusi tanpaa status:"
-    }
-  ],
-  "lh0TuF": [
-    {
-      "type": 0,
-      "value": "Daftar menurun untuk memilih jalur file"
     }
   ],
   "lhL/KL": [
@@ -8147,6 +8141,12 @@
     {
       "type": 0,
       "value": "(UTC+10.00) Brisbane"
+    }
+  ],
+  "nwLd4b": [
+    {
+      "type": 0,
+      "value": "Dropdown to select filepath"
     }
   ],
   "nx25nq": [
@@ -8976,6 +8976,12 @@
       "value": "Wajib. String berisi nama zona waktu dari zona waktu tempat tujuan. Lihat https://msdn.microsoft.com/en-us/library/gg154758.aspx untuk rinciannya."
     }
   ],
+  "t/RPwA": [
+    {
+      "type": 0,
+      "value": "results found"
+    }
+  ],
   "t9RwOi": [
     {
       "type": 0,
@@ -9300,6 +9306,16 @@
     {
       "type": 0,
       "value": "Variabel"
+    }
+  ],
+  "ur3P27": [
+    {
+      "type": 0,
+      "value": "Try using a Conversion function such as: "
+    },
+    {
+      "type": 1,
+      "value": "conversionFunctions"
     }
   ],
   "urAHv1": [

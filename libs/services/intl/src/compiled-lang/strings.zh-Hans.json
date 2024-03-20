@@ -41,6 +41,12 @@
       "value": "触发器"
     }
   ],
+  "+KXX+O": [
+    {
+      "type": 0,
+      "value": "Select function from"
+    }
+  ],
   "+M72+a": [
     {
       "type": 0,
@@ -985,6 +991,12 @@
       "value": "重试策略"
     }
   ],
+  "4Levd5": [
+    {
+      "type": 0,
+      "value": "Send me an email when"
+    }
+  ],
   "4Q7WzU": [
     {
       "type": 0,
@@ -1219,6 +1231,12 @@
       "value": "保护操作的输入"
     }
   ],
+  "635Koz": [
+    {
+      "type": 0,
+      "value": "Every week on Monday"
+    }
+  ],
   "63CC7M": [
     {
       "type": 0,
@@ -1369,12 +1387,6 @@
     {
       "type": 0,
       "value": "当状态为“成功”时需要提供输出"
-    }
-  ],
-  "70eoQu": [
-    {
-      "type": 0,
-      "value": "选择函数来源"
     }
   ],
   "73iM9+": [
@@ -1613,12 +1625,6 @@
       "value": "描述应如何更改流。请添加尽可能详细的信息，包括要使用的连接器以及是否应包含任何内容。"
     }
   ],
-  "8Q7ns/": [
-    {
-      "type": 0,
-      "value": "将此流编辑到"
-    }
-  ],
   "8U0KPg": [
     {
       "type": 0,
@@ -1773,6 +1779,20 @@
     {
       "type": 0,
       "value": "还原流"
+    }
+  ],
+  "9QS9a3": [
+    {
+      "type": 0,
+      "value": "Replace \""
+    },
+    {
+      "type": 1,
+      "value": "selectedOperation"
+    },
+    {
+      "type": 0,
+      "value": "\" with"
     }
   ],
   "9SuA/E": [
@@ -2104,12 +2124,6 @@
     {
       "type": 0,
       "value": "以纯文本形式输入密码或使用安全参数"
-    }
-  ],
-  "BQyLiu": [
-    {
-      "type": 0,
-      "value": "找到的结果"
     }
   ],
   "BS3gy8": [
@@ -2779,12 +2793,6 @@
       "value": "返回数组的每一项都由分隔符联接的字符串"
     }
   ],
-  "G/CC5/": [
-    {
-      "type": 0,
-      "value": "{splitOn} 中的拆分对象格式无效。"
-    }
-  ],
   "G0XYrd": [
     {
       "type": 0,
@@ -3197,6 +3205,12 @@
       "value": "无属性"
     }
   ],
+  "IsbbsG": [
+    {
+      "type": 0,
+      "value": "When a new item"
+    }
+  ],
   "IxWip7": [
     {
       "type": 0,
@@ -3379,20 +3393,6 @@
     {
       "type": 0,
       "value": "更改连接引用"
-    }
-  ],
-  "KNDVnN": [
-    {
-      "type": 0,
-      "value": "将 \""
-    },
-    {
-      "type": 1,
-      "value": "selectedOperation"
-    },
-    {
-      "type": 0,
-      "value": "\" 替换为"
     }
   ],
   "KV4uky": [
@@ -3662,12 +3662,6 @@
     {
       "type": 0,
       "value": "代码视图"
-    }
-  ],
-  "M3kJsI": [
-    {
-      "type": 0,
-      "value": "每周的星期一"
     }
   ],
   "M4H0gh": [
@@ -4054,12 +4048,6 @@
       "value": "正在加载所有连接器..."
     }
   ],
-  "OQud51": [
-    {
-      "type": 0,
-      "value": "向我详细介绍"
-    }
-  ],
   "OSHNZ2": [
     {
       "type": 0,
@@ -4154,6 +4142,20 @@
     {
       "type": 0,
       "value": "选择托管标识"
+    }
+  ],
+  "OrPVcU": [
+    {
+      "type": 0,
+      "value": "Invalid split on format in '"
+    },
+    {
+      "type": 1,
+      "value": "splitOn"
+    },
+    {
+      "type": 0,
+      "value": "'."
     }
   ],
   "Ov7Ckz": [
@@ -4975,16 +4977,6 @@
       "value": "删除工作流操作"
     }
   ],
-  "UF3KjL": [
-    {
-      "type": 0,
-      "value": "尝试使用转换函数，例如: "
-    },
-    {
-      "type": 1,
-      "value": "conversionFunctions"
-    }
-  ],
   "UHCVNK": [
     {
       "type": 0,
@@ -5029,12 +5021,6 @@
     {
       "type": 0,
       "value": "必需。要从中获取最后一个对象的集合。"
-    }
-  ],
-  "UW+fkB": [
-    {
-      "type": 0,
-      "value": "在以下情况向我发送一封电子邮件"
     }
   ],
   "UYRIS/": [
@@ -5743,12 +5729,6 @@
     {
       "type": 0,
       "value": "密码"
-    }
-  ],
-  "Y04+GH": [
-    {
-      "type": 0,
-      "value": "添加操作"
     }
   ],
   "Y0H9aX": [
@@ -6515,6 +6495,12 @@
       "value": "了解详细信息"
     }
   ],
+  "dKCp2j": [
+    {
+      "type": 0,
+      "value": "Tell me more about"
+    }
+  ],
   "dL9V5t": [
     {
       "type": 0,
@@ -6673,6 +6659,12 @@
       "value": "指定持续时间(按 ISO 8601 格式)"
     }
   ],
+  "eI00kb": [
+    {
+      "type": 0,
+      "value": "Edit this flow to"
+    }
+  ],
   "eO1h/h": [
     {
       "type": 0,
@@ -6725,12 +6717,6 @@
     {
       "type": 0,
       "value": "共享"
-    }
-  ],
-  "eqAUdj": [
-    {
-      "type": 0,
-      "value": "当有新项时"
     }
   ],
   "evyGYj": [
@@ -6913,20 +6899,6 @@
     {
       "type": 0,
       "value": "将文本格式设置为斜体。快捷方式: Ctrl+I"
-    }
-  ],
-  "gKEaXI": [
-    {
-      "type": 0,
-      "value": "将 \""
-    },
-    {
-      "type": 1,
-      "value": "label"
-    },
-    {
-      "type": 0,
-      "value": "\" 的值复制到剪贴板"
     }
   ],
   "gKq3Jv": [
@@ -7336,6 +7308,12 @@
       "value": "示例: 0、10"
     }
   ],
+  "iXW+2l": [
+    {
+      "type": 0,
+      "value": "Add an action"
+    }
+  ],
   "id4DBb": [
     {
       "type": 0,
@@ -7743,6 +7721,20 @@
       "value": "托管标识"
     }
   ],
+  "lA/sHA": [
+    {
+      "type": 0,
+      "value": "Copy the value of '"
+    },
+    {
+      "type": 1,
+      "value": "label"
+    },
+    {
+      "type": 0,
+      "value": "' to the clipboard"
+    }
+  ],
   "lB56l2": [
     {
       "type": 0,
@@ -7809,12 +7801,6 @@
     {
       "type": 0,
       "value": "无状态运行模式:"
-    }
-  ],
-  "lh0TuF": [
-    {
-      "type": 0,
-      "value": "用于选择文件路径的下拉列表"
     }
   ],
   "lhL/KL": [
@@ -8199,6 +8185,12 @@
     {
       "type": 0,
       "value": "(UTC+10:00)布里斯班"
+    }
+  ],
+  "nwLd4b": [
+    {
+      "type": 0,
+      "value": "Dropdown to select filepath"
     }
   ],
   "nx25nq": [
@@ -9036,6 +9028,12 @@
       "value": "必需。一个字符串，它包含目标时区的时区名称。请访问 https://msdn.microsoft.com/en-us/library/gg154758.aspx 查看详细信息。"
     }
   ],
+  "t/RPwA": [
+    {
+      "type": 0,
+      "value": "results found"
+    }
+  ],
   "t9RwOi": [
     {
       "type": 0,
@@ -9356,6 +9354,16 @@
     {
       "type": 0,
       "value": "变量"
+    }
+  ],
+  "ur3P27": [
+    {
+      "type": 0,
+      "value": "Try using a Conversion function such as: "
+    },
+    {
+      "type": 1,
+      "value": "conversionFunctions"
     }
   ],
   "urAHv1": [

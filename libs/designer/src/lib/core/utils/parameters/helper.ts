@@ -244,6 +244,7 @@ export function addRecurrenceParametersInGroup(
         id: ParameterGroupKeys.RECURRENCE,
         description: intl.formatMessage({
           defaultMessage: 'How often do you want to check for items?',
+          id: 'e00zot',
           description: 'Recurrence parameter group title',
         }),
         parameters: recurrenceParameters,
@@ -1992,9 +1993,11 @@ async function loadDynamicContentForInputsInNode(
           );
         } catch (error: any) {
           const message = parseErrorMessage(error);
-          const errorMessage = getIntl().formatMessage(
+          const intl = getIntl();
+          const errorMessage = intl.formatMessage(
             {
               defaultMessage: `Failed to retrieve dynamic inputs. Error details: ''{message}''`,
+              id: 'sytRna',
               description: 'Error message to show when loading dynamic inputs failed',
             },
             { message }
@@ -2184,9 +2187,11 @@ async function tryGetInputDynamicSchema(
     }
 
     const message = parseErrorMessage(error);
-    const errorMessage = getIntl().formatMessage(
+    const intl = getIntl();
+    const errorMessage = intl.formatMessage(
       {
         defaultMessage: `Failed to retrieve dynamic inputs. Error details: ''{message}''`,
+        id: 'sytRna',
         description: 'Error message to show when loading dynamic inputs failed',
       },
       { message }
@@ -2232,6 +2237,7 @@ function showErrorWhenDependenciesNotReady(
                 message: intl.formatMessage(
                   {
                     defaultMessage: 'Required parameters {parameters} not set or invalid',
+                    id: '3Y8a6G',
                     description: 'Error message to show when required parameters are not set or invalid',
                   },
                   { parameters: `${invalidParameterNames.join(' , ')}` }
@@ -2383,9 +2389,11 @@ export const recurseSerializeCondition = (
     );
     if (errors && errors.length === 0 && (operand1String || operand2String)) {
       if (!operand1String) {
+        const intl = getIntl();
         errors.push(
-          getIntl().formatMessage({
+          intl.formatMessage({
             defaultMessage: 'Enter a valid condition statement.',
+            id: 'WToL/O',
             description: 'Error validation message for invalid condition statement',
           })
         );
