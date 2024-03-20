@@ -1,0 +1,34 @@
+id: logic-apps-shared
+language: typescript
+platform: node
+tags: []
+tasks:
+  build:
+    command: rollup
+    args:
+    - --config 
+    - ./rollup.config.ts
+    - --configPlugin
+    - "@rollup/plugin-typescript"
+  lint:
+    command: linter eslint
+    # args:
+    # - --lintFilePatterns
+    # - '["libs/logic-apps-shared/**/*.ts"]'
+    outputs:
+    - '{options.outputFile}'
+  test:
+    command: jest
+    args:
+    - --jestConfig
+    - $workspaceRoot/libs/logic-apps-shared/jest.config.ts
+    - --passWithNoTests
+    outputs:
+    - /coverage/libs/logic-apps-shared
+  yalcpush:
+    command: npm run yalcpush
+    deps:
+    - ~:build
+    outputs:
+    - '{options.outputPath}'
+type: library

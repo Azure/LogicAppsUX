@@ -1,0 +1,32 @@
+dependsOn:
+- designer-standalone
+id: designer-e2e
+language: typescript
+platform: node
+tags: []
+tasks:
+  e2e:
+    command: nx-playwright run-tests
+    args:
+    - --devServerTarget
+    - designer-standalone:serve:citest
+    - --packageRunner
+    - npx
+    - --e2eFolder
+    - $workspaceRoot/apps/designer-e2e
+  e2e.production:
+    extends: e2e
+    args:
+    - --devServerTarget
+    - designer-standalone:serve:citest
+  lint:
+    command: linter eslint
+    args:
+    - --lintFilePatterns
+    - '["apps/designer-e2e/**/*.{ts,tsx,js,jsx}"]'
+    outputs:
+    - '{options.outputFile}'
+  ts-check:
+    command: '{"command":"tsc --build --force --verbose apps/designer-standalone-e2e/tsconfig.json"}'
+    platform: system
+

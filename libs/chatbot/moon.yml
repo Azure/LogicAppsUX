@@ -1,0 +1,50 @@
+id: chatbot
+language: typescript
+platform: node
+tasks:
+  build:
+    command: rollup
+    args:
+    - --buildableProjectDepsInPackageJsonType
+    - dependencies
+    - --project
+    - $workspaceRoot/libs/chatbot/package.json
+    - --external
+    - '["react/jsx-runtime"]'
+    - --outputPath
+    - $workspaceRoot/dist/libs/chatbot
+    - --rollupConfig
+    - $workspaceRoot/@nrwl/react/plugins/bundle-rollup
+    - --extractCss
+    - --format
+    - '["cjs","esm"]'
+    - --assets
+    - '[{"glob":"libs/chatbot/README.md","input":".","output":"."}]'
+    - --entryFile
+    - $workspaceRoot/libs/chatbot/src/index.ts
+    - --tsConfig
+    - $workspaceRoot/libs/chatbot/tsconfig.lib.json
+    outputs:
+    - '{options.outputPath}'
+  lint:
+    command: linter eslint
+    args:
+    - --lintFilePatterns
+    - '["libs/chatbot/**/*.{ts,tsx,js,jsx}"]'
+    outputs:
+    - '{options.outputFile}'
+  test:
+    command: jest
+    args:
+    - --jestConfig
+    - $workspaceRoot/libs/chatbot/jest.config.ts
+    - --passWithNoTests
+    outputs:
+    - /coverage/libs/chatbot
+  yalcpush:
+    command: npm run yalcpush
+    deps:
+    - ~:build
+    outputs:
+    - '{options.outputPath}'
+type: library

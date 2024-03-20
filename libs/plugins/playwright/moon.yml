@@ -1,0 +1,26 @@
+id: plugins-playwright
+language: typescript
+platform: node
+tags: []
+tasks:
+  build:
+    command: js tsc
+    args:
+    - --outputPath
+    - $workspaceRoot/dist/libs/plugins/playwright
+    - --tsConfig
+    - $workspaceRoot/libs/plugins/playwright/tsconfig.lib.json
+    - --main
+    - $workspaceRoot/libs/plugins/playwright/src/index.ts
+    - --assets
+    - '["libs/plugins/playwright/*.md",{"glob":"**/!(*.ts)","input":"./libs/plugins/playwright/src","output":"./src"},{"glob":"**/*.d.ts","input":"./libs/plugins/playwright/src","output":"./src"},{"glob":"generators.json","input":"./libs/plugins/playwright","output":"."},{"glob":"executors.json","input":"./libs/plugins/playwright","output":"."}]'
+    outputs:
+    - '{options.outputPath}'
+  lint:
+    command: linter eslint
+    args:
+    - --lintFilePatterns
+    - '["libs/plugins/playwright/**/*.ts","libs/plugins/playwright/generators.json","libs/plugins/playwright/executors.json","libs/plugins/playwright/package.json"]'
+    outputs:
+    - '{options.outputFile}'
+type: library

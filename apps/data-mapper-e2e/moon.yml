@@ -1,0 +1,32 @@
+dependsOn:
+- data-mapper-standalone
+id: data-mapper-e2e
+language: typescript
+platform: node
+tags: []
+tasks:
+  e2e:
+    command: nx-playwright run-tests
+    args:
+    - --devServerTarget
+    - data-mapper-standalone:serve:citest
+    - --packageRunner
+    - npx
+    - --e2eFolder
+    - $workspaceRoot/apps/data-mapper-e2e
+  e2e.production:
+    extends: e2e
+    args:
+    - --devServerTarget
+    - data-mapper-standalone:serve:citest
+  lint:
+    command: linter eslint
+    args:
+    - --lintFilePatterns
+    - '["apps/data-mapper-e2e/**/*.{ts,tsx,js,jsx}"]'
+    outputs:
+    - '{options.outputFile}'
+  ts-check:
+    command: '{"command":"tsc --build --force --verbose apps/data-mapper-standalone-e2e/tsconfig.json"}'
+    platform: system
+type: application

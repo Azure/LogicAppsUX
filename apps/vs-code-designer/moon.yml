@@ -1,0 +1,55 @@
+dependsOn:
+- vs-code-react
+id: vs-code-designer
+language: typescript
+platform: node
+tags: []
+tasks:
+  build:
+    command: webpack
+    args:
+    - --compiler
+    - tsc
+    - --externalDependencies
+    - '["vscode","commonjs"]'
+    - --target
+    - node
+    - --outputPath
+    - $workspaceRoot/dist/apps/vs-code-designer
+    - --tsConfig
+    - $workspaceRoot/apps/vs-code-designer/tsconfig.app.json
+    - --main
+    - $workspaceRoot/apps/vs-code-designer/src/main.ts
+    - --assets
+    - '["apps/vs-code-designer/src/assets","apps/vs-code-designer/src/package.json","apps/vs-code-designer/src/LICENSE.md","apps/vs-code-designer/src/README.md",{"glob":"**/*.svg","input":"node_modules/@microsoft/vscode-azext-azureutils/resources","output":"node_modules/@microsoft/vscode-azext-azureutils/resources"}]'
+    outputs:
+    - '{options.outputPath}'
+  build.production:
+    extends: build
+    args:
+    - --no-inspect
+    - --optimization
+    - --extractLicenses
+    - --fileReplacements
+    - '[{"replace":"apps/vs-code-designer/src/environments/environment.ts","with":"apps/vs-code-designer/src/environments/environment.prod.ts"}]'
+  lint:
+    command: linter eslint
+    args:
+    - --lintFilePatterns
+    - '["apps/vs-code-designer/**/*.ts"]'
+    outputs:
+    - '{options.outputFile}'
+  serve:
+    command: node
+    args:
+    - --buildTarget
+    - vs-code-designer:build
+  test:
+    command: jest
+    args:
+    - --jestConfig
+    - $workspaceRoot/apps/vs-code-designer/jest.config.ts
+    - --passWithNoTests
+    outputs:
+    - /coverage/apps/vs-code-designer
+type: application

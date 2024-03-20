@@ -1,0 +1,55 @@
+id: data-mapper
+language: typescript
+platform: node
+tasks:
+  build:
+    command: rollup
+    args:
+    - --buildableProjectDepsInPackageJsonType
+    - dependencies
+    - --project
+    - $workspaceRoot/libs/data-mapper/package.json
+    - --external
+    - '["react/jsx-runtime"]'
+    - --outputPath
+    - $workspaceRoot/dist/libs/data-mapper
+    - --rollupConfig
+    - $workspaceRoot/@nrwl/react/plugins/bundle-rollup
+    - --extractCss
+    - --format
+    - '["cjs","esm"]'
+    - --assets
+    - '[{"glob":"libs/data-mapper/README.md","input":".","output":"."}]'
+    - --entryFile
+    - $workspaceRoot/libs/data-mapper/src/index.ts
+    - --tsConfig
+    - $workspaceRoot/libs/data-mapper/tsconfig.lib.json
+    outputs:
+    - '{options.outputPath}'
+  build.vscode:
+    extends: build
+    args:
+    - --outputPath
+    - $workspaceRoot/dist/apps/vs-code-designer/vs-code-data-mapper/data-mapper
+  lint:
+    command: linter eslint
+    args:
+    - --lintFilePatterns
+    - '["libs/data-mapper/**/*.{ts,tsx,js,jsx}"]'
+    outputs:
+    - '{options.outputFile}'
+  test:
+    command: jest
+    args:
+    - --jestConfig
+    - $workspaceRoot/libs/data-mapper/jest.config.ts
+    - --passWithNoTests
+    outputs:
+    - /coverage/libs/data-mapper
+  yalcpush:
+    command: npm run yalcpush
+    deps:
+    - ~:build
+    outputs:
+    - '{options.outputPath}'
+type: library

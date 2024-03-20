@@ -1,0 +1,82 @@
+id: designer-standalone
+language: typescript
+platform: node
+tasks:
+  build:
+    command: webpack
+    args:
+    - --config
+    - ./webpack.config.js
+  build.development:
+    extends: build
+    args:
+    - --sourceMap
+    - --vendorChunk
+    - --no-optimization
+    - --no-extractLicenses
+  build.production:
+    extends: build
+    args:
+    - --no-sourceMap
+    - --extractCss
+    - --extractLicenses
+    - --no-namedChunks
+    - --fileReplacements
+    - '[{"replace":"apps/designer-standalone/src/environments/environment.ts","with":"apps/designer-standalone/src/environments/environment.prod.ts"}]'
+    - --outputHashing
+    - all
+    - --no-vendorChunk
+    - --optimization
+  lint:
+    command: linter eslint
+    args:
+    - --lintFilePatterns
+    - '["apps/designer-standalone/**/*.{ts,tsx,js,jsx}"]'
+    outputs:
+    - '{options.outputFile}'
+  serve:
+    command: webpack dev-server
+    args:
+    - --buildTarget
+    - designer-standalone:build
+    - --ssl
+    - --sslKey
+    - $workspaceRoot/local-key.pem
+    - --host
+    - localhost
+    - --hmr
+    - --sslCert
+    - $workspaceRoot/local-cert.pem
+  serve.citest:
+    extends: serve
+    args:
+    - --buildTarget
+    - designer-standalone:build:development
+    - --ssl
+    - --sslKey
+    - $workspaceRoot/ci-key.pem
+    - --host
+    - localhost
+    - --no-hmr
+    - --sslCert
+    - $workspaceRoot/ci-cert.pem
+  serve.development:
+    extends: serve
+    args:
+    - --buildTarget
+    - designer-standalone:build:development
+  serve.production:
+    extends: serve
+    args:
+    - --buildTarget
+    - designer-standalone:build:production
+    - --no-hmr
+  test:
+    command: jest
+    args:
+    - --jestConfig
+    - $workspaceRoot/apps/designer-standalone/jest.config.ts
+    - --passWithNoTests
+    outputs:
+    - /coverage/apps/designer-standalone
+type: application

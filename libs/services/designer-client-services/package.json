@@ -13,10 +13,10 @@
     "@rollup/plugin-babel": "6.0.4"
   },
   "dependencies": {
-    "@microsoft/logic-apps-shared": "2.121.0",
-    "react-query": "3.39.3",
+    "@microsoft/logic-apps-shared": "file:../../logic-apps-shared",
     "axios": "1.6.0",
-    "react-intl": "6.3.0"
+    "react-intl": "6.3.0",
+    "react-query": "3.39.3"
   },
   "scripts": {
     "yalcpush": "yalc push ../../../dist/libs/services/designer-client-services"
