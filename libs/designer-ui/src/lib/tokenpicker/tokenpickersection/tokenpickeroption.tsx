@@ -196,29 +196,31 @@ export const TokenPickerOptions = ({
               </button>
             )}
           </div>
-          <div className="msla-token-picker-section-options">
+          <ul className="msla-token-picker-section-options" aria-label={section.label}>
             {getReducedTokenList(!searchQuery ? section.tokens : filteredTokens, {
               hasSearchQuery: !!searchQuery,
               maxRowsShown,
               showAllOptions: !moreOptions,
             }).map((token, j) => (
-              <button
-                className="msla-token-picker-section-option"
-                data-automation-id={`msla-token-picker-section-option-${j}`}
-                key={`token-picker-option-${j}`}
-                onClick={() => handleTokenClicked(token)}
-              >
-                <div className="msla-token-picker-section-option-text">
-                  <div className="msla-token-picker-option-inner">
-                    <div className="msla-token-picker-option-title">{token.title}</div>
-                    <div className="msla-token-picker-option-description" title={token.description}>
-                      {token.description}
+              <li key={`token-picker-option-li-${j}`}>
+                <button
+                  className="msla-token-picker-section-option"
+                  data-automation-id={`msla-token-picker-section-option-${j}`}
+                  key={`token-picker-option-${j}`}
+                  onClick={() => handleTokenClicked(token)}
+                >
+                  <div className="msla-token-picker-section-option-text">
+                    <div className="msla-token-picker-option-inner">
+                      <div className="msla-token-picker-option-title">{token.title}</div>
+                      <div className="msla-token-picker-option-description" title={token.description}>
+                        {token.description}
+                      </div>
                     </div>
                   </div>
-                </div>
-              </button>
+                </button>
+              </li>
             ))}
-          </div>
+          </ul>
         </>
       ) : null}
     </>
