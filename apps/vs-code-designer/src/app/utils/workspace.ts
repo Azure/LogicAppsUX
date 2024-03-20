@@ -16,6 +16,21 @@ import * as path from 'path';
 import * as vscode from 'vscode';
 
 /**
+ * Checks if the current workspace has a Logic App project.
+ * @param {IActionContext} actionContext - The action context.
+ * @returns A promise that resolves to a boolean indicating whether a Logic App project exists in the workspace.
+ */
+export const hasLogicAppProject = async (actionContext: IActionContext): Promise<boolean> => {
+  for (const folder of vscode.workspace.workspaceFolders) {
+    const projectRoot = await tryGetLogicAppProjectRoot(actionContext, folder);
+    if (projectRoot) {
+      return true;
+    }
+  }
+  return false;
+};
+
+/**
  * Gets workspace folder from the workflow file path.
  * @param {string} fsPath - Workflow file path.
  * @returns {vscode.WorkspaceFolder | undefined} Workflow folder.
