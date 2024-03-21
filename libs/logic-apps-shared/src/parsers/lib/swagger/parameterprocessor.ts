@@ -298,7 +298,7 @@ export class ParametersProcessor {
         editorOptions: parameter[Constants.ExtensionProperties.EditorOptions],
         recommended: undefined,
         summary: intl.formatMessage(
-          { defaultMessage: '{fileName} (file name)', description: 'Title for file name parameter' },
+          { defaultMessage: '{fileName} (file name)', id: 'UYRIS/', description: 'Title for file name parameter' },
           { fileName: parameter[Constants.ExtensionProperties.Summary] }
         ),
         visibility: undefined,

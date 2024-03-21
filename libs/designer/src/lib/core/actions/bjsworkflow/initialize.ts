@@ -54,7 +54,6 @@ import {
   equals,
   getBrandColorFromConnector,
   getIconUriFromConnector,
-  getIntl,
   getObjectPropertyValue,
   isDynamicListExtension,
   isDynamicPropertiesExtension,
@@ -436,10 +435,6 @@ export const updateCallbackUrlInInputs = async (
       const parameter = getParameterFromName(nodeInputs, 'callbackUrl');
 
       if (parameter && callbackInfo) {
-        parameter.label = getIntl().formatMessage(
-          { defaultMessage: 'HTTP {method} URL', description: 'Callback url method' },
-          { method: callbackInfo.method }
-        );
         parameter.value = [createLiteralValueSegment(callbackInfo.value)];
 
         return parameter;

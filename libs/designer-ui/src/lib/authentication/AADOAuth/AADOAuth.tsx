@@ -76,6 +76,7 @@ export const ActiveDirectoryAuthentication = ({
 
   const oAuthTypeLabel = intl.formatMessage({
     defaultMessage: 'Credential Type',
+    id: 'CsPY74',
     description: 'Authentication OAuth Type Label',
   });
 
@@ -92,11 +93,13 @@ export const ActiveDirectoryAuthentication = ({
 
   const oAuthTypeSecretLabel = intl.formatMessage({
     defaultMessage: 'Secret',
+    id: 'rDDPpJ',
     description: 'Authentication OAuth Secret Type Label',
   });
 
   const oAuthTypeCertificateLabel = intl.formatMessage({
     defaultMessage: 'Certificate',
+    id: 'VlvlX1',
     description: 'Authentication OAuth Certificate Type Label',
   });
 

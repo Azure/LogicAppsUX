@@ -58,18 +58,22 @@ export function TokenPickerFooter({
 
   const tokenPickerAdd = intl.formatMessage({
     defaultMessage: 'Add',
+    id: '9atGYe',
     description: 'Insert Expression',
   });
   const tokenPickerUpdate = intl.formatMessage({
     defaultMessage: 'Update',
+    id: 'dOpdsP',
     description: 'Update Expression',
   });
   const invalidExpression = intl.formatMessage({
     defaultMessage: 'The expression is invalid.',
+    id: 't9RwOi',
     description: 'Invalid expression alert',
   });
   const invalidExpressionQuotations = intl.formatMessage({
     defaultMessage: 'The expression is invalid. Make sure to use single quotes.',
+    id: 'H9CZTr',
     description: 'Invalid expression due to misused double quotes',
   });
 

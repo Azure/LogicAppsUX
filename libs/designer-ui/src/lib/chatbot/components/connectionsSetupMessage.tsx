@@ -41,10 +41,12 @@ const ConnectionsSetup: React.FC<ConnectionsSetupProps> = ({ item }) => {
   const intlText = {
     skipText: intl.formatMessage({
       defaultMessage: 'Skip',
+      id: 'dUbKuK',
       description: 'Chatbot conenction setup skip button text',
     }),
     connectionsSetupCardDescription: intl.formatMessage({
       defaultMessage: 'Set up these connections to use them in your flow.',
+      id: 'EqX3Mi',
       description: 'Chatbot connections set up description text',
     }),
   };

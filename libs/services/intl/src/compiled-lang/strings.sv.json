@@ -41,6 +41,12 @@
       "value": "Utlösare"
     }
   ],
+  "+KXX+O": [
+    {
+      "type": 0,
+      "value": "Välj funktion från"
+    }
+  ],
   "+M72+a": [
     {
       "type": 0,
@@ -981,6 +987,12 @@
       "value": "Återförsöksprincip"
     }
   ],
+  "4Levd5": [
+    {
+      "type": 0,
+      "value": "Skicka mig ett e-postmeddelande när"
+    }
+  ],
   "4Q7WzU": [
     {
       "type": 0,
@@ -1215,6 +1227,12 @@
       "value": "Säkra indata för åtgärden"
     }
   ],
+  "635Koz": [
+    {
+      "type": 0,
+      "value": "Varje vecka på måndag"
+    }
+  ],
   "63CC7M": [
     {
       "type": 0,
@@ -1365,12 +1383,6 @@
     {
       "type": 0,
       "value": "Utdata krävs när statusen är Slutfört"
-    }
-  ],
-  "70eoQu": [
-    {
-      "type": 0,
-      "value": "Välj funktion från"
     }
   ],
   "73iM9+": [
@@ -1609,12 +1621,6 @@
       "value": "Beskriv hur ditt flöde ska ändras. Lägg till information där det är möjligt, även information om vilken anslutningsapp som ska användas och om något innehåll ska tas med."
     }
   ],
-  "8Q7ns/": [
-    {
-      "type": 0,
-      "value": "Redigera det här flödet till"
-    }
-  ],
   "8U0KPg": [
     {
       "type": 0,
@@ -1769,6 +1775,20 @@
     {
       "type": 0,
       "value": "Återställ ditt flöde"
+    }
+  ],
+  "9QS9a3": [
+    {
+      "type": 0,
+      "value": "Ersätt "
+    },
+    {
+      "type": 1,
+      "value": "selectedOperation"
+    },
+    {
+      "type": 0,
+      "value": " med"
     }
   ],
   "9SuA/E": [
@@ -2103,12 +2123,6 @@
     {
       "type": 0,
       "value": "Ange lösenordet som oformaterad text eller använd en säker parameter"
-    }
-  ],
-  "BQyLiu": [
-    {
-      "type": 0,
-      "value": "resultat hittades"
     }
   ],
   "BS3gy8": [
@@ -2781,20 +2795,6 @@
       "value": "Returnerar en sträng med varje objekt i en matris som har kopplats med en avgränsare"
     }
   ],
-  "G/CC5/": [
-    {
-      "type": 0,
-      "value": "Ogiltigt delningsformat i "
-    },
-    {
-      "type": 1,
-      "value": "splitOn"
-    },
-    {
-      "type": 0,
-      "value": "."
-    }
-  ],
   "G0XYrd": [
     {
       "type": 0,
@@ -3207,6 +3207,12 @@
       "value": "Inga egenskaper"
     }
   ],
+  "IsbbsG": [
+    {
+      "type": 0,
+      "value": "När ett nytt objekt"
+    }
+  ],
   "IxWip7": [
     {
       "type": 0,
@@ -3389,20 +3395,6 @@
     {
       "type": 0,
       "value": "Ändra anslutningsreferens"
-    }
-  ],
-  "KNDVnN": [
-    {
-      "type": 0,
-      "value": "Ersätt "
-    },
-    {
-      "type": 1,
-      "value": "selectedOperation"
-    },
-    {
-      "type": 0,
-      "value": " med"
     }
   ],
   "KV4uky": [
@@ -3683,12 +3675,6 @@
     {
       "type": 0,
       "value": "Kodvy"
-    }
-  ],
-  "M3kJsI": [
-    {
-      "type": 0,
-      "value": "Varje vecka på måndag"
     }
   ],
   "M4H0gh": [
@@ -4075,12 +4061,6 @@
       "value": "Läser in alla kopplingar..."
     }
   ],
-  "OQud51": [
-    {
-      "type": 0,
-      "value": "Berätta mer om"
-    }
-  ],
   "OSHNZ2": [
     {
       "type": 0,
@@ -4175,6 +4155,20 @@
     {
       "type": 0,
       "value": "Välj en hanterad identitet"
+    }
+  ],
+  "OrPVcU": [
+    {
+      "type": 0,
+      "value": "Invalid split on format in '"
+    },
+    {
+      "type": 1,
+      "value": "splitOn"
+    },
+    {
+      "type": 0,
+      "value": "'."
     }
   ],
   "Ov7Ckz": [
@@ -4991,16 +4985,6 @@
       "value": "Ta bort arbetsflödesåtgärd"
     }
   ],
-  "UF3KjL": [
-    {
-      "type": 0,
-      "value": "Prova att använda en konverteringsfunktion som: "
-    },
-    {
-      "type": 1,
-      "value": "conversionFunctions"
-    }
-  ],
   "UHCVNK": [
     {
       "type": 0,
@@ -5045,12 +5029,6 @@
     {
       "type": 0,
       "value": "Obligatoriskt. Den samling som det sista objektet ska hämtas från."
-    }
-  ],
-  "UW+fkB": [
-    {
-      "type": 0,
-      "value": "Skicka mig ett e-postmeddelande när"
     }
   ],
   "UYRIS/": [
@@ -5743,12 +5721,6 @@
     {
       "type": 0,
       "value": "Lösenord"
-    }
-  ],
-  "Y04+GH": [
-    {
-      "type": 0,
-      "value": "Lägga till en åtgärd"
     }
   ],
   "Y0H9aX": [
@@ -6515,6 +6487,12 @@
       "value": "Läs mer"
     }
   ],
+  "dKCp2j": [
+    {
+      "type": 0,
+      "value": "Berätta mer om"
+    }
+  ],
   "dL9V5t": [
     {
       "type": 0,
@@ -6673,6 +6651,12 @@
       "value": "Ange varaktigheten i ISO 8601-format"
     }
   ],
+  "eI00kb": [
+    {
+      "type": 0,
+      "value": "Redigera det här flödet till"
+    }
+  ],
   "eO1h/h": [
     {
       "type": 0,
@@ -6725,12 +6709,6 @@
     {
       "type": 0,
       "value": "Delat"
-    }
-  ],
-  "eqAUdj": [
-    {
-      "type": 0,
-      "value": "När ett nytt objekt"
     }
   ],
   "evyGYj": [
@@ -6797,16 +6775,6 @@
     {
       "type": 0,
       "value": "Läser in anslutningsdata..."
-    }
-  ],
-  "fc1AV8": [
-    {
-      "type": 0,
-      "value": "Webbadress för HTTP "
-    },
-    {
-      "type": 1,
-      "value": "method"
     }
   ],
   "fg/34o": [
@@ -6909,20 +6877,6 @@
     {
       "type": 0,
       "value": "Formatera text som kursiv. Genväg: Ctrl+I"
-    }
-  ],
-  "gKEaXI": [
-    {
-      "type": 0,
-      "value": "Kopiera värdet för "
-    },
-    {
-      "type": 1,
-      "value": "label"
-    },
-    {
-      "type": 0,
-      "value": " till Urklipp"
     }
   ],
   "gKq3Jv": [
@@ -7343,6 +7297,12 @@
       "value": "Exempel: 0, 10"
     }
   ],
+  "iXW+2l": [
+    {
+      "type": 0,
+      "value": "Lägga till en åtgärd"
+    }
+  ],
   "id4DBb": [
     {
       "type": 0,
@@ -7753,6 +7713,20 @@
       "value": "Hanterad identitet"
     }
   ],
+  "lA/sHA": [
+    {
+      "type": 0,
+      "value": "Copy the value of '"
+    },
+    {
+      "type": 1,
+      "value": "label"
+    },
+    {
+      "type": 0,
+      "value": "' to the clipboard"
+    }
+  ],
   "lB56l2": [
     {
       "type": 0,
@@ -7819,12 +7793,6 @@
     {
       "type": 0,
       "value": "Tillståndslöst körningsläge:"
-    }
-  ],
-  "lh0TuF": [
-    {
-      "type": 0,
-      "value": "Listruta för att välja filsökväg"
     }
   ],
   "lhL/KL": [
@@ -8209,6 +8177,12 @@
     {
       "type": 0,
       "value": "(UTC+10:00) Brisbane"
+    }
+  ],
+  "nwLd4b": [
+    {
+      "type": 0,
+      "value": "Listruta för att välja filsökväg"
     }
   ],
   "nx25nq": [
@@ -9041,6 +9015,12 @@
       "value": "Krävs. En sträng som innehåller tidszonnamnet för måltidszonen. Se https://msdn.microsoft.com/sv-se/library/gg154758.aspx för Information."
     }
   ],
+  "t/RPwA": [
+    {
+      "type": 0,
+      "value": "resultat hittades"
+    }
+  ],
   "t9RwOi": [
     {
       "type": 0,
@@ -9365,6 +9345,16 @@
     {
       "type": 0,
       "value": "Variabler"
+    }
+  ],
+  "ur3P27": [
+    {
+      "type": 0,
+      "value": "Prova att använda en konverteringsfunktion som: "
+    },
+    {
+      "type": 1,
+      "value": "conversionFunctions"
     }
   ],
   "urAHv1": [

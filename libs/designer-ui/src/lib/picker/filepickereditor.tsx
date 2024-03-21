@@ -116,7 +116,7 @@ export const FilePickerEditor = ({
     setPickerDisplayValue([]);
   };
 
-  const openFolderLabel = intl.formatMessage({ defaultMessage: 'Open folder', description: 'Open folder label' });
+  const openFolderLabel = intl.formatMessage({ defaultMessage: 'Open folder', id: 's+4LEa', description: 'Open folder label' });
   return (
     <div className="msla-filepicker-editor-container">
       <EditorWrapper

@@ -40,7 +40,11 @@ export const TextInput = ({
     if (isInteger && isNaN(newValue as any)) {
       setValue(value ?? '');
       setErrorMessage(
-        intl.formatMessage({ defaultMessage: 'Invalid integer value', description: 'Error message for invalid integer value' })
+        intl.formatMessage({
+          defaultMessage: 'Invalid integer value',
+          id: 'oR2x4N',
+          description: 'Error message for invalid integer value',
+        })
       );
     } else {
       setValue(newValue ?? '');
@@ -93,16 +97,19 @@ export const MinuteTextInput = ({
     if (input.includes(NaN)) {
       return intl.formatMessage({
         defaultMessage: 'This contains an invalid value',
+        id: 'i4Om5O',
         description: 'Error message for invalid integer array',
       });
     } else if (input.some((value, index) => input.indexOf(value) !== index)) {
       return intl.formatMessage({
         defaultMessage: 'This contains a duplicate value',
+        id: 'vxOc/M',
         description: 'Error message for duplicate integer array',
       });
     } else if (input.some((value) => value < 0 || value > 59)) {
       return intl.formatMessage({
         defaultMessage: 'This contains a value that is not between 0 and 59',
+        id: 'GEB1on',
         description: 'Error message for invalid minute array',
       });
     }

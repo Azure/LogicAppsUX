@@ -38,25 +38,30 @@ export function TokenPickerHeader({ fullScreen, isExpression, setFullScreen, pas
 
   const closeMessage = intl.formatMessage({
     defaultMessage: 'Close',
+    id: 'Zg3IjD',
     description: 'Close token picker',
   });
 
   const infoMessage = intl.formatMessage({
     defaultMessage: 'Info',
+    id: 'gRUmiA',
     description: 'Info about token picker',
   });
 
   const fullScreenMessage = intl.formatMessage({
     defaultMessage: 'Full Screen',
+    id: 'ae7W0a',
     description: 'Full Screen token picker',
   });
   const fullScreenExitMessage = intl.formatMessage({
     defaultMessage: 'Exit full screen',
+    id: 'HMiE+4',
     description: "Token picker for 'Exit full screen'",
   });
 
   const pasteLastUsedExpressionMessage = intl.formatMessage({
     defaultMessage: 'Paste last used expression',
+    id: '+ijo/2',
     description: "Token picker for 'Paste last used expression'",
   });
 

@@ -30,20 +30,24 @@ export const MSIAuthenticationDefault = ({
 
   const authNotEnabledError = intl.formatMessage({
     defaultMessage: 'Please enable managed identity for the logic app.',
+    id: '8ND+Yc',
     description: 'Error Message for disabled managed identity',
   });
 
   const systemAssignedManagedIdentity = intl.formatMessage({
     defaultMessage: 'System-assigned managed identity',
+    id: '36RiST',
     description: 'System-assigned managed identity dropdown option text',
   });
 
   const MSIAuthLabel = intl.formatMessage({
     defaultMessage: 'Managed identity',
+    id: '2TMGk7',
     description: 'Managed Identity Label',
   });
   const MSIAuthPlaceholder = intl.formatMessage({
     defaultMessage: 'Please select an identity',
+    id: 'cgq/+y',
     description: 'Placehodler text for dropdown',
   });
 

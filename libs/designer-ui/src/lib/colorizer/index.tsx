@@ -31,7 +31,8 @@ export const Colorizer: React.FC<ColorizerProps> = ({ ariaLabel, code, language 
   const intl = useIntl();
   const copyAria = intl.formatMessage(
     {
-      defaultMessage: "Copy the value of ''{label}'' to the clipboard",
+      defaultMessage: `Copy the value of ''{label}'' to the clipboard`,
+      id: 'lA/sHA',
       description: 'Accessibility label for a button to copy all text in a value box',
     },
     {
@@ -41,6 +42,7 @@ export const Colorizer: React.FC<ColorizerProps> = ({ ariaLabel, code, language 
   const selectAria = intl.formatMessage(
     {
       defaultMessage: 'Select all text in {label}',
+      id: 'WK6hZX',
       description: 'Accessibility label for a button to select all text in a value box',
     },
     {

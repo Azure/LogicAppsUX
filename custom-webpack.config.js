@@ -1,6 +1,7 @@
 const ReactConfig = require('@nrwl/react/plugins/webpack');
 const { merge } = require('webpack-merge');
 const webpack = require('webpack');
+const MonacoWebpackPlugin = require('monaco-editor-webpack-plugin');
 module.exports = (config, context) => {
   const webpackConfig = ReactConfig(config, context);
   webpackConfig.resolve.alias['https'] = false;
@@ -10,6 +11,8 @@ module.exports = (config, context) => {
       aliasFields: ['browser', 'browser.esm'],
     },
     plugins: [
+      new MonacoWebpackPlugin(),
+
       new webpack.ProvidePlugin({
         // Make a global `process` variable that points to the `process` package,
         // because the `util` package expects there to be a global variable named `process`.
