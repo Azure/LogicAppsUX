@@ -451,7 +451,6 @@ function getParametersForDynamicInvoke(
   // Get app settings from query client
   const queryClient = getReactQueryClient();
   const appSettings = queryClient.getQueryData(['appSettings']);
-  console.log('### appsettings', appSettings);
 
   for (const [parameterName, parameter] of Object.entries(referenceParameters ?? {})) {
     const referenceParameterName = (parameter?.parameterReference ?? parameter?.parameter ?? 'undefined') as string;
