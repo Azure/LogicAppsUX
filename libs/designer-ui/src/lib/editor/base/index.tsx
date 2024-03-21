@@ -41,7 +41,6 @@ export type GetTokenPickerHandler = (
   labelId: string,
   tokenPickerMode?: TokenPickerMode,
   valueType?: string,
-  setInTokenpicker?: (b: boolean) => void,
   tokenClickedCallback?: (token: ValueSegment) => void
 ) => JSX.Element;
 
@@ -216,7 +215,7 @@ export const BaseEditor = ({
         {htmlEditor === 'rich-html' ? null : <ArrowNavigation />}
         {tokens ? (
           <>
-            <InsertTokenNode closeTokenPicker={() => setIsTokenPickerOpened(false)} />
+            <InsertTokenNode />
             <DeleteTokenNode />
             <OpenTokenPicker openTokenPicker={openTokenPicker} />
             <CloseTokenPicker closeTokenPicker={() => setIsTokenPickerOpened(false)} />
@@ -232,7 +231,7 @@ export const BaseEditor = ({
           <FloatingLinkEditorPlugin anchorElem={floatingAnchorElem} isMainEditorFocused={isEditorFocused} />
         ) : null}
         {children}
-        {tokens && isTokenPickerOpened ? getTokenPicker(editorId, labelId ?? '', tokenPickerMode, valueType, setIsTokenPickerOpened) : null}
+        {tokens && isTokenPickerOpened ? getTokenPicker(editorId, labelId ?? '', tokenPickerMode, valueType) : null}
       </div>
       {tokens && isEditorFocused && !isTokenPickerOpened
         ? createPortal(<TokenPickerButton {...tokenPickerButtonProps} openTokenPicker={openTokenPicker} />, document.body)

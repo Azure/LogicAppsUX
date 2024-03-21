@@ -57,13 +57,6 @@ export function CodeEditor({
     setInTokenPicker(!getInTokenPicker());
   };
 
-  const setIsInTokenpicker = (b: boolean) => {
-    setInTokenPicker(b);
-    if (!b) {
-      codeEditorRef.current?.focus();
-    }
-  };
-
   const tokenClicked = (valueSegment: ValueSegment) => {
     if (codeEditorRef.current && valueSegment.token) {
       const newText = buildInlineCodeTextFromToken(valueSegment.token, language);
@@ -122,7 +115,6 @@ export function CodeEditor({
             callOutLabelId,
             undefined /* TokenPickerMode: undefined uses legacy tokenpicker */,
             undefined /* Editortype: undefined defaults to parameter type */,
-            setIsInTokenpicker,
             tokenClicked
           )
         : null}
