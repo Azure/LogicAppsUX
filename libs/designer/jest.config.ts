@@ -19,6 +19,7 @@ export default {
   moduleNameMapper: {
     '@fluentui/react/lib/(.*)$': '@fluentui/react/lib-commonjs/$1',
     'react-markdown': 'react-markdown/react-markdown.min.js',
+    '^monaco-editor$': '@monaco-editor/react',
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
   coverageDirectory: '../../coverage/libs/designer',
