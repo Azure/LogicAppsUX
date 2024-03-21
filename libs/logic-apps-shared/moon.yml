@@ -6,29 +6,22 @@ tasks:
   build:
     command: rollup
     args:
-    - --config 
-    - ./rollup.config.ts
-    - --configPlugin
-    - "@rollup/plugin-typescript"
-  lint:
-    command: linter eslint
-    # args:
-    # - --lintFilePatterns
-    # - '["libs/logic-apps-shared/**/*.ts"]'
-    outputs:
-    - '{options.outputFile}'
+      - --config
+      - ./rollup.config.ts
+      - --configPlugin
+      - '@rollup/plugin-typescript'
   test:
     command: jest
     args:
-    - --jestConfig
-    - $workspaceRoot/libs/logic-apps-shared/jest.config.ts
-    - --passWithNoTests
+      - --jestConfig
+      - $workspaceRoot/libs/logic-apps-shared/jest.config.ts
+      - --passWithNoTests
     outputs:
-    - /coverage/libs/logic-apps-shared
+      - /coverage/libs/logic-apps-shared
   yalcpush:
     command: npm run yalcpush
     deps:
-    - ~:build
+      - ~:build
     outputs:
-    - '{options.outputPath}'
+      - '{options.outputPath}'
 type: library

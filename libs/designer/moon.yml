@@ -5,51 +5,29 @@ tasks:
   build:
     command: rollup
     args:
-    - --buildableProjectDepsInPackageJsonType
-    - dependencies
-    - --project
-    - $workspaceRoot/libs/designer/package.json
-    - --external
-    - '["react/jsx-runtime"]'
-    - --outputPath
-    - $workspaceRoot/dist/libs/designer
-    - --rollupConfig
-    - $workspaceRoot/@nrwl/react/plugins/bundle-rollup
-    - --extractCss
-    - --format
-    - '["cjs","esm"]'
-    - --assets
-    - '[{"glob":"libs/designer/README.md","input":".","output":"."}]'
-    - --entryFile
-    - $workspaceRoot/libs/designer/src/index.ts
-    - --tsConfig
-    - $workspaceRoot/libs/designer/tsconfig.lib.json
+      - --config
+      - ./rollup.config.ts
+      - --configPlugin
+      - '@rollup/plugin-typescript'
     outputs:
-    - '{options.outputPath}'
+      - '{options.outputPath}'
   build.vscode:
     extends: build
     args:
-    - --outputPath
-    - $workspaceRoot/dist/apps/vs-code-designer/designer
-  lint:
-    command: linter eslint
-    args:
-    - --lintFilePatterns
-    - '["libs/designer/**/*.{ts,tsx,js,jsx}"]'
-    outputs:
-    - '{options.outputFile}'
+      - --outputPath
+      - $workspaceRoot/dist/apps/vs-code-designer/designer
   test:
     command: jest
     args:
-    - --jestConfig
-    - $workspaceRoot/libs/designer/jest.config.ts
-    - --passWithNoTests
+      - --jestConfig
+      - $workspaceRoot/libs/designer/jest.config.ts
+      - --passWithNoTests
     outputs:
-    - /coverage/libs/designer
+      - /coverage/libs/designer
   yalcpush:
     command: npm run yalcpush
     deps:
-    - ~:build
+      - ~:build
     outputs:
-    - '{options.outputPath}'
+      - '{options.outputPath}'
 type: library

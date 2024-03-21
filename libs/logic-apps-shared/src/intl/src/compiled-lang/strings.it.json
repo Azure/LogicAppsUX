@@ -41,6 +41,12 @@
       "value": "Trigger"
     }
   ],
+  "+KXX+O": [
+    {
+      "type": 0,
+      "value": "Select function from"
+    }
+  ],
   "+M72+a": [
     {
       "type": 0,
@@ -973,6 +979,12 @@
       "value": "Criteri di ripetizione"
     }
   ],
+  "4Levd5": [
+    {
+      "type": 0,
+      "value": "Send me an email when"
+    }
+  ],
   "4Q7WzU": [
     {
       "type": 0,
@@ -1207,6 +1219,12 @@
       "value": "Input sicuri dell'operazione"
     }
   ],
+  "635Koz": [
+    {
+      "type": 0,
+      "value": "Every week on Monday"
+    }
+  ],
   "63CC7M": [
     {
       "type": 0,
@@ -1357,12 +1375,6 @@
     {
       "type": 0,
       "value": "Gli output sono obbligatori quando lo stato è \"Riuscito\""
-    }
-  ],
-  "70eoQu": [
-    {
-      "type": 0,
-      "value": "Selezionare funzione da"
     }
   ],
   "73iM9+": [
@@ -1601,12 +1613,6 @@
       "value": "Descrivere come deve essere modificato il flusso. Aggiungere i dettagli laddove possibile, come il connettore da usare e se deve essere incluso un eventuale contenuto."
     }
   ],
-  "8Q7ns/": [
-    {
-      "type": 0,
-      "value": "Modifica questo flusso in"
-    }
-  ],
   "8U0KPg": [
     {
       "type": 0,
@@ -1761,6 +1767,20 @@
     {
       "type": 0,
       "value": "Ripristina il flusso"
+    }
+  ],
+  "9QS9a3": [
+    {
+      "type": 0,
+      "value": "Replace \""
+    },
+    {
+      "type": 1,
+      "value": "selectedOperation"
+    },
+    {
+      "type": 0,
+      "value": "\" with"
     }
   ],
   "9SuA/E": [
@@ -2114,12 +2134,6 @@
     {
       "type": 0,
       "value": "Immettere la password come testo normale o usare un parametro protetto"
-    }
-  ],
-  "BQyLiu": [
-    {
-      "type": 0,
-      "value": "risultati trovati"
     }
   ],
   "BS3gy8": [
@@ -2799,12 +2813,6 @@
       "value": "Restituisce una stringa con ogni elemento di una matrice unito da un delimitatore"
     }
   ],
-  "G/CC5/": [
-    {
-      "type": 0,
-      "value": "Il formato dell'opzione SplitOn in {splitOn} non è valido."
-    }
-  ],
   "G0XYrd": [
     {
       "type": 0,
@@ -3217,6 +3225,12 @@
       "value": "Nessuna proprietà"
     }
   ],
+  "IsbbsG": [
+    {
+      "type": 0,
+      "value": "When a new item"
+    }
+  ],
   "IxWip7": [
     {
       "type": 0,
@@ -3399,20 +3413,6 @@
     {
       "type": 0,
       "value": "Modifica riferimento alla connessione"
-    }
-  ],
-  "KNDVnN": [
-    {
-      "type": 0,
-      "value": "Sostituisci \""
-    },
-    {
-      "type": 1,
-      "value": "selectedOperation"
-    },
-    {
-      "type": 0,
-      "value": "\" con"
     }
   ],
   "KV4uky": [
@@ -3704,12 +3704,6 @@
     {
       "type": 0,
       "value": "Visualizzazione Codice"
-    }
-  ],
-  "M3kJsI": [
-    {
-      "type": 0,
-      "value": "Ogni settimana di lunedì"
     }
   ],
   "M4H0gh": [
@@ -4096,12 +4090,6 @@
       "value": "Caricamento di tutti i connettori in corso..."
     }
   ],
-  "OQud51": [
-    {
-      "type": 0,
-      "value": "Altre informazioni su"
-    }
-  ],
   "OSHNZ2": [
     {
       "type": 0,
@@ -4204,6 +4192,20 @@
     {
       "type": 0,
       "value": "Selezionare un'identità gestita"
+    }
+  ],
+  "OrPVcU": [
+    {
+      "type": 0,
+      "value": "Invalid split on format in '"
+    },
+    {
+      "type": 1,
+      "value": "splitOn"
+    },
+    {
+      "type": 0,
+      "value": "'."
     }
   ],
   "Ov7Ckz": [
@@ -5039,16 +5041,6 @@
       "value": "Elimina azione flusso di lavoro"
     }
   ],
-  "UF3KjL": [
-    {
-      "type": 0,
-      "value": "Provare a usare una funzione di conversione, ad esempio: "
-    },
-    {
-      "type": 1,
-      "value": "conversionFunctions"
-    }
-  ],
   "UHCVNK": [
     {
       "type": 0,
@@ -5093,12 +5085,6 @@
     {
       "type": 0,
       "value": "Obbligatorio. Raccolta da cui recuperare l'ultimo oggetto."
-    }
-  ],
-  "UW+fkB": [
-    {
-      "type": 0,
-      "value": "Inviami un messaggio di posta elettronica quando"
     }
   ],
   "UYRIS/": [
@@ -5795,12 +5781,6 @@
     {
       "type": 0,
       "value": "Password"
-    }
-  ],
-  "Y04+GH": [
-    {
-      "type": 0,
-      "value": "Aggiungi un'azione"
     }
   ],
   "Y0H9aX": [
@@ -6567,6 +6547,12 @@
       "value": "Altre informazioni"
     }
   ],
+  "dKCp2j": [
+    {
+      "type": 0,
+      "value": "Tell me more about"
+    }
+  ],
   "dL9V5t": [
     {
       "type": 0,
@@ -6725,6 +6711,12 @@
       "value": "Specificare la durata nel formato ISO 8601"
     }
   ],
+  "eI00kb": [
+    {
+      "type": 0,
+      "value": "Edit this flow to"
+    }
+  ],
   "eO1h/h": [
     {
       "type": 0,
@@ -6777,12 +6769,6 @@
     {
       "type": 0,
       "value": "Condivisa"
-    }
-  ],
-  "eqAUdj": [
-    {
-      "type": 0,
-      "value": "Quando un nuovo elemento"
     }
   ],
   "evyGYj": [
@@ -6965,12 +6951,6 @@
     {
       "type": 0,
       "value": "Formatta il testo in corsivo. Scelta rapida: CTRL+I"
-    }
-  ],
-  "gKEaXI": [
-    {
-      "type": 0,
-      "value": "Copia il valore di {label} negli Appunti"
     }
   ],
   "gKq3Jv": [
@@ -7402,6 +7382,12 @@
       "value": "Esempio: 0, 10"
     }
   ],
+  "iXW+2l": [
+    {
+      "type": 0,
+      "value": "Add an action"
+    }
+  ],
   "id4DBb": [
     {
       "type": 0,
@@ -7823,6 +7809,20 @@
       "value": "Identità gestita"
     }
   ],
+  "lA/sHA": [
+    {
+      "type": 0,
+      "value": "Copy the value of '"
+    },
+    {
+      "type": 1,
+      "value": "label"
+    },
+    {
+      "type": 0,
+      "value": "' to the clipboard"
+    }
+  ],
   "lB56l2": [
     {
       "type": 0,
@@ -7889,12 +7889,6 @@
     {
       "type": 0,
       "value": "Modalità di esecuzione senza stato:"
-    }
-  ],
-  "lh0TuF": [
-    {
-      "type": 0,
-      "value": "Elenco a discesa per selezionare il percorso file"
     }
   ],
   "lhL/KL": [
@@ -8275,6 +8269,12 @@
     {
       "type": 0,
       "value": "(UTC+10:00) Brisbane"
+    }
+  ],
+  "nwLd4b": [
+    {
+      "type": 0,
+      "value": "Dropdown to select filepath"
     }
   ],
   "nx25nq": [
@@ -9126,6 +9126,12 @@
       "value": "Obbligatorio. Stringa contenente il nome del fuso orario del fuso orario di destinazione. Per informazioni dettagliate, vedere https://msdn.microsoft.com/en-us/library/gg154758.aspx."
     }
   ],
+  "t/RPwA": [
+    {
+      "type": 0,
+      "value": "results found"
+    }
+  ],
   "t9RwOi": [
     {
       "type": 0,
@@ -9450,6 +9456,16 @@
     {
       "type": 0,
       "value": "Variabili"
+    }
+  ],
+  "ur3P27": [
+    {
+      "type": 0,
+      "value": "Try using a Conversion function such as: "
+    },
+    {
+      "type": 1,
+      "value": "conversionFunctions"
     }
   ],
   "urAHv1": [

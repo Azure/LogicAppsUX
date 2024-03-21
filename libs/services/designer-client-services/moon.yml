@@ -6,31 +6,24 @@ tasks:
   build:
     command: rollup
     args:
-    - --config
-    - $workspaceRoot/libs/services/designer-client-services/rollup.config.ts
-    - --configPlugin
-    - "@rollup/plugin-typescript"
+      - --config
+      - $workspaceRoot/libs/services/designer-client-services/rollup.config.ts
+      - --configPlugin
+      - '@rollup/plugin-typescript'
     outputs:
-    - '{options.outputPath}'
-  lint:
-    command: linter eslint
-    args:
-    - --lintFilePatterns
-    - '["libs/services/designer-client-services/**/*.ts"]'
-    outputs:
-    - '{options.outputFile}'
+      - '{options.outputPath}'
   test:
     command: jest
     args:
-    - --jestConfig
-    - $workspaceRoot/libs/services/designer-client-services/jest.config.ts
-    - --passWithNoTests
+      - --jestConfig
+      - $workspaceRoot/libs/services/designer-client-services/jest.config.ts
+      - --passWithNoTests
     outputs:
-    - /coverage/libs/services/designer-client-services
+      - /coverage/libs/services/designer-client-services
   yalcpush:
     command: npm run yalcpush
     deps:
-    - ~:build
+      - ~:build
     outputs:
-    - '{options.outputPath}'
+      - '{options.outputPath}'
 type: library

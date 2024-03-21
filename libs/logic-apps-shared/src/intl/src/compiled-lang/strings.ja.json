@@ -41,6 +41,12 @@
       "value": "トリガー"
     }
   ],
+  "+KXX+O": [
+    {
+      "type": 0,
+      "value": "Select function from"
+    }
+  ],
   "+M72+a": [
     {
       "type": 0,
@@ -973,6 +979,12 @@
       "value": "再試行ポリシー"
     }
   ],
+  "4Levd5": [
+    {
+      "type": 0,
+      "value": "Send me an email when"
+    }
+  ],
   "4Q7WzU": [
     {
       "type": 0,
@@ -1207,6 +1219,12 @@
       "value": "操作の入力をセキュリティで保護します"
     }
   ],
+  "635Koz": [
+    {
+      "type": 0,
+      "value": "Every week on Monday"
+    }
+  ],
   "63CC7M": [
     {
       "type": 0,
@@ -1357,12 +1375,6 @@
     {
       "type": 0,
       "value": "状態が \"成功\" の場合には、出力が必要です"
-    }
-  ],
-  "70eoQu": [
-    {
-      "type": 0,
-      "value": "関数の選択元"
     }
   ],
   "73iM9+": [
@@ -1601,12 +1613,6 @@
       "value": "フローの変更方法を説明してください。使用するコネクタやコンテンツを含める必要があるかどうかなど、可能な場合は詳細情報を追加してください。"
     }
   ],
-  "8Q7ns/": [
-    {
-      "type": 0,
-      "value": "このフローを次のものに編集してください"
-    }
-  ],
   "8U0KPg": [
     {
       "type": 0,
@@ -1761,6 +1767,20 @@
     {
       "type": 0,
       "value": "フローを元に戻す"
+    }
+  ],
+  "9QS9a3": [
+    {
+      "type": 0,
+      "value": "Replace \""
+    },
+    {
+      "type": 1,
+      "value": "selectedOperation"
+    },
+    {
+      "type": 0,
+      "value": "\" with"
     }
   ],
   "9SuA/E": [
@@ -2092,12 +2112,6 @@
     {
       "type": 0,
       "value": "パスワードをプレーンテキストとして入力するか、セキュリティで保護されたパラメーターを使用してください"
-    }
-  ],
-  "BQyLiu": [
-    {
-      "type": 0,
-      "value": "件の結果が見つかりました"
     }
   ],
   "BS3gy8": [
@@ -2759,12 +2773,6 @@
       "value": "アレイの各項目が区切り記号で結合されている文字列を返します"
     }
   ],
-  "G/CC5/": [
-    {
-      "type": 0,
-      "value": "{splitOn} の形式の分割が無効です。"
-    }
-  ],
   "G0XYrd": [
     {
       "type": 0,
@@ -3177,6 +3185,12 @@
       "value": "プロパティなし"
     }
   ],
+  "IsbbsG": [
+    {
+      "type": 0,
+      "value": "When a new item"
+    }
+  ],
   "IxWip7": [
     {
       "type": 0,
@@ -3359,20 +3373,6 @@
     {
       "type": 0,
       "value": "接続参照の変更"
-    }
-  ],
-  "KNDVnN": [
-    {
-      "type": 0,
-      "value": "\""
-    },
-    {
-      "type": 1,
-      "value": "selectedOperation"
-    },
-    {
-      "type": 0,
-      "value": "\"と置き換える操作"
     }
   ],
   "KV4uky": [
@@ -3642,12 +3642,6 @@
     {
       "type": 0,
       "value": "コード ビュー"
-    }
-  ],
-  "M3kJsI": [
-    {
-      "type": 0,
-      "value": "毎週月曜日の"
     }
   ],
   "M4H0gh": [
@@ -4034,12 +4028,6 @@
       "value": "すべてのコネクタを読み込んでいます..."
     }
   ],
-  "OQud51": [
-    {
-      "type": 0,
-      "value": "次のものの詳細を説明してください"
-    }
-  ],
   "OSHNZ2": [
     {
       "type": 0,
@@ -4134,6 +4122,20 @@
     {
       "type": 0,
       "value": "マネージド ID を選択してください"
+    }
+  ],
+  "OrPVcU": [
+    {
+      "type": 0,
+      "value": "Invalid split on format in '"
+    },
+    {
+      "type": 1,
+      "value": "splitOn"
+    },
+    {
+      "type": 0,
+      "value": "'."
     }
   ],
   "Ov7Ckz": [
@@ -4947,16 +4949,6 @@
       "value": "Workflowアクションの削除"
     }
   ],
-  "UF3KjL": [
-    {
-      "type": 0,
-      "value": "次のような変換関数を使用してみてください: "
-    },
-    {
-      "type": 1,
-      "value": "conversionFunctions"
-    }
-  ],
   "UHCVNK": [
     {
       "type": 0,
@@ -5001,12 +4993,6 @@
     {
       "type": 0,
       "value": "必須。最後のオブジェクトの取得元となるコレクション。"
-    }
-  ],
-  "UW+fkB": [
-    {
-      "type": 0,
-      "value": "メールを送信する場合"
     }
   ],
   "UYRIS/": [
@@ -5699,12 +5685,6 @@
     {
       "type": 0,
       "value": "パスワード"
-    }
-  ],
-  "Y04+GH": [
-    {
-      "type": 0,
-      "value": "アクションを追加してください"
     }
   ],
   "Y0H9aX": [
@@ -6471,6 +6451,12 @@
       "value": "詳細情報"
     }
   ],
+  "dKCp2j": [
+    {
+      "type": 0,
+      "value": "Tell me more about"
+    }
+  ],
   "dL9V5t": [
     {
       "type": 0,
@@ -6625,6 +6611,12 @@
       "value": "ISO 8601 形式で期間を指定します"
     }
   ],
+  "eI00kb": [
+    {
+      "type": 0,
+      "value": "Edit this flow to"
+    }
+  ],
   "eO1h/h": [
     {
       "type": 0,
@@ -6677,12 +6669,6 @@
     {
       "type": 0,
       "value": "共有済み"
-    }
-  ],
-  "eqAUdj": [
-    {
-      "type": 0,
-      "value": "新しいアイテム"
     }
   ],
   "evyGYj": [
@@ -6865,12 +6851,6 @@
     {
       "type": 0,
       "value": "テキストを斜体で書式設定します。ショートカット: Ctrl+I"
-    }
-  ],
-  "gKEaXI": [
-    {
-      "type": 0,
-      "value": "{label} の値をクリップボードにコピーします"
     }
   ],
   "gKq3Jv": [
@@ -7276,6 +7256,12 @@
       "value": "例: 0、10"
     }
   ],
+  "iXW+2l": [
+    {
+      "type": 0,
+      "value": "Add an action"
+    }
+  ],
   "id4DBb": [
     {
       "type": 0,
@@ -7675,6 +7661,20 @@
       "value": "マネージド ID"
     }
   ],
+  "lA/sHA": [
+    {
+      "type": 0,
+      "value": "Copy the value of '"
+    },
+    {
+      "type": 1,
+      "value": "label"
+    },
+    {
+      "type": 0,
+      "value": "' to the clipboard"
+    }
+  ],
   "lB56l2": [
     {
       "type": 0,
@@ -7733,12 +7733,6 @@
     {
       "type": 0,
       "value": "ステートレス実行モード:"
-    }
-  ],
-  "lh0TuF": [
-    {
-      "type": 0,
-      "value": "ファイルパスを選択するためのドロップダウン"
     }
   ],
   "lhL/KL": [
@@ -8123,6 +8117,12 @@
     {
       "type": 0,
       "value": "(UTC+10:00) ブリスベン"
+    }
+  ],
+  "nwLd4b": [
+    {
+      "type": 0,
+      "value": "Dropdown to select filepath"
     }
   ],
   "nx25nq": [
@@ -8948,6 +8948,12 @@
       "value": "必須。変換先のタイム ゾーンのタイム ゾーン名を含む文字列です。詳しくは、https://msdn.microsoft.com/ja-jp/library/gg154758.aspx をご覧ください。"
     }
   ],
+  "t/RPwA": [
+    {
+      "type": 0,
+      "value": "results found"
+    }
+  ],
   "t9RwOi": [
     {
       "type": 0,
@@ -9268,6 +9274,16 @@
     {
       "type": 0,
       "value": "変数"
+    }
+  ],
+  "ur3P27": [
+    {
+      "type": 0,
+      "value": "Try using a Conversion function such as: "
+    },
+    {
+      "type": 1,
+      "value": "conversionFunctions"
     }
   ],
   "urAHv1": [
