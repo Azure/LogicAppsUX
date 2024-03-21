@@ -1,4 +1,27 @@
 # Logic Apps Designer
+## [2.127.0](https://github.com/Azure/LogicAppsUX/compare/v2.126.0...v2.127.0) (2024-03-21)
+
+
+### Features
+
+* **Designer:** Allow user to zoom out 10x more than before ([#4372](https://github.com/Azure/LogicAppsUX/issues/4372)) ([31bffcc](https://github.com/Azure/LogicAppsUX/commit/31bffcca97ff0e6a5a1ea5e195c2c235b49ec32e))
+* **designer:** make adjustments to http request trigger parameters to make chosen method clearer ([#4398](https://github.com/Azure/LogicAppsUX/issues/4398)) ([261511d](https://github.com/Azure/LogicAppsUX/commit/261511da6e7120898beb78d0a4fcac0f999a219e))
+
+
+### Bug Fixes
+
+* **Consumption:** Changing parent ID for subgraph nodes ([#4395](https://github.com/Azure/LogicAppsUX/issues/4395)) ([650f736](https://github.com/Azure/LogicAppsUX/commit/650f73681dd41797587cf8e55b18cfb2fe487b0f))
+* **consumption:** Deleting idReplamenent when deleting node ([#4369](https://github.com/Azure/LogicAppsUX/issues/4369)) ([69f6a87](https://github.com/Azure/LogicAppsUX/commit/69f6a87f2c80e63acdfb584be27f4e86748da962))
+* **Data Mapper:** Deserialize source edge for custom function with dash in its name ([#4384](https://github.com/Azure/LogicAppsUX/issues/4384)) ([9b44f43](https://github.com/Azure/LogicAppsUX/commit/9b44f43d5cd1e3cf5ee46b7171422ca28e5b0cf6))
+* **data mapper:** Fix issue where custom functions were being labels 'Collection' ([2c03d24](https://github.com/Azure/LogicAppsUX/commit/2c03d24f01072fdd29de2228bda6fffd0dea0e19))
+* **Data Mapper:** Fixes custom functions category branding ([#4382](https://github.com/Azure/LogicAppsUX/issues/4382)) ([1327f8d](https://github.com/Azure/LogicAppsUX/commit/1327f8d33a41e36a07344bf9f26818ecbcdfa373))
+* **designer-ui:** Convert tokenpickeroptions to ul ([#4396](https://github.com/Azure/LogicAppsUX/issues/4396)) ([45b56ce](https://github.com/Azure/LogicAppsUX/commit/45b56cec7450a2575d787c6c8f1f27c2b550b556))
+* **designer:** Fixes an issue where titles were sometimes not updating input tokens from dynamic data ([#4377](https://github.com/Azure/LogicAppsUX/issues/4377)) ([4d0b914](https://github.com/Azure/LogicAppsUX/commit/4d0b9140bf3bd931fcd8bd66e12962f7b15691ee))
+* **designer:** load monaco as part of build instead of CDN ([#4401](https://github.com/Azure/LogicAppsUX/issues/4401)) ([3c7e360](https://github.com/Azure/LogicAppsUX/commit/3c7e360e860bc6ff708718d4fe17e196c80f9901))
+* **Designer:** Override default Paste Behavior on FireFox ([#4378](https://github.com/Azure/LogicAppsUX/issues/4378)) ([6a2e972](https://github.com/Azure/LogicAppsUX/commit/6a2e9726883a52c5c05f4ad9e89d6828b76198cc))
+* **Designer:** Secure string workflow parameters now pass validation ([#4408](https://github.com/Azure/LogicAppsUX/issues/4408)) ([ba6327a](https://github.com/Azure/LogicAppsUX/commit/ba6327aeadafe3944799e4f0eafc9b28eb70f12a))
+* **designer:** Title changes not updating downstream inputs when serializing ([#4407](https://github.com/Azure/LogicAppsUX/issues/4407)) ([25cf75b](https://github.com/Azure/LogicAppsUX/commit/25cf75bc822e58e7bb2934ad0b9e7a56fbecfead))
+
 ## [2.126.0](https://github.com/Azure/LogicAppsUX/compare/v2.125.0...v2.126.0) (2024-03-14)
 
 
