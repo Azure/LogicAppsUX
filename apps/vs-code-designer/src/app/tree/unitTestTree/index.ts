@@ -10,6 +10,7 @@ import { TestWorkflow } from './testWorkflow';
 import { TestWorkspace } from './testWorkspace';
 import { isEmptyString } from '@microsoft/utils-logic-apps';
 import { type IActionContext, callWithTelemetryAndErrorHandling } from '@microsoft/vscode-azext-utils';
+import * as path from 'path';
 import {
   RelativePattern,
   type TestController,
@@ -210,8 +211,8 @@ const getOrCreateWorkspace = (controller: TestController, workspaceName: string,
  */
 const getOrCreateFile = async (controller: TestController, uri: Uri) => {
   const workspaceName = uri.fsPath.split('/').slice(-5)[0];
-  const testName = uri.fsPath.split('/').slice(-1)[0];
-  const workflowName = uri.fsPath.split('/').slice(-2)[0];
+  const testName = path.basename(uri.fsPath);
+  const workflowName = path.basename(path.dirname(uri.fsPath));
 
   const existingWorkspaceTest = controller.items.get(workspaceName);
 

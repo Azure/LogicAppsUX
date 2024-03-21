@@ -4,6 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 import { ext } from '../../../extensionVariables';
 import { TestWorkflow } from './testWorkflow';
+import * as path from 'path';
 import { Uri, type TestController, type TestItem } from 'vscode';
 
 /**
@@ -35,7 +36,8 @@ export class TestWorkspace {
    */
   private parseTestWorkflows(workflows: Uri[]): Record<string, Uri[]> {
     return workflows.reduce((acc, workflow) => {
-      const workflowName = workflow.fsPath.split('/').slice(-2)[0];
+      const workflowName = path.basename(path.dirname(workflow.fsPath));
+
       if (!acc[workflowName]) {
         acc[workflowName] = [];
       }
