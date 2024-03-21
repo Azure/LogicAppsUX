@@ -87,6 +87,7 @@ export const QueryBuilderEditor = ({
   if (showDescription) {
     description = intl.formatMessage({
       defaultMessage: 'Provide the values to compare and select the operator to use.',
+      id: '5gOG+F',
       description: 'Text description for how to use the Condition action.',
     });
   }

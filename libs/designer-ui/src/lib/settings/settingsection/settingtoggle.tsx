@@ -22,10 +22,12 @@ export const SettingToggle = ({
   const intl = useIntl();
   const defaultOnText = intl.formatMessage({
     defaultMessage: 'On',
+    id: '2tTQ0A',
     description: 'label when setting is on',
   });
   const defaultOffText = intl.formatMessage({
     defaultMessage: 'Off',
+    id: '1htSs7',
     description: 'label when setting is off',
   });
   return (

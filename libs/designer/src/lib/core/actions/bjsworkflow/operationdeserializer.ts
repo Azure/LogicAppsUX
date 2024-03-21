@@ -601,13 +601,15 @@ const updateDynamicDataForValidConnection = async (
       operation
     );
   } else {
+    const intl = getIntl();
     dispatch(
       updateErrorDetails({
         id: nodeId,
         errorInfo: {
           level: ErrorLevel.Connection,
-          message: getIntl().formatMessage({
+          message: intl.formatMessage({
             defaultMessage: 'Invalid connection, please update your connection to load complete details',
+            id: 'tMdcE1',
             description: 'Error message to show on connection error during deserialization',
           }),
         },

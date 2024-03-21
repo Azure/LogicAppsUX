@@ -64,6 +64,7 @@ const FolderItem = ({ displayName, isParent, value, mediaType, onSelect, onNavig
   const navMessage = intl.formatMessage(
     {
       defaultMessage: 'Navigate to {folderName} folder',
+      id: 'z/UY4k',
       description: 'a label that shows which folder the user will be able to dig deeper into',
     },
     {

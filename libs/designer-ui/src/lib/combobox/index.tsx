@@ -123,7 +123,11 @@ export const Combobox = ({
       key: 'isloading',
       value: 'isloading',
       disabled: true,
-      displayName: intl.formatMessage({ defaultMessage: 'Loading...', description: 'Loading text when items are being fetched' }),
+      displayName: intl.formatMessage({
+        defaultMessage: 'Loading...',
+        id: 'kM+Mr0',
+        description: 'Loading text when items are being fetched',
+      }),
       type: 'loadingrender',
     };
     const errorOption: ComboboxItem = {
@@ -143,6 +147,7 @@ export const Combobox = ({
       if (newOptions.length === 0) {
         const noValuesLabel = intl.formatMessage({
           defaultMessage: 'No values match your search.',
+          id: '/KRvvg',
           description: 'Label for when no values match search value.',
         });
         newOptions.push({ key: 'header', value: noValuesLabel, disabled: true, displayName: noValuesLabel });
@@ -152,6 +157,7 @@ export const Combobox = ({
         const customValueLabel = intl.formatMessage(
           {
             defaultMessage: 'Use "{value}" as a custom value',
+            id: 'VptXzY',
             description: 'Label for button to allow user to create custom value in combobox from current input',
           },
           { value: searchValue }
@@ -244,6 +250,7 @@ export const Combobox = ({
 
   const clearEditor = intl.formatMessage({
     defaultMessage: 'Clear custom value',
+    id: 'zUgja+',
     description: 'Label for button to clear the editor',
   });
 
@@ -325,6 +332,7 @@ const getOptions = (options: ComboboxItem[]): IComboBoxOption[] => {
 
   const customValueLabel = intl.formatMessage({
     defaultMessage: 'Enter custom value',
+    id: 'vrYqUF',
     description: 'Label for button to allow user to create custom value in combobox',
   });
 

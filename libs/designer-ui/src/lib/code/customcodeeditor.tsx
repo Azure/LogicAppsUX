@@ -1,4 +1,3 @@
-import { getFileExtensionName, type EditorLanguage } from '@microsoft/logic-apps-shared';
 import constants from '../constants';
 import type { ValueSegment } from '../editor';
 import type { BaseEditorProps } from '../editor/base';
@@ -9,6 +8,7 @@ import { MonacoEditor as Editor } from '../editor/monaco';
 import { useId } from '../useId';
 import { buildInlineCodeTextFromToken, getEditorHeight, getInitialValue } from './util';
 import { Icon, MessageBar, MessageBarType } from '@fluentui/react';
+import { getFileExtensionName, type EditorLanguage } from '@microsoft/logic-apps-shared';
 import { useFunctionalState } from '@react-hookz/web';
 import type { editor, IRange } from 'monaco-editor';
 import { useEffect, useMemo, useRef, useState } from 'react';
@@ -68,7 +68,9 @@ export function CustomCodeEditor({
     }
     onChange?.({
       value: [createLiteralValueSegment(getFileName())],
-      viewModel: { customCodeData: { fileData: getCurrentValue(), fileExtension: getFileExtensionName(language), fileName: getFileName() } },
+      viewModel: {
+        customCodeData: { fileData: getCurrentValue(), fileExtension: getFileExtensionName(language), fileName: getFileName() },
+      },
     });
   };
 
@@ -108,6 +110,7 @@ export function CustomCodeEditor({
     return intl.formatMessage(
       {
         defaultMessage: "{label} To add dynamic data, press the Alt + '/' keys.",
+        id: 'IdOhPY',
         description: 'This is an a11y message meant to help screen reader users figure out how to insert dynamic data',
       },
       { label }
@@ -116,11 +119,13 @@ export function CustomCodeEditor({
 
   const messageBarText = intl.formatMessage({
     defaultMessage: 'To use modules or dependecies, please add at Custom Code Dependenncies in Portal TOC',
+    id: 'Mcvr0B',
     description: 'This is a message to inform the user to add dependencies to use this action',
   });
 
   const closeButtonAriaLabel = intl.formatMessage({
     defaultMessage: 'Close',
+    id: 'TjkOzp',
     description: 'This is the aria label for the close button in the message bar',
   });
 

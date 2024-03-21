@@ -21,7 +21,7 @@ export function Peek({ input, onOKClick }: PeekProps): JSX.Element {
     defaultValue: '',
   };
 
-  const doneLabel = intl.formatMessage({ defaultMessage: 'Done', description: 'Done Label for button' });
+  const doneLabel = intl.formatMessage({ defaultMessage: 'Done', id: 'AO6T9u', description: 'Done Label for button' });
 
   return (
     <div className="msla-card-inner-body msla-peek">

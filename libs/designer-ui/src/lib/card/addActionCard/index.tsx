@@ -1,8 +1,8 @@
-import { replaceWhiteSpaceWithUnderscore } from '@microsoft/logic-apps-shared';
 import { useCardKeyboardInteraction } from '../hooks';
 import { getCardStyle } from '../utils';
 import AddNodeIcon from './addNodeIcon.svg';
 import { TooltipHost, DirectionalHint, css } from '@fluentui/react';
+import { replaceWhiteSpaceWithUnderscore } from '@microsoft/logic-apps-shared';
 import { useIntl } from 'react-intl';
 
 export const ADD_CARD_TYPE = {
@@ -46,11 +46,13 @@ export const AddActionCard: React.FC<AddActionCardProps> = ({ addCardType, onCli
 
   const triggerTitle = intl.formatMessage({
     defaultMessage: 'Add a trigger',
+    id: 'q1gfIs',
     description: 'Text on example trigger node',
   });
 
   const actionTitle = intl.formatMessage({
     defaultMessage: 'Add an action',
+    id: '7ZR1xr',
     description: 'Text on example action node',
   });
 
@@ -58,21 +60,25 @@ export const AddActionCard: React.FC<AddActionCardProps> = ({ addCardType, onCli
 
   const triggerTooltipHeading = intl.formatMessage({
     defaultMessage: 'Triggers',
+    id: '3GINhd',
     description: 'Heading for a tooltip explaining Triggers',
   });
 
   const triggerTooltipBody = intl.formatMessage({
     defaultMessage: 'Triggers tell your app when to start running. Each workflow needs at least one trigger.',
+    id: 'VbMYd8',
     description: 'Description of what Triggers are, on a tooltip about Triggers',
   });
 
   const actionTooltipHeading = intl.formatMessage({
     defaultMessage: 'Actions',
+    id: 'MYgKHu',
     description: 'Heading for a tooltip explaining Actions',
   });
 
   const actionTooltipBody = intl.formatMessage({
     defaultMessage: 'Actions perform operations on data, communicate between systems, or run other tasks.',
+    id: '1dlfUe',
     description: 'Description of what Actions are, on a tooltip about Actions',
   });
 

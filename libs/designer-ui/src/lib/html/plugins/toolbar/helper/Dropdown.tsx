@@ -79,11 +79,13 @@ export const DropDown = ({
 
   const altTextForButtonIcon = intl.formatMessage({
     defaultMessage: 'alt text for button icon',
+    id: '34Nt/B',
     description: 'alt text for button icon',
   });
 
   const altTextForChevronDown = intl.formatMessage({
     defaultMessage: 'Alt text for down chevron',
+    id: '+Uvo/p',
     description: 'Alt text for down chevron',
   });
 

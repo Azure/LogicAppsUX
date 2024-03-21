@@ -41,6 +41,12 @@
       "value": "Aktiválás"
     }
   ],
+  "+KXX+O": [
+    {
+      "type": 0,
+      "value": "Függvény kiválasztása innen:"
+    }
+  ],
   "+M72+a": [
     {
       "type": 0,
@@ -989,6 +995,12 @@
       "value": "Újrapróbálkozási szabályzat"
     }
   ],
+  "4Levd5": [
+    {
+      "type": 0,
+      "value": "E-mailt kérek, ha"
+    }
+  ],
   "4Q7WzU": [
     {
       "type": 0,
@@ -1223,6 +1235,12 @@
       "value": "A művelet bemeneteinek biztonságossá tétele"
     }
   ],
+  "635Koz": [
+    {
+      "type": 0,
+      "value": "Minden héten hétfőn"
+    }
+  ],
   "63CC7M": [
     {
       "type": 0,
@@ -1365,12 +1383,6 @@
     {
       "type": 0,
       "value": "A kimenetek megadása kötelező, ha az állapot „Sikeres”"
-    }
-  ],
-  "70eoQu": [
-    {
-      "type": 0,
-      "value": "Függvény kiválasztása innen:"
     }
   ],
   "73iM9+": [
@@ -1609,12 +1621,6 @@
       "value": "Írja le, hogyan legyen módosítva a folyamat. Adjon meg részleteket ott, ahol lehetséges, beleértve a használni kívánt összekötőt, és azt is, hogy szerepeljen-e benne tartalom."
     }
   ],
-  "8Q7ns/": [
-    {
-      "type": 0,
-      "value": "A folyamat szerkesztése a következőre:"
-    }
-  ],
   "8U0KPg": [
     {
       "type": 0,
@@ -1769,6 +1775,20 @@
     {
       "type": 0,
       "value": "A folyamat visszaállítása"
+    }
+  ],
+  "9QS9a3": [
+    {
+      "type": 0,
+      "value": "A(z) "
+    },
+    {
+      "type": 1,
+      "value": "selectedOperation"
+    },
+    {
+      "type": 0,
+      "value": " lecserélése a következőre:"
     }
   ],
   "9SuA/E": [
@@ -2111,12 +2131,6 @@
     {
       "type": 0,
       "value": "Adja meg a jelszót egyszerű szövegként, vagy használjon biztonságos paramétert"
-    }
-  ],
-  "BQyLiu": [
-    {
-      "type": 0,
-      "value": "találat"
     }
   ],
   "BS3gy8": [
@@ -2793,20 +2807,6 @@
       "value": "Egy tömb összes elemét tartalmazó, az elemeket határolóval összekötő sztringet ad vissza."
     }
   ],
-  "G/CC5/": [
-    {
-      "type": 0,
-      "value": "Érvénytelen formátum szerinti felosztás a következőben: „"
-    },
-    {
-      "type": 1,
-      "value": "splitOn"
-    },
-    {
-      "type": 0,
-      "value": "”."
-    }
-  ],
   "G0XYrd": [
     {
       "type": 0,
@@ -3219,6 +3219,12 @@
       "value": "Nincsenek tulajdonságok"
     }
   ],
+  "IsbbsG": [
+    {
+      "type": 0,
+      "value": "Új elem esetén"
+    }
+  ],
   "IxWip7": [
     {
       "type": 0,
@@ -3401,20 +3407,6 @@
     {
       "type": 0,
       "value": "Kapcsolati hivatkozás módosítása"
-    }
-  ],
-  "KNDVnN": [
-    {
-      "type": 0,
-      "value": "A(z) "
-    },
-    {
-      "type": 1,
-      "value": "selectedOperation"
-    },
-    {
-      "type": 0,
-      "value": " lecserélése a következőre:"
     }
   ],
   "KV4uky": [
@@ -3695,12 +3687,6 @@
     {
       "type": 0,
       "value": "Kódnézet"
-    }
-  ],
-  "M3kJsI": [
-    {
-      "type": 0,
-      "value": "Minden héten hétfőn"
     }
   ],
   "M4H0gh": [
@@ -4087,12 +4073,6 @@
       "value": "Az összes összekötő betöltése..."
     }
   ],
-  "OQud51": [
-    {
-      "type": 0,
-      "value": "Mutass többet a következőről:"
-    }
-  ],
   "OSHNZ2": [
     {
       "type": 0,
@@ -4187,6 +4167,20 @@
     {
       "type": 0,
       "value": "Felügyelt identitás kiválasztása"
+    }
+  ],
+  "OrPVcU": [
+    {
+      "type": 0,
+      "value": "Érvénytelen felosztási formátum a következőben: „"
+    },
+    {
+      "type": 1,
+      "value": "splitOn"
+    },
+    {
+      "type": 0,
+      "value": "”."
     }
   ],
   "Ov7Ckz": [
@@ -5019,16 +5013,6 @@
       "value": "Munkafolyamatművelet törlése"
     }
   ],
-  "UF3KjL": [
-    {
-      "type": 0,
-      "value": "Próbáljon konverziós függvényt használni, például a következőt: "
-    },
-    {
-      "type": 1,
-      "value": "conversionFunctions"
-    }
-  ],
   "UHCVNK": [
     {
       "type": 0,
@@ -5073,12 +5057,6 @@
     {
       "type": 0,
       "value": "Kötelező megadni. A gyűjtemény, melyből be kell olvasni az utolsó objektumot."
-    }
-  ],
-  "UW+fkB": [
-    {
-      "type": 0,
-      "value": "E-mailt kérek, ha"
     }
   ],
   "UYRIS/": [
@@ -5755,12 +5733,6 @@
     {
       "type": 0,
       "value": "Jelszó"
-    }
-  ],
-  "Y04+GH": [
-    {
-      "type": 0,
-      "value": "Művelet hozzáadása"
     }
   ],
   "Y0H9aX": [
@@ -6527,6 +6499,12 @@
       "value": "További információ"
     }
   ],
+  "dKCp2j": [
+    {
+      "type": 0,
+      "value": "Mutass többet a következőről:"
+    }
+  ],
   "dL9V5t": [
     {
       "type": 0,
@@ -6685,6 +6663,12 @@
       "value": "Az időtartamot az ISO 8601 formátumban kell megadni"
     }
   ],
+  "eI00kb": [
+    {
+      "type": 0,
+      "value": "A folyamat szerkesztése a következőre:"
+    }
+  ],
   "eO1h/h": [
     {
       "type": 0,
@@ -6737,12 +6721,6 @@
     {
       "type": 0,
       "value": "Közös"
-    }
-  ],
-  "eqAUdj": [
-    {
-      "type": 0,
-      "value": "Új elem esetén"
     }
   ],
   "evyGYj": [
@@ -6809,20 +6787,6 @@
     {
       "type": 0,
       "value": "Kapcsolati adatok betöltése..."
-    }
-  ],
-  "fc1AV8": [
-    {
-      "type": 0,
-      "value": "HTTP "
-    },
-    {
-      "type": 1,
-      "value": "method"
-    },
-    {
-      "type": 0,
-      "value": " URL"
     }
   ],
   "fg/34o": [
@@ -6925,20 +6889,6 @@
     {
       "type": 0,
       "value": "Szöveg formázása dőltként. Billentyűparancs: Ctrl+I"
-    }
-  ],
-  "gKEaXI": [
-    {
-      "type": 0,
-      "value": "A(z) "
-    },
-    {
-      "type": 1,
-      "value": "label"
-    },
-    {
-      "type": 0,
-      "value": " értékének másolása a vágólapra"
     }
   ],
   "gKq3Jv": [
@@ -7359,6 +7309,12 @@
       "value": "Példa: 0, 10"
     }
   ],
+  "iXW+2l": [
+    {
+      "type": 0,
+      "value": "Művelet hozzáadása"
+    }
+  ],
   "id4DBb": [
     {
       "type": 0,
@@ -7769,6 +7725,20 @@
       "value": "Felügyelt identitás"
     }
   ],
+  "lA/sHA": [
+    {
+      "type": 0,
+      "value": "A(z) „"
+    },
+    {
+      "type": 1,
+      "value": "label"
+    },
+    {
+      "type": 0,
+      "value": "” értékének másolása a vágólapra"
+    }
+  ],
   "lB56l2": [
     {
       "type": 0,
@@ -7835,12 +7805,6 @@
     {
       "type": 0,
       "value": "Állapot nélküli futtatási mód:"
-    }
-  ],
-  "lh0TuF": [
-    {
-      "type": 0,
-      "value": "Legördülő lista a fájlelérési út kiválasztásához"
     }
   ],
   "lhL/KL": [
@@ -8225,6 +8189,12 @@
     {
       "type": 0,
       "value": "(UTC+10:00) Brisbane"
+    }
+  ],
+  "nwLd4b": [
+    {
+      "type": 0,
+      "value": "Legördülő lista a fájlelérési út kiválasztásához"
     }
   ],
   "nx25nq": [
@@ -9065,6 +9035,12 @@
       "value": "Kötelező megadni. A célidőzóna nevét tartalmazó sztring. A részleteket lásd: https://msdn.microsoft.com/en-us/library/gg154758.aspx."
     }
   ],
+  "t/RPwA": [
+    {
+      "type": 0,
+      "value": "találat"
+    }
+  ],
   "t9RwOi": [
     {
       "type": 0,
@@ -9385,6 +9361,16 @@
     {
       "type": 0,
       "value": "Változók"
+    }
+  ],
+  "ur3P27": [
+    {
+      "type": 0,
+      "value": "Próbáljon konverziós függvényt használni, például a következőt: "
+    },
+    {
+      "type": 1,
+      "value": "conversionFunctions"
     }
   ],
   "urAHv1": [

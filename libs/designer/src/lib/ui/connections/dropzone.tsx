@@ -2,7 +2,7 @@ import type { AppDispatch } from '../../core';
 import { pasteOperation } from '../../core/actions/bjsworkflow/copypaste';
 import { expandDiscoveryPanel } from '../../core/state/panel/panelSlice';
 import { useUpstreamNodes } from '../../core/state/tokens/tokenSelectors';
-import { useGetAllOperationNodesWithin, useNodeDisplayName } from '../../core/state/workflow/workflowSelectors';
+import { useGetAllOperationNodesWithin, useNodeDisplayName, useNodeMetadata } from '../../core/state/workflow/workflowSelectors';
 import { AllowDropTarget } from './dynamicsvgs/allowdroptarget';
 import { BlockDropTarget } from './dynamicsvgs/blockdroptarget';
 import { MenuDivider, MenuItem, MenuList, Popover, PopoverSurface, PopoverTrigger } from '@fluentui/react-components';
@@ -55,16 +55,19 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId, 
 
   const newActionText = intl.formatMessage({
     defaultMessage: 'Add an action',
+    id: 'mCzkXX',
     description: 'Text for button to add a new action',
   });
 
   const newBranchText = intl.formatMessage({
     defaultMessage: 'Add a parallel branch',
+    id: 'LZm3ze',
     description: 'Text for button to add a parallel branch',
   });
 
   const pasteFromClipboard = intl.formatMessage({
     defaultMessage: 'Paste an action',
+    id: 'ZUCTVP',
     description: 'Text for button to paste an action from clipboard',
   });
 
@@ -113,7 +116,16 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId, 
     setShowCallout(false);
   }, [dispatch, graphId, parentId]);
 
-  const upstreamNodesOfChild = useUpstreamNodes(removeIdTag(childId ?? parentId ?? graphId));
+  const nodeMetadata = useNodeMetadata(removeIdTag(parentId ?? ''));
+  // For subgraph nodes, we want to use the id of the scope node as the parentId to get the dependancies
+  const newParentId = useMemo(() => {
+    if (nodeMetadata?.subgraphType) {
+      return nodeMetadata.parentNodeId;
+    } else {
+      return parentId;
+    }
+  }, [nodeMetadata, parentId]);
+  const upstreamNodesOfChild = useUpstreamNodes(removeIdTag(childId ?? newParentId ?? graphId));
   const immediateAncestor = useGetAllOperationNodesWithin(parentId && !containsIdTag(parentId) ? parentId : '');
   const upstreamNodes = useMemo(() => new Set([...upstreamNodesOfChild, ...immediateAncestor]), [immediateAncestor, upstreamNodesOfChild]);
 
@@ -148,6 +160,7 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId, 
     ? intl.formatMessage(
         {
           defaultMessage: 'Insert a new step between {parentName} and {childName}',
+          id: 'CypYLs',
           description: 'Tooltip for the button to add a new step (action or branch)',
         },
         {
@@ -159,6 +172,7 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId, 
     ? intl.formatMessage(
         {
           defaultMessage: 'Insert a new step in {parentSubgraphName}',
+          id: 'RjvpD+',
           description: 'Tooltip for the button to add a new step under subgraph',
         },
         {
@@ -168,6 +182,7 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId, 
     : intl.formatMessage(
         {
           defaultMessage: 'Insert a new step after {parentName}',
+          id: '2r30S9',
           description: 'Tooltip for the button to add a new step (action or branch)',
         },
         {

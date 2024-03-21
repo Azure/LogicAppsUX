@@ -50,21 +50,25 @@ export const EditorBreadcrumb = ({ isCodeViewOpen, setIsCodeViewOpen }: EditorBr
 
   const startMappingLoc = intl.formatMessage({
     defaultMessage: 'Select a target schema node to start mapping',
+    id: '0IRUjM',
     description: 'Breadcrumb message shown in overview',
   });
 
   const showCodeLoc = intl.formatMessage({
     defaultMessage: 'Show code',
+    id: 'MirIsS',
     description: 'Button to display the code view',
   });
 
   const hideCodeLoc = intl.formatMessage({
     defaultMessage: 'Hide code',
+    id: 'UR1CS5',
     description: 'Button to hide the code view',
   });
 
   const chevronAriaDescription = intl.formatMessage({
     defaultMessage: 'Expant list of sibling elements',
+    id: 'BUutcC',
     description: 'Button that toggles list of elements to view',
   });
 

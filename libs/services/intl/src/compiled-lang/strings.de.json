@@ -41,6 +41,12 @@
       "value": "Trigger"
     }
   ],
+  "+KXX+O": [
+    {
+      "type": 0,
+      "value": "Funktion auswählen aus"
+    }
+  ],
   "+M72+a": [
     {
       "type": 0,
@@ -993,6 +999,12 @@
       "value": "Wiederholungsrichtlinie"
     }
   ],
+  "4Levd5": [
+    {
+      "type": 0,
+      "value": "E-Mail an mich senden, wenn"
+    }
+  ],
   "4Q7WzU": [
     {
       "type": 0,
@@ -1227,6 +1239,12 @@
       "value": "Sichere Eingaben für den Vorgang"
     }
   ],
+  "635Koz": [
+    {
+      "type": 0,
+      "value": "Jede Woche am Montag"
+    }
+  ],
   "63CC7M": [
     {
       "type": 0,
@@ -1377,12 +1395,6 @@
     {
       "type": 0,
       "value": "Ausgaben sind erforderlich, wenn der Status „Erfolgreich“ lautet"
-    }
-  ],
-  "70eoQu": [
-    {
-      "type": 0,
-      "value": "Funktion auswählen aus"
     }
   ],
   "73iM9+": [
@@ -1621,12 +1633,6 @@
       "value": "Beschreiben Sie, wie Ihr Flow geändert werden soll. Fügen Sie nach Möglichkeit Details hinzu, einschließlich des zu verwendenden Connectors und ob Inhalte eingeschlossen werden sollen."
     }
   ],
-  "8Q7ns/": [
-    {
-      "type": 0,
-      "value": "Diesen Flow bearbeiten in"
-    }
-  ],
   "8U0KPg": [
     {
       "type": 0,
@@ -1785,6 +1791,20 @@
     {
       "type": 0,
       "value": "Flow wiederherstellen"
+    }
+  ],
+  "9QS9a3": [
+    {
+      "type": 0,
+      "value": "\""
+    },
+    {
+      "type": 1,
+      "value": "selectedOperation"
+    },
+    {
+      "type": 0,
+      "value": "\" ersetzen durch"
     }
   ],
   "9SuA/E": [
@@ -2127,12 +2147,6 @@
     {
       "type": 0,
       "value": "Geben Sie das Kennwort in Nur-Text-Form oder als sicheren Parameter ein."
-    }
-  ],
-  "BQyLiu": [
-    {
-      "type": 0,
-      "value": "Ergebnisse gefunden"
     }
   ],
   "BS3gy8": [
@@ -2813,20 +2827,6 @@
       "value": "Gibt eine Zeichenfolge zurück, in der die einzelnen Elemente eines Arrays durch Trennzeichen verknüpft sind."
     }
   ],
-  "G/CC5/": [
-    {
-      "type": 0,
-      "value": "Ungültiges „Aufteilung auf“-Format in „"
-    },
-    {
-      "type": 1,
-      "value": "splitOn"
-    },
-    {
-      "type": 0,
-      "value": "“."
-    }
-  ],
   "G0XYrd": [
     {
       "type": 0,
@@ -3243,6 +3243,12 @@
       "value": "Keine Eigenschaften"
     }
   ],
+  "IsbbsG": [
+    {
+      "type": 0,
+      "value": "Wenn ein neues Element"
+    }
+  ],
   "IxWip7": [
     {
       "type": 0,
@@ -3425,20 +3431,6 @@
     {
       "type": 0,
       "value": "Verbindungsreferenz ändern"
-    }
-  ],
-  "KNDVnN": [
-    {
-      "type": 0,
-      "value": "\""
-    },
-    {
-      "type": 1,
-      "value": "selectedOperation"
-    },
-    {
-      "type": 0,
-      "value": "\" ersetzen durch"
     }
   ],
   "KV4uky": [
@@ -3719,12 +3711,6 @@
     {
       "type": 0,
       "value": "Codeansicht"
-    }
-  ],
-  "M3kJsI": [
-    {
-      "type": 0,
-      "value": "Jede Woche am Montag"
     }
   ],
   "M4H0gh": [
@@ -4111,12 +4097,6 @@
       "value": "Alle Connectors werden geladen..."
     }
   ],
-  "OQud51": [
-    {
-      "type": 0,
-      "value": "Weitere Informationen darüber"
-    }
-  ],
   "OSHNZ2": [
     {
       "type": 0,
@@ -4211,6 +4191,20 @@
     {
       "type": 0,
       "value": "Verwaltete Identität auswählen"
+    }
+  ],
+  "OrPVcU": [
+    {
+      "type": 0,
+      "value": "Invalid split on format in '"
+    },
+    {
+      "type": 1,
+      "value": "splitOn"
+    },
+    {
+      "type": 0,
+      "value": "'."
     }
   ],
   "Ov7Ckz": [
@@ -5047,16 +5041,6 @@
       "value": "Workflowaktion löschen"
     }
   ],
-  "UF3KjL": [
-    {
-      "type": 0,
-      "value": "Verwenden Sie eine Konvertierungsfunktion, z. B.: "
-    },
-    {
-      "type": 1,
-      "value": "conversionFunctions"
-    }
-  ],
   "UHCVNK": [
     {
       "type": 0,
@@ -5101,12 +5085,6 @@
     {
       "type": 0,
       "value": "Erforderlich. Die Sammlung, aus der das letzte Objekt entnommen werden soll."
-    }
-  ],
-  "UW+fkB": [
-    {
-      "type": 0,
-      "value": "E-Mail an mich senden, wenn"
     }
   ],
   "UYRIS/": [
@@ -5811,12 +5789,6 @@
     {
       "type": 0,
       "value": "Kennwort"
-    }
-  ],
-  "Y04+GH": [
-    {
-      "type": 0,
-      "value": "Eine Aktion hinzufügen"
     }
   ],
   "Y0H9aX": [
@@ -6583,6 +6555,12 @@
       "value": "Weitere Informationen"
     }
   ],
+  "dKCp2j": [
+    {
+      "type": 0,
+      "value": "Weitere Informationen darüber"
+    }
+  ],
   "dL9V5t": [
     {
       "type": 0,
@@ -6741,6 +6719,12 @@
       "value": "Geben Sie die Dauer im ISO 8601-Format an."
     }
   ],
+  "eI00kb": [
+    {
+      "type": 0,
+      "value": "Diesen Flow bearbeiten in"
+    }
+  ],
   "eO1h/h": [
     {
       "type": 0,
@@ -6793,12 +6777,6 @@
     {
       "type": 0,
       "value": "Freigegeben"
-    }
-  ],
-  "eqAUdj": [
-    {
-      "type": 0,
-      "value": "Wenn ein neues Element"
     }
   ],
   "evyGYj": [
@@ -6865,20 +6843,6 @@
     {
       "type": 0,
       "value": "Verbindungsdaten werden geladen..."
-    }
-  ],
-  "fc1AV8": [
-    {
-      "type": 0,
-      "value": "HTTP "
-    },
-    {
-      "type": 1,
-      "value": "method"
-    },
-    {
-      "type": 0,
-      "value": "-URL"
     }
   ],
   "fg/34o": [
@@ -6981,20 +6945,6 @@
     {
       "type": 0,
       "value": "Text kursiv formatieren. Verknüpfung: STRG+I"
-    }
-  ],
-  "gKEaXI": [
-    {
-      "type": 0,
-      "value": "Kopiert den Wert von „"
-    },
-    {
-      "type": 1,
-      "value": "label"
-    },
-    {
-      "type": 0,
-      "value": "“ in die Zwischenablage."
     }
   ],
   "gKq3Jv": [
@@ -7415,6 +7365,12 @@
       "value": "Beispiel: 0, 10"
     }
   ],
+  "iXW+2l": [
+    {
+      "type": 0,
+      "value": "Eine Aktion hinzufügen"
+    }
+  ],
   "id4DBb": [
     {
       "type": 0,
@@ -7825,6 +7781,20 @@
       "value": "Verwaltete Identität"
     }
   ],
+  "lA/sHA": [
+    {
+      "type": 0,
+      "value": "Copy the value of '"
+    },
+    {
+      "type": 1,
+      "value": "label"
+    },
+    {
+      "type": 0,
+      "value": "' to the clipboard"
+    }
+  ],
   "lB56l2": [
     {
       "type": 0,
@@ -7891,12 +7861,6 @@
     {
       "type": 0,
       "value": "Zustandsloser Ausführungsmodus:"
-    }
-  ],
-  "lh0TuF": [
-    {
-      "type": 0,
-      "value": "Dropdown zum Auswählen des Dateipfads"
     }
   ],
   "lhL/KL": [
@@ -8285,6 +8249,12 @@
     {
       "type": 0,
       "value": "(UTC+10:00) Brisbane"
+    }
+  ],
+  "nwLd4b": [
+    {
+      "type": 0,
+      "value": "Dropdown zum Auswählen des Dateipfads"
     }
   ],
   "nx25nq": [
@@ -9125,6 +9095,12 @@
       "value": "Erforderlich. Hiermit wird eine Zeichenfolge angegeben, die den Namen der Zielzeitzone enthält. Weitere Informationen finden Sie unter https://msdn.microsoft.com/de-de/library/gg154758.aspx."
     }
   ],
+  "t/RPwA": [
+    {
+      "type": 0,
+      "value": "Ergebnisse gefunden"
+    }
+  ],
   "t9RwOi": [
     {
       "type": 0,
@@ -9449,6 +9425,16 @@
     {
       "type": 0,
       "value": "Variablen"
+    }
+  ],
+  "ur3P27": [
+    {
+      "type": 0,
+      "value": "Verwenden Sie eine Konvertierungsfunktion, z. B.: "
+    },
+    {
+      "type": 1,
+      "value": "conversionFunctions"
     }
   ],
   "urAHv1": [

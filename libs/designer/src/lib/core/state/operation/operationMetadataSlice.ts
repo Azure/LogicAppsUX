@@ -3,11 +3,11 @@ import type { Settings } from '../../actions/bjsworkflow/settings';
 import type { NodeStaticResults } from '../../actions/bjsworkflow/staticresults';
 import { StaticResultOption } from '../../actions/bjsworkflow/staticresults';
 import type { RepetitionContext } from '../../utils/parameters/helper';
-import { isTokenValueSegment } from '../../utils/parameters/segment';
+import { createTokenValueSegment, isTokenValueSegment } from '../../utils/parameters/segment';
 import { normalizeKey } from '../../utils/tokens';
 import { resetNodesLoadStatus, resetWorkflowState } from '../global';
 import { LogEntryLevel, LoggerService } from '@microsoft/designer-client-services-logic-apps';
-import type { ParameterInfo, Token } from '@microsoft/designer-ui';
+import type { ParameterInfo } from '@microsoft/designer-ui';
 import type {
   FilePickerInfo,
   InputParameter,
@@ -180,7 +180,7 @@ interface AddDynamicOutputsPayload {
   outputs: Record<string, OutputInfo>;
 }
 
-interface updateExisitingInputTokenTitlesPayload {
+interface updateExistingInputTokenTitlesPayload {
   tokenTitles: Record<string, string>;
 }
 
@@ -311,7 +311,7 @@ export const operationMetadataSlice = createSlice({
       const nodeErrors = getRecordEntry(state.errors, nodeId);
       delete nodeErrors?.[ErrorLevel.DynamicOutputs];
     },
-    updateExisitingInputTokenTitles: (state, action: PayloadAction<updateExisitingInputTokenTitlesPayload>) => {
+    updateExistingInputTokenTitles: (state, action: PayloadAction<updateExistingInputTokenTitlesPayload>) => {
       const { tokenTitles } = action.payload;
 
       Object.entries(state.inputParameters).forEach(([nodeId, nodeInputs]) => {
@@ -321,9 +321,8 @@ export const operationMetadataSlice = createSlice({
               if (isTokenValueSegment(segment) && segment.token?.key) {
                 const normalizedKey = normalizeKey(segment.token.key);
                 if (normalizedKey in tokenTitles) {
-                  (
-                    state.inputParameters[nodeId].parameterGroups[parameterId].parameters[parameterIndex].value[segmentIndex].token as Token
-                  ).title = tokenTitles[normalizedKey];
+                  state.inputParameters[nodeId].parameterGroups[parameterId].parameters[parameterIndex].value[segmentIndex] =
+                    createTokenValueSegment({ ...segment.token, title: tokenTitles[normalizedKey] }, segment.value, segment.type);
                 }
               }
             });
@@ -520,7 +519,7 @@ export const {
   updateParameterConditionalVisibility,
   updateParameterValidation,
   updateParameterEditorViewModel,
-  updateExisitingInputTokenTitles,
+  updateExistingInputTokenTitles,
   removeParameterValidationError,
   updateOutputs,
   updateActionMetadata,

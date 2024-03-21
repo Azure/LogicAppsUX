@@ -41,6 +41,12 @@
       "value": "Déclencheur"
     }
   ],
+  "+KXX+O": [
+    {
+      "type": 0,
+      "value": "Sélectionner une fonction depuis"
+    }
+  ],
   "+M72+a": [
     {
       "type": 0,
@@ -981,6 +987,12 @@
       "value": "Stratégie de nouvelles tentatives"
     }
   ],
+  "4Levd5": [
+    {
+      "type": 0,
+      "value": "M’envoyer un e-mail quand"
+    }
+  ],
   "4Q7WzU": [
     {
       "type": 0,
@@ -1215,6 +1227,12 @@
       "value": "Sécuriser les entrées de l’opération"
     }
   ],
+  "635Koz": [
+    {
+      "type": 0,
+      "value": "Chaque semaine le lundi"
+    }
+  ],
   "63CC7M": [
     {
       "type": 0,
@@ -1365,12 +1383,6 @@
     {
       "type": 0,
       "value": "Les sorties sont requises lorsque l’état est « Réussite »"
-    }
-  ],
-  "70eoQu": [
-    {
-      "type": 0,
-      "value": "Sélectionner une fonction depuis"
     }
   ],
   "73iM9+": [
@@ -1609,12 +1621,6 @@
       "value": "Décrivez comment votre flux doit être modifié. Ajoutez des détails dans la mesure du possible, y compris le connecteur à utiliser et si du contenu doit être inclus."
     }
   ],
-  "8Q7ns/": [
-    {
-      "type": 0,
-      "value": "Modifiez ce flux pour"
-    }
-  ],
   "8U0KPg": [
     {
       "type": 0,
@@ -1769,6 +1775,20 @@
     {
       "type": 0,
       "value": "Rétablir votre flux"
+    }
+  ],
+  "9QS9a3": [
+    {
+      "type": 0,
+      "value": "Remplacez « "
+    },
+    {
+      "type": 1,
+      "value": "selectedOperation"
+    },
+    {
+      "type": 0,
+      "value": " » par"
     }
   ],
   "9SuA/E": [
@@ -2122,12 +2142,6 @@
     {
       "type": 0,
       "value": "Entrez le mot de passe en tant que texte brut ou utilisez un paramètre sécurisé"
-    }
-  ],
-  "BQyLiu": [
-    {
-      "type": 0,
-      "value": "résultats trouvés"
     }
   ],
   "BS3gy8": [
@@ -2815,12 +2829,6 @@
       "value": "Retourne une chaîne avec chaque élément d'un tableau joint par un délimiteur"
     }
   ],
-  "G/CC5/": [
-    {
-      "type": 0,
-      "value": "Fractionnement non valide sur format dans {splitOn}."
-    }
-  ],
   "G0XYrd": [
     {
       "type": 0,
@@ -3233,6 +3241,12 @@
       "value": "Aucune propriété"
     }
   ],
+  "IsbbsG": [
+    {
+      "type": 0,
+      "value": "Lorsqu’un nouvel élément"
+    }
+  ],
   "IxWip7": [
     {
       "type": 0,
@@ -3415,20 +3429,6 @@
     {
       "type": 0,
       "value": "Modifier la référence de connexion"
-    }
-  ],
-  "KNDVnN": [
-    {
-      "type": 0,
-      "value": "Remplacez « "
-    },
-    {
-      "type": 1,
-      "value": "selectedOperation"
-    },
-    {
-      "type": 0,
-      "value": " » par"
     }
   ],
   "KV4uky": [
@@ -3720,12 +3720,6 @@
     {
       "type": 0,
       "value": "Mode Code"
-    }
-  ],
-  "M3kJsI": [
-    {
-      "type": 0,
-      "value": "Chaque semaine le lundi"
     }
   ],
   "M4H0gh": [
@@ -4112,12 +4106,6 @@
       "value": "Chargement de tous les connecteurs..."
     }
   ],
-  "OQud51": [
-    {
-      "type": 0,
-      "value": "Dites-moi en plus sur"
-    }
-  ],
   "OSHNZ2": [
     {
       "type": 0,
@@ -4212,6 +4200,20 @@
     {
       "type": 0,
       "value": "Sélectionner une identité managée"
+    }
+  ],
+  "OrPVcU": [
+    {
+      "type": 0,
+      "value": "Invalid split on format in '"
+    },
+    {
+      "type": 1,
+      "value": "splitOn"
+    },
+    {
+      "type": 0,
+      "value": "'."
     }
   ],
   "Ov7Ckz": [
@@ -5047,16 +5049,6 @@
       "value": "Supprimer l’action de flux de travail"
     }
   ],
-  "UF3KjL": [
-    {
-      "type": 0,
-      "value": "Essayez d’utiliser une fonction de conversion telle que : "
-    },
-    {
-      "type": 1,
-      "value": "conversionFunctions"
-    }
-  ],
   "UHCVNK": [
     {
       "type": 0,
@@ -5101,12 +5093,6 @@
     {
       "type": 0,
       "value": "Obligatoire. Collection dans laquelle prendre le dernier objet."
-    }
-  ],
-  "UW+fkB": [
-    {
-      "type": 0,
-      "value": "M’envoyer un e-mail quand"
     }
   ],
   "UYRIS/": [
@@ -5803,12 +5789,6 @@
     {
       "type": 0,
       "value": "Mot de passe"
-    }
-  ],
-  "Y04+GH": [
-    {
-      "type": 0,
-      "value": "Ajoutez une action"
     }
   ],
   "Y0H9aX": [
@@ -6575,6 +6555,12 @@
       "value": "En savoir plus"
     }
   ],
+  "dKCp2j": [
+    {
+      "type": 0,
+      "value": "Dites-moi en plus sur"
+    }
+  ],
   "dL9V5t": [
     {
       "type": 0,
@@ -6733,6 +6719,12 @@
       "value": "Spécifier la durée au format ISO 8601"
     }
   ],
+  "eI00kb": [
+    {
+      "type": 0,
+      "value": "Modifiez ce flux pour"
+    }
+  ],
   "eO1h/h": [
     {
       "type": 0,
@@ -6785,12 +6777,6 @@
     {
       "type": 0,
       "value": "Partagé"
-    }
-  ],
-  "eqAUdj": [
-    {
-      "type": 0,
-      "value": "Lorsqu’un nouvel élément"
     }
   ],
   "evyGYj": [
@@ -6857,20 +6843,6 @@
     {
       "type": 0,
       "value": "Chargement des données de connexion..."
-    }
-  ],
-  "fc1AV8": [
-    {
-      "type": 0,
-      "value": "URL "
-    },
-    {
-      "type": 1,
-      "value": "method"
-    },
-    {
-      "type": 0,
-      "value": " HTTP"
     }
   ],
   "fg/34o": [
@@ -6973,20 +6945,6 @@
     {
       "type": 0,
       "value": "Appliquer la mise en forme Italique au texte. Raccourci : Ctrl+I"
-    }
-  ],
-  "gKEaXI": [
-    {
-      "type": 0,
-      "value": "Copier la valeur de « "
-    },
-    {
-      "type": 1,
-      "value": "label"
-    },
-    {
-      "type": 0,
-      "value": " » dans le Presse-papiers"
     }
   ],
   "gKq3Jv": [
@@ -7418,6 +7376,12 @@
       "value": "Exemple : 0, 10"
     }
   ],
+  "iXW+2l": [
+    {
+      "type": 0,
+      "value": "Ajoutez une action"
+    }
+  ],
   "id4DBb": [
     {
       "type": 0,
@@ -7839,6 +7803,20 @@
       "value": "Identité managée"
     }
   ],
+  "lA/sHA": [
+    {
+      "type": 0,
+      "value": "Copy the value of '"
+    },
+    {
+      "type": 1,
+      "value": "label"
+    },
+    {
+      "type": 0,
+      "value": "' to the clipboard"
+    }
+  ],
   "lB56l2": [
     {
       "type": 0,
@@ -7905,12 +7883,6 @@
     {
       "type": 0,
       "value": "Mode d’exécution sans état :"
-    }
-  ],
-  "lh0TuF": [
-    {
-      "type": 0,
-      "value": "Liste déroulante pour sélectionner le chemin d’accès au fichier"
     }
   ],
   "lhL/KL": [
@@ -8295,6 +8267,12 @@
     {
       "type": 0,
       "value": "(UTC+10:00) Brisbane"
+    }
+  ],
+  "nwLd4b": [
+    {
+      "type": 0,
+      "value": "Liste déroulante pour sélectionner le chemin d’accès au fichier"
     }
   ],
   "nx25nq": [
@@ -9146,6 +9124,12 @@
       "value": "Obligatoire. Chaîne contenant le nom du fuseau horaire de destination. Pour plus d'informations, consultez https://msdn.microsoft.com/fr-fr/library/gg154758.aspx."
     }
   ],
+  "t/RPwA": [
+    {
+      "type": 0,
+      "value": "résultats trouvés"
+    }
+  ],
   "t9RwOi": [
     {
       "type": 0,
@@ -9470,6 +9454,16 @@
     {
       "type": 0,
       "value": "Variables"
+    }
+  ],
+  "ur3P27": [
+    {
+      "type": 0,
+      "value": "Essayez d’utiliser une fonction de conversion telle que : "
+    },
+    {
+      "type": 1,
+      "value": "conversionFunctions"
     }
   ],
   "urAHv1": [

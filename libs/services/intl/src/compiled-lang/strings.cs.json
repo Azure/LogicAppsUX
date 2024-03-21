@@ -41,6 +41,12 @@
       "value": "Trigger"
     }
   ],
+  "+KXX+O": [
+    {
+      "type": 0,
+      "value": "Vybrat funkci z"
+    }
+  ],
   "+M72+a": [
     {
       "type": 0,
@@ -981,6 +987,12 @@
       "value": "Zásady opakování"
     }
   ],
+  "4Levd5": [
+    {
+      "type": 0,
+      "value": "Poslat mi e-mail, když"
+    }
+  ],
   "4Q7WzU": [
     {
       "type": 0,
@@ -1215,6 +1227,12 @@
       "value": "Umožňuje zabezpečit vstupy operace."
     }
   ],
+  "635Koz": [
+    {
+      "type": 0,
+      "value": "Každý týden v pondělí"
+    }
+  ],
   "63CC7M": [
     {
       "type": 0,
@@ -1365,12 +1383,6 @@
     {
       "type": 0,
       "value": "Výstupy se vyžadují, pokud je stav „Úspěšné“"
-    }
-  ],
-  "70eoQu": [
-    {
-      "type": 0,
-      "value": "Vybrat funkci z"
     }
   ],
   "73iM9+": [
@@ -1609,12 +1621,6 @@
       "value": "Popište, jak by se měl tok změnit. Pokud je to možné, přidejte podrobnosti včetně konektoru, který se má použít, a uveďte, jestli by měl být zahrnut nějaký obsah."
     }
   ],
-  "8Q7ns/": [
-    {
-      "type": 0,
-      "value": "Upravit tento tok do"
-    }
-  ],
   "8U0KPg": [
     {
       "type": 0,
@@ -1769,6 +1775,20 @@
     {
       "type": 0,
       "value": "Vrácení toku zpět"
+    }
+  ],
+  "9QS9a3": [
+    {
+      "type": 0,
+      "value": "Nahradit "
+    },
+    {
+      "type": 1,
+      "value": "selectedOperation"
+    },
+    {
+      "type": 0,
+      "value": " za"
     }
   ],
   "9SuA/E": [
@@ -2133,12 +2153,6 @@
     {
       "type": 0,
       "value": "Zadejte heslo jako prostý text nebo použijte zabezpečený parametr."
-    }
-  ],
-  "BQyLiu": [
-    {
-      "type": 0,
-      "value": "nalez. výsl."
     }
   ],
   "BS3gy8": [
@@ -2837,20 +2851,6 @@
       "value": "Vrátí řetězec s jednotlivými položkami pole spojenými oddělovači."
     }
   ],
-  "G/CC5/": [
-    {
-      "type": 0,
-      "value": "Neplatný formát rozdělení v „"
-    },
-    {
-      "type": 1,
-      "value": "splitOn"
-    },
-    {
-      "type": 0,
-      "value": "“."
-    }
-  ],
   "G0XYrd": [
     {
       "type": 0,
@@ -3259,6 +3259,12 @@
       "value": "Žádné vlastnosti"
     }
   ],
+  "IsbbsG": [
+    {
+      "type": 0,
+      "value": "Když nová položka"
+    }
+  ],
   "IxWip7": [
     {
       "type": 0,
@@ -3437,20 +3443,6 @@
     {
       "type": 0,
       "value": "Změnit informace o připojení"
-    }
-  ],
-  "KNDVnN": [
-    {
-      "type": 0,
-      "value": "Nahradit "
-    },
-    {
-      "type": 1,
-      "value": "selectedOperation"
-    },
-    {
-      "type": 0,
-      "value": " za"
     }
   ],
   "KV4uky": [
@@ -3753,12 +3745,6 @@
     {
       "type": 0,
       "value": "Zobrazení kódu"
-    }
-  ],
-  "M3kJsI": [
-    {
-      "type": 0,
-      "value": "Každý týden v pondělí"
     }
   ],
   "M4H0gh": [
@@ -4149,12 +4135,6 @@
       "value": "Načítají se všechny konektory..."
     }
   ],
-  "OQud51": [
-    {
-      "type": 0,
-      "value": "Chci se dozvědět víc o"
-    }
-  ],
   "OSHNZ2": [
     {
       "type": 0,
@@ -4249,6 +4229,16 @@
     {
       "type": 0,
       "value": "Vyberte spravovanou identitu"
+    }
+  ],
+  "OrPVcU": [
+    {
+      "type": 0,
+      "value": "Neplatný formát rozdělení v "
+    },
+    {
+      "type": 1,
+      "value": "splitOn"
     }
   ],
   "Ov7Ckz": [
@@ -5095,16 +5085,6 @@
       "value": "Odstranit akci pracovního postupu"
     }
   ],
-  "UF3KjL": [
-    {
-      "type": 0,
-      "value": "Zkuste použít funkci převodu, například: "
-    },
-    {
-      "type": 1,
-      "value": "conversionFunctions"
-    }
-  ],
   "UHCVNK": [
     {
       "type": 0,
@@ -5149,12 +5129,6 @@
     {
       "type": 0,
       "value": "Vyžadováno. Kolekce, ze které se má získat poslední objekt."
-    }
-  ],
-  "UW+fkB": [
-    {
-      "type": 0,
-      "value": "Poslat mi e-mail, když"
     }
   ],
   "UYRIS/": [
@@ -5851,12 +5825,6 @@
     {
       "type": 0,
       "value": "Heslo"
-    }
-  ],
-  "Y04+GH": [
-    {
-      "type": 0,
-      "value": "Přidat akci"
     }
   ],
   "Y0H9aX": [
@@ -6623,6 +6591,12 @@
       "value": "Další informace"
     }
   ],
+  "dKCp2j": [
+    {
+      "type": 0,
+      "value": "Chci se dozvědět víc o"
+    }
+  ],
   "dL9V5t": [
     {
       "type": 0,
@@ -6781,6 +6755,12 @@
       "value": "Uveďte dobu trvání ve formátu ISO 8601."
     }
   ],
+  "eI00kb": [
+    {
+      "type": 0,
+      "value": "Upravit tento tok na"
+    }
+  ],
   "eO1h/h": [
     {
       "type": 0,
@@ -6833,12 +6813,6 @@
     {
       "type": 0,
       "value": "Sdíleno"
-    }
-  ],
-  "eqAUdj": [
-    {
-      "type": 0,
-      "value": "Když nová položka"
     }
   ],
   "evyGYj": [
@@ -6905,16 +6879,6 @@
     {
       "type": 0,
       "value": "Načítají se data připojení..."
-    }
-  ],
-  "fc1AV8": [
-    {
-      "type": 0,
-      "value": "Adresa URL HTTP "
-    },
-    {
-      "type": 1,
-      "value": "method"
     }
   ],
   "fg/34o": [
@@ -7017,20 +6981,6 @@
     {
       "type": 0,
       "value": "Naformátujte text jako kurzívu. Zkratka: Ctrl+I"
-    }
-  ],
-  "gKEaXI": [
-    {
-      "type": 0,
-      "value": "Zkopírovat hodnotu "
-    },
-    {
-      "type": 1,
-      "value": "label"
-    },
-    {
-      "type": 0,
-      "value": " do schránky"
     }
   ],
   "gKq3Jv": [
@@ -7477,6 +7427,12 @@
       "value": "Příklad: 0, 10"
     }
   ],
+  "iXW+2l": [
+    {
+      "type": 0,
+      "value": "Přidat akci"
+    }
+  ],
   "id4DBb": [
     {
       "type": 0,
@@ -7909,6 +7865,20 @@
       "value": "Spravovaná identita"
     }
   ],
+  "lA/sHA": [
+    {
+      "type": 0,
+      "value": "Zkopírovat hodnotu "
+    },
+    {
+      "type": 1,
+      "value": "label"
+    },
+    {
+      "type": 0,
+      "value": " do schránky"
+    }
+  ],
   "lB56l2": [
     {
       "type": 0,
@@ -7975,12 +7945,6 @@
     {
       "type": 0,
       "value": "Bezstavový režim spuštění:"
-    }
-  ],
-  "lh0TuF": [
-    {
-      "type": 0,
-      "value": "Rozevírací seznam pro výběr cesty k souboru"
     }
   ],
   "lhL/KL": [
@@ -8365,6 +8329,12 @@
     {
       "type": 0,
       "value": "(UTC+10:00) Brisbane"
+    }
+  ],
+  "nwLd4b": [
+    {
+      "type": 0,
+      "value": "Rozevírací seznam pro výběr cesty k souboru"
     }
   ],
   "nx25nq": [
@@ -9223,6 +9193,12 @@
       "value": "Povinný parametr. Řetězec, který obsahuje název cílového časového pásma. Podrobnosti najdete tady: https://msdn.microsoft.com/en-us/library/gg154758.aspx"
     }
   ],
+  "t/RPwA": [
+    {
+      "type": 0,
+      "value": "nalez. výsl."
+    }
+  ],
   "t9RwOi": [
     {
       "type": 0,
@@ -9543,6 +9519,16 @@
     {
       "type": 0,
       "value": "Proměnné"
+    }
+  ],
+  "ur3P27": [
+    {
+      "type": 0,
+      "value": "Zkuste použít funkci převodu, například: "
+    },
+    {
+      "type": 1,
+      "value": "conversionFunctions"
     }
   ],
   "urAHv1": [
