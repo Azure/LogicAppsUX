@@ -2379,19 +2379,16 @@ export const recurseSerializeCondition = (
       operator = RowDropdownOptions.EQUALS;
     }
 
-    console.log(idReplacements);
     const operand1String = parameterValueToString(
       { type: 'any', value: operand1, ...commonProperties } as any,
       isDefinitionValue,
       idReplacements
     );
-    console.log(operand1String);
     const operand2String = parameterValueToString(
       { type: 'any', value: operand2, ...commonProperties } as any,
       isDefinitionValue,
       idReplacements
     );
-    console.log(operand2String);
     if (errors && errors.length === 0 && (operand1String || operand2String)) {
       if (!operand1String) {
         const intl = getIntl();
