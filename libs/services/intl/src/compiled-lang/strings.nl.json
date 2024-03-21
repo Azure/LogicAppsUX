@@ -44,7 +44,7 @@
   "+KXX+O": [
     {
       "type": 0,
-      "value": "Select function from"
+      "value": "Functie selecteren uit"
     }
   ],
   "+M72+a": [
@@ -990,7 +990,7 @@
   "4Levd5": [
     {
       "type": 0,
-      "value": "Send me an email when"
+      "value": "Stuur me een e-mail wanneer"
     }
   ],
   "4Q7WzU": [
@@ -1230,7 +1230,7 @@
   "635Koz": [
     {
       "type": 0,
-      "value": "Every week on Monday"
+      "value": "Elke week op maandag"
     }
   ],
   "63CC7M": [
@@ -1779,16 +1779,12 @@
   ],
   "9QS9a3": [
     {
-      "type": 0,
-      "value": "Replace \""
-    },
-    {
       "type": 1,
       "value": "selectedOperation"
     },
     {
       "type": 0,
-      "value": "\" with"
+      "value": " vervangen door"
     }
   ],
   "9SuA/E": [
@@ -3214,7 +3210,7 @@
   "IsbbsG": [
     {
       "type": 0,
-      "value": "When a new item"
+      "value": "Wanneer een nieuw item"
     }
   ],
   "IxWip7": [
@@ -6502,7 +6498,7 @@
   "dKCp2j": [
     {
       "type": 0,
-      "value": "Tell me more about"
+      "value": "Vertel me er meer over"
     }
   ],
   "dL9V5t": [
@@ -6666,7 +6662,7 @@
   "eI00kb": [
     {
       "type": 0,
-      "value": "Edit this flow to"
+      "value": "Deze stroom bewerken om"
     }
   ],
   "eO1h/h": [
@@ -6787,16 +6783,6 @@
     {
       "type": 0,
       "value": "Verbindingsgegevens laden..."
-    }
-  ],
-  "fc1AV8": [
-    {
-      "type": 0,
-      "value": "URL van de HTTP-"
-    },
-    {
-      "type": 1,
-      "value": "methode"
     }
   ],
   "fg/34o": [
@@ -7322,7 +7308,7 @@
   "iXW+2l": [
     {
       "type": 0,
-      "value": "Add an action"
+      "value": "Een actie toevoegen"
     }
   ],
   "id4DBb": [
@@ -8204,7 +8190,7 @@
   "nwLd4b": [
     {
       "type": 0,
-      "value": "Dropdown to select filepath"
+      "value": "Vervolgkeuzelijst om bestandspad te selecteren"
     }
   ],
   "nx25nq": [
@@ -9040,7 +9026,7 @@
   "t/RPwA": [
     {
       "type": 0,
-      "value": "results found"
+      "value": "resultaten gevonden"
     }
   ],
   "t9RwOi": [
@@ -9368,7 +9354,7 @@
   "ur3P27": [
     {
       "type": 0,
-      "value": "Try using a Conversion function such as: "
+      "value": "Probeer een conversiefunctie te gebruiken, zoals: "
     },
     {
       "type": 1,

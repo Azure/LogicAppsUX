@@ -44,7 +44,7 @@
   "+KXX+O": [
     {
       "type": 0,
-      "value": "Select function from"
+      "value": "İşlev seçin"
     }
   ],
   "+M72+a": [
@@ -982,7 +982,7 @@
   "4Levd5": [
     {
       "type": 0,
-      "value": "Send me an email when"
+      "value": "Şu durumda bana bir e-posta gönder:"
     }
   ],
   "4Q7WzU": [
@@ -1222,7 +1222,7 @@
   "635Koz": [
     {
       "type": 0,
-      "value": "Every week on Monday"
+      "value": "Her hafta Pazartesi günü"
     }
   ],
   "63CC7M": [
@@ -1772,7 +1772,7 @@
   "9QS9a3": [
     {
       "type": 0,
-      "value": "Replace \""
+      "value": "\""
     },
     {
       "type": 1,
@@ -1780,7 +1780,7 @@
     },
     {
       "type": 0,
-      "value": "\" with"
+      "value": "\" öğesini şununla değiştir:"
     }
   ],
   "9SuA/E": [
@@ -3210,7 +3210,7 @@
   "IsbbsG": [
     {
       "type": 0,
-      "value": "When a new item"
+      "value": "Yeni bir öğe şu durumda olduğunda:"
     }
   ],
   "IxWip7": [
@@ -6502,7 +6502,7 @@
   "dKCp2j": [
     {
       "type": 0,
-      "value": "Tell me more about"
+      "value": "Şunun hakkında daha fazla bilgi edinmek istiyorum:"
     }
   ],
   "dL9V5t": [
@@ -6662,7 +6662,7 @@
   "eI00kb": [
     {
       "type": 0,
-      "value": "Edit this flow to"
+      "value": "Bu akışı şunun için düzenleyin:"
     }
   ],
   "eO1h/h": [
@@ -6783,20 +6783,6 @@
     {
       "type": 0,
       "value": "Bağlantı verileri yükleniyor..."
-    }
-  ],
-  "fc1AV8": [
-    {
-      "type": 0,
-      "value": "HTTP "
-    },
-    {
-      "type": 1,
-      "value": "method"
-    },
-    {
-      "type": 0,
-      "value": " URL’si"
     }
   ],
   "fg/34o": [
@@ -7318,7 +7304,7 @@
   "iXW+2l": [
     {
       "type": 0,
-      "value": "Add an action"
+      "value": "Eylem ekleyin"
     }
   ],
   "id4DBb": [
@@ -8200,7 +8186,7 @@
   "nwLd4b": [
     {
       "type": 0,
-      "value": "Dropdown to select filepath"
+      "value": "Dosya yolu seçmek için açılan liste"
     }
   ],
   "nx25nq": [
@@ -9040,7 +9026,7 @@
   "t/RPwA": [
     {
       "type": 0,
-      "value": "results found"
+      "value": "sonuç bulundu"
     }
   ],
   "t9RwOi": [
@@ -9372,7 +9358,7 @@
   "ur3P27": [
     {
       "type": 0,
-      "value": "Try using a Conversion function such as: "
+      "value": "Dönüştürme işlevini kullanmayı deneyin, örneğin: "
     },
     {
       "type": 1,

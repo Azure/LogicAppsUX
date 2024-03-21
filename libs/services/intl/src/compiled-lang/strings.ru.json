@@ -44,7 +44,7 @@
   "+KXX+O": [
     {
       "type": 0,
-      "value": "Select function from"
+      "value": "Выберите функцию из"
     }
   ],
   "+M72+a": [
@@ -6889,16 +6889,6 @@
       "value": "Загрузка данных подключения…"
     }
   ],
-  "fc1AV8": [
-    {
-      "type": 0,
-      "value": "URL-адрес HTTP "
-    },
-    {
-      "type": 1,
-      "value": "method"
-    }
-  ],
   "fg/34o": [
     {
       "type": 0,
@@ -7444,7 +7434,7 @@
   "iXW+2l": [
     {
       "type": 0,
-      "value": "Add an action"
+      "value": "Добавить действие"
     }
   ],
   "id4DBb": [
@@ -8352,7 +8342,7 @@
   "nwLd4b": [
     {
       "type": 0,
-      "value": "Dropdown to select filepath"
+      "value": "Раскрывающийся список для выбора пути к файлу"
     }
   ],
   "nx25nq": [
@@ -9218,7 +9208,7 @@
   "t/RPwA": [
     {
       "type": 0,
-      "value": "results found"
+      "value": "найдено результатов"
     }
   ],
   "t9RwOi": [
@@ -9550,7 +9540,7 @@
   "ur3P27": [
     {
       "type": 0,
-      "value": "Try using a Conversion function such as: "
+      "value": "Попробуйте использовать функцию преобразования, например: "
     },
     {
       "type": 1,
