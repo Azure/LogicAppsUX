@@ -44,7 +44,7 @@
   "+KXX+O": [
     {
       "type": 0,
-      "value": "Select function from"
+      "value": "Vybrat funkci z"
     }
   ],
   "+M72+a": [
@@ -990,7 +990,7 @@
   "4Levd5": [
     {
       "type": 0,
-      "value": "Send me an email when"
+      "value": "Poslat mi e-mail, když"
     }
   ],
   "4Q7WzU": [
@@ -1230,7 +1230,7 @@
   "635Koz": [
     {
       "type": 0,
-      "value": "Every week on Monday"
+      "value": "Každý týden v pondělí"
     }
   ],
   "63CC7M": [
@@ -1780,7 +1780,7 @@
   "9QS9a3": [
     {
       "type": 0,
-      "value": "Replace \""
+      "value": "Nahradit "
     },
     {
       "type": 1,
@@ -1788,7 +1788,7 @@
     },
     {
       "type": 0,
-      "value": "\" with"
+      "value": " za"
     }
   ],
   "9SuA/E": [
@@ -3262,7 +3262,7 @@
   "IsbbsG": [
     {
       "type": 0,
-      "value": "When a new item"
+      "value": "Když nová položka"
     }
   ],
   "IxWip7": [
@@ -4234,15 +4234,11 @@
   "OrPVcU": [
     {
       "type": 0,
-      "value": "Invalid split on format in '"
+      "value": "Neplatný formát rozdělení v "
     },
     {
       "type": 1,
       "value": "splitOn"
-    },
-    {
-      "type": 0,
-      "value": "'."
     }
   ],
   "Ov7Ckz": [
@@ -6598,7 +6594,7 @@
   "dKCp2j": [
     {
       "type": 0,
-      "value": "Tell me more about"
+      "value": "Chci se dozvědět víc o"
     }
   ],
   "dL9V5t": [
@@ -6762,7 +6758,7 @@
   "eI00kb": [
     {
       "type": 0,
-      "value": "Edit this flow to"
+      "value": "Upravit tento tok na"
     }
   ],
   "eO1h/h": [
@@ -6883,16 +6879,6 @@
     {
       "type": 0,
       "value": "Načítají se data připojení..."
-    }
-  ],
-  "fc1AV8": [
-    {
-      "type": 0,
-      "value": "Adresa URL HTTP "
-    },
-    {
-      "type": 1,
-      "value": "method"
     }
   ],
   "fg/34o": [
@@ -7444,7 +7430,7 @@
   "iXW+2l": [
     {
       "type": 0,
-      "value": "Add an action"
+      "value": "Přidat akci"
     }
   ],
   "id4DBb": [
@@ -7882,7 +7868,7 @@
   "lA/sHA": [
     {
       "type": 0,
-      "value": "Copy the value of '"
+      "value": "Zkopírovat hodnotu "
     },
     {
       "type": 1,
@@ -7890,7 +7876,7 @@
     },
     {
       "type": 0,
-      "value": "' to the clipboard"
+      "value": " do schránky"
     }
   ],
   "lB56l2": [
@@ -8348,7 +8334,7 @@
   "nwLd4b": [
     {
       "type": 0,
-      "value": "Dropdown to select filepath"
+      "value": "Rozevírací seznam pro výběr cesty k souboru"
     }
   ],
   "nx25nq": [
@@ -9210,7 +9196,7 @@
   "t/RPwA": [
     {
       "type": 0,
-      "value": "results found"
+      "value": "nalez. výsl."
     }
   ],
   "t9RwOi": [
@@ -9538,7 +9524,7 @@
   "ur3P27": [
     {
       "type": 0,
-      "value": "Try using a Conversion function such as: "
+      "value": "Zkuste použít funkci převodu, například: "
     },
     {
       "type": 1,

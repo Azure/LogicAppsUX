@@ -44,7 +44,7 @@
   "+KXX+O": [
     {
       "type": 0,
-      "value": "Select function from"
+      "value": "选择函数来源"
     }
   ],
   "+M72+a": [
@@ -994,7 +994,7 @@
   "4Levd5": [
     {
       "type": 0,
-      "value": "Send me an email when"
+      "value": "在以下情况向我发送一封电子邮件"
     }
   ],
   "4Q7WzU": [
@@ -1234,7 +1234,7 @@
   "635Koz": [
     {
       "type": 0,
-      "value": "Every week on Monday"
+      "value": "每周的星期一"
     }
   ],
   "63CC7M": [
@@ -1784,7 +1784,7 @@
   "9QS9a3": [
     {
       "type": 0,
-      "value": "Replace \""
+      "value": "将 \""
     },
     {
       "type": 1,
@@ -1792,7 +1792,7 @@
     },
     {
       "type": 0,
-      "value": "\" with"
+      "value": "\" 替换为"
     }
   ],
   "9SuA/E": [
@@ -3208,7 +3208,7 @@
   "IsbbsG": [
     {
       "type": 0,
-      "value": "When a new item"
+      "value": "当有新项时"
     }
   ],
   "IxWip7": [
@@ -6498,7 +6498,7 @@
   "dKCp2j": [
     {
       "type": 0,
-      "value": "Tell me more about"
+      "value": "向我详细介绍"
     }
   ],
   "dL9V5t": [
@@ -6662,7 +6662,7 @@
   "eI00kb": [
     {
       "type": 0,
-      "value": "Edit this flow to"
+      "value": "将此流编辑到"
     }
   ],
   "eO1h/h": [
@@ -6783,20 +6783,6 @@
     {
       "type": 0,
       "value": "正在加载连接数据..."
-    }
-  ],
-  "fc1AV8": [
-    {
-      "type": 0,
-      "value": "HTTP "
-    },
-    {
-      "type": 1,
-      "value": "method"
-    },
-    {
-      "type": 0,
-      "value": " URL"
     }
   ],
   "fg/34o": [
@@ -7311,7 +7297,7 @@
   "iXW+2l": [
     {
       "type": 0,
-      "value": "Add an action"
+      "value": "添加操作"
     }
   ],
   "id4DBb": [
@@ -8190,7 +8176,7 @@
   "nwLd4b": [
     {
       "type": 0,
-      "value": "Dropdown to select filepath"
+      "value": "用于选择文件路径的下拉列表"
     }
   ],
   "nx25nq": [
@@ -9031,7 +9017,7 @@
   "t/RPwA": [
     {
       "type": 0,
-      "value": "results found"
+      "value": "找到的结果"
     }
   ],
   "t9RwOi": [
@@ -9359,7 +9345,7 @@
   "ur3P27": [
     {
       "type": 0,
-      "value": "Try using a Conversion function such as: "
+      "value": "尝试使用转换函数，例如: "
     },
     {
       "type": 1,

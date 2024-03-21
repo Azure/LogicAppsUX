@@ -44,7 +44,7 @@
   "+KXX+O": [
     {
       "type": 0,
-      "value": "Select function from"
+      "value": "Függvény kiválasztása innen:"
     }
   ],
   "+M72+a": [
@@ -998,7 +998,7 @@
   "4Levd5": [
     {
       "type": 0,
-      "value": "Send me an email when"
+      "value": "E-mailt kérek, ha"
     }
   ],
   "4Q7WzU": [
@@ -1238,7 +1238,7 @@
   "635Koz": [
     {
       "type": 0,
-      "value": "Every week on Monday"
+      "value": "Minden héten hétfőn"
     }
   ],
   "63CC7M": [
@@ -1780,7 +1780,7 @@
   "9QS9a3": [
     {
       "type": 0,
-      "value": "Replace \""
+      "value": "A(z) "
     },
     {
       "type": 1,
@@ -1788,7 +1788,7 @@
     },
     {
       "type": 0,
-      "value": "\" with"
+      "value": " lecserélése a következőre:"
     }
   ],
   "9SuA/E": [
@@ -3222,7 +3222,7 @@
   "IsbbsG": [
     {
       "type": 0,
-      "value": "When a new item"
+      "value": "Új elem esetén"
     }
   ],
   "IxWip7": [
@@ -4172,7 +4172,7 @@
   "OrPVcU": [
     {
       "type": 0,
-      "value": "Invalid split on format in '"
+      "value": "Érvénytelen felosztási formátum a következőben: „"
     },
     {
       "type": 1,
@@ -4180,7 +4180,7 @@
     },
     {
       "type": 0,
-      "value": "'."
+      "value": "”."
     }
   ],
   "Ov7Ckz": [
@@ -6502,7 +6502,7 @@
   "dKCp2j": [
     {
       "type": 0,
-      "value": "Tell me more about"
+      "value": "Mutass többet a következőről:"
     }
   ],
   "dL9V5t": [
@@ -6666,7 +6666,7 @@
   "eI00kb": [
     {
       "type": 0,
-      "value": "Edit this flow to"
+      "value": "A folyamat szerkesztése a következőre:"
     }
   ],
   "eO1h/h": [
@@ -6787,20 +6787,6 @@
     {
       "type": 0,
       "value": "Kapcsolati adatok betöltése..."
-    }
-  ],
-  "fc1AV8": [
-    {
-      "type": 0,
-      "value": "HTTP "
-    },
-    {
-      "type": 1,
-      "value": "method"
-    },
-    {
-      "type": 0,
-      "value": " URL"
     }
   ],
   "fg/34o": [
@@ -7326,7 +7312,7 @@
   "iXW+2l": [
     {
       "type": 0,
-      "value": "Add an action"
+      "value": "Művelet hozzáadása"
     }
   ],
   "id4DBb": [
@@ -7742,7 +7728,7 @@
   "lA/sHA": [
     {
       "type": 0,
-      "value": "Copy the value of '"
+      "value": "A(z) „"
     },
     {
       "type": 1,
@@ -7750,7 +7736,7 @@
     },
     {
       "type": 0,
-      "value": "' to the clipboard"
+      "value": "” értékének másolása a vágólapra"
     }
   ],
   "lB56l2": [
@@ -8208,7 +8194,7 @@
   "nwLd4b": [
     {
       "type": 0,
-      "value": "Dropdown to select filepath"
+      "value": "Legördülő lista a fájlelérési út kiválasztásához"
     }
   ],
   "nx25nq": [
@@ -9052,7 +9038,7 @@
   "t/RPwA": [
     {
       "type": 0,
-      "value": "results found"
+      "value": "találat"
     }
   ],
   "t9RwOi": [
@@ -9380,7 +9366,7 @@
   "ur3P27": [
     {
       "type": 0,
-      "value": "Try using a Conversion function such as: "
+      "value": "Próbáljon konverziós függvényt használni, például a következőt: "
     },
     {
       "type": 1,

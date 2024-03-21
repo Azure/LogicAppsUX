@@ -44,7 +44,7 @@
   "+KXX+O": [
     {
       "type": 0,
-      "value": "Select function from"
+      "value": "関数の選択元"
     }
   ],
   "+M72+a": [
@@ -982,7 +982,7 @@
   "4Levd5": [
     {
       "type": 0,
-      "value": "Send me an email when"
+      "value": "メールを送信する場合"
     }
   ],
   "4Q7WzU": [
@@ -1222,7 +1222,7 @@
   "635Koz": [
     {
       "type": 0,
-      "value": "Every week on Monday"
+      "value": "毎週月曜日の"
     }
   ],
   "63CC7M": [
@@ -1772,7 +1772,7 @@
   "9QS9a3": [
     {
       "type": 0,
-      "value": "Replace \""
+      "value": "\""
     },
     {
       "type": 1,
@@ -1780,7 +1780,7 @@
     },
     {
       "type": 0,
-      "value": "\" with"
+      "value": "\"と置き換える操作"
     }
   ],
   "9SuA/E": [
@@ -3188,7 +3188,7 @@
   "IsbbsG": [
     {
       "type": 0,
-      "value": "When a new item"
+      "value": "新しいアイテム"
     }
   ],
   "IxWip7": [
@@ -6454,7 +6454,7 @@
   "dKCp2j": [
     {
       "type": 0,
-      "value": "Tell me more about"
+      "value": "次のものの詳細を説明してください"
     }
   ],
   "dL9V5t": [
@@ -6614,7 +6614,7 @@
   "eI00kb": [
     {
       "type": 0,
-      "value": "Edit this flow to"
+      "value": "このフローを次のものに編集してください"
     }
   ],
   "eO1h/h": [
@@ -6735,20 +6735,6 @@
     {
       "type": 0,
       "value": "接続データを読み込んでいます..."
-    }
-  ],
-  "fc1AV8": [
-    {
-      "type": 0,
-      "value": "HTTP "
-    },
-    {
-      "type": 1,
-      "value": "method"
-    },
-    {
-      "type": 0,
-      "value": " URL"
     }
   ],
   "fg/34o": [
@@ -7259,7 +7245,7 @@
   "iXW+2l": [
     {
       "type": 0,
-      "value": "Add an action"
+      "value": "アクションを追加してください"
     }
   ],
   "id4DBb": [
@@ -8122,7 +8108,7 @@
   "nwLd4b": [
     {
       "type": 0,
-      "value": "Dropdown to select filepath"
+      "value": "ファイルパスを選択するためのドロップダウン"
     }
   ],
   "nx25nq": [
@@ -8951,7 +8937,7 @@
   "t/RPwA": [
     {
       "type": 0,
-      "value": "results found"
+      "value": "件の結果が見つかりました"
     }
   ],
   "t9RwOi": [

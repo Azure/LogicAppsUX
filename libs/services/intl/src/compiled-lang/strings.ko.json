@@ -44,7 +44,7 @@
   "+KXX+O": [
     {
       "type": 0,
-      "value": "Select function from"
+      "value": "다음에서 함수 선택"
     }
   ],
   "+M72+a": [
@@ -982,7 +982,7 @@
   "4Levd5": [
     {
       "type": 0,
-      "value": "Send me an email when"
+      "value": "전자 메일을 보낼 때"
     }
   ],
   "4Q7WzU": [
@@ -1222,7 +1222,7 @@
   "635Koz": [
     {
       "type": 0,
-      "value": "Every week on Monday"
+      "value": "매주 월요일"
     }
   ],
   "63CC7M": [
@@ -1772,7 +1772,7 @@
   "9QS9a3": [
     {
       "type": 0,
-      "value": "Replace \""
+      "value": "\""
     },
     {
       "type": 1,
@@ -1780,7 +1780,7 @@
     },
     {
       "type": 0,
-      "value": "\" with"
+      "value": "\"을(를) (으)로 바꾸기"
     }
   ],
   "9SuA/E": [
@@ -3180,7 +3180,7 @@
   "IsbbsG": [
     {
       "type": 0,
-      "value": "When a new item"
+      "value": "새 항목이 있는 경우"
     }
   ],
   "IxWip7": [
@@ -6442,7 +6442,7 @@
   "dKCp2j": [
     {
       "type": 0,
-      "value": "Tell me more about"
+      "value": "자세한 정보"
     }
   ],
   "dL9V5t": [
@@ -6602,7 +6602,7 @@
   "eI00kb": [
     {
       "type": 0,
-      "value": "Edit this flow to"
+      "value": "다음으로 이 흐름 편집"
     }
   ],
   "eO1h/h": [
@@ -6723,20 +6723,6 @@
     {
       "type": 0,
       "value": "연결 데이터를 로드하는 중..."
-    }
-  ],
-  "fc1AV8": [
-    {
-      "type": 0,
-      "value": "HTTP "
-    },
-    {
-      "type": 1,
-      "value": "method"
-    },
-    {
-      "type": 0,
-      "value": " URL"
     }
   ],
   "fg/34o": [
@@ -7247,7 +7233,7 @@
   "iXW+2l": [
     {
       "type": 0,
-      "value": "Add an action"
+      "value": "동작 추가"
     }
   ],
   "id4DBb": [
@@ -8110,7 +8096,7 @@
   "nwLd4b": [
     {
       "type": 0,
-      "value": "Dropdown to select filepath"
+      "value": "파일 경로를 선택하는 드롭다운"
     }
   ],
   "nx25nq": [
@@ -8939,7 +8925,7 @@
   "t/RPwA": [
     {
       "type": 0,
-      "value": "results found"
+      "value": "찾은 결과"
     }
   ],
   "t9RwOi": [
@@ -9266,12 +9252,12 @@
   ],
   "ur3P27": [
     {
-      "type": 0,
-      "value": "Try using a Conversion function such as: "
-    },
-    {
       "type": 1,
       "value": "conversionFunctions"
+    },
+    {
+      "type": 0,
+      "value": " 등의 변환 함수를 사용해 보세요."
     }
   ],
   "urAHv1": [

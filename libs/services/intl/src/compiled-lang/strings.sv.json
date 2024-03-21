@@ -44,7 +44,7 @@
   "+KXX+O": [
     {
       "type": 0,
-      "value": "Select function from"
+      "value": "Välj funktion från"
     }
   ],
   "+M72+a": [
@@ -990,7 +990,7 @@
   "4Levd5": [
     {
       "type": 0,
-      "value": "Send me an email when"
+      "value": "Skicka mig ett e-postmeddelande när"
     }
   ],
   "4Q7WzU": [
@@ -1230,7 +1230,7 @@
   "635Koz": [
     {
       "type": 0,
-      "value": "Every week on Monday"
+      "value": "Varje vecka på måndag"
     }
   ],
   "63CC7M": [
@@ -1780,7 +1780,7 @@
   "9QS9a3": [
     {
       "type": 0,
-      "value": "Replace \""
+      "value": "Ersätt "
     },
     {
       "type": 1,
@@ -1788,7 +1788,7 @@
     },
     {
       "type": 0,
-      "value": "\" with"
+      "value": " med"
     }
   ],
   "9SuA/E": [
@@ -3210,7 +3210,7 @@
   "IsbbsG": [
     {
       "type": 0,
-      "value": "When a new item"
+      "value": "När ett nytt objekt"
     }
   ],
   "IxWip7": [
@@ -6490,7 +6490,7 @@
   "dKCp2j": [
     {
       "type": 0,
-      "value": "Tell me more about"
+      "value": "Berätta mer om"
     }
   ],
   "dL9V5t": [
@@ -6654,7 +6654,7 @@
   "eI00kb": [
     {
       "type": 0,
-      "value": "Edit this flow to"
+      "value": "Redigera det här flödet till"
     }
   ],
   "eO1h/h": [
@@ -6775,16 +6775,6 @@
     {
       "type": 0,
       "value": "Läser in anslutningsdata..."
-    }
-  ],
-  "fc1AV8": [
-    {
-      "type": 0,
-      "value": "Webbadress för HTTP "
-    },
-    {
-      "type": 1,
-      "value": "method"
     }
   ],
   "fg/34o": [
@@ -7310,7 +7300,7 @@
   "iXW+2l": [
     {
       "type": 0,
-      "value": "Add an action"
+      "value": "Lägga till en åtgärd"
     }
   ],
   "id4DBb": [
@@ -8192,7 +8182,7 @@
   "nwLd4b": [
     {
       "type": 0,
-      "value": "Dropdown to select filepath"
+      "value": "Listruta för att välja filsökväg"
     }
   ],
   "nx25nq": [
@@ -9028,7 +9018,7 @@
   "t/RPwA": [
     {
       "type": 0,
-      "value": "results found"
+      "value": "resultat hittades"
     }
   ],
   "t9RwOi": [
@@ -9360,7 +9350,7 @@
   "ur3P27": [
     {
       "type": 0,
-      "value": "Try using a Conversion function such as: "
+      "value": "Prova att använda en konverteringsfunktion som: "
     },
     {
       "type": 1,

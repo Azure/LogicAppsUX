@@ -44,7 +44,7 @@
   "+KXX+O": [
     {
       "type": 0,
-      "value": "Select function from"
+      "value": "Selecionar função a partir de"
     }
   ],
   "+M72+a": [
@@ -990,7 +990,7 @@
   "4Levd5": [
     {
       "type": 0,
-      "value": "Send me an email when"
+      "value": "Enviar-me um e-mail quando"
     }
   ],
   "4Q7WzU": [
@@ -1230,7 +1230,7 @@
   "635Koz": [
     {
       "type": 0,
-      "value": "Every week on Monday"
+      "value": "Todas as semanas à segunda-feira"
     }
   ],
   "63CC7M": [
@@ -1780,7 +1780,7 @@
   "9QS9a3": [
     {
       "type": 0,
-      "value": "Replace \""
+      "value": "Substituir \""
     },
     {
       "type": 1,
@@ -1788,7 +1788,7 @@
     },
     {
       "type": 0,
-      "value": "\" with"
+      "value": "\" por"
     }
   ],
   "9SuA/E": [
@@ -3244,7 +3244,7 @@
   "IsbbsG": [
     {
       "type": 0,
-      "value": "When a new item"
+      "value": "Quando um novo item"
     }
   ],
   "IxWip7": [
@@ -6558,7 +6558,7 @@
   "dKCp2j": [
     {
       "type": 0,
-      "value": "Tell me more about"
+      "value": "Quero saber mais sobre"
     }
   ],
   "dL9V5t": [
@@ -6722,7 +6722,7 @@
   "eI00kb": [
     {
       "type": 0,
-      "value": "Edit this flow to"
+      "value": "Edite este fluxo para"
     }
   ],
   "eO1h/h": [
@@ -6843,20 +6843,6 @@
     {
       "type": 0,
       "value": "A carregar dados de ligação..."
-    }
-  ],
-  "fc1AV8": [
-    {
-      "type": 0,
-      "value": "HTTP "
-    },
-    {
-      "type": 1,
-      "value": "method"
-    },
-    {
-      "type": 0,
-      "value": " URL"
     }
   ],
   "fg/34o": [
@@ -7393,7 +7379,7 @@
   "iXW+2l": [
     {
       "type": 0,
-      "value": "Add an action"
+      "value": "Adicionar uma ação"
     }
   ],
   "id4DBb": [
@@ -8286,7 +8272,7 @@
   "nwLd4b": [
     {
       "type": 0,
-      "value": "Dropdown to select filepath"
+      "value": "Lista pendente para selecionar caminho de ficheiro"
     }
   ],
   "nx25nq": [
@@ -9141,7 +9127,7 @@
   "t/RPwA": [
     {
       "type": 0,
-      "value": "results found"
+      "value": "resultados encontrados"
     }
   ],
   "t9RwOi": [
@@ -9473,7 +9459,7 @@
   "ur3P27": [
     {
       "type": 0,
-      "value": "Try using a Conversion function such as: "
+      "value": "Experimente utilizar uma função de Conversão, como: "
     },
     {
       "type": 1,
