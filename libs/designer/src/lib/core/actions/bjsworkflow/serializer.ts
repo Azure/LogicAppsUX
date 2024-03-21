@@ -217,7 +217,11 @@ const getWorkflowParameters = (
     delete parameterDefinition['name'];
     delete parameterDefinition['isEditable'];
 
-    parameterDefinition.value = equals(parameterDefinition.type, UIConstants.WORKFLOW_PARAMETER_TYPE.STRING)
+    const isStringParameter =
+      equals(parameterDefinition.type, UIConstants.WORKFLOW_PARAMETER_TYPE.STRING) ||
+      equals(parameterDefinition.type, UIConstants.WORKFLOW_PARAMETER_TYPE.SECURE_STRING);
+
+    parameterDefinition.value = isStringParameter
       ? value
       : value === ''
       ? undefined
@@ -225,7 +229,7 @@ const getWorkflowParameters = (
       ? value
       : JSON.parse(value);
 
-    parameterDefinition.defaultValue = equals(parameterDefinition.type, UIConstants.WORKFLOW_PARAMETER_TYPE.STRING)
+    parameterDefinition.defaultValue = isStringParameter
       ? defaultValue
       : defaultValue === ''
       ? undefined
