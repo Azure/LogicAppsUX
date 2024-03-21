@@ -3,13 +3,11 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { developmentDirectoryName, testsDirectoryName, workflowFileName } from '../../../../constants';
-import { localize } from '../../../../localize';
-import { getUnitTestInLocalProject, getUnitTestName } from '../../../utils/unitTests';
+import { getUnitTestName, pickUnitTest } from '../../../utils/unitTests';
 import { tryGetLogicAppProjectRoot } from '../../../utils/verifyIsProject';
 import { getWorkflowNode, getWorkspaceFolder } from '../../../utils/workspace';
 import { type IAzureConnectorsContext } from '../azureConnectorWizard';
 import OpenDesignerForLocalProject from '../openDesigner/openDesignerForLocalProject';
-import { type IAzureQuickPickItem, type IActionContext } from '@microsoft/vscode-azext-utils';
 import { readFileSync } from 'fs';
 import * as path from 'path';
 import * as vscode from 'vscode';
@@ -43,29 +41,3 @@ export async function editUnitTest(context: IAzureConnectorsContext, node: vscod
   const openDesignerObj = new OpenDesignerForLocalProject(context, workflowNode, unitTestName, unitTestDefinition);
   await openDesignerObj?.createPanel();
 }
-
-/**
- * Prompts the user to select a unit test to edit.
- * @param {IActionContext} context - The action context.
- * @param {string} projectPath - The path of the project.
- * @returns A promise that resolves to the selected unit test.
- */
-const pickUnitTest = async (context: IActionContext, projectPath: string) => {
-  const placeHolder: string = localize('selectUnitTest', 'Select unit test to edit');
-  return await context.ui.showQuickPick(getUnitTestPick(projectPath), { placeHolder });
-};
-
-/**
- * Retrieves a list of unit tests in the local project.
- * @param {string} projectPath - The path to the project.
- * @returns A promise that resolves to an array of unit test picks.
- */
-const getUnitTestPick = async (projectPath: string) => {
-  const listOfUnitTest = await getUnitTestInLocalProject(projectPath);
-  const picks: IAzureQuickPickItem<string>[] = Array.from(Object.keys(listOfUnitTest)).map((unitTestName) => {
-    return { label: unitTestName, data: listOfUnitTest[unitTestName] };
-  });
-
-  picks.sort((a, b) => a.label.localeCompare(b.label));
-  return picks;
-};

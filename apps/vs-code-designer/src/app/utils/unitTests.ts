@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 import { developmentDirectoryName, saveUnitTestEvent, testsDirectoryName, unitTestsFileName } from '../../constants';
 import { localize } from '../../localize';
-import { callWithTelemetryAndErrorHandling } from '@microsoft/vscode-azext-utils';
+import { type IAzureQuickPickItem, type IActionContext, callWithTelemetryAndErrorHandling } from '@microsoft/vscode-azext-utils';
 import * as fs from 'fs';
 import * as fse from 'fs-extra';
 import * as path from 'path';
@@ -150,3 +150,29 @@ export async function getUnitTestInLocalProject(projectPath: string): Promise<Re
 
   return unitTests;
 }
+
+/**
+ * Prompts the user to select a unit test to edit.
+ * @param {IActionContext} context - The action context.
+ * @param {string} projectPath - The path of the project.
+ * @returns A promise that resolves to the selected unit test.
+ */
+export const pickUnitTest = async (context: IActionContext, projectPath: string) => {
+  const placeHolder: string = localize('selectUnitTest', 'Select unit test to edit');
+  return await context.ui.showQuickPick(getUnitTestPick(projectPath), { placeHolder });
+};
+
+/**
+ * Retrieves a list of unit tests in the local project.
+ * @param {string} projectPath - The path to the project.
+ * @returns A promise that resolves to an array of unit test picks.
+ */
+const getUnitTestPick = async (projectPath: string) => {
+  const listOfUnitTest = await getUnitTestInLocalProject(projectPath);
+  const picks: IAzureQuickPickItem<string>[] = Array.from(Object.keys(listOfUnitTest)).map((unitTestName) => {
+    return { label: unitTestName, data: listOfUnitTest[unitTestName] };
+  });
+
+  picks.sort((a, b) => a.label.localeCompare(b.label));
+  return picks;
+};
