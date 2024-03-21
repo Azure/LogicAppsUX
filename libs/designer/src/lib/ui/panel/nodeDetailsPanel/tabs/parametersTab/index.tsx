@@ -52,7 +52,7 @@ import {
 } from '@microsoft/designer-ui';
 import type { ChangeState, ParameterInfo, ValueSegment, OutputToken, TokenPickerMode, PanelTabFn } from '@microsoft/designer-ui';
 import type { OperationInfo } from '@microsoft/logic-apps-shared';
-import { equals, getPropertyValue, getRecordEntry } from '@microsoft/logic-apps-shared';
+import { equals, getPropertyValue, getRecordEntry, isRecordNotEmpty } from '@microsoft/logic-apps-shared';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
@@ -391,12 +391,14 @@ const ParameterSection = ({
     .map((param) => {
       const { id, label, value, required, showTokens, placeholder, editorViewModel, dynamicData, conditionalVisibility, validationErrors } =
         param;
-      const { value: remappedEditorViewModel } = remapEditorViewModelWithNewIds(editorViewModel, idReplacements);
+      const remappedEditorViewModel = isRecordNotEmpty(idReplacements)
+        ? remapEditorViewModelWithNewIds(editorViewModel, idReplacements)
+        : editorViewModel;
       const paramSubset = { id, label, required, showTokens, placeholder, editorViewModel: remappedEditorViewModel, conditionalVisibility };
       const { editor, editorOptions } = getEditorAndOptions(operationInfo, param, upstreamNodeIds ?? [], variables);
 
-      const { value: remappedValues } = remapValueSegmentsWithNewIds(value, idReplacements);
-      console.log(remappedEditorViewModel);
+      const { value: remappedValues } = isRecordNotEmpty(idReplacements) ? remapValueSegmentsWithNewIds(value, idReplacements) : { value };
+
       return {
         settingType: 'SettingTokenField',
         settingProp: {

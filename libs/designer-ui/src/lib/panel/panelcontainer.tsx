@@ -53,7 +53,6 @@ export type PanelContainerProps = {
   onCommentChange: (panelCommentChangeEvent?: string) => void;
   renderHeader?: (props?: IPanelProps, defaultrender?: IPanelHeaderRenderer, headerTextId?: string) => JSX.Element;
   onTitleChange: TitleChangeHandler;
-  onTitleBlur?: (prevTitle: string) => void;
 } & CommonPanelProps;
 
 export const PanelContainer = ({
@@ -83,7 +82,6 @@ export const PanelContainer = ({
   renderHeader,
   onCommentChange,
   onTitleChange,
-  onTitleBlur,
 }: PanelContainerProps) => {
   const intl = useIntl();
 
@@ -111,7 +109,6 @@ export const PanelContainer = ({
           commentChange={onCommentChange}
           toggleCollapse={toggleCollapse}
           onTitleChange={onTitleChange}
-          onTitleBlur={onTitleBlur}
         />
       );
     },
@@ -134,7 +131,6 @@ export const PanelContainer = ({
       onCommentChange,
       toggleCollapse,
       onTitleChange,
-      onTitleBlur,
     ]
   );
 

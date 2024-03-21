@@ -138,6 +138,7 @@ import {
   nthLastIndexOf,
   parseErrorMessage,
   getRecordEntry,
+  isRecordNotEmpty,
 } from '@microsoft/logic-apps-shared';
 import type {
   DependentParameterInfo,
@@ -2372,17 +2373,19 @@ export const recurseSerializeCondition = (
       operator = RowDropdownOptions.EQUALS;
     }
 
-    console.log(operand1, operand2, idReplacements);
+    console.log(idReplacements);
     const operand1String = parameterValueToString(
       { type: 'any', value: operand1, ...commonProperties } as any,
       isDefinitionValue,
       idReplacements
     );
+    console.log(operand1String);
     const operand2String = parameterValueToString(
       { type: 'any', value: operand2, ...commonProperties } as any,
       isDefinitionValue,
       idReplacements
     );
+    console.log(operand2String);
     if (errors && errors.length === 0 && (operand1String || operand2String)) {
       if (!operand1String) {
         errors.push(
@@ -3128,10 +3131,16 @@ export function parameterValueToString(
   isDefinitionValue: boolean,
   idReplacements?: Record<string, string>
 ): string | undefined {
-  const { value: remappedValue, didRemap } = idReplacements
-    ? remapValueSegmentsWithNewIds(parameterInfo.value, idReplacements)
+  const { value: remappedValue, didRemap } = isRecordNotEmpty(idReplacements)
+    ? remapValueSegmentsWithNewIds(parameterInfo.value, idReplacements ?? {})
     : { value: parameterInfo.value, didRemap: false };
-  const remappedParameterInfo = idReplacements ? { ...parameterInfo, value: remappedValue } : parameterInfo;
+  const remappedEditorViewModel = isRecordNotEmpty(idReplacements)
+    ? remapEditorViewModelWithNewIds(parameterInfo.editorViewModel, idReplacements ?? {})
+    : parameterInfo.editorViewModel;
+
+  const remappedParameterInfo = isRecordNotEmpty(idReplacements)
+    ? { ...parameterInfo, value: remappedValue, editorViewModel: remappedEditorViewModel }
+    : parameterInfo;
 
   if (didRemap) delete remappedParameterInfo.preservedValue;
 
@@ -3309,17 +3318,14 @@ export function getJSONValueFromString(value: any, type: string): any {
 }
 
 export function remapEditorViewModelWithNewIds(editorViewModel: any, idReplacements: Record<string, string>): any {
-  if (!editorViewModel) return editorViewModel;
-  console.log(editorViewModel);
-  if (isObject(editorViewModel)) {
-    if (Array.isArray(editorViewModel)) {
-      if (isValueSegmentArray(editorViewModel)) {
-        return remapValueSegmentsWithNewIds(editorViewModel, idReplacements).value;
-      }
-      return editorViewModel.map((value: any) => {
-        return remapEditorViewModelWithNewIds(value, idReplacements);
-      });
+  if (Array.isArray(editorViewModel)) {
+    if (isValueSegmentArray(editorViewModel)) {
+      return remapValueSegmentsWithNewIds(editorViewModel, idReplacements).value;
     }
+    return editorViewModel.map((value: any) => {
+      return remapEditorViewModelWithNewIds(value, idReplacements);
+    });
+  } else if (isObject(editorViewModel)) {
     const updatedEditorViewModel = { ...editorViewModel };
     Object.entries(editorViewModel).forEach(([key, value]) => {
       updatedEditorViewModel[key] = remapEditorViewModelWithNewIds(value, idReplacements);
@@ -3337,7 +3343,7 @@ export function remapValueSegmentsWithNewIds(
   const value = segments.map((segment) => {
     if (isTokenValueSegment(segment)) {
       const result = remapTokenSegmentValue(segment, idReplacements);
-      didRemap = result.didRemap;
+      didRemap = didRemap || result.didRemap;
       return result.value;
     }
 

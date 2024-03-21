@@ -121,7 +121,7 @@ export const getUpdatedManifestForSplitOn = (manifest: OperationManifest, splitO
   const intl = getIntl();
   const invalidSplitOn = intl.formatMessage(
     {
-      defaultMessage: `Invalid split on format in '{splitOn}'.`,
+      defaultMessage: `Invalid split on format in ''{splitOn}''.`,
       description: 'Error message for invalid split on value.',
     },
     { splitOn }

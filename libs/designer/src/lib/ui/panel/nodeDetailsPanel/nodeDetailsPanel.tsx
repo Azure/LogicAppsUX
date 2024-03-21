@@ -10,23 +10,21 @@ import {
 } from '../../../core';
 import { useReadOnly } from '../../../core/state/designerOptions/designerOptionsSelectors';
 import { setShowDeleteModal } from '../../../core/state/designerView/designerViewSlice';
-import { ErrorLevel, updateExistingInputTokens } from '../../../core/state/operation/operationMetadataSlice';
+import { ErrorLevel } from '../../../core/state/operation/operationMetadataSlice';
 import { useIconUri, useOperationErrorInfo } from '../../../core/state/operation/operationSelector';
 import { useIsPanelCollapsed, useSelectedPanelTabId } from '../../../core/state/panel/panelSelectors';
 import { expandPanel, selectPanelTab, setSelectedNodeId, updatePanelLocation } from '../../../core/state/panel/panelSlice';
 import { useOperationQuery } from '../../../core/state/selectors/actionMetadataSelector';
-import { useOutputTokens } from '../../../core/state/tokens/tokenSelectors';
 import { useNodeDescription, useRunData, useRunInstance } from '../../../core/state/workflow/workflowSelectors';
 import { replaceId, setNodeDescription } from '../../../core/state/workflow/workflowSlice';
 import { isOperationNameValid, isRootNodeInGraph } from '../../../core/utils/graph';
-import { getTokenValue } from '../../../core/utils/tokens';
 import { CommentMenuItem } from '../../menuItems/commentMenuItem';
 import { DeleteMenuItem } from '../../menuItems/deleteMenuItem';
 import { usePanelTabs } from './usePanelTabs';
 import { WorkflowService } from '@microsoft/designer-client-services-logic-apps';
 import type { CommonPanelProps, PageActionTelemetryData } from '@microsoft/designer-ui';
-import { PanelContainer, PanelLocation, PanelScope, PanelSize, convertUIElementNameToAutomationId } from '@microsoft/designer-ui';
-import { SUBGRAPH_TYPES, getRecordEntry, isNullOrUndefined } from '@microsoft/logic-apps-shared';
+import { PanelContainer, PanelLocation, PanelScope, PanelSize } from '@microsoft/designer-ui';
+import { SUBGRAPH_TYPES, isNullOrUndefined } from '@microsoft/logic-apps-shared';
 import type { ReactElement } from 'react';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -50,8 +48,6 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
     idReplacements: state.workflow.idReplacements,
   }));
   const selectedNodeDisplayName = useNodeDisplayName(selectedNode);
-  const outputTokens = useOutputTokens(selectedNode);
-  const nodeType = useSelector((state: RootState) => state.operations.operationInfo[selectedNode]?.type);
 
   const [width, setWidth] = useState<PanelSize>(PanelSize.Auto);
 
@@ -101,18 +97,6 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
     dispatch(replaceId({ originalId: selectedNode, newId }));
 
     return { valid: isValid, oldValue: isValid ? newId : selectedNode };
-  };
-
-  const onTitleBlur = (prevTitle: string) => {
-    console.log(selectedNode);
-    const newTitle = getRecordEntry(idReplacements, selectedNode) ?? selectedNode;
-    const formattedOldTitle = convertUIElementNameToAutomationId(prevTitle);
-    if (newTitle === formattedOldTitle) return;
-    outputTokens?.forEach((token) => {
-      const tokenValue = getTokenValue(token, nodeType, idReplacements);
-      console.log(tokenValue);
-      console.log(token);
-    });
   };
 
   const onCommentChange = (newDescription?: string) => {
@@ -189,7 +173,6 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
       onCommentChange={onCommentChange}
       title={selectedNodeDisplayName}
       onTitleChange={onTitleChange}
-      onTitleBlur={onTitleBlur}
     />
   );
 };
