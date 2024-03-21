@@ -35,7 +35,7 @@ export class TestWorkspace {
    */
   private parseTestWorkflows(workflows: Uri[]): Record<string, Uri[]> {
     return workflows.reduce((acc, workflow) => {
-      const workflowName = workflow.path.split('/').slice(-2)[0];
+      const workflowName = workflow.fsPath.split('/').slice(-2)[0];
       if (!acc[workflowName]) {
         acc[workflowName] = [];
       }
@@ -50,7 +50,7 @@ export class TestWorkspace {
    */
   public async createChild(controller: TestController) {
     Object.keys(this.workflows).forEach((workflow) => {
-      const filePath = this.workflows[workflow][0].path;
+      const filePath = this.workflows[workflow][0].fsPath;
       const workflowUri = Uri.file(filePath.substring(0, filePath.lastIndexOf('/')));
       const id = `${this.name}/${workflow}`;
       const workflowTestItem = controller.createTestItem(id, workflow, workflowUri);

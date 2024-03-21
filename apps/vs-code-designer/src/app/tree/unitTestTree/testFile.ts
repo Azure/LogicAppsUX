@@ -35,12 +35,12 @@ export class TestFile {
    * @returns A promise that resolves when the unit test data is parsed.
    */
   public async parseUnitTest(): Promise<void> {
-    const data: string = (await fse.readFile(this.file.path)).toString();
+    const data: string = (await fse.readFile(this.file.fsPath)).toString();
     if (/[^\s]/.test(data)) {
       try {
         this.unitTest = parseJson(data);
       } catch (error) {
-        const message: string = localize('failedToParse', 'Failed to parse "{0}": {1}.', this.file.path, parseError(error).message);
+        const message: string = localize('failedToParse', 'Failed to parse "{0}": {1}.', this.file.fsPath, parseError(error).message);
         throw new Error(message);
       }
     } else {

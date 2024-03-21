@@ -338,12 +338,14 @@
       {
         "command": "azureLogicAppsStandard.openUnitTestResults",
         "title": "View Unit Test Results",
-        "category": "Azure Logic Apps"
+        "category": "Azure Logic Apps",
+        "icon": "$(tasklist)"
       },
       {
         "command": "azureLogicAppsStandard.editUnitTest",
         "title": "Edit Unit Test",
-        "category": "Azure Logic Apps"
+        "category": "Azure Logic Apps",
+        "icon": "$(edit)"
       },
       {
         "command": "azureLogicAppsStandard.runUnitTest",
@@ -695,7 +697,7 @@
         },
         {
           "command": "azureLogicAppsStandard.openUnitTestResults",
-          "when": "resourceFilename=~/.unit-test.[0-9]{14}/",
+          "when": "resourceFilename=~/.unit-test.json/",
           "group": "navigation@5"
         },
         {
@@ -741,6 +743,26 @@
         {
           "command": "azureLogicAppsStandard.viewProperties",
           "when": "never"
+        }
+      ],
+      "testing/item/context": [
+        {
+          "command": "azureLogicAppsStandard.editUnitTest",
+          "group": "inline@3",
+          "when": "testId=~/.unit-test.json/"
+        },
+        {
+          "command": "azureLogicAppsStandard.openUnitTestResults",
+          "group": "inline@4",
+          "when": "testId=~/.unit-test.json/"
+        },
+        {
+          "command": "azureLogicAppsStandard.editUnitTest",
+          "when": "testId=~/.unit-test.json/"
+        },
+        {
+          "command": "azureLogicAppsStandard.openUnitTestResults",
+          "when": "testId=~/.unit-test.json/"
         }
       ],
       "azureLogicAppsStandard.dataMapperMenu": [

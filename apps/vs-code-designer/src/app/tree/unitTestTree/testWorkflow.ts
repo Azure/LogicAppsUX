@@ -35,7 +35,7 @@ export class TestWorkflow {
    */
   public async createChild(controller: TestController): Promise<void> {
     for (const testFile of this.testFiles) {
-      const testName = testFile.path.split('/').slice(-1)[0];
+      const testName = testFile.fsPath.split('/').slice(-1)[0];
       const id = `${this.name}/${testName}`;
 
       const fileTestItem = controller.createTestItem(id, testName, testFile);
