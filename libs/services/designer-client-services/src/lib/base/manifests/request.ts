@@ -22,20 +22,18 @@ export default {
             skip: true,
           },
         },
-        schema: {
-          type: 'object',
-          title: 'Request Body JSON Schema',
-          description:
-            'Example:\n{\n    "type": "object",\n    "properties": {\n        "address": {\n            "type": "string"\n        }\n    },\n    "required": ["address"]\n}',
-          'x-ms-editor': 'schema',
-          'x-ms-visiblity': 'important',
-        },
         method: {
           type: 'string',
           title: 'Method',
+          'x-ms-visiblity': 'important',
           'x-ms-editor': 'combobox',
+          description: 'URL will be generated after save',
           'x-ms-editor-options': {
             options: [
+              {
+                displayName: 'Default (Allow All Methods)',
+                value: '',
+              },
               {
                 displayName: 'GET',
                 value: 'GET',
@@ -58,6 +56,14 @@ export default {
               },
             ],
           },
+        },
+        schema: {
+          type: 'object',
+          title: 'Request Body JSON Schema',
+          description:
+            'Example:\n{\n    "type": "object",\n    "properties": {\n        "address": {\n            "type": "string"\n        }\n    },\n    "required": ["address"]\n}',
+          'x-ms-editor': 'schema',
+          'x-ms-visiblity': 'important',
         },
         relativePath: {
           type: 'string',
