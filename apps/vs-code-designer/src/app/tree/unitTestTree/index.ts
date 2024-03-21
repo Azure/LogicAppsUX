@@ -30,8 +30,9 @@ export type TestData = TestWorkspace | TestWorkflow | TestFile;
 /**
  * Prepares the test explorer for unit tests.
  * @param {ExtensionContext} context - The extension context.
+ * @param {IActionContext} activateContext - Command activate context.
  */
-export const prepareTestExplorer = async (context: ExtensionContext) => {
+export const prepareTestExplorer = async (context: ExtensionContext, activateContext: IActionContext) => {
   callWithTelemetryAndErrorHandling(unitTestExplorer, async (actionContext: IActionContext) => {
     if (workspace.workspaceFolders && workspace.workspaceFolders.length > 0) {
       const isLogicAppProject = await hasLogicAppProject(actionContext);
@@ -51,7 +52,7 @@ export const prepareTestExplorer = async (context: ExtensionContext) => {
         unitTestController.createRunProfile(
           'Run logic apps standard unit tests',
           TestRunProfileKind.Run,
-          (request, cancellation) => runHandler(request, cancellation, unitTestController),
+          (request, cancellation) => runHandler(request, cancellation, unitTestController, activateContext),
           true,
           undefined
         );
@@ -91,10 +92,16 @@ export const getWorkspaceTestPatterns = () => {
  * Runs the test handler based on the provided request and cancellation token.
  * @param {TestRunRequest} request - The test run request.
  * @param {CancellationToken} cancellation - The cancellation token.
+ * @param {IActionContext} activateContext - Command activate context.
  */
-export const runHandler = (request: TestRunRequest, cancellation: CancellationToken, unitTestController: TestController) => {
+export const runHandler = (
+  request: TestRunRequest,
+  cancellation: CancellationToken,
+  unitTestController: TestController,
+  activateContext: IActionContext
+) => {
   cancellation.onCancellationRequested(() => request.include.forEach((item) => ext.watchingTests.delete(item)));
-  return startTestRun(request, unitTestController);
+  return startTestRun(request, unitTestController, activateContext);
 };
 
 /**
@@ -242,8 +249,9 @@ const getOrCreateFile = async (controller: TestController, uri: Uri) => {
  * Starts a test run based on the provided request and unit test controller.
  * @param {TestRunRequest} request - The test run request.
  * @param {TestController} unitTestController - The unit test controller.
+ * @param {IActionContext} activateContext - Command activate context.
  */
-const startTestRun = (request: TestRunRequest, unitTestController: TestController) => {
+const startTestRun = (request: TestRunRequest, unitTestController: TestController, activateContext: IActionContext) => {
   const queue: { test: TestItem; data: TestFile }[] = [];
   const run = unitTestController.createTestRun(request);
 
@@ -283,7 +291,7 @@ const startTestRun = (request: TestRunRequest, unitTestController: TestControlle
         run.skipped(test);
       } else {
         run.started(test);
-        await data.run(test, run);
+        await data.run(test, run, activateContext);
       }
 
       run.appendOutput(`Completed ${test.id}\r\n`);

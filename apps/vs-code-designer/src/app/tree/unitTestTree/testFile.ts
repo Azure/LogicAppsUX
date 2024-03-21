@@ -3,9 +3,10 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { localize } from '../../../localize';
+import { runUnitTest } from '../../commands/workflows/unitTest/runUnitTest';
 import { parseJson } from '../../utils/parseJson';
 import { type UnitTestDefinition } from '@microsoft/utils-logic-apps';
-import { parseError } from '@microsoft/vscode-azext-utils';
+import { type IActionContext, parseError } from '@microsoft/vscode-azext-utils';
 import * as fse from 'fs-extra';
 import { TestMessage, type TestItem, type Uri, type TestRun } from 'vscode';
 
@@ -58,19 +59,13 @@ export class TestFile {
    * @param {TestRun} options - The options for running the unit test.
    * @returns A promise that resolves when the unit test is completed.
    */
-  async run(item: TestItem, options: TestRun): Promise<void> {
-    const start = Date.now();
-    await new Promise((resolve) => setTimeout(resolve, 1000 + Math.random() * 1000));
-    const duration = Date.now() - start;
-
-    // This is where we are going to run the unit test from extension bundle
-
-    // Just put a random decision here in the meantime
-    if (start % 2 === 0) {
-      options.passed(item, duration);
+  async run(item: TestItem, options: TestRun, activateContext: IActionContext): Promise<void> {
+    const unitTestResult = await runUnitTest(activateContext, item);
+    if (unitTestResult.isSuccessful) {
+      options.passed(item, unitTestResult.duration);
     } else {
       const message = TestMessage.diff(`Expected ${item.label}`, '1', '2');
-      options.failed(item, message, duration);
+      options.failed(item, message, unitTestResult.duration);
     }
   }
 }

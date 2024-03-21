@@ -34,6 +34,4 @@ export async function openUnitTestResults(context: IAzureConnectorsContext, node
 
   const openDesignerObj = new OpenDesignerForLocalProject(context, workflowNode, unitTestName, unitTestDefinition);
   await openDesignerObj?.createPanel();
-
-  await openDesignerObj?.createPanel();
 }

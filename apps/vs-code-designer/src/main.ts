@@ -65,7 +65,7 @@ export async function activate(context: vscode.ExtensionContext) {
     runPostWorkflowCreateStepsFromCache();
 
     await startOnboarding(activateContext);
-    await prepareTestExplorer(context);
+    await prepareTestExplorer(context, activateContext);
 
     ext.extensionVersion = getExtensionVersion();
     ext.rgApi = await getResourceGroupsApi();
