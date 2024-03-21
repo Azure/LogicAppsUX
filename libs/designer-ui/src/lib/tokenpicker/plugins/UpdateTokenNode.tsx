@@ -1,5 +1,6 @@
 import type { ValueSegment } from '../../editor';
 import { $isTokenNode, TokenNode } from '../../editor/base/nodes/tokenNode';
+import { CLOSE_TOKENPICKER } from '../../editor/base/plugins/CloseTokenPicker';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import type { LexicalCommand } from 'lexical';
 import { $getNodeByKey, COMMAND_PRIORITY_EDITOR, createCommand } from 'lexical';
@@ -31,6 +32,7 @@ export default function UpdateTokenNode(): null {
             node.updateContent(payload, payload.updatedData);
             node.selectNext();
           }
+          editor.dispatchCommand(CLOSE_TOKENPICKER, { focusEditorAfter: true });
         });
         return false;
       },

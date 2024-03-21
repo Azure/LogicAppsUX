@@ -34,7 +34,6 @@ export const TokenPickerOptions = ({
   index,
   expressionEditorRef,
   expression,
-  closeTokenPicker,
   setExpression,
   setTokenLength,
   getValueSegmentFromToken,
@@ -151,7 +150,6 @@ export const TokenPickerOptions = ({
         value,
         data: segment,
       });
-      closeTokenPicker();
     }
   };
 

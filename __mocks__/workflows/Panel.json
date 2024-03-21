@@ -61,7 +61,7 @@
       "Filter_array": {
         "type": "Query",
         "inputs": {
-          "from": "@triggerBody()?['array']",
+          "from": "@body('Parse_JSON')",
           "where": "@not(contains(length(split(item(), '|')?[0]),length(split(item(), '|')?[0])))"
         },
         "runAfter": {

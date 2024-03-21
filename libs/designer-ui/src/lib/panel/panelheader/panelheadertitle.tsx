@@ -29,10 +29,10 @@ export interface PanelHeaderTitleProps {
 
 export const PanelHeaderTitle = ({
   titleValue,
-  onChange,
   titleId,
   readOnlyMode,
   renameTitleDisabled,
+  onChange,
 }: PanelHeaderTitleProps): JSX.Element => {
   const intl = useIntl();
 

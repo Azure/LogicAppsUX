@@ -1,5 +1,6 @@
 import type { TokenNodeProps } from '../nodes/tokenNode';
 import { $createTokenNode, TokenNode } from '../nodes/tokenNode';
+import { CLOSE_TOKENPICKER } from './CloseTokenPicker';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import type { LexicalCommand } from 'lexical';
 import { $getSelection, $isRangeSelection, COMMAND_PRIORITY_EDITOR, createCommand } from 'lexical';
@@ -7,11 +8,7 @@ import { useEffect } from 'react';
 
 export const INSERT_TOKEN_NODE: LexicalCommand<TokenNodeProps> = createCommand();
 
-export interface InsertTokenNodeProps {
-  closeTokenPicker: () => void;
-}
-
-export default function InsertTokenNode({ closeTokenPicker }: InsertTokenNodeProps): null {
+export default function InsertTokenNode(): null {
   const [editor] = useLexicalComposerContext();
 
   useEffect(() => {
@@ -28,12 +25,12 @@ export default function InsertTokenNode({ closeTokenPicker }: InsertTokenNodePro
           const tokenNode = $createTokenNode({ ...payload, value, readonly: false });
           selection.insertNodes([tokenNode]);
         }
-        closeTokenPicker();
+        editor.dispatchCommand(CLOSE_TOKENPICKER, { focusEditorAfter: true });
         return true;
       },
       COMMAND_PRIORITY_EDITOR
     );
-  }, [editor, closeTokenPicker]);
+  }, [editor]);
 
   return null;
 }

@@ -39,7 +39,6 @@ export const CollapsedAuthentication = ({
     editorState.read(() => {
       const nodeMap = new Map<string, ValueSegment>();
       const editorString = getChildrenNodes($getRoot(), nodeMap).trim();
-      console.log(editorString);
       const newCollapsedValue = serializeEditorState(editorState);
       try {
         // no collapsed value, update current Props to be empty

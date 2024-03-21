@@ -1047,6 +1047,15 @@ export const getRecordEntry = <T>(record: Record<string, T> | undefined, key: st
   return record[key];
 };
 
+/**
+ * Returns true if the record is not empty.
+ * @param record - The record to check.
+ * @returns {boolean} - True if the record is not empty.
+ */
+export const isRecordNotEmpty = (record: Record<string, any> | undefined) => {
+  return record && Object.keys(record).length > 0;
+};
+
 export const FindPreviousAndNextPage = (page: number, bookmarks: number[]) => {
   let left = 0;
   let right = bookmarks.length - 1;

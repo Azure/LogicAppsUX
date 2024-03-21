@@ -3,7 +3,10 @@ import type { LexicalCommand } from 'lexical';
 import { COMMAND_PRIORITY_EDITOR, createCommand } from 'lexical';
 import { useEffect } from 'react';
 
-export const CLOSE_TOKENPICKER: LexicalCommand<undefined> = createCommand();
+interface CloseTokenPickerPaylaod {
+  focusEditorAfter?: boolean;
+}
+export const CLOSE_TOKENPICKER: LexicalCommand<CloseTokenPickerPaylaod> = createCommand();
 
 export interface CloseTokenPickerProps {
   closeTokenPicker: () => void;
@@ -15,8 +18,11 @@ export default function CloseTokenPicker({ closeTokenPicker }: CloseTokenPickerP
   useEffect(() => {
     return editor.registerCommand(
       CLOSE_TOKENPICKER,
-      () => {
+      (payload) => {
         closeTokenPicker();
+        if (payload.focusEditorAfter) {
+          editor.focus();
+        }
         return true;
       },
       COMMAND_PRIORITY_EDITOR
