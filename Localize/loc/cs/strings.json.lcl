@@ -9211,7 +9211,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Edit this flow to]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Upravit tento tok na]]></Val>
+            <Val><![CDATA[Upravit tento tok do]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />

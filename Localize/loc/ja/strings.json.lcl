@@ -12957,6 +12957,9 @@
       <Item ItemId=";ur3P27" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Try using a Conversion function such as: {conversionFunctions}]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[次のような変換関数を使用してみてください: {conversionFunctions}]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
