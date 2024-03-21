@@ -1,6 +1,6 @@
 {
   "extends": ["../../.eslintrc.json"],
-  "ignorePatterns": ["!**/*", "rollup.config.ts", ".rollup.cache/**"],
+  "ignorePatterns": ["!**/*", "rollup.config.ts", ".rollup.cache/**", "node_modules/**"],
   "overrides": [
     {
       "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
