@@ -6,29 +6,22 @@ tasks:
   build:
     command: js tsc
     args:
-    - --outputPath
-    - $workspaceRoot/dist/libs/vscode-extension
-    - --tsConfig
-    - $workspaceRoot/libs/vscode-extension/tsconfig.json
-    - --main
-    - $workspaceRoot/libs/vscode-extension/src/index.ts
-    - --assets
-    - '["libs/vscode-extension/*.md"]'
+      - --outputPath
+      - $workspaceRoot/dist/libs/vscode-extension
+      - --tsConfig
+      - $workspaceRoot/libs/vscode-extension/tsconfig.json
+      - --main
+      - $workspaceRoot/libs/vscode-extension/src/index.ts
+      - --assets
+      - '["libs/vscode-extension/*.md"]'
     outputs:
-    - '{options.outputPath}'
-  lint:
-    command: linter eslint
-    args:
-    - --lintFilePatterns
-    - '["libs/vscode-extension/**/*.ts"]'
-    outputs:
-    - '{options.outputFile}'
+      - '{options.outputPath}'
   test:
     command: jest
     args:
-    - --jestConfig
-    - $workspaceRoot/libs/vscode-extension/jest.config.ts
-    - --passWithNoTests
+      - --jestConfig
+      - $workspaceRoot/libs/vscode-extension/jest.config.ts
+      - --passWithNoTests
     outputs:
-    - /coverage/$projectRoot
+      - /coverage/$projectRoot
 type: library

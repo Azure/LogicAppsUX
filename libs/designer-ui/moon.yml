@@ -3,23 +3,6 @@ language: typescript
 platform: node
 tags: []
 tasks:
-  build:
-    command: rollup
-    args:
-      - --config
-      - ./rollup.config.ts
-      - --configPlugin
-      - '@rollup/plugin-typescript'
-    outputs:
-      - '{options.outputPath}'
-  test:
-    command: jest
-    args:
-      - --jestConfig
-      - $workspaceRoot/libs/designer-ui/jest.config.ts
-      - --passWithNoTests
-    outputs:
-      - /coverage/libs/designer-ui
   yalcpush:
     command: npm run yalcpush
     deps:

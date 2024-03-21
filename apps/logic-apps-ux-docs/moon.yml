@@ -6,11 +6,14 @@ tasks:
   build:
     command: docusaurus browser
     args:
-    - --outputPath
-    - $workspaceRoot/dist/apps/logic-apps-ux-docs
+      - --outputPath
+      - $workspaceRoot/dist/apps/logic-apps-ux-docs
   serve:
     command: docusaurus dev-server
     args:
-    - --port
-    - '3000'
+      - --port
+      - '3000'
 type: application
+workspace:
+  inheritedTasks:
+    exclude: ['lint']

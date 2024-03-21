@@ -1,0 +1,19 @@
+tasks:
+  build:
+    command: rollup
+    args:
+      - --config
+      - ./rollup.config.ts
+      - --configPlugin
+      - '@rollup/plugin-typescript'
+    inputs:
+      - 'src/**/*'
+      - 'rollup.config.ts'
+      - 'tsconfig.json'
+      - 'tsconfig.lib.json'
+      - 'package.json'
+  test:
+    command: jest
+    args:
+      - -c
+      - jest.config.ts

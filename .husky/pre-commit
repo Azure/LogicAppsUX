@@ -4,6 +4,6 @@
 npm run extract
 npm run compile:loc
 npm run compile:loc:psuedo
-moon run designer:lint
+moon run :lint
 npm run pretty
 git add .

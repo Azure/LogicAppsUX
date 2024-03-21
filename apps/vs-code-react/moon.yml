@@ -6,79 +6,72 @@ tasks:
   build:
     command: webpack
     args:
-    - --styles
-    - '["apps/vs-code-react/src/styles.less"]'
-    - --index
-    - $workspaceRoot/apps/vs-code-react/src/index.html
-    - --polyfills
-    - $workspaceRoot/apps/vs-code-react/src/polyfills.ts
-    - --outputPath
-    - $workspaceRoot/dist/apps/vs-code-designer/vs-code-react
-    - --assets
-    - '["apps/vs-code-react/src/favicon.ico","apps/vs-code-react/src/assets"]'
-    - --main
-    - $workspaceRoot/apps/vs-code-react/src/main.tsx
-    - --scripts
-    - '[]'
-    - --baseHref
-    - $workspaceRoot/
-    - --webpackConfig
-    - $workspaceRoot/custom-webpack.config.js
-    - --tsConfig
-    - $workspaceRoot/apps/vs-code-react/tsconfig.app.json
-    - --compiler
-    - babel
+      - --styles
+      - '["apps/vs-code-react/src/styles.less"]'
+      - --index
+      - $workspaceRoot/apps/vs-code-react/src/index.html
+      - --polyfills
+      - $workspaceRoot/apps/vs-code-react/src/polyfills.ts
+      - --outputPath
+      - $workspaceRoot/dist/apps/vs-code-designer/vs-code-react
+      - --assets
+      - '["apps/vs-code-react/src/favicon.ico","apps/vs-code-react/src/assets"]'
+      - --main
+      - $workspaceRoot/apps/vs-code-react/src/main.tsx
+      - --scripts
+      - '[]'
+      - --baseHref
+      - $workspaceRoot/
+      - --webpackConfig
+      - $workspaceRoot/custom-webpack.config.js
+      - --tsConfig
+      - $workspaceRoot/apps/vs-code-react/tsconfig.app.json
+      - --compiler
+      - babel
     outputs:
-    - '{options.outputPath}'
+      - '{options.outputPath}'
   build.development:
     extends: build
     args:
-    - --sourceMap
-    - --vendorChunk
-    - --no-optimization
-    - --no-extractLicenses
+      - --sourceMap
+      - --vendorChunk
+      - --no-optimization
+      - --no-extractLicenses
   build.production:
     extends: build
     args:
-    - --fileReplacements
-    - '[{"replace":"apps/vs-code-react/src/environments/environment.ts","with":"apps/vs-code-react/src/environments/environment.prod.ts"}]'
-    - --no-sourceMap
-    - --no-vendorChunk
-    - --optimization
-    - --no-namedChunks
-    - --extractLicenses
-    - --outputHashing
-    - all
-  lint:
-    command: linter eslint
-    args:
-    - --lintFilePatterns
-    - '["apps/vs-code-react/**/*.{ts,tsx,js,jsx}"]'
-    outputs:
-    - '{options.outputFile}'
+      - --fileReplacements
+      - '[{"replace":"apps/vs-code-react/src/environments/environment.ts","with":"apps/vs-code-react/src/environments/environment.prod.ts"}]'
+      - --no-sourceMap
+      - --no-vendorChunk
+      - --optimization
+      - --no-namedChunks
+      - --extractLicenses
+      - --outputHashing
+      - all
   serve:
     command: webpack dev-server
     args:
-    - --buildTarget
-    - vs-code-react:build
-    - --hmr
+      - --buildTarget
+      - vs-code-react:build
+      - --hmr
   serve.development:
     extends: serve
     args:
-    - --buildTarget
-    - vs-code-react:build:development
+      - --buildTarget
+      - vs-code-react:build:development
   serve.production:
     extends: serve
     args:
-    - --buildTarget
-    - vs-code-react:build:production
-    - --no-hmr
+      - --buildTarget
+      - vs-code-react:build:production
+      - --no-hmr
   test:
     command: jest
     args:
-    - --jestConfig
-    - $workspaceRoot/apps/vs-code-react/jest.config.ts
-    - --passWithNoTests
+      - --jestConfig
+      - $workspaceRoot/apps/vs-code-react/jest.config.ts
+      - --passWithNoTests
     outputs:
-    - /coverage/apps/vs-code-react
+      - /coverage/apps/vs-code-react
 type: library

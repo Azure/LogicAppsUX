@@ -44,7 +44,9 @@
   "workspaces": [
     "libs/logic-apps-shared",
     "libs/designer-ui",
-    "libs/designer"
+    "libs/designer",
+    "libs/services/designer-client-services",
+    "libs/data-mapper"
   ],
   "private": true,
   "dependencies": {

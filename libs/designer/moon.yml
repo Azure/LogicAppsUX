@@ -2,28 +2,11 @@ id: designer
 language: typescript
 platform: node
 tasks:
-  build:
-    command: rollup
-    args:
-      - --config
-      - ./rollup.config.ts
-      - --configPlugin
-      - '@rollup/plugin-typescript'
-    outputs:
-      - '{options.outputPath}'
   build.vscode:
     extends: build
     args:
       - --outputPath
       - $workspaceRoot/dist/apps/vs-code-designer/designer
-  test:
-    command: jest
-    args:
-      - --jestConfig
-      - $workspaceRoot/libs/designer/jest.config.ts
-      - --passWithNoTests
-    outputs:
-      - /coverage/libs/designer
   yalcpush:
     command: npm run yalcpush
     deps:

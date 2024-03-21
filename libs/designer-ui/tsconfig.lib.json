@@ -18,7 +18,8 @@
     "**/*.spec.jsx",
     "**/*.test.jsx",
     "jest.config.ts",
-    "rollup.config.ts"
+    "rollup.config.ts",
+    "**/__test__/**"
   ],
   "references": [{ "path": "../logic-apps-shared" }, { "path": "../services/designer-client-services" }],
   "include": ["**/*.js", "**/*.jsx", "**/*.ts", "**/*.tsx"]
