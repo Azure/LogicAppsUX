@@ -2,10 +2,12 @@ import Constants from '../../constants';
 import { registerWorkflowLanguageProviders } from '../../workflow/languageservice/workflowlanguageservice';
 import { useTheme } from '@fluentui/react';
 import Editor, { loader } from '@monaco-editor/react';
+import * as monaco from 'monaco-editor';
 import type { IScrollEvent, editor } from 'monaco-editor';
 import type { MutableRefObject } from 'react';
 import { useState, useEffect, forwardRef, useRef, useCallback } from 'react';
 
+loader.config({ monaco });
 export interface EditorContentChangedEventArgs extends editor.IModelContentChangedEvent {
   value?: string;
 }
