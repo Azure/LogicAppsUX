@@ -10,6 +10,7 @@ import {
   equals,
   prettifyJsonString,
   UnsupportedException,
+  capitalizeFirstLetter,
 } from '@microsoft/logic-apps-shared';
 
 const OperationCategory = {
@@ -68,10 +69,17 @@ export function buildInlineCodeTextFromToken(inputToken: Token, language: string
   } else {
     property = decodePropertySegment(inputToken.name);
   }
+  const segmentedProperty = getSegmentedPropertyValue(property);
 
   switch (language) {
-    case constants.SWAGGER.FORMAT.JAVASCRIPT: {
+    case constants.PARAMETER.EDITOR_OPTIONS.LANGUAGE.JAVASCRIPT: {
       return formatForJavascript(property, actionName, source);
+    }
+    case constants.PARAMETER.EDITOR_OPTIONS.LANGUAGE.POWERSHELL: {
+      return formatForPowershell(segmentedProperty, actionName, source);
+    }
+    case constants.PARAMETER.EDITOR_OPTIONS.LANGUAGE.CSHARP: {
+      return formatForCSharp(segmentedProperty, actionName, source);
     }
 
     default: {
@@ -106,6 +114,30 @@ function formatForJavascript(property: string, actionName?: string, source?: str
 
   return result;
 }
+
+function formatForPowershell(property: string, actionName?: string, source?: string): string {
+  const result = `(get-WorkflowActionOutputs -actionName ${actionName ?? capitalizeFirstLetter(OperationCategory.Trigger)})${
+    source ? `["${source}"]` : ''
+  }${property}`;
+
+  return result;
+}
+
+function formatForCSharp(property: string, actionName?: string, source?: string): string {
+  const result = `await context.GetActionResult("${actionName ?? capitalizeFirstLetter(OperationCategory.Trigger)}")${
+    source ? `["${source}"]` : ''
+  }${property}`;
+  return result;
+}
+
+const getSegmentedPropertyValue = (property: string): string => {
+  const splitProperty = property.split('.');
+  let updatedProperty = '';
+  splitProperty.forEach((segment) => {
+    updatedProperty += `["${segment}"]`;
+  });
+  return updatedProperty;
+};
 
 function matchesOutputKey(tokenName: string): boolean {
   return (

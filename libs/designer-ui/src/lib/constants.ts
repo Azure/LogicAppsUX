@@ -433,7 +433,7 @@ export default {
     VALUE_OFFSET: -7,
   },
   DROPDOWN_CALLOUT_MAX_HEIGHT: 380,
-  
+
   PARAMETER: {
     EDITOR: {
       ARRAY: 'array',
@@ -452,9 +452,16 @@ export default {
       STRING: 'string',
       TABLE: 'table',
     },
+    EDITOR_OPTIONS: {
+      LANGUAGE: {
+        CSHARP: 'csharp',
+        JAVASCRIPT: 'javascript',
+        JSON: 'json',
+        POWERSHELL: 'powershell',
+      },
+    },
   },
 };
-
 
 export const FxBrandColor = '#AD008C';
 export const FxIcon =

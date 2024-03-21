@@ -263,6 +263,7 @@ export const MonacoEditor = forwardRef<editor.IStandaloneCodeEditor, MonacoProps
               renderWhitespace: 'none',
               ariaLabel: label,
               wordWrap,
+              language,
               ...options,
             }}
             value={value}
