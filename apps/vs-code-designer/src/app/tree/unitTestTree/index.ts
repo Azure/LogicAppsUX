@@ -141,10 +141,6 @@ const testsWorkspaceWatcher = (controller: TestController, fileChangedEmitter: E
       fileChangedEmitter.fire(uri);
     });
     watcher.onDidChange(async (uri) => {
-      const { data } = await getOrCreateFile(controller, uri);
-      if (data instanceof TestFile) {
-        await data.parseUnitTest();
-      }
       fileChangedEmitter.fire(uri);
     });
     watcher.onDidDelete((uri) => controller.items.delete(uri.toString()));
