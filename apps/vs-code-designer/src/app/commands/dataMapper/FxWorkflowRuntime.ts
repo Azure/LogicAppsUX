@@ -1,23 +1,31 @@
-import { designTimeDirectoryName, designerStartApi, hostFileContent, hostFileName, localSettingsFileName } from '../../../constants';
+import {
+  designTimeDirectoryName,
+  designerStartApi,
+  hostFileContent,
+  hostFileName,
+  localSettingsFileName,
+  logicAppKind,
+} from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
+import { addOrUpdateLocalAppSettings } from '../../utils/appSettings/localSettings';
 import {
   createJsonFile,
   getOrCreateDesignTimeDirectory,
   isDesignTimeUp,
   startDesignTimeProcess,
-  updateProjectPath,
   waitForDesignTimeStartUp,
 } from '../../utils/codeless/startDesignTimeApi';
 import { getFunctionsCommand } from '../../utils/funcCoreTools/funcVersion';
 import { backendRuntimeBaseUrl, settingsFileContent } from './extensionConfig';
+import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import * as portfinder from 'portfinder';
 import { ProgressLocation, type Uri, window } from 'vscode';
 
 // NOTE: LA Standard ext does this in workflowFolder/workflow-designtime
 // For now at least, DM is just going to do everything in workflowFolder
 
-export async function startBackendRuntime(projectPath: string): Promise<void> {
+export async function startBackendRuntime(projectPath: string, context: IActionContext): Promise<void> {
   const designTimeDirectory: Uri | undefined = await getOrCreateDesignTimeDirectory(designTimeDirectoryName, projectPath);
 
   if (!ext.designTimePort) {
@@ -42,8 +50,10 @@ export async function startBackendRuntime(projectPath: string): Promise<void> {
       if (designTimeDirectory) {
         await createJsonFile(designTimeDirectory, hostFileName, hostFileContent);
         await createJsonFile(designTimeDirectory, localSettingsFileName, modifiedSettingsFileContent);
-        await updateProjectPath(designTimeDirectory, localSettingsFileName, projectPath);
-
+        await addOrUpdateLocalAppSettings(context, designTimeDirectory.fsPath, {
+          APP_KIND: logicAppKind,
+          ProjectDirectoryPath: projectPath,
+        });
         const cwd: string = designTimeDirectory.fsPath;
         const portArgs = `--port ${ext.designTimePort}`;
         startDesignTimeProcess(ext.outputChannel, cwd, getFunctionsCommand(), 'host', 'start', portArgs);
