@@ -20,7 +20,7 @@ export const createNewDataMapCmd = (context: IActionContext) => {
 
     context.telemetry.properties.result = 'Succeeded';
 
-    DataMapperExt.openDataMapperPanel(newDataMapName);
+    DataMapperExt.openDataMapperPanel(newDataMapName, context);
   });
 };
 
@@ -165,7 +165,7 @@ export const loadDataMapFileCmd = async (context: IActionContext, uri: Uri) => {
   const dataMapName = path.basename(mapDefinitionPath, path.extname(mapDefinitionPath)).replace(draftMapDefinitionSuffix, ''); // Gets filename w/o ext (and w/o draft suffix)
 
   // Set map definition data to be loaded once webview sends webviewLoaded msg
-  DataMapperExt.openDataMapperPanel(dataMapName, {
+  DataMapperExt.openDataMapperPanel(dataMapName, context, {
     mapDefinition,
     sourceSchemaFileName: path.basename(srcSchemaPath),
     targetSchemaFileName: path.basename(tgtSchemaPath),

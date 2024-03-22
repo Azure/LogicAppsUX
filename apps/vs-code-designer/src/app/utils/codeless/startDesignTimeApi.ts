@@ -20,6 +20,7 @@ import {
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import { type settingsFileContent } from '../../commands/dataMapper/extensionConfig';
+import { addOrUpdateLocalAppSettings } from '../appSettings/localSettings';
 import { updateFuncIgnore } from '../codeless/common';
 import { writeFormattedJson } from '../fs';
 import { getFunctionsCommand } from '../funcCoreTools/funcVersion';
@@ -27,7 +28,6 @@ import { tryGetLogicAppProjectRoot } from '../verifyIsProject';
 import { getWorkspaceSetting, updateGlobalSetting } from '../vsCodeConfig/settings';
 import { getWorkspaceFolder } from '../workspace';
 import { delay } from '@azure/ms-rest-js';
-import { extend } from '@microsoft/logic-apps-shared';
 import {
   DialogResponses,
   openUrl,
@@ -39,7 +39,6 @@ import { WorkerRuntime } from '@microsoft/vscode-extension';
 import axios from 'axios';
 import * as cp from 'child_process';
 import * as fs from 'fs';
-import * as fse from 'fs-extra';
 import * as os from 'os';
 import * as path from 'path';
 import * as portfinder from 'portfinder';
@@ -94,7 +93,10 @@ export async function startDesignTimeApi(projectPath: string): Promise<void> {
       if (designTimeDirectory) {
         await createJsonFile(designTimeDirectory, hostFileName, hostFileContent);
         await createJsonFile(designTimeDirectory, localSettingsFileName, settingsFileContent);
-        await updateProjectPath(designTimeDirectory, localSettingsFileName, projectPath);
+        await addOrUpdateLocalAppSettings(actionContext, designTimeDirectory.fsPath, {
+          APP_KIND: logicAppKind,
+          ProjectDirectoryPath: projectPath,
+        });
         await updateFuncIgnore(projectPath, [`${designTimeDirectoryName}/`]);
         const cwd: string = designTimeDirectory.fsPath;
         const portArgs = `--port ${ext.designTimePort}`;
@@ -255,22 +257,5 @@ export async function createJsonFile(
   // Create file
   if (!fs.existsSync(filePath.fsPath)) {
     await writeFormattedJson(filePath.fsPath, fileContent);
-  }
-}
-
-/**
- * Updates the project path in a settings file.
- * @param {Uri} directory - The directory where the settings file is located.
- * @param {string} fileName - The name of the settings file.
- * @param {string} projectDirectoryPath - The new project directory path to be updated in the settings file.
- */
-export async function updateProjectPath(directory: Uri, fileName: string, projectDirectoryPath: string) {
-  const filePath: Uri = Uri.file(path.join(directory.fsPath, fileName));
-
-  // Overwrite file
-  if (fs.existsSync(filePath.fsPath)) {
-    const fileJson: typeof settingsFileContent = JSON.parse(await fse.readFile(filePath.fsPath, 'utf-8'));
-    fileJson.Values[ProjectDirectoryPath] = projectDirectoryPath;
-    await fse.writeFile(filePath.fsPath, JSON.stringify(extend({}, fileJson), null, 2), 'utf-8');
   }
 }
