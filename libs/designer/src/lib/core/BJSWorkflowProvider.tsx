@@ -10,6 +10,7 @@ import { parseWorkflowKind } from './utils/workflow';
 import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import { useDeepCompareEffect } from '@react-hookz/web';
 import React, { useContext, useEffect } from 'react';
+import { useQuery } from 'react-query';
 import { useDispatch } from 'react-redux';
 
 export interface BJSWorkflowProviderProps {
@@ -17,9 +18,10 @@ export interface BJSWorkflowProviderProps {
   customCode?: Record<string, string>;
   runInstance?: LogicAppsV2.RunInstanceDefinition | null;
   children?: React.ReactNode;
+  appSettings?: Record<string, any>;
 }
 
-const DataProviderInner: React.FC<BJSWorkflowProviderProps> = ({ workflow, children, runInstance, customCode }) => {
+const DataProviderInner: React.FC<BJSWorkflowProviderProps> = ({ workflow, children, runInstance, customCode, appSettings }) => {
   const dispatch = useDispatch<AppDispatch>();
   useDeepCompareEffect(() => {
     dispatch(initWorkflowSpec('BJS'));
@@ -28,6 +30,9 @@ const DataProviderInner: React.FC<BJSWorkflowProviderProps> = ({ workflow, child
     dispatch(initCustomCode(customCode));
     dispatch(initializeGraphState({ workflowDefinition: workflow, runInstance }));
   }, [runInstance, workflow, customCode]);
+
+  // Store app settings in query to access outside of functional components
+  useQuery({ queryKey: ['appSettings'], initialData: appSettings });
 
   return <>{children}</>;
 };

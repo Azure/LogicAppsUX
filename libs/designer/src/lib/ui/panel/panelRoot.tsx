@@ -25,6 +25,7 @@ import { useDispatch } from 'react-redux';
 export interface PanelRootProps {
   panelLocation?: PanelLocation;
   customPanelLocations?: CustomPanelLocation[];
+  isResizeable?: boolean;
 }
 
 const layerProps = {
@@ -70,7 +71,6 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element => {
   const startResizing = useCallback(() => setIsResizing(true), []);
   const stopResizing = useCallback(() => setIsResizing(false), []);
   const animationFrame = useRef<number>(0);
-  const isResizable = currentPanelMode === 'Assertions';
 
   useEffect(() => {
     setWidth(collapsed ? PanelSize.Auto : PanelSize.Medium);
@@ -135,7 +135,11 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element => {
       isLightDismiss
       isBlocking={!isLoadingPanel && !nonBlockingPanels.includes(currentPanelMode ?? '')}
       type={
-        commonPanelProps.panelLocation === PanelLocation.Right ? (isResizable ? PanelType.custom : PanelType.medium) : PanelType.customNear
+        commonPanelProps.panelLocation === PanelLocation.Right
+          ? props.isResizeable
+            ? PanelType.custom
+            : PanelType.medium
+          : PanelType.customNear
       }
       isOpen={!collapsed}
       onDismiss={dismissPanel}
@@ -152,8 +156,14 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element => {
         },
       })}
     >
-      {isResizable ? (
-        <div className={mergeClasses(styles.resizer, isResizing && styles.resizerActive)} onMouseDown={startResizing} />
+      {props.isResizeable ? (
+        <div
+          className={mergeClasses(styles.resizer, isResizing && styles.resizerActive)}
+          onMouseDown={() => {
+            startResizing();
+            console.log('hi');
+          }}
+        />
       ) : null}
       {
         isLoadingPanel ? (

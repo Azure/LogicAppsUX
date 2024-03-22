@@ -4205,7 +4205,7 @@
   "OrPVcU": [
     {
       "type": 0,
-      "value": "Invalid split on format in '"
+      "value": "División no válida en formato en '"
     },
     {
       "type": 1,
@@ -7806,7 +7806,7 @@
   "lA/sHA": [
     {
       "type": 0,
-      "value": "Copy the value of '"
+      "value": "Copiar el valor de \""
     },
     {
       "type": 1,
@@ -7814,7 +7814,7 @@
     },
     {
       "type": 0,
-      "value": "' to the clipboard"
+      "value": "\" en el Portapapeles"
     }
   ],
   "lB56l2": [

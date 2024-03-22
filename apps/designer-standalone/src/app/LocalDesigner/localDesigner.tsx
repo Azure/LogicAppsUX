@@ -15,6 +15,7 @@ import {
   StandardRunService,
   ConsumptionOperationManifestService,
   ConsumptionConnectionService,
+  StandardCustomCodeService,
 } from '@microsoft/designer-client-services-logic-apps';
 import type { ContentType } from '@microsoft/designer-client-services-logic-apps';
 import { DesignerProvider, BJSWorkflowProvider, Designer } from '@microsoft/logic-apps-designer';
@@ -124,6 +125,16 @@ const runService = new StandardRunService({
   isDev: true,
 });
 
+const customCodeService = new StandardCustomCodeService({
+  apiVersion: '2018-11-01',
+  baseUrl: '/url',
+  subscriptionId: 'test',
+  resourceGroup: 'test',
+  appName: 'app',
+  workflowName: 'workflow',
+  httpClient,
+});
+
 const workflowService = { getCallbackUrl: () => Promise.resolve({ method: 'POST', value: 'Dummy url' }) };
 
 const hostService = {
@@ -166,6 +177,7 @@ export const LocalDesigner = () => {
       runService,
       editorService,
       connectionParameterEditorService,
+      customCodeService,
     },
     readOnly: isReadOnly,
     isMonitoringView,

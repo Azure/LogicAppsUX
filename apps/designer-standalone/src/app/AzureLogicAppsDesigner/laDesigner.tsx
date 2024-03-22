@@ -297,6 +297,7 @@ const DesignerEditor = () => {
             workflow={{ definition: workflow?.definition, connectionReferences, parameters, kind: workflow?.kind }}
             customCode={customCodeData}
             runInstance={runInstanceData}
+            appSettings={settingsData?.properties}
           >
             <div style={{ height: 'inherit', width: 'inherit' }}>
               <DesignerCommandBar

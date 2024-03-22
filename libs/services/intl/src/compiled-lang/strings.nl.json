@@ -4160,7 +4160,7 @@
   "OrPVcU": [
     {
       "type": 0,
-      "value": "Invalid split on format in '"
+      "value": "Ongeldige splitsing in indeling voor "
     },
     {
       "type": 1,
@@ -4168,7 +4168,7 @@
     },
     {
       "type": 0,
-      "value": "'."
+      "value": "."
     }
   ],
   "Ov7Ckz": [
@@ -7724,7 +7724,7 @@
   "lA/sHA": [
     {
       "type": 0,
-      "value": "Copy the value of '"
+      "value": "De waarde van "
     },
     {
       "type": 1,
@@ -7732,7 +7732,7 @@
     },
     {
       "type": 0,
-      "value": "' to the clipboard"
+      "value": " naar het klembord kopiëren"
     }
   ],
   "lB56l2": [
