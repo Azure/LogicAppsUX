@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [2.125.4](https://github.com/Azure/LogicAppsUX/compare/v2.125.3...v2.125.4) (2024-03-22)
+
+
+### Bug Fixes
+
+* **vscode:** Add app kind setting to local settings creation and update on design time ([#4418](https://github.com/Azure/LogicAppsUX/issues/4418)) ([9c0d1dc](https://github.com/Azure/LogicAppsUX/commit/9c0d1dce8d74bdaa7f928b4e511afdc5915701af)), closes [#4417](https://github.com/Azure/LogicAppsUX/issues/4417)
+
 ### [2.125.3](https://github.com/Azure/LogicAppsUX/compare/v2.125.2...v2.125.3) (2024-03-22)
 
 
