@@ -62,23 +62,39 @@ export const Navigation: React.FC = () => {
     navigate(-1);
   };
 
+  /**
+   * Logs the last step of the navigation.
+   * @param {string} pageName - The name of the page.
+   */
+  const logLastStep = (pageName: string) => {
+    vscode.postMessage({
+      command: ExtensionCommand.log_telemtry,
+      key: 'lastStep',
+      value: pageName,
+    });
+  };
+
   const onClickNext = () => {
     const { pathname } = location;
 
     switch (pathname) {
       case `/${RouteName.export}/${RouteName.instance_selection}`: {
+        logLastStep(RouteName.workflows_selection);
         navigate(`/${RouteName.export}/${RouteName.workflows_selection}`);
         break;
       }
       case `/${RouteName.export}/${RouteName.workflows_selection}`: {
+        logLastStep(RouteName.validation);
         navigate(`/${RouteName.export}/${RouteName.validation}`);
         break;
       }
       case `/${RouteName.export}/${RouteName.validation}`: {
+        logLastStep(RouteName.summary);
         navigate(`/${RouteName.export}/${RouteName.summary}`);
         break;
       }
       case `/${RouteName.export}/${RouteName.summary}`: {
+        logLastStep(RouteName.status);
         navigate(`/${RouteName.export}/${RouteName.status}`);
         vscode.postMessage({
           command: ExtensionCommand.export_package,
