@@ -1,6 +1,7 @@
+import { isBuiltInConnector, isCustomConnector } from '../connectors';
 import Constants from '../constants';
-import { getIntl } from '@microsoft/logic-apps-shared';
-import { equals, isBuiltInConnector, isCustomConnector } from '@microsoft/logic-apps-shared';
+import type { Connector, OperationApi } from '@microsoft/logic-apps-shared';
+import { equals, getIntl } from '@microsoft/logic-apps-shared';
 
 /**
  * Returns a string with a duration, possibly abbreviated, e.g., 15s or 15 second(s)
@@ -20,6 +21,7 @@ export function getDurationString(milliseconds: number, abbreviated = true): str
       return intl.formatMessage(
         {
           defaultMessage: '{seconds}s',
+          id: 'iql+jn',
           description: 'This is a period in time in seconds. {seconds} is replaced by the number and s is an abbreviation of seconds',
         },
         {
@@ -30,6 +32,7 @@ export function getDurationString(milliseconds: number, abbreviated = true): str
       return intl.formatMessage(
         {
           defaultMessage: '{seconds, plural, one {# second} other {# seconds}}',
+          id: 'hN7iBP',
           description: 'A duration of time shown in seconds',
         },
         {
@@ -45,6 +48,7 @@ export function getDurationString(milliseconds: number, abbreviated = true): str
       return intl.formatMessage(
         {
           defaultMessage: '{minutes}m',
+          id: 'SXb47U',
           description: 'This is a period in time in seconds. {minutes} is replaced by the number and m is an abbreviation of minutes',
         },
         {
@@ -55,6 +59,7 @@ export function getDurationString(milliseconds: number, abbreviated = true): str
       return intl.formatMessage(
         {
           defaultMessage: '{minutes, plural, one {# minute} other {# minutes}}',
+          id: 'RhH4pF',
           description: 'A duration of time shown in minutes',
         },
         {
@@ -70,6 +75,7 @@ export function getDurationString(milliseconds: number, abbreviated = true): str
       return intl.formatMessage(
         {
           defaultMessage: '{hours}h',
+          id: 'Qu1HkA',
           description: 'This is a period in time in hours. {hours} is replaced by the number and h is an abbreviation of hours',
         },
         {
@@ -80,6 +86,7 @@ export function getDurationString(milliseconds: number, abbreviated = true): str
       return intl.formatMessage(
         {
           defaultMessage: '{hours, plural, one {# hour} other {# hours}}',
+          id: 'FXLR5M',
           description: 'A duration of time shown in hours',
         },
         {
@@ -94,6 +101,7 @@ export function getDurationString(milliseconds: number, abbreviated = true): str
     return intl.formatMessage(
       {
         defaultMessage: '{days}d',
+        id: 'YIBDSH',
         description: 'This is a period in time in days. {days} is replaced by the number and d is an abbreviation of days',
       },
       {
@@ -104,6 +112,7 @@ export function getDurationString(milliseconds: number, abbreviated = true): str
     return intl.formatMessage(
       {
         defaultMessage: '{days, plural, one {# day} other {# days}}',
+        id: 'qUWBUX',
         description: 'A duration of time shown in days',
       },
       {
@@ -144,6 +153,7 @@ export function getDurationStringPanelMode(milliseconds: number, abbreviated = t
       return intl.formatMessage(
         {
           defaultMessage: '{seconds}s',
+          id: 'iql+jn',
           description: 'This is a period in time in seconds. {seconds} is replaced by the number and s is an abbreviation of seconds',
         },
         {
@@ -154,6 +164,7 @@ export function getDurationStringPanelMode(milliseconds: number, abbreviated = t
       return intl.formatMessage(
         {
           defaultMessage: '{seconds, plural, one {# second} other {# seconds}}',
+          id: 'hN7iBP',
           description: 'A duration of time shown in seconds',
         },
         {
@@ -169,6 +180,7 @@ export function getDurationStringPanelMode(milliseconds: number, abbreviated = t
       return intl.formatMessage(
         {
           defaultMessage: '{seconds}s',
+          id: 'iql+jn',
           description: 'This is a period in time in seconds. {seconds} is replaced by the number and s is an abbreviation of seconds',
         },
         {
@@ -179,6 +191,7 @@ export function getDurationStringPanelMode(milliseconds: number, abbreviated = t
       return intl.formatMessage(
         {
           defaultMessage: '{seconds, plural, one {# second} other {# seconds}}',
+          id: 'hN7iBP',
           description: 'A duration of time shown in seconds',
         },
         {
@@ -196,6 +209,7 @@ export function getDurationStringPanelMode(milliseconds: number, abbreviated = t
       return intl.formatMessage(
         {
           defaultMessage: '{minutes}m {seconds}s',
+          id: 'kHcCxH',
           description: 'This is a time duration in abbreviated format',
         },
         {
@@ -207,6 +221,7 @@ export function getDurationStringPanelMode(milliseconds: number, abbreviated = t
       return intl.formatMessage(
         {
           defaultMessage: '{minutes} minutes {seconds} seconds',
+          id: 'XTuxmH',
           description: 'This is a time duration in full non abbreviated format',
         },
         {
@@ -224,6 +239,7 @@ export function getDurationStringPanelMode(milliseconds: number, abbreviated = t
       return intl.formatMessage(
         {
           defaultMessage: '{hours}h {minutes}m',
+          id: 'Oib1mL',
           description: 'This is a time duration in abbreviated format',
         },
         {
@@ -235,6 +251,7 @@ export function getDurationStringPanelMode(milliseconds: number, abbreviated = t
       return intl.formatMessage(
         {
           defaultMessage: '{hours} hours {minutes} minutes',
+          id: 'l36V56',
           description: 'This is a time duration in full non abbreviated format',
         },
         {
@@ -251,6 +268,7 @@ export function getDurationStringPanelMode(milliseconds: number, abbreviated = t
     return intl.formatMessage(
       {
         defaultMessage: '{days}d {hours}h',
+        id: 'tImHz/',
         description: 'This is a time duration in abbreviated format',
       },
       {
@@ -262,6 +280,7 @@ export function getDurationStringPanelMode(milliseconds: number, abbreviated = t
     return intl.formatMessage(
       {
         defaultMessage: '{days} days {hours} hours',
+        id: 'X8JjjT',
         description: 'This is a time duration in full non abbreviated format',
       },
       {
@@ -278,6 +297,7 @@ export function getStatusString(status: string, hasRetries: boolean): string {
     case Constants.STATUS.ABORTED:
       return intl.formatMessage({
         defaultMessage: 'Aborted',
+        id: 'x7IYBg',
 
         description: 'The status message to show in monitoring view.',
       });
@@ -285,28 +305,33 @@ export function getStatusString(status: string, hasRetries: boolean): string {
     case Constants.STATUS.CANCELLED:
       return intl.formatMessage({
         defaultMessage: 'Cancelled',
+        id: 'aYTy7X',
 
         description: 'The status message to show in monitoring view.',
       });
     case Constants.STATUS.FAILED:
       return intl.formatMessage({
         defaultMessage: 'Failed',
+        id: 'J62n9E',
         description: 'The status message to show in monitoring view.',
       });
     case Constants.STATUS.FAULTED:
       return intl.formatMessage({
         defaultMessage: 'Faulted',
+        id: '+FcXe9',
         description: 'The status message to show in monitoring view.',
       });
     case Constants.STATUS.IGNORED:
       return intl.formatMessage({
         defaultMessage: 'Ignored',
+        id: 'KnjcUV',
         description: 'The status message to show in monitoring view.',
       });
 
     case Constants.STATUS.SKIPPED:
       return intl.formatMessage({
         defaultMessage: 'Skipped',
+        id: 'nHIeXp',
         description: 'The status message to show in monitoring view.',
       });
 
@@ -314,22 +339,26 @@ export function getStatusString(status: string, hasRetries: boolean): string {
       return hasRetries
         ? intl.formatMessage({
             defaultMessage: 'Succeeded with retries',
+            id: 'BFTwRN',
             description: 'The status message to show in monitoring view.. This refers to the succeeded status of a previous action.',
           })
         : intl.formatMessage({
             defaultMessage: 'Succeeded',
+            id: 'uanMWm',
             description: 'The status message to show in monitoring view.',
           });
 
     case Constants.STATUS.TIMEDOUT:
       return intl.formatMessage({
         defaultMessage: 'Timed Out',
+        id: 'MsCHhQ',
         description: 'The status message to show in monitoring view.',
       });
 
     case Constants.STATUS.WAITING:
       return intl.formatMessage({
         defaultMessage: 'Waiting',
+        id: '41eMpW',
         description: 'The status message to show in monitoring view.',
       });
 
@@ -337,6 +366,7 @@ export function getStatusString(status: string, hasRetries: boolean): string {
     default:
       return intl.formatMessage({
         defaultMessage: 'Not specified',
+        id: 'BPYdTX',
         description: 'The status message to show in monitoring view.',
       });
   }
@@ -348,22 +378,25 @@ export const filterRecord = <T>(data: Record<string, T>, filter: (_key: string, 
     .reduce((res: any, [key, value]: any) => ({ ...res, [key]: value }), {});
 };
 
-export const getConnectorCategoryString = (connectorId: string): string => {
+export const getConnectorCategoryString = (connector: Connector | OperationApi | string): string => {
   const intl = getIntl();
   const builtInText = intl.formatMessage({
     defaultMessage: 'In App',
+    id: 'VA7M1u',
     description: '"In App" category name',
   });
   const azureText = intl.formatMessage({
     defaultMessage: 'Shared',
+    id: 'epOMnV',
     description: 'Shared category name text',
   });
   const customText = intl.formatMessage({
     defaultMessage: 'Custom',
+    id: 'nRpM02',
     description: 'Custom category name text',
   });
 
-  return isBuiltInConnector(connectorId) ? builtInText : isCustomConnector(connectorId) ? customText : azureText;
+  return isBuiltInConnector(connector) ? builtInText : isCustomConnector(connector) ? customText : azureText;
 };
 
 export const convertUIElementNameToAutomationId = (uiElementName: string): string => {
@@ -371,9 +404,11 @@ export const convertUIElementNameToAutomationId = (uiElementName: string): strin
 };
 
 export const getPreviewTag = (status: string | undefined): string | undefined => {
+  const intl = getIntl();
   return equals(status, 'preview')
-    ? getIntl().formatMessage({
+    ? intl.formatMessage({
         defaultMessage: 'Preview',
+        id: 'RJ3DuE',
         description: 'The preview tag for a preview connector.',
       })
     : undefined;

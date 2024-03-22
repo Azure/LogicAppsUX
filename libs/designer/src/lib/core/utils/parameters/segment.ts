@@ -12,8 +12,12 @@ import {
   isStringInterpolation,
   isStringLiteral,
   isTemplateExpression,
+  format,
+  guid,
+  isNullOrUndefined,
+  startsWith,
+  UnsupportedException,
 } from '@microsoft/logic-apps-shared';
-import { format, guid, isNullOrUndefined, startsWith, UnsupportedException } from '@microsoft/logic-apps-shared';
 
 /**
  * The options for value segment convertor.
@@ -202,6 +206,15 @@ export class ValueSegmentConvertor {
   private _createExpressionTokenValueSegment(value: string, expression: Expression): ValueSegment {
     return createTokenValueSegment(createExpressionToken(expression), value);
   }
+}
+
+/**
+ * Checks whether the array is a value segment.
+ * @arg {any[]} array - The value segment array.
+ * @return {boolean}
+ */
+export function isValueSegmentArray(array: any[]): boolean {
+  return array.every((item) => isValueSegment(item));
 }
 
 /**

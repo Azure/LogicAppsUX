@@ -136,11 +136,13 @@ export const PanelContainer = ({
 
   const panelLabel = intl.formatMessage({
     defaultMessage: 'panel',
+    id: 'c6XbVI',
     description: 'label for panel component',
   });
 
   const panelErrorMessage = intl.formatMessage({
     defaultMessage: 'Error loading operation data',
+    id: '62Ypnr',
     description: 'label for panel error',
   });
 

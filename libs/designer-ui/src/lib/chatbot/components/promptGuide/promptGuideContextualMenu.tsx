@@ -53,47 +53,58 @@ export const PromptGuideContextualMenu = ({
       createFlowSubMenuItems: {
         example1: intl.formatMessage({
           defaultMessage: 'Send me an email when...',
+          id: 'yrYEmk',
           description: 'Example of a sentence that the user should complete',
         }),
         example2: intl.formatMessage({
           defaultMessage: 'Every week on Monday...',
+          id: 'kKJMeM',
           description: 'Example of a sentence that the user should complete',
         }),
         example3: intl.formatMessage({
           defaultMessage: 'When a new item...',
+          id: 'KV4uky',
           description: 'Example of a sentence that the user should complete',
         }),
       },
       createFlow: intl.formatMessage({
         defaultMessage: 'Create flow',
+        id: '6sGj3J',
         description: 'Chatbot create a flow text',
       }),
       explainFlow: intl.formatMessage({
         defaultMessage: 'Explain flow',
+        id: 'GQnN3U',
         description: 'Chatbot prompt to explain the flow',
       }),
       addAction: intl.formatMessage({
         defaultMessage: 'Add an action',
+        id: 'MGZRu4',
         description: 'Chatbot prompt to add action',
       }),
       replaceAction: intl.formatMessage({
         defaultMessage: 'Replace action with',
+        id: 'l2YXln',
         description: 'Chatbot prompt to replace an action',
       }),
       editFlow: intl.formatMessage({
         defaultMessage: 'Edit flow',
+        id: 'hwj1Ht',
         description: 'Chatbot prompt to edit the workflow',
       }),
       askQuestion: intl.formatMessage({
         defaultMessage: 'Ask a question',
+        id: 'BynK4X',
         description: 'Chatbot prompt to ask a question',
       }),
       explainAction: intl.formatMessage({
         defaultMessage: 'Explain action',
+        id: '50W8FI',
         description: 'Chatbot prompt to explain an action',
       }),
       title: intl.formatMessage({
         defaultMessage: 'Get started',
+        id: 'Ggkf4s',
         description: 'Chatbot prompt guide menu title',
       }),
     },

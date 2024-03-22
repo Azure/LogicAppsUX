@@ -55,7 +55,7 @@ exports[`ui/monitoring/values/_raw should render 1`] = `
           </span>
         </button>
         <button
-          aria-label="Copy the value of {label} to the clipboard"
+          aria-label="Copy the value of 'display-name' to the clipboard"
           className="ms-Button ms-Button--icon root-109"
           data-is-focusable={true}
           onClick={[Function]}
@@ -168,7 +168,7 @@ exports[`ui/monitoring/values/_raw should rendered a zero-width space if value i
           </span>
         </button>
         <button
-          aria-label="Copy the value of {label} to the clipboard"
+          aria-label="Copy the value of 'display-name' to the clipboard"
           className="ms-Button ms-Button--icon root-109"
           data-is-focusable={true}
           onClick={[Function]}

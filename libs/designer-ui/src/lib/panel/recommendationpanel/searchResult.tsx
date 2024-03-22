@@ -1,5 +1,6 @@
 import NoResultsSvg from '../../../assets/search/noResults.svg';
 import { AriaSearchResultsAlert } from '../../ariaSearchResults/ariaSearchResultsAlert';
+import { isBuiltInConnector } from '../../connectors';
 import { getConnectorCategoryString } from '../../utils';
 import type { OperationActionData } from './interfaces';
 import { OperationSearchCard } from './operationSearchCard';
@@ -7,7 +8,6 @@ import { OperationSearchGroup } from './operationSearchGroup';
 import { List, Text } from '@fluentui/react';
 import { Spinner } from '@fluentui/react-components';
 import type { DiscoveryOpArray, DiscoveryOperation, DiscoveryResultTypes } from '@microsoft/logic-apps-shared';
-import { isBuiltInConnector } from '@microsoft/logic-apps-shared';
 import type { PropsWithChildren } from 'react';
 import React, { useMemo } from 'react';
 import { useIntl } from 'react-intl';
@@ -84,6 +84,7 @@ export const SearchResultsGrid: React.FC<PropsWithChildren<SearchResultsGridProp
   const noResultsText = intl.formatMessage(
     {
       defaultMessage: 'No results found for {searchTerm}',
+      id: 'VI7EqG',
       description: 'Text to show when there are no search results',
     },
     {
@@ -93,6 +94,7 @@ export const SearchResultsGrid: React.FC<PropsWithChildren<SearchResultsGridProp
 
   const loadingText = intl.formatMessage({
     defaultMessage: 'Loading more results...',
+    id: 'AoalgS',
     description: 'Message to show when loading search results',
   });
 
@@ -140,9 +142,9 @@ export const OperationActionDataFromOperation = (operation: DiscoveryOperation<D
   brandColor: operation.properties.api.brandColor,
   iconUri: operation.properties.api.iconUri,
   connectorName: operation.properties.api.displayName,
-  category: getConnectorCategoryString(operation.properties.api.id),
+  category: getConnectorCategoryString(operation.properties.api),
   isTrigger: !!operation.properties?.trigger,
-  isBuiltIn: isBuiltInConnector(operation.properties.api.id),
+  isBuiltIn: isBuiltInConnector(operation.properties.api),
   apiId: operation.properties.api.id,
   releaseStatus: operation.properties.annotation?.status,
 });

@@ -31,6 +31,7 @@ export const ProgressCardWithStopButton: React.FC<ProgressCardWithStopButtonProp
   const intlText = {
     stopButtonAltText: intl.formatMessage({
       defaultMessage: 'Stop',
+      id: 'zec5Ay',
       description: 'Chatbot stop generating flow button alt text',
     }),
   };

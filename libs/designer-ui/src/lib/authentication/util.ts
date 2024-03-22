@@ -6,9 +6,8 @@ import { ValueSegmentType } from '../editor';
 import { convertStringToSegments } from '../editor/base/utils/editorToSegment';
 import { convertKeyValueItemToSegments } from '../editor/base/utils/keyvalueitem';
 import { AuthenticationOAuthType } from './AADOAuth/AADOAuth';
-import { getIntl } from '@microsoft/logic-apps-shared';
+import { getIntl, guid, equals, ResourceIdentityType } from '@microsoft/logic-apps-shared';
 import type { ManagedIdentity } from '@microsoft/logic-apps-shared';
-import { guid, equals, ResourceIdentityType } from '@microsoft/logic-apps-shared';
 
 export interface AuthProperty {
   displayName: string;
@@ -31,6 +30,7 @@ export const AUTHENTICATION_PROPERTIES = {
   AAD_OAUTH_AUDIENCE: {
     displayName: intl.formatMessage({
       defaultMessage: 'Audience',
+      id: 'vX9WYS',
       description: 'Audience Label Display Name',
     }),
     name: 'audience',
@@ -38,6 +38,7 @@ export const AUTHENTICATION_PROPERTIES = {
     key: 'aadOAuthAudience',
     placeHolder: intl.formatMessage({
       defaultMessage: 'Enter the audience.',
+      id: 'gpUphl',
       description: 'Audience Placeholder Text',
     }),
     type: constants.SWAGGER.TYPE.STRING,
@@ -46,6 +47,7 @@ export const AUTHENTICATION_PROPERTIES = {
   AAD_OAUTH_AUTHORITY: {
     displayName: intl.formatMessage({
       defaultMessage: 'Authority',
+      id: '5SAQOb',
       description: 'Authority Label Display Name',
     }),
     name: 'authority',
@@ -53,6 +55,7 @@ export const AUTHENTICATION_PROPERTIES = {
     key: 'aadOAuthAuthority',
     placeHolder: intl.formatMessage({
       defaultMessage: 'Enter authority',
+      id: 'GDUGlm',
       description: 'Authority Placeholder Text',
     }),
     type: constants.SWAGGER.TYPE.STRING,
@@ -61,6 +64,7 @@ export const AUTHENTICATION_PROPERTIES = {
   AAD_OAUTH_CERTIFICATE_PASSWORD: {
     displayName: intl.formatMessage({
       defaultMessage: 'Password',
+      id: 'EjXdAm',
       description: 'OAuth Password Label Display Name',
     }),
     name: 'password',
@@ -68,6 +72,7 @@ export const AUTHENTICATION_PROPERTIES = {
     key: 'aadOAuthTypeCertificatePassword',
     placeHolder: intl.formatMessage({
       defaultMessage: 'Enter password as plain text or use a secure parameter',
+      id: 'mvrlkP',
       description: 'OAuth Password Placeholder Text',
     }),
     type: constants.SWAGGER.TYPE.STRING,
@@ -76,6 +81,7 @@ export const AUTHENTICATION_PROPERTIES = {
   AAD_OAUTH_CERTIFICATE_PFX: {
     displayName: intl.formatMessage({
       defaultMessage: 'Pfx',
+      id: '84D91Y',
       description: 'OAuth Pfx Label Display Name',
     }),
     format: constants.SWAGGER.FORMAT.BYTE,
@@ -84,6 +90,7 @@ export const AUTHENTICATION_PROPERTIES = {
     key: 'aadOAuthTypeCertificatePfx',
     placeHolder: intl.formatMessage({
       defaultMessage: 'Enter Pfx',
+      id: 'ahsVI/',
       description: 'OAuth Pfx Placeholder Text',
     }),
     type: constants.SWAGGER.TYPE.STRING,
@@ -92,6 +99,7 @@ export const AUTHENTICATION_PROPERTIES = {
   AAD_OAUTH_CLIENT_ID: {
     displayName: intl.formatMessage({
       defaultMessage: 'Client ID',
+      id: 'srpZD2',
       description: 'Client ID Label Display Name',
     }),
     name: 'clientId',
@@ -99,6 +107,7 @@ export const AUTHENTICATION_PROPERTIES = {
     key: 'aadOAuthClientId',
     placeHolder: intl.formatMessage({
       defaultMessage: 'Enter client ID',
+      id: 'DWsh56',
       description: 'Client ID Placeholder Text',
     }),
     type: constants.SWAGGER.TYPE.STRING,
@@ -107,6 +116,7 @@ export const AUTHENTICATION_PROPERTIES = {
   AAD_OAUTH_SECRET: {
     displayName: intl.formatMessage({
       defaultMessage: 'Secret',
+      id: 'OEEuUu',
       description: 'Secret Label Display Name',
     }),
     name: 'secret',
@@ -114,6 +124,7 @@ export const AUTHENTICATION_PROPERTIES = {
     key: 'aadOAuthTypeSecret',
     placeHolder: intl.formatMessage({
       defaultMessage: 'Enter secret as plain text or use a secure parameter',
+      id: '8UfIAk',
       description: 'Secret Placeholder Text',
     }),
     type: constants.SWAGGER.TYPE.STRING,
@@ -122,6 +133,7 @@ export const AUTHENTICATION_PROPERTIES = {
   AAD_OAUTH_TENANT: {
     displayName: intl.formatMessage({
       defaultMessage: 'Tenant',
+      id: 'X4gDhV',
       description: 'Tenant Label Display Name',
     }),
     name: 'tenant',
@@ -129,6 +141,7 @@ export const AUTHENTICATION_PROPERTIES = {
     key: 'aadOAuthTenant',
     placeHolder: intl.formatMessage({
       defaultMessage: 'Enter tenant',
+      id: 'No6CS+',
       description: 'Tenant Placeholder Text',
     }),
     type: constants.SWAGGER.TYPE.STRING,
@@ -137,6 +150,7 @@ export const AUTHENTICATION_PROPERTIES = {
   BASIC_USERNAME: {
     displayName: intl.formatMessage({
       defaultMessage: 'Username',
+      id: 'AnX5yC',
       description: 'Username Label Display Name',
     }),
     name: 'username',
@@ -144,6 +158,7 @@ export const AUTHENTICATION_PROPERTIES = {
     key: 'basicUsername',
     placeHolder: intl.formatMessage({
       defaultMessage: 'Enter username',
+      id: '78Vggn',
       description: 'Username placeholder text',
     }),
     type: constants.SWAGGER.TYPE.STRING,
@@ -152,6 +167,7 @@ export const AUTHENTICATION_PROPERTIES = {
   BASIC_PASSWORD: {
     displayName: intl.formatMessage({
       defaultMessage: 'Password',
+      id: 'SCCE6s',
       description: 'Basic Password Label Display Name',
     }),
     name: 'password',
@@ -159,6 +175,7 @@ export const AUTHENTICATION_PROPERTIES = {
     key: 'basicPassword',
     placeHolder: intl.formatMessage({
       defaultMessage: 'Enter password as plain text or use a secure parameter',
+      id: 'BQSRV0',
       description: 'Basic Password Placeholder Text',
     }),
     type: constants.SWAGGER.TYPE.STRING,
@@ -167,6 +184,7 @@ export const AUTHENTICATION_PROPERTIES = {
   SERIALIZED_VALUE: {
     displayName: intl.formatMessage({
       defaultMessage: 'Authentication',
+      id: '45ubha',
       description: 'Authentication Label Display Name',
     }),
     name: '',
@@ -179,6 +197,7 @@ export const AUTHENTICATION_PROPERTIES = {
   CLIENT_CERTIFICATE_PASSWORD: {
     displayName: intl.formatMessage({
       defaultMessage: 'Password',
+      id: 'Y/bcmG',
       description: 'Client Certificate Password Label Display Name',
     }),
     name: 'password',
@@ -186,6 +205,7 @@ export const AUTHENTICATION_PROPERTIES = {
     key: 'clientCertificatePassword',
     placeHolder: intl.formatMessage({
       defaultMessage: 'Enter password as plain text or use a secure parameter',
+      id: 'xN3GEX',
       description: 'Client Certificate Password Placeholder Text',
     }),
     type: constants.SWAGGER.TYPE.STRING,
@@ -194,6 +214,7 @@ export const AUTHENTICATION_PROPERTIES = {
   CLIENT_CERTIFICATE_PFX: {
     displayName: intl.formatMessage({
       defaultMessage: 'Pfx',
+      id: 'P+mWgV',
       description: 'Client Certificate Pfx Label Display Name',
     }),
     format: constants.SWAGGER.FORMAT.BYTE,
@@ -202,6 +223,7 @@ export const AUTHENTICATION_PROPERTIES = {
     key: 'clientCertificatePfx',
     placeHolder: intl.formatMessage({
       defaultMessage: 'Enter Pfx',
+      id: 'YOUfNf',
       description: 'Client Certificate Pfx Placeholder Text',
     }),
     type: constants.SWAGGER.TYPE.STRING,
@@ -210,6 +232,7 @@ export const AUTHENTICATION_PROPERTIES = {
   MSI_AUDIENCE: {
     displayName: intl.formatMessage({
       defaultMessage: 'Audience',
+      id: 'hvbclb',
       description: 'MSI Audience Label Display Name',
     }),
     name: 'audience',
@@ -218,6 +241,7 @@ export const AUTHENTICATION_PROPERTIES = {
     // TODO: Replace audience placeholder specific to environment (public azure, fairfax, mooncake)
     placeHolder: intl.formatMessage({
       defaultMessage: 'Enter the audience.',
+      id: 'OSP9JY',
       description: 'MSI Audience Placeholder Text',
     }),
     type: constants.SWAGGER.TYPE.STRING,
@@ -226,6 +250,7 @@ export const AUTHENTICATION_PROPERTIES = {
   MSI_IDENTITY: {
     displayName: intl.formatMessage({
       defaultMessage: 'Managed identity',
+      id: 'MLCQzX',
       description: 'Managed Identity Label Display Name',
     }),
     name: 'identity',
@@ -233,6 +258,7 @@ export const AUTHENTICATION_PROPERTIES = {
     key: 'identity',
     placeHolder: intl.formatMessage({
       defaultMessage: 'Please select an identity',
+      id: 'NoXs0l',
       description: 'MSI Identity Placeholder Text',
     }),
     type: constants.SWAGGER.TYPE.STRING,
@@ -241,6 +267,7 @@ export const AUTHENTICATION_PROPERTIES = {
   RAW_VALUE: {
     displayName: intl.formatMessage({
       defaultMessage: 'Value',
+      id: '90Q7Pw',
       description: 'Raw Value Label Display Name',
     }),
     name: 'value',
@@ -248,6 +275,7 @@ export const AUTHENTICATION_PROPERTIES = {
     key: 'rawValue',
     placeHolder: intl.formatMessage({
       defaultMessage: 'Enter the value of the Authorization header',
+      id: '1nvvw1',
       description: 'Raw Value Placeholder Text',
     }),
     type: constants.SWAGGER.TYPE.STRING,
@@ -438,7 +466,8 @@ export const validateAuthenticationString = (s: string): string => {
   parsedSerializedValue = JSON.parse(s);
   if (parsedSerializedValue.type === undefined) {
     return intl.formatMessage({
-      defaultMessage: "Missing authentication type property: 'type'.",
+      defaultMessage: `Missing authentication type property: 'type'.`,
+      id: 'kuFK3E',
       description: 'Invalid authentication without type property',
     });
   } else {
@@ -446,13 +475,15 @@ export const validateAuthenticationString = (s: string): string => {
     if (!Object.values(AuthenticationType).find((val) => authType === val)) {
       if (containsToken(authType)) {
         return intl.formatMessage({
-          defaultMessage: "Missing authentication type property: 'type'.",
+          defaultMessage: `Missing authentication type property: 'type'.`,
+          id: 'kuFK3E',
           description: 'Invalid authentication without type property',
         });
       }
       return intl.formatMessage(
         {
-          defaultMessage: "Unsupported authentication type ''{authType}''.",
+          defaultMessage: `Unsupported authentication type ''{authType}''.`,
+          id: '7zsUT3',
           description: 'Invalid authentication type',
         },
         { authType }
@@ -502,7 +533,8 @@ function checkForMissingOrInvalidProperties(authentication: any, authType: Authe
         (hasSecret && hasPassword)
       ) {
         return intl.formatMessage({
-          defaultMessage: "Missing required properties 'secret' or 'pfx' and 'password' for authentication type 'ActiveDirectoryOAuth'.",
+          defaultMessage: `Missing required properties 'secret' or 'pfx' and 'password' for authentication type 'ActiveDirectoryOAuth'.`,
+          id: 'mYQFtf',
           description: 'OAuth Error message when missing properties',
         });
       }
@@ -513,14 +545,16 @@ function checkForMissingOrInvalidProperties(authentication: any, authType: Authe
       missingProperties.length === 1
         ? intl.formatMessage(
             {
-              defaultMessage: "Missing required property ''{missingProperties}'' for authentication type ''{authType}''",
+              defaultMessage: `Missing required property ''{missingProperties}'' for authentication type ''{authType}''`,
+              id: 'Ov7Ckz',
               description: 'Error message when missing a required authentication property',
             },
             { missingProperties: missingProperties[0], authType }
           )
         : intl.formatMessage(
             {
-              defaultMessage: "Missing required properties ''{missingProperties}'' for authentication type ''{authType}''",
+              defaultMessage: `Missing required properties ''{missingProperties}'' for authentication type ''{authType}''`,
+              id: 'BGw6eH',
               description: 'Error message when missing multiple required authentication properties',
             },
             { missingProperties: missingProperties.join(', '), authType }
@@ -548,6 +582,7 @@ function checkForUnknownProperties(authentication: any, authType: Authentication
     if (containsToken(authenticationKey)) {
       return intl.formatMessage({
         defaultMessage: 'Dynamic content not supported as properties in authentication.',
+        id: 'HzS2gJ',
         description: 'Error message for when putting token in authentication property',
       });
     }
@@ -560,14 +595,16 @@ function checkForUnknownProperties(authentication: any, authType: Authentication
       invalidProperties.length === 1
         ? intl.formatMessage(
             {
-              defaultMessage: "Invalid property ''{invalidProperties}'' for authentication type ''{authType}''.",
+              defaultMessage: `Invalid property ''{invalidProperties}'' for authentication type ''{authType}''.`,
+              id: 'I1CYNA',
               description: 'Error message when having an invalid authentication property',
             },
             { invalidProperties: invalidProperties[0], authType }
           )
         : intl.formatMessage(
             {
-              defaultMessage: "The ''{invalidProperties}'' properties are invalid for the ''{authType}'' authentication type.",
+              defaultMessage: `The ''{invalidProperties}'' properties are invalid for the ''{authType}'' authentication type.`,
+              id: '5LV34t',
               description: 'Error message when having multiple invalid authentication properties',
             },
             { invalidProperties: invalidProperties.join(', '), authType }
@@ -602,7 +639,8 @@ function checkForInvalidValues(authentication: any): string {
       errorMessages.push(
         intl.formatMessage(
           {
-            defaultMessage: "The type for ''{authenticationKey}'' is ''{propertyType}''.",
+            defaultMessage: `The type for ''{authenticationKey}'' is ''{propertyType}''.`,
+            id: 'UnytRl',
             description: 'Error message when having invalid authentication property types',
           },
           { authenticationKey, propertyType: currentProperty.type }

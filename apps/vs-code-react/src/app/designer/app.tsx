@@ -44,10 +44,12 @@ export const DesignerApp = () => {
   const intlText = {
     ERROR_APP: intl.formatMessage({
       defaultMessage: 'Something went wrong',
+      id: 'XtVOMn',
       description: 'Something went wrong text',
     }),
     LOADING_APP: intl.formatMessage({
       defaultMessage: 'Loading designer',
+      id: 'fZJWBR',
       description: 'Loading designer text',
     }),
   };
@@ -167,6 +169,7 @@ export const DesignerApp = () => {
         kind: standardApp.kind,
       }}
       runInstance={runInstance}
+      appSettings={panelMetaData?.localSettings}
     >
       <Designer />
     </BJSWorkflowProvider>

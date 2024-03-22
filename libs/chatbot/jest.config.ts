@@ -8,15 +8,6 @@ export default {
       'babel-jest',
       {
         presets: ['@nrwl/react/babel'],
-        plugins: [
-          [
-            'formatjs',
-            {
-              idInterpolationPattern: '[sha512:contenthash:base64:6]',
-              ast: true,
-            },
-          ],
-        ],
       },
     ],
     '^.+\\.svg$': '../../__mocks__/svgTransform.js',
@@ -24,10 +15,12 @@ export default {
   transformIgnorePatterns: [
     // all exceptions must be first line
     '/node_modules/(?!@fluentui/react)',
+    '/node_modules/(?!(monaco-editor))',
   ],
   moduleNameMapper: {
     '@fluentui/react/lib/(.*)$': '@fluentui/react/lib-commonjs/$1',
     'react-markdown': 'react-markdown/react-markdown.min.js',
+    '^monaco-editor$': '@monaco-editor/react',
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
   coverageDirectory: '../../coverage/libs/chatbot',

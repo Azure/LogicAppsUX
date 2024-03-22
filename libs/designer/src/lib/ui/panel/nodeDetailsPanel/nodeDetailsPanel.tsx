@@ -1,30 +1,31 @@
 import type { AppDispatch, RootState } from '../../../core';
 import {
-  useSelectedNodeId,
-  useNodeDisplayName,
-  useNodeMetadata,
   clearPanel,
   collapsePanel,
-  validateParameter,
   updateParameterValidation,
+  useNodeDisplayName,
+  useNodeMetadata,
+  useSelectedNodeId,
+  validateParameter,
 } from '../../../core';
 import { useReadOnly } from '../../../core/state/designerOptions/designerOptionsSelectors';
 import { setShowDeleteModal } from '../../../core/state/designerView/designerViewSlice';
 import { ErrorLevel } from '../../../core/state/operation/operationMetadataSlice';
 import { useIconUri, useOperationErrorInfo } from '../../../core/state/operation/operationSelector';
 import { useIsPanelCollapsed, useSelectedPanelTabId } from '../../../core/state/panel/panelSelectors';
-import { expandPanel, updatePanelLocation, selectPanelTab, setSelectedNodeId } from '../../../core/state/panel/panelSlice';
+import { expandPanel, selectPanelTab, setSelectedNodeId, updatePanelLocation } from '../../../core/state/panel/panelSlice';
 import { useOperationQuery } from '../../../core/state/selectors/actionMetadataSelector';
 import { useNodeDescription, useRunData, useRunInstance } from '../../../core/state/workflow/workflowSelectors';
-import { setNodeDescription, replaceId } from '../../../core/state/workflow/workflowSlice';
-import { isRootNodeInGraph, isOperationNameValid } from '../../../core/utils/graph';
+import { replaceId, setNodeDescription } from '../../../core/state/workflow/workflowSlice';
+import { isOperationNameValid, isRootNodeInGraph } from '../../../core/utils/graph';
 import { CommentMenuItem } from '../../menuItems/commentMenuItem';
 import { DeleteMenuItem } from '../../menuItems/deleteMenuItem';
 import { usePanelTabs } from './usePanelTabs';
 import { WorkflowService } from '@microsoft/designer-client-services-logic-apps';
 import type { CommonPanelProps, PageActionTelemetryData } from '@microsoft/designer-ui';
 import { PanelContainer, PanelLocation, PanelScope, PanelSize } from '@microsoft/designer-ui';
-import { isNullOrUndefined } from '@microsoft/logic-apps-shared';
+import { SUBGRAPH_TYPES, isNullOrUndefined } from '@microsoft/logic-apps-shared';
+import type { ReactElement } from 'react';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -83,10 +84,13 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
     dispatch(setNodeDescription({ nodeId: selectedNode, ...(showCommentBox && { description: '' }) }));
   };
 
-  const headerMenuItems = [
-    <CommentMenuItem key={'comment'} onClick={handleCommentMenuClick} hasComment={showCommentBox} />,
-    <DeleteMenuItem key={'delete'} onClick={deleteClick} />,
-  ];
+  // Removing the 'add a note' button for subgraph nodes
+  const isSubgraphContainer = nodeMetaData?.subgraphType === SUBGRAPH_TYPES.SWITCH_CASE;
+  const headerMenuItems: ReactElement[] = [];
+  if (!isSubgraphContainer) {
+    headerMenuItems.push(<CommentMenuItem key={'comment'} onClick={handleCommentMenuClick} hasComment={showCommentBox} />);
+  }
+  headerMenuItems.push(<DeleteMenuItem key={'delete'} onClick={deleteClick} />);
 
   const onTitleChange = (newId: string): { valid: boolean; oldValue?: string } => {
     const isValid = isOperationNameValid(selectedNode, newId, isTriggerNode, nodesMetadata, idReplacements);
@@ -144,7 +148,9 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
       showCommentBox={showCommentBox}
       tabs={panelTabs}
       selectedTab={selectedTab}
-      selectTab={(tabId: string) => dispatch(selectPanelTab(tabId))}
+      selectTab={(tabId: string) => {
+        dispatch(selectPanelTab(tabId));
+      }}
       nodeId={selectedNode}
       readOnlyMode={readOnly}
       canResubmit={runData?.canResubmit ?? false}

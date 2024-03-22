@@ -1,6 +1,6 @@
 import constants from '../constants';
 import type { Token } from '../editor';
-import { ValueSegmentType, TokenType } from '../editor';
+import { TokenType, ValueSegmentType } from '../editor';
 import type { TokenNodeProps } from '../editor/base/nodes/tokenNode';
 import { INSERT_TOKEN_NODE } from '../editor/base/plugins/InsertTokenNode';
 import { SINGLE_VALUE_SEGMENT } from '../editor/base/plugins/SingleValueSegment';
@@ -8,12 +8,12 @@ import type { ExpressionEditorEvent } from '../expressioneditor';
 import type { TokenGroup, Token as TokenGroupToken } from './models/token';
 import { UPDATE_TOKEN_NODE } from './plugins/UpdateTokenNode';
 import type { GetValueSegmentHandler } from './tokenpickersection/tokenpickeroption';
-import { getExpressionTokenTitle, getExpressionOutput } from './util';
+import { getExpressionOutput, getExpressionTokenTitle } from './util';
 import { PrimaryButton } from '@fluentui/react';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
+import { LogEntryLevel, LoggerService } from '@microsoft/designer-client-services-logic-apps';
 import type { Expression } from '@microsoft/logic-apps-shared';
-import { ExpressionExceptionCode, ExpressionParser, ScannerException } from '@microsoft/logic-apps-shared';
-import { guid } from '@microsoft/logic-apps-shared';
+import { ExpressionExceptionCode, ExpressionParser, ScannerException, guid } from '@microsoft/logic-apps-shared';
 import type { LexicalEditor, NodeKey } from 'lexical';
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
@@ -25,7 +25,6 @@ interface TokenPickerFooterProps {
   expression: ExpressionEditorEvent;
   expressionToBeUpdated: NodeKey | null;
   tokenGroup: TokenGroup[];
-  closeTokenPicker: () => void;
   getValueSegmentFromToken: GetValueSegmentHandler;
   setExpressionEditorError: (error: string) => void;
 }
@@ -34,7 +33,6 @@ export function TokenPickerFooter({
   expression,
   expressionToBeUpdated,
   tokenGroup,
-  closeTokenPicker,
   getValueSegmentFromToken,
   setExpressionEditorError,
 }: TokenPickerFooterProps) {
@@ -60,18 +58,22 @@ export function TokenPickerFooter({
 
   const tokenPickerAdd = intl.formatMessage({
     defaultMessage: 'Add',
+    id: '9atGYe',
     description: 'Insert Expression',
   });
   const tokenPickerUpdate = intl.formatMessage({
     defaultMessage: 'Update',
+    id: 'dOpdsP',
     description: 'Update Expression',
   });
   const invalidExpression = intl.formatMessage({
     defaultMessage: 'The expression is invalid.',
+    id: 't9RwOi',
     description: 'Invalid expression alert',
   });
   const invalidExpressionQuotations = intl.formatMessage({
     defaultMessage: 'The expression is invalid. Make sure to use single quotes.',
+    id: 'H9CZTr',
     description: 'Invalid expression due to misused double quotes',
   });
 
@@ -106,8 +108,19 @@ export function TokenPickerFooter({
       } else {
         setExpressionEditorError(invalidExpression);
       }
+    }
+
+    LoggerService().log({
+      area: 'TokenPickerFooter:onUpdateOrAddClicked',
+      args: [expressionToBeUpdated ? 'update' : 'add', currExpression ? 'valid' : 'invalid'],
+      level: LogEntryLevel.Verbose,
+      message: 'Expression add/update button clicked.',
+    });
+
+    if (!currExpression) {
       return;
     }
+
     if (expression.value && window.localStorage.getItem('msla-tokenpicker-expression') !== expression.value) {
       window.localStorage.setItem('msla-tokenpicker-expression', expression.value);
     }
@@ -154,7 +167,6 @@ export function TokenPickerFooter({
         });
       }
     }
-    closeTokenPicker();
   };
 
   return (

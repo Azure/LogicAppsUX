@@ -187,15 +187,17 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
   const intl = useIntl();
   const returnToSearchText = intl.formatMessage({
     defaultMessage: 'Return to search',
+    id: 'tH2pT1',
     description: 'Text for the Details page navigation heading',
   });
 
   const headingText = isTrigger
-    ? intl.formatMessage({ defaultMessage: 'Add a trigger', description: 'Text for the "Add Trigger" page header' })
-    : intl.formatMessage({ defaultMessage: 'Add an action', description: 'Text for the "Add Action" page header' });
+    ? intl.formatMessage({ defaultMessage: 'Add a trigger', id: 'dBxX0M', description: 'Text for the "Add Trigger" page header' })
+    : intl.formatMessage({ defaultMessage: 'Add an action', id: 'EUQDM6', description: 'Text for the "Add Action" page header' });
 
   const closeButtonAriaLabel = intl.formatMessage({
     defaultMessage: 'Close Add Action Panel',
+    id: 'Yg/vvm',
     description: 'Aria label for the close button in the Add Action Panel',
   });
   return (
@@ -263,5 +265,5 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
 };
 
 const joinAndDeduplicateById = (arr1: DiscoveryOpArray, arr2: DiscoveryOpArray) => [
-  ...new Map([...arr1, ...arr2].map((v) => [v.id, v])).values(),
+  ...new Map([...arr1, ...arr2].map((v) => [`${v?.properties?.api?.id}/${v.id}`, v])).values(),
 ];

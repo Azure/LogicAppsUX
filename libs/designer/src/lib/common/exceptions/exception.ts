@@ -1,11 +1,11 @@
-import { getIntl } from '@microsoft/logic-apps-shared';
+import { getIntl, isException } from '@microsoft/logic-apps-shared';
 import type { Exception } from '@microsoft/logic-apps-shared';
-import { isException } from '@microsoft/logic-apps-shared';
 
 export function includeInnerExceptionMessage(error: Error | Exception): string {
   const intl = getIntl();
   const defaultErrorMessage = intl.formatMessage({
     defaultMessage: 'Unexpected error',
+    id: 'MmBfD1',
     description:
       'This is the default message shown in case of an error. It can be shown in multiple contexts but generally would be a notification',
   });

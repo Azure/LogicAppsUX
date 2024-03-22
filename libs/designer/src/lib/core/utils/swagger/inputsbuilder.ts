@@ -2,9 +2,8 @@ import Constants from '../../../common/constants';
 import type { SerializedParameter } from '../../actions/bjsworkflow/serializer';
 import { constructInputValues } from '../../actions/bjsworkflow/serializer';
 import { getAndEscapeSegment, transformInputParameter, updateParameterWithValues } from '../parameters/helper';
-import { getIntl } from '@microsoft/logic-apps-shared';
-import type { Expression, ExpressionFunction, InputParameter, Segment } from '@microsoft/logic-apps-shared';
 import {
+  getIntl,
   create,
   ExpressionBuilder,
   ExpressionExceptionCode,
@@ -16,8 +15,6 @@ import {
   ParameterLocations,
   parseEx,
   PropertyName,
-} from '@microsoft/logic-apps-shared';
-import {
   AssertionErrorCode,
   AssertionException,
   clone,
@@ -31,6 +28,7 @@ import {
   startsWith,
   UnsupportedException,
 } from '@microsoft/logic-apps-shared';
+import type { Expression, ExpressionFunction, InputParameter, Segment } from '@microsoft/logic-apps-shared';
 
 const operationPathDelimiter = '<DELIMITER>';
 
@@ -90,6 +88,7 @@ export function buildOperationDetailsFromControls(
           intl.formatMessage(
             {
               defaultMessage: `Unsupported 'in' value : ''{value}'' in Parameter`,
+              id: '5akc1Q',
               description:
                 'Error message for unsupported values. Do not remove the double single quotes around the placeholder text, as it is needed to wrap the placeholder text in single quotes.',
             },
@@ -281,11 +280,13 @@ function serializeFormData(formDataParameters: SerializedParameter[]): Partial<O
         const fileNameItem = firstItemIsContent ? items[1] : items[0];
         return createMultipart(name, fileContentItem.value, fileNameItem.value);
       } else {
+        const intl = getIntl();
         throw new AssertionException(
           AssertionErrorCode.UNSPECIFIED,
-          getIntl().formatMessage(
+          intl.formatMessage(
             {
-              defaultMessage: `Invalid operation. Number of items: {length}.`,
+              defaultMessage: 'Invalid operation. Number of items: {length}.',
+              id: 'J55HA9',
               description: 'Exception message for invalid formdata operation.',
             },
             { length: items.length }
@@ -547,7 +548,8 @@ export function processPathInputs(pathValue: string, pathTemplate: string): Reco
 
     const errorMessage = intl.formatMessage(
       {
-        defaultMessage: `Invalid operation path input value. Path value - {pathValue} Path template - {pathTemplate}`,
+        defaultMessage: 'Invalid operation path input value. Path value - {pathValue} Path template - {pathTemplate}',
+        id: 'NnD8gF',
         description: 'Error message while parsing ',
       },
       { pathValue, pathTemplate }
@@ -589,7 +591,8 @@ export function processPathInputs(pathValue: string, pathTemplate: string): Reco
 
     const errorMismatchSegments = intl.formatMessage(
       {
-        defaultMessage: `Operation path value does not match the template for segment. Path {pathValue}, Template {pathTemplate}`,
+        defaultMessage: 'Operation path value does not match the template for segment. Path {pathValue}, Template {pathTemplate}',
+        id: 'hq1mk6',
         description: 'Error while parsing expression for path value',
       },
       { pathValue, pathTemplate }

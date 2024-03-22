@@ -107,7 +107,7 @@ exports[`ui/monitoring/values/value should render a decimal value 1`] = `
           </span>
         </button>
         <button
-          aria-label="Copy the value of {label} to the clipboard"
+          aria-label="Copy the value of 'display-name' to the clipboard"
           className="ms-Button ms-Button--icon root-110"
           data-is-focusable={true}
           onClick={[Function]}
@@ -579,7 +579,7 @@ exports[`ui/monitoring/values/value should render a number value 1`] = `
           </span>
         </button>
         <button
-          aria-label="Copy the value of {label} to the clipboard"
+          aria-label="Copy the value of 'display-name' to the clipboard"
           className="ms-Button ms-Button--icon root-110"
           data-is-focusable={true}
           onClick={[Function]}
@@ -697,7 +697,7 @@ exports[`ui/monitoring/values/value should render a raw value 1`] = `
           </span>
         </button>
         <button
-          aria-label="Copy the value of {label} to the clipboard"
+          aria-label="Copy the value of 'raw' to the clipboard"
           className="ms-Button ms-Button--icon root-110"
           data-is-focusable={true}
           onClick={[Function]}
@@ -810,7 +810,7 @@ exports[`ui/monitoring/values/value should render an XML value 1`] = `
           </span>
         </button>
         <button
-          aria-label="Copy the value of {label} to the clipboard"
+          aria-label="Copy the value of 'XML' to the clipboard"
           className="ms-Button ms-Button--icon root-110"
           data-is-focusable={true}
           onClick={[Function]}

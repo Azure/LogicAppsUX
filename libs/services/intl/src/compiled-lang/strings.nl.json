@@ -41,6 +41,12 @@
       "value": "Trigger"
     }
   ],
+  "+KXX+O": [
+    {
+      "type": 0,
+      "value": "Functie selecteren uit"
+    }
+  ],
   "+M72+a": [
     {
       "type": 0,
@@ -981,6 +987,12 @@
       "value": "Beleid voor opnieuw proberen"
     }
   ],
+  "4Levd5": [
+    {
+      "type": 0,
+      "value": "Stuur me een e-mail wanneer"
+    }
+  ],
   "4Q7WzU": [
     {
       "type": 0,
@@ -1215,6 +1227,12 @@
       "value": "Beveiligde invoerwaarden van de bewerking"
     }
   ],
+  "635Koz": [
+    {
+      "type": 0,
+      "value": "Elke week op maandag"
+    }
+  ],
   "63CC7M": [
     {
       "type": 0,
@@ -1365,12 +1383,6 @@
     {
       "type": 0,
       "value": "Uitvoer is vereist wanneer de status Geslaagd is"
-    }
-  ],
-  "70eoQu": [
-    {
-      "type": 0,
-      "value": "Functie selecteren uit"
     }
   ],
   "73iM9+": [
@@ -1609,12 +1621,6 @@
       "value": "Beschrijf hoe uw stroom moet worden gewijzigd. Voeg waar mogelijk details toe, inclusief de connector die moet worden gebruikt en of er inhoud moet worden opgenomen."
     }
   ],
-  "8Q7ns/": [
-    {
-      "type": 0,
-      "value": "Deze stroom bewerken om"
-    }
-  ],
   "8U0KPg": [
     {
       "type": 0,
@@ -1769,6 +1775,16 @@
     {
       "type": 0,
       "value": "Uw stroom omkeren"
+    }
+  ],
+  "9QS9a3": [
+    {
+      "type": 1,
+      "value": "selectedOperation"
+    },
+    {
+      "type": 0,
+      "value": " vervangen door"
     }
   ],
   "9SuA/E": [
@@ -2103,12 +2119,6 @@
     {
       "type": 0,
       "value": "Wachtwoord invoeren als tekst zonder opmaak of een beveiligde parameter gebruiken"
-    }
-  ],
-  "BQyLiu": [
-    {
-      "type": 0,
-      "value": "resultaten gevonden"
     }
   ],
   "BS3gy8": [
@@ -2785,20 +2795,6 @@
       "value": "Er wordt een tekenreeks voor elk item van een matrix geretourneerd, gekoppeld door een scheidingsteken"
     }
   ],
-  "G/CC5/": [
-    {
-      "type": 0,
-      "value": "Ongeldige splitsing in indeling in "
-    },
-    {
-      "type": 1,
-      "value": "splitOn"
-    },
-    {
-      "type": 0,
-      "value": "."
-    }
-  ],
   "G0XYrd": [
     {
       "type": 0,
@@ -3027,6 +3023,12 @@
       "value": "Headers"
     }
   ],
+  "HX3Xmx": [
+    {
+      "type": 0,
+      "value": "Verwijderen..."
+    }
+  ],
   "HYhDYB": [
     {
       "type": 0,
@@ -3203,6 +3205,12 @@
     {
       "type": 0,
       "value": "Geen eigenschappen"
+    }
+  ],
+  "IsbbsG": [
+    {
+      "type": 0,
+      "value": "Wanneer een nieuw item"
     }
   ],
   "IxWip7": [
@@ -3387,16 +3395,6 @@
     {
       "type": 0,
       "value": "Verbindingsverwijzing wijzigen"
-    }
-  ],
-  "KNDVnN": [
-    {
-      "type": 1,
-      "value": "selectedOperation"
-    },
-    {
-      "type": 0,
-      "value": " vervangen door"
     }
   ],
   "KV4uky": [
@@ -3677,12 +3675,6 @@
     {
       "type": 0,
       "value": "Codeweergave"
-    }
-  ],
-  "M3kJsI": [
-    {
-      "type": 0,
-      "value": "Elke week op maandag"
     }
   ],
   "M4H0gh": [
@@ -4069,12 +4061,6 @@
       "value": "Alle connectors laden..."
     }
   ],
-  "OQud51": [
-    {
-      "type": 0,
-      "value": "Vertel me er meer over"
-    }
-  ],
   "OSHNZ2": [
     {
       "type": 0,
@@ -4169,6 +4155,20 @@
     {
       "type": 0,
       "value": "Een beheerde identiteit selecteren"
+    }
+  ],
+  "OrPVcU": [
+    {
+      "type": 0,
+      "value": "Ongeldige splitsing in indeling voor "
+    },
+    {
+      "type": 1,
+      "value": "splitOn"
+    },
+    {
+      "type": 0,
+      "value": "."
     }
   ],
   "Ov7Ckz": [
@@ -4809,6 +4809,12 @@
       "value": "Actietype"
     }
   ],
+  "TUdPdI": [
+    {
+      "type": 0,
+      "value": "Object beveiligen"
+    }
+  ],
   "TX4Kdr": [
     {
       "type": 0,
@@ -4987,16 +4993,6 @@
       "value": "Werkstroomactie verwijderen"
     }
   ],
-  "UF3KjL": [
-    {
-      "type": 0,
-      "value": "Probeer een conversiefunctie te gebruiken, zoals: "
-    },
-    {
-      "type": 1,
-      "value": "conversionFunctions"
-    }
-  ],
   "UHCVNK": [
     {
       "type": 0,
@@ -5041,12 +5037,6 @@
     {
       "type": 0,
       "value": "Vereist. De verzameling waaruit het laatste object moet worden gehaald."
-    }
-  ],
-  "UW+fkB": [
-    {
-      "type": 0,
-      "value": "Stuur me een e-mail wanneer"
     }
   ],
   "UYRIS/": [
@@ -5741,12 +5731,6 @@
       "value": "Wachtwoord"
     }
   ],
-  "Y04+GH": [
-    {
-      "type": 0,
-      "value": "Een actie toevoegen"
-    }
-  ],
   "Y0H9aX": [
     {
       "type": 0,
@@ -6007,6 +5991,12 @@
       "value": "Hoofdtekst"
     }
   ],
+  "ZKnJnh": [
+    {
+      "type": 0,
+      "value": "Beveiligde tekenreeks"
+    }
+  ],
   "ZM1mRy": [
     {
       "type": 0,
@@ -6183,6 +6173,20 @@
     {
       "type": 0,
       "value": "Hoofdtekst"
+    }
+  ],
+  "bC2LBK": [
+    {
+      "type": 0,
+      "value": "Het wordt niet aanbevolen om een standaardwaarde in te stellen voor het type "
+    },
+    {
+      "type": 1,
+      "value": "type"
+    },
+    {
+      "type": 0,
+      "value": " omdat deze wordt opgeslagen als tekst zonder opmaak."
     }
   ],
   "bG9rjv": [
@@ -6491,6 +6495,12 @@
       "value": "Meer informatie"
     }
   ],
+  "dKCp2j": [
+    {
+      "type": 0,
+      "value": "Vertel me er meer over"
+    }
+  ],
   "dL9V5t": [
     {
       "type": 0,
@@ -6649,6 +6659,12 @@
       "value": "Geef de duur op in de ISO 8601-indeling"
     }
   ],
+  "eI00kb": [
+    {
+      "type": 0,
+      "value": "Deze stroom bewerken om"
+    }
+  ],
   "eO1h/h": [
     {
       "type": 0,
@@ -6701,12 +6717,6 @@
     {
       "type": 0,
       "value": "Gedeeld"
-    }
-  ],
-  "eqAUdj": [
-    {
-      "type": 0,
-      "value": "Wanneer een nieuw item"
     }
   ],
   "evyGYj": [
@@ -6773,16 +6783,6 @@
     {
       "type": 0,
       "value": "Verbindingsgegevens laden..."
-    }
-  ],
-  "fc1AV8": [
-    {
-      "type": 0,
-      "value": "URL van de HTTP-"
-    },
-    {
-      "type": 1,
-      "value": "methode"
     }
   ],
   "fg/34o": [
@@ -6885,20 +6885,6 @@
     {
       "type": 0,
       "value": "Tekst opmaken als cursief. Toetsencombinatie: Ctrl+I"
-    }
-  ],
-  "gKEaXI": [
-    {
-      "type": 0,
-      "value": "De waarde van "
-    },
-    {
-      "type": 1,
-      "value": "label"
-    },
-    {
-      "type": 0,
-      "value": " kopiëren naar het klembord"
     }
   ],
   "gKq3Jv": [
@@ -7319,6 +7305,12 @@
       "value": "Voorbeeld: 0, 10"
     }
   ],
+  "iXW+2l": [
+    {
+      "type": 0,
+      "value": "Een actie toevoegen"
+    }
+  ],
   "id4DBb": [
     {
       "type": 0,
@@ -7729,6 +7721,20 @@
       "value": "Beheerde identiteit"
     }
   ],
+  "lA/sHA": [
+    {
+      "type": 0,
+      "value": "De waarde van "
+    },
+    {
+      "type": 1,
+      "value": "label"
+    },
+    {
+      "type": 0,
+      "value": " naar het klembord kopiëren"
+    }
+  ],
   "lB56l2": [
     {
       "type": 0,
@@ -7795,12 +7801,6 @@
     {
       "type": 0,
       "value": "Statusloze uitvoeringsmodus:"
-    }
-  ],
-  "lh0TuF": [
-    {
-      "type": 0,
-      "value": "Vervolgkeuzelijst om bestandspad te selecteren"
     }
   ],
   "lhL/KL": [
@@ -8185,6 +8185,12 @@
     {
       "type": 0,
       "value": "(UTC+10:00) Brisbane"
+    }
+  ],
+  "nwLd4b": [
+    {
+      "type": 0,
+      "value": "Vervolgkeuzelijst om bestandspad te selecteren"
     }
   ],
   "nx25nq": [
@@ -9017,6 +9023,12 @@
       "value": "Vereist. Een tekenreeks die de tijdzonenaam van de doeltijdzone bevat. Zie https://msdn.microsoft.com/en-us/library/gg154758.aspx voor meer informatie."
     }
   ],
+  "t/RPwA": [
+    {
+      "type": 0,
+      "value": "resultaten gevonden"
+    }
+  ],
   "t9RwOi": [
     {
       "type": 0,
@@ -9337,6 +9349,16 @@
     {
       "type": 0,
       "value": "Variabelen"
+    }
+  ],
+  "ur3P27": [
+    {
+      "type": 0,
+      "value": "Probeer een conversiefunctie te gebruiken, zoals: "
+    },
+    {
+      "type": 1,
+      "value": "conversionFunctions"
     }
   ],
   "urAHv1": [

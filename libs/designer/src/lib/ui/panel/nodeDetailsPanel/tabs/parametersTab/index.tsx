@@ -27,6 +27,7 @@ import {
   loadDynamicValuesForParameter,
   loadParameterValueFromString,
   parameterValueToString,
+  remapEditorViewModelWithNewIds,
   remapValueSegmentsWithNewIds,
   shouldUseParameterInGroup,
   updateParameterAndDependencies,
@@ -51,7 +52,7 @@ import {
 } from '@microsoft/designer-ui';
 import type { ChangeState, ParameterInfo, ValueSegment, OutputToken, TokenPickerMode, PanelTabFn } from '@microsoft/designer-ui';
 import type { OperationInfo } from '@microsoft/logic-apps-shared';
-import { equals, getPropertyValue, getRecordEntry } from '@microsoft/logic-apps-shared';
+import { equals, getPropertyValue, getRecordEntry, isRecordNotEmpty } from '@microsoft/logic-apps-shared';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
@@ -76,8 +77,10 @@ export const ParametersTab = () => {
   const { hideUTFExpressions } = useHostOptions();
   const replacedIds = useReplacedIds();
 
-  const emptyParametersMessage = useIntl().formatMessage({
+  const intl = useIntl();
+  const emptyParametersMessage = intl.formatMessage({
     defaultMessage: 'No additional information is needed for this step. You will be able to use the outputs in subsequent steps.',
+    id: 'BtL7UI',
     description: 'Message to show when there are no parameters to author in operation.',
   });
 
@@ -318,7 +321,6 @@ const ParameterSection = ({
     tokenPickerMode?: TokenPickerMode,
     editorType?: string,
     isCodeEditor?: boolean,
-    setIsTokenPickerOpened?: (b: boolean) => void,
     tokenClickedCallback?: (token: ValueSegment) => void
   ): JSX.Element => {
     const parameterType =
@@ -353,7 +355,6 @@ const ParameterSection = ({
         filteredTokenGroup={filteredTokenGroup}
         expressionGroup={expressionGroup}
         hideUTFExpressions={hideUTFExpressions}
-        setIsTokenPickerOpened={setIsTokenPickerOpened}
         initialMode={tokenPickerMode}
         getValueSegmentFromToken={(token: OutputToken, addImplicitForeach: boolean) =>
           getValueSegmentFromToken(parameterId, token, addImplicitForeach, !!isCodeEditor)
@@ -392,10 +393,14 @@ const ParameterSection = ({
     .map((param) => {
       const { id, label, value, required, showTokens, placeholder, editorViewModel, dynamicData, conditionalVisibility, validationErrors } =
         param;
-      const paramSubset = { id, label, required, showTokens, placeholder, editorViewModel, conditionalVisibility };
+      const remappedEditorViewModel = isRecordNotEmpty(idReplacements)
+        ? remapEditorViewModelWithNewIds(editorViewModel, idReplacements)
+        : editorViewModel;
+      const paramSubset = { id, label, required, showTokens, placeholder, editorViewModel: remappedEditorViewModel, conditionalVisibility };
       const { editor, editorOptions } = getEditorAndOptions(operationInfo, param, upstreamNodeIds ?? [], variables);
 
-      const { value: remappedValues } = remapValueSegmentsWithNewIds(value, idReplacements);
+      const { value: remappedValues } = isRecordNotEmpty(idReplacements) ? remapValueSegmentsWithNewIds(value, idReplacements) : { value };
+
       return {
         settingType: 'SettingTokenField',
         settingProp: {
@@ -428,7 +433,6 @@ const ParameterSection = ({
             labelId: string,
             tokenPickerMode?: TokenPickerMode,
             editorType?: string,
-            setIsInTokenPicker?: (b: boolean) => void,
             tokenClickedCallback?: (token: ValueSegment) => void
           ) =>
             getTokenPicker(
@@ -438,7 +442,6 @@ const ParameterSection = ({
               tokenPickerMode,
               editorType,
               editor?.toLowerCase() === constants.EDITOR.CODE,
-              setIsInTokenPicker,
               tokenClickedCallback
             ),
         },
@@ -501,8 +504,12 @@ const hasParametersToAuthor = (parameterGroups: Record<string, ParameterGroup>):
 
 export const parametersTab: PanelTabFn = (intl) => ({
   id: constants.PANEL_TAB_NAMES.PARAMETERS,
-  title: intl.formatMessage({ defaultMessage: 'Parameters', description: 'Parameters tab title' }),
-  description: intl.formatMessage({ defaultMessage: 'Configure parameters for this node', description: 'Parameters tab description' }),
+  title: intl.formatMessage({ defaultMessage: 'Parameters', id: 'uxKRO/', description: 'Parameters tab title' }),
+  description: intl.formatMessage({
+    defaultMessage: 'Configure parameters for this node',
+    id: 'SToblZ',
+    description: 'Parameters tab description',
+  }),
   visible: true,
   content: <ParametersTab />,
   order: 0,

@@ -146,9 +146,14 @@ export const FloatingActionMenuInputs = (props: FloatingActionMenuInputsProps): 
     }
   };
 
-  const collapsedTitle = intl.formatMessage({ defaultMessage: 'Add an input', description: 'Button to add a dynamically added parameter' });
+  const collapsedTitle = intl.formatMessage({
+    defaultMessage: 'Add an input',
+    id: 'DuoHXI',
+    description: 'Button to add a dynamically added parameter',
+  });
   const expandedTitle = intl.formatMessage({
     defaultMessage: 'Choose the type of user input',
+    id: '3X4FHS',
     description: 'Button to choose data type of the dynamically added parameter',
   });
 

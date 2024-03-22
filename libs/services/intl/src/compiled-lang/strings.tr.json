@@ -41,6 +41,12 @@
       "value": "Tetikleyici"
     }
   ],
+  "+KXX+O": [
+    {
+      "type": 0,
+      "value": "İşlev seçin"
+    }
+  ],
   "+M72+a": [
     {
       "type": 0,
@@ -973,6 +979,12 @@
       "value": "Yeniden Deneme İlkesi"
     }
   ],
+  "4Levd5": [
+    {
+      "type": 0,
+      "value": "Şu durumda bana bir e-posta gönder:"
+    }
+  ],
   "4Q7WzU": [
     {
       "type": 0,
@@ -1207,6 +1219,12 @@
       "value": "İşlemin girişlerini güvenli hale getirin"
     }
   ],
+  "635Koz": [
+    {
+      "type": 0,
+      "value": "Her hafta Pazartesi günü"
+    }
+  ],
   "63CC7M": [
     {
       "type": 0,
@@ -1357,12 +1375,6 @@
     {
       "type": 0,
       "value": "Durum “Başarılı” olduğunda çıkışlar gereklidir"
-    }
-  ],
-  "70eoQu": [
-    {
-      "type": 0,
-      "value": "İşlev seçin"
     }
   ],
   "73iM9+": [
@@ -1601,12 +1613,6 @@
       "value": "Akışınızın nasıl değiştirileceğini açıklayın. Kullanılacak bağlayıcı ve içerik eklenip eklenmeyeceği dahil olmak üzere mümkün olduğunda ayrıntıları ekleyin."
     }
   ],
-  "8Q7ns/": [
-    {
-      "type": 0,
-      "value": "Bu akışı şunun için düzenleyin:"
-    }
-  ],
   "8U0KPg": [
     {
       "type": 0,
@@ -1761,6 +1767,20 @@
     {
       "type": 0,
       "value": "Akışınızı geri alın"
+    }
+  ],
+  "9QS9a3": [
+    {
+      "type": 0,
+      "value": "\""
+    },
+    {
+      "type": 1,
+      "value": "selectedOperation"
+    },
+    {
+      "type": 0,
+      "value": "\" öğesini şununla değiştir:"
     }
   ],
   "9SuA/E": [
@@ -2103,12 +2123,6 @@
     {
       "type": 0,
       "value": "Parolayı düz metin olarak girin veya güvenli bir parametre kullanın"
-    }
-  ],
-  "BQyLiu": [
-    {
-      "type": 0,
-      "value": "sonuç bulundu"
     }
   ],
   "BS3gy8": [
@@ -2781,12 +2795,6 @@
       "value": "Bir dizinin her öğesinin bir sınırlandırıcı ile birleştirildiği bir dize döndürür"
     }
   ],
-  "G/CC5/": [
-    {
-      "type": 0,
-      "value": "{splitOn} öğesinde bölünme biçimi geçersiz."
-    }
-  ],
   "G0XYrd": [
     {
       "type": 0,
@@ -3015,6 +3023,12 @@
       "value": "Üstbilgiler"
     }
   ],
+  "HX3Xmx": [
+    {
+      "type": 0,
+      "value": "Siliniyor..."
+    }
+  ],
   "HYhDYB": [
     {
       "type": 0,
@@ -3191,6 +3205,12 @@
     {
       "type": 0,
       "value": "Özellik yok"
+    }
+  ],
+  "IsbbsG": [
+    {
+      "type": 0,
+      "value": "Yeni bir öğe şu durumda olduğunda:"
     }
   ],
   "IxWip7": [
@@ -3375,20 +3395,6 @@
     {
       "type": 0,
       "value": "Bağlantı başvurularını değiştir"
-    }
-  ],
-  "KNDVnN": [
-    {
-      "type": 0,
-      "value": "\""
-    },
-    {
-      "type": 1,
-      "value": "selectedOperation"
-    },
-    {
-      "type": 0,
-      "value": "\" öğesini şununla değiştir:"
     }
   ],
   "KV4uky": [
@@ -3669,12 +3675,6 @@
     {
       "type": 0,
       "value": "Kod görünümü"
-    }
-  ],
-  "M3kJsI": [
-    {
-      "type": 0,
-      "value": "Her hafta Pazartesi günü"
     }
   ],
   "M4H0gh": [
@@ -4061,12 +4061,6 @@
       "value": "Tüm bağlayıcılar yükleniyor..."
     }
   ],
-  "OQud51": [
-    {
-      "type": 0,
-      "value": "Şunun hakkında daha fazla bilgi edinmek istiyorum:"
-    }
-  ],
   "OSHNZ2": [
     {
       "type": 0,
@@ -4161,6 +4155,20 @@
     {
       "type": 0,
       "value": "Yönetilen kimlik seçin"
+    }
+  ],
+  "OrPVcU": [
+    {
+      "type": 0,
+      "value": "'"
+    },
+    {
+      "type": 1,
+      "value": "splitOn"
+    },
+    {
+      "type": 0,
+      "value": "' öğesinde bölünme biçimi geçersiz."
     }
   ],
   "Ov7Ckz": [
@@ -4809,6 +4817,12 @@
       "value": "Eylem Türü"
     }
   ],
+  "TUdPdI": [
+    {
+      "type": 0,
+      "value": "Güvenli Nesne"
+    }
+  ],
   "TX4Kdr": [
     {
       "type": 0,
@@ -4979,16 +4993,6 @@
       "value": "İş Akışını Eylemini Sil"
     }
   ],
-  "UF3KjL": [
-    {
-      "type": 0,
-      "value": "Dönüştürme işlevini kullanmayı deneyin, örneğin: "
-    },
-    {
-      "type": 1,
-      "value": "conversionFunctions"
-    }
-  ],
   "UHCVNK": [
     {
       "type": 0,
@@ -5033,12 +5037,6 @@
     {
       "type": 0,
       "value": "Gerekli. Son nesnenin alınacağı koleksiyon."
-    }
-  ],
-  "UW+fkB": [
-    {
-      "type": 0,
-      "value": "Şu durumda bana bir e-posta gönder:"
     }
   ],
   "UYRIS/": [
@@ -5737,12 +5735,6 @@
       "value": "Parola"
     }
   ],
-  "Y04+GH": [
-    {
-      "type": 0,
-      "value": "Eylem ekleyin"
-    }
-  ],
   "Y0H9aX": [
     {
       "type": 0,
@@ -6003,6 +5995,12 @@
       "value": "Gövde"
     }
   ],
+  "ZKnJnh": [
+    {
+      "type": 0,
+      "value": "Güvenli Dize"
+    }
+  ],
   "ZM1mRy": [
     {
       "type": 0,
@@ -6179,6 +6177,20 @@
     {
       "type": 0,
       "value": "Gövde"
+    }
+  ],
+  "bC2LBK": [
+    {
+      "type": 0,
+      "value": "Düz metin olarak depolandığından, '"
+    },
+    {
+      "type": 1,
+      "value": "type"
+    },
+    {
+      "type": 0,
+      "value": "' türü için bir varsayılan değer ayarlanması önerilmez."
     }
   ],
   "bG9rjv": [
@@ -6487,6 +6499,12 @@
       "value": "Daha fazla bilgi edinin"
     }
   ],
+  "dKCp2j": [
+    {
+      "type": 0,
+      "value": "Şunun hakkında daha fazla bilgi edinmek istiyorum:"
+    }
+  ],
   "dL9V5t": [
     {
       "type": 0,
@@ -6641,6 +6659,12 @@
       "value": "Süreyi ISO 8601 biçiminde belirtin"
     }
   ],
+  "eI00kb": [
+    {
+      "type": 0,
+      "value": "Bu akışı şunun için düzenleyin:"
+    }
+  ],
   "eO1h/h": [
     {
       "type": 0,
@@ -6693,12 +6717,6 @@
     {
       "type": 0,
       "value": "Paylaşılan"
-    }
-  ],
-  "eqAUdj": [
-    {
-      "type": 0,
-      "value": "Yeni bir öğe şu durumda olduğunda:"
     }
   ],
   "evyGYj": [
@@ -6765,20 +6783,6 @@
     {
       "type": 0,
       "value": "Bağlantı verileri yükleniyor..."
-    }
-  ],
-  "fc1AV8": [
-    {
-      "type": 0,
-      "value": "HTTP "
-    },
-    {
-      "type": 1,
-      "value": "method"
-    },
-    {
-      "type": 0,
-      "value": " URL’si"
     }
   ],
   "fg/34o": [
@@ -6881,12 +6885,6 @@
     {
       "type": 0,
       "value": "Metni italik olarak biçimlendirin. Kısayol: Ctrl+I"
-    }
-  ],
-  "gKEaXI": [
-    {
-      "type": 0,
-      "value": "{label} değerini panoya kopyala"
     }
   ],
   "gKq3Jv": [
@@ -7303,6 +7301,12 @@
       "value": "Örnek: 0, 10"
     }
   ],
+  "iXW+2l": [
+    {
+      "type": 0,
+      "value": "Eylem ekleyin"
+    }
+  ],
   "id4DBb": [
     {
       "type": 0,
@@ -7713,6 +7717,20 @@
       "value": "Yönetilen Kimlik"
     }
   ],
+  "lA/sHA": [
+    {
+      "type": 0,
+      "value": "'"
+    },
+    {
+      "type": 1,
+      "value": "label"
+    },
+    {
+      "type": 0,
+      "value": "' değerini panoya kopyala"
+    }
+  ],
   "lB56l2": [
     {
       "type": 0,
@@ -7779,12 +7797,6 @@
     {
       "type": 0,
       "value": "Durum bilgisi olmayan çalıştırma modu:"
-    }
-  ],
-  "lh0TuF": [
-    {
-      "type": 0,
-      "value": "Dosya yolu seçmek için açılan liste"
     }
   ],
   "lhL/KL": [
@@ -8169,6 +8181,12 @@
     {
       "type": 0,
       "value": "(UTC+10:00) Brisbane"
+    }
+  ],
+  "nwLd4b": [
+    {
+      "type": 0,
+      "value": "Dosya yolu seçmek için açılan liste"
     }
   ],
   "nx25nq": [
@@ -9005,6 +9023,12 @@
       "value": "Zorunlu. Hedef saat diliminin saat dilimi adını içeren bir dize. Ayrıntılar için bkz. https://msdn.microsoft.com/en-us/library/gg154758.aspx."
     }
   ],
+  "t/RPwA": [
+    {
+      "type": 0,
+      "value": "sonuç bulundu"
+    }
+  ],
   "t9RwOi": [
     {
       "type": 0,
@@ -9329,6 +9353,16 @@
     {
       "type": 0,
       "value": "Değişkenler"
+    }
+  ],
+  "ur3P27": [
+    {
+      "type": 0,
+      "value": "Dönüştürme işlevini kullanmayı deneyin, örneğin: "
+    },
+    {
+      "type": 1,
+      "value": "conversionFunctions"
     }
   ],
   "urAHv1": [

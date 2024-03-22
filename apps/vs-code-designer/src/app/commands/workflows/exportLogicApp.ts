@@ -51,6 +51,22 @@ interface Deployment {
 }
 
 class ExportEngine {
+  private intlText = {
+    SUCESSFULL_EXPORTED_MESSAGE: localize('workflowsExportedSuccessfully', 'The selected workflows exported successfully.'),
+    DONE: localize('done', 'Done.'),
+    DEPLOYING_CONNECTIONS: localize('deployConnections', 'Deploying connections ...'),
+    DOWNLOADING_PACKAGE: localize('downloadingPackage', 'Downloading package ...'),
+    UNZIP_PACKAGE: localize('unzipPackage', 'Unzipping package ...'),
+    FETCH_CONNECTION: localize('fetchConnectionKeys', 'Retrieving connection keys ...'),
+    UPDATE_FILES: localize('updateFiles', 'Updating parameters and settings ...'),
+  };
+
+  private finalStatus = {
+    InProgress: 'InProgress',
+    Succeeded: 'Succeeded',
+    Failed: 'Failed',
+  };
+
   public constructor(
     private getAccessToken: () => string,
     private packageUrl: string,
@@ -66,8 +82,8 @@ class ExportEngine {
 
   public async export(): Promise<void> {
     try {
-      this.setFinalStatus('InProgress');
-      this.addStatus(localize('downloadPackage', 'Downloading package ...'));
+      this.setFinalStatus(this.finalStatus.InProgress);
+      this.addStatus(this.intlText.DOWNLOADING_PACKAGE);
       ext.logTelemetry(this.context, 'exportLastStep', 'downloadPackage');
       const flatFile = await axios.get(this.packageUrl, {
         responseType: 'arraybuffer',
@@ -75,26 +91,28 @@ class ExportEngine {
       });
 
       const buffer = Buffer.from(flatFile.data);
-      this.addStatus(localize('done', 'Done.'));
-      this.addStatus(localize('unzipPackage', 'Unzipping package ...'));
+      this.addStatus(this.intlText.DONE);
+      this.addStatus(this.intlText.UNZIP_PACKAGE);
       ext.logTelemetry(this.context, 'exportLastStep', 'unzipPackage');
+
       const zip = new AdmZip(buffer);
       zip.extractAllTo(/*target path*/ this.targetDirectory, /*overwrite*/ true);
-      this.addStatus(localize('done', 'Done.'));
+      this.addStatus(this.intlText.DONE);
 
       const templatePath = `${this.targetDirectory}/.development/deployment/LogicAppStandardConnections.template.json`;
 
       const templateExists = await fse.pathExists(templatePath);
       if (!this.resourceGroupName || !templateExists) {
-        this.setFinalStatus('Succeeded');
-        this.addStatus(localize('workflowsExportedSuccessfully', 'The selected workflows exported successfully.'));
+        this.setFinalStatus(this.finalStatus.Succeeded);
+        this.addStatus(this.intlText.SUCESSFULL_EXPORTED_MESSAGE);
         ext.logTelemetry(this.context, 'exportLastStep', 'workflowsExportedSuccessfully');
+
         const uri: vscode.Uri = vscode.Uri.file(this.targetDirectory);
         vscode.commands.executeCommand('vscode.openFolder', uri, { forceNewWindow: true });
         return;
       }
 
-      this.addStatus(localize('deployConnections', 'Deploying connections ...'));
+      this.addStatus(this.intlText.DEPLOYING_CONNECTIONS);
       ext.logTelemetry(this.context, 'exportLastStep', 'deployConnections');
 
       const connectionsTemplate = await fse.readJSON(templatePath);
@@ -108,19 +126,19 @@ class ExportEngine {
       }
 
       const output = await this.deployConnectionsTemplate(connectionsTemplate);
-      this.addStatus(localize('done', 'Done.'));
+      this.addStatus(this.intlText.DONE);
 
       await this.fetchConnectionKeys(output);
       await this.updateParametersAndSettings(output, parametersFile, localSettingsFile);
 
-      this.setFinalStatus('Succeeded');
-      this.addStatus(localize('workflowsExportedSuccessfully', 'The selected workflows exported successfully.'));
+      this.setFinalStatus(this.finalStatus.Succeeded);
+      this.addStatus(this.intlText.SUCESSFULL_EXPORTED_MESSAGE);
       ext.logTelemetry(this.context, 'exportLastStep', 'workflowsExportedSuccessfully');
       const uri: vscode.Uri = vscode.Uri.file(this.targetDirectory);
       vscode.commands.executeCommand('vscode.openFolder', uri, { forceNewWindow: true });
     } catch (error) {
       this.addStatus(localize('exportFailed', 'Export failed. {0}', error?.message ?? ''));
-      this.setFinalStatus('Failed');
+      this.setFinalStatus(this.finalStatus.Failed);
       ext.logTelemetry(this.context, 'exportError', error?.message ?? '');
     }
   }
@@ -215,13 +233,13 @@ class ExportEngine {
   }
 
   private async fetchConnectionKeys(output: ConnectionsDeploymentOutput): Promise<void> {
-    this.addStatus(localize('fetchConnectionKeys', 'Retrieving connection keys ...'));
+    this.addStatus(this.intlText.FETCH_CONNECTION);
     ext.logTelemetry(this.context, 'exportLastStep', 'retrieveConnectionKeys');
     for (const connectionKey of Object.keys(output?.connections?.value || {})) {
       const connectionItem = output.connections.value[connectionKey];
       connectionItem.authKey = await this.getConnectionKey(connectionItem.connectionId);
     }
-    this.addStatus(localize('done', 'Done.'));
+    this.addStatus(this.intlText.DONE);
   }
 
   private async getConnectionKey(connectionId: string): Promise<string> {
@@ -271,7 +289,7 @@ class ExportEngine {
     parametersFile: any,
     localSettingsFile: any
   ): Promise<void> {
-    this.addStatus(localize('updateFiles', 'Updating parameters and settings ...'));
+    this.addStatus(this.intlText.UPDATE_FILES);
     ext.logTelemetry(this.context, 'exportLastStep', 'updatingParametersAndSettings');
 
     const { value } = output.connections;
@@ -290,7 +308,7 @@ class ExportEngine {
 
     writeFileSync(`${this.targetDirectory}/parameters.json`, JSON.stringify(parametersFile, null, 4));
     writeFileSync(`${this.targetDirectory}/local.settings.json`, JSON.stringify(localSettingsFile, null, 4));
-    this.addStatus(localize('done', 'Done.'));
+    this.addStatus(this.intlText.DONE);
   }
 }
 

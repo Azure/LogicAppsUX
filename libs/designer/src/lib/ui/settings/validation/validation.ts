@@ -4,8 +4,7 @@ import type { AppDispatch } from '../../../core';
 import type { Settings } from '../../../core/actions/bjsworkflow/settings';
 import { setValidationError } from '../../../core/state/setting/settingSlice';
 import { isISO8601 } from '../../../core/utils/validation';
-import { getIntl } from '@microsoft/logic-apps-shared';
-import { isTemplateExpression } from '@microsoft/logic-apps-shared';
+import { getIntl, isTemplateExpression } from '@microsoft/logic-apps-shared';
 
 export const ValidationErrorKeys = {
   CHUNK_SIZE_INVALID: 'ChunkSizeInvalid',
@@ -43,15 +42,18 @@ export const validateNodeSettings = (
 
   const triggerConditionEmpty = intl.formatMessage({
     defaultMessage: 'Trigger condition cannot be empty',
+    id: 'DsPDVB',
     description: 'error message for empty trigger condition',
   });
   const pagingCount = intl.formatMessage({
     defaultMessage: 'Paging count invalid. Value must be a number greater than 0',
+    id: '2pCFsW',
     description: 'error message for invalid paging count',
   });
   const pagingCountMax = intl.formatMessage(
     {
       defaultMessage: 'Paging count exceeds maximum value of {max}',
+      id: 'QhKk80',
       description: 'error message for max-exceeding paging count',
     },
     { max: constants.MAX_PAGING_COUNT }
@@ -60,6 +62,7 @@ export const validateNodeSettings = (
   const retryCountInvalidText = intl.formatMessage(
     {
       defaultMessage: 'Retry Policy count is invalid (Must be from {min} to {max})',
+      id: 'Z9PWl/',
       description: 'error message for invalid retry count',
     },
     {
@@ -69,21 +72,25 @@ export const validateNodeSettings = (
   );
   const retryIntervalInvalidText = intl.formatMessage({
     defaultMessage: 'Retry Policy Interval is invalid, must match ISO 8601 duration format',
+    id: 'DEKsll',
     description: 'error message for invalid retry interval',
   });
 
   const retryMinIntervalInvalidText = intl.formatMessage({
     defaultMessage: 'Retry Policy Minimum Interval is invalid, must match ISO 8601 duration format',
+    id: 'X4SuNU',
     description: 'error message for invalid minimum retry interval',
   });
 
   const retryMaxIntervalInvalidText = intl.formatMessage({
     defaultMessage: 'Retry Policy Maximum Interval is invalid, must match ISO 8601 duration format',
+    id: 'F6+icQ',
     description: 'error message for maximum invalid retry interval',
   });
 
   const requestOptionsInvalidText = intl.formatMessage({
     defaultMessage: 'Timeout value is invalid, must match ISO 8601 duration format',
+    id: '6VV7OY',
     description: 'error message for invalid timeout value',
   });
 

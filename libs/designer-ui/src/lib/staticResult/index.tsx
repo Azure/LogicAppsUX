@@ -3,8 +3,7 @@ import { StaticResult } from './StaticResult';
 import { deserializePropertyValues, parseStaticResultSchema, serializePropertyValues } from './util';
 import type { IButtonStyles } from '@fluentui/react';
 import { DefaultButton, PrimaryButton, Toggle } from '@fluentui/react';
-import type { OpenApiSchema } from '@microsoft/logic-apps-shared';
-import type { OpenAPIV2 } from '@microsoft/logic-apps-shared';
+import type { OpenApiSchema, OpenAPIV2 } from '@microsoft/logic-apps-shared';
 import { useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 
@@ -63,6 +62,7 @@ export const StaticResultContainer = ({
       setErrorMessage(
         intl.formatMessage({
           defaultMessage: 'Outputs are required when status is "Succeeded"',
+          id: '6yFUar',
           description: 'Error message for when status is succeded and outputs are not provided',
         })
       );
@@ -70,13 +70,15 @@ export const StaticResultContainer = ({
       setErrorMessage(
         intl.formatMessage({
           defaultMessage: 'Error should not be provided when status is "Succeeded"',
+          id: 'svaqnp',
           description: 'Error message for when status is succeded and error is provided',
         })
       );
     } else if (serializedValue['status'] === constants.STATUS.FAILED && !(serializedValue['error'] && serializedValue['error']['code'])) {
       setErrorMessage(
         intl.formatMessage({
-          defaultMessage: `The Error and its code is required when status is "Failed"`,
+          defaultMessage: 'The Error and its code is required when status is "Failed"',
+          id: 'HGA9iU',
           description: 'Error message for when status is failed and error and error code are not provided',
         })
       );
@@ -84,6 +86,7 @@ export const StaticResultContainer = ({
       setErrorMessage(
         intl.formatMessage({
           defaultMessage: 'Ouputs should not be provided when status is "Failed"',
+          id: 'LPdGu/',
           description: 'Error message for when status is failed and outputs are provided',
         })
       );
@@ -94,26 +97,31 @@ export const StaticResultContainer = ({
 
   const toggleLabelOn = intl.formatMessage({
     defaultMessage: 'Disable Static Result',
+    id: 'Yw7Nfl',
     description: 'Label for toggle to disable static result',
   });
 
   const toggleLabelOff = intl.formatMessage({
     defaultMessage: 'Enable Static Result',
+    id: 'OdoUEu',
     description: 'Label for toggle to enable static result',
   });
 
   const testingTitle = intl.formatMessage({
     defaultMessage: 'Testing',
+    id: '++ZVe/',
     description: 'Title for testing section',
   });
 
   const saveButtonLabel = intl.formatMessage({
     defaultMessage: 'Save',
+    id: 'uIurld',
     description: 'Label for save button',
   });
 
   const cancelButtonLabel = intl.formatMessage({
     defaultMessage: 'Cancel',
+    id: 'KZOa5l',
     description: 'Label for cancel button',
   });
 

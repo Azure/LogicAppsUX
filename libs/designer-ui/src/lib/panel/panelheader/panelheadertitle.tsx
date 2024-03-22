@@ -29,10 +29,10 @@ export interface PanelHeaderTitleProps {
 
 export const PanelHeaderTitle = ({
   titleValue,
-  onChange,
   titleId,
   readOnlyMode,
   renameTitleDisabled,
+  onChange,
 }: PanelHeaderTitleProps): JSX.Element => {
   const intl = useIntl();
 
@@ -48,6 +48,7 @@ export const PanelHeaderTitle = ({
       setErrorMessage(
         intl.formatMessage({
           defaultMessage: 'The name already exists or is invalid. Update the name before you continue.',
+          id: '0xLWzG',
           description: 'Text for invalid operation title name',
         })
       );
@@ -70,6 +71,7 @@ export const PanelHeaderTitle = ({
   const readOnly = readOnlyMode || renameTitleDisabled;
   const panelHeaderCardTitle = intl.formatMessage({
     defaultMessage: 'Card Title',
+    id: 'rCl53e',
     description: 'Label for the title for panel header card',
   });
 

@@ -43,12 +43,14 @@ export const CustomSwaggerSelection = (props: CustomSwaggerSelectionProps) => {
 
   const inputLabel = intl.formatMessage({
     defaultMessage: 'Swagger Endpoint',
+    id: 'qUMXpq',
     description: 'Swagger endpoint input label',
   });
 
   const inputPlaceholder = intl.formatMessage(
     {
       defaultMessage: 'Example: {url}',
+      id: 'IHMd3X',
       description: 'Swagger url input placeholder',
     },
     {
@@ -58,6 +60,7 @@ export const CustomSwaggerSelection = (props: CustomSwaggerSelectionProps) => {
 
   const urlErrorMessage = intl.formatMessage({
     defaultMessage: 'Please enter a valid URL',
+    id: 'eHgfpz',
     description: 'Swagger url input error message',
   });
 
@@ -102,7 +105,7 @@ export const CustomSwaggerSelection = (props: CustomSwaggerSelectionProps) => {
           submitCallback();
         }}
       >
-        {intl.formatMessage({ defaultMessage: 'Add Action', description: 'Add action button text' })}
+        {intl.formatMessage({ defaultMessage: 'Add Action', id: '2vnYre', description: 'Add action button text' })}
       </PrimaryButton>
     </div>
   );

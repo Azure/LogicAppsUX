@@ -34,7 +34,6 @@ export const TokenPickerOptions = ({
   index,
   expressionEditorRef,
   expression,
-  closeTokenPicker,
   setExpression,
   setTokenLength,
   getValueSegmentFromToken,
@@ -68,6 +67,7 @@ export const TokenPickerOptions = ({
   const buttonTextMore = intl.formatMessage(
     {
       defaultMessage: 'See More ({count})',
+      id: 'uTnqzQ',
       description: 'Click to view more token options. {count} indicates the number of total tokens.',
     },
     { count: section.tokens.length }
@@ -75,6 +75,7 @@ export const TokenPickerOptions = ({
 
   const buttonTextLess = intl.formatMessage({
     defaultMessage: 'See Less',
+    id: 'oWGaw9',
     description: 'Click to view less token options.',
   });
 
@@ -149,7 +150,6 @@ export const TokenPickerOptions = ({
         value,
         data: segment,
       });
-      closeTokenPicker();
     }
   };
 
@@ -194,29 +194,31 @@ export const TokenPickerOptions = ({
               </button>
             )}
           </div>
-          <div className="msla-token-picker-section-options">
+          <ul className="msla-token-picker-section-options" aria-label={section.label}>
             {getReducedTokenList(!searchQuery ? section.tokens : filteredTokens, {
               hasSearchQuery: !!searchQuery,
               maxRowsShown,
               showAllOptions: !moreOptions,
             }).map((token, j) => (
-              <button
-                className="msla-token-picker-section-option"
-                data-automation-id={`msla-token-picker-section-option-${j}`}
-                key={`token-picker-option-${j}`}
-                onClick={() => handleTokenClicked(token)}
-              >
-                <div className="msla-token-picker-section-option-text">
-                  <div className="msla-token-picker-option-inner">
-                    <div className="msla-token-picker-option-title">{token.title}</div>
-                    <div className="msla-token-picker-option-description" title={token.description}>
-                      {token.description}
+              <li key={`token-picker-option-li-${j}`}>
+                <button
+                  className="msla-token-picker-section-option"
+                  data-automation-id={`msla-token-picker-section-option-${j}`}
+                  key={`token-picker-option-${j}`}
+                  onClick={() => handleTokenClicked(token)}
+                >
+                  <div className="msla-token-picker-section-option-text">
+                    <div className="msla-token-picker-option-inner">
+                      <div className="msla-token-picker-option-title">{token.title}</div>
+                      <div className="msla-token-picker-option-description" title={token.description}>
+                        {token.description}
+                      </div>
                     </div>
                   </div>
-                </div>
-              </button>
+                </button>
+              </li>
             ))}
-          </div>
+          </ul>
         </>
       ) : null}
     </>
