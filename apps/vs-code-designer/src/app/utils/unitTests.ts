@@ -10,6 +10,12 @@ import * as fse from 'fs-extra';
 import * as path from 'path';
 import * as vscode from 'vscode';
 
+export interface UnitTestResult {
+  isSuccessful: boolean;
+  assertions: any[];
+  duration?: number;
+}
+
 export const saveUnitTestDefinition = async (
   projectPath: string,
   workflowName: string,

@@ -5,15 +5,16 @@
 import { runUnitTestEvent } from '../../../../constants';
 import { ext } from '../../../../extensionVariables';
 import { localize } from '../../../../localize';
+import { type UnitTestResult } from '../../../utils/unitTests';
 import { type IActionContext, callWithTelemetryAndErrorHandling } from '@microsoft/vscode-azext-utils';
 import * as vscode from 'vscode';
 
-export interface UnitTestResult {
-  isSuccessful: boolean;
-  assertions: any[];
-  duration?: number;
-}
-
+/**
+ * Runs a unit test for a given node in the Logic Apps designer.
+ * @param {IActionContext} context -  The action context.
+ * @param {vscode.Uri | vscode.TestItem} node - The URI or TestItem representing the node to run the unit test for.
+ * @returns A Promise that resolves to the UnitTestResult object.
+ */
 export async function runUnitTest(context: IActionContext, node: vscode.Uri | vscode.TestItem): Promise<UnitTestResult> {
   return await callWithTelemetryAndErrorHandling(runUnitTestEvent, async () => {
     const options: vscode.ProgressOptions = {
