@@ -28,6 +28,7 @@ import {
   loadDynamicValuesForParameter,
   loadParameterValueFromString,
   parameterValueToString,
+  remapEditorViewModelWithNewIds,
   remapValueSegmentsWithNewIds,
   shouldUseParameterInGroup,
   updateParameterAndDependencies,
@@ -52,7 +53,7 @@ import {
 } from '@microsoft/designer-ui';
 import type { ChangeState, ParameterInfo, ValueSegment, OutputToken, TokenPickerMode, PanelTabFn } from '@microsoft/designer-ui';
 import type { OperationInfo } from '@microsoft/logic-apps-shared';
-import { equals, getPropertyValue, getRecordEntry, replaceWhiteSpaceWithUnderscore } from '@microsoft/logic-apps-shared';
+import { equals, getPropertyValue, getRecordEntry, isRecordNotEmpty, replaceWhiteSpaceWithUnderscore } from '@microsoft/logic-apps-shared';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
@@ -328,7 +329,6 @@ const ParameterSection = ({
     tokenPickerMode?: TokenPickerMode,
     editorType?: string,
     isCodeEditor?: boolean,
-    setIsTokenPickerOpened?: (b: boolean) => void,
     tokenClickedCallback?: (token: ValueSegment) => void
   ): JSX.Element => {
     const parameterType =
@@ -363,7 +363,6 @@ const ParameterSection = ({
         filteredTokenGroup={filteredTokenGroup}
         expressionGroup={expressionGroup}
         hideUTFExpressions={hideUTFExpressions}
-        setIsTokenPickerOpened={setIsTokenPickerOpened}
         initialMode={tokenPickerMode}
         getValueSegmentFromToken={(token: OutputToken, addImplicitForeach: boolean) =>
           getValueSegmentFromToken(parameterId, token, addImplicitForeach, !!isCodeEditor)
@@ -402,10 +401,13 @@ const ParameterSection = ({
     .map((param) => {
       const { id, label, value, required, showTokens, placeholder, editorViewModel, dynamicData, conditionalVisibility, validationErrors } =
         param;
-      const paramSubset = { id, label, required, showTokens, placeholder, editorViewModel, conditionalVisibility };
+      const remappedEditorViewModel = isRecordNotEmpty(idReplacements)
+        ? remapEditorViewModelWithNewIds(editorViewModel, idReplacements)
+        : editorViewModel;
+      const paramSubset = { id, label, required, showTokens, placeholder, editorViewModel: remappedEditorViewModel, conditionalVisibility };
       const { editor, editorOptions } = getEditorAndOptions(operationInfo, param, upstreamNodeIds ?? [], variables);
 
-      const { value: remappedValues } = remapValueSegmentsWithNewIds(value, idReplacements);
+      const { value: remappedValues } = isRecordNotEmpty(idReplacements) ? remapValueSegmentsWithNewIds(value, idReplacements) : { value };
       const isCodeEditor = editor?.toLowerCase() === constants.EDITOR.CODE;
 
       return {
@@ -441,9 +443,8 @@ const ParameterSection = ({
             labelId: string,
             tokenPickerMode?: TokenPickerMode,
             editorType?: string,
-            setIsInTokenPicker?: (b: boolean) => void,
             tokenClickedCallback?: (token: ValueSegment) => void
-          ) => getTokenPicker(id, editorId, labelId, tokenPickerMode, editorType, isCodeEditor, setIsInTokenPicker, tokenClickedCallback),
+          ) => getTokenPicker(id, editorId, labelId, tokenPickerMode, editorType, isCodeEditor, tokenClickedCallback),
         },
       };
     });

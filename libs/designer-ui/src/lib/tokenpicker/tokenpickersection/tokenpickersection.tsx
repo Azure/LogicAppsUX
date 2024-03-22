@@ -15,7 +15,6 @@ export interface TokenPickerBaseProps {
   searchQuery: string;
   expressionEditorRef: MutableRefObject<editor.IStandaloneCodeEditor | null>;
   expression: ExpressionEditorEvent;
-  closeTokenPicker: () => void;
   setExpression: Dispatch<SetStateAction<ExpressionEditorEvent>>;
   getValueSegmentFromToken: GetValueSegmentHandler;
   tokenClickedCallback?: (token: ValueSegment) => void;

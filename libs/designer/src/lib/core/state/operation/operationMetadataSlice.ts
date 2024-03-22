@@ -180,10 +180,9 @@ interface AddDynamicOutputsPayload {
   outputs: Record<string, OutputInfo>;
 }
 
-interface updateExistingInputTokenTitlesPayload {
+interface UpdateExistingInputTokenTitlesPayload {
   tokenTitles: Record<string, string>;
 }
-
 interface AddDynamicInputsPayload {
   nodeId: string;
   groupId: string;
@@ -311,7 +310,7 @@ export const operationMetadataSlice = createSlice({
       const nodeErrors = getRecordEntry(state.errors, nodeId);
       delete nodeErrors?.[ErrorLevel.DynamicOutputs];
     },
-    updateExistingInputTokenTitles: (state, action: PayloadAction<updateExistingInputTokenTitlesPayload>) => {
+    updateExistingInputTokenTitles: (state, action: PayloadAction<UpdateExistingInputTokenTitlesPayload>) => {
       const { tokenTitles } = action.payload;
 
       Object.entries(state.inputParameters).forEach(([nodeId, nodeInputs]) => {
