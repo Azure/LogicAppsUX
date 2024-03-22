@@ -2,7 +2,7 @@
   "name": "@microsoft/logic-apps-designer",
   "version": "2.126.0",
   "scripts": {
-    "yalcpush": "yalc push ../../dist/libs/designer"
+    "yalcpush": "yalc push ../../dist/rollup/designer"
   },
   "peerDependencies": {
     "react": "^16.4.0 || ^17.0.0 || ^18.0.0",

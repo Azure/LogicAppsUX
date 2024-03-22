@@ -2,15 +2,11 @@ id: designer
 language: typescript
 platform: node
 tasks:
-  build.vscode:
-    extends: build
-    args:
-      - --outputPath
-      - $workspaceRoot/dist/apps/vs-code-designer/designer
+  build:
+    outputs:
+      - '/dist/rollup/designer/'
   yalcpush:
     command: npm run yalcpush
     deps:
       - ~:build
-    outputs:
-      - '{options.outputPath}'
 type: library

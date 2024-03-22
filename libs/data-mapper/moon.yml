@@ -2,3 +2,7 @@ id: data-mapper
 language: typescript
 platform: node
 type: library
+tasks:
+  build:
+    outputs:
+      - '/dist/rollup/data-mapper/'

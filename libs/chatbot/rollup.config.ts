@@ -11,7 +11,8 @@ import { fileURLToPath } from 'url';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 
-const externalFn = (str, parent, _isResolved) => {
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+const externalFn = (str, _parent, _isResolved) => {
   if (str.includes('logic-apps-shared') || str.includes('designer-client-services') || str.includes('designer-ui')) {
     //console.log(`Parent: ${parent} ${str}`);
     return true;
@@ -28,10 +29,10 @@ export default {
   external: externalFn,
   output: {
     format: 'esm',
-    dir: '../../dist/rollup/designer',
+    dir: '../../dist/rollup/chatbot',
     entryFileNames: 'index.esm.js',
     sourcemap: true,
-    name: '@microsoft/logic-apps-designer',
+    name: '@microsoft/chatbot',
   },
   plugins: [
     typescript({ tsconfig: './tsconfig.lib.json' }),

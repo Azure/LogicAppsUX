@@ -3,8 +3,7 @@
   "compilerOptions": {
     "rootDir": ".",
     "declaration": true,
-    "declarationDir": "../../dist/rollup/libs/designer-ui",
-    "outDir": "../../dist/rollup/libs/designer-ui",
+    "outDir": "../../dist/rollup/designer-ui",
     "composite": true,
     "types": ["node"]
   },

@@ -2,6 +2,11 @@ id: designer-standalone
 language: typescript
 platform: node
 tasks:
+  serve:
+    command: webpack serve
+    args:
+      - --config
+      - ./webpack.config.js
   build:
     command: webpack
     args:
@@ -27,19 +32,6 @@ tasks:
       - all
       - --no-vendorChunk
       - --optimization
-  serve:
-    command: webpack dev-server
-    args:
-      - --buildTarget
-      - designer-standalone:build
-      - --ssl
-      - --sslKey
-      - $workspaceRoot/local-key.pem
-      - --host
-      - localhost
-      - --hmr
-      - --sslCert
-      - $workspaceRoot/local-cert.pem
   serve.citest:
     extends: serve
     args:
@@ -64,12 +56,4 @@ tasks:
       - --buildTarget
       - designer-standalone:build:production
       - --no-hmr
-  test:
-    command: jest
-    args:
-      - --jestConfig
-      - $workspaceRoot/apps/designer-standalone/jest.config.ts
-      - --passWithNoTests
-    outputs:
-      - /coverage/apps/designer-standalone
 type: application

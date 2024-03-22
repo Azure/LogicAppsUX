@@ -3,6 +3,9 @@ language: typescript
 platform: node
 tags: []
 tasks:
+  build:
+    outputs:
+      - '/dist/rollup/logic-apps-shared/'
   yalcpush:
     command: npm run yalcpush
     deps:

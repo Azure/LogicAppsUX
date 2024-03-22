@@ -1,7 +1,7 @@
 {
   "extends": "./tsconfig.json",
   "compilerOptions": {
-    "outDir": "../../../dist/rollup/libs/designer-client-services",
+    "outDir": "../../../dist/rollup/designer-client-services",
     "declaration": true,
     "types": []
   },

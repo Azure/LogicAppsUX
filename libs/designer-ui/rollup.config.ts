@@ -10,7 +10,7 @@ import copy from 'rollup-plugin-copy';
 import postcss from 'rollup-plugin-postcss';
 import { fileURLToPath } from 'url';
 
-const distFolder = '../../dist/rollup/libs/designer-ui';
+const distFolder = '../../dist/rollup/designer-ui';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 

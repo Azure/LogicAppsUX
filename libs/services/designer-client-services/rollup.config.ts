@@ -17,7 +17,7 @@ const externalFn = (str, _parent, _isResolved) => {
   return false;
 };
 
-const distFolder = '../../../dist/rollup/libs/designer-client-services';
+const distFolder = '../../../dist/rollup/designer-client-services';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);

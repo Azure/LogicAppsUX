@@ -6,7 +6,7 @@
   "type": "module",
   "types": "./index.d.ts",
   "scripts": {
-    "yalcpush": "yalc push ../../dist/libs/logic-apps-shared"
+    "yalcpush": "yalc push ../../dist/rollup/logic-apps-shared"
   },
   "devDependencies": {
     "@rollup/plugin-babel": "5.3.1",

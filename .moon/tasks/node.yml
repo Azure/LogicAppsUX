@@ -1,24 +1,10 @@
 fileGroups:
   default:
-  - '**/*'
+    - '**/*'
   production:
-  - '**/*'
-  # - '!**/?(*.)+(spec|test).[jt]s?(x)?(.snap)'
-  - '!tsconfig.spec.json'
-  - '!jest.config.[jt]s'
+    - '**/*'
+    # - '!**/?(*.)+(spec|test).[jt]s?(x)?(.snap)'
+    - '!tsconfig.spec.json'
+    - '!jest.config.[jt]s'
   sharedGlobals:
-  - /babel.config.json
-tasks:
-  build:
-    deps:
-    - ^:build
-    inputs:
-    - '@group(production)'
-  lint:
-    inputs:
-    - '@group(default)'
-    - /.eslintrc.json
-  test:
-    inputs:
-    - '@group(default)'
-    - /jest.preset.js
+    - /babel.config.json

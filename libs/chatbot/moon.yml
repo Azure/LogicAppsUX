@@ -1,7 +1,9 @@
 id: chatbot
 language: typescript
-platform: node
 tasks:
+  build:
+    outputs:
+      - '/dist/rollup/chatbot/'
   yalcpush:
     command: npm run yalcpush
     deps:

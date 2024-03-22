@@ -15,7 +15,7 @@ const externalFn = (str, parent, _isResolved) => {
   return false;
 };
 
-const distFolder = '../../dist/rollup/libs/logic-apps-shared';
+const distFolder = '../../dist/rollup/logic-apps-shared';
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = path.dirname(__filename);
 

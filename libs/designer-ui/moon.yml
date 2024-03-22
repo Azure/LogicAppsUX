@@ -2,7 +2,11 @@ id: designer-ui
 language: typescript
 platform: node
 tags: []
+
 tasks:
+  build:
+    outputs:
+      - '/dist/rollup/designer-ui/'
   yalcpush:
     command: npm run yalcpush
     deps:
