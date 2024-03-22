@@ -332,24 +332,24 @@
       },
       {
         "command": "azureLogicAppsStandard.createUnitTest",
-        "title": "Create Unit Test",
+        "title": "Create unit test",
         "category": "Azure Logic Apps"
       },
       {
         "command": "azureLogicAppsStandard.openUnitTestResults",
-        "title": "View Unit Test Results",
+        "title": "View unit test results",
         "category": "Azure Logic Apps",
         "icon": "$(tasklist)"
       },
       {
         "command": "azureLogicAppsStandard.editUnitTest",
-        "title": "Edit Unit Test",
+        "title": "Edit unit test",
         "category": "Azure Logic Apps",
         "icon": "$(edit)"
       },
       {
         "command": "azureLogicAppsStandard.runUnitTest",
-        "title": "Run Unit Test",
+        "title": "Run unit test",
         "category": "Azure Logic Apps"
       }
     ],

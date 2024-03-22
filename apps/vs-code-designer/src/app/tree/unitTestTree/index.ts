@@ -283,7 +283,7 @@ const startTestRun = (request: TestRunRequest, unitTestController: TestControlle
    */
   const runTestQueue = async () => {
     for (const { test, data } of queue) {
-      run.appendOutput(`Running ${test.id}\r\n`);
+      run.appendOutput(`Running ${test.label}\r\n`);
       if (run.token.isCancellationRequested) {
         run.skipped(test);
       } else {
@@ -291,7 +291,7 @@ const startTestRun = (request: TestRunRequest, unitTestController: TestControlle
         await data.run(test, run, activateContext);
       }
 
-      run.appendOutput(`Completed ${test.id}\r\n`);
+      run.appendOutput(`Completed ${test.label}\r\n`);
     }
 
     run.end();

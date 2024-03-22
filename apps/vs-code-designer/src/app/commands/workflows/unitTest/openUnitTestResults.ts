@@ -40,6 +40,6 @@ export async function openUnitTestResults(context: IAzureConnectorsContext, node
   }
 
   window.showInformationMessage(
-    localize('noRunForUnitTest', 'There is no run for the selected unit test. Please run the unit test for "{0}"', unitTestName)
+    localize('noRunForUnitTest', 'There is no run for the selected unit test. Make sure to run the unit test for "{0}"', unitTestName)
   );
 }
