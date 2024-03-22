@@ -48,8 +48,8 @@ export interface ConnectionProperties {
   overallStatus: string;
   parameterValueType?: string;
   statuses: ConnectionStatus[];
-  testLinks?: TestLink[];
-  testRequests?: TestRequest[];
+  testLinks?: TestConnectionObject[];
+  testRequests?: TestConnectionObject[];
   accountName?: string;
   api: Api;
   connectionRuntimeUrl?: string;
@@ -57,13 +57,7 @@ export interface ConnectionProperties {
 
 export type Connection = ArmResource<ConnectionProperties>;
 
-export interface TestLink {
-  body?: string;
-  method: string;
-  requestUri: string;
-}
-
-export interface TestRequest {
+interface TestConnectionObject {
   body?: string;
   method: string;
   requestUri: string;
