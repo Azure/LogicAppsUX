@@ -1,4 +1,12 @@
 # Logic Apps Designer
+### [2.125.3](https://github.com/Azure/LogicAppsUX/compare/v2.125.2...v2.125.3) (2024-03-22)
+
+
+### Bug Fixes
+
+* **Designer:** Allow WorkflowParameters and AppSettings to be used within each other in dynamic data ([#4410](https://github.com/Azure/LogicAppsUX/issues/4410)) ([0b90db9](https://github.com/Azure/LogicAppsUX/commit/0b90db91c74df85c8ca45fbea0cd69d21979ecee))
+* **Designer:** Secure string workflow parameters now pass validation ([#4408](https://github.com/Azure/LogicAppsUX/issues/4408)) ([937c600](https://github.com/Azure/LogicAppsUX/commit/937c600c77733f43341d624ee853f6111da1fdee))
+
 ### [2.125.2](https://github.com/Azure/LogicAppsUX/compare/v2.125.1...v2.125.2) (2024-03-13)
 
 
