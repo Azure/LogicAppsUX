@@ -282,6 +282,7 @@ const DesignerEditor = () => {
           <BJSWorkflowProvider
             workflow={{ definition: workflow?.definition, connectionReferences, parameters, kind: workflow?.kind }}
             runInstance={runInstanceData}
+            appSettings={settingsData?.properties}
           >
             <div style={{ height: 'inherit', width: 'inherit' }}>
               <DesignerCommandBar

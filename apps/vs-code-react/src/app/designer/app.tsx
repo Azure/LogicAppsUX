@@ -169,6 +169,7 @@ export const DesignerApp = () => {
         kind: standardApp.kind,
       }}
       runInstance={runInstance}
+      appSettings={panelMetaData?.localSettings}
     >
       <Designer />
     </BJSWorkflowProvider>
