@@ -44,7 +44,7 @@
   "+KXX+O": [
     {
       "type": 0,
-      "value": "Select function from"
+      "value": "Selecionar função de"
     }
   ],
   "+M72+a": [
@@ -4177,7 +4177,7 @@
   "OrPVcU": [
     {
       "type": 0,
-      "value": "Invalid split on format in '"
+      "value": "Divisão inválida no formato em '"
     },
     {
       "type": 1,
@@ -7774,7 +7774,7 @@
   "lA/sHA": [
     {
       "type": 0,
-      "value": "Copy the value of '"
+      "value": "Copiar o valor de '"
     },
     {
       "type": 1,
@@ -7782,7 +7782,7 @@
     },
     {
       "type": 0,
-      "value": "' to the clipboard"
+      "value": "' para a área de transferência"
     }
   ],
   "lB56l2": [
@@ -8240,7 +8240,7 @@
   "nwLd4b": [
     {
       "type": 0,
-      "value": "Dropdown to select filepath"
+      "value": "Lista suspensa para selecionar o caminho do arquivo"
     }
   ],
   "nx25nq": [

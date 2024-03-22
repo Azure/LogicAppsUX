@@ -4197,7 +4197,7 @@
   "OrPVcU": [
     {
       "type": 0,
-      "value": "Invalid split on format in '"
+      "value": "Il formato dell'opzione SplitOn in \""
     },
     {
       "type": 1,
@@ -4205,7 +4205,7 @@
     },
     {
       "type": 0,
-      "value": "'."
+      "value": "\" non è valido."
     }
   ],
   "Ov7Ckz": [
@@ -7798,7 +7798,7 @@
   "lA/sHA": [
     {
       "type": 0,
-      "value": "Copy the value of '"
+      "value": "Copia il valore di \""
     },
     {
       "type": 1,
@@ -7806,7 +7806,7 @@
     },
     {
       "type": 0,
-      "value": "' to the clipboard"
+      "value": "\" negli Appunti"
     }
   ],
   "lB56l2": [
