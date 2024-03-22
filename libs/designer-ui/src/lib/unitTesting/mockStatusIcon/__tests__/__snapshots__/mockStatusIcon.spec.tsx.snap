@@ -1,0 +1,79 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`ui/unitTesting/mockStatusIcon should render the completed status. 1`] = `
+<div
+  aria-label="Completed"
+  className="msla-mock-status-icon"
+  id="test-id"
+  role="status"
+>
+  <svg
+    fill="none"
+    height="14"
+    viewBox="0 0 24 24"
+    width="14"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <circle
+      cx="12"
+      cy="12"
+      fill="#428000"
+      r="10"
+      stroke="#979593"
+      strokeWidth="2"
+    />
+  </svg>
+</div>
+`;
+
+exports[`ui/unitTesting/mockStatusIcon should render the empty status when no completed property is send. 1`] = `
+<div
+  aria-label="Empty"
+  className="msla-mock-status-icon"
+  id="test-id"
+  role="status"
+>
+  <svg
+    fill="none"
+    height="14"
+    viewBox="0 0 24 24"
+    width="14"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <circle
+      cx="12"
+      cy="12"
+      fill="#605E5C"
+      r="10"
+      stroke="#979593"
+      strokeWidth="2"
+    />
+  </svg>
+</div>
+`;
+
+exports[`ui/unitTesting/mockStatusIcon should render the empty status. 1`] = `
+<div
+  aria-label="Empty"
+  className="msla-mock-status-icon"
+  id="test-id"
+  role="status"
+>
+  <svg
+    fill="none"
+    height="14"
+    viewBox="0 0 24 24"
+    width="14"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <circle
+      cx="12"
+      cy="12"
+      fill="#605E5C"
+      r="10"
+      stroke="#979593"
+      strokeWidth="2"
+    />
+  </svg>
+</div>
+`;
