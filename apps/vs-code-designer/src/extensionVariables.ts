@@ -100,6 +100,7 @@ export namespace ext {
   export const testFileChangedEmitter = new EventEmitter<Uri>();
   export const testData = new WeakMap<TestItem, TestData>();
   export let unitTestController: TestController;
+  export const testRuns = new Map<string, any>();
 }
 
 export const ExtensionCommand = {

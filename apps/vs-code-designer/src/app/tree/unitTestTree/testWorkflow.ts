@@ -3,7 +3,9 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { ext } from '../../../extensionVariables';
+import { getUnitTestName } from '../../utils/unitTests';
 import { TestFile } from './testFile';
+import * as path from 'path';
 import { type TestController, type TestItem, type Uri } from 'vscode';
 
 /**
@@ -35,13 +37,13 @@ export class TestWorkflow {
    */
   public async createChild(controller: TestController): Promise<void> {
     for (const testFile of this.testFiles) {
-      const testName = testFile.path.split('/').slice(-1)[0];
-      const id = `${this.name}/${testName}`;
+      const testName = getUnitTestName(testFile.fsPath);
+      const unitTestFileName = path.basename(testFile.fsPath);
+      const id = `${this.name}/${unitTestFileName}`;
 
       const fileTestItem = controller.createTestItem(id, testName, testFile);
       controller.items.add(fileTestItem);
-      const data = new TestFile(testName, testFile, fileTestItem);
-      await data.parseUnitTest();
+      const data = new TestFile();
       ext.testData.set(fileTestItem, data);
       this.children.push(fileTestItem);
     }

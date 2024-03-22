@@ -10,6 +10,7 @@ import { TestWorkflow } from './testWorkflow';
 import { TestWorkspace } from './testWorkspace';
 import { isEmptyString } from '@microsoft/utils-logic-apps';
 import { type IActionContext, callWithTelemetryAndErrorHandling } from '@microsoft/vscode-azext-utils';
+import * as path from 'path';
 import {
   RelativePattern,
   type TestController,
@@ -30,8 +31,9 @@ export type TestData = TestWorkspace | TestWorkflow | TestFile;
 /**
  * Prepares the test explorer for unit tests.
  * @param {ExtensionContext} context - The extension context.
+ * @param {IActionContext} activateContext - Command activate context.
  */
-export const prepareTestExplorer = async (context: ExtensionContext) => {
+export const prepareTestExplorer = async (context: ExtensionContext, activateContext: IActionContext) => {
   callWithTelemetryAndErrorHandling(unitTestExplorer, async (actionContext: IActionContext) => {
     if (workspace.workspaceFolders && workspace.workspaceFolders.length > 0) {
       const isLogicAppProject = await hasLogicAppProject(actionContext);
@@ -51,7 +53,7 @@ export const prepareTestExplorer = async (context: ExtensionContext) => {
         unitTestController.createRunProfile(
           'Run logic apps standard unit tests',
           TestRunProfileKind.Run,
-          (request, cancellation) => runHandler(request, cancellation, unitTestController),
+          (request, cancellation) => runHandler(request, cancellation, unitTestController, activateContext),
           true,
           undefined
         );
@@ -91,10 +93,16 @@ export const getWorkspaceTestPatterns = () => {
  * Runs the test handler based on the provided request and cancellation token.
  * @param {TestRunRequest} request - The test run request.
  * @param {CancellationToken} cancellation - The cancellation token.
+ * @param {IActionContext} activateContext - Command activate context.
  */
-export const runHandler = (request: TestRunRequest, cancellation: CancellationToken, unitTestController: TestController) => {
+export const runHandler = (
+  request: TestRunRequest,
+  cancellation: CancellationToken,
+  unitTestController: TestController,
+  activateContext: IActionContext
+) => {
   cancellation.onCancellationRequested(() => request.include.forEach((item) => ext.watchingTests.delete(item)));
-  return startTestRun(request, unitTestController);
+  return startTestRun(request, unitTestController, activateContext);
 };
 
 /**
@@ -133,10 +141,6 @@ const testsWorkspaceWatcher = (controller: TestController, fileChangedEmitter: E
       fileChangedEmitter.fire(uri);
     });
     watcher.onDidChange(async (uri) => {
-      const { data } = await getOrCreateFile(controller, uri);
-      if (data instanceof TestFile) {
-        await data.parseUnitTest();
-      }
       fileChangedEmitter.fire(uri);
     });
     watcher.onDidDelete((uri) => controller.items.delete(uri.toString()));
@@ -156,7 +160,7 @@ const findInitialFiles = async (controller: TestController, pattern: RelativePat
   const unitTestFiles = await workspace.findFiles(pattern);
 
   const workspacesTestFiles = unitTestFiles.reduce((acc, file: Uri) => {
-    const workspaceName = file.path.split('/').slice(-5)[0];
+    const workspaceName = file.fsPath.split('/').slice(-5)[0];
 
     if (!acc[workspaceName]) {
       acc[workspaceName] = [];
@@ -182,7 +186,7 @@ const getOrCreateWorkspace = (controller: TestController, workspaceName: string,
   if (existing) {
     return { file: existing, data: ext.testData.get(existing) as TestWorkspace };
   }
-  const filePath = files.length > 0 ? files[0].path : '';
+  const filePath = files.length > 0 ? files[0].fsPath : '';
   const workspaceUri = isEmptyString(filePath) ? undefined : Uri.file(filePath.split('/').slice(0, -4).join('/'));
 
   const workspaceTestItem = controller.createTestItem(workspaceName, workspaceName, workspaceUri);
@@ -202,9 +206,9 @@ const getOrCreateWorkspace = (controller: TestController, workspaceName: string,
  * @returns An object containing the file test and its associated data, if it exists.
  */
 const getOrCreateFile = async (controller: TestController, uri: Uri) => {
-  const workspaceName = uri.path.split('/').slice(-5)[0];
-  const testName = uri.path.split('/').slice(-1)[0];
-  const workflowName = uri.path.split('/').slice(-2)[0];
+  const workspaceName = uri.fsPath.split('/').slice(-5)[0];
+  const testName = path.basename(uri.fsPath);
+  const workflowName = path.basename(path.dirname(uri.fsPath));
 
   const existingWorkspaceTest = controller.items.get(workspaceName);
 
@@ -225,7 +229,7 @@ const getOrCreateFile = async (controller: TestController, uri: Uri) => {
       existingWorkspaceTest.children.add(workflowTestItem);
     }
   } else {
-    const workspaceUri = Uri.file(uri.path.split('/').slice(0, -4).join('/'));
+    const workspaceUri = Uri.file(uri.fsPath.split('/').slice(0, -4).join('/'));
     const workspaceTestItem = controller.createTestItem(workspaceName, workspaceName, workspaceUri);
     workspaceTestItem.canResolveChildren = true;
     controller.items.add(workspaceTestItem);
@@ -242,8 +246,9 @@ const getOrCreateFile = async (controller: TestController, uri: Uri) => {
  * Starts a test run based on the provided request and unit test controller.
  * @param {TestRunRequest} request - The test run request.
  * @param {TestController} unitTestController - The unit test controller.
+ * @param {IActionContext} activateContext - Command activate context.
  */
-const startTestRun = (request: TestRunRequest, unitTestController: TestController) => {
+const startTestRun = (request: TestRunRequest, unitTestController: TestController, activateContext: IActionContext) => {
   const queue: { test: TestItem; data: TestFile }[] = [];
   const run = unitTestController.createTestRun(request);
 
@@ -278,15 +283,15 @@ const startTestRun = (request: TestRunRequest, unitTestController: TestControlle
    */
   const runTestQueue = async () => {
     for (const { test, data } of queue) {
-      run.appendOutput(`Running ${test.id}\r\n`);
+      run.appendOutput(`Running ${test.label}\r\n`);
       if (run.token.isCancellationRequested) {
         run.skipped(test);
       } else {
         run.started(test);
-        await data.run(test, run);
+        await data.run(test, run, activateContext);
       }
 
-      run.appendOutput(`Completed ${test.id}\r\n`);
+      run.appendOutput(`Completed ${test.label}\r\n`);
     }
 
     run.end();
