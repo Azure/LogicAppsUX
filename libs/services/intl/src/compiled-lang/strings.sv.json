@@ -4160,7 +4160,7 @@
   "OrPVcU": [
     {
       "type": 0,
-      "value": "Invalid split on format in '"
+      "value": "Ogiltigt delningsformat i "
     },
     {
       "type": 1,
@@ -4168,7 +4168,7 @@
     },
     {
       "type": 0,
-      "value": "'."
+      "value": "."
     }
   ],
   "Ov7Ckz": [
@@ -7716,7 +7716,7 @@
   "lA/sHA": [
     {
       "type": 0,
-      "value": "Copy the value of '"
+      "value": "Kopiera värdet för "
     },
     {
       "type": 1,
@@ -7724,7 +7724,7 @@
     },
     {
       "type": 0,
-      "value": "' to the clipboard"
+      "value": " till Urklipp"
     }
   ],
   "lB56l2": [

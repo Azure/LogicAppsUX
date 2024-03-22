@@ -4143,7 +4143,7 @@
   "OrPVcU": [
     {
       "type": 0,
-      "value": "Invalid split on format in '"
+      "value": "在 '"
     },
     {
       "type": 1,
@@ -4151,7 +4151,7 @@
     },
     {
       "type": 0,
-      "value": "'."
+      "value": "' 中的格式分割無效。"
     }
   ],
   "Ov7Ckz": [
@@ -7694,7 +7694,7 @@
   "lA/sHA": [
     {
       "type": 0,
-      "value": "Copy the value of '"
+      "value": "將 '"
     },
     {
       "type": 1,
@@ -7702,7 +7702,7 @@
     },
     {
       "type": 0,
-      "value": "' to the clipboard"
+      "value": "' 的值複製到剪貼簿"
     }
   ],
   "lB56l2": [

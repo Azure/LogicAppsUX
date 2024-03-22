@@ -4205,7 +4205,7 @@
   "OrPVcU": [
     {
       "type": 0,
-      "value": "Invalid split on format in '"
+      "value": "Fractionnement non valide sur format dans « "
     },
     {
       "type": 1,
@@ -4213,7 +4213,7 @@
     },
     {
       "type": 0,
-      "value": "'."
+      "value": " »."
     }
   ],
   "Ov7Ckz": [
@@ -7806,7 +7806,7 @@
   "lA/sHA": [
     {
       "type": 0,
-      "value": "Copy the value of '"
+      "value": "Copier la valeur de « "
     },
     {
       "type": 1,
@@ -7814,7 +7814,7 @@
     },
     {
       "type": 0,
-      "value": "' to the clipboard"
+      "value": " » dans le Presse-papiers"
     }
   ],
   "lB56l2": [

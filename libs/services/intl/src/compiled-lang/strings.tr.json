@@ -4160,7 +4160,7 @@
   "OrPVcU": [
     {
       "type": 0,
-      "value": "Invalid split on format in '"
+      "value": "'"
     },
     {
       "type": 1,
@@ -4168,7 +4168,7 @@
     },
     {
       "type": 0,
-      "value": "'."
+      "value": "' öğesinde bölünme biçimi geçersiz."
     }
   ],
   "Ov7Ckz": [
@@ -7720,7 +7720,7 @@
   "lA/sHA": [
     {
       "type": 0,
-      "value": "Copy the value of '"
+      "value": "'"
     },
     {
       "type": 1,
@@ -7728,7 +7728,7 @@
     },
     {
       "type": 0,
-      "value": "' to the clipboard"
+      "value": "' değerini panoya kopyala"
     }
   ],
   "lB56l2": [

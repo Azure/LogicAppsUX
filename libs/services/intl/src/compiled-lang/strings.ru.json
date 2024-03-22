@@ -990,7 +990,7 @@
   "4Levd5": [
     {
       "type": 0,
-      "value": "Send me an email when"
+      "value": "Отправить мне письмо, когда"
     }
   ],
   "4Q7WzU": [
@@ -1230,7 +1230,7 @@
   "635Koz": [
     {
       "type": 0,
-      "value": "Every week on Monday"
+      "value": "Каждую неделю в понедельник"
     }
   ],
   "63CC7M": [
@@ -1780,7 +1780,7 @@
   "9QS9a3": [
     {
       "type": 0,
-      "value": "Replace \""
+      "value": "Заменить \""
     },
     {
       "type": 1,
@@ -1788,7 +1788,7 @@
     },
     {
       "type": 0,
-      "value": "\" with"
+      "value": "\" на"
     }
   ],
   "9SuA/E": [
@@ -3266,7 +3266,7 @@
   "IsbbsG": [
     {
       "type": 0,
-      "value": "When a new item"
+      "value": "Если новый элемент"
     }
   ],
   "IxWip7": [
@@ -4238,7 +4238,7 @@
   "OrPVcU": [
     {
       "type": 0,
-      "value": "Invalid split on format in '"
+      "value": "Недопустимый формат разделения в \""
     },
     {
       "type": 1,
@@ -4246,7 +4246,7 @@
     },
     {
       "type": 0,
-      "value": "'."
+      "value": "\"."
     }
   ],
   "Ov7Ckz": [
@@ -6602,7 +6602,7 @@
   "dKCp2j": [
     {
       "type": 0,
-      "value": "Tell me more about"
+      "value": "Расскажи подробнее о"
     }
   ],
   "dL9V5t": [
@@ -6766,7 +6766,7 @@
   "eI00kb": [
     {
       "type": 0,
-      "value": "Edit this flow to"
+      "value": "Изменить этот поток на"
     }
   ],
   "eO1h/h": [
@@ -7876,7 +7876,7 @@
   "lA/sHA": [
     {
       "type": 0,
-      "value": "Copy the value of '"
+      "value": "Копировать значение \""
     },
     {
       "type": 1,
@@ -7884,7 +7884,7 @@
     },
     {
       "type": 0,
-      "value": "' to the clipboard"
+      "value": "\" в буфер обмена"
     }
   ],
   "lB56l2": [
