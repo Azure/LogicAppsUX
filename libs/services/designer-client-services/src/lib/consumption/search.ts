@@ -104,8 +104,8 @@ export class ConsumptionSearchService extends BaseSearchService {
           operation.properties.operationType = isWebhook
             ? 'OpenApiConnectionWebhook'
             : isNotification
-            ? 'OpenApiConnectionNotification'
-            : 'OpenApiConnection';
+              ? 'OpenApiConnectionNotification'
+              : 'OpenApiConnection';
         }
 
         return operation;

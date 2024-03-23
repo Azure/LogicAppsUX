@@ -26,7 +26,10 @@ export interface ParametersProcessorOptions {
 type Parameter = OpenAPIV2.Parameter;
 
 export class ParametersProcessor {
-  constructor(private parameters: Parameter[] = [], private options: ParametersProcessorOptions = {}) {
+  constructor(
+    private parameters: Parameter[] = [],
+    private options: ParametersProcessorOptions = {}
+  ) {
     this.options = {
       excludeAdvanced: false,
       excludeInternal: true,

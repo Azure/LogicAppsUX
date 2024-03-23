@@ -28,8 +28,8 @@ export const BoundedInputEntry = ({ index, input, functionData, connection, conn
   const inputConnection = !connection
     ? undefined
     : Object.values(connection.inputs).length > 1
-    ? connection.inputs[index][0]
-    : connection.inputs[0][index];
+      ? connection.inputs[index][0]
+      : connection.inputs[0][index];
 
   let inputBox: JSX.Element;
 

@@ -169,26 +169,26 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId, 
         }
       )
     : parentSubgraphName
-    ? intl.formatMessage(
-        {
-          defaultMessage: 'Insert a new step in {parentSubgraphName}',
-          id: 'RjvpD+',
-          description: 'Tooltip for the button to add a new step under subgraph',
-        },
-        {
-          parentSubgraphName,
-        }
-      )
-    : intl.formatMessage(
-        {
-          defaultMessage: 'Insert a new step after {parentName}',
-          id: '2r30S9',
-          description: 'Tooltip for the button to add a new step (action or branch)',
-        },
-        {
-          parentName,
-        }
-      );
+      ? intl.formatMessage(
+          {
+            defaultMessage: 'Insert a new step in {parentSubgraphName}',
+            id: 'RjvpD+',
+            description: 'Tooltip for the button to add a new step under subgraph',
+          },
+          {
+            parentSubgraphName,
+          }
+        )
+      : intl.formatMessage(
+          {
+            defaultMessage: 'Insert a new step after {parentName}',
+            id: '2r30S9',
+            description: 'Tooltip for the button to add a new step (action or branch)',
+          },
+          {
+            parentName,
+          }
+        );
 
   const actionButtonClick = useCallback(
     (e: React.MouseEvent<HTMLButtonElement>) => {

@@ -47,10 +47,10 @@ export const DeleteNodeModal = (props: DeleteNodeModalProps) => {
     nodeType === WORKFLOW_NODE_TYPES['OPERATION_NODE']
       ? operationNodeTitle
       : nodeType === WORKFLOW_NODE_TYPES['GRAPH_NODE']
-      ? graphNodeTitle
-      : nodeType === WORKFLOW_NODE_TYPES['SUBGRAPH_NODE'] // This is only for switch cases
-      ? switchCaseTitle
-      : otherNodeTitle;
+        ? graphNodeTitle
+        : nodeType === WORKFLOW_NODE_TYPES['SUBGRAPH_NODE'] // This is only for switch cases
+          ? switchCaseTitle
+          : otherNodeTitle;
 
   const confirmText = intl.formatMessage({
     defaultMessage: 'OK',

@@ -182,8 +182,8 @@ export abstract class BaseConnectorService implements IConnectorService {
     const uri = isManagedIdentityTypeConnection
       ? `${dynamicInvokeUrl}/dynamicInvoke`
       : isArmResourceId(connectorId) && apiHubServiceDetails?.baseUrl
-      ? pathCombine(`${apiHubServiceDetails?.baseUrl}/${connectionId}/extensions/proxy`, parameters['path'])
-      : pathCombine(`${baseUrl}/${connectionId}/extensions/proxy`, parameters['path']); // TODO - This code path should never hit, verify.
+        ? pathCombine(`${apiHubServiceDetails?.baseUrl}/${connectionId}/extensions/proxy`, parameters['path'])
+        : pathCombine(`${baseUrl}/${connectionId}/extensions/proxy`, parameters['path']); // TODO - This code path should never hit, verify.
 
     try {
       if (isManagedIdentityTypeConnection) {

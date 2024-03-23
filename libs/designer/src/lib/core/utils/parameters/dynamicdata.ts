@@ -662,10 +662,10 @@ function getSwaggerBasedInputParameters(
     key === 'inputs.$'
       ? undefined
       : key.indexOf('inputs.$') === 0
-      ? key.replace('inputs.$.', '')
-      : key.indexOf('body.$') === 0
-      ? key.replace('.$', '')
-      : '';
+        ? key.replace('inputs.$.', '')
+        : key.indexOf('body.$') === 0
+          ? key.replace('.$', '')
+          : '';
   const propertyNames = parseEx(parameterKey).map((segment) => segment.value?.toString()) as string[];
   const dynamicInputDefinition = safeSetObjectPropertyValue(
     {},

@@ -1,0 +1,31 @@
+{
+  "javascript": {
+    "formatter": {
+      "indentWidth": 2,
+      "indentStyle": "space",
+      "lineWidth": 140,
+      "trailingComma": "es5",
+      "quoteStyle": "single"
+    }
+  },
+  "json": {
+    "formatter": {
+      "indentWidth": 2,
+      "indentStyle": "space",
+      "lineWidth": 140
+    }
+  },
+  "formatter": {
+    "enabled": true,
+    "formatWithErrors": false,
+    "ignore": ["dist/*", "test-results/*", "tmp/*", "playwright-report/*"]
+  },
+  "linter": {
+    "enabled": false
+  },
+  "organizeImports": {
+    "enabled": false,
+    "include": ["libs/**/*.ts", "libs/**/*.tsx", "apps/**/*.ts", "apps/**/*.tsx"],
+    "ignore": ["dist/*", "test-results/*", "tmp/*", "playwright-report/*"]
+  }
+}

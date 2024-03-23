@@ -274,8 +274,8 @@ export class SchemaProcessor {
           this.options.useAliasedIndexing && childAlias
             ? childAlias
             : this.options.prefix
-            ? `${this.options.prefix}.${encodedChildPropertyName}`
-            : encodedChildPropertyName;
+              ? `${this.options.prefix}.${encodedChildPropertyName}`
+              : encodedChildPropertyName;
         const required = isNullOrUndefined(this.options.required)
           ? requiredProperties.indexOf(key) !== -1
           : this.options.required && requiredProperties.indexOf(key) !== -1;
@@ -562,8 +562,8 @@ export class SchemaProcessor {
     const titleText = title
       ? title
       : key === ParameterKeyUtility.WildIndexSegment
-      ? intl.formatMessage({ defaultMessage: 'Item', id: 'QbJDi7', description: 'Label for single item inside an array.' })
-      : getKnownTitlesFromKey(keyPrefix) ?? getKnownTitles(name) ?? key;
+        ? intl.formatMessage({ defaultMessage: 'Item', id: 'QbJDi7', description: 'Label for single item inside an array.' })
+        : getKnownTitlesFromKey(keyPrefix) ?? getKnownTitles(name) ?? key;
     const titlePrefix = this.options.titlePrefix || this.options.summaryPrefix;
 
     return titlePrefix && titleText ? `${titlePrefix} ${titleText}` : titleText;

@@ -11,15 +11,16 @@ export const ChatEntryReaction = {
 } as const;
 export type ChatEntryReaction = (typeof ChatEntryReaction)[keyof typeof ChatEntryReaction];
 
-export type ConversationItem = //TODO: Add other types of items
+export type ConversationItem =
+  //TODO: Add other types of items
 
-    | UserQueryItem
-    | AssistantReplyItem
-    | AssistantReplyWithFlowItem
-    | AssistantGreetingItem
-    | AssistantErrorItem
-    | ConnectionsSetupItem
-    | OperationsNeedingAttentionItem;
+  | UserQueryItem
+  | AssistantReplyItem
+  | AssistantReplyWithFlowItem
+  | AssistantGreetingItem
+  | AssistantErrorItem
+  | ConnectionsSetupItem
+  | OperationsNeedingAttentionItem;
 
 export type ReactionItem =
   | AssistantReplyItem

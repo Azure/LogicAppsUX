@@ -354,8 +354,8 @@ export class LogicAppResourceTree implements ResolvedAppResourceBase {
     const confirmationMessage: string = isSlot
       ? localize('confirmDeleteSlot', 'Are you sure you want to delete slot "{0}"?', fullName)
       : isFunctionApp
-      ? localize('confirmDeleteFunctionApp', 'Are you sure you want to delete function app "{0}"?', fullName)
-      : localize('confirmDeleteWebApp', 'Are you sure you want to delete web app "{0}"?', fullName);
+        ? localize('confirmDeleteFunctionApp', 'Are you sure you want to delete function app "{0}"?', fullName)
+        : localize('confirmDeleteWebApp', 'Are you sure you want to delete web app "{0}"?', fullName);
 
     const wizardContext = Object.assign(context, {
       site: this.site,

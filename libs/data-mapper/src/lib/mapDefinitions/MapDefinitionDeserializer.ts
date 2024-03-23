@@ -202,8 +202,8 @@ export class MapDefinitionDeserializer {
               flattenedChildValueParents.length > 1
                 ? flattenedChildValueParents.reduce((a, b) => (a.lastIndexOf('/') <= b.lastIndexOf('/') ? a : b))
                 : flattenedChildValueParents.length === 1
-                ? flattenedChildValueParents[0]
-                : undefined;
+                  ? flattenedChildValueParents[0]
+                  : undefined;
             const ifConnectionEntry = Object.entries(connections).find(
               ([_connectionKey, connectionValue]) =>
                 connectionValue.self.node.key === ifPseudoFunctionKey &&
