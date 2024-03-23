@@ -1,7 +1,7 @@
 import { inputsResponse, outputsResponse } from '../__test__/__mocks__/monitoringInputsOutputsResponse';
 import type { HttpRequestOptions, IHttpClient } from '../httpClient';
 import type { IRunService } from '../run';
-import type { CallbackInfo } from '../workflow';
+import type { CallbackInfo } from '../callbackInfo';
 import {
   isNumber,
   isCallbackInfoWithRelativePath,

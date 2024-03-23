@@ -17,7 +17,7 @@ import { SearchView } from './searchView';
 import { Link, Icon, Text } from '@fluentui/react';
 import { Button } from '@fluentui/react-components';
 import { bundleIcon, Dismiss24Filled, Dismiss24Regular } from '@fluentui/react-icons';
-import { SearchService } from '@microsoft/designer-client-services-logic-apps';
+import { SearchService } from '@microsoft/logic-apps-shared';
 import { OperationSearchHeader } from '@microsoft/designer-ui';
 import type { CommonPanelProps } from '@microsoft/designer-ui';
 import type { DiscoveryOpArray, DiscoveryOperation, DiscoveryResultTypes } from '@microsoft/logic-apps-shared';

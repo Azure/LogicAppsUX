@@ -10,7 +10,7 @@ import {
   OperationManifestService,
   WorkflowService,
   isServiceProviderOperation,
-} from '@microsoft/designer-client-services-logic-apps';
+} from '@microsoft/logic-apps-shared';
 import type { AssistedConnectionProps } from '@microsoft/designer-ui';
 import {
   getIntl,

@@ -1,4 +1,4 @@
-import { HostService } from '@microsoft/designer-client-services-logic-apps';
+import { HostService } from '@microsoft/logic-apps-shared';
 import type { Connector, OperationApi } from '@microsoft/logic-apps-shared';
 import { getAllConnectorProperties, isBuiltInConnectorId, isCustomConnectorId, isString } from '@microsoft/logic-apps-shared';
 

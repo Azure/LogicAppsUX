@@ -3,7 +3,7 @@ import type { AppDispatch } from '../../../core';
 import { useActionMetadata, useRunInstance } from '../../../core/state/workflow/workflowSelectors';
 import { setRunIndex } from '../../../core/state/workflow/workflowSlice';
 import { getForeachItemsCount } from './helper';
-import { RunService } from '@microsoft/designer-client-services-logic-apps';
+import { RunService } from '@microsoft/logic-apps-shared';
 import type { PageChangeEventArgs, PageChangeEventHandler } from '@microsoft/designer-ui';
 import { Pager } from '@microsoft/designer-ui';
 import { FindPreviousAndNextPage, isNullOrUndefined, type LogicAppsV2 } from '@microsoft/logic-apps-shared';

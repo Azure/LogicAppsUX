@@ -15,8 +15,8 @@ import {
   StandardRunService,
   ConsumptionOperationManifestService,
   ConsumptionConnectionService,
-} from '@microsoft/designer-client-services-logic-apps';
-import type { ContentType } from '@microsoft/designer-client-services-logic-apps';
+} from '@microsoft/logic-apps-shared';
+import type { ContentType } from '@microsoft/logic-apps-shared';
 import { DesignerProvider, BJSWorkflowProvider, Designer } from '@microsoft/logic-apps-designer';
 import { ResourceIdentityType } from '@microsoft/logic-apps-shared';
 import { useSelector } from 'react-redux';

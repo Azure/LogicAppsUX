@@ -1,4 +1,4 @@
-import { SearchService } from '@microsoft/designer-client-services-logic-apps';
+import { SearchService } from '@microsoft/logic-apps-shared';
 import { BrowseGrid, isBuiltInConnector, isCustomConnector } from '@microsoft/designer-ui';
 import { cleanConnectorId, type Connector } from '@microsoft/logic-apps-shared';
 import { useCallback, useMemo } from 'react';
