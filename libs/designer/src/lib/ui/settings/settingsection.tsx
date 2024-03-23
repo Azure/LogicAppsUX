@@ -335,7 +335,7 @@ const Setting = ({ id, settings, isReadOnly }: { id?: string; settings: Settings
 
     return visible && conditionalVisibility !== false ? (
       <div key={i} style={{ display: 'flex', gap: '4px' }}>
-        <div className={getClassName()} style={{ flex: '1 1 auto' }}>
+        <div className={getClassName()} style={{ flex: '1 1 auto', width: '100%' }}>
           {renderSetting()}
           {errorMessage && !hideErrorMessage[i] && (
             <span className="msla-input-parameter-error" role="alert">

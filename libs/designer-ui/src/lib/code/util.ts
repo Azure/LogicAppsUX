@@ -134,7 +134,9 @@ const getSegmentedPropertyValue = (property: string): string => {
   const splitProperty = property.split('.');
   let updatedProperty = '';
   splitProperty.forEach((segment) => {
-    updatedProperty += `["${segment}"]`;
+    if (segment) {
+      updatedProperty += `["${segment}"]`;
+    }
   });
   return updatedProperty;
 };
@@ -171,4 +173,9 @@ export const formatValue = (input: string): string => {
 // Monaco should be at least 3 rows high (19*3 px) but no more than 20 rows high (19*20 px).
 export const getEditorHeight = (input = ''): string => {
   return Math.min(Math.max(input?.split('\n').length * 20, 120), 380) + 'px';
+};
+
+// CodeEditor Height should be at least 12 rows high (19*12 px) but no more than 24 rows high (19*24 px).
+export const getCodeEditorHeight = (input = ''): string => {
+  return Math.min(Math.max(input?.split('\n').length * 20, 228), 456) + 'px';
 };

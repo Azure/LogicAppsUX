@@ -26,7 +26,7 @@ import { DeleteMenuItem } from '../../menuItems/deleteMenuItem';
 import { usePanelTabs } from './usePanelTabs';
 import { CustomCodeService, WorkflowService } from '@microsoft/designer-client-services-logic-apps';
 import type { CommonPanelProps, PageActionTelemetryData } from '@microsoft/designer-ui';
-import { PanelContainer, PanelLocation, PanelScope, PanelSize } from '@microsoft/designer-ui';
+import { PanelContainer, PanelScope, PanelSize } from '@microsoft/designer-ui';
 import { SUBGRAPH_TYPES, isNullOrUndefined, replaceWhiteSpaceWithUnderscore, splitFileName } from '@microsoft/logic-apps-shared';
 import type { ReactElement } from 'react';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
@@ -52,7 +52,7 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
   }));
   const selectedNodeDisplayName = useNodeDisplayName(selectedNode);
 
-  const [width, setWidth] = useState<PanelSize>(PanelSize.Auto);
+  const [width, setWidth] = useState<string>(PanelSize.Auto);
 
   const inputs = useSelector((state: RootState) => state.operations.inputParameters[selectedNode]);
   const comment = useNodeDescription(selectedNode);
@@ -166,7 +166,8 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
     toggleCollapse: dismissPanel,
     width,
     layerProps,
-    panelLocation: panelLocation ?? PanelLocation.Right,
+    panelLocation,
+    isResizeable: props.isResizeable,
   };
 
   return (
@@ -209,6 +210,7 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
       title={selectedNodeDisplayName}
       onTitleChange={onTitleChange}
       onTitleBlur={onTitleBlur}
+      setCurrWidth={setWidth}
     />
   );
 };

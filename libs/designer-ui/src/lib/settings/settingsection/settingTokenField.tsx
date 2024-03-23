@@ -1,7 +1,6 @@
 import { ArrayEditor } from '../../arrayeditor';
 import { AuthenticationEditor } from '../../authentication';
 import { CodeEditor } from '../../code';
-import { CustomCodeEditor } from '../../code/customcodeeditor';
 import { Combobox } from '../../combobox';
 import constants from '../../constants';
 import { CopyInputControl } from '../../copyinputcontrol';
@@ -157,33 +156,27 @@ export const TokenField = ({
           tokenPickerButtonProps={tokenpickerButtonProps}
         />
       );
-
     case constants.PARAMETER.EDITOR.CODE:
-      if (editorOptions?.language && editorOptions.language !== 'javascript') {
+      return (() => {
+        const isCustomCode = editorOptions?.language !== constants.PARAMETER.EDITOR_OPTIONS.LANGUAGE.JAVASCRIPT;
+        const initialValue =
+          editorOptions?.language && isCustomCode ? [createLiteralValueSegment(editorViewModel?.customCodeData?.fileData)] : value;
+        const language = editorOptions.language ?? EditorLanguage.javascript;
+
         return (
-          <CustomCodeEditor
-            nodeTitle={nodeTitle}
+          <CodeEditor
             labelId={labelId}
-            initialValue={[createLiteralValueSegment(editorViewModel?.customCodeData?.fileData)]}
+            initialValue={initialValue}
             getTokenPicker={getTokenPicker}
-            language={editorOptions.language}
+            language={language}
             onChange={onValueChange}
             readonly={readOnly}
             placeholder={placeholder}
+            isCustomCode={isCustomCode}
+            nodeTitle={nodeTitle}
           />
         );
-      }
-      return (
-        <CodeEditor
-          labelId={labelId}
-          initialValue={value}
-          getTokenPicker={getTokenPicker}
-          language={editorOptions.language ?? EditorLanguage.javascript}
-          onChange={onValueChange}
-          readonly={readOnly}
-          placeholder={placeholder}
-        />
-      );
+      })();
 
     case constants.PARAMETER.EDITOR.COMBOBOX:
       return (
