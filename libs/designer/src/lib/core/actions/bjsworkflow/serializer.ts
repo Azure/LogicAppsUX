@@ -227,18 +227,18 @@ const getWorkflowParameters = (
     parameterDefinition.value = isStringParameter
       ? value
       : value === ''
-      ? undefined
-      : typeof value !== 'string'
-      ? value
-      : JSON.parse(value);
+        ? undefined
+        : typeof value !== 'string'
+          ? value
+          : JSON.parse(value);
 
     parameterDefinition.defaultValue = isStringParameter
       ? defaultValue
       : defaultValue === ''
-      ? undefined
-      : typeof defaultValue !== 'string'
-      ? defaultValue
-      : JSON.parse(defaultValue);
+        ? undefined
+        : typeof defaultValue !== 'string'
+          ? defaultValue
+          : JSON.parse(defaultValue);
 
     return { ...result, [parameter?.name ?? parameterId]: parameterDefinition };
   }, {});
@@ -352,10 +352,10 @@ const serializeSwaggerBasedOperation = async (rootState: RootState, operationId:
   const serializedType = equals(type, Constants.NODE.TYPE.API_CONNECTION)
     ? Constants.SERIALIZED_TYPE.API_CONNECTION
     : equals(type, Constants.NODE.TYPE.API_CONNECTION_NOTIFICATION)
-    ? Constants.SERIALIZED_TYPE.API_CONNECTION_NOTIFICATION
-    : equals(type, Constants.NODE.TYPE.API_CONNECTION_WEBHOOK)
-    ? Constants.SERIALIZED_TYPE.API_CONNECTION_WEBHOOK
-    : type;
+      ? Constants.SERIALIZED_TYPE.API_CONNECTION_NOTIFICATION
+      : equals(type, Constants.NODE.TYPE.API_CONNECTION_WEBHOOK)
+        ? Constants.SERIALIZED_TYPE.API_CONNECTION_WEBHOOK
+        : type;
 
   return {
     type: serializedType,

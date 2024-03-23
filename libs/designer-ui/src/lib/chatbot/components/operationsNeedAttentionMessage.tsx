@@ -52,8 +52,8 @@ export const OperationsNeedingAttentionMessage: React.FC<OperationsNeedingAttent
         ? intlText.savingDescription_plural
         : intlText.savingDescription
       : item.operationsNeedingAttention.length > 1
-      ? intlText.editingDescription_plural
-      : intlText.editingDescription;
+        ? intlText.editingDescription_plural
+        : intlText.editingDescription;
 
   const operations = item.operationsNeedingAttention.map((info: any) => {
     const disabled = false;

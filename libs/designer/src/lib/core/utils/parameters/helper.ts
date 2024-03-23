@@ -427,8 +427,8 @@ export function getParameterEditorProps(
     editorViewModel = editorOptions?.isOldFormat
       ? toSimpleQueryBuilderViewModel(value)
       : editorOptions?.isHybridEditor
-      ? toHybridConditionViewModel(value)
-      : toConditionViewModel(value);
+        ? toHybridConditionViewModel(value)
+        : toConditionViewModel(value);
   } else if (dynamicValues && isLegacyDynamicValuesExtension(dynamicValues) && dynamicValues.extension.builtInOperation) {
     editor = undefined;
   } else if (editor === constants.EDITOR.FILEPICKER && dynamicValues) {
@@ -1083,8 +1083,8 @@ export function getTokenValueFromToken(tokenType: TokenType, functionArguments: 
   return tokenType === TokenType.PARAMETER
     ? `parameters(${convertToStringLiteral(functionArguments[0])})`
     : tokenType === TokenType.VARIABLE
-    ? `variables(${convertToStringLiteral(functionArguments[0])})`
-    : undefined;
+      ? `variables(${convertToStringLiteral(functionArguments[0])})`
+      : undefined;
 }
 
 export function getTokenExpressionValue(token: SegmentToken, currentValue?: string): string {

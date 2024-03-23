@@ -113,8 +113,8 @@ const useNodeAttribute = (operationInfo: NodeOperation, propertyInManifest: stri
     result: manifest
       ? getObjectPropertyValue(manifest.properties, propertyInManifest)
       : connector
-      ? getObjectPropertyValue(connector.properties, propertyInConnector)
-      : undefined,
+        ? getObjectPropertyValue(connector.properties, propertyInConnector)
+        : undefined,
   };
 };
 
