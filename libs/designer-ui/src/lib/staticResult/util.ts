@@ -178,8 +178,8 @@ export const initializePropertyValueInput = (
     typeof currProperties === 'string' || typeof currProperties === 'number' || typeof currProperties === 'boolean'
       ? currProperties
       : Object.keys(currProperties).length > 0
-      ? JSON.stringify(currProperties, null, 2)
-      : schema?.default ?? ''
+        ? JSON.stringify(currProperties, null, 2)
+        : schema?.default ?? ''
   ) as string;
   return inputVal;
 };

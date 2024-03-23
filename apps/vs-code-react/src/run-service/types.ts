@@ -263,10 +263,9 @@ export interface UpdatePanelMetadataMessage {
 // Rest of Message Interfaces
 export interface InjectValuesMessage {
   command: typeof ExtensionCommand.initialize_frame;
-  data:
-    | InitializePayload & {
-        project: string;
-      };
+  data: InitializePayload & {
+    project: string;
+  };
 }
 
 export interface UpdateAccessTokenMessage {

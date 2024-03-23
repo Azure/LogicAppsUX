@@ -134,8 +134,8 @@ export class HttpClient implements IHttpClient {
     return isUrl(updatedUri)
       ? updatedUri
       : isArmResourceId(updatedUri)
-      ? `${this._apihubBaseUrl}${updatedUri}`
-      : `${this._baseUrl}${updatedUri}`;
+        ? `${this._apihubBaseUrl}${updatedUri}`
+        : `${this._baseUrl}${updatedUri}`;
   }
 }
 

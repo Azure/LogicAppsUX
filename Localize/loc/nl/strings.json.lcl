@@ -9376,7 +9376,7 @@
         <Str Cat="Text">
           <Val><![CDATA[HTTP {method} URL]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[URL van de HTTP-{methode}]]></Val>
+            <Val><![CDATA[URL van de HTTP-{method}]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />

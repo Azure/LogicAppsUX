@@ -5817,6 +5817,9 @@
       <Item ItemId=";OrPVcU" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Invalid split on format in ''{splitOn}''.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Nieprawidłowy podział formatu w „{splitOn}”.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -7219,7 +7222,7 @@
         <Str Cat="Text">
           <Val><![CDATA[No results found for {searchTerm}]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Nie znaleziono wyników dla {searchText}]]></Val>
+            <Val><![CDATA[Nie znaleziono wyników dla {searchTerm}]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -9397,7 +9400,7 @@
         <Str Cat="Text">
           <Val><![CDATA[HTTP {method} URL]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[{method} HTTP adresu URL]]></Val>
+            <Val><![CDATA[Adres URL metody {method} HTTP]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -10728,6 +10731,9 @@
       <Item ItemId=";lA/sHA" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Copy the value of ''{label}'' to the clipboard]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Skopiuj wartość „{label}” do schowka]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>

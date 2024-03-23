@@ -285,8 +285,8 @@ export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
     isCurrentNodeSelected || sourceNodeConnectionBeingDrawnFromId === reactFlowId
       ? selectedCardStyles
       : isCurrentNodeHighlighted
-      ? highlightedCardStyles
-      : undefined;
+        ? highlightedCardStyles
+        : undefined;
 
   return (
     <div className={classes.badgeContainer}>

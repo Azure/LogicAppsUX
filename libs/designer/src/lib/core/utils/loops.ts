@@ -649,8 +649,8 @@ export const getTokenExpressionValueForManifestBasedOperation = (
       ? `items(${convertToStringLiteral(loopSource)})`
       : Constants.ITEM
     : actionName
-    ? `${Constants.OUTPUTS}(${convertToStringLiteral(actionName)})`
-    : Constants.TRIGGER_OUTPUTS_OUTPUT;
+      ? `${Constants.OUTPUTS}(${convertToStringLiteral(actionName)})`
+      : Constants.TRIGGER_OUTPUTS_OUTPUT;
 
   return generateExpressionFromKey(method, key, actionName, isInsideArray, required, /* overrideMethod */ false);
 };
@@ -819,6 +819,6 @@ const normalizeKeyPath = (path: string | undefined): string | undefined => {
   return path && path.startsWith('outputs.$.body.')
     ? path.replace('outputs.$.body.', 'body.$.')
     : path === 'outputs.$.body'
-    ? 'body.$'
-    : path;
+      ? 'body.$'
+      : path;
 };

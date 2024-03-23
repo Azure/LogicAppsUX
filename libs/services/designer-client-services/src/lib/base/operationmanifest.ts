@@ -355,8 +355,8 @@ export function getBuiltInOperationInfo(definition: any, isTrigger: boolean): Op
               ? httpswaggertrigger
               : httpswaggeraction
             : isTrigger
-            ? httptrigger
-            : httpaction,
+              ? httptrigger
+              : httpaction,
         };
       }
     case httpwebhook:

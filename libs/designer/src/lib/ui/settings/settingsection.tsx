@@ -275,8 +275,8 @@ const Setting = ({ id, settings, isReadOnly }: { id?: string; settings: Settings
       settingType === 'RunAfter'
         ? 'msla-setting-section-run-after-setting'
         : settingType === 'MultiAddExpressionEditor'
-        ? 'msla-setting-section-expression-field'
-        : 'msla-setting-section-setting';
+          ? 'msla-setting-section-expression-field'
+          : 'msla-setting-section-setting';
     const renderSetting = (): JSX.Element | null => {
       switch (settingType) {
         case 'MultiSelectSetting':
