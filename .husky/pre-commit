@@ -5,3 +5,5 @@ npm run extract
 npm run compile:loc
 npm run compile:loc:psuedo
 npx lint-staged
+git add .
+
