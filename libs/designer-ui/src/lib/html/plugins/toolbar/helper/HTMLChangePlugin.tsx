@@ -11,7 +11,7 @@ import {
   cleanStyleAttribute,
   encodeSegmentValueInLexicalContext,
   getDomFromHtmlEditorString,
-  isAttributeSupportedByLexical,
+  isAttributeSupportedByHtmlEditor,
   isHtmlStringValueSafeForLexical,
 } from './util';
 import { $generateHtmlFromNodes } from '@lexical/html';
@@ -81,7 +81,7 @@ export const convertEditorState = (
         const attributes = Array.from(element.attributes);
         for (let j = 0; j < attributes.length; j++) {
           const attribute = attributes[j];
-          if (!isAttributeSupportedByLexical(element.tagName, attribute.name)) {
+          if (!isAttributeSupportedByHtmlEditor(element.tagName, attribute.name)) {
             element.removeAttribute(attribute.name);
             continue;
           }
