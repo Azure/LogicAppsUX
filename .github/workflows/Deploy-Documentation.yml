@@ -34,7 +34,6 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: 20.x
-
       - run: npm ci
         working-directory: ./docs
       - run: npm run build
