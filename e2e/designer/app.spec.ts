@@ -1,8 +1,7 @@
-import { baseUrl } from '../utils';
 import { expect, test } from '@playwright/test';
 
 test('Sanity Check', async ({ page }) => {
-  await page.goto(baseUrl);
+  await page.goto('/');
 
   await page.getByText('Select an option').click();
   await page.getByRole('option', { name: 'Simple Big Workflow' }).click();
