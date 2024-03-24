@@ -1,51 +1,8 @@
-[NX Daemon Server] - 2024-03-24T18:41:40.053Z - Started listening on: /var/folders/_y/sdlctx2s49x0rfh4btvlkk0h0000gn/T/b2e3995542fb2c572214/d.sock
-[NX Daemon Server] - 2024-03-24T18:41:40.072Z - [WATCHER]: Subscribed to changes within: /Users/travisharris/code/LogicAppsUX
-[NX Daemon Server] - 2024-03-24T18:41:43.991Z - Established a connection. Number of open connections: 1
-[NX Daemon Server] - 2024-03-24T18:41:43.992Z - Established a connection. Number of open connections: 2
-[NX Daemon Server] - 2024-03-24T18:41:43.993Z - Closed a connection. Number of open connections: 1
-[NX Daemon Server] - 2024-03-24T18:41:44.008Z - [REQUEST]: Client Request for Project Graph Received
-[NX Daemon Server] - 2024-03-24T18:41:44.142Z - [REQUEST]: Updated file-hasher based on watched changes, recomputing project graph...
-[NX Daemon Server] - 2024-03-24T18:41:44.448Z - [REQUEST]: Responding to the client. project-graph
-[NX Daemon Server] - 2024-03-24T18:41:44.451Z - Time taken for 'total for creating and serializing project graph' 440.55595803260803ms
-[NX Daemon Server] - 2024-03-24T18:41:44.457Z - Done responding to the client project-graph
-[NX Daemon Server] - 2024-03-24T18:42:44.507Z - [WATCHER]: 2 file(s) created or restored, 0 file(s) modified, 0 file(s) deleted
-[NX Daemon Server] - 2024-03-24T18:42:44.708Z - [REQUEST]: Updated file-hasher based on watched changes, recomputing project graph...
-[NX Daemon Server] - 2024-03-24T18:42:44.774Z - Time taken for 'hash changed files from watcher' 29.437458038330078ms
-[NX Daemon Server] - 2024-03-24T18:44:26.610Z - Closed a connection. Number of open connections: 0
-[NX Daemon Server] - 2024-03-24T18:44:33.852Z - Established a connection. Number of open connections: 1
-[NX Daemon Server] - 2024-03-24T18:44:33.852Z - Closed a connection. Number of open connections: 0
-[NX Daemon Server] - 2024-03-24T18:44:33.853Z - Established a connection. Number of open connections: 1
-[NX Daemon Server] - 2024-03-24T18:44:33.863Z - [REQUEST]: Client Request for Project Graph Received
-[NX Daemon Server] - 2024-03-24T18:44:33.863Z - [REQUEST]: Responding to the client. project-graph
-[NX Daemon Server] - 2024-03-24T18:44:33.867Z - Time taken for 'total for creating and serializing project graph' 0.26579201221466064ms
-[NX Daemon Server] - 2024-03-24T18:44:33.871Z - Done responding to the client project-graph
-[NX Daemon Server] - 2024-03-24T18:44:49.964Z - [REQUEST]: Responding to the client. recordOutputsHash
-[NX Daemon Server] - 2024-03-24T18:44:49.964Z - Done responding to the client recordOutputsHash
-[NX Daemon Server] - 2024-03-24T18:45:46.512Z - [REQUEST]: Responding to the client. recordOutputsHash
-[NX Daemon Server] - 2024-03-24T18:45:46.512Z - Done responding to the client recordOutputsHash
-[NX Daemon Server] - 2024-03-24T18:46:39.864Z - [REQUEST]: Responding to the client. recordOutputsHash
-[NX Daemon Server] - 2024-03-24T18:46:39.864Z - Done responding to the client recordOutputsHash
-[NX Daemon Server] - 2024-03-24T18:47:13.847Z - [REQUEST]: Responding to the client. recordOutputsHash
-[NX Daemon Server] - 2024-03-24T18:47:13.847Z - Done responding to the client recordOutputsHash
-[NX Daemon Server] - 2024-03-24T18:47:19.410Z - [REQUEST]: Responding to the client. recordOutputsHash
-[NX Daemon Server] - 2024-03-24T18:47:19.411Z - Done responding to the client recordOutputsHash
-[NX Daemon Server] - 2024-03-24T18:47:20.851Z - [REQUEST]: Responding to the client. recordOutputsHash
-[NX Daemon Server] - 2024-03-24T18:47:20.851Z - Done responding to the client recordOutputsHash
-[NX Daemon Server] - 2024-03-24T18:47:21.599Z - [REQUEST]: Responding to the client. recordOutputsHash
-[NX Daemon Server] - 2024-03-24T18:47:21.599Z - Done responding to the client recordOutputsHash
-[NX Daemon Server] - 2024-03-24T18:47:22.703Z - [REQUEST]: Responding to the client. recordOutputsHash
-[NX Daemon Server] - 2024-03-24T18:47:22.704Z - Done responding to the client recordOutputsHash
-[NX Daemon Server] - 2024-03-24T18:47:23.504Z - [REQUEST]: Responding to the client. recordOutputsHash
-[NX Daemon Server] - 2024-03-24T18:47:23.504Z - Done responding to the client recordOutputsHash
-[NX Daemon Server] - 2024-03-24T18:47:24.153Z - [REQUEST]: Responding to the client. recordOutputsHash
-[NX Daemon Server] - 2024-03-24T18:47:24.153Z - Done responding to the client recordOutputsHash
-[NX Daemon Server] - 2024-03-24T18:47:24.167Z - Closed a connection. Number of open connections: 0
-[NX Daemon Server] - 2024-03-24T19:43:29.077Z - [WATCHER]: Localize/lang/strings.json was modified
-[NX Daemon Server] - 2024-03-24T19:43:29.393Z - [REQUEST]: Updated file-hasher based on watched changes, recomputing project graph...
-[NX Daemon Server] - 2024-03-24T19:43:29.479Z - Time taken for 'hash changed files from watcher' 48.14100003242493ms
-[NX Daemon Server] - 2024-03-24T19:43:29.769Z - [WATCHER]: 0 file(s) created or restored, 19 file(s) modified, 0 file(s) deleted
-[NX Daemon Server] - 2024-03-24T19:43:30.129Z - [REQUEST]: Updated file-hasher based on watched changes, recomputing project graph...
-[NX Daemon Server] - 2024-03-24T19:43:30.205Z - Time taken for 'hash changed files from watcher' 50.176333010196686ms
-[NX Daemon Server] - 2024-03-24T19:43:30.343Z - [WATCHER]: libs/logic-apps-shared/src/intl/compiled-lang/strings.en-XA.json was modified
-[NX Daemon Server] - 2024-03-24T19:43:30.864Z - [REQUEST]: Updated file-hasher based on watched changes, recomputing project graph...
-[NX Daemon Server] - 2024-03-24T19:43:30.930Z - Time taken for 'hash changed files from watcher' 30.748291969299316ms
+[NX Daemon Server] - 2024-03-24T19:44:10.566Z - Started listening on: /var/folders/_y/sdlctx2s49x0rfh4btvlkk0h0000gn/T/b2e3995542fb2c572214/d.sock
+[NX Daemon Server] - 2024-03-24T19:44:10.592Z - [WATCHER]: Subscribed to changes within: /Users/travisharris/code/LogicAppsUX
+[NX Daemon Server] - 2024-03-24T19:44:32.833Z - [WATCHER]: Localize/lang/strings.json was modified
+[NX Daemon Server] - 2024-03-24T19:44:33.116Z - [REQUEST]: Updated file-hasher based on watched changes, recomputing project graph...
+[NX Daemon Server] - 2024-03-24T19:44:33.517Z - [WATCHER]: 0 file(s) created or restored, 19 file(s) modified, 0 file(s) deleted
+[NX Daemon Server] - 2024-03-24T19:44:33.852Z - [REQUEST]: Updated file-hasher based on watched changes, recomputing project graph...
+[NX Daemon Server] - 2024-03-24T19:44:34.047Z - [WATCHER]: libs/logic-apps-shared/src/intl/compiled-lang/strings.en-XA.json was modified
+[NX Daemon Server] - 2024-03-24T19:44:34.547Z - [REQUEST]: Updated file-hasher based on watched changes, recomputing project graph...
