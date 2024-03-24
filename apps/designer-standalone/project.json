@@ -63,9 +63,7 @@
           "buildTarget": "designer-standalone:build:development",
           "hmr": false,
           "host": "localhost",
-          "ssl": true,
-          "sslKey": "ci-key.pem",
-          "sslCert": "ci-cert.pem"
+          "ssl": false
         },
         "development": {
           "buildTarget": "designer-standalone:build:development"
