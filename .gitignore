@@ -56,3 +56,4 @@ __azurite_db_queue_extent__.json
 # Generated Docusaurus files
 .docusaurus/
 .cache-loader/
+docs/src/pages/CHANGELOG.MD

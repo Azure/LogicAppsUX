@@ -9,7 +9,6 @@
     "designer-standalone": "apps/designer-standalone",
     "designer-ui": "libs/designer-ui",
     "logic-apps-shared": "libs/logic-apps-shared",
-    "logic-apps-ux-docs": "apps/logic-apps-ux-docs",
     "plugins-playwright": "libs/plugins/playwright",
     "vs-code-designer": "apps/vs-code-designer",
     "vs-code-react": "apps/vs-code-react",

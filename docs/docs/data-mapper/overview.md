@@ -29,22 +29,22 @@ Test data (XSLTs, map definitions, schemas, etc.) to be utilized within Data Map
 
 Translates any supported schema format into JSON consumed by the Data Mapper frontend
 
-**Endpoint:** http://{localhost:7071}/runtime/webhooks/workflow/api/management/schemas/CBRSourceSchema/contents/schemaTree?api-version=2019-10-01-edge-preview
+**Endpoint:** http://\{localhost:7071\}/runtime/webhooks/workflow/api/management/schemas/CBRSourceSchema/contents/schemaTree?api-version=2019-10-01-edge-preview
 
 #### Function Manifest - GET mapTransformations
 
 Responds with the list of available Functions and their metadata
 
-**Endpoint:** http://{localhost:7071}/runtime/webhooks/workflow/api/management/mapTransformations?api-version=2019-10-01-edge-preview
+**Endpoint:** http://\{localhost:7071\}/runtime/webhooks/workflow/api/management/mapTransformations?api-version=2019-10-01-edge-preview
 
 #### Data Map XSLT generation - POST generateXslt
 
 Formats a data map with all of its connections into the XSLT (.xslt) Formats
 
-**Endpoint:** http://{localhost:7071}/runtime/webhooks/workflow/api/management/generateXslt
+**Endpoint:** http://\{localhost:7071\}/runtime/webhooks/workflow/api/management/generateXslt
 
 #### Test Mappings/Connections - POST testMap
 
 Tests data map and its connections to ensure that a specified input schema value produces the expected output schema value
 
-**Endpoint:** http://{localhost:7071}/runtime/webhooks/workflow/api/management/maps/{mapXsltFilename}/testMap
+**Endpoint:** http://\{localhost:7071\}/runtime/webhooks/workflow/api/management/maps/\{mapXsltFilename\}/testMap
