@@ -3,8 +3,7 @@ import type { RunDisplayItem } from '../../run-service';
 import type { RootState } from '../../state/store';
 import { VSCodeContext } from '../../webviewCommunication';
 import './overview.less';
-import { StandardRunService } from '@microsoft/designer-client-services-logic-apps';
-import type { CallbackInfo } from '@microsoft/designer-client-services-logic-apps';
+import { StandardRunService } from '@microsoft/logic-apps-shared';
 import { Overview, isRunError, mapToRunItem } from '@microsoft/designer-ui';
 import type { Runs } from '@microsoft/logic-apps-shared';
 import { ExtensionCommand, HttpClient } from '@microsoft/vscode-extension';
@@ -12,7 +11,10 @@ import { useCallback, useContext, useMemo } from 'react';
 import { useInfiniteQuery, useMutation } from 'react-query';
 import { useSelector } from 'react-redux';
 import invariant from 'tiny-invariant';
-
+export interface CallbackInfo {
+  method?: string;
+  value: string;
+}
 export const OverviewApp = () => {
   const workflowState = useSelector((state: RootState) => state.workflow);
   const vscode = useContext(VSCodeContext);

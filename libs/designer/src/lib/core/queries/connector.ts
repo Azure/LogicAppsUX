@@ -4,8 +4,8 @@ import type {
   ManagedIdentityRequestProperties,
   TreeDynamicExtension,
   TreeDynamicValue,
-} from '@microsoft/designer-client-services-logic-apps';
-import { ConnectorService } from '@microsoft/designer-client-services-logic-apps';
+} from '@microsoft/logic-apps-shared';
+import { ConnectorService } from '@microsoft/logic-apps-shared';
 import type { FilePickerInfo, LegacyDynamicSchemaExtension, LegacyDynamicValuesExtension, OpenAPIV2 } from '@microsoft/logic-apps-shared';
 import { Types, getPropertyValue, equals, getJSONValue, getObjectPropertyValue, isNullOrUndefined } from '@microsoft/logic-apps-shared';
 

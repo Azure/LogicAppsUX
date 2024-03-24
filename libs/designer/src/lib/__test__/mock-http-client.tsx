@@ -1,4 +1,4 @@
-import type { IHttpClient } from '@microsoft/designer-client-services-logic-apps';
+import type { IHttpClient } from '@microsoft/logic-apps-shared';
 
 export class MockHttpClient implements IHttpClient {
   dispose() {

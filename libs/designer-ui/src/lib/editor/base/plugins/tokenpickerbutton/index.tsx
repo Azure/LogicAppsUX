@@ -5,7 +5,7 @@ import { TooltipHost } from '@fluentui/react/lib/Tooltip';
 import { Depths } from '@fluentui/theme';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
-import { LogEntryLevel, LoggerService } from '@microsoft/designer-client-services-logic-apps';
+import { LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
 import type { NodeKey } from 'lexical';
 import { $getSelection } from 'lexical';
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';

@@ -1,6 +1,6 @@
 import { getEditorAndOptions } from '..';
 import type { VariableDeclaration } from '../../../../../../core/state/tokens/tokensSlice';
-import { InitEditorService } from '@microsoft/designer-client-services-logic-apps';
+import { InitEditorService } from '@microsoft/logic-apps-shared';
 import type { ParameterInfo } from '@microsoft/designer-ui';
 import type { OperationInfo } from '@microsoft/logic-apps-shared';
 

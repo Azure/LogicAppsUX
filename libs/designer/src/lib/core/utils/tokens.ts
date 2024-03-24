@@ -34,7 +34,7 @@ import {
 import { createTokenValueSegment } from './parameters/segment';
 import { getSplitOnValue, hasSecureOutputs } from './setting';
 import { getVariableTokens } from './variables';
-import { OperationManifestService } from '@microsoft/designer-client-services-logic-apps';
+import { OperationManifestService } from '@microsoft/logic-apps-shared';
 import type { FunctionDefinition, OutputToken, Token, ValueSegment } from '@microsoft/designer-ui';
 import { UIConstants, TemplateFunctions, TokenType, removeUTFExpressions } from '@microsoft/designer-ui';
 import { getIntl, getKnownTitles, OutputKeys, labelCase, unmap, equals, filterRecord, getRecordEntry } from '@microsoft/logic-apps-shared';

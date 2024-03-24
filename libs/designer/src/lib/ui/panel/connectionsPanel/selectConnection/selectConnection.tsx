@@ -9,7 +9,7 @@ import { ActionList } from '../actionList/actionList';
 import { ConnectionTable } from './connectionTable';
 import { MessageBar, MessageBarType } from '@fluentui/react';
 import { Body1Strong, Button, Divider, Spinner } from '@fluentui/react-components';
-import { ConnectionService } from '@microsoft/designer-client-services-logic-apps';
+import { ConnectionService } from '@microsoft/logic-apps-shared';
 import { getIconUriFromConnector, type Connection, type Connector } from '@microsoft/logic-apps-shared';
 import { useCallback, useEffect, useMemo } from 'react';
 import { useIntl } from 'react-intl';

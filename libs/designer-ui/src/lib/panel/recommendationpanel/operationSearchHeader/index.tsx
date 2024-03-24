@@ -2,8 +2,8 @@ import { DesignerSearchBox } from '../../../searchbox';
 import { Checkbox } from '@fluentui/react';
 import type { IDropdownOption } from '@fluentui/react/lib/Dropdown';
 import { Dropdown } from '@fluentui/react/lib/Dropdown';
-import type { OperationRuntimeCategory } from '@microsoft/designer-client-services-logic-apps';
-import { LogEntryLevel, LoggerService, SearchService } from '@microsoft/designer-client-services-logic-apps';
+import type { OperationRuntimeCategory } from '@microsoft/logic-apps-shared';
+import { LogEntryLevel, LoggerService, SearchService } from '@microsoft/logic-apps-shared';
 import type { IntlShape } from 'react-intl';
 import { useIntl } from 'react-intl';
 

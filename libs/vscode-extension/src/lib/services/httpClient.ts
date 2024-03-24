@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
-import type { HttpRequestOptions, IHttpClient } from '@microsoft/designer-client-services-logic-apps';
+import type { HttpRequestOptions, IHttpClient } from '@microsoft/logic-apps-shared';
 import { HTTP_METHODS } from '@microsoft/logic-apps-shared';
 import axios from 'axios';
 

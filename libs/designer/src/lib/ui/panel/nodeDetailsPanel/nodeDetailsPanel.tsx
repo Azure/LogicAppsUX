@@ -21,7 +21,7 @@ import { isOperationNameValid, isRootNodeInGraph } from '../../../core/utils/gra
 import { CommentMenuItem } from '../../menuItems/commentMenuItem';
 import { DeleteMenuItem } from '../../menuItems/deleteMenuItem';
 import { usePanelTabs } from './usePanelTabs';
-import { WorkflowService } from '@microsoft/designer-client-services-logic-apps';
+import { WorkflowService } from '@microsoft/logic-apps-shared';
 import type { CommonPanelProps, PageActionTelemetryData } from '@microsoft/designer-ui';
 import { PanelContainer, PanelLocation, PanelScope, PanelSize } from '@microsoft/designer-ui';
 import { SUBGRAPH_TYPES, isNullOrUndefined } from '@microsoft/logic-apps-shared';

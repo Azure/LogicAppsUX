@@ -1,6 +1,6 @@
 import * as connectionSelector from '../../connection/connectionSelector';
 import { useOperationDescription, useOperationDocumentation, useOperationSummary } from '../actionMetadataSelector';
-import * as designerClientServices from '@microsoft/designer-client-services-logic-apps';
+import * as designerClientServices from '@microsoft/logic-apps-shared';
 import type { Connector, Documentation, OperationManifest } from '@microsoft/logic-apps-shared';
 import * as reactQuery from 'react-query';
 

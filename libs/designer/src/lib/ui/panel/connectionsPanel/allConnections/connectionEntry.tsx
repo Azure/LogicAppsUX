@@ -10,7 +10,7 @@ import {
   ErrorCircle24Filled,
   PlugDisconnected24Filled,
 } from '@fluentui/react-icons';
-import { HostService } from '@microsoft/designer-client-services-logic-apps';
+import { HostService } from '@microsoft/logic-apps-shared';
 import { getConnectionErrors } from '@microsoft/logic-apps-shared';
 import { useCallback, useMemo } from 'react';
 import { useIntl } from 'react-intl';

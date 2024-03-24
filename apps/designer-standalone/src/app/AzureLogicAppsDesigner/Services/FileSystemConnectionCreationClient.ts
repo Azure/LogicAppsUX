@@ -1,4 +1,4 @@
-import type { ConnectionCreationInfo, IHttpClient } from '@microsoft/designer-client-services-logic-apps';
+import type { ConnectionCreationInfo, IHttpClient } from '@microsoft/logic-apps-shared';
 
 type CreateConnectionFunc = (connectionInfo: ConnectionCreationInfo, connectionName: string) => Promise<ConnectionCreationInfo>;
 

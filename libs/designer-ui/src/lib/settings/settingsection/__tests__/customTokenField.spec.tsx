@@ -2,7 +2,7 @@ import { ValueSegmentType } from '../../../editor';
 import type { CustomTokenFieldProps } from '../customTokenField';
 import { CustomTokenField, isCustomEditor, toCustomEditorAndOptions } from '../customTokenField';
 import { TokenField } from '../settingTokenField';
-import type { IRenderDefaultEditorParams } from '@microsoft/designer-client-services-logic-apps';
+import type { IRenderDefaultEditorParams } from '@microsoft/logic-apps-shared';
 import * as ReactShallowRenderer from 'react-test-renderer/shallow';
 
 describe('ui/settings/customTokenField', () => {

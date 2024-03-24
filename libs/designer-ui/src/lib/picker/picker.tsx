@@ -4,7 +4,7 @@ import { Spinner } from '@fluentui/react';
 import type { IBreadcrumbItem } from '@fluentui/react/lib/Breadcrumb';
 import type { ICalloutContentStyles } from '@fluentui/react/lib/Callout';
 import { FocusTrapCallout } from '@fluentui/react/lib/Callout';
-import type { TreeDynamicValue } from '@microsoft/designer-client-services-logic-apps';
+import type { TreeDynamicValue } from '@microsoft/logic-apps-shared';
 import { useIntl } from 'react-intl';
 
 const calloutStyles: Partial<ICalloutContentStyles> = {

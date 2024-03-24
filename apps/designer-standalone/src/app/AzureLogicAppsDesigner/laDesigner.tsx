@@ -35,8 +35,8 @@ import {
   StandardOperationManifestService,
   StandardRunService,
   StandardSearchService,
-} from '@microsoft/designer-client-services-logic-apps';
-import type { ContentType, IWorkflowService } from '@microsoft/designer-client-services-logic-apps';
+} from '@microsoft/logic-apps-shared';
+import type { ContentType, IWorkflowService } from '@microsoft/logic-apps-shared';
 import type { Workflow } from '@microsoft/logic-apps-designer';
 import {
   DesignerProvider,

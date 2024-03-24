@@ -1,7 +1,7 @@
 import { useId } from '../useId';
 import { Icon, IconButton, TooltipHost } from '@fluentui/react';
 import type { IIconStyles } from '@fluentui/react';
-import type { TreeDynamicValue } from '@microsoft/designer-client-services-logic-apps';
+import type { TreeDynamicValue } from '@microsoft/logic-apps-shared';
 import { useIntl } from 'react-intl';
 
 export const PickerItemType = {
