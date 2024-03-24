@@ -1,4 +1,12 @@
 # Logic Apps Designer
+## [3.0.0](https://github.com/Azure/LogicAppsUX/compare/v2.128.0...v3.0.0) (2024-03-24)
+
+
+### Bug Fixes
+
+* **designer-ui:** Add support for `<img src=>` in raw HTML editor ([#4422](https://github.com/Azure/LogicAppsUX/issues/4422)) ([9ce1a98](https://github.com/Azure/LogicAppsUX/commit/9ce1a98fbf3fb2abdbaf2f26341b835ad6c7d2d3))
+* **vscode:** Add app kind setting to local settings creation and update on design time ([#4417](https://github.com/Azure/LogicAppsUX/issues/4417)) ([58425bd](https://github.com/Azure/LogicAppsUX/commit/58425bd30b86494ea347777f5b5378b9326d14a6))
+
 ## [2.128.0](https://github.com/Azure/LogicAppsUX/compare/v2.127.0...v2.128.0) (2024-03-22)
 
 
