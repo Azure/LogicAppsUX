@@ -25,6 +25,15 @@ import {
 import { ArmParser } from './Utilities/ArmParser';
 import { WorkflowUtility } from './Utilities/Workflow';
 import { Chatbot, chatbotPanelWidth } from '@microsoft/chatbot';
+import type { CustomCodeFileNameMapping, Workflow } from '@microsoft/logic-apps-designer';
+import {
+  DesignerProvider,
+  BJSWorkflowProvider,
+  Designer,
+  getReactQueryClient,
+  serializeBJSWorkflow,
+  store as DesignerStore,
+} from '@microsoft/logic-apps-designer';
 import {
   BaseApiManagementService,
   BaseAppServiceService,
@@ -37,19 +46,13 @@ import {
   StandardOperationManifestService,
   StandardRunService,
   StandardSearchService,
-} from '@microsoft/designer-client-services-logic-apps';
-import type { ContentType, IWorkflowService } from '@microsoft/designer-client-services-logic-apps';
-import type { CustomCodeFileNameMapping, Workflow } from '@microsoft/logic-apps-designer';
-import {
-  DesignerProvider,
-  BJSWorkflowProvider,
-  Designer,
-  getReactQueryClient,
-  serializeBJSWorkflow,
-  store as DesignerStore,
-} from '@microsoft/logic-apps-designer';
-import { clone, equals, guid, isArmResourceId, optional } from '@microsoft/logic-apps-shared';
-import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
+  clone,
+  equals,
+  guid,
+  isArmResourceId,
+  optional,
+} from '@microsoft/logic-apps-shared';
+import type { ContentType, IWorkflowService, LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import axios from 'axios';
 import isEqual from 'lodash.isequal';
 import { useEffect, useMemo, useState } from 'react';
@@ -180,7 +183,9 @@ const DesignerEditor = () => {
     return <></>;
   }
 
-  const originalSettings: Record<string, string> = { ...(settingsData?.properties ?? {}) };
+  const originalSettings: Record<string, string> = {
+    ...(settingsData?.properties ?? {}),
+  };
   const originalParametersData: ParametersData = clone(parameters ?? {});
 
   if (isError || settingsIsError) {
@@ -197,7 +202,9 @@ const DesignerEditor = () => {
       definition,
     };
 
-    const newManagedApiConnections = { ...(connectionsData?.managedApiConnections ?? {}) };
+    const newManagedApiConnections = {
+      ...(connectionsData?.managedApiConnections ?? {}),
+    };
     const newServiceProviderConnections: Record<string, any> = {};
 
     const referenceKeys = Object.keys(connectionReferences ?? {});
@@ -294,7 +301,12 @@ const DesignerEditor = () => {
       >
         {workflow?.definition ? (
           <BJSWorkflowProvider
-            workflow={{ definition: workflow?.definition, connectionReferences, parameters, kind: workflow?.kind }}
+            workflow={{
+              definition: workflow?.definition,
+              connectionReferences,
+              parameters,
+              kind: workflow?.kind,
+            }}
             customCode={customCodeData}
             runInstance={runInstanceData}
             appSettings={settingsData?.properties}
@@ -353,7 +365,11 @@ const getDesignerServices = (
   const { subscriptionId, resourceGroup } = new ArmParser(workflowId);
 
   const defaultServiceParams = { baseUrl, httpClient, apiVersion };
-  const armServiceParams = { ...defaultServiceParams, baseUrl: armUrl, siteResourceId };
+  const armServiceParams = {
+    ...defaultServiceParams,
+    baseUrl: armUrl,
+    siteResourceId,
+  };
 
   const connectionService = new StandardConnectionService({
     ...defaultServiceParams,
@@ -387,13 +403,24 @@ const getDesignerServices = (
     httpClient,
     queryClient,
   });
-  const childWorkflowService = new ChildWorkflowService({ apiVersion, baseUrl: armUrl, siteResourceId, httpClient, workflowName });
+  const childWorkflowService = new ChildWorkflowService({
+    apiVersion,
+    baseUrl: armUrl,
+    siteResourceId,
+    httpClient,
+    workflowName,
+  });
   const artifactService = new ArtifactService({
     ...armServiceParams,
     siteResourceId,
     integrationAccountCallbackUrl: undefined,
   });
-  const appService = new BaseAppServiceService({ baseUrl: armUrl, apiVersion, subscriptionId, httpClient });
+  const appService = new BaseAppServiceService({
+    baseUrl: armUrl,
+    apiVersion,
+    subscriptionId,
+    httpClient,
+  });
   const connectorService = new StandardConnectorService({
     ...defaultServiceParams,
     clientSupportedOperations: [
@@ -469,7 +496,11 @@ const getDesignerServices = (
   const operationManifestService = new StandardOperationManifestService(defaultServiceParams);
   const searchService = new StandardSearchService({
     ...defaultServiceParams,
-    apiHubServiceDetails: { apiVersion: '2018-07-01-preview', subscriptionId, location },
+    apiHubServiceDetails: {
+      apiVersion: '2018-07-01-preview',
+      subscriptionId,
+      location,
+    },
     showStatefulOperations: isStateful,
     isDev: false,
   });

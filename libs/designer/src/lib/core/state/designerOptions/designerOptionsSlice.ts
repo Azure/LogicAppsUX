@@ -1,5 +1,5 @@
 import type { DesignerOptionsState, ServiceOptions } from './designerOptionsInterfaces';
-import type { ILoggerService } from '@microsoft/designer-client-services-logic-apps';
+import type { ILoggerService } from '@microsoft/logic-apps-shared';
 import {
   DevLogger,
   InitLoggerService,
@@ -19,7 +19,7 @@ import {
   InitConnectionParameterEditorService,
   InitChatbotService,
   InitCustomCodeService,
-} from '@microsoft/designer-client-services-logic-apps';
+} from '@microsoft/logic-apps-shared';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 

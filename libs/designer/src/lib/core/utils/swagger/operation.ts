@@ -27,7 +27,7 @@ import {
   updateParameterWithValues,
 } from '../parameters/helper';
 import { loadInputValuesFromDefinition } from './inputsbuilder';
-import { LogEntryLevel, LoggerService, StaticResultService } from '@microsoft/designer-client-services-logic-apps';
+import { LogEntryLevel, LoggerService, StaticResultService } from '@microsoft/logic-apps-shared';
 import type { LAOperation, LogicAppsV2, OperationInfo, OutputParameter, SwaggerParser } from '@microsoft/logic-apps-shared';
 import {
   ParameterLocations,

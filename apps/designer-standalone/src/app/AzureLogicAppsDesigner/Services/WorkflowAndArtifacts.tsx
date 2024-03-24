@@ -3,10 +3,9 @@ import type { CallbackInfo, ConnectionsData, ParametersData, Workflow } from '..
 import { Artifact } from '../Models/Workflow';
 import { validateResourceId } from '../Utilities/resourceUtilities';
 import { convertDesignerWorkflowToConsumptionWorkflow } from './ConsumptionSerializationHelpers';
-import type { VFSObject } from '@microsoft/designer-client-services-logic-apps';
-import { CustomCodeService, LogEntryLevel, LoggerService } from '@microsoft/designer-client-services-logic-apps';
 import type { CustomCodeFileNameMapping } from '@microsoft/logic-apps-designer';
-import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
+import { CustomCodeService, LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
+import type { LogicAppsV2, VFSObject } from '@microsoft/logic-apps-shared';
 import axios from 'axios';
 import jwt_decode from 'jwt-decode';
 import { useQuery } from 'react-query';

@@ -24,10 +24,16 @@ import { ParameterGroupKeys, getCustomCodeFileName, getParameterFromName } from 
 import { CommentMenuItem } from '../../menuItems/commentMenuItem';
 import { DeleteMenuItem } from '../../menuItems/deleteMenuItem';
 import { usePanelTabs } from './usePanelTabs';
-import { CustomCodeService, WorkflowService } from '@microsoft/designer-client-services-logic-apps';
 import type { CommonPanelProps, PageActionTelemetryData } from '@microsoft/designer-ui';
 import { PanelContainer, PanelScope, PanelSize } from '@microsoft/designer-ui';
-import { SUBGRAPH_TYPES, isNullOrUndefined, replaceWhiteSpaceWithUnderscore, splitFileName } from '@microsoft/logic-apps-shared';
+import {
+  CustomCodeService,
+  WorkflowService,
+  SUBGRAPH_TYPES,
+  isNullOrUndefined,
+  replaceWhiteSpaceWithUnderscore,
+  splitFileName,
+} from '@microsoft/logic-apps-shared';
 import type { ReactElement } from 'react';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -84,7 +90,12 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
 
   const handleCommentMenuClick = (_: React.MouseEvent<HTMLElement>): void => {
     showCommentBox = !showCommentBox;
-    dispatch(setNodeDescription({ nodeId: selectedNode, ...(showCommentBox && { description: '' }) }));
+    dispatch(
+      setNodeDescription({
+        nodeId: selectedNode,
+        ...(showCommentBox && { description: '' }),
+      })
+    );
   };
 
   // Removing the 'add a note' button for subgraph nodes
@@ -119,7 +130,10 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
           parameterId: parameter.id,
           editorViewModel: {
             ...(parameter.editorViewModel ?? {}),
-            customCodeData: { ...(parameter.editorViewModel?.customCodeData ?? {}), fileName: newFileName },
+            customCodeData: {
+              ...(parameter.editorViewModel?.customCodeData ?? {}),
+              fileName: newFileName,
+            },
           },
         })
       );
@@ -198,7 +212,12 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
             inputs.parameterGroups[parameterGroup].parameters.forEach((parameter: any) => {
               const validationErrors = validateParameter(parameter, parameter.value);
               dispatch(
-                updateParameterValidation({ nodeId: selectedNode, groupId: parameterGroup, parameterId: parameter.id, validationErrors })
+                updateParameterValidation({
+                  nodeId: selectedNode,
+                  groupId: parameterGroup,
+                  parameterId: parameter.id,
+                  validationErrors,
+                })
               );
             });
           });

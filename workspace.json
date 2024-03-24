@@ -5,13 +5,9 @@
     "data-mapper": "libs/data-mapper",
     "data-mapper-standalone": "apps/data-mapper-standalone",
     "designer": "libs/designer",
-    "designer-e2e": "apps/designer-e2e",
     "designer-standalone": "apps/designer-standalone",
     "designer-ui": "libs/designer-ui",
     "logic-apps-shared": "libs/logic-apps-shared",
-    "logic-apps-ux-docs": "apps/logic-apps-ux-docs",
-    "plugins-playwright": "libs/plugins/playwright",
-    "services-designer-client-services": "libs/services/designer-client-services",
     "vs-code-designer": "apps/vs-code-designer",
     "vs-code-react": "apps/vs-code-react",
     "vscode-extension": "libs/vscode-extension"

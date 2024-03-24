@@ -28,8 +28,8 @@ import {
   toParameterInfoMap,
   tryConvertStringToExpression,
 } from './helper';
-import type { ListDynamicValue, ManagedIdentityRequestProperties, TreeDynamicValue } from '@microsoft/designer-client-services-logic-apps';
-import { OperationManifestService } from '@microsoft/designer-client-services-logic-apps';
+import type { ListDynamicValue, ManagedIdentityRequestProperties, TreeDynamicValue } from '@microsoft/logic-apps-shared';
+import { OperationManifestService } from '@microsoft/logic-apps-shared';
 import type { ParameterInfo } from '@microsoft/designer-ui';
 import { TokenType, ValueSegmentType } from '@microsoft/designer-ui';
 import {

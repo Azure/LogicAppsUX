@@ -1,6 +1,6 @@
 import { MenuItem } from '@fluentui/react-components';
 import { bundleIcon, Clipboard24Filled, Clipboard24Regular } from '@fluentui/react-icons';
-import { LogEntryLevel, LoggerService } from '@microsoft/designer-client-services-logic-apps';
+import { LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
 import { isApple } from '@microsoft/logic-apps-shared';
 import { useCallback } from 'react';
 import { useIntl } from 'react-intl';

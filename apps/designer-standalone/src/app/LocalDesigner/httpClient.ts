@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
-import type { HttpRequestOptions, IHttpClient } from '@microsoft/designer-client-services-logic-apps';
+import type { HttpRequestOptions, IHttpClient } from '@microsoft/logic-apps-shared';
 
 export class HttpClient implements IHttpClient {
   async get<ReturnType>(_options: HttpRequestOptions<unknown>): Promise<ReturnType> {

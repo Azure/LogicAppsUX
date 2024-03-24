@@ -3,8 +3,6 @@ import { Badge } from '@fluentui/react-components';
 import type { ICommandBarItemProps } from '@fluentui/react/lib/CommandBar';
 import { CommandBar } from '@fluentui/react/lib/CommandBar';
 import { Spinner, SpinnerSize } from '@fluentui/react/lib/Spinner';
-import type { ILoggerService } from '@microsoft/designer-client-services-logic-apps';
-import { LogEntryLevel, LoggerService } from '@microsoft/designer-client-services-logic-apps';
 import type { CustomCodeFileNameMapping, RootState, Workflow } from '@microsoft/logic-apps-designer';
 import {
   store as DesignerStore,
@@ -21,7 +19,8 @@ import {
   useNodesInitialized,
   getCustomCodeFilesWithData,
 } from '@microsoft/logic-apps-designer';
-import { isNullOrEmpty, RUN_AFTER_COLORS } from '@microsoft/logic-apps-shared';
+import type { ILoggerService } from '@microsoft/logic-apps-shared';
+import { LogEntryLevel, LoggerService, isNullOrEmpty, RUN_AFTER_COLORS } from '@microsoft/logic-apps-shared';
 import { useMemo } from 'react';
 import { useMutation } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
@@ -72,7 +71,14 @@ export const DesignerCommandBar = ({
         return parameterGroup.parameters.some((parameter) => {
           const validationErrors = validateParameter(parameter, parameter.value);
           if (validationErrors.length > 0) {
-            dispatch(updateParameterValidation({ nodeId: id, groupId: parameterGroup.id, parameterId: parameter.id, validationErrors }));
+            dispatch(
+              updateParameterValidation({
+                nodeId: id,
+                groupId: parameterGroup.id,
+                parameterId: parameter.id,
+                validationErrors,
+              })
+            );
           }
           return validationErrors.length;
         });
@@ -171,7 +177,11 @@ export const DesignerCommandBar = ({
         disabled: !haveErrors,
         iconProps: {
           iconName: haveErrors ? 'StatusErrorFull' : 'ErrorBadge',
-          style: haveErrors ? { color: RUN_AFTER_COLORS[isDarkMode ? 'dark' : 'light']['FAILED'] } : undefined,
+          style: haveErrors
+            ? {
+                color: RUN_AFTER_COLORS[isDarkMode ? 'dark' : 'light']['FAILED'],
+              }
+            : undefined,
         },
         onClick: () => !!dispatch(openPanel({ panelMode: 'Error' })),
       },
@@ -231,7 +241,13 @@ export const DesignerCommandBar = ({
   );
 };
 
-const CustomCommandBarButton = ({ text, showError }: { text: string; showError?: boolean }) => (
+const CustomCommandBarButton = ({
+  text,
+  showError,
+}: {
+  text: string;
+  showError?: boolean;
+}) => (
   <div style={{ margin: '2px', display: 'flex', gap: '8px', alignItems: 'center' }}>
     {text}
     {showError && <Badge size="extra-small" color="danger" />}

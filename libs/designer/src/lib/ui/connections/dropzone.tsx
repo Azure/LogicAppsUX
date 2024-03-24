@@ -18,9 +18,16 @@ import {
 // import AddBranchIcon from './edgeContextMenuSvgs/addBranchIcon.svg';
 // import AddNodeIcon from './edgeContextMenuSvgs/addNodeIcon.svg';
 import { css } from '@fluentui/utilities';
-import { LogEntryLevel, LoggerService } from '@microsoft/designer-client-services-logic-apps';
 import { ActionButtonV2 } from '@microsoft/designer-ui';
-import { containsIdTag, guid, normalizeAutomationId, removeIdTag, replaceWhiteSpaceWithUnderscore } from '@microsoft/logic-apps-shared';
+import {
+  containsIdTag,
+  guid,
+  normalizeAutomationId,
+  removeIdTag,
+  replaceWhiteSpaceWithUnderscore,
+  LogEntryLevel,
+  LoggerService,
+} from '@microsoft/logic-apps-shared';
 import { useCallback, useMemo, useState } from 'react';
 import { useDrop } from 'react-dnd';
 import { useIntl } from 'react-intl';
@@ -107,7 +114,13 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId, 
   const addParallelBranch = useCallback(() => {
     const newId = guid();
     const relationshipIds = { graphId, childId: undefined, parentId };
-    dispatch(expandDiscoveryPanel({ nodeId: newId, relationshipIds, isParallelBranch: true }));
+    dispatch(
+      expandDiscoveryPanel({
+        nodeId: newId,
+        relationshipIds,
+        isParallelBranch: true,
+      })
+    );
     LoggerService().log({
       area: 'DropZone:addParallelBranch',
       level: LogEntryLevel.Verbose,
@@ -133,7 +146,11 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId, 
     () => ({
       accept: 'BOX',
       drop: () => ({ graphId, parentId, childId }),
-      canDrop: (item: { id: string; dependencies?: string[]; graphId?: string }) => {
+      canDrop: (item: {
+        id: string;
+        dependencies?: string[];
+        graphId?: string;
+      }) => {
         // This supports preventing moving a node with a dependency above its upstream node
         for (const dec of item.dependencies ?? []) {
           if (!upstreamNodes.has(dec)) {
@@ -218,7 +235,12 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId, 
     <div
       ref={drop}
       className={css('msla-drop-zone-viewmanager2', isOver && canDrop && 'canDrop', isOver && !canDrop && 'cannotDrop')}
-      style={{ display: 'grid', placeItems: 'center', width: '100%', height: '100%' }}
+      style={{
+        display: 'grid',
+        placeItems: 'center',
+        width: '100%',
+        height: '100%',
+      }}
     >
       {isOver && (
         <div style={{ height: '24px', display: 'grid', placeItems: 'center' }}>

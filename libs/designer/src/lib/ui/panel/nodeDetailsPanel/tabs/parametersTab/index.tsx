@@ -42,7 +42,6 @@ import { ConnectionDisplay } from './connectionDisplay';
 import { IdentitySelector } from './identityselector';
 import { MessageBar, MessageBarType, Spinner, SpinnerSize } from '@fluentui/react';
 import { Divider } from '@fluentui/react-components';
-import { CustomCodeService, EditorService } from '@microsoft/designer-client-services-logic-apps';
 import {
   DynamicCallStatus,
   PanelLocation,
@@ -52,8 +51,16 @@ import {
   toCustomEditorAndOptions,
 } from '@microsoft/designer-ui';
 import type { ChangeState, ParameterInfo, ValueSegment, OutputToken, TokenPickerMode, PanelTabFn } from '@microsoft/designer-ui';
+import {
+  CustomCodeService,
+  EditorService,
+  equals,
+  getPropertyValue,
+  getRecordEntry,
+  isRecordNotEmpty,
+  replaceWhiteSpaceWithUnderscore,
+} from '@microsoft/logic-apps-shared';
 import type { OperationInfo } from '@microsoft/logic-apps-shared';
-import { equals, getPropertyValue, getRecordEntry, isRecordNotEmpty, replaceWhiteSpaceWithUnderscore } from '@microsoft/logic-apps-shared';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
@@ -210,7 +217,10 @@ const ParameterSection = ({
       const { value, viewModel } = newState;
       const parameter = nodeInputs.parameterGroups[group.id].parameters.find((param: any) => param.id === id);
 
-      const propertiesToUpdate = { value, preservedValue: undefined } as Partial<ParameterInfo>;
+      const propertiesToUpdate = {
+        value,
+        preservedValue: undefined,
+      } as Partial<ParameterInfo>;
 
       if (viewModel !== undefined) {
         propertiesToUpdate.editorViewModel = viewModel;
@@ -404,7 +414,15 @@ const ParameterSection = ({
       const remappedEditorViewModel = isRecordNotEmpty(idReplacements)
         ? remapEditorViewModelWithNewIds(editorViewModel, idReplacements)
         : editorViewModel;
-      const paramSubset = { id, label, required, showTokens, placeholder, editorViewModel: remappedEditorViewModel, conditionalVisibility };
+      const paramSubset = {
+        id,
+        label,
+        required,
+        showTokens,
+        placeholder,
+        editorViewModel: remappedEditorViewModel,
+        conditionalVisibility,
+      };
       const { editor, editorOptions } = getEditorAndOptions(operationInfo, param, upstreamNodeIds ?? [], variables);
 
       const { value: remappedValues } = isRecordNotEmpty(idReplacements) ? remapValueSegmentsWithNewIds(value, idReplacements) : { value };
@@ -434,7 +452,12 @@ const ParameterSection = ({
           suppressCastingForSerialize: suppressCastingForSerialize ?? false,
           onCastParameter: (value: ValueSegment[], type?: string, format?: string, suppressCasting?: boolean) =>
             parameterValueToString(
-              { value, type: type ?? 'string', info: { format }, suppressCasting } as ParameterInfo,
+              {
+                value,
+                type: type ?? 'string',
+                info: { format },
+                suppressCasting,
+              } as ParameterInfo,
               false,
               idReplacements
             ) ?? '',
@@ -505,7 +528,11 @@ const hasParametersToAuthor = (parameterGroups: Record<string, ParameterGroup>):
 
 export const parametersTab: PanelTabFn = (intl) => ({
   id: constants.PANEL_TAB_NAMES.PARAMETERS,
-  title: intl.formatMessage({ defaultMessage: 'Parameters', id: 'uxKRO/', description: 'Parameters tab title' }),
+  title: intl.formatMessage({
+    defaultMessage: 'Parameters',
+    id: 'uxKRO/',
+    description: 'Parameters tab title',
+  }),
   description: intl.formatMessage({
     defaultMessage: 'Configure parameters for this node',
     id: 'SToblZ',

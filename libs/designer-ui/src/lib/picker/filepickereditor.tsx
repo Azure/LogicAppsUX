@@ -10,7 +10,7 @@ import { UpdateEditorFromFilePicker } from './plugins/UpdateEditorFromFilePicker
 import type { IBreadcrumbItem, IIconProps, ITooltipHostStyles } from '@fluentui/react';
 import { TooltipHost, IconButton } from '@fluentui/react';
 import { useId } from '@fluentui/react-hooks';
-import type { TreeDynamicValue } from '@microsoft/designer-client-services-logic-apps';
+import type { TreeDynamicValue } from '@microsoft/logic-apps-shared';
 import { equals } from '@microsoft/logic-apps-shared';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -34,7 +34,9 @@ export interface FilePickerEditorProps extends BaseEditorProps {
 }
 
 const folderIcon: IIconProps = { iconName: 'FolderOpen' };
-const hostStyles: Partial<ITooltipHostStyles> = { root: { display: 'inline-block' } };
+const hostStyles: Partial<ITooltipHostStyles> = {
+  root: { display: 'inline-block' },
+};
 const calloutProps = { gapSpace: 0 };
 
 export const FilePickerEditor = ({
@@ -78,7 +80,14 @@ export const FilePickerEditor = ({
   const onFolderNavigated = (selectedItem: TreeDynamicValue) => {
     onFolderNavigation(selectedItem.value);
     const displayValue = selectedItem.displayName;
-    setTitleSegments([...titleSegments, { text: displayValue, key: displayValue, onClick: () => onFolderNavigated(selectedItem) }]);
+    setTitleSegments([
+      ...titleSegments,
+      {
+        text: displayValue,
+        key: displayValue,
+        onClick: () => onFolderNavigated(selectedItem),
+      },
+    ]);
   };
 
   const onFileFolderSelected = (selectedItem: TreeDynamicValue) => {
@@ -98,7 +107,10 @@ export const FilePickerEditor = ({
 
       editorBlur?.({
         value: valueSegmentValue,
-        viewModel: { displayValue: pickerDisplayValue[0]?.value, selectedItem: selectedItem },
+        viewModel: {
+          displayValue: pickerDisplayValue[0]?.value,
+          selectedItem: selectedItem,
+        },
       });
     } else if (notEqual(editorDisplayValue, pickerDisplayValue)) {
       editorBlur?.({
@@ -113,7 +125,11 @@ export const FilePickerEditor = ({
     setPickerDisplayValue([]);
   };
 
-  const openFolderLabel = intl.formatMessage({ defaultMessage: 'Open folder', id: 's+4LEa', description: 'Open folder label' });
+  const openFolderLabel = intl.formatMessage({
+    defaultMessage: 'Open folder',
+    id: 's+4LEa',
+    description: 'Open folder label',
+  });
   return (
     <div className="msla-filepicker-editor-container">
       <EditorWrapper
