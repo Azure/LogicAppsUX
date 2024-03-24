@@ -1,5 +1,5 @@
 import messages from '../logic-apps-shared/src/intl/compiled-lang/strings.json';
-import { InitLoggerService } from '@microsoft/designer-client-services-logic-apps';
+import { InitLoggerService } from '@microsoft/logic-apps-shared';
 import { createIntl, createIntlCache } from 'react-intl';
 import * as Intl from 'react-intl';
 

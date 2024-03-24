@@ -3,7 +3,7 @@ import type {
   IConnectionParameterEditorProps,
   IConnectionParameterEditorService,
   IConnectionParameterInfo,
-} from '@microsoft/designer-client-services-logic-apps';
+} from '@microsoft/logic-apps-shared';
 import { ConnectionParameterRow, UniversalConnectionParameter } from '@microsoft/logic-apps-designer';
 import { useEffect, useState } from 'react';
 

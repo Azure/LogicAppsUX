@@ -3,7 +3,7 @@ import { CLOSE_TOKENPICKER } from '../editor/base/plugins/CloseTokenPicker';
 import type { IButtonStyles } from '@fluentui/react';
 import { IconButton } from '@fluentui/react';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
-import { LogEntryLevel, LoggerService } from '@microsoft/designer-client-services-logic-apps';
+import { LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
 import type { LexicalEditor } from 'lexical';
 import { useIntl } from 'react-intl';
 

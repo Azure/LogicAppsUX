@@ -11,7 +11,6 @@
     "logic-apps-shared": "libs/logic-apps-shared",
     "logic-apps-ux-docs": "apps/logic-apps-ux-docs",
     "plugins-playwright": "libs/plugins/playwright",
-    "services-designer-client-services": "libs/services/designer-client-services",
     "vs-code-designer": "apps/vs-code-designer",
     "vs-code-react": "apps/vs-code-react",
     "vscode-extension": "libs/vscode-extension"

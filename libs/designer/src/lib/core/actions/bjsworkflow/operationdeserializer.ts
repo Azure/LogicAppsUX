@@ -50,12 +50,7 @@ import {
 } from './initialize';
 import { getOperationSettings, getSplitOnValue } from './settings';
 import type { Settings } from './settings';
-import {
-  LogEntryLevel,
-  LoggerService,
-  OperationManifestService,
-  StaticResultService,
-} from '@microsoft/designer-client-services-logic-apps';
+import { LogEntryLevel, LoggerService, OperationManifestService, StaticResultService } from '@microsoft/logic-apps-shared';
 import {
   getIntl,
   ManifestParser,

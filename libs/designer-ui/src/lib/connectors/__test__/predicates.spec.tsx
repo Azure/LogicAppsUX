@@ -1,4 +1,4 @@
-import * as DesignerClientServices from '@microsoft/designer-client-services-logic-apps';
+import * as DesignerClientServices from '@microsoft/logic-apps-shared';
 import type { Connector, OperationApi } from '@microsoft/logic-apps-shared';
 import { isBuiltInConnector } from '../index';
 

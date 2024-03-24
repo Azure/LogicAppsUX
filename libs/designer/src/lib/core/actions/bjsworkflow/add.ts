@@ -35,7 +35,7 @@ import {
 import type { NodeDataWithOperationMetadata } from './operationdeserializer';
 import type { Settings } from './settings';
 import { getOperationSettings, getSplitOnValue } from './settings';
-import { ConnectionService, OperationManifestService, StaticResultService } from '@microsoft/designer-client-services-logic-apps';
+import { ConnectionService, OperationManifestService, StaticResultService } from '@microsoft/logic-apps-shared';
 import type {
   Connector,
   DiscoveryOperation,

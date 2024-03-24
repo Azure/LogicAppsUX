@@ -1,6 +1,6 @@
-import type { CallbackInfo } from './workflow';
 import type { ContentLink, LogicAppsV2, Run, RunError, Runs } from '@microsoft/logic-apps-shared';
 import { AssertionErrorCode, AssertionException } from '@microsoft/logic-apps-shared';
+import type { CallbackInfo } from './callbackInfo';
 
 export interface IRunService {
   getContent(contentLink: ContentLink): Promise<any>;
