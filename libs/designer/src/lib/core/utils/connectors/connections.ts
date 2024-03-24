@@ -10,9 +10,6 @@ import {
   OperationManifestService,
   WorkflowService,
   isServiceProviderOperation,
-} from '@microsoft/logic-apps-shared';
-import type { AssistedConnectionProps } from '@microsoft/designer-ui';
-import {
   getIntl,
   ConnectionParameterTypes,
   ResourceIdentityType,
@@ -21,6 +18,7 @@ import {
   getResourceName,
   getRecordEntry,
 } from '@microsoft/logic-apps-shared';
+import type { AssistedConnectionProps } from '@microsoft/designer-ui';
 import type {
   Connection,
   ConnectionParameterSet,

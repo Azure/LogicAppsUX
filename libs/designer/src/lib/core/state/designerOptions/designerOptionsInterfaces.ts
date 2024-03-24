@@ -16,8 +16,8 @@ import type {
   IEditorService,
   IConnectionParameterEditorService,
   IChatbotService,
+  LogicApps,
 } from '@microsoft/logic-apps-shared';
-import type { LogicApps } from '@microsoft/logic-apps-shared';
 
 type PANEL_TAB_NAMES = keyof typeof CONSTANTS.PANEL_TAB_NAMES;
 

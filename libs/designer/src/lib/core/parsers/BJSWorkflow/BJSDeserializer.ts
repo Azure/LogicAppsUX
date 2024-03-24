@@ -4,9 +4,9 @@ import { UnsupportedException, UnsupportedExceptionCode } from '../../../common/
 import type { Operations, NodesMetadata } from '../../state/workflow/workflowInterfaces';
 import { createWorkflowNode, createWorkflowEdge } from '../../utils/graph';
 import type { WorkflowNode, WorkflowEdge } from '../models/workflowNode';
-import { LoggerService, Status } from '@microsoft/logic-apps-shared';
-import { getDurationStringPanelMode } from '@microsoft/designer-ui';
 import {
+  LoggerService,
+  Status,
   getIntl,
   containsIdTag,
   WORKFLOW_NODE_TYPES,
@@ -18,6 +18,7 @@ import {
   getUniqueName,
   getRecordEntry,
 } from '@microsoft/logic-apps-shared';
+import { getDurationStringPanelMode } from '@microsoft/designer-ui';
 import type { LogicAppsV2, SubgraphType } from '@microsoft/logic-apps-shared';
 
 const hasMultipleTriggers = (definition: LogicAppsV2.WorkflowDefinition): boolean => {

@@ -28,8 +28,11 @@ import {
 import { CreateConnection } from './createConnection';
 import { Spinner } from '@fluentui/react-components';
 import type { ConnectionCreationInfo, ConnectionParametersMetadata } from '@microsoft/logic-apps-shared';
-import { ConnectionService, LogEntryLevel, LoggerService, WorkflowService } from '@microsoft/logic-apps-shared';
 import {
+  ConnectionService,
+  LogEntryLevel,
+  LoggerService,
+  WorkflowService,
   getIconUriFromConnector,
   getRecordEntry,
   safeSetObjectPropertyValue,
