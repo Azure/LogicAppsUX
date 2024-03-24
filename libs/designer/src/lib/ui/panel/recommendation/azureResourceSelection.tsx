@@ -4,10 +4,16 @@ import { addOperation } from '../../../core/actions/bjsworkflow/add';
 import { useRelationshipIds, useIsParallelBranch, useIsAddingTrigger } from '../../../core/state/panel/panelSelectors';
 import { Text } from '@fluentui/react';
 import { Button } from '@fluentui/react-components';
-import { ApiManagementService, FunctionService, SearchService, AppServiceService } from '@microsoft/logic-apps-shared';
+import {
+  ApiManagementService,
+  FunctionService,
+  SearchService,
+  AppServiceService,
+  getResourceName,
+  getResourceGroupFromWorkflowId,
+} from '@microsoft/logic-apps-shared';
 import { AzureResourcePicker } from '@microsoft/designer-ui';
 import type { DiscoveryOperation, DiscoveryResultTypes } from '@microsoft/logic-apps-shared';
-import { getResourceName, getResourceGroupFromWorkflowId } from '@microsoft/logic-apps-shared';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';

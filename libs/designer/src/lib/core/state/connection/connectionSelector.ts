@@ -5,8 +5,14 @@ import { getConnectionReference, isConnectionMultiAuthManagedIdentityType } from
 import { useNodeConnectorId } from '../operation/operationSelector';
 import { useOperationManifest, useOperationInfo } from '../selectors/actionMetadataSelector';
 import type { ConnectionMapping } from './connectionSlice';
-import { ConnectionService, GatewayService, OperationManifestService, isServiceProviderOperation } from '@microsoft/logic-apps-shared';
-import { getRecordEntry, type Connector } from '@microsoft/logic-apps-shared';
+import {
+  ConnectionService,
+  GatewayService,
+  OperationManifestService,
+  isServiceProviderOperation,
+  getRecordEntry,
+  type Connector,
+} from '@microsoft/logic-apps-shared';
 import { useMemo } from 'react';
 import { useQuery } from 'react-query';
 import { useSelector } from 'react-redux';

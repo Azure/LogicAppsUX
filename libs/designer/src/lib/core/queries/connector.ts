@@ -4,10 +4,20 @@ import type {
   ManagedIdentityRequestProperties,
   TreeDynamicExtension,
   TreeDynamicValue,
+  FilePickerInfo,
+  LegacyDynamicSchemaExtension,
+  LegacyDynamicValuesExtension,
+  OpenAPIV2,
 } from '@microsoft/logic-apps-shared';
-import { ConnectorService } from '@microsoft/logic-apps-shared';
-import type { FilePickerInfo, LegacyDynamicSchemaExtension, LegacyDynamicValuesExtension, OpenAPIV2 } from '@microsoft/logic-apps-shared';
-import { Types, getPropertyValue, equals, getJSONValue, getObjectPropertyValue, isNullOrUndefined } from '@microsoft/logic-apps-shared';
+import {
+  ConnectorService,
+  Types,
+  getPropertyValue,
+  equals,
+  getJSONValue,
+  getObjectPropertyValue,
+  isNullOrUndefined,
+} from '@microsoft/logic-apps-shared';
 
 export const getLegacyDynamicValues = async (
   connectionId: string,

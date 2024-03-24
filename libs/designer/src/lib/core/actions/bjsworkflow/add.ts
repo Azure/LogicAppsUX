@@ -35,7 +35,16 @@ import {
 import type { NodeDataWithOperationMetadata } from './operationdeserializer';
 import type { Settings } from './settings';
 import { getOperationSettings, getSplitOnValue } from './settings';
-import { ConnectionService, OperationManifestService, StaticResultService } from '@microsoft/logic-apps-shared';
+import {
+  ConnectionService,
+  OperationManifestService,
+  StaticResultService,
+  ManifestParser,
+  equals,
+  getBrandColorFromConnector,
+  getIconUriFromConnector,
+  getRecordEntry,
+} from '@microsoft/logic-apps-shared';
 import type {
   Connector,
   DiscoveryOperation,
@@ -44,7 +53,6 @@ import type {
   SomeKindOfAzureOperationDiscovery,
   SwaggerParser,
 } from '@microsoft/logic-apps-shared';
-import { ManifestParser, equals, getBrandColorFromConnector, getIconUriFromConnector, getRecordEntry } from '@microsoft/logic-apps-shared';
 import type { Dispatch } from '@reduxjs/toolkit';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { batch } from 'react-redux';

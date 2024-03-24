@@ -6,8 +6,13 @@ import {
   getLegacyConnectionReferenceKey,
   getManifestBasedConnectionMapping,
 } from '../../../actions/bjsworkflow/connections';
-import { InitOperationManifestService, StandardOperationManifestService, OperationManifestService } from '@microsoft/logic-apps-shared';
-import { createItem, ConnectionReferenceKeyFormat } from '@microsoft/logic-apps-shared';
+import {
+  InitOperationManifestService,
+  StandardOperationManifestService,
+  OperationManifestService,
+  createItem,
+  ConnectionReferenceKeyFormat,
+} from '@microsoft/logic-apps-shared';
 import type { LogicAppsV2, OperationManifest } from '@microsoft/logic-apps-shared';
 
 const nodeId = '1';
