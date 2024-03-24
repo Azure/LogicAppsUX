@@ -32,9 +32,9 @@ const config: Config = {
       'docusaurus-plugin-remote-content',
       {
         // options here
-        name: 'changelog', // used by CLI, must be path safe
+        name: 'changelog-gen', // used by CLI, must be path safe
         sourceBaseUrl: 'https://raw.githubusercontent.com/Azure/LogicAppsUX/main/', // the base url for the markdown (gets prepended to all of the documents when fetching)
-        outDir: 'src/pages', // the base directory to output to.
+        outDir: 'src/components', // the base directory to output to.
         documents: ['CHANGELOG.md'], // the file names to download
       },
     ],
