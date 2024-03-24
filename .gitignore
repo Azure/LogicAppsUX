@@ -57,3 +57,7 @@ __azurite_db_queue_extent__.json
 .docusaurus/
 .cache-loader/
 docs/src/pages/CHANGELOG.MD
+/test-results/
+/playwright-report/
+/blob-report/
+/playwright/.cache/
