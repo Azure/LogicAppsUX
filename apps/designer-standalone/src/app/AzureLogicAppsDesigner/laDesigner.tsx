@@ -35,8 +35,13 @@ import {
   StandardOperationManifestService,
   StandardRunService,
   StandardSearchService,
+  clone,
+  equals,
+  guid,
+  isArmResourceId,
+  optional,
 } from '@microsoft/logic-apps-shared';
-import type { ContentType, IWorkflowService } from '@microsoft/logic-apps-shared';
+import type { ContentType, IWorkflowService, LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import type { Workflow } from '@microsoft/logic-apps-designer';
 import {
   DesignerProvider,
@@ -46,8 +51,6 @@ import {
   serializeBJSWorkflow,
   store as DesignerStore,
 } from '@microsoft/logic-apps-designer';
-import { clone, equals, guid, isArmResourceId, optional } from '@microsoft/logic-apps-shared';
-import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import axios from 'axios';
 import isEqual from 'lodash.isequal';
 import { useEffect, useMemo, useState } from 'react';

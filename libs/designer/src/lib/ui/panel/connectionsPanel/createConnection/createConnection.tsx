@@ -11,20 +11,9 @@ import { UniversalConnectionParameter } from './formInputs/universalConnectionPa
 import type { IDropdownOption } from '@fluentui/react';
 import { MessageBarType, MessageBar, Label } from '@fluentui/react';
 import { Body1Strong, Button, Divider } from '@fluentui/react-components';
-import { ConnectionParameterEditorService, ConnectionService } from '@microsoft/logic-apps-shared';
-import type { GatewayServiceConfig, IConnectionCredentialMappingEditorProps } from '@microsoft/logic-apps-shared';
-import type { AzureResourcePickerProps } from '@microsoft/designer-ui';
-import { AzureResourcePicker } from '@microsoft/designer-ui';
-import type {
-  ConnectionParameter,
-  ConnectionParameterSet,
-  ConnectionParameterSetParameter,
-  ConnectionParameterSets,
-  Gateway,
-  ManagedIdentity,
-  Subscription,
-} from '@microsoft/logic-apps-shared';
 import {
+  ConnectionParameterEditorService,
+  ConnectionService,
   Capabilities,
   ConnectionParameterTypes,
   ResourceIdentityType,
@@ -36,6 +25,19 @@ import {
   isServicePrinicipalConnectionParameter,
   usesLegacyManagedIdentity,
 } from '@microsoft/logic-apps-shared';
+import type {
+  GatewayServiceConfig,
+  IConnectionCredentialMappingEditorProps,
+  ConnectionParameter,
+  ConnectionParameterSet,
+  ConnectionParameterSetParameter,
+  ConnectionParameterSets,
+  Gateway,
+  ManagedIdentity,
+  Subscription,
+} from '@microsoft/logic-apps-shared';
+import type { AzureResourcePickerProps } from '@microsoft/designer-ui';
+import { AzureResourcePicker } from '@microsoft/designer-ui';
 import fromPairs from 'lodash.frompairs';
 import type { FormEvent } from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';

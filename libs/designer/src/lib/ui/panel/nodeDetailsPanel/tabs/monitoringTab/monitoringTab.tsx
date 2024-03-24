@@ -6,10 +6,9 @@ import { useRunData } from '../../../../../core/state/workflow/workflowSelectors
 import { InputsPanel } from './inputsPanel';
 import { OutputsPanel } from './outputsPanel';
 import { PropertiesPanel } from './propertiesPanel';
-import { RunService } from '@microsoft/logic-apps-shared';
+import { RunService, isNullOrUndefined } from '@microsoft/logic-apps-shared';
 import { ErrorSection } from '@microsoft/designer-ui';
 import type { PanelTabFn } from '@microsoft/designer-ui';
-import { isNullOrUndefined } from '@microsoft/logic-apps-shared';
 import { useEffect } from 'react';
 import { useQuery } from 'react-query';
 

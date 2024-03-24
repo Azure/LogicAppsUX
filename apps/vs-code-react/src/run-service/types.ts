@@ -1,6 +1,5 @@
 import type { InitializePayload, Status } from '../state/WorkflowSlice';
-import type { ApiHubServiceDetails } from '@microsoft/logic-apps-shared';
-import type { SchemaType } from '@microsoft/logic-apps-shared';
+import type { ApiHubServiceDetails, SchemaType } from '@microsoft/logic-apps-shared';
 import type { MapDefinitionData, ExtensionCommand, ConnectionsData, IDesignerPanelMetadata } from '@microsoft/vscode-extension';
 
 export interface IApiService {

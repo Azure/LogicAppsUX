@@ -19,10 +19,11 @@ import {
 import { buildOperationDetailsFromControls } from '../../utils/swagger/inputsbuilder';
 import type { Settings } from './settings';
 import type { NodeStaticResults } from './staticresults';
-import { LogEntryLevel, LoggerService, OperationManifestService, WorkflowService } from '@microsoft/logic-apps-shared';
-import type { ParameterInfo } from '@microsoft/designer-ui';
-import { UIConstants } from '@microsoft/designer-ui';
 import {
+  LogEntryLevel,
+  LoggerService,
+  OperationManifestService,
+  WorkflowService,
   getIntl,
   create,
   removeConnectionPrefix,
@@ -54,6 +55,8 @@ import {
   excludePathValueFromTarget,
   getRecordEntry,
 } from '@microsoft/logic-apps-shared';
+import type { ParameterInfo } from '@microsoft/designer-ui';
+import { UIConstants } from '@microsoft/designer-ui';
 import type { Segment, LocationSwapMap, LogicAppsV2, OperationManifest, SubGraphDetail } from '@microsoft/logic-apps-shared';
 import merge from 'lodash.merge';
 
