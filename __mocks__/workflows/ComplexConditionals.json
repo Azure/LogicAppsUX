@@ -191,7 +191,10 @@
         "expression": {
           "and": [
             {
-              "equals": ["@body('Get_a_goal_check-in')?['value']", "@variables('checkinValue')"]
+              "equals": [
+                "@body('Get_a_goal_check-in')?['value']",
+                "@variables('checkinValue')"
+              ]
             },
             {
               "equals": ["@body('Get_a_goal_check-in')?['status']", "At risk"]
@@ -225,7 +228,10 @@
         "expression": {
           "and": [
             {
-              "equals": ["@variables('actualNote')", "@variables('checkinNote')"]
+              "equals": [
+                "@variables('actualNote')",
+                "@variables('checkinNote')"
+              ]
             }
           ]
         },

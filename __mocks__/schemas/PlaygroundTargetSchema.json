@@ -2,7 +2,10 @@
   "name": "PlaygroundTargetSchema.xsd",
   "type": "XML",
   "targetNamespace": "http://tempuri.org/Target.xsd",
-  "namespaces": { "ns0": "http://tempuri.org/Target.xsd", "xs": "http://www.w3.org/2001/XMLSchema" },
+  "namespaces": {
+    "ns0": "http://tempuri.org/Target.xsd",
+    "xs": "http://www.w3.org/2001/XMLSchema"
+  },
   "schemaTreeRoot": {
     "key": "/ns0:TargetPlaygroundRoot",
     "name": "TargetPlaygroundRoot",

@@ -25,7 +25,12 @@
   },
   "organizeImports": {
     "enabled": false,
-    "include": ["libs/**/*.ts", "libs/**/*.tsx", "apps/**/*.ts", "apps/**/*.tsx"],
+    "include": [
+      "libs/**/*.ts",
+      "libs/**/*.tsx",
+      "apps/**/*.ts",
+      "apps/**/*.tsx"
+    ],
     "ignore": ["dist/*", "test-results/*", "tmp/*", "playwright-report/*"]
   }
 }

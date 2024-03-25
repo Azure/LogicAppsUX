@@ -4119,7 +4119,7 @@
   "OrPVcU": [
     {
       "type": 0,
-      "value": "Invalid split on format in '"
+      "value": "“"
     },
     {
       "type": 1,
@@ -4127,7 +4127,7 @@
     },
     {
       "type": 0,
-      "value": "'."
+      "value": "” 분할 형식이 잘못되었습니다."
     }
   ],
   "Ov7Ckz": [
@@ -7638,7 +7638,7 @@
   "lA/sHA": [
     {
       "type": 0,
-      "value": "Copy the value of '"
+      "value": "'"
     },
     {
       "type": 1,
@@ -7646,7 +7646,7 @@
     },
     {
       "type": 0,
-      "value": "' to the clipboard"
+      "value": "' 값을 클립보드에 복사"
     }
   ],
   "lB56l2": [
