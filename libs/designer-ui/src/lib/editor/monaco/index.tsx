@@ -214,7 +214,7 @@ export const MonacoEditor = forwardRef<editor.IStandaloneCodeEditor, MonacoProps
       id: 'open-tokenpicker',
       label: 'Open TokenPicker',
       keybindings: [512 | 85],
-      run: function (): void | Promise<void> {
+      run: (): void | Promise<void> => {
         openTokenPicker?.();
       },
     };
