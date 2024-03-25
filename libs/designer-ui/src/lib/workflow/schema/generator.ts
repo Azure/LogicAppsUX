@@ -2,7 +2,7 @@ import { InvalidJsonSchemaTypeException } from '../exceptions/invalidjsonschemat
 import { isTemplateExpression, createCopy, clone } from '@microsoft/logic-apps-shared';
 import type { OpenAPIV2 } from '@microsoft/logic-apps-shared';
 
-export const Types = {
+export const DataTypes = {
   object: 'object',
   number: 'number',
   string: 'string',
@@ -30,19 +30,19 @@ export function generateSchemaFromValue(value: any): SchemaObject {
   let valueType;
   switch (type) {
     case 'number':
-      valueType = Number.isInteger(value) ? Types.integer : Types.number;
+      valueType = Number.isInteger(value) ? DataTypes.integer : DataTypes.number;
       return {
         type: valueType,
       };
 
     case 'boolean':
       return {
-        type: Types.boolean,
+        type: DataTypes.boolean,
       };
 
     case 'string':
       return {
-        type: Types.string,
+        type: DataTypes.string,
       };
 
     case 'object':
@@ -63,7 +63,7 @@ export function generateSchemaFromValue(value: any): SchemaObject {
 
 function generateSchemaFromArray(jsonArray: any): SchemaObject {
   const schema: SchemaObject = {
-    type: Types.array,
+    type: DataTypes.array,
   };
 
   if (jsonArray.length) {
@@ -79,7 +79,7 @@ function generateSchemaFromArray(jsonArray: any): SchemaObject {
     }
 
     if (isHomogeneousArray) {
-      if (firstItem !== null && firstItemType === Types.object) {
+      if (firstItem !== null && firstItemType === DataTypes.object) {
         let proposedRequiredProperties = Object.keys(firstItem);
         const representativeItem = clone(firstItem);
 
@@ -109,7 +109,7 @@ function generateSchemaFromArray(jsonArray: any): SchemaObject {
 
 function generateSchemaForObject(obj: any): SchemaObject {
   const schema: SchemaObject = {
-    type: Types.object,
+    type: DataTypes.object,
     properties: {},
   };
 
@@ -126,21 +126,21 @@ function getJsonSchemaType(value: any): string {
   const type = typeof value;
   switch (type) {
     case 'number':
-      return Number.isInteger(value) ? Types.integer : Types.number;
+      return Number.isInteger(value) ? DataTypes.integer : DataTypes.number;
 
     case 'boolean':
-      return Types.boolean;
+      return DataTypes.boolean;
 
     case 'string':
-      return Types.string;
+      return DataTypes.string;
 
     case 'object':
       if (value === null) {
-        return Types.null;
+        return DataTypes.null;
       } else if (Array.isArray(value)) {
-        return Types.array;
+        return DataTypes.array;
       } else {
-        return Types.object;
+        return DataTypes.object;
       }
 
     default:

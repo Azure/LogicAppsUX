@@ -1,5 +1,6 @@
+import type { ValueSegment } from '../../../../editor';
 import { encodeStringSegmentTokensInDomContext } from '../../../../editor/base/utils/parsesegments';
-import type { ValueSegment } from '@microsoft/logic-apps-shared';
+
 
 const htmlUnsafeCharacters = ['<', '>'];
 const htmlUnsafeCharacterEncodingMap: Record<string, string> = htmlUnsafeCharacters.reduce(

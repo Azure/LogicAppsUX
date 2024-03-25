@@ -45,7 +45,7 @@ export interface WorkflowParameterProps {
   onRegisterLanguageProvider?: RegisterLanguageHandler;
 }
 
-export function WorkflowParameter({ definition, isReadOnly, useLegacy, isInverted, ...props }: WorkflowParameterProps): JSX.Element {
+export function WorkflowParameterItem({ definition, isReadOnly, useLegacy, isInverted, ...props }: WorkflowParameterProps): JSX.Element {
   const [expanded, setExpanded] = useState(!!definition.isEditable);
   const [isEditable, setIsEditable] = useState(definition.isEditable);
   const [name, setName] = useState(definition.name);

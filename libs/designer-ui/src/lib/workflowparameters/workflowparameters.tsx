@@ -2,7 +2,7 @@ import ParametersIcon from '../card/images/parameters.svg';
 import Constants from '../constants';
 import { isHighContrastBlack } from '../utils/theme';
 import type { WorkflowParameterDefinition, WorkflowParameterDeleteHandler, WorkflowParameterUpdateHandler } from './workflowparameter';
-import { WorkflowParameter } from './workflowparameter';
+import { WorkflowParameterItem } from './workflowparameter';
 import { List, useTheme, Text } from '@fluentui/react';
 import { Button, MessageBar } from '@fluentui/react-components';
 import { bundleIcon, Dismiss24Filled, Dismiss24Regular, Add24Filled, Add24Regular } from '@fluentui/react-icons';
@@ -110,7 +110,7 @@ export function WorkflowParameters({
     // TODO: 12798972 Workflow Parameter
     const parameterErrors = validationErrors && item ? validationErrors[item.id] : undefined;
     return (
-      <WorkflowParameter
+      <WorkflowParameterItem
         key={item?.id}
         definition={item ?? { id: 'id', type: Constants.WORKFLOW_PARAMETER_SERIALIZED_TYPE.ARRAY }}
         isReadOnly={isReadOnly}

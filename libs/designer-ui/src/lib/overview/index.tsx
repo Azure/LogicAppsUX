@@ -7,7 +7,6 @@ import { isRunError, mapToRunItem } from './utils';
 import type { IIconProps, ITextFieldStyles } from '@fluentui/react';
 import { IconButton, MessageBar, MessageBarType, Pivot, PivotItem, TextField } from '@fluentui/react';
 import type { Run, RunError, getCallbackUrl } from '@microsoft/logic-apps-shared';
-import { isCallbackInfoWithRelativePath } from '@microsoft/logic-apps-shared';
 import { useState } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useIntl } from 'react-intl';
@@ -170,5 +169,5 @@ export const Overview: React.FC<OverviewProps> = ({
   );
 };
 
-export { isRunError, isCallbackInfoWithRelativePath, getCallbackUrl, mapToRunItem };
+export { isRunError, getCallbackUrl, mapToRunItem };
 export type { OverviewPropertiesProps };

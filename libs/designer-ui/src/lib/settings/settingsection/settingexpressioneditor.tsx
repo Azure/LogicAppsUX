@@ -136,7 +136,7 @@ export const Expressions = ({ expressions, readOnly = false, onChange, onDelete,
     <>
       {expressions.map((expression, index) => {
         return (
-          <Expression
+          <ExpressionSetting
             key={index}
             expression={expression}
             index={index}
@@ -158,7 +158,7 @@ export interface ExpressionProps extends SettingProps {
   onDelete(index: number): void;
 }
 
-export const Expression = ({ expression, index, readOnly = false, onChange, onDelete, ariaLabel }: ExpressionProps): JSX.Element => {
+export const ExpressionSetting = ({ expression, index, readOnly = false, onChange, onDelete, ariaLabel }: ExpressionProps): JSX.Element => {
   const intl = useIntl();
 
   const expressionValue = expression ? `'${expression}'` : '';

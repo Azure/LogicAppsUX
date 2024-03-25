@@ -1,3 +1,4 @@
+import { Recurrence } from '@microsoft/logic-apps-shared';
 import constants from '../constants';
 import type { ValueSegment } from '../editor';
 import { ValueSegmentType } from '../editor';
@@ -18,18 +19,6 @@ import {
 } from '@microsoft/logic-apps-shared';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
-
-export interface Recurrence {
-  frequency: string | undefined;
-  interval: number | undefined;
-  startTime?: string;
-  timeZone?: string;
-  schedule?: {
-    hours?: string[];
-    minutes?: number[];
-    weekDays?: string[];
-  };
-}
 
 interface ScheduleEditorProps {
   type?: RecurrenceType;

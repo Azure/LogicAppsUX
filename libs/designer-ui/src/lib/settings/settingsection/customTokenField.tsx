@@ -3,7 +3,6 @@ import type { ChangeHandler } from '../../editor/base';
 import type { TokenFieldProps } from './settingTokenField';
 import { TokenField } from './settingTokenField';
 import type {
-  ChangeHandler as CustomEditorChangeHandler,
   ICustomEditorOptions,
   IEditorProps,
   IRenderDefaultEditorParams,
@@ -22,7 +21,7 @@ export const CustomTokenField = (props: CustomTokenFieldProps) => {
     editor,
     editorOptions,
     value: props.value,
-    onValueChange: props.onValueChange as CustomEditorChangeHandler,
+    onValueChange: props.onValueChange as ChangeHandler,
     renderDefaultEditor,
     disabled: props.readOnly,
   };
