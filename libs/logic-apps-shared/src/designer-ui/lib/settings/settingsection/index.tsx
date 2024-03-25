@@ -1,6 +1,6 @@
 export { MultiSelectSetting } from './settingmultiselect';
 export type { MultiSelectSettingProps } from './settingmultiselect';
-export { MultiAddExpressionEditor, ExpressionsEditor, Expressions, ExpressionSetting as Expression } from './settingexpressioneditor';
+export { MultiAddExpressionEditor, ExpressionsEditor, Expressions, ExpressionSetting } from './settingexpressioneditor';
 export type {
   MultiAddExpressionEditorProps,
   ExpressionsEditorProps,

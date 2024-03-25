@@ -1,4 +1,3 @@
-import { Recurrence } from '@microsoft/logic-apps-shared';
 import constants from '../constants';
 import type { ValueSegment } from '../editor';
 import { ValueSegmentType } from '../editor';
@@ -20,6 +19,18 @@ import {
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
 
+export interface RecurrenceConfiguration {	
+  frequency: string | undefined;	
+  interval: number | undefined;	
+  startTime?: string;	
+  timeZone?: string;	
+  schedule?: {	
+    hours?: string[];	
+    minutes?: number[];	
+    weekDays?: string[];	
+  };	
+}
+
 interface ScheduleEditorProps {
   type?: RecurrenceType;
   initialValue: ValueSegment[];
@@ -36,9 +47,9 @@ export const ScheduleEditor = ({
   onChange,
 }: ScheduleEditorProps): JSX.Element => {
   const intl = useIntl();
-  const [recurrence, setRecurrence] = useState<Recurrence>(getRecurrenceValue(initialValue));
+  const [recurrence, setRecurrence] = useState<RecurrenceConfiguration>(getRecurrenceValue(initialValue));
 
-  const updateRecurrence = (newRecurrence: Recurrence) => {
+  const updateRecurrence = (newRecurrence: RecurrenceConfiguration) => {
     setRecurrence(newRecurrence);
     onChange?.({ value: [{ id: guid(), type: ValueSegmentType.LITERAL, value: JSON.stringify(newRecurrence) }] });
   };

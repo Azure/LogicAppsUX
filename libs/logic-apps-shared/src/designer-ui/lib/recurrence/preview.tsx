@@ -1,11 +1,11 @@
-import type { Recurrence } from '.';
+import type { RecurrenceConfiguration } from '.';
 import constants from '../constants';
 import { getIntervalValue } from './util';
 import { getIntl, equals, getPropertyValue } from '@microsoft/logic-apps-shared';
 import { useIntl } from 'react-intl';
 
 interface PreviewProps {
-  recurrence: Recurrence;
+  recurrence: RecurrenceConfiguration;
 }
 
 export const Preview = ({ recurrence }: PreviewProps): JSX.Element => {
