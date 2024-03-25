@@ -74,6 +74,7 @@ import {
   PropertyName,
   unmap,
   UnsupportedException,
+  isNullOrEmpty,
 } from '@microsoft/logic-apps-shared';
 import type { OutputToken, ParameterInfo } from '@microsoft/designer-ui';
 import type { Dispatch } from '@reduxjs/toolkit';
@@ -457,7 +458,7 @@ export const updateCustomCodeInInputs = async (
   nodeInputs: NodeInputs,
   customCode: CustomCodeFileNameMapping
 ) => {
-  if (!customCode || Object.keys(customCode).length === 0) return;
+  if (isNullOrEmpty(customCode)) return;
   // getCustomCodeFileName does not return the file extension because the editor view model is not populated yet
   const fileName = getCustomCodeFileName(nodeId, nodeInputs) + fileExtension;
   try {
