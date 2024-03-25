@@ -59,37 +59,11 @@ import {
   isVariableToken,
   ValueSegmentConvertor,
 } from './segment';
-import { LogEntryLevel, LoggerService, OperationManifestService, WorkflowService } from '@microsoft/logic-apps-shared';
-import type {
-  AuthProps,
-  ComboboxItem,
-  DictionaryEditorItemProps,
-  DropdownItem,
-  FloatingActionMenuOutputViewModel,
-  GroupItemProps,
-  OutputToken,
-  ParameterInfo,
-  RowItemProps,
-  Token as SegmentToken,
-  Token,
-  ValueSegment,
-} from '@microsoft/designer-ui';
 import {
-  removeQuotes,
-  ArrayType,
-  FloatingActionMenuKind,
-  getOuterMostCommaIndex,
-  RowDropdownOptions,
-  GroupDropdownOptions,
-  GroupType,
-  AuthenticationType,
-  ColumnMode,
-  DynamicCallStatus,
-  ValueSegmentType,
-  TokenType,
-  AuthenticationOAuthType,
-} from '@microsoft/designer-ui';
-import {
+  LogEntryLevel,
+  LoggerService,
+  OperationManifestService,
+  WorkflowService,
   getIntl,
   isDynamicTreeExtension,
   isLegacyDynamicValuesTreeExtension,
@@ -143,6 +117,35 @@ import {
   replaceWhiteSpaceWithUnderscore,
   isRecordNotEmpty,
 } from '@microsoft/logic-apps-shared';
+import type {
+  AuthProps,
+  ComboboxItem,
+  DictionaryEditorItemProps,
+  DropdownItem,
+  FloatingActionMenuOutputViewModel,
+  GroupItemProps,
+  OutputToken,
+  ParameterInfo,
+  RowItemProps,
+  Token as SegmentToken,
+  Token,
+  ValueSegment,
+} from '@microsoft/designer-ui';
+import {
+  removeQuotes,
+  ArrayType,
+  FloatingActionMenuKind,
+  getOuterMostCommaIndex,
+  RowDropdownOptions,
+  GroupDropdownOptions,
+  GroupType,
+  AuthenticationType,
+  ColumnMode,
+  DynamicCallStatus,
+  ValueSegmentType,
+  TokenType,
+  AuthenticationOAuthType,
+} from '@microsoft/designer-ui';
 import type {
   DependentParameterInfo,
   DynamicParameters,

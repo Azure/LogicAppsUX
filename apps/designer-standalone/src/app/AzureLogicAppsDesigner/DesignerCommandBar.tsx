@@ -18,6 +18,7 @@ import {
   openPanel,
   useNodesInitialized,
   getCustomCodeFilesWithData,
+  resetCustomCode,
 } from '@microsoft/logic-apps-designer';
 import type { ILoggerService } from '@microsoft/logic-apps-shared';
 import { LogEntryLevel, LoggerService, isNullOrEmpty, RUN_AFTER_COLORS } from '@microsoft/logic-apps-shared';
@@ -93,6 +94,7 @@ export const DesignerCommandBar = ({
     if (!hasParametersErrors) {
       await saveWorkflow(serializedWorkflow, customCodeFilesWithData);
       updateCallbackUrl(designerState, DesignerStore.dispatch);
+      DesignerStore.dispatch(resetCustomCode());
     }
   });
 

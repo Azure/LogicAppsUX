@@ -8,7 +8,8 @@ import { MonacoEditor } from '../editor/monaco';
 import { useId } from '../useId';
 import { buildInlineCodeTextFromToken, getCodeEditorHeight, getInitialValue } from './util';
 import { Icon, MessageBar, MessageBarType } from '@fluentui/react';
-import { getFileExtensionName, type EditorLanguage } from '@microsoft/logic-apps-shared';
+import type { EditorLanguage } from '@microsoft/logic-apps-shared';
+import { getFileExtensionName } from '@microsoft/logic-apps-shared';
 import { useFunctionalState } from '@react-hookz/web';
 import type { editor, IRange } from 'monaco-editor';
 import { useEffect, useMemo, useRef, useState } from 'react';
@@ -73,7 +74,11 @@ export function CodeEditor({
       onChange?.({
         value: [createLiteralValueSegment(getFileName())],
         viewModel: {
-          customCodeData: { fileData: getCurrentValue(), fileExtension: getFileExtensionName(language), fileName: getFileName() },
+          customCodeData: {
+            fileData: getCurrentValue(),
+            fileExtension: getFileExtensionName(language),
+            fileName: getFileName(),
+          },
         },
       });
     } else {
@@ -94,7 +99,12 @@ export function CodeEditor({
   const tokenClicked = (valueSegment: ValueSegment) => {
     if (codeEditorRef.current && valueSegment.token) {
       const newText = buildInlineCodeTextFromToken(valueSegment.token, language);
-      codeEditorRef.current.executeEdits(null, [{ range: codeEditorRef.current.getSelection() as IRange, text: newText }]);
+      codeEditorRef.current.executeEdits(null, [
+        {
+          range: codeEditorRef.current.getSelection() as IRange,
+          text: newText,
+        },
+      ]);
       const currSelection = codeEditorRef.current.getSelection();
       if (currSelection) {
         setTimeout(() => {

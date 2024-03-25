@@ -18,7 +18,12 @@ export const customCodeSlice = createSlice({
       if (!customCodeData) return;
       Object.entries(customCodeData).forEach(([fileName, fileData]) => {
         const [nodeId, fileExtension] = splitFileName(fileName);
-        state.files[fileName] = { nodeId, fileExtension, isModified: false, isDeleted: false };
+        state.files[fileName] = {
+          nodeId,
+          fileExtension,
+          isModified: false,
+          isDeleted: false,
+        };
         state.fileData[nodeId] = fileData;
       });
     },
@@ -47,12 +52,26 @@ export const customCodeSlice = createSlice({
     renameCustomCode: (state, action: PayloadAction<RenameCustomCodePayload>) => {
       const { nodeId, oldFileName, newFileName } = action.payload;
       if (state.files[oldFileName]) {
-        state.files[newFileName] = { ...state.files[oldFileName], isModified: true, isDeleted: false };
+        state.files[newFileName] = {
+          ...state.files[oldFileName],
+          isModified: true,
+          isDeleted: false,
+        };
       }
       // cycle through the existing files, and mark as deleted to all that share the same nodeId
       Object.entries(state.files).forEach(([fileName, file]) => {
         if (file.nodeId === nodeId && fileName !== newFileName) {
           state.files[fileName] = { ...file, isDeleted: true };
+        }
+      });
+    },
+    // on save we want to remove all deleted files and reset the modified flag
+    resetCustomCode: (state) => {
+      Object.entries(state.files).forEach(([fileName, file]) => {
+        if (file.isDeleted) {
+          delete state.files[fileName];
+        } else {
+          state.files[fileName] = { ...file, isModified: false };
         }
       });
     },
@@ -62,6 +81,6 @@ export const customCodeSlice = createSlice({
   },
 });
 
-export const { initCustomCode, addOrUpdateCustomCode, deleteCustomCode, renameCustomCode } = customCodeSlice.actions;
+export const { initCustomCode, addOrUpdateCustomCode, deleteCustomCode, renameCustomCode, resetCustomCode } = customCodeSlice.actions;
 
 export default customCodeSlice.reducer;
