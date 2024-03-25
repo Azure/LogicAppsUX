@@ -1,6 +1,5 @@
 import type { EditOrDeleteButtonProps } from '../workflowparametersButtons';
 import { EditOrDeleteButton } from '../workflowparametersButtons';
-import * as React from 'react';
 import * as ReactShallowRenderer from 'react-test-renderer/shallow';
 
 describe('ui/workflowparameters/workflowparametersButtons', () => {

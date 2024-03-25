@@ -29,7 +29,7 @@ export function isFuncHostTask(task: vscode.Task): boolean {
   const commandLine: string | undefined = task.execution && (task.execution as vscode.ShellExecution).commandLine;
   if (task.definition.type == 'shell') {
     const command = (task.execution as vscode.ShellExecution).command?.toString();
-    const funcRegex = new RegExp('\\$\\{config:azureLogicAppsStandard\\.funcCoreToolsBinaryPath\\}');
+    const funcRegex = /\$\{config:azureLogicAppsStandard\.funcCoreToolsBinaryPath\}/;
     // check for args?
     return funcRegex.test(command);
   }

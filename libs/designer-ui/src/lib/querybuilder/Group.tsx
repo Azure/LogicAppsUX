@@ -377,7 +377,7 @@ export const Group = ({
                 items={[]}
                 overflowItems={groupMenuItems}
                 onRenderOverflowButton={onRenderOverflowButton}
-                onRenderItem={function (_item: IOverflowSetItemProps) {
+                onRenderItem={(_item: IOverflowSetItemProps) => {
                   throw new Error('No items in overflowset');
                 }}
               />

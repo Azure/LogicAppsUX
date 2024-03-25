@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import type { EventHandler } from '../../../eventhandler';
-import { Label } from '../../../label';
 import { useId } from '../../../useId';
 import { SimpleDictionaryItem } from './simpledictionaryitem';
 import type { SimpleDictionaryRowModel, SimpleDictionaryChangeModel } from './simpledictionaryitem';

@@ -37,9 +37,7 @@ export const ConnectorConnectionsCard: React.FC<ConnectorConnectionsCardProps> =
   const hasErrors = useMemo(() => {
     if (disconnectedNodes?.length > 0) return true;
     const nodesWithErrors = Object.keys(allErrors);
-    const connectorNodeIds = Object.values(connectionRefs)
-      .map((obj) => obj.nodes)
-      .flat();
+    const connectorNodeIds = Object.values(connectionRefs).flatMap((obj) => obj.nodes);
     return nodesWithErrors.some((nodeId) => connectorNodeIds.includes(nodeId));
   }, [allErrors, connectionRefs, disconnectedNodes?.length]);
 
