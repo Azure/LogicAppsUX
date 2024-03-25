@@ -4,6 +4,7 @@ import type { WorkflowsList, SelectedWorkflowsList } from '../../../run-service'
 import { ApiService } from '../../../run-service/export/index';
 import { updateSelectedWorkFlows } from '../../../state/WorkflowSlice';
 import type { AppDispatch, RootState } from '../../../state/store';
+import { VSCodeContext } from '../../../webviewCommunication';
 import { AdvancedOptions } from './advancedOptions';
 import { Filters } from './filters';
 import {
@@ -19,12 +20,13 @@ import { SelectedList } from './selectedList';
 import { Separator, ShimmeredDetailsList, Text, SelectionMode, Selection, MessageBar, MessageBarType } from '@fluentui/react';
 import type { IDropdownOption } from '@fluentui/react';
 import { isNullOrUndefined } from '@microsoft/logic-apps-shared';
-import { useMemo, useRef, useState, useEffect } from 'react';
+import { useMemo, useRef, useState, useEffect, useContext } from 'react';
 import { useIntl } from 'react-intl';
 import { useQuery } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
 
 export const WorkflowsSelection: React.FC = () => {
+  const vscode = useContext(VSCodeContext);
   const workflowState = useSelector((state: RootState) => state.workflow);
   const { baseUrl, accessToken, exportData, cloudHost } = workflowState;
   const { selectedSubscription, selectedIse, selectedWorkflows, location } = exportData;
@@ -91,8 +93,9 @@ export const WorkflowsSelection: React.FC = () => {
       baseUrl,
       accessToken,
       cloudHost,
+      vscodeContext: vscode,
     });
-  }, [accessToken, baseUrl, cloudHost]);
+  }, [accessToken, baseUrl, cloudHost, vscode]);
 
   const loadWorkflows = () => {
     return apiService.getWorkflows(selectedSubscription, selectedIse, location);

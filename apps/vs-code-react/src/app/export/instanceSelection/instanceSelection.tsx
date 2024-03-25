@@ -2,17 +2,19 @@ import { type ISubscription, QueryKeys, type IIse, type IRegion } from '../../..
 import { ApiService } from '../../../run-service/export';
 import { updateSelectedLocation, updateSelectedSubscripton } from '../../../state/WorkflowSlice';
 import type { AppDispatch, RootState } from '../../../state/store';
+import { VSCodeContext } from '../../../webviewCommunication';
 import { SearchableDropdown } from '../../components/searchableDropdown';
 import { getDropdownPlaceholder, parseIseList, parseRegionList, parseSubscriptionsList } from './helper';
 import { Text, DropdownMenuItemType } from '@fluentui/react';
 import type { IDropdownOption } from '@fluentui/react';
 import { isEmptyString } from '@microsoft/logic-apps-shared';
-import { useEffect, useMemo } from 'react';
+import { useContext, useEffect, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useQuery } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
 
 export const InstanceSelection: React.FC = () => {
+  const vscode = useContext(VSCodeContext);
   const workflowState = useSelector((state: RootState) => state.workflow);
   const { baseUrl, accessToken, exportData, cloudHost } = workflowState;
   const { selectedSubscription, selectedIse, location } = exportData;
@@ -88,8 +90,9 @@ export const InstanceSelection: React.FC = () => {
       baseUrl,
       accessToken,
       cloudHost,
+      vscodeContext: vscode,
     });
-  }, [accessToken, baseUrl, cloudHost]);
+  }, [accessToken, baseUrl, cloudHost, vscode]);
 
   const loadSubscriptions = () => {
     return apiService.getSubscriptions();

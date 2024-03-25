@@ -11,23 +11,27 @@ import type {
 } from '../types';
 import { getValidationPayload, getExportUri } from './helper';
 import { HTTP_METHODS } from '@microsoft/logic-apps-shared';
-import { getBaseGraphApi } from '@microsoft/vscode-extension';
+import { ExtensionCommand, getBaseGraphApi } from '@microsoft/vscode-extension';
+import { type WebviewApi } from 'vscode-webview';
 
 export interface ApiServiceOptions {
   baseUrl?: string;
   accessToken?: string;
   cloudHost?: string;
+  vscodeContext: WebviewApi<unknown>;
 }
 
 export class ApiService implements IApiService {
   private options: ApiServiceOptions;
   private graphApiUri: string;
   private baseGraphApi: string;
+  private vscodeContext: WebviewApi<unknown>;
 
   constructor(options: ApiServiceOptions) {
     this.options = options;
     this.baseGraphApi = getBaseGraphApi(options.cloudHost);
     this.graphApiUri = `${this.baseGraphApi}/providers/Microsoft.ResourceGraph/resources?api-version=2021-03-01`;
+    this.vscodeContext = options.vscodeContext;
   }
 
   private getAccessTokenHeaders = () => {
@@ -109,7 +113,9 @@ export class ApiService implements IApiService {
       const response = await fetch(this.graphApiUri, { headers, method: HTTP_METHODS.POST, body: JSON.stringify(payload) });
 
       if (!response.ok) {
-        throw new Error(`${response.status} ${response.statusText}`);
+        const errorText = `${response.status} ${response.statusText}`;
+        this.logTelemetryError(errorText);
+        throw new Error(errorText);
       }
 
       const responseBody = await response.json();
@@ -151,7 +157,9 @@ export class ApiService implements IApiService {
     const response = await fetch(this.graphApiUri, { headers, method: HTTP_METHODS.POST, body: JSON.stringify(payload) });
 
     if (!response.ok) {
-      throw new Error(`${response.status} ${response.statusText}`);
+      const errorText = `${response.status} ${response.statusText}`;
+      this.logTelemetryError(errorText);
+      throw new Error(errorText);
     }
 
     const subscriptionsResponse: any = await response.json();
@@ -171,7 +179,9 @@ export class ApiService implements IApiService {
     const response = await fetch(this.graphApiUri, { headers, method: HTTP_METHODS.POST, body: JSON.stringify(payload) });
 
     if (!response.ok) {
-      throw new Error(`${response.status} ${response.statusText}`);
+      const errorText = `${response.status} ${response.statusText}`;
+      this.logTelemetryError(errorText);
+      throw new Error(errorText);
     }
 
     const iseResponse: any = await response.json();
@@ -185,7 +195,9 @@ export class ApiService implements IApiService {
     const response = await fetch(url, { headers, method: HTTP_METHODS.GET });
 
     if (!response.ok) {
-      throw new Error(`${response.status} ${response.statusText}`);
+      const errorText = `${response.status} ${response.statusText}`;
+      this.logTelemetryError(errorText);
+      throw new Error(errorText);
     }
 
     return (await response.json()).value;
@@ -203,7 +215,9 @@ export class ApiService implements IApiService {
     const response = await fetch(this.graphApiUri, { headers, method: 'POST', body: JSON.stringify(payload) });
 
     if (!response.ok) {
-      throw new Error(`${response.status} ${response.statusText}`);
+      const errorText = `${response.status} ${response.statusText}`;
+      this.logTelemetryError(errorText);
+      throw new Error(errorText);
     }
 
     return (await response.json()).data;
@@ -243,17 +257,21 @@ export class ApiService implements IApiService {
     const validationUri = getExportUri(selectedSubscription, selectedLocation, true, this.baseGraphApi);
     const workflowExportOptions = selectedAdvanceOptions.join(',');
     const validationPayload = getValidationPayload(selectedWorkflows, workflowExportOptions);
-    const response = await fetch(validationUri, { headers, method: 'POST', body: JSON.stringify(validationPayload) });
+    const response = await fetch(validationUri, { headers, method: HTTP_METHODS.POST, body: JSON.stringify(validationPayload) });
 
     if (!response.ok) {
       let errorBody: any;
       try {
         errorBody = await response.json();
       } catch (_ex) {
-        throw new Error(`${response.status} ${response.statusText}`);
+        const parseErrorText = `${response.status} ${response.statusText}`;
+        this.logTelemetryError(parseErrorText);
+        throw new Error(parseErrorText);
       }
 
-      throw new Error(errorBody.error.message);
+      const errorText = errorBody.error.message;
+      this.logTelemetryError(errorText);
+      throw new Error(errorText);
     }
 
     const validationResponse: any = await response.json();
@@ -277,9 +295,13 @@ export class ApiService implements IApiService {
       try {
         errorBody = await response.json();
       } catch (_ex) {
-        throw new Error(`${response.status} ${response.statusText}`);
+        const parseErrorText = `${response.status} ${response.statusText}`;
+        this.logTelemetryError(parseErrorText);
+        throw new Error(parseErrorText);
       }
-      throw new Error(errorBody.error.message);
+      const errorText = errorBody.error.message;
+      this.logTelemetryError(errorText);
+      throw new Error(errorText);
     }
 
     if (!response.ok) {
@@ -296,7 +318,9 @@ export class ApiService implements IApiService {
     const response = await fetch(this.graphApiUri, { headers, method: 'POST', body: JSON.stringify(payload) });
 
     if (!response.ok) {
-      throw new Error(`${response.status} ${response.statusText}`);
+      const errorText = `${response.status} ${response.statusText}`;
+      this.logTelemetryError(errorText);
+      throw new Error(errorText);
     }
 
     const resourceGroupsResponse: any = await response.json();
@@ -304,4 +328,12 @@ export class ApiService implements IApiService {
 
     return { resourceGroups };
   }
+
+  private logTelemetryError = (error: any) => {
+    this.vscodeContext.postMessage({
+      command: ExtensionCommand.log_telemtry,
+      key: 'error',
+      value: error,
+    });
+  };
 }
