@@ -4127,7 +4127,7 @@
   "OrPVcU": [
     {
       "type": 0,
-      "value": "Invalid split on format in '"
+      "value": "'"
     },
     {
       "type": 1,
@@ -4135,7 +4135,7 @@
     },
     {
       "type": 0,
-      "value": "'."
+      "value": "' の形式の分割が無効です。"
     }
   ],
   "Ov7Ckz": [
@@ -7650,7 +7650,7 @@
   "lA/sHA": [
     {
       "type": 0,
-      "value": "Copy the value of '"
+      "value": "'"
     },
     {
       "type": 1,
@@ -7658,7 +7658,7 @@
     },
     {
       "type": 0,
-      "value": "' to the clipboard"
+      "value": "' の値をクリップボードにコピーする"
     }
   ],
   "lB56l2": [

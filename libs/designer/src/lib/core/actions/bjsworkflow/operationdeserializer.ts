@@ -52,8 +52,11 @@ import {
 } from './initialize';
 import { getOperationSettings, getSplitOnValue } from './settings';
 import type { Settings } from './settings';
-import { LogEntryLevel, LoggerService, OperationManifestService, StaticResultService } from '@microsoft/logic-apps-shared';
 import {
+  LogEntryLevel,
+  LoggerService,
+  OperationManifestService,
+  StaticResultService,
   getIntl,
   ManifestParser,
   isArmResourceId,

@@ -3,7 +3,6 @@ import { CustomConnectionParameterEditorService } from './customConnectionParame
 import { CustomEditorService } from './customEditorService';
 import { HttpClient } from './httpClient';
 import { PseudoCommandBar } from './pseudoCommandBar';
-import { DesignerProvider, BJSWorkflowProvider, Designer } from '@microsoft/logic-apps-designer';
 import {
   StandardConnectionService,
   StandardOperationManifestService,
@@ -20,6 +19,7 @@ import {
   ResourceIdentityType,
 } from '@microsoft/logic-apps-shared';
 import type { ContentType } from '@microsoft/logic-apps-shared';
+import { DesignerProvider, BJSWorkflowProvider, Designer } from '@microsoft/logic-apps-designer';
 import { useSelector } from 'react-redux';
 
 const httpClient = new HttpClient();
