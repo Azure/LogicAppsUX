@@ -120,14 +120,7 @@ export const useAllOperationErrors = () => useSelector(createSelector(getOperati
 
 export const useParameterValidationErrors = (nodeId: string) => {
   const allParameters = useOperationInputParameters(nodeId);
-  return useMemo(
-    () =>
-      allParameters
-        .map((parameter) => parameter.validationErrors)
-        .flat()
-        .filter((error) => error),
-    [allParameters]
-  );
+  return useMemo(() => allParameters.flatMap((parameter) => parameter.validationErrors).filter((error) => error), [allParameters]);
 };
 
 export const useNodesInitialized = () => useSelector(createSelector(getOperationState, (state) => state.loadStatus.nodesInitialized));

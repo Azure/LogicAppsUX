@@ -1,3 +1,4 @@
+import type { editor } from 'monaco-editor';
 import type { ValueSegment } from '../editor';
 import { CLOSE_TOKENPICKER } from '../editor/base/plugins/CloseTokenPicker';
 import type { ExpressionEditorEvent } from '../expressioneditor';
@@ -15,7 +16,6 @@ import type { ICalloutContentStyles, ISearchBox, PivotItem } from '@fluentui/rea
 import { SearchBox, DirectionalHint, Callout } from '@fluentui/react';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import type { LexicalEditor, NodeKey } from 'lexical';
-import type { editor } from 'monaco-editor';
 import { useEffect, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 

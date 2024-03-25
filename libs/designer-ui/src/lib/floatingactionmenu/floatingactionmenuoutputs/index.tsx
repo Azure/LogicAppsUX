@@ -9,7 +9,6 @@ import { StringEditor } from '../../editor/string';
 import type { FloatingActionMenuItem } from '../floatingactionmenubase';
 import { FloatingActionMenuBase } from '../floatingactionmenubase';
 import { clone, ValidationErrorCode, ValidationException } from '@microsoft/logic-apps-shared';
-import React from 'react';
 import { useIntl } from 'react-intl';
 
 type DynamicallyAddedParameterOutputsProperties = {

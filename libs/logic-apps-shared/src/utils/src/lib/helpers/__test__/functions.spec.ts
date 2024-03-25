@@ -889,6 +889,17 @@ describe('lib/helpers/functions', () => {
       expect(hexToRgbA(hexColor)).toBe('rgba(0,51,255, 1)');
     });
 
+    it('returns 0 for opacity when opacity is 0', () => {
+      const hexColor = '#0033FF';
+      // Note: This actually would have failed before the fix
+      expect(hexToRgbA(hexColor, 0)).toBe('rgba(0,51,255, 0)');
+    });
+
+    it('returns 0.5 for opacity when opacity is 0', () => {
+      const hexColor = '#0033FF';
+      expect(hexToRgbA(hexColor, 0.5)).toBe('rgba(0,51,255, 0.5)');
+    });
+
     it('returns rgb value for the incomplete hex value', () => {
       const hexColor = '#03F';
       expect(hexToRgbA(hexColor)).toBe('rgba(0,51,255, 1)');
