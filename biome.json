@@ -1,0 +1,64 @@
+{
+  "javascript": {
+    "formatter": {
+      "indentWidth": 2,
+      "indentStyle": "space",
+      "lineWidth": 140,
+      "trailingComma": "es5",
+      "quoteStyle": "single"
+    }
+  },
+  "json": {
+    "formatter": {
+      "indentWidth": 2,
+      "indentStyle": "space",
+      "lineWidth": 140
+    }
+  },
+  "formatter": {
+    "enabled": true,
+    "formatWithErrors": false,
+    "ignore": ["dist/*", "test-results/*", "tmp/*", "playwright-report/*"]
+  },
+  "linter": {
+    "enabled": true,
+    "rules": {
+      "recommended": false,
+      "performance": {
+        "all": true,
+        "noDelete": "off",
+        "noAccumulatingSpread": "off"
+      },
+      "a11y": {
+        "all": false
+      },
+      "complexity": {
+        "all": false
+      },
+      "correctness": {
+        "all": false
+      },
+      "security": {
+        "all": true
+      },
+      "style": {
+        "all": false
+      },
+      "suspicious": {
+        "all": false
+      }
+    },
+    "include": ["libs/**/*.ts", "libs/**/*.tsx", "apps/**/*.ts", "apps/**/*.tsx"],
+    "ignore": ["**/__test__/**"]
+  },
+  "organizeImports": {
+    "enabled": false,
+    "include": [
+      "libs/**/*.ts",
+      "libs/**/*.tsx",
+      "apps/**/*.ts",
+      "apps/**/*.tsx"
+    ],
+    "ignore": ["dist/*", "test-results/*", "tmp/*", "playwright-report/*"]
+  }
+}

@@ -12,16 +12,17 @@ import {
   BaseApiManagementService,
   BaseFunctionService,
   BaseAppServiceService,
-} from '@microsoft/designer-client-services-logic-apps';
+  HTTP_METHODS,
+  clone,
+} from '@microsoft/logic-apps-shared';
 import type {
   ApiHubServiceDetails,
   ConnectionCreationInfo,
   ContentType,
   IHostService,
   IWorkflowService,
-} from '@microsoft/designer-client-services-logic-apps';
-import type { ManagedIdentity } from '@microsoft/logic-apps-shared';
-import { HTTP_METHODS, clone } from '@microsoft/logic-apps-shared';
+  ManagedIdentity,
+} from '@microsoft/logic-apps-shared';
 import type { ConnectionAndAppSetting, ConnectionsData, IDesignerPanelMetadata } from '@microsoft/vscode-extension';
 import { ExtensionCommand, HttpClient } from '@microsoft/vscode-extension';
 import type { QueryClient } from 'react-query';

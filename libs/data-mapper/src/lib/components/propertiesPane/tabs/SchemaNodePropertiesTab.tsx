@@ -81,10 +81,10 @@ export const SchemaNodePropertiesTab = ({ currentNode }: SchemaNodePropertiesTab
       return input === undefined
         ? undefined
         : isCustomValue(input)
-        ? input
-        : isSchemaNodeExtended(input.node)
-        ? input.node.name
-        : functionDropDownItemText(input.reactFlowKey, input.node, connectionDictionary);
+          ? input
+          : isSchemaNodeExtended(input.node)
+            ? input.node.name
+            : functionDropDownItemText(input.reactFlowKey, input.node, connectionDictionary);
     }
 
     return undefined;

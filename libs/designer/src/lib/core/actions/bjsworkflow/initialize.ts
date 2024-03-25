@@ -36,7 +36,15 @@ import type {
   ISearchService,
   IOAuthService,
   IWorkflowService,
-} from '@microsoft/designer-client-services-logic-apps';
+  CustomSwaggerServiceDetails,
+  InputParameter,
+  OperationInfo,
+  OperationManifest,
+  OperationManifestProperties,
+  OutputParameter,
+  SchemaProperty,
+  SwaggerParser,
+} from '@microsoft/logic-apps-shared';
 import {
   WorkflowService,
   LoggerService,
@@ -44,9 +52,6 @@ import {
   OperationManifestService,
   FunctionService,
   ApiManagementService,
-} from '@microsoft/designer-client-services-logic-apps';
-import type { OutputToken, ParameterInfo } from '@microsoft/designer-ui';
-import {
   clone,
   ConnectionReferenceKeyFormat,
   CustomSwaggerServiceNames,
@@ -66,16 +71,7 @@ import {
   unmap,
   UnsupportedException,
 } from '@microsoft/logic-apps-shared';
-import type {
-  CustomSwaggerServiceDetails,
-  InputParameter,
-  OperationInfo,
-  OperationManifest,
-  OperationManifestProperties,
-  OutputParameter,
-  SchemaProperty,
-  SwaggerParser,
-} from '@microsoft/logic-apps-shared';
+import type { OutputToken, ParameterInfo } from '@microsoft/designer-ui';
 import type { Dispatch } from '@reduxjs/toolkit';
 
 export interface ServiceOptions {

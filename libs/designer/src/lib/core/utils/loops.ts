@@ -26,18 +26,9 @@ import {
 import { isTokenValueSegment } from './parameters/segment';
 import { TokenSegmentConvertor } from './parameters/tokensegment';
 import { getSplitOnValue } from './setting';
-import { foreachOperationInfo, OperationManifestService } from '@microsoft/designer-client-services-logic-apps';
-import type { OutputToken, Token } from '@microsoft/designer-ui';
-import { TokenType } from '@microsoft/designer-ui';
-import type {
-  Dereference,
-  Expression,
-  ExpressionFunction,
-  ExpressionLiteral,
-  Segment,
-  OperationManifest,
-} from '@microsoft/logic-apps-shared';
 import {
+  foreachOperationInfo,
+  OperationManifestService,
   OutputKeys,
   containsWildIndexSegment,
   convertToStringLiteral,
@@ -56,6 +47,16 @@ import {
   first,
   getRecordEntry,
   isNullOrUndefined,
+} from '@microsoft/logic-apps-shared';
+import type { OutputToken, Token } from '@microsoft/designer-ui';
+import { TokenType } from '@microsoft/designer-ui';
+import type {
+  Dereference,
+  Expression,
+  ExpressionFunction,
+  ExpressionLiteral,
+  Segment,
+  OperationManifest,
 } from '@microsoft/logic-apps-shared';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 
@@ -646,8 +647,8 @@ export const getTokenExpressionValueForManifestBasedOperation = (
       ? `items(${convertToStringLiteral(loopSource)})`
       : Constants.ITEM
     : actionName
-    ? `${Constants.OUTPUTS}(${convertToStringLiteral(actionName)})`
-    : Constants.TRIGGER_OUTPUTS_OUTPUT;
+      ? `${Constants.OUTPUTS}(${convertToStringLiteral(actionName)})`
+      : Constants.TRIGGER_OUTPUTS_OUTPUT;
 
   return generateExpressionFromKey(method, key, actionName, isInsideArray, required, /* overrideMethod */ false);
 };
@@ -816,6 +817,6 @@ const normalizeKeyPath = (path: string | undefined): string | undefined => {
   return path && path.startsWith('outputs.$.body.')
     ? path.replace('outputs.$.body.', 'body.$.')
     : path === 'outputs.$.body'
-    ? 'body.$'
-    : path;
+      ? 'body.$'
+      : path;
 };

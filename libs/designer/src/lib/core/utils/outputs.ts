@@ -24,19 +24,8 @@ import {
   isDynamicDataReadyToLoad,
 } from './parameters/helper';
 import { convertOutputsToTokens, getTokenTitle } from './tokens';
-import { OperationManifestService } from '@microsoft/designer-client-services-logic-apps';
-import { ValueSegmentType, generateSchemaFromJsonString } from '@microsoft/designer-ui';
-import type {
-  Expression,
-  ExpressionFunction,
-  ExpressionLiteral,
-  OpenAPIV2,
-  OpenApiSchema,
-  OperationManifest,
-  OutputParameter,
-  OutputParameters,
-} from '@microsoft/logic-apps-shared';
 import {
+  OperationManifestService,
   AssertionErrorCode,
   AssertionException,
   ConnectionReferenceKeyFormat,
@@ -57,6 +46,17 @@ import {
   parseErrorMessage,
   safeSetObjectPropertyValue,
   unmap,
+} from '@microsoft/logic-apps-shared';
+import { ValueSegmentType, generateSchemaFromJsonString } from '@microsoft/designer-ui';
+import type {
+  Expression,
+  ExpressionFunction,
+  ExpressionLiteral,
+  OpenAPIV2,
+  OpenApiSchema,
+  OperationManifest,
+  OutputParameter,
+  OutputParameters,
 } from '@microsoft/logic-apps-shared';
 import type { Dispatch } from '@reduxjs/toolkit';
 

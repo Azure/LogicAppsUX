@@ -57,37 +57,11 @@ import {
   isVariableToken,
   ValueSegmentConvertor,
 } from './segment';
-import { LogEntryLevel, LoggerService, OperationManifestService, WorkflowService } from '@microsoft/designer-client-services-logic-apps';
-import type {
-  AuthProps,
-  ComboboxItem,
-  DictionaryEditorItemProps,
-  DropdownItem,
-  FloatingActionMenuOutputViewModel,
-  GroupItemProps,
-  OutputToken,
-  ParameterInfo,
-  RowItemProps,
-  Token as SegmentToken,
-  Token,
-  ValueSegment,
-} from '@microsoft/designer-ui';
 import {
-  removeQuotes,
-  ArrayType,
-  FloatingActionMenuKind,
-  getOuterMostCommaIndex,
-  RowDropdownOptions,
-  GroupDropdownOptions,
-  GroupType,
-  AuthenticationType,
-  ColumnMode,
-  DynamicCallStatus,
-  ValueSegmentType,
-  TokenType,
-  AuthenticationOAuthType,
-} from '@microsoft/designer-ui';
-import {
+  LogEntryLevel,
+  LoggerService,
+  OperationManifestService,
+  WorkflowService,
   getIntl,
   isDynamicTreeExtension,
   isLegacyDynamicValuesTreeExtension,
@@ -140,6 +114,35 @@ import {
   getRecordEntry,
   isRecordNotEmpty,
 } from '@microsoft/logic-apps-shared';
+import type {
+  AuthProps,
+  ComboboxItem,
+  DictionaryEditorItemProps,
+  DropdownItem,
+  FloatingActionMenuOutputViewModel,
+  GroupItemProps,
+  OutputToken,
+  ParameterInfo,
+  RowItemProps,
+  Token as SegmentToken,
+  Token,
+  ValueSegment,
+} from '@microsoft/designer-ui';
+import {
+  removeQuotes,
+  ArrayType,
+  FloatingActionMenuKind,
+  getOuterMostCommaIndex,
+  RowDropdownOptions,
+  GroupDropdownOptions,
+  GroupType,
+  AuthenticationType,
+  ColumnMode,
+  DynamicCallStatus,
+  ValueSegmentType,
+  TokenType,
+  AuthenticationOAuthType,
+} from '@microsoft/designer-ui';
 import type {
   DependentParameterInfo,
   DynamicParameters,
@@ -427,8 +430,8 @@ export function getParameterEditorProps(
     editorViewModel = editorOptions?.isOldFormat
       ? toSimpleQueryBuilderViewModel(value)
       : editorOptions?.isHybridEditor
-      ? toHybridConditionViewModel(value)
-      : toConditionViewModel(value);
+        ? toHybridConditionViewModel(value)
+        : toConditionViewModel(value);
   } else if (dynamicValues && isLegacyDynamicValuesExtension(dynamicValues) && dynamicValues.extension.builtInOperation) {
     editor = undefined;
   } else if (editor === constants.EDITOR.FILEPICKER && dynamicValues) {
@@ -1083,8 +1086,8 @@ export function getTokenValueFromToken(tokenType: TokenType, functionArguments: 
   return tokenType === TokenType.PARAMETER
     ? `parameters(${convertToStringLiteral(functionArguments[0])})`
     : tokenType === TokenType.VARIABLE
-    ? `variables(${convertToStringLiteral(functionArguments[0])})`
-    : undefined;
+      ? `variables(${convertToStringLiteral(functionArguments[0])})`
+      : undefined;
 }
 
 export function getTokenExpressionValue(token: SegmentToken, currentValue?: string): string {

@@ -35,7 +35,16 @@ import {
 import type { NodeDataWithOperationMetadata } from './operationdeserializer';
 import type { Settings } from './settings';
 import { getOperationSettings, getSplitOnValue } from './settings';
-import { ConnectionService, OperationManifestService, StaticResultService } from '@microsoft/designer-client-services-logic-apps';
+import {
+  ConnectionService,
+  OperationManifestService,
+  StaticResultService,
+  ManifestParser,
+  equals,
+  getBrandColorFromConnector,
+  getIconUriFromConnector,
+  getRecordEntry,
+} from '@microsoft/logic-apps-shared';
 import type {
   Connector,
   DiscoveryOperation,
@@ -44,7 +53,6 @@ import type {
   SomeKindOfAzureOperationDiscovery,
   SwaggerParser,
 } from '@microsoft/logic-apps-shared';
-import { ManifestParser, equals, getBrandColorFromConnector, getIconUriFromConnector, getRecordEntry } from '@microsoft/logic-apps-shared';
 import type { Dispatch } from '@reduxjs/toolkit';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { batch } from 'react-redux';
@@ -373,8 +381,8 @@ const getOperationType = (operation: DiscoveryOperation<DiscoveryResultTypes>): 
     ? (operation.properties as SomeKindOfAzureOperationDiscovery).isWebhook
       ? Constants.NODE.TYPE.API_CONNECTION_WEBHOOK
       : (operation.properties as SomeKindOfAzureOperationDiscovery).isNotification
-      ? Constants.NODE.TYPE.API_CONNECTION_NOTIFICATION
-      : Constants.NODE.TYPE.API_CONNECTION
+        ? Constants.NODE.TYPE.API_CONNECTION_NOTIFICATION
+        : Constants.NODE.TYPE.API_CONNECTION
     : operationType;
 };
 

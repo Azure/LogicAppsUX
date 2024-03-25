@@ -55,8 +55,6 @@ import {
   LoggerService,
   OperationManifestService,
   StaticResultService,
-} from '@microsoft/designer-client-services-logic-apps';
-import {
   getIntl,
   ManifestParser,
   isArmResourceId,

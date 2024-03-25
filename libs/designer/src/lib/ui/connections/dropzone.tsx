@@ -18,9 +18,8 @@ import {
 // import AddBranchIcon from './edgeContextMenuSvgs/addBranchIcon.svg';
 // import AddNodeIcon from './edgeContextMenuSvgs/addNodeIcon.svg';
 import { css } from '@fluentui/utilities';
-import { LogEntryLevel, LoggerService } from '@microsoft/designer-client-services-logic-apps';
+import { LogEntryLevel, LoggerService, containsIdTag, guid, normalizeAutomationId, removeIdTag } from '@microsoft/logic-apps-shared';
 import { ActionButtonV2, convertUIElementNameToAutomationId } from '@microsoft/designer-ui';
-import { containsIdTag, guid, normalizeAutomationId, removeIdTag } from '@microsoft/logic-apps-shared';
 import { useCallback, useMemo, useState } from 'react';
 import { useDrop } from 'react-dnd';
 import { useIntl } from 'react-intl';
@@ -169,26 +168,26 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId, 
         }
       )
     : parentSubgraphName
-    ? intl.formatMessage(
-        {
-          defaultMessage: 'Insert a new step in {parentSubgraphName}',
-          id: 'RjvpD+',
-          description: 'Tooltip for the button to add a new step under subgraph',
-        },
-        {
-          parentSubgraphName,
-        }
-      )
-    : intl.formatMessage(
-        {
-          defaultMessage: 'Insert a new step after {parentName}',
-          id: '2r30S9',
-          description: 'Tooltip for the button to add a new step (action or branch)',
-        },
-        {
-          parentName,
-        }
-      );
+      ? intl.formatMessage(
+          {
+            defaultMessage: 'Insert a new step in {parentSubgraphName}',
+            id: 'RjvpD+',
+            description: 'Tooltip for the button to add a new step under subgraph',
+          },
+          {
+            parentSubgraphName,
+          }
+        )
+      : intl.formatMessage(
+          {
+            defaultMessage: 'Insert a new step after {parentName}',
+            id: '2r30S9',
+            description: 'Tooltip for the button to add a new step (action or branch)',
+          },
+          {
+            parentName,
+          }
+        );
 
   const actionButtonClick = useCallback(
     (e: React.MouseEvent<HTMLButtonElement>) => {

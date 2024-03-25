@@ -28,11 +28,26 @@ import {
   toParameterInfoMap,
   tryConvertStringToExpression,
 } from './helper';
-import type { ListDynamicValue, ManagedIdentityRequestProperties, TreeDynamicValue } from '@microsoft/designer-client-services-logic-apps';
-import { OperationManifestService } from '@microsoft/designer-client-services-logic-apps';
-import type { ParameterInfo } from '@microsoft/designer-ui';
-import { TokenType, ValueSegmentType } from '@microsoft/designer-ui';
+import type {
+  ListDynamicValue,
+  ManagedIdentityRequestProperties,
+  TreeDynamicValue,
+  DynamicParameters,
+  ExpressionEvaluatorOptions,
+  InputParameter,
+  OutputParameter,
+  OutputParameters,
+  ResolvedParameter,
+  SchemaProcessorOptions,
+  SwaggerParser,
+  Connection,
+  Connector,
+  OpenAPIV2,
+  OperationInfo,
+  OperationManifest,
+} from '@microsoft/logic-apps-shared';
 import {
+  OperationManifestService,
   getIntl,
   ExpressionEvaluator,
   isTemplateExpression,
@@ -73,21 +88,8 @@ import {
   copy,
   unmap,
 } from '@microsoft/logic-apps-shared';
-import type {
-  DynamicParameters,
-  ExpressionEvaluatorOptions,
-  InputParameter,
-  OutputParameter,
-  OutputParameters,
-  ResolvedParameter,
-  SchemaProcessorOptions,
-  SwaggerParser,
-  Connection,
-  Connector,
-  OpenAPIV2,
-  OperationInfo,
-  OperationManifest,
-} from '@microsoft/logic-apps-shared';
+import type { ParameterInfo } from '@microsoft/designer-ui';
+import { TokenType, ValueSegmentType } from '@microsoft/designer-ui';
 
 export async function getDynamicValues(
   dependencyInfo: DependencyInfo,
@@ -662,10 +664,10 @@ function getSwaggerBasedInputParameters(
     key === 'inputs.$'
       ? undefined
       : key.indexOf('inputs.$') === 0
-      ? key.replace('inputs.$.', '')
-      : key.indexOf('body.$') === 0
-      ? key.replace('.$', '')
-      : '';
+        ? key.replace('inputs.$.', '')
+        : key.indexOf('body.$') === 0
+          ? key.replace('.$', '')
+          : '';
   const propertyNames = parseEx(parameterKey).map((segment) => segment.value?.toString()) as string[];
   const dynamicInputDefinition = safeSetObjectPropertyValue(
     {},
