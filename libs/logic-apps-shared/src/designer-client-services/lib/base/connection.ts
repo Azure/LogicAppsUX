@@ -205,17 +205,16 @@ export abstract class BaseConnectionService implements IConnectionService {
 
   protected async testConnection(connection: Connection): Promise<void> {
     let response: HttpResponse<any> | undefined = undefined;
-    const testLinks = connection.properties?.testLinks;
-    if (!testLinks || testLinks.length === 0) return;
     response = await this.requestTestConnection(connection);
     if (response) this.handleTestConnectionResponse(response);
   }
 
   protected async requestTestConnection(connection: Connection): Promise<HttpResponse<any> | undefined> {
     const testLinks = connection.properties?.testLinks;
-    if (!testLinks || testLinks.length === 0) return undefined;
+    const testRequests = connection.properties?.testRequests;
     const { httpClient } = this.options;
-    const { method: httpMethod, requestUri: uri } = testLinks[0];
+    const { method: httpMethod, requestUri: uri, body } = testRequests?.[0] ?? testLinks?.[0] ?? {};
+    if (!httpMethod || !uri) return;
     const method = httpMethod.toUpperCase() as HTTP_METHODS;
 
     try {
@@ -223,6 +222,7 @@ export abstract class BaseConnectionService implements IConnectionService {
       const requestOptions: HttpRequestOptions<any> = {
         headers: { noBatch: 'true' }, // Some requests fail specifically when run through batch
         uri,
+        ...(body ? { content: body } : {}),
       };
       if (equals(method, HTTP_METHODS.GET)) response = await httpClient.get<any>(requestOptions);
       else if (equals(method, HTTP_METHODS.POST)) response = await httpClient.post<any, any>(requestOptions);
@@ -236,17 +236,42 @@ export abstract class BaseConnectionService implements IConnectionService {
 
   protected handleTestConnectionResponse(response?: HttpResponse<any>): void {
     if (!response) return;
+    if (response?.status) return this.handleTestLinkResponse(response);
+    if ((response as any)?.response) return this.handleTestRequestResponse((response as any)?.response);
+  }
+
+  private handleTestLinkResponse(response: HttpResponse<any>): void {
     const defaultErrorResponse = 'Please check your account info and/or permissions and try again.';
-    if (response.status >= 400 && response.status < 500 && response.status !== 429) {
+    const status = response?.status;
+    if (status >= 400 && status < 500 && status !== 429) {
       let errorMessage = defaultErrorResponse;
-      if (response.body && typeof response.body === 'string')
-        errorMessage = this.tryParseErrorMessage(JSON.parse(response.body), defaultErrorResponse);
+      const body = response?.body;
+      if (body && typeof body === 'string') errorMessage = this.tryParseErrorMessage(JSON.parse(body), defaultErrorResponse);
+      throw new UserException(UserErrorCode.TEST_CONNECTION_FAILED, errorMessage);
+    }
+  }
+
+  private handleTestRequestResponse(response: any): void {
+    const defaultErrorResponse = 'Please check your account info and/or permissions and try again.';
+    const statusCode = response?.statusCode;
+    if (statusCode !== 'OK') {
+      let errorMessage = defaultErrorResponse;
+      const body = response?.body;
+      if (body) errorMessage = this.tryParseErrorMessage(body, defaultErrorResponse);
       throw new UserException(UserErrorCode.TEST_CONNECTION_FAILED, errorMessage);
     }
   }
 
   protected tryParseErrorMessage(error: any, defaultErrorMessage?: string): string {
-    return error?.message ?? error?.Message ?? error?.error?.message ?? error?.responseText ?? defaultErrorMessage ?? 'Unknown error';
+    return (
+      error?.message ??
+      error?.Message ??
+      error?.error?.message ??
+      error?.responseText ??
+      error?.errors?.map((e: any) => e?.message ?? e)?.join(', ') ??
+      defaultErrorMessage ??
+      'Unknown error'
+    );
   }
 
   protected async getConnectionsForConnector(connectorId: string): Promise<Connection[]> {
