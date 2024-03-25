@@ -106,7 +106,6 @@ jobs:
             { dist: './dist/libs/designer-ui', package: 'designer-ui' },
             { dist: './dist/libs/logic-apps-shared', package: 'logic-apps-shared' },
             { dist: './dist/libs/vscode-extension', package: 'vscode-extension' },
-            { dist: './dist/libs/chatbot', package: 'chatbot' },
           ]
     steps:
       - name: 'Checkout Github Action'

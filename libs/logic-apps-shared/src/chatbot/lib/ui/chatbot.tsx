@@ -17,7 +17,7 @@ import {
   ChatSuggestionGroup,
   ChatSuggestion,
 } from '@microsoft/designer-ui';
-import type { Workflow } from '@microsoft/logic-apps-designer';
+import type { Workflow } from '@microsoft/logic-apps-shared';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 

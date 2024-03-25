@@ -24,7 +24,7 @@ import {
 } from './Services/WorkflowAndArtifacts';
 import { ArmParser } from './Utilities/ArmParser';
 import { WorkflowUtility } from './Utilities/Workflow';
-import { Chatbot, chatbotPanelWidth } from '@microsoft/chatbot';
+import { Chatbot, chatbotPanelWidth } from '@microsoft/logic-apps-shared';
 import {
   BaseApiManagementService,
   BaseAppServiceService,

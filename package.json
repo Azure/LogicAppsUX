@@ -18,7 +18,6 @@
     "compile:loc": "formatjs compile-folder --ast --format ./format.js \"Localize/lang\" \"libs/logic-apps-shared/src/intl/compiled-lang/\" ",
     "compile:loc:psuedo": "formatjs compile \"Localize/lang/strings.json\" --ast --format ./format.js --out-file \"libs/logic-apps-shared/src/intl/compiled-lang/strings.en-XA.json\" --pseudo-locale en-XA",
     "build:designer-client-services": "nx run services-designer-client-services:build",
-    "build:chatbot": "nx run chatbot:build",
     "build:parsers": "nx run parsers:build",
     "build:vscode-react": "nx run vs-code-react:build",
     "build:vscode-designer": "nx run vs-code-designer:build && nx run vs-code-react:build",
