@@ -1,6 +1,6 @@
 {
   "name": "@microsoft/logic-apps-data-mapper",
-  "version": "2.125.4",
+  "version": "2.125.5",
   "scripts": {
     "yalcpush": "yalc push ../../dist/libs/data-mapper"
   }

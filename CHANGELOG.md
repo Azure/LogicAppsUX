@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [2.125.5](https://github.com/Azure/LogicAppsUX/compare/v2.125.4...v2.125.5) (2024-03-25)
+
+
+### Bug Fixes
+
+* **Designer:** Create connection now uses `testRequests` when available ([#4419](https://github.com/Azure/LogicAppsUX/issues/4419)) ([45928d0](https://github.com/Azure/LogicAppsUX/commit/45928d091d7d7c04a548067c2a551d972471491d))
+
 ### [2.125.4](https://github.com/Azure/LogicAppsUX/compare/v2.125.3...v2.125.4) (2024-03-22)
 
 
