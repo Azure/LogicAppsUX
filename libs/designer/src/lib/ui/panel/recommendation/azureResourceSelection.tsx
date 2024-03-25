@@ -88,7 +88,7 @@ export const AzureResourceSelection = (props: AzureResourceSelectionProps) => {
   const addResourceOperation = useCallback(
     (props: AddResourceOperationParameters) => {
       const { name, presetParameterValues, actionMetadata } = props;
-      const newNodeId = name.replaceAll(' ', '_');
+      const newNodeId = name.replaceAll(' ', '_').replaceAll('/', '-');
       dispatch(
         addOperation({
           operation,
