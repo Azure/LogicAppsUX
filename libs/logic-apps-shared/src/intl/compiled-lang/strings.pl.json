@@ -4238,7 +4238,7 @@
   "OrPVcU": [
     {
       "type": 0,
-      "value": "Invalid split on format in '"
+      "value": "Nieprawidłowy podział formatu w „"
     },
     {
       "type": 1,
@@ -4246,7 +4246,7 @@
     },
     {
       "type": 0,
-      "value": "'."
+      "value": "”."
     }
   ],
   "Ov7Ckz": [
@@ -5340,7 +5340,7 @@
     },
     {
       "type": 1,
-      "value": "searchText"
+      "value": "searchTerm"
     }
   ],
   "VIN7lB": [
@@ -7892,7 +7892,7 @@
   "lA/sHA": [
     {
       "type": 0,
-      "value": "Copy the value of '"
+      "value": "Skopiuj wartość „"
     },
     {
       "type": 1,
@@ -7900,7 +7900,7 @@
     },
     {
       "type": 0,
-      "value": "' to the clipboard"
+      "value": "” do schowka"
     }
   ],
   "lB56l2": [

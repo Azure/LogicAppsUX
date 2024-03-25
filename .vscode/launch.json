@@ -6,7 +6,9 @@
       "type": "extensionHost",
       "request": "launch",
       "runtimeExecutable": "${execPath}",
-      "args": ["--extensionDevelopmentPath=${workspaceFolder}/dist/apps/vs-code-designer"],
+      "args": [
+        "--extensionDevelopmentPath=${workspaceFolder}/dist/apps/vs-code-designer"
+      ],
       "trace": false,
       "internalConsoleOptions": "openOnFirstSessionStart",
       "outFiles": ["${workspaceFolder}/dist/apps/vs-code-designer/*.js"],

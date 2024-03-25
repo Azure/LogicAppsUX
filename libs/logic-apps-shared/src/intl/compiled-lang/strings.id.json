@@ -4131,7 +4131,7 @@
   "OrPVcU": [
     {
       "type": 0,
-      "value": "Invalid split on format in '"
+      "value": "Format pemisahan tidak valid dalam '"
     },
     {
       "type": 1,
@@ -7666,7 +7666,7 @@
   "lA/sHA": [
     {
       "type": 0,
-      "value": "Copy the value of '"
+      "value": "Salin nilai '"
     },
     {
       "type": 1,
@@ -7674,7 +7674,7 @@
     },
     {
       "type": 0,
-      "value": "' to the clipboard"
+      "value": "' ke clipboard"
     }
   ],
   "lB56l2": [
