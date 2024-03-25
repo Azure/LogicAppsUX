@@ -49,13 +49,18 @@ export const ConnectorSummaryCard = (props: ConnectorSummaryCardProps) => {
 
   if (isCard)
     return (
-      <button className="msla-connector-summary-card" onClick={handleClick} aria-label={`${connectorName} ${description}`}>
+      <button
+        className="msla-connector-summary-card"
+        onClick={handleClick}
+        aria-label={`${connectorName} ${description}`}
+        data-automation-id={id}
+      >
         <Content />
       </button>
     );
 
   return (
-    <div className="msla-connector-summary-display">
+    <div className="msla-connector-summary-display" data-automation-id={id}>
       <ConnectorImage />
       <div style={{ flexGrow: 1 }}>
         <Content />
