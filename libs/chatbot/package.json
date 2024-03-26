@@ -4,6 +4,19 @@
   "scripts": {
     "yalcpush": "yalc push ../../dist/libs/chatbot"
   },
+  "dependencies": {
+    "@microsoft/logic-apps-shared": "workspace:*",
+    "react-intl": "6.3.0",
+    "@microsoft/logic-apps-designer": "workspace:*",
+    "@fluentui/react": "8.110.2",
+    "@fluentui/react-icons": "2.0.224",
+    "@microsoft/designer-ui": "workspace:*",
+    "@fluentui/react-components": "9.42.0"
+  },
+  "devDependencies": {
+    "@types/react": "^18.2.69",
+    "react": "^18.2.0"
+  },
   "peerDependencies": {
     "react": "^16.4.0 || ^17.0.0 || ^18.0.0",
     "react-dom": "^16.4.0 || ^17.0.0 || ^18.0.0"

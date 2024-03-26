@@ -1,0 +1,414 @@
+[NX Daemon Server] - 2024-03-26T03:24:15.606Z - Started listening on: /var/folders/_y/sdlctx2s49x0rfh4btvlkk0h0000gn/T/d8564d2627e263173438/d.sock
+[NX Daemon Server] - 2024-03-26T03:24:15.622Z - [WATCHER]: Subscribed to changes within: /Users/travisharris/code/LogicAppsUX (native)
+[NX Daemon Server] - 2024-03-26T03:24:15.622Z - Established a connection. Number of open connections: 1
+[NX Daemon Server] - 2024-03-26T03:24:15.622Z - Established a connection. Number of open connections: 2
+[NX Daemon Server] - 2024-03-26T03:24:15.625Z - [REQUEST]: Client Request for Project Graph Received
+[NX Daemon Server] - 2024-03-26T03:24:15.769Z - [REQUEST]: Updated workspace context based on watched changes, recomputing project graph...
+[NX Daemon Server] - 2024-03-26T03:24:15.769Z - [REQUEST]: 
+[NX Daemon Server] - 2024-03-26T03:24:15.769Z - [REQUEST]: 
+[NX Daemon Server] - 2024-03-26T03:24:16.545Z - [REQUEST]: Responding to the client. project-graph
+[NX Daemon Server] - 2024-03-26T03:24:16.546Z - Time taken for 'total for creating and serializing project graph' 919.9834170043468ms
+[NX Daemon Server] - 2024-03-26T03:24:16.546Z - Closed a connection. Number of open connections: 1
+[NX Daemon Server] - 2024-03-26T03:24:16.548Z - Done responding to the client project-graph
+[NX Daemon Server] - 2024-03-26T03:24:16.548Z - Handled REQUEST_PROJECT_GRAPH. Handling time: 920. Response time: 3.
+[NX Daemon Server] - 2024-03-26T03:24:16.555Z - [REQUEST]: Responding to the client. handleRequestFileData
+[NX Daemon Server] - 2024-03-26T03:24:16.555Z - Done responding to the client handleRequestFileData
+[NX Daemon Server] - 2024-03-26T03:24:16.555Z - Handled REQUEST_FILE_DATA. Handling time: 2. Response time: 0.
+[NX Daemon Server] - 2024-03-26T03:24:16.558Z - Closed a connection. Number of open connections: 0
+[NX Daemon Server] - 2024-03-26T03:24:59.411Z - [WATCHER]: libs/chatbot/package.json was modified
+[NX Daemon Server] - 2024-03-26T03:24:59.411Z - [WATCHER]: Processing file changes in outputs
+[NX Daemon Server] - 2024-03-26T03:24:59.516Z - [REQUEST]: Updated workspace context based on watched changes, recomputing project graph...
+[NX Daemon Server] - 2024-03-26T03:24:59.516Z - [REQUEST]: libs/chatbot/package.json
+[NX Daemon Server] - 2024-03-26T03:24:59.516Z - [REQUEST]: 
+[NX Daemon Server] - 2024-03-26T03:24:59.582Z - Time taken for 'hash changed files from watcher' 3.4532079994678497ms
+[NX Daemon Server] - 2024-03-26T03:25:34.573Z - [WATCHER]: libs/chatbot/package.json was modified
+[NX Daemon Server] - 2024-03-26T03:25:34.573Z - [WATCHER]: Processing file changes in outputs
+[NX Daemon Server] - 2024-03-26T03:25:34.776Z - [REQUEST]: Updated workspace context based on watched changes, recomputing project graph...
+[NX Daemon Server] - 2024-03-26T03:25:34.777Z - [REQUEST]: libs/chatbot/package.json
+[NX Daemon Server] - 2024-03-26T03:25:34.777Z - [REQUEST]: 
+[NX Daemon Server] - 2024-03-26T03:25:34.832Z - Time taken for 'hash changed files from watcher' 2.2701670080423355ms
+[NX Daemon Server] - 2024-03-26T03:25:42.885Z - [WATCHER]: 0 file(s) created or restored, 0 file(s) modified, 2 file(s) deleted
+[NX Daemon Server] - 2024-03-26T03:25:42.885Z - [WATCHER]: Processing file changes in outputs
+[NX Daemon Server] - 2024-03-26T03:25:43.286Z - [REQUEST]: Updated workspace context based on watched changes, recomputing project graph...
+[NX Daemon Server] - 2024-03-26T03:25:43.287Z - [REQUEST]: 
+[NX Daemon Server] - 2024-03-26T03:25:43.287Z - [REQUEST]: libs/chatbot/jest.setup.js,libs/chatbot/jest.config.ts
+[NX Daemon Server] - 2024-03-26T03:25:43.536Z - Time taken for 'hash changed files from watcher' 1.3793749958276749ms
+[NX Daemon Server] - 2024-03-26T03:25:49.340Z - [WATCHER]: libs/chatbot/.eslintrc.json was deleted
+[NX Daemon Server] - 2024-03-26T03:25:49.340Z - [WATCHER]: Processing file changes in outputs
+[NX Daemon Server] - 2024-03-26T03:25:50.143Z - [REQUEST]: Updated workspace context based on watched changes, recomputing project graph...
+[NX Daemon Server] - 2024-03-26T03:25:50.143Z - [REQUEST]: 
+[NX Daemon Server] - 2024-03-26T03:25:50.143Z - [REQUEST]: libs/chatbot/.eslintrc.json
+[NX Daemon Server] - 2024-03-26T03:25:50.211Z - Time taken for 'hash changed files from watcher' 2.47112500667572ms
+[NX Daemon Server] - 2024-03-26T03:25:54.437Z - [WATCHER]: libs/chatbot/.babelrc was deleted
+[NX Daemon Server] - 2024-03-26T03:25:54.437Z - [WATCHER]: Processing file changes in outputs
+[NX Daemon Server] - 2024-03-26T03:25:56.039Z - [REQUEST]: Updated workspace context based on watched changes, recomputing project graph...
+[NX Daemon Server] - 2024-03-26T03:25:56.039Z - [REQUEST]: 
+[NX Daemon Server] - 2024-03-26T03:25:56.039Z - [REQUEST]: libs/chatbot/.babelrc
+[NX Daemon Server] - 2024-03-26T03:25:56.098Z - Time taken for 'hash changed files from watcher' 1.7534999996423721ms
+[NX Daemon Server] - 2024-03-26T03:27:19.740Z - [WATCHER]: tsconfig.base.json was deleted
+[NX Daemon Server] - 2024-03-26T03:27:19.740Z - [WATCHER]: Processing file changes in outputs
+[NX Daemon Server] - 2024-03-26T03:27:22.942Z - [REQUEST]: Updated workspace context based on watched changes, recomputing project graph...
+[NX Daemon Server] - 2024-03-26T03:27:22.943Z - [REQUEST]: 
+[NX Daemon Server] - 2024-03-26T03:27:22.943Z - [REQUEST]: tsconfig.base.json
+[NX Daemon Server] - 2024-03-26T03:27:23.184Z - Time taken for 'hash changed files from watcher' 1.3768329918384552ms
+[NX Daemon Server] - 2024-03-26T03:27:51.217Z - [WATCHER]: tsconfig.json was created or restored
+[NX Daemon Server] - 2024-03-26T03:27:51.217Z - [WATCHER]: Processing file changes in outputs
+[NX Daemon Server] - 2024-03-26T03:27:51.321Z - [REQUEST]: Updated workspace context based on watched changes, recomputing project graph...
+[NX Daemon Server] - 2024-03-26T03:27:51.321Z - [REQUEST]: tsconfig.json
+[NX Daemon Server] - 2024-03-26T03:27:51.321Z - [REQUEST]: 
+[NX Daemon Server] - 2024-03-26T03:27:51.380Z - Time taken for 'hash changed files from watcher' 2.421333998441696ms
+[NX Daemon Server] - 2024-03-26T03:28:00.724Z - [WATCHER]: tsconfig.json was modified
+[NX Daemon Server] - 2024-03-26T03:28:00.725Z - [WATCHER]: Processing file changes in outputs
+[NX Daemon Server] - 2024-03-26T03:28:00.953Z - [REQUEST]: Updated workspace context based on watched changes, recomputing project graph...
+[NX Daemon Server] - 2024-03-26T03:28:00.954Z - [REQUEST]: tsconfig.json
+[NX Daemon Server] - 2024-03-26T03:28:00.954Z - [REQUEST]: 
+[NX Daemon Server] - 2024-03-26T03:28:01.200Z - Time taken for 'hash changed files from watcher' 27.543166995048523ms
+[NX Daemon Server] - 2024-03-26T03:28:12.649Z - [WATCHER]: libs/chatbot/tsconfig.lib.json was deleted
+[NX Daemon Server] - 2024-03-26T03:28:12.649Z - [WATCHER]: Processing file changes in outputs
+[NX Daemon Server] - 2024-03-26T03:28:12.707Z - [WATCHER]: libs/chatbot/tsconfig.spec.json was deleted
+[NX Daemon Server] - 2024-03-26T03:28:12.707Z - [WATCHER]: Processing file changes in outputs
+[NX Daemon Server] - 2024-03-26T03:28:13.051Z - [REQUEST]: Updated workspace context based on watched changes, recomputing project graph...
+[NX Daemon Server] - 2024-03-26T03:28:13.051Z - [REQUEST]: 
+[NX Daemon Server] - 2024-03-26T03:28:13.051Z - [REQUEST]: libs/chatbot/tsconfig.lib.json,libs/chatbot/tsconfig.spec.json
+[NX Daemon Server] - 2024-03-26T03:28:13.165Z - Time taken for 'hash changed files from watcher' 1.4239170104265213ms
+[NX Daemon Server] - 2024-03-26T03:28:20.394Z - [WATCHER]: libs/chatbot/README.md was deleted
+[NX Daemon Server] - 2024-03-26T03:28:20.394Z - [WATCHER]: Processing file changes in outputs
+[NX Daemon Server] - 2024-03-26T03:28:21.198Z - [REQUEST]: Updated workspace context based on watched changes, recomputing project graph...
+[NX Daemon Server] - 2024-03-26T03:28:21.198Z - [REQUEST]: 
+[NX Daemon Server] - 2024-03-26T03:28:21.198Z - [REQUEST]: libs/chatbot/README.md
+[NX Daemon Server] - 2024-03-26T03:28:21.253Z - Time taken for 'hash changed files from watcher' 2.154458999633789ms
+[NX Daemon Server] - 2024-03-26T03:28:54.648Z - [WATCHER]: libs/chatbot/tsconfig.json was modified
+[NX Daemon Server] - 2024-03-26T03:28:54.648Z - [WATCHER]: Processing file changes in outputs
+[NX Daemon Server] - 2024-03-26T03:28:56.253Z - [REQUEST]: Updated workspace context based on watched changes, recomputing project graph...
+[NX Daemon Server] - 2024-03-26T03:28:56.253Z - [REQUEST]: libs/chatbot/tsconfig.json
+[NX Daemon Server] - 2024-03-26T03:28:56.253Z - [REQUEST]: 
+[NX Daemon Server] - 2024-03-26T03:28:56.399Z - Time taken for 'hash changed files from watcher' 3.160624995827675ms
+[NX Daemon Server] - 2024-03-26T03:28:57.288Z - [WATCHER]: libs/chatbot/tsconfig.json was modified
+[NX Daemon Server] - 2024-03-26T03:28:57.288Z - [WATCHER]: Processing file changes in outputs
+[NX Daemon Server] - 2024-03-26T03:29:00.491Z - [REQUEST]: Updated workspace context based on watched changes, recomputing project graph...
+[NX Daemon Server] - 2024-03-26T03:29:00.491Z - [REQUEST]: libs/chatbot/tsconfig.json
+[NX Daemon Server] - 2024-03-26T03:29:00.491Z - [REQUEST]: 
+[NX Daemon Server] - 2024-03-26T03:29:00.523Z - Time taken for 'hash changed files from watcher' 2.0177910029888153ms
+[NX Daemon Server] - 2024-03-26T03:29:21.052Z - [WATCHER]: libs/chatbot/rollup was created or restored
+[NX Daemon Server] - 2024-03-26T03:29:21.053Z - [WATCHER]: Processing file changes in outputs
+[NX Daemon Server] - 2024-03-26T03:29:21.156Z - [REQUEST]: Updated workspace context based on watched changes, recomputing project graph...
+[NX Daemon Server] - 2024-03-26T03:29:21.157Z - [REQUEST]: libs/chatbot/rollup
+[NX Daemon Server] - 2024-03-26T03:29:21.157Z - [REQUEST]: 
+[NX Daemon Server] - 2024-03-26T03:29:21.211Z - Time taken for 'hash changed files from watcher' 2.7014999985694885ms
+[NX Daemon Server] - 2024-03-26T03:29:32.437Z - [WATCHER]: 1 file(s) created or restored, 0 file(s) modified, 1 file(s) deleted
+[NX Daemon Server] - 2024-03-26T03:29:32.437Z - [WATCHER]: Processing file changes in outputs
+[NX Daemon Server] - 2024-03-26T03:29:32.540Z - [REQUEST]: Updated workspace context based on watched changes, recomputing project graph...
+[NX Daemon Server] - 2024-03-26T03:29:32.540Z - [REQUEST]: libs/chatbot/rollup.config.mjs
+[NX Daemon Server] - 2024-03-26T03:29:32.540Z - [REQUEST]: libs/chatbot/rollup
+[NX Daemon Server] - 2024-03-26T03:29:32.578Z - Time taken for 'hash changed files from watcher' 1.812959000468254ms
+[NX Daemon Server] - 2024-03-26T03:30:10.248Z - [WATCHER]: package.json was modified
+[NX Daemon Server] - 2024-03-26T03:30:10.248Z - [WATCHER]: Processing file changes in outputs
+[NX Daemon Server] - 2024-03-26T03:30:10.456Z - [REQUEST]: Updated workspace context based on watched changes, recomputing project graph...
+[NX Daemon Server] - 2024-03-26T03:30:10.459Z - [REQUEST]: package.json
+[NX Daemon Server] - 2024-03-26T03:30:10.459Z - [REQUEST]: 
+[NX Daemon Server] - 2024-03-26T03:30:10.579Z - Time taken for 'hash changed files from watcher' 6.319290995597839ms
+[NX Daemon Server] - 2024-03-26T03:30:23.661Z - [WATCHER]: package.json was modified
+[NX Daemon Server] - 2024-03-26T03:30:23.662Z - [WATCHER]: Processing file changes in outputs
+[NX Daemon Server] - 2024-03-26T03:30:24.064Z - [REQUEST]: Updated workspace context based on watched changes, recomputing project graph...
+[NX Daemon Server] - 2024-03-26T03:30:24.064Z - [REQUEST]: package.json
+[NX Daemon Server] - 2024-03-26T03:30:24.064Z - [REQUEST]: 
+[NX Daemon Server] - 2024-03-26T03:30:24.111Z - Time taken for 'hash changed files from watcher' 1.3653749972581863ms
+[NX Daemon Server] - 2024-03-26T03:30:30.199Z - [WATCHER]: _tmp_79260_8f4f6fea85f9d1c3424f3bda636f135c was deleted
+[NX Daemon Server] - 2024-03-26T03:30:30.199Z - [WATCHER]: Processing file changes in outputs
+[NX Daemon Server] - 2024-03-26T03:30:31.002Z - [REQUEST]: Updated workspace context based on watched changes, recomputing project graph...
+[NX Daemon Server] - 2024-03-26T03:30:31.002Z - [REQUEST]: 
+[NX Daemon Server] - 2024-03-26T03:30:31.002Z - [REQUEST]: _tmp_79260_8f4f6fea85f9d1c3424f3bda636f135c
+[NX Daemon Server] - 2024-03-26T03:30:31.088Z - Time taken for 'hash changed files from watcher' 2.701875001192093ms
+[NX Daemon Server] - 2024-03-26T03:40:33.278Z - Started listening on: /var/folders/_y/sdlctx2s49x0rfh4btvlkk0h0000gn/T/d8564d2627e263173438/d.sock
+[NX Daemon Server] - 2024-03-26T03:40:33.282Z - [WATCHER]: Subscribed to changes within: /Users/travisharris/code/LogicAppsUX (native)
+[NX Daemon Server] - 2024-03-26T03:40:33.282Z - Established a connection. Number of open connections: 1
+[NX Daemon Server] - 2024-03-26T03:40:33.283Z - Established a connection. Number of open connections: 2
+[NX Daemon Server] - 2024-03-26T03:40:33.283Z - Closed a connection. Number of open connections: 1
+[NX Daemon Server] - 2024-03-26T03:40:33.285Z - [REQUEST]: Client Request for Project Graph Received
+[NX Daemon Server] - 2024-03-26T03:40:33.306Z - [REQUEST]: Updated workspace context based on watched changes, recomputing project graph...
+[NX Daemon Server] - 2024-03-26T03:40:33.307Z - [REQUEST]: 
+[NX Daemon Server] - 2024-03-26T03:40:33.307Z - [REQUEST]: 
+[NX Daemon Server] - 2024-03-26T03:40:34.032Z - [REQUEST]: Responding to the client. project-graph
+[NX Daemon Server] - 2024-03-26T03:40:34.033Z - Time taken for 'total for creating and serializing project graph' 746.5286249965429ms
+[NX Daemon Server] - 2024-03-26T03:40:34.034Z - Done responding to the client project-graph
+[NX Daemon Server] - 2024-03-26T03:40:34.034Z - Handled REQUEST_PROJECT_GRAPH. Handling time: 747. Response time: 2.
+[NX Daemon Server] - 2024-03-26T03:40:34.039Z - [REQUEST]: Responding to the client. handleRequestFileData
+[NX Daemon Server] - 2024-03-26T03:40:34.040Z - Done responding to the client handleRequestFileData
+[NX Daemon Server] - 2024-03-26T03:40:34.040Z - Handled REQUEST_FILE_DATA. Handling time: 1. Response time: 1.
+[NX Daemon Server] - 2024-03-26T03:40:34.042Z - Closed a connection. Number of open connections: 0
+[NX Daemon Server] - 2024-03-26T03:40:39.522Z - [WATCHER]: libs/data-mapper/tsconfig.json was modified
+[NX Daemon Server] - 2024-03-26T03:40:39.523Z - [WATCHER]: Processing file changes in outputs
+[NX Daemon Server] - 2024-03-26T03:40:39.634Z - [REQUEST]: Updated workspace context based on watched changes, recomputing project graph...
+[NX Daemon Server] - 2024-03-26T03:40:39.635Z - [REQUEST]: libs/data-mapper/tsconfig.json
+[NX Daemon Server] - 2024-03-26T03:40:39.635Z - [REQUEST]: 
+[NX Daemon Server] - 2024-03-26T03:40:39.732Z - Time taken for 'hash changed files from watcher' 10.130832999944687ms
+[NX Daemon Server] - 2024-03-26T03:40:55.826Z - [WATCHER]: Processing file changes in outputs
+[NX Daemon Server] - 2024-03-26T03:40:55.828Z - [WATCHER]: 0 file(s) created or restored, 0 file(s) modified, 2 file(s) deleted
+[NX Daemon Server] - 2024-03-26T03:40:55.879Z - Established a connection. Number of open connections: 1
+[NX Daemon Server] - 2024-03-26T03:40:55.879Z - Closed a connection. Number of open connections: 0
+[NX Daemon Server] - 2024-03-26T03:40:55.879Z - Established a connection. Number of open connections: 1
+[NX Daemon Server] - 2024-03-26T03:40:55.882Z - [REQUEST]: Client Request for Project Graph Received
+[NX Daemon Server] - 2024-03-26T03:40:55.883Z - [REQUEST]: Updated workspace context based on watched changes, recomputing project graph...
+[NX Daemon Server] - 2024-03-26T03:40:55.883Z - [REQUEST]: 
+[NX Daemon Server] - 2024-03-26T03:40:55.883Z - [REQUEST]: libs/designer/.babelrc,libs/designer/.eslintrc.json
+Unable to create nodes for libs/designer/project.json using plugin nx/core/project-json. 
+
+	 Inner Error: Error: ENOENT: no such file or directory, open '/Users/travisharris/code/LogicAppsUX/libs/designer/project.json'
+    at Object.openSync (node:fs:605:3)
+    at Object.func [as openSync] (node:electron/js2c/node_init:2:2107)
+    at readFileSync (node:fs:473:35)
+    at node:electron/js2c/node_init:2:9456
+    at readJsonFile (/Users/travisharris/code/LogicAppsUX/node_modules/.pnpm/nx@18.1.3_@swc-node+register@1.9.0_@swc+core@1.4.8/node_modules/nx/src/utils/fileutils.js:17:43)
+    at exports.ProjectJsonProjectsPlugin.createNodes (/Users/travisharris/code/LogicAppsUX/node_modules/.pnpm/nx@18.1.3_@swc-node+register@1.9.0_@swc+core@1.4.8/node_modules/nx/src/plugins/project-json/build-nodes/project-json.js:12:55)
+    at buildProjectsConfigurationsFromProjectPathsAndPlugins (/Users/travisharris/code/LogicAppsUX/node_modules/.pnpm/nx@18.1.3_@swc-node+register@1.9.0_@swc+core@1.4.8/node_modules/nx/src/project-graph/utils/project-configuration-utils.js:146:25)
+    at createProjectConfigurations (/Users/travisharris/code/LogicAppsUX/node_modules/.pnpm/nx@18.1.3_@swc-node+register@1.9.0_@swc+core@1.4.8/node_modules/nx/src/project-graph/utils/retrieve-workspace-files.js:89:156)
+    at _retrieveProjectConfigurations (/Users/travisharris/code/LogicAppsUX/node_modules/.pnpm/nx@18.1.3_@swc-node+register@1.9.0_@swc+core@1.4.8/node_modules/nx/src/project-graph/utils/retrieve-workspace-files.js:61:12)
+    at retrieveProjectConfigurations (/Users/travisharris/code/LogicAppsUX/node_modules/.pnpm/nx@18.1.3_@swc-node+register@1.9.0_@swc+core@1.4.8/node_modules/nx/src/project-graph/utils/retrieve-workspace-files.js:46:12)
+[NX Daemon Server] - 2024-03-26T03:40:55.913Z - [REQUEST]: Responding to the client with an error. Error when preparing serialized project graph. Unable to create nodes for libs/designer/project.json using plugin nx/core/project-json. 
+
+	 Inner Error: Error: ENOENT: no such file or directory, open '/Users/travisharris/code/LogicAppsUX/libs/designer/project.json'
+    at Object.openSync (node:fs:605:3)
+    at Object.func [as openSync] (node:electron/js2c/node_init:2:2107)
+    at readFileSync (node:fs:473:35)
+    at node:electron/js2c/node_init:2:9456
+    at readJsonFile (/Users/travisharris/code/LogicAppsUX/node_modules/.pnpm/nx@18.1.3_@swc-node+register@1.9.0_@swc+core@1.4.8/node_modules/nx/src/utils/fileutils.js:17:43)
+    at exports.ProjectJsonProjectsPlugin.createNodes (/Users/travisharris/code/LogicAppsUX/node_modules/.pnpm/nx@18.1.3_@swc-node+register@1.9.0_@swc+core@1.4.8/node_modules/nx/src/plugins/project-json/build-nodes/project-json.js:12:55)
+    at buildProjectsConfigurationsFromProjectPathsAndPlugins (/Users/travisharris/code/LogicAppsUX/node_modules/.pnpm/nx@18.1.3_@swc-node+register@1.9.0_@swc+core@1.4.8/node_modules/nx/src/project-graph/utils/project-configuration-utils.js:146:25)
+    at createProjectConfigurations (/Users/travisharris/code/LogicAppsUX/node_modules/.pnpm/nx@18.1.3_@swc-node+register@1.9.0_@swc+core@1.4.8/node_modules/nx/src/project-graph/utils/retrieve-workspace-files.js:89:156)
+    at _retrieveProjectConfigurations (/Users/travisharris/code/LogicAppsUX/node_modules/.pnpm/nx@18.1.3_@swc-node+register@1.9.0_@swc+core@1.4.8/node_modules/nx/src/project-graph/utils/retrieve-workspace-files.js:61:12)
+    at retrieveProjectConfigurations (/Users/travisharris/code/LogicAppsUX/node_modules/.pnpm/nx@18.1.3_@swc-node+register@1.9.0_@swc+core@1.4.8/node_modules/nx/src/project-graph/utils/retrieve-workspace-files.js:46:12)
+CreateNodesError: Unable to create nodes for libs/designer/project.json using plugin nx/core/project-json. 
+
+	 Inner Error: Error: ENOENT: no such file or directory, open '/Users/travisharris/code/LogicAppsUX/libs/designer/project.json'
+    at Object.openSync (node:fs:605:3)
+    at Object.func [as openSync] (node:electron/js2c/node_init:2:2107)
+    at readFileSync (node:fs:473:35)
+    at node:electron/js2c/node_init:2:9456
+    at readJsonFile (/Users/travisharris/code/LogicAppsUX/node_modules/.pnpm/nx@18.1.3_@swc-node+register@1.9.0_@swc+core@1.4.8/node_modules/nx/src/utils/fileutils.js:17:43)
+    at exports.ProjectJsonProjectsPlugin.createNodes (/Users/travisharris/code/LogicAppsUX/node_modules/.pnpm/nx@18.1.3_@swc-node+register@1.9.0_@swc+core@1.4.8/node_modules/nx/src/plugins/project-json/build-nodes/project-json.js:12:55)
+    at buildProjectsConfigurationsFromProjectPathsAndPlugins (/Users/travisharris/code/LogicAppsUX/node_modules/.pnpm/nx@18.1.3_@swc-node+register@1.9.0_@swc+core@1.4.8/node_modules/nx/src/project-graph/utils/project-configuration-utils.js:146:25)
+    at createProjectConfigurations (/Users/travisharris/code/LogicAppsUX/node_modules/.pnpm/nx@18.1.3_@swc-node+register@1.9.0_@swc+core@1.4.8/node_modules/nx/src/project-graph/utils/retrieve-workspace-files.js:89:156)
+    at _retrieveProjectConfigurations (/Users/travisharris/code/LogicAppsUX/node_modules/.pnpm/nx@18.1.3_@swc-node+register@1.9.0_@swc+core@1.4.8/node_modules/nx/src/project-graph/utils/retrieve-workspace-files.js:61:12)
+    at retrieveProjectConfigurations (/Users/travisharris/code/LogicAppsUX/node_modules/.pnpm/nx@18.1.3_@swc-node+register@1.9.0_@swc+core@1.4.8/node_modules/nx/src/project-graph/utils/retrieve-workspace-files.js:46:12)
+    at buildProjectsConfigurationsFromProjectPathsAndPlugins (/Users/travisharris/code/LogicAppsUX/node_modules/.pnpm/nx@18.1.3_@swc-node+register@1.9.0_@swc+core@1.4.8/node_modules/nx/src/project-graph/utils/project-configuration-utils.js:174:23)
+    at createProjectConfigurations (/Users/travisharris/code/LogicAppsUX/node_modules/.pnpm/nx@18.1.3_@swc-node+register@1.9.0_@swc+core@1.4.8/node_modules/nx/src/project-graph/utils/retrieve-workspace-files.js:89:156)
+    at _retrieveProjectConfigurations (/Users/travisharris/code/LogicAppsUX/node_modules/.pnpm/nx@18.1.3_@swc-node+register@1.9.0_@swc+core@1.4.8/node_modules/nx/src/project-graph/utils/retrieve-workspace-files.js:61:12)
+    at retrieveProjectConfigurations (/Users/travisharris/code/LogicAppsUX/node_modules/.pnpm/nx@18.1.3_@swc-node+register@1.9.0_@swc+core@1.4.8/node_modules/nx/src/project-graph/utils/retrieve-workspace-files.js:46:12)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async processFilesAndCreateAndSerializeProjectGraph (/Users/travisharris/code/LogicAppsUX/node_modules/.pnpm/nx@18.1.3_@swc-node+register@1.9.0_@swc+core@1.4.8/node_modules/nx/src/daemon/server/project-graph-incremental-recomputation.js:142:28)
+    at async getCachedSerializedProjectGraphPromise (/Users/travisharris/code/LogicAppsUX/node_modules/.pnpm/nx@18.1.3_@swc-node+register@1.9.0_@swc+core@1.4.8/node_modules/nx/src/daemon/server/project-graph-incremental-recomputation.js:43:16)
+    at async handleRequestProjectGraph (/Users/travisharris/code/LogicAppsUX/node_modules/.pnpm/nx@18.1.3_@swc-node+register@1.9.0_@swc+core@1.4.8/node_modules/nx/src/daemon/server/handle-request-project-graph.js:12:24)
+    at async handleResult (/Users/travisharris/code/LogicAppsUX/node_modules/.pnpm/nx@18.1.3_@swc-node+register@1.9.0_@swc+core@1.4.8/node_modules/nx/src/daemon/server/server.js:110:16)
+    at async handleMessage (/Users/travisharris/code/LogicAppsUX/node_modules/.pnpm/nx@18.1.3_@swc-node+register@1.9.0_@swc+core@1.4.8/node_modules/nx/src/daemon/server/server.js:81:9) {
+  [cause]: Error: ENOENT: no such file or directory, open '/Users/travisharris/code/LogicAppsUX/libs/designer/project.json'
+      at Object.openSync (node:fs:605:3)
+      at Object.func [as openSync] (node:electron/js2c/node_init:2:2107)
+      at readFileSync (node:fs:473:35)
+      at node:electron/js2c/node_init:2:9456
+      at readJsonFile (/Users/travisharris/code/LogicAppsUX/node_modules/.pnpm/nx@18.1.3_@swc-node+register@1.9.0_@swc+core@1.4.8/node_modules/nx/src/utils/fileutils.js:17:43)
+      at exports.ProjectJsonProjectsPlugin.createNodes (/Users/travisharris/code/LogicAppsUX/node_modules/.pnpm/nx@18.1.3_@swc-node+register@1.9.0_@swc+core@1.4.8/node_modules/nx/src/plugins/project-json/build-nodes/project-json.js:12:55)
+      at buildProjectsConfigurationsFromProjectPathsAndPlugins (/Users/travisharris/code/LogicAppsUX/node_modules/.pnpm/nx@18.1.3_@swc-node+register@1.9.0_@swc+core@1.4.8/node_modules/nx/src/project-graph/utils/project-configuration-utils.js:146:25)
+      at createProjectConfigurations (/Users/travisharris/code/LogicAppsUX/node_modules/.pnpm/nx@18.1.3_@swc-node+register@1.9.0_@swc+core@1.4.8/node_modules/nx/src/project-graph/utils/retrieve-workspace-files.js:89:156)
+      at _retrieveProjectConfigurations (/Users/travisharris/code/LogicAppsUX/node_modules/.pnpm/nx@18.1.3_@swc-node+register@1.9.0_@swc+core@1.4.8/node_modules/nx/src/project-graph/utils/retrieve-workspace-files.js:61:12)
+      at retrieveProjectConfigurations (/Users/travisharris/code/LogicAppsUX/node_modules/.pnpm/nx@18.1.3_@swc-node+register@1.9.0_@swc+core@1.4.8/node_modules/nx/src/project-graph/utils/retrieve-workspace-files.js:46:12) {
+    errno: -2,
+    syscall: 'open',
+    code: 'ENOENT',
+    path: '/Users/travisharris/code/LogicAppsUX/libs/designer/project.json'
+  }
+}
+[NX Daemon Server] - 2024-03-26T03:40:55.913Z - Done responding to the client null
+[NX Daemon Server] - 2024-03-26T03:41:17.030Z - Started listening on: /var/folders/_y/sdlctx2s49x0rfh4btvlkk0h0000gn/T/d8564d2627e263173438/d.sock
+[NX Daemon Server] - 2024-03-26T03:41:17.032Z - [WATCHER]: Subscribed to changes within: /Users/travisharris/code/LogicAppsUX (native)
+[NX Daemon Server] - 2024-03-26T03:41:17.041Z - Established a connection. Number of open connections: 1
+[NX Daemon Server] - 2024-03-26T03:41:17.041Z - Established a connection. Number of open connections: 2
+[NX Daemon Server] - 2024-03-26T03:41:17.041Z - Closed a connection. Number of open connections: 1
+[NX Daemon Server] - 2024-03-26T03:41:17.044Z - [REQUEST]: Client Request for Project Graph Received
+[NX Daemon Server] - 2024-03-26T03:41:17.052Z - [REQUEST]: Updated workspace context based on watched changes, recomputing project graph...
+[NX Daemon Server] - 2024-03-26T03:41:17.052Z - [REQUEST]: 
+[NX Daemon Server] - 2024-03-26T03:41:17.052Z - [REQUEST]: 
+[NX Daemon Server] - 2024-03-26T03:41:17.130Z - [REQUEST]: Responding to the client. project-graph
+[NX Daemon Server] - 2024-03-26T03:41:17.131Z - Time taken for 'total for creating and serializing project graph' 85.46066699922085ms
+[NX Daemon Server] - 2024-03-26T03:41:17.132Z - Done responding to the client project-graph
+[NX Daemon Server] - 2024-03-26T03:41:17.132Z - Handled REQUEST_PROJECT_GRAPH. Handling time: 86. Response time: 2.
+[NX Daemon Server] - 2024-03-26T03:41:17.136Z - [REQUEST]: Responding to the client. handleRequestFileData
+[NX Daemon Server] - 2024-03-26T03:41:17.136Z - Done responding to the client handleRequestFileData
+[NX Daemon Server] - 2024-03-26T03:41:17.136Z - Handled REQUEST_FILE_DATA. Handling time: 2. Response time: 0.
+[NX Daemon Server] - 2024-03-26T03:41:17.139Z - Closed a connection. Number of open connections: 0
+[NX Daemon Server] - 2024-03-26T03:41:20.675Z - [WATCHER]: libs/designer-ui/tsconfig.json was modified
+[NX Daemon Server] - 2024-03-26T03:41:20.676Z - [WATCHER]: Processing file changes in outputs
+[NX Daemon Server] - 2024-03-26T03:41:20.786Z - [REQUEST]: Updated workspace context based on watched changes, recomputing project graph...
+[NX Daemon Server] - 2024-03-26T03:41:20.786Z - [REQUEST]: libs/designer-ui/tsconfig.json
+[NX Daemon Server] - 2024-03-26T03:41:20.786Z - [REQUEST]: 
+[NX Daemon Server] - 2024-03-26T03:41:20.867Z - Time taken for 'hash changed files from watcher' 9.172666996717453ms
+[NX Daemon Server] - 2024-03-26T03:41:29.738Z - [WATCHER]: 0 file(s) created or restored, 0 file(s) modified, 2 file(s) deleted
+[NX Daemon Server] - 2024-03-26T03:41:29.738Z - [WATCHER]: Processing file changes in outputs
+[NX Daemon Server] - 2024-03-26T03:41:29.803Z - Established a connection. Number of open connections: 1
+[NX Daemon Server] - 2024-03-26T03:41:29.803Z - Closed a connection. Number of open connections: 0
+[NX Daemon Server] - 2024-03-26T03:41:29.803Z - Established a connection. Number of open connections: 1
+[NX Daemon Server] - 2024-03-26T03:41:29.805Z - [REQUEST]: Client Request for Project Graph Received
+[NX Daemon Server] - 2024-03-26T03:41:29.807Z - [REQUEST]: Updated workspace context based on watched changes, recomputing project graph...
+[NX Daemon Server] - 2024-03-26T03:41:29.807Z - [REQUEST]: 
+[NX Daemon Server] - 2024-03-26T03:41:29.807Z - [REQUEST]: libs/logic-apps-shared/.babelrc,libs/logic-apps-shared/.eslintrc.json
+Unable to create nodes for libs/logic-apps-shared/project.json using plugin nx/core/project-json. 
+
+	 Inner Error: Error: ENOENT: no such file or directory, open '/Users/travisharris/code/LogicAppsUX/libs/logic-apps-shared/project.json'
+    at Object.openSync (node:fs:605:3)
+    at Object.func [as openSync] (node:electron/js2c/node_init:2:2107)
+    at readFileSync (node:fs:473:35)
+    at node:electron/js2c/node_init:2:9456
+    at readJsonFile (/Users/travisharris/code/LogicAppsUX/node_modules/.pnpm/nx@18.1.3_@swc-node+register@1.9.0_@swc+core@1.4.8/node_modules/nx/src/utils/fileutils.js:17:43)
+    at exports.ProjectJsonProjectsPlugin.createNodes (/Users/travisharris/code/LogicAppsUX/node_modules/.pnpm/nx@18.1.3_@swc-node+register@1.9.0_@swc+core@1.4.8/node_modules/nx/src/plugins/project-json/build-nodes/project-json.js:12:55)
+    at buildProjectsConfigurationsFromProjectPathsAndPlugins (/Users/travisharris/code/LogicAppsUX/node_modules/.pnpm/nx@18.1.3_@swc-node+register@1.9.0_@swc+core@1.4.8/node_modules/nx/src/project-graph/utils/project-configuration-utils.js:146:25)
+    at createProjectConfigurations (/Users/travisharris/code/LogicAppsUX/node_modules/.pnpm/nx@18.1.3_@swc-node+register@1.9.0_@swc+core@1.4.8/node_modules/nx/src/project-graph/utils/retrieve-workspace-files.js:89:156)
+    at _retrieveProjectConfigurations (/Users/travisharris/code/LogicAppsUX/node_modules/.pnpm/nx@18.1.3_@swc-node+register@1.9.0_@swc+core@1.4.8/node_modules/nx/src/project-graph/utils/retrieve-workspace-files.js:61:12)
+    at retrieveProjectConfigurations (/Users/travisharris/code/LogicAppsUX/node_modules/.pnpm/nx@18.1.3_@swc-node+register@1.9.0_@swc+core@1.4.8/node_modules/nx/src/project-graph/utils/retrieve-workspace-files.js:46:12)
+[NX Daemon Server] - 2024-03-26T03:41:29.835Z - [REQUEST]: Responding to the client with an error. Error when preparing serialized project graph. Unable to create nodes for libs/logic-apps-shared/project.json using plugin nx/core/project-json. 
+
+	 Inner Error: Error: ENOENT: no such file or directory, open '/Users/travisharris/code/LogicAppsUX/libs/logic-apps-shared/project.json'
+    at Object.openSync (node:fs:605:3)
+    at Object.func [as openSync] (node:electron/js2c/node_init:2:2107)
+    at readFileSync (node:fs:473:35)
+    at node:electron/js2c/node_init:2:9456
+    at readJsonFile (/Users/travisharris/code/LogicAppsUX/node_modules/.pnpm/nx@18.1.3_@swc-node+register@1.9.0_@swc+core@1.4.8/node_modules/nx/src/utils/fileutils.js:17:43)
+    at exports.ProjectJsonProjectsPlugin.createNodes (/Users/travisharris/code/LogicAppsUX/node_modules/.pnpm/nx@18.1.3_@swc-node+register@1.9.0_@swc+core@1.4.8/node_modules/nx/src/plugins/project-json/build-nodes/project-json.js:12:55)
+    at buildProjectsConfigurationsFromProjectPathsAndPlugins (/Users/travisharris/code/LogicAppsUX/node_modules/.pnpm/nx@18.1.3_@swc-node+register@1.9.0_@swc+core@1.4.8/node_modules/nx/src/project-graph/utils/project-configuration-utils.js:146:25)
+    at createProjectConfigurations (/Users/travisharris/code/LogicAppsUX/node_modules/.pnpm/nx@18.1.3_@swc-node+register@1.9.0_@swc+core@1.4.8/node_modules/nx/src/project-graph/utils/retrieve-workspace-files.js:89:156)
+    at _retrieveProjectConfigurations (/Users/travisharris/code/LogicAppsUX/node_modules/.pnpm/nx@18.1.3_@swc-node+register@1.9.0_@swc+core@1.4.8/node_modules/nx/src/project-graph/utils/retrieve-workspace-files.js:61:12)
+    at retrieveProjectConfigurations (/Users/travisharris/code/LogicAppsUX/node_modules/.pnpm/nx@18.1.3_@swc-node+register@1.9.0_@swc+core@1.4.8/node_modules/nx/src/project-graph/utils/retrieve-workspace-files.js:46:12)
+CreateNodesError: Unable to create nodes for libs/logic-apps-shared/project.json using plugin nx/core/project-json. 
+
+	 Inner Error: Error: ENOENT: no such file or directory, open '/Users/travisharris/code/LogicAppsUX/libs/logic-apps-shared/project.json'
+    at Object.openSync (node:fs:605:3)
+    at Object.func [as openSync] (node:electron/js2c/node_init:2:2107)
+    at readFileSync (node:fs:473:35)
+    at node:electron/js2c/node_init:2:9456
+    at readJsonFile (/Users/travisharris/code/LogicAppsUX/node_modules/.pnpm/nx@18.1.3_@swc-node+register@1.9.0_@swc+core@1.4.8/node_modules/nx/src/utils/fileutils.js:17:43)
+    at exports.ProjectJsonProjectsPlugin.createNodes (/Users/travisharris/code/LogicAppsUX/node_modules/.pnpm/nx@18.1.3_@swc-node+register@1.9.0_@swc+core@1.4.8/node_modules/nx/src/plugins/project-json/build-nodes/project-json.js:12:55)
+    at buildProjectsConfigurationsFromProjectPathsAndPlugins (/Users/travisharris/code/LogicAppsUX/node_modules/.pnpm/nx@18.1.3_@swc-node+register@1.9.0_@swc+core@1.4.8/node_modules/nx/src/project-graph/utils/project-configuration-utils.js:146:25)
+    at createProjectConfigurations (/Users/travisharris/code/LogicAppsUX/node_modules/.pnpm/nx@18.1.3_@swc-node+register@1.9.0_@swc+core@1.4.8/node_modules/nx/src/project-graph/utils/retrieve-workspace-files.js:89:156)
+    at _retrieveProjectConfigurations (/Users/travisharris/code/LogicAppsUX/node_modules/.pnpm/nx@18.1.3_@swc-node+register@1.9.0_@swc+core@1.4.8/node_modules/nx/src/project-graph/utils/retrieve-workspace-files.js:61:12)
+    at retrieveProjectConfigurations (/Users/travisharris/code/LogicAppsUX/node_modules/.pnpm/nx@18.1.3_@swc-node+register@1.9.0_@swc+core@1.4.8/node_modules/nx/src/project-graph/utils/retrieve-workspace-files.js:46:12)
+    at buildProjectsConfigurationsFromProjectPathsAndPlugins (/Users/travisharris/code/LogicAppsUX/node_modules/.pnpm/nx@18.1.3_@swc-node+register@1.9.0_@swc+core@1.4.8/node_modules/nx/src/project-graph/utils/project-configuration-utils.js:174:23)
+    at createProjectConfigurations (/Users/travisharris/code/LogicAppsUX/node_modules/.pnpm/nx@18.1.3_@swc-node+register@1.9.0_@swc+core@1.4.8/node_modules/nx/src/project-graph/utils/retrieve-workspace-files.js:89:156)
+    at _retrieveProjectConfigurations (/Users/travisharris/code/LogicAppsUX/node_modules/.pnpm/nx@18.1.3_@swc-node+register@1.9.0_@swc+core@1.4.8/node_modules/nx/src/project-graph/utils/retrieve-workspace-files.js:61:12)
+    at retrieveProjectConfigurations (/Users/travisharris/code/LogicAppsUX/node_modules/.pnpm/nx@18.1.3_@swc-node+register@1.9.0_@swc+core@1.4.8/node_modules/nx/src/project-graph/utils/retrieve-workspace-files.js:46:12)
+    at process.processTicksAndRejections (node:internal/process/task_queues:95:5)
+    at async processFilesAndCreateAndSerializeProjectGraph (/Users/travisharris/code/LogicAppsUX/node_modules/.pnpm/nx@18.1.3_@swc-node+register@1.9.0_@swc+core@1.4.8/node_modules/nx/src/daemon/server/project-graph-incremental-recomputation.js:142:28)
+    at async getCachedSerializedProjectGraphPromise (/Users/travisharris/code/LogicAppsUX/node_modules/.pnpm/nx@18.1.3_@swc-node+register@1.9.0_@swc+core@1.4.8/node_modules/nx/src/daemon/server/project-graph-incremental-recomputation.js:43:16)
+    at async handleRequestProjectGraph (/Users/travisharris/code/LogicAppsUX/node_modules/.pnpm/nx@18.1.3_@swc-node+register@1.9.0_@swc+core@1.4.8/node_modules/nx/src/daemon/server/handle-request-project-graph.js:12:24)
+    at async handleResult (/Users/travisharris/code/LogicAppsUX/node_modules/.pnpm/nx@18.1.3_@swc-node+register@1.9.0_@swc+core@1.4.8/node_modules/nx/src/daemon/server/server.js:110:16)
+    at async handleMessage (/Users/travisharris/code/LogicAppsUX/node_modules/.pnpm/nx@18.1.3_@swc-node+register@1.9.0_@swc+core@1.4.8/node_modules/nx/src/daemon/server/server.js:81:9) {
+  [cause]: Error: ENOENT: no such file or directory, open '/Users/travisharris/code/LogicAppsUX/libs/logic-apps-shared/project.json'
+      at Object.openSync (node:fs:605:3)
+      at Object.func [as openSync] (node:electron/js2c/node_init:2:2107)
+      at readFileSync (node:fs:473:35)
+      at node:electron/js2c/node_init:2:9456
+      at readJsonFile (/Users/travisharris/code/LogicAppsUX/node_modules/.pnpm/nx@18.1.3_@swc-node+register@1.9.0_@swc+core@1.4.8/node_modules/nx/src/utils/fileutils.js:17:43)
+      at exports.ProjectJsonProjectsPlugin.createNodes (/Users/travisharris/code/LogicAppsUX/node_modules/.pnpm/nx@18.1.3_@swc-node+register@1.9.0_@swc+core@1.4.8/node_modules/nx/src/plugins/project-json/build-nodes/project-json.js:12:55)
+      at buildProjectsConfigurationsFromProjectPathsAndPlugins (/Users/travisharris/code/LogicAppsUX/node_modules/.pnpm/nx@18.1.3_@swc-node+register@1.9.0_@swc+core@1.4.8/node_modules/nx/src/project-graph/utils/project-configuration-utils.js:146:25)
+      at createProjectConfigurations (/Users/travisharris/code/LogicAppsUX/node_modules/.pnpm/nx@18.1.3_@swc-node+register@1.9.0_@swc+core@1.4.8/node_modules/nx/src/project-graph/utils/retrieve-workspace-files.js:89:156)
+      at _retrieveProjectConfigurations (/Users/travisharris/code/LogicAppsUX/node_modules/.pnpm/nx@18.1.3_@swc-node+register@1.9.0_@swc+core@1.4.8/node_modules/nx/src/project-graph/utils/retrieve-workspace-files.js:61:12)
+      at retrieveProjectConfigurations (/Users/travisharris/code/LogicAppsUX/node_modules/.pnpm/nx@18.1.3_@swc-node+register@1.9.0_@swc+core@1.4.8/node_modules/nx/src/project-graph/utils/retrieve-workspace-files.js:46:12) {
+    errno: -2,
+    syscall: 'open',
+    code: 'ENOENT',
+    path: '/Users/travisharris/code/LogicAppsUX/libs/logic-apps-shared/project.json'
+  }
+}
+[NX Daemon Server] - 2024-03-26T03:41:29.836Z - Done responding to the client null
+[NX Daemon Server] - 2024-03-26T03:41:44.959Z - Started listening on: /var/folders/_y/sdlctx2s49x0rfh4btvlkk0h0000gn/T/d8564d2627e263173438/d.sock
+[NX Daemon Server] - 2024-03-26T03:41:44.961Z - [WATCHER]: Subscribed to changes within: /Users/travisharris/code/LogicAppsUX (native)
+[NX Daemon Server] - 2024-03-26T03:41:44.966Z - Established a connection. Number of open connections: 1
+[NX Daemon Server] - 2024-03-26T03:41:44.966Z - Established a connection. Number of open connections: 2
+[NX Daemon Server] - 2024-03-26T03:41:44.967Z - Closed a connection. Number of open connections: 1
+[NX Daemon Server] - 2024-03-26T03:41:44.969Z - [REQUEST]: Client Request for Project Graph Received
+[NX Daemon Server] - 2024-03-26T03:41:44.978Z - [REQUEST]: Updated workspace context based on watched changes, recomputing project graph...
+[NX Daemon Server] - 2024-03-26T03:41:44.978Z - [REQUEST]: 
+[NX Daemon Server] - 2024-03-26T03:41:44.978Z - [REQUEST]: 
+[NX Daemon Server] - 2024-03-26T03:41:45.053Z - [REQUEST]: Responding to the client. project-graph
+[NX Daemon Server] - 2024-03-26T03:41:45.054Z - Time taken for 'total for creating and serializing project graph' 84.327084004879ms
+[NX Daemon Server] - 2024-03-26T03:41:45.054Z - Done responding to the client project-graph
+[NX Daemon Server] - 2024-03-26T03:41:45.054Z - Handled REQUEST_PROJECT_GRAPH. Handling time: 84. Response time: 1.
+[NX Daemon Server] - 2024-03-26T03:41:45.058Z - [REQUEST]: Responding to the client. handleRequestFileData
+[NX Daemon Server] - 2024-03-26T03:41:45.059Z - Done responding to the client handleRequestFileData
+[NX Daemon Server] - 2024-03-26T03:41:45.059Z - Handled REQUEST_FILE_DATA. Handling time: 1. Response time: 1.
+[NX Daemon Server] - 2024-03-26T03:41:45.061Z - Closed a connection. Number of open connections: 0
+[NX Daemon Server] - 2024-03-26T03:41:49.056Z - [WATCHER]: libs/vscode-extension/tsconfig.json was modified
+[NX Daemon Server] - 2024-03-26T03:41:49.056Z - [WATCHER]: Processing file changes in outputs
+[NX Daemon Server] - 2024-03-26T03:41:49.166Z - [REQUEST]: Updated workspace context based on watched changes, recomputing project graph...
+[NX Daemon Server] - 2024-03-26T03:41:49.166Z - [REQUEST]: libs/vscode-extension/tsconfig.json
+[NX Daemon Server] - 2024-03-26T03:41:49.166Z - [REQUEST]: 
+[NX Daemon Server] - 2024-03-26T03:41:49.237Z - Time taken for 'hash changed files from watcher' 8.238749995827675ms
+[NX Daemon Server] - 2024-03-26T03:42:54.346Z - [WATCHER]: libs/data-mapper/package.json was modified
+[NX Daemon Server] - 2024-03-26T03:42:54.346Z - [WATCHER]: Processing file changes in outputs
+[NX Daemon Server] - 2024-03-26T03:42:54.551Z - [REQUEST]: Updated workspace context based on watched changes, recomputing project graph...
+[NX Daemon Server] - 2024-03-26T03:42:54.552Z - [REQUEST]: libs/data-mapper/package.json
+[NX Daemon Server] - 2024-03-26T03:42:54.552Z - [REQUEST]: 
+[NX Daemon Server] - 2024-03-26T03:42:54.618Z - Time taken for 'hash changed files from watcher' 4.6250420063734055ms
+[NX Daemon Server] - 2024-03-26T03:43:06.821Z - [WATCHER]: libs/data-mapper/package.json was modified
+[NX Daemon Server] - 2024-03-26T03:43:06.821Z - [WATCHER]: Processing file changes in outputs
+[NX Daemon Server] - 2024-03-26T03:43:07.225Z - [REQUEST]: Updated workspace context based on watched changes, recomputing project graph...
+[NX Daemon Server] - 2024-03-26T03:43:07.225Z - [REQUEST]: libs/data-mapper/package.json
+[NX Daemon Server] - 2024-03-26T03:43:07.225Z - [REQUEST]: 
+[NX Daemon Server] - 2024-03-26T03:43:07.263Z - Time taken for 'hash changed files from watcher' 2.6047499924898148ms
+[NX Daemon Server] - 2024-03-26T03:43:47.620Z - [WATCHER]: libs/designer/package.json was modified
+[NX Daemon Server] - 2024-03-26T03:43:47.620Z - [WATCHER]: Processing file changes in outputs
+[NX Daemon Server] - 2024-03-26T03:43:48.431Z - [REQUEST]: Updated workspace context based on watched changes, recomputing project graph...
+[NX Daemon Server] - 2024-03-26T03:43:48.431Z - [REQUEST]: libs/designer/package.json
+[NX Daemon Server] - 2024-03-26T03:43:48.431Z - [REQUEST]: 
+[NX Daemon Server] - 2024-03-26T03:43:48.505Z - Time taken for 'hash changed files from watcher' 9.466667011380196ms
+[NX Daemon Server] - 2024-03-26T03:44:28.189Z - [WATCHER]: libs/data-mapper/package.json was modified
+[NX Daemon Server] - 2024-03-26T03:44:28.190Z - [WATCHER]: Processing file changes in outputs
+[NX Daemon Server] - 2024-03-26T03:44:29.796Z - [REQUEST]: Updated workspace context based on watched changes, recomputing project graph...
+[NX Daemon Server] - 2024-03-26T03:44:29.797Z - [REQUEST]: libs/data-mapper/package.json
+[NX Daemon Server] - 2024-03-26T03:44:29.797Z - [REQUEST]: 
+[NX Daemon Server] - 2024-03-26T03:44:29.859Z - Time taken for 'hash changed files from watcher' 5.856000006198883ms
+[NX Daemon Server] - 2024-03-26T03:44:38.963Z - [WATCHER]: libs/designer/package.json was modified
+[NX Daemon Server] - 2024-03-26T03:44:38.963Z - [WATCHER]: Processing file changes in outputs
+[NX Daemon Server] - 2024-03-26T03:44:42.171Z - [REQUEST]: Updated workspace context based on watched changes, recomputing project graph...
+[NX Daemon Server] - 2024-03-26T03:44:42.172Z - [REQUEST]: libs/designer/package.json
+[NX Daemon Server] - 2024-03-26T03:44:42.172Z - [REQUEST]: 
+[NX Daemon Server] - 2024-03-26T03:44:42.245Z - Time taken for 'hash changed files from watcher' 6.783832997083664ms
+[NX Daemon Server] - 2024-03-26T03:45:08.103Z - [WATCHER]: libs/designer-ui/package.json was modified
+[NX Daemon Server] - 2024-03-26T03:45:08.103Z - [WATCHER]: Processing file changes in outputs
+[NX Daemon Server] - 2024-03-26T03:45:14.517Z - [REQUEST]: Updated workspace context based on watched changes, recomputing project graph...
+[NX Daemon Server] - 2024-03-26T03:45:14.517Z - [REQUEST]: libs/designer-ui/package.json
+[NX Daemon Server] - 2024-03-26T03:45:14.517Z - [REQUEST]: 
+[NX Daemon Server] - 2024-03-26T03:45:14.615Z - Time taken for 'hash changed files from watcher' 12.361625000834465ms
+[NX Daemon Server] - 2024-03-26T03:45:29.913Z - [WATCHER]: libs/logic-apps-shared/package.json was modified
+[NX Daemon Server] - 2024-03-26T03:45:29.914Z - [WATCHER]: Processing file changes in outputs
+[NX Daemon Server] - 2024-03-26T03:45:31.804Z - [WATCHER]: libs/logic-apps-shared/package.json was modified
+[NX Daemon Server] - 2024-03-26T03:45:31.804Z - [WATCHER]: Processing file changes in outputs
+[NX Daemon Server] - 2024-03-26T03:45:36.319Z - [REQUEST]: Updated workspace context based on watched changes, recomputing project graph...
+[NX Daemon Server] - 2024-03-26T03:45:36.319Z - [REQUEST]: libs/logic-apps-shared/package.json
+[NX Daemon Server] - 2024-03-26T03:45:36.319Z - [REQUEST]: 
+[NX Daemon Server] - 2024-03-26T03:45:36.370Z - Time taken for 'hash changed files from watcher' 3.728959009051323ms
+[NX Daemon Server] - 2024-03-26T03:45:57.666Z - [WATCHER]: libs/vscode-extension/package.json was modified
+[NX Daemon Server] - 2024-03-26T03:45:57.666Z - [WATCHER]: Processing file changes in outputs
+[NX Daemon Server] - 2024-03-26T03:46:04.070Z - [REQUEST]: Updated workspace context based on watched changes, recomputing project graph...
+[NX Daemon Server] - 2024-03-26T03:46:04.070Z - [REQUEST]: libs/vscode-extension/package.json
+[NX Daemon Server] - 2024-03-26T03:46:04.070Z - [REQUEST]: 
+[NX Daemon Server] - 2024-03-26T03:46:04.110Z - Time taken for 'hash changed files from watcher' 3.3724999874830246ms
+[NX Daemon Server] - 2024-03-26T03:46:09.894Z - [WATCHER]: libs/logic-apps-shared/package.json was modified
+[NX Daemon Server] - 2024-03-26T03:46:09.894Z - [WATCHER]: Processing file changes in outputs
+[NX Daemon Server] - 2024-03-26T03:46:16.299Z - [REQUEST]: Updated workspace context based on watched changes, recomputing project graph...
+[NX Daemon Server] - 2024-03-26T03:46:16.299Z - [REQUEST]: libs/logic-apps-shared/package.json
+[NX Daemon Server] - 2024-03-26T03:46:16.299Z - [REQUEST]: 
+[NX Daemon Server] - 2024-03-26T03:46:16.340Z - Time taken for 'hash changed files from watcher' 3.4640830010175705ms
+[NX Daemon Server] - 2024-03-26T03:46:30.025Z - [WATCHER]: libs/vscode-extension/package.json was modified
+[NX Daemon Server] - 2024-03-26T03:46:30.026Z - [WATCHER]: Processing file changes in outputs
+[NX Daemon Server] - 2024-03-26T03:46:36.436Z - [REQUEST]: Updated workspace context based on watched changes, recomputing project graph...
+[NX Daemon Server] - 2024-03-26T03:46:36.436Z - [REQUEST]: libs/vscode-extension/package.json
+[NX Daemon Server] - 2024-03-26T03:46:36.436Z - [REQUEST]: 
+[NX Daemon Server] - 2024-03-26T03:46:36.536Z - Time taken for 'hash changed files from watcher' 9.177375003695488ms
+[NX Daemon Server] - 2024-03-26T03:46:51.056Z - [WATCHER]: _tmp_80975_663d5a83bf77f55788fba767e5c22feb was deleted
+[NX Daemon Server] - 2024-03-26T03:46:51.056Z - [WATCHER]: Processing file changes in outputs
+[NX Daemon Server] - 2024-03-26T03:46:57.458Z - [REQUEST]: Updated workspace context based on watched changes, recomputing project graph...
+[NX Daemon Server] - 2024-03-26T03:46:57.467Z - [REQUEST]: 
+[NX Daemon Server] - 2024-03-26T03:46:57.467Z - [REQUEST]: _tmp_80975_663d5a83bf77f55788fba767e5c22feb
+[NX Daemon Server] - 2024-03-26T03:46:57.533Z - Time taken for 'hash changed files from watcher' 1.3915420025587082ms
+[NX Daemon Server] - 2024-03-26T03:47:10.540Z - [WATCHER]: Processing file changes in outputs
+[NX Daemon Server] - 2024-03-26T03:47:10.540Z - [WATCHER]: Stopping the watcher for /Users/travisharris/code/LogicAppsUX (sources)
+[NX Daemon Server] - 2024-03-26T03:47:10.540Z - [WATCHER]: Stopping the watcher for /Users/travisharris/code/LogicAppsUX (outputs)
+[NX Daemon Server] - 2024-03-26T03:47:10.540Z - Server stopped because: "Lock file changed"

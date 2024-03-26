@@ -7,5 +7,35 @@
   "peerDependencies": {
     "react": "^16.4.0 || ^17.0.0 || ^18.0.0",
     "react-dom": "^16.4.0 || ^17.0.0 || ^18.0.0"
+  },
+  "dependencies": {
+    "@microsoft/logic-apps-shared": "workspace:*",
+    "react-intl": "6.3.0",
+    "@reduxjs/toolkit": "1.8.5",
+    "react-redux": "8.0.2",
+    "@fluentui/react": "8.110.2",
+    "to-title-case": "1.0.0",
+    "@microsoft/designer-ui": "workspace:*",
+    "lodash.merge": "4.6.2",
+    "@react-hookz/web": "22.0.0",
+    "react-query": "3.39.3",
+    "@fluentui/azure-themes": "8.5.70",
+    "@fluentui/react-components": "9.42.0",
+    "elkjs": "0.8.2",
+    "reactflow": "11.8.2",
+    "immer": "9.0.15",
+    "yocto-queue": "0.1.0",
+    "@fluentui/react-icons": "2.0.224",
+    "@fluentui/utilities": "8.13.16",
+    "react-dnd": "16.0.1",
+    "react-dnd-accessible-backend": "1.0.1",
+    "react-dnd-html5-backend": "16.0.1",
+    "react-dnd-multi-backend": "8.0.0",
+    "react-hotkeys-hook": "4.3.8",
+    "lodash.frompairs": "4.0.1",
+    "fuse.js": "6.6.2",
+    "@microsoft/applicationinsights-core-js": "2.8.9",
+    "@fluentui/react-hooks": "8.6.20",
+    "util": "0.12.5"
   }
 }

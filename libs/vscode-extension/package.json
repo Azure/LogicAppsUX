@@ -1,4 +1,16 @@
 {
   "name": "@microsoft/vscode-extension-logic-apps",
-  "version": "3.0.0"
+  "version": "3.0.0",
+  "dependencies": {},
+  "peerDependencies": {
+    "@microsoft/vscode-azext-azureappservice": "0.8.1",
+    "@microsoft/vscode-azext-utils": "0.4.6",
+    "@microsoft/logic-apps-shared": "workspace:*",
+    "react-intl": "6.3.0",
+    "react-query": "3.39.3",
+    "axios": "1.6.0",
+    "@apidevtools/swagger-parser": "10.0.3",
+    "reactflow": "11.8.2",
+    "tslib": "2.4.0"
+  }
 }
