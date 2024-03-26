@@ -258,7 +258,9 @@ export class SchemaProcessor {
     titlePrefix = this._concatenateString(titlePrefix, schema.title);
     summaryPrefix = this._concatenateString(summaryPrefix, summary);
 
-    if (keys.length && !this._isInternalParameter(schema) && !isReadOnlyInputParameter) {
+    const skipInternal = this.options.excludeInternal && this._isInternalParameter(schema);
+
+    if (keys.length && !skipInternal && !isReadOnlyInputParameter) {
       const outputs = keys.map((key) => {
         const childOutput = properties[key] as SchemaObject;
 
