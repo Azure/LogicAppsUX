@@ -113,9 +113,20 @@ export const CodeView = ({
   });
 
   return (
-    <Stack style={{ display: isCodeViewOpen ? 'flex' : 'none', width: contentWidth, minWidth: '25%' }} horizontal={true} verticalFill>
+    <Stack
+      style={{
+        display: isCodeViewOpen ? 'flex' : 'none',
+        width: contentWidth,
+        minWidth: '25%',
+      }}
+      horizontal={true}
+      verticalFill
+    >
       <div
-        style={{ width: '10px', cursor: isCodeViewOpen ? 'col-resize' : 'auto' }}
+        style={{
+          width: '10px',
+          cursor: isCodeViewOpen ? 'col-resize' : 'auto',
+        }}
         onDragStart={onStartDrag}
         onDrag={onDrag}
         onDragEnd={onDragEnd}
@@ -126,7 +137,12 @@ export const CodeView = ({
           <Stack
             horizontal
             verticalAlign="center"
-            style={{ width: '100%', justifyContent: 'space-between', marginBottom: '12px', marginTop: '4px' }}
+            style={{
+              width: '100%',
+              justifyContent: 'space-between',
+              marginBottom: '12px',
+              marginTop: '4px',
+            }}
           >
             <Stack horizontal verticalAlign="center">
               <Code20Regular />
@@ -143,7 +159,14 @@ export const CodeView = ({
             />
           </Stack>
 
-          <div style={{ width: '100%', display: 'flex', flexDirection: 'column', flex: '1 1 auto' }}>
+          <div
+            style={{
+              width: '100%',
+              display: 'flex',
+              flexDirection: 'column',
+              flex: '1 1 auto',
+            }}
+          >
             <MonacoEditor
               language={EditorLanguage.yaml}
               value={dataMapDefinition === '' ? noMapDefLoc : dataMapDefinition}

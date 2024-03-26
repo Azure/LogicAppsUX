@@ -13,10 +13,7 @@
         "main": "apps/data-mapper-standalone/src/main.tsx",
         "polyfills": "apps/data-mapper-standalone/src/polyfills.ts",
         "tsConfig": "apps/data-mapper-standalone/tsconfig.app.json",
-        "assets": [
-          "apps/data-mapper-standalone/src/favicon.ico",
-          "apps/data-mapper-standalone/src/assets"
-        ],
+        "assets": ["apps/data-mapper-standalone/src/favicon.ico", "apps/data-mapper-standalone/src/assets"],
         "styles": ["apps/data-mapper-standalone/src/styles.less"],
         "scripts": [],
         "statsJson": true,

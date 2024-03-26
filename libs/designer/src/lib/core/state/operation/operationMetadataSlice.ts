@@ -7,8 +7,7 @@ import { createTokenValueSegment, isTokenValueSegment } from '../../utils/parame
 import { normalizeKey } from '../../utils/tokens';
 import { resetNodesLoadStatus, resetWorkflowState } from '../global';
 import { LogEntryLevel, LoggerService, getRecordEntry, type OpenAPIV2, type OperationInfo } from '@microsoft/logic-apps-shared';
-import type { ParameterInfoUI } from '@microsoft/logic-apps-shared';
-import type { FilePickerInfo, InputParameter, OutputParameter, SwaggerParser } from '@microsoft/logic-apps-shared';
+import type { FilePickerInfo, InputParameter, OutputParameter, SwaggerParser, ParameterInfoUI } from '@microsoft/logic-apps-shared';
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import type { WritableDraft } from 'immer/dist/internal';
@@ -239,7 +238,9 @@ export const operationMetadataSlice = createSlice({
     },
     addDynamicInputs: (state, action: PayloadAction<AddDynamicInputsPayload>) => {
       const { nodeId, groupId, inputs, newInputs: rawInputs, swagger } = action.payload;
-      const inputParameters = getRecordEntry(state.inputParameters, nodeId) ?? { parameterGroups: {} };
+      const inputParameters = getRecordEntry(state.inputParameters, nodeId) ?? {
+        parameterGroups: {},
+      };
       const parameterGroups = getRecordEntry(inputParameters?.parameterGroups, groupId);
       if (parameterGroups) {
         const { parameters } = parameterGroups;
@@ -257,7 +258,10 @@ export const operationMetadataSlice = createSlice({
 
       const dependencies = getInputDependencies(inputParameters, rawInputs, swagger);
       if (dependencies) {
-        state.dependencies[nodeId].inputs = { ...state.dependencies[nodeId].inputs, ...dependencies };
+        state.dependencies[nodeId].inputs = {
+          ...state.dependencies[nodeId].inputs,
+          ...dependencies,
+        };
       }
     },
     addDynamicOutputs: (state, action: PayloadAction<AddDynamicOutputsPayload>) => {
@@ -337,7 +341,11 @@ export const operationMetadataSlice = createSlice({
     updateStaticResults: (state, action: PayloadAction<AddStaticResultsPayload>) => {
       const { id, staticResults } = action.payload;
       const nodeStaticResults = getRecordEntry(state.staticResults, id);
-      if (!nodeStaticResults) state.staticResults[id] = { name: '', staticResultOptions: StaticResultOption.DISABLED };
+      if (!nodeStaticResults)
+        state.staticResults[id] = {
+          name: '',
+          staticResultOptions: StaticResultOption.DISABLED,
+        };
       state.staticResults[id] = { ...nodeStaticResults, ...staticResults };
 
       LoggerService().log({
@@ -357,7 +365,10 @@ export const operationMetadataSlice = createSlice({
           const parameterGroup = nodeInputs.parameterGroups[groupId];
           const index = parameterGroup.parameters.findIndex((parameter) => parameter.id === parameterId);
           if (index > -1) {
-            parameterGroup.parameters[index] = { ...parameterGroup.parameters[index], ...propertiesToUpdate };
+            parameterGroup.parameters[index] = {
+              ...parameterGroup.parameters[index],
+              ...propertiesToUpdate,
+            };
             nodeInputs.parameterGroups[groupId] = parameterGroup;
           }
         }
@@ -365,10 +376,16 @@ export const operationMetadataSlice = createSlice({
 
       const nodeDependencies = getRecordEntry(state.dependencies, nodeId);
       if (nodeDependencies && dependencies?.inputs) {
-        nodeDependencies.inputs = { ...nodeDependencies.inputs, ...dependencies.inputs };
+        nodeDependencies.inputs = {
+          ...nodeDependencies.inputs,
+          ...dependencies.inputs,
+        };
       }
       if (nodeDependencies && dependencies?.outputs) {
-        nodeDependencies.outputs = { ...nodeDependencies.outputs, ...dependencies.outputs };
+        nodeDependencies.outputs = {
+          ...nodeDependencies.outputs,
+          ...dependencies.outputs,
+        };
       }
 
       LoggerService().log({
@@ -380,7 +397,12 @@ export const operationMetadataSlice = createSlice({
     },
     updateParameterConditionalVisibility: (
       state,
-      action: PayloadAction<{ nodeId: string; groupId: string; parameterId: string; value?: boolean }>
+      action: PayloadAction<{
+        nodeId: string;
+        groupId: string;
+        parameterId: string;
+        value?: boolean;
+      }>
     ) => {
       const { nodeId, groupId, parameterId, value } = action.payload;
       const inputParameters = getRecordEntry(state.inputParameters, nodeId);
@@ -402,9 +424,32 @@ export const operationMetadataSlice = createSlice({
         args: [action.payload],
       });
     },
+    updateParameterEditorViewModel: (
+      state,
+      action: PayloadAction<{
+        nodeId: string;
+        groupId: string;
+        parameterId: string;
+        editorViewModel: any;
+      }>
+    ) => {
+      const { nodeId, groupId, parameterId, editorViewModel } = action.payload;
+      const inputParameters = getRecordEntry(state.inputParameters, nodeId);
+      const parameterGroup = getRecordEntry(inputParameters?.parameterGroups, groupId);
+      if (!inputParameters || !parameterGroup) return;
+      const index = parameterGroup.parameters.findIndex((parameter) => parameter.id === parameterId);
+      if (index > -1) {
+        parameterGroup.parameters[index].editorViewModel = editorViewModel;
+      }
+    },
     updateParameterValidation: (
       state,
-      action: PayloadAction<{ nodeId: string; groupId: string; parameterId: string; validationErrors: string[] | undefined }>
+      action: PayloadAction<{
+        nodeId: string;
+        groupId: string;
+        parameterId: string;
+        validationErrors: string[] | undefined;
+      }>
     ) => {
       const { nodeId, groupId, parameterId, validationErrors } = action.payload;
       const inputParameters = getRecordEntry(state.inputParameters, nodeId);
@@ -417,7 +462,12 @@ export const operationMetadataSlice = createSlice({
     },
     removeParameterValidationError: (
       state,
-      action: PayloadAction<{ nodeId: string; groupId: string; parameterId: string; validationError: string }>
+      action: PayloadAction<{
+        nodeId: string;
+        groupId: string;
+        parameterId: string;
+        validationError: string;
+      }>
     ) => {
       const { nodeId, groupId, parameterId, validationError } = action.payload;
       const inputParameters = getRecordEntry(state.inputParameters, nodeId);
@@ -445,10 +495,20 @@ export const operationMetadataSlice = createSlice({
       const nodeRepetition = getRecordEntry(state.repetitionInfos, id);
       state.repetitionInfos[id] = { ...nodeRepetition, ...repetition };
     },
-    updateErrorDetails: (state, action: PayloadAction<{ id: string; errorInfo?: ErrorInfo; clear?: boolean }>) => {
+    updateErrorDetails: (
+      state,
+      action: PayloadAction<{
+        id: string;
+        errorInfo?: ErrorInfo;
+        clear?: boolean;
+      }>
+    ) => {
       const { id, errorInfo, clear } = action.payload;
       if (errorInfo) {
-        state.errors[id] = { ...(getRecordEntry(state.errors, id) as any), [errorInfo.level]: errorInfo };
+        state.errors[id] = {
+          ...(getRecordEntry(state.errors, id) as any),
+          [errorInfo.level]: errorInfo,
+        };
       } else if (clear) {
         delete state.errors[id];
       }
@@ -496,6 +556,7 @@ export const {
   updateStaticResults,
   updateParameterConditionalVisibility,
   updateParameterValidation,
+  updateParameterEditorViewModel,
   updateExistingInputTokenTitles,
   removeParameterValidationError,
   updateOutputs,

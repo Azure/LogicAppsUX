@@ -188,6 +188,16 @@ export default {
     HTML: 'html',
     RECURRENCE: 'recurrence',
   },
+  EDITOR_OPTIONS: {
+    LANGUAGE: {
+      CSHARP: 'csharp',
+      JAVASCRIPT: 'javascript',
+      JSON: 'json',
+      POWERSHELL: 'powershell',
+    },
+  },
+  DEFAULT_CUSTOM_CODE_INPUT: 'CodeFile',
+  INLINECODE: 'connectionProviders/inlineCode',
   EVENT_AUTH_COMPLETED: 'MSLA_AUTH_COMPLETED',
   ERROR_MESSAGES: {
     FAILED_TO_FETCH: 'Failed to fetch',
@@ -860,6 +870,7 @@ export default {
   TRIGGER_BODY_OUTPUT: 'triggerBody()',
   TRIGGER_QUERIES_OUTPUT: `triggerOutputs()['queries']`,
   TRIGGER_HEADERS_OUTPUT: `triggerOutputs()['headers']`,
+  TRIGGER_STATUS_CODE_OUTPUT: `triggerOutputs()['statusCode']`,
   TRIGGER_OUTPUTS_OUTPUT: 'triggerOutputs()',
   UIDEFINITION_TYPES: {
     BOOLEAN: 'bool',

@@ -1,3 +1,10 @@
+import type { ManifestParser, SwaggerParser } from '../../../parsers';
+import {
+  isSharedManagedConnectorId,
+  isSharedManagedConnectorIdFromPApps,
+  isCustomConnectorId,
+  isManagedConnectorId,
+} from '../../../utils/src';
 import {
   apiManagementConnectorId,
   dataOperationConnectorId,
@@ -20,13 +27,6 @@ import { FlatFileEncodingStaticResultSchema } from './schemas/flatfileencoding';
 import { HttpStaticResultSchema } from './schemas/httpresult';
 import { ParseJsonStaticResultSchema } from './schemas/parseJson';
 import { QueryStaticResultSchema } from './schemas/query';
-import type { ManifestParser, SwaggerParser } from '@microsoft/logic-apps-shared';
-import {
-  isCustomConnectorId,
-  isManagedConnectorId,
-  isSharedManagedConnectorId,
-  isSharedManagedConnectorIdFromPApps,
-} from '@microsoft/logic-apps-shared';
 
 /**
  * Factory method to provide the static result root schema for an operation

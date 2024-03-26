@@ -1,5 +1,6 @@
-import { getIntl } from '@microsoft/logic-apps-shared';
-import type { OpenApiSchema, OpenAPIV2 } from '@microsoft/logic-apps-shared';
+import { getIntl } from '../../../../intl/src';
+import type { OpenApiSchema } from '../../../../parsers';
+import type { OpenAPIV2 } from '../../../../utils/src';
 
 export type StaticResultRootSchemaType = OpenAPIV2.SchemaObject & {
   properties: {

@@ -11,9 +11,8 @@ import * as jsonc from 'jsonc-parser';
  * @returns {T} Parsed data in JSON format.
  */
 export function parseJson<T extends object>(data: string): T {
-  let updateData = data;
-  if (updateData.charCodeAt(0) === 0xfeff) {
-    updateData = updateData.slice(1);
+  if (data.charCodeAt(0) === 0xfeff) {
+    data = data.slice(1);
   }
 
   const errors: jsonc.ParseError[] = [];

@@ -1,5 +1,5 @@
+import { AssertionException, AssertionErrorCode } from '../../utils/src';
 import type { IHttpClient } from './httpClient';
-import { AssertionException, AssertionErrorCode } from '@microsoft/logic-apps-shared';
 
 export interface LoginResult {
   [x: string]: any;

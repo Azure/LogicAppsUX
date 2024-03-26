@@ -4,6 +4,7 @@ import type { ValueSegmentUI } from '../editor';
 import { ValueSegmentType, removeQuotes } from '../editor';
 import type { GetTokenPickerHandler } from '../editor/base';
 import type { ChangeHandler, ChangeState} from '@microsoft/logic-apps-shared';
+import { createLiteralValueSegment } from '../editor/base/utils/helper';
 
 import { isEmptySegments } from '../editor/base/utils/parsesegments';
 import { StringEditor } from '../editor/string';
@@ -144,17 +145,17 @@ export const SimpleQueryBuilder = ({ getTokenPicker, itemValue, readonly, onChan
 const convertRootPropToValue = (rootProps: RowItemProps): ValueSegmentUI[] => {
   const { operator, operand1, operand2 } = rootProps;
   const negatory = operator.includes('not');
-  const op1: ValueSegmentUI = getOperationValue(operand1[0]) ?? { id: guid(), type: ValueSegmentType.LITERAL, value: '' };
-  const separatorLiteral: ValueSegmentUI = { id: guid(), type: ValueSegmentType.LITERAL, value: `,` };
-  const op2: ValueSegmentUI = getOperationValue(operand2[0]) ?? { id: guid(), type: ValueSegmentType.LITERAL, value: '' };
+  const op1: ValueSegmentUI = getOperationValue(operand1[0]) ?? createLiteralValueSegment('');
+  const separatorLiteral: ValueSegmentUI = createLiteralValueSegment(`,`);
+  const op2: ValueSegmentUI = getOperationValue(operand2[0]) ?? createLiteralValueSegment('');
   if (negatory) {
     const newOperator = operator.replace('not', '');
-    const negatoryOperatorLiteral: ValueSegmentUI = { id: guid(), type: ValueSegmentType.LITERAL, value: `@not(${newOperator}(` };
-    const endingLiteral: ValueSegmentUI = { id: guid(), type: ValueSegmentType.LITERAL, value: `))` };
+    const negatoryOperatorLiteral: ValueSegmentUI = createLiteralValueSegment(`@not(${newOperator}(`);
+    const endingLiteral: ValueSegmentUI = createLiteralValueSegment(`))`);
     return [negatoryOperatorLiteral, op1, separatorLiteral, op2, endingLiteral];
   } else {
-    const operatorLiteral: ValueSegmentUI = { id: guid(), type: ValueSegmentType.LITERAL, value: `@${operator}(` };
-    const endingLiteral: ValueSegmentUI = { id: guid(), type: ValueSegmentType.LITERAL, value: `)` };
+    const operatorLiteral: ValueSegmentUI = createLiteralValueSegment(`@${operator}(`);
+    const endingLiteral: ValueSegmentUI = createLiteralValueSegment(`)`);
     return [operatorLiteral, op1, separatorLiteral, op2, endingLiteral];
   }
 };
@@ -190,8 +191,8 @@ const convertAdvancedValueToRootProp = (value: ValueSegmentUI[]): RowItemProps |
     const operandSubstring = stringValue.substring(stringValue.indexOf('(') + 1, nthLastIndexOf(stringValue, ')', negatory ? 2 : 1));
     const operand1String = removeQuotes(operandSubstring.substring(0, getOuterMostCommaIndex(operandSubstring)).trim());
     const operand2String = removeQuotes(operandSubstring.substring(getOuterMostCommaIndex(operandSubstring) + 1).trim());
-    operand1 = [nodeMap.get(operand1String) ?? { id: guid(), type: ValueSegmentType.LITERAL, value: operand1String }];
-    operand2 = [nodeMap.get(operand2String) ?? { id: guid(), type: ValueSegmentType.LITERAL, value: operand2String }];
+    operand1 = [nodeMap.get(operand1String) ?? createLiteralValueSegment(operand1String)];
+    operand2 = [nodeMap.get(operand2String) ?? createLiteralValueSegment(operand2String)];
   } catch {
     return undefined;
   }

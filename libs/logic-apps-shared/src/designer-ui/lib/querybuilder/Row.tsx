@@ -3,18 +3,15 @@ import { GroupType } from '.';
 import { Checkbox } from '../checkbox';
 import constants from '../constants';
 import type { ValueSegmentUI } from '../editor';
-import { ValueSegmentType } from '../editor';
 import type {  GetTokenPickerHandler } from '../editor/base';
 import { TokenPickerButtonLocation } from '../editor/base/plugins/tokenpickerbutton';
-import { notEqual } from '../editor/base/utils/helper';
+import { createEmptyLiteralValueSegment, notEqual } from '../editor/base/utils/helper';
 import { StringEditor } from '../editor/string';
-// import type { MoveOption } from './Group';
 import { RowDropdown, RowDropdownOptions } from './RowDropdown';
 import { operandNotEmpty } from './helper';
 import type { ICalloutProps, IIconProps, IOverflowSetItemProps, IOverflowSetStyles } from '@fluentui/react';
 import { css, IconButton, DirectionalHint, TooltipHost, OverflowSet } from '@fluentui/react';
 import type { ChangeState} from '@microsoft/logic-apps-shared';
-import { guid } from '@microsoft/logic-apps-shared';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
 
@@ -28,8 +25,6 @@ const overflowStyle: Partial<IOverflowSetStyles> = {
 const menuIconProps: IIconProps = {
   iconName: 'More',
 };
-
-const emptyValueSegmentArray: ValueSegmentUI[] = [{ type: ValueSegmentType.LITERAL, value: '', id: guid() }];
 
 type RowProps = {
   checked?: boolean;
@@ -178,7 +173,7 @@ export const Row = ({
           checked: checked,
           operand1: newState.value,
           operator: operator ?? 'equals',
-          operand2: operandNotEmpty(operand2) ? operand2 : emptyValueSegmentArray,
+          operand2: operandNotEmpty(operand2) ? operand2 : [createEmptyLiteralValueSegment()],
         },
         index
       );
@@ -190,9 +185,9 @@ export const Row = ({
       {
         type: GroupType.ROW,
         checked: checked,
-        operand1: operandNotEmpty(operand1) ? operand1 : emptyValueSegmentArray,
+        operand1: operandNotEmpty(operand1) ? operand1 : [createEmptyLiteralValueSegment()],
         operator: newState.value[0].value,
-        operand2: operandNotEmpty(operand2) ? operand2 : emptyValueSegmentArray,
+        operand2: operandNotEmpty(operand2) ? operand2 : [createEmptyLiteralValueSegment()],
       },
       index
     );
@@ -204,7 +199,7 @@ export const Row = ({
         {
           type: GroupType.ROW,
           checked: checked,
-          operand1: operandNotEmpty(operand1) ? operand1 : emptyValueSegmentArray,
+          operand1: operandNotEmpty(operand1) ? operand1 : [createEmptyLiteralValueSegment()],
           operator: operator ?? 'equals',
           operand2: newState.value,
         },

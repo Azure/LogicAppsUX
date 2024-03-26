@@ -42,4 +42,5 @@ export interface CommonPanelProps {
   width: string;
   layerProps?: any;
   panelLocation: PanelLocation;
+  isResizeable?: boolean;
 }

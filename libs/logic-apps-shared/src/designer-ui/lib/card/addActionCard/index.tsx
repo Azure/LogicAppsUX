@@ -1,8 +1,8 @@
-import { convertUIElementNameToAutomationId } from '../../utils';
 import { useCardKeyboardInteraction } from '../hooks';
 import { getCardStyle } from '../utils';
 import AddNodeIcon from './addNodeIcon.svg';
 import { TooltipHost, DirectionalHint, css } from '@fluentui/react';
+import { replaceWhiteSpaceWithUnderscore } from '@microsoft/logic-apps-shared';
 import { useIntl } from 'react-intl';
 
 export const ADD_CARD_TYPE = {
@@ -108,7 +108,7 @@ export const AddActionCard: React.FC<AddActionCardProps> = ({ addCardType, onCli
           className={css('msla-panel-card-container', selected && 'msla-panel-card-container-selected')}
           style={getCardStyle(brandColor)}
           data-testid={`card-${title}`}
-          data-automation-id={`card-${convertUIElementNameToAutomationId(title)}`}
+          data-automation-id={`card-${replaceWhiteSpaceWithUnderscore(title)}`}
           onClick={handleClick}
           onKeyDown={keyboardInteraction.keyDown}
           onKeyUp={keyboardInteraction.keyUp}

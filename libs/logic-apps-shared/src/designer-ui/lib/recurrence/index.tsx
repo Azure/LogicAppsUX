@@ -1,7 +1,7 @@
 import constants from '../constants';
-import type { ValueSegmentUI } from '../editor';
-import { ValueSegmentType } from '../editor';
 import type { ChangeHandler} from '@microsoft/logic-apps-shared';
+import type { ValueSegmentUI } from '../editor';
+import { createLiteralValueSegment } from '../editor/base/utils/helper';
 import { DropdownControl, DropdownType } from './dropdownControl';
 import { Preview } from './preview';
 import { MinuteTextInput, TextInput } from './textInput';
@@ -13,7 +13,6 @@ import {
   getScheduleDayValues,
   getScheduleHourValues,
   getTimezoneValues,
-  guid,
   RecurrenceType,
 } from '@microsoft/logic-apps-shared';
 import { useState } from 'react';
@@ -51,7 +50,7 @@ export const ScheduleEditor = ({
 
   const updateRecurrence = (newRecurrence: RecurrenceConfiguration) => {
     setRecurrence(newRecurrence);
-    onChange?.({ value: [{ id: guid(), type: ValueSegmentType.LITERAL, value: JSON.stringify(newRecurrence) }] });
+    onChange?.({ value: [createLiteralValueSegment(JSON.stringify(newRecurrence))] });
   };
 
   const renderScheduleSection = (): JSX.Element | null => {

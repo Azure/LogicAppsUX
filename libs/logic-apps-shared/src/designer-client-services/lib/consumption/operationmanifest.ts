@@ -1,3 +1,5 @@
+import type { OperationInfo, OperationManifest } from '../../../utils/src';
+import { ArgumentException, startsWith, UnsupportedException } from '../../../utils/src';
 import { BaseOperationManifestService } from '../base';
 import type { BaseOperationManifestServiceOptions } from '../base/operationmanifest';
 import {
@@ -21,8 +23,6 @@ import { rosettaNetEncodeManifest, rosettaNetDecodeManifest, rosettaNetWaitForRe
 import { selectSwaggerFunctionManifest } from './manifests/swaggerFunctions';
 import { xmlTransformManifest, xmlValidationManifest } from './manifests/xml';
 import { functionGroup, functionOperation, invokeWorkflowGroup, invokeWorkflowOperation, swaggerFunctionOperation } from './operations';
-import type { OperationInfo, OperationManifest } from '@microsoft/logic-apps-shared';
-import { ArgumentException, UnsupportedException, startsWith } from '@microsoft/logic-apps-shared';
 
 interface ConsumptionOperationManifestServiceOptions extends BaseOperationManifestServiceOptions {
   subscriptionId: string;

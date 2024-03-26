@@ -5,11 +5,12 @@ import type { ChangeHandler} from '@microsoft/logic-apps-shared';
 
 import { EditorWrapper } from '../editor/base/EditorWrapper';
 import { EditorChangePlugin } from '../editor/base/plugins/EditorChange';
+import { createLiteralValueSegment } from '../editor/base/utils/helper';
 import type { IComboBox, IComboBoxOption, IComboBoxOptionStyles, IComboBoxStyles } from '@fluentui/react';
 import { SelectableOptionMenuItemType, ComboBox } from '@fluentui/react';
 import { Button, Spinner, Tooltip } from '@fluentui/react-components';
 import { bundleIcon, Dismiss24Filled, Dismiss24Regular } from '@fluentui/react-icons';
-import { getIntl, guid } from '@microsoft/logic-apps-shared';
+import { getIntl } from '@microsoft/logic-apps-shared';
 import { useRef, useState, useCallback, useMemo, useEffect } from 'react';
 import type { FormEvent } from 'react';
 import { useIntl } from 'react-intl';
@@ -210,7 +211,7 @@ export const Combobox = ({
 
   const handleOptionSelect = (_event: FormEvent<IComboBox>, option?: IComboBoxOption): void => {
     if (option?.data === 'customrender') {
-      setValue([{ id: guid(), type: ValueSegmentType.LITERAL, value: option.key === 'customValue' ? '' : option.key.toString() }]);
+      setValue([createLiteralValueSegment(option.key === 'customValue' ? '' : option.key.toString())]);
       setMode(Mode.Custom);
       setCanAutoFocus(true);
     } else {
@@ -219,13 +220,7 @@ export const Combobox = ({
         setSelectedKey(currSelectedKey);
         setMode(Mode.Default);
         onChange?.({
-          value: [
-            {
-              id: guid(),
-              type: ValueSegmentType.LITERAL,
-              value: currSelectedKey ? getSelectedValue(options, currSelectedKey).toString() : '',
-            },
-          ],
+          value: [createLiteralValueSegment(currSelectedKey ? getSelectedValue(options, currSelectedKey).toString() : '')],
         });
       }
     }
@@ -233,7 +228,7 @@ export const Combobox = ({
 
   const handleOptionMultiSelect = (_event: FormEvent<IComboBox>, option?: IComboBoxOption): void => {
     if (option?.data === 'customrender') {
-      setValue([{ id: guid(), type: ValueSegmentType.LITERAL, value: option.key === 'customValue' ? '' : option.key.toString() }]);
+      setValue([createLiteralValueSegment(option.key === 'customValue' ? '' : option.key.toString())]);
       setMode(Mode.Custom);
       setCanAutoFocus(true);
     } else {
@@ -246,11 +241,9 @@ export const Combobox = ({
         const selectedValues = newKeys.map((key) => getSelectedValue(options, key));
         onChange?.({
           value: [
-            {
-              id: guid(),
-              value: serialization?.valueType === 'array' ? JSON.stringify(selectedValues) : selectedValues.join(serialization?.separator),
-              type: ValueSegmentType.LITERAL,
-            },
+            createLiteralValueSegment(
+              serialization?.valueType === 'array' ? JSON.stringify(selectedValues) : selectedValues.join(serialization?.separator)
+            ),
           ],
         });
       }
@@ -270,13 +263,7 @@ export const Combobox = ({
     comboBoxRef.current?.focus(true);
     setMode(Mode.Default);
     onChange?.({
-      value: [
-        {
-          id: guid(),
-          type: ValueSegmentType.LITERAL,
-          value: '',
-        },
-      ],
+      value: [createLiteralValueSegment('')],
     });
   };
 

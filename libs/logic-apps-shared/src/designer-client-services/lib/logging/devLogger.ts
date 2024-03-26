@@ -1,8 +1,8 @@
+import { guid } from '../../../utils/src';
 import type { ILoggerService } from '../logger';
 import { BrowserReporter } from './browserLogger';
 import type { LogEntry, TelemetryEvent } from './logEntry';
 import { LogEntryLevel } from './logEntry';
-import { guid } from '@microsoft/logic-apps-shared';
 
 export class DevLogger implements ILoggerService {
   private traceIds = new Map<string, { data: Pick<TelemetryEvent, 'action' | 'actionModifier' | 'name' | 'source'>; startTime: number }>();

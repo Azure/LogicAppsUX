@@ -4,3 +4,4 @@ export { StandardOperationManifestService, isServiceProviderOperation } from './
 export { StandardSearchService } from './search';
 export { StandardRunService } from './run';
 export { StandardArtifactService } from './artifact';
+export { StandardCustomCodeService } from './customcode';

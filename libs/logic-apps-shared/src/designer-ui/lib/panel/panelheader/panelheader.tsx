@@ -44,6 +44,7 @@ export interface PanelHeaderProps {
   onRenderWarningMessage?(): JSX.Element;
   toggleCollapse: () => void;
   onTitleChange: TitleChangeHandler;
+  onTitleBlur?: (prevtitle: string) => void;
 }
 
 const DismissIcon = bundleIcon(ChevronRight24Filled, ChevronRight24Regular);
@@ -72,6 +73,7 @@ export const PanelHeader = ({
   onRenderWarningMessage,
   toggleCollapse,
   onTitleChange,
+  onTitleBlur,
 }: PanelHeaderProps): JSX.Element => {
   const intl = useIntl();
 
@@ -180,6 +182,7 @@ export const PanelHeader = ({
                 renameTitleDisabled={renameTitleDisabled}
                 titleValue={title}
                 onChange={onTitleChange}
+                onBlur={onTitleBlur}
               />
             </div>
             <OverflowButton />

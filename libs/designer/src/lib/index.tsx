@@ -15,6 +15,7 @@ if (process.env.NODE_ENV === 'development') {
 export * from './ui/index';
 export * from './core/index';
 export * from './common/models/workflow';
+export * from './common/models/customcode';
 export { default as Constants } from './common/constants';
 export { serializeWorkflow as serializeBJSWorkflow } from './core/actions/bjsworkflow/serializer';
 export { updateCallbackUrl } from './core/actions/bjsworkflow/initialize';

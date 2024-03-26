@@ -1,13 +1,13 @@
-import { AssertionErrorCode, AssertionException } from '@microsoft/logic-apps-shared';
 import type {
-  Connector,
   Connection,
-  ConnectionParameter,
-  ConnectionParameterSet as ParameterSet,
-  ConnectionParameterSetValues,
   ConnectionMetadata,
+  ConnectionParameterSet as ParameterSet,
+  ConnectionParameter,
+  ConnectionParameterSetValues,
+  Connector,
   OpenAPIV2,
-} from '@microsoft/logic-apps-shared';
+} from '../../utils/src';
+import { AssertionErrorCode, AssertionException } from '../../utils/src';
 
 export interface ConnectorWithSwagger {
   connector: Connector;

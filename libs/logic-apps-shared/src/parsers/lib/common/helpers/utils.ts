@@ -5,7 +5,7 @@ import { OutputKeys } from '../constants';
 import { parseEx } from './keysutility';
 import { getIntl } from '@microsoft/intl-logic-apps';
 import type { OpenAPIV2 } from '@microsoft/utils-logic-apps';
-import { equals, isNullOrUndefined } from '@microsoft/utils-logic-apps';
+import { capitalizeFirstLetter, equals, isNullOrUndefined } from '@microsoft/utils-logic-apps';
 
 type SchemaObject = OpenAPIV2.SchemaObject;
 type Parameter = OpenAPIV2.ParameterObject;
@@ -48,9 +48,15 @@ export function getEnum(parameter: SchemaObject, required: boolean | undefined):
     } else {
       const editorOptions = parameter[Constants.ExtensionProperties.EditorOptions];
       if (editorOptions && editorOptions.items) {
-        return editorOptions.items.map((item: any) => ({ displayName: item.title, value: item.value }));
+        return editorOptions.items.map((item: any) => ({
+          displayName: item.title,
+          value: item.value,
+        }));
       } else {
-        return parameter.enum.map((item) => ({ displayName: !isNullOrUndefined(item) ? item.toString() : '', value: item }));
+        return parameter.enum.map((item) => ({
+          displayName: !isNullOrUndefined(item) ? item.toString() : '',
+          value: item,
+        }));
       }
     }
   }
@@ -242,17 +248,41 @@ export function getKnownTitles(name: string): string {
   const intl = getIntl();
   switch (name) {
     case OutputKeys.Body:
-      return intl.formatMessage({ defaultMessage: 'Body', id: 'ZCFMoe', description: 'Display name for body outputs' });
+      return intl.formatMessage({
+        defaultMessage: 'Body',
+        id: 'ZCFMoe',
+        description: 'Display name for body outputs',
+      });
     case OutputKeys.Headers:
-      return intl.formatMessage({ defaultMessage: 'Headers', id: 'N4dEVo', description: 'Display name for headers in outputs' });
+      return intl.formatMessage({
+        defaultMessage: 'Headers',
+        id: 'N4dEVo',
+        description: 'Display name for headers in outputs',
+      });
     case OutputKeys.Outputs:
-      return intl.formatMessage({ defaultMessage: 'Outputs', id: 'vT0DCP', description: 'Display name for operation outputs' });
+      return intl.formatMessage({
+        defaultMessage: 'Outputs',
+        id: 'vT0DCP',
+        description: 'Display name for operation outputs',
+      });
     case OutputKeys.Queries:
-      return intl.formatMessage({ defaultMessage: 'Queries', id: 'w16qh+', description: 'Display name for queries in outputs' });
+      return intl.formatMessage({
+        defaultMessage: 'Queries',
+        id: 'w16qh+',
+        description: 'Display name for queries in outputs',
+      });
     case OutputKeys.StatusCode:
-      return intl.formatMessage({ defaultMessage: 'Status Code', id: 'x10E1p', description: 'Display name for status code in outputs' });
+      return intl.formatMessage({
+        defaultMessage: 'Status Code',
+        id: 'x10E1p',
+        description: 'Display name for status code in outputs',
+      });
     case OutputKeys.Item:
-      return intl.formatMessage({ defaultMessage: 'Item', id: 'oDHXKh', description: 'Display name for item output' });
+      return intl.formatMessage({
+        defaultMessage: 'Item',
+        id: 'oDHXKh',
+        description: 'Display name for item output',
+      });
     case OutputKeys.PathParameters:
       return intl.formatMessage({
         defaultMessage: 'Path Parameters',
@@ -279,6 +309,17 @@ export function getKnownTitlesFromKey(key: string): string | undefined {
     case '$.statuscode':
       return getKnownTitles(OutputKeys.StatusCode);
     default:
+      if (key.startsWith('$.x-ms-')) {
+        return replaceXmsTitle(key);
+      }
       return undefined;
   }
+}
+
+export function replaceXmsTitle(key: string): string {
+  return key
+    .replace('$.x-ms-', '')
+    .split('-')
+    .map((word) => capitalizeFirstLetter(word))
+    .join(' ');
 }

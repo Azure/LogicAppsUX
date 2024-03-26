@@ -3,7 +3,9 @@ import type { CallbackInfo, ConnectionsData, ParametersData, Workflow } from '..
 import { Artifact } from '../Models/Workflow';
 import { validateResourceId } from '../Utilities/resourceUtilities';
 import { convertDesignerWorkflowToConsumptionWorkflow } from './ConsumptionSerializationHelpers';
-import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
+import type { CustomCodeFileNameMapping } from '@microsoft/logic-apps-designer';
+import { CustomCodeService, LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
+import type { LogicAppsV2, VFSObject } from '@microsoft/logic-apps-shared';
 import axios from 'axios';
 import jwt_decode from 'jwt-decode';
 import { useQuery } from 'react-query';
@@ -32,6 +34,53 @@ export const useWorkflowAndArtifactsStandard = (workflowId: string) => {
       refetchOnWindowFocus: false,
     }
   );
+};
+
+export const useAllCustomCodeFiles = (appId?: string, workflowName?: string) => {
+  return useQuery(['workflowCustomCode', appId, workflowName], async () => await getAllCustomCodeFiles(appId, workflowName), {
+    enabled: !!appId && !!workflowName,
+    refetchOnMount: false,
+    refetchOnReconnect: false,
+    refetchOnWindowFocus: false,
+  });
+};
+
+const getAllCustomCodeFiles = async (appId?: string, workflowName?: string) => {
+  const customCodeFiles: Record<string, string> = {};
+  const uri = `${baseUrl}${appId}/hostruntime/admin/vfs/${workflowName}`;
+  const vfsObjects: VFSObject[] = (
+    await axios.get<VFSObject[]>(uri, {
+      headers: {
+        Authorization: `Bearer ${environment.armToken}`,
+      },
+      params: {
+        relativePath: 1,
+        'api-version': '2018-11-01',
+      },
+    })
+  ).data.filter((file) => file.name !== Artifact.WorkflowFile);
+
+  const filesData = await Promise.all(
+    vfsObjects.map(async (file) => {
+      const response = await axios.get<string>(`${uri}/${file.name}`, {
+        headers: {
+          Authorization: `Bearer ${environment.armToken}`,
+          'If-Match': ['*'],
+        },
+        params: {
+          relativePath: 1,
+          'api-version': '2018-11-01',
+        },
+      });
+      return { name: file.name, data: response.data };
+    })
+  );
+
+  filesData.forEach((file) => {
+    customCodeFiles[file.name] = file.data;
+  });
+
+  return customCodeFiles;
 };
 
 export const useWorkflowAndArtifactsConsumption = (workflowId: string) => {
@@ -213,13 +262,57 @@ export const getConnectionConsumption = async (connectionId: string) => {
   return response.data;
 };
 
+export const saveCustomCodeStandard = async (customCode?: CustomCodeFileNameMapping): Promise<void> => {
+  if (!customCode) return;
+  try {
+    const existingFiles = (await CustomCodeService().getAllCustomCodeFiles()).map((file) => file.name);
+    // to prevent 404's we first check which custom code files are already present before deleting
+    Object.entries(customCode).forEach(([fileName, customCodeData]) => {
+      const { fileExtension, isModified, isDeleted, fileData } = customCodeData;
+      if (isDeleted) {
+        if (existingFiles.includes(fileName)) {
+          CustomCodeService().deleteCustomCode(fileName);
+          LoggerService().log({
+            level: LogEntryLevel.Verbose,
+            area: 'serializeCustomcode',
+            message: `Deleting custom code file: ${fileName}`,
+          });
+        }
+      } else if (isModified) {
+        LoggerService().log({
+          level: LogEntryLevel.Verbose,
+          area: 'serializeCustomcode',
+          message: `Uploading/Updating custom code file: ${fileName}`,
+        });
+
+        CustomCodeService().uploadCustomCode({
+          fileData,
+          fileName,
+          fileExtension,
+        });
+      }
+    });
+    return;
+  } catch (error) {
+    const errorMessage = `Failed to save custom code: ${error}`;
+    LoggerService().log({
+      level: LogEntryLevel.Error,
+      area: 'serializeCustomcode',
+      message: errorMessage,
+      error: error instanceof Error ? error : undefined,
+    });
+    return;
+  }
+};
+
 export const saveWorkflowStandard = async (
   siteResourceId: string,
   workflowName: string,
   workflow: any,
   connectionsData: ConnectionsData | undefined,
   parametersData: ParametersData | undefined,
-  settings: Record<string, string> | undefined
+  settings: Record<string, string> | undefined,
+  customCodeData: CustomCodeFileNameMapping | undefined
 ): Promise<any> => {
   const data: any = {
     files: {
@@ -248,6 +341,9 @@ export const saveWorkflowStandard = async (
       }
     }
 
+    // saving custom code must happen synchronously with deploying the workflow artifacts as they both cause
+    // the host to go soft restart. We may need to look into if there's a race case where this may still happen
+    saveCustomCodeStandard(customCodeData);
     await axios.post(`${baseUrl}${siteResourceId}/deployWorkflowArtifacts?api-version=${standardApiVersion}`, data, {
       headers: {
         'If-Match': '*',

@@ -5,8 +5,7 @@ import { LogCategory, LogService } from '../../utils/Logging.Utils';
 import { ChoiceGroup, DefaultButton, Panel, PanelType, Pivot, PivotItem, PrimaryButton, Stack, StackItem, Text } from '@fluentui/react';
 import { makeStyles, shorthands, tokens } from '@fluentui/react-components';
 import type { MonacoProps } from '@microsoft/logic-apps-shared';
-import { EditorLanguage, MonacoEditor } from '@microsoft/logic-apps-shared';
-import { guid, isNullOrEmpty, SchemaFileFormat } from '@microsoft/logic-apps-shared';
+import { EditorLanguage, MonacoEditor , guid, isNullOrEmpty, SchemaFileFormat } from '@microsoft/logic-apps-shared';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useSelector } from 'react-redux';
@@ -229,7 +228,12 @@ export const TestMapPanel = ({ mapDefinition, isOpen, onClose }: TestMapPanelPro
               {noXsltLoc}
             </Text>
           ) : isMismatchedXslt ? (
-            <Text variant={'mediumPlus'} style={{ color: '#e4cc00' /*tokens.colorPaletteYellowForeground1*/ }}>
+            <Text
+              variant={'mediumPlus'}
+              style={{
+                color: '#e4cc00' /*tokens.colorPaletteYellowForeground1*/,
+              }}
+            >
               {mismatchedXsltLoc}
             </Text>
           ) : (

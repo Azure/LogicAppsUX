@@ -1,5 +1,5 @@
-import type { LogicAppsV2, ManagedIdentity, OpenAPIV2 } from '@microsoft/logic-apps-shared';
-import { AssertionErrorCode, AssertionException } from '@microsoft/logic-apps-shared';
+import type { OpenAPIV2, ManagedIdentity, LogicAppsV2 } from '../../utils/src';
+import { AssertionException, AssertionErrorCode } from '../../utils/src';
 import type { CallbackInfo } from './callbackInfo';
 
 export interface NodeOutputs {
