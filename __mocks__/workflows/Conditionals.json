@@ -45,7 +45,10 @@
               "and": [
                 {
                   "not": {
-                    "endsWith": ["@{concat(concat(concat(concat())))}", "@variables('goalOwner')"]
+                    "endsWith": [
+                      "@{concat(concat(concat(concat())))}",
+                      "@variables('goalOwner')"
+                    ]
                   }
                 },
                 {
