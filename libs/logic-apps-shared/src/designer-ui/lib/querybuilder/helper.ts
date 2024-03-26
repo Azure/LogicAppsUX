@@ -1,6 +1,6 @@
 import type { GroupItemProps, GroupedItems, RowItemProps } from '.';
 import { GroupType } from '.';
-import type { ValueSegment } from '../editor';
+import type { ValueSegmentUI } from '../editor';
 import { isNumber, isStringBoolean } from '@microsoft/logic-apps-shared';
 
 export const checkHeights = (item: GroupItemProps | RowItemProps, returnVal: number[], height: number): number[] => {
@@ -23,7 +23,7 @@ export const getGroupedItems = (item: GroupItemProps | RowItemProps, returnVal: 
   return returnVal;
 };
 
-export const operandNotEmpty = (valSeg: ValueSegment[]): boolean => {
+export const operandNotEmpty = (valSeg: ValueSegmentUI[]): boolean => {
   return valSeg.length > 0;
 };
 
@@ -44,7 +44,7 @@ export const getOuterMostCommaIndex = (input: string): number => {
   return outermostCommaIndex;
 };
 
-export const getOperationValue = (valSegment?: ValueSegment): ValueSegment | undefined => {
+export const getOperationValue = (valSegment?: ValueSegmentUI): ValueSegmentUI | undefined => {
   if (!valSegment) {
     return undefined;
   }
@@ -56,7 +56,7 @@ export const getOperationValue = (valSegment?: ValueSegment): ValueSegment | und
   return { id: valSegment.id, type: valSegment.type, value: `${opeartionHasQuote ? "'" : ''}${currValue}${opeartionHasQuote ? "'" : ''}` };
 };
 
-const checkIfShouldHaveQuotes = (valSegment: ValueSegment): boolean => {
+const checkIfShouldHaveQuotes = (valSegment: ValueSegmentUI): boolean => {
   const value = valSegment.value;
   if (value && (isNumber(value) || isStringBoolean(value))) {
     return false;

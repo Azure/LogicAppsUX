@@ -9,8 +9,8 @@ import {
   useOperationDocumentation,
   useOperationInfo,
 } from '../../../../core/state/selectors/actionMetadataSelector';
-import type { PanelTabFn } from '@microsoft/designer-ui';
-import { About, getConnectorCategoryString } from '@microsoft/designer-ui';
+import type { PanelTabFn } from '@microsoft/logic-apps-shared';
+import { About, getConnectorCategoryString } from '@microsoft/logic-apps-shared';
 
 export const AboutTab = () => {
   const nodeId = useSelectedNodeId();

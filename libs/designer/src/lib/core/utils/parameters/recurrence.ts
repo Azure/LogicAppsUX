@@ -1,7 +1,7 @@
 import constants from '../../../common/constants';
 import { getReactQueryClient } from '../../ReactQueryProvider';
 import { loadParameterValuesFromDefault, toParameterInfoMap } from './helper';
-import type { ParameterInfo } from '@microsoft/designer-ui';
+import type { ParameterInfoUI } from '@microsoft/logic-apps-shared';
 import { OutputMapKey, SchemaProcessor, toInputParameter, map, RecurrenceType } from '@microsoft/logic-apps-shared';
 import type { OpenAPIV2, RecurrenceSetting } from '@microsoft/logic-apps-shared';
 
@@ -35,7 +35,7 @@ const getRecurrenceSchema = (recurrenceType?: RecurrenceType): OpenAPIV2.SchemaO
   };
 };
 
-export const getRecurrenceParameters = (recurrence: RecurrenceSetting | undefined, operationDefinition: any): ParameterInfo[] => {
+export const getRecurrenceParameters = (recurrence: RecurrenceSetting | undefined, operationDefinition: any): ParameterInfoUI[] => {
   if (!recurrence || recurrence.type === RecurrenceType.None) {
     return [];
   }

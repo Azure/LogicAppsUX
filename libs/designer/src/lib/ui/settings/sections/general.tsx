@@ -8,7 +8,7 @@ import { getSplitOnOptions } from '../../../core/utils/outputs';
 import type { SettingsSectionProps } from '../settingsection';
 import { SettingsSection } from '../settingsection';
 import { OperationManifestService } from '@microsoft/logic-apps-shared';
-import { getSettingLabel, type DropdownSelectionChangeHandler, type ExpressionChangeHandler } from '@microsoft/designer-ui';
+import { getSettingLabel, type DropdownSelectionChangeHandler, type ExpressionChangeHandler } from '@microsoft/logic-apps-shared';
 import { useIntl } from 'react-intl';
 
 export interface GeneralSectionProps extends SectionProps {

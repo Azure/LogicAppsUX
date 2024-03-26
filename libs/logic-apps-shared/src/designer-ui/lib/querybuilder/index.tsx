@@ -1,10 +1,11 @@
-import type { ValueSegment } from '../editor';
+import type { ValueSegmentUI } from '../editor';
 import { ValueSegmentType } from '../editor';
-import type { ChangeHandler, GetTokenPickerHandler } from '../editor/base';
+import type { GetTokenPickerHandler } from '../editor/base';
 import { Group } from './Group';
 import { GroupDropdownOptions } from './GroupDropdown';
 import { RowDropdownOptions } from './RowDropdown';
 import { checkHeights, getGroupedItems } from './helper';
+import type { ChangeHandler} from '@microsoft/logic-apps-shared';
 import { guid } from '@microsoft/logic-apps-shared';
 import { useFunctionalState, useUpdateEffect } from '@react-hookz/web';
 import { useEffect, useRef, useState } from 'react';
@@ -27,9 +28,9 @@ export type GroupType = (typeof GroupType)[keyof typeof GroupType];
 export interface RowItemProps {
   type: typeof GroupType.ROW;
   checked?: boolean;
-  operand1: ValueSegment[];
+  operand1: ValueSegmentUI[];
   operator: string;
-  operand2: ValueSegment[];
+  operand2: ValueSegmentUI[];
 }
 
 export interface GroupItemProps {
@@ -42,8 +43,8 @@ export interface GroupItemProps {
 export interface QueryBuilderProps {
   readonly?: boolean;
   groupProps: GroupItemProps;
-  tokenMapping?: Record<string, ValueSegment>;
-  loadParameterValueFromString?: (value: string) => ValueSegment[];
+  tokenMapping?: Record<string, ValueSegmentUI>;
+  loadParameterValueFromString?: (value: string) => ValueSegmentUI[];
   getTokenPicker: GetTokenPickerHandler;
   onChange?: ChangeHandler;
   showDescription?: boolean;

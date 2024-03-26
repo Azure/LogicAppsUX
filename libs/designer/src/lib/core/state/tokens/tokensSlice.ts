@@ -1,6 +1,6 @@
 import { resetWorkflowState } from '../global';
 import { clearDynamicOutputs } from '../operation/operationMetadataSlice';
-import type { OutputToken as Token } from '@microsoft/designer-ui';
+import type { OutputToken as Token } from '@microsoft/logic-apps-shared';
 import { getRecordEntry } from '@microsoft/logic-apps-shared';
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';

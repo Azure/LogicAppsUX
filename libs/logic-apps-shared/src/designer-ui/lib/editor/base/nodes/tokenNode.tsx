@@ -1,12 +1,12 @@
 import { InputToken } from '../../../token/inputToken';
 import type { updateTokenProps } from '../../../tokenpicker/plugins/UpdateTokenNode';
-import type { ValueSegment } from '../../models/parameter';
+import type { ValueSegmentUI } from '../../models/parameter';
 import type { LexicalNode, SerializedLexicalNode, Spread } from 'lexical';
 import { DecoratorNode } from 'lexical';
 
 export interface TokenNodeProps {
   title: string;
-  data: ValueSegment;
+  data: ValueSegmentUI;
   icon?: string;
   brandColor?: string;
   value?: string;
@@ -17,7 +17,7 @@ export interface TokenNodeProps {
 export type SerializedTokenNode = Spread<
   {
     title: string;
-    data: ValueSegment;
+    data: ValueSegmentUI;
     icon?: string;
     brandColor?: string;
     value?: string;
@@ -29,7 +29,7 @@ export type SerializedTokenNode = Spread<
 >;
 export class TokenNode extends DecoratorNode<JSX.Element> {
   __title: string;
-  __data: ValueSegment;
+  __data: ValueSegmentUI;
   __icon?: string;
   __brandColor?: string;
   __value?: string;
@@ -88,11 +88,11 @@ export class TokenNode extends DecoratorNode<JSX.Element> {
     return this.getTextContent();
   }
 
-  convertToSegment(): ValueSegment {
+  convertToSegment(): ValueSegmentUI {
     return this.__data;
   }
 
-  updateContent(props: updateTokenProps, data: ValueSegment): void {
+  updateContent(props: updateTokenProps, data: ValueSegmentUI): void {
     const writable = this.getWritable();
     writable.__value = props.updatedValue;
     writable.__title = props.updatedTitle;
@@ -101,7 +101,7 @@ export class TokenNode extends DecoratorNode<JSX.Element> {
 
   constructor(
     title: string,
-    data: ValueSegment,
+    data: ValueSegmentUI,
     icon?: string,
     brandColor?: string,
     value?: string,

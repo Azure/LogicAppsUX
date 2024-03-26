@@ -1,6 +1,7 @@
-import type { ComboboxItem, SimpleArrayItem, TokenPickerButtonEditorProps, ValueSegment } from '..';
+import type { ComboboxItem, SimpleArrayItem, TokenPickerButtonEditorProps, ValueSegmentUI } from '..';
 import { Combobox, StringEditor } from '..';
-import type { ChangeState, GetTokenPickerHandler } from '../editor/base';
+import type { GetTokenPickerHandler } from '../editor/base';
+import type { ChangeState} from '@microsoft/logic-apps-shared';
 import { notEqual } from '../editor/base/utils/helper';
 import { Label } from '../label';
 import type { LabelProps } from '../label';
@@ -37,8 +38,8 @@ export interface ExpandedSimpleArrayProps {
   setItems: (newItems: SimpleArrayItem[]) => void;
   options?: ComboboxItem[];
   getTokenPicker: GetTokenPickerHandler;
-  tokenMapping?: Record<string, ValueSegment>;
-  loadParameterValueFromString?: (value: string) => ValueSegment[];
+  tokenMapping?: Record<string, ValueSegmentUI>;
+  loadParameterValueFromString?: (value: string) => ValueSegmentUI[];
 }
 
 export const ExpandedSimpleArray = ({
@@ -65,7 +66,7 @@ export const ExpandedSimpleArray = ({
     setItems(items.filter((_, i) => i !== index));
   };
 
-  const handleArrayElementSaved = (prevVal: ValueSegment[], newState: ChangeState, index: number) => {
+  const handleArrayElementSaved = (prevVal: ValueSegmentUI[], newState: ChangeState, index: number) => {
     if (notEqual(prevVal, newState.value)) {
       const newItems = JSON.parse(JSON.stringify(items));
       newItems[index].value = newState.value;

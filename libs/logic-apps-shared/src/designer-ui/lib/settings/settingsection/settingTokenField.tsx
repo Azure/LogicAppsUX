@@ -5,8 +5,10 @@ import { Combobox } from '../../combobox';
 import { CopyInputControl } from '../../copyinputcontrol';
 import { DictionaryEditor } from '../../dictionary';
 import { DropdownEditor } from '../../dropdown';
-import type { ValueSegment } from '../../editor';
-import type { CallbackHandler, CastHandler, ChangeHandler, GetTokenPickerHandler } from '../../editor/base';
+import type { ValueSegmentUI } from '../../editor';
+import type { CallbackHandler, CastHandler, GetTokenPickerHandler } from '../../editor/base';
+import type { ChangeHandler} from '@microsoft/logic-apps-shared';
+
 import type { TokenPickerButtonEditorProps } from '../../editor/base/plugins/tokenpickerbutton';
 import { EditorLanguage } from '../../editor/monaco';
 import { StringEditor } from '../../editor/string';
@@ -32,7 +34,7 @@ import { equals, getPropertyValue } from '@microsoft/logic-apps-shared';
 
 export interface SettingTokenFieldProps extends SettingProps {
   id?: string;
-  value: ValueSegment[];
+  value: ValueSegmentUI[];
   isLoading?: boolean;
   errorDetails?: { message: string };
   editor?: string;
@@ -47,8 +49,8 @@ export interface SettingTokenFieldProps extends SettingProps {
   showTokens?: boolean;
   tokenGroup?: TokenGroup[];
   expressionGroup?: TokenGroup[];
-  tokenMapping: Record<string, ValueSegment>;
-  loadParameterValueFromString?: (value: string) => ValueSegment[];
+  tokenMapping: Record<string, ValueSegmentUI>;
+  loadParameterValueFromString?: (value: string) => ValueSegmentUI[];
   onValueChange?: ChangeHandler;
   onComboboxMenuOpen?: CallbackHandler;
   onCastParameter: CastHandler;

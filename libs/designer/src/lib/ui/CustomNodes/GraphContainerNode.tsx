@@ -3,7 +3,7 @@ import { useIsNodeSelected } from '../../core/state/panel/panelSelectors';
 import { useActionMetadata, useIsLeafNode, useNodeMetadata } from '../../core/state/workflow/workflowSelectors';
 import { DropZone } from '../connections/dropzone';
 import { css } from '@fluentui/react';
-import { GraphContainer } from '@microsoft/designer-ui';
+import { GraphContainer } from '@microsoft/logic-apps-shared';
 import { SUBGRAPH_TYPES } from '@microsoft/logic-apps-shared';
 import { memo } from 'react';
 import { Handle, Position } from 'reactflow';

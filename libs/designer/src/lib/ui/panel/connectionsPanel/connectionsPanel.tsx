@@ -9,7 +9,7 @@ import { SelectConnection } from './selectConnection/selectConnection';
 import { Text } from '@fluentui/react';
 import { Button } from '@fluentui/react-components';
 import { bundleIcon, Dismiss24Filled, Dismiss24Regular } from '@fluentui/react-icons';
-import { type CommonPanelProps } from '@microsoft/designer-ui';
+import { type CommonPanelProps } from '@microsoft/logic-apps-shared';
 import { useCallback, useEffect, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';

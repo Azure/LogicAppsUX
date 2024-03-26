@@ -36,8 +36,8 @@ import type {
   ManagedIdentity,
   Subscription,
 } from '@microsoft/logic-apps-shared';
-import type { AzureResourcePickerProps } from '@microsoft/designer-ui';
-import { AzureResourcePicker } from '@microsoft/designer-ui';
+import type { AzureResourcePickerProps } from '@microsoft/logic-apps-shared';
+import { AzureResourcePicker } from '@microsoft/logic-apps-shared';
 import fromPairs from 'lodash.frompairs';
 import type { FormEvent } from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';

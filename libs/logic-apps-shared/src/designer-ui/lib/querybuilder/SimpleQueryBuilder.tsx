@@ -1,8 +1,10 @@
 import type { GroupItems, RowItemProps } from '.';
 import { RowDropdownOptions, GroupType } from '.';
-import type { ValueSegment } from '../editor';
+import type { ValueSegmentUI } from '../editor';
 import { ValueSegmentType, removeQuotes } from '../editor';
-import type { ChangeHandler, ChangeState, GetTokenPickerHandler } from '../editor/base';
+import type { GetTokenPickerHandler } from '../editor/base';
+import type { ChangeHandler, ChangeState} from '@microsoft/logic-apps-shared';
+
 import { isEmptySegments } from '../editor/base/utils/parsesegments';
 import { StringEditor } from '../editor/string';
 import { Row } from './Row';
@@ -18,10 +20,10 @@ export * from './helper';
 
 export interface SimpleQueryBuilderProps {
   readonly?: boolean;
-  itemValue: ValueSegment[];
+  itemValue: ValueSegmentUI[];
   isRowFormat?: boolean;
-  tokenMapping?: Record<string, ValueSegment>;
-  loadParameterValueFromString?: (value: string) => ValueSegment[];
+  tokenMapping?: Record<string, ValueSegmentUI>;
+  loadParameterValueFromString?: (value: string) => ValueSegmentUI[];
   getTokenPicker: GetTokenPickerHandler;
   onChange?: ChangeHandler;
 }
@@ -44,7 +46,7 @@ export const SimpleQueryBuilder = ({ getTokenPicker, itemValue, readonly, onChan
   const intl = useIntl();
 
   const [getRootProp, setRootProp] = useFunctionalState<RowItemProps | undefined>(convertAdvancedValueToRootProp(itemValue));
-  const [advancedValue, setAdvancedValue] = useState<ValueSegment[]>(itemValue);
+  const [advancedValue, setAdvancedValue] = useState<ValueSegmentUI[]>(itemValue);
   const [isRowFormat, setIsRowFormat] = useState(convertAdvancedValueToRootProp(itemValue) !== undefined);
 
   const advancedButtonLabel = intl.formatMessage({
@@ -139,29 +141,29 @@ export const SimpleQueryBuilder = ({ getTokenPicker, itemValue, readonly, onChan
   );
 };
 
-const convertRootPropToValue = (rootProps: RowItemProps): ValueSegment[] => {
+const convertRootPropToValue = (rootProps: RowItemProps): ValueSegmentUI[] => {
   const { operator, operand1, operand2 } = rootProps;
   const negatory = operator.includes('not');
-  const op1: ValueSegment = getOperationValue(operand1[0]) ?? { id: guid(), type: ValueSegmentType.LITERAL, value: '' };
-  const separatorLiteral: ValueSegment = { id: guid(), type: ValueSegmentType.LITERAL, value: `,` };
-  const op2: ValueSegment = getOperationValue(operand2[0]) ?? { id: guid(), type: ValueSegmentType.LITERAL, value: '' };
+  const op1: ValueSegmentUI = getOperationValue(operand1[0]) ?? { id: guid(), type: ValueSegmentType.LITERAL, value: '' };
+  const separatorLiteral: ValueSegmentUI = { id: guid(), type: ValueSegmentType.LITERAL, value: `,` };
+  const op2: ValueSegmentUI = getOperationValue(operand2[0]) ?? { id: guid(), type: ValueSegmentType.LITERAL, value: '' };
   if (negatory) {
     const newOperator = operator.replace('not', '');
-    const negatoryOperatorLiteral: ValueSegment = { id: guid(), type: ValueSegmentType.LITERAL, value: `@not(${newOperator}(` };
-    const endingLiteral: ValueSegment = { id: guid(), type: ValueSegmentType.LITERAL, value: `))` };
+    const negatoryOperatorLiteral: ValueSegmentUI = { id: guid(), type: ValueSegmentType.LITERAL, value: `@not(${newOperator}(` };
+    const endingLiteral: ValueSegmentUI = { id: guid(), type: ValueSegmentType.LITERAL, value: `))` };
     return [negatoryOperatorLiteral, op1, separatorLiteral, op2, endingLiteral];
   } else {
-    const operatorLiteral: ValueSegment = { id: guid(), type: ValueSegmentType.LITERAL, value: `@${operator}(` };
-    const endingLiteral: ValueSegment = { id: guid(), type: ValueSegmentType.LITERAL, value: `)` };
+    const operatorLiteral: ValueSegmentUI = { id: guid(), type: ValueSegmentType.LITERAL, value: `@${operator}(` };
+    const endingLiteral: ValueSegmentUI = { id: guid(), type: ValueSegmentType.LITERAL, value: `)` };
     return [operatorLiteral, op1, separatorLiteral, op2, endingLiteral];
   }
 };
 
-const convertAdvancedValueToRootProp = (value: ValueSegment[]): RowItemProps | undefined => {
+const convertAdvancedValueToRootProp = (value: ValueSegmentUI[]): RowItemProps | undefined => {
   if (isEmptySegments(value)) {
     return { operator: 'equals', operand1: [], operand2: [], type: GroupType.ROW };
   }
-  const nodeMap = new Map<string, ValueSegment>();
+  const nodeMap = new Map<string, ValueSegmentUI>();
   let stringValue = '';
   value.forEach((segment) => {
     if (segment.type === ValueSegmentType.TOKEN) {
@@ -173,7 +175,7 @@ const convertAdvancedValueToRootProp = (value: ValueSegment[]): RowItemProps | u
   if (!stringValue.includes('@') || !stringValue.includes(',')) {
     return undefined;
   }
-  let operator: string, operand1: ValueSegment[], operand2: ValueSegment[];
+  let operator: string, operand1: ValueSegmentUI[], operand2: ValueSegmentUI[];
   try {
     operator = stringValue.substring(stringValue.indexOf('@') + 1, stringValue.indexOf('('));
     const negatory = operator === 'not';

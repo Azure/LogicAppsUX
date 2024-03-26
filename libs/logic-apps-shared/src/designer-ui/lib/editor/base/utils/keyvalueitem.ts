@@ -1,17 +1,17 @@
 import constants from '../../../constants';
 import { isEmpty } from '../../../dictionary/expandeddictionary';
-import { ValueSegmentType, type ValueSegment } from '../../models/parameter';
+import { ValueSegmentType, type ValueSegmentUI } from '../../models/parameter';
 import { insertQutationForStringType } from './helper';
 import { convertSegmentsToString } from './parsesegments';
 import { isNumber, guid, isBoolean } from '@microsoft/logic-apps-shared';
 
 export interface KeyValueItem {
   id: string;
-  key: ValueSegment[];
-  value: ValueSegment[];
+  key: ValueSegmentUI[];
+  value: ValueSegmentUI[];
 }
 
-export const convertKeyValueItemToSegments = (items: KeyValueItem[], keyType?: string, valueType?: string): ValueSegment[] => {
+export const convertKeyValueItemToSegments = (items: KeyValueItem[], keyType?: string, valueType?: string): ValueSegmentUI[] => {
   const itemsToConvert = items.filter((item) => {
     return !isEmpty(item);
   });
@@ -19,7 +19,7 @@ export const convertKeyValueItemToSegments = (items: KeyValueItem[], keyType?: s
   if (itemsToConvert.length === 0) {
     return [{ id: guid(), type: ValueSegmentType.LITERAL, value: '' }];
   }
-  const parsedItems: ValueSegment[] = [];
+  const parsedItems: ValueSegmentUI[] = [];
   parsedItems.push({ id: guid(), type: ValueSegmentType.LITERAL, value: '{\n  ' });
 
   for (let index = 0; index < itemsToConvert.length; index++) {
@@ -55,7 +55,7 @@ export const convertKeyValueItemToSegments = (items: KeyValueItem[], keyType?: s
 };
 
 // we want to default to string type when the value is type any
-export const convertValueType = (value: ValueSegment[], type?: string): string | undefined => {
+export const convertValueType = (value: ValueSegmentUI[], type?: string): string | undefined => {
   if (type !== constants.SWAGGER.TYPE.ANY) {
     return type;
   }

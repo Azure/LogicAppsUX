@@ -1,6 +1,6 @@
 import type { AuthProps } from '.';
 import { AuthenticationType } from '.';
-import type { ValueSegment } from '../editor';
+import type { ValueSegmentUI } from '../editor';
 import type { GetTokenPickerHandler } from '../editor/base';
 import { EditorWrapper } from '../editor/base/EditorWrapper';
 import type { TokenPickerButtonEditorProps } from '../editor/base/plugins/tokenpickerbutton';
@@ -13,16 +13,16 @@ import { type Dispatch, type SetStateAction } from 'react';
 import { useIntl } from 'react-intl';
 
 interface CollapsedAuthenticationProps {
-  collapsedValue: ValueSegment[];
+  collapsedValue: ValueSegmentUI[];
   setErrorMessage: (s: string) => void;
   setCurrentProps: Dispatch<SetStateAction<AuthProps>>;
   readonly?: boolean;
   tokenPickerButtonProps?: TokenPickerButtonEditorProps;
   setOption: (s: AuthenticationType) => void;
-  serializeValue: (value: ValueSegment[]) => void;
+  serializeValue: (value: ValueSegmentUI[]) => void;
   getTokenPicker: GetTokenPickerHandler;
-  tokenMapping?: Record<string, ValueSegment>;
-  loadParameterValueFromString?: (value: string) => ValueSegment[];
+  tokenMapping?: Record<string, ValueSegmentUI>;
+  loadParameterValueFromString?: (value: string) => ValueSegmentUI[];
 }
 
 export const CollapsedAuthentication = ({
@@ -37,7 +37,7 @@ export const CollapsedAuthentication = ({
 
   const onChange = (editorState: EditorState) => {
     editorState.read(() => {
-      const nodeMap = new Map<string, ValueSegment>();
+      const nodeMap = new Map<string, ValueSegmentUI>();
       const editorString = getChildrenNodes($getRoot(), nodeMap).trim();
       const newCollapsedValue = serializeEditorState(editorState);
       try {

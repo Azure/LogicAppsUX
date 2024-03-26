@@ -1,6 +1,6 @@
 import type { DictionaryEditorItemProps } from '..';
 import constants from '../../constants';
-import type { ValueSegment } from '../../editor';
+import type { ValueSegmentUI } from '../../editor';
 import { convertStringToSegments } from '../../editor/base/utils/editorToSegment';
 import { getChildrenNodesWithTokenInterpolation, removeQuotes } from '../../editor/base/utils/helper';
 import { guid } from '@microsoft/logic-apps-shared';
@@ -15,7 +15,7 @@ export const serializeDictionary = (
   valueType?: string
 ) => {
   editor.getEditorState().read(() => {
-    const nodeMap = new Map<string, ValueSegment>();
+    const nodeMap = new Map<string, ValueSegmentUI>();
     const editorString = getChildrenNodesWithTokenInterpolation($getRoot(), nodeMap);
     let jsonEditor;
     try {

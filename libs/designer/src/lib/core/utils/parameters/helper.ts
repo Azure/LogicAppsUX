@@ -122,12 +122,12 @@ import type {
   FloatingActionMenuOutputViewModel,
   GroupItemProps,
   OutputToken,
-  ParameterInfo,
+  ParameterInfoUI,
   RowItemProps,
   Token as SegmentToken,
   Token,
-  ValueSegment,
-} from '@microsoft/designer-ui';
+  ValueSegmentUI,
+} from '@microsoft/logic-apps-shared';
 import {
   removeQuotes,
   ArrayType,
@@ -142,7 +142,7 @@ import {
   ValueSegmentType,
   TokenType,
   AuthenticationOAuthType,
-} from '@microsoft/designer-ui';
+} from '@microsoft/logic-apps-shared';
 import type {
   DependentParameterInfo,
   DynamicParameters,
@@ -203,7 +203,7 @@ export interface RepetitionReference {
   repetitionPath?: string; // NOTE: the full output path for repetition value if it coming from output
 }
 
-export function getParametersSortedByVisibility(parameters: ParameterInfo[]): ParameterInfo[] {
+export function getParametersSortedByVisibility(parameters: ParameterInfoUI[]): ParameterInfoUI[] {
   return parameters.sort((a, b) => {
     // Sort by dynamic data dependencies
     const aDeps = Object.keys(a?.schema?.['x-ms-dynamic-values']?.parameters ?? {});
@@ -282,9 +282,9 @@ export const getDependentParameters = (
  * @arg {InputParameter[]} inputParameters - The input parameters.
  * @arg {any} [stepDefinition] - The step definition.
  */
-export function toParameterInfoMap(inputParameters: InputParameter[], stepDefinition?: any): ParameterInfo[] {
+export function toParameterInfoMap(inputParameters: InputParameter[], stepDefinition?: any): ParameterInfoUI[] {
   const metadata = stepDefinition && stepDefinition.metadata;
-  const result: ParameterInfo[] = [];
+  const result: ParameterInfoUI[] = [];
   for (const inputParameter of inputParameters) {
     if (!inputParameter.dynamicSchema) {
       const parameter = createParameterInfo(inputParameter, metadata);
@@ -300,13 +300,13 @@ export function toParameterInfoMap(inputParameters: InputParameter[], stepDefini
  * @arg {ResolvedParameter} parameter - An object with metadata about a Swagger input parameter.
  * @arg {Record<string, string>} [metadata] - A hash mapping dynamic value lookup values to their display strings.
  * @arg {boolean} [shouldIgnoreDefaultValue=false] - True if should not populate with default value of dynamic parameter.
- * @return {ParameterInfo} - An object with the view model for an input parameter field.
+ * @return {ParameterInfoUI} - An object with the view model for an input parameter field.
  */
 export function createParameterInfo(
   parameter: ResolvedParameter,
   metadata?: Record<string, string>,
   shouldIgnoreDefaultValue = false
-): ParameterInfo {
+): ParameterInfoUI {
   const value = loadParameterValue(parameter);
   const { editor, editorOptions, editorViewModel, schema } = getParameterEditorProps(parameter, value, shouldIgnoreDefaultValue, metadata);
   const { alias, dependencies, encode, format, isDynamic, isUnknown, serialization, deserialization } = parameter;
@@ -322,7 +322,7 @@ export function createParameterInfo(
     deserialization,
   };
 
-  const parameterInfo: ParameterInfo = {
+  const parameterInfo: ParameterInfoUI = {
     alternativeKey: parameter.alternativeKey,
     id: guid(),
     dynamicData: parameter.dynamicValues ? { status: DynamicCallStatus.NOTSTARTED } : undefined,
@@ -370,7 +370,7 @@ function hasValue(parameter: ResolvedParameter): boolean {
 
 export function getParameterEditorProps(
   parameter: InputParameter,
-  parameterValue: ValueSegment[],
+  parameterValue: ValueSegmentUI[],
   _shouldIgnoreDefaultValue: boolean,
   nodeMetadata?: Record<string, any>
 ): ParameterEditorProps {
@@ -566,9 +566,9 @@ const parseArrayItemSchema = (itemSchema: any, itemPath = itemSchema?.title?.toL
 // Create SimpleQueryBuilder Editor View Model
 const toSimpleQueryBuilderViewModel = (
   input: any
-): { isOldFormat: boolean; itemValue: ValueSegment[] | undefined; isRowFormat: boolean } => {
+): { isOldFormat: boolean; itemValue: ValueSegmentUI[] | undefined; isRowFormat: boolean } => {
   const advancedModeResult = { isOldFormat: true, isRowFormat: false, itemValue: undefined };
-  let operand1: ValueSegment, operand2: ValueSegment, operationLiteral: ValueSegment;
+  let operand1: ValueSegmentUI, operand2: ValueSegmentUI, operationLiteral: ValueSegmentUI;
   // default value
   if (!input || input.length === 0) {
     return { isOldFormat: true, isRowFormat: true, itemValue: [{ id: guid(), type: ValueSegmentType.LITERAL, value: "@equals('','')" }] };
@@ -583,7 +583,7 @@ const toSimpleQueryBuilderViewModel = (
   try {
     let operator: string = stringValue.substring(stringValue.indexOf('@') + 1, stringValue.indexOf('('));
     const negatory = operator === 'not';
-    let endingLiteral: ValueSegment;
+    let endingLiteral: ValueSegmentUI;
     if (negatory) {
       stringValue = stringValue.replace('@not(', '@');
       const baseOperator = stringValue.substring(stringValue.indexOf('@') + 1, stringValue.indexOf('('));
@@ -604,7 +604,7 @@ const toSimpleQueryBuilderViewModel = (
     const operand2String = removeQuotes(operandSubstring.substring(getOuterMostCommaIndex(operandSubstring) + 1).trim());
     operand1 = loadParameterValueFromString(operand1String, true, true, true)[0];
     operand2 = loadParameterValueFromString(operand2String, true, true, true)[0];
-    const separatorLiteral: ValueSegment = { id: guid(), type: ValueSegmentType.LITERAL, value: `,` };
+    const separatorLiteral: ValueSegmentUI = { id: guid(), type: ValueSegmentType.LITERAL, value: `,` };
     return {
       isOldFormat: true,
       isRowFormat: true,
@@ -830,7 +830,7 @@ const loadOauthType = (value: any): AuthenticationOAuthType => {
 function toFloatingActionMenuOutputsViewModel(value: any) {
   const clonedValue = clone(value);
 
-  const outputValueSegmentsMap: Record<string, ValueSegment[]> = {};
+  const outputValueSegmentsMap: Record<string, ValueSegmentUI[]> = {};
   const outputValueMap = clonedValue?.additionalProperties?.outputValueMap;
   if (outputValueMap) {
     Object.entries(outputValueMap).forEach(([key, outputValue]) => {
@@ -862,7 +862,7 @@ export function shouldIncludeSelfForRepetitionReference(manifest: OperationManif
   return false;
 }
 
-export function loadParameterValue(parameter: InputParameter): ValueSegment[] {
+export function loadParameterValue(parameter: InputParameter): ValueSegmentUI[] {
   let valueObject: unknown = undefined;
 
   if (parameter.isNotificationUrl) {
@@ -882,8 +882,8 @@ export function loadParameterValue(parameter: InputParameter): ValueSegment[] {
   return valueSegments;
 }
 
-export function compressSegments(segments: ValueSegment[], addInsertAnchorIfNeeded = false): ValueSegment[] {
-  const result: ValueSegment[] = [];
+export function compressSegments(segments: ValueSegmentUI[], addInsertAnchorIfNeeded = false): ValueSegmentUI[] {
+  const result: ValueSegmentUI[] = [];
 
   if (!segments || !segments.length) {
     if (addInsertAnchorIfNeeded) {
@@ -924,7 +924,7 @@ export function convertToTokenExpression(value: any): string {
   }
 }
 
-export function convertToValueSegments(value: any, shouldUncast: boolean): ValueSegment[] {
+export function convertToValueSegments(value: any, shouldUncast: boolean): ValueSegmentUI[] {
   try {
     const convertor = new ValueSegmentConvertor({
       shouldUncast,
@@ -936,7 +936,7 @@ export function convertToValueSegments(value: any, shouldUncast: boolean): Value
   }
 }
 
-export function getAllInputParameters(nodeInputs: NodeInputs): ParameterInfo[] {
+export function getAllInputParameters(nodeInputs: NodeInputs): ParameterInfoUI[] {
   const { parameterGroups } = nodeInputs;
   return aggregate(Object.keys(parameterGroups).map((groupKey) => parameterGroups[groupKey].parameters));
 }
@@ -945,7 +945,7 @@ interface Dependency extends DependentParameterInfo {
   actualValue: any;
 }
 
-export function shouldUseParameterInGroup(parameter: ParameterInfo, allParameters: ParameterInfo[]): boolean {
+export function shouldUseParameterInGroup(parameter: ParameterInfoUI, allParameters: ParameterInfoUI[]): boolean {
   const {
     info: { dependencies },
   } = parameter;
@@ -973,7 +973,7 @@ export function shouldUseParameterInGroup(parameter: ParameterInfo, allParameter
   return true;
 }
 
-export function ensureExpressionValue(valueSegment: ValueSegment, calculateValue = false): void {
+export function ensureExpressionValue(valueSegment: ValueSegmentUI, calculateValue = false): void {
   if (isTokenValueSegment(valueSegment)) {
     // eslint-disable-next-line no-param-reassign
     valueSegment.value = getTokenExpressionValue(valueSegment.token as SegmentToken, calculateValue ? undefined : valueSegment.value);
@@ -1703,7 +1703,7 @@ export async function updateParameterAndDependencies(
   nodeId: string,
   groupId: string,
   parameterId: string,
-  properties: Partial<ParameterInfo>,
+  properties: Partial<ParameterInfoUI>,
   isTrigger: boolean,
   operationInfo: NodeOperation,
   connectionReference: ConnectionReference,
@@ -1716,7 +1716,7 @@ export async function updateParameterAndDependencies(
   operationDefinition?: any
 ): Promise<void> {
   const parameter = nodeInputs.parameterGroups[groupId].parameters.find((param) => param.id === parameterId) ?? {};
-  const updatedParameter = { ...parameter, ...properties } as ParameterInfo;
+  const updatedParameter = { ...parameter, ...properties } as ParameterInfoUI;
   updatedParameter.validationErrors = validateParameter(updatedParameter, updatedParameter.value);
   const propertiesWithValidations = { ...properties, validationErrors: updatedParameter.validationErrors };
 
@@ -1786,7 +1786,7 @@ export async function updateParameterAndDependencies(
   }
 }
 
-function updateNodeMetadataOnParameterUpdate(nodeId: string, parameter: ParameterInfo, dispatch: Dispatch): void {
+function updateNodeMetadataOnParameterUpdate(nodeId: string, parameter: ParameterInfoUI, dispatch: Dispatch): void {
   // Updating action metadata when file picker parameters have different display values than parameter value.
   const { editor, editorViewModel, value } = parameter;
   if (editor === constants.EDITOR.FILEPICKER && value.length === 1 && isLiteralValueSegment(value[0])) {
@@ -1799,7 +1799,7 @@ function updateNodeMetadataOnParameterUpdate(nodeId: string, parameter: Paramete
 function getDependenciesToUpdate(
   dependencies: NodeDependencies,
   parameterId: string,
-  updatedParameter: ParameterInfo
+  updatedParameter: ParameterInfoUI
 ): NodeDependencies | undefined {
   let dependenciesToUpdate: NodeDependencies | undefined;
 
@@ -1983,7 +1983,7 @@ async function loadDynamicContentForInputsInNode(
           const inputParameters = schemaInputs.map((input) => ({
             ...createParameterInfo(input),
             schema: input,
-          })) as ParameterInfo[];
+          })) as ParameterInfoUI[];
 
           updateTokenMetadataInParameters(nodeId, inputParameters, rootState);
 
@@ -2035,7 +2035,7 @@ export async function loadDynamicTreeItemsForParameter(
   workflowParameters: Record<string, WorkflowParameterDefinition>
 ): Promise<void> {
   const groupParameters = nodeInputs.parameterGroups[groupId].parameters;
-  const parameter = groupParameters.find((parameter) => parameter.id === parameterId) as ParameterInfo;
+  const parameter = groupParameters.find((parameter) => parameter.id === parameterId) as ParameterInfoUI;
   if (!parameter) {
     return;
   }
@@ -2120,7 +2120,7 @@ export async function loadDynamicValuesForParameter(
   workflowParameters: Record<string, WorkflowParameterDefinition>
 ): Promise<void> {
   const groupParameters = nodeInputs.parameterGroups[groupId].parameters;
-  const parameter = groupParameters.find((parameter) => parameter.id === parameterId) as ParameterInfo;
+  const parameter = groupParameters.find((parameter) => parameter.id === parameterId) as ParameterInfoUI;
   if (!parameter) {
     return;
   }
@@ -2219,7 +2219,7 @@ function showErrorWhenDependenciesNotReady(
   groupId: string,
   parameterId: string,
   dependencyInfo: DependencyInfo,
-  groupParameters: ParameterInfo[],
+  groupParameters: ParameterInfoUI[],
   isTreeCall: boolean,
   dispatch: Dispatch
 ): void {
@@ -2258,7 +2258,7 @@ function showErrorWhenDependenciesNotReady(
 }
 
 function getStringifiedValueFromEditorViewModel(
-  parameter: ParameterInfo,
+  parameter: ParameterInfoUI,
   isDefinitionValue: boolean,
   idReplacements?: Record<string, string>
 ): string | undefined {
@@ -2307,7 +2307,7 @@ function getStringifiedValueFromEditorViewModel(
 }
 
 const getStringifiedValueFromFloatingActionMenuOutputsViewModel = (
-  parameter: ParameterInfo,
+  parameter: ParameterInfoUI,
   editorViewModel: FloatingActionMenuOutputViewModel
 ): string | undefined => {
   const value: typeof editorViewModel.schema & { additionalProperties?: { outputValueMap?: Record<string, unknown> } } = clone(
@@ -2344,7 +2344,7 @@ const getStringifiedValueFromFloatingActionMenuOutputsViewModel = (
 };
 
 const iterateSimpleQueryBuilderEditor = (
-  itemValue: ValueSegment[],
+  itemValue: ValueSegmentUI[],
   isRowFormat: boolean,
   idReplacements?: Record<string, string>
 ): string | undefined => {
@@ -2362,7 +2362,7 @@ const iterateSimpleQueryBuilderEditor = (
 };
 
 export const recurseSerializeCondition = (
-  parameter: ParameterInfo,
+  parameter: ParameterInfoUI,
   editorViewModel: any,
   isDefinitionValue: boolean,
   idReplacements?: Record<string, string>,
@@ -2438,7 +2438,7 @@ function updateNodeInputsWithParameter(
   nodeInputs: NodeInputs,
   parameterId: string,
   groupId: string,
-  properties: Partial<ParameterInfo>
+  properties: Partial<ParameterInfoUI>
 ): NodeInputs {
   const inputs = clone(nodeInputs);
   const parameterGroup = inputs.parameterGroups[groupId];
@@ -2450,7 +2450,7 @@ function updateNodeInputsWithParameter(
   return inputs;
 }
 
-export function getParameterFromName(nodeInputs: NodeInputs, parameterName: string): ParameterInfo | undefined {
+export function getParameterFromName(nodeInputs: NodeInputs, parameterName: string): ParameterInfoUI | undefined {
   for (const groupId of Object.keys(nodeInputs.parameterGroups)) {
     const parameterGroup = nodeInputs.parameterGroups[groupId];
     const parameter = parameterGroup.parameters.find((parameter) => parameter.parameterName === parameterName);
@@ -2462,7 +2462,7 @@ export function getParameterFromName(nodeInputs: NodeInputs, parameterName: stri
   return undefined;
 }
 
-export function getParameterFromId(nodeInputs: NodeInputs, parameterId: string): ParameterInfo | undefined {
+export function getParameterFromId(nodeInputs: NodeInputs, parameterId: string): ParameterInfoUI | undefined {
   for (const groupId of Object.keys(nodeInputs.parameterGroups)) {
     const parameterGroup = nodeInputs.parameterGroups[groupId];
     const parameter = parameterGroup.parameters.find((parameter) => parameter.id === parameterId);
@@ -2474,7 +2474,7 @@ export function getParameterFromId(nodeInputs: NodeInputs, parameterId: string):
   return undefined;
 }
 
-export function parameterHasValue(parameter: ParameterInfo): boolean {
+export function parameterHasValue(parameter: ParameterInfoUI): boolean {
   const value = parameter.value;
 
   if (!isUndefinedOrEmptyString(parameter.preservedValue)) {
@@ -2484,14 +2484,14 @@ export function parameterHasValue(parameter: ParameterInfo): boolean {
   return !!value && !!value.length && value.some((segment) => !!segment.value);
 }
 
-export function parameterValidForDynamicCall(parameter: ParameterInfo): boolean {
+export function parameterValidForDynamicCall(parameter: ParameterInfoUI): boolean {
   return !parameter.required || parameterHasValue(parameter);
 }
 
 export function getGroupAndParameterFromParameterKey(
   nodeInputs: NodeInputs,
   parameterKey: string
-): { groupId: string; parameter: ParameterInfo } | undefined {
+): { groupId: string; parameter: ParameterInfoUI } | undefined {
   for (const groupId of Object.keys(nodeInputs.parameterGroups)) {
     const parameter = nodeInputs.parameterGroups[groupId].parameters.find((param) => param.parameterKey === parameterKey);
     if (parameter) {
@@ -2718,7 +2718,7 @@ function getClosestRepetitionReference(repetitionContext: RepetitionContext): Re
   return undefined;
 }
 
-export function updateTokenMetadataInParameters(nodeId: string, parameters: ParameterInfo[], rootState: RootState): void {
+export function updateTokenMetadataInParameters(nodeId: string, parameters: ParameterInfoUI[], rootState: RootState): void {
   const {
     workflow: { operations, nodesMetadata },
     operations: { operationMetadata, outputParameters, settings },
@@ -2795,7 +2795,7 @@ export const flattenAndUpdateViewModel = (
   if (!items) return;
   // check if on bottom-most level (array of valueSegments)
   if (Array.isArray(items) && items.every((item) => isValueSegment(item))) {
-    return items.map((keyItem: ValueSegment) => {
+    return items.map((keyItem: ValueSegmentUI) => {
       if (!isTokenValueSegment(keyItem)) return keyItem;
       const valueSegmentToUpdate = updateTokenMetadata(
         keyItem,
@@ -2810,7 +2810,7 @@ export const flattenAndUpdateViewModel = (
       );
       if (valueSegmentToUpdate) return valueSegmentToUpdate;
       return keyItem;
-    }) as ValueSegment[];
+    }) as ValueSegmentUI[];
   }
 
   const replacedItems: any = {};
@@ -2841,7 +2841,7 @@ export const flattenAndUpdateViewModel = (
 };
 
 export function updateTokenMetadata(
-  valueSegment: ValueSegment,
+  valueSegment: ValueSegmentUI,
   repetitionContext: RepetitionContext,
   actionNodes: Record<string, string>,
   triggerNodeId: string,
@@ -2851,7 +2851,7 @@ export function updateTokenMetadata(
   nodesMetadata: NodesMetadata,
   parameterType?: string,
   parameterNodeId?: string
-): ValueSegment {
+): ValueSegmentUI {
   const token = valueSegment.token as SegmentToken;
   switch (token?.tokenType) {
     case TokenType.VARIABLE:
@@ -3113,7 +3113,7 @@ export function getNormalizedTokenName(tokenName: string): string {
   return tokenName.replace(/\?/g, '');
 }
 
-export function getRepetitionValue(manifest: OperationManifest, nodeInputs: ParameterInfo[]): any {
+export function getRepetitionValue(manifest: OperationManifest, nodeInputs: ParameterInfoUI[]): any {
   const loopParameter = manifest.properties.repetition?.loopParameter;
 
   if (loopParameter) {
@@ -3135,7 +3135,7 @@ export function getInterpolatedExpression(expression: string, parameterType: str
 }
 
 export function parameterValueToString(
-  parameterInfo: ParameterInfo,
+  parameterInfo: ParameterInfoUI,
   isDefinitionValue: boolean,
   idReplacements?: Record<string, string>
 ): string | undefined {
@@ -3237,12 +3237,12 @@ export function parameterValueToString(
     .join('');
 }
 
-export function parameterValueToJSONString(parameterValue: ValueSegment[], applyCasting = true, forValidation = false): string {
+export function parameterValueToJSONString(parameterValue: ValueSegmentUI[], applyCasting = true, forValidation = false): string {
   let shouldInterpolate = false,
     parameterValueString = '',
     numberOfDoubleQuotes = 0;
   const rawStringFormat = parameterValueToStringWithoutCasting(parameterValue, forValidation);
-  const updatedParameterValue: ValueSegment[] = parameterValue.map((expression) => ({ ...expression }));
+  const updatedParameterValue: ValueSegmentUI[] = parameterValue.map((expression) => ({ ...expression }));
 
   // We return the raw stringified form, if value is not a valid json
   if (!isValidJSONObjectFormat(rawStringFormat) && !isValidJSONArrayFormat(rawStringFormat)) {
@@ -3300,7 +3300,7 @@ export function parameterValueToJSONString(parameterValue: ValueSegment[], apply
   }
 }
 
-export function parameterValueWithoutCasting(parameter: ParameterInfo): any {
+export function parameterValueWithoutCasting(parameter: ParameterInfoUI): any {
   const stringifiedValue = parameterValueToStringWithoutCasting(parameter.value);
   return getJSONValueFromString(stringifiedValue, parameter.type);
 }
@@ -3344,9 +3344,9 @@ export function remapEditorViewModelWithNewIds(editorViewModel: any, idReplaceme
 }
 
 export function remapValueSegmentsWithNewIds(
-  segments: ValueSegment[],
+  segments: ValueSegmentUI[],
   idReplacements: Record<string, string>
-): { value: ValueSegment[]; didRemap: boolean } {
+): { value: ValueSegmentUI[]; didRemap: boolean } {
   let didRemap = false;
   const value = segments.map((segment) => {
     if (isTokenValueSegment(segment)) {
@@ -3362,9 +3362,9 @@ export function remapValueSegmentsWithNewIds(
 }
 
 export function remapTokenSegmentValue(
-  segment: ValueSegment,
+  segment: ValueSegmentUI,
   idReplacements: Record<string, string>
-): { value: ValueSegment; didRemap: boolean } {
+): { value: ValueSegmentUI; didRemap: boolean } {
   let didRemap = false;
   let newSegment = segment;
   const { actionName, arrayDetails } = segment.token as Token;
@@ -3381,7 +3381,7 @@ export function remapTokenSegmentValue(
       token: arrayDetails
         ? { ...segment.token, arrayDetails: { ...arrayDetails, loopSource: newId }, value: newValue }
         : { ...segment.token, actionName: newId, value: newValue },
-    } as ValueSegment;
+    } as ValueSegmentUI;
   } else if (isFunctionValueSegment(segment)) {
     let newSegmentValue = segment.value;
     for (const id of Object.keys(idReplacements)) {
@@ -3391,18 +3391,18 @@ export function remapTokenSegmentValue(
       newSegmentValue = newSegmentValue?.replaceAll(`'${id}'`, `'${getRecordEntry(idReplacements, id)}'`);
     }
 
-    newSegment = { ...segment, value: newSegmentValue, token: { ...segment.token, value: newSegmentValue } } as ValueSegment;
+    newSegment = { ...segment, value: newSegmentValue, token: { ...segment.token, value: newSegmentValue } } as ValueSegmentUI;
   }
 
   return { value: newSegment, didRemap };
 }
 
 /**
- * @arg {ValueSegment[]} value
+ * @arg {ValueSegmentUI[]} value
  * @arg {boolean} [forValidation=false]
  * @return {string}
  */
-function parameterValueToStringWithoutCasting(value: ValueSegment[], forValidation = false): string {
+function parameterValueToStringWithoutCasting(value: ValueSegmentUI[], forValidation = false): string {
   const shouldInterpolateTokens = value.length > 1 && value.some(isTokenValueSegment);
 
   return value
@@ -3417,7 +3417,7 @@ function parameterValueToStringWithoutCasting(value: ValueSegment[], forValidati
     .join('');
 }
 
-function castParameterValueToString(value: ValueSegment[], parameterFormat: string, parameterType: string): string | undefined {
+function castParameterValueToString(value: ValueSegmentUI[], parameterFormat: string, parameterType: string): string | undefined {
   // In case of only one token or only user entered text, we get the casting function from expression format.
   if (value.length === 1) {
     const [expression] = value;
@@ -3435,7 +3435,7 @@ function castParameterValueToString(value: ValueSegment[], parameterFormat: stri
   }
 }
 
-function castTokenSegmentsInValue(parameterValue: ValueSegment[], parameterType: string, parameterFormat: string): ValueSegment[] {
+function castTokenSegmentsInValue(parameterValue: ValueSegmentUI[], parameterType: string, parameterFormat: string): ValueSegmentUI[] {
   return parameterValue.map((segment) => {
     const newSegment = { ...segment };
     const segmentValue = newSegment.value;
@@ -3457,7 +3457,7 @@ function castTokenSegmentsInValue(parameterValue: ValueSegment[], parameterType:
 function requiresCast(
   parameterType: string,
   parameterFormat: string,
-  parameterValue: ValueSegment[],
+  parameterValue: ValueSegmentUI[],
   parameterSuppressesCasting: boolean
 ): boolean {
   if (parameterSuppressesCasting) {
@@ -3494,7 +3494,7 @@ function requiresCast(
   return false;
 }
 
-function getInferredParameterType(value: ValueSegment[], type: string): string {
+function getInferredParameterType(value: ValueSegmentUI[], type: string): string {
   let parameterType = type;
 
   if (type === constants.SWAGGER.TYPE.ANY || type === undefined) {
@@ -3585,13 +3585,13 @@ export function getArrayTypeForOutputs(parsedSwagger: SwaggerParser, operationId
   return itemKeyOutputParameter?.type ?? '';
 }
 
-export function isParameterRequired(parameterInfo: ParameterInfo): boolean {
+export function isParameterRequired(parameterInfo: ParameterInfoUI): boolean {
   return parameterInfo && parameterInfo.required && !(parameterInfo.info.parentProperty && parameterInfo.info.parentProperty.optional);
 }
 
 export function validateParameter(
-  parameter: ParameterInfo,
-  parameterValue: ValueSegment[],
+  parameter: ParameterInfoUI,
+  parameterValue: ValueSegmentUI[],
   shouldValidateUnknownParameterAsError = false
 ): string[] {
   const parameterType = getInferredParameterType(parameterValue, parameter.type);
@@ -3610,8 +3610,8 @@ export function validateUntilAction(
   nodeId: string,
   groupId: string,
   parameterId: string,
-  parameters: ParameterInfo[],
-  changedParameter: Partial<ParameterInfo>
+  parameters: ParameterInfoUI[],
+  changedParameter: Partial<ParameterInfoUI>
 ) {
   const errorMessage = 'Either limit count or timout must be specified.';
 

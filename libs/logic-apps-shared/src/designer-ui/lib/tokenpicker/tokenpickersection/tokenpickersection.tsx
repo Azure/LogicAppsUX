@@ -1,5 +1,5 @@
 import { getWindowDimensions, TokenPickerMode } from '..';
-import type { ValueSegment } from '../../editor';
+import type { ValueSegmentUI } from '../../editor';
 import type { ExpressionEditorEvent } from '../../expressioneditor';
 import type { TokenGroup } from '../models/token';
 import { TokenPickerNoDynamicContent } from './tokenpickernodynamiccontent';
@@ -17,7 +17,7 @@ export interface TokenPickerBaseProps {
   expression: ExpressionEditorEvent;
   setExpression: Dispatch<SetStateAction<ExpressionEditorEvent>>;
   getValueSegmentFromToken: GetValueSegmentHandler;
-  tokenClickedCallback?: (token: ValueSegment) => void;
+  tokenClickedCallback?: (token: ValueSegmentUI) => void;
 }
 interface TokenPickerSectionProps extends TokenPickerBaseProps {
   tokenGroup: TokenGroup[];

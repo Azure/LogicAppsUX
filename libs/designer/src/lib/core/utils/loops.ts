@@ -48,8 +48,8 @@ import {
   getRecordEntry,
   isNullOrUndefined,
 } from '@microsoft/logic-apps-shared';
-import type { OutputToken, Token } from '@microsoft/designer-ui';
-import { TokenType } from '@microsoft/designer-ui';
+import type { OutputToken, Token } from '@microsoft/logic-apps-shared';
+import { TokenType } from '@microsoft/logic-apps-shared';
 import type {
   Dereference,
   Expression,

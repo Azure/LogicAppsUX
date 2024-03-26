@@ -1,7 +1,7 @@
 import { Toolbar } from '../../html/plugins/toolbar/Toolbar';
 import type { TokenPickerMode } from '../../tokenpicker';
 import { useId } from '../../useId';
-import type { ValueSegment } from '../models/parameter';
+import type { ValueSegmentUI } from '../models/parameter';
 import { ArrowNavigation } from './plugins/ArrowNavigation';
 import { AutoFocus } from './plugins/AutoFocus';
 import AutoLink from './plugins/AutoLink';
@@ -30,23 +30,19 @@ import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
 import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useIntl } from 'react-intl';
+import type { ChangeHandler} from '@microsoft/logic-apps-shared';
 
-export interface ChangeState {
-  value: ValueSegment[];
-  viewModel?: any; // TODO - Should be strongly typed once updated for Array
-}
 
 export type GetTokenPickerHandler = (
   editorId: string,
   labelId: string,
   tokenPickerMode?: TokenPickerMode,
   valueType?: string,
-  tokenClickedCallback?: (token: ValueSegment) => void
+  tokenClickedCallback?: (token: ValueSegmentUI) => void
 ) => JSX.Element;
 
-export type ChangeHandler = (newState: ChangeState) => void;
 export type CallbackHandler = () => void;
-export type CastHandler = (value: ValueSegment[], type?: string, format?: string, suppressCasting?: boolean) => string;
+export type CastHandler = (value: ValueSegmentUI[], type?: string, format?: string, suppressCasting?: boolean) => string;
 
 export interface DictionaryCallbackProps {
   addItem: (index: number) => void;
@@ -57,16 +53,16 @@ export interface BaseEditorProps {
   readonly?: boolean;
   placeholder?: string;
   basePlugins?: BasePlugins;
-  initialValue: ValueSegment[];
+  initialValue: ValueSegmentUI[];
   children?: React.ReactNode;
   labelId?: string;
   label?: string;
   valueType?: string;
   tokenPickerButtonProps?: TokenPickerButtonEditorProps;
   dataAutomationId?: string;
-  tokenMapping?: Record<string, ValueSegment>;
+  tokenMapping?: Record<string, ValueSegmentUI>;
   isSwitchFromPlaintextBlocked?: boolean;
-  loadParameterValueFromString?: (value: string) => ValueSegment[];
+  loadParameterValueFromString?: (value: string) => ValueSegmentUI[];
   onChange?: ChangeHandler;
   onBlur?: () => void;
   onFocus?: () => void;

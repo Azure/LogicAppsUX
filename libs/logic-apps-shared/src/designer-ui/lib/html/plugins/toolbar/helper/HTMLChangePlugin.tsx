@@ -1,4 +1,4 @@
-import type { ValueSegment } from '../../../../editor';
+import type { ValueSegmentUI } from '../../../../editor';
 import { convertStringToSegments } from '../../../../editor/base/utils/editorToSegment';
 import { getChildrenNodes } from '../../../../editor/base/utils/helper';
 import {
@@ -23,7 +23,7 @@ interface HTMLChangePluginProps {
   isValuePlaintext: boolean;
   setIsSwitchFromPlaintextBlocked: (value: boolean) => void;
   setIsValuePlaintext: (isValuePlaintext: boolean) => void;
-  setValue: (newVal: ValueSegment[]) => void;
+  setValue: (newVal: ValueSegmentUI[]) => void;
 }
 
 export const HTMLChangePlugin = ({
@@ -33,7 +33,7 @@ export const HTMLChangePlugin = ({
   setValue,
 }: HTMLChangePluginProps) => {
   const onChange = (editorState: EditorState, editor: LexicalEditor) => {
-    const nodeMap = new Map<string, ValueSegment>();
+    const nodeMap = new Map<string, ValueSegmentUI>();
     let isNewValuePlaintext = isValuePlaintext;
 
     editorState.read(() => {
@@ -54,11 +54,11 @@ export const HTMLChangePlugin = ({
 
 export const convertEditorState = (
   editor: LexicalEditor,
-  nodeMap: Map<string, ValueSegment>,
+  nodeMap: Map<string, ValueSegmentUI>,
   options: {
     isValuePlaintext: boolean;
   }
-): Promise<ValueSegment[]> => {
+): Promise<ValueSegmentUI[]> => {
   const { isValuePlaintext } = options;
 
   return new Promise((resolve) => {
@@ -114,7 +114,7 @@ export const convertEditorState = (
           return match;
         }
       });
-      const valueSegments: ValueSegment[] = convertStringToSegments(noTokenSpansString, nodeMap, { tokensEnabled: true });
+      const valueSegments: ValueSegmentUI[] = convertStringToSegments(noTokenSpansString, nodeMap, { tokensEnabled: true });
       resolve(valueSegments);
     });
   });

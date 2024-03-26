@@ -1,6 +1,6 @@
 import constants from '../../../../common/constants';
-import type { PanelTabFn } from '@microsoft/designer-ui';
-import { RequestPanel } from '@microsoft/designer-ui';
+import type { PanelTabFn } from '@microsoft/logic-apps-shared';
+import { RequestPanel } from '@microsoft/logic-apps-shared';
 
 export const RequestPanelTab = () => {
   // TODO: Retrieve logic from a redux store?

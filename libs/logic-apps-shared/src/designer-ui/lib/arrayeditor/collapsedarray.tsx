@@ -1,5 +1,5 @@
 import type { SimpleArrayItem, ComplexArrayItems, ArrayItemSchema } from '.';
-import type { ValueSegment } from '../editor';
+import type { ValueSegmentUI } from '../editor';
 import type { GetTokenPickerHandler } from '../editor/base';
 import { EditorWrapper } from '../editor/base/EditorWrapper';
 import type { TokenPickerButtonEditorProps } from '../editor/base/plugins/tokenpickerbutton';
@@ -11,18 +11,18 @@ import { useIntl } from 'react-intl';
 export interface CollapsedArrayProps {
   labelProps?: LabelProps;
   isValid?: boolean;
-  collapsedValue: ValueSegment[];
+  collapsedValue: ValueSegmentUI[];
   readonly?: boolean;
   tokenPickerButtonProps?: TokenPickerButtonEditorProps;
   itemSchema: ArrayItemSchema;
   isComplex: boolean;
-  setCollapsedValue: (val: ValueSegment[]) => void;
+  setCollapsedValue: (val: ValueSegmentUI[]) => void;
   setItems: ((simpleItems: SimpleArrayItem[]) => void) | ((complexItems: ComplexArrayItems[]) => void);
   setIsValid: (b: boolean) => void;
   onBlur?: () => void;
   getTokenPicker: GetTokenPickerHandler;
-  tokenMapping?: Record<string, ValueSegment>;
-  loadParameterValueFromString?: (value: string) => ValueSegment[];
+  tokenMapping?: Record<string, ValueSegmentUI>;
+  loadParameterValueFromString?: (value: string) => ValueSegmentUI[];
 }
 
 export const CollapsedArray = ({
@@ -66,7 +66,7 @@ export const CollapsedArray = ({
             tabbable: true,
           }}
           placeholder={editorPlaceHolder}
-          initialValue={collapsedValue?.length > 0 ? collapsedValue : ([] as ValueSegment[])}
+          initialValue={collapsedValue?.length > 0 ? collapsedValue : ([] as ValueSegmentUI[])}
           onBlur={onBlur}
         >
           <CollapsedArrayValidation

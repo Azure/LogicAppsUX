@@ -1,4 +1,4 @@
-import type { ValueSegment } from '../editor';
+import type { ValueSegmentUI } from '../editor';
 import { ValueSegmentType } from '../editor';
 import type { BaseEditorProps } from '../editor/base';
 import TokenPickerButtonLegacy from '../editor/base/plugins/TokenPickerButtonLegacy';
@@ -57,7 +57,7 @@ export function CodeEditor({
     setInTokenPicker(!getInTokenPicker());
   };
 
-  const tokenClicked = (valueSegment: ValueSegment) => {
+  const tokenClicked = (valueSegment: ValueSegmentUI) => {
     if (codeEditorRef.current && valueSegment.token) {
       const newText = buildInlineCodeTextFromToken(valueSegment.token, language);
       codeEditorRef.current.executeEdits(null, [{ range: codeEditorRef.current.getSelection() as IRange, text: newText }]);

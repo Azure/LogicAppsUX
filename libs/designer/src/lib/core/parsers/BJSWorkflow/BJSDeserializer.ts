@@ -18,7 +18,7 @@ import {
   getUniqueName,
   getRecordEntry,
 } from '@microsoft/logic-apps-shared';
-import { getDurationStringPanelMode } from '@microsoft/designer-ui';
+import { getDurationStringPanelMode } from '@microsoft/logic-apps-shared';
 import type { LogicAppsV2, SubgraphType } from '@microsoft/logic-apps-shared';
 
 const hasMultipleTriggers = (definition: LogicAppsV2.WorkflowDefinition): boolean => {

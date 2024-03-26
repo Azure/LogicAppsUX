@@ -1,5 +1,5 @@
 import constants from '../constants';
-import type { Token, ValueSegment } from '../editor';
+import type { Token, ValueSegmentUI } from '../editor';
 import { TokenType } from '../editor';
 import {
   getIntl,
@@ -121,7 +121,7 @@ function matchesOutputKey(tokenName: string): boolean {
   );
 }
 
-export const getInitialValue = (initialValue: ValueSegment[]): string => {
+export const getInitialValue = (initialValue: ValueSegmentUI[]): string => {
   if (initialValue[0]?.value) {
     return formatValue(initialValue[0].value);
   }

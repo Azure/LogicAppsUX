@@ -1,10 +1,10 @@
-import type { ValueSegment } from '../../models/parameter';
+import type { ValueSegmentUI } from '../../models/parameter';
 import { serializeEditorState } from '../utils/editorToSegment';
 import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
 import type { EditorState } from 'lexical';
 
 interface EditorChangePluginProps {
-  setValue: (newVal: ValueSegment[]) => void;
+  setValue: (newVal: ValueSegmentUI[]) => void;
 }
 
 export const EditorChangePlugin = ({ setValue }: EditorChangePluginProps) => {

@@ -47,7 +47,7 @@ import {
   safeSetObjectPropertyValue,
   unmap,
 } from '@microsoft/logic-apps-shared';
-import { ValueSegmentType, generateSchemaFromJsonString } from '@microsoft/designer-ui';
+import { ValueSegmentType, generateSchemaFromJsonString } from '@microsoft/logic-apps-shared';
 import type {
   Expression,
   ExpressionFunction,

@@ -71,7 +71,7 @@ import {
   unmap,
   UnsupportedException,
 } from '@microsoft/logic-apps-shared';
-import type { OutputToken, ParameterInfo } from '@microsoft/designer-ui';
+import type { OutputToken, ParameterInfoUI } from '@microsoft/logic-apps-shared';
 import type { Dispatch } from '@reduxjs/toolkit';
 
 export interface ServiceOptions {
@@ -421,7 +421,7 @@ export const updateCallbackUrlInInputs = async (
   nodeId: string,
   { type, kind }: NodeOperation,
   nodeInputs: NodeInputs
-): Promise<ParameterInfo | undefined> => {
+): Promise<ParameterInfoUI | undefined> => {
   if (
     equals(type, Constants.NODE.TYPE.REQUEST) &&
     (equals(kind, Constants.NODE.KIND.HTTP) || equals(kind, Constants.NODE.KIND.TEAMSWEBHOOK))

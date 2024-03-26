@@ -1,12 +1,12 @@
 import constants from '../../../constants';
-import type { ValueSegment, TokenType } from '../../models/parameter';
+import type { ValueSegmentUI, TokenType } from '../../models/parameter';
 import { ValueSegmentType } from '../../models/parameter';
 import { $isTokenNode } from '../nodes/tokenNode';
 import { guid } from '@microsoft/logic-apps-shared';
 import type { ElementNode } from 'lexical';
 import { $getNodeByKey, $isElementNode, $isLineBreakNode, $isTextNode } from 'lexical';
 
-export const removeFirstAndLast = (segments: ValueSegment[], removeFirst?: string, removeLast?: string): ValueSegment[] => {
+export const removeFirstAndLast = (segments: ValueSegmentUI[], removeFirst?: string, removeLast?: string): ValueSegmentUI[] => {
   const n = segments.length - 1;
   segments.forEach((segment, i) => {
     const currentSegment = segment;
@@ -21,11 +21,11 @@ export const removeFirstAndLast = (segments: ValueSegment[], removeFirst?: strin
   return segments;
 };
 
-export const showCollapsedValidation = (collapsedValue: ValueSegment[]): boolean => {
+export const showCollapsedValidation = (collapsedValue: ValueSegmentUI[]): boolean => {
   return collapsedValue?.length === 1;
 };
 
-export const isTokenValueSegment = (value: ValueSegment[]): boolean => {
+export const isTokenValueSegment = (value: ValueSegmentUI[]): boolean => {
   return value.length === 1 && value[0].type === ValueSegmentType.TOKEN;
 };
 
@@ -38,7 +38,7 @@ export const validateDictionaryStrings = (s: string): boolean => {
   return true;
 };
 
-export const getChildrenNodes = (node: ElementNode, nodeMap?: Map<string, ValueSegment>): string => {
+export const getChildrenNodes = (node: ElementNode, nodeMap?: Map<string, ValueSegmentUI>): string => {
   let text = '';
   node.getChildren().forEach((child) => {
     const childNode = $getNodeByKey(child.getKey());
@@ -57,7 +57,7 @@ export const getChildrenNodes = (node: ElementNode, nodeMap?: Map<string, ValueS
 };
 
 // interpolate tokens if they have not been interpolated
-export const getChildrenNodesWithTokenInterpolation = (node: ElementNode, nodeMap?: Map<string, ValueSegment>): string => {
+export const getChildrenNodesWithTokenInterpolation = (node: ElementNode, nodeMap?: Map<string, ValueSegmentUI>): string => {
   let text = '';
   let lastNodeWasText = '';
   let lastNodeWasToken = '';
@@ -102,8 +102,8 @@ export const getChildrenNodesWithTokenInterpolation = (node: ElementNode, nodeMa
   return text;
 };
 
-export const findChildNode = (node: ElementNode, nodeKey: string, tokenType?: TokenType): ValueSegment | null => {
-  let foundNode: ValueSegment | null = null;
+export const findChildNode = (node: ElementNode, nodeKey: string, tokenType?: TokenType): ValueSegmentUI | null => {
+  let foundNode: ValueSegmentUI | null = null;
   node.getChildren().find((child) => {
     const childNode = $getNodeByKey(child.getKey());
     if (childNode && $isElementNode(childNode)) {
@@ -121,7 +121,7 @@ export const findChildNode = (node: ElementNode, nodeKey: string, tokenType?: To
 };
 
 // checks the equality of two value segments
-export const notEqual = (a: ValueSegment[], b: ValueSegment[]): boolean => {
+export const notEqual = (a: ValueSegmentUI[], b: ValueSegmentUI[]): boolean => {
   if (a.length !== b.length) {
     return true;
   }
@@ -138,13 +138,13 @@ export const notEqual = (a: ValueSegment[], b: ValueSegment[]): boolean => {
   return false;
 };
 
-export const insertQutationForStringType = (segments: ValueSegment[], type?: string) => {
+export const insertQutationForStringType = (segments: ValueSegmentUI[], type?: string) => {
   if (type === constants.SWAGGER.TYPE.STRING) {
     addStringLiteralSegment(segments);
   }
 };
 
-const addStringLiteralSegment = (segments: ValueSegment[]): void => {
+const addStringLiteralSegment = (segments: ValueSegmentUI[]): void => {
   segments.push({ id: guid(), type: ValueSegmentType.LITERAL, value: `"` });
 };
 

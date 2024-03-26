@@ -1,7 +1,7 @@
 import { formatValue, getEditorHeight, getInitialValue } from '../code/util';
-import type { ValueSegment } from '../editor';
+import type { ValueSegmentUI } from '../editor';
 import { ValueSegmentType } from '../editor';
-import type { ChangeHandler } from '../editor/base';
+import type { ChangeHandler} from '@microsoft/logic-apps-shared';
 import type { EditorContentChangedEventArgs } from '../editor/monaco';
 import { MonacoEditor, EditorLanguage } from '../editor/monaco';
 import { ModalDialog } from '../modaldialog';
@@ -30,7 +30,7 @@ const buttonStyles: IButtonStyles = {
 };
 
 export interface SchemaEditorProps {
-  initialValue: ValueSegment[];
+  initialValue: ValueSegmentUI[];
   label?: string;
   readonly?: boolean;
   onChange?: ChangeHandler;

@@ -1,4 +1,4 @@
-import type { ValueSegment } from '../editor';
+import type { ValueSegmentUI } from '../editor';
 import { EditorCollapseToggle } from '../editor';
 import type { BaseEditorProps } from '../editor/base';
 import { isTokenValueSegment } from '../editor/base/utils/helper';
@@ -31,32 +31,32 @@ export const AuthenticationType = {
 export type AuthenticationType = (typeof AuthenticationType)[keyof typeof AuthenticationType];
 
 export interface BasicProps {
-  basicUsername?: ValueSegment[];
-  basicPassword?: ValueSegment[];
+  basicUsername?: ValueSegmentUI[];
+  basicPassword?: ValueSegmentUI[];
 }
 
 export interface ClientCertificateProps {
-  clientCertificatePfx?: ValueSegment[];
-  clientCertificatePassword?: ValueSegment[];
+  clientCertificatePfx?: ValueSegmentUI[];
+  clientCertificatePassword?: ValueSegmentUI[];
 }
 
 export interface RawProps {
-  rawValue?: ValueSegment[];
+  rawValue?: ValueSegmentUI[];
 }
 export interface MSIProps {
-  msiAudience?: ValueSegment[];
+  msiAudience?: ValueSegmentUI[];
   msiIdentity?: string;
 }
 
 export interface OAuthProps {
-  oauthTenant?: ValueSegment[];
-  oauthAudience?: ValueSegment[];
-  oauthAuthority?: ValueSegment[];
-  oauthClientId?: ValueSegment[];
+  oauthTenant?: ValueSegmentUI[];
+  oauthAudience?: ValueSegmentUI[];
+  oauthAuthority?: ValueSegmentUI[];
+  oauthClientId?: ValueSegmentUI[];
   oauthType?: AuthenticationOAuthType;
-  oauthTypeSecret?: ValueSegment[];
-  oauthTypeCertificatePfx?: ValueSegment[];
-  oauthTypeCertificatePassword?: ValueSegment[];
+  oauthTypeSecret?: ValueSegmentUI[];
+  oauthTypeCertificatePfx?: ValueSegmentUI[];
+  oauthTypeCertificatePassword?: ValueSegmentUI[];
 }
 export interface AuthenticationEditorOptions {
   supportedAuthTypes: AuthenticationType[];
@@ -97,7 +97,7 @@ export const AuthenticationEditor = ({
   const [currentProps, setCurrentProps] = useState<AuthProps>(authenticationValue);
   const { basic = {}, clientCertificate = {}, raw = {}, msi = {}, aadOAuth = {} } = currentProps;
 
-  const serializeCodeCollapsedValue = (value: ValueSegment[]): void => {
+  const serializeCodeCollapsedValue = (value: ValueSegmentUI[]): void => {
     setCollapsedValue(value);
     onChange?.({
       value: value,

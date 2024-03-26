@@ -88,8 +88,8 @@ import {
   copy,
   unmap,
 } from '@microsoft/logic-apps-shared';
-import type { ParameterInfo } from '@microsoft/designer-ui';
-import { TokenType, ValueSegmentType } from '@microsoft/designer-ui';
+import type { ParameterInfoUI } from '@microsoft/logic-apps-shared';
+import { TokenType, ValueSegmentType } from '@microsoft/logic-apps-shared';
 
 export async function getDynamicValues(
   dependencyInfo: DependencyInfo,
@@ -445,7 +445,7 @@ function getParametersForDynamicInvoke(
   nodeInputs: NodeInputs,
   idReplacements: Record<string, string>,
   workflowParameters: Record<string, WorkflowParameterDefinition>,
-  operationInputs?: Record<string, ParameterInfo>
+  operationInputs?: Record<string, ParameterInfoUI>
 ): SerializedParameter[] {
   const intl = getIntl();
   const operationParameters: SerializedParameter[] = [];

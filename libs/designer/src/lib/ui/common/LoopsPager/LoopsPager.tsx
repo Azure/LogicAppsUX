@@ -4,8 +4,8 @@ import { useActionMetadata, useRunInstance } from '../../../core/state/workflow/
 import { setRunIndex } from '../../../core/state/workflow/workflowSlice';
 import { getForeachItemsCount } from './helper';
 import { RunService, FindPreviousAndNextPage, isNullOrUndefined, type LogicAppsV2 } from '@microsoft/logic-apps-shared';
-import type { PageChangeEventArgs, PageChangeEventHandler } from '@microsoft/designer-ui';
-import { Pager } from '@microsoft/designer-ui';
+import type { PageChangeEventArgs, PageChangeEventHandler } from '@microsoft/logic-apps-shared';
+import { Pager } from '@microsoft/logic-apps-shared';
 import { useCallback, useEffect, useState } from 'react';
 import { useQuery } from 'react-query';
 import { useDispatch } from 'react-redux';

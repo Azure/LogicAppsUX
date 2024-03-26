@@ -1,8 +1,8 @@
 import type { DynamicallyAddedParameterProps, DynamicallyAddedParameterTypeType } from '../../dynamicallyaddedparameter';
 import { DynamicallyAddedParameter } from '../../dynamicallyaddedparameter';
 import { generateDynamicParameterKey } from '../../dynamicallyaddedparameter/helper';
-import type { ValueSegment } from '../../editor';
-import type { ChangeHandler } from '../../editor/base';
+import type { ValueSegmentUI } from '../../editor';
+import type { ChangeHandler} from '@microsoft/logic-apps-shared';
 import type { FloatingActionMenuItem } from '../floatingactionmenubase';
 import { FloatingActionMenuBase } from '../floatingactionmenubase';
 import { createDynamicallyAddedParameterProperties, deserialize, getEmptySchemaValueSegmentForInitialization, serialize } from './helper';
@@ -53,7 +53,7 @@ export type DynamicallyAddedParameterInputsModel = DynamicallyAddedParameterProp
 export interface FloatingActionMenuInputsProps {
   supportedTypes: Array<string>;
   useStaticInputs: boolean | undefined;
-  initialValue: ValueSegment[];
+  initialValue: ValueSegmentUI[];
   isRequestApiConnectionTrigger?: boolean;
   onChange?: ChangeHandler;
 }

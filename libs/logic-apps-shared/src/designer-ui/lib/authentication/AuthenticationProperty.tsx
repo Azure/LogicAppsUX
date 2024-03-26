@@ -1,5 +1,6 @@
-import type { ValueSegment } from '../editor';
-import type { ChangeHandler, GetTokenPickerHandler } from '../editor/base';
+import type { ChangeHandler } from '@microsoft/logic-apps-shared';
+import type { ValueSegmentUI } from '../editor';
+import type { GetTokenPickerHandler } from '../editor/base';
 import type { TokenPickerButtonEditorProps } from '../editor/base/plugins/tokenpickerbutton';
 import { StringEditor } from '../editor/string';
 import type { AuthProperty } from './util';
@@ -7,11 +8,11 @@ import { Label } from '@fluentui/react';
 
 interface AuthenticationPropertyProps {
   AuthProperty: AuthProperty;
-  initialValue?: ValueSegment[];
+  initialValue?: ValueSegmentUI[];
   tokenPickerButtonProps?: TokenPickerButtonEditorProps;
   readonly?: boolean;
-  tokenMapping?: Record<string, ValueSegment>;
-  loadParameterValueFromString?: (value: string) => ValueSegment[];
+  tokenMapping?: Record<string, ValueSegmentUI>;
+  loadParameterValueFromString?: (value: string) => ValueSegmentUI[];
   getTokenPicker: GetTokenPickerHandler;
   onBlur?: ChangeHandler;
 }

@@ -2,9 +2,9 @@ import type { GroupedItems, GroupItems } from '.';
 import { GroupType } from '.';
 import { Checkbox } from '../checkbox';
 import constants from '../constants';
-import type { ValueSegment } from '../editor';
+import type { ValueSegmentUI } from '../editor';
 import { ValueSegmentType } from '../editor';
-import type { ChangeState, GetTokenPickerHandler } from '../editor/base';
+import type {  GetTokenPickerHandler } from '../editor/base';
 import { TokenPickerButtonLocation } from '../editor/base/plugins/tokenpickerbutton';
 import { notEqual } from '../editor/base/utils/helper';
 import { StringEditor } from '../editor/string';
@@ -13,6 +13,7 @@ import { RowDropdown, RowDropdownOptions } from './RowDropdown';
 import { operandNotEmpty } from './helper';
 import type { ICalloutProps, IIconProps, IOverflowSetItemProps, IOverflowSetStyles } from '@fluentui/react';
 import { css, IconButton, DirectionalHint, TooltipHost, OverflowSet } from '@fluentui/react';
+import type { ChangeState} from '@microsoft/logic-apps-shared';
 import { guid } from '@microsoft/logic-apps-shared';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -28,12 +29,12 @@ const menuIconProps: IIconProps = {
   iconName: 'More',
 };
 
-const emptyValueSegmentArray: ValueSegment[] = [{ type: ValueSegmentType.LITERAL, value: '', id: guid() }];
+const emptyValueSegmentArray: ValueSegmentUI[] = [{ type: ValueSegmentType.LITERAL, value: '', id: guid() }];
 
 type RowProps = {
   checked?: boolean;
-  operand1?: ValueSegment[];
-  operand2?: ValueSegment[];
+  operand1?: ValueSegmentUI[];
+  operand2?: ValueSegmentUI[];
   operator?: string;
   index: number;
   showDisabledDelete?: boolean;
@@ -41,8 +42,8 @@ type RowProps = {
   groupedItems: GroupedItems[];
   // isTop: boolean;
   // isBottom: boolean;
-  tokenMapping?: Record<string, ValueSegment>;
-  loadParameterValueFromString?: (value: string) => ValueSegment[];
+  tokenMapping?: Record<string, ValueSegmentUI>;
+  loadParameterValueFromString?: (value: string) => ValueSegmentUI[];
   getTokenPicker: GetTokenPickerHandler;
   readonly?: boolean;
   // handleMove?: (childIndex: number, moveOption: MoveOption) => void;
@@ -75,7 +76,7 @@ export const Row = ({
   ...baseEditorProps
 }: RowProps) => {
   const intl = useIntl();
-  const [key, setKey] = useState<ValueSegment[]>(operand1);
+  const [key, setKey] = useState<ValueSegmentUI[]>(operand1);
 
   const handleGroup = () => {
     handleUpdateParent(

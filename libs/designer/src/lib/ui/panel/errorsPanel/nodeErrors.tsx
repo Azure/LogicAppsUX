@@ -1,7 +1,7 @@
 import { openPanel, setFocusNode, useNodeDisplayName } from '../../../core';
 import { useOperationVisuals } from '../../../core/state/operation/operationSelector';
-import { NodeErrorCard } from '@microsoft/designer-ui';
-import type { MessageLevel, NodeMessage } from '@microsoft/designer-ui';
+import { NodeErrorCard } from '@microsoft/logic-apps-shared';
+import type { MessageLevel, NodeMessage } from '@microsoft/logic-apps-shared';
 import { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 

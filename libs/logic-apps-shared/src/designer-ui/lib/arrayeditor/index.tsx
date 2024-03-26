@@ -1,5 +1,5 @@
 import type { ComboboxItem } from '../combobox';
-import type { ValueSegment } from '../editor';
+import type { ValueSegmentUI } from '../editor';
 import { EditorCollapseToggle } from '../editor';
 import type { BaseEditorProps, CallbackHandler, CastHandler } from '../editor/base';
 import type { LabelProps } from '../label';
@@ -35,7 +35,7 @@ export interface ComplexArrayItem {
   key: string;
   title: string;
   description: string;
-  value: ValueSegment[];
+  value: ValueSegmentUI[];
   arrayItems?: ComplexArrayItems[];
 }
 export interface ComplexArrayItems {
@@ -47,7 +47,7 @@ export interface ComplexArrayItems {
 export interface SimpleArrayItem {
   key: string;
   visibility?: string;
-  value: ValueSegment[];
+  value: ValueSegmentUI[];
 }
 
 export interface ArrayEditorProps extends BaseEditorProps {
@@ -80,7 +80,7 @@ export const ArrayEditor: React.FC<ArrayEditorProps> = ({
   ...baseEditorProps
 }): JSX.Element => {
   const [collapsed, setCollapsed] = useState<boolean>(false);
-  const [collapsedValue, setCollapsedValue] = useState<ValueSegment[]>(initialValue);
+  const [collapsedValue, setCollapsedValue] = useState<ValueSegmentUI[]>(initialValue);
   const [items, setItems] = useState<ComplexArrayItems[] | SimpleArrayItem[]>([]);
   const [isValid, setIsValid] = useState<boolean>(false);
   const intl = useIntl();

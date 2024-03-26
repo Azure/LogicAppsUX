@@ -1,8 +1,8 @@
 import Constants from '../../../common/constants';
 import { getNormalizedName } from './helper';
 import { createOutputToken, createParameterToken, createTokenValueSegment, createVariableToken } from './segment';
-import { TokenType } from '@microsoft/designer-ui';
-import type { ValueSegment } from '@microsoft/designer-ui';
+import { TokenType } from '@microsoft/logic-apps-shared';
+import type { ValueSegmentUI } from '@microsoft/logic-apps-shared';
 import { encodePropertySegment, ExpressionType, isStringLiteral, OutputKeys, OutputSource, equals } from '@microsoft/logic-apps-shared';
 import type { Dereference, Expression, ExpressionFunction, ExpressionLiteral } from '@microsoft/logic-apps-shared';
 
@@ -13,9 +13,9 @@ export class TokenSegmentConvertor {
   /**
    * Tries to convert a function expression into a dynamic content token segment.
    * @arg {ExpressionFunction} expression - The function expression.
-   * @return {ValueSegment | null}
+   * @return {ValueSegmentUI | null}
    */
-  public tryConvertToDynamicContentTokenSegment(expression: ExpressionFunction): ValueSegment | null {
+  public tryConvertToDynamicContentTokenSegment(expression: ExpressionFunction): ValueSegmentUI | null {
     const value =
       expression.startPosition === 0
         ? expression.expression

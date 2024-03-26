@@ -2,8 +2,10 @@ import constants from '../../constants';
 import type { DynamicallyAddedParameterProps, DynamicallyAddedParameterTypeType } from '../../dynamicallyaddedparameter';
 import { DynamicallyAddedParameter, DynamicallyAddedParameterType } from '../../dynamicallyaddedparameter';
 import { generateDynamicParameterKey, getIconForDynamicallyAddedParameterType } from '../../dynamicallyaddedparameter/helper';
-import type { ValueSegment } from '../../editor';
-import type { BasePlugins, ChangeHandler, ChangeState, GetTokenPickerHandler } from '../../editor/base';
+import type { ValueSegmentUI } from '../../editor';
+import type { BasePlugins, GetTokenPickerHandler } from '../../editor/base';
+import type { ChangeHandler, ChangeState} from '@microsoft/logic-apps-shared';
+
 import type { TokenPickerButtonEditorProps } from '../../editor/base/plugins/tokenpickerbutton';
 import { StringEditor } from '../../editor/string';
 import type { FloatingActionMenuItem } from '../floatingactionmenubase';
@@ -24,12 +26,12 @@ export type FloatingActionMenuOutputViewModel = {
     type: string;
     properties: Record<string, DynamicallyAddedParameterOutputsProperties>;
   };
-  outputValueSegmentsMap: Record<string, ValueSegment[] | undefined>;
+  outputValueSegmentsMap: Record<string, ValueSegmentUI[] | undefined>;
 };
 
 type FloatingActionMenuOutputsProps = {
   supportedTypes: string[];
-  initialValue: ValueSegment[];
+  initialValue: ValueSegmentUI[];
   onChange?: ChangeHandler;
   editorViewModel: FloatingActionMenuOutputViewModel;
   basePlugins: BasePlugins;
@@ -77,7 +79,7 @@ export const FloatingActionMenuOutputs = (props: FloatingActionMenuOutputsProps)
       id: '4izAMi',
       description: 'Placeholder for output value field',
     });
-    const onDynamicallyAddedParameterValueChange = (schemaKey: string, newValue: ValueSegment[]) => {
+    const onDynamicallyAddedParameterValueChange = (schemaKey: string, newValue: ValueSegmentUI[]) => {
       const { onChange } = props;
       if (onChange) {
         const viewModel = clone(props.editorViewModel);

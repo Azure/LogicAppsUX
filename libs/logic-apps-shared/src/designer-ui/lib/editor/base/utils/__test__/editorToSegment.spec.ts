@@ -1,8 +1,8 @@
 import { ValueSegmentType } from '../../../models/parameter';
 import { convertStringToSegments } from '../editorToSegment';
-import type { ValueSegment } from '@microsoft/logic-apps-shared';
+import type { ValueSegmentUI } from '@microsoft/logic-apps-shared';
 
-type SimplifiedValueSegment = Omit<ValueSegment, 'id'>;
+type SimplifiedValueSegment = Omit<ValueSegmentUI, 'id'>;
 
 describe('lib/editor/base/utils/editorToSegment', () => {
   describe('convertStringToSegments', () => {
@@ -59,7 +59,7 @@ describe('lib/editor/base/utils/editorToSegment', () => {
     });
 
     it('does not parse segments into tokens if tokensEnabled is not set', () => {
-      const nodeMap = new Map<string, ValueSegment>();
+      const nodeMap = new Map<string, ValueSegmentUI>();
       nodeMap.set(`@{variables('abc')}`, { id: '', ...getInitializeVariableAbcToken() });
       nodeMap.set(`@{body('Create_new_folder')?['{Link}']}`, { id: '', ...getCreateNewFolderToken() });
 
@@ -132,7 +132,7 @@ describe('lib/editor/base/utils/editorToSegment', () => {
         ],
       ],
     ])('parses segments out of %p with appropriate node map', (input, expectedTokens) => {
-      const nodeMap = new Map<string, ValueSegment>();
+      const nodeMap = new Map<string, ValueSegmentUI>();
       nodeMap.set(`@{variables('abc')}`, { id: '', ...getInitializeVariableAbcToken() });
       nodeMap.set(`@{variables('@{')}`, { id: '', ...getInitializeVariableOpenBraceToken() });
       nodeMap.set(`@{body('Create_new_folder')?['{Link}']}`, { id: '', ...getCreateNewFolderToken() });
@@ -161,7 +161,7 @@ describe('lib/editor/base/utils/editorToSegment', () => {
         [{ type: ValueSegmentType.LITERAL, value: `Text before @{body('Create_new_folder')?['{Link}']} text after` }],
       ],
     ])('parses segments out of %p with an empty node map', (input, expectedTokens) => {
-      const nodeMap = new Map<string, ValueSegment>();
+      const nodeMap = new Map<string, ValueSegmentUI>();
 
       const segments = convertStringToSegments(input, nodeMap, { tokensEnabled: true });
       const simplifiedSegments = segments.map(

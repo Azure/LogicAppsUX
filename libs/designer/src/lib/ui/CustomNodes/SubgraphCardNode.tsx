@@ -22,7 +22,7 @@ import { LoopsPager } from '../common/LoopsPager/LoopsPager';
 import { DropZone } from '../connections/dropzone';
 import { DeleteMenuItem } from '../menuItems/deleteMenuItem';
 import { MessageBarType } from '@fluentui/react';
-import { SubgraphCard } from '@microsoft/designer-ui';
+import { SubgraphCard } from '@microsoft/logic-apps-shared';
 import { SUBGRAPH_TYPES, removeIdTag } from '@microsoft/logic-apps-shared';
 import { memo, useCallback, useMemo } from 'react';
 import { useIntl } from 'react-intl';

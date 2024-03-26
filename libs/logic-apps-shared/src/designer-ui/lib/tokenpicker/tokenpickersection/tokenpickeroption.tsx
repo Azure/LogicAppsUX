@@ -1,6 +1,6 @@
 import type { OutputToken } from '..';
 import { TokenPickerMode } from '../';
-import type { ValueSegment } from '../../editor';
+import type { ValueSegmentUI } from '../../editor';
 import { INSERT_TOKEN_NODE } from '../../editor/base/plugins/InsertTokenNode';
 import { SINGLE_VALUE_SEGMENT } from '../../editor/base/plugins/SingleValueSegment';
 import { convertUIElementNameToAutomationId } from '../../utils';
@@ -17,7 +17,7 @@ import type { Dispatch, SetStateAction } from 'react';
 import { useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
 
-export type GetValueSegmentHandler = (tokenProps: OutputToken, addImplicitForeach: boolean) => Promise<ValueSegment>;
+export type GetValueSegmentHandler = (tokenProps: OutputToken, addImplicitForeach: boolean) => Promise<ValueSegmentUI>;
 
 interface TokenPickerOptionsProps extends TokenPickerBaseProps {
   section: TokenGroup;

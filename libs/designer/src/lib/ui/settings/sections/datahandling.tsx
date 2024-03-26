@@ -1,7 +1,7 @@
 import { SettingSectionName, type SectionProps, type ToggleHandler } from '..';
 import { SettingsSection } from '../settingsection';
 import type { SettingsSectionProps } from '../settingsection';
-import { getSettingLabel } from '@microsoft/designer-ui';
+import { getSettingLabel } from '@microsoft/logic-apps-shared';
 import { useIntl } from 'react-intl';
 
 export interface DataHandlingSectionProps extends SectionProps {

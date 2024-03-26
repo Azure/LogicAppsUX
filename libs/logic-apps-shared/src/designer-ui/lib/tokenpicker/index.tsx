@@ -1,5 +1,5 @@
 import type { editor } from 'monaco-editor';
-import type { ValueSegment } from '../editor';
+import type { ValueSegmentUI } from '../editor';
 import { CLOSE_TOKENPICKER } from '../editor/base/plugins/CloseTokenPicker';
 import type { ExpressionEditorEvent } from '../expressioneditor';
 import { ExpressionEditor } from '../expressioneditor';
@@ -50,7 +50,7 @@ export interface TokenPickerProps {
   // if initialMode is undefined, it is Legacy TokenPicker
   initialMode?: TokenPickerMode;
   // tokenClickedCallback is used for the code Editor TokenPicker(Legacy Token Picker)
-  tokenClickedCallback?: (token: ValueSegment) => void;
+  tokenClickedCallback?: (token: ValueSegmentUI) => void;
   hideUTFExpressions?: boolean;
 }
 export function TokenPicker({

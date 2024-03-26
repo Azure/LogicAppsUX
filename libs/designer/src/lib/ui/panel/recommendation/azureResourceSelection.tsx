@@ -12,7 +12,7 @@ import {
   getResourceName,
   getResourceGroupFromWorkflowId,
 } from '@microsoft/logic-apps-shared';
-import { AzureResourcePicker } from '@microsoft/designer-ui';
+import { AzureResourcePicker } from '@microsoft/logic-apps-shared';
 import type { DiscoveryOperation, DiscoveryResultTypes } from '@microsoft/logic-apps-shared';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';

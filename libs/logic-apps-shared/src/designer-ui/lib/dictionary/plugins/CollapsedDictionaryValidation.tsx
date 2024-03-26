@@ -1,5 +1,5 @@
 import type { DictionaryEditorItemProps } from '..';
-import type { ValueSegment } from '../../editor';
+import type { ValueSegmentUI } from '../../editor';
 import { ValueSegmentType } from '../../editor';
 import { serializeEditorState } from '../../editor/base/utils/editorToSegment';
 import { getChildrenNodes } from '../../editor/base/utils/helper';
@@ -16,7 +16,7 @@ export interface CollapsedDictionaryValidationProps {
   valueType?: string;
   setIsValid: (b: boolean) => void;
   setItems: (items: DictionaryEditorItemProps[]) => void;
-  setCollapsedValue: (val: ValueSegment[]) => void;
+  setCollapsedValue: (val: ValueSegmentUI[]) => void;
 }
 
 export const CollapsedDictionaryValidation = ({

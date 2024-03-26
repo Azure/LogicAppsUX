@@ -1,7 +1,7 @@
 import type { AuthProps } from '.';
 import { AuthenticationType } from '.';
 import constants from '../constants';
-import type { ValueSegment } from '../editor';
+import type { ValueSegmentUI } from '../editor';
 import { ValueSegmentType } from '../editor';
 import { convertStringToSegments } from '../editor/base/utils/editorToSegment';
 import { convertKeyValueItemToSegments } from '../editor/base/utils/keyvalueitem';
@@ -19,8 +19,8 @@ export interface AuthProperty {
   format?: string;
 }
 interface CollapsedAuthEditorItems {
-  key: ValueSegment[];
-  value: ValueSegment[];
+  key: ValueSegmentUI[];
+  value: ValueSegmentUI[];
   id: string;
 }
 
@@ -328,9 +328,9 @@ export function containsUserAssignedIdentities(identity: ManagedIdentity | undef
  * Converts AuthEditor Props into ValueSegment Array for the Collpased Authentication Editor.
  * @param {AuthenticationType} authType - The Authority Type.
  * @param {AuthProps} items - Authority Props.
- * @return {ValueSegment[]} - Collapsed ValueSegment Array.
+ * @return {ValueSegmentUI[]} - Collapsed ValueSegment Array.
  */
-export function parseAuthEditor(authType: AuthenticationType, items: AuthProps): ValueSegment[] {
+export function parseAuthEditor(authType: AuthenticationType, items: AuthProps): ValueSegmentUI[] {
   const values: CollapsedAuthEditorItems[] = [];
   switch (authType) {
     case AuthenticationType.BASIC:
@@ -378,7 +378,7 @@ export function parseAuthEditor(authType: AuthenticationType, items: AuthProps):
   return convertKeyValueItemToSegments(currentItems, constants.SWAGGER.TYPE.STRING, constants.SWAGGER.TYPE.STRING);
 }
 
-const updateValues = (values: CollapsedAuthEditorItems[], property: AuthProperty, val?: ValueSegment[]) => {
+const updateValues = (values: CollapsedAuthEditorItems[], property: AuthProperty, val?: ValueSegmentUI[]) => {
   if (property.isRequired || (val && val.length > 0)) {
     values.push({
       key: [{ type: ValueSegmentType.LITERAL, id: guid(), value: property.name }],
@@ -392,7 +392,7 @@ export const serializeAuthentication = (
   editorString: string,
   setCurrentProps: (items: AuthProps) => void,
   setOption: (s: AuthenticationType) => void,
-  nodeMap: Map<string, ValueSegment>
+  nodeMap: Map<string, ValueSegmentUI>
 ): boolean => {
   let jsonEditor = Object.create(null);
   try {

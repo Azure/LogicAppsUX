@@ -1,4 +1,4 @@
-import type { PanelLocation } from '@microsoft/designer-ui';
+import type { PanelLocation } from '@microsoft/logic-apps-shared';
 
 export type PanelMode = 'Operation' | 'Discovery' | 'WorkflowParameters' | 'NodeSearch' | 'Error' | 'Connection';
 

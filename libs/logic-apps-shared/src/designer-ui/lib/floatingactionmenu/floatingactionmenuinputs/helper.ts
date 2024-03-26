@@ -7,7 +7,7 @@ import {
   getDescriptionForDynamicallyAddedParameterType,
   getIconForDynamicallyAddedParameterType,
 } from '../../dynamicallyaddedparameter/helper';
-import type { ValueSegment } from '../../editor';
+import type { ValueSegmentUI } from '../../editor';
 import { ValueSegmentType } from '../../editor';
 import type { OpenApiSchema } from '@microsoft/logic-apps-shared';
 import { guid } from '@microsoft/logic-apps-shared';
@@ -52,7 +52,7 @@ type PartialDynamicallyAddedParameterInputsModel = Pick<
  * @param onChange - handler to update value when the user changes their input in one of the dynamic parameters
  * @returns - array of props to render DynamicallyAddedParameter editors with
  */
-export function deserialize(value: ValueSegment[], isRequestApiConnectionTrigger = false): PartialDynamicallyAddedParameterInputsModel[] {
+export function deserialize(value: ValueSegmentUI[], isRequestApiConnectionTrigger = false): PartialDynamicallyAddedParameterInputsModel[] {
   if (!value || value.length === 0 || !value[0].value) {
     return [];
   }
@@ -92,7 +92,7 @@ export function deserialize(value: ValueSegment[], isRequestApiConnectionTrigger
  * @param isManualTrigger - Flag that sets the rootObject to required schema type.
  * @returns - ValueSegment array with one literal -- value for which is a JSON representation of the dynamically added parameters in the shape expected by FlowRP
  */
-export function serialize(models: DynamicallyAddedParameterInputsModel[], isRequestApiConnectionTrigger = false): ValueSegment[] {
+export function serialize(models: DynamicallyAddedParameterInputsModel[], isRequestApiConnectionTrigger = false): ValueSegmentUI[] {
   const requiredArray: string[] = [];
   models.forEach((model) => {
     if (model.required) requiredArray.push(model.schemaKey);

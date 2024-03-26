@@ -9,8 +9,8 @@ import {
   toHybridConditionViewModel,
   getTokenExpressionMethodFromKey,
 } from '../helper';
-import type { DictionaryEditorItemProps, ParameterInfo, ValueSegment, OutputToken } from '@microsoft/designer-ui';
-import { GroupDropdownOptions, GroupType, TokenType, ValueSegmentType } from '@microsoft/designer-ui';
+import type { DictionaryEditorItemProps, ParameterInfoUI, ValueSegmentUI, OutputToken } from '@microsoft/logic-apps-shared';
+import { GroupDropdownOptions, GroupType, TokenType, ValueSegmentType } from '@microsoft/logic-apps-shared';
 import type { DynamicListExtension, LegacyDynamicValuesExtension, InputParameter } from '@microsoft/logic-apps-shared';
 import { DynamicValuesType, ExpressionType } from '@microsoft/logic-apps-shared';
 
@@ -333,7 +333,7 @@ describe('core/utils/parameters/helper', () => {
     });
 
     it('should handle double quotes in non-interpolated expression tokens', () => {
-      const parameterValue: ValueSegment[] = [
+      const parameterValue: ValueSegmentUI[] = [
         {
           value: '{\n',
           id: '1',
@@ -407,7 +407,7 @@ describe('core/utils/parameters/helper', () => {
     });
 
     it('should handle double quotes in interpolated expression tokens which require casting', () => {
-      const parameterValue: ValueSegment[] = [
+      const parameterValue: ValueSegmentUI[] = [
         {
           value: '{\n',
           id: '1',
@@ -665,8 +665,8 @@ describe('core/utils/parameters/helper', () => {
   });
 
   describe('parameterValueToString', () => {
-    let parameter: ParameterInfo;
-    const emptyLiteral: ValueSegment = {
+    let parameter: ParameterInfoUI;
+    const emptyLiteral: ValueSegmentUI = {
       id: 'key',
       type: ValueSegmentType.LITERAL,
       value: '',

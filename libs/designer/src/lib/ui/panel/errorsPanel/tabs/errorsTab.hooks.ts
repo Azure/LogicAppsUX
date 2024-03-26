@@ -3,7 +3,7 @@ import { useAllConnectionErrors } from '../../../../core/state/operation/operati
 import { useAllSettingsValidationErrors } from '../../../../core/state/setting/settingSelector';
 import type { ErrorMessage } from '../../../../core/state/workflow/workflowInterfaces';
 import { useWorkflowParameterValidationErrors } from '../../../../core/state/workflowparameters/workflowparametersselector';
-import { MessageLevel } from '@microsoft/designer-ui';
+import { MessageLevel } from '@microsoft/logic-apps-shared';
 import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 

@@ -1,4 +1,4 @@
-import type { ValueSegment } from '../../models/parameter';
+import type { ValueSegmentUI } from '../../models/parameter';
 import { ValueSegmentType } from '../../models/parameter';
 import { $isTokenNode } from '../nodes/tokenNode';
 import type { SegmentParserOptions } from './parsesegments';
@@ -6,15 +6,15 @@ import { guid } from '@microsoft/logic-apps-shared';
 import type { EditorState, ElementNode } from 'lexical';
 import { $getNodeByKey, $getRoot, $isElementNode, $isLineBreakNode, $isTextNode } from 'lexical';
 
-export function serializeEditorState(editorState: EditorState, trimLiteral = false): ValueSegment[] {
-  const segments: ValueSegment[] = [];
+export function serializeEditorState(editorState: EditorState, trimLiteral = false): ValueSegmentUI[] {
+  const segments: ValueSegmentUI[] = [];
   editorState.read(() => {
     getChildrenNodesToSegments($getRoot(), segments, trimLiteral);
   });
   return segments;
 }
 
-const getChildrenNodesToSegments = (node: ElementNode, segments: ValueSegment[], trimLiteral = false): void => {
+const getChildrenNodesToSegments = (node: ElementNode, segments: ValueSegmentUI[], trimLiteral = false): void => {
   node.getChildren().forEach((child, index) => {
     const childNode = $getNodeByKey(child.getKey());
     if (childNode && $isElementNode(childNode)) {
@@ -35,9 +35,9 @@ const getChildrenNodesToSegments = (node: ElementNode, segments: ValueSegment[],
 
 export const convertStringToSegments = (
   value: string,
-  nodeMap: Map<string, ValueSegment>,
+  nodeMap: Map<string, ValueSegmentUI>,
   options?: SegmentParserOptions
-): ValueSegment[] => {
+): ValueSegmentUI[] => {
   if (!value) return [];
 
   const { tokensEnabled } = options ?? {};
@@ -46,7 +46,7 @@ export const convertStringToSegments = (
     return [{ id: guid(), type: ValueSegmentType.LITERAL, value }];
   }
 
-  const returnSegments: ValueSegment[] = [];
+  const returnSegments: ValueSegmentUI[] = [];
 
   let currSegmentType: ValueSegmentType = ValueSegmentType.LITERAL;
   let isInQuotedString = false;
@@ -99,7 +99,7 @@ export const convertStringToSegments = (
   return returnSegments;
 };
 
-const collapseLiteralSegments = (segments: ValueSegment[]): void => {
+const collapseLiteralSegments = (segments: ValueSegmentUI[]): void => {
   let index = 0;
   while (index < segments.length) {
     const currSegment = segments[index];

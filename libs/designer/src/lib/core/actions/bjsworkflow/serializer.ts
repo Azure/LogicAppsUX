@@ -55,8 +55,8 @@ import {
   excludePathValueFromTarget,
   getRecordEntry,
 } from '@microsoft/logic-apps-shared';
-import type { ParameterInfo } from '@microsoft/designer-ui';
-import { UIConstants } from '@microsoft/designer-ui';
+import type { ParameterInfoUI } from '@microsoft/logic-apps-shared';
+import { UIConstants } from '@microsoft/logic-apps-shared';
 import type { Segment, LocationSwapMap, LogicAppsV2, OperationManifest, SubGraphDetail } from '@microsoft/logic-apps-shared';
 import merge from 'lodash.merge';
 
@@ -110,7 +110,7 @@ export const serializeWorkflow = async (rootState: RootState, options?: Serializ
     const operationsWithParameterErrors = (Object.entries(rootState.operations.inputParameters) ?? []).filter(
       ([_id, nodeInputs]: [id: string, i: NodeInputs]) =>
         Object.values(nodeInputs.parameterGroups).some((parameterGroup: ParameterGroup) =>
-          parameterGroup.parameters.some((parameter: ParameterInfo) => (parameter?.validationErrors?.length ?? 0) > 0)
+          parameterGroup.parameters.some((parameter: ParameterInfoUI) => (parameter?.validationErrors?.length ?? 0) > 0)
         )
     );
     if (operationsWithParameterErrors.length > 0) {
@@ -384,7 +384,7 @@ const getRunAfter = (operation: LogicAppsV2.ActionDefinition, idReplacements: Re
 };
 
 //#region Parameters Serialization
-export interface SerializedParameter extends ParameterInfo {
+export interface SerializedParameter extends ParameterInfoUI {
   value: any;
 }
 

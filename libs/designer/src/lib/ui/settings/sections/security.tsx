@@ -4,7 +4,7 @@ import { useOperationInfo } from '../../../core';
 import { isSecureOutputsLinkedToInputs } from '../../../core/utils/setting';
 import type { SettingsSectionProps } from '../settingsection';
 import { SettingsSection } from '../settingsection';
-import { getSettingLabel } from '@microsoft/designer-ui';
+import { getSettingLabel } from '@microsoft/logic-apps-shared';
 import { useIntl } from 'react-intl';
 
 export interface SecuritySectionProps extends SectionProps {

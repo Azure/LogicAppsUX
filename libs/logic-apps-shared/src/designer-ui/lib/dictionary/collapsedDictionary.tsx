@@ -1,5 +1,5 @@
 import type { DictionaryEditorItemProps } from '.';
-import type { ValueSegment } from '../editor';
+import type { ValueSegmentUI } from '../editor';
 import type { GetTokenPickerHandler } from '../editor/base';
 import { EditorWrapper } from '../editor/base/EditorWrapper';
 import type { TokenPickerButtonEditorProps } from '../editor/base/plugins/tokenpickerbutton';
@@ -8,17 +8,17 @@ import { useIntl } from 'react-intl';
 
 export type CollapsedDictionaryProps = {
   readonly?: boolean;
-  collapsedValue: ValueSegment[];
+  collapsedValue: ValueSegmentUI[];
   keyType?: string;
   valueType?: string;
   tokenPickerButtonProps?: TokenPickerButtonEditorProps;
   setIsValid: (b: boolean) => void;
   setItems: (items: DictionaryEditorItemProps[]) => void;
-  setCollapsedValue: (val: ValueSegment[]) => void;
+  setCollapsedValue: (val: ValueSegmentUI[]) => void;
   onBlur?: () => void;
   getTokenPicker: GetTokenPickerHandler;
-  tokenMapping?: Record<string, ValueSegment>;
-  loadParameterValueFromString?: (value: string) => ValueSegment[];
+  tokenMapping?: Record<string, ValueSegmentUI>;
+  loadParameterValueFromString?: (value: string) => ValueSegmentUI[];
 };
 
 export const CollapsedDictionary = ({
@@ -49,7 +49,7 @@ export const CollapsedDictionary = ({
             tabbable: true,
           }}
           placeholder={editorPlaceHolder}
-          initialValue={collapsedValue?.length > 0 ? collapsedValue : ([] as ValueSegment[])}
+          initialValue={collapsedValue?.length > 0 ? collapsedValue : ([] as ValueSegmentUI[])}
           onBlur={onBlur}
         >
           <CollapsedDictionaryValidation

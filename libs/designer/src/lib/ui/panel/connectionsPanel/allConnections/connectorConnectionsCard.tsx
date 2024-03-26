@@ -1,7 +1,7 @@
 import { useAllConnectionErrors } from '../../../../core';
 import { ConnectionEntry } from './connectionEntry';
 import { AccordionHeader, AccordionPanel, Badge, Spinner, Text } from '@fluentui/react-components';
-import { getConnectorCategoryString, isBuiltInConnector } from '@microsoft/designer-ui';
+import { getConnectorCategoryString, isBuiltInConnector } from '@microsoft/logic-apps-shared';
 import type { Connector } from '@microsoft/logic-apps-shared';
 import {
   fallbackConnectorIconUrl,

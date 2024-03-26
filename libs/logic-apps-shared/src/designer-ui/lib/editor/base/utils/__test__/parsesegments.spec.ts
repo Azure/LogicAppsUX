@@ -4,7 +4,7 @@ import {
   encodeStringSegmentTokensInDomContext,
   encodeStringSegmentTokensInLexicalContext,
 } from '../parsesegments';
-import type { ValueSegment } from '@microsoft/logic-apps-shared';
+import type { ValueSegmentUI } from '@microsoft/logic-apps-shared';
 
 describe('lib/editor/base/utils/parseSegments', () => {
   describe('decodeStringSegmentTokensInDomContext', () => {
@@ -13,8 +13,8 @@ describe('lib/editor/base/utils/parseSegments', () => {
       [`text @{concat('%3C')} text`, `text @{concat('<')} text`],
       [`text @{concat('<')} text`, `text @{concat('<')} text`],
     ])('should properly decode DOM-safe in: %p', (input, expected) => {
-      const nodeMap = new Map<string, ValueSegment>();
-      nodeMap.set(`concat('<')`, {} as unknown as ValueSegment);
+      const nodeMap = new Map<string, ValueSegmentUI>();
+      nodeMap.set(`concat('<')`, {} as unknown as ValueSegmentUI);
 
       expect(decodeStringSegmentTokensInDomContext(input, nodeMap)).toBe(expected);
     });
@@ -26,8 +26,8 @@ describe('lib/editor/base/utils/parseSegments', () => {
       [`text @{concat('<')} text`, `text @{concat('%3C')} text`],
       [`text @{concat('%3C')} text`, `text @{concat('%3C')} text`],
     ])('should properly encode segments to be DOM-safe in: %p', (input, expected) => {
-      const nodeMap = new Map<string, ValueSegment>();
-      nodeMap.set(`concat('<')`, {} as unknown as ValueSegment);
+      const nodeMap = new Map<string, ValueSegmentUI>();
+      nodeMap.set(`concat('<')`, {} as unknown as ValueSegmentUI);
 
       expect(encodeStringSegmentTokensInDomContext(input, nodeMap)).toBe(expected);
     });
@@ -47,9 +47,9 @@ describe('lib/editor/base/utils/parseSegments', () => {
         `@{replace(replace(replace('abc','&lt;','<'),'&gt;','>'),'&quot;','"')}`,
       ],
     ])('should properly decode Lexical-safe segments in: %p', (input, expected) => {
-      const nodeMap = new Map<string, ValueSegment>();
-      nodeMap.set(`concat('&lt;')`, {} as unknown as ValueSegment);
-      nodeMap.set(`replace(replace(replace('abc','&lt;','<'),'&gt;','>'),'&quot;','"')`, {} as unknown as ValueSegment);
+      const nodeMap = new Map<string, ValueSegmentUI>();
+      nodeMap.set(`concat('&lt;')`, {} as unknown as ValueSegmentUI);
+      nodeMap.set(`replace(replace(replace('abc','&lt;','<'),'&gt;','>'),'&quot;','"')`, {} as unknown as ValueSegmentUI);
 
       expect(decodeStringSegmentTokensInLexicalContext(input, nodeMap)).toBe(expected);
     });
@@ -69,9 +69,9 @@ describe('lib/editor/base/utils/parseSegments', () => {
         `@{replace(replace(replace('abc','%26lt;','<'),'%26gt;','>'),'%26quot;','%22')}`,
       ],
     ])('should properly encode segments to be Lexical-safe in: %p', (input, expected) => {
-      const nodeMap = new Map<string, ValueSegment>();
-      nodeMap.set(`concat('&lt;')`, {} as unknown as ValueSegment);
-      nodeMap.set(`replace(replace(replace('abc','&lt;','<'),'&gt;','>'),'&quot;','"')`, {} as unknown as ValueSegment);
+      const nodeMap = new Map<string, ValueSegmentUI>();
+      nodeMap.set(`concat('&lt;')`, {} as unknown as ValueSegmentUI);
+      nodeMap.set(`replace(replace(replace('abc','&lt;','<'),'&gt;','>'),'&quot;','"')`, {} as unknown as ValueSegmentUI);
 
       expect(encodeStringSegmentTokensInLexicalContext(input, nodeMap)).toBe(expected);
     });

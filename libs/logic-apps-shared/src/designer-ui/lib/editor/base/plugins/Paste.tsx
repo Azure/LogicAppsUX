@@ -1,6 +1,6 @@
 import { FxBrandColor, FxIcon } from '../../../constants';
 import { getExpressionTokenTitle } from '../../../tokenpicker/util';
-import { ValueSegmentType, type ValueSegment, TokenType } from '../../models/parameter';
+import { ValueSegmentType, type ValueSegmentUI, TokenType } from '../../models/parameter';
 import type { TokenNode } from '../nodes/tokenNode';
 import { $createTokenNode } from '../nodes/tokenNode';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
@@ -10,8 +10,8 @@ import { $createParagraphNode, $createTextNode, $getSelection, COMMAND_PRIORITY_
 import { useEffect } from 'react';
 
 interface PastePluginProps {
-  segmentMapping?: Record<string, ValueSegment>;
-  loadParameterValueFromString?: (value: string) => ValueSegment[];
+  segmentMapping?: Record<string, ValueSegmentUI>;
+  loadParameterValueFromString?: (value: string) => ValueSegmentUI[];
 }
 
 export const PastePlugin = ({ segmentMapping, loadParameterValueFromString }: PastePluginProps) => {

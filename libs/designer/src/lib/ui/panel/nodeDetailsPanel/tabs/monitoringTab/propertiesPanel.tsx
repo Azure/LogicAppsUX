@@ -1,5 +1,5 @@
 import constants from '../../../../../common/constants';
-import { getStatusString, ValuesPanel } from '@microsoft/designer-ui';
+import { getStatusString, ValuesPanel } from '@microsoft/logic-apps-shared';
 import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import { isNullOrEmpty } from '@microsoft/logic-apps-shared';
 import { useIntl } from 'react-intl';

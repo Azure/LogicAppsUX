@@ -1,6 +1,6 @@
 import type { ArrayItemSchema, ComplexArrayItem, ComplexArrayItems, SimpleArrayItem } from '..';
 import constants from '../../constants';
-import type { ValueSegment } from '../../editor';
+import type { ValueSegmentUI } from '../../editor';
 import type { CastHandler } from '../../editor/base';
 import { convertStringToSegments } from '../../editor/base/utils/editorToSegment';
 import { convertSegmentsToString } from '../../editor/base/utils/parsesegments';
@@ -62,7 +62,7 @@ export const getOneDimensionalSchema = (itemSchema: ArrayItemSchema, isRequired?
 export const convertComplexItemsToArray = (
   itemSchema: ArrayItemSchema,
   items: ComplexArrayItem[],
-  nodeMap?: Map<string, ValueSegment>,
+  nodeMap?: Map<string, ValueSegmentUI>,
   suppressCasting?: boolean,
   castParameter?: CastHandler
 ) => {
@@ -129,20 +129,20 @@ export const convertComplexItemsToArray = (
 };
 
 export const initializeSimpleArrayItems = (
-  initialValue: ValueSegment[],
+  initialValue: ValueSegmentUI[],
   valueType: string,
   setItems: (items: SimpleArrayItem[]) => void,
   setIsValid: (b: boolean) => void,
   setCollapsed: (b: boolean) => void
 ) => {
-  const nodeMap = new Map<string, ValueSegment>();
+  const nodeMap = new Map<string, ValueSegmentUI>();
   const stringifiedCollapsedValue = convertSegmentsToString(initialValue, nodeMap);
   validationAndSerializeSimpleArray(stringifiedCollapsedValue, nodeMap, valueType, setItems, setIsValid, setCollapsed);
 };
 
 export const validationAndSerializeSimpleArray = (
   editorString: string,
-  nodeMap: Map<string, ValueSegment>,
+  nodeMap: Map<string, ValueSegmentUI>,
   valueType: string,
   setItems: (items: SimpleArrayItem[]) => void,
   setIsValid: (b: boolean) => void,
@@ -175,20 +175,20 @@ export const validationAndSerializeSimpleArray = (
 };
 
 export const initializeComplexArrayItems = (
-  initialValue: ValueSegment[],
+  initialValue: ValueSegmentUI[],
   itemSchema: ArrayItemSchema,
   setItems: (items: ComplexArrayItems[]) => void,
   setIsValid: (b: boolean) => void,
   setCollapsed: (b: boolean) => void
 ): void => {
-  const nodeMap = new Map<string, ValueSegment>();
+  const nodeMap = new Map<string, ValueSegmentUI>();
   const stringifiedCollapsedValue = convertSegmentsToString(initialValue, nodeMap);
   validationAndSerializeComplexArray(stringifiedCollapsedValue, nodeMap, itemSchema, setItems, setIsValid, setCollapsed);
 };
 
 export const validationAndSerializeComplexArray = (
   editorString: string,
-  nodeMap: Map<string, ValueSegment>,
+  nodeMap: Map<string, ValueSegmentUI>,
   itemSchema: ArrayItemSchema,
   setItems: (items: ComplexArrayItems[]) => void,
   setIsValid: (b: boolean) => void,
@@ -222,7 +222,7 @@ export const validationAndSerializeComplexArray = (
 const convertObjectToComplexArrayItemArray = (
   obj: any,
   itemSchema: ArrayItemSchema,
-  nodeMap: Map<string, ValueSegment>
+  nodeMap: Map<string, ValueSegmentUI>
 ): ComplexArrayItem[] => {
   const items: ComplexArrayItem[] = [];
 

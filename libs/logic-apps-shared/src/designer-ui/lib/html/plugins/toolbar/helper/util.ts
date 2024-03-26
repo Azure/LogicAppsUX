@@ -1,4 +1,4 @@
-import type { ValueSegment } from '../../../../editor';
+import type { ValueSegmentUI } from '../../../../editor';
 import { encodeStringSegmentTokensInDomContext } from '../../../../editor/base/utils/parsesegments';
 
 
@@ -95,7 +95,7 @@ export const encodeOrDecodeSegmentValue = (value: string, encodingMap: Record<st
   return newValue;
 };
 
-export const getDomFromHtmlEditorString = (htmlEditorString: string, nodeMap: Map<string, ValueSegment>): HTMLElement => {
+export const getDomFromHtmlEditorString = (htmlEditorString: string, nodeMap: Map<string, ValueSegmentUI>): HTMLElement => {
   const encodedHtmlEditorString = encodeStringSegmentTokensInDomContext(htmlEditorString, nodeMap);
 
   const tempElement = document.createElement('div');
@@ -119,7 +119,7 @@ export const isAttributeSupportedByHtmlEditor = (tagName: string, attribute: str
   return htmlEditorSupportedAttributes['*'].includes(attributeLower);
 };
 
-export const isHtmlStringValueSafeForLexical = (htmlEditorString: string, nodeMap: Map<string, ValueSegment>): boolean => {
+export const isHtmlStringValueSafeForLexical = (htmlEditorString: string, nodeMap: Map<string, ValueSegmentUI>): boolean => {
   const tempElement = getDomFromHtmlEditorString(htmlEditorString, nodeMap);
 
   const elements = tempElement.querySelectorAll('*');

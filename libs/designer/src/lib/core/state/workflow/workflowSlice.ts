@@ -31,8 +31,8 @@ import {
   WORKFLOW_EDGE_TYPES,
   WORKFLOW_NODE_TYPES,
 } from '@microsoft/logic-apps-shared';
-import type { MessageLevel } from '@microsoft/designer-ui';
-import { getDurationStringPanelMode } from '@microsoft/designer-ui';
+import type { MessageLevel } from '@microsoft/logic-apps-shared';
+import { getDurationStringPanelMode } from '@microsoft/logic-apps-shared';
 import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import { createSlice, isAnyOf } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';

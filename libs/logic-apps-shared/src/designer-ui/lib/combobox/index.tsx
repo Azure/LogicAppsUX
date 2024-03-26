@@ -1,6 +1,8 @@
-import type { ValueSegment } from '../editor';
+import type { ValueSegmentUI } from '../editor';
 import { ValueSegmentType } from '../editor';
-import type { BaseEditorProps, CallbackHandler, ChangeHandler } from '../editor/base';
+import type { BaseEditorProps, CallbackHandler } from '../editor/base';
+import type { ChangeHandler} from '@microsoft/logic-apps-shared';
+
 import { EditorWrapper } from '../editor/base/EditorWrapper';
 import { EditorChangePlugin } from '../editor/base/plugins/EditorChange';
 import type { IComboBox, IComboBoxOption, IComboBoxOptionStyles, IComboBoxStyles } from '@fluentui/react';
@@ -91,7 +93,7 @@ export const Combobox = ({
   const comboBoxRef = useRef<IComboBox>(null);
   const optionKey = getSelectedKey(options, initialValue, isLoading);
   const optionKeys = getSelectedKeys(options, initialValue, serialization);
-  const [value, setValue] = useState<ValueSegment[]>(initialValue);
+  const [value, setValue] = useState<ValueSegmentUI[]>(initialValue);
   const [mode, setMode] = useState<Mode>(getMode(optionKey, optionKeys, initialValue, isLoading));
   const [selectedKey, setSelectedKey] = useState<string>(optionKey);
   const [selectedKeys, setSelectedKeys] = useState<string[] | undefined>(multiSelect ? optionKeys : undefined);
@@ -365,7 +367,7 @@ const getOptions = (options: ComboboxItem[]): IComboBoxOption[] => {
   ];
 };
 
-const getMode = (selectedKey: string, selectedKeys: string[], initialValue: ValueSegment[], isLoading?: boolean): Mode => {
+const getMode = (selectedKey: string, selectedKeys: string[], initialValue: ValueSegmentUI[], isLoading?: boolean): Mode => {
   if (isLoading) return Mode.Default;
   if (selectedKeys.length > 0) {
     for (const key of selectedKeys) {
@@ -378,7 +380,7 @@ const getMode = (selectedKey: string, selectedKeys: string[], initialValue: Valu
   return hasValue ? (selectedKey ? Mode.Default : Mode.Custom) : Mode.Default;
 };
 
-const getSelectedKey = (options: ComboboxItem[], initialValue?: ValueSegment[], isLoading?: boolean): string => {
+const getSelectedKey = (options: ComboboxItem[], initialValue?: ValueSegmentUI[], isLoading?: boolean): string => {
   if (isLoading) return '';
   if (initialValue?.length === 1 && initialValue[0].type === ValueSegmentType.LITERAL) {
     return (
@@ -390,7 +392,7 @@ const getSelectedKey = (options: ComboboxItem[], initialValue?: ValueSegment[], 
   return '';
 };
 
-const getSelectedKeys = (options: ComboboxItem[], initialValue?: ValueSegment[], serialization?: SerializationOptions): string[] => {
+const getSelectedKeys = (options: ComboboxItem[], initialValue?: ValueSegmentUI[], serialization?: SerializationOptions): string[] => {
   const returnVal: string[] = [];
   if (initialValue?.length === 1 && initialValue[0].type === ValueSegmentType.LITERAL) {
     const value = initialValue[0].value;

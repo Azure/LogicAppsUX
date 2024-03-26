@@ -1,7 +1,8 @@
-import type { BaseEditorProps, ChangeHandler } from '../base';
+import type { BaseEditorProps } from '../base';
+import type { ChangeHandler} from '@microsoft/logic-apps-shared';
 import { EditorWrapper } from '../base/EditorWrapper';
 import { EditorChangePlugin } from '../base/plugins/EditorChange';
-import type { ValueSegment } from '../models/parameter';
+import type { ValueSegmentUI } from '../models/parameter';
 import { useState } from 'react';
 
 export interface StringEditorProps extends BaseEditorProps {
@@ -18,7 +19,7 @@ export const StringEditor = ({
 }: StringEditorProps) => {
   const [value, setValue] = useState(initialValue);
 
-  const onValueChange = (newValue: ValueSegment[]): void => {
+  const onValueChange = (newValue: ValueSegmentUI[]): void => {
     setValue(newValue);
     onChange?.({ value: newValue, viewModel: { hideErrorMessage: true } });
   };

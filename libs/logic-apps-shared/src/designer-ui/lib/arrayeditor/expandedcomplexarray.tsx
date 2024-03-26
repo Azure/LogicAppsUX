@@ -1,11 +1,13 @@
-import type { ComboboxItem, ComplexArrayItems, TokenPickerButtonEditorProps, ValueSegment } from '..';
+import type { ComboboxItem, ComplexArrayItems, TokenPickerButtonEditorProps, ValueSegmentUI } from '..';
 import { Combobox, StringEditor } from '..';
 import constants from '../constants';
-import type { ChangeState, GetTokenPickerHandler } from '../editor/base';
+import type { GetTokenPickerHandler } from '../editor/base';
+
 import { ItemMenuButton } from './expandedsimplearray';
 import { hideComplexArray, type ItemSchemaItemProps } from './util/util';
 import type { IIconProps } from '@fluentui/react';
 import { Label, css, DefaultButton } from '@fluentui/react';
+import type { ChangeState} from '@microsoft/logic-apps-shared';
 import { guid } from '@microsoft/logic-apps-shared';
 import { useIntl } from 'react-intl';
 
@@ -24,8 +26,8 @@ export interface ExpandedComplexArrayProps {
   isNested?: boolean;
   options?: ComboboxItem[];
   getTokenPicker: GetTokenPickerHandler;
-  tokenMapping?: Record<string, ValueSegment>;
-  loadParameterValueFromString?: (value: string) => ValueSegment[];
+  tokenMapping?: Record<string, ValueSegmentUI>;
+  loadParameterValueFromString?: (value: string) => ValueSegmentUI[];
 }
 
 export const ExpandedComplexArray = ({

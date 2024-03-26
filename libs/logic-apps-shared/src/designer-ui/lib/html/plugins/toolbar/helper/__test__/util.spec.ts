@@ -9,7 +9,7 @@ import {
   isHtmlStringValueSafeForLexical,
   isTagNameSupportedByLexical,
 } from '../util';
-import type { ValueSegment } from '@microsoft/logic-apps-shared';
+import type { ValueSegmentUI } from '@microsoft/logic-apps-shared';
 
 describe('lib/html/plugins/toolbar/helper/util', () => {
   describe('cleanHtmlString', () => {
@@ -141,7 +141,7 @@ describe('lib/html/plugins/toolbar/helper/util', () => {
       ['large string using <a>, <u>, <h3>, <span>', true, case3],
       ['small string using <section>', false, case4],
     ])('should return %p as supported=%p', (_caseName, expected, inputString) => {
-      const nodeMap = new Map<string, ValueSegment>();
+      const nodeMap = new Map<string, ValueSegmentUI>();
       expect(isHtmlStringValueSafeForLexical(inputString, nodeMap)).toBe(expected);
     });
   });

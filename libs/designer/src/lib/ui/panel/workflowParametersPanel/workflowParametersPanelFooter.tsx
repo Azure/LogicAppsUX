@@ -1,6 +1,6 @@
 import { useMonitoringView, useReadOnly } from '../../../core/state/designerOptions/designerOptionsSelectors';
 import { HostService } from '@microsoft/logic-apps-shared';
-import { WorkflowParametersFooter } from '@microsoft/designer-ui';
+import { WorkflowParametersFooter } from '@microsoft/logic-apps-shared';
 
 export const WorkflowParametersPanelFooter = () => {
   const readOnly = useReadOnly();

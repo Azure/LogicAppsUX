@@ -4,7 +4,7 @@ import { shouldUseParameterInGroup } from '../../utils/parameters/helper';
 import type { ErrorInfo, NodeDependencies, NodeInputs } from './operationMetadataSlice';
 import { ErrorLevel } from './operationMetadataSlice';
 import type { NodeOutputs } from '@microsoft/logic-apps-shared';
-import type { ParameterInfo } from '@microsoft/designer-ui';
+import type { ParameterInfoUI } from '@microsoft/logic-apps-shared';
 import { getRecordEntry } from '@microsoft/logic-apps-shared';
 import { createSelector } from '@reduxjs/toolkit';
 import { useMemo } from 'react';
@@ -17,9 +17,9 @@ export const useOperationVisuals = (nodeId: string) =>
     createSelector(getOperationState, (state) => getRecordEntry(state.operationMetadata, nodeId) ?? { brandColor: '', iconUri: '' })
   );
 
-export const getOperationInputParameters = (rootState: RootState, nodeId: string): ParameterInfo[] => {
+export const getOperationInputParameters = (rootState: RootState, nodeId: string): ParameterInfoUI[] => {
   const nodeInputs = getRecordEntry(rootState.operations.inputParameters, nodeId);
-  const allParameters: ParameterInfo[] = [];
+  const allParameters: ParameterInfoUI[] = [];
 
   if (nodeInputs) {
     const { parameterGroups } = nodeInputs;
@@ -37,10 +37,10 @@ export const getOperationInputParameters = (rootState: RootState, nodeId: string
   return allParameters;
 };
 
-export const useOperationInputParameters = (nodeId: string): ParameterInfo[] => {
+export const useOperationInputParameters = (nodeId: string): ParameterInfoUI[] => {
   const nodeInputs = useSelector((rootState: RootState) => getRecordEntry(rootState.operations.inputParameters, nodeId));
   return useMemo(() => {
-    const allParameters: ParameterInfo[] = [];
+    const allParameters: ParameterInfoUI[] = [];
     if (nodeInputs) {
       const { parameterGroups } = nodeInputs;
       if (parameterGroups) {

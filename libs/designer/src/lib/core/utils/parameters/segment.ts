@@ -2,8 +2,8 @@ import { VariableBrandColor, FxIcon, ParameterIcon, VariableIcon } from './helpe
 import { JsonSplitter } from './jsonsplitter';
 import { TokenSegmentConvertor } from './tokensegment';
 import { UncastingUtility } from './uncast';
-import { TokenType, ValueSegmentType } from '@microsoft/designer-ui';
-import type { Token, ValueSegment } from '@microsoft/designer-ui';
+import { TokenType, ValueSegmentType } from '@microsoft/logic-apps-shared';
+import type { Token, ValueSegmentUI } from '@microsoft/logic-apps-shared';
 import type { Expression, ExpressionFunction, ExpressionLiteral } from '@microsoft/logic-apps-shared';
 import {
   ExpressionParser,
@@ -54,9 +54,9 @@ export class ValueSegmentConvertor {
   /**
    * Converts the value to value segments.
    * @arg {any} value - The value.
-   * @return {ValueSegment[]}
+   * @return {ValueSegmentUI[]}
    */
-  public convertToValueSegments(value: any): ValueSegment[] {
+  public convertToValueSegments(value: any): ValueSegmentUI[] {
     if (isNullOrUndefined(value)) {
       return [createLiteralValueSegment('')];
     } else if (typeof value === 'string') {
@@ -66,9 +66,9 @@ export class ValueSegmentConvertor {
     }
   }
 
-  private _convertJsonToValueSegments(json: string): ValueSegment[] {
+  private _convertJsonToValueSegments(json: string): ValueSegmentUI[] {
     const sections = new JsonSplitter(json).split();
-    const segments: ValueSegment[] = [];
+    const segments: ValueSegmentUI[] = [];
 
     for (const section of sections) {
       for (const segment of this._convertJsonSectionToSegments(section)) {
@@ -79,7 +79,7 @@ export class ValueSegmentConvertor {
     return segments;
   }
 
-  private _convertJsonSectionToSegments(section: string): ValueSegment[] {
+  private _convertJsonSectionToSegments(section: string): ValueSegmentUI[] {
     if (section.charAt(0) !== '"') {
       return [this._createLiteralValueSegment(section)];
     } else {
@@ -110,7 +110,7 @@ export class ValueSegmentConvertor {
     }
   }
 
-  private _convertStringToValueSegments(value: string): ValueSegment[] {
+  private _convertStringToValueSegments(value: string): ValueSegmentUI[] {
     if (isTemplateExpression(value)) {
       const expression = ExpressionParser.parseTemplateExpression(value);
       return this._convertTemplateExpressionToValueSegments(expression);
@@ -119,7 +119,7 @@ export class ValueSegmentConvertor {
     }
   }
 
-  private _convertTemplateExpressionToValueSegments(expression: Expression): ValueSegment[] {
+  private _convertTemplateExpressionToValueSegments(expression: Expression): ValueSegmentUI[] {
     if (isStringInterpolation(expression)) {
       const segments = [];
       for (const interpolatedExpression of expression.segments) {
@@ -142,7 +142,7 @@ export class ValueSegmentConvertor {
     }
   }
 
-  private _uncastAndConvertExpressionToValueSegments(expression: Expression): ValueSegment[] {
+  private _uncastAndConvertExpressionToValueSegments(expression: Expression): ValueSegmentUI[] {
     if (this._options.shouldUncast && isFunction(expression)) {
       return this._uncastAndConvertFunctionExpressionToValueSegments(expression);
     } else {
@@ -150,7 +150,7 @@ export class ValueSegmentConvertor {
     }
   }
 
-  private _uncastAndConvertFunctionExpressionToValueSegments(expression: ExpressionFunction): ValueSegment[] {
+  private _uncastAndConvertFunctionExpressionToValueSegments(expression: ExpressionFunction): ValueSegmentUI[] {
     const uncastResults = new UncastingUtility(expression).uncast();
     if (uncastResults) {
       return uncastResults.map((result) => {
@@ -167,7 +167,7 @@ export class ValueSegmentConvertor {
     return [this._convertFunctionExpressionToValueSegment(expression)];
   }
 
-  private _convertExpressionToValueSegment(expression: Expression): ValueSegment {
+  private _convertExpressionToValueSegment(expression: Expression): ValueSegmentUI {
     switch (expression.type) {
       case ExpressionType.Function:
         return this._convertFunctionExpressionToValueSegment(expression as ExpressionFunction);
@@ -185,7 +185,7 @@ export class ValueSegmentConvertor {
     }
   }
 
-  private _convertFunctionExpressionToValueSegment(expression: ExpressionFunction): ValueSegment {
+  private _convertFunctionExpressionToValueSegment(expression: ExpressionFunction): ValueSegmentUI {
     const dynamicContentTokenSegment = this._tokenSegmentConvertor.tryConvertToDynamicContentTokenSegment(expression);
     if (dynamicContentTokenSegment) {
       return dynamicContentTokenSegment;
@@ -199,11 +199,11 @@ export class ValueSegmentConvertor {
     }
   }
 
-  private _createLiteralValueSegment(value: string): ValueSegment {
+  private _createLiteralValueSegment(value: string): ValueSegmentUI {
     return createLiteralValueSegment(value);
   }
 
-  private _createExpressionTokenValueSegment(value: string, expression: Expression): ValueSegment {
+  private _createExpressionTokenValueSegment(value: string, expression: Expression): ValueSegmentUI {
     return createTokenValueSegment(createExpressionToken(expression), value);
   }
 }
@@ -230,29 +230,29 @@ export function isValueSegment(object: any): boolean {
 
 /**
  * Checks whether the segment is a literal value segment.
- * @arg {ValueSegment} segment - The value segment.
+ * @arg {ValueSegmentUI} segment - The value segment.
  * @return {boolean}
  */
-export function isLiteralValueSegment(segment: ValueSegment): boolean {
+export function isLiteralValueSegment(segment: ValueSegmentUI): boolean {
   return segment.type === ValueSegmentType.LITERAL;
 }
 
 /**
  * Checks whether the segment is a token value segment.
- * @arg {ValueSegment} segment - The value segment.
+ * @arg {ValueSegmentUI} segment - The value segment.
  * @return {boolean}
  */
-export function isTokenValueSegment(segment: ValueSegment): boolean {
+export function isTokenValueSegment(segment: ValueSegmentUI): boolean {
   return segment.type === ValueSegmentType.TOKEN;
 }
 
-export function isOutputTokenValueSegment(segment: ValueSegment): boolean {
+export function isOutputTokenValueSegment(segment: ValueSegmentUI): boolean {
   return (
     segment.type === ValueSegmentType.TOKEN && segment.token?.tokenType !== TokenType.FX && segment.token?.tokenType !== TokenType.PARAMETER
   );
 }
 
-export function isFunctionValueSegment(segment: ValueSegment): boolean {
+export function isFunctionValueSegment(segment: ValueSegmentUI): boolean {
   return segment.type === ValueSegmentType.TOKEN && segment.token?.tokenType === TokenType.FX;
 }
 
@@ -260,9 +260,9 @@ export function isFunctionValueSegment(segment: ValueSegment): boolean {
  * Creates a literal value segment.
  * @arg {string} value - The literal value.
  * @arg {string} [segmentId] - The segment id.
- * @return {ValueSegment}
+ * @return {ValueSegmentUI}
  */
-export function createLiteralValueSegment(value: string, segmentId?: string): ValueSegment {
+export function createLiteralValueSegment(value: string, segmentId?: string): ValueSegmentUI {
   return {
     id: segmentId ? segmentId : guid(),
     type: ValueSegmentType.LITERAL,
@@ -274,9 +274,9 @@ export function createLiteralValueSegment(value: string, segmentId?: string): Va
  * Creates a token value segment.
  * @arg {Token} token - The token.
  * @arg {string} [tokenFormat] - The token format.
- * @return {ValueSegment}
+ * @return {ValueSegmentUI}
  */
-export function createTokenValueSegment(token: Token, value: string, _tokenFormat?: string): ValueSegment {
+export function createTokenValueSegment(token: Token, value: string, _tokenFormat?: string): ValueSegmentUI {
   return {
     id: guid(),
     type: ValueSegmentType.TOKEN,
@@ -428,11 +428,11 @@ export function createParameterToken(parameterName: string): Token {
 
 /**
  * Gets expression value for given segment key in value segments.
- * @arg {ValueSegment[]} valueSegments - The value segments.
+ * @arg {ValueSegmentUI[]} valueSegments - The value segments.
  * @arg {string} segmentKey - The segment key to get the value from.
  * @return {string | undefined} - The value of the expression for segment key.
  */
-export function getExpressionFromValueSegment(valueSegments: ValueSegment[], segmentKey: string): string | undefined {
+export function getExpressionFromValueSegment(valueSegments: ValueSegmentUI[], segmentKey: string): string | undefined {
   if (!segmentKey) {
     return undefined;
   }

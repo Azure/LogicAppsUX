@@ -1,5 +1,5 @@
 import type { SimpleArrayItem, ComplexArrayItems, ArrayItemSchema } from '..';
-import type { ValueSegment } from '../../editor';
+import type { ValueSegmentUI } from '../../editor';
 import { serializeEditorState } from '../../editor/base/utils/editorToSegment';
 import { serializeSimpleArray, serializeComplexArray } from '../util/serializecollapsedarray';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
@@ -11,7 +11,7 @@ export interface CollapsedArrayValidationProps {
   isComplex: boolean;
   setIsValid: (b: boolean) => void;
   setItems: ((simpleItems: SimpleArrayItem[]) => void) | ((complexItems: ComplexArrayItems[]) => void);
-  setCollapsedValue: (val: ValueSegment[]) => void;
+  setCollapsedValue: (val: ValueSegmentUI[]) => void;
 }
 
 export const CollapsedArrayValidation = ({

@@ -7,7 +7,7 @@ import { createTokenValueSegment, isTokenValueSegment } from '../../utils/parame
 import { normalizeKey } from '../../utils/tokens';
 import { resetNodesLoadStatus, resetWorkflowState } from '../global';
 import { LogEntryLevel, LoggerService, getRecordEntry, type OpenAPIV2, type OperationInfo } from '@microsoft/logic-apps-shared';
-import type { ParameterInfo } from '@microsoft/designer-ui';
+import type { ParameterInfoUI } from '@microsoft/logic-apps-shared';
 import type { FilePickerInfo, InputParameter, OutputParameter, SwaggerParser } from '@microsoft/logic-apps-shared';
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
@@ -16,7 +16,7 @@ import type { WritableDraft } from 'immer/dist/internal';
 export interface ParameterGroup {
   id: string;
   description?: string;
-  parameters: ParameterInfo[];
+  parameters: ParameterInfoUI[];
   showAdvancedParameters?: boolean;
   hasAdvancedParameters?: boolean;
 }
@@ -178,7 +178,7 @@ interface UpdateExistingInputTokenTitlesPayload {
 interface AddDynamicInputsPayload {
   nodeId: string;
   groupId: string;
-  inputs: ParameterInfo[];
+  inputs: ParameterInfoUI[];
   newInputs: InputParameter[];
   swagger?: SwaggerParser;
 }
@@ -189,7 +189,7 @@ export interface UpdateParametersPayload {
   parameters: {
     groupId: string;
     parameterId: string;
-    propertiesToUpdate: Partial<ParameterInfo>;
+    propertiesToUpdate: Partial<ParameterInfoUI>;
   }[];
   isUserAction?: boolean;
 }

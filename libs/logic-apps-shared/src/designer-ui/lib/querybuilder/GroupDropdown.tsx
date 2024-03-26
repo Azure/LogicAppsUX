@@ -1,7 +1,7 @@
 import type { DropdownItem } from '../dropdown';
 import { DropdownEditor } from '../dropdown';
 import { ValueSegmentType } from '../editor';
-import type { ChangeHandler } from '../editor/base';
+import type { ChangeHandler} from '@microsoft/logic-apps-shared';
 import { guid } from '@microsoft/logic-apps-shared';
 
 export const GroupDropdownOptions = {

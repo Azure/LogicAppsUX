@@ -1,4 +1,4 @@
-import type { ValueSegment } from '../../editor';
+import type { ValueSegmentUI } from '../../editor';
 import { $isTokenNode, TokenNode } from '../../editor/base/nodes/tokenNode';
 import { CLOSE_TOKENPICKER } from '../../editor/base/plugins/CloseTokenPicker';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
@@ -9,7 +9,7 @@ import { useEffect } from 'react';
 export interface updateTokenProps {
   nodeKey: string;
   updatedValue: string;
-  updatedData: ValueSegment;
+  updatedData: ValueSegmentUI;
   updatedTitle: string;
 }
 

@@ -1,11 +1,11 @@
-import type { ValueSegment } from '../../editor';
+import type { ValueSegmentUI } from '../../editor';
 import { parseSegments } from '../../editor/base/utils/parsesegments';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { useUpdateEffect } from '@react-hookz/web';
 import { CLEAR_EDITOR_COMMAND } from 'lexical';
 
 interface ChangeProps {
-  pickerDisplayValue: ValueSegment[];
+  pickerDisplayValue: ValueSegmentUI[];
 }
 
 export const UpdateEditorFromFilePicker = ({ pickerDisplayValue }: ChangeProps) => {

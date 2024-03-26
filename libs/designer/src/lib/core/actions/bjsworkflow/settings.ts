@@ -3,7 +3,7 @@ import type { NodeOperation, NodeOutputs } from '../../state/operation/operation
 import { WorkflowKind } from '../../state/workflow/workflowInterfaces';
 import { getSplitOnOptions } from '../../utils/outputs';
 import { getTokenExpressionValue } from '../../utils/parameters/helper';
-import { TokenType } from '@microsoft/designer-ui';
+import { TokenType } from '@microsoft/logic-apps-shared';
 import type {
   SwaggerParser,
   DownloadChunkMetadata,

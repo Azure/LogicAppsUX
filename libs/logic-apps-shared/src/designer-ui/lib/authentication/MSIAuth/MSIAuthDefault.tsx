@@ -1,11 +1,12 @@
 import type { MSIProps } from '..';
-import type { ValueSegment } from '../../editor';
-import type { ChangeHandler, GetTokenPickerHandler } from '../../editor/base';
+import type { ValueSegmentUI } from '../../editor';
+import type { GetTokenPickerHandler } from '../../editor/base';
 import type { TokenPickerButtonEditorProps } from '../../editor/base/plugins/tokenpickerbutton';
 import { AuthenticationDropdown } from '../AuthenticationDropdown';
 import { AuthenticationProperty } from '../AuthenticationProperty';
 import { AUTHENTICATION_PROPERTIES } from '../util';
 import type { IDropdownOption } from '@fluentui/react';
+import type { ChangeHandler} from '@microsoft/logic-apps-shared';
 import { ResourceIdentityType } from '@microsoft/logic-apps-shared';
 import { useIntl } from 'react-intl';
 
@@ -16,8 +17,8 @@ interface MSIAuthenticationDefaultProps {
   onManagedIdentityChange(event: React.FormEvent<HTMLDivElement>, item: IDropdownOption): void;
   onBlur: ChangeHandler;
   getTokenPicker: GetTokenPickerHandler;
-  tokenMapping?: Record<string, ValueSegment>;
-  loadParameterValueFromString?: (value: string) => ValueSegment[];
+  tokenMapping?: Record<string, ValueSegmentUI>;
+  loadParameterValueFromString?: (value: string) => ValueSegmentUI[];
 }
 
 export const MSIAuthenticationDefault = ({

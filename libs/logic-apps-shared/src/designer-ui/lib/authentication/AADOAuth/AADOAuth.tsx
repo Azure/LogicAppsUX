@@ -1,6 +1,7 @@
 import type { AuthProps, OAuthProps } from '..';
-import type { ValueSegment } from '../../editor';
-import type { ChangeState, GetTokenPickerHandler } from '../../editor/base';
+import type { ValueSegmentUI } from '../../editor';
+import type { GetTokenPickerHandler } from '../../editor/base';
+import type { ChangeState} from '@microsoft/logic-apps-shared';
 import type { TokenPickerButtonEditorProps } from '../../editor/base/plugins/tokenpickerbutton';
 import { AuthenticationDropdown } from '../AuthenticationDropdown';
 import { AuthenticationProperty } from '../AuthenticationProperty';
@@ -23,8 +24,8 @@ interface ActiveDirectoryAuthenticationProps {
   tokenPickerButtonProps?: TokenPickerButtonEditorProps;
   setCurrentProps: Dispatch<SetStateAction<AuthProps>>;
   getTokenPicker: GetTokenPickerHandler;
-  tokenMapping?: Record<string, ValueSegment>;
-  loadParameterValueFromString?: (value: string) => ValueSegment[];
+  tokenMapping?: Record<string, ValueSegmentUI>;
+  loadParameterValueFromString?: (value: string) => ValueSegmentUI[];
 }
 
 export const ActiveDirectoryAuthentication = ({

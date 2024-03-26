@@ -1,8 +1,9 @@
-import type { BaseEditorProps, ChangeHandler } from '../editor/base';
+import type { BaseEditorProps} from '../editor/base';
+import type { ChangeHandler} from '@microsoft/logic-apps-shared';
 import { EditorWrapper } from '../editor/base/EditorWrapper';
 import { TokenPickerButtonLocation } from '../editor/base/plugins/tokenpickerbutton';
 import { notEqual } from '../editor/base/utils/helper';
-import type { ValueSegment } from '../editor/models/parameter';
+import type { ValueSegmentUI } from '../editor/models/parameter';
 import { ValueSegmentType } from '../editor/models/parameter';
 import { Picker } from './picker';
 import { PickerItemType } from './pickerItem';
@@ -54,8 +55,8 @@ export const FilePickerEditor = ({
   const intl = useIntl();
   const [selectedItem, setSelectedItem] = useState<any>();
   const initialDisplayValue = displayValue ? [{ id: guid(), value: displayValue, type: ValueSegmentType.LITERAL }] : initialValue;
-  const [editorDisplayValue, setEditorDisplayValue] = useState<ValueSegment[]>(initialDisplayValue);
-  const [pickerDisplayValue, setPickerDisplayValue] = useState<ValueSegment[]>(initialDisplayValue);
+  const [editorDisplayValue, setEditorDisplayValue] = useState<ValueSegmentUI[]>(initialDisplayValue);
+  const [pickerDisplayValue, setPickerDisplayValue] = useState<ValueSegmentUI[]>(initialDisplayValue);
   const [showPicker, setShowPicker] = useState(false);
 
   const { onFolderNavigation, getFileSourceName, getDisplayValueFromSelectedItem, getValueFromSelectedItem } = pickerCallbacks;
@@ -95,7 +96,7 @@ export const FilePickerEditor = ({
 
   const handleBlur = () => {
     if (selectedItem) {
-      const valueSegmentValue: ValueSegment[] = [
+      const valueSegmentValue: ValueSegmentUI[] = [
         { id: guid(), type: ValueSegmentType.LITERAL, value: getValueFromSelectedItem(selectedItem) },
       ];
 

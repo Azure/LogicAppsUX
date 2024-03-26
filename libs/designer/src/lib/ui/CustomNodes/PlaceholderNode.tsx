@@ -3,7 +3,7 @@ import type { AppDispatch } from '../../core';
 import { useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
 import { useIsNodeSelected } from '../../core/state/panel/panelSelectors';
 import { expandDiscoveryPanel } from '../../core/state/panel/panelSlice';
-import { AddActionCard, ADD_CARD_TYPE, NoActionCard } from '@microsoft/designer-ui';
+import { AddActionCard, ADD_CARD_TYPE, NoActionCard } from '@microsoft/logic-apps-shared';
 import { guid } from '@microsoft/logic-apps-shared';
 import { memo, useCallback } from 'react';
 import { useDispatch } from 'react-redux';

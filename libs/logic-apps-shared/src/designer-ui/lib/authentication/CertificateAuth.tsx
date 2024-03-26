@@ -1,6 +1,8 @@
 import type { AuthProps, ClientCertificateProps } from '.';
-import type { ValueSegment } from '../editor';
-import type { ChangeState, GetTokenPickerHandler } from '../editor/base';
+import type { ValueSegmentUI } from '../editor';
+import type { GetTokenPickerHandler } from '../editor/base';
+import type { ChangeState} from '@microsoft/logic-apps-shared';
+
 import type { TokenPickerButtonEditorProps } from '../editor/base/plugins/tokenpickerbutton';
 import { AuthenticationProperty } from './AuthenticationProperty';
 import { AUTHENTICATION_PROPERTIES } from './util';
@@ -13,8 +15,8 @@ interface CertificateAuthenticationProps {
   tokenPickerButtonProps?: TokenPickerButtonEditorProps;
   setCurrentProps: Dispatch<SetStateAction<AuthProps>>;
   getTokenPicker: GetTokenPickerHandler;
-  tokenMapping?: Record<string, ValueSegment>;
-  loadParameterValueFromString?: (value: string) => ValueSegment[];
+  tokenMapping?: Record<string, ValueSegmentUI>;
+  loadParameterValueFromString?: (value: string) => ValueSegmentUI[];
 }
 
 export const CertificateAuthentication = ({

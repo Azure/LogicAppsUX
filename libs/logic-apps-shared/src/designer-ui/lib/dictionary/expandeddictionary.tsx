@@ -1,5 +1,6 @@
 import type { DictionaryEditorItemProps } from '.';
-import type { ChangeState, TokenPickerButtonEditorProps, ValueSegment } from '..';
+import type {  TokenPickerButtonEditorProps, ValueSegmentUI } from '..';
+import type { ChangeState} from '@microsoft/logic-apps-shared';
 import type { GetTokenPickerHandler } from '../editor/base';
 import { isEmptySegments } from '../editor/base/utils/parsesegments';
 import { StringEditor } from '../editor/string';
@@ -24,8 +25,8 @@ export interface ExpandedDictionaryProps {
   setItems: (items: DictionaryEditorItemProps[]) => void;
   tokenPickerButtonProps?: TokenPickerButtonEditorProps;
   getTokenPicker: GetTokenPickerHandler;
-  tokenMapping?: Record<string, ValueSegment>;
-  loadParameterValueFromString?: (value: string) => ValueSegment[];
+  tokenMapping?: Record<string, ValueSegmentUI>;
+  loadParameterValueFromString?: (value: string) => ValueSegmentUI[];
 }
 
 export const ExpandedDictionary = ({

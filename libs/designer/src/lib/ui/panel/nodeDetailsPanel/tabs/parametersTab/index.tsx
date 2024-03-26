@@ -49,8 +49,8 @@ import {
   TokenPickerButtonLocation,
   TokenType,
   toCustomEditorAndOptions,
-} from '@microsoft/designer-ui';
-import type { ChangeState, ParameterInfo, ValueSegment, OutputToken, TokenPickerMode, PanelTabFn } from '@microsoft/designer-ui';
+} from '@microsoft/logic-apps-shared';
+import type { ChangeState, ParameterInfoUI, ValueSegmentUI, OutputToken, TokenPickerMode, PanelTabFn } from '@microsoft/logic-apps-shared';
 import type { OperationInfo } from '@microsoft/logic-apps-shared';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -200,14 +200,14 @@ const ParameterSection = ({
 
   const { suppressCastingForSerialize, hideUTFExpressions } = useHostOptions();
 
-  const [tokenMapping, setTokenMapping] = useState<Record<string, ValueSegment>>({});
+  const [tokenMapping, setTokenMapping] = useState<Record<string, ValueSegmentUI>>({});
 
   const onValueChange = useCallback(
     (id: string, newState: ChangeState) => {
       const { value, viewModel } = newState;
       const parameter = nodeInputs.parameterGroups[group.id].parameters.find((param: any) => param.id === id);
 
-      const propertiesToUpdate = { value, preservedValue: undefined } as Partial<ParameterInfo>;
+      const propertiesToUpdate = { value, preservedValue: undefined } as Partial<ParameterInfoUI>;
 
       if (viewModel !== undefined) {
         propertiesToUpdate.editorViewModel = viewModel;
@@ -253,7 +253,7 @@ const ParameterSection = ({
     ]
   );
 
-  const onComboboxMenuOpen = (parameter: ParameterInfo): void => {
+  const onComboboxMenuOpen = (parameter: ParameterInfoUI): void => {
     if (parameter.dynamicData?.status === DynamicCallStatus.FAILED || parameter.dynamicData?.status === DynamicCallStatus.NOTSTARTED) {
       loadDynamicValuesForParameter(
         nodeId,
@@ -271,7 +271,7 @@ const ParameterSection = ({
     }
   };
 
-  const getPickerCallbacks = (parameter: ParameterInfo) => ({
+  const getPickerCallbacks = (parameter: ParameterInfoUI) => ({
     getFileSourceName: (): string => {
       return displayNameResult.result;
     },
@@ -307,7 +307,7 @@ const ParameterSection = ({
       token: OutputToken,
       addImplicitForeachIfNeeded: boolean,
       addLatestActionName: boolean
-    ): Promise<ValueSegment> => {
+    ): Promise<ValueSegmentUI> => {
       return createValueSegmentFromToken(nodeId, parameterId, token, addImplicitForeachIfNeeded, addLatestActionName, rootState, dispatch);
     },
     [dispatch, nodeId, rootState]
@@ -320,7 +320,7 @@ const ParameterSection = ({
     tokenPickerMode?: TokenPickerMode,
     editorType?: string,
     isCodeEditor?: boolean,
-    tokenClickedCallback?: (token: ValueSegment) => void
+    tokenClickedCallback?: (token: ValueSegmentUI) => void
   ): JSX.Element => {
     const parameterType =
       editorType ??
@@ -365,7 +365,7 @@ const ParameterSection = ({
 
   useEffect(() => {
     const callback = async () => {
-      const mapping: Record<string, ValueSegment> = {};
+      const mapping: Record<string, ValueSegmentUI> = {};
       for (const group of tokenGroup) {
         for (const token of group.tokens) {
           if (!token.value) {
@@ -421,9 +421,9 @@ const ParameterSection = ({
             location: panelLocation === PanelLocation.Left ? TokenPickerButtonLocation.Right : TokenPickerButtonLocation.Left,
           },
           suppressCastingForSerialize: suppressCastingForSerialize ?? false,
-          onCastParameter: (value: ValueSegment[], type?: string, format?: string, suppressCasting?: boolean) =>
+          onCastParameter: (value: ValueSegmentUI[], type?: string, format?: string, suppressCasting?: boolean) =>
             parameterValueToString(
-              { value, type: type ?? 'string', info: { format }, suppressCasting } as ParameterInfo,
+              { value, type: type ?? 'string', info: { format }, suppressCasting } as ParameterInfoUI,
               false,
               idReplacements
             ) ?? '',
@@ -432,7 +432,7 @@ const ParameterSection = ({
             labelId: string,
             tokenPickerMode?: TokenPickerMode,
             editorType?: string,
-            tokenClickedCallback?: (token: ValueSegment) => void
+            tokenClickedCallback?: (token: ValueSegmentUI) => void
           ) =>
             getTokenPicker(
               id,
@@ -463,7 +463,7 @@ const ParameterSection = ({
 
 export const getEditorAndOptions = (
   operationInfo: OperationInfo,
-  parameter: ParameterInfo,
+  parameter: ParameterInfoUI,
   upstreamNodeIds: string[],
   variables: Record<string, VariableDeclaration[]>
 ): { editor?: string; editorOptions?: any } => {

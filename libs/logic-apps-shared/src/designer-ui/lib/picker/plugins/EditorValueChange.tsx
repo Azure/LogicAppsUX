@@ -1,12 +1,12 @@
-import type { ValueSegment } from '../../editor';
+import type { ValueSegmentUI } from '../../editor';
 import { serializeEditorState } from '../../editor/base/utils/editorToSegment';
 import { notEqual } from '../../editor/base/utils/helper';
 import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
 import type { EditorState } from 'lexical';
 
 interface ChangeProps {
-  pickerDisplayValue: ValueSegment[];
-  setEditorDisplayValue: (newVal: ValueSegment[]) => void;
+  pickerDisplayValue: ValueSegmentUI[];
+  setEditorDisplayValue: (newVal: ValueSegmentUI[]) => void;
   clearPickerInfo: () => void;
 }
 

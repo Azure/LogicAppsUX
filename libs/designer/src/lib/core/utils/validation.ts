@@ -4,10 +4,10 @@ import { isParameterRequired, parameterValueToJSONString, recurseSerializeCondit
 import { isTokenValueSegment } from './parameters/segment';
 import {
   type FloatingActionMenuOutputViewModel,
-  type ParameterInfo,
-  type ValueSegment,
+  type ParameterInfoUI,
+  type ValueSegmentUI,
   FloatingActionMenuKind,
-} from '@microsoft/designer-ui';
+} from '@microsoft/logic-apps-shared';
 import {
   getIntl,
   ExpressionParser,
@@ -39,13 +39,13 @@ const regex = {
 
 /**
  * Checks that the entered expression meets requirements for the parameter specified by its type, format, and pattern
- * @arg {ParameterInfo} parameterMetadata - The metadata of the parameter as described by its swagger
+ * @arg {ParameterInfoUI} parameterMetadata - The metadata of the parameter as described by its swagger
  * @arg {string} parameterValue - The current value of the expression entered for the parameter
  * @arg {string} shouldValidateUnknownParameterAsError - Flag indicating whether to consider unknown parameters as errors
  * @return {string[]} - An array of strings with validation error messages, if there are any
  */
 export function validateStaticParameterInfo(
-  parameterMetadata: ParameterInfo,
+  parameterMetadata: ParameterInfoUI,
   parameterValue: string,
   shouldValidateUnknownParameterAsError: boolean
 ): string[] {
@@ -324,11 +324,11 @@ function validateStringFormat(parameterFormat: string, parameterValue: string, i
 }
 
 /**
- * @arg {ParameterInfo} parameterMetadata - An object with metadata describing a parameter
- * @arg {ValueSegment[]} parameterValue - An array of valuesegments from a parameter value to validate
+ * @arg {ParameterInfoUI} parameterMetadata - An object with metadata describing a parameter
+ * @arg {ValueSegmentUI[]} parameterValue - An array of valuesegments from a parameter value to validate
  * @return {string[]} - An array of validation error messages, if there are any
  */
-export function validateJSONParameter(parameterMetadata: ParameterInfo, parameterValue: ValueSegment[]): string[] {
+export function validateJSONParameter(parameterMetadata: ParameterInfoUI, parameterValue: ValueSegmentUI[]): string[] {
   const intl = getIntl();
   const { editor, editorOptions } = parameterMetadata;
   const isConditionEditor = editor === Constants.EDITOR.CONDITION && !editorOptions?.isOldFormat;
@@ -408,7 +408,7 @@ const validateFloatingActionMenuOutputsEditor = (editorViewModel: FloatingAction
   }
 };
 
-function shouldValidateJSON(expressions: ValueSegment[]): boolean {
+function shouldValidateJSON(expressions: ValueSegmentUI[]): boolean {
   const shouldValidate = true;
 
   if (shouldValidate && expressions.length) {
@@ -421,17 +421,17 @@ function shouldValidateJSON(expressions: ValueSegment[]): boolean {
   return shouldValidate;
 }
 
-export function parameterHasOnlyTokenBinding(parameterValue: ValueSegment[]): boolean {
+export function parameterHasOnlyTokenBinding(parameterValue: ValueSegmentUI[]): boolean {
   const trimmedValue = trimParameterValue(parameterValue);
   return trimmedValue.length === 1 && isTokenValueSegment(trimmedValue[0]);
 }
 
 /**
  * Removes empty segments that are part of a parameter value, which might exist between tokens or at the end of the value.
- * @arg {ValueSegment[]} value - The parameter value.
- * @return {ValueSegment[]} - The trimmed value.
+ * @arg {ValueSegmentUI[]} value - The parameter value.
+ * @return {ValueSegmentUI[]} - The trimmed value.
  */
-export function trimParameterValue(value: ValueSegment[]): ValueSegment[] {
+export function trimParameterValue(value: ValueSegmentUI[]): ValueSegmentUI[] {
   return (value || []).filter((segment) => segment.token?.value !== '');
 }
 

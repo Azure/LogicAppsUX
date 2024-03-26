@@ -19,7 +19,7 @@ import {
 // import AddNodeIcon from './edgeContextMenuSvgs/addNodeIcon.svg';
 import { css } from '@fluentui/utilities';
 import { LogEntryLevel, LoggerService, containsIdTag, guid, normalizeAutomationId, removeIdTag } from '@microsoft/logic-apps-shared';
-import { ActionButtonV2, convertUIElementNameToAutomationId } from '@microsoft/designer-ui';
+import { ActionButtonV2, convertUIElementNameToAutomationId } from '@microsoft/logic-apps-shared';
 import { useCallback, useMemo, useState } from 'react';
 import { useDrop } from 'react-dnd';
 import { useIntl } from 'react-intl';

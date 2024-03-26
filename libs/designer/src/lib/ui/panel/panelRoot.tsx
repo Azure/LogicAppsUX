@@ -17,8 +17,8 @@ import { WorkflowParametersPanelFooter } from './workflowParametersPanel/workflo
 import { Panel, PanelType } from '@fluentui/react';
 import { Spinner } from '@fluentui/react-components';
 import { isUndefined } from '@microsoft/applicationinsights-core-js';
-import type { CommonPanelProps, CustomPanelLocation } from '@microsoft/designer-ui';
-import { PanelLocation, PanelSize } from '@microsoft/designer-ui';
+import type { CommonPanelProps, CustomPanelLocation } from '@microsoft/logic-apps-shared';
+import { PanelLocation, PanelSize } from '@microsoft/logic-apps-shared';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 

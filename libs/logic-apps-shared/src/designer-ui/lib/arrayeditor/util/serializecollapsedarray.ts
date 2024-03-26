@@ -1,5 +1,5 @@
 import type { ArrayItemSchema, ComplexArrayItems, SimpleArrayItem } from '..';
-import type { ValueSegment } from '../../editor';
+import type { ValueSegmentUI } from '../../editor';
 import { ValueSegmentType } from '../../editor';
 import type { CastHandler } from '../../editor/base';
 import { convertStringToSegments } from '../../editor/base/utils/editorToSegment';
@@ -19,7 +19,7 @@ export const serializeSimpleArray = (
   setIsValid: (b: boolean) => void
 ) => {
   editor.getEditorState().read(() => {
-    const nodeMap = new Map<string, ValueSegment>();
+    const nodeMap = new Map<string, ValueSegmentUI>();
     const editorString = getChildrenNodes($getRoot(), nodeMap);
     validationAndSerializeSimpleArray(editorString, nodeMap, valueType, setItems, setIsValid);
   });
@@ -32,7 +32,7 @@ export const serializeComplexArray = (
   setIsValid: (b: boolean) => void
 ) => {
   editor.getEditorState().read(() => {
-    const nodeMap = new Map<string, ValueSegment>();
+    const nodeMap = new Map<string, ValueSegmentUI>();
     const editorString = getChildrenNodes($getRoot(), nodeMap);
     validationAndSerializeComplexArray(editorString, nodeMap, itemSchema, setItems, setIsValid, undefined);
   });
@@ -42,13 +42,13 @@ export const parseSimpleItems = (
   items: SimpleArrayItem[],
   itemSchema: ArrayItemSchema,
   castParameter: CastHandler
-): { castedValue: ValueSegment[]; uncastedValue: ValueSegment[] } => {
+): { castedValue: ValueSegmentUI[]; uncastedValue: ValueSegmentUI[] } => {
   if (items.length === 0) {
     return { castedValue: emptyArrayValue, uncastedValue: emptyArrayValue };
   }
   const { type, format } = itemSchema;
-  const castedArraySegments: ValueSegment[] = [];
-  const uncastedArraySegments: ValueSegment[] = [];
+  const castedArraySegments: ValueSegmentUI[] = [];
+  const uncastedArraySegments: ValueSegmentUI[] = [];
   castedArraySegments.push({ id: guid(), type: ValueSegmentType.LITERAL, value: '[\n  ' });
   uncastedArraySegments.push({ id: guid(), type: ValueSegmentType.LITERAL, value: '[\n  ' });
   items.forEach((item, index) => {
@@ -70,7 +70,7 @@ export const parseSimpleItems = (
 
   // Beautify ValueSegment
   try {
-    const nodeMap = new Map<string, ValueSegment>();
+    const nodeMap = new Map<string, ValueSegmentUI>();
     const stringValueCasted = prettifyJsonString(convertSegmentsToString(castedArraySegments, nodeMap));
     const stringValueUncasted = prettifyJsonString(convertSegmentsToString(uncastedArraySegments, nodeMap));
     return {
@@ -87,13 +87,13 @@ export const parseComplexItems = (
   itemSchema: ArrayItemSchema,
   castParameter: CastHandler,
   suppressCastingForSerialize?: boolean
-): { castedValue: ValueSegment[]; uncastedValue: ValueSegment[] } => {
+): { castedValue: ValueSegmentUI[]; uncastedValue: ValueSegmentUI[] } => {
   if (allItems.length === 0) {
     return { castedValue: emptyArrayValue, uncastedValue: emptyArrayValue };
   }
   const castedArrayVal: any = [];
   const uncastedArrayVal: any = [];
-  const nodeMap = new Map<string, ValueSegment>();
+  const nodeMap = new Map<string, ValueSegmentUI>();
   allItems.forEach((currItem) => {
     const { items } = currItem;
     castedArrayVal.push(

@@ -1,6 +1,6 @@
-import type { ValueSegment } from '../editor';
+import type { ValueSegmentUI } from '../editor';
 import { ValueSegmentType } from '../editor';
-import type { ChangeHandler } from '../editor/base';
+import type { ChangeHandler} from '@microsoft/logic-apps-shared';
 import type { IDropdownOption, IDropdownStyles } from '@fluentui/react';
 import { SelectableOptionMenuItemType, Dropdown } from '@fluentui/react';
 import { guid } from '@microsoft/logic-apps-shared';
@@ -13,7 +13,7 @@ interface SerializationOptions {
 }
 
 interface DropdownEditorProps {
-  initialValue: ValueSegment[];
+  initialValue: ValueSegmentUI[];
   options: DropdownItem[];
   multiSelect?: boolean;
   serialization?: SerializationOptions;
@@ -133,7 +133,7 @@ const getOptions = (options: DropdownItem[]): IDropdownOption[] => {
   ];
 };
 
-const getSelectedKey = (options: DropdownItem[], initialValue?: ValueSegment[]): string => {
+const getSelectedKey = (options: DropdownItem[], initialValue?: ValueSegmentUI[]): string => {
   if (initialValue?.length === 1 && initialValue[0].type === ValueSegmentType.LITERAL) {
     return (
       options.find((option) => {
@@ -144,7 +144,7 @@ const getSelectedKey = (options: DropdownItem[], initialValue?: ValueSegment[]):
   return '';
 };
 
-const getSelectedKeys = (options: DropdownItem[], initialValue?: ValueSegment[], serialization?: SerializationOptions): string[] => {
+const getSelectedKeys = (options: DropdownItem[], initialValue?: ValueSegmentUI[], serialization?: SerializationOptions): string[] => {
   const returnVal: string[] = [];
   if (initialValue?.length === 1 && initialValue[0].type === ValueSegmentType.LITERAL) {
     const value = initialValue[0].value;

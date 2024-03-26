@@ -4,8 +4,8 @@ import {
   useWorkflowParameters,
   useWorkflowParameterValidationErrors,
 } from '../../../core/state/workflowparameters/workflowparametersselector';
-import type { CommonPanelProps, WorkflowParameterUpdateEvent } from '@microsoft/designer-ui';
-import { WorkflowParameters } from '@microsoft/designer-ui';
+import type { CommonPanelProps, WorkflowParameterUpdateEvent } from '@microsoft/logic-apps-shared';
+import { WorkflowParameters } from '@microsoft/logic-apps-shared';
 import { useDispatch } from 'react-redux';
 
 export const WorkflowParametersPanel = (props: CommonPanelProps) => {

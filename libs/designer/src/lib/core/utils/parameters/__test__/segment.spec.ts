@@ -1,14 +1,14 @@
 import { ParameterIcon, VariableIcon } from '../helper';
 import { ValueSegmentConvertor } from '../segment';
-import type { ValueSegment } from '@microsoft/designer-ui';
-import { TokenType, ValueSegmentType } from '@microsoft/designer-ui';
+import type { ValueSegmentUI } from '@microsoft/logic-apps-shared';
+import { TokenType, ValueSegmentType } from '@microsoft/logic-apps-shared';
 import { convertToStringLiteral, OutputSource } from '@microsoft/logic-apps-shared';
 
 describe('core/utils/parameters/segment', () => {
   describe('ValueSegmentConvertor', () => {
     it('should convert primatives to token segment successfully.', () => {
       const convertor = new ValueSegmentConvertor();
-      let segments: ValueSegment[];
+      let segments: ValueSegmentUI[];
 
       segments = convertor.convertToValueSegments(null);
       expect(segments.length).toEqual(1);
@@ -37,7 +37,7 @@ describe('core/utils/parameters/segment', () => {
 
     it('should convert template expression to token segment successfully.', () => {
       const convertor = new ValueSegmentConvertor();
-      let segments: ValueSegment[];
+      let segments: ValueSegmentUI[];
 
       segments = convertor.convertToValueSegments("@actionBody('a').foo");
       expect(segments.length).toEqual(1);
@@ -212,7 +212,7 @@ describe('core/utils/parameters/segment', () => {
   });
 });
 
-export function expectLiteralSegment(segment: ValueSegment | undefined | null, value: string): void {
+export function expectLiteralSegment(segment: ValueSegmentUI | undefined | null, value: string): void {
   expect(segment).toBeDefined();
   expect(segment).not.toBeNull();
   expect(segment?.type).toEqual(ValueSegmentType.LITERAL);
@@ -220,7 +220,7 @@ export function expectLiteralSegment(segment: ValueSegment | undefined | null, v
 }
 
 export function expectOutputTokenSegment(
-  segment: ValueSegment | undefined | null,
+  segment: ValueSegmentUI | undefined | null,
   actionName: string | undefined,
   source: string,
   name: string,
@@ -245,7 +245,7 @@ export function expectOutputTokenSegment(
   expect(segment?.token).toMatchObject(matchingObject);
 }
 
-export function expectExpressionTokenSegment(segment: ValueSegment | undefined | null, value: string): void {
+export function expectExpressionTokenSegment(segment: ValueSegmentUI | undefined | null, value: string): void {
   expect(segment).toBeDefined();
   expect(segment).not.toBeNull();
   expect(segment?.type).toEqual(ValueSegmentType.TOKEN);
@@ -253,7 +253,7 @@ export function expectExpressionTokenSegment(segment: ValueSegment | undefined |
   expect(segment?.value).toEqual(value);
 }
 
-export function expectVariableTokenSegment(segment: ValueSegment | undefined | null, variableName: string, value: string): void {
+export function expectVariableTokenSegment(segment: ValueSegmentUI | undefined | null, variableName: string, value: string): void {
   expect(segment).toBeDefined();
   expect(segment).not.toBeNull();
   expect(segment?.type).toEqual(ValueSegmentType.TOKEN);
@@ -270,7 +270,7 @@ export function expectVariableTokenSegment(segment: ValueSegment | undefined | n
   });
 }
 
-export function expectParameterTokenSegment(segment: ValueSegment | undefined | null, parameterName: string, value?: string): void {
+export function expectParameterTokenSegment(segment: ValueSegmentUI | undefined | null, parameterName: string, value?: string): void {
   expect(segment).toBeDefined();
   expect(segment).not.toBeNull();
   expect(segment?.type).toEqual(ValueSegmentType.TOKEN);

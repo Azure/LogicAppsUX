@@ -1,6 +1,6 @@
 import { type RootState } from '../../../../core';
 import type { ErrorMessage } from '../../../../core/state/workflow/workflowInterfaces';
-import { MessageLevel } from '@microsoft/designer-ui';
+import { MessageLevel } from '@microsoft/logic-apps-shared';
 import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 

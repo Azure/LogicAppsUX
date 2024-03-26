@@ -1,7 +1,7 @@
 import constants from '../constants';
-import type { ValueSegment } from '../editor';
+import type { ValueSegmentUI } from '../editor';
 import { ValueSegmentType } from '../editor';
-import type { ChangeHandler } from '../editor/base';
+import type { ChangeHandler} from '@microsoft/logic-apps-shared';
 import { DropdownControl, DropdownType } from './dropdownControl';
 import { Preview } from './preview';
 import { MinuteTextInput, TextInput } from './textInput';
@@ -33,7 +33,7 @@ export interface RecurrenceConfiguration {
 
 interface ScheduleEditorProps {
   type?: RecurrenceType;
-  initialValue: ValueSegment[];
+  initialValue: ValueSegmentUI[];
   onChange?: ChangeHandler;
   readOnly?: boolean;
   showPreview?: boolean;

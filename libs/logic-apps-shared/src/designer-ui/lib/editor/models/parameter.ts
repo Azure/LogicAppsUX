@@ -7,7 +7,7 @@ import type {
   OpenAPIV2,
 } from '@microsoft/logic-apps-shared';
 
-export interface ParameterInfo {
+export interface ParameterInfoUI {
   alternativeKey?: string;
   conditionalVisibility?: boolean;
   dynamicData?: {
@@ -33,7 +33,7 @@ export interface ParameterInfo {
   suppressCasting?: boolean;
   type: string;
   validationErrors?: string[];
-  value: ValueSegment[];
+  value: ValueSegmentUI[];
   visibility?: string;
 }
 
@@ -60,7 +60,7 @@ export const DynamicCallStatus = {
 } as const;
 export type DynamicCallStatus = (typeof DynamicCallStatus)[keyof typeof DynamicCallStatus];
 
-export interface ValueSegment {
+export interface ValueSegmentUI {
   id: string;
   type: ValueSegmentType;
   value: string;

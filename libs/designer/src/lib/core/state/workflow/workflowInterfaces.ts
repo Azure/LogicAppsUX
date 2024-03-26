@@ -1,5 +1,5 @@
 import type { WorkflowNode } from '../../parsers/models/workflowNode';
-import type { MessageLevel } from '@microsoft/designer-ui';
+import type { MessageLevel } from '@microsoft/logic-apps-shared';
 import type { LogicAppsV2, SubgraphType } from '@microsoft/logic-apps-shared';
 
 export type SpecTypes = 'BJS' | 'CNCF';

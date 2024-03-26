@@ -1,5 +1,5 @@
 import constants from '../constants';
-import type { ValueSegment } from '../editor';
+import type { ValueSegmentUI } from '../editor';
 import { EditorCollapseToggle } from '../editor';
 import type { BaseEditorProps } from '../editor/base';
 import { convertKeyValueItemToSegments } from '../editor/base/utils/keyvalueitem';
@@ -16,8 +16,8 @@ export const DictionaryType = {
 export type DictionaryType = (typeof DictionaryType)[keyof typeof DictionaryType];
 export interface DictionaryEditorItemProps {
   id: string;
-  key: ValueSegment[];
-  value: ValueSegment[];
+  key: ValueSegmentUI[];
+  value: ValueSegmentUI[];
 }
 
 export interface DictionaryEditorProps extends BaseEditorProps {
@@ -45,7 +45,7 @@ export const DictionaryEditor: React.FC<DictionaryEditorProps> = ({
   const intl = useIntl();
   const [collapsed, setCollapsed] = useState(!initialItems ?? false);
   const [items, setItems] = useState(initialItems);
-  const [collapsedValue, setCollapsedValue] = useState<ValueSegment[]>(initialValue);
+  const [collapsedValue, setCollapsedValue] = useState<ValueSegmentUI[]>(initialValue);
   const [isValid, setIsValid] = useState(false);
 
   const toggleCollapsed = () => {
@@ -90,7 +90,7 @@ export const DictionaryEditor: React.FC<DictionaryEditorProps> = ({
           getTokenPicker={getTokenPicker}
           setItems={(newItems: DictionaryEditorItemProps[]) => setItems(newItems)}
           setIsValid={setIsValid}
-          setCollapsedValue={(val: ValueSegment[]) => setCollapsedValue(val)}
+          setCollapsedValue={(val: ValueSegmentUI[]) => setCollapsedValue(val)}
           onBlur={handleCollapsedBlur}
           tokenMapping={baseEditorProps.tokenMapping}
           loadParameterValueFromString={baseEditorProps.loadParameterValueFromString}

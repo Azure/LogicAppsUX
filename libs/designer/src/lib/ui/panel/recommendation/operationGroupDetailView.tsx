@@ -1,5 +1,5 @@
-import type { OperationActionData } from '@microsoft/designer-ui';
-import { OperationActionDataFromOperation, OperationGroupDetailsPage } from '@microsoft/designer-ui';
+import type { OperationActionData } from '@microsoft/logic-apps-shared';
+import { OperationActionDataFromOperation, OperationGroupDetailsPage } from '@microsoft/logic-apps-shared';
 import type { Connector, DiscoveryOpArray } from '@microsoft/logic-apps-shared';
 import { useCallback } from 'react';
 

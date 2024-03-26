@@ -1,7 +1,7 @@
 import Constants from '../../../common/constants';
 import { getInterpolatedExpression } from './helper';
 import { isTokenValueSegment } from './segment';
-import type { ValueSegment } from '@microsoft/designer-ui';
+import type { ValueSegmentUI } from '@microsoft/logic-apps-shared';
 import { equals, format } from '@microsoft/logic-apps-shared';
 
 /**
@@ -23,14 +23,14 @@ export function addCastToExpression(fromFormat: string, toFormat: string, expres
 
 /**
  * @arg {string} convertingTo - A string with the desired type for the expression being cast.
- * @arg {ValueSegment[]} valueSegments - An array of mixed literals and tokens to be cast together.
+ * @arg {ValueSegmentUI[]} valueSegments - An array of mixed literals and tokens to be cast together.
  * @arg {string} parameterType - Used by getInterpolatedExpression to determine when to emit interpolated syntax.
  * @arg {string} parameterFormat - Used by getInterpolatedExpression to determine when to emit interpolated syntax.
  * @return {string} - A string with the casting function(s) applied to the expressions.
  */
 export function addFoldingCastToExpression(
   convertingTo: string,
-  valueSegments: ValueSegment[],
+  valueSegments: ValueSegmentUI[],
   parameterType: string,
   parameterFormat: string
 ): string | undefined {
@@ -173,7 +173,7 @@ function getCastingTemplate(fromType: string, fromFormat: string, toType: string
   }
 }
 
-function concatenateAndInterpolateExpressions(valueSegments: ValueSegment[]): string {
+function concatenateAndInterpolateExpressions(valueSegments: ValueSegmentUI[]): string {
   const strings = valueSegments.map((segment) => {
     const { value } = segment;
     return isTokenValueSegment(segment) ? `@{${value}}` : value;

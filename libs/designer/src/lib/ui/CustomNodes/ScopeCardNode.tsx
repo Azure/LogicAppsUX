@@ -30,7 +30,7 @@ import { DeleteMenuItem } from '../menuItems/deleteMenuItem';
 import { ResubmitMenuItem } from '../menuItems/resubmitMenuItem';
 import { MessageBarType } from '@fluentui/react';
 import { RunService, WorkflowService, removeIdTag } from '@microsoft/logic-apps-shared';
-import { ScopeCard } from '@microsoft/designer-ui';
+import { ScopeCard } from '@microsoft/logic-apps-shared';
 import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import { memo, useCallback, useEffect, useMemo } from 'react';
 import { useDrag } from 'react-dnd';

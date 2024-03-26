@@ -6,7 +6,7 @@ import {
   encodeSegmentValueInLexicalContext,
 } from '../../../html/plugins/toolbar/helper/util';
 import { getExpressionTokenTitle } from '../../../tokenpicker/util';
-import type { Token, ValueSegment } from '../../models/parameter';
+import type { Token, ValueSegmentUI } from '../../models/parameter';
 import { TokenType, ValueSegmentType } from '../../models/parameter';
 import { $createExtendedTextNode } from '../nodes/extendedTextNode';
 import type { TokenNode } from '../nodes/tokenNode';
@@ -39,11 +39,11 @@ export interface SegmentParserOptions {
   tokensEnabled?: boolean;
 }
 
-export const isEmptySegments = (segments: ValueSegment[]): boolean => {
+export const isEmptySegments = (segments: ValueSegmentUI[]): boolean => {
   return !segments.length || (segments.length === 1 && segments[0].value === '');
 };
 
-export const parseHtmlSegments = (value: ValueSegment[], options?: SegmentParserOptions): RootNode => {
+export const parseHtmlSegments = (value: ValueSegmentUI[], options?: SegmentParserOptions): RootNode => {
   const editor = createEditor({ ...defaultInitialConfig, nodes: htmlNodes });
   const parser = new DOMParser();
   const root = $getRoot().clear();
@@ -55,7 +55,7 @@ export const parseHtmlSegments = (value: ValueSegment[], options?: SegmentParser
   } else {
     paragraph = $createParagraphNode();
   }
-  const nodeMap = new Map<string, ValueSegment>();
+  const nodeMap = new Map<string, ValueSegmentUI>();
 
   const stringValue = convertSegmentsToString(value, nodeMap);
   const encodedStringValue = encodeStringSegmentTokensInDomContext(
@@ -111,7 +111,7 @@ export const parseHtmlSegments = (value: ValueSegment[], options?: SegmentParser
   return root;
 };
 
-const getURL = (node: LinkNode, nodeMap: Map<string, ValueSegment>, options?: SegmentParserOptions): string => {
+const getURL = (node: LinkNode, nodeMap: Map<string, ValueSegmentUI>, options?: SegmentParserOptions): string => {
   const valueUrl = node.getURL();
   const urlSegments = convertStringToSegments(valueUrl, nodeMap, options);
   return urlSegments
@@ -123,7 +123,7 @@ const getURL = (node: LinkNode, nodeMap: Map<string, ValueSegment>, options?: Se
 const appendChildrenNode = (
   paragraph: ParagraphNode | HeadingNode | ListNode | ListItemNode | LinkNode,
   childNode: LexicalNode,
-  nodeMap: Map<string, ValueSegment>,
+  nodeMap: Map<string, ValueSegmentUI>,
   options: SegmentParserOptions | undefined
 ) => {
   const { tokensEnabled } = options ?? {};
@@ -165,7 +165,7 @@ const appendStringSegment = (
   value: string,
   childNodeStyles: string | undefined,
   childNodeFormat: number | undefined,
-  nodeMap: Map<string, ValueSegment>,
+  nodeMap: Map<string, ValueSegmentUI>,
   options: SegmentParserOptions | undefined
 ) => {
   const { tokensEnabled } = options ?? {};
@@ -181,7 +181,7 @@ const appendStringSegment = (
   }
 };
 
-export const parseSegments = (valueSegments: ValueSegment[], options?: SegmentParserOptions): RootNode => {
+export const parseSegments = (valueSegments: ValueSegmentUI[], options?: SegmentParserOptions): RootNode => {
   const root = $getRoot();
   const rootChild = root.getFirstChild();
   let paragraph: ParagraphNode;
@@ -216,7 +216,7 @@ export const parseSegments = (valueSegments: ValueSegment[], options?: SegmentPa
   return root;
 };
 
-export const convertSegmentsToString = (input: ValueSegment[], nodeMap?: Map<string, ValueSegment>): string => {
+export const convertSegmentsToString = (input: ValueSegmentUI[], nodeMap?: Map<string, ValueSegmentUI>): string => {
   let text = '';
   input.forEach((segment) => {
     if (segment.type === ValueSegmentType.LITERAL) {
@@ -234,9 +234,9 @@ export const convertSegmentsToString = (input: ValueSegment[], nodeMap?: Map<str
 };
 
 const createTokenNodeFromSegment = (
-  tokenSegment: ValueSegment | undefined,
+  tokenSegment: ValueSegmentUI | undefined,
   options: SegmentParserOptions | undefined,
-  nodeMap?: Map<string, ValueSegment>
+  nodeMap?: Map<string, ValueSegmentUI>
 ): TokenNode | undefined => {
   if (!tokenSegment?.token) {
     return undefined;
@@ -245,7 +245,7 @@ const createTokenNodeFromSegment = (
   const segmentValue = tokenSegment.value;
   const wrappedSegmentValue = wrapTokenValue(segmentValue);
   const mappedSegment = nodeMap?.get(wrappedSegmentValue);
-  let segment: ValueSegment;
+  let segment: ValueSegmentUI;
   let segmentToken: Token;
 
   if (mappedSegment?.token) {
@@ -285,21 +285,21 @@ const createTokenNodeFromSegment = (
   throw new Error('Token Node is missing title or name');
 };
 
-export const decodeStringSegmentTokensInDomContext = (value: string, nodeMap: Map<string, ValueSegment>): string =>
+export const decodeStringSegmentTokensInDomContext = (value: string, nodeMap: Map<string, ValueSegmentUI>): string =>
   encodeOrDecodeStringSegmentTokens(value, nodeMap, decodeSegmentValueInDomContext, encodeSegmentValueInDomContext, 'decode');
 
-export const encodeStringSegmentTokensInDomContext = (value: string, nodeMap: Map<string, ValueSegment>): string =>
+export const encodeStringSegmentTokensInDomContext = (value: string, nodeMap: Map<string, ValueSegmentUI>): string =>
   encodeOrDecodeStringSegmentTokens(value, nodeMap, decodeSegmentValueInDomContext, encodeSegmentValueInDomContext, 'encode');
 
-export const decodeStringSegmentTokensInLexicalContext = (value: string, nodeMap: Map<string, ValueSegment>): string =>
+export const decodeStringSegmentTokensInLexicalContext = (value: string, nodeMap: Map<string, ValueSegmentUI>): string =>
   encodeOrDecodeStringSegmentTokens(value, nodeMap, decodeSegmentValueInLexicalContext, encodeSegmentValueInLexicalContext, 'decode');
 
-export const encodeStringSegmentTokensInLexicalContext = (value: string, nodeMap: Map<string, ValueSegment>): string =>
+export const encodeStringSegmentTokensInLexicalContext = (value: string, nodeMap: Map<string, ValueSegmentUI>): string =>
   encodeOrDecodeStringSegmentTokens(value, nodeMap, decodeSegmentValueInLexicalContext, encodeSegmentValueInLexicalContext, 'encode');
 
 const encodeOrDecodeStringSegmentTokens = (
   value: string,
-  nodeMap: Map<string, ValueSegment>,
+  nodeMap: Map<string, ValueSegmentUI>,
   decoder: (input: string) => string,
   encoder: (input: string) => string,
   direction: 'encode' | 'decode'

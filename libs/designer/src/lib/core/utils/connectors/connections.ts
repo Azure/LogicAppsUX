@@ -18,7 +18,7 @@ import {
   getResourceName,
   getRecordEntry,
 } from '@microsoft/logic-apps-shared';
-import type { AssistedConnectionProps } from '@microsoft/designer-ui';
+import type { AssistedConnectionProps } from '@microsoft/logic-apps-shared';
 import type {
   Connection,
   ConnectionParameterSet,

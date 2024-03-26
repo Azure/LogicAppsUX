@@ -1,4 +1,4 @@
-import { MessageLevel } from '@microsoft/designer-ui';
+import { MessageLevel } from '@microsoft/logic-apps-shared';
 import { useState } from 'react';
 
 type ErrorCategoryProps = {

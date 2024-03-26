@@ -1,7 +1,7 @@
 import { VSCodeContext } from '../../../webviewCommunication';
 import { FontIcon, mergeStyles, mergeStyleSets, Spinner, SpinnerSize, CommandBar } from '@fluentui/react';
 import type { ICommandBarItemProps } from '@fluentui/react';
-import { TrafficLightDot } from '@microsoft/designer-ui';
+import { TrafficLightDot } from '@microsoft/logic-apps-shared';
 import {
   serializeWorkflow as serializeBJSWorkflow,
   store as DesignerStore,

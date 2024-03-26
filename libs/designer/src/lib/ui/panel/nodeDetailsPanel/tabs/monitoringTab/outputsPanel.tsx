@@ -1,5 +1,5 @@
 import { HostService, ContentType, isNullOrUndefined } from '@microsoft/logic-apps-shared';
-import { ValuesPanel, SecureDataSection } from '@microsoft/designer-ui';
+import { ValuesPanel, SecureDataSection } from '@microsoft/logic-apps-shared';
 import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';

@@ -1,5 +1,5 @@
 import { openPanel } from '../../../core/state/panel/panelSlice';
-import { WorkflowParametersErrorCard } from '@microsoft/designer-ui';
+import { WorkflowParametersErrorCard } from '@microsoft/logic-apps-shared';
 import { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 

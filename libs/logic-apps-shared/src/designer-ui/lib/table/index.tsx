@@ -1,7 +1,7 @@
 import type { DictionaryEditorItemProps, DictionaryEditorProps } from '../dictionary';
 import { DictionaryEditor, DictionaryType } from '../dictionary';
 import { ValueSegmentType } from '../editor';
-import type { ChangeState } from '../editor/base';
+import type { ChangeState} from '@microsoft/logic-apps-shared';
 import type { IDropdownOption, IDropdownStyles } from '@fluentui/react';
 import { Dropdown } from '@fluentui/react';
 import { getIntl, guid } from '@microsoft/logic-apps-shared';

@@ -45,8 +45,8 @@ import {
   filterRecord,
   getRecordEntry,
 } from '@microsoft/logic-apps-shared';
-import type { FunctionDefinition, OutputToken, Token, ValueSegment } from '@microsoft/designer-ui';
-import { UIConstants, TemplateFunctions, TokenType, removeUTFExpressions } from '@microsoft/designer-ui';
+import type { FunctionDefinition, OutputToken, Token, ValueSegmentUI } from '@microsoft/logic-apps-shared';
+import { UIConstants, TemplateFunctions, TokenType, removeUTFExpressions } from '@microsoft/logic-apps-shared';
 import type { BuiltInOutput, OperationManifest } from '@microsoft/logic-apps-shared';
 
 export interface TokenGroup {
@@ -302,7 +302,7 @@ export const createValueSegmentFromToken = async (
   addLatestActionName: boolean,
   rootState: RootState,
   dispatch: AppDispatch
-): Promise<ValueSegment> => {
+): Promise<ValueSegmentUI> => {
   const tokenOwnerNodeId = token.outputInfo.actionName ?? getTriggerNodeId(rootState.workflow);
   const nodeType = getRecordEntry(rootState.operations.operationInfo, tokenOwnerNodeId)?.type ?? '';
   const idReplacements = rootState.workflow.idReplacements;
@@ -395,7 +395,7 @@ const getTokenValueSegmentTokenType = (token: OutputToken, nodeType: string): To
   return TokenType.OUTPUTS;
 };
 
-const convertTokenToValueSegment = (token: OutputToken, nodeType: string, replacementIds: Record<string, string>): ValueSegment => {
+const convertTokenToValueSegment = (token: OutputToken, nodeType: string, replacementIds: Record<string, string>): ValueSegmentUI => {
   const tokenType = getTokenValueSegmentTokenType(token, nodeType);
   const { key, brandColor, icon, title, description, name, type, outputInfo } = token;
   const { actionName, required, format, source, isSecure, arrayDetails, schema } = outputInfo;
