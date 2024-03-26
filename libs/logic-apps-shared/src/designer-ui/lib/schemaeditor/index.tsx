@@ -1,6 +1,5 @@
 import { formatValue, getEditorHeight, getInitialValue } from '../code/util';
 import type { ValueSegmentUI } from '../editor';
-import type { ChangeHandler } from '../editor/base';
 import { createLiteralValueSegment } from '../editor/base/utils/helper';
 import type { EditorContentChangedEventArgs } from '../editor/monaco';
 import { MonacoEditor } from '../editor/monaco';
@@ -10,6 +9,7 @@ import type { IDialogStyles, IStyle } from '@fluentui/react';
 import type { IButtonStyles } from '@fluentui/react/lib/Button';
 import { ActionButton } from '@fluentui/react/lib/Button';
 import { FontSizes } from '@fluentui/theme';
+import type { ChangeHandler } from '@microsoft/logic-apps-shared';
 import { EditorLanguage } from '@microsoft/logic-apps-shared';
 import { useFunctionalState } from '@react-hookz/web';
 import type { editor } from 'monaco-editor';

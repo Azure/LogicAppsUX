@@ -11,6 +11,7 @@
         "outputPath": "dist/apps/vs-code-designer",
         "main": "apps/vs-code-designer/src/main.ts",
         "tsConfig": "apps/vs-code-designer/tsconfig.app.json",
+        "webpackConfig": "custom-webpack.config.js",
         "assets": [
           "apps/vs-code-designer/src/assets",
           "apps/vs-code-designer/src/package.json",

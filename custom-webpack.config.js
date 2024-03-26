@@ -10,6 +10,14 @@ module.exports = (config, context) => {
     resolve: {
       aliasFields: ['browser', 'browser.esm'],
     },
+    module: {
+      rules: [
+        {
+          test: /\.(css|less)$/,
+          use: ['style-loader', 'css-loader', 'less-loader'],
+        },
+      ],
+    },
     plugins: [
       new MonacoWebpackPlugin(),
 
