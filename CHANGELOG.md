@@ -1,4 +1,20 @@
 # Logic Apps Designer
+## [3.1.0](https://github.com/Azure/LogicAppsUX/compare/v3.0.0...v3.1.0) (2024-03-26)
+
+
+### Features
+
+* **Designer:** Add data-automation-id for connector summary card ([#4434](https://github.com/Azure/LogicAppsUX/issues/4434)) ([d829b4f](https://github.com/Azure/LogicAppsUX/commit/d829b4f877ae07725ae8fdbe63476ae5b8d78d71))
+* **designer:** Custom Code ([#4376](https://github.com/Azure/LogicAppsUX/issues/4376)) ([9d7015e](https://github.com/Azure/LogicAppsUX/commit/9d7015eae3f92711f9932cdf5ac2f2e5cd6e54eb)), closes [#4134](https://github.com/Azure/LogicAppsUX/issues/4134)
+* **vscode:** Improve export telemetry ([#4421](https://github.com/Azure/LogicAppsUX/issues/4421)) ([d6bb652](https://github.com/Azure/LogicAppsUX/commit/d6bb6520edf3cf9f41732bee156f6b8cfdff95e4))
+
+
+### Bug Fixes
+
+* **Designer:** Create connection now uses `testRequests` when available ([#4419](https://github.com/Azure/LogicAppsUX/issues/4419)) ([fc844fa](https://github.com/Azure/LogicAppsUX/commit/fc844fa929e7a0d9c6faad682c181cf201eb1459))
+* **designer:** Dont use slashes in node names from azure resources ([#4430](https://github.com/Azure/LogicAppsUX/issues/4430)) ([f3b2e5d](https://github.com/Azure/LogicAppsUX/commit/f3b2e5d451e32dd1f494023d7bb79cf40d2f7929))
+* **vscode:** Update data variable to fix BOM character ([#4437](https://github.com/Azure/LogicAppsUX/issues/4437)) ([d0ea7ed](https://github.com/Azure/LogicAppsUX/commit/d0ea7ed54ab9cc746a43441388a41201c106248b))
+
 ## [3.0.0](https://github.com/Azure/LogicAppsUX/compare/v2.128.0...v3.0.0) (2024-03-24)
 
 
