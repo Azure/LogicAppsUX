@@ -37,7 +37,7 @@ export const useWorkflowAndArtifactsStandard = (workflowId: string) => {
 };
 
 export const useAllCustomCodeFiles = (appId?: string, workflowName?: string) => {
-  return useQuery(['workflowCustomCode', workflowName], async () => await getAllCustomCodeFiles(appId, workflowName), {
+  return useQuery(['workflowCustomCode', appId, workflowName], async () => await getAllCustomCodeFiles(appId, workflowName), {
     enabled: !!appId && !!workflowName,
     refetchOnMount: false,
     refetchOnReconnect: false,
