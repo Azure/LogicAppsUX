@@ -1,13 +1,13 @@
 import type {
-  ArmResource,
   Connector,
   DiscoveryOpArray,
-  DiscoveryOperation,
-  DiscoveryResultTypes,
+  ArmResource,
   DiscoveryWorkflow,
   DiscoveryWorkflowTrigger,
-} from '@microsoft/logic-apps-shared';
-import { AssertionErrorCode, AssertionException } from '@microsoft/logic-apps-shared';
+  DiscoveryOperation,
+  DiscoveryResultTypes,
+} from '../../utils/src';
+import { AssertionException, AssertionErrorCode } from '../../utils/src';
 
 export type OperationRuntimeCategory = {
   key: string;

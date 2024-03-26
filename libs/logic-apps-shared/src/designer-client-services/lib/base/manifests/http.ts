@@ -1,5 +1,5 @@
-import type { OperationManifest } from '@microsoft/logic-apps-shared';
-import { OperationOptions, RecurrenceType, SettingScope } from '@microsoft/logic-apps-shared';
+import type { OperationManifest } from '../../../../utils/src';
+import { SettingScope, OperationOptions, RecurrenceType } from '../../../../utils/src';
 
 const methodOptions = [
   { value: 'GET', displayName: 'GET' },

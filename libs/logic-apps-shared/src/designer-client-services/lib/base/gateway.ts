@@ -1,8 +1,8 @@
+import type { Gateway, Subscription } from '../../../utils/src';
+import { ArgumentException } from '../../../utils/src';
 import { getAzureResourceRecursive } from '../common/azure';
 import type { IGatewayService } from '../gateway';
 import type { IHttpClient } from '../httpClient';
-import type { Gateway, Subscription } from '@microsoft/logic-apps-shared';
-import { ArgumentException } from '@microsoft/logic-apps-shared';
 
 export interface BaseGatewayServiceOptions {
   baseUrl: string;
@@ -29,7 +29,7 @@ export class BaseGatewayService implements IGatewayService {
   }
 
   public async getGateways(subscriptionId: string | undefined, connectorName: string): Promise<Gateway[]> {
-    const config = await (this as IGatewayService).getConfig?.();
+    const config = await (this as any).getConfig?.();
     const isSubscriptionRequired = !config?.disableSubscriptionLookup;
     if ((isSubscriptionRequired && !subscriptionId) || !connectorName) {
       return [];

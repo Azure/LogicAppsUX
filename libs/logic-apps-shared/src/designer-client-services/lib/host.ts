@@ -1,5 +1,5 @@
-import type { ConnectorProperty, OperationApi } from '@microsoft/logic-apps-shared';
-import { AssertionErrorCode, AssertionException } from '@microsoft/logic-apps-shared';
+import type { ConnectorProperty, OperationApi } from '../../utils/src';
+import { AssertionErrorCode, AssertionException } from '../../utils/src';
 
 export const ContentType = {
   Inputs: 'inputs',
