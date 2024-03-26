@@ -37,9 +37,9 @@ export async function openUnitTestResults(context: IAzureConnectorsContext, node
 
     const openDesignerObj = new OpenDesignerForLocalProject(context, workflowNode, unitTestName, unitTestDefinition);
     await openDesignerObj?.createPanel();
+  } else {
+    window.showInformationMessage(
+      localize('noRunForUnitTest', 'There is no run for the selected unit test. Make sure to run the unit test for "{0}"', unitTestName)
+    );
   }
-
-  window.showInformationMessage(
-    localize('noRunForUnitTest', 'There is no run for the selected unit test. Make sure to run the unit test for "{0}"', unitTestName)
-  );
 }
