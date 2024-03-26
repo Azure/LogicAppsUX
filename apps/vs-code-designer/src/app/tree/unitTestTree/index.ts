@@ -4,6 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 import { unitTestExplorer } from '../../../constants';
 import { ext } from '../../../extensionVariables';
+import { localize } from '../../../localize';
 import { hasLogicAppProject } from '../../utils/workspace';
 import { TestFile } from './testFile';
 import { TestWorkflow } from './testWorkflow';
@@ -250,7 +251,7 @@ const getOrCreateFile = async (controller: TestController, uri: Uri) => {
  */
 const startTestRun = (request: TestRunRequest, unitTestController: TestController, activateContext: IActionContext) => {
   const queue: { test: TestItem; data: TestFile }[] = [];
-  const run = unitTestController.createTestRun(request);
+  const run = unitTestController.createTestRun(request, localize('runLogicApps', 'Run logic apps standard'), true);
 
   /**
    * Discovers tests recursively and enqueues them for execution.
