@@ -1,5 +1,6 @@
+import type { OperationManifest } from '../../../../utils/src';
+import { RecurrenceType, SettingScope } from '../../../../utils/src';
 import { coreBadge } from '../../badges';
-import { SettingScope, type OperationManifest, RecurrenceType } from '@microsoft/logic-apps-shared';
 
 const iconUri = 'https://logicappsv2resources.blob.core.windows.net/icons/apimanagement.svg';
 

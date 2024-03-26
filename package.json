@@ -75,8 +75,10 @@
     "vitest": "^1.4.0"
   },
   "lint-staged": {
-    "*.js,ts,tsx": "eslint --cache --fix",
-    "*.{ts,tsx,js,css,md}": "biome check . --apply",
-    "*.{ts,tsx}": "npm run extract"
+    "*.{js,ts,tsx}": [
+      "npm run extract",
+      "eslint --cache --fix",
+      "biome check --apply"
+    ]
   }
 }
