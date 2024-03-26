@@ -1,4 +1,4 @@
-import type { SettingProps } from './settingtoggle';
+import type { SettingProps } from './';
 import { TextField } from '@fluentui/react';
 import React, { useState } from 'react';
 import type { FormEvent } from 'react';

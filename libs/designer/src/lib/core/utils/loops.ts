@@ -22,6 +22,7 @@ import {
   getParameterFromName,
   parameterValueToString,
   shouldIncludeSelfForRepetitionReference,
+  getCustomCodeFilesWithData,
 } from './parameters/helper';
 import { isTokenValueSegment } from './parameters/segment';
 import { TokenSegmentConvertor } from './parameters/tokensegment';
@@ -152,9 +153,11 @@ export const addForeachToNode = createAsyncThunk(
 
       // Initializing details for newly added foreach operation.
       const foreachOperation = newState.workflow.operations[foreachNodeId];
+      const customCodeWithData = getCustomCodeFilesWithData(state.customCode);
       const [{ nodeInputs, nodeOutputs, nodeDependencies, settings }] = (await initializeOperationDetailsForManifest(
         foreachNodeId,
         foreachOperation,
+        customCodeWithData,
         /* isTrigger */ false,
         state.workflow.workflowKind,
         state.designerOptions.hostOptions.forceEnableSplitOn ?? false,

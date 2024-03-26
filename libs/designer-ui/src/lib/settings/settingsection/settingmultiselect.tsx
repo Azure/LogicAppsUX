@@ -1,4 +1,4 @@
-import type { SettingProps } from './settingtoggle';
+import type { SettingProps } from './';
 import { Checkbox } from '@fluentui/react';
 import React, { useState } from 'react';
 

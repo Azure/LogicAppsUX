@@ -14,7 +14,7 @@ import {
   tokens,
 } from '@fluentui/react-components';
 import type { MonacoProps } from '@microsoft/designer-ui';
-import { EditorLanguage, MonacoEditor } from '@microsoft/designer-ui';
+import { MonacoEditor } from '@microsoft/designer-ui';
 import {
   convertSchemaToSchemaExtended,
   convertToMapDefinition,
@@ -22,6 +22,7 @@ import {
   loadMapDefinition,
   MapDefinitionDeserializer,
 } from '@microsoft/logic-apps-data-mapper';
+import { EditorLanguage } from '@microsoft/logic-apps-shared';
 import { useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 
@@ -145,7 +146,16 @@ export const DevSerializationTester = () => {
               {selectedTab === SerializationTab.Deserialization && (
                 <>
                   <Stack tokens={{ childrenGap: '8px' }}>
-                    <Text style={{ fontWeight: 'bold', fontSize: '22px', display: 'block', marginBottom: '12px' }}>Map definition</Text>
+                    <Text
+                      style={{
+                        fontWeight: 'bold',
+                        fontSize: '22px',
+                        display: 'block',
+                        marginBottom: '12px',
+                      }}
+                    >
+                      Map definition
+                    </Text>
                     <MonacoEditor
                       {...commonCodeEditorProps}
                       language={EditorLanguage.yaml}
@@ -159,7 +169,16 @@ export const DevSerializationTester = () => {
                   </Stack>
 
                   <Stack tokens={{ childrenGap: '8px' }}>
-                    <Text style={{ fontWeight: 'bold', fontSize: '22px', display: 'block', marginBottom: '12px' }}>Connections</Text>
+                    <Text
+                      style={{
+                        fontWeight: 'bold',
+                        fontSize: '22px',
+                        display: 'block',
+                        marginBottom: '12px',
+                      }}
+                    >
+                      Connections
+                    </Text>
                     <MonacoEditor
                       {...commonCodeEditorProps}
                       language={EditorLanguage.json}
@@ -175,7 +194,16 @@ export const DevSerializationTester = () => {
               {selectedTab === SerializationTab.Serialization && (
                 <>
                   <Stack tokens={{ childrenGap: '8px' }}>
-                    <Text style={{ fontWeight: 'bold', fontSize: '22px', display: 'block', marginBottom: '12px' }}>Connections</Text>
+                    <Text
+                      style={{
+                        fontWeight: 'bold',
+                        fontSize: '22px',
+                        display: 'block',
+                        marginBottom: '12px',
+                      }}
+                    >
+                      Connections
+                    </Text>
                     <MonacoEditor
                       {...commonCodeEditorProps}
                       language={EditorLanguage.json}
@@ -189,7 +217,16 @@ export const DevSerializationTester = () => {
                   </Stack>
 
                   <Stack tokens={{ childrenGap: '8px' }}>
-                    <Text style={{ fontWeight: 'bold', fontSize: '22px', display: 'block', marginBottom: '12px' }}>Map definition</Text>
+                    <Text
+                      style={{
+                        fontWeight: 'bold',
+                        fontSize: '22px',
+                        display: 'block',
+                        marginBottom: '12px',
+                      }}
+                    >
+                      Map definition
+                    </Text>
                     <MonacoEditor
                       {...commonCodeEditorProps}
                       language={EditorLanguage.json}

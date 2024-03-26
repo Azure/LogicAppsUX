@@ -6,6 +6,28 @@ import { guid } from '@microsoft/logic-apps-shared';
 import type { ElementNode } from 'lexical';
 import { $getNodeByKey, $isElementNode, $isLineBreakNode, $isTextNode } from 'lexical';
 
+/**
+ * Creates a literal value segment.
+ * @arg {string} value - The literal value.
+ * @arg {string} [segmentId] - The segment id.
+ * @return {ValueSegment}
+ */
+export function createLiteralValueSegment(value: string, segmentId?: string): ValueSegment {
+  return {
+    id: segmentId ? segmentId : guid(),
+    type: ValueSegmentType.LITERAL,
+    value,
+  };
+}
+
+export function createEmptyLiteralValueSegment(): ValueSegment {
+  return {
+    id: guid(),
+    type: ValueSegmentType.LITERAL,
+    value: '',
+  };
+}
+
 export const removeFirstAndLast = (segments: ValueSegment[], removeFirst?: string, removeLast?: string): ValueSegment[] => {
   const n = segments.length - 1;
   segments.forEach((segment, i) => {
@@ -145,7 +167,7 @@ export const insertQutationForStringType = (segments: ValueSegment[], type?: str
 };
 
 const addStringLiteralSegment = (segments: ValueSegment[]): void => {
-  segments.push({ id: guid(), type: ValueSegmentType.LITERAL, value: `"` });
+  segments.push(createLiteralValueSegment(`"`));
 };
 
 export const removeQuotes = (s: string): string => {

@@ -24,3 +24,10 @@ export type { SettingTokenFieldProps as SettingTokenTextFieldProps } from './set
 export { SettingDropdown } from './settingdropdown';
 export type { SettingDropdownProps, DropdownSelectionChangeHandler } from './settingdropdown';
 export { toCustomEditorAndOptions, isCustomEditor } from './customTokenField';
+
+export interface SettingProps {
+  readOnly?: boolean;
+  ariaLabel?: string;
+  customLabel?: JSX.Element;
+  nodeTitle?: string;
+}

@@ -1,7 +1,7 @@
+import type { SettingProps, ToggleChangeHandler } from './';
 import { SettingTextField } from './settingtextfield';
 import type { TextInputChangeHandler } from './settingtextfield';
 import { SettingToggle } from './settingtoggle';
-import type { SettingProps, ToggleChangeHandler } from './settingtoggle';
 import { useState } from 'react';
 
 export interface ReactiveToggleProps extends SettingProps {

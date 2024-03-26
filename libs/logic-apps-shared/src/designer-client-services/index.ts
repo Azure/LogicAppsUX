@@ -23,3 +23,4 @@ export * from './lib/staticresult';
 export * from './lib/editor';
 export * from './lib/connectionParameterEditor';
 export * from './lib/chatbot';
+export * from './lib/customcode';

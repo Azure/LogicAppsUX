@@ -1,4 +1,5 @@
 import connectionsReducer from './state/connection/connectionSlice';
+import customCodeReducer from './state/customcode/customcodeSlice';
 import designerOptionsReducer from './state/designerOptions/designerOptionsSlice';
 import designerViewReducer from './state/designerView/designerViewSlice';
 import operationMetadataReducer from './state/operation/operationMetadataSlice';
@@ -22,6 +23,7 @@ export const store = configureStore({
     tokens: tokens,
     workflowParameters: workflowParametersReducer,
     staticResults: staticResultsSchemasReducer,
+    customCode: customCodeReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

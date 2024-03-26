@@ -1,9 +1,9 @@
 import type { ValueSegment } from '../editor';
 import { ValueSegmentType } from '../editor';
 import type { ChangeHandler } from '../editor/base';
+import { createLiteralValueSegment } from '../editor/base/utils/helper';
 import type { IDropdownOption, IDropdownStyles } from '@fluentui/react';
 import { SelectableOptionMenuItemType, Dropdown } from '@fluentui/react';
-import { guid } from '@microsoft/logic-apps-shared';
 import type { FormEvent } from 'react';
 import { useMemo, useState } from 'react';
 
@@ -75,7 +75,7 @@ export const DropdownEditor = ({
   const handleOptionSelect = (_event: FormEvent<HTMLDivElement>, option?: IDropdownOption): void => {
     if (option) {
       setSelectedKey(option.key as string);
-      onChange?.({ value: [{ id: guid(), value: getSelectedValue(options, option.key as string), type: ValueSegmentType.LITERAL }] });
+      onChange?.({ value: [createLiteralValueSegment(getSelectedValue(options, option.key as string))] });
     }
   };
 
@@ -87,11 +87,9 @@ export const DropdownEditor = ({
       const selectedValues = newKeys.map((key) => getSelectedValue(options, key));
       onChange?.({
         value: [
-          {
-            id: guid(),
-            value: serialization?.valueType === 'array' ? JSON.stringify(selectedValues) : selectedValues.join(serialization?.separator),
-            type: ValueSegmentType.LITERAL,
-          },
+          createLiteralValueSegment(
+            serialization?.valueType === 'array' ? JSON.stringify(selectedValues) : selectedValues.join(serialization?.separator)
+          ),
         ],
       });
     }

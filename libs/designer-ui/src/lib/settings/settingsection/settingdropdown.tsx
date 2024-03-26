@@ -1,4 +1,4 @@
-import type { SettingProps } from './settingtoggle';
+import type { SettingProps } from './';
 import { Dropdown } from '@fluentui/react';
 import type { IDropdownOption } from '@fluentui/react';
 

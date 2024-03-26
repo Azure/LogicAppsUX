@@ -1,3 +1,4 @@
+import constants from '../../../common/constants';
 import type { AppDispatch, RootState } from '../../../core';
 import {
   clearPanel,
@@ -8,9 +9,10 @@ import {
   useSelectedNodeId,
   validateParameter,
 } from '../../../core';
+import { renameCustomCode } from '../../../core/state/customcode/customcodeSlice';
 import { useReadOnly } from '../../../core/state/designerOptions/designerOptionsSelectors';
 import { setShowDeleteModal } from '../../../core/state/designerView/designerViewSlice';
-import { ErrorLevel } from '../../../core/state/operation/operationMetadataSlice';
+import { ErrorLevel, updateParameterEditorViewModel } from '../../../core/state/operation/operationMetadataSlice';
 import { useIconUri, useOperationErrorInfo } from '../../../core/state/operation/operationSelector';
 import { useIsPanelCollapsed, useSelectedPanelTabId } from '../../../core/state/panel/panelSelectors';
 import { expandPanel, selectPanelTab, setSelectedNodeId, updatePanelLocation } from '../../../core/state/panel/panelSlice';
@@ -18,12 +20,20 @@ import { useOperationQuery } from '../../../core/state/selectors/actionMetadataS
 import { useNodeDescription, useRunData, useRunInstance } from '../../../core/state/workflow/workflowSelectors';
 import { replaceId, setNodeDescription } from '../../../core/state/workflow/workflowSlice';
 import { isOperationNameValid, isRootNodeInGraph } from '../../../core/utils/graph';
+import { ParameterGroupKeys, getCustomCodeFileName, getParameterFromName } from '../../../core/utils/parameters/helper';
 import { CommentMenuItem } from '../../menuItems/commentMenuItem';
 import { DeleteMenuItem } from '../../menuItems/deleteMenuItem';
 import { usePanelTabs } from './usePanelTabs';
-import { WorkflowService, SUBGRAPH_TYPES, isNullOrUndefined } from '@microsoft/logic-apps-shared';
 import type { CommonPanelProps, PageActionTelemetryData } from '@microsoft/designer-ui';
-import { PanelContainer, PanelLocation, PanelScope, PanelSize } from '@microsoft/designer-ui';
+import { PanelContainer, PanelScope, PanelSize } from '@microsoft/designer-ui';
+import {
+  CustomCodeService,
+  WorkflowService,
+  SUBGRAPH_TYPES,
+  isNullOrUndefined,
+  replaceWhiteSpaceWithUnderscore,
+  splitFileName,
+} from '@microsoft/logic-apps-shared';
 import type { ReactElement } from 'react';
 import React, { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -48,7 +58,7 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
   }));
   const selectedNodeDisplayName = useNodeDisplayName(selectedNode);
 
-  const [width, setWidth] = useState<PanelSize>(PanelSize.Auto);
+  const [width, setWidth] = useState<string>(PanelSize.Auto);
 
   const inputs = useSelector((state: RootState) => state.operations.inputParameters[selectedNode]);
   const comment = useNodeDescription(selectedNode);
@@ -80,7 +90,12 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
 
   const handleCommentMenuClick = (_: React.MouseEvent<HTMLElement>): void => {
     showCommentBox = !showCommentBox;
-    dispatch(setNodeDescription({ nodeId: selectedNode, ...(showCommentBox && { description: '' }) }));
+    dispatch(
+      setNodeDescription({
+        nodeId: selectedNode,
+        ...(showCommentBox && { description: '' }),
+      })
+    );
   };
 
   // Removing the 'add a note' button for subgraph nodes
@@ -96,6 +111,41 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
     dispatch(replaceId({ originalId: selectedNode, newId }));
 
     return { valid: isValid, oldValue: isValid ? newId : selectedNode };
+  };
+
+  // if is customcode file, on blur title,
+  // delete the existing custom code file name and upload the new file with updated name
+  const onTitleBlur = (prevTitle: string) => {
+    const parameter = getParameterFromName(inputs, constants.DEFAULT_CUSTOM_CODE_INPUT);
+    if (parameter && CustomCodeService().isCustomCode(parameter?.editor, parameter?.editorOptions?.language)) {
+      const newFileName = getCustomCodeFileName(selectedNode, inputs, idReplacements);
+      const [, fileExtension] = splitFileName(newFileName);
+      const oldFileName = replaceWhiteSpaceWithUnderscore(prevTitle) + fileExtension;
+      if (newFileName === oldFileName) return;
+      // update the view model with the latest file name
+      dispatch(
+        updateParameterEditorViewModel({
+          nodeId: selectedNode,
+          groupId: ParameterGroupKeys.DEFAULT,
+          parameterId: parameter.id,
+          editorViewModel: {
+            ...(parameter.editorViewModel ?? {}),
+            customCodeData: {
+              ...(parameter.editorViewModel?.customCodeData ?? {}),
+              fileName: newFileName,
+            },
+          },
+        })
+      );
+
+      dispatch(
+        renameCustomCode({
+          nodeId: selectedNode,
+          newFileName,
+          oldFileName,
+        })
+      );
+    }
   };
 
   const onCommentChange = (newDescription?: string) => {
@@ -130,7 +180,8 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
     toggleCollapse: dismissPanel,
     width,
     layerProps,
-    panelLocation: panelLocation ?? PanelLocation.Right,
+    panelLocation,
+    isResizeable: props.isResizeable,
   };
 
   return (
@@ -161,7 +212,12 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
             inputs.parameterGroups[parameterGroup].parameters.forEach((parameter: any) => {
               const validationErrors = validateParameter(parameter, parameter.value);
               dispatch(
-                updateParameterValidation({ nodeId: selectedNode, groupId: parameterGroup, parameterId: parameter.id, validationErrors })
+                updateParameterValidation({
+                  nodeId: selectedNode,
+                  groupId: parameterGroup,
+                  parameterId: parameter.id,
+                  validationErrors,
+                })
               );
             });
           });
@@ -172,6 +228,8 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
       onCommentChange={onCommentChange}
       title={selectedNodeDisplayName}
       onTitleChange={onTitleChange}
+      onTitleBlur={onTitleBlur}
+      setCurrWidth={setWidth}
     />
   );
 };

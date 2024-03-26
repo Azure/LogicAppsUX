@@ -1,9 +1,8 @@
 import type { BaseEditorProps, ChangeHandler } from '../editor/base';
 import { EditorWrapper } from '../editor/base/EditorWrapper';
 import { TokenPickerButtonLocation } from '../editor/base/plugins/tokenpickerbutton';
-import { notEqual } from '../editor/base/utils/helper';
+import { createLiteralValueSegment, notEqual } from '../editor/base/utils/helper';
 import type { ValueSegment } from '../editor/models/parameter';
-import { ValueSegmentType } from '../editor/models/parameter';
 import { Picker } from './picker';
 import { PickerItemType } from './pickerItem';
 import { EditorValueChange } from './plugins/EditorValueChange';
@@ -12,7 +11,7 @@ import type { IBreadcrumbItem, IIconProps, ITooltipHostStyles } from '@fluentui/
 import { TooltipHost, IconButton } from '@fluentui/react';
 import { useId } from '@fluentui/react-hooks';
 import type { TreeDynamicValue } from '@microsoft/logic-apps-shared';
-import { equals, guid } from '@microsoft/logic-apps-shared';
+import { equals } from '@microsoft/logic-apps-shared';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
 
@@ -35,7 +34,9 @@ export interface FilePickerEditorProps extends BaseEditorProps {
 }
 
 const folderIcon: IIconProps = { iconName: 'FolderOpen' };
-const hostStyles: Partial<ITooltipHostStyles> = { root: { display: 'inline-block' } };
+const hostStyles: Partial<ITooltipHostStyles> = {
+  root: { display: 'inline-block' },
+};
 const calloutProps = { gapSpace: 0 };
 
 export const FilePickerEditor = ({
@@ -53,7 +54,7 @@ export const FilePickerEditor = ({
   const pickerIconId = useId();
   const intl = useIntl();
   const [selectedItem, setSelectedItem] = useState<any>();
-  const initialDisplayValue = displayValue ? [{ id: guid(), value: displayValue, type: ValueSegmentType.LITERAL }] : initialValue;
+  const initialDisplayValue = displayValue ? [createLiteralValueSegment(displayValue)] : initialValue;
   const [editorDisplayValue, setEditorDisplayValue] = useState<ValueSegment[]>(initialDisplayValue);
   const [pickerDisplayValue, setPickerDisplayValue] = useState<ValueSegment[]>(initialDisplayValue);
   const [showPicker, setShowPicker] = useState(false);
@@ -79,7 +80,14 @@ export const FilePickerEditor = ({
   const onFolderNavigated = (selectedItem: TreeDynamicValue) => {
     onFolderNavigation(selectedItem.value);
     const displayValue = selectedItem.displayName;
-    setTitleSegments([...titleSegments, { text: displayValue, key: displayValue, onClick: () => onFolderNavigated(selectedItem) }]);
+    setTitleSegments([
+      ...titleSegments,
+      {
+        text: displayValue,
+        key: displayValue,
+        onClick: () => onFolderNavigated(selectedItem),
+      },
+    ]);
   };
 
   const onFileFolderSelected = (selectedItem: TreeDynamicValue) => {
@@ -88,20 +96,21 @@ export const FilePickerEditor = ({
     }
     if (showPicker) {
       setSelectedItem(selectedItem.value);
-      setPickerDisplayValue([{ id: guid(), value: getDisplayValueFromSelectedItem(selectedItem.value), type: ValueSegmentType.LITERAL }]);
+      setPickerDisplayValue([createLiteralValueSegment(getDisplayValueFromSelectedItem(selectedItem.value))]);
       setShowPicker(false);
     }
   };
 
   const handleBlur = () => {
     if (selectedItem) {
-      const valueSegmentValue: ValueSegment[] = [
-        { id: guid(), type: ValueSegmentType.LITERAL, value: getValueFromSelectedItem(selectedItem) },
-      ];
+      const valueSegmentValue: ValueSegment[] = [createLiteralValueSegment(getValueFromSelectedItem(selectedItem))];
 
       editorBlur?.({
         value: valueSegmentValue,
-        viewModel: { displayValue: pickerDisplayValue[0]?.value, selectedItem: selectedItem },
+        viewModel: {
+          displayValue: pickerDisplayValue[0]?.value,
+          selectedItem: selectedItem,
+        },
       });
     } else if (notEqual(editorDisplayValue, pickerDisplayValue)) {
       editorBlur?.({
@@ -116,7 +125,11 @@ export const FilePickerEditor = ({
     setPickerDisplayValue([]);
   };
 
-  const openFolderLabel = intl.formatMessage({ defaultMessage: 'Open folder', id: 's+4LEa', description: 'Open folder label' });
+  const openFolderLabel = intl.formatMessage({
+    defaultMessage: 'Open folder',
+    id: 's+4LEa',
+    description: 'Open folder label',
+  });
   return (
     <div className="msla-filepicker-editor-container">
       <EditorWrapper

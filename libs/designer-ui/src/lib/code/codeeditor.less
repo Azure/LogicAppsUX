@@ -1,6 +1,7 @@
 @import (reference) '../variables.less';
 
-.msla-code-editor-body {
+.msla-code-editor-body,
+.msla-custom-code-editor-body {
   position: relative;
   .msla-monaco {
     border: 1px solid @defaultBorderColor;
@@ -15,5 +16,20 @@
 .msla-code-editor-errors {
   .msla-input-parameter-error.msla-label {
     margin-left: 0px;
+  }
+}
+
+.msla-custom-code-editor-body {
+  .msla-custom-code-editor-file {
+    display: flex;
+    align-items: center;
+    margin-bottom: 15px;
+    .msla-custom-code-editor-fileName {
+      color: #0078d4;
+      font-size: 14px;
+    }
+  }
+  .msla-custom-code-editor-message-bar {
+    margin-top: 30px;
   }
 }

@@ -15,6 +15,7 @@ import {
   StandardRunService,
   ConsumptionOperationManifestService,
   ConsumptionConnectionService,
+  StandardCustomCodeService,
   ResourceIdentityType,
 } from '@microsoft/logic-apps-shared';
 import type { ContentType } from '@microsoft/logic-apps-shared';
@@ -34,7 +35,10 @@ const connectionServiceStandard = new StandardConnectionService({
     location: '',
     httpClient,
   },
-  workflowAppDetails: { appName: 'app', identity: { type: ResourceIdentityType.SYSTEM_ASSIGNED } },
+  workflowAppDetails: {
+    appName: 'app',
+    identity: { type: ResourceIdentityType.SYSTEM_ASSIGNED },
+  },
   readConnections: () => Promise.resolve({}),
 });
 
@@ -124,7 +128,19 @@ const runService = new StandardRunService({
   isDev: true,
 });
 
-const workflowService = { getCallbackUrl: () => Promise.resolve({ method: 'POST', value: 'Dummy url' }) };
+const customCodeService = new StandardCustomCodeService({
+  apiVersion: '2018-11-01',
+  baseUrl: '/url',
+  subscriptionId: 'test',
+  resourceGroup: 'test',
+  appName: 'app',
+  workflowName: 'workflow',
+  httpClient,
+});
+
+const workflowService = {
+  getCallbackUrl: () => Promise.resolve({ method: 'POST', value: 'Dummy url' }),
+};
 
 const hostService = {
   fetchAndDisplayContent: (title: string, url: string, type: ContentType) => console.log(title, url, type),
@@ -166,6 +182,7 @@ export const LocalDesigner = () => {
       runService,
       editorService,
       connectionParameterEditorService,
+      customCodeService,
     },
     readOnly: isReadOnly,
     isMonitoringView,

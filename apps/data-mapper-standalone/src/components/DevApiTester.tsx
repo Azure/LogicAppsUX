@@ -13,8 +13,9 @@ import {
   tokens,
 } from '@fluentui/react-components';
 import type { MonacoProps } from '@microsoft/designer-ui';
-import { EditorLanguage, MonacoEditor } from '@microsoft/designer-ui';
+import { MonacoEditor } from '@microsoft/designer-ui';
 import { generateDataMapXslt, getFunctions, getSelectedSchema, testDataMap } from '@microsoft/logic-apps-data-mapper';
+import { EditorLanguage } from '@microsoft/logic-apps-shared';
 import { useState } from 'react';
 
 const RequestTab = {
@@ -138,7 +139,14 @@ export const DevApiTester = () => {
                         onChange={(_e, newValue) => setXsltFilename(newValue ?? '')}
                       />
 
-                      <Text style={{ fontWeight: 'bold', fontSize: '22px', display: 'block', marginBottom: '12px' }}>
+                      <Text
+                        style={{
+                          fontWeight: 'bold',
+                          fontSize: '22px',
+                          display: 'block',
+                          marginBottom: '12px',
+                        }}
+                      >
                         Input schema value
                       </Text>
                       <MonacoEditor
@@ -156,7 +164,16 @@ export const DevApiTester = () => {
 
                   {selectedTab === RequestTab.GenerateXslt && (
                     <Stack tokens={{ childrenGap: '8px' }}>
-                      <Text style={{ fontWeight: 'bold', fontSize: '22px', display: 'block', marginBottom: '12px' }}>Map definition</Text>
+                      <Text
+                        style={{
+                          fontWeight: 'bold',
+                          fontSize: '22px',
+                          display: 'block',
+                          marginBottom: '12px',
+                        }}
+                      >
+                        Map definition
+                      </Text>
                       <MonacoEditor
                         {...commonCodeEditorProps}
                         language={EditorLanguage.yaml}
@@ -173,7 +190,16 @@ export const DevApiTester = () => {
               </StackItem>
 
               <StackItem>
-                <Text style={{ fontWeight: 'bold', fontSize: '22px', display: 'block', marginBottom: '12px' }}>Response</Text>
+                <Text
+                  style={{
+                    fontWeight: 'bold',
+                    fontSize: '22px',
+                    display: 'block',
+                    marginBottom: '12px',
+                  }}
+                >
+                  Response
+                </Text>
                 <MonacoEditor
                   {...commonCodeEditorProps}
                   language={EditorLanguage.json}

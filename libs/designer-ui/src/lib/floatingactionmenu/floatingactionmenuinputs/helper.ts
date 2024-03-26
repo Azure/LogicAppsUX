@@ -8,9 +8,8 @@ import {
   getIconForDynamicallyAddedParameterType,
 } from '../../dynamicallyaddedparameter/helper';
 import type { ValueSegment } from '../../editor';
-import { ValueSegmentType } from '../../editor';
+import { createLiteralValueSegment } from '../../editor/base/utils/helper';
 import type { OpenApiSchema } from '@microsoft/logic-apps-shared';
-import { guid } from '@microsoft/logic-apps-shared';
 
 type PartialDynamicallyAddedParameterInputsModel = Pick<
   DynamicallyAddedParameterInputsModel,
@@ -130,13 +129,7 @@ export function serialize(models: DynamicallyAddedParameterInputsModel[], isRequ
     };
   }
 
-  return [
-    {
-      id: guid(),
-      type: ValueSegmentType.LITERAL,
-      value: JSON.stringify(rootObject),
-    },
-  ];
+  return [createLiteralValueSegment(JSON.stringify(rootObject))];
 }
 
 export function getEmptySchemaValueSegmentForInitialization(useStaticInputs: boolean, isRequestApiConnectionTrigger = false) {
@@ -165,13 +158,7 @@ export function getEmptySchemaValueSegmentForInitialization(useStaticInputs: boo
     rootObject = rootObjectWithStaticInputs;
   }
 
-  return [
-    {
-      id: guid(),
-      type: ValueSegmentType.LITERAL,
-      value: JSON.stringify(rootObject),
-    },
-  ];
+  return [createLiteralValueSegment(JSON.stringify(rootObject))];
 }
 
 export function createDynamicallyAddedParameterProperties(

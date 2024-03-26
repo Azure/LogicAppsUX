@@ -253,7 +253,7 @@ export const Designer = (props: DesignerProps) => {
               hideAttribution: true,
             }}
           >
-            <PanelRoot panelLocation={panelLocation} customPanelLocations={customPanelLocations} />
+            <PanelRoot panelLocation={panelLocation} customPanelLocations={customPanelLocations} isResizeable={true} />
             {backgroundProps ? <Background {...backgroundProps} /> : null}
             <DeleteModal />
           </ReactFlow>
