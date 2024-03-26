@@ -402,7 +402,7 @@ const checkArrayInRepetition = (
   }
 
   if (areOutputsManifestBased && tokenKey) {
-    const method = getTokenExpressionMethodFromKey(tokenKey, actionName);
+    const method = getTokenExpressionMethodFromKey(tokenKey, actionName, outputInfo?.source);
     const sanitizedValue = `@${generateExpressionFromKey(
       method,
       tokenKey,

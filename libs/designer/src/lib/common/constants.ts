@@ -860,6 +860,7 @@ export default {
   TRIGGER_BODY_OUTPUT: 'triggerBody()',
   TRIGGER_QUERIES_OUTPUT: `triggerOutputs()['queries']`,
   TRIGGER_HEADERS_OUTPUT: `triggerOutputs()['headers']`,
+  TRIGGER_STATUS_CODE_OUTPUT: `triggerOutputs()['statusCode']`,
   TRIGGER_OUTPUTS_OUTPUT: 'triggerOutputs()',
   UIDEFINITION_TYPES: {
     BOOLEAN: 'bool',

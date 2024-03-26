@@ -984,7 +984,7 @@ export function getExpressionValueForOutputToken(token: OutputToken, nodeType: s
   const {
     key,
     name,
-    outputInfo: { type: tokenType, actionName, source, required, arrayDetails, functionArguments },
+    outputInfo: { type: tokenType, actionName, required, arrayDetails, functionArguments, source },
   } = token;
   // get the expression value for webhook list callback url
   if (key === constants.HTTP_WEBHOOK_LIST_CALLBACK_URL_KEY) {
@@ -1024,17 +1024,32 @@ export function getExpressionValueForOutputToken(token: OutputToken, nodeType: s
       }
 
     default:
-      method = arrayDetails ? constants.ITEM : getTokenExpressionMethodFromKey(key, actionName);
-      return getTokenExpressionValue({...token, tokenType, source});
+      method = arrayDetails ? constants.ITEM : getTokenExpressionMethodFromKey(key, actionName, source);
+      return generateExpressionFromKey(method, key, actionName, !!arrayDetails, !!required);
   }
 }
 
-export function getTokenExpressionMethodFromKey(key: string, actionName: string | undefined): string {
+export function getTokenExpressionMethodFromKey(key: string, actionName: string | undefined, source: string | undefined): string {
   const segments = parseEx(key);
   if (segmentsAreBodyReference(segments)) {
     return actionName ? `${OutputSource.Body}(${convertToStringLiteral(actionName)})` : constants.TRIGGER_BODY_OUTPUT;
   } else {
-    return actionName ? `${constants.OUTPUTS}(${convertToStringLiteral(actionName)})` : constants.TRIGGER_OUTPUTS_OUTPUT;
+    if (actionName) {
+      return `${OutputSource.Outputs}(${convertToStringLiteral(actionName)})`;
+    }
+    if (source) {
+      const propertyInQueries = !!source && equals(source, OutputSource.Queries);
+      const propertyInHeaders = !!source && equals(source, OutputSource.Headers);
+      const propertyInStatusCode = !!source && equals(source, OutputSource.StatusCode);
+      if (propertyInQueries) {
+        return constants.TRIGGER_QUERIES_OUTPUT;
+      } else if (propertyInHeaders) {
+        return constants.TRIGGER_HEADERS_OUTPUT;
+      } else if (propertyInStatusCode) {
+        return constants.TRIGGER_STATUS_CODE_OUTPUT;
+      }
+    }
+    return constants.TRIGGER_OUTPUTS_OUTPUT;
   }
 }
 
@@ -1164,7 +1179,7 @@ function getNonOpenApiTokenExpressionValue(token: SegmentToken): string {
     } else if (propertyInHeaders) {
       expressionValue = `${constants.TRIGGER_HEADERS_OUTPUT}${propertyPath}`;
     } else if (propertyInStatusCode) {
-      expressionValue = `${constants.TRIGGER_OUTPUTS_OUTPUT}['${constants.OUTPUT_LOCATIONS.STATUS_CODE}']`;
+      expressionValue = `${constants.TRIGGER_STATUS_CODE_OUTPUT}`;
     } else if (propertyInOutputs) {
       if (equals(name, OutputKeys.PathParameters) || includes(key, OutputKeys.PathParameters)) {
         expressionValue = `${constants.TRIGGER_OUTPUTS_OUTPUT}['${constants.OUTPUT_LOCATIONS.RELATIVE_PATH_PARAMETERS}']${propertyPath}`;
