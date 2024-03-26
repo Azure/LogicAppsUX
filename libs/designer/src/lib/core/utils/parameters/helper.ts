@@ -1,10 +1,12 @@
 /* eslint-disable no-case-declarations  */
+import type { CustomCodeFileNameMapping } from '../../..';
 import constants from '../../../common/constants';
 import type { ConnectionReference, WorkflowParameter } from '../../../common/models/workflow';
 import { getReactQueryClient } from '../../ReactQueryProvider';
 import type { NodeDataWithOperationMetadata } from '../../actions/bjsworkflow/operationdeserializer';
 import type { Settings } from '../../actions/bjsworkflow/settings';
 import { getConnectorWithSwagger } from '../../queries/connections';
+import type { CustomCodeState } from '../../state/customcode/customcodeInterfaces';
 import type {
   DependencyInfo,
   NodeDependencies,
@@ -112,6 +114,7 @@ import {
   nthLastIndexOf,
   parseErrorMessage,
   getRecordEntry,
+  replaceWhiteSpaceWithUnderscore,
   isRecordNotEmpty,
 } from '@microsoft/logic-apps-shared';
 import type {
@@ -571,7 +574,7 @@ const toSimpleQueryBuilderViewModel = (
   let operand1: ValueSegment, operand2: ValueSegment, operationLiteral: ValueSegment;
   // default value
   if (!input || input.length === 0) {
-    return { isOldFormat: true, isRowFormat: true, itemValue: [{ id: guid(), type: ValueSegmentType.LITERAL, value: "@equals('','')" }] };
+    return { isOldFormat: true, isRowFormat: true, itemValue: [createLiteralValueSegment("@equals('','')")] };
   }
 
   if (!input.includes('@') || !input.includes(',')) {
@@ -588,11 +591,11 @@ const toSimpleQueryBuilderViewModel = (
       stringValue = stringValue.replace('@not(', '@');
       const baseOperator = stringValue.substring(stringValue.indexOf('@') + 1, stringValue.indexOf('('));
       operator = 'not' + baseOperator;
-      operationLiteral = { id: guid(), type: ValueSegmentType.LITERAL, value: `@not(${baseOperator}(` };
-      endingLiteral = { id: guid(), type: ValueSegmentType.LITERAL, value: `))` };
+      operationLiteral = createLiteralValueSegment(`@not(${baseOperator}(`);
+      endingLiteral = createLiteralValueSegment(`))`);
     } else {
-      operationLiteral = { id: guid(), type: ValueSegmentType.LITERAL, value: `@${operator}(` };
-      endingLiteral = { id: guid(), type: ValueSegmentType.LITERAL, value: ')' };
+      operationLiteral = createLiteralValueSegment(`@${operator}(`);
+      endingLiteral = createLiteralValueSegment(')');
     }
 
     // if operator is not of the dropdownlist, it cannot be converted into row format
@@ -604,7 +607,7 @@ const toSimpleQueryBuilderViewModel = (
     const operand2String = removeQuotes(operandSubstring.substring(getOuterMostCommaIndex(operandSubstring) + 1).trim());
     operand1 = loadParameterValueFromString(operand1String, true, true, true)[0];
     operand2 = loadParameterValueFromString(operand2String, true, true, true)[0];
-    const separatorLiteral: ValueSegment = { id: guid(), type: ValueSegmentType.LITERAL, value: `,` };
+    const separatorLiteral: ValueSegment = createLiteralValueSegment(`,`);
     return {
       isOldFormat: true,
       isRowFormat: true,
@@ -2422,8 +2425,8 @@ export const recurseSerializeCondition = (
         {
           type: GroupType.ROW,
           operator: RowDropdownOptions.EQUALS,
-          operand1: [{ id: guid(), type: ValueSegmentType.LITERAL, value: '' }],
-          operand2: [{ id: guid(), type: ValueSegmentType.LITERAL, value: '' }],
+          operand1: [createLiteralValueSegment('')],
+          operand2: [createLiteralValueSegment('')],
         },
       ];
     }
@@ -2501,6 +2504,36 @@ export function getGroupAndParameterFromParameterKey(
 
   return undefined;
 }
+
+export const getCustomCodeFileName = (nodeId: string, nodeInputs?: NodeInputs, idReplacements?: Record<string, string>): string => {
+  const updatedNodeId = idReplacements?.[nodeId] || nodeId;
+  let fileName = replaceWhiteSpaceWithUnderscore(updatedNodeId);
+
+  if (nodeInputs) {
+    const parameter = getParameterFromName(nodeInputs, constants.DEFAULT_CUSTOM_CODE_INPUT);
+    const fileExtension = parameter?.editorViewModel?.customCodeData?.fileExtension;
+    if (fileExtension) {
+      fileName = `${fileName}${fileExtension}`;
+    }
+  }
+  return fileName;
+};
+
+export const getCustomCodeFilesWithData = (state: CustomCodeState): CustomCodeFileNameMapping => {
+  const { files, fileData } = state;
+  const customCodeFileWithData: CustomCodeFileNameMapping = {};
+  Object.entries(files).forEach(([fileName, fileInfo]) => {
+    const { nodeId } = fileInfo;
+    const fileDataInfo = getRecordEntry(fileData, nodeId);
+    if (fileDataInfo || fileInfo.isDeleted) {
+      customCodeFileWithData[fileName] = {
+        ...fileInfo,
+        fileData: fileDataInfo ?? '',
+      };
+    }
+  });
+  return customCodeFileWithData;
+};
 
 export function getInputsValueFromDefinitionForManifest(
   inputsLocation: string[],
