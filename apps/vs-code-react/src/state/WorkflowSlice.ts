@@ -1,6 +1,6 @@
 import type { ExportData, ITargetDirectory, IValidationData, ManagedConnections, WorkflowsList } from '../run-service';
 import { AdvancedOptionsTypes } from '../run-service';
-import type { OverviewPropertiesProps } from '@microsoft/designer-ui';
+import type { OverviewPropertiesProps } from '@microsoft/logic-apps-shared';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 

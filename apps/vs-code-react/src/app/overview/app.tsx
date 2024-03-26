@@ -4,7 +4,7 @@ import type { RootState } from '../../state/store';
 import { VSCodeContext } from '../../webviewCommunication';
 import './overview.less';
 import { StandardRunService } from '@microsoft/logic-apps-shared';
-import { Overview, isRunError, mapToRunItem } from '@microsoft/designer-ui';
+import { Overview, isRunError, mapToRunItem } from '@microsoft/logic-apps-shared';
 import type { Runs } from '@microsoft/logic-apps-shared';
 import { ExtensionCommand, HttpClient } from '@microsoft/vscode-extension';
 import { useCallback, useContext, useMemo } from 'react';
