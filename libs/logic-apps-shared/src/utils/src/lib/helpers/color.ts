@@ -141,3 +141,16 @@ export const lighten = ({ blue, green, red }: RGB, amount: number): RGB => {
     red: lightenColor(red),
   };
 };
+
+export const darken = ({ blue, green, red }: RGB, amount: number): RGB => {
+  const darkenColor = (color: number): number => {
+    const adjustBy = color * amount;
+    return Math.round(color - adjustBy);
+  };
+
+  return {
+    blue: darkenColor(blue),
+    green: darkenColor(green),
+    red: darkenColor(red),
+  };
+};

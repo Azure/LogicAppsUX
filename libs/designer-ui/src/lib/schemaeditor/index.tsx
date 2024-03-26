@@ -1,15 +1,16 @@
 import { formatValue, getEditorHeight, getInitialValue } from '../code/util';
 import type { ValueSegment } from '../editor';
-import { ValueSegmentType } from '../editor';
 import type { ChangeHandler } from '../editor/base';
+import { createLiteralValueSegment } from '../editor/base/utils/helper';
 import type { EditorContentChangedEventArgs } from '../editor/monaco';
-import { MonacoEditor, EditorLanguage } from '../editor/monaco';
+import { MonacoEditor } from '../editor/monaco';
 import { ModalDialog } from '../modaldialog';
 import { generateSchemaFromJsonString } from '../workflow/schema/generator';
 import type { IDialogStyles, IStyle } from '@fluentui/react';
 import type { IButtonStyles } from '@fluentui/react/lib/Button';
 import { ActionButton } from '@fluentui/react/lib/Button';
 import { FontSizes } from '@fluentui/theme';
+import { EditorLanguage } from '@microsoft/logic-apps-shared';
 import { useFunctionalState } from '@react-hookz/web';
 import type { editor } from 'monaco-editor';
 import { useRef, useState } from 'react';
@@ -81,7 +82,7 @@ export function SchemaEditor({ readonly, label, initialValue, onChange, onFocus 
   };
 
   const handleBlur = (): void => {
-    onChange?.({ value: [{ id: 'key', type: ValueSegmentType.LITERAL, value: getCurrentValue() }] });
+    onChange?.({ value: [createLiteralValueSegment(getCurrentValue())] });
   };
 
   const handleFocus = (): void => {
@@ -101,7 +102,7 @@ export function SchemaEditor({ readonly, label, initialValue, onChange, onFocus 
         const stringifiedJsonSchema = formatValue(JSON.stringify(jsonSchema, null, 4));
         setCurrentValue(stringifiedJsonSchema);
         setEditorHeight(getEditorHeight(stringifiedJsonSchema));
-        onChange?.({ value: [{ id: 'key', type: ValueSegmentType.LITERAL, value: stringifiedJsonSchema }] });
+        onChange?.({ value: [createLiteralValueSegment(stringifiedJsonSchema)] });
       } catch (ex) {
         const error = intl.formatMessage({
           defaultMessage: 'Unable to generate schema',

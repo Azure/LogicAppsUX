@@ -1,3 +1,5 @@
+import type { OperationInfo, OperationManifest } from '../../../utils/src';
+import { ArgumentException, UnsupportedException, equals } from '../../../utils/src';
 import type { IHttpClient } from '../httpClient';
 import type { IOperationManifestService } from '../operationmanifest';
 import conditionManifest from './manifests/condition';
@@ -20,6 +22,14 @@ import {
   httpWebhookManifest,
   httpWebhookTriggerManifest,
 } from './manifests/http';
+import {
+  appendArrayManifest,
+  appendStringManifest,
+  decrementManifest,
+  incrementManifest,
+  initializeManifest,
+  setManifest,
+} from './manifests/variables';
 import joinManifest from './manifests/join';
 import parsejsonManifest from './manifests/parsejson';
 import queryManifest from './manifests/query';
@@ -31,16 +41,6 @@ import selectManifest from './manifests/select';
 import switchManifest from './manifests/switch';
 import terminateManifest from './manifests/terminate';
 import untilManifest from './manifests/until';
-import {
-  appendArrayManifest,
-  appendStringManifest,
-  decrementManifest,
-  incrementManifest,
-  initializeManifest,
-  setManifest,
-} from './manifests/variables';
-import type { OperationInfo, OperationManifest } from '@microsoft/logic-apps-shared';
-import { ArgumentException, equals, UnsupportedException } from '@microsoft/logic-apps-shared';
 
 const apimanagement = 'apimanagement';
 const apimanagementtrigger = 'apimanagementtrigger';
@@ -52,6 +52,8 @@ const rosettanetdecode = 'rosettanetdecode';
 const rosettanetwaitforresponse = 'rosettanetwaitforresponse';
 const invokefunction = 'invokefunction';
 const javascriptcode = 'javascriptcode';
+const powershellcode = 'powershellcode';
+const csharpcode = 'csharpscriptcode';
 const compose = 'compose';
 const csvtable = 'csvtable';
 const htmltable = 'htmltable';
@@ -135,6 +137,7 @@ const liquidConnectorId = 'connectionProviders/liquidOperations';
 const dataMapperConnectorId = 'connectionProviders/dataMapperOperations';
 const x12connectorId = 'connectionProviders/x12Operations';
 const edifactConnectorId = 'connectionProviders/edifactOperations';
+export const inlineCodeConnectorId = 'connectionProviders/inlineCode';
 
 const azurefunction = 'azurefunction';
 const appservice = 'appservice';
@@ -161,6 +164,8 @@ export const supportedBaseManifestTypes = [
   integrationaccountartifactlookup,
   invokefunction,
   javascriptcode,
+  powershellcode,
+  csharpcode,
   join,
   liquid,
   parsejson,
@@ -260,6 +265,8 @@ export function isBuiltInOperation(definition: any): boolean {
     case incrementvariable:
     case invokefunction:
     case javascriptcode:
+    case powershellcode:
+    case csharpcode:
     case join:
     case liquid:
     case parsejson:
@@ -509,8 +516,16 @@ const builtInOperationsMetadata: Record<string, OperationInfo> = {
     operationId: 'invokeFunction',
   },
   [javascriptcode]: {
-    connectorId: 'connectionProviders/inlineCode',
+    connectorId: inlineCodeConnectorId,
     operationId: 'javaScriptCode',
+  },
+  [powershellcode]: {
+    connectorId: inlineCodeConnectorId,
+    operationId: powershellcode,
+  },
+  [csharpcode]: {
+    connectorId: inlineCodeConnectorId,
+    operationId: 'cSharpScriptCode',
   },
   [join]: {
     connectorId: dataOperationConnectorId,

@@ -1,14 +1,9 @@
+import type { SettingProps } from './';
 import type { IToggleProps } from '@fluentui/react';
 import { Toggle } from '@fluentui/react';
 import { useIntl } from 'react-intl';
 
 export type ToggleChangeHandler = (e: React.MouseEvent<HTMLElement>, checked?: boolean) => void;
-
-export interface SettingProps {
-  readOnly?: boolean;
-  ariaLabel?: string;
-  customLabel?: JSX.Element;
-}
 
 export interface SettingToggleProps extends IToggleProps, SettingProps {
   onToggleInputChange?: ToggleChangeHandler;

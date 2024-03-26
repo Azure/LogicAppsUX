@@ -1,4 +1,4 @@
-import type { DiscoveryOperation, DiscoveryResultTypes } from '@microsoft/logic-apps-shared';
+import type { DiscoveryOperation, DiscoveryResultTypes } from '../../../../utils/src';
 
 export const almostAllBuiltInOperations: DiscoveryOperation<DiscoveryResultTypes>[] = [
   // result from this url https://management.azure.com/subscriptions/4201f397-837b-48ea-8943-980767f294ac/resourceGroups/LogicApps/providers/Microsoft.Web/sites/standarddacogbur/hostruntime/runtime/webhooks/workflow/api/management/operations?api-version=2018-11-01&workflowKind=Stateful&%24filter=
@@ -2082,6 +2082,48 @@ export const almostAllBuiltInOperations: DiscoveryOperation<DiscoveryResultTypes
         status: 'Preview',
         family: 'flatFileOperations',
       },
+    },
+  },
+  {
+    name: 'cSharpCode',
+    id: 'cSharpCode',
+    type: 'cSharpCode',
+    properties: {
+      api: {
+        id: 'connectionProviders/inlineCode',
+        name: 'inlineCode',
+        displayName: 'Inline Code',
+        iconUri: 'https://logicappsv2resources.blob.core.windows.net/icons/inline_code.svg',
+        brandColor: '#ba5d00',
+        description: 'Inline Code',
+      },
+      summary: 'Execute C Sharp Code',
+      description: 'Execute C Sharp Code',
+      visibility: 'Important',
+      operationType: 'CSharpCode',
+      brandColor: '#e68a00',
+      iconUri: 'https://logicappsv2resources.blob.core.windows.net/icons/javascript.svg',
+    },
+  },
+  {
+    name: 'powershellCode',
+    id: 'powershellCode',
+    type: 'powershellCode',
+    properties: {
+      api: {
+        id: 'connectionProviders/inlineCode',
+        name: 'inlineCode',
+        displayName: 'Inline Code',
+        iconUri: 'https://logicappsv2resources.blob.core.windows.net/icons/inline_code.svg',
+        brandColor: '#ba5d00',
+        description: 'Inline Code',
+      },
+      summary: 'Execute Powershell Code',
+      description: 'Execute Powershell Code',
+      visibility: 'Important',
+      operationType: 'PowershellCode',
+      brandColor: '#e68a00',
+      iconUri: 'https://logicappsv2resources.blob.core.windows.net/icons/javascript.svg',
     },
   },
 ];

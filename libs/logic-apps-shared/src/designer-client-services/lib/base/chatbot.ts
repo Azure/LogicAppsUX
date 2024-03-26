@@ -1,7 +1,7 @@
 import type { IChatbotService } from '../chatbot';
-import { ArgumentException } from '@microsoft/logic-apps-shared';
 import type { AxiosResponse } from 'axios';
 import axios from 'axios';
+import { ArgumentException } from '../../../utils/src';
 
 export interface ChatbotServiceOptions {
   baseUrl: string;

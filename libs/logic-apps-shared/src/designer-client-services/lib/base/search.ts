@@ -1,3 +1,14 @@
+import type {
+  DiscoveryOperation,
+  SomeKindOfAzureOperationDiscovery,
+  DiscoveryOpArray,
+  Connector,
+  ArmResource,
+  DiscoveryWorkflow,
+  DiscoveryWorkflowTrigger,
+  BuiltInOperation,
+} from '../../../utils/src';
+import { ArgumentException, equals } from '../../../utils/src';
 import { AzureConnectorMock } from '../__test__/__mocks__/azureConnectorResponse';
 import { azureOperationsResponse } from '../__test__/__mocks__/azureOperationResponse';
 import type { ContinuationTokenResponse } from '../common/azure';
@@ -6,17 +17,6 @@ import { LoggerService } from '../logger';
 import { Status } from '../logging/logEntry';
 import type { ISearchService } from '../search';
 import * as ClientOperationsData from './operations';
-import type {
-  ArmResource,
-  BuiltInOperation,
-  Connector,
-  DiscoveryOperation,
-  DiscoveryOpArray,
-  DiscoveryWorkflow,
-  DiscoveryWorkflowTrigger,
-  SomeKindOfAzureOperationDiscovery,
-} from '@microsoft/logic-apps-shared';
-import { equals, ArgumentException } from '@microsoft/logic-apps-shared';
 
 export type AzureOperationsFetchResponse = ContinuationTokenResponse<DiscoveryOperation<SomeKindOfAzureOperationDiscovery>[]>;
 

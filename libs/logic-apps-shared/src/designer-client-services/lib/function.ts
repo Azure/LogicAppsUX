@@ -1,5 +1,5 @@
-import type { SwaggerParser } from '@microsoft/logic-apps-shared';
-import { AssertionErrorCode, AssertionException } from '@microsoft/logic-apps-shared';
+import type { SwaggerParser } from '../../parsers';
+import { AssertionException, AssertionErrorCode } from '../../utils/src';
 
 export interface IFunctionService {
   fetchFunctionApps(): Promise<any>;

@@ -48,7 +48,12 @@
         "all": false
       }
     },
-    "include": ["libs/**/*.ts", "libs/**/*.tsx", "apps/**/*.ts", "apps/**/*.tsx"],
+    "include": [
+      "libs/**/*.ts",
+      "libs/**/*.tsx",
+      "apps/**/*.ts",
+      "apps/**/*.tsx"
+    ],
     "ignore": ["**/__test__/**"]
   },
   "organizeImports": {
