@@ -1041,14 +1041,11 @@ export function getTokenExpressionMethodFromKey(key: string, actionName: string 
       return `${OutputSource.Outputs}(${convertToStringLiteral(actionName)})`;
     }
     if (source) {
-      const propertyInQueries = !!source && equals(source, OutputSource.Queries);
-      const propertyInHeaders = !!source && equals(source, OutputSource.Headers);
-      const propertyInStatusCode = !!source && equals(source, OutputSource.StatusCode);
-      if (propertyInQueries) {
+      if (equals(source, OutputSource.Queries)) {
         return constants.TRIGGER_QUERIES_OUTPUT;
-      } else if (propertyInHeaders) {
+      } else if (equals(source, OutputSource.Headers)) {
         return constants.TRIGGER_HEADERS_OUTPUT;
-      } else if (propertyInStatusCode) {
+      } else if (equals(source, OutputSource.StatusCode)) {
         return constants.TRIGGER_STATUS_CODE_OUTPUT;
       }
     }
