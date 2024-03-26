@@ -1,9 +1,10 @@
+import { ResponseCodes, SwaggerParser } from '../../../parsers';
+import { ArgumentException, unmap } from '../../../utils/src';
 import { getAzureResourceRecursive } from '../common/azure';
 import type { ListDynamicValue } from '../connector';
 import type { IFunctionService } from '../function';
 import { isFunctionContainer } from '../helpers';
 import type { IHttpClient } from '../httpClient';
-import { ResponseCodes, SwaggerParser, ArgumentException, unmap } from '@microsoft/logic-apps-shared';
 
 export interface BaseFunctionServiceOptions {
   baseUrl: string;

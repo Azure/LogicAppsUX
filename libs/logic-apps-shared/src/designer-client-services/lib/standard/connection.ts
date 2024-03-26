@@ -1,3 +1,19 @@
+import { getIntl } from '../../../intl/src';
+import type { ManagedIdentity, Connector, Connection, ConnectionParameter } from '../../../utils/src';
+import {
+  ArgumentException,
+  isArmResourceId,
+  AssertionException,
+  AssertionErrorCode,
+  isIdentityAssociatedWithLogicApp,
+  equals,
+  ResourceIdentityType,
+  ConnectionType,
+  optional,
+  createCopy,
+  ConnectionParameterSource,
+  safeSetObjectPropertyValue,
+} from '../../../utils/src';
 import type { BaseConnectionServiceOptions } from '../base';
 import { BaseConnectionService } from '../base';
 import { apiManagementConnectorId, azureFunctionConnectorId } from '../base/operationmanifest';
@@ -8,22 +24,6 @@ import { LoggerService } from '../logger';
 import { LogEntryLevel, Status } from '../logging/logEntry';
 import type { IOAuthPopup } from '../oAuth';
 import { OAuthService } from '../oAuth';
-import {
-  getIntl,
-  ArgumentException,
-  AssertionErrorCode,
-  AssertionException,
-  ConnectionParameterSource,
-  ConnectionType,
-  ResourceIdentityType,
-  equals,
-  optional,
-  isArmResourceId,
-  isIdentityAssociatedWithLogicApp,
-  safeSetObjectPropertyValue,
-  createCopy,
-} from '@microsoft/logic-apps-shared';
-import type { Connection, ConnectionParameter, Connector, ManagedIdentity } from '@microsoft/logic-apps-shared';
 
 interface ConnectionAcl {
   id: string;

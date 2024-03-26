@@ -1,4 +1,16 @@
 /* eslint-disable no-param-reassign */
+import { SwaggerParser } from '../../../parsers';
+import type { Connection, OpenAPIV2, Connector } from '../../../utils/src';
+import {
+  ArgumentException,
+  isArmResourceId,
+  HTTP_METHODS,
+  equals,
+  UserException,
+  UserErrorCode,
+  isCustomConnectorId,
+  getUniqueName,
+} from '../../../utils/src';
 import type { HttpResponse } from '../common/exceptions/service';
 import type {
   ConnectionCreationInfo,
@@ -8,18 +20,6 @@ import type {
   IConnectionService,
 } from '../connection';
 import type { HttpRequestOptions, IHttpClient, QueryParameters } from '../httpClient';
-import type { Connection, Connector, OpenAPIV2 } from '@microsoft/logic-apps-shared';
-import {
-  ArgumentException,
-  HTTP_METHODS,
-  SwaggerParser,
-  UserErrorCode,
-  UserException,
-  equals,
-  getUniqueName,
-  isArmResourceId,
-  isCustomConnectorId,
-} from '@microsoft/logic-apps-shared';
 
 export interface ApiHubServiceDetails {
   apiVersion: string;

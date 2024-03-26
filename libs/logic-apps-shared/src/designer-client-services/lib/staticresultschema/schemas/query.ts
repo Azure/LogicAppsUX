@@ -1,5 +1,5 @@
+import { getIntl } from '../../../../intl/src';
 import { StaticResultRootSchema } from './baseactionresult';
-import { getIntl } from '@microsoft/logic-apps-shared';
 
 const intl = getIntl();
 const QUERY_OUTPUT_TITLE = intl.formatMessage({
