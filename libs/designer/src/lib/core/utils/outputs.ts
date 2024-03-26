@@ -552,7 +552,7 @@ export const loadDynamicOutputsInNode = async (
   }
 };
 
-const getExpressionValueForTriggerOutput = ({ key, required }: OutputInfo, isManifestBasedOperation: boolean): string => {
+const getExpressionValueForTriggerOutput = ({ key, required, source }: OutputInfo, isManifestBasedOperation: boolean): string => {
   if (isManifestBasedOperation) {
     return `@${getTokenExpressionValueForManifestBasedOperation(
       key,
@@ -562,7 +562,7 @@ const getExpressionValueForTriggerOutput = ({ key, required }: OutputInfo, isMan
       !!required
     )}`;
   } else {
-    const method = getTokenExpressionMethodFromKey(key, /* actionName */ undefined);
+    const method = getTokenExpressionMethodFromKey(key, /* actionName */ undefined, source);
     return `@${generateExpressionFromKey(method, key, /* actionName */ undefined, /* isInsideArray */ false, !!required)}`;
   }
 };

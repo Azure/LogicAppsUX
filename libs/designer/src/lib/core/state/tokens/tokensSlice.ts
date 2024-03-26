@@ -42,8 +42,12 @@ export const tokensSlice = createSlice({
   initialState,
   reducers: {
     initializeTokensAndVariables: (state, action: PayloadAction<InitializeTokensAndVariablesPayload>) => {
-      state.outputTokens = { ...state.outputTokens, ...action.payload.outputTokens };
-      state.variables = { ...state.variables, ...action.payload.variables };
+      const { outputTokens, variables } = action.payload;
+      state.outputTokens = {
+        ...state.outputTokens,
+        ...outputTokens,
+      };
+      state.variables = { ...state.variables, ...variables };
     },
     deinitializeTokensAndVariables: (state, action: PayloadAction<{ id: string }>) => {
       const { id } = action.payload;
@@ -54,8 +58,16 @@ export const tokensSlice = createSlice({
       const { id, name, type } = action.payload;
       const variables = getRecordEntry(state.variables, id);
       if (!variables) return;
-      if (name) state.variables[id] = variables.map((variable) => ({ ...variable, name }));
-      if (type) state.variables[id] = variables.map((variable) => ({ ...variable, type }));
+      if (name)
+        state.variables[id] = variables.map((variable) => ({
+          ...variable,
+          name,
+        }));
+      if (type)
+        state.variables[id] = variables.map((variable) => ({
+          ...variable,
+          type,
+        }));
     },
     updateTokens: (state, action: PayloadAction<{ id: string; tokens: Token[] }>) => {
       const { id, tokens } = action.payload;
