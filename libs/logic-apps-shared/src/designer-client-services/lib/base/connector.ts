@@ -1,3 +1,13 @@
+import { getIntl } from '../../../intl/src';
+import type { OpenAPIV2, OperationInfo } from '../../../utils/src';
+import {
+  ArgumentException,
+  equals,
+  ConnectorServiceException,
+  ConnectorServiceErrorCode,
+  isArmResourceId,
+  UnsupportedException,
+} from '../../../utils/src';
 import type {
   IConnectorService,
   ListDynamicValue,
@@ -7,16 +17,7 @@ import type {
 } from '../connector';
 import { getClientRequestIdFromHeaders, pathCombine } from '../helpers';
 import type { IHttpClient } from '../httpClient';
-import {
-  getIntl,
-  UnsupportedException,
-  ArgumentException,
-  ConnectorServiceErrorCode,
-  ConnectorServiceException,
-  equals,
-  isArmResourceId,
-} from '@microsoft/logic-apps-shared';
-import type { OpenAPIV2, OperationInfo } from '@microsoft/logic-apps-shared';
+
 import type { IntlShape } from 'react-intl';
 
 type GetSchemaFunction = (args: Record<string, any>) => Promise<OpenAPIV2.SchemaObject>;

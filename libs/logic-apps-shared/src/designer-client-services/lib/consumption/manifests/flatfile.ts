@@ -1,7 +1,7 @@
+import type { OperationManifest } from '../../../../utils/src';
+import { SettingScope } from '../../../../utils/src';
 import { flatFileGroup } from '../operations';
 import { flatFileDecodingOperations, flatFileEncodingOperations } from '../operations/flatfile';
-import type { OperationManifest } from '@microsoft/logic-apps-shared';
-import { SettingScope } from '@microsoft/logic-apps-shared';
 
 export const flatFileDecodingManifest = {
   properties: {

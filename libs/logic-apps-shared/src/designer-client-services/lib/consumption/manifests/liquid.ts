@@ -1,6 +1,6 @@
+import type { OperationManifest } from '../../../../utils/src';
+import { SettingScope } from '../../../../utils/src';
 import { liquidGroup } from '../operations';
-import type { OperationManifest } from '@microsoft/logic-apps-shared';
-import { SettingScope } from '@microsoft/logic-apps-shared';
 
 const iconUri = liquidGroup.properties.iconUri;
 const brandColor = liquidGroup.properties.brandColor;

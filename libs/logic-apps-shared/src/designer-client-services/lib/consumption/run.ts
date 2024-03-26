@@ -2,19 +2,19 @@ import { inputsResponse, outputsResponse } from '../__test__/__mocks__/monitorin
 import type { HttpRequestOptions, IHttpClient } from '../httpClient';
 import type { IRunService } from '../run';
 import type { CallbackInfo } from '../callbackInfo';
+import type { ContentLink, Runs, ArmResources, Run, LogicAppsV2, BoundParameters } from '../../../utils/src';
 import {
-  isNumber,
-  isCallbackInfoWithRelativePath,
   ArgumentException,
+  isCallbackInfoWithRelativePath,
   HTTP_METHODS,
-  UnsupportedException,
-  isString,
   getCallbackUrl,
-  isNullOrUndefined,
-  isBoolean,
   getRecordEntry,
-} from '@microsoft/logic-apps-shared';
-import type { ArmResources, BoundParameters, ContentLink, LogicAppsV2, Run, Runs } from '@microsoft/logic-apps-shared';
+  UnsupportedException,
+  isNullOrUndefined,
+  isString,
+  isBoolean,
+} from '../../../utils/src';
+import { isNumber } from '../../../parsers';
 
 export interface ConsumptionRunServiceOptions {
   apiVersion: string;

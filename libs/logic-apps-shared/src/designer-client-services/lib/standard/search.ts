@@ -1,17 +1,17 @@
+import type {
+  DiscoveryOpArray,
+  DiscoveryOperation,
+  BuiltInOperation,
+  Connector,
+  SomeKindOfAzureOperationDiscovery,
+} from '../../../utils/src';
+import { ArgumentException, connectorsSearchResultsMock } from '../../../utils/src';
 import { almostAllBuiltInOperations } from '../__test__/__mocks__/builtInOperationResponse';
 import { BaseSearchService } from '../base';
 import type { AzureOperationsFetchResponse, BaseSearchServiceOptions } from '../base/search';
 import { getClientBuiltInOperations, getClientBuiltInConnectors } from '../base/search';
 import type { ContinuationTokenResponse } from '../common/azure';
 import type { QueryParameters } from '../httpClient';
-import type {
-  BuiltInOperation,
-  Connector,
-  DiscoveryOpArray,
-  DiscoveryOperation,
-  SomeKindOfAzureOperationDiscovery,
-} from '@microsoft/logic-apps-shared';
-import { ArgumentException, connectorsSearchResultsMock } from '@microsoft/logic-apps-shared';
 
 const ISE_RESOURCE_ID = 'properties/integrationServiceEnvironmentResourceId';
 

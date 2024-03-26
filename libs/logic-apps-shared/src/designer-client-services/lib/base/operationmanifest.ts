@@ -1,3 +1,5 @@
+import type { OperationInfo, OperationManifest } from '../../../utils/src';
+import { ArgumentException, UnsupportedException, equals } from '../../../utils/src';
 import type { IHttpClient } from '../httpClient';
 import type { IOperationManifestService } from '../operationmanifest';
 import conditionManifest from './manifests/condition';
@@ -20,6 +22,14 @@ import {
   httpWebhookManifest,
   httpWebhookTriggerManifest,
 } from './manifests/http';
+import {
+  appendArrayManifest,
+  appendStringManifest,
+  decrementManifest,
+  incrementManifest,
+  initializeManifest,
+  setManifest,
+} from './manifests/variables';
 import joinManifest from './manifests/join';
 import parsejsonManifest from './manifests/parsejson';
 import queryManifest from './manifests/query';
@@ -31,16 +41,6 @@ import selectManifest from './manifests/select';
 import switchManifest from './manifests/switch';
 import terminateManifest from './manifests/terminate';
 import untilManifest from './manifests/until';
-import {
-  appendArrayManifest,
-  appendStringManifest,
-  decrementManifest,
-  incrementManifest,
-  initializeManifest,
-  setManifest,
-} from './manifests/variables';
-import type { OperationInfo, OperationManifest } from '@microsoft/logic-apps-shared';
-import { ArgumentException, equals, UnsupportedException } from '@microsoft/logic-apps-shared';
 
 const apimanagement = 'apimanagement';
 const apimanagementtrigger = 'apimanagementtrigger';

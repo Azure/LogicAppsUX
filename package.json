@@ -209,8 +209,10 @@
     "yalc": "1.0.0-pre.53"
   },
   "lint-staged": {
-    "*.js,ts,tsx": "eslint --cache --fix",
-    "*.{ts,tsx,js,css,md}": "biome check . --apply",
-    "*.{ts,tsx}": "npm run extract"
+    "*.{js,ts,tsx}": [
+      "npm run extract",
+      "eslint --cache --fix",
+      "biome check --apply"
+    ]
   }
 }

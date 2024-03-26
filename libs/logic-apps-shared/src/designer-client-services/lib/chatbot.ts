@@ -1,5 +1,5 @@
-import { AssertionErrorCode, AssertionException } from '@microsoft/logic-apps-shared';
 import type { AxiosResponse } from 'axios';
+import { AssertionErrorCode, AssertionException } from '../../utils/src';
 
 export interface IChatbotService {
   getCopilotResponse: (query: string, workflow: any, signal: AbortSignal, armToken: string) => Promise<AxiosResponse<any>>;

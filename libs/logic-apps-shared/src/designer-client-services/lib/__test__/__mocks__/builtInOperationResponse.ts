@@ -1,4 +1,4 @@
-import type { DiscoveryOperation, DiscoveryResultTypes } from '@microsoft/logic-apps-shared';
+import type { DiscoveryOperation, DiscoveryResultTypes } from '../../../../utils/src';
 
 export const almostAllBuiltInOperations: DiscoveryOperation<DiscoveryResultTypes>[] = [
   // result from this url https://management.azure.com/subscriptions/4201f397-837b-48ea-8943-980767f294ac/resourceGroups/LogicApps/providers/Microsoft.Web/sites/standarddacogbur/hostruntime/runtime/webhooks/workflow/api/management/operations?api-version=2018-11-01&workflowKind=Stateful&%24filter=
