@@ -134,6 +134,7 @@ export const convertOutputsToTokens = (
   const isSecure = hasSecureOutputs(nodeType, settings);
 
   // TODO - Look at repetition context to get foreach context correctly in tokens and for splitOn
+  console.log(outputs);
 
   return Object.keys(outputs).map((outputKey) => {
     const {

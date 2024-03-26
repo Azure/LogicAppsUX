@@ -1,9 +1,9 @@
-import { resetWorkflowState } from '../global';
-import { clearDynamicOutputs } from '../operation/operationMetadataSlice';
-import type { OutputToken as Token } from '@microsoft/designer-ui';
-import { getRecordEntry } from '@microsoft/logic-apps-shared';
-import { createSlice } from '@reduxjs/toolkit';
-import type { PayloadAction } from '@reduxjs/toolkit';
+import { resetWorkflowState } from "../global";
+import { clearDynamicOutputs } from "../operation/operationMetadataSlice";
+import type { OutputToken as Token } from "@microsoft/designer-ui";
+import { getRecordEntry } from "@microsoft/logic-apps-shared";
+import { createSlice } from "@reduxjs/toolkit";
+import type { PayloadAction } from "@reduxjs/toolkit";
 
 export type UpdateUpstreamNodesPayload = Record<string, string[]>;
 export interface NodeTokens {
@@ -38,31 +38,59 @@ interface AddDynamicTokensPayload {
 }
 
 export const tokensSlice = createSlice({
-  name: 'tokens',
+  name: "tokens",
   initialState,
   reducers: {
-    initializeTokensAndVariables: (state, action: PayloadAction<InitializeTokensAndVariablesPayload>) => {
-      state.outputTokens = { ...state.outputTokens, ...action.payload.outputTokens };
-      state.variables = { ...state.variables, ...action.payload.variables };
+    initializeTokensAndVariables: (
+      state,
+      action: PayloadAction<InitializeTokensAndVariablesPayload>
+    ) => {
+      const { outputTokens, variables } = action.payload;
+      console.log(outputTokens);
+      state.outputTokens = {
+        ...state.outputTokens,
+        ...outputTokens,
+      };
+      state.variables = { ...state.variables, ...variables };
     },
-    deinitializeTokensAndVariables: (state, action: PayloadAction<{ id: string }>) => {
+    deinitializeTokensAndVariables: (
+      state,
+      action: PayloadAction<{ id: string }>
+    ) => {
       const { id } = action.payload;
       // delete state.outputTokens[id]; // TODO: This causes lots of errors as tokens are not null-safe
       delete state.variables[id];
     },
-    updateVariableInfo: (state, action: PayloadAction<{ id: string; name?: string; type?: string }>) => {
+    updateVariableInfo: (
+      state,
+      action: PayloadAction<{ id: string; name?: string; type?: string }>
+    ) => {
       const { id, name, type } = action.payload;
       const variables = getRecordEntry(state.variables, id);
       if (!variables) return;
-      if (name) state.variables[id] = variables.map((variable) => ({ ...variable, name }));
-      if (type) state.variables[id] = variables.map((variable) => ({ ...variable, type }));
+      if (name)
+        state.variables[id] = variables.map((variable) => ({
+          ...variable,
+          name,
+        }));
+      if (type)
+        state.variables[id] = variables.map((variable) => ({
+          ...variable,
+          type,
+        }));
     },
-    updateTokens: (state, action: PayloadAction<{ id: string; tokens: Token[] }>) => {
+    updateTokens: (
+      state,
+      action: PayloadAction<{ id: string; tokens: Token[] }>
+    ) => {
       const { id, tokens } = action.payload;
       const outputTokens = getRecordEntry(state.outputTokens, id);
       if (outputTokens) outputTokens.tokens = tokens;
     },
-    updateTokenSecureStatus: (state, action: PayloadAction<{ id: string; isSecure: boolean }>) => {
+    updateTokenSecureStatus: (
+      state,
+      action: PayloadAction<{ id: string; isSecure: boolean }>
+    ) => {
       const { id, isSecure } = action.payload;
       const outputTokens = getRecordEntry(state.outputTokens, id);
       if (outputTokens) {
@@ -72,7 +100,10 @@ export const tokensSlice = createSlice({
         }));
       }
     },
-    addDynamicTokens: (state, action: PayloadAction<AddDynamicTokensPayload>) => {
+    addDynamicTokens: (
+      state,
+      action: PayloadAction<AddDynamicTokensPayload>
+    ) => {
       const { nodeId, tokens } = action.payload;
       const outputTokens = getRecordEntry(state.outputTokens, nodeId);
       if (!outputTokens) return;
@@ -87,21 +118,31 @@ export const tokensSlice = createSlice({
       }
       outputTokens.tokens = newTokens;
     },
-    updateUpstreamNodes: (state, action: PayloadAction<UpdateUpstreamNodesPayload>) => {
+    updateUpstreamNodes: (
+      state,
+      action: PayloadAction<UpdateUpstreamNodesPayload>
+    ) => {
       for (const nodeId of Object.keys(action.payload)) {
         const outputTokens = getRecordEntry(state.outputTokens, nodeId);
-        if (outputTokens) outputTokens.upstreamNodeIds = getRecordEntry(action.payload, nodeId) ?? [];
+        if (outputTokens)
+          outputTokens.upstreamNodeIds =
+            getRecordEntry(action.payload, nodeId) ?? [];
       }
     },
   },
   extraReducers: (builder) => {
-    builder.addCase(clearDynamicOutputs, (state, action: PayloadAction<string>) => {
-      const nodeId = action.payload;
-      const outputTokens = getRecordEntry(state.outputTokens, nodeId);
-      if (outputTokens) {
-        outputTokens.tokens = outputTokens.tokens.filter((token) => !token.outputInfo.isDynamic);
+    builder.addCase(
+      clearDynamicOutputs,
+      (state, action: PayloadAction<string>) => {
+        const nodeId = action.payload;
+        const outputTokens = getRecordEntry(state.outputTokens, nodeId);
+        if (outputTokens) {
+          outputTokens.tokens = outputTokens.tokens.filter(
+            (token) => !token.outputInfo.isDynamic
+          );
+        }
       }
-    });
+    );
     builder.addCase(resetWorkflowState, () => initialState);
   },
 });

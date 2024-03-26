@@ -984,7 +984,7 @@ export function getExpressionValueForOutputToken(token: OutputToken, nodeType: s
   const {
     key,
     name,
-    outputInfo: { type: tokenType, actionName, required, arrayDetails, functionArguments },
+    outputInfo: { type: tokenType, actionName, source, required, arrayDetails, functionArguments },
   } = token;
   // get the expression value for webhook list callback url
   if (key === constants.HTTP_WEBHOOK_LIST_CALLBACK_URL_KEY) {
@@ -1025,7 +1025,7 @@ export function getExpressionValueForOutputToken(token: OutputToken, nodeType: s
 
     default:
       method = arrayDetails ? constants.ITEM : getTokenExpressionMethodFromKey(key, actionName);
-      return generateExpressionFromKey(method, key, actionName, !!arrayDetails, !!required);
+      return getTokenExpressionValue({...token, tokenType, source});
   }
 }
 
