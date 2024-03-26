@@ -21,10 +21,7 @@
         "expression": {
           "and": [
             {
-              "equals": [
-                "@variables('foundGoalIds')",
-                "@variables('expectedGoalIds')"
-              ]
+              "equals": ["@variables('foundGoalIds')", "@variables('expectedGoalIds')"]
             }
           ]
         },
@@ -95,16 +92,10 @@
             "expression": {
               "or": [
                 {
-                  "equals": [
-                    "@items('For_each')?['id']",
-                    "@body('Create_a_goal')['id']"
-                  ]
+                  "equals": ["@items('For_each')?['id']", "@body('Create_a_goal')['id']"]
                 },
                 {
-                  "equals": [
-                    "@items('For_each')?['id']",
-                    "@body('Create_a_goal_2')['id']"
-                  ]
+                  "equals": ["@items('For_each')?['id']", "@body('Create_a_goal_2')['id']"]
                 }
               ]
             },
