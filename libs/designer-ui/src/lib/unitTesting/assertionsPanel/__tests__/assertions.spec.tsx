@@ -1,8 +1,8 @@
-import * as ReactShallowRenderer from 'react-test-renderer/shallow';
 import { Assertions, type AssertionsProps } from '../assertions';
 import { initializeIcons } from '@fluentui/react';
+import * as ReactShallowRenderer from 'react-test-renderer/shallow';
 
-describe('ui/assertionsPanel/assertions', () => {
+describe('ui/unitTesting/assertionsPanel/assertions', () => {
   let minimal: AssertionsProps, renderer: ReactShallowRenderer.ShallowRenderer;
 
   beforeEach(() => {
@@ -26,32 +26,38 @@ describe('ui/assertionsPanel/assertions', () => {
   });
 
   it('should render without assertions items and add button.', () => {
-    const assertions = renderer.render(<Assertions
-      {...minimal}
-    />);
+    const assertions = renderer.render(<Assertions {...minimal} />);
     expect(assertions).toMatchSnapshot();
   });
 
   it('should render list of assertions and add button', () => {
     minimal.assertions = [
-      {  name: 'test-assertion',
+      {
+        name: 'test-assertion',
         description: 'test-description',
-        expression: {},
+        expression: {
+          items: {
+            type: 'group',
+            items: [],
+          },
+        },
         id: 'test-id',
-        isEditable: true
+        isEditable: true,
       },
-      {  name: 'test-assertion-2',
+      {
+        name: 'test-assertion-2',
         description: '',
-        expression: {},
+        expression: {
+          items: {
+            type: 'group',
+            items: [],
+          },
+        },
         id: 'test-id-2',
-        isEditable: true
-      }
-    ]
-    const assertions = renderer.render(
-      <Assertions
-      {...minimal}
-    />
-    );
+        isEditable: true,
+      },
+    ];
+    const assertions = renderer.render(<Assertions {...minimal} />);
     expect(assertions).toMatchSnapshot();
   });
 });

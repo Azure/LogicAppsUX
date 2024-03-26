@@ -1,6 +1,6 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`ui/assertionsPanel/assertions should render list of assertions and add button 1`] = `
+exports[`ui/unitTesting/assertionsPanel/assertions should render list of assertions and add button 1`] = `
 <div
   className="msla-workflow-assertions"
 >
@@ -23,14 +23,24 @@ exports[`ui/assertionsPanel/assertions should render list of assertions and add 
       Array [
         Object {
           "description": "test-description",
-          "expression": Object {},
+          "expression": Object {
+            "items": Object {
+              "items": Array [],
+              "type": "group",
+            },
+          },
           "id": "test-id",
           "isEditable": true,
           "name": "test-assertion",
         },
         Object {
           "description": "",
-          "expression": Object {},
+          "expression": Object {
+            "items": Object {
+              "items": Array [],
+              "type": "group",
+            },
+          },
           "id": "test-id-2",
           "isEditable": true,
           "name": "test-assertion-2",
@@ -55,7 +65,7 @@ exports[`ui/assertionsPanel/assertions should render list of assertions and add 
 </div>
 `;
 
-exports[`ui/assertionsPanel/assertions should render without assertions items and add button. 1`] = `
+exports[`ui/unitTesting/assertionsPanel/assertions should render without assertions items and add button. 1`] = `
 <div
   className="msla-workflow-assertions"
 >
