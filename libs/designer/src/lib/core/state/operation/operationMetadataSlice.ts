@@ -179,6 +179,13 @@ interface AddDynamicOutputsPayload {
   outputs: Record<string, OutputInfo>;
 }
 
+export interface ClearDynamicIOPayload {
+  nodeId?: string;
+  nodeIds?: string[];
+  inputs?: boolean;
+  outputs?: boolean;
+}
+
 interface UpdateExistingInputTokenTitlesPayload {
   tokenTitles: Record<string, string>;
 }
@@ -277,42 +284,51 @@ export const operationMetadataSlice = createSlice({
       const outputParameters = getRecordEntry(state.outputParameters, nodeId);
       if (outputParameters) outputParameters.outputs = { ...outputParameters.outputs, ...outputs };
     },
-    clearDynamicInputs: (state, action: PayloadAction<string>) => {
-      const nodeId = action.payload;
-      const nodeInputParameters = getRecordEntry(state.inputParameters, nodeId);
-      if (nodeInputParameters) {
-        for (const groupId of Object.keys(nodeInputParameters.parameterGroups)) {
-          const filteredParams = nodeInputParameters.parameterGroups[groupId].parameters.filter((parameter) => !parameter.info.isDynamic);
-          nodeInputParameters.parameterGroups[groupId].parameters = filteredParams;
-        }
-      }
+    clearDynamicIO: (state, action: PayloadAction<ClearDynamicIOPayload>) => {
+      const { nodeId, nodeIds: _nodeIds, inputs = true, outputs = true } = action.payload;
+      const nodeIds = _nodeIds ?? [nodeId];
+      for (const nodeId of nodeIds) {
+        const nodeErrors = getRecordEntry(state.errors, nodeId);
 
-      const inputDependencies = getRecordEntry(state.dependencies, nodeId)?.inputs as WritableDraft<Record<string, DependencyInfo>>;
-      for (const inputKey of Object.keys(inputDependencies ?? {})) {
-        if (inputDependencies[inputKey].parameter?.isDynamic && inputDependencies[inputKey].dependencyType !== 'ApiSchema') {
-          delete getRecordEntry(state.dependencies, nodeId)?.inputs[inputKey];
-        }
-      }
+        if (inputs) {
+          delete nodeErrors?.[ErrorLevel.DynamicInputs];
 
-      if (getRecordEntry(state.errors, nodeId)?.[ErrorLevel.DynamicInputs]) {
-        delete getRecordEntry(state.errors, nodeId)?.[ErrorLevel.DynamicInputs];
-      }
-    },
-    clearDynamicOutputs: (state, action: PayloadAction<string>) => {
-      const nodeId = action.payload;
-      const outputParameters = getRecordEntry(state.outputParameters, nodeId);
-      if (outputParameters) {
-        outputParameters.outputs = Object.keys(outputParameters.outputs).reduce((result: Record<string, OutputInfo>, outputKey: string) => {
-          if (!outputParameters.outputs[outputKey].isDynamic) {
-            return { [outputKey]: outputParameters.outputs[outputKey] };
+          const nodeInputParameters = getRecordEntry(state.inputParameters, nodeId);
+          if (nodeInputParameters) {
+            for (const groupId of Object.keys(nodeInputParameters.parameterGroups)) {
+              const filteredParams = nodeInputParameters.parameterGroups[groupId].parameters.filter(
+                (parameter) => !parameter.info.isDynamic
+              );
+              nodeInputParameters.parameterGroups[groupId].parameters = filteredParams;
+            }
           }
 
-          return result;
-        }, {}) as Record<string, OutputInfo>;
-      }
+          const inputDependencies = getRecordEntry(state.dependencies, nodeId)?.inputs as WritableDraft<Record<string, DependencyInfo>>;
+          for (const inputKey of Object.keys(inputDependencies ?? {})) {
+            if (inputDependencies[inputKey].parameter?.isDynamic && inputDependencies[inputKey].dependencyType !== 'ApiSchema') {
+              delete getRecordEntry(state.dependencies, nodeId)?.inputs[inputKey];
+            }
+          }
+        }
 
-      const nodeErrors = getRecordEntry(state.errors, nodeId);
-      delete nodeErrors?.[ErrorLevel.DynamicOutputs];
+        if (outputs) {
+          delete nodeErrors?.[ErrorLevel.DynamicOutputs];
+
+          const outputParameters = getRecordEntry(state.outputParameters, nodeId);
+          if (outputParameters) {
+            outputParameters.outputs = Object.keys(outputParameters.outputs).reduce(
+              (result: Record<string, OutputInfo>, outputKey: string) => {
+                if (!outputParameters.outputs[outputKey].isDynamic) {
+                  return { [outputKey]: outputParameters.outputs[outputKey] };
+                }
+
+                return result;
+              },
+              {}
+            ) as Record<string, OutputInfo>;
+          }
+        }
+      }
     },
     updateExistingInputTokenTitles: (state, action: PayloadAction<UpdateExistingInputTokenTitlesPayload>) => {
       const { tokenTitles } = action.payload;
@@ -558,8 +574,7 @@ export const {
   updateNodeParameters,
   addDynamicInputs,
   addDynamicOutputs,
-  clearDynamicInputs,
-  clearDynamicOutputs,
+  clearDynamicIO,
   updateNodeSettings,
   updateStaticResults,
   updateParameterConditionalVisibility,

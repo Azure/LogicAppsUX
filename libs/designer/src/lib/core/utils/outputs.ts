@@ -8,7 +8,7 @@ import type { DependencyInfo, NodeInputs, NodeOperation, NodeOutputs, OutputInfo
 import {
   ErrorLevel,
   addDynamicOutputs,
-  clearDynamicOutputs,
+  clearDynamicIO,
   updateErrorDetails,
   updateExistingInputTokenTitles,
 } from '../state/operation/operationMetadataSlice';
@@ -462,7 +462,7 @@ export const loadDynamicOutputsInNode = async (
 ): Promise<void> => {
   for (const outputKey of Object.keys(outputDependencies)) {
     const info = outputDependencies[outputKey];
-    dispatch(clearDynamicOutputs(nodeId));
+    dispatch(clearDynamicIO({ nodeId, inputs: false, outputs: true }));
 
     if (isDynamicDataReadyToLoad(info)) {
       if (info.dependencyType === 'StaticSchema') {
