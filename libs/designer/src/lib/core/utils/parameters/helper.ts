@@ -25,7 +25,6 @@ import {
   DynamicLoadStatus,
   addDynamicInputs,
   updateNodeParameters,
-  clearDynamicIO,
 } from '../../state/operation/operationMetadataSlice';
 import type { VariableDeclaration } from '../../state/tokens/tokensSlice';
 import type { NodesMetadata, Operations as Actions } from '../../state/workflow/workflowInterfaces';
@@ -1879,27 +1878,41 @@ export async function updateDynamicDataInNode(
   const { operations, workflowParameters } = getState();
   const nodeDependencies = getRecordEntry(operations.dependencies, nodeId) ?? { inputs: {}, outputs: {} };
   const nodeInputParameters = getRecordEntry(operations.inputParameters, nodeId) ?? { parameterGroups: {} };
+
+  // dispatch loading status to all parameters that are dependent on dynamic values
+  const parameterTempValues = [] as any;
   for (const parameterKey of Object.keys(nodeDependencies?.inputs ?? {})) {
-    const dependencyInfo = nodeDependencies.inputs[parameterKey];
-    if (dependencyInfo.dependencyType === 'ListValues') {
-      const details = getGroupAndParameterFromParameterKey(nodeInputParameters, parameterKey);
-      if (details) {
-        loadDynamicValuesForParameter(
-          nodeId,
-          details.groupId,
-          details.parameter.id,
-          operationInfo,
-          connectionReference,
-          nodeInputParameters,
-          nodeDependencies,
-          false /* showErrorWhenNotReady */,
-          dispatch,
-          /* idReplacements */ undefined,
-          workflowParameters.definitions
-        );
-      }
-    }
+    if (nodeDependencies.inputs?.[parameterKey]?.dependencyType !== 'ListValues') continue;
+    const details = getGroupAndParameterFromParameterKey(nodeInputParameters, parameterKey);
+    if (!details) continue;
+    parameterTempValues.push({
+      groupId: details.groupId,
+      parameterId: details.parameter.id,
+      propertiesToUpdate: { dynamicData: { status: DynamicCallStatus.STARTED } },
+    });
   }
+  dispatch(updateNodeParameters({ nodeId, parameters: parameterTempValues }));
+
+  const parameterDynamicValues = [] as any;
+  for (const parameterKey of Object.keys(nodeDependencies?.inputs ?? {})) {
+    if (nodeDependencies.inputs?.[parameterKey]?.dependencyType !== 'ListValues') continue;
+    const details = getGroupAndParameterFromParameterKey(nodeInputParameters, parameterKey);
+    if (!details) continue;
+    parameterDynamicValues.push(
+      await fetchDynamicValuesForParameter(
+        details.groupId,
+        details.parameter.id,
+        operationInfo,
+        connectionReference,
+        nodeInputParameters,
+        nodeDependencies,
+        false /* showErrorWhenNotReady */,
+        undefined /* idReplacements */,
+        workflowParameters.definitions
+      )
+    );
+  }
+  dispatch(updateNodeParameters({ nodeId, parameters: parameterDynamicValues }));
 }
 
 async function loadDynamicData(
@@ -1915,8 +1928,6 @@ async function loadDynamicData(
   rootState: RootState,
   operationDefinition?: any
 ): Promise<void> {
-  dispatch(clearDynamicIO({ nodeId }));
-
   if (Object.keys(dependencies?.outputs ?? {}).length) {
     loadDynamicOutputsInNode(
       nodeId,
@@ -2172,6 +2183,53 @@ export async function loadDynamicValuesForParameter(
   dispatch(updateNodeParameters({ nodeId, parameters: [{ parameterId, groupId, propertiesToUpdate }] }));
 }
 
+export async function fetchDynamicValuesForParameter(
+  groupId: string,
+  parameterId: string,
+  operationInfo: NodeOperation,
+  connectionReference: ConnectionReference | undefined,
+  nodeInputs: NodeInputs,
+  dependencies: NodeDependencies,
+  showErrorWhenNotReady: boolean,
+  idReplacements: Record<string, string> = {},
+  workflowParameters: Record<string, WorkflowParameterDefinition>
+): Promise<{ parameterId: string; groupId: string; propertiesToUpdate: any } | undefined> {
+  const groupParameters = nodeInputs.parameterGroups[groupId].parameters;
+  const parameter = groupParameters.find((parameter) => parameter.id === parameterId) as ParameterInfo;
+  if (!parameter) {
+    return;
+  }
+
+  const dependencyInfo = dependencies.inputs[parameter.parameterKey];
+  if (!dependencyInfo) return;
+  if (!isDynamicDataReadyToLoad(dependencyInfo)) {
+    if (showErrorWhenNotReady)
+      fetchErrorWhenDependenciesNotReady(groupId, parameterId, dependencyInfo, groupParameters, /* isTreeCall */ false);
+    return;
+  }
+
+  let propertiesToUpdate: any = { dynamicData: { status: DynamicCallStatus.STARTED }, editorOptions: { options: [] } };
+
+  try {
+    const dynamicValues = await getDynamicValues(
+      dependencyInfo,
+      nodeInputs,
+      operationInfo,
+      connectionReference,
+      idReplacements,
+      workflowParameters
+    );
+
+    propertiesToUpdate = { dynamicData: { status: DynamicCallStatus.SUCCEEDED }, editorOptions: { options: dynamicValues } };
+  } catch (error: any) {
+    const rootMessage = parseErrorMessage(error);
+    const message = error?.response?.data?.error?.message ?? rootMessage;
+    propertiesToUpdate = { dynamicData: { status: DynamicCallStatus.FAILED, error: { ...error, message } } };
+  }
+
+  return { parameterId, groupId, propertiesToUpdate };
+}
+
 export function shouldLoadDynamicInputs(nodeInputs: NodeInputs): boolean {
   return nodeInputs.dynamicLoadStatus === DynamicLoadStatus.FAILED || nodeInputs.dynamicLoadStatus === DynamicLoadStatus.NOTSTARTED;
 }
@@ -2270,6 +2328,40 @@ function showErrorWhenDependenciesNotReady(
       ],
     })
   );
+}
+
+function fetchErrorWhenDependenciesNotReady(
+  groupId: string,
+  parameterId: string,
+  dependencyInfo: DependencyInfo,
+  groupParameters: ParameterInfo[],
+  isTreeCall: boolean
+): any {
+  const intl = getIntl();
+  const invalidParameterNames = Object.keys(dependencyInfo.dependentParameters)
+    .filter((key) => !dependencyInfo.dependentParameters[key].isValid)
+    .map((id) => groupParameters.find((param) => param.id === id)?.parameterName);
+
+  return {
+    parameterId,
+    groupId,
+    propertiesToUpdate: {
+      dynamicData: {
+        error: {
+          name: isTreeCall ? 'DynamicTreeFailed' : 'DynamicListFailed',
+          message: intl.formatMessage(
+            {
+              defaultMessage: 'Required parameters {parameters} not set or invalid',
+              id: '3Y8a6G',
+              description: 'Error message to show when required parameters are not set or invalid',
+            },
+            { parameters: `${invalidParameterNames.join(' , ')}` }
+          ),
+        },
+        status: DynamicCallStatus.FAILED,
+      },
+    },
+  };
 }
 
 function getStringifiedValueFromEditorViewModel(

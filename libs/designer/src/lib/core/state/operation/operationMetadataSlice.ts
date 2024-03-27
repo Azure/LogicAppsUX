@@ -6,7 +6,7 @@ import type { RepetitionContext } from '../../utils/parameters/helper';
 import { createTokenValueSegment, isTokenValueSegment } from '../../utils/parameters/segment';
 import { normalizeKey } from '../../utils/tokens';
 import { resetNodesLoadStatus, resetWorkflowState } from '../global';
-import { LogEntryLevel, LoggerService, getRecordEntry } from '@microsoft/logic-apps-shared';
+import { LogEntryLevel, LoggerService, filterRecord, getRecordEntry } from '@microsoft/logic-apps-shared';
 import type { ParameterInfo } from '@microsoft/designer-ui';
 import type {
   FilePickerInfo,
@@ -293,13 +293,10 @@ export const operationMetadataSlice = createSlice({
         if (inputs) {
           delete nodeErrors?.[ErrorLevel.DynamicInputs];
 
-          const nodeInputParameters = getRecordEntry(state.inputParameters, nodeId);
-          if (nodeInputParameters) {
-            for (const groupId of Object.keys(nodeInputParameters.parameterGroups)) {
-              const filteredParams = nodeInputParameters.parameterGroups[groupId].parameters.filter(
-                (parameter) => !parameter.info.isDynamic
-              );
-              nodeInputParameters.parameterGroups[groupId].parameters = filteredParams;
+          const inputParameters = getRecordEntry(state.inputParameters, nodeId);
+          if (inputParameters) {
+            for (const group of Object.values(inputParameters.parameterGroups)) {
+              group.parameters = group.parameters.filter((parameter) => !parameter.info.isDynamic);
             }
           }
 
@@ -316,16 +313,7 @@ export const operationMetadataSlice = createSlice({
 
           const outputParameters = getRecordEntry(state.outputParameters, nodeId);
           if (outputParameters) {
-            outputParameters.outputs = Object.keys(outputParameters.outputs).reduce(
-              (result: Record<string, OutputInfo>, outputKey: string) => {
-                if (!outputParameters.outputs[outputKey].isDynamic) {
-                  return { [outputKey]: outputParameters.outputs[outputKey] };
-                }
-
-                return result;
-              },
-              {}
-            ) as Record<string, OutputInfo>;
+            outputParameters.outputs = filterRecord(outputParameters.outputs, (key, value) => !value.isDynamic);
           }
         }
       }

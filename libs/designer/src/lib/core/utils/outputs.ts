@@ -460,10 +460,10 @@ export const loadDynamicOutputsInNode = async (
   forceEnableSplitOn: boolean,
   dispatch: Dispatch
 ): Promise<void> => {
+  dispatch(clearDynamicIO({ nodeId, inputs: false, outputs: true }));
+
   for (const outputKey of Object.keys(outputDependencies)) {
     const info = outputDependencies[outputKey];
-    dispatch(clearDynamicIO({ nodeId, inputs: false, outputs: true }));
-
     if (isDynamicDataReadyToLoad(info)) {
       if (info.dependencyType === 'StaticSchema') {
         updateOutputsAndTokens(

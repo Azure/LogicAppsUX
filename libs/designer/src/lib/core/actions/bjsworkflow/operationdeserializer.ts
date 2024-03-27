@@ -227,7 +227,7 @@ export const initializeOperationDetailsForManifest = async (
     const schema = staticResultService.getOperationResultSchema(connectorId, operationId, parsedManifest);
     schema.then((schema) => {
       if (schema) {
-        dispatch(addResultSchema({ id: `${connectorId}-${operationId}`, schema: schema }));
+        dispatch(addResultSchema({ id: `${connectorId}-${operationId}`, schema }));
       }
     });
 
@@ -530,7 +530,7 @@ const initializeRepetitionInfos = async (
   );
 };
 
-export const updateDynamicDataInNodes = async (getState: () => RootState, dispatch: Dispatch): Promise<void> => {
+export const initializeDynamicDataInNodes = async (getState: () => RootState, dispatch: Dispatch): Promise<void> => {
   const rootState = getState();
   const {
     workflow: { nodesMetadata, operations },
