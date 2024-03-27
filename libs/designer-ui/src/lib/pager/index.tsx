@@ -76,8 +76,8 @@ export const Pager: React.FC<PagerProps> = ({
     setCurrent(initialCurrent);
   }, [initialCurrent]);
 
-  let failedMax = 0,
-    failedMin = 0;
+  let failedMax = 0;
+  let failedMin = 0;
   let onClickNext: PageChangeEventHandler | undefined, onClickPrevious: PageChangeEventHandler | undefined;
 
   if (failedIterationProps) {
