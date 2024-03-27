@@ -220,13 +220,7 @@ export const Combobox = ({
         const selectedValue = getSelectedValue(options, currSelectedKey);
         const value = typeof selectedValue === 'object' ? JSON.stringify(selectedValue) : selectedValue.toString();
         onChange?.({
-          value: [
-            {
-              id: guid(),
-              type: ValueSegmentType.LITERAL,
-              value: [createLiteralValueSegment(currSelectedKey ? value : '')],
-            },
-          ],
+          value: [createLiteralValueSegment(currSelectedKey ? value : '')],
         });
       }
     }
