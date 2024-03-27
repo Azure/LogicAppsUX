@@ -2,11 +2,6 @@
   "name": "@microsoft/logic-apps-shared",
   "version": "3.0.0",
   "license": "MIT",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/TanStack/table.git",
-    "directory": "packages/react-table"
-  },
   "type": "commonjs",
   "module": "build/lib/index.esm.js",
   "main": "build/lib/index.js",
@@ -23,21 +18,20 @@
   "engines": {
     "node": ">=12"
   },
-  "files": ["build/lib/*", "build/umd/*", "src"],
+  "files": [
+    "build/lib/*",
+    "build/umd/*",
+    "src"
+  ],
   "scripts": {
-    "clean": "rimraf ./build",
-    "test:lib": "vitest",
-    "test:lib:dev": "pnpm test:lib --watch",
-    "test:types": "tsc --noEmit",
-    "build": "pnpm build:rollup && pnpm build:types",
-    "build:rollup": "rollup --config rollup.config.mjs",
-    "build:types": "tsc --emitDeclarationOnly"
+    "build": "tsup"
   },
   "dependencies": {
+    "@apidevtools/swagger-parser": "10.0.3",
+    "@formatjs/intl": "^2.10.1",
+    "axios": "1.6.0",
     "react-intl": "6.3.0",
     "react-query": "3.39.3",
-    "axios": "1.6.0",
-    "@apidevtools/swagger-parser": "10.0.3",
     "reactflow": "11.8.2"
   },
   "peerDependencies": {

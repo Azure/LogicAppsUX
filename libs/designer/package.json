@@ -1,21 +1,39 @@
 {
   "name": "@microsoft/logic-apps-designer",
   "version": "3.0.0",
-  "scripts": {
-    "yalcpush": "yalc push ../../dist/libs/designer"
+  "license": "MIT",
+  "type": "commonjs",
+  "module": "build/lib/index.esm.js",
+  "main": "build/lib/index.js",
+  "types": "build/lib/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./build/lib/index.d.ts",
+      "import": "./build/lib/index.mjs",
+      "default": "./build/lib/index.js"
+    },
+    "./package.json": "./package.json"
   },
-  "peerDependencies": {
-    "react": "^16.4.0 || ^17.0.0 || ^18.0.0",
-    "react-dom": "^16.4.0 || ^17.0.0 || ^18.0.0"
+  "sideEffects": false,
+  "engines": {
+    "node": ">=12"
+  },
+  "files": [
+    "build/lib/*",
+    "build/umd/*",
+    "src"
+  ],
+  "scripts": {
+    "build": "tsup"
   },
   "dependencies": {
     "@microsoft/logic-apps-shared": "workspace:*",
+    "@microsoft/designer-ui": "workspace:*",
     "react-intl": "6.3.0",
     "@reduxjs/toolkit": "1.8.5",
     "react-redux": "8.0.2",
     "@fluentui/react": "8.110.2",
     "to-title-case": "1.0.0",
-    "@microsoft/designer-ui": "workspace:*",
     "lodash.merge": "4.6.2",
     "@react-hookz/web": "22.0.0",
     "react-query": "3.39.3",
@@ -37,5 +55,9 @@
     "@microsoft/applicationinsights-core-js": "2.8.9",
     "@fluentui/react-hooks": "8.6.20",
     "util": "0.12.5"
+  },
+  "peerDependencies": {
+    "react": "^16.4.0 || ^17.0.0 || ^18.0.0",
+    "react-dom": "^16.4.0 || ^17.0.0 || ^18.0.0"
   }
 }

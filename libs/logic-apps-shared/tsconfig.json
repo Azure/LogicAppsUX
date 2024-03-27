@@ -1,9 +1,38 @@
 {
-  "extends": "../../tsconfig.json",
+  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
+    "forceConsistentCasingInFileNames": true,
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "noImplicitOverride": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
     "jsx": "react",
-    "rootDir": "./src",
-    "outDir": "./build/lib"
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "outDir": "./build",
+    "baseUrl": "./src",
+    "paths": {
+      "@microsoft/intl-logic-apps": [
+        "intl/src/index.ts"
+      ],
+      "@microsoft/logic-apps-shared": [
+        "index.ts"
+      ],
+      "@microsoft/utils-logic-apps": [
+        "utils/src/index.ts"
+      ]
+    }
   },
-  "include": ["src"]
+  "files": [],
+  "include": [],
+  "references": [
+    {
+      "path": "./tsconfig.lib.json"
+    },
+    {
+      "path": "./tsconfig.spec.json"
+    }
+  ]
 }

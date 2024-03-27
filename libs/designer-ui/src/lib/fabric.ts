@@ -1,4 +1,4 @@
-import './fabric.less';
+// import './fabric.less';
 import type {
   IButtonStyles,
   ICalloutContentStyles,

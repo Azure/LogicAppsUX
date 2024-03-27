@@ -1,8 +1,30 @@
 {
   "name": "@microsoft/designer-ui",
   "version": "3.0.0",
+  "license": "MIT",
+  "type": "commonjs",
+  "module": "build/lib/index.esm.js",
+  "main": "build/lib/index.js",
+  "types": "build/lib/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./build/lib/index.d.ts",
+      "import": "./build/lib/index.mjs",
+      "default": "./build/lib/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "sideEffects": false,
+  "engines": {
+    "node": ">=12"
+  },
+  "files": [
+    "build/lib/*",
+    "build/umd/*",
+    "src"
+  ],
   "scripts": {
-    "yalcpush": "yalc push ../../dist/libs/designer-ui"
+    "build": "tsup"
   },
   "dependencies": {
     "@microsoft/logic-apps-shared": "workspace:*",

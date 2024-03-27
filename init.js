@@ -1,5 +1,5 @@
-const proc = require('child_process');
-proc.exec('mkcert --help', function (err, stdout) {
+import proc from 'child_process';
+proc.exec('mkcert --help', function (err) {
   if (err) {
     console.error(
       '\x1b[31m%s\x1b[0m',

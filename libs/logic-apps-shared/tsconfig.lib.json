@@ -1,0 +1,15 @@
+{
+    "extends": "./tsconfig.json",
+    "compilerOptions": {
+        "outDir": "./build",
+        "declaration": true,
+        "types": []
+    },
+    "include": [
+        "**/*.ts"
+    ],
+    "exclude": [
+        "**/*.spec.ts",
+        "jest.config.ts"
+    ]
+}
