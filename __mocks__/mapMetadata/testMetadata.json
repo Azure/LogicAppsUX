@@ -23,7 +23,10 @@
           "yPos": 0
         }
       ],
-      "connections": ["ToUpper-565A471E-6DB3-42A6-99AA-A4DFDF01DA02", "/ns0:CBRInputRecord/TestStuff/NCName"]
+      "connections": [
+        "ToUpper-565A471E-6DB3-42A6-99AA-A4DFDF01DA02",
+        "/ns0:CBRInputRecord/TestStuff/NCName"
+      ]
     }
   ]
 }

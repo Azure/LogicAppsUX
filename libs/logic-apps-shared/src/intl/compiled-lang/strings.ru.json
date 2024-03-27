@@ -3863,6 +3863,12 @@
       "value": "Поиск"
     }
   ],
+  "Mcvr0B": [
+    {
+      "type": 0,
+      "value": "To use modules or dependecies, please add at Custom Code Dependenncies in Portal TOC"
+    }
+  ],
   "MfAdfx": [
     {
       "type": 0,
@@ -4977,6 +4983,12 @@
     {
       "type": 0,
       "value": "(UTC –06:00) Остров Пасхи"
+    }
+  ],
+  "TjkOzp": [
+    {
+      "type": 0,
+      "value": "Close"
     }
   ],
   "TlX98E": [

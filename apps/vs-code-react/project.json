@@ -16,7 +16,10 @@
         "main": "apps/vs-code-react/src/main.tsx",
         "polyfills": "apps/vs-code-react/src/polyfills.ts",
         "tsConfig": "apps/vs-code-react/tsconfig.app.json",
-        "assets": ["apps/vs-code-react/src/favicon.ico", "apps/vs-code-react/src/assets"],
+        "assets": [
+          "apps/vs-code-react/src/favicon.ico",
+          "apps/vs-code-react/src/assets"
+        ],
         "styles": ["apps/vs-code-react/src/styles.less"],
         "scripts": [],
         "webpackConfig": "custom-webpack.config.js"

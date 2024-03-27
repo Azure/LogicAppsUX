@@ -20,12 +20,16 @@
     "paths": {
       "@microsoft/chatbot": ["libs/chatbot/src/index.ts"],
       "@microsoft/designer-ui": ["libs/designer-ui/src/index.ts"],
-      "@microsoft/intl-logic-apps": ["libs/logic-apps-shared/src/intl/src/index.ts"],
+      "@microsoft/intl-logic-apps": [
+        "libs/logic-apps-shared/src/intl/src/index.ts"
+      ],
       "@microsoft/logic-apps-data-mapper": ["libs/data-mapper/src/index.ts"],
       "@microsoft/logic-apps-designer": ["libs/designer/src/index.ts"],
       "@microsoft/logic-apps-shared": ["libs/logic-apps-shared/src/index.ts"],
       "@microsoft/nx-playwright": ["libs/plugins/playwright/src/index.ts"],
-      "@microsoft/utils-logic-apps": ["libs/logic-apps-shared/src/utils/src/index.ts"],
+      "@microsoft/utils-logic-apps": [
+        "libs/logic-apps-shared/src/utils/src/index.ts"
+      ],
       "@microsoft/vscode-extension": ["libs/vscode-extension/src/index.ts"]
     }
   },

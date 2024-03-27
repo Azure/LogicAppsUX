@@ -114,19 +114,34 @@
         "expression": {
           "and": [
             {
-              "equals": ["@body('When_a_property_of_some_goal_changes')?['changeList']", "currentValue,status"]
+              "equals": [
+                "@body('When_a_property_of_some_goal_changes')?['changeList']",
+                "currentValue,status"
+              ]
             },
             {
-              "equals": ["@body('When_a_property_of_some_goal_changes')?['newStatus']", "At risk"]
+              "equals": [
+                "@body('When_a_property_of_some_goal_changes')?['newStatus']",
+                "At risk"
+              ]
             },
             {
-              "equals": ["@body('When_a_property_of_some_goal_changes')?['oldStatus']", "On track"]
+              "equals": [
+                "@body('When_a_property_of_some_goal_changes')?['oldStatus']",
+                "On track"
+              ]
             },
             {
-              "equals": ["@body('When_a_property_of_some_goal_changes')?['newCurrentValue']", 100]
+              "equals": [
+                "@body('When_a_property_of_some_goal_changes')?['newCurrentValue']",
+                100
+              ]
             },
             {
-              "equals": ["@body('When_a_property_of_some_goal_changes')?['oldCurrentValue']", 500]
+              "equals": [
+                "@body('When_a_property_of_some_goal_changes')?['oldCurrentValue']",
+                500
+              ]
             }
           ]
         },
