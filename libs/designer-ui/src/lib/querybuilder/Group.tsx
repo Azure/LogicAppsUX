@@ -100,6 +100,7 @@ export const Group = ({
 
   const deleteButton = intl.formatMessage({
     defaultMessage: 'Delete',
+    id: 'bGtEPd',
     description: 'delete button',
   });
 
@@ -115,11 +116,13 @@ export const Group = ({
 
   const makeGroupButton = intl.formatMessage({
     defaultMessage: 'Make Group',
+    id: 'ERVorY',
     description: 'Make group button',
   });
 
   const unGroupButton = intl.formatMessage({
     defaultMessage: 'Ungroup',
+    id: 'OdNhwc',
     description: 'Ungroup button',
   });
 
@@ -224,6 +227,7 @@ export const Group = ({
   const onRenderOverflowButton = (): JSX.Element => {
     const groupCommands = intl.formatMessage({
       defaultMessage: 'More commands',
+      id: 'GdGm4T',
       description: 'Label for commands in row',
     });
     return (
@@ -248,6 +252,7 @@ export const Group = ({
 
   const collapseLabel = intl.formatMessage({
     defaultMessage: 'Collapse',
+    id: 'BoMvF2',
     description: 'Label for collapsing group',
   });
 
@@ -372,7 +377,7 @@ export const Group = ({
                 items={[]}
                 overflowItems={groupMenuItems}
                 onRenderOverflowButton={onRenderOverflowButton}
-                onRenderItem={function (_item: IOverflowSetItemProps) {
+                onRenderItem={(_item: IOverflowSetItemProps) => {
                   throw new Error('No items in overflowset');
                 }}
               />

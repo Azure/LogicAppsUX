@@ -44,21 +44,25 @@ export const SchemaNodePropertiesTab = ({ currentNode }: SchemaNodePropertiesTab
 
   const nameLoc = intl.formatMessage({
     defaultMessage: 'Name',
+    id: 'RFjYpH',
     description: 'Name of current node',
   });
 
   const fullPathLoc = intl.formatMessage({
     defaultMessage: 'Full path',
+    id: 'wPlTDB',
     description: 'Full path of current node',
   });
 
   const dataTypeLoc = intl.formatMessage({
     defaultMessage: 'Data type',
+    id: '6xRvni',
     description: 'The data type of the current node.',
   });
 
   const inputLoc = intl.formatMessage({
     defaultMessage: 'Input',
+    id: 'P6I90y',
     description: 'Input',
   });
 
@@ -77,10 +81,10 @@ export const SchemaNodePropertiesTab = ({ currentNode }: SchemaNodePropertiesTab
       return input === undefined
         ? undefined
         : isCustomValue(input)
-        ? input
-        : isSchemaNodeExtended(input.node)
-        ? input.node.name
-        : functionDropDownItemText(input.reactFlowKey, input.node, connectionDictionary);
+          ? input
+          : isSchemaNodeExtended(input.node)
+            ? input.node.name
+            : functionDropDownItemText(input.reactFlowKey, input.node, connectionDictionary);
     }
 
     return undefined;

@@ -2,7 +2,8 @@ import { commonCodeEditorProps } from '../testMapPanel/TestMapPanel';
 import { Stack } from '@fluentui/react';
 import { Button, makeStyles, shorthands, Text, tokens, typographyStyles } from '@fluentui/react-components';
 import { Code20Regular, Dismiss20Regular } from '@fluentui/react-icons';
-import { EditorLanguage, MonacoEditor } from '@microsoft/designer-ui';
+import { MonacoEditor } from '@microsoft/designer-ui';
+import { EditorLanguage } from '@microsoft/logic-apps-shared';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
 
@@ -96,23 +97,37 @@ export const CodeView = ({
 
   const codeViewLoc = intl.formatMessage({
     defaultMessage: 'Code view',
+    id: 'M0xrm+',
     description: 'Code view title',
   });
 
   const closeCodeViewLoc = intl.formatMessage({
     defaultMessage: 'Close code view',
+    id: '3sJlV+',
     description: 'Close code view button',
   });
 
   const noMapDefLoc = intl.formatMessage({
     defaultMessage: 'Unable to generate data map definition',
+    id: 'sv+IcU',
     description: `Message to display when the data map definition can't be generated`,
   });
 
   return (
-    <Stack style={{ display: isCodeViewOpen ? 'flex' : 'none', width: contentWidth, minWidth: '25%' }} horizontal={true} verticalFill>
+    <Stack
+      style={{
+        display: isCodeViewOpen ? 'flex' : 'none',
+        width: contentWidth,
+        minWidth: '25%',
+      }}
+      horizontal={true}
+      verticalFill
+    >
       <div
-        style={{ width: '10px', cursor: isCodeViewOpen ? 'col-resize' : 'auto' }}
+        style={{
+          width: '10px',
+          cursor: isCodeViewOpen ? 'col-resize' : 'auto',
+        }}
         onDragStart={onStartDrag}
         onDrag={onDrag}
         onDragEnd={onDragEnd}
@@ -123,7 +138,12 @@ export const CodeView = ({
           <Stack
             horizontal
             verticalAlign="center"
-            style={{ width: '100%', justifyContent: 'space-between', marginBottom: '12px', marginTop: '4px' }}
+            style={{
+              width: '100%',
+              justifyContent: 'space-between',
+              marginBottom: '12px',
+              marginTop: '4px',
+            }}
           >
             <Stack horizontal verticalAlign="center">
               <Code20Regular />
@@ -140,7 +160,14 @@ export const CodeView = ({
             />
           </Stack>
 
-          <div style={{ width: '100%', display: 'flex', flexDirection: 'column', flex: '1 1 auto' }}>
+          <div
+            style={{
+              width: '100%',
+              display: 'flex',
+              flexDirection: 'column',
+              flex: '1 1 auto',
+            }}
+          >
             <MonacoEditor
               language={EditorLanguage.yaml}
               value={dataMapDefinition === '' ? noMapDefLoc : dataMapDefinition}

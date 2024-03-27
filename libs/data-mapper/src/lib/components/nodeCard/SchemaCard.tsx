@@ -259,12 +259,14 @@ export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
   const contextMenu = useCardContextMenu();
   const ariaDescribeChevron = intl.formatMessage({
     defaultMessage: 'Navigate to element and view children',
+    id: 'vvSHR8',
     description: "Change context of the canvas to view that element's children",
   });
 
   const RemoveMenuItem = () => {
     const deleteNode = intl.formatMessage({
       defaultMessage: 'Remove',
+      id: 'WcnIF8',
       description: 'Remove card from canvas',
     });
     return (
@@ -283,8 +285,8 @@ export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
     isCurrentNodeSelected || sourceNodeConnectionBeingDrawnFromId === reactFlowId
       ? selectedCardStyles
       : isCurrentNodeHighlighted
-      ? highlightedCardStyles
-      : undefined;
+        ? highlightedCardStyles
+        : undefined;
 
   return (
     <div className={classes.badgeContainer}>
@@ -362,6 +364,7 @@ const NBadge = ({ isOutput }: NBadgeProps) => {
 
   const arrayMappingLabel = intl.formatMessage({
     defaultMessage: 'Repeating',
+    id: 'j5z8Vd',
     description: 'Label for array connection',
   });
 

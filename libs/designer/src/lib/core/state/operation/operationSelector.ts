@@ -3,7 +3,7 @@ import type { RootState } from '../../store';
 import { shouldUseParameterInGroup } from '../../utils/parameters/helper';
 import type { ErrorInfo, NodeDependencies, NodeInputs } from './operationMetadataSlice';
 import { ErrorLevel } from './operationMetadataSlice';
-import type { NodeOutputs } from '@microsoft/designer-client-services-logic-apps';
+import type { NodeOutputs } from '@microsoft/logic-apps-shared';
 import type { ParameterInfo } from '@microsoft/designer-ui';
 import { getRecordEntry } from '@microsoft/logic-apps-shared';
 import { createSelector } from '@reduxjs/toolkit';
@@ -120,14 +120,7 @@ export const useAllOperationErrors = () => useSelector(createSelector(getOperati
 
 export const useParameterValidationErrors = (nodeId: string) => {
   const allParameters = useOperationInputParameters(nodeId);
-  return useMemo(
-    () =>
-      allParameters
-        .map((parameter) => parameter.validationErrors)
-        .flat()
-        .filter((error) => error),
-    [allParameters]
-  );
+  return useMemo(() => allParameters.flatMap((parameter) => parameter.validationErrors).filter((error) => error), [allParameters]);
 };
 
 export const useNodesInitialized = () => useSelector(createSelector(getOperationState, (state) => state.loadStatus.nodesInitialized));

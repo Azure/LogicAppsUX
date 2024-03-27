@@ -1,7 +1,6 @@
 import { MenuItem } from '@fluentui/react-components';
 import { bundleIcon, Clipboard24Filled, Clipboard24Regular } from '@fluentui/react-icons';
-import { LogEntryLevel, LoggerService } from '@microsoft/designer-client-services-logic-apps';
-import { isApple } from '@microsoft/logic-apps-shared';
+import { LogEntryLevel, LoggerService, isApple } from '@microsoft/logic-apps-shared';
 import { useCallback } from 'react';
 import { useIntl } from 'react-intl';
 
@@ -20,18 +19,22 @@ export const CopyMenuItem = (props: CopyMenuItemProps) => {
 
   const copyAction = intl.formatMessage({
     defaultMessage: 'Copy Action',
+    id: 'i1vHaT',
     description: 'Copy Action text',
   });
   const copyTrigger = intl.formatMessage({
     defaultMessage: 'Copy Trigger',
+    id: 'oRxmXb',
     description: 'Copy Trigger text',
   });
   const copyKeyboardTextWin = intl.formatMessage({
     defaultMessage: 'Ctrl+C',
+    id: 'snJFUi',
     description: '"Copy" keyboard command text for Windows',
   });
   const copyKeyboardTextMac = intl.formatMessage({
     defaultMessage: '⌘+C',
+    id: '/c1l10',
     description: '"Copy" keyboard command text for Mac',
   });
   const copyKeyboardText = isApple() ? copyKeyboardTextMac : copyKeyboardTextWin;

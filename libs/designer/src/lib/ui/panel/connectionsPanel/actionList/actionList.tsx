@@ -12,6 +12,7 @@ export const ActionList = ({ nodeIds, iconUri }: ActionListProps) => {
   const intl = useIntl();
   const multipleActionsWarning = intl.formatMessage({
     defaultMessage: 'Multiple actions will be modified by this change.',
+    id: 'nSUXtP',
     description: "Warning displayed when editing multiple action's connectionst once.",
   });
 

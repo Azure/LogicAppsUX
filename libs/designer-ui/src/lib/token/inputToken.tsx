@@ -69,7 +69,7 @@ export const InputToken: React.FC<InputTokenProps> = ({ value, brandColor, icon,
         } else {
           clearSelection();
           setSelected(true);
-          editor.dispatchCommand(CLOSE_TOKENPICKER, undefined);
+          editor.dispatchCommand(CLOSE_TOKENPICKER, { focusEditorAfter: true });
         }
       });
     }
@@ -82,6 +82,7 @@ export const InputToken: React.FC<InputTokenProps> = ({ value, brandColor, icon,
 
   const tokenDelete = intl.formatMessage({
     defaultMessage: 'Delete',
+    id: 'XqamWZ',
     description: 'Label of Delete Token Button',
   });
 
@@ -129,12 +130,11 @@ export const InputToken: React.FC<InputTokenProps> = ({ value, brandColor, icon,
         handleTokenClicked(e);
         e.stopPropagation();
       }}
+      title={value}
       style={tokenStyle}
       ref={tokenRef}
     >
-      <div className="msla-token-title" title={value}>
-        {title}
-      </div>
+      <div className="msla-token-title">{title}</div>
       {renderTokenDeleteButton()}
     </span>
   );

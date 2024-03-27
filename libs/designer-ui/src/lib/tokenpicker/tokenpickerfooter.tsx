@@ -11,9 +11,15 @@ import type { GetValueSegmentHandler } from './tokenpickersection/tokenpickeropt
 import { getExpressionOutput, getExpressionTokenTitle } from './util';
 import { PrimaryButton } from '@fluentui/react';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
-import { LogEntryLevel, LoggerService } from '@microsoft/designer-client-services-logic-apps';
+import {
+  LogEntryLevel,
+  LoggerService,
+  ExpressionExceptionCode,
+  ExpressionParser,
+  ScannerException,
+  guid,
+} from '@microsoft/logic-apps-shared';
 import type { Expression } from '@microsoft/logic-apps-shared';
-import { ExpressionExceptionCode, ExpressionParser, ScannerException, guid } from '@microsoft/logic-apps-shared';
 import type { LexicalEditor, NodeKey } from 'lexical';
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
@@ -25,7 +31,6 @@ interface TokenPickerFooterProps {
   expression: ExpressionEditorEvent;
   expressionToBeUpdated: NodeKey | null;
   tokenGroup: TokenGroup[];
-  closeTokenPicker: () => void;
   getValueSegmentFromToken: GetValueSegmentHandler;
   setExpressionEditorError: (error: string) => void;
 }
@@ -34,7 +39,6 @@ export function TokenPickerFooter({
   expression,
   expressionToBeUpdated,
   tokenGroup,
-  closeTokenPicker,
   getValueSegmentFromToken,
   setExpressionEditorError,
 }: TokenPickerFooterProps) {
@@ -60,18 +64,22 @@ export function TokenPickerFooter({
 
   const tokenPickerAdd = intl.formatMessage({
     defaultMessage: 'Add',
+    id: '9atGYe',
     description: 'Insert Expression',
   });
   const tokenPickerUpdate = intl.formatMessage({
     defaultMessage: 'Update',
+    id: 'dOpdsP',
     description: 'Update Expression',
   });
   const invalidExpression = intl.formatMessage({
     defaultMessage: 'The expression is invalid.',
+    id: 't9RwOi',
     description: 'Invalid expression alert',
   });
   const invalidExpressionQuotations = intl.formatMessage({
     defaultMessage: 'The expression is invalid. Make sure to use single quotes.',
+    id: 'H9CZTr',
     description: 'Invalid expression due to misused double quotes',
   });
 
@@ -165,7 +173,6 @@ export function TokenPickerFooter({
         });
       }
     }
-    closeTokenPicker();
   };
 
   return (

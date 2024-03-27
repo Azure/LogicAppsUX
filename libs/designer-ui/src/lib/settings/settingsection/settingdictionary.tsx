@@ -1,6 +1,6 @@
 import type { EventHandler } from '../..';
+import type { SettingProps } from './';
 import { SimpleDictionary } from './dictionary/simpledictionary';
-import type { SettingProps } from './settingtoggle';
 import { TextField } from '@fluentui/react';
 import type { ITextFieldStyles } from '@fluentui/react';
 import { isObject } from '@microsoft/logic-apps-shared';

@@ -105,6 +105,9 @@
   display: flex;
   flex-direction: column;
   padding: 0;
+  list-style-type: none;
+  margin-block-start: 0;
+  margin-block-end: 0;
   .msla-token-picker-section-option {
     background: none;
     border: none;
@@ -230,6 +233,7 @@
 .msla-theme-dark {
   .msla-token-picker-header {
     border-bottom: 1px solid @ms-color-secondaryBackground;
+    background-color: @ms-color-primaryBackground;
   }
   .msla-token-picker-footer {
     border-top: 1px solid @ms-color-secondaryBackground;
@@ -268,5 +272,19 @@
 
   .ms-TextField-field {
     background: none;
+  }
+  .msla-token-picker-expression-subheader {
+    background: @ms-color-primaryBackground;
+    border-bottom: 1px solid @ms-color-secondaryBackground;
+    .msla-panel-menu {
+      button[role='tab'] {
+        .ms-Pivot-text {
+          color: #fff;
+          &:hover {
+            color: #0078d4;
+          }
+        }
+      }
+    }
   }
 }

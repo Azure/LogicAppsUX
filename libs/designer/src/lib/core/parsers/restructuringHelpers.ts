@@ -122,9 +122,12 @@ export const moveRunAfterSource = (
 
 export const applyIsRootNode = (state: WorkflowState, graph: WorkflowNode, metadata: NodesMetadata) => {
   const rootNodeIds: string[] =
-    graph.edges?.reduce((acc, edge) => {
-      return !containsIdTag(edge.source) ? acc?.filter((id) => id !== edge.target) : acc;
-    }, graph.children?.filter((node) => isWorkflowOperationNode(node))?.map((node) => node.id) ?? []) ?? [];
+    graph.edges?.reduce(
+      (acc, edge) => {
+        return !containsIdTag(edge.source) ? acc?.filter((id) => id !== edge.target) : acc;
+      },
+      graph.children?.filter((node) => isWorkflowOperationNode(node))?.map((node) => node.id) ?? []
+    ) ?? [];
 
   (graph.children ?? []).forEach((node) => {
     const isRoot = node.id === constants.NODE.TYPE.PLACEHOLDER_TRIGGER ? true : rootNodeIds?.includes(node.id) ?? false;

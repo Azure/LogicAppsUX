@@ -4,6 +4,7 @@ export const AriaSearchResultsAlert = (props: { resultCount: number; resultDescr
   const intl = useIntl();
   const ariaResultCount = intl.formatMessage({
     defaultMessage: ' results found',
+    id: 't/RPwA',
     description: 'shows how many results are returned after search',
   });
   return (

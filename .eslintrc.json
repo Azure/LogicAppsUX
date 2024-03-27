@@ -73,24 +73,23 @@
             "disallowTypeAnnotations": true
           }
         ],
+        "formatjs/enforce-id": [
+          "error",
+          {
+            "idInterpolationPattern": "[sha512:contenthash:base64:6]"
+          }
+        ],
         "formatjs/enforce-placeholders": [
           "error",
           {
             "ignoreList": ["foo"]
           }
         ],
-        "no-param-reassign": [
-          "error",
-          {
-            "props": true,
-            "ignorePropertyModificationsFor": ["state"]
-          }
-        ],
+        "no-param-reassign": "off",
         "formatjs/enforce-default-message": ["error", "literal"],
         "formatjs/enforce-description": ["error", "literal"],
         "formatjs/no-multiple-whitespaces": [1],
         "formatjs/no-multiple-plurals": ["error"],
-        "formatjs/no-id": ["error"],
         "formatjs/no-complex-selectors": [
           "error",
           {
