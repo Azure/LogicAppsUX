@@ -1,4 +1,15 @@
 # Logic Apps Designer
+## [3.2.0](https://github.com/Azure/LogicAppsUX/compare/v3.1.0...v3.2.0) (2024-03-28)
+
+
+### Bug Fixes
+
+* **designer:** Adjust HTML editor toolbar color to fit contract requirements of 4.5:1 ([#4469](https://github.com/Azure/LogicAppsUX/issues/4469)) ([62f82bb](https://github.com/Azure/LogicAppsUX/commit/62f82bb23d0ced02394fc7fc5e4da585f2a13f1c))
+* **designer:** Fix issue where next failure is disabled when there is only 1 failure ([#4468](https://github.com/Azure/LogicAppsUX/issues/4468)) ([650f14d](https://github.com/Azure/LogicAppsUX/commit/650f14d13bec7c5bfb9f930366f4585ebbaac8ba))
+* **Designer:** Resolve all app settings except key vault reference values ([#4459](https://github.com/Azure/LogicAppsUX/issues/4459)) ([5b2c870](https://github.com/Azure/LogicAppsUX/commit/5b2c870d86f8edd871bf1f4e1b839f2d29772f06))
+* **designer:** Trigger Tokens Having Wrong Titles and Values With Output Source ([#4454](https://github.com/Azure/LogicAppsUX/issues/4454)) ([c0f4907](https://github.com/Azure/LogicAppsUX/commit/c0f490775a8f23719d59255d50eea01022b3dc5e))
+* **powerautomate:** Serialize combobox value as json if value is an object ([#4473](https://github.com/Azure/LogicAppsUX/issues/4473)) ([8fd8267](https://github.com/Azure/LogicAppsUX/commit/8fd8267e4783e31815de712f1725330f35b48871))
+
 ## [3.1.0](https://github.com/Azure/LogicAppsUX/compare/v3.0.0...v3.1.0) (2024-03-26)
 
 
