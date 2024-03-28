@@ -2,6 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
+import { isString } from '@microsoft/logic-apps-shared';
 import {
   extensionCommand,
   funcVersionSetting,
@@ -20,7 +21,6 @@ import { OpenFolderStepCodeProject } from './CodeProjectBase/OpenFolderStepCodeP
 import { SetLogicAppName } from './CodeProjectBase/SetLogicAppNameStep';
 import { setWorkspaceName } from './CodeProjectBase/SetWorkspaceName';
 import { SetLogicAppType } from './CodeProjectBase/setLogicAppType';
-import { isString } from '@microsoft/utils-logic-apps';
 import { AzureWizard } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { latestGAVersion, OpenBehavior } from '@microsoft/vscode-extension';

@@ -1,5 +1,5 @@
+import { isEmptyString } from '@microsoft/logic-apps-shared';
 import { workflowLocationKey, workflowSubscriptionIdKey, workflowResourceGroupNameKey } from '../../../constants';
-import { isEmptyString } from '@microsoft/utils-logic-apps';
 import type {
   ConnectionReferenceModel,
   ServiceProviderConnectionModel,
