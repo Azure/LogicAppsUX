@@ -57,7 +57,7 @@ export interface ConnectionProperties {
 
 export type Connection = ArmResource<ConnectionProperties>;
 
-interface TestConnectionObject {
+export interface TestConnectionObject {
   body?: string;
   method: string;
   requestUri: string;
