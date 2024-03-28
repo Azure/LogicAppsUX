@@ -110,6 +110,10 @@ export async function openResultsWebview(workflowName: string): Promise<void> {
             });
             break;
           }
+          case ExtensionCommand.viewWorkflow: {
+            console.log('View workflow');
+            break;
+          }
           default:
             break;
         }

@@ -7,6 +7,13 @@ export interface UnitTestState {
   unitTestDescription?: string;
 }
 
+export interface InitializeUnitTestPayload {
+  hostVersion: string;
+  unitTestName: string;
+  unitTestDescription: string;
+  project: string;
+}
+
 const initialState: UnitTestState = {
   hostVersion: '',
   unitTestName: '',
@@ -17,7 +24,7 @@ export const unitTestSlice = createSlice({
   name: 'project',
   initialState,
   reducers: {
-    initialize: (state: UnitTestState, action: PayloadAction<any>) => {
+    initializeUnitTest: (state: UnitTestState, action: PayloadAction<InitializeUnitTestPayload>) => {
       state.hostVersion = action.payload.hostVersion;
       state.unitTestName = action.payload.unitTestName;
       state.unitTestDescription = action.payload.unitTestDescription;
@@ -25,6 +32,6 @@ export const unitTestSlice = createSlice({
   },
 });
 
-export const { initialize } = unitTestSlice.actions;
+export const { initializeUnitTest } = unitTestSlice.actions;
 
 export default unitTestSlice.reducer;
