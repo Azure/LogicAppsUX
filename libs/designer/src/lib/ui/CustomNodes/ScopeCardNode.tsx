@@ -19,6 +19,7 @@ import {
   useParentRunIndex,
   useRunInstance,
   useParentRunId,
+  useNodeDescription,
 } from '../../core/state/workflow/workflowSelectors';
 import { setRepetitionRunData, toggleCollapsedGraphId } from '../../core/state/workflow/workflowSlice';
 import type { AppDispatch } from '../../core/store';
@@ -28,10 +29,9 @@ import { DropZone } from '../connections/dropzone';
 import { DeleteMenuItem } from '../menuItems/deleteMenuItem';
 import { ResubmitMenuItem } from '../menuItems/resubmitMenuItem';
 import { MessageBarType } from '@fluentui/react';
-import { RunService, WorkflowService } from '@microsoft/designer-client-services-logic-apps';
+import { RunService, WorkflowService, removeIdTag } from '@microsoft/logic-apps-shared';
 import { ScopeCard } from '@microsoft/designer-ui';
 import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
-import { removeIdTag } from '@microsoft/logic-apps-shared';
 import { memo, useCallback, useEffect, useMemo } from 'react';
 import { useDrag } from 'react-dnd';
 import { useIntl } from 'react-intl';
@@ -43,6 +43,7 @@ import type { NodeProps } from 'reactflow';
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = Position.Bottom, id }: NodeProps) => {
   const scopeId = removeIdTag(id);
+  const nodeComment = useNodeDescription(scopeId);
 
   const node = useActionMetadata(scopeId);
   const operationsInfo = useAllOperations();
@@ -176,20 +177,36 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
     [brandColor, iconUri, opQuery.isLoading, isRepetitionLoading, isRepetitionRefetching]
   );
 
+  const comment = useMemo(
+    () =>
+      nodeComment
+        ? {
+            brandColor,
+            comment: nodeComment,
+            isDismissed: false,
+            isEditing: false,
+          }
+        : undefined,
+    [brandColor, nodeComment]
+  );
+
   const opManifestErrorText = intl.formatMessage({
     defaultMessage: 'Error fetching manifest',
+    id: 'HmcHoE',
     description: 'Error message when manifest fails to load',
   });
 
   const settingValidationErrors = useSettingValidationErrors(scopeId);
   const settingValidationErrorText = intl.formatMessage({
     defaultMessage: 'Invalid settings',
+    id: 'Jil/Wa',
     description: 'Text to explain that there are invalid settings for this node',
   });
 
   const parameterValidationErrors = useParameterValidationErrors(scopeId);
   const parameterValidationErrorText = intl.formatMessage({
     defaultMessage: 'Invalid parameters',
+    id: 'Tmr/9e',
     description: 'Text to explain that there are invalid parameters for this node',
   });
 
@@ -227,6 +244,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
   const actionString = intl.formatMessage(
     {
       defaultMessage: '{actionCount, plural, one {# Action} =0 {0 Actions} other {# Actions}}',
+      id: 'B/JzwK',
       description: 'This is the number of actions to be completed in a group',
     },
     { actionCount }
@@ -235,6 +253,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
   const caseString = intl.formatMessage(
     {
       defaultMessage: '{actionCount, plural, one {# Case} =0 {0 Cases} other {# Cases}}',
+      id: 'KX1poC',
       description: 'This is the number of cases or options the program can take',
     },
     { actionCount }
@@ -279,6 +298,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
             selected={selected}
             contextMenuItems={contextMenuItems}
             runData={runData}
+            commentBox={comment}
           />
           {isMonitoringView && normalizedType === constants.NODE.TYPE.FOREACH ? (
             <LoopsPager metadata={metadata} scopeId={scopeId} collapsed={graphCollapsed} />

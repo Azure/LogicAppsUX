@@ -17,22 +17,27 @@ export const OperationsNeedingAttentionMessage: React.FC<OperationsNeedingAttent
   const intlText = {
     allRequiredParametersAreSetMessage: intl.formatMessage({
       defaultMessage: 'All required parameters are set',
+      id: 'YCDF7A',
       description: 'Chatbot message letting user know that required parameters are set.',
     }),
     savingDescription: intl.formatMessage({
       defaultMessage: 'To save this workflow, finish setting up this action:',
+      id: 'zb3lE6',
       description: 'Chatbot message telling user to set up action in order to save the workflow',
     }),
     editingDescription: intl.formatMessage({
       defaultMessage: 'To get this workflow ready, finish setting up this action:',
+      id: 'vmlhVB',
       description: 'Chatbot message telling user to set up action in order to get the workflow ready',
     }),
     savingDescription_plural: intl.formatMessage({
       defaultMessage: 'To save this workflow, finish setting up these actions:',
+      id: 'sBBLuh',
       description: 'Chatbot message telling user to set up actions in order to save the workflow',
     }),
     editingDescription_plural: intl.formatMessage({
       defaultMessage: 'To get this workflow ready, finish setting up these actions:',
+      id: '6pISgk',
       description: 'Chatbot message telling user to set up actions in order to get the workflow ready',
     }),
   };
@@ -47,8 +52,8 @@ export const OperationsNeedingAttentionMessage: React.FC<OperationsNeedingAttent
         ? intlText.savingDescription_plural
         : intlText.savingDescription
       : item.operationsNeedingAttention.length > 1
-      ? intlText.editingDescription_plural
-      : intlText.editingDescription;
+        ? intlText.editingDescription_plural
+        : intlText.editingDescription;
 
   const operations = item.operationsNeedingAttention.map((info: any) => {
     const disabled = false;

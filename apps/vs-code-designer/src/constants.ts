@@ -205,6 +205,7 @@ export const targetBundleKey = 'FUNCTIONS_EXTENSIONBUNDLE_SOURCE_URI';
 
 // local.settings.json
 export const localEmulatorConnectionString = 'UseDevelopmentStorage=true';
+export const appKindSetting = 'APP_KIND';
 
 // Project
 export const defaultBundleId = 'Microsoft.Azure.Functions.ExtensionBundle';

@@ -1,6 +1,5 @@
-import { HostService } from '@microsoft/designer-client-services-logic-apps';
+import { HostService, getAllConnectorProperties, isBuiltInConnectorId, isCustomConnectorId, isString } from '@microsoft/logic-apps-shared';
 import type { Connector, OperationApi } from '@microsoft/logic-apps-shared';
-import { getAllConnectorProperties, isBuiltInConnectorId, isCustomConnectorId, isString } from '@microsoft/logic-apps-shared';
 
 export const isBuiltInConnector = (connector: Connector | OperationApi | string): boolean => {
   const hostIsBuiltInConnectorFn = HostService()?.isBuiltInConnector;

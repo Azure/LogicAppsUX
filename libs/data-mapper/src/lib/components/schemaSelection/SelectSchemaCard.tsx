@@ -56,11 +56,13 @@ export const SelectSchemaCard = ({ schemaType, style }: SelectSchemaCardProps) =
     if (schemaType === SchemaType.Source) {
       return intl.formatMessage({
         defaultMessage: 'Add a source schema',
+        id: 'jQjteB',
         description: 'label to inform to add a source schema to be used',
       });
     } else {
       return intl.formatMessage({
         defaultMessage: 'Add a target schema',
+        id: 'IXy91L',
         description: 'label to inform to add a target schema to be used',
       });
     }

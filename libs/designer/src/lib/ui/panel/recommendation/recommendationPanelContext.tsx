@@ -17,11 +17,10 @@ import { SearchView } from './searchView';
 import { Link, Icon, Text } from '@fluentui/react';
 import { Button } from '@fluentui/react-components';
 import { bundleIcon, Dismiss24Filled, Dismiss24Regular } from '@fluentui/react-icons';
-import { SearchService } from '@microsoft/designer-client-services-logic-apps';
+import { SearchService, equals, guid, areApiIdsEqual } from '@microsoft/logic-apps-shared';
 import { OperationSearchHeader } from '@microsoft/designer-ui';
 import type { CommonPanelProps } from '@microsoft/designer-ui';
 import type { DiscoveryOpArray, DiscoveryOperation, DiscoveryResultTypes } from '@microsoft/logic-apps-shared';
-import { equals, guid, areApiIdsEqual } from '@microsoft/logic-apps-shared';
 import { useDebouncedEffect } from '@react-hookz/web';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -187,15 +186,17 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
   const intl = useIntl();
   const returnToSearchText = intl.formatMessage({
     defaultMessage: 'Return to search',
+    id: 'tH2pT1',
     description: 'Text for the Details page navigation heading',
   });
 
   const headingText = isTrigger
-    ? intl.formatMessage({ defaultMessage: 'Add a trigger', description: 'Text for the "Add Trigger" page header' })
-    : intl.formatMessage({ defaultMessage: 'Add an action', description: 'Text for the "Add Action" page header' });
+    ? intl.formatMessage({ defaultMessage: 'Add a trigger', id: 'dBxX0M', description: 'Text for the "Add Trigger" page header' })
+    : intl.formatMessage({ defaultMessage: 'Add an action', id: 'EUQDM6', description: 'Text for the "Add Action" page header' });
 
   const closeButtonAriaLabel = intl.formatMessage({
     defaultMessage: 'Close Add Action Panel',
+    id: 'Yg/vvm',
     description: 'Aria label for the close button in the Add Action Panel',
   });
   return (
@@ -263,5 +264,5 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
 };
 
 const joinAndDeduplicateById = (arr1: DiscoveryOpArray, arr2: DiscoveryOpArray) => [
-  ...new Map([...arr1, ...arr2].map((v) => [v.id, v])).values(),
+  ...new Map([...arr1, ...arr2].map((v) => [`${v?.properties?.api?.id}/${v.id}`, v])).values(),
 ];

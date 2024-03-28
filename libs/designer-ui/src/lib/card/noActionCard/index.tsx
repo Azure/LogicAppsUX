@@ -1,4 +1,4 @@
-import { convertUIElementNameToAutomationId } from '../../utils';
+import { replaceWhiteSpaceWithUnderscore } from '@microsoft/logic-apps-shared';
 import { useIntl } from 'react-intl';
 
 export const NoActionCard: React.FC = () => {
@@ -6,6 +6,7 @@ export const NoActionCard: React.FC = () => {
 
   const triggerTitle = intl.formatMessage({
     defaultMessage: 'No actions',
+    id: 'i8xPfO',
     description: 'Text on a no actions node',
   });
 
@@ -15,7 +16,7 @@ export const NoActionCard: React.FC = () => {
         aria-label={triggerTitle}
         className="msla-panel-card-container--no-action"
         data-testid={`card-${triggerTitle}`}
-        data-automation-id={`card-${convertUIElementNameToAutomationId(triggerTitle)}`}
+        data-automation-id={`card-${replaceWhiteSpaceWithUnderscore(triggerTitle)}`}
         tabIndex={0}
       >
         <div className="panel-card--no-action">

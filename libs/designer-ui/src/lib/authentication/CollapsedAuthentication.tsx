@@ -39,7 +39,6 @@ export const CollapsedAuthentication = ({
     editorState.read(() => {
       const nodeMap = new Map<string, ValueSegment>();
       const editorString = getChildrenNodes($getRoot(), nodeMap).trim();
-      console.log(editorString);
       const newCollapsedValue = serializeEditorState(editorState);
       try {
         // no collapsed value, update current Props to be empty
@@ -57,6 +56,7 @@ export const CollapsedAuthentication = ({
             setErrorMessage(
               intl.formatMessage({
                 defaultMessage: 'Invalid Authentication Value',
+                id: 'OBO/HE',
                 description: 'Error message for invalid Auth in authentication editor',
               })
             );
@@ -71,6 +71,7 @@ export const CollapsedAuthentication = ({
           setErrorMessage(
             intl.formatMessage({
               defaultMessage: 'Enter a valid JSON.',
+              id: 'mNaBPE',
               description: 'Error message for invalid JSON in authentication editor',
             })
           );

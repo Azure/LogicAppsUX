@@ -11,11 +11,13 @@ export default function ClearEditor({ showButton }: ClearEditorProps): JSX.Eleme
   const [editor] = useLexicalComposerContext();
   const buttonText = intl.formatMessage({
     defaultMessage: 'Clear',
+    id: 'WGwH45',
     description: 'Label to clear editor',
   });
 
   const buttonLabel = intl.formatMessage({
     defaultMessage: 'Clear Editor',
+    id: 'YEHutH',
     description: 'Label to clear editor',
   });
 

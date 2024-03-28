@@ -1,8 +1,7 @@
 import { useAllApiIdsWithActions, useAllApiIdsWithTriggers, useAllConnectors } from '../../../core/queries/browse';
 import { selectOperationGroupId } from '../../../core/state/panel/panelSlice';
-import { SearchService } from '@microsoft/designer-client-services-logic-apps';
+import { SearchService, cleanConnectorId, type Connector } from '@microsoft/logic-apps-shared';
 import { BrowseGrid, isBuiltInConnector, isCustomConnector } from '@microsoft/designer-ui';
-import { cleanConnectorId, type Connector } from '@microsoft/logic-apps-shared';
 import { useCallback, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 

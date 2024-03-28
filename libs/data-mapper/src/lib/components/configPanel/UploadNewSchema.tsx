@@ -19,10 +19,12 @@ export const UploadNewSchema = (props: UploadNewSchemaProps) => {
   const intl = useIntl();
   const uploadMessage = intl.formatMessage({
     defaultMessage: 'Select a file to upload',
+    id: '2CXCOt',
     description: 'Placeholder for input to load a schema file',
   });
   const browseLoc = intl.formatMessage({
     defaultMessage: 'Browse',
+    id: 'syiNc+',
     description: 'Browse for file',
   });
 

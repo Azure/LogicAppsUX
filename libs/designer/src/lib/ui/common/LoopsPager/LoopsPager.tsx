@@ -3,10 +3,9 @@ import type { AppDispatch } from '../../../core';
 import { useActionMetadata, useRunInstance } from '../../../core/state/workflow/workflowSelectors';
 import { setRunIndex } from '../../../core/state/workflow/workflowSlice';
 import { getForeachItemsCount } from './helper';
-import { RunService } from '@microsoft/designer-client-services-logic-apps';
+import { RunService, FindPreviousAndNextPage, isNullOrUndefined, type LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import type { PageChangeEventArgs, PageChangeEventHandler } from '@microsoft/designer-ui';
 import { Pager } from '@microsoft/designer-ui';
-import { FindPreviousAndNextPage, isNullOrUndefined, type LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import { useCallback, useEffect, useState } from 'react';
 import { useQuery } from 'react-query';
 import { useDispatch } from 'react-redux';
@@ -97,7 +96,7 @@ export const LoopsPager = ({ metadata, scopeId, collapsed }: LoopsPagerProps) =>
   const failedIterationProps =
     failedRepetitions.length > 0
       ? {
-          max: failedRepetitions.length > 1 ? failedRepetitions[failedRepetitions.length - 1] + 1 : 0,
+          max: failedRepetitions.length >= 1 ? failedRepetitions[failedRepetitions.length - 1] + 1 : 0,
           min: failedRepetitions[0] + 1 >= 1 ? failedRepetitions[0] + 1 : 1,
           onClickNext: onClickNextFailed,
           onClickPrevious: onClickPreviousFailed,

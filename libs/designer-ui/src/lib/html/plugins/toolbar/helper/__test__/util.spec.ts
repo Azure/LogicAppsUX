@@ -5,11 +5,11 @@ import {
   decodeSegmentValueInLexicalContext,
   encodeSegmentValueInDomContext,
   encodeSegmentValueInLexicalContext,
-  isAttributeSupportedByLexical,
+  isAttributeSupportedByHtmlEditor,
   isHtmlStringValueSafeForLexical,
   isTagNameSupportedByLexical,
 } from '../util';
-import type { ValueSegment } from '@microsoft/designer-client-services-logic-apps';
+import type { ValueSegment } from '@microsoft/logic-apps-shared';
 
 describe('lib/html/plugins/toolbar/helper/util', () => {
   describe('cleanHtmlString', () => {
@@ -107,7 +107,7 @@ describe('lib/html/plugins/toolbar/helper/util', () => {
     });
   });
 
-  describe('isAttributeSupportedByLexical', () => {
+  describe('isAttributeSupportedByHtmlEditor', () => {
     it.each<[string, string, boolean]>([
       ['', 'href', false],
       ['a', '', false],
@@ -120,8 +120,12 @@ describe('lib/html/plugins/toolbar/helper/util', () => {
       ['p', 'href', false],
       ['p', 'id', true],
       ['p', 'style', true],
+      ['img', 'id', true],
+      ['img', 'alt', true],
+      ['img', 'script', false],
+      ['img', 'src', true],
     ])('should return <%s %s="..." /> as supported=%p', (inputTag, inputAttr, expected) => {
-      expect(isAttributeSupportedByLexical(inputTag, inputAttr)).toBe(expected);
+      expect(isAttributeSupportedByHtmlEditor(inputTag, inputAttr)).toBe(expected);
     });
   });
 
@@ -162,6 +166,7 @@ describe('lib/html/plugins/toolbar/helper/util', () => {
       ['h5', true],
       ['h6', true],
       ['i', true],
+      ['img', false],
       ['li', true],
       ['ol', true],
       ['p', true],

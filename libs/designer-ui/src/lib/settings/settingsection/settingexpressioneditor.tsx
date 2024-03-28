@@ -1,4 +1,4 @@
-import type { SettingProps } from './settingtoggle';
+import type { SettingProps } from './';
 import { ActionButton, IconButton } from '@fluentui/react/lib/Button';
 import type { IIconProps } from '@fluentui/react/lib/Icon';
 import { TextField } from '@fluentui/react/lib/TextField';
@@ -60,10 +60,12 @@ export const ExpressionsEditor = ({
   const intl = useIntl();
   const addCondition = intl.formatMessage({
     defaultMessage: 'Add',
+    id: 'LpPNAD',
     description: 'label to add a condition',
   });
   const expressionEditorLabel = intl.formatMessage({
     defaultMessage: 'Expression Editor',
+    id: 'zEv8dd',
     description: 'label for expression editor',
   });
 
@@ -126,6 +128,7 @@ export const Expressions = ({ expressions, readOnly = false, onChange, onDelete,
   const intl = useIntl();
   const indexItem = intl.formatMessage({
     defaultMessage: 'item',
+    id: 'NFgfP4',
     description: 'Label for users to know which item they are on in the dictionary',
   });
 
@@ -162,6 +165,7 @@ export const Expression = ({ expression, index, readOnly = false, onChange, onDe
   const deleteValue = intl.formatMessage(
     {
       defaultMessage: 'Delete {expressionValue}',
+      id: 'UMPuUJ',
       description: 'Label to delete a value',
     },
     {

@@ -1,4 +1,87 @@
 # Logic Apps Designer
+## [3.2.0](https://github.com/Azure/LogicAppsUX/compare/v3.1.0...v3.2.0) (2024-03-28)
+
+
+### Bug Fixes
+
+* **designer:** Adjust HTML editor toolbar color to fit contract requirements of 4.5:1 ([#4469](https://github.com/Azure/LogicAppsUX/issues/4469)) ([62f82bb](https://github.com/Azure/LogicAppsUX/commit/62f82bb23d0ced02394fc7fc5e4da585f2a13f1c))
+* **designer:** Fix issue where next failure is disabled when there is only 1 failure ([#4468](https://github.com/Azure/LogicAppsUX/issues/4468)) ([650f14d](https://github.com/Azure/LogicAppsUX/commit/650f14d13bec7c5bfb9f930366f4585ebbaac8ba))
+* **Designer:** Resolve all app settings except key vault reference values ([#4459](https://github.com/Azure/LogicAppsUX/issues/4459)) ([5b2c870](https://github.com/Azure/LogicAppsUX/commit/5b2c870d86f8edd871bf1f4e1b839f2d29772f06))
+* **designer:** Trigger Tokens Having Wrong Titles and Values With Output Source ([#4454](https://github.com/Azure/LogicAppsUX/issues/4454)) ([c0f4907](https://github.com/Azure/LogicAppsUX/commit/c0f490775a8f23719d59255d50eea01022b3dc5e))
+* **powerautomate:** Serialize combobox value as json if value is an object ([#4473](https://github.com/Azure/LogicAppsUX/issues/4473)) ([8fd8267](https://github.com/Azure/LogicAppsUX/commit/8fd8267e4783e31815de712f1725330f35b48871))
+
+## [3.1.0](https://github.com/Azure/LogicAppsUX/compare/v3.0.0...v3.1.0) (2024-03-26)
+
+
+### Features
+
+* **Designer:** Add data-automation-id for connector summary card ([#4434](https://github.com/Azure/LogicAppsUX/issues/4434)) ([d829b4f](https://github.com/Azure/LogicAppsUX/commit/d829b4f877ae07725ae8fdbe63476ae5b8d78d71))
+* **designer:** Custom Code ([#4376](https://github.com/Azure/LogicAppsUX/issues/4376)) ([9d7015e](https://github.com/Azure/LogicAppsUX/commit/9d7015eae3f92711f9932cdf5ac2f2e5cd6e54eb)), closes [#4134](https://github.com/Azure/LogicAppsUX/issues/4134)
+* **vscode:** Improve export telemetry ([#4421](https://github.com/Azure/LogicAppsUX/issues/4421)) ([d6bb652](https://github.com/Azure/LogicAppsUX/commit/d6bb6520edf3cf9f41732bee156f6b8cfdff95e4))
+
+
+### Bug Fixes
+
+* **Designer:** Create connection now uses `testRequests` when available ([#4419](https://github.com/Azure/LogicAppsUX/issues/4419)) ([fc844fa](https://github.com/Azure/LogicAppsUX/commit/fc844fa929e7a0d9c6faad682c181cf201eb1459))
+* **designer:** Dont use slashes in node names from azure resources ([#4430](https://github.com/Azure/LogicAppsUX/issues/4430)) ([f3b2e5d](https://github.com/Azure/LogicAppsUX/commit/f3b2e5d451e32dd1f494023d7bb79cf40d2f7929))
+* **vscode:** Update data variable to fix BOM character ([#4437](https://github.com/Azure/LogicAppsUX/issues/4437)) ([d0ea7ed](https://github.com/Azure/LogicAppsUX/commit/d0ea7ed54ab9cc746a43441388a41201c106248b))
+
+## [3.0.0](https://github.com/Azure/LogicAppsUX/compare/v2.128.0...v3.0.0) (2024-03-24)
+
+
+### Bug Fixes
+
+* **designer-ui:** Add support for `<img src=>` in raw HTML editor ([#4422](https://github.com/Azure/LogicAppsUX/issues/4422)) ([9ce1a98](https://github.com/Azure/LogicAppsUX/commit/9ce1a98fbf3fb2abdbaf2f26341b835ad6c7d2d3))
+* **vscode:** Add app kind setting to local settings creation and update on design time ([#4417](https://github.com/Azure/LogicAppsUX/issues/4417)) ([58425bd](https://github.com/Azure/LogicAppsUX/commit/58425bd30b86494ea347777f5b5378b9326d14a6))
+
+## [2.128.0](https://github.com/Azure/LogicAppsUX/compare/v2.127.0...v2.128.0) (2024-03-22)
+
+## [2.128.0](https://github.com/Azure/LogicAppsUX/compare/v2.127.0...v2.128.0) (2024-03-22)
+
+### Bug Fixes
+
+- **Designer:** Allow WorkflowParameters and AppSettings to be used within each other in dynamic data ([#4410](https://github.com/Azure/LogicAppsUX/issues/4410)) ([6f9b652](https://github.com/Azure/LogicAppsUX/commit/6f9b6520107b2daa5a1d5314155f486c01bbb554))
+
+## [2.127.0](https://github.com/Azure/LogicAppsUX/compare/v2.126.0...v2.127.0) (2024-03-21)
+
+### Features
+
+- **Designer:** Allow user to zoom out 10x more than before ([#4372](https://github.com/Azure/LogicAppsUX/issues/4372)) ([31bffcc](https://github.com/Azure/LogicAppsUX/commit/31bffcca97ff0e6a5a1ea5e195c2c235b49ec32e))
+- **designer:** make adjustments to http request trigger parameters to make chosen method clearer ([#4398](https://github.com/Azure/LogicAppsUX/issues/4398)) ([261511d](https://github.com/Azure/LogicAppsUX/commit/261511da6e7120898beb78d0a4fcac0f999a219e))
+
+### Bug Fixes
+
+- **Consumption:** Changing parent ID for subgraph nodes ([#4395](https://github.com/Azure/LogicAppsUX/issues/4395)) ([650f736](https://github.com/Azure/LogicAppsUX/commit/650f73681dd41797587cf8e55b18cfb2fe487b0f))
+- **consumption:** Deleting idReplamenent when deleting node ([#4369](https://github.com/Azure/LogicAppsUX/issues/4369)) ([69f6a87](https://github.com/Azure/LogicAppsUX/commit/69f6a87f2c80e63acdfb584be27f4e86748da962))
+- **Data Mapper:** Deserialize source edge for custom function with dash in its name ([#4384](https://github.com/Azure/LogicAppsUX/issues/4384)) ([9b44f43](https://github.com/Azure/LogicAppsUX/commit/9b44f43d5cd1e3cf5ee46b7171422ca28e5b0cf6))
+- **data mapper:** Fix issue where custom functions were being labels 'Collection' ([2c03d24](https://github.com/Azure/LogicAppsUX/commit/2c03d24f01072fdd29de2228bda6fffd0dea0e19))
+- **Data Mapper:** Fixes custom functions category branding ([#4382](https://github.com/Azure/LogicAppsUX/issues/4382)) ([1327f8d](https://github.com/Azure/LogicAppsUX/commit/1327f8d33a41e36a07344bf9f26818ecbcdfa373))
+- **designer-ui:** Convert tokenpickeroptions to ul ([#4396](https://github.com/Azure/LogicAppsUX/issues/4396)) ([45b56ce](https://github.com/Azure/LogicAppsUX/commit/45b56cec7450a2575d787c6c8f1f27c2b550b556))
+- **designer:** Fixes an issue where titles were sometimes not updating input tokens from dynamic data ([#4377](https://github.com/Azure/LogicAppsUX/issues/4377)) ([4d0b914](https://github.com/Azure/LogicAppsUX/commit/4d0b9140bf3bd931fcd8bd66e12962f7b15691ee))
+- **designer:** load monaco as part of build instead of CDN ([#4401](https://github.com/Azure/LogicAppsUX/issues/4401)) ([3c7e360](https://github.com/Azure/LogicAppsUX/commit/3c7e360e860bc6ff708718d4fe17e196c80f9901))
+- **Designer:** Override default Paste Behavior on FireFox ([#4378](https://github.com/Azure/LogicAppsUX/issues/4378)) ([6a2e972](https://github.com/Azure/LogicAppsUX/commit/6a2e9726883a52c5c05f4ad9e89d6828b76198cc))
+- **Designer:** Secure string workflow parameters now pass validation ([#4408](https://github.com/Azure/LogicAppsUX/issues/4408)) ([ba6327a](https://github.com/Azure/LogicAppsUX/commit/ba6327aeadafe3944799e4f0eafc9b28eb70f12a))
+- **designer:** Title changes not updating downstream inputs when serializing ([#4407](https://github.com/Azure/LogicAppsUX/issues/4407)) ([25cf75b](https://github.com/Azure/LogicAppsUX/commit/25cf75bc822e58e7bb2934ad0b9e7a56fbecfead))
+
+## [2.126.0](https://github.com/Azure/LogicAppsUX/compare/v2.125.0...v2.126.0) (2024-03-14)
+
+### Bug Fixes
+
+- **Consumption:** Adding check for valid 'false' value ([#4360](https://github.com/Azure/LogicAppsUX/issues/4360)) ([4791743](https://github.com/Azure/LogicAppsUX/commit/4791743f840bd68d6789801490fb25f492f41005))
+- **Consumption:** Changing 'undefined' check for value ([#4361](https://github.com/Azure/LogicAppsUX/issues/4361)) ([b4e0212](https://github.com/Azure/LogicAppsUX/commit/b4e0212690c16190629e0d0b352908965a30d02f))
+- **Designer:** Only resolve app settings if they are used in resource ids ([#4354](https://github.com/Azure/LogicAppsUX/issues/4354)) ([04b6f29](https://github.com/Azure/LogicAppsUX/commit/04b6f29e694ef9dc2e87971162bd5275f2dbd66b))
+- **Designer:** Reverted app settings resolve change ([#4353](https://github.com/Azure/LogicAppsUX/issues/4353)) ([38e3959](https://github.com/Azure/LogicAppsUX/commit/38e3959adf6189633fd1f5b133ebe55d704d0cf9))
+
+## [2.125.0](https://github.com/Azure/LogicAppsUX/compare/v2.124.0...v2.125.0) (2024-03-11)
+
+### Bug Fixes
+
+- **Consumption:** Multiple minor changes to scope and subgraph nodes ([#4331](https://github.com/Azure/LogicAppsUX/issues/4331)) ([fd62aaa](https://github.com/Azure/LogicAppsUX/commit/fd62aaab26b6251171f5b76c2bfc34520a190ed3))
+- **Designer:** Fixed issue where some service provider operations would not appear in search / browse ([#4345](https://github.com/Azure/LogicAppsUX/issues/4345)) ([96d2cf5](https://github.com/Azure/LogicAppsUX/commit/96d2cf52c346d9de1a82499842e0c506c6afdbac))
+- **Designer:** Showing secure workflow parameters in consumption ([#4325](https://github.com/Azure/LogicAppsUX/issues/4325)) ([ab07b14](https://github.com/Azure/LogicAppsUX/commit/ab07b14d24af81eb9a2d1380697c016dbfdc8f28))
+- **Designer:** Stuck on loading after making Manage Identity Issue Action ([#4332](https://github.com/Azure/LogicAppsUX/issues/4332)) ([1a366aa](https://github.com/Azure/LogicAppsUX/commit/1a366aadd9c0e7f3c8a12c2f1fa7670cf93ab1c7))
+- **desinger:** Remove Outputs if includeRootOutputs is not set ([#4333](https://github.com/Azure/LogicAppsUX/issues/4333)) ([2ae577d](https://github.com/Azure/LogicAppsUX/commit/2ae577d1f43b61ac9312aae43f1574189c2afd76))
+- **vscode:** Add validation for extension bundle workflows folder ([#4326](https://github.com/Azure/LogicAppsUX/issues/4326)) ([fe7dc9c](https://github.com/Azure/LogicAppsUX/commit/fe7dc9cd2c4daabbada0112b4abeea956b35f006))
 
 ## [2.124.0](https://github.com/Azure/LogicAppsUX/compare/v2.123.0...v2.124.0) (2024-03-07)
 
@@ -14,8 +97,6 @@
 
 - **consumption:** Adding 'Invalid Parameter' message to Subgraph nodes ([#4314](https://github.com/Azure/LogicAppsUX/issues/4314)) ([97e26d7](https://github.com/Azure/LogicAppsUX/commit/97e26d7c2c4efebc7243eca69803ffcfee9652fe))
 - **designer:** Fix linter errors happening on PRs from library consolodation ([#4315](https://github.com/Azure/LogicAppsUX/issues/4315)) ([96e0fff](https://github.com/Azure/LogicAppsUX/commit/96e0fff70a04b5a0797c571951685b259bf09c1d))
-
-## [2.122.0](https://github.com/Azure/LogicAppsUX/compare/v2.121.0...v2.122.0) (2024-03-01)
 
 ## [2.122.0](https://github.com/Azure/LogicAppsUX/compare/v2.121.0...v2.122.0) (2024-03-01)
 
