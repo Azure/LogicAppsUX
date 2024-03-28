@@ -57,7 +57,7 @@ export async function activate(context: vscode.ExtensionContext) {
     runPostWorkflowCreateStepsFromCache();
 
     await downloadExtensionBundle(activateContext);
-    await promptParameterizeConnections(activateContext);
+    promptParameterizeConnections(activateContext);
     await startOnboarding(activateContext);
 
     ext.extensionVersion = getExtensionVersion();
