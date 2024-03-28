@@ -217,8 +217,10 @@ export const Combobox = ({
         const currSelectedKey = option.key.toString();
         setSelectedKey(currSelectedKey);
         setMode(Mode.Default);
+        const selectedValue = getSelectedValue(options, currSelectedKey);
+        const value = typeof selectedValue === 'object' ? JSON.stringify(selectedValue) : selectedValue.toString();
         onChange?.({
-          value: [createLiteralValueSegment(currSelectedKey ? getSelectedValue(options, currSelectedKey).toString() : '')],
+          value: [createLiteralValueSegment(currSelectedKey ? value : '')],
         });
       }
     }
