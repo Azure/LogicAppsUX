@@ -10,16 +10,21 @@ export const devSlice = createSlice({
   name: 'dev',
   initialState,
   reducers: {
-    // Nothing for now
+    // Nothing
   },
   extraReducers: (builder) => {
+    // Reset the state on workflow reset
     builder.addCase(resetWorkflowState, () => initialState);
-    builder.addDefaultCase((state, action) => {
-      state.reduxActionCounts = {
-        ...state.reduxActionCounts,
-        [action.type]: (state.reduxActionCounts?.[action.type] ?? 0) + 1,
-      };
-    });
+    // Count the number of times each action is dispatched
+    builder.addMatcher(
+      () => true,
+      (state, action) => {
+        state.reduxActionCounts = {
+          ...state.reduxActionCounts,
+          [action.type]: (state.reduxActionCounts?.[action.type] ?? 0) + 1,
+        };
+      }
+    );
   },
 });
 

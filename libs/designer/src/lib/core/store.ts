@@ -26,7 +26,8 @@ export const store = configureStore({
     workflowParameters: workflowParametersReducer,
     staticResults: staticResultsSchemasReducer,
     customCode: customCodeReducer,
-    dev: devReducer,
+    // if is in dev environment, add devSlice to store
+    ...(process.env.NODE_ENV === 'development' ? { dev: devReducer } : {}),
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({
