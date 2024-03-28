@@ -1,6 +1,7 @@
 // eslint-disable-next-line import/no-named-as-default
 import { dataMapSlice } from './DataMapSlice';
 import { designerSlice } from './DesignerSlice';
+import { unitTestSlice } from './UnitTestSlice';
 import { workflowSlice } from './WorkflowSlice';
 import { projectSlice } from './projectSlice';
 import { configureStore } from '@reduxjs/toolkit';
@@ -11,6 +12,7 @@ export const store = configureStore({
     workflow: workflowSlice.reducer,
     designer: designerSlice.reducer,
     dataMapDataLoader: dataMapSlice.reducer,
+    unitTest: unitTestSlice.reducer,
   },
 });
 

@@ -103,6 +103,8 @@ export async function openResultsWebview(workflowName: string): Promise<void> {
               command: ExtensionCommand.initialize_frame,
               data: {
                 project: ProjectName.unitTest,
+                unitTestName: 'unitTestName',
+                unitTestDescription: 'unitTestDescription',
                 hostVersion: ext.extensionVersion,
               },
             });

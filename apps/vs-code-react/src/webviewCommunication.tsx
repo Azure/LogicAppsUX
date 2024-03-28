@@ -66,7 +66,7 @@ export const WebViewCommunication: React.FC<{ children: ReactNode }> = ({ childr
     }
 
     switch (projectState?.project ?? message?.data?.project) {
-      case ProjectName.designer:
+      case ProjectName.designer: {
         switch (message.command) {
           case ExtensionCommand.initialize_frame:
             dispatch(initializeDesigner(message.data));
@@ -84,7 +84,8 @@ export const WebViewCommunication: React.FC<{ children: ReactNode }> = ({ childr
             throw new Error('Unknown post message received');
         }
         break;
-      case ProjectName.dataMapper:
+      }
+      case ProjectName.dataMapper: {
         switch (message.command) {
           case ExtensionCommand.setRuntimePort:
             dispatch(changeRuntimePort(message.data));
@@ -120,6 +121,17 @@ export const WebViewCommunication: React.FC<{ children: ReactNode }> = ({ childr
             throw new Error('Unknown post message received');
         }
         break;
+      }
+      case ProjectName.unitTest: {
+        switch (message.command) {
+          case ExtensionCommand.initialize_frame:
+            dispatch(initializeWorkflow(message.data as InitializePayload));
+            break;
+          default:
+            throw new Error('Unknown post message received');
+        }
+        break;
+      }
       default:
         switch (message.command) {
           case ExtensionCommand.initialize_frame:
