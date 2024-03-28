@@ -9,7 +9,6 @@ import {
   workflowSubscriptionIdKey,
   localSettingsFileName,
   extensionCommand,
-  parameterizeConnectionsInProjectLoadSetting,
   COMMON_ERRORS,
 } from '../../../constants';
 import { ext } from '../../../extensionVariables';
@@ -17,17 +16,20 @@ import { localize } from '../../../localize';
 import { getLocalSettingsJson } from '../../utils/appSettings/localSettings';
 import { getConnectionsJson } from '../../utils/codeless/connection';
 import { getAuthorizationToken, getCloudHost } from '../../utils/codeless/getAuthorizationToken';
+import { isConnectionsParameterized } from '../../utils/codeless/parameterizer';
 import { getAccountCredentials } from '../../utils/credentials';
 import { addLocalFuncTelemetry } from '../../utils/funcCoreTools/funcVersion';
 import { showPreviewWarning, unzipLogicAppArtifacts } from '../../utils/taskUtils';
-import { getGlobalSetting } from '../../utils/vsCodeConfig/settings';
+import { tryGetLogicAppProjectRoot } from '../../utils/verifyIsProject';
+import { getWorkspaceFolder } from '../../utils/workspace';
 import { parameterizeConnections } from '../parameterizeConnections';
 import type { IAzureScriptWizard } from './azureScriptWizard';
 import { createAzureWizard } from './azureScriptWizard';
 import { FileManagement } from './iacGestureHelperFunctions';
 import type { ServiceClientCredentials } from '@azure/ms-rest-js';
+import { isEmptyString } from '@microsoft/utils-logic-apps';
 import { DialogResponses, type IActionContext } from '@microsoft/vscode-azext-utils';
-import { getBaseGraphApi, type ILocalSettingsJson } from '@microsoft/vscode-extension';
+import { type ConnectionsData, getBaseGraphApi, type ILocalSettingsJson } from '@microsoft/vscode-extension';
 import axios from 'axios';
 import * as path from 'path';
 import * as portfinder from 'portfinder';
@@ -41,9 +43,17 @@ export async function generateDeploymentScripts(context: IActionContext, project
 
     addLocalFuncTelemetry(context);
     showPreviewWarning(extensionCommand.generateDeploymentScripts);
-    const parameterizeConnectionsSetting = getGlobalSetting(parameterizeConnectionsInProjectLoadSetting);
+    const workspaceFolder = await getWorkspaceFolder(context);
+    const projectPath = await tryGetLogicAppProjectRoot(context, workspaceFolder);
+    const connectionsJson = await getConnectionsJson(projectPath);
+    if (isEmptyString(connectionsJson)) {
+      return;
+    }
 
-    if (!parameterizeConnectionsSetting) {
+    const connectionsData: ConnectionsData = JSON.parse(connectionsJson);
+    const isParameterized = await isConnectionsParameterized(connectionsData);
+
+    if (!isParameterized) {
       const message = localize(
         'parameterizeInDeploymentScripts',
         'Allow parameterization for connections? Declining cancels generation for deployment scripts.'
@@ -57,7 +67,6 @@ export async function generateDeploymentScripts(context: IActionContext, project
         return;
       }
     }
-
     const scriptContext = await setupWizardScriptContext(context, projectRoot);
     const inputs = await gatherAndValidateInputs(scriptContext, projectRoot);
     const sourceControlPath = scriptContext.sourceControlPath;
