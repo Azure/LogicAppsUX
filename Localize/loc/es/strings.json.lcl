@@ -5286,6 +5286,9 @@
       <Item ItemId=";Mcvr0B" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[To use modules or dependecies, please add at Custom Code Dependenncies in Portal TOC]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Para usar módulos o dependencias, agregue las dependencias de código personalizadas en la tabla de contenido del portal.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
