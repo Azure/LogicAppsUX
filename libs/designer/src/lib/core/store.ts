@@ -9,6 +9,8 @@ import staticResultsSchemasReducer from './state/staticresultschema/staticresult
 import tokens from './state/tokens/tokensSlice';
 import workflowReducer from './state/workflow/workflowSlice';
 import workflowParametersReducer from './state/workflowparameters/workflowparametersSlice';
+import devReducer from './state/dev/devSlice';
+
 import { configureStore } from '@reduxjs/toolkit';
 
 export const store = configureStore({
@@ -24,6 +26,7 @@ export const store = configureStore({
     workflowParameters: workflowParametersReducer,
     staticResults: staticResultsSchemasReducer,
     customCode: customCodeReducer,
+    dev: devReducer,
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

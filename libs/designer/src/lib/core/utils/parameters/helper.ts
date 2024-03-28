@@ -1891,7 +1891,9 @@ export async function updateDynamicDataInNode(
       propertiesToUpdate: { dynamicData: { status: DynamicCallStatus.STARTED } },
     });
   }
-  dispatch(updateNodeParameters({ nodeId, parameters: parameterTempValues }));
+  if (parameterTempValues.length > 0) {
+    dispatch(updateNodeParameters({ nodeId, parameters: parameterTempValues }));
+  }
 
   const parameterDynamicValues = [] as any;
   for (const parameterKey of Object.keys(nodeDependencies?.inputs ?? {})) {
@@ -1912,7 +1914,9 @@ export async function updateDynamicDataInNode(
       )
     );
   }
-  dispatch(updateNodeParameters({ nodeId, parameters: parameterDynamicValues }));
+  if (parameterDynamicValues.length > 0) {
+    dispatch(updateNodeParameters({ nodeId, parameters: parameterDynamicValues }));
+  }
 }
 
 async function loadDynamicData(

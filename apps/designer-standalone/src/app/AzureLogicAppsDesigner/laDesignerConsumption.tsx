@@ -8,6 +8,7 @@ import {
   useShowChatBot,
   useHostOptions,
   useShowConnectionsPanel,
+  useShowPerformanceDebug,
 } from '../../state/workflowLoadingSelectors';
 import { setIsChatBotEnabled } from '../../state/workflowLoadingSlice';
 import { DesignerCommandBar } from './DesignerCommandBar';
@@ -67,6 +68,7 @@ const DesignerEditorConsumption = () => {
   const isMonitoringView = useIsMonitoringView();
   const showChatBot = useShowChatBot();
   const showConnectionsPanel = useShowConnectionsPanel();
+  const showPerformanceDebug = useShowPerformanceDebug();
 
   const hostOptions = useHostOptions();
   const queryClient = getReactQueryClient();
@@ -196,6 +198,7 @@ const DesignerEditorConsumption = () => {
             ...hostOptions,
             recurrenceInterval: { interval: 3, frequency: 'Minute' },
           },
+          showPerformanceDebug,
         }}
       >
         {workflow?.definition ? (

@@ -36,7 +36,7 @@ import { useQuery } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import { Background, ReactFlow, ReactFlowProvider, useNodes, useReactFlow, useStore, BezierEdge } from 'reactflow';
 import type { BackgroundProps, NodeChange } from 'reactflow';
-import { InitializationSpinner } from './common/InitializationSpinner/InitializationSpinner';
+import { PerformanceDebugTool } from './common/PerformanceDebug/PerformanceDebug';
 
 export interface DesignerProps {
   backgroundProps?: BackgroundProps;
@@ -262,7 +262,7 @@ export const Designer = (props: DesignerProps) => {
             <Controls />
             <Minimap />
           </div>
-          <InitializationSpinner />
+          <PerformanceDebugTool />
           <CanvasFinder panelLocation={panelLocation} />
         </ReactFlowProvider>
         <div

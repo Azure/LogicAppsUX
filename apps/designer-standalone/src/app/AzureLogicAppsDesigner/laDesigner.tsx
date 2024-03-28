@@ -69,9 +69,18 @@ const DesignerEditor = () => {
   }));
 
   const dispatch = useDispatch<AppDispatch>();
-  const { isReadOnly, isDarkMode, isMonitoringView, runId, appId, showChatBot, language, hostOptions, showConnectionsPanel } = useSelector(
-    (state: RootState) => state.workflowLoader
-  );
+  const {
+    isReadOnly,
+    isDarkMode,
+    isMonitoringView,
+    runId,
+    appId,
+    showChatBot,
+    language,
+    hostOptions,
+    showConnectionsPanel,
+    showPerformanceDebug,
+  } = useSelector((state: RootState) => state.workflowLoader);
 
   const workflowName = workflowId.split('/').splice(-1)[0];
   const siteResourceId = new ArmParser(workflowId).topmostResourceId;
@@ -297,6 +306,7 @@ const DesignerEditor = () => {
             recurrenceInterval: { interval: 1, frequency: 'Minute' },
           },
           showConnectionsPanel,
+          showPerformanceDebug,
         }}
       >
         {workflow?.definition ? (
