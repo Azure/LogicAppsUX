@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [3.0.1](https://github.com/Azure/LogicAppsUX/compare/v3.0.0...v3.0.1) (2024-03-28)
+
+
+### Bug Fixes
+
+* **vscode:** Connections, azure resources and telemetry fixed ([#4482](https://github.com/Azure/LogicAppsUX/issues/4482)) ([a2e3157](https://github.com/Azure/LogicAppsUX/commit/a2e3157684849e408751d51d2bb238f340bb2781)), closes [#4421](https://github.com/Azure/LogicAppsUX/issues/4421) [#4437](https://github.com/Azure/LogicAppsUX/issues/4437) [#4430](https://github.com/Azure/LogicAppsUX/issues/4430) [#4419](https://github.com/Azure/LogicAppsUX/issues/4419)
+
 ## [3.0.0](https://github.com/Azure/LogicAppsUX/compare/v2.128.0...v3.0.0) (2024-03-24)
 
 
