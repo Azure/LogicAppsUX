@@ -74,7 +74,7 @@ export async function openOverview(context: IAzureConnectorsContext, node: vscod
     apiVersion = workflowAppApiVersion;
     callbackInfo = await workflowNode.getCallbackUrl(workflowNode, getRequestTriggerName(workflowContent.definition));
     corsNotice = localize('CorsNotice', 'To view runs, set "*" to allowed origins in the CORS setting.');
-    true;
+    isWorkflowRuntimeRunning = true;
   }
 
   const existingPanel: vscode.WebviewPanel | undefined = tryGetWebviewPanel(panelGroupKey, panelName);
