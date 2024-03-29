@@ -5268,6 +5268,9 @@
       <Item ItemId=";Mcvr0B" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[To use modules or dependecies, please add at Custom Code Dependenncies in Portal TOC]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[モジュールまたは依存関係を使用するには、ポータル TOC のカスタム コード依存関係で追加してください]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
