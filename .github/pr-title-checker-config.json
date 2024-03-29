@@ -4,7 +4,7 @@
     "color": "EEEEEE"
   },
   "CHECKS": {
-    "regexp": "^(feat|fix|docs|style|refactor|test|chore)(!)?(\\([a-zA-Z0-9-_. ]+\\))?:\\s.+$",
+    "regexp": "^(feat|fix|docs|style|refactor|test|chore|meta)(!)?(\\([a-zA-Z0-9-_. ]+\\))?:\\s.+$",
     "regexpFlags": "i",
     "ignoreLabels": ["skip-pr-check"]
   },
