@@ -69,8 +69,9 @@ export const Summary: React.FC = () => {
       baseUrl,
       accessToken,
       cloudHost,
+      vscodeContext: vscode,
     });
-  }, [accessToken, baseUrl, cloudHost]);
+  }, [accessToken, baseUrl, cloudHost, vscode]);
 
   const exportWorkflows = () => {
     return apiService.exportWorkflows(selectedWorkflows, selectedSubscription, location, selectedAdvanceOptions);

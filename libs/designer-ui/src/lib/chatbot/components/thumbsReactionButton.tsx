@@ -22,13 +22,13 @@ export const ThumbsReactionButton: React.FC<IThumbsReactionButtonProps> = ({ isV
     ? isVoted
       ? DislikeFilled
       : isInverted
-      ? DislikeDark
-      : Dislike
+        ? DislikeDark
+        : Dislike
     : isVoted
-    ? LikeFilled
-    : isInverted
-    ? LikeDark
-    : Like;
+      ? LikeFilled
+      : isInverted
+        ? LikeDark
+        : Like;
   const intl = useIntl();
   const intlText = {
     upvote: intl.formatMessage({

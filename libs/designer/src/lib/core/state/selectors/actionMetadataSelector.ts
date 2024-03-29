@@ -4,9 +4,8 @@ import { useConnectionResource } from '../../queries/connections';
 import type { RootState } from '../../store';
 import { useConnector, useConnectorAndSwagger, useNodeConnectionId } from '../connection/connectionSelector';
 import type { NodeOperation } from '../operation/operationMetadataSlice';
-import { OperationManifestService } from '@microsoft/designer-client-services-logic-apps';
+import { OperationManifestService, SwaggerParser, getObjectPropertyValue, getRecordEntry } from '@microsoft/logic-apps-shared';
 import type { LAOperation } from '@microsoft/logic-apps-shared';
-import { SwaggerParser, getObjectPropertyValue, getRecordEntry } from '@microsoft/logic-apps-shared';
 import { createSelector } from '@reduxjs/toolkit';
 import { useMemo } from 'react';
 import { useQuery } from 'react-query';
@@ -113,8 +112,8 @@ const useNodeAttribute = (operationInfo: NodeOperation, propertyInManifest: stri
     result: manifest
       ? getObjectPropertyValue(manifest.properties, propertyInManifest)
       : connector
-      ? getObjectPropertyValue(connector.properties, propertyInConnector)
-      : undefined,
+        ? getObjectPropertyValue(connector.properties, propertyInConnector)
+        : undefined,
   };
 };
 

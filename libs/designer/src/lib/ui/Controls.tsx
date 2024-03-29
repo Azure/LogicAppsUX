@@ -2,7 +2,7 @@ import { openPanel } from '../core';
 import { useShowMinimap } from '../core/state/designerView/designerViewSelectors';
 import { toggleMinimap } from '../core/state/designerView/designerViewSlice';
 import { Icon, useTheme } from '@fluentui/react';
-import { LogEntryLevel, LoggerService } from '@microsoft/designer-client-services-logic-apps';
+import { LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
 import { ControlButton, Controls } from 'reactflow';

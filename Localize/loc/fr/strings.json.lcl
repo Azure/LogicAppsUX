@@ -5283,6 +5283,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";Mcvr0B" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[To use modules or dependecies, please add at Custom Code Dependenncies in Portal TOC]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Pour utiliser des modules ou des dépendances, veuillez les ajouter à Dépendances du code personnalisé dans la table des matières du portail.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";MfAdfx" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Edit in advanced mode]]></Val>
@@ -5808,6 +5817,9 @@
       <Item ItemId=";OrPVcU" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Invalid split on format in ''{splitOn}''.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Fractionnement non valide sur format dans « {splitOn} ».]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -6776,6 +6788,15 @@
           <Val><![CDATA[(UTC-06:00) Easter Island]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[(UTC-06:00) Île de Pâques]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";TjkOzp" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Close]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Fermer]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -9381,15 +9402,6 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";fc1AV8" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[HTTP {method} URL]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[URL {method} HTTP]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
       <Item ItemId=";fg/34o" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Logical functions]]></Val>
@@ -10710,6 +10722,9 @@
       <Item ItemId=";lA/sHA" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Copy the value of ''{label}'' to the clipboard]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Copier la valeur de « {label} » dans le Presse-papiers]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>

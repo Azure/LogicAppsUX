@@ -5265,6 +5265,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";Mcvr0B" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[To use modules or dependecies, please add at Custom Code Dependenncies in Portal TOC]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[모듈 또는 종속성을 사용하려면 포털 TOC의 사용자 지정 코드 종속성에서 추가하세요.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";MfAdfx" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Edit in advanced mode]]></Val>
@@ -5790,6 +5799,9 @@
       <Item ItemId=";OrPVcU" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Invalid split on format in ''{splitOn}''.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[“{splitOn}” 분할 형식이 잘못되었습니다.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -6752,6 +6764,15 @@
           <Val><![CDATA[(UTC-06:00) Easter Island]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[(UTC-06:00) 이스터 섬]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";TjkOzp" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Close]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[닫기]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -9357,15 +9378,6 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";fc1AV8" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[HTTP {method} URL]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[HTTP {method} URL]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
       <Item ItemId=";fg/34o" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Logical functions]]></Val>
@@ -10674,6 +10686,9 @@
       <Item ItemId=";lA/sHA" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Copy the value of ''{label}'' to the clipboard]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[''{label}'' 값을 클립보드에 복사]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>

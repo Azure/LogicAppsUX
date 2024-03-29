@@ -3,13 +3,14 @@ import { RowDropdownOptions, GroupType } from '.';
 import type { ValueSegment } from '../editor';
 import { ValueSegmentType, removeQuotes } from '../editor';
 import type { ChangeHandler, ChangeState, GetTokenPickerHandler } from '../editor/base';
+import { createLiteralValueSegment } from '../editor/base/utils/helper';
 import { isEmptySegments } from '../editor/base/utils/parsesegments';
 import { StringEditor } from '../editor/string';
 import { Row } from './Row';
 import { getOperationValue, getOuterMostCommaIndex } from './helper';
 import type { IButtonStyles, IStyle } from '@fluentui/react';
 import { ActionButton, FontSizes } from '@fluentui/react';
-import { guid, nthLastIndexOf } from '@microsoft/logic-apps-shared';
+import { nthLastIndexOf } from '@microsoft/logic-apps-shared';
 import { useFunctionalState } from '@react-hookz/web';
 import { useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -142,17 +143,17 @@ export const SimpleQueryBuilder = ({ getTokenPicker, itemValue, readonly, onChan
 const convertRootPropToValue = (rootProps: RowItemProps): ValueSegment[] => {
   const { operator, operand1, operand2 } = rootProps;
   const negatory = operator.includes('not');
-  const op1: ValueSegment = getOperationValue(operand1[0]) ?? { id: guid(), type: ValueSegmentType.LITERAL, value: '' };
-  const separatorLiteral: ValueSegment = { id: guid(), type: ValueSegmentType.LITERAL, value: `,` };
-  const op2: ValueSegment = getOperationValue(operand2[0]) ?? { id: guid(), type: ValueSegmentType.LITERAL, value: '' };
+  const op1: ValueSegment = getOperationValue(operand1[0]) ?? createLiteralValueSegment('');
+  const separatorLiteral: ValueSegment = createLiteralValueSegment(`,`);
+  const op2: ValueSegment = getOperationValue(operand2[0]) ?? createLiteralValueSegment('');
   if (negatory) {
     const newOperator = operator.replace('not', '');
-    const negatoryOperatorLiteral: ValueSegment = { id: guid(), type: ValueSegmentType.LITERAL, value: `@not(${newOperator}(` };
-    const endingLiteral: ValueSegment = { id: guid(), type: ValueSegmentType.LITERAL, value: `))` };
+    const negatoryOperatorLiteral: ValueSegment = createLiteralValueSegment(`@not(${newOperator}(`);
+    const endingLiteral: ValueSegment = createLiteralValueSegment(`))`);
     return [negatoryOperatorLiteral, op1, separatorLiteral, op2, endingLiteral];
   } else {
-    const operatorLiteral: ValueSegment = { id: guid(), type: ValueSegmentType.LITERAL, value: `@${operator}(` };
-    const endingLiteral: ValueSegment = { id: guid(), type: ValueSegmentType.LITERAL, value: `)` };
+    const operatorLiteral: ValueSegment = createLiteralValueSegment(`@${operator}(`);
+    const endingLiteral: ValueSegment = createLiteralValueSegment(`)`);
     return [operatorLiteral, op1, separatorLiteral, op2, endingLiteral];
   }
 };
@@ -188,8 +189,8 @@ const convertAdvancedValueToRootProp = (value: ValueSegment[]): RowItemProps | u
     const operandSubstring = stringValue.substring(stringValue.indexOf('(') + 1, nthLastIndexOf(stringValue, ')', negatory ? 2 : 1));
     const operand1String = removeQuotes(operandSubstring.substring(0, getOuterMostCommaIndex(operandSubstring)).trim());
     const operand2String = removeQuotes(operandSubstring.substring(getOuterMostCommaIndex(operandSubstring) + 1).trim());
-    operand1 = [nodeMap.get(operand1String) ?? { id: guid(), type: ValueSegmentType.LITERAL, value: operand1String }];
-    operand2 = [nodeMap.get(operand2String) ?? { id: guid(), type: ValueSegmentType.LITERAL, value: operand2String }];
+    operand1 = [nodeMap.get(operand1String) ?? createLiteralValueSegment(operand1String)];
+    operand2 = [nodeMap.get(operand2String) ?? createLiteralValueSegment(operand2String)];
   } catch {
     return undefined;
   }

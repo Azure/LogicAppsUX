@@ -53,6 +53,7 @@ const ClearIcon = bundleIcon(Dismiss24Filled, Dismiss24Regular);
 
 type SettingBase = {
   visible?: boolean;
+  nodeTitle?: string;
 };
 
 export type Settings = SettingBase &
@@ -274,8 +275,8 @@ const Setting = ({ id, settings, isReadOnly }: { id?: string; settings: Settings
       settingType === 'RunAfter'
         ? 'msla-setting-section-run-after-setting'
         : settingType === 'MultiAddExpressionEditor'
-        ? 'msla-setting-section-expression-field'
-        : 'msla-setting-section-setting';
+          ? 'msla-setting-section-expression-field'
+          : 'msla-setting-section-setting';
     const renderSetting = (): JSX.Element | null => {
       switch (settingType) {
         case 'MultiSelectSetting':
@@ -334,7 +335,7 @@ const Setting = ({ id, settings, isReadOnly }: { id?: string; settings: Settings
 
     return visible && conditionalVisibility !== false ? (
       <div key={i} style={{ display: 'flex', gap: '4px' }}>
-        <div className={getClassName()} style={{ flex: '1 1 auto' }}>
+        <div className={getClassName()} style={{ flex: '1 1 auto', width: '100%' }}>
           {renderSetting()}
           {errorMessage && !hideErrorMessage[i] && (
             <span className="msla-input-parameter-error" role="alert">

@@ -1,0 +1,10240 @@
+{
+  "++ZVe/": [
+    {
+      "type": 0,
+      "value": "Test"
+    }
+  ],
+  "+0H8Or": [
+    {
+      "type": 0,
+      "value": "Warnung: Der Eingabeknotentyp stimmt nicht mit dem Typ des Schemaknotens überein."
+    }
+  ],
+  "+0yxlR": [
+    {
+      "type": 0,
+      "value": "Funktionsanzeige"
+    }
+  ],
+  "+3rROX": [
+    {
+      "type": 0,
+      "value": "Geschützt"
+    }
+  ],
+  "+FcXe9": [
+    {
+      "type": 0,
+      "value": "Fehlerhaft"
+    }
+  ],
+  "+HcevX": [
+    {
+      "type": 0,
+      "value": "Geben Sie einen gültigen booleschen Wert ein."
+    }
+  ],
+  "+Jryh+": [
+    {
+      "type": 0,
+      "value": "Trigger"
+    }
+  ],
+  "+KXX+O": [
+    {
+      "type": 0,
+      "value": "Funktion auswählen aus"
+    }
+  ],
+  "+M72+a": [
+    {
+      "type": 0,
+      "value": "Übersicht"
+    }
+  ],
+  "+Uvo/p": [
+    {
+      "type": 0,
+      "value": "Alternativtext für Nach-unten-Chevron"
+    }
+  ],
+  "+ZSBrq": [
+    {
+      "type": 0,
+      "value": "Kontextmenü für Karte „"
+    },
+    {
+      "type": 1,
+      "value": "title"
+    },
+    {
+      "type": 0,
+      "value": "“"
+    }
+  ],
+  "+ijo/2": [
+    {
+      "type": 0,
+      "value": "Zuletzt verwendeten Ausdruck einfügen"
+    }
+  ],
+  "+mAJR3": [
+    {
+      "type": 0,
+      "value": "(UTC+08:00) Kuala Lumpur, Singapur"
+    }
+  ],
+  "+oelX4": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Die zu untersuchende Zeichenfolge."
+    }
+  ],
+  "+powfX": [
+    {
+      "type": 0,
+      "value": "Zeitzone"
+    }
+  ],
+  "+v1RlQ": [
+    {
+      "type": 0,
+      "value": "Workflowheader in der Antwort unterdrücken"
+    }
+  ],
+  "+xXHdp": [
+    {
+      "type": 0,
+      "value": "Keine Ausgaben"
+    }
+  ],
+  "/2V8bQ": [
+    {
+      "type": 0,
+      "value": "Timeout"
+    }
+  ],
+  "/EU/oJ": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Eine Zeichenfolge, die den Zeitzonennamen der Quellzeitzone enthält. Siehe „Standardzeitzonen“ unter „https://go.microsoft.com/fwlink/?linkid=2238292“."
+    }
+  ],
+  "/I/U8L": [
+    {
+      "type": 0,
+      "value": "Textkörper"
+    }
+  ],
+  "/KRvvg": [
+    {
+      "type": 0,
+      "value": "Keine Werte stimmen mit Ihrer Suche überein."
+    }
+  ],
+  "/NtebP": [
+    {
+      "type": 0,
+      "value": "(UTC+05:00) Islamabad, Karatschi"
+    }
+  ],
+  "/QqADs": [
+    {
+      "type": 0,
+      "value": "Gibt die Elemente im Array beginnend bei Index \"Anzahl\" zurück."
+    }
+  ],
+  "/RS9F7": [
+    {
+      "type": 0,
+      "value": "(UTC-06:00) Saskatchewan"
+    }
+  ],
+  "/ULFwg": [
+    {
+      "type": 0,
+      "value": "Verbindung ändern"
+    }
+  ],
+  "/VcZ9g": [
+    {
+      "type": 0,
+      "value": "Dieser Connector verfügt über mehrere Versionen, ist integriert und wird in Azure gehostet. Verwenden Sie integrierte Features für optimale Leistung, Authentifizierung mit Verbindungszeichenfolgen und andere Features. Verwenden Sie „in Azure gehostet“ für andere Authentifizierungsoptionen."
+    }
+  ],
+  "/WW7If": [
+    {
+      "type": 0,
+      "value": "TRUE"
+    }
+  ],
+  "/X2+cq": [
+    {
+      "type": 0,
+      "value": "Azure Copilot öffnen"
+    }
+  ],
+  "/c1l10": [
+    {
+      "type": 0,
+      "value": "⌘+C"
+    }
+  ],
+  "/doURb": [
+    {
+      "type": 0,
+      "value": "Eingabe in Array konvertieren"
+    }
+  ],
+  "/km5eO": [
+    {
+      "type": 0,
+      "value": "(UTC-04:00) Asunción"
+    }
+  ],
+  "/mjH84": [
+    {
+      "type": 0,
+      "value": "Unformatierte Ausgaben anzeigen"
+    }
+  ],
+  "/n13VL": [
+    {
+      "type": 0,
+      "value": "Eigenschaften"
+    }
+  ],
+  "/qchXQ": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Die Sammlung, aus der Elemente verknüpft werden sollen."
+    }
+  ],
+  "/qu3zt": [
+    {
+      "type": 0,
+      "value": "0"
+    }
+  ],
+  "/ut0u7": [
+    {
+      "type": 0,
+      "value": "Gibt die ersten Count Elemente aus dem übergebenen Array oder aus der übergebenen Zeichenfolge zurück."
+    }
+  ],
+  "/vWMKW": [
+    {
+      "type": 0,
+      "value": "Fehlende erforderliche Eingaben"
+    }
+  ],
+  "/yYyOq": [
+    {
+      "type": 0,
+      "value": "Ressourcengruppe"
+    }
+  ],
+  "00xlpa": [
+    {
+      "type": 0,
+      "value": "Freigegeben"
+    }
+  ],
+  "02vyBk": [
+    {
+      "type": 0,
+      "value": "Trigger"
+    }
+  ],
+  "03RO5d": [
+    {
+      "type": 0,
+      "value": "Parameter bearbeiten"
+    }
+  ],
+  "04AwK7": [
+    {
+      "type": 0,
+      "value": "Fehlercode: „"
+    },
+    {
+      "type": 1,
+      "value": "errorCode"
+    },
+    {
+      "type": 0,
+      "value": "“, Meldung: „"
+    },
+    {
+      "type": 1,
+      "value": "message"
+    },
+    {
+      "type": 0,
+      "value": "“."
+    }
+  ],
+  "06zKZg": [
+    {
+      "type": 0,
+      "value": "(UTC+04:00) Tiflis"
+    }
+  ],
+  "07ZsoY": [
+    {
+      "type": 0,
+      "value": "Gibt den Anfang der Stunde an einen übergebenen Zeichenfolgen-Zeitstempel zurück."
+    }
+  ],
+  "07oZoX": [
+    {
+      "type": 0,
+      "value": "(UTC+12:00) Anadyr, Petropawlowsk-Kamtschatski"
+    }
+  ],
+  "08e2rO": [
+    {
+      "type": 0,
+      "value": "Die für diesen Vorgang verwendete verwaltete Identität ist nicht mehr vorhanden. Um den Vorgang fortzusetzen, müssen Sie eine Identität einrichten oder die Verbindung ändern."
+    }
+  ],
+  "09B9CU": [
+    {
+      "type": 0,
+      "value": "Gibt die URL zum Auslösen eines Triggers oder einer Aktion zurück. Hinweis: Diese Funktion kann nur in einem httpWebhook und einem apiConnectionWebhook verwendet werden, nicht jedoch in manual, recurrence, http oder apiConnection."
+    }
+  ],
+  "0B5xDu": [
+    {
+      "type": 0,
+      "value": "(UTC+05:30) Sri Jayawardenepura"
+    }
+  ],
+  "0CPsxh": [
+    {
+      "type": 0,
+      "value": "ENTF"
+    }
+  ],
+  "0CvRZW": [
+    {
+      "type": 0,
+      "value": "Speichern"
+    }
+  ],
+  "0F6jmK": [
+    {
+      "type": 0,
+      "value": "Sichere Eingaben oder Ausgaben sind aktiviert."
+    }
+  ],
+  "0FzNJV": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Die Base64-codierte Zeichenfolge."
+    }
+  ],
+  "0GT0SI": [
+    {
+      "type": 0,
+      "value": "Abbrechen"
+    }
+  ],
+  "0GqNGo": [
+    {
+      "type": 0,
+      "value": "URL decodiert die Eingabezeichenfolge."
+    }
+  ],
+  "0IRUjM": [
+    {
+      "type": 0,
+      "value": "Wählen Sie einen Zielschemaknoten aus, um die Zuordnung zu starten."
+    }
+  ],
+  "0JTHTZ": [
+    {
+      "type": 0,
+      "value": "Ausführungsmenü anzeigen"
+    }
+  ],
+  "0KMjv6": [
+    {
+      "type": 0,
+      "value": "Nachverfolgung"
+    }
+  ],
+  "0R2D5l": [
+    {
+      "type": 0,
+      "value": "Gibt eine Binärdarstellung einer URI-codierten Zeichenfolge zurück."
+    }
+  ],
+  "0SSwxD": [
+    {
+      "type": 0,
+      "value": "Panel schließen"
+    }
+  ],
+  "0Vzp0l": [
+    {
+      "type": 0,
+      "value": "Reduzieren"
+    }
+  ],
+  "0i/6TR": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Die Zeichenfolge, die in Großbuchstaben konvertiert werden soll. Wenn für ein Zeichen in der Zeichenfolge keine Entsprechung in Großbuchstaben vorhanden ist, wird das Zeichen unverändert in die zurückgegebene Zeichenfolge übernommen."
+    }
+  ],
+  "0m2Y1/": [
+    {
+      "type": 0,
+      "value": "Wert"
+    }
+  ],
+  "0oebOm": [
+    {
+      "type": 0,
+      "value": "Ausgaben"
+    }
+  ],
+  "0p+pJq": [
+    {
+      "type": 0,
+      "value": "Gibt den Rest nach der Division der beiden Zahlen zurück (Modulo)."
+    }
+  ],
+  "0qV0Qe": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Die Zeichenfolge, die möglicherweise den Wert enthält."
+    }
+  ],
+  "0uj1Li": [
+    {
+      "type": 0,
+      "value": "Gibt eine Binärdarstellung einer Eingabedaten-URI-Zeichenfolge zurück."
+    }
+  ],
+  "0upuCv": [
+    {
+      "type": 0,
+      "value": "Stunde"
+    }
+  ],
+  "0vfdFS": [
+    {
+      "type": 0,
+      "value": "täglich"
+    }
+  ],
+  "0xLWzG": [
+    {
+      "type": 0,
+      "value": "Der Name ist bereits vorhanden oder ungültig. Aktualisieren Sie den Namen, bevor Sie fortfahren."
+    }
+  ],
+  "0y5eia": [
+    {
+      "type": 0,
+      "value": "Weitere Befehle"
+    }
+  ],
+  "1+Z8n9": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Der Daten-URI, der in die Zeichenfolgendarstellung konvertiert werden soll."
+    }
+  ],
+  "109OPL": [
+    {
+      "type": 0,
+      "value": "Gibt den Port aus einem URI zurück. Falls der Port nicht angegeben ist, wird der Standardport für das Protokoll zurückgegeben."
+    }
+  ],
+  "14lYtE": [
+    {
+      "type": 0,
+      "value": "18"
+    }
+  ],
+  "1A1P5b": [
+    {
+      "type": 0,
+      "value": "Kommentar"
+    }
+  ],
+  "1D047X": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Der Wert, der in XML konvertiert werden soll."
+    }
+  ],
+  "1Fn5n+": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Die URI-codierte Zeichenfolge."
+    }
+  ],
+  "1KFpTX": [
+    {
+      "type": 0,
+      "value": "(UTC+03:00) Minsk"
+    }
+  ],
+  "1NBvKu": [
+    {
+      "type": 0,
+      "value": "Parameterargument in Gleitkommazahl konvertieren"
+    }
+  ],
+  "1ZSzl6": [
+    {
+      "type": 0,
+      "value": "Für jede Ausführung nach der Konfiguration muss mindestens ein Status überprüft werden."
+    }
+  ],
+  "1dlfUe": [
+    {
+      "type": 0,
+      "value": "Aktionen führen Vorgänge für Daten aus, kommunizieren zwischen Systemen oder führen andere Aufgaben aus."
+    }
+  ],
+  "1eKQwo": [
+    {
+      "type": 0,
+      "value": "(UTC+08:00) Perth"
+    }
+  ],
+  "1ejxkP": [
+    {
+      "type": 0,
+      "value": "Sichere Eingaben"
+    }
+  ],
+  "1hHFdx": [
+    {
+      "type": 0,
+      "value": "(UTC-01:00) Azoren"
+    }
+  ],
+  "1hPZqe": [
+    {
+      "type": 0,
+      "value": "Gibt an, wie oft die Anforderung wiederholt werden soll."
+    }
+  ],
+  "1htSs7": [
+    {
+      "type": 0,
+      "value": "Aus"
+    }
+  ],
+  "1jhzOM": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Das Objekt, bei dem geprüft wird, ob es kleiner als der Vergleichswert ist."
+    }
+  ],
+  "1nODUD": [
+    {
+      "type": 0,
+      "value": "Funktionen ausblenden"
+    }
+  ],
+  "1nvvw1": [
+    {
+      "type": 0,
+      "value": "Geben Sie den Wert des Autorisierungsheaders ein."
+    }
+  ],
+  "1pjO9s": [
+    {
+      "type": 0,
+      "value": "Quellschema ausblenden"
+    }
+  ],
+  "1r9ljA": [
+    {
+      "type": 0,
+      "value": "Geben Sie eine gültige URI ein."
+    }
+  ],
+  "1uGBLP": [
+    {
+      "type": 0,
+      "value": "5"
+    }
+  ],
+  "20oqsp": [
+    {
+      "type": 0,
+      "value": "Untergeordnete Elemente (rekursiv) hinzufügen"
+    }
+  ],
+  "23fENy": [
+    {
+      "type": 0,
+      "value": "Gibt eine Binärdarstellung einer Base64-codierten Zeichenfolge zurück."
+    }
+  ],
+  "23szE+": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Der Wert, der in einen Daten-URI konvertiert werden soll."
+    }
+  ],
+  "23uZn1": [
+    {
+      "type": 0,
+      "value": "Globale Suche"
+    }
+  ],
+  "27Nhhv": [
+    {
+      "type": 0,
+      "value": "Auswählen einer API aus einer API Management-Instanz"
+    }
+  ],
+  "2CXCOt": [
+    {
+      "type": 0,
+      "value": "Datei für Upload auswählen"
+    }
+  ],
+  "2Gh+Gd": [
+    {
+      "type": 0,
+      "value": "Workflow-Assistent"
+    }
+  ],
+  "2JA3gY": [
+    {
+      "type": 0,
+      "value": "Strukturknoten erweitern"
+    }
+  ],
+  "2K2fAj": [
+    {
+      "type": 0,
+      "value": "Endzeit"
+    }
+  ],
+  "2MOA1x": [
+    {
+      "type": 0,
+      "value": "Steuern, wie neue Ausführungen in die Warteschlange eingereiht werden"
+    }
+  ],
+  "2NXYYu": [
+    {
+      "type": 0,
+      "value": "Suchen"
+    }
+  ],
+  "2Noh96": [
+    {
+      "type": 0,
+      "value": "17"
+    }
+  ],
+  "2TMGk7": [
+    {
+      "type": 0,
+      "value": "Verwaltete Identität"
+    }
+  ],
+  "2ZfzaY": [
+    {
+      "type": 0,
+      "value": "Vorhandene auswählen"
+    }
+  ],
+  "2cVEMV": [
+    {
+      "type": 0,
+      "value": "Gibt einen einzelnen Wert zurück, der dem Schlüsselnamen aus der form-data- oder form-encoded-Aktionsausgabe entspricht."
+    }
+  ],
+  "2gOfQI": [
+    {
+      "type": 0,
+      "value": "Vorhandene Schemas von"
+    }
+  ],
+  "2gzGrJ": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Der Name der Aktion mit einer form-data- oder form-encoded-Antwort."
+    }
+  ],
+  "2hrQOL": [
+    {
+      "type": 0,
+      "value": "(UTC+00:00) Dublin, Edinburgh, Lissabon, London"
+    }
+  ],
+  "2kWLLc": [
+    {
+      "type": 0,
+      "value": "Startzeit"
+    }
+  ],
+  "2pCFsW": [
+    {
+      "type": 0,
+      "value": "Die Auslagerungsanzahl ist ungültig. Der Wert muss eine Zahl größer als 0 sein"
+    }
+  ],
+  "2pRsUf": [
+    {
+      "type": 0,
+      "value": "Geben Sie ein gültiges Array ein."
+    }
+  ],
+  "2r30S9": [
+    {
+      "type": 0,
+      "value": "Neuen Schritt nach "
+    },
+    {
+      "type": 1,
+      "value": "parentName"
+    },
+    {
+      "type": 0,
+      "value": " einfügen"
+    }
+  ],
+  "2tTQ0A": [
+    {
+      "type": 0,
+      "value": "Bezug"
+    }
+  ],
+  "2uINs9": [
+    {
+      "type": 0,
+      "value": "Standard"
+    }
+  ],
+  "2vnYre": [
+    {
+      "type": 0,
+      "value": "Aktion hinzufügen"
+    }
+  ],
+  "2y24a/": [
+    {
+      "type": 0,
+      "value": "Speichern"
+    }
+  ],
+  "2z5HGT": [
+    {
+      "type": 0,
+      "value": "Optional. Der zu verwendende RFC 4646-Gebietsschemacode. Wenn keine Angabe erfolgt, wird das Standardgebietsschema verwendet. Wenn das Gebietsschema kein gültiger Wert ist, wird ein Fehler generiert, dass das angegebene Gebietsschema ungültig ist oder über kein zugeordnetes Gebietsschema verfügt."
+    }
+  ],
+  "3+TQMa": [
+    {
+      "type": 0,
+      "value": "Verbindung wird geladen..."
+    }
+  ],
+  "33+WHG": [
+    {
+      "type": 0,
+      "value": "Bezeichner"
+    }
+  ],
+  "34Nt/B": [
+    {
+      "type": 0,
+      "value": "Alternativtext für Schaltflächensymbol"
+    }
+  ],
+  "36RiST": [
+    {
+      "type": 0,
+      "value": "Systemseitig zugewiesene verwaltete Identität"
+    }
+  ],
+  "3AWwVl": [
+    {
+      "type": 0,
+      "value": "Code"
+    }
+  ],
+  "3BZnxY": [
+    {
+      "type": 0,
+      "value": "Dynamischen Inhalt hinzufügen"
+    }
+  ],
+  "3ERi+E": [
+    {
+      "type": 0,
+      "value": "Vertragsbedingungen"
+    }
+  ],
+  "3GINhd": [
+    {
+      "type": 0,
+      "value": "Trigger"
+    }
+  ],
+  "3KPLpx": [
+    {
+      "type": 0,
+      "value": "Entfernen Sie zuerst alle Zuordnungen innerhalb des Quellelements „"
+    },
+    {
+      "type": 1,
+      "value": "nodeName"
+    },
+    {
+      "type": 0,
+      "value": "“."
+    }
+  ],
+  "3MTSYZ": [
+    {
+      "type": 0,
+      "value": "(UTC-03:00) Salvador"
+    }
+  ],
+  "3NhwIJ": [
+    {
+      "type": 0,
+      "value": "Erforderlich. die Trennlinie."
+    }
+  ],
+  "3O0i4j": [
+    {
+      "type": 0,
+      "value": "Es ist kein Inhalt verfügbar."
+    }
+  ],
+  "3PJZH0": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Die zu untersuchende Zeichenfolge."
+    }
+  ],
+  "3QXY3z": [
+    {
+      "type": 0,
+      "value": "Das Ersetzen eines vorhandenen Schemas durch ein inkompatibles Schema kann zu Fehlern in Ihrer Zuordnung führen."
+    }
+  ],
+  "3RoD4h": [
+    {
+      "type": 0,
+      "value": "Gibt die Sammlung in umgekehrter Reihenfolge zurück."
+    }
+  ],
+  "3X4FHS": [
+    {
+      "type": 0,
+      "value": "Art der Benutzereingabe auswählen"
+    }
+  ],
+  "3Y8a6G": [
+    {
+      "type": 0,
+      "value": "Erforderliche Parameter "
+    },
+    {
+      "type": 1,
+      "value": "parameters"
+    },
+    {
+      "type": 0,
+      "value": " nicht festgelegt oder ungültig"
+    }
+  ],
+  "3cZZKj": [
+    {
+      "type": 0,
+      "value": "Trennlinie"
+    }
+  ],
+  "3eeli7": [
+    {
+      "type": 0,
+      "value": "Quellschema auswählen"
+    }
+  ],
+  "3ewBbk": [
+    {
+      "type": 0,
+      "value": "Die eingegebene Identität ist dieser Logik-App nicht zugeordnet."
+    }
+  ],
+  "3n5pnv": [
+    {
+      "type": 0,
+      "value": "(UTC+10:30) Lord-Howe-Insel"
+    }
+  ],
+  "3rzrWf": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Das Objekt, aus dem die Eigenschaft entfernt werden soll."
+    }
+  ],
+  "3sJlV+": [
+    {
+      "type": 0,
+      "value": "Codeansicht schließen"
+    }
+  ],
+  "3uA4ml": [
+    {
+      "type": 0,
+      "value": "Geben Sie einen gültigen Wert für „Datum/Uhrzeit“ ein."
+    }
+  ],
+  "3vCCY7": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Hiermit wird der Zahlenwert einer festgelegten Zeiteinheit angegeben, die abgezogen werden soll."
+    }
+  ],
+  "3vqfeV": [
+    {
+      "type": 0,
+      "value": "3"
+    }
+  ],
+  "3z6rhG": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Dieser Wert ist die nächste ganze Zahl nach der höchsten ganzen Zahl, die zurückgegeben werden kann."
+    }
+  ],
+  "41drjl": [
+    {
+      "type": 0,
+      "value": "Verbindung öffnen"
+    }
+  ],
+  "41eMpW": [
+    {
+      "type": 0,
+      "value": "Wartet"
+    }
+  ],
+  "43xObP": [
+    {
+      "type": 0,
+      "value": "(UTC+10:00) Canberra, Melbourne, Sydney"
+    }
+  ],
+  "45ubha": [
+    {
+      "type": 0,
+      "value": "Authentifizierung"
+    }
+  ],
+  "47kOXr": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Die niedrigste ganze Zahl, die zurückgegeben werden kann."
+    }
+  ],
+  "49YUXK": [
+    {
+      "type": 0,
+      "value": "Der „"
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "“ ist erforderlich."
+    }
+  ],
+  "4BH9uU": [
+    {
+      "type": 0,
+      "value": "Fehler"
+    }
+  ],
+  "4BrA0z": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Die Anzahl der zu addierenden Tage. Kann negativ sein, um Tage zu subtrahieren."
+    }
+  ],
+  "4D7H4R": [
+    {
+      "type": 0,
+      "value": "Wird "
+    },
+    {
+      "type": 1,
+      "value": "onDays"
+    },
+    {
+      "type": 0,
+      "value": " ausgeführt"
+    }
+  ],
+  "4Ekn9t": [
+    {
+      "type": 0,
+      "value": "Rückgängig machen"
+    }
+  ],
+  "4IS4yp": [
+    {
+      "type": 0,
+      "value": "Wiederholungsrichtlinie"
+    }
+  ],
+  "4Levd5": [
+    {
+      "type": 0,
+      "value": "E-Mail an mich senden, wenn"
+    }
+  ],
+  "4Q7WzU": [
+    {
+      "type": 0,
+      "value": "Neue Verbindung hinzufügen"
+    }
+  ],
+  "4YKQAF": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Hiermit wird die im Intervall festgelegte Zeiteinheit angegeben."
+    }
+  ],
+  "4aaixN": [
+    {
+      "type": 0,
+      "value": "Tour"
+    }
+  ],
+  "4c0uPQ": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Der Name des Parameters, dessen Werte Sie erhalten möchten."
+    }
+  ],
+  "4hi3ks": [
+    {
+      "type": 0,
+      "value": "Ihr Flow wurde aktualisiert."
+    }
+  ],
+  "4iyEAY": [
+    {
+      "type": 0,
+      "value": "💾 Dieser Flow wird gespeichert..."
+    }
+  ],
+  "4izAMi": [
+    {
+      "type": 0,
+      "value": "Wert für Antwort eingeben"
+    }
+  ],
+  "4j2MEv": [
+    {
+      "type": 0,
+      "value": "Minimap umschalten"
+    }
+  ],
+  "4vcnOA": [
+    {
+      "type": 0,
+      "value": "Gibt den Mindestwert im Eingabearray von Zahlen zurück."
+    }
+  ],
+  "4vmGh0": [
+    {
+      "type": 0,
+      "value": "Dienstanforderungs-ID"
+    }
+  ],
+  "4wjJs0": [
+    {
+      "type": 0,
+      "value": "14"
+    }
+  ],
+  "5+P3ef": [
+    {
+      "type": 0,
+      "value": "(UTC+08:45) Eucla"
+    }
+  ],
+  "50W8FI": [
+    {
+      "type": 0,
+      "value": "Aktion erläutern"
+    }
+  ],
+  "53MgCQ": [
+    {
+      "type": 0,
+      "value": "Bereich öffnen"
+    }
+  ],
+  "595Baw": [
+    {
+      "type": 0,
+      "value": "(UTC+09:00) Osaka, Sapporo, Tokyo"
+    }
+  ],
+  "5J9jne": [
+    {
+      "type": 0,
+      "value": "Teilen Sie Microsoft mit, was Ihnen an diesem Feature gefallen hat."
+    }
+  ],
+  "5LV34t": [
+    {
+      "type": 0,
+      "value": "Die Eigenschaften „"
+    },
+    {
+      "type": 1,
+      "value": "invalidProperties"
+    },
+    {
+      "type": 0,
+      "value": "“ sind für den Authentifizierungstyp „"
+    },
+    {
+      "type": 1,
+      "value": "authType"
+    },
+    {
+      "type": 0,
+      "value": "“ ungültig."
+    }
+  ],
+  "5OvGgn": [
+    {
+      "type": 0,
+      "value": "Textkörper"
+    }
+  ],
+  "5SAQOb": [
+    {
+      "type": 0,
+      "value": "Autorität"
+    }
+  ],
+  "5WTRY8": [
+    {
+      "type": 0,
+      "value": "Fehler"
+    }
+  ],
+  "5akc1Q": [
+    {
+      "type": 0,
+      "value": "Nicht unterstützter \"in\"-Wert „"
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "“ im Parameter"
+    }
+  ],
+  "5b0sKi": [
+    {
+      "type": 0,
+      "value": "Gibt TRUE zurück, wenn ein Objekt, ein Array oder eine Zeichenfolge leer ist."
+    }
+  ],
+  "5cPiWA": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Der Name der Schleife, deren Element Sie abrufen möchten."
+    }
+  ],
+  "5dCAjy": [
+    {
+      "type": 0,
+      "value": "Tag"
+    }
+  ],
+  "5fmV2Q": [
+    {
+      "type": 0,
+      "value": "In der Logik-App verwendete Parameter werden während der Generierung von Bereitstellungsvorlagen in eine Azure Resource Manager-Vorlage konvertiert."
+    }
+  ],
+  "5gOG+F": [
+    {
+      "type": 0,
+      "value": "Geben Sie die zu vergleichenden Werte an, und wählen Sie den zu verwendenden Operator aus."
+    }
+  ],
+  "5hWg4V": [
+    {
+      "type": 0,
+      "value": "Element auswählen"
+    }
+  ],
+  "5qzZMo": [
+    {
+      "type": 0,
+      "value": "Wird geladen..."
+    }
+  ],
+  "5rkegy": [
+    {
+      "type": 0,
+      "value": "Parameter löschen"
+    }
+  ],
+  "5ytHcK": [
+    {
+      "type": 0,
+      "value": "Wird geladen..."
+    }
+  ],
+  "6+RwRp": [
+    {
+      "type": 0,
+      "value": "Hybridconnector"
+    }
+  ],
+  "61iT9C": [
+    {
+      "type": 0,
+      "value": "Daten aus dem vorherigen Schritt einfügen (Sie können sie auch hinzufügen, indem Sie „ALT + /“ im Editor eingeben)"
+    }
+  ],
+  "62Ypnr": [
+    {
+      "type": 0,
+      "value": "Fehler beim Laden der Vorgangsdaten"
+    }
+  ],
+  "63/zYN": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Das Objekt, bei dem geprüft wird, ob es größer als der Vergleichswert ist."
+    }
+  ],
+  "632t9E": [
+    {
+      "type": 0,
+      "value": "Sichere Eingaben für den Vorgang"
+    }
+  ],
+  "635Koz": [
+    {
+      "type": 0,
+      "value": "Jede Woche am Montag"
+    }
+  ],
+  "63CC7M": [
+    {
+      "type": 0,
+      "value": "Fehler beim Laden der Eingaben"
+    }
+  ],
+  "63fQWE": [
+    {
+      "type": 0,
+      "value": "Alle erweiterten Parameter anzeigen"
+    }
+  ],
+  "6OSgRP": [
+    {
+      "type": 0,
+      "value": "Zuordnung testen"
+    }
+  ],
+  "6PdOcy": [
+    {
+      "type": 0,
+      "value": "Abbrechen"
+    }
+  ],
+  "6VV7OY": [
+    {
+      "type": 0,
+      "value": "Der Timeoutwert ist ungültig. Er muss mit dem ISO 8601-Dauerformat übereinstimmen."
+    }
+  ],
+  "6fDYzG": [
+    {
+      "type": 0,
+      "value": "Fehler beim Laden des Schemas. Versuchen Sie es noch einmal."
+    }
+  ],
+  "6gZ4I3": [
+    {
+      "type": 0,
+      "value": "Der Funktion „"
+    },
+    {
+      "type": 1,
+      "value": "functionName"
+    },
+    {
+      "type": 0,
+      "value": "“ sind zu viele Eingaben zugewiesen."
+    }
+  ],
+  "6gblzt": [
+    {
+      "type": 0,
+      "value": "Diese Aktion wurde aktualisiert."
+    }
+  ],
+  "6jiO7t": [
+    {
+      "type": 0,
+      "value": "Ausführung anzeigen"
+    }
+  ],
+  "6jsWn/": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Die Sammlung, in der gesucht werden soll."
+    }
+  ],
+  "6kSpHL": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Der Name der Aktion mit einer mehrteiligen Antwort."
+    }
+  ],
+  "6lLsi+": [
+    {
+      "type": 0,
+      "value": "Dieser Schritt wird aus der Logik-App entfernt."
+    }
+  ],
+  "6oqk+A": [
+    {
+      "type": 0,
+      "value": "Zurück"
+    }
+  ],
+  "6pISgk": [
+    {
+      "type": 0,
+      "value": "Schließen Sie die Einrichtung der folgenden Aktionen ab, um diesen Workflow bereit zu stellen:"
+    }
+  ],
+  "6qkBwz": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Die Zahl, mit der Multiplikand 2 multipliziert werden soll."
+    }
+  ],
+  "6sGj3J": [
+    {
+      "type": 0,
+      "value": "Flow erstellen"
+    }
+  ],
+  "6sSPNb": [
+    {
+      "type": 1,
+      "value": "connectorName"
+    },
+    {
+      "type": 0,
+      "value": "-Connector"
+    }
+  ],
+  "6u6CS+": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Der Wert, für den der Index gesucht werden soll."
+    }
+  ],
+  "6uCEoM": [
+    {
+      "type": 0,
+      "value": "Geben Sie einen gültigen Wert für „"
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "“ ein."
+    }
+  ],
+  "6ueRYm": [
+    {
+      "type": 0,
+      "value": "Startzeit"
+    }
+  ],
+  "6xRvni": [
+    {
+      "type": 0,
+      "value": "Datentyp"
+    }
+  ],
+  "6yFUar": [
+    {
+      "type": 0,
+      "value": "Ausgaben sind erforderlich, wenn der Status „Erfolgreich“ lautet"
+    }
+  ],
+  "73iM9+": [
+    {
+      "type": 0,
+      "value": "Quellschema aktualisieren"
+    }
+  ],
+  "74e2xB": [
+    {
+      "type": 0,
+      "value": "Neue Verbindung erstellen"
+    }
+  ],
+  "78Vggn": [
+    {
+      "type": 0,
+      "value": "Benutzernamen eingeben"
+    }
+  ],
+  "7EZ2oY": [
+    {
+      "type": 0,
+      "value": "(UTC-04:00) Turks- und Caicosinseln"
+    }
+  ],
+  "7Fyq1F": [
+    {
+      "type": 0,
+      "value": "Keine Eingaben"
+    }
+  ],
+  "7GSk99": [
+    {
+      "type": 0,
+      "value": "OK"
+    }
+  ],
+  "7LmpNN": [
+    {
+      "type": 0,
+      "value": "Der Parameter \""
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "\" wurde für diesen Vorgang nicht gefunden"
+    }
+  ],
+  "7PtWvu": [
+    {
+      "type": 0,
+      "value": "(UTC-05:00) Eastern Time (USA und Kanada)"
+    }
+  ],
+  "7QymrD": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Die Zeichenfolge, aus der die Teilzeichenfolge entnommen wird."
+    }
+  ],
+  "7S2wtE": [
+    {
+      "type": 0,
+      "value": "Schemaüberprüfung"
+    }
+  ],
+  "7ZR1xr": [
+    {
+      "type": 0,
+      "value": "Aktion hinzufügen"
+    }
+  ],
+  "7aJqIH": [
+    {
+      "type": 0,
+      "value": "Optional. Das Gebietsschema, das bei der Formatierung verwendet werden soll (standardmäßig \"en-US\")."
+    }
+  ],
+  "7gUE8h": [
+    {
+      "type": 0,
+      "value": "Dadurch wird Ihr Workflow auf den Zustand zurückgesetzt, in dem er sich vor der Bearbeitung von Copilot befand. Wenn Sie zusätzliche Änderungen am Workflow nach Copilot vorgenommen haben, verlieren Sie diese. Diese Aktion kann nicht rückgängig gemacht werden. Möchten Sie den Vorgang fortsetzen?"
+    }
+  ],
+  "7jcTNd": [
+    {
+      "type": 0,
+      "value": "Geben Sie eine gültige E-Mail-Adresse an."
+    }
+  ],
+  "7k9jXx": [
+    {
+      "type": 0,
+      "value": "Statuscode"
+    }
+  ],
+  "7lnElz": [
+    {
+      "type": 0,
+      "value": "Gibt die Anzahl von Zeiteinheiten (Intervall von 100 Nanosekunden) seit dem 1. Januar 0001 00:00:00 UT eines Zeichenfolgen-Zeitstempels zurück."
+    }
+  ],
+  "7lvqST": [
+    {
+      "type": 0,
+      "value": "Ungültig"
+    }
+  ],
+  "7yEdSt": [
+    {
+      "type": 0,
+      "value": "Mehr anzeigen"
+    }
+  ],
+  "7yFLpB": [
+    {
+      "type": 0,
+      "value": "URL kopieren"
+    }
+  ],
+  "7zDk9N": [
+    {
+      "type": 0,
+      "value": "Exponentielles Intervall"
+    }
+  ],
+  "7zsUT3": [
+    {
+      "type": 0,
+      "value": "Nicht unterstützter Authentifizierungstyp \""
+    },
+    {
+      "type": 1,
+      "value": "authType"
+    },
+    {
+      "type": 0,
+      "value": "\"."
+    }
+  ],
+  "7zzPsK": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Die Zeichenfolge, die möglicherweise den Wert enthält."
+    }
+  ],
+  "8+0teU": [
+    {
+      "type": 0,
+      "value": "Der Parametername ist bereits vorhanden."
+    }
+  ],
+  "83G5rr": [
+    {
+      "type": 0,
+      "value": "Geben Sie einen Intervall an."
+    }
+  ],
+  "83PYuA": [
+    {
+      "type": 0,
+      "value": "(UTC-06:00) Central Time (USA und Kanada)"
+    }
+  ],
+  "84D91Y": [
+    {
+      "type": 0,
+      "value": "PFX"
+    }
+  ],
+  "8BoVtZ": [
+    {
+      "type": 0,
+      "value": "Fehler beim Ausführen der API : "
+    },
+    {
+      "type": 1,
+      "value": "url"
+    }
+  ],
+  "8CWFEh": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Der zurückzugebende Wert, falls der Ausdruck \"wahr\" ist."
+    }
+  ],
+  "8DFwxH": [
+    {
+      "type": 0,
+      "value": "Gibt eine formatierte Zahlenzeichenfolge zurück."
+    }
+  ],
+  "8FjOSh": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Das Objekt, bei dem geprüft wird, ob es größer oder gleich dem Vergleichsobjekt ist."
+    }
+  ],
+  "8JEHiY": [
+    {
+      "type": 0,
+      "value": "Samstag"
+    }
+  ],
+  "8L+oIz": [
+    {
+      "type": 0,
+      "value": "Der Designer kann aufgrund mehrerer Trigger in der Definition nicht gerendert werden."
+    }
+  ],
+  "8LhQeL": [
+    {
+      "type": 0,
+      "value": "In den Codeansichtsmodus wechseln"
+    }
+  ],
+  "8ND+Yc": [
+    {
+      "type": 0,
+      "value": "Aktivieren Sie die verwaltete Identität für die Logik-App."
+    }
+  ],
+  "8NFfuB": [
+    {
+      "type": 0,
+      "value": "Aktionen"
+    }
+  ],
+  "8NUqpR": [
+    {
+      "type": 0,
+      "value": "Beschreiben Sie, wie Ihr Flow geändert werden soll. Fügen Sie nach Möglichkeit Details hinzu, einschließlich des zu verwendenden Connectors und ob Inhalte eingeschlossen werden sollen."
+    }
+  ],
+  "8U0KPg": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Die als URI zu codierende Zeichenfolge."
+    }
+  ],
+  "8UfIAk": [
+    {
+      "type": 0,
+      "value": "Geben Sie das Geheimnis in Nur-Text-Form oder als sicheren Parameter ein."
+    }
+  ],
+  "8Y5xpK": [
+    {
+      "type": 0,
+      "value": "Donnerstag"
+    }
+  ],
+  "8ZfbyZ": [
+    {
+      "type": 0,
+      "value": "(UTC+06:00) Astana"
+    }
+  ],
+  "8baaNC": [
+    {
+      "type": 0,
+      "value": "Nicht unterstützter Tokentyp: "
+    },
+    {
+      "type": 1,
+      "value": "expressions"
+    }
+  ],
+  "8eKf/c": [
+    {
+      "type": 0,
+      "value": "(UTC+08:00) Irkutsk"
+    }
+  ],
+  "8eTWaf": [
+    {
+      "type": 0,
+      "value": "Umbenennen"
+    }
+  ],
+  "8j+a0n": [
+    {
+      "type": 0,
+      "value": "Beim asynchronen Muster fährt die Logic Apps-Engine mit dem Abruf der im Adressheader der Antwort angegebenen URL fort, bis ein Endstatus erreicht ist, sofern der Remoteserver mit einer 202-Antwort (Akzeptiert) signalisiert, dass die Anforderung zur Verarbeitung akzeptiert wird."
+    }
+  ],
+  "8mDG0V": [
+    {
+      "type": 0,
+      "value": "Der Workflow weist Parametervalidierungsfehler in den folgenden Vorgängen auf: "
+    },
+    {
+      "type": 1,
+      "value": "invalidNodes"
+    },
+    {
+      "type": 0,
+      "value": "."
+    }
+  ],
+  "8wr0zO": [
+    {
+      "type": 0,
+      "value": "Fügt einem übergebenen Zeichenfolgen-Zeitstempel eine ganze Zahl von Tagen hinzu."
+    }
+  ],
+  "8zkvmc": [
+    {
+      "type": 0,
+      "value": "Testen"
+    }
+  ],
+  "9/UeTh": [
+    {
+      "type": 0,
+      "value": "Gibt ein einzelnes Array oder Objekt zurück, das gemeinsame Elemente zwischen übergebenen Arrays oder Objekten aufweist."
+    }
+  ],
+  "90Q7Pw": [
+    {
+      "type": 0,
+      "value": "Wert"
+    }
+  ],
+  "90o7sB": [
+    {
+      "type": 0,
+      "value": "Datei"
+    }
+  ],
+  "93Gj/n": [
+    {
+      "type": 0,
+      "value": "Zeilenposition"
+    }
+  ],
+  "93svjx": [
+    {
+      "type": 0,
+      "value": "Die Benutzeridentität wird nicht unterstützt, wenn für die Logik-App die systemseitig zugewiesene verwaltete Identität aktiviert ist."
+    }
+  ],
+  "96JG8I": [
+    {
+      "type": 1,
+      "value": "operationName"
+    },
+    {
+      "type": 0,
+      "value": "-Vorgang"
+    }
+  ],
+  "99vsJy": [
+    {
+      "type": 0,
+      "value": "Connector"
+    }
+  ],
+  "9EmN2M": [
+    {
+      "type": 0,
+      "value": "Abbrechen"
+    }
+  ],
+  "9IDWMU": [
+    {
+      "type": 0,
+      "value": "Schließen"
+    }
+  ],
+  "9JuvQ4": [
+    {
+      "type": 0,
+      "value": "Gibt einen Daten-URI eines Werts zurück."
+    }
+  ],
+  "9Jv3+1": [
+    {
+      "type": 0,
+      "value": "Gibt ein Objekt mit einem zusätzlichen Eigenschaft-Wert-Paar zurück."
+    }
+  ],
+  "9LLnyJ": [
+    {
+      "type": 0,
+      "value": "(UTC-03:00) Brasília"
+    }
+  ],
+  "9QNZSj": [
+    {
+      "type": 0,
+      "value": "Flow wiederherstellen"
+    }
+  ],
+  "9QS9a3": [
+    {
+      "type": 0,
+      "value": "\""
+    },
+    {
+      "type": 1,
+      "value": "selectedOperation"
+    },
+    {
+      "type": 0,
+      "value": "\" ersetzen durch"
+    }
+  ],
+  "9SuA/E": [
+    {
+      "type": 0,
+      "value": "12"
+    }
+  ],
+  "9W0lck": [
+    {
+      "type": 0,
+      "value": "Ungültige Aufteilung auf Wert „"
+    },
+    {
+      "type": 1,
+      "value": "splitOn"
+    },
+    {
+      "type": 0,
+      "value": "“. Er kann nicht in den Ausgaben gefunden werden."
+    }
+  ],
+  "9YGcT2": [
+    {
+      "type": 0,
+      "value": "ChildErrors"
+    }
+  ],
+  "9YZ873": [
+    {
+      "type": 0,
+      "value": "Text"
+    }
+  ],
+  "9aj+el": [
+    {
+      "type": 0,
+      "value": "Standard"
+    }
+  ],
+  "9atGYe": [
+    {
+      "type": 0,
+      "value": "Hinzufügen"
+    }
+  ],
+  "9djnqI": [
+    {
+      "type": 0,
+      "value": "Gibt das Ergebnis aus der Addition der beiden Zahlen zurück."
+    }
+  ],
+  "9u/Ae3": [
+    {
+      "type": 0,
+      "value": "Gibt TRUE zurück, wenn beide Parameter TRUE sind."
+    }
+  ],
+  "9wX3u9": [
+    {
+      "type": 0,
+      "value": "Feedback senden"
+    }
+  ],
+  "9x8hg8": [
+    {
+      "type": 0,
+      "value": "Im Standardmodus bearbeiten"
+    }
+  ],
+  "9yLPwo": [
+    {
+      "type": 0,
+      "value": "Ausführlichere Informationen finden Sie in den folgenden Ressourcen:"
+    }
+  ],
+  "A5Ferh": [
+    {
+      "type": 0,
+      "value": "Das Quellelement wurde aus der Ansicht entfernt."
+    }
+  ],
+  "A8l+k7": [
+    {
+      "type": 0,
+      "value": "Fehler beim Ausführen der folgenden API-Parameter: „"
+    },
+    {
+      "type": 1,
+      "value": "parameters"
+    },
+    {
+      "type": 0,
+      "value": "“"
+    }
+  ],
+  "ADM1Z8": [
+    {
+      "type": 0,
+      "value": "Authentifizierungstyp"
+    }
+  ],
+  "AEguAy": [
+    {
+      "type": 0,
+      "value": "Leerer Wert"
+    }
+  ],
+  "AGCm1p": [
+    {
+      "type": 0,
+      "value": "Name"
+    }
+  ],
+  "AHB418": [
+    {
+      "type": 0,
+      "value": "Filteraktionen"
+    }
+  ],
+  "ANGw2o": [
+    {
+      "type": 0,
+      "value": "Klicken Sie für weitere Informationen zum statischen Ergebnis"
+    }
+  ],
+  "AO6T9u": [
+    {
+      "type": 0,
+      "value": "Fertig"
+    }
+  ],
+  "AQ7Zxc": [
+    {
+      "type": 0,
+      "value": "Gibt den Index für das n-te Vorkommen eines Werts in einer Zeichenfolge zurück (keine Unterscheidung von Groß-/Kleinschreibung, invariante Kultur)."
+    }
+  ],
+  "Af+Ve0": [
+    {
+      "type": 0,
+      "value": "(UTC+11:00) Bougainville-Insel"
+    }
+  ],
+  "AheXMN": [
+    {
+      "type": 0,
+      "value": "Wählen Sie die Häufigkeit aus."
+    }
+  ],
+  "AhvQ7r": [
+    {
+      "type": 0,
+      "value": "Entfernen und Löschen aller erweiterten Parameter und ihrer Werte"
+    }
+  ],
+  "Ak2Lka": [
+    {
+      "type": 0,
+      "value": "Nicht verbunden mit"
+    }
+  ],
+  "AnX5yC": [
+    {
+      "type": 0,
+      "value": "Benutzername"
+    }
+  ],
+  "AoalgS": [
+    {
+      "type": 0,
+      "value": "Weitere Ergebnisse werden geladen..."
+    }
+  ],
+  "ArTh0/": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Die Zeichenfolge, die als Base64-Darstellung codiert werden soll."
+    }
+  ],
+  "AsqIUa": [
+    {
+      "type": 0,
+      "value": "Maximal zulässiges Intervall"
+    }
+  ],
+  "Az0QvG": [
+    {
+      "type": 0,
+      "value": "Automatisch"
+    }
+  ],
+  "B/JzwK": [
+    {
+      "offset": 0,
+      "options": {
+        "=0": {
+          "value": [
+            {
+              "type": 0,
+              "value": "0 Aktionen"
+            }
+          ]
+        },
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " Aktion"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " Aktionen"
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "actionCount"
+    }
+  ],
+  "B/gCWM": [
+    {
+      "type": 0,
+      "value": "Fehler"
+    }
+  ],
+  "B2s0iG": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Der Index des abzurufenden Teils."
+    }
+  ],
+  "B59BCg": [
+    {
+      "type": 0,
+      "value": "Kein dynamischer Inhalt verfügbar"
+    }
+  ],
+  "B999mz": [
+    {
+      "type": 0,
+      "value": "Die Zeilen wurden gelöscht."
+    }
+  ],
+  "BBD8Em": [
+    {
+      "type": 0,
+      "value": "Schlüssel"
+    }
+  ],
+  "BCAnZP": [
+    {
+      "type": 0,
+      "value": "Hiermit wird entweder ein einzelnes Zeichen als Formatbezeichner oder ein benutzerdefiniertes Formatmuster angegeben, das festlegt, wie der Wert dieses Zeitstempels formatiert werden soll. Wenn kein Format angegeben wird, wird das ISO 8601-Format (\"o\") verwendet."
+    }
+  ],
+  "BCgiRh": [
+    {
+      "type": 0,
+      "value": "Warnung: Der benutzerdefinierte Wert stimmt nicht mit einem der zulässigen Typen für diese Eingabe überein."
+    }
+  ],
+  "BFTwRN": [
+    {
+      "type": 0,
+      "value": "Erfolgreich mit Wiederholungen"
+    }
+  ],
+  "BGw6eH": [
+    {
+      "type": 0,
+      "value": "Fehlende erforderliche Eigenschaften „"
+    },
+    {
+      "type": 1,
+      "value": "missingProperties"
+    },
+    {
+      "type": 0,
+      "value": "“ für den Authentifizierungstyp „"
+    },
+    {
+      "type": 1,
+      "value": "authType"
+    },
+    {
+      "type": 0,
+      "value": "“"
+    }
+  ],
+  "BHe7qY": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Die URI-codierte Zeichenfolge."
+    }
+  ],
+  "BIzX3S": [
+    {
+      "type": 0,
+      "value": "Weitere Informationen zu „Rückgängig machen“-Vorgängen"
+    }
+  ],
+  "BJNUxN": [
+    {
+      "type": 0,
+      "value": "Pfadparameter"
+    }
+  ],
+  "BKL0ZG": [
+    {
+      "type": 0,
+      "value": "Startzeit"
+    }
+  ],
+  "BPYdTX": [
+    {
+      "type": 0,
+      "value": "Nicht angegeben"
+    }
+  ],
+  "BQCPY7": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Die Zeichenfolge, aus der die URL-unsicheren Zeichen decodiert werden sollen."
+    }
+  ],
+  "BQSRV0": [
+    {
+      "type": 0,
+      "value": "Geben Sie das Kennwort in Nur-Text-Form oder als sicheren Parameter ein."
+    }
+  ],
+  "BS3gy8": [
+    {
+      "type": 0,
+      "value": "Es ist ein Fehler aufgetreten. Wiederholen Sie den Vorgang."
+    }
+  ],
+  "BSgavq": [
+    {
+      "type": 0,
+      "value": "Beispiel: Montag, Freitag"
+    }
+  ],
+  "BUutcC": [
+    {
+      "type": 0,
+      "value": "Liste gleichgeordneter Elemente erweitern"
+    }
+  ],
+  "BYrP8F": [
+    {
+      "type": 0,
+      "value": "Zahl"
+    }
+  ],
+  "BeqBP7": [
+    {
+      "type": 0,
+      "value": "Automatische Dekomprimierung"
+    }
+  ],
+  "Bewmet": [
+    {
+      "type": 0,
+      "value": "Array"
+    }
+  ],
+  "Bl4Iv0": [
+    {
+      "type": 0,
+      "value": "(UTC+08:00) Ulan-Bator"
+    }
+  ],
+  "Bn8iTS": [
+    {
+      "type": 0,
+      "value": "Zustandstyp:"
+    }
+  ],
+  "BoMvF2": [
+    {
+      "type": 0,
+      "value": "Reduzieren"
+    }
+  ],
+  "BogxJl": [
+    {
+      "type": 0,
+      "value": "(UTC+04:00) Ischewsk, Samara"
+    }
+  ],
+  "BrWQ0Z": [
+    {
+      "type": 0,
+      "value": "Verwaltete Identität auswählen"
+    }
+  ],
+  "BtL7UI": [
+    {
+      "type": 0,
+      "value": "Für diesen Schritt sind keine zusätzlichen Informationen erforderlich. Sie können die Ausgaben in nachfolgenden Schritten verwenden."
+    }
+  ],
+  "BuYrD3": [
+    {
+      "type": 0,
+      "value": "Ein einzelner Formatspezifizierer, der angibt, wie der Wert dieser GUID formatiert werden soll."
+    }
+  ],
+  "BvCnOv": [
+    {
+      "type": 0,
+      "value": "Legen Sie die Nachverfolgungs-ID für die Ausführung fest. Diese Nachverfolgungs-ID gilt für die initiierende Anforderung."
+    }
+  ],
+  "BxITRH": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Das Objekt, bei dem geprüft wird, ob es größer als das Vergleichsobjekt ist."
+    }
+  ],
+  "BynK4X": [
+    {
+      "type": 0,
+      "value": "Frage stellen"
+    }
+  ],
+  "C1cy54": [
+    {
+      "type": 0,
+      "value": "Textkörper"
+    }
+  ],
+  "C4NQ1J": [
+    {
+      "type": 0,
+      "value": "Hiermit werden die im Schwellenwert angegebenen Elemente gemäß Fortsetzungstoken abgerufen. Aufgrund der Seitengröße des Connectors überschreitet die zurückgegebene Anzahl möglicherweise den Schwellenwert."
+    }
+  ],
+  "CBzSJo": [
+    {
+      "type": 0,
+      "value": "WAHR"
+    }
+  ],
+  "CG772M": [
+    {
+      "type": 0,
+      "value": "Verbindung erforderlich"
+    }
+  ],
+  "CaajcD": [
+    {
+      "type": 0,
+      "value": "(UTC+13:00) Samoa"
+    }
+  ],
+  "Cb6IEq": [
+    {
+      "type": 0,
+      "value": "(UTC-05:00) Havanna"
+    }
+  ],
+  "Cb8pv0": [
+    {
+      "type": 0,
+      "value": "(UTC-02:00) Mittelatlantik – alt"
+    }
+  ],
+  "Ci41Od": [
+    {
+      "type": 0,
+      "value": "(UTC+12:00) Auckland, Wellington"
+    }
+  ],
+  "Ciol6I": [
+    {
+      "type": 0,
+      "value": "Ausgabe"
+    }
+  ],
+  "Cj3/LJ": [
+    {
+      "type": 0,
+      "value": "Der Parametername muss angegeben werden."
+    }
+  ],
+  "ClZW2r": [
+    {
+      "type": 0,
+      "value": "Wert"
+    }
+  ],
+  "CsPY74": [
+    {
+      "type": 0,
+      "value": "Typ der Anmeldeinformationen"
+    }
+  ],
+  "CvoqQ6": [
+    {
+      "type": 0,
+      "value": "Geben Sie ein Datum ein, oder wählen Sie ein Datum aus (JJJJ-MM-TT)."
+    }
+  ],
+  "Cy0pyB": [
+    {
+      "type": 0,
+      "value": "(UTC+09:30) Adelaide"
+    }
+  ],
+  "CyT8H7": [
+    {
+      "type": 0,
+      "value": "Akzeptiert die Typen „Zahl“, „Ganze Zahl“ und „Dezimal“."
+    }
+  ],
+  "CypYLs": [
+    {
+      "type": 0,
+      "value": "Einen neuen Schritt zwischen "
+    },
+    {
+      "type": 1,
+      "value": "parentName"
+    },
+    {
+      "type": 0,
+      "value": " und "
+    },
+    {
+      "type": 1,
+      "value": "childName"
+    },
+    {
+      "type": 0,
+      "value": " einfügen"
+    }
+  ],
+  "Czt6YV": [
+    {
+      "type": 0,
+      "value": "um "
+    },
+    {
+      "type": 1,
+      "value": "times"
+    }
+  ],
+  "D+Ptnq": [
+    {
+      "type": 0,
+      "value": "Gibt Pfad und Abfrage aus einem URI zurück."
+    }
+  ],
+  "D/xTXV": [
+    {
+      "type": 0,
+      "value": "Quellschema anzeigen"
+    }
+  ],
+  "D1lgsT": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Die Zeichenfolge, aus der führende und nachstehende Leerzeichen entfernt werden sollen."
+    }
+  ],
+  "D5FIKL": [
+    {
+      "type": 0,
+      "value": "Aus Beispiel einfügen"
+    }
+  ],
+  "DDIIAQ": [
+    {
+      "type": 0,
+      "value": "Knoten"
+    }
+  ],
+  "DEKsll": [
+    {
+      "type": 0,
+      "value": "Das Wiederholungsrichtlinienintervall ist ungültig. Es muss dem ISO 8601-Dauerformat entsprechen."
+    }
+  ],
+  "DEu7oK": [
+    {
+      "type": 0,
+      "value": "(UTC-07:00) Arizona"
+    }
+  ],
+  "DGMwU4": [
+    {
+      "type": 0,
+      "value": "Beispielnutzdaten zum Generieren eines Schemas verwenden"
+    }
+  ],
+  "DJW8RE": [
+    {
+      "type": 0,
+      "value": "Einen Wert auswählen"
+    }
+  ],
+  "DMuwuJ": [
+    {
+      "type": 0,
+      "value": "Datum"
+    }
+  ],
+  "DQV7aK": [
+    {
+      "type": 0,
+      "value": "ALT/OPTION + Klicken Sie, um „"
+    },
+    {
+      "type": 1,
+      "value": "displayName"
+    },
+    {
+      "type": 0,
+      "value": "“ herunterzuladen"
+    }
+  ],
+  "DS/WmZ": [
+    {
+      "type": 0,
+      "value": "Hinzugefügte Funktionen"
+    }
+  ],
+  "DWd9vy": [
+    {
+      "type": 0,
+      "value": "wöchentlich"
+    }
+  ],
+  "DWsh56": [
+    {
+      "type": 0,
+      "value": "Client-ID eingeben"
+    }
+  ],
+  "DYXoEM": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Chișinău"
+    }
+  ],
+  "DZZ3fj": [
+    {
+      "type": 0,
+      "value": "Dauer"
+    }
+  ],
+  "DfXxoX": [
+    {
+      "type": 0,
+      "value": "Wählen Sie eine vorhandene Verbindung aus, oder erstellen Sie eine neue."
+    }
+  ],
+  "Dhu3IS": [
+    {
+      "type": 0,
+      "value": "Minikarte anzeigen"
+    }
+  ],
+  "DjbVKU": [
+    {
+      "type": 0,
+      "value": "OAuth"
+    }
+  ],
+  "DkF25I": [
+    {
+      "type": 0,
+      "value": "Statisches Ergebnis erweitern"
+    }
+  ],
+  "Dm0zAO": [
+    {
+      "type": 0,
+      "value": "Die maximale Dauer für eine einzelne ausgehende Anforderung dieser Aktion. Wenn die Anforderung nach dem Ausführen von Wiederholungsversuchen nicht innerhalb dieses Grenzwerts abgeschlossen wird, schlägt die Aktion fehl."
+    }
+  ],
+  "DsPDVB": [
+    {
+      "type": 0,
+      "value": "Die Triggerbedingung darf nicht leer sein"
+    }
+  ],
+  "DuoHXI": [
+    {
+      "type": 0,
+      "value": "Eingabe hinzufügen"
+    }
+  ],
+  "DyYcJZ": [
+    {
+      "type": 0,
+      "value": "Ausführen nach"
+    }
+  ],
+  "DysO/Q": [
+    {
+      "type": 0,
+      "value": "STRG+Y"
+    }
+  ],
+  "E+HsWF": [
+    {
+      "type": 0,
+      "value": "Anmeldung läuft…"
+    }
+  ],
+  "E+iim4": [
+    {
+      "type": 0,
+      "value": "Wählen Sie die Zeitzone aus."
+    }
+  ],
+  "E3+TAA": [
+    {
+      "type": 0,
+      "value": "Der Schemaknoten „"
+    },
+    {
+      "type": 1,
+      "value": "nodeName"
+    },
+    {
+      "type": 0,
+      "value": "“ weist eine Eingabe mit einem nicht übereinstimmenden Typ auf."
+    }
+  ],
+  "E7NzDN": [
+    {
+      "type": 0,
+      "value": "Einstellungen"
+    }
+  ],
+  "E8iqLl": [
+    {
+      "type": 0,
+      "value": "(UTC+11:00) Sachalin"
+    }
+  ],
+  "ECZC6Y": [
+    {
+      "type": 0,
+      "value": "Konvertiert den Parameter in eine Dezimalzahl"
+    }
+  ],
+  "ERAWZA": [
+    {
+      "type": 0,
+      "value": "Antwort"
+    }
+  ],
+  "ERVorY": [
+    {
+      "type": 0,
+      "value": "Gruppe erstellen"
+    }
+  ],
+  "ESZXfC": [
+    {
+      "type": 0,
+      "value": "Zu diesen Minuten"
+    }
+  ],
+  "EUQDM6": [
+    {
+      "type": 0,
+      "value": "Eine Aktion hinzufügen"
+    }
+  ],
+  "EZz5q7": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Der Index, an dem mit dem Extrahieren des Substrings begonnen werden soll."
+    }
+  ],
+  "Ea/fr+": [
+    {
+      "type": 0,
+      "value": "Alle "
+    },
+    {
+      "type": 1,
+      "value": "interval"
+    },
+    {
+      "type": 0,
+      "value": " Tage"
+    }
+  ],
+  "EaTGcN": [
+    {
+      "type": 0,
+      "value": "(UTC+01:00) West-Zentralafrika"
+    }
+  ],
+  "EdeHLs": [
+    {
+      "type": 0,
+      "value": "Hiermit wird zur Eingabe für das gesamte Array gewechselt."
+    }
+  ],
+  "EdzoIs": [
+    {
+      "type": 0,
+      "value": "1"
+    }
+  ],
+  "EiRMD4": [
+    {
+      "type": 0,
+      "value": "Melden Sie sich an, um eine Verbindung mit "
+    },
+    {
+      "type": 1,
+      "value": "connectorDisplayName"
+    },
+    {
+      "type": 0,
+      "value": " zu erstellen."
+    }
+  ],
+  "EjXdAm": [
+    {
+      "type": 0,
+      "value": "Kennwort"
+    }
+  ],
+  "Ek0mSE": [
+    {
+      "type": 0,
+      "value": "Anforderungsverlauf für diesen Vorgang anzeigen"
+    }
+  ],
+  "EptZhD": [
+    {
+      "type": 0,
+      "value": "Geben Sie eine gültige Tabelle ein."
+    }
+  ],
+  "EqX3Mi": [
+    {
+      "type": 0,
+      "value": "Richten Sie diese Verbindungen ein, um sie in Ihrem Flow zu verwenden."
+    }
+  ],
+  "EurkzL": [
+    {
+      "type": 0,
+      "value": "Wählen Sie \"Ja\" oder \"Nein\"."
+    }
+  ],
+  "F3IDl8": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Hiermit wird der Zahlenwert einer festgelegten Zeiteinheit angegeben, die hinzugefügt werden soll."
+    }
+  ],
+  "F6+icQ": [
+    {
+      "type": 0,
+      "value": "Das maximale Wiederholungsrichtlinienintervall ist ungültig. Es muss dem ISO 8601-Dauerformat entsprechen."
+    }
+  ],
+  "F9dR1Q": [
+    {
+      "type": 0,
+      "value": "Hinzufügen"
+    }
+  ],
+  "FBNevf": [
+    {
+      "type": 0,
+      "value": "Gehe zu Vorgang"
+    }
+  ],
+  "FDF4Qb": [
+    {
+      "type": 0,
+      "value": "Gibt einen Parameterwert zurück, der in der Definition definiert ist."
+    }
+  ],
+  "FDWfqM": [
+    {
+      "type": 0,
+      "value": "Sichere Ausgaben"
+    }
+  ],
+  "FIL1Nt": [
+    {
+      "type": 0,
+      "value": "Die Bedingung ist zu komplex oder ungültig. Ein Wechsel in den Basismodus ist nicht möglich."
+    }
+  ],
+  "FIT7i0": [
+    {
+      "type": 0,
+      "value": "20"
+    }
+  ],
+  "FL/0Zp": [
+    {
+      "type": 0,
+      "value": "(UTC-07:00) Chihuahua, La Paz, Mazatlan"
+    }
+  ],
+  "FMA0Q0": [
+    {
+      "type": 0,
+      "value": "Ihr Flow wurde aktualisiert."
+    }
+  ],
+  "FN5zHQ": [
+    {
+      "type": 0,
+      "value": "Gibt einen Abschnitt einer Zeichenfolge zurück, die durch den Startindex und den Endindex definiert wird."
+    }
+  ],
+  "FT3jt6": [
+    {
+      "type": 0,
+      "value": "Webhook-Referenzinformationen"
+    }
+  ],
+  "FUhNu4": [
+    {
+      "type": 0,
+      "value": "Teilen bei"
+    }
+  ],
+  "FUuFlC": [
+    {
+      "type": 0,
+      "value": "Standard"
+    }
+  ],
+  "FXLR5M": [
+    {
+      "offset": 0,
+      "options": {
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " Stunde"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " Stunden"
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "hours"
+    }
+  ],
+  "FYtDP0": [
+    {
+      "type": 0,
+      "value": "Geben Sie eine E-Mail-Adresse ein."
+    }
+  ],
+  "Fcvgvg": [
+    {
+      "type": 0,
+      "value": "Suchen"
+    }
+  ],
+  "FiyQjU": [
+    {
+      "type": 0,
+      "value": "2"
+    }
+  ],
+  "FslNgF": [
+    {
+      "type": 0,
+      "value": "Status"
+    }
+  ],
+  "FxQ2Ts": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Tripolis"
+    }
+  ],
+  "G+XvKn": [
+    {
+      "type": 0,
+      "value": "Gibt eine Zeichenfolge zurück, in der die einzelnen Elemente eines Arrays durch Trennzeichen verknüpft sind."
+    }
+  ],
+  "G0XYrd": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Die Zeichenfolge, die möglicherweise den Wert enthält."
+    }
+  ],
+  "GAY7b8": [
+    {
+      "type": 0,
+      "value": "Gibt die Abfrage aus einem URI zurück."
+    }
+  ],
+  "GD3m4X": [
+    {
+      "type": 0,
+      "value": "Erweitert"
+    }
+  ],
+  "GDUGlm": [
+    {
+      "type": 0,
+      "value": "Autorität eingeben"
+    }
+  ],
+  "GE14Xd": [
+    {
+      "type": 0,
+      "value": "(UTC-03:00) Buenos Aires"
+    }
+  ],
+  "GEB1on": [
+    {
+      "type": 0,
+      "value": "Enthält einen Wert, der nicht zwischen 0 und 59 liegt"
+    }
+  ],
+  "GIUSQs": [
+    {
+      "type": 0,
+      "value": "Nach Datentyp filtern"
+    }
+  ],
+  "GLd3MU": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Das Objekt, das in der Within-Sammlung gesucht werden soll."
+    }
+  ],
+  "GQnN3U": [
+    {
+      "type": 0,
+      "value": "Flow erläutern"
+    }
+  ],
+  "GXXLuT": [
+    {
+      "type": 0,
+      "value": "Geben Sie einen gültigen booleschen Wert ein."
+    }
+  ],
+  "GYvF54": [
+    {
+      "type": 0,
+      "value": "Referenzierende Funktionen"
+    }
+  ],
+  "GZ8MDP": [
+    {
+      "type": 1,
+      "value": "s1"
+    },
+    {
+      "type": 0,
+      "value": " von "
+    },
+    {
+      "type": 1,
+      "value": "s2"
+    }
+  ],
+  "GcG0qf": [
+    {
+      "type": 0,
+      "value": "Gibt TRUE zurück, wenn die Parameter FALSE sind."
+    }
+  ],
+  "GdGm4T": [
+    {
+      "type": 0,
+      "value": "Weitere Befehle"
+    }
+  ],
+  "Ggkf4s": [
+    {
+      "type": 0,
+      "value": "Erste Schritte"
+    }
+  ],
+  "Gi7czD": [
+    {
+      "type": 0,
+      "value": "Quellschemaelement"
+    }
+  ],
+  "Gl5khw": [
+    {
+      "type": 0,
+      "value": "Zu diesen Stunden"
+    }
+  ],
+  "Gmya+V": [
+    {
+      "type": 0,
+      "value": "Nicht verfügbar"
+    }
+  ],
+  "GreYWQ": [
+    {
+      "type": 0,
+      "value": "Geben Sie den Parameternamen ein."
+    }
+  ],
+  "GtDOFg": [
+    {
+      "type": 0,
+      "value": "Auswahl abbrechen"
+    }
+  ],
+  "GyUe4C": [
+    {
+      "type": 0,
+      "value": "Ändern von Optionen in Bezug auf Funktionen"
+    }
+  ],
+  "GzQQqH": [
+    {
+      "type": 0,
+      "value": "Array"
+    }
+  ],
+  "Gziyq8": [
+    {
+      "type": 0,
+      "value": "Dateiinhalt"
+    }
+  ],
+  "H/QVod": [
+    {
+      "type": 0,
+      "value": "Der Workflow weist Validierungsfehler für Einstellungen in den folgenden Vorgängen auf: "
+    },
+    {
+      "type": 1,
+      "value": "invalidNodes"
+    },
+    {
+      "type": 0,
+      "value": "."
+    }
+  ],
+  "H17jEE": [
+    {
+      "type": 0,
+      "value": "URI-Analysefunktionen"
+    }
+  ],
+  "H1wnHr": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Die zu segmentierende Zeichenfolge."
+    }
+  ],
+  "H2WdiZ": [
+    {
+      "type": 0,
+      "value": "Geben Sie die gültigen Minutenwerte (von 0 bis 59) durch Komma getrennt ein, z. B.: 15,30."
+    }
+  ],
+  "H5VikC": [
+    {
+      "type": 0,
+      "value": "Ungültige Verbindung. Die Zuordnung darf keine geschlossene Schleife bilden."
+    }
+  ],
+  "H8bEUn": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Die Zahl, von der der Subtrahend abgezogen wird."
+    }
+  ],
+  "H9CZTr": [
+    {
+      "type": 0,
+      "value": "Der Ausdruck ist ungültig. Stellen Sie sicher, dass Sie einfache Anführungszeichen verwenden."
+    }
+  ],
+  "HDqP2g": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Der Schlüsselname des zurückzugebenden Formulardatenwerts."
+    }
+  ],
+  "HGA9iU": [
+    {
+      "type": 0,
+      "value": "Der Fehler und sein Code sind erforderlich, wenn der Status „Fehlgeschlagen“ lautet"
+    }
+  ],
+  "HH970i": [
+    {
+      "type": 0,
+      "value": "Monat"
+    }
+  ],
+  "HILmmE": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Die zu sortierende Sammlung."
+    }
+  ],
+  "HMiE+4": [
+    {
+      "type": 0,
+      "value": "Vollbildmodus beenden"
+    }
+  ],
+  "HSJLCu": [
+    {
+      "type": 0,
+      "value": "Header"
+    }
+  ],
+  "HX3Xmx": [
+    {
+      "type": 0,
+      "value": "Wird gelöscht..."
+    }
+  ],
+  "HYhDYB": [
+    {
+      "type": 0,
+      "value": "(UTC-02:00) Koordinierte Weltzeit -02"
+    }
+  ],
+  "Hbqlzk": [
+    {
+      "type": 0,
+      "value": "Ausdruck einfügen"
+    }
+  ],
+  "HfinO2": [
+    {
+      "type": 0,
+      "value": "Hiermit wird zu den Detaileingaben für ein Arrayelement gewechselt."
+    }
+  ],
+  "HfmDk9": [
+    {
+      "type": 0,
+      "value": "Flow bearbeiten"
+    }
+  ],
+  "HfrUId": [
+    {
+      "type": 0,
+      "value": "Wählen Sie eine Karte aus, um den Inhalt anzuzeigen."
+    }
+  ],
+  "HmcHoE": [
+    {
+      "type": 0,
+      "value": "Fehler beim Abrufen des Manifests"
+    }
+  ],
+  "HsO1Rd": [
+    {
+      "type": 1,
+      "value": "addIcon"
+    },
+    {
+      "type": 0,
+      "value": " Gateway installieren"
+    }
+  ],
+  "HzS2gJ": [
+    {
+      "type": 0,
+      "value": "Dynamische Inhalte werden als Eigenschaften in der Authentifizierung nicht unterstützt."
+    }
+  ],
+  "I+85NV": [
+    {
+      "type": 0,
+      "value": "Von dieser Aktion übermitteln"
+    }
+  ],
+  "I1CYNA": [
+    {
+      "type": 0,
+      "value": "Ungültige Eigenschaft „"
+    },
+    {
+      "type": 1,
+      "value": "invalidProperties"
+    },
+    {
+      "type": 0,
+      "value": "“ für den Authentifizierungstyp „"
+    },
+    {
+      "type": 1,
+      "value": "authType"
+    },
+    {
+      "type": 0,
+      "value": "“."
+    }
+  ],
+  "I3mifR": [
+    {
+      "type": 0,
+      "value": "Wurde übersprungen"
+    }
+  ],
+  "I41vZ/": [
+    {
+      "type": 0,
+      "value": "(UTC-11:00) Koordinierte Weltzeit -11"
+    }
+  ],
+  "IA+Ogm": [
+    {
+      "type": 0,
+      "value": "22"
+    }
+  ],
+  "IAmvpa": [
+    {
+      "type": 0,
+      "value": "(GMT-08:00) Koordinierte Weltzeit-08"
+    }
+  ],
+  "IHMd3X": [
+    {
+      "type": 0,
+      "value": "Beispiel: "
+    },
+    {
+      "type": 1,
+      "value": "url"
+    }
+  ],
+  "IPbMdl": [
+    {
+      "type": 0,
+      "value": "Codeansicht"
+    }
+  ],
+  "IPwWgu": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Jerusalem"
+    }
+  ],
+  "IQyOth": [
+    {
+      "type": 0,
+      "value": "Falls verfügbar, werden dynamische Inhalte automatisch von den Connectors und Aktionen generiert, die Sie für Ihren Flow auswählen."
+    }
+  ],
+  "IS4vNX": [
+    {
+      "type": 0,
+      "value": "(UTC-12:00) Internationale Datumsgrenze West"
+    }
+  ],
+  "ISaPr+": [
+    {
+      "type": 0,
+      "value": "Hiermit werden Logic Apps-Parameter erstellt, verwaltet und mit einem Standardwert versehen."
+    }
+  ],
+  "IW2MjQ": [
+    {
+      "type": 0,
+      "value": "Hiermit wird ein aus einem UTC-Wert übergebener Zeichenfolgen-Zeitstempel in eine Zielzeitzone konvertiert."
+    }
+  ],
+  "IXy91L": [
+    {
+      "type": 0,
+      "value": "Zielschema hinzufügen"
+    }
+  ],
+  "IdOhPY": [
+    {
+      "type": 1,
+      "value": "label"
+    },
+    {
+      "type": 0,
+      "value": " Drücken Sie die ALT+„/“-Taste, um dynamische Daten hinzuzufügen."
+    }
+  ],
+  "If+p6C": [
+    {
+      "type": 0,
+      "value": "(UTC+09:00) Jakutsk"
+    }
+  ],
+  "IsVhkH": [
+    {
+      "type": 0,
+      "value": "Keine Eigenschaften"
+    }
+  ],
+  "IsbbsG": [
+    {
+      "type": 0,
+      "value": "Wenn ein neues Element"
+    }
+  ],
+  "IxWip7": [
+    {
+      "type": 0,
+      "value": "(UTC+03:00) Moskau (Moskwa), St. Petersburg, Wolgograd"
+    }
+  ],
+  "J/Kz1j": [
+    {
+      "type": 0,
+      "value": "Asynchrones Muster"
+    }
+  ],
+  "J2Su6x": [
+    {
+      "type": 0,
+      "value": "Formatierungsoptionen für den Schriftgrad"
+    }
+  ],
+  "J5/7vN": [
+    {
+      "type": 0,
+      "value": "Konvertiert eine Zeichenfolge anhand der Groß-/Kleinschreibregeln der invarianten Kultur in Kleinbuchstaben."
+    }
+  ],
+  "J55HA9": [
+    {
+      "type": 0,
+      "value": "Ungültiger Vorgang. Anzahl der Elemente: "
+    },
+    {
+      "type": 1,
+      "value": "length"
+    },
+    {
+      "type": 0,
+      "value": "."
+    }
+  ],
+  "J5TTF6": [
+    {
+      "type": 0,
+      "value": "Akzeptierte Datentypen: "
+    },
+    {
+      "type": 1,
+      "value": "type"
+    }
+  ],
+  "J62n9E": [
+    {
+      "type": 0,
+      "value": "Fehlgeschlagen"
+    }
+  ],
+  "J9wWry": [
+    {
+      "type": 0,
+      "value": "Parameter"
+    }
+  ],
+  "JAIV0h": [
+    {
+      "type": 0,
+      "value": "Die aktuelle Zuordnung enthält "
+    },
+    {
+      "type": 1,
+      "value": "numOfIssues"
+    },
+    {
+      "type": 0,
+      "value": " "
+    },
+    {
+      "type": 1,
+      "value": "issue"
+    },
+    {
+      "type": 0,
+      "value": "."
+    }
+  ],
+  "JErLDT": [
+    {
+      "type": 0,
+      "value": "Löschen"
+    }
+  ],
+  "JJyT88": [
+    {
+      "type": 0,
+      "value": "Aktion rückgängig gemacht"
+    }
+  ],
+  "JKZpcd": [
+    {
+      "type": 0,
+      "value": "Copilot-Chat abgebrochen"
+    }
+  ],
+  "JNQHws": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Eine Zeichenfolge, die die Zeit enthält."
+    }
+  ],
+  "JSfWJ0": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Der Wert, der in einen booleschen Wert konvertiert wird."
+    }
+  ],
+  "JWl/LD": [
+    {
+      "type": 0,
+      "value": "Neues Element hinzufügen"
+    }
+  ],
+  "Jaz3EC": [
+    {
+      "type": 0,
+      "value": "Hiermit wird ein aus einer Quellzeitzone übergebener Zeichenfolgen-Zeitstempel in eine Zielzeitzone konvertiert."
+    }
+  ],
+  "JbgTET": [
+    {
+      "type": 0,
+      "value": "Methode"
+    }
+  ],
+  "Ji6663": [
+    {
+      "type": 0,
+      "value": "Gibt TRUE zurück, wenn ein Wörterbuch einen Schlüssel enthält, wenn ein Array einen Wert enthält oder wenn eine Zeichenfolge eine Unterzeichenfolge enthält."
+    }
+  ],
+  "Jil/Wa": [
+    {
+      "type": 0,
+      "value": "Ungültige Einstellungen"
+    }
+  ],
+  "JjTfC7": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Die Zahl, die formatiert werden soll."
+    }
+  ],
+  "JnlcZQ": [
+    {
+      "type": 0,
+      "value": "Name:"
+    }
+  ],
+  "Jq2Y/o": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Die numerische Formatzeichenfolge."
+    }
+  ],
+  "JzRzVp": [
+    {
+      "type": 0,
+      "value": "(UTC-09:00) Alaska"
+    }
+  ],
+  "K50znc": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Das Objekt, dem eine neue Eigenschaft hinzugefügt werden soll."
+    }
+  ],
+  "K7/DnZ": [
+    {
+      "type": 0,
+      "value": "Ausgabe"
+    }
+  ],
+  "KBaGkS": [
+    {
+      "type": 0,
+      "value": "Verbindungsreferenz ändern"
+    }
+  ],
+  "KV4uky": [
+    {
+      "type": 0,
+      "value": "Wenn ein neues Element..."
+    }
+  ],
+  "KX1poC": [
+    {
+      "offset": 0,
+      "options": {
+        "=0": {
+          "value": [
+            {
+              "type": 0,
+              "value": "0 Fälle"
+            }
+          ]
+        },
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " Fall"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " Fälle"
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "actionCount"
+    }
+  ],
+  "KYX5Do": [
+    {
+      "type": 0,
+      "value": "Unterstreichen (⌘U)"
+    }
+  ],
+  "KZOa5l": [
+    {
+      "type": 0,
+      "value": "Abbrechen"
+    }
+  ],
+  "KlDW+5": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Beirut"
+    }
+  ],
+  "KnjcUV": [
+    {
+      "type": 0,
+      "value": "Ignoriert"
+    }
+  ],
+  "KwGA+K": [
+    {
+      "type": 0,
+      "value": "Funktions-App-Ressource auswählen"
+    }
+  ],
+  "L+PY+j": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Die Anzahl von Objekten, die aus der Sammlung entnommen werden sollen. Muss eine positive ganze Zahl sein."
+    }
+  ],
+  "L0UAzs": [
+    {
+      "type": 0,
+      "value": "Gibt die Wochentagkomponente eines Zeichenfolgen-Zeitstempels zurück."
+    }
+  ],
+  "L0hujG": [
+    {
+      "type": 0,
+      "value": "Schaltfläche zum Hinzufügen dynamischer Inhalte, wenn TokenPicker angezeigt wird"
+    }
+  ],
+  "L4RJF0": [
+    {
+      "type": 0,
+      "value": "Es gibt keine Ergebnisse für Ihre Suche."
+    }
+  ],
+  "LBH8UV": [
+    {
+      "type": 0,
+      "value": "Erweitern"
+    }
+  ],
+  "LBbhCu": [
+    {
+      "type": 0,
+      "value": "Workflowdiagramm löschen"
+    }
+  ],
+  "LCRHQ9": [
+    {
+      "type": 0,
+      "value": "(UTC+12:00) Fidschi"
+    }
+  ],
+  "LCXZLM": [
+    {
+      "type": 0,
+      "value": "Funktions-Apps werden geladen..."
+    }
+  ],
+  "LElaX3": [
+    {
+      "type": 0,
+      "value": "Nächster Flowvorschlag"
+    }
+  ],
+  "LMB8am": [
+    {
+      "type": 0,
+      "value": "Wird erstellt..."
+    }
+  ],
+  "LPdGu/": [
+    {
+      "type": 0,
+      "value": "Ausgaben sollten nicht angegeben werden, wenn der Status „Fehlerhaft“ lautet"
+    }
+  ],
+  "LR/3Lr": [
+    {
+      "type": 0,
+      "value": "Konfigurieren"
+    }
+  ],
+  "LRAhSA": [
+    {
+      "type": 0,
+      "value": "Wenn diese Aktion aktiviert ist, wird sie mit dem Benutzer über die Einstellung \"Ausführen als\" im Dataverse-Trigger ausgeführt."
+    }
+  ],
+  "LS8rfZ": [
+    {
+      "type": 0,
+      "value": "Gibt das Schema aus einem URI zurück."
+    }
+  ],
+  "LTTgWN": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Die Sammlung, aus der das erste Objekt entnommen werden soll."
+    }
+  ],
+  "LV/BTE": [
+    {
+      "type": 0,
+      "value": "API Management-Dienstinstanzen werden geladen..."
+    }
+  ],
+  "LV3k48": [
+    {
+      "type": 0,
+      "value": "(UTC+01:00) Belgrad, Bratislava, Budapest, Ljubljana, Prag"
+    }
+  ],
+  "LZm3ze": [
+    {
+      "type": 0,
+      "value": "Parallelen Branch hinzufügen"
+    }
+  ],
+  "LaFlFh": [
+    {
+      "type": 0,
+      "value": "Diese Aktion wurde entfernt."
+    }
+  ],
+  "LdITnG": [
+    {
+      "type": 0,
+      "value": "(UTC-03:00) Cayenne, Fortaleza"
+    }
+  ],
+  "Lft/is": [
+    {
+      "type": 0,
+      "value": "Neu hinzufügen"
+    }
+  ],
+  "LlYz9c": [
+    {
+      "type": 0,
+      "value": "Mehr anzeigen"
+    }
+  ],
+  "Lm9bnN": [
+    {
+      "type": 0,
+      "value": "Aufzählung"
+    }
+  ],
+  "Lnqh6h": [
+    {
+      "type": 0,
+      "value": "Fett (STRG+B)"
+    }
+  ],
+  "LoGUT3": [
+    {
+      "type": 0,
+      "value": "Bei Verwendung innerhalb einer for-each-Schleife gibt diese Funktion das aktuelle Element der angegebenen Schleife zurück."
+    }
+  ],
+  "LpPNAD": [
+    {
+      "type": 0,
+      "value": "Hinzufügen"
+    }
+  ],
+  "LtbkS7": [
+    {
+      "type": 0,
+      "value": "Gibt den Anfang des Tages für den übergebenen Zeichenfolgen-Zeitstempel zurück."
+    }
+  ],
+  "Lub7NN": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Die Ausdrücke, die TRUE sein können."
+    }
+  ],
+  "LvLksz": [
+    {
+      "type": 0,
+      "value": "Ausgaben werden geladen"
+    }
+  ],
+  "LvpxiA": [
+    {
+      "type": 0,
+      "value": "Gateway"
+    }
+  ],
+  "Lx8HRl": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Damaskus"
+    }
+  ],
+  "M/gUE8": [
+    {
+      "type": 0,
+      "value": "Info"
+    }
+  ],
+  "M0bbZk": [
+    {
+      "type": 0,
+      "value": "Flowprüfung"
+    }
+  ],
+  "M0xrm+": [
+    {
+      "type": 0,
+      "value": "Codeansicht"
+    }
+  ],
+  "M4H0gh": [
+    {
+      "type": 0,
+      "value": "Entfernen"
+    }
+  ],
+  "M6U2LE": [
+    {
+      "type": 0,
+      "value": "Die Parameter werden gespeichert, wenn der Workflow gespeichert wird. Sie können sie hier bearbeiten, bevor Sie sie speichern oder nach dem Speichern auf der Parameterseite bearbeiten."
+    }
+  ],
+  "M8Aqm4": [
+    {
+      "type": 0,
+      "value": "(Optional) Der Name der bereichsbezogenen Aktion, in der die Eingaben und Ausgaben der Aktionen der obersten Ebene in diesem Bereich verwendet werden sollen."
+    }
+  ],
+  "MCzWDc": [
+    {
+      "type": 0,
+      "value": "Vorschau"
+    }
+  ],
+  "MDbmMw": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Die auszuwertenden Sammlungen. Ein Objekt muss sich in allen übergebenen Sammlungen befinden, um im Ergebnis angezeigt zu werden."
+    }
+  ],
+  "MGZRu4": [
+    {
+      "type": 0,
+      "value": "Eine Aktion hinzufügen"
+    }
+  ],
+  "MIX4f9": [
+    {
+      "type": 0,
+      "value": "Nicht unterstützte Programmiersprache."
+    }
+  ],
+  "MKTdNk": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Der Daten-URI, der in die Binärdarstellung konvertiert werden soll."
+    }
+  ],
+  "MLCQzX": [
+    {
+      "type": 0,
+      "value": "Verwaltete Identität"
+    }
+  ],
+  "MLckJz": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Eine Zeichenfolge, welche die Startzeit enthält."
+    }
+  ],
+  "MOsuw2": [
+    {
+      "type": 0,
+      "value": "(UTC+10:00) Guam, Port Moresby"
+    }
+  ],
+  "MPPyI6": [
+    {
+      "type": 0,
+      "value": "(UTC+04:00) Baku"
+    }
+  ],
+  "MTR4Vg": [
+    {
+      "type": 0,
+      "value": "Gibt den aktuellen Zeitstempel als Zeichenfolge zurück."
+    }
+  ],
+  "MVrv+N": [
+    {
+      "type": 0,
+      "value": "Geben Sie ein gültiges Array ein."
+    }
+  ],
+  "MYgKHu": [
+    {
+      "type": 0,
+      "value": "Aktionen"
+    }
+  ],
+  "Mb+Eaq": [
+    {
+      "type": 0,
+      "value": "Boolesch"
+    }
+  ],
+  "Mb/Vp8": [
+    {
+      "type": 0,
+      "value": "Nächster Fehler"
+    }
+  ],
+  "Mc6ITJ": [
+    {
+      "type": 0,
+      "value": "Suchen"
+    }
+  ],
+  "Mcvr0B": [
+    {
+      "type": 0,
+      "value": "Um Module oder Abhängigkeiten zu verwenden, fügen Sie diese bitte im Portal-Inhaltsverzeichnis unter „Benutzerdefinierte Codeabhängigkeiten“ hinzu."
+    }
+  ],
+  "MfAdfx": [
+    {
+      "type": 0,
+      "value": "Im erweiterten Modus bearbeiten"
+    }
+  ],
+  "MirIsS": [
+    {
+      "type": 0,
+      "value": "Code anzeigen"
+    }
+  ],
+  "MmBfD1": [
+    {
+      "type": 0,
+      "value": "Unerwarteter Fehler"
+    }
+  ],
+  "MnThTq": [
+    {
+      "type": 0,
+      "value": "Funktion einfügen"
+    }
+  ],
+  "MsCHhQ": [
+    {
+      "type": 0,
+      "value": "Timeout"
+    }
+  ],
+  "N0pS6Y": [
+    {
+      "type": 0,
+      "value": "Zielschema"
+    }
+  ],
+  "N2CF0J": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Der Schlüsselname der zurückzugebenden Formulardatenwerte."
+    }
+  ],
+  "N4dEVo": [
+    {
+      "type": 0,
+      "value": "Header"
+    }
+  ],
+  "N7E9hd": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Helsinki, Kiew, Riga, Sofia, Tallinn, Wilna"
+    }
+  ],
+  "N7zEUZ": [
+    {
+      "type": 0,
+      "value": "Kopieren"
+    }
+  ],
+  "NE54Uu": [
+    {
+      "type": 0,
+      "value": "Kopiert!"
+    }
+  ],
+  "NFgfP4": [
+    {
+      "type": 0,
+      "value": "Element"
+    }
+  ],
+  "NGJ00e": [
+    {
+      "type": 0,
+      "value": "(UTC-04:00) Georgetown, La Paz, Manaus, San Juan"
+    }
+  ],
+  "NHnG2S": [
+    {
+      "type": 0,
+      "value": "Die generierte XSLT stimmt nicht mit der aktuellen Zuordnung überein."
+    }
+  ],
+  "NMpFs6": [
+    {
+      "type": 0,
+      "value": "(UTC-03:00) Araguaina"
+    }
+  ],
+  "NPUFgH": [
+    {
+      "type": 0,
+      "value": "Status"
+    }
+  ],
+  "NWxGWN": [
+    {
+      "type": 0,
+      "value": "Geben Sie einen eindeutigen Eigenschaftennamen ein."
+    }
+  ],
+  "NdOhXD": [
+    {
+      "type": 0,
+      "value": "Verbindung erstellen"
+    }
+  ],
+  "Nh91qA": [
+    {
+      "type": 0,
+      "value": "Gibt den Wert der angegebenen Variablen zurück."
+    }
+  ],
+  "NhJPUn": [
+    {
+      "type": 0,
+      "value": "Wie kann ich einen externen Endpunkt aufrufen?"
+    }
+  ],
+  "NnD8gF": [
+    {
+      "type": 0,
+      "value": "Ungültiger Eingabewert für den Vorgangspfad. Pfadwert - "
+    },
+    {
+      "type": 1,
+      "value": "pathValue"
+    },
+    {
+      "type": 0,
+      "value": " Pfadvorlage - "
+    },
+    {
+      "type": 1,
+      "value": "pathTemplate"
+    }
+  ],
+  "NnrHK3": [
+    {
+      "type": 0,
+      "value": "(UTC+10:00) Wladiwostok"
+    }
+  ],
+  "No6CS+": [
+    {
+      "type": 0,
+      "value": "Mandant eingeben"
+    }
+  ],
+  "NoXs0l": [
+    {
+      "type": 0,
+      "value": "Wählen Sie eine Identität aus."
+    }
+  ],
+  "NvJDn/": [
+    {
+      "type": 0,
+      "value": "Dienstag"
+    }
+  ],
+  "NzPnFS": [
+    {
+      "type": 0,
+      "value": "Beispiel:"
+    }
+  ],
+  "O+3Y9f": [
+    {
+      "type": 0,
+      "value": "Fehlgeschlagen"
+    }
+  ],
+  "O+8vRv": [
+    {
+      "type": 0,
+      "value": "Gibt eine Binärdarstellung eines Werts zurück."
+    }
+  ],
+  "O/fh9A": [
+    {
+      "type": 0,
+      "value": "Dienstprinzipal"
+    }
+  ],
+  "O0tSvb": [
+    {
+      "type": 0,
+      "value": "🖊️ Wird bearbeitet..."
+    }
+  ],
+  "O1tedM": [
+    {
+      "type": 0,
+      "value": "Es wurden keine Fehler gefunden."
+    }
+  ],
+  "O27gKq": [
+    {
+      "type": 0,
+      "value": "Dateien werden geladen..."
+    }
+  ],
+  "O6VHe0": [
+    {
+      "type": 0,
+      "value": "Vorgangswarnungen"
+    }
+  ],
+  "O7HhyP": [
+    {
+      "type": 0,
+      "value": "um es zu konfigurieren"
+    }
+  ],
+  "O9ZExg": [
+    {
+      "type": 0,
+      "value": "OK"
+    }
+  ],
+  "OBO/HE": [
+    {
+      "type": 0,
+      "value": "Ungültiger Authentifizierungswert"
+    }
+  ],
+  "ODQCKj": [
+    {
+      "type": 0,
+      "value": "Eingabe werden in einen Wert vom Typ „JSON“ konvertieren."
+    }
+  ],
+  "OEEuUu": [
+    {
+      "type": 0,
+      "value": "Geheimnis"
+    }
+  ],
+  "OFKZzQ": [
+    {
+      "type": 0,
+      "value": "Vorgangsoptionen:"
+    }
+  ],
+  "OH9xlX": [
+    {
+      "type": 0,
+      "value": "10"
+    }
+  ],
+  "OIOexo": [
+    {
+      "type": 0,
+      "value": "An diesen Tagen"
+    }
+  ],
+  "OKszbi": [
+    {
+      "type": 0,
+      "value": "Verbindungsname"
+    }
+  ],
+  "OOUSLP": [
+    {
+      "type": 0,
+      "value": "Diese Funktion erfordert keine Eingabe."
+    }
+  ],
+  "OOUTdW": [
+    {
+      "type": 0,
+      "value": "Alle Connectors werden geladen..."
+    }
+  ],
+  "OSHNZ2": [
+    {
+      "type": 0,
+      "value": "Kommentar"
+    }
+  ],
+  "OSP9JY": [
+    {
+      "type": 0,
+      "value": "Geben Sie die Benutzergruppe ein."
+    }
+  ],
+  "OVDEFP": [
+    {
+      "type": 0,
+      "value": "Fehler melden"
+    }
+  ],
+  "OVvieE": [
+    {
+      "type": 0,
+      "value": "Hiermit werden die Ergebnisse der Aktionen der obersten Ebene in der angegebenen bereichsbezogenen Aktion zurückgegeben, z. B. eine for_each-, Until- oder Scope-Aktion."
+    }
+  ],
+  "OYWZE4": [
+    {
+      "type": 0,
+      "value": "Diesen Workflow speichern"
+    }
+  ],
+  "OdNhwc": [
+    {
+      "type": 0,
+      "value": "Gruppierung aufheben"
+    }
+  ],
+  "OdoUEu": [
+    {
+      "type": 0,
+      "value": "Statisches Ergebnis aktivieren"
+    }
+  ],
+  "Oep6va": [
+    {
+      "type": 0,
+      "value": "Übermitteln"
+    }
+  ],
+  "OgJ9eG": [
+    {
+      "type": 0,
+      "value": "(UTC+08:00) Taipeh"
+    }
+  ],
+  "OhbvXz": [
+    {
+      "type": 0,
+      "value": "(UTC+11:00) Norfolkinsel"
+    }
+  ],
+  "Oib1mL": [
+    {
+      "type": 1,
+      "value": "hours"
+    },
+    {
+      "type": 0,
+      "value": "h "
+    },
+    {
+      "type": 1,
+      "value": "minutes"
+    },
+    {
+      "type": 0,
+      "value": "m"
+    }
+  ],
+  "OihxQE": [
+    {
+      "type": 0,
+      "value": "Optional. Das Gebietsschema, das beim Analysieren der Datums-/Uhrzeitzeichenfolge verwendet werden soll."
+    }
+  ],
+  "OjGJ8Y": [
+    {
+      "type": 0,
+      "value": "Gibt den Host aus einem URI zurück."
+    }
+  ],
+  "OnrO5/": [
+    {
+      "type": 0,
+      "value": "Verwaltete Identität auswählen"
+    }
+  ],
+  "OrPVcU": [
+    {
+      "type": 0,
+      "value": "Ungültiges \"Aufteilung auf\"-Format in \""
+    },
+    {
+      "type": 1,
+      "value": "splitOn"
+    },
+    {
+      "type": 0,
+      "value": "\"."
+    }
+  ],
+  "Ov7Ckz": [
+    {
+      "type": 0,
+      "value": "Fehlende erforderliche Eigenschaft „"
+    },
+    {
+      "type": 1,
+      "value": "missingProperties"
+    },
+    {
+      "type": 0,
+      "value": "“ für den Authentifizierungstyp „"
+    },
+    {
+      "type": 1,
+      "value": "authType"
+    },
+    {
+      "type": 0,
+      "value": "“"
+    }
+  ],
+  "P+7G62": [
+    {
+      "type": 0,
+      "value": "Überschrift 3"
+    }
+  ],
+  "P+mWgV": [
+    {
+      "type": 0,
+      "value": "PFX"
+    }
+  ],
+  "P/S+q5": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Eine der Zeichenfolgen, die zu einer einzelnen Zeichenfolge kombiniert wird."
+    }
+  ],
+  "P/dnfK": [
+    {
+      "type": 0,
+      "value": "(UTC+06:00) Dhaka"
+    }
+  ],
+  "P2A5dB": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Dieser Wert entspricht der Anzahl von ganzen Zahlen im Array."
+    }
+  ],
+  "P4XUjW": [
+    {
+      "type": 0,
+      "value": "Leerzeichen müssen für URIs codiert werden."
+    }
+  ],
+  "P4rEwD": [
+    {
+      "type": 0,
+      "value": "Sammlungsfunktionen"
+    }
+  ],
+  "P6I90y": [
+    {
+      "type": 0,
+      "value": "Eingabe"
+    }
+  ],
+  "PDMP/Z": [
+    {
+      "type": 0,
+      "value": "Reduziert"
+    }
+  ],
+  "PNk3n4": [
+    {
+      "type": 0,
+      "value": "Wird "
+    },
+    {
+      "type": 1,
+      "value": "onTime"
+    },
+    {
+      "type": 0,
+      "value": " ausgeführt"
+    }
+  ],
+  "PORNMZ": [
+    {
+      "type": 0,
+      "value": "Eingaben"
+    }
+  ],
+  "PP63jY": [
+    {
+      "type": 0,
+      "value": "weitere Bereiche"
+    }
+  ],
+  "PQOiAc": [
+    {
+      "type": 0,
+      "value": "Reduzieren"
+    }
+  ],
+  "PRnqYA": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Die Anzahl der zu addierenden Sekunden. Kann negativ sein, um Sekunden zu subtrahieren."
+    }
+  ],
+  "PSrCNL": [
+    {
+      "type": 0,
+      "value": "Funktion"
+    }
+  ],
+  "PXa0D4": [
+    {
+      "type": 0,
+      "value": "FALSE"
+    }
+  ],
+  "PZgHf/": [
+    {
+      "type": 0,
+      "value": "Schema-URI"
+    }
+  ],
+  "Pa+UkC": [
+    {
+      "type": 0,
+      "value": "Gibt die UTF-8-Länge einer Eingabezeichenfolge in Bytes zurück."
+    }
+  ],
+  "Peg6ZT": [
+    {
+      "type": 0,
+      "value": "Einstellungsfehler"
+    }
+  ],
+  "PfCJlN": [
+    {
+      "type": 0,
+      "value": "Workflowfunktionen"
+    }
+  ],
+  "PjBcG3": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Amman"
+    }
+  ],
+  "Pk4cb+": [
+    {
+      "type": 0,
+      "value": "Nachverfolgte Eigenschaften"
+    }
+  ],
+  "Pl/fcn": [
+    {
+      "type": 0,
+      "value": "Nachverfolgungs-ID für Aufteilung"
+    }
+  ],
+  "Pnt0Xj": [
+    {
+      "type": 0,
+      "value": "Erläutern Sie, wie Dateien vom SFTP-Server empfangen werden."
+    }
+  ],
+  "Pq+4a+": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Kairo"
+    }
+  ],
+  "PqUAbF": [
+    {
+      "type": 0,
+      "value": "Dekomprimiert den Anforderungstext, wenn er mithilfe von GZip oder Deflate komprimiert wurde. Diese Einstellung gilt nur für HTTP-Trigger."
+    }
+  ],
+  "PsmHyH": [
+    {
+      "type": 0,
+      "value": "Verbindungsfehler"
+    }
+  ],
+  "Pudllg": [
+    {
+      "type": 0,
+      "value": "(UTC+07:00) Hovd"
+    }
+  ],
+  "PvWTxR": [
+    {
+      "type": 0,
+      "value": "Funktionen anzeigen"
+    }
+  ],
+  "Pvm0xB": [
+    {
+      "type": 0,
+      "value": "Gibt die Base64-Darstellung der Eingabezeichenfolge zurück."
+    }
+  ],
+  "PytMJ0": [
+    {
+      "type": 0,
+      "value": "Nach "
+    },
+    {
+      "type": 1,
+      "value": "sourceNodeId"
+    },
+    {
+      "type": 0,
+      "value": " ausführen"
+    }
+  ],
+  "Q+ZZHI": [
+    {
+      "type": 0,
+      "value": "(UTC-10:00) Hawaii"
+    }
+  ],
+  "Q/7unA": [
+    {
+      "type": 0,
+      "value": "Objekt"
+    }
+  ],
+  "Q0xpPQ": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Das Objekt, bei dem geprüft wird, ob es kleiner oder gleich dem Vergleichsobjekt ist."
+    }
+  ],
+  "Q4TUFX": [
+    {
+      "type": 0,
+      "value": "Verwerfen"
+    }
+  ],
+  "Q5Fh2R": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Die Zeichenfolge, aus der die UTF-16-Länge berechnet werden soll."
+    }
+  ],
+  "Q5w4Do": [
+    {
+      "type": 0,
+      "value": "Fügen Sie dynamische Daten oder Ausdrücke hinzu, indem Sie ein „/“ einfügen."
+    }
+  ],
+  "Q8HCYK": [
+    {
+      "type": 0,
+      "value": "Keine Elemente"
+    }
+  ],
+  "Q8zxeb": [
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": " Schlüssel"
+    }
+  ],
+  "QGbUXX": [
+    {
+      "type": 0,
+      "value": "Statuscode"
+    }
+  ],
+  "QZBPUx": [
+    {
+      "type": 0,
+      "value": "Gibt einen einzelnen Wert zurück, der dem Schlüsselnamen aus der form-data- oder form-encoded-Triggerausgabe entspricht."
+    }
+  ],
+  "QZrxUk": [
+    {
+      "type": 0,
+      "value": "Zeichenfolgenfunktionen"
+    }
+  ],
+  "QbJDi7": [
+    {
+      "type": 0,
+      "value": "Element"
+    }
+  ],
+  "QdJUaS": [
+    {
+      "type": 0,
+      "value": "Bleistiftsymbol"
+    }
+  ],
+  "QdhS3y": [
+    {
+      "type": 0,
+      "value": "Workflowparameter"
+    }
+  ],
+  "QhKk80": [
+    {
+      "type": 0,
+      "value": "Die Auslagerungsanzahl überschreitet den Maximalwert von "
+    },
+    {
+      "type": 1,
+      "value": "max"
+    }
+  ],
+  "Qn8qxn": [
+    {
+      "type": 0,
+      "value": "Gibt eine Zeichenfolge im Datumsformat zurück."
+    }
+  ],
+  "QoPTod": [
+    {
+      "type": 0,
+      "value": "Dies ist das, was der Flow tun wird"
+    }
+  ],
+  "QpRRt3": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Die Zeichenfolge, mit der Elemente getrennt werden sollen."
+    }
+  ],
+  "QpX2+j": [
+    {
+      "type": 0,
+      "value": "Standort"
+    }
+  ],
+  "QrQDdp": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Eine Zeichenfolge mit der im Intervall festgelegten Zeiteinheit zum subtrahieren."
+    }
+  ],
+  "Qu1HkA": [
+    {
+      "type": 1,
+      "value": "hours"
+    },
+    {
+      "type": 0,
+      "value": "h"
+    }
+  ],
+  "R/aiRy": [
+    {
+      "type": 0,
+      "value": "(UTC+12:00) Koordinierte Weltzeit +12"
+    }
+  ],
+  "RFjYpH": [
+    {
+      "type": 0,
+      "value": "Name"
+    }
+  ],
+  "RJ3DuE": [
+    {
+      "type": 0,
+      "value": "Vorschau"
+    }
+  ],
+  "RJes1w": [
+    {
+      "type": 0,
+      "value": "(UTC+04:00) Eriwan"
+    }
+  ],
+  "RX2Shm": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Die geteilte Zeichenfolge."
+    }
+  ],
+  "RbJNVk": [
+    {
+      "type": 0,
+      "value": "Schema"
+    }
+  ],
+  "RhH4pF": [
+    {
+      "offset": 0,
+      "options": {
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " Minute"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " Minuten"
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "minutes"
+    }
+  ],
+  "RjvpD+": [
+    {
+      "type": 0,
+      "value": "Neuen Schritt in \""
+    },
+    {
+      "type": 1,
+      "value": "parentSubgraphName"
+    },
+    {
+      "type": 0,
+      "value": "\" einfügen"
+    }
+  ],
+  "RkgScy": [
+    {
+      "type": 0,
+      "value": "6"
+    }
+  ],
+  "RnBddN": [
+    {
+      "type": 0,
+      "value": "Problem"
+    }
+  ],
+  "Rp5pHU": [
+    {
+      "type": 0,
+      "value": "(UTC+00:00) Monrovia, Reykjavik"
+    }
+  ],
+  "Rq2U5n": [
+    {
+      "type": 0,
+      "value": "Ausdruck „"
+    },
+    {
+      "type": 1,
+      "value": "expression"
+    },
+    {
+      "type": 0,
+      "value": "“ wurde nicht erkannt"
+    }
+  ],
+  "Rs7j3V": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Die Ausdrücke, die TRUE sein müssen."
+    }
+  ],
+  "RvpHdu": [
+    {
+      "type": 0,
+      "value": "(UTC+11:00) Salomonen, Neukaledonien"
+    }
+  ],
+  "RxGxr+": [
+    {
+      "type": 0,
+      "value": "Zeilennummer"
+    }
+  ],
+  "S138/4": [
+    {
+      "type": 0,
+      "value": "Text fett formatieren. Verknüpfung: ⌘B"
+    }
+  ],
+  "SCCE6s": [
+    {
+      "type": 0,
+      "value": "Kennwort"
+    }
+  ],
+  "SGnTpt": [
+    {
+      "type": 0,
+      "value": "Überschrift 2"
+    }
+  ],
+  "SHXdzU": [
+    {
+      "type": 0,
+      "value": "KI-generierte Inhalte können falsch sein"
+    }
+  ],
+  "SJFVxf": [
+    {
+      "type": 0,
+      "value": "Probleme"
+    }
+  ],
+  "SKXopi": [
+    {
+      "type": 0,
+      "value": "Parameter in ganze Zahl konvertieren"
+    }
+  ],
+  "SLJkRn": [
+    {
+      "type": 0,
+      "value": "Eingabe entfernen"
+    }
+  ],
+  "SLZ0n4": [
+    {
+      "type": 0,
+      "value": "Prüft, ob die Zeichenfolge mit einem Wert beginnt (Groß-/Kleinschreibung nicht relevant, invariante Kultur)."
+    }
+  ],
+  "SToblZ": [
+    {
+      "type": 0,
+      "value": "Parameter für diesen Knoten konfigurieren"
+    }
+  ],
+  "SXb47U": [
+    {
+      "type": 1,
+      "value": "minutes"
+    },
+    {
+      "type": 0,
+      "value": "m"
+    }
+  ],
+  "SY04wn": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Der Name der Aktion mit einer form-data- oder form-encoded-Antwort."
+    }
+  ],
+  "SenWwt": [
+    {
+      "type": 0,
+      "value": "Geben Sie das Verhalten und die Funktionen für die Übertragung von Inhalten über HTTP an. Große Nachrichten können in kleinere Anforderungen an den Connector aufgeteilt werden, um das Hochladen großer Nachrichten zu ermöglichen."
+    }
+  ],
+  "SgiTAh": [
+    {
+      "type": 0,
+      "value": "Eingabe eingeben"
+    }
+  ],
+  "Sh10cw": [
+    {
+      "type": 0,
+      "value": "Speichern"
+    }
+  ],
+  "SmCQys": [
+    {
+      "type": 0,
+      "value": "Benutzerdefinierte Nachverfolgungs-ID"
+    }
+  ],
+  "Smo/VO": [
+    {
+      "type": 0,
+      "value": "Namen eingeben"
+    }
+  ],
+  "Sr8PcK": [
+    {
+      "type": 0,
+      "value": "Keine Vorgänge gefunden"
+    }
+  ],
+  "SvQyvs": [
+    {
+      "type": 0,
+      "value": "Fertig"
+    }
+  ],
+  "SyFXM3": [
+    {
+      "type": 0,
+      "value": "Weniger Informationen"
+    }
+  ],
+  "Sz8KN3": [
+    {
+      "type": 0,
+      "value": "Test"
+    }
+  ],
+  "T6VIym": [
+    {
+      "type": 0,
+      "value": "Name"
+    }
+  ],
+  "TEN+cR": [
+    {
+      "type": 0,
+      "value": "Feedback geben"
+    }
+  ],
+  "TNEttQ": [
+    {
+      "type": 0,
+      "value": "Freitag"
+    }
+  ],
+  "TNH/nK": [
+    {
+      "type": 0,
+      "value": "Workflowaktionen suchen"
+    }
+  ],
+  "TO7qos": [
+    {
+      "type": 0,
+      "value": "Gibt den Anfang des Monats eines Zeichenfolgen-Zeitstempels zurück."
+    }
+  ],
+  "TRpSCQ": [
+    {
+      "type": 0,
+      "value": "Aktionstyp"
+    }
+  ],
+  "TUdPdI": [
+    {
+      "type": 0,
+      "value": "Sicheres Objekt"
+    }
+  ],
+  "TX4Kdr": [
+    {
+      "type": 0,
+      "value": "Neue Verbindung erstellen"
+    }
+  ],
+  "TY4HzZ": [
+    {
+      "type": 0,
+      "value": "Fügen Sie Ihre Schemas hinzu, oder ersetzen Sie diese."
+    }
+  ],
+  "TZh8nV": [
+    {
+      "type": 0,
+      "value": "am "
+    },
+    {
+      "type": 1,
+      "value": "weekDays"
+    },
+    {
+      "type": 0,
+      "value": " "
+    },
+    {
+      "type": 1,
+      "value": "frequencyDesc"
+    }
+  ],
+  "Tayrub": [
+    {
+      "type": 0,
+      "value": "Roh"
+    }
+  ],
+  "Tb2QLA": [
+    {
+      "type": 0,
+      "value": "Clientanforderungs-ID"
+    }
+  ],
+  "TgcgXE": [
+    {
+      "type": 0,
+      "value": "Tags"
+    }
+  ],
+  "Tiqnir": [
+    {
+      "type": 0,
+      "value": "Benutzerdefiniert"
+    }
+  ],
+  "TjMkDP": [
+    {
+      "type": 0,
+      "value": "(UTC-06:00) Osterinsel"
+    }
+  ],
+  "TjkOzp": [
+    {
+      "type": 0,
+      "value": "Schließen"
+    }
+  ],
+  "TlX98E": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Kaliningrad"
+    }
+  ],
+  "Tla33B": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Der Wert, für den der Index gesucht werden soll."
+    }
+  ],
+  "Tmr/9e": [
+    {
+      "type": 0,
+      "value": "Ungültige Parameter"
+    }
+  ],
+  "To3RNy": [
+    {
+      "type": 0,
+      "value": "Workflowparameterfehler"
+    }
+  ],
+  "Ts5Pzr": [
+    {
+      "type": 0,
+      "value": "Notiz"
+    }
+  ],
+  "TsJbGH": [
+    {
+      "type": 0,
+      "value": "Getrennt"
+    }
+  ],
+  "Ttc0SM": [
+    {
+      "type": 0,
+      "value": "Überschrift 1"
+    }
+  ],
+  "TvPOXI": [
+    {
+      "type": 0,
+      "value": "Hier ist Ihr Flow."
+    }
+  ],
+  "Twfck/": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Die Zahl, mit der Multiplikand 1 multipliziert werden soll."
+    }
+  ],
+  "U086AA": [
+    {
+      "type": 0,
+      "value": "Zielschemaelement"
+    }
+  ],
+  "U0I10w": [
+    {
+      "type": 0,
+      "value": "(UTC+05:00) Jekaterinburg"
+    }
+  ],
+  "U3guPp": [
+    {
+      "type": 0,
+      "value": "Nach Connector gruppieren"
+    }
+  ],
+  "U3iWVd": [
+    {
+      "type": 0,
+      "value": "Generiert ein Array von ganzen Zahlen ab einer bestimmten Zahl."
+    }
+  ],
+  "U4zovj": [
+    {
+      "type": 0,
+      "value": "Wird zu folgenden Zeitpunkten ausgeführt: "
+    },
+    {
+      "type": 1,
+      "value": "onTime"
+    },
+    {
+      "type": 0,
+      "value": " "
+    },
+    {
+      "type": 1,
+      "value": "onDays"
+    }
+  ],
+  "U7yRwM": [
+    {
+      "type": 0,
+      "value": "Validierungsfehler"
+    }
+  ],
+  "UCNM4L": [
+    {
+      "type": 0,
+      "value": "Verwenden Sie die Liste dynamischer Inhalte, um auf einen Parameter zu verweisen."
+    }
+  ],
+  "UEryJE": [
+    {
+      "type": 0,
+      "value": "Workflowaktion löschen"
+    }
+  ],
+  "UHCVNK": [
+    {
+      "type": 0,
+      "value": "Ersetzt eine Zeichenfolge durch eine angegebene Zeichenfolge."
+    }
+  ],
+  "UIWX6p": [
+    {
+      "type": 0,
+      "value": "Logischer Name"
+    }
+  ],
+  "UMPuUJ": [
+    {
+      "type": 0,
+      "value": "Delete "
+    },
+    {
+      "type": 1,
+      "value": "expressionValue"
+    }
+  ],
+  "UR1CS5": [
+    {
+      "type": 0,
+      "value": "Code ausblenden"
+    }
+  ],
+  "USVffu": [
+    {
+      "type": 0,
+      "value": "Der Inhalt wird aufgrund der Sicherheitskonfiguration nicht angezeigt."
+    }
+  ],
+  "UT2ozj": [
+    {
+      "type": 0,
+      "value": "(UTC-07:00) Mountain Time (USA und Kanada)"
+    }
+  ],
+  "UVAfYj": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Die Sammlung, aus der das letzte Objekt entnommen werden soll."
+    }
+  ],
+  "UYRIS/": [
+    {
+      "type": 1,
+      "value": "fileName"
+    },
+    {
+      "type": 0,
+      "value": " (Dateiname)"
+    }
+  ],
+  "UZiXVh": [
+    {
+      "type": 0,
+      "value": "Ausgabe"
+    }
+  ],
+  "Ufv5m9": [
+    {
+      "type": 0,
+      "value": "Die Funktion „"
+    },
+    {
+      "type": 1,
+      "value": "nodeName"
+    },
+    {
+      "type": 0,
+      "value": "“ hat eine nicht beendende Verbindungskette."
+    }
+  ],
+  "Ug4sWZ": [
+    {
+      "type": 0,
+      "value": "Erweitern"
+    }
+  ],
+  "UgaIRz": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Die Länge jedes Blocks."
+    }
+  ],
+  "Umpr3z": [
+    {
+      "type": 0,
+      "value": "Alle "
+    },
+    {
+      "type": 1,
+      "value": "interval"
+    },
+    {
+      "type": 0,
+      "value": " Wochen"
+    }
+  ],
+  "Unc2tG": [
+    {
+      "type": 0,
+      "value": "Gibt „WAHR“ zurück, wenn zwei Werte gleich sind."
+    }
+  ],
+  "UnrrzF": [
+    {
+      "type": 0,
+      "value": "Quellschema"
+    }
+  ],
+  "UnytRl": [
+    {
+      "type": 0,
+      "value": "Der Typ für \""
+    },
+    {
+      "type": 1,
+      "value": "authenticationKey"
+    },
+    {
+      "type": 0,
+      "value": "\" ist \""
+    },
+    {
+      "type": 1,
+      "value": "propertyType"
+    },
+    {
+      "type": 0,
+      "value": "\"."
+    }
+  ],
+  "Ur+wph": [
+    {
+      "type": 0,
+      "value": "Klicken, um Element zu löschen"
+    }
+  ],
+  "UtyRCH": [
+    {
+      "type": 0,
+      "value": "Geben Sie einen Namen für die Verbindung ein"
+    }
+  ],
+  "Uxckds": [
+    {
+      "type": 0,
+      "value": "Vorgeschlagener Flow"
+    }
+  ],
+  "V+/c21": [
+    {
+      "type": 0,
+      "value": "Allgemein"
+    }
+  ],
+  "V+xi3c": [
+    {
+      "type": 0,
+      "value": "Weitere Informationen finden Sie unter http://aka.ms/logicapps-chunk#upload-content-in-chunks"
+    }
+  ],
+  "V0ZbQO": [
+    {
+      "type": 0,
+      "value": "Weniger anzeigen"
+    }
+  ],
+  "V3vpin": [
+    {
+      "type": 0,
+      "value": "Der „"
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "“ ist im Vorgangsschema nicht mehr vorhanden. Der Parameter muss entfernt werden, bevor der Workflow erneut gespeichert wird."
+    }
+  ],
+  "V5f3ha": [
+    {
+      "type": 0,
+      "value": "Woche"
+    }
+  ],
+  "V7k/GN": [
+    {
+      "type": 0,
+      "value": "Switch Case löschen"
+    }
+  ],
+  "V8A+1J": [
+    {
+      "type": 0,
+      "value": "Intervall"
+    }
+  ],
+  "VA7M1u": [
+    {
+      "type": 0,
+      "value": "In-App"
+    }
+  ],
+  "VEbE93": [
+    {
+      "type": 0,
+      "value": "Erläutern, was die Aktion \""
+    },
+    {
+      "type": 1,
+      "value": "selectedOperation"
+    },
+    {
+      "type": 0,
+      "value": "\" in diesem Flow bewirkt"
+    }
+  ],
+  "VHm1Sr": [
+    {
+      "type": 0,
+      "value": "Wählen Sie eine App Service-Ressource aus."
+    }
+  ],
+  "VI5Sa8": [
+    {
+      "type": 0,
+      "value": "Erweitern"
+    }
+  ],
+  "VI7EqG": [
+    {
+      "type": 0,
+      "value": "Keine Ergebnisse gefunden für „"
+    },
+    {
+      "type": 1,
+      "value": "searchTerm"
+    },
+    {
+      "type": 0,
+      "value": "“"
+    }
+  ],
+  "VIN7lB": [
+    {
+      "type": 0,
+      "value": "Der Flow startet, wenn dies geschieht"
+    }
+  ],
+  "VKAk5g": [
+    {
+      "type": 0,
+      "value": "Der angegebene Name der Workflowausführung ist ungültig."
+    }
+  ],
+  "VL9wOu": [
+    {
+      "type": 0,
+      "value": "Für den Parameter muss ein Wert angegeben werden."
+    }
+  ],
+  "VLc3FV": [
+    {
+      "type": 0,
+      "value": "Quellschema"
+    }
+  ],
+  "VPh9Jo": [
+    {
+      "type": 0,
+      "value": "(UTC+06:00) Nowosibirsk"
+    }
+  ],
+  "VUH9aj": [
+    {
+      "type": 0,
+      "value": "23"
+    }
+  ],
+  "VVfYvq": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Die Zahl, die durch den Divisor zu teilen ist."
+    }
+  ],
+  "VXBWrq": [
+    {
+      "type": 0,
+      "value": "Kommentar"
+    }
+  ],
+  "VZHick": [
+    {
+      "type": 0,
+      "value": "Dauer"
+    }
+  ],
+  "Vaacox": [
+    {
+      "type": 0,
+      "value": "Ausführungsverlauf"
+    }
+  ],
+  "VbMYd8": [
+    {
+      "type": 0,
+      "value": "Trigger (Auslöser) teilen Ihrer App mit, wann sie gestartet werden soll. Jeder Workflow benötigt mindestens einen Trigger."
+    }
+  ],
+  "Vfce7b": [
+    {
+      "type": 0,
+      "value": "Fehlertyp"
+    }
+  ],
+  "Vi5TIV": [
+    {
+      "type": 0,
+      "value": "Keine Warnungen gefunden."
+    }
+  ],
+  "VlvlX1": [
+    {
+      "type": 0,
+      "value": "Zertifikat"
+    }
+  ],
+  "VptXzY": [
+    {
+      "type": 0,
+      "value": "Verwenden Sie „"
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "“ als benutzerdefinierter Wert"
+    }
+  ],
+  "Vqs8hE": [
+    {
+      "type": 0,
+      "value": "Aktionen"
+    }
+  ],
+  "Vx6fwP": [
+    {
+      "type": 0,
+      "value": "Diese Aktion wurde hinzugefügt."
+    }
+  ],
+  "W+mUyI": [
+    {
+      "type": 0,
+      "value": "Weiter"
+    }
+  ],
+  "W070M2": [
+    {
+      "type": 0,
+      "value": "von "
+    },
+    {
+      "type": 1,
+      "value": "max"
+    }
+  ],
+  "W6FdMh": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Der Name der neuen Eigenschaft."
+    }
+  ],
+  "WCASt1": [
+    {
+      "type": 0,
+      "value": "Beschreiben Sie etwas in Ihrem Ablauf, das ersetzt werden soll, und was es ersetzen soll. Fügen Sie nach Möglichkeit Details hinzu, z. B. den zu verwendenden Connector und ob ein Inhalt enthalten sein soll."
+    }
+  ],
+  "WGwH45": [
+    {
+      "type": 0,
+      "value": "Löschen"
+    }
+  ],
+  "WK6hZX": [
+    {
+      "type": 0,
+      "value": "Gesamten Text in "
+    },
+    {
+      "type": 1,
+      "value": "label"
+    },
+    {
+      "type": 0,
+      "value": " auswählen"
+    }
+  ],
+  "WMX2ig": [
+    {
+      "type": 0,
+      "value": "Wie lautet die Parallelitätseinstellung dieses Workflows?"
+    }
+  ],
+  "WR1K3z": [
+    {
+      "type": 0,
+      "value": "(UTC+04:00) Astrachan, Uljanowsk"
+    }
+  ],
+  "WS55UF": [
+    {
+      "type": 0,
+      "value": "Geben Sie die Dauer im ISO 8601-Format an."
+    }
+  ],
+  "WS9kXD": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Die erste ganze Zahl im Array."
+    }
+  ],
+  "WTZvGW": [
+    {
+      "type": 0,
+      "value": "Der Workflow weist ungültige Verbindungen für die folgenden Vorgänge auf: "
+    },
+    {
+      "type": 1,
+      "value": "invalidNodes"
+    }
+  ],
+  "WToL/O": [
+    {
+      "type": 0,
+      "value": "Geben Sie eine gültige Bedingungsanweisung ein."
+    }
+  ],
+  "WUe3DY": [
+    {
+      "type": 0,
+      "value": "Kompakteigenschaft für trigger().outputs"
+    }
+  ],
+  "WaTsxR": [
+    {
+      "type": 0,
+      "value": "Anforderungsverlauf"
+    }
+  ],
+  "Wb/cBR": [
+    {
+      "type": 0,
+      "value": "Festes Intervall"
+    }
+  ],
+  "WcnIF8": [
+    {
+      "type": 0,
+      "value": "Entfernen"
+    }
+  ],
+  "WgChTm": [
+    {
+      "type": 0,
+      "value": "(Benutzerdefinierter Wert)"
+    }
+  ],
+  "WgoP7R": [
+    {
+      "type": 0,
+      "value": "Gibt das Ergebnis aus der Multiplikation der beiden Zahlen zurück."
+    }
+  ],
+  "WnU9v0": [
+    {
+      "type": 0,
+      "value": "Eine verwaltete Identität ist in der Logik-App nicht konfiguriert."
+    }
+  ],
+  "WvvJYw": [
+    {
+      "type": 0,
+      "value": "Aktionen"
+    }
+  ],
+  "X/7je+": [
+    {
+      "type": 0,
+      "value": "Minute"
+    }
+  ],
+  "X2idLs": [
+    {
+      "type": 0,
+      "value": "(UTC-03:00) Montevideo"
+    }
+  ],
+  "X4SuNU": [
+    {
+      "type": 0,
+      "value": "Das Mindestintervall der Wiederholungsrichtlinie ist ungültig. Es muss dem ISO 8601-Dauerformat entsprechen."
+    }
+  ],
+  "X4gDhV": [
+    {
+      "type": 0,
+      "value": "Mandant"
+    }
+  ],
+  "X7X5ew": [
+    {
+      "type": 0,
+      "value": "Parameter"
+    }
+  ],
+  "X8JjjT": [
+    {
+      "type": 1,
+      "value": "days"
+    },
+    {
+      "type": 0,
+      "value": " Tage "
+    },
+    {
+      "type": 1,
+      "value": "hours"
+    },
+    {
+      "type": 0,
+      "value": " Stunden"
+    }
+  ],
+  "XCunbR": [
+    {
+      "type": 0,
+      "value": "Kompakteigenschaft für actions(\"Aktionsname\").outputs"
+    }
+  ],
+  "XEuptL": [
+    {
+      "type": 0,
+      "value": "Kombiniert eine beliebige Anzahl von Zeichenfolgen."
+    }
+  ],
+  "XFFpu/": [
+    {
+      "type": 0,
+      "value": "Wiederholen"
+    }
+  ],
+  "XFzzaw": [
+    {
+      "type": 0,
+      "value": "Erweiterte Parameter"
+    }
+  ],
+  "XH94im": [
+    {
+      "type": 0,
+      "value": "Stellen Sie sicher, dass die Wörter richtig geschrieben sind."
+    }
+  ],
+  "XJkBrZ": [
+    {
+      "type": 0,
+      "value": "Geben Sie einen oder mehrere Ausdrücke an, die WAHR sein müssen, damit der Trigger ausgelöst wird."
+    }
+  ],
+  "XKDZXi": [
+    {
+      "type": 0,
+      "value": "Aktionstimeout"
+    }
+  ],
+  "XLUs2P": [
+    {
+      "type": 0,
+      "value": "Nicht unterstützter Tokentyp: "
+    },
+    {
+      "type": 1,
+      "value": "var"
+    }
+  ],
+  "XOAcjQ": [
+    {
+      "type": 0,
+      "value": "(UTC+03:00) Nairobi"
+    }
+  ],
+  "XOzn/3": [
+    {
+      "type": 0,
+      "value": "Verbindungsname"
+    }
+  ],
+  "XQ4OCV": [
+    {
+      "type": 0,
+      "value": "(UTC+03:00) Bagdad"
+    }
+  ],
+  "XR4Sd/": [
+    {
+      "type": 0,
+      "value": "Gefällt mir"
+    }
+  ],
+  "XRK+gt": [
+    {
+      "type": 0,
+      "value": "Die Funktion „"
+    },
+    {
+      "type": 1,
+      "value": "functionName"
+    },
+    {
+      "type": 0,
+      "value": "“ hat eine nicht beendende Verbindungskette."
+    }
+  ],
+  "XTeLIw": [
+    {
+      "type": 0,
+      "value": "(UTC+07:00) Krasnojarsk"
+    }
+  ],
+  "XTuxmH": [
+    {
+      "type": 1,
+      "value": "minutes"
+    },
+    {
+      "type": 0,
+      "value": " Minuten "
+    },
+    {
+      "type": 1,
+      "value": "seconds"
+    },
+    {
+      "type": 0,
+      "value": " Sekunden"
+    }
+  ],
+  "XVTQT6": [
+    {
+      "type": 0,
+      "value": "Intervall"
+    }
+  ],
+  "XbtEq9": [
+    {
+      "type": 0,
+      "value": "Anzahl"
+    }
+  ],
+  "Xew1Df": [
+    {
+      "type": 0,
+      "value": "Weitere Diagnoseinformationen: x-ms-client-Anforderungs-Id lautet „"
+    },
+    {
+      "type": 1,
+      "value": "clientRequestId"
+    },
+    {
+      "type": 0,
+      "value": "“."
+    }
+  ],
+  "Xj0Gr/": [
+    {
+      "type": 0,
+      "value": "Das Zielschemaelement kann nicht gelöscht werden."
+    }
+  ],
+  "Xj4xwI": [
+    {
+      "type": 0,
+      "value": "Die für diesen Vorgang verwendete verwaltete Identität ist nicht mehr vorhanden. Um den Vorgang fortzusetzen, müssen Sie eine vorhandene Identität auswählen oder die Verbindung ändern."
+    }
+  ],
+  "XkBxv5": [
+    {
+      "type": 0,
+      "value": "Zielschema auswählen"
+    }
+  ],
+  "Xkt2vD": [
+    {
+      "type": 0,
+      "value": "Funktions-App-Funktion auswählen"
+    }
+  ],
+  "Xnn0uj": [
+    {
+      "type": 0,
+      "value": "Anfordern"
+    }
+  ],
+  "XqamWZ": [
+    {
+      "type": 0,
+      "value": "Löschen"
+    }
+  ],
+  "XsktQ/": [
+    {
+      "type": 0,
+      "value": "Durch diese Einstellung schließen Logik-Apps keine Workflow-Metadatenheader in der Antwort ein."
+    }
+  ],
+  "XtuP5e": [
+    {
+      "type": 0,
+      "value": "Mathematische Funktionen"
+    }
+  ],
+  "Xv5CGN": [
+    {
+      "type": 0,
+      "value": "(UTC-05:00) Indiana (Ost)"
+    }
+  ],
+  "Xx/naD": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Der Name der Aktion, deren Textausgaben Sie erhalten möchten."
+    }
+  ],
+  "Y/bcmG": [
+    {
+      "type": 0,
+      "value": "Kennwort"
+    }
+  ],
+  "Y0H9aX": [
+    {
+      "type": 0,
+      "value": "Weitere Informationen"
+    }
+  ],
+  "Y5XAbg": [
+    {
+      "type": 0,
+      "value": "Swagger-Funktions-App-Ressource auswählen"
+    }
+  ],
+  "Y9kBz5": [
+    {
+      "type": 0,
+      "value": "Gibt eine Binärdarstellung eines Daten-URI zurück."
+    }
+  ],
+  "YABOLz": [
+    {
+      "type": 0,
+      "value": "Textelement"
+    }
+  ],
+  "YCDF7A": [
+    {
+      "type": 0,
+      "value": "Alle erforderlichen Parameter sind festgelegt."
+    }
+  ],
+  "YCFhzp": [
+    {
+      "type": 0,
+      "value": "Untergeordnete Elemente hinzufügen"
+    }
+  ],
+  "YDoc9z": [
+    {
+      "type": 0,
+      "value": "Triggerbedingungen"
+    }
+  ],
+  "YEHutH": [
+    {
+      "type": 0,
+      "value": "Editor löschen"
+    }
+  ],
+  "YF1yZk": [
+    {
+      "type": 0,
+      "value": "chat-session-id:"
+    }
+  ],
+  "YHsAKl": [
+    {
+      "type": 0,
+      "value": "Vorgangshinweis"
+    }
+  ],
+  "YIBDSH": [
+    {
+      "type": 1,
+      "value": "days"
+    },
+    {
+      "type": 0,
+      "value": "d"
+    }
+  ],
+  "YJJ+gQ": [
+    {
+      "type": 0,
+      "value": "Zeichenfolge"
+    }
+  ],
+  "YJlS8E": [
+    {
+      "type": 0,
+      "value": "Text unterstrichen formatieren. Verknüpfung: STRG+U"
+    }
+  ],
+  "YKXmKD": [
+    {
+      "type": 0,
+      "value": "Ermöglicht einem Ausdruck das Ableiten seines Werts aus anderen JSON-Name/Wert-Paaren oder aus der Ausgabe des Laufzeittriggers."
+    }
+  ],
+  "YOUfNf": [
+    {
+      "type": 0,
+      "value": "PFX eingeben"
+    }
+  ],
+  "YR1uWE": [
+    {
+      "type": 0,
+      "value": "Text fett formatieren. Verknüpfung: STRG+B"
+    }
+  ],
+  "YRk271": [
+    {
+      "type": 0,
+      "value": "Authentifizierung"
+    }
+  ],
+  "YUbSFS": [
+    {
+      "type": 0,
+      "value": "Ja/Nein"
+    }
+  ],
+  "YWOKlU": [
+    {
+      "type": 0,
+      "value": "Nummerierte Liste"
+    }
+  ],
+  "YWws/r": [
+    {
+      "type": 0,
+      "value": "Ausgabenamen dürfen nicht leer sein."
+    }
+  ],
+  "YZ5Kwe": [
+    {
+      "type": 0,
+      "value": "(UTC-04:00) Atlantik-Zeit (Kanada)"
+    }
+  ],
+  "YaFjJQ": [
+    {
+      "type": 0,
+      "value": "Gibt ein einzelnes Array oder Objekt mit allen Elementen zurück, die sich entweder in einem Array oder in einem Objekt befinden, das an diese Funktion übergeben wurde. Bei den Parametern für die Funktion kann es sich entweder um einen Satz Objekte oder um einen Satz Arrays handeln (keine Mischung aus beidem). Wenn in der finalen Ausgabe zwei Objekte mit dem gleichen Namen vorhanden sind, wird das letzte Objekt mit diesem Namen in das endgültige Objekt aufgenommen."
+    }
+  ],
+  "Ybzoim": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Der Name der Aktion, deren Werte Sie erhalten möchten."
+    }
+  ],
+  "YdQw4/": [
+    {
+      "type": 0,
+      "value": "Text kursiv formatieren. Verknüpfung: ⌘I"
+    }
+  ],
+  "YfwZJO": [
+    {
+      "type": 0,
+      "value": "Suchtipps"
+    }
+  ],
+  "Yg/vvm": [
+    {
+      "type": 0,
+      "value": "Bereich \"Aktion hinzufügen\" schließen"
+    }
+  ],
+  "YgU88A": [
+    {
+      "type": 0,
+      "value": "(UTC+05:30) Chennai, Kolkata, Mumbai, Neu-Delhi"
+    }
+  ],
+  "YiOybp": [
+    {
+      "type": 0,
+      "value": "(UTC+01:00) Brüssel, Kopenhagen, Madrid, Paris"
+    }
+  ],
+  "YlesUQ": [
+    {
+      "type": 0,
+      "value": "Ihre Zuordnung befindet sich in einem perfekten Zustand."
+    }
+  ],
+  "YoQara": [
+    {
+      "type": 0,
+      "value": "Keine"
+    }
+  ],
+  "Yrw/Qt": [
+    {
+      "type": 0,
+      "value": "Ihre persönlichen und Unternehmensdaten sind in diesem Chat geschützt."
+    }
+  ],
+  "Yuu5CD": [
+    {
+      "type": 0,
+      "value": "Verkleinern"
+    }
+  ],
+  "Yuxprm": [
+    {
+      "type": 0,
+      "value": "Willkommen beim Workflow-Assistenten!"
+    }
+  ],
+  "Yw7Nfl": [
+    {
+      "type": 0,
+      "value": "Statisches Ergebnis deaktivieren"
+    }
+  ],
+  "Yz9o1k": [
+    {
+      "type": 0,
+      "value": "Nicht verbunden."
+    }
+  ],
+  "Z8tBFS": [
+    {
+      "type": 0,
+      "value": "Der Workflow-Assistent dient nur zur Bereitstellung von Hilfe und unterstützt keine Workflowerstellung oder -bearbeitung."
+    }
+  ],
+  "Z9PWl/": [
+    {
+      "type": 0,
+      "value": "Die Anzahl der Wiederholungsrichtlinien ist ungültig (muss zwischen "
+    },
+    {
+      "type": 1,
+      "value": "min"
+    },
+    {
+      "type": 0,
+      "value": " und "
+    },
+    {
+      "type": 1,
+      "value": "max"
+    },
+    {
+      "type": 0,
+      "value": " liegen)"
+    }
+  ],
+  "ZAdaBl": [
+    {
+      "type": 0,
+      "value": "Wählen Sie eine vorhandene Verbindungsreferenz aus, oder erstellen Sie eine neue."
+    }
+  ],
+  "ZBJiuD": [
+    {
+      "type": 0,
+      "value": "Status"
+    }
+  ],
+  "ZCFMoe": [
+    {
+      "type": 0,
+      "value": "Textkörper"
+    }
+  ],
+  "ZKnJnh": [
+    {
+      "type": 0,
+      "value": "Sichere Zeichenfolge"
+    }
+  ],
+  "ZM1mRy": [
+    {
+      "type": 0,
+      "value": "Gleichzeitigkeitssteuerung"
+    }
+  ],
+  "ZME5hh": [
+    {
+      "type": 0,
+      "value": "Gibt die Monatstagkomponente eines Zeichenfolgen-Zeitstempels zurück."
+    }
+  ],
+  "ZRdkFN": [
+    {
+      "type": 0,
+      "value": "Statisches Ergebnis zuklappen"
+    }
+  ],
+  "ZUCTVP": [
+    {
+      "type": 0,
+      "value": "Aktion einfügen"
+    }
+  ],
+  "ZUaz3Y": [
+    {
+      "type": 0,
+      "value": "Kompakteigenschaft für trigger().outputs.body"
+    }
+  ],
+  "ZaIeDG": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Der Wert, mit dem die Zeichenfolge möglicherweise beginnt."
+    }
+  ],
+  "ZbCS4a": [
+    {
+      "type": 0,
+      "value": "Weitere Informationen"
+    }
+  ],
+  "Zg3IjD": [
+    {
+      "type": 0,
+      "value": "Schließen"
+    }
+  ],
+  "Zi9gQK": [
+    {
+      "type": 0,
+      "value": "Neues Element hinzufügen"
+    }
+  ],
+  "ZihyUf": [
+    {
+      "type": 0,
+      "value": "Schließen"
+    }
+  ],
+  "ZkjTbp": [
+    {
+      "type": 0,
+      "value": "Erfahren Sie mehr über dynamische Inhalte."
+    }
+  ],
+  "ZyDq4/": [
+    {
+      "type": 0,
+      "value": "Einen anderen Vorschlag anzeigen"
+    }
+  ],
+  "a7j3gS": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Die Zahl, die durch den Divisor zu teilen ist."
+    }
+  ],
+  "aAXnqw": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Die Anzahl des Vorkommens des zu suchenden Substrings."
+    }
+  ],
+  "aE+2gr": [
+    {
+      "type": 0,
+      "value": "FALSCH"
+    }
+  ],
+  "aGyVJT": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Die Anzahl von Objekten, die vom Anfang der Sammlung entfernt werden sollen. Muss eine positive ganze Zahl sein."
+    }
+  ],
+  "aK4iLW": [
+    {
+      "type": 0,
+      "value": "Datenverarbeitung"
+    }
+  ],
+  "aP1wk9": [
+    {
+      "type": 0,
+      "value": "Gibt den ersten Index eines Werts innerhalb einer Zeichenfolge zurück (Groß-/Kleinschreibung nicht relevant, invariante Kultur)."
+    }
+  ],
+  "aSnCCB": [
+    {
+      "type": 0,
+      "value": "Standort"
+    }
+  ],
+  "aV/nLS": [
+    {
+      "type": 0,
+      "value": "Sekunde"
+    }
+  ],
+  "aYTy7X": [
+    {
+      "type": 0,
+      "value": "Abgebrochen"
+    }
+  ],
+  "ae7W0a": [
+    {
+      "type": 0,
+      "value": "Vollbild"
+    }
+  ],
+  "ahFd/S": [
+    {
+      "type": 0,
+      "value": "Eindeutige Nachverfolgungs-ID für jede geteilte Instanz"
+    }
+  ],
+  "ahsVI/": [
+    {
+      "type": 0,
+      "value": "PFX eingeben"
+    }
+  ],
+  "aoUT/3": [
+    {
+      "type": 0,
+      "value": "Ressourcen werden geladen...."
+    }
+  ],
+  "auUI93": [
+    {
+      "type": 0,
+      "value": "Fügen Sie ein Quellschema hinzu, oder wählen Sie eines aus, das für Ihre Zuordnung verwendet werden soll."
+    }
+  ],
+  "b9/1dK": [
+    {
+      "type": 0,
+      "value": "Wert"
+    }
+  ],
+  "b9P8SA": [
+    {
+      "type": 0,
+      "value": "Nicht unterstützter Tokentyp: "
+    },
+    {
+      "type": 1,
+      "value": "controls"
+    }
+  ],
+  "b9Rvl9": [
+    {
+      "type": 0,
+      "value": "Textkörper"
+    }
+  ],
+  "bC2LBK": [
+    {
+      "type": 0,
+      "value": "Es wird nicht empfohlen, einen Standardwert für den Typ „"
+    },
+    {
+      "type": 1,
+      "value": "type"
+    },
+    {
+      "type": 0,
+      "value": "“ festzulegen, da er als Nur-Text gespeichert wird."
+    }
+  ],
+  "bG9rjv": [
+    {
+      "type": 0,
+      "value": "Aktionen"
+    }
+  ],
+  "bGtEPd": [
+    {
+      "type": 0,
+      "value": "Löschen"
+    }
+  ],
+  "bIyTi7": [
+    {
+      "type": 0,
+      "value": "Abonnement"
+    }
+  ],
+  "bJ7DWe": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Der Wert, der in einen Binärwert konvertiert wird."
+    }
+  ],
+  "bJEJoL": [
+    {
+      "type": 0,
+      "value": "Optional. Ein Schlüssel, der zum Sortieren von Objekten in der Sammlung verwendet werden soll."
+    }
+  ],
+  "bSZ0lL": [
+    {
+      "type": 0,
+      "value": "Rückruf-URL"
+    }
+  ],
+  "bTrk+S": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Das Objekt, bei dem geprüft wird, ob es größer oder gleich dem Vergleichswert ist."
+    }
+  ],
+  "bWBMhe": [
+    {
+      "type": 0,
+      "value": "Standardmäßig werden Logik-App-Instanzen gleichzeitig oder parallel ausgeführt. Dieses Steuerelement ändert, wie neue Ausführungen in die Warteschlange eingereiht werden, und kann nach der Aktivierung nicht mehr geändert werden. Lassen Sie dieses Steuerelement deaktiviert, um so viele parallele Instanzen wie möglich auszuführen. Um die Anzahl paralleler Ausführungen einzuschränken, aktivieren Sie dieses Steuerelement, und wählen Sie einen Grenzwert aus. Wählen Sie 1 als Grenzwert für eine sequenzielle Ausführung aus."
+    }
+  ],
+  "bWOsvo": [
+    {
+      "type": 0,
+      "value": "Verbindung des Aufrufers verwenden"
+    }
+  ],
+  "bXFGpe": [
+    {
+      "type": 0,
+      "value": "Info"
+    }
+  ],
+  "bYwqkV": [
+    {
+      "type": 0,
+      "value": "Geben Sie einen gültigen JSON-Wert ein."
+    }
+  ],
+  "ba9yGJ": [
+    {
+      "type": 0,
+      "value": "Weitere laden"
+    }
+  ],
+  "bf7078": [
+    {
+      "type": 0,
+      "value": "Gibt den Höchstwert im Eingabearray von Zahlen zurück."
+    }
+  ],
+  "blRFVt": [
+    {
+      "type": 0,
+      "value": "Richten Sie diese Verbindungen ein, um sie in Ihrem Flow zu verwenden."
+    }
+  ],
+  "bldzuj": [
+    {
+      "type": 0,
+      "value": "Wiederholungsverlauf"
+    }
+  ],
+  "bt2CaQ": [
+    {
+      "type": 0,
+      "value": "Alle löschen"
+    }
+  ],
+  "bwlAWn": [
+    {
+      "type": 0,
+      "value": "Vorgang öffnen"
+    }
+  ],
+  "byRkj+": [
+    {
+      "type": 0,
+      "value": "Für diesen Vorgang sind sichere Eingaben oder Ausgaben aktiviert."
+    }
+  ],
+  "byTBrn": [
+    {
+      "type": 0,
+      "value": "Benutzerdefiniert"
+    }
+  ],
+  "c/+j08": [
+    {
+      "type": 0,
+      "value": "Los"
+    }
+  ],
+  "c2XklE": [
+    {
+      "type": 0,
+      "value": "Suchen"
+    }
+  ],
+  "c3FLox": [
+    {
+      "type": 0,
+      "value": "(UTC+10:00) Hobart"
+    }
+  ],
+  "c3G/zq": [
+    {
+      "type": 0,
+      "value": "Gibt ein Objekt zurück, für das eine Eigenschaft auf den angegebenen Wert festgelegt wurde."
+    }
+  ],
+  "c4GQZE": [
+    {
+      "type": 0,
+      "value": "Wählen Sie das Schema für die Dropdownliste aus."
+    }
+  ],
+  "c6XbVI": [
+    {
+      "type": 0,
+      "value": "Bereich"
+    }
+  ],
+  "c7kfkV": [
+    {
+      "type": 0,
+      "value": "Geben Sie einen gültigen JSON-Wert ein."
+    }
+  ],
+  "c8UPLp": [
+    {
+      "type": 0,
+      "value": "Dynamische Inhalte können auch aus anderen Quellen hinzugefügt werden."
+    }
+  ],
+  "cHiBAn": [
+    {
+      "type": 0,
+      "value": "(UTC+09:00) Seoul"
+    }
+  ],
+  "cJkSrD": [
+    {
+      "type": 0,
+      "value": "Weitere Ergebnisse bis zum Paginierungslimit abrufen"
+    }
+  ],
+  "cK2A/V": [
+    {
+      "type": 0,
+      "value": "Dokumentation anzeigen"
+    }
+  ],
+  "cR9RtV": [
+    {
+      "type": 0,
+      "value": "Änderungen verwerfen"
+    }
+  ],
+  "cZXqqf": [
+    {
+      "type": 0,
+      "value": "Verbindung ändern"
+    }
+  ],
+  "cZv9J0": [
+    {
+      "type": 0,
+      "value": "Verbindung ist gültig"
+    }
+  ],
+  "ca/QIc": [
+    {
+      "type": 0,
+      "value": "Fehlermeldung"
+    }
+  ],
+  "ceVB5l": [
+    {
+      "type": 0,
+      "value": "Gibt den Teiltext einer mehrteiligen Ausgabe für eine Aktion zurück."
+    }
+  ],
+  "cfUHfs": [
+    {
+      "type": 0,
+      "value": "Gibt die Differenz zwischen zwei Datumsangaben als Zeitspanne zurück."
+    }
+  ],
+  "cgq/+y": [
+    {
+      "type": 0,
+      "value": "Wählen Sie eine Identität aus."
+    }
+  ],
+  "ciLkfU": [
+    {
+      "type": 0,
+      "value": "Fett (⌘B)"
+    }
+  ],
+  "cmTCsW": [
+    {
+      "type": 0,
+      "value": "Fehler beim Laden der Komponente."
+    }
+  ],
+  "cqiqcf": [
+    {
+      "type": 0,
+      "value": "Startzeit"
+    }
+  ],
+  "cr0UnG": [
+    {
+      "type": 0,
+      "value": "9"
+    }
+  ],
+  "cscezV": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Die Sammlung, in der die ersten Count-Objekte übersprungen werden sollen."
+    }
+  ],
+  "ctI9Pp": [
+    {
+      "type": 0,
+      "value": "Generieren Sie zuerst XSLT, bevor Sie versuchen, Zuordnungen zu testen."
+    }
+  ],
+  "cvp9VP": [
+    {
+      "type": 0,
+      "value": "Fehlercode"
+    }
+  ],
+  "cyEBus": [
+    {
+      "type": 0,
+      "value": "(UTC-04:00) Cuiabá"
+    }
+  ],
+  "d020eg": [
+    {
+      "type": 0,
+      "value": "Gibt das erste Element des übergebenen Arrays oder der übergebenen Zeichenfolge zurück."
+    }
+  ],
+  "d4Ddhp": [
+    {
+      "type": 0,
+      "value": "Herunterladen (ALT oder Option + Auswählen)"
+    }
+  ],
+  "dBWIjR": [
+    {
+      "type": 0,
+      "value": "Im Schema fehlen erforderliche Eingaben."
+    }
+  ],
+  "dBxX0M": [
+    {
+      "type": 0,
+      "value": "Trigger hinzufügen"
+    }
+  ],
+  "dD8y1n": [
+    {
+      "type": 0,
+      "value": "Zum Schlüsselwertmodus wechseln"
+    }
+  ],
+  "dDYCuU": [
+    {
+      "type": 0,
+      "value": "Weitere Informationen"
+    }
+  ],
+  "dKCp2j": [
+    {
+      "type": 0,
+      "value": "Weitere Informationen darüber"
+    }
+  ],
+  "dL9V5t": [
+    {
+      "type": 0,
+      "value": "Verwaltete Identität"
+    }
+  ],
+  "dMAC4C": [
+    {
+      "type": 0,
+      "value": "Aktion ersetzen"
+    }
+  ],
+  "dOpdsP": [
+    {
+      "type": 0,
+      "value": "Aktualisieren"
+    }
+  ],
+  "dQmi91": [
+    {
+      "type": 0,
+      "value": "Häufigkeit"
+    }
+  ],
+  "dUbKuK": [
+    {
+      "type": 0,
+      "value": "Überspringen"
+    }
+  ],
+  "daoo3l": [
+    {
+      "type": 0,
+      "value": "Verbunden mit "
+    },
+    {
+      "type": 1,
+      "value": "connectionName"
+    },
+    {
+      "type": 0,
+      "value": "."
+    }
+  ],
+  "dfKsgg": [
+    {
+      "type": 0,
+      "value": "Leider konnte ich Ihre Anforderung nicht verstehen. Wiederholen Sie den Vorgang, und versuchen Sie es noch einmal."
+    }
+  ],
+  "dfNjw1": [
+    {
+      "type": 0,
+      "value": "Schließen"
+    }
+  ],
+  "dfmH55": [
+    {
+      "type": 0,
+      "value": "Kursiv (STRG+I)"
+    }
+  ],
+  "dhvk0u": [
+    {
+      "type": 0,
+      "value": "Gibt eine Zeichenfolgendarstellung einer Base64-codierten Zeichenfolge zurück."
+    }
+  ],
+  "dqgt9y": [
+    {
+      "type": 0,
+      "value": "Parameter in booleschen Wert konvertieren"
+    }
+  ],
+  "drM9Sl": [
+    {
+      "type": 0,
+      "value": "Gibt ein Array von Werten zurück, das dem Schlüsselnamen aus der form-data- oder form-encoded-Aktionsausgabe entspricht."
+    }
+  ],
+  "dsz+Ae": [
+    {
+      "type": 0,
+      "value": "Unterteilt die Zeichenfolge durch ein Trennzeichen."
+    }
+  ],
+  "dwrqEc": [
+    {
+      "type": 0,
+      "value": "Warnungen"
+    }
+  ],
+  "e+GuGo": [
+    {
+      "type": 0,
+      "value": "Eingabe"
+    }
+  ],
+  "e00zot": [
+    {
+      "type": 0,
+      "value": "Wie oft möchten Sie auf Elemente prüfen?"
+    }
+  ],
+  "e4JZEY": [
+    {
+      "type": 0,
+      "value": "(UTC+07:00) Tomsk"
+    }
+  ],
+  "e9OvzW": [
+    {
+      "type": 0,
+      "value": "Löschen"
+    }
+  ],
+  "e9bIKh": [
+    {
+      "type": 0,
+      "value": "Fehler beim Generieren von XSLT."
+    }
+  ],
+  "eESljX": [
+    {
+      "type": 0,
+      "value": "Wiederherstellen"
+    }
+  ],
+  "eFet4K": [
+    {
+      "type": 0,
+      "value": "Aktionsnachverfolgungs-ID"
+    }
+  ],
+  "eFnLWK": [
+    {
+      "type": 0,
+      "value": "(UTC-06:00) Zentralamerika"
+    }
+  ],
+  "eHgfpz": [
+    {
+      "type": 0,
+      "value": "Geben Sie eine gültige URL ein."
+    }
+  ],
+  "eHgi14": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Der Name der Variable, deren Wert Sie abrufen möchten."
+    }
+  ],
+  "eHsOsm": [
+    {
+      "type": 0,
+      "value": "Geben Sie die Dauer im ISO 8601-Format an."
+    }
+  ],
+  "eI00kb": [
+    {
+      "type": 0,
+      "value": "Diesen Flow bearbeiten in"
+    }
+  ],
+  "eO1h/h": [
+    {
+      "type": 0,
+      "value": "Dieser Assistent kann Ihnen dabei helfen, mehr über Ihre Workflows und die Funktionen und Connectors der Azure Logic Apps-Plattform zu erfahren."
+    }
+  ],
+  "eRvRWs": [
+    {
+      "type": 0,
+      "value": "Startzeit"
+    }
+  ],
+  "eT+b9W": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Die Zahl, durch die der Dividend zu teilen ist."
+    }
+  ],
+  "egLI8P": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Der Index, bei dem die Teilzeichenfolge in Parameter 1 beginnt."
+    }
+  ],
+  "ehIBkh": [
+    {
+      "type": 0,
+      "value": "Geben Sie eine ganze Zahl ein."
+    }
+  ],
+  "elD6+N": [
+    {
+      "type": 0,
+      "value": "Kursiv (⌘I)"
+    }
+  ],
+  "en/5A3": [
+    {
+      "type": 0,
+      "value": "Neu zuweisen"
+    }
+  ],
+  "eo1YKX": [
+    {
+      "type": 0,
+      "value": "Aktivieren Sie die aufgeteilte Ausführung, um für jedes Element im ausgewählten Array eine Instanz des Workflows zu starten. Jede Instanz kann auch eine eindeutige Nachverfolgungs-ID aufweisen."
+    }
+  ],
+  "epOMnV": [
+    {
+      "type": 0,
+      "value": "Freigegeben"
+    }
+  ],
+  "evyGYj": [
+    {
+      "type": 0,
+      "value": "Zuweisen aller verbundenen Aktionen zu einer neuen Verbindung"
+    }
+  ],
+  "f/lWTW": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Die Objekte, die auf NULL geprüft werden."
+    }
+  ],
+  "f1j0to": [
+    {
+      "type": 0,
+      "value": "Optional. Der Index, an dem das Extrahieren des Substrings beendet werden soll."
+    }
+  ],
+  "f7Janv": [
+    {
+      "type": 0,
+      "value": "Beispiel: PT1S"
+    }
+  ],
+  "f81ClO": [
+    {
+      "type": 0,
+      "value": "Leer-Symbol für dynamischen Inhalt"
+    }
+  ],
+  "fBQBw/": [
+    {
+      "type": 0,
+      "value": "Gibt TRUE zurück, wenn das erste Argument größer als das zweite oder gleich ist."
+    }
+  ],
+  "fDisLL": [
+    {
+      "type": 0,
+      "value": "Fehler bei der ACL-Erstellung für die Verbindung. Die Verbindung wird gelöscht."
+    }
+  ],
+  "fElufw": [
+    {
+      "type": 0,
+      "value": "API Management-Ressource auswählen"
+    }
+  ],
+  "fKYuwf": [
+    {
+      "type": 0,
+      "value": "Datei oder Image auswählen"
+    }
+  ],
+  "fVG5aD": [
+    {
+      "type": 0,
+      "value": "(UTC-05:00) Haiti"
+    }
+  ],
+  "faUrud": [
+    {
+      "type": 0,
+      "value": "Verbindungsdaten werden geladen..."
+    }
+  ],
+  "fg/34o": [
+    {
+      "type": 0,
+      "value": "Logische Funktionen"
+    }
+  ],
+  "fifSPb": [
+    {
+      "type": 0,
+      "value": "(UTC-03:30) Neufundland"
+    }
+  ],
+  "fmm7Ik": [
+    {
+      "type": 0,
+      "value": "Funktion"
+    }
+  ],
+  "fp8Ry3": [
+    {
+      "type": 0,
+      "value": "(UTC+08:00) Beijing (Peking), Chongqing, Hongkong (SAR), Urumqi"
+    }
+  ],
+  "fvGvnA": [
+    {
+      "type": 0,
+      "value": "Es ist ein Fehler aufgetreten. Wiederholen Sie den Vorgang."
+    }
+  ],
+  "g076bL": [
+    {
+      "type": 0,
+      "value": "E-Mail"
+    }
+  ],
+  "g1zwch": [
+    {
+      "type": 0,
+      "value": "Vergrößern"
+    }
+  ],
+  "g4igOR": [
+    {
+      "type": 0,
+      "value": "Veröffentlichen"
+    }
+  ],
+  "g5A6Bn": [
+    {
+      "type": 0,
+      "value": "Runtime"
+    }
+  ],
+  "g7/EKC": [
+    {
+      "type": 0,
+      "value": "Grenzwert"
+    }
+  ],
+  "g7my78": [
+    {
+      "type": 0,
+      "value": "Test ausführen"
+    }
+  ],
+  "gA1dde": [
+    {
+      "type": 0,
+      "value": "Codeansicht umschalten"
+    }
+  ],
+  "gCXOd5": [
+    {
+      "type": 0,
+      "value": "URI"
+    }
+  ],
+  "gDDfek": [
+    {
+      "type": 0,
+      "value": "Hiermit wird ein Zeitstempel zurückgegeben, der der aktuellen Uhrzeit zuzüglich des angegebenen Zeitintervalls entspricht."
+    }
+  ],
+  "gDY9xk": [
+    {
+      "type": 0,
+      "value": "Gibt das Ergebnis aus der Division der beiden Zahlen zurück."
+    }
+  ],
+  "gIK0WG": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Ein boolescher Wert, der bestimmt, welchen Wert der Ausdruck zurückgeben soll."
+    }
+  ],
+  "gIx5ys": [
+    {
+      "type": 0,
+      "value": "Text kursiv formatieren. Verknüpfung: STRG+I"
+    }
+  ],
+  "gKq3Jv": [
+    {
+      "type": 0,
+      "value": "Vorheriger Fehler"
+    }
+  ],
+  "gL4rVQ": [
+    {
+      "type": 0,
+      "value": "Keine"
+    }
+  ],
+  "gQt/0f": [
+    {
+      "type": 0,
+      "value": "Konvertierungsfunktionen"
+    }
+  ],
+  "gRUmiA": [
+    {
+      "type": 0,
+      "value": "Info"
+    }
+  ],
+  "gWyYg0": [
+    {
+      "type": 0,
+      "value": "(UTC+05:00) Aschgabat, Taschkent"
+    }
+  ],
+  "gYaVvl": [
+    {
+      "type": 0,
+      "value": "Geben Sie einen gültigen Gleitkommawert ein."
+    }
+  ],
+  "gc6v4X": [
+    {
+      "type": 0,
+      "value": "Systemseitig zugewiesene verwaltete Identität"
+    }
+  ],
+  "gfBWfH": [
+    {
+      "type": 0,
+      "value": "E-Mail"
+    }
+  ],
+  "ginGIZ": [
+    {
+      "type": 0,
+      "value": "(UTC-06:00) Guadalajara, Mexiko-Stadt, Monterrey"
+    }
+  ],
+  "gkY5ya": [
+    {
+      "type": 0,
+      "value": "Löschen"
+    }
+  ],
+  "gpUphl": [
+    {
+      "type": 0,
+      "value": "Geben Sie die Benutzergruppe ein."
+    }
+  ],
+  "gtQYgr": [
+    {
+      "type": 0,
+      "value": "Gibt einen booleschen Wert zurück, der angibt, ob eine Zeichenfolge eine Gleitkommazahl ist."
+    }
+  ],
+  "gu9o9z": [
+    {
+      "type": 0,
+      "value": "Bei Verwendung innerhalb einer until-Schleife gibt diese Funktion den aktuellen Iterationsindex der angegebenen Schleife zurück."
+    }
+  ],
+  "gusZw5": [
+    {
+      "type": 0,
+      "value": "Ausgabenamen müssen eindeutig sein."
+    }
+  ],
+  "gvDMuq": [
+    {
+      "type": 0,
+      "value": "Batchworkflowressource auswählen"
+    }
+  ],
+  "gwEKLM": [
+    {
+      "type": 0,
+      "value": "Wird geladen..."
+    }
+  ],
+  "h+W3VW": [
+    {
+      "type": 0,
+      "value": "Zahl"
+    }
+  ],
+  "h1lQDa": [
+    {
+      "type": 0,
+      "value": "Geben oder fügen Sie JSON-Beispielnutzdaten ein."
+    }
+  ],
+  "h40rpg": [
+    {
+      "type": 0,
+      "value": "Geben Sie das Intervall im ISO 8601-Format an."
+    }
+  ],
+  "h6vVbX": [
+    {
+      "type": 0,
+      "value": "Fügen Sie zuerst ein Quellschema hinzu, und wählen Sie dann Elemente aus, um Ihre Zuordnung zu erstellen."
+    }
+  ],
+  "hH/wAd": [
+    {
+      "type": 0,
+      "value": "Workflowausführung aus dieser Aktion erneut übermitteln"
+    }
+  ],
+  "hJbr09": [
+    {
+      "type": 0,
+      "value": "Zum Reduzieren klicken"
+    }
+  ],
+  "hLOIwp": [
+    {
+      "type": 0,
+      "value": "Warnungen"
+    }
+  ],
+  "hMf2TA": [
+    {
+      "type": 0,
+      "value": "Segmentierung zulassen"
+    }
+  ],
+  "hN7iBP": [
+    {
+      "offset": 0,
+      "options": {
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " Sekunde"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " Sekunden"
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "seconds"
+    }
+  ],
+  "hPM6iC": [
+    {
+      "type": 0,
+      "value": "Gibt das Ergebnis aus der Subtraktion von zwei Zahlen zurück."
+    }
+  ],
+  "hRVVdR": [
+    {
+      "type": 0,
+      "value": "Rückgängig machen"
+    }
+  ],
+  "hZqQdt": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Gaza, Hebron"
+    }
+  ],
+  "hbOvB4": [
+    {
+      "type": 0,
+      "value": "Dies ist nicht das, wonach ich suche"
+    }
+  ],
+  "hihfHd": [
+    {
+      "type": 0,
+      "value": "Der Wert ist zu groß."
+    }
+  ],
+  "hq1mk6": [
+    {
+      "type": 0,
+      "value": "Der Wert für den Vorgangspfad entspricht nicht der Vorlage für das Segment. Pfad "
+    },
+    {
+      "type": 1,
+      "value": "pathValue"
+    },
+    {
+      "type": 0,
+      "value": ", Vorlage "
+    },
+    {
+      "type": 1,
+      "value": "pathTemplate"
+    }
+  ],
+  "hrbDu6": [
+    {
+      "type": 0,
+      "value": "Dauer"
+    }
+  ],
+  "htj+eZ": [
+    {
+      "type": 0,
+      "value": "Zielschema aktualisieren"
+    }
+  ],
+  "hvbclb": [
+    {
+      "type": 0,
+      "value": "Benutzergruppe"
+    }
+  ],
+  "hwj1Ht": [
+    {
+      "type": 0,
+      "value": "Flow bearbeiten"
+    }
+  ],
+  "hza/cT": [
+    {
+      "type": 0,
+      "value": "(UTC+00:00) Casablanca"
+    }
+  ],
+  "i/SguY": [
+    {
+      "type": 0,
+      "value": "Systemseitig zugewiesene verwaltete Identität"
+    }
+  ],
+  "i/b3Ko": [
+    {
+      "type": 0,
+      "value": "Asynchrone Antwort"
+    }
+  ],
+  "i0XjL5": [
+    {
+      "type": 0,
+      "value": "Nach Vorgang suchen"
+    }
+  ],
+  "i1EQYm": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Harare, Pretoria"
+    }
+  ],
+  "i1Tufp": [
+    {
+      "type": 0,
+      "value": "Bereitstellen von Eingabedaten zum Testen der Zuordnung mit"
+    }
+  ],
+  "i1cwra": [
+    {
+      "type": 0,
+      "value": "Wiederholen"
+    }
+  ],
+  "i1vHaT": [
+    {
+      "type": 0,
+      "value": "Kopieraktion"
+    }
+  ],
+  "i4C4aB": [
+    {
+      "type": 0,
+      "value": "Networking"
+    }
+  ],
+  "i4Om5O": [
+    {
+      "type": 0,
+      "value": "Dies einen ungültigen Wert auf."
+    }
+  ],
+  "i8xPfO": [
+    {
+      "type": 0,
+      "value": "Keine Aktionen"
+    }
+  ],
+  "iB8YKD": [
+    {
+      "type": 0,
+      "value": "Inforegisterkarte"
+    }
+  ],
+  "iCSHJG": [
+    {
+      "type": 0,
+      "value": "Konvertiert eine Zeichenfolge anhand der Groß-/Kleinschreibregeln der invarianten Kultur in Großbuchstaben."
+    }
+  ],
+  "iE2+sy": [
+    {
+      "type": 0,
+      "value": "Typ der Ausgabe auswählen"
+    }
+  ],
+  "iEy9pT": [
+    {
+      "type": 0,
+      "value": "Dynamischer Inhalt"
+    }
+  ],
+  "iHVVTl": [
+    {
+      "type": 0,
+      "value": "Möchten Sie \""
+    },
+    {
+      "type": 1,
+      "value": "nodeId"
+    },
+    {
+      "type": 0,
+      "value": "\" löschen?"
+    }
+  ],
+  "iJOIca": [
+    {
+      "type": 0,
+      "value": "Weiter"
+    }
+  ],
+  "iMicOQ": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Der zu analysierende URI."
+    }
+  ],
+  "iRe/g7": [
+    {
+      "type": 0,
+      "value": "21"
+    }
+  ],
+  "iRjBf4": [
+    {
+      "type": 0,
+      "value": "Für diese Aktion sind Tests konfiguriert."
+    }
+  ],
+  "iSb/hp": [
+    {
+      "type": 0,
+      "value": "Verwaltete Identität"
+    }
+  ],
+  "iSiVB0": [
+    {
+      "type": 0,
+      "value": "Sichere Ausgaben für den Vorgang und Verweise auf Ausgabeeigenschaften"
+    }
+  ],
+  "iTKrs8": [
+    {
+      "type": 0,
+      "value": "Paginierung"
+    }
+  ],
+  "iU1OJh": [
+    {
+      "type": 0,
+      "value": "Erweitern"
+    }
+  ],
+  "iU5Fdh": [
+    {
+      "type": 0,
+      "value": "Manipulationsfunktionen"
+    }
+  ],
+  "iUs7pv": [
+    {
+      "type": 0,
+      "value": "Abbrechen"
+    }
+  ],
+  "iVMVAt": [
+    {
+      "type": 0,
+      "value": "Beispiel: 0, 10"
+    }
+  ],
+  "iXW+2l": [
+    {
+      "type": 0,
+      "value": "Eine Aktion hinzufügen"
+    }
+  ],
+  "id4DBb": [
+    {
+      "type": 0,
+      "value": "Nachdem Sie diesen KI-generierten Flowvorschlag überprüft haben, wählen Sie"
+    }
+  ],
+  "idQjOP": [
+    {
+      "type": 0,
+      "value": "Eigenschaften"
+    }
+  ],
+  "ifnOUI": [
+    {
+      "type": 0,
+      "value": "Registerkarte \"Codeansicht\""
+    }
+  ],
+  "ihCdw4": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Die Zahl, die mit Summand 2 addiert werden soll."
+    }
+  ],
+  "iq+tiv": [
+    {
+      "type": 0,
+      "value": "11"
+    }
+  ],
+  "iql+jn": [
+    {
+      "type": 1,
+      "value": "seconds"
+    },
+    {
+      "type": 0,
+      "value": "s"
+    }
+  ],
+  "iy8rNf": [
+    {
+      "type": 0,
+      "value": "Test"
+    }
+  ],
+  "j5z8Vd": [
+    {
+      "type": 0,
+      "value": "Wiederholen"
+    }
+  ],
+  "jA6Wrp": [
+    {
+      "type": 0,
+      "value": "Fügen Sie ein Zielschema hinzu, oder wählen Sie eines aus, das für Ihre Zuordnung verwendet werden soll."
+    }
+  ],
+  "jHHF/u": [
+    {
+      "type": 0,
+      "value": "Hiermit wird eine zufällige ganze Zahl aus einem angegebenen Bereich zurückgegeben. Nur die Untergrenze des Bereichs wird eingeschlossen."
+    }
+  ],
+  "jHKc3w": [
+    {
+      "type": 0,
+      "value": "Andere"
+    }
+  ],
+  "jKsMS6": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Der Ausdruck, der negiert wird."
+    }
+  ],
+  "jMLmag": [
+    {
+      "type": 0,
+      "value": "Neu erstellen"
+    }
+  ],
+  "jN0YES": [
+    {
+      "type": 0,
+      "value": "Teilen Sie Microsoft mit, wie dieses Feature verbessert werden kann."
+    }
+  ],
+  "jO5Fet": [
+    {
+      "type": 0,
+      "value": "Anforderungsoptionen – Timeout"
+    }
+  ],
+  "jQ0Aqj": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Der Wert, der in eine Zeichenfolge konvertiert wird."
+    }
+  ],
+  "jQ7UzV": [
+    {
+      "type": 0,
+      "value": "(UTC-10:00) Aleuten-Inseln"
+    }
+  ],
+  "jQjteB": [
+    {
+      "type": 0,
+      "value": "Quellschema hinzufügen"
+    }
+  ],
+  "jTHUFb": [
+    {
+      "type": 1,
+      "value": "countShowing"
+    },
+    {
+      "type": 0,
+      "value": " von "
+    },
+    {
+      "type": 1,
+      "value": "countTotal"
+    },
+    {
+      "type": 0,
+      "value": " werden angezeigt"
+    }
+  ],
+  "jUDhbs": [
+    {
+      "type": 0,
+      "value": "Zielschema"
+    }
+  ],
+  "jVIgz1": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Die aufzuteilende Zeichenfolge oder das aufzuteilende Array."
+    }
+  ],
+  "jVpanH": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Eine Base64-Eingabezeichenfolge."
+    }
+  ],
+  "jZjgYZ": [
+    {
+      "type": 0,
+      "value": "In diesem Abonnement wurden keine Ressourcen dieses Typs gefunden."
+    }
+  ],
+  "jcA3Ig": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Der Schlüsselname der zurückzugebenden Formulardatenwerte."
+    }
+  ],
+  "jfInxm": [
+    {
+      "type": 0,
+      "value": "In JSON bearbeiten"
+    }
+  ],
+  "jfU6pn": [
+    {
+      "type": 0,
+      "value": "Durch das Aktivieren sicherer Eingaben werden die Ausgaben automatisch geschützt."
+    }
+  ],
+  "jgOaTX": [
+    {
+      "type": 0,
+      "value": "Das Schema kann nicht generiert werden"
+    }
+  ],
+  "jlcMGg": [
+    {
+      "type": 0,
+      "value": "Beschreiben Sie, was Ihr Flow bewirken sollte. Fügen Sie nach Möglichkeit Details hinzu, einschließlich des zu verwendenden Connectors und ob Inhalte eingeschlossen werden sollen."
+    }
+  ],
+  "juvF+0": [
+    {
+      "type": 0,
+      "value": "Gateway"
+    }
+  ],
+  "k/oqFL": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Die Base64-codierte Zeichenfolge."
+    }
+  ],
+  "k5tGEr": [
+    {
+      "type": 0,
+      "value": "Ja"
+    }
+  ],
+  "k8cbQ1": [
+    {
+      "type": 0,
+      "value": "Parameterfehler"
+    }
+  ],
+  "kBOAkT": [
+    {
+      "type": 0,
+      "value": "Felder auswählen"
+    }
+  ],
+  "kBSLfu": [
+    {
+      "type": 0,
+      "value": "Doppelter Eigenschaftenname"
+    }
+  ],
+  "kEI2xx": [
+    {
+      "type": 0,
+      "value": "Meldung"
+    }
+  ],
+  "kEjmTx": [
+    {
+      "type": 0,
+      "value": "Was Sie fragen können:"
+    }
+  ],
+  "kHcCxH": [
+    {
+      "type": 1,
+      "value": "minutes"
+    },
+    {
+      "type": 0,
+      "value": "m "
+    },
+    {
+      "type": 1,
+      "value": "seconds"
+    },
+    {
+      "type": 0,
+      "value": "s"
+    }
+  ],
+  "kHs5R4": [
+    {
+      "type": 0,
+      "value": "Überprüfen Sie diese Aktionen, um festzustellen, ob Parameter festgelegt werden müssen."
+    }
+  ],
+  "kKJMeM": [
+    {
+      "type": 0,
+      "value": "Jede Woche am Montag..."
+    }
+  ],
+  "kM+Mr0": [
+    {
+      "type": 0,
+      "value": "Wird geladen..."
+    }
+  ],
+  "kN6kce": [
+    {
+      "type": 0,
+      "value": "Gibt eine Zeichenfolgendarstellung einer Base64-Eingabezeichenfolge zurück."
+    }
+  ],
+  "kSK9Pq": [
+    {
+      "type": 0,
+      "value": "(UTC-05:00) Bogota, Lima, Quito, Rio Branco"
+    }
+  ],
+  "kVwJXt": [
+    {
+      "type": 0,
+      "value": "(UTC+04:00) Abu Dhabi, Maskat"
+    }
+  ],
+  "kXn5e0": [
+    {
+      "type": 0,
+      "value": "Stellen Sie eine Frage zu diesem Workflow oder zu Azure Logic Apps als Ganzes ..."
+    }
+  ],
+  "kZCX7t": [
+    {
+      "type": 0,
+      "value": "Montag"
+    }
+  ],
+  "kcOhfh": [
+    {
+      "type": 0,
+      "value": "Elemente und Zuordnungen, die nicht mit einem Zielelement verbunden sind, werden entfernt."
+    }
+  ],
+  "klY9UN": [
+    {
+      "offset": 0,
+      "options": {
+        "=0": {
+          "value": [
+            {
+              "type": 0,
+              "value": "keine Elemente stimmen überein."
+            }
+          ]
+        },
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " Element stimmt überein."
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " Elemente stimmen überein."
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "count"
+    }
+  ],
+  "kq+I5o": [
+    {
+      "type": 0,
+      "value": "Ausgabe hinzufügen"
+    }
+  ],
+  "kuFK3E": [
+    {
+      "type": 0,
+      "value": "Fehlende Authentifizierungstypeigenschaft: \"type\"."
+    }
+  ],
+  "kxMDyM": [
+    {
+      "type": 0,
+      "value": "Geben Sie einen gültigen JSON-Wert ein."
+    }
+  ],
+  "l/3yJr": [
+    {
+      "type": 0,
+      "value": "Ungültige Verbindung"
+    }
+  ],
+  "l/9YHQ": [
+    {
+      "type": 0,
+      "value": "(UTC+01:00) Windhuk"
+    }
+  ],
+  "l2YXln": [
+    {
+      "type": 0,
+      "value": "Aktion ersetzen durch"
+    }
+  ],
+  "l36V56": [
+    {
+      "type": 1,
+      "value": "hours"
+    },
+    {
+      "type": 0,
+      "value": " Stunden "
+    },
+    {
+      "type": 1,
+      "value": "minutes"
+    },
+    {
+      "type": 0,
+      "value": " Minuten"
+    }
+  ],
+  "l536iI": [
+    {
+      "type": 0,
+      "value": "Registerkarte \"Überwachung\""
+    }
+  ],
+  "l72gf4": [
+    {
+      "type": 0,
+      "value": "Verwaltete Identität"
+    }
+  ],
+  "lA/sHA": [
+    {
+      "type": 0,
+      "value": "Kopiert den Wert von \""
+    },
+    {
+      "type": 1,
+      "value": "label"
+    },
+    {
+      "type": 0,
+      "value": "\" in die Zwischenablage."
+    }
+  ],
+  "lB56l2": [
+    {
+      "type": 0,
+      "value": "Geben Sie eine gültige Zahl ein."
+    }
+  ],
+  "lM9qrG": [
+    {
+      "type": 0,
+      "value": "(UTC+13:00) Nuku'alofa"
+    }
+  ],
+  "lPTdSf": [
+    {
+      "type": 0,
+      "value": "Trigger ausführen"
+    }
+  ],
+  "lQNKUB": [
+    {
+      "type": 0,
+      "value": "Eine Zeile für das übergeordnete Element wird automatisch hinzugefügt."
+    }
+  ],
+  "lR7V87": [
+    {
+      "type": 0,
+      "value": "Funktionen"
+    }
+  ],
+  "lX30/R": [
+    {
+      "type": 0,
+      "value": "Reduzieren"
+    }
+  ],
+  "lZT0JI": [
+    {
+      "type": 0,
+      "value": "Gruppe hinzufügen"
+    }
+  ],
+  "lckgnb": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Die umzukehrende Sammlung."
+    }
+  ],
+  "lexzgJ": [
+    {
+      "type": 0,
+      "value": "Entfernen Sie alle Verweise auf das Element „"
+    },
+    {
+      "type": 1,
+      "value": "nodeName"
+    },
+    {
+      "type": 0,
+      "value": "“, bevor Sie es entfernen."
+    }
+  ],
+  "lgs5sf": [
+    {
+      "type": 0,
+      "value": "Zustandsloser Ausführungsmodus:"
+    }
+  ],
+  "lhL/KL": [
+    {
+      "type": 0,
+      "value": "Normal"
+    }
+  ],
+  "ljAOR6": [
+    {
+      "type": 0,
+      "value": "Kompakteigenschaft für actions(\"Aktionsname\").outputs.body"
+    }
+  ],
+  "lkgjxD": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Eine Zeichenfolge, welche die Endzeit enthält."
+    }
+  ],
+  "loxzZD": [
+    {
+      "type": 0,
+      "value": "Ausdruck einfügen (Sie können den Ausdruck auch hinzufügen, indem Sie „/“ im Editor eingeben)."
+    }
+  ],
+  "lsH37F": [
+    {
+      "type": 0,
+      "value": "Hiermit wird der Anforderungstext anhand des angegebenen Schemas überprüft. Falls ein Konflikt vorliegt, wird HTTP 400 zurückgegeben."
+    }
+  ],
+  "lsKVU6": [
+    {
+      "type": 0,
+      "value": "Aktionstyp auswählen"
+    }
+  ],
+  "lwlg2K": [
+    {
+      "type": 0,
+      "value": "Unterstrichen (STRG+U)"
+    }
+  ],
+  "lztiwS": [
+    {
+      "type": 0,
+      "value": "Istwert"
+    }
+  ],
+  "m/jJ/5": [
+    {
+      "type": 0,
+      "value": "Zuordnungsprüfer"
+    }
+  ],
+  "m7Y6Qf": [
+    {
+      "type": 0,
+      "value": "Test"
+    }
+  ],
+  "m8Q61y": [
+    {
+      "type": 0,
+      "value": "Name"
+    }
+  ],
+  "m8z4Yr": [
+    {
+      "type": 0,
+      "value": "Schwellenwert für die zurückzugebenden Elemente"
+    }
+  ],
+  "mAuMD+": [
+    {
+      "type": 0,
+      "value": "Array eingeben"
+    }
+  ],
+  "mCKsFw": [
+    {
+      "type": 0,
+      "value": "(UTC+07:00) Barnaul, Gorno-Altaisk"
+    }
+  ],
+  "mCzkXX": [
+    {
+      "type": 0,
+      "value": "Aktion hinzufügen"
+    }
+  ],
+  "mE7w9G": [
+    {
+      "type": 0,
+      "value": "Funktion gelöscht."
+    }
+  ],
+  "mGUdCO": [
+    {
+      "type": 0,
+      "value": "Hiermit wird ein Zeitstempel zurückgegeben, der der aktuellen Uhrzeit abzüglich des angegebenen Zeitintervalls entspricht."
+    }
+  ],
+  "mGpKsl": [
+    {
+      "type": 0,
+      "value": "Gibt eine Zeichenfolgendarstellung eines Daten-URI zurück."
+    }
+  ],
+  "mNaBPE": [
+    {
+      "type": 0,
+      "value": "Geben Sie einen gültigen JSON-Wert ein."
+    }
+  ],
+  "mPakaD": [
+    {
+      "type": 0,
+      "value": "URL codiert die Eingabezeichenfolge."
+    }
+  ],
+  "mPuXlv": [
+    {
+      "type": 0,
+      "value": "Ungültiger Typ des „Teilen bei“-Werts „"
+    },
+    {
+      "type": 1,
+      "value": "splitOn"
+    },
+    {
+      "type": 0,
+      "value": "“. Die Aufteilung ist nicht innerhalb des Arrays."
+    }
+  ],
+  "mUURJW": [
+    {
+      "type": 0,
+      "value": "Verbindung ist ungültig"
+    }
+  ],
+  "mYQFtf": [
+    {
+      "type": 0,
+      "value": "Die erforderlichen Eigenschaften \"secret\" oder \"pfx\" und \"password\" für den Authentifizierungstyp \"ActiveDirectoryOAuth\" fehlen."
+    }
+  ],
+  "mZQYLv": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Der XPath-Ausdruck, der ausgewertet werden soll."
+    }
+  ],
+  "mZRMD9": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Die Zeichenfolge, die in Kleinbuchstaben konvertiert werden soll. Wenn für ein Zeichen in der Zeichenfolge keine Entsprechung in Kleinbuchstaben vorhanden ist, wird das Zeichen unverändert in die zurückgegebene Zeichenfolge übernommen."
+    }
+  ],
+  "mca3Ml": [
+    {
+      "type": 0,
+      "value": "Beim Connector anmelden"
+    }
+  ],
+  "meVkB6": [
+    {
+      "type": 0,
+      "value": "Leerer Eigenschaftenname"
+    }
+  ],
+  "mej02C": [
+    {
+      "type": 0,
+      "value": "(UTC+08:30) Pjöngjang"
+    }
+  ],
+  "mjS/k1": [
+    {
+      "type": 0,
+      "value": "Durch diese Einstellung schließen Logik-Apps keine Workflow-Metadatenheader in ausgehenden Anforderungen ein."
+    }
+  ],
+  "mlU+AC": [
+    {
+      "type": 0,
+      "value": "Verbindungen"
+    }
+  ],
+  "mvrlkP": [
+    {
+      "type": 0,
+      "value": "Geben Sie das Kennwort in Nur-Text-Form oder als sicheren Parameter ein."
+    }
+  ],
+  "mvu5xN": [
+    {
+      "type": 0,
+      "value": "Wert des Felds „"
+    },
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": "“"
+    }
+  ],
+  "mwEHSX": [
+    {
+      "type": 0,
+      "value": "Funktion"
+    }
+  ],
+  "mx2IMJ": [
+    {
+      "type": 0,
+      "value": "13"
+    }
+  ],
+  "n+F7e2": [
+    {
+      "type": 0,
+      "value": "15"
+    }
+  ],
+  "n20T2h": [
+    {
+      "type": 0,
+      "value": "7"
+    }
+  ],
+  "n35O/+": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Der Wert, der in eine Gleitkommazahl konvertiert wird."
+    }
+  ],
+  "n42uAO": [
+    {
+      "type": 0,
+      "value": "(UTC-04:00) Santiago"
+    }
+  ],
+  "n4V2Hi": [
+    {
+      "type": 0,
+      "value": "Active Directory OAuth"
+    }
+  ],
+  "n7wxxN": [
+    {
+      "type": 0,
+      "value": "Versuchen Sie es mit weniger spezifischen Schlüsselwörtern."
+    }
+  ],
+  "nCa0KG": [
+    {
+      "type": 0,
+      "value": "Interne Fehler"
+    }
+  ],
+  "nGds/r": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Das Objekt, bei dem geprüft wird, ob es kleiner oder gleich dem Vergleichswert ist."
+    }
+  ],
+  "nHIeXp": [
+    {
+      "type": 0,
+      "value": "Übersprungen"
+    }
+  ],
+  "nHseED": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Hiermit wird angegeben, um wie viele Zeiteinheiten die gewünschte Uhrzeit in der Zukunft liegt."
+    }
+  ],
+  "nNWAAh": [
+    {
+      "type": 0,
+      "value": "Es wurde kein Schema hinzugefügt."
+    }
+  ],
+  "nOWGAV": [
+    {
+      "type": 0,
+      "value": "Endzeit"
+    }
+  ],
+  "nOhve4": [
+    {
+      "type": 0,
+      "value": "Ja/Nein"
+    }
+  ],
+  "nPgYuI": [
+    {
+      "type": 0,
+      "value": "Neuer Parameter"
+    }
+  ],
+  "nRpM02": [
+    {
+      "type": 0,
+      "value": "Benutzerdefiniert"
+    }
+  ],
+  "nSUXtP": [
+    {
+      "type": 0,
+      "value": "Durch diese Änderung werden mehrere Aktionen geändert."
+    }
+  ],
+  "nSan4V": [
+    {
+      "type": 0,
+      "value": "Zurücksetzen"
+    }
+  ],
+  "nTA155": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Der Name der zu entfernenden Eigenschaft."
+    }
+  ],
+  "nVDG00": [
+    {
+      "type": 0,
+      "value": "(UTC+14:00) Kiritimati-Insel"
+    }
+  ],
+  "nZ4nLn": [
+    {
+      "type": 0,
+      "value": "Workflowheader unterdrücken"
+    }
+  ],
+  "ncW1Sw": [
+    {
+      "type": 1,
+      "value": "operationName"
+    },
+    {
+      "type": 0,
+      "value": "-Vorgang, "
+    },
+    {
+      "type": 1,
+      "value": "connectorName"
+    },
+    {
+      "type": 0,
+      "value": "-Connector"
+    }
+  ],
+  "ngsC44": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Das Objekt, bei dem geprüft wird, ob es kleiner als das Vergleichsobjekt ist."
+    }
+  ],
+  "njGstq": [
+    {
+      "type": 0,
+      "value": "(UTC+05:45) Kathmandu"
+    }
+  ],
+  "nkk1mu": [
+    {
+      "type": 0,
+      "value": "Fügt einem übergebenen Zeichenfolgen-Zeitstempel eine ganze Zahl von Minuten hinzu."
+    }
+  ],
+  "nmFupX": [
+    {
+      "type": 0,
+      "value": "Timeout"
+    }
+  ],
+  "no/SMg": [
+    {
+      "type": 0,
+      "value": "(UTC+10:00) Brisbane"
+    }
+  ],
+  "nwLd4b": [
+    {
+      "type": 0,
+      "value": "Dropdown zum Auswählen des Dateipfads"
+    }
+  ],
+  "nx25nq": [
+    {
+      "type": 0,
+      "value": "19"
+    }
+  ],
+  "ny75Ly": [
+    {
+      "type": 0,
+      "value": "Geben Sie einen Standardwert für den Parameter ein."
+    }
+  ],
+  "o/0SEj": [
+    {
+      "type": 0,
+      "value": "Gibt das letzte Element im übergebenen Array oder in der übergebenen Zeichenfolge zurück."
+    }
+  ],
+  "o/FgET": [
+    {
+      "type": 0,
+      "value": "Die Funktion wurde aus dem aktuellen Speicherort entfernt und ist derzeit an anderer Stelle vorhanden."
+    }
+  ],
+  "o14STH": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Der XML-Code, in dem der XPath-Ausdruck ausgewertet werden soll."
+    }
+  ],
+  "o1HOyf": [
+    {
+      "type": 1,
+      "value": "current_page"
+    },
+    {
+      "type": 0,
+      "value": " von "
+    },
+    {
+      "type": 1,
+      "value": "max_page"
+    }
+  ],
+  "o3SfI4": [
+    {
+      "type": 0,
+      "value": "An Fenstergröße anpassen"
+    }
+  ],
+  "o5fYVy": [
+    {
+      "type": 0,
+      "value": "Beschreiben Sie diesen Workflow."
+    }
+  ],
+  "o7bd1o": [
+    {
+      "type": 0,
+      "value": "(UTC+03:30) Teheran"
+    }
+  ],
+  "o8ohVV": [
+    {
+      "type": 0,
+      "value": "Schema-ID"
+    }
+  ],
+  "oAFcW6": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Der dataURI, der in die Binärdarstellung decodiert werden soll."
+    }
+  ],
+  "oDHXKh": [
+    {
+      "type": 0,
+      "value": "Element"
+    }
+  ],
+  "oLtwMw": [
+    {
+      "type": 0,
+      "value": "Inhaltsübertragung"
+    }
+  ],
+  "oMphsh": [
+    {
+      "type": 0,
+      "value": "Einstellungen"
+    }
+  ],
+  "oO12r6": [
+    {
+      "type": 0,
+      "value": "(UTC-08:00) Baja California"
+    }
+  ],
+  "oQjIWf": [
+    {
+      "type": 0,
+      "value": "Fehler"
+    }
+  ],
+  "oR2x4N": [
+    {
+      "type": 0,
+      "value": "Ungültiger Integerwert"
+    }
+  ],
+  "oRxmXb": [
+    {
+      "type": 0,
+      "value": "Trigger kopieren"
+    }
+  ],
+  "oTBkbU": [
+    {
+      "type": 0,
+      "value": "Ausgabe"
+    }
+  ],
+  "oV0xQ9": [
+    {
+      "type": 0,
+      "value": "Geben Sie den Ausführungsbezeichner ein, um die Ausführung zu öffnen."
+    }
+  ],
+  "oVVPst": [
+    {
+      "type": 0,
+      "value": "Möchten Sie alle nicht gespeicherten Änderungen verwerfen?"
+    }
+  ],
+  "oWGaw9": [
+    {
+      "type": 0,
+      "value": "Weniger anzeigen"
+    }
+  ],
+  "oZMhX/": [
+    {
+      "type": 0,
+      "value": "Erweitern"
+    }
+  ],
+  "odQ554": [
+    {
+      "type": 0,
+      "value": "Antworttext"
+    }
+  ],
+  "onXUu0": [
+    {
+      "type": 0,
+      "value": "Notiz hinzufügen"
+    }
+  ],
+  "osKNnl": [
+    {
+      "type": 0,
+      "value": "Geben Sie eine gültige Double-Zahl ein."
+    }
+  ],
+  "ox2Ou7": [
+    {
+      "type": 0,
+      "value": "Gültigen JSON-Wert eingeben"
+    }
+  ],
+  "oxXV4+": [
+    {
+      "type": 0,
+      "value": "Gibt das erste Objekt in den übergebenen Argumenten zurück, das nicht NULL ist."
+    }
+  ],
+  "p/0r2N": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Der Schlüsselname des zurückzugebenden Formulardatenwerts."
+    }
+  ],
+  "p16/4S": [
+    {
+      "type": 0,
+      "value": "Header"
+    }
+  ],
+  "p1IEXb": [
+    {
+      "type": 0,
+      "value": "Geben Sie die Daten aus dem vorherigen Schritt ein. Sie können auch Daten hinzufügen, indem Sie das Zeichen \"/\" eingeben."
+    }
+  ],
+  "p1Qtm5": [
+    {
+      "type": 0,
+      "value": "In-App"
+    }
+  ],
+  "p5ZID0": [
+    {
+      "type": 0,
+      "value": "(UTC+03:00) Kuwait, Riad"
+    }
+  ],
+  "pC2nr2": [
+    {
+      "type": 0,
+      "value": "Schlüssel eingeben"
+    }
+  ],
+  "pH2uak": [
+    {
+      "type": 0,
+      "value": "Reduzieren"
+    }
+  ],
+  "pIczsS": [
+    {
+      "type": 0,
+      "value": "Endzeit"
+    }
+  ],
+  "pMms92": [
+    {
+      "type": 0,
+      "value": "Dynamischen Inhalt einfügen"
+    }
+  ],
+  "pOTcUO": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Die Werte, die zu einem Array gruppiert werden sollen."
+    }
+  ],
+  "pOVDll": [
+    {
+      "type": 0,
+      "value": "Geben Sie eine gültige ganze Zahl ein."
+    }
+  ],
+  "pXmFGf": [
+    {
+      "type": 0,
+      "value": "Eingabe in einen XML-Wert konvertieren"
+    }
+  ],
+  "pYNzbj": [
+    {
+      "type": 0,
+      "value": "Pfad"
+    }
+  ],
+  "pYtSyE": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Die Zahl, durch die der Dividend zu teilen ist. Nach der Division wird der Rest verwendet."
+    }
+  ],
+  "pc0FCg": [
+    {
+      "type": 0,
+      "value": "Schaltfläche zum Hinzufügen dynamischer Inhalte, wenn TokenPicker ausgeblendet ist"
+    }
+  ],
+  "pcGqoB": [
+    {
+      "type": 0,
+      "value": "Fehler beim Laden der Ausgaben"
+    }
+  ],
+  "pcuZKB": [
+    {
+      "type": 0,
+      "value": "Gibt ein einzelnes Array oder Objekt zurück, das gemeinsame Elemente zwischen übergebenen Arrays oder Objekten aufweist. Bei den Parametern für die Funktion kann es sich entweder um einen Satz von Objekten oder um einen Satz von Arrays handeln (keine Mischung aus beidem). Wenn zwei Objekte mit dem gleichen Namen vorhanden sind, wird das letzte Objekt mit diesem Namen in das endgültige Objekt aufgenommen."
+    }
+  ],
+  "piaRy6": [
+    {
+      "type": 0,
+      "value": "Trigger"
+    }
+  ],
+  "pozypE": [
+    {
+      "type": 0,
+      "value": "Entfernt führende und nachfolgende Leerzeichen aus einer Zeichenfolge."
+    }
+  ],
+  "pr9GwA": [
+    {
+      "type": 0,
+      "value": "Aktualisieren"
+    }
+  ],
+  "ptkf0D": [
+    {
+      "type": 0,
+      "value": "Sicherheit"
+    }
+  ],
+  "q+ZZjX": [
+    {
+      "type": 0,
+      "value": "Wiederholungsverlauf"
+    }
+  ],
+  "q/+Uex": [
+    {
+      "type": 0,
+      "value": "Gibt einen XML-Knoten, einen Knotensatz oder Wert in JSON-Schreibweise aus dem angegebenen XPath-Ausdruck zurück."
+    }
+  ],
+  "q/DRBW": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Die Zeichenfolge, aus der die UTF-8-Länge berechnet werden soll."
+    }
+  ],
+  "q1gfIs": [
+    {
+      "type": 0,
+      "value": "Trigger hinzufügen"
+    }
+  ],
+  "q2OCEx": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Der Wert, der der Eigenschaft zugewiesen werden soll."
+    }
+  ],
+  "q2w8Sk": [
+    {
+      "type": 0,
+      "value": "Parameter in Zeichenfolge konvertieren"
+    }
+  ],
+  "q4ChjK": [
+    {
+      "type": 0,
+      "value": "Workflow mit Trigger „manuell“ auswählen"
+    }
+  ],
+  "q5TkqE": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Der zurückzugebende Wert, falls der Ausdruck „FALSCH“ ist."
+    }
+  ],
+  "q87X20": [
+    {
+      "type": 0,
+      "value": "Fügt einem übergebenen Zeichenfolgen-Zeitstempel eine ganze Zahl von Sekunden hinzu."
+    }
+  ],
+  "qAlTD5": [
+    {
+      "type": 0,
+      "value": "Nicht unterstütztes Referenzformat für Manifestverbindung: „"
+    },
+    {
+      "type": 1,
+      "value": "referenceKeyFormat"
+    },
+    {
+      "type": 0,
+      "value": "“"
+    }
+  ],
+  "qBNM3e": [
+    {
+      "type": 0,
+      "value": "Herstellen einer Verbindung mit Apps und Diensten"
+    }
+  ],
+  "qBkxGU": [
+    {
+      "type": 0,
+      "value": "Text unterstrichen formatieren. Verknüpfung: ⌘U"
+    }
+  ],
+  "qGfwxW": [
+    {
+      "type": 0,
+      "value": "Verwaltete Identität"
+    }
+  ],
+  "qJpnIL": [
+    {
+      "type": 0,
+      "value": "Prüft, ob die Zeichenfolge mit einem Wert endet (Groß-/Kleinschreibung nicht relevant, invariante Kultur)."
+    }
+  ],
+  "qSejoi": [
+    {
+      "type": 0,
+      "value": "Gibt TRUE zurück, wenn das erste Argument kleiner als das zweite oder gleich ist."
+    }
+  ],
+  "qSt0Sb": [
+    {
+      "type": 0,
+      "value": "Erforderlich"
+    }
+  ],
+  "qUMXpq": [
+    {
+      "type": 0,
+      "value": "Swagger-Endpunkt"
+    }
+  ],
+  "qUWBUX": [
+    {
+      "offset": 0,
+      "options": {
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " Tag"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " Tage"
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "days"
+    }
+  ],
+  "qVgQfW": [
+    {
+      "type": 0,
+      "value": "Suchen"
+    }
+  ],
+  "qc5S69": [
+    {
+      "type": 0,
+      "value": "Gibt die Anzahl von Elementen in einem Array oder einer Zeichenfolge zurück."
+    }
+  ],
+  "qdUeUk": [
+    {
+      "type": 0,
+      "value": "Zum Erweitern klicken"
+    }
+  ],
+  "qiIs4V": [
+    {
+      "type": 0,
+      "value": "Beispiel: "
+    },
+    {
+      "type": 1,
+      "value": "example"
+    }
+  ],
+  "qij+Vf": [
+    {
+      "type": 0,
+      "value": "In den Standardansichtsmodus wechseln"
+    }
+  ],
+  "qnI4Y1": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Der Wert, der in eine ganze Zahl konvertiert wird."
+    }
+  ],
+  "qr1lLG": [
+    {
+      "type": 0,
+      "value": "Die Funktion „"
+    },
+    {
+      "type": 1,
+      "value": "nodeName"
+    },
+    {
+      "type": 0,
+      "value": "“ weist eine Eingabe mit einem nicht übereinstimmenden Typ auf."
+    }
+  ],
+  "qrxi0L": [
+    {
+      "type": 0,
+      "value": "\"Asynchrone Antwort\" ermöglicht es einer Logik-App, durch die Antwort \"202 (Zulässig)\" darauf hinzuweisen, dass die Anforderung zur Verarbeitung akzeptiert wurde. Es wird ein Adressheader bereitgestellt, um den Endzustand abzurufen. "
+    }
+  ],
+  "qy5WqY": [
+    {
+      "type": 0,
+      "value": "Vorheriger Flowvorschlag"
+    }
+  ],
+  "qzaoRR": [
+    {
+      "type": 0,
+      "value": "Schränken Sie die maximale Dauer zwischen Wiederholungen und asynchronen Antworten für diese Aktion ein. Hinweis: Dadurch wird das Anforderungstimeout einer einzelnen Anforderung nicht geändert."
+    }
+  ],
+  "r/n6/9": [
+    {
+      "type": 0,
+      "value": "Wert eingeben"
+    }
+  ],
+  "r43nMc": [
+    {
+      "type": 0,
+      "value": "Rückgängig machen"
+    }
+  ],
+  "r4zp7m": [
+    {
+      "type": 0,
+      "value": "Erweitert"
+    }
+  ],
+  "r7vZ5a": [
+    {
+      "type": 0,
+      "value": "Mindestintervall"
+    }
+  ],
+  "r8aZXs": [
+    {
+      "type": 0,
+      "value": "Ermöglicht einem Ausdruck das Ableiten seines Werts aus anderen JSON-Name/Wert-Paaren oder aus der Ausgabe der Laufzeitaktion."
+    }
+  ],
+  "r9SVE4": [
+    {
+      "type": 0,
+      "value": "Int."
+    }
+  ],
+  "rAwCdh": [
+    {
+      "type": 0,
+      "value": "Über lokales Datengateway verbinden"
+    }
+  ],
+  "rAyuzv": [
+    {
+      "type": 0,
+      "value": "Nein"
+    }
+  ],
+  "rCl53e": [
+    {
+      "type": 0,
+      "value": "Kartentitel"
+    }
+  ],
+  "rDDPpJ": [
+    {
+      "type": 0,
+      "value": "Geheimnis"
+    }
+  ],
+  "rNi5Y3": [
+    {
+      "type": 0,
+      "value": "Aktivieren Sie dieses Kontrollkästchen, wenn Sie eine lokale Verbindung einrichten."
+    }
+  ],
+  "rSIBjh": [
+    {
+      "type": 0,
+      "value": "Geben Sie einen Wert für den Parameter ein."
+    }
+  ],
+  "rSa1Id": [
+    {
+      "type": 0,
+      "value": "In "
+    },
+    {
+      "type": 1,
+      "value": "filePath"
+    },
+    {
+      "type": 0,
+      "value": " wurden keine Dateien gefunden. Speichern Sie XSLT im angegebenen Pfad, um diese Funktion zu verwenden."
+    }
+  ],
+  "raBiud": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Entweder ein Array von Werten zum Auffinden des höchsten Werts oder der erste Wert aus einem Satz."
+    }
+  ],
+  "rcz4w4": [
+    {
+      "type": 0,
+      "value": "Gibt eine URI-codierte Darstellung eines Werts zurück."
+    }
+  ],
+  "rd6fai": [
+    {
+      "type": 0,
+      "value": "Verwenden Sie die NACH-LINKS- und NACH-RECHTS-TASTEN, um zwischen Befehlen zu navigieren."
+    }
+  ],
+  "rh5g4p": [
+    {
+      "type": 0,
+      "value": "Ist erfolgreich"
+    }
+  ],
+  "rsdJcV": [
+    {
+      "type": 0,
+      "value": "Wählen Sie Quellschemaelemente aus, um Ihre Zuordnung zu erstellen."
+    }
+  ],
+  "rv0Pn+": [
+    {
+      "type": 0,
+      "value": "Neu hinzufügen"
+    }
+  ],
+  "rxIJfD": [
+    {
+      "type": 0,
+      "value": "(UTC+09:30) Darwin"
+    }
+  ],
+  "rxMXmZ": [
+    {
+      "type": 0,
+      "value": "(UTC+04:00) Port Louis"
+    }
+  ],
+  "s+4LEa": [
+    {
+      "type": 0,
+      "value": "Ordner öffnen"
+    }
+  ],
+  "s5RV9B": [
+    {
+      "type": 0,
+      "value": "Gibt die Jahrestagkomponente eines Zeichenfolgen-Zeitstempels zurück."
+    }
+  ],
+  "s7nGyC": [
+    {
+      "type": 0,
+      "value": "Löschen"
+    }
+  ],
+  "sBBLuh": [
+    {
+      "type": 0,
+      "value": "Schließen Sie die Einrichtung der folgenden Aktionen ab, um diesen Workflow zu speichern:"
+    }
+  ],
+  "sDkAVZ": [
+    {
+      "type": 0,
+      "value": "Gibt ein Array von Werten zurück, das dem Schlüsselnamen aus der form-data- oder form-encoded-Triggerausgabe entspricht."
+    }
+  ],
+  "sEqLTV": [
+    {
+      "type": 0,
+      "value": "Registerkarte \"Testen\""
+    }
+  ],
+  "sFbnCs": [
+    {
+      "type": 0,
+      "value": "(UTC-05:00) Chetumal"
+    }
+  ],
+  "sFwHQc": [
+    {
+      "type": 0,
+      "value": "Erstellen einer Verbindung abbrechen"
+    }
+  ],
+  "sQ2vRs": [
+    {
+      "type": 0,
+      "value": "Fall hinzufügen"
+    }
+  ],
+  "sRpETS": [
+    {
+      "type": 0,
+      "value": "Warnung: Der benutzerdefinierte Wert stimmt nicht mit dem Typ des Schemaknotens überein."
+    }
+  ],
+  "sVQe34": [
+    {
+      "type": 0,
+      "value": "Geben Sie Parameter zum Testen der Ausgabe an."
+    }
+  ],
+  "sW47JR": [
+    {
+      "type": 0,
+      "value": "Grad an Parallelität"
+    }
+  ],
+  "sYQDN+": [
+    {
+      "type": 0,
+      "value": "Formatierungsoptionen für die Schriftfamilie"
+    }
+  ],
+  "sZ0G/Z": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Hiermit wird eine Zeichenfolge mit der im Intervall festgelegten Zeiteinheit angegeben, die hinzugefügt werden soll."
+    }
+  ],
+  "sZHTQV": [
+    {
+      "type": 0,
+      "value": "(UTC+09:00) Chita"
+    }
+  ],
+  "sbPZ9S": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Die Sammlung, bei der geprüft werden soll, ob sie leer ist."
+    }
+  ],
+  "sfJTHV": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Die Zahl, die vom Minuenden abgezogen werden soll."
+    }
+  ],
+  "shF9tZ": [
+    {
+      "type": 0,
+      "value": "Schlüssel"
+    }
+  ],
+  "snJFUi": [
+    {
+      "type": 0,
+      "value": "STRG+C"
+    }
+  ],
+  "soqP+Z": [
+    {
+      "type": 0,
+      "value": "Gibt TRUE zurück, wenn einer der Parameter TRUE ist."
+    }
+  ],
+  "srMbm9": [
+    {
+      "type": 0,
+      "value": "Abbrechen"
+    }
+  ],
+  "srpZD2": [
+    {
+      "type": 0,
+      "value": "Client-ID"
+    }
+  ],
+  "ss5JPH": [
+    {
+      "type": 0,
+      "value": "Neuer Parameter"
+    }
+  ],
+  "sv+IcU": [
+    {
+      "type": 0,
+      "value": "Die Datenzuordnungsdefinition kann nicht generiert werden."
+    }
+  ],
+  "svaqnp": [
+    {
+      "type": 0,
+      "value": "Fehler sollte nicht angegeben werden, wenn der Status „Erfolgreich“ lautet"
+    }
+  ],
+  "sw6EXK": [
+    {
+      "type": 0,
+      "value": "Status"
+    }
+  ],
+  "syiNc+": [
+    {
+      "type": 0,
+      "value": "Durchsuchen"
+    }
+  ],
+  "sys5gu": [
+    {
+      "type": 0,
+      "value": "Clientzertifikat"
+    }
+  ],
+  "sytRna": [
+    {
+      "type": 0,
+      "value": "Fehler beim Abrufen dynamischer Eingaben. Fehlerdetails: '"
+    },
+    {
+      "type": 1,
+      "value": "message"
+    },
+    {
+      "type": 0,
+      "value": "'."
+    }
+  ],
+  "t+XCkg": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Hiermit wird eine Zeichenfolge angegeben, die den Namen der Zielzeitzone enthält. Weitere Informationen finden Sie unter https://msdn.microsoft.com/de-de/library/gg154758.aspx."
+    }
+  ],
+  "t/RPwA": [
+    {
+      "type": 0,
+      "value": "Ergebnisse gefunden"
+    }
+  ],
+  "t9RwOi": [
+    {
+      "type": 0,
+      "value": "Der Ausdruck ist ungültig."
+    }
+  ],
+  "tAbbH8": [
+    {
+      "type": 0,
+      "value": "Zu viele Eingaben zugewiesen"
+    }
+  ],
+  "tAeKNh": [
+    {
+      "type": 0,
+      "value": "Einfach"
+    }
+  ],
+  "tE7Zam": [
+    {
+      "type": 0,
+      "value": "Gibt die URL zum Aufrufen des Triggers oder der Aktion zurück."
+    }
+  ],
+  "tH2pT1": [
+    {
+      "type": 0,
+      "value": "Zurück zur Suche"
+    }
+  ],
+  "tImHz/": [
+    {
+      "type": 1,
+      "value": "days"
+    },
+    {
+      "type": 0,
+      "value": "d "
+    },
+    {
+      "type": 1,
+      "value": "hours"
+    },
+    {
+      "type": 0,
+      "value": "h"
+    }
+  ],
+  "tLZ9Sh": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Der Index des abzurufenden Teils."
+    }
+  ],
+  "tMRPnG": [
+    {
+      "type": 0,
+      "value": "Diese Funktion stellt Ihnen Details für den Workflow selbst zur Laufzeit bereit."
+    }
+  ],
+  "tMdcE1": [
+    {
+      "type": 0,
+      "value": "Ungültige Verbindung. Aktualisieren Sie Ihre Verbindung, um die vollständigen Details zu laden."
+    }
+  ],
+  "tNoZx2": [
+    {
+      "type": 0,
+      "value": "Typ"
+    }
+  ],
+  "tTIsTX": [
+    {
+      "type": 0,
+      "value": "Diesen Workflow testen"
+    }
+  ],
+  "tUCptx": [
+    {
+      "type": 0,
+      "value": "Link einfügen"
+    }
+  ],
+  "tUU4ak": [
+    {
+      "type": 0,
+      "value": "(UTC+11:00) Tschokurdach"
+    }
+  ],
+  "tUYXRA": [
+    {
+      "type": 0,
+      "value": "Beispiel: 2017-03-24T15:00:00Z"
+    }
+  ],
+  "tUlRzr": [
+    {
+      "type": 0,
+      "value": "Basic"
+    }
+  ],
+  "tWV2mC": [
+    {
+      "type": 0,
+      "value": "jede Stunde um "
+    },
+    {
+      "type": 1,
+      "value": "times"
+    }
+  ],
+  "tZIlCA": [
+    {
+      "type": 0,
+      "value": "(UTC-08:00) Pacific Time (USA und Kanada)"
+    }
+  ],
+  "tZj2Xn": [
+    {
+      "type": 0,
+      "value": "Gibt TRUE zurück, wenn das erste Argument größer als das zweite ist."
+    }
+  ],
+  "taPCmY": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Die Anzahl der zu addierenden Stunden. Kann negativ sein, um Stunden zu subtrahieren."
+    }
+  ],
+  "tarDYT": [
+    {
+      "type": 0,
+      "value": "Gibt „WAHR“ zurück, wenn das erste Argument kleiner als das zweite ist."
+    }
+  ],
+  "td5//c": [
+    {
+      "type": 0,
+      "value": "Strukturknoten reduzieren"
+    }
+  ],
+  "ti5TEd": [
+    {
+      "type": 0,
+      "value": "Abbrechen"
+    }
+  ],
+  "tqqUHX": [
+    {
+      "type": 0,
+      "value": "(UTC+12:45) Chatham-Inseln"
+    }
+  ],
+  "tsmuoF": [
+    {
+      "type": 0,
+      "value": "Anzeigename"
+    }
+  ],
+  "tu4TTM": [
+    {
+      "type": 0,
+      "value": "Vorschau"
+    }
+  ],
+  "u81zB9": [
+    {
+      "type": 0,
+      "value": "(GMT-09:00) Koordinierte Weltzeit-09"
+    }
+  ],
+  "u9tr3k": [
+    {
+      "type": 0,
+      "value": "Wählen Sie ein Element aus, um mit der Konfiguration zu beginnen."
+    }
+  ],
+  "uDI1Um": [
+    {
+      "type": 0,
+      "value": "Statuscode"
+    }
+  ],
+  "uE0A0s": [
+    {
+      "type": 0,
+      "value": "(UTC) Koordinierte Weltzeit"
+    }
+  ],
+  "uIurld": [
+    {
+      "type": 0,
+      "value": "Speichern"
+    }
+  ],
+  "uM1i27": [
+    {
+      "type": 0,
+      "value": "Wiederholungsanzahl zwischen 1 und 90 angeben"
+    }
+  ],
+  "uN4zFU": [
+    {
+      "type": 0,
+      "value": "OK"
+    }
+  ],
+  "uNHpGB": [
+    {
+      "type": 0,
+      "value": "(UTC+07:00) Bangkok, Hanoi, Jakarta"
+    }
+  ],
+  "uOWkHS": [
+    {
+      "type": 0,
+      "value": "Fehler beim Abrufen dynamischer Ausgaben. Daher sind die Ausgaben dieses Vorgangs in nachfolgenden Aktionen möglicherweise nicht sichtbar. Fehlerdetails: "
+    },
+    {
+      "type": 1,
+      "value": "message"
+    },
+    {
+      "type": 0,
+      "value": "."
+    }
+  ],
+  "uR9WuI": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Die auszuwertenden Sammlungen. Ein Objekt, das sich in einer Sammlung befindet, wird auch im Ergebnis angezeigt."
+    }
+  ],
+  "uTnqzQ": [
+    {
+      "type": 0,
+      "value": "Mehr anzeigen ("
+    },
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": ")"
+    }
+  ],
+  "uUlBZ8": [
+    {
+      "type": 0,
+      "value": "Fügt einem übergebenen Zeichenfolgen-Zeitstempel eine ganze Zahl von Stunden hinzu."
+    }
+  ],
+  "uWf/I5": [
+    {
+      "type": 0,
+      "value": "Anzeigen"
+    }
+  ],
+  "uZpzqY": [
+    {
+      "type": 0,
+      "value": "Leider hat Copilot die Kapazität erreicht und ist vorübergehend nicht verfügbar. Versuchen Sie es später noch mal."
+    }
+  ],
+  "uanMWm": [
+    {
+      "type": 0,
+      "value": "Erfolgreich"
+    }
+  ],
+  "uc/PoD": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Hiermit wird angegeben, um wie viele Zeiteinheiten die gewünschte Uhrzeit in der Vergangenheit liegt."
+    }
+  ],
+  "uc3ytS": [
+    {
+      "type": 0,
+      "value": "Laufzeit auswählen"
+    }
+  ],
+  "uczA5c": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Die Zeichenfolge, die möglicherweise den Wert enthält."
+    }
+  ],
+  "uesaee": [
+    {
+      "type": 0,
+      "value": "Ausdruck"
+    }
+  ],
+  "uh/+ZN": [
+    {
+      "type": 0,
+      "value": "(UTC-03:00) Grönland"
+    }
+  ],
+  "ui3KuP": [
+    {
+      "type": 0,
+      "value": "Vorgangsfehler"
+    }
+  ],
+  "ui7GCl": [
+    {
+      "type": 0,
+      "value": "16"
+    }
+  ],
+  "unMG8m": [
+    {
+      "type": 0,
+      "value": "Connectortyp"
+    }
+  ],
+  "unMaeV": [
+    {
+      "type": 0,
+      "value": "Variablen"
+    }
+  ],
+  "ur3P27": [
+    {
+      "type": 0,
+      "value": "Verwenden Sie eine Konvertierungsfunktion, z. B.: "
+    },
+    {
+      "type": 1,
+      "value": "conversionFunctions"
+    }
+  ],
+  "urAHv1": [
+    {
+      "type": 0,
+      "value": "4"
+    }
+  ],
+  "usCZ7R": [
+    {
+      "type": 0,
+      "value": "(UTC+11:00) Magadan"
+    }
+  ],
+  "ut5Med": [
+    {
+      "type": 0,
+      "value": "Standardwert"
+    }
+  ],
+  "uwuGU0": [
+    {
+      "type": 0,
+      "value": "(UTC+06:30) Yangon (Rangun)"
+    }
+  ],
+  "uxKRO/": [
+    {
+      "type": 0,
+      "value": "Parameter"
+    }
+  ],
+  "uxQ143": [
+    {
+      "type": 0,
+      "value": "Stellen Sie Fragen im Zusammenhang mit Ihrem Workflow oder Logic Apps."
+    }
+  ],
+  "uxt1xW": [
+    {
+      "type": 0,
+      "value": "Parameter „"
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "“ und seinen Wert entfernen"
+    }
+  ],
+  "uzsleE": [
+    {
+      "type": 0,
+      "value": "Erstellt ein Array aus den Parametern."
+    }
+  ],
+  "v+keTP": [
+    {
+      "type": 0,
+      "value": "Triggerdatum"
+    }
+  ],
+  "v39HKj": [
+    {
+      "type": 0,
+      "value": "Generiert eine global eindeutige Zeichenfolge (GUID)."
+    }
+  ],
+  "v7ipqH": [
+    {
+      "type": 0,
+      "value": "Jede Aktion muss mindestens eine Ausführung nach der Konfiguration aufweisen"
+    }
+  ],
+  "vDYFIF": [
+    {
+      "type": 0,
+      "value": "Gibt die UTF-16-Länge einer Eingabezeichenfolge in Bytes zurück."
+    }
+  ],
+  "vEBhDX": [
+    {
+      "type": 0,
+      "value": "Gibt den letzten Index eines Werts innerhalb einer Zeichenfolge zurück (Groß-/Kleinschreibung nicht relevant, invariante Kultur)."
+    }
+  ],
+  "vF+gWH": [
+    {
+      "type": 0,
+      "value": "Erläutern, was dieser Flow bewirkt"
+    }
+  ],
+  "vLereV": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Die Sammlung, aus der die ersten Count-Objekte entnommen werden sollen."
+    }
+  ],
+  "vQcQkU": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Der Wert, mit dem die Zeichenfolge möglicherweise endet."
+    }
+  ],
+  "vSlNPe": [
+    {
+      "type": 0,
+      "value": "Löschen"
+    }
+  ],
+  "vT0DCP": [
+    {
+      "type": 0,
+      "value": "Ausgaben"
+    }
+  ],
+  "vX9WYS": [
+    {
+      "type": 0,
+      "value": "Benutzergruppe"
+    }
+  ],
+  "va40BJ": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Der Name der Aktion, deren Ausgaben Sie erhalten möchten."
+    }
+  ],
+  "vdKLiR": [
+    {
+      "type": 0,
+      "value": "Anforderungseinstellungen"
+    }
+  ],
+  "vdtKjT": [
+    {
+      "type": 0,
+      "value": "Zum Erstellen und Verwenden einer API-Verbindung muss eine verwaltete Identität für diese Logik-App konfiguriert sein."
+    }
+  ],
+  "viee6C": [
+    {
+      "type": 0,
+      "value": "Dauer"
+    }
+  ],
+  "vlDynP": [
+    {
+      "type": 0,
+      "value": "Verwerfen"
+    }
+  ],
+  "vmlhVB": [
+    {
+      "type": 0,
+      "value": "Schließen Sie die Einrichtung der folgenden Aktion ab, um diesen Workflow bereit zu stellen:"
+    }
+  ],
+  "vr70Gn": [
+    {
+      "type": 0,
+      "value": "Erstellen Sie eine Verbindung für "
+    },
+    {
+      "type": 1,
+      "value": "connectorName"
+    },
+    {
+      "type": 0,
+      "value": "."
+    }
+  ],
+  "vrYqUF": [
+    {
+      "type": 0,
+      "value": "Benutzerdefinierten Wert eingeben"
+    }
+  ],
+  "vvSHR8": [
+    {
+      "type": 0,
+      "value": "Zu Element navigieren und untergeordnete Elemente anzeigen"
+    }
+  ],
+  "vwH/XV": [
+    {
+      "type": 0,
+      "value": "Parameter erstellen"
+    }
+  ],
+  "vxOc/M": [
+    {
+      "type": 0,
+      "value": "Dies enthält einen doppelten Wert."
+    }
+  ],
+  "vz2gZC": [
+    {
+      "type": 0,
+      "value": "Workfloweigenschaften"
+    }
+  ],
+  "w0pI5M": [
+    {
+      "type": 0,
+      "value": "Keine Ergebnisse für die angegebenen Filter gefunden"
+    }
+  ],
+  "w16qh+": [
+    {
+      "type": 0,
+      "value": "Abfragen"
+    }
+  ],
+  "w5Hhig": [
+    {
+      "type": 0,
+      "value": "Sonntag"
+    }
+  ],
+  "w8ijDZ": [
+    {
+      "type": 0,
+      "value": "Zuklappen"
+    }
+  ],
+  "wEaGWn": [
+    {
+      "type": 0,
+      "value": "Hiermit wird ein Ganzzahlwert einer angegebenen Zeiteinheit von einem übergebenen Zeichenfolgen-Zeitstempel abgezogen."
+    }
+  ],
+  "wF7C+h": [
+    {
+      "type": 0,
+      "value": "Abbrechen"
+    }
+  ],
+  "wFCkpM": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Entweder ein Array von Werten zum Auffinden des niedrigsten Werts oder der erste Wert aus einem Satz."
+    }
+  ],
+  "wGYmui": [
+    {
+      "type": 0,
+      "value": "Einschließlich dynamischer Inhalte"
+    }
+  ],
+  "wP0/uB": [
+    {
+      "type": 0,
+      "value": "Generieren beenden"
+    }
+  ],
+  "wPlTDB": [
+    {
+      "type": 0,
+      "value": "Vollständiger Pfad"
+    }
+  ],
+  "wQcEXt": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Die Zeichenfolge, die nach Parameter 2 durchsucht und mit Parameter 3 aktualisiert wird, wenn Parameter 2 in Parameter 1 gefunden wird."
+    }
+  ],
+  "wQsEwc": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Die Länge der Teilzeichenfolge."
+    }
+  ],
+  "wV3Lmd": [
+    {
+      "type": 0,
+      "value": "Klicken, um Element zu löschen"
+    }
+  ],
+  "wWVQuK": [
+    {
+      "type": 0,
+      "value": "Gibt einen angegebenen Wert basierend darauf zurück, ob der Ausdruck in TRUE oder FALSE ausgewertet wurde."
+    }
+  ],
+  "wXJALc": [
+    {
+      "type": 0,
+      "value": "Menü"
+    }
+  ],
+  "wkiETV": [
+    {
+      "type": 0,
+      "value": "Clientnachverfolgungs-ID"
+    }
+  ],
+  "wkvUUA": [
+    {
+      "type": 0,
+      "value": "Eingabetypkonflikt"
+    }
+  ],
+  "wl7X0l": [
+    {
+      "type": 0,
+      "value": "Minikarte ausblenden"
+    }
+  ],
+  "wmDUGV": [
+    {
+      "type": 0,
+      "value": "Hiermit wird ein aus einer Quellzeitzone übergebener Zeichenfolgen-Zeitstempel in einen UTC-Wert konvertiert."
+    }
+  ],
+  "wmw/ai": [
+    {
+      "type": 0,
+      "value": "Gibt ein einzelnes Array oder ein Objekt mit allen Elementen zurück, die entweder in dem Array oder in dem Objekt enthalten sind, das an diese Funktion übergeben wurde."
+    }
+  ],
+  "woJQhv": [
+    {
+      "type": 0,
+      "value": "Rückruf-URL:"
+    }
+  ],
+  "wtj07J": [
+    {
+      "type": 0,
+      "value": "(UTC-09:30) Marquesasinseln"
+    }
+  ],
+  "ww1mN/": [
+    {
+      "type": 0,
+      "value": "Canvas"
+    }
+  ],
+  "wxaQwD": [
+    {
+      "type": 0,
+      "value": "(UTC+04:30) Kabul"
+    }
+  ],
+  "wzEneQ": [
+    {
+      "type": 0,
+      "value": "Schließen"
+    }
+  ],
+  "x+6ccf": [
+    {
+      "type": 0,
+      "value": "Mittwoch"
+    }
+  ],
+  "x0or2o": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Die Sammlung, für die die Länge abgerufen werden soll."
+    }
+  ],
+  "x10E1p": [
+    {
+      "type": 0,
+      "value": "Statuscode"
+    }
+  ],
+  "x2JTW5": [
+    {
+      "type": 0,
+      "value": "Gibt ein Objekt zurück, bei dem die angegebene Eigenschaft entfernt wurde."
+    }
+  ],
+  "x3dWOL": [
+    {
+      "type": 0,
+      "value": "(UTC+01:00) Amsterdam, Berlin, Bern, Rom, Stockholm, Wien"
+    }
+  ],
+  "x7IYBg": [
+    {
+      "type": 0,
+      "value": "Abgebrochen"
+    }
+  ],
+  "x8kTAX": [
+    {
+      "type": 0,
+      "value": "Notiz löschen"
+    }
+  ],
+  "xC1zg3": [
+    {
+      "type": 0,
+      "value": "Schemas"
+    }
+  ],
+  "xFQXAI": [
+    {
+      "type": 0,
+      "value": "STRG+Z"
+    }
+  ],
+  "xJ6vjn": [
+    {
+      "type": 0,
+      "value": "Gibt eine Zeichenfolgendarstellung einer URI-codierten Zeichenfolge zurück."
+    }
+  ],
+  "xJQeeC": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Istanbul"
+    }
+  ],
+  "xLF2Zr": [
+    {
+      "type": 0,
+      "value": "Zeile hinzufügen"
+    }
+  ],
+  "xN3GEX": [
+    {
+      "type": 0,
+      "value": "Geben Sie das Kennwort in Nur-Text-Form oder als sicheren Parameter ein."
+    }
+  ],
+  "xQQ9ko": [
+    {
+      "type": 0,
+      "value": "Schwellenwert"
+    }
+  ],
+  "xSMbKr": [
+    {
+      "type": 0,
+      "value": "Unformatierte Eingaben anzeigen"
+    }
+  ],
+  "xSSfKC": [
+    {
+      "type": 0,
+      "value": "(UTC-03:00) St. Pierre und Miquelon"
+    }
+  ],
+  "xV/oyK": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Der Name der neuen oder vorhandenen Eigenschaft."
+    }
+  ],
+  "xV4Koe": [
+    {
+      "type": 0,
+      "value": "Code"
+    }
+  ],
+  "xXVu2y": [
+    {
+      "type": 0,
+      "value": "Zum Textmodus wechseln"
+    }
+  ],
+  "xYyPR8": [
+    {
+      "type": 0,
+      "value": "Gibt den Pfad aus einem URI zurück. Falls der Pfad nicht angegeben ist, wird \"/\" zurückgegeben."
+    }
+  ],
+  "xi2tn6": [
+    {
+      "type": 0,
+      "value": "Parameter"
+    }
+  ],
+  "xt5TeT": [
+    {
+      "type": 0,
+      "value": "Parameter werden workflowübergreifend in einer Logik-App freigegeben."
+    }
+  ],
+  "xvav7+": [
+    {
+      "type": 0,
+      "value": "Verbunden mit"
+    }
+  ],
+  "xwD1VZ": [
+    {
+      "type": 0,
+      "value": "Eingaben werden geladen"
+    }
+  ],
+  "xwEX2/": [
+    {
+      "type": 0,
+      "value": "Wert"
+    }
+  ],
+  "y1e9yw": [
+    {
+      "type": 0,
+      "value": "Anmelden"
+    }
+  ],
+  "y3AZQB": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Das Objekt, das für Gleichheit verglichen werden soll."
+    }
+  ],
+  "y6BcVN": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Die Zeichenfolge, in der die URL-unsicheren Zeichen mit Escapezeichen versehen werden sollen."
+    }
+  ],
+  "yB6PB/": [
+    {
+      "type": 0,
+      "value": "Der Wert enthält Funktionsausdrücke, die nicht aufgelöst werden können. Es werden nur konstante Werte unterstützt"
+    }
+  ],
+  "yBrsFJ": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Der Wert, der in ein Array konvertiert wird."
+    }
+  ],
+  "yF2R//": [
+    {
+      "type": 0,
+      "value": "Gibt eine Teilmenge von Zeichen aus einer Zeichenfolge zurück."
+    }
+  ],
+  "yKOsmK": [
+    {
+      "type": 0,
+      "value": "Gibt ein Array in aufsteigender Reihenfolge zurück."
+    }
+  ],
+  "yNtBUV": [
+    {
+      "type": 0,
+      "value": "Warnung: Der Eingabeknotentyp stimmt nicht mit einem der zulässigen Typen für diese Eingabe überein."
+    }
+  ],
+  "yRDuqj": [
+    {
+      "type": 0,
+      "value": "Alle anzeigen"
+    }
+  ],
+  "yVFIAQ": [
+    {
+      "type": 0,
+      "value": "(UTC-01:00) Cabo Verde Is."
+    }
+  ],
+  "yVh9kr": [
+    {
+      "type": 0,
+      "value": "8"
+    }
+  ],
+  "yc0GcM": [
+    {
+      "type": 0,
+      "value": "Aufteilen einer Zeichenfolge oder eines Arrays in Blöcke gleicher Länge"
+    }
+  ],
+  "ydqOly": [
+    {
+      "type": 0,
+      "value": "Wert auswählen"
+    }
+  ],
+  "yjierd": [
+    {
+      "type": 0,
+      "value": "Ungültiger Ausdruckstyp „"
+    },
+    {
+      "type": 1,
+      "value": "type"
+    },
+    {
+      "type": 0,
+      "value": "“."
+    }
+  ],
+  "yk7L+4": [
+    {
+      "type": 0,
+      "value": "Gefällt mir nicht"
+    }
+  ],
+  "ylfgv1": [
+    {
+      "type": 0,
+      "value": "XSLT generieren"
+    }
+  ],
+  "ypZV9w": [
+    {
+      "type": 0,
+      "value": "Gibt den Text für einen Teil in einer mehrteiligen Ausgabe des Triggers zurück."
+    }
+  ],
+  "yqRrQ/": [
+    {
+      "type": 0,
+      "value": "Datums- und Uhrzeitfunktionen"
+    }
+  ],
+  "yrYEmk": [
+    {
+      "type": 0,
+      "value": "E-Mail an mich senden, wenn..."
+    }
+  ],
+  "ysoumb": [
+    {
+      "type": 0,
+      "value": "Feld hinzufügen"
+    }
+  ],
+  "yuJBmK": [
+    {
+      "type": 0,
+      "value": "Geben Sie eine Zahl ein."
+    }
+  ],
+  "yucvJE": [
+    {
+      "type": 0,
+      "value": "(UTC+01:00) Sarajewo, Skopje, Warschau, Zagreb"
+    }
+  ],
+  "yzqXMp": [
+    {
+      "type": 0,
+      "value": "Weitere Informationen"
+    }
+  ],
+  "z/UY4k": [
+    {
+      "type": 0,
+      "value": "Zum Ordner „"
+    },
+    {
+      "type": 1,
+      "value": "folderName"
+    },
+    {
+      "type": 0,
+      "value": "“ navigieren"
+    }
+  ],
+  "z3VuE+": [
+    {
+      "type": 0,
+      "value": "Menü"
+    }
+  ],
+  "z9kH+0": [
+    {
+      "type": 0,
+      "value": "Dadurch werden auch alle untergeordneten Schritte entfernt."
+    }
+  ],
+  "zBMVKg": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Der Wert, der in eine Dezimalzahl konvertiert wird."
+    }
+  ],
+  "zCsGWP": [
+    {
+      "type": 0,
+      "value": "Wert eingeben"
+    }
+  ],
+  "zEv8dd": [
+    {
+      "type": 0,
+      "value": "Ausdrucks-Editor"
+    }
+  ],
+  "zIDVd9": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Der Wert, der in einen nativen Typwert konvertiert wird."
+    }
+  ],
+  "zNesUZ": [
+    {
+      "type": 0,
+      "value": "Eine Wiederholungsrichtlinie wird bei zeitweiligen Fehlern angewendet, gekennzeichnet durch die HTTP-Statuscodes 408, 429 und 5xx, zusätzlich zu Konnektivitätsausnahmen. Die Standardrichtlinie umfasst ein exponentielles Intervall und sieht 4 Wiederholungsversuche vor."
+    }
+  ],
+  "zOvGF8": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Athen, Bukarest"
+    }
+  ],
+  "zTKAc9": [
+    {
+      "type": 0,
+      "value": "Aktionen auswählen"
+    }
+  ],
+  "zUWAsJ": [
+    {
+      "type": 0,
+      "value": "Gibt einen booleschen Wert zurück, der angibt, ob eine Zeichenfolge eine ganze Zahl ist."
+    }
+  ],
+  "zUgja+": [
+    {
+      "type": 0,
+      "value": "Benutzerdefinierten Wert löschen"
+    }
+  ],
+  "zViEGr": [
+    {
+      "type": 0,
+      "value": "(UTC+12:00) Petropawlowsk-Kamtschatski – alt"
+    }
+  ],
+  "zb3lE6": [
+    {
+      "type": 0,
+      "value": "Schließen Sie die Einrichtung der folgenden Aktion ab, um diesen Workflow zu speichern:"
+    }
+  ],
+  "zcZpHT": [
+    {
+      "type": 0,
+      "value": "Konvertiert eine Zeichenfolge in ein Datum, mit optional einem Gebietsschema und einem Format."
+    }
+  ],
+  "zec5Ay": [
+    {
+      "type": 0,
+      "value": "Beenden"
+    }
+  ],
+  "ziYCiA": [
+    {
+      "type": 0,
+      "value": "Zusammenfassung"
+    }
+  ],
+  "zjDJwP": [
+    {
+      "type": 0,
+      "value": "Gleitkomma"
+    }
+  ],
+  "zkeKWE": [
+    {
+      "type": 0,
+      "value": "(UTC-04:00) Caracas"
+    }
+  ],
+  "znGyyU": [
+    {
+      "type": 0,
+      "value": "Hiermit wird ein Ganzzahlwert einer angegebenen Zeiteinheit zu einem übergebenen Zeichenfolgen-Zeitstempel hinzugefügt."
+    }
+  ],
+  "zsPNYN": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Die Zahl, die mit Summand 1 addiert werden soll."
+    }
+  ],
+  "zxe9hh": [
+    {
+      "type": 0,
+      "value": "Erforderlich. Die Anzahl der zu addierenden Minuten. Kann negativ sein, um Minuten zu subtrahieren."
+    }
+  ]
+}

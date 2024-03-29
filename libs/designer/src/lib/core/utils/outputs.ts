@@ -24,19 +24,8 @@ import {
   isDynamicDataReadyToLoad,
 } from './parameters/helper';
 import { convertOutputsToTokens, getTokenTitle } from './tokens';
-import { OperationManifestService } from '@microsoft/designer-client-services-logic-apps';
-import { ValueSegmentType, generateSchemaFromJsonString } from '@microsoft/designer-ui';
-import type {
-  Expression,
-  ExpressionFunction,
-  ExpressionLiteral,
-  OpenAPIV2,
-  OpenApiSchema,
-  OperationManifest,
-  OutputParameter,
-  OutputParameters,
-} from '@microsoft/logic-apps-shared';
 import {
+  OperationManifestService,
   AssertionErrorCode,
   AssertionException,
   ConnectionReferenceKeyFormat,
@@ -57,6 +46,17 @@ import {
   parseErrorMessage,
   safeSetObjectPropertyValue,
   unmap,
+} from '@microsoft/logic-apps-shared';
+import { ValueSegmentType, generateSchemaFromJsonString } from '@microsoft/designer-ui';
+import type {
+  Expression,
+  ExpressionFunction,
+  ExpressionLiteral,
+  OpenAPIV2,
+  OpenApiSchema,
+  OperationManifest,
+  OutputParameter,
+  OutputParameters,
 } from '@microsoft/logic-apps-shared';
 import type { Dispatch } from '@reduxjs/toolkit';
 
@@ -552,7 +552,7 @@ export const loadDynamicOutputsInNode = async (
   }
 };
 
-const getExpressionValueForTriggerOutput = ({ key, required }: OutputInfo, isManifestBasedOperation: boolean): string => {
+const getExpressionValueForTriggerOutput = ({ key, required, source }: OutputInfo, isManifestBasedOperation: boolean): string => {
   if (isManifestBasedOperation) {
     return `@${getTokenExpressionValueForManifestBasedOperation(
       key,
@@ -562,7 +562,7 @@ const getExpressionValueForTriggerOutput = ({ key, required }: OutputInfo, isMan
       !!required
     )}`;
   } else {
-    const method = getTokenExpressionMethodFromKey(key, /* actionName */ undefined);
+    const method = getTokenExpressionMethodFromKey(key, /* actionName */ undefined, source);
     return `@${generateExpressionFromKey(method, key, /* actionName */ undefined, /* isInsideArray */ false, !!required)}`;
   }
 };

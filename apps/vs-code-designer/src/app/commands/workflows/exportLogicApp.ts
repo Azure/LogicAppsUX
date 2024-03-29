@@ -18,6 +18,7 @@ import { getAccountCredentials } from '../../utils/credentials';
 import { getRandomHexString } from '../../utils/fs';
 import { delay } from '@azure/ms-rest-js';
 import type { ServiceClientCredentials } from '@azure/ms-rest-js';
+import { type IActionContext } from '@microsoft/vscode-azext-utils';
 import { ExtensionCommand, ProjectName, getBaseGraphApi } from '@microsoft/vscode-extension';
 import axios from 'axios';
 import { writeFileSync } from 'fs';
@@ -75,13 +76,15 @@ class ExportEngine {
     private location: string,
     private addStatus: (status: string) => void,
     private setFinalStatus: (status: string) => void,
-    private baseGraphUri: string
+    private baseGraphUri: string,
+    private context: IActionContext
   ) {}
 
   public async export(): Promise<void> {
     try {
       this.setFinalStatus(this.finalStatus.InProgress);
       this.addStatus(this.intlText.DOWNLOADING_PACKAGE);
+      ext.logTelemetry(this.context, 'exportLastStep', 'downloadPackage');
       const flatFile = await axios.get(this.packageUrl, {
         responseType: 'arraybuffer',
         responseEncoding: 'binary',
@@ -90,6 +93,7 @@ class ExportEngine {
       const buffer = Buffer.from(flatFile.data);
       this.addStatus(this.intlText.DONE);
       this.addStatus(this.intlText.UNZIP_PACKAGE);
+      ext.logTelemetry(this.context, 'exportLastStep', 'unzipPackage');
       const zip = new AdmZip(buffer);
       zip.extractAllTo(/*target path*/ this.targetDirectory, /*overwrite*/ true);
       this.addStatus(this.intlText.DONE);
@@ -100,12 +104,14 @@ class ExportEngine {
       if (!this.resourceGroupName || !templateExists) {
         this.setFinalStatus(this.finalStatus.Succeeded);
         this.addStatus(this.intlText.SUCESSFULL_EXPORTED_MESSAGE);
+        ext.logTelemetry(this.context, 'exportLastStep', 'workflowsExportedSuccessfully');
         const uri: vscode.Uri = vscode.Uri.file(this.targetDirectory);
         vscode.commands.executeCommand('vscode.openFolder', uri, { forceNewWindow: true });
         return;
       }
 
       this.addStatus(this.intlText.DEPLOYING_CONNECTIONS);
+      ext.logTelemetry(this.context, 'exportLastStep', 'deployConnections');
 
       const connectionsTemplate = await fse.readJSON(templatePath);
       const parametersFile = await fse.readJSON(`${this.targetDirectory}/parameters.json`);
@@ -125,11 +131,13 @@ class ExportEngine {
 
       this.setFinalStatus(this.finalStatus.Succeeded);
       this.addStatus(this.intlText.SUCESSFULL_EXPORTED_MESSAGE);
+      ext.logTelemetry(this.context, 'exportLastStep', 'workflowsExportedSuccessfully');
       const uri: vscode.Uri = vscode.Uri.file(this.targetDirectory);
       vscode.commands.executeCommand('vscode.openFolder', uri, { forceNewWindow: true });
     } catch (error) {
       this.addStatus(localize('exportFailed', 'Export failed. {0}', error?.message ?? ''));
       this.setFinalStatus(this.finalStatus.Failed);
+      ext.logTelemetry(this.context, 'exportError', error?.message ?? '');
     }
   }
 
@@ -224,6 +232,7 @@ class ExportEngine {
 
   private async fetchConnectionKeys(output: ConnectionsDeploymentOutput): Promise<void> {
     this.addStatus(this.intlText.FETCH_CONNECTION);
+    ext.logTelemetry(this.context, 'exportLastStep', 'retrieveConnectionKeys');
     for (const connectionKey of Object.keys(output?.connections?.value || {})) {
       const connectionItem = output.connections.value[connectionKey];
       connectionItem.authKey = await this.getConnectionKey(connectionItem.connectionId);
@@ -279,6 +288,7 @@ class ExportEngine {
     localSettingsFile: any
   ): Promise<void> {
     this.addStatus(this.intlText.UPDATE_FILES);
+    ext.logTelemetry(this.context, 'exportLastStep', 'updatingParametersAndSettings');
 
     const { value } = output.connections;
     for (const key of Object.keys(value)) {
@@ -300,24 +310,22 @@ class ExportEngine {
   }
 }
 
-export async function exportLogicApp(): Promise<void> {
+const exportDialogOptions: vscode.OpenDialogOptions = {
+  canSelectMany: false,
+  openLabel: localize('selectFolder', 'Select folder'),
+  canSelectFiles: false,
+  canSelectFolders: true,
+};
+
+export async function exportLogicApp(context: IActionContext): Promise<void> {
   const panelName: string = localize('export', 'Export');
   const panelGroupKey = ext.webViewKey.export;
-  let accessToken: string;
   const credentials: ServiceClientCredentials | undefined = await getAccountCredentials();
   const apiVersion = '2021-03-01';
-
-  const dialogOptions: vscode.OpenDialogOptions = {
-    canSelectMany: false,
-    openLabel: 'Select folder',
-    canSelectFiles: false,
-    canSelectFolders: true,
-  };
-
   const existingPanel: vscode.WebviewPanel | undefined = tryGetWebviewPanel(panelGroupKey, panelName);
-
-  accessToken = await getAuthorizationToken(credentials);
   const cloudHost = await getCloudHost(credentials);
+  let accessToken: string;
+  accessToken = await getAuthorizationToken(credentials);
 
   if (existingPanel) {
     if (!existingPanel.active) {
@@ -369,7 +377,7 @@ export async function exportLogicApp(): Promise<void> {
         break;
       }
       case ExtensionCommand.select_folder: {
-        vscode.window.showOpenDialog(dialogOptions).then((fileUri) => {
+        vscode.window.showOpenDialog(exportDialogOptions).then((fileUri) => {
           if (fileUri && fileUri[0]) {
             panel.webview.postMessage({
               command: ExtensionCommand.update_export_path,
@@ -410,9 +418,14 @@ export async function exportLogicApp(): Promise<void> {
               },
             });
           },
-          baseGraphUri
+          baseGraphUri,
+          context
         );
         engine.export();
+        break;
+      }
+      case ExtensionCommand.log_telemtry: {
+        ext.logTelemetry(context, message.key, message.value);
         break;
       }
       default:
