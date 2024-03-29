@@ -28,6 +28,7 @@ export const UnitTestResults: React.FC = () => {
     }),
     TEST_ICON: intl.formatMessage({
       defaultMessage: 'Test icon',
+      id: 'qfmSaq',
       description: 'Test icon text',
     }),
   };
