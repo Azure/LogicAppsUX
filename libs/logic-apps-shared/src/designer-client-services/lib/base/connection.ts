@@ -1,6 +1,6 @@
 /* eslint-disable no-param-reassign */
 import { SwaggerParser } from '../../../parsers';
-import type { Connection, OpenAPIV2, Connector } from '../../../utils/src';
+import type { Connection, OpenAPIV2, Connector, TestConnectionObject } from '../../../utils/src';
 import {
   ArgumentException,
   isArmResourceId,
@@ -205,15 +205,28 @@ export abstract class BaseConnectionService implements IConnectionService {
 
   protected async testConnection(connection: Connection): Promise<void> {
     let response: HttpResponse<any> | undefined = undefined;
-    response = await this.requestTestConnection(connection);
-    if (response) this.handleTestConnectionResponse(response);
+    const testLink = connection.properties?.testLinks?.[0];
+    try {
+      if (testLink) {
+        response = await this.requestTestConnection(testLink);
+        if (response) this.handleTestConnectionResponse(response);
+      }
+    } catch (testLinkError: any) {
+      try {
+        const testRequest = connection.properties?.testRequests?.[0];
+        if (testRequest) {
+          response = await this.requestTestConnection(testRequest);
+          if (response) this.handleTestConnectionResponse(response);
+        }
+      } catch (testRequestError: any) {
+        throw testLinkError ?? testRequestError;
+      }
+    }
   }
 
-  protected async requestTestConnection(connection: Connection): Promise<HttpResponse<any> | undefined> {
-    const testLinks = connection.properties?.testLinks;
-    const testRequests = connection.properties?.testRequests;
+  protected async requestTestConnection(testConnectionObj: TestConnectionObject): Promise<HttpResponse<any> | undefined> {
     const { httpClient } = this.options;
-    const { method: httpMethod, requestUri: uri, body } = testRequests?.[0] ?? testLinks?.[0] ?? {};
+    const { method: httpMethod, requestUri: uri, body } = testConnectionObj;
     if (!httpMethod || !uri) return;
     const method = httpMethod.toUpperCase() as HTTP_METHODS;
 

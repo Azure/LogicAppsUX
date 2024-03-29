@@ -5283,6 +5283,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";Mcvr0B" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[To use modules or dependecies, please add at Custom Code Dependenncies in Portal TOC]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Per usare moduli o dipendenze, aggiungere le dipendenze del codice personalizzato nel sommario del portale]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";MfAdfx" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Edit in advanced mode]]></Val>
@@ -6779,6 +6788,15 @@
           <Val><![CDATA[(UTC-06:00) Easter Island]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[(UTC - 06.00) Isola di Pasqua]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";TjkOzp" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Close]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Chiudere]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -9380,15 +9398,6 @@
           <Val><![CDATA[Loading connection data...]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Caricamento dei dati di connessione in corso...]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
-      <Item ItemId=";fc1AV8" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[HTTP {method} URL]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[URL {method} HTTP]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
