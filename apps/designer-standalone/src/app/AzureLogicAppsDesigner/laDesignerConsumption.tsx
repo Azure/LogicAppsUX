@@ -39,6 +39,7 @@ import {
   ConsumptionRunService,
   guid,
   startsWith,
+  StandardCustomCodeService,
 } from '@microsoft/logic-apps-shared';
 import type { Workflow } from '@microsoft/logic-apps-designer';
 import {
@@ -414,6 +415,18 @@ const getDesignerServices = (
     location: 'westcentralus',
   });
 
+  // This isn't correct but without it I was getting errors
+  //   It's fine just to unblock standalone consumption
+  const customCodeService = new StandardCustomCodeService({
+    apiVersion: '2018-11-01',
+    baseUrl: 'test',
+    subscriptionId,
+    resourceGroup,
+    appName: 'test',
+    workflowName,
+    httpClient,
+  });
+
   return {
     appServiceService,
     connectionService,
@@ -428,6 +441,7 @@ const getDesignerServices = (
     functionService,
     runService,
     chatbotService,
+    customCodeService,
   };
 };
 

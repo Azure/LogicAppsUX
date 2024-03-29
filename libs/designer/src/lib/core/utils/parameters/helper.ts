@@ -1879,22 +1879,6 @@ export async function updateDynamicDataInNode(
   const nodeDependencies = getRecordEntry(operations.dependencies, nodeId) ?? { inputs: {}, outputs: {} };
   const nodeInputParameters = getRecordEntry(operations.inputParameters, nodeId) ?? { parameterGroups: {} };
 
-  // dispatch loading status to all parameters that are dependent on dynamic values
-  const parameterTempValues = [] as any;
-  for (const parameterKey of Object.keys(nodeDependencies?.inputs ?? {})) {
-    if (nodeDependencies.inputs?.[parameterKey]?.dependencyType !== 'ListValues') continue;
-    const details = getGroupAndParameterFromParameterKey(nodeInputParameters, parameterKey);
-    if (!details) continue;
-    parameterTempValues.push({
-      groupId: details.groupId,
-      parameterId: details.parameter.id,
-      propertiesToUpdate: { dynamicData: { status: DynamicCallStatus.STARTED } },
-    });
-  }
-  if (parameterTempValues.length > 0) {
-    dispatch(updateNodeParameters({ nodeId, parameters: parameterTempValues }));
-  }
-
   const parameterDynamicValues = [] as any;
   for (const parameterKey of Object.keys(nodeDependencies?.inputs ?? {})) {
     if (nodeDependencies.inputs?.[parameterKey]?.dependencyType !== 'ListValues') continue;
