@@ -46,7 +46,6 @@ const foreignObjectWidth = 200;
 
 const runAfterWidth = 36;
 const runAfterHeight = 12;
-const runAfterCollapsedHeight = 18;
 
 const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
   id,
@@ -194,7 +193,7 @@ const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
         <foreignObject
           id="msla-run-after-traffic-light"
           width={runAfterWidth}
-          height={runAfterCollapsedHeight}
+          height={runAfterHeight}
           x={targetX - runAfterWidth / 2}
           y={targetY - runAfterHeight}
         >
