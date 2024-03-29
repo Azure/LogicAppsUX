@@ -1,15 +1,6 @@
 /* eslint-disable @typescript-eslint/ban-types */
 import { environment } from '../../environments/environment';
 import type { AppDispatch, RootState } from '../../state/store';
-import {
-  useIsDarkMode,
-  useIsMonitoringView,
-  useIsReadOnly,
-  useShowChatBot,
-  useHostOptions,
-  useShowConnectionsPanel,
-  useShowPerformanceDebug,
-} from '../../state/workflowLoadingSelectors';
 import { setIsChatBotEnabled } from '../../state/workflowLoadingSlice';
 import { DesignerCommandBar } from './DesignerCommandBar';
 import type { ParametersData } from './Models/Workflow';
@@ -21,11 +12,13 @@ import {
   saveWorkflowConsumption,
   useCurrentObjectId,
   useCurrentTenantId,
+  useRunInstanceConsumption,
   useWorkflowAndArtifactsConsumption,
 } from './Services/WorkflowAndArtifacts';
 import { ArmParser } from './Utilities/ArmParser';
 import { WorkflowUtility } from './Utilities/Workflow';
 import { Chatbot, chatbotPanelWidth } from '@microsoft/chatbot';
+import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import {
   BaseApiManagementService,
   BaseAppServiceService,
@@ -64,17 +57,22 @@ const DesignerEditorConsumption = () => {
     id: state.workflowLoader.resourcePath!,
   }));
 
-  const isDarkMode = useIsDarkMode();
-  const readOnly = useIsReadOnly();
-  const isMonitoringView = useIsMonitoringView();
-  const showChatBot = useShowChatBot();
-  const showConnectionsPanel = useShowConnectionsPanel();
-  const showPerformanceDebug = useShowPerformanceDebug();
+  const {
+    isReadOnly: readOnly,
+    isDarkMode,
+    isMonitoringView,
+    runId,
+    appId,
+    showChatBot,
+    hostOptions,
+    showConnectionsPanel,
+    showPerformanceDebug,
+  } = useSelector((state: RootState) => state.workflowLoader);
 
-  const hostOptions = useHostOptions();
+  const workflowName = workflowId.split('/').splice(-1)[0];
+
   const queryClient = getReactQueryClient();
 
-  // const workflowName = workflowId.split('/').splice(-1)[0];
   const {
     data: workflowAndArtifactsData,
     isLoading: isWorkflowAndArtifactsLoading,
@@ -85,10 +83,27 @@ const DesignerEditorConsumption = () => {
   const { data: objectId } = useCurrentObjectId();
   const [designerID, setDesignerID] = React.useState(guid());
 
-  const { workflow, connectionReferences, parameters } = React.useMemo(
-    () => getDataForConsumption(workflowAndArtifactsData),
-    [workflowAndArtifactsData]
-  );
+  const {
+    workflow: baseWorkflow,
+    connectionReferences,
+    parameters,
+  } = React.useMemo(() => getDataForConsumption(workflowAndArtifactsData), [workflowAndArtifactsData]);
+
+  const [runWorkflow, setRunWorkflow] = React.useState<any>();
+
+  const onRunInstanceSuccess = async (runDefinition: LogicAppsV2.RunInstanceDefinition) => {
+    if (isMonitoringView) {
+      const standardAppInstance = {
+        ...workflow,
+        definition: runDefinition.properties.workflow.properties.definition,
+      };
+      setRunWorkflow(standardAppInstance);
+    }
+  };
+  const { data: runInstanceData } = useRunInstanceConsumption(workflowName, onRunInstanceSuccess, appId, runId);
+
+  const workflow = runWorkflow ?? baseWorkflow;
+
   const { definition } = workflow;
 
   const discardAllChanges = () => {
@@ -203,7 +218,14 @@ const DesignerEditorConsumption = () => {
         }}
       >
         {workflow?.definition ? (
-          <BJSWorkflowProvider workflow={{ definition: parsedDefinition, connectionReferences, parameters }}>
+          <BJSWorkflowProvider
+            workflow={{
+              definition: parsedDefinition,
+              connectionReferences,
+              parameters,
+            }}
+            runInstance={runInstanceData}
+          >
             <div style={{ height: 'inherit', width: 'inherit' }}>
               <DesignerCommandBar
                 id={workflowId}
@@ -400,7 +422,7 @@ const getDesignerServices = (
   });
 
   const runService = new ConsumptionRunService({
-    apiVersion,
+    apiVersion: '2016-10-01',
     baseUrl,
     workflowId,
     httpClient,
