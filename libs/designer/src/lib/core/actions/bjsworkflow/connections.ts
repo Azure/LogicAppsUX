@@ -15,10 +15,18 @@ import {
 import { isRootNodeInGraph } from '../../utils/graph';
 import { updateDynamicDataInNode } from '../../utils/parameters/helper';
 import { getAllVariables } from '../../utils/variables';
-import type { IOperationManifestService } from '@microsoft/designer-client-services-logic-apps';
-import { ConnectionService, WorkflowService, OperationManifestService } from '@microsoft/designer-client-services-logic-apps';
-import type { Connection, ConnectionParameter, Connector, OperationManifest, LogicAppsV2 } from '@microsoft/logic-apps-shared';
+import type {
+  IOperationManifestService,
+  Connection,
+  ConnectionParameter,
+  Connector,
+  OperationManifest,
+  LogicAppsV2,
+} from '@microsoft/logic-apps-shared';
 import {
+  ConnectionService,
+  WorkflowService,
+  OperationManifestService,
   ResourceIdentityType,
   optional,
   isHiddenConnectionParameter,

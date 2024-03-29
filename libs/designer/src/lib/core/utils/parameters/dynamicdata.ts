@@ -1,5 +1,6 @@
 import Constants from '../../../common/constants';
 import type { ConnectionReference } from '../../../common/models/workflow';
+import { getReactQueryClient } from '../../ReactQueryProvider';
 import { getCustomSwaggerIfNeeded } from '../../actions/bjsworkflow/initialize';
 import type { SerializedParameter } from '../../actions/bjsworkflow/serializer';
 import { getConnection, getConnectorWithSwagger } from '../../queries/connections';
@@ -27,11 +28,26 @@ import {
   toParameterInfoMap,
   tryConvertStringToExpression,
 } from './helper';
-import type { ListDynamicValue, ManagedIdentityRequestProperties, TreeDynamicValue } from '@microsoft/designer-client-services-logic-apps';
-import { OperationManifestService } from '@microsoft/designer-client-services-logic-apps';
-import type { ParameterInfo } from '@microsoft/designer-ui';
-import { TokenType, ValueSegmentType } from '@microsoft/designer-ui';
+import type {
+  ListDynamicValue,
+  ManagedIdentityRequestProperties,
+  TreeDynamicValue,
+  DynamicParameters,
+  ExpressionEvaluatorOptions,
+  InputParameter,
+  OutputParameter,
+  OutputParameters,
+  ResolvedParameter,
+  SchemaProcessorOptions,
+  SwaggerParser,
+  Connection,
+  Connector,
+  OpenAPIV2,
+  OperationInfo,
+  OperationManifest,
+} from '@microsoft/logic-apps-shared';
 import {
+  OperationManifestService,
   getIntl,
   ExpressionEvaluator,
   isTemplateExpression,
@@ -72,21 +88,8 @@ import {
   copy,
   unmap,
 } from '@microsoft/logic-apps-shared';
-import type {
-  DynamicParameters,
-  ExpressionEvaluatorOptions,
-  InputParameter,
-  OutputParameter,
-  OutputParameters,
-  ResolvedParameter,
-  SchemaProcessorOptions,
-  SwaggerParser,
-  Connection,
-  Connector,
-  OpenAPIV2,
-  OperationInfo,
-  OperationManifest,
-} from '@microsoft/logic-apps-shared';
+import type { ParameterInfo } from '@microsoft/designer-ui';
+import { TokenType, ValueSegmentType } from '@microsoft/designer-ui';
 
 export async function getDynamicValues(
   dependencyInfo: DependencyInfo,
@@ -447,6 +450,10 @@ function getParametersForDynamicInvoke(
   const intl = getIntl();
   const operationParameters: SerializedParameter[] = [];
 
+  // Get app settings from query client
+  const queryClient = getReactQueryClient();
+  const appSettings = queryClient.getQueryData(['appSettings']);
+
   for (const [parameterName, parameter] of Object.entries(referenceParameters ?? {})) {
     const referenceParameterName = (parameter?.parameterReference ?? parameter?.parameter ?? 'undefined') as string;
     const operationParameter = operationInputs?.[parameterName];
@@ -505,7 +512,7 @@ function getParametersForDynamicInvoke(
     }
   }
 
-  evaluateTemplateExpressions(operationParameters, workflowParameters);
+  evaluateTemplateExpressions(operationParameters, workflowParameters, appSettings);
 
   return operationParameters;
 }
@@ -657,10 +664,10 @@ function getSwaggerBasedInputParameters(
     key === 'inputs.$'
       ? undefined
       : key.indexOf('inputs.$') === 0
-      ? key.replace('inputs.$.', '')
-      : key.indexOf('body.$') === 0
-      ? key.replace('.$', '')
-      : '';
+        ? key.replace('inputs.$.', '')
+        : key.indexOf('body.$') === 0
+          ? key.replace('.$', '')
+          : '';
   const propertyNames = parseEx(parameterKey).map((segment) => segment.value?.toString()) as string[];
   const dynamicInputDefinition = safeSetObjectPropertyValue(
     {},
@@ -770,33 +777,42 @@ function isOpenApiParameter(param: InputParameter): boolean {
 
 function evaluateTemplateExpressions(
   parameters: SerializedParameter[],
-  workflowParameters: Record<string, WorkflowParameterDefinition>
+  workflowParameters: Record<string, WorkflowParameterDefinition>,
+  appSettings: any
 ): void {
   if (!Object.keys(workflowParameters).length) {
     return;
   }
 
+  const outputParameters = Object.keys(workflowParameters).reduce(
+    (result: Record<string, any>, parameterId: string) => ({
+      ...result,
+      [workflowParameters[parameterId].name as string]:
+        workflowParameters[parameterId].defaultValue ?? workflowParameters[parameterId].value,
+    }),
+    {}
+  );
+
   const options: ExpressionEvaluatorOptions = {
     fuzzyEvaluation: true,
     context: {
-      parameters: Object.keys(workflowParameters).reduce(
-        (result: Record<string, any>, parameterId: string) => ({
-          ...result,
-          [workflowParameters[parameterId].name as string]:
-            workflowParameters[parameterId].defaultValue ?? workflowParameters[parameterId].value,
-        }),
-        {}
-      ),
-      appsettings: {},
+      parameters: outputParameters,
+      appsettings: appSettings,
     },
   };
 
   const evaluator = new ExpressionEvaluator(options);
+  for (const parameter of parameters) evaluateParameter(parameter, evaluator);
+}
 
-  for (const parameter of parameters) {
-    const value = parameter.value;
-    if (isTemplateExpression(value)) {
-      parameter.value = evaluator.evaluate(value);
-    }
+// Recursively evaluate in case there is a expression within the expression
+function evaluateParameter(parameter: SerializedParameter, evaluator: ExpressionEvaluator): void {
+  const value = parameter.value;
+  if (isTemplateExpression(value)) {
+    // eslint-disable-next-line no-param-reassign
+    parameter.value = evaluator.evaluate(value);
+  }
+  if (value !== parameter.value) {
+    evaluateParameter(parameter, evaluator);
   }
 }

@@ -8,8 +8,8 @@ type NonPrimitive = Record<string, unknown>;
  * @return {T[]} - An array of elements of type T
  */
 export function aggregate<T>(array: T[][] | null | undefined): T[] {
-  array = array || [];
-  return array.reduce((previous, current) => previous.concat(current), []);
+  const initializedArray = array || [];
+  return initializedArray.reduce((previous, current) => previous.concat(current), []);
 }
 
 /**
@@ -100,9 +100,8 @@ export function equals(x: string | null | undefined, y: string | null | undefine
     // in a different evaluation, which means checking only 'toLowerCase' equivalence is insufficient. This should also return 'true'
     // in the event that they share 'toUpperCase' equivalence. See work item One/#15505347 and incident 333040852 for details.
     return !isNullOrUndefined(x) && !isNullOrUndefined(y) && (x.toLowerCase() === y.toLowerCase() || x.toUpperCase() === y.toUpperCase());
-  } else {
-    return !isNullOrUndefined(x) && !isNullOrUndefined(y) && x === y;
   }
+  return !isNullOrUndefined(x) && !isNullOrUndefined(y) && x === y;
 }
 
 /**
@@ -130,9 +129,8 @@ export function csvContains(csv: string | null | undefined, value: string | null
 export function includes(str: string, substring: string, caseInsensitive = true) {
   if (caseInsensitive) {
     return !isNullOrUndefined(str) && !isNullOrUndefined(substring) && str.toLowerCase().indexOf(substring.toLowerCase()) > -1;
-  } else {
-    return !isNullOrUndefined(str) && !isNullOrUndefined(substring) && str.indexOf(substring) > -1;
   }
+  return !isNullOrUndefined(str) && !isNullOrUndefined(substring) && str.indexOf(substring) > -1;
 }
 
 /**
@@ -144,9 +142,8 @@ export function includes(str: string, substring: string, caseInsensitive = true)
  */
 export function nthLastIndexOf(str: string, searchString: string, n: number): number {
   if (!str || str.length === 0) return -1;
-  if (!n || isNaN(n) || n <= 1) return str.lastIndexOf(searchString);
-  n--;
-  return str.lastIndexOf(searchString, nthLastIndexOf(str, searchString, n) - 1);
+  if (!n || Number.isNaN(n) || n <= 1) return str.lastIndexOf(searchString);
+  return str.lastIndexOf(searchString, nthLastIndexOf(str, searchString, n - 1) - 1);
 }
 
 /**
@@ -216,18 +213,18 @@ export function exclude(array: string[], itemsToExclude: string[]): void {
  * @return {any} - The value of the property, if found. Otherwise, undefined.
  */
 export function getPropertyValue(object: Record<string, any> | null | undefined, propertyName: string, caseInsensitive = true): any {
-  object = object || {};
+  const defaultObject = object || {};
 
   if (propertyName === '__proto__' || propertyName === 'constructor') throw new Error('attempting to access protected properties');
   // Note: This is an optimization for when property name matches case sensitively.
-  const value = (object as any)[propertyName];
+  const value = (defaultObject as any)[propertyName];
   if (value !== undefined) {
     return value;
   }
 
-  for (const key of Object.keys(object)) {
+  for (const key of Object.keys(defaultObject)) {
     if (equals(key, propertyName, caseInsensitive)) {
-      return (object as any)[key];
+      return (defaultObject as any)[key];
     }
   }
 
@@ -277,17 +274,18 @@ export function getObjectPropertyValue(object: Record<string, any>, properties: 
  * @return {void}
  */
 export function setObjectPropertyValue(object: Record<string, unknown>, properties: string[], value: any): void {
-  if (!properties.length || !object) {
+  let dobject = object;
+  if (!properties.length || !dobject) {
     return;
   }
 
   for (let i = 0; i < properties.length - 1; i++) {
-    object = getPropertyValue(object, properties[i]);
+    dobject = getPropertyValue(dobject, properties[i]);
   }
 
   const lastProperty = properties[properties.length - 1];
   if (lastProperty) {
-    (object as any)[lastProperty] = value;
+    (dobject as any)[lastProperty] = value;
   }
 }
 
@@ -310,9 +308,9 @@ export function safeSetObjectPropertyValue(
     return value;
   }
 
-  target = target || {};
+  const tgt = target || {};
 
-  let current = target;
+  let current = tgt;
   for (let i = 0; i < properties.length - 1; i++) {
     const parent = current;
     const propertyName = properties[i];
@@ -344,7 +342,7 @@ export function safeSetObjectPropertyValue(
     current[property] = value;
   }
 
-  return target;
+  return tgt;
 }
 
 /**
@@ -390,17 +388,17 @@ export function deleteObjectProperty(object: Record<string, unknown>, properties
   if (!properties.length || !object) {
     return;
   }
-
+  let dobject = object;
   for (let i = 0; i < properties.length - 1; i++) {
-    object = getPropertyValue(object, properties[i]);
-    if (!object) {
+    dobject = getPropertyValue(dobject, properties[i]);
+    if (!dobject) {
       return;
     }
   }
 
   const lastProperty = properties[properties.length - 1];
   if (lastProperty) {
-    delete (object as any)[lastProperty];
+    delete (dobject as any)[lastProperty];
   }
 }
 
@@ -526,9 +524,8 @@ export function isNullOrUndefined(value: any): value is null | undefined {
 export function isNullOrEmpty(value: any): boolean {
   if (typeof value === 'object') {
     return !value || !Object.keys(value).length;
-  } else {
-    return !value;
   }
+  return !value;
 }
 
 /**
@@ -569,10 +566,10 @@ export function map<T extends object>(array: T[] | null | undefined, keyName: st
     throw new Error('key required');
   }
 
-  array = array || [];
+  const arr = array || [];
 
   const object: Record<string, T> = {};
-  for (const value of array.filter((element) => Object.prototype.hasOwnProperty.call(element, keyName))) {
+  for (const value of arr.filter((element) => Object.prototype.hasOwnProperty.call(element, keyName))) {
     const key = (value as any)[keyName];
     object[key] = value;
   }
@@ -652,8 +649,8 @@ export function extend(target: any, ...sources: any[]): any {
  * @return {any[]} - The unique list of elements from the given array.
  */
 export function uniqueArray(array: any[]): any[] {
-  const result: any[] = [],
-    temp: any = {};
+  const result: any[] = [];
+  const temp: any = {};
   for (let i = 0, l = array.length; i < l; ++i) {
     if (!Object.prototype.hasOwnProperty.call(temp, array[i])) {
       result.push(array[i]);
@@ -688,8 +685,8 @@ export function copyArray(array: any[] | null | undefined, options?: CopyOptions
 export function format(input: string, ...args: any[]): string {
   const namedFormatSpecifierRegex = /\{[a-zA-Z$_\d]*\}/g;
   const numberedFormatSpecifierRegex = /\{(\d+)\}/g;
-  let matched = false,
-    retVal = input;
+  let matched = false;
+  let retVal = input;
 
   if (args && args.length === 1 && args[0] && typeof args[0] === 'object') {
     const namedArgs: any = args[0];
@@ -698,9 +695,8 @@ export function format(input: string, ...args: any[]): string {
       if (Object.prototype.hasOwnProperty.call(namedArgs, name)) {
         matched = true;
         return namedArgs[name];
-      } else {
-        return match;
       }
+      return match;
     });
   }
 
@@ -786,7 +782,7 @@ export function trim(value: string, char: string): string {
  */
 export function addPrefix(value: string | null | undefined, prefix: string | null | undefined): string | null | undefined {
   if (!!value && !!prefix && !startsWith(value, prefix)) {
-    value = `${prefix}${value}`;
+    return `${prefix}${value}`;
   }
 
   return value;
@@ -812,13 +808,14 @@ export function getJSONValue(value: string): any {
 export function createCopy(value: any, options?: CopyOptions): any {
   if (Array.isArray(value)) {
     return copyArray(value, options);
-  } else if (value instanceof Date) {
-    return new Date(value.valueOf());
-  } else if (!!value && typeof value === 'object') {
-    return copy({ copyNonEnumerableProps: false, ...options }, {}, value);
-  } else {
-    return value;
   }
+  if (value instanceof Date) {
+    return new Date(value.valueOf());
+  }
+  if (!!value && typeof value === 'object') {
+    return copy({ copyNonEnumerableProps: false, ...options }, {}, value);
+  }
+  return value;
 }
 
 /**
@@ -935,16 +932,18 @@ export function parsePathnameAndQueryKeyFromUri(uri: string): { pathname: string
  */
 function extractQueryKeyFromSearch(search: string): Record<string, string> {
   const queryKey: Record<string, string> = {};
-  search = search.slice(search[0] === '?' ? 1 : 0);
-  if (!search) {
+  const searchPart = search.slice(search[0] === '?' ? 1 : 0);
+  if (!searchPart) {
     return queryKey;
   }
 
   const re = /(?:^|&)([^&=]*)=?([^&]*)/g;
-  let matches: RegExpExecArray | null;
-  while ((matches = re.exec(search)) !== null) {
+  let matches = re.exec(searchPart);
+
+  while (matches !== null) {
     const [, key, value] = matches;
     queryKey[decodeURIComponent(key)] = decodeURIComponent(value);
+    matches = re.exec(searchPart);
   }
 
   return queryKey;
@@ -963,9 +962,8 @@ export function hexToRgbA(hexColor: string, opacity?: number) {
     if (rgbColor.length === 3) {
       rgbColor = [rgbColor[0], rgbColor[0], rgbColor[1], rgbColor[1], rgbColor[2], rgbColor[2]];
     }
-    const hexValue: number = parseInt(`0x${rgbColor.join('')}`, 16);
-    opacity = opacity || 1;
-    return `rgba(${[(hexValue >> 16) & 255, (hexValue >> 8) & 255, hexValue & 255].join(',')}, ${opacity})`;
+    const hexValue: number = Number.parseInt(`0x${rgbColor.join('')}`, 16);
+    return `rgba(${[(hexValue >> 16) & 255, (hexValue >> 8) & 255, hexValue & 255].join(',')}, ${opacity ?? 1})`;
   }
 
   throw new Error('Invalid Hex color value');
@@ -1033,7 +1031,10 @@ export function getResourceName(obj: any): string {
 export const filterRecord = <T>(data: Record<string, T>, filter: (_key: string, _val: T) => boolean): Record<string, T> => {
   return Object.entries(data)
     .filter(([key, value]) => filter(key, value))
-    .reduce((res: any, [key, value]: any) => ({ ...res, [key]: value }), {});
+    .reduce((res: any, [key, value]: any) => {
+      res[key] = value;
+      return res;
+    }, {});
 };
 
 /**

@@ -2,12 +2,12 @@ import type { AuthProps } from '.';
 import { AuthenticationType } from '.';
 import constants from '../constants';
 import type { ValueSegment } from '../editor';
-import { ValueSegmentType } from '../editor';
 import { convertStringToSegments } from '../editor/base/utils/editorToSegment';
+import { createLiteralValueSegment } from '../editor/base/utils/helper';
 import { convertKeyValueItemToSegments } from '../editor/base/utils/keyvalueitem';
 import { AuthenticationOAuthType } from './AADOAuth/AADOAuth';
-import { getIntl, guid, equals, ResourceIdentityType } from '@microsoft/logic-apps-shared';
 import type { ManagedIdentity } from '@microsoft/logic-apps-shared';
+import { ResourceIdentityType, equals, getIntl, guid } from '@microsoft/logic-apps-shared';
 
 export interface AuthProperty {
   displayName: string;
@@ -346,9 +346,7 @@ export function parseAuthEditor(authType: AuthenticationType, items: AuthProps):
       break;
     case AuthenticationType.MSI:
       if (items.msi?.msiIdentity) {
-        updateValues(values, AUTHENTICATION_PROPERTIES.MSI_IDENTITY, [
-          { id: guid(), type: ValueSegmentType.LITERAL, value: items.msi.msiIdentity },
-        ]);
+        updateValues(values, AUTHENTICATION_PROPERTIES.MSI_IDENTITY, [createLiteralValueSegment(items.msi.msiIdentity)]);
       }
 
       updateValues(values, AUTHENTICATION_PROPERTIES.MSI_AUDIENCE, items.msi?.msiAudience);
@@ -368,8 +366,8 @@ export function parseAuthEditor(authType: AuthenticationType, items: AuthProps):
   }
   const currentItems: CollapsedAuthEditorItems[] = [
     {
-      key: [{ type: ValueSegmentType.LITERAL, id: guid(), value: AUTHENTICATION_PROPERTIES.TYPE.name }],
-      value: [{ type: ValueSegmentType.LITERAL, id: guid(), value: authType }],
+      key: [createLiteralValueSegment(AUTHENTICATION_PROPERTIES.TYPE.name)],
+      value: [createLiteralValueSegment(authType)],
       id: guid(),
     },
     ...values,
@@ -381,8 +379,8 @@ export function parseAuthEditor(authType: AuthenticationType, items: AuthProps):
 const updateValues = (values: CollapsedAuthEditorItems[], property: AuthProperty, val?: ValueSegment[]) => {
   if (property.isRequired || (val && val.length > 0)) {
     values.push({
-      key: [{ type: ValueSegmentType.LITERAL, id: guid(), value: property.name }],
-      value: val ?? [{ type: ValueSegmentType.LITERAL, id: guid(), value: '' }],
+      key: [createLiteralValueSegment(property.name)],
+      value: val ?? [createLiteralValueSegment('')],
       id: guid(),
     });
   }
@@ -404,32 +402,48 @@ export const serializeAuthentication = (
   switch (jsonEditor.type) {
     case AuthenticationType.BASIC:
       returnItems.basic = {
-        basicUsername: convertStringToSegments(jsonEditor.username, nodeMap, { tokensEnabled: true }),
-        basicPassword: convertStringToSegments(jsonEditor.password, nodeMap, { tokensEnabled: true }),
+        basicUsername: convertStringToSegments(jsonEditor.username, nodeMap, {
+          tokensEnabled: true,
+        }),
+        basicPassword: convertStringToSegments(jsonEditor.password, nodeMap, {
+          tokensEnabled: true,
+        }),
       };
       break;
     case AuthenticationType.CERTIFICATE:
       returnItems.clientCertificate = {
-        clientCertificatePfx: convertStringToSegments(jsonEditor.pfx, nodeMap, { tokensEnabled: true }),
+        clientCertificatePfx: convertStringToSegments(jsonEditor.pfx, nodeMap, {
+          tokensEnabled: true,
+        }),
         clientCertificatePassword: convertStringToSegments(jsonEditor.password, nodeMap, { tokensEnabled: true }),
       };
       break;
     case AuthenticationType.RAW:
       returnItems.raw = {
-        rawValue: convertStringToSegments(jsonEditor.value, nodeMap, { tokensEnabled: true }),
+        rawValue: convertStringToSegments(jsonEditor.value, nodeMap, {
+          tokensEnabled: true,
+        }),
       };
       break;
     case AuthenticationType.MSI:
       returnItems.msi = {
         msiIdentity: jsonEditor.identity,
-        msiAudience: convertStringToSegments(jsonEditor.audience, nodeMap, { tokensEnabled: true }),
+        msiAudience: convertStringToSegments(jsonEditor.audience, nodeMap, {
+          tokensEnabled: true,
+        }),
       };
       break;
     case AuthenticationType.OAUTH:
       returnItems.aadOAuth = {
-        oauthTenant: convertStringToSegments(jsonEditor.tenant, nodeMap, { tokensEnabled: true }),
-        oauthAudience: convertStringToSegments(jsonEditor.audience, nodeMap, { tokensEnabled: true }),
-        oauthClientId: convertStringToSegments(jsonEditor.clientId, nodeMap, { tokensEnabled: true }),
+        oauthTenant: convertStringToSegments(jsonEditor.tenant, nodeMap, {
+          tokensEnabled: true,
+        }),
+        oauthAudience: convertStringToSegments(jsonEditor.audience, nodeMap, {
+          tokensEnabled: true,
+        }),
+        oauthClientId: convertStringToSegments(jsonEditor.clientId, nodeMap, {
+          tokensEnabled: true,
+        }),
       };
       if (jsonEditor.authority) {
         returnItems.aadOAuth.oauthAuthority = convertStringToSegments(jsonEditor.authority, nodeMap, { tokensEnabled: true });
@@ -441,7 +455,9 @@ export const serializeAuthentication = (
       if (jsonEditor.pfx && jsonEditor.password) {
         returnItems.aadOAuth.oauthType = AuthenticationOAuthType.CERTIFICATE;
         returnItems.aadOAuth.oauthTypeCertificatePfx = convertStringToSegments(jsonEditor.pfx, nodeMap, { tokensEnabled: true });
-        returnItems.aadOAuth.oauthTypeCertificatePassword = convertStringToSegments(jsonEditor.password, nodeMap, { tokensEnabled: true });
+        returnItems.aadOAuth.oauthTypeCertificatePassword = convertStringToSegments(jsonEditor.password, nodeMap, {
+          tokensEnabled: true,
+        });
       }
       break;
     default:

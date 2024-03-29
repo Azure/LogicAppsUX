@@ -43,8 +43,8 @@ export const rgb2hsv = ({ red, green, blue }: RGB): HSV => {
     ? (max === newRed
         ? (newGreen - newBlue) / difference + (newGreen < newBlue ? 6 : 0)
         : max === newGreen
-        ? 2 + (newBlue - newRed) / difference
-        : 4 + (newRed - newGreen) / difference) * 60
+          ? 2 + (newBlue - newRed) / difference
+          : 4 + (newRed - newGreen) / difference) * 60
     : 0;
   const saturation = max ? (difference / max) * 100 : 0;
   const value = max * 100;
@@ -139,5 +139,18 @@ export const lighten = ({ blue, green, red }: RGB, amount: number): RGB => {
     blue: lightenColor(blue),
     green: lightenColor(green),
     red: lightenColor(red),
+  };
+};
+
+export const darken = ({ blue, green, red }: RGB, amount: number): RGB => {
+  const darkenColor = (color: number): number => {
+    const adjustBy = color * amount;
+    return Math.round(color - adjustBy);
+  };
+
+  return {
+    blue: darkenColor(blue),
+    green: darkenColor(green),
+    red: darkenColor(red),
   };
 };

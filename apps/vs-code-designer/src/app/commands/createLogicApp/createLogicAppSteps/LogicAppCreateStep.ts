@@ -3,6 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import {
+  appKindSetting,
   azureWebJobsStorageKey,
   defaultVersionRange,
   extensionBundleId,
@@ -157,7 +158,7 @@ export class LogicAppCreateStep extends AzureWizardExecuteStep<IFunctionAppWizar
     if (context.customLocation) {
       appSettings.push(
         {
-          name: 'APP_KIND',
+          name: appKindSetting,
           value: logicAppKindAppSetting,
         },
         {

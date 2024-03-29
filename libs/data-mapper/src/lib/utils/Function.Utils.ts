@@ -237,8 +237,8 @@ export const getInputName = (inputConnection: InputConnection | undefined, conne
     return isCustomValue(inputConnection)
       ? inputConnection
       : isSchemaNodeExtended(inputConnection.node)
-      ? inputConnection.node.name
-      : functionDropDownItemText(inputConnection.reactFlowKey, inputConnection.node, connectionDictionary);
+        ? inputConnection.node.name
+        : functionDropDownItemText(inputConnection.reactFlowKey, inputConnection.node, connectionDictionary);
   }
 
   return undefined;

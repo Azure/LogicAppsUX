@@ -4,7 +4,7 @@ import {
   encodeStringSegmentTokensInDomContext,
   encodeStringSegmentTokensInLexicalContext,
 } from '../parsesegments';
-import type { ValueSegment } from '@microsoft/designer-client-services-logic-apps';
+import type { ValueSegment } from '@microsoft/logic-apps-shared';
 
 describe('lib/editor/base/utils/parseSegments', () => {
   describe('decodeStringSegmentTokensInDomContext', () => {

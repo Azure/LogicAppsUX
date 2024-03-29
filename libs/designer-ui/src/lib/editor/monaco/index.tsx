@@ -1,6 +1,7 @@
 import Constants from '../../constants';
 import { registerWorkflowLanguageProviders } from '../../workflow/languageservice/workflowlanguageservice';
 import { useTheme } from '@fluentui/react';
+import { EditorLanguage } from '@microsoft/logic-apps-shared';
 import Editor, { loader } from '@monaco-editor/react';
 import * as monaco from 'monaco-editor';
 import type { IScrollEvent, editor } from 'monaco-editor';
@@ -11,15 +12,6 @@ loader.config({ monaco });
 export interface EditorContentChangedEventArgs extends editor.IModelContentChangedEvent {
   value?: string;
 }
-// TODO: Add more languages
-export const EditorLanguage = {
-  javascript: 'javascript',
-  json: 'json',
-  xml: 'xml',
-  templateExpressionLanguage: 'TemplateExpressionLanguage',
-  yaml: 'yaml',
-} as const;
-export type EditorLanguage = (typeof EditorLanguage)[keyof typeof EditorLanguage];
 
 export interface MonacoProps extends MonacoOptions {
   className?: string;
@@ -214,7 +206,7 @@ export const MonacoEditor = forwardRef<editor.IStandaloneCodeEditor, MonacoProps
       id: 'open-tokenpicker',
       label: 'Open TokenPicker',
       keybindings: [512 | 85],
-      run: function (): void | Promise<void> {
+      run: (): void | Promise<void> => {
         openTokenPicker?.();
       },
     };
@@ -271,6 +263,7 @@ export const MonacoEditor = forwardRef<editor.IStandaloneCodeEditor, MonacoProps
               renderWhitespace: 'none',
               ariaLabel: label,
               wordWrap,
+              language,
               ...options,
             }}
             value={value}

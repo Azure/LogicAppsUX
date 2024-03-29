@@ -85,13 +85,7 @@
             "ignoreList": ["foo"]
           }
         ],
-        "no-param-reassign": [
-          "error",
-          {
-            "props": true,
-            "ignorePropertyModificationsFor": ["state"]
-          }
-        ],
+        "no-param-reassign": "off",
         "formatjs/enforce-default-message": ["error", "literal"],
         "formatjs/enforce-description": ["error", "literal"],
         "formatjs/no-multiple-whitespaces": [1],
