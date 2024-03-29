@@ -5295,6 +5295,9 @@
       <Item ItemId=";Mcvr0B" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[To use modules or dependecies, please add at Custom Code Dependenncies in Portal TOC]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Aby korzystać z modułów lub zależności, dodaj je w witrynie Zależności kodu niestandardowego w spisie treści portalu]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
