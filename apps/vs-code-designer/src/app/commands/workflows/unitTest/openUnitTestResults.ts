@@ -23,6 +23,7 @@ import {
   type WebviewPanelOptions,
   type ProgressOptions,
   ProgressLocation,
+  workspace,
 } from 'vscode';
 
 /**
@@ -50,7 +51,7 @@ export async function openUnitTestResults(context: IAzureConnectorsContext, node
 
   if (ext.testRuns.has(unitTestNode.fsPath)) {
     const workflowName = path.basename(path.dirname(unitTestNode.fsPath));
-    await openResultsWebview(workflowName, unitTestName);
+    await openResultsWebview(workflowName, unitTestName, unitTestNode.fsPath);
   } else {
     window.showInformationMessage(
       localize('noRunForUnitTest', 'There is no run for the selected unit test. Make sure to run the unit test for "{0}"', unitTestName)
@@ -63,7 +64,7 @@ export async function openUnitTestResults(context: IAzureConnectorsContext, node
  * @param {string} workflowName - The name of the workflow.
  * @returns A promise that resolves when the unit test results are opened.
  */
-export async function openResultsWebview(workflowName: string, unitTestName: string): Promise<void> {
+export async function openResultsWebview(workflowName: string, unitTestName: string, unitTestFilePath: string): Promise<void> {
   const panelName = `${workflowName} - ${unitTestName} - ${localize('unitTestResult', 'unit test results')}`;
   const panelGroupKey = ext.webViewKey.unitTest;
   const existingPanel: WebviewPanel | undefined = tryGetWebviewPanel(panelGroupKey, panelName);
@@ -107,7 +108,7 @@ export async function openResultsWebview(workflowName: string, unitTestName: str
             break;
           }
           case ExtensionCommand.viewWorkflow: {
-            console.log('View workflow');
+            window.showTextDocument(await workspace.openTextDocument(unitTestFilePath));
             break;
           }
           default:
