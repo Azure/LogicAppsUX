@@ -4,7 +4,7 @@ import type { NodeStaticResults } from '../../actions/bjsworkflow/staticresults'
 import { StaticResultOption } from '../../actions/bjsworkflow/staticresults';
 import type { RepetitionContext } from '../../utils/parameters/helper';
 import { createTokenValueSegment, isTokenValueSegment } from '../../utils/parameters/segment';
-import { normalizeKey } from '../../utils/tokens';
+import { getTokenTitle, normalizeKey } from '../../utils/tokens';
 import { resetNodesLoadStatus, resetWorkflowState } from '../global';
 import { LogEntryLevel, LoggerService, filterRecord, getRecordEntry } from '@microsoft/logic-apps-shared';
 import type { ParameterInfo } from '@microsoft/designer-ui';
@@ -186,9 +186,6 @@ export interface ClearDynamicIOPayload {
   outputs?: boolean;
 }
 
-interface UpdateExistingInputTokenTitlesPayload {
-  tokenTitles: Record<string, string>;
-}
 interface AddDynamicInputsPayload {
   nodeId: string;
   groupId: string;
@@ -318,25 +315,6 @@ export const operationMetadataSlice = createSlice({
         }
       }
     },
-    updateExistingInputTokenTitles: (state, action: PayloadAction<UpdateExistingInputTokenTitlesPayload>) => {
-      const { tokenTitles } = action.payload;
-
-      Object.entries(state.inputParameters).forEach(([nodeId, nodeInputs]) => {
-        Object.entries(nodeInputs.parameterGroups).forEach(([parameterId, parameterGroup]) => {
-          parameterGroup.parameters.forEach((parameter, parameterIndex) => {
-            parameter.value.forEach((segment, segmentIndex) => {
-              if (isTokenValueSegment(segment) && segment.token?.key) {
-                const normalizedKey = normalizeKey(segment.token.key);
-                if (normalizedKey in tokenTitles) {
-                  state.inputParameters[nodeId].parameterGroups[parameterId].parameters[parameterIndex].value[segmentIndex] =
-                    createTokenValueSegment({ ...segment.token, title: tokenTitles[normalizedKey] }, segment.value, segment.type);
-                }
-              }
-            });
-          });
-        });
-      });
-    },
     updateNodeSettings: (state, action: PayloadAction<AddSettingsPayload>) => {
       const { id, settings } = action.payload;
       const nodeSettings = getRecordEntry(state.settings, id);
@@ -369,11 +347,12 @@ export const operationMetadataSlice = createSlice({
     },
     updateNodeParameters: (state, action: PayloadAction<UpdateParametersPayload>) => {
       const { nodeId, dependencies, parameters } = action.payload;
-      for (const payload of parameters) {
-        const { groupId, parameterId, propertiesToUpdate } = payload;
-        const nodeInputs = getRecordEntry(state.inputParameters, nodeId);
+      // console.log('### UPDATE NODE PARAMETERS ###', action.payload);
+      const nodeInputs = getRecordEntry(state.inputParameters, nodeId);
+      if (nodeInputs) {
+        for (const payload of parameters) {
+          const { groupId, parameterId, propertiesToUpdate } = payload;
 
-        if (nodeInputs) {
           const parameterGroup = nodeInputs.parameterGroups[groupId];
           const index = parameterGroup.parameters.findIndex((parameter) => parameter.id === parameterId);
           if (index > -1) {
@@ -400,12 +379,12 @@ export const operationMetadataSlice = createSlice({
         };
       }
 
-      LoggerService().log({
-        level: LogEntryLevel.Verbose,
-        area: 'Designer:Operation Metadata Slice',
-        message: action.type,
-        args: [action.payload.nodeId],
-      });
+      // LoggerService().log({
+      //   level: LogEntryLevel.Verbose,
+      //   area: 'Designer:Operation Metadata Slice',
+      //   message: action.type,
+      //   args: [action.payload.nodeId],
+      // });
     },
     updateParameterConditionalVisibility: (
       state,
@@ -552,6 +531,30 @@ export const operationMetadataSlice = createSlice({
       state.loadStatus.nodesInitialized = false;
       state.loadStatus.nodesAndDynamicDataInitialized = false;
     });
+    // updateExistingInputTokenTitles
+    builder.addCase(addDynamicOutputs, (state, action) => {
+      const { outputs } = action.payload;
+
+      const tokenTitles = Object.values(outputs).reduce((result: Record<string, string>, outputValue: OutputInfo) => {
+        return { ...result, [outputValue.key]: getTokenTitle(outputValue) };
+      }, {});
+
+      Object.entries(state.inputParameters).forEach(([nodeId, nodeInputs]) => {
+        Object.entries(nodeInputs.parameterGroups).forEach(([parameterId, parameterGroup]) => {
+          parameterGroup.parameters.forEach((parameter, parameterIndex) => {
+            parameter.value.forEach((segment, segmentIndex) => {
+              if (isTokenValueSegment(segment) && segment.token?.key) {
+                const normalizedKey = normalizeKey(segment.token.key);
+                if (normalizedKey in tokenTitles) {
+                  state.inputParameters[nodeId].parameterGroups[parameterId].parameters[parameterIndex].value[segmentIndex] =
+                    createTokenValueSegment({ ...segment.token, title: tokenTitles[normalizedKey] }, segment.value, segment.type);
+                }
+              }
+            });
+          });
+        });
+      });
+    });
   },
 });
 
@@ -568,7 +571,6 @@ export const {
   updateParameterConditionalVisibility,
   updateParameterValidation,
   updateParameterEditorViewModel,
-  updateExistingInputTokenTitles,
   removeParameterValidationError,
   updateOutputs,
   updateActionMetadata,
