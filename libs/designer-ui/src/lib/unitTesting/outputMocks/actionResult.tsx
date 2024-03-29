@@ -14,22 +14,27 @@ export const ActionResult: React.FC<ActionResultProps> = ({ nodeId, onActionResu
   const intlText = {
     ACTION_RESULT: intl.formatMessage({
       defaultMessage: 'Action Result',
+      id: '5U6Dee',
       description: 'The label for the action result dropdown in the unit test panel.',
     }),
     SUCCEEDED_STATUS: intl.formatMessage({
       defaultMessage: 'Is successful',
+      id: 'HF2SNx',
       description: 'Successful action result',
     }),
     TIMEDOUT_STATUS: intl.formatMessage({
       defaultMessage: 'Timed out',
+      id: '2M+Kcv',
       description: 'Timed action result',
     }),
     SKIPPED_STATUS: intl.formatMessage({
       defaultMessage: 'Is skipped',
+      id: 'gX4ect',
       description: 'Skipped action result',
     }),
     FAILED_STATUS: intl.formatMessage({
       defaultMessage: 'Has failed',
+      id: 'cySYfO',
       description: 'Failed action result',
     }),
   };

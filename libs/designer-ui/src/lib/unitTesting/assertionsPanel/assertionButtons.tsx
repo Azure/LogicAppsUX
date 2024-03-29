@@ -16,11 +16,13 @@ export const AssertionButtons = ({ onDelete, isEditable, onEdit }: assertionButt
 
   const deleteAssertionText = intl.formatMessage({
     defaultMessage: 'Delete assertion',
+    id: '+nCfrr',
     description: 'Create Assertion Text',
   });
 
   const editAssertionText = intl.formatMessage({
     defaultMessage: 'Edit assertion',
+    id: 'dzPAxq',
     description: 'Edit Assertion Text',
   });
 
