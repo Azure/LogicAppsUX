@@ -6,7 +6,7 @@ import { PropertyEditor } from './propertyEditor';
 import { initializePropertyValueInput } from './util';
 import type { IDropdownOption, IDropdownStyles, ITextFieldStyles } from '@fluentui/react';
 import { Dropdown, TextField } from '@fluentui/react';
-import type { OpenAPIV2 } from '@microsoft/utils-logic-apps';
+import type { OpenAPIV2 } from '@microsoft/logic-apps-shared';
 import { useMountEffect, useUpdateEffect } from '@react-hookz/web';
 import React, { useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -104,15 +104,18 @@ function WrappedStaticResultProperty({
 
   const dropdownPlaceHolder = intl.formatMessage({
     defaultMessage: 'Select a value',
+    id: 'DJW8RE',
     description: 'Placeholder for dropdown',
   });
 
   const textFieldPlaceHolder = intl.formatMessage({
     defaultMessage: 'Enter a value',
+    id: 'r/n6/9',
     description: 'Placeholder for text field',
   });
   const integerTextFieldPlaceHolder = intl.formatMessage({
     defaultMessage: 'Enter an integer',
+    id: 'ehIBkh',
     description: 'Placeholder for integer text field',
   });
 
@@ -120,7 +123,11 @@ function WrappedStaticResultProperty({
     if (isNaN(newValue)) {
       setInputValue(inputValue ?? '');
       setErrorMessage(
-        intl.formatMessage({ defaultMessage: 'Invalid integer value', description: 'Error message for invalid integer value' })
+        intl.formatMessage({
+          defaultMessage: 'Invalid integer value',
+          id: 'oR2x4N',
+          description: 'Error message for invalid integer value',
+        })
       );
     } else {
       setInputValue(newValue);

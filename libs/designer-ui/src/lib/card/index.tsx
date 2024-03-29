@@ -1,7 +1,6 @@
 import { StatusPill } from '../monitoring';
 import { MockStatusIcon } from '../unitTesting/mockStatusIcon';
 import { type OutputMock } from '../unitTesting/outputMocks';
-import { convertUIElementNameToAutomationId } from '../utils';
 import { CardContextMenu } from './cardcontextmenu';
 import { CardFooter } from './cardfooter';
 import { ErrorBanner } from './errorbanner';
@@ -12,7 +11,8 @@ import { getCardStyle } from './utils';
 import type { ISpinnerStyles, MessageBarType } from '@fluentui/react';
 import { Icon, css } from '@fluentui/react';
 import { Spinner } from '@fluentui/react-components';
-import { type LogicAppsV2 } from '@microsoft/utils-logic-apps';
+import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
+import { replaceWhiteSpaceWithUnderscore } from '@microsoft/logic-apps-shared';
 import { useEffect, useMemo, useRef } from 'react';
 import type { ConnectDragPreview, ConnectDragSource } from 'react-dnd';
 import { useIntl } from 'react-intl';
@@ -125,6 +125,7 @@ export const Card: React.FC<CardProps> = ({
       withConnectorOnly: intl.formatMessage(
         {
           defaultMessage: '{connectorName} connector',
+          id: '6sSPNb',
           description: 'Alt text on action/trigger card when there is a connector name but no operation name',
         },
         cardAltTextArgs
@@ -132,6 +133,7 @@ export const Card: React.FC<CardProps> = ({
       withOperationOnly: intl.formatMessage(
         {
           defaultMessage: '{operationName} operation',
+          id: '96JG8I',
           description: 'Alt text on action/trigger card when there is an operation name but no connector name',
         },
         cardAltTextArgs
@@ -139,6 +141,7 @@ export const Card: React.FC<CardProps> = ({
       withConnectorAndOperation: intl.formatMessage(
         {
           defaultMessage: '{operationName} operation, {connectorName} connector',
+          id: 'ncW1Sw',
           description: 'Alt text on action/trigger card when there are both an operation name and connector name',
         },
         cardAltTextArgs
@@ -185,7 +188,7 @@ export const Card: React.FC<CardProps> = ({
         )}
         style={getCardStyle(brandColor)}
         data-testid={`card-${title}`}
-        data-automation-id={`card-${convertUIElementNameToAutomationId(title)}`}
+        data-automation-id={`card-${replaceWhiteSpaceWithUnderscore(title)}`}
         onClick={handleClick}
         onContextMenu={contextMenu.handle}
         onKeyDown={keyboardInteraction.keyDown}

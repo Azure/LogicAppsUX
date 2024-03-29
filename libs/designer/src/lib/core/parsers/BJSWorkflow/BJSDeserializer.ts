@@ -8,11 +8,10 @@ import { createWorkflowNode, createWorkflowEdge } from '../../utils/graph';
 import { toConditionViewModel } from '../../utils/parameters/helper';
 import { createLiteralValueSegment, isValueSegment } from '../../utils/parameters/segment';
 import type { WorkflowNode, WorkflowEdge } from '../models/workflowNode';
-import { LoggerService, Status } from '@microsoft/designer-client-services-logic-apps';
-import { getDurationStringPanelMode, ActionResults } from '@microsoft/designer-ui';
-import { getIntl } from '@microsoft/intl-logic-apps';
-import type { Assertion, LogicAppsV2, SubgraphType, UnitTestDefinition } from '@microsoft/utils-logic-apps';
 import {
+  LoggerService,
+  Status,
+  getIntl,
   containsIdTag,
   WORKFLOW_NODE_TYPES,
   WORKFLOW_EDGE_TYPES,
@@ -22,9 +21,11 @@ import {
   isNullOrUndefined,
   getUniqueName,
   getRecordEntry,
-  ConnectionType,
   guid,
-} from '@microsoft/utils-logic-apps';
+  ConnectionType,
+} from '@microsoft/logic-apps-shared';
+import { getDurationStringPanelMode, ActionResults } from '@microsoft/designer-ui';
+import type { Assertion, LogicAppsV2, SubgraphType, UnitTestDefinition } from '@microsoft/logic-apps-shared';
 
 const hasMultipleTriggers = (definition: LogicAppsV2.WorkflowDefinition): boolean => {
   return definition && definition.triggers ? Object.keys(definition.triggers).length > 1 : false;
@@ -500,6 +501,7 @@ const throwIfMultipleTriggers = (definition: LogicAppsV2.WorkflowDefinition) => 
     throw new UnsupportedException(
       intl.formatMessage({
         defaultMessage: 'Cannot render designer due to multiple triggers in definition.',
+        id: '8L+oIz',
         description:
           "This is an error message shown when a user tries to load a workflow defintion that contains Multiple entry points which isn't supported",
       }),

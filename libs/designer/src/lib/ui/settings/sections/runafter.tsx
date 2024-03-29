@@ -9,7 +9,7 @@ import { SettingsSection } from '../settingsection';
 import type { ValidationError } from '../validation/validation';
 import { ValidationErrorKeys, ValidationErrorType } from '../validation/validation';
 import type { RunAfterActionDetailsProps } from './runafterconfiguration';
-import { getRecordEntry, type LogicAppsV2 } from '@microsoft/utils-logic-apps';
+import { getRecordEntry, type LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import { useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
@@ -25,14 +25,17 @@ export const RunAfter = ({ nodeId, readOnly = false, expanded, onHeaderClick }: 
 
   const runAfterTitle = intl.formatMessage({
     defaultMessage: 'Run After',
+    id: 'DyYcJZ',
     description: 'title for run after setting section',
   });
   const lastActionErrorMessage = intl.formatMessage({
     defaultMessage: 'Each action must have one or more run after configurations',
+    id: 'v7ipqH',
     description: 'error message for deselection of last run after action',
   });
   const lastStatusErrorMessage = intl.formatMessage({
     defaultMessage: 'Each run after configuration must have at least one status checked',
+    id: '1ZSzl6',
     description: 'error message for deselection of last run after status',
   });
 

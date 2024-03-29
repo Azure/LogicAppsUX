@@ -7,7 +7,7 @@ import type { AzureAccountTreeItemWithProjects } from './app/tree/AzureAccountTr
 import { type TestData } from './app/tree/unitTestTree';
 import { dotnet, func, node, npm } from './constants';
 import type { Site } from '@azure/arm-appservice';
-import type { IAzExtOutputChannel } from '@microsoft/vscode-azext-utils';
+import type { IActionContext, IAzExtOutputChannel } from '@microsoft/vscode-azext-utils';
 import type { AzureHostExtensionApi } from '@microsoft/vscode-azext-utils/hostapi';
 import type * as cp from 'child_process';
 import {
@@ -93,6 +93,10 @@ export namespace ext {
   export const showError = (errMsg: string) => {
     ext.log(errMsg);
     window.showErrorMessage(errMsg);
+  };
+
+  export const logTelemetry = (context: IActionContext, key: string, value: string) => {
+    context.telemetry.properties[key] = value;
   };
 
   // Unit Test

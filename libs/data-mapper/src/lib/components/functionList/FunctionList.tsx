@@ -19,7 +19,7 @@ import FunctionListHeader from './FunctionListHeader';
 import FunctionListItem from './FunctionListItem';
 import { Button, Input, Tooltip } from '@fluentui/react-components';
 import { Dismiss20Regular } from '@fluentui/react-icons';
-import type { FunctionPositionMetadata } from '@microsoft/utils-logic-apps';
+import type { FunctionPositionMetadata } from '@microsoft/logic-apps-shared';
 import Fuse from 'fuse.js';
 import { useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -187,11 +187,13 @@ export const FunctionList = () => {
 
   const searchLoc = intl.formatMessage({
     defaultMessage: 'Search',
+    id: '2NXYYu',
     description: 'Search',
   });
 
   const clearLoc = intl.formatMessage({
     defaultMessage: 'Clear',
+    id: 'e9OvzW',
     description: 'Clear',
   });
 

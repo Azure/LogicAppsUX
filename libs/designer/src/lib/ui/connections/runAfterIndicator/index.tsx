@@ -1,7 +1,7 @@
 import { Text, useTheme } from '@fluentui/react';
 import { Tooltip } from '@fluentui/react-components';
 import { EmptyTrafficLightDot, Failed, Skipped, Succeeded, TimedOut, TrafficLightDot } from '@microsoft/designer-ui';
-import { idDisplayCase, RUN_AFTER_COLORS, RUN_AFTER_STATUS } from '@microsoft/utils-logic-apps';
+import { idDisplayCase, RUN_AFTER_COLORS, RUN_AFTER_STATUS } from '@microsoft/logic-apps-shared';
 import { useCallback } from 'react';
 import { useIntl } from 'react-intl';
 
@@ -32,6 +32,7 @@ export function RunAfterIndicator({ statuses, sourceNodeId }: RunAfterIndicatorP
   const tooltipHeaderText = intl.formatMessage(
     {
       defaultMessage: 'Run after {sourceNodeId}',
+      id: 'PytMJ0',
       description: 'The text that shows the node after which the target node is run.',
     },
     {
@@ -42,18 +43,22 @@ export function RunAfterIndicator({ statuses, sourceNodeId }: RunAfterIndicatorP
   const StatusStrings: Record<string, string> = {
     SUCCEEDED_STATUS: intl.formatMessage({
       defaultMessage: 'Is successful',
+      id: 'rh5g4p',
       description: 'Successful run',
     }),
     TIMEDOUT_STATUS: intl.formatMessage({
       defaultMessage: 'Timed out',
+      id: '/2V8bQ',
       description: 'Timed out run',
     }),
     SKIPPED_STATUS: intl.formatMessage({
       defaultMessage: 'Is skipped',
+      id: 'I3mifR',
       description: 'Skipped run',
     }),
     FAILED_STATUS: intl.formatMessage({
       defaultMessage: 'Has failed',
+      id: 'O+3Y9f',
       description: 'Failed run',
     }),
   };

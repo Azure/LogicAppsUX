@@ -6,8 +6,7 @@ import { AssertionButtons } from './assertionButtons';
 import { AssertionField } from './assertionField';
 import { Button } from '@fluentui/react-components';
 import { bundleIcon, ChevronRight24Regular, ChevronRight24Filled, ChevronDown24Regular, ChevronDown24Filled } from '@fluentui/react-icons';
-import type { AssertionDefintion } from '@microsoft/utils-logic-apps';
-import { RUN_AFTER_COLORS, type Assertion } from '@microsoft/utils-logic-apps';
+import { RUN_AFTER_COLORS, type Assertion, type AssertionDefintion } from '@microsoft/logic-apps-shared';
 import { useState } from 'react';
 
 const ExpandIcon = bundleIcon(ChevronRight24Filled, ChevronRight24Regular);
@@ -39,7 +38,6 @@ export type GetAssertionTokenPickerHandler = (
   labelId: string,
   type: string,
   tokenPickerMode?: TokenPickerMode,
-  setIsTokenPickerOpened?: (b: boolean) => void,
   tokenClickedCallback?: (token: ValueSegment) => void
 ) => JSX.Element;
 

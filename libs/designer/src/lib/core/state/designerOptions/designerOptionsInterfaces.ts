@@ -16,8 +16,9 @@ import type {
   IEditorService,
   IConnectionParameterEditorService,
   IChatbotService,
-} from '@microsoft/designer-client-services-logic-apps';
-import type { LogicApps } from '@microsoft/utils-logic-apps';
+  ICustomCodeService,
+  LogicApps,
+} from '@microsoft/logic-apps-shared';
 
 type PANEL_TAB_NAMES = keyof typeof CONSTANTS.PANEL_TAB_NAMES;
 
@@ -36,6 +37,7 @@ export interface DesignerOptionsState {
     suppressCastingForSerialize?: boolean; // suppress casting for serialize
     recurrenceInterval?: LogicApps.Recurrence;
     forceEnableSplitOn?: boolean; // force enable split on (by default it is disabled on stateless workflows)
+    hideUTFExpressions?: boolean; // hide UTF expressions in template functions
   };
   nodeSelectAdditionalCallback?: (nodeId: string) => any;
   showConnectionsPanel?: boolean;
@@ -59,4 +61,5 @@ export interface ServiceOptions {
   editorService?: IEditorService;
   connectionParameterEditorService?: IConnectionParameterEditorService;
   chatbotService?: IChatbotService;
+  customCodeService?: ICustomCodeService;
 }

@@ -2,7 +2,7 @@ import { isEnterKey, isSpaceKey } from '../utils';
 import type { NodeMessage } from './errorsPanel.types';
 import { MessageLevel } from './errorsPanel.types';
 import { Text, Icon } from '@fluentui/react';
-import { fallbackConnectorIconUrl } from '@microsoft/utils-logic-apps';
+import { fallbackConnectorIconUrl } from '@microsoft/logic-apps-shared';
 import { useIntl } from 'react-intl';
 
 interface NodeErrorCardProps {
@@ -32,6 +32,7 @@ export const NodeErrorCard: React.FC<NodeErrorCardProps> = ({ id, level, title, 
 
   const buttonHint = intl.formatMessage({
     defaultMessage: 'Open operation',
+    id: 'bwlAWn',
     description: 'Hint for the button on the error card',
   });
 

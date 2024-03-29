@@ -6,7 +6,7 @@ import type { TokenPickerMode } from '../../tokenpicker';
 import type { GetAssertionTokenPickerHandler } from './assertion';
 import type { ILabelStyles, IStyle, ITextFieldStyles } from '@fluentui/react';
 import { Label, Text, TextField } from '@fluentui/react';
-import { type Assertion, isEmptyString, isNullOrUndefined } from '@microsoft/utils-logic-apps';
+import { type Assertion, isEmptyString, isNullOrUndefined } from '@microsoft/logic-apps-shared';
 import { useIntl } from 'react-intl';
 
 export const labelStyles: Partial<ILabelStyles> = {
@@ -80,31 +80,37 @@ export const AssertionField = ({
 
   const nameTitle = intl.formatMessage({
     defaultMessage: 'Assertion name',
+    id: 'LdBN0m',
     description: 'Assertion field name title',
   });
 
   const descriptionTitle = intl.formatMessage({
     defaultMessage: 'Description',
+    id: 's4omwa',
     description: 'Assertion field description title',
   });
 
   const conditionTitle = intl.formatMessage({
     defaultMessage: 'Condition expression',
+    id: 'ujp53j',
     description: 'Assertion field condition title',
   });
 
   const noDescription = intl.formatMessage({
     defaultMessage: 'No description',
+    id: 'kSXjTx',
     description: 'Assertion field no description text',
   });
 
   const namePlaceholder = intl.formatMessage({
     defaultMessage: 'Enter name',
+    id: 'PhBS5+',
     description: 'Assertion field name placeholder',
   });
 
   const descriptionPlaceholder = intl.formatMessage({
     defaultMessage: 'Enter description',
+    id: 'hW7oe7',
     description: 'Assertion field description placeholder',
   });
 
@@ -194,18 +200,8 @@ export const AssertionField = ({
                   labelId: string,
                   tokenPickerMode?: TokenPickerMode,
                   editorType?: string,
-                  setIsInTokenPicker?: (b: boolean) => void,
                   tokenClickedCallback?: (token: ValueSegment) => void
-                ) =>
-                  getTokenPicker(
-                    editorId,
-                    labelId,
-                    editorType ?? constants.SWAGGER.TYPE.ANY,
-                    tokenPickerMode,
-                    setIsInTokenPicker,
-                    tokenClickedCallback
-                  )
-                }
+                ) => getTokenPicker(editorId, labelId, editorType ?? constants.SWAGGER.TYPE.ANY, tokenPickerMode, tokenClickedCallback)}
                 onCastParameter={() => ''}
                 onValueChange={onExpressionChange}
               />

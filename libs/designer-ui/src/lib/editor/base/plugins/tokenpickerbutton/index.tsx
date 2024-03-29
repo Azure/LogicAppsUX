@@ -5,6 +5,7 @@ import { TooltipHost } from '@fluentui/react/lib/Tooltip';
 import { Depths } from '@fluentui/theme';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
+import { LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
 import type { NodeKey } from 'lexical';
 import { $getSelection } from 'lexical';
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
@@ -113,11 +114,13 @@ export const TokenPickerButton = ({
 
   const dynamicContentButtonText = intl.formatMessage({
     defaultMessage: `Enter the data from previous step. You can also add data by typing the '/' character.`,
+    id: 'p1IEXb',
     description: 'Label for button to open dynamic content token picker',
   });
 
   const expressionButtonText = intl.formatMessage({
     defaultMessage: 'Insert Expression (You can also add by typing / in the editor)',
+    id: 'loxzZD',
     description: 'Label for button to open expression token picker',
   });
 
@@ -137,7 +140,15 @@ export const TokenPickerButton = ({
                 styles={{ root: `top-root-button-style ${hideExpression ? 'top-root-button-style-single' : ''}` }}
                 className="msla-token-picker-entrypoint-button-dynamic-content"
                 data-automation-id="msla-token-picker-entrypoint-button-dynamic-content"
-                onClick={() => openTokenPicker(TokenPickerMode.TOKEN)}
+                onClick={() => {
+                  LoggerService().log({
+                    area: 'TokenPickerButton:openTokenPicker',
+                    args: [TokenPickerMode.TOKEN],
+                    level: LogEntryLevel.Verbose,
+                    message: 'Token picker opened.',
+                  });
+                  openTokenPicker(TokenPickerMode.TOKEN);
+                }}
               />
             </TooltipHost>
           ) : null}
@@ -148,7 +159,15 @@ export const TokenPickerButton = ({
                 styles={{ root: `bottom-root-button-style ${hideDynamicContent ? 'bottom-root-button-style-single' : ''}` }}
                 className="msla-token-picker-entrypoint-button-dynamic-content"
                 data-automation-id="msla-token-picker-entrypoint-button-expression"
-                onClick={() => openTokenPicker(TokenPickerMode.EXPRESSION)}
+                onClick={() => {
+                  LoggerService().log({
+                    area: 'TokenPickerButton:openTokenPicker',
+                    args: [TokenPickerMode.EXPRESSION],
+                    level: LogEntryLevel.Verbose,
+                    message: 'Expression picker opened.',
+                  });
+                  openTokenPicker(TokenPickerMode.EXPRESSION);
+                }}
               />
             </TooltipHost>
           ) : null}

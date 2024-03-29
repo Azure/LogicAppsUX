@@ -1,8 +1,8 @@
 import { PropertyEditorItem, SchemaPropertyValueType } from './PropertyEditorItem';
 import type { IButtonStyles, IIconProps, ITextFieldStyles } from '@fluentui/react';
 import { DefaultButton, PrimaryButton, Callout, DirectionalHint, TextField } from '@fluentui/react';
-import type { OpenAPIV2 } from '@microsoft/utils-logic-apps';
-import { clone } from '@microsoft/utils-logic-apps';
+import type { OpenAPIV2 } from '@microsoft/logic-apps-shared';
+import { clone } from '@microsoft/logic-apps-shared';
 import { useUpdateEffect } from '@react-hookz/web';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -61,10 +61,12 @@ export const PropertyEditor = ({ properties, schema, updateProperties }: Propert
 
   const duplicatePropertyName = intl.formatMessage({
     defaultMessage: 'Duplicate property name',
+    id: 'kBSLfu',
     description: 'Duplicate property name error message',
   });
   const emptyPropertyName = intl.formatMessage({
     defaultMessage: 'Empty property name',
+    id: 'meVkB6',
     description: 'Empty property name error message',
   });
 
@@ -140,21 +142,25 @@ export const PropertyEditor = ({ properties, schema, updateProperties }: Propert
 
   const saveButtonLabel = intl.formatMessage({
     defaultMessage: 'Save',
+    id: '2y24a/',
     description: 'Save button label',
   });
 
   const cancelButtonLabel = intl.formatMessage({
     defaultMessage: 'Cancel',
+    id: '0GT0SI',
     description: 'Cancel button label',
   });
 
   const newPropertyPlaceholderText = intl.formatMessage({
     defaultMessage: 'Enter unique property name',
+    id: 'NWxGWN',
     description: 'Placeholder text for new property name',
   });
 
   const addItemButtonLabel = intl.formatMessage({
     defaultMessage: 'Add new item',
+    id: 'Zi9gQK',
     description: 'Label to add item to property editor',
   });
 

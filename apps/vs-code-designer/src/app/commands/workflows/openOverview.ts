@@ -197,6 +197,6 @@ function getWorkflowStateType(workflowName: string, kind: string, settings: Reco
   return kind?.toLowerCase() === 'stateful'
     ? localize('logicapps.stateful', 'Stateful')
     : settings[settingName]?.toLowerCase() === 'withstatelessrunhistory'
-    ? localize('logicapps.statelessDebug', 'Stateless (debug mode)')
-    : localize('logicapps.stateless', 'Stateless');
+      ? localize('logicapps.statelessDebug', 'Stateless (debug mode)')
+      : localize('logicapps.stateless', 'Stateless');
 }

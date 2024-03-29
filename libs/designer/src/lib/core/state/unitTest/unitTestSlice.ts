@@ -9,7 +9,6 @@ import type {
   updateMockResultPayload,
 } from './unitTestInterfaces';
 import { ActionResults, type ParameterInfo } from '@microsoft/designer-ui';
-import { getIntl } from '@microsoft/intl-logic-apps';
 import {
   type Assertion,
   type AssertionDefintion,
@@ -18,7 +17,8 @@ import {
   equals,
   getRecordEntry,
   isNullOrEmpty,
-} from '@microsoft/utils-logic-apps';
+  getIntl,
+} from '@microsoft/logic-apps-shared';
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 
@@ -67,6 +67,7 @@ export const validateAssertion = (
       if (!name) {
         return intl.formatMessage({
           defaultMessage: 'Must provide the Assertion name.',
+          id: 'YjSqtf',
           description: 'Error message when the workflow assertion name is empty.',
         });
       }
@@ -78,6 +79,7 @@ export const validateAssertion = (
       return duplicateParameters.length > 0
         ? intl.formatMessage({
             defaultMessage: 'Assertion name already exists.',
+            id: 'l0hO5f',
             description: 'Error message when the workflow assertion name already exists.',
           })
         : undefined;

@@ -12,9 +12,8 @@ import { MSIAuthentication } from './MSIAuth/MSIAuth';
 import { RawAuthentication } from './RawAuth';
 import { parseAuthEditor } from './util';
 import type { IDropdownOption } from '@fluentui/react/lib/Dropdown';
-import { getIntl } from '@microsoft/intl-logic-apps';
-import type { ManagedIdentity } from '@microsoft/utils-logic-apps';
-import { AssertionErrorCode, AssertionException, format } from '@microsoft/utils-logic-apps';
+import { AssertionErrorCode, AssertionException, format, getIntl } from '@microsoft/logic-apps-shared';
+import type { ManagedIdentity } from '@microsoft/logic-apps-shared';
 import { useUpdateEffect } from '@react-hookz/web';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -193,16 +192,19 @@ export const AuthenticationEditor = ({
 
   const authenticationTypeLabel = intl.formatMessage({
     defaultMessage: 'Authentication Type',
+    id: 'ADM1Z8',
     description: 'Label for Authentication Type dropdown',
   });
 
   const expandedLabel: string = intl.formatMessage({
     defaultMessage: 'Switch to code view mode',
+    id: '8LhQeL',
     description: 'Label for editor toggle button when in expanded mode',
   });
 
   const collapsedLabel: string = intl.formatMessage({
     defaultMessage: 'Switch to default view mode',
+    id: 'qij+Vf',
     description: 'Label for editor toggle button when in collapsed mode',
   });
 
@@ -254,30 +256,30 @@ const getAuthenticationTypes = (supportedTypes: AuthenticationType[]): IDropdown
       case AuthenticationType.BASIC:
         return {
           key: type,
-          text: intl.formatMessage({ defaultMessage: 'Basic', description: 'Authentication type' }),
+          text: intl.formatMessage({ defaultMessage: 'Basic', id: 'tUlRzr', description: 'Authentication type' }),
         };
       case AuthenticationType.CERTIFICATE:
         return {
           key: type,
-          text: intl.formatMessage({ defaultMessage: 'Client Certificate', description: 'Authentication type' }),
+          text: intl.formatMessage({ defaultMessage: 'Client Certificate', id: 'sys5gu', description: 'Authentication type' }),
         };
 
       case AuthenticationType.OAUTH:
         return {
           key: type,
-          text: intl.formatMessage({ defaultMessage: 'Active Directory OAuth', description: 'Authentication type' }),
+          text: intl.formatMessage({ defaultMessage: 'Active Directory OAuth', id: 'n4V2Hi', description: 'Authentication type' }),
         };
 
       case AuthenticationType.RAW:
         return {
           key: type,
-          text: intl.formatMessage({ defaultMessage: 'Raw', description: 'Authentication type' }),
+          text: intl.formatMessage({ defaultMessage: 'Raw', id: 'Tayrub', description: 'Authentication type' }),
         };
 
       case AuthenticationType.MSI:
         return {
           key: type,
-          text: intl.formatMessage({ defaultMessage: 'Managed Identity', description: 'Authentication type' }),
+          text: intl.formatMessage({ defaultMessage: 'Managed Identity', id: 'iSb/hp', description: 'Authentication type' }),
         };
 
       default:

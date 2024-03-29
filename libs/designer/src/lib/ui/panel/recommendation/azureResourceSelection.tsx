@@ -4,10 +4,16 @@ import { addOperation } from '../../../core/actions/bjsworkflow/add';
 import { useRelationshipIds, useIsParallelBranch, useIsAddingTrigger } from '../../../core/state/panel/panelSelectors';
 import { Text } from '@fluentui/react';
 import { Button } from '@fluentui/react-components';
-import { ApiManagementService, FunctionService, SearchService, AppServiceService } from '@microsoft/designer-client-services-logic-apps';
+import {
+  ApiManagementService,
+  FunctionService,
+  SearchService,
+  AppServiceService,
+  getResourceName,
+  getResourceGroupFromWorkflowId,
+} from '@microsoft/logic-apps-shared';
 import { AzureResourcePicker } from '@microsoft/designer-ui';
-import type { DiscoveryOperation, DiscoveryResultTypes } from '@microsoft/utils-logic-apps';
-import { getResourceName, getResourceGroupFromWorkflowId } from '@microsoft/utils-logic-apps';
+import type { DiscoveryOperation, DiscoveryResultTypes } from '@microsoft/logic-apps-shared';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
@@ -30,26 +36,32 @@ export const AzureResourceSelection = (props: AzureResourceSelectionProps) => {
   const intl = useIntl();
   const apimTitleText = intl.formatMessage({
     defaultMessage: 'Select an API Management resource',
+    id: 'fElufw',
     description: 'Select an API Management resource',
   });
   const appServiceTitleText = intl.formatMessage({
     defaultMessage: 'Select an App Service resource',
+    id: 'VHm1Sr',
     description: 'Select an App Service resource',
   });
   const functionAppTitleText = intl.formatMessage({
     defaultMessage: 'Select a Function App resource',
+    id: 'KwGA+K',
     description: 'Select a Function App resource',
   });
   const swaggerFunctionAppTitleText = intl.formatMessage({
     defaultMessage: 'Select a Swagger Function App resource',
+    id: 'Y5XAbg',
     description: 'Select a Swagger Function App resource',
   });
   const manualWorkflowTitleText = intl.formatMessage({
-    defaultMessage: "Select workflow with 'manual' trigger",
+    defaultMessage: `Select workflow with 'manual' trigger`,
+    id: 'q4ChjK',
     description: "Select workflow with 'manual' trigger",
   });
   const batchWorkflowTitleText = intl.formatMessage({
     defaultMessage: 'Select a Batch Workflow resource',
+    id: 'gvDMuq',
     description: 'Select a Batch Workflow resource',
   });
 
@@ -76,7 +88,7 @@ export const AzureResourceSelection = (props: AzureResourceSelectionProps) => {
   const addResourceOperation = useCallback(
     (props: AddResourceOperationParameters) => {
       const { name, presetParameterValues, actionMetadata } = props;
-      const newNodeId = name.replaceAll(' ', '_');
+      const newNodeId = name.replaceAll(' ', '_').replaceAll('/', '-');
       dispatch(
         addOperation({
           operation,
@@ -225,13 +237,14 @@ export const AzureResourceSelection = (props: AzureResourceSelectionProps) => {
   ]);
 
   const headers = [
-    intl.formatMessage({ defaultMessage: 'Name', description: 'Header for resource name' }),
-    intl.formatMessage({ defaultMessage: 'Resource Group', description: 'Header for resource group name' }),
-    intl.formatMessage({ defaultMessage: 'Location', description: 'Header for resource location' }),
+    intl.formatMessage({ defaultMessage: 'Name', id: 'AGCm1p', description: 'Header for resource name' }),
+    intl.formatMessage({ defaultMessage: 'Resource Group', id: '/yYyOq', description: 'Header for resource group name' }),
+    intl.formatMessage({ defaultMessage: 'Location', id: 'QpX2+j', description: 'Header for resource location' }),
   ];
 
   const loadingText = intl.formatMessage({
     defaultMessage: 'Loading resources...',
+    id: 'aoUT/3',
     description: 'Text for loading Azure Resources',
   });
 
@@ -276,7 +289,7 @@ export const AzureResourceSelection = (props: AzureResourceSelectionProps) => {
           submitCallback();
         }}
       >
-        {intl.formatMessage({ defaultMessage: 'Add Action', description: 'Add action button text' })}
+        {intl.formatMessage({ defaultMessage: 'Add Action', id: '2vnYre', description: 'Add action button text' })}
       </Button>
     </div>
   );

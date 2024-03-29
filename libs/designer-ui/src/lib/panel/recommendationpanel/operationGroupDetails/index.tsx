@@ -4,7 +4,7 @@ import HybridNotice from './HybridNotice';
 import { OperationGroupHeader } from './operationGroupHeader';
 import { MessageBar, MessageBarType } from '@fluentui/react';
 import { Spinner } from '@fluentui/react-components';
-import type { Connector } from '@microsoft/utils-logic-apps';
+import type { Connector } from '@microsoft/logic-apps-shared';
 import { useIntl } from 'react-intl';
 
 export interface OperationGroupDetailsPageProps {
@@ -27,11 +27,13 @@ export const OperationGroupDetailsPage: React.FC<OperationGroupDetailsPageProps>
 
   const noOperationsText = intl.formatMessage({
     defaultMessage: 'No operations found',
+    id: 'Sr8PcK',
     description: 'Message to show when no operations are found',
   });
 
   const loadingText = intl.formatMessage({
     defaultMessage: 'Loading...',
+    id: '5ytHcK',
     description: 'Loading text for spinner',
   });
 

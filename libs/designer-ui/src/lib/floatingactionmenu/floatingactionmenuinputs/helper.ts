@@ -8,9 +8,8 @@ import {
   getIconForDynamicallyAddedParameterType,
 } from '../../dynamicallyaddedparameter/helper';
 import type { ValueSegment } from '../../editor';
-import { ValueSegmentType } from '../../editor';
-import type { Schema } from '@microsoft/parsers-logic-apps';
-import { guid } from '@microsoft/utils-logic-apps';
+import { createLiteralValueSegment } from '../../editor/base/utils/helper';
+import type { OpenApiSchema } from '@microsoft/logic-apps-shared';
 
 type PartialDynamicallyAddedParameterInputsModel = Pick<
   DynamicallyAddedParameterInputsModel,
@@ -109,7 +108,7 @@ export function serialize(models: DynamicallyAddedParameterInputsModel[], isRequ
       return { ...resultPropertiesObj, [schemaKey]: propertyValue };
     }, {});
 
-  let rootObject: Schema;
+  let rootObject: OpenApiSchema;
 
   rootObject = {
     type: 'object',
@@ -130,17 +129,11 @@ export function serialize(models: DynamicallyAddedParameterInputsModel[], isRequ
     };
   }
 
-  return [
-    {
-      id: guid(),
-      type: ValueSegmentType.LITERAL,
-      value: JSON.stringify(rootObject),
-    },
-  ];
+  return [createLiteralValueSegment(JSON.stringify(rootObject))];
 }
 
 export function getEmptySchemaValueSegmentForInitialization(useStaticInputs: boolean, isRequestApiConnectionTrigger = false) {
-  let rootObject: Schema;
+  let rootObject: OpenApiSchema;
 
   rootObject = {
     type: 'object',
@@ -165,13 +158,7 @@ export function getEmptySchemaValueSegmentForInitialization(useStaticInputs: boo
     rootObject = rootObjectWithStaticInputs;
   }
 
-  return [
-    {
-      id: guid(),
-      type: ValueSegmentType.LITERAL,
-      value: JSON.stringify(rootObject),
-    },
-  ];
+  return [createLiteralValueSegment(JSON.stringify(rootObject))];
 }
 
 export function createDynamicallyAddedParameterProperties(

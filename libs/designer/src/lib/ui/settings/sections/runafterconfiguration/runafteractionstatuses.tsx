@@ -1,7 +1,7 @@
 import type { onChangeHandler } from './runafteractiondetails';
 import { Text, Checkbox } from '@fluentui/react-components';
 import { Failed, Skipped, Succeeded, TimedOut } from '@microsoft/designer-ui';
-import { RUN_AFTER_STATUS } from '@microsoft/utils-logic-apps';
+import { RUN_AFTER_STATUS } from '@microsoft/logic-apps-shared';
 import { useIntl } from 'react-intl';
 
 export interface RunAfterActionStatusesProps {
@@ -19,6 +19,7 @@ export function RunAfterActionStatuses({ isReadOnly, statuses, onStatusChange }:
       id: RUN_AFTER_STATUS.SUCCEEDED,
       label: intl.formatMessage({
         defaultMessage: 'Is successful',
+        id: 'rh5g4p',
         description: 'Successful run',
       }),
       icon: <Succeeded />,
@@ -27,6 +28,7 @@ export function RunAfterActionStatuses({ isReadOnly, statuses, onStatusChange }:
       id: RUN_AFTER_STATUS.TIMEDOUT,
       label: intl.formatMessage({
         defaultMessage: 'Has timed out',
+        id: 'nmFupX',
         description: 'Timed out run',
       }),
       icon: <TimedOut />,
@@ -35,6 +37,7 @@ export function RunAfterActionStatuses({ isReadOnly, statuses, onStatusChange }:
       id: RUN_AFTER_STATUS.SKIPPED,
       label: intl.formatMessage({
         defaultMessage: 'Is skipped',
+        id: 'I3mifR',
         description: 'Skipped run',
       }),
       icon: <Skipped />,
@@ -43,6 +46,7 @@ export function RunAfterActionStatuses({ isReadOnly, statuses, onStatusChange }:
       id: RUN_AFTER_STATUS.FAILED,
       label: intl.formatMessage({
         defaultMessage: 'Has failed',
+        id: 'O+3Y9f',
         description: 'Failed run',
       }),
       icon: <Failed />,

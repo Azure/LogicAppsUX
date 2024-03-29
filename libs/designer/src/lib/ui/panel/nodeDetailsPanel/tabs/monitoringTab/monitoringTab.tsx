@@ -6,10 +6,9 @@ import { useRunData } from '../../../../../core/state/workflow/workflowSelectors
 import { InputsPanel } from './inputsPanel';
 import { OutputsPanel } from './outputsPanel';
 import { PropertiesPanel } from './propertiesPanel';
-import { RunService } from '@microsoft/designer-client-services-logic-apps';
+import { RunService, isNullOrUndefined } from '@microsoft/logic-apps-shared';
 import { ErrorSection } from '@microsoft/designer-ui';
 import type { PanelTabFn } from '@microsoft/designer-ui';
-import { isNullOrUndefined } from '@microsoft/utils-logic-apps';
 import { useEffect } from 'react';
 import { useQuery } from 'react-query';
 
@@ -67,10 +66,12 @@ export const monitoringTab: PanelTabFn = (intl) => ({
   id: constants.PANEL_TAB_NAMES.MONITORING,
   title: intl.formatMessage({
     defaultMessage: 'Parameters',
+    id: 'xi2tn6',
     description: 'The tab label for the monitoring parameters tab on the operation panel',
   }),
   description: intl.formatMessage({
     defaultMessage: 'Monitoring Tab',
+    id: 'l536iI',
     description: 'An accessability label that describes the monitoring tab',
   }),
   visible: true,

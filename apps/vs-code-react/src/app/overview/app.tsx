@@ -2,16 +2,19 @@ import { QueryKeys } from '../../run-service';
 import type { RunDisplayItem } from '../../run-service';
 import type { RootState } from '../../state/store';
 import { VSCodeContext } from '../../webviewCommunication';
-import { StandardRunService } from '@microsoft/designer-client-services-logic-apps';
-import type { CallbackInfo } from '@microsoft/designer-client-services-logic-apps';
+import './overview.less';
+import { StandardRunService } from '@microsoft/logic-apps-shared';
 import { Overview, isRunError, mapToRunItem } from '@microsoft/designer-ui';
-import type { Runs } from '@microsoft/utils-logic-apps';
+import type { Runs } from '@microsoft/logic-apps-shared';
 import { ExtensionCommand, HttpClient } from '@microsoft/vscode-extension';
 import { useCallback, useContext, useMemo } from 'react';
 import { useInfiniteQuery, useMutation } from 'react-query';
 import { useSelector } from 'react-redux';
 import invariant from 'tiny-invariant';
-
+export interface CallbackInfo {
+  method?: string;
+  value: string;
+}
 export const OverviewApp = () => {
   const workflowState = useSelector((state: RootState) => state.workflow);
   const vscode = useContext(VSCodeContext);
@@ -104,31 +107,33 @@ export const OverviewApp = () => {
   }, [error, runTriggerError]);
 
   return (
-    <Overview
-      corsNotice={workflowState.corsNotice}
-      errorMessage={errorMessage}
-      hasMoreRuns={hasNextPage}
-      loading={isLoading || runTriggerLoading}
-      runItems={runItems ?? []}
-      workflowProperties={workflowState.workflowProperties}
-      isRefreshing={isRefetching}
-      onLoadMoreRuns={fetchNextPage}
-      onLoadRuns={refetch}
-      onOpenRun={(run: RunDisplayItem) => {
-        vscode.postMessage({
-          command: ExtensionCommand.loadRun,
-          item: run,
-        });
-      }}
-      onRunTrigger={runTriggerCall}
-      onVerifyRunId={onVerifyRunId}
-      supportsUnitTest={workflowState.isLocal}
-      onCreateUnitTest={(run: RunDisplayItem) => {
-        vscode.postMessage({
-          command: ExtensionCommand.createUnitTest,
-          runId: run.id,
-        });
-      }}
-    />
+    <div className="msla-overview">
+      <Overview
+        corsNotice={workflowState.corsNotice}
+        errorMessage={errorMessage}
+        hasMoreRuns={hasNextPage}
+        loading={isLoading || runTriggerLoading}
+        runItems={runItems ?? []}
+        workflowProperties={workflowState.workflowProperties}
+        isRefreshing={isRefetching}
+        onLoadMoreRuns={fetchNextPage}
+        onLoadRuns={refetch}
+        onOpenRun={(run: RunDisplayItem) => {
+          vscode.postMessage({
+            command: ExtensionCommand.loadRun,
+            item: run,
+          });
+        }}
+        onRunTrigger={runTriggerCall}
+        onVerifyRunId={onVerifyRunId}
+        supportsUnitTest={workflowState.isLocal}
+        onCreateUnitTest={(run: RunDisplayItem) => {
+          vscode.postMessage({
+            command: ExtensionCommand.createUnitTest,
+            runId: run.id,
+          });
+        }}
+      />
+    </div>
   );
 };

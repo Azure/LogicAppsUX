@@ -4,8 +4,8 @@ import { ValueSegmentType, type ValueSegment, TokenType } from '../../models/par
 import type { TokenNode } from '../nodes/tokenNode';
 import { $createTokenNode } from '../nodes/tokenNode';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
-import type { Expression } from '@microsoft/parsers-logic-apps';
-import { ExpressionParser } from '@microsoft/parsers-logic-apps';
+import type { Expression } from '@microsoft/logic-apps-shared';
+import { ExpressionParser } from '@microsoft/logic-apps-shared';
 import { $createParagraphNode, $createTextNode, $getSelection, COMMAND_PRIORITY_LOW, PASTE_COMMAND } from 'lexical';
 import { useEffect } from 'react';
 
@@ -24,6 +24,9 @@ export const PastePlugin = ({ segmentMapping, loadParameterValueFromString }: Pa
         const clipboardData = event instanceof InputEvent || event instanceof KeyboardEvent ? null : event.clipboardData;
         const lexicalString = clipboardData?.getData('text/plain').replace(/\r\n/g, '\n');
         if (lexicalString && segmentMapping && loadParameterValueFromString) {
+          // normally we can overwrite default paste behavior by returning true
+          // however on firefox this doesn't happen, so we've manually called preventDefault
+          event.preventDefault();
           const valueSegments = loadParameterValueFromString(lexicalString);
           editor.update(() => {
             // Get the selection from the EditorState

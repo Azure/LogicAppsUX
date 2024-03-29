@@ -1,5 +1,4 @@
-import type { ApiHubServiceDetails, ListDynamicValue } from '@microsoft/designer-client-services-logic-apps';
-import type { UnitTestDefinition } from '@microsoft/utils-logic-apps';
+import type { ApiHubServiceDetails, ListDynamicValue, UnitTestDefinition } from '@microsoft/logic-apps-shared';
 import type { ConnectionsData, ICallbackUrlResponse, IDesignerPanelMetadata } from '@microsoft/vscode-extension';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';

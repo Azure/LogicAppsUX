@@ -2,17 +2,19 @@ import { type ISubscription, QueryKeys, type IIse, type IRegion } from '../../..
 import { ApiService } from '../../../run-service/export';
 import { updateSelectedLocation, updateSelectedSubscripton } from '../../../state/WorkflowSlice';
 import type { AppDispatch, RootState } from '../../../state/store';
+import { VSCodeContext } from '../../../webviewCommunication';
 import { SearchableDropdown } from '../../components/searchableDropdown';
 import { getDropdownPlaceholder, parseIseList, parseRegionList, parseSubscriptionsList } from './helper';
 import { Text, DropdownMenuItemType } from '@fluentui/react';
 import type { IDropdownOption } from '@fluentui/react';
-import { isEmptyString } from '@microsoft/utils-logic-apps';
-import { useEffect, useMemo } from 'react';
+import { isEmptyString } from '@microsoft/logic-apps-shared';
+import { useContext, useEffect, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useQuery } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
 
 export const InstanceSelection: React.FC = () => {
+  const vscode = useContext(VSCodeContext);
   const workflowState = useSelector((state: RootState) => state.workflow);
   const { baseUrl, accessToken, exportData, cloudHost } = workflowState;
   const { selectedSubscription, selectedIse, location } = exportData;
@@ -23,50 +25,62 @@ export const InstanceSelection: React.FC = () => {
   const intlText = {
     DIVIDER_REGIONS: intl.formatMessage({
       defaultMessage: 'Regions',
+      id: 'w+aIAc',
       description: 'Divider title for azure regions',
     }),
     DIVIDER_ISE: intl.formatMessage({
       defaultMessage: 'Integration service environments',
+      id: 'BbQXF+',
       description: 'Divider title for ISE',
     }),
     SELECT_TITLE: intl.formatMessage({
       defaultMessage: 'Select logic app instance',
+      id: 'aIgACb',
       description: 'Select logic app instance title',
     }),
     SELECT_DESCRIPTION: intl.formatMessage({
       defaultMessage: 'Select the logic apps that you want to export and combine into a single logic app instance.',
+      id: 'rQtQpJ',
       description: 'Select apps to export description',
     }),
     SELECTION_SUBSCRIPTION: intl.formatMessage({
       defaultMessage: 'Select a subscription',
+      id: '4fP2Ko',
       description: 'Select a subscription',
     }),
     SELECTION_LOCATION: intl.formatMessage({
       defaultMessage: 'Select a region or an integration service environment (ISE) instance',
+      id: 'e7LAHT',
       description: 'Select a region or an ISE instance',
     }),
     SELECT_OPTION: intl.formatMessage({
       defaultMessage: 'Select an option',
+      id: '//Icb/',
       description: 'Select an option placeholder',
     }),
     EMPTY_SUBSCRIPTION: intl.formatMessage({
       defaultMessage: 'No subscriptions available',
+      id: 'bUIrND',
       description: 'No subscriptions available',
     }),
     EMPTY_LOCATION: intl.formatMessage({
       defaultMessage: 'No regions and integration service environment (ISE) instances available',
+      id: 'xxZDTu',
       description: 'No regions and ISE instances available text',
     }),
     SEARCH_SUBSCRIPTION: intl.formatMessage({
       defaultMessage: 'Find and select subscription',
+      id: 'bGPcRT',
       description: 'Find and select subscription text',
     }),
     SEARCH_LOCATION: intl.formatMessage({
       defaultMessage: 'Find and select region or integration service environment (ISE)',
+      id: 'gBRTE5',
       description: 'Find region or ISE text',
     }),
     LOADING: intl.formatMessage({
       defaultMessage: 'Loading...',
+      id: '2EZWf6',
       description: 'Loading text',
     }),
   };
@@ -76,8 +90,9 @@ export const InstanceSelection: React.FC = () => {
       baseUrl,
       accessToken,
       cloudHost,
+      vscodeContext: vscode,
     });
-  }, [accessToken, baseUrl, cloudHost]);
+  }, [accessToken, baseUrl, cloudHost, vscode]);
 
   const loadSubscriptions = () => {
     return apiService.getSubscriptions();

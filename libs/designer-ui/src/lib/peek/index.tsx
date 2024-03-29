@@ -1,5 +1,6 @@
-import { MonacoEditor as Editor, EditorLanguage } from '../editor/monaco';
+import { MonacoEditor } from '../editor/monaco';
 import { PrimaryButton } from '@fluentui/react/lib/Button';
+import { EditorLanguage } from '@microsoft/logic-apps-shared';
 import { useIntl } from 'react-intl';
 
 export interface PeekProps {
@@ -20,12 +21,12 @@ export function Peek({ input, onOKClick }: PeekProps): JSX.Element {
     defaultValue: '',
   };
 
-  const doneLabel = intl.formatMessage({ defaultMessage: 'Done', description: 'Done Label for button' });
+  const doneLabel = intl.formatMessage({ defaultMessage: 'Done', id: 'AO6T9u', description: 'Done Label for button' });
 
   return (
     <div className="msla-card-inner-body msla-peek">
       <div className="msla-peek-json">
-        <Editor
+        <MonacoEditor
           className={'msla-monaco-peek'}
           value={input}
           fontSize={options.fontSize}

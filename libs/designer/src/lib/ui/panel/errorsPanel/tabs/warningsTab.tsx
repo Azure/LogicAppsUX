@@ -3,7 +3,7 @@ import { NodeErrors } from '../nodeErrors';
 import { useHostCheckerWarnings, useTotalNumWarnings } from './warningsTab.hooks';
 import { Text } from '@fluentui/react';
 import { MessageLevel } from '@microsoft/designer-ui';
-import { getRecordEntry } from '@microsoft/utils-logic-apps';
+import { getRecordEntry } from '@microsoft/logic-apps-shared';
 import { useIntl } from 'react-intl';
 
 export const WarningsTab = () => {
@@ -11,11 +11,13 @@ export const WarningsTab = () => {
 
   const operationWarningsCategoryHeader = intl.formatMessage({
     defaultMessage: 'Operation warnings',
+    id: 'O6VHe0',
     description: 'Header for the operation warnings category',
   });
 
   const noWarningsText = intl.formatMessage({
     defaultMessage: 'No warnings found.',
+    id: 'Vi5TIV',
     description: 'Text to show when no warnings exist',
   });
 

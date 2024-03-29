@@ -1,12 +1,12 @@
+import type { ValueSegment } from '@microsoft/logic-apps-shared';
 import { type ChangeHandler } from '../../editor/base';
 import { type EventHandler } from '../../eventhandler';
-import { type SettingProps } from '../../settings/settingsection/settingtoggle';
 import { ActionResult } from './actionResult';
 import { OutputsSettings } from './ouputsSettings';
 import './outputMocks.less';
 import { Divider, Text } from '@fluentui/react-components';
-import { type ValueSegment } from '@microsoft/designer-client-services-logic-apps';
 import { useIntl } from 'react-intl';
+import type { SettingProps } from '../../settings/settingsection';
 
 export interface MockUpdateEvent {
   outputId: string;
@@ -68,6 +68,7 @@ export const OutputMocks = ({ isMockSupported, nodeId, onActionResultUpdate, out
     UNSUPPORTED_MOCKS: intl.formatMessage({
       defaultMessage:
         'This operation does not support mocking. Mocking is only supported for operations that are connected to a service provider, function, API connection, or API Management.',
+      id: 'aWkG01',
       description: 'Unsupported message for mock results tab',
     }),
   };

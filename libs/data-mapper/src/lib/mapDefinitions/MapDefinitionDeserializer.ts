@@ -24,8 +24,8 @@ import { isFunctionData, isKeyAnIndexValue } from '../utils/Function.Utils';
 import { LogCategory, LogService } from '../utils/Logging.Utils';
 import { createReactFlowFunctionKey } from '../utils/ReactFlow.Util';
 import { findNodeForKey, flattenSchemaIntoDictionary } from '../utils/Schema.Utils';
-import type { MapDefinitionEntry, SchemaExtended, SchemaNodeDictionary, SchemaNodeExtended } from '@microsoft/utils-logic-apps';
-import { isAGuid, SchemaType } from '@microsoft/utils-logic-apps';
+import type { MapDefinitionEntry, SchemaExtended, SchemaNodeDictionary, SchemaNodeExtended } from '@microsoft/logic-apps-shared';
+import { isAGuid, SchemaType } from '@microsoft/logic-apps-shared';
 
 export class MapDefinitionDeserializer {
   private readonly _mapDefinition: MapDefinitionEntry;
@@ -202,8 +202,8 @@ export class MapDefinitionDeserializer {
               flattenedChildValueParents.length > 1
                 ? flattenedChildValueParents.reduce((a, b) => (a.lastIndexOf('/') <= b.lastIndexOf('/') ? a : b))
                 : flattenedChildValueParents.length === 1
-                ? flattenedChildValueParents[0]
-                : undefined;
+                  ? flattenedChildValueParents[0]
+                  : undefined;
             const ifConnectionEntry = Object.entries(connections).find(
               ([_connectionKey, connectionValue]) =>
                 connectionValue.self.node.key === ifPseudoFunctionKey &&

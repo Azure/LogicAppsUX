@@ -1,16 +1,15 @@
 import type { ArrayItemSchema, ComplexArrayItems, SimpleArrayItem } from '..';
 import type { ValueSegment } from '../../editor';
-import { ValueSegmentType } from '../../editor';
 import type { CastHandler } from '../../editor/base';
 import { convertStringToSegments } from '../../editor/base/utils/editorToSegment';
-import { getChildrenNodes, insertQutationForStringType } from '../../editor/base/utils/helper';
+import { createLiteralValueSegment, getChildrenNodes, insertQutationForStringType } from '../../editor/base/utils/helper';
 import { convertSegmentsToString } from '../../editor/base/utils/parsesegments';
 import { convertComplexItemsToArray, validationAndSerializeComplexArray, validationAndSerializeSimpleArray } from './util';
-import { guid, prettifyJsonString } from '@microsoft/utils-logic-apps';
+import { prettifyJsonString } from '@microsoft/logic-apps-shared';
 import type { LexicalEditor } from 'lexical';
 import { $getRoot } from 'lexical';
 
-const emptyArrayValue = [{ id: guid(), type: ValueSegmentType.LITERAL, value: '[]' }];
+const emptyArrayValue = [createLiteralValueSegment('[]')];
 
 export const serializeSimpleArray = (
   editor: LexicalEditor,
@@ -49,23 +48,23 @@ export const parseSimpleItems = (
   const { type, format } = itemSchema;
   const castedArraySegments: ValueSegment[] = [];
   const uncastedArraySegments: ValueSegment[] = [];
-  castedArraySegments.push({ id: guid(), type: ValueSegmentType.LITERAL, value: '[\n  ' });
-  uncastedArraySegments.push({ id: guid(), type: ValueSegmentType.LITERAL, value: '[\n  ' });
+  castedArraySegments.push(createLiteralValueSegment('[\n  '));
+  uncastedArraySegments.push(createLiteralValueSegment('[\n  '));
   items.forEach((item, index) => {
     const { value } = item;
     if (value?.length === 0) {
-      castedArraySegments.push({ id: guid(), type: ValueSegmentType.LITERAL, value: '""' });
-      uncastedArraySegments.push({ id: guid(), type: ValueSegmentType.LITERAL, value: '""' });
+      castedArraySegments.push(createLiteralValueSegment('""'));
+      uncastedArraySegments.push(createLiteralValueSegment('""'));
     } else {
       insertQutationForStringType(castedArraySegments, type);
       insertQutationForStringType(uncastedArraySegments, type);
-      castedArraySegments.push({ id: guid(), type: ValueSegmentType.LITERAL, value: castParameter(value, type, format) });
+      castedArraySegments.push(createLiteralValueSegment(castParameter(value, type, format)));
       uncastedArraySegments.push(...value);
       insertQutationForStringType(castedArraySegments, type);
       insertQutationForStringType(uncastedArraySegments, type);
     }
-    castedArraySegments.push({ id: guid(), type: ValueSegmentType.LITERAL, value: index < items.length - 1 ? ',\n  ' : '\n]' });
-    uncastedArraySegments.push({ id: guid(), type: ValueSegmentType.LITERAL, value: index < items.length - 1 ? ',\n  ' : '\n]' });
+    castedArraySegments.push(createLiteralValueSegment(index < items.length - 1 ? ',\n  ' : '\n]'));
+    uncastedArraySegments.push(createLiteralValueSegment(index < items.length - 1 ? ',\n  ' : '\n]'));
   });
 
   // Beautify ValueSegment

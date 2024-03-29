@@ -10,7 +10,7 @@ import { useStaticResultProperties, useStaticResultSchema } from '../../../../..
 import { updateStaticResultProperties } from '../../../../../core/state/staticresultschema/staticresultsSlice';
 import type { PanelTabFn } from '@microsoft/designer-ui';
 import { StaticResultContainer } from '@microsoft/designer-ui';
-import type { OpenAPIV2 } from '@microsoft/utils-logic-apps';
+import type { OpenAPIV2 } from '@microsoft/logic-apps-shared';
 import { useCallback } from 'react';
 import { useDispatch } from 'react-redux';
 
@@ -53,8 +53,16 @@ export const TestingPanel: React.FC = () => {
 
 export const testingTab: PanelTabFn = (intl) => ({
   id: constants.PANEL_TAB_NAMES.TESTING,
-  title: intl.formatMessage({ defaultMessage: 'Testing', description: 'The tab label for the testing tab on the operation panel' }),
-  description: intl.formatMessage({ defaultMessage: 'Testing Tab', description: 'An accessability label that describes the testing tab' }),
+  title: intl.formatMessage({
+    defaultMessage: 'Testing',
+    id: '8zkvmc',
+    description: 'The tab label for the testing tab on the operation panel',
+  }),
+  description: intl.formatMessage({
+    defaultMessage: 'Testing Tab',
+    id: 'sEqLTV',
+    description: 'An accessability label that describes the testing tab',
+  }),
   visible: true,
   content: <TestingPanel />,
   order: 5,

@@ -1,3 +1,5 @@
+import type { AssertionDefintion } from '@microsoft/logic-apps-shared';
+import { aggregate, getIntl, getPropertyValue, guid, isNullOrEmpty, labelCase } from '@microsoft/logic-apps-shared';
 import { Constants } from '../../..';
 import { getTriggerNodeId } from '../../../core';
 import type { VariableDeclaration } from '../../../core/state/tokens/tokensSlice';
@@ -29,8 +31,6 @@ import {
   type TokenPickerMode,
   ValueSegmentType,
 } from '@microsoft/designer-ui';
-import { getIntl } from '@microsoft/intl-logic-apps';
-import { guid, type AssertionDefintion, aggregate, getPropertyValue, labelCase, isNullOrEmpty } from '@microsoft/utils-logic-apps';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -86,7 +86,7 @@ const useTokens = (): { outputTokensWithValues: TokenGroup[]; variableTokens: To
     return Object.keys(outputTokens).map((tokenKey) => {
       const tokensArray = outputTokens[tokenKey].tokens.map((token) => {
         const isTrigger = tokenKey === triggerNodeId;
-        const method = getTokenExpressionMethodFromKey(token.key, token.outputInfo.actionName);
+        const method = getTokenExpressionMethodFromKey(token.key, token.outputInfo.actionName, token.outputInfo.source);
         const valueExpression = generateExpressionFromKey(method, token.key, token.outputInfo.actionName, false, false);
         const actionName = isTrigger ? undefined : tokenKey;
         const triggerName = isTrigger ? undefined : tokenKey;
@@ -156,7 +156,6 @@ const getTokenPicker = (
   tokenGroup: TokenGroup[],
   expressionGroup: TokenGroup[],
   tokenPickerMode?: TokenPickerMode,
-  setIsTokenPickerOpened?: (b: boolean) => void,
   tokenClickedCallback?: (token: ValueSegment) => void
 ): JSX.Element => {
   const supportedTypes: string[] = getPropertyValue(Constants.TOKENS, type);
@@ -172,7 +171,6 @@ const getTokenPicker = (
       tokenGroup={filteredTokens}
       filteredTokenGroup={filteredTokens}
       expressionGroup={expressionGroup}
-      setIsTokenPickerOpened={setIsTokenPickerOpened}
       initialMode={tokenPickerMode}
       getValueSegmentFromToken={(token: OutputToken) => Promise.resolve(getValueSegmentFromToken(token))}
       tokenClickedCallback={tokenClickedCallback}
@@ -256,7 +254,6 @@ export const AssertionsPanel = (props: CommonPanelProps) => {
       labelId: string,
       type: string,
       tokenPickerMode?: TokenPickerMode,
-      setIsTokenPickerOpened?: (b: boolean) => void,
       tokenClickedCallback?: (token: ValueSegment) => void
     ) => {
       return getTokenPicker(
@@ -266,7 +263,6 @@ export const AssertionsPanel = (props: CommonPanelProps) => {
         [...tokens.outputTokensWithValues, ...tokens.variableTokens],
         tokens.expressionTokens,
         tokenPickerMode,
-        setIsTokenPickerOpened,
         tokenClickedCallback
       );
     },

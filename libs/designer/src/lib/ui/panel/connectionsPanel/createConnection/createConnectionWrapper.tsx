@@ -1,13 +1,13 @@
 import constants from '../../../../common/constants';
 import type { AppDispatch, RootState } from '../../../../core';
-import { getIconUriFromConnector, useOperationInfo, useSelectedNodeId, useSelectedNodeIds } from '../../../../core';
+import { useOperationInfo, useSelectedNodeId, useSelectedNodeIds } from '../../../../core';
 import type { ConnectionPayload } from '../../../../core/actions/bjsworkflow/connections';
 import {
+  getApiHubAuthentication,
   getConnectionMetadata,
   getConnectionProperties,
-  getApiHubAuthentication,
-  updateNodeConnection,
   needsOAuth,
+  updateNodeConnection,
 } from '../../../../core/actions/bjsworkflow/connections';
 import { getUniqueConnectionName } from '../../../../core/queries/connections';
 import {
@@ -27,9 +27,13 @@ import {
 } from '../../../../core/utils/connectors/connections';
 import { CreateConnection } from './createConnection';
 import { Spinner } from '@fluentui/react-components';
-import type { ConnectionCreationInfo, ConnectionParametersMetadata } from '@microsoft/designer-client-services-logic-apps';
-import { ConnectionService, LogEntryLevel, LoggerService, WorkflowService } from '@microsoft/designer-client-services-logic-apps';
+import type { ConnectionCreationInfo, ConnectionParametersMetadata } from '@microsoft/logic-apps-shared';
 import {
+  ConnectionService,
+  LogEntryLevel,
+  LoggerService,
+  WorkflowService,
+  getIconUriFromConnector,
   getRecordEntry,
   safeSetObjectPropertyValue,
   type Connection,
@@ -37,7 +41,7 @@ import {
   type ConnectionParameterSetValues,
   type Connector,
   type ManagedIdentity,
-} from '@microsoft/utils-logic-apps';
+} from '@microsoft/logic-apps-shared';
 import { useCallback, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
@@ -61,6 +65,8 @@ export const CreateConnectionWrapper = () => {
   const gatewaysQuery = useGateways(selectedSubscriptionId, connector?.id ?? '');
   const availableGateways = useMemo(() => gatewaysQuery.data, [gatewaysQuery]);
   const gatewayServiceConfig = useGatewayServiceConfig();
+
+  const existingReferences = useSelector((state: RootState) => Object.keys(state.connections.connectionReferences));
 
   const identity = WorkflowService().getAppIdentity?.() as ManagedIdentity;
 
@@ -200,7 +206,7 @@ export const CreateConnectionWrapper = () => {
 
         let connection, err;
 
-        const newName = await getUniqueConnectionName(connector.id);
+        const newName = await getUniqueConnectionName(connector.id, existingReferences);
         if (isOAuthConnection) {
           await ConnectionService()
             .createAndAuthorizeOAuthConnection(newName, connector?.id ?? '', connectionInfo, parametersMetadata)
@@ -245,6 +251,7 @@ export const CreateConnectionWrapper = () => {
       closeConnectionsFlow,
       nodeIds,
       applyNewConnection,
+      existingReferences,
     ]
   );
 
@@ -254,6 +261,7 @@ export const CreateConnectionWrapper = () => {
 
   const loadingText = intl.formatMessage({
     defaultMessage: 'Loading connection data...',
+    id: 'faUrud',
     description: 'Message to show under the loading icon when loading connection parameters',
   });
 

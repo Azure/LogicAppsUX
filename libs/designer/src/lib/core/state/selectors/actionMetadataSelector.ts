@@ -4,10 +4,8 @@ import { useConnectionResource } from '../../queries/connections';
 import type { RootState } from '../../store';
 import { useConnector, useConnectorAndSwagger, useNodeConnectionId } from '../connection/connectionSelector';
 import type { NodeOperation, OperationMetadataState } from '../operation/operationMetadataSlice';
-import { OperationManifestService } from '@microsoft/designer-client-services-logic-apps';
-import type { Operation } from '@microsoft/parsers-logic-apps';
-import { SwaggerParser } from '@microsoft/parsers-logic-apps';
-import { getObjectPropertyValue, getRecordEntry } from '@microsoft/utils-logic-apps';
+import { OperationManifestService, SwaggerParser, getObjectPropertyValue, getRecordEntry } from '@microsoft/logic-apps-shared';
+import type { LAOperation } from '@microsoft/logic-apps-shared';
 import { createSelector } from '@reduxjs/toolkit';
 import { useMemo } from 'react';
 import { useQuery } from 'react-query';
@@ -116,8 +114,8 @@ const useNodeAttribute = (operationInfo: NodeOperation, propertyInManifest: stri
     result: manifest
       ? getObjectPropertyValue(manifest.properties, propertyInManifest)
       : connector
-      ? getObjectPropertyValue(connector.properties, propertyInConnector)
-      : undefined,
+        ? getObjectPropertyValue(connector.properties, propertyInConnector)
+        : undefined,
   };
 };
 
@@ -157,7 +155,7 @@ const useNodeAttributeOrSwagger = (
   operationInfo: NodeOperation,
   propertyInManifest: string[],
   propertyInConnector: string[],
-  propertyInSwagger: keyof Operation,
+  propertyInSwagger: keyof LAOperation,
   options: { useManifest: boolean }
 ): QueryResult => {
   const { data: connectorData } = useConnectorAndSwagger(operationInfo?.connectorId, !options.useManifest);

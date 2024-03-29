@@ -20,8 +20,8 @@ import { ListPlugin } from '@lexical/react/LexicalListPlugin';
 import { $isHeadingNode } from '@lexical/rich-text';
 import { $getSelectionStyleValueForProperty } from '@lexical/selection';
 import { mergeRegister, $getNearestNodeOfType, $findMatchingParent } from '@lexical/utils';
-import type { ValueSegment } from '@microsoft/designer-client-services-logic-apps';
-import { isApple } from '@microsoft/utils-logic-apps';
+import type { ValueSegment } from '@microsoft/logic-apps-shared';
+import { isApple } from '@microsoft/logic-apps-shared';
 import {
   $getRoot,
   $getSelection,
@@ -176,6 +176,7 @@ export const Toolbar = ({ isRawText, isSwitchFromPlaintextBlocked, readonly = fa
 
   const toggleCodeViewMessage = intl.formatMessage({
     defaultMessage: 'Toggle code view',
+    id: 'gA1dde',
     description: 'Label used for the toolbar button which switches between raw HTML (code) view and WYSIWIG (rich text) view',
   });
 

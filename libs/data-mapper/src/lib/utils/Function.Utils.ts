@@ -1,6 +1,7 @@
 import {
   collectionBranding,
   conversionBranding,
+  customBranding,
   dateTimeBranding,
   logicalBranding,
   mathBranding,
@@ -16,7 +17,7 @@ import { getInputValues } from './DataMap.Utils';
 import { LogCategory, LogService } from './Logging.Utils';
 import { addTargetReactFlowPrefix } from './ReactFlow.Util';
 import { isSchemaNodeExtended } from './Schema.Utils';
-import { isAGuid, InputFormat, type SchemaNodeDictionary, type SchemaNodeExtended } from '@microsoft/utils-logic-apps';
+import { isAGuid, InputFormat, type SchemaNodeDictionary, type SchemaNodeExtended } from '@microsoft/logic-apps-shared';
 
 export const getFunctionBrandingForCategory = (functionCategory: FunctionCategory) => {
   switch (functionCategory) {
@@ -24,7 +25,7 @@ export const getFunctionBrandingForCategory = (functionCategory: FunctionCategor
       return collectionBranding;
     }
     case FunctionCategory.Custom: {
-      return collectionBranding;
+      return customBranding;
     }
     case FunctionCategory.DateTime: {
       return dateTimeBranding;
@@ -236,8 +237,8 @@ export const getInputName = (inputConnection: InputConnection | undefined, conne
     return isCustomValue(inputConnection)
       ? inputConnection
       : isSchemaNodeExtended(inputConnection.node)
-      ? inputConnection.node.name
-      : functionDropDownItemText(inputConnection.reactFlowKey, inputConnection.node, connectionDictionary);
+        ? inputConnection.node.name
+        : functionDropDownItemText(inputConnection.reactFlowKey, inputConnection.node, connectionDictionary);
   }
 
   return undefined;

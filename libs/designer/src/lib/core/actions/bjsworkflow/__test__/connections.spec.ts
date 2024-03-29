@@ -10,10 +10,10 @@ import {
   InitOperationManifestService,
   StandardOperationManifestService,
   OperationManifestService,
-} from '@microsoft/designer-client-services-logic-apps';
-import { createItem } from '@microsoft/parsers-logic-apps';
-import type { LogicAppsV2, OperationManifest } from '@microsoft/utils-logic-apps';
-import { ConnectionReferenceKeyFormat } from '@microsoft/utils-logic-apps';
+  createItem,
+  ConnectionReferenceKeyFormat,
+} from '@microsoft/logic-apps-shared';
+import type { LogicAppsV2, OperationManifest } from '@microsoft/logic-apps-shared';
 
 const nodeId = '1';
 const connectionName = 'name123';

@@ -1,6 +1,6 @@
 import type { FunctionData } from '../models/Function';
 import { FunctionCategory } from '../models/Function';
-import { NormalizedDataType } from '@microsoft/utils-logic-apps';
+import { NormalizedDataType } from '@microsoft/logic-apps-shared';
 
 export const addFunction: FunctionData = {
   key: 'Add',

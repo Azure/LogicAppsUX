@@ -7,7 +7,7 @@ import { getLocalSettingsJson } from '../appSettings/localSettings';
 import { tryGetLogicAppProjectRoot } from '../verifyIsProject';
 import { getWorkspaceSetting } from '../vsCodeConfig/settings';
 import { delay } from '@azure/ms-rest-js';
-import { isString } from '@microsoft/utils-logic-apps';
+import { isString } from '@microsoft/logic-apps-shared';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { registerEvent } from '@microsoft/vscode-azext-utils';
 import * as path from 'path';
@@ -29,7 +29,7 @@ export function isFuncHostTask(task: vscode.Task): boolean {
   const commandLine: string | undefined = task.execution && (task.execution as vscode.ShellExecution).commandLine;
   if (task.definition.type == 'shell') {
     const command = (task.execution as vscode.ShellExecution).command?.toString();
-    const funcRegex = new RegExp('\\$\\{config:azureLogicAppsStandard\\.funcCoreToolsBinaryPath\\}');
+    const funcRegex = /\$\{config:azureLogicAppsStandard\.funcCoreToolsBinaryPath\}/;
     // check for args?
     return funcRegex.test(command);
   }

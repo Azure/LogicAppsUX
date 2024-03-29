@@ -1,6 +1,6 @@
 import { useTheme } from '@fluentui/react';
 import { EmptyTrafficLightDot, TrafficLightDot } from '@microsoft/designer-ui';
-import { RUN_AFTER_COLORS, RUN_AFTER_STATUS } from '@microsoft/utils-logic-apps';
+import { RUN_AFTER_COLORS, RUN_AFTER_STATUS } from '@microsoft/logic-apps-shared';
 import { useCallback } from 'react';
 
 export interface RunAfterTrafficLightsProps {

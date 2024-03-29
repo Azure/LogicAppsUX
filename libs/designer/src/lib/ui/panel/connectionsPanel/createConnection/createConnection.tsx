@@ -11,20 +11,9 @@ import { UniversalConnectionParameter } from './formInputs/universalConnectionPa
 import type { IDropdownOption } from '@fluentui/react';
 import { MessageBarType, MessageBar, Label } from '@fluentui/react';
 import { Body1Strong, Button, Divider } from '@fluentui/react-components';
-import { ConnectionParameterEditorService, ConnectionService } from '@microsoft/designer-client-services-logic-apps';
-import type { GatewayServiceConfig, IConnectionCredentialMappingEditorProps } from '@microsoft/designer-client-services-logic-apps';
-import type { AzureResourcePickerProps } from '@microsoft/designer-ui';
-import { AzureResourcePicker } from '@microsoft/designer-ui';
-import type {
-  ConnectionParameter,
-  ConnectionParameterSet,
-  ConnectionParameterSetParameter,
-  ConnectionParameterSets,
-  Gateway,
-  ManagedIdentity,
-  Subscription,
-} from '@microsoft/utils-logic-apps';
 import {
+  ConnectionParameterEditorService,
+  ConnectionService,
   Capabilities,
   ConnectionParameterTypes,
   ResourceIdentityType,
@@ -35,7 +24,20 @@ import {
   getPropertyValue,
   isServicePrinicipalConnectionParameter,
   usesLegacyManagedIdentity,
-} from '@microsoft/utils-logic-apps';
+} from '@microsoft/logic-apps-shared';
+import type {
+  GatewayServiceConfig,
+  IConnectionCredentialMappingEditorProps,
+  ConnectionParameter,
+  ConnectionParameterSet,
+  ConnectionParameterSetParameter,
+  ConnectionParameterSets,
+  Gateway,
+  ManagedIdentity,
+  Subscription,
+} from '@microsoft/logic-apps-shared';
+import type { AzureResourcePickerProps } from '@microsoft/designer-ui';
+import { AzureResourcePicker } from '@microsoft/designer-ui';
 import fromPairs from 'lodash.frompairs';
 import type { FormEvent } from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
@@ -349,37 +351,44 @@ export const CreateConnection = (props: CreateConnectionProps) => {
 
   const componentDescription = intl.formatMessage({
     defaultMessage: 'Create a new connection',
+    id: '74e2xB',
     description: 'General description for creating a new connection.',
   });
 
   const createButtonText = intl.formatMessage({
     defaultMessage: 'Create New',
+    id: 'jMLmag',
     description: 'Button to add a new connection',
   });
 
   const createButtonLoadingText = intl.formatMessage({
     defaultMessage: 'Creating...',
+    id: 'LMB8am',
     description: 'Button text to show a connection is being created',
   });
 
   const createButtonAria = intl.formatMessage({
     defaultMessage: 'Create a new connection',
+    id: 'TX4Kdr',
     description: 'aria label description for create button',
   });
 
   const cancelButtonText = intl.formatMessage({
     defaultMessage: 'Cancel',
+    id: '9EmN2M',
     description: 'Button to cancel creating a connection',
   });
 
   const cancelButtonAria = intl.formatMessage({
     defaultMessage: 'Cancel creating a connection',
+    id: 'sFwHQc',
     description: 'aria label description for cancel button',
   });
 
   const simpleDescriptionText = intl.formatMessage(
     {
       defaultMessage: 'Create a connection for {connectorName}.',
+      id: 'vr70Gn',
       description: 'Create a connection for selected connector',
     },
     {
@@ -390,6 +399,7 @@ export const CreateConnection = (props: CreateConnectionProps) => {
   const authDescriptionText = intl.formatMessage(
     {
       defaultMessage: 'Sign in to create a connection to {connectorDisplayName}.',
+      id: 'EiRMD4',
       description: 'Description for creating an externally authenticated connection.',
     },
     { connectorDisplayName }
@@ -397,26 +407,31 @@ export const CreateConnection = (props: CreateConnectionProps) => {
 
   const signInButtonText = intl.formatMessage({
     defaultMessage: 'Sign in',
+    id: 'y1e9yw',
     description: 'Text for sign in button.',
   });
 
   const signInButtonAria = intl.formatMessage({
     defaultMessage: 'Sign in to connector',
+    id: 'mca3Ml',
     description: 'Aria label description for sign in button.',
   });
 
   const signInButtonLoadingText = intl.formatMessage({
     defaultMessage: 'Signing in...',
+    id: 'E+HsWF',
     description: 'Text for sign in button while loading.',
   });
 
   const closeErrorButtonAriaLabel = intl.formatMessage({
     defaultMessage: 'Close',
+    id: '9IDWMU',
     description: 'Close button aria label',
   });
 
   const legacyManagedIdentityLabelText = intl.formatMessage({
     defaultMessage: 'Managed Identity',
+    id: 'l72gf4',
     description: 'Dropdown text for legacy managed identity connection',
   });
 
@@ -666,5 +681,8 @@ export function parseParameterValues(
     Object.entries(parameterValues).filter(([key]) => !Object.keys(capabilityEnabledParameters).includes(key)) ?? []
   );
 
-  return { visibleParameterValues, additionalParameterValues };
+  return {
+    visibleParameterValues,
+    additionalParameterValues: Object.keys(additionalParameterValues).length ? additionalParameterValues : undefined,
+  };
 }

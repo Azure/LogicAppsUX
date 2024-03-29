@@ -1,5 +1,7 @@
+import type { CustomCodeFileNameMapping } from '../../..';
 import Constants from '../../../common/constants';
-import { ImpersonationSource, type ConnectionReferences, type WorkflowParameter } from '../../../common/models/workflow';
+import type { ConnectionReferences, WorkflowParameter } from '../../../common/models/workflow';
+import { ImpersonationSource } from '../../../common/models/workflow';
 import type { WorkflowNode } from '../../parsers/models/workflowNode';
 import { getConnectorWithSwagger, getSwaggerFromEndpoint } from '../../queries/connections';
 import { getOperationManifest } from '../../queries/operation';
@@ -11,12 +13,12 @@ import { WorkflowKind } from '../../state/workflow/workflowInterfaces';
 import type { WorkflowParameterDefinition } from '../../state/workflowparameters/workflowparametersSlice';
 import { initializeParameters } from '../../state/workflowparameters/workflowparametersSlice';
 import type { RootState } from '../../store';
-import { getBrandColorFromConnector, getIconUriFromConnector } from '../../utils/card';
 import { getTriggerNodeId, isRootNodeInGraph } from '../../utils/graph';
 import { getSplitOnOptions, getUpdatedManifestForSchemaDependency, getUpdatedManifestForSplitOn, toOutputInfo } from '../../utils/outputs';
 import {
   addRecurrenceParametersInGroup,
   getAllInputParameters,
+  getCustomCodeFileName,
   getDependentParameters,
   getInputsValueFromDefinitionForManifest,
   getParameterFromName,
@@ -37,7 +39,15 @@ import type {
   ISearchService,
   IOAuthService,
   IWorkflowService,
-} from '@microsoft/designer-client-services-logic-apps';
+  CustomSwaggerServiceDetails,
+  InputParameter,
+  OperationInfo,
+  OperationManifest,
+  OperationManifestProperties,
+  OutputParameter,
+  SchemaProperty,
+  SwaggerParser,
+} from '@microsoft/logic-apps-shared';
 import {
   WorkflowService,
   LoggerService,
@@ -45,36 +55,28 @@ import {
   OperationManifestService,
   FunctionService,
   ApiManagementService,
-} from '@microsoft/designer-client-services-logic-apps';
-import type { OutputToken, ParameterInfo } from '@microsoft/designer-ui';
-import { getIntl } from '@microsoft/intl-logic-apps';
-import type { SchemaProperty, InputParameter, SwaggerParser, OutputParameter } from '@microsoft/parsers-logic-apps';
-import {
+  clone,
+  ConnectionReferenceKeyFormat,
+  CustomSwaggerServiceNames,
+  DynamicSchemaType,
+  equals,
+  getBrandColorFromConnector,
+  getIconUriFromConnector,
+  getObjectPropertyValue,
+  getRecordEntry,
   isDynamicListExtension,
   isDynamicPropertiesExtension,
   isDynamicSchemaExtension,
   isDynamicTreeExtension,
   isLegacyDynamicValuesExtension,
   isLegacyDynamicValuesTreeExtension,
-  DynamicSchemaType,
   ManifestParser,
   PropertyName,
-} from '@microsoft/parsers-logic-apps';
-import {
-  CustomSwaggerServiceNames,
-  UnsupportedException,
-  clone,
-  equals,
-  ConnectionReferenceKeyFormat,
   unmap,
-  getObjectPropertyValue,
-} from '@microsoft/utils-logic-apps';
-import type {
-  CustomSwaggerServiceDetails,
-  OperationInfo,
-  OperationManifest,
-  OperationManifestProperties,
-} from '@microsoft/utils-logic-apps';
+  UnsupportedException,
+  isNullOrEmpty,
+} from '@microsoft/logic-apps-shared';
+import type { OutputToken, ParameterInfo } from '@microsoft/designer-ui';
 import type { Dispatch } from '@reduxjs/toolkit';
 
 export interface ServiceOptions {
@@ -434,10 +436,6 @@ export const updateCallbackUrlInInputs = async (
       const parameter = getParameterFromName(nodeInputs, 'callbackUrl');
 
       if (parameter && callbackInfo) {
-        parameter.label = getIntl().formatMessage(
-          { defaultMessage: 'HTTP {method} URL', description: 'Callback url method' },
-          { method: callbackInfo.method }
-        );
         parameter.value = [createLiteralValueSegment(callbackInfo.value)];
 
         return parameter;
@@ -452,6 +450,36 @@ export const updateCallbackUrlInInputs = async (
   }
 
   return;
+};
+
+export const updateCustomCodeInInputs = async (
+  nodeId: string,
+  fileExtension: string,
+  nodeInputs: NodeInputs,
+  customCode: CustomCodeFileNameMapping
+) => {
+  if (isNullOrEmpty(customCode)) return;
+  // getCustomCodeFileName does not return the file extension because the editor view model is not populated yet
+  const fileName = getCustomCodeFileName(nodeId, nodeInputs) + fileExtension;
+  try {
+    const customCodeValue = getRecordEntry(customCode, fileName)?.fileData;
+    const parameter = getParameterFromName(nodeInputs, Constants.DEFAULT_CUSTOM_CODE_INPUT);
+
+    if (parameter && customCodeValue) {
+      parameter.editorViewModel = {
+        customCodeData: { fileData: customCodeValue, fileExtension, fileName },
+      };
+    }
+  } catch (error) {
+    const errorMessage = `Failed to populate code file ${fileName}: ${error}`;
+    LoggerService().log({
+      level: LogEntryLevel.Error,
+      area: 'fetchCustomCode',
+      message: errorMessage,
+      error: error instanceof Error ? error : undefined,
+    });
+    return;
+  }
 };
 
 export const updateAllUpstreamNodes = (state: RootState, dispatch: Dispatch): void => {

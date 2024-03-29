@@ -36,7 +36,9 @@ import {
   ConsumptionSearchService,
   BaseChatbotService,
   ConsumptionRunService,
-} from '@microsoft/designer-client-services-logic-apps';
+  guid,
+  startsWith,
+} from '@microsoft/logic-apps-shared';
 import type { Workflow } from '@microsoft/logic-apps-designer';
 import {
   DesignerProvider,
@@ -47,7 +49,6 @@ import {
   serializeBJSWorkflow,
   store as DesignerStore,
 } from '@microsoft/logic-apps-designer';
-import { guid, startsWith } from '@microsoft/utils-logic-apps';
 import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 

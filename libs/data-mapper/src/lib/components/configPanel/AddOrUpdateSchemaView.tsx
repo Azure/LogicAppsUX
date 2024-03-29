@@ -5,7 +5,7 @@ import { UploadNewSchema } from './UploadNewSchema';
 import { ChoiceGroup, MessageBar, MessageBarType } from '@fluentui/react';
 import type { IChoiceGroupOption } from '@fluentui/react';
 import { Text } from '@fluentui/react-components';
-import { SchemaType } from '@microsoft/utils-logic-apps';
+import { SchemaType } from '@microsoft/logic-apps-shared';
 import { useCallback, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useSelector } from 'react-redux';
@@ -55,26 +55,31 @@ export const AddOrUpdateSchemaView = ({
 
   const replaceSchemaWarningLoc = intl.formatMessage({
     defaultMessage: 'Replacing an existing schema with an incompatible schema might create errors in your map.',
+    id: '3QXY3z',
     description: 'Message bar warning about replacing existing schema',
   });
 
   const addNewLoc = intl.formatMessage({
     defaultMessage: 'Add new',
+    id: 'rv0Pn+',
     description: 'Add new option',
   });
 
   const selectExistingLoc = intl.formatMessage({
     defaultMessage: 'Select existing',
+    id: '2ZfzaY',
     description: 'Select existing option',
   });
 
   const updateSourceSchemaHeaderMsg = intl.formatMessage({
     defaultMessage: 'Update source schema',
+    id: '73iM9+',
     description: 'Header to update source schema',
   });
 
   const updateTargetSchemaHeaderMsg = intl.formatMessage({
     defaultMessage: 'Update target schema',
+    id: 'htj+eZ',
     description: 'Header to update target schema',
   });
 
@@ -105,6 +110,7 @@ export const AddOrUpdateSchemaView = ({
       return [
         intl.formatMessage({
           defaultMessage: 'Add or select a source schema to use for your map.',
+          id: 'auUI93',
           description: 'label to inform to upload or select source schema to be used',
         }),
       ];
@@ -112,6 +118,7 @@ export const AddOrUpdateSchemaView = ({
       return [
         intl.formatMessage({
           defaultMessage: 'Add or select a target schema to use for your map.',
+          id: 'jA6Wrp',
           description: 'label to inform to upload or select target schema to be used',
         }),
       ];

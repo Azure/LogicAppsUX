@@ -15,7 +15,7 @@ import {
 import { Text } from '@fluentui/react';
 import type { NodeMessage } from '@microsoft/designer-ui';
 import { MessageLevel } from '@microsoft/designer-ui';
-import { getRecordEntry } from '@microsoft/utils-logic-apps';
+import { getRecordEntry } from '@microsoft/logic-apps-shared';
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useSelector } from 'react-redux';
@@ -25,31 +25,37 @@ export const ErrorsTab = () => {
 
   const noErrorsText = intl.formatMessage({
     defaultMessage: 'No errors found.',
+    id: 'O1tedM',
     description: 'Text to show when no errors exist',
   });
 
   const operationErrorsCategoryHeader = intl.formatMessage({
     defaultMessage: 'Operation errors',
+    id: 'ui3KuP',
     description: 'Header for the input errors category',
   });
 
   const workflowParameterErrorsCategoryHeader = intl.formatMessage({
     defaultMessage: 'Workflow parameter errors',
+    id: 'To3RNy',
     description: 'Header for the workflow parameter errors category',
   });
 
   const inputErrorsSubsectionHeader = intl.formatMessage({
     defaultMessage: 'Parameter errors',
+    id: 'k8cbQ1',
     description: 'Header for the node parameter errors subsection',
   });
 
   const settingErrorsSubsectionHeader = intl.formatMessage({
     defaultMessage: 'Setting errors',
+    id: 'Peg6ZT',
     description: 'Header for the setting errors subsection',
   });
 
   const connectionErrorsSubsectionHeader = intl.formatMessage({
     defaultMessage: 'Connection errors',
+    id: 'PsmHyH',
     description: 'Header for the connection errors subsection',
   });
 

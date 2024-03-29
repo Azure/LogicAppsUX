@@ -1,8 +1,9 @@
 import type { ValueSegment } from '../../models/parameter';
 import { ValueSegmentType } from '../../models/parameter';
 import { $isTokenNode } from '../nodes/tokenNode';
+import { createLiteralValueSegment } from './helper';
 import type { SegmentParserOptions } from './parsesegments';
-import { guid } from '@microsoft/utils-logic-apps';
+import { guid } from '@microsoft/logic-apps-shared';
 import type { EditorState, ElementNode } from 'lexical';
 import { $getNodeByKey, $getRoot, $isElementNode, $isLineBreakNode, $isTextNode } from 'lexical';
 
@@ -19,16 +20,16 @@ const getChildrenNodesToSegments = (node: ElementNode, segments: ValueSegment[],
     const childNode = $getNodeByKey(child.getKey());
     if (childNode && $isElementNode(childNode)) {
       if (!trimLiteral && /* ignore first paragraph node */ index > 0) {
-        segments.push({ id: guid(), type: ValueSegmentType.LITERAL, value: '\n' });
+        segments.push(createLiteralValueSegment('\n'));
       }
       return getChildrenNodesToSegments(childNode, segments, trimLiteral);
     }
     if ($isTextNode(childNode)) {
-      segments.push({ id: guid(), type: ValueSegmentType.LITERAL, value: trimLiteral ? childNode.__text.trim() : childNode.__text });
+      segments.push(createLiteralValueSegment(trimLiteral ? childNode.__text.trim() : childNode.__text));
     } else if ($isTokenNode(childNode)) {
       segments.push(childNode.__data);
     } else if ($isLineBreakNode(childNode)) {
-      segments.push({ id: guid(), type: ValueSegmentType.LITERAL, value: '\n' });
+      segments.push(createLiteralValueSegment('\n'));
     }
   });
 };
@@ -43,7 +44,7 @@ export const convertStringToSegments = (
   const { tokensEnabled } = options ?? {};
 
   if (typeof value !== 'string' || !tokensEnabled) {
-    return [{ id: guid(), type: ValueSegmentType.LITERAL, value }];
+    return [createLiteralValueSegment(value)];
   }
 
   const returnSegments: ValueSegment[] = [];
@@ -91,7 +92,7 @@ export const convertStringToSegments = (
   if (segmentSoFar) {
     // Treat anything remaining as `ValueSegmentType.LITERAL`, even if `currSegmentType` is not; this is to
     // ensure that if we opened a token with `@{`, but it has no end, we just treat the remaining text as a literal.
-    returnSegments.push({ id: guid(), type: ValueSegmentType.LITERAL, value: segmentSoFar });
+    returnSegments.push(createLiteralValueSegment(segmentSoFar));
   }
 
   collapseLiteralSegments(returnSegments);

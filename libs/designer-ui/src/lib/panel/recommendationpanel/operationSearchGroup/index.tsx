@@ -3,7 +3,7 @@ import { getConnectorCategoryString } from '../../../utils';
 import type { OperationActionData } from '../interfaces';
 import { OperationSearchCard } from '../operationSearchCard';
 import { Link } from '@fluentui/react';
-import type { OperationApi } from '@microsoft/utils-logic-apps';
+import type { OperationApi } from '@microsoft/logic-apps-shared';
 import { useIntl } from 'react-intl';
 
 export interface OperationSearchGroupProps {
@@ -16,28 +16,21 @@ export interface OperationSearchGroupProps {
 
 export const OperationSearchGroup = (props: OperationSearchGroupProps) => {
   const { operationApi, operationActionsData, onConnectorClick, onOperationClick, displayRuntimeInfo } = props;
-  const { id, displayName, description, iconUri } = operationApi;
+  const { id } = operationApi;
 
   const intl = useIntl();
 
-  const category = getConnectorCategoryString(id);
+  const category = getConnectorCategoryString(operationApi);
 
   const seeMoreText = intl.formatMessage({
     defaultMessage: 'See more',
+    id: 'LlYz9c',
     description: 'Text that will be clicked to show more details for the connector',
   });
 
   return (
     <div style={{ position: 'relative' }}>
-      <ConnectorSummaryCard
-        id={id}
-        connectorName={displayName}
-        description={description}
-        iconUrl={iconUri}
-        category={category}
-        isCard={false}
-        displayRuntimeInfo={displayRuntimeInfo}
-      />
+      <ConnectorSummaryCard connector={operationApi} category={category} isCard={false} displayRuntimeInfo={displayRuntimeInfo} />
       <Link className="msla-op-search-group-see-more" onClick={() => onConnectorClick(id)}>
         {seeMoreText}
       </Link>

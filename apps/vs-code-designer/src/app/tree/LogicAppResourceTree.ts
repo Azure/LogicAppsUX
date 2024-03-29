@@ -16,7 +16,7 @@ import type { SlotTreeItem } from './slotsTree/SlotTreeItem';
 import { SlotsTreeItem } from './slotsTree/SlotsTreeItem';
 import { ArtifactsTreeItem } from './slotsTree/artifactsTree/ArtifactsTreeItem';
 import type { Site, SiteConfig, SiteSourceControl, StringDictionary } from '@azure/arm-appservice';
-import { isString } from '@microsoft/utils-logic-apps';
+import { isString } from '@microsoft/logic-apps-shared';
 import {
   DeleteLastServicePlanStep,
   DeleteSiteStep,
@@ -354,8 +354,8 @@ export class LogicAppResourceTree implements ResolvedAppResourceBase {
     const confirmationMessage: string = isSlot
       ? localize('confirmDeleteSlot', 'Are you sure you want to delete slot "{0}"?', fullName)
       : isFunctionApp
-      ? localize('confirmDeleteFunctionApp', 'Are you sure you want to delete function app "{0}"?', fullName)
-      : localize('confirmDeleteWebApp', 'Are you sure you want to delete web app "{0}"?', fullName);
+        ? localize('confirmDeleteFunctionApp', 'Are you sure you want to delete function app "{0}"?', fullName)
+        : localize('confirmDeleteWebApp', 'Are you sure you want to delete web app "{0}"?', fullName);
 
     const wizardContext = Object.assign(context, {
       site: this.site,

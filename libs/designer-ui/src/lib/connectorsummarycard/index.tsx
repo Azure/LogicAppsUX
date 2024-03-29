@@ -1,31 +1,33 @@
-import { InfoDot } from '../infoDot';
 import { Text, css } from '@fluentui/react';
-import { fallbackConnectorIconUrl, isBuiltInConnector } from '@microsoft/utils-logic-apps';
+import type { Connector, OperationApi } from '@microsoft/logic-apps-shared';
+import { getDescriptionFromConnector, getDisplayNameFromConnector, getIconUriFromConnector } from '@microsoft/logic-apps-shared';
 import { useCallback } from 'react';
+import { isBuiltInConnector } from '../connectors/predicates';
+import { InfoDot } from '../infoDot';
 
 export interface ConnectorSummaryCardProps {
-  id: string;
-  connectorName: string;
+  connector: Connector | OperationApi;
   displayRuntimeInfo: boolean;
-  description?: string;
-  iconUrl: string;
-  brandColor?: string;
   category: string;
   onClick?: (id: string) => void;
   isCard?: boolean;
 }
 
 export const ConnectorSummaryCard = (props: ConnectorSummaryCardProps) => {
-  const { id, connectorName, description, iconUrl, category, onClick, isCard = true, displayRuntimeInfo } = props;
+  const { connector, category, onClick, isCard = true, displayRuntimeInfo } = props;
+  const { id } = connector;
+
+  const connectorName = getDisplayNameFromConnector(connector);
+  const description = getDescriptionFromConnector(connector);
+  const iconUrl = getIconUriFromConnector(connector);
 
   const handleClick = () => onClick?.(id);
 
   const ConnectorImage = useCallback(() => {
-    const src = fallbackConnectorIconUrl(iconUrl);
-    return <img className={css('msla-connector-summary-image', !isCard && 'large')} alt={connectorName} src={src} />;
+    return <img className={css('msla-connector-summary-image', !isCard && 'large')} alt={connectorName} src={iconUrl} />;
   }, [connectorName, iconUrl, isCard]);
 
-  const isBuiltIn = isBuiltInConnector(id);
+  const isBuiltIn = isBuiltInConnector(connector);
 
   const Content = () => (
     <>
@@ -47,13 +49,18 @@ export const ConnectorSummaryCard = (props: ConnectorSummaryCardProps) => {
 
   if (isCard)
     return (
-      <button className="msla-connector-summary-card" onClick={handleClick} aria-label={`${connectorName} ${description}`}>
+      <button
+        className="msla-connector-summary-card"
+        onClick={handleClick}
+        aria-label={`${connectorName} ${description}`}
+        data-automation-id={id}
+      >
         <Content />
       </button>
     );
 
   return (
-    <div className="msla-connector-summary-display">
+    <div className="msla-connector-summary-display" data-automation-id={id}>
       <ConnectorImage />
       <div style={{ flexGrow: 1 }}>
         <Content />

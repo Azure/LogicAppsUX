@@ -21,12 +21,12 @@ import {
 import { buildOperationDetailsFromControls } from '../../utils/swagger/inputsbuilder';
 import type { Settings } from './settings';
 import type { NodeStaticResults } from './staticresults';
-import { LogEntryLevel, LoggerService, OperationManifestService, WorkflowService } from '@microsoft/designer-client-services-logic-apps';
-import type { ParameterInfo, ValueSegment } from '@microsoft/designer-ui';
-import { UIConstants } from '@microsoft/designer-ui';
-import { getIntl } from '@microsoft/intl-logic-apps';
-import type { Segment } from '@microsoft/parsers-logic-apps';
 import {
+  LogEntryLevel,
+  LoggerService,
+  OperationManifestService,
+  WorkflowService,
+  getIntl,
   create,
   removeConnectionPrefix,
   cleanIndexedValue,
@@ -35,18 +35,6 @@ import {
   SegmentType,
   DeserializationType,
   PropertySerializationType,
-} from '@microsoft/parsers-logic-apps';
-import type {
-  Assertion,
-  AssertionDefintion,
-  LocationSwapMap,
-  LogicAppsV2,
-  OperationManifest,
-  OperationMock,
-  SubGraphDetail,
-  UnitTestDefinition,
-} from '@microsoft/utils-logic-apps';
-import {
   SerializationErrorCode,
   SerializationException,
   clone,
@@ -68,7 +56,21 @@ import {
   filterRecord,
   excludePathValueFromTarget,
   getRecordEntry,
-} from '@microsoft/utils-logic-apps';
+} from '@microsoft/logic-apps-shared';
+import type { ParameterInfo } from '@microsoft/designer-ui';
+import { UIConstants } from '@microsoft/designer-ui';
+import type {
+  Segment,
+  LocationSwapMap,
+  LogicAppsV2,
+  OperationManifest,
+  SubGraphDetail,
+  OperationMock,
+  ValueSegment,
+  AssertionDefintion,
+  Assertion,
+  UnitTestDefinition,
+} from '@microsoft/logic-apps-shared';
 import merge from 'lodash.merge';
 
 export interface SerializeOptions {
@@ -90,6 +92,7 @@ export const serializeWorkflow = async (rootState: RootState, options?: Serializ
         intl.formatMessage(
           {
             defaultMessage: 'Workflow has invalid connections on the following operations: {invalidNodes}',
+            id: 'WTZvGW',
             description: 'Error message to show when there are invalid connections in the nodes.',
           },
           { invalidNodes }
@@ -108,6 +111,7 @@ export const serializeWorkflow = async (rootState: RootState, options?: Serializ
         intl.formatMessage(
           {
             defaultMessage: 'Workflow has settings validation errors on the following operations: {invalidNodes}',
+            id: 'H/QVod',
             description: 'Error message to show when there are invalid connections in the nodes.',
           },
           { invalidNodes }
@@ -129,6 +133,7 @@ export const serializeWorkflow = async (rootState: RootState, options?: Serializ
         intl.formatMessage(
           {
             defaultMessage: 'The workflow has parameter validation errors in the following operations: {invalidNodes}',
+            id: '8mDG0V',
             description: 'Error message to show when there are invalid connections in the nodes.',
           },
           { invalidNodes }
@@ -231,21 +236,25 @@ const getWorkflowParameters = (
     delete parameterDefinition['name'];
     delete parameterDefinition['isEditable'];
 
-    parameterDefinition.value = equals(parameterDefinition.type, UIConstants.WORKFLOW_PARAMETER_TYPE.STRING)
+    const isStringParameter =
+      equals(parameterDefinition.type, UIConstants.WORKFLOW_PARAMETER_TYPE.STRING) ||
+      equals(parameterDefinition.type, UIConstants.WORKFLOW_PARAMETER_TYPE.SECURE_STRING);
+
+    parameterDefinition.value = isStringParameter
       ? value
       : value === ''
-      ? undefined
-      : typeof value !== 'string'
-      ? value
-      : JSON.parse(value);
+        ? undefined
+        : typeof value !== 'string'
+          ? value
+          : JSON.parse(value);
 
-    parameterDefinition.defaultValue = equals(parameterDefinition.type, UIConstants.WORKFLOW_PARAMETER_TYPE.STRING)
+    parameterDefinition.defaultValue = isStringParameter
       ? defaultValue
       : defaultValue === ''
-      ? undefined
-      : typeof defaultValue !== 'string'
-      ? defaultValue
-      : JSON.parse(defaultValue);
+        ? undefined
+        : typeof defaultValue !== 'string'
+          ? defaultValue
+          : JSON.parse(defaultValue);
 
     return { ...result, [parameter?.name ?? parameterId]: parameterDefinition };
   }, {});
@@ -359,10 +368,10 @@ const serializeSwaggerBasedOperation = async (rootState: RootState, operationId:
   const serializedType = equals(type, Constants.NODE.TYPE.API_CONNECTION)
     ? Constants.SERIALIZED_TYPE.API_CONNECTION
     : equals(type, Constants.NODE.TYPE.API_CONNECTION_NOTIFICATION)
-    ? Constants.SERIALIZED_TYPE.API_CONNECTION_NOTIFICATION
-    : equals(type, Constants.NODE.TYPE.API_CONNECTION_WEBHOOK)
-    ? Constants.SERIALIZED_TYPE.API_CONNECTION_WEBHOOK
-    : type;
+      ? Constants.SERIALIZED_TYPE.API_CONNECTION_NOTIFICATION
+      : equals(type, Constants.NODE.TYPE.API_CONNECTION_WEBHOOK)
+        ? Constants.SERIALIZED_TYPE.API_CONNECTION_WEBHOOK
+        : type;
 
   return {
     type: serializedType,
@@ -712,6 +721,7 @@ const serializeHost = (
         intl.formatMessage(
           {
             defaultMessage: `Unsupported manifest connection reference format: ''{referenceKeyFormat}''`,
+            id: 'qAlTD5',
             description:
               'Error message to show when reference format is unsupported, {referenceKeyFormat} will be replaced based on action definition. Do not remove the double single quotes around the display name, as it is needed to wrap the placeholder text.',
           },

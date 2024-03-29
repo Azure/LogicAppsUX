@@ -8,8 +8,8 @@ import type { SchemaFile } from './AddOrUpdateSchemaView';
 import { AddOrUpdateSchemaView, UploadSchemaTypes } from './AddOrUpdateSchemaView';
 import { DefaultConfigView } from './DefaultConfigView';
 import { DefaultButton, Panel, PrimaryButton } from '@fluentui/react';
-import type { Schema } from '@microsoft/utils-logic-apps';
-import { SchemaType } from '@microsoft/utils-logic-apps';
+import type { DataMapSchema } from '@microsoft/logic-apps-shared';
+import { SchemaType } from '@microsoft/logic-apps-shared';
 import { useCallback, useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useQuery } from 'react-query';
@@ -78,31 +78,37 @@ export const ConfigPanel = ({
 
   const addLoc = intl.formatMessage({
     defaultMessage: 'Add',
+    id: 'F9dR1Q',
     description: 'Add',
   });
 
   const saveLoc = intl.formatMessage({
     defaultMessage: 'Save',
+    id: '0CvRZW',
     description: 'Save',
   });
 
   const cancelLoc = intl.formatMessage({
     defaultMessage: 'Cancel',
+    id: '6PdOcy',
     description: 'Cancel',
   });
 
   const configureLoc = intl.formatMessage({
     defaultMessage: 'Configure',
+    id: 'LR/3Lr',
     description: 'Configure',
   });
 
   const closeLoc = intl.formatMessage({
     defaultMessage: 'Close',
+    id: 'wzEneQ',
     description: 'Close',
   });
 
   const genericErrorMsg = intl.formatMessage({
     defaultMessage: 'Failed to load the schema. Please try again.',
+    id: '6fDYzG',
     description: 'Load schema error message',
   });
 
@@ -117,7 +123,7 @@ export const ConfigPanel = ({
   }, [dispatch, setErrorMessage]);
 
   const onSubmitSchema = useCallback(
-    (schema: Schema) => {
+    (schema: DataMapSchema) => {
       if (schemaType) {
         const extendedSchema = convertSchemaToSchemaExtended(schema);
         dispatch(setInitialSchema({ schema: extendedSchema, schemaType: schemaType }));
@@ -156,7 +162,8 @@ export const ConfigPanel = ({
         return;
       }
 
-      const selectedSchema = schemaType === SchemaType.Source ? (fetchedSourceSchema.data as Schema) : (fetchedTargetSchema.data as Schema);
+      const selectedSchema =
+        schemaType === SchemaType.Source ? (fetchedSourceSchema.data as DataMapSchema) : (fetchedTargetSchema.data as DataMapSchema);
 
       if (uploadType === UploadSchemaTypes.SelectFrom && selectedSchema) {
         onSubmitSchema(selectedSchema);

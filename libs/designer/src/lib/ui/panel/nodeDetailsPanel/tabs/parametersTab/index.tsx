@@ -1,5 +1,6 @@
 import constants from '../../../../../common/constants';
 import { useShowIdentitySelectorQuery } from '../../../../../core/state/connection/connectionSelector';
+import { addOrUpdateCustomCode } from '../../../../../core/state/customcode/customcodeSlice';
 import { useHostOptions, useReadOnly } from '../../../../../core/state/designerOptions/designerOptionsSelectors';
 import type { ParameterGroup } from '../../../../../core/state/operation/operationMetadataSlice';
 import { DynamicLoadStatus, ErrorLevel } from '../../../../../core/state/operation/operationMetadataSlice';
@@ -18,7 +19,7 @@ import {
 } from '../../../../../core/state/selectors/actionMetadataSelector';
 import type { VariableDeclaration } from '../../../../../core/state/tokens/tokensSlice';
 import { updateVariableInfo } from '../../../../../core/state/tokens/tokensSlice';
-import { useNodeMetadata, useReplacedIds } from '../../../../../core/state/workflow/workflowSelectors';
+import { useNodeDisplayName, useNodeMetadata, useReplacedIds } from '../../../../../core/state/workflow/workflowSelectors';
 import type { AppDispatch, RootState } from '../../../../../core/store';
 import { getConnectionReference } from '../../../../../core/utils/connectors/connections';
 import { isRootNodeInGraph } from '../../../../../core/utils/graph';
@@ -27,6 +28,7 @@ import {
   loadDynamicValuesForParameter,
   loadParameterValueFromString,
   parameterValueToString,
+  remapEditorViewModelWithNewIds,
   remapValueSegmentsWithNewIds,
   shouldUseParameterInGroup,
   updateParameterAndDependencies,
@@ -40,7 +42,6 @@ import { ConnectionDisplay } from './connectionDisplay';
 import { IdentitySelector } from './identityselector';
 import { MessageBar, MessageBarType, Spinner, SpinnerSize } from '@fluentui/react';
 import { Divider } from '@fluentui/react-components';
-import { EditorService } from '@microsoft/designer-client-services-logic-apps';
 import {
   DynamicCallStatus,
   PanelLocation,
@@ -50,8 +51,16 @@ import {
   toCustomEditorAndOptions,
 } from '@microsoft/designer-ui';
 import type { ChangeState, ParameterInfo, ValueSegment, OutputToken, TokenPickerMode, PanelTabFn } from '@microsoft/designer-ui';
-import type { OperationInfo } from '@microsoft/utils-logic-apps';
-import { equals, getPropertyValue, getRecordEntry } from '@microsoft/utils-logic-apps';
+import {
+  CustomCodeService,
+  EditorService,
+  equals,
+  getPropertyValue,
+  getRecordEntry,
+  isRecordNotEmpty,
+  replaceWhiteSpaceWithUnderscore,
+} from '@microsoft/logic-apps-shared';
+import type { OperationInfo } from '@microsoft/logic-apps-shared';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
@@ -73,11 +82,13 @@ export const ParametersTab = () => {
   const showConnectionDisplay = useAllowUserToChangeConnection(operationInfo);
   const showIdentitySelector = useShowIdentitySelectorQuery(selectedNodeId);
   const errorInfo = useOperationErrorInfo(selectedNodeId);
-
+  const { hideUTFExpressions } = useHostOptions();
   const replacedIds = useReplacedIds();
 
-  const emptyParametersMessage = useIntl().formatMessage({
+  const intl = useIntl();
+  const emptyParametersMessage = intl.formatMessage({
     defaultMessage: 'No additional information is needed for this step. You will be able to use the outputs in subsequent steps.',
+    id: 'BtL7UI',
     description: 'Message to show when there are no parameters to author in operation.',
   });
 
@@ -105,7 +116,7 @@ export const ParametersTab = () => {
   }
 
   const tokenGroup = getOutputTokenSections(selectedNodeId, nodeType, tokenState, workflowParametersState, replacedIds);
-  const expressionGroup = getExpressionTokenSections();
+  const expressionGroup = getExpressionTokenSections(hideUTFExpressions);
 
   return (
     <>
@@ -115,8 +126,8 @@ export const ParametersTab = () => {
             errorInfo.level === ErrorLevel.DynamicInputs || errorInfo.level === ErrorLevel.Default
               ? MessageBarType.severeWarning
               : errorInfo.level === ErrorLevel.DynamicOutputs
-              ? MessageBarType.warning
-              : MessageBarType.error
+                ? MessageBarType.warning
+                : MessageBarType.error
           }
         >
           {errorInfo.message}
@@ -195,8 +206,9 @@ const ParameterSection = ({
   const rootState = useSelector((state: RootState) => state);
   const displayNameResult = useConnectorName(operationInfo);
   const panelLocation = usePanelLocation();
+  const nodeTitle = replaceWhiteSpaceWithUnderscore(useNodeDisplayName(nodeId));
 
-  const { suppressCastingForSerialize } = useHostOptions();
+  const { suppressCastingForSerialize, hideUTFExpressions } = useHostOptions();
 
   const [tokenMapping, setTokenMapping] = useState<Record<string, ValueSegment>>({});
 
@@ -205,17 +217,26 @@ const ParameterSection = ({
       const { value, viewModel } = newState;
       const parameter = nodeInputs.parameterGroups[group.id].parameters.find((param: any) => param.id === id);
 
-      const propertiesToUpdate = { value, preservedValue: undefined } as Partial<ParameterInfo>;
+      const propertiesToUpdate = {
+        value,
+        preservedValue: undefined,
+      } as Partial<ParameterInfo>;
 
       if (viewModel !== undefined) {
         propertiesToUpdate.editorViewModel = viewModel;
       }
+
       if (getRecordEntry(variables, nodeId)) {
         if (parameter?.parameterKey === 'inputs.$.name') {
           dispatch(updateVariableInfo({ id: nodeId, name: value[0]?.value }));
         } else if (parameter?.parameterKey === 'inputs.$.type') {
           dispatch(updateVariableInfo({ id: nodeId, type: value[0]?.value }));
         }
+      }
+
+      if (CustomCodeService().isCustomCode(parameter?.editor, parameter?.editorOptions?.language)) {
+        const { fileData, fileExtension, fileName } = viewModel.customCodeData;
+        dispatch(addOrUpdateCustomCode({ nodeId, fileData, fileExtension, fileName }));
       }
 
       updateParameterAndDependencies(
@@ -318,7 +339,6 @@ const ParameterSection = ({
     tokenPickerMode?: TokenPickerMode,
     editorType?: string,
     isCodeEditor?: boolean,
-    setIsTokenPickerOpened?: (b: boolean) => void,
     tokenClickedCallback?: (token: ValueSegment) => void
   ): JSX.Element => {
     const parameterType =
@@ -352,7 +372,7 @@ const ParameterSection = ({
         tokenGroup={tokenGroup}
         filteredTokenGroup={filteredTokenGroup}
         expressionGroup={expressionGroup}
-        setIsTokenPickerOpened={setIsTokenPickerOpened}
+        hideUTFExpressions={hideUTFExpressions}
         initialMode={tokenPickerMode}
         getValueSegmentFromToken={(token: OutputToken, addImplicitForeach: boolean) =>
           getValueSegmentFromToken(parameterId, token, addImplicitForeach, !!isCodeEditor)
@@ -391,10 +411,23 @@ const ParameterSection = ({
     .map((param) => {
       const { id, label, value, required, showTokens, placeholder, editorViewModel, dynamicData, conditionalVisibility, validationErrors } =
         param;
-      const paramSubset = { id, label, required, showTokens, placeholder, editorViewModel, conditionalVisibility };
+      const remappedEditorViewModel = isRecordNotEmpty(idReplacements)
+        ? remapEditorViewModelWithNewIds(editorViewModel, idReplacements)
+        : editorViewModel;
+      const paramSubset = {
+        id,
+        label,
+        required,
+        showTokens,
+        placeholder,
+        editorViewModel: remappedEditorViewModel,
+        conditionalVisibility,
+      };
       const { editor, editorOptions } = getEditorAndOptions(operationInfo, param, upstreamNodeIds ?? [], variables);
 
-      const { value: remappedValues } = remapValueSegmentsWithNewIds(value, idReplacements);
+      const { value: remappedValues } = isRecordNotEmpty(idReplacements) ? remapValueSegmentsWithNewIds(value, idReplacements) : { value };
+      const isCodeEditor = editor?.toLowerCase() === constants.EDITOR.CODE;
+
       return {
         settingType: 'SettingTokenField',
         settingProp: {
@@ -408,6 +441,7 @@ const ParameterSection = ({
           errorDetails: dynamicData?.error ? { message: dynamicData.error.message } : undefined,
           validationErrors,
           tokenMapping,
+          nodeTitle,
           loadParameterValueFromString: (value: string) => loadParameterValueFromString(value),
           onValueChange: (newState: ChangeState) => onValueChange(id, newState),
           onComboboxMenuOpen: () => onComboboxMenuOpen(param),
@@ -418,7 +452,12 @@ const ParameterSection = ({
           suppressCastingForSerialize: suppressCastingForSerialize ?? false,
           onCastParameter: (value: ValueSegment[], type?: string, format?: string, suppressCasting?: boolean) =>
             parameterValueToString(
-              { value, type: type ?? 'string', info: { format }, suppressCasting } as ParameterInfo,
+              {
+                value,
+                type: type ?? 'string',
+                info: { format },
+                suppressCasting,
+              } as ParameterInfo,
               false,
               idReplacements
             ) ?? '',
@@ -427,19 +466,8 @@ const ParameterSection = ({
             labelId: string,
             tokenPickerMode?: TokenPickerMode,
             editorType?: string,
-            setIsInTokenPicker?: (b: boolean) => void,
             tokenClickedCallback?: (token: ValueSegment) => void
-          ) =>
-            getTokenPicker(
-              id,
-              editorId,
-              labelId,
-              tokenPickerMode,
-              editorType,
-              editor?.toLowerCase() === constants.EDITOR.CODE,
-              setIsInTokenPicker,
-              tokenClickedCallback
-            ),
+          ) => getTokenPicker(id, editorId, labelId, tokenPickerMode, editorType, isCodeEditor, tokenClickedCallback),
         },
       };
     });
@@ -500,8 +528,16 @@ const hasParametersToAuthor = (parameterGroups: Record<string, ParameterGroup>):
 
 export const parametersTab: PanelTabFn = (intl) => ({
   id: constants.PANEL_TAB_NAMES.PARAMETERS,
-  title: intl.formatMessage({ defaultMessage: 'Parameters', description: 'Parameters tab title' }),
-  description: intl.formatMessage({ defaultMessage: 'Configure parameters for this node', description: 'Parameters tab description' }),
+  title: intl.formatMessage({
+    defaultMessage: 'Parameters',
+    id: 'uxKRO/',
+    description: 'Parameters tab title',
+  }),
+  description: intl.formatMessage({
+    defaultMessage: 'Configure parameters for this node',
+    id: 'SToblZ',
+    description: 'Parameters tab description',
+  }),
   visible: true,
   content: <ParametersTab />,
   order: 0,

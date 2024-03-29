@@ -6,8 +6,7 @@ import { validateType } from '../../utils/validation';
 import { resetWorkflowState } from '../global';
 import type { WorkflowParameterUpdateEvent } from '@microsoft/designer-ui';
 import { UIConstants } from '@microsoft/designer-ui';
-import { getIntl } from '@microsoft/intl-logic-apps';
-import { equals, getRecordEntry, guid } from '@microsoft/utils-logic-apps';
+import { getIntl, equals, getRecordEntry, guid } from '@microsoft/logic-apps-shared';
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 
@@ -43,6 +42,7 @@ export const validateParameter = (
       if (!name) {
         return intl.formatMessage({
           defaultMessage: 'Must provide the parameter name.',
+          id: 'Cj3/LJ',
           description: 'Error message when the workflow parameter name is empty.',
         });
       }
@@ -54,6 +54,7 @@ export const validateParameter = (
       return duplicateParameters.length > 0
         ? intl.formatMessage({
             defaultMessage: 'Parameter name already exists.',
+            id: '8+0teU',
             description: 'Error message when the workflow parameter name already exists.',
           })
         : undefined;
@@ -66,6 +67,7 @@ export const validateParameter = (
         if (!required) return undefined;
         return intl.formatMessage({
           defaultMessage: 'Must provide value for parameter.',
+          id: 'VL9wOu',
           description: 'Error message when the workflow parameter value is empty.',
         });
       }
@@ -86,7 +88,7 @@ export const validateParameter = (
           }
 
           error = isInvalid
-            ? intl.formatMessage({ defaultMessage: 'Enter a valid array.', description: 'Error validation message' })
+            ? intl.formatMessage({ defaultMessage: 'Enter a valid array.', id: 'MVrv+N', description: 'Error validation message' })
             : undefined;
           break;
 
@@ -97,8 +99,8 @@ export const validateParameter = (
           } catch {
             error =
               swaggerType === Constants.SWAGGER.TYPE.BOOLEAN
-                ? intl.formatMessage({ defaultMessage: 'Enter a valid boolean.', description: 'Error validation message' })
-                : intl.formatMessage({ defaultMessage: 'Enter a valid json.', description: 'Error validation message' });
+                ? intl.formatMessage({ defaultMessage: 'Enter a valid boolean.', id: 'GXXLuT', description: 'Error validation message' })
+                : intl.formatMessage({ defaultMessage: 'Enter a valid json.', id: 'kxMDyM', description: 'Error validation message' });
           }
           break;
 

@@ -5,7 +5,7 @@ import type { BaseEditorProps } from '../editor/base';
 import { convertKeyValueItemToSegments } from '../editor/base/utils/keyvalueitem';
 import { CollapsedDictionary } from './collapsedDictionary';
 import { ExpandedDictionary } from './expandeddictionary';
-import { guid } from '@microsoft/utils-logic-apps';
+import { guid } from '@microsoft/logic-apps-shared';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
 
@@ -68,11 +68,13 @@ export const DictionaryEditor: React.FC<DictionaryEditorProps> = ({
 
   const expandedLabel: string = intl.formatMessage({
     defaultMessage: 'Switch to text mode',
+    id: 'xXVu2y',
     description: 'Label for editor toggle button when in expanded mode',
   });
 
   const collapsedLabel: string = intl.formatMessage({
     defaultMessage: 'Switch to key value mode',
+    id: 'dD8y1n',
     description: 'Label for editor toggle button when in collapsed mode',
   });
 

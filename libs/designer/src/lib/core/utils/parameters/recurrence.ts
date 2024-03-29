@@ -2,9 +2,8 @@ import constants from '../../../common/constants';
 import { getReactQueryClient } from '../../ReactQueryProvider';
 import { loadParameterValuesFromDefault, toParameterInfoMap } from './helper';
 import type { ParameterInfo } from '@microsoft/designer-ui';
-import { OutputMapKey, SchemaProcessor, toInputParameter } from '@microsoft/parsers-logic-apps';
-import type { OpenAPIV2, RecurrenceSetting } from '@microsoft/utils-logic-apps';
-import { map, RecurrenceType } from '@microsoft/utils-logic-apps';
+import { OutputMapKey, SchemaProcessor, toInputParameter, map, RecurrenceType } from '@microsoft/logic-apps-shared';
+import type { OpenAPIV2, RecurrenceSetting } from '@microsoft/logic-apps-shared';
 
 export interface Recurrence {
   frequency: string | undefined;

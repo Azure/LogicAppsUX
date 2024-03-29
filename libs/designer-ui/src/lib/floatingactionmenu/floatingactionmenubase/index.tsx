@@ -2,7 +2,7 @@ import type { DynamicallyAddedParameterTypeType } from '../../dynamicallyaddedpa
 import { getMenuItemsForDynamicAddedParameters } from './helper';
 import { Icon, KeyCodes } from '@fluentui/react';
 import { useBoolean } from '@fluentui/react-hooks';
-import { ValidationErrorCode, ValidationException } from '@microsoft/utils-logic-apps';
+import { ValidationErrorCode, ValidationException } from '@microsoft/logic-apps-shared';
 import type { PropsWithChildren } from 'react';
 import React from 'react';
 import { useIntl } from 'react-intl';
@@ -52,6 +52,7 @@ export const FloatingActionMenuBase = (props: PropsWithChildren<FloatingActionMe
   const renderMenuItemsHeader = (): JSX.Element => {
     const closeErrorButtonAriaLabel = intl.formatMessage({
       defaultMessage: 'Close',
+      id: '9IDWMU',
       description: 'Close button aria label',
     });
 

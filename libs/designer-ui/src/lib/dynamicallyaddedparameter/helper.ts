@@ -1,7 +1,6 @@
 import type { DynamicallyAddedParameterTypeType } from '../dynamicallyaddedparameter';
 import { DynamicallyAddedParameterType } from '../dynamicallyaddedparameter';
-import { getIntl } from '@microsoft/intl-logic-apps';
-import { generateUniqueName } from '@microsoft/utils-logic-apps';
+import { getIntl, generateUniqueName } from '@microsoft/logic-apps-shared';
 
 export type DynamicallyAddedParameterIcon = string;
 
@@ -41,31 +40,37 @@ export function getDefaultTitleForDynamicallyAddedParameterType(type: Dynamicall
     case DynamicallyAddedParameterType.Text:
       return intl.formatMessage({
         defaultMessage: 'Input',
+        id: 'e+GuGo',
         description: 'Placeholder title for a newly inserted Text parameter',
       });
     case DynamicallyAddedParameterType.Boolean:
       return intl.formatMessage({
         defaultMessage: 'Yes/No',
+        id: 'YUbSFS',
         description: 'Placeholder title for a newly inserted Boolean parameter',
       });
     case DynamicallyAddedParameterType.File:
       return intl.formatMessage({
         defaultMessage: 'File Content',
+        id: 'Gziyq8',
         description: 'Placeholder title for a newly inserted File parameter',
       });
     case DynamicallyAddedParameterType.Email:
       return intl.formatMessage({
         defaultMessage: 'Email',
+        id: 'g076bL',
         description: 'Placeholder title for a newly inserted Email parameter',
       });
     case DynamicallyAddedParameterType.Number:
       return intl.formatMessage({
         defaultMessage: 'Number',
+        id: 'BYrP8F',
         description: 'Placeholder title for a newly inserted Number parameter',
       });
     case DynamicallyAddedParameterType.Date:
       return intl.formatMessage({
         defaultMessage: 'Trigger date',
+        id: 'v+keTP',
         description: 'Placeholder title for a newly inserted Date parameter',
       });
   }
@@ -77,31 +82,37 @@ export function getDescriptionForDynamicallyAddedParameterType(type: Dynamically
     case DynamicallyAddedParameterType.Text:
       return intl.formatMessage({
         defaultMessage: 'Please enter your input',
+        id: 'SgiTAh',
         description: 'Placeholder description for a newly inserted Text parameter',
       });
     case DynamicallyAddedParameterType.Boolean:
       return intl.formatMessage({
         defaultMessage: 'Please select yes or no',
+        id: 'EurkzL',
         description: 'Placeholder description for a newly inserted Boolean parameter',
       });
     case DynamicallyAddedParameterType.File:
       return intl.formatMessage({
         defaultMessage: 'Please select file or image',
+        id: 'fKYuwf',
         description: 'Placeholder description for a newly inserted File parameter',
       });
     case DynamicallyAddedParameterType.Email:
       return intl.formatMessage({
         defaultMessage: 'Enter an email address.',
+        id: 'FYtDP0',
         description: "The placeholder description for a newly inserted 'Email' parameter.",
       });
     case DynamicallyAddedParameterType.Number:
       return intl.formatMessage({
         defaultMessage: 'Please enter a number',
+        id: 'yuJBmK',
         description: 'Placeholder description for a newly inserted Number parameter',
       });
     case DynamicallyAddedParameterType.Date:
       return intl.formatMessage({
         defaultMessage: 'Please enter or select a date (YYYY-MM-DD)',
+        id: 'CvoqQ6',
         description: 'Placeholder description for a newly inserted Date parameter',
       });
   }

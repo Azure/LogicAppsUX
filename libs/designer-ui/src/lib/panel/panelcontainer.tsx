@@ -1,5 +1,6 @@
 import { EmptyContent } from '../card/emptycontent';
 import type { PageActionTelemetryData } from '../telemetry/models';
+import { PanelResizer } from './panelResizer';
 import type { CommonPanelProps, PanelTab } from './panelUtil';
 import { PanelScope, PanelLocation } from './panelUtil';
 import { PanelContent } from './panelcontent';
@@ -53,6 +54,8 @@ export type PanelContainerProps = {
   onCommentChange: (panelCommentChangeEvent?: string) => void;
   renderHeader?: (props?: IPanelProps, defaultrender?: IPanelHeaderRenderer, headerTextId?: string) => JSX.Element;
   onTitleChange: TitleChangeHandler;
+  onTitleBlur?: (prevTitle: string) => void;
+  setCurrWidth: (width: string) => void;
 } & CommonPanelProps;
 
 export const PanelContainer = ({
@@ -82,6 +85,9 @@ export const PanelContainer = ({
   renderHeader,
   onCommentChange,
   onTitleChange,
+  onTitleBlur,
+  setCurrWidth,
+  isResizeable,
 }: PanelContainerProps) => {
   const intl = useIntl();
 
@@ -109,6 +115,7 @@ export const PanelContainer = ({
           commentChange={onCommentChange}
           toggleCollapse={toggleCollapse}
           onTitleChange={onTitleChange}
+          onTitleBlur={onTitleBlur}
         />
       );
     },
@@ -131,16 +138,19 @@ export const PanelContainer = ({
       onCommentChange,
       toggleCollapse,
       onTitleChange,
+      onTitleBlur,
     ]
   );
 
   const panelLabel = intl.formatMessage({
     defaultMessage: 'panel',
+    id: 'c6XbVI',
     description: 'label for panel component',
   });
 
   const panelErrorMessage = intl.formatMessage({
     defaultMessage: 'Error loading operation data',
+    id: '62Ypnr',
     description: 'label for panel error',
   });
 
@@ -173,6 +183,7 @@ export const PanelContainer = ({
           ) : (
             <PanelContent tabs={tabs} trackEvent={trackEvent} nodeId={nodeId} selectedTab={selectedTab} selectTab={selectTab} />
           )}
+          {isResizeable ? <PanelResizer updatePanelWidth={setCurrWidth} /> : null}
         </>
       )}
     </Panel>

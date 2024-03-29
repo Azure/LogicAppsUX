@@ -7,7 +7,7 @@ import { FileDropdown } from '../../fileDropdown/fileDropdown';
 import { InputDropdown } from '../../inputTypes/InputDropdown';
 import { InputTextbox } from '../../inputTypes/InputTextbox';
 import { Tooltip } from '@fluentui/react-components';
-import { InputFormat } from '@microsoft/utils-logic-apps';
+import { InputFormat } from '@microsoft/logic-apps-shared';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -28,8 +28,8 @@ export const BoundedInputEntry = ({ index, input, functionData, connection, conn
   const inputConnection = !connection
     ? undefined
     : Object.values(connection.inputs).length > 1
-    ? connection.inputs[index][0]
-    : connection.inputs[0][index];
+      ? connection.inputs[index][0]
+      : connection.inputs[0][index];
 
   let inputBox: JSX.Element;
 
@@ -46,15 +46,18 @@ export const BoundedInputEntry = ({ index, input, functionData, connection, conn
 
       const relativePathMessage = intl.formatMessage({
         defaultMessage: 'Select function from ',
+        id: '+KXX+O',
         description: 'Path to the function to select',
       });
       const ariaLabel = intl.formatMessage({
         defaultMessage: 'Dropdown to select filepath ',
+        id: 'nwLd4b',
         description: 'Label of the file path selection box',
       });
       const noFilesFound = intl.formatMessage(
         {
           defaultMessage: 'No files found in {filePath}, please save XSLT to specified path to use this function',
+          id: 'rSa1Id',
           description: 'Files could not be found in specified path',
         },
         {

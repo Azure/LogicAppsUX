@@ -1,14 +1,17 @@
 import type { RootState } from '../../..';
+import constants from '../../../common/constants';
 import type { WorkflowNode } from '../../parsers/models/workflowNode';
 import { removeNodeConnectionData } from '../../state/connection/connectionSlice';
+import { deleteCustomCode } from '../../state/customcode/customcodeSlice';
 import { deinitializeNodes, deinitializeOperationInfo } from '../../state/operation/operationMetadataSlice';
 import { clearPanel } from '../../state/panel/panelSlice';
 import { setValidationError } from '../../state/setting/settingSlice';
 import { deinitializeStaticResultProperty } from '../../state/staticresultschema/staticresultsSlice';
 import { deinitializeTokensAndVariables } from '../../state/tokens/tokensSlice';
 import { clearFocusNode, deleteNode } from '../../state/workflow/workflowSlice';
+import { getParameterFromName } from '../../utils/parameters/helper';
 import { updateAllUpstreamNodes } from './initialize';
-import { WORKFLOW_NODE_TYPES } from '@microsoft/utils-logic-apps';
+import { WORKFLOW_NODE_TYPES, getRecordEntry, CustomCodeService } from '@microsoft/logic-apps-shared';
 import type { Dispatch } from '@reduxjs/toolkit';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { batch } from 'react-redux';
@@ -33,6 +36,7 @@ export const deleteOperation = createAsyncThunk(
       dispatch(clearPanel());
 
       dispatch(deleteNode(deletePayload));
+      deleteCustomCodeInfo(nodeId, dispatch, getState() as RootState);
       deleteOperationDetails(nodeId, dispatch);
       updateAllUpstreamNodes(getState() as RootState, dispatch);
     });
@@ -46,6 +50,18 @@ const deleteOperationDetails = async (nodeId: string, dispatch: Dispatch): Promi
   dispatch(deinitializeOperationInfo({ id: nodeId }));
   dispatch(setValidationError({ nodeId, errors: [] }));
   dispatch(deinitializeStaticResultProperty({ id: nodeId + 0 }));
+};
+
+const deleteCustomCodeInfo = (nodeId: string, dispatch: Dispatch, state: RootState): void => {
+  const nodeInputs = getRecordEntry(state.operations.inputParameters, nodeId);
+  if (nodeInputs) {
+    const parameter = getParameterFromName(nodeInputs, constants.DEFAULT_CUSTOM_CODE_INPUT);
+    if (CustomCodeService().isCustomCode(parameter?.editor, parameter?.editorOptions?.language)) {
+      const fileName = parameter?.editorViewModel?.customCodeData?.fileName;
+      // if the file name is not present, then it is a new custom code and we just need to remove the file data
+      dispatch(deleteCustomCode({ nodeId, fileName }));
+    }
+  }
 };
 
 export const deleteGraphNode = createAsyncThunk('deleteGraph', async (deletePayload: DeleteGraphPayload, { dispatch }) => {

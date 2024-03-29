@@ -6,11 +6,12 @@ import { getConnectionsQuery } from '../queries/connections';
 import { initializeConnectionReferences } from '../state/connection/connectionSlice';
 import { initializeStaticResultProperties } from '../state/staticresultschema/staticresultsSlice';
 import type { RootState } from '../store';
+import { getCustomCodeFilesWithData } from '../utils/parameters/helper';
 import type { DeserializedWorkflow } from './BJSWorkflow/BJSDeserializer';
 import { Deserialize as BJSDeserialize } from './BJSWorkflow/BJSDeserializer';
 import type { WorkflowNode } from './models/workflowNode';
-import { LoggerService, Status } from '@microsoft/designer-client-services-logic-apps';
-import type { LogicAppsV2 } from '@microsoft/utils-logic-apps';
+import { LoggerService, Status } from '@microsoft/logic-apps-shared';
+import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { batch } from 'react-redux';
 
@@ -49,14 +50,18 @@ export const initializeGraphState = createAsyncThunk<
     thunkAPI.dispatch(initializeStaticResultProperties(deserializedWorkflow.staticResults ?? {}));
     updateWorkflowParameters(parameters ?? {}, thunkAPI.dispatch);
 
+    const { connections, customCode } = thunkAPI.getState();
+    const customCodeWithData = getCustomCodeFilesWithData(customCode);
+
     const asyncInitialize = async () => {
       batch(async () => {
         try {
           await Promise.all([
             initializeOperationMetadata(
               deserializedWorkflow,
-              thunkAPI.getState().connections.connectionReferences,
+              connections.connectionReferences,
               parameters ?? {},
+              customCodeWithData,
               workflow.workflowKind,
               designerOptions.hostOptions.forceEnableSplitOn ?? false,
               thunkAPI.dispatch

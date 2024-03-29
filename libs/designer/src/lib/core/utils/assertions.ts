@@ -1,5 +1,5 @@
 import { type ValueSegment, ValueSegmentType, GroupType, type GroupItems } from '@microsoft/designer-ui';
-import { type AssertionDefintion, clone } from '@microsoft/utils-logic-apps';
+import { type AssertionDefintion, clone } from '@microsoft/logic-apps-shared';
 
 /**
  * Loads token metadata for the given operand using the provided token mapping.

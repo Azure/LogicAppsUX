@@ -1,4 +1,5 @@
 /* eslint-disable no-param-reassign */
+import type { CustomCodeFileNameMapping } from '../../..';
 import Constants from '../../../common/constants';
 import type { ConnectionReference, ConnectionReferences, WorkflowParameter } from '../../../common/models/workflow';
 import type { DeserializedWorkflow } from '../../parsers/BJSWorkflow/BJSDeserializer';
@@ -46,6 +47,7 @@ import {
   getInputParametersFromManifest,
   getOutputParametersFromManifest,
   updateCallbackUrlInInputs,
+  updateCustomCodeInInputs,
   updateInvokerSettings,
 } from './initialize';
 import { getOperationSettings, getSplitOnValue } from './settings';
@@ -55,12 +57,19 @@ import {
   LoggerService,
   OperationManifestService,
   StaticResultService,
-} from '@microsoft/designer-client-services-logic-apps';
-import { getIntl } from '@microsoft/intl-logic-apps';
-import type { InputParameter, OutputParameter } from '@microsoft/parsers-logic-apps';
-import { ManifestParser } from '@microsoft/parsers-logic-apps';
-import type { LogicAppsV2, OperationManifest } from '@microsoft/utils-logic-apps';
-import { isArmResourceId, uniqueArray, getPropertyValue, map, aggregate, equals, getRecordEntry } from '@microsoft/utils-logic-apps';
+  getIntl,
+  ManifestParser,
+  isArmResourceId,
+  uniqueArray,
+  getPropertyValue,
+  map,
+  aggregate,
+  equals,
+  getRecordEntry,
+  getFileExtensionNameFromOperationId,
+  parseErrorMessage,
+} from '@microsoft/logic-apps-shared';
+import type { InputParameter, OutputParameter, LogicAppsV2, OperationManifest } from '@microsoft/logic-apps-shared';
 import type { Dispatch } from '@reduxjs/toolkit';
 
 export interface NodeDataWithOperationMetadata extends NodeData {
@@ -89,6 +98,7 @@ export const initializeOperationMetadata = async (
   deserializedWorkflow: DeserializedWorkflow,
   references: ConnectionReferences,
   workflowParameters: Record<string, WorkflowParameter>,
+  customCode: CustomCodeFileNameMapping,
   workflowKind: WorkflowKind,
   forceEnableSplitOn: boolean,
   dispatch: Dispatch
@@ -109,7 +119,9 @@ export const initializeOperationMetadata = async (
       triggerNodeId = operationId;
     }
     if (operationManifestService.isSupported(operation.type, operation.kind)) {
-      promises.push(initializeOperationDetailsForManifest(operationId, operation, !!isTrigger, workflowKind, forceEnableSplitOn, dispatch));
+      promises.push(
+        initializeOperationDetailsForManifest(operationId, operation, customCode, !!isTrigger, workflowKind, forceEnableSplitOn, dispatch)
+      );
     } else {
       promises.push(
         initializeOperationDetailsForSwagger(operationId, operation, references, !!isTrigger, workflowKind, forceEnableSplitOn, dispatch)
@@ -192,6 +204,7 @@ const initializeConnectorsForReferences = async (references: ConnectionReference
 export const initializeOperationDetailsForManifest = async (
   nodeId: string,
   _operation: LogicAppsV2.ActionDefinition | LogicAppsV2.TriggerDefinition,
+  customCode: CustomCodeFileNameMapping,
   isTrigger: boolean,
   workflowKind: WorkflowKind,
   forceEnableSplitOn: boolean,
@@ -229,6 +242,11 @@ export const initializeOperationDetailsForManifest = async (
 
     if (isTrigger) {
       await updateCallbackUrlInInputs(nodeId, nodeOperationInfo, nodeInputs);
+    }
+
+    // Populate Customcode with values gotten from file system
+    if (equals(operationInfo.connectorId, Constants.INLINECODE) && !equals(operationInfo.operationId, 'javascriptcode')) {
+      updateCustomCodeInInputs(nodeId, getFileExtensionNameFromOperationId(operationInfo.operationId), nodeInputs, customCode);
     }
 
     const { outputs: nodeOutputs, dependencies: outputDependencies } = getOutputParametersFromManifest(
@@ -269,7 +287,8 @@ export const initializeOperationDetailsForManifest = async (
       ...childGraphInputs,
     ];
   } catch (error: any) {
-    const message = `Unable to initialize operation details for operation - ${nodeId}. Error details - ${error}`;
+    const errorMessage = parseErrorMessage(error);
+    const message = `Unable to initialize operation details for operation - ${nodeId}. Error details - ${errorMessage}`;
     LoggerService().log({
       level: LogEntryLevel.Error,
       area: 'operation deserializer',
@@ -580,13 +599,15 @@ const updateDynamicDataForValidConnection = async (
       operation
     );
   } else {
+    const intl = getIntl();
     dispatch(
       updateErrorDetails({
         id: nodeId,
         errorInfo: {
           level: ErrorLevel.Connection,
-          message: getIntl().formatMessage({
+          message: intl.formatMessage({
             defaultMessage: 'Invalid connection, please update your connection to load complete details',
+            id: 'tMdcE1',
             description: 'Error message to show on connection error during deserialization',
           }),
         },

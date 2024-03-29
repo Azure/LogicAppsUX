@@ -1,7 +1,6 @@
-import { HostService, ContentType } from '@microsoft/designer-client-services-logic-apps';
+import { HostService, ContentType, isNullOrUndefined } from '@microsoft/logic-apps-shared';
 import { SecureDataSection, ValuesPanel } from '@microsoft/designer-ui';
-import type { LogicAppsV2 } from '@microsoft/utils-logic-apps';
-import { isNullOrUndefined } from '@microsoft/utils-logic-apps';
+import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
 
@@ -24,22 +23,27 @@ export const InputsPanel: React.FC<InputsPanelProps> = ({ runMetaData, brandColo
   const intlText = {
     inputs: intl.formatMessage({
       defaultMessage: 'Inputs',
+      id: 'PORNMZ',
       description: 'Inputs text',
     }),
     noInputs: intl.formatMessage({
       defaultMessage: 'No inputs',
+      id: '7Fyq1F',
       description: 'No inputs text',
     }),
     showInputs: intl.formatMessage({
       defaultMessage: 'Show raw inputs',
+      id: 'xSMbKr',
       description: 'Show inputs text',
     }),
     inputsLoading: intl.formatMessage({
       defaultMessage: 'Loading inputs',
+      id: 'xwD1VZ',
       description: 'Loading inputs text',
     }),
     inputsError: intl.formatMessage({
       defaultMessage: 'Error loading inputs',
+      id: '63CC7M',
       description: 'The text for the loading inputs error.',
     }),
   };

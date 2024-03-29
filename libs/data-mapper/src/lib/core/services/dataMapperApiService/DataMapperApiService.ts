@@ -1,7 +1,7 @@
 import type { GenerateXsltResponse, TestMapResponse } from '.';
 import { dataMapperApiVersions } from '.';
 import type { FunctionManifest } from '../../../models/Function';
-import type { Schema } from '@microsoft/utils-logic-apps';
+import type { DataMapSchema } from '@microsoft/logic-apps-shared';
 
 type DmErrorResponse = { code: string; message: string };
 
@@ -79,7 +79,7 @@ export class DataMapperApiService {
   }
 
   // NOTE: From BPM repo, looks like two schema files with the same name will prefer the JSON one
-  async getSchemaFile(schemaFilename: string, schemaFilePath: string): Promise<Schema> {
+  async getSchemaFile(schemaFilename: string, schemaFilePath: string): Promise<DataMapSchema> {
     const headers = this.getHeaders();
     const schemaFileUri = this.getSchemaFileUri(schemaFilename.substring(0, schemaFilename.lastIndexOf('.')), schemaFilePath);
     console.log(schemaFileUri);
@@ -90,7 +90,7 @@ export class DataMapperApiService {
       throw new Error(`${response.status} - ${errorResponse.code}: ${errorResponse.message}`);
     }
 
-    const schemaFileResponse: Schema = await response.json();
+    const schemaFileResponse: DataMapSchema = await response.json();
 
     return schemaFileResponse;
   }

@@ -5,11 +5,16 @@ import type { Settings } from '../actions/bjsworkflow/settings';
 import { getConnectorWithSwagger } from '../queries/connections';
 import { getOperationManifest } from '../queries/operation';
 import type { DependencyInfo, NodeInputs, NodeOperation, NodeOutputs, OutputInfo } from '../state/operation/operationMetadataSlice';
-import { ErrorLevel, updateErrorDetails, clearDynamicOutputs, addDynamicOutputs } from '../state/operation/operationMetadataSlice';
+import {
+  ErrorLevel,
+  addDynamicOutputs,
+  clearDynamicOutputs,
+  updateErrorDetails,
+  updateExistingInputTokenTitles,
+} from '../state/operation/operationMetadataSlice';
 import { addDynamicTokens } from '../state/tokens/tokensSlice';
 import type { WorkflowKind } from '../state/workflow/workflowInterfaces';
 import type { WorkflowParameterDefinition } from '../state/workflowparameters/workflowparametersSlice';
-import { getBrandColorFromConnector, getIconUriFromConnector } from './card';
 import { getTokenExpressionValueForManifestBasedOperation } from './loops';
 import { getDynamicOutputsFromSchema, getDynamicSchema } from './parameters/dynamicdata';
 import {
@@ -18,40 +23,41 @@ import {
   getTokenExpressionMethodFromKey,
   isDynamicDataReadyToLoad,
 } from './parameters/helper';
-import { convertOutputsToTokens } from './tokens';
-import { OperationManifestService } from '@microsoft/designer-client-services-logic-apps';
-import { generateSchemaFromJsonString, ValueSegmentType } from '@microsoft/designer-ui';
-import { getIntl } from '@microsoft/intl-logic-apps';
+import { convertOutputsToTokens, getTokenTitle } from './tokens';
+import {
+  OperationManifestService,
+  AssertionErrorCode,
+  AssertionException,
+  ConnectionReferenceKeyFormat,
+  ExpressionParser,
+  ExtensionProperties,
+  OutputKeys,
+  OutputSource,
+  clone,
+  create,
+  equals,
+  getBrandColorFromConnector,
+  getIconUriFromConnector,
+  getIntl,
+  getObjectPropertyValue,
+  isFunction,
+  isStringLiteral,
+  isTemplateExpression,
+  parseErrorMessage,
+  safeSetObjectPropertyValue,
+  unmap,
+} from '@microsoft/logic-apps-shared';
+import { ValueSegmentType, generateSchemaFromJsonString } from '@microsoft/designer-ui';
 import type {
   Expression,
   ExpressionFunction,
   ExpressionLiteral,
+  OpenAPIV2,
+  OpenApiSchema,
+  OperationManifest,
   OutputParameter,
   OutputParameters,
-  Schema,
-} from '@microsoft/parsers-logic-apps';
-import {
-  create,
-  OutputKeys,
-  OutputSource,
-  ExpressionParser,
-  ExtensionProperties,
-  isTemplateExpression,
-  isFunction,
-  isStringLiteral,
-} from '@microsoft/parsers-logic-apps';
-import type { OpenAPIV2, OperationManifest } from '@microsoft/utils-logic-apps';
-import {
-  ConnectionReferenceKeyFormat,
-  getObjectPropertyValue,
-  safeSetObjectPropertyValue,
-  unmap,
-  AssertionErrorCode,
-  AssertionException,
-  clone,
-  equals,
-  parseErrorMessage,
-} from '@microsoft/utils-logic-apps';
+} from '@microsoft/logic-apps-shared';
 import type { Dispatch } from '@reduxjs/toolkit';
 
 export const toOutputInfo = (output: OutputParameter): OutputInfo => {
@@ -115,7 +121,8 @@ export const getUpdatedManifestForSplitOn = (manifest: OperationManifest, splitO
   const intl = getIntl();
   const invalidSplitOn = intl.formatMessage(
     {
-      defaultMessage: `Invalid split on format in '{splitOn}'.`,
+      defaultMessage: `Invalid split on format in ''{splitOn}''.`,
+      id: 'OrPVcU',
       description: 'Error message for invalid split on value.',
     },
     { splitOn }
@@ -158,6 +165,7 @@ export const getUpdatedManifestForSplitOn = (manifest: OperationManifest, splitO
           intl.formatMessage(
             {
               defaultMessage: `Invalid split on value ''{splitOn}'', cannot find in outputs.`,
+              id: '9W0lck',
               description:
                 'Error message for when split on value not found in operation outputs. Do not remove the double single quotes around the placeholder text, as it is needed to wrap the placeholder text in single quotes.',
             },
@@ -181,6 +189,7 @@ export const getUpdatedManifestForSplitOn = (manifest: OperationManifest, splitO
         intl.formatMessage(
           {
             defaultMessage: `Invalid type on split on value ''{splitOn}'', split on not in array.`,
+            id: 'mPuXlv',
             description:
               'Error message for when split on array is invalid. Do not remove the double single quotes around the placeholder text, as it is needed to wrap the placeholder text in single quotes.',
           },
@@ -354,7 +363,7 @@ export const getUpdatedManifestForSchemaDependency = (manifest: OperationManifes
       const isRequestApiConnectionTrigger =
         !!updatedManifest.properties?.inputs?.properties?.schema?.['x-ms-editor-options']?.isRequestApiConnectionTrigger;
 
-      let schemaValue: Schema;
+      let schemaValue: OpenApiSchema;
       let shouldMerge: boolean;
       // if schema contains static object returned from RP, merge the current schema value and new schema value
       if (
@@ -485,12 +494,16 @@ export const loadDynamicOutputsInNode = async (
             schemaOutputs = updateOutputsForBatchingTrigger(schemaOutputs, settings.splitOn?.value?.value);
           }
 
+          const dynamicOutputTitles: Record<string, string> = {};
           const dynamicOutputs = Object.keys(schemaOutputs).reduce((result: Record<string, OutputInfo>, outputKey: string) => {
             const outputInfo = toOutputInfo(schemaOutputs[outputKey]);
+            dynamicOutputTitles[outputInfo.key] = getTokenTitle(outputInfo);
             return { ...result, [outputInfo.key]: outputInfo };
           }, {});
 
           dispatch(addDynamicOutputs({ nodeId, outputs: dynamicOutputs }));
+
+          dispatch(updateExistingInputTokenTitles({ tokenTitles: dynamicOutputTitles }));
 
           let iconUri: string, brandColor: string;
           if (OperationManifestService().isSupported(operationInfo.type, operationInfo.kind)) {
@@ -516,10 +529,12 @@ export const loadDynamicOutputsInNode = async (
             })
           );
         } catch (error: any) {
+          const intl = getIntl();
           const message = parseErrorMessage(error);
-          const errorMessage = getIntl().formatMessage(
+          const errorMessage = intl.formatMessage(
             {
               defaultMessage: `Failed to retrieve dynamic outputs. As a result, this operation's outputs might not be visible in subsequent actions. Error details: {message}`,
+              id: 'uOWkHS',
               description: 'Error message to show when loading dynamic outputs failed.',
             },
             { message }
@@ -537,7 +552,7 @@ export const loadDynamicOutputsInNode = async (
   }
 };
 
-const getExpressionValueForTriggerOutput = ({ key, required }: OutputInfo, isManifestBasedOperation: boolean): string => {
+const getExpressionValueForTriggerOutput = ({ key, required, source }: OutputInfo, isManifestBasedOperation: boolean): string => {
   if (isManifestBasedOperation) {
     return `@${getTokenExpressionValueForManifestBasedOperation(
       key,
@@ -547,7 +562,7 @@ const getExpressionValueForTriggerOutput = ({ key, required }: OutputInfo, isMan
       !!required
     )}`;
   } else {
-    const method = getTokenExpressionMethodFromKey(key, /* actionName */ undefined);
+    const method = getTokenExpressionMethodFromKey(key, /* actionName */ undefined, source);
     return `@${generateExpressionFromKey(method, key, /* actionName */ undefined, /* isInsideArray */ false, !!required)}`;
   }
 };

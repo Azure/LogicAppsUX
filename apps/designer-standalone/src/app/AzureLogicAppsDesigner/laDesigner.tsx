@@ -14,6 +14,7 @@ import {
   getConnectionStandard,
   listCallbackUrl,
   saveWorkflowStandard,
+  useAllCustomCodeFiles,
   useAppSettings,
   useCurrentObjectId,
   useCurrentTenantId,
@@ -32,12 +33,18 @@ import {
   BaseGatewayService,
   StandardConnectionService,
   StandardConnectorService,
+  StandardCustomCodeService,
   StandardOperationManifestService,
   StandardRunService,
   StandardSearchService,
-} from '@microsoft/designer-client-services-logic-apps';
-import type { ContentType, IWorkflowService } from '@microsoft/designer-client-services-logic-apps';
-import type { Workflow } from '@microsoft/logic-apps-designer';
+  clone,
+  equals,
+  guid,
+  isArmResourceId,
+  optional,
+} from '@microsoft/logic-apps-shared';
+import type { ContentType, IWorkflowService, LogicAppsV2 } from '@microsoft/logic-apps-shared';
+import type { CustomCodeFileNameMapping, Workflow } from '@microsoft/logic-apps-designer';
 import {
   DesignerProvider,
   BJSWorkflowProvider,
@@ -46,8 +53,6 @@ import {
   serializeBJSWorkflow,
   store as DesignerStore,
 } from '@microsoft/logic-apps-designer';
-import { clone, equals, guid, isArmResourceId, optional } from '@microsoft/utils-logic-apps';
-import type { LogicAppsV2 } from '@microsoft/utils-logic-apps';
 import axios from 'axios';
 import isEqual from 'lodash.isequal';
 import { useEffect, useMemo, useState } from 'react';
@@ -69,6 +74,7 @@ const DesignerEditor = () => {
 
   const workflowName = workflowId.split('/').splice(-1)[0];
   const siteResourceId = new ArmParser(workflowId).topmostResourceId;
+  const { data: customCodeData, isLoading: customCodeLoading } = useAllCustomCodeFiles(appId, workflowName);
   const { data, isLoading, isError, error } = useWorkflowAndArtifactsStandard(workflowId);
   const { data: settingsData, isLoading: settingsLoading, isError: settingsIsError, error: settingsError } = useAppSettings(siteResourceId);
   const { data: workflowAppData, isLoading: appLoading } = useWorkflowApp(siteResourceId);
@@ -92,8 +98,13 @@ const DesignerEditor = () => {
   const { data: runInstanceData } = useRunInstanceStandard(workflowName, onRunInstanceSuccess, appId, runId);
 
   const connectionsData = useMemo(
-    () => WorkflowUtility.resolveConnectionsReferences(JSON.stringify(clone(originalConnectionsData ?? {})), parameters),
-    [originalConnectionsData, parameters]
+    () =>
+      WorkflowUtility.resolveConnectionsReferences(
+        JSON.stringify(clone(originalConnectionsData ?? {})),
+        parameters,
+        settingsData?.properties ?? {}
+      ),
+    [originalConnectionsData, parameters, settingsData?.properties]
   );
 
   const addConnectionData = async (connectionAndSetting: ConnectionAndAppSetting): Promise<void> => {
@@ -112,7 +123,11 @@ const DesignerEditor = () => {
 
     if (connectionInfo) {
       // TODO(psamband): Add new settings in this blade so that we do not resolve all the appsettings in the connectionInfo.
-      const resolvedConnectionInfo = WorkflowUtility.resolveConnectionsReferences(JSON.stringify(connectionInfo), {});
+      const resolvedConnectionInfo = WorkflowUtility.resolveConnectionsReferences(
+        JSON.stringify(connectionInfo),
+        {},
+        settingsData?.properties
+      );
       delete resolvedConnectionInfo.displayName;
 
       return {
@@ -162,31 +177,42 @@ const DesignerEditor = () => {
     setWorkflow(data?.properties.files[Artifact.WorkflowFile]);
   }, [data?.properties.files]);
 
-  if (isLoading || appLoading || settingsLoading) {
+  if (isLoading || appLoading || settingsLoading || customCodeLoading) {
     // eslint-disable-next-line react/jsx-no-useless-fragment
     return <></>;
   }
 
-  const originalSettings: Record<string, string> = { ...(settingsData?.properties ?? {}) };
+  const originalSettings: Record<string, string> = {
+    ...(settingsData?.properties ?? {}),
+  };
   const originalParametersData: ParametersData = clone(parameters ?? {});
 
   if (isError || settingsIsError) {
     throw error ?? settingsError;
   }
 
-  const saveWorkflowFromDesigner = async (workflowFromDesigner: Workflow): Promise<void> => {
+  const saveWorkflowFromDesigner = async (
+    workflowFromDesigner: Workflow,
+    customCode: CustomCodeFileNameMapping | undefined
+  ): Promise<void> => {
     const { definition, connectionReferences, parameters } = workflowFromDesigner;
     const workflowToSave = {
       ...workflow,
       definition,
     };
 
-    const referencesToAdd = { ...(connectionsData?.managedApiConnections ?? {}) };
-    if (Object.keys(connectionReferences ?? {}).length) {
+    const newManagedApiConnections = {
+      ...(connectionsData?.managedApiConnections ?? {}),
+    };
+    const newServiceProviderConnections: Record<string, any> = {};
+
+    const referenceKeys = Object.keys(connectionReferences ?? {});
+    if (referenceKeys.length) {
       await Promise.all(
-        Object.keys(connectionReferences).map(async (referenceKey) => {
+        referenceKeys.map(async (referenceKey) => {
           const reference = connectionReferences[referenceKey];
-          if (isArmResourceId(reference.connection.id) && !referencesToAdd[referenceKey]) {
+          if (isArmResourceId(reference?.connection?.id) && !newManagedApiConnections[referenceKey]) {
+            // Managed API Connection
             const {
               api: { id: apiId },
               connection: { id: connectionId },
@@ -194,7 +220,7 @@ const DesignerEditor = () => {
             } = reference;
             const connection = await getConnectionStandard(connectionId);
             const userIdentity = connectionProperties?.authentication?.identity;
-            referencesToAdd[referenceKey] = {
+            const newConnectionObj = {
               api: { id: apiId },
               connection: { id: connectionId },
               authentication: {
@@ -204,17 +230,37 @@ const DesignerEditor = () => {
               connectionRuntimeUrl: connection?.properties?.connectionRuntimeUrl ?? '',
               connectionProperties,
             };
+            newManagedApiConnections[referenceKey] = newConnectionObj;
+          } else if (reference?.connection?.id.startsWith('/serviceProviders/')) {
+            // Service Provider Connection
+            const connectionKey = reference.connection.id.split('/').splice(-1)[0];
+            // We can't apply this directly in case there is a temporary key overlap
+            // We need to move the data out to a new object, delete the old data, then apply the new data at the end
+            newServiceProviderConnections[referenceKey] = connectionsData?.serviceProviderConnections?.[connectionKey];
+            delete connectionsData?.serviceProviderConnections?.[connectionKey];
           }
         })
       );
-      (connectionsData as ConnectionsData).managedApiConnections = referencesToAdd;
+      (connectionsData as ConnectionsData).managedApiConnections = newManagedApiConnections;
+      (connectionsData as ConnectionsData).serviceProviderConnections = {
+        ...connectionsData?.serviceProviderConnections,
+        ...newServiceProviderConnections,
+      };
     }
 
     const connectionsToUpdate = getConnectionsToUpdate(originalConnectionsData, connectionsData ?? {});
     const parametersToUpdate = !isEqual(originalParametersData, parameters) ? (parameters as ParametersData) : undefined;
     const settingsToUpdate = !isEqual(settingsData?.properties, originalSettings) ? settingsData?.properties : undefined;
 
-    return saveWorkflowStandard(siteResourceId, workflowName, workflowToSave, connectionsToUpdate, parametersToUpdate, settingsToUpdate);
+    return saveWorkflowStandard(
+      siteResourceId,
+      workflowName,
+      workflowToSave,
+      connectionsToUpdate,
+      parametersToUpdate,
+      settingsToUpdate,
+      customCode
+    );
   };
 
   const getUpdatedWorkflow = async (): Promise<Workflow> => {
@@ -255,8 +301,15 @@ const DesignerEditor = () => {
       >
         {workflow?.definition ? (
           <BJSWorkflowProvider
-            workflow={{ definition: workflow?.definition, connectionReferences, parameters, kind: workflow?.kind }}
+            workflow={{
+              definition: workflow?.definition,
+              connectionReferences,
+              parameters,
+              kind: workflow?.kind,
+            }}
+            customCode={customCodeData}
             runInstance={runInstanceData}
+            appSettings={settingsData?.properties}
           >
             <div style={{ height: 'inherit', width: 'inherit' }}>
               <DesignerCommandBar
@@ -309,10 +362,15 @@ const getDesignerServices = (
   const baseUrl = `${armUrl}${siteResourceId}/hostruntime/runtime/webhooks/workflow/api/management`;
   const workflowName = workflowId.split('/').splice(-1)[0];
   const workflowIdWithHostRuntime = `${siteResourceId}/hostruntime/runtime/webhooks/workflow/api/management/workflows/${workflowName}`;
+  const appName = siteResourceId.split('/').splice(-1)[0];
   const { subscriptionId, resourceGroup } = new ArmParser(workflowId);
 
   const defaultServiceParams = { baseUrl, httpClient, apiVersion };
-  const armServiceParams = { ...defaultServiceParams, baseUrl: armUrl, siteResourceId };
+  const armServiceParams = {
+    ...defaultServiceParams,
+    baseUrl: armUrl,
+    siteResourceId,
+  };
 
   const connectionService = new StandardConnectionService({
     ...defaultServiceParams,
@@ -325,7 +383,7 @@ const getDesignerServices = (
       tenantId,
       httpClient,
     },
-    workflowAppDetails: { appName: siteResourceId.split('/').splice(-1)[0], identity: workflowApp?.identity as any },
+    workflowAppDetails: { appName, identity: workflowApp?.identity as any },
     readConnections: () => Promise.resolve(connectionsData),
     writeConnection: addConnection as any,
     connectionCreationClients: {
@@ -333,7 +391,7 @@ const getDesignerServices = (
         baseUrl: armUrl,
         subscriptionId,
         resourceGroup,
-        appName: siteResourceId.split('/').splice(-1)[0],
+        appName,
         apiVersion: '2022-03-01',
         httpClient,
       }),
@@ -346,13 +404,24 @@ const getDesignerServices = (
     httpClient,
     queryClient,
   });
-  const childWorkflowService = new ChildWorkflowService({ apiVersion, baseUrl: armUrl, siteResourceId, httpClient, workflowName });
+  const childWorkflowService = new ChildWorkflowService({
+    apiVersion,
+    baseUrl: armUrl,
+    siteResourceId,
+    httpClient,
+    workflowName,
+  });
   const artifactService = new ArtifactService({
     ...armServiceParams,
     siteResourceId,
     integrationAccountCallbackUrl: undefined,
   });
-  const appService = new BaseAppServiceService({ baseUrl: armUrl, apiVersion, subscriptionId, httpClient });
+  const appService = new BaseAppServiceService({
+    baseUrl: armUrl,
+    apiVersion,
+    subscriptionId,
+    httpClient,
+  });
   const connectorService = new StandardConnectorService({
     ...defaultServiceParams,
     clientSupportedOperations: [
@@ -428,7 +497,11 @@ const getDesignerServices = (
   const operationManifestService = new StandardOperationManifestService(defaultServiceParams);
   const searchService = new StandardSearchService({
     ...defaultServiceParams,
-    apiHubServiceDetails: { apiVersion: '2018-07-01-preview', subscriptionId, location },
+    apiHubServiceDetails: {
+      apiVersion: '2018-07-01-preview',
+      subscriptionId,
+      location,
+    },
     showStatefulOperations: isStateful,
     isDev: false,
   });
@@ -494,12 +567,20 @@ const getDesignerServices = (
   });
 
   const chatbotService = new BaseChatbotService({
-    // temporarily having brazilus as the baseUrl until deployment finishes in prod
-    baseUrl: 'https://brazilus.management.azure.com',
+    baseUrl: armUrl,
     apiVersion: '2022-09-01-preview',
     subscriptionId,
-    // temporarily hardcoding location until we have deployed to all regions
-    location: 'westcentralus',
+    location,
+  });
+
+  const customCodeService = new StandardCustomCodeService({
+    apiVersion: '2018-11-01',
+    baseUrl: armUrl,
+    subscriptionId,
+    resourceGroup,
+    appName,
+    workflowName,
+    httpClient,
   });
 
   return {
@@ -517,6 +598,7 @@ const getDesignerServices = (
     runService,
     hostService,
     chatbotService,
+    customCodeService,
   };
 };
 
@@ -557,57 +639,63 @@ const addOrUpdateAppSettings = (settings: Record<string, string>, originalSettin
   return originalSettings;
 };
 
+const hasNewKeys = (original: Record<string, any> = {}, updated: Record<string, any> = {}) => {
+  return !Object.keys(updated).some((key) => !Object.keys(original).includes(key));
+};
+
 const getConnectionsToUpdate = (
   originalConnectionsJson: ConnectionsData,
   connectionsJson: ConnectionsData
 ): ConnectionsData | undefined => {
-  const originalKeys = Object.keys({
-    ...(originalConnectionsJson.functionConnections ?? {}),
-    ...(originalConnectionsJson.apiManagementConnections ?? {}),
-    ...(originalConnectionsJson.managedApiConnections ?? {}),
-    ...(originalConnectionsJson.serviceProviderConnections ?? {}),
-  });
+  const hasNewFunctionKeys = hasNewKeys(originalConnectionsJson.functionConnections, connectionsJson.functionConnections);
+  const hasNewApimKeys = hasNewKeys(originalConnectionsJson.apiManagementConnections, connectionsJson.apiManagementConnections);
+  const hasNewManagedApiKeys = hasNewKeys(originalConnectionsJson.managedApiConnections, connectionsJson.managedApiConnections);
+  const hasNewServiceProviderKeys = hasNewKeys(
+    originalConnectionsJson.serviceProviderConnections,
+    connectionsJson.serviceProviderConnections
+  );
 
-  const updatedKeys = Object.keys({
-    ...(connectionsJson.functionConnections ?? {}),
-    ...(connectionsJson.apiManagementConnections ?? {}),
-    ...(connectionsJson.managedApiConnections ?? {}),
-    ...(connectionsJson.serviceProviderConnections ?? {}),
-  });
-
-  // NOTE: We don't edit connections from the workflow, so existing connections should not be changed. If no new connections are added, there was no change.
-  if (!updatedKeys.some((conn) => !originalKeys.includes(conn))) {
+  if (!hasNewFunctionKeys && !hasNewApimKeys && !hasNewManagedApiKeys && !hasNewServiceProviderKeys) {
     return undefined;
   }
 
   const connectionsToUpdate = { ...connectionsJson };
-  for (const functionConnectionName of Object.keys(connectionsJson.functionConnections ?? {})) {
-    if (originalConnectionsJson.functionConnections?.[functionConnectionName]) {
-      (connectionsToUpdate.functionConnections as any)[functionConnectionName] =
-        originalConnectionsJson.functionConnections[functionConnectionName];
+
+  if (hasNewFunctionKeys) {
+    for (const functionConnectionName of Object.keys(connectionsJson.functionConnections ?? {})) {
+      if (originalConnectionsJson.functionConnections?.[functionConnectionName]) {
+        (connectionsToUpdate.functionConnections as any)[functionConnectionName] =
+          originalConnectionsJson.functionConnections[functionConnectionName];
+      }
     }
   }
 
-  for (const apimConnectionName of Object.keys(connectionsJson.apiManagementConnections ?? {})) {
-    if (originalConnectionsJson.apiManagementConnections?.[apimConnectionName]) {
-      (connectionsToUpdate.apiManagementConnections as any)[apimConnectionName] =
-        originalConnectionsJson.apiManagementConnections[apimConnectionName];
+  if (hasNewApimKeys) {
+    for (const apimConnectionName of Object.keys(connectionsJson.apiManagementConnections ?? {})) {
+      if (originalConnectionsJson.apiManagementConnections?.[apimConnectionName]) {
+        (connectionsToUpdate.apiManagementConnections as any)[apimConnectionName] =
+          originalConnectionsJson.apiManagementConnections[apimConnectionName];
+      }
     }
   }
 
-  for (const managedApiConnectionName of Object.keys(connectionsJson.managedApiConnections ?? {})) {
-    if (originalConnectionsJson.managedApiConnections?.[managedApiConnectionName]) {
-      // eslint-disable-next-line no-param-reassign
-      (connectionsJson.managedApiConnections as any)[managedApiConnectionName] =
-        originalConnectionsJson.managedApiConnections[managedApiConnectionName];
+  if (hasNewManagedApiKeys) {
+    for (const managedApiConnectionName of Object.keys(connectionsJson.managedApiConnections ?? {})) {
+      if (originalConnectionsJson.managedApiConnections?.[managedApiConnectionName]) {
+        // eslint-disable-next-line no-param-reassign
+        (connectionsJson.managedApiConnections as any)[managedApiConnectionName] =
+          originalConnectionsJson.managedApiConnections[managedApiConnectionName];
+      }
     }
   }
 
-  for (const serviceProviderConnectionName of Object.keys(connectionsJson.serviceProviderConnections ?? {})) {
-    if (originalConnectionsJson.serviceProviderConnections?.[serviceProviderConnectionName]) {
-      // eslint-disable-next-line no-param-reassign
-      (connectionsJson.serviceProviderConnections as any)[serviceProviderConnectionName] =
-        originalConnectionsJson.serviceProviderConnections[serviceProviderConnectionName];
+  if (hasNewServiceProviderKeys) {
+    for (const serviceProviderConnectionName of Object.keys(connectionsJson.serviceProviderConnections ?? {})) {
+      if (originalConnectionsJson.serviceProviderConnections?.[serviceProviderConnectionName]) {
+        // eslint-disable-next-line no-param-reassign
+        (connectionsJson.serviceProviderConnections as any)[serviceProviderConnectionName] =
+          originalConnectionsJson.serviceProviderConnections[serviceProviderConnectionName];
+      }
     }
   }
 

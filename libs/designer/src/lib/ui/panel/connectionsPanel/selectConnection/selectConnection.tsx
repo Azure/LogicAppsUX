@@ -1,7 +1,7 @@
-import { type AppDispatch, getIconUriFromConnector } from '../../../../core';
+import { type AppDispatch } from '../../../../core';
 import { updateNodeConnection } from '../../../../core/actions/bjsworkflow/connections';
 import { useConnectionsForConnector } from '../../../../core/queries/connections';
-import { useNodeConnectionId, useConnectorByNodeId } from '../../../../core/state/connection/connectionSelector';
+import { useConnectorByNodeId, useNodeConnectionId } from '../../../../core/state/connection/connectionSelector';
 import { useIsXrmConnectionReferenceMode } from '../../../../core/state/designerOptions/designerOptionsSelectors';
 import { useReferencePanelMode, useSelectedNodeIds } from '../../../../core/state/panel/panelSelectors';
 import { openPanel, setIsCreatingConnection } from '../../../../core/state/panel/panelSlice';
@@ -9,8 +9,7 @@ import { ActionList } from '../actionList/actionList';
 import { ConnectionTable } from './connectionTable';
 import { MessageBar, MessageBarType } from '@fluentui/react';
 import { Body1Strong, Button, Divider, Spinner } from '@fluentui/react-components';
-import { ConnectionService } from '@microsoft/designer-client-services-logic-apps';
-import { type Connection, type Connector } from '@microsoft/utils-logic-apps';
+import { ConnectionService, getIconUriFromConnector, type Connection, type Connector } from '@microsoft/logic-apps-shared';
 import { useCallback, useEffect, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
@@ -63,36 +62,43 @@ export const SelectConnection = () => {
 
   const loadingText = intl.formatMessage({
     defaultMessage: 'Loading connection data...',
+    id: 'faUrud',
     description: 'Message to show under the loading icon when loading connection parameters',
   });
 
   const componentDescription = isXrmConnectionReferenceMode
     ? intl.formatMessage({
         defaultMessage: 'Select an existing connection reference or create a new one',
+        id: 'ZAdaBl',
         description: 'Select an existing connection reference or create a new one.',
       })
     : intl.formatMessage({
         defaultMessage: 'Select an existing connection or create a new one',
+        id: 'DfXxoX',
         description: 'Select an existing connection or create a new one.',
       });
 
   const buttonAddText = intl.formatMessage({
     defaultMessage: 'Add new',
+    id: 'Lft/is',
     description: 'Button to add a new connection',
   });
 
   const buttonAddAria = intl.formatMessage({
     defaultMessage: 'Add a new connection',
+    id: '4Q7WzU',
     description: 'Aria label description for add button',
   });
 
   const buttonCancelText = intl.formatMessage({
     defaultMessage: 'Cancel',
+    id: 'wF7C+h',
     description: 'Button to cancel a connection',
   });
 
   const buttonCancelAria = intl.formatMessage({
     defaultMessage: 'Cancel the selection',
+    id: 'GtDOFg',
     description: 'Aria label description for cancel button',
   });
 

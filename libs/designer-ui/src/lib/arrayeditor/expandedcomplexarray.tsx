@@ -6,7 +6,7 @@ import { ItemMenuButton } from './expandedsimplearray';
 import { hideComplexArray, type ItemSchemaItemProps } from './util/util';
 import type { IIconProps } from '@fluentui/react';
 import { Label, css, DefaultButton } from '@fluentui/react';
-import { guid } from '@microsoft/utils-logic-apps';
+import { guid } from '@microsoft/logic-apps-shared';
 import { useIntl } from 'react-intl';
 
 const addItemButtonIconProps: IIconProps = {
@@ -41,6 +41,7 @@ export const ExpandedComplexArray = ({
 
   const addItemButtonLabel = intl.formatMessage({
     defaultMessage: 'Add new item',
+    id: 'JWl/LD',
     description: 'Label to add item to array editor',
   });
 

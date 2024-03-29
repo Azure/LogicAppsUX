@@ -4,7 +4,7 @@ import { TokenSegmentConvertor } from './tokensegment';
 import { UncastingUtility } from './uncast';
 import { TokenType, ValueSegmentType } from '@microsoft/designer-ui';
 import type { Token, ValueSegment } from '@microsoft/designer-ui';
-import type { Expression, ExpressionFunction, ExpressionLiteral } from '@microsoft/parsers-logic-apps';
+import type { Expression, ExpressionFunction, ExpressionLiteral } from '@microsoft/logic-apps-shared';
 import {
   ExpressionParser,
   ExpressionType,
@@ -12,8 +12,12 @@ import {
   isStringInterpolation,
   isStringLiteral,
   isTemplateExpression,
-} from '@microsoft/parsers-logic-apps';
-import { format, guid, isNullOrUndefined, startsWith, UnsupportedException } from '@microsoft/utils-logic-apps';
+  format,
+  guid,
+  isNullOrUndefined,
+  startsWith,
+  UnsupportedException,
+} from '@microsoft/logic-apps-shared';
 
 /**
  * The options for value segment convertor.
@@ -202,6 +206,15 @@ export class ValueSegmentConvertor {
   private _createExpressionTokenValueSegment(value: string, expression: Expression): ValueSegment {
     return createTokenValueSegment(createExpressionToken(expression), value);
   }
+}
+
+/**
+ * Checks whether the array is a value segment.
+ * @arg {any[]} array - The value segment array.
+ * @return {boolean}
+ */
+export function isValueSegmentArray(array: any[]): boolean {
+  return array.every((item) => isValueSegment(item));
 }
 
 /**

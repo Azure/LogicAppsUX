@@ -1,3 +1,5 @@
+import type { OutputInfo } from '@microsoft/logic-apps-shared';
+import { isNullOrUndefined } from '@microsoft/logic-apps-shared';
 import { Constants } from '../../../../../../../src/lib';
 import { convertVariableTypeToSwaggerType } from '../../../../../../lib/core/utils/variables';
 import constants from '../../../../../common/constants';
@@ -7,7 +9,6 @@ import { updateActionResult, updateMock } from '../../../../../core/state/unitTe
 import type { AppDispatch, RootState } from '../../../../../core/store';
 import { isRootNodeInGraph } from '../../../../../core/utils/graph';
 import { getParameterEditorProps } from '../../../../../core/utils/parameters/helper';
-import { type OutputInfo } from '@microsoft/designer-client-services-logic-apps';
 import {
   OutputMocks,
   type PanelTabFn,
@@ -16,7 +17,6 @@ import {
   ArrayType,
   type OutputsField,
 } from '@microsoft/designer-ui';
-import { isNullOrUndefined } from '@microsoft/utils-logic-apps';
 import { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -100,11 +100,13 @@ export const mockResultsTab: PanelTabFn = (intl) => ({
   id: constants.PANEL_TAB_NAMES.MOCK_RESULTS,
   title: intl.formatMessage({
     defaultMessage: 'Mocked Results',
+    id: 'lC+EbT',
     description: 'The tab label for the mocked results tab on the operation panel',
   }),
   name: constants.PANEL_TAB_NAMES.MOCK_RESULTS,
   description: intl.formatMessage({
     defaultMessage: 'Mocked Results Tab',
+    id: 'R/UPRD',
     description: 'An accessability label that describes the mocked results tab',
   }),
   visible: true,

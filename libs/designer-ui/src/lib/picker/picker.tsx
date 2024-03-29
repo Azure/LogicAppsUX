@@ -4,7 +4,7 @@ import { Spinner } from '@fluentui/react';
 import type { IBreadcrumbItem } from '@fluentui/react/lib/Breadcrumb';
 import type { ICalloutContentStyles } from '@fluentui/react/lib/Callout';
 import { FocusTrapCallout } from '@fluentui/react/lib/Callout';
-import type { TreeDynamicValue } from '@microsoft/designer-client-services-logic-apps';
+import type { TreeDynamicValue } from '@microsoft/logic-apps-shared';
 import { useIntl } from 'react-intl';
 
 const calloutStyles: Partial<ICalloutContentStyles> = {
@@ -44,10 +44,12 @@ export const Picker = ({
   const intl = useIntl();
   const loadingMessage = intl.formatMessage({
     defaultMessage: 'Loading Files...',
+    id: 'O27gKq',
     description: 'Loading indicator message showing that the UX is getting the next list of files',
   });
   const noItemsMessage = intl.formatMessage({
     defaultMessage: 'No items',
+    id: 'Q8HCYK',
     description: 'Message to show when there are no items to show',
   });
   const handleDismiss = (e?: Event | React.MouseEvent<HTMLElement> | React.KeyboardEvent<HTMLElement>): void => {

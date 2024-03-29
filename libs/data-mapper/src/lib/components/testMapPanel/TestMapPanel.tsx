@@ -5,8 +5,8 @@ import { LogCategory, LogService } from '../../utils/Logging.Utils';
 import { ChoiceGroup, DefaultButton, Panel, PanelType, Pivot, PivotItem, PrimaryButton, Stack, StackItem, Text } from '@fluentui/react';
 import { makeStyles, shorthands, tokens } from '@fluentui/react-components';
 import type { MonacoProps } from '@microsoft/designer-ui';
-import { EditorLanguage, MonacoEditor } from '@microsoft/designer-ui';
-import { guid, isNullOrEmpty, SchemaFileFormat } from '@microsoft/utils-logic-apps';
+import { MonacoEditor } from '@microsoft/designer-ui';
+import { EditorLanguage, guid, isNullOrEmpty, SchemaFileFormat } from '@microsoft/logic-apps-shared';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useSelector } from 'react-redux';
@@ -79,56 +79,67 @@ export const TestMapPanel = ({ mapDefinition, isOpen, onClose }: TestMapPanelPro
   //#region Loc
   const testMapLoc = intl.formatMessage({
     defaultMessage: 'Test map',
+    id: '6OSgRP',
     description: 'Test map panel header',
   });
 
   const testLoc = intl.formatMessage({
     defaultMessage: 'Test',
+    id: 'Sz8KN3',
     description: 'Test',
   });
 
   const closeLoc = intl.formatMessage({
     defaultMessage: 'Close',
+    id: 'wzEneQ',
     description: 'Close',
   });
 
   const inputLoc = intl.formatMessage({
     defaultMessage: 'Input',
+    id: 'P6I90y',
     description: 'Input',
   });
 
   const outputLoc = intl.formatMessage({
     defaultMessage: 'Output',
+    id: 'Ciol6I',
     description: 'Output',
   });
 
   const pasteFromSampleLoc = intl.formatMessage({
     defaultMessage: 'Paste from sample',
+    id: 'D5FIKL',
     description: 'Paste from sample',
   });
 
   const inputDataOptionsLabelLoc = intl.formatMessage({
     defaultMessage: 'Provide input data to test the map with',
+    id: 'i1Tufp',
     description: 'Label for input data option choice group',
   });
 
   const statusCodeLoc = intl.formatMessage({
     defaultMessage: 'Status code',
+    id: 'QGbUXX',
     description: 'Response status code for test map API',
   });
 
   const responseBodyLoc = intl.formatMessage({
     defaultMessage: 'Response body',
+    id: 'odQ554',
     description: 'Response body for test map API',
   });
 
   const noXsltLoc = intl.formatMessage({
     defaultMessage: 'Generate XSLT first before attempting to test mappings.',
+    id: 'ctI9Pp',
     description: 'Message on missing XSLT and attempting to test maps',
   });
 
   const mismatchedXsltLoc = intl.formatMessage({
     defaultMessage: 'The generated XSLT does not match the current mapping.',
+    id: 'NHnG2S',
     description: 'Message on mismatched XSLT and attempting to test maps',
   });
   //#endregion
@@ -218,7 +229,12 @@ export const TestMapPanel = ({ mapDefinition, isOpen, onClose }: TestMapPanelPro
               {noXsltLoc}
             </Text>
           ) : isMismatchedXslt ? (
-            <Text variant={'mediumPlus'} style={{ color: '#e4cc00' /*tokens.colorPaletteYellowForeground1*/ }}>
+            <Text
+              variant={'mediumPlus'}
+              style={{
+                color: '#e4cc00' /*tokens.colorPaletteYellowForeground1*/,
+              }}
+            >
               {mismatchedXsltLoc}
             </Text>
           ) : (

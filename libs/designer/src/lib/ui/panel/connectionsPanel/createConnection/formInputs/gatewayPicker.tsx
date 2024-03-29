@@ -1,6 +1,6 @@
 import type { IDropdownOption } from '@fluentui/react';
 import { Dropdown } from '@fluentui/react';
-import type { Gateway, Subscription } from '@microsoft/utils-logic-apps';
+import type { Gateway, Subscription } from '@microsoft/logic-apps-shared';
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
 
@@ -26,6 +26,7 @@ const GatewayPicker = (props: any) => {
       text: intl.formatMessage(
         {
           defaultMessage: '{addIcon} Install Gateway',
+          id: 'HsO1Rd',
           description: 'Option to install a new gateway, links to new page',
         },
         { addIcon: '+ ' }
@@ -60,11 +61,13 @@ const GatewayPicker = (props: any) => {
 
   const subscriptionDropdownLabel = intl.formatMessage({
     defaultMessage: 'Subscription',
+    id: 'bIyTi7',
     description: 'Subscription dropdown label',
   });
 
   const gatewayDropdownLabel = intl.formatMessage({
     defaultMessage: 'Gateway',
+    id: 'juvF+0',
     description: 'Gateway dropdown label',
   });
 

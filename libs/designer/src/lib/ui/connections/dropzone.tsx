@@ -2,24 +2,32 @@ import type { AppDispatch } from '../../core';
 import { pasteOperation } from '../../core/actions/bjsworkflow/copypaste';
 import { expandDiscoveryPanel } from '../../core/state/panel/panelSlice';
 import { useUpstreamNodes } from '../../core/state/tokens/tokenSelectors';
-import { useNodeDisplayName, useGetAllOperationNodesWithin } from '../../core/state/workflow/workflowSelectors';
+import { useGetAllOperationNodesWithin, useNodeDisplayName, useNodeMetadata } from '../../core/state/workflow/workflowSelectors';
 import { AllowDropTarget } from './dynamicsvgs/allowdroptarget';
 import { BlockDropTarget } from './dynamicsvgs/blockdroptarget';
 import { MenuDivider, MenuItem, MenuList, Popover, PopoverSurface, PopoverTrigger } from '@fluentui/react-components';
 import {
-  bundleIcon,
   ArrowBetweenDown24Filled,
   ArrowBetweenDown24Regular,
   ArrowSplit24Filled,
   ArrowSplit24Regular,
   ClipboardPasteFilled,
   ClipboardPasteRegular,
+  bundleIcon,
 } from '@fluentui/react-icons';
 // import AddBranchIcon from './edgeContextMenuSvgs/addBranchIcon.svg';
 // import AddNodeIcon from './edgeContextMenuSvgs/addNodeIcon.svg';
 import { css } from '@fluentui/utilities';
-import { ActionButtonV2, convertUIElementNameToAutomationId } from '@microsoft/designer-ui';
-import { containsIdTag, guid, normalizeAutomationId, removeIdTag } from '@microsoft/utils-logic-apps';
+import { ActionButtonV2 } from '@microsoft/designer-ui';
+import {
+  containsIdTag,
+  guid,
+  normalizeAutomationId,
+  removeIdTag,
+  replaceWhiteSpaceWithUnderscore,
+  LogEntryLevel,
+  LoggerService,
+} from '@microsoft/logic-apps-shared';
 import { useCallback, useMemo, useState } from 'react';
 import { useDrop } from 'react-dnd';
 import { useIntl } from 'react-intl';
@@ -54,16 +62,19 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId, 
 
   const newActionText = intl.formatMessage({
     defaultMessage: 'Add an action',
+    id: 'mCzkXX',
     description: 'Text for button to add a new action',
   });
 
   const newBranchText = intl.formatMessage({
     defaultMessage: 'Add a parallel branch',
+    id: 'LZm3ze',
     description: 'Text for button to add a parallel branch',
   });
 
   const pasteFromClipboard = intl.formatMessage({
     defaultMessage: 'Paste an action',
+    id: 'ZUCTVP',
     description: 'Text for button to paste an action from clipboard',
   });
 
@@ -72,6 +83,11 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId, 
     const relationshipIds = { graphId, childId, parentId };
     dispatch(expandDiscoveryPanel({ nodeId: newId, relationshipIds }));
     setShowCallout(false);
+    LoggerService().log({
+      area: 'DropZone:openAddNodePanel',
+      level: LogEntryLevel.Verbose,
+      message: 'Side-panel opened to add a new node.',
+    });
   }, [dispatch, graphId, childId, parentId]);
 
   const handlePasteClicked = useCallback(() => {
@@ -86,6 +102,11 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId, 
           connectionData: copiedNode.connectionData,
         })
       );
+      LoggerService().log({
+        area: 'DropZone:handlePasteClicked',
+        level: LogEntryLevel.Verbose,
+        message: 'New node added via paste.',
+      });
     }
     setShowCallout(false);
   }, [graphId, childId, parentId, dispatch, copiedNode]);
@@ -93,11 +114,31 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId, 
   const addParallelBranch = useCallback(() => {
     const newId = guid();
     const relationshipIds = { graphId, childId: undefined, parentId };
-    dispatch(expandDiscoveryPanel({ nodeId: newId, relationshipIds, isParallelBranch: true }));
+    dispatch(
+      expandDiscoveryPanel({
+        nodeId: newId,
+        relationshipIds,
+        isParallelBranch: true,
+      })
+    );
+    LoggerService().log({
+      area: 'DropZone:addParallelBranch',
+      level: LogEntryLevel.Verbose,
+      message: 'Side-panel opened to add a new parallel branch node.',
+    });
     setShowCallout(false);
   }, [dispatch, graphId, parentId]);
 
-  const upstreamNodesOfChild = useUpstreamNodes(removeIdTag(childId ?? parentId ?? graphId));
+  const nodeMetadata = useNodeMetadata(removeIdTag(parentId ?? ''));
+  // For subgraph nodes, we want to use the id of the scope node as the parentId to get the dependancies
+  const newParentId = useMemo(() => {
+    if (nodeMetadata?.subgraphType) {
+      return nodeMetadata.parentNodeId;
+    } else {
+      return parentId;
+    }
+  }, [nodeMetadata, parentId]);
+  const upstreamNodesOfChild = useUpstreamNodes(removeIdTag(childId ?? newParentId ?? graphId));
   const immediateAncestor = useGetAllOperationNodesWithin(parentId && !containsIdTag(parentId) ? parentId : '');
   const upstreamNodes = useMemo(() => new Set([...upstreamNodesOfChild, ...immediateAncestor]), [immediateAncestor, upstreamNodesOfChild]);
 
@@ -105,7 +146,11 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId, 
     () => ({
       accept: 'BOX',
       drop: () => ({ graphId, parentId, childId }),
-      canDrop: (item: { id: string; dependencies?: string[]; graphId?: string }) => {
+      canDrop: (item: {
+        id: string;
+        dependencies?: string[];
+        graphId?: string;
+      }) => {
         // This supports preventing moving a node with a dependency above its upstream node
         for (const dec of item.dependencies ?? []) {
           if (!upstreamNodes.has(dec)) {
@@ -132,6 +177,7 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId, 
     ? intl.formatMessage(
         {
           defaultMessage: 'Insert a new step between {parentName} and {childName}',
+          id: 'CypYLs',
           description: 'Tooltip for the button to add a new step (action or branch)',
         },
         {
@@ -140,24 +186,26 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId, 
         }
       )
     : parentSubgraphName
-    ? intl.formatMessage(
-        {
-          defaultMessage: 'Insert a new step in {parentSubgraphName}',
-          description: 'Tooltip for the button to add a new step under subgraph',
-        },
-        {
-          parentSubgraphName,
-        }
-      )
-    : intl.formatMessage(
-        {
-          defaultMessage: 'Insert a new step after {parentName}',
-          description: 'Tooltip for the button to add a new step (action or branch)',
-        },
-        {
-          parentName,
-        }
-      );
+      ? intl.formatMessage(
+          {
+            defaultMessage: 'Insert a new step in {parentSubgraphName}',
+            id: 'RjvpD+',
+            description: 'Tooltip for the button to add a new step under subgraph',
+          },
+          {
+            parentSubgraphName,
+          }
+        )
+      : intl.formatMessage(
+          {
+            defaultMessage: 'Insert a new step after {parentName}',
+            id: '2r30S9',
+            description: 'Tooltip for the button to add a new step (action or branch)',
+          },
+          {
+            parentName,
+          }
+        );
 
   const actionButtonClick = useCallback(
     (e: React.MouseEvent<HTMLButtonElement>) => {
@@ -168,7 +216,7 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId, 
   );
 
   const buttonId = normalizeAutomationId(
-    `msla-edge-button-${convertUIElementNameToAutomationId(parentName)}-${convertUIElementNameToAutomationId(childName) || 'undefined'}`
+    `msla-edge-button-${replaceWhiteSpaceWithUnderscore(parentName)}-${replaceWhiteSpaceWithUnderscore(childName) || 'undefined'}`
   );
 
   const showParallelBranchButton = !isLeaf && parentId;
@@ -176,8 +224,8 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId, 
   const automationId = useCallback(
     (buttonName: string) =>
       normalizeAutomationId(
-        `msla-${buttonName}-button-${convertUIElementNameToAutomationId(parentName)}-${
-          convertUIElementNameToAutomationId(childName) || 'undefined'
+        `msla-${buttonName}-button-${replaceWhiteSpaceWithUnderscore(parentName)}-${
+          replaceWhiteSpaceWithUnderscore(childName) || 'undefined'
         }`
       ),
     [parentName, childName]
@@ -187,7 +235,12 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId, 
     <div
       ref={drop}
       className={css('msla-drop-zone-viewmanager2', isOver && canDrop && 'canDrop', isOver && !canDrop && 'cannotDrop')}
-      style={{ display: 'grid', placeItems: 'center', width: '100%', height: '100%' }}
+      style={{
+        display: 'grid',
+        placeItems: 'center',
+        width: '100%',
+        height: '100%',
+      }}
     >
       {isOver && (
         <div style={{ height: '24px', display: 'grid', placeItems: 'center' }}>

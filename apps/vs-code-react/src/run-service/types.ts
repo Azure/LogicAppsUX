@@ -1,6 +1,5 @@
 import type { InitializePayload, Status } from '../state/WorkflowSlice';
-import type { ApiHubServiceDetails } from '@microsoft/designer-client-services-logic-apps';
-import type { SchemaType } from '@microsoft/utils-logic-apps';
+import type { ApiHubServiceDetails, SchemaType } from '@microsoft/logic-apps-shared';
 import type { MapDefinitionData, ExtensionCommand, ConnectionsData, IDesignerPanelMetadata } from '@microsoft/vscode-extension';
 
 export interface IApiService {
@@ -263,10 +262,9 @@ export interface UpdatePanelMetadataMessage {
 // Rest of Message Interfaces
 export interface InjectValuesMessage {
   command: typeof ExtensionCommand.initialize_frame;
-  data:
-    | InitializePayload & {
-        project: string;
-      };
+  data: InitializePayload & {
+    project: string;
+  };
 }
 
 export interface UpdateAccessTokenMessage {

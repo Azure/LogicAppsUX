@@ -3,11 +3,10 @@ import type { AppDispatch } from '../../../core';
 import { useActionMetadata, useRunInstance } from '../../../core/state/workflow/workflowSelectors';
 import { setRunIndex } from '../../../core/state/workflow/workflowSlice';
 import { getForeachItemsCount } from './helper';
-import { RunService } from '@microsoft/designer-client-services-logic-apps';
+import { RunService, FindPreviousAndNextPage, isNullOrUndefined, type LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import type { PageChangeEventArgs, PageChangeEventHandler } from '@microsoft/designer-ui';
 import { Pager } from '@microsoft/designer-ui';
-import { isNullOrUndefined, type LogicAppsV2 } from '@microsoft/utils-logic-apps';
-import { useEffect, useState } from 'react';
+import { useCallback, useEffect, useState } from 'react';
 import { useQuery } from 'react-query';
 import { useDispatch } from 'react-redux';
 
@@ -41,7 +40,7 @@ export const LoopsPager = ({ metadata, scopeId, collapsed }: LoopsPagerProps) =>
       }, [])
       .sort();
 
-    setFailedRepetitions(sortedFailedRepetitions);
+    setFailedRepetitions(sortedFailedRepetitions.sort((a, b) => a - b));
   };
 
   const onRunRepetitionsError = async () => {
@@ -67,6 +66,8 @@ export const LoopsPager = ({ metadata, scopeId, collapsed }: LoopsPagerProps) =>
     }
   }, [runInstance?.id, refetch, scopeId, normalizedType]);
 
+  const findPreviousAndNextFailed = useCallback((page: number) => FindPreviousAndNextPage(page, failedRepetitions), [failedRepetitions]);
+
   if (!forEachItemsCount || isError || collapsed) {
     return null;
   }
@@ -77,23 +78,13 @@ export const LoopsPager = ({ metadata, scopeId, collapsed }: LoopsPagerProps) =>
   };
 
   const onClickNextFailed: PageChangeEventHandler = (page: PageChangeEventArgs) => {
-    let nextFailedRepetition = -1;
-    if (failedRepetitions.includes(page.value - 1)) {
-      nextFailedRepetition = page.value - 1;
-    } else if (page.value - 1 < failedRepetitions[0]) {
-      nextFailedRepetition = failedRepetitions[0];
-    }
+    const { nextFailedRepetition } = findPreviousAndNextFailed(page.value - 1);
     dispatch(setRunIndex({ page: nextFailedRepetition, nodeId: scopeId }));
     setCurrentPage(nextFailedRepetition + 1);
   };
 
   const onClickPreviousFailed: PageChangeEventHandler = (page: PageChangeEventArgs) => {
-    let prevFailedRepetition = -1;
-    if (failedRepetitions.includes(page.value - 1)) {
-      prevFailedRepetition = page.value - 1;
-    } else if (page.value - 1 > failedRepetitions[failedRepetitions.length - 1]) {
-      prevFailedRepetition = failedRepetitions[failedRepetitions.length - 1];
-    }
+    const { prevFailedRepetition } = findPreviousAndNextFailed(page.value - 1);
     dispatch(setRunIndex({ page: prevFailedRepetition, nodeId: scopeId }));
     setCurrentPage(prevFailedRepetition + 1);
   };
@@ -105,10 +96,7 @@ export const LoopsPager = ({ metadata, scopeId, collapsed }: LoopsPagerProps) =>
   const failedIterationProps =
     failedRepetitions.length > 0
       ? {
-          max:
-            failedRepetitions[failedRepetitions.length - 1] + 1 <= forEachItemsCount
-              ? failedRepetitions[failedRepetitions.length - 1] + 1
-              : forEachItemsCount,
+          max: failedRepetitions.length >= 1 ? failedRepetitions[failedRepetitions.length - 1] + 1 : 0,
           min: failedRepetitions[0] + 1 >= 1 ? failedRepetitions[0] + 1 : 1,
           onClickNext: onClickNextFailed,
           onClickPrevious: onClickPreviousFailed,

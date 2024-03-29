@@ -28,8 +28,8 @@ import {
 } from './Function.Utils';
 import { addReactFlowPrefix, addSourceReactFlowPrefix } from './ReactFlow.Util';
 import { findNodeForKey, isSchemaNodeExtended } from './Schema.Utils';
-import type { MapDefinitionEntry, SchemaExtended, SchemaNodeDictionary, SchemaNodeExtended } from '@microsoft/utils-logic-apps';
-import { isAGuid, SchemaType } from '@microsoft/utils-logic-apps';
+import type { MapDefinitionEntry, SchemaExtended, SchemaNodeDictionary, SchemaNodeExtended } from '@microsoft/logic-apps-shared';
+import { isAGuid, SchemaType } from '@microsoft/logic-apps-shared';
 
 export type UnknownNode = SchemaNodeExtended | FunctionData | undefined;
 
@@ -254,7 +254,8 @@ export const getDestinationNode = (targetKey: string, functions: FunctionData[],
     return findFunctionForFunctionName(mapNodeParams.if, functions);
   }
 
-  const dashIndex = targetKey.indexOf('-');
+  const guidLength = 36;
+  const dashIndex = targetKey.lastIndexOf('-', targetKey.length - guidLength);
   const destinationFunctionKey = dashIndex === -1 ? targetKey : targetKey.slice(0, dashIndex);
   const destinationFunctionGuid = targetKey.slice(dashIndex + 1);
 

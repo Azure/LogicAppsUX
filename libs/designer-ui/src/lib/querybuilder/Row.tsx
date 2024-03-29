@@ -3,17 +3,14 @@ import { GroupType } from '.';
 import { Checkbox } from '../checkbox';
 import constants from '../constants';
 import type { ValueSegment } from '../editor';
-import { ValueSegmentType } from '../editor';
 import type { ChangeState, GetTokenPickerHandler } from '../editor/base';
 import { TokenPickerButtonLocation } from '../editor/base/plugins/tokenpickerbutton';
-import { notEqual } from '../editor/base/utils/helper';
+import { createEmptyLiteralValueSegment, notEqual } from '../editor/base/utils/helper';
 import { StringEditor } from '../editor/string';
-// import type { MoveOption } from './Group';
 import { RowDropdown, RowDropdownOptions } from './RowDropdown';
 import { operandNotEmpty } from './helper';
 import type { ICalloutProps, IIconProps, IOverflowSetItemProps, IOverflowSetStyles } from '@fluentui/react';
 import { css, IconButton, DirectionalHint, TooltipHost, OverflowSet } from '@fluentui/react';
-import { guid } from '@microsoft/utils-logic-apps';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
 
@@ -27,8 +24,6 @@ const overflowStyle: Partial<IOverflowSetStyles> = {
 const menuIconProps: IIconProps = {
   iconName: 'More',
 };
-
-const emptyValueSegmentArray: ValueSegment[] = [{ type: ValueSegmentType.LITERAL, value: '', id: guid() }];
 
 type RowProps = {
   checked?: boolean;
@@ -94,6 +89,7 @@ export const Row = ({
 
   const deleteButton = intl.formatMessage({
     defaultMessage: 'Delete',
+    id: 'bGtEPd',
     description: 'delete button',
   });
 
@@ -109,6 +105,7 @@ export const Row = ({
 
   const makeGroupButton = intl.formatMessage({
     defaultMessage: 'Make Group',
+    id: 'ERVorY',
     description: 'Make group button',
   });
 
@@ -175,7 +172,7 @@ export const Row = ({
           checked: checked,
           operand1: newState.value,
           operator: operator ?? 'equals',
-          operand2: operandNotEmpty(operand2) ? operand2 : emptyValueSegmentArray,
+          operand2: operandNotEmpty(operand2) ? operand2 : [createEmptyLiteralValueSegment()],
         },
         index
       );
@@ -187,9 +184,9 @@ export const Row = ({
       {
         type: GroupType.ROW,
         checked: checked,
-        operand1: operandNotEmpty(operand1) ? operand1 : emptyValueSegmentArray,
+        operand1: operandNotEmpty(operand1) ? operand1 : [createEmptyLiteralValueSegment()],
         operator: newState.value[0].value,
-        operand2: operandNotEmpty(operand2) ? operand2 : emptyValueSegmentArray,
+        operand2: operandNotEmpty(operand2) ? operand2 : [createEmptyLiteralValueSegment()],
       },
       index
     );
@@ -201,7 +198,7 @@ export const Row = ({
         {
           type: GroupType.ROW,
           checked: checked,
-          operand1: operandNotEmpty(operand1) ? operand1 : emptyValueSegmentArray,
+          operand1: operandNotEmpty(operand1) ? operand1 : [createEmptyLiteralValueSegment()],
           operator: operator ?? 'equals',
           operand2: newState.value,
         },
@@ -224,6 +221,7 @@ export const Row = ({
 
     const rowCommands = intl.formatMessage({
       defaultMessage: 'More commands',
+      id: 'GdGm4T',
       description: 'Label for commands in row',
     });
     return (
@@ -240,6 +238,7 @@ export const Row = ({
 
   const rowValueInputPlaceholder = intl.formatMessage({
     defaultMessage: 'Choose a value',
+    id: 'ydqOly',
     description: 'placeholder text for row values',
   });
 
@@ -296,7 +295,7 @@ export const Row = ({
           items={[]}
           overflowItems={rowMenuItems}
           onRenderOverflowButton={onRenderOverflowButton}
-          onRenderItem={function (_item: IOverflowSetItemProps) {
+          onRenderItem={(_item: IOverflowSetItemProps) => {
             throw new Error('No items in overflowset');
           }}
         />

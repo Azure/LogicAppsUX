@@ -17,12 +17,12 @@ import { SearchView } from './searchView';
 import { Link, Icon, Text } from '@fluentui/react';
 import { Button } from '@fluentui/react-components';
 import { bundleIcon, Dismiss24Filled, Dismiss24Regular } from '@fluentui/react-icons';
-import { SearchService } from '@microsoft/designer-client-services-logic-apps';
+import { SearchService, equals, guid, areApiIdsEqual } from '@microsoft/logic-apps-shared';
 import { OperationSearchHeader } from '@microsoft/designer-ui';
 import type { CommonPanelProps } from '@microsoft/designer-ui';
-import type { DiscoveryOperation, DiscoveryResultTypes } from '@microsoft/utils-logic-apps';
-import { equals, guid, areApiIdsEqual } from '@microsoft/utils-logic-apps';
-import { useCallback, useEffect, useState } from 'react';
+import type { DiscoveryOpArray, DiscoveryOperation, DiscoveryResultTypes } from '@microsoft/logic-apps-shared';
+import { useDebouncedEffect } from '@react-hookz/web';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
 
@@ -45,15 +45,46 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
   const [filters, setFilters] = useState<Record<string, string>>({
     actionType: isTrigger ? 'triggers' : 'actions',
   });
-  const [allOperationsForGroup, setAllOperationsForGroup] = useState<DiscoveryOperation<DiscoveryResultTypes>[]>([]);
+  const [allOperationsForGroup, setAllOperationsForGroup] = useState<DiscoveryOpArray>([]);
 
   const [isGrouped, setIsGrouped] = useState(true);
 
   const [selectionState, setSelectionState] = useState<SelectionState>(SELECTION_STATES.SEARCH);
 
-  const { data: allOperations, isLoading: isLoadingOperations } = useAllOperations();
+  const { data: preloadedOperations, isLoading: isLoadingOperations } = useAllOperations();
   const [selectedOperation, setSelectedOperation] = useState<DiscoveryOperation<DiscoveryResultTypes> | undefined>(undefined);
   const [isLoadingOperationGroup, setIsLoadingOperationGroup] = useState<boolean>(false);
+
+  // Searched terms, so we don't search the same term twice
+  const [searchedTerms, setSearchedTerms] = useState(['']);
+  // Array of actively searched operations, to avoid duplicate data storage
+  const [activeSearchOperations, setActiveSearchOperations] = useState<DiscoveryOpArray>([]);
+
+  // Remove duplicates from allOperations and activeSearchOperations
+  const allOperations: DiscoveryOpArray = useMemo(
+    () => joinAndDeduplicateById(preloadedOperations, activeSearchOperations),
+    [preloadedOperations, activeSearchOperations]
+  );
+
+  // Active search
+  useDebouncedEffect(
+    () => {
+      // if preload is complete, no need to actively search
+      if (!isLoadingOperations) return;
+      if (searchedTerms.includes(searchTerm)) return;
+      // We are still preloading, perform active search
+      const activeSearchResults =
+        SearchService().getActiveSearchOperations?.(searchTerm, filters['actionType'], filters['runtime']) ??
+        Promise.resolve([] as DiscoveryOpArray);
+      // Store results
+      activeSearchResults.then((results) => {
+        setSearchedTerms([...searchedTerms, searchTerm]);
+        setActiveSearchOperations(joinAndDeduplicateById(results, activeSearchOperations));
+      });
+    },
+    [searchedTerms, isLoadingOperations, searchTerm, filters, activeSearchOperations],
+    300
+  );
 
   const selectedOperationGroupId = useSelectedSearchOperationGroupId();
   const { data: allConnectors } = useAllConnectors();
@@ -155,15 +186,17 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
   const intl = useIntl();
   const returnToSearchText = intl.formatMessage({
     defaultMessage: 'Return to search',
+    id: 'tH2pT1',
     description: 'Text for the Details page navigation heading',
   });
 
   const headingText = isTrigger
-    ? intl.formatMessage({ defaultMessage: 'Add a trigger', description: 'Text for the "Add Trigger" page header' })
-    : intl.formatMessage({ defaultMessage: 'Add an action', description: 'Text for the "Add Action" page header' });
+    ? intl.formatMessage({ defaultMessage: 'Add a trigger', id: 'dBxX0M', description: 'Text for the "Add Trigger" page header' })
+    : intl.formatMessage({ defaultMessage: 'Add an action', id: 'EUQDM6', description: 'Text for the "Add Action" page header' });
 
   const closeButtonAriaLabel = intl.formatMessage({
     defaultMessage: 'Close Add Action Panel',
+    id: 'Yg/vvm',
     description: 'Aria label for the close button in the Add Action Panel',
   });
   return (
@@ -212,6 +245,7 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
                 <SearchView
                   searchTerm={searchTerm}
                   allOperations={allOperations ?? []}
+                  isLoadingOperations={isLoadingOperations}
                   groupByConnector={isGrouped}
                   isLoading={isLoadingOperations}
                   filters={filters}
@@ -228,3 +262,7 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
     </>
   );
 };
+
+const joinAndDeduplicateById = (arr1: DiscoveryOpArray, arr2: DiscoveryOpArray) => [
+  ...new Map([...arr1, ...arr2].map((v) => [`${v?.properties?.api?.id}/${v.id}`, v])).values(),
+];

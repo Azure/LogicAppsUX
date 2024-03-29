@@ -10,7 +10,7 @@ import {
 import { List, Text, useTheme } from '@fluentui/react';
 import { Button } from '@fluentui/react-components';
 import { bundleIcon, Dismiss24Filled, Dismiss24Regular, Add24Filled, Add24Regular } from '@fluentui/react-icons';
-import type { AssertionDefintion } from '@microsoft/utils-logic-apps';
+import type { AssertionDefintion } from '@microsoft/logic-apps-shared';
 import { useIntl } from 'react-intl';
 
 type OnClickHandler = () => void;
@@ -46,16 +46,19 @@ export function Assertions({
 
   const titleText = intl.formatMessage({
     defaultMessage: 'Assertions',
+    id: 'oFq3ng',
     description: 'Assertions Panel Title',
   });
 
   const addAssertionText = intl.formatMessage({
     defaultMessage: 'New assertion',
+    id: 'GX3fkR',
     description: 'New Assertion Text',
   });
 
   const headingTitle = intl.formatMessage({
     defaultMessage: 'New assertion',
+    id: '7PTnxD',
     description: 'Heading title for an assertion without name',
   });
 

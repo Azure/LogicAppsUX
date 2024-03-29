@@ -1,7 +1,7 @@
 import type { FileWithVsCodePath, SchemaFile } from './AddOrUpdateSchemaView';
 import { Button, Input } from '@fluentui/react-components';
 import { StackShim } from '@fluentui/react-migration-v8-v9';
-import type { SchemaType } from '@microsoft/utils-logic-apps';
+import type { SchemaType } from '@microsoft/logic-apps-shared';
 import { useRef } from 'react';
 import { useIntl } from 'react-intl';
 
@@ -19,10 +19,12 @@ export const UploadNewSchema = (props: UploadNewSchemaProps) => {
   const intl = useIntl();
   const uploadMessage = intl.formatMessage({
     defaultMessage: 'Select a file to upload',
+    id: '2CXCOt',
     description: 'Placeholder for input to load a schema file',
   });
   const browseLoc = intl.formatMessage({
     defaultMessage: 'Browse',
+    id: 'syiNc+',
     description: 'Browse for file',
   });
 

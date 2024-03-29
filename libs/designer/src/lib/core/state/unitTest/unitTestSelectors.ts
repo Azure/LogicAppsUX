@@ -2,7 +2,7 @@ import type { RootState } from '../../store';
 import { type OperationMetadataState } from '../operation/operationMetadataSlice';
 import { getOperationsState } from '../selectors/actionMetadataSelector';
 import type { OutputMock, UnitTestState } from './unitTestInterfaces';
-import { getRecordEntry, type AssertionDefintion, ConnectionType } from '@microsoft/utils-logic-apps';
+import { getRecordEntry, type AssertionDefintion, ConnectionType } from '@microsoft/logic-apps-shared';
 import { createSelector } from '@reduxjs/toolkit';
 import { useSelector } from 'react-redux';
 

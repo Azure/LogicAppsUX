@@ -7,7 +7,7 @@ import CardOnRest from './card_onRest.svg';
 import CardOnRestDark from './card_onRest_dark.svg';
 import { Image, Stack } from '@fluentui/react';
 import { Button, makeStyles, shorthands, Text, tokens, typographyStyles } from '@fluentui/react-components';
-import { SchemaType } from '@microsoft/utils-logic-apps';
+import { SchemaType } from '@microsoft/logic-apps-shared';
 import { useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
@@ -56,11 +56,13 @@ export const SelectSchemaCard = ({ schemaType, style }: SelectSchemaCardProps) =
     if (schemaType === SchemaType.Source) {
       return intl.formatMessage({
         defaultMessage: 'Add a source schema',
+        id: 'jQjteB',
         description: 'label to inform to add a source schema to be used',
       });
     } else {
       return intl.formatMessage({
         defaultMessage: 'Add a target schema',
+        id: 'IXy91L',
         description: 'label to inform to add a target schema to be used',
       });
     }

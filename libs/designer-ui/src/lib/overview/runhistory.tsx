@@ -41,30 +41,37 @@ export const RunHistory: React.FC<RunHistoryProps> = ({ items, loading = false, 
   const Resources = {
     CONTEXT_MENU: intl.formatMessage({
       defaultMessage: 'Show run menu',
+      id: '0JTHTZ',
       description: 'Button text to show run menu',
     }),
     DURATION: intl.formatMessage({
       defaultMessage: 'Duration',
+      id: 'DZZ3fj',
       description: 'Column header text for duration',
     }),
     IDENTIFIER: intl.formatMessage({
       defaultMessage: 'Identifier',
+      id: '33+WHG',
       description: 'Column header text for identifier',
     }),
     SHOW_RUN: intl.formatMessage({
       defaultMessage: 'Show run',
+      id: '6jiO7t',
       description: 'Menu item text for show run',
     }),
     CREATE_UNIT_TEST: intl.formatMessage({
       defaultMessage: 'Create unit test',
+      id: 'EINKvY',
       description: 'Menu item text for create unit test',
     }),
     START_TIME: intl.formatMessage({
       defaultMessage: 'Start time',
+      id: 'BKL0ZG',
       description: 'Column header text for start time',
     }),
     STATUS: intl.formatMessage({
       defaultMessage: 'Status',
+      id: 'FslNgF',
       description: 'Column header text for status',
     }),
   };

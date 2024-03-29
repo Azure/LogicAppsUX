@@ -8,7 +8,7 @@ import { Button } from '@fluentui/react-components';
 import { bundleIcon, Dismiss24Filled, Dismiss24Regular } from '@fluentui/react-icons';
 import type { CommonPanelProps } from '@microsoft/designer-ui';
 import { OperationSearchCard } from '@microsoft/designer-ui';
-import { labelCase } from '@microsoft/utils-logic-apps';
+import { labelCase } from '@microsoft/logic-apps-shared';
 import Fuse from 'fuse.js';
 import { useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -66,9 +66,11 @@ export const NodeSearchPanel = (props: NodeSearchPanelProps) => {
   const goToOperationHeader = intl.formatMessage({
     description: 'Header for a search panel that searches for and allows direct navigation to a specific node',
     defaultMessage: 'Go To Operation',
+    id: 'FBNevf',
   });
   const searchOperation = intl.formatMessage({
     defaultMessage: 'Search for operation',
+    id: 'i0XjL5',
     description: 'Placeholder for search box that searches operations',
   });
 

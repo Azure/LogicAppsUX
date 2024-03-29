@@ -20,7 +20,7 @@ import { NewCodeProjectTypeStep } from './createCodeProjectSteps/NewCodeProjectT
 import { setWorkspaceName } from './createCodeProjectSteps/SetWorkspaceName';
 import { setMethodName } from './createCodeProjectSteps/createFunction/setMethodName';
 import { setNamespace } from './createCodeProjectSteps/createFunction/setNamepSpace';
-import { isString } from '@microsoft/utils-logic-apps';
+import { isString } from '@microsoft/logic-apps-shared';
 import { AzureWizard } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { latestGAVersion, OpenBehavior } from '@microsoft/vscode-extension';
@@ -54,7 +54,7 @@ export async function createNewCodeProjectInternal(context: IActionContext, opti
   addLocalFuncTelemetry(context);
   showPreviewWarning(extensionCommand.createNewCodeProject); //Show warning if command is set to preview
 
-  const language: ProjectLanguage | undefined = (options.language as ProjectLanguage) || getGlobalSetting(projectLanguageSetting);
+  const language: ProjectLanguage | string = (options.language as ProjectLanguage) || getGlobalSetting(projectLanguageSetting);
   const version: string = options.version || getGlobalSetting(funcVersionSetting) || (await tryGetLocalFuncVersion()) || latestGAVersion;
   const projectTemplateKey: string | undefined = getGlobalSetting(projectTemplateKeySetting);
   const wizardContext: Partial<IFunctionWizardContext> & IActionContext = Object.assign(context, options, {
