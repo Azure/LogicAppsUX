@@ -347,7 +347,6 @@ export const operationMetadataSlice = createSlice({
     },
     updateNodeParameters: (state, action: PayloadAction<UpdateParametersPayload>) => {
       const { nodeId, dependencies, parameters } = action.payload;
-      // console.log('### UPDATE NODE PARAMETERS ###', action.payload);
       const nodeInputs = getRecordEntry(state.inputParameters, nodeId);
       if (nodeInputs) {
         for (const payload of parameters) {
@@ -378,13 +377,6 @@ export const operationMetadataSlice = createSlice({
           ...dependencies.outputs,
         };
       }
-
-      // LoggerService().log({
-      //   level: LogEntryLevel.Verbose,
-      //   area: 'Designer:Operation Metadata Slice',
-      //   message: action.type,
-      //   args: [action.payload.nodeId],
-      // });
     },
     updateParameterConditionalVisibility: (
       state,
