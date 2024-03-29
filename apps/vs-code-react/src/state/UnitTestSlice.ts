@@ -19,7 +19,7 @@ const initialState: UnitTestState = {
 };
 
 export const unitTestSlice = createSlice({
-  name: 'project',
+  name: 'unitTest',
   initialState,
   reducers: {
     initializeUnitTest: (state: UnitTestState, action: PayloadAction<InitializeUnitTestPayload>) => {
