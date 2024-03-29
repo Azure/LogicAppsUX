@@ -1,5 +1,5 @@
 import { Text, useTheme } from '@fluentui/react';
-import { Tooltip } from '@fluentui/react-components';
+import { Divider, Tooltip } from '@fluentui/react-components';
 import { EmptyTrafficLightDot, Failed, Skipped, Succeeded, TimedOut, TrafficLightDot } from '@microsoft/designer-ui';
 import { idDisplayCase, RUN_AFTER_COLORS, RUN_AFTER_STATUS } from '@microsoft/logic-apps-shared';
 import { useCallback } from 'react';
@@ -12,7 +12,7 @@ export interface RunAfterIndicatorProps {
 
 export interface CollapsedRunAfterIndicatorProps {
   filteredRunAfters: Record<string, string[]>;
-  allSourceNodeIds: string[];
+  runAfterCount: number;
 }
 
 export function RunAfterIndicator({ statuses, sourceNodeId }: RunAfterIndicatorProps): JSX.Element {
@@ -105,7 +105,7 @@ export function RunAfterIndicator({ statuses, sourceNodeId }: RunAfterIndicatorP
   );
 }
 
-export function CollapsedRunAfterIndicator({ filteredRunAfters, allSourceNodeIds }: CollapsedRunAfterIndicatorProps): JSX.Element {
+export function CollapsedRunAfterIndicator({ filteredRunAfters, runAfterCount }: CollapsedRunAfterIndicatorProps): JSX.Element {
   const intl = useIntl();
 
   const StatusStrings: Record<string, string> = {
@@ -155,8 +155,7 @@ export function CollapsedRunAfterIndicator({ filteredRunAfters, allSourceNodeIds
 
   const tooltipContents: JSX.Element[] = [];
 
-  allSourceNodeIds.forEach((source) => {
-    const statuses = filteredRunAfters?.[source] ?? [];
+  Object.entries(filteredRunAfters).forEach(([source, statuses], index) => {
     const normalizedStatuses = statuses.map((status) => status.toUpperCase()) as RUN_AFTER_STATUS[];
 
     const tooltipHeaderText = intl.formatMessage(defaultMessage, {
@@ -169,6 +168,7 @@ export function CollapsedRunAfterIndicator({ filteredRunAfters, allSourceNodeIds
         {normalizedStatuses.map((status) => (
           <StatusLabel key={status} text={StatusStrings[status + '_STATUS']} status={status} />
         ))}
+        {index !== runAfterCount - 1 && <Divider />}
       </div>
     );
 
@@ -177,7 +177,7 @@ export function CollapsedRunAfterIndicator({ filteredRunAfters, allSourceNodeIds
 
   return (
     <Tooltip relationship={'description'} withArrow content={<div className="msla-run-after-content">{tooltipContents}</div>}>
-      <span className="msla-run-after-overflow">&times;{allSourceNodeIds.length}</span>
+      <span className="msla-run-after-overflow">&times;{runAfterCount}</span>
     </Tooltip>
   );
 }

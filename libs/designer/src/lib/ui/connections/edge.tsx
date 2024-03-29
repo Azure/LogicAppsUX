@@ -92,8 +92,9 @@ const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
   }, [filteredRunAfters, reactFlow, source]);
 
   const runAfterStatuses = useMemo(() => filteredRunAfters?.[source] ?? [], [filteredRunAfters, source]);
-  const showRunAfter = runAfterStatuses.length && edgeSources.length < 5;
-  const showCollapsedRunAfter = runAfterStatuses.length && edgeSources.length > 4 && edgeSources[0] === source;
+  const runAfterCount = Object.keys(filteredRunAfters).length;
+  const showRunAfter = runAfterStatuses.length && runAfterCount < 6;
+  const showCollapsedRunAfter = runAfterStatuses.length && runAfterCount > 5 && Object.keys(filteredRunAfters)[0] === source;
 
   const showSourceButton = edgeTargets[edgeTargets.length - 1] === target;
   const showTargetButton = edgeSources?.[edgeSources.length - 1] === source;
@@ -197,7 +198,7 @@ const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
           x={targetX - runAfterWidth / 2}
           y={targetY - runAfterHeight}
         >
-          <CollapsedRunAfterIndicator filteredRunAfters={filteredRunAfters} allSourceNodeIds={edgeSources} />
+          <CollapsedRunAfterIndicator filteredRunAfters={filteredRunAfters} runAfterCount={runAfterCount} />
         </foreignObject>
       ) : null}
     </>
