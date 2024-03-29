@@ -9,7 +9,7 @@ export default defineConfig({
     clean: true,
     dts: true,
     splitting: false,
-    tsconfig: 'tsconfig.lib.json',
+    tsconfig: 'tsconfig.json',
     format: ['cjs', 'esm'],
     external: ['react'],
     injectStyle: false,

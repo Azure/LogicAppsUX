@@ -8,6 +8,7 @@
     "moduleResolution": "node",
     "emitDecoratorMetadata": true,
     "experimentalDecorators": true,
+    "noPropertyAccessFromIndexSignature": false,
     "importHelpers": true,
     "target": "ESNext",
     "module": "esnext",

@@ -5,23 +5,23 @@
     "allowSyntheticDefaultImports": true,
     "strict": true,
     "noImplicitOverride": false,
-    "noPropertyAccessFromIndexSignature": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
     "jsx": "react-jsx",
     "esModuleInterop": true,
     "resolveJsonModule": true,
     "outDir": "./build/lib",
-    "baseUrl": "./src"
+    "baseUrl": "./src",
+
+    "declaration": true,
+    "types": ["node", "react"]
   },
   "files": [],
-  "include": [],
-  "references": [
-    {
-      "path": "./tsconfig.lib.json"
-    },
-    {
-      "path": "./tsconfig.spec.json"
-    }
+  "include": [
+    "**/*.ts"
+  ],
+  "exclude": [
+    "**/*.spec.ts",
+    "jest.config.ts"
   ]
 }
