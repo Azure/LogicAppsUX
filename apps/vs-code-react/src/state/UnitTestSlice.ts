@@ -4,7 +4,6 @@ import { createSlice } from '@reduxjs/toolkit';
 export interface UnitTestState {
   hostVersion?: string;
   unitTestName?: string;
-  unitTestDescription?: string;
 }
 
 export interface InitializeUnitTestPayload {
@@ -17,7 +16,6 @@ export interface InitializeUnitTestPayload {
 const initialState: UnitTestState = {
   hostVersion: '',
   unitTestName: '',
-  unitTestDescription: '',
 };
 
 export const unitTestSlice = createSlice({
@@ -27,7 +25,6 @@ export const unitTestSlice = createSlice({
     initializeUnitTest: (state: UnitTestState, action: PayloadAction<InitializeUnitTestPayload>) => {
       state.hostVersion = action.payload.hostVersion;
       state.unitTestName = action.payload.unitTestName;
-      state.unitTestDescription = action.payload.unitTestDescription;
     },
   },
 });
