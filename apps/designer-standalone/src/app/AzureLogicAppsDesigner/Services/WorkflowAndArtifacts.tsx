@@ -130,6 +130,35 @@ export const useRunInstanceStandard = (
   );
 };
 
+export const useRunInstanceConsumption = (
+  workflowname: string,
+  onRunInstanceSuccess: (data: LogicAppsV2.RunInstanceDefinition) => void,
+  appId?: string,
+  runId?: string
+) => {
+  return useQuery(
+    ['getRunInstance', workflowname, runId],
+    async () => {
+      const results = await axios.get<LogicAppsV2.RunInstanceDefinition>(
+        `${baseUrl}${appId}/runs/${runId}?api-version=${consumptionApiVersion}&$expand=properties/actions,workflow/properties`,
+        {
+          headers: {
+            Authorization: `Bearer ${environment.armToken}`,
+          },
+        }
+      );
+      return results.data;
+    },
+    {
+      enabled: !!workflowname && !!runId,
+      refetchOnMount: false,
+      refetchOnReconnect: false,
+      refetchOnWindowFocus: false,
+      onSuccess: onRunInstanceSuccess,
+    }
+  );
+};
+
 export const listCallbackUrl = async (
   workflowId: string,
   triggerName: string | undefined,
