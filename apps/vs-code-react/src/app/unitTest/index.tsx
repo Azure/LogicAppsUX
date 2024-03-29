@@ -48,7 +48,9 @@ export const UnitTestResults: React.FC = () => {
         </Text>
       </div>
 
-      <Link onClick={handleViewWorkflow}>{intlText.VIEW_WORKFLOW}</Link>
+      <Link style={{ margin: '20px' }} onClick={handleViewWorkflow}>
+        {intlText.VIEW_WORKFLOW}
+      </Link>
     </div>
   );
 };

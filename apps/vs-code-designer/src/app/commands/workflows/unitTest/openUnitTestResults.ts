@@ -2,7 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { developmentDirectoryName, testsDirectoryName } from '../../../../constants';
+import { developmentDirectoryName, testsDirectoryName, workflowFileName } from '../../../../constants';
 import { ext } from '../../../../extensionVariables';
 import { localize } from '../../../../localize';
 import { cacheWebviewPanel, removeWebviewPanelFromCache, tryGetWebviewPanel } from '../../../utils/codeless/common';
@@ -51,7 +51,7 @@ export async function openUnitTestResults(context: IAzureConnectorsContext, node
 
   if (ext.testRuns.has(unitTestNode.fsPath)) {
     const workflowName = path.basename(path.dirname(unitTestNode.fsPath));
-    await openResultsWebview(workflowName, unitTestName, unitTestNode.fsPath);
+    await openResultsWebview(workflowName, unitTestName, projectPath);
   } else {
     window.showInformationMessage(
       localize('noRunForUnitTest', 'There is no run for the selected unit test. Make sure to run the unit test for "{0}"', unitTestName)
@@ -64,10 +64,12 @@ export async function openUnitTestResults(context: IAzureConnectorsContext, node
  * @param {string} workflowName - The name of the workflow.
  * @returns A promise that resolves when the unit test results are opened.
  */
-export async function openResultsWebview(workflowName: string, unitTestName: string, unitTestFilePath: string): Promise<void> {
-  const panelName = `${workflowName} - ${unitTestName} - ${localize('unitTestResult', 'unit test results')}`;
+export async function openResultsWebview(workflowName: string, unitTestName: string, projectPath: string): Promise<void> {
+  const panelName = `${workflowName} - ${unitTestName} - ${localize('unitTestResult', 'Unit test results')}`;
   const panelGroupKey = ext.webViewKey.unitTest;
   const existingPanel: WebviewPanel | undefined = tryGetWebviewPanel(panelGroupKey, panelName);
+  const workflowPath = path.join(projectPath, workflowName, workflowFileName);
+  const workflowNode = Uri.file(workflowPath);
 
   if (existingPanel) {
     if (!existingPanel.active) {
@@ -88,6 +90,10 @@ export async function openResultsWebview(workflowName: string, unitTestName: str
   };
 
   const panel: WebviewPanel = window.createWebviewPanel('UnitTestsResults', panelName, ViewColumn.Active, webviewOptions);
+  panel.iconPath = {
+    light: Uri.file(path.join(ext.context.extensionPath, 'assets', 'light', 'Codeless.svg')),
+    dark: Uri.file(path.join(ext.context.extensionPath, 'assets', 'dark', 'Codeless.svg')),
+  };
   panel.webview.html = await getWebViewHTML('vs-code-react', panel);
 
   let interval;
@@ -108,7 +114,7 @@ export async function openResultsWebview(workflowName: string, unitTestName: str
             break;
           }
           case ExtensionCommand.viewWorkflow: {
-            window.showTextDocument(await workspace.openTextDocument(unitTestFilePath));
+            window.showTextDocument(await workspace.openTextDocument(workflowNode));
             break;
           }
           default:
