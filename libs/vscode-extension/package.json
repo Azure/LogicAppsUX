@@ -1,8 +1,31 @@
 {
   "name": "@microsoft/vscode-extension-logic-apps",
   "version": "3.2.0",
-  "dependencies": {},
-  "peerDependencies": {
+  "license": "MIT",
+  "type": "module",
+  "module": "build/lib/index.esm.js",
+  "main": "build/lib/index.js",
+  "types": "build/lib/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./build/lib/index.d.ts",
+      "import": "./build/lib/index.mjs",
+      "default": "./build/lib/index.js"
+    },
+    "./package.json": "./package.json"
+  },
+  "sideEffects": false,
+  "engines": {
+    "node": ">=12"
+  },
+  "files": [
+    "build/lib/**/*",
+    "src"
+  ],
+  "scripts": {
+    "build": "tsup && tsc --emitDeclarationOnly"
+  },
+  "dependencies": {
     "@microsoft/vscode-azext-azureappservice": "0.8.1",
     "@microsoft/vscode-azext-utils": "0.4.6",
     "@microsoft/logic-apps-shared": "workspace:*",
@@ -12,5 +35,9 @@
     "@apidevtools/swagger-parser": "10.0.3",
     "reactflow": "11.8.2",
     "tslib": "2.4.0"
+  },
+  "devDependencies": {
+    "@types/vscode": "1.76.0",
+    "@types/vscode-webview": "1.57.1"
   }
 }

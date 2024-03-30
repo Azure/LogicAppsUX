@@ -1,9 +1,30 @@
 {
-  "extends": "../../tsconfig.json",
+  "extends": "../../tsconfig.base.json",
   "compilerOptions": {
+    "forceConsistentCasingInFileNames": true,
+    "allowSyntheticDefaultImports": true,
+    "strict": true,
+    "noImplicitOverride": true,
+    "noPropertyAccessFromIndexSignature": true,
+    "noImplicitReturns": true,
+    "noFallthroughCasesInSwitch": true,
     "jsx": "react",
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "outDir": "./build/lib",
+    "baseUrl": "./src",
     "rootDir": "./src",
-    "outDir": "./build/lib"
+    "declaration": true,
+    "types": [],
   },
-  "include": ["src"]
+  "files": [],
+  "include": [
+    "**/src/**/*.ts",
+    "**/src/**/*.tsx"
+  ],
+  "exclude": [
+    "**/__test__/**",
+    "**/__tests__/**",
+    "jest.config.ts"
+  ]
 }
