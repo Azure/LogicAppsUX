@@ -84,5 +84,8 @@
       "eslint --cache --fix",
       "biome check --apply"
     ]
+  },
+  "dependencies": {
+    "react-query": "3.39.3"
   }
 }

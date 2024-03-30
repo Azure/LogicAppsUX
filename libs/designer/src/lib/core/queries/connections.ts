@@ -3,6 +3,8 @@ import { ConnectionService, SwaggerParser, equals } from '@microsoft/logic-apps-
 import type { Connector } from '@microsoft/logic-apps-shared';
 import { useMemo } from 'react';
 import { useQuery } from 'react-query';
+import type { } from '@microsoft/logic-apps-shared/node_modules/react-query/types';
+
 
 const connectionKey = 'connections';
 export interface ConnectorWithParsedSwagger {

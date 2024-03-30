@@ -4,7 +4,9 @@
     "forceConsistentCasingInFileNames": true,
     "allowSyntheticDefaultImports": true,
     "strict": true,
+    "noImplicitAny": true,
     "noImplicitOverride": false,
+    "noPropertyAccessFromIndexSignature": false,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
     "jsx": "react-jsx",
@@ -12,16 +14,21 @@
     "resolveJsonModule": true,
     "outDir": "./build/lib",
     "baseUrl": "./src",
-
+    "rootDir": "./src",
     "declaration": true,
-    "types": ["node", "react"]
+    "types": [
+      "node",
+      "react",
+      "react-query"
+    ]
   },
   "files": [],
   "include": [
-    "**/*.ts"
+    "**/src/*.ts"
   ],
   "exclude": [
     "**/*.spec.ts",
+    "**/__test__/**",
     "jest.config.ts"
   ]
 }

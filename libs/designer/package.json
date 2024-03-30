@@ -53,6 +53,7 @@
     "react-redux": "8.0.2",
     "reactflow": "11.8.2",
     "redux-thunk": "2.4.2",
+    "reselect": "4.1.8",
     "to-title-case": "1.0.0",
     "util": "0.12.5",
     "yocto-queue": "0.1.0"
@@ -60,5 +61,11 @@
   "peerDependencies": {
     "react": "^16.4.0 || ^17.0.0 || ^18.0.0",
     "react-dom": "^16.4.0 || ^17.0.0 || ^18.0.0"
+  },
+  "devDependencies": {
+    "@formatjs/intl": "^2.10.1",
+    "@types/lodash.frompairs": "^4.0.9",
+    "@types/lodash.merge": "^4.6.9",
+    "@types/to-title-case": "^1.0.2"
   }
 }

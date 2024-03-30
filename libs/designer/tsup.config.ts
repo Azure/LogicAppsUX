@@ -7,7 +7,7 @@ export default defineConfig({
     sourcemap: 'inline',
     minify: true,
     clean: true,
-    dts: true,
+    // dts: true,
     splitting: false,
     tsconfig: 'tsconfig.json',
     format: ['cjs', 'esm'],
