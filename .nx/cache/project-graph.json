@@ -5,16 +5,13 @@
       "type": "app",
       "data": {
         "root": "apps/data-mapper-standalone",
+        "name": "data-mapper-standalone",
+        "$schema": "../../node_modules/nx/schemas/project-schema.json",
+        "sourceRoot": "apps/data-mapper-standalone/src",
+        "projectType": "application",
         "targets": {
           "build": {
             "executor": "@nrwl/webpack:webpack",
-            "dependsOn": [
-              "^build"
-            ],
-            "inputs": [
-              "production",
-              "^production"
-            ],
             "outputs": [
               "{options.outputPath}"
             ],
@@ -60,38 +57,6 @@
             },
             "defaultConfiguration": "production"
           },
-          "test": {
-            "executor": "@nrwl/jest:jest",
-            "inputs": [
-              "default",
-              "^production",
-              "{workspaceRoot}/jest.preset.js"
-            ],
-            "outputs": [
-              "{workspaceRoot}/coverage/apps/data-mapper-standalone"
-            ],
-            "options": {
-              "jestConfig": "apps/data-mapper-standalone/jest.config.ts",
-              "passWithNoTests": true
-            },
-            "configurations": {}
-          },
-          "lint": {
-            "executor": "@nrwl/linter:eslint",
-            "inputs": [
-              "default",
-              "{workspaceRoot}/.eslintrc.json"
-            ],
-            "outputs": [
-              "{options.outputFile}"
-            ],
-            "options": {
-              "lintFilePatterns": [
-                "apps/data-mapper-standalone/**/*.{ts,tsx,js,jsx}"
-              ]
-            },
-            "configurations": {}
-          },
           "serve": {
             "executor": "@nrwl/webpack:dev-server",
             "options": {
@@ -120,12 +85,31 @@
               }
             },
             "defaultConfiguration": "development"
+          },
+          "lint": {
+            "executor": "@nrwl/linter:eslint",
+            "outputs": [
+              "{options.outputFile}"
+            ],
+            "options": {
+              "lintFilePatterns": [
+                "apps/data-mapper-standalone/**/*.{ts,tsx,js,jsx}"
+              ]
+            },
+            "configurations": {}
+          },
+          "test": {
+            "executor": "@nrwl/jest:jest",
+            "outputs": [
+              "{workspaceRoot}/coverage/apps/data-mapper-standalone"
+            ],
+            "options": {
+              "jestConfig": "apps/data-mapper-standalone/jest.config.ts",
+              "passWithNoTests": true
+            },
+            "configurations": {}
           }
         },
-        "name": "data-mapper-standalone",
-        "$schema": "../../node_modules/nx/schemas/project-schema.json",
-        "sourceRoot": "apps/data-mapper-standalone/src",
-        "projectType": "application",
         "implicitDependencies": [],
         "tags": []
       }
@@ -135,16 +119,13 @@
       "type": "app",
       "data": {
         "root": "apps/designer-standalone",
+        "name": "designer-standalone",
+        "$schema": "../../node_modules/nx/schemas/project-schema.json",
+        "sourceRoot": "apps/designer-standalone/src",
+        "projectType": "application",
         "targets": {
           "build": {
             "executor": "@nrwl/webpack:webpack",
-            "dependsOn": [
-              "^build"
-            ],
-            "inputs": [
-              "production",
-              "^production"
-            ],
             "outputs": [
               "{options.outputPath}"
             ],
@@ -190,38 +171,6 @@
             },
             "defaultConfiguration": "production"
           },
-          "test": {
-            "executor": "@nrwl/jest:jest",
-            "inputs": [
-              "default",
-              "^production",
-              "{workspaceRoot}/jest.preset.js"
-            ],
-            "outputs": [
-              "{workspaceRoot}/coverage/apps/designer-standalone"
-            ],
-            "options": {
-              "jestConfig": "apps/designer-standalone/jest.config.ts",
-              "passWithNoTests": true
-            },
-            "configurations": {}
-          },
-          "lint": {
-            "executor": "@nrwl/linter:eslint",
-            "inputs": [
-              "default",
-              "{workspaceRoot}/.eslintrc.json"
-            ],
-            "outputs": [
-              "{options.outputFile}"
-            ],
-            "options": {
-              "lintFilePatterns": [
-                "apps/designer-standalone/**/*.{ts,tsx,js,jsx}"
-              ]
-            },
-            "configurations": {}
-          },
           "serve": {
             "executor": "@nrwl/webpack:dev-server",
             "options": {
@@ -248,12 +197,31 @@
               }
             },
             "defaultConfiguration": "development"
+          },
+          "lint": {
+            "executor": "@nrwl/linter:eslint",
+            "outputs": [
+              "{options.outputFile}"
+            ],
+            "options": {
+              "lintFilePatterns": [
+                "apps/designer-standalone/**/*.{ts,tsx,js,jsx}"
+              ]
+            },
+            "configurations": {}
+          },
+          "test": {
+            "executor": "@nrwl/jest:jest",
+            "outputs": [
+              "{workspaceRoot}/coverage/apps/designer-standalone"
+            ],
+            "options": {
+              "jestConfig": "apps/designer-standalone/jest.config.ts",
+              "passWithNoTests": true
+            },
+            "configurations": {}
           }
         },
-        "name": "designer-standalone",
-        "$schema": "../../node_modules/nx/schemas/project-schema.json",
-        "sourceRoot": "apps/designer-standalone/src",
-        "projectType": "application",
         "implicitDependencies": [],
         "tags": []
       }
@@ -263,16 +231,12 @@
       "type": "lib",
       "data": {
         "root": "libs/logic-apps-shared",
+        "sourceRoot": "libs/logic-apps-shared",
+        "name": "@microsoft/logic-apps-shared",
+        "projectType": "library",
         "targets": {
           "build": {
             "executor": "nx:run-script",
-            "dependsOn": [
-              "^build"
-            ],
-            "inputs": [
-              "production",
-              "^production"
-            ],
             "options": {
               "script": "build"
             },
@@ -287,9 +251,6 @@
             "configurations": {}
           }
         },
-        "sourceRoot": "libs/logic-apps-shared",
-        "name": "@microsoft/logic-apps-shared",
-        "projectType": "library",
         "implicitDependencies": [],
         "tags": []
       }
@@ -299,6 +260,9 @@
       "type": "lib",
       "data": {
         "root": "libs/vscode-extension",
+        "sourceRoot": "libs/vscode-extension",
+        "name": "@microsoft/vscode-extension-logic-apps",
+        "projectType": "library",
         "targets": {
           "nx-release-publish": {
             "dependsOn": [
@@ -309,9 +273,6 @@
             "configurations": {}
           }
         },
-        "sourceRoot": "libs/vscode-extension",
-        "name": "@microsoft/vscode-extension-logic-apps",
-        "projectType": "library",
         "implicitDependencies": [],
         "tags": []
       }
@@ -321,16 +282,13 @@
       "type": "app",
       "data": {
         "root": "apps/vs-code-designer",
+        "name": "vs-code-designer",
+        "$schema": "../../node_modules/nx/schemas/project-schema.json",
+        "sourceRoot": "apps/vs-code-designer/src",
+        "projectType": "application",
         "targets": {
           "build": {
             "executor": "@nrwl/webpack:webpack",
-            "dependsOn": [
-              "^build"
-            ],
-            "inputs": [
-              "production",
-              "^production"
-            ],
             "outputs": [
               "{options.outputPath}"
             ],
@@ -370,28 +328,15 @@
               }
             }
           },
-          "test": {
-            "executor": "@nrwl/jest:jest",
-            "inputs": [
-              "default",
-              "^production",
-              "{workspaceRoot}/jest.preset.js"
-            ],
-            "outputs": [
-              "{workspaceRoot}/coverage/apps/vs-code-designer"
-            ],
+          "serve": {
+            "executor": "@nrwl/node:node",
             "options": {
-              "jestConfig": "apps/vs-code-designer/jest.config.ts",
-              "passWithNoTests": true
+              "buildTarget": "vs-code-designer:build"
             },
             "configurations": {}
           },
           "lint": {
             "executor": "@nrwl/linter:eslint",
-            "inputs": [
-              "default",
-              "{workspaceRoot}/.eslintrc.json"
-            ],
             "outputs": [
               "{options.outputFile}"
             ],
@@ -402,18 +347,18 @@
             },
             "configurations": {}
           },
-          "serve": {
-            "executor": "@nrwl/node:node",
+          "test": {
+            "executor": "@nrwl/jest:jest",
+            "outputs": [
+              "{workspaceRoot}/coverage/apps/vs-code-designer"
+            ],
             "options": {
-              "buildTarget": "vs-code-designer:build"
+              "jestConfig": "apps/vs-code-designer/jest.config.ts",
+              "passWithNoTests": true
             },
             "configurations": {}
           }
         },
-        "name": "vs-code-designer",
-        "$schema": "../../node_modules/nx/schemas/project-schema.json",
-        "sourceRoot": "apps/vs-code-designer/src",
-        "projectType": "application",
         "tags": [],
         "implicitDependencies": [
           "vs-code-react"
@@ -425,16 +370,13 @@
       "type": "app",
       "data": {
         "root": "apps/vs-code-react",
+        "name": "vs-code-react",
+        "$schema": "../../node_modules/nx/schemas/project-schema.json",
+        "sourceRoot": "apps/vs-code-react/src",
+        "projectType": "application",
         "targets": {
           "build": {
             "executor": "@nrwl/webpack:webpack",
-            "dependsOn": [
-              "^build"
-            ],
-            "inputs": [
-              "production",
-              "^production"
-            ],
             "outputs": [
               "{options.outputPath}"
             ],
@@ -480,38 +422,6 @@
               }
             }
           },
-          "test": {
-            "executor": "@nrwl/jest:jest",
-            "inputs": [
-              "default",
-              "^production",
-              "{workspaceRoot}/jest.preset.js"
-            ],
-            "outputs": [
-              "{workspaceRoot}/coverage/apps/vs-code-react"
-            ],
-            "options": {
-              "jestConfig": "apps/vs-code-react/jest.config.ts",
-              "passWithNoTests": true
-            },
-            "configurations": {}
-          },
-          "lint": {
-            "executor": "@nrwl/linter:eslint",
-            "inputs": [
-              "default",
-              "{workspaceRoot}/.eslintrc.json"
-            ],
-            "outputs": [
-              "{options.outputFile}"
-            ],
-            "options": {
-              "lintFilePatterns": [
-                "apps/vs-code-react/**/*.{ts,tsx,js,jsx}"
-              ]
-            },
-            "configurations": {}
-          },
           "serve": {
             "executor": "@nrwl/webpack:dev-server",
             "options": {
@@ -528,12 +438,31 @@
               }
             },
             "defaultConfiguration": "development"
+          },
+          "lint": {
+            "executor": "@nrwl/linter:eslint",
+            "outputs": [
+              "{options.outputFile}"
+            ],
+            "options": {
+              "lintFilePatterns": [
+                "apps/vs-code-react/**/*.{ts,tsx,js,jsx}"
+              ]
+            },
+            "configurations": {}
+          },
+          "test": {
+            "executor": "@nrwl/jest:jest",
+            "outputs": [
+              "{workspaceRoot}/coverage/apps/vs-code-react"
+            ],
+            "options": {
+              "jestConfig": "apps/vs-code-react/jest.config.ts",
+              "passWithNoTests": true
+            },
+            "configurations": {}
           }
         },
-        "name": "vs-code-react",
-        "$schema": "../../node_modules/nx/schemas/project-schema.json",
-        "sourceRoot": "apps/vs-code-react/src",
-        "projectType": "application",
         "tags": [],
         "implicitDependencies": []
       }
@@ -543,16 +472,12 @@
       "type": "lib",
       "data": {
         "root": "libs/designer-ui",
+        "sourceRoot": "libs/designer-ui",
+        "name": "@microsoft/designer-ui",
+        "projectType": "library",
         "targets": {
           "build": {
             "executor": "nx:run-script",
-            "dependsOn": [
-              "^build"
-            ],
-            "inputs": [
-              "production",
-              "^production"
-            ],
             "options": {
               "script": "build"
             },
@@ -567,9 +492,6 @@
             "configurations": {}
           }
         },
-        "sourceRoot": "libs/designer-ui",
-        "name": "@microsoft/designer-ui",
-        "projectType": "library",
         "implicitDependencies": [],
         "tags": []
       }
@@ -579,6 +501,9 @@
       "type": "lib",
       "data": {
         "root": "libs/data-mapper",
+        "sourceRoot": "libs/data-mapper",
+        "name": "@microsoft/logic-apps-data-mapper",
+        "projectType": "library",
         "targets": {
           "yalcpush": {
             "executor": "nx:run-script",
@@ -596,9 +521,6 @@
             "configurations": {}
           }
         },
-        "sourceRoot": "libs/data-mapper",
-        "name": "@microsoft/logic-apps-data-mapper",
-        "projectType": "library",
         "implicitDependencies": [],
         "tags": []
       }
@@ -608,16 +530,12 @@
       "type": "lib",
       "data": {
         "root": "libs/designer",
+        "sourceRoot": "libs/designer",
+        "name": "@microsoft/logic-apps-designer",
+        "projectType": "library",
         "targets": {
           "build": {
             "executor": "nx:run-script",
-            "dependsOn": [
-              "^build"
-            ],
-            "inputs": [
-              "production",
-              "^production"
-            ],
             "options": {
               "script": "build"
             },
@@ -632,9 +550,6 @@
             "configurations": {}
           }
         },
-        "sourceRoot": "libs/designer",
-        "name": "@microsoft/logic-apps-designer",
-        "projectType": "library",
         "implicitDependencies": [],
         "tags": []
       }
@@ -644,16 +559,12 @@
       "type": "lib",
       "data": {
         "root": "libs/chatbot",
+        "sourceRoot": "libs/chatbot",
+        "name": "@microsoft/logic-apps-chatbot",
+        "projectType": "library",
         "targets": {
           "build": {
             "executor": "nx:run-script",
-            "dependsOn": [
-              "^build"
-            ],
-            "inputs": [
-              "production",
-              "^production"
-            ],
             "options": {
               "script": "build"
             },
@@ -668,9 +579,6 @@
             "configurations": {}
           }
         },
-        "sourceRoot": "libs/chatbot",
-        "name": "@microsoft/logic-apps-chatbot",
-        "projectType": "library",
         "implicitDependencies": [],
         "tags": []
       }
