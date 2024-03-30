@@ -47,7 +47,7 @@ importers:
         version: 11.1.2(size-limit@11.1.2)
       '@tanstack/config':
         specifier: ^0.6.0
-        version: 0.6.0(@types/node@20.11.30)(esbuild@0.20.2)(rollup@4.13.0)(typescript@5.4.3)(vite@5.2.6)
+        version: 0.6.0(@types/node@20.11.30)(esbuild@0.20.2)(rollup@4.13.0)(typescript@4.7.4)(vite@5.2.6)
       '@testing-library/jest-dom':
         specifier: ^6.4.2
         version: 6.4.2(vitest@1.4.0)
@@ -77,7 +77,7 @@ importers:
         version: 24.0.0
       knip:
         specifier: ^5.2.2
-        version: 5.5.0(@types/node@20.11.30)(typescript@5.4.3)
+        version: 5.5.0(@types/node@20.11.30)(typescript@4.7.4)
       lint-staged:
         specifier: ^15.2.2
         version: 15.2.2
@@ -113,10 +113,10 @@ importers:
         version: 11.1.2
       tsup:
         specifier: ^8.0.2
-        version: 8.0.2(typescript@5.4.3)
+        version: 8.0.2(typescript@4.7.4)
       typescript:
-        specifier: 5.4.3
-        version: 5.4.3
+        specifier: 4.7.4
+        version: 4.7.4
       vitest:
         specifier: ^1.4.0
         version: 1.4.0(@types/node@20.11.30)(jsdom@24.0.0)
@@ -146,7 +146,7 @@ importers:
         version: 18.2.0(react@18.2.0)
       react-intl:
         specifier: 6.3.0
-        version: 6.3.0(react@18.2.0)(typescript@5.4.3)
+        version: 6.3.0(react@18.2.0)(typescript@4.7.4)
     devDependencies:
       '@types/react':
         specifier: ^18.2.69
@@ -225,7 +225,7 @@ importers:
         version: 4.8.0(react@18.2.0)
       react-intl:
         specifier: 6.3.0
-        version: 6.3.0(react@18.2.0)(typescript@5.4.3)
+        version: 6.3.0(react@18.2.0)(typescript@4.7.4)
       react-query:
         specifier: 3.39.3
         version: 3.39.3(react-dom@18.2.0)(react@18.2.0)
@@ -319,7 +319,7 @@ importers:
         version: 4.3.8(react-dom@18.2.0)(react@17.0.2)
       react-intl:
         specifier: 6.3.0
-        version: 6.3.0(react@17.0.2)(typescript@5.4.3)
+        version: 6.3.0(react@17.0.2)(typescript@4.7.4)
       react-query:
         specifier: 3.39.3
         version: 3.39.3(react-dom@18.2.0)(react@17.0.2)
@@ -347,7 +347,7 @@ importers:
     devDependencies:
       '@formatjs/intl':
         specifier: ^2.10.1
-        version: 2.10.1(typescript@5.4.3)
+        version: 2.10.1(typescript@4.7.4)
       '@types/lodash.frompairs':
         specifier: ^4.0.9
         version: 4.0.9
@@ -434,7 +434,7 @@ importers:
         version: 6.1.0(react@18.2.0)
       react-intl:
         specifier: 6.3.0
-        version: 6.3.0(react@18.2.0)(typescript@5.4.3)
+        version: 6.3.0(react@18.2.0)(typescript@4.7.4)
       react-markdown:
         specifier: 8.0.5
         version: 8.0.5(@types/react@18.2.70)(react@18.2.0)
@@ -455,7 +455,7 @@ importers:
         version: 10.0.3(openapi-types@12.1.3)
       '@formatjs/intl':
         specifier: ^2.10.1
-        version: 2.10.1(typescript@5.4.3)
+        version: 2.10.1(typescript@4.7.4)
       axios:
         specifier: 1.6.0
         version: 1.6.0
@@ -467,7 +467,7 @@ importers:
         version: 18.2.0(react@18.2.0)
       react-intl:
         specifier: 6.3.0
-        version: 6.3.0(react@18.2.0)(typescript@5.4.3)
+        version: 6.3.0(react@18.2.0)(typescript@4.7.4)
       react-query:
         specifier: 3.39.3
         version: 3.39.3(react-dom@18.2.0)(react@18.2.0)
@@ -494,7 +494,7 @@ importers:
         version: 1.6.0
       react-intl:
         specifier: 6.3.0
-        version: 6.3.0(react@18.2.0)(typescript@5.4.3)
+        version: 6.3.0(react@18.2.0)(typescript@4.7.4)
       react-query:
         specifier: 3.39.3
         version: 3.39.3(react-dom@18.2.0)(react@18.2.0)
@@ -5827,7 +5827,7 @@ packages:
     dependencies:
       tslib: 2.6.2
 
-  /@formatjs/intl@2.10.1(typescript@5.4.3):
+  /@formatjs/intl@2.10.1(typescript@4.7.4):
     resolution: {integrity: sha512-dsLG15U7xDi8yzKf4hcAWSsCaez3XrjTO2oaRHPyHtXLm1aEzYbDw6bClo/HMHu+iwS5GbDqT3DV+hYP2ylScg==}
     peerDependencies:
       typescript: ^4.7 || 5
@@ -5842,9 +5842,9 @@ packages:
       '@formatjs/intl-listformat': 7.5.5
       intl-messageformat: 10.5.11
       tslib: 2.6.2
-      typescript: 5.4.3
+      typescript: 4.7.4
 
-  /@formatjs/intl@2.6.7(typescript@5.4.3):
+  /@formatjs/intl@2.6.7(typescript@4.7.4):
     resolution: {integrity: sha512-9FvEJfUMzlmP5ZBK3EE0928kVsZmD5aeWXg+faP8+mKIvG3c0hkLEXQ2MiUrXQt4rsEzOPbYVtBdthzSM0e2fw==}
     peerDependencies:
       typescript: ^4.7
@@ -5859,7 +5859,7 @@ packages:
       '@formatjs/intl-listformat': 7.1.9
       intl-messageformat: 10.3.1
       tslib: 2.6.2
-      typescript: 5.4.3
+      typescript: 4.7.4
     dev: false
 
   /@griffel/core@1.15.3:
@@ -7590,7 +7590,7 @@ packages:
       tslib: 2.6.2
     dev: false
 
-  /@tanstack/config@0.6.0(@types/node@20.11.30)(esbuild@0.20.2)(rollup@4.13.0)(typescript@5.4.3)(vite@5.2.6):
+  /@tanstack/config@0.6.0(@types/node@20.11.30)(esbuild@0.20.2)(rollup@4.13.0)(typescript@4.7.4)(vite@5.2.6):
     resolution: {integrity: sha512-ndVPsyXWZFz3RcpRF7q5L4Ol5zY+m1H2lAiufw+J4BrV09042PETU2OZAREYz88ZcLtu6p+LZAHKltmqrL8gDg==}
     engines: {node: '>=18'}
     hasBin: true
@@ -7611,9 +7611,9 @@ packages:
       semver: 7.6.0
       stream-to-array: 2.3.0
       v8flags: 4.0.1
-      vite-plugin-dts: 3.7.3(@types/node@20.11.30)(rollup@4.13.0)(typescript@5.4.3)(vite@5.2.6)
+      vite-plugin-dts: 3.7.3(@types/node@20.11.30)(rollup@4.13.0)(typescript@4.7.4)(vite@5.2.6)
       vite-plugin-externalize-deps: 0.8.0(vite@5.2.6)
-      vite-tsconfig-paths: 4.3.2(typescript@5.4.3)(vite@5.2.6)
+      vite-tsconfig-paths: 4.3.2(typescript@4.7.4)(vite@5.2.6)
     transitivePeerDependencies:
       - '@types/node'
       - esbuild
@@ -8095,7 +8095,7 @@ packages:
       '@vue/shared': 3.4.21
     dev: true
 
-  /@vue/language-core@1.8.27(typescript@5.4.3):
+  /@vue/language-core@1.8.27(typescript@4.7.4):
     resolution: {integrity: sha512-L8Kc27VdQserNaCUNiSFdDl9LWT24ly8Hpwf1ECy3aFb9m6bDhBGQYOujDm21N7EW3moKIOKEanQwe1q5BK+mA==}
     peerDependencies:
       typescript: '*'
@@ -8111,7 +8111,7 @@ packages:
       minimatch: 9.0.3
       muggle-string: 0.3.1
       path-browserify: 1.0.1
-      typescript: 5.4.3
+      typescript: 4.7.4
       vue-template-compiler: 2.7.16
     dev: true
 
@@ -10646,7 +10646,7 @@ packages:
     engines: {node: '>=6'}
     dev: false
 
-  /knip@5.5.0(@types/node@20.11.30)(typescript@5.4.3):
+  /knip@5.5.0(@types/node@20.11.30)(typescript@4.7.4):
     resolution: {integrity: sha512-50hMAFPBW2z/IJeW5rNKKNNLXVQNJFJDQ72C4o+vsCNCiPv5mn4M52iQVsp8hwjOcVGYB7bKFKaNVzPAQ6C4gw==}
     engines: {node: '>=18.6.0'}
     hasBin: true
@@ -10675,7 +10675,7 @@ packages:
       smol-toml: 1.1.4
       strip-json-comments: 5.0.1
       summary: 2.1.0
-      typescript: 5.4.3
+      typescript: 4.7.4
       zod: 3.22.4
       zod-validation-error: 3.0.3(zod@3.22.4)
     transitivePeerDependencies:
@@ -12196,7 +12196,7 @@ packages:
       throttle-debounce: 2.3.0
     dev: false
 
-  /react-intl@6.3.0(react@17.0.2)(typescript@5.4.3):
+  /react-intl@6.3.0(react@17.0.2)(typescript@4.7.4):
     resolution: {integrity: sha512-3hNuLecjy2IwAYbkeI2CRi5RyFN/ucBvHBnmDdePaJt/sTGa1aw2s+0QaW/reL9uTKP/O84O23wO3qZxx3FonQ==}
     peerDependencies:
       react: ^16.6.0 || 17 || 18
@@ -12207,7 +12207,7 @@ packages:
     dependencies:
       '@formatjs/ecma402-abstract': 1.14.3
       '@formatjs/icu-messageformat-parser': 2.3.0
-      '@formatjs/intl': 2.6.7(typescript@5.4.3)
+      '@formatjs/intl': 2.6.7(typescript@4.7.4)
       '@formatjs/intl-displaynames': 6.2.6
       '@formatjs/intl-listformat': 7.1.9
       '@types/hoist-non-react-statics': 3.3.5
@@ -12216,10 +12216,10 @@ packages:
       intl-messageformat: 10.3.1
       react: 17.0.2
       tslib: 2.6.2
-      typescript: 5.4.3
+      typescript: 4.7.4
     dev: false
 
-  /react-intl@6.3.0(react@18.2.0)(typescript@5.4.3):
+  /react-intl@6.3.0(react@18.2.0)(typescript@4.7.4):
     resolution: {integrity: sha512-3hNuLecjy2IwAYbkeI2CRi5RyFN/ucBvHBnmDdePaJt/sTGa1aw2s+0QaW/reL9uTKP/O84O23wO3qZxx3FonQ==}
     peerDependencies:
       react: ^16.6.0 || 17 || 18
@@ -12230,7 +12230,7 @@ packages:
     dependencies:
       '@formatjs/ecma402-abstract': 1.14.3
       '@formatjs/icu-messageformat-parser': 2.3.0
-      '@formatjs/intl': 2.6.7(typescript@5.4.3)
+      '@formatjs/intl': 2.6.7(typescript@4.7.4)
       '@formatjs/intl-displaynames': 6.2.6
       '@formatjs/intl-listformat': 7.1.9
       '@types/hoist-non-react-statics': 3.3.5
@@ -12239,7 +12239,7 @@ packages:
       intl-messageformat: 10.3.1
       react: 18.2.0
       tslib: 2.6.2
-      typescript: 5.4.3
+      typescript: 4.7.4
     dev: false
 
   /react-is@16.13.1:
@@ -13773,7 +13773,7 @@ packages:
     resolution: {integrity: sha512-Y/arvbn+rrz3JCKl9C4kVNfTfSm2/mEp5FSz5EsZSANGPSlQrpRI5M4PKF+mJnE52jOO90PnPSc3Ur3bTQw0gA==}
     dev: true
 
-  /tsconfck@3.0.3(typescript@5.4.3):
+  /tsconfck@3.0.3(typescript@4.7.4):
     resolution: {integrity: sha512-4t0noZX9t6GcPTfBAbIbbIU4pfpCwh0ueq3S4O/5qXI1VwK1outmxhe9dOiEWqMz3MW2LKgDTpqWV+37IWuVbA==}
     engines: {node: ^18 || >=20}
     hasBin: true
@@ -13783,7 +13783,7 @@ packages:
       typescript:
         optional: true
     dependencies:
-      typescript: 5.4.3
+      typescript: 4.7.4
     dev: true
 
   /tsconfig-paths@4.2.0:
@@ -13806,7 +13806,7 @@ packages:
   /tslib@2.6.2:
     resolution: {integrity: sha512-AEYxH93jGFPn/a2iVAwW87VuUIkR1FVUKB77NwMF7nBTDkDrrT/Hpt/IrCJ0QXhW27jTBDcf5ZY7w6RiqTMw2Q==}
 
-  /tsup@8.0.2(typescript@5.4.3):
+  /tsup@8.0.2(typescript@4.7.4):
     resolution: {integrity: sha512-NY8xtQXdH7hDUAZwcQdY/Vzlw9johQsaqf7iwZ6g1DOUlFYQ5/AtVAjTvihhEyeRlGo4dLRVHtrRaL35M1daqQ==}
     engines: {node: '>=18'}
     hasBin: true
@@ -13839,7 +13839,7 @@ packages:
       source-map: 0.8.0-beta.0
       sucrase: 3.35.0
       tree-kill: 1.2.2
-      typescript: 5.4.3
+      typescript: 4.7.4
     transitivePeerDependencies:
       - supports-color
       - ts-node
@@ -13860,16 +13860,16 @@ packages:
     engines: {node: '>=8'}
     dev: true
 
+  /typescript@4.7.4:
+    resolution: {integrity: sha512-C0WQT0gezHuw6AdY1M2jxUO83Rjf0HP7Sk1DtXj6j1EwkQNZrHAg2XPWlq62oqEhYvONq5pkC2Y9oPljWToLmQ==}
+    engines: {node: '>=4.2.0'}
+    hasBin: true
+
   /typescript@5.3.3:
     resolution: {integrity: sha512-pXWcraxM0uxAS+tN0AG/BF2TyqmHO014Z070UsJ+pFvYuRSq8KH8DmWpnbXe0pEPDHXZV3FcAbJkijJ5oNEnWw==}
     engines: {node: '>=14.17'}
     hasBin: true
     dev: true
-
-  /typescript@5.4.3:
-    resolution: {integrity: sha512-KrPd3PKaCLr78MalgiwJnA25Nm8HAmdwN3mYUYZgG/wizIo9EainNVQI9/yDavtVFRN2h3k8uf3GLHuhDMgEHg==}
-    engines: {node: '>=14.17'}
-    hasBin: true
 
   /ufo@1.5.3:
     resolution: {integrity: sha512-Y7HYmWaFwPUmkoQCUIAYpKqkOf+SbVj/2fJJZ4RJMCfZp0rTGwRbzQD+HghfnhKOjL9E01okqz+ncJskGYfBNw==}
@@ -14171,7 +14171,7 @@ packages:
       - terser
     dev: true
 
-  /vite-plugin-dts@3.7.3(@types/node@20.11.30)(rollup@4.13.0)(typescript@5.4.3)(vite@5.2.6):
+  /vite-plugin-dts@3.7.3(@types/node@20.11.30)(rollup@4.13.0)(typescript@4.7.4)(vite@5.2.6):
     resolution: {integrity: sha512-26eTlBYdpjRLWCsTJebM8vkCieE+p9gP3raf+ecDnzzK5E3FG6VE1wcy55OkRpfWWVlVvKkYFe6uvRHYWx7Nog==}
     engines: {node: ^14.18.0 || >=16.0.0}
     peerDependencies:
@@ -14183,12 +14183,12 @@ packages:
     dependencies:
       '@microsoft/api-extractor': 7.39.0(@types/node@20.11.30)
       '@rollup/pluginutils': 5.1.0(rollup@4.13.0)
-      '@vue/language-core': 1.8.27(typescript@5.4.3)
+      '@vue/language-core': 1.8.27(typescript@4.7.4)
       debug: 4.3.4
       kolorist: 1.8.0
-      typescript: 5.4.3
+      typescript: 4.7.4
       vite: 5.2.6(@types/node@20.11.30)
-      vue-tsc: 1.8.27(typescript@5.4.3)
+      vue-tsc: 1.8.27(typescript@4.7.4)
     transitivePeerDependencies:
       - '@types/node'
       - rollup
@@ -14203,7 +14203,7 @@ packages:
       vite: 5.2.6(@types/node@20.11.30)
     dev: true
 
-  /vite-tsconfig-paths@4.3.2(typescript@5.4.3)(vite@5.2.6):
+  /vite-tsconfig-paths@4.3.2(typescript@4.7.4)(vite@5.2.6):
     resolution: {integrity: sha512-0Vd/a6po6Q+86rPlntHye7F31zA2URZMbH8M3saAZ/xR9QoGN/L21bxEGfXdWmFdNkqPpRdxFT7nmNe12e9/uA==}
     peerDependencies:
       vite: '*'
@@ -14213,7 +14213,7 @@ packages:
     dependencies:
       debug: 4.3.4
       globrex: 0.1.2
-      tsconfck: 3.0.3(typescript@5.4.3)
+      tsconfck: 3.0.3(typescript@4.7.4)
       vite: 5.2.6(@types/node@20.11.30)
     transitivePeerDependencies:
       - supports-color
@@ -14335,16 +14335,16 @@ packages:
       he: 1.2.0
     dev: true
 
-  /vue-tsc@1.8.27(typescript@5.4.3):
+  /vue-tsc@1.8.27(typescript@4.7.4):
     resolution: {integrity: sha512-WesKCAZCRAbmmhuGl3+VrdWItEvfoFIPXOvUJkjULi+x+6G/Dy69yO3TBRJDr9eUlmsNAwVmxsNZxvHKzbkKdg==}
     hasBin: true
     peerDependencies:
       typescript: '*'
     dependencies:
       '@volar/typescript': 1.11.1
-      '@vue/language-core': 1.8.27(typescript@5.4.3)
+      '@vue/language-core': 1.8.27(typescript@4.7.4)
       semver: 7.6.0
-      typescript: 5.4.3
+      typescript: 4.7.4
     dev: true
 
   /w3c-xmlserializer@5.0.0:

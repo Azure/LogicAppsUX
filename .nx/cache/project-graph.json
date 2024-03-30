@@ -12820,6 +12820,15 @@
         "hash": "sha512-q+MB8nYR1KDLrgr4G5yemftpMC7/QLqVndBmEEdqzmNj5dcFOO4Oo8qlwZE3ULT3+Zim1F8Kq4cBnikNhlCMlg=="
       }
     },
+    "npm:typescript": {
+      "type": "npm",
+      "name": "npm:typescript",
+      "data": {
+        "version": "4.7.4",
+        "packageName": "typescript",
+        "hash": "sha512-C0WQT0gezHuw6AdY1M2jxUO83Rjf0HP7Sk1DtXj6j1EwkQNZrHAg2XPWlq62oqEhYvONq5pkC2Y9oPljWToLmQ=="
+      }
+    },
     "npm:typescript@5.3.3": {
       "type": "npm",
       "name": "npm:typescript@5.3.3",
@@ -12827,15 +12836,6 @@
         "version": "5.3.3",
         "packageName": "typescript",
         "hash": "sha512-pXWcraxM0uxAS+tN0AG/BF2TyqmHO014Z070UsJ+pFvYuRSq8KH8DmWpnbXe0pEPDHXZV3FcAbJkijJ5oNEnWw=="
-      }
-    },
-    "npm:typescript": {
-      "type": "npm",
-      "name": "npm:typescript",
-      "data": {
-        "version": "5.4.3",
-        "packageName": "typescript",
-        "hash": "sha512-KrPd3PKaCLr78MalgiwJnA25Nm8HAmdwN3mYUYZgG/wizIo9EainNVQI9/yDavtVFRN2h3k8uf3GLHuhDMgEHg=="
       }
     },
     "npm:ufo": {
