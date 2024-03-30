@@ -3830,6 +3830,12 @@
       "value": "Pesquisar"
     }
   ],
+  "Mcvr0B": [
+    {
+      "type": 0,
+      "value": "Para utilizar módulos ou dependências, adicione em Dependências de Código Personalizadas no Índice do Portal"
+    }
+  ],
   "MfAdfx": [
     {
       "type": 0,
@@ -4933,6 +4939,12 @@
     {
       "type": 0,
       "value": "(UTC-06:00) Ilha da Páscoa"
+    }
+  ],
+  "TjkOzp": [
+    {
+      "type": 0,
+      "value": "Fechar"
     }
   ],
   "TlX98E": [

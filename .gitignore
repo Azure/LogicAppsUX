@@ -5,6 +5,7 @@
 /tmp
 /out-tsc
 build 
+.nx
 # dependencies
 node_modules
 

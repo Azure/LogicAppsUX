@@ -22,6 +22,7 @@ import {
   getParameterFromName,
   parameterValueToString,
   shouldIncludeSelfForRepetitionReference,
+  getCustomCodeFilesWithData,
 } from './parameters/helper';
 import { isTokenValueSegment } from './parameters/segment';
 import { TokenSegmentConvertor } from './parameters/tokensegment';
@@ -152,9 +153,11 @@ export const addForeachToNode = createAsyncThunk(
 
       // Initializing details for newly added foreach operation.
       const foreachOperation = newState.workflow.operations[foreachNodeId];
+      const customCodeWithData = getCustomCodeFilesWithData(state.customCode);
       const [{ nodeInputs, nodeOutputs, nodeDependencies, settings }] = (await initializeOperationDetailsForManifest(
         foreachNodeId,
         foreachOperation,
+        customCodeWithData,
         /* isTrigger */ false,
         state.workflow.workflowKind,
         state.designerOptions.hostOptions.forceEnableSplitOn ?? false,
@@ -402,7 +405,7 @@ const checkArrayInRepetition = (
   }
 
   if (areOutputsManifestBased && tokenKey) {
-    const method = getTokenExpressionMethodFromKey(tokenKey, actionName);
+    const method = getTokenExpressionMethodFromKey(tokenKey, actionName, outputInfo?.source);
     const sanitizedValue = `@${generateExpressionFromKey(
       method,
       tokenKey,

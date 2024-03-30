@@ -559,10 +559,15 @@ export class SchemaProcessor {
 
   private _getTitle(title: string, key: string, keyPrefix: string, name: string): string {
     const intl = getIntl();
+    const defaultItemTitle = intl.formatMessage({
+      defaultMessage: 'Item',
+      id: 'QbJDi7',
+      description: 'Label for single item inside an array.',
+    });
     const titleText = title
       ? title
       : key === ParameterKeyUtility.WildIndexSegment
-        ? intl.formatMessage({ defaultMessage: 'Item', id: 'QbJDi7', description: 'Label for single item inside an array.' })
+        ? defaultItemTitle
         : getKnownTitlesFromKey(keyPrefix) ?? getKnownTitles(name) ?? key;
     const titlePrefix = this.options.titlePrefix || this.options.summaryPrefix;
 

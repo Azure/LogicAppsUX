@@ -3830,6 +3830,12 @@
       "value": "Buscar"
     }
   ],
+  "Mcvr0B": [
+    {
+      "type": 0,
+      "value": "Para usar módulos o dependencias, agregue las dependencias de código personalizadas en la tabla de contenido del portal."
+    }
+  ],
   "MfAdfx": [
     {
       "type": 0,
@@ -4933,6 +4939,12 @@
     {
       "type": 0,
       "value": "(UTC-06:00) Isla de Pascua"
+    }
+  ],
+  "TjkOzp": [
+    {
+      "type": 0,
+      "value": "Cerrar"
     }
   ],
   "TlX98E": [

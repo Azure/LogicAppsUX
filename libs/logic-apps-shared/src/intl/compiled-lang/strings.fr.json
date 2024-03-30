@@ -3830,6 +3830,12 @@
       "value": "Rechercher"
     }
   ],
+  "Mcvr0B": [
+    {
+      "type": 0,
+      "value": "Pour utiliser des modules ou des dépendances, veuillez les ajouter à Dépendances du code personnalisé dans la table des matières du portail."
+    }
+  ],
   "MfAdfx": [
     {
       "type": 0,
@@ -4933,6 +4939,12 @@
     {
       "type": 0,
       "value": "(UTC-06:00) Île de Pâques"
+    }
+  ],
+  "TjkOzp": [
+    {
+      "type": 0,
+      "value": "Fermer"
     }
   ],
   "TlX98E": [

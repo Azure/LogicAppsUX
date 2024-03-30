@@ -2,10 +2,10 @@ import type { StaticResultRootSchemaType } from '.';
 import constants from '../constants';
 import type { DropdownItem } from '../dropdown';
 import type { ValueSegment } from '../editor';
-import { ValueSegmentType } from '../editor';
+import { createLiteralValueSegment } from '../editor/base/utils/helper';
 import { SchemaPropertyValueType } from './propertyEditor/PropertyEditorItem';
 import type { OpenAPIV2 } from '@microsoft/logic-apps-shared';
-import { capitalizeFirstLetter, guid } from '@microsoft/logic-apps-shared';
+import { capitalizeFirstLetter } from '@microsoft/logic-apps-shared';
 
 export const parseStaticResultSchema = (staticResultSchema: any) => {
   const { additionalProperties, properties, required, type } = staticResultSchema;
@@ -131,7 +131,7 @@ export const initializeShownProperties = (
 export const formatShownProperties = (propertiesSchema: Record<string, boolean>): ValueSegment[] => {
   if (!propertiesSchema) return [];
   const filteredProperties: Record<string, boolean> = Object.fromEntries(Object.entries(propertiesSchema).filter(([, value]) => value));
-  return [{ id: guid(), type: ValueSegmentType.LITERAL, value: Object.keys(filteredProperties).toString() }];
+  return [createLiteralValueSegment(Object.keys(filteredProperties).toString())];
 };
 
 export const getOptions = (propertiesSchema: StaticResultRootSchemaType, required: string[]): DropdownItem[] => {

@@ -3756,6 +3756,12 @@
       "value": "Cari"
     }
   ],
+  "Mcvr0B": [
+    {
+      "type": 0,
+      "value": "Untuk menggunakan modul atau dependensi, silakan tambahkan di Dependensi Kode Kustom di TOC Portal"
+    }
+  ],
   "MfAdfx": [
     {
       "type": 0,
@@ -4837,6 +4843,12 @@
     {
       "type": 0,
       "value": "(UTC-06:00) Pulau Paskah"
+    }
+  ],
+  "TjkOzp": [
+    {
+      "type": 0,
+      "value": "Tutup"
     }
   ],
   "TlX98E": [

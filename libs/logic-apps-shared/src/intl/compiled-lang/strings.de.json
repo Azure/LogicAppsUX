@@ -3821,6 +3821,12 @@
       "value": "Suchen"
     }
   ],
+  "Mcvr0B": [
+    {
+      "type": 0,
+      "value": "Um Module oder Abhängigkeiten zu verwenden, fügen Sie diese bitte im Portal-Inhaltsverzeichnis unter „Benutzerdefinierte Codeabhängigkeiten“ hinzu."
+    }
+  ],
   "MfAdfx": [
     {
       "type": 0,
@@ -4925,6 +4931,12 @@
     {
       "type": 0,
       "value": "(UTC-06:00) Osterinsel"
+    }
+  ],
+  "TjkOzp": [
+    {
+      "type": 0,
+      "value": "Schließen"
     }
   ],
   "TlX98E": [

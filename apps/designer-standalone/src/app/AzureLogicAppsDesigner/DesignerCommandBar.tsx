@@ -5,7 +5,7 @@ import { CommandBar } from '@fluentui/react/lib/CommandBar';
 import { Spinner, SpinnerSize } from '@fluentui/react/lib/Spinner';
 import type { ILoggerService } from '@microsoft/logic-apps-shared';
 import { LogEntryLevel, LoggerService, isNullOrEmpty, RUN_AFTER_COLORS } from '@microsoft/logic-apps-shared';
-import type { RootState, Workflow } from '@microsoft/logic-apps-designer';
+import type { CustomCodeFileNameMapping, RootState, Workflow } from '@microsoft/logic-apps-designer';
 import {
   store as DesignerStore,
   serializeBJSWorkflow,
@@ -19,6 +19,8 @@ import {
   updateParameterValidation,
   openPanel,
   useNodesInitialized,
+  getCustomCodeFilesWithData,
+  resetCustomCode,
 } from '@microsoft/logic-apps-designer';
 import { useMemo } from 'react';
 import { useMutation } from 'react-query';
@@ -48,7 +50,7 @@ export const DesignerCommandBar = ({
   location: string;
   isReadOnly: boolean;
   discard: () => unknown;
-  saveWorkflow: (workflow: Workflow) => Promise<void>;
+  saveWorkflow: (workflow: Workflow, customCodeData: CustomCodeFileNameMapping | undefined) => Promise<void>;
   isDarkMode: boolean;
   isConsumption?: boolean;
   showConnectionsPanel?: boolean;
@@ -70,7 +72,14 @@ export const DesignerCommandBar = ({
         return parameterGroup.parameters.some((parameter) => {
           const validationErrors = validateParameter(parameter, parameter.value);
           if (validationErrors.length > 0) {
-            dispatch(updateParameterValidation({ nodeId: id, groupId: parameterGroup.id, parameterId: parameter.id, validationErrors }));
+            dispatch(
+              updateParameterValidation({
+                nodeId: id,
+                groupId: parameterGroup.id,
+                parameterId: parameter.id,
+                validationErrors,
+              })
+            );
           }
           return validationErrors.length;
         });
@@ -80,9 +89,12 @@ export const DesignerCommandBar = ({
 
     const hasParametersErrors = !isNullOrEmpty(validationErrorsList);
 
+    const customCodeFilesWithData = getCustomCodeFilesWithData(designerState.customCode);
+
     if (!hasParametersErrors) {
-      await saveWorkflow(serializedWorkflow);
+      await saveWorkflow(serializedWorkflow, customCodeFilesWithData);
       updateCallbackUrl(designerState, DesignerStore.dispatch);
+      DesignerStore.dispatch(resetCustomCode());
     }
   });
 
@@ -167,7 +179,11 @@ export const DesignerCommandBar = ({
         disabled: !haveErrors,
         iconProps: {
           iconName: haveErrors ? 'StatusErrorFull' : 'ErrorBadge',
-          style: haveErrors ? { color: RUN_AFTER_COLORS[isDarkMode ? 'dark' : 'light']['FAILED'] } : undefined,
+          style: haveErrors
+            ? {
+                color: RUN_AFTER_COLORS[isDarkMode ? 'dark' : 'light']['FAILED'],
+              }
+            : undefined,
         },
         onClick: () => !!dispatch(openPanel({ panelMode: 'Error' })),
       },
@@ -227,7 +243,13 @@ export const DesignerCommandBar = ({
   );
 };
 
-const CustomCommandBarButton = ({ text, showError }: { text: string; showError?: boolean }) => (
+const CustomCommandBarButton = ({
+  text,
+  showError,
+}: {
+  text: string;
+  showError?: boolean;
+}) => (
   <div style={{ margin: '2px', display: 'flex', gap: '8px', alignItems: 'center' }}>
     {text}
     {showError && <Badge size="extra-small" color="danger" />}
