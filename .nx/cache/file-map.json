@@ -21,6 +21,9 @@
     "@types/react": "^18.2.69",
     "@types/react-dom": "^18.2.22",
     "child_process": "^1.0.2",
+    "esbuild-plugin-less": "^1.3.3",
+    "esbuild-plugin-svg": "^0.1.0",
+    "esbuild-plugin-svgr": "^2.1.0",
     "husky": "^9.0.11",
     "jsdom": "^24.0.0",
     "knip": "^5.2.2",
@@ -43,372 +46,238 @@
   "nxJsonPlugins": [],
   "fileMap": {
     "projectFileMap": {
-      "@microsoft/logic-apps-chatbot": [
+      "designer-standalone": [
         {
-          "file": "libs/chatbot/package.json",
-          "hash": "14533386357963788386",
-          "deps": [
-            "@microsoft/logic-apps-shared",
-            "npm:react-intl",
-            "@microsoft/logic-apps-designer",
-            "npm:@fluentui/react",
-            "npm:@fluentui/react-icons",
-            "@microsoft/designer-ui",
-            "npm:@fluentui/react-components",
-            "npm:@types/react",
-            "npm:react",
-            "npm:react-dom"
-          ]
-        },
-        {
-          "file": "libs/chatbot/rollup.config.mjs",
-          "hash": "16469814706170133141"
-        },
-        {
-          "file": "libs/chatbot/src/index.ts",
-          "hash": "5472632491119599158"
-        },
-        {
-          "file": "libs/chatbot/src/lib/common/constants.ts",
-          "hash": "2429934717009400244"
-        },
-        {
-          "file": "libs/chatbot/src/lib/common/models/Query.ts",
-          "hash": "12711516361292056739"
-        },
-        {
-          "file": "libs/chatbot/src/lib/common/models/workflow.ts",
-          "hash": "15855456327309866932"
-        },
-        {
-          "file": "libs/chatbot/src/lib/core/util/index.ts",
-          "hash": "5139985942597791835"
-        },
-        {
-          "file": "libs/chatbot/src/lib/images/LogicApps.svg",
-          "hash": "2097860906489808431"
-        },
-        {
-          "file": "libs/chatbot/src/lib/images/Sparkle.svg",
-          "hash": "3138281638005072555"
-        },
-        {
-          "file": "libs/chatbot/src/lib/images/SparkleDisabled.svg",
-          "hash": "12308741199338082792"
-        },
-        {
-          "file": "libs/chatbot/src/lib/images/Workflow.svg",
-          "hash": "9644831917975499371"
-        },
-        {
-          "file": "libs/chatbot/src/lib/index.tsx",
-          "hash": "7293379411218707820"
-        },
-        {
-          "file": "libs/chatbot/src/lib/styles.less",
-          "hash": "17038065324912682386"
-        },
-        {
-          "file": "libs/chatbot/src/lib/ui/chatbot.tsx",
-          "hash": "14000638668528235529"
-        },
-        {
-          "file": "libs/chatbot/src/lib/ui/panelheader.tsx",
-          "hash": "933389736901388174"
-        },
-        {
-          "file": "libs/chatbot/src/lib/ui/styles.less",
-          "hash": "16062592558757698716"
-        },
-        {
-          "file": "libs/chatbot/tsconfig.json",
-          "hash": "2883325760657722404"
-        }
-      ],
-      "vs-code-react": [
-        {
-          "file": "apps/vs-code-react/.babelrc",
+          "file": "apps/designer-standalone/.babelrc",
           "hash": "7338834004944326044"
         },
         {
-          "file": "apps/vs-code-react/.browserslistrc",
-          "hash": "167759602395835039"
+          "file": "apps/designer-standalone/.browserslistrc",
+          "hash": "2888533144288818662"
         },
         {
-          "file": "apps/vs-code-react/.eslintrc.json",
+          "file": "apps/designer-standalone/.eslintrc.json",
           "hash": "10075191527724852300"
         },
         {
-          "file": "apps/vs-code-react/jest.config.ts",
-          "hash": "8334961725413338902"
+          "file": "apps/designer-standalone/jest.config.ts",
+          "hash": "5095600455584759097"
         },
         {
-          "file": "apps/vs-code-react/project.json",
-          "hash": "16992379845976149116"
+          "file": "apps/designer-standalone/project.json",
+          "hash": "2186189716536309729"
         },
         {
-          "file": "apps/vs-code-react/src/app/components/reviewList/helper.ts",
-          "hash": "7103226391461447657"
+          "file": "apps/designer-standalone/src/app/AzureLogicAppsDesigner/DesignerCommandBar.tsx",
+          "hash": "3298017156622978060"
         },
         {
-          "file": "apps/vs-code-react/src/app/components/reviewList/reviewList.tsx",
-          "hash": "15235190526173296646"
+          "file": "apps/designer-standalone/src/app/AzureLogicAppsDesigner/LogicAppSelectionSetting/AzureConsumptionLogicAppSelector.tsx",
+          "hash": "13505482435147628633"
         },
         {
-          "file": "apps/vs-code-react/src/app/components/reviewList/styles.less",
-          "hash": "3923189858935612561"
+          "file": "apps/designer-standalone/src/app/AzureLogicAppsDesigner/LogicAppSelectionSetting/AzureStandardLogicAppSelector.tsx",
+          "hash": "9606761639132729551"
         },
         {
-          "file": "apps/vs-code-react/src/app/components/searchableDropdown/index.tsx",
-          "hash": "5310943053923898056"
+          "file": "apps/designer-standalone/src/app/AzureLogicAppsDesigner/Models/Arm.ts",
+          "hash": "6979701506181809557"
         },
         {
-          "file": "apps/vs-code-react/src/app/components/searchableDropdown/styles.less",
-          "hash": "14353098042527666078"
+          "file": "apps/designer-standalone/src/app/AzureLogicAppsDesigner/Models/LogicAppAppTypes.ts",
+          "hash": "14118413145410608191"
         },
         {
-          "file": "apps/vs-code-react/src/app/dataMapper/app.less",
-          "hash": "10860476654260307609"
+          "file": "apps/designer-standalone/src/app/AzureLogicAppsDesigner/Models/Workflow.ts",
+          "hash": "1588066658590448230"
         },
         {
-          "file": "apps/vs-code-react/src/app/dataMapper/app.tsx",
-          "hash": "1229212044608318791"
+          "file": "apps/designer-standalone/src/app/AzureLogicAppsDesigner/Models/WorkflowApp.ts",
+          "hash": "11196696306113960606"
         },
         {
-          "file": "apps/vs-code-react/src/app/designer/DesignerCommandBar/index.tsx",
-          "hash": "1233751610250085221"
+          "file": "apps/designer-standalone/src/app/AzureLogicAppsDesigner/Models/WorkflowListTypes.ts",
+          "hash": "14682812772519432090"
         },
         {
-          "file": "apps/vs-code-react/src/app/designer/app.less",
-          "hash": "2873139032757981092"
+          "file": "apps/designer-standalone/src/app/AzureLogicAppsDesigner/Queries/FetchConsumptionApps.ts",
+          "hash": "4580548922855359394"
         },
         {
-          "file": "apps/vs-code-react/src/app/designer/app.tsx",
-          "hash": "14446374292339965572"
+          "file": "apps/designer-standalone/src/app/AzureLogicAppsDesigner/Queries/FetchStandardApps.ts",
+          "hash": "12895583927495006597"
         },
         {
-          "file": "apps/vs-code-react/src/app/designer/constants.ts",
-          "hash": "5903664051922439610"
+          "file": "apps/designer-standalone/src/app/AzureLogicAppsDesigner/Services/Artifact.ts",
+          "hash": "2755209554830887096"
         },
         {
-          "file": "apps/vs-code-react/src/app/designer/models/workflow.ts",
-          "hash": "8677180454198120663"
+          "file": "apps/designer-standalone/src/app/AzureLogicAppsDesigner/Services/ChildWorkflow.ts",
+          "hash": "16951494746367962696"
         },
         {
-          "file": "apps/vs-code-react/src/app/designer/services/JwtHelper.ts",
-          "hash": "13157754222681752876"
+          "file": "apps/designer-standalone/src/app/AzureLogicAppsDesigner/Services/ConsumptionSerializationHelpers.ts",
+          "hash": "11922224593998776622"
         },
         {
-          "file": "apps/vs-code-react/src/app/designer/services/oAuth.ts",
-          "hash": "3846553792648049504"
+          "file": "apps/designer-standalone/src/app/AzureLogicAppsDesigner/Services/FileSystemConnectionCreationClient.ts",
+          "hash": "9092529694739284525"
         },
         {
-          "file": "apps/vs-code-react/src/app/designer/servicesHelper.ts",
-          "hash": "2583935077415507996"
+          "file": "apps/designer-standalone/src/app/AzureLogicAppsDesigner/Services/HttpClient.ts",
+          "hash": "14344615542145629436"
         },
         {
-          "file": "apps/vs-code-react/src/app/designer/utilities/workflow.ts",
-          "hash": "11284208617598927726"
+          "file": "apps/designer-standalone/src/app/AzureLogicAppsDesigner/Services/OAuthService.ts",
+          "hash": "2732486466259074455"
         },
         {
-          "file": "apps/vs-code-react/src/app/export/export.less",
-          "hash": "3696757642502745218"
+          "file": "apps/designer-standalone/src/app/AzureLogicAppsDesigner/Services/WorkflowAndArtifacts.tsx",
+          "hash": "17257936693118977812"
         },
         {
-          "file": "apps/vs-code-react/src/app/export/export.tsx",
-          "hash": "8780683083445998923"
+          "file": "apps/designer-standalone/src/app/AzureLogicAppsDesigner/Utilities/ArmParser.ts",
+          "hash": "11766814904345254217"
         },
         {
-          "file": "apps/vs-code-react/src/app/export/instanceSelection/helper.ts",
-          "hash": "1432771657034188602"
+          "file": "apps/designer-standalone/src/app/AzureLogicAppsDesigner/Utilities/Workflow.ts",
+          "hash": "15343875879297750706"
         },
         {
-          "file": "apps/vs-code-react/src/app/export/instanceSelection/instanceSelection.tsx",
-          "hash": "920422646883876413"
+          "file": "apps/designer-standalone/src/app/AzureLogicAppsDesigner/Utilities/resourceUtilities.ts",
+          "hash": "4446661457006721606"
         },
         {
-          "file": "apps/vs-code-react/src/app/export/navigation/navigation.tsx",
-          "hash": "11162162346257637474"
+          "file": "apps/designer-standalone/src/app/AzureLogicAppsDesigner/laDesigner.tsx",
+          "hash": "13092524529881537344"
         },
         {
-          "file": "apps/vs-code-react/src/app/export/status/status.tsx",
-          "hash": "7912554661822815221"
+          "file": "apps/designer-standalone/src/app/AzureLogicAppsDesigner/laDesignerConsumption.tsx",
+          "hash": "7976663886408218270"
         },
         {
-          "file": "apps/vs-code-react/src/app/export/summary/helper.ts",
-          "hash": "14153533387296877593"
+          "file": "apps/designer-standalone/src/app/DesignerShell/designer.tsx",
+          "hash": "13293572578025384518"
         },
         {
-          "file": "apps/vs-code-react/src/app/export/summary/managedConnections.tsx",
-          "hash": "7161124247970943148"
+          "file": "apps/designer-standalone/src/app/LocalDesigner/LogicAppSelector/LogicAppSelector.tsx",
+          "hash": "8960093372869801569"
         },
         {
-          "file": "apps/vs-code-react/src/app/export/summary/newResourceGroup.tsx",
-          "hash": "4655457745320534508"
+          "file": "apps/designer-standalone/src/app/LocalDesigner/customConnectionParameterEditorService.tsx",
+          "hash": "17011074881319644796"
         },
         {
-          "file": "apps/vs-code-react/src/app/export/summary/summary.tsx",
-          "hash": "314441399583635160"
+          "file": "apps/designer-standalone/src/app/LocalDesigner/customEditorService.tsx",
+          "hash": "4734349067026517129"
         },
         {
-          "file": "apps/vs-code-react/src/app/export/validation/helper.ts",
-          "hash": "11787808914725369004"
+          "file": "apps/designer-standalone/src/app/LocalDesigner/httpClient.ts",
+          "hash": "11056877601318419241"
         },
         {
-          "file": "apps/vs-code-react/src/app/export/validation/validation.tsx",
-          "hash": "6866286216752763150"
+          "file": "apps/designer-standalone/src/app/LocalDesigner/localDesigner.tsx",
+          "hash": "7960030919432291768"
         },
         {
-          "file": "apps/vs-code-react/src/app/export/workflowsSelection/advancedOptions.tsx",
-          "hash": "10475247554118844324"
+          "file": "apps/designer-standalone/src/app/LocalDesigner/pseudoCommandBar.less",
+          "hash": "4190195339052860475"
         },
         {
-          "file": "apps/vs-code-react/src/app/export/workflowsSelection/filters.tsx",
-          "hash": "1366466573911291031"
+          "file": "apps/designer-standalone/src/app/LocalDesigner/pseudoCommandBar.tsx",
+          "hash": "17311351490108510384"
         },
         {
-          "file": "apps/vs-code-react/src/app/export/workflowsSelection/helper.ts",
-          "hash": "3750291621191783642"
+          "file": "apps/designer-standalone/src/app/SettingsSections/contextSettings.tsx",
+          "hash": "17876933317388473037"
         },
         {
-          "file": "apps/vs-code-react/src/app/export/workflowsSelection/selectedList.tsx",
-          "hash": "16694375718863827935"
+          "file": "apps/designer-standalone/src/app/SettingsSections/sourceSettings.tsx",
+          "hash": "11182070599256684242"
         },
         {
-          "file": "apps/vs-code-react/src/app/export/workflowsSelection/workflowsSelection.tsx",
-          "hash": "3220598036709854135"
-        },
-        {
-          "file": "apps/vs-code-react/src/app/overview/app.tsx",
-          "hash": "6561625234207029430"
-        },
-        {
-          "file": "apps/vs-code-react/src/app/overview/overview.less",
-          "hash": "10514910349287699054"
-        },
-        {
-          "file": "apps/vs-code-react/src/app/review/index.tsx",
-          "hash": "17050061761908500120"
-        },
-        {
-          "file": "apps/vs-code-react/src/assets/.gitkeep",
+          "file": "apps/designer-standalone/src/assets/.gitkeep",
           "hash": "3244421341483603138"
         },
         {
-          "file": "apps/vs-code-react/src/environments/environment.prod.ts",
+          "file": "apps/designer-standalone/src/components/LocalizationSettings.tsx",
+          "hash": "11358026391684952458"
+        },
+        {
+          "file": "apps/designer-standalone/src/components/settings_box.module.less",
+          "hash": "9808519016183858536"
+        },
+        {
+          "file": "apps/designer-standalone/src/components/settings_box.tsx",
+          "hash": "12099490358448849702"
+        },
+        {
+          "file": "apps/designer-standalone/src/components/themes.ts",
+          "hash": "10280533146008251816"
+        },
+        {
+          "file": "apps/designer-standalone/src/environments/environment.prod.ts",
           "hash": "10220522844224226756"
         },
         {
-          "file": "apps/vs-code-react/src/environments/environment.ts",
-          "hash": "11309522437153898482"
+          "file": "apps/designer-standalone/src/environments/environment.ts",
+          "hash": "5920947766445218989"
         },
         {
-          "file": "apps/vs-code-react/src/favicon.ico",
+          "file": "apps/designer-standalone/src/favicon.ico",
           "hash": "9303420814833116677"
         },
         {
-          "file": "apps/vs-code-react/src/fixtures/get-more-runs.json",
-          "hash": "8025372240546622652"
+          "file": "apps/designer-standalone/src/index.html",
+          "hash": "706131400937913887"
         },
         {
-          "file": "apps/vs-code-react/src/fixtures/get-run.json",
-          "hash": "14954993404334898723"
+          "file": "apps/designer-standalone/src/main.tsx",
+          "hash": "6196242117816635624"
         },
         {
-          "file": "apps/vs-code-react/src/fixtures/get-runs.json",
-          "hash": "16210149105685428411"
-        },
-        {
-          "file": "apps/vs-code-react/src/index.html",
-          "hash": "15542557927961559597"
-        },
-        {
-          "file": "apps/vs-code-react/src/main.tsx",
-          "hash": "12636954517020345187"
-        },
-        {
-          "file": "apps/vs-code-react/src/polyfills.ts",
+          "file": "apps/designer-standalone/src/polyfills.ts",
           "hash": "17041846422484582267"
         },
         {
-          "file": "apps/vs-code-react/src/resources/Caution.svg",
-          "hash": "12946324935578891880"
+          "file": "apps/designer-standalone/src/state/connectionReferences.ts",
+          "hash": "3642930491684807465"
         },
         {
-          "file": "apps/vs-code-react/src/resources/Error.svg",
-          "hash": "1306017530222758526"
+          "file": "apps/designer-standalone/src/state/historyHelpers.ts",
+          "hash": "14898556878004432608"
         },
         {
-          "file": "apps/vs-code-react/src/resources/Success.svg",
-          "hash": "1346479691433759862"
+          "file": "apps/designer-standalone/src/state/store.ts",
+          "hash": "11326541673147537080"
         },
         {
-          "file": "apps/vs-code-react/src/router/index.tsx",
-          "hash": "15140865326278989359"
+          "file": "apps/designer-standalone/src/state/workflowLoadingSelectors.ts",
+          "hash": "2817444802055692850"
         },
         {
-          "file": "apps/vs-code-react/src/run-service.ts",
-          "hash": "17001222516069202300"
+          "file": "apps/designer-standalone/src/state/workflowLoadingSlice.ts",
+          "hash": "14190318844766308247"
         },
         {
-          "file": "apps/vs-code-react/src/run-service/export/helper.ts",
-          "hash": "17978663445350106988"
+          "file": "apps/designer-standalone/src/styles.less",
+          "hash": "17529353978711030180"
         },
         {
-          "file": "apps/vs-code-react/src/run-service/export/index.ts",
-          "hash": "8958556086353433187"
+          "file": "apps/designer-standalone/src/typings.d.ts",
+          "hash": "8667080681692980982"
         },
         {
-          "file": "apps/vs-code-react/src/run-service/types.ts",
-          "hash": "15571572309314646001"
+          "file": "apps/designer-standalone/tsconfig.app.json",
+          "hash": "9143020992508194197"
         },
         {
-          "file": "apps/vs-code-react/src/state/DataMapSlice.ts",
-          "hash": "12162383684219148227"
+          "file": "apps/designer-standalone/tsconfig.json",
+          "hash": "292688152284415530"
         },
         {
-          "file": "apps/vs-code-react/src/state/DesignerSlice.ts",
-          "hash": "15018588436028947609"
-        },
-        {
-          "file": "apps/vs-code-react/src/state/WorkflowSlice.ts",
-          "hash": "17422552152551623659"
-        },
-        {
-          "file": "apps/vs-code-react/src/state/projectSlice.ts",
-          "hash": "17786023480081942934"
-        },
-        {
-          "file": "apps/vs-code-react/src/state/store.ts",
-          "hash": "9306760291102940367"
-        },
-        {
-          "file": "apps/vs-code-react/src/stateWrapper.tsx",
-          "hash": "2412499423087675880"
-        },
-        {
-          "file": "apps/vs-code-react/src/styles.less",
-          "hash": "11897878901819299767"
-        },
-        {
-          "file": "apps/vs-code-react/src/themeProvider.tsx",
-          "hash": "3199307216492964650"
-        },
-        {
-          "file": "apps/vs-code-react/src/webviewCommunication.tsx",
-          "hash": "4256707400206268801"
-        },
-        {
-          "file": "apps/vs-code-react/tsconfig.app.json",
-          "hash": "4251399858593500384"
-        },
-        {
-          "file": "apps/vs-code-react/tsconfig.json",
-          "hash": "10208151351921925114"
-        },
-        {
-          "file": "apps/vs-code-react/tsconfig.spec.json",
-          "hash": "15143458430517966976"
+          "file": "apps/designer-standalone/tsconfig.spec.json",
+          "hash": "420895369075964006"
         }
       ],
       "@microsoft/designer-ui": [
@@ -2906,6 +2775,1737 @@
         {
           "file": "libs/designer-ui/tsup.config.ts",
           "hash": "5034656414761252557"
+        }
+      ],
+      "vs-code-react": [
+        {
+          "file": "apps/vs-code-react/.babelrc",
+          "hash": "7338834004944326044"
+        },
+        {
+          "file": "apps/vs-code-react/.browserslistrc",
+          "hash": "167759602395835039"
+        },
+        {
+          "file": "apps/vs-code-react/.eslintrc.json",
+          "hash": "10075191527724852300"
+        },
+        {
+          "file": "apps/vs-code-react/jest.config.ts",
+          "hash": "8334961725413338902"
+        },
+        {
+          "file": "apps/vs-code-react/project.json",
+          "hash": "16992379845976149116"
+        },
+        {
+          "file": "apps/vs-code-react/src/app/components/reviewList/helper.ts",
+          "hash": "7103226391461447657"
+        },
+        {
+          "file": "apps/vs-code-react/src/app/components/reviewList/reviewList.tsx",
+          "hash": "15235190526173296646"
+        },
+        {
+          "file": "apps/vs-code-react/src/app/components/reviewList/styles.less",
+          "hash": "3923189858935612561"
+        },
+        {
+          "file": "apps/vs-code-react/src/app/components/searchableDropdown/index.tsx",
+          "hash": "5310943053923898056"
+        },
+        {
+          "file": "apps/vs-code-react/src/app/components/searchableDropdown/styles.less",
+          "hash": "14353098042527666078"
+        },
+        {
+          "file": "apps/vs-code-react/src/app/dataMapper/app.less",
+          "hash": "10860476654260307609"
+        },
+        {
+          "file": "apps/vs-code-react/src/app/dataMapper/app.tsx",
+          "hash": "1229212044608318791"
+        },
+        {
+          "file": "apps/vs-code-react/src/app/designer/DesignerCommandBar/index.tsx",
+          "hash": "1233751610250085221"
+        },
+        {
+          "file": "apps/vs-code-react/src/app/designer/app.less",
+          "hash": "2873139032757981092"
+        },
+        {
+          "file": "apps/vs-code-react/src/app/designer/app.tsx",
+          "hash": "14446374292339965572"
+        },
+        {
+          "file": "apps/vs-code-react/src/app/designer/constants.ts",
+          "hash": "5903664051922439610"
+        },
+        {
+          "file": "apps/vs-code-react/src/app/designer/models/workflow.ts",
+          "hash": "8677180454198120663"
+        },
+        {
+          "file": "apps/vs-code-react/src/app/designer/services/JwtHelper.ts",
+          "hash": "13157754222681752876"
+        },
+        {
+          "file": "apps/vs-code-react/src/app/designer/services/oAuth.ts",
+          "hash": "3846553792648049504"
+        },
+        {
+          "file": "apps/vs-code-react/src/app/designer/servicesHelper.ts",
+          "hash": "2583935077415507996"
+        },
+        {
+          "file": "apps/vs-code-react/src/app/designer/utilities/workflow.ts",
+          "hash": "11284208617598927726"
+        },
+        {
+          "file": "apps/vs-code-react/src/app/export/export.less",
+          "hash": "3696757642502745218"
+        },
+        {
+          "file": "apps/vs-code-react/src/app/export/export.tsx",
+          "hash": "8780683083445998923"
+        },
+        {
+          "file": "apps/vs-code-react/src/app/export/instanceSelection/helper.ts",
+          "hash": "1432771657034188602"
+        },
+        {
+          "file": "apps/vs-code-react/src/app/export/instanceSelection/instanceSelection.tsx",
+          "hash": "920422646883876413"
+        },
+        {
+          "file": "apps/vs-code-react/src/app/export/navigation/navigation.tsx",
+          "hash": "11162162346257637474"
+        },
+        {
+          "file": "apps/vs-code-react/src/app/export/status/status.tsx",
+          "hash": "7912554661822815221"
+        },
+        {
+          "file": "apps/vs-code-react/src/app/export/summary/helper.ts",
+          "hash": "14153533387296877593"
+        },
+        {
+          "file": "apps/vs-code-react/src/app/export/summary/managedConnections.tsx",
+          "hash": "7161124247970943148"
+        },
+        {
+          "file": "apps/vs-code-react/src/app/export/summary/newResourceGroup.tsx",
+          "hash": "4655457745320534508"
+        },
+        {
+          "file": "apps/vs-code-react/src/app/export/summary/summary.tsx",
+          "hash": "314441399583635160"
+        },
+        {
+          "file": "apps/vs-code-react/src/app/export/validation/helper.ts",
+          "hash": "11787808914725369004"
+        },
+        {
+          "file": "apps/vs-code-react/src/app/export/validation/validation.tsx",
+          "hash": "6866286216752763150"
+        },
+        {
+          "file": "apps/vs-code-react/src/app/export/workflowsSelection/advancedOptions.tsx",
+          "hash": "10475247554118844324"
+        },
+        {
+          "file": "apps/vs-code-react/src/app/export/workflowsSelection/filters.tsx",
+          "hash": "1366466573911291031"
+        },
+        {
+          "file": "apps/vs-code-react/src/app/export/workflowsSelection/helper.ts",
+          "hash": "3750291621191783642"
+        },
+        {
+          "file": "apps/vs-code-react/src/app/export/workflowsSelection/selectedList.tsx",
+          "hash": "16694375718863827935"
+        },
+        {
+          "file": "apps/vs-code-react/src/app/export/workflowsSelection/workflowsSelection.tsx",
+          "hash": "3220598036709854135"
+        },
+        {
+          "file": "apps/vs-code-react/src/app/overview/app.tsx",
+          "hash": "6561625234207029430"
+        },
+        {
+          "file": "apps/vs-code-react/src/app/overview/overview.less",
+          "hash": "10514910349287699054"
+        },
+        {
+          "file": "apps/vs-code-react/src/app/review/index.tsx",
+          "hash": "17050061761908500120"
+        },
+        {
+          "file": "apps/vs-code-react/src/assets/.gitkeep",
+          "hash": "3244421341483603138"
+        },
+        {
+          "file": "apps/vs-code-react/src/environments/environment.prod.ts",
+          "hash": "10220522844224226756"
+        },
+        {
+          "file": "apps/vs-code-react/src/environments/environment.ts",
+          "hash": "11309522437153898482"
+        },
+        {
+          "file": "apps/vs-code-react/src/favicon.ico",
+          "hash": "9303420814833116677"
+        },
+        {
+          "file": "apps/vs-code-react/src/fixtures/get-more-runs.json",
+          "hash": "8025372240546622652"
+        },
+        {
+          "file": "apps/vs-code-react/src/fixtures/get-run.json",
+          "hash": "14954993404334898723"
+        },
+        {
+          "file": "apps/vs-code-react/src/fixtures/get-runs.json",
+          "hash": "16210149105685428411"
+        },
+        {
+          "file": "apps/vs-code-react/src/index.html",
+          "hash": "15542557927961559597"
+        },
+        {
+          "file": "apps/vs-code-react/src/main.tsx",
+          "hash": "12636954517020345187"
+        },
+        {
+          "file": "apps/vs-code-react/src/polyfills.ts",
+          "hash": "17041846422484582267"
+        },
+        {
+          "file": "apps/vs-code-react/src/resources/Caution.svg",
+          "hash": "12946324935578891880"
+        },
+        {
+          "file": "apps/vs-code-react/src/resources/Error.svg",
+          "hash": "1306017530222758526"
+        },
+        {
+          "file": "apps/vs-code-react/src/resources/Success.svg",
+          "hash": "1346479691433759862"
+        },
+        {
+          "file": "apps/vs-code-react/src/router/index.tsx",
+          "hash": "15140865326278989359"
+        },
+        {
+          "file": "apps/vs-code-react/src/run-service.ts",
+          "hash": "17001222516069202300"
+        },
+        {
+          "file": "apps/vs-code-react/src/run-service/export/helper.ts",
+          "hash": "17978663445350106988"
+        },
+        {
+          "file": "apps/vs-code-react/src/run-service/export/index.ts",
+          "hash": "8958556086353433187"
+        },
+        {
+          "file": "apps/vs-code-react/src/run-service/types.ts",
+          "hash": "15571572309314646001"
+        },
+        {
+          "file": "apps/vs-code-react/src/state/DataMapSlice.ts",
+          "hash": "12162383684219148227"
+        },
+        {
+          "file": "apps/vs-code-react/src/state/DesignerSlice.ts",
+          "hash": "15018588436028947609"
+        },
+        {
+          "file": "apps/vs-code-react/src/state/WorkflowSlice.ts",
+          "hash": "17422552152551623659"
+        },
+        {
+          "file": "apps/vs-code-react/src/state/projectSlice.ts",
+          "hash": "17786023480081942934"
+        },
+        {
+          "file": "apps/vs-code-react/src/state/store.ts",
+          "hash": "9306760291102940367"
+        },
+        {
+          "file": "apps/vs-code-react/src/stateWrapper.tsx",
+          "hash": "2412499423087675880"
+        },
+        {
+          "file": "apps/vs-code-react/src/styles.less",
+          "hash": "11897878901819299767"
+        },
+        {
+          "file": "apps/vs-code-react/src/themeProvider.tsx",
+          "hash": "3199307216492964650"
+        },
+        {
+          "file": "apps/vs-code-react/src/webviewCommunication.tsx",
+          "hash": "4256707400206268801"
+        },
+        {
+          "file": "apps/vs-code-react/tsconfig.app.json",
+          "hash": "4251399858593500384"
+        },
+        {
+          "file": "apps/vs-code-react/tsconfig.json",
+          "hash": "10208151351921925114"
+        },
+        {
+          "file": "apps/vs-code-react/tsconfig.spec.json",
+          "hash": "15143458430517966976"
+        }
+      ],
+      "@microsoft/logic-apps-chatbot": [
+        {
+          "file": "libs/chatbot/package.json",
+          "hash": "14533386357963788386",
+          "deps": [
+            "@microsoft/logic-apps-shared",
+            "npm:react-intl",
+            "@microsoft/logic-apps-designer",
+            "npm:@fluentui/react",
+            "npm:@fluentui/react-icons",
+            "@microsoft/designer-ui",
+            "npm:@fluentui/react-components",
+            "npm:@types/react",
+            "npm:react",
+            "npm:react-dom"
+          ]
+        },
+        {
+          "file": "libs/chatbot/rollup.config.mjs",
+          "hash": "16469814706170133141"
+        },
+        {
+          "file": "libs/chatbot/src/index.ts",
+          "hash": "5472632491119599158"
+        },
+        {
+          "file": "libs/chatbot/src/lib/common/constants.ts",
+          "hash": "2429934717009400244"
+        },
+        {
+          "file": "libs/chatbot/src/lib/common/models/Query.ts",
+          "hash": "12711516361292056739"
+        },
+        {
+          "file": "libs/chatbot/src/lib/common/models/workflow.ts",
+          "hash": "15855456327309866932"
+        },
+        {
+          "file": "libs/chatbot/src/lib/core/util/index.ts",
+          "hash": "5139985942597791835"
+        },
+        {
+          "file": "libs/chatbot/src/lib/images/LogicApps.svg",
+          "hash": "2097860906489808431"
+        },
+        {
+          "file": "libs/chatbot/src/lib/images/Sparkle.svg",
+          "hash": "3138281638005072555"
+        },
+        {
+          "file": "libs/chatbot/src/lib/images/SparkleDisabled.svg",
+          "hash": "12308741199338082792"
+        },
+        {
+          "file": "libs/chatbot/src/lib/images/Workflow.svg",
+          "hash": "9644831917975499371"
+        },
+        {
+          "file": "libs/chatbot/src/lib/index.tsx",
+          "hash": "7293379411218707820"
+        },
+        {
+          "file": "libs/chatbot/src/lib/styles.less",
+          "hash": "17038065324912682386"
+        },
+        {
+          "file": "libs/chatbot/src/lib/ui/chatbot.tsx",
+          "hash": "14000638668528235529"
+        },
+        {
+          "file": "libs/chatbot/src/lib/ui/panelheader.tsx",
+          "hash": "933389736901388174"
+        },
+        {
+          "file": "libs/chatbot/src/lib/ui/styles.less",
+          "hash": "16062592558757698716"
+        },
+        {
+          "file": "libs/chatbot/tsconfig.json",
+          "hash": "2883325760657722404"
+        }
+      ],
+      "@microsoft/logic-apps-designer": [
+        {
+          "file": "libs/designer/package.json",
+          "hash": "8694041123093540774",
+          "deps": [
+            "npm:@fluentui/azure-themes",
+            "npm:@fluentui/react",
+            "npm:@fluentui/react-components",
+            "npm:@fluentui/react-hooks",
+            "npm:@fluentui/react-icons",
+            "npm:@fluentui/utilities",
+            "npm:@microsoft/applicationinsights-core-js",
+            "@microsoft/designer-ui",
+            "@microsoft/logic-apps-shared",
+            "npm:@react-hookz/web",
+            "npm:@reduxjs/toolkit",
+            "npm:elkjs",
+            "npm:fuse.js",
+            "npm:immer",
+            "npm:lodash.frompairs",
+            "npm:lodash.merge",
+            "npm:react-dnd",
+            "npm:react-dnd-accessible-backend",
+            "npm:react-dnd-html5-backend",
+            "npm:react-dnd-multi-backend",
+            "npm:react-hotkeys-hook",
+            "npm:react-intl",
+            "npm:react-query",
+            "npm:react-redux",
+            "npm:reactflow",
+            "npm:redux-thunk",
+            "npm:to-title-case",
+            "npm:util",
+            "npm:yocto-queue",
+            "npm:react",
+            "npm:react-dom"
+          ]
+        },
+        {
+          "file": "libs/designer/src/index.ts",
+          "hash": "11355081150901527302"
+        },
+        {
+          "file": "libs/designer/src/lib/__test__/intl-test-helper.tsx",
+          "hash": "5078806607436249013"
+        },
+        {
+          "file": "libs/designer/src/lib/__test__/mock-http-client.tsx",
+          "hash": "9240782448242967537"
+        },
+        {
+          "file": "libs/designer/src/lib/__test__/redux-test-helper.tsx",
+          "hash": "5214463813702224032"
+        },
+        {
+          "file": "libs/designer/src/lib/common/constants.ts",
+          "hash": "14716266680681788853"
+        },
+        {
+          "file": "libs/designer/src/lib/common/exceptions/exception.ts",
+          "hash": "4016853272413138441"
+        },
+        {
+          "file": "libs/designer/src/lib/common/exceptions/unsupported.ts",
+          "hash": "2438628799773606413"
+        },
+        {
+          "file": "libs/designer/src/lib/common/images/actionpalette/addaction_black.svg",
+          "hash": "13936938153293651615"
+        },
+        {
+          "file": "libs/designer/src/lib/common/images/actionpalette/addaction_blue.svg",
+          "hash": "17853975463227900194"
+        },
+        {
+          "file": "libs/designer/src/lib/common/images/actionpalette/addaction_white.svg",
+          "hash": "716422980644102335"
+        },
+        {
+          "file": "libs/designer/src/lib/common/images/actionpalette/addcondition_black.svg",
+          "hash": "10948104330765315206"
+        },
+        {
+          "file": "libs/designer/src/lib/common/images/actionpalette/addcondition_blue.svg",
+          "hash": "13744301547491746840"
+        },
+        {
+          "file": "libs/designer/src/lib/common/images/actionpalette/addcondition_white.svg",
+          "hash": "5099585607600274464"
+        },
+        {
+          "file": "libs/designer/src/lib/common/images/actionpalette/adddountil.svg",
+          "hash": "3057811563704111315"
+        },
+        {
+          "file": "libs/designer/src/lib/common/images/actionpalette/addforeach.svg",
+          "hash": "13794169093128310758"
+        },
+        {
+          "file": "libs/designer/src/lib/common/images/actionpalette/addparallel.svg",
+          "hash": "6553711262896807602"
+        },
+        {
+          "file": "libs/designer/src/lib/common/images/actionpalette/addparallel_white.svg",
+          "hash": "3769112376720810799"
+        },
+        {
+          "file": "libs/designer/src/lib/common/images/actionpalette/addscope.svg",
+          "hash": "4840054514873781546"
+        },
+        {
+          "file": "libs/designer/src/lib/common/images/actionpalette/addswitch.svg",
+          "hash": "13772471609559374653"
+        },
+        {
+          "file": "libs/designer/src/lib/common/images/actionpalette/adduntil.svg",
+          "hash": "17291714734882915823"
+        },
+        {
+          "file": "libs/designer/src/lib/common/images/actionpalette/delete.svg",
+          "hash": "8696373633900139960"
+        },
+        {
+          "file": "libs/designer/src/lib/common/images/actionpalette/ellipsis_blue.svg",
+          "hash": "10209490491669077224"
+        },
+        {
+          "file": "libs/designer/src/lib/common/images/actionpalette/ellipsis_white.svg",
+          "hash": "5762239862513015054"
+        },
+        {
+          "file": "libs/designer/src/lib/common/images/arrowdark.svg",
+          "hash": "5926111895234327525"
+        },
+        {
+          "file": "libs/designer/src/lib/common/images/arrowlight.svg",
+          "hash": "8015769479673340480"
+        },
+        {
+          "file": "libs/designer/src/lib/common/images/arrowred.svg",
+          "hash": "2430505900927056727"
+        },
+        {
+          "file": "libs/designer/src/lib/common/images/bolt.svg",
+          "hash": "17462634652015284885"
+        },
+        {
+          "file": "libs/designer/src/lib/common/images/builtinoperationicons/compose.svg",
+          "hash": "4281210752025126548"
+        },
+        {
+          "file": "libs/designer/src/lib/common/images/builtinoperationicons/condition.svg",
+          "hash": "8923215817224206799"
+        },
+        {
+          "file": "libs/designer/src/lib/common/images/builtinoperationicons/control.svg",
+          "hash": "4347287844293995514"
+        },
+        {
+          "file": "libs/designer/src/lib/common/images/builtinoperationicons/foreach.svg",
+          "hash": "802393672600738414"
+        },
+        {
+          "file": "libs/designer/src/lib/common/images/builtinoperationicons/function.svg",
+          "hash": "788257097228620744"
+        },
+        {
+          "file": "libs/designer/src/lib/common/images/builtinoperationicons/geofence.svg",
+          "hash": "11736524123979545801"
+        },
+        {
+          "file": "libs/designer/src/lib/common/images/builtinoperationicons/http.svg",
+          "hash": "965633922044453844"
+        },
+        {
+          "file": "libs/designer/src/lib/common/images/builtinoperationicons/http_swagger.svg",
+          "hash": "10224443075493376159"
+        },
+        {
+          "file": "libs/designer/src/lib/common/images/builtinoperationicons/logicapps/asc.svg",
+          "hash": "488405671534951514"
+        },
+        {
+          "file": "libs/designer/src/lib/common/images/builtinoperationicons/logicapps/batch.svg",
+          "hash": "16381515837357068415"
+        },
+        {
+          "file": "libs/designer/src/lib/common/images/builtinoperationicons/logicapps/eventgrid.svg",
+          "hash": "17856490403949387790"
+        },
+        {
+          "file": "libs/designer/src/lib/common/images/builtinoperationicons/logicapps/flatfiledecoding.svg",
+          "hash": "15243776523488424116"
+        },
+        {
+          "file": "libs/designer/src/lib/common/images/builtinoperationicons/logicapps/flatfileencoding.svg",
+          "hash": "5699680888941228448"
+        },
+        {
+          "file": "libs/designer/src/lib/common/images/builtinoperationicons/logicapps/integrationaccountartifactlookup.svg",
+          "hash": "9764035938809534317"
+        },
+        {
+          "file": "libs/designer/src/lib/common/images/builtinoperationicons/logicapps/manual.svg",
+          "hash": "12326541136900487952"
+        },
+        {
+          "file": "libs/designer/src/lib/common/images/builtinoperationicons/logicapps/transform.svg",
+          "hash": "6245055721372883370"
+        },
+        {
+          "file": "libs/designer/src/lib/common/images/builtinoperationicons/logicapps/xml.svg",
+          "hash": "14444337833939963797"
+        },
+        {
+          "file": "libs/designer/src/lib/common/images/builtinoperationicons/logicapps/xmlvalidation.svg",
+          "hash": "17064721766454223509"
+        },
+        {
+          "file": "libs/designer/src/lib/common/images/builtinoperationicons/powerapps.svg",
+          "hash": "13549953610772304995"
+        },
+        {
+          "file": "libs/designer/src/lib/common/images/builtinoperationicons/powerapps/DynamicsFinOps.svg",
+          "hash": "9884449892115783238"
+        },
+        {
+          "file": "libs/designer/src/lib/common/images/builtinoperationicons/powerapps/button.svg",
+          "hash": "5650084185790556380"
+        },
+        {
+          "file": "libs/designer/src/lib/common/images/builtinoperationicons/powerapps/commondataservice.svg",
+          "hash": "16533471828587912919"
+        },
+        {
+          "file": "libs/designer/src/lib/common/images/builtinoperationicons/powerapps/dynamics365.svg",
+          "hash": "10277570825407438664"
+        },
+        {
+          "file": "libs/designer/src/lib/common/images/builtinoperationicons/powerapps/excelonline.svg",
+          "hash": "5644614242196469494"
+        },
+        {
+          "file": "libs/designer/src/lib/common/images/builtinoperationicons/powerapps/manual.svg",
+          "hash": "4854754781356184488"
+        },
+        {
+          "file": "libs/designer/src/lib/common/images/builtinoperationicons/powerapps/microsoft365appshealth.svg",
+          "hash": "17577366797422234032"
+        },
+        {
+          "file": "libs/designer/src/lib/common/images/builtinoperationicons/powerapps/microsoft365compliance.svg",
+          "hash": "18096424898773100452"
+        },
+        {
+          "file": "libs/designer/src/lib/common/images/builtinoperationicons/powerapps/onedriveforbusiness.svg",
+          "hash": "8410319851745043818"
+        },
+        {
+          "file": "libs/designer/src/lib/common/images/builtinoperationicons/powerapps/powerbi.svg",
+          "hash": "4344707577102300882"
+        },
+        {
+          "file": "libs/designer/src/lib/common/images/builtinoperationicons/powerapps/powervirtualagents.svg",
+          "hash": "14973565284851361466"
+        },
+        {
+          "file": "libs/designer/src/lib/common/images/builtinoperationicons/powerapps/sharepoint.svg",
+          "hash": "6940736653966224597"
+        },
+        {
+          "file": "libs/designer/src/lib/common/images/builtinoperationicons/powerapps/teams.svg",
+          "hash": "10913390805409066774"
+        },
+        {
+          "file": "libs/designer/src/lib/common/images/builtinoperationicons/query.svg",
+          "hash": "18310566090601123291"
+        },
+        {
+          "file": "libs/designer/src/lib/common/images/builtinoperationicons/recurrence.svg",
+          "hash": "4211895255849396300"
+        },
+        {
+          "file": "libs/designer/src/lib/common/images/builtinoperationicons/response.svg",
+          "hash": "15249336994675481"
+        },
+        {
+          "file": "libs/designer/src/lib/common/images/builtinoperationicons/schedule.svg",
+          "hash": "6229273879523350518"
+        },
+        {
+          "file": "libs/designer/src/lib/common/images/builtinoperationicons/scope.svg",
+          "hash": "14552059136095416702"
+        },
+        {
+          "file": "libs/designer/src/lib/common/images/builtinoperationicons/switch.svg",
+          "hash": "8321402279766452771"
+        },
+        {
+          "file": "libs/designer/src/lib/common/images/builtinoperationicons/terminate.svg",
+          "hash": "14144206237714493160"
+        },
+        {
+          "file": "libs/designer/src/lib/common/images/builtinoperationicons/until.svg",
+          "hash": "546764277464022095"
+        },
+        {
+          "file": "libs/designer/src/lib/common/images/builtinoperationicons/variable.svg",
+          "hash": "15076765899186592786"
+        },
+        {
+          "file": "libs/designer/src/lib/common/images/builtinoperationicons/wait.svg",
+          "hash": "3692508794323306407"
+        },
+        {
+          "file": "libs/designer/src/lib/common/images/builtinoperationicons/wait_until.svg",
+          "hash": "1731479113183843607"
+        },
+        {
+          "file": "libs/designer/src/lib/common/images/builtinoperationicons/webhook.svg",
+          "hash": "4173490804496111343"
+        },
+        {
+          "file": "libs/designer/src/lib/common/images/builtinoperationicons/workflow.svg",
+          "hash": "11873669256365835624"
+        },
+        {
+          "file": "libs/designer/src/lib/common/images/builtinoperationicons/workflowparameter.svg",
+          "hash": "11139441907313241224"
+        },
+        {
+          "file": "libs/designer/src/lib/common/images/buttonparametertypes/button_parameter_boolean_type.svg",
+          "hash": "3241487867540139826"
+        },
+        {
+          "file": "libs/designer/src/lib/common/images/buttonparametertypes/button_parameter_date_type.svg",
+          "hash": "7715913989452853316"
+        },
+        {
+          "file": "libs/designer/src/lib/common/images/buttonparametertypes/button_parameter_email_type.svg",
+          "hash": "13582317555878671565"
+        },
+        {
+          "file": "libs/designer/src/lib/common/images/buttonparametertypes/button_parameter_file_type.svg",
+          "hash": "4977325050658584568"
+        },
+        {
+          "file": "libs/designer/src/lib/common/images/buttonparametertypes/button_parameter_number_type.svg",
+          "hash": "1045431280059616257"
+        },
+        {
+          "file": "libs/designer/src/lib/common/images/buttonparametertypes/button_parameter_text_type.svg",
+          "hash": "16640363275658842913"
+        },
+        {
+          "file": "libs/designer/src/lib/common/images/card/delete.svg",
+          "hash": "15675230980148461553"
+        },
+        {
+          "file": "libs/designer/src/lib/common/images/card/input_selection.svg",
+          "hash": "6874565955253727212"
+        },
+        {
+          "file": "libs/designer/src/lib/common/images/card/optional_field.svg",
+          "hash": "13884780002161969050"
+        },
+        {
+          "file": "libs/designer/src/lib/common/images/codeviewbutton/Embed.svg",
+          "hash": "11872211244220681036"
+        },
+        {
+          "file": "libs/designer/src/lib/common/images/delete.svg",
+          "hash": "2369920463731912593"
+        },
+        {
+          "file": "libs/designer/src/lib/common/images/gateway/add.svg",
+          "hash": "11819585580235095669"
+        },
+        {
+          "file": "libs/designer/src/lib/common/images/gateway/help.svg",
+          "hash": "12599303004882720277"
+        },
+        {
+          "file": "libs/designer/src/lib/common/images/gateway/remote_application.svg",
+          "hash": "6435518280858083886"
+        },
+        {
+          "file": "libs/designer/src/lib/common/images/gateway/virtual_network.svg",
+          "hash": "12997387777000294056"
+        },
+        {
+          "file": "libs/designer/src/lib/common/images/operationtypes/appservices.svg",
+          "hash": "7939169194091714776"
+        },
+        {
+          "file": "libs/designer/src/lib/common/images/operationtypes/flow.svg",
+          "hash": "16280757524503959992"
+        },
+        {
+          "file": "libs/designer/src/lib/common/images/operationtypes/it.svg",
+          "hash": "18333062729648676215"
+        },
+        {
+          "file": "libs/designer/src/lib/common/images/operationtypes/microsoft.svg",
+          "hash": "17826554870116185216"
+        },
+        {
+          "file": "libs/designer/src/lib/common/images/pencil.svg",
+          "hash": "4552542774403200136"
+        },
+        {
+          "file": "libs/designer/src/lib/common/images/recommendation/choose-an-action.svg",
+          "hash": "7905571557546338691"
+        },
+        {
+          "file": "libs/designer/src/lib/common/images/recommendation/defaulticon.svg",
+          "hash": "5071015496602458535"
+        },
+        {
+          "file": "libs/designer/src/lib/common/images/selector/check_mark_blue.svg",
+          "hash": "11632821499690045898"
+        },
+        {
+          "file": "libs/designer/src/lib/common/images/status_error.svg",
+          "hash": "7327477685402663444"
+        },
+        {
+          "file": "libs/designer/src/lib/common/images/status_success.svg",
+          "hash": "16589415129232216666"
+        },
+        {
+          "file": "libs/designer/src/lib/common/images/tokenpicker/fx.svg",
+          "hash": "8952058323183937865"
+        },
+        {
+          "file": "libs/designer/src/lib/common/images/website/api.svg",
+          "hash": "16095509088326340538"
+        },
+        {
+          "file": "libs/designer/src/lib/common/images/website/apim.svg",
+          "hash": "15873815965442020768"
+        },
+        {
+          "file": "libs/designer/src/lib/common/images/website/apim_white.svg",
+          "hash": "14020416160783112768"
+        },
+        {
+          "file": "libs/designer/src/lib/common/images/website/create.svg",
+          "hash": "16033491393116457661"
+        },
+        {
+          "file": "libs/designer/src/lib/common/images/website/foreach.svg",
+          "hash": "3719190676549030233"
+        },
+        {
+          "file": "libs/designer/src/lib/common/images/website/function.svg",
+          "hash": "12552781765647401474"
+        },
+        {
+          "file": "libs/designer/src/lib/common/models/workflow.ts",
+          "hash": "11724936275981787758"
+        },
+        {
+          "file": "libs/designer/src/lib/common/utilities/Utils.ts",
+          "hash": "2333252227487981555"
+        },
+        {
+          "file": "libs/designer/src/lib/common/utilities/error.ts",
+          "hash": "14761866046570043475"
+        },
+        {
+          "file": "libs/designer/src/lib/core/BJSWorkflowProvider.tsx",
+          "hash": "10226240319907572020"
+        },
+        {
+          "file": "libs/designer/src/lib/core/DesignerProvider.tsx",
+          "hash": "8865415753051342650"
+        },
+        {
+          "file": "libs/designer/src/lib/core/ProviderWrappedContext.ts",
+          "hash": "1133788957422173169"
+        },
+        {
+          "file": "libs/designer/src/lib/core/ReactQueryProvider.tsx",
+          "hash": "13021850733178929057"
+        },
+        {
+          "file": "libs/designer/src/lib/core/actions/bjsworkflow/__test__/connections.spec.ts",
+          "hash": "10976178124567025188"
+        },
+        {
+          "file": "libs/designer/src/lib/core/actions/bjsworkflow/__test__/initialize.mocks.ts",
+          "hash": "8007408756114040866"
+        },
+        {
+          "file": "libs/designer/src/lib/core/actions/bjsworkflow/__test__/initialize.spec.ts",
+          "hash": "12793128001647914730"
+        },
+        {
+          "file": "libs/designer/src/lib/core/actions/bjsworkflow/__test__/serializer.spec.ts",
+          "hash": "9408756046827245410"
+        },
+        {
+          "file": "libs/designer/src/lib/core/actions/bjsworkflow/add.ts",
+          "hash": "1145445308673345143"
+        },
+        {
+          "file": "libs/designer/src/lib/core/actions/bjsworkflow/connections.ts",
+          "hash": "8714067957965973862"
+        },
+        {
+          "file": "libs/designer/src/lib/core/actions/bjsworkflow/copypaste.ts",
+          "hash": "377035099592140993"
+        },
+        {
+          "file": "libs/designer/src/lib/core/actions/bjsworkflow/delete.ts",
+          "hash": "2640821823957837771"
+        },
+        {
+          "file": "libs/designer/src/lib/core/actions/bjsworkflow/initialize.ts",
+          "hash": "4883489638704343677"
+        },
+        {
+          "file": "libs/designer/src/lib/core/actions/bjsworkflow/move.ts",
+          "hash": "1063338721262391862"
+        },
+        {
+          "file": "libs/designer/src/lib/core/actions/bjsworkflow/operationdeserializer.ts",
+          "hash": "13051148389008776707"
+        },
+        {
+          "file": "libs/designer/src/lib/core/actions/bjsworkflow/runafter.ts",
+          "hash": "16166965666592256044"
+        },
+        {
+          "file": "libs/designer/src/lib/core/actions/bjsworkflow/serializer.ts",
+          "hash": "7644883283632193272"
+        },
+        {
+          "file": "libs/designer/src/lib/core/actions/bjsworkflow/settings.ts",
+          "hash": "3268658162048948497"
+        },
+        {
+          "file": "libs/designer/src/lib/core/actions/bjsworkflow/staticresults.ts",
+          "hash": "12938819441932090008"
+        },
+        {
+          "file": "libs/designer/src/lib/core/graphlayout/__test__/__snapshots__/elklayout.spec.ts.snap",
+          "hash": "18391939971202172617"
+        },
+        {
+          "file": "libs/designer/src/lib/core/graphlayout/__test__/elklayout.spec.ts",
+          "hash": "5135976908480724598"
+        },
+        {
+          "file": "libs/designer/src/lib/core/graphlayout/elklayout.ts",
+          "hash": "6555520085152754544"
+        },
+        {
+          "file": "libs/designer/src/lib/core/graphlayout/index.ts",
+          "hash": "1183230721606983661"
+        },
+        {
+          "file": "libs/designer/src/lib/core/index.ts",
+          "hash": "17021345483470396631"
+        },
+        {
+          "file": "libs/designer/src/lib/core/parsers/BJSWorkflow/BJSDeserializer.ts",
+          "hash": "5690913620690077130"
+        },
+        {
+          "file": "libs/designer/src/lib/core/parsers/BJSWorkflow/__test__/BJSDeserializer.spec.ts",
+          "hash": "14509662786295405295"
+        },
+        {
+          "file": "libs/designer/src/lib/core/parsers/BJSWorkflow/__test__/scopedWorkflowDefinition.ts",
+          "hash": "6387737565995930308"
+        },
+        {
+          "file": "libs/designer/src/lib/core/parsers/BJSWorkflow/__test__/simpleWorkflowDefinition.ts",
+          "hash": "18344987115654458228"
+        },
+        {
+          "file": "libs/designer/src/lib/core/parsers/ParseReduxAction.ts",
+          "hash": "14964928502892749345"
+        },
+        {
+          "file": "libs/designer/src/lib/core/parsers/__test__/editWorkflow.spec.ts",
+          "hash": "14646033592987575031"
+        },
+        {
+          "file": "libs/designer/src/lib/core/parsers/__test__/mocks/workflowMock.ts",
+          "hash": "17520637296625214501"
+        },
+        {
+          "file": "libs/designer/src/lib/core/parsers/__test__/respectExistingWorkflowDimensions.spec.ts",
+          "hash": "16515897955999880047"
+        },
+        {
+          "file": "libs/designer/src/lib/core/parsers/addNodeToWorkflow.ts",
+          "hash": "8489461695139161622"
+        },
+        {
+          "file": "libs/designer/src/lib/core/parsers/deleteNodeFromWorkflow.ts",
+          "hash": "11556548277387433966"
+        },
+        {
+          "file": "libs/designer/src/lib/core/parsers/models/workflowNode.ts",
+          "hash": "1566269831108361105"
+        },
+        {
+          "file": "libs/designer/src/lib/core/parsers/moveNodeInWorkflow.ts",
+          "hash": "13854397699622059247"
+        },
+        {
+          "file": "libs/designer/src/lib/core/parsers/restructuringHelpers.ts",
+          "hash": "7091192159636622669"
+        },
+        {
+          "file": "libs/designer/src/lib/core/queries/browse.ts",
+          "hash": "15277260528629014649"
+        },
+        {
+          "file": "libs/designer/src/lib/core/queries/connections.ts",
+          "hash": "1501738903167968950"
+        },
+        {
+          "file": "libs/designer/src/lib/core/queries/connector.ts",
+          "hash": "10042584932448483913"
+        },
+        {
+          "file": "libs/designer/src/lib/core/queries/operation.ts",
+          "hash": "18070523527133930267"
+        },
+        {
+          "file": "libs/designer/src/lib/core/state/__test__/connectionSlice.spec.ts",
+          "hash": "11873332201419444196"
+        },
+        {
+          "file": "libs/designer/src/lib/core/state/__test__/workflowSlice.spec.ts",
+          "hash": "944283261874392963"
+        },
+        {
+          "file": "libs/designer/src/lib/core/state/connection/connectionSelector.ts",
+          "hash": "14043559070256094030"
+        },
+        {
+          "file": "libs/designer/src/lib/core/state/connection/connectionSlice.ts",
+          "hash": "17661438812224560039"
+        },
+        {
+          "file": "libs/designer/src/lib/core/state/designerOptions/designerOptionsInterfaces.ts",
+          "hash": "552151791694841859"
+        },
+        {
+          "file": "libs/designer/src/lib/core/state/designerOptions/designerOptionsSelectors.ts",
+          "hash": "5709160121732674319"
+        },
+        {
+          "file": "libs/designer/src/lib/core/state/designerOptions/designerOptionsSlice.ts",
+          "hash": "11880532030602689040"
+        },
+        {
+          "file": "libs/designer/src/lib/core/state/designerView/designerViewInterfaces.ts",
+          "hash": "15539125750855046238"
+        },
+        {
+          "file": "libs/designer/src/lib/core/state/designerView/designerViewSelectors.ts",
+          "hash": "17496610770440064597"
+        },
+        {
+          "file": "libs/designer/src/lib/core/state/designerView/designerViewSlice.ts",
+          "hash": "12399207044214169579"
+        },
+        {
+          "file": "libs/designer/src/lib/core/state/global.ts",
+          "hash": "2467378088186721273"
+        },
+        {
+          "file": "libs/designer/src/lib/core/state/operation/operationMetadataSlice.ts",
+          "hash": "7160406653392297178"
+        },
+        {
+          "file": "libs/designer/src/lib/core/state/operation/operationSelector.ts",
+          "hash": "13231490325898643987"
+        },
+        {
+          "file": "libs/designer/src/lib/core/state/panel/panelInterfaces.ts",
+          "hash": "580443950008935701"
+        },
+        {
+          "file": "libs/designer/src/lib/core/state/panel/panelSelectors.ts",
+          "hash": "11619174720328207349"
+        },
+        {
+          "file": "libs/designer/src/lib/core/state/panel/panelSlice.ts",
+          "hash": "12360836867786652472"
+        },
+        {
+          "file": "libs/designer/src/lib/core/state/selectors/__test__/actionMetadataSelector.spec.ts",
+          "hash": "17837734844866824533"
+        },
+        {
+          "file": "libs/designer/src/lib/core/state/selectors/actionMetadataSelector.ts",
+          "hash": "3597817075648231871"
+        },
+        {
+          "file": "libs/designer/src/lib/core/state/setting/settingInterface.ts",
+          "hash": "8221487224681813587"
+        },
+        {
+          "file": "libs/designer/src/lib/core/state/setting/settingSelector.ts",
+          "hash": "13672923006305683744"
+        },
+        {
+          "file": "libs/designer/src/lib/core/state/setting/settingSlice.ts",
+          "hash": "3869560885023421381"
+        },
+        {
+          "file": "libs/designer/src/lib/core/state/staticresultschema/staitcresultsSelector.ts",
+          "hash": "7513105324012396408"
+        },
+        {
+          "file": "libs/designer/src/lib/core/state/staticresultschema/staticresultsSlice.ts",
+          "hash": "15674134190940167340"
+        },
+        {
+          "file": "libs/designer/src/lib/core/state/tokens/tokenSelectors.ts",
+          "hash": "4534305780862072392"
+        },
+        {
+          "file": "libs/designer/src/lib/core/state/tokens/tokensSlice.ts",
+          "hash": "4540330469149645148"
+        },
+        {
+          "file": "libs/designer/src/lib/core/state/workflow/workflowInterfaces.ts",
+          "hash": "297492272351660565"
+        },
+        {
+          "file": "libs/designer/src/lib/core/state/workflow/workflowSelectors.ts",
+          "hash": "6447767112269051024"
+        },
+        {
+          "file": "libs/designer/src/lib/core/state/workflow/workflowSlice.ts",
+          "hash": "21027795098134668"
+        },
+        {
+          "file": "libs/designer/src/lib/core/state/workflowparameters/workflowparametersSlice.ts",
+          "hash": "10627578442358036420"
+        },
+        {
+          "file": "libs/designer/src/lib/core/state/workflowparameters/workflowparametersselector.ts",
+          "hash": "3377780393722064446"
+        },
+        {
+          "file": "libs/designer/src/lib/core/store.ts",
+          "hash": "7675307851224561844"
+        },
+        {
+          "file": "libs/designer/src/lib/core/utils/__test__/graph.spec.ts",
+          "hash": "10932912534190676887"
+        },
+        {
+          "file": "libs/designer/src/lib/core/utils/__test__/outputs.spec.ts",
+          "hash": "10477834709138765316"
+        },
+        {
+          "file": "libs/designer/src/lib/core/utils/__test__/tokens.spec.ts",
+          "hash": "6400741599488247828"
+        },
+        {
+          "file": "libs/designer/src/lib/core/utils/card.ts",
+          "hash": "17388048148998821366"
+        },
+        {
+          "file": "libs/designer/src/lib/core/utils/connectors/connections.ts",
+          "hash": "14380782528292918805"
+        },
+        {
+          "file": "libs/designer/src/lib/core/utils/graph.ts",
+          "hash": "9113893809945541281"
+        },
+        {
+          "file": "libs/designer/src/lib/core/utils/loops.ts",
+          "hash": "17832329493412946298"
+        },
+        {
+          "file": "libs/designer/src/lib/core/utils/openapi/__test__/schema.test.ts",
+          "hash": "1420254453350497458"
+        },
+        {
+          "file": "libs/designer/src/lib/core/utils/openapi/schema.ts",
+          "hash": "842207519268466443"
+        },
+        {
+          "file": "libs/designer/src/lib/core/utils/outputs.ts",
+          "hash": "2523378346613014879"
+        },
+        {
+          "file": "libs/designer/src/lib/core/utils/parameters/__test__/casting.spec.ts",
+          "hash": "3643994527394489617"
+        },
+        {
+          "file": "libs/designer/src/lib/core/utils/parameters/__test__/helper.spec.ts",
+          "hash": "2422344699678475886"
+        },
+        {
+          "file": "libs/designer/src/lib/core/utils/parameters/__test__/jsonsplitter.spec.ts",
+          "hash": "17504009570966731362"
+        },
+        {
+          "file": "libs/designer/src/lib/core/utils/parameters/__test__/segment.spec.ts",
+          "hash": "14679208978083456209"
+        },
+        {
+          "file": "libs/designer/src/lib/core/utils/parameters/__test__/tokensegment.spec.ts",
+          "hash": "9346212500047195690"
+        },
+        {
+          "file": "libs/designer/src/lib/core/utils/parameters/casting.ts",
+          "hash": "16944935834687261736"
+        },
+        {
+          "file": "libs/designer/src/lib/core/utils/parameters/dynamicdata.ts",
+          "hash": "5504094716509853138"
+        },
+        {
+          "file": "libs/designer/src/lib/core/utils/parameters/helper.ts",
+          "hash": "789795195726361469"
+        },
+        {
+          "file": "libs/designer/src/lib/core/utils/parameters/jsonsplitter.ts",
+          "hash": "1212164914387801521"
+        },
+        {
+          "file": "libs/designer/src/lib/core/utils/parameters/recurrence.ts",
+          "hash": "4584055025926510588"
+        },
+        {
+          "file": "libs/designer/src/lib/core/utils/parameters/segment.ts",
+          "hash": "17685281869497732131"
+        },
+        {
+          "file": "libs/designer/src/lib/core/utils/parameters/tokensegment.ts",
+          "hash": "17503616740995511873"
+        },
+        {
+          "file": "libs/designer/src/lib/core/utils/parameters/uncast.ts",
+          "hash": "5493345090301795523"
+        },
+        {
+          "file": "libs/designer/src/lib/core/utils/setting.ts",
+          "hash": "607724160972661514"
+        },
+        {
+          "file": "libs/designer/src/lib/core/utils/swagger/inputsbuilder.ts",
+          "hash": "300462517969513749"
+        },
+        {
+          "file": "libs/designer/src/lib/core/utils/swagger/operation.ts",
+          "hash": "710587862511662252"
+        },
+        {
+          "file": "libs/designer/src/lib/core/utils/tokens.ts",
+          "hash": "16598154144351001077"
+        },
+        {
+          "file": "libs/designer/src/lib/core/utils/validation.ts",
+          "hash": "3321415876925824657"
+        },
+        {
+          "file": "libs/designer/src/lib/core/utils/variables.ts",
+          "hash": "18113110944598796795"
+        },
+        {
+          "file": "libs/designer/src/lib/core/utils/workflow.ts",
+          "hash": "2503685323390352213"
+        },
+        {
+          "file": "libs/designer/src/lib/index.tsx",
+          "hash": "3108540739134237574"
+        },
+        {
+          "file": "libs/designer/src/lib/typings.d.ts",
+          "hash": "8667080681692980982"
+        },
+        {
+          "file": "libs/designer/src/lib/ui/Controls.tsx",
+          "hash": "11679666175589395115"
+        },
+        {
+          "file": "libs/designer/src/lib/ui/CustomNodes/GraphContainerNode.tsx",
+          "hash": "18335299629456245936"
+        },
+        {
+          "file": "libs/designer/src/lib/ui/CustomNodes/HiddenNode.tsx",
+          "hash": "8683562698326398762"
+        },
+        {
+          "file": "libs/designer/src/lib/ui/CustomNodes/OperationCardNode.tsx",
+          "hash": "6973870354555514502"
+        },
+        {
+          "file": "libs/designer/src/lib/ui/CustomNodes/PlaceholderNode.tsx",
+          "hash": "2623692442355217780"
+        },
+        {
+          "file": "libs/designer/src/lib/ui/CustomNodes/ScopeCardNode.tsx",
+          "hash": "17275763272438441218"
+        },
+        {
+          "file": "libs/designer/src/lib/ui/CustomNodes/SubgraphCardNode.tsx",
+          "hash": "16798466643167652597"
+        },
+        {
+          "file": "libs/designer/src/lib/ui/Designer.tsx",
+          "hash": "16681715909651728710"
+        },
+        {
+          "file": "libs/designer/src/lib/ui/Minimap.tsx",
+          "hash": "16784302034175684453"
+        },
+        {
+          "file": "libs/designer/src/lib/ui/ThemeObservable.tsx",
+          "hash": "9589106174231375844"
+        },
+        {
+          "file": "libs/designer/src/lib/ui/common/DeleteModal/DeleteModal.tsx",
+          "hash": "3078414740510575754"
+        },
+        {
+          "file": "libs/designer/src/lib/ui/common/LoopsPager/LoopsPager.tsx",
+          "hash": "14069610435069570388"
+        },
+        {
+          "file": "libs/designer/src/lib/ui/common/LoopsPager/helper.ts",
+          "hash": "2917805269573375288"
+        },
+        {
+          "file": "libs/designer/src/lib/ui/connections/dropzone.tsx",
+          "hash": "3469127252427478749"
+        },
+        {
+          "file": "libs/designer/src/lib/ui/connections/dynamicsvgs/allowdroptarget.tsx",
+          "hash": "16424915556916750495"
+        },
+        {
+          "file": "libs/designer/src/lib/ui/connections/dynamicsvgs/arrowCap.tsx",
+          "hash": "2870378826580830856"
+        },
+        {
+          "file": "libs/designer/src/lib/ui/connections/dynamicsvgs/blockdroptarget.tsx",
+          "hash": "14597964550574862411"
+        },
+        {
+          "file": "libs/designer/src/lib/ui/connections/dynamicsvgs/gripper.tsx",
+          "hash": "17062398617519134809"
+        },
+        {
+          "file": "libs/designer/src/lib/ui/connections/dynamicsvgs/trafficlightsvgs.tsx",
+          "hash": "14795306292735185189"
+        },
+        {
+          "file": "libs/designer/src/lib/ui/connections/edge.tsx",
+          "hash": "5497512017299495007"
+        },
+        {
+          "file": "libs/designer/src/lib/ui/connections/edgeContextMenuSvgs/addBranchIcon.svg",
+          "hash": "18432693650012936880"
+        },
+        {
+          "file": "libs/designer/src/lib/ui/connections/edgeContextMenuSvgs/addNodeIcon.svg",
+          "hash": "5555780360896210685"
+        },
+        {
+          "file": "libs/designer/src/lib/ui/connections/hiddenEdge.tsx",
+          "hash": "13807895509711892964"
+        },
+        {
+          "file": "libs/designer/src/lib/ui/connections/onlyEdge.tsx",
+          "hash": "7876264136480687494"
+        },
+        {
+          "file": "libs/designer/src/lib/ui/connections/runAfterIndicator/index.tsx",
+          "hash": "2408849985874822150"
+        },
+        {
+          "file": "libs/designer/src/lib/ui/connections/runAfterIndicator/styles.less",
+          "hash": "4860151930479659861"
+        },
+        {
+          "file": "libs/designer/src/lib/ui/index.tsx",
+          "hash": "16341670098352328808"
+        },
+        {
+          "file": "libs/designer/src/lib/ui/less/logicapps/variables.less",
+          "hash": "11764721752232747899"
+        },
+        {
+          "file": "libs/designer/src/lib/ui/less/processsimple/variables.less",
+          "hash": "18054694947746552645"
+        },
+        {
+          "file": "libs/designer/src/lib/ui/logicapps.less",
+          "hash": "8806087804226244251"
+        },
+        {
+          "file": "libs/designer/src/lib/ui/menuItems/commentMenuItem.tsx",
+          "hash": "17569954728099794023"
+        },
+        {
+          "file": "libs/designer/src/lib/ui/menuItems/copyMenuItem.tsx",
+          "hash": "583479515840133304"
+        },
+        {
+          "file": "libs/designer/src/lib/ui/menuItems/deleteMenuItem.tsx",
+          "hash": "12873127522514834077"
+        },
+        {
+          "file": "libs/designer/src/lib/ui/menuItems/index.tsx",
+          "hash": "17248340653302800129"
+        },
+        {
+          "file": "libs/designer/src/lib/ui/menuItems/resubmitMenuItem.tsx",
+          "hash": "11451946634355722234"
+        },
+        {
+          "file": "libs/designer/src/lib/ui/panel/connectionsPanel/actionList/actionList.tsx",
+          "hash": "8808436492128491535"
+        },
+        {
+          "file": "libs/designer/src/lib/ui/panel/connectionsPanel/actionList/connectionActionHeader.tsx",
+          "hash": "11188019418177543078"
+        },
+        {
+          "file": "libs/designer/src/lib/ui/panel/connectionsPanel/allConnections/allConnections.less",
+          "hash": "10622257218635018165"
+        },
+        {
+          "file": "libs/designer/src/lib/ui/panel/connectionsPanel/allConnections/allConnections.tsx",
+          "hash": "14381813606682941152"
+        },
+        {
+          "file": "libs/designer/src/lib/ui/panel/connectionsPanel/allConnections/connectionEntry.tsx",
+          "hash": "14863904385332766059"
+        },
+        {
+          "file": "libs/designer/src/lib/ui/panel/connectionsPanel/allConnections/connectorConnectionsCard.tsx",
+          "hash": "105776725888969737"
+        },
+        {
+          "file": "libs/designer/src/lib/ui/panel/connectionsPanel/allConnections/nodeLinkButton.tsx",
+          "hash": "3486053682563706186"
+        },
+        {
+          "file": "libs/designer/src/lib/ui/panel/connectionsPanel/connectionsPanel.less",
+          "hash": "4295986676874411230"
+        },
+        {
+          "file": "libs/designer/src/lib/ui/panel/connectionsPanel/connectionsPanel.tsx",
+          "hash": "5044350433743159771"
+        },
+        {
+          "file": "libs/designer/src/lib/ui/panel/connectionsPanel/createConnection/_test__/connectionParameterRow.spec.tsx",
+          "hash": "17190185412675906484"
+        },
+        {
+          "file": "libs/designer/src/lib/ui/panel/connectionsPanel/createConnection/_test__/createConnection.spec.tsx",
+          "hash": "413683764976891703"
+        },
+        {
+          "file": "libs/designer/src/lib/ui/panel/connectionsPanel/createConnection/_test__/createConnectionWrapper.spec.tsx",
+          "hash": "2896450508867033368"
+        },
+        {
+          "file": "libs/designer/src/lib/ui/panel/connectionsPanel/createConnection/connectionParameterRow.tsx",
+          "hash": "8866623228316007595"
+        },
+        {
+          "file": "libs/designer/src/lib/ui/panel/connectionsPanel/createConnection/createConnection.less",
+          "hash": "17888799308169784633"
+        },
+        {
+          "file": "libs/designer/src/lib/ui/panel/connectionsPanel/createConnection/createConnection.tsx",
+          "hash": "3217802139905584148"
+        },
+        {
+          "file": "libs/designer/src/lib/ui/panel/connectionsPanel/createConnection/createConnectionWrapper.tsx",
+          "hash": "962585077833873680"
+        },
+        {
+          "file": "libs/designer/src/lib/ui/panel/connectionsPanel/createConnection/formInputs/connectionMultiAuth.tsx",
+          "hash": "2345600340639460118"
+        },
+        {
+          "file": "libs/designer/src/lib/ui/panel/connectionsPanel/createConnection/formInputs/connectionNameInput.tsx",
+          "hash": "6438581048872326276"
+        },
+        {
+          "file": "libs/designer/src/lib/ui/panel/connectionsPanel/createConnection/formInputs/gatewayPicker.tsx",
+          "hash": "4636028013835727768"
+        },
+        {
+          "file": "libs/designer/src/lib/ui/panel/connectionsPanel/createConnection/formInputs/legacyGatewayCheckbox.tsx",
+          "hash": "14888900866274310223"
+        },
+        {
+          "file": "libs/designer/src/lib/ui/panel/connectionsPanel/createConnection/formInputs/legacyManagedIdentityPicker.tsx",
+          "hash": "4040358874212544513"
+        },
+        {
+          "file": "libs/designer/src/lib/ui/panel/connectionsPanel/createConnection/formInputs/legacyMultiAuth.tsx",
+          "hash": "15708146643216275913"
+        },
+        {
+          "file": "libs/designer/src/lib/ui/panel/connectionsPanel/createConnection/formInputs/universalConnectionParameter.tsx",
+          "hash": "18064072806053472795"
+        },
+        {
+          "file": "libs/designer/src/lib/ui/panel/connectionsPanel/createConnection/iFrameTOS.tsx",
+          "hash": "813895254218562259"
+        },
+        {
+          "file": "libs/designer/src/lib/ui/panel/connectionsPanel/selectConnection/connectionTable.tsx",
+          "hash": "16620206185148038430"
+        },
+        {
+          "file": "libs/designer/src/lib/ui/panel/connectionsPanel/selectConnection/selectConnection.less",
+          "hash": "5385478426844583686"
+        },
+        {
+          "file": "libs/designer/src/lib/ui/panel/connectionsPanel/selectConnection/selectConnection.tsx",
+          "hash": "17955152684217995627"
+        },
+        {
+          "file": "libs/designer/src/lib/ui/panel/errorsPanel/errorCategory.tsx",
+          "hash": "8096213501021087139"
+        },
+        {
+          "file": "libs/designer/src/lib/ui/panel/errorsPanel/errorsPanel.tsx",
+          "hash": "6954364116161516939"
+        },
+        {
+          "file": "libs/designer/src/lib/ui/panel/errorsPanel/nodeErrors.tsx",
+          "hash": "2774370202590136493"
+        },
+        {
+          "file": "libs/designer/src/lib/ui/panel/errorsPanel/tabs/errorsTab.hooks.ts",
+          "hash": "2990072573754773610"
+        },
+        {
+          "file": "libs/designer/src/lib/ui/panel/errorsPanel/tabs/errorsTab.tsx",
+          "hash": "16009164000053936481"
+        },
+        {
+          "file": "libs/designer/src/lib/ui/panel/errorsPanel/tabs/warningsTab.hooks.ts",
+          "hash": "12787968918952964503"
+        },
+        {
+          "file": "libs/designer/src/lib/ui/panel/errorsPanel/tabs/warningsTab.tsx",
+          "hash": "7320427274234546201"
+        },
+        {
+          "file": "libs/designer/src/lib/ui/panel/errorsPanel/workflowParameterErrors.tsx",
+          "hash": "1017935854018236971"
+        },
+        {
+          "file": "libs/designer/src/lib/ui/panel/index.tsx",
+          "hash": "8931413980282435903"
+        },
+        {
+          "file": "libs/designer/src/lib/ui/panel/nodeDetailsPanel/nodeDetailsPanel.tsx",
+          "hash": "691362796351085760"
+        },
+        {
+          "file": "libs/designer/src/lib/ui/panel/nodeDetailsPanel/tabs/aboutTab.tsx",
+          "hash": "1761891437078855966"
+        },
+        {
+          "file": "libs/designer/src/lib/ui/panel/nodeDetailsPanel/tabs/codeViewTab.tsx",
+          "hash": "1057924626207991961"
+        },
+        {
+          "file": "libs/designer/src/lib/ui/panel/nodeDetailsPanel/tabs/monitoringTab/inputsPanel.tsx",
+          "hash": "6280253552466033403"
+        },
+        {
+          "file": "libs/designer/src/lib/ui/panel/nodeDetailsPanel/tabs/monitoringTab/monitoringTab.tsx",
+          "hash": "8768239693411150392"
+        },
+        {
+          "file": "libs/designer/src/lib/ui/panel/nodeDetailsPanel/tabs/monitoringTab/outputsPanel.tsx",
+          "hash": "7891578013616621917"
+        },
+        {
+          "file": "libs/designer/src/lib/ui/panel/nodeDetailsPanel/tabs/monitoringTab/propertiesPanel.tsx",
+          "hash": "6936908943603154102"
+        },
+        {
+          "file": "libs/designer/src/lib/ui/panel/nodeDetailsPanel/tabs/parametersTab/__test__/getEditorAndOptions.spec.ts",
+          "hash": "438510564774690503"
+        },
+        {
+          "file": "libs/designer/src/lib/ui/panel/nodeDetailsPanel/tabs/parametersTab/connectionDisplay.tsx",
+          "hash": "16798406127854826620"
+        },
+        {
+          "file": "libs/designer/src/lib/ui/panel/nodeDetailsPanel/tabs/parametersTab/identityselector.tsx",
+          "hash": "3595348225477585500"
+        },
+        {
+          "file": "libs/designer/src/lib/ui/panel/nodeDetailsPanel/tabs/parametersTab/index.tsx",
+          "hash": "11057896419932325694"
+        },
+        {
+          "file": "libs/designer/src/lib/ui/panel/nodeDetailsPanel/tabs/requestTab.tsx",
+          "hash": "4104206428172572624"
+        },
+        {
+          "file": "libs/designer/src/lib/ui/panel/nodeDetailsPanel/tabs/retryTab.tsx",
+          "hash": "6547505579084266234"
+        },
+        {
+          "file": "libs/designer/src/lib/ui/panel/nodeDetailsPanel/tabs/scratchTab.tsx",
+          "hash": "6573526002733579255"
+        },
+        {
+          "file": "libs/designer/src/lib/ui/panel/nodeDetailsPanel/tabs/settingsTab.tsx",
+          "hash": "2589613772379687118"
+        },
+        {
+          "file": "libs/designer/src/lib/ui/panel/nodeDetailsPanel/tabs/testingTab/index.tsx",
+          "hash": "5973638345373933302"
+        },
+        {
+          "file": "libs/designer/src/lib/ui/panel/nodeDetailsPanel/usePanelTabs.tsx",
+          "hash": "15042347812954300106"
+        },
+        {
+          "file": "libs/designer/src/lib/ui/panel/nodeSearchPanel/nodeSearchPanel.tsx",
+          "hash": "6338890337184233730"
+        },
+        {
+          "file": "libs/designer/src/lib/ui/panel/panelRoot.tsx",
+          "hash": "12332136203110463175"
+        },
+        {
+          "file": "libs/designer/src/lib/ui/panel/recommendation/azureResourceSelection.tsx",
+          "hash": "14199280944066488263"
+        },
+        {
+          "file": "libs/designer/src/lib/ui/panel/recommendation/browseView.tsx",
+          "hash": "2615756064988394528"
+        },
+        {
+          "file": "libs/designer/src/lib/ui/panel/recommendation/customSwaggerSelection.tsx",
+          "hash": "17548951851137442209"
+        },
+        {
+          "file": "libs/designer/src/lib/ui/panel/recommendation/operationGroupDetailView.tsx",
+          "hash": "13695075695640031897"
+        },
+        {
+          "file": "libs/designer/src/lib/ui/panel/recommendation/recommendationPanelContext.tsx",
+          "hash": "5633104287798836216"
+        },
+        {
+          "file": "libs/designer/src/lib/ui/panel/recommendation/searchView.tsx",
+          "hash": "18046537988904659224"
+        },
+        {
+          "file": "libs/designer/src/lib/ui/panel/workflowParametersPanel/workflowParametersPanel.tsx",
+          "hash": "1871737709038769946"
+        },
+        {
+          "file": "libs/designer/src/lib/ui/panel/workflowParametersPanel/workflowParametersPanelFooter.tsx",
+          "hash": "6979096270862588135"
+        },
+        {
+          "file": "libs/designer/src/lib/ui/settings/__tests__/__snapshots__/settingsection.spec.tsx.snap",
+          "hash": "970334209122746164"
+        },
+        {
+          "file": "libs/designer/src/lib/ui/settings/__tests__/settingsection.spec.tsx",
+          "hash": "9667005076024681736"
+        },
+        {
+          "file": "libs/designer/src/lib/ui/settings/index.tsx",
+          "hash": "14559726202240722620"
+        },
+        {
+          "file": "libs/designer/src/lib/ui/settings/sections/datahandling.tsx",
+          "hash": "4578759189608616930"
+        },
+        {
+          "file": "libs/designer/src/lib/ui/settings/sections/general.tsx",
+          "hash": "17737294470449076285"
+        },
+        {
+          "file": "libs/designer/src/lib/ui/settings/sections/networking.tsx",
+          "hash": "3442351415387182271"
+        },
+        {
+          "file": "libs/designer/src/lib/ui/settings/sections/runafter.tsx",
+          "hash": "15073803307628141748"
+        },
+        {
+          "file": "libs/designer/src/lib/ui/settings/sections/runafterconfiguration/index.tsx",
+          "hash": "13259211909852062902"
+        },
+        {
+          "file": "libs/designer/src/lib/ui/settings/sections/runafterconfiguration/runafterActionSelector.tsx",
+          "hash": "1121495998656744936"
+        },
+        {
+          "file": "libs/designer/src/lib/ui/settings/sections/runafterconfiguration/runafteractiondetails.tsx",
+          "hash": "1034166355859418220"
+        },
+        {
+          "file": "libs/designer/src/lib/ui/settings/sections/runafterconfiguration/runafteractionstatuses.tsx",
+          "hash": "305675838625215663"
+        },
+        {
+          "file": "libs/designer/src/lib/ui/settings/sections/runafterconfiguration/runafterconfiguration.less",
+          "hash": "1949585750942351876"
+        },
+        {
+          "file": "libs/designer/src/lib/ui/settings/sections/runafterconfiguration/runaftertrafficlights.tsx",
+          "hash": "4499489232140778372"
+        },
+        {
+          "file": "libs/designer/src/lib/ui/settings/sections/security.tsx",
+          "hash": "13293113667156220544"
+        },
+        {
+          "file": "libs/designer/src/lib/ui/settings/sections/tracking.tsx",
+          "hash": "9211118379886345968"
+        },
+        {
+          "file": "libs/designer/src/lib/ui/settings/settingsection.tsx",
+          "hash": "1426261106233320224"
+        },
+        {
+          "file": "libs/designer/src/lib/ui/settings/validation/errorbar.tsx",
+          "hash": "4817919565569896749"
+        },
+        {
+          "file": "libs/designer/src/lib/ui/settings/validation/validation.ts",
+          "hash": "14117197387047983705"
+        },
+        {
+          "file": "libs/designer/src/lib/ui/styles.less",
+          "hash": "8828323265444774935"
+        },
+        {
+          "file": "libs/designer/tsconfig.json",
+          "hash": "9903972631138361140"
+        },
+        {
+          "file": "libs/designer/tsup.config.ts",
+          "hash": "8336763382846384517"
         }
       ],
       "@microsoft/logic-apps-shared": [
@@ -6028,1603 +7628,6 @@
         {
           "file": "apps/vs-code-designer/tsconfig.spec.json",
           "hash": "9983375138734725293"
-        }
-      ],
-      "designer-standalone": [
-        {
-          "file": "apps/designer-standalone/.babelrc",
-          "hash": "7338834004944326044"
-        },
-        {
-          "file": "apps/designer-standalone/.browserslistrc",
-          "hash": "2888533144288818662"
-        },
-        {
-          "file": "apps/designer-standalone/.eslintrc.json",
-          "hash": "10075191527724852300"
-        },
-        {
-          "file": "apps/designer-standalone/jest.config.ts",
-          "hash": "5095600455584759097"
-        },
-        {
-          "file": "apps/designer-standalone/project.json",
-          "hash": "2186189716536309729"
-        },
-        {
-          "file": "apps/designer-standalone/src/app/AzureLogicAppsDesigner/DesignerCommandBar.tsx",
-          "hash": "3298017156622978060"
-        },
-        {
-          "file": "apps/designer-standalone/src/app/AzureLogicAppsDesigner/LogicAppSelectionSetting/AzureConsumptionLogicAppSelector.tsx",
-          "hash": "13505482435147628633"
-        },
-        {
-          "file": "apps/designer-standalone/src/app/AzureLogicAppsDesigner/LogicAppSelectionSetting/AzureStandardLogicAppSelector.tsx",
-          "hash": "9606761639132729551"
-        },
-        {
-          "file": "apps/designer-standalone/src/app/AzureLogicAppsDesigner/Models/Arm.ts",
-          "hash": "6979701506181809557"
-        },
-        {
-          "file": "apps/designer-standalone/src/app/AzureLogicAppsDesigner/Models/LogicAppAppTypes.ts",
-          "hash": "14118413145410608191"
-        },
-        {
-          "file": "apps/designer-standalone/src/app/AzureLogicAppsDesigner/Models/Workflow.ts",
-          "hash": "1588066658590448230"
-        },
-        {
-          "file": "apps/designer-standalone/src/app/AzureLogicAppsDesigner/Models/WorkflowApp.ts",
-          "hash": "11196696306113960606"
-        },
-        {
-          "file": "apps/designer-standalone/src/app/AzureLogicAppsDesigner/Models/WorkflowListTypes.ts",
-          "hash": "14682812772519432090"
-        },
-        {
-          "file": "apps/designer-standalone/src/app/AzureLogicAppsDesigner/Queries/FetchConsumptionApps.ts",
-          "hash": "4580548922855359394"
-        },
-        {
-          "file": "apps/designer-standalone/src/app/AzureLogicAppsDesigner/Queries/FetchStandardApps.ts",
-          "hash": "12895583927495006597"
-        },
-        {
-          "file": "apps/designer-standalone/src/app/AzureLogicAppsDesigner/Services/Artifact.ts",
-          "hash": "2755209554830887096"
-        },
-        {
-          "file": "apps/designer-standalone/src/app/AzureLogicAppsDesigner/Services/ChildWorkflow.ts",
-          "hash": "16951494746367962696"
-        },
-        {
-          "file": "apps/designer-standalone/src/app/AzureLogicAppsDesigner/Services/ConsumptionSerializationHelpers.ts",
-          "hash": "11922224593998776622"
-        },
-        {
-          "file": "apps/designer-standalone/src/app/AzureLogicAppsDesigner/Services/FileSystemConnectionCreationClient.ts",
-          "hash": "9092529694739284525"
-        },
-        {
-          "file": "apps/designer-standalone/src/app/AzureLogicAppsDesigner/Services/HttpClient.ts",
-          "hash": "14344615542145629436"
-        },
-        {
-          "file": "apps/designer-standalone/src/app/AzureLogicAppsDesigner/Services/OAuthService.ts",
-          "hash": "2732486466259074455"
-        },
-        {
-          "file": "apps/designer-standalone/src/app/AzureLogicAppsDesigner/Services/WorkflowAndArtifacts.tsx",
-          "hash": "17257936693118977812"
-        },
-        {
-          "file": "apps/designer-standalone/src/app/AzureLogicAppsDesigner/Utilities/ArmParser.ts",
-          "hash": "11766814904345254217"
-        },
-        {
-          "file": "apps/designer-standalone/src/app/AzureLogicAppsDesigner/Utilities/Workflow.ts",
-          "hash": "15343875879297750706"
-        },
-        {
-          "file": "apps/designer-standalone/src/app/AzureLogicAppsDesigner/Utilities/resourceUtilities.ts",
-          "hash": "4446661457006721606"
-        },
-        {
-          "file": "apps/designer-standalone/src/app/AzureLogicAppsDesigner/laDesigner.tsx",
-          "hash": "13092524529881537344"
-        },
-        {
-          "file": "apps/designer-standalone/src/app/AzureLogicAppsDesigner/laDesignerConsumption.tsx",
-          "hash": "7976663886408218270"
-        },
-        {
-          "file": "apps/designer-standalone/src/app/DesignerShell/designer.tsx",
-          "hash": "13293572578025384518"
-        },
-        {
-          "file": "apps/designer-standalone/src/app/LocalDesigner/LogicAppSelector/LogicAppSelector.tsx",
-          "hash": "8960093372869801569"
-        },
-        {
-          "file": "apps/designer-standalone/src/app/LocalDesigner/customConnectionParameterEditorService.tsx",
-          "hash": "17011074881319644796"
-        },
-        {
-          "file": "apps/designer-standalone/src/app/LocalDesigner/customEditorService.tsx",
-          "hash": "4734349067026517129"
-        },
-        {
-          "file": "apps/designer-standalone/src/app/LocalDesigner/httpClient.ts",
-          "hash": "11056877601318419241"
-        },
-        {
-          "file": "apps/designer-standalone/src/app/LocalDesigner/localDesigner.tsx",
-          "hash": "7960030919432291768"
-        },
-        {
-          "file": "apps/designer-standalone/src/app/LocalDesigner/pseudoCommandBar.less",
-          "hash": "4190195339052860475"
-        },
-        {
-          "file": "apps/designer-standalone/src/app/LocalDesigner/pseudoCommandBar.tsx",
-          "hash": "17311351490108510384"
-        },
-        {
-          "file": "apps/designer-standalone/src/app/SettingsSections/contextSettings.tsx",
-          "hash": "17876933317388473037"
-        },
-        {
-          "file": "apps/designer-standalone/src/app/SettingsSections/sourceSettings.tsx",
-          "hash": "11182070599256684242"
-        },
-        {
-          "file": "apps/designer-standalone/src/assets/.gitkeep",
-          "hash": "3244421341483603138"
-        },
-        {
-          "file": "apps/designer-standalone/src/components/LocalizationSettings.tsx",
-          "hash": "11358026391684952458"
-        },
-        {
-          "file": "apps/designer-standalone/src/components/settings_box.module.less",
-          "hash": "9808519016183858536"
-        },
-        {
-          "file": "apps/designer-standalone/src/components/settings_box.tsx",
-          "hash": "12099490358448849702"
-        },
-        {
-          "file": "apps/designer-standalone/src/components/themes.ts",
-          "hash": "10280533146008251816"
-        },
-        {
-          "file": "apps/designer-standalone/src/environments/environment.prod.ts",
-          "hash": "10220522844224226756"
-        },
-        {
-          "file": "apps/designer-standalone/src/environments/environment.ts",
-          "hash": "5920947766445218989"
-        },
-        {
-          "file": "apps/designer-standalone/src/favicon.ico",
-          "hash": "9303420814833116677"
-        },
-        {
-          "file": "apps/designer-standalone/src/index.html",
-          "hash": "706131400937913887"
-        },
-        {
-          "file": "apps/designer-standalone/src/main.tsx",
-          "hash": "6196242117816635624"
-        },
-        {
-          "file": "apps/designer-standalone/src/polyfills.ts",
-          "hash": "17041846422484582267"
-        },
-        {
-          "file": "apps/designer-standalone/src/state/connectionReferences.ts",
-          "hash": "3642930491684807465"
-        },
-        {
-          "file": "apps/designer-standalone/src/state/historyHelpers.ts",
-          "hash": "14898556878004432608"
-        },
-        {
-          "file": "apps/designer-standalone/src/state/store.ts",
-          "hash": "11326541673147537080"
-        },
-        {
-          "file": "apps/designer-standalone/src/state/workflowLoadingSelectors.ts",
-          "hash": "2817444802055692850"
-        },
-        {
-          "file": "apps/designer-standalone/src/state/workflowLoadingSlice.ts",
-          "hash": "14190318844766308247"
-        },
-        {
-          "file": "apps/designer-standalone/src/styles.less",
-          "hash": "17529353978711030180"
-        },
-        {
-          "file": "apps/designer-standalone/src/typings.d.ts",
-          "hash": "8667080681692980982"
-        },
-        {
-          "file": "apps/designer-standalone/tsconfig.app.json",
-          "hash": "9143020992508194197"
-        },
-        {
-          "file": "apps/designer-standalone/tsconfig.json",
-          "hash": "292688152284415530"
-        },
-        {
-          "file": "apps/designer-standalone/tsconfig.spec.json",
-          "hash": "420895369075964006"
-        }
-      ],
-      "@microsoft/logic-apps-designer": [
-        {
-          "file": "libs/designer/package.json",
-          "hash": "8694041123093540774",
-          "deps": [
-            "npm:@fluentui/azure-themes",
-            "npm:@fluentui/react",
-            "npm:@fluentui/react-components",
-            "npm:@fluentui/react-hooks",
-            "npm:@fluentui/react-icons",
-            "npm:@fluentui/utilities",
-            "npm:@microsoft/applicationinsights-core-js",
-            "@microsoft/designer-ui",
-            "@microsoft/logic-apps-shared",
-            "npm:@react-hookz/web",
-            "npm:@reduxjs/toolkit",
-            "npm:elkjs",
-            "npm:fuse.js",
-            "npm:immer",
-            "npm:lodash.frompairs",
-            "npm:lodash.merge",
-            "npm:react-dnd",
-            "npm:react-dnd-accessible-backend",
-            "npm:react-dnd-html5-backend",
-            "npm:react-dnd-multi-backend",
-            "npm:react-hotkeys-hook",
-            "npm:react-intl",
-            "npm:react-query",
-            "npm:react-redux",
-            "npm:reactflow",
-            "npm:redux-thunk",
-            "npm:to-title-case",
-            "npm:util",
-            "npm:yocto-queue",
-            "npm:react",
-            "npm:react-dom"
-          ]
-        },
-        {
-          "file": "libs/designer/src/index.ts",
-          "hash": "11355081150901527302"
-        },
-        {
-          "file": "libs/designer/src/lib/__test__/intl-test-helper.tsx",
-          "hash": "5078806607436249013"
-        },
-        {
-          "file": "libs/designer/src/lib/__test__/mock-http-client.tsx",
-          "hash": "9240782448242967537"
-        },
-        {
-          "file": "libs/designer/src/lib/__test__/redux-test-helper.tsx",
-          "hash": "5214463813702224032"
-        },
-        {
-          "file": "libs/designer/src/lib/common/constants.ts",
-          "hash": "14716266680681788853"
-        },
-        {
-          "file": "libs/designer/src/lib/common/exceptions/exception.ts",
-          "hash": "4016853272413138441"
-        },
-        {
-          "file": "libs/designer/src/lib/common/exceptions/unsupported.ts",
-          "hash": "2438628799773606413"
-        },
-        {
-          "file": "libs/designer/src/lib/common/images/actionpalette/addaction_black.svg",
-          "hash": "13936938153293651615"
-        },
-        {
-          "file": "libs/designer/src/lib/common/images/actionpalette/addaction_blue.svg",
-          "hash": "17853975463227900194"
-        },
-        {
-          "file": "libs/designer/src/lib/common/images/actionpalette/addaction_white.svg",
-          "hash": "716422980644102335"
-        },
-        {
-          "file": "libs/designer/src/lib/common/images/actionpalette/addcondition_black.svg",
-          "hash": "10948104330765315206"
-        },
-        {
-          "file": "libs/designer/src/lib/common/images/actionpalette/addcondition_blue.svg",
-          "hash": "13744301547491746840"
-        },
-        {
-          "file": "libs/designer/src/lib/common/images/actionpalette/addcondition_white.svg",
-          "hash": "5099585607600274464"
-        },
-        {
-          "file": "libs/designer/src/lib/common/images/actionpalette/adddountil.svg",
-          "hash": "3057811563704111315"
-        },
-        {
-          "file": "libs/designer/src/lib/common/images/actionpalette/addforeach.svg",
-          "hash": "13794169093128310758"
-        },
-        {
-          "file": "libs/designer/src/lib/common/images/actionpalette/addparallel.svg",
-          "hash": "6553711262896807602"
-        },
-        {
-          "file": "libs/designer/src/lib/common/images/actionpalette/addparallel_white.svg",
-          "hash": "3769112376720810799"
-        },
-        {
-          "file": "libs/designer/src/lib/common/images/actionpalette/addscope.svg",
-          "hash": "4840054514873781546"
-        },
-        {
-          "file": "libs/designer/src/lib/common/images/actionpalette/addswitch.svg",
-          "hash": "13772471609559374653"
-        },
-        {
-          "file": "libs/designer/src/lib/common/images/actionpalette/adduntil.svg",
-          "hash": "17291714734882915823"
-        },
-        {
-          "file": "libs/designer/src/lib/common/images/actionpalette/delete.svg",
-          "hash": "8696373633900139960"
-        },
-        {
-          "file": "libs/designer/src/lib/common/images/actionpalette/ellipsis_blue.svg",
-          "hash": "10209490491669077224"
-        },
-        {
-          "file": "libs/designer/src/lib/common/images/actionpalette/ellipsis_white.svg",
-          "hash": "5762239862513015054"
-        },
-        {
-          "file": "libs/designer/src/lib/common/images/arrowdark.svg",
-          "hash": "5926111895234327525"
-        },
-        {
-          "file": "libs/designer/src/lib/common/images/arrowlight.svg",
-          "hash": "8015769479673340480"
-        },
-        {
-          "file": "libs/designer/src/lib/common/images/arrowred.svg",
-          "hash": "2430505900927056727"
-        },
-        {
-          "file": "libs/designer/src/lib/common/images/bolt.svg",
-          "hash": "17462634652015284885"
-        },
-        {
-          "file": "libs/designer/src/lib/common/images/builtinoperationicons/compose.svg",
-          "hash": "4281210752025126548"
-        },
-        {
-          "file": "libs/designer/src/lib/common/images/builtinoperationicons/condition.svg",
-          "hash": "8923215817224206799"
-        },
-        {
-          "file": "libs/designer/src/lib/common/images/builtinoperationicons/control.svg",
-          "hash": "4347287844293995514"
-        },
-        {
-          "file": "libs/designer/src/lib/common/images/builtinoperationicons/foreach.svg",
-          "hash": "802393672600738414"
-        },
-        {
-          "file": "libs/designer/src/lib/common/images/builtinoperationicons/function.svg",
-          "hash": "788257097228620744"
-        },
-        {
-          "file": "libs/designer/src/lib/common/images/builtinoperationicons/geofence.svg",
-          "hash": "11736524123979545801"
-        },
-        {
-          "file": "libs/designer/src/lib/common/images/builtinoperationicons/http.svg",
-          "hash": "965633922044453844"
-        },
-        {
-          "file": "libs/designer/src/lib/common/images/builtinoperationicons/http_swagger.svg",
-          "hash": "10224443075493376159"
-        },
-        {
-          "file": "libs/designer/src/lib/common/images/builtinoperationicons/logicapps/asc.svg",
-          "hash": "488405671534951514"
-        },
-        {
-          "file": "libs/designer/src/lib/common/images/builtinoperationicons/logicapps/batch.svg",
-          "hash": "16381515837357068415"
-        },
-        {
-          "file": "libs/designer/src/lib/common/images/builtinoperationicons/logicapps/eventgrid.svg",
-          "hash": "17856490403949387790"
-        },
-        {
-          "file": "libs/designer/src/lib/common/images/builtinoperationicons/logicapps/flatfiledecoding.svg",
-          "hash": "15243776523488424116"
-        },
-        {
-          "file": "libs/designer/src/lib/common/images/builtinoperationicons/logicapps/flatfileencoding.svg",
-          "hash": "5699680888941228448"
-        },
-        {
-          "file": "libs/designer/src/lib/common/images/builtinoperationicons/logicapps/integrationaccountartifactlookup.svg",
-          "hash": "9764035938809534317"
-        },
-        {
-          "file": "libs/designer/src/lib/common/images/builtinoperationicons/logicapps/manual.svg",
-          "hash": "12326541136900487952"
-        },
-        {
-          "file": "libs/designer/src/lib/common/images/builtinoperationicons/logicapps/transform.svg",
-          "hash": "6245055721372883370"
-        },
-        {
-          "file": "libs/designer/src/lib/common/images/builtinoperationicons/logicapps/xml.svg",
-          "hash": "14444337833939963797"
-        },
-        {
-          "file": "libs/designer/src/lib/common/images/builtinoperationicons/logicapps/xmlvalidation.svg",
-          "hash": "17064721766454223509"
-        },
-        {
-          "file": "libs/designer/src/lib/common/images/builtinoperationicons/powerapps.svg",
-          "hash": "13549953610772304995"
-        },
-        {
-          "file": "libs/designer/src/lib/common/images/builtinoperationicons/powerapps/DynamicsFinOps.svg",
-          "hash": "9884449892115783238"
-        },
-        {
-          "file": "libs/designer/src/lib/common/images/builtinoperationicons/powerapps/button.svg",
-          "hash": "5650084185790556380"
-        },
-        {
-          "file": "libs/designer/src/lib/common/images/builtinoperationicons/powerapps/commondataservice.svg",
-          "hash": "16533471828587912919"
-        },
-        {
-          "file": "libs/designer/src/lib/common/images/builtinoperationicons/powerapps/dynamics365.svg",
-          "hash": "10277570825407438664"
-        },
-        {
-          "file": "libs/designer/src/lib/common/images/builtinoperationicons/powerapps/excelonline.svg",
-          "hash": "5644614242196469494"
-        },
-        {
-          "file": "libs/designer/src/lib/common/images/builtinoperationicons/powerapps/manual.svg",
-          "hash": "4854754781356184488"
-        },
-        {
-          "file": "libs/designer/src/lib/common/images/builtinoperationicons/powerapps/microsoft365appshealth.svg",
-          "hash": "17577366797422234032"
-        },
-        {
-          "file": "libs/designer/src/lib/common/images/builtinoperationicons/powerapps/microsoft365compliance.svg",
-          "hash": "18096424898773100452"
-        },
-        {
-          "file": "libs/designer/src/lib/common/images/builtinoperationicons/powerapps/onedriveforbusiness.svg",
-          "hash": "8410319851745043818"
-        },
-        {
-          "file": "libs/designer/src/lib/common/images/builtinoperationicons/powerapps/powerbi.svg",
-          "hash": "4344707577102300882"
-        },
-        {
-          "file": "libs/designer/src/lib/common/images/builtinoperationicons/powerapps/powervirtualagents.svg",
-          "hash": "14973565284851361466"
-        },
-        {
-          "file": "libs/designer/src/lib/common/images/builtinoperationicons/powerapps/sharepoint.svg",
-          "hash": "6940736653966224597"
-        },
-        {
-          "file": "libs/designer/src/lib/common/images/builtinoperationicons/powerapps/teams.svg",
-          "hash": "10913390805409066774"
-        },
-        {
-          "file": "libs/designer/src/lib/common/images/builtinoperationicons/query.svg",
-          "hash": "18310566090601123291"
-        },
-        {
-          "file": "libs/designer/src/lib/common/images/builtinoperationicons/recurrence.svg",
-          "hash": "4211895255849396300"
-        },
-        {
-          "file": "libs/designer/src/lib/common/images/builtinoperationicons/response.svg",
-          "hash": "15249336994675481"
-        },
-        {
-          "file": "libs/designer/src/lib/common/images/builtinoperationicons/schedule.svg",
-          "hash": "6229273879523350518"
-        },
-        {
-          "file": "libs/designer/src/lib/common/images/builtinoperationicons/scope.svg",
-          "hash": "14552059136095416702"
-        },
-        {
-          "file": "libs/designer/src/lib/common/images/builtinoperationicons/switch.svg",
-          "hash": "8321402279766452771"
-        },
-        {
-          "file": "libs/designer/src/lib/common/images/builtinoperationicons/terminate.svg",
-          "hash": "14144206237714493160"
-        },
-        {
-          "file": "libs/designer/src/lib/common/images/builtinoperationicons/until.svg",
-          "hash": "546764277464022095"
-        },
-        {
-          "file": "libs/designer/src/lib/common/images/builtinoperationicons/variable.svg",
-          "hash": "15076765899186592786"
-        },
-        {
-          "file": "libs/designer/src/lib/common/images/builtinoperationicons/wait.svg",
-          "hash": "3692508794323306407"
-        },
-        {
-          "file": "libs/designer/src/lib/common/images/builtinoperationicons/wait_until.svg",
-          "hash": "1731479113183843607"
-        },
-        {
-          "file": "libs/designer/src/lib/common/images/builtinoperationicons/webhook.svg",
-          "hash": "4173490804496111343"
-        },
-        {
-          "file": "libs/designer/src/lib/common/images/builtinoperationicons/workflow.svg",
-          "hash": "11873669256365835624"
-        },
-        {
-          "file": "libs/designer/src/lib/common/images/builtinoperationicons/workflowparameter.svg",
-          "hash": "11139441907313241224"
-        },
-        {
-          "file": "libs/designer/src/lib/common/images/buttonparametertypes/button_parameter_boolean_type.svg",
-          "hash": "3241487867540139826"
-        },
-        {
-          "file": "libs/designer/src/lib/common/images/buttonparametertypes/button_parameter_date_type.svg",
-          "hash": "7715913989452853316"
-        },
-        {
-          "file": "libs/designer/src/lib/common/images/buttonparametertypes/button_parameter_email_type.svg",
-          "hash": "13582317555878671565"
-        },
-        {
-          "file": "libs/designer/src/lib/common/images/buttonparametertypes/button_parameter_file_type.svg",
-          "hash": "4977325050658584568"
-        },
-        {
-          "file": "libs/designer/src/lib/common/images/buttonparametertypes/button_parameter_number_type.svg",
-          "hash": "1045431280059616257"
-        },
-        {
-          "file": "libs/designer/src/lib/common/images/buttonparametertypes/button_parameter_text_type.svg",
-          "hash": "16640363275658842913"
-        },
-        {
-          "file": "libs/designer/src/lib/common/images/card/delete.svg",
-          "hash": "15675230980148461553"
-        },
-        {
-          "file": "libs/designer/src/lib/common/images/card/input_selection.svg",
-          "hash": "6874565955253727212"
-        },
-        {
-          "file": "libs/designer/src/lib/common/images/card/optional_field.svg",
-          "hash": "13884780002161969050"
-        },
-        {
-          "file": "libs/designer/src/lib/common/images/codeviewbutton/Embed.svg",
-          "hash": "11872211244220681036"
-        },
-        {
-          "file": "libs/designer/src/lib/common/images/delete.svg",
-          "hash": "2369920463731912593"
-        },
-        {
-          "file": "libs/designer/src/lib/common/images/gateway/add.svg",
-          "hash": "11819585580235095669"
-        },
-        {
-          "file": "libs/designer/src/lib/common/images/gateway/help.svg",
-          "hash": "12599303004882720277"
-        },
-        {
-          "file": "libs/designer/src/lib/common/images/gateway/remote_application.svg",
-          "hash": "6435518280858083886"
-        },
-        {
-          "file": "libs/designer/src/lib/common/images/gateway/virtual_network.svg",
-          "hash": "12997387777000294056"
-        },
-        {
-          "file": "libs/designer/src/lib/common/images/operationtypes/appservices.svg",
-          "hash": "7939169194091714776"
-        },
-        {
-          "file": "libs/designer/src/lib/common/images/operationtypes/flow.svg",
-          "hash": "16280757524503959992"
-        },
-        {
-          "file": "libs/designer/src/lib/common/images/operationtypes/it.svg",
-          "hash": "18333062729648676215"
-        },
-        {
-          "file": "libs/designer/src/lib/common/images/operationtypes/microsoft.svg",
-          "hash": "17826554870116185216"
-        },
-        {
-          "file": "libs/designer/src/lib/common/images/pencil.svg",
-          "hash": "4552542774403200136"
-        },
-        {
-          "file": "libs/designer/src/lib/common/images/recommendation/choose-an-action.svg",
-          "hash": "7905571557546338691"
-        },
-        {
-          "file": "libs/designer/src/lib/common/images/recommendation/defaulticon.svg",
-          "hash": "5071015496602458535"
-        },
-        {
-          "file": "libs/designer/src/lib/common/images/selector/check_mark_blue.svg",
-          "hash": "11632821499690045898"
-        },
-        {
-          "file": "libs/designer/src/lib/common/images/status_error.svg",
-          "hash": "7327477685402663444"
-        },
-        {
-          "file": "libs/designer/src/lib/common/images/status_success.svg",
-          "hash": "16589415129232216666"
-        },
-        {
-          "file": "libs/designer/src/lib/common/images/tokenpicker/fx.svg",
-          "hash": "8952058323183937865"
-        },
-        {
-          "file": "libs/designer/src/lib/common/images/website/api.svg",
-          "hash": "16095509088326340538"
-        },
-        {
-          "file": "libs/designer/src/lib/common/images/website/apim.svg",
-          "hash": "15873815965442020768"
-        },
-        {
-          "file": "libs/designer/src/lib/common/images/website/apim_white.svg",
-          "hash": "14020416160783112768"
-        },
-        {
-          "file": "libs/designer/src/lib/common/images/website/create.svg",
-          "hash": "16033491393116457661"
-        },
-        {
-          "file": "libs/designer/src/lib/common/images/website/foreach.svg",
-          "hash": "3719190676549030233"
-        },
-        {
-          "file": "libs/designer/src/lib/common/images/website/function.svg",
-          "hash": "12552781765647401474"
-        },
-        {
-          "file": "libs/designer/src/lib/common/models/workflow.ts",
-          "hash": "11724936275981787758"
-        },
-        {
-          "file": "libs/designer/src/lib/common/utilities/Utils.ts",
-          "hash": "2333252227487981555"
-        },
-        {
-          "file": "libs/designer/src/lib/common/utilities/error.ts",
-          "hash": "14761866046570043475"
-        },
-        {
-          "file": "libs/designer/src/lib/core/BJSWorkflowProvider.tsx",
-          "hash": "10226240319907572020"
-        },
-        {
-          "file": "libs/designer/src/lib/core/DesignerProvider.tsx",
-          "hash": "8865415753051342650"
-        },
-        {
-          "file": "libs/designer/src/lib/core/ProviderWrappedContext.ts",
-          "hash": "1133788957422173169"
-        },
-        {
-          "file": "libs/designer/src/lib/core/ReactQueryProvider.tsx",
-          "hash": "13021850733178929057"
-        },
-        {
-          "file": "libs/designer/src/lib/core/actions/bjsworkflow/__test__/connections.spec.ts",
-          "hash": "10976178124567025188"
-        },
-        {
-          "file": "libs/designer/src/lib/core/actions/bjsworkflow/__test__/initialize.mocks.ts",
-          "hash": "8007408756114040866"
-        },
-        {
-          "file": "libs/designer/src/lib/core/actions/bjsworkflow/__test__/initialize.spec.ts",
-          "hash": "12793128001647914730"
-        },
-        {
-          "file": "libs/designer/src/lib/core/actions/bjsworkflow/__test__/serializer.spec.ts",
-          "hash": "9408756046827245410"
-        },
-        {
-          "file": "libs/designer/src/lib/core/actions/bjsworkflow/add.ts",
-          "hash": "1145445308673345143"
-        },
-        {
-          "file": "libs/designer/src/lib/core/actions/bjsworkflow/connections.ts",
-          "hash": "8714067957965973862"
-        },
-        {
-          "file": "libs/designer/src/lib/core/actions/bjsworkflow/copypaste.ts",
-          "hash": "377035099592140993"
-        },
-        {
-          "file": "libs/designer/src/lib/core/actions/bjsworkflow/delete.ts",
-          "hash": "2640821823957837771"
-        },
-        {
-          "file": "libs/designer/src/lib/core/actions/bjsworkflow/initialize.ts",
-          "hash": "4883489638704343677"
-        },
-        {
-          "file": "libs/designer/src/lib/core/actions/bjsworkflow/move.ts",
-          "hash": "1063338721262391862"
-        },
-        {
-          "file": "libs/designer/src/lib/core/actions/bjsworkflow/operationdeserializer.ts",
-          "hash": "13051148389008776707"
-        },
-        {
-          "file": "libs/designer/src/lib/core/actions/bjsworkflow/runafter.ts",
-          "hash": "16166965666592256044"
-        },
-        {
-          "file": "libs/designer/src/lib/core/actions/bjsworkflow/serializer.ts",
-          "hash": "7644883283632193272"
-        },
-        {
-          "file": "libs/designer/src/lib/core/actions/bjsworkflow/settings.ts",
-          "hash": "3268658162048948497"
-        },
-        {
-          "file": "libs/designer/src/lib/core/actions/bjsworkflow/staticresults.ts",
-          "hash": "12938819441932090008"
-        },
-        {
-          "file": "libs/designer/src/lib/core/graphlayout/__test__/__snapshots__/elklayout.spec.ts.snap",
-          "hash": "18391939971202172617"
-        },
-        {
-          "file": "libs/designer/src/lib/core/graphlayout/__test__/elklayout.spec.ts",
-          "hash": "5135976908480724598"
-        },
-        {
-          "file": "libs/designer/src/lib/core/graphlayout/elklayout.ts",
-          "hash": "6555520085152754544"
-        },
-        {
-          "file": "libs/designer/src/lib/core/graphlayout/index.ts",
-          "hash": "1183230721606983661"
-        },
-        {
-          "file": "libs/designer/src/lib/core/index.ts",
-          "hash": "17021345483470396631"
-        },
-        {
-          "file": "libs/designer/src/lib/core/parsers/BJSWorkflow/BJSDeserializer.ts",
-          "hash": "5690913620690077130"
-        },
-        {
-          "file": "libs/designer/src/lib/core/parsers/BJSWorkflow/__test__/BJSDeserializer.spec.ts",
-          "hash": "14509662786295405295"
-        },
-        {
-          "file": "libs/designer/src/lib/core/parsers/BJSWorkflow/__test__/scopedWorkflowDefinition.ts",
-          "hash": "6387737565995930308"
-        },
-        {
-          "file": "libs/designer/src/lib/core/parsers/BJSWorkflow/__test__/simpleWorkflowDefinition.ts",
-          "hash": "18344987115654458228"
-        },
-        {
-          "file": "libs/designer/src/lib/core/parsers/ParseReduxAction.ts",
-          "hash": "14964928502892749345"
-        },
-        {
-          "file": "libs/designer/src/lib/core/parsers/__test__/editWorkflow.spec.ts",
-          "hash": "14646033592987575031"
-        },
-        {
-          "file": "libs/designer/src/lib/core/parsers/__test__/mocks/workflowMock.ts",
-          "hash": "17520637296625214501"
-        },
-        {
-          "file": "libs/designer/src/lib/core/parsers/__test__/respectExistingWorkflowDimensions.spec.ts",
-          "hash": "16515897955999880047"
-        },
-        {
-          "file": "libs/designer/src/lib/core/parsers/addNodeToWorkflow.ts",
-          "hash": "8489461695139161622"
-        },
-        {
-          "file": "libs/designer/src/lib/core/parsers/deleteNodeFromWorkflow.ts",
-          "hash": "11556548277387433966"
-        },
-        {
-          "file": "libs/designer/src/lib/core/parsers/models/workflowNode.ts",
-          "hash": "1566269831108361105"
-        },
-        {
-          "file": "libs/designer/src/lib/core/parsers/moveNodeInWorkflow.ts",
-          "hash": "13854397699622059247"
-        },
-        {
-          "file": "libs/designer/src/lib/core/parsers/restructuringHelpers.ts",
-          "hash": "7091192159636622669"
-        },
-        {
-          "file": "libs/designer/src/lib/core/queries/browse.ts",
-          "hash": "15277260528629014649"
-        },
-        {
-          "file": "libs/designer/src/lib/core/queries/connections.ts",
-          "hash": "1501738903167968950"
-        },
-        {
-          "file": "libs/designer/src/lib/core/queries/connector.ts",
-          "hash": "10042584932448483913"
-        },
-        {
-          "file": "libs/designer/src/lib/core/queries/operation.ts",
-          "hash": "18070523527133930267"
-        },
-        {
-          "file": "libs/designer/src/lib/core/state/__test__/connectionSlice.spec.ts",
-          "hash": "11873332201419444196"
-        },
-        {
-          "file": "libs/designer/src/lib/core/state/__test__/workflowSlice.spec.ts",
-          "hash": "944283261874392963"
-        },
-        {
-          "file": "libs/designer/src/lib/core/state/connection/connectionSelector.ts",
-          "hash": "14043559070256094030"
-        },
-        {
-          "file": "libs/designer/src/lib/core/state/connection/connectionSlice.ts",
-          "hash": "17661438812224560039"
-        },
-        {
-          "file": "libs/designer/src/lib/core/state/designerOptions/designerOptionsInterfaces.ts",
-          "hash": "552151791694841859"
-        },
-        {
-          "file": "libs/designer/src/lib/core/state/designerOptions/designerOptionsSelectors.ts",
-          "hash": "5709160121732674319"
-        },
-        {
-          "file": "libs/designer/src/lib/core/state/designerOptions/designerOptionsSlice.ts",
-          "hash": "11880532030602689040"
-        },
-        {
-          "file": "libs/designer/src/lib/core/state/designerView/designerViewInterfaces.ts",
-          "hash": "15539125750855046238"
-        },
-        {
-          "file": "libs/designer/src/lib/core/state/designerView/designerViewSelectors.ts",
-          "hash": "17496610770440064597"
-        },
-        {
-          "file": "libs/designer/src/lib/core/state/designerView/designerViewSlice.ts",
-          "hash": "12399207044214169579"
-        },
-        {
-          "file": "libs/designer/src/lib/core/state/global.ts",
-          "hash": "2467378088186721273"
-        },
-        {
-          "file": "libs/designer/src/lib/core/state/operation/operationMetadataSlice.ts",
-          "hash": "7160406653392297178"
-        },
-        {
-          "file": "libs/designer/src/lib/core/state/operation/operationSelector.ts",
-          "hash": "13231490325898643987"
-        },
-        {
-          "file": "libs/designer/src/lib/core/state/panel/panelInterfaces.ts",
-          "hash": "580443950008935701"
-        },
-        {
-          "file": "libs/designer/src/lib/core/state/panel/panelSelectors.ts",
-          "hash": "11619174720328207349"
-        },
-        {
-          "file": "libs/designer/src/lib/core/state/panel/panelSlice.ts",
-          "hash": "12360836867786652472"
-        },
-        {
-          "file": "libs/designer/src/lib/core/state/selectors/__test__/actionMetadataSelector.spec.ts",
-          "hash": "17837734844866824533"
-        },
-        {
-          "file": "libs/designer/src/lib/core/state/selectors/actionMetadataSelector.ts",
-          "hash": "3597817075648231871"
-        },
-        {
-          "file": "libs/designer/src/lib/core/state/setting/settingInterface.ts",
-          "hash": "8221487224681813587"
-        },
-        {
-          "file": "libs/designer/src/lib/core/state/setting/settingSelector.ts",
-          "hash": "13672923006305683744"
-        },
-        {
-          "file": "libs/designer/src/lib/core/state/setting/settingSlice.ts",
-          "hash": "3869560885023421381"
-        },
-        {
-          "file": "libs/designer/src/lib/core/state/staticresultschema/staitcresultsSelector.ts",
-          "hash": "7513105324012396408"
-        },
-        {
-          "file": "libs/designer/src/lib/core/state/staticresultschema/staticresultsSlice.ts",
-          "hash": "15674134190940167340"
-        },
-        {
-          "file": "libs/designer/src/lib/core/state/tokens/tokenSelectors.ts",
-          "hash": "4534305780862072392"
-        },
-        {
-          "file": "libs/designer/src/lib/core/state/tokens/tokensSlice.ts",
-          "hash": "4540330469149645148"
-        },
-        {
-          "file": "libs/designer/src/lib/core/state/workflow/workflowInterfaces.ts",
-          "hash": "297492272351660565"
-        },
-        {
-          "file": "libs/designer/src/lib/core/state/workflow/workflowSelectors.ts",
-          "hash": "6447767112269051024"
-        },
-        {
-          "file": "libs/designer/src/lib/core/state/workflow/workflowSlice.ts",
-          "hash": "21027795098134668"
-        },
-        {
-          "file": "libs/designer/src/lib/core/state/workflowparameters/workflowparametersSlice.ts",
-          "hash": "10627578442358036420"
-        },
-        {
-          "file": "libs/designer/src/lib/core/state/workflowparameters/workflowparametersselector.ts",
-          "hash": "3377780393722064446"
-        },
-        {
-          "file": "libs/designer/src/lib/core/store.ts",
-          "hash": "7675307851224561844"
-        },
-        {
-          "file": "libs/designer/src/lib/core/utils/__test__/graph.spec.ts",
-          "hash": "10932912534190676887"
-        },
-        {
-          "file": "libs/designer/src/lib/core/utils/__test__/outputs.spec.ts",
-          "hash": "10477834709138765316"
-        },
-        {
-          "file": "libs/designer/src/lib/core/utils/__test__/tokens.spec.ts",
-          "hash": "6400741599488247828"
-        },
-        {
-          "file": "libs/designer/src/lib/core/utils/card.ts",
-          "hash": "17388048148998821366"
-        },
-        {
-          "file": "libs/designer/src/lib/core/utils/connectors/connections.ts",
-          "hash": "14380782528292918805"
-        },
-        {
-          "file": "libs/designer/src/lib/core/utils/graph.ts",
-          "hash": "9113893809945541281"
-        },
-        {
-          "file": "libs/designer/src/lib/core/utils/loops.ts",
-          "hash": "17832329493412946298"
-        },
-        {
-          "file": "libs/designer/src/lib/core/utils/openapi/__test__/schema.test.ts",
-          "hash": "1420254453350497458"
-        },
-        {
-          "file": "libs/designer/src/lib/core/utils/openapi/schema.ts",
-          "hash": "842207519268466443"
-        },
-        {
-          "file": "libs/designer/src/lib/core/utils/outputs.ts",
-          "hash": "2523378346613014879"
-        },
-        {
-          "file": "libs/designer/src/lib/core/utils/parameters/__test__/casting.spec.ts",
-          "hash": "3643994527394489617"
-        },
-        {
-          "file": "libs/designer/src/lib/core/utils/parameters/__test__/helper.spec.ts",
-          "hash": "2422344699678475886"
-        },
-        {
-          "file": "libs/designer/src/lib/core/utils/parameters/__test__/jsonsplitter.spec.ts",
-          "hash": "17504009570966731362"
-        },
-        {
-          "file": "libs/designer/src/lib/core/utils/parameters/__test__/segment.spec.ts",
-          "hash": "14679208978083456209"
-        },
-        {
-          "file": "libs/designer/src/lib/core/utils/parameters/__test__/tokensegment.spec.ts",
-          "hash": "9346212500047195690"
-        },
-        {
-          "file": "libs/designer/src/lib/core/utils/parameters/casting.ts",
-          "hash": "16944935834687261736"
-        },
-        {
-          "file": "libs/designer/src/lib/core/utils/parameters/dynamicdata.ts",
-          "hash": "5504094716509853138"
-        },
-        {
-          "file": "libs/designer/src/lib/core/utils/parameters/helper.ts",
-          "hash": "789795195726361469"
-        },
-        {
-          "file": "libs/designer/src/lib/core/utils/parameters/jsonsplitter.ts",
-          "hash": "1212164914387801521"
-        },
-        {
-          "file": "libs/designer/src/lib/core/utils/parameters/recurrence.ts",
-          "hash": "4584055025926510588"
-        },
-        {
-          "file": "libs/designer/src/lib/core/utils/parameters/segment.ts",
-          "hash": "17685281869497732131"
-        },
-        {
-          "file": "libs/designer/src/lib/core/utils/parameters/tokensegment.ts",
-          "hash": "17503616740995511873"
-        },
-        {
-          "file": "libs/designer/src/lib/core/utils/parameters/uncast.ts",
-          "hash": "5493345090301795523"
-        },
-        {
-          "file": "libs/designer/src/lib/core/utils/setting.ts",
-          "hash": "607724160972661514"
-        },
-        {
-          "file": "libs/designer/src/lib/core/utils/swagger/inputsbuilder.ts",
-          "hash": "300462517969513749"
-        },
-        {
-          "file": "libs/designer/src/lib/core/utils/swagger/operation.ts",
-          "hash": "710587862511662252"
-        },
-        {
-          "file": "libs/designer/src/lib/core/utils/tokens.ts",
-          "hash": "16598154144351001077"
-        },
-        {
-          "file": "libs/designer/src/lib/core/utils/validation.ts",
-          "hash": "3321415876925824657"
-        },
-        {
-          "file": "libs/designer/src/lib/core/utils/variables.ts",
-          "hash": "18113110944598796795"
-        },
-        {
-          "file": "libs/designer/src/lib/core/utils/workflow.ts",
-          "hash": "2503685323390352213"
-        },
-        {
-          "file": "libs/designer/src/lib/index.tsx",
-          "hash": "3108540739134237574"
-        },
-        {
-          "file": "libs/designer/src/lib/typings.d.ts",
-          "hash": "8667080681692980982"
-        },
-        {
-          "file": "libs/designer/src/lib/ui/Controls.tsx",
-          "hash": "11679666175589395115"
-        },
-        {
-          "file": "libs/designer/src/lib/ui/CustomNodes/GraphContainerNode.tsx",
-          "hash": "18335299629456245936"
-        },
-        {
-          "file": "libs/designer/src/lib/ui/CustomNodes/HiddenNode.tsx",
-          "hash": "8683562698326398762"
-        },
-        {
-          "file": "libs/designer/src/lib/ui/CustomNodes/OperationCardNode.tsx",
-          "hash": "6973870354555514502"
-        },
-        {
-          "file": "libs/designer/src/lib/ui/CustomNodes/PlaceholderNode.tsx",
-          "hash": "2623692442355217780"
-        },
-        {
-          "file": "libs/designer/src/lib/ui/CustomNodes/ScopeCardNode.tsx",
-          "hash": "17275763272438441218"
-        },
-        {
-          "file": "libs/designer/src/lib/ui/CustomNodes/SubgraphCardNode.tsx",
-          "hash": "16798466643167652597"
-        },
-        {
-          "file": "libs/designer/src/lib/ui/Designer.tsx",
-          "hash": "16681715909651728710"
-        },
-        {
-          "file": "libs/designer/src/lib/ui/Minimap.tsx",
-          "hash": "16784302034175684453"
-        },
-        {
-          "file": "libs/designer/src/lib/ui/ThemeObservable.tsx",
-          "hash": "9589106174231375844"
-        },
-        {
-          "file": "libs/designer/src/lib/ui/common/DeleteModal/DeleteModal.tsx",
-          "hash": "3078414740510575754"
-        },
-        {
-          "file": "libs/designer/src/lib/ui/common/LoopsPager/LoopsPager.tsx",
-          "hash": "14069610435069570388"
-        },
-        {
-          "file": "libs/designer/src/lib/ui/common/LoopsPager/helper.ts",
-          "hash": "2917805269573375288"
-        },
-        {
-          "file": "libs/designer/src/lib/ui/connections/dropzone.tsx",
-          "hash": "3469127252427478749"
-        },
-        {
-          "file": "libs/designer/src/lib/ui/connections/dynamicsvgs/allowdroptarget.tsx",
-          "hash": "16424915556916750495"
-        },
-        {
-          "file": "libs/designer/src/lib/ui/connections/dynamicsvgs/arrowCap.tsx",
-          "hash": "2870378826580830856"
-        },
-        {
-          "file": "libs/designer/src/lib/ui/connections/dynamicsvgs/blockdroptarget.tsx",
-          "hash": "14597964550574862411"
-        },
-        {
-          "file": "libs/designer/src/lib/ui/connections/dynamicsvgs/gripper.tsx",
-          "hash": "17062398617519134809"
-        },
-        {
-          "file": "libs/designer/src/lib/ui/connections/dynamicsvgs/trafficlightsvgs.tsx",
-          "hash": "14795306292735185189"
-        },
-        {
-          "file": "libs/designer/src/lib/ui/connections/edge.tsx",
-          "hash": "5497512017299495007"
-        },
-        {
-          "file": "libs/designer/src/lib/ui/connections/edgeContextMenuSvgs/addBranchIcon.svg",
-          "hash": "18432693650012936880"
-        },
-        {
-          "file": "libs/designer/src/lib/ui/connections/edgeContextMenuSvgs/addNodeIcon.svg",
-          "hash": "5555780360896210685"
-        },
-        {
-          "file": "libs/designer/src/lib/ui/connections/hiddenEdge.tsx",
-          "hash": "13807895509711892964"
-        },
-        {
-          "file": "libs/designer/src/lib/ui/connections/onlyEdge.tsx",
-          "hash": "7876264136480687494"
-        },
-        {
-          "file": "libs/designer/src/lib/ui/connections/runAfterIndicator/index.tsx",
-          "hash": "2408849985874822150"
-        },
-        {
-          "file": "libs/designer/src/lib/ui/connections/runAfterIndicator/styles.less",
-          "hash": "4860151930479659861"
-        },
-        {
-          "file": "libs/designer/src/lib/ui/index.tsx",
-          "hash": "16341670098352328808"
-        },
-        {
-          "file": "libs/designer/src/lib/ui/less/logicapps/variables.less",
-          "hash": "11764721752232747899"
-        },
-        {
-          "file": "libs/designer/src/lib/ui/less/processsimple/variables.less",
-          "hash": "18054694947746552645"
-        },
-        {
-          "file": "libs/designer/src/lib/ui/logicapps.less",
-          "hash": "8806087804226244251"
-        },
-        {
-          "file": "libs/designer/src/lib/ui/menuItems/commentMenuItem.tsx",
-          "hash": "17569954728099794023"
-        },
-        {
-          "file": "libs/designer/src/lib/ui/menuItems/copyMenuItem.tsx",
-          "hash": "583479515840133304"
-        },
-        {
-          "file": "libs/designer/src/lib/ui/menuItems/deleteMenuItem.tsx",
-          "hash": "12873127522514834077"
-        },
-        {
-          "file": "libs/designer/src/lib/ui/menuItems/index.tsx",
-          "hash": "17248340653302800129"
-        },
-        {
-          "file": "libs/designer/src/lib/ui/menuItems/resubmitMenuItem.tsx",
-          "hash": "11451946634355722234"
-        },
-        {
-          "file": "libs/designer/src/lib/ui/panel/connectionsPanel/actionList/actionList.tsx",
-          "hash": "8808436492128491535"
-        },
-        {
-          "file": "libs/designer/src/lib/ui/panel/connectionsPanel/actionList/connectionActionHeader.tsx",
-          "hash": "11188019418177543078"
-        },
-        {
-          "file": "libs/designer/src/lib/ui/panel/connectionsPanel/allConnections/allConnections.less",
-          "hash": "10622257218635018165"
-        },
-        {
-          "file": "libs/designer/src/lib/ui/panel/connectionsPanel/allConnections/allConnections.tsx",
-          "hash": "14381813606682941152"
-        },
-        {
-          "file": "libs/designer/src/lib/ui/panel/connectionsPanel/allConnections/connectionEntry.tsx",
-          "hash": "14863904385332766059"
-        },
-        {
-          "file": "libs/designer/src/lib/ui/panel/connectionsPanel/allConnections/connectorConnectionsCard.tsx",
-          "hash": "105776725888969737"
-        },
-        {
-          "file": "libs/designer/src/lib/ui/panel/connectionsPanel/allConnections/nodeLinkButton.tsx",
-          "hash": "3486053682563706186"
-        },
-        {
-          "file": "libs/designer/src/lib/ui/panel/connectionsPanel/connectionsPanel.less",
-          "hash": "4295986676874411230"
-        },
-        {
-          "file": "libs/designer/src/lib/ui/panel/connectionsPanel/connectionsPanel.tsx",
-          "hash": "5044350433743159771"
-        },
-        {
-          "file": "libs/designer/src/lib/ui/panel/connectionsPanel/createConnection/_test__/connectionParameterRow.spec.tsx",
-          "hash": "17190185412675906484"
-        },
-        {
-          "file": "libs/designer/src/lib/ui/panel/connectionsPanel/createConnection/_test__/createConnection.spec.tsx",
-          "hash": "413683764976891703"
-        },
-        {
-          "file": "libs/designer/src/lib/ui/panel/connectionsPanel/createConnection/_test__/createConnectionWrapper.spec.tsx",
-          "hash": "2896450508867033368"
-        },
-        {
-          "file": "libs/designer/src/lib/ui/panel/connectionsPanel/createConnection/connectionParameterRow.tsx",
-          "hash": "8866623228316007595"
-        },
-        {
-          "file": "libs/designer/src/lib/ui/panel/connectionsPanel/createConnection/createConnection.less",
-          "hash": "17888799308169784633"
-        },
-        {
-          "file": "libs/designer/src/lib/ui/panel/connectionsPanel/createConnection/createConnection.tsx",
-          "hash": "3217802139905584148"
-        },
-        {
-          "file": "libs/designer/src/lib/ui/panel/connectionsPanel/createConnection/createConnectionWrapper.tsx",
-          "hash": "962585077833873680"
-        },
-        {
-          "file": "libs/designer/src/lib/ui/panel/connectionsPanel/createConnection/formInputs/connectionMultiAuth.tsx",
-          "hash": "2345600340639460118"
-        },
-        {
-          "file": "libs/designer/src/lib/ui/panel/connectionsPanel/createConnection/formInputs/connectionNameInput.tsx",
-          "hash": "6438581048872326276"
-        },
-        {
-          "file": "libs/designer/src/lib/ui/panel/connectionsPanel/createConnection/formInputs/gatewayPicker.tsx",
-          "hash": "4636028013835727768"
-        },
-        {
-          "file": "libs/designer/src/lib/ui/panel/connectionsPanel/createConnection/formInputs/legacyGatewayCheckbox.tsx",
-          "hash": "14888900866274310223"
-        },
-        {
-          "file": "libs/designer/src/lib/ui/panel/connectionsPanel/createConnection/formInputs/legacyManagedIdentityPicker.tsx",
-          "hash": "4040358874212544513"
-        },
-        {
-          "file": "libs/designer/src/lib/ui/panel/connectionsPanel/createConnection/formInputs/legacyMultiAuth.tsx",
-          "hash": "15708146643216275913"
-        },
-        {
-          "file": "libs/designer/src/lib/ui/panel/connectionsPanel/createConnection/formInputs/universalConnectionParameter.tsx",
-          "hash": "18064072806053472795"
-        },
-        {
-          "file": "libs/designer/src/lib/ui/panel/connectionsPanel/createConnection/iFrameTOS.tsx",
-          "hash": "813895254218562259"
-        },
-        {
-          "file": "libs/designer/src/lib/ui/panel/connectionsPanel/selectConnection/connectionTable.tsx",
-          "hash": "16620206185148038430"
-        },
-        {
-          "file": "libs/designer/src/lib/ui/panel/connectionsPanel/selectConnection/selectConnection.less",
-          "hash": "5385478426844583686"
-        },
-        {
-          "file": "libs/designer/src/lib/ui/panel/connectionsPanel/selectConnection/selectConnection.tsx",
-          "hash": "17955152684217995627"
-        },
-        {
-          "file": "libs/designer/src/lib/ui/panel/errorsPanel/errorCategory.tsx",
-          "hash": "8096213501021087139"
-        },
-        {
-          "file": "libs/designer/src/lib/ui/panel/errorsPanel/errorsPanel.tsx",
-          "hash": "6954364116161516939"
-        },
-        {
-          "file": "libs/designer/src/lib/ui/panel/errorsPanel/nodeErrors.tsx",
-          "hash": "2774370202590136493"
-        },
-        {
-          "file": "libs/designer/src/lib/ui/panel/errorsPanel/tabs/errorsTab.hooks.ts",
-          "hash": "2990072573754773610"
-        },
-        {
-          "file": "libs/designer/src/lib/ui/panel/errorsPanel/tabs/errorsTab.tsx",
-          "hash": "16009164000053936481"
-        },
-        {
-          "file": "libs/designer/src/lib/ui/panel/errorsPanel/tabs/warningsTab.hooks.ts",
-          "hash": "12787968918952964503"
-        },
-        {
-          "file": "libs/designer/src/lib/ui/panel/errorsPanel/tabs/warningsTab.tsx",
-          "hash": "7320427274234546201"
-        },
-        {
-          "file": "libs/designer/src/lib/ui/panel/errorsPanel/workflowParameterErrors.tsx",
-          "hash": "1017935854018236971"
-        },
-        {
-          "file": "libs/designer/src/lib/ui/panel/index.tsx",
-          "hash": "8931413980282435903"
-        },
-        {
-          "file": "libs/designer/src/lib/ui/panel/nodeDetailsPanel/nodeDetailsPanel.tsx",
-          "hash": "691362796351085760"
-        },
-        {
-          "file": "libs/designer/src/lib/ui/panel/nodeDetailsPanel/tabs/aboutTab.tsx",
-          "hash": "1761891437078855966"
-        },
-        {
-          "file": "libs/designer/src/lib/ui/panel/nodeDetailsPanel/tabs/codeViewTab.tsx",
-          "hash": "1057924626207991961"
-        },
-        {
-          "file": "libs/designer/src/lib/ui/panel/nodeDetailsPanel/tabs/monitoringTab/inputsPanel.tsx",
-          "hash": "6280253552466033403"
-        },
-        {
-          "file": "libs/designer/src/lib/ui/panel/nodeDetailsPanel/tabs/monitoringTab/monitoringTab.tsx",
-          "hash": "8768239693411150392"
-        },
-        {
-          "file": "libs/designer/src/lib/ui/panel/nodeDetailsPanel/tabs/monitoringTab/outputsPanel.tsx",
-          "hash": "7891578013616621917"
-        },
-        {
-          "file": "libs/designer/src/lib/ui/panel/nodeDetailsPanel/tabs/monitoringTab/propertiesPanel.tsx",
-          "hash": "6936908943603154102"
-        },
-        {
-          "file": "libs/designer/src/lib/ui/panel/nodeDetailsPanel/tabs/parametersTab/__test__/getEditorAndOptions.spec.ts",
-          "hash": "438510564774690503"
-        },
-        {
-          "file": "libs/designer/src/lib/ui/panel/nodeDetailsPanel/tabs/parametersTab/connectionDisplay.tsx",
-          "hash": "16798406127854826620"
-        },
-        {
-          "file": "libs/designer/src/lib/ui/panel/nodeDetailsPanel/tabs/parametersTab/identityselector.tsx",
-          "hash": "3595348225477585500"
-        },
-        {
-          "file": "libs/designer/src/lib/ui/panel/nodeDetailsPanel/tabs/parametersTab/index.tsx",
-          "hash": "11057896419932325694"
-        },
-        {
-          "file": "libs/designer/src/lib/ui/panel/nodeDetailsPanel/tabs/requestTab.tsx",
-          "hash": "4104206428172572624"
-        },
-        {
-          "file": "libs/designer/src/lib/ui/panel/nodeDetailsPanel/tabs/retryTab.tsx",
-          "hash": "6547505579084266234"
-        },
-        {
-          "file": "libs/designer/src/lib/ui/panel/nodeDetailsPanel/tabs/scratchTab.tsx",
-          "hash": "6573526002733579255"
-        },
-        {
-          "file": "libs/designer/src/lib/ui/panel/nodeDetailsPanel/tabs/settingsTab.tsx",
-          "hash": "2589613772379687118"
-        },
-        {
-          "file": "libs/designer/src/lib/ui/panel/nodeDetailsPanel/tabs/testingTab/index.tsx",
-          "hash": "5973638345373933302"
-        },
-        {
-          "file": "libs/designer/src/lib/ui/panel/nodeDetailsPanel/usePanelTabs.tsx",
-          "hash": "15042347812954300106"
-        },
-        {
-          "file": "libs/designer/src/lib/ui/panel/nodeSearchPanel/nodeSearchPanel.tsx",
-          "hash": "6338890337184233730"
-        },
-        {
-          "file": "libs/designer/src/lib/ui/panel/panelRoot.tsx",
-          "hash": "12332136203110463175"
-        },
-        {
-          "file": "libs/designer/src/lib/ui/panel/recommendation/azureResourceSelection.tsx",
-          "hash": "14199280944066488263"
-        },
-        {
-          "file": "libs/designer/src/lib/ui/panel/recommendation/browseView.tsx",
-          "hash": "2615756064988394528"
-        },
-        {
-          "file": "libs/designer/src/lib/ui/panel/recommendation/customSwaggerSelection.tsx",
-          "hash": "17548951851137442209"
-        },
-        {
-          "file": "libs/designer/src/lib/ui/panel/recommendation/operationGroupDetailView.tsx",
-          "hash": "13695075695640031897"
-        },
-        {
-          "file": "libs/designer/src/lib/ui/panel/recommendation/recommendationPanelContext.tsx",
-          "hash": "5633104287798836216"
-        },
-        {
-          "file": "libs/designer/src/lib/ui/panel/recommendation/searchView.tsx",
-          "hash": "18046537988904659224"
-        },
-        {
-          "file": "libs/designer/src/lib/ui/panel/workflowParametersPanel/workflowParametersPanel.tsx",
-          "hash": "1871737709038769946"
-        },
-        {
-          "file": "libs/designer/src/lib/ui/panel/workflowParametersPanel/workflowParametersPanelFooter.tsx",
-          "hash": "6979096270862588135"
-        },
-        {
-          "file": "libs/designer/src/lib/ui/settings/__tests__/__snapshots__/settingsection.spec.tsx.snap",
-          "hash": "970334209122746164"
-        },
-        {
-          "file": "libs/designer/src/lib/ui/settings/__tests__/settingsection.spec.tsx",
-          "hash": "9667005076024681736"
-        },
-        {
-          "file": "libs/designer/src/lib/ui/settings/index.tsx",
-          "hash": "14559726202240722620"
-        },
-        {
-          "file": "libs/designer/src/lib/ui/settings/sections/datahandling.tsx",
-          "hash": "4578759189608616930"
-        },
-        {
-          "file": "libs/designer/src/lib/ui/settings/sections/general.tsx",
-          "hash": "17737294470449076285"
-        },
-        {
-          "file": "libs/designer/src/lib/ui/settings/sections/networking.tsx",
-          "hash": "3442351415387182271"
-        },
-        {
-          "file": "libs/designer/src/lib/ui/settings/sections/runafter.tsx",
-          "hash": "15073803307628141748"
-        },
-        {
-          "file": "libs/designer/src/lib/ui/settings/sections/runafterconfiguration/index.tsx",
-          "hash": "13259211909852062902"
-        },
-        {
-          "file": "libs/designer/src/lib/ui/settings/sections/runafterconfiguration/runafterActionSelector.tsx",
-          "hash": "1121495998656744936"
-        },
-        {
-          "file": "libs/designer/src/lib/ui/settings/sections/runafterconfiguration/runafteractiondetails.tsx",
-          "hash": "1034166355859418220"
-        },
-        {
-          "file": "libs/designer/src/lib/ui/settings/sections/runafterconfiguration/runafteractionstatuses.tsx",
-          "hash": "305675838625215663"
-        },
-        {
-          "file": "libs/designer/src/lib/ui/settings/sections/runafterconfiguration/runafterconfiguration.less",
-          "hash": "1949585750942351876"
-        },
-        {
-          "file": "libs/designer/src/lib/ui/settings/sections/runafterconfiguration/runaftertrafficlights.tsx",
-          "hash": "4499489232140778372"
-        },
-        {
-          "file": "libs/designer/src/lib/ui/settings/sections/security.tsx",
-          "hash": "13293113667156220544"
-        },
-        {
-          "file": "libs/designer/src/lib/ui/settings/sections/tracking.tsx",
-          "hash": "9211118379886345968"
-        },
-        {
-          "file": "libs/designer/src/lib/ui/settings/settingsection.tsx",
-          "hash": "1426261106233320224"
-        },
-        {
-          "file": "libs/designer/src/lib/ui/settings/validation/errorbar.tsx",
-          "hash": "4817919565569896749"
-        },
-        {
-          "file": "libs/designer/src/lib/ui/settings/validation/validation.ts",
-          "hash": "14117197387047983705"
-        },
-        {
-          "file": "libs/designer/src/lib/ui/styles.less",
-          "hash": "8828323265444774935"
-        },
-        {
-          "file": "libs/designer/tsconfig.json",
-          "hash": "9903972631138361140"
-        },
-        {
-          "file": "libs/designer/tsup.config.ts",
-          "hash": "8336763382846384517"
         }
       ]
     },

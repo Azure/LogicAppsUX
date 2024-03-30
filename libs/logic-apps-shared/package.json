@@ -2,7 +2,7 @@
   "name": "@microsoft/logic-apps-shared",
   "version": "3.2.0",
   "license": "MIT",
-  "type": "commonjs",
+  "type": "module",
   "module": "build/lib/index.esm.js",
   "main": "build/lib/index.js",
   "types": "build/lib/index.d.ts",
@@ -19,12 +19,11 @@
     "node": ">=12"
   },
   "files": [
-    "build/lib/*",
-    "build/umd/*",
+    "build/lib/**/*",
     "src"
   ],
   "scripts": {
-    "build": "tsup"
+    "build": "tsup && tsc --emitDeclarationOnly"
   },
   "dependencies": {
     "@apidevtools/swagger-parser": "10.0.3",

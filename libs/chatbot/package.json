@@ -1,8 +1,30 @@
 {
   "name": "@microsoft/logic-apps-chatbot",
   "version": "3.2.0",
+  "license": "MIT",
+  "type": "commonjs",
+  "module": "build/lib/index.esm.js",
+  "main": "build/lib/index.js",
+  "types": "build/lib/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./build/lib/index.d.ts",
+      "import": "./build/lib/index.mjs",
+      "default": "./build/lib/index.js"
+    },
+    "./package.json": "./package.json",
+    "./build/lib/index.css": "./build/lib/index.css"
+  },
+  "sideEffects": false,
+  "engines": {
+    "node": ">=12"
+  },
+  "files": [
+    "build/lib/**/*",
+    "src"
+  ],
   "scripts": {
-    "yalcpush": "yalc push ../../dist/libs/chatbot"
+    "build": "tsup && tsc --emitDeclarationOnly"
   },
   "dependencies": {
     "@microsoft/logic-apps-shared": "workspace:*",

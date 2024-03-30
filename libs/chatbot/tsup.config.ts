@@ -1,13 +1,14 @@
 import { defineConfig } from 'tsup';
+import { lessLoader } from 'esbuild-plugin-less';
 import svgr from 'esbuild-plugin-svgr'
-
 export default defineConfig({
     entry: ['src/index.ts'],
     treeshake: true,
-    sourcemap: 'inline',
     outDir: 'build/lib',
+    sourcemap: 'inline',
     minify: false,
     clean: true,
+    // dts: true,
     splitting: false,
     tsconfig: 'tsconfig.json',
     format: ['cjs', 'esm'],
@@ -16,4 +17,7 @@ export default defineConfig({
     loader: {
         '.svg': 'dataurl',
     },
+    esbuildPlugins: [
+        lessLoader(),
+    ],
 });
