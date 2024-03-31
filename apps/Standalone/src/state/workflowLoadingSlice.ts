@@ -63,7 +63,7 @@ type RunPayload = {
 export const loadWorkflow = createAsyncThunk('workflowLoadingState/loadWorkflow', async (_: void, thunkAPI) => {
   const currentState: RootState = thunkAPI.getState() as RootState;
 
-  const wf = await import(`../../../../__mocks__/workflows/${currentState.workflowLoader.resourcePath}`);
+  const wf = await import(`../../../../__mocks__/workflows/${currentState.workflowLoader.resourcePath?.split('.')[0]}.json`);
   return {
     workflowDefinition: wf.definition as LogicAppsV2.WorkflowDefinition,
     connectionReferences: {},
@@ -73,7 +73,7 @@ export const loadWorkflow = createAsyncThunk('workflowLoadingState/loadWorkflow'
 export const loadRun = createAsyncThunk('runLoadingState/loadRun', async (_: void, thunkAPI) => {
   const currentState: RootState = thunkAPI.getState() as RootState;
   try {
-    const runInstance = await import(`../../../../__mocks__/runs/${currentState.workflowLoader.resourcePath}`);
+    const runInstance = await import(`../../../../__mocks__/runs/${currentState.workflowLoader.resourcePath?.split('.')[0]}.json`);
     return { runInstance: runInstance as LogicAppsV2.RunInstanceDefinition } as RunPayload;
   } catch {
     return thunkAPI.rejectWithValue(null);

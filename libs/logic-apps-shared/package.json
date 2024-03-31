@@ -3,13 +3,13 @@
   "version": "3.2.0",
   "license": "MIT",
   "type": "module",
-  "module": "build/lib/index.esm.js",
+  "module": "build/lib/index.js",
   "main": "build/lib/index.js",
   "types": "build/lib/index.d.ts",
   "exports": {
     ".": {
       "types": "./build/lib/index.d.ts",
-      "import": "./build/lib/index.mjs",
+      "import": "./build/lib/index.js",
       "default": "./build/lib/index.js"
     },
     "./package.json": "./package.json"

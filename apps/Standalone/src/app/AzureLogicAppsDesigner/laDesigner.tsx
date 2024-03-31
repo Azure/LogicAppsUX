@@ -24,7 +24,7 @@ import {
 } from './Services/WorkflowAndArtifacts';
 import { ArmParser } from './Utilities/ArmParser';
 import { WorkflowUtility } from './Utilities/Workflow';
-import { Chatbot, chatbotPanelWidth } from '@microsoft/chatbot';
+// import { Chatbot, chatbotPanelWidth } from '@microsoft/logic-apps-chatbot';
 import {
   BaseApiManagementService,
   BaseAppServiceService,
@@ -320,13 +320,13 @@ const DesignerEditor = () => {
                 isReadOnly={isReadOnly}
                 isDarkMode={isDarkMode}
                 showConnectionsPanel={showConnectionsPanel}
-                rightShift={showChatBot ? chatbotPanelWidth : undefined}
+                rightShift={showChatBot ? 'chatbotPanelWidth' : undefined}
                 enableCopilot={async () => {
                   dispatch(setIsChatBotEnabled(!showChatBot));
                 }}
               />
-              <Designer rightShift={showChatBot ? chatbotPanelWidth : undefined} />
-              {showChatBot ? (
+              <Designer rightShift={showChatBot ? 'chatbotPanelWidth' : undefined} />
+              {/* {showChatBot ? (
                 <Chatbot
                   openAzureCopilotPanel={() => openPanel('Azure Copilot Panel has been opened')}
                   getAuthToken={getAuthToken}
@@ -334,7 +334,7 @@ const DesignerEditor = () => {
                   openFeedbackPanel={() => openPanel('Azure Feedback Panel has been opened')}
                   closeChatBot={() => dispatch(setIsChatBotEnabled(false))}
                 />
-              ) : null}
+              ) : null} */}
             </div>
           </BJSWorkflowProvider>
         ) : null}

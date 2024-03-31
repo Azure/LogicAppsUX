@@ -9,6 +9,7 @@ import type { MutableRefObject } from 'react';
 import { useState, useEffect, forwardRef, useRef, useCallback } from 'react';
 
 loader.config({ monaco });
+
 export interface EditorContentChangedEventArgs extends editor.IModelContentChangedEvent {
   value?: string;
 }
