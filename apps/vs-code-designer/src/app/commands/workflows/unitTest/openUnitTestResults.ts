@@ -2,7 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { developmentDirectoryName, testsDirectoryName, workflowFileName } from '../../../../constants';
+import { testsDirectoryName, workflowFileName } from '../../../../constants';
 import { ext } from '../../../../extensionVariables';
 import { localize } from '../../../../localize';
 import { cacheWebviewPanel, removeWebviewPanelFromCache, tryGetWebviewPanel } from '../../../utils/codeless/common';
@@ -44,7 +44,7 @@ export async function openUnitTestResults(context: IAzureConnectorsContext, node
   } else if (node && !(node instanceof Uri) && node.uri instanceof Uri) {
     unitTestNode = node.uri;
   } else {
-    const unitTest = await pickUnitTest(context, path.join(projectPath, developmentDirectoryName, testsDirectoryName));
+    const unitTest = await pickUnitTest(context, path.join(projectPath, testsDirectoryName));
     unitTestNode = Uri.file(unitTest.data) as Uri;
   }
   const unitTestName = getUnitTestName(unitTestNode.fsPath);
