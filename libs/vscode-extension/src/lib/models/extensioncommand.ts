@@ -41,6 +41,7 @@ export const ExtensionCommand = {
   webviewRscLoadError: 'webviewRscLoadError',
   saveUnitTest: 'saveUnitTest',
   createUnitTest: 'createUnitTest',
+  viewWorkflow: 'viewWorkflow',
 } as const;
 export type ExtensionCommand = (typeof ExtensionCommand)[keyof typeof ExtensionCommand];
 

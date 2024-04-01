@@ -69,6 +69,7 @@ export namespace ext {
     monitoring: 'monitoring',
     export: 'export',
     overview: 'overview',
+    unitTest: 'unitTest',
   } as const;
   export type webViewKey = keyof typeof webViewKey;
 
