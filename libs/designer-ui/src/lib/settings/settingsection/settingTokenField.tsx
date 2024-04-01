@@ -1,6 +1,7 @@
 import { ArrayEditor } from '../../arrayeditor';
 import { AuthenticationEditor } from '../../authentication';
 import { CodeEditor } from '../../code';
+import { isCustomCode } from '../../code/util';
 import { Combobox } from '../../combobox';
 import constants from '../../constants';
 import { CopyInputControl } from '../../copyinputcontrol';
@@ -158,9 +159,9 @@ export const TokenField = ({
       );
     case constants.PARAMETER.EDITOR.CODE:
       return (() => {
-        const isCustomCode = editorOptions?.language !== constants.PARAMETER.EDITOR_OPTIONS.LANGUAGE.JAVASCRIPT;
+        const customCodeEditor = isCustomCode(editor, editorOptions?.language);
         const initialValue =
-          editorOptions?.language && isCustomCode ? [createLiteralValueSegment(editorViewModel?.customCodeData?.fileData)] : value;
+          editorOptions?.language && customCodeEditor ? [createLiteralValueSegment(editorViewModel?.customCodeData?.fileData)] : value;
         const language = editorOptions.language ?? EditorLanguage.javascript;
 
         return (
@@ -172,7 +173,7 @@ export const TokenField = ({
             onChange={onValueChange}
             readonly={readOnly}
             placeholder={placeholder}
-            isCustomCode={isCustomCode}
+            customCodeEditor={customCodeEditor}
             nodeTitle={nodeTitle}
           />
         );

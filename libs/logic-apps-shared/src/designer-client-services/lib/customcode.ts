@@ -16,19 +16,7 @@ export interface VFSObject {
   path: string;
 }
 
-export const CustomCodeConstants = {
-  EDITOR: {
-    CODE: 'code',
-  },
-  EDITOR_OPTIONS: {
-    LANGUAGE: {
-      JAVASCRIPT: 'javascript',
-    },
-  },
-};
-
 export interface ICustomCodeService {
-  isCustomCode(editor?: string, language?: string): boolean;
   getAllCustomCodeFiles(): Promise<VFSObject[]>;
   getCustomCodeFile(fileName: string): Promise<string>;
   uploadCustomCode(customCode: UploadCustomCode): Promise<void>;
