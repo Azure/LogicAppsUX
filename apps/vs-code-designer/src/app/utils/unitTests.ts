@@ -2,7 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.md in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { developmentDirectoryName, saveUnitTestEvent, testsDirectoryName, unitTestsFileName } from '../../constants';
+import { saveUnitTestEvent, testsDirectoryName, unitTestsFileName } from '../../constants';
 import { localize } from '../../localize';
 import { type IAzureQuickPickItem, type IActionContext, callWithTelemetryAndErrorHandling } from '@microsoft/vscode-azext-utils';
 import * as fs from 'fs';
@@ -67,7 +67,7 @@ export const getUnitTestName = (filePath: string) => {
  * @returns The path of the unit test file.
  */
 const getUnitTestsPath = (projectPath: string, workflowName: string, unitTestName: string) => {
-  return path.join(projectPath, developmentDirectoryName, testsDirectoryName, workflowName, `${unitTestName}${unitTestsFileName}`);
+  return path.join(projectPath, testsDirectoryName, workflowName, `${unitTestName}${unitTestsFileName}`);
 };
 
 /**
@@ -77,7 +77,7 @@ const getUnitTestsPath = (projectPath: string, workflowName: string, unitTestNam
  * @returns The path to the workflow tests directory.
  */
 const getWorkflowTestsPath = (projectPath: string, workflowName: string) => {
-  return path.join(projectPath, developmentDirectoryName, testsDirectoryName, workflowName);
+  return path.join(projectPath, testsDirectoryName, workflowName);
 };
 
 /**

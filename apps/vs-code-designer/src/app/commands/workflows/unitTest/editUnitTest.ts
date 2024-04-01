@@ -2,7 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { developmentDirectoryName, testsDirectoryName, workflowFileName } from '../../../../constants';
+import { testsDirectoryName, workflowFileName } from '../../../../constants';
 import { getUnitTestName, pickUnitTest } from '../../../utils/unitTests';
 import { tryGetLogicAppProjectRoot } from '../../../utils/verifyIsProject';
 import { getWorkflowNode, getWorkspaceFolder } from '../../../utils/workspace';
@@ -28,7 +28,7 @@ export async function editUnitTest(context: IAzureConnectorsContext, node: vscod
   } else if (node && !(node instanceof vscode.Uri) && node.uri instanceof vscode.Uri) {
     unitTestNode = node.uri;
   } else {
-    const unitTest = await pickUnitTest(context, path.join(projectPath, developmentDirectoryName, testsDirectoryName));
+    const unitTest = await pickUnitTest(context, path.join(projectPath, testsDirectoryName));
     unitTestNode = vscode.Uri.file(unitTest.data) as vscode.Uri;
   }
 
