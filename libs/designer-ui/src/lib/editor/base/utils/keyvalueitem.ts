@@ -3,7 +3,7 @@ import { isEmpty } from '../../../dictionary/expandeddictionary';
 import type { ValueSegment } from '../../models/parameter';
 import { createLiteralValueSegment, insertQutationForStringType } from './helper';
 import { convertSegmentsToString } from './parsesegments';
-import { isNumber, isBoolean } from '@microsoft/logic-apps-shared';
+import { isNumber, isBoolean, doubleQuoteString } from '@microsoft/logic-apps-shared';
 
 export interface KeyValueItem {
   id: string;
@@ -29,7 +29,7 @@ export const convertKeyValueItemToSegments = (items: KeyValueItem[], keyType?: s
     const updatedKey = key.map((segment) => {
       return {
         ...segment,
-        value: convertedKeyType !== constants.SWAGGER.TYPE.STRING ? segment.value : segment.value.replace(/\n/g, '\\n'),
+        value: convertedKeyType !== constants.SWAGGER.TYPE.STRING ? segment.value : doubleQuoteString(segment.value),
       };
     });
 
@@ -37,7 +37,7 @@ export const convertKeyValueItemToSegments = (items: KeyValueItem[], keyType?: s
     const updatedValue = value.map((segment) => {
       return {
         ...segment,
-        value: convertedValueType !== constants.SWAGGER.TYPE.STRING ? segment.value : segment.value.replace(/\n/g, '\\n'),
+        value: convertedValueType !== constants.SWAGGER.TYPE.STRING ? segment.value : doubleQuoteString(segment.value),
       };
     });
 

@@ -29,3 +29,7 @@ export const splitFileName = (fileName: string) => {
   const splitFileName = fileName.lastIndexOf('.');
   return [fileName.slice(0, splitFileName), fileName.slice(splitFileName)];
 };
+
+export const doubleQuoteString = (s: string): string => {
+  return s.replace(/\\/g, '\\\\').replace(/\n/g, '\\n');
+};
