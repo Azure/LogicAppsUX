@@ -2,7 +2,7 @@ import { useReadOnly } from '../../core/state/designerOptions/designerOptionsSel
 import { useActionMetadata, useNodeEdgeTargets, useNodeMetadata } from '../../core/state/workflow/workflowSelectors';
 import { DropZone } from './dropzone';
 import { ArrowCap } from './dynamicsvgs/arrowCap';
-import { RunAfterIndicator } from './runAfterIndicator';
+import { CollapsedRunAfterIndicator, RunAfterIndicator } from './runAfterIndicator';
 import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import { containsIdTag, removeIdTag, getEdgeCenter, RUN_AFTER_STATUS } from '@microsoft/logic-apps-shared';
 import type { ElkExtendedEdge } from 'elkjs/lib/elk-api';
@@ -92,7 +92,9 @@ const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
   }, [filteredRunAfters, reactFlow, source]);
 
   const runAfterStatuses = useMemo(() => filteredRunAfters?.[source] ?? [], [filteredRunAfters, source]);
-  const showRunAfter = runAfterStatuses.length;
+  const runAfterCount = Object.keys(filteredRunAfters).length;
+  const showRunAfter = runAfterStatuses.length && runAfterCount < 6;
+  const showCollapsedRunAfter = runAfterStatuses.length && runAfterCount > 5 && Object.keys(filteredRunAfters)[0] === source;
 
   const showSourceButton = edgeTargets[edgeTargets.length - 1] === target;
   const showTargetButton = edgeSources?.[edgeSources.length - 1] === source;
@@ -185,6 +187,18 @@ const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
           y={targetY - runAfterHeight}
         >
           <RunAfterIndicator statuses={runAfterStatuses} sourceNodeId={source} />
+        </foreignObject>
+      ) : null}
+      {/* RUN AFTER INDICATOR WHEN COLLAPSED */}
+      {showCollapsedRunAfter ? (
+        <foreignObject
+          id="msla-run-after-traffic-light"
+          width={runAfterWidth}
+          height={runAfterHeight}
+          x={targetX - runAfterWidth / 2}
+          y={targetY - runAfterHeight}
+        >
+          <CollapsedRunAfterIndicator filteredRunAfters={filteredRunAfters} runAfterCount={runAfterCount} />
         </foreignObject>
       ) : null}
     </>
