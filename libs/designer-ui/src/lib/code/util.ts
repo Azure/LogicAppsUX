@@ -179,3 +179,7 @@ export const getEditorHeight = (input = ''): string => {
 export const getCodeEditorHeight = (input = ''): string => {
   return Math.min(Math.max(input?.split('\n').length * 20, 228), 456) + 'px';
 };
+
+export const isCustomCode = (editor?: string, language?: string): boolean => {
+  return equals(editor, constants.PARAMETER.EDITOR.CODE) && !equals(language, constants.PARAMETER.EDITOR_OPTIONS.LANGUAGE.JAVASCRIPT);
+};

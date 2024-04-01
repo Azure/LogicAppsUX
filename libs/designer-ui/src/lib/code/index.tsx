@@ -25,7 +25,7 @@ const customCodeIconStyle = {
 
 export interface CodeEditorProps extends BaseEditorProps {
   language: EditorLanguage;
-  isCustomCode?: boolean;
+  customCodeEditor?: boolean;
   nodeTitle?: string;
 }
 
@@ -38,7 +38,7 @@ export function CodeEditor({
   getTokenPicker,
   label,
   nodeTitle,
-  isCustomCode,
+  customCodeEditor,
 }: CodeEditorProps): JSX.Element {
   const intl = useIntl();
   const codeEditorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
@@ -70,7 +70,7 @@ export function CodeEditor({
     if (!getInTokenPicker()) {
       setShowTokenPickerButton(false);
     }
-    if (isCustomCode) {
+    if (customCodeEditor) {
       onChange?.({
         value: [createLiteralValueSegment(getFileName())],
         viewModel: {
@@ -140,8 +140,8 @@ export function CodeEditor({
   });
 
   return (
-    <div className={isCustomCode ? 'msla-custom-code-editor-body' : 'msla-code-editor-body'} id={editorId}>
-      {isCustomCode ? (
+    <div className={customCodeEditor ? 'msla-custom-code-editor-body' : 'msla-code-editor-body'} id={editorId}>
+      {customCodeEditor ? (
         <div className="msla-custom-code-editor-file">
           <Icon iconName="FileCode" styles={customCodeIconStyle} />
           <div className="msla-custom-code-editor-fileName">{getFileName()}</div>
@@ -180,7 +180,7 @@ export function CodeEditor({
             tokenClicked
           )
         : null}
-      {isCustomCode && showMessageBar ? (
+      {customCodeEditor && showMessageBar ? (
         <MessageBar
           messageBarType={MessageBarType.info}
           className="msla-custom-code-editor-message-bar"

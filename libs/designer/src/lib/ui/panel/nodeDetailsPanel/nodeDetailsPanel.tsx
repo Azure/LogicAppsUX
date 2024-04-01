@@ -25,9 +25,8 @@ import { CommentMenuItem } from '../../menuItems/commentMenuItem';
 import { DeleteMenuItem } from '../../menuItems/deleteMenuItem';
 import { usePanelTabs } from './usePanelTabs';
 import type { CommonPanelProps, PageActionTelemetryData } from '@microsoft/designer-ui';
-import { PanelContainer, PanelScope, PanelSize } from '@microsoft/designer-ui';
+import { PanelContainer, PanelScope, PanelSize, isCustomCode } from '@microsoft/designer-ui';
 import {
-  CustomCodeService,
   WorkflowService,
   SUBGRAPH_TYPES,
   isNullOrUndefined,
@@ -117,7 +116,7 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
   // delete the existing custom code file name and upload the new file with updated name
   const onTitleBlur = (prevTitle: string) => {
     const parameter = getParameterFromName(inputs, constants.DEFAULT_CUSTOM_CODE_INPUT);
-    if (parameter && CustomCodeService().isCustomCode(parameter?.editor, parameter?.editorOptions?.language)) {
+    if (parameter && isCustomCode(parameter?.editor, parameter?.editorOptions?.language)) {
       const newFileName = getCustomCodeFileName(selectedNode, inputs, idReplacements);
       const [, fileExtension] = splitFileName(newFileName);
       const oldFileName = replaceWhiteSpaceWithUnderscore(prevTitle) + fileExtension;
