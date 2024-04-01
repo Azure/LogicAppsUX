@@ -97,7 +97,7 @@ export const LoopsPager = ({ metadata, scopeId, collapsed }: LoopsPagerProps) =>
   const failedIterationProps =
     failedRepetitions.length > 0
       ? {
-          max: failedRepetitions.length > 1 ? failedRepetitions[failedRepetitions.length - 1] + 1 : 0,
+          max: failedRepetitions.length >= 1 ? failedRepetitions[failedRepetitions.length - 1] + 1 : 0,
           min: failedRepetitions[0] + 1 >= 1 ? failedRepetitions[0] + 1 : 1,
           onClickNext: onClickNextFailed,
           onClickPrevious: onClickPreviousFailed,
