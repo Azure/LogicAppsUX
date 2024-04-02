@@ -1,7 +1,5 @@
 import type { ICustomCodeService, UploadCustomCode, VFSObject } from '../customcode';
-import { CustomCodeConstants } from '../customcode';
 import type { IHttpClient } from '../httpClient';
-import { equals } from '../../../utils/src';
 
 export interface CustomCodeServiceOptions {
   apiVersion: string;
@@ -31,10 +29,6 @@ export class StandardCustomCodeService implements ICustomCodeService {
     } else if (!httpClient) {
       throw new Error('httpClient required');
     }
-  }
-
-  isCustomCode(editor?: string, language?: string): boolean {
-    return equals(editor, CustomCodeConstants.EDITOR.CODE) && !equals(language, CustomCodeConstants.EDITOR_OPTIONS.LANGUAGE.JAVASCRIPT);
   }
 
   async getAllCustomCodeFiles(): Promise<VFSObject[]> {
