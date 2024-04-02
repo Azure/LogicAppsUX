@@ -37,7 +37,9 @@ export const PanelResizer = (props: PanelResizerProps): JSX.Element => {
   const animationFrame = useRef<number>(0);
 
   const resize = useCallback(
-    ({ clientX }: MouseEvent) => {
+    (e: MouseEvent) => {
+      e.preventDefault();
+      const { clientX } = e;
       animationFrame.current = requestAnimationFrame(() => {
         if (isResizing) {
           const newWidth = Math.max(window.innerWidth - clientX, 400);

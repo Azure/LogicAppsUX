@@ -66,6 +66,7 @@ const DesignerEditorConsumption = () => {
     showChatBot,
     hostOptions,
     showConnectionsPanel,
+    language,
   } = useSelector((state: RootState) => state.workflowLoader);
 
   const workflowName = workflowId.split('/').splice(-1)[0];
@@ -201,7 +202,7 @@ const DesignerEditorConsumption = () => {
     <div key={designerID} style={{ height: 'inherit', width: 'inherit' }}>
       <DesignerProvider
         key={designerID}
-        locale={'en-US'}
+        locale={language}
         options={{
           services,
           isDarkMode,
