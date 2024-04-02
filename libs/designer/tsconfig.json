@@ -29,6 +29,7 @@
   "exclude": [
     "**/*.spec.ts",
     "**/__test__/**",
+    "**/build/**",
     "jest.config.ts"
   ]
 }

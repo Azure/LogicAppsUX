@@ -24,7 +24,7 @@
     "src"
   ],
   "scripts": {
-    "build": "tsup && tsc --emitDeclarationOnly"
+    "build": "tsup && tsc --emitDeclarationOnly && node ./build-finish.js"
   },
   "dependencies": {
     "@fluentui/azure-themes": "8.5.70",

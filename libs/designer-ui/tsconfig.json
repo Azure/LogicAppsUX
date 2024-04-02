@@ -24,6 +24,7 @@
   "exclude": [
     "**/__test__/**",
     "**/__tests__/**",
+    "**/build/**",
     "jest.config.ts"
   ]
 }

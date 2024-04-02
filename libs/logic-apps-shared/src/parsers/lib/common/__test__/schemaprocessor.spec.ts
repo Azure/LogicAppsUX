@@ -1,6 +1,6 @@
 import type { SchemaProcessorOptions } from '../schemaprocessor';
 import { SchemaProcessor } from '../schemaprocessor';
-import type { OpenAPIV2 } from '@microsoft/utils-logic-apps';
+import type { OpenAPIV2 } from '../../../../utils/src';
 
 type SchemaObject = OpenAPIV2.SchemaObject;
 

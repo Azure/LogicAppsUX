@@ -15,8 +15,8 @@ import type {
 import { ParametersProcessor } from './parameterprocessor';
 import { UriTemplateParser, UriTemplateGenerator } from './uritemplateparser';
 import APIParser from '@apidevtools/swagger-parser';
-import type { DownloadChunkMetadata, OpenAPIV2, UploadChunkMetadata } from '@microsoft/utils-logic-apps';
-import { aggregate, equals, getPropertyValue, map, unmap } from '@microsoft/utils-logic-apps';
+import type { DownloadChunkMetadata, OpenAPIV2, UploadChunkMetadata } from '../../../utils/src';
+import { aggregate, equals, getPropertyValue, map, unmap } from '../../../utils/src';
 
 interface GetOperationsOptions {
   excludeAdvancedOperations?: boolean;

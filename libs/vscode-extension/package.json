@@ -23,7 +23,6 @@
     "src"
   ],
   "scripts": {
-    "build": "tsup && tsc --emitDeclarationOnly"
   },
   "dependencies": {
     "@microsoft/vscode-azext-azureappservice": "0.8.1",

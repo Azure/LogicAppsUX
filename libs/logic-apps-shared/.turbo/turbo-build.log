@@ -1,0 +1,19 @@
+
+> @microsoft/logic-apps-shared@3.2.0 build /Users/travisharris/code/LogicAppsUX/libs/logic-apps-shared
+> tsup && tsc --emitDeclarationOnly && node ./build-finish.js
+
+[34mCLI[39m Building entry: src/index.ts
+[34mCLI[39m Using tsconfig: tsconfig.json
+[34mCLI[39m tsup v8.0.2
+[34mCLI[39m Using tsup config: /Users/travisharris/code/LogicAppsUX/libs/logic-apps-shared/tsup.config.ts
+[34mCLI[39m Target: esnext
+[34mCLI[39m Cleaning output folder
+[34mCJS[39m Build start
+[34mESM[39m Build start
+[32mCJS[39m [1mbuild/lib/index.cjs [22m[32m17.34 MB[39m
+[32mCJS[39m ⚡️ Build success in 2418ms
+[32mESM[39m [1mbuild/lib/index.js [22m[32m17.33 MB[39m
+[32mESM[39m ⚡️ Build success in 2419ms
+(node:13300) ExperimentalWarning: Import assertions are not a stable feature of the JavaScript language. Avoid relying on their current behavior and syntax as those might change in a future version of Node.js.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:13300) ExperimentalWarning: Importing JSON modules is an experimental feature and might change at any time

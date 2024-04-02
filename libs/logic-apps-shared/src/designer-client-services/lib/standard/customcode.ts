@@ -1,7 +1,7 @@
 import type { ICustomCodeService, UploadCustomCode, VFSObject } from '../customcode';
 import { CustomCodeConstants } from '../customcode';
 import type { IHttpClient } from '../httpClient';
-import { equals } from '@microsoft/logic-apps-shared';
+import { equals } from '../../../utils/src';
 
 export interface CustomCodeServiceOptions {
   apiVersion: string;

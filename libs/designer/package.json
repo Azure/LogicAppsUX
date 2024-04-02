@@ -3,17 +3,16 @@
   "version": "3.2.0",
   "license": "MIT",
   "type": "module",
-  "module": "build/lib/index.js",
-  "main": "build/lib/index.js",
+  "module": "src/index.ts",
+  "main": "src/index.ts",
   "types": "build/lib/index.d.ts",
   "exports": {
     ".": {
       "types": "./build/lib/index.d.ts",
-      "import": "./build/lib/index.js",
-      "default": "./build/lib/index.js"
+      "import": "./src/index.ts",
+      "default": "./src/index.ts"
     },
-    "./package.json": "./package.json",
-    "./build/lib/index.css": "./build/lib/index.css"
+    "./package.json": "./package.json"
   },
   "sideEffects": false,
   "engines": {
@@ -24,7 +23,7 @@
     "src"
   ],
   "scripts": {
-    "build": "tsup && tsc --emitDeclarationOnly"
+    "build": "tsup && tsc --emitDeclarationOnly && node ./build-finish.js"
   },
   "dependencies": {
     "@fluentui/azure-themes": "8.5.70",
