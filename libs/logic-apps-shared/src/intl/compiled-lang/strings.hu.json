@@ -11,6 +11,12 @@
       "value": "Figyelmeztetés: a bemeneti csomópont típusa nem felel meg a sémacsomópont típusának"
     }
   ],
+  "+0ua83": [
+    {
+      "type": 0,
+      "value": "Parameters"
+    }
+  ],
   "+0yxlR": [
     {
       "type": 0,
@@ -6079,6 +6085,12 @@
       "value": "További információ a dinamikus tartalmakról."
     }
   ],
+  "ZvAp7m": [
+    {
+      "type": 0,
+      "value": "Save"
+    }
+  ],
   "ZyDq4/": [
     {
       "type": 0,
@@ -8361,6 +8373,12 @@
       "value": "Választörzs"
     }
   ],
+  "ohOaXj": [
+    {
+      "type": 0,
+      "value": "Errors"
+    }
+  ],
   "onXUu0": [
     {
       "type": 0,
@@ -8905,6 +8923,12 @@
     {
       "type": 0,
       "value": "Kapcsolat létrehozásának megszakítása"
+    }
+  ],
+  "sOnphB": [
+    {
+      "type": 0,
+      "value": "Resubmit"
     }
   ],
   "sQ2vRs": [

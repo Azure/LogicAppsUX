@@ -194,7 +194,8 @@ const DesignerEditor = () => {
 
   const saveWorkflowFromDesigner = async (
     workflowFromDesigner: Workflow,
-    customCode: CustomCodeFileNameMapping | undefined
+    customCode: CustomCodeFileNameMapping | undefined,
+    clearDirtyState: () => void
   ): Promise<void> => {
     const { definition, connectionReferences, parameters } = workflowFromDesigner;
     const workflowToSave = {
@@ -260,7 +261,8 @@ const DesignerEditor = () => {
       connectionsToUpdate,
       parametersToUpdate,
       settingsToUpdate,
-      customCode
+      customCode,
+      clearDirtyState
     );
   };
 

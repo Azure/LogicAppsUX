@@ -1,4 +1,4 @@
-import { connectionsFileName } from '../../../constants';
+import { azurePublicBaseUrl, connectionsFileName } from '../../../constants';
 import { localize } from '../../../localize';
 import { isCSharpProject } from '../../commands/initProjectForVSCode/detectProjectLanguage';
 import { addOrUpdateLocalAppSettings } from '../appSettings/localSettings';
@@ -320,7 +320,7 @@ async function createAccessPolicyInConnection(
         },
       },
     },
-    uri: `https://management.azure.com/${connectionId}/accessPolicies/${name}?api-version=2018-07-01-preview`,
+    uri: `${azurePublicBaseUrl}/${connectionId}/accessPolicies/${name}?api-version=2018-07-01-preview`,
   };
 
   return axios

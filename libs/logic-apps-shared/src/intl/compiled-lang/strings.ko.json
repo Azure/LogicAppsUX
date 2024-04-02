@@ -11,6 +11,12 @@
       "value": "경고: 입력 노드 형식이 스키마 노드의 형식과 일치하지 않습니다."
     }
   ],
+  "+0ua83": [
+    {
+      "type": 0,
+      "value": "Parameters"
+    }
+  ],
   "+0yxlR": [
     {
       "type": 0,
@@ -6027,6 +6033,12 @@
       "value": "동적 콘텐츠에 대해 자세히 알아보세요."
     }
   ],
+  "ZvAp7m": [
+    {
+      "type": 0,
+      "value": "Save"
+    }
+  ],
   "ZyDq4/": [
     {
       "type": 0,
@@ -8263,6 +8275,12 @@
       "value": "응답 본문"
     }
   ],
+  "ohOaXj": [
+    {
+      "type": 0,
+      "value": "Errors"
+    }
+  ],
   "onXUu0": [
     {
       "type": 0,
@@ -8792,6 +8810,12 @@
     {
       "type": 0,
       "value": "연결 만들기 취소"
+    }
+  ],
+  "sOnphB": [
+    {
+      "type": 0,
+      "value": "Resubmit"
     }
   ],
   "sQ2vRs": [

@@ -1,6 +1,6 @@
 {
   "name": "@microsoft/logicappsux",
-  "version": "3.2.0",
+  "version": "3.3.0",
   "license": "MIT",
   "packageManager": "pnpm@8.12.1",
   "type": "module",
