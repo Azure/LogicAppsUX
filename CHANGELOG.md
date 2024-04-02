@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [3.0.2](https://github.com/Azure/LogicAppsUX/compare/v3.0.1...v3.0.2) (2024-04-02)
+
+
+### Bug Fixes
+
+* **vscode:** Implement management base URL to api hub base URL to support multiple clouds ([#4520](https://github.com/Azure/LogicAppsUX/issues/4520)) ([f0c8d1c](https://github.com/Azure/LogicAppsUX/commit/f0c8d1cd2ba143d53c3ea5d34fabef547f57121b)), closes [#4519](https://github.com/Azure/LogicAppsUX/issues/4519)
+
 ### [3.0.1](https://github.com/Azure/LogicAppsUX/compare/v3.0.0...v3.0.1) (2024-03-28)
 
 
