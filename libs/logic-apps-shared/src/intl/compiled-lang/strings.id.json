@@ -11,6 +11,12 @@
       "value": "Peringatan: tipe node input tidak cocok dengan tipe node skema"
     }
   ],
+  "+0ua83": [
+    {
+      "type": 0,
+      "value": "Parameters"
+    }
+  ],
   "+0yxlR": [
     {
       "type": 0,
@@ -6039,6 +6045,12 @@
       "value": "Pelajari selengkapnya tentang konten dinamis."
     }
   ],
+  "ZvAp7m": [
+    {
+      "type": 0,
+      "value": "Save"
+    }
+  ],
   "ZyDq4/": [
     {
       "type": 0,
@@ -8299,6 +8311,12 @@
       "value": "Isi respons"
     }
   ],
+  "ohOaXj": [
+    {
+      "type": 0,
+      "value": "Errors"
+    }
+  ],
   "onXUu0": [
     {
       "type": 0,
@@ -8832,6 +8850,12 @@
     {
       "type": 0,
       "value": "Batalkan pembuatan koneksi"
+    }
+  ],
+  "sOnphB": [
+    {
+      "type": 0,
+      "value": "Resubmit"
     }
   ],
   "sQ2vRs": [

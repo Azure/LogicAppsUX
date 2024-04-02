@@ -11,6 +11,12 @@
       "value": "Varning! Indatanodens typ matchar inte typ av schemanod"
     }
   ],
+  "+0ua83": [
+    {
+      "type": 0,
+      "value": "Parameters"
+    }
+  ],
   "+0yxlR": [
     {
       "type": 0,
@@ -6067,6 +6073,12 @@
       "value": "Läs mer om dynamiskt innehåll."
     }
   ],
+  "ZvAp7m": [
+    {
+      "type": 0,
+      "value": "Save"
+    }
+  ],
   "ZyDq4/": [
     {
       "type": 0,
@@ -8349,6 +8361,12 @@
       "value": "Svarstext"
     }
   ],
+  "ohOaXj": [
+    {
+      "type": 0,
+      "value": "Errors"
+    }
+  ],
   "onXUu0": [
     {
       "type": 0,
@@ -8889,6 +8907,12 @@
     {
       "type": 0,
       "value": "Avbryt skapande av en anslutning"
+    }
+  ],
+  "sOnphB": [
+    {
+      "type": 0,
+      "value": "Resubmit"
     }
   ],
   "sQ2vRs": [

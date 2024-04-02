@@ -11,6 +11,12 @@
       "value": "Upozornění: Typ vstupního uzlu neodpovídá typu uzlu schématu."
     }
   ],
+  "+0ua83": [
+    {
+      "type": 0,
+      "value": "Parameters"
+    }
+  ],
   "+0yxlR": [
     {
       "type": 0,
@@ -6171,6 +6177,12 @@
       "value": "Další informace o dynamickém obsahu"
     }
   ],
+  "ZvAp7m": [
+    {
+      "type": 0,
+      "value": "Save"
+    }
+  ],
   "ZyDq4/": [
     {
       "type": 0,
@@ -8501,6 +8513,12 @@
       "value": "Text odpovědi"
     }
   ],
+  "ohOaXj": [
+    {
+      "type": 0,
+      "value": "Errors"
+    }
+  ],
   "onXUu0": [
     {
       "type": 0,
@@ -9067,6 +9085,12 @@
     {
       "type": 0,
       "value": "Zrušit vytváření připojení"
+    }
+  ],
+  "sOnphB": [
+    {
+      "type": 0,
+      "value": "Resubmit"
     }
   ],
   "sQ2vRs": [
