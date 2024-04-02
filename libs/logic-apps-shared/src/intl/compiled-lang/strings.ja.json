@@ -11,6 +11,12 @@
       "value": "警告: 入力ノードの種類がスキーマ ノードの種類と一致しません"
     }
   ],
+  "+0ua83": [
+    {
+      "type": 0,
+      "value": "Parameters"
+    }
+  ],
   "+0yxlR": [
     {
       "type": 0,
@@ -6031,6 +6037,12 @@
       "value": "動的コンテンツの詳細情報。"
     }
   ],
+  "ZvAp7m": [
+    {
+      "type": 0,
+      "value": "Save"
+    }
+  ],
   "ZyDq4/": [
     {
       "type": 0,
@@ -8275,6 +8287,12 @@
       "value": "応答本文"
     }
   ],
+  "ohOaXj": [
+    {
+      "type": 0,
+      "value": "Errors"
+    }
+  ],
   "onXUu0": [
     {
       "type": 0,
@@ -8804,6 +8822,12 @@
     {
       "type": 0,
       "value": "接続の作成を取り消します"
+    }
+  ],
+  "sOnphB": [
+    {
+      "type": 0,
+      "value": "Resubmit"
     }
   ],
   "sQ2vRs": [
