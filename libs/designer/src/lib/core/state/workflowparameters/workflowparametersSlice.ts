@@ -88,7 +88,7 @@ export const validateParameter = (
           }
 
           error = isInvalid
-            ? intl.formatMessage({ defaultMessage: 'Enter a valid array.', id: 'MVrv+N', description: 'Error validation message' })
+            ? intl.formatMessage({ defaultMessage: 'Enter a valid Array.', id: 'JgugQX', description: 'Error validation message' })
             : undefined;
           break;
 
@@ -99,8 +99,8 @@ export const validateParameter = (
           } catch {
             error =
               swaggerType === Constants.SWAGGER.TYPE.BOOLEAN
-                ? intl.formatMessage({ defaultMessage: 'Enter a valid boolean.', id: 'GXXLuT', description: 'Error validation message' })
-                : intl.formatMessage({ defaultMessage: 'Enter a valid json.', id: 'kxMDyM', description: 'Error validation message' });
+                ? intl.formatMessage({ defaultMessage: 'Enter a valid Boolean.', id: 'b7BQdu', description: 'Error validation message' })
+                : intl.formatMessage({ defaultMessage: 'Enter a valid JSON.', id: 'dEe6Ob', description: 'Error validation message' });
           }
           break;
 
