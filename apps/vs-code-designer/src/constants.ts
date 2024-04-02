@@ -291,3 +291,6 @@ export const logicAppFilter = {
   type: 'microsoft.web/sites',
   kind: 'functionapp,workflowapp',
 };
+
+// Environment Variables
+export const azurePublicBaseUrl = 'https://management.azure.com';
