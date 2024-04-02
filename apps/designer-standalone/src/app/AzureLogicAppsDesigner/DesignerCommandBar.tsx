@@ -5,7 +5,7 @@ import { CommandBar } from '@fluentui/react/lib/CommandBar';
 import { Spinner, SpinnerSize } from '@fluentui/react/lib/Spinner';
 import type { ILoggerService } from '@microsoft/logic-apps-shared';
 import { LogEntryLevel, LoggerService, isNullOrEmpty, RUN_AFTER_COLORS } from '@microsoft/logic-apps-shared';
-import type { CustomCodeFileNameMapping, RootState, Workflow } from '@microsoft/logic-apps-designer';
+import type { AppDispatch, CustomCodeFileNameMapping, RootState, Workflow } from '@microsoft/logic-apps-designer';
 import {
   store as DesignerStore,
   serializeBJSWorkflow,
@@ -20,7 +20,7 @@ import {
   openPanel,
   useNodesInitialized,
   getCustomCodeFilesWithData,
-  resetCustomCode,
+  resetDesignerDirtyState,
 } from '@microsoft/logic-apps-designer';
 import { useMemo } from 'react';
 import { useMutation } from 'react-query';
@@ -50,7 +50,7 @@ export const DesignerCommandBar = ({
   location: string;
   isReadOnly: boolean;
   discard: () => unknown;
-  saveWorkflow: (workflow: Workflow, customCodeData: CustomCodeFileNameMapping | undefined) => Promise<void>;
+  saveWorkflow: (workflow: Workflow, customCodeData: CustomCodeFileNameMapping | undefined, clearDirtyState: () => void) => Promise<void>;
   isDarkMode: boolean;
   isConsumption?: boolean;
   showConnectionsPanel?: boolean;
@@ -58,7 +58,7 @@ export const DesignerCommandBar = ({
   enableCopilot?: () => void;
   loggerService?: ILoggerService;
 }) => {
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const isCopilotReady = useNodesInitialized();
   const { isLoading: isSaving, mutate: saveWorkflowMutate } = useMutation(async () => {
     const designerState = DesignerStore.getState();
@@ -92,9 +92,8 @@ export const DesignerCommandBar = ({
     const customCodeFilesWithData = getCustomCodeFilesWithData(designerState.customCode);
 
     if (!hasParametersErrors) {
-      await saveWorkflow(serializedWorkflow, customCodeFilesWithData);
+      await saveWorkflow(serializedWorkflow, customCodeFilesWithData, () => dispatch(resetDesignerDirtyState()));
       updateCallbackUrl(designerState, DesignerStore.dispatch);
-      DesignerStore.dispatch(resetCustomCode());
     }
   });
 

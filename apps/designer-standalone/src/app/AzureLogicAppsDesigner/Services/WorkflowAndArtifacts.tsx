@@ -9,6 +9,7 @@ import type { LogicAppsV2, VFSObject } from '@microsoft/logic-apps-shared';
 import axios from 'axios';
 import jwt_decode from 'jwt-decode';
 import { useQuery } from 'react-query';
+import { isSuccessResponse } from './HttpClient';
 
 const baseUrl = 'https://management.azure.com';
 const standardApiVersion = '2020-06-01';
@@ -341,7 +342,8 @@ export const saveWorkflowStandard = async (
   connectionsData: ConnectionsData | undefined,
   parametersData: ParametersData | undefined,
   settings: Record<string, string> | undefined,
-  customCodeData: CustomCodeFileNameMapping | undefined
+  customCodeData: CustomCodeFileNameMapping | undefined,
+  clearDirtyState: () => void
 ): Promise<any> => {
   const data: any = {
     files: {
@@ -373,13 +375,18 @@ export const saveWorkflowStandard = async (
     // saving custom code must happen synchronously with deploying the workflow artifacts as they both cause
     // the host to go soft restart. We may need to look into if there's a race case where this may still happen
     saveCustomCodeStandard(customCodeData);
-    await axios.post(`${baseUrl}${siteResourceId}/deployWorkflowArtifacts?api-version=${standardApiVersion}`, data, {
+    const response = await axios.post(`${baseUrl}${siteResourceId}/deployWorkflowArtifacts?api-version=${standardApiVersion}`, data, {
       headers: {
         'If-Match': '*',
         'Content-Type': 'application/json',
         Authorization: `Bearer ${environment.armToken}`,
       },
     });
+    if (!isSuccessResponse(response.status)) {
+      alert('Failed to save workflow');
+      return;
+    }
+    clearDirtyState();
   } catch (error) {
     console.log(error);
   }
