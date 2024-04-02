@@ -11,6 +11,12 @@
       "value": "Avviso: il tipo del nodo di input non corrisponde al tipo di nodo dello schema."
     }
   ],
+  "+0ua83": [
+    {
+      "type": 0,
+      "value": "Parameters"
+    }
+  ],
   "+0yxlR": [
     {
       "type": 0,
@@ -6127,6 +6133,12 @@
       "value": "Altre informazioni sul contenuto dinamico."
     }
   ],
+  "ZvAp7m": [
+    {
+      "type": 0,
+      "value": "Save"
+    }
+  ],
   "ZyDq4/": [
     {
       "type": 0,
@@ -8427,6 +8439,12 @@
       "value": "Corpo della risposta"
     }
   ],
+  "ohOaXj": [
+    {
+      "type": 0,
+      "value": "Errors"
+    }
+  ],
   "onXUu0": [
     {
       "type": 0,
@@ -8982,6 +9000,12 @@
     {
       "type": 0,
       "value": "Annulla la creazione di una connessione"
+    }
+  ],
+  "sOnphB": [
+    {
+      "type": 0,
+      "value": "Resubmit"
     }
   ],
   "sQ2vRs": [

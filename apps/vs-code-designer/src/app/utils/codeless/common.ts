@@ -6,6 +6,7 @@ import {
   workflowLocationKey,
   workflowManagementBaseURIKey,
   managementApiPrefix,
+  azurePublicBaseUrl,
 } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
@@ -146,7 +147,7 @@ export async function getAzureConnectorDetailsForLocalProject(
   let credentials: ServiceClientCredentials;
 
   // Set default for customers who created Logic Apps before sovereign cloud support was added.
-  let workflowManagementBaseUrl = localSettings.Values[workflowManagementBaseURIKey] ?? 'https://management.azure.com/';
+  let workflowManagementBaseUrl = localSettings.Values[workflowManagementBaseURIKey] ?? `${azurePublicBaseUrl}/`;
 
   if (subscriptionId === undefined) {
     const wizard = createAzureWizard(connectorsContext, projectPath);
