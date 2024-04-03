@@ -3,8 +3,13 @@
     "pipeline": {
         "build": {
             "dependsOn": [
-                "^build"
+                "^build:lib"
             ],
+            "outputs": [
+                "build/**"
+            ]
+        },
+        "build:lib": {
             "outputs": [
                 "build/**"
             ]

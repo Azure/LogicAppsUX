@@ -23,7 +23,7 @@
     "src"
   ],
   "scripts": {
-    "build": "tsup && tsc --emitDeclarationOnly -p tsconfig.json && node ./build-finish.js",
+    "build:lib": "tsup && tsc --emitDeclarationOnly -p tsconfig.json && node ./build-finish.js",
     "test:lib": "vitest --retry=3"
   },
   "dependencies": {
