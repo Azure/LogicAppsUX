@@ -3,7 +3,6 @@ import react from '@vitejs/plugin-react';
 import { NodeGlobalsPolyfillPlugin } from '@esbuild-plugins/node-globals-polyfill';
 import nodePolyfills from 'rollup-plugin-polyfill-node';
 import { nodePolyfills as np } from 'vite-plugin-node-polyfills';
-import mkcert from 'vite-plugin-mkcert';
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -13,8 +12,7 @@ export default defineConfig({
       // process: true,
       buffer: true,
     }),
-    np(),
-    mkcert(),
+    np()
   ],
   server: {
     port: 4200

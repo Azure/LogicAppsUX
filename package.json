@@ -6,6 +6,7 @@
   "type": "module",
   "scripts": {
     "start": "turbo run dev",
+    "start:e2e": "turbo run e2e",
     "build": "turbo run build",
     "yalcpush:all": "",
     "test": "turbo run test:unit",
@@ -32,6 +33,7 @@
     "@biomejs/biome": "1.6.3",
     "@faker-js/faker": "^8.4.1",
     "@formatjs/cli": "^6.2.9",
+    "@playwright/test": "^1.42.1",
     "@size-limit/preset-small-lib": "^11.1.2",
     "@tanstack/config": "^0.6.0",
     "@testing-library/jest-dom": "^6.4.2",
