@@ -2,7 +2,7 @@ import { ConnectionParameterRow, type ConnectionParameterRowProps } from '../con
 import { Label, TooltipHost } from '@fluentui/react';
 import React, { type ReactElement } from 'react';
 import * as ReactShallowRenderer from 'react-test-renderer/shallow';
-
+import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 describe('ui/connectionParameterRow', () => {
   let renderer: ReactShallowRenderer.ShallowRenderer;
 

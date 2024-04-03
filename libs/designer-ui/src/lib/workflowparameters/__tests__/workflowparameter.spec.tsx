@@ -3,7 +3,7 @@ import { WorkflowParameter } from '../workflowparameter';
 import { initializeIcons } from '@fluentui/react';
 import * as React from 'react';
 import * as ReactShallowRenderer from 'react-test-renderer/shallow';
-
+import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 describe('ui/workflowparameters/workflowparameter', () => {
   let minimal: WorkflowParameterProps, renderer: ReactShallowRenderer.ShallowRenderer;
 

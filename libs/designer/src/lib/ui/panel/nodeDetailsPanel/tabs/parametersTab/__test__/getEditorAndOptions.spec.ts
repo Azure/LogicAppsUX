@@ -3,7 +3,7 @@ import type { VariableDeclaration } from '../../../../../../core/state/tokens/to
 import { InitEditorService } from '@microsoft/logic-apps-shared';
 import type { ParameterInfo } from '@microsoft/designer-ui';
 import type { OperationInfo } from '@microsoft/logic-apps-shared';
-
+import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 describe('getEditorAndOptions', () => {
   const operationInfo: OperationInfo = {
     connectorId: 'connectorId',

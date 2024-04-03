@@ -11,7 +11,7 @@ import {
 import type { ConnectionParameter, ConnectionParameterSets } from '@microsoft/logic-apps-shared';
 import React, { type ReactElement } from 'react';
 import * as ReactShallowRenderer from 'react-test-renderer/shallow';
-
+import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 describe('ui/createConnection', () => {
   let renderer: ReactShallowRenderer.ShallowRenderer;
 

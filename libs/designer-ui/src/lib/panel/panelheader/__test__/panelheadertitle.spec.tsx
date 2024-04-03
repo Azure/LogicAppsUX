@@ -2,7 +2,7 @@ import type { PanelHeaderTitleProps } from '../panelheadertitle';
 import { PanelHeaderTitle } from '../panelheadertitle';
 import * as React from 'react';
 import * as ReactShallowRenderer from 'react-test-renderer/shallow';
-
+import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 describe('ui/panel/panelheadertitle', () => {
   let minimal: PanelHeaderTitleProps, renderer: ReactShallowRenderer.ShallowRenderer;
 

@@ -12,7 +12,7 @@ import {
   targetMockJsonSchema,
   targetMockSchema,
 } from '../../../__mocks__/schemas';
-
+import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 describe('mapDefinitions/MapDefinitionDeserializer', () => {
   describe('XML', () => {
     let simpleMap: MapDefinitionEntry = {};

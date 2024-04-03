@@ -1,5 +1,5 @@
 import { isHighContrastBlack } from '../theme';
-
+import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 describe('lib/utils/theme', () => {
   describe('isHighContrastBlack', () => {
     afterEach(() => {

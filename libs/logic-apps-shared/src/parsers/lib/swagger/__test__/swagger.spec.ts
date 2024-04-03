@@ -1,7 +1,7 @@
 import { SwaggerParser } from '../parser';
 import { Outlook } from './fixtures/outlook';
 import type { OpenAPIV2 } from '../../../../utils/src';
-
+import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 describe('Swagger tests', () => {
   it('should be able to successfully parse and dereference swagger', async () => {
     const result = await SwaggerParser.parse(Outlook as OpenAPIV2.Document);

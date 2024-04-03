@@ -3,7 +3,7 @@ import { SchemaProcessor } from '../schemaprocessor';
 import type { OpenAPIV2 } from '../../../../utils/src';
 
 type SchemaObject = OpenAPIV2.SchemaObject;
-
+import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 describe('SchemaProcessor Tests', () => {
   for (const type of ['boolean', 'integer', 'null', 'number', 'string', 'object']) {
     it(`should return $ as the key for type ${type}.`, () => {

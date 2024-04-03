@@ -28,7 +28,14 @@ jobs:
         with:
           node-version: ${{ matrix.node-version }}
 
-      - run: npm ci
-      - run: npx nx affected --target=lint --parallel
-      - run: npx nx affected --target=build
-      - run: npx nx affected --target=test --parallel
+      - uses: pnpm/action-setup@v3
+        with:
+          version: 8
+          run_install: |
+            - recursive: true
+              args: [--frozen-lockfile, --strict-peer-dependencies]
+            - args: [--global, turbo, typescript]
+            
+      # - run: npx nx affected --target=lint --parallel
+      - run: turbo run build
+      - run: turbo run test:lib

@@ -5,7 +5,7 @@
     "allowSyntheticDefaultImports": true,
     "strict": true,
     "noImplicitOverride": false,
-    "noPropertyAccessFromIndexSignature": true,
+    "noPropertyAccessFromIndexSignature": false,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
     "jsx": "react-jsx",
@@ -15,16 +15,10 @@
     "baseUrl": "./src",
     "rootDir": "./src",
     "declaration": true,
-    "composite": true,
     "types": [
       "vitest/globals"
     ]
   },
-  "references": [
-    {
-      "path": "./tsconfig.test.json"
-    }
-  ],
   "files": [],
   "include": [
     "**/src/**/*.ts",

@@ -2,7 +2,7 @@ import type { ValueLinkProps } from '../valuelink';
 import { ValueLink } from '../valuelink';
 import React from 'react';
 import ShallowRenderer from 'react-test-renderer/shallow';
-
+import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 describe('lib/monitoring/valuespanel/valuelink', () => {
   let minimal: ValueLinkProps, renderer: ShallowRenderer.ShallowRenderer;
 

@@ -2,7 +2,7 @@ import type { TipProps } from '..';
 import { Tip } from '..';
 import * as React from 'react';
 import * as ReactShallowRenderer from 'react-test-renderer/shallow';
-
+import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 describe('ui/tip', () => {
   const classNames = {
     tip: 'msla-tip',

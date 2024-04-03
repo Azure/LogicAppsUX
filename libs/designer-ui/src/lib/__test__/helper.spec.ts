@@ -1,6 +1,6 @@
 import { getDragStartHandlerWhenDisabled } from '../helper';
 import { isEdge, isFirefox } from '@microsoft/logic-apps-shared';
-
+import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 describe('lib/helper', () => {
   afterEach(() => {
     vi.restoreAllMocks();

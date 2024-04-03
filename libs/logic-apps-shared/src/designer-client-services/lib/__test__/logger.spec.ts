@@ -1,7 +1,7 @@
 import { LoggerService, InitLoggerService } from '../logger';
 import type { LogEntry } from '../logging/logEntry';
 import { LogEntryLevel } from '../logging/logEntry';
-
+import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 describe('lib/designer-client-services/logger', () => {
   it('should call mock log fn when service is called', () => {
     const mockLoggingService = {

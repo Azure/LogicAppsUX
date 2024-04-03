@@ -2,7 +2,7 @@ import { setIconOptions } from '@fluentui/react';
 import renderer from 'react-test-renderer';
 import { getTestIntl } from '../../__test__/intl-test-helper';
 import { ErrorBoundaryInternal as ErrorBoundary } from '../index';
-
+import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 describe('lib/errorboundary', () => {
   const Throws = () => {
     throw new Error("I'm an error");

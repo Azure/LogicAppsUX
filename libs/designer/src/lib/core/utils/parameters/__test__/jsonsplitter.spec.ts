@@ -1,5 +1,5 @@
 import { JsonSplitter } from '../jsonsplitter';
-
+import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 describe('core/utils/parameters/jsonsplitter', () => {
   describe('JsonSplitter', () => {
     it('should split the value correctly.', () => {

@@ -6,7 +6,7 @@ import renderer from 'react-test-renderer';
 //   ...vi.requireActual('@fluentui/react'),
 //   Dropdown: 'Dropdown',
 // }));
-
+import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 describe('lib/searchabledropdownwithaddall', () => {
   it('should create a dropdown with an add all and remove all buttons', () => {
     const props: SearchableDropdownWithAddAllProps = {
@@ -34,7 +34,7 @@ describe('lib/searchabledropdownwithaddall', () => {
     expect(renderedComponent).toMatchSnapshot();
   });
 });
-
+import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 describe('lib/searchabledropdownwithaddall', () => {
   it('should create a dropdown with an add all only', () => {
     const props: SearchableDropdownWithAddAllProps = {

@@ -6,7 +6,7 @@ import renderer from 'react-test-renderer';
 //   ...vi.requireActual('@fluentui/react'),
 //   Dropdown: 'Dropdown',
 // }));
-
+import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 describe('lib/searchabledropdown', () => {
   it('should create a dropdown without a search box for 3 options', () => {
     const props: SearchableDropdownProps = {

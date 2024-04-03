@@ -5,7 +5,7 @@ import {
   type IConnectionParameterInfo,
   type IConnectionCredentialMappingInfo,
 } from '../connectionParameterEditor';
-
+import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 describe('lib/designer-client-services/connectionParameterEditor', () => {
   beforeEach(() => {
     InitConnectionParameterEditorService(undefined);

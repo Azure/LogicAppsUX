@@ -5,7 +5,7 @@ import { isBuiltInConnector } from '../index';
 const getMinimalHostService = (): DesignerClientServices.IHostService => ({
   fetchAndDisplayContent: vi.fn(),
 });
-
+import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 describe('lib/connectors', () => {
   afterEach(() => {
     vi.restoreAllMocks();

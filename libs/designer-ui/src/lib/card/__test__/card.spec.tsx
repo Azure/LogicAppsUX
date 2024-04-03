@@ -1,7 +1,7 @@
 import type { CardProps } from '../index';
 import { Card } from '../index';
 import renderer from 'react-test-renderer';
-
+import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 describe('lib/card', () => {
   let minimal: CardProps;
 

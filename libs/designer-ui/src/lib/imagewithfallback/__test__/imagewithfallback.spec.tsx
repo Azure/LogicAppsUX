@@ -1,7 +1,7 @@
 import type { ImageWithFallbackProps } from '..';
 import { ImageWithFallback } from '..';
 import * as ReactShallowRenderer from 'react-test-renderer/shallow';
-
+import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 describe('ui/imagewithfallback', () => {
   let minimal: ImageWithFallbackProps, renderer: ReactShallowRenderer.ShallowRenderer;
 

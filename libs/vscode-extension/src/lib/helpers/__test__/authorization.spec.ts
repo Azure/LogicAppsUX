@@ -1,5 +1,5 @@
 import { getBaseGraphApi } from '../authorization';
-
+import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 describe('getBaseGraphApi', () => {
     it('should return default URL when cloudHost is undefined', () => {
         expect(getBaseGraphApi(undefined)).toEqual('https://management.azure.com');

@@ -2,7 +2,7 @@ import { Combobox } from '../index';
 import { setIconOptions } from '@fluentui/react';
 import { render, fireEvent, act } from '@testing-library/react';
 import renderer from 'react-test-renderer';
-
+import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 describe('lib/combobox', () => {
   const defaultProps = {
     options: [

@@ -13,7 +13,7 @@ import type { DictionaryEditorItemProps, ParameterInfo, ValueSegment, OutputToke
 import { GroupDropdownOptions, GroupType, TokenType, ValueSegmentType } from '@microsoft/designer-ui';
 import type { DynamicListExtension, LegacyDynamicValuesExtension, InputParameter } from '@microsoft/logic-apps-shared';
 import { DynamicValuesType, ExpressionType } from '@microsoft/logic-apps-shared';
-
+import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 describe('core/utils/parameters/helper', () => {
   describe('parameterValueToJSONString', () => {
     it('should parse user typed json containing null, array, numeric, and nested values', () => {
