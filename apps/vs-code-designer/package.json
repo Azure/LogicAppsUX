@@ -3,7 +3,7 @@
     "version": "3.3.0",
     "type": "module",
     "scripts": {
-        "build": "tsup src/main.ts --external=vscode"
+        "build:vscode": "tsup src/main.ts --external=vscode"
     },
     "devDependencies": {
         "@azure/ms-rest-js": "^2.6.4",
