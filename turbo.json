@@ -5,6 +5,11 @@
             "cache": false,
             "persistent": true
         },
+        "build:docs": {
+            "outputs": [
+                "build/**"
+            ]
+        },
         "build": {
             "dependsOn": [
                 "^build:lib"
