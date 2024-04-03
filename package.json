@@ -22,6 +22,7 @@
     "vscode:designer:pack:step3": "cd ./dist/apps/vs-code-designer && vsce package",
     "vscode:designer:pack": "npm run vscode:designer:pack:step1 && npm run vscode:designer:pack:step2 && npm run vscode:designer:pack:step3",
     "testgen": "playwright codegen https://localhost:4200",
+    "e2e:setup": "playwright install --with-deps",
     "generateArmToken": "az account get-access-token --tenant 72f988bf-86f1-41af-91ab-2d7cd011db47 > ./apps/designer-standalone/src/environments/armToken.json",
     "start:arm": "npm run generateArmToken && npm run start"
   },
