@@ -5,10 +5,10 @@
   "type": "module",
   "module": "build/lib/index.js",
   "main": "build/lib/index.js",
-  "types": "build/lib/index.d.ts",
+  "types": "src/index.ts",
   "exports": {
     ".": {
-      "types": "./build/lib/index.d.ts",
+      "types": "./src/index.ts",
       "import": "./build/lib/index.js",
       "default": "./build/lib/index.js"
     },
