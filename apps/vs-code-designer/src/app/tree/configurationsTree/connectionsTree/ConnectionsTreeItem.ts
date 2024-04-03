@@ -10,7 +10,7 @@ import type { ConfigurationsTreeItem } from '../ConfigurationsTreeItem';
 import { ConnectionTreeItem } from './ConnectionTreeItem';
 import { AzExtParentTreeItem } from '@microsoft/vscode-azext-utils';
 import type { AzExtTreeItem, ILoadingTreeContext, TreeItemIconPath } from '@microsoft/vscode-azext-utils';
-import { ProjectAccess, ProjectResource } from '@microsoft/vscode-extension';
+import { ProjectAccess, ProjectResource } from '@microsoft/vscode-extension-logic-apps';
 
 export class ConnectionsTreeItem extends AzExtParentTreeItem {
   public readonly label: string = localize('Connections', 'Connections');
