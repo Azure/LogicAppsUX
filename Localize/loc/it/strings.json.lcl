@@ -12394,7 +12394,7 @@
         <Str Cat="Text">
           <Val><![CDATA[Resubmit]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Invia di nuovo]]></Val>
+            <Val><![CDATA[Inviare di nuovo]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
