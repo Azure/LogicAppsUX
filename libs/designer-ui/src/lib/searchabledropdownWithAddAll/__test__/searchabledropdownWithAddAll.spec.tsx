@@ -2,10 +2,10 @@ import type { SearchableDropdownWithAddAllProps } from '..';
 import { SearchableDropdownWithAddAll } from '..';
 import renderer from 'react-test-renderer';
 
-jest.mock('@fluentui/react', () => ({
-  ...jest.requireActual('@fluentui/react'),
-  Dropdown: 'Dropdown',
-}));
+// vi.mock('@fluentui/react', () => ({
+//   ...vi.requireActual('@fluentui/react'),
+//   Dropdown: 'Dropdown',
+// }));
 
 describe('lib/searchabledropdownwithaddall', () => {
   it('should create a dropdown with an add all and remove all buttons', () => {
@@ -19,15 +19,15 @@ describe('lib/searchabledropdownwithaddall', () => {
           { key: 'baz', text: 'Baz' },
         ],
       },
-      onItemSelectionChanged: jest.fn(),
+      onItemSelectionChanged: vi.fn(),
       addAllButtonText: 'Add all',
       addAllButtonTooltip: 'Add all tooltip',
       addAllButtonEnabled: true,
       removeAllButtonText: 'Remove all',
       removeAllButtonTooltip: 'Remove all tooltip',
       removeAllButtonEnabled: true,
-      onShowAllClick: jest.fn(),
-      onHideAllClick: jest.fn(),
+      onShowAllClick: vi.fn(),
+      onHideAllClick: vi.fn(),
     };
     const component = <SearchableDropdownWithAddAll {...props} />;
     const renderedComponent = renderer.create(component).toJSON();
@@ -47,11 +47,11 @@ describe('lib/searchabledropdownwithaddall', () => {
           { key: 'baz', text: 'Baz' },
         ],
       },
-      onItemSelectionChanged: jest.fn(),
+      onItemSelectionChanged: vi.fn(),
       addAllButtonText: 'Add all',
       addAllButtonTooltip: 'Add all tooltip',
       addAllButtonEnabled: true,
-      onShowAllClick: jest.fn(),
+      onShowAllClick: vi.fn(),
     };
     const component = <SearchableDropdownWithAddAll {...props} />;
     const renderedComponent = renderer.create(component).toJSON();

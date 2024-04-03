@@ -23,7 +23,8 @@
     "src"
   ],
   "scripts": {
-    "build": "tsup && tsc --emitDeclarationOnly && node ./build-finish.js"
+    "build": "tsup && tsc --emitDeclarationOnly && node ./build-finish.js",
+    "test:lib": "vitest --retry=3"
   },
   "dependencies": {
     "@microsoft/logic-apps-shared": "workspace:*",

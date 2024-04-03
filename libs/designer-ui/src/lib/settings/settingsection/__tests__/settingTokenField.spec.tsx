@@ -37,8 +37,8 @@ describe('ui/settings/settingTokenField', () => {
         },
       ],
       tokenEditor: true,
-      onCastParameter: jest.fn(),
-      getTokenPicker: jest.fn(),
+      onCastParameter: vi.fn(),
+      getTokenPicker: vi.fn(),
     };
 
     const { children } = render(SettingTokenField, props);
@@ -68,8 +68,8 @@ describe('ui/settings/settingTokenField', () => {
         },
       ],
       tokenEditor: true,
-      onCastParameter: jest.fn(),
-      getTokenPicker: jest.fn(),
+      onCastParameter: vi.fn(),
+      getTokenPicker: vi.fn(),
       editor: 'internal-custom-editor',
       editorOptions: {
         EditorComponent: MyCustomEditor,
@@ -103,8 +103,8 @@ describe('ui/settings/settingTokenField', () => {
         },
       ],
       tokenEditor: true,
-      onCastParameter: jest.fn(),
-      getTokenPicker: jest.fn(),
+      onCastParameter: vi.fn(),
+      getTokenPicker: vi.fn(),
       editor: 'internal-custom-editor',
       editorOptions: {
         EditorComponent: MyCustomEditor,

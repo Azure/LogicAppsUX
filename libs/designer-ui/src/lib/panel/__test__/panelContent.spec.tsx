@@ -7,7 +7,7 @@ describe('ui/workflowparameters/workflowparameter', () => {
     minimal = {
       nodeId: '',
       tabs: [],
-      trackEvent: jest.fn(),
+      trackEvent: vi.fn(),
     };
     renderer = ReactShallowRenderer.createRenderer();
   });

@@ -12,7 +12,7 @@ describe('lib/monitoring/valuespanel/valuelist', () => {
       noValuesText: 'no-values-text',
       showMore: false,
       values: {},
-      onMoreClick: jest.fn(),
+      onMoreClick: vi.fn(),
     };
     renderer = ShallowRenderer.createRenderer();
   });

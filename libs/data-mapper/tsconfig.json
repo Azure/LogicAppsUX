@@ -4,9 +4,8 @@
     "forceConsistentCasingInFileNames": true,
     "allowSyntheticDefaultImports": true,
     "strict": true,
-    "noImplicitAny": true,
     "noImplicitOverride": false,
-    "noPropertyAccessFromIndexSignature": false,
+    "noPropertyAccessFromIndexSignature": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
     "jsx": "react-jsx",
@@ -16,22 +15,25 @@
     "baseUrl": "./src",
     "rootDir": "./src",
     "declaration": true,
+    "composite": true,
     "types": [
-      "node",
-      "react",
-      "react-query"
+      "vitest/globals"
     ]
   },
+  "references": [
+    {
+      "path": "./tsconfig.test.json"
+    }
+  ],
   "files": [],
   "include": [
     "**/src/**/*.ts",
     "**/src/**/*.tsx"
-
   ],
   "exclude": [
-    "**/*.spec.ts",
     "**/__test__/**",
     "**/__tests__/**",
+    "**/build/**",
     "jest.config.ts"
   ]
 }

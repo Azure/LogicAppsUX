@@ -12,7 +12,7 @@ describe('lib/flyout/flyoutcallout', () => {
       target: undefined,
       text: 'text',
       visible: true,
-      onDismiss: jest.fn(),
+      onDismiss: vi.fn(),
     };
     renderer = ShallowRenderer.createRenderer();
   });

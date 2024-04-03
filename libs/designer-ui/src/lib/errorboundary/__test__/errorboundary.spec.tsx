@@ -15,13 +15,13 @@ describe('lib/errorboundary', () => {
   });
 
   beforeEach(() => {
-    jest.spyOn(console, 'error').mockImplementation(() => {
+    vi.spyOn(console, 'error').mockImplementation(() => {
       // Silence automatically generated error messages when rendering React error boundaries.
     });
   });
 
   afterEach(() => {
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
   });
 
   it('should render children if there is no error', () => {

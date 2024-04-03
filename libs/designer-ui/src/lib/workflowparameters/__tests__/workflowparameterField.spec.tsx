@@ -13,7 +13,7 @@ describe('ui/workflowparameters/workflowparameterField', () => {
       isEditable: true,
       name: 'test',
       definition: { id: 'id', value: 'blue', name: 'test', type: 'String' },
-      setName: jest.fn(),
+      setName: vi.fn(),
     };
     renderer = ReactShallowRenderer.createRenderer();
     initializeIcons();

@@ -12,7 +12,7 @@ describe('lib/combobox', () => {
       { key: '4', value: 'four', displayName: 'D' },
     ],
     initialValue: [],
-    onChange: jest.fn(),
+    onChange: vi.fn(),
   };
 
   beforeAll(() => {

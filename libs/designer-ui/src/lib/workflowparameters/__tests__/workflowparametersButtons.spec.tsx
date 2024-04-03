@@ -9,8 +9,8 @@ describe('ui/workflowparameters/workflowparametersButtons', () => {
     minimal = {
       //   showDelete: true,
       definition: { id: 'test' },
-      setIsEditable: jest.fn(),
-      setExpanded: jest.fn(),
+      setIsEditable: vi.fn(),
+      setExpanded: vi.fn(),
     };
     renderer = ReactShallowRenderer.createRenderer();
   });

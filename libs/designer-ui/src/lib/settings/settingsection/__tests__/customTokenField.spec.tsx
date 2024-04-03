@@ -37,7 +37,7 @@ describe('ui/settings/customTokenField', () => {
 
   describe('toCustomEditorAndOptions', () => {
     it('should return editor value and provided options', () => {
-      const editorOptions = { EditorComponent: jest.fn() };
+      const editorOptions = { EditorComponent: vi.fn() };
       const props = toCustomEditorAndOptions(editorOptions);
 
       expect(props).toEqual({ editor: 'internal-custom-editor', editorOptions });
@@ -67,8 +67,8 @@ describe('ui/settings/customTokenField', () => {
         },
       ],
       tokenEditor: true,
-      onCastParameter: jest.fn(),
-      getTokenPicker: jest.fn(),
+      onCastParameter: vi.fn(),
+      getTokenPicker: vi.fn(),
       editor: 'internal-custom-editor',
       editorOptions: {
         EditorComponent: MyCustomEditor,
@@ -98,7 +98,7 @@ describe('ui/settings/customTokenField', () => {
           options: [{ key: '1', value: 'option 1', displayName: 'Option 1' }],
         },
         value: [],
-        onValueChange: jest.fn(),
+        onValueChange: vi.fn(),
       };
       const defaultEditor = customTokenField.props.renderDefaultEditor(defaultEditorParams);
 

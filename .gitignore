@@ -19,7 +19,7 @@ node_modules
 *.launch
 .settings/
 *.sublime-workspace
-
+coverage
 # IDE - VSCode
 .vscode/*
 !.vscode/tasks.json
