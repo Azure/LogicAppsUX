@@ -14,7 +14,7 @@
   "+0ua83": [
     {
       "type": 0,
-      "value": "Parameters"
+      "value": "Parametreler"
     }
   ],
   "+0yxlR": [
@@ -869,6 +869,12 @@
     {
       "type": 0,
       "value": "(UTC+10:30) Lord Howe Adası"
+    }
+  ],
+  "3n6GJG": [
+    {
+      "type": 0,
+      "value": "Enter a valid JSON."
     }
   ],
   "3rzrWf": [
@@ -2855,12 +2861,6 @@
       "value": "Akışı açıklayın"
     }
   ],
-  "GXXLuT": [
-    {
-      "type": 0,
-      "value": "Geçerli bir boole değeri girin."
-    }
-  ],
   "GYvF54": [
     {
       "type": 0,
@@ -3349,6 +3349,12 @@
       "value": "Yöntem"
     }
   ],
+  "JgugQX": [
+    {
+      "type": 0,
+      "value": "Enter a valid Array."
+    }
+  ],
   "Ji6663": [
     {
       "type": 0,
@@ -3759,12 +3765,6 @@
     {
       "type": 0,
       "value": "Geçerli zaman damgasını dize olarak döndürür"
-    }
-  ],
-  "MVrv+N": [
-    {
-      "type": 0,
-      "value": "Geçerli bir dizi girin."
     }
   ],
   "MYgKHu": [
@@ -6088,7 +6088,7 @@
   "ZvAp7m": [
     {
       "type": 0,
-      "value": "Save"
+      "value": "Kaydet"
     }
   ],
   "ZyDq4/": [
@@ -6179,6 +6179,12 @@
     {
       "type": 0,
       "value": "Eşlemeniz için kullanmak üzere bir kaynak şema ekleyin veya seçin."
+    }
+  ],
+  "b7BQdu": [
+    {
+      "type": 0,
+      "value": "Enter a valid Boolean."
     }
   ],
   "b9/1dK": [
@@ -6275,12 +6281,6 @@
     {
       "type": 0,
       "value": "Bilgi"
-    }
-  ],
-  "bYwqkV": [
-    {
-      "type": 0,
-      "value": "Geçerli bir json girin."
     }
   ],
   "ba9yGJ": [
@@ -6521,6 +6521,12 @@
     {
       "type": 0,
       "value": "Daha fazla bilgi edinin"
+    }
+  ],
+  "dEe6Ob": [
+    {
+      "type": 0,
+      "value": "Enter a valid JSON."
     }
   ],
   "dKCp2j": [
@@ -7687,12 +7693,6 @@
       "value": "Kimlik doğrulama türü özelliği eksik: 'Type'."
     }
   ],
-  "kxMDyM": [
-    {
-      "type": 0,
-      "value": "Geçerli bir json girin."
-    }
-  ],
   "l/3yJr": [
     {
       "type": 0,
@@ -8368,7 +8368,7 @@
   "ohOaXj": [
     {
       "type": 0,
-      "value": "Errors"
+      "value": "Hatalar"
     }
   ],
   "onXUu0": [
@@ -8916,7 +8916,7 @@
   "sOnphB": [
     {
       "type": 0,
-      "value": "Resubmit"
+      "value": "Yeniden Gönder"
     }
   ],
   "sQ2vRs": [

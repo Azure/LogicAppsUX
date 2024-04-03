@@ -14,7 +14,7 @@
   "+0ua83": [
     {
       "type": 0,
-      "value": "Parameters"
+      "value": "Parametri"
     }
   ],
   "+0yxlR": [
@@ -869,6 +869,12 @@
     {
       "type": 0,
       "value": "(UTC + 10.30) Isola Lord Howe"
+    }
+  ],
+  "3n6GJG": [
+    {
+      "type": 0,
+      "value": "Enter a valid JSON."
     }
   ],
   "3rzrWf": [
@@ -2873,12 +2879,6 @@
       "value": "Spiega il flusso"
     }
   ],
-  "GXXLuT": [
-    {
-      "type": 0,
-      "value": "Immetti un valore booleano valido."
-    }
-  ],
   "GYvF54": [
     {
       "type": 0,
@@ -3367,6 +3367,12 @@
       "value": "Metodo"
     }
   ],
+  "JgugQX": [
+    {
+      "type": 0,
+      "value": "Enter a valid Array."
+    }
+  ],
   "Ji6663": [
     {
       "type": 0,
@@ -3788,12 +3794,6 @@
     {
       "type": 0,
       "value": "Restituisce il timestamp corrente in formato stringa"
-    }
-  ],
-  "MVrv+N": [
-    {
-      "type": 0,
-      "value": "Immetti una matrice valida."
     }
   ],
   "MYgKHu": [
@@ -6136,7 +6136,7 @@
   "ZvAp7m": [
     {
       "type": 0,
-      "value": "Save"
+      "value": "Salva"
     }
   ],
   "ZyDq4/": [
@@ -6227,6 +6227,12 @@
     {
       "type": 0,
       "value": "Aggiungere o selezionare uno schema di origine da usare per la mappa."
+    }
+  ],
+  "b7BQdu": [
+    {
+      "type": 0,
+      "value": "Enter a valid Boolean."
     }
   ],
   "b9/1dK": [
@@ -6323,12 +6329,6 @@
     {
       "type": 0,
       "value": "Info"
-    }
-  ],
-  "bYwqkV": [
-    {
-      "type": 0,
-      "value": "Immetti un JSON valido."
     }
   ],
   "ba9yGJ": [
@@ -6569,6 +6569,12 @@
     {
       "type": 0,
       "value": "Altre informazioni"
+    }
+  ],
+  "dEe6Ob": [
+    {
+      "type": 0,
+      "value": "Enter a valid JSON."
     }
   ],
   "dKCp2j": [
@@ -7765,12 +7771,6 @@
       "value": "Manca la proprietà del tipo di autenticazione: 'type'."
     }
   ],
-  "kxMDyM": [
-    {
-      "type": 0,
-      "value": "Immetti un JSON valido."
-    }
-  ],
   "l/3yJr": [
     {
       "type": 0,
@@ -8442,7 +8442,7 @@
   "ohOaXj": [
     {
       "type": 0,
-      "value": "Errors"
+      "value": "Errori"
     }
   ],
   "onXUu0": [
@@ -9005,7 +9005,7 @@
   "sOnphB": [
     {
       "type": 0,
-      "value": "Resubmit"
+      "value": "Invia di nuovo"
     }
   ],
   "sQ2vRs": [

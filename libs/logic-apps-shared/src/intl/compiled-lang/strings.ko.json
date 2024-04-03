@@ -14,7 +14,7 @@
   "+0ua83": [
     {
       "type": 0,
-      "value": "Parameters"
+      "value": "매개 변수"
     }
   ],
   "+0yxlR": [
@@ -869,6 +869,12 @@
     {
       "type": 0,
       "value": "(UTC+10:30) 로드하우 섬"
+    }
+  ],
+  "3n6GJG": [
+    {
+      "type": 0,
+      "value": "Enter a valid JSON."
     }
   ],
   "3rzrWf": [
@@ -2825,12 +2831,6 @@
       "value": "흐름 설명"
     }
   ],
-  "GXXLuT": [
-    {
-      "type": 0,
-      "value": "유효한 부울을 입력하세요."
-    }
-  ],
   "GYvF54": [
     {
       "type": 0,
@@ -3319,6 +3319,12 @@
       "value": "메서드"
     }
   ],
+  "JgugQX": [
+    {
+      "type": 0,
+      "value": "Enter a valid Array."
+    }
+  ],
   "Ji6663": [
     {
       "type": 0,
@@ -3718,12 +3724,6 @@
     {
       "type": 0,
       "value": "현재 타임스탬프를 문자열로 반환합니다."
-    }
-  ],
-  "MVrv+N": [
-    {
-      "type": 0,
-      "value": "올바른 배열을 입력합니다."
     }
   ],
   "MYgKHu": [
@@ -6036,7 +6036,7 @@
   "ZvAp7m": [
     {
       "type": 0,
-      "value": "Save"
+      "value": "저장"
     }
   ],
   "ZyDq4/": [
@@ -6129,6 +6129,12 @@
       "value": "맵에 사용할 원본 스키마를 추가하거나 선택합니다."
     }
   ],
+  "b7BQdu": [
+    {
+      "type": 0,
+      "value": "Enter a valid Boolean."
+    }
+  ],
   "b9/1dK": [
     {
       "type": 0,
@@ -6215,12 +6221,6 @@
     {
       "type": 0,
       "value": "정보"
-    }
-  ],
-  "bYwqkV": [
-    {
-      "type": 0,
-      "value": "올바른 JSON을 입력하세요."
     }
   ],
   "ba9yGJ": [
@@ -6461,6 +6461,12 @@
     {
       "type": 0,
       "value": "자세한 정보"
+    }
+  ],
+  "dEe6Ob": [
+    {
+      "type": 0,
+      "value": "Enter a valid JSON."
     }
   ],
   "dKCp2j": [
@@ -7605,12 +7611,6 @@
       "value": "인증 유형 속성 'type'이 없습니다."
     }
   ],
-  "kxMDyM": [
-    {
-      "type": 0,
-      "value": "올바른 JSON을 입력하세요."
-    }
-  ],
   "l/3yJr": [
     {
       "type": 0,
@@ -8278,7 +8278,7 @@
   "ohOaXj": [
     {
       "type": 0,
-      "value": "Errors"
+      "value": "오류"
     }
   ],
   "onXUu0": [
@@ -8815,7 +8815,7 @@
   "sOnphB": [
     {
       "type": 0,
-      "value": "Resubmit"
+      "value": "다시 제출"
     }
   ],
   "sQ2vRs": [

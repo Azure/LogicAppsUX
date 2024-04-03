@@ -14,7 +14,7 @@
   "+0ua83": [
     {
       "type": 0,
-      "value": "Parameters"
+      "value": "参数"
     }
   ],
   "+0yxlR": [
@@ -881,6 +881,12 @@
     {
       "type": 0,
       "value": "(UTC+10:30) 豪勋爵岛"
+    }
+  ],
+  "3n6GJG": [
+    {
+      "type": 0,
+      "value": "Enter a valid JSON."
     }
   ],
   "3rzrWf": [
@@ -2853,12 +2859,6 @@
       "value": "解释流"
     }
   ],
-  "GXXLuT": [
-    {
-      "type": 0,
-      "value": "输入有效的布尔值。"
-    }
-  ],
   "GYvF54": [
     {
       "type": 0,
@@ -3347,6 +3347,12 @@
       "value": "方法"
     }
   ],
+  "JgugQX": [
+    {
+      "type": 0,
+      "value": "Enter a valid Array."
+    }
+  ],
   "Ji6663": [
     {
       "type": 0,
@@ -3746,12 +3752,6 @@
     {
       "type": 0,
       "value": "以字符串形式返回当前时间戳"
-    }
-  ],
-  "MVrv+N": [
-    {
-      "type": 0,
-      "value": "输入有效的数组。"
     }
   ],
   "MYgKHu": [
@@ -6084,7 +6084,7 @@
   "ZvAp7m": [
     {
       "type": 0,
-      "value": "Save"
+      "value": "保存"
     }
   ],
   "ZyDq4/": [
@@ -6175,6 +6175,12 @@
     {
       "type": 0,
       "value": "添加或选择要用于映射的源架构。"
+    }
+  ],
+  "b7BQdu": [
+    {
+      "type": 0,
+      "value": "Enter a valid Boolean."
     }
   ],
   "b9/1dK": [
@@ -6271,12 +6277,6 @@
     {
       "type": 0,
       "value": "信息"
-    }
-  ],
-  "bYwqkV": [
-    {
-      "type": 0,
-      "value": "输入有效的 JSON。"
     }
   ],
   "ba9yGJ": [
@@ -6517,6 +6517,12 @@
     {
       "type": 0,
       "value": "了解详细信息"
+    }
+  ],
+  "dEe6Ob": [
+    {
+      "type": 0,
+      "value": "Enter a valid JSON."
     }
   ],
   "dKCp2j": [
@@ -7677,12 +7683,6 @@
       "value": "缺少身份验证类型属性: \"type\"。"
     }
   ],
-  "kxMDyM": [
-    {
-      "type": 0,
-      "value": "输入有效的 JSON。"
-    }
-  ],
   "l/3yJr": [
     {
       "type": 0,
@@ -8366,7 +8366,7 @@
   "ohOaXj": [
     {
       "type": 0,
-      "value": "Errors"
+      "value": "错误"
     }
   ],
   "onXUu0": [
@@ -8907,7 +8907,7 @@
   "sOnphB": [
     {
       "type": 0,
-      "value": "Resubmit"
+      "value": "重新提交"
     }
   ],
   "sQ2vRs": [

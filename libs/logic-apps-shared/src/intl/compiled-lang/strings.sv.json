@@ -14,7 +14,7 @@
   "+0ua83": [
     {
       "type": 0,
-      "value": "Parameters"
+      "value": "Parametrar"
     }
   ],
   "+0yxlR": [
@@ -881,6 +881,12 @@
     {
       "type": 0,
       "value": "(UTC+10:30) Lord Howeön"
+    }
+  ],
+  "3n6GJG": [
+    {
+      "type": 0,
+      "value": "Enter a valid JSON."
     }
   ],
   "3rzrWf": [
@@ -2855,12 +2861,6 @@
       "value": "Förklara flödet"
     }
   ],
-  "GXXLuT": [
-    {
-      "type": 0,
-      "value": "Ange ett giltigt booleskt värde."
-    }
-  ],
   "GYvF54": [
     {
       "type": 0,
@@ -3349,6 +3349,12 @@
       "value": "Metod"
     }
   ],
+  "JgugQX": [
+    {
+      "type": 0,
+      "value": "Enter a valid Array."
+    }
+  ],
   "Ji6663": [
     {
       "type": 0,
@@ -3759,12 +3765,6 @@
     {
       "type": 0,
       "value": "Returnerar den aktuella tidsstämpeln som en sträng"
-    }
-  ],
-  "MVrv+N": [
-    {
-      "type": 0,
-      "value": "Ange en giltig matris."
     }
   ],
   "MYgKHu": [
@@ -6076,7 +6076,7 @@
   "ZvAp7m": [
     {
       "type": 0,
-      "value": "Save"
+      "value": "Spara"
     }
   ],
   "ZyDq4/": [
@@ -6167,6 +6167,12 @@
     {
       "type": 0,
       "value": "Lägg till eller välj ett källschema som ska användas för kartan."
+    }
+  ],
+  "b7BQdu": [
+    {
+      "type": 0,
+      "value": "Enter a valid Boolean."
     }
   ],
   "b9/1dK": [
@@ -6263,12 +6269,6 @@
     {
       "type": 0,
       "value": "Information"
-    }
-  ],
-  "bYwqkV": [
-    {
-      "type": 0,
-      "value": "Ange en giltig JSON."
     }
   ],
   "ba9yGJ": [
@@ -6509,6 +6509,12 @@
     {
       "type": 0,
       "value": "Läs mer"
+    }
+  ],
+  "dEe6Ob": [
+    {
+      "type": 0,
+      "value": "Enter a valid JSON."
     }
   ],
   "dKCp2j": [
@@ -7683,12 +7689,6 @@
       "value": "Autentiseringstypegenskapen saknas: typ."
     }
   ],
-  "kxMDyM": [
-    {
-      "type": 0,
-      "value": "Ange en giltig JSON."
-    }
-  ],
   "l/3yJr": [
     {
       "type": 0,
@@ -8364,7 +8364,7 @@
   "ohOaXj": [
     {
       "type": 0,
-      "value": "Errors"
+      "value": "Fel"
     }
   ],
   "onXUu0": [
@@ -8912,7 +8912,7 @@
   "sOnphB": [
     {
       "type": 0,
-      "value": "Resubmit"
+      "value": "Skicka igen"
     }
   ],
   "sQ2vRs": [
