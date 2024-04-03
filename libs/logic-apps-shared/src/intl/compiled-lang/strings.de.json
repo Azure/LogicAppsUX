@@ -14,7 +14,7 @@
   "+0ua83": [
     {
       "type": 0,
-      "value": "Parameters"
+      "value": "Parameter"
     }
   ],
   "+0yxlR": [
@@ -885,6 +885,12 @@
     {
       "type": 0,
       "value": "(UTC+10:30) Lord-Howe-Insel"
+    }
+  ],
+  "3n6GJG": [
+    {
+      "type": 0,
+      "value": "Enter a valid JSON."
     }
   ],
   "3rzrWf": [
@@ -2887,12 +2893,6 @@
       "value": "Flow erläutern"
     }
   ],
-  "GXXLuT": [
-    {
-      "type": 0,
-      "value": "Geben Sie einen gültigen booleschen Wert ein."
-    }
-  ],
   "GYvF54": [
     {
       "type": 0,
@@ -3385,6 +3385,12 @@
       "value": "Methode"
     }
   ],
+  "JgugQX": [
+    {
+      "type": 0,
+      "value": "Enter a valid Array."
+    }
+  ],
   "Ji6663": [
     {
       "type": 0,
@@ -3795,12 +3801,6 @@
     {
       "type": 0,
       "value": "Gibt den aktuellen Zeitstempel als Zeichenfolge zurück."
-    }
-  ],
-  "MVrv+N": [
-    {
-      "type": 0,
-      "value": "Geben Sie ein gültiges Array ein."
     }
   ],
   "MYgKHu": [
@@ -6144,7 +6144,7 @@
   "ZvAp7m": [
     {
       "type": 0,
-      "value": "Save"
+      "value": "Speichern"
     }
   ],
   "ZyDq4/": [
@@ -6235,6 +6235,12 @@
     {
       "type": 0,
       "value": "Fügen Sie ein Quellschema hinzu, oder wählen Sie eines aus, das für Ihre Zuordnung verwendet werden soll."
+    }
+  ],
+  "b7BQdu": [
+    {
+      "type": 0,
+      "value": "Enter a valid Boolean."
     }
   ],
   "b9/1dK": [
@@ -6331,12 +6337,6 @@
     {
       "type": 0,
       "value": "Info"
-    }
-  ],
-  "bYwqkV": [
-    {
-      "type": 0,
-      "value": "Geben Sie einen gültigen JSON-Wert ein."
     }
   ],
   "ba9yGJ": [
@@ -6577,6 +6577,12 @@
     {
       "type": 0,
       "value": "Weitere Informationen"
+    }
+  ],
+  "dEe6Ob": [
+    {
+      "type": 0,
+      "value": "Enter a valid JSON."
     }
   ],
   "dKCp2j": [
@@ -7751,12 +7757,6 @@
       "value": "Fehlende Authentifizierungstypeigenschaft: \"type\"."
     }
   ],
-  "kxMDyM": [
-    {
-      "type": 0,
-      "value": "Geben Sie einen gültigen JSON-Wert ein."
-    }
-  ],
   "l/3yJr": [
     {
       "type": 0,
@@ -8436,7 +8436,7 @@
   "ohOaXj": [
     {
       "type": 0,
-      "value": "Errors"
+      "value": "Fehler"
     }
   ],
   "onXUu0": [
@@ -8988,7 +8988,7 @@
   "sOnphB": [
     {
       "type": 0,
-      "value": "Resubmit"
+      "value": "Erneut übermitteln"
     }
   ],
   "sQ2vRs": [
