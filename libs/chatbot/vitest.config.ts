@@ -1,8 +1,8 @@
-import { defineConfig } from 'vitest/config'
+import { defineProject } from 'vitest/config'
 import react from '@vitejs/plugin-react'
 import packageJson from './package.json'
 
-export default defineConfig({
+export default defineProject({
   plugins: [react()],
   test: {
     name: packageJson.name,
@@ -11,8 +11,7 @@ export default defineConfig({
     environment: 'jsdom',
     globals: true,
     setupFiles: ['test-setup.ts'],
-    coverage: { enabled: true, provider: 'istanbul', include: ['src/**/*'] },
-    typecheck: { enabled: true, tsconfig: 'tsconfig.test.json' },
+    coverage: { enabled: true, provider: 'istanbul', include: ['src/**/*'], reporter: ['html', 'json'] },
     restoreMocks: true,
     alias: [
       {

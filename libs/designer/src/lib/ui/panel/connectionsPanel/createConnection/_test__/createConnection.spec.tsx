@@ -29,7 +29,7 @@ describe('ui/createConnection', () => {
         location: '',
         httpClient,
       },
-      readConnections: jest.fn(),
+      readConnections: vi.fn(),
     })
   );
 
@@ -138,7 +138,7 @@ describe('ui/createConnection', () => {
     const props: CreateConnectionProps = {
       connectorId: 'myConnectorId',
       connectorDisplayName: 'My Connector',
-      checkOAuthCallback: jest.fn(),
+      checkOAuthCallback: vi.fn(),
     };
     renderer.render(<CreateConnection {...props} />);
     const createConnectionContainer = renderer.getRenderOutput();
@@ -161,7 +161,7 @@ describe('ui/createConnection', () => {
       connectorId: 'myConnectorId',
       connectorDisplayName: 'My Connector',
       connectionParameters: getConnectionParameters(),
-      checkOAuthCallback: jest.fn(),
+      checkOAuthCallback: vi.fn(),
     };
     renderer.render(<CreateConnection {...props} />);
     const createConnectionContainer = renderer.getRenderOutput();
@@ -188,7 +188,7 @@ describe('ui/createConnection', () => {
       connectorId: 'myConnectorId',
       connectorDisplayName: 'My Connector',
       connectionParameterSets: getConnectionParameterSets(),
-      checkOAuthCallback: jest.fn(),
+      checkOAuthCallback: vi.fn(),
     };
     renderer.render(<CreateConnection {...props} />);
     const createConnectionContainer = renderer.getRenderOutput();
@@ -215,7 +215,7 @@ describe('ui/createConnection', () => {
     const CustomConnectionParameter = () => <div>Custom Connection Parameter</div>;
 
     const connectionParameterEditorService = {
-      getConnectionParameterEditor: jest.fn(({ parameterKey }: IConnectionParameterInfo) => {
+      getConnectionParameterEditor: vi.fn(({ parameterKey }: IConnectionParameterInfo) => {
         if (parameterKey === 'parameterA') {
           return {
             EditorComponent: CustomConnectionParameter,
@@ -239,7 +239,7 @@ describe('ui/createConnection', () => {
         connectorId: 'myConnectorId',
         connectorDisplayName: 'My Connector',
         connectionParameters: getConnectionParameters(),
-        checkOAuthCallback: jest.fn(),
+        checkOAuthCallback: vi.fn(),
       };
       renderer.render(<CreateConnection {...props} />);
       const createConnectionContainer = renderer.getRenderOutput();
@@ -274,7 +274,7 @@ describe('ui/createConnection', () => {
       const CustomConnectionParameter = () => <div>Custom Connection Parameter</div>;
 
       const connectionParameterEditorService: IConnectionParameterEditorService = {
-        getConnectionParameterEditor: jest.fn(({ parameterKey }) => {
+        getConnectionParameterEditor: vi.fn(({ parameterKey }) => {
           if (parameterKey === 'parameterA') {
             return {
               EditorComponent: CustomConnectionParameter,
@@ -289,7 +289,7 @@ describe('ui/createConnection', () => {
         connectorId: 'myConnectorId',
         connectorDisplayName: 'My Connector',
         connectionParameterSets: getConnectionParameterSets(),
-        checkOAuthCallback: jest.fn(),
+        checkOAuthCallback: vi.fn(),
       };
       renderer.render(<CreateConnection {...props} />);
       const createConnectionContainer = renderer.getRenderOutput();
@@ -430,8 +430,8 @@ describe('ui/createConnection', () => {
     let connectionParameterEditorService: IConnectionParameterEditorService;
     beforeEach(() => {
       connectionParameterEditorService = {
-        getConnectionParameterEditor: jest.fn(),
-        getCredentialMappingEditorOptions: jest.fn(({ connectorId }) => {
+        getConnectionParameterEditor: vi.fn(),
+        getCredentialMappingEditorOptions: vi.fn(({ connectorId }) => {
           if (connectorId !== 'myConnectorId') {
             return undefined;
           }
@@ -442,7 +442,7 @@ describe('ui/createConnection', () => {
         }),
       };
       // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-      jest.mocked(connectionParameterEditorService.getCredentialMappingEditorOptions!).mockClear();
+      vi.mocked(connectionParameterEditorService.getCredentialMappingEditorOptions!).mockClear();
       InitConnectionParameterEditorService(connectionParameterEditorService);
     });
 
@@ -456,7 +456,7 @@ describe('ui/createConnection', () => {
         connectorId: 'myConnectorId',
         connectorDisplayName: 'My Connector',
         connectionParameterSets,
-        checkOAuthCallback: jest.fn(),
+        checkOAuthCallback: vi.fn(),
       };
       renderer.render(<CreateConnection {...props} />);
       const createConnectionContainer = renderer.getRenderOutput();
@@ -477,7 +477,7 @@ describe('ui/createConnection', () => {
         connectorId: 'myConnectorId',
         connectorDisplayName: 'My Connector',
         connectionParameterSets,
-        checkOAuthCallback: jest.fn(),
+        checkOAuthCallback: vi.fn(),
       };
       renderer.render(<CreateConnection {...props} />);
       const createConnectionContainer = renderer.getRenderOutput();
@@ -521,7 +521,7 @@ describe('ui/createConnection', () => {
         connectorId: 'myConnectorId',
         connectorDisplayName: 'My Connector',
         connectionParameterSets,
-        checkOAuthCallback: jest.fn(),
+        checkOAuthCallback: vi.fn(),
       };
       renderer.render(<CreateConnection {...props} />);
       const createConnectionContainer = renderer.getRenderOutput();
@@ -537,7 +537,7 @@ describe('ui/createConnection', () => {
         'service method returns undefined',
         () => {
           // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-          jest.mocked(connectionParameterEditorService.getCredentialMappingEditorOptions!).mockReturnValue(undefined);
+          vi.mocked(connectionParameterEditorService.getCredentialMappingEditorOptions!).mockReturnValue(undefined);
         },
       ],
       [
@@ -560,7 +560,7 @@ describe('ui/createConnection', () => {
         connectorId: 'myConnectorId',
         connectorDisplayName: 'My Connector',
         connectionParameterSets,
-        checkOAuthCallback: jest.fn(),
+        checkOAuthCallback: vi.fn(),
       };
       renderer.render(<CreateConnection {...props} />);
       const createConnectionContainer = renderer.getRenderOutput();

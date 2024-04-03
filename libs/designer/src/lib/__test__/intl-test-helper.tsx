@@ -23,7 +23,7 @@ const intl = createIntl(
 );
 
 export const mockUseIntl = () => {
-  jest.spyOn(Intl, 'useIntl').mockImplementation(() => intl);
+  vi.spyOn(Intl, 'useIntl').mockImplementation(() => intl);
 };
 
 export const getTestIntl = () => {

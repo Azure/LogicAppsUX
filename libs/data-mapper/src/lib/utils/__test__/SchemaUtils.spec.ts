@@ -1,6 +1,6 @@
 import { convertSchemaToSchemaExtended, findNodeForKey, getFileNameAndPath, parsePropertiesIntoNodeProperties } from '../Schema.Utils';
 import { SchemaNodeProperty } from '@microsoft/logic-apps-shared';
-import { targetMockSchema } from '__mocks__/schemas';
+import { targetMockSchema } from '../../../.../../__mocks__/schemas';
 
 describe('utils/Schema', () => {
   describe('parsePropertiesIntoNodeProperties', () => {

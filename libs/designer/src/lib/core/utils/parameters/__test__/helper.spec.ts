@@ -1153,7 +1153,7 @@ describe('core/utils/parameters/helper', () => {
     });
 
     // TODO - Need to check if this scenario makes sense after token picker is integrated
-    xit('should be correct for a parameter with user entered template functions', () => {
+    test.skip('should be correct for a parameter with user entered template functions', () => {
       parameter.value = [
         {
           id: '1',

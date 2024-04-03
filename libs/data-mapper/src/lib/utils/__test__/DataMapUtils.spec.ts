@@ -30,7 +30,7 @@ import {
 } from '../__mocks__';
 import type { Schema, SchemaExtended, SchemaNodeExtended } from '@microsoft/logic-apps-shared';
 import { NormalizedDataType, SchemaNodeProperty, SchemaType } from '@microsoft/logic-apps-shared';
-import { comprehensiveSourceSchema, comprehensiveTargetSchema, sourceMockSchema } from '__mocks__/schemas';
+import { comprehensiveSourceSchema, comprehensiveTargetSchema, sourceMockSchema } from '../../../__mocks__/schemas';
 
 describe('utils/DataMap', () => {
   describe('isValidToMakeMapDefinition', () => {

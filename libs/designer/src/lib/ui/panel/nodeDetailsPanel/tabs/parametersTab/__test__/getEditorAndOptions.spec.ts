@@ -109,9 +109,9 @@ describe('getEditorAndOptions', () => {
   });
 
   it('should support EditorService override', () => {
-    const customEditorOptions = { EditorComponent: jest.fn() };
+    const customEditorOptions = { EditorComponent: vi.fn() };
     const editorService = {
-      getEditor: jest.fn(() => customEditorOptions),
+      getEditor: vi.fn(() => customEditorOptions),
     };
     InitEditorService(editorService);
 
@@ -129,9 +129,9 @@ describe('getEditorAndOptions', () => {
   });
 
   it('should apply EditorService override before remapping "variablename" editor', () => {
-    const customEditorOptions = { EditorComponent: jest.fn() };
+    const customEditorOptions = { EditorComponent: vi.fn() };
     const editorService = {
-      getEditor: jest.fn(() => customEditorOptions),
+      getEditor: vi.fn(() => customEditorOptions),
     };
     InitEditorService(editorService);
 

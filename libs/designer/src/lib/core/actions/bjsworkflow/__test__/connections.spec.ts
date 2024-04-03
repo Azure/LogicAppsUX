@@ -31,10 +31,10 @@ describe('connection workflow mappings', () => {
     if (spy) {
       spy.mockClear();
     }
-    jest.clearAllMocks();
-    jest.resetAllMocks();
-    jest.resetModules();
-    jest.restoreAllMocks();
+    vi.clearAllMocks();
+    vi.resetAllMocks();
+    vi.resetModules();
+    vi.restoreAllMocks();
 
     getReactQueryClient().clear();
   });
@@ -60,7 +60,7 @@ describe('connection workflow mappings', () => {
   it('should get the correct connectionId for manifest', async () => {
     makeMockStdOperationManifestService(ConnectionReferenceKeyFormat.OpenApi);
     const mockStdOperationManifestService = OperationManifestService();
-    jest.spyOn(StandardOperationManifestService.prototype, 'isSupported').mockImplementation((): boolean => {
+    vi.spyOn(StandardOperationManifestService.prototype, 'isSupported').mockImplementation((): boolean => {
       return true;
     });
 
@@ -135,7 +135,7 @@ const mockOpenApiConnection: LogicAppsV2.OpenApiOperationAction = {
 };
 
 function makeMockStdOperationManifestService(referenceKeyFormat: ConnectionReferenceKeyFormat | '') {
-  spy = jest
+  spy = vi
     .spyOn(StandardOperationManifestService.prototype, 'getOperationManifest')
     .mockImplementation((_connectorId: string, _operationId: string): Promise<OperationManifest> => {
       const mockManifest = { ...createItem };

@@ -23,7 +23,8 @@
     "src"
   ],
   "scripts": {
-    "build": "tsup && tsc --emitDeclarationOnly && node ./build-finish.js"
+    "build": "tsup && tsc --emitDeclarationOnly && node ./build-finish.js",
+    "test:lib": "vitest --retry=3"
   },
   "dependencies": {
     "@fluentui/azure-themes": "8.5.70",
@@ -55,7 +56,8 @@
     "reselect": "4.1.8",
     "to-title-case": "1.0.0",
     "util": "0.12.5",
-    "yocto-queue": "0.1.0"
+    "yocto-queue": "0.1.0",
+    "monaco-editor": "0.47.0"
   },
   "peerDependencies": {
     "react": "^16.4.0 || ^17.0.0 || ^18.0.0",

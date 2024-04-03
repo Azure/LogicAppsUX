@@ -249,6 +249,9 @@ importers:
       '@microsoft/logic-apps-shared':
         specifier: workspace:*
         version: link:../logic-apps-shared
+      monaco-editor:
+        specifier: 0.47.0
+        version: 0.47.0
       react-dom:
         specifier: ^16.4.0 || ^17.0.0 || ^18.0.0
         version: 18.2.0(react@18.2.0)
@@ -410,6 +413,9 @@ importers:
       lodash.merge:
         specifier: 4.6.2
         version: 4.6.2
+      monaco-editor:
+        specifier: 0.47.0
+        version: 0.47.0
       react:
         specifier: ^16.4.0 || ^17.0.0 || ^18.0.0
         version: 18.2.0

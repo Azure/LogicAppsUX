@@ -12,6 +12,11 @@
         "dev": {
             "cache": false,
             "persistent": true
+        },
+        "test:lib": {
+            "outputs": [
+                "coverage/**"
+            ]
         }
     }
 }

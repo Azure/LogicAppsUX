@@ -11,7 +11,7 @@ import {
   sourceMockSchema,
   targetMockJsonSchema,
   targetMockSchema,
-} from '__mocks__/schemas';
+} from '../../../__mocks__/schemas';
 
 describe('mapDefinitions/MapDefinitionDeserializer', () => {
   describe('XML', () => {
