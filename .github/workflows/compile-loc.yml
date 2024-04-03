@@ -26,16 +26,9 @@ jobs:
           run_install: |
             - recursive: true
               args: [--frozen-lockfile, --strict-peer-dependencies]
-          
-      
-      - name: Install dependencies
-        run: npm ci
 
       - name: Update source code
         run: npm run compile:loc
-
-      - name: Run Prettier On JSON
-        run: npm run fixLineEndings
 
       - name: Commit changes
         uses: EndBug/add-and-commit@v7

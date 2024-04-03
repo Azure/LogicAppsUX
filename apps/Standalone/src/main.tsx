@@ -1,16 +1,16 @@
 import { StrictMode } from 'react';
-import { DesignerWrapper } from './app/DesignerShell/designer';
 import './polyfills';
-import { store } from './state/store';
 import { initializeIcons } from '@fluentui/react';
 import { createRoot } from 'react-dom/client';
-import { Provider } from 'react-redux';
+
+import { BrowserRouter } from 'react-router-dom';
+import { App } from './App';
 
 initializeIcons();
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
-    <Provider store={store}>
-      <DesignerWrapper />
-    </Provider>
+    <BrowserRouter>
+      <App />
+    </BrowserRouter>
   </StrictMode>
 );
