@@ -1,4 +1,34 @@
 # Logic Apps Designer
+### [3.3.1](https://github.com/Azure/LogicAppsUX/compare/v3.3.0...v3.3.1) (2024-04-03)
+
+
+### Features
+
+* **vscode:** Show error message in overview when workflow runtime api isn't running ([#4498](https://github.com/Azure/LogicAppsUX/issues/4498)) ([5d68a24](https://github.com/Azure/LogicAppsUX/commit/5d68a24f6ef5c37399728323cbcb8670ef929546))
+
+
+### Bug Fixes
+
+* **designer:** Fix Infinite Loop on resolving app settings ([#4531](https://github.com/Azure/LogicAppsUX/issues/4531)) ([d275e64](https://github.com/Azure/LogicAppsUX/commit/d275e647680aa30a95958cf5fa0a990b5e8632e2))
+
+## [3.3.0](https://github.com/Azure/LogicAppsUX/compare/v3.2.0...v3.3.0) (2024-04-02)
+
+
+### Features
+
+* **vscode:** Implement errors side panel in vscode extension ([#4512](https://github.com/Azure/LogicAppsUX/issues/4512)) ([c573d57](https://github.com/Azure/LogicAppsUX/commit/c573d57b55451275cca30a0029c618a87f07122b))
+
+
+### Bug Fixes
+
+* **Designer:** Collapsed view of 'Run After'  ([#4493](https://github.com/Azure/LogicAppsUX/issues/4493)) ([734a6ca](https://github.com/Azure/LogicAppsUX/commit/734a6ca578707188c515f39659da6b66e8c5a161))
+* **Designer:** Connection TestLink / TestRequest both require failure to show error ([#4480](https://github.com/Azure/LogicAppsUX/issues/4480)) ([b3e5ed2](https://github.com/Azure/LogicAppsUX/commit/b3e5ed2db1e8a7d995ad2c07785cf4c39f581dcb))
+* **Designer:** Consumption Services Not Being Initialized ([#4504](https://github.com/Azure/LogicAppsUX/issues/4504)) ([04bf3b5](https://github.com/Azure/LogicAppsUX/commit/04bf3b5c596e0270602a361d47130aa24d2ebaeb))
+* **designer:** Dictionary Editor validation error on \ + Paste on Monaco Editor ([#4509](https://github.com/Azure/LogicAppsUX/issues/4509)) ([14440f2](https://github.com/Azure/LogicAppsUX/commit/14440f2b568dbedfb77ee8c018a5660a5a231865))
+* **designer:** Fix a couple of bugs that occurred with Custom Code ([#4521](https://github.com/Azure/LogicAppsUX/issues/4521)) ([78c64aa](https://github.com/Azure/LogicAppsUX/commit/78c64aa7474bd917b6f5629e185d3e6107468175))
+* **designer:** Only use default value when the parameter is required ([#4505](https://github.com/Azure/LogicAppsUX/issues/4505)) ([3e1b872](https://github.com/Azure/LogicAppsUX/commit/3e1b872c71e9ee5ed5cb4e80e101612bfe9e2847))
+* **vscode:** Implement management base URL to api hub base URL to support multiple clouds ([#4519](https://github.com/Azure/LogicAppsUX/issues/4519)) ([90dfbbc](https://github.com/Azure/LogicAppsUX/commit/90dfbbc0763cb83874e000a1dc56c4317bae9009))
+
 ## [3.2.0](https://github.com/Azure/LogicAppsUX/compare/v3.1.0...v3.2.0) (2024-03-28)
 
 

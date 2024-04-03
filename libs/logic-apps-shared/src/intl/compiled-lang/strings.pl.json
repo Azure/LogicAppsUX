@@ -14,7 +14,7 @@
   "+0ua83": [
     {
       "type": 0,
-      "value": "Parameters"
+      "value": "Parametry"
     }
   ],
   "+0yxlR": [
@@ -877,6 +877,12 @@
     {
       "type": 0,
       "value": "(UTC+10:30) Lord Howe"
+    }
+  ],
+  "3n6GJG": [
+    {
+      "type": 0,
+      "value": "Enter a valid JSON."
     }
   ],
   "3rzrWf": [
@@ -2911,12 +2917,6 @@
       "value": "Objaśnij przepływ"
     }
   ],
-  "GXXLuT": [
-    {
-      "type": 0,
-      "value": "Wprowadź prawidłową wartość logiczną."
-    }
-  ],
   "GYvF54": [
     {
       "type": 0,
@@ -3405,6 +3405,12 @@
       "value": "Metoda"
     }
   ],
+  "JgugQX": [
+    {
+      "type": 0,
+      "value": "Enter a valid Array."
+    }
+  ],
   "Ji6663": [
     {
       "type": 0,
@@ -3837,12 +3843,6 @@
     {
       "type": 0,
       "value": "Zwraca bieżącą sygnaturę czasową jako ciąg"
-    }
-  ],
-  "MVrv+N": [
-    {
-      "type": 0,
-      "value": "Wprowadź prawidłową tablicę."
     }
   ],
   "MYgKHu": [
@@ -6192,7 +6192,7 @@
   "ZvAp7m": [
     {
       "type": 0,
-      "value": "Save"
+      "value": "Zapisz"
     }
   ],
   "ZyDq4/": [
@@ -6283,6 +6283,12 @@
     {
       "type": 0,
       "value": "Dodaj lub wybierz schemat źródłowy, który ma być używany dla mapy."
+    }
+  ],
+  "b7BQdu": [
+    {
+      "type": 0,
+      "value": "Enter a valid Boolean."
     }
   ],
   "b9/1dK": [
@@ -6379,12 +6385,6 @@
     {
       "type": 0,
       "value": "Informacje"
-    }
-  ],
-  "bYwqkV": [
-    {
-      "type": 0,
-      "value": "Wprowadź prawidłowy kod JSON."
     }
   ],
   "ba9yGJ": [
@@ -6625,6 +6625,12 @@
     {
       "type": 0,
       "value": "Dowiedz się więcej"
+    }
+  ],
+  "dEe6Ob": [
+    {
+      "type": 0,
+      "value": "Enter a valid JSON."
     }
   ],
   "dKCp2j": [
@@ -7859,12 +7865,6 @@
       "value": "Brak właściwości typu uwierzytelniania: „type”."
     }
   ],
-  "kxMDyM": [
-    {
-      "type": 0,
-      "value": "Wprowadź prawidłowy kod JSON."
-    }
-  ],
   "l/3yJr": [
     {
       "type": 0,
@@ -8540,7 +8540,7 @@
   "ohOaXj": [
     {
       "type": 0,
-      "value": "Errors"
+      "value": "Błędy"
     }
   ],
   "onXUu0": [
@@ -9114,7 +9114,7 @@
   "sOnphB": [
     {
       "type": 0,
-      "value": "Resubmit"
+      "value": "Prześlij ponownie"
     }
   ],
   "sQ2vRs": [
