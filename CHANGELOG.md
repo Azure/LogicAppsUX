@@ -1,4 +1,16 @@
 # Logic Apps Designer
+### [3.3.1](https://github.com/Azure/LogicAppsUX/compare/v3.3.0...v3.3.1) (2024-04-03)
+
+
+### Features
+
+* **vscode:** Show error message in overview when workflow runtime api isn't running ([#4498](https://github.com/Azure/LogicAppsUX/issues/4498)) ([5d68a24](https://github.com/Azure/LogicAppsUX/commit/5d68a24f6ef5c37399728323cbcb8670ef929546))
+
+
+### Bug Fixes
+
+* **designer:** Fix Infinite Loop on resolving app settings ([#4531](https://github.com/Azure/LogicAppsUX/issues/4531)) ([d275e64](https://github.com/Azure/LogicAppsUX/commit/d275e647680aa30a95958cf5fa0a990b5e8632e2))
+
 ## [3.3.0](https://github.com/Azure/LogicAppsUX/compare/v3.2.0...v3.3.0) (2024-04-02)
 
 
