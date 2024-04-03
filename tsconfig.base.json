@@ -24,6 +24,7 @@
         "libs/logic-apps-shared/src/intl/src/index.ts"
       ],
       "@microsoft/logic-apps-data-mapper": ["libs/data-mapper/src/index.ts"],
+      "@microsoft/logic-apps-data-mapper-v2": ["libs/data-mapper-v2/src/index.ts"],
       "@microsoft/logic-apps-designer": ["libs/designer/src/index.ts"],
       "@microsoft/logic-apps-shared": ["libs/logic-apps-shared/src/index.ts"],
       "@microsoft/nx-playwright": ["libs/plugins/playwright/src/index.ts"],
