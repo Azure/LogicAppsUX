@@ -1,6 +1,8 @@
 import merge from 'deepmerge-json';
 import packageJSONCurrent from './package.json' assert { type: 'json' };
 import fs from 'fs';
+import logicAppsSharedPJSON from '../logic-apps-shared/package.json' assert { type: 'json' };
+
 const packageJSONBuilt = {
   module: 'lib/index.js',
   main: 'lib/index.cjs',
@@ -13,6 +15,9 @@ const packageJSONBuilt = {
     },
     './package.json': './package.json',
     './lib/index.css': './build/lib/index.css',
+  },
+  dependencies: {
+    '@microsoft/logic-apps-shared': `${logicAppsSharedPJSON.version}`,
   },
 };
 fs.writeFileSync('./build/package.json', JSON.stringify(merge(packageJSONCurrent, packageJSONBuilt), null, 2));
