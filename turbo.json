@@ -27,6 +27,12 @@
             "cache": false,
             "persistent": true
         },
+        "publish:local": {
+            "dependsOn": [
+                "build",
+                "^publish:local"
+            ]
+        },
         "test:lib": {
             "outputs": [
                 "coverage/**"

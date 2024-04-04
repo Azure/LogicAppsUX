@@ -103,7 +103,7 @@ export const SuggestedFlowsSection: React.FC = () => {
           definition={{
             triggers: { operationName: 'When a new channel message is added', connectionName: 'Microsoft Teams' },
             actions: [
-              { operationName: 'I update so fast', connectionName: 'Office 365 Users' },
+              { operationName: 'Get User', connectionName: 'Office 365 Users' },
               { operationName: 'Send an email', connectionName: 'Office 365 Outlook' },
             ],
           }}
