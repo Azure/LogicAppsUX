@@ -132,11 +132,9 @@ jobs:
         run: ${{ env.BUMP_COMMAND }} --skip.commit --skip.tag
       - run: pnpm install --frozen-lockfile --strict-peer-dependencies
 
-      - run: turbo run build:lib
-
       - name: Use .npmrc
         uses: bduff9/use-npmrc@v1.1
         with:
           dot-npmrc: ${{ secrets.PUBLISHING_PAT }}
           
-      - run: turbo publish
+      - run: pnpm run publish --no-git-checks --access public --tag latest
