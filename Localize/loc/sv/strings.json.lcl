@@ -1269,6 +1269,15 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";3n6GJG" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Enter a valid JSON.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Ange en giltig JSON.]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";3rzrWf" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Required. The object to remove the property from.]]></Val>
@@ -3984,15 +3993,6 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
-      <Item ItemId=";GXXLuT" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Enter a valid boolean.]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Ange ett giltigt booleskt värde.]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
       <Item ItemId=";GYvF54" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Referencing functions]]></Val>
@@ -4623,6 +4623,12 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";JgugQX" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Enter a valid Array.]]></Val>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";Ji6663" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Returns true if a dictionary contains a key, if an array contains a value, or if a string contains a substring]]></Val>
@@ -5234,15 +5240,6 @@
           <Val><![CDATA[Returns the current timestamp as a string]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Returnerar den aktuella tidsstämpeln som en sträng]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
-      <Item ItemId=";MVrv+N" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Enter a valid array.]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Ange en giltig matris.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -8490,6 +8487,12 @@
         </Str>
         <Disp Icon="Str" />
       </Item>
+      <Item ItemId=";b7BQdu" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Enter a valid Boolean.]]></Val>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
       <Item ItemId=";b9/1dK" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Value]]></Val>
@@ -8612,15 +8615,6 @@
           <Val><![CDATA[Info]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Information]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
-      <Item ItemId=";bYwqkV" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Enter a valid json.]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Ange en giltig JSON.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -8981,6 +8975,15 @@
           <Val><![CDATA[Learn more]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Läs mer]]></Val>
+          </Tgt>
+        </Str>
+        <Disp Icon="Str" />
+      </Item>
+      <Item ItemId=";dEe6Ob" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
+        <Str Cat="Text">
+          <Val><![CDATA[Enter a valid JSON.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Ange en giltig JSON.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
@@ -10652,15 +10655,6 @@
           <Val><![CDATA[Missing authentication type property: 'type'.]]></Val>
           <Tgt Cat="Text" Stat="Loc" Orig="New">
             <Val><![CDATA[Autentiseringstypegenskapen saknas: typ.]]></Val>
-          </Tgt>
-        </Str>
-        <Disp Icon="Str" />
-      </Item>
-      <Item ItemId=";kxMDyM" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
-        <Str Cat="Text">
-          <Val><![CDATA[Enter a valid json.]]></Val>
-          <Tgt Cat="Text" Stat="Loc" Orig="New">
-            <Val><![CDATA[Ange en giltig JSON.]]></Val>
           </Tgt>
         </Str>
         <Disp Icon="Str" />
