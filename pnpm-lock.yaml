@@ -377,8 +377,8 @@ importers:
         specifier: ^5.2.0
         version: 5.2.0
       xml2js:
-        specifier: 0.2.8
-        version: 0.2.8
+        specifier: 0.5.0
+        version: 0.5.0
       yargs-parser:
         specifier: 21.1.1
         version: 21.1.1
