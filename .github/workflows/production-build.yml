@@ -20,7 +20,7 @@ on:
 env:
   AI_KEY: 3cf0d6ae-3327-414a-b7c1-12f31ef45eff
   NX_AI_CON_STR: InstrumentationKey=3cf0d6ae-3327-414a-b7c1-12f31ef45eff;IngestionEndpoint=https://eastus-8.in.applicationinsights.azure.com/;LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/
-  BUMP_COMMAND: pnpm run bump -- --release-as ${{ github.event.inputs.release_type || 'minor' }}
+  BUMP_COMMAND: pnpm run bump --release-as ${{ github.event.inputs.release_type || 'minor' }}
 
 jobs:
   bump-version:
