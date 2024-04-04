@@ -882,7 +882,7 @@
   "3n6GJG": [
     {
       "type": 0,
-      "value": "Enter a valid JSON."
+      "value": "Введите допустимый объект JSON."
     }
   ],
   "3rzrWf": [
@@ -6626,7 +6626,7 @@
   "dEe6Ob": [
     {
       "type": 0,
-      "value": "Enter a valid JSON."
+      "value": "Введите допустимый объект JSON."
     }
   ],
   "dKCp2j": [
@@ -6737,6 +6737,12 @@
     {
       "type": 0,
       "value": "Как часто вам нужно проверять наличие элементов?"
+    }
+  ],
+  "e1gQAz": [
+    {
+      "type": 0,
+      "value": "Please start the project by pressing F5 or run it through the Run and Debug view"
     }
   ],
   "e4JZEY": [

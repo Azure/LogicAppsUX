@@ -866,7 +866,7 @@
   "3n6GJG": [
     {
       "type": 0,
-      "value": "Enter a valid JSON."
+      "value": "Insira um JSON válido."
     }
   ],
   "3rzrWf": [
@@ -6550,7 +6550,7 @@
   "dEe6Ob": [
     {
       "type": 0,
-      "value": "Enter a valid JSON."
+      "value": "Insira um JSON válido."
     }
   ],
   "dKCp2j": [
@@ -6661,6 +6661,12 @@
     {
       "type": 0,
       "value": "Com que frequência deseja procurar por itens?"
+    }
+  ],
+  "e1gQAz": [
+    {
+      "type": 0,
+      "value": "Please start the project by pressing F5 or run it through the Run and Debug view"
     }
   ],
   "e4JZEY": [

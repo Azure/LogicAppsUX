@@ -882,7 +882,7 @@
   "3n6GJG": [
     {
       "type": 0,
-      "value": "Enter a valid JSON."
+      "value": "Entrez un JSON valide."
     }
   ],
   "3rzrWf": [
@@ -3386,7 +3386,7 @@
   "JgugQX": [
     {
       "type": 0,
-      "value": "Enter a valid Array."
+      "value": "Entrez un tableau valide."
     }
   ],
   "Ji6663": [
@@ -6240,7 +6240,7 @@
   "b7BQdu": [
     {
       "type": 0,
-      "value": "Enter a valid Boolean."
+      "value": "Entrez une valeur booléenne valide."
     }
   ],
   "b9/1dK": [
@@ -6582,7 +6582,7 @@
   "dEe6Ob": [
     {
       "type": 0,
-      "value": "Enter a valid JSON."
+      "value": "Entrez un JSON valide."
     }
   ],
   "dKCp2j": [
@@ -6693,6 +6693,12 @@
     {
       "type": 0,
       "value": "À quelle fréquence voulez-vous vérifier les éléments ?"
+    }
+  ],
+  "e1gQAz": [
+    {
+      "type": 0,
+      "value": "Please start the project by pressing F5 or run it through the Run and Debug view"
     }
   ],
   "e4JZEY": [
@@ -9017,7 +9023,7 @@
   "sOnphB": [
     {
       "type": 0,
-      "value": "Soumettre à nouveau"
+      "value": "Nouvelle soumission"
     }
   ],
   "sQ2vRs": [
