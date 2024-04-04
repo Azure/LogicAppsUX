@@ -7,7 +7,7 @@
         "copyFiles": "node extension-copy-svgs.js",
         "vscode:designer:pack:step2": "cd ./dist && vsce package",
         "vscode:designer:pack:step1": "cd ./dist && npm install",
-        "vscode:designer:pack": "pnpm run build && npm run vscode:designer:pack:step1 && npm run vscode:designer:pack:step2"
+        "vscode:designer:pack": "pnpm run build && pnpm run vscode:designer:pack:step1 && pnpm run vscode:designer:pack:step2"
     },
     "devDependencies": {
         "@azure/ms-rest-js": "^2.6.4",
