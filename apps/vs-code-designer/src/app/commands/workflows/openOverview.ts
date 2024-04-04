@@ -2,7 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { isNullOrUndefined } from '@microsoft/utils-logic-apps';
+import { isNullOrUndefined } from '@microsoft/logic-apps-shared';
 import { localSettingsFileName, managementApiPrefix, workflowAppApiVersion } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
@@ -24,8 +24,8 @@ import type { IAzureConnectorsContext } from './azureConnectorWizard';
 import { openMonitoringView } from './openMonitoringView/openMonitoringView';
 import type { ServiceClientCredentials } from '@azure/ms-rest-js';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
-import type { ICallbackUrlResponse } from '@microsoft/vscode-extension';
-import { ExtensionCommand, ProjectName } from '@microsoft/vscode-extension';
+import type { ICallbackUrlResponse } from '@microsoft/vscode-extension-logic-apps';
+import { ExtensionCommand, ProjectName } from '@microsoft/vscode-extension-logic-apps';
 import { readFileSync } from 'fs';
 import { basename, dirname, join } from 'path';
 import * as path from 'path';

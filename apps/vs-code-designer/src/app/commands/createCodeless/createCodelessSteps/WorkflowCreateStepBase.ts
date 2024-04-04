@@ -7,7 +7,7 @@ import { localize } from '../../../../localize';
 import { getContainingWorkspace } from '../../../utils/workspace';
 import { AzureWizardExecuteStep, callWithTelemetryAndErrorHandling, nonNullProp } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
-import type { IFunctionWizardContext, IWorkflowTemplate } from '@microsoft/vscode-extension';
+import type { IFunctionWizardContext, IWorkflowTemplate } from '@microsoft/vscode-extension-logic-apps';
 import * as fse from 'fs-extra';
 import { Uri, window, workspace } from 'vscode';
 import type { Progress } from 'vscode';

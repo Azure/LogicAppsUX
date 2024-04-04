@@ -44,7 +44,7 @@ export const TestingPanel: React.FC = () => {
       key={`${name}`}
       properties={(properties ?? {}) as OpenAPIV2.SchemaObject}
       staticResultSchema={staticResultSchema}
-      enabled={staticResultOptions === StaticResultOption.ENABLED ?? false}
+      enabled={staticResultOptions === StaticResultOption.ENABLED}
       savePropertiesCallback={savePropertiesCallback}
       cancelPropertiesCallback={cancelPropertiesCallback}
     />

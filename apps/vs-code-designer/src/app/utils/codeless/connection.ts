@@ -21,7 +21,7 @@ import type {
   ConnectionAcl,
   ConnectionAndAppSetting,
   Parameter,
-} from '@microsoft/vscode-extension';
+} from '@microsoft/vscode-extension-logic-apps';
 import axios from 'axios';
 import * as fse from 'fs-extra';
 import * as path from 'path';

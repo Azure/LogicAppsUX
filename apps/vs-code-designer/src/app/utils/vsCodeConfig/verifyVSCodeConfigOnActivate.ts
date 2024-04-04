@@ -10,11 +10,11 @@ import { tryParseFuncVersion } from '../funcCoreTools/funcVersion';
 import { tryGetLogicAppProjectRoot } from '../verifyIsProject';
 import { getWorkspaceSetting, updateGlobalSetting } from './settings';
 import { verifyTargetFramework } from './verifyTargetFramework';
-import { isEmptyString, isNullOrUndefined } from '@microsoft/utils-logic-apps';
+import { isEmptyString, isNullOrUndefined } from '@microsoft/logic-apps-shared';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { callWithTelemetryAndErrorHandling, DialogResponses } from '@microsoft/vscode-azext-utils';
-import type { FuncVersion } from '@microsoft/vscode-extension';
-import { ProjectLanguage } from '@microsoft/vscode-extension';
+import type { FuncVersion } from '@microsoft/vscode-extension-logic-apps';
+import { ProjectLanguage } from '@microsoft/vscode-extension-logic-apps';
 import * as path from 'path';
 import type { WorkspaceFolder, MessageItem } from 'vscode';
 

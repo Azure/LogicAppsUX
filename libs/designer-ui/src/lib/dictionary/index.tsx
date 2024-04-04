@@ -43,7 +43,7 @@ export const DictionaryEditor: React.FC<DictionaryEditorProps> = ({
   ...baseEditorProps
 }): JSX.Element => {
   const intl = useIntl();
-  const [collapsed, setCollapsed] = useState(!initialItems ?? false);
+  const [collapsed, setCollapsed] = useState(!initialItems);
   const [items, setItems] = useState(initialItems);
   const [collapsedValue, setCollapsedValue] = useState<ValueSegment[]>(initialValue);
   const [isValid, setIsValid] = useState(false);
