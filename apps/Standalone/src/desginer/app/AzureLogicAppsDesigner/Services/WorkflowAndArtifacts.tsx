@@ -293,7 +293,7 @@ export const getConnectionConsumption = async (connectionId: string) => {
 };
 
 export const saveCustomCodeStandard = async (customCode?: CustomCodeFileNameMapping): Promise<void> => {
-  if (!customCode) return;
+  if (!customCode || Object.keys(customCode).length === 0) return;
   try {
     const existingFiles = (await CustomCodeService().getAllCustomCodeFiles()).map((file) => file.name);
     // to prevent 404's we first check which custom code files are already present before deleting
