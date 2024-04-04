@@ -20,7 +20,7 @@ on:
 env:
   AI_KEY: 3cf0d6ae-3327-414a-b7c1-12f31ef45eff
   NX_AI_CON_STR: InstrumentationKey=3cf0d6ae-3327-414a-b7c1-12f31ef45eff;IngestionEndpoint=https://eastus-8.in.applicationinsights.azure.com/;LiveEndpoint=https://eastus.livediagnostics.monitor.azure.com/
-  BUMP_COMMAND: npm run bump -- --release-as ${{ github.event.inputs.release_type || 'minor' }}
+  BUMP_COMMAND: pnpm run bump -- --release-as ${{ github.event.inputs.release_type || 'minor' }}
 
 jobs:
   bump-version:
@@ -37,10 +37,16 @@ jobs:
         with:
           node-version: 20
 
-      - run: npm ci
+      - uses: pnpm/action-setup@v3
+        with:
+          version: 8
+          run_install: |
+            - recursive: true
+              args: [--frozen-lockfile, --strict-peer-dependencies]
+            - args: [--global, turbo, typescript]
 
       - name: 'Version Bump'
-        run: git config --global user.email $GITHUB_ACTOR && git config --global user.name release-automation-${GITHUB_ACTOR}@microsoft.com && ${{ env.BUMP_COMMAND }} && npm install
+        run: git config --global user.email $GITHUB_ACTOR && git config --global user.name release-automation-${GITHUB_ACTOR}@microsoft.com && ${{ env.BUMP_COMMAND }} && pnpm install
 
       - name: Push changes
         uses: ad-m/github-push-action@master
@@ -64,7 +70,13 @@ jobs:
         with:
           node-version: 20
 
-      - run: npm ci
+      - uses: pnpm/action-setup@v3
+        with:
+          version: 8
+          run_install: |
+            - recursive: true
+              args: [--frozen-lockfile, --strict-peer-dependencies]
+            - args: [--global, turbo, typescript]
 
       - name: 'Local Version Bump'
         run: ${{ env.BUMP_COMMAND }} --skip.commit --skip.tag
@@ -72,8 +84,8 @@ jobs:
       - name: 'Set Designer Extension VSIX aiKey in package.json'
         run: echo "`jq '.aiKey="${{ env.AI_KEY }}"' apps/vs-code-designer/src/package.json`" > apps/vs-code-designer/src/package.json
 
-      - run: npm run build:vscode-designer
-      - run: npm run vscode:designer:pack
+      # - run: npm run build:vscode-designer
+      # - run: npm run vscode:designer:pack
 
       - name: 'Get Previous tag'
         id: previoustag
@@ -81,15 +93,16 @@ jobs:
         with:
           fallback: 0.0.0
 
-      - name: Archive VSIX
-        uses: actions/upload-artifact@v3
-        with:
-          path: |
-            dist/apps/vs-code-designer/*.vsix
+      # - name: Archive VSIX
+      #   uses: actions/upload-artifact@v3
+      #   with:
+      #     path: |
+      #       dist/apps/vs-code-designer/*.vsix
 
       - uses: ncipollo/release-action@v1
         with:
-          artifacts: 'LICENSE.md,dist/apps/vs-code-designer/*.vsix'
+          # artifacts: 'LICENSE.md,dist/apps/vs-code-designer/*.vsix'
+          artifacts: 'LICENSE.md'
           generateReleaseNotes: true
           tag: '${{ steps.previoustag.outputs.tag }}'
           token: ${{ secrets.AUTOMATION_PAT }}
@@ -97,17 +110,6 @@ jobs:
   publish:
     needs: bump-version
     runs-on: ubuntu-latest
-    strategy:
-      matrix:
-        lib:
-          [
-            { dist: './dist/libs/data-mapper', package: 'data-mapper' },
-            { dist: './dist/libs/designer', package: 'designer' },
-            { dist: './dist/libs/designer-ui', package: 'designer-ui' },
-            { dist: './dist/libs/logic-apps-shared', package: 'logic-apps-shared' },
-            { dist: './dist/libs/vscode-extension', package: 'vscode-extension' },
-            { dist: './dist/libs/chatbot', package: 'chatbot' },
-          ]
     steps:
       - name: 'Checkout Github Action'
         uses: actions/checkout@master
@@ -117,14 +119,24 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: 20
-      - run: npm ci
+          
+      - uses: pnpm/action-setup@v3
+        with:
+          version: 8
+          run_install: |
+            - recursive: true
+              args: [--frozen-lockfile, --strict-peer-dependencies]
+            - args: [--global, turbo, typescript]
+    
       - name: 'Local Version Bump'
         run: ${{ env.BUMP_COMMAND }} --skip.commit --skip.tag
-      - run: npm ci
-      - run: npx nx build ${{ matrix.lib.package }}
+      - run: pnpm install --frozen-lockfile --strict-peer-dependencies
+
+      - run: turbo run build:lib
+
       - name: Use .npmrc
         uses: bduff9/use-npmrc@v1.1
         with:
           dot-npmrc: ${{ secrets.PUBLISHING_PAT }}
-          working-directory: ${{ matrix.lib.dist }}
-      - run: cd ${{ matrix.lib.dist }} && npm publish
+          
+      - run: turbo publish

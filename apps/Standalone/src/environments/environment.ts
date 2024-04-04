@@ -3,7 +3,7 @@
 
 const getAccessToken = async (fileName: string): Promise<string | undefined> => {
   try {
-    const armTokenData = await import(`./${fileName}.json`);
+    const armTokenData = await import(`./jsonImports/${fileName}.json`);
     if (new Date(armTokenData.expiresOn) <= new Date()) {
       return undefined;
     }

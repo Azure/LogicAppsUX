@@ -27,9 +27,13 @@
             "cache": false,
             "persistent": true
         },
+        "unpublish:local": {
+            "cache": false
+        },
         "publish:local": {
+            "cache": false,
             "dependsOn": [
-                "build",
+                "build:lib",
                 "^publish:local"
             ]
         },

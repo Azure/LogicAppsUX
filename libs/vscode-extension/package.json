@@ -38,6 +38,7 @@
   "scripts": {
     "build:lib": "tsup && tsc --emitDeclarationOnly",
     "test:lib": "vitest --retry=3",
+    "unpublish:local": "pnpm unpublish --force",
     "publish:local": "pnpm unpublish --force && pnpm publish --no-git-checks --registry http://localhost:4873"
   },
   "dependencies": {

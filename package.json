@@ -1,5 +1,6 @@
 {
   "name": "@microsoft/logicappsux",
+  "private": true,
   "version": "3.3.1",
   "license": "MIT",
   "packageManager": "pnpm@8.12.1",
@@ -19,7 +20,8 @@
     "bump": "standard-version --no-verify",
     "testgen": "playwright codegen https://localhost:4200",
     "e2e:setup": "playwright install --with-deps",
-    "generateArmToken": "az account get-access-token --tenant 72f988bf-86f1-41af-91ab-2d7cd011db47 > ./apps/standalone/src/environments/armToken.json",
+    "publish": "turbo run build:lib && pnpm publish -r",
+    "generateArmToken": "az account get-access-token --tenant 72f988bf-86f1-41af-91ab-2d7cd011db47 > ./apps/standalone/src/environments/jsonImport/armToken.json",
     "start:arm": "npm run generateArmToken && npm run start"
   },
   "engines": {
