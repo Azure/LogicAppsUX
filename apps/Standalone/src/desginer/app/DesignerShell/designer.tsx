@@ -11,8 +11,7 @@ import { QueryClientProvider, useQuery } from 'react-query';
 const standaloneQueryClient = getReactQueryClient();
 
 const LoadWhenArmTokenIsLoaded = ({ children }: { children: ReactNode }) => {
-  const { data, isLoading } = useQuery('armToken', loadToken);
-  console.log(data);
+  const { isLoading } = useQuery('armToken', loadToken);
   return isLoading ? null : <>{children}</>;
 };
 export const DesignerWrapper = () => {
