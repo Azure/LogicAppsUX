@@ -2,13 +2,12 @@
     "name": "vscode-designer",
     "private": true,
     "version": "3.3.0",
-    "type": "module",
     "scripts": {
-        "build": "tsup src/main.ts --external=vscode",
-        "vscode:designer:pack:step1": "cd ./dist/apps/vs-code-designer && npm install",
-        "vscode:designer:pack:step2": "node extension-copy-svgs.js",
-        "vscode:designer:pack:step3": "cd ./dist/apps/vs-code-designer && vsce package",
-        "vscode:designer:pack": "npm run vscode:designer:pack:step1 && npm run vscode:designer:pack:step2 && npm run vscode:designer:pack:step3"
+        "build": "tsup && pnpm run copyFiles",
+        "copyFiles": "node extension-copy-svgs.js",
+        "vscode:designer:pack:step2": "cd ./dist && vsce package",
+        "vscode:designer:pack:step1": "cd ./dist && npm install",
+        "vscode:designer:pack": "pnpm run build && npm run vscode:designer:pack:step1 && npm run vscode:designer:pack:step2"
     },
     "devDependencies": {
         "@azure/ms-rest-js": "^2.6.4",
@@ -40,6 +39,8 @@
         "@types/adm-zip": "^0.5.1",
         "globby": "^11.0.2",
         "jsonc-parser": "2.3.1",
-        "request": "2.88.2"
+        "request": "2.88.2",
+        "recursive-copy": "^2.0.14",
+        "vsce": "^2.11.0"
     }
 }

@@ -1,14 +1,8 @@
 const copy = require('recursive-copy');
 
-const copySVG = async (projectPath) => {
-  await copy('node_modules', `${projectPath}/node_modules`, {
-    filter: ['**/*.svg'],
-  });
-};
-
 const copyDoc = async (projectPath) => {
-  await copy('./', `${projectPath}`, {
-    filter: ['SECURITY.md', 'CHANGELOG.md'],
+  await copy('./src', `${projectPath}`, {
+    filter: ['LICENSE.md', 'CHANGELOG.md', 'package.json', 'README.md', 'assets/**'],
   });
 };
 
@@ -16,10 +10,9 @@ const copyDoc = async (projectPath) => {
  * Copy svgs and documentation files to dist folder before pack vsix.
  */
 const copyFiles = async () => {
-  const projectPath = 'dist/apps/vs-code-designer';
+  const projectPath = 'dist/';
 
   try {
-    await copySVG(projectPath);
     await copyDoc(projectPath);
   } catch (error) {
     console.error('Copy failed: ' + error);
