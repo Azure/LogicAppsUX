@@ -13,8 +13,8 @@ import type {
   FunctionConnectionModel,
   IConnectionsFileContent,
   ServiceProviderConnectionModel,
-} from '@microsoft/vscode-extension';
-import { ProjectResource } from '@microsoft/vscode-extension';
+} from '@microsoft/vscode-extension-logic-apps';
+import { ProjectResource } from '@microsoft/vscode-extension-logic-apps';
 
 export class ConnectionTreeItem extends AzExtTreeItem {
   public readonly parent: ConnectionsTreeItem;

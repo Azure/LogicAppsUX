@@ -1,6 +1,6 @@
 import Constants from '../../constants';
 import { getDurationString, getDurationStringPanelMode, getStatusString } from '../index';
-
+import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 describe('ui/utils/utils', () => {
   describe('getDurationString', () => {
     it(`returns -- if you try to get a duration for NaN milliseconds`, () => {

@@ -5,7 +5,7 @@
 import { binariesExist } from '../../../app/utils/binaries';
 import { extensionCommand, func, funcDependencyName, funcWatchProblemMatcher, hostStartCommand } from '../../../constants';
 import { ScriptInitVSCodeStep } from './ScriptInitVSCodeStep';
-import type { IProjectWizardContext, ITaskInputs, ISettingToAdd } from '@microsoft/vscode-extension';
+import type { IProjectWizardContext, ITaskInputs, ISettingToAdd } from '@microsoft/vscode-extension-logic-apps';
 import type { TaskDefinition } from 'vscode';
 
 export class WorkflowInitVSCodeStep extends ScriptInitVSCodeStep {
