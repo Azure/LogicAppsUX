@@ -1,4 +1,4 @@
-exports.format = (msgs) => {
+export const format = (msgs) => {
   return Object.keys(msgs).reduce((all, k) => {
     if (msgs[k].description) {
       all[`_${k}.comment`] = msgs[k].description;
@@ -10,7 +10,7 @@ exports.format = (msgs) => {
   }, {});
 };
 
-exports.compile = (msgs) => {
+export const compile = (msgs) => {
   return Object.keys(msgs).reduce((all, k) => {
     if (k.startsWith('_') && k.endsWith('.comment')) {
       return all;

@@ -3,7 +3,7 @@ import { convertStringToSegments } from '../editorToSegment';
 import type { ValueSegment } from '@microsoft/logic-apps-shared';
 
 type SimplifiedValueSegment = Omit<ValueSegment, 'id'>;
-
+import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 describe('lib/editor/base/utils/editorToSegment', () => {
   describe('convertStringToSegments', () => {
     const getInitializeVariableAbcToken = (): SimplifiedValueSegment => ({

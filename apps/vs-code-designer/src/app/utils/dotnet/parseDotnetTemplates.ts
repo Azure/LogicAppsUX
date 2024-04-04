@@ -2,8 +2,8 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { ValueType, ProjectLanguage, TemplateCategory } from '@microsoft/vscode-extension';
-import type { IBindingSetting, ITemplates, IWorkflowTemplate, IRawSetting, IRawTemplate } from '@microsoft/vscode-extension';
+import { ValueType, ProjectLanguage, TemplateCategory } from '@microsoft/vscode-extension-logic-apps';
+import type { IBindingSetting, ITemplates, IWorkflowTemplate, IRawSetting, IRawTemplate } from '@microsoft/vscode-extension-logic-apps';
 
 function parseDotnetSetting(rawSetting: IRawSetting): IBindingSetting {
   return {

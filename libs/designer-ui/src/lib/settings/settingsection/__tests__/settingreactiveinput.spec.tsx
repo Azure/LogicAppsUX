@@ -2,7 +2,7 @@ import type { ReactiveToggleProps } from '../settingreactiveinput';
 import { ReactiveToggle } from '../settingreactiveinput';
 import React from 'react';
 import * as ReactShallowRenderer from 'react-test-renderer/shallow';
-
+import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 describe('ui/settings/settingreactiveinput', () => {
   let minimal: ReactiveToggleProps, renderer: ReactShallowRenderer.ShallowRenderer;
 

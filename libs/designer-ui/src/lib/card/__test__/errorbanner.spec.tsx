@@ -3,7 +3,7 @@ import { ErrorBanner } from '../errorbanner';
 import { MessageBarType, setIconOptions } from '@fluentui/react';
 import renderer from 'react-test-renderer';
 import ShallowRenderer from 'react-test-renderer/shallow';
-
+import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 describe('lib/card/errorbanner', () => {
   let minimal: ErrorBannerProps;
 

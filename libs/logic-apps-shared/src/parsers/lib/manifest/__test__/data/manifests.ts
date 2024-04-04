@@ -1,5 +1,5 @@
-import type { OperationManifest } from '@microsoft/utils-logic-apps';
-import { ConnectionReferenceKeyFormat } from '@microsoft/utils-logic-apps';
+import type { OperationManifest } from '../../../../../utils/src';
+import { ConnectionReferenceKeyFormat } from '../../../../../utils/src';
 
 export const createItem: OperationManifest = {
   properties: {

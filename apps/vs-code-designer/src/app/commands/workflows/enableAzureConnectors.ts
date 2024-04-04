@@ -9,7 +9,7 @@ import { createAzureWizard } from '../../commands/workflows/azureConnectorWizard
 import { getLocalSettingsJson } from '../../utils/appSettings/localSettings';
 import { getLocalSettingsFile } from '../appSettings/getLocalSettingsFile';
 import type { AzureWizard, IActionContext } from '@microsoft/vscode-azext-utils';
-import type { ILocalSettingsJson } from '@microsoft/vscode-extension';
+import type { ILocalSettingsJson } from '@microsoft/vscode-extension-logic-apps';
 import * as path from 'path';
 import * as vscode from 'vscode';
 

@@ -43,8 +43,8 @@ import type {
   ITasksJson,
   ILaunchJson,
   IExtensionsJson,
-} from '@microsoft/vscode-extension';
-import { WorkflowProjectType, FuncVersion } from '@microsoft/vscode-extension';
+} from '@microsoft/vscode-extension-logic-apps';
+import { WorkflowProjectType, FuncVersion } from '@microsoft/vscode-extension-logic-apps';
 import * as fse from 'fs-extra';
 import * as path from 'path';
 import type { TaskDefinition, DebugConfiguration, WorkspaceFolder } from 'vscode';

@@ -3,7 +3,7 @@ import { CardFooter } from '../cardfooter';
 import type { CommentBoxProps } from '../types';
 import { setIconOptions } from '@fluentui/react';
 import renderer from 'react-test-renderer';
-
+import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 describe('lib/card/cardfooter', () => {
   let minimal: CardFooterProps;
 

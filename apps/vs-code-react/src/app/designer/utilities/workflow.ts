@@ -1,6 +1,6 @@
 import type { ParametersData } from '../models/workflow';
 import type { ConnectionReferences } from '@microsoft/logic-apps-designer';
-import type { ConnectionsData } from '@microsoft/vscode-extension';
+import type { ConnectionsData } from '@microsoft/vscode-extension-logic-apps';
 
 export const convertConnectionsDataToReferences = (connectionsData: ConnectionsData | undefined): ConnectionReferences => {
   const references: any = {};

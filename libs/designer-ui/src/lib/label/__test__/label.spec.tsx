@@ -1,6 +1,6 @@
 import renderer from 'react-test-renderer';
 import { Label } from '../../label';
-
+import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 describe('lib/label', () => {
   it('should construct', () => {
     const tree = renderer.create(<Label text="label" />).toJSON();

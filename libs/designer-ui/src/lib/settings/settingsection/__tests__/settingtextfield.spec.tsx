@@ -2,7 +2,7 @@ import type { SettingTextFieldProps } from '../settingtextfield';
 import { SettingTextField } from '../settingtextfield';
 import renderer from 'react-test-renderer';
 import * as ReactShallowRenderer from 'react-test-renderer/shallow';
-
+import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 describe('ui/settings/settingtextfield', () => {
   let minimal: SettingTextFieldProps, shallow: ReactShallowRenderer.ShallowRenderer;
 

@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`lib/monitoring/requestpanel/request should render 1`] = `
+exports[`lib/monitoring/requestpanel/request > should render 1`] = `
 <div
   className="msla-trace-inputs-outputs"
 >
@@ -58,8 +58,8 @@ exports[`lib/monitoring/requestpanel/request should render 1`] = `
                   className="ms-Icon root-105 css-118 ms-Button-icon icon-112"
                   data-icon-name="SelectAll"
                   style={
-                    Object {
-                      "fontFamily": "\\"FabricMDL2Icons-1\\"",
+                    {
+                      "fontFamily": ""FabricMDL2Icons-1"",
                     }
                   }
                 >
@@ -88,8 +88,8 @@ exports[`lib/monitoring/requestpanel/request should render 1`] = `
                   className="ms-Icon root-105 css-120 ms-Button-icon icon-112"
                   data-icon-name="Copy"
                   style={
-                    Object {
-                      "fontFamily": "\\"FabricMDL2Icons-2\\"",
+                    {
+                      "fontFamily": ""FabricMDL2Icons-2"",
                     }
                   }
                 >
@@ -101,7 +101,7 @@ exports[`lib/monitoring/requestpanel/request should render 1`] = `
           <pre
             className="prism-code language-json"
             style={
-              Object {
+              {
                 "backgroundColor": "#ffffff",
                 "color": "#000000",
               }
@@ -110,7 +110,7 @@ exports[`lib/monitoring/requestpanel/request should render 1`] = `
             <div
               className="token-line"
               style={
-                Object {
+                {
                   "backgroundColor": null,
                   "color": "#000000",
                 }
@@ -168,8 +168,8 @@ exports[`lib/monitoring/requestpanel/request should render 1`] = `
                   className="ms-Icon root-105 css-118 ms-Button-icon icon-112"
                   data-icon-name="SelectAll"
                   style={
-                    Object {
-                      "fontFamily": "\\"FabricMDL2Icons-1\\"",
+                    {
+                      "fontFamily": ""FabricMDL2Icons-1"",
                     }
                   }
                 >
@@ -198,8 +198,8 @@ exports[`lib/monitoring/requestpanel/request should render 1`] = `
                   className="ms-Icon root-105 css-120 ms-Button-icon icon-112"
                   data-icon-name="Copy"
                   style={
-                    Object {
-                      "fontFamily": "\\"FabricMDL2Icons-2\\"",
+                    {
+                      "fontFamily": ""FabricMDL2Icons-2"",
                     }
                   }
                 >
@@ -211,7 +211,7 @@ exports[`lib/monitoring/requestpanel/request should render 1`] = `
           <pre
             className="prism-code language-json"
             style={
-              Object {
+              {
                 "backgroundColor": "#ffffff",
                 "color": "#000000",
               }
@@ -220,7 +220,7 @@ exports[`lib/monitoring/requestpanel/request should render 1`] = `
             <div
               className="token-line"
               style={
-                Object {
+                {
                   "backgroundColor": null,
                   "color": "#000000",
                 }
@@ -234,7 +234,7 @@ exports[`lib/monitoring/requestpanel/request should render 1`] = `
               <span
                 className="token operator"
                 style={
-                  Object {
+                  {
                     "color": "rgb(0, 0, 0)",
                   }
                 }
@@ -244,7 +244,7 @@ exports[`lib/monitoring/requestpanel/request should render 1`] = `
               <span
                 className="token comment"
                 style={
-                  Object {
+                  {
                     "color": "rgb(0, 128, 0)",
                   }
                 }
@@ -270,7 +270,7 @@ exports[`lib/monitoring/requestpanel/request should render 1`] = `
         <div
           className="ms-Viewport"
           style={
-            Object {
+            {
               "minHeight": 1,
               "minWidth": 1,
             }
@@ -297,6 +297,7 @@ exports[`lib/monitoring/requestpanel/request should render 1`] = `
                   className="ms-FocusZone css-139 ms-DetailsHeader root-123"
                   data-automationid="DetailsHeader"
                   data-focuszone-id="FocusZone14"
+                  data-tabster="{"uncontrolled": {}}"
                   onFocus={[Function]}
                   onKeyDown={[Function]}
                   onMouseDownCapture={[Function]}
@@ -314,7 +315,7 @@ exports[`lib/monitoring/requestpanel/request should render 1`] = `
                     draggable={false}
                     role="columnheader"
                     style={
-                      Object {
+                      {
                         "width": 120,
                       }
                     }
@@ -358,7 +359,7 @@ exports[`lib/monitoring/requestpanel/request should render 1`] = `
                     draggable={false}
                     role="columnheader"
                     style={
-                      Object {
+                      {
                         "width": 120,
                       }
                     }
@@ -413,6 +414,7 @@ exports[`lib/monitoring/requestpanel/request should render 1`] = `
                   <div
                     className="ms-FocusZone css-139 focusZone-122"
                     data-focuszone-id="FocusZone15"
+                    data-tabster="{"uncontrolled": {}}"
                     onBlur={[Function]}
                     onFocus={[Function]}
                     onKeyDown={[Function]}
@@ -438,7 +440,7 @@ exports[`lib/monitoring/requestpanel/request should render 1`] = `
 </div>
 `;
 
-exports[`lib/monitoring/requestpanel/request should render a body 1`] = `
+exports[`lib/monitoring/requestpanel/request > should render a body 1`] = `
 <div
   className="msla-trace-inputs-outputs"
 >
@@ -496,8 +498,8 @@ exports[`lib/monitoring/requestpanel/request should render a body 1`] = `
                   className="ms-Icon root-105 css-118 ms-Button-icon icon-112"
                   data-icon-name="SelectAll"
                   style={
-                    Object {
-                      "fontFamily": "\\"FabricMDL2Icons-1\\"",
+                    {
+                      "fontFamily": ""FabricMDL2Icons-1"",
                     }
                   }
                 >
@@ -526,8 +528,8 @@ exports[`lib/monitoring/requestpanel/request should render a body 1`] = `
                   className="ms-Icon root-105 css-120 ms-Button-icon icon-112"
                   data-icon-name="Copy"
                   style={
-                    Object {
-                      "fontFamily": "\\"FabricMDL2Icons-2\\"",
+                    {
+                      "fontFamily": ""FabricMDL2Icons-2"",
                     }
                   }
                 >
@@ -539,7 +541,7 @@ exports[`lib/monitoring/requestpanel/request should render a body 1`] = `
           <pre
             className="prism-code language-json"
             style={
-              Object {
+              {
                 "backgroundColor": "#ffffff",
                 "color": "#000000",
               }
@@ -548,7 +550,7 @@ exports[`lib/monitoring/requestpanel/request should render a body 1`] = `
             <div
               className="token-line"
               style={
-                Object {
+                {
                   "backgroundColor": null,
                   "color": "#000000",
                 }
@@ -606,8 +608,8 @@ exports[`lib/monitoring/requestpanel/request should render a body 1`] = `
                   className="ms-Icon root-105 css-118 ms-Button-icon icon-112"
                   data-icon-name="SelectAll"
                   style={
-                    Object {
-                      "fontFamily": "\\"FabricMDL2Icons-1\\"",
+                    {
+                      "fontFamily": ""FabricMDL2Icons-1"",
                     }
                   }
                 >
@@ -636,8 +638,8 @@ exports[`lib/monitoring/requestpanel/request should render a body 1`] = `
                   className="ms-Icon root-105 css-120 ms-Button-icon icon-112"
                   data-icon-name="Copy"
                   style={
-                    Object {
-                      "fontFamily": "\\"FabricMDL2Icons-2\\"",
+                    {
+                      "fontFamily": ""FabricMDL2Icons-2"",
                     }
                   }
                 >
@@ -649,7 +651,7 @@ exports[`lib/monitoring/requestpanel/request should render a body 1`] = `
           <pre
             className="prism-code language-json"
             style={
-              Object {
+              {
                 "backgroundColor": "#ffffff",
                 "color": "#000000",
               }
@@ -658,7 +660,7 @@ exports[`lib/monitoring/requestpanel/request should render a body 1`] = `
             <div
               className="token-line"
               style={
-                Object {
+                {
                   "backgroundColor": null,
                   "color": "#000000",
                 }
@@ -672,7 +674,7 @@ exports[`lib/monitoring/requestpanel/request should render a body 1`] = `
               <span
                 className="token operator"
                 style={
-                  Object {
+                  {
                     "color": "rgb(0, 0, 0)",
                   }
                 }
@@ -682,7 +684,7 @@ exports[`lib/monitoring/requestpanel/request should render a body 1`] = `
               <span
                 className="token comment"
                 style={
-                  Object {
+                  {
                     "color": "rgb(0, 128, 0)",
                   }
                 }
@@ -708,7 +710,7 @@ exports[`lib/monitoring/requestpanel/request should render a body 1`] = `
         <div
           className="ms-Viewport"
           style={
-            Object {
+            {
               "minHeight": 1,
               "minWidth": 1,
             }
@@ -735,6 +737,7 @@ exports[`lib/monitoring/requestpanel/request should render a body 1`] = `
                   className="ms-FocusZone css-139 ms-DetailsHeader root-123"
                   data-automationid="DetailsHeader"
                   data-focuszone-id="FocusZone30"
+                  data-tabster="{"uncontrolled": {}}"
                   onFocus={[Function]}
                   onKeyDown={[Function]}
                   onMouseDownCapture={[Function]}
@@ -752,7 +755,7 @@ exports[`lib/monitoring/requestpanel/request should render a body 1`] = `
                     draggable={false}
                     role="columnheader"
                     style={
-                      Object {
+                      {
                         "width": 120,
                       }
                     }
@@ -796,7 +799,7 @@ exports[`lib/monitoring/requestpanel/request should render a body 1`] = `
                     draggable={false}
                     role="columnheader"
                     style={
-                      Object {
+                      {
                         "width": 120,
                       }
                     }
@@ -851,6 +854,7 @@ exports[`lib/monitoring/requestpanel/request should render a body 1`] = `
                   <div
                     className="ms-FocusZone css-139 focusZone-122"
                     data-focuszone-id="FocusZone31"
+                    data-tabster="{"uncontrolled": {}}"
                     onBlur={[Function]}
                     onFocus={[Function]}
                     onKeyDown={[Function]}
@@ -914,8 +918,8 @@ exports[`lib/monitoring/requestpanel/request should render a body 1`] = `
                   className="ms-Icon root-105 css-118 ms-Button-icon icon-112"
                   data-icon-name="SelectAll"
                   style={
-                    Object {
-                      "fontFamily": "\\"FabricMDL2Icons-1\\"",
+                    {
+                      "fontFamily": ""FabricMDL2Icons-1"",
                     }
                   }
                 >
@@ -944,8 +948,8 @@ exports[`lib/monitoring/requestpanel/request should render a body 1`] = `
                   className="ms-Icon root-105 css-120 ms-Button-icon icon-112"
                   data-icon-name="Copy"
                   style={
-                    Object {
-                      "fontFamily": "\\"FabricMDL2Icons-2\\"",
+                    {
+                      "fontFamily": ""FabricMDL2Icons-2"",
                     }
                   }
                 >
@@ -957,7 +961,7 @@ exports[`lib/monitoring/requestpanel/request should render a body 1`] = `
           <pre
             className="prism-code language-json"
             style={
-              Object {
+              {
                 "backgroundColor": "#ffffff",
                 "color": "#000000",
               }
@@ -966,7 +970,7 @@ exports[`lib/monitoring/requestpanel/request should render a body 1`] = `
             <div
               className="token-line"
               style={
-                Object {
+                {
                   "backgroundColor": null,
                   "color": "#000000",
                 }
@@ -975,7 +979,7 @@ exports[`lib/monitoring/requestpanel/request should render a body 1`] = `
               <span
                 className="token punctuation"
                 style={
-                  Object {
+                  {
                     "color": "rgb(4, 81, 165)",
                   }
                 }
@@ -989,7 +993,7 @@ exports[`lib/monitoring/requestpanel/request should render a body 1`] = `
             <div
               className="token-line"
               style={
-                Object {
+                {
                   "backgroundColor": null,
                   "color": "#000000",
                 }
@@ -1008,7 +1012,7 @@ exports[`lib/monitoring/requestpanel/request should render a body 1`] = `
               <span
                 className="token operator"
                 style={
-                  Object {
+                  {
                     "color": "rgb(0, 0, 0)",
                   }
                 }
@@ -1023,7 +1027,7 @@ exports[`lib/monitoring/requestpanel/request should render a body 1`] = `
               <span
                 className="token string"
                 style={
-                  Object {
+                  {
                     "color": "rgb(163, 21, 21)",
                   }
                 }
@@ -1037,7 +1041,7 @@ exports[`lib/monitoring/requestpanel/request should render a body 1`] = `
             <div
               className="token-line"
               style={
-                Object {
+                {
                   "backgroundColor": null,
                   "color": "#000000",
                 }
@@ -1049,7 +1053,7 @@ exports[`lib/monitoring/requestpanel/request should render a body 1`] = `
               <span
                 className="token punctuation"
                 style={
-                  Object {
+                  {
                     "color": "rgb(4, 81, 165)",
                   }
                 }
@@ -1065,7 +1069,7 @@ exports[`lib/monitoring/requestpanel/request should render a body 1`] = `
 </div>
 `;
 
-exports[`lib/monitoring/requestpanel/request should render a body link 1`] = `
+exports[`lib/monitoring/requestpanel/request > should render a body link 1`] = `
 <div
   className="msla-trace-inputs-outputs"
 >
@@ -1123,8 +1127,8 @@ exports[`lib/monitoring/requestpanel/request should render a body link 1`] = `
                   className="ms-Icon root-105 css-118 ms-Button-icon icon-112"
                   data-icon-name="SelectAll"
                   style={
-                    Object {
-                      "fontFamily": "\\"FabricMDL2Icons-1\\"",
+                    {
+                      "fontFamily": ""FabricMDL2Icons-1"",
                     }
                   }
                 >
@@ -1153,8 +1157,8 @@ exports[`lib/monitoring/requestpanel/request should render a body link 1`] = `
                   className="ms-Icon root-105 css-120 ms-Button-icon icon-112"
                   data-icon-name="Copy"
                   style={
-                    Object {
-                      "fontFamily": "\\"FabricMDL2Icons-2\\"",
+                    {
+                      "fontFamily": ""FabricMDL2Icons-2"",
                     }
                   }
                 >
@@ -1166,7 +1170,7 @@ exports[`lib/monitoring/requestpanel/request should render a body link 1`] = `
           <pre
             className="prism-code language-json"
             style={
-              Object {
+              {
                 "backgroundColor": "#ffffff",
                 "color": "#000000",
               }
@@ -1175,7 +1179,7 @@ exports[`lib/monitoring/requestpanel/request should render a body link 1`] = `
             <div
               className="token-line"
               style={
-                Object {
+                {
                   "backgroundColor": null,
                   "color": "#000000",
                 }
@@ -1233,8 +1237,8 @@ exports[`lib/monitoring/requestpanel/request should render a body link 1`] = `
                   className="ms-Icon root-105 css-118 ms-Button-icon icon-112"
                   data-icon-name="SelectAll"
                   style={
-                    Object {
-                      "fontFamily": "\\"FabricMDL2Icons-1\\"",
+                    {
+                      "fontFamily": ""FabricMDL2Icons-1"",
                     }
                   }
                 >
@@ -1263,8 +1267,8 @@ exports[`lib/monitoring/requestpanel/request should render a body link 1`] = `
                   className="ms-Icon root-105 css-120 ms-Button-icon icon-112"
                   data-icon-name="Copy"
                   style={
-                    Object {
-                      "fontFamily": "\\"FabricMDL2Icons-2\\"",
+                    {
+                      "fontFamily": ""FabricMDL2Icons-2"",
                     }
                   }
                 >
@@ -1276,7 +1280,7 @@ exports[`lib/monitoring/requestpanel/request should render a body link 1`] = `
           <pre
             className="prism-code language-json"
             style={
-              Object {
+              {
                 "backgroundColor": "#ffffff",
                 "color": "#000000",
               }
@@ -1285,7 +1289,7 @@ exports[`lib/monitoring/requestpanel/request should render a body link 1`] = `
             <div
               className="token-line"
               style={
-                Object {
+                {
                   "backgroundColor": null,
                   "color": "#000000",
                 }
@@ -1299,7 +1303,7 @@ exports[`lib/monitoring/requestpanel/request should render a body link 1`] = `
               <span
                 className="token operator"
                 style={
-                  Object {
+                  {
                     "color": "rgb(0, 0, 0)",
                   }
                 }
@@ -1309,7 +1313,7 @@ exports[`lib/monitoring/requestpanel/request should render a body link 1`] = `
               <span
                 className="token comment"
                 style={
-                  Object {
+                  {
                     "color": "rgb(0, 128, 0)",
                   }
                 }
@@ -1335,7 +1339,7 @@ exports[`lib/monitoring/requestpanel/request should render a body link 1`] = `
         <div
           className="ms-Viewport"
           style={
-            Object {
+            {
               "minHeight": 1,
               "minWidth": 1,
             }
@@ -1362,6 +1366,7 @@ exports[`lib/monitoring/requestpanel/request should render a body link 1`] = `
                   className="ms-FocusZone css-139 ms-DetailsHeader root-123"
                   data-automationid="DetailsHeader"
                   data-focuszone-id="FocusZone52"
+                  data-tabster="{"uncontrolled": {}}"
                   onFocus={[Function]}
                   onKeyDown={[Function]}
                   onMouseDownCapture={[Function]}
@@ -1379,7 +1384,7 @@ exports[`lib/monitoring/requestpanel/request should render a body link 1`] = `
                     draggable={false}
                     role="columnheader"
                     style={
-                      Object {
+                      {
                         "width": 120,
                       }
                     }
@@ -1423,7 +1428,7 @@ exports[`lib/monitoring/requestpanel/request should render a body link 1`] = `
                     draggable={false}
                     role="columnheader"
                     style={
-                      Object {
+                      {
                         "width": 120,
                       }
                     }
@@ -1478,6 +1483,7 @@ exports[`lib/monitoring/requestpanel/request should render a body link 1`] = `
                   <div
                     className="ms-FocusZone css-139 focusZone-122"
                     data-focuszone-id="FocusZone53"
+                    data-tabster="{"uncontrolled": {}}"
                     onBlur={[Function]}
                     onFocus={[Function]}
                     onKeyDown={[Function]}

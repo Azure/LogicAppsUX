@@ -6,8 +6,8 @@ import { extInstallTaskName, func, funcDependencyName, funcWatchProblemMatcher, 
 import { binariesExist } from '../../utils/binaries';
 import { getLocalFuncCoreToolsVersion } from '../../utils/funcCoreTools/funcVersion';
 import { InitVSCodeStepBase } from './InitVSCodeStepBase';
-import type { IProjectWizardContext } from '@microsoft/vscode-extension';
-import { FuncVersion } from '@microsoft/vscode-extension';
+import type { IProjectWizardContext } from '@microsoft/vscode-extension-logic-apps';
+import { FuncVersion } from '@microsoft/vscode-extension-logic-apps';
 import * as fse from 'fs-extra';
 import * as path from 'path';
 import * as semver from 'semver';

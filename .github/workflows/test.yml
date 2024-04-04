@@ -20,15 +20,27 @@ jobs:
         with:
           fetch-depth: 0
 
-      - name: Derive appropriate SHAs for base and head for `nx affected` commands
-        uses: nrwl/nx-set-shas@v2
+      - name: Cache turbo build setup
+        uses: actions/cache@v4
+        with:
+          path: .turbo
+          key: ${{ runner.os }}-turbo-${{ github.sha }}
+          restore-keys: |
+            ${{ runner.os }}-turbo-
 
       - name: Set up Node.js version ${{ matrix.node-version }}
         uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node-version }}
 
-      - run: npm ci
-      - run: npx nx affected --target=lint --parallel
-      - run: npx nx affected --target=build
-      - run: npx nx affected --target=test --parallel
+      - uses: pnpm/action-setup@v3
+        with:
+          version: 8
+          run_install: |
+            - recursive: true
+              args: [--frozen-lockfile, --strict-peer-dependencies]
+            - args: [--global, turbo, typescript]
+            
+      # - run: npx nx affected --target=lint --parallel
+      - run: turbo run build --cache-dir=.turbo
+      - run: turbo run test:lib --cache-dir=.turbo

@@ -5,8 +5,8 @@ import { CodeProjectWorkflowStateTypeStep } from './createLogicApp/CodeProjectWo
 import { DesignerConfig } from './createLogicApp/workflowDesigner/DesignerConfig';
 import type { AzureWizardExecuteStep, IWizardOptions } from '@microsoft/vscode-azext-utils';
 import { AzureWizardPromptStep, nonNullProp } from '@microsoft/vscode-azext-utils';
-import type { IProjectWizardContext } from '@microsoft/vscode-extension';
-import { ProjectLanguage, WorkflowProjectType } from '@microsoft/vscode-extension';
+import type { IProjectWizardContext } from '@microsoft/vscode-extension-logic-apps';
+import { ProjectLanguage, WorkflowProjectType } from '@microsoft/vscode-extension-logic-apps';
 import * as fs from 'fs-extra';
 import * as path from 'path';
 

@@ -3,7 +3,7 @@ import { ErrorSection } from '..';
 import { MessageBarType } from '@fluentui/react';
 import React from 'react';
 import ShallowRenderer from 'react-test-renderer/shallow';
-
+import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 describe('lib/monitoring/requestpanel/errorsection', () => {
   let minimal: ErrorSectionProps, renderer: ShallowRenderer.ShallowRenderer;
 

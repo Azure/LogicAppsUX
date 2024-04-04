@@ -4,22 +4,26 @@
     "forceConsistentCasingInFileNames": true,
     "allowSyntheticDefaultImports": true,
     "strict": true,
-    "noImplicitOverride": true,
+    "noImplicitOverride": false,
     "noPropertyAccessFromIndexSignature": true,
     "noImplicitReturns": true,
     "noFallthroughCasesInSwitch": true,
-    "jsx": "react",
+    "jsx": "react-jsx",
     "esModuleInterop": true,
-    "resolveJsonModule": true
+    "resolveJsonModule": true,
+    "outDir": "./build/lib",
+    "baseUrl": "./src",
+    "rootDir": "./src",
+    "declaration": true
   },
   "files": [],
-  "include": [],
-  "references": [
-    {
-      "path": "./tsconfig.lib.json"
-    },
-    {
-      "path": "./tsconfig.spec.json"
-    }
+  "include": [
+    "**/src/**/*.ts",
+    "**/src/**/*.tsx"
+  ],
+  "exclude": [
+    "**/__test__/**",
+    "**/__tests__/**",
+    "**/build/**"
   ]
 }

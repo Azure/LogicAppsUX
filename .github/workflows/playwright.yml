@@ -13,12 +13,18 @@ jobs:
     - uses: actions/setup-node@v4
       with:
         node-version: lts/*
-    - name: Install dependencies
-      run: npm ci
+    - uses: pnpm/action-setup@v3
+      with:
+        version: 8
+        run_install: |
+          - recursive: true
+            args: [--frozen-lockfile, --strict-peer-dependencies]
+          - args: [--global, turbo, typescript]
+          
     - name: Install Playwright Browsers
-      run: npx playwright install --with-deps
+      run: pnpm run e2e:setup
     - name: Run Playwright tests
-      run: npx playwright test
+      run: pnpm run test:e2e
     - uses: actions/upload-artifact@v4
       if: always()
       with:

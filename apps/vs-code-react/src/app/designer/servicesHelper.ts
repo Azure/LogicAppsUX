@@ -23,8 +23,8 @@ import type {
   IWorkflowService,
   ManagedIdentity,
 } from '@microsoft/logic-apps-shared';
-import type { ConnectionAndAppSetting, ConnectionsData, IDesignerPanelMetadata } from '@microsoft/vscode-extension';
-import { ExtensionCommand, HttpClient } from '@microsoft/vscode-extension';
+import type { ConnectionAndAppSetting, ConnectionsData, IDesignerPanelMetadata } from '@microsoft/vscode-extension-logic-apps';
+import { ExtensionCommand, HttpClient } from '@microsoft/vscode-extension-logic-apps';
 import type { QueryClient } from 'react-query';
 import type { WebviewApi } from 'vscode-webview';
 

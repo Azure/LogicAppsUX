@@ -1,5 +1,5 @@
 import { hasModifier, isDeleteKey, isDownArrowKey, isEnterKey, isEscapeKey, isSpaceKey, isUpArrowKey } from '../keyboardUtils';
-
+import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 describe('ui/utils/keyboardUtils', () => {
   describe('hasModifier', () => {
     it('should return true if the Alt key is pressed', () => {

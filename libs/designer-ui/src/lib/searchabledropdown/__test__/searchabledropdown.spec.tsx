@@ -2,11 +2,11 @@ import type { SearchableDropdownProps } from '..';
 import { SearchableDropdown } from '..';
 import renderer from 'react-test-renderer';
 
-jest.mock('@fluentui/react', () => ({
-  ...jest.requireActual('@fluentui/react'),
-  Dropdown: 'Dropdown',
-}));
-
+// vi.mock('@fluentui/react', () => ({
+//   ...vi.requireActual('@fluentui/react'),
+//   Dropdown: 'Dropdown',
+// }));
+import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 describe('lib/searchabledropdown', () => {
   it('should create a dropdown without a search box for 3 options', () => {
     const props: SearchableDropdownProps = {
@@ -19,7 +19,7 @@ describe('lib/searchabledropdown', () => {
           { key: 'baz', text: 'Baz' },
         ],
       },
-      onItemSelectionChanged: jest.fn(),
+      onItemSelectionChanged: vi.fn(),
     };
     const component = <SearchableDropdown {...props} />;
     const renderedComponent = renderer.create(component).toJSON();
@@ -39,7 +39,7 @@ describe('lib/searchabledropdown', () => {
           { key: 'qoz', text: 'Qoz' },
         ],
       },
-      onItemSelectionChanged: jest.fn(),
+      onItemSelectionChanged: vi.fn(),
     };
     const component = <SearchableDropdown {...props} />;
     const renderedComponent = renderer.create(component).toJSON();

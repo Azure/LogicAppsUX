@@ -1,6 +1,6 @@
 import type { InitializePayload, Status } from '../state/WorkflowSlice';
 import type { ApiHubServiceDetails, SchemaType } from '@microsoft/logic-apps-shared';
-import type { MapDefinitionData, ExtensionCommand, ConnectionsData, IDesignerPanelMetadata } from '@microsoft/vscode-extension';
+import type { MapDefinitionData, ExtensionCommand, ConnectionsData, IDesignerPanelMetadata } from '@microsoft/vscode-extension-logic-apps';
 
 export interface IApiService {
   getWorkflows(subscriptionId: string, iseId?: string, location?: string): Promise<WorkflowsList[]>;

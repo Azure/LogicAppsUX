@@ -11,7 +11,7 @@ import type {
 } from '../models/expression';
 import { ExpressionType, ExpressionTokenType } from '../models/expression';
 import { ExpressionScanner } from './scanner';
-import { equals } from '@microsoft/utils-logic-apps';
+import { equals } from '../../../utils/src';
 
 interface TokenToParse {
   tokenType: ExpressionTokenType;

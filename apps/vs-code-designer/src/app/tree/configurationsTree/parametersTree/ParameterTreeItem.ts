@@ -8,8 +8,8 @@ import { getProjectContextValue } from '../../../utils/tree/projectContextValues
 import type { ParametersTreeItem } from './ParametersTreeItem';
 import { AzExtTreeItem } from '@microsoft/vscode-azext-utils';
 import type { TreeItemIconPath } from '@microsoft/vscode-azext-utils';
-import { ProjectResource } from '@microsoft/vscode-extension';
-import type { Parameter, IParametersFileContent } from '@microsoft/vscode-extension';
+import { ProjectResource } from '@microsoft/vscode-extension-logic-apps';
+import type { Parameter, IParametersFileContent } from '@microsoft/vscode-extension-logic-apps';
 
 export class ParameterTreeItem extends AzExtTreeItem {
   public readonly parent: ParametersTreeItem;

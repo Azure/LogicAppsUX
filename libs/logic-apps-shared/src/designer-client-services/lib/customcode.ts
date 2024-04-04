@@ -1,4 +1,4 @@
-import { AssertionErrorCode, AssertionException } from '@microsoft/logic-apps-shared';
+import { AssertionErrorCode, AssertionException } from '../../utils/src';
 
 export interface UploadCustomCode {
   fileData: string;

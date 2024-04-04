@@ -12,8 +12,8 @@ import { getContainingWorkspace } from '../../utils/workspace';
 import { InitVSCodeLanguageStep } from './InitVSCodeLanguageStep';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { AzureWizard, UserCancelledError } from '@microsoft/vscode-azext-utils';
-import { latestGAVersion } from '@microsoft/vscode-extension';
-import type { ProjectLanguage, FuncVersion, IProjectWizardContext } from '@microsoft/vscode-extension';
+import { latestGAVersion } from '@microsoft/vscode-extension-logic-apps';
+import type { ProjectLanguage, FuncVersion, IProjectWizardContext } from '@microsoft/vscode-extension-logic-apps';
 import type { WorkspaceFolder } from 'vscode';
 import { window, workspace } from 'vscode';
 

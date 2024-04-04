@@ -495,12 +495,12 @@ const getRetryPolicy = (
 const isRetryPolicySupported = (isTrigger: boolean, operationType: string, manifest?: OperationManifest): boolean => {
   return manifest
     ? isSettingSupportedFromOperationManifest(
-        getOperationSettingFromManifest(manifest, 'retryPolicy') as OperationManifestSetting<void>,
-        isTrigger
-      )
+      getOperationSettingFromManifest(manifest, 'retryPolicy') as OperationManifestSetting<void>,
+      isTrigger
+    )
     : [Constants.NODE.TYPE.API_CONNECTION, Constants.NODE.TYPE.API_CONNECTION_WEBHOOK, Constants.NODE.TYPE.HTTP].indexOf(
-        operationType.toLowerCase()
-      ) > -1;
+      operationType.toLowerCase()
+    ) > -1;
 };
 
 const getSequential = (definition?: LogicAppsV2.OperationDefinition): boolean => {
@@ -601,9 +601,9 @@ const getTimeout = (
 ): string | undefined => {
   const isTimeoutable = manifest
     ? isSettingSupportedFromOperationManifest(
-        getOperationSettingFromManifest(manifest, 'timeout') as OperationManifestSetting<void>,
-        isTrigger
-      )
+      getOperationSettingFromManifest(manifest, 'timeout') as OperationManifestSetting<void>,
+      isTrigger
+    )
     : isTimeoutableAction(nodeType);
 
   if (isTimeoutable) {
@@ -622,9 +622,9 @@ const isTimeoutableAction = (operationType: string): boolean => {
 const isTimeoutSupported = (isTrigger: boolean, nodeType: string, manifest?: OperationManifest): boolean => {
   return manifest
     ? isSettingSupportedFromOperationManifest(
-        getOperationSettingFromManifest(manifest, 'timeout') as OperationManifestSetting<void>,
-        isTrigger
-      )
+      getOperationSettingFromManifest(manifest, 'timeout') as OperationManifestSetting<void>,
+      isTrigger
+    )
     : isTimeoutableAction(nodeType);
 };
 
@@ -758,9 +758,9 @@ export const isChunkedTransferModeSupported = (
 const getDownloadChunkSize = (definition?: LogicAppsV2.OperationDefinition): number | undefined => {
   return definition
     ? getObjectPropertyValue(getRuntimeConfiguration(definition), [
-        Constants.SETTINGS.PROPERTY_NAMES.CONTENT_TRANSFER,
-        Constants.SETTINGS.PROPERTY_NAMES.DOWNLOAD_CHUNK_SIZE,
-      ])
+      Constants.SETTINGS.PROPERTY_NAMES.CONTENT_TRANSFER,
+      Constants.SETTINGS.PROPERTY_NAMES.DOWNLOAD_CHUNK_SIZE,
+    ])
     : undefined;
 };
 
@@ -861,7 +861,7 @@ const getConditionExpressions = (definition?: LogicAppsV2.TriggerDefinition): st
 };
 
 const getRunAfter = (definition?: LogicAppsV2.ActionDefinition): GraphEdge[] => {
-  const graphEdges = [];
+  const graphEdges: GraphEdge[] = [];
   if (definition?.runAfter) {
     for (const [predecessorId, statuses] of Object.entries(definition.runAfter)) {
       graphEdges.push({ predecessorId, statuses });

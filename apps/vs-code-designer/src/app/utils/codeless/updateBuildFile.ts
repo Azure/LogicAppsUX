@@ -6,7 +6,7 @@ import { DotnetVersion } from '../../../constants';
 import { localize } from '../../../localize';
 import { getProjFiles } from '../dotnet/dotnet';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
-import { ProjectLanguage } from '@microsoft/vscode-extension';
+import { ProjectLanguage } from '@microsoft/vscode-extension-logic-apps';
 import * as fs from 'fs';
 import * as path from 'path';
 import { Uri } from 'vscode';

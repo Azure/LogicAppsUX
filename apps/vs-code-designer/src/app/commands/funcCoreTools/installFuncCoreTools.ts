@@ -15,7 +15,7 @@ import { getBrewPackageName } from '../../utils/funcCoreTools/getBrewPackageName
 import { getNpmDistTag } from '../../utils/funcCoreTools/getNpmDistTag';
 import { getGlobalSetting, promptForFuncVersion } from '../../utils/vsCodeConfig/settings';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
-import type { FuncVersion, INpmDistTag } from '@microsoft/vscode-extension';
+import type { FuncVersion, INpmDistTag } from '@microsoft/vscode-extension-logic-apps';
 import { localize } from 'vscode-nls';
 
 export async function installFuncCoreToolsBinaries(context: IActionContext, majorVersion?: string): Promise<void> {

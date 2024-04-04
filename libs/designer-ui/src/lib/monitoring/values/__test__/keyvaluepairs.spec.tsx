@@ -3,7 +3,7 @@ import type { ValueProps } from '../types';
 import { CheckboxVisibility, DetailsListLayoutMode, SelectionMode } from '@fluentui/react';
 import * as React from 'react';
 import * as ReactShallowRenderer from 'react-test-renderer/shallow';
-
+import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 describe('ui/monitoring/values/_keyvaluepairs', () => {
   const classNames = {
     displayName: 'msla-trace-value-display-name',

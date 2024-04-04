@@ -3,7 +3,7 @@ import type { VariableDeclaration } from '../../../../../../core/state/tokens/to
 import { InitEditorService } from '@microsoft/logic-apps-shared';
 import type { ParameterInfo } from '@microsoft/designer-ui';
 import type { OperationInfo } from '@microsoft/logic-apps-shared';
-
+import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 describe('getEditorAndOptions', () => {
   const operationInfo: OperationInfo = {
     connectorId: 'connectorId',
@@ -109,9 +109,9 @@ describe('getEditorAndOptions', () => {
   });
 
   it('should support EditorService override', () => {
-    const customEditorOptions = { EditorComponent: jest.fn() };
+    const customEditorOptions = { EditorComponent: vi.fn() };
     const editorService = {
-      getEditor: jest.fn(() => customEditorOptions),
+      getEditor: vi.fn(() => customEditorOptions),
     };
     InitEditorService(editorService);
 
@@ -129,9 +129,9 @@ describe('getEditorAndOptions', () => {
   });
 
   it('should apply EditorService override before remapping "variablename" editor', () => {
-    const customEditorOptions = { EditorComponent: jest.fn() };
+    const customEditorOptions = { EditorComponent: vi.fn() };
     const editorService = {
-      getEditor: jest.fn(() => customEditorOptions),
+      getEditor: vi.fn(() => customEditorOptions),
     };
     InitEditorService(editorService);
 

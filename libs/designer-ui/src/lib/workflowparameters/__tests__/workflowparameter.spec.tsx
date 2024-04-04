@@ -3,7 +3,7 @@ import { WorkflowParameter } from '../workflowparameter';
 import { initializeIcons } from '@fluentui/react';
 import * as React from 'react';
 import * as ReactShallowRenderer from 'react-test-renderer/shallow';
-
+import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 describe('ui/workflowparameters/workflowparameter', () => {
   let minimal: WorkflowParameterProps, renderer: ReactShallowRenderer.ShallowRenderer;
 
@@ -36,7 +36,6 @@ describe('ui/workflowparameters/workflowparameter', () => {
     expect(commandBar).toBeDefined();
 
     expect(commandBar.props.className).toBe('msla-workflow-parameter-heading-button');
-    console.log('commandBar.props', commandBar.props);
     expect(commandBar.props.children).toBe('New parameter');
   });
 });

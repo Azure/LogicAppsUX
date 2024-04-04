@@ -31,5 +31,5 @@ export const OnlyEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
     });
   }, [sourcePosition, sourceX, sourceY, targetPosition, targetX, targetY]);
 
-  return <path id={id} style={style} className="react-flow__edge-path" d={d} />;
+  return <path id={id} style={style} className="react-flow__edge-path" d={d as any} />;
 };

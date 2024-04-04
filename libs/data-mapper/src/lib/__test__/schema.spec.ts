@@ -1,7 +1,7 @@
 import { simpleMockSchema, noChildrenMockSchema } from '../__mocks__';
 import { convertSchemaToSchemaExtended } from '../utils/Schema.Utils';
 import type { Schema } from '@microsoft/logic-apps-shared';
-
+import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 describe('models/Schema', () => {
   describe('convertSchemaToSchemaExtended', () => {
     it('Test pathToRoot generates in correct order', () => {

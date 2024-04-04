@@ -70,7 +70,7 @@ export default defineConfig({
 
   /* Run your local dev server before starting the tests */
   webServer: {
-    command: 'npx nx run designer-standalone:serve:citest',
+    command: 'pnpm run start:e2e',
     url: 'http://localhost:4200/',
     ignoreHTTPSErrors: true,
     reuseExistingServer: !process.env.CI,

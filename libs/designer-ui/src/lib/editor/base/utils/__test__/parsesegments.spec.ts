@@ -5,7 +5,7 @@ import {
   encodeStringSegmentTokensInLexicalContext,
 } from '../parsesegments';
 import type { ValueSegment } from '@microsoft/logic-apps-shared';
-
+import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 describe('lib/editor/base/utils/parseSegments', () => {
   describe('decodeStringSegmentTokensInDomContext', () => {
     it.each([

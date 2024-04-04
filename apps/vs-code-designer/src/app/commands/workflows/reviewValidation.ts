@@ -7,7 +7,7 @@ import { localize } from '../../../localize';
 import { cacheWebviewPanel, removeWebviewPanelFromCache, tryGetWebviewPanel } from '../../utils/codeless/common';
 import { getWebViewHTML } from '../../utils/codeless/getWebViewHTML';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
-import { ProjectName } from '@microsoft/vscode-extension';
+import { ProjectName } from '@microsoft/vscode-extension-logic-apps';
 import { readFileSync } from 'fs';
 import * as vscode from 'vscode';
 

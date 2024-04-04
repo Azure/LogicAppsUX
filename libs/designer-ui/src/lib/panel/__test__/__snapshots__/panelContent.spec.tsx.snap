@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`ui/workflowparameters/workflowparameter should construct. 1`] = `
+exports[`ui/workflowparameters/workflowparameter > should construct. 1`] = `
 <div
   id="msla-node-details-panel-"
 >
@@ -10,13 +10,13 @@ exports[`ui/workflowparameters/workflowparameter should construct. 1`] = `
     <TabList
       onTabSelect={[Function]}
       style={
-        Object {
+        {
           "margin": "0px -12px",
         }
       }
     >
       <OverflowMenu
-        tabs={Array []}
+        tabs={[]}
       />
     </TabList>
   </ForwardRef>

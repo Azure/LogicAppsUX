@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`lib/card/errorbanner should render 1`] = `
+exports[`lib/card/errorbanner > should render 1`] = `
 <div
   className="ms-TooltipHost msla-panel-card-error-wrapper root-109"
   onBlurCapture={[Function]}
@@ -30,7 +30,7 @@ exports[`lib/card/errorbanner should render 1`] = `
     hidden={true}
     id="tooltip0"
     style={
-      Object {
+      {
         "border": 0,
         "height": 1,
         "margin": -1,

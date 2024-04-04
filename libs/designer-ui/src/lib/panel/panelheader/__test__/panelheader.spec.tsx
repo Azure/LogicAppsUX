@@ -6,7 +6,7 @@ import { MenuItem } from '@fluentui/react-components';
 import React from 'react';
 import renderer from 'react-test-renderer';
 import * as ReactShallowRenderer from 'react-test-renderer/shallow';
-
+import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 describe('lib/panel/panelHeader/main', () => {
   let minimal: PanelHeaderProps;
   let minimalWithHeader: PanelHeaderProps;
@@ -20,27 +20,27 @@ describe('lib/panel/panelHeader/main', () => {
       headerMenuItems: [],
       headerLocation: PanelLocation.Right,
       panelScope: PanelScope.CardLevel,
-      toggleCollapse: jest.fn(),
-      onTitleChange: jest.fn(),
-      commentChange: jest.fn(),
+      toggleCollapse: vi.fn(),
+      onTitleChange: vi.fn(),
+      commentChange: vi.fn(),
     };
     minimalWithHeader = {
       nodeId: '',
       horizontalPadding: '',
       isCollapsed: false,
-      onTitleChange: jest.fn(),
-      commentChange: jest.fn(),
+      onTitleChange: vi.fn(),
+      commentChange: vi.fn(),
       headerMenuItems: [
-        <MenuItem key={'Comment'} disabled={false} icon={'Comment'} onClick={jest.fn()}>
+        <MenuItem key={'Comment'} disabled={false} icon={'Comment'} onClick={vi.fn()}>
           Add a comment
         </MenuItem>,
-        <MenuItem key={'Delete'} disabled={false} icon={'Delete'} onClick={jest.fn()}>
+        <MenuItem key={'Delete'} disabled={false} icon={'Delete'} onClick={vi.fn()}>
           Delete
         </MenuItem>,
       ],
       headerLocation: PanelLocation.Right,
       panelScope: PanelScope.CardLevel,
-      toggleCollapse: jest.fn(),
+      toggleCollapse: vi.fn(),
     };
     shallow = ReactShallowRenderer.createRenderer();
     initializeIcons();

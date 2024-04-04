@@ -2,7 +2,7 @@ import { setIconOptions } from '@fluentui/react';
 import renderer from 'react-test-renderer';
 import { OverviewCommandBar, type OverviewCommandBarProps } from '../overviewcommandbar';
 import type { CallbackInfo } from '../types';
-
+import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 describe('lib/overview/overviewcommandbar', () => {
   let minimal: OverviewCommandBarProps;
 
@@ -14,8 +14,8 @@ describe('lib/overview/overviewcommandbar', () => {
 
   beforeEach(() => {
     minimal = {
-      onRefresh: jest.fn(),
-      onRunTrigger: jest.fn(),
+      onRefresh: vi.fn(),
+      onRunTrigger: vi.fn(),
     };
   });
 

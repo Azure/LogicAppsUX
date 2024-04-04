@@ -108,7 +108,7 @@ export function TokenPickerFooter({
     try {
       currExpression = ExpressionParser.parseExpression(expression.value);
     } catch (ex) {
-      if (ex instanceof ScannerException && ex.message === ExpressionExceptionCode.MISUSED_DOUBLE_QUOTES) {
+      if (ex instanceof ScannerException && (ex as any).message === ExpressionExceptionCode.MISUSED_DOUBLE_QUOTES) {
         // if the expression contains misused double quotes, we'll show a different error message
         setExpressionEditorError(invalidExpressionQuotations);
       } else {

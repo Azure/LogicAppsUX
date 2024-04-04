@@ -35,7 +35,7 @@ import {
   type IAzExtOutputChannel,
   callWithTelemetryAndErrorHandling,
 } from '@microsoft/vscode-azext-utils';
-import { WorkerRuntime } from '@microsoft/vscode-extension';
+import { WorkerRuntime } from '@microsoft/vscode-extension-logic-apps';
 import axios from 'axios';
 import * as cp from 'child_process';
 import * as fs from 'fs';

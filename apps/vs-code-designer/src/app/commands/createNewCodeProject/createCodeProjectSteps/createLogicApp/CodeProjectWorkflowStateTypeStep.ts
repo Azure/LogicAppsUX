@@ -13,8 +13,8 @@ import type {
   IWorkflowTemplate,
   IFunctionWizardContext,
   ProjectLanguage,
-} from '@microsoft/vscode-extension';
-import { TemplateCategory, TemplatePromptResult } from '@microsoft/vscode-extension';
+} from '@microsoft/vscode-extension-logic-apps';
+import { TemplateCategory, TemplatePromptResult } from '@microsoft/vscode-extension-logic-apps';
 
 /**
  * This class represents a prompt step that allows the user to select a workflow type for their Azure Functions project.

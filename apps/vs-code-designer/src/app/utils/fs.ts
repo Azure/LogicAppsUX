@@ -6,7 +6,7 @@ import { localize } from '../../localize';
 import { isEmptyString } from '@microsoft/logic-apps-shared';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { DialogResponses } from '@microsoft/vscode-azext-utils';
-import type { pathRelativeFunc } from '@microsoft/vscode-extension';
+import type { pathRelativeFunc } from '@microsoft/vscode-extension-logic-apps';
 import * as crypto from 'crypto';
 import * as fse from 'fs-extra';
 import * as path from 'path';

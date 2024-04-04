@@ -6,7 +6,7 @@ import { localize } from '../../../../localize';
 import { gitInit, isGitInstalled, isInsideRepo } from '../../../utils/git';
 import { AzureWizardExecuteStep, callWithTelemetryAndErrorHandling } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
-import type { IProjectWizardContext } from '@microsoft/vscode-extension';
+import type { IProjectWizardContext } from '@microsoft/vscode-extension-logic-apps';
 import * as fse from 'fs-extra';
 import type { Progress } from 'vscode';
 

@@ -18,8 +18,8 @@ import { getDebugConfigs, isDebugConfigEqual } from '../utils/vsCodeConfig/launc
 import { getWorkspaceSetting, getFunctionsWorkerRuntime } from '../utils/vsCodeConfig/settings';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { parseError } from '@microsoft/vscode-azext-utils';
-import { MismatchBehavior } from '@microsoft/vscode-extension';
-import type { IPreDebugValidateResult } from '@microsoft/vscode-extension';
+import { MismatchBehavior } from '@microsoft/vscode-extension-logic-apps';
+import type { IPreDebugValidateResult } from '@microsoft/vscode-extension-logic-apps';
 import * as azureStorage from 'azure-storage';
 import * as vscode from 'vscode';
 

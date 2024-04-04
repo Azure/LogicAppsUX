@@ -23,7 +23,7 @@ const elkSubgraphLayoutOptions = {
   nodeType: WORKFLOW_NODE_TYPES.SUBGRAPH_NODE,
 };
 
-const { convertWorkflowGraphToElkGraph, convertElkGraphToReactFlow, elkLayout } = exportForTesting;
+const { convertWorkflowGraphToElkGraph, convertElkGraphToReactFlow, elkLayout } = exportForTesting;import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 describe('elklayout', () => {
   describe('convertWorkflowGraphToElkGraph', () => {
     it('should properly convert a valid WorkflowGraph to an ElkNode', () => {

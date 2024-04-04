@@ -1,4 +1,5 @@
 /* eslint-disable no-param-reassign */
+import { getIntl } from '../../../intl/src';
 import type { SchemaProperty } from '../models/operation';
 import * as SwaggerConstants from './constants';
 import * as ParameterKeyUtility from './helpers/keysutility';
@@ -11,9 +12,8 @@ import {
   getParameterDynamicSchema,
   getParameterDynamicValues,
 } from './helpers/utils';
-import { getIntl } from '@microsoft/intl-logic-apps';
-import type { OpenAPIV2 } from '@microsoft/utils-logic-apps';
-import { aggregate, clone, equals, hasProperty, isNullOrUndefined } from '@microsoft/utils-logic-apps';
+import type { OpenAPIV2 } from '../../../utils/src';
+import { aggregate, clone, equals, hasProperty, isNullOrUndefined } from '../../../utils/src';
 
 export type OpenApiSchema = OpenAPIV2.Schema;
 

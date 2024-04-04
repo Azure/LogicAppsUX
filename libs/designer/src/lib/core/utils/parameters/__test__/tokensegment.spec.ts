@@ -2,7 +2,7 @@ import { TokenSegmentConvertor } from '../tokensegment';
 import { expectOutputTokenSegment, expectParameterTokenSegment, expectVariableTokenSegment } from './segment.spec';
 import type { ExpressionFunction } from '@microsoft/logic-apps-shared';
 import { ExpressionParser, OutputKeys, OutputSource } from '@microsoft/logic-apps-shared';
-
+import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 describe('core/utils/parameters/tokensegment', () => {
   describe('TokenSegmentConvertor', () => {
     describe('variables()', () => {

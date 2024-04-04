@@ -20,8 +20,8 @@ import {
 } from '../DataMapSlice';
 import type { FunctionMetadata, FunctionPositionMetadata, Schema, SchemaExtended } from '@microsoft/logic-apps-shared';
 import { NormalizedDataType, SchemaNodeProperty, SchemaType } from '@microsoft/logic-apps-shared';
-
-// NOTE: Functions with an unbounded input (like our concatFunction mock) will have two empty (undefined) values/fields by default
+import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
+// NOTE: Functions with an unbounded input (like our concatFunction mock) will have two empty (undefined) values/fields by defaultimport { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 describe('DataMapSlice', () => {
   const schema: Schema = simpleMockSchema;
   const extendedSchema: SchemaExtended = convertSchemaToSchemaExtended(schema);

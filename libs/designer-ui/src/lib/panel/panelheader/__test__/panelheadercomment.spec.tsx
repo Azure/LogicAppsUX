@@ -2,7 +2,7 @@ import type { PanelHeaderCommentProps } from '../panelheadercomment';
 import { PanelHeaderComment } from '../panelheadercomment';
 import * as React from 'react';
 import * as ReactShallowRenderer from 'react-test-renderer/shallow';
-
+import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 describe('ui/panel/panelheadercomment', () => {
   let minimal: PanelHeaderCommentProps, renderer: ReactShallowRenderer.ShallowRenderer;
 

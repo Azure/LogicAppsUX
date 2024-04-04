@@ -5,7 +5,7 @@
 import { funcPackageName, PackageManager, Platform } from '../../../constants';
 import { executeCommand } from './cpUtils';
 import { tryGetInstalledBrewPackageName } from './getBrewPackageName';
-import { FuncVersion } from '@microsoft/vscode-extension';
+import { FuncVersion } from '@microsoft/vscode-extension-logic-apps';
 
 /**
  * Gets package managers installed in the system.

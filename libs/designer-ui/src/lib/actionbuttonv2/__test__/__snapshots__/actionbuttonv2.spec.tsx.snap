@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`lib/actionbuttonv2 should render 1`] = `
+exports[`lib/actionbuttonv2 > should render 1`] = `
 <button
   aria-label="title"
   className="msla-action-button-v2"
@@ -26,7 +26,7 @@ exports[`lib/actionbuttonv2 should render 1`] = `
 </button>
 `;
 
-exports[`lib/actionbuttonv2 should render disabled 1`] = `
+exports[`lib/actionbuttonv2 > should render disabled 1`] = `
 <button
   aria-label="title"
   className="msla-action-button-v2"
@@ -52,7 +52,7 @@ exports[`lib/actionbuttonv2 should render disabled 1`] = `
 </button>
 `;
 
-exports[`lib/actionbuttonv2 should render with a CSS class 1`] = `
+exports[`lib/actionbuttonv2 > should render with a CSS class 1`] = `
 <button
   aria-label="title"
   className="msla-action-button-v2 class-name"
@@ -78,7 +78,7 @@ exports[`lib/actionbuttonv2 should render with a CSS class 1`] = `
 </button>
 `;
 
-exports[`lib/actionbuttonv2 should render with a ref 1`] = `
+exports[`lib/actionbuttonv2 > should render with a ref 1`] = `
 <button
   aria-label="title"
   className="msla-action-button-v2"

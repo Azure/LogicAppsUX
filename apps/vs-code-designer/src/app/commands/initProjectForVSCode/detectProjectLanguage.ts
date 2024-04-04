@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 import { getProjFiles } from '../../utils/dotnet/dotnet';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
-import { ProjectLanguage } from '@microsoft/vscode-extension';
+import { ProjectLanguage } from '@microsoft/vscode-extension-logic-apps';
 import * as fse from 'fs-extra';
 import * as path from 'path';
 

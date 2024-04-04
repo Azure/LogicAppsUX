@@ -1,7 +1,7 @@
 import type { Flyout2Props } from '../index';
 import { Flyout2 } from '../index';
 import renderer from 'react-test-renderer';
-
+import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 describe('lib/flyout2', () => {
   let minimal: Flyout2Props;
 

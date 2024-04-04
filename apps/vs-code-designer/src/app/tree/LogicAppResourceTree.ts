@@ -32,8 +32,14 @@ import type { IDeployContext } from '@microsoft/vscode-azext-azureappservice';
 import { AzureWizard, DeleteConfirmationStep, nonNullValue } from '@microsoft/vscode-azext-utils';
 import type { AzExtTreeItem, IActionContext, ISubscriptionContext, TreeItemIconPath } from '@microsoft/vscode-azext-utils';
 import type { ResolvedAppResourceBase } from '@microsoft/vscode-azext-utils/hostapi';
-import { ProjectResource, ProjectSource, latestGAVersion } from '@microsoft/vscode-extension';
-import type { ApplicationSettings, FuncHostRequest, FuncVersion, ILocalSettingsJson, IParsedHostJson } from '@microsoft/vscode-extension';
+import { ProjectResource, ProjectSource, latestGAVersion } from '@microsoft/vscode-extension-logic-apps';
+import type {
+  ApplicationSettings,
+  FuncHostRequest,
+  FuncVersion,
+  ILocalSettingsJson,
+  IParsedHostJson,
+} from '@microsoft/vscode-extension-logic-apps';
 import * as path from 'path';
 
 export function isLogicAppResourceTree(ti: unknown): ti is ResolvedAppResourceBase {

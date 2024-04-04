@@ -5,7 +5,7 @@
 import { localize } from '../../../../../localize';
 import { WorkflowNameStepBase } from '../WorkflowNameStepBase';
 import { nonNullProp } from '@microsoft/vscode-azext-utils';
-import type { IWorkflowTemplate, IScriptWorkflowWizardContext } from '@microsoft/vscode-extension';
+import type { IWorkflowTemplate, IScriptWorkflowWizardContext } from '@microsoft/vscode-extension-logic-apps';
 import * as fse from 'fs-extra';
 import * as path from 'path';
 

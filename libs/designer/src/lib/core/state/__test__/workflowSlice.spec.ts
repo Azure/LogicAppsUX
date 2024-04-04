@@ -2,7 +2,7 @@ import { initialState } from '../../parsers/__test__/mocks/workflowMock';
 import type { AddNodePayload } from '../../parsers/addNodeToWorkflow';
 import reducer, { addNode } from '../workflow/workflowSlice';
 import { WORKFLOW_NODE_TYPES } from '@microsoft/logic-apps-shared';
-
+import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 describe('workflow slice reducers', () => {
   it('should add initial node to the workflow', () => {
     const mockAddNode: AddNodePayload = {

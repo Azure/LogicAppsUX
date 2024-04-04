@@ -18,7 +18,7 @@ import { validateDotNetIsLatest } from '../dotnet/validateDotNetIsLatest';
 import { validateFuncCoreToolsIsLatest } from '../funcCoreTools/validateFuncCoreToolsIsLatest';
 import { validateNodeJsIsLatest } from '../nodeJs/validateNodeJsIsLatest';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
-import type { IBundleDependencyFeed } from '@microsoft/vscode-extension';
+import type { IBundleDependencyFeed } from '@microsoft/vscode-extension-logic-apps';
 import * as vscode from 'vscode';
 
 export async function validateAndInstallBinaries(context: IActionContext) {

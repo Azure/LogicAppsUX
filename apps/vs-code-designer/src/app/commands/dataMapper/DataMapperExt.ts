@@ -4,7 +4,7 @@ import { startBackendRuntime } from './FxWorkflowRuntime';
 import { webviewType } from './extensionConfig';
 import type { MapDefinitionEntry } from '@microsoft/logic-apps-shared';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
-import type { MapDefinitionData } from '@microsoft/vscode-extension';
+import type { MapDefinitionData } from '@microsoft/vscode-extension-logic-apps';
 import * as yaml from 'js-yaml';
 import * as path from 'path';
 import { Uri, ViewColumn, window } from 'vscode';

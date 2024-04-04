@@ -16,14 +16,14 @@ import type { ServiceClientCredentials } from '@azure/ms-rest-js';
 import { isEmptyString, HTTP_METHODS } from '@microsoft/logic-apps-shared';
 import { AzExtTreeItem, DialogResponses } from '@microsoft/vscode-azext-utils';
 import type { IActionContext, TreeItemIconPath } from '@microsoft/vscode-azext-utils';
-import { ProjectResource } from '@microsoft/vscode-extension';
+import { ProjectResource } from '@microsoft/vscode-extension-logic-apps';
 import type {
   ServiceProviderConnectionModel,
   IWorkflowFileContent,
   Artifacts,
   Parameter,
   ICallbackUrlResponse,
-} from '@microsoft/vscode-extension';
+} from '@microsoft/vscode-extension-logic-apps';
 import { ProgressLocation, window } from 'vscode';
 
 export class RemoteWorkflowTreeItem extends AzExtTreeItem {

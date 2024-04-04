@@ -30,8 +30,8 @@ import {
 } from '../__mocks__';
 import type { Schema, SchemaExtended, SchemaNodeExtended } from '@microsoft/logic-apps-shared';
 import { NormalizedDataType, SchemaNodeProperty, SchemaType } from '@microsoft/logic-apps-shared';
-import { comprehensiveSourceSchema, comprehensiveTargetSchema, sourceMockSchema } from '__mocks__/schemas';
-
+import { comprehensiveSourceSchema, comprehensiveTargetSchema, sourceMockSchema } from '../../../__mocks__/schemas';
+import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 describe('utils/DataMap', () => {
   describe('isValidToMakeMapDefinition', () => {
     it('includes a function node that is not connected to any input and outputs', () => {

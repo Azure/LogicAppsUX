@@ -4,8 +4,8 @@
  *--------------------------------------------------------------------------------------------*/
 import { defaultRoutePrefix } from '../../constants';
 import { isObject, isNullOrUndefined } from '@microsoft/logic-apps-shared';
-import type { IBundleMetadata, IHostJsonV1, IHostJsonV2, IParsedHostJson } from '@microsoft/vscode-extension';
-import { FuncVersion } from '@microsoft/vscode-extension';
+import type { IBundleMetadata, IHostJsonV1, IHostJsonV2, IParsedHostJson } from '@microsoft/vscode-extension-logic-apps';
+import { FuncVersion } from '@microsoft/vscode-extension-logic-apps';
 
 class ParsedHostJsonV2 implements IParsedHostJson {
   public data: IHostJsonV2;

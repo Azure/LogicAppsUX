@@ -33,7 +33,7 @@ import { initializeWorkflow, updateAccessToken, updateTargetDirectory, addStatus
 import { initialize } from './state/projectSlice';
 import type { AppDispatch, RootState } from './state/store';
 import { SchemaType } from '@microsoft/logic-apps-shared';
-import { ExtensionCommand, ProjectName } from '@microsoft/vscode-extension';
+import { ExtensionCommand, ProjectName } from '@microsoft/vscode-extension-logic-apps';
 import useEventListener from '@use-it/event-listener';
 import type { ReactNode } from 'react';
 import React, { useEffect } from 'react';

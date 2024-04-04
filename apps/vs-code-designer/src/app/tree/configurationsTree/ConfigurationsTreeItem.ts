@@ -11,7 +11,7 @@ import { ParametersTreeItem } from './parametersTree/ParametersTreeItem';
 import { AppSettingsTreeItem } from '@microsoft/vscode-azext-azureappservice';
 import { AzExtParentTreeItem } from '@microsoft/vscode-azext-utils';
 import type { AzExtTreeItem, IActionContext, TreeItemIconPath } from '@microsoft/vscode-azext-utils';
-import { ProjectAccess, ProjectResource } from '@microsoft/vscode-extension';
+import { ProjectAccess, ProjectResource } from '@microsoft/vscode-extension-logic-apps';
 
 export class ConfigurationsTreeItem extends AzExtParentTreeItem {
   public static contextValue = 'azLogicAppsConfigurations';

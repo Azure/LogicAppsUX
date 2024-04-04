@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 import { addOrUpdateLocalAppSettings } from '../../../utils/appSettings/localSettings';
 import { AzureWizardExecuteStep } from '@microsoft/vscode-azext-utils';
-import type { IDebugModeContext } from '@microsoft/vscode-extension';
+import type { IDebugModeContext } from '@microsoft/vscode-extension-logic-apps';
 import type { Progress } from 'vscode';
 
 export class UpdateDebugModeStep extends AzureWizardExecuteStep<IDebugModeContext> {

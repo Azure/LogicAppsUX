@@ -2,7 +2,7 @@ import { workflowAppAADClientId, workflowAppAADClientSecret, workflowAppAADObjec
 import type { SlotTreeItem } from '../../tree/slotsTree/SlotTreeItem';
 import type { StringDictionary } from '@azure/arm-appservice';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
-import type { IIdentityWizardContext } from '@microsoft/vscode-extension';
+import type { IIdentityWizardContext } from '@microsoft/vscode-extension-logic-apps';
 
 /**
  * Updates remote logic app settings with identity details.

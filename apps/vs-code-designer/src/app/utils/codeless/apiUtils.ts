@@ -16,7 +16,7 @@ import type {
   IWorkflowFileContent,
   IArtifactFile,
   Artifacts,
-} from '@microsoft/vscode-extension';
+} from '@microsoft/vscode-extension-logic-apps';
 import * as path from 'path';
 import * as vscode from 'vscode';
 

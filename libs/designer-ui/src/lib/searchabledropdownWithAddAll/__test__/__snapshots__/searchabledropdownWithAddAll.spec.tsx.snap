@@ -1,34 +1,49 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`lib/searchabledropdownwithaddall should create a dropdown with an add all and remove all buttons 1`] = `
+exports[`lib/searchabledropdownwithaddall > should create a dropdown with an add all and remove all buttons 1`] = `
 <div
   className="ms-Stack css-109"
 >
-  <Dropdown
-    className="msla-searchable-dropdown-with-buttons"
-    multiSelect={true}
-    onChange={[Function]}
-    onDismiss={[Function]}
-    onRenderItem={[Function]}
-    options={
-      Array [
-        Object {
-          "key": "foo",
-          "text": "Foo",
-        },
-        Object {
-          "key": "bar",
-          "text": "Bar",
-        },
-        Object {
-          "key": "baz",
-          "text": "Baz",
-        },
-      ]
-    }
-    placeholder="Select an option"
-    selectedKeys={Array []}
-  />
+  <div
+    className="ms-Dropdown-container msla-searchable-dropdown-with-buttons"
+  >
+    <div
+      aria-expanded="false"
+      aria-haspopup="listbox"
+      className="ms-Dropdown dropdown-110"
+      data-is-focusable={true}
+      data-ktp-target={true}
+      id="Dropdown0"
+      onBlur={[Function]}
+      onChange={[Function]}
+      onClick={[Function]}
+      onFocus={[Function]}
+      onKeyDown={[Function]}
+      onKeyUp={[Function]}
+      onMouseDown={[Function]}
+      role="combobox"
+      tabIndex={0}
+    >
+      <span
+        aria-invalid={false}
+        className="ms-Dropdown-title ms-Dropdown-titleIsPlaceHolder title-111"
+        id="Dropdown0-option"
+      >
+        Select an option
+      </span>
+      <span
+        className="ms-Dropdown-caretDownWrapper caretDownWrapper-112"
+      >
+        <i
+          aria-hidden={true}
+          className="ms-Dropdown-caretDown caretDown-130"
+          data-icon-name="ChevronDown"
+        >
+          
+        </i>
+      </span>
+    </div>
+  </div>
   <button
     aria-label="Add all tooltip"
     className="fui-Button r1alrhcs ___93s59t0_1cia91x f1c21dwh fjxutwb fwiml72 fh7ncta f1khb0e9 f1vdfbxk f1jnq6q7 f1f5gg8d f1aa9q02 f16jpd5f f1jar5jt fyu767a fy9rknc figsok6 fwrc4pm fg3gtdo fwii5mg f1palphq f12nxie7"
@@ -60,35 +75,50 @@ exports[`lib/searchabledropdownwithaddall should create a dropdown with an add a
 </div>
 `;
 
-exports[`lib/searchabledropdownwithaddall should create a dropdown with an add all only 1`] = `
+exports[`lib/searchabledropdownwithaddall > should create a dropdown with an add all only 1`] = `
 <div
   className="ms-Stack css-109"
 >
-  <Dropdown
-    className="msla-searchable-dropdown-with-buttons"
-    multiSelect={true}
-    onChange={[Function]}
-    onDismiss={[Function]}
-    onRenderItem={[Function]}
-    options={
-      Array [
-        Object {
-          "key": "foo",
-          "text": "Foo",
-        },
-        Object {
-          "key": "bar",
-          "text": "Bar",
-        },
-        Object {
-          "key": "baz",
-          "text": "Baz",
-        },
-      ]
-    }
-    placeholder="Select an option"
-    selectedKeys={Array []}
-  />
+  <div
+    className="ms-Dropdown-container msla-searchable-dropdown-with-buttons"
+  >
+    <div
+      aria-expanded="false"
+      aria-haspopup="listbox"
+      className="ms-Dropdown dropdown-110"
+      data-is-focusable={true}
+      data-ktp-target={true}
+      id="Dropdown1"
+      onBlur={[Function]}
+      onChange={[Function]}
+      onClick={[Function]}
+      onFocus={[Function]}
+      onKeyDown={[Function]}
+      onKeyUp={[Function]}
+      onMouseDown={[Function]}
+      role="combobox"
+      tabIndex={0}
+    >
+      <span
+        aria-invalid={false}
+        className="ms-Dropdown-title ms-Dropdown-titleIsPlaceHolder title-111"
+        id="Dropdown1-option"
+      >
+        Select an option
+      </span>
+      <span
+        className="ms-Dropdown-caretDownWrapper caretDownWrapper-112"
+      >
+        <i
+          aria-hidden={true}
+          className="ms-Dropdown-caretDown caretDown-130"
+          data-icon-name="ChevronDown"
+        >
+          
+        </i>
+      </span>
+    </div>
+  </div>
   <button
     aria-label="Add all tooltip"
     className="fui-Button r1alrhcs ___93s59t0_1cia91x f1c21dwh fjxutwb fwiml72 fh7ncta f1khb0e9 f1vdfbxk f1jnq6q7 f1f5gg8d f1aa9q02 f16jpd5f f1jar5jt fyu767a fy9rknc figsok6 fwrc4pm fg3gtdo fwii5mg f1palphq f12nxie7"

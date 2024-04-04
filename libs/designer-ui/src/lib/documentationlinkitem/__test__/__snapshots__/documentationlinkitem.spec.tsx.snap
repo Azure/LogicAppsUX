@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`lib/documentationlinkitem should render 1`] = `
+exports[`lib/documentationlinkitem > should render 1`] = `
 <div>
   <a
     href="https://aka.ms/logicapps-chunk"
@@ -10,7 +10,7 @@ exports[`lib/documentationlinkitem should render 1`] = `
 </div>
 `;
 
-exports[`lib/documentationlinkitem should render with a description 1`] = `
+exports[`lib/documentationlinkitem > should render with a description 1`] = `
 <div>
   <a
     href="https://aka.ms/logicapps-chunk"

@@ -7,7 +7,7 @@ import { SchemaPropertyValueType } from './propertyEditor/PropertyEditorItem';
 import type { OpenAPIV2 } from '@microsoft/logic-apps-shared';
 import { capitalizeFirstLetter } from '@microsoft/logic-apps-shared';
 
-export const parseStaticResultSchema = (staticResultSchema: OpenAPIV2.SchemaObject) => {
+export const parseStaticResultSchema = (staticResultSchema: any) => {
   const { additionalProperties, properties, required, type } = staticResultSchema;
   return {
     additionalProperties,

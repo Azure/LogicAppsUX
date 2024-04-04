@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`lib/errorboundary should render a default experience if an error occurs and no fallback is set 1`] = `
+exports[`lib/errorboundary > should render a default experience if an error occurs and no fallback is set 1`] = `
 <div
   className="msla-panel-container-error"
 >
@@ -13,7 +13,7 @@ exports[`lib/errorboundary should render a default experience if an error occurs
   </i>
   <span
     style={
-      Object {
+      {
         "alignSelf": "center",
         "color": "#e00202",
         "fontSize": "18px",
@@ -26,13 +26,13 @@ exports[`lib/errorboundary should render a default experience if an error occurs
 </div>
 `;
 
-exports[`lib/errorboundary should render children if there is no error 1`] = `
+exports[`lib/errorboundary > should render children if there is no error 1`] = `
 <div>
   Nothing happened.
 </div>
 `;
 
-exports[`lib/errorboundary should render the fallback if an error occurs and fallback is set 1`] = `
+exports[`lib/errorboundary > should render the fallback if an error occurs and fallback is set 1`] = `
 <div>
   Fallback rendered when error occurs
 </div>

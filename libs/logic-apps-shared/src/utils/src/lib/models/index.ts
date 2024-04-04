@@ -13,7 +13,9 @@ export * from './theme';
 export * from './dataMap';
 export * from './dataMapSchema';
 
-export * as LogicApps from './logicApps';
-export * as LogicAppsV2 from './logicAppsV2';
-export * as OpenAPIV2 from './openApiV2';
-export * as Swagger from './swagger';
+import * as LogicApps from './logicApps';
+import * as LogicAppsV2 from './logicAppsV2';
+import * as OpenAPIV2 from './openApiV2';
+import * as Swagger from './swagger';
+
+export { LogicApps, LogicAppsV2, OpenAPIV2, Swagger };

@@ -25,8 +25,8 @@ import { createWebSiteClient, WebsiteOS } from '@microsoft/vscode-azext-azureapp
 import type { CustomLocation } from '@microsoft/vscode-azext-azureappservice';
 import { LocationListStep } from '@microsoft/vscode-azext-azureutils';
 import { AzureWizardExecuteStep, nonNullOrEmptyValue, nonNullProp } from '@microsoft/vscode-azext-utils';
-import type { IFunctionAppWizardContext, ConnectionStrings } from '@microsoft/vscode-extension';
-import { StorageOptions, FuncVersion, WorkerRuntime } from '@microsoft/vscode-extension';
+import type { IFunctionAppWizardContext, ConnectionStrings } from '@microsoft/vscode-extension-logic-apps';
+import { StorageOptions, FuncVersion, WorkerRuntime } from '@microsoft/vscode-extension-logic-apps';
 import type { Progress } from 'vscode';
 
 export class LogicAppCreateStep extends AzureWizardExecuteStep<IFunctionAppWizardContext> {

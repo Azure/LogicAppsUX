@@ -3,7 +3,7 @@ import { FontSizes, getTheme, Icon, registerOnThemeChangeCallback, removeOnTheme
 import React from 'react';
 import type { WrappedComponentProps } from 'react-intl';
 import { injectIntl } from 'react-intl';
-
+import type {} from 'react';
 export type ErrorHandler = (error: Error, info: React.ErrorInfo) => void;
 
 export interface ErrorBoundaryProps {
@@ -100,4 +100,4 @@ export class ErrorBoundaryInternal extends React.Component<ErrorBoundaryProps & 
   };
 }
 
-export const ErrorBoundary = injectIntl<'intl', ErrorBoundaryProps & WrappedComponentProps<'intl'>>(ErrorBoundaryInternal);
+export const ErrorBoundary : React.FC = injectIntl<'intl', ErrorBoundaryProps & WrappedComponentProps<'intl'>>(ErrorBoundaryInternal);

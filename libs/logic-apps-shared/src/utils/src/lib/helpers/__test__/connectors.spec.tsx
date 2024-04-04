@@ -6,7 +6,7 @@ import {
   getDisplayNameFromConnector,
   getIconUriFromConnector,
 } from '../index';
-
+import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 describe('utils/src/lib/helpers/connectors', () => {
   describe('getAllConnectorProperties', () => {
     test('works for a Connector', () => {

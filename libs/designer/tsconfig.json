@@ -1,27 +1,33 @@
 {
   "extends": "../../tsconfig.base.json",
   "compilerOptions": {
-    "jsx": "react-jsx",
-    "allowJs": true,
-    "esModuleInterop": true,
-    "allowSyntheticDefaultImports": true,
     "forceConsistentCasingInFileNames": true,
+    "allowSyntheticDefaultImports": true,
     "strict": true,
+    "noImplicitOverride": false,
+    "noPropertyAccessFromIndexSignature": false,
     "noImplicitReturns": true,
-    "noFallthroughCasesInSwitch": true
+    "noFallthroughCasesInSwitch": true,
+    "jsx": "react-jsx",
+    "esModuleInterop": true,
+    "resolveJsonModule": true,
+    "outDir": "./build/lib",
+    "baseUrl": "./src",
+    "rootDir": "./src",
+    "declaration": true,
+    "types": [
+      "vitest/globals"
+    ]
   },
-  "files": [
-    "../../node_modules/@nrwl/react/typings/cssmodule.d.ts",
-    "../../node_modules/@nrwl/react/typings/image.d.ts",
-    "../../types/Svg.d.ts"
+  "files": [],
+  "include": [
+    "**/src/**/*.ts",
+    "**/src/**/*.tsx"
   ],
-  "include": [],
-  "references": [
-    {
-      "path": "./tsconfig.lib.json"
-    },
-    {
-      "path": "./tsconfig.spec.json"
-    }
+  "exclude": [
+    "**/__test__/**",
+    "**/__tests__/**",
+    "**/build/**",
+    "jest.config.ts"
   ]
 }

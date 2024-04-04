@@ -9,7 +9,7 @@ import { tryParseFuncVersion } from '../funcCoreTools/funcVersion';
 import { getWorkspaceSetting } from './settings';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { DialogResponses, nonNullOrEmptyValue } from '@microsoft/vscode-azext-utils';
-import type { ProjectLanguage, FuncVersion } from '@microsoft/vscode-extension';
+import type { ProjectLanguage, FuncVersion } from '@microsoft/vscode-extension-logic-apps';
 
 /**
  * Verifies vscode workspace is initialized for a Logic App project.

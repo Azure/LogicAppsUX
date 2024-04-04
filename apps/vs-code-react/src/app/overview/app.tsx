@@ -6,7 +6,7 @@ import './overview.less';
 import { StandardRunService } from '@microsoft/logic-apps-shared';
 import { Overview, isRunError, mapToRunItem } from '@microsoft/designer-ui';
 import type { Runs } from '@microsoft/logic-apps-shared';
-import { ExtensionCommand, HttpClient } from '@microsoft/vscode-extension';
+import { ExtensionCommand, HttpClient } from '@microsoft/vscode-extension-logic-apps';
 import { useCallback, useContext, useMemo } from 'react';
 import { useInfiniteQuery, useMutation } from 'react-query';
 import { useSelector } from 'react-redux';

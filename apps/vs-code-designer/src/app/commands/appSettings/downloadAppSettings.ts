@@ -14,7 +14,7 @@ import type { StringDictionary } from '@azure/arm-appservice';
 import type { IAppSettingsClient } from '@microsoft/vscode-azext-azureappservice';
 import { AppSettingsTreeItem, confirmOverwriteSettings } from '@microsoft/vscode-azext-azureappservice';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
-import type { ILocalSettingsJson } from '@microsoft/vscode-extension';
+import type { ILocalSettingsJson } from '@microsoft/vscode-extension-logic-apps';
 import * as fse from 'fs-extra';
 import * as vscode from 'vscode';
 

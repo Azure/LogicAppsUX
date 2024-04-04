@@ -12,9 +12,9 @@ import { SchemaProcessor } from '../common/schemaprocessor';
 import type { InputParameter, InputParameters } from '../models/operation';
 import { toInputParameter } from '../models/operation';
 import type { KeyProjectionOptions } from './parser';
-import { getIntl } from '@microsoft/intl-logic-apps';
-import type { OpenAPIV2 } from '@microsoft/utils-logic-apps';
-import { aggregate, equals, includes, map } from '@microsoft/utils-logic-apps';
+import { getIntl } from '../../../intl/src';
+import type { OpenAPIV2 } from '../../../utils/src';
+import { aggregate, equals, includes, map } from '../../../utils/src';
 
 export interface ParametersProcessorOptions {
   excludeAdvanced?: boolean;

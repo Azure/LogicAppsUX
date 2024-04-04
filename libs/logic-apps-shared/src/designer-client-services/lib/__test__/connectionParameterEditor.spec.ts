@@ -5,7 +5,7 @@ import {
   type IConnectionParameterInfo,
   type IConnectionCredentialMappingInfo,
 } from '../connectionParameterEditor';
-
+import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 describe('lib/designer-client-services/connectionParameterEditor', () => {
   beforeEach(() => {
     InitConnectionParameterEditorService(undefined);
@@ -17,7 +17,7 @@ describe('lib/designer-client-services/connectionParameterEditor', () => {
 
   it('should call "getConnectionParameterEditor" with initialized service instance', () => {
     const service: IConnectionParameterEditorService = {
-      getConnectionParameterEditor: jest.fn(),
+      getConnectionParameterEditor: vi.fn(),
     };
 
     expect(ConnectionParameterEditorService()).toBeUndefined();
@@ -35,8 +35,8 @@ describe('lib/designer-client-services/connectionParameterEditor', () => {
 
   it('should call "getCredentialMappingEditorOptions" with initialized service instance', () => {
     const service: IConnectionParameterEditorService = {
-      getConnectionParameterEditor: jest.fn(),
-      getCredentialMappingEditorOptions: jest.fn(),
+      getConnectionParameterEditor: vi.fn(),
+      getCredentialMappingEditorOptions: vi.fn(),
     };
 
     expect(ConnectionParameterEditorService()).toBeUndefined();
