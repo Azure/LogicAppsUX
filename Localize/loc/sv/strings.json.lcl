@@ -4626,6 +4626,9 @@
       <Item ItemId=";JgugQX" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Enter a valid Array.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Ange en giltig matris.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -8490,6 +8493,9 @@
       <Item ItemId=";b7BQdu" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Enter a valid Boolean.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Ange ett giltigt booleskt värde.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>

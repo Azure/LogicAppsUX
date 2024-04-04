@@ -4632,6 +4632,9 @@
       <Item ItemId=";JgugQX" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Enter a valid Array.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Escriba una matriz válida.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
@@ -8502,6 +8505,9 @@
       <Item ItemId=";b7BQdu" ItemType="0" PsrId="306" InstFlg="true" Leaf="true">
         <Str Cat="Text">
           <Val><![CDATA[Enter a valid Boolean.]]></Val>
+          <Tgt Cat="Text" Stat="Loc" Orig="New">
+            <Val><![CDATA[Escriba un valor booleano válido.]]></Val>
+          </Tgt>
         </Str>
         <Disp Icon="Str" />
       </Item>
