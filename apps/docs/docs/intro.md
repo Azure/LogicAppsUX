@@ -12,23 +12,16 @@ Welcome to the LogicApps UX documentation! This guide will help new engineers se
 Ensure you have the following installed on your system:
 
 - Node.js v18 or higher
-- MkCert
-- (Optional) Nx CLI
+- PNPM 
 
-### MkCert Installation
+### Pnpm CLI Installation (Recommended)
 
-MkCert is a one-time installation. Follow the instructions provided at [MkCert GitHub Repository](https://github.com/FiloSottile/mkcert) to install it. After the installation, run the following command:
+Check here for system specific ways to install:
 
-```bash
-mkcert -install
-```
-
-### Nx CLI Installation (Recommended)
-
-To install the Nx CLI, run:
+Or you can just install using npm:
 
 ```bash
-npm install -g nx
+npm install -g pnpm
 ```
 
 ## Running the Code
@@ -36,29 +29,27 @@ npm install -g nx
 First, navigate to the root level of the repository and run:
 
 ```bash
-npm install
+pnpm install
 ```
-
-**Note:** All commands should be executed from the root repo directory.
 
 ### Standalone Designer (for testing)
 
 - Code Location: `/apps/designer-standalone`
 
-To start the standalone designer, run:
+To start the standalone designer, run(from the root):
 
 ```bash
-nx serve
+pnpm turbo run dev
 ```
 
-### Building the Designer Library (for NPM publishing)
+### Building the Production Librarys (for NPM publishing)
 
-- Code Location: `/libs/designer`
+- Code Location: `/libs/*`
 
 To build the designer library, run:
 
 ```bash
-nx run designer:build
+pnpm turbo run build:lib
 ```
 
 ### Unit Tests
@@ -68,44 +59,15 @@ nx run designer:build
 To run unit tests, execute:
 
 ```bash
-nx test designer
+pnpm turbo run test:lib
 ```
-
-**Debugging tests:** For easier debugging, install [Jest for VS Code](https://marketplace.visualstudio.com/items?itemName=Orta.vscode-jest). No additional configuration should be needed, but you may need to restart your VSCode instance.
 
 ### End-to-End (E2E) Tests
 
-- Code Location: `/apps/designer-e2e`
+- Code Location: `/e2e`
 
 To run E2E tests, execute:
 
 ```bash
-nx run designer-e2e:e2e
+pnpm run test:e2e
 ```
-
-# Power Automate Designer Community Contribution
-
-We are excited to announce that the new Power Automate designer is open source on Github and is actually built on top of Logic Apps designer. We are accepting contributions to the core designer, the changes for which will show up in both Logic Apps and Power Automate. The contribution can fall into these categories:
-
-### Bugs- Choose from our Issues list Issues · [Azure/LogicAppsUX (github.com)](https://github.com/Azure/LogicAppsUX/issues) or introduce a new one that you personally relate to.
-
-### Features- Choose one from our list · [Features List (github.com)](https://github.com/Azure/LogicAppsUX/discussions/categories/feature-requests) for which the topic starts with (_PAuto + LA)_.
-
-Please reach out to kisubedi@microsoft.com if you have any questions.
-
-# PnP Badge Program for contributions
-
-Power Platform PnP will provide you badges for accepted contributions.
-
-**For issues contribution:**
-
-If 1 bug fix, you will be issued a Power Automate Issue Contributor badge.
-If >=5 bug fixes, you will be issued a Power Automate Designer Issue Specialist badge.
-If >= 8 bug fixes, you will be issued a Power Automate Designer Issue Expert badge.
-
-**For feature contribution:**
-
-If 1 feature, you will be issued a Power Automate Designer Specialist.
-If >=2 feature, you will be issued a Power Automate Designer Expert badge.
-
-To apply for a badge, you need to fill a simple application with PnP and provide your github username along with requested badge name.

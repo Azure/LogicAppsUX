@@ -1,6 +1,6 @@
 {
   "name": "@microsoft/vscode-extension-logic-apps",
-  "version": "3.3.1",
+  "version": "3.3.4",
   "license": "MIT",
   "type": "module",
   "module": "src/index.ts",
@@ -25,14 +25,15 @@
   "publishConfig": {
     "main": "build/lib/index.cjs",
     "module": "build/lib/index.js",
-    "typings": "build/lib/index.d.ts",
+    "types": "build/lib/index.d.ts",
     "exports": {
       ".": {
         "types:": "./build/lib/index.d.ts",
         "import": "./build/lib/index.js",
         "default": "./build/lib/index.cjs"
       },
-      "./package.json": "./package.json"
+      "./package.json": "./package.json",
+      "./build/lib/index.css": "./build/lib/index.css"
     }
   },
   "scripts": {

@@ -1,6 +1,6 @@
 {
   "name": "@microsoft/logic-apps-designer",
-  "version": "3.3.1",
+  "version": "3.3.4",
   "license": "MIT",
   "type": "module",
   "module": "src/index.ts",
@@ -25,7 +25,7 @@
   "publishConfig": {
     "main": "build/lib/index.cjs",
     "module": "build/lib/index.js",
-    "typings": "build/lib/index.d.ts",
+    "types": "build/lib/index.d.ts",
     "exports": {
       ".": {
         "types:": "./build/lib/index.d.ts",
@@ -33,7 +33,7 @@
         "default": "./build/lib/index.cjs"
       },
       "./package.json": "./package.json",
-      "./lib/index.css": "./build/lib/index.css"
+      "./build/lib/index.css": "./build/lib/index.css"
     }
   },
   "scripts": {

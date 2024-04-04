@@ -101,6 +101,9 @@ importers:
       jsonc-eslint-parser:
         specifier: ^2.4.0
         version: 2.4.0
+      just-pnpm:
+        specifier: ^1.0.2
+        version: 1.0.2
       lint-staged:
         specifier: ^15.2.2
         version: 15.2.2
@@ -17023,6 +17026,12 @@ packages:
       pako: 1.0.11
       readable-stream: 2.3.8
       setimmediate: 1.0.5
+    dev: true
+
+  /just-pnpm@1.0.2:
+    resolution: {integrity: sha512-a/LtVYjTy1Z1yBl3kFEsic313J8MZ29ZEAFrw1snFOY7/x6Afy1VO2zAgtAlUjIgexOt8TRCRCXo1J+PABIo/Q==}
+    hasBin: true
+    requiresBuild: true
     dev: true
 
   /jwt-decode@3.1.2:
