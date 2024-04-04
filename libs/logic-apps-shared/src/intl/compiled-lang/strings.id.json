@@ -874,7 +874,7 @@
   "3n6GJG": [
     {
       "type": 0,
-      "value": "Enter a valid JSON."
+      "value": "Masukkan JSON yang valid."
     }
   ],
   "3rzrWf": [
@@ -3334,7 +3334,7 @@
   "JgugQX": [
     {
       "type": 0,
-      "value": "Enter a valid Array."
+      "value": "Masukkan Array yang valid."
     }
   ],
   "Ji6663": [
@@ -6144,7 +6144,7 @@
   "b7BQdu": [
     {
       "type": 0,
-      "value": "Enter a valid Boolean."
+      "value": "Masukkan Boolean yang valid."
     }
   ],
   "b9/1dK": [
@@ -6486,7 +6486,7 @@
   "dEe6Ob": [
     {
       "type": 0,
-      "value": "Enter a valid JSON."
+      "value": "Masukkan JSON yang valid."
     }
   ],
   "dKCp2j": [
@@ -6597,6 +6597,12 @@
     {
       "type": 0,
       "value": "Seberapa sering Anda ingin memeriksa item?"
+    }
+  ],
+  "e1gQAz": [
+    {
+      "type": 0,
+      "value": "Please start the project by pressing F5 or run it through the Run and Debug view"
     }
   ],
   "e4JZEY": [

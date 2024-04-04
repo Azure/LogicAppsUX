@@ -890,7 +890,7 @@
   "3n6GJG": [
     {
       "type": 0,
-      "value": "Enter a valid JSON."
+      "value": "Geben Sie einen gültigen JSON-Wert ein."
     }
   ],
   "3rzrWf": [
@@ -6582,7 +6582,7 @@
   "dEe6Ob": [
     {
       "type": 0,
-      "value": "Enter a valid JSON."
+      "value": "Geben Sie einen gültigen JSON-Wert ein."
     }
   ],
   "dKCp2j": [
@@ -6693,6 +6693,12 @@
     {
       "type": 0,
       "value": "Wie oft möchten Sie auf Elemente prüfen?"
+    }
+  ],
+  "e1gQAz": [
+    {
+      "type": 0,
+      "value": "Please start the project by pressing F5 or run it through the Run and Debug view"
     }
   ],
   "e4JZEY": [

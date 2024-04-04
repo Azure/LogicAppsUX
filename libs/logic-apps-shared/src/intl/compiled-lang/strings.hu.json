@@ -890,7 +890,7 @@
   "3n6GJG": [
     {
       "type": 0,
-      "value": "Enter a valid JSON."
+      "value": "Érvényes JSON-t adjon meg."
     }
   ],
   "3rzrWf": [
@@ -6526,7 +6526,7 @@
   "dEe6Ob": [
     {
       "type": 0,
-      "value": "Enter a valid JSON."
+      "value": "Érvényes JSON-t adjon meg."
     }
   ],
   "dKCp2j": [
@@ -6637,6 +6637,12 @@
     {
       "type": 0,
       "value": "Milyen gyakran szeretne elemeket keresni?"
+    }
+  ],
+  "e1gQAz": [
+    {
+      "type": 0,
+      "value": "Please start the project by pressing F5 or run it through the Run and Debug view"
     }
   ],
   "e4JZEY": [

@@ -882,7 +882,7 @@
   "3n6GJG": [
     {
       "type": 0,
-      "value": "Enter a valid JSON."
+      "value": "Zadejte platný kód JSON."
     }
   ],
   "3rzrWf": [
@@ -6618,7 +6618,7 @@
   "dEe6Ob": [
     {
       "type": 0,
-      "value": "Enter a valid JSON."
+      "value": "Zadejte platný kód JSON."
     }
   ],
   "dKCp2j": [
@@ -6729,6 +6729,12 @@
     {
       "type": 0,
       "value": "Jak často chcete vyhledávat položky?"
+    }
+  ],
+  "e1gQAz": [
+    {
+      "type": 0,
+      "value": "Please start the project by pressing F5 or run it through the Run and Debug view"
     }
   ],
   "e4JZEY": [

@@ -878,7 +878,7 @@
   "3n6GJG": [
     {
       "type": 0,
-      "value": "Enter a valid JSON."
+      "value": "請輸入有效的 JSON。"
     }
   ],
   "3rzrWf": [
@@ -3346,7 +3346,7 @@
   "JgugQX": [
     {
       "type": 0,
-      "value": "Enter a valid Array."
+      "value": "輸入有效的陣列。"
     }
   ],
   "Ji6663": [
@@ -6180,7 +6180,7 @@
   "b7BQdu": [
     {
       "type": 0,
-      "value": "Enter a valid Boolean."
+      "value": "輸入有效的布林值。"
     }
   ],
   "b9/1dK": [
@@ -6514,7 +6514,7 @@
   "dEe6Ob": [
     {
       "type": 0,
-      "value": "Enter a valid JSON."
+      "value": "請輸入有效的 JSON。"
     }
   ],
   "dKCp2j": [
@@ -6625,6 +6625,12 @@
     {
       "type": 0,
       "value": "您要多久檢查一次項目?"
+    }
+  ],
+  "e1gQAz": [
+    {
+      "type": 0,
+      "value": "Please start the project by pressing F5 or run it through the Run and Debug view"
     }
   ],
   "e4JZEY": [
