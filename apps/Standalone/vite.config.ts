@@ -7,10 +7,11 @@ import mkcert from 'vite-plugin-mkcert';
 
 // https://vitejs.dev/config/
 export default defineConfig({
+
   plugins: [
     react(),
     NodeGlobalsPolyfillPlugin({
-      // process: true,
+      process: true,
       buffer: true,
     }),
     np(),
@@ -22,7 +23,6 @@ export default defineConfig({
   define: {
     global: 'globalThis',
     'process.env': {},
-    // process: process,
   },
   build: {
     rollupOptions: {

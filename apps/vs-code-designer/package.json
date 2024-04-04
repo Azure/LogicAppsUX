@@ -3,7 +3,11 @@
     "version": "3.3.0",
     "type": "module",
     "scripts": {
-        "build": "tsup src/main.ts --external=vscode"
+        "build": "tsup src/main.ts --external=vscode",
+        "vscode:designer:pack:step1": "cd ./dist/apps/vs-code-designer && npm install",
+        "vscode:designer:pack:step2": "node extension-copy-svgs.js",
+        "vscode:designer:pack:step3": "cd ./dist/apps/vs-code-designer && vsce package",
+        "vscode:designer:pack": "npm run vscode:designer:pack:step1 && npm run vscode:designer:pack:step2 && npm run vscode:designer:pack:step3"
     },
     "devDependencies": {
         "@azure/ms-rest-js": "^2.6.4",

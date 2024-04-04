@@ -17,3 +17,6 @@ import { loader } from "@monaco-editor/react";
 // you can change the source of the monaco files
 // loader.config({ paths: { vs: "https://cdn.jsdelivr.net/npm/monaco-editor@0.47.0/min/vs" } });
 loader.config({ paths: { vs: "../node_modules/monaco-editor/min/vs" } });
+
+
+process.cwd = () => '/';

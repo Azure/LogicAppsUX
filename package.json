@@ -5,10 +5,10 @@
   "packageManager": "pnpm@8.12.1",
   "type": "module",
   "scripts": {
+    "preinstall": "npx -y only-allow pnpm",
     "start": "turbo run dev",
     "start:e2e": "turbo run e2e",
     "build": "turbo run build",
-    "yalcpush:all": "",
     "test": "turbo run test:unit",
     "test:e2e": "playwright test",
     "prepare": "husky install",
@@ -17,18 +17,14 @@
     "compile:loc": "formatjs compile-folder --ast --format ./format.js \"Localize/lang\" \"libs/logic-apps-shared/src/intl/compiled-lang/\" ",
     "compile:loc:psuedo": "formatjs compile \"Localize/lang/strings.json\" --ast --format ./format.js --out-file \"libs/logic-apps-shared/src/intl/compiled-lang/strings.en-XA.json\" --pseudo-locale en-XA",
     "bump": "standard-version --no-verify",
-    "vscode:designer:pack:step1": "cd ./dist/apps/vs-code-designer && npm install",
-    "vscode:designer:pack:step2": "node extension-copy-svgs.js",
-    "vscode:designer:pack:step3": "cd ./dist/apps/vs-code-designer && vsce package",
-    "vscode:designer:pack": "npm run vscode:designer:pack:step1 && npm run vscode:designer:pack:step2 && npm run vscode:designer:pack:step3",
     "testgen": "playwright codegen https://localhost:4200",
     "e2e:setup": "playwright install --with-deps",
-    "generateArmToken": "az account get-access-token --tenant 72f988bf-86f1-41af-91ab-2d7cd011db47 > ./apps/designer-standalone/src/environments/armToken.json",
+    "generateArmToken": "az account get-access-token --tenant 72f988bf-86f1-41af-91ab-2d7cd011db47 > ./apps/standalone/src/environments/armToken.json",
     "start:arm": "npm run generateArmToken && npm run start"
   },
   "engines": {
     "node": ">=18",
-    "npm": ">=9"
+    "pnpm": ">=8"
   },
   "devDependencies": {
     "@biomejs/biome": "1.6.3",
@@ -69,6 +65,7 @@
     "rimraf": "^5.0.5",
     "sherif": "^0.8.1",
     "size-limit": "^11.1.2",
+    "standard-version": "^9.5.0",
     "tsup": "^8.0.2",
     "turbo": "^1.13.2",
     "typescript": "4.7.4",

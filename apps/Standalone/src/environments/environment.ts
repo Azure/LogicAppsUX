@@ -1,10 +1,9 @@
 // This file can be replaced during build by using the `fileReplacements` array.
 // When building for production, this file is replaced with `environment.prod.ts`.
 
-const getAccessToken = (): string | undefined => {
+const getAccessToken = async (fileName: string): Promise<string | undefined> => {
   try {
-    // eslint-disable-next-line @typescript-eslint/no-var-requires
-    const armTokenData = require('./armToken.json');
+    const armTokenData = await import(`./${fileName}.json`);
     if (new Date(armTokenData.expiresOn) <= new Date()) {
       return undefined;
     }
@@ -22,5 +21,10 @@ export interface EnvironmentVars {
 
 export const environment: EnvironmentVars = {
   production: false,
-  armToken: getAccessToken(),
 };
+
+export const loadToken = async () => {
+  const token = await getAccessToken('armToken');
+  environment.armToken = token;
+  return token;
+}
