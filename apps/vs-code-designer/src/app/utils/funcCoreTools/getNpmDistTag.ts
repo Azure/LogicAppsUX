@@ -8,7 +8,7 @@ import { sendRequestWithExtTimeout } from '../requestUtils';
 import { tryGetMajorVersion } from './funcVersion';
 import { HTTP_METHODS } from '@microsoft/logic-apps-shared';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
-import type { FuncVersion, INpmDistTag, IPackageMetadata } from '@microsoft/vscode-extension';
+import type { FuncVersion, INpmDistTag, IPackageMetadata } from '@microsoft/vscode-extension-logic-apps';
 import * as semver from 'semver';
 
 /**

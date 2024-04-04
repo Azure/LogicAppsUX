@@ -1,7 +1,7 @@
 import { SettingsSection } from '../settingsection';
 import type { SettingsSectionProps } from '../settingsection';
 import * as ReactShallowRenderer from 'react-test-renderer/shallow';
-
+import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 describe('ui/settings/settingsection', () => {
   let minimal: SettingsSectionProps, renderer: ReactShallowRenderer.ShallowRenderer;
 

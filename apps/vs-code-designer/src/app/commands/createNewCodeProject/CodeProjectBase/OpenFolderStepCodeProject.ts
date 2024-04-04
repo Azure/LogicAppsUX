@@ -3,8 +3,8 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { AzureWizardExecuteStep } from '@microsoft/vscode-azext-utils';
-import type { IProjectWizardContext } from '@microsoft/vscode-extension';
-import { OpenBehavior } from '@microsoft/vscode-extension';
+import type { IProjectWizardContext } from '@microsoft/vscode-extension-logic-apps';
+import { OpenBehavior } from '@microsoft/vscode-extension-logic-apps';
 import * as fs from 'fs';
 import * as path from 'path';
 import { commands, Uri, workspace } from 'vscode';

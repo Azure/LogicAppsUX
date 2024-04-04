@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 import { localize } from '../../../../localize';
 import { AzureWizardPromptStep } from '@microsoft/vscode-azext-utils';
-import type { IIdentityWizardContext } from '@microsoft/vscode-extension';
+import type { IIdentityWizardContext } from '@microsoft/vscode-extension-logic-apps';
 
 export class AdvancedIdentityObjectIdStep extends AzureWizardPromptStep<IIdentityWizardContext> {
   public async prompt(wizardContext: IIdentityWizardContext): Promise<void> {

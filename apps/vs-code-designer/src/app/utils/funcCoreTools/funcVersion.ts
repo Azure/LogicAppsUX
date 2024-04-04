@@ -14,7 +14,7 @@ import { getGlobalSetting, getWorkspaceSettingFromAnyFolder, updateGlobalSetting
 import { executeCommand } from './cpUtils';
 import { isNullOrUndefined } from '@microsoft/logic-apps-shared';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
-import { FuncVersion, latestGAVersion } from '@microsoft/vscode-extension';
+import { FuncVersion, latestGAVersion } from '@microsoft/vscode-extension-logic-apps';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as semver from 'semver';

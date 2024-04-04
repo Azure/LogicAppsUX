@@ -10,7 +10,7 @@ import tokens from './state/tokens/tokensSlice';
 import workflowReducer from './state/workflow/workflowSlice';
 import workflowParametersReducer from './state/workflowparameters/workflowparametersSlice';
 import { configureStore } from '@reduxjs/toolkit';
-
+import type {} from 'redux-thunk';
 export const store = configureStore({
   reducer: {
     workflow: workflowReducer,

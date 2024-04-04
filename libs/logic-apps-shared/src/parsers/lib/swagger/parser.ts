@@ -15,8 +15,8 @@ import type {
 import { ParametersProcessor } from './parameterprocessor';
 import { UriTemplateParser, UriTemplateGenerator } from './uritemplateparser';
 import APIParser from '@apidevtools/swagger-parser';
-import type { DownloadChunkMetadata, OpenAPIV2, UploadChunkMetadata } from '@microsoft/utils-logic-apps';
-import { aggregate, equals, getPropertyValue, map, unmap } from '@microsoft/utils-logic-apps';
+import type { DownloadChunkMetadata, OpenAPIV2, UploadChunkMetadata } from '../../../utils/src';
+import { aggregate, equals, getPropertyValue, map, unmap } from '../../../utils/src';
 
 interface GetOperationsOptions {
   excludeAdvancedOperations?: boolean;
@@ -70,7 +70,7 @@ const ApiNotificationConstants = {
 
 export class SwaggerParser {
   static parse = async (swagger: OpenAPIV2.Document): Promise<OpenAPIV2.Document> => {
-    return APIParser.validate(swagger, {
+    return APIParser.validate(swagger as any, {
       dereference: {
         circular: 'ignore',
       },
@@ -78,7 +78,7 @@ export class SwaggerParser {
         schema: false,
         spec: false,
       },
-    });
+    }) as any;
   };
 
   constructor(public api: OpenAPIV2.Document) {}

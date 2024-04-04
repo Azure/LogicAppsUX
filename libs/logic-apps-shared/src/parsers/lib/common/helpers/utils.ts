@@ -3,9 +3,9 @@ import { isDynamicTreeExtension, isLegacyDynamicValuesTreeExtension, DynamicSche
 import * as Constants from '../constants';
 import { OutputKeys } from '../constants';
 import { parseEx } from './keysutility';
-import { getIntl } from '@microsoft/intl-logic-apps';
-import type { OpenAPIV2 } from '@microsoft/utils-logic-apps';
-import { capitalizeFirstLetter, equals, isNullOrUndefined } from '@microsoft/utils-logic-apps';
+import { getIntl } from '../../../../intl/src';
+import type { OpenAPIV2 } from '../../../../utils/src';
+import { capitalizeFirstLetter, equals, isNullOrUndefined } from '../../../../utils/src';
 
 type SchemaObject = OpenAPIV2.SchemaObject;
 type Parameter = OpenAPIV2.ParameterObject;

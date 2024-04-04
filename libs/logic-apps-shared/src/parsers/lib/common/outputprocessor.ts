@@ -4,8 +4,8 @@ import * as ParameterKeyUtility from './helpers/keysutility';
 import { getArrayOutputMetadata } from './helpers/utils';
 import type { SchemaProcessorOptions, OpenApiSchema } from './schemaprocessor';
 import { SchemaProcessor } from './schemaprocessor';
-import type { OpenAPIV2 } from '@microsoft/utils-logic-apps';
-import { equals, startsWith } from '@microsoft/utils-logic-apps';
+import type { OpenAPIV2 } from '../../../utils/src';
+import { equals, startsWith } from '../../../utils/src';
 
 export type Responses = OpenAPIV2.ResponsesObject;
 

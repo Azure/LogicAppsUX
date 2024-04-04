@@ -1,31 +1,31 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`ui/dialogs/_confirm should render 1`] = `
+exports[`ui/dialogs/_confirm > should render 1`] = `
 <Dialog
   dialogContentProps={
-    Object {
+    {
       "title": "Title",
     }
   }
   hidden={false}
   modalProps={
-    Object {
+    {
       "firstFocusableSelector": "dialog-ok-button",
       "isBlocking": true,
     }
   }
-  onDismiss={[MockFunction]}
+  onDismiss={[MockFunction spy]}
 >
   Message
   <StyledDialogFooterBase>
     <CustomizedPrimaryButton
       className="dialog-ok-button"
-      onClick={[MockFunction]}
+      onClick={[MockFunction spy]}
     >
       OK
     </CustomizedPrimaryButton>
     <CustomizedDefaultButton
-      onClick={[MockFunction]}
+      onClick={[MockFunction spy]}
     >
       Cancel
     </CustomizedDefaultButton>
