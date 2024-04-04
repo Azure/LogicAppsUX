@@ -4,8 +4,8 @@ import type { ConnectionDictionary, ConnectionUnit } from '../../models/Connecti
 import {
   ReservedToken,
   Separators,
-  addAncestorNodesToCanvas,
-  addParentConnectionForRepeatingElementsNested,
+  //addAncestorNodesToCanvas,
+ // addParentConnectionForRepeatingElementsNested,
   getDestinationNode,
   getSourceValueFromLoop,
   getTargetValueWithoutLoops,
@@ -16,7 +16,7 @@ import {
   isValidToMakeMapDefinition,
   amendSourceKeyForDirectAccessIfNeeded,
 } from '../DataMap.Utils';
-import { addSourceReactFlowPrefix } from '../ReactFlow.Util';
+//import { addSourceReactFlowPrefix } from '../ReactFlow.Util';
 import { convertSchemaToSchemaExtended, flattenSchemaIntoDictionary } from '../Schema.Utils';
 import {
   manyToManyConnectionFromSource,

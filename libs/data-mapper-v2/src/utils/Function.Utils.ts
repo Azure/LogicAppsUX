@@ -15,7 +15,7 @@ import { FunctionCategory, directAccessPseudoFunctionKey, ifPseudoFunctionKey, i
 import { getConnectedTargetSchemaNodes, isConnectionUnit, isCustomValue } from './Connection.Utils';
 import { getInputValues } from './DataMap.Utils';
 import { LogCategory, LogService } from './Logging.Utils';
-import { addTargetReactFlowPrefix } from './ReactFlow.Util';
+//import { addTargetReactFlowPrefix } from './ReactFlow.Util';
 import { isSchemaNodeExtended } from './Schema.Utils';
 import { isAGuid, InputFormat, type SchemaNodeDictionary, type SchemaNodeExtended } from '@microsoft/logic-apps-shared';
 
@@ -153,7 +153,7 @@ export const getFunctionLocationsForAllFunctions = (
       const parentNodes: SchemaNodeExtended[] = [];
       targetNodesConnectedToFunction.forEach((childNode) => {
         if (childNode.parentKey) {
-          parentNodes.push(flattenedTargetSchema[addTargetReactFlowPrefix(childNode.parentKey)]);
+          //parentNodes.push(flattenedTargetSchema[addTargetReactFlowPrefix(childNode.parentKey)]);
         }
       });
 

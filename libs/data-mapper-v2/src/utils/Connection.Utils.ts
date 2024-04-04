@@ -5,7 +5,7 @@ import type { Connection, ConnectionDictionary, ConnectionUnit, InputConnection,
 import type { FunctionData } from '../models/Function';
 import { isFunctionData } from './Function.Utils';
 import { LogCategory, LogService } from './Logging.Utils';
-import { addReactFlowPrefix, addTargetReactFlowPrefix } from './ReactFlow.Util';
+//import { addReactFlowPrefix, addTargetReactFlowPrefix } from './ReactFlow.Util';
 import { isSchemaNodeExtended } from './Schema.Utils';
 import type { SchemaNodeExtended } from '@microsoft/logic-apps-shared';
 import { NormalizedDataType, SchemaNodeProperty, SchemaType } from '@microsoft/logic-apps-shared';
@@ -420,10 +420,10 @@ export const getTargetSchemaNodeConnections = (
     return foundConnection ? [foundConnection] : [];
   });
 
-  const targetReactFlowKey = addReactFlowPrefix(currentTargetSchemaNode.key, SchemaType.Target);
-  if (connections[targetReactFlowKey] && flattenInputs(connections[targetReactFlowKey].inputs).length > 0) {
-    outputFilteredConnections.push(connections[targetReactFlowKey]);
-  }
+  // const targetReactFlowKey = addReactFlowPrefix(currentTargetSchemaNode.key, SchemaType.Target);
+  // if (connections[targetReactFlowKey] && flattenInputs(connections[targetReactFlowKey].inputs).length > 0) {
+  //   outputFilteredConnections.push(connections[targetReactFlowKey]);
+  // }
 
   return outputFilteredConnections;
 };
@@ -462,20 +462,20 @@ export const bringInParentSourceNodesForRepeating = (
   newState: DataMapOperationState
 ) => {
   if (parentTargetNode) {
-    const inputsToParentTarget = newState.dataMapConnections[addTargetReactFlowPrefix(parentTargetNode?.key)]?.inputs;
-    if (inputsToParentTarget) {
-      Object.keys(inputsToParentTarget).forEach((key) => {
-        const inputs = inputsToParentTarget[key];
-        inputs.forEach((input) => {
-          if (input && typeof input !== 'string') {
-            const inputSrc = input.node;
-            if (isSchemaNodeExtended(inputSrc) && !newState.currentSourceSchemaNodes.find((node) => node.key === inputSrc.key)) {
-              newState.currentSourceSchemaNodes.push(inputSrc);
-            }
-          }
-        });
-      });
-    }
+    // const inputsToParentTarget = newState.dataMapConnections[addTargetReactFlowPrefix(parentTargetNode?.key)]?.inputs;
+    // if (inputsToParentTarget) {
+    //   Object.keys(inputsToParentTarget).forEach((key) => {
+    //     const inputs = inputsToParentTarget[key];
+    //     inputs.forEach((input) => {
+    //       if (input && typeof input !== 'string') {
+    //         const inputSrc = input.node;
+    //         if (isSchemaNodeExtended(inputSrc) && !newState.currentSourceSchemaNodes.find((node) => node.key === inputSrc.key)) {
+    //           newState.currentSourceSchemaNodes.push(inputSrc);
+    //         }
+    //       }
+    //     });
+    //   });
+    // }
   }
 };
 

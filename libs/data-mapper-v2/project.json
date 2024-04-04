@@ -48,14 +48,14 @@
       "executor": "@nrwl/linter:eslint",
       "outputs": ["{options.outputFile}"],
       "options": {
-        "lintFilePatterns": ["libs/data-mapper/**/*.{ts,tsx,js,jsx}"]
+        "lintFilePatterns": ["libs/data-mapper-v2/**/*.{ts,tsx,js,jsx}"]
       }
     },
     "test": {
       "executor": "@nrwl/jest:jest",
       "outputs": ["{workspaceRoot}/coverage/libs/data-mapper-v2"],
       "options": {
-        "jestConfig": "libs/data-mapper/jest.config.ts",
+        "jestConfig": "libs/data-mapper-v2/jest.config.ts",
         "passWithNoTests": true
       }
     }

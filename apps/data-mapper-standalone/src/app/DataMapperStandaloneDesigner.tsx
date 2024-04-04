@@ -1,5 +1,6 @@
 import { DevToolbox } from '../components/DevToolbox';
 import { dataMapDataLoaderSlice } from '../state/DataMapDataLoader';
+import { DataMapperDesignerV2} from '@microsoft/logic-apps-data-mapper-v2';
 import type { AppDispatch, RootState } from '../state/Store';
 import { AzureThemeDark } from '@fluentui/azure-themes/lib/azure/AzureThemeDark';
 import { AzureThemeLight } from '@fluentui/azure-themes/lib/azure/AzureThemeLight';
@@ -34,6 +35,7 @@ const customXsltPath = ['folder/file.xslt', 'file2.xslt'];
 export const DataMapperStandaloneDesigner = () => {
   const dispatch = useDispatch<AppDispatch>();
   const theme = useSelector((state: RootState) => state.dataMapDataLoader.theme);
+  const dmVersion = useSelector((state: RootState) => state.dataMapDataLoader.dmVersion);
   const armToken = useSelector((state: RootState) => state.dataMapDataLoader.armToken);
 
   const xsltFilename = useSelector((state: RootState) => state.dataMapDataLoader.xsltFilename);
@@ -107,12 +109,15 @@ export const DataMapperStandaloneDesigner = () => {
             fetchedFunctions={fetchedFunctions}
             theme={theme}
           >
-            <DataMapperDesigner
+             { dmVersion === 'v1' ? <DataMapperDesigner
               saveMapDefinitionCall={saveMapDefinitionCall}
               saveXsltCall={saveXsltCall}
               setFunctionDisplayExpanded={setFunctionDisplayExpanded}
-              useExpandedFunctionCards={functionDisplay}
-            />
+              useExpandedFunctionCards={functionDisplay}/> :
+               <DataMapperDesignerV2
+               saveMapDefinitionCall={saveMapDefinitionCall}
+               saveXsltCall={saveXsltCall}/>
+             }
           </DataMapDataProvider>
         </DataMapperDesignerProvider>
       </div>

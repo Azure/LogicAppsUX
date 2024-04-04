@@ -26,10 +26,12 @@ import {
   isFunctionData,
   isIfAndGuid,
 } from './Function.Utils';
-import { addReactFlowPrefix, addSourceReactFlowPrefix } from './ReactFlow.Util';
+//import { addReactFlowPrefix, addSourceReactFlowPrefix } from './ReactFlow.Util';
 import { findNodeForKey, isSchemaNodeExtended } from './Schema.Utils';
 import type { MapDefinitionEntry, SchemaExtended, SchemaNodeDictionary, SchemaNodeExtended } from '@microsoft/logic-apps-shared';
 import { isAGuid, SchemaType } from '@microsoft/logic-apps-shared';
+
+// danielle remove unused after deserialization refactor
 
 export type UnknownNode = SchemaNodeExtended | FunctionData | undefined;
 
@@ -593,65 +595,65 @@ export const getTargetValueWithoutLoopsSchemaSpecific = (targetKey: string, isJs
   return result;
 };
 
-export const addParentConnectionForRepeatingElementsNested = (
-  sourceNode: SchemaNodeExtended,
-  targetNode: SchemaNodeExtended,
-  flattenedSourceSchema: SchemaNodeDictionary,
-  flattenedTargetSchema: SchemaNodeDictionary,
-  dataMapConnections: ConnectionDictionary
-): boolean => {
-  if (sourceNode.parentKey) {
-    const firstTargetNodeWithRepeatingPathItem = findLast(targetNode.pathToRoot, (pathItem) => pathItem.repeating);
-    const firstSourceNodeWithRepeatingPathItem = findLast(sourceNode.pathToRoot, (pathItem) => pathItem.repeating);
+// export const addParentConnectionForRepeatingElementsNested = (
+//   sourceNode: SchemaNodeExtended,
+//   targetNode: SchemaNodeExtended,
+//   flattenedSourceSchema: SchemaNodeDictionary,
+//   flattenedTargetSchema: SchemaNodeDictionary,
+//   dataMapConnections: ConnectionDictionary
+// ): boolean => {
+//   if (sourceNode.parentKey) {
+//     const firstTargetNodeWithRepeatingPathItem = findLast(targetNode.pathToRoot, (pathItem) => pathItem.repeating);
+//     const firstSourceNodeWithRepeatingPathItem = findLast(sourceNode.pathToRoot, (pathItem) => pathItem.repeating);
 
-    if (firstSourceNodeWithRepeatingPathItem && firstTargetNodeWithRepeatingPathItem) {
-      const prefixedSourceKey = addReactFlowPrefix(firstSourceNodeWithRepeatingPathItem.key, SchemaType.Source);
-      const firstRepeatingSourceNode = flattenedSourceSchema[prefixedSourceKey];
-      if (!firstRepeatingSourceNode) {
-        return false;
-      }
+//     if (firstSourceNodeWithRepeatingPathItem && firstTargetNodeWithRepeatingPathItem) {
+//       const prefixedSourceKey = addReactFlowPrefix(firstSourceNodeWithRepeatingPathItem.key, SchemaType.Source);
+//       const firstRepeatingSourceNode = flattenedSourceSchema[prefixedSourceKey];
+//       if (!firstRepeatingSourceNode) {
+//         return false;
+//       }
 
-      const prefixedTargetKey = addReactFlowPrefix(firstTargetNodeWithRepeatingPathItem.key, SchemaType.Target);
-      const firstRepeatingTargetNode = flattenedTargetSchema[prefixedTargetKey];
+//       const prefixedTargetKey = addReactFlowPrefix(firstTargetNodeWithRepeatingPathItem.key, SchemaType.Target);
+//       const firstRepeatingTargetNode = flattenedTargetSchema[prefixedTargetKey];
 
-      const parentsAlreadyConnected = nodeHasSpecificInputEventually(
-        prefixedSourceKey,
-        dataMapConnections[prefixedTargetKey],
-        dataMapConnections,
-        true
-      );
+//       const parentsAlreadyConnected = nodeHasSpecificInputEventually(
+//         prefixedSourceKey,
+//         dataMapConnections[prefixedTargetKey],
+//         dataMapConnections,
+//         true
+//       );
 
-      if (!parentsAlreadyConnected) {
-        applyConnectionValue(dataMapConnections, {
-          targetNode: firstRepeatingTargetNode,
-          targetNodeReactFlowKey: prefixedTargetKey,
-          findInputSlot: true,
-          input: {
-            reactFlowKey: prefixedSourceKey,
-            node: firstRepeatingSourceNode,
-          },
-        });
-      }
+//       if (!parentsAlreadyConnected) {
+//         applyConnectionValue(dataMapConnections, {
+//           targetNode: firstRepeatingTargetNode,
+//           targetNodeReactFlowKey: prefixedTargetKey,
+//           findInputSlot: true,
+//           input: {
+//             reactFlowKey: prefixedSourceKey,
+//             node: firstRepeatingSourceNode,
+//           },
+//         });
+//       }
 
-      let nextTargetNode = flattenedTargetSchema[addReactFlowPrefix(firstRepeatingTargetNode.parentKey ?? '', SchemaType.Target)];
-      if (!findLast(nextTargetNode.pathToRoot, (pathItem) => pathItem.repeating)) {
-        nextTargetNode = firstRepeatingTargetNode;
-      }
+//       let nextTargetNode = flattenedTargetSchema[addReactFlowPrefix(firstRepeatingTargetNode.parentKey ?? '', SchemaType.Target)];
+//       if (!findLast(nextTargetNode.pathToRoot, (pathItem) => pathItem.repeating)) {
+//         nextTargetNode = firstRepeatingTargetNode;
+//       }
 
-      const wasNewArrayConnectionAdded = addParentConnectionForRepeatingElementsNested(
-        flattenedSourceSchema[addReactFlowPrefix(firstRepeatingSourceNode.parentKey ?? '', SchemaType.Source)],
-        nextTargetNode,
-        flattenedSourceSchema,
-        flattenedTargetSchema,
-        dataMapConnections
-      );
+//       const wasNewArrayConnectionAdded = addParentConnectionForRepeatingElementsNested(
+//         flattenedSourceSchema[addReactFlowPrefix(firstRepeatingSourceNode.parentKey ?? '', SchemaType.Source)],
+//         nextTargetNode,
+//         flattenedSourceSchema,
+//         flattenedTargetSchema,
+//         dataMapConnections
+//       );
 
-      return !parentsAlreadyConnected ? true : wasNewArrayConnectionAdded;
-    }
-  }
+//       return !parentsAlreadyConnected ? true : wasNewArrayConnectionAdded;
+//     }
+//   }
 
-  return false;
-};
+//   return false;
+// };
 
 export const addNodeToCanvasIfDoesNotExist = (newNode: SchemaNodeExtended, currentCanvasNodes: SchemaNodeExtended[]) => {
   const existingNode = currentCanvasNodes.find((currentNode) => currentNode.key === newNode.key);
@@ -660,33 +662,33 @@ export const addNodeToCanvasIfDoesNotExist = (newNode: SchemaNodeExtended, curre
   }
 };
 
-export const addAncestorNodesToCanvas = (
-  payloadNode: SchemaNodeExtended,
-  currentSourceSchemaNodes: SchemaNodeExtended[],
-  flattenedSourceSchema: SchemaNodeDictionary
-) => {
-  const grandparentNodesOnCanvas = currentSourceSchemaNodes.filter(
-    (node) => payloadNode?.key.includes(node.key) && payloadNode.parentKey !== node.key && payloadNode.key !== node.key
-  );
+// export const addAncestorNodesToCanvas = (
+//   payloadNode: SchemaNodeExtended,
+//   currentSourceSchemaNodes: SchemaNodeExtended[],
+//   flattenedSourceSchema: SchemaNodeDictionary
+// ) => {
+//   const grandparentNodesOnCanvas = currentSourceSchemaNodes.filter(
+//     (node) => payloadNode?.key.includes(node.key) && payloadNode.parentKey !== node.key && payloadNode.key !== node.key
+//   );
 
-  if (grandparentNodesOnCanvas.length > 0) {
-    grandparentNodesOnCanvas.sort((a, b) => a.key.length - b.key.length);
-    const highestAncestor = grandparentNodesOnCanvas[0];
-    payloadNode.pathToRoot.forEach((ancestorNode) => {
-      if (ancestorNode.key.length > highestAncestor.key.length && ancestorNode.key !== payloadNode.key) {
-        addNodeToCanvasIfDoesNotExist(flattenedSourceSchema[addSourceReactFlowPrefix(ancestorNode.key)], currentSourceSchemaNodes);
-      }
-    });
-  } else {
-    const pathToRootWithoutCurrent = payloadNode.pathToRoot.filter((node) => node.key !== payloadNode.key);
-    const firstSourceNodeWithRepeatingPathItem = findLast(pathToRootWithoutCurrent, (pathItem) => pathItem.repeating);
-    const parentNodeToAdd =
-      firstSourceNodeWithRepeatingPathItem && flattenedSourceSchema[addSourceReactFlowPrefix(firstSourceNodeWithRepeatingPathItem.key)];
-    if (parentNodeToAdd) {
-      addNodeToCanvasIfDoesNotExist(parentNodeToAdd, currentSourceSchemaNodes);
-    }
-  }
-};
+//   if (grandparentNodesOnCanvas.length > 0) {
+//     grandparentNodesOnCanvas.sort((a, b) => a.key.length - b.key.length);
+//     const highestAncestor = grandparentNodesOnCanvas[0];
+//     payloadNode.pathToRoot.forEach((ancestorNode) => {
+//       if (ancestorNode.key.length > highestAncestor.key.length && ancestorNode.key !== payloadNode.key) {
+//         addNodeToCanvasIfDoesNotExist(flattenedSourceSchema[addSourceReactFlowPrefix(ancestorNode.key)], currentSourceSchemaNodes);
+//       }
+//     });
+//   } else {
+//     const pathToRootWithoutCurrent = payloadNode.pathToRoot.filter((node) => node.key !== payloadNode.key);
+//     const firstSourceNodeWithRepeatingPathItem = findLast(pathToRootWithoutCurrent, (pathItem) => pathItem.repeating);
+//     const parentNodeToAdd =
+//       firstSourceNodeWithRepeatingPathItem && flattenedSourceSchema[addSourceReactFlowPrefix(firstSourceNodeWithRepeatingPathItem.key)];
+//     if (parentNodeToAdd) {
+//       addNodeToCanvasIfDoesNotExist(parentNodeToAdd, currentSourceSchemaNodes);
+//     }
+//   }
+// };
 
 // TODO JSON deserialization with the array type
 export const flattenMapDefinitionValues = (node: MapDefinitionEntry | MapDefinitionEntry[]): string[] => {
