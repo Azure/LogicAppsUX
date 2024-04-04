@@ -874,7 +874,7 @@
   "3n6GJG": [
     {
       "type": 0,
-      "value": "Enter a valid JSON."
+      "value": "Geçerli bir JSON girin."
     }
   ],
   "3rzrWf": [
@@ -6526,7 +6526,7 @@
   "dEe6Ob": [
     {
       "type": 0,
-      "value": "Enter a valid JSON."
+      "value": "Geçerli bir JSON girin."
     }
   ],
   "dKCp2j": [
@@ -6633,6 +6633,12 @@
     {
       "type": 0,
       "value": "Öğeleri ne sıklıkta denetlemek istiyorsunuz?"
+    }
+  ],
+  "e1gQAz": [
+    {
+      "type": 0,
+      "value": "Please start the project by pressing F5 or run it through the Run and Debug view"
     }
   ],
   "e4JZEY": [

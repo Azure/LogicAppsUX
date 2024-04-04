@@ -874,7 +874,7 @@
   "3n6GJG": [
     {
       "type": 0,
-      "value": "Enter a valid JSON."
+      "value": "올바른 JSON을 입력하세요."
     }
   ],
   "3rzrWf": [
@@ -3322,7 +3322,7 @@
   "JgugQX": [
     {
       "type": 0,
-      "value": "Enter a valid Array."
+      "value": "유효한 배열을 입력하세요."
     }
   ],
   "Ji6663": [
@@ -6132,7 +6132,7 @@
   "b7BQdu": [
     {
       "type": 0,
-      "value": "Enter a valid Boolean."
+      "value": "유효한 부울을 입력하세요."
     }
   ],
   "b9/1dK": [
@@ -6466,7 +6466,7 @@
   "dEe6Ob": [
     {
       "type": 0,
-      "value": "Enter a valid JSON."
+      "value": "올바른 JSON을 입력하세요."
     }
   ],
   "dKCp2j": [
@@ -6573,6 +6573,12 @@
     {
       "type": 0,
       "value": "얼마나 자주 항목을 확인하시겠습니까?"
+    }
+  ],
+  "e1gQAz": [
+    {
+      "type": 0,
+      "value": "Please start the project by pressing F5 or run it through the Run and Debug view"
     }
   ],
   "e4JZEY": [

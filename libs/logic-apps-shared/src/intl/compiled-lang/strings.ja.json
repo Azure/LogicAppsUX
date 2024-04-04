@@ -874,7 +874,7 @@
   "3n6GJG": [
     {
       "type": 0,
-      "value": "Enter a valid JSON."
+      "value": "有効な JSON を入力してください。"
     }
   ],
   "3rzrWf": [
@@ -6478,7 +6478,7 @@
   "dEe6Ob": [
     {
       "type": 0,
-      "value": "Enter a valid JSON."
+      "value": "有効な JSON を入力してください。"
     }
   ],
   "dKCp2j": [
@@ -6585,6 +6585,12 @@
     {
       "type": 0,
       "value": "項目を確認する頻度"
+    }
+  ],
+  "e1gQAz": [
+    {
+      "type": 0,
+      "value": "Please start the project by pressing F5 or run it through the Run and Debug view"
     }
   ],
   "e4JZEY": [
