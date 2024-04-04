@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [4.1.1](https://github.com/Azure/LogicAppsUX/compare/v4.1.0...v4.1.1) (2024-04-04)
+
+
+### Bug Fixes
+
+* **designer:** Fix Combobox erroring when non-string displayName are used ([#4549](https://github.com/Azure/LogicAppsUX/issues/4549)) ([28f196a](https://github.com/Azure/LogicAppsUX/commit/28f196a58000634b39569313dd047dc2deb1e9f1))
+
 ## [4.1.0](https://github.com/Azure/LogicAppsUX/compare/v4.0.0...v4.1.0) (2024-04-04)
 
 
