@@ -13,7 +13,9 @@ export interface PanelState {
   schemaType?: SchemaType;
 }
 
-const initialState: PanelState = {};
+const initialState: PanelState = {
+  currentPanelView: ConfigPanelView.AddSchema,
+};
 
 export const panelSlice = createSlice({
   name: 'panel',

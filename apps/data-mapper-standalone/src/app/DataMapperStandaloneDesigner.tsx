@@ -1,6 +1,10 @@
 import { DevToolbox } from '../components/DevToolbox';
 import { dataMapDataLoaderSlice } from '../state/DataMapDataLoader';
-import { DataMapperDesignerV2} from '@microsoft/logic-apps-data-mapper-v2';
+import {
+  DataMapperDesignerV2,
+  DataMapDataProvider as DataMapDataProviderV2,
+  DataMapperDesignerProvider as DataMapperDesignerProviderV2,
+} from '@microsoft/logic-apps-data-mapper-v2';
 import type { AppDispatch, RootState } from '../state/Store';
 import { AzureThemeDark } from '@fluentui/azure-themes/lib/azure/AzureThemeDark';
 import { AzureThemeLight } from '@fluentui/azure-themes/lib/azure/AzureThemeLight';
@@ -96,30 +100,46 @@ export const DataMapperStandaloneDesigner = () => {
       </div>
 
       <div style={{ flex: '1 1 1px', display: 'flex', flexDirection: 'column' }}>
-        <DataMapperDesignerProvider locale="en-US" theme={theme} options={{}}>
-          <DataMapDataProvider
-            xsltFilename={xsltFilename}
-            xsltContent={xsltContent}
-            mapDefinition={mapDefinition}
-            dataMapMetadata={mapMetadata}
-            sourceSchema={sourceSchema}
-            targetSchema={targetSchema}
-            availableSchemas={workflowSchemaFilenames}
-            customXsltPaths={customXsltPath}
-            fetchedFunctions={fetchedFunctions}
-            theme={theme}
-          >
-             { dmVersion === 'v1' ? <DataMapperDesigner
-              saveMapDefinitionCall={saveMapDefinitionCall}
-              saveXsltCall={saveXsltCall}
-              setFunctionDisplayExpanded={setFunctionDisplayExpanded}
-              useExpandedFunctionCards={functionDisplay}/> :
-               <DataMapperDesignerV2
-               saveMapDefinitionCall={saveMapDefinitionCall}
-               saveXsltCall={saveXsltCall}/>
-             }
-          </DataMapDataProvider>
-        </DataMapperDesignerProvider>
+        {dmVersion === 'v1' ? (
+          <DataMapperDesignerProvider locale="en-US" theme={theme} options={{}}>
+            <DataMapDataProvider
+              xsltFilename={xsltFilename}
+              xsltContent={xsltContent}
+              mapDefinition={mapDefinition}
+              dataMapMetadata={mapMetadata}
+              sourceSchema={sourceSchema}
+              targetSchema={targetSchema}
+              availableSchemas={workflowSchemaFilenames}
+              customXsltPaths={customXsltPath}
+              fetchedFunctions={fetchedFunctions}
+              theme={theme}
+            >
+              <DataMapperDesigner
+                saveMapDefinitionCall={saveMapDefinitionCall}
+                saveXsltCall={saveXsltCall}
+                setFunctionDisplayExpanded={setFunctionDisplayExpanded}
+                useExpandedFunctionCards={functionDisplay}
+              />
+            </DataMapDataProvider>
+          </DataMapperDesignerProvider>
+        ) : (
+          <DataMapperDesignerProviderV2 locale="en-US" theme={theme} options={{}}>
+            <DataMapDataProviderV2
+              xsltFilename={xsltFilename}
+              xsltContent={xsltContent}
+              mapDefinition={mapDefinition}
+              dataMapMetadata={mapMetadata}
+              sourceSchema={sourceSchema}
+              targetSchema={targetSchema}
+              availableSchemas={workflowSchemaFilenames}
+              customXsltPaths={customXsltPath}
+              fetchedFunctions={fetchedFunctions}
+              theme={theme}
+            >
+              <DataMapperDesignerV2 saveMapDefinitionCall={saveMapDefinitionCall} saveXsltCall={saveXsltCall} />
+            </DataMapDataProviderV2>
+          </DataMapperDesignerProviderV2>
+        )}
       </div>
     </div>
   );

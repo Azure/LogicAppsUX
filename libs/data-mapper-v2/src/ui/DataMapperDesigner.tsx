@@ -14,6 +14,7 @@ import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { useDispatch, useSelector } from 'react-redux';
 import { ReactFlowProvider } from 'reactflow';
+import { AddSchemaDrawer } from '../components/addSchema/AddSchemaPanel';
 
 // danielle to strip
 
@@ -90,11 +91,10 @@ export const DataMapperDesignerV2 = ({
   saveMapDefinitionCall,
   //saveXsltCall,
   saveDraftStateCall,
- // addSchemaFromFile,
- // readCurrentSchemaOptions,
+  // addSchemaFromFile,
+  // readCurrentSchemaOptions,
   readCurrentCustomXsltPathOptions,
-  setIsMapStateDirty
-
+  setIsMapStateDirty,
 }: DataMapperDesignerProps) => {
   const dispatch = useDispatch<AppDispatch>();
   useStaticStyles();
@@ -113,7 +113,7 @@ export const DataMapperDesignerV2 = ({
   const { centerViewHeight, centerViewWidth } = useCenterViewSize();
   const [isPropPaneExpanded, setIsPropPaneExpanded] = useState(!!selectedItemKey);
   // const [isCodeViewOpen, setIsCodeViewOpen] = useState(false);
- // const [codeViewExpandedWidth, setCodeViewExpandedWidth] = useState(minCodeViewWidth);
+  // const [codeViewExpandedWidth, setCodeViewExpandedWidth] = useState(minCodeViewWidth);
   const [isTestMapPanelOpen, setIsTestMapPanelOpen] = useState(false);
   const [isSidePaneExpanded, setIsSidePaneExpanded] = useState(false);
 
@@ -202,27 +202,27 @@ export const DataMapperDesignerV2 = ({
   //     );
   //   }
 
-    // generateDataMapXslt(dataMapDefinition)
-    //   .then((xsltStr) => {
-    //     saveXsltCall(xsltStr);
+  // generateDataMapXslt(dataMapDefinition)
+  //   .then((xsltStr) => {
+  //     saveXsltCall(xsltStr);
 
-    //     LogService.log(LogCategory.DataMapperDesigner, 'onGenerateClick', {
-    //       message: 'Successfully generated xslt',
-    //     });
-    //   })
-    //   .catch((error: Error) => {
-    //     LogService.error(LogCategory.DataMapperDesigner, 'onGenerateClick', {
-    //       message: error.message,
-    //     });
+  //     LogService.log(LogCategory.DataMapperDesigner, 'onGenerateClick', {
+  //       message: 'Successfully generated xslt',
+  //     });
+  //   })
+  //   .catch((error: Error) => {
+  //     LogService.error(LogCategory.DataMapperDesigner, 'onGenerateClick', {
+  //       message: error.message,
+  //     });
 
-    //     dispatch(
-    //       showNotification({
-    //         type: NotificationTypes.GenerateFailed,
-    //         msgBody: error.message,
-    //         autoHideDurationMs: errorNotificationAutoHideDuration,
-    //       })
-    //     );
-    //   });
+  //     dispatch(
+  //       showNotification({
+  //         type: NotificationTypes.GenerateFailed,
+  //         msgBody: error.message,
+  //         autoHideDurationMs: errorNotificationAutoHideDuration,
+  //       })
+  //     );
+  //   });
   // }, [currentConnections, flattenedTargetSchema, dispatch]);
 
   // NOTE: Putting this useEffect here for vis next to onSave
@@ -263,8 +263,6 @@ export const DataMapperDesignerV2 = ({
   //   });
   // };
 
-
-
   const getCanvasAreaHeight = () => {
     // PropPane isn't shown when in the other views, so canvas can use full height
 
@@ -274,7 +272,6 @@ export const DataMapperDesignerV2 = ({
       return centerViewHeight;
     }
   };
-
 
   return (
     <DndProvider backend={HTML5Backend}>
@@ -289,10 +286,16 @@ export const DataMapperDesignerV2 = ({
             setShowGlobalView={setShowGlobalView}
             onGenerateClick={onGenerateClick}
           /> */}
+          <AddSchemaDrawer
+            onSubmitSchemaFileSelection={(schema) => console.log(schema)}
+            readCurrentSchemaOptions={() => console.log('')}
+
+            // onSubmitSchemaFileSelection={onSubmitSchemaFileSelection}
+            // readCurrentSchemaOptions={readCurrentSchemaOptions}
+          />
 
           <div id="editorView" style={{ display: 'flex', flex: '1 1 1px' }}>
             <div id="centerViewWithBreadcrumb" style={{ display: 'flex', flexDirection: 'column', flex: '1 1 1px' }}>
-
               <div id={centerViewId} style={{ minHeight: 400, flex: '1 1 1px' }}>
                 <div
                   style={{
@@ -309,16 +312,14 @@ export const DataMapperDesignerV2 = ({
                         backgroundColor: tokens.colorNeutralBackground4,
                       }}
                     >
-                      
-                        {/* <ReactFlowWrapper
+                      {/* <ReactFlowWrapper
                           canvasBlockHeight={getCanvasAreaHeight()}
                           canvasBlockWidth={centerViewWidth}
                           useExpandedFunctionCards={useExpandedFunctionCards}
                           openMapChecker={openMapChecker}
                         /> */}
-                      
                     </div>
-{/* 
+                    {/* 
                     <CodeView
                       dataMapDefinition={dataMapDefinition}
                       isCodeViewOpen={isCodeViewOpen}
@@ -332,7 +333,6 @@ export const DataMapperDesignerV2 = ({
                 </div>
               </div>
             </div>
-
           </div>
 
           {/* <TestMapPanel mapDefinition={dataMapDefinition} isOpen={isTestMapPanelOpen} onClose={() => setTestMapPanelOpen(false)} /> */}

@@ -171,19 +171,15 @@ export const DevToolbox = () => {
 
   const changeDMVersion = (_e: unknown, checked?: boolean) => {
     dispatch(dataMapDataLoaderSlice.actions.changeDmVersion(checked ? 'v2' : 'v1'));
-  }
+  };
 
   const toolboxItems = useMemo(() => {
     const newToolboxItems = [];
 
     if (loadingMethod === LoadingMethod.File) {
       newToolboxItems.push(
-        <StackItem key={'mapDefinitionDropDown'} style={{ width: '250px' }}>
-          <Toggle
-            label="New data mapper"
-            onChange={changeDMVersion}
-            placeholder="Select a map definition"
-          />
+        <StackItem key={'dataMapperVersionToggle'} style={{ width: '250px' }}>
+          <Toggle label="New data mapper" onChange={changeDMVersion} placeholder="Select a map definition" />
         </StackItem>
       );
       newToolboxItems.push(
