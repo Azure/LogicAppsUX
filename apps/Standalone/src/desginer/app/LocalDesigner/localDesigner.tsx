@@ -1,5 +1,5 @@
 import type { RootState } from '../../state/store';
-import { CustomConnectionParameterEditorService } from './customConnectionParameterEditorService';
+import { CustomConnectionParameterEditorService } from './customConnection/customConnectionParameterEditorService';
 import { CustomEditorService } from './customEditorService';
 import { HttpClient } from './httpClient';
 import { PseudoCommandBar } from './pseudoCommandBar';

@@ -46,6 +46,7 @@ import {
 } from '@microsoft/logic-apps-designer';
 import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { Chatbot } from '@microsoft/logic-apps-chatbot';
 
 const apiVersion = '2020-06-01';
 const httpClient = new HttpClient();
@@ -136,7 +137,6 @@ const DesignerEditorConsumption = () => {
   }, []);
 
   if (!parsedDefinition || isWorkflowAndArtifactsLoading) {
-    // eslint-disable-next-line react/jsx-no-useless-fragment
     return <></>;
   }
 
@@ -241,7 +241,7 @@ const DesignerEditorConsumption = () => {
                 }}
               />
               <Designer />
-              {/* {showChatBot ? (
+              {showChatBot ? (
                 <Chatbot
                   getUpdatedWorkflow={getUpdatedWorkflow}
                   openFeedbackPanel={openFeedBackPanel}
@@ -250,7 +250,7 @@ const DesignerEditorConsumption = () => {
                   }}
                   getAuthToken={getAuthToken}
                 />
-              ) : null} */}
+              ) : null}
             </div>
           </BJSWorkflowProvider>
         ) : null}
