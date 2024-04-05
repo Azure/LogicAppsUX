@@ -7,7 +7,7 @@ import { getWebViewHTML } from '../../../utils/codeless/getWebViewHTML';
 import type { IAzureConnectorsContext } from '../azureConnectorWizard';
 import { ResolutionService, getRecordEntry, isEmptyString } from '@microsoft/logic-apps-shared';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
-import type { Artifacts, AzureConnectorDetails, ConnectionsData, FileDetails, Parameter } from '@microsoft/vscode-extension';
+import type { Artifacts, AzureConnectorDetails, ConnectionsData, FileDetails, Parameter } from '@microsoft/vscode-extension-logic-apps';
 import { azurePublicBaseUrl, workflowManagementBaseURIKey } from '../../../../constants';
 import type { WebviewPanel, WebviewOptions, WebviewPanelOptions } from 'vscode';
 

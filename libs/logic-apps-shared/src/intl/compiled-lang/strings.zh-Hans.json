@@ -11,12 +11,6 @@
       "value": "警告: 输入节点类型与架构节点的类型不匹配"
     }
   ],
-  "+0ua83": [
-    {
-      "type": 0,
-      "value": "Parameters"
-    }
-  ],
   "+0yxlR": [
     {
       "type": 0,
@@ -881,6 +875,12 @@
     {
       "type": 0,
       "value": "(UTC+10:30) 豪勋爵岛"
+    }
+  ],
+  "3n6GJG": [
+    {
+      "type": 0,
+      "value": "输入有效的 JSON。"
     }
   ],
   "3rzrWf": [
@@ -2853,12 +2853,6 @@
       "value": "解释流"
     }
   ],
-  "GXXLuT": [
-    {
-      "type": 0,
-      "value": "输入有效的布尔值。"
-    }
-  ],
   "GYvF54": [
     {
       "type": 0,
@@ -3347,6 +3341,12 @@
       "value": "方法"
     }
   ],
+  "JgugQX": [
+    {
+      "type": 0,
+      "value": "输入有效的数组。"
+    }
+  ],
   "Ji6663": [
     {
       "type": 0,
@@ -3746,12 +3746,6 @@
     {
       "type": 0,
       "value": "以字符串形式返回当前时间戳"
-    }
-  ],
-  "MVrv+N": [
-    {
-      "type": 0,
-      "value": "输入有效的数组。"
     }
   ],
   "MYgKHu": [
@@ -6081,12 +6075,6 @@
       "value": "详细了解动态内容。"
     }
   ],
-  "ZvAp7m": [
-    {
-      "type": 0,
-      "value": "Save"
-    }
-  ],
   "ZyDq4/": [
     {
       "type": 0,
@@ -6175,6 +6163,12 @@
     {
       "type": 0,
       "value": "添加或选择要用于映射的源架构。"
+    }
+  ],
+  "b7BQdu": [
+    {
+      "type": 0,
+      "value": "输入有效的布尔值。"
     }
   ],
   "b9/1dK": [
@@ -6271,12 +6265,6 @@
     {
       "type": 0,
       "value": "信息"
-    }
-  ],
-  "bYwqkV": [
-    {
-      "type": 0,
-      "value": "输入有效的 JSON。"
     }
   ],
   "ba9yGJ": [
@@ -6519,6 +6507,12 @@
       "value": "了解详细信息"
     }
   ],
+  "dEe6Ob": [
+    {
+      "type": 0,
+      "value": "输入有效的 JSON。"
+    }
+  ],
   "dKCp2j": [
     {
       "type": 0,
@@ -6627,6 +6621,12 @@
     {
       "type": 0,
       "value": "你希望多久检查一次项目?"
+    }
+  ],
+  "e1gQAz": [
+    {
+      "type": 0,
+      "value": "Please start the project by pressing F5 or run it through the Run and Debug view"
     }
   ],
   "e4JZEY": [
@@ -7677,12 +7677,6 @@
       "value": "缺少身份验证类型属性: \"type\"。"
     }
   ],
-  "kxMDyM": [
-    {
-      "type": 0,
-      "value": "输入有效的 JSON。"
-    }
-  ],
   "l/3yJr": [
     {
       "type": 0,
@@ -8363,12 +8357,6 @@
       "value": "响应正文"
     }
   ],
-  "ohOaXj": [
-    {
-      "type": 0,
-      "value": "Errors"
-    }
-  ],
   "onXUu0": [
     {
       "type": 0,
@@ -8902,12 +8890,6 @@
     {
       "type": 0,
       "value": "取消创建连接"
-    }
-  ],
-  "sOnphB": [
-    {
-      "type": 0,
-      "value": "Resubmit"
     }
   ],
   "sQ2vRs": [

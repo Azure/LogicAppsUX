@@ -11,12 +11,6 @@
       "value": "경고: 입력 노드 형식이 스키마 노드의 형식과 일치하지 않습니다."
     }
   ],
-  "+0ua83": [
-    {
-      "type": 0,
-      "value": "Parameters"
-    }
-  ],
   "+0yxlR": [
     {
       "type": 0,
@@ -869,6 +863,12 @@
     {
       "type": 0,
       "value": "(UTC+10:30) 로드하우 섬"
+    }
+  ],
+  "3n6GJG": [
+    {
+      "type": 0,
+      "value": "올바른 JSON을 입력하세요."
     }
   ],
   "3rzrWf": [
@@ -2825,12 +2825,6 @@
       "value": "흐름 설명"
     }
   ],
-  "GXXLuT": [
-    {
-      "type": 0,
-      "value": "유효한 부울을 입력하세요."
-    }
-  ],
   "GYvF54": [
     {
       "type": 0,
@@ -3319,6 +3313,12 @@
       "value": "메서드"
     }
   ],
+  "JgugQX": [
+    {
+      "type": 0,
+      "value": "유효한 배열을 입력하세요."
+    }
+  ],
   "Ji6663": [
     {
       "type": 0,
@@ -3718,12 +3718,6 @@
     {
       "type": 0,
       "value": "현재 타임스탬프를 문자열로 반환합니다."
-    }
-  ],
-  "MVrv+N": [
-    {
-      "type": 0,
-      "value": "올바른 배열을 입력합니다."
     }
   ],
   "MYgKHu": [
@@ -6033,12 +6027,6 @@
       "value": "동적 콘텐츠에 대해 자세히 알아보세요."
     }
   ],
-  "ZvAp7m": [
-    {
-      "type": 0,
-      "value": "Save"
-    }
-  ],
   "ZyDq4/": [
     {
       "type": 0,
@@ -6129,6 +6117,12 @@
       "value": "맵에 사용할 원본 스키마를 추가하거나 선택합니다."
     }
   ],
+  "b7BQdu": [
+    {
+      "type": 0,
+      "value": "유효한 부울을 입력하세요."
+    }
+  ],
   "b9/1dK": [
     {
       "type": 0,
@@ -6215,12 +6209,6 @@
     {
       "type": 0,
       "value": "정보"
-    }
-  ],
-  "bYwqkV": [
-    {
-      "type": 0,
-      "value": "올바른 JSON을 입력하세요."
     }
   ],
   "ba9yGJ": [
@@ -6463,6 +6451,12 @@
       "value": "자세한 정보"
     }
   ],
+  "dEe6Ob": [
+    {
+      "type": 0,
+      "value": "올바른 JSON을 입력하세요."
+    }
+  ],
   "dKCp2j": [
     {
       "type": 0,
@@ -6567,6 +6561,12 @@
     {
       "type": 0,
       "value": "얼마나 자주 항목을 확인하시겠습니까?"
+    }
+  ],
+  "e1gQAz": [
+    {
+      "type": 0,
+      "value": "Please start the project by pressing F5 or run it through the Run and Debug view"
     }
   ],
   "e4JZEY": [
@@ -7605,12 +7605,6 @@
       "value": "인증 유형 속성 'type'이 없습니다."
     }
   ],
-  "kxMDyM": [
-    {
-      "type": 0,
-      "value": "올바른 JSON을 입력하세요."
-    }
-  ],
   "l/3yJr": [
     {
       "type": 0,
@@ -8275,12 +8269,6 @@
       "value": "응답 본문"
     }
   ],
-  "ohOaXj": [
-    {
-      "type": 0,
-      "value": "Errors"
-    }
-  ],
   "onXUu0": [
     {
       "type": 0,
@@ -8810,12 +8798,6 @@
     {
       "type": 0,
       "value": "연결 만들기 취소"
-    }
-  ],
-  "sOnphB": [
-    {
-      "type": 0,
-      "value": "Resubmit"
     }
   ],
   "sQ2vRs": [

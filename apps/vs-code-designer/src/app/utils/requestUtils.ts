@@ -13,7 +13,7 @@ import { createGenericClient, sendRequestWithTimeout } from '@microsoft/vscode-a
 import type { AzExtRequestPrepareOptions } from '@microsoft/vscode-azext-azureutils';
 import { nonNullProp, nonNullValue, parseError } from '@microsoft/vscode-azext-utils';
 import type { IActionContext, ISubscriptionContext } from '@microsoft/vscode-azext-utils';
-import type { IIdentityWizardContext } from '@microsoft/vscode-extension';
+import type { IIdentityWizardContext } from '@microsoft/vscode-extension-logic-apps';
 import * as fse from 'fs-extra';
 import * as path from 'path';
 

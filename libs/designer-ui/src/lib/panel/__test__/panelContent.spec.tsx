@@ -1,13 +1,13 @@
 import { PanelContent, type PanelContentProps } from '../panelcontent';
 import * as ReactShallowRenderer from 'react-test-renderer/shallow';
-
+import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 describe('ui/workflowparameters/workflowparameter', () => {
   let minimal: PanelContentProps, renderer: ReactShallowRenderer.ShallowRenderer;
   beforeEach(() => {
     minimal = {
       nodeId: '',
       tabs: [],
-      trackEvent: jest.fn(),
+      trackEvent: vi.fn(),
     };
     renderer = ReactShallowRenderer.createRenderer();
   });

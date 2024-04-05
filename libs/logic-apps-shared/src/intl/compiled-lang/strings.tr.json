@@ -11,12 +11,6 @@
       "value": "Uyarı: Giriş düğümü türü şema düğümünün türüyle eşleşmiyor"
     }
   ],
-  "+0ua83": [
-    {
-      "type": 0,
-      "value": "Parameters"
-    }
-  ],
   "+0yxlR": [
     {
       "type": 0,
@@ -869,6 +863,12 @@
     {
       "type": 0,
       "value": "(UTC+10:30) Lord Howe Adası"
+    }
+  ],
+  "3n6GJG": [
+    {
+      "type": 0,
+      "value": "Geçerli bir JSON girin."
     }
   ],
   "3rzrWf": [
@@ -2855,12 +2855,6 @@
       "value": "Akışı açıklayın"
     }
   ],
-  "GXXLuT": [
-    {
-      "type": 0,
-      "value": "Geçerli bir boole değeri girin."
-    }
-  ],
   "GYvF54": [
     {
       "type": 0,
@@ -3349,6 +3343,12 @@
       "value": "Yöntem"
     }
   ],
+  "JgugQX": [
+    {
+      "type": 0,
+      "value": "Enter a valid Array."
+    }
+  ],
   "Ji6663": [
     {
       "type": 0,
@@ -3759,12 +3759,6 @@
     {
       "type": 0,
       "value": "Geçerli zaman damgasını dize olarak döndürür"
-    }
-  ],
-  "MVrv+N": [
-    {
-      "type": 0,
-      "value": "Geçerli bir dizi girin."
     }
   ],
   "MYgKHu": [
@@ -6085,12 +6079,6 @@
       "value": "Dinamik içerikler hakkında daha fazla bilgi edinin."
     }
   ],
-  "ZvAp7m": [
-    {
-      "type": 0,
-      "value": "Save"
-    }
-  ],
   "ZyDq4/": [
     {
       "type": 0,
@@ -6179,6 +6167,12 @@
     {
       "type": 0,
       "value": "Eşlemeniz için kullanmak üzere bir kaynak şema ekleyin veya seçin."
+    }
+  ],
+  "b7BQdu": [
+    {
+      "type": 0,
+      "value": "Enter a valid Boolean."
     }
   ],
   "b9/1dK": [
@@ -6275,12 +6269,6 @@
     {
       "type": 0,
       "value": "Bilgi"
-    }
-  ],
-  "bYwqkV": [
-    {
-      "type": 0,
-      "value": "Geçerli bir json girin."
     }
   ],
   "ba9yGJ": [
@@ -6523,6 +6511,12 @@
       "value": "Daha fazla bilgi edinin"
     }
   ],
+  "dEe6Ob": [
+    {
+      "type": 0,
+      "value": "Geçerli bir JSON girin."
+    }
+  ],
   "dKCp2j": [
     {
       "type": 0,
@@ -6627,6 +6621,12 @@
     {
       "type": 0,
       "value": "Öğeleri ne sıklıkta denetlemek istiyorsunuz?"
+    }
+  ],
+  "e1gQAz": [
+    {
+      "type": 0,
+      "value": "Please start the project by pressing F5 or run it through the Run and Debug view"
     }
   ],
   "e4JZEY": [
@@ -7687,12 +7687,6 @@
       "value": "Kimlik doğrulama türü özelliği eksik: 'Type'."
     }
   ],
-  "kxMDyM": [
-    {
-      "type": 0,
-      "value": "Geçerli bir json girin."
-    }
-  ],
   "l/3yJr": [
     {
       "type": 0,
@@ -8365,12 +8359,6 @@
       "value": "Yanıt gövdesi"
     }
   ],
-  "ohOaXj": [
-    {
-      "type": 0,
-      "value": "Errors"
-    }
-  ],
   "onXUu0": [
     {
       "type": 0,
@@ -8911,12 +8899,6 @@
     {
       "type": 0,
       "value": "Bağlantı oluşturmayı iptal et"
-    }
-  ],
-  "sOnphB": [
-    {
-      "type": 0,
-      "value": "Resubmit"
     }
   ],
   "sQ2vRs": [

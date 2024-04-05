@@ -11,12 +11,6 @@
       "value": "Figyelmeztetés: a bemeneti csomópont típusa nem felel meg a sémacsomópont típusának"
     }
   ],
-  "+0ua83": [
-    {
-      "type": 0,
-      "value": "Parameters"
-    }
-  ],
   "+0yxlR": [
     {
       "type": 0,
@@ -885,6 +879,12 @@
     {
       "type": 0,
       "value": "(UTC+10:30) Lord Howe-sziget"
+    }
+  ],
+  "3n6GJG": [
+    {
+      "type": 0,
+      "value": "Érvényes JSON-t adjon meg."
     }
   ],
   "3rzrWf": [
@@ -2867,12 +2867,6 @@
       "value": "A folyamat elmagyarázása"
     }
   ],
-  "GXXLuT": [
-    {
-      "type": 0,
-      "value": "Adjon meg egy érvényes logikai értéket."
-    }
-  ],
   "GYvF54": [
     {
       "type": 0,
@@ -3361,6 +3355,12 @@
       "value": "Módszer"
     }
   ],
+  "JgugQX": [
+    {
+      "type": 0,
+      "value": "Enter a valid Array."
+    }
+  ],
   "Ji6663": [
     {
       "type": 0,
@@ -3771,12 +3771,6 @@
     {
       "type": 0,
       "value": "Az aktuális időbélyeget adja vissza sztringként."
-    }
-  ],
-  "MVrv+N": [
-    {
-      "type": 0,
-      "value": "Adjon meg egy érvényes tömböt."
     }
   ],
   "MYgKHu": [
@@ -6085,12 +6079,6 @@
       "value": "További információ a dinamikus tartalmakról."
     }
   ],
-  "ZvAp7m": [
-    {
-      "type": 0,
-      "value": "Save"
-    }
-  ],
   "ZyDq4/": [
     {
       "type": 0,
@@ -6179,6 +6167,12 @@
     {
       "type": 0,
       "value": "Töltse fel vagy válassza ki a leképezéshez használni kívánt forrássémát."
+    }
+  ],
+  "b7BQdu": [
+    {
+      "type": 0,
+      "value": "Enter a valid Boolean."
     }
   ],
   "b9/1dK": [
@@ -6275,12 +6269,6 @@
     {
       "type": 0,
       "value": "Információ"
-    }
-  ],
-  "bYwqkV": [
-    {
-      "type": 0,
-      "value": "Érvényes JSON-t adjon meg."
     }
   ],
   "ba9yGJ": [
@@ -6523,6 +6511,12 @@
       "value": "További információ"
     }
   ],
+  "dEe6Ob": [
+    {
+      "type": 0,
+      "value": "Érvényes JSON-t adjon meg."
+    }
+  ],
   "dKCp2j": [
     {
       "type": 0,
@@ -6631,6 +6625,12 @@
     {
       "type": 0,
       "value": "Milyen gyakran szeretne elemeket keresni?"
+    }
+  ],
+  "e1gQAz": [
+    {
+      "type": 0,
+      "value": "Please start the project by pressing F5 or run it through the Run and Debug view"
     }
   ],
   "e4JZEY": [
@@ -7695,12 +7695,6 @@
       "value": "Hiányzik a hitelesítés típusa tulajdonság: típus."
     }
   ],
-  "kxMDyM": [
-    {
-      "type": 0,
-      "value": "Érvényes JSON-t adjon meg."
-    }
-  ],
   "l/3yJr": [
     {
       "type": 0,
@@ -8373,12 +8367,6 @@
       "value": "Választörzs"
     }
   ],
-  "ohOaXj": [
-    {
-      "type": 0,
-      "value": "Errors"
-    }
-  ],
   "onXUu0": [
     {
       "type": 0,
@@ -8923,12 +8911,6 @@
     {
       "type": 0,
       "value": "Kapcsolat létrehozásának megszakítása"
-    }
-  ],
-  "sOnphB": [
-    {
-      "type": 0,
-      "value": "Resubmit"
     }
   ],
   "sQ2vRs": [

@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 import { ext } from '../../../extensionVariables';
 import { tryGetWebviewPanel } from './common';
-import { ExtensionCommand } from '@microsoft/vscode-extension';
+import { ExtensionCommand } from '@microsoft/vscode-extension-logic-apps';
 import * as query from 'querystring';
 // querystring = require('querystring');
 import * as vscode from 'vscode';

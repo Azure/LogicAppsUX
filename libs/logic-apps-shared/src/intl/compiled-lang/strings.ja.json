@@ -11,12 +11,6 @@
       "value": "警告: 入力ノードの種類がスキーマ ノードの種類と一致しません"
     }
   ],
-  "+0ua83": [
-    {
-      "type": 0,
-      "value": "Parameters"
-    }
-  ],
   "+0yxlR": [
     {
       "type": 0,
@@ -869,6 +863,12 @@
     {
       "type": 0,
       "value": "(UTC+10:30) ロードハウ島"
+    }
+  ],
+  "3n6GJG": [
+    {
+      "type": 0,
+      "value": "有効な JSON を入力してください。"
     }
   ],
   "3rzrWf": [
@@ -2833,12 +2833,6 @@
       "value": "フローを説明してください"
     }
   ],
-  "GXXLuT": [
-    {
-      "type": 0,
-      "value": "有効なブール値を入力してください。"
-    }
-  ],
   "GYvF54": [
     {
       "type": 0,
@@ -3327,6 +3321,12 @@
       "value": "メソッド"
     }
   ],
+  "JgugQX": [
+    {
+      "type": 0,
+      "value": "Enter a valid Array."
+    }
+  ],
   "Ji6663": [
     {
       "type": 0,
@@ -3726,12 +3726,6 @@
     {
       "type": 0,
       "value": "現在のタイムスタンプを文字列として返します"
-    }
-  ],
-  "MVrv+N": [
-    {
-      "type": 0,
-      "value": "有効な配列を入力してください。"
     }
   ],
   "MYgKHu": [
@@ -6037,12 +6031,6 @@
       "value": "動的コンテンツの詳細情報。"
     }
   ],
-  "ZvAp7m": [
-    {
-      "type": 0,
-      "value": "Save"
-    }
-  ],
   "ZyDq4/": [
     {
       "type": 0,
@@ -6131,6 +6119,12 @@
     {
       "type": 0,
       "value": "マップに使用するソース スキーマを追加または選択します。"
+    }
+  ],
+  "b7BQdu": [
+    {
+      "type": 0,
+      "value": "Enter a valid Boolean."
     }
   ],
   "b9/1dK": [
@@ -6227,12 +6221,6 @@
     {
       "type": 0,
       "value": "情報"
-    }
-  ],
-  "bYwqkV": [
-    {
-      "type": 0,
-      "value": "有効な JSON を入力してください。"
     }
   ],
   "ba9yGJ": [
@@ -6475,6 +6463,12 @@
       "value": "詳細情報"
     }
   ],
+  "dEe6Ob": [
+    {
+      "type": 0,
+      "value": "有効な JSON を入力してください。"
+    }
+  ],
   "dKCp2j": [
     {
       "type": 0,
@@ -6579,6 +6573,12 @@
     {
       "type": 0,
       "value": "項目を確認する頻度"
+    }
+  ],
+  "e1gQAz": [
+    {
+      "type": 0,
+      "value": "Please start the project by pressing F5 or run it through the Run and Debug view"
     }
   ],
   "e4JZEY": [
@@ -7617,12 +7617,6 @@
       "value": "認証の種類のプロパティ 'type' がありません。"
     }
   ],
-  "kxMDyM": [
-    {
-      "type": 0,
-      "value": "有効な JSON を入力してください。"
-    }
-  ],
   "l/3yJr": [
     {
       "type": 0,
@@ -8287,12 +8281,6 @@
       "value": "応答本文"
     }
   ],
-  "ohOaXj": [
-    {
-      "type": 0,
-      "value": "Errors"
-    }
-  ],
   "onXUu0": [
     {
       "type": 0,
@@ -8822,12 +8810,6 @@
     {
       "type": 0,
       "value": "接続の作成を取り消します"
-    }
-  ],
-  "sOnphB": [
-    {
-      "type": 0,
-      "value": "Resubmit"
     }
   ],
   "sQ2vRs": [

@@ -11,12 +11,6 @@
       "value": "Warnung: Der Eingabeknotentyp stimmt nicht mit dem Typ des Schemaknotens überein."
     }
   ],
-  "+0ua83": [
-    {
-      "type": 0,
-      "value": "Parameters"
-    }
-  ],
   "+0yxlR": [
     {
       "type": 0,
@@ -885,6 +879,12 @@
     {
       "type": 0,
       "value": "(UTC+10:30) Lord-Howe-Insel"
+    }
+  ],
+  "3n6GJG": [
+    {
+      "type": 0,
+      "value": "Geben Sie einen gültigen JSON-Wert ein."
     }
   ],
   "3rzrWf": [
@@ -2887,12 +2887,6 @@
       "value": "Flow erläutern"
     }
   ],
-  "GXXLuT": [
-    {
-      "type": 0,
-      "value": "Geben Sie einen gültigen booleschen Wert ein."
-    }
-  ],
   "GYvF54": [
     {
       "type": 0,
@@ -3385,6 +3379,12 @@
       "value": "Methode"
     }
   ],
+  "JgugQX": [
+    {
+      "type": 0,
+      "value": "Geben Sie ein gültiges Array ein."
+    }
+  ],
   "Ji6663": [
     {
       "type": 0,
@@ -3795,12 +3795,6 @@
     {
       "type": 0,
       "value": "Gibt den aktuellen Zeitstempel als Zeichenfolge zurück."
-    }
-  ],
-  "MVrv+N": [
-    {
-      "type": 0,
-      "value": "Geben Sie ein gültiges Array ein."
     }
   ],
   "MYgKHu": [
@@ -6141,12 +6135,6 @@
       "value": "Erfahren Sie mehr über dynamische Inhalte."
     }
   ],
-  "ZvAp7m": [
-    {
-      "type": 0,
-      "value": "Save"
-    }
-  ],
   "ZyDq4/": [
     {
       "type": 0,
@@ -6235,6 +6223,12 @@
     {
       "type": 0,
       "value": "Fügen Sie ein Quellschema hinzu, oder wählen Sie eines aus, das für Ihre Zuordnung verwendet werden soll."
+    }
+  ],
+  "b7BQdu": [
+    {
+      "type": 0,
+      "value": "Geben Sie einen gültigen booleschen Wert ein."
     }
   ],
   "b9/1dK": [
@@ -6331,12 +6325,6 @@
     {
       "type": 0,
       "value": "Info"
-    }
-  ],
-  "bYwqkV": [
-    {
-      "type": 0,
-      "value": "Geben Sie einen gültigen JSON-Wert ein."
     }
   ],
   "ba9yGJ": [
@@ -6579,6 +6567,12 @@
       "value": "Weitere Informationen"
     }
   ],
+  "dEe6Ob": [
+    {
+      "type": 0,
+      "value": "Geben Sie einen gültigen JSON-Wert ein."
+    }
+  ],
   "dKCp2j": [
     {
       "type": 0,
@@ -6687,6 +6681,12 @@
     {
       "type": 0,
       "value": "Wie oft möchten Sie auf Elemente prüfen?"
+    }
+  ],
+  "e1gQAz": [
+    {
+      "type": 0,
+      "value": "Please start the project by pressing F5 or run it through the Run and Debug view"
     }
   ],
   "e4JZEY": [
@@ -7751,12 +7751,6 @@
       "value": "Fehlende Authentifizierungstypeigenschaft: \"type\"."
     }
   ],
-  "kxMDyM": [
-    {
-      "type": 0,
-      "value": "Geben Sie einen gültigen JSON-Wert ein."
-    }
-  ],
   "l/3yJr": [
     {
       "type": 0,
@@ -8433,12 +8427,6 @@
       "value": "Antworttext"
     }
   ],
-  "ohOaXj": [
-    {
-      "type": 0,
-      "value": "Errors"
-    }
-  ],
   "onXUu0": [
     {
       "type": 0,
@@ -8983,12 +8971,6 @@
     {
       "type": 0,
       "value": "Erstellen einer Verbindung abbrechen"
-    }
-  ],
-  "sOnphB": [
-    {
-      "type": 0,
-      "value": "Resubmit"
     }
   ],
   "sQ2vRs": [

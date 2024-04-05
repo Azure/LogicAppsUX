@@ -187,7 +187,11 @@ export const TokenField = ({
           placeholder={placeholder}
           readonly={readOnly}
           initialValue={value}
-          options={dropdownOptions.map((option: any, index: number) => ({ key: index.toString(), ...option }))}
+          options={dropdownOptions.map((option: any, index: number) => ({
+            key: index.toString(),
+            ...option,
+            displayName: typeof option.displayName === 'string' ? option.displayName : JSON.stringify(option.displayName),
+          }))}
           useOption={true}
           isLoading={isLoading}
           errorDetails={errorDetails}

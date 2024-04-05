@@ -1,7 +1,7 @@
 import renderer from 'react-test-renderer';
 import type { ValueProps } from '../types';
 import { XmlValue } from '../xml';
-
+import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 describe('ui/monitoring/values/xml', () => {
   let props: ValueProps;
 

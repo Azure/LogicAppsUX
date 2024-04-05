@@ -8,7 +8,7 @@ import { localize } from '../../../localize';
 import { isString } from '@microsoft/logic-apps-shared';
 import type { IActionContext, IAzureQuickPickItem, IAzureQuickPickOptions } from '@microsoft/vscode-azext-utils';
 import { openUrl } from '@microsoft/vscode-azext-utils';
-import { FuncVersion, ProjectLanguage, WorkerRuntime } from '@microsoft/vscode-extension';
+import { FuncVersion, ProjectLanguage, WorkerRuntime } from '@microsoft/vscode-extension-logic-apps';
 import { ConfigurationTarget, Uri, workspace } from 'vscode';
 import type { WorkspaceConfiguration, WorkspaceFolder } from 'vscode';
 

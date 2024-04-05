@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 import { localize } from '../../../../localize';
 import { AzureWizardPromptStep, nonNullProp } from '@microsoft/vscode-azext-utils';
-import type { IFunctionWizardContext, IWorkflowTemplate } from '@microsoft/vscode-extension';
+import type { IFunctionWizardContext, IWorkflowTemplate } from '@microsoft/vscode-extension-logic-apps';
 import * as fse from 'fs-extra';
 import * as path from 'path';
 

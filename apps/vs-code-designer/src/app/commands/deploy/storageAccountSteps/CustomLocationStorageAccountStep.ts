@@ -15,8 +15,8 @@ import {
 import type { INewStorageAccountDefaults } from '@microsoft/vscode-azext-azureutils';
 import type { IWizardOptions } from '@microsoft/vscode-azext-utils';
 import { AzureWizardPromptStep } from '@microsoft/vscode-azext-utils';
-import type { IFunctionAppWizardContext, ICreateLogicAppContext } from '@microsoft/vscode-extension';
-import { StorageOptions } from '@microsoft/vscode-extension';
+import type { IFunctionAppWizardContext, ICreateLogicAppContext } from '@microsoft/vscode-extension-logic-apps';
+import { StorageOptions } from '@microsoft/vscode-extension-logic-apps';
 import type { QuickPickItem, QuickPickOptions } from 'vscode';
 
 export class CustomLocationStorageAccountStep extends AzureWizardPromptStep<IFunctionAppWizardContext> {

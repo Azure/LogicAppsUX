@@ -11,12 +11,6 @@
       "value": "Aviso: o tipo de nó de entrada não corresponde ao tipo do nó de esquema"
     }
   ],
-  "+0ua83": [
-    {
-      "type": 0,
-      "value": "Parameters"
-    }
-  ],
   "+0yxlR": [
     {
       "type": 0,
@@ -861,6 +855,12 @@
     {
       "type": 0,
       "value": "(UTC+10:30) Ilha Lord Howe"
+    }
+  ],
+  "3n6GJG": [
+    {
+      "type": 0,
+      "value": "Insira um JSON válido."
     }
   ],
   "3rzrWf": [
@@ -2861,12 +2861,6 @@
       "value": "Explicar fluxo"
     }
   ],
-  "GXXLuT": [
-    {
-      "type": 0,
-      "value": "Insira um booliano válido."
-    }
-  ],
   "GYvF54": [
     {
       "type": 0,
@@ -3355,6 +3349,12 @@
       "value": "Método"
     }
   ],
+  "JgugQX": [
+    {
+      "type": 0,
+      "value": "Insira uma Matriz válida."
+    }
+  ],
   "Ji6663": [
     {
       "type": 0,
@@ -3776,12 +3776,6 @@
     {
       "type": 0,
       "value": "Retorna o carimbo de data/hora atual como uma cadeia de caracteres"
-    }
-  ],
-  "MVrv+N": [
-    {
-      "type": 0,
-      "value": "Insira uma matriz válida."
     }
   ],
   "MYgKHu": [
@@ -6109,12 +6103,6 @@
       "value": "Saiba mais sobre limites dinâmicos."
     }
   ],
-  "ZvAp7m": [
-    {
-      "type": 0,
-      "value": "Save"
-    }
-  ],
   "ZyDq4/": [
     {
       "type": 0,
@@ -6203,6 +6191,12 @@
     {
       "type": 0,
       "value": "Adicione ou selecione um esquema de origem para usar em seu mapa."
+    }
+  ],
+  "b7BQdu": [
+    {
+      "type": 0,
+      "value": "Insira um valor Booliano válido."
     }
   ],
   "b9/1dK": [
@@ -6299,12 +6293,6 @@
     {
       "type": 0,
       "value": "Informações"
-    }
-  ],
-  "bYwqkV": [
-    {
-      "type": 0,
-      "value": "Insira um json válido."
     }
   ],
   "ba9yGJ": [
@@ -6547,6 +6535,12 @@
       "value": "Saiba mais"
     }
   ],
+  "dEe6Ob": [
+    {
+      "type": 0,
+      "value": "Insira um JSON válido."
+    }
+  ],
   "dKCp2j": [
     {
       "type": 0,
@@ -6655,6 +6649,12 @@
     {
       "type": 0,
       "value": "Com que frequência deseja procurar por itens?"
+    }
+  ],
+  "e1gQAz": [
+    {
+      "type": 0,
+      "value": "Please start the project by pressing F5 or run it through the Run and Debug view"
     }
   ],
   "e4JZEY": [
@@ -7741,12 +7741,6 @@
       "value": "Propriedade de tipo de autenticação ausente: 'type'."
     }
   ],
-  "kxMDyM": [
-    {
-      "type": 0,
-      "value": "Insira um json válido."
-    }
-  ],
   "l/3yJr": [
     {
       "type": 0,
@@ -8419,12 +8413,6 @@
       "value": "Corpo da resposta"
     }
   ],
-  "ohOaXj": [
-    {
-      "type": 0,
-      "value": "Errors"
-    }
-  ],
   "onXUu0": [
     {
       "type": 0,
@@ -8980,12 +8968,6 @@
     {
       "type": 0,
       "value": "Cancelar a criação de uma conexão"
-    }
-  ],
-  "sOnphB": [
-    {
-      "type": 0,
-      "value": "Resubmit"
     }
   ],
   "sQ2vRs": [
