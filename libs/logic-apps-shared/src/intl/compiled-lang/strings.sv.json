@@ -11,12 +11,6 @@
       "value": "Varning! Indatanodens typ matchar inte typ av schemanod"
     }
   ],
-  "+0ua83": [
-    {
-      "type": 0,
-      "value": "Parametrar"
-    }
-  ],
   "+0yxlR": [
     {
       "type": 0,
@@ -3352,7 +3346,7 @@
   "JgugQX": [
     {
       "type": 0,
-      "value": "Enter a valid Array."
+      "value": "Ange en giltig matris."
     }
   ],
   "Ji6663": [
@@ -6073,12 +6067,6 @@
       "value": "Läs mer om dynamiskt innehåll."
     }
   ],
-  "ZvAp7m": [
-    {
-      "type": 0,
-      "value": "Spara"
-    }
-  ],
   "ZyDq4/": [
     {
       "type": 0,
@@ -6172,7 +6160,7 @@
   "b7BQdu": [
     {
       "type": 0,
-      "value": "Enter a valid Boolean."
+      "value": "Ange ett giltigt booleskt värde."
     }
   ],
   "b9/1dK": [
@@ -8367,12 +8355,6 @@
       "value": "Svarstext"
     }
   ],
-  "ohOaXj": [
-    {
-      "type": 0,
-      "value": "Fel"
-    }
-  ],
   "onXUu0": [
     {
       "type": 0,
@@ -8913,12 +8895,6 @@
     {
       "type": 0,
       "value": "Avbryt skapande av en anslutning"
-    }
-  ],
-  "sOnphB": [
-    {
-      "type": 0,
-      "value": "Skicka igen"
     }
   ],
   "sQ2vRs": [

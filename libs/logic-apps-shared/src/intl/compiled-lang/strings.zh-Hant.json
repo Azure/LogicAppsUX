@@ -11,12 +11,6 @@
       "value": "警告: 輸入節點類型不符合結構描述節點的類型"
     }
   ],
-  "+0ua83": [
-    {
-      "type": 0,
-      "value": "參數"
-    }
-  ],
   "+0yxlR": [
     {
       "type": 0,
@@ -6081,12 +6075,6 @@
       "value": "深入了解動態內容。"
     }
   ],
-  "ZvAp7m": [
-    {
-      "type": 0,
-      "value": "儲存"
-    }
-  ],
   "ZyDq4/": [
     {
       "type": 0,
@@ -6630,7 +6618,7 @@
   "e1gQAz": [
     {
       "type": 0,
-      "value": "Please start the project by pressing F5 or run it through the Run and Debug view"
+      "value": "請按下 F5 以啟動專案，或透過 [執行及偵錯] 檢視加以執行"
     }
   ],
   "e4JZEY": [
@@ -8337,12 +8325,6 @@
       "value": "回應本文"
     }
   ],
-  "ohOaXj": [
-    {
-      "type": 0,
-      "value": "錯誤"
-    }
-  ],
   "onXUu0": [
     {
       "type": 0,
@@ -8876,12 +8858,6 @@
     {
       "type": 0,
       "value": "取消建立連線"
-    }
-  ],
-  "sOnphB": [
-    {
-      "type": 0,
-      "value": "重新提交"
     }
   ],
   "sQ2vRs": [

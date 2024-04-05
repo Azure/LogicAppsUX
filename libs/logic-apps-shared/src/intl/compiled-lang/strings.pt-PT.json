@@ -11,12 +11,6 @@
       "value": "Aviso: o tipo de nó de entrada não corresponde ao tipo do nó de esquema."
     }
   ],
-  "+0ua83": [
-    {
-      "type": 0,
-      "value": "Parâmetros"
-    }
-  ],
   "+0yxlR": [
     {
       "type": 0,
@@ -3386,7 +3380,7 @@
   "JgugQX": [
     {
       "type": 0,
-      "value": "Enter a valid Array."
+      "value": "Introduza uma Matriz válida."
     }
   ],
   "Ji6663": [
@@ -6141,12 +6135,6 @@
       "value": "Saiba mais sobre conteúdos dinâmicos."
     }
   ],
-  "ZvAp7m": [
-    {
-      "type": 0,
-      "value": "Guardar"
-    }
-  ],
   "ZyDq4/": [
     {
       "type": 0,
@@ -6240,7 +6228,7 @@
   "b7BQdu": [
     {
       "type": 0,
-      "value": "Enter a valid Boolean."
+      "value": "Introduza um Booleano válido."
     }
   ],
   "b9/1dK": [
@@ -8457,12 +8445,6 @@
       "value": "Corpo de resposta"
     }
   ],
-  "ohOaXj": [
-    {
-      "type": 0,
-      "value": "Erros"
-    }
-  ],
   "onXUu0": [
     {
       "type": 0,
@@ -9018,12 +9000,6 @@
     {
       "type": 0,
       "value": "Cancelar a criação de uma ligação"
-    }
-  ],
-  "sOnphB": [
-    {
-      "type": 0,
-      "value": "Submeter novamente"
     }
   ],
   "sQ2vRs": [

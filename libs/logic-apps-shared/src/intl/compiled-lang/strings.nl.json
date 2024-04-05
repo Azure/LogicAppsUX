@@ -11,12 +11,6 @@
       "value": "Waarschuwing: Het type invoerknooppunt komt niet overeen met het type van het schemaknooppunt"
     }
   ],
-  "+0ua83": [
-    {
-      "type": 0,
-      "value": "Parameters"
-    }
-  ],
   "+0yxlR": [
     {
       "type": 0,
@@ -3352,7 +3346,7 @@
   "JgugQX": [
     {
       "type": 0,
-      "value": "Enter a valid Array."
+      "value": "Voer een geldige matrix in."
     }
   ],
   "Ji6663": [
@@ -6081,12 +6075,6 @@
       "value": "Meer informatie over dynamische inhoud"
     }
   ],
-  "ZvAp7m": [
-    {
-      "type": 0,
-      "value": "Opslaan"
-    }
-  ],
   "ZyDq4/": [
     {
       "type": 0,
@@ -6180,7 +6168,7 @@
   "b7BQdu": [
     {
       "type": 0,
-      "value": "Enter a valid Boolean."
+      "value": "Voer een geldige booleaanse waarde in."
     }
   ],
   "b9/1dK": [
@@ -8375,12 +8363,6 @@
       "value": "Hoofdtekst van de reactie"
     }
   ],
-  "ohOaXj": [
-    {
-      "type": 0,
-      "value": "Fouten"
-    }
-  ],
   "onXUu0": [
     {
       "type": 0,
@@ -8921,12 +8903,6 @@
     {
       "type": 0,
       "value": "Het maken van een verbinding annuleren"
-    }
-  ],
-  "sOnphB": [
-    {
-      "type": 0,
-      "value": "Opnieuw indienen"
     }
   ],
   "sQ2vRs": [

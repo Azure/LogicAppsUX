@@ -11,12 +11,6 @@
       "value": "Warnung: Der Eingabeknotentyp stimmt nicht mit dem Typ des Schemaknotens überein."
     }
   ],
-  "+0ua83": [
-    {
-      "type": 0,
-      "value": "Parameter"
-    }
-  ],
   "+0yxlR": [
     {
       "type": 0,
@@ -3388,7 +3382,7 @@
   "JgugQX": [
     {
       "type": 0,
-      "value": "Enter a valid Array."
+      "value": "Geben Sie ein gültiges Array ein."
     }
   ],
   "Ji6663": [
@@ -6141,12 +6135,6 @@
       "value": "Erfahren Sie mehr über dynamische Inhalte."
     }
   ],
-  "ZvAp7m": [
-    {
-      "type": 0,
-      "value": "Speichern"
-    }
-  ],
   "ZyDq4/": [
     {
       "type": 0,
@@ -6240,7 +6228,7 @@
   "b7BQdu": [
     {
       "type": 0,
-      "value": "Enter a valid Boolean."
+      "value": "Geben Sie einen gültigen booleschen Wert ein."
     }
   ],
   "b9/1dK": [
@@ -8439,12 +8427,6 @@
       "value": "Antworttext"
     }
   ],
-  "ohOaXj": [
-    {
-      "type": 0,
-      "value": "Fehler"
-    }
-  ],
   "onXUu0": [
     {
       "type": 0,
@@ -8989,12 +8971,6 @@
     {
       "type": 0,
       "value": "Erstellen einer Verbindung abbrechen"
-    }
-  ],
-  "sOnphB": [
-    {
-      "type": 0,
-      "value": "Erneut übermitteln"
     }
   ],
   "sQ2vRs": [

@@ -11,12 +11,6 @@
       "value": "Ostrzeżenie: typ węzła danych wejściowych jest niezgodny z typem węzła schematu"
     }
   ],
-  "+0ua83": [
-    {
-      "type": 0,
-      "value": "Parametry"
-    }
-  ],
   "+0yxlR": [
     {
       "type": 0,
@@ -3408,7 +3402,7 @@
   "JgugQX": [
     {
       "type": 0,
-      "value": "Enter a valid Array."
+      "value": "Wprowadź prawidłową tablicę."
     }
   ],
   "Ji6663": [
@@ -6189,12 +6183,6 @@
       "value": "Dowiedz się więcej o zawartości dynamicznej."
     }
   ],
-  "ZvAp7m": [
-    {
-      "type": 0,
-      "value": "Zapisz"
-    }
-  ],
   "ZyDq4/": [
     {
       "type": 0,
@@ -6288,7 +6276,7 @@
   "b7BQdu": [
     {
       "type": 0,
-      "value": "Enter a valid Boolean."
+      "value": "Wprowadź prawidłową wartość logiczną."
     }
   ],
   "b9/1dK": [
@@ -8543,12 +8531,6 @@
       "value": "Treść odpowiedzi"
     }
   ],
-  "ohOaXj": [
-    {
-      "type": 0,
-      "value": "Błędy"
-    }
-  ],
   "onXUu0": [
     {
       "type": 0,
@@ -9115,12 +9097,6 @@
     {
       "type": 0,
       "value": "Anulowanie tworzenia połączenia"
-    }
-  ],
-  "sOnphB": [
-    {
-      "type": 0,
-      "value": "Prześlij ponownie"
     }
   ],
   "sQ2vRs": [
