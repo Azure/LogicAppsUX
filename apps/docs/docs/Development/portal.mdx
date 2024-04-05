@@ -84,3 +84,29 @@ log: { type: stdout, format: pretty, level: http }
 npm install -g pm2 
 pm2 start verdaccio --watch
 ```
+
+
+4. Set the global repo on your machine to proxy through verdaccio
+:::info
+
+This can also be done on the .npmrc of the repo levels if preferred.
+
+:::
+
+```bash 
+npm set registry http://localhost:4873/
+```
+
+:::note
+
+1-4 are one time setup steps. You can now publish packages to verdaccio and install them from there.
+
+:::
+5. Publish the package to verdaccio
+from the LAUX repo root:
+```bash
+pnpm turbo run pusblish:local
+```
+
+6. Install the package from verdaccio
+Just go to the target app and update the versions of the package.json to the current versions published to verdaccio. Then run npm install noramlly.
