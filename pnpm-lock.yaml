@@ -682,6 +682,9 @@ importers:
       '@react-hookz/web':
         specifier: 22.0.0
         version: 22.0.0(react-dom@18.2.0)(react@18.2.0)
+      dompurify:
+        specifier: 3.0.11
+        version: 3.0.11
       fuse.js:
         specifier: 6.6.2
         version: 6.6.2
@@ -721,6 +724,10 @@ importers:
       reactflow:
         specifier: 11.8.2
         version: 11.8.2(@types/react@18.2.73)(immer@9.0.15)(react-dom@18.2.0)(react@18.2.0)
+    devDependencies:
+      '@types/dompurify':
+        specifier: 3.0.5
+        version: 3.0.5
 
   libs/logic-apps-shared:
     dependencies:
@@ -10783,6 +10790,12 @@ packages:
     dependencies:
       '@types/ms': 0.7.34
 
+  /@types/dompurify@3.0.5:
+    resolution: {integrity: sha512-1Wg0g3BtQF7sSb27fJQAKck1HECM6zV1EB66j8JH9i3LCjYabJa0FSdiSgsD5K/RbrsR0SiraKacLB+T8ZVYAg==}
+    dependencies:
+      '@types/trusted-types': 2.0.7
+    dev: true
+
   /@types/eslint-scope@3.7.7:
     resolution: {integrity: sha512-MzMFlSLBqNF2gcHWO0G1vP/YQyfvrxZ0bF+u7mzUdZ1/xK4A4sru+nraZz5i3iEIk1l1uyicaDVTB4QbbEkAYg==}
     dependencies:
@@ -11110,6 +11123,10 @@ packages:
 
   /@types/to-title-case@1.0.2:
     resolution: {integrity: sha512-JWCy93Z2bM/xYRcKjC2SOeU1PRYNOdZhD5ZUG8T1si9Tlau1M6UZ1wm7yR+avqdy51Du4BLEIaEB4axfPC4UKg==}
+    dev: true
+
+  /@types/trusted-types@2.0.7:
+    resolution: {integrity: sha512-ScaPdn1dQczgbl0QFTeTOmVHFULt394XJgOQNoyVhZ6r2vLnMLJfBPd53SB52T/3G36VI1/g2MZaX0cwDuXsfw==}
     dev: true
 
   /@types/tunnel@0.0.3:
@@ -14017,6 +14034,10 @@ packages:
     engines: {node: '>= 4'}
     dependencies:
       domelementtype: 2.3.0
+    dev: false
+
+  /dompurify@3.0.11:
+    resolution: {integrity: sha512-Fan4uMuyB26gFV3ovPoEoQbxRRPfTu3CvImyZnhGq5fsIEO+gEFLp45ISFt+kQBWsK5ulDdT0oV28jS1UrwQLg==}
     dev: false
 
   /domutils@2.8.0:
