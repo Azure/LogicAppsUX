@@ -426,7 +426,7 @@ const checkArrayInRepetition = (
 
 // Directly checking the node type, because cannot make async calls while adding token from picker to editor.
 // TODO - See if this can be made async and looked at manifest.
-export const isLoopingNode = (nodeId: string, operationInfos: Record<string, NodeOperation>, ignoreUntil?: boolean): boolean => {
+export const isLoopingNode = (nodeId: string, operationInfos: Record<string, NodeOperation>, ignoreUntil: boolean): boolean => {
   const nodeType = getRecordEntry(operationInfos, nodeId)?.type;
   return equals(nodeType, Constants.NODE.TYPE.FOREACH) || (!ignoreUntil && equals(nodeType, Constants.NODE.TYPE.UNTIL));
 };
