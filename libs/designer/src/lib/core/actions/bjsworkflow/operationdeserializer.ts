@@ -452,7 +452,6 @@ const initializeOutputTokensForOperations = (
 
     result[operationId] = nodeTokens;
   }
-  console.log(result);
 
   return result;
 };
