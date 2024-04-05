@@ -11,12 +11,6 @@
       "value": "Avviso: il tipo del nodo di input non corrisponde al tipo di nodo dello schema."
     }
   ],
-  "+0ua83": [
-    {
-      "type": 0,
-      "value": "Parametri"
-    }
-  ],
   "+0yxlR": [
     {
       "type": 0,
@@ -3370,7 +3364,7 @@
   "JgugQX": [
     {
       "type": 0,
-      "value": "Enter a valid Array."
+      "value": "Immetti una matrice valida."
     }
   ],
   "Ji6663": [
@@ -6133,12 +6127,6 @@
       "value": "Altre informazioni sul contenuto dinamico."
     }
   ],
-  "ZvAp7m": [
-    {
-      "type": 0,
-      "value": "Salva"
-    }
-  ],
   "ZyDq4/": [
     {
       "type": 0,
@@ -6232,7 +6220,7 @@
   "b7BQdu": [
     {
       "type": 0,
-      "value": "Enter a valid Boolean."
+      "value": "Immetti un valore booleano valido."
     }
   ],
   "b9/1dK": [
@@ -8445,12 +8433,6 @@
       "value": "Corpo della risposta"
     }
   ],
-  "ohOaXj": [
-    {
-      "type": 0,
-      "value": "Errori"
-    }
-  ],
   "onXUu0": [
     {
       "type": 0,
@@ -9006,12 +8988,6 @@
     {
       "type": 0,
       "value": "Annulla la creazione di una connessione"
-    }
-  ],
-  "sOnphB": [
-    {
-      "type": 0,
-      "value": "Inviare di nuovo"
     }
   ],
   "sQ2vRs": [

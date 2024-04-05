@@ -11,12 +11,6 @@
       "value": "Aviso: o tipo de nó de entrada não corresponde ao tipo do nó de esquema"
     }
   ],
-  "+0ua83": [
-    {
-      "type": 0,
-      "value": "Parâmetros"
-    }
-  ],
   "+0yxlR": [
     {
       "type": 0,
@@ -3358,7 +3352,7 @@
   "JgugQX": [
     {
       "type": 0,
-      "value": "Enter a valid Array."
+      "value": "Insira uma Matriz válida."
     }
   ],
   "Ji6663": [
@@ -6109,12 +6103,6 @@
       "value": "Saiba mais sobre limites dinâmicos."
     }
   ],
-  "ZvAp7m": [
-    {
-      "type": 0,
-      "value": "Salvar"
-    }
-  ],
   "ZyDq4/": [
     {
       "type": 0,
@@ -6208,7 +6196,7 @@
   "b7BQdu": [
     {
       "type": 0,
-      "value": "Enter a valid Boolean."
+      "value": "Insira um valor Booliano válido."
     }
   ],
   "b9/1dK": [
@@ -8425,12 +8413,6 @@
       "value": "Corpo da resposta"
     }
   ],
-  "ohOaXj": [
-    {
-      "type": 0,
-      "value": "Erros"
-    }
-  ],
   "onXUu0": [
     {
       "type": 0,
@@ -8986,12 +8968,6 @@
     {
       "type": 0,
       "value": "Cancelar a criação de uma conexão"
-    }
-  ],
-  "sOnphB": [
-    {
-      "type": 0,
-      "value": "Reenviar"
     }
   ],
   "sQ2vRs": [
