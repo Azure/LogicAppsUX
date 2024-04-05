@@ -10,9 +10,6 @@
       "node"
     ]
   },
-  "files": [
-    "../../types/Svg.d.ts"
-  ],
   "exclude": [
     "**/*.spec.ts",
     "**/*.test.ts",

@@ -1,35 +1,9 @@
-import type {
-  IConnectionParameterEditorOptions,
-  IConnectionParameterEditorProps,
-  IConnectionParameterEditorService,
-  IConnectionParameterInfo,
-} from '@microsoft/logic-apps-shared';
 import { ConnectionParameterRow, UniversalConnectionParameter } from '@microsoft/logic-apps-designer';
+import { IConnectionParameterEditorProps } from '@microsoft/logic-apps-shared';
 import { useEffect, useState } from 'react';
 
-export class CustomConnectionParameterEditorService implements IConnectionParameterEditorService {
-  public areCustomEditorsEnabled = false;
-
-  public getConnectionParameterEditor({
-    connectorId,
-    parameterKey,
-  }: IConnectionParameterInfo): IConnectionParameterEditorOptions | undefined {
-    if (!this.areCustomEditorsEnabled) {
-      return undefined;
-    }
-
-    if (connectorId === '/providers/Microsoft.PowerApps/apis/shared_uiflow' && parameterKey === 'targetId') {
-      return {
-        EditorComponent: TargetPicker,
-      };
-    }
-
-    return undefined;
-  }
-}
-
 // string parameter to dropdown options with manual value.
-const TargetPicker = (props: IConnectionParameterEditorProps) => {
+export const TargetPicker = (props: IConnectionParameterEditorProps) => {
   type RemoteOption = {
     text: string;
     value: any;
