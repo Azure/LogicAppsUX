@@ -14,6 +14,7 @@ import { useCallback, useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useQuery } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
+import { DrawerBody, DrawerHeader, DrawerHeaderTitle, InlineDrawer } from '@fluentui/react-components';
 
 const schemaFileQuerySettings = {
   cacheTime: 0,
@@ -242,21 +243,21 @@ export const AddSchemaDrawer = ({ readCurrentSchemaOptions, onSubmitSchemaFileSe
 
   return (
     <div>
-      <Panel
-        headerText={configureLoc}
-        isOpen={!!currentPanelView}
-        onDismiss={closeEntirePanel}
-        closeButtonAriaLabel={closeLoc}
-        onRenderFooterContent={onRenderFooterContent}
-        isFooterAtBottom={true}
-        overlayProps={{ isDarkThemed: currentTheme === 'dark' }}
-        isLightDismiss
+      <InlineDrawer
+        open={!!currentPanelView}
+
+        // onDismiss={closeEntirePanel}
+        // closeButtonAriaLabel={closeLoc}
+        // onRenderFooterContent={onRenderFooterContent}
+        // isFooterAtBottom={true}
+        // overlayProps={{ isDarkThemed: currentTheme === 'dark' }}
+        // isLightDismiss
       >
         {/* {currentPanelView === ConfigPanelView.DefaultConfig && (
           <DefaultConfigView setFunctionDisplayExpanded={setFunctionDisplayExpanded} useExpandedFunctionCards={useExpandedFunctionCards} />
         )} */}
 
-        {(currentPanelView === ConfigPanelView.AddSchema || currentPanelView === ConfigPanelView.UpdateSchema) && (
+        {/* {(currentPanelView === ConfigPanelView.AddSchema || currentPanelView === ConfigPanelView.UpdateSchema) && (
           <AddOrUpdateSchemaView
             schemaType={schemaType}
             selectedSchema={schemaType === SchemaType.Source ? selectedSourceSchema : selectedTargetSchema}
@@ -267,8 +268,14 @@ export const AddSchemaDrawer = ({ readCurrentSchemaOptions, onSubmitSchemaFileSe
             uploadType={uploadType}
             setUploadType={setUploadType}
           />
-        )}
-      </Panel>
+          
+        )} */}
+        <DrawerHeader>
+          <DrawerHeaderTitle>Source</DrawerHeaderTitle>
+        </DrawerHeader>
+
+        <DrawerBody>DrawerBody dropdown</DrawerBody>
+      </InlineDrawer>
     </div>
   );
 };
