@@ -1,6 +1,8 @@
 import { test, expect } from '@playwright/test';
 
-test('Should serialize the workflow after deserializing it and match', async ({ page }) => {
+test('Should serialize the workflow after deserializing it and match', {
+  tag: '@mock',
+}, async ({ page }) => {
   await page.goto('/');
 
   await page.locator('text=Select an option').click();
