@@ -873,6 +873,12 @@
       "value": "(UTC+10:30) Ostrov Lorda Howa"
     }
   ],
+  "3n6GJG": [
+    {
+      "type": 0,
+      "value": "Zadejte platný kód JSON."
+    }
+  ],
   "3rzrWf": [
     {
       "type": 0,
@@ -2905,12 +2911,6 @@
       "value": "Vysvětlit tok"
     }
   ],
-  "GXXLuT": [
-    {
-      "type": 0,
-      "value": "Zadejte platnou logickou hodnotu."
-    }
-  ],
   "GYvF54": [
     {
       "type": 0,
@@ -3391,6 +3391,12 @@
       "value": "Metoda"
     }
   ],
+  "JgugQX": [
+    {
+      "type": 0,
+      "value": "Enter a valid Array."
+    }
+  ],
   "Ji6663": [
     {
       "type": 0,
@@ -3825,12 +3831,6 @@
       "value": "Vrátí aktuální časové razítko jako řetězec."
     }
   ],
-  "MVrv+N": [
-    {
-      "type": 0,
-      "value": "Zadejte platné pole."
-    }
-  ],
   "MYgKHu": [
     {
       "type": 0,
@@ -3858,7 +3858,7 @@
   "Mcvr0B": [
     {
       "type": 0,
-      "value": "To use modules or dependecies, please add at Custom Code Dependenncies in Portal TOC"
+      "value": "Pokud chcete používat moduly nebo závislosti, přidejte je prosím na stránce Závislosti vlastního kódu na TOC portálu."
     }
   ],
   "MfAdfx": [
@@ -6261,6 +6261,12 @@
       "value": "Přidejte nebo vyberte zdrojové schéma, které se použije pro vaši mapu."
     }
   ],
+  "b7BQdu": [
+    {
+      "type": 0,
+      "value": "Enter a valid Boolean."
+    }
+  ],
   "b9/1dK": [
     {
       "type": 0,
@@ -6355,12 +6361,6 @@
     {
       "type": 0,
       "value": "Informace"
-    }
-  ],
-  "bYwqkV": [
-    {
-      "type": 0,
-      "value": "Zadejte platný JSON."
     }
   ],
   "ba9yGJ": [
@@ -6603,6 +6603,12 @@
       "value": "Další informace"
     }
   ],
+  "dEe6Ob": [
+    {
+      "type": 0,
+      "value": "Zadejte platný kód JSON."
+    }
+  ],
   "dKCp2j": [
     {
       "type": 0,
@@ -6711,6 +6717,12 @@
     {
       "type": 0,
       "value": "Jak často chcete vyhledávat položky?"
+    }
+  ],
+  "e1gQAz": [
+    {
+      "type": 0,
+      "value": "Please start the project by pressing F5 or run it through the Run and Debug view"
     }
   ],
   "e4JZEY": [
@@ -7821,12 +7833,6 @@
     {
       "type": 0,
       "value": "Chybí vlastnost typu ověřování: type"
-    }
-  ],
-  "kxMDyM": [
-    {
-      "type": 0,
-      "value": "Zadejte platný JSON."
     }
   ],
   "l/3yJr": [

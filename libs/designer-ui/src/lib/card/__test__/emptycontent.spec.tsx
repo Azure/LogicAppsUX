@@ -1,7 +1,7 @@
 import { EmptyContent } from '../emptycontent';
 import React from 'react';
 import ShallowRenderer from 'react-test-renderer/shallow';
-
+import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 describe('lib/card/emptycontent', () => {
   let renderer: ShallowRenderer.ShallowRenderer;
 

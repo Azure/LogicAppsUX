@@ -3,7 +3,7 @@ import { ValueSegmentConvertor } from '../segment';
 import type { ValueSegment } from '@microsoft/designer-ui';
 import { TokenType, ValueSegmentType } from '@microsoft/designer-ui';
 import { convertToStringLiteral, OutputSource } from '@microsoft/logic-apps-shared';
-
+import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 describe('core/utils/parameters/segment', () => {
   describe('ValueSegmentConvertor', () => {
     it('should convert primatives to token segment successfully.', () => {

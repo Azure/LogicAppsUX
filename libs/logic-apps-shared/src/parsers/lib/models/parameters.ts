@@ -1,4 +1,4 @@
-import { isNullOrUndefined } from '@microsoft/utils-logic-apps';
+import { isNullOrUndefined } from '../../../utils/src';
 
 export interface ParametersObject {
   type: string;

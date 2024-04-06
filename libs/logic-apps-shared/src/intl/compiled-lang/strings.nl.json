@@ -873,6 +873,12 @@
       "value": "(UTC+10:30) Lord Howe Island"
     }
   ],
+  "3n6GJG": [
+    {
+      "type": 0,
+      "value": "Voer een geldige JSON in."
+    }
+  ],
   "3rzrWf": [
     {
       "type": 0,
@@ -2849,12 +2855,6 @@
       "value": "Stroom uitleggen"
     }
   ],
-  "GXXLuT": [
-    {
-      "type": 0,
-      "value": "Voer een geldige booleaanse waarde in."
-    }
-  ],
   "GYvF54": [
     {
       "type": 0,
@@ -3343,6 +3343,12 @@
       "value": "Methode"
     }
   ],
+  "JgugQX": [
+    {
+      "type": 0,
+      "value": "Voer een geldige matrix in."
+    }
+  ],
   "Ji6663": [
     {
       "type": 0,
@@ -3755,12 +3761,6 @@
       "value": "Het huidige tijdstempel wordt als tekenreeks geretourneerd"
     }
   ],
-  "MVrv+N": [
-    {
-      "type": 0,
-      "value": "Voer een geldige matrix in."
-    }
-  ],
   "MYgKHu": [
     {
       "type": 0,
@@ -3788,7 +3788,7 @@
   "Mcvr0B": [
     {
       "type": 0,
-      "value": "To use modules or dependecies, please add at Custom Code Dependenncies in Portal TOC"
+      "value": "Als u modules of afhankelijkheden wilt gebruiken, voegt u aangepaste code-afhankelijkheden toe in portal-INHOUDSOPGAVE"
     }
   ],
   "MfAdfx": [
@@ -6165,6 +6165,12 @@
       "value": "Voeg een bronschema toe of selecteer dit om te gebruiken voor uw kaart."
     }
   ],
+  "b7BQdu": [
+    {
+      "type": 0,
+      "value": "Voer een geldige booleaanse waarde in."
+    }
+  ],
   "b9/1dK": [
     {
       "type": 0,
@@ -6259,12 +6265,6 @@
     {
       "type": 0,
       "value": "Info"
-    }
-  ],
-  "bYwqkV": [
-    {
-      "type": 0,
-      "value": "Voer een geldige JSON in."
     }
   ],
   "ba9yGJ": [
@@ -6507,6 +6507,12 @@
       "value": "Meer informatie"
     }
   ],
+  "dEe6Ob": [
+    {
+      "type": 0,
+      "value": "Voer een geldige JSON in."
+    }
+  ],
   "dKCp2j": [
     {
       "type": 0,
@@ -6615,6 +6621,12 @@
     {
       "type": 0,
       "value": "Hoe vaak wilt u controleren op items?"
+    }
+  ],
+  "e1gQAz": [
+    {
+      "type": 0,
+      "value": "Please start the project by pressing F5 or run it through the Run and Debug view"
     }
   ],
   "e4JZEY": [
@@ -7677,12 +7689,6 @@
     {
       "type": 0,
       "value": "Ontbrekende verificatietype-eigenschap: type."
-    }
-  ],
-  "kxMDyM": [
-    {
-      "type": 0,
-      "value": "Voer een geldige JSON in."
     }
   ],
   "l/3yJr": [

@@ -3,8 +3,8 @@ import type { DynamicListExtension, InputParameter, OutputParameter } from '../.
 import { DynamicSchemaType, DynamicValuesType } from '../../models/operation';
 import { ManifestParser } from '../parser';
 import { createItem, getEmails, onNewEmail } from './data/manifests';
-import { equals } from '@microsoft/utils-logic-apps';
-
+import { equals } from '../../../../utils/src';
+import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 describe('Operation manifest parser tests', () => {
   describe('Input Parameters', () => {
     it('should return empty object when there is no inputs.', () => {

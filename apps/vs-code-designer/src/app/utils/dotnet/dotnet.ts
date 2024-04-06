@@ -19,8 +19,8 @@ import { getGlobalSetting, updateGlobalSetting, updateWorkspaceSetting } from '.
 import { findFiles, getWorkspaceFolder } from '../workspace';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { AzExtFsExtra } from '@microsoft/vscode-azext-utils';
-import type { IWorkerRuntime } from '@microsoft/vscode-extension';
-import { FuncVersion, ProjectLanguage } from '@microsoft/vscode-extension';
+import type { IWorkerRuntime } from '@microsoft/vscode-extension-logic-apps';
+import { FuncVersion, ProjectLanguage } from '@microsoft/vscode-extension-logic-apps';
 import * as fs from 'fs';
 import * as path from 'path';
 import * as semver from 'semver';

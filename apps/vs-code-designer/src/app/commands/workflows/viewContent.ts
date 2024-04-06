@@ -13,7 +13,7 @@ import type {
   FunctionConnectionModel,
   ServiceProviderConnectionModel,
   IWorkflowFileContent,
-} from '@microsoft/vscode-extension';
+} from '@microsoft/vscode-extension-logic-apps';
 
 export async function viewContent(_context: IActionContext, node: ConnectionTreeItem | RemoteWorkflowTreeItem): Promise<void> {
   let data:

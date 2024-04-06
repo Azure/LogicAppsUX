@@ -48,11 +48,11 @@ import {
   TokenPicker,
   TokenPickerButtonLocation,
   TokenType,
+  isCustomCode,
   toCustomEditorAndOptions,
 } from '@microsoft/designer-ui';
 import type { ChangeState, ParameterInfo, ValueSegment, OutputToken, TokenPickerMode, PanelTabFn } from '@microsoft/designer-ui';
 import {
-  CustomCodeService,
   EditorService,
   equals,
   getPropertyValue,
@@ -234,7 +234,7 @@ const ParameterSection = ({
         }
       }
 
-      if (CustomCodeService().isCustomCode(parameter?.editor, parameter?.editorOptions?.language)) {
+      if (isCustomCode(parameter?.editor, parameter?.editorOptions?.language)) {
         const { fileData, fileExtension, fileName } = viewModel.customCodeData;
         dispatch(addOrUpdateCustomCode({ nodeId, fileData, fileExtension, fileName }));
       }

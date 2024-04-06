@@ -1,5 +1,5 @@
 import { ResolutionService } from '../resolution-service';
-
+import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 describe('Resolution Service tests', () => {
   it('should resolve a full string replacement correctly', () => {
     const parameters = {

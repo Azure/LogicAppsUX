@@ -881,6 +881,12 @@
       "value": "(UTC+10:30) Lord Howe-sziget"
     }
   ],
+  "3n6GJG": [
+    {
+      "type": 0,
+      "value": "Érvényes JSON-t adjon meg."
+    }
+  ],
   "3rzrWf": [
     {
       "type": 0,
@@ -2861,12 +2867,6 @@
       "value": "A folyamat elmagyarázása"
     }
   ],
-  "GXXLuT": [
-    {
-      "type": 0,
-      "value": "Adjon meg egy érvényes logikai értéket."
-    }
-  ],
   "GYvF54": [
     {
       "type": 0,
@@ -3355,6 +3355,12 @@
       "value": "Módszer"
     }
   ],
+  "JgugQX": [
+    {
+      "type": 0,
+      "value": "Enter a valid Array."
+    }
+  ],
   "Ji6663": [
     {
       "type": 0,
@@ -3767,12 +3773,6 @@
       "value": "Az aktuális időbélyeget adja vissza sztringként."
     }
   ],
-  "MVrv+N": [
-    {
-      "type": 0,
-      "value": "Adjon meg egy érvényes tömböt."
-    }
-  ],
   "MYgKHu": [
     {
       "type": 0,
@@ -3800,7 +3800,7 @@
   "Mcvr0B": [
     {
       "type": 0,
-      "value": "To use modules or dependecies, please add at Custom Code Dependenncies in Portal TOC"
+      "value": "Modulok vagy függőségek használatához vegye fel az egyéni kódtól való függőségeket a portál tartalomjegyzékében."
     }
   ],
   "MfAdfx": [
@@ -6169,6 +6169,12 @@
       "value": "Töltse fel vagy válassza ki a leképezéshez használni kívánt forrássémát."
     }
   ],
+  "b7BQdu": [
+    {
+      "type": 0,
+      "value": "Enter a valid Boolean."
+    }
+  ],
   "b9/1dK": [
     {
       "type": 0,
@@ -6263,12 +6269,6 @@
     {
       "type": 0,
       "value": "Információ"
-    }
-  ],
-  "bYwqkV": [
-    {
-      "type": 0,
-      "value": "Érvényes JSON-t adjon meg."
     }
   ],
   "ba9yGJ": [
@@ -6511,6 +6511,12 @@
       "value": "További információ"
     }
   ],
+  "dEe6Ob": [
+    {
+      "type": 0,
+      "value": "Érvényes JSON-t adjon meg."
+    }
+  ],
   "dKCp2j": [
     {
       "type": 0,
@@ -6619,6 +6625,12 @@
     {
       "type": 0,
       "value": "Milyen gyakran szeretne elemeket keresni?"
+    }
+  ],
+  "e1gQAz": [
+    {
+      "type": 0,
+      "value": "Please start the project by pressing F5 or run it through the Run and Debug view"
     }
   ],
   "e4JZEY": [
@@ -7681,12 +7693,6 @@
     {
       "type": 0,
       "value": "Hiányzik a hitelesítés típusa tulajdonság: típus."
-    }
-  ],
-  "kxMDyM": [
-    {
-      "type": 0,
-      "value": "Érvényes JSON-t adjon meg."
     }
   ],
   "l/3yJr": [
