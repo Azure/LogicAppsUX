@@ -24,7 +24,13 @@ jobs:
     #   run: |
     #     mkdir ./apps/standalone/src/environments/jsonImport
     #     touch ./apps/standalone/src/environments/jsonImport/armToken.json
-
+    - uses: pnpm/action-setup@v3
+      with:
+        version: 8
+        run_install: |
+          - recursive: true
+            args: [--frozen-lockfile, --strict-peer-dependencies]
+             
     - name: Azure CLI script
       uses: azure/cli@v2
       with:
@@ -37,13 +43,7 @@ jobs:
             --template-file ./e2e/testSetup/BlankLogicApp/logicAppStandard.bicep
             
     
-    - uses: pnpm/action-setup@v3
-      with:
-        version: 8
-        run_install: |
-          - recursive: true
-            args: [--frozen-lockfile, --strict-peer-dependencies]
-                                
+                       
     - name: Install Playwright Browsers
       run: pnpm run e2e:setup
     - name: Run Playwright tests
