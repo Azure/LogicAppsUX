@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`lib/identitydropdown should render 1`] = `
+exports[`lib/identitydropdown > should render 1`] = `
 <div
   className="msla-identity-dropdown-container"
 >
@@ -22,7 +22,7 @@ exports[`lib/identitydropdown should render 1`] = `
       data-ktp-target={true}
       id="Dropdown0"
       onBlur={[Function]}
-      onChange={[MockFunction]}
+      onChange={[MockFunction spy]}
       onClick={[Function]}
       onFocus={[Function]}
       onKeyDown={[Function]}

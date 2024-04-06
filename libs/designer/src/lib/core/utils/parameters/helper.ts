@@ -1,10 +1,12 @@
 /* eslint-disable no-case-declarations  */
+import type { CustomCodeFileNameMapping } from '../../..';
 import constants from '../../../common/constants';
 import type { ConnectionReference, WorkflowParameter } from '../../../common/models/workflow';
 import { getReactQueryClient } from '../../ReactQueryProvider';
 import type { NodeDataWithOperationMetadata } from '../../actions/bjsworkflow/operationdeserializer';
 import type { Settings } from '../../actions/bjsworkflow/settings';
 import { getConnectorWithSwagger } from '../../queries/connections';
+import type { CustomCodeState } from '../../state/customcode/customcodeInterfaces';
 import type {
   DependencyInfo,
   NodeDependencies,
@@ -53,40 +55,15 @@ import {
   isParameterToken,
   isTokenValueSegment,
   isValueSegment,
+  isValueSegmentArray,
   isVariableToken,
   ValueSegmentConvertor,
 } from './segment';
-import { LogEntryLevel, LoggerService, OperationManifestService, WorkflowService } from '@microsoft/designer-client-services-logic-apps';
-import type {
-  AuthProps,
-  ComboboxItem,
-  DictionaryEditorItemProps,
-  DropdownItem,
-  FloatingActionMenuOutputViewModel,
-  GroupItemProps,
-  OutputToken,
-  ParameterInfo,
-  RowItemProps,
-  Token as SegmentToken,
-  Token,
-  ValueSegment,
-} from '@microsoft/designer-ui';
 import {
-  removeQuotes,
-  ArrayType,
-  FloatingActionMenuKind,
-  getOuterMostCommaIndex,
-  RowDropdownOptions,
-  GroupDropdownOptions,
-  GroupType,
-  AuthenticationType,
-  ColumnMode,
-  DynamicCallStatus,
-  ValueSegmentType,
-  TokenType,
-  AuthenticationOAuthType,
-} from '@microsoft/designer-ui';
-import {
+  LogEntryLevel,
+  LoggerService,
+  OperationManifestService,
+  WorkflowService,
   getIntl,
   isDynamicTreeExtension,
   isLegacyDynamicValuesTreeExtension,
@@ -137,7 +114,38 @@ import {
   nthLastIndexOf,
   parseErrorMessage,
   getRecordEntry,
+  replaceWhiteSpaceWithUnderscore,
+  isRecordNotEmpty,
 } from '@microsoft/logic-apps-shared';
+import type {
+  AuthProps,
+  ComboboxItem,
+  DictionaryEditorItemProps,
+  DropdownItem,
+  FloatingActionMenuOutputViewModel,
+  GroupItemProps,
+  OutputToken,
+  ParameterInfo,
+  RowItemProps,
+  Token as SegmentToken,
+  Token,
+  ValueSegment,
+} from '@microsoft/designer-ui';
+import {
+  removeQuotes,
+  ArrayType,
+  FloatingActionMenuKind,
+  getOuterMostCommaIndex,
+  RowDropdownOptions,
+  GroupDropdownOptions,
+  GroupType,
+  AuthenticationType,
+  ColumnMode,
+  DynamicCallStatus,
+  ValueSegmentType,
+  TokenType,
+  AuthenticationOAuthType,
+} from '@microsoft/designer-ui';
 import type {
   DependentParameterInfo,
   DynamicParameters,
@@ -244,6 +252,7 @@ export function addRecurrenceParametersInGroup(
         id: ParameterGroupKeys.RECURRENCE,
         description: intl.formatMessage({
           defaultMessage: 'How often do you want to check for items?',
+          id: 'e00zot',
           description: 'Recurrence parameter group title',
         }),
         parameters: recurrenceParameters,
@@ -424,8 +433,8 @@ export function getParameterEditorProps(
     editorViewModel = editorOptions?.isOldFormat
       ? toSimpleQueryBuilderViewModel(value)
       : editorOptions?.isHybridEditor
-      ? toHybridConditionViewModel(value)
-      : toConditionViewModel(value);
+        ? toHybridConditionViewModel(value)
+        : toConditionViewModel(value);
   } else if (dynamicValues && isLegacyDynamicValuesExtension(dynamicValues) && dynamicValues.extension.builtInOperation) {
     editor = undefined;
   } else if (editor === constants.EDITOR.FILEPICKER && dynamicValues) {
@@ -565,7 +574,7 @@ const toSimpleQueryBuilderViewModel = (
   let operand1: ValueSegment, operand2: ValueSegment, operationLiteral: ValueSegment;
   // default value
   if (!input || input.length === 0) {
-    return { isOldFormat: true, isRowFormat: true, itemValue: [{ id: guid(), type: ValueSegmentType.LITERAL, value: "@equals('','')" }] };
+    return { isOldFormat: true, isRowFormat: true, itemValue: [createLiteralValueSegment("@equals('','')")] };
   }
 
   if (!input.includes('@') || !input.includes(',')) {
@@ -582,11 +591,11 @@ const toSimpleQueryBuilderViewModel = (
       stringValue = stringValue.replace('@not(', '@');
       const baseOperator = stringValue.substring(stringValue.indexOf('@') + 1, stringValue.indexOf('('));
       operator = 'not' + baseOperator;
-      operationLiteral = { id: guid(), type: ValueSegmentType.LITERAL, value: `@not(${baseOperator}(` };
-      endingLiteral = { id: guid(), type: ValueSegmentType.LITERAL, value: `))` };
+      operationLiteral = createLiteralValueSegment(`@not(${baseOperator}(`);
+      endingLiteral = createLiteralValueSegment(`))`);
     } else {
-      operationLiteral = { id: guid(), type: ValueSegmentType.LITERAL, value: `@${operator}(` };
-      endingLiteral = { id: guid(), type: ValueSegmentType.LITERAL, value: ')' };
+      operationLiteral = createLiteralValueSegment(`@${operator}(`);
+      endingLiteral = createLiteralValueSegment(')');
     }
 
     // if operator is not of the dropdownlist, it cannot be converted into row format
@@ -598,7 +607,7 @@ const toSimpleQueryBuilderViewModel = (
     const operand2String = removeQuotes(operandSubstring.substring(getOuterMostCommaIndex(operandSubstring) + 1).trim());
     operand1 = loadParameterValueFromString(operand1String, true, true, true)[0];
     operand2 = loadParameterValueFromString(operand2String, true, true, true)[0];
-    const separatorLiteral: ValueSegment = { id: guid(), type: ValueSegmentType.LITERAL, value: `,` };
+    const separatorLiteral: ValueSegment = createLiteralValueSegment(`,`);
     return {
       isOldFormat: true,
       isRowFormat: true,
@@ -861,10 +870,11 @@ export function loadParameterValue(parameter: InputParameter): ValueSegment[] {
 
   if (parameter.isNotificationUrl) {
     valueObject = `@${constants.HTTP_WEBHOOK_LIST_CALLBACK_URL_NAME}`;
-  } else if (parameter.value) {
-    valueObject = parameter.value;
-  } else if (parameter.default) {
-    valueObject = parameter.default;
+  } else {
+    valueObject = parameter?.value;
+    if (parameter?.required && valueObject === undefined) {
+      valueObject = parameter?.default;
+    }
   }
 
   let valueSegments = convertToValueSegments(valueObject, !parameter.suppressCasting /* shouldUncast */);
@@ -980,7 +990,7 @@ export function getExpressionValueForOutputToken(token: OutputToken, nodeType: s
   const {
     key,
     name,
-    outputInfo: { type: tokenType, actionName, required, arrayDetails, functionArguments },
+    outputInfo: { type: tokenType, actionName, required, arrayDetails, functionArguments, source },
   } = token;
   // get the expression value for webhook list callback url
   if (key === constants.HTTP_WEBHOOK_LIST_CALLBACK_URL_KEY) {
@@ -1020,17 +1030,29 @@ export function getExpressionValueForOutputToken(token: OutputToken, nodeType: s
       }
 
     default:
-      method = arrayDetails ? constants.ITEM : getTokenExpressionMethodFromKey(key, actionName);
+      method = arrayDetails ? constants.ITEM : getTokenExpressionMethodFromKey(key, actionName, source);
       return generateExpressionFromKey(method, key, actionName, !!arrayDetails, !!required);
   }
 }
 
-export function getTokenExpressionMethodFromKey(key: string, actionName: string | undefined): string {
+export function getTokenExpressionMethodFromKey(key: string, actionName: string | undefined, source: string | undefined): string {
   const segments = parseEx(key);
   if (segmentsAreBodyReference(segments)) {
     return actionName ? `${OutputSource.Body}(${convertToStringLiteral(actionName)})` : constants.TRIGGER_BODY_OUTPUT;
   } else {
-    return actionName ? `${constants.OUTPUTS}(${convertToStringLiteral(actionName)})` : constants.TRIGGER_OUTPUTS_OUTPUT;
+    if (actionName) {
+      return `${OutputSource.Outputs}(${convertToStringLiteral(actionName)})`;
+    }
+    if (source) {
+      if (equals(source, OutputSource.Queries)) {
+        return constants.TRIGGER_QUERIES_OUTPUT;
+      } else if (equals(source, OutputSource.Headers)) {
+        return constants.TRIGGER_HEADERS_OUTPUT;
+      } else if (equals(source, OutputSource.StatusCode)) {
+        return constants.TRIGGER_STATUS_CODE_OUTPUT;
+      }
+    }
+    return constants.TRIGGER_OUTPUTS_OUTPUT;
   }
 }
 
@@ -1082,8 +1104,8 @@ export function getTokenValueFromToken(tokenType: TokenType, functionArguments: 
   return tokenType === TokenType.PARAMETER
     ? `parameters(${convertToStringLiteral(functionArguments[0])})`
     : tokenType === TokenType.VARIABLE
-    ? `variables(${convertToStringLiteral(functionArguments[0])})`
-    : undefined;
+      ? `variables(${convertToStringLiteral(functionArguments[0])})`
+      : undefined;
 }
 
 export function getTokenExpressionValue(token: SegmentToken, currentValue?: string): string {
@@ -1160,7 +1182,7 @@ function getNonOpenApiTokenExpressionValue(token: SegmentToken): string {
     } else if (propertyInHeaders) {
       expressionValue = `${constants.TRIGGER_HEADERS_OUTPUT}${propertyPath}`;
     } else if (propertyInStatusCode) {
-      expressionValue = `${constants.TRIGGER_OUTPUTS_OUTPUT}['${constants.OUTPUT_LOCATIONS.STATUS_CODE}']`;
+      expressionValue = `${constants.TRIGGER_STATUS_CODE_OUTPUT}`;
     } else if (propertyInOutputs) {
       if (equals(name, OutputKeys.PathParameters) || includes(key, OutputKeys.PathParameters)) {
         expressionValue = `${constants.TRIGGER_OUTPUTS_OUTPUT}['${constants.OUTPUT_LOCATIONS.RELATIVE_PATH_PARAMETERS}']${propertyPath}`;
@@ -1994,9 +2016,11 @@ async function loadDynamicContentForInputsInNode(
           );
         } catch (error: any) {
           const message = parseErrorMessage(error);
-          const errorMessage = getIntl().formatMessage(
+          const intl = getIntl();
+          const errorMessage = intl.formatMessage(
             {
               defaultMessage: `Failed to retrieve dynamic inputs. Error details: ''{message}''`,
+              id: 'sytRna',
               description: 'Error message to show when loading dynamic inputs failed',
             },
             { message }
@@ -2186,9 +2210,11 @@ async function tryGetInputDynamicSchema(
     }
 
     const message = parseErrorMessage(error);
-    const errorMessage = getIntl().formatMessage(
+    const intl = getIntl();
+    const errorMessage = intl.formatMessage(
       {
         defaultMessage: `Failed to retrieve dynamic inputs. Error details: ''{message}''`,
+        id: 'sytRna',
         description: 'Error message to show when loading dynamic inputs failed',
       },
       { message }
@@ -2234,6 +2260,7 @@ function showErrorWhenDependenciesNotReady(
                 message: intl.formatMessage(
                   {
                     defaultMessage: 'Required parameters {parameters} not set or invalid',
+                    id: '3Y8a6G',
                     description: 'Error message to show when required parameters are not set or invalid',
                   },
                   { parameters: `${invalidParameterNames.join(' , ')}` }
@@ -2385,9 +2412,11 @@ export const recurseSerializeCondition = (
     );
     if (errors && errors.length === 0 && (operand1String || operand2String)) {
       if (!operand1String) {
+        const intl = getIntl();
         errors.push(
-          getIntl().formatMessage({
+          intl.formatMessage({
             defaultMessage: 'Enter a valid condition statement.',
+            id: 'WToL/O',
             description: 'Error validation message for invalid condition statement',
           })
         );
@@ -2411,8 +2440,8 @@ export const recurseSerializeCondition = (
         {
           type: GroupType.ROW,
           operator: RowDropdownOptions.EQUALS,
-          operand1: [{ id: guid(), type: ValueSegmentType.LITERAL, value: '' }],
-          operand2: [{ id: guid(), type: ValueSegmentType.LITERAL, value: '' }],
+          operand1: [createLiteralValueSegment('')],
+          operand2: [createLiteralValueSegment('')],
         },
       ];
     }
@@ -2490,6 +2519,36 @@ export function getGroupAndParameterFromParameterKey(
 
   return undefined;
 }
+
+export const getCustomCodeFileName = (nodeId: string, nodeInputs?: NodeInputs, idReplacements?: Record<string, string>): string => {
+  const updatedNodeId = idReplacements?.[nodeId] || nodeId;
+  let fileName = replaceWhiteSpaceWithUnderscore(updatedNodeId);
+
+  if (nodeInputs) {
+    const parameter = getParameterFromName(nodeInputs, constants.DEFAULT_CUSTOM_CODE_INPUT);
+    const fileExtension = parameter?.editorViewModel?.customCodeData?.fileExtension;
+    if (fileExtension) {
+      fileName = `${fileName}${fileExtension}`;
+    }
+  }
+  return fileName;
+};
+
+export const getCustomCodeFilesWithData = (state: CustomCodeState): CustomCodeFileNameMapping => {
+  const { files, fileData } = state;
+  const customCodeFileWithData: CustomCodeFileNameMapping = {};
+  Object.entries(files).forEach(([fileName, fileInfo]) => {
+    const { nodeId } = fileInfo;
+    const fileDataInfo = getRecordEntry(fileData, nodeId);
+    if (fileDataInfo || fileInfo.isDeleted) {
+      customCodeFileWithData[fileName] = {
+        ...fileInfo,
+        fileData: fileDataInfo ?? '',
+      };
+    }
+  });
+  return customCodeFileWithData;
+};
 
 export function getInputsValueFromDefinitionForManifest(
   inputsLocation: string[],
@@ -3128,10 +3187,16 @@ export function parameterValueToString(
   isDefinitionValue: boolean,
   idReplacements?: Record<string, string>
 ): string | undefined {
-  const { value: remappedValue, didRemap } = idReplacements
-    ? remapValueSegmentsWithNewIds(parameterInfo.value, idReplacements)
+  const { value: remappedValue, didRemap } = isRecordNotEmpty(idReplacements)
+    ? remapValueSegmentsWithNewIds(parameterInfo.value, idReplacements ?? {})
     : { value: parameterInfo.value, didRemap: false };
-  const remappedParameterInfo = idReplacements ? { ...parameterInfo, value: remappedValue } : parameterInfo;
+  const remappedEditorViewModel = isRecordNotEmpty(idReplacements)
+    ? remapEditorViewModelWithNewIds(parameterInfo.editorViewModel, idReplacements ?? {})
+    : parameterInfo.editorViewModel;
+
+  const remappedParameterInfo = isRecordNotEmpty(idReplacements)
+    ? { ...parameterInfo, value: remappedValue, editorViewModel: remappedEditorViewModel }
+    : parameterInfo;
 
   if (didRemap) delete remappedParameterInfo.preservedValue;
 
@@ -3308,6 +3373,24 @@ export function getJSONValueFromString(value: any, type: string): any {
   return parameterValue;
 }
 
+export function remapEditorViewModelWithNewIds(editorViewModel: any, idReplacements: Record<string, string>): any {
+  if (Array.isArray(editorViewModel)) {
+    if (isValueSegmentArray(editorViewModel)) {
+      return remapValueSegmentsWithNewIds(editorViewModel, idReplacements).value;
+    }
+    return editorViewModel.map((value: any) => {
+      return remapEditorViewModelWithNewIds(value, idReplacements);
+    });
+  } else if (isObject(editorViewModel)) {
+    const updatedEditorViewModel = { ...editorViewModel };
+    Object.entries(editorViewModel).forEach(([key, value]) => {
+      updatedEditorViewModel[key] = remapEditorViewModelWithNewIds(value, idReplacements);
+    });
+    return updatedEditorViewModel;
+  }
+  return editorViewModel;
+}
+
 export function remapValueSegmentsWithNewIds(
   segments: ValueSegment[],
   idReplacements: Record<string, string>
@@ -3316,7 +3399,7 @@ export function remapValueSegmentsWithNewIds(
   const value = segments.map((segment) => {
     if (isTokenValueSegment(segment)) {
       const result = remapTokenSegmentValue(segment, idReplacements);
-      didRemap = result.didRemap;
+      didRemap = didRemap || result.didRemap;
       return result.value;
     }
 

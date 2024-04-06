@@ -1,6 +1,7 @@
 import {
   collectionBranding,
   conversionBranding,
+  customBranding,
   dateTimeBranding,
   logicalBranding,
   mathBranding,
@@ -24,7 +25,7 @@ export const getFunctionBrandingForCategory = (functionCategory: FunctionCategor
       return collectionBranding;
     }
     case FunctionCategory.Custom: {
-      return collectionBranding;
+      return customBranding;
     }
     case FunctionCategory.DateTime: {
       return dateTimeBranding;
@@ -236,8 +237,8 @@ export const getInputName = (inputConnection: InputConnection | undefined, conne
     return isCustomValue(inputConnection)
       ? inputConnection
       : isSchemaNodeExtended(inputConnection.node)
-      ? inputConnection.node.name
-      : functionDropDownItemText(inputConnection.reactFlowKey, inputConnection.node, connectionDictionary);
+        ? inputConnection.node.name
+        : functionDropDownItemText(inputConnection.reactFlowKey, inputConnection.node, connectionDictionary);
   }
 
   return undefined;

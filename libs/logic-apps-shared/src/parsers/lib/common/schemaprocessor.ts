@@ -1,4 +1,5 @@
 /* eslint-disable no-param-reassign */
+import { getIntl } from '../../../intl/src';
 import type { SchemaProperty } from '../models/operation';
 import * as SwaggerConstants from './constants';
 import * as ParameterKeyUtility from './helpers/keysutility';
@@ -11,9 +12,8 @@ import {
   getParameterDynamicSchema,
   getParameterDynamicValues,
 } from './helpers/utils';
-import { getIntl } from '@microsoft/intl-logic-apps';
-import type { OpenAPIV2 } from '@microsoft/utils-logic-apps';
-import { aggregate, clone, equals, hasProperty, isNullOrUndefined } from '@microsoft/utils-logic-apps';
+import type { OpenAPIV2 } from '../../../utils/src';
+import { aggregate, clone, equals, hasProperty, isNullOrUndefined } from '../../../utils/src';
 
 export type OpenApiSchema = OpenAPIV2.Schema;
 
@@ -167,7 +167,7 @@ export class SchemaProcessor {
       const title = this.options.isInputSchema
         ? schema.title ||
           (this.options.currentKey === ParameterKeyUtility.WildIndexSegment
-            ? intl.formatMessage({ defaultMessage: 'Item', description: 'Label for single item inside an array.' })
+            ? intl.formatMessage({ defaultMessage: 'Item', id: 'QbJDi7', description: 'Label for single item inside an array.' })
             : this.options.currentKey)
         : schema.title;
       const originalTitlePrefix = this.options.titlePrefix;
@@ -274,8 +274,8 @@ export class SchemaProcessor {
           this.options.useAliasedIndexing && childAlias
             ? childAlias
             : this.options.prefix
-            ? `${this.options.prefix}.${encodedChildPropertyName}`
-            : encodedChildPropertyName;
+              ? `${this.options.prefix}.${encodedChildPropertyName}`
+              : encodedChildPropertyName;
         const required = isNullOrUndefined(this.options.required)
           ? requiredProperties.indexOf(key) !== -1
           : this.options.required && requiredProperties.indexOf(key) !== -1;
@@ -559,11 +559,16 @@ export class SchemaProcessor {
 
   private _getTitle(title: string, key: string, keyPrefix: string, name: string): string {
     const intl = getIntl();
+    const defaultItemTitle = intl.formatMessage({
+      defaultMessage: 'Item',
+      id: 'QbJDi7',
+      description: 'Label for single item inside an array.',
+    });
     const titleText = title
       ? title
       : key === ParameterKeyUtility.WildIndexSegment
-      ? intl.formatMessage({ defaultMessage: 'Item', description: 'Label for single item inside an array.' })
-      : getKnownTitlesFromKey(keyPrefix) ?? getKnownTitles(name) ?? key;
+        ? defaultItemTitle
+        : getKnownTitlesFromKey(keyPrefix) ?? getKnownTitles(name) ?? key;
     const titlePrefix = this.options.titlePrefix || this.options.summaryPrefix;
 
     return titlePrefix && titleText ? `${titlePrefix} ${titleText}` : titleText;

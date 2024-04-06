@@ -48,8 +48,8 @@ import {
 } from '@microsoft/vscode-azext-azureutils';
 import type { AzExtTreeItem, AzureWizardExecuteStep, AzureWizardPromptStep, IActionContext } from '@microsoft/vscode-azext-utils';
 import { nonNullProp, parseError, AzureWizard } from '@microsoft/vscode-azext-utils';
-import type { IFunctionAppWizardContext, ICreateLogicAppContext } from '@microsoft/vscode-extension';
-import { FuncVersion } from '@microsoft/vscode-extension';
+import type { IFunctionAppWizardContext, ICreateLogicAppContext } from '@microsoft/vscode-extension-logic-apps';
+import { FuncVersion } from '@microsoft/vscode-extension-logic-apps';
 
 export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
   public readonly childTypeLabel: string = localize('LogicApp', 'Logic App (Standard) in Azure');

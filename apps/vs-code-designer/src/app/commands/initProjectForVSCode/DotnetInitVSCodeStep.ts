@@ -19,8 +19,8 @@ import { tryParseFuncVersion } from '../../utils/funcCoreTools/funcVersion';
 import { getWorkspaceSetting, updateGlobalSetting } from '../../utils/vsCodeConfig/settings';
 import { InitVSCodeStepBase } from './InitVSCodeStepBase';
 import { DialogResponses, nonNullProp, openUrl, parseError } from '@microsoft/vscode-azext-utils';
-import { FuncVersion, ProjectLanguage } from '@microsoft/vscode-extension';
-import type { IProjectWizardContext } from '@microsoft/vscode-extension';
+import { FuncVersion, ProjectLanguage } from '@microsoft/vscode-extension-logic-apps';
+import type { IProjectWizardContext } from '@microsoft/vscode-extension-logic-apps';
 import * as path from 'path';
 import type { MessageItem, TaskDefinition } from 'vscode';
 

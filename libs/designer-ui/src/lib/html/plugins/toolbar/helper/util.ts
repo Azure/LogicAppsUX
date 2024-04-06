@@ -1,5 +1,6 @@
 import { encodeStringSegmentTokensInDomContext } from '../../../../editor/base/utils/parsesegments';
-import type { ValueSegment } from '@microsoft/designer-client-services-logic-apps';
+import type { ValueSegment } from '@microsoft/logic-apps-shared';
+import DomPurify from 'dompurify';
 
 const htmlUnsafeCharacters = ['<', '>'];
 const htmlUnsafeCharacterEncodingMap: Record<string, string> = htmlUnsafeCharacters.reduce(
@@ -41,9 +42,10 @@ const lexicalSupportedTagNames = new Set([
   'u',
   'ul',
 ]);
-const lexicalSupportedAttributes: { '*': string[] } & Record<string, string[]> = {
+const htmlEditorSupportedAttributes: { '*': string[] } & Record<string, string[]> = {
   '*': ['id', 'style'],
   a: ['href'],
+  img: ['alt', 'src'],
 };
 
 export interface Position {
@@ -94,15 +96,20 @@ export const encodeOrDecodeSegmentValue = (value: string, encodingMap: Record<st
 };
 
 export const getDomFromHtmlEditorString = (htmlEditorString: string, nodeMap: Map<string, ValueSegment>): HTMLElement => {
-  const encodedHtmlEditorString = encodeStringSegmentTokensInDomContext(htmlEditorString, nodeMap);
+  // Comments at the start of a DOM are lost when parsing HTML strings, so we wrap the HTML string in a <div>.
+  const wrappedHtmlEditorString = `<div>${htmlEditorString}</div>`;
 
-  const tempElement = document.createElement('div');
+  const purifiedHtmlEditorString = DomPurify.sanitize(wrappedHtmlEditorString, { ADD_TAGS: ['#comment'] });
+  const encodedHtmlEditorString = encodeStringSegmentTokensInDomContext(purifiedHtmlEditorString, nodeMap);
+
+  const tempElement = document.createElement('div', {});
   tempElement.innerHTML = encodedHtmlEditorString;
 
-  return tempElement;
+  // Unwrap the wrapper <div>.
+  return tempElement.children[0] as HTMLElement;
 };
 
-export const isAttributeSupportedByLexical = (tagName: string, attribute: string): boolean => {
+export const isAttributeSupportedByHtmlEditor = (tagName: string, attribute: string): boolean => {
   if (tagName.length === 0 || attribute.length === 0) {
     return false;
   }
@@ -110,11 +117,11 @@ export const isAttributeSupportedByLexical = (tagName: string, attribute: string
   const tagNameLower = tagName.toLowerCase();
   const attributeLower = attribute.toLowerCase();
 
-  if (lexicalSupportedAttributes[tagNameLower]?.includes(attributeLower)) {
+  if (htmlEditorSupportedAttributes[tagNameLower]?.includes(attributeLower)) {
     return true;
   }
 
-  return lexicalSupportedAttributes['*'].includes(attributeLower);
+  return htmlEditorSupportedAttributes['*'].includes(attributeLower);
 };
 
 export const isHtmlStringValueSafeForLexical = (htmlEditorString: string, nodeMap: Map<string, ValueSegment>): boolean => {
@@ -130,7 +137,7 @@ export const isHtmlStringValueSafeForLexical = (htmlEditorString: string, nodeMa
     const attributes = Array.from(element.attributes);
     for (let j = 0; j < attributes.length; j++) {
       const attribute = attributes[j];
-      if (!isAttributeSupportedByLexical(element.tagName, attribute.name)) {
+      if (!isAttributeSupportedByHtmlEditor(element.tagName, attribute.name)) {
         return false;
       }
     }

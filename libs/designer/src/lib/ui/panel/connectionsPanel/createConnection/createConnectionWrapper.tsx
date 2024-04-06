@@ -27,9 +27,12 @@ import {
 } from '../../../../core/utils/connectors/connections';
 import { CreateConnection } from './createConnection';
 import { Spinner } from '@fluentui/react-components';
-import type { ConnectionCreationInfo, ConnectionParametersMetadata } from '@microsoft/designer-client-services-logic-apps';
-import { ConnectionService, LogEntryLevel, LoggerService, WorkflowService } from '@microsoft/designer-client-services-logic-apps';
+import type { ConnectionCreationInfo, ConnectionParametersMetadata } from '@microsoft/logic-apps-shared';
 import {
+  ConnectionService,
+  LogEntryLevel,
+  LoggerService,
+  WorkflowService,
   getIconUriFromConnector,
   getRecordEntry,
   safeSetObjectPropertyValue,
@@ -258,6 +261,7 @@ export const CreateConnectionWrapper = () => {
 
   const loadingText = intl.formatMessage({
     defaultMessage: 'Loading connection data...',
+    id: 'faUrud',
     description: 'Message to show under the loading icon when loading connection parameters',
   });
 

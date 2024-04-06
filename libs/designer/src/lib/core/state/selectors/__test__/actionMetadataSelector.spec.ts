@@ -1,12 +1,12 @@
 import * as connectionSelector from '../../connection/connectionSelector';
 import { useOperationDescription, useOperationDocumentation, useOperationSummary } from '../actionMetadataSelector';
-import * as designerClientServices from '@microsoft/designer-client-services-logic-apps';
+import * as designerClientServices from '@microsoft/logic-apps-shared';
 import type { Connector, Documentation, OperationManifest } from '@microsoft/logic-apps-shared';
 import * as reactQuery from 'react-query';
-
+import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 describe('actionMetadataSelector', () => {
   afterEach(() => {
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
   });
 
   describe('useOperationDescription', () => {
@@ -37,11 +37,11 @@ describe('actionMetadataSelector', () => {
           isSupported: () => true,
         };
 
-        jest
+        vi
           .spyOn(designerClientServices, 'OperationManifestService')
           .mockReturnValue(partialOperationManifestService as designerClientServices.IOperationManifestService);
 
-        jest
+        vi
           .spyOn(reactQuery, 'useQuery')
           .mockReturnValue({ data: operationManifest, isLoading: false, status: 'success' } as reactQuery.UseQueryResult<
             OperationManifest | undefined,
@@ -82,17 +82,17 @@ describe('actionMetadataSelector', () => {
           isSupported: () => false, // Force call to `useConnector`.
         };
 
-        jest
+        vi
           .spyOn(designerClientServices, 'OperationManifestService')
           .mockReturnValue(partialOperationManifestService as designerClientServices.IOperationManifestService);
 
-        jest.spyOn(reactQuery, 'useQuery').mockReturnValue({
+        vi.spyOn(reactQuery, 'useQuery').mockReturnValue({
           data: undefined /* Force call to `useConnector`. */,
           isLoading: false,
           status: 'success',
         } as reactQuery.UseQueryResult<OperationManifest | undefined, unknown>);
 
-        jest
+        vi
           .spyOn(connectionSelector, 'useConnector')
           .mockReturnValue({ data: connector, isLoading: false, status: 'success' } as reactQuery.UseQueryResult<any, unknown>);
 
@@ -135,11 +135,11 @@ describe('actionMetadataSelector', () => {
         isSupported: () => true,
       };
 
-      jest
+      vi
         .spyOn(designerClientServices, 'OperationManifestService')
         .mockReturnValue(partialOperationManifestService as designerClientServices.IOperationManifestService);
 
-      jest
+      vi
         .spyOn(reactQuery, 'useQuery')
         .mockReturnValue({ data: operationManifest, isLoading: false, status: 'success' } as reactQuery.UseQueryResult<
           OperationManifest | undefined,
@@ -181,17 +181,17 @@ describe('actionMetadataSelector', () => {
         isSupported: () => false, // Force call to `useConnector`.
       };
 
-      jest
+      vi
         .spyOn(designerClientServices, 'OperationManifestService')
         .mockReturnValue(partialOperationManifestService as designerClientServices.IOperationManifestService);
 
-      jest.spyOn(reactQuery, 'useQuery').mockReturnValue({
+      vi.spyOn(reactQuery, 'useQuery').mockReturnValue({
         data: undefined /* Force call to `useConnector`. */,
         isLoading: false,
         status: 'success',
       } as reactQuery.UseQueryResult<OperationManifest | undefined, unknown>);
 
-      jest
+      vi
         .spyOn(connectionSelector, 'useConnector')
         .mockReturnValue({ data: connector, isLoading: false, status: 'success' } as reactQuery.UseQueryResult<any, unknown>);
 
@@ -231,11 +231,11 @@ describe('actionMetadataSelector', () => {
           isSupported: () => true,
         };
 
-        jest
+        vi
           .spyOn(designerClientServices, 'OperationManifestService')
           .mockReturnValue(partialOperationManifestService as designerClientServices.IOperationManifestService);
 
-        jest
+        vi
           .spyOn(reactQuery, 'useQuery')
           .mockReturnValue({ data: operationManifest, isLoading: false, status: 'success' } as reactQuery.UseQueryResult<
             OperationManifest | undefined,
@@ -274,11 +274,11 @@ describe('actionMetadataSelector', () => {
         isSupported: () => true,
       };
 
-      jest
+      vi
         .spyOn(designerClientServices, 'OperationManifestService')
         .mockReturnValue(partialOperationManifestService as designerClientServices.IOperationManifestService);
 
-      jest
+      vi
         .spyOn(reactQuery, 'useQuery')
         .mockReturnValue({ data: operationManifest, isLoading: false, status: 'success' } as reactQuery.UseQueryResult<
           OperationManifest | undefined,

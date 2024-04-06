@@ -2,8 +2,8 @@ import { isFunction, isStringLiteral, isStringInterpolation } from '../common/he
 import type { ExpressionEvaluationContext } from '../models/expression';
 import { ExpressionFunctionNames } from '../models/expression';
 import { ExpressionParser } from './parser';
-import { getIntl } from '@microsoft/intl-logic-apps';
-import { BaseException } from '@microsoft/utils-logic-apps';
+import { getIntl } from '../../../intl/src';
+import { BaseException } from '../../../utils/src';
 
 /**
  * The expression evaluator exception name.
@@ -76,7 +76,7 @@ export class ExpressionEvaluator {
     // NOTE: This method is best effort to evaluate if the value is template expression,
     if (!expression) {
       throw new ExpressionEvaluatorException(
-        intl.formatMessage({ defaultMessage: 'Empty value', description: 'Error message on expression evaluation' }),
+        intl.formatMessage({ defaultMessage: 'Empty value', id: 'AEguAy', description: 'Error message on expression evaluation' }),
         ExpressionEvaluatorErrorCode.EMPTY_VALUE
       );
     }
@@ -125,7 +125,7 @@ export class ExpressionEvaluator {
     if (/^@/.test(expression)) {
       throw new ExpressionEvaluatorException(
         intl.formatMessage(
-          { defaultMessage: `Unrecognized expression ''{expression}''`, description: 'Error message on invalid expression' },
+          { defaultMessage: `Unrecognized expression ''{expression}''`, id: 'Rq2U5n', description: 'Error message on invalid expression' },
           { expression }
         ),
         ExpressionEvaluatorErrorCode.UNRECOGNIZED_EXPRESSION
@@ -135,7 +135,7 @@ export class ExpressionEvaluator {
     if (/@{/.test(expression)) {
       throw new ExpressionEvaluatorException(
         intl.formatMessage(
-          { defaultMessage: `Unrecognized expression ''{expression}''`, description: 'Error message on invalid expression' },
+          { defaultMessage: `Unrecognized expression ''{expression}''`, id: 'Rq2U5n', description: 'Error message on invalid expression' },
           { expression }
         ),
         ExpressionEvaluatorErrorCode.UNRECOGNIZED_EXPRESSION

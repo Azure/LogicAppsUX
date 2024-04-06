@@ -1,7 +1,6 @@
-import { HostService, ContentType } from '@microsoft/designer-client-services-logic-apps';
+import { HostService, ContentType, isNullOrUndefined } from '@microsoft/logic-apps-shared';
 import { ValuesPanel, SecureDataSection } from '@microsoft/designer-ui';
 import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
-import { isNullOrUndefined } from '@microsoft/logic-apps-shared';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
 
@@ -24,22 +23,27 @@ export const OutputsPanel: React.FC<OutputsPanelProps> = ({ runMetaData, brandCo
   const intlText = {
     outputs: intl.formatMessage({
       defaultMessage: 'Outputs',
+      id: '0oebOm',
       description: 'Outputs text',
     }),
     noOutputs: intl.formatMessage({
       defaultMessage: 'No outputs',
+      id: '+xXHdp',
       description: 'No outputs text',
     }),
     showOutputs: intl.formatMessage({
       defaultMessage: 'Show raw outputs',
+      id: '/mjH84',
       description: 'Show outputs text',
     }),
     outputsLoading: intl.formatMessage({
       defaultMessage: 'Loading outputs',
+      id: 'LvLksz',
       description: 'Loading outputs text',
     }),
     outputsError: intl.formatMessage({
       defaultMessage: 'Error loading outputs',
+      id: 'pcGqoB',
       description: 'Error loading outputs text',
     }),
   };

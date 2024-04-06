@@ -3,17 +3,18 @@ import DataMapperPanel from './DataMapperPanel';
 import { startBackendRuntime } from './FxWorkflowRuntime';
 import { webviewType } from './extensionConfig';
 import type { MapDefinitionEntry } from '@microsoft/logic-apps-shared';
-import type { MapDefinitionData } from '@microsoft/vscode-extension';
+import type { IActionContext } from '@microsoft/vscode-azext-utils';
+import type { MapDefinitionData } from '@microsoft/vscode-extension-logic-apps';
 import * as yaml from 'js-yaml';
 import * as path from 'path';
 import { Uri, ViewColumn, window } from 'vscode';
 
 export default class DataMapperExt {
-  public static async openDataMapperPanel(dataMapName: string, mapDefinitionData?: MapDefinitionData) {
+  public static async openDataMapperPanel(dataMapName: string, context: IActionContext, mapDefinitionData?: MapDefinitionData) {
     const workflowFolder = ext.logicAppWorkspace;
 
     if (workflowFolder) {
-      await startBackendRuntime(workflowFolder);
+      await startBackendRuntime(workflowFolder, context);
 
       DataMapperExt.createOrShow(dataMapName, mapDefinitionData);
     }

@@ -1,6 +1,10 @@
 export const idDisplayCase = (s: string) => removeIdTag(labelCase(s));
 export const labelCase = (label: string) => label?.replace(/_/g, ' ');
 
+export const replaceWhiteSpaceWithUnderscore = (uiElementName: string): string => {
+  return uiElementName?.replace(/\W/g, '_')?.toLowerCase();
+};
+
 export const containsIdTag = (id: string) => id?.includes('-#');
 export const removeIdTag = (id: string) => id?.split('-#')[0];
 
@@ -20,3 +24,12 @@ export const wrapTokenValue = (s: string) => `@{${s}}`;
 export const cleanConnectorId = (id: string) => id.replace(/[()]/g, '');
 
 export const prettifyJsonString = (json: string) => JSON.stringify(JSON.parse(json), null, 4);
+
+export const splitFileName = (fileName: string) => {
+  const splitFileName = fileName.lastIndexOf('.');
+  return [fileName.slice(0, splitFileName), fileName.slice(splitFileName)];
+};
+
+export const escapeString = (s: string): string => {
+  return s.replace(/\\/g, '\\\\').replace(/\n/g, '\\n');
+};

@@ -1,30 +1,20 @@
 {
   "root": true,
-  "ignorePatterns": ["**/*"],
-  "plugins": ["@nrwl/nx", "formatjs", "react", "react-hooks"],
+  "ignorePatterns": [
+    "**/*"
+  ],
+  "plugins": [
+    "formatjs",
+    "react",
+    "react-hooks"
+  ],
   "overrides": [
     {
-      "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
-      "rules": {
-        "@nrwl/nx/enforce-module-boundaries": [
-          "error",
-          {
-            "enforceBuildableLibDependency": true,
-            "allow": [],
-            "depConstraints": [
-              {
-                "sourceTag": "*",
-                "onlyDependOnLibsWithTags": ["*"]
-              }
-            ]
-          }
-        ]
-      }
-    },
-    {
-      "files": ["*.ts", "*.tsx"],
+      "files": [
+        "*.ts",
+        "*.tsx"
+      ],
       "extends": [
-        "plugin:@nrwl/nx/typescript",
         "plugin:react/recommended",
         "plugin:react-hooks/recommended",
         "plugin:import/recommended",
@@ -73,24 +63,35 @@
             "disallowTypeAnnotations": true
           }
         ],
+        "formatjs/enforce-id": [
+          "error",
+          {
+            "idInterpolationPattern": "[sha512:contenthash:base64:6]"
+          }
+        ],
         "formatjs/enforce-placeholders": [
           "error",
           {
-            "ignoreList": ["foo"]
+            "ignoreList": [
+              "foo"
+            ]
           }
         ],
-        "no-param-reassign": [
+        "no-param-reassign": "off",
+        "formatjs/enforce-default-message": [
           "error",
-          {
-            "props": true,
-            "ignorePropertyModificationsFor": ["state"]
-          }
+          "literal"
         ],
-        "formatjs/enforce-default-message": ["error", "literal"],
-        "formatjs/enforce-description": ["error", "literal"],
-        "formatjs/no-multiple-whitespaces": [1],
-        "formatjs/no-multiple-plurals": ["error"],
-        "formatjs/no-id": ["error"],
+        "formatjs/enforce-description": [
+          "error",
+          "literal"
+        ],
+        "formatjs/no-multiple-whitespaces": [
+          1
+        ],
+        "formatjs/no-multiple-plurals": [
+          "error"
+        ],
         "formatjs/no-complex-selectors": [
           "error",
           {
@@ -100,11 +101,6 @@
         "react/react-in-jsx-scope": 0,
         "react/prop-types": 0
       }
-    },
-    {
-      "files": ["*.js", "*.jsx"],
-      "extends": ["plugin:@nrwl/nx/javascript"],
-      "rules": {}
     },
     {
       "files": "*.json",

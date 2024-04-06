@@ -8,8 +8,8 @@ import { isFunctionData } from '../../../utils/Function.Utils';
 import { addSourceReactFlowPrefix } from '../../../utils/ReactFlow.Util';
 import { commonCodeEditorProps } from '../../testMapPanel/TestMapPanel';
 import { makeStyles, shorthands, tokens } from '@fluentui/react-components';
-import { EditorLanguage, MonacoEditor } from '@microsoft/designer-ui';
-import type { SchemaNodeExtended } from '@microsoft/logic-apps-shared';
+import { MonacoEditor } from '@microsoft/designer-ui';
+import { EditorLanguage, type SchemaNodeExtended } from '@microsoft/logic-apps-shared';
 import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 
@@ -59,7 +59,9 @@ export const CodeTab = ({ currentNode, contentHeight }: CodeTabProps) => {
         return srcSchemaNode.key;
       } else {
         // Get target schema node's map definition chunk
-        const reducedConnectionDictionary: ConnectionDictionary = { ...connectionDictionary };
+        const reducedConnectionDictionary: ConnectionDictionary = {
+          ...connectionDictionary,
+        };
         Object.keys(reducedConnectionDictionary).forEach((conKey) => {
           if (conKey.includes(targetPrefix) && !conKey.includes(currentNode.key)) {
             delete reducedConnectionDictionary[conKey];

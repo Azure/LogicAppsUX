@@ -1,9 +1,9 @@
 import constants from '../../../constants';
 import { isEmpty } from '../../../dictionary/expandeddictionary';
-import { ValueSegmentType, type ValueSegment } from '../../models/parameter';
-import { insertQutationForStringType } from './helper';
+import type { ValueSegment } from '../../models/parameter';
+import { createLiteralValueSegment, insertQutationForStringType } from './helper';
 import { convertSegmentsToString } from './parsesegments';
-import { isNumber, guid, isBoolean } from '@microsoft/logic-apps-shared';
+import { isNumber, isBoolean, escapeString } from '@microsoft/logic-apps-shared';
 
 export interface KeyValueItem {
   id: string;
@@ -17,10 +17,10 @@ export const convertKeyValueItemToSegments = (items: KeyValueItem[], keyType?: s
   });
 
   if (itemsToConvert.length === 0) {
-    return [{ id: guid(), type: ValueSegmentType.LITERAL, value: '' }];
+    return [createLiteralValueSegment('')];
   }
   const parsedItems: ValueSegment[] = [];
-  parsedItems.push({ id: guid(), type: ValueSegmentType.LITERAL, value: '{\n  ' });
+  parsedItems.push(createLiteralValueSegment('{\n '));
 
   for (let index = 0; index < itemsToConvert.length; index++) {
     const { key, value } = itemsToConvert[index];
@@ -29,7 +29,7 @@ export const convertKeyValueItemToSegments = (items: KeyValueItem[], keyType?: s
     const updatedKey = key.map((segment) => {
       return {
         ...segment,
-        value: convertedKeyType !== constants.SWAGGER.TYPE.STRING ? segment.value : segment.value.replace(/\n/g, '\\n'),
+        value: convertedKeyType !== constants.SWAGGER.TYPE.STRING ? segment.value : escapeString(segment.value),
       };
     });
 
@@ -37,18 +37,18 @@ export const convertKeyValueItemToSegments = (items: KeyValueItem[], keyType?: s
     const updatedValue = value.map((segment) => {
       return {
         ...segment,
-        value: convertedValueType !== constants.SWAGGER.TYPE.STRING ? segment.value : segment.value.replace(/\n/g, '\\n'),
+        value: convertedValueType !== constants.SWAGGER.TYPE.STRING ? segment.value : escapeString(segment.value),
       };
     });
 
     insertQutationForStringType(parsedItems, convertedKeyType);
     parsedItems.push(...updatedKey);
     insertQutationForStringType(parsedItems, convertedKeyType);
-    parsedItems.push({ id: guid(), type: ValueSegmentType.LITERAL, value: ' : ' });
+    parsedItems.push(createLiteralValueSegment(' : '));
     insertQutationForStringType(parsedItems, convertedValueType);
     parsedItems.push(...updatedValue);
     insertQutationForStringType(parsedItems, convertedValueType);
-    parsedItems.push({ id: guid(), type: ValueSegmentType.LITERAL, value: index < itemsToConvert.length - 1 ? ',\n  ' : '\n}' });
+    parsedItems.push(createLiteralValueSegment(index < itemsToConvert.length - 1 ? ',\n ' : '\n}'));
   }
 
   return parsedItems;

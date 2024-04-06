@@ -39,7 +39,7 @@ const mockBoundedFunctionInputs: FunctionInput[] = [
     placeHolder: 'The scope',
   },
 ];
-
+import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 describe('utils/Connections', () => {
   describe('createConnectionEntryIfNeeded', () => {
     const connections: ConnectionDictionary = {};

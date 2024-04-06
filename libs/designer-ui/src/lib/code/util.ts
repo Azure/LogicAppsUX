@@ -10,6 +10,7 @@ import {
   equals,
   prettifyJsonString,
   UnsupportedException,
+  capitalizeFirstLetter,
 } from '@microsoft/logic-apps-shared';
 
 const OperationCategory = {
@@ -26,6 +27,7 @@ export function buildInlineCodeTextFromToken(inputToken: Token, language: string
       intl.formatMessage(
         {
           defaultMessage: 'Unsupported Token Type: {var}',
+          id: 'XLUs2P',
           description: 'Exception for unsupported token types',
         },
         { var: 'Variables' }
@@ -38,6 +40,7 @@ export function buildInlineCodeTextFromToken(inputToken: Token, language: string
       intl.formatMessage(
         {
           defaultMessage: 'Unsupported Token Type: {controls}',
+          id: 'b9P8SA',
           description: 'Exception for unsupported token types',
         },
         { controls: 'Controls' }
@@ -50,6 +53,7 @@ export function buildInlineCodeTextFromToken(inputToken: Token, language: string
       intl.formatMessage(
         {
           defaultMessage: 'Unsupported Token Type: {expressions}',
+          id: '8baaNC',
           description: 'Exception for unsupported token types',
         },
         { expressions: 'Expressions' }
@@ -65,16 +69,24 @@ export function buildInlineCodeTextFromToken(inputToken: Token, language: string
   } else {
     property = decodePropertySegment(inputToken.name);
   }
+  const segmentedProperty = getSegmentedPropertyValue(property);
 
   switch (language) {
-    case constants.SWAGGER.FORMAT.JAVASCRIPT: {
+    case constants.PARAMETER.EDITOR_OPTIONS.LANGUAGE.JAVASCRIPT: {
       return formatForJavascript(property, actionName, source);
+    }
+    case constants.PARAMETER.EDITOR_OPTIONS.LANGUAGE.POWERSHELL: {
+      return formatForPowershell(segmentedProperty, actionName, source);
+    }
+    case constants.PARAMETER.EDITOR_OPTIONS.LANGUAGE.CSHARP: {
+      return formatForCSharp(segmentedProperty, actionName, source);
     }
 
     default: {
       throw new ArgumentException(
         intl.formatMessage({
           defaultMessage: 'Unsupported programming language.',
+          id: 'MIX4f9',
           description: 'The exception for an unsupported programming language.',
         })
       );
@@ -102,6 +114,32 @@ function formatForJavascript(property: string, actionName?: string, source?: str
 
   return result;
 }
+
+function formatForPowershell(property: string, actionName?: string, source?: string): string {
+  const result = `(get-WorkflowActionOutputs -actionName ${actionName ?? capitalizeFirstLetter(OperationCategory.Trigger)})${
+    source ? `["${source}"]` : ''
+  }${property}`;
+
+  return result;
+}
+
+function formatForCSharp(property: string, actionName?: string, source?: string): string {
+  const result = `await context.GetActionResult("${actionName ?? capitalizeFirstLetter(OperationCategory.Trigger)}")${
+    source ? `["${source}"]` : ''
+  }${property}`;
+  return result;
+}
+
+const getSegmentedPropertyValue = (property: string): string => {
+  const splitProperty = property.split('.');
+  let updatedProperty = '';
+  splitProperty.forEach((segment) => {
+    if (segment) {
+      updatedProperty += `["${segment}"]`;
+    }
+  });
+  return updatedProperty;
+};
 
 function matchesOutputKey(tokenName: string): boolean {
   return (
@@ -135,4 +173,13 @@ export const formatValue = (input: string): string => {
 // Monaco should be at least 3 rows high (19*3 px) but no more than 20 rows high (19*20 px).
 export const getEditorHeight = (input = ''): string => {
   return Math.min(Math.max(input?.split('\n').length * 20, 120), 380) + 'px';
+};
+
+// CodeEditor Height should be at least 12 rows high (19*12 px) but no more than 24 rows high (19*24 px).
+export const getCodeEditorHeight = (input = ''): string => {
+  return Math.min(Math.max(input?.split('\n').length * 20, 228), 456) + 'px';
+};
+
+export const isCustomCode = (editor?: string, language?: string): boolean => {
+  return equals(editor, constants.PARAMETER.EDITOR.CODE) && !equals(language, constants.PARAMETER.EDITOR_OPTIONS.LANGUAGE.JAVASCRIPT);
 };

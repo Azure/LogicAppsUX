@@ -7,7 +7,7 @@ import { useOutputParameters } from '../../../core/state/selectors/actionMetadat
 import { getSplitOnOptions } from '../../../core/utils/outputs';
 import type { SettingsSectionProps } from '../settingsection';
 import { SettingsSection } from '../settingsection';
-import { OperationManifestService } from '@microsoft/designer-client-services-logic-apps';
+import { OperationManifestService } from '@microsoft/logic-apps-shared';
 import { getSettingLabel, type DropdownSelectionChangeHandler, type ExpressionChangeHandler } from '@microsoft/designer-ui';
 import { useIntl } from 'react-intl';
 
@@ -50,82 +50,100 @@ export const General = ({
   const isTrigger = nodesMetadata?.isRoot ?? false;
   const generalTitle = intl.formatMessage({
     defaultMessage: 'General',
+    id: 'V+/c21',
     description: 'title for general setting section',
   });
   const degreeOfParallelism = intl.formatMessage({
     defaultMessage: 'Degree of Parallelism',
+    id: 'sW47JR',
     description: 'label for slider indicating the degree of parallelism',
   });
   const splitOnTitle = intl.formatMessage({
     defaultMessage: 'Split On',
+    id: 'FUhNu4',
     description: 'title for split on setting',
   });
   const splitOnTooltipText = intl.formatMessage({
     defaultMessage:
       'Enable split-on to start an instance of the workflow per item in the selected array. Each instance can also have a distinct tracking id',
+    id: 'eo1YKX',
     description: 'description of the split on setting',
   });
   const actionTimeoutTitle = intl.formatMessage({
     defaultMessage: 'Action Timeout',
+    id: 'XKDZXi',
     description: 'title for action timeout setting',
   });
   const actionTimeoutTooltipText = intl.formatMessage({
     defaultMessage:
       'Limit the maximum duration between the retries and asynchronous responses for this action. Note: This does not alter the request timeout of a single request',
+    id: 'qzaoRR',
     description: 'description of action timeout setting',
   });
   const actionTimeoutFormatDescription = intl.formatMessage({
     defaultMessage: 'Specify the duration in ISO 8601 format',
+    id: 'eHsOsm',
     description: 'description of action timeout format description',
   });
   const concurrencyTitle = intl.formatMessage({
     defaultMessage: 'Concurrency Control',
+    id: 'ZM1mRy',
     description: 'title for concurrency setting',
   });
 
   const concurrencyTooltipText = intl.formatMessage({
     defaultMessage: 'Control how new runs are queued',
+    id: '2MOA1x',
     description: 'tooltip text of concurrency setting',
   });
   const concurrencyDescription = intl.formatMessage({
-    defaultMessage:
-      "By default, Logic App instances run at the same time, or in parallel. This control changes how new runs are queued and can't be changed after enabling. To run as many parallel instances as possible, leave this control turned off. To limit the number of parallel runs, turn on this control, and select a limit. To run sequentially, select 1 as the limit.",
+    defaultMessage: `By default, Logic App instances run at the same time, or in parallel. This control changes how new runs are queued and can't be changed after enabling. To run as many parallel instances as possible, leave this control turned off. To limit the number of parallel runs, turn on this control, and select a limit. To run sequentially, select 1 as the limit.`,
+    id: 'bWBMhe',
     description: 'description of concurrency setting',
   });
   const concurrencySubLabel = intl.formatMessage({
     defaultMessage: 'Limit',
+    id: 'g7/EKC',
     description: 'sublabel for concurrency limit toggle button',
   });
   const triggerConditionsTitle = intl.formatMessage({
     defaultMessage: 'Trigger conditions',
+    id: 'YDoc9z',
     description: 'Title for trigger conditions setting',
   });
   const triggerConditionsTooltipText = intl.formatMessage({
     defaultMessage: 'Specify one or more expressions that must be true for the trigger to fire',
+    id: 'XJkBrZ',
     description: 'The description for the trigger condition expression setting.',
   });
   const splitOnTrackingId = intl.formatMessage({
     defaultMessage: 'Split-On Tracking Id',
+    id: 'Pl/fcn',
     description: 'Title for split on client tracking id setting',
   });
   const splitOnTrackingIdTooltipText = intl.formatMessage({
     defaultMessage: 'Distinct Tracking id for each split-on instance',
+    id: 'ahFd/S',
     description: 'Description of tracking id input field of split on setting',
   });
   const arrayDropdownTitle = intl.formatMessage({
     defaultMessage: 'Array',
+    id: 'Bewmet',
     description: 'Title for array dropdown input setting',
   });
   const invokerConnectionTitle = intl.formatMessage({
-    defaultMessage: "Use Invoker's Connection",
+    defaultMessage: `Use Invoker's Connection`,
+    id: 'bWOsvo',
     description: 'Title for invoker connection',
   });
   const invokerConnectionTooltipText = intl.formatMessage({
     defaultMessage: 'When enabled, this action will run with the user from the "Run as" setting in the Dataverse trigger',
+    id: 'LRAhSA',
     description: 'Description of invoker connection setting',
   });
   const examplePlaceholderText = intl.formatMessage({
     defaultMessage: 'Example:',
+    id: 'NzPnFS',
     description: 'Placeholder text for an example input field',
   });
 

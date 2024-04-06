@@ -1,6 +1,6 @@
-import { designTimeDirectoryName } from '../../../../../../constants';
+import { designTimeDirectoryName, localSettingsFileName, logicAppKind } from '../../../../../../constants';
 import { AzureWizardPromptStep } from '@microsoft/vscode-azext-utils';
-import type { IProjectWizardContext } from '@microsoft/vscode-extension';
+import type { IProjectWizardContext } from '@microsoft/vscode-extension-logic-apps';
 import * as fs from 'fs-extra';
 import * as path from 'path';
 
@@ -57,13 +57,14 @@ export class DesignerConfig extends AzureWizardPromptStep<IProjectWizardContext>
    * @param folderPath The path to the folder where the local.settings.json file should be generated.
    */
   private async generateLocalSettingsJson(folderPath: string, context: IProjectWizardContext): Promise<void> {
-    const filePath = path.join(folderPath, 'local.settings.json');
+    const filePath = path.join(folderPath, localSettingsFileName);
     const designerProjPath: string = context.logicAppFolderPath;
     const content = {
       IsEncrypted: false,
       Values: {
         AzureWebJobsSecretStorageType: 'Files',
         FUNCTIONS_WORKER_RUNTIME: 'node',
+        APP_KIND: logicAppKind,
         ProjectDirectoryPath: designerProjPath,
       },
     };

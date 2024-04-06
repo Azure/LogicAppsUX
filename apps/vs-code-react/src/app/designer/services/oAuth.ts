@@ -1,6 +1,6 @@
 import { JwtTokenConstants, JwtTokenHelper } from './JwtHelper';
-import type { IOAuthPopup, IOAuthService, OAuthPopupOptions } from '@microsoft/designer-client-services-logic-apps';
-import { ExtensionCommand } from '@microsoft/vscode-extension';
+import type { IOAuthPopup, IOAuthService, OAuthPopupOptions } from '@microsoft/logic-apps-shared';
+import { ExtensionCommand } from '@microsoft/vscode-extension-logic-apps';
 
 export interface LoginResult {
   [x: string]: any;

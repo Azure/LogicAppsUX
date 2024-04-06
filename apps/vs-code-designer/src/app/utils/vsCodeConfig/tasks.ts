@@ -8,7 +8,7 @@ import type { ProjectFile } from '../dotnet/dotnet';
 import { getDotnetDebugSubpath, getProjFiles, getTargetFramework } from '../dotnet/dotnet';
 import { tryGetLogicAppProjectRoot } from '../verifyIsProject';
 import { DialogResponses, openUrl, type IActionContext } from '@microsoft/vscode-azext-utils';
-import { ProjectLanguage, type ITask, type ITaskInputs } from '@microsoft/vscode-extension';
+import { ProjectLanguage, type ITask, type ITaskInputs } from '@microsoft/vscode-extension-logic-apps';
 import * as fse from 'fs-extra';
 import * as path from 'path';
 import { workspace } from 'vscode';

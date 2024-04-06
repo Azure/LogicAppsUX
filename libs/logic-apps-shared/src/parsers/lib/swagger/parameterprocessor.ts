@@ -12,9 +12,9 @@ import { SchemaProcessor } from '../common/schemaprocessor';
 import type { InputParameter, InputParameters } from '../models/operation';
 import { toInputParameter } from '../models/operation';
 import type { KeyProjectionOptions } from './parser';
-import { getIntl } from '@microsoft/intl-logic-apps';
-import type { OpenAPIV2 } from '@microsoft/utils-logic-apps';
-import { aggregate, equals, includes, map } from '@microsoft/utils-logic-apps';
+import { getIntl } from '../../../intl/src';
+import type { OpenAPIV2 } from '../../../utils/src';
+import { aggregate, equals, includes, map } from '../../../utils/src';
 
 export interface ParametersProcessorOptions {
   excludeAdvanced?: boolean;
@@ -26,7 +26,10 @@ export interface ParametersProcessorOptions {
 type Parameter = OpenAPIV2.Parameter;
 
 export class ParametersProcessor {
-  constructor(private parameters: Parameter[] = [], private options: ParametersProcessorOptions = {}) {
+  constructor(
+    private parameters: Parameter[] = [],
+    private options: ParametersProcessorOptions = {}
+  ) {
     this.options = {
       excludeAdvanced: false,
       excludeInternal: true,
@@ -298,7 +301,7 @@ export class ParametersProcessor {
         editorOptions: parameter[Constants.ExtensionProperties.EditorOptions],
         recommended: undefined,
         summary: intl.formatMessage(
-          { defaultMessage: '{fileName} (file name)', description: 'Title for file name parameter' },
+          { defaultMessage: '{fileName} (file name)', id: 'UYRIS/', description: 'Title for file name parameter' },
           { fileName: parameter[Constants.ExtensionProperties.Summary] }
         ),
         visibility: undefined,

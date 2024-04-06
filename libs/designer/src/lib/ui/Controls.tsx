@@ -2,7 +2,7 @@ import { openPanel } from '../core';
 import { useShowMinimap } from '../core/state/designerView/designerViewSelectors';
 import { toggleMinimap } from '../core/state/designerView/designerViewSlice';
 import { Icon, useTheme } from '@fluentui/react';
-import { LogEntryLevel, LoggerService } from '@microsoft/designer-client-services-logic-apps';
+import { LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
 import { ControlButton, Controls } from 'reactflow';
@@ -34,11 +34,13 @@ const CustomControls = () => {
 
   const minimapAria = intl.formatMessage({
     defaultMessage: 'Toggle Minimap',
+    id: '4j2MEv',
     description: 'Turn the minimap on or off',
   });
 
   const searchAria = intl.formatMessage({
     defaultMessage: 'Search Workflow Actions',
+    id: 'TNH/nK',
     description: 'Aria label for a button that opens a search panel to search the actions in the users workflow',
   });
 

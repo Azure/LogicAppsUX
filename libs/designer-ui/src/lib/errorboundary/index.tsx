@@ -3,7 +3,7 @@ import { FontSizes, getTheme, Icon, registerOnThemeChangeCallback, removeOnTheme
 import React from 'react';
 import type { WrappedComponentProps } from 'react-intl';
 import { injectIntl } from 'react-intl';
-
+import type {} from 'react';
 export type ErrorHandler = (error: Error, info: React.ErrorInfo) => void;
 
 export interface ErrorBoundaryProps {
@@ -84,6 +84,7 @@ export class ErrorBoundaryInternal extends React.Component<ErrorBoundaryProps & 
           <span style={spanStyle}>
             {intl.formatMessage({
               defaultMessage: 'Error loading component.',
+              id: 'cmTCsW',
               description: 'This is a generic error message shown when something in the app fails to load.',
             })}
           </span>
@@ -99,4 +100,4 @@ export class ErrorBoundaryInternal extends React.Component<ErrorBoundaryProps & 
   };
 }
 
-export const ErrorBoundary = injectIntl<'intl', ErrorBoundaryProps & WrappedComponentProps<'intl'>>(ErrorBoundaryInternal);
+export const ErrorBoundary : React.FC = injectIntl<'intl', ErrorBoundaryProps & WrappedComponentProps<'intl'>>(ErrorBoundaryInternal);

@@ -1,7 +1,7 @@
 import { useId } from '../useId';
 import { Icon, IconButton, TooltipHost } from '@fluentui/react';
 import type { IIconStyles } from '@fluentui/react';
-import type { TreeDynamicValue } from '@microsoft/designer-client-services-logic-apps';
+import type { TreeDynamicValue } from '@microsoft/logic-apps-shared';
 import { useIntl } from 'react-intl';
 
 export const PickerItemType = {
@@ -64,6 +64,7 @@ const FolderItem = ({ displayName, isParent, value, mediaType, onSelect, onNavig
   const navMessage = intl.formatMessage(
     {
       defaultMessage: 'Navigate to {folderName} folder',
+      id: 'z/UY4k',
       description: 'a label that shows which folder the user will be able to dig deeper into',
     },
     {

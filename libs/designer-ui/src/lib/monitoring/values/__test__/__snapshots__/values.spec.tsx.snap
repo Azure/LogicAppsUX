@@ -1,8 +1,8 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`ui/monitoring/values/value should not render when not visible 1`] = `null`;
+exports[`ui/monitoring/values/value > should not render when not visible 1`] = `null`;
 
-exports[`ui/monitoring/values/value should render a HTML value 1`] = `
+exports[`ui/monitoring/values/value > should render a HTML value 1`] = `
 <section
   className="msla-trace-value-label"
 >
@@ -18,7 +18,7 @@ exports[`ui/monitoring/values/value should render a HTML value 1`] = `
   >
     <table
       dangerouslySetInnerHTML={
-        Object {
+        {
           "__html": "<table><tbody><tr><td>1</td></tr></tbody></table>",
         }
       }
@@ -28,7 +28,7 @@ exports[`ui/monitoring/values/value should render a HTML value 1`] = `
 </section>
 `;
 
-exports[`ui/monitoring/values/value should render a body link value 1`] = `
+exports[`ui/monitoring/values/value > should render a body link value 1`] = `
 <section
   className="msla-trace-value-label"
 >
@@ -54,7 +54,7 @@ exports[`ui/monitoring/values/value should render a body link value 1`] = `
 </section>
 `;
 
-exports[`ui/monitoring/values/value should render a decimal value 1`] = `
+exports[`ui/monitoring/values/value > should render a decimal value 1`] = `
 <section
   className="msla-trace-value-label"
 >
@@ -97,8 +97,8 @@ exports[`ui/monitoring/values/value should render a decimal value 1`] = `
               className="ms-Icon root-105 css-119 ms-Button-icon icon-113"
               data-icon-name="SelectAll"
               style={
-                Object {
-                  "fontFamily": "\\"FabricMDL2Icons-1\\"",
+                {
+                  "fontFamily": ""FabricMDL2Icons-1"",
                 }
               }
             >
@@ -107,7 +107,7 @@ exports[`ui/monitoring/values/value should render a decimal value 1`] = `
           </span>
         </button>
         <button
-          aria-label="Copy the value of {label} to the clipboard"
+          aria-label="Copy the value of 'display-name' to the clipboard"
           className="ms-Button ms-Button--icon root-110"
           data-is-focusable={true}
           onClick={[Function]}
@@ -127,8 +127,8 @@ exports[`ui/monitoring/values/value should render a decimal value 1`] = `
               className="ms-Icon root-105 css-121 ms-Button-icon icon-113"
               data-icon-name="Copy"
               style={
-                Object {
-                  "fontFamily": "\\"FabricMDL2Icons-2\\"",
+                {
+                  "fontFamily": ""FabricMDL2Icons-2"",
                 }
               }
             >
@@ -140,7 +140,7 @@ exports[`ui/monitoring/values/value should render a decimal value 1`] = `
       <pre
         className="prism-code language-json"
         style={
-          Object {
+          {
             "backgroundColor": "#ffffff",
             "color": "#000000",
           }
@@ -149,7 +149,7 @@ exports[`ui/monitoring/values/value should render a decimal value 1`] = `
         <div
           className="token-line"
           style={
-            Object {
+            {
               "backgroundColor": null,
               "color": "#000000",
             }
@@ -158,7 +158,7 @@ exports[`ui/monitoring/values/value should render a decimal value 1`] = `
           <span
             className="token number"
             style={
-              Object {
+              {
                 "color": "rgb(9, 134, 88)",
               }
             }
@@ -172,7 +172,7 @@ exports[`ui/monitoring/values/value should render a decimal value 1`] = `
 </section>
 `;
 
-exports[`ui/monitoring/values/value should render a key-value pairs details list 1`] = `
+exports[`ui/monitoring/values/value > should render a key-value pairs details list 1`] = `
 <section
   className="msla-trace-value-label"
 >
@@ -187,7 +187,7 @@ exports[`ui/monitoring/values/value should render a key-value pairs details list
     <div
       className="ms-Viewport"
       style={
-        Object {
+        {
           "minHeight": 1,
           "minWidth": 1,
         }
@@ -214,6 +214,7 @@ exports[`ui/monitoring/values/value should render a key-value pairs details list
               className="ms-FocusZone css-140 ms-DetailsHeader root-124"
               data-automationid="DetailsHeader"
               data-focuszone-id="FocusZone9"
+              data-tabster="{"uncontrolled": {}}"
               onFocus={[Function]}
               onKeyDown={[Function]}
               onMouseDownCapture={[Function]}
@@ -231,7 +232,7 @@ exports[`ui/monitoring/values/value should render a key-value pairs details list
                 draggable={false}
                 role="columnheader"
                 style={
-                  Object {
+                  {
                     "width": 120,
                   }
                 }
@@ -275,7 +276,7 @@ exports[`ui/monitoring/values/value should render a key-value pairs details list
                 draggable={false}
                 role="columnheader"
                 style={
-                  Object {
+                  {
                     "width": 120,
                   }
                 }
@@ -330,6 +331,7 @@ exports[`ui/monitoring/values/value should render a key-value pairs details list
               <div
                 className="ms-FocusZone css-140 focusZone-123"
                 data-focuszone-id="FocusZone10"
+                data-tabster="{"uncontrolled": {}}"
                 onBlur={[Function]}
                 onFocus={[Function]}
                 onKeyDown={[Function]}
@@ -346,7 +348,7 @@ exports[`ui/monitoring/values/value should render a key-value pairs details list
                     <div
                       className="ms-List-page"
                       role="presentation"
-                      style={Object {}}
+                      style={{}}
                     >
                       <div
                         className="ms-List-cell"
@@ -363,6 +365,7 @@ exports[`ui/monitoring/values/value should render a key-value pairs details list
                           data-item-index={0}
                           data-selection-index={0}
                           data-selection-touch-invoke={true}
+                          data-tabster="{"uncontrolled": {}}"
                           id="row7-0"
                           onFocus={[Function]}
                           onKeyDown={[Function]}
@@ -380,7 +383,7 @@ exports[`ui/monitoring/values/value should render a key-value pairs details list
                               data-automationid="DetailsRowCell"
                               role="gridcell"
                               style={
-                                Object {
+                                {
                                   "width": 120,
                                 }
                               }
@@ -393,7 +396,7 @@ exports[`ui/monitoring/values/value should render a key-value pairs details list
                               data-automationid="DetailsRowCell"
                               role="gridcell"
                               style={
-                                Object {
+                                {
                                   "width": 120,
                                 }
                               }
@@ -418,6 +421,7 @@ exports[`ui/monitoring/values/value should render a key-value pairs details list
                           data-item-index={1}
                           data-selection-index={1}
                           data-selection-touch-invoke={true}
+                          data-tabster="{"uncontrolled": {}}"
                           id="row7-1"
                           onFocus={[Function]}
                           onKeyDown={[Function]}
@@ -435,7 +439,7 @@ exports[`ui/monitoring/values/value should render a key-value pairs details list
                               data-automationid="DetailsRowCell"
                               role="gridcell"
                               style={
-                                Object {
+                                {
                                   "width": 120,
                                 }
                               }
@@ -448,7 +452,7 @@ exports[`ui/monitoring/values/value should render a key-value pairs details list
                               data-automationid="DetailsRowCell"
                               role="gridcell"
                               style={
-                                Object {
+                                {
                                   "width": 120,
                                 }
                               }
@@ -473,6 +477,7 @@ exports[`ui/monitoring/values/value should render a key-value pairs details list
                           data-item-index={2}
                           data-selection-index={2}
                           data-selection-touch-invoke={true}
+                          data-tabster="{"uncontrolled": {}}"
                           id="row7-2"
                           onFocus={[Function]}
                           onKeyDown={[Function]}
@@ -490,7 +495,7 @@ exports[`ui/monitoring/values/value should render a key-value pairs details list
                               data-automationid="DetailsRowCell"
                               role="gridcell"
                               style={
-                                Object {
+                                {
                                   "width": 120,
                                 }
                               }
@@ -503,7 +508,7 @@ exports[`ui/monitoring/values/value should render a key-value pairs details list
                               data-automationid="DetailsRowCell"
                               role="gridcell"
                               style={
-                                Object {
+                                {
                                   "width": 120,
                                 }
                               }
@@ -526,7 +531,7 @@ exports[`ui/monitoring/values/value should render a key-value pairs details list
 </section>
 `;
 
-exports[`ui/monitoring/values/value should render a number value 1`] = `
+exports[`ui/monitoring/values/value > should render a number value 1`] = `
 <section
   className="msla-trace-value-label"
 >
@@ -569,8 +574,8 @@ exports[`ui/monitoring/values/value should render a number value 1`] = `
               className="ms-Icon root-105 css-119 ms-Button-icon icon-113"
               data-icon-name="SelectAll"
               style={
-                Object {
-                  "fontFamily": "\\"FabricMDL2Icons-1\\"",
+                {
+                  "fontFamily": ""FabricMDL2Icons-1"",
                 }
               }
             >
@@ -579,7 +584,7 @@ exports[`ui/monitoring/values/value should render a number value 1`] = `
           </span>
         </button>
         <button
-          aria-label="Copy the value of {label} to the clipboard"
+          aria-label="Copy the value of 'display-name' to the clipboard"
           className="ms-Button ms-Button--icon root-110"
           data-is-focusable={true}
           onClick={[Function]}
@@ -599,8 +604,8 @@ exports[`ui/monitoring/values/value should render a number value 1`] = `
               className="ms-Icon root-105 css-121 ms-Button-icon icon-113"
               data-icon-name="Copy"
               style={
-                Object {
-                  "fontFamily": "\\"FabricMDL2Icons-2\\"",
+                {
+                  "fontFamily": ""FabricMDL2Icons-2"",
                 }
               }
             >
@@ -612,7 +617,7 @@ exports[`ui/monitoring/values/value should render a number value 1`] = `
       <pre
         className="prism-code language-json"
         style={
-          Object {
+          {
             "backgroundColor": "#ffffff",
             "color": "#000000",
           }
@@ -621,7 +626,7 @@ exports[`ui/monitoring/values/value should render a number value 1`] = `
         <div
           className="token-line"
           style={
-            Object {
+            {
               "backgroundColor": null,
               "color": "#000000",
             }
@@ -630,7 +635,7 @@ exports[`ui/monitoring/values/value should render a number value 1`] = `
           <span
             className="token number"
             style={
-              Object {
+              {
                 "color": "rgb(9, 134, 88)",
               }
             }
@@ -644,7 +649,7 @@ exports[`ui/monitoring/values/value should render a number value 1`] = `
 </section>
 `;
 
-exports[`ui/monitoring/values/value should render a raw value 1`] = `
+exports[`ui/monitoring/values/value > should render a raw value 1`] = `
 <section
   className="msla-trace-value-label"
 >
@@ -687,8 +692,8 @@ exports[`ui/monitoring/values/value should render a raw value 1`] = `
               className="ms-Icon root-105 css-119 ms-Button-icon icon-113"
               data-icon-name="SelectAll"
               style={
-                Object {
-                  "fontFamily": "\\"FabricMDL2Icons-1\\"",
+                {
+                  "fontFamily": ""FabricMDL2Icons-1"",
                 }
               }
             >
@@ -697,7 +702,7 @@ exports[`ui/monitoring/values/value should render a raw value 1`] = `
           </span>
         </button>
         <button
-          aria-label="Copy the value of {label} to the clipboard"
+          aria-label="Copy the value of 'raw' to the clipboard"
           className="ms-Button ms-Button--icon root-110"
           data-is-focusable={true}
           onClick={[Function]}
@@ -717,8 +722,8 @@ exports[`ui/monitoring/values/value should render a raw value 1`] = `
               className="ms-Icon root-105 css-121 ms-Button-icon icon-113"
               data-icon-name="Copy"
               style={
-                Object {
-                  "fontFamily": "\\"FabricMDL2Icons-2\\"",
+                {
+                  "fontFamily": ""FabricMDL2Icons-2"",
                 }
               }
             >
@@ -730,7 +735,7 @@ exports[`ui/monitoring/values/value should render a raw value 1`] = `
       <pre
         className="prism-code language-json"
         style={
-          Object {
+          {
             "backgroundColor": "#ffffff",
             "color": "#000000",
           }
@@ -739,7 +744,7 @@ exports[`ui/monitoring/values/value should render a raw value 1`] = `
         <div
           className="token-line"
           style={
-            Object {
+            {
               "backgroundColor": null,
               "color": "#000000",
             }
@@ -757,7 +762,7 @@ exports[`ui/monitoring/values/value should render a raw value 1`] = `
 </section>
 `;
 
-exports[`ui/monitoring/values/value should render an XML value 1`] = `
+exports[`ui/monitoring/values/value > should render an XML value 1`] = `
 <section
   className="msla-trace-value-label"
 >
@@ -800,8 +805,8 @@ exports[`ui/monitoring/values/value should render an XML value 1`] = `
               className="ms-Icon root-105 css-119 ms-Button-icon icon-113"
               data-icon-name="SelectAll"
               style={
-                Object {
-                  "fontFamily": "\\"FabricMDL2Icons-1\\"",
+                {
+                  "fontFamily": ""FabricMDL2Icons-1"",
                 }
               }
             >
@@ -810,7 +815,7 @@ exports[`ui/monitoring/values/value should render an XML value 1`] = `
           </span>
         </button>
         <button
-          aria-label="Copy the value of {label} to the clipboard"
+          aria-label="Copy the value of 'XML' to the clipboard"
           className="ms-Button ms-Button--icon root-110"
           data-is-focusable={true}
           onClick={[Function]}
@@ -830,8 +835,8 @@ exports[`ui/monitoring/values/value should render an XML value 1`] = `
               className="ms-Icon root-105 css-121 ms-Button-icon icon-113"
               data-icon-name="Copy"
               style={
-                Object {
-                  "fontFamily": "\\"FabricMDL2Icons-2\\"",
+                {
+                  "fontFamily": ""FabricMDL2Icons-2"",
                 }
               }
             >
@@ -843,7 +848,7 @@ exports[`ui/monitoring/values/value should render an XML value 1`] = `
       <pre
         className="prism-code language-json"
         style={
-          Object {
+          {
             "backgroundColor": "#ffffff",
             "color": "#000000",
           }
@@ -852,7 +857,7 @@ exports[`ui/monitoring/values/value should render an XML value 1`] = `
         <div
           className="token-line"
           style={
-            Object {
+            {
               "backgroundColor": null,
               "color": "#000000",
             }

@@ -2,9 +2,9 @@ import { ValueSegmentType } from '../../../editor';
 import type { CustomTokenFieldProps } from '../customTokenField';
 import { CustomTokenField, isCustomEditor, toCustomEditorAndOptions } from '../customTokenField';
 import { TokenField } from '../settingTokenField';
-import type { IRenderDefaultEditorParams } from '@microsoft/designer-client-services-logic-apps';
+import type { IRenderDefaultEditorParams } from '@microsoft/logic-apps-shared';
 import * as ReactShallowRenderer from 'react-test-renderer/shallow';
-
+import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 describe('ui/settings/customTokenField', () => {
   describe('isCustomEditor', () => {
     it.each`
@@ -37,7 +37,7 @@ describe('ui/settings/customTokenField', () => {
 
   describe('toCustomEditorAndOptions', () => {
     it('should return editor value and provided options', () => {
-      const editorOptions = { EditorComponent: jest.fn() };
+      const editorOptions = { EditorComponent: vi.fn() };
       const props = toCustomEditorAndOptions(editorOptions);
 
       expect(props).toEqual({ editor: 'internal-custom-editor', editorOptions });
@@ -67,8 +67,8 @@ describe('ui/settings/customTokenField', () => {
         },
       ],
       tokenEditor: true,
-      onCastParameter: jest.fn(),
-      getTokenPicker: jest.fn(),
+      onCastParameter: vi.fn(),
+      getTokenPicker: vi.fn(),
       editor: 'internal-custom-editor',
       editorOptions: {
         EditorComponent: MyCustomEditor,
@@ -98,7 +98,7 @@ describe('ui/settings/customTokenField', () => {
           options: [{ key: '1', value: 'option 1', displayName: 'Option 1' }],
         },
         value: [],
-        onValueChange: jest.fn(),
+        onValueChange: vi.fn(),
       };
       const defaultEditor = customTokenField.props.renderDefaultEditor(defaultEditorParams);
 

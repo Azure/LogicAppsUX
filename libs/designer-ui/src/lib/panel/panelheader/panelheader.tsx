@@ -44,6 +44,7 @@ export interface PanelHeaderProps {
   onRenderWarningMessage?(): JSX.Element;
   toggleCollapse: () => void;
   onTitleChange: TitleChangeHandler;
+  onTitleBlur?: (prevtitle: string) => void;
 }
 
 const DismissIcon = bundleIcon(ChevronRight24Filled, ChevronRight24Regular);
@@ -72,6 +73,7 @@ export const PanelHeader = ({
   onRenderWarningMessage,
   toggleCollapse,
   onTitleChange,
+  onTitleBlur,
 }: PanelHeaderProps): JSX.Element => {
   const intl = useIntl();
 
@@ -79,6 +81,7 @@ export const PanelHeader = ({
 
   const resubmitButtonText = intl.formatMessage({
     defaultMessage: 'Submit from this action',
+    id: 'I+85NV',
     description: 'Button label for submitting a workflow to rerun from this action',
   });
   useEffect(() => {
@@ -112,10 +115,12 @@ export const PanelHeader = ({
   const CollapseButton = (): JSX.Element => {
     const panelCollapseTitle = intl.formatMessage({
       defaultMessage: 'Collapse',
+      id: 'lX30/R',
       description: 'Text of Tooltip to collapse',
     });
     const panelExpandTitle = intl.formatMessage({
       defaultMessage: 'Expand',
+      id: 'oZMhX/',
       description: 'Text of Tooltip to expand',
     });
     const buttonText = isCollapsed ? panelExpandTitle : panelCollapseTitle;
@@ -139,6 +144,7 @@ export const PanelHeader = ({
   const OverflowButton = (): JSX.Element => {
     const PanelHeaderMenuCommands = intl.formatMessage({
       defaultMessage: 'More commands',
+      id: '0y5eia',
       description: 'Label for commands in panel header',
     });
 
@@ -176,6 +182,7 @@ export const PanelHeader = ({
                 renameTitleDisabled={renameTitleDisabled}
                 titleValue={title}
                 onChange={onTitleChange}
+                onBlur={onTitleBlur}
               />
             </div>
             <OverflowButton />

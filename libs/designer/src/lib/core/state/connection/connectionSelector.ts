@@ -10,14 +10,16 @@ import {
   GatewayService,
   OperationManifestService,
   isServiceProviderOperation,
-} from '@microsoft/designer-client-services-logic-apps';
-import { getRecordEntry, type Connector } from '@microsoft/logic-apps-shared';
+  getRecordEntry,
+  type Connector,
+  Gateway
+} from '@microsoft/logic-apps-shared';
 import { useMemo } from 'react';
-import { useQuery } from 'react-query';
+import { UseQueryResult, useQuery } from 'react-query';
 import { useSelector } from 'react-redux';
 
-export const useConnector = (connectorId: string | undefined, enabled = true) => {
-  const { data, ...rest } = useConnectorAndSwagger(connectorId, enabled);
+export const useConnector = (connectorId: string | undefined, enabled = true): UseQueryResult<Connector | undefined, unknown> => {
+  const { data, ...rest }: any = useConnectorAndSwagger(connectorId, enabled);
   return { data: data?.connector, ...rest };
 };
 
@@ -38,7 +40,7 @@ export const useConnectorAndSwagger = (connectorId: string | undefined, enabled 
   );
 };
 
-export const useGateways = (subscriptionId: string, connectorName: string) => {
+export const useGateways = (subscriptionId: string, connectorName: string): UseQueryResult<Gateway[], unknown> => {
   return useQuery(
     ['gateways', { subscriptionId }, { connectorName }],
     async () => GatewayService().getGateways(subscriptionId, connectorName),

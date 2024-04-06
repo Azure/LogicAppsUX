@@ -1,5 +1,5 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
-import type { HttpRequestOptions, IHttpClient } from '@microsoft/designer-client-services-logic-apps';
+import type { HttpRequestOptions, IHttpClient } from '@microsoft/logic-apps-shared';
 import { HTTP_METHODS } from '@microsoft/logic-apps-shared';
 import axios from 'axios';
 
@@ -134,8 +134,8 @@ export class HttpClient implements IHttpClient {
     return isUrl(updatedUri)
       ? updatedUri
       : isArmResourceId(updatedUri)
-      ? `${this._apihubBaseUrl}${updatedUri}`
-      : `${this._baseUrl}${updatedUri}`;
+        ? `${this._apihubBaseUrl}${updatedUri}`
+        : `${this._baseUrl}${updatedUri}`;
   }
 }
 

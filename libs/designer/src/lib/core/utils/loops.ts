@@ -22,22 +22,14 @@ import {
   getParameterFromName,
   parameterValueToString,
   shouldIncludeSelfForRepetitionReference,
+  getCustomCodeFilesWithData,
 } from './parameters/helper';
 import { isTokenValueSegment } from './parameters/segment';
 import { TokenSegmentConvertor } from './parameters/tokensegment';
 import { getSplitOnValue } from './setting';
-import { foreachOperationInfo, OperationManifestService } from '@microsoft/designer-client-services-logic-apps';
-import type { OutputToken, Token } from '@microsoft/designer-ui';
-import { TokenType } from '@microsoft/designer-ui';
-import type {
-  Dereference,
-  Expression,
-  ExpressionFunction,
-  ExpressionLiteral,
-  Segment,
-  OperationManifest,
-} from '@microsoft/logic-apps-shared';
 import {
+  foreachOperationInfo,
+  OperationManifestService,
   OutputKeys,
   containsWildIndexSegment,
   convertToStringLiteral,
@@ -56,6 +48,16 @@ import {
   first,
   getRecordEntry,
   isNullOrUndefined,
+} from '@microsoft/logic-apps-shared';
+import type { OutputToken, Token } from '@microsoft/designer-ui';
+import { TokenType } from '@microsoft/designer-ui';
+import type {
+  Dereference,
+  Expression,
+  ExpressionFunction,
+  ExpressionLiteral,
+  Segment,
+  OperationManifest,
 } from '@microsoft/logic-apps-shared';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 
@@ -151,9 +153,11 @@ export const addForeachToNode = createAsyncThunk(
 
       // Initializing details for newly added foreach operation.
       const foreachOperation = newState.workflow.operations[foreachNodeId];
+      const customCodeWithData = getCustomCodeFilesWithData(state.customCode);
       const [{ nodeInputs, nodeOutputs, nodeDependencies, settings }] = (await initializeOperationDetailsForManifest(
         foreachNodeId,
         foreachOperation,
+        customCodeWithData,
         /* isTrigger */ false,
         state.workflow.workflowKind,
         state.designerOptions.hostOptions.forceEnableSplitOn ?? false,
@@ -201,14 +205,19 @@ export const addForeachToNode = createAsyncThunk(
   }
 );
 
+interface GetRepetitionNodeIdsOptions {
+  includeSelf?: boolean;
+  ignoreUntil?: boolean;
+}
+
 export const getRepetitionNodeIds = (
   nodeId: string,
   nodesMetadata: NodesMetadata,
   operationInfos: Record<string, NodeOperation>,
-  includeSelf?: boolean
+  { includeSelf = false, ignoreUntil = false }: GetRepetitionNodeIdsOptions = {}
 ): string[] => {
   const allParentNodeIds = getAllParentsForNode(nodeId, nodesMetadata);
-  const repetitionNodeIds = allParentNodeIds.filter((parentId) => isLoopingNode(parentId, operationInfos));
+  const repetitionNodeIds = allParentNodeIds.filter((parentId) => isLoopingNode(parentId, operationInfos, ignoreUntil));
 
   if (includeSelf) {
     repetitionNodeIds.unshift(nodeId);
@@ -226,7 +235,7 @@ export const getRepetitionContext = async (
   splitOn: string | undefined,
   idReplacements?: Record<string, string>
 ): Promise<RepetitionContext> => {
-  const repetitionNodeIds = getRepetitionNodeIds(nodeId, nodesMetadata, operationInfos, includeSelf);
+  const repetitionNodeIds = getRepetitionNodeIds(nodeId, nodesMetadata, operationInfos, { includeSelf });
   const repetitionReferences = (
     await Promise.all(
       repetitionNodeIds.map((repetitionNodeId) => getRepetitionReference(repetitionNodeId, operationInfos, allInputs, idReplacements))
@@ -401,7 +410,7 @@ const checkArrayInRepetition = (
   }
 
   if (areOutputsManifestBased && tokenKey) {
-    const method = getTokenExpressionMethodFromKey(tokenKey, actionName);
+    const method = getTokenExpressionMethodFromKey(tokenKey, actionName, outputInfo?.source);
     const sanitizedValue = `@${generateExpressionFromKey(
       method,
       tokenKey,
@@ -417,9 +426,9 @@ const checkArrayInRepetition = (
 
 // Directly checking the node type, because cannot make async calls while adding token from picker to editor.
 // TODO - See if this can be made async and looked at manifest.
-export const isLoopingNode = (nodeId: string, operationInfos: Record<string, NodeOperation>): boolean => {
+export const isLoopingNode = (nodeId: string, operationInfos: Record<string, NodeOperation>, ignoreUntil: boolean): boolean => {
   const nodeType = getRecordEntry(operationInfos, nodeId)?.type;
-  return equals(nodeType, Constants.NODE.TYPE.FOREACH) || equals(nodeType, Constants.NODE.TYPE.UNTIL);
+  return equals(nodeType, Constants.NODE.TYPE.FOREACH) || (!ignoreUntil && equals(nodeType, Constants.NODE.TYPE.UNTIL));
 };
 
 export const getForeachActionName = (
@@ -646,8 +655,8 @@ export const getTokenExpressionValueForManifestBasedOperation = (
       ? `items(${convertToStringLiteral(loopSource)})`
       : Constants.ITEM
     : actionName
-    ? `${Constants.OUTPUTS}(${convertToStringLiteral(actionName)})`
-    : Constants.TRIGGER_OUTPUTS_OUTPUT;
+      ? `${Constants.OUTPUTS}(${convertToStringLiteral(actionName)})`
+      : Constants.TRIGGER_OUTPUTS_OUTPUT;
 
   return generateExpressionFromKey(method, key, actionName, isInsideArray, required, /* overrideMethod */ false);
 };
@@ -816,6 +825,6 @@ const normalizeKeyPath = (path: string | undefined): string | undefined => {
   return path && path.startsWith('outputs.$.body.')
     ? path.replace('outputs.$.body.', 'body.$.')
     : path === 'outputs.$.body'
-    ? 'body.$'
-    : path;
+      ? 'body.$'
+      : path;
 };

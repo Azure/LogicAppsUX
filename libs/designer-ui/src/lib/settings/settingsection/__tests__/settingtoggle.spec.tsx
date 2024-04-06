@@ -1,8 +1,7 @@
 import type { SettingToggleProps } from '../settingtoggle';
 import { SettingToggle } from '../settingtoggle';
-import * as React from 'react';
 import * as ReactShallowRenderer from 'react-test-renderer/shallow';
-
+import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 describe('ui/settings/settingtoggle', () => {
   let minimal: SettingToggleProps, renderer: ReactShallowRenderer.ShallowRenderer;
 

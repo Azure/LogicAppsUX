@@ -4,7 +4,13 @@ import { getConnectionsForConnector, getConnectorWithSwagger } from '../../queri
 import { getOperationManifest } from '../../queries/operation';
 import { initEmptyConnectionMap } from '../../state/connection/connectionSlice';
 import type { NodeData, NodeOperation, OperationMetadataState } from '../../state/operation/operationMetadataSlice';
-import { initializeNodes, initializeOperationInfo, updateNodeSettings } from '../../state/operation/operationMetadataSlice';
+import {
+  ErrorLevel,
+  initializeNodes,
+  initializeOperationInfo,
+  updateErrorDetails,
+  updateNodeSettings,
+} from '../../state/operation/operationMetadataSlice';
 import type { RelationshipIds } from '../../state/panel/panelInterfaces';
 import { changePanelNode, openPanel, setIsPanelLoading } from '../../state/panel/panelSlice';
 import { addResultSchema } from '../../state/staticresultschema/staticresultsSlice';
@@ -29,7 +35,16 @@ import {
 import type { NodeDataWithOperationMetadata } from './operationdeserializer';
 import type { Settings } from './settings';
 import { getOperationSettings, getSplitOnValue } from './settings';
-import { ConnectionService, OperationManifestService, StaticResultService } from '@microsoft/designer-client-services-logic-apps';
+import {
+  ConnectionService,
+  OperationManifestService,
+  StaticResultService,
+  ManifestParser,
+  equals,
+  getBrandColorFromConnector,
+  getIconUriFromConnector,
+  getRecordEntry,
+} from '@microsoft/logic-apps-shared';
 import type {
   Connector,
   DiscoveryOperation,
@@ -38,7 +53,6 @@ import type {
   SomeKindOfAzureOperationDiscovery,
   SwaggerParser,
 } from '@microsoft/logic-apps-shared';
-import { ManifestParser, equals, getBrandColorFromConnector, getIconUriFromConnector, getRecordEntry } from '@microsoft/logic-apps-shared';
 import type { Dispatch } from '@reduxjs/toolkit';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { batch } from 'react-redux';
@@ -232,7 +246,20 @@ export const initializeOperationDetails = async (
       getState
     );
   } else if (connector) {
-    await trySetDefaultConnectionForNode(nodeId, connector, dispatch, isConnectionRequired);
+    try {
+      await trySetDefaultConnectionForNode(nodeId, connector, dispatch, isConnectionRequired);
+    } catch (e: any) {
+      dispatch(
+        updateErrorDetails({
+          id: nodeId,
+          errorInfo: {
+            level: ErrorLevel.Connection,
+            message: e?.message,
+          },
+        })
+      );
+      dispatch(setIsPanelLoading(false));
+    }
   }
 
   const schemaService = staticResultService.getOperationResultSchema(connectorId, operationId, swagger || parsedManifest);
@@ -354,8 +381,8 @@ const getOperationType = (operation: DiscoveryOperation<DiscoveryResultTypes>): 
     ? (operation.properties as SomeKindOfAzureOperationDiscovery).isWebhook
       ? Constants.NODE.TYPE.API_CONNECTION_WEBHOOK
       : (operation.properties as SomeKindOfAzureOperationDiscovery).isNotification
-      ? Constants.NODE.TYPE.API_CONNECTION_NOTIFICATION
-      : Constants.NODE.TYPE.API_CONNECTION
+        ? Constants.NODE.TYPE.API_CONNECTION_NOTIFICATION
+        : Constants.NODE.TYPE.API_CONNECTION
     : operationType;
 };
 

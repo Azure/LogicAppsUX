@@ -1,8 +1,8 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`ui/monitoring/values/xml should not render when not visible 1`] = `null`;
+exports[`ui/monitoring/values/xml > should not render when not visible 1`] = `null`;
 
-exports[`ui/monitoring/values/xml should render XML 1`] = `
+exports[`ui/monitoring/values/xml > should render XML 1`] = `
 <section
   className="msla-trace-value-label"
 >
@@ -45,8 +45,8 @@ exports[`ui/monitoring/values/xml should render XML 1`] = `
               className="ms-Icon root-105 css-118 ms-Button-icon icon-112"
               data-icon-name="SelectAll"
               style={
-                Object {
-                  "fontFamily": "\\"FabricMDL2Icons-1\\"",
+                {
+                  "fontFamily": ""FabricMDL2Icons-1"",
                 }
               }
             >
@@ -55,7 +55,7 @@ exports[`ui/monitoring/values/xml should render XML 1`] = `
           </span>
         </button>
         <button
-          aria-label="Copy the value of {label} to the clipboard"
+          aria-label="Copy the value of 'XML' to the clipboard"
           className="ms-Button ms-Button--icon root-109"
           data-is-focusable={true}
           onClick={[Function]}
@@ -75,8 +75,8 @@ exports[`ui/monitoring/values/xml should render XML 1`] = `
               className="ms-Icon root-105 css-120 ms-Button-icon icon-112"
               data-icon-name="Copy"
               style={
-                Object {
-                  "fontFamily": "\\"FabricMDL2Icons-2\\"",
+                {
+                  "fontFamily": ""FabricMDL2Icons-2"",
                 }
               }
             >
@@ -88,7 +88,7 @@ exports[`ui/monitoring/values/xml should render XML 1`] = `
       <pre
         className="prism-code language-json"
         style={
-          Object {
+          {
             "backgroundColor": "#ffffff",
             "color": "#000000",
           }
@@ -97,7 +97,7 @@ exports[`ui/monitoring/values/xml should render XML 1`] = `
         <div
           className="token-line"
           style={
-            Object {
+            {
               "backgroundColor": null,
               "color": "#000000",
             }
@@ -115,7 +115,7 @@ exports[`ui/monitoring/values/xml should render XML 1`] = `
 </section>
 `;
 
-exports[`ui/monitoring/values/xml should render XML with encoded UTF-8 Chinese correctly 1`] = `
+exports[`ui/monitoring/values/xml > should render XML with encoded UTF-8 Chinese correctly 1`] = `
 <section
   className="msla-trace-value-label"
 >
@@ -158,8 +158,8 @@ exports[`ui/monitoring/values/xml should render XML with encoded UTF-8 Chinese c
               className="ms-Icon root-105 css-118 ms-Button-icon icon-112"
               data-icon-name="SelectAll"
               style={
-                Object {
-                  "fontFamily": "\\"FabricMDL2Icons-1\\"",
+                {
+                  "fontFamily": ""FabricMDL2Icons-1"",
                 }
               }
             >
@@ -168,7 +168,7 @@ exports[`ui/monitoring/values/xml should render XML with encoded UTF-8 Chinese c
           </span>
         </button>
         <button
-          aria-label="Copy the value of {label} to the clipboard"
+          aria-label="Copy the value of 'XML' to the clipboard"
           className="ms-Button ms-Button--icon root-109"
           data-is-focusable={true}
           onClick={[Function]}
@@ -188,8 +188,8 @@ exports[`ui/monitoring/values/xml should render XML with encoded UTF-8 Chinese c
               className="ms-Icon root-105 css-120 ms-Button-icon icon-112"
               data-icon-name="Copy"
               style={
-                Object {
-                  "fontFamily": "\\"FabricMDL2Icons-2\\"",
+                {
+                  "fontFamily": ""FabricMDL2Icons-2"",
                 }
               }
             >
@@ -201,7 +201,7 @@ exports[`ui/monitoring/values/xml should render XML with encoded UTF-8 Chinese c
       <pre
         className="prism-code language-json"
         style={
-          Object {
+          {
             "backgroundColor": "#ffffff",
             "color": "#000000",
           }
@@ -210,7 +210,7 @@ exports[`ui/monitoring/values/xml should render XML with encoded UTF-8 Chinese c
         <div
           className="token-line"
           style={
-            Object {
+            {
               "backgroundColor": null,
               "color": "#000000",
             }
@@ -224,7 +224,7 @@ exports[`ui/monitoring/values/xml should render XML with encoded UTF-8 Chinese c
           <span
             className="token string"
             style={
-              Object {
+              {
                 "color": "rgb(163, 21, 21)",
               }
             }
@@ -239,7 +239,7 @@ exports[`ui/monitoring/values/xml should render XML with encoded UTF-8 Chinese c
           <span
             className="token string"
             style={
-              Object {
+              {
                 "color": "rgb(163, 21, 21)",
               }
             }
@@ -254,7 +254,7 @@ exports[`ui/monitoring/values/xml should render XML with encoded UTF-8 Chinese c
           <span
             className="token string"
             style={
-              Object {
+              {
                 "color": "rgb(163, 21, 21)",
               }
             }
@@ -269,7 +269,7 @@ exports[`ui/monitoring/values/xml should render XML with encoded UTF-8 Chinese c
           <span
             className="token string"
             style={
-              Object {
+              {
                 "color": "rgb(163, 21, 21)",
               }
             }
@@ -288,7 +288,7 @@ exports[`ui/monitoring/values/xml should render XML with encoded UTF-8 Chinese c
 </section>
 `;
 
-exports[`ui/monitoring/values/xml should render XML without the UTF-8 byte order mark (BOM) 1`] = `
+exports[`ui/monitoring/values/xml > should render XML without the UTF-8 byte order mark (BOM) 1`] = `
 <section
   className="msla-trace-value-label"
 >
@@ -331,8 +331,8 @@ exports[`ui/monitoring/values/xml should render XML without the UTF-8 byte order
               className="ms-Icon root-105 css-118 ms-Button-icon icon-112"
               data-icon-name="SelectAll"
               style={
-                Object {
-                  "fontFamily": "\\"FabricMDL2Icons-1\\"",
+                {
+                  "fontFamily": ""FabricMDL2Icons-1"",
                 }
               }
             >
@@ -341,7 +341,7 @@ exports[`ui/monitoring/values/xml should render XML without the UTF-8 byte order
           </span>
         </button>
         <button
-          aria-label="Copy the value of {label} to the clipboard"
+          aria-label="Copy the value of 'XML' to the clipboard"
           className="ms-Button ms-Button--icon root-109"
           data-is-focusable={true}
           onClick={[Function]}
@@ -361,8 +361,8 @@ exports[`ui/monitoring/values/xml should render XML without the UTF-8 byte order
               className="ms-Icon root-105 css-120 ms-Button-icon icon-112"
               data-icon-name="Copy"
               style={
-                Object {
-                  "fontFamily": "\\"FabricMDL2Icons-2\\"",
+                {
+                  "fontFamily": ""FabricMDL2Icons-2"",
                 }
               }
             >
@@ -374,7 +374,7 @@ exports[`ui/monitoring/values/xml should render XML without the UTF-8 byte order
       <pre
         className="prism-code language-json"
         style={
-          Object {
+          {
             "backgroundColor": "#ffffff",
             "color": "#000000",
           }
@@ -383,7 +383,7 @@ exports[`ui/monitoring/values/xml should render XML without the UTF-8 byte order
         <div
           className="token-line"
           style={
-            Object {
+            {
               "backgroundColor": null,
               "color": "#000000",
             }
@@ -401,7 +401,7 @@ exports[`ui/monitoring/values/xml should render XML without the UTF-8 byte order
 </section>
 `;
 
-exports[`ui/monitoring/values/xml should render a zero-width space if value is empty 1`] = `
+exports[`ui/monitoring/values/xml > should render a zero-width space if value is empty 1`] = `
 <section
   className="msla-trace-value-label"
 >
@@ -444,8 +444,8 @@ exports[`ui/monitoring/values/xml should render a zero-width space if value is e
               className="ms-Icon root-105 css-118 ms-Button-icon icon-112"
               data-icon-name="SelectAll"
               style={
-                Object {
-                  "fontFamily": "\\"FabricMDL2Icons-1\\"",
+                {
+                  "fontFamily": ""FabricMDL2Icons-1"",
                 }
               }
             >
@@ -454,7 +454,7 @@ exports[`ui/monitoring/values/xml should render a zero-width space if value is e
           </span>
         </button>
         <button
-          aria-label="Copy the value of {label} to the clipboard"
+          aria-label="Copy the value of 'XML' to the clipboard"
           className="ms-Button ms-Button--icon root-109"
           data-is-focusable={true}
           onClick={[Function]}
@@ -474,8 +474,8 @@ exports[`ui/monitoring/values/xml should render a zero-width space if value is e
               className="ms-Icon root-105 css-120 ms-Button-icon icon-112"
               data-icon-name="Copy"
               style={
-                Object {
-                  "fontFamily": "\\"FabricMDL2Icons-2\\"",
+                {
+                  "fontFamily": ""FabricMDL2Icons-2"",
                 }
               }
             >
@@ -487,7 +487,7 @@ exports[`ui/monitoring/values/xml should render a zero-width space if value is e
       <pre
         className="prism-code language-json"
         style={
-          Object {
+          {
             "backgroundColor": "#ffffff",
             "color": "#000000",
           }
@@ -496,7 +496,7 @@ exports[`ui/monitoring/values/xml should render a zero-width space if value is e
         <div
           className="token-line"
           style={
-            Object {
+            {
               "backgroundColor": null,
               "color": "#000000",
             }

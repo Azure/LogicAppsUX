@@ -1,8 +1,9 @@
 import constants from '../constants';
+import { CLOSE_TOKENPICKER } from '../editor/base/plugins/CloseTokenPicker';
 import type { IButtonStyles } from '@fluentui/react';
 import { IconButton } from '@fluentui/react';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
-import { LogEntryLevel, LoggerService } from '@microsoft/designer-client-services-logic-apps';
+import { LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
 import type { LexicalEditor } from 'lexical';
 import { useIntl } from 'react-intl';
 
@@ -22,18 +23,11 @@ const buttonStyles: IButtonStyles = {
 interface TokenPickerHeaderProps {
   fullScreen: boolean;
   isExpression: boolean;
-  closeTokenPicker?: () => void;
   setFullScreen: (fullScreen: boolean) => void;
   pasteLastUsedExpression?: () => void;
 }
 
-export function TokenPickerHeader({
-  fullScreen,
-  isExpression,
-  closeTokenPicker,
-  setFullScreen,
-  pasteLastUsedExpression,
-}: TokenPickerHeaderProps) {
+export function TokenPickerHeader({ fullScreen, isExpression, setFullScreen, pasteLastUsedExpression }: TokenPickerHeaderProps) {
   let editor: LexicalEditor | null;
   try {
     [editor] = useLexicalComposerContext();
@@ -44,33 +38,37 @@ export function TokenPickerHeader({
 
   const closeMessage = intl.formatMessage({
     defaultMessage: 'Close',
+    id: 'Zg3IjD',
     description: 'Close token picker',
   });
 
   const infoMessage = intl.formatMessage({
     defaultMessage: 'Info',
+    id: 'gRUmiA',
     description: 'Info about token picker',
   });
 
   const fullScreenMessage = intl.formatMessage({
     defaultMessage: 'Full Screen',
+    id: 'ae7W0a',
     description: 'Full Screen token picker',
   });
   const fullScreenExitMessage = intl.formatMessage({
     defaultMessage: 'Exit full screen',
+    id: 'HMiE+4',
     description: "Token picker for 'Exit full screen'",
   });
 
   const pasteLastUsedExpressionMessage = intl.formatMessage({
     defaultMessage: 'Paste last used expression',
+    id: '+ijo/2',
     description: "Token picker for 'Paste last used expression'",
   });
 
   const isExpressionString = isExpression ? 'expression' : 'token';
 
   const handleCloseTokenPicker = () => {
-    editor?.focus();
-    closeTokenPicker?.();
+    editor?.dispatchCommand(CLOSE_TOKENPICKER, { focusEditorAfter: true });
     LoggerService().log({
       area: 'TokenPickerHeader:handleCloseTokenPicker',
       args: [isExpressionString],

@@ -5,7 +5,7 @@ import { TooltipHost } from '@fluentui/react/lib/Tooltip';
 import { Depths } from '@fluentui/theme';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
-import { LogEntryLevel, LoggerService } from '@microsoft/designer-client-services-logic-apps';
+import { LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
 import type { NodeKey } from 'lexical';
 import { $getSelection } from 'lexical';
 import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
@@ -114,11 +114,13 @@ export const TokenPickerButton = ({
 
   const dynamicContentButtonText = intl.formatMessage({
     defaultMessage: `Enter the data from previous step. You can also add data by typing the '/' character.`,
+    id: 'p1IEXb',
     description: 'Label for button to open dynamic content token picker',
   });
 
   const expressionButtonText = intl.formatMessage({
     defaultMessage: 'Insert Expression (You can also add by typing / in the editor)',
+    id: 'loxzZD',
     description: 'Label for button to open expression token picker',
   });
 

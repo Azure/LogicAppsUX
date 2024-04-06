@@ -1,8 +1,8 @@
 import { convertToStringLiteral, isStringInterpolation, isStringLiteral } from '../common/helpers/expression';
 import type { Dereference, Expression, ExpressionFunction, ExpressionLiteral } from '../models/expression';
 import { ExpressionType } from '../models/expression';
-import { getIntl } from '@microsoft/intl-logic-apps';
-import { BaseException } from '@microsoft/utils-logic-apps';
+import { getIntl } from '../../../intl/src';
+import { BaseException } from '../../../utils/src';
 
 /**
  * The expression builder exception name.
@@ -57,6 +57,7 @@ export class ExpressionBuilder {
    * @return {string}
    */
   public buildExpression(expression: Expression): string {
+    const intl = getIntl();
     switch (expression.type) {
       case ExpressionType.NullLiteral:
       case ExpressionType.BooleanLiteral:
@@ -71,9 +72,10 @@ export class ExpressionBuilder {
 
       default:
         throw new ExpressionBuilderException(
-          getIntl().formatMessage(
+          intl.formatMessage(
             {
               defaultMessage: `Invalid expression type ''{type}''.`,
+              id: 'yjierd',
               description:
                 'Error message on invalid expression type during building. Do not remove the double single quotes around the placeholder text, as it is needed to wrap the placeholder text in single quotes.',
             },
