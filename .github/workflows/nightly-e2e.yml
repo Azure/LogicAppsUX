@@ -20,17 +20,20 @@ jobs:
         client-id: ${{ secrets.AZURE_TESTING_CLIENT_ID }}
         tenant-id: ${{ secrets.AZURE_TESTING_TENANT_ID }}
         subscription-id: ${{ secrets.AZURE_TESTING_SUBSCRIPTION_ID }}
+    - name: Create Arm Token File
+      run: touch ./apps/standalone/src/environments/jsonImport/armToken.json
 
     - name: Azure CLI script
       uses: azure/cli@v2
       with:
         azcliversion: 2.30.0
         inlineScript: |
+            az account get-access-token --tenant 72f988bf-86f1-41af-91ab-2d7cd011db47 > ./apps/standalone/src/environments/jsonImport/armToken.json
             az deployment group create \
             --resource-group LAE2ETESTING \
             --subscription ${{ secrets.AZURE_TESTING_SUBSCRIPTION_ID }} \
             --template-file ./e2e/testSetup/BlankLogicApp/logicAppStandard.bicep
-            az account get-access-token --tenant 72f988bf-86f1-41af-91ab-2d7cd011db47 > ./apps/standalone/src/environments/jsonImport/armToken.json
+            
     
     - uses: pnpm/action-setup@v3
       with:
@@ -43,6 +46,9 @@ jobs:
       run: pnpm run e2e:setup
     - name: Run Playwright tests
       run: pnpm run test:e2e --grep @real
+    - name: Scrub Secrets From Trace
+      run: pnpm run scrub-secrets:e2e
+      
     - uses: actions/upload-artifact@v4
       if: always()
       with:

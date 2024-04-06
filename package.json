@@ -12,6 +12,7 @@
     "build": "turbo run build",
     "test": "turbo run test:unit",
     "test:e2e": "playwright test",
+    "scrub-secrets:e2e": "node ./scrub-e2e-trace.js",
     "check": "biome check --apply .",
     "extract": "formatjs extract \"libs/**/*.{ts,tsx}\" --ignore \"libs/**/*.{d,test,spec}.{ts,tsx}\" --out-file Localize/lang/strings.json --format ./format.js",
     "compile:loc": "formatjs compile-folder --ast --format ./format.js \"Localize/lang\" \"libs/logic-apps-shared/src/intl/compiled-lang/\" ",
@@ -45,7 +46,9 @@
     "@vitejs/plugin-react": "^4.2.1",
     "@vitest/coverage-istanbul": "^1.4.0",
     "@vitest/ui": "^1.4.0",
+    "archiver": "^7.0.1",
     "child_process": "^1.0.2",
+    "common-es": "^1.0.1",
     "concurrently": "^8.2.2",
     "deepmerge-json": "^1.5.0",
     "esbuild-plugin-less": "^1.3.3",
@@ -56,6 +59,8 @@
     "eslint-plugin-react": "^7.34.1",
     "eslint-plugin-react-hooks": "^4.6.0",
     "eslint-plugin-react-refresh": "^0.4.6",
+    "extract-zip": "^2.0.1",
+    "glob": "^10.3.12",
     "husky": "^9.0.11",
     "jsdom": "^24.0.0",
     "jsonc-eslint-parser": "^2.4.0",
@@ -81,5 +86,9 @@
       "eslint --cache --fix",
       "biome check --apply"
     ]
+  },
+  "dependencies": {
+    "D": "^1.0.0",
+    "replace-in-file": "^7.1.0"
   }
 }

@@ -19,7 +19,6 @@ jobs:
         run_install: |
           - recursive: true
             args: [--frozen-lockfile, --strict-peer-dependencies]
-          - args: [--global, turbo, typescript]
           
     - name: Install Playwright Browsers
       run: pnpm run e2e:setup
