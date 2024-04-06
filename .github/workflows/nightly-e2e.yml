@@ -27,7 +27,7 @@ jobs:
         azcliversion: 2.58.0
         inlineScript: |
           tokenData=$(az account get-access-token --tenant 72f988bf-86f1-41af-91ab-2d7cd011db47)
-          echo “::set-output name=token::$tokenData
+          echo “::set-output name=token::'$tokenData'”
   # > ./apps/standalone/src/environments/jsonImport/armToken.json
 
     - name: Test Token Data
