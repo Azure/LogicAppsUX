@@ -6,7 +6,7 @@ export interface CustomCode {
 }
 
 export interface CustomCodeWithData extends CustomCode {
-  fileData: string;
+  fileData?: string;
 }
 
 export type CustomCodeFileNameMapping = Record<string, CustomCodeWithData>;

@@ -2543,7 +2543,7 @@ export const getCustomCodeFilesWithData = (state: CustomCodeState): CustomCodeFi
     if (fileDataInfo || fileInfo.isDeleted) {
       customCodeFileWithData[fileName] = {
         ...fileInfo,
-        fileData: fileDataInfo ?? '',
+        fileData: fileDataInfo,
       };
     }
   });

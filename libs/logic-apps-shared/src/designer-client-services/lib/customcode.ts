@@ -17,8 +17,6 @@ export interface VFSObject {
 }
 
 export interface ICustomCodeService {
-  getAllCustomCodeFiles(): Promise<VFSObject[]>;
-  getCustomCodeFile(fileName: string): Promise<string>;
   uploadCustomCode(customCode: UploadCustomCode): Promise<void>;
   deleteCustomCode(fileName: string): Promise<void>;
 }

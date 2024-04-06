@@ -17,7 +17,7 @@ export type EditorLanguage = (typeof EditorLanguage)[keyof typeof EditorLanguage
 export const getFileExtensionName = (language: EditorLanguage): string => {
   switch (language) {
     case EditorLanguage.csharp:
-      return '.cs';
+      return '.csx';
     case EditorLanguage.powershell:
       return '.ps1';
     default:
@@ -27,8 +27,8 @@ export const getFileExtensionName = (language: EditorLanguage): string => {
 
 export const getFileExtensionNameFromOperationId = (operationId: string): string => {
   switch (operationId) {
-    case 'csharpcode':
-      return '.cs';
+    case 'csharpscriptcode':
+      return '.csx';
     case 'powershellcode':
       return '.ps1';
     default:

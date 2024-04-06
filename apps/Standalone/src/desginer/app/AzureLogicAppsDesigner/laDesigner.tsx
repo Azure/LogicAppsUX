@@ -85,6 +85,8 @@ const DesignerEditor = () => {
   const [designerID, setDesignerID] = useState(guid());
   const [workflow, setWorkflow] = useState(data?.properties.files[Artifact.WorkflowFile]);
   const originalConnectionsData = useMemo(() => data?.properties.files[Artifact.ConnectionsFile] ?? {}, [data?.properties.files]);
+  const originalCustomCodeData = useMemo(() => Object.keys(customCodeData ?? {}), [customCodeData]);
+  console.log(customCodeData);
   const parameters = useMemo(() => data?.properties.files[Artifact.ParametersFile] ?? {}, [data?.properties.files]);
   const queryClient = getReactQueryClient();
 
@@ -251,6 +253,7 @@ const DesignerEditor = () => {
     }
 
     const connectionsToUpdate = getConnectionsToUpdate(originalConnectionsData, connectionsData ?? {});
+    const customCodeToUpdate = getCustomCodeToUpdate(originalCustomCodeData, customCode ?? {});
     const parametersToUpdate = !isEqual(originalParametersData, parameters) ? (parameters as ParametersData) : undefined;
     const settingsToUpdate = !isEqual(settingsData?.properties, originalSettings) ? settingsData?.properties : undefined;
 
@@ -261,7 +264,7 @@ const DesignerEditor = () => {
       connectionsToUpdate,
       parametersToUpdate,
       settingsToUpdate,
-      customCode,
+      customCodeToUpdate,
       clearDirtyState
     );
   };
@@ -701,6 +704,17 @@ const getConnectionsToUpdate = (
   }
 
   return connectionsToUpdate;
+};
+
+const getCustomCodeToUpdate = (originalCustomCodeData: string[], customCode: CustomCodeFileNameMapping): CustomCodeFileNameMapping => {
+  const filteredCustomCodeMapping: CustomCodeFileNameMapping = {};
+  Object.entries(customCode).forEach(([fileName, customCodeData]) => {
+    const { isModified, isDeleted } = customCodeData;
+    if ((isDeleted && originalCustomCodeData.includes(fileName)) || (isModified && !isDeleted)) {
+      filteredCustomCodeMapping[fileName] = { ...customCodeData };
+    }
+  });
+  return filteredCustomCodeMapping;
 };
 
 export default DesignerEditor;

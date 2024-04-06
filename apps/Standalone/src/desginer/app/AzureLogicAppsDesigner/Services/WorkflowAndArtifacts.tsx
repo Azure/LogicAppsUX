@@ -10,6 +10,7 @@ import axios from 'axios';
 import jwt_decode from 'jwt-decode';
 import { useQuery } from 'react-query';
 import { isSuccessResponse } from './HttpClient';
+import { fetchFilesFromFolder } from './vfsService';
 
 const baseUrl = 'https://management.azure.com';
 const standardApiVersion = '2020-06-01';
@@ -49,17 +50,7 @@ export const useAllCustomCodeFiles = (appId?: string, workflowName?: string) => 
 const getAllCustomCodeFiles = async (appId?: string, workflowName?: string) => {
   const customCodeFiles: Record<string, string> = {};
   const uri = `${baseUrl}${appId}/hostruntime/admin/vfs/${workflowName}`;
-  const vfsObjects: VFSObject[] = (
-    await axios.get<VFSObject[]>(uri, {
-      headers: {
-        Authorization: `Bearer ${environment.armToken}`,
-      },
-      params: {
-        relativePath: 1,
-        'api-version': '2018-11-01',
-      },
-    })
-  ).data.filter((file) => file.name !== Artifact.WorkflowFile);
+  const vfsObjects: VFSObject[] = (await fetchFilesFromFolder(uri)).filter((file) => file.name !== Artifact.WorkflowFile);
 
   const filesData = await Promise.all(
     vfsObjects.map(async (file) => {
@@ -295,30 +286,26 @@ export const getConnectionConsumption = async (connectionId: string) => {
 export const saveCustomCodeStandard = async (customCode?: CustomCodeFileNameMapping): Promise<void> => {
   if (!customCode || Object.keys(customCode).length === 0) return;
   try {
-    const existingFiles = (await CustomCodeService().getAllCustomCodeFiles()).map((file) => file.name);
     // to prevent 404's we first check which custom code files are already present before deleting
     Object.entries(customCode).forEach(([fileName, customCodeData]) => {
       const { fileExtension, isModified, isDeleted, fileData } = customCodeData;
       if (isDeleted) {
-        if (existingFiles.includes(fileName)) {
-          CustomCodeService().deleteCustomCode(fileName);
-          LoggerService().log({
-            level: LogEntryLevel.Verbose,
-            area: 'serializeCustomcode',
-            message: `Deleting custom code file: ${fileName}`,
-          });
-        }
-      } else if (isModified) {
+        CustomCodeService().deleteCustomCode(fileName);
         LoggerService().log({
           level: LogEntryLevel.Verbose,
           area: 'serializeCustomcode',
-          message: `Uploading/Updating custom code file: ${fileName}`,
+          message: `Deleting custom code file: ${fileName}`,
         });
-
+      } else if (isModified && fileData) {
         CustomCodeService().uploadCustomCode({
           fileData,
           fileName,
           fileExtension,
+        });
+        LoggerService().log({
+          level: LogEntryLevel.Verbose,
+          area: 'serializeCustomcode',
+          message: `Uploading/Updating custom code file: ${fileName}`,
         });
       }
     });
