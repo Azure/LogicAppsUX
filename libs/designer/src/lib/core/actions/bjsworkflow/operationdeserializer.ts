@@ -2,7 +2,7 @@
 import type { CustomCodeFileNameMapping } from '../../..';
 import Constants from '../../../common/constants';
 import type { ConnectionReference, ConnectionReferences, WorkflowParameter } from '../../../common/models/workflow';
-import type { DeserializedWorkflow } from '../../parsers/BJSWorkflow/BJSDeserializer';
+import { isSwitchAction, type DeserializedWorkflow } from '../../parsers/BJSWorkflow/BJSDeserializer';
 import type { WorkflowNode } from '../../parsers/models/workflowNode';
 import type { ConnectorWithParsedSwagger } from '../../queries/connections';
 import { getConnectorWithSwagger } from '../../queries/connections';
@@ -68,6 +68,8 @@ import {
   getRecordEntry,
   getFileExtensionNameFromOperationId,
   parseErrorMessage,
+  isNumber,
+  isStringBoolean,
 } from '@microsoft/logic-apps-shared';
 import type { InputParameter, OutputParameter, LogicAppsV2, OperationManifest } from '@microsoft/logic-apps-shared';
 import type { Dispatch } from '@reduxjs/toolkit';
@@ -270,7 +272,7 @@ export const initializeOperationDetailsForManifest = async (
       forceEnableSplitOn
     );
 
-    const childGraphInputs = processChildGraphAndItsInputs(manifest, operation);
+    const childGraphInputs = processChildGraphAndItsInputs(manifest, operation, isSwitchAction(operation));
 
     return [
       {
@@ -303,7 +305,8 @@ export const initializeOperationDetailsForManifest = async (
 
 const processChildGraphAndItsInputs = (
   manifest: OperationManifest,
-  operation: LogicAppsV2.ActionDefinition | LogicAppsV2.TriggerDefinition
+  operation: LogicAppsV2.ActionDefinition | LogicAppsV2.TriggerDefinition,
+  isSwitch?: boolean
 ): NodeDataWithOperationMetadata[] => {
   const { subGraphDetails } = manifest.properties;
   const nodesData: NodeDataWithOperationMetadata[] = [];
@@ -316,12 +319,15 @@ const processChildGraphAndItsInputs = (
         const subManifest = { properties: { inputs, inputsLocation } } as any;
         if (isAdditive) {
           for (const subNodeKey of Object.keys(subOperation)) {
+            const caseValue = subOperation[subNodeKey]?.case;
+            const suppressTypeConversion = !!isSwitch && typeof caseValue === 'string' && isNumber(caseValue);
             const { inputs: subNodeInputs, dependencies: subNodeInputDependencies } = getInputParametersFromManifest(
               subNodeKey,
               subManifest,
               /* presetParameterValues */ undefined,
               /* customSwagger */ undefined,
-              subOperation[subNodeKey]
+              subOperation[subNodeKey],
+              suppressTypeConversion
             );
             const subNodeOutputs = { outputs: {} };
             nodesData.push({

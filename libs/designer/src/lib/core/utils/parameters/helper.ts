@@ -2555,14 +2555,21 @@ export function getInputsValueFromDefinitionForManifest(
   manifest: OperationManifest,
   customSwagger: SwaggerParser | undefined,
   stepDefinition: any,
-  allInputs: InputParameter[]
+  allInputs: InputParameter[],
+  suppressTypeConversion: boolean = false
 ): any {
   let inputsValue = stepDefinition;
 
   for (const property of inputsLocation) {
     // NOTE: Currently this only supports single item array. Might need to be updated when multiple array support operations are added.
     // None right now in any connectors.
-    inputsValue = property === '[*]' ? inputsValue[0] : getPropertyValue(inputsValue, property);
+    const propertyValue = getPropertyValue(inputsValue, property);
+    inputsValue =
+      property === '[*]'
+        ? inputsValue[0]
+        : typeof propertyValue === 'string' && suppressTypeConversion
+          ? `"${propertyValue}"`
+          : propertyValue;
   }
 
   inputsValue = swapInputsValueIfNeeded(inputsValue, manifest);

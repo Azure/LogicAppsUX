@@ -120,7 +120,7 @@ const isIfAction = (action: LogicAppsV2.ActionDefinition): action is LogicAppsV2
   return equals(action?.type, 'if');
 };
 
-const isSwitchAction = (action: LogicAppsV2.ActionDefinition): action is LogicAppsV2.SwitchAction => {
+export const isSwitchAction = (action: LogicAppsV2.ActionDefinition): action is LogicAppsV2.SwitchAction => {
   return equals(action?.type, 'switch');
 };
 

@@ -106,7 +106,8 @@ export const getInputParametersFromManifest = (
   manifest: OperationManifest,
   presetParameterValues?: Record<string, any>,
   customSwagger?: SwaggerParser,
-  stepDefinition?: any
+  stepDefinition?: any,
+  suppressTypeConversion?: boolean
 ): NodeInputsWithDependencies => {
   const primaryInputParameters = new ManifestParser(manifest).getInputParameters(
     false /* includeParentObject */,
@@ -145,7 +146,8 @@ export const getInputParametersFromManifest = (
         manifest,
         customSwagger,
         operationData,
-        primaryInputParametersInArray
+        primaryInputParametersInArray,
+        suppressTypeConversion
       ),
       '',
       primaryInputParametersInArray,
