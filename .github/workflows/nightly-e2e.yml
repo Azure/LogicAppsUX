@@ -32,14 +32,13 @@ jobs:
             --template-file ./e2e/testSetup/BlankLogicApp/logicAppStandard.bicep
             az account get-access-token --tenant 72f988bf-86f1-41af-91ab-2d7cd011db47 > ./apps/standalone/src/environments/jsonImport/armToken.json
     
-            - uses: pnpm/action-setup@v3
-            with:
-              version: 8
-              run_install: |
-                - recursive: true
-                  args: [--frozen-lockfile, --strict-peer-dependencies]
-                - args: [--global, turbo, typescript]
-                
+    - uses: pnpm/action-setup@v3
+      with:
+        version: 8
+        run_install: |
+          - recursive: true
+            args: [--frozen-lockfile, --strict-peer-dependencies]
+                                
     - name: Install Playwright Browsers
       run: pnpm run e2e:setup
     - name: Run Playwright tests
