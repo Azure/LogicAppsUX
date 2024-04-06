@@ -1,8 +1,4 @@
-import {
-  comprehensiveMapDefinition,
-  fullTranscriptMapDefinitionString,
-  transcriptJsonMapDefinitionString,
-} from '../mapDefinitions';
+import { comprehensiveMapDefinition, fullTranscriptMapDefinitionString, transcriptJsonMapDefinitionString } from '../mapDefinitions';
 import { testMetadata } from '../mapMetadata';
 import { LoadingMethod, dataMapDataLoaderSlice, loadDataMap } from '../state/DataMapDataLoader';
 import { loadSourceSchema, loadTargetSchema, schemaDataLoaderSlice } from '../state/SchemaDataLoader';
@@ -90,13 +86,10 @@ export const DevToolbox = () => {
     [dispatch]
   );
 
-  const resetToUseARM = useCallback(
-    () => {
-      dispatch(dataMapDataLoaderSlice.actions.changeRawDefinition({} as MapDefDropdownOption));
-      dispatch(loadDataMap());
-    },
-    [dispatch]
-  );
+  const resetToUseARM = useCallback(() => {
+    dispatch(dataMapDataLoaderSlice.actions.changeRawDefinition({} as MapDefDropdownOption));
+    dispatch(loadDataMap());
+  }, [dispatch]);
 
   const changeMapXsltFilenameCB = useCallback(
     (newFilename?: string) => {
@@ -180,7 +173,7 @@ export const DevToolbox = () => {
     if (loadingMethod === LoadingMethod.File) {
       newToolboxItems.push(
         <StackItem key={'dataMapperVersionToggle'} style={{ width: '250px' }}>
-          <Toggle label="New data mapper" onChange={changeDMVersion} placeholder="Select a map definition" />
+          <Toggle label="New data mapper" onChange={changeDMVersion} defaultChecked={true} placeholder="Select a map definition" />
         </StackItem>
       );
       newToolboxItems.push(
