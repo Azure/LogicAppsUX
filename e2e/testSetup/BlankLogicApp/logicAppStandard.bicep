@@ -95,3 +95,11 @@ resource appService 'Microsoft.Web/sites@2020-06-01' = {
   }
   kind: 'functionapp,workflowapp'
 }
+
+resource zipDeploy 'Microsoft.Web/sites/extensions@2021-02-01' = {
+  name: any('ZipDeploy')
+  parent: appService
+  properties: {
+    packageUri: 'https://raw.githubusercontent.com/Azure/LogicAppsUX/e2eTesting/e2e/testSetup/BlankLogicApp/zipStuff.zip'
+  }
+}
