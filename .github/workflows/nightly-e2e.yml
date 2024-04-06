@@ -21,7 +21,9 @@ jobs:
         tenant-id: ${{ secrets.AZURE_TESTING_TENANT_ID }}
         subscription-id: ${{ secrets.AZURE_TESTING_SUBSCRIPTION_ID }}
     - name: Create Arm Token File
-      run: touch ./apps/standalone/src/environments/jsonImport/armToken.json
+      run: |
+        mkdir ./apps/standalone/src/environments/jsonImport
+        touch ./apps/standalone/src/environments/jsonImport/armToken.json
 
     - name: Azure CLI script
       uses: azure/cli@v2
@@ -48,7 +50,7 @@ jobs:
       run: pnpm run test:e2e --grep @real
     - name: Scrub Secrets From Trace
       run: pnpm run scrub-secrets:e2e
-      
+
     - uses: actions/upload-artifact@v4
       if: always()
       with:
