@@ -32,8 +32,9 @@ jobs:
 
     - name: Test Token Data
       run: |
-        echo ${{ steps.genToken.outputs.token }}
+        echo ${{ steps.genToken.outputs }}
         echo "Test Output Here"
+
     - uses: "finnp/create-file-action@master"
       env:
         FILE_NAME: "apps/standalone/src/environments/jsonImport/armToken.json"
