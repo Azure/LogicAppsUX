@@ -24,13 +24,14 @@ jobs:
     - name: Genreate Token for test
       uses: azure/cli@v2
       with:
-        azcliversion: 2.30.0
+        azcliversion: 2.58.0
         inlineScript: |
           tokenData=$(az account get-access-token --tenant 72f988bf-86f1-41af-91ab-2d7cd011db47)
-          echo "$tokenData"
-          echo "td=$tokenData" >> $GITHUB_OUTPUT
+          echo “::set-output name=token::$tokenData
   # > ./apps/standalone/src/environments/jsonImport/armToken.json
 
+    - name: Test Token Data
+      run: echo ${{ steps.GenreateToken.outputs.token }}
     - name: Deploy Logic Apps For Testing
       uses: azure/cli@v2
       with:
