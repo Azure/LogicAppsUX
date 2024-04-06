@@ -8,6 +8,10 @@ jobs:
 
   build-and-deploy:
     runs-on: ubuntu-latest
+    permissions:
+        issues: write
+        pull-requests: write
+        id-token: write
     steps:
     - name: Azure login
       uses: azure/login@v2
@@ -15,7 +19,7 @@ jobs:
         client-id: ${{ secrets.AZURE_TESTING_CLIENT_ID }}
         tenant-id: ${{ secrets.AZURE_TESTING_TENANT_ID }}
         subscription-id: ${{ secrets.AZURE_TESTING_SUBSCRIPTION_ID }}
-        
+
     - name: Azure CLI script
       uses: azure/cli@v2
       with:
