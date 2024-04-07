@@ -10,7 +10,7 @@ import axios from 'axios';
 import jwt_decode from 'jwt-decode';
 import { useQuery } from 'react-query';
 import { isSuccessResponse } from './HttpClient';
-import { fetchFilesFromFolder } from './vfsService';
+import { fetchFileData, fetchFilesFromFolder } from './vfsService';
 
 const baseUrl = 'https://management.azure.com';
 const standardApiVersion = '2020-06-01';
@@ -54,17 +54,8 @@ const getAllCustomCodeFiles = async (appId?: string, workflowName?: string) => {
 
   const filesData = await Promise.all(
     vfsObjects.map(async (file) => {
-      const response = await axios.get<string>(`${uri}/${file.name}`, {
-        headers: {
-          Authorization: `Bearer ${environment.armToken}`,
-          'If-Match': ['*'],
-        },
-        params: {
-          relativePath: 1,
-          'api-version': '2018-11-01',
-        },
-      });
-      return { name: file.name, data: response.data };
+      const response = await fetchFileData(`${uri}/${file.name}`);
+      return { name: file.name, data: response };
     })
   );
 

@@ -15,3 +15,18 @@ export const fetchFilesFromFolder = async (uri: string): Promise<VFSObject[]> =>
     })
   ).data;
 };
+
+export const fetchFileData = async (uri: string): Promise<string> => {
+  return (
+    await axios.get<string>(uri, {
+      headers: {
+        Authorization: `Bearer ${environment.armToken}`,
+        'If-Match': ['*'],
+      },
+      params: {
+        relativePath: 1,
+        'api-version': '2018-11-01',
+      },
+    })
+  ).data;
+};
