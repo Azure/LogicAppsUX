@@ -39,15 +39,10 @@ jobs:
           echo token=$tokenData >> $env:GITHUB_OUTPUT
         azPSVersion: "latest"
 
-    - name: Test Token Data
-      run: |
-        echo ${{ steps.genToken.outputs.token }}
-        echo "Test Output Here"
-
     - uses: "finnp/create-file-action@master"
       env:
         FILE_NAME: "apps/standalone/src/environments/jsonImport/armToken.json"
-        FILE_DATA: ${{ steps.genToken.outputs.token }}
+        FILE_DATA: "{\"accessToken\":\"${{ steps.genToken.outputs.token }}\"}"
   # > ./apps/standalone/src/environments/jsonImport/armToken.json
 
    
