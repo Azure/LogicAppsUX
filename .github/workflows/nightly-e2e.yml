@@ -27,8 +27,12 @@ jobs:
       with:
         azcliversion: 2.58.0
         inlineScript: |
-          echo "token=$(az account get-access-token --tenant 72f988bf-86f1-41af-91ab-2d7cd011db47)" > $GITHUB_OUTPUT
-
+          tokenData=$(az account get-access-token --tenant 72f988bf-86f1-41af-91ab-2d7cd011db47)
+          echo "token='$(tokenData)'" > $GITHUB_OUTPUT
+          echo $(tokenData)
+      outputs:
+        token: ${{ steps.genToken.outputs.token }}
+        
     - name: Test Token Data
       run: |
         echo ${{ steps.genToken.outputs.token }}
