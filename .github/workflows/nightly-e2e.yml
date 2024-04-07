@@ -35,8 +35,7 @@ jobs:
       id: genToken
       with:
         inlineScript: |
-          echo "token='{\"accessToken\":\"${(Get-AzAccessToken -TenantId 72f988bf-86f1-41af-91ab-2d7cd011db47).Token}\"}"
-          echo "token='{\"accessToken\":\"${(Get-AzAccessToken -TenantId 72f988bf-86f1-41af-91ab-2d7cd011db47).Token}\"}" >> $env:GITHUB_OUTPUT
+          echo token=((Get-AzAccessToken -TenantId 72f988bf-86f1-41af-91ab-2d7cd011db47).Token) >> $env:GITHUB_OUTPUT
         azPSVersion: "latest"
 
     - name: Test Token Data
