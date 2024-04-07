@@ -21,18 +21,23 @@ jobs:
         tenant-id: ${{ secrets.AZURE_TESTING_TENANT_ID }}
         subscription-id: ${{ secrets.AZURE_TESTING_SUBSCRIPTION_ID }}
 
-    - name: Genreate Token for test
-      uses: azure/cli@v2
+    # - name: Genreate Token for test
+    #   uses: azure/cli@v2
+    #   id: genToken
+    #   with:
+    #     azcliversion: 2.58.0
+    #     inlineScript: |
+    #       tokenData=$(az account get-access-token --tenant 72f988bf-86f1-41af-91ab-2d7cd011db47)
+    #       echo "token=$(tokenData)" > $GITHUB_OUTPUT
+    #       echo $(tokenData)
+    - name: Run Azure PowerShell inline script
+      uses: azure/powershell@v2
       id: genToken
       with:
-        azcliversion: 2.58.0
         inlineScript: |
-          tokenData=$(az account get-access-token --tenant 72f988bf-86f1-41af-91ab-2d7cd011db47)
-          echo "token='$(tokenData)'" > $GITHUB_OUTPUT
-          echo $(tokenData)
-      outputs:
-        token: ${{ steps.genToken.outputs.token }}
-        
+          echo "token=${(Get-AzAccessToken -TenantId 72f988bf-86f1-41af-91ab-2d7cd011db47).Token} >> $env:GITHUB_OUTPUT
+        azPSVersion: "latest"
+
     - name: Test Token Data
       run: |
         echo ${{ steps.genToken.outputs.token }}
