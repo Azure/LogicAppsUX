@@ -35,7 +35,7 @@ jobs:
       id: genToken
       with:
         inlineScript: |
-          $tokenData = (Get-AzAccessToken -TenantId 72f988bf-86f1-41af-91ab-2d7cd011db47) | ConvertTo-Json
+          $tokenData = (Get-AzAccessToken -TenantId 72f988bf-86f1-41af-91ab-2d7cd011db47).Token
           echo token=$tokenData >> $env:GITHUB_OUTPUT
         azPSVersion: "latest"
 
