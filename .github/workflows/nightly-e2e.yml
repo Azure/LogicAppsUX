@@ -28,12 +28,12 @@ jobs:
         azcliversion: 2.58.0
         inlineScript: |
           tokenData=$(az account get-access-token --tenant 72f988bf-86f1-41af-91ab-2d7cd011db47)
-          echo "token='$(tokenData.access_token)'" > $GITHUB_OUTPUT
-          echo $(tokenData.access_token)
+          echo "token='$(tokenData)'" > $GITHUB_OUTPUT
+          echo '$(tokenData)'
 
     - name: Test Token Data
       run: |
-        echo ${{ steps.genToken.outputs }}
+        echo ${{ steps.genToken.outputs.token }}
         echo "Test Output Here"
 
     - uses: "finnp/create-file-action@master"
