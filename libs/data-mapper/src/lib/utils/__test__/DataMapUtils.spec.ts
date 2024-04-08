@@ -765,6 +765,12 @@ describe('utils/DataMap', () => {
         )
       ).toBe('/ns0:TargetSchemaRoot/Looping/ManyToOne/$for(/ns0:SourceSchemaRoot/Looping/ManyToOne/Simple, $a)/RandomKey');
     });
+
+    it('two loops with child name in source name', () => {
+      expect(qualifyLoopRelativeSourceKeys('/ns0:X12_00401_856/$for(/Shipment/HL-S)/ns0:HL-SLoop/$for(HL)/ns0:HL/HL01')).toBe(
+        '/ns0:X12_00401_856/$for(/Shipment/HL-S)/ns0:HL-SLoop/$for(/Shipment/HL-S/HL)/ns0:HL/HL01'
+      );
+    });
   });
 
   describe('getTargetValueWithoutLoops', () => {
