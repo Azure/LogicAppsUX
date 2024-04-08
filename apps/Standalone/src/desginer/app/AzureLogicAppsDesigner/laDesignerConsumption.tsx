@@ -32,6 +32,7 @@ import {
   ConsumptionRunService,
   guid,
   startsWith,
+  StandardCustomCodeService,
 } from '@microsoft/logic-apps-shared';
 import type { Workflow } from '@microsoft/logic-apps-designer';
 import {
@@ -46,6 +47,7 @@ import {
 } from '@microsoft/logic-apps-designer';
 import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { Chatbot } from '@microsoft/logic-apps-chatbot';
 
 const apiVersion = '2020-06-01';
 const httpClient = new HttpClient();
@@ -66,6 +68,7 @@ const DesignerEditorConsumption = () => {
     showChatBot,
     hostOptions,
     showConnectionsPanel,
+    showPerformanceDebug,
     language,
   } = useSelector((state: RootState) => state.workflowLoader);
 
@@ -136,7 +139,6 @@ const DesignerEditorConsumption = () => {
   }, []);
 
   if (!parsedDefinition || isWorkflowAndArtifactsLoading) {
-    // eslint-disable-next-line react/jsx-no-useless-fragment
     return <></>;
   }
 
@@ -214,6 +216,7 @@ const DesignerEditorConsumption = () => {
             ...hostOptions,
             recurrenceInterval: Constants.RECURRENCE_OPTIONS.CONSUMPTION,
           },
+          showPerformanceDebug,
         }}
       >
         {workflow?.definition ? (
@@ -241,7 +244,7 @@ const DesignerEditorConsumption = () => {
                 }}
               />
               <Designer />
-              {/* {showChatBot ? (
+              {showChatBot ? (
                 <Chatbot
                   getUpdatedWorkflow={getUpdatedWorkflow}
                   openFeedbackPanel={openFeedBackPanel}
@@ -250,7 +253,7 @@ const DesignerEditorConsumption = () => {
                   }}
                   getAuthToken={getAuthToken}
                 />
-              ) : null} */}
+              ) : null}
             </div>
           </BJSWorkflowProvider>
         ) : null}
@@ -436,6 +439,18 @@ const getDesignerServices = (
     location: 'westcentralus',
   });
 
+  // This isn't correct but without it I was getting errors
+  //   It's fine just to unblock standalone consumption
+  const customCodeService = new StandardCustomCodeService({
+    apiVersion: '2018-11-01',
+    baseUrl: 'test',
+    subscriptionId,
+    resourceGroup,
+    appName: 'test',
+    workflowName,
+    httpClient,
+  });
+
   const hostService = {};
 
   return {
@@ -453,6 +468,7 @@ const getDesignerServices = (
     runService,
     hostService,
     chatbotService,
+    customCodeService,
   };
 };
 

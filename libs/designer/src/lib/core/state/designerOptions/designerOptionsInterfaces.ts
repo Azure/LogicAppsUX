@@ -41,6 +41,7 @@ export interface DesignerOptionsState {
   nodeSelectAdditionalCallback?: (nodeId: string) => any;
   showConnectionsPanel?: boolean;
   panelTabHideKeys?: PANEL_TAB_NAMES[];
+  showPerformanceDebug?: boolean;
 }
 
 export interface ServiceOptions {

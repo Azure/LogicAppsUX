@@ -1,4 +1,20 @@
 # Logic Apps Designer
+## [4.2.0](https://github.com/Azure/LogicAppsUX/compare/v4.1.1...v4.2.0) (2024-04-06)
+
+
+### Features
+
+* **designer:** Adding changes to support xml operations ([#4552](https://github.com/Azure/LogicAppsUX/issues/4552)) ([7e9abd9](https://github.com/Azure/LogicAppsUX/commit/7e9abd9d514e16e8d90bb442d7a2cc7aaee91e14))
+
+
+### Bug Fixes
+
+* **designer-ui:** Prevent certain malicious HTML from executing in raw HTML editor ([#4553](https://github.com/Azure/LogicAppsUX/issues/4553)) ([275fa95](https://github.com/Azure/LogicAppsUX/commit/275fa95c81b1b3f1ca903a7a81263f9b4e58d519))
+* **designer:** MonacoEditor Erroring in Standalone ([#4563](https://github.com/Azure/LogicAppsUX/issues/4563)) ([f720684](https://github.com/Azure/LogicAppsUX/commit/f7206847333b1b5d6edb6c84eb4c9108db5c2714))
+* **designer:** Prevent filtering of Until Nodes when getting upstream nodes for output tokens ([#4560](https://github.com/Azure/LogicAppsUX/issues/4560)) ([86fafd0](https://github.com/Azure/LogicAppsUX/commit/86fafd0a81068512b9d4104c7414d983fdc34bae))
+* **designer:** Standalone Error Fixes ([#4564](https://github.com/Azure/LogicAppsUX/issues/4564)) ([e2c09c0](https://github.com/Azure/LogicAppsUX/commit/e2c09c0b13aa9be05de7f8253a077e468c0f1e0c))
+* **vscode:** Add keepNames to tsup config ([#4565](https://github.com/Azure/LogicAppsUX/issues/4565)) ([0aa9da0](https://github.com/Azure/LogicAppsUX/commit/0aa9da00f0ffc8a7cff3b005c4df8e06021e9f4a))
+
 ### [4.1.1](https://github.com/Azure/LogicAppsUX/compare/v4.1.0...v4.1.1) (2024-04-04)
 
 

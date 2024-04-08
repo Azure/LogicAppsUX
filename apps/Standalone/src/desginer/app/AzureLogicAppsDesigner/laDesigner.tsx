@@ -58,6 +58,7 @@ import isEqual from 'lodash.isequal';
 import { useEffect, useMemo, useState } from 'react';
 import type { QueryClient } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
+import { Chatbot } from '@microsoft/logic-apps-chatbot';
 
 const apiVersion = '2020-06-01';
 const httpClient = new HttpClient();
@@ -69,9 +70,18 @@ const DesignerEditor = () => {
   }));
 
   const dispatch = useDispatch<AppDispatch>();
-  const { isReadOnly, isDarkMode, isMonitoringView, runId, appId, showChatBot, language, hostOptions, showConnectionsPanel } = useSelector(
-    (state: RootState) => state.workflowLoader
-  );
+  const {
+    isReadOnly,
+    isDarkMode,
+    isMonitoringView,
+    runId,
+    appId,
+    showChatBot,
+    language,
+    hostOptions,
+    showConnectionsPanel,
+    showPerformanceDebug,
+  } = useSelector((state: RootState) => state.workflowLoader);
 
   const workflowName = workflowId.split('/').splice(-1)[0];
   const siteResourceId = new ArmParser(workflowId).topmostResourceId;
@@ -179,7 +189,6 @@ const DesignerEditor = () => {
   }, [data?.properties.files]);
 
   if (isLoading || appLoading || settingsLoading || customCodeLoading) {
-    // eslint-disable-next-line react/jsx-no-useless-fragment
     return <></>;
   }
 
@@ -299,6 +308,7 @@ const DesignerEditor = () => {
             recurrenceInterval: { interval: 1, frequency: 'Minute' },
           },
           showConnectionsPanel,
+          showPerformanceDebug,
         }}
       >
         {workflow?.definition ? (
@@ -328,7 +338,7 @@ const DesignerEditor = () => {
                 }}
               />
               <Designer rightShift={showChatBot ? 'chatbotPanelWidth' : undefined} />
-              {/* {showChatBot ? (
+              {showChatBot ? (
                 <Chatbot
                   openAzureCopilotPanel={() => openPanel('Azure Copilot Panel has been opened')}
                   getAuthToken={getAuthToken}
@@ -336,7 +346,7 @@ const DesignerEditor = () => {
                   openFeedbackPanel={() => openPanel('Azure Feedback Panel has been opened')}
                   closeChatBot={() => dispatch(setIsChatBotEnabled(false))}
                 />
-              ) : null} */}
+              ) : null}
             </div>
           </BJSWorkflowProvider>
         ) : null}
