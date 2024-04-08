@@ -1,4 +1,17 @@
 # Logic Apps Designer
+### [4.2.1](https://github.com/Azure/LogicAppsUX/compare/v4.2.0...v4.2.1) (2024-04-08)
+
+
+### Features
+
+* **Designer:** Dynamic data performance improvements ([#4483](https://github.com/Azure/LogicAppsUX/issues/4483)) ([1f6477c](https://github.com/Azure/LogicAppsUX/commit/1f6477c8d3251b4f384c56d73e294027cd739345))
+
+
+### Bug Fixes
+
+* **Data Mapper:** deserialization string bug fix ([#4567](https://github.com/Azure/LogicAppsUX/issues/4567)) ([f48f2fe](https://github.com/Azure/LogicAppsUX/commit/f48f2fe40abf3869082caaaf6e8242ed3c01762c))
+* **designer:** Custom Code Fixes from Internal BugBash ([#4576](https://github.com/Azure/LogicAppsUX/issues/4576)) ([eb8803e](https://github.com/Azure/LogicAppsUX/commit/eb8803e71ffd80feff9c72c11f2519b5df29826b))
+
 ## [4.2.0](https://github.com/Azure/LogicAppsUX/compare/v4.1.1...v4.2.0) (2024-04-06)
 
 
