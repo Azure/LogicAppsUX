@@ -2620,11 +2620,12 @@ export const getCustomCodeFilesWithData = (state: CustomCodeState): CustomCodeFi
   Object.entries(files).forEach(([fileName, fileInfo]) => {
     const { nodeId } = fileInfo;
     const fileDataInfo = getRecordEntry(fileData, nodeId);
-    if (!fileDataInfo && !fileInfo.isDeleted) return;
-    customCodeFilesWithData[fileName] = {
-      ...fileInfo,
-      fileData: fileDataInfo,
-    };
+    if (fileDataInfo || fileInfo.isDeleted) {
+      customCodeFilesWithData[fileName] = {
+        ...fileInfo,
+        fileData: fileDataInfo ?? '',
+      };
+    }
   });
   return customCodeFilesWithData;
 };
