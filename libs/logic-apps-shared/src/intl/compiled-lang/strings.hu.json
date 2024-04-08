@@ -3358,7 +3358,7 @@
   "JgugQX": [
     {
       "type": 0,
-      "value": "Enter a valid Array."
+      "value": "Adjon meg egy érvényes tömböt."
     }
   ],
   "Ji6663": [
@@ -6172,7 +6172,7 @@
   "b7BQdu": [
     {
       "type": 0,
-      "value": "Enter a valid Boolean."
+      "value": "Adjon meg egy érvényes logikai értéket."
     }
   ],
   "b9/1dK": [
@@ -6625,12 +6625,6 @@
     {
       "type": 0,
       "value": "Milyen gyakran szeretne elemeket keresni?"
-    }
-  ],
-  "e1gQAz": [
-    {
-      "type": 0,
-      "value": "Please start the project by pressing F5 or run it through the Run and Debug view"
     }
   ],
   "e4JZEY": [
