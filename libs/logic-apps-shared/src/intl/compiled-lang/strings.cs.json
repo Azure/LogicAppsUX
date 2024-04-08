@@ -3394,7 +3394,7 @@
   "JgugQX": [
     {
       "type": 0,
-      "value": "Enter a valid Array."
+      "value": "Zadejte platné pole."
     }
   ],
   "Ji6663": [
@@ -6264,7 +6264,7 @@
   "b7BQdu": [
     {
       "type": 0,
-      "value": "Enter a valid Boolean."
+      "value": "Zadejte platnou logickou hodnotu."
     }
   ],
   "b9/1dK": [
@@ -6717,12 +6717,6 @@
     {
       "type": 0,
       "value": "Jak často chcete vyhledávat položky?"
-    }
-  ],
-  "e1gQAz": [
-    {
-      "type": 0,
-      "value": "Please start the project by pressing F5 or run it through the Run and Debug view"
     }
   ],
   "e4JZEY": [

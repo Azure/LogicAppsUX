@@ -3346,7 +3346,7 @@
   "JgugQX": [
     {
       "type": 0,
-      "value": "Enter a valid Array."
+      "value": "Geçerli bir Dizi girin."
     }
   ],
   "Ji6663": [
@@ -6172,7 +6172,7 @@
   "b7BQdu": [
     {
       "type": 0,
-      "value": "Enter a valid Boolean."
+      "value": "Geçerli bir Boole girin."
     }
   ],
   "b9/1dK": [
@@ -6621,12 +6621,6 @@
     {
       "type": 0,
       "value": "Öğeleri ne sıklıkta denetlemek istiyorsunuz?"
-    }
-  ],
-  "e1gQAz": [
-    {
-      "type": 0,
-      "value": "Please start the project by pressing F5 or run it through the Run and Debug view"
     }
   ],
   "e4JZEY": [
