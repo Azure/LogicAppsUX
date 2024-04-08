@@ -52,3 +52,7 @@ export const useShowConnectionsPanel = () => {
 export const useAreCustomEditorsEnabled = () => {
   return useSelector((state: RootState) => state.workflowLoader.areCustomEditorsEnabled);
 };
+
+export const useShowPerformanceDebug = () => {
+  return useSelector((state: RootState) => state.workflowLoader.showPerformanceDebug);
+};
