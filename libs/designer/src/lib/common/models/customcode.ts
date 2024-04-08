@@ -6,7 +6,12 @@ export interface CustomCode {
 }
 
 export interface CustomCodeWithData extends CustomCode {
-  fileData: string;
+  fileData?: string;
 }
 
 export type CustomCodeFileNameMapping = Record<string, CustomCodeWithData>;
+
+export interface AllCustomCodeFiles {
+  customCodeFiles: CustomCodeFileNameMapping;
+  appFiles: Record<string, string>;
+}

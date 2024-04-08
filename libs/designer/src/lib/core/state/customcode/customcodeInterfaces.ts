@@ -1,9 +1,9 @@
 import type { CustomCode } from '../../../common/models/customcode';
 
 export interface CustomCodeState {
-  // by fileName
+  // where we store the metadata for the custom code files
   files: Record<string, CustomCode>;
-  // by nodeId
+  // where we store the actual file data
   fileData: Record<string, string>;
 }
 

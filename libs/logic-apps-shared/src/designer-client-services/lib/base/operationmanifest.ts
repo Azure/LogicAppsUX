@@ -528,7 +528,7 @@ const builtInOperationsMetadata: Record<string, OperationInfo> = {
   },
   [csharpcode]: {
     connectorId: inlineCodeConnectorId,
-    operationId: 'cSharpScriptCode',
+    operationId: csharpcode,
   },
   [join]: {
     connectorId: dataOperationConnectorId,

@@ -1,25 +1,18 @@
 import { AssertionErrorCode, AssertionException } from '../../utils/src';
 
-export interface UploadCustomCode {
+export interface UploadCustomCodeAppFilePayload {
+  fileName: string;
+  fileData: string;
+}
+export interface UploadCustomCodePayload {
   fileData: string;
   fileName: string;
   fileExtension: string;
 }
 
-export interface VFSObject {
-  name: string;
-  size: number;
-  mtime: string;
-  crtime: string;
-  mime: string;
-  href: string;
-  path: string;
-}
-
 export interface ICustomCodeService {
-  getAllCustomCodeFiles(): Promise<VFSObject[]>;
-  getCustomCodeFile(fileName: string): Promise<string>;
-  uploadCustomCode(customCode: UploadCustomCode): Promise<void>;
+  uploadCustomCodeAppFile(customCode: UploadCustomCodeAppFilePayload): Promise<void>;
+  uploadCustomCode(customCode: UploadCustomCodePayload): Promise<void>;
   deleteCustomCode(fileName: string): Promise<void>;
 }
 
