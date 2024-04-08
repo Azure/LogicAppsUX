@@ -4,6 +4,7 @@ import functionReducer from './FunctionSlice';
 import modalReducer from './ModalSlice';
 import panelReducer from './PanelSlice';
 import schemaReducer from './SchemaSlice';
+import type {} from 'redux-thunk';
 import { configureStore } from '@reduxjs/toolkit';
 import undoable, { includeAction } from 'redux-undo';
 

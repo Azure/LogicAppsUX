@@ -14,12 +14,21 @@ import { useCallback, useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useQuery } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
-import { DrawerBody, DrawerHeader, DrawerHeaderTitle, InlineDrawer } from '@fluentui/react-components';
+import { DrawerBody, DrawerHeader, DrawerHeaderTitle, InlineDrawer, makeStyles } from '@fluentui/react-components';
 
 const schemaFileQuerySettings = {
   cacheTime: 0,
   retry: false, // Don't retry as it stops error from making its way through
 };
+
+const useStyles = makeStyles({
+  root: {
+    display: 'flex',
+  },
+  drawer: {
+    backgroundColor: '#fff',
+  },
+});
 
 export interface ConfigPanelProps {
   onSubmitSchemaFileSelection: (schemaFile: SchemaFile) => void;
@@ -29,6 +38,7 @@ export interface ConfigPanelProps {
 export const AddSchemaDrawer = ({ readCurrentSchemaOptions, onSubmitSchemaFileSelection }: ConfigPanelProps) => {
   const dispatch = useDispatch<AppDispatch>();
   const intl = useIntl();
+  const styles = useStyles();
 
   const curDataMapOperation = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation);
   const currentPanelView = useSelector((state: RootState) => {
@@ -242,9 +252,11 @@ export const AddSchemaDrawer = ({ readCurrentSchemaOptions, onSubmitSchemaFileSe
   ]);
 
   return (
-    <div>
+    <div className={styles.root}>
       <InlineDrawer
         open={!!currentPanelView}
+        size="small"
+        className={styles.root}
 
         // onDismiss={closeEntirePanel}
         // closeButtonAriaLabel={closeLoc}

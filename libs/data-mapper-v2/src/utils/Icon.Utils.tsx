@@ -1,4 +1,4 @@
-import { MapCheckerItemSeverity } from '../components/sidePane/tabs/mapCheckerTab/MapCheckerItem';
+//import { MapCheckerItemSeverity } from '../components/sidePane/tabs/mapCheckerTab/MapCheckerItem';
 import { Collection20Regular, StringCategory20Regular } from '../images/CategoryIcons';
 import {
   Any16Filled,
@@ -220,23 +220,23 @@ export const iconUriForIconImageName = (iconImageName: string) => {
 
 const mapCheckerIconStyle = { minHeight: '20px', minWidth: '20px' };
 
-export const iconForMapCheckerSeverity = (severity: MapCheckerItemSeverity) => {
-  switch (severity) {
-    case MapCheckerItemSeverity.Error: {
-      return <DismissCircleFilled style={mapCheckerIconStyle} primaryFill={tokens.colorPaletteRedBackground3} />;
-    }
-    case MapCheckerItemSeverity.Warning: {
-      return <WarningFilled style={mapCheckerIconStyle} primaryFill={tokens.colorPaletteGoldBorderActive} />;
-    }
-    case MapCheckerItemSeverity.Info: {
-      return <InfoFilled style={mapCheckerIconStyle} primaryFill={tokens.colorPaletteBlueBorderActive} />;
-    }
-    case MapCheckerItemSeverity.Unknown:
-    default: {
-      return <QuestionCircleFilled style={mapCheckerIconStyle} primaryFill={tokens.colorPaletteBeigeBorderActive} />;
-    }
-  }
-};
+// export const iconForMapCheckerSeverity = (severity: MapCheckerItemSeverity) => {
+//   switch (severity) {
+//     case MapCheckerItemSeverity.Error: {
+//       return <DismissCircleFilled style={mapCheckerIconStyle} primaryFill={tokens.colorPaletteRedBackground3} />;
+//     }
+//     case MapCheckerItemSeverity.Warning: {
+//       return <WarningFilled style={mapCheckerIconStyle} primaryFill={tokens.colorPaletteGoldBorderActive} />;
+//     }
+//     case MapCheckerItemSeverity.Info: {
+//       return <InfoFilled style={mapCheckerIconStyle} primaryFill={tokens.colorPaletteBlueBorderActive} />;
+//     }
+//     case MapCheckerItemSeverity.Unknown:
+//     default: {
+//       return <QuestionCircleFilled style={mapCheckerIconStyle} primaryFill={tokens.colorPaletteBeigeBorderActive} />;
+//     }
+//   }
+// };
 
 export const iconForFunction = (functionKey: string, color: string) => {
   const defaultStyle = { height: 20, width: 20, margin: 'auto' };
