@@ -12,6 +12,7 @@ import { HttpClient, getExtraHeaders, getRequestUrl, isSuccessResponse } from '.
 import { StandaloneOAuthService } from './Services/OAuthService';
 import {
   getConnectionStandard,
+  getCustomCodeAppFiles,
   listCallbackUrl,
   saveWorkflowStandard,
   useAllCustomCodeFiles,
@@ -24,7 +25,7 @@ import {
 } from './Services/WorkflowAndArtifacts';
 import { ArmParser } from './Utilities/ArmParser';
 import { WorkflowUtility } from './Utilities/Workflow';
-// import { Chatbot, chatbotPanelWidth } from '@microsoft/logic-apps-chatbot';
+import { Chatbot, chatbotPanelWidth } from '@microsoft/logic-apps-chatbot';
 import {
   BaseApiManagementService,
   BaseAppServiceService,
@@ -39,12 +40,13 @@ import {
   StandardSearchService,
   clone,
   equals,
+  getAppFileForFileExtension,
   guid,
   isArmResourceId,
   optional,
 } from '@microsoft/logic-apps-shared';
 import type { ContentType, IWorkflowService, LogicAppsV2 } from '@microsoft/logic-apps-shared';
-import type { CustomCodeFileNameMapping, Workflow } from '@microsoft/logic-apps-designer';
+import type { AllCustomCodeFiles, CustomCodeFileNameMapping, Workflow } from '@microsoft/logic-apps-designer';
 import {
   DesignerProvider,
   BJSWorkflowProvider,
@@ -58,7 +60,6 @@ import isEqual from 'lodash.isequal';
 import { useEffect, useMemo, useState } from 'react';
 import type { QueryClient } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
-import { Chatbot } from '@microsoft/logic-apps-chatbot';
 
 const apiVersion = '2020-06-01';
 const httpClient = new HttpClient();
@@ -86,7 +87,6 @@ const DesignerEditor = () => {
   const [workflow, setWorkflow] = useState(data?.properties.files[Artifact.WorkflowFile]);
   const originalConnectionsData = useMemo(() => data?.properties.files[Artifact.ConnectionsFile] ?? {}, [data?.properties.files]);
   const originalCustomCodeData = useMemo(() => Object.keys(customCodeData ?? {}), [customCodeData]);
-  console.log(customCodeData);
   const parameters = useMemo(() => data?.properties.files[Artifact.ParametersFile] ?? {}, [data?.properties.files]);
   const queryClient = getReactQueryClient();
 
@@ -253,7 +253,7 @@ const DesignerEditor = () => {
     }
 
     const connectionsToUpdate = getConnectionsToUpdate(originalConnectionsData, connectionsData ?? {});
-    const customCodeToUpdate = getCustomCodeToUpdate(originalCustomCodeData, customCode ?? {});
+    const customCodeToUpdate = await getCustomCodeToUpdate(originalCustomCodeData, customCode ?? {}, appId);
     const parametersToUpdate = !isEqual(originalParametersData, parameters) ? (parameters as ParametersData) : undefined;
     const settingsToUpdate = !isEqual(settingsData?.properties, originalSettings) ? settingsData?.properties : undefined;
 
@@ -325,12 +325,12 @@ const DesignerEditor = () => {
                 isReadOnly={isReadOnly}
                 isDarkMode={isDarkMode}
                 showConnectionsPanel={showConnectionsPanel}
-                rightShift={showChatBot ? 'chatbotPanelWidth' : undefined}
+                rightShift={showChatBot ? chatbotPanelWidth : undefined}
                 enableCopilot={async () => {
                   dispatch(setIsChatBotEnabled(!showChatBot));
                 }}
               />
-              <Designer rightShift={showChatBot ? 'chatbotPanelWidth' : undefined} />
+              <Designer rightShift={showChatBot ? chatbotPanelWidth : undefined} />
               {showChatBot ? (
                 <Chatbot
                   openAzureCopilotPanel={() => openPanel('Azure Copilot Panel has been opened')}
@@ -706,15 +706,32 @@ const getConnectionsToUpdate = (
   return connectionsToUpdate;
 };
 
-const getCustomCodeToUpdate = (originalCustomCodeData: string[], customCode: CustomCodeFileNameMapping): CustomCodeFileNameMapping => {
+const getCustomCodeToUpdate = async (
+  originalCustomCodeData: string[],
+  customCode: CustomCodeFileNameMapping,
+  appId?: string
+): Promise<AllCustomCodeFiles | undefined> => {
   const filteredCustomCodeMapping: CustomCodeFileNameMapping = {};
+  const appFilesToAdd: Record<string, string> = {};
+  if (!customCode || Object.keys(customCode).length === 0) return;
+  const appFiles = await getCustomCodeAppFiles(appId);
+
   Object.entries(customCode).forEach(([fileName, customCodeData]) => {
-    const { isModified, isDeleted } = customCodeData;
-    if ((isDeleted && originalCustomCodeData.includes(fileName)) || (isModified && !isDeleted)) {
+    const { isModified, isDeleted, fileExtension } = customCodeData;
+
+    if (isDeleted && originalCustomCodeData.includes(fileName)) {
+      filteredCustomCodeMapping[fileName] = { ...customCodeData };
+    } else if (isModified && !isDeleted) {
+      if (!appFiles[fileExtension] && !appFilesToAdd[fileExtension]) {
+        const appFileData = getAppFileForFileExtension(fileExtension);
+        if (appFileData) {
+          appFilesToAdd[fileExtension] = appFileData;
+        }
+      }
       filteredCustomCodeMapping[fileName] = { ...customCodeData };
     }
   });
-  return filteredCustomCodeMapping;
+  return { customCodeFiles: filteredCustomCodeMapping, appFiles: appFilesToAdd };
 };
 
 export default DesignerEditor;

@@ -2536,18 +2536,17 @@ export const getCustomCodeFileName = (nodeId: string, nodeInputs?: NodeInputs, i
 
 export const getCustomCodeFilesWithData = (state: CustomCodeState): CustomCodeFileNameMapping => {
   const { files, fileData } = state;
-  const customCodeFileWithData: CustomCodeFileNameMapping = {};
+  const customCodeFilesWithData: CustomCodeFileNameMapping = {};
   Object.entries(files).forEach(([fileName, fileInfo]) => {
     const { nodeId } = fileInfo;
     const fileDataInfo = getRecordEntry(fileData, nodeId);
-    if (fileDataInfo || fileInfo.isDeleted) {
-      customCodeFileWithData[fileName] = {
-        ...fileInfo,
-        fileData: fileDataInfo,
-      };
-    }
+    if (!fileDataInfo && !fileInfo.isDeleted) return;
+    customCodeFilesWithData[fileName] = {
+      ...fileInfo,
+      fileData: fileDataInfo,
+    };
   });
-  return customCodeFileWithData;
+  return customCodeFilesWithData;
 };
 
 export function getInputsValueFromDefinitionForManifest(

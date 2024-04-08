@@ -3,8 +3,8 @@ import type { CallbackInfo, ConnectionsData, ParametersData, Workflow } from '..
 import { Artifact } from '../Models/Workflow';
 import { validateResourceId } from '../Utilities/resourceUtilities';
 import { convertDesignerWorkflowToConsumptionWorkflow } from './ConsumptionSerializationHelpers';
-import type { CustomCodeFileNameMapping } from '@microsoft/logic-apps-designer';
-import { CustomCodeService, LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
+import type { AllCustomCodeFiles } from '@microsoft/logic-apps-designer';
+import { CustomCodeService, LogEntryLevel, LoggerService, getAppFiles, mapFileExtensionToAppFileName } from '@microsoft/logic-apps-shared';
 import type { LogicAppsV2, VFSObject } from '@microsoft/logic-apps-shared';
 import axios from 'axios';
 import jwt_decode from 'jwt-decode';
@@ -47,7 +47,13 @@ export const useAllCustomCodeFiles = (appId?: string, workflowName?: string) => 
   });
 };
 
-const getAllCustomCodeFiles = async (appId?: string, workflowName?: string) => {
+export const getCustomCodeAppFiles = async (appId?: string): Promise<Record<string, boolean>> => {
+  const uri = `${baseUrl}${appId}/hostruntime/admin/vfs`;
+  const vfsObjects: VFSObject[] = await fetchFilesFromFolder(uri);
+  return getAppFiles(vfsObjects);
+};
+
+const getAllCustomCodeFiles = async (appId?: string, workflowName?: string): Promise<Record<string, string>> => {
   const customCodeFiles: Record<string, string> = {};
   const uri = `${baseUrl}${appId}/hostruntime/admin/vfs/${workflowName}`;
   const vfsObjects: VFSObject[] = (await fetchFilesFromFolder(uri)).filter((file) => file.name !== Artifact.WorkflowFile);
@@ -274,7 +280,8 @@ export const getConnectionConsumption = async (connectionId: string) => {
   return response.data;
 };
 
-export const saveCustomCodeStandard = async (customCode?: CustomCodeFileNameMapping): Promise<void> => {
+export const saveCustomCodeStandard = async (allCustomCodeFiles?: AllCustomCodeFiles): Promise<void> => {
+  const { customCodeFiles: customCode, appFiles } = allCustomCodeFiles ?? {};
   if (!customCode || Object.keys(customCode).length === 0) return;
   try {
     // to prevent 404's we first check which custom code files are already present before deleting
@@ -300,7 +307,9 @@ export const saveCustomCodeStandard = async (customCode?: CustomCodeFileNameMapp
         });
       }
     });
-    return;
+    Object.entries(appFiles ?? {}).forEach(([fileExtension, fileData]) =>
+      CustomCodeService().uploadCustomCodeAppFile({ fileName: mapFileExtensionToAppFileName(fileExtension), fileData })
+    );
   } catch (error) {
     const errorMessage = `Failed to save custom code: ${error}`;
     LoggerService().log({
@@ -320,7 +329,7 @@ export const saveWorkflowStandard = async (
   connectionsData: ConnectionsData | undefined,
   parametersData: ParametersData | undefined,
   settings: Record<string, string> | undefined,
-  customCodeData: CustomCodeFileNameMapping | undefined,
+  customCodeData: AllCustomCodeFiles | undefined,
   clearDirtyState: () => void
 ): Promise<any> => {
   const data: any = {

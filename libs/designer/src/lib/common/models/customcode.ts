@@ -10,3 +10,8 @@ export interface CustomCodeWithData extends CustomCode {
 }
 
 export type CustomCodeFileNameMapping = Record<string, CustomCodeWithData>;
+
+export interface AllCustomCodeFiles {
+  customCodeFiles: CustomCodeFileNameMapping;
+  appFiles: Record<string, string>;
+}
