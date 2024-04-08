@@ -25,8 +25,13 @@ import { sendRequest } from '../../../utils/requestUtils';
 import { OpenDesignerBase } from './openDesignerBase';
 import { HTTP_METHODS } from '@microsoft/logic-apps-shared';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
-import type { AzureConnectorDetails, FileSystemConnectionInfo, IDesignerPanelMetadata, Parameter } from '@microsoft/vscode-extension';
-import { ExtensionCommand, ProjectName } from '@microsoft/vscode-extension';
+import type {
+  AzureConnectorDetails,
+  FileSystemConnectionInfo,
+  IDesignerPanelMetadata,
+  Parameter,
+} from '@microsoft/vscode-extension-logic-apps';
+import { ExtensionCommand, ProjectName } from '@microsoft/vscode-extension-logic-apps';
 import axios from 'axios';
 import { exec } from 'child_process';
 import { writeFileSync, readFileSync } from 'fs';

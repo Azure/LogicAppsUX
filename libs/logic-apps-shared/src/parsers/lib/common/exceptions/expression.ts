@@ -1,4 +1,4 @@
-import { BaseException } from '@microsoft/utils-logic-apps';
+import { BaseException } from '../../../../utils/src';
 
 export const ExpressionExceptionCode = {
   UNRECOGNIZED_EXPRESSION: 'UnrecognizedExpression',

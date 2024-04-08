@@ -1,0 +1,46 @@
+{
+    "$schema": "https://turbo.build/schema.json",
+    "pipeline": {
+        "e2e": {
+            "cache": false,
+            "persistent": true
+        },
+        "build:docs": {
+            "outputs": [
+                "build/**"
+            ]
+        },
+        "build": {
+            "dependsOn": [
+                "^build:lib"
+            ],
+            "outputs": [
+                "build/**"
+            ]
+        },
+        "build:lib": {
+            "outputs": [
+                "build/**"
+            ]
+        },
+        "dev": {
+            "cache": false,
+            "persistent": true
+        },
+        "unpublish:local": {
+            "cache": false
+        },
+        "publish:local": {
+            "cache": false,
+            "dependsOn": [
+                "build:lib",
+                "^publish:local"
+            ]
+        },
+        "test:lib": {
+            "outputs": [
+                "coverage/**"
+            ]
+        }
+    }
+}

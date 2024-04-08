@@ -1,12 +1,15 @@
 # See http://help.github.com/ignore-files/ for more about ignoring files.
 
+.turbo
+
 # compiled output
 /dist
 /tmp
 /out-tsc
+build 
 .nx
 # dependencies
-/node_modules
+node_modules
 
 # IDEs and editors
 /.idea
@@ -16,7 +19,7 @@
 *.launch
 .settings/
 *.sublime-workspace
-
+coverage
 # IDE - VSCode
 .vscode/*
 !.vscode/tasks.json
@@ -62,6 +65,51 @@ docs/src/pages/CHANGELOG.MD
 /blob-report/
 /playwright/.cache/
 
-# ESLINT
+# Logs
+logs
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+lerna-debug.log*
 
+node_modules
+dist
+dist-ssr
+*.local
+
+# Editor directories and files
+.vscode/*
+!.vscode/extensions.json
+.idea
+.DS_Store
+*.suo
+*.ntvs*
+*.njsproj
+*.sln
+*.sw?
+
+
+
+# Dependencies
+/node_modules
+
+# Production
+/build
+
+# Generated files
+.docusaurus
+.cache-loader
+CHANGELOG.MD
+# Misc
+.DS_Store
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
 .eslintcache
+
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*

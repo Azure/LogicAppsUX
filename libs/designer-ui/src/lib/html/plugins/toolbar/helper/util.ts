@@ -1,5 +1,6 @@
 import { encodeStringSegmentTokensInDomContext } from '../../../../editor/base/utils/parsesegments';
 import type { ValueSegment } from '@microsoft/logic-apps-shared';
+import DomPurify from 'dompurify';
 
 const htmlUnsafeCharacters = ['<', '>'];
 const htmlUnsafeCharacterEncodingMap: Record<string, string> = htmlUnsafeCharacters.reduce(
@@ -95,12 +96,17 @@ export const encodeOrDecodeSegmentValue = (value: string, encodingMap: Record<st
 };
 
 export const getDomFromHtmlEditorString = (htmlEditorString: string, nodeMap: Map<string, ValueSegment>): HTMLElement => {
-  const encodedHtmlEditorString = encodeStringSegmentTokensInDomContext(htmlEditorString, nodeMap);
+  // Comments at the start of a DOM are lost when parsing HTML strings, so we wrap the HTML string in a <div>.
+  const wrappedHtmlEditorString = `<div>${htmlEditorString}</div>`;
 
-  const tempElement = document.createElement('div');
+  const purifiedHtmlEditorString = DomPurify.sanitize(wrappedHtmlEditorString, { ADD_TAGS: ['#comment'] });
+  const encodedHtmlEditorString = encodeStringSegmentTokensInDomContext(purifiedHtmlEditorString, nodeMap);
+
+  const tempElement = document.createElement('div', {});
   tempElement.innerHTML = encodedHtmlEditorString;
 
-  return tempElement;
+  // Unwrap the wrapper <div>.
+  return tempElement.children[0] as HTMLElement;
 };
 
 export const isAttributeSupportedByHtmlEditor = (tagName: string, attribute: string): boolean => {

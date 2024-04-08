@@ -865,6 +865,12 @@
       "value": "(UTC + 10.30) Isola Lord Howe"
     }
   ],
+  "3n6GJG": [
+    {
+      "type": 0,
+      "value": "Immettere un oggetto JSON valido."
+    }
+  ],
   "3rzrWf": [
     {
       "type": 0,
@@ -2867,12 +2873,6 @@
       "value": "Spiega il flusso"
     }
   ],
-  "GXXLuT": [
-    {
-      "type": 0,
-      "value": "Immetti un valore booleano valido."
-    }
-  ],
   "GYvF54": [
     {
       "type": 0,
@@ -3361,6 +3361,12 @@
       "value": "Metodo"
     }
   ],
+  "JgugQX": [
+    {
+      "type": 0,
+      "value": "Immetti una matrice valida."
+    }
+  ],
   "Ji6663": [
     {
       "type": 0,
@@ -3784,12 +3790,6 @@
       "value": "Restituisce il timestamp corrente in formato stringa"
     }
   ],
-  "MVrv+N": [
-    {
-      "type": 0,
-      "value": "Immetti una matrice valida."
-    }
-  ],
   "MYgKHu": [
     {
       "type": 0,
@@ -3817,7 +3817,7 @@
   "Mcvr0B": [
     {
       "type": 0,
-      "value": "To use modules or dependecies, please add at Custom Code Dependenncies in Portal TOC"
+      "value": "Per usare moduli o dipendenze, aggiungere le dipendenze del codice personalizzato nel sommario del portale"
     }
   ],
   "MfAdfx": [
@@ -4936,7 +4936,7 @@
   "TjkOzp": [
     {
       "type": 0,
-      "value": "Chiudi"
+      "value": "Chiudere"
     }
   ],
   "TlX98E": [
@@ -6217,6 +6217,12 @@
       "value": "Aggiungere o selezionare uno schema di origine da usare per la mappa."
     }
   ],
+  "b7BQdu": [
+    {
+      "type": 0,
+      "value": "Immetti un valore booleano valido."
+    }
+  ],
   "b9/1dK": [
     {
       "type": 0,
@@ -6311,12 +6317,6 @@
     {
       "type": 0,
       "value": "Info"
-    }
-  ],
-  "bYwqkV": [
-    {
-      "type": 0,
-      "value": "Immetti un JSON valido."
     }
   ],
   "ba9yGJ": [
@@ -6557,6 +6557,12 @@
     {
       "type": 0,
       "value": "Altre informazioni"
+    }
+  ],
+  "dEe6Ob": [
+    {
+      "type": 0,
+      "value": "Immettere un oggetto JSON valido."
     }
   ],
   "dKCp2j": [
@@ -7751,12 +7757,6 @@
     {
       "type": 0,
       "value": "Manca la proprietà del tipo di autenticazione: 'type'."
-    }
-  ],
-  "kxMDyM": [
-    {
-      "type": 0,
-      "value": "Immetti un JSON valido."
     }
   ],
   "l/3yJr": [

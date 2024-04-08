@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`ui/settings/settingtoggle should construct 1`] = `
+exports[`ui/settings/settingtoggle > should construct 1`] = `
 <React.Fragment>
   <StyledToggleBase
     checked={false}

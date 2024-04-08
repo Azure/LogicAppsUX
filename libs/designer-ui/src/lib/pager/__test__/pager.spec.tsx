@@ -2,7 +2,7 @@ import type { PagerProps } from '../index';
 import { Pager } from '../index';
 import * as React from 'react';
 import * as ReactShallowRenderer from 'react-test-renderer/shallow';
-
+import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 describe('lib/pager', () => {
   const classNames = {
     Pager: 'msla-pager-v2',
@@ -60,8 +60,8 @@ describe('lib/pager', () => {
   });
 
   it('should render with failed iteration buttons', () => {
-    const onClickNext = jest.fn();
-    const onClickPrevious = jest.fn();
+    const onClickNext = vi.fn();
+    const onClickPrevious = vi.fn();
     const failedIterationProps = {
       max: 0,
       min: 0,

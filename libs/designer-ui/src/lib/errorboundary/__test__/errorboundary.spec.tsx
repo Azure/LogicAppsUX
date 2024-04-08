@@ -2,7 +2,7 @@ import { setIconOptions } from '@fluentui/react';
 import renderer from 'react-test-renderer';
 import { getTestIntl } from '../../__test__/intl-test-helper';
 import { ErrorBoundaryInternal as ErrorBoundary } from '../index';
-
+import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 describe('lib/errorboundary', () => {
   const Throws = () => {
     throw new Error("I'm an error");
@@ -15,13 +15,13 @@ describe('lib/errorboundary', () => {
   });
 
   beforeEach(() => {
-    jest.spyOn(console, 'error').mockImplementation(() => {
+    vi.spyOn(console, 'error').mockImplementation(() => {
       // Silence automatically generated error messages when rendering React error boundaries.
     });
   });
 
   afterEach(() => {
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
   });
 
   it('should render children if there is no error', () => {

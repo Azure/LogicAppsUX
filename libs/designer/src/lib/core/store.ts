@@ -12,7 +12,7 @@ import workflowParametersReducer from './state/workflowparameters/workflowparame
 import devReducer from './state/dev/devSlice';
 
 import { configureStore } from '@reduxjs/toolkit';
-
+import type {} from 'redux-thunk';
 export const store = configureStore({
   reducer: {
     workflow: workflowReducer,

@@ -5,9 +5,10 @@
 import { tryGetWebviewPanel } from '../../../utils/codeless/common';
 import { getWebViewHTML } from '../../../utils/codeless/getWebViewHTML';
 import type { IAzureConnectorsContext } from '../azureConnectorWizard';
-import { ResolutionService, isEmptyString } from '@microsoft/logic-apps-shared';
+import { ResolutionService, getRecordEntry, isEmptyString } from '@microsoft/logic-apps-shared';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
-import type { Artifacts, AzureConnectorDetails, ConnectionsData, FileDetails, Parameter } from '@microsoft/vscode-extension';
+import type { Artifacts, AzureConnectorDetails, ConnectionsData, FileDetails, Parameter } from '@microsoft/vscode-extension-logic-apps';
+import { azurePublicBaseUrl, workflowManagementBaseURIKey } from '../../../../constants';
 import type { WebviewPanel, WebviewOptions, WebviewPanelOptions } from 'vscode';
 
 export interface IDesingerOptions {
@@ -98,7 +99,7 @@ export abstract class OpenDesignerBase {
     const resolvedConnections: ConnectionsData = parametersResolutionService.resolve(parsedConnections);
 
     this.connectionData = resolvedConnections;
-    this.apiHubServiceDetails = this.getApiHubServiceDetails(azureDetails);
+    this.apiHubServiceDetails = this.getApiHubServiceDetails(azureDetails, localSettings);
     this.mapArtifacts = mapArtifacts;
     this.schemaArtifacts = artifacts.schemas;
 
@@ -152,13 +153,14 @@ export abstract class OpenDesignerBase {
     return JSON.stringify(parseConnectionsData);
   }
 
-  protected getApiHubServiceDetails(azureDetails: AzureConnectorDetails) {
+  protected getApiHubServiceDetails(azureDetails: AzureConnectorDetails, localSettings: Record<string, any>) {
     const isApiHubEnabled = azureDetails.enabled;
+    const workflowManagementBaseUrl = getRecordEntry(localSettings, workflowManagementBaseURIKey) ?? azurePublicBaseUrl;
 
     return isApiHubEnabled
       ? {
           apiVersion: '2018-07-01-preview',
-          baseUrl: 'https://management.azure.com',
+          baseUrl: workflowManagementBaseUrl,
           subscriptionId: azureDetails.subscriptionId,
           location: azureDetails.location,
           resourceGroup: azureDetails.resourceGroupName,

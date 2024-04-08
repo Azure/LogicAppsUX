@@ -10,7 +10,7 @@ import { getBrewPackageName, tryGetInstalledBrewPackageName } from '../../utils/
 import { getNpmDistTag } from '../../utils/funcCoreTools/getNpmDistTag';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { nonNullValue } from '@microsoft/vscode-azext-utils';
-import type { FuncVersion, INpmDistTag } from '@microsoft/vscode-extension';
+import type { FuncVersion, INpmDistTag } from '@microsoft/vscode-extension-logic-apps';
 
 export async function updateFuncCoreTools(context: IActionContext, packageManager: PackageManager, version: FuncVersion): Promise<void> {
   ext.outputChannel.show();

@@ -5,10 +5,10 @@ import type { RootState } from '../../store';
 import { useConnector, useConnectorAndSwagger, useNodeConnectionId } from '../connection/connectionSelector';
 import type { NodeOperation } from '../operation/operationMetadataSlice';
 import { OperationManifestService, SwaggerParser, getObjectPropertyValue, getRecordEntry } from '@microsoft/logic-apps-shared';
-import type { LAOperation } from '@microsoft/logic-apps-shared';
+import type { LAOperation, OperationManifest } from '@microsoft/logic-apps-shared';
 import { createSelector } from '@reduxjs/toolkit';
 import { useMemo } from 'react';
-import { useQuery } from 'react-query';
+import { UseQueryResult, useQuery } from 'react-query';
 import { useSelector } from 'react-redux';
 
 interface QueryResult {
@@ -34,13 +34,13 @@ export const useNodeConnectionName = (nodeId: string): QueryResult => {
     () =>
       nodeId && connectionId
         ? {
-            isLoading,
-            result: !isLoading ? connection?.properties?.displayName ?? connectionId.split('/').at(-1) : '',
-          }
+          isLoading,
+          result: !isLoading ? connection?.properties?.displayName ?? connectionId.split('/').at(-1) : '',
+        }
         : {
-            isLoading: false,
-            result: undefined,
-          },
+          isLoading: false,
+          result: undefined,
+        },
     [nodeId, connection?.properties?.displayName, connectionId, isLoading]
   );
 };
@@ -63,7 +63,7 @@ export const useOutputParameters = (nodeId: string) => {
   return useSelector((state: RootState) => selector(state, nodeId));
 };
 
-export const useOperationManifest = (operationInfo?: NodeOperation, enabled = true) => {
+export const useOperationManifest = (operationInfo?: NodeOperation, enabled = true): UseQueryResult<OperationManifest | undefined, unknown> => {
   const operationManifestService = OperationManifestService();
   const connectorId = operationInfo?.connectorId?.toLowerCase();
   const operationId = operationInfo?.operationId?.toLowerCase();

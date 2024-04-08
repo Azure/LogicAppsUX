@@ -2,6 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
+import { isNullOrUndefined } from '@microsoft/logic-apps-shared';
 import { localSettingsFileName, managementApiPrefix, workflowAppApiVersion } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
@@ -23,8 +24,8 @@ import type { IAzureConnectorsContext } from './azureConnectorWizard';
 import { openMonitoringView } from './openMonitoringView/openMonitoringView';
 import type { ServiceClientCredentials } from '@azure/ms-rest-js';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
-import type { ICallbackUrlResponse } from '@microsoft/vscode-extension';
-import { ExtensionCommand, ProjectName } from '@microsoft/vscode-extension';
+import type { ICallbackUrlResponse } from '@microsoft/vscode-extension-logic-apps';
+import { ExtensionCommand, ProjectName } from '@microsoft/vscode-extension-logic-apps';
 import { readFileSync } from 'fs';
 import { basename, dirname, join } from 'path';
 import * as path from 'path';
@@ -42,6 +43,7 @@ export async function openOverview(context: IAzureConnectorsContext, node: vscod
   let corsNotice: string | undefined;
   let localSettings: Record<string, string> = {};
   let credentials: ServiceClientCredentials;
+  let isWorkflowRuntimeRunning;
   const workflowNode = getWorkflowNode(node);
   const panelGroupKey = ext.webViewKey.overview;
 
@@ -61,6 +63,7 @@ export async function openOverview(context: IAzureConnectorsContext, node: vscod
 
     const projectPath = await getLogicAppProjectRoot(context, workflowFilePath);
     localSettings = projectPath ? (await getLocalSettingsJson(context, join(projectPath, localSettingsFileName))).Values || {} : {};
+    isWorkflowRuntimeRunning = !isNullOrUndefined(ext.workflowRuntimePort);
   } else if (workflowNode instanceof RemoteWorkflowTreeItem) {
     workflowName = workflowNode.name;
     panelName = `${workflowNode.id}-${workflowName}-overview`;
@@ -71,6 +74,7 @@ export async function openOverview(context: IAzureConnectorsContext, node: vscod
     apiVersion = workflowAppApiVersion;
     callbackInfo = await workflowNode.getCallbackUrl(workflowNode, getRequestTriggerName(workflowContent.definition));
     corsNotice = localize('CorsNotice', 'To view runs, set "*" to allowed origins in the CORS setting.');
+    isWorkflowRuntimeRunning = true;
   }
 
   const existingPanel: vscode.WebviewPanel | undefined = tryGetWebviewPanel(panelGroupKey, panelName);
@@ -127,6 +131,7 @@ export async function openOverview(context: IAzureConnectorsContext, node: vscod
             workflowProperties: workflowProps,
             project: ProjectName.overview,
             hostVersion: ext.extensionVersion,
+            isWorkflowRuntimeRunning: isWorkflowRuntimeRunning,
           },
         });
         // Just shipping the access Token every 5 seconds is easier and more
