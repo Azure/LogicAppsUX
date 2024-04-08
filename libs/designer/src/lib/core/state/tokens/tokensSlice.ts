@@ -1,5 +1,5 @@
 import { resetWorkflowState } from '../global';
-import { clearDynamicOutputs } from '../operation/operationMetadataSlice';
+import { clearDynamicIO, type ClearDynamicIOPayload } from '../operation/operationMetadataSlice';
 import type { OutputToken as Token } from '@microsoft/designer-ui';
 import { getRecordEntry } from '@microsoft/logic-apps-shared';
 import { createSlice } from '@reduxjs/toolkit';
@@ -107,11 +107,16 @@ export const tokensSlice = createSlice({
     },
   },
   extraReducers: (builder) => {
-    builder.addCase(clearDynamicOutputs, (state, action: PayloadAction<string>) => {
-      const nodeId = action.payload;
-      const outputTokens = getRecordEntry(state.outputTokens, nodeId);
-      if (outputTokens) {
-        outputTokens.tokens = outputTokens.tokens.filter((token) => !token.outputInfo.isDynamic);
+    builder.addCase(clearDynamicIO, (state, action: PayloadAction<ClearDynamicIOPayload>) => {
+      const { nodeId, nodeIds: _nodeIds, outputs = true } = action.payload;
+      const nodeIds = _nodeIds ?? [nodeId];
+      if (outputs) {
+        for (const id of nodeIds) {
+          const outputTokens = getRecordEntry(state.outputTokens, id);
+          if (outputTokens) {
+            outputTokens.tokens = outputTokens.tokens.filter((token) => !token.outputInfo.isDynamic);
+          }
+        }
       }
     });
     builder.addCase(resetWorkflowState, () => initialState);
