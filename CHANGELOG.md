@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [4.2.2](https://github.com/Azure/LogicAppsUX/compare/v4.2.1...v4.2.2) (2024-04-08)
+
+
+### Bug Fixes
+
+* **designer:** Fix custom code bug ([#4577](https://github.com/Azure/LogicAppsUX/issues/4577)) ([614178e](https://github.com/Azure/LogicAppsUX/commit/614178e7b7047d2b3ff6902ab974ea9a0bba0db8))
+
 ### [4.2.1](https://github.com/Azure/LogicAppsUX/compare/v4.2.0...v4.2.1) (2024-04-08)
 
 
