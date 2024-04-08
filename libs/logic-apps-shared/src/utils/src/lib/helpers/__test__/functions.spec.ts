@@ -45,6 +45,7 @@ import {
   uniqueArray,
   unmap,
   FindPreviousAndNextPage,
+  sortRecord,
 } from './../functions';
 import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 describe('lib/helpers/functions', () => {
@@ -1418,6 +1419,15 @@ describe('lib/helpers/functions', () => {
       expect(unmap(null, 'id')).toEqual([]);
       expect(unmap(undefined, 'id')).toEqual([]);
       expect(unmap({}, 'id')).toEqual([]);
+    });
+  });
+
+  describe('sortRecord', () => {
+    it('returns a record sorted by a sort function parameter', () => {
+      const record = { cat: 2, dog: 1 };
+      const sortedRecord = { dog: 1, cat: 2 };
+      const sortFunc = (_k1, v1, _k2, v2) => v1 - v2;
+      expect(sortRecord(record, sortFunc)).toEqual(sortedRecord);
     });
   });
 });

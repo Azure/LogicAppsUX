@@ -6,6 +6,7 @@ import {
   useIsReadOnly,
   useShowConnectionsPanel,
   useHostOptions,
+  useShowPerformanceDebug,
 } from '../../state/workflowLoadingSelectors';
 import {
   setDarkMode,
@@ -16,6 +17,7 @@ import {
   setAreCustomEditorsEnabled,
   setShowConnectionsPanel,
   setHostOptions,
+  setShowPerformanceDebug,
 } from '../../state/workflowLoadingSlice';
 import { Checkbox } from '@fluentui/react';
 import { useCallback } from 'react';
@@ -28,6 +30,7 @@ const ContextSettings = () => {
   const showConnectionsPanel = useShowConnectionsPanel();
   const areCustomEditorsEnabled = useAreCustomEditorsEnabled();
   const hostOptions = useHostOptions();
+  const showPerformanceDebug = useShowPerformanceDebug();
   const dispatch = useDispatch<AppDispatch>();
 
   const changeMonitoringView = useCallback(
@@ -42,7 +45,7 @@ const ContextSettings = () => {
   );
 
   return (
-    <div style={{ display: 'flex', gap: '24px' }}>
+    <div style={{ display: 'flex', gap: '24px', flexWrap: 'wrap' }}>
       <Checkbox
         label="Read Only"
         disabled={isMonitoringView}
@@ -70,6 +73,11 @@ const ContextSettings = () => {
         label="Force Enable Split-On"
         checked={hostOptions.forceEnableSplitOn}
         onChange={(_, checked) => dispatch(setHostOptions({ forceEnableSplitOn: !!checked }))}
+      />
+      <Checkbox
+        label="Show Performance Debug"
+        checked={showPerformanceDebug}
+        onChange={(_, checked) => dispatch(setShowPerformanceDebug(!!checked))}
       />
     </div>
   );

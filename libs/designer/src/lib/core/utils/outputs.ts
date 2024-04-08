@@ -5,13 +5,7 @@ import type { Settings } from '../actions/bjsworkflow/settings';
 import { getConnectorWithSwagger } from '../queries/connections';
 import { getOperationManifest } from '../queries/operation';
 import type { DependencyInfo, NodeInputs, NodeOperation, NodeOutputs, OutputInfo } from '../state/operation/operationMetadataSlice';
-import {
-  ErrorLevel,
-  addDynamicOutputs,
-  clearDynamicOutputs,
-  updateErrorDetails,
-  updateExistingInputTokenTitles,
-} from '../state/operation/operationMetadataSlice';
+import { ErrorLevel, addDynamicOutputs, clearDynamicIO, updateErrorDetails } from '../state/operation/operationMetadataSlice';
 import { addDynamicTokens } from '../state/tokens/tokensSlice';
 import type { WorkflowKind } from '../state/workflow/workflowInterfaces';
 import type { WorkflowParameterDefinition } from '../state/workflowparameters/workflowparametersSlice';
@@ -23,7 +17,7 @@ import {
   getTokenExpressionMethodFromKey,
   isDynamicDataReadyToLoad,
 } from './parameters/helper';
-import { convertOutputsToTokens, getTokenTitle } from './tokens';
+import { convertOutputsToTokens } from './tokens';
 import {
   OperationManifestService,
   AssertionErrorCode,
@@ -460,10 +454,10 @@ export const loadDynamicOutputsInNode = async (
   forceEnableSplitOn: boolean,
   dispatch: Dispatch
 ): Promise<void> => {
+  dispatch(clearDynamicIO({ nodeId, inputs: false, outputs: true }));
+
   for (const outputKey of Object.keys(outputDependencies)) {
     const info = outputDependencies[outputKey];
-    dispatch(clearDynamicOutputs(nodeId));
-
     if (isDynamicDataReadyToLoad(info)) {
       if (info.dependencyType === 'StaticSchema') {
         updateOutputsAndTokens(
@@ -494,16 +488,11 @@ export const loadDynamicOutputsInNode = async (
             schemaOutputs = updateOutputsForBatchingTrigger(schemaOutputs, settings.splitOn?.value?.value);
           }
 
-          const dynamicOutputTitles: Record<string, string> = {};
-          const dynamicOutputs = Object.keys(schemaOutputs).reduce((result: Record<string, OutputInfo>, outputKey: string) => {
-            const outputInfo = toOutputInfo(schemaOutputs[outputKey]);
-            dynamicOutputTitles[outputInfo.key] = getTokenTitle(outputInfo);
-            return { ...result, [outputInfo.key]: outputInfo };
+          const dynamicOutputs = Object.entries(schemaOutputs).reduce((result: Record<string, OutputInfo>, [outputKey, outputValue]) => {
+            return { ...result, [outputKey]: toOutputInfo(outputValue) };
           }, {});
 
           dispatch(addDynamicOutputs({ nodeId, outputs: dynamicOutputs }));
-
-          dispatch(updateExistingInputTokenTitles({ tokenTitles: dynamicOutputTitles }));
 
           let iconUri: string, brandColor: string;
           if (OperationManifestService().isSupported(operationInfo.type, operationInfo.kind)) {
