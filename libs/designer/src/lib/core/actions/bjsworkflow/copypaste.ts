@@ -1,4 +1,4 @@
-import { ReferenceKey } from 'lib/common/models/workflow';
+import type { ReferenceKey } from '../../../common/models/workflow';
 import { setFocusNode, type RootState } from '../..';
 import { initCopiedConnectionMap } from '../../state/connection/connectionSlice';
 import type { NodeData, NodeOperation } from '../../state/operation/operationMetadataSlice';
