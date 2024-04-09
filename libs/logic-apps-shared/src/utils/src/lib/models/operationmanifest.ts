@@ -187,6 +187,7 @@ export interface OperationManifestProperties {
   iconUri: string;
   brandColor: string;
   description?: string;
+  displayText?: string;
   summary?: string;
 
   allowChildOperations?: boolean;

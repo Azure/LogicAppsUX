@@ -108,12 +108,16 @@ export const getInputParametersFromManifest = (
   customSwagger?: SwaggerParser,
   stepDefinition?: any
 ): NodeInputsWithDependencies => {
+  console.log('Elaina: getInputParametersFromManifest ', manifest);
+
   const primaryInputParameters = new ManifestParser(manifest).getInputParameters(
     false /* includeParentObject */,
     0 /* expandArrayPropertiesDepth */,
     undefined,
     undefined
   );
+  console.log('Elaina: getInputParametersFromManifest 1.2 primaryInputParameters ', primaryInputParameters);
+
   const allInputParameters = unmap(
     new ManifestParser(manifest).getInputParameters(
       true /* includeParentObject */,
@@ -121,6 +125,8 @@ export const getInputParametersFromManifest = (
     )
   );
   let primaryInputParametersInArray = unmap(primaryInputParameters);
+
+  console.log('Elaina: getInputParametersFromManifest 1.5 primaryInputParametersInArray ', primaryInputParametersInArray);
 
   if (stepDefinition) {
     const { inputsLocation } = manifest.properties;
@@ -167,7 +173,11 @@ export const getInputParametersFromManifest = (
     }
   }
 
+  console.log('Elaina: getInputParametersFromManifest 2 primaryInputParametersInArray ', primaryInputParametersInArray);
+
   const allParametersAsArray = toParameterInfoMap(primaryInputParametersInArray, stepDefinition);
+  console.log('Elaina: getInputParametersFromManifest 3 allParametersAsArray ', allParametersAsArray);
+
   const dynamicInput = primaryInputParametersInArray.find((parameter) => parameter.dynamicSchema);
 
   const defaultParameterGroup = {

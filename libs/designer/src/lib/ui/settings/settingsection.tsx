@@ -143,6 +143,8 @@ export const SettingsSection: FC<SettingsSectionProps> = ({
   const theme = useTheme();
   const isInverted = isHighContrastBlack() || theme.isInverted;
 
+  console.log('Elaina SettingsSection settings : ', settings);
+
   const separatorStyles = {
     root: { color: isInverted ? constants.Settings.SETTING_SEPARATOR_COLOR_DARK : constants.Settings.SETTING_SEPARATOR_COLOR_LIGHT },
   };
@@ -301,6 +303,7 @@ const Setting = ({ id, settings, isReadOnly }: { id?: string; settings: Settings
           return <SettingDictionary {...settingProp} />;
         case 'SettingTokenField':
           return (
+            // <div>{"2" + setting.settingProp?.placeholder?.toString() + "\n" + JSON.stringify(setting)}</div>
             <SettingTokenField
               {...{
                 hideValidationErrors: (newState: ChangeState) => {

@@ -451,6 +451,7 @@ export default {
       SCHEMA: 'schema',
       STRING: 'string',
       TABLE: 'table',
+      DISPLAYTEXT: 'displaytext',
     },
     EDITOR_OPTIONS: {
       LANGUAGE: {

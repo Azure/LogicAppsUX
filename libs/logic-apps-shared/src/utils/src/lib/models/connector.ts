@@ -46,6 +46,7 @@ export interface ParameterSchema {
   description?: string;
   'x-ms-editor'?: string;
   'x-ms-editor-options'?: any;
+  //TODO: Elaina -> this !!!! value? e-ms-editor => editor.
 }
 
 export interface ConnectionParameterSetParameterUIDefinition extends ConnectionParameterUIDefinitionBase {

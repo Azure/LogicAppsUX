@@ -236,6 +236,7 @@ interface ParameterBase {
   default?: any;
   dependencies?: InputDependencies;
   description?: string;
+  displayText?: string;
   dynamicSchema?: ParameterDynamicSchema;
   dynamicValues?: ParameterDynamicValues;
   editor?: string;
@@ -310,6 +311,7 @@ export function toInputParameter(schemaProperty: SchemaProperty, suppressCasting
     default: $default,
     dependencies,
     description,
+    displayText,
     dynamicSchema,
     dynamicValues,
     editor,
@@ -341,6 +343,7 @@ export function toInputParameter(schemaProperty: SchemaProperty, suppressCasting
     default: $default,
     dependencies,
     description,
+    displayText,
     dynamicSchema,
     dynamicValues,
     editor,

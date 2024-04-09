@@ -321,6 +321,7 @@ export class SchemaProcessor {
         alias: schema[SwaggerConstants.ExtensionProperties.Alias],
         default: schema.default,
         description: schema.description,
+        displayText: schema.displayText, //!!! Elaina  this is probably the right place
         dynamicValues,
         dynamicSchema: getParameterDynamicSchema(schema),
         editor: getEditorForParameter(schema, dynamicValues),
@@ -472,6 +473,7 @@ export class SchemaProcessor {
     const $default = schema.default;
     const contentHint = schema[SwaggerConstants.ExtensionProperties.ContentHint];
     const description = schema.description;
+    const displayText = schema.displayText;
     const dynamicallyAdded = schema[SwaggerConstants.ExtensionProperties.DynamicallyAdded];
     const dynamicSchema = getParameterDynamicSchema(schema);
     const dynamicValues = getParameterDynamicValues(schema);
@@ -519,6 +521,7 @@ export class SchemaProcessor {
       contentHint,
       default: $default,
       description,
+      displayText,
       dynamicallyAdded,
       dynamicSchema,
       dynamicValues,

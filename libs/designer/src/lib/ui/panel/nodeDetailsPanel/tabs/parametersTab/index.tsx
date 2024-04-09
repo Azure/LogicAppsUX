@@ -69,6 +69,7 @@ export const ParametersTab = () => {
   const selectedNodeId = useSelectedNodeId();
   const nodeMetadata = useNodeMetadata(selectedNodeId);
   const inputs = useSelector((state: RootState) => state.operations.inputParameters[selectedNodeId]);
+  console.log('Elaina : inputs ', inputs);
   const { tokenState, workflowParametersState } = useSelector((state: RootState) => ({
     tokenState: state.tokens,
     workflowParametersState: state.workflowParameters,
@@ -409,8 +410,19 @@ const ParameterSection = ({
   const settings: Settings[] = group?.parameters
     .filter((x) => !x.hideInUI && shouldUseParameterInGroup(x, group.parameters))
     .map((param) => {
-      const { id, label, value, required, showTokens, placeholder, editorViewModel, dynamicData, conditionalVisibility, validationErrors } =
-        param;
+      const {
+        id,
+        label,
+        value,
+        required,
+        showTokens,
+        placeholder,
+        displayText,
+        editorViewModel,
+        dynamicData,
+        conditionalVisibility,
+        validationErrors,
+      } = param;
       const remappedEditorViewModel = isRecordNotEmpty(idReplacements)
         ? remapEditorViewModelWithNewIds(editorViewModel, idReplacements)
         : editorViewModel;
@@ -420,9 +432,11 @@ const ParameterSection = ({
         required,
         showTokens,
         placeholder,
+        displayText,
         editorViewModel: remappedEditorViewModel,
         conditionalVisibility,
       };
+
       const { editor, editorOptions } = getEditorAndOptions(operationInfo, param, upstreamNodeIds ?? [], variables);
 
       const { value: remappedValues } = isRecordNotEmpty(idReplacements) ? remapValueSegmentsWithNewIds(value, idReplacements) : { value };
@@ -472,6 +486,9 @@ const ParameterSection = ({
       };
     });
 
+  // console.log("Elaina group?.parameters --- " , group?.parameters);
+  // console.log("Elaina settings --- " , settings);
+
   return (
     <SettingsSection
       id={group.id}
@@ -499,6 +516,8 @@ export const getEditorAndOptions = (
   if (customEditor) {
     return toCustomEditorAndOptions(customEditor);
   }
+
+  console.log('Elaina operationInfo parameter variables --- ', operationInfo, parameter, variables);
 
   const { editor, editorOptions } = parameter;
   const supportedTypes: string[] = editorOptions?.supportedTypes ?? [];

@@ -30,6 +30,7 @@ import type { SettingProps } from './';
 import { CustomTokenField, isCustomEditor } from './customTokenField';
 import { Label } from '@fluentui/react';
 import { EditorLanguage, equals, getPropertyValue, replaceWhiteSpaceWithUnderscore } from '@microsoft/logic-apps-shared';
+import Markdown from 'react-markdown';
 
 export interface SettingTokenFieldProps extends SettingProps {
   id?: string;
@@ -366,6 +367,12 @@ export const TokenField = ({
           tokenMapping={tokenMapping}
           loadParameterValueFromString={loadParameterValueFromString}
         />
+      );
+
+    case constants.PARAMETER.EDITOR.DISPLAYTEXT:
+      return (
+        // <Markdown>{value}</Markdown>
+        <div>display texttttttt {placeholder}</div>
       );
 
     default:
