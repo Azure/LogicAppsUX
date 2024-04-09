@@ -53,10 +53,9 @@ export function isWhitespace(ch: string) {
 }
 
 export function isTemplateExpression(value: string): boolean {
-  if (isNullOrEmpty(value) || value.length < 2) {
+  if (isNullOrEmpty(value) || typeof value !== 'string' || value.length < 2) {
     return false;
   }
-
   return value.charAt(0) === '@' || value.indexOf('@{') > 0;
 }
 
