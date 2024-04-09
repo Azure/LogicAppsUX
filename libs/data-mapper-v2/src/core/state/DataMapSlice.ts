@@ -66,7 +66,7 @@ export interface DataMapState {
   curDataMapOperation: DataMapOperationState;
   pristineDataMap: DataMapOperationState;
   isDirty: boolean;
- // notificationData?: NotificationData;
+  // notificationData?: NotificationData;
   sourceNodeConnectionBeingDrawnFromId?: string;
   // canvasToolboxTabToDisplay: ToolboxPanelTabs | '';
 }
@@ -573,7 +573,7 @@ export const {
   setXsltFilename,
   setXsltContent,
   setInitialSchema,
- // setInitialDataMap,
+  // setInitialDataMap,
   changeSourceSchema,
   changeTargetSchema,
   // setCurrentSourceSchemaNodes,
@@ -951,19 +951,19 @@ export const updateFunctionNodeLocations = (newState: DataMapOperationState, fun
   });
 };
 
-// export const assignFunctionNodePositionsFromMetadata = (
-//   connections: ConnectionDictionary,
-//   metadata: FunctionMetadata[],
-//   functions: FunctionDictionary
-// ) => {
-//   Object.keys(functions).forEach((key) => {
-//     // find matching metadata
-//     const generatedMetadata = generateFunctionConnectionMetadata(key, connections);
-//     const id = convertConnectionShorthandToId(generatedMetadata);
-//     const matchingMetadata = metadata.find((meta) => meta.connectionShorthand === id);
+export const assignFunctionNodePositionsFromMetadata = (
+  connections: ConnectionDictionary,
+  metadata: FunctionMetadata[],
+  functions: FunctionDictionary
+) => {
+  Object.keys(functions).forEach((key) => {
+    // find matching metadata
+    const generatedMetadata = generateFunctionConnectionMetadata(key, connections);
+    const id = convertConnectionShorthandToId(generatedMetadata);
+    const matchingMetadata = metadata.find((meta) => meta.connectionShorthand === id);
 
-//     // assign position data to function in store
-//     functions[key].functionData = { ...functions[key].functionData, positions: matchingMetadata?.positions };
-//   });
-//   return functions;
-// };
+    // assign position data to function in store
+    functions[key].functionData = { ...functions[key].functionData, positions: matchingMetadata?.positions };
+  });
+  return functions;
+};

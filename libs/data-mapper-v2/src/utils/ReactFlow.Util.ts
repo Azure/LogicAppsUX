@@ -22,6 +22,16 @@
 // import type { Edge as ReactFlowEdge, Node as ReactFlowNode, XYPosition } from 'reactflow';
 // import { Position } from 'reactflow';
 
+import { guid, SchemaType } from '@microsoft/logic-apps-shared';
+import { sourcePrefix, targetPrefix } from '../constants/ReactFlowConstants';
+import { FunctionData } from 'models';
+
+export const addReactFlowPrefix = (key: string, type: SchemaType) => `${type}-${key}`;
+export const addSourceReactFlowPrefix = (key: string) => `${sourcePrefix}${key}`;
+export const addTargetReactFlowPrefix = (key: string) => `${targetPrefix}${key}`;
+
+export const createReactFlowFunctionKey = (functionData: FunctionData): string => `${functionData.key}-${guid()}`;
+
 // export const overviewTgtSchemaX = 600;
 
 // interface SimplifiedLayoutEdge {

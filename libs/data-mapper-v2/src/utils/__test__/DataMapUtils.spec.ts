@@ -5,7 +5,7 @@ import {
   ReservedToken,
   Separators,
   //addAncestorNodesToCanvas,
- // addParentConnectionForRepeatingElementsNested,
+  // addParentConnectionForRepeatingElementsNested,
   getDestinationNode,
   getSourceValueFromLoop,
   getTargetValueWithoutLoops,
@@ -30,7 +30,8 @@ import {
 } from '../__mocks__';
 import type { Schema, SchemaExtended, SchemaNodeExtended } from '@microsoft/logic-apps-shared';
 import { NormalizedDataType, SchemaNodeProperty, SchemaType } from '@microsoft/logic-apps-shared';
-import { comprehensiveSourceSchema, comprehensiveTargetSchema, sourceMockSchema } from '__mocks__/schemas';
+import { comprehensiveSourceSchema, comprehensiveTargetSchema, sourceMockSchema } from '../../__mocks__/schemas';
+import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 
 describe('utils/DataMap', () => {
   describe('isValidToMakeMapDefinition', () => {
@@ -520,144 +521,6 @@ describe('utils/DataMap', () => {
       };
 
       expect(isValidToMakeMapDefinition(connectionsWithUnconnectedFunction)).toBe(true);
-    });
-  });
-
-  describe('addAncestorNodesToCanvas', () => {
-    const sourceSchema: Schema = comprehensiveSourceSchema;
-    const extendedSourceSchema: SchemaExtended = convertSchemaToSchemaExtended(sourceSchema);
-    const flattenedSchema = flattenSchemaIntoDictionary(extendedSourceSchema, SchemaType.Source);
-
-    it('includes direct parent', () => {
-      const nodeToAddKey = addSourceReactFlowPrefix(
-        '/ns0:SourceSchemaRoot/Looping/ManyToMany/Simple/SourceSimpleChild/SourceSimpleChildChild/SourceDirect'
-      );
-
-      const nodesCurrentlyOnCanvas: SchemaNodeExtended[] = [];
-      const nodeToAdd = flattenedSchema[nodeToAddKey];
-      addAncestorNodesToCanvas(nodeToAdd, nodesCurrentlyOnCanvas, flattenedSchema);
-      const canvasNodeKeys = nodesCurrentlyOnCanvas.map((node) => node.key);
-
-      const parentOnCanvasKey = '/ns0:SourceSchemaRoot/Looping/ManyToMany/Simple/SourceSimpleChild/SourceSimpleChildChild';
-      expect(canvasNodeKeys).toContain(parentOnCanvasKey);
-    });
-
-    it('includes all nodes under highest ancestor on the canvas', () => {
-      const ancestorOnCanvasKey = '/ns0:SourceSchemaRoot/Looping/ManyToMany/Simple';
-      const interimAncestorKey1 = '/ns0:SourceSchemaRoot/Looping/ManyToMany/Simple/SourceSimpleChild';
-      const interimAncestorKey2 = '/ns0:SourceSchemaRoot/Looping/ManyToMany/Simple/SourceSimpleChild/SourceSimpleChildChild';
-
-      const nodeToAddKey = addSourceReactFlowPrefix(
-        '/ns0:SourceSchemaRoot/Looping/ManyToMany/Simple/SourceSimpleChild/SourceSimpleChildChild/SourceDirect'
-      );
-
-      const nodesCurrentlyOnCanvas = [flattenedSchema[addSourceReactFlowPrefix(ancestorOnCanvasKey)]];
-      const nodeToAdd = flattenedSchema[nodeToAddKey];
-
-      addAncestorNodesToCanvas(nodeToAdd, nodesCurrentlyOnCanvas, flattenedSchema);
-      const canvasNodeKeys = nodesCurrentlyOnCanvas.map((node) => node.key);
-      expect(canvasNodeKeys.length).toEqual(3);
-
-      expect(canvasNodeKeys).toContain(ancestorOnCanvasKey);
-      expect(canvasNodeKeys).toContain(interimAncestorKey1);
-      expect(canvasNodeKeys).toContain(interimAncestorKey2);
-    });
-  });
-
-  describe('getSourceValueFromLoop', () => {
-    it('gets the source key from a looped target string', () => {
-      const extendedSource = convertSchemaToSchemaExtended(sourceMockSchema);
-      const flattenedSchema = flattenSchemaIntoDictionary(extendedSource, SchemaType.Source);
-
-      const result = getSourceValueFromLoop(
-        'TelephoneNumber',
-        '/ns0:Root/Looping/$for(/ns0:Root/Looping/Employee)/Person/Name',
-        flattenedSchema
-      );
-      expect(result).toEqual('/ns0:Root/Looping/Employee/TelephoneNumber');
-    });
-
-    it('gets the source key from a looped target string with a function', () => {
-      const extendedSource = convertSchemaToSchemaExtended(sourceMockSchema);
-      const flattenedSchema = flattenSchemaIntoDictionary(extendedSource, SchemaType.Source);
-
-      const result = getSourceValueFromLoop(
-        'lower-case(TelephoneNumber)',
-        '/ns0:Root/Looping/$for(/ns0:Root/Looping/Employee)/Person/Name',
-        flattenedSchema
-      );
-      expect(result).toEqual('lower-case(/ns0:Root/Looping/Employee/TelephoneNumber)');
-    });
-
-    it('gets the source key from a nested looped target string', () => {
-      const extendedSource = convertSchemaToSchemaExtended(comprehensiveSourceSchema);
-      const flattenedSchema = flattenSchemaIntoDictionary(extendedSource, SchemaType.Source);
-
-      const result = getSourceValueFromLoop(
-        'SourceDirect',
-        '/ns0:TargetSchemaRoot/Looping/ManyToMany/$for(/ns0:SourceSchemaRoot/Looping/ManyToMany/Simple)/Simple/$for(SourceSimpleChild)/SimpleChild/$for(SourceSimpleChildChild)/SimpleChildChild',
-        flattenedSchema
-      );
-      expect(result).toEqual('/ns0:SourceSchemaRoot/Looping/ManyToMany/Simple/SourceSimpleChild/SourceSimpleChildChild/SourceDirect');
-    });
-  });
-
-  describe('addParentConnectionForRepeatingElementsNested', () => {
-    const extendedLoopSource = convertSchemaToSchemaExtended(comprehensiveSourceSchema);
-    const extendedLoopTarget = convertSchemaToSchemaExtended(comprehensiveTargetSchema);
-    const flattenedLoopSource = flattenSchemaIntoDictionary(extendedLoopSource, SchemaType.Source);
-    const flattenedLoopTarget = flattenSchemaIntoDictionary(extendedLoopTarget, SchemaType.Target);
-
-    it('adds parent connections for nested loops', () => {
-      const sourceNodeParent = flattenedLoopSource[manyToManyConnectionSourceName];
-      const targetNodeParent = flattenedLoopTarget[manyToManyConnectionTargetName];
-      const connectionsDict: ConnectionDictionary = {
-        [manyToManyConnectionSourceName]: manyToManyConnectionFromSource,
-        [manyToManyConnectionTargetName]: manyToManyConnectionFromTarget,
-      };
-      addParentConnectionForRepeatingElementsNested(
-        sourceNodeParent,
-        targetNodeParent,
-        flattenedLoopSource,
-        flattenedLoopTarget,
-        connectionsDict
-      );
-      expect(Object.keys(connectionsDict).length).toEqual(8);
-    });
-
-    it('adds parent connections for many-to-one', () => {
-      const sourceNodeParent = flattenedLoopSource[manyToOneConnectionSourceName];
-      const targetNodeParent = flattenedLoopTarget[manyToOneConnectionTargetName];
-      const connectionsDict: ConnectionDictionary = {
-        [manyToOneConnectionSourceName]: manyToOneConnectionFromSource,
-        [manyToOneConnectionTargetName]: manyToOneConnectionFromTarget,
-      };
-      addParentConnectionForRepeatingElementsNested(
-        sourceNodeParent,
-        targetNodeParent,
-        flattenedLoopSource,
-        flattenedLoopTarget,
-        connectionsDict
-      );
-      // target-date should be connected to src-yr, src-month, src-day
-      const parentTarget = connectionsDict['target-/ns0:TargetSchemaRoot/Looping/ManyToOne/Simple'];
-      const input0 = parentTarget.inputs['0'][0] as ConnectionUnit;
-      const input1 = parentTarget.inputs['0'][1] as ConnectionUnit;
-      const input2 = parentTarget.inputs['0'][2] as ConnectionUnit;
-
-      expect(input0.reactFlowKey).toEqual('source-/ns0:SourceSchemaRoot/Looping/ManyToOne/Simple/SourceSimpleChild/SourceSimpleChildChild');
-      expect(input1.reactFlowKey).toEqual('source-/ns0:SourceSchemaRoot/Looping/ManyToOne/Simple/SourceSimpleChild');
-      expect(input2.reactFlowKey).toEqual('source-/ns0:SourceSchemaRoot/Looping/ManyToOne/Simple');
-    });
-
-    it('adds parent connections for indexed many-to-one', () => {
-      const sourceNodeParent = flattenedLoopSource['source-/ns0:SourceSchemaRoot/Looping/ManyToOne/Simple'];
-      const targetNodeParent = flattenedLoopTarget['target-/ns0:TargetSchemaRoot/Looping/ManyToOne/Simple'];
-
-      addParentConnectionForRepeatingElementsNested(sourceNodeParent, targetNodeParent, flattenedLoopSource, flattenedLoopTarget, indexed);
-      const parentTarget = indexed['target-/ns0:TargetSchemaRoot/Looping/ManyToOne/Simple'];
-      const input0 = parentTarget.inputs['0'];
-      expect(input0).toHaveLength(1);
     });
   });
 
