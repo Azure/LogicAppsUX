@@ -13,7 +13,7 @@ export const LoadingMethod = {
 } as const;
 export type LoadingMethod = (typeof LoadingMethod)[keyof typeof LoadingMethod];
 
-export type DmVersions  = 'v1' | 'v2';
+export type DmVersions = 'v1' | 'v2';
 
 export interface DataMapLoadingState {
   theme: ThemeType;
@@ -21,7 +21,6 @@ export interface DataMapLoadingState {
   rawDefinition?: MapDefDropdownOption;
   loadingMethod: LoadingMethod;
   mapDefinition: MapDefinitionEntry;
-  dmVersion: DmVersions;
   mapMetadata?: MapMetadata;
   xsltFilename: string;
   xsltContent: string;
@@ -44,7 +43,6 @@ const mockMetadata: MapMetadata = {
 const initialState: DataMapLoadingState = {
   theme: ThemeType.Light,
   loadingMethod: LoadingMethod.File,
-  dmVersion: 'v2',
   mapDefinition: {},
   xsltFilename: '',
   xsltContent: '',
@@ -73,9 +71,6 @@ export const dataMapDataLoaderSlice = createSlice({
   name: 'dataMapDataLoader',
   initialState,
   reducers: {
-    changeDmVersion: (state, action: PayloadAction<DmVersions>) => {
-      state.dmVersion = action.payload;
-    },
     changeTheme: (state, action: PayloadAction<ThemeType>) => {
       state.theme = action.payload;
     },

@@ -6,7 +6,7 @@ import type { AppDispatch, RootState } from '../state/Store';
 import { DevApiTester } from './DevApiTester';
 import { DevSerializationTester } from './DevSerializationTester';
 import type { IDropdownOption } from '@fluentui/react';
-import { Checkbox, Dropdown, Stack, StackItem, TextField, Toggle } from '@fluentui/react';
+import { Checkbox, Dropdown, Stack, StackItem, TextField } from '@fluentui/react';
 import { Accordion, AccordionHeader, AccordionItem, AccordionPanel, Tooltip, tokens } from '@fluentui/react-components';
 import { SchemaFileFormat, Theme as ThemeType } from '@microsoft/logic-apps-shared';
 import { useCallback, useMemo, useState } from 'react';
@@ -163,19 +163,10 @@ export const DevToolbox = () => {
     [dispatch]
   );
 
-  const changeDMVersion = (_e: unknown, checked?: boolean) => {
-    dispatch(dataMapDataLoaderSlice.actions.changeDmVersion(checked ? 'v2' : 'v1'));
-  };
-
   const toolboxItems = useMemo(() => {
     const newToolboxItems = [];
 
     if (loadingMethod === LoadingMethod.File) {
-      newToolboxItems.push(
-        <StackItem key={'dataMapperVersionToggle'} style={{ width: '250px' }}>
-          <Toggle label="New data mapper" onChange={changeDMVersion} defaultChecked={true} placeholder="Select a map definition" />
-        </StackItem>
-      );
       newToolboxItems.push(
         <StackItem key={'mapDefinitionDropDown'} style={{ width: '250px' }}>
           <Dropdown

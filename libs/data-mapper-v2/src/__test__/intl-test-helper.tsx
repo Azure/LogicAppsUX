@@ -4,7 +4,7 @@
  * These helper functions aim to address that and wrap a valid,
  * English-locale intl context around them.
  */
-import messages from '../../../../../libs/logic-apps-shared/src/intl/src/compiled-lang/strings.json';
+import messages from '../../../../libs/logic-apps-shared/src/intl/src/compiled-lang/strings.json';
 import { createIntl, createIntlCache } from 'react-intl';
 import * as Intl from 'react-intl';
 import { vi } from 'vitest';

@@ -24,6 +24,7 @@ const schemaFileQuerySettings = {
 const useStyles = makeStyles({
   root: {
     display: 'flex',
+    height: '100vh',
   },
   drawer: {
     backgroundColor: '#fff',
@@ -33,9 +34,10 @@ const useStyles = makeStyles({
 export interface ConfigPanelProps {
   onSubmitSchemaFileSelection: (schemaFile: SchemaFile) => void;
   readCurrentSchemaOptions?: () => void;
+  schemaType: SchemaType;
 }
 
-export const AddSchemaDrawer = ({ readCurrentSchemaOptions, onSubmitSchemaFileSelection }: ConfigPanelProps) => {
+export const AddSchemaDrawer = ({ readCurrentSchemaOptions, onSubmitSchemaFileSelection, schemaType }: ConfigPanelProps) => {
   const dispatch = useDispatch<AppDispatch>();
   const intl = useIntl();
   const styles = useStyles();
@@ -44,7 +46,6 @@ export const AddSchemaDrawer = ({ readCurrentSchemaOptions, onSubmitSchemaFileSe
   const currentPanelView = useSelector((state: RootState) => {
     return state.panel.currentPanelView;
   });
-  const schemaType = useSelector((state: RootState) => state.panel.schemaType);
   const currentTheme = useSelector((state: RootState) => state.app.theme);
 
   const [uploadType, setUploadType] = useState<UploadSchemaTypes>(UploadSchemaTypes.SelectFrom);
@@ -256,7 +257,7 @@ export const AddSchemaDrawer = ({ readCurrentSchemaOptions, onSubmitSchemaFileSe
       <InlineDrawer
         open={!!currentPanelView}
         size="small"
-        className={styles.root}
+        className={styles.drawer}
 
         // onDismiss={closeEntirePanel}
         // closeButtonAriaLabel={closeLoc}
@@ -269,7 +270,11 @@ export const AddSchemaDrawer = ({ readCurrentSchemaOptions, onSubmitSchemaFileSe
           <DefaultConfigView setFunctionDisplayExpanded={setFunctionDisplayExpanded} useExpandedFunctionCards={useExpandedFunctionCards} />
         )} */}
 
-        {/* {(currentPanelView === ConfigPanelView.AddSchema || currentPanelView === ConfigPanelView.UpdateSchema) && (
+        <DrawerHeader>
+          <DrawerHeaderTitle>{schemaType === SchemaType.Source ? 'Source' : 'Target'}</DrawerHeaderTitle>
+        </DrawerHeader>
+
+        <DrawerBody>
           <AddOrUpdateSchemaView
             schemaType={schemaType}
             selectedSchema={schemaType === SchemaType.Source ? selectedSourceSchema : selectedTargetSchema}
@@ -280,13 +285,7 @@ export const AddSchemaDrawer = ({ readCurrentSchemaOptions, onSubmitSchemaFileSe
             uploadType={uploadType}
             setUploadType={setUploadType}
           />
-          
-        )} */}
-        <DrawerHeader>
-          <DrawerHeaderTitle>Source</DrawerHeaderTitle>
-        </DrawerHeader>
-
-        <DrawerBody>DrawerBody dropdown</DrawerBody>
+        </DrawerBody>
       </InlineDrawer>
     </div>
   );

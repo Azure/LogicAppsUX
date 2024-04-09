@@ -15,6 +15,7 @@ import { HTML5Backend } from 'react-dnd-html5-backend';
 import { useDispatch, useSelector } from 'react-redux';
 import { ReactFlowProvider } from 'reactflow';
 import { AddSchemaDrawer } from '../components/addSchema/AddSchemaPanel';
+import { SchemaType } from '@microsoft/logic-apps-shared';
 
 // danielle to strip
 
@@ -87,7 +88,7 @@ export interface DataMapperDesignerProps {
   setIsMapStateDirty?: (isMapStateDirty: boolean) => void;
 }
 
-export const DataMapperDesignerV2 = ({
+export const DataMapperDesigner = ({
   saveMapDefinitionCall,
   //saveXsltCall,
   saveDraftStateCall,
@@ -289,6 +290,7 @@ export const DataMapperDesignerV2 = ({
           <AddSchemaDrawer
             onSubmitSchemaFileSelection={(schema) => console.log(schema)}
             readCurrentSchemaOptions={() => console.log('')}
+            schemaType={SchemaType.Source}
 
             // onSubmitSchemaFileSelection={onSubmitSchemaFileSelection}
             // readCurrentSchemaOptions={readCurrentSchemaOptions}

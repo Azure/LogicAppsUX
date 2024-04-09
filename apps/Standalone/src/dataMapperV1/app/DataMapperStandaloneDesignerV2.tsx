@@ -1,7 +1,7 @@
 import { DevToolbox } from '../components/DevToolbox';
 import { dataMapDataLoaderSlice } from '../state/DataMapDataLoader';
 import {
-  DataMapperDesignerV2,
+  DataMapperDesigner as DataMapperDesignerV2,
   DataMapDataProvider as DataMapDataProviderV2,
   DataMapperDesignerProvider as DataMapperDesignerProviderV2,
 } from '@microsoft/logic-apps-data-mapper-v2';
@@ -11,16 +11,9 @@ import { AzureThemeLight } from '@fluentui/azure-themes/lib/azure/AzureThemeLigh
 import { ThemeProvider } from '@fluentui/react';
 import { FluentProvider, webDarkTheme, webLightTheme } from '@fluentui/react-components';
 import { PortalCompatProvider } from '@fluentui/react-portal-compat';
-import {
-  DataMapDataProvider,
-  DataMapperDesigner,
-  DataMapperDesignerProvider,
-  InitDataMapperApiService,
-  defaultDataMapperApiServiceOptions,
-  getFunctions,
-} from '@microsoft/logic-apps-data-mapper';
+import { InitDataMapperApiService, defaultDataMapperApiServiceOptions, getFunctions } from '@microsoft/logic-apps-data-mapper';
 import { Theme as ThemeType } from '@microsoft/logic-apps-shared';
-import { useEffect, useState } from 'react';
+import { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 const workflowSchemaFilenames = [
@@ -36,10 +29,9 @@ const workflowSchemaFilenames = [
 
 const customXsltPath = ['folder/file.xslt', 'file2.xslt'];
 
-export const DataMapperStandaloneDesigner = () => {
+export const DataMapperStandaloneDesignerV2 = () => {
   const dispatch = useDispatch<AppDispatch>();
   const theme = useSelector((state: RootState) => state.dataMapDataLoader.theme);
-  const dmVersion = useSelector((state: RootState) => state.dataMapDataLoader.dmVersion);
   const armToken = useSelector((state: RootState) => state.dataMapDataLoader.armToken);
 
   const xsltFilename = useSelector((state: RootState) => state.dataMapDataLoader.xsltFilename);
@@ -49,8 +41,6 @@ export const DataMapperStandaloneDesigner = () => {
   const fetchedFunctions = useSelector((state: RootState) => state.dataMapDataLoader.fetchedFunctions);
   const sourceSchema = useSelector((state: RootState) => state.schemaDataLoader.sourceSchema);
   const targetSchema = useSelector((state: RootState) => state.schemaDataLoader.targetSchema);
-
-  const [functionDisplay, setFunctionDisplayExpanded] = useState<boolean>(true);
 
   // Standalone uses default/dev runtime settings - can just run 'func host start' in the workflow root
   InitDataMapperApiService({
@@ -100,46 +90,22 @@ export const DataMapperStandaloneDesigner = () => {
       </div>
 
       <div style={{ flex: '1 1 1px', display: 'flex', flexDirection: 'column' }}>
-        {dmVersion === 'v1' ? (
-          <DataMapperDesignerProvider locale="en-US" theme={theme} options={{}}>
-            <DataMapDataProvider
-              xsltFilename={xsltFilename}
-              xsltContent={xsltContent}
-              mapDefinition={mapDefinition}
-              dataMapMetadata={mapMetadata}
-              sourceSchema={sourceSchema}
-              targetSchema={targetSchema}
-              availableSchemas={workflowSchemaFilenames}
-              customXsltPaths={customXsltPath}
-              fetchedFunctions={fetchedFunctions}
-              theme={theme}
-            >
-              <DataMapperDesigner
-                saveMapDefinitionCall={saveMapDefinitionCall}
-                saveXsltCall={saveXsltCall}
-                setFunctionDisplayExpanded={setFunctionDisplayExpanded}
-                useExpandedFunctionCards={functionDisplay}
-              />
-            </DataMapDataProvider>
-          </DataMapperDesignerProvider>
-        ) : (
-          <DataMapperDesignerProviderV2 locale="en-US" theme={theme} options={{}}>
-            <DataMapDataProviderV2
-              xsltFilename={xsltFilename}
-              xsltContent={xsltContent}
-              mapDefinition={mapDefinition}
-              dataMapMetadata={mapMetadata}
-              sourceSchema={sourceSchema}
-              targetSchema={targetSchema}
-              availableSchemas={workflowSchemaFilenames}
-              customXsltPaths={customXsltPath}
-              fetchedFunctions={fetchedFunctions}
-              theme={theme}
-            >
-              <DataMapperDesignerV2 saveMapDefinitionCall={saveMapDefinitionCall} saveXsltCall={saveXsltCall} />
-            </DataMapDataProviderV2>
-          </DataMapperDesignerProviderV2>
-        )}
+        <DataMapperDesignerProviderV2 locale="en-US" theme={theme} options={{}}>
+          <DataMapDataProviderV2
+            xsltFilename={xsltFilename}
+            xsltContent={xsltContent}
+            mapDefinition={mapDefinition}
+            dataMapMetadata={mapMetadata}
+            sourceSchema={sourceSchema}
+            targetSchema={targetSchema}
+            availableSchemas={workflowSchemaFilenames}
+            customXsltPaths={customXsltPath}
+            fetchedFunctions={fetchedFunctions}
+            theme={theme}
+          >
+            <DataMapperDesignerV2 saveMapDefinitionCall={saveMapDefinitionCall} saveXsltCall={saveXsltCall} />
+          </DataMapDataProviderV2>
+        </DataMapperDesignerProviderV2>
       </div>
     </div>
   );
