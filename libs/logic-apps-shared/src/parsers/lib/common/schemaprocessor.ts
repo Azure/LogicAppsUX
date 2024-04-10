@@ -321,7 +321,7 @@ export class SchemaProcessor {
         alias: schema[SwaggerConstants.ExtensionProperties.Alias],
         default: schema.default,
         description: schema.description,
-        displayText: schema.displayText, //!!! Elaina  this is probably the right place
+        displayText: schema.displayText,
         dynamicValues,
         dynamicSchema: getParameterDynamicSchema(schema),
         editor: getEditorForParameter(schema, dynamicValues),

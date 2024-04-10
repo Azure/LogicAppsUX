@@ -114,7 +114,6 @@ export const getInputParametersFromManifest = (
     undefined,
     undefined
   );
-
   const allInputParameters = unmap(
     new ManifestParser(manifest).getInputParameters(
       true /* includeParentObject */,
