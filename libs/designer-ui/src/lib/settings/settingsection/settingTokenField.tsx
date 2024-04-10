@@ -41,6 +41,7 @@ export interface SettingTokenFieldProps extends SettingProps {
   editorOptions?: any;
   editorViewModel?: any;
   defaultValue?: string;
+  displayText?: string;
   placeholder?: string;
   label: string;
   readOnly?: boolean;
@@ -65,7 +66,9 @@ export interface SettingTokenFieldProps extends SettingProps {
 export const SettingTokenField = ({ ...props }: SettingTokenFieldProps) => {
   const labelId = useId('msla-editor-label');
   const hideLabel =
-    (isCustomEditor(props) && props.editorOptions?.hideLabel === true) || equals(props.editor?.toLowerCase(), 'floatingactionmenu');
+    (isCustomEditor(props) && props.editorOptions?.hideLabel === true) ||
+    equals(props.editor?.toLowerCase(), 'floatingactionmenu') ||
+    equals(props.editor?.toLowerCase(), 'displaytext');
   return (
     <>
       {!hideLabel && (
@@ -89,6 +92,7 @@ export const TokenField = ({
   editor,
   editorOptions,
   editorViewModel,
+  displayText,
   placeholder,
   readOnly,
   value,
@@ -370,10 +374,7 @@ export const TokenField = ({
       );
 
     case constants.PARAMETER.EDITOR.DISPLAYTEXT:
-      return (
-        // <Markdown>{value}</Markdown>
-        <div>display texttttttt {placeholder}</div>
-      );
+      return <Markdown linkTarget="_blank">{displayText ?? ''}</Markdown>;
 
     default:
       return (

@@ -74,7 +74,8 @@ export const httpManifest = {
           type: 'string',
           title: 'data mapper create',
           description: 'Initial data mapper description',
-          displayText: 'To complete this data transformation, add an existing map or create a new map with Data Mapper in VSCode.',
+          displayText:
+            'To complete this data transformation, add an existing map or create a new map with [Data Mapper in VSCode](/dataMapper).',
           'x-ms-editor': 'displaytext',
           'x-ms-editor-options': {
             hideLabel: true,
