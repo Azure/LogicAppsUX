@@ -115,7 +115,7 @@ import {
   getRecordEntry,
   replaceWhiteSpaceWithUnderscore,
   isRecordNotEmpty,
-  isStringNumberOrBoolean,
+  isStringNonPrimitive,
 } from '@microsoft/logic-apps-shared';
 import type {
   AuthProps,
@@ -1574,7 +1574,7 @@ function reduceRedundantSegments(segments: Segment[]): void {
 }
 
 export function transformInputParameter(inputParameter: InputParameter, parameterValue: any, invisible = false): InputParameter {
-  if (inputParameter.type === constants.SWAGGER.TYPE.ANY && typeof parameterValue === 'string' && isStringNumberOrBoolean(parameterValue)) {
+  if (inputParameter.type === constants.SWAGGER.TYPE.ANY && typeof parameterValue === 'string' && isStringNonPrimitive(parameterValue)) {
     parameterValue = `"${parameterValue}"`;
   }
   return { ...inputParameter, hideInUI: invisible, value: parameterValue };

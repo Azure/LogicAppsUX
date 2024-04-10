@@ -34,15 +34,9 @@ export const escapeString = (s: string): string => {
   return s.replace(/\\/g, '\\\\').replace(/\n/g, '\\n');
 };
 
-export const isStringNumberOrBoolean = (s: string) => {
-  if (typeof s !== 'string') {
-    return false;
-  }
-  if (s.toLowerCase() === 'true' || s.toLowerCase() === 'false') {
-    return 'boolean';
-  }
-  if (!isNaN(Number(s))) {
-    return 'number';
-  }
+export const isStringNonPrimitive = (s: string): boolean => {
+  if (typeof s !== 'string') return false;
+  if (s === 'true' || s === 'false' || s === 'null') return true;
+  if (!isNaN(Number(s))) return true;
   return false;
 };
