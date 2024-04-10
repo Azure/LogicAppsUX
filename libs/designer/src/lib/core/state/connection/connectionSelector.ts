@@ -1,10 +1,9 @@
-import type { ConnectionReference, ConnectionReferences } from '../../../common/models/workflow';
+import type { ConnectionMapping, ConnectionReference, ConnectionReferences } from '../../../common/models/workflow';
 import { getConnection } from '../../queries/connections';
 import type { RootState } from '../../store';
 import { getConnectionReference, isConnectionMultiAuthManagedIdentityType } from '../../utils/connectors/connections';
 import { useNodeConnectorId } from '../operation/operationSelector';
 import { useOperationManifest, useOperationInfo } from '../selectors/actionMetadataSelector';
-import type { ConnectionMapping } from './connectionSlice';
 import {
   ConnectionService,
   GatewayService,

@@ -6,6 +6,12 @@ import { nodePolyfills as np } from 'vite-plugin-node-polyfills';
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  resolve: {
+    alias: [{
+      find: '~reactflow',
+      replacement: 'reactflow',
+    }],
+  },
   plugins: [
     react(),
     NodeGlobalsPolyfillPlugin({
