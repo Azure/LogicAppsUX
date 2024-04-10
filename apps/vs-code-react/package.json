@@ -1,0 +1,38 @@
+{
+  "name": "vscode-react",
+  "private": true,
+  "version": "0.0.0",
+  "type": "module",
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0"
+  },
+  "dependencies": {
+    "@fluentui/react": "8.110.2",
+    "react-redux": "8.0.2",
+    "react-intl": "6.3.0",
+    "react-query": "3.39.3",
+    "react-router-dom": "^6.22.3",
+    "@types/vscode-webview": "1.57.1",
+    "@use-it/event-listener": "0.1.7",
+    "@reduxjs/toolkit": "1.8.5",
+    "@fluentui/azure-themes": "8.5.70",
+    "@fluentui/react-hooks": "8.6.20",
+    "tiny-invariant": "1.3.1",
+    "@microsoft/designer-ui": "workspace:*",
+    "@microsoft/logic-apps-chatbot": "workspace:*",
+    "@microsoft/logic-apps-data-mapper": "workspace:*",
+    "@microsoft/logic-apps-data-mapper-v2": "workspace:*",
+    "@microsoft/logic-apps-designer": "workspace:*",
+    "@microsoft/logic-apps-shared": "workspace:*",
+    "@microsoft/vscode-extension-logic-apps": "workspace:*"
+  },
+  "devDependencies": {
+    "@esbuild-plugins/node-globals-polyfill": "^0.2.3",
+    "@types/lodash.isequal": "^4.5.8",
+    "rollup-plugin-polyfill-node": "^0.13.0",
+    "vite": "^5.2.0",
+    "vite-plugin-node-polyfills": "^0.21.0"
+  }
+}
