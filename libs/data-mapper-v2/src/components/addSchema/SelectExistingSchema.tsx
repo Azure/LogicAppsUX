@@ -4,7 +4,7 @@ import { SchemaType } from '@microsoft/logic-apps-shared';
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useSelector } from 'react-redux';
-import { Tree, TreeItem, TreeItemLayout } from '@fluentui/react-components';
+import { Dropdown, Tree, TreeItem, TreeItemLayout, Option, Combobox } from '@fluentui/react-components';
 
 export type SelectExistingSchemaProps = {
   errorMessage: string;
@@ -109,5 +109,16 @@ export const SelectExistingSchema = (props: SelectExistingSchemaProps) => {
     }
   };
 
-  return <Tree>{fileTree(mockFileTree)}</Tree>;
+  const onSelect: React.MouseEventHandler<HTMLDivElement> = (e) => {
+    e.stopPropagation();
+    e.preventDefault();
+  };
+
+  return (
+    <Combobox id="dropdown" style={{ width: '200px' }} open={true}>
+      <Option checkIcon={<div></div>} text="mono" onClick={onSelect}>
+        <Tree>{fileTree(mockFileTree)}</Tree>
+      </Option>
+    </Combobox>
+  );
 };
