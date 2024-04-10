@@ -69,7 +69,6 @@ export const ParametersTab = () => {
   const selectedNodeId = useSelectedNodeId();
   const nodeMetadata = useNodeMetadata(selectedNodeId);
   const inputs = useSelector((state: RootState) => state.operations.inputParameters[selectedNodeId]);
-  console.log('Elaina : inputs ', inputs);
   const { tokenState, workflowParametersState } = useSelector((state: RootState) => ({
     tokenState: state.tokens,
     workflowParametersState: state.workflowParameters,
@@ -486,9 +485,6 @@ const ParameterSection = ({
       };
     });
 
-  // console.log("Elaina group?.parameters --- " , group?.parameters);
-  // console.log("Elaina settings --- " , settings);
-
   return (
     <SettingsSection
       id={group.id}
@@ -516,8 +512,6 @@ export const getEditorAndOptions = (
   if (customEditor) {
     return toCustomEditorAndOptions(customEditor);
   }
-
-  console.log('Elaina operationInfo parameter variables --- ', operationInfo, parameter, variables);
 
   const { editor, editorOptions } = parameter;
   const supportedTypes: string[] = editorOptions?.supportedTypes ?? [];

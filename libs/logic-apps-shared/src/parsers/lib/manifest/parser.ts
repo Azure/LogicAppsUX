@@ -82,11 +82,7 @@ export class ManifestParser {
       },
     };
 
-    console.log('Elaina getInputParameters- : ', this._operationManifest.properties);
-
     const schemaProperties = new SchemaProcessor(schemaProcessorOptions).getSchemaProperties(inputParams);
-    console.log('Elaina schemaPropertiesschemaProperties : ', schemaProperties);
-
     const inputParameters = schemaProperties.map((item) => toInputParameter(item, !this._operationManifest.properties.autoCast));
 
     return map(inputParameters, 'key');

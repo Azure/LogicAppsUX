@@ -72,8 +72,8 @@ export const httpManifest = {
       properties: {
         text: {
           type: 'string',
-          title: 'data mapper create',
-          description: 'Initial data mapper description',
+          title: 'Info',
+          description: 'Data mapper navigate description',
           displayText:
             'To complete this data transformation, add an existing map or create a new map with [Data Mapper in VSCode](/dataMapper).',
           'x-ms-editor': 'displaytext',
@@ -81,10 +81,10 @@ export const httpManifest = {
             hideLabel: true,
           },
         },
-        uri2: {
+        uri: {
           type: 'string',
           format: 'uri',
-          title: 'URI5', // testing: changed to see if in effect
+          title: 'URI',
           description: 'Enter request url',
         },
         method: {
@@ -128,7 +128,7 @@ export const httpManifest = {
         },
         authentication: authenticationParameter,
       },
-      required: ['text', 'uri2', 'method'],
+      required: ['text', 'uri', 'method'],
     },
     inputsLocation: ['inputs'],
     isInputsOptional: false,
