@@ -61,8 +61,8 @@ export const Networking = ({
   onRetryMaxIntervalChange,
   onHeaderClick,
 }: NetworkingSectionProps): JSX.Element => {
-  const minimumSize = uploadChunkMetadata?.minimumSize ?? downloadChunkMetadata?.minimumSize ?? 5;
-  const maximumSize = uploadChunkMetadata?.maximumSize ?? downloadChunkMetadata?.maximumSize ?? 50;
+  const minimumSize = uploadChunkMetadata?.minimumSize ?? downloadChunkMetadata?.minimumSize;
+  const maximumSize = uploadChunkMetadata?.maximumSize ?? downloadChunkMetadata?.maximumSize;
 
   const intl = useIntl();
   const asyncPatternTitle = intl.formatMessage({
