@@ -3,13 +3,16 @@ import { Provider } from 'react-redux';
 import { DesignerWrapper } from './desginer/app/DesignerShell/designer';
 import { store as designerStore } from './desginer/state/store';
 import { store as dataMapperStore } from './dataMapperV1/state/Store';
-import { DataMapperStandaloneDesigner } from './dataMapperV1/app/DataMapperStandaloneDesigner';
+import { DataMapperStandaloneDesignerV1 } from './dataMapperV1/app/DataMapperStandaloneDesignerV1';
+import { DataMapperStandaloneDesignerV2 } from './dataMapperV1/app/DataMapperStandaloneDesignerV2';
+
 export const App = () => {
   return (
     <Routes>
       <Route index element={<DesignerStandalone />} />
       <Route path="/" element={<DesignerStandalone />} />
-      <Route path="datamapper" element={<DataMapper />} />
+      <Route path="datamapperv1" element={<DataMapperV1 />} />
+      <Route path="datamapperv2" element={<DataMapperV2 />} />
       {/* Using path="*"" means "match anything", so this route
                 acts like a catch-all for URLs that we don't have explicit
                 routes for. */}
@@ -26,10 +29,18 @@ const DesignerStandalone = () => {
   );
 };
 
-const DataMapper = () => {
+const DataMapperV1 = () => {
   return (
     <Provider store={dataMapperStore}>
-      <DataMapperStandaloneDesigner />
+      <DataMapperStandaloneDesignerV1 />
+    </Provider>
+  );
+};
+
+const DataMapperV2 = () => {
+  return (
+    <Provider store={dataMapperStore}>
+      <DataMapperStandaloneDesignerV2 />
     </Provider>
   );
 };

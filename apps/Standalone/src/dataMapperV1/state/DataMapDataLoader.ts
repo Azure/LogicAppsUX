@@ -13,6 +13,8 @@ export const LoadingMethod = {
 } as const;
 export type LoadingMethod = (typeof LoadingMethod)[keyof typeof LoadingMethod];
 
+export type DmVersions = 'v1' | 'v2';
+
 export interface DataMapLoadingState {
   theme: ThemeType;
   armToken?: string;
