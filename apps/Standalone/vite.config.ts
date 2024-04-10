@@ -7,7 +7,12 @@ import mkcert from 'vite-plugin-mkcert';
 
 // https://vitejs.dev/config/
 export default defineConfig({
-
+  resolve: {
+    alias: [{
+      find: '~reactflow',
+      replacement: 'reactflow',
+    }],
+  },
   plugins: [
     react(),
     NodeGlobalsPolyfillPlugin({
