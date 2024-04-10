@@ -1,8 +1,4 @@
-import {
-  comprehensiveMapDefinition,
-  fullTranscriptMapDefinitionString,
-  transcriptJsonMapDefinitionString,
-} from '../mapDefinitions';
+import { comprehensiveMapDefinition, fullTranscriptMapDefinitionString, transcriptJsonMapDefinitionString } from '../mapDefinitions';
 import { testMetadata } from '../mapMetadata';
 import { LoadingMethod, dataMapDataLoaderSlice, loadDataMap } from '../state/DataMapDataLoader';
 import { loadSourceSchema, loadTargetSchema, schemaDataLoaderSlice } from '../state/SchemaDataLoader';
@@ -90,13 +86,10 @@ export const DevToolbox = () => {
     [dispatch]
   );
 
-  const resetToUseARM = useCallback(
-    () => {
-      dispatch(dataMapDataLoaderSlice.actions.changeRawDefinition({} as MapDefDropdownOption));
-      dispatch(loadDataMap());
-    },
-    [dispatch]
-  );
+  const resetToUseARM = useCallback(() => {
+    dispatch(dataMapDataLoaderSlice.actions.changeRawDefinition({} as MapDefDropdownOption));
+    dispatch(loadDataMap());
+  }, [dispatch]);
 
   const changeMapXsltFilenameCB = useCallback(
     (newFilename?: string) => {

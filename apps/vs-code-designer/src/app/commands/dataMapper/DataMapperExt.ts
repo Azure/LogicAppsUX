@@ -30,7 +30,7 @@ export default class DataMapperExt {
       return;
     }
 
-    const panel = window.createWebviewPanel(
+    const panel =                                                                                                                              window.createWebviewPanel(
       webviewType, // Key used to reference the panel
       dataMapName, // Title displayed in the tab
       ViewColumn.Active, // Editor column to show the new webview panel in
