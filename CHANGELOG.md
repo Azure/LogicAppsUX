@@ -1,4 +1,14 @@
 # Logic Apps Designer
+## [4.3.0](https://github.com/Azure/LogicAppsUX/compare/v4.2.2...v4.3.0) (2024-04-10)
+
+
+### Bug Fixes
+
+* **designer:** Ensure stringified parameter value type when initializing parameter ([#4588](https://github.com/Azure/LogicAppsUX/issues/4588)) ([86e554e](https://github.com/Azure/LogicAppsUX/commit/86e554eb7f51ece5b4af7e00e791775f4932af3b))
+* **designer:** Fix code editor when non-string gets uploaded to custom code file ([#4587](https://github.com/Azure/LogicAppsUX/issues/4587)) ([620f685](https://github.com/Azure/LogicAppsUX/commit/620f6850a8d23b2c05b47b9dc1bc34b682607aa1))
+* **designer:** Fix react-flow CSS path and a couple exports ([#4585](https://github.com/Azure/LogicAppsUX/issues/4585)) ([57869ac](https://github.com/Azure/LogicAppsUX/commit/57869ac5934191c6f3d3f2aedb1fb3832aec4621))
+* **Designer:** Fixed issue where dynamic data call would fail when value is non-string ([#4584](https://github.com/Azure/LogicAppsUX/issues/4584)) ([65e9ab6](https://github.com/Azure/LogicAppsUX/commit/65e9ab684ac27de51b48e2511c86ffe6cdc556aa))
+
 ### [4.2.2](https://github.com/Azure/LogicAppsUX/compare/v4.2.1...v4.2.2) (2024-04-08)
 
 
