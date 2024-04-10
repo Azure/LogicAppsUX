@@ -4,17 +4,24 @@ import { useNodeDisplayName } from '../../../../core/state/workflow/workflowSele
 import { RunAfterActionStatuses } from './runafteractionstatuses';
 import { RunAfterTrafficLights } from './runaftertrafficlights';
 import { useTheme } from '@fluentui/react';
-import { Button, Text } from '@fluentui/react-components';
+import { Button, Divider, Text } from '@fluentui/react-components';
 import { useBoolean } from '@fluentui/react-hooks';
-import { bundleIcon, Delete24Filled, Delete24Regular } from '@fluentui/react-icons';
-import { Icon } from '@fluentui/react/lib/Icon';
+import {
+  bundleIcon,
+  ChevronDown24Filled,
+  ChevronDown24Regular,
+  ChevronRight24Filled,
+  ChevronRight24Regular,
+  Delete24Filled,
+  Delete24Regular,
+} from '@fluentui/react-icons';
 import type { ISeparatorStyles } from '@fluentui/react/lib/Separator';
-import { Separator } from '@fluentui/react/lib/Separator';
 import type { MouseEvent } from 'react';
 import { useIntl } from 'react-intl';
-import { format } from 'util';
 
 const DeleteIcon = bundleIcon(Delete24Filled, Delete24Regular);
+const ChevronDownIcon = bundleIcon(ChevronDown24Filled, ChevronDown24Regular);
+const ChevronRightIcon = bundleIcon(ChevronRight24Filled, ChevronRight24Regular);
 
 export type onChangeHandler = (status: string, checked?: boolean) => void;
 
@@ -69,48 +76,32 @@ export const RunAfterActionDetails = ({
     description: 'An accessible label for collapse toggle icon',
   });
 
-  const collapsibleProps: React.HTMLAttributes<HTMLDivElement> | undefined = collapsible
-    ? {
-        'aria-expanded': expanded,
-        role: 'button',
-        tabIndex: 0,
-        onClick: setExpanded.toggle,
-        onKeyDown: (key) => {
-          if (key.code === 'Space' || key.code === 'Enter') {
-            setExpanded.toggle();
-          }
-        },
-      }
-    : undefined;
-
   const title = useNodeDisplayName(id);
   const { iconUri } = useOperationVisuals(id);
 
   return (
     <>
       <div className="msla-run-after-edge-header">
-        <div className="msla-run-after-edge-header-contents-container" {...collapsibleProps}>
-          <div>
-            <div className="msla-run-after-edge-header-contents">
-              <Icon
-                className="msla-run-after-icon"
-                aria-label={format(expanded ? `${collapseAriaLabel} ${title}` : `${expandAriaLabel} ${title}`, title)}
-                iconName={expanded ? 'ChevronDownMed' : 'ChevronRightMed'}
-                styles={{ root: { color: isInverted ? 'white' : constants.Settings.CHEVRON_ROOT_COLOR_LIGHT } }}
-              />
-              <img alt="" className="msla-run-after-node-image" role="presentation" src={iconUri} />
-              <Text weight="semibold" className="msla-run-after-node-title">
-                {title}
-              </Text>
-              <RunAfterTrafficLights statuses={statuses} />
-              <DeleteButton visible={isDeleteVisible && !readOnly} onDelete={onDelete} />
-            </div>
-          </div>
-        </div>
+        <Button
+          className="msla-run-after-edge-header-contents"
+          appearance="subtle"
+          onClick={setExpanded.toggle}
+          icon={expanded ? <ChevronDownIcon /> : <ChevronRightIcon />}
+          aria-label={expanded ? collapseAriaLabel : expandAriaLabel}
+        >
+          <img alt="" className="msla-run-after-node-image" role="presentation" src={iconUri} />
+          <span className="msla-run-after-node-title">{title}</span>
+          <RunAfterTrafficLights statuses={statuses} />
+          <DeleteButton visible={isDeleteVisible && !readOnly} onDelete={onDelete} />
+        </Button>
       </div>
 
-      {(!collapsible || expanded) && <RunAfterActionStatuses isReadOnly={readOnly} statuses={statuses} onStatusChange={onStatusChange} />}
-      <Separator className="msla-run-after-separator" styles={separatorStyles} />
+      {(!collapsible || expanded) && (
+        <>
+          <RunAfterActionStatuses isReadOnly={readOnly} statuses={statuses} onStatusChange={onStatusChange} />
+          <Divider style={{ margin: '8px 0px' }} />
+        </>
+      )}
     </>
   );
 };
