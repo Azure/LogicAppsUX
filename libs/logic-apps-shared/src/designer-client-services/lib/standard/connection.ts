@@ -615,7 +615,7 @@ function convertToServiceProviderConnectionsData(
     ? connectionParameterMetadata.connectionParameterSet?.parameters
     : (connectionParameterMetadata.connectionParameters as Record<string, ConnectionParameter>);
   const parameterValues = connectionParametersSetValues
-    ? Object.keys(connectionParametersSetValues.values).reduce(
+    ? Object.keys(connectionParametersSetValues?.values ?? {}).reduce(
         (result: Record<string, any>, currentKey: string) => ({
           ...result,
           [currentKey]: connectionParametersSetValues.values[currentKey].value,

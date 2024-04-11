@@ -394,8 +394,8 @@ export function needsSimpleConnection(connector: Connector): boolean {
 }
 
 export function needsConfigConnection(connector: Connector): boolean {
-  if (connector?.properties?.connectionParameters) {
-    const connectionParameters = connector.properties.connectionParameters;
+  const connectionParameters = connector?.properties?.connectionParameters;
+  if (connectionParameters) {
     return Object.keys(connectionParameters)
       .filter((connectionParameterKey) => !isHiddenConnectionParameter(connectionParameters, connectionParameterKey))
       .some((connectionParameterKey) => {
