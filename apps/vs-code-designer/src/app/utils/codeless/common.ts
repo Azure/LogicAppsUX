@@ -24,6 +24,8 @@ import type {
   Artifacts,
   AzureConnectorDetails,
   ILocalSettingsJson,
+  Parameter,
+  WorkflowParameter,
 } from '@microsoft/vscode-extension-logic-apps';
 import { readFileSync } from 'fs';
 import * as fse from 'fs-extra';
@@ -65,6 +67,18 @@ export function getStandardAppData(workflowName: string, workflow: IWorkflowFile
     kind,
     operationOptions,
   };
+}
+
+export function getWorkflowParameters(parameters: Record<string, Parameter>): Record<string, WorkflowParameter> {
+  const workflowParameters: Record<string, WorkflowParameter> = {};
+  for (const parameterKey of Object.keys(parameters)) {
+    const parameter = parameters[parameterKey];
+    workflowParameters[parameterKey] = {
+      ...parameter,
+      defaultValue: parameter.value,
+    };
+  }
+  return workflowParameters;
 }
 
 export async function updateFuncIgnore(projectPath: string, variables: string[]) {

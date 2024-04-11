@@ -255,7 +255,7 @@ async function readJsonFromUrl(url: string): Promise<any> {
       throw new Error(`Request failed with status: ${response.status}`);
     }
   } catch (error) {
-    vscode.window.showErrorMessage(`Error reading JSON from URL: ${error.message}`);
+    vscode.window.showErrorMessage(`Error reading JSON from URL ${url} : ${error.message}`);
     throw error;
   }
 }

@@ -48,7 +48,8 @@ export interface AzureConnectorDetails {
 
 export interface WorkflowParameter {
   type: string;
-  defaultValue: any;
+  value?: any;
+  defaultValue?: any;
   allowedValues?: any[];
   metadata?: any;
 }

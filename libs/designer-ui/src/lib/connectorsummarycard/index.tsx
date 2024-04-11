@@ -1,9 +1,9 @@
+import { isBuiltInConnector } from '../connectors/predicates';
+import { InfoDot } from '../infoDot';
 import { Text, css } from '@fluentui/react';
 import type { Connector, OperationApi } from '@microsoft/logic-apps-shared';
 import { getDescriptionFromConnector, getDisplayNameFromConnector, getIconUriFromConnector } from '@microsoft/logic-apps-shared';
 import { useCallback } from 'react';
-import { isBuiltInConnector } from '../connectors/predicates';
-import { InfoDot } from '../infoDot';
 
 export interface ConnectorSummaryCardProps {
   connector: Connector | OperationApi;

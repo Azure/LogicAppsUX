@@ -49,8 +49,8 @@ export abstract class ProjectCodeCreateStepBase extends AzureWizardExecuteStep<I
     await this.executeCore(context, progress);
 
     // Initialize a git repository if one is not already present
-    if ((await isGitInstalled(context.workspacePath)) && !(await isInsideRepo(context.workspacePath))) {
-      await gitInit(context.workspacePath);
+    if ((await isGitInstalled(context.customWorkspaceFolderPath)) && !(await isInsideRepo(context.customWorkspaceFolderPath))) {
+      await gitInit(context.customWorkspaceFolderPath);
     }
 
     // Log telemetry for the step

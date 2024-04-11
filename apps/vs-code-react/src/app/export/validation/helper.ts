@@ -53,7 +53,7 @@ const getValidationGroup = (
   children: Array<IGroupedGroup>
 ): IGroupedGroup => {
   const status = workflowSchema?.validationState ?? getStatusFromChildren(children);
-  const isCollapsed = status === ValidationStatus.succeeded ?? false;
+  const isCollapsed = status === ValidationStatus.succeeded;
   const styledGroupName = getGroupName(groupName);
 
   return {

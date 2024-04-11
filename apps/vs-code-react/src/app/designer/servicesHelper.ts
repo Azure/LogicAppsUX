@@ -58,7 +58,7 @@ export const getDesignerServices = (
     workflowDetails: Record<string, any> = {},
     appSettings = {},
     isStateful = false,
-    connectionsData = { ...connectionData } ?? {};
+    connectionsData = { ...connectionData };
 
   const { subscriptionId = 'subscriptionId', resourceGroup, location } = apiHubDetails;
 

@@ -137,7 +137,7 @@ export abstract class OpenDesignerBase {
     if (!connectionsData) {
       return connectionsData;
     }
-    const parseConnectionsData = JSON.parse(connectionsData);
+    const parseConnectionsData: ConnectionsData = JSON.parse(connectionsData);
     const managedApiConnections = Object.keys(parseConnectionsData?.managedApiConnections ?? {});
 
     managedApiConnections?.forEach((apiConnection: any) => {

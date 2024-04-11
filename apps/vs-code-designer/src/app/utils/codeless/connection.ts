@@ -6,8 +6,10 @@ import { writeFormattedJson } from '../fs';
 import { sendAzureRequest } from '../requestUtils';
 import { tryGetLogicAppProjectRoot } from '../verifyIsProject';
 import { getContainingWorkspace } from '../workspace';
+import { getWorkflowParameters } from './common';
 import { getAuthorizationToken } from './getAuthorizationToken';
-import { getParametersJson } from './parameter';
+import { getParametersJson, saveWorkflowParameterRecords } from './parameter';
+import * as parameterizer from './parameterizer';
 import { addNewFileInCSharpProject } from './updateBuildFile';
 import { HTTP_METHODS, isString } from '@microsoft/logic-apps-shared';
 import type { ParsedSite } from '@microsoft/vscode-azext-azureappservice';
@@ -54,12 +56,17 @@ export async function addConnectionData(
   filePath: string,
   ConnectionAndAppSetting: ConnectionAndAppSetting
 ): Promise<void> {
+  const jsonParameters = await getParametersFromFile(context, filePath);
   const projectPath = await getLogicAppProjectRoot(context, filePath);
 
-  await addConnectionDataInJson(context, projectPath ?? '', ConnectionAndAppSetting);
+  await addConnectionDataInJson(context, projectPath ?? '', ConnectionAndAppSetting, jsonParameters);
 
   const { settings } = ConnectionAndAppSetting;
+  const workflowParameterRecords = getWorkflowParameters(jsonParameters);
+
   await addOrUpdateLocalAppSettings(context, projectPath ?? '', settings);
+  await saveWorkflowParameterRecords(context, filePath, workflowParameterRecords);
+
   await vscode.window.showInformationMessage(localize('azureFunctions.addConnection', 'Connection added.'));
 }
 
@@ -79,7 +86,8 @@ export async function getLogicAppProjectRoot(context: IActionContext, workflowFi
 async function addConnectionDataInJson(
   context: IActionContext,
   functionAppPath: string,
-  ConnectionAndAppSetting: ConnectionAndAppSetting
+  ConnectionAndAppSetting: ConnectionAndAppSetting,
+  parametersData: Record<string, Parameter>
 ): Promise<void> {
   const connectionsFilePath = path.join(functionAppPath, connectionsFileName);
   const connectionsFileExists = fse.pathExistsSync(connectionsFilePath);
@@ -87,7 +95,7 @@ async function addConnectionDataInJson(
   const connectionsJsonString = await getConnectionsJson(functionAppPath);
   const connectionsJson = connectionsJsonString === '' ? {} : JSON.parse(connectionsJsonString);
 
-  const { connectionData, connectionKey, pathLocation } = ConnectionAndAppSetting;
+  const { connectionData, connectionKey, pathLocation, settings } = ConnectionAndAppSetting;
 
   let pathToSetConnectionsData = connectionsJson;
 
@@ -105,6 +113,8 @@ async function addConnectionDataInJson(
     return;
   }
 
+  parameterizer.parameterizeConnection(connectionData, connectionKey, parametersData, settings);
+
   pathToSetConnectionsData[connectionKey] = connectionData;
   await writeFormattedJson(connectionsFilePath, connectionsJson);
 
@@ -118,7 +128,8 @@ async function getConnectionReference(
   reference: any,
   accessToken: string,
   workflowBaseManagementUri: string,
-  settingsToAdd: Record<string, string>
+  settingsToAdd: Record<string, string>,
+  parametersToAdd: any
 ): Promise<ConnectionReferenceModel> {
   const {
     api: { id: apiId },
@@ -136,7 +147,7 @@ async function getConnectionReference(
       const appSettingKey = `${referenceKey}-connectionKey`;
       settingsToAdd[appSettingKey] = response.connectionKey;
 
-      return {
+      const connectionReference: ConnectionReferenceModel = {
         api: { id: apiId },
         connection: { id: connectionId },
         connectionRuntimeUrl: response.runtimeUrls.length ? response.runtimeUrls[0] : '',
@@ -147,6 +158,10 @@ async function getConnectionReference(
         },
         connectionProperties,
       };
+
+      parameterizer.parameterizeConnection(connectionReference, referenceKey, parametersToAdd, settingsToAdd);
+
+      return connectionReference;
     })
     .catch((error) => {
       throw new Error(`Error in fetching connection keys for ${connectionId}. ${error}`);
@@ -158,7 +173,8 @@ export async function getConnectionsAndSettingsToUpdate(
   workflowFilePath: string,
   connectionReferences: any,
   azureTenantId: string,
-  workflowBaseManagementUri: string
+  workflowBaseManagementUri: string,
+  parametersFromDefinition: any
 ): Promise<ConnectionAndSettings> {
   const projectPath = await getLogicAppProjectRoot(context, workflowFilePath);
   const connectionsDataString = projectPath ? await getConnectionsJson(projectPath) : '';
@@ -178,7 +194,8 @@ export async function getConnectionsAndSettingsToUpdate(
         reference,
         accessToken,
         workflowBaseManagementUri,
-        settingsToAdd
+        settingsToAdd,
+        parametersFromDefinition
       );
     }
   }

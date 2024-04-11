@@ -8,6 +8,7 @@ import { AzureWizardExecuteStep, callWithTelemetryAndErrorHandling } from '@micr
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type { IProjectWizardContext } from '@microsoft/vscode-extension-logic-apps';
 import * as fse from 'fs-extra';
+import * as path from 'path';
 import type { Progress } from 'vscode';
 
 export abstract class ProjectCreateStepBase extends AzureWizardExecuteStep<IProjectWizardContext> {
@@ -32,7 +33,13 @@ export abstract class ProjectCreateStepBase extends AzureWizardExecuteStep<IProj
     await this.executeCore(context, progress);
 
     if ((await isGitInstalled(context.workspacePath)) && !(await isInsideRepo(context.workspacePath))) {
-      await gitInit(context.workspacePath);
+      //Init git repo inside mutli root workspace custom logic app project
+      if (!context.isCustomCodeLogicApp && context.isCustomCodeLogicApp !== null) {
+        const parentDirectory = path.dirname(context.workspacePath);
+        await gitInit(parentDirectory);
+      } else {
+        await gitInit(context.workspacePath);
+      }
     }
 
     // OpenFolderStep sometimes restarts the extension host. Adding a second event here to see if we're losing any telemetry

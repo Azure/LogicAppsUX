@@ -30,11 +30,13 @@ import { disconnectRepo } from './deployments/disconnectRepo';
 import { redeployDeployment } from './deployments/redeployDeployment';
 import { viewCommitInGitHub } from './deployments/viewCommitInGitHub';
 import { viewDeploymentLogs } from './deployments/viewDeploymentLogs';
+import { generateDeploymentScripts } from './generateDeploymentScripts/generateDeploymentScripts';
 import { initProjectForVSCode } from './initProjectForVSCode/initProjectForVSCode';
 import { startStreamingLogs } from './logstream/startStreamingLogs';
 import { stopStreamingLogs } from './logstream/stopStreamingLogs';
 import { openFile } from './openFile';
 import { openInPortal } from './openInPortal';
+import { parameterizeConnections } from './parameterizeConnections';
 import { pickFuncProcess } from './pickFuncProcess';
 import { startRemoteDebug } from './remoteDebug/startRemoteDebug';
 import { restartLogicApp } from './restartLogicApp';
@@ -72,6 +74,7 @@ export function registerCommands(): void {
   registerCommandWithTreeNodeUnwrapping(extensionCommand.createLogicAppAdvanced, createLogicAppAdvanced);
   registerSiteCommand(extensionCommand.deploy, unwrapTreeNodeCommandCallback(deployProductionSlot));
   registerSiteCommand(extensionCommand.deploySlot, unwrapTreeNodeCommandCallback(deploySlot));
+  registerCommand(extensionCommand.generateDeploymentScripts, generateDeploymentScripts);
   registerSiteCommand(extensionCommand.redeploy, unwrapTreeNodeCommandCallback(redeployDeployment));
   registerCommandWithTreeNodeUnwrapping(extensionCommand.showOutputChannel, () => {
     ext.outputChannel.show();
@@ -128,10 +131,8 @@ export function registerCommands(): void {
   registerCommand(extensionCommand.initProjectForVSCode, initProjectForVSCode);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.configureDeploymentSource, configureDeploymentSource);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.startRemoteDebug, startRemoteDebug);
-
-  registerCommandWithTreeNodeUnwrapping(extensionCommand.validateAndInstallBinaries, async (context: IActionContext) =>
-    validateAndInstallBinaries(context)
-  );
+  registerCommand(extensionCommand.parameterizeConnections, parameterizeConnections);
+  registerCommandWithTreeNodeUnwrapping(extensionCommand.validateAndInstallBinaries, validateAndInstallBinaries);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.resetValidateAndInstallBinaries, resetValidateAndInstallBinaries);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.disableValidateAndInstallBinaries, disableValidateAndInstallBinaries);
   // Data Mapper Commands

@@ -63,7 +63,9 @@ export interface IProjectWizardContext extends IActionContext {
   projectPath: string;
   version: FuncVersion;
   workspacePath: string;
+  workspaceCustomFilePath?: string;
   workspaceFolder: WorkspaceFolder | undefined;
+  customWorkspaceFolderPath?: string;
   projectTemplateKey: string | undefined;
   language?: ProjectLanguage;
   languageFilter?: RegExp;
@@ -74,6 +76,8 @@ export interface IProjectWizardContext extends IActionContext {
   generateFromOpenAPI?: boolean;
   openApiSpecificationFile?: Uri[];
   targetFramework?: string | string[];
+  isCustomCodeLogicApp?: boolean;
+  logicAppName?: string;
 }
 
 export const OpenBehavior = {
