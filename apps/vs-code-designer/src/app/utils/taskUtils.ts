@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 import * as packageJson from '../../package.json';
 import { isPathEqual } from './fs';
-import * as AdmZip from 'adm-zip';
+import AdmZip = require('adm-zip');
 import type { Task, WorkspaceFolder } from 'vscode';
 import { tasks as codeTasks, window } from 'vscode';
 
