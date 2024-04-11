@@ -24,9 +24,9 @@ import { UserCancelledError, callWithTelemetryAndErrorHandling } from '@microsof
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { ProjectLanguage } from '@microsoft/vscode-extension-logic-apps';
 import type { IPreDebugValidateResult, IProcessInfo } from '@microsoft/vscode-extension-logic-apps';
-import * as unixPsTree from 'ps-tree';
+import unixPsTree from 'ps-tree';
 import * as vscode from 'vscode';
-import * as parser from 'yargs-parser';
+import parser from 'yargs-parser';
 
 type OSAgnosticProcess = { command: string | undefined; pid: number | string };
 type ActualUnixPS = unixPsTree.PS & { COMM?: string };

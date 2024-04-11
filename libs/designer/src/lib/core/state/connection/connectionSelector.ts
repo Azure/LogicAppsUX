@@ -11,7 +11,7 @@ import {
   isServiceProviderOperation,
   getRecordEntry,
   type Connector,
-  Gateway
+  Gateway,
 } from '@microsoft/logic-apps-shared';
 import { useMemo } from 'react';
 import { UseQueryResult, useQuery } from 'react-query';
@@ -117,7 +117,7 @@ export const useConnectionRefsByConnectorId = (connectorId?: string) => {
 
 export const useIsOperationMissingConnection = (nodeId: string) => {
   const connectionsMapping = useSelector((state: RootState) => state.connections.connectionsMapping);
-  return Object.keys(connectionsMapping).includes(nodeId) && getRecordEntry(connectionsMapping, nodeId) === null;
+  return Object.keys(connectionsMapping ?? {}).includes(nodeId) && getRecordEntry(connectionsMapping, nodeId) === null;
 };
 
 export const useShowIdentitySelectorQuery = (nodeId: string) => {
