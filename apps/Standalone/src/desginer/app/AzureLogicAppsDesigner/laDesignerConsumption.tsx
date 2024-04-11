@@ -17,7 +17,7 @@ import {
 } from './Services/WorkflowAndArtifacts';
 import { ArmParser } from './Utilities/ArmParser';
 import { WorkflowUtility } from './Utilities/Workflow';
-// import { Chatbot, chatbotPanelWidth } from '@microsoft/logic-apps-chatbot';
+import { Chatbot, chatbotPanelWidth } from '@microsoft/logic-apps-chatbot';
 import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import {
   BaseApiManagementService,
@@ -32,6 +32,7 @@ import {
   ConsumptionRunService,
   guid,
   startsWith,
+  StandardCustomCodeService,
 } from '@microsoft/logic-apps-shared';
 import type { Workflow } from '@microsoft/logic-apps-designer';
 import {
@@ -46,7 +47,6 @@ import {
 } from '@microsoft/logic-apps-designer';
 import * as React from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { Chatbot } from '@microsoft/logic-apps-chatbot';
 
 const apiVersion = '2020-06-01';
 const httpClient = new HttpClient();
@@ -67,6 +67,7 @@ const DesignerEditorConsumption = () => {
     showChatBot,
     hostOptions,
     showConnectionsPanel,
+    showPerformanceDebug,
     language,
   } = useSelector((state: RootState) => state.workflowLoader);
 
@@ -214,6 +215,7 @@ const DesignerEditorConsumption = () => {
             ...hostOptions,
             recurrenceInterval: Constants.RECURRENCE_OPTIONS.CONSUMPTION,
           },
+          showPerformanceDebug,
         }}
       >
         {workflow?.definition ? (
@@ -235,7 +237,7 @@ const DesignerEditorConsumption = () => {
                 isDarkMode={isDarkMode}
                 isConsumption
                 showConnectionsPanel={showConnectionsPanel}
-                rightShift={showChatBot ? 'chatbotPanelWidth' : undefined}
+                rightShift={showChatBot ? chatbotPanelWidth : undefined}
                 enableCopilot={() => {
                   dispatch(setIsChatBotEnabled(!showChatBot));
                 }}
@@ -436,6 +438,18 @@ const getDesignerServices = (
     location: 'westcentralus',
   });
 
+  // This isn't correct but without it I was getting errors
+  //   It's fine just to unblock standalone consumption
+  const customCodeService = new StandardCustomCodeService({
+    apiVersion: '2018-11-01',
+    baseUrl: 'test',
+    subscriptionId,
+    resourceGroup,
+    appName: 'test',
+    workflowName,
+    httpClient,
+  });
+
   const hostService = {};
 
   return {
@@ -453,6 +467,7 @@ const getDesignerServices = (
     runService,
     hostService,
     chatbotService,
+    customCodeService,
   };
 };
 

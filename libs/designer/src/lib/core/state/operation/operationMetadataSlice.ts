@@ -4,9 +4,9 @@ import type { NodeStaticResults } from '../../actions/bjsworkflow/staticresults'
 import { StaticResultOption } from '../../actions/bjsworkflow/staticresults';
 import type { RepetitionContext } from '../../utils/parameters/helper';
 import { createTokenValueSegment, isTokenValueSegment } from '../../utils/parameters/segment';
-import { normalizeKey } from '../../utils/tokens';
+import { getTokenTitle, normalizeKey } from '../../utils/tokens';
 import { resetNodesLoadStatus, resetWorkflowState } from '../global';
-import { LogEntryLevel, LoggerService, getRecordEntry } from '@microsoft/logic-apps-shared';
+import { LogEntryLevel, LoggerService, filterRecord, getRecordEntry } from '@microsoft/logic-apps-shared';
 import type { ParameterInfo } from '@microsoft/designer-ui';
 import type {
   FilePickerInfo,
@@ -179,9 +179,13 @@ interface AddDynamicOutputsPayload {
   outputs: Record<string, OutputInfo>;
 }
 
-interface UpdateExistingInputTokenTitlesPayload {
-  tokenTitles: Record<string, string>;
+export interface ClearDynamicIOPayload {
+  nodeId?: string;
+  nodeIds?: string[];
+  inputs?: boolean;
+  outputs?: boolean;
 }
+
 interface AddDynamicInputsPayload {
   nodeId: string;
   groupId: string;
@@ -277,61 +281,39 @@ export const operationMetadataSlice = createSlice({
       const outputParameters = getRecordEntry(state.outputParameters, nodeId);
       if (outputParameters) outputParameters.outputs = { ...outputParameters.outputs, ...outputs };
     },
-    clearDynamicInputs: (state, action: PayloadAction<string>) => {
-      const nodeId = action.payload;
-      const nodeInputParameters = getRecordEntry(state.inputParameters, nodeId);
-      if (nodeInputParameters) {
-        for (const groupId of Object.keys(nodeInputParameters.parameterGroups)) {
-          const filteredParams = nodeInputParameters.parameterGroups[groupId].parameters.filter((parameter) => !parameter.info.isDynamic);
-          nodeInputParameters.parameterGroups[groupId].parameters = filteredParams;
-        }
-      }
+    clearDynamicIO: (state, action: PayloadAction<ClearDynamicIOPayload>) => {
+      const { nodeId, nodeIds: _nodeIds, inputs = true, outputs = true } = action.payload;
+      const nodeIds = _nodeIds ?? [nodeId];
+      for (const nodeId of nodeIds) {
+        const nodeErrors = getRecordEntry(state.errors, nodeId);
 
-      const inputDependencies = getRecordEntry(state.dependencies, nodeId)?.inputs as WritableDraft<Record<string, DependencyInfo>>;
-      for (const inputKey of Object.keys(inputDependencies ?? {})) {
-        if (inputDependencies[inputKey].parameter?.isDynamic && inputDependencies[inputKey].dependencyType !== 'ApiSchema') {
-          delete getRecordEntry(state.dependencies, nodeId)?.inputs[inputKey];
-        }
-      }
+        if (inputs) {
+          delete nodeErrors?.[ErrorLevel.DynamicInputs];
 
-      if (getRecordEntry(state.errors, nodeId)?.[ErrorLevel.DynamicInputs]) {
-        delete getRecordEntry(state.errors, nodeId)?.[ErrorLevel.DynamicInputs];
-      }
-    },
-    clearDynamicOutputs: (state, action: PayloadAction<string>) => {
-      const nodeId = action.payload;
-      const outputParameters = getRecordEntry(state.outputParameters, nodeId);
-      if (outputParameters) {
-        outputParameters.outputs = Object.keys(outputParameters.outputs).reduce((result: Record<string, OutputInfo>, outputKey: string) => {
-          if (!outputParameters.outputs[outputKey].isDynamic) {
-            return { [outputKey]: outputParameters.outputs[outputKey] };
+          const inputParameters = getRecordEntry(state.inputParameters, nodeId);
+          if (inputParameters) {
+            for (const group of Object.values(inputParameters.parameterGroups)) {
+              group.parameters = group.parameters.filter((parameter) => !parameter.info.isDynamic);
+            }
           }
 
-          return result;
-        }, {}) as Record<string, OutputInfo>;
+          const inputDependencies = getRecordEntry(state.dependencies, nodeId)?.inputs as WritableDraft<Record<string, DependencyInfo>>;
+          for (const inputKey of Object.keys(inputDependencies ?? {})) {
+            if (inputDependencies[inputKey].parameter?.isDynamic && inputDependencies[inputKey].dependencyType !== 'ApiSchema') {
+              delete getRecordEntry(state.dependencies, nodeId)?.inputs[inputKey];
+            }
+          }
+        }
+
+        if (outputs) {
+          delete nodeErrors?.[ErrorLevel.DynamicOutputs];
+
+          const outputParameters = getRecordEntry(state.outputParameters, nodeId);
+          if (outputParameters) {
+            outputParameters.outputs = filterRecord(outputParameters.outputs, (key, value) => !value.isDynamic);
+          }
+        }
       }
-
-      const nodeErrors = getRecordEntry(state.errors, nodeId);
-      delete nodeErrors?.[ErrorLevel.DynamicOutputs];
-    },
-    updateExistingInputTokenTitles: (state, action: PayloadAction<UpdateExistingInputTokenTitlesPayload>) => {
-      const { tokenTitles } = action.payload;
-
-      Object.entries(state.inputParameters).forEach(([nodeId, nodeInputs]) => {
-        Object.entries(nodeInputs.parameterGroups).forEach(([parameterId, parameterGroup]) => {
-          parameterGroup.parameters.forEach((parameter, parameterIndex) => {
-            parameter.value.forEach((segment, segmentIndex) => {
-              if (isTokenValueSegment(segment) && segment.token?.key) {
-                const normalizedKey = normalizeKey(segment.token.key);
-                if (normalizedKey in tokenTitles) {
-                  state.inputParameters[nodeId].parameterGroups[parameterId].parameters[parameterIndex].value[segmentIndex] =
-                    createTokenValueSegment({ ...segment.token, title: tokenTitles[normalizedKey] }, segment.value, segment.type);
-                }
-              }
-            });
-          });
-        });
-      });
     },
     updateNodeSettings: (state, action: PayloadAction<AddSettingsPayload>) => {
       const { id, settings } = action.payload;
@@ -365,11 +347,11 @@ export const operationMetadataSlice = createSlice({
     },
     updateNodeParameters: (state, action: PayloadAction<UpdateParametersPayload>) => {
       const { nodeId, dependencies, parameters } = action.payload;
-      for (const payload of parameters) {
-        const { groupId, parameterId, propertiesToUpdate } = payload;
-        const nodeInputs = getRecordEntry(state.inputParameters, nodeId);
+      const nodeInputs = getRecordEntry(state.inputParameters, nodeId);
+      if (nodeInputs) {
+        for (const payload of parameters) {
+          const { groupId, parameterId, propertiesToUpdate } = payload;
 
-        if (nodeInputs) {
           const parameterGroup = nodeInputs.parameterGroups[groupId];
           const index = parameterGroup.parameters.findIndex((parameter) => parameter.id === parameterId);
           if (index > -1) {
@@ -395,13 +377,6 @@ export const operationMetadataSlice = createSlice({
           ...dependencies.outputs,
         };
       }
-
-      LoggerService().log({
-        level: LogEntryLevel.Verbose,
-        area: 'Designer:Operation Metadata Slice',
-        message: action.type,
-        args: [action.payload.nodeId],
-      });
     },
     updateParameterConditionalVisibility: (
       state,
@@ -548,6 +523,30 @@ export const operationMetadataSlice = createSlice({
       state.loadStatus.nodesInitialized = false;
       state.loadStatus.nodesAndDynamicDataInitialized = false;
     });
+    // updateExistingInputTokenTitles
+    builder.addCase(addDynamicOutputs, (state, action) => {
+      const { outputs } = action.payload;
+
+      const tokenTitles = Object.values(outputs).reduce((result: Record<string, string>, outputValue: OutputInfo) => {
+        return { ...result, [outputValue.key]: getTokenTitle(outputValue) };
+      }, {});
+
+      Object.entries(state.inputParameters).forEach(([nodeId, nodeInputs]) => {
+        Object.entries(nodeInputs.parameterGroups).forEach(([parameterId, parameterGroup]) => {
+          parameterGroup.parameters.forEach((parameter, parameterIndex) => {
+            parameter.value.forEach((segment, segmentIndex) => {
+              if (isTokenValueSegment(segment) && segment.token?.key) {
+                const normalizedKey = normalizeKey(segment.token.key);
+                if (normalizedKey in tokenTitles) {
+                  state.inputParameters[nodeId].parameterGroups[parameterId].parameters[parameterIndex].value[segmentIndex] =
+                    createTokenValueSegment({ ...segment.token, title: tokenTitles[normalizedKey] }, segment.value, segment.type);
+                }
+              }
+            });
+          });
+        });
+      });
+    });
   },
 });
 
@@ -558,14 +557,12 @@ export const {
   updateNodeParameters,
   addDynamicInputs,
   addDynamicOutputs,
-  clearDynamicInputs,
-  clearDynamicOutputs,
+  clearDynamicIO,
   updateNodeSettings,
   updateStaticResults,
   updateParameterConditionalVisibility,
   updateParameterValidation,
   updateParameterEditorViewModel,
-  updateExistingInputTokenTitles,
   removeParameterValidationError,
   updateOutputs,
   updateActionMetadata,
