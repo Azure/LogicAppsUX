@@ -45,3 +45,24 @@ exports[`ui/settings/settingsection > should construct 1`] = `
   </div>
 </div>
 `;
+
+exports[`ui/settings/settingsection > should construct 2`] = `
+<div
+  className="msla-setting-section"
+>
+  <div
+    className="msla-setting-section-content"
+  >
+    <Button
+      appearance="subtle"
+      aria-label="Click to Expand"
+      className="msla-setting-section-header"
+      icon={<CompoundIcon />}
+      onClick={[Function]}
+    >
+      Sample Setting Section
+    </Button>
+    <React.Fragment />
+  </div>
+</div>
+`;

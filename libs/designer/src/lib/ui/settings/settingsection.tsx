@@ -149,10 +149,17 @@ export const SettingsSection: FC<SettingsSectionProps> = ({
   validationErrors,
   onDismiss,
 }) => {
-  const theme = useTheme();
-  const isInverted = isHighContrastBlack() || theme.isInverted;
-
   const intl = useIntl();
+  const expandedLabel = intl.formatMessage({
+    defaultMessage: 'Expanded',
+    id: 'r4zp7m',
+    description: 'A label to represent setting section being expanded',
+  });
+  const collapsedLabel = intl.formatMessage({
+    defaultMessage: 'Collapsed',
+    id: 'PDMP/Z',
+    description: 'A label to represent setting section being collapsed',
+  });
   const expandAriaLabel = intl.formatMessage({
     defaultMessage: 'Click to Collapse',
     id: 'hJbr09',
@@ -192,7 +199,7 @@ export const SettingsSection: FC<SettingsSectionProps> = ({
           onClick={() => handleSectionClick(sectionName as SettingSectionName | undefined)}
           icon={expanded ? <ChevronDownIcon /> : <ChevronRightIcon />}
           appearance={'subtle'}
-          aria-label={expanded ? expandAriaLabel : collapseAriaLabel}
+          aria-label={`${expanded ? expandedLabel : collapsedLabel} ${title}, ${expanded ? expandAriaLabel : collapseAriaLabel}`}
         >
           {title}
         </Button>
