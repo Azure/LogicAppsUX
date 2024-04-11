@@ -1,4 +1,19 @@
 # Logic Apps Designer
+## [4.4.0](https://github.com/Azure/LogicAppsUX/compare/v4.3.0...v4.4.0) (2024-04-11)
+
+
+### Features
+
+* **Data Mapper:** creating new data mapper library ([#4575](https://github.com/Azure/LogicAppsUX/issues/4575)) ([1bec11b](https://github.com/Azure/LogicAppsUX/commit/1bec11bb24832a396a246a7459e016cbc737b1ce))
+
+
+### Bug Fixes
+
+* **designer:** Adding upload and download chunk size missing settings ([#4594](https://github.com/Azure/LogicAppsUX/issues/4594)) ([027574f](https://github.com/Azure/LogicAppsUX/commit/027574f3d21eee15c91d9ea5ec366aca4c92dbe8))
+* **designer:** Fix issue that was causing designer to crashw hen clicking on settings ([#4598](https://github.com/Azure/LogicAppsUX/issues/4598)) ([0df2bf6](https://github.com/Azure/LogicAppsUX/commit/0df2bf6ad1447d4167b16dce7882a8877eb8b65f))
+* **Designer:** Fixed issue where we weren't handling null connection references fully ([#4596](https://github.com/Azure/LogicAppsUX/issues/4596)) ([62622f7](https://github.com/Azure/LogicAppsUX/commit/62622f74a77781cf9fbb7e22039a7098235ddd86))
+* **vscode:** Building vs-code-react with vite ([#4595](https://github.com/Azure/LogicAppsUX/issues/4595)) ([211e785](https://github.com/Azure/LogicAppsUX/commit/211e785f35b627ac3ec092af8d9ce563dc31204c))
+
 ## [4.3.0](https://github.com/Azure/LogicAppsUX/compare/v4.2.2...v4.3.0) (2024-04-10)
 
 
