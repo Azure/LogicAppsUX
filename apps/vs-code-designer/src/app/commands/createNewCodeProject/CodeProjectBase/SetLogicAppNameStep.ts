@@ -5,7 +5,7 @@
 import { ext } from '../../../../extensionVariables';
 import { localize } from '../../../../localize';
 import { AzureWizardPromptStep } from '@microsoft/vscode-azext-utils';
-import type { IProjectWizardContext } from '@microsoft/vscode-extension';
+import type { IProjectWizardContext } from '@microsoft/vscode-extension-logic-apps';
 
 export class SetLogicAppName extends AzureWizardPromptStep<IProjectWizardContext> {
   public async prompt(context: IProjectWizardContext): Promise<void> {

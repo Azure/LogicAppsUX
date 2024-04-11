@@ -5,7 +5,7 @@
 import { localize } from '../../../../localize';
 import { AzureWizardPromptStep } from '@microsoft/vscode-azext-utils';
 import type { IAzureQuickPickItem } from '@microsoft/vscode-azext-utils';
-import type { IProjectWizardContext } from '@microsoft/vscode-extension';
+import type { IProjectWizardContext } from '@microsoft/vscode-extension-logic-apps';
 
 export class SetLogicAppType extends AzureWizardPromptStep<IProjectWizardContext> {
   public async prompt(context: IProjectWizardContext): Promise<void> {

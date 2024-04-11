@@ -20,7 +20,7 @@ import { OpenFolderStepCodeProject } from './CodeProjectBase/OpenFolderStepCodeP
 import { SetLogicAppName } from './CodeProjectBase/SetLogicAppNameStep';
 import { setWorkspaceName } from './CodeProjectBase/SetWorkspaceName';
 import { SetLogicAppType } from './CodeProjectBase/setLogicAppType';
-import { isString } from '@microsoft/utils-logic-apps';
+import { isString } from '@microsoft/logic-apps-shared';
 import { AzureWizard } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { latestGAVersion, OpenBehavior } from '@microsoft/vscode-extension-logic-apps';

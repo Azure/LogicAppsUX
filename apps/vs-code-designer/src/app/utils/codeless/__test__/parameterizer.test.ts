@@ -1,5 +1,10 @@
 import { parameterizeConnection } from '../parameterizer';
-import type { ConnectionReferenceModel, FunctionConnectionModel, APIManagementConnectionModel } from '@microsoft/vscode-extension';
+import type {
+  ConnectionReferenceModel,
+  FunctionConnectionModel,
+  APIManagementConnectionModel,
+} from '@microsoft/vscode-extension-logic-apps';
+import { describe, it, expect } from 'vitest';
 
 describe('parameterizeConnection', () => {
   it('should expose a parameterizeConnection', () => {

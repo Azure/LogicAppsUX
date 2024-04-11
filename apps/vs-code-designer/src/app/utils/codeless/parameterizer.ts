@@ -1,5 +1,5 @@
 import { workflowLocationKey, workflowSubscriptionIdKey, workflowResourceGroupNameKey } from '../../../constants';
-import { isEmptyString } from '@microsoft/utils-logic-apps';
+import { isEmptyString } from '@microsoft/logic-apps-shared';
 import type {
   ConnectionReferenceModel,
   ServiceProviderConnectionModel,
@@ -7,7 +7,7 @@ import type {
   APIManagementConnectionModel,
   Parameter,
   ConnectionsData,
-} from '@microsoft/vscode-extension';
+} from '@microsoft/vscode-extension-logic-apps';
 
 const DELIMITER = '/';
 const SUBSCRIPTION_INDEX = 2;

@@ -8,7 +8,7 @@ import { isMultiRootWorkspace } from '../../utils/workspace';
 import { ResourceGroupListStep } from '@microsoft/vscode-azext-azureutils';
 import { AzureWizard, AzureWizardExecuteStep, AzureWizardPromptStep } from '@microsoft/vscode-azext-utils';
 import type { IActionContext, IWizardOptions } from '@microsoft/vscode-azext-utils';
-import { OpenBehavior, type IProjectWizardContext } from '@microsoft/vscode-extension';
+import { OpenBehavior, type IProjectWizardContext } from '@microsoft/vscode-extension-logic-apps';
 import * as fs from 'fs-extra';
 import * as path from 'path';
 import * as vscode from 'vscode';
