@@ -18,9 +18,17 @@ const horizontalPadding = '2rem';
 const verticalPadding = '1rem';
 
 const panelStyles: Partial<IPanelStyles> = {
-  content: { padding: verticalPadding + ' ' + horizontalPadding },
+  content: {
+    padding: '1rem 2rem 0rem',
+    overflow: 'hidden',
+    height: '100%',
+  },
   main: { overflow: 'hidden' },
-  scrollableContent: { height: '100%' },
+  scrollableContent: {
+    height: '100%',
+    display: 'flex',
+    flexDirection: 'column',
+  },
 };
 
 const panelStylesCollapsed: Partial<IPanelStyles> = {
