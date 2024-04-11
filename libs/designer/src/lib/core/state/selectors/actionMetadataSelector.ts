@@ -161,7 +161,7 @@ export const useOperationUploadChunkMetadata = (operationInfo: NodeOperation): Q
   });
 
   if (!result.isLoading) {
-    if (useManifest && !result.result) {
+    if (useManifest && result?.result) {
       return { result: result.result.options, isLoading: false };
     }
   }
@@ -184,7 +184,7 @@ export const useOperationDownloadChunkMetadata = (operationInfo: NodeOperation):
   );
 
   if (!result.isLoading) {
-    if (useManifest && !result.result) {
+    if (useManifest && result.result) {
       return { result: result.result.options, isLoading: false };
     }
   }
