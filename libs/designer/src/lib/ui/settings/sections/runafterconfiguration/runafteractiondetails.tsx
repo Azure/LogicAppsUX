@@ -16,6 +16,7 @@ import {
 } from '@fluentui/react-icons';
 import type { MouseEvent } from 'react';
 import { useIntl } from 'react-intl';
+import { format } from 'util';
 
 const DeleteIcon = bundleIcon(Delete24Filled, Delete24Regular);
 const ChevronDownIcon = bundleIcon(ChevronDown24Filled, ChevronDown24Regular);
@@ -52,9 +53,6 @@ export const RunAfterActionDetails = ({
 }: RunAfterActionDetailsProps) => {
   const [expanded, setExpanded] = useBoolean(false);
 
-  const theme = useTheme();
-  const isInverted = theme.isInverted;
-
   const intl = useIntl();
 
   const expandAriaLabel = intl.formatMessage({
@@ -79,7 +77,7 @@ export const RunAfterActionDetails = ({
           appearance="subtle"
           onClick={setExpanded.toggle}
           icon={expanded ? <ChevronDownIcon /> : <ChevronRightIcon />}
-          aria-label={expanded ? collapseAriaLabel : expandAriaLabel}
+          aria-label={format(expanded ? `${collapseAriaLabel} ${title}` : `${expandAriaLabel} ${title}`, title)}
         >
           <img alt="" className="msla-run-after-node-image" role="presentation" src={iconUri} />
           <span className="msla-run-after-node-title">{title}</span>
