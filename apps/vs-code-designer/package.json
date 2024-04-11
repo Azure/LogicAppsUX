@@ -3,7 +3,7 @@
     "private": true,
     "version": "3.3.0",
     "scripts": {
-        "build": "tsup && pnpm run copyFiles",
+        "build": "tsup && pnpm run copyFiles && pnpm -w run build:vscode ", 
         "copyFiles": "node extension-copy-svgs.js",
         "vscode:designer:pack:step2": "cd ./dist && vsce package",
         "vscode:designer:pack:step1": "cd ./dist && npm install",
