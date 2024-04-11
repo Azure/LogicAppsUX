@@ -25,6 +25,18 @@ export function getGlobalSetting<T>(key: string, prefix: string = ext.prefix): T
 }
 
 /**
+ * Updates a global setting in the VS Code configuration.
+ * @param {string} section - The section of the configuration to update.
+ * @param {T} value - The new value for the setting.
+ * @param {string} prefix - The prefix for the configuration section (default: ext.prefix).
+ * @returns A promise that resolves when the setting is updated.
+ */
+export async function updateGlobalSetting<T = string>(section: string, value: T, prefix: string = ext.prefix): Promise<void> {
+  const projectConfiguration: WorkspaceConfiguration = workspace.getConfiguration(prefix);
+  await projectConfiguration.update(section, value, ConfigurationTarget.Global);
+}
+
+/**
  * Searches through all open folders and gets the current workspace setting (as long as there are no conflicts)
  * Uses ext.prefix 'azureLogicAppsStandard' unless otherwise specified
  */
@@ -122,12 +134,4 @@ export async function promptForFuncVersion(context: IActionContext, message?: st
   } else {
     return version;
   }
-}
-
-/**
- * Uses ext.prefix 'azureFunctions' unless otherwise specified
- */
-export async function updateGlobalSetting<T = string>(section: string, value: T, prefix: string = ext.prefix): Promise<void> {
-  const projectConfiguration: WorkspaceConfiguration = workspace.getConfiguration(prefix);
-  await projectConfiguration.update(section, value, ConfigurationTarget.Global);
 }
