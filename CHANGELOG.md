@@ -1,4 +1,12 @@
 # Logic Apps Designer
+### [4.4.1](https://github.com/Azure/LogicAppsUX/compare/v4.4.0...v4.4.1) (2024-04-11)
+
+
+### Features
+
+* **Designer:** Node details panel updates ([#4600](https://github.com/Azure/LogicAppsUX/issues/4600)) ([5fba416](https://github.com/Azure/LogicAppsUX/commit/5fba416b18d34ce759d84212ffca211fa3cab47f))
+* **vscode:** Introducing iac to vscode extension ([#4599](https://github.com/Azure/LogicAppsUX/issues/4599)) ([6b8f6e9](https://github.com/Azure/LogicAppsUX/commit/6b8f6e98be57ba4f2fd148e0d67aa58812536cb3)), closes [#2830](https://github.com/Azure/LogicAppsUX/issues/2830) [#3031](https://github.com/Azure/LogicAppsUX/issues/3031) [#3037](https://github.com/Azure/LogicAppsUX/issues/3037)
+
 ## [4.4.0](https://github.com/Azure/LogicAppsUX/compare/v4.3.0...v4.4.0) (2024-04-11)
 
 
