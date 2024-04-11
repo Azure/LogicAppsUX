@@ -1,5 +1,5 @@
 import type { HeaderClickHandler, SettingSectionName } from '.';
-import { useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
+import { useHostOptions, useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
 import { updateParameterConditionalVisibility } from '../../core/state/operation/operationMetadataSlice';
 import { useSelectedNodeId } from '../../core/state/panel/panelSelectors';
 import type { RunAfterProps } from './sections/runafterconfiguration';
@@ -215,6 +215,7 @@ const Setting = ({ id, settings, isReadOnly }: { id?: string; settings: Settings
   const nodeId = useSelectedNodeId();
   const readOnly = useReadOnly();
   const [hideErrorMessage, setHideErrorMessage] = useState<boolean[]>(new Array(settings.length).fill(false));
+  const { useDisplaytextEditor } = useHostOptions();
 
   const updateHideErrorMessage = (index: number, b: boolean) => {
     setHideErrorMessage([...hideErrorMessage.slice(0, index), b, ...hideErrorMessage.slice(index + 1)]);
@@ -301,6 +302,7 @@ const Setting = ({ id, settings, isReadOnly }: { id?: string; settings: Settings
           return (
             <SettingTokenField
               {...{
+                useDisplaytextEditor: useDisplaytextEditor,
                 hideValidationErrors: (newState: ChangeState) => {
                   updateHideErrorMessage(i, newState.viewModel.hideErrorMessage);
                 },

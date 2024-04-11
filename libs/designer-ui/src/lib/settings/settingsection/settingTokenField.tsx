@@ -61,6 +61,7 @@ export interface SettingTokenFieldProps extends SettingProps {
   validationErrors?: string[];
   hideValidationErrors?: ChangeHandler;
   suppressCastingForSerialize?: boolean;
+  useDisplaytextEditor?: boolean;
 }
 
 export const SettingTokenField = ({ ...props }: SettingTokenFieldProps) => {
@@ -110,6 +111,7 @@ export const TokenField = ({
   onCastParameter,
   getTokenPicker,
   suppressCastingForSerialize,
+  useDisplaytextEditor,
 }: TokenFieldProps) => {
   const dropdownOptions = editorOptions?.options?.value ?? editorOptions?.options ?? [];
   const labelForAutomationId = replaceWhiteSpaceWithUnderscore(label);
@@ -374,7 +376,7 @@ export const TokenField = ({
       );
 
     case constants.PARAMETER.EDITOR.DISPLAYTEXT:
-      return <Markdown linkTarget="_blank">{editorOptions?.displayText ?? ''}</Markdown>;
+      return useDisplaytextEditor ? <Markdown linkTarget="_blank">{editorOptions?.displayText ?? ''}</Markdown> : <></>;
 
     default:
       return (
