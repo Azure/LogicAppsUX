@@ -23,6 +23,9 @@
                 "build/**"
             ]
         },
+        "build:vscode": {
+            "cache": false
+        },
         "dev": {
             "cache": false,
             "persistent": true

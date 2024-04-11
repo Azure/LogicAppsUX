@@ -10,6 +10,7 @@
     "start": "turbo run dev",
     "start:e2e": "turbo run e2e",
     "build": "turbo run build",
+    "build:vscode": "turbo run build:vscode",
     "test": "turbo run test:unit",
     "test:e2e": "playwright test",
     "check": "biome check --apply .",
