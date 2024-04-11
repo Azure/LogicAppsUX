@@ -58,7 +58,7 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element => {
       width,
       layerProps,
       panelLocation: customLocation ?? panelLocation ?? PanelLocation.Right,
-      isResizeable: isResizeable,
+      isResizeable,
     };
   }, [customPanelLocations, collapsed, dismissPanel, width, panelLocation, isResizeable, currentPanelMode]);
 

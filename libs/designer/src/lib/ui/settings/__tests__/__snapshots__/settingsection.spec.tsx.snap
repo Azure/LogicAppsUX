@@ -7,41 +7,16 @@ exports[`ui/settings/settingsection > should construct 1`] = `
   <div
     className="msla-setting-section-content"
   >
-    <button
+    <Button
+      appearance="subtle"
+      aria-label="Collapsed Sample Setting Section, Click to Expand"
       className="msla-setting-section-header"
+      icon={<CompoundIcon />}
       onClick={[Function]}
     >
-      <Memo(Icon)
-        aria-label="Collapsed Sample Setting Section, Click to Expand"
-        className="msla-setting-section-header-icon"
-        iconName="ChevronRightMed"
-        styles={
-          {
-            "root": {
-              "color": "#514f4e",
-              "fontSize": 14,
-            },
-          }
-        }
-      />
-      <div
-        className="msla-setting-section-header-text"
-      >
-        Sample Setting Section
-      </div>
-    </button>
-    <React.Fragment>
-      <Separator
-        className="msla-setting-section-separator"
-        styles={
-          {
-            "root": {
-              "color": "#eaeaea",
-            },
-          }
-        }
-      />
-    </React.Fragment>
+      Sample Setting Section
+    </Button>
+    <React.Fragment />
   </div>
 </div>
 `;
