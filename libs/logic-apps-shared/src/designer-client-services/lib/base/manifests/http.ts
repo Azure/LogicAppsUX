@@ -70,15 +70,16 @@ export const httpManifest = {
     inputs: {
       type: 'object',
       properties: {
+        // sample text for debugging, this will be for data mapper manifest from backend.
         text: {
           type: 'string',
           title: 'Info',
           description: 'Data mapper navigate description',
-          displayText:
-            'To complete this data transformation, add an existing map or create a new map with [Data Mapper in VSCode](/dataMapper).',
           'x-ms-editor': 'displaytext',
           'x-ms-editor-options': {
             hideLabel: true,
+            displayText:
+              'To complete this data transformation, add an existing map or create a new map with [Data Mapper in VSCode](/dataMapper).',
           },
         },
         uri: {

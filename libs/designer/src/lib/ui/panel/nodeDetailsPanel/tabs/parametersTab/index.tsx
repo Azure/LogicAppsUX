@@ -409,19 +409,8 @@ const ParameterSection = ({
   const settings: Settings[] = group?.parameters
     .filter((x) => !x.hideInUI && shouldUseParameterInGroup(x, group.parameters))
     .map((param) => {
-      const {
-        id,
-        label,
-        value,
-        required,
-        showTokens,
-        placeholder,
-        displayText,
-        editorViewModel,
-        dynamicData,
-        conditionalVisibility,
-        validationErrors,
-      } = param;
+      const { id, label, value, required, showTokens, placeholder, editorViewModel, dynamicData, conditionalVisibility, validationErrors } =
+        param;
       const remappedEditorViewModel = isRecordNotEmpty(idReplacements)
         ? remapEditorViewModelWithNewIds(editorViewModel, idReplacements)
         : editorViewModel;
@@ -431,13 +420,11 @@ const ParameterSection = ({
         required,
         showTokens,
         placeholder,
-        displayText,
         editorViewModel: remappedEditorViewModel,
         conditionalVisibility,
       };
 
       const { editor, editorOptions } = getEditorAndOptions(operationInfo, param, upstreamNodeIds ?? [], variables);
-
       const { value: remappedValues } = isRecordNotEmpty(idReplacements) ? remapValueSegmentsWithNewIds(value, idReplacements) : { value };
       const isCodeEditor = editor?.toLowerCase() === constants.EDITOR.CODE;
 

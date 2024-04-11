@@ -92,7 +92,6 @@ export const TokenField = ({
   editor,
   editorOptions,
   editorViewModel,
-  displayText,
   placeholder,
   readOnly,
   value,
@@ -375,7 +374,7 @@ export const TokenField = ({
       );
 
     case constants.PARAMETER.EDITOR.DISPLAYTEXT:
-      return <Markdown linkTarget="_blank">{displayText ?? ''}</Markdown>;
+      return <Markdown linkTarget="_blank">{editorOptions?.displayText ?? ''}</Markdown>;
 
     default:
       return (

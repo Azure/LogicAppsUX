@@ -25,7 +25,6 @@ export interface ParameterInfo {
   parameterName: string;
   pattern?: string;
   placeholder?: string;
-  displayText?: string;
   preservedValue?: any;
   required: boolean;
   schema?: any;

@@ -339,7 +339,6 @@ export function createParameterInfo(
     parameterKey: parameter.key,
     parameterName: parameter.name,
     placeholder: parameter.description,
-    displayText: parameter.displayText,
     preservedValue: getPreservedValue(parameter),
     required: !!parameter.required,
     schema,

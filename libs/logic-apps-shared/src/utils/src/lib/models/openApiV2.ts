@@ -269,7 +269,6 @@ export interface IJsonSchema {
   $schema?: string;
   title?: string;
   description?: string;
-  displayText?: string;
   multipleOf?: number;
   maximum?: number;
   exclusiveMaximum?: boolean;
