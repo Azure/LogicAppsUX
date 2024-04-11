@@ -1,7 +1,57 @@
 {
   "name": "@microsoft/logic-apps-shared",
-  "version": "3.2.0",
+  "version": "4.4.0",
+  "license": "MIT",
+  "type": "module",
+  "module": "src/index.ts",
+  "main": "src/index.ts",
+  "types": "src/index.ts",
+  "exports": {
+    ".": {
+      "types:": "./src/index.ts",
+      "import": "./src/index.ts",
+      "default": "./src/index.ts"
+    },
+    "./package.json": "./package.json"
+  },
+  "sideEffects": false,
+  "engines": {
+    "node": ">=12"
+  },
+  "files": [
+    "build/lib/**/*",
+    "src"
+  ],
+  "publishConfig": {
+    "main": "build/lib/index.cjs",
+    "module": "build/lib/index.js",
+    "types": "build/lib/index.d.ts",
+    "exports": {
+      ".": {
+        "types:": "./build/lib/index.d.ts",
+        "import": "./build/lib/index.js",
+        "default": "./build/lib/index.cjs"
+      },
+      "./package.json": "./package.json",
+      "./build/lib/index.css": "./build/lib/index.css"
+    }
+  },
   "scripts": {
-    "yalcpush": "yalc push ../../dist/libs/logic-apps-shared"
+    "build:lib": "tsup && tsc --emitDeclarationOnly -p tsconfig.json",
+    "test:lib": "vitest --retry=3",
+    "unpublish:local": "pnpm unpublish --force",
+    "publish:local": "pnpm unpublish --force && pnpm publish --no-git-checks --registry http://localhost:4873"
+  },
+  "dependencies": {
+    "@apidevtools/swagger-parser": "10.0.3",
+    "@formatjs/intl": "^2.10.1",
+    "axios": "1.6.0",
+    "react-intl": "6.3.0",
+    "react-query": "3.39.3",
+    "reactflow": "11.8.2"
+  },
+  "peerDependencies": {
+    "react": "^16.4.0 || ^17.0.0 || ^18.0.0",
+    "react-dom": "^16.4.0 || ^17.0.0 || ^18.0.0"
   }
 }

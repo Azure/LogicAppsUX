@@ -1,4 +1,4 @@
-import type { ConnectionReferences } from '../../../common/models/workflow';
+import type { ConnectionMapping, ConnectionReferences, NodeId, ReferenceKey } from '../../../common/models/workflow';
 import type { UpdateConnectionPayload } from '../../actions/bjsworkflow/connections';
 import { resetWorkflowState } from '../global';
 import { LogEntryLevel, LoggerService, deepCompareObjects, equals, getUniqueName } from '@microsoft/logic-apps-shared';
@@ -9,10 +9,6 @@ export interface ConnectionsStoreState {
   connectionsMapping: ConnectionMapping;
   connectionReferences: ConnectionReferences;
 }
-
-type NodeId = string;
-export type ReferenceKey = string | null;
-export type ConnectionMapping = Record<NodeId, ReferenceKey>;
 
 export const initialConnectionsState: ConnectionsStoreState = {
   connectionsMapping: {},

@@ -84,7 +84,7 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element => {
       className={`msla-panel-root-${currentPanelMode}`}
       isLightDismiss
       isBlocking={!isLoadingPanel && !nonBlockingPanels.includes(currentPanelMode ?? '')}
-      type={panelLocation === PanelLocation.Right ? PanelType.custom : PanelType.customNear}
+      type={commonPanelProps.panelLocation === PanelLocation.Right ? PanelType.custom : PanelType.customNear}
       isOpen={!collapsed}
       onDismiss={dismissPanel}
       hasCloseButton={false}

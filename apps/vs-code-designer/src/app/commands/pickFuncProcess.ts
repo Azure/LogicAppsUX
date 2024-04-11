@@ -22,11 +22,11 @@ import type { AzExtRequestPrepareOptions } from '@microsoft/vscode-azext-azureut
 import { sendRequestWithTimeout } from '@microsoft/vscode-azext-azureutils';
 import { UserCancelledError, callWithTelemetryAndErrorHandling } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
-import { ProjectLanguage } from '@microsoft/vscode-extension';
-import type { IPreDebugValidateResult, IProcessInfo } from '@microsoft/vscode-extension';
-import * as unixPsTree from 'ps-tree';
+import { ProjectLanguage } from '@microsoft/vscode-extension-logic-apps';
+import type { IPreDebugValidateResult, IProcessInfo } from '@microsoft/vscode-extension-logic-apps';
+import unixPsTree from 'ps-tree';
 import * as vscode from 'vscode';
-import * as parser from 'yargs-parser';
+import parser from 'yargs-parser';
 
 type OSAgnosticProcess = { command: string | undefined; pid: number | string };
 type ActualUnixPS = unixPsTree.PS & { COMM?: string };

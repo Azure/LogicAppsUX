@@ -1,6 +1,6 @@
 import renderer from 'react-test-renderer';
 import { StatusIcon } from '../statusicon';
-
+import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 describe('lib/monitoring/statuspill/statusicon', () => {
   for (const { hasRetries, status } of [
     { hasRetries: false, status: 'Aborted' },

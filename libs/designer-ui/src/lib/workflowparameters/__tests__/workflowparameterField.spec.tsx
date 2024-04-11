@@ -4,7 +4,7 @@ import { initializeIcons } from '@fluentui/react';
 import * as React from 'react';
 import { useIntl } from 'react-intl';
 import * as ReactShallowRenderer from 'react-test-renderer/shallow';
-
+import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 describe('ui/workflowparameters/workflowparameterField', () => {
   let minimal: WorkflowparameterFieldProps, renderer: ReactShallowRenderer.ShallowRenderer;
 
@@ -13,7 +13,7 @@ describe('ui/workflowparameters/workflowparameterField', () => {
       isEditable: true,
       name: 'test',
       definition: { id: 'id', value: 'blue', name: 'test', type: 'String' },
-      setName: jest.fn(),
+      setName: vi.fn(),
     };
     renderer = ReactShallowRenderer.createRenderer();
     initializeIcons();

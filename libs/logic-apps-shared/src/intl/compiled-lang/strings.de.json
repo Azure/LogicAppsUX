@@ -881,6 +881,12 @@
       "value": "(UTC+10:30) Lord-Howe-Insel"
     }
   ],
+  "3n6GJG": [
+    {
+      "type": 0,
+      "value": "Geben Sie einen gültigen JSON-Wert ein."
+    }
+  ],
   "3rzrWf": [
     {
       "type": 0,
@@ -2881,12 +2887,6 @@
       "value": "Flow erläutern"
     }
   ],
-  "GXXLuT": [
-    {
-      "type": 0,
-      "value": "Geben Sie einen gültigen booleschen Wert ein."
-    }
-  ],
   "GYvF54": [
     {
       "type": 0,
@@ -3379,6 +3379,12 @@
       "value": "Methode"
     }
   ],
+  "JgugQX": [
+    {
+      "type": 0,
+      "value": "Geben Sie ein gültiges Array ein."
+    }
+  ],
   "Ji6663": [
     {
       "type": 0,
@@ -3791,12 +3797,6 @@
       "value": "Gibt den aktuellen Zeitstempel als Zeichenfolge zurück."
     }
   ],
-  "MVrv+N": [
-    {
-      "type": 0,
-      "value": "Geben Sie ein gültiges Array ein."
-    }
-  ],
   "MYgKHu": [
     {
       "type": 0,
@@ -3824,7 +3824,7 @@
   "Mcvr0B": [
     {
       "type": 0,
-      "value": "To use modules or dependecies, please add at Custom Code Dependenncies in Portal TOC"
+      "value": "Um Module oder Abhängigkeiten zu verwenden, fügen Sie diese bitte im Portal-Inhaltsverzeichnis unter „Benutzerdefinierte Codeabhängigkeiten“ hinzu."
     }
   ],
   "MfAdfx": [
@@ -6225,6 +6225,12 @@
       "value": "Fügen Sie ein Quellschema hinzu, oder wählen Sie eines aus, das für Ihre Zuordnung verwendet werden soll."
     }
   ],
+  "b7BQdu": [
+    {
+      "type": 0,
+      "value": "Geben Sie einen gültigen booleschen Wert ein."
+    }
+  ],
   "b9/1dK": [
     {
       "type": 0,
@@ -6319,12 +6325,6 @@
     {
       "type": 0,
       "value": "Info"
-    }
-  ],
-  "bYwqkV": [
-    {
-      "type": 0,
-      "value": "Geben Sie einen gültigen JSON-Wert ein."
     }
   ],
   "ba9yGJ": [
@@ -6565,6 +6565,12 @@
     {
       "type": 0,
       "value": "Weitere Informationen"
+    }
+  ],
+  "dEe6Ob": [
+    {
+      "type": 0,
+      "value": "Geben Sie einen gültigen JSON-Wert ein."
     }
   ],
   "dKCp2j": [
@@ -7737,12 +7743,6 @@
     {
       "type": 0,
       "value": "Fehlende Authentifizierungstypeigenschaft: \"type\"."
-    }
-  ],
-  "kxMDyM": [
-    {
-      "type": 0,
-      "value": "Geben Sie einen gültigen JSON-Wert ein."
     }
   ],
   "l/3yJr": [

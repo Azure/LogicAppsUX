@@ -2,7 +2,7 @@ import type { ValuesPanelProps } from '../index';
 import { ValuesPanel } from '../index';
 import React from 'react';
 import ShallowRenderer from 'react-test-renderer/shallow';
-
+import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 describe('lib/monitoring/valuespanel', () => {
   let minimal: ValuesPanelProps, renderer: ShallowRenderer.ShallowRenderer;
 

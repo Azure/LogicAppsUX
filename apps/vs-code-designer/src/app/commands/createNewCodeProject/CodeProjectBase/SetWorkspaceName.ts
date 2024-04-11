@@ -5,9 +5,9 @@
 import { localize } from '../../../../localize';
 import { getContainingWorkspace } from '../../../utils/workspace';
 import { AzureWizardPromptStep } from '@microsoft/vscode-azext-utils';
-import { OpenBehavior } from '@microsoft/vscode-extension';
-import type { IProjectWizardContext } from '@microsoft/vscode-extension';
 import * as fs from 'fs-extra';
+import { OpenBehavior } from '@microsoft/vscode-extension-logic-apps';
+import type { IProjectWizardContext } from '@microsoft/vscode-extension-logic-apps';
 import * as path from 'path';
 
 export class setWorkspaceName extends AzureWizardPromptStep<IProjectWizardContext> {

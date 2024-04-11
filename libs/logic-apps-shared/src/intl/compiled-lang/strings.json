@@ -877,6 +877,12 @@
       "value": "(UTC+10:30) Lord Howe Island"
     }
   ],
+  "3n6GJG": [
+    {
+      "type": 0,
+      "value": "Enter a valid JSON."
+    }
+  ],
   "3rzrWf": [
     {
       "type": 0,
@@ -2865,12 +2871,6 @@
       "value": "Explain flow"
     }
   ],
-  "GXXLuT": [
-    {
-      "type": 0,
-      "value": "Enter a valid boolean."
-    }
-  ],
   "GYvF54": [
     {
       "type": 0,
@@ -3359,6 +3359,12 @@
       "value": "Method"
     }
   ],
+  "JgugQX": [
+    {
+      "type": 0,
+      "value": "Enter a valid Array."
+    }
+  ],
   "Ji6663": [
     {
       "type": 0,
@@ -3769,12 +3775,6 @@
     {
       "type": 0,
       "value": "Returns the current timestamp as a string"
-    }
-  ],
-  "MVrv+N": [
-    {
-      "type": 0,
-      "value": "Enter a valid array."
     }
   ],
   "MYgKHu": [
@@ -6185,6 +6185,12 @@
       "value": "Add or select a source schema to use for your map."
     }
   ],
+  "b7BQdu": [
+    {
+      "type": 0,
+      "value": "Enter a valid Boolean."
+    }
+  ],
   "b9/1dK": [
     {
       "type": 0,
@@ -6279,12 +6285,6 @@
     {
       "type": 0,
       "value": "Info"
-    }
-  ],
-  "bYwqkV": [
-    {
-      "type": 0,
-      "value": "Enter a valid json."
     }
   ],
   "ba9yGJ": [
@@ -6525,6 +6525,12 @@
     {
       "type": 0,
       "value": "Learn more"
+    }
+  ],
+  "dEe6Ob": [
+    {
+      "type": 0,
+      "value": "Enter a valid JSON."
     }
   ],
   "dKCp2j": [
@@ -7697,12 +7703,6 @@
     {
       "type": 0,
       "value": "Missing authentication type property: 'type'."
-    }
-  ],
-  "kxMDyM": [
-    {
-      "type": 0,
-      "value": "Enter a valid json."
     }
   ],
   "l/3yJr": [

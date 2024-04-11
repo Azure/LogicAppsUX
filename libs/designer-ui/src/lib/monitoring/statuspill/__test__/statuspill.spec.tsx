@@ -2,7 +2,7 @@ import type { StatusPillProps } from '../index';
 import { StatusPill } from '../index';
 import * as React from 'react';
 import * as ReactShallowRenderer from 'react-test-renderer/shallow';
-
+import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 describe('lib/monitoring/statuspill', () => {
   const classNames = {
     pill: 'msla-pill',

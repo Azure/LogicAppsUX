@@ -23,8 +23,13 @@ import { SetLogicAppType } from './CodeProjectBase/setLogicAppType';
 import { isString } from '@microsoft/utils-logic-apps';
 import { AzureWizard } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
-import { latestGAVersion, OpenBehavior } from '@microsoft/vscode-extension';
-import type { ICreateFunctionOptions, IFunctionWizardContext, ProjectLanguage, ProjectVersion } from '@microsoft/vscode-extension';
+import { latestGAVersion, OpenBehavior } from '@microsoft/vscode-extension-logic-apps';
+import type {
+  ICreateFunctionOptions,
+  IFunctionWizardContext,
+  ProjectLanguage,
+  ProjectVersion,
+} from '@microsoft/vscode-extension-logic-apps';
 import * as fse from 'fs-extra';
 import * as path from 'path';
 import { window } from 'vscode';

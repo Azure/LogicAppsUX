@@ -873,6 +873,12 @@
       "value": "(UTC+10:30) Isla Lord Howe"
     }
   ],
+  "3n6GJG": [
+    {
+      "type": 0,
+      "value": "Especifica un nombre válido."
+    }
+  ],
   "3rzrWf": [
     {
       "type": 0,
@@ -2883,12 +2889,6 @@
       "value": "Explicar flujo"
     }
   ],
-  "GXXLuT": [
-    {
-      "type": 0,
-      "value": "Escribir un valor booleano válido."
-    }
-  ],
   "GYvF54": [
     {
       "type": 0,
@@ -3377,6 +3377,12 @@
       "value": "Método"
     }
   ],
+  "JgugQX": [
+    {
+      "type": 0,
+      "value": "Escriba una matriz válida."
+    }
+  ],
   "Ji6663": [
     {
       "type": 0,
@@ -3800,12 +3806,6 @@
       "value": "Devuelve la marca de tiempo actual como una cadena."
     }
   ],
-  "MVrv+N": [
-    {
-      "type": 0,
-      "value": "Escriba una matriz válida."
-    }
-  ],
   "MYgKHu": [
     {
       "type": 0,
@@ -3833,7 +3833,7 @@
   "Mcvr0B": [
     {
       "type": 0,
-      "value": "To use modules or dependecies, please add at Custom Code Dependenncies in Portal TOC"
+      "value": "Para usar módulos o dependencias, agregue las dependencias de código personalizadas en la tabla de contenido del portal."
     }
   ],
   "MfAdfx": [
@@ -6225,6 +6225,12 @@
       "value": "Agregue o seleccione un esquema de origen para usarlo en la asignación."
     }
   ],
+  "b7BQdu": [
+    {
+      "type": 0,
+      "value": "Escriba un valor booleano válido."
+    }
+  ],
   "b9/1dK": [
     {
       "type": 0,
@@ -6319,12 +6325,6 @@
     {
       "type": 0,
       "value": "Información"
-    }
-  ],
-  "bYwqkV": [
-    {
-      "type": 0,
-      "value": "Escriba un json válido."
     }
   ],
   "ba9yGJ": [
@@ -6565,6 +6565,12 @@
     {
       "type": 0,
       "value": "Más información"
+    }
+  ],
+  "dEe6Ob": [
+    {
+      "type": 0,
+      "value": "Especifica un nombre válido."
     }
   ],
   "dKCp2j": [
@@ -7759,12 +7765,6 @@
     {
       "type": 0,
       "value": "Falta la propiedad de tipo de autenticación: \"type\"."
-    }
-  ],
-  "kxMDyM": [
-    {
-      "type": 0,
-      "value": "Escriba un json válido."
     }
   ],
   "l/3yJr": [

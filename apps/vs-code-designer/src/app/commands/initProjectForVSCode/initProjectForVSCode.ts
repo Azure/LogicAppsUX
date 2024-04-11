@@ -11,7 +11,7 @@ import { getGlobalSetting } from '../../utils/vsCodeConfig/settings';
 import { getContainingWorkspace } from '../../utils/workspace';
 import { InitVSCodeLanguageStep } from './InitVSCodeLanguageStep';
 import { type IActionContext, AzureWizard, UserCancelledError } from '@microsoft/vscode-azext-utils';
-import { latestGAVersion, type ProjectLanguage, type FuncVersion, type IProjectWizardContext } from '@microsoft/vscode-extension';
+import { latestGAVersion, type ProjectLanguage, type FuncVersion, type IProjectWizardContext } from '@microsoft/vscode-extension-logic-apps';
 import { window, workspace, type WorkspaceFolder } from 'vscode';
 
 export async function initProjectForVSCode(context: IActionContext, fsPath?: string, language?: ProjectLanguage): Promise<void> {

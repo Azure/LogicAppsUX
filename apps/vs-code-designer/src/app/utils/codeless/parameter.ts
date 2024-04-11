@@ -11,7 +11,7 @@ import { getLogicAppProjectRoot } from './connection';
 import { addNewFileInCSharpProject } from './updateBuildFile';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { parseError } from '@microsoft/vscode-azext-utils';
-import type { Parameter, WorkflowParameter } from '@microsoft/vscode-extension';
+import type { Parameter, WorkflowParameter } from '@microsoft/vscode-extension-logic-apps';
 import * as fse from 'fs-extra';
 import * as path from 'path';
 

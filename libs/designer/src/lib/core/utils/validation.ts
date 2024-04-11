@@ -183,8 +183,8 @@ export function validateType(type: string, parameterFormat: string, parameterVal
       }
       if (!isValidJSONObjectFormat(parameterValue)) {
         return intl.formatMessage({
-          defaultMessage: 'Enter a valid json.',
-          id: 'bYwqkV',
+          defaultMessage: 'Enter a valid JSON.',
+          id: '3n6GJG',
           description: 'Error validation message for Objects',
         });
       }

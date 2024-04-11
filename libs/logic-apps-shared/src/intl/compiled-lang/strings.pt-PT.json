@@ -873,6 +873,12 @@
       "value": "(UTC+10:30) Ilha de Lord Howe"
     }
   ],
+  "3n6GJG": [
+    {
+      "type": 0,
+      "value": "Introduza um JSON válido."
+    }
+  ],
   "3rzrWf": [
     {
       "type": 0,
@@ -2883,12 +2889,6 @@
       "value": "Explicar fluxo"
     }
   ],
-  "GXXLuT": [
-    {
-      "type": 0,
-      "value": "Introduza um valor booleano válido."
-    }
-  ],
   "GYvF54": [
     {
       "type": 0,
@@ -3377,6 +3377,12 @@
       "value": "Método"
     }
   ],
+  "JgugQX": [
+    {
+      "type": 0,
+      "value": "Introduza uma Matriz válida."
+    }
+  ],
   "Ji6663": [
     {
       "type": 0,
@@ -3800,12 +3806,6 @@
       "value": "Devolve o carimbo de data/hora atual como uma cadeia"
     }
   ],
-  "MVrv+N": [
-    {
-      "type": 0,
-      "value": "Introduza uma matriz válida."
-    }
-  ],
   "MYgKHu": [
     {
       "type": 0,
@@ -3833,7 +3833,7 @@
   "Mcvr0B": [
     {
       "type": 0,
-      "value": "To use modules or dependecies, please add at Custom Code Dependenncies in Portal TOC"
+      "value": "Para utilizar módulos ou dependências, adicione em Dependências de Código Personalizadas no Índice do Portal"
     }
   ],
   "MfAdfx": [
@@ -6225,6 +6225,12 @@
       "value": "Adicione ou selecione um esquema de origem a utilizar para o seu mapa."
     }
   ],
+  "b7BQdu": [
+    {
+      "type": 0,
+      "value": "Introduza um Booleano válido."
+    }
+  ],
   "b9/1dK": [
     {
       "type": 0,
@@ -6319,12 +6325,6 @@
     {
       "type": 0,
       "value": "Informações"
-    }
-  ],
-  "bYwqkV": [
-    {
-      "type": 0,
-      "value": "Introduza um json válido."
     }
   ],
   "ba9yGJ": [
@@ -6565,6 +6565,12 @@
     {
       "type": 0,
       "value": "Saber mais"
+    }
+  ],
+  "dEe6Ob": [
+    {
+      "type": 0,
+      "value": "Introduza um JSON válido."
     }
   ],
   "dKCp2j": [
@@ -7759,12 +7765,6 @@
     {
       "type": 0,
       "value": "Propriedade do tipo de autenticação em falta: \"type\"."
-    }
-  ],
-  "kxMDyM": [
-    {
-      "type": 0,
-      "value": "Introduza um json válido."
     }
   ],
   "l/3yJr": [
