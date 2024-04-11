@@ -44,6 +44,12 @@
             "outputs": [
                 "coverage/**"
             ]
+        },
+        "vscode:designer:pack":{
+            "cache": false,
+            "dependsOn": [
+                "build"
+            ]
         }
     }
 }
