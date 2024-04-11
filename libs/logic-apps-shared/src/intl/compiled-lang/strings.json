@@ -1925,12 +1925,6 @@
       "value": "Click for more information on Static Result"
     }
   ],
-  "AO6T9u": [
-    {
-      "type": 0,
-      "value": "Done"
-    }
-  ],
   "AQ7Zxc": [
     {
       "type": 0,
@@ -4748,7 +4742,13 @@
   "SenWwt": [
     {
       "type": 0,
-      "value": "Specify the behavior and capabilities for transferring content over HTTP. Large messages may be split up into smaller requests to the connector to allow large message upload."
+      "value": "Large messages may be split up into smaller requests to the connector to allow large message upload. More details can be found at http://aka.ms/logicapps-chunk#upload-content-in-chunks"
+    }
+  ],
+  "SfnWwt": [
+    {
+      "type": 0,
+      "value": "Specify the behavior and capabilities for transferring content over HTTP."
     }
   ],
   "SgiTAh": [
@@ -5179,12 +5179,6 @@
     {
       "type": 0,
       "value": "General"
-    }
-  ],
-  "V+xi3c": [
-    {
-      "type": 0,
-      "value": "More details can be found at http://aka.ms/logicapps-chunk#upload-content-in-chunks"
     }
   ],
   "V0ZbQO": [
@@ -7283,6 +7277,12 @@
       "value": "Next"
     }
   ],
+  "iMf2TA": [
+    {
+      "type": 0,
+      "value": "Chunk size"
+    }
+  ],
   "iMicOQ": [
     {
       "type": 0,
@@ -7617,6 +7617,28 @@
       "value": "Loading..."
     }
   ],
+  "kMf2TA": [
+    {
+      "type": 0,
+      "value": "Specify upload chunk size between "
+    },
+    {
+      "type": 1,
+      "value": "minimumSize"
+    },
+    {
+      "type": 0,
+      "value": " and "
+    },
+    {
+      "type": 1,
+      "value": "maximumSize"
+    },
+    {
+      "type": 0,
+      "value": " Mb. Example: 10"
+    }
+  ],
   "kN6kce": [
     {
       "type": 0,
@@ -7777,6 +7799,28 @@
     {
       "type": 0,
       "value": "(UTC+13:00) Nuku'alofa"
+    }
+  ],
+  "lMf2TA": [
+    {
+      "type": 0,
+      "value": "Specify download chunk size between "
+    },
+    {
+      "type": 1,
+      "value": "minimumSize"
+    },
+    {
+      "type": 0,
+      "value": " and "
+    },
+    {
+      "type": 1,
+      "value": "maximumSize"
+    },
+    {
+      "type": 0,
+      "value": " Mb. Example: 10"
     }
   ],
   "lPTdSf": [
