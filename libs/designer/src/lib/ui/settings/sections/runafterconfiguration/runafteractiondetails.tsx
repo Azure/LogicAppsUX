@@ -1,10 +1,9 @@
-import constants from '../../../../common/constants';
 import { useOperationVisuals } from '../../../../core/state/operation/operationSelector';
 import { useNodeDisplayName } from '../../../../core/state/workflow/workflowSelectors';
 import { RunAfterActionStatuses } from './runafteractionstatuses';
 import { RunAfterTrafficLights } from './runaftertrafficlights';
 import { useTheme } from '@fluentui/react';
-import { Button, Divider, Text } from '@fluentui/react-components';
+import { Button, Divider } from '@fluentui/react-components';
 import { useBoolean } from '@fluentui/react-hooks';
 import {
   bundleIcon,
@@ -15,7 +14,6 @@ import {
   Delete24Filled,
   Delete24Regular,
 } from '@fluentui/react-icons';
-import type { ISeparatorStyles } from '@fluentui/react/lib/Separator';
 import type { MouseEvent } from 'react';
 import { useIntl } from 'react-intl';
 
@@ -42,12 +40,6 @@ export interface RunAfterActionDetailsProps {
   onRenderLabel?(props: LabelProps): JSX.Element | null;
   onStatusChange?: onChangeHandler;
 }
-
-const separatorStyles: Partial<ISeparatorStyles> = {
-  root: {
-    color: '#d4d4d4',
-  },
-};
 
 export const RunAfterActionDetails = ({
   id,
@@ -96,12 +88,8 @@ export const RunAfterActionDetails = ({
         </Button>
       </div>
 
-      {(!collapsible || expanded) && (
-        <>
-          <RunAfterActionStatuses isReadOnly={readOnly} statuses={statuses} onStatusChange={onStatusChange} />
-          <Divider style={{ margin: '8px 0px' }} />
-        </>
-      )}
+      {(!collapsible || expanded) && <RunAfterActionStatuses isReadOnly={readOnly} statuses={statuses} onStatusChange={onStatusChange} />}
+      {expanded && <Divider className="msla-run-after-divider" />}
     </>
   );
 };

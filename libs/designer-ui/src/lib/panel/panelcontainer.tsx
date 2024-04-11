@@ -15,7 +15,6 @@ import { useCallback } from 'react';
 import { useIntl } from 'react-intl';
 
 const horizontalPadding = '2rem';
-const verticalPadding = '1rem';
 
 const panelStyles: Partial<IPanelStyles> = {
   content: {

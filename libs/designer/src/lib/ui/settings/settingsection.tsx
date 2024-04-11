@@ -1,5 +1,4 @@
 import type { HeaderClickHandler, SettingSectionName } from '.';
-import constants from '../../common/constants';
 import { useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
 import { updateParameterConditionalVisibility } from '../../core/state/operation/operationMetadataSlice';
 import { useSelectedNodeId } from '../../core/state/panel/panelSelectors';
@@ -9,7 +8,7 @@ import { CustomizableMessageBar } from './validation/errorbar';
 import type { ValidationError } from './validation/validation';
 import { ValidationErrorType } from './validation/validation';
 import type { IDropdownOption } from '@fluentui/react';
-import { Separator, useTheme, Icon } from '@fluentui/react';
+import { useTheme } from '@fluentui/react';
 import { Button, Divider, Tooltip } from '@fluentui/react-components';
 import {
   bundleIcon,
@@ -153,20 +152,7 @@ export const SettingsSection: FC<SettingsSectionProps> = ({
   const theme = useTheme();
   const isInverted = isHighContrastBlack() || theme.isInverted;
 
-  const separatorStyles = {
-    root: { color: isInverted ? constants.Settings.SETTING_SEPARATOR_COLOR_DARK : constants.Settings.SETTING_SEPARATOR_COLOR_LIGHT },
-  };
   const intl = useIntl();
-  const expandedLabel = intl.formatMessage({
-    defaultMessage: 'Expanded',
-    id: 'r4zp7m',
-    description: 'A label to represent setting section being expanded',
-  });
-  const collapsedLabel = intl.formatMessage({
-    defaultMessage: 'Collapsed',
-    id: 'PDMP/Z',
-    description: 'A label to represent setting section being collapsed',
-  });
   const expandAriaLabel = intl.formatMessage({
     defaultMessage: 'Click to Collapse',
     id: 'hJbr09',
@@ -206,7 +192,7 @@ export const SettingsSection: FC<SettingsSectionProps> = ({
           onClick={() => handleSectionClick(sectionName as SettingSectionName | undefined)}
           icon={expanded ? <ChevronDownIcon /> : <ChevronRightIcon />}
           appearance={'subtle'}
-          // size='large'
+          aria-label={expanded ? expandAriaLabel : collapseAriaLabel}
         >
           {title}
         </Button>
