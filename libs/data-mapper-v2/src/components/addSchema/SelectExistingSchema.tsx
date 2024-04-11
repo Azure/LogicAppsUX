@@ -1,10 +1,11 @@
 import type { RootState } from '../../core/state/Store';
 import { FileDropdown } from '../fileDropdown/fileDropdown';
 import { SchemaType } from '@microsoft/logic-apps-shared';
-import { useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useSelector } from 'react-redux';
 import { Dropdown, Tree, TreeItem, TreeItemLayout, Option, Combobox } from '@fluentui/react-components';
+import { SearchBox } from '@fluentui/react';
 
 export type SelectExistingSchemaProps = {
   errorMessage: string;
@@ -56,6 +57,8 @@ const mockFileTree: FileTreeDirectory = {
 
 export const SelectExistingSchema = (props: SelectExistingSchemaProps) => {
   const schemaRelativePath = '/Artifacts/Schemas';
+  const [selectedFileName, setSelectedFileName] = useState<string>('');
+  const [selectedFileOption, setSelectedFileOption] = useState<string[]>([]);
 
   // intl
   const intl = useIntl();
@@ -102,11 +105,19 @@ export const SelectExistingSchema = (props: SelectExistingSchemaProps) => {
       );
     } else {
       return (
-        <TreeItem itemType="leaf">
+        <TreeItem key={item.fullPath} value={item.fullPath} onClick={onFileNameSelect} itemType="leaf">
           <TreeItemLayout>{item.name}</TreeItemLayout>
         </TreeItem>
       );
     }
+  };
+
+  const onFileNameSelect: React.MouseEventHandler<HTMLDivElement> = (e) => {
+    const value = e.currentTarget.getAttribute('data-fui-tree-item-value');
+    setSelectedFileName(value ?? '');
+    const opt = selectedFileOption;
+    opt.push(value ?? '');
+    setSelectedFileOption(opt);
   };
 
   const onSelect: React.MouseEventHandler<HTMLDivElement> = (e) => {
@@ -114,11 +125,23 @@ export const SelectExistingSchema = (props: SelectExistingSchemaProps) => {
     e.preventDefault();
   };
 
+  const onHover: React.MouseEventHandler<HTMLDivElement> = (e) => {
+    e.preventDefault();
+  };
+
   return (
-    <Combobox id="dropdown" style={{ width: '200px' }} open={true}>
-      <Option checkIcon={<div></div>} text="mono" onClick={onSelect}>
-        <Tree>{fileTree(mockFileTree)}</Tree>
-      </Option>
-    </Combobox>
+    //   <>      <Option checkIcon={<div></div>} text="mono" onClick={onSelect}>
+    //   <Tree>{fileTree(mockFileTree)}</Tree>
+    // </Option>
+    //   <Combobox selectedOptions={selectedFileOption} defaultValue={selectedFileName} id="dropdown" style={{ width: '200px' }} open={true}>
+    //     <Option checkIcon={<div></div>} text="mono" onClick={onSelect}>
+    //       <Tree>{fileTree(mockFileTree)}</Tree>
+    //     </Option>
+    //   </Combobox>
+    //   </>
+    <>
+      <SearchBox></SearchBox>
+      <Tree>{fileTree(mockFileTree)}</Tree>
+    </>
   );
 };
