@@ -27,7 +27,7 @@ export interface WorkflowLoadingState {
   hostOptions: {
     displayRuntimeInfo: boolean; // show info about where the action is run(i.e. InApp/Shared/Custom)
     forceEnableSplitOn?: boolean; // force enable split on for all actions
-    showDataMapperEditor?: boolean; // show displaytext editor
+    showDataMapperEditor?: boolean; // show data mapper editor
   };
   showPerformanceDebug?: boolean;
 }

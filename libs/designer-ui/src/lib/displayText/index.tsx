@@ -14,11 +14,9 @@ export const DisplayTextEditor: React.FC<DisplayTextEditorProps> = ({
   openRelativeLink,
 }): JSX.Element => {
   return (
-    <div className="msla-displayText-editor-container">
+    <div>
       {text}
-      <Link className="msla-workflow-parameters-link-text" onClick={() => openRelativeLink?.(relativeLink ?? '')}>
-        {relativeLinkText}
-      </Link>
+      <Link onClick={() => openRelativeLink?.(relativeLink ?? '')}>{relativeLinkText}</Link>
     </div>
   );
 };
