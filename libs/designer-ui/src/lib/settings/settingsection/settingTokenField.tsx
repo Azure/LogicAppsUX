@@ -1,3 +1,4 @@
+import { Button } from '@fluentui/react-components';
 import { ArrayEditor } from '../../arrayeditor';
 import { AuthenticationEditor } from '../../authentication';
 import { CodeEditor } from '../../code';
@@ -28,9 +29,10 @@ import type { TokenGroup } from '../../tokenpicker/models/token';
 import { useId } from '../../useId';
 import type { SettingProps } from './';
 import { CustomTokenField, isCustomEditor } from './customTokenField';
-import { Label } from '@fluentui/react';
+import { Label, Link } from '@fluentui/react';
 import { EditorLanguage, equals, getPropertyValue, replaceWhiteSpaceWithUnderscore } from '@microsoft/logic-apps-shared';
 import Markdown from 'react-markdown';
+import { DisplayTextEditor } from '../../displayText';
 
 export interface SettingTokenFieldProps extends SettingProps {
   id?: string;
@@ -62,6 +64,7 @@ export interface SettingTokenFieldProps extends SettingProps {
   hideValidationErrors?: ChangeHandler;
   suppressCastingForSerialize?: boolean;
   useDisplaytextEditor?: boolean;
+  openRelativeLink?: (relativeLink: string) => void;
 }
 
 export const SettingTokenField = ({ ...props }: SettingTokenFieldProps) => {
@@ -112,6 +115,7 @@ export const TokenField = ({
   getTokenPicker,
   suppressCastingForSerialize,
   useDisplaytextEditor,
+  openRelativeLink,
 }: TokenFieldProps) => {
   const dropdownOptions = editorOptions?.options?.value ?? editorOptions?.options ?? [];
   const labelForAutomationId = replaceWhiteSpaceWithUnderscore(label);
@@ -376,7 +380,18 @@ export const TokenField = ({
       );
 
     case constants.PARAMETER.EDITOR.DISPLAYTEXT:
-      return useDisplaytextEditor ? <Markdown linkTarget="_blank">{editorOptions?.displayText ?? ''}</Markdown> : <></>;
+      return (
+        <DisplayTextEditor
+          displayTextText={editorOptions?.displayText?.text}
+          relativeLinkText={editorOptions?.displayText?.relativeLinkText}
+          relativeLink={editorOptions?.displayText?.relativeLink}
+          openRelativeLink={openRelativeLink}
+        />
+      );
+    // return useDisplaytextEditor ? <Markdown linkTarget="_blank">{editorOptions?.displayText ?? ''}</Markdown> : <></>;
+    /// instead of using a markfonwcomponet , i would sa Butoon or a link compoentn
+    // Both componets have e onclick, with that onclick we can pass a callback funciton
+    //<Button onClick={onOpenDataMapper}>DATAMAPPER</Button>
 
     default:
       return (

@@ -78,8 +78,11 @@ export const httpManifest = {
           'x-ms-editor': 'displaytext',
           'x-ms-editor-options': {
             hideLabel: true,
-            displayText:
-              'To complete this data transformation, add an existing map or create a new map with [Data Mapper in VSCode](/dataMapper).',
+            displayText: {
+              text: 'To complete this data transformation, add an existing map or create a new map with',
+              relativeLinkText: 'Data Mapper in VSCode',
+              relativeLink: '/dataMapper',
+            },
           },
         },
         uri: {

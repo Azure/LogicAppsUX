@@ -51,6 +51,7 @@ import type {
   SettingDropdownProps,
   ChangeState,
 } from '@microsoft/designer-ui';
+import { WorkflowService } from '@microsoft/logic-apps-shared';
 import type { FC } from 'react';
 import { useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -306,6 +307,12 @@ const Setting = ({ id, settings, isReadOnly }: { id?: string; settings: Settings
                 hideValidationErrors: (newState: ChangeState) => {
                   updateHideErrorMessage(i, newState.viewModel.hideErrorMessage);
                 },
+                openRelativeLink: WorkflowService().openRelativeLink,
+                // openRelativeLink: (link: string) => {
+                //   console.log("---link 2 ", link);
+                //   console.log("---our func ", WorkflowService().openRelativeLink?.(link));
+                //   console.log("---other callback func ", WorkflowService().getCallbackUrl?.(link));
+                // },
                 ...settingProp,
               }}
             />

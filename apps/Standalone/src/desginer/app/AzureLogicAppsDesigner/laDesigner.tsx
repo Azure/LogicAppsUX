@@ -558,6 +558,9 @@ const getDesignerServices = (
       const workflowId: string = response.headers['x-ms-workflow-run-id'];
       dispatch(changeRunId(workflowId));
     },
+    openRelativeLink: (relativeLink: string) => {
+      console.log('*******open relative link in laDesigner*******', relativeLink);
+    },
   };
 
   const hostService = {

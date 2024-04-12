@@ -262,6 +262,12 @@ export const getDesignerServices = (
       } as ManagedIdentity;
     },
     isExplicitAuthRequiredForManagedIdentity: () => true,
+    openRelativeLink: (relativeLink: string) => {
+      vscode.postMessage({
+        comand: ExtensionCommand.openRelativeLink,
+        content: relativeLink,
+      });
+    },
   };
 
   const hostService: IHostService = {

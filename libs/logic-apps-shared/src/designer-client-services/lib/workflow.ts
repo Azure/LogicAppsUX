@@ -59,6 +59,8 @@ export interface IWorkflowService {
    * Resubmits workflow from a specific action
    */
   resubmitWorkflow?(runId: string, actionsToResubmit: string[]): void;
+
+  openRelativeLink?: (relativeLink: string) => void;
 }
 
 let service: IWorkflowService;
