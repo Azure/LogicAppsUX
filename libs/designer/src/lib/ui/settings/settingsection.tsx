@@ -216,7 +216,6 @@ const Setting = ({ id, settings, isReadOnly }: { id?: string; settings: Settings
   const nodeId = useSelectedNodeId();
   const readOnly = useReadOnly();
   const [hideErrorMessage, setHideErrorMessage] = useState<boolean[]>(new Array(settings.length).fill(false));
-  const { useDisplaytextEditor } = useHostOptions();
 
   const updateHideErrorMessage = (index: number, b: boolean) => {
     setHideErrorMessage([...hideErrorMessage.slice(0, index), b, ...hideErrorMessage.slice(index + 1)]);
@@ -303,7 +302,6 @@ const Setting = ({ id, settings, isReadOnly }: { id?: string; settings: Settings
           return (
             <SettingTokenField
               {...{
-                useDisplaytextEditor: useDisplaytextEditor,
                 hideValidationErrors: (newState: ChangeState) => {
                   updateHideErrorMessage(i, newState.viewModel.hideErrorMessage);
                 },

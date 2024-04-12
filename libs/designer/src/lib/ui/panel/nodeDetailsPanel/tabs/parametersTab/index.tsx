@@ -208,7 +208,7 @@ const ParameterSection = ({
   const panelLocation = usePanelLocation();
   const nodeTitle = replaceWhiteSpaceWithUnderscore(useNodeDisplayName(nodeId));
 
-  const { suppressCastingForSerialize, hideUTFExpressions } = useHostOptions();
+  const { suppressCastingForSerialize, hideUTFExpressions, showDataMapperEditor } = useHostOptions();
 
   const [tokenMapping, setTokenMapping] = useState<Record<string, ValueSegment>>({});
 
@@ -435,6 +435,7 @@ const ParameterSection = ({
           value: remappedValues,
           editor,
           editorOptions,
+          showDataMapperEditor: showDataMapperEditor,
           tokenEditor: true,
           isLoading: dynamicData?.status === DynamicCallStatus.STARTED,
           errorDetails: dynamicData?.error ? { message: dynamicData.error.message } : undefined,

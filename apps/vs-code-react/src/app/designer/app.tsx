@@ -186,7 +186,7 @@ export const DesignerApp = () => {
         services: services,
         hostOptions: {
           displayRuntimeInfo: true,
-          useDisplaytextEditor: true,
+          showDataMapperEditor: true,
         },
       }}
     >

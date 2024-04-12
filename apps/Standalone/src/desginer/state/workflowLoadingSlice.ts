@@ -27,7 +27,7 @@ export interface WorkflowLoadingState {
   hostOptions: {
     displayRuntimeInfo: boolean; // show info about where the action is run(i.e. InApp/Shared/Custom)
     forceEnableSplitOn?: boolean; // force enable split on for all actions
-    useDisplaytextEditor?: boolean; // show displaytext editor
+    showDataMapperEditor?: boolean; // show displaytext editor
   };
   showPerformanceDebug?: boolean;
 }
@@ -50,7 +50,7 @@ const initialState: WorkflowLoadingState = {
   areCustomEditorsEnabled: false,
   hostOptions: {
     displayRuntimeInfo: true,
-    useDisplaytextEditor: false,
+    showDataMapperEditor: false,
   },
   showPerformanceDebug: false,
 };

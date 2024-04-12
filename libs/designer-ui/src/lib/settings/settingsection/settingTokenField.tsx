@@ -63,7 +63,7 @@ export interface SettingTokenFieldProps extends SettingProps {
   validationErrors?: string[];
   hideValidationErrors?: ChangeHandler;
   suppressCastingForSerialize?: boolean;
-  useDisplaytextEditor?: boolean;
+  showDataMapperEditor?: boolean;
   openRelativeLink?: (relativeLink: string) => void;
 }
 
@@ -114,7 +114,7 @@ export const TokenField = ({
   onCastParameter,
   getTokenPicker,
   suppressCastingForSerialize,
-  useDisplaytextEditor,
+  showDataMapperEditor,
   openRelativeLink,
 }: TokenFieldProps) => {
   const dropdownOptions = editorOptions?.options?.value ?? editorOptions?.options ?? [];
@@ -380,9 +380,11 @@ export const TokenField = ({
       );
 
     case constants.PARAMETER.EDITOR.DISPLAYTEXT:
-      return (
+      return editorOptions?.displayText?.relativeLink === '/dataMapper' && !showDataMapperEditor ? (
+        <></>
+      ) : (
         <DisplayTextEditor
-          displayTextText={editorOptions?.displayText?.text}
+          text={editorOptions?.displayText?.text}
           relativeLinkText={editorOptions?.displayText?.relativeLinkText}
           relativeLink={editorOptions?.displayText?.relativeLink}
           openRelativeLink={openRelativeLink}
