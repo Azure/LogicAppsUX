@@ -76,10 +76,12 @@
   width: 100%;
 
   .msla-run-after-edge-header-contents {
+		width: inherit;
     display: flex;
     gap: 8px;
     align-items: center;
     padding: 4px 4px 4px 8px;
+		text-align: left;
   }
 
   .msla-run-after-node-image {
@@ -97,6 +99,7 @@
     gap: 2px;
   }
 }
+
 .msla-run-after-delete-icon {
   width: 5%;
   position: relative;
@@ -108,8 +111,7 @@
 }
 
 .msla-run-after-statuses {
-  margin-left: 25px;
-  margin-top: 4px;
+  margin: 4px 0px 4px 39px;
   display: flex;
   flex-direction: column;
 
@@ -124,37 +126,9 @@
     }
   }
 }
+
 .msla-card-body div.msla-two-columns.msla-run-after-columns {
   width: 100%;
-}
-
-.msla-theme-light {
-  .msla-run-after-configure-select-button,
-  .msla-run-after-edge-header-contents-container {
-    &:hover {
-      background-color: #f3f3f3;
-      cursor: pointer;
-    }
-    &:active {
-      background-color: #e9e9e9;
-      cursor: pointer;
-    }
-  }
-}
-
-.msla-theme-dark {
-  .msla-run-after-configure-select-button,
-  .msla-run-after-edge-header-contents-container {
-    &:hover {
-      background-color: @ms-color-primaryBackground;
-      cursor: pointer;
-    }
-
-    &:active {
-      background-color: @ms-color-primaryBackgroundHover;
-      cursor: pointer;
-    }
-  }
 }
 
 .msla-run-after-section-description {
@@ -175,4 +149,12 @@
 .msla-run-after-action-menu-list {
   overflow-y: scroll;
   max-height: 400px;
+}
+
+.msla-run-after-divider {
+	margin: 8px 0px;
+
+	&:last-of-type {
+		display: none;
+	}
 }

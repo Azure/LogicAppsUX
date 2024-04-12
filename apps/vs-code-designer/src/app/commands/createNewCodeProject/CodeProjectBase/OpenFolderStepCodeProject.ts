@@ -2,16 +2,13 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
+import { getContainingWorkspace } from '../../../utils/workspace';
 import { AzureWizardExecuteStep } from '@microsoft/vscode-azext-utils';
 import type { IProjectWizardContext } from '@microsoft/vscode-extension-logic-apps';
 import { OpenBehavior } from '@microsoft/vscode-extension-logic-apps';
 import * as fs from 'fs';
-import * as path from 'path';
 import { commands, Uri, workspace } from 'vscode';
 
-/**
- * A class that extends AzureWizardExecuteStep and is responsible for opening a folder in Visual Studio Code.
- */
 export class OpenFolderStepCodeProject extends AzureWizardExecuteStep<IProjectWizardContext> {
   public priority = 250;
 
@@ -23,10 +20,10 @@ export class OpenFolderStepCodeProject extends AzureWizardExecuteStep<IProjectWi
   public async execute(context: IProjectWizardContext): Promise<void> {
     const openFolders = workspace.workspaceFolders || [];
     let uri: Uri;
-    const workspaceName = context.workspaceName;
 
     // Check if .code-workspace file exists in project path
-    const workspaceFilePath = path.join(context.workspacePath, `${workspaceName}.code-workspace`);
+    const workspaceFilePath = context.customWorkspaceFolderPath;
+    context.workspaceFolder = getContainingWorkspace(workspaceFilePath);
     if (fs.existsSync(workspaceFilePath)) {
       uri = Uri.file(workspaceFilePath);
     } else {

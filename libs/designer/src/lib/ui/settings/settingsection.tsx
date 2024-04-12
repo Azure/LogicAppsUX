@@ -1,5 +1,4 @@
 import type { HeaderClickHandler, SettingSectionName } from '.';
-import constants from '../../common/constants';
 import { useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
 import { updateParameterConditionalVisibility } from '../../core/state/operation/operationMetadataSlice';
 import { useSelectedNodeId } from '../../core/state/panel/panelSelectors';
@@ -9,9 +8,17 @@ import { CustomizableMessageBar } from './validation/errorbar';
 import type { ValidationError } from './validation/validation';
 import { ValidationErrorType } from './validation/validation';
 import type { IDropdownOption } from '@fluentui/react';
-import { Separator, useTheme, Icon } from '@fluentui/react';
+import { useTheme } from '@fluentui/react';
 import { Button, Divider, Tooltip } from '@fluentui/react-components';
-import { bundleIcon, Dismiss24Filled, Dismiss24Regular } from '@fluentui/react-icons';
+import {
+  bundleIcon,
+  ChevronDown24Filled,
+  ChevronDown24Regular,
+  ChevronRight24Filled,
+  ChevronRight24Regular,
+  Dismiss24Filled,
+  Dismiss24Regular,
+} from '@fluentui/react-icons';
 import { MessageBarType } from '@fluentui/react/lib/MessageBar';
 import {
   isHighContrastBlack,
@@ -50,6 +57,8 @@ import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
 
 const ClearIcon = bundleIcon(Dismiss24Filled, Dismiss24Regular);
+const ChevronDownIcon = bundleIcon(ChevronDown24Filled, ChevronDown24Regular);
+const ChevronRightIcon = bundleIcon(ChevronRight24Filled, ChevronRight24Regular);
 
 type SettingBase = {
   visible?: boolean;
@@ -140,12 +149,6 @@ export const SettingsSection: FC<SettingsSectionProps> = ({
   validationErrors,
   onDismiss,
 }) => {
-  const theme = useTheme();
-  const isInverted = isHighContrastBlack() || theme.isInverted;
-
-  const separatorStyles = {
-    root: { color: isInverted ? constants.Settings.SETTING_SEPARATOR_COLOR_DARK : constants.Settings.SETTING_SEPARATOR_COLOR_LIGHT },
-  };
   const intl = useIntl();
   const expandedLabel = intl.formatMessage({
     defaultMessage: 'Expanded',
@@ -169,7 +172,6 @@ export const SettingsSection: FC<SettingsSectionProps> = ({
   });
   const internalSettings = (
     <>
-      {expanded || !showHeading ? <Setting id={id} isReadOnly={isReadOnly} settings={settings} /> : null}
       {expanded
         ? (validationErrors ?? []).map(({ key: errorKey, errorType, message }, i) => (
             <CustomizableMessageBar
@@ -180,7 +182,8 @@ export const SettingsSection: FC<SettingsSectionProps> = ({
             />
           ))
         : null}
-      {showSeparator ? <Separator className="msla-setting-section-separator" styles={separatorStyles} /> : null}
+      {expanded || !showHeading ? <Setting id={id} isReadOnly={isReadOnly} settings={settings} /> : null}
+      {expanded && showSeparator ? <Divider className="msla-setting-section-divider" /> : null}
     </>
   );
   if (!showHeading) return internalSettings;
@@ -191,15 +194,15 @@ export const SettingsSection: FC<SettingsSectionProps> = ({
   return (
     <div className="msla-setting-section">
       <div className="msla-setting-section-content">
-        <button className="msla-setting-section-header" onClick={() => handleSectionClick(sectionName as SettingSectionName | undefined)}>
-          <Icon
-            className="msla-setting-section-header-icon"
-            aria-label={`${expanded ? expandedLabel : collapsedLabel} ${title}, ${expanded ? expandAriaLabel : collapseAriaLabel}`}
-            iconName={expanded ? 'ChevronDownMed' : 'ChevronRightMed'}
-            styles={{ root: { fontSize: 14, color: isInverted ? 'white' : constants.Settings.CHEVRON_ROOT_COLOR_LIGHT } }}
-          />
-          <div className="msla-setting-section-header-text">{title}</div>
-        </button>
+        <Button
+          className="msla-setting-section-header"
+          onClick={() => handleSectionClick(sectionName as SettingSectionName | undefined)}
+          icon={expanded ? <ChevronDownIcon /> : <ChevronRightIcon />}
+          appearance={'subtle'}
+          aria-label={`${expanded ? expandedLabel : collapsedLabel} ${title}, ${expanded ? expandAriaLabel : collapseAriaLabel}`}
+        >
+          {title}
+        </Button>
         {internalSettings}
       </div>
     </div>
@@ -271,12 +274,7 @@ const Setting = ({ id, settings, isReadOnly }: { id?: string; settings: Settings
     if (!readOnly) settingProp.readOnly = isReadOnly;
     const errorMessage = validationErrors?.reduce((acc: string, message: any) => acc + message + ' ', '');
 
-    const getClassName = (): string =>
-      settingType === 'RunAfter'
-        ? 'msla-setting-section-run-after-setting'
-        : settingType === 'MultiAddExpressionEditor'
-          ? 'msla-setting-section-expression-field'
-          : 'msla-setting-section-setting';
+    const getClassName = (): string => (settingType === 'MultiAddExpressionEditor' ? 'msla-setting-section-expression-field' : '');
     const renderSetting = (): JSX.Element | null => {
       switch (settingType) {
         case 'MultiSelectSetting':
