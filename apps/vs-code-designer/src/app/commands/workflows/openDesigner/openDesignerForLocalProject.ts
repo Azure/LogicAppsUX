@@ -212,15 +212,12 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
         }
         break;
 
-      case ExtensionCommand.openRelativeLink:
-        createNewDataMapCmd(this.context);
-        // this.sendMsgToWebview({
-        //   command: ExtensionCommand.openRelativeLink,
-        //   data: {
-        //     hello: msg?.content
-        //   },
-        // });
+      case ExtensionCommand.openRelativeLink: {
+        if (msg.content === '/dataMapper') {
+          createNewDataMapCmd(this.context);
+        }
         break;
+      }
 
       default:
         break;

@@ -263,8 +263,8 @@ export const getDesignerServices = (
     },
     isExplicitAuthRequiredForManagedIdentity: () => true,
     openRelativeLink: (relativeLink: string) => {
-      vscode.postMessage({
-        comand: ExtensionCommand.openRelativeLink,
+      return vscode.postMessage({
+        command: ExtensionCommand.openRelativeLink,
         content: relativeLink,
       });
     },
