@@ -85,7 +85,7 @@ jobs:
         run: echo "`jq '.aiKey="${{ env.AI_KEY }}"' apps/vs-code-designer/src/package.json`" > apps/vs-code-designer/src/package.json
 
       - name: 'Pack VSCode Designer Extension'
-        - run: pnpm run vscode:designer:pack
+        run: pnpm run vscode:designer:pack
 
       - name: 'Get Previous tag'
         id: previoustag
