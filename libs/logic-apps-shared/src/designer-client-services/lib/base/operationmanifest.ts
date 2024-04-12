@@ -397,6 +397,12 @@ export function getBuiltInOperationInfo(definition: any, isTrigger: boolean): Op
             operationId: request,
           };
         default:
+          if (kind === undefined) {
+            return {
+              connectorId: 'connectionProviders/request',
+              operationId: request,
+            };
+          }
           throw new UnsupportedException(`Unsupported operation kind ${kind} for request type`);
       }
     case response:
@@ -407,6 +413,12 @@ export function getBuiltInOperationInfo(definition: any, isTrigger: boolean): Op
             operationId: response,
           };
         default:
+          if (kind === undefined) {
+            return {
+              connectorId: 'connectionProviders/request',
+              operationId: response,
+            };
+          }
           throw new UnsupportedException(`Unsupported operation kind ${kind} for response type`);
       }
     case table:

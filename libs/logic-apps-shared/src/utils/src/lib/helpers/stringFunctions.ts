@@ -40,3 +40,5 @@ export const isStringNonPrimitive = (s: string): boolean => {
   if (!isNaN(Number(s))) return true;
   return false;
 };
+
+export const createIdCopy = (id: string) => `${id}-copy`;

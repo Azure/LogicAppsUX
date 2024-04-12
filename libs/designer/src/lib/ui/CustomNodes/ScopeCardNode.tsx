@@ -28,17 +28,20 @@ import { getRepetitionName } from '../common/LoopsPager/helper';
 import { DropZone } from '../connections/dropzone';
 import { DeleteMenuItem } from '../menuItems/deleteMenuItem';
 import { ResubmitMenuItem } from '../menuItems/resubmitMenuItem';
-import { MessageBarType } from '@fluentui/react';
+import { ICalloutContentStyles, MessageBarType } from '@fluentui/react';
 import { RunService, WorkflowService, removeIdTag } from '@microsoft/logic-apps-shared';
 import { ScopeCard } from '@microsoft/designer-ui';
 import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
-import { memo, useCallback, useEffect, useMemo } from 'react';
+import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { useDrag } from 'react-dnd';
 import { useIntl } from 'react-intl';
 import { useQuery } from 'react-query';
 import { useDispatch } from 'react-redux';
-import { Handle, Position } from 'reactflow';
+import { Handle, Position, useOnViewportChange } from 'reactflow';
 import type { NodeProps } from 'reactflow';
+import { CopyMenuItem } from '../menuItems';
+import { copyScopeOperation } from '../../core/actions/bjsworkflow/copypaste';
+import { Tooltip } from '@fluentui/react-components';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = Position.Bottom, id }: NodeProps) => {
@@ -142,8 +145,18 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
   const brandColor = useBrandColor(scopeId);
   const iconUri = useIconUri(scopeId);
   const isLeaf = useIsLeafNode(id);
-
   const label = useNodeDisplayName(scopeId);
+
+  const [showCopyCallout, setShowCopyCallout] = useState(false);
+
+  useOnViewportChange({
+    onStart: useCallback(() => {
+      if (showCopyCallout) {
+        setShowCopyCallout(false);
+      }
+    }, [showCopyCallout]),
+  });
+
   const nodeClick = useCallback(() => {
     dispatch(changePanelNode(scopeId));
   }, [dispatch, scopeId]);
@@ -158,6 +171,14 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
     dispatch(setShowDeleteModal(true));
   }, [dispatch, id]);
 
+  const copyClick = useCallback(() => {
+    setShowCopyCallout(true);
+    dispatch(copyScopeOperation({ nodeId: id }));
+    setTimeout(() => {
+      setShowCopyCallout(false);
+    }, 3000);
+  }, [dispatch, id]);
+
   const resubmitClick = useCallback(() => {
     WorkflowService().resubmitWorkflow?.(runInstance?.name ?? '', [id]);
   }, [runInstance, id]);
@@ -165,6 +186,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
   const contextMenuItems: JSX.Element[] = useMemo(
     () => [
       <DeleteMenuItem key={'delete'} onClick={deleteClick} showKey />,
+      <CopyMenuItem key={'copy'} isTrigger={false} isScope={true} onClick={copyClick} showKey />,
       ...(runData?.canResubmit ? [<ResubmitMenuItem key={'resubmit'} onClick={resubmitClick} />] : []),
     ],
     [deleteClick, resubmitClick, runData?.canResubmit]
@@ -273,9 +295,17 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
     constants.NODE.TYPE.UNTIL,
   ];
   if (implementedGraphTypes.includes(normalizedType)) {
+    const copiedText = intl.formatMessage({
+      defaultMessage: 'Copied!',
+      id: 'NE54Uu',
+      description: 'Copied text',
+    });
+
+    const [rootRef, setRef] = useState<HTMLDivElement | null>(null);
+
     return (
       <>
-        <div className="msla-scope-card nopan">
+        <div className="msla-scope-card nopan" ref={setRef}>
           <Handle className="node-handle top" type="target" position={targetPosition} isConnectable={false} />
           <ScopeCard
             brandColor={brandColor}
@@ -299,6 +329,13 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
             contextMenuItems={contextMenuItems}
             runData={runData}
             commentBox={comment}
+          />
+          <Tooltip
+            positioning={{ target: rootRef, position: 'below', align: 'end' }}
+            withArrow
+            content={copiedText}
+            relationship="description"
+            visible={showCopyCallout}
           />
           {isMonitoringView && normalizedType === constants.NODE.TYPE.FOREACH ? (
             <LoopsPager metadata={metadata} scopeId={scopeId} collapsed={graphCollapsed} />

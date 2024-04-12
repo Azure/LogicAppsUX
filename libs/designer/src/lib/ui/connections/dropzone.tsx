@@ -1,5 +1,5 @@
 import type { AppDispatch } from '../../core';
-import { pasteOperation } from '../../core/actions/bjsworkflow/copypaste';
+import { pasteOperation, pasteScopeOperation } from '../../core/actions/bjsworkflow/copypaste';
 import { expandDiscoveryPanel } from '../../core/state/panel/panelSlice';
 import { useUpstreamNodes } from '../../core/state/tokens/tokenSelectors';
 import { useGetAllOperationNodesWithin, useNodeDisplayName, useNodeMetadata } from '../../core/state/workflow/workflowSelectors';
@@ -93,15 +93,26 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId, 
   const handlePasteClicked = useCallback(() => {
     const relationshipIds = { graphId, childId, parentId };
     if (copiedNode) {
-      dispatch(
-        pasteOperation({
-          relationshipIds,
-          nodeId: copiedNode.nodeId,
-          nodeData: copiedNode.nodeData,
-          operationInfo: copiedNode.operationInfo,
-          connectionData: copiedNode.connectionData,
-        })
-      );
+      if (copiedNode?.isScopeNode) {
+        dispatch(
+          pasteScopeOperation({
+            relationshipIds,
+            nodeId: copiedNode.nodeId,
+            serializedValue: copiedNode.serializedOperation,
+          })
+        );
+      } else {
+        dispatch(
+          pasteOperation({
+            relationshipIds,
+            nodeId: copiedNode.nodeId,
+            nodeData: copiedNode.nodeData,
+            operationInfo: copiedNode.nodeOperationInfo,
+            connectionData: copiedNode.nodeConnectionData,
+          })
+        );
+      }
+
       LoggerService().log({
         area: 'DropZone:handlePasteClicked',
         level: LogEntryLevel.Verbose,

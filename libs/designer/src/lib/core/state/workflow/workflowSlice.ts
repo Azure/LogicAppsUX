@@ -9,6 +9,7 @@ import type { WorkflowNode } from '../../parsers/models/workflowNode';
 import { isWorkflowNode } from '../../parsers/models/workflowNode';
 import type { MoveNodePayload } from '../../parsers/moveNodeInWorkflow';
 import { moveNodeInWorkflow } from '../../parsers/moveNodeInWorkflow';
+import { PasteScopeNodePayload, pasteScopeInWorkflow } from '../../parsers/pasteScopeInWorkflow';
 import { addNewEdge } from '../../parsers/restructuringHelpers';
 import { createWorkflowNode, getImmediateSourceNodeIds, transformOperationTitle } from '../../utils/graph';
 import { resetWorkflowState } from '../global';
@@ -20,7 +21,7 @@ import {
   updateStaticResults,
 } from '../operation/operationMetadataSlice';
 import type { RelationshipIds } from '../panel/panelInterfaces';
-import type { ErrorMessage, SpecTypes, WorkflowState, WorkflowKind } from './workflowInterfaces';
+import type { ErrorMessage, SpecTypes, WorkflowState, WorkflowKind, NodesMetadata, Operations } from './workflowInterfaces';
 import { getWorkflowNodeFromGraphState } from './workflowSelectors';
 import {
   LogEntryLevel,
@@ -158,11 +159,18 @@ export const workflowSlice = createSlice({
         state
       );
     },
+    pasteScopeNode: (state: WorkflowState, action: PayloadAction<PasteScopeNodePayload>) => {
+      const { relationshipIds, scopeNode, operations, nodesMetadata, allActions } = action.payload;
+      const newGraph = getWorkflowNodeFromGraphState(state, relationshipIds.graphId);
+      if (!newGraph) throw new Error('graph not set');
+      pasteScopeInWorkflow(scopeNode, newGraph, relationshipIds, operations, nodesMetadata, allActions, state);
+    },
     moveNode: (state: WorkflowState, action: PayloadAction<MoveNodePayload>) => {
       if (!state.graph) {
         console.error('graph not set');
         return; // log exception
       }
+      console.log(action.payload);
       const oldGraph = getWorkflowNodeFromGraphState(state, action.payload.oldGraphId);
       if (!oldGraph) throw new Error('graph not set');
       const newGraph = getWorkflowNodeFromGraphState(state, action.payload.newGraphId);
@@ -468,6 +476,7 @@ export const {
   addNode,
   addImplicitForeachNode,
   pasteNode,
+  pasteScopeNode,
   moveNode,
   deleteNode,
   deleteSwitchCase,

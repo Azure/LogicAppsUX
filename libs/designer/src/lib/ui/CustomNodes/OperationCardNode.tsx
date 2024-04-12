@@ -172,15 +172,9 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
   const connectionResult = useNodeConnectionName(id);
   const isConnectionRequired = useIsConnectionRequired(operationInfo);
   const isLeaf = useIsLeafNode(id);
+  const label = useNodeDisplayName(id);
 
   const showLeafComponents = useMemo(() => !readOnly && isLeaf, [readOnly, isLeaf]);
-
-  const nodeClick = useCallback(() => {
-    if (nodeSelectCallbackOverride) nodeSelectCallbackOverride(id);
-
-    if (suppressDefaultNodeSelect) dispatch(setSelectedNodeId(id));
-    else dispatch(changePanelNode(id));
-  }, [dispatch, id, nodeSelectCallbackOverride, suppressDefaultNodeSelect]);
 
   const { brandColor, iconUri } = useOperationVisuals(id);
 
@@ -197,8 +191,6 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
     [brandColor, nodeComment]
   );
 
-  const label = useNodeDisplayName(id);
-
   const [showCopyCallout, setShowCopyCallout] = useState(false);
 
   useOnViewportChange({
@@ -208,6 +200,13 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
       }
     }, [showCopyCallout]),
   });
+
+  const nodeClick = useCallback(() => {
+    if (nodeSelectCallbackOverride) nodeSelectCallbackOverride(id);
+
+    if (suppressDefaultNodeSelect) dispatch(setSelectedNodeId(id));
+    else dispatch(changePanelNode(id));
+  }, [dispatch, id, nodeSelectCallbackOverride, suppressDefaultNodeSelect]);
 
   const deleteClick = useCallback(() => {
     dispatch(setSelectedNodeId(id));

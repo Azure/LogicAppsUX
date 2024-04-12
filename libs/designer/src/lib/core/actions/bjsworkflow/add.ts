@@ -16,7 +16,7 @@ import { changePanelNode, openPanel, setIsPanelLoading } from '../../state/panel
 import { addResultSchema } from '../../state/staticresultschema/staticresultsSlice';
 import type { NodeTokens, VariableDeclaration } from '../../state/tokens/tokensSlice';
 import { initializeTokensAndVariables } from '../../state/tokens/tokensSlice';
-import type { WorkflowState } from '../../state/workflow/workflowInterfaces';
+import type { NodesMetadata, WorkflowState } from '../../state/workflow/workflowInterfaces';
 import { addNode, setFocusNode } from '../../state/workflow/workflowSlice';
 import type { AppDispatch, RootState } from '../../store';
 import { getBrandColorFromManifest, getIconUriFromManifest } from '../../utils/card';
@@ -44,6 +44,7 @@ import {
   getBrandColorFromConnector,
   getIconUriFromConnector,
   getRecordEntry,
+  isNumber,
 } from '@microsoft/logic-apps-shared';
 import type {
   Connector,
@@ -71,13 +72,7 @@ export const addOperation = createAsyncThunk('addOperation', async (payload: Add
   batch(() => {
     const { operation, nodeId: actionId, presetParameterValues, actionMetadata } = payload;
     if (!operation) throw new Error('Operation does not exist'); // Just an optional catch, should never happen
-    let count = 1;
-    let nodeId = actionId;
-    const nodesMetadata = (getState() as RootState).workflow.nodesMetadata;
-    while (getRecordEntry(nodesMetadata, nodeId)) {
-      nodeId = `${actionId}_${count}`;
-      count++;
-    }
+    const nodeId = getNonDuplicateId((getState() as RootState).workflow.nodesMetadata, actionId);
 
     const newPayload = { ...payload, nodeId };
 
@@ -397,4 +392,20 @@ export const getTriggerNodeManifest = async (
     return getOperationManifest({ connectorId, operationId });
   }
   return undefined;
+};
+
+export const getNonDuplicateId = (nodesMetadata: NodesMetadata, actionId: string): string => {
+  const splitActionId = actionId.split('_');
+  let nodeId = actionId;
+  let count = 1;
+  if (isNumber(splitActionId[splitActionId.length - 1])) {
+    splitActionId.pop();
+    actionId = splitActionId.join('_');
+  }
+
+  while (getRecordEntry(nodesMetadata, nodeId)) {
+    nodeId = `${actionId}_${count}`;
+    count++;
+  }
+  return nodeId;
 };
