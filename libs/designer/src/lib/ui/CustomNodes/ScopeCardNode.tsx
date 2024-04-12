@@ -28,7 +28,7 @@ import { getRepetitionName } from '../common/LoopsPager/helper';
 import { DropZone } from '../connections/dropzone';
 import { DeleteMenuItem } from '../menuItems/deleteMenuItem';
 import { ResubmitMenuItem } from '../menuItems/resubmitMenuItem';
-import { ICalloutContentStyles, MessageBarType } from '@fluentui/react';
+import { MessageBarType } from '@fluentui/react';
 import { RunService, WorkflowService, removeIdTag } from '@microsoft/logic-apps-shared';
 import { ScopeCard } from '@microsoft/designer-ui';
 import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';

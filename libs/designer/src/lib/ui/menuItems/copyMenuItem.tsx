@@ -31,7 +31,6 @@ export const CopyMenuItem = (props: CopyMenuItemProps) => {
   const copyScope = intl.formatMessage({
     defaultMessage: 'Copy Subgraph',
     description: 'Copy Scope text',
-    id: 'test',
   });
   const copyKeyboardTextWin = intl.formatMessage({
     defaultMessage: 'Ctrl+C',

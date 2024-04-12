@@ -28,7 +28,6 @@ const DeleteModal = () => {
     if (!nodeData) return;
     const { type } = nodeData;
 
-    console.log(type);
     if (type === WORKFLOW_NODE_TYPES.OPERATION_NODE) {
       dispatch(deleteOperation({ nodeId, isTrigger }));
     } else if (type === WORKFLOW_NODE_TYPES.GRAPH_NODE) {
