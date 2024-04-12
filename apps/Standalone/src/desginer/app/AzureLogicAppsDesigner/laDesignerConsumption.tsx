@@ -413,9 +413,6 @@ const getDesignerServices = (
         ? 'https://schema.management.azure.com/providers/Microsoft.Logic/schemas/2023-01-31-preview/workflowdefinition.json#'
         : undefined;
     },
-    openRelativeLink: (relativeLink: string) => {
-      console.log('*******open relative link in consumpsion*******', relativeLink);
-    },
   };
 
   const functionService = new BaseFunctionService({

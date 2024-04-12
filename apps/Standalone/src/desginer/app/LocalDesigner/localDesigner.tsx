@@ -140,9 +140,6 @@ const customCodeService = new StandardCustomCodeService({
 
 const workflowService = {
   getCallbackUrl: () => Promise.resolve({ method: 'POST', value: 'Dummy url' }),
-  openRelativeLink: (relativeLink: string) => {
-    console.log('*******open relative link in localDesigner*******', relativeLink);
-  },
 };
 
 const hostService = {

@@ -388,10 +388,6 @@ export const TokenField = ({
           openRelativeLink={openRelativeLink}
         />
       );
-    // return useDisplaytextEditor ? <Markdown linkTarget="_blank">{editorOptions?.displayText ?? ''}</Markdown> : <></>;
-    /// instead of using a markfonwcomponet , i would sa Butoon or a link compoentn
-    // Both componets have e onclick, with that onclick we can pass a callback funciton
-    //<Button onClick={onOpenDataMapper}>DATAMAPPER</Button>
 
     default:
       return (

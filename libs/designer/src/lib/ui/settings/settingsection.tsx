@@ -308,11 +308,6 @@ const Setting = ({ id, settings, isReadOnly }: { id?: string; settings: Settings
                   updateHideErrorMessage(i, newState.viewModel.hideErrorMessage);
                 },
                 openRelativeLink: WorkflowService().openRelativeLink,
-                // openRelativeLink: (link: string) => {
-                //   console.log("---link 2 ", link);
-                //   console.log("---our func ", WorkflowService().openRelativeLink?.(link));
-                //   console.log("---other callback func ", WorkflowService().getCallbackUrl?.(link));
-                // },
                 ...settingProp,
               }}
             />

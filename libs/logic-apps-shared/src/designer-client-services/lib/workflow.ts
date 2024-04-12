@@ -60,6 +60,9 @@ export interface IWorkflowService {
    */
   resubmitWorkflow?(runId: string, actionsToResubmit: string[]): void;
 
+  /**
+   * Open a relative link handled correctly with host
+   */
   openRelativeLink?: (relativeLink: string) => void;
 }
 

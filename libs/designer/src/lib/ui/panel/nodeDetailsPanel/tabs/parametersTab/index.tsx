@@ -423,7 +423,6 @@ const ParameterSection = ({
         editorViewModel: remappedEditorViewModel,
         conditionalVisibility,
       };
-
       const { editor, editorOptions } = getEditorAndOptions(operationInfo, param, upstreamNodeIds ?? [], variables);
       const { value: remappedValues } = isRecordNotEmpty(idReplacements) ? remapValueSegmentsWithNewIds(value, idReplacements) : { value };
       const isCodeEditor = editor?.toLowerCase() === constants.EDITOR.CODE;
