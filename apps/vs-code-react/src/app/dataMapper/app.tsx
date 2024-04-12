@@ -56,6 +56,12 @@ export const DataMapperApp = () => {
     [vscode]
   );
 
+  // const openVsCodeTab = (vscodeExtensionCommand: ExtensionCommand) => {
+  //   sendMsgToVsix({
+  //     command: vscodeExtensionCommand,
+  //   });
+  // };
+
   const addSchemaFromFile = (selectedSchemaFile: SchemaFile) => {
     sendMsgToVsix({
       command: ExtensionCommand.addSchemaFromFile,
