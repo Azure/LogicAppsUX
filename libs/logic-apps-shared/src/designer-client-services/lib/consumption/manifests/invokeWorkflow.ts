@@ -91,7 +91,7 @@ export const invokeWorkflowManifest = {
 
     settings: {
       operationOptions: {
-        options: ['DisableAsyncPattern'],
+        options: ['DisableAsyncPattern', 'DisableAutomaticDecompression'],
         scopes: ['action'],
       },
       retryPolicy: {
@@ -99,6 +99,9 @@ export const invokeWorkflowManifest = {
       },
       secureData: {},
       trackedProperties: {
+        scopes: ['action'],
+      },
+      timeout: {
         scopes: ['action'],
       },
     },
