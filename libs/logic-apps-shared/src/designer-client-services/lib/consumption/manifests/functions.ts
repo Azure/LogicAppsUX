@@ -130,6 +130,24 @@ export const selectFunctionManifest = {
 
     connector,
 
-    settings: {},
+    settings: {
+      operationOptions: {
+        options: ['DisableAsyncPattern', 'DisableAutomaticDecompression', 'SuppressWorkflowHeaders'],
+        scopes: ['action'],
+      },
+      retryPolicy: {
+        scopes: ['action'],
+      },
+      secureData: {},
+      trackedProperties: {
+        scopes: ['action'],
+      },
+      paging: {
+        scopes: ['action'],
+      },
+      timeout: {
+        scopes: ['action'],
+      },
+    },
   },
 } as OperationManifest;

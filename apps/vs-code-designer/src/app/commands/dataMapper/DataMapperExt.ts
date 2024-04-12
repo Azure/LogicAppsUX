@@ -4,7 +4,7 @@ import { startBackendRuntime } from './FxWorkflowRuntime';
 import { webviewType } from './extensionConfig';
 import type { MapDefinitionEntry } from '@microsoft/logic-apps-shared';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
-import type { MapDefinitionData } from '@microsoft/vscode-extension';
+import type { MapDefinitionData } from '@microsoft/vscode-extension-logic-apps';
 import * as yaml from 'js-yaml';
 import * as path from 'path';
 import { Uri, ViewColumn, window } from 'vscode';
@@ -30,7 +30,7 @@ export default class DataMapperExt {
       return;
     }
 
-    const panel = window.createWebviewPanel(
+    const panel =                                                                                                                              window.createWebviewPanel(
       webviewType, // Key used to reference the panel
       dataMapName, // Title displayed in the tab
       ViewColumn.Active, // Editor column to show the new webview panel in

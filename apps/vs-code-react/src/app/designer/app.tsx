@@ -11,8 +11,7 @@ import type { ConnectionCreationInfo, LogicAppsV2 } from '@microsoft/logic-apps-
 import type { ConnectionReferences } from '@microsoft/logic-apps-designer';
 import { DesignerProvider, BJSWorkflowProvider, Designer, getTheme, useThemeObserver } from '@microsoft/logic-apps-designer';
 import { isEmptyString, Theme, isNullOrUndefined } from '@microsoft/logic-apps-shared';
-import type { FileSystemConnectionInfo, StandardApp } from '@microsoft/vscode-extension';
-import { ExtensionCommand } from '@microsoft/vscode-extension';
+import { type FileSystemConnectionInfo, type StandardApp, ExtensionCommand } from '@microsoft/vscode-extension-logic-apps';
 import { useContext, useMemo, useState, useEffect } from 'react';
 import { useIntl } from 'react-intl';
 import { useQuery, useQueryClient } from 'react-query';

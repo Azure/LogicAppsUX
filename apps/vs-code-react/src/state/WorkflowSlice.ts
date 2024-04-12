@@ -14,6 +14,7 @@ export interface InitializePayload {
   reviewContent?: IValidationData;
   hostVersion?: string;
   isLocal?: boolean;
+  isWorkflowRuntimeRunning?: boolean;
 }
 
 export const Status = {
@@ -36,6 +37,7 @@ export interface WorkflowState {
   reviewContent?: IValidationData;
   hostVersion?: string;
   isLocal?: boolean;
+  isWorkflowRuntimeRunning?: boolean;
 }
 
 const initialState: WorkflowState = {
@@ -69,8 +71,18 @@ export const workflowSlice = createSlice({
   initialState: initialState as WorkflowState,
   reducers: {
     initializeWorkflow: (state: WorkflowState, action: PayloadAction<InitializePayload>) => {
-      const { apiVersion, baseUrl, corsNotice, accessToken, workflowProperties, reviewContent, cloudHost, hostVersion, isLocal } =
-        action.payload;
+      const {
+        apiVersion,
+        baseUrl,
+        corsNotice,
+        accessToken,
+        workflowProperties,
+        reviewContent,
+        cloudHost,
+        hostVersion,
+        isLocal,
+        isWorkflowRuntimeRunning,
+      } = action.payload;
       const initializedState = state;
       initializedState.accessToken = accessToken;
       initializedState.cloudHost = cloudHost;
@@ -99,6 +111,7 @@ export const workflowSlice = createSlice({
       };
       initializedState.hostVersion = hostVersion;
       initializedState.isLocal = isLocal;
+      initializedState.isWorkflowRuntimeRunning = isWorkflowRuntimeRunning;
     },
     updateAccessToken: (state: WorkflowState, action: PayloadAction<string | undefined>) => {
       state.accessToken = action.payload;

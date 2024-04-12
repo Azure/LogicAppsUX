@@ -13,8 +13,8 @@ import type {
   IWorkflowTemplate,
   IFunctionWizardContext,
   ProjectLanguage,
-} from '@microsoft/vscode-extension';
-import { TemplateCategory, TemplatePromptResult } from '@microsoft/vscode-extension';
+} from '@microsoft/vscode-extension-logic-apps';
+import { TemplateCategory, TemplatePromptResult } from '@microsoft/vscode-extension-logic-apps';
 
 export class WorkflowStateTypeStep extends AzureWizardPromptStep<IFunctionWizardContext> {
   public hideStepCount = true;

@@ -144,7 +144,7 @@ export const serializeWorkflow = async (rootState: RootState, options?: Serializ
   }
 
   const { connectionsMapping, connectionReferences: referencesObject } = rootState.connections;
-  const connectionReferences = Object.keys(connectionsMapping).reduce((references: ConnectionReferences, nodeId: string) => {
+  const connectionReferences = Object.keys(connectionsMapping ?? {}).reduce((references: ConnectionReferences, nodeId: string) => {
     const referenceKey = getRecordEntry(connectionsMapping, nodeId);
     if (!referenceKey || !referencesObject[referenceKey]) {
       return references;
@@ -164,7 +164,7 @@ export const serializeWorkflow = async (rootState: RootState, options?: Serializ
       $schema:
         WorkflowService().getDefinitionSchema?.(unmap(rootState.operations.operationInfo)) ?? rootState.workflow.originalDefinition.$schema,
       actions: await getActions(rootState, options),
-      ...(Object.keys(rootState?.staticResults?.properties).length > 0 ? { staticResults: rootState.staticResults.properties } : {}),
+      ...(Object.keys(rootState?.staticResults?.properties ?? {}).length > 0 ? { staticResults: rootState.staticResults.properties } : {}),
       triggers: await getTrigger(rootState, options),
     },
     connectionReferences,

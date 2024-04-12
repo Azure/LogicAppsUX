@@ -37,12 +37,13 @@ export const PanelResizer = (props: PanelResizerProps): JSX.Element => {
   const animationFrame = useRef<number>(0);
 
   const resize = useCallback(
-    ({ clientX }: MouseEvent) => {
+    (e: MouseEvent) => {
+      if (!isResizing) return;
+      e.preventDefault();
+      const { clientX } = e;
       animationFrame.current = requestAnimationFrame(() => {
-        if (isResizing) {
-          const newWidth = Math.max(window.innerWidth - clientX, 400);
-          updatePanelWidth(newWidth.toString() + 'px');
-        }
+        const newWidth = Math.max(window.innerWidth - clientX, 400);
+        updatePanelWidth(newWidth.toString() + 'px');
       });
     },
     [isResizing, updatePanelWidth]

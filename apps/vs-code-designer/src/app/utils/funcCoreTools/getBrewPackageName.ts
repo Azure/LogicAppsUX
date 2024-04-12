@@ -5,7 +5,7 @@
 import { funcPackageName } from '../../../constants';
 import { executeCommand } from './cpUtils';
 import { tryGetMajorVersion } from './funcVersion';
-import { FuncVersion } from '@microsoft/vscode-extension';
+import { FuncVersion } from '@microsoft/vscode-extension-logic-apps';
 
 /**
  * Gets functions core tools brew package name.

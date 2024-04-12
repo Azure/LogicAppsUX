@@ -9,8 +9,14 @@ import type { RemoteWorkflowTreeItem } from '../remoteWorkflowsTree/RemoteWorkfl
 import type { AppSettingsTreeItem, DeploymentsTreeItem, IDeployContext, ParsedSite } from '@microsoft/vscode-azext-azureappservice';
 import { AzExtParentTreeItem } from '@microsoft/vscode-azext-utils';
 import type { AzExtTreeItem, IActionContext } from '@microsoft/vscode-azext-utils';
-import type { ApplicationSettings, FuncHostRequest, FuncVersion, IParsedHostJson, IProjectTreeItem } from '@microsoft/vscode-extension';
-import { ProjectSource } from '@microsoft/vscode-extension';
+import type {
+  ApplicationSettings,
+  FuncHostRequest,
+  FuncVersion,
+  IParsedHostJson,
+  IProjectTreeItem,
+} from '@microsoft/vscode-extension-logic-apps';
+import { ProjectSource } from '@microsoft/vscode-extension-logic-apps';
 
 export class SlotTreeItem extends AzExtParentTreeItem implements IProjectTreeItem {
   public logStreamPath = '';

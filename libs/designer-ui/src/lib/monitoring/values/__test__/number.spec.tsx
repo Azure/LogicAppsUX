@@ -2,7 +2,7 @@ import * as ReactShallowRenderer from 'react-test-renderer/shallow';
 import { getTestIntl } from '../../../__test__/intl-test-helper';
 import { NumberValue } from '../number';
 import type { ValueProps } from '../types';
-
+import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 describe('ui/monitoring/values/number', () => {
   let props: ValueProps, renderer: ReactShallowRenderer.ShallowRenderer;
 

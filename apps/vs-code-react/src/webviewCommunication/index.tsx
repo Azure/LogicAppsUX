@@ -24,12 +24,12 @@ import {
 import { initialize } from '../state/projectSlice';
 import type { AppDispatch, RootState } from '../state/store';
 import type { MessageType } from './messageTypes';
-import { ExtensionCommand, ProjectName } from '@microsoft/vscode-extension';
 import useEventListener from '@use-it/event-listener';
 import type { ReactNode } from 'react';
 import React, { useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import type { WebviewApi } from 'vscode-webview';
+import { ExtensionCommand, ProjectName } from '@microsoft/vscode-extension-logic-apps';
 
 const vscode: WebviewApi<unknown> = acquireVsCodeApi();
 export const VSCodeContext = React.createContext(vscode);

@@ -10,7 +10,7 @@ import {
   isTagNameSupportedByLexical,
 } from '../util';
 import type { ValueSegment } from '@microsoft/logic-apps-shared';
-
+import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 describe('lib/html/plugins/toolbar/helper/util', () => {
   describe('cleanHtmlString', () => {
     it.each([

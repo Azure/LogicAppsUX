@@ -16,7 +16,9 @@ test('Should serialize the workflow after deserializing it and match', async ({ 
     });
   });
 
-  const mock = await import('../../__mocks__/workflows/Panel.json');
+  const mock = await import('../../__mocks__/workflows/Panel.json', {
+    assert: { type: 'json' }
+  });
 
   expect({ connectionReferences: {}, parameters: {}, definition: mock.default.definition }).toEqual(serialized as any);
 });
@@ -37,7 +39,9 @@ test('Should serialize the workflow after deserializing it and match with a swit
     });
   });
 
-  const mock = await import('../../__mocks__/workflows/Switch.json');
+  const mock = await import('../../__mocks__/workflows/Switch.json', {
+    assert: { type: 'json' }
+  });
 
   expect({ connectionReferences: {}, parameters: {}, definition: mock.default.definition }).toEqual(serialized as any);
 });
@@ -60,7 +64,9 @@ test('Should serialize the workflow after deserializing it and match with some s
     });
   });
 
-  const mock = await import('../../__mocks__/workflows/UnicodeKeys.json');
+  const mock = await import('../../__mocks__/workflows/UnicodeKeys.json', {
+    assert: { type: 'json' }
+  });
 
   expect({ connectionReferences: {}, parameters: {}, definition: mock.default.definition }).toEqual(serialized as any);
 });

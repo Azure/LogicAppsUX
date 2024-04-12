@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`lib/label className should set the "class" attribute 1`] = `
+exports[`lib/label > className > should set the "class" attribute 1`] = `
 <label
   className="ms-Label class-name msla-label root-109"
   title="label text"
@@ -9,7 +9,7 @@ exports[`lib/label className should set the "class" attribute 1`] = `
 </label>
 `;
 
-exports[`lib/label htmlFor should set the "for" attribute 1`] = `
+exports[`lib/label > htmlFor > should set the "for" attribute 1`] = `
 <label
   className="ms-Label msla-label root-109"
   htmlFor="an-input"
@@ -19,7 +19,7 @@ exports[`lib/label htmlFor should set the "for" attribute 1`] = `
 </label>
 `;
 
-exports[`lib/label id should set the "id" attribute 1`] = `
+exports[`lib/label > id > should set the "id" attribute 1`] = `
 <label
   className="ms-Label msla-label root-109"
   id="label-id"
@@ -29,7 +29,7 @@ exports[`lib/label id should set the "id" attribute 1`] = `
 </label>
 `;
 
-exports[`lib/label isRequiredField should render the required parameter marker if set 1`] = `
+exports[`lib/label > isRequiredField > should render the required parameter marker if set 1`] = `
 <label
   className="ms-Label msla-label root-109"
   title="label text"
@@ -44,7 +44,7 @@ exports[`lib/label isRequiredField should render the required parameter marker i
 </label>
 `;
 
-exports[`lib/label should construct 1`] = `
+exports[`lib/label > should construct 1`] = `
 <label
   className="ms-Label msla-label root-109"
   title="label"
@@ -53,7 +53,7 @@ exports[`lib/label should construct 1`] = `
 </label>
 `;
 
-exports[`lib/label tooltip should set the "title" attribute if tooltip is set 1`] = `
+exports[`lib/label > tooltip > should set the "title" attribute if tooltip is set 1`] = `
 <label
   className="ms-Label msla-label root-109"
   title="title"
