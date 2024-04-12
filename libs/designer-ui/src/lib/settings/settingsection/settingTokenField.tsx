@@ -31,7 +31,6 @@ import type { SettingProps } from './';
 import { CustomTokenField, isCustomEditor } from './customTokenField';
 import { Label, Link } from '@fluentui/react';
 import { EditorLanguage, equals, getPropertyValue, replaceWhiteSpaceWithUnderscore } from '@microsoft/logic-apps-shared';
-import Markdown from 'react-markdown';
 import { DisplayTextEditor } from '../../displayText';
 
 export interface SettingTokenFieldProps extends SettingProps {
