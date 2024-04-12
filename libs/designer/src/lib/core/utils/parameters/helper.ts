@@ -2359,7 +2359,7 @@ export function fetchErrorWhenDependenciesNotReady(
   };
 }
 
-function getStringifiedValueFromEditorViewModel(
+export function getStringifiedValueFromEditorViewModel(
   parameter: ParameterInfo,
   isDefinitionValue: boolean,
   idReplacements?: Record<string, string>

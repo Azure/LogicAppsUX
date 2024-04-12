@@ -9,7 +9,7 @@ import { hasLogicAppProject } from '../../utils/workspace';
 import { TestFile } from './testFile';
 import { TestWorkflow } from './testWorkflow';
 import { TestWorkspace } from './testWorkspace';
-import { isEmptyString } from '@microsoft/utils-logic-apps';
+import { isEmptyString } from '@microsoft/logic-apps-shared';
 import { type IActionContext, callWithTelemetryAndErrorHandling } from '@microsoft/vscode-azext-utils';
 import * as path from 'path';
 import {

@@ -32,7 +32,7 @@ export const MockResultsTab = () => {
 
   const filteredOutputs: OutputInfo[] = Object.values(rawOutputs.outputs)
     .filter((output: OutputInfo) => {
-      return !output.isInsideArray ?? true;
+      return !output.isInsideArray;
     })
     .filter((output: OutputInfo, _index: number, outputArray: OutputInfo[]) => {
       const hasChildren = outputArray.some((o: OutputInfo) => (o.key === output.key ? false : o.key.includes(output.key)));
