@@ -29,7 +29,7 @@ import type { TokenGroup } from '../../tokenpicker/models/token';
 import { useId } from '../../useId';
 import type { SettingProps } from './';
 import { CustomTokenField, isCustomEditor } from './customTokenField';
-import { Label, Link } from '@fluentui/react';
+import { Label } from '@fluentui/react';
 import { EditorLanguage, equals, getPropertyValue, replaceWhiteSpaceWithUnderscore } from '@microsoft/logic-apps-shared';
 import { DisplayTextEditor } from '../../displayText';
 
