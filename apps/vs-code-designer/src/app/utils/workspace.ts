@@ -10,7 +10,7 @@ import { tryGetLogicAppProjectRoot } from './verifyIsProject';
 import { isNullOrUndefined, isString } from '@microsoft/logic-apps-shared';
 import { UserCancelledError } from '@microsoft/vscode-azext-utils';
 import type { IActionContext, IAzureQuickPickItem } from '@microsoft/vscode-azext-utils';
-import * as globby from 'globby';
+import globby from 'globby';
 import * as path from 'path';
 import * as vscode from 'vscode';
 

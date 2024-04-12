@@ -23,6 +23,9 @@
                 "build/**"
             ]
         },
+        "build:vscode": {
+            "cache": false
+        },
         "dev": {
             "cache": false,
             "persistent": true
@@ -40,6 +43,12 @@
         "test:lib": {
             "outputs": [
                 "coverage/**"
+            ]
+        },
+        "vscode:designer:pack":{
+            "cache": false,
+            "dependsOn": [
+                "build"
             ]
         }
     }
