@@ -93,6 +93,7 @@ export const extensionCommand = {
   createLogicApp: 'azureLogicAppsStandard.createLogicApp',
   createLogicAppAdvanced: 'azureLogicAppsStandard.createLogicAppAdvanced',
   deploy: 'azureLogicAppsStandard.deploy',
+  generateDeploymentScripts: 'azureLogicAppsStandard.generateDeploymentScripts',
   deploySlot: 'azureLogicAppsStandard.deploySlot',
   redeploy: 'azureLogicAppsStandard.redeploy',
   showOutputChannel: 'azureLogicAppsStandard.showOutputChannel',
@@ -143,6 +144,7 @@ export const extensionCommand = {
   resetValidateAndInstallBinaries: 'azureLogicAppsStandard.resetValidateAndInstallBinaries',
   disableValidateAndInstallBinaries: 'azureLogicAppsStandard.disableValidateAndInstallBinaries',
   azureAzuriteStart: 'azurite.start',
+  parameterizeConnections: 'azureLogicAppsStandard.parameterizeConnections',
   loadDataMapFile: 'azureLogicAppsStandard.dataMap.loadDataMapFile',
   dataMapAddSchemaFromFile: 'azureLogicAppsStandard.dataMap.addSchemaFromFile',
   dataMapAttemptToResolveMissingSchemaFile: 'azureLogicAppsStandard.dataMap.attemptToResolveMissingSchemaFile',
@@ -188,6 +190,7 @@ export const showStartDesignTimeMessageSetting = 'showStartDesignTimeMessage';
 export const autoStartDesignTimeSetting = 'autoStartDesignTime';
 export const autoRuntimeDependenciesValidationAndInstallationSetting = 'autoRuntimeDependenciesValidationAndInstallation';
 export const azuriteBinariesLocationSetting = 'azuriteLocationSetting';
+export const parameterizeConnectionsInProjectLoadSetting = 'parameterizeConnectionsInProjectLoad';
 export const showAutoStartAzuriteWarning = 'showAutoStartAzuriteWarning';
 export const autoStartAzuriteSetting = 'autoStartAzurite';
 export const autoRuntimeDependenciesPathSettingKey = 'autoRuntimeDependenciesPath';
@@ -292,5 +295,9 @@ export const logicAppFilter = {
   kind: 'functionapp,workflowapp',
 };
 
+export const COMMON_ERRORS = {
+  OPERATION_CANCELLED: 'Operation cancelled',
+} as const;
+export type COMMON_ERRORS = (typeof COMMON_ERRORS)[keyof typeof COMMON_ERRORS];
 // Environment Variables
 export const azurePublicBaseUrl = 'https://management.azure.com';

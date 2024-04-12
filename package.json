@@ -1,7 +1,7 @@
 {
   "name": "@microsoft/logicappsux",
   "private": true,
-  "version": "4.4.0",
+  "version": "4.4.1",
   "license": "MIT",
   "packageManager": "pnpm@8.12.1",
   "type": "module",
@@ -11,6 +11,7 @@
     "start:e2e": "turbo run e2e",
     "build": "turbo run build",
     "build:vscode": "turbo run build:vscode",
+    "vscode:designer:pack": "turbo run vscode:designer:pack",
     "test": "turbo run test:unit",
     "test:e2e": "playwright test",
     "check": "biome check --apply .",

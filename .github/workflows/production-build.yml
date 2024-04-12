@@ -84,8 +84,8 @@ jobs:
       - name: 'Set Designer Extension VSIX aiKey in package.json'
         run: echo "`jq '.aiKey="${{ env.AI_KEY }}"' apps/vs-code-designer/src/package.json`" > apps/vs-code-designer/src/package.json
 
-      # - run: npm run build:vscode-designer
-      # - run: npm run vscode:designer:pack
+      - name: 'Pack VSCode Designer Extension'
+        run: pnpm run vscode:designer:pack
 
       - name: 'Get Previous tag'
         id: previoustag
@@ -93,16 +93,15 @@ jobs:
         with:
           fallback: 0.0.0
 
-      # - name: Archive VSIX
-      #   uses: actions/upload-artifact@v3
-      #   with:
-      #     path: |
-      #       dist/apps/vs-code-designer/*.vsix
+      - name: Archive VSIX
+        uses: actions/upload-artifact@v3
+        with:
+          path: |
+            apps/vs-code-designer/dist/*.vsix
 
       - uses: ncipollo/release-action@v1
         with:
-          # artifacts: 'LICENSE.md,dist/apps/vs-code-designer/*.vsix'
-          artifacts: 'LICENSE.md'
+          artifacts: 'LICENSE.md,apps/vs-code-designer/dist/*.vsix'
           generateReleaseNotes: true
           tag: '${{ steps.previoustag.outputs.tag }}'
           token: ${{ secrets.AUTOMATION_PAT }}
