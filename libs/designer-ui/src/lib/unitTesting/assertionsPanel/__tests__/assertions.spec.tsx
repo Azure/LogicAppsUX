@@ -1,6 +1,8 @@
 import { Assertions, type AssertionsProps } from '../assertions';
 import { initializeIcons } from '@fluentui/react';
 import * as ReactShallowRenderer from 'react-test-renderer/shallow';
+import { describe, beforeEach, afterEach, it, vi, expect } from 'vitest';
+import React from 'react';
 
 describe('ui/unitTesting/assertionsPanel/assertions', () => {
   let minimal: AssertionsProps, renderer: ReactShallowRenderer.ShallowRenderer;
@@ -8,13 +10,13 @@ describe('ui/unitTesting/assertionsPanel/assertions', () => {
   beforeEach(() => {
     minimal = {
       assertions: [],
-      onAssertionAdd: jest.fn(),
-      onDismiss: jest.fn(),
-      onAssertionDelete: jest.fn(),
-      onAssertionUpdate: jest.fn(),
-      getTokenPicker: jest.fn(),
+      onAssertionAdd: vi.fn(),
+      onDismiss: vi.fn(),
+      onAssertionDelete: vi.fn(),
+      onAssertionUpdate: vi.fn(),
+      getTokenPicker: vi.fn(),
       tokenMapping: {},
-      loadParameterValueFromString: jest.fn(),
+      loadParameterValueFromString: vi.fn(),
       validationErrors: {},
     };
     renderer = ReactShallowRenderer.createRenderer();
