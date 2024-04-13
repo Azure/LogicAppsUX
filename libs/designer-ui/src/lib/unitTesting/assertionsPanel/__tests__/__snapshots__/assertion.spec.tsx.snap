@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`ui/unitTesting/assertionsPanel/assertion should render the component as editable with light theme. 1`] = `
+exports[`ui/unitTesting/assertionsPanel/assertion > should render the component as editable with light theme. 1`] = `
 <div
   className="msla-workflow-assertion"
 >
@@ -66,7 +66,7 @@ exports[`ui/unitTesting/assertionsPanel/assertion should render the component as
             fill="currentColor"
             height="24"
             style={
-              Object {
+              {
                 "color": "var(--colorBrandForeground1)",
               }
             }
@@ -85,7 +85,7 @@ exports[`ui/unitTesting/assertionsPanel/assertion should render the component as
             fill="currentColor"
             height="24"
             style={
-              Object {
+              {
                 "color": "var(--colorBrandForeground1)",
               }
             }
@@ -109,24 +109,24 @@ exports[`ui/unitTesting/assertionsPanel/assertion should render the component as
       className="msla-assertion-field"
     >
       <label
-        className="ms-Label root-127"
+        className="ms-Label root-184"
         htmlFor="test-name-name"
       >
         Assertion name
       </label>
       <div
-        className="ms-TextField root-129"
+        className="ms-TextField root-186"
       >
         <div
           className="ms-TextField-wrapper"
         >
           <div
-            className="ms-TextField-fieldGroup fieldGroup-130"
+            className="ms-TextField-fieldGroup fieldGroup-187"
           >
             <input
               aria-invalid={false}
               aria-label="Assertion name"
-              className="ms-TextField-field field-131"
+              className="ms-TextField-field field-188"
               data-testid="test-name-name"
               disabled={false}
               id="test-name-name"
@@ -146,24 +146,24 @@ exports[`ui/unitTesting/assertionsPanel/assertion should render the component as
       className="msla-assertion-field"
     >
       <label
-        className="ms-Label root-140"
+        className="ms-Label root-197"
         htmlFor="test-name-description"
       >
         Description
       </label>
       <div
-        className="ms-TextField ms-TextField--multiline root-129"
+        className="ms-TextField ms-TextField--multiline root-186"
       >
         <div
           className="ms-TextField-wrapper"
         >
           <div
-            className="ms-TextField-fieldGroup fieldGroup-141"
+            className="ms-TextField-fieldGroup fieldGroup-198"
           >
             <textarea
               aria-invalid={false}
               aria-label="Description"
-              className="ms-TextField-field field-142"
+              className="ms-TextField-field field-199"
               data-testid="test-name-description"
               disabled={false}
               id="test-name-description"
@@ -182,7 +182,7 @@ exports[`ui/unitTesting/assertionsPanel/assertion should render the component as
       className="msla-assertion-condition"
     >
       <label
-        className="ms-Label root-127"
+        className="ms-Label root-184"
         htmlFor="test-name-expression"
       >
         Condition expression
@@ -217,13 +217,13 @@ exports[`ui/unitTesting/assertionsPanel/assertion should render the component as
                     className="msla-dropdown-editor-container"
                   >
                     <div
-                      className="ms-Dropdown-container root-144"
+                      className="ms-Dropdown-container root-201"
                     >
                       <div
                         aria-disabled={false}
                         aria-expanded="false"
                         aria-haspopup="listbox"
-                        className="ms-Dropdown dropdown-145"
+                        className="ms-Dropdown dropdown-202"
                         data-is-focusable={true}
                         data-ktp-target={true}
                         id="Dropdown10"
@@ -239,17 +239,17 @@ exports[`ui/unitTesting/assertionsPanel/assertion should render the component as
                       >
                         <span
                           aria-invalid={false}
-                          className="ms-Dropdown-title title-193"
+                          className="ms-Dropdown-title title-250"
                           id="Dropdown10-option"
                         >
                           AND
                         </span>
                         <span
-                          className="ms-Dropdown-caretDownWrapper caretDownWrapper-147"
+                          className="ms-Dropdown-caretDownWrapper caretDownWrapper-204"
                         >
                           <i
                             aria-hidden={true}
-                            className="ms-Dropdown-caretDown caretDown-165"
+                            className="ms-Dropdown-caretDown caretDown-222"
                             data-icon-name="ChevronDown"
                           >
                             
@@ -269,12 +269,12 @@ exports[`ui/unitTesting/assertionsPanel/assertion should render the component as
                     className="msla-querybuilder-row-checkbox msla-checkbox"
                   >
                     <div
-                      className="ms-Checkbox is-enabled msla-checkbox-label root-166"
+                      className="ms-Checkbox is-enabled msla-checkbox-label root-223"
                     >
                       <input
                         aria-disabled={false}
                         checked={false}
-                        className="input-167"
+                        className="input-224"
                         data-ktp-execute-target={true}
                         disabled={false}
                         id="checkbox-11"
@@ -282,16 +282,16 @@ exports[`ui/unitTesting/assertionsPanel/assertion should render the component as
                         type="checkbox"
                       />
                       <label
-                        className="ms-Checkbox-label label-168"
+                        className="ms-Checkbox-label label-225"
                         htmlFor="checkbox-11"
                       >
                         <div
-                          className="ms-Checkbox-checkbox checkbox-169"
+                          className="ms-Checkbox-checkbox checkbox-226"
                           data-ktp-target={true}
                         >
                           <i
                             aria-hidden={true}
-                            className="ms-Checkbox-checkmark checkmark-172"
+                            className="ms-Checkbox-checkmark checkmark-229"
                             data-icon-name="CheckMark"
                           >
                             
@@ -305,7 +305,7 @@ exports[`ui/unitTesting/assertionsPanel/assertion should render the component as
                   >
                     <div
                       style={
-                        Object {
+                        {
                           "width": "100%",
                         }
                       }
@@ -342,13 +342,13 @@ exports[`ui/unitTesting/assertionsPanel/assertion should render the component as
                         className="msla-dropdown-editor-container"
                       >
                         <div
-                          className="ms-Dropdown-container root-173"
+                          className="ms-Dropdown-container root-230"
                         >
                           <div
                             aria-disabled={true}
                             aria-expanded="false"
                             aria-haspopup="listbox"
-                            className="ms-Dropdown is-disabled dropdown-174"
+                            className="ms-Dropdown is-disabled dropdown-231"
                             data-is-focusable={false}
                             data-ktp-target={true}
                             id="Dropdown14"
@@ -364,17 +364,17 @@ exports[`ui/unitTesting/assertionsPanel/assertion should render the component as
                           >
                             <span
                               aria-invalid={false}
-                              className="ms-Dropdown-title title-194"
+                              className="ms-Dropdown-title title-251"
                               id="Dropdown14-option"
                             >
                               is equal to
                             </span>
                             <span
-                              className="ms-Dropdown-caretDownWrapper caretDownWrapper-176"
+                              className="ms-Dropdown-caretDownWrapper caretDownWrapper-233"
                             >
                               <i
                                 aria-hidden={true}
-                                className="ms-Dropdown-caretDown caretDown-178"
+                                className="ms-Dropdown-caretDown caretDown-235"
                                 data-icon-name="ChevronDown"
                               >
                                 
@@ -386,7 +386,7 @@ exports[`ui/unitTesting/assertionsPanel/assertion should render the component as
                     </div>
                     <div
                       style={
-                        Object {
+                        {
                           "width": "100%",
                         }
                       }
@@ -420,14 +420,14 @@ exports[`ui/unitTesting/assertionsPanel/assertion should render the component as
                     </div>
                   </div>
                   <div
-                    className="ms-OverflowSet msla-querybuilder-row-more root-179"
+                    className="ms-OverflowSet msla-querybuilder-row-more root-236"
                     role="group"
                   >
                     <div
-                      className="ms-OverflowSet-overflowButton overflowButton-181"
+                      className="ms-OverflowSet-overflowButton overflowButton-238"
                     >
                       <div
-                        className="ms-TooltipHost root-182"
+                        className="ms-TooltipHost root-239"
                         onBlurCapture={[Function]}
                         onFocusCapture={[Function]}
                         onKeyDown={[Function]}
@@ -440,7 +440,7 @@ exports[`ui/unitTesting/assertionsPanel/assertion should render the component as
                           aria-expanded={false}
                           aria-haspopup={true}
                           aria-label="More commands"
-                          className="ms-Button ms-Button--icon ms-Button--hasMenu root-183"
+                          className="ms-Button ms-Button--icon ms-Button--hasMenu root-240"
                           data-is-focusable={true}
                           onClick={[Function]}
                           onKeyDown={[Function]}
@@ -451,16 +451,16 @@ exports[`ui/unitTesting/assertionsPanel/assertion should render the component as
                           type="button"
                         >
                           <span
-                            className="ms-Button-flexContainer flexContainer-184"
+                            className="ms-Button-flexContainer flexContainer-241"
                             data-automationid="splitbuttonprimary"
                           >
                             <i
                               aria-hidden={true}
-                              className="ms-Icon root-105 css-164 ms-Button-menuIcon menuIcon-188"
+                              className="ms-Icon root-105 css-221 ms-Button-menuIcon menuIcon-245"
                               data-icon-name="More"
                               style={
-                                Object {
-                                  "fontFamily": "\\"FabricMDL2Icons\\"",
+                                {
+                                  "fontFamily": ""FabricMDL2Icons"",
                                 }
                               }
                             >
@@ -472,7 +472,7 @@ exports[`ui/unitTesting/assertionsPanel/assertion should render the component as
                           hidden={true}
                           id="tooltip17"
                           style={
-                            Object {
+                            {
                               "border": 0,
                               "height": 1,
                               "margin": -1,
@@ -500,7 +500,7 @@ exports[`ui/unitTesting/assertionsPanel/assertion should render the component as
                     aria-controls={null}
                     aria-expanded={false}
                     aria-haspopup={true}
-                    className="ms-Button ms-Button--default ms-Button--hasMenu root-191"
+                    className="ms-Button ms-Button--default ms-Button--hasMenu root-248"
                     data-is-focusable={true}
                     onClick={[Function]}
                     onKeyDown={[Function]}
@@ -511,26 +511,26 @@ exports[`ui/unitTesting/assertionsPanel/assertion should render the component as
                     type="button"
                   >
                     <span
-                      className="ms-Button-flexContainer flexContainer-184"
+                      className="ms-Button-flexContainer flexContainer-241"
                       data-automationid="splitbuttonprimary"
                     >
                       <i
                         aria-hidden={true}
-                        className="ms-Icon root-105 css-164 ms-Button-icon icon-186"
+                        className="ms-Icon root-105 css-221 ms-Button-icon icon-243"
                         data-icon-name="Add"
                         style={
-                          Object {
-                            "fontFamily": "\\"FabricMDL2Icons\\"",
+                          {
+                            "fontFamily": ""FabricMDL2Icons"",
                           }
                         }
                       >
                         
                       </i>
                       <span
-                        className="ms-Button-textContainer textContainer-185"
+                        className="ms-Button-textContainer textContainer-242"
                       >
                         <span
-                          className="ms-Button-label label-192"
+                          className="ms-Button-label label-249"
                           id="id__21"
                         >
                           New item
@@ -538,11 +538,11 @@ exports[`ui/unitTesting/assertionsPanel/assertion should render the component as
                       </span>
                       <i
                         aria-hidden={true}
-                        className="ms-Icon root-105 css-164 ms-Button-menuIcon menuIcon-188"
+                        className="ms-Icon root-105 css-221 ms-Button-menuIcon menuIcon-245"
                         data-icon-name="ChevronDown"
                         style={
-                          Object {
-                            "fontFamily": "\\"FabricMDL2Icons\\"",
+                          {
+                            "fontFamily": ""FabricMDL2Icons"",
                           }
                         }
                       >
@@ -564,7 +564,7 @@ exports[`ui/unitTesting/assertionsPanel/assertion should render the component as
 </div>
 `;
 
-exports[`ui/unitTesting/assertionsPanel/assertion should render the component as no editable with dark theme. 1`] = `
+exports[`ui/unitTesting/assertionsPanel/assertion > should render the component as no editable with dark theme. 1`] = `
 <div
   className="msla-workflow-assertion"
 >
@@ -630,7 +630,7 @@ exports[`ui/unitTesting/assertionsPanel/assertion should render the component as
             fill="currentColor"
             height="24"
             style={
-              Object {
+              {
                 "color": "var(--colorBrandForeground1)",
               }
             }
@@ -649,7 +649,7 @@ exports[`ui/unitTesting/assertionsPanel/assertion should render the component as
             fill="currentColor"
             height="24"
             style={
-              Object {
+              {
                 "color": "var(--colorBrandForeground1)",
               }
             }
@@ -676,7 +676,7 @@ exports[`ui/unitTesting/assertionsPanel/assertion should render the component as
       className="msla-assertion-field"
     >
       <span
-        className="msla-assertion-field-read-only css-195"
+        className="msla-assertion-field-read-only css-252"
       >
         test-description
       </span>
@@ -692,7 +692,7 @@ exports[`ui/unitTesting/assertionsPanel/assertion should render the component as
 </div>
 `;
 
-exports[`ui/unitTesting/assertionsPanel/assertion should render the component with validation errors and error traffic light dot 1`] = `
+exports[`ui/unitTesting/assertionsPanel/assertion > should render the component with validation errors and error traffic light dot 1`] = `
 <div
   className="msla-workflow-assertion"
 >
@@ -775,7 +775,7 @@ exports[`ui/unitTesting/assertionsPanel/assertion should render the component wi
             fill="currentColor"
             height="24"
             style={
-              Object {
+              {
                 "color": "var(--colorBrandForeground1)",
               }
             }
@@ -794,7 +794,7 @@ exports[`ui/unitTesting/assertionsPanel/assertion should render the component wi
             fill="currentColor"
             height="24"
             style={
-              Object {
+              {
                 "color": "var(--colorBrandForeground1)",
               }
             }
@@ -818,25 +818,25 @@ exports[`ui/unitTesting/assertionsPanel/assertion should render the component wi
       className="msla-assertion-field"
     >
       <label
-        className="ms-Label root-127"
+        className="ms-Label root-184"
         htmlFor="-name"
       >
         Assertion name
       </label>
       <div
-        className="ms-TextField root-129"
+        className="ms-TextField root-186"
       >
         <div
           className="ms-TextField-wrapper"
         >
           <div
-            className="ms-TextField-fieldGroup fieldGroup-196"
+            className="ms-TextField-fieldGroup fieldGroup-253"
           >
             <input
               aria-describedby="TextFieldDescription25"
               aria-invalid={true}
               aria-label="Assertion name"
-              className="ms-TextField-field field-131"
+              className="ms-TextField-field field-188"
               data-testid="-name"
               disabled={false}
               id="-name"
@@ -863,24 +863,24 @@ exports[`ui/unitTesting/assertionsPanel/assertion should render the component wi
       className="msla-assertion-field"
     >
       <label
-        className="ms-Label root-140"
+        className="ms-Label root-197"
         htmlFor="-description"
       >
         Description
       </label>
       <div
-        className="ms-TextField ms-TextField--multiline root-129"
+        className="ms-TextField ms-TextField--multiline root-186"
       >
         <div
           className="ms-TextField-wrapper"
         >
           <div
-            className="ms-TextField-fieldGroup fieldGroup-141"
+            className="ms-TextField-fieldGroup fieldGroup-198"
           >
             <textarea
               aria-invalid={false}
               aria-label="Description"
-              className="ms-TextField-field field-142"
+              className="ms-TextField-field field-199"
               data-testid="-description"
               disabled={false}
               id="-description"
@@ -899,7 +899,7 @@ exports[`ui/unitTesting/assertionsPanel/assertion should render the component wi
       className="msla-assertion-condition"
     >
       <label
-        className="ms-Label root-127"
+        className="ms-Label root-184"
         htmlFor="-expression"
       >
         Condition expression
@@ -934,13 +934,13 @@ exports[`ui/unitTesting/assertionsPanel/assertion should render the component wi
                     className="msla-dropdown-editor-container"
                   >
                     <div
-                      className="ms-Dropdown-container root-144"
+                      className="ms-Dropdown-container root-201"
                     >
                       <div
                         aria-disabled={false}
                         aria-expanded="false"
                         aria-haspopup="listbox"
-                        className="ms-Dropdown dropdown-145"
+                        className="ms-Dropdown dropdown-202"
                         data-is-focusable={true}
                         data-ktp-target={true}
                         id="Dropdown34"
@@ -956,17 +956,17 @@ exports[`ui/unitTesting/assertionsPanel/assertion should render the component wi
                       >
                         <span
                           aria-invalid={false}
-                          className="ms-Dropdown-title title-193"
+                          className="ms-Dropdown-title title-250"
                           id="Dropdown34-option"
                         >
                           AND
                         </span>
                         <span
-                          className="ms-Dropdown-caretDownWrapper caretDownWrapper-147"
+                          className="ms-Dropdown-caretDownWrapper caretDownWrapper-204"
                         >
                           <i
                             aria-hidden={true}
-                            className="ms-Dropdown-caretDown caretDown-165"
+                            className="ms-Dropdown-caretDown caretDown-222"
                             data-icon-name="ChevronDown"
                           >
                             
@@ -986,12 +986,12 @@ exports[`ui/unitTesting/assertionsPanel/assertion should render the component wi
                     className="msla-querybuilder-row-checkbox msla-checkbox"
                   >
                     <div
-                      className="ms-Checkbox is-enabled msla-checkbox-label root-166"
+                      className="ms-Checkbox is-enabled msla-checkbox-label root-223"
                     >
                       <input
                         aria-disabled={false}
                         checked={false}
-                        className="input-167"
+                        className="input-224"
                         data-ktp-execute-target={true}
                         disabled={false}
                         id="checkbox-35"
@@ -999,16 +999,16 @@ exports[`ui/unitTesting/assertionsPanel/assertion should render the component wi
                         type="checkbox"
                       />
                       <label
-                        className="ms-Checkbox-label label-168"
+                        className="ms-Checkbox-label label-225"
                         htmlFor="checkbox-35"
                       >
                         <div
-                          className="ms-Checkbox-checkbox checkbox-169"
+                          className="ms-Checkbox-checkbox checkbox-226"
                           data-ktp-target={true}
                         >
                           <i
                             aria-hidden={true}
-                            className="ms-Checkbox-checkmark checkmark-172"
+                            className="ms-Checkbox-checkmark checkmark-229"
                             data-icon-name="CheckMark"
                           >
                             
@@ -1022,7 +1022,7 @@ exports[`ui/unitTesting/assertionsPanel/assertion should render the component wi
                   >
                     <div
                       style={
-                        Object {
+                        {
                           "width": "100%",
                         }
                       }
@@ -1059,13 +1059,13 @@ exports[`ui/unitTesting/assertionsPanel/assertion should render the component wi
                         className="msla-dropdown-editor-container"
                       >
                         <div
-                          className="ms-Dropdown-container root-173"
+                          className="ms-Dropdown-container root-230"
                         >
                           <div
                             aria-disabled={true}
                             aria-expanded="false"
                             aria-haspopup="listbox"
-                            className="ms-Dropdown is-disabled dropdown-174"
+                            className="ms-Dropdown is-disabled dropdown-231"
                             data-is-focusable={false}
                             data-ktp-target={true}
                             id="Dropdown38"
@@ -1081,17 +1081,17 @@ exports[`ui/unitTesting/assertionsPanel/assertion should render the component wi
                           >
                             <span
                               aria-invalid={false}
-                              className="ms-Dropdown-title title-194"
+                              className="ms-Dropdown-title title-251"
                               id="Dropdown38-option"
                             >
                               is equal to
                             </span>
                             <span
-                              className="ms-Dropdown-caretDownWrapper caretDownWrapper-176"
+                              className="ms-Dropdown-caretDownWrapper caretDownWrapper-233"
                             >
                               <i
                                 aria-hidden={true}
-                                className="ms-Dropdown-caretDown caretDown-178"
+                                className="ms-Dropdown-caretDown caretDown-235"
                                 data-icon-name="ChevronDown"
                               >
                                 
@@ -1103,7 +1103,7 @@ exports[`ui/unitTesting/assertionsPanel/assertion should render the component wi
                     </div>
                     <div
                       style={
-                        Object {
+                        {
                           "width": "100%",
                         }
                       }
@@ -1135,14 +1135,14 @@ exports[`ui/unitTesting/assertionsPanel/assertion should render the component wi
                     </div>
                   </div>
                   <div
-                    className="ms-OverflowSet msla-querybuilder-row-more root-179"
+                    className="ms-OverflowSet msla-querybuilder-row-more root-236"
                     role="group"
                   >
                     <div
-                      className="ms-OverflowSet-overflowButton overflowButton-181"
+                      className="ms-OverflowSet-overflowButton overflowButton-238"
                     >
                       <div
-                        className="ms-TooltipHost root-182"
+                        className="ms-TooltipHost root-239"
                         onBlurCapture={[Function]}
                         onFocusCapture={[Function]}
                         onKeyDown={[Function]}
@@ -1155,7 +1155,7 @@ exports[`ui/unitTesting/assertionsPanel/assertion should render the component wi
                           aria-expanded={false}
                           aria-haspopup={true}
                           aria-label="More commands"
-                          className="ms-Button ms-Button--icon ms-Button--hasMenu root-183"
+                          className="ms-Button ms-Button--icon ms-Button--hasMenu root-240"
                           data-is-focusable={true}
                           onClick={[Function]}
                           onKeyDown={[Function]}
@@ -1166,16 +1166,16 @@ exports[`ui/unitTesting/assertionsPanel/assertion should render the component wi
                           type="button"
                         >
                           <span
-                            className="ms-Button-flexContainer flexContainer-184"
+                            className="ms-Button-flexContainer flexContainer-241"
                             data-automationid="splitbuttonprimary"
                           >
                             <i
                               aria-hidden={true}
-                              className="ms-Icon root-105 css-164 ms-Button-menuIcon menuIcon-188"
+                              className="ms-Icon root-105 css-221 ms-Button-menuIcon menuIcon-245"
                               data-icon-name="More"
                               style={
-                                Object {
-                                  "fontFamily": "\\"FabricMDL2Icons\\"",
+                                {
+                                  "fontFamily": ""FabricMDL2Icons"",
                                 }
                               }
                             >
@@ -1187,7 +1187,7 @@ exports[`ui/unitTesting/assertionsPanel/assertion should render the component wi
                           hidden={true}
                           id="tooltip41"
                           style={
-                            Object {
+                            {
                               "border": 0,
                               "height": 1,
                               "margin": -1,
@@ -1215,7 +1215,7 @@ exports[`ui/unitTesting/assertionsPanel/assertion should render the component wi
                     aria-controls={null}
                     aria-expanded={false}
                     aria-haspopup={true}
-                    className="ms-Button ms-Button--default ms-Button--hasMenu root-191"
+                    className="ms-Button ms-Button--default ms-Button--hasMenu root-248"
                     data-is-focusable={true}
                     onClick={[Function]}
                     onKeyDown={[Function]}
@@ -1226,26 +1226,26 @@ exports[`ui/unitTesting/assertionsPanel/assertion should render the component wi
                     type="button"
                   >
                     <span
-                      className="ms-Button-flexContainer flexContainer-184"
+                      className="ms-Button-flexContainer flexContainer-241"
                       data-automationid="splitbuttonprimary"
                     >
                       <i
                         aria-hidden={true}
-                        className="ms-Icon root-105 css-164 ms-Button-icon icon-186"
+                        className="ms-Icon root-105 css-221 ms-Button-icon icon-243"
                         data-icon-name="Add"
                         style={
-                          Object {
-                            "fontFamily": "\\"FabricMDL2Icons\\"",
+                          {
+                            "fontFamily": ""FabricMDL2Icons"",
                           }
                         }
                       >
                         
                       </i>
                       <span
-                        className="ms-Button-textContainer textContainer-185"
+                        className="ms-Button-textContainer textContainer-242"
                       >
                         <span
-                          className="ms-Button-label label-192"
+                          className="ms-Button-label label-249"
                           id="id__45"
                         >
                           New item
@@ -1253,11 +1253,11 @@ exports[`ui/unitTesting/assertionsPanel/assertion should render the component wi
                       </span>
                       <i
                         aria-hidden={true}
-                        className="ms-Icon root-105 css-164 ms-Button-menuIcon menuIcon-188"
+                        className="ms-Icon root-105 css-221 ms-Button-menuIcon menuIcon-245"
                         data-icon-name="ChevronDown"
                         style={
-                          Object {
-                            "fontFamily": "\\"FabricMDL2Icons\\"",
+                          {
+                            "fontFamily": ""FabricMDL2Icons"",
                           }
                         }
                       >

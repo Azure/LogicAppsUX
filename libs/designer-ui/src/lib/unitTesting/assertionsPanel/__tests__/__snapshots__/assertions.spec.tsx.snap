@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`ui/unitTesting/assertionsPanel/assertions should render list of assertions and add button 1`] = `
+exports[`ui/unitTesting/assertionsPanel/assertions > should render list of assertions and add button 1`] = `
 <div
   className="msla-workflow-assertions"
 >
@@ -20,12 +20,12 @@ exports[`ui/unitTesting/assertionsPanel/assertions should render list of asserti
   </div>
   <List
     items={
-      Array [
-        Object {
+      [
+        {
           "description": "test-description",
-          "expression": Object {
-            "items": Object {
-              "items": Array [],
+          "expression": {
+            "items": {
+              "items": [],
               "type": "group",
             },
           },
@@ -33,11 +33,11 @@ exports[`ui/unitTesting/assertionsPanel/assertions should render list of asserti
           "isEditable": true,
           "name": "test-assertion",
         },
-        Object {
+        {
           "description": "",
-          "expression": Object {
-            "items": Object {
-              "items": Array [],
+          "expression": {
+            "items": {
+              "items": [],
               "type": "group",
             },
           },
@@ -65,7 +65,7 @@ exports[`ui/unitTesting/assertionsPanel/assertions should render list of asserti
 </div>
 `;
 
-exports[`ui/unitTesting/assertionsPanel/assertions should render without assertions items and add button. 1`] = `
+exports[`ui/unitTesting/assertionsPanel/assertions > should render without assertions items and add button. 1`] = `
 <div
   className="msla-workflow-assertions"
 >
