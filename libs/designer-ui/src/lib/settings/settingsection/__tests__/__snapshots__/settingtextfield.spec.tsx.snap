@@ -1,3 +1,3 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`ui/settings/settingtextfield should construct 1`] = `null`;
+exports[`ui/settings/settingtextfield > should construct 1`] = `null`;

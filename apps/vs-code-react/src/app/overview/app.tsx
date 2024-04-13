@@ -6,11 +6,13 @@ import './overview.less';
 import { StandardRunService } from '@microsoft/logic-apps-shared';
 import { Overview, isRunError, mapToRunItem } from '@microsoft/designer-ui';
 import type { Runs } from '@microsoft/logic-apps-shared';
-import { ExtensionCommand, HttpClient } from '@microsoft/vscode-extension';
+import { ExtensionCommand, HttpClient } from '@microsoft/vscode-extension-logic-apps';
 import { useCallback, useContext, useMemo } from 'react';
 import { useInfiniteQuery, useMutation } from 'react-query';
 import { useSelector } from 'react-redux';
 import invariant from 'tiny-invariant';
+import { useIntl } from 'react-intl';
+
 export interface CallbackInfo {
   method?: string;
   value: string;
@@ -18,6 +20,16 @@ export interface CallbackInfo {
 export const OverviewApp = () => {
   const workflowState = useSelector((state: RootState) => state.workflow);
   const vscode = useContext(VSCodeContext);
+  const { isWorkflowRuntimeRunning } = workflowState;
+  const intl = useIntl();
+
+  const intlText = {
+    DEBUG_PROJECT_ERROR: intl.formatMessage({
+      defaultMessage: 'Please start the project by pressing F5 or run it through the Run and Debug view',
+      id: 'e1gQAz',
+      description: 'Debug logic app project error text',
+    }),
+  };
 
   const runService = useMemo(() => {
     const httpClient = new HttpClient({
@@ -56,6 +68,7 @@ export const OverviewApp = () => {
       getNextPageParam: (lastPage) => lastPage.nextLink,
       refetchInterval: 5000, // 5 seconds refresh interval
       refetchIntervalInBackground: false, // It will automatically refetch when window is focused
+      enabled: isWorkflowRuntimeRunning,
     }
   );
 
@@ -85,6 +98,9 @@ export const OverviewApp = () => {
   );
 
   const errorMessage = useMemo((): string | undefined => {
+    if (!isWorkflowRuntimeRunning) {
+      return intlText.DEBUG_PROJECT_ERROR;
+    }
     let loadingErrorMessage: string | undefined;
     let triggerErrorMessage: string | undefined;
     if (error instanceof Error) {
@@ -104,7 +120,7 @@ export const OverviewApp = () => {
     }
 
     return loadingErrorMessage ?? triggerErrorMessage;
-  }, [error, runTriggerError]);
+  }, [error, runTriggerError, isWorkflowRuntimeRunning, intlText.DEBUG_PROJECT_ERROR]);
 
   return (
     <div className="msla-overview">

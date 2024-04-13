@@ -33,8 +33,8 @@ import { getContainingWorkspace } from '../../utils/workspace';
 import { DotnetInitVSCodeStep } from '../initProjectForVSCode/DotnetInitVSCodeStep';
 import { DialogResponses, nonNullOrEmptyValue } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
-import type { IProjectWizardContext, FuncVersion, ITemplates } from '@microsoft/vscode-extension';
-import { ProjectLanguage } from '@microsoft/vscode-extension';
+import type { IProjectWizardContext, FuncVersion, ITemplates } from '@microsoft/vscode-extension-logic-apps';
+import { ProjectLanguage } from '@microsoft/vscode-extension-logic-apps';
 import * as fse from 'fs-extra';
 import * as path from 'path';
 import * as vscode from 'vscode';
@@ -198,7 +198,7 @@ async function updateBuildFile(context: IActionContext, target: vscode.Uri, dotn
 }
 
 async function deleteBundleProjectFiles(target: vscode.Uri): Promise<void> {
-  const filesTobeDeleted: string[] = [hostFileName, funcIgnoreFileName];
+  const filesTobeDeleted: string[] = [funcIgnoreFileName];
   for (const fileName of filesTobeDeleted) {
     if (await fse.pathExists(path.join(target.fsPath, fileName))) {
       await deleteFile(path.join(target.fsPath, fileName));
@@ -211,7 +211,7 @@ async function deleteFile(file: string): Promise<void> {
 }
 
 async function renameBundleProjectFiles(target: vscode.Uri): Promise<void> {
-  const filesToBeRenamed: string[] = [localSettingsFileName];
+  const filesToBeRenamed: string[] = [hostFileName, localSettingsFileName];
   for (const fileName of filesToBeRenamed) {
     if (await fse.pathExists(path.join(target.fsPath, fileName))) {
       await renameFile(path.join(target.fsPath, fileName), path.join(target.fsPath, fileName + '-copy'));
@@ -224,7 +224,7 @@ async function renameFile(fileName: string, newFileName: string): Promise<void> 
 }
 
 async function copyBundleProjectFiles(target: vscode.Uri): Promise<void> {
-  const filesToBeCopied: string[] = [localSettingsFileName];
+  const filesToBeCopied: string[] = [hostFileName, localSettingsFileName];
   for (const fileName of filesToBeCopied) {
     if (
       (await fse.pathExists(path.join(target.fsPath, fileName))) &&
@@ -236,8 +236,8 @@ async function copyBundleProjectFiles(target: vscode.Uri): Promise<void> {
   }
 }
 
-async function getArtifactNamesFromProject(target: vscode.Uri): Promise<{ [key: string]: string[] }> {
-  const artifactDict: { [key: string]: string[] } = {
+async function getArtifactNamesFromProject(target: vscode.Uri): Promise<Record<string, string[]>> {
+  const artifactDict: Record<string, string[]> = {
     workflows: [],
     connections: [],
     artifacts: [],

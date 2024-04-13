@@ -1,6 +1,8 @@
 import { SettingsSection } from '../settingsection';
 import type { SettingsSectionProps } from '../settingsection';
 import * as ReactShallowRenderer from 'react-test-renderer/shallow';
+import { describe, vi, beforeEach, afterEach, it, expect } from 'vitest';
+import React from 'react';
 
 describe('ui/settings/settingsection', () => {
   let minimal: SettingsSectionProps, renderer: ReactShallowRenderer.ShallowRenderer;
@@ -91,7 +93,7 @@ describe('ui/settings/settingsection', () => {
         },
       ],
       onHeaderClick: () => {
-        jest.fn();
+        vi.fn();
       },
     };
     renderer = ReactShallowRenderer.createRenderer();

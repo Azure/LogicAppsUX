@@ -1,7 +1,7 @@
 {
   "name": "vscode-azurelogicapps",
   "displayName": "Azure Logic Apps (Standard)",
-  "version": "3.2.0",
+  "version": "4.4.1",
   "aiKey": "setInGitHubBuild",
   "repository": "https://github.com/Azure/LogicAppsUX",
   "main": "main.js",
@@ -33,7 +33,7 @@
       "commands": [
         {
           "command": "azureLogicAppsStandard.createLogicApp",
-          "title": "Create Logic App in Azure...",
+          "title": "Create logic app in Azure...",
           "type": "LogicApp",
           "detail": "To create and run automated workflows with little to no code."
         }
@@ -60,7 +60,7 @@
       },
       {
         "command": "azureLogicAppsStandard.createNewProject",
-        "title": "Create New Project...",
+        "title": "Create new project...",
         "category": "Azure Logic Apps",
         "icon": {
           "light": "assets/light/CreateNewProject.svg",
@@ -88,10 +88,16 @@
       },
       {
         "command": "azureLogicAppsStandard.deploy",
-        "title": "Deploy to Logic App...",
+        "title": "Deploy to logic app...",
         "category": "Azure Logic Apps",
         "icon": "$(cloud-upload)",
         "enablement": "!virtualWorkspace"
+      },
+      {
+        "command": "azureLogicAppsStandard.generateDeploymentScripts",
+        "title": "Generate deployment scripts...",
+        "category": "Azure Logic Apps",
+        "preview": true
       },
       {
         "command": "azureLogicAppsStandard.deploySlot",
@@ -100,12 +106,12 @@
       },
       {
         "command": "azureLogicAppsStandard.createLogicApp",
-        "title": "Create Logic App in Azure...",
+        "title": "Create logic app in Azure...",
         "category": "Azure Logic Apps"
       },
       {
         "command": "azureLogicAppsStandard.createLogicAppAdvanced",
-        "title": "Create Logic App in Azure... (Advanced)",
+        "title": "Create logic app in Azure... (Advanced)",
         "category": "Azure Logic Apps"
       },
       {
@@ -125,7 +131,7 @@
       },
       {
         "command": "azureLogicAppsStandard.deleteLogicApp",
-        "title": "Delete Logic App...",
+        "title": "Delete logic app...",
         "category": "Azure Logic Apps"
       },
       {
@@ -140,7 +146,7 @@
       },
       {
         "command": "azureLogicAppsStandard.exportLogicApp",
-        "title": "Export Logic App...",
+        "title": "Export logic app...",
         "category": "Azure Logic Apps",
         "icon": {
           "light": "assets/light/export.svg",
@@ -149,7 +155,7 @@
       },
       {
         "command": "azureLogicAppsStandard.switchToDotnetProject",
-        "title": "Convert to NuGet-based Logic App project",
+        "title": "Convert to NuGet-based logic app project",
         "category": "Azure Logic Apps"
       },
       {
@@ -258,7 +264,7 @@
       },
       {
         "command": "azureLogicAppsStandard.useSQLStorage",
-        "title": "Use SQL storage for your Logic App project",
+        "title": "Use SQL storage for your logic app project",
         "category": "Azure Logic Apps"
       },
       {
@@ -351,6 +357,12 @@
         "command": "azureLogicAppsStandard.runUnitTest",
         "title": "Run unit test",
         "category": "Azure Logic Apps"
+      },
+      {
+        "command": "azureLogicAppsStandard.parameterizeConnections",
+        "title": "Parameterize connections",
+        "category": "Azure Logic Apps",
+        "when": "config.myExtension.enableCommand"
       }
     ],
     "submenus": [
@@ -389,7 +401,6 @@
         },
         {
           "command": "azureLogicAppsStandard.createNewCodeProject",
-          "when": "isWindows",
           "group": "1_create@2"
         },
         {
@@ -646,6 +657,11 @@
           "group": "zzz_LogicApptools@1"
         },
         {
+          "command": "azureLogicAppsStandard.generateDeploymentScripts",
+          "when": "explorerResourceIsRoot == true",
+          "group": "zzz_LogicApptools@1"
+        },
+        {
           "command": "azureLogicAppsStandard.openOverview",
           "when": "resourceFilename==workflow.json",
           "group": "navigation@1"
@@ -717,10 +733,6 @@
           "when": "resourceFilename==workflow.json"
         },
         {
-          "command": "azureLogicAppsStandard.createNewCodeProject",
-          "when": "isWindows"
-        },
-        {
           "command": "azureLogicAppsStandard.viewContent",
           "when": "never"
         },
@@ -742,6 +754,10 @@
         },
         {
           "command": "azureLogicAppsStandard.viewProperties",
+          "when": "never"
+        },
+        {
+          "command": "azureLogicAppsStandard.generateDeploymentScripts",
           "when": "never"
         }
       ],
@@ -789,7 +805,7 @@
               "~4",
               "~3"
             ],
-            "description": "The default version of the Azure Functions runtime to use when performing operations like \"Create New Logic App\".",
+            "description": "The default version of the Azure Functions runtime to use when performing operations like \"Create new logic app\".",
             "enumDescriptions": [
               "Azure Functions v4",
               "Azure Functions v3 (.NET Core)"
@@ -978,6 +994,11 @@
             "type": "boolean",
             "default": true,
             "description": "Default the data mapper to use the expanded function cards."
+          },
+          "azureLogicAppsStandard.parameterizeConnectionsInProjectLoad": {
+            "type": "boolean",
+            "default": null,
+            "description": "Parameterize connections when your project loads."
           }
         }
       }
@@ -997,6 +1018,7 @@
     "onCommand:azureLogicAppsStandard.createNewCodeProject",
     "onCommand:azureLogicAppsStandard.createCodeless",
     "onCommand:azureLogicAppsStandard.deploy",
+    "onCommand:azureLogicAppsStandard.generateDeploymentScripts",
     "onCommand:azureLogicAppsStandard.deploySlot",
     "onCommand:azureLogicAppsStandard.createLogicApp",
     "onCommand:azureLogicAppsStandard.createLogicAppAdvanced",

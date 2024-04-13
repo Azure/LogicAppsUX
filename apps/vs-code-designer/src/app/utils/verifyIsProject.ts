@@ -9,7 +9,7 @@ import { getWorkspaceSetting, updateWorkspaceSetting } from './vsCodeConfig/sett
 import { isString } from '@microsoft/logic-apps-shared';
 import { DialogResponses } from '@microsoft/vscode-azext-utils';
 import type { IActionContext, IAzureQuickPickItem } from '@microsoft/vscode-azext-utils';
-import type { ICreateFunctionOptions } from '@microsoft/vscode-extension';
+import type { ICreateFunctionOptions } from '@microsoft/vscode-extension-logic-apps';
 import * as fse from 'fs-extra';
 import * as path from 'path';
 import type { MessageItem, WorkspaceFolder } from 'vscode';

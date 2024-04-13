@@ -1,7 +1,7 @@
 import { setIconOptions } from '@fluentui/react';
 import renderer from 'react-test-renderer';
 import { RunHistory, type RunHistoryProps } from '../runhistory';
-
+import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 describe('lib/overview/runhistory', () => {
   let minimal: RunHistoryProps;
 
@@ -14,7 +14,7 @@ describe('lib/overview/runhistory', () => {
   beforeEach(() => {
     minimal = {
       items: [],
-      onOpenRun: jest.fn(),
+      onOpenRun: vi.fn(),
     };
   });
 

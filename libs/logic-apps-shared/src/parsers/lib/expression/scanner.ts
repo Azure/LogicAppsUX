@@ -5,7 +5,7 @@ import { ScannerException } from '../common/exceptions/scanner';
 import { isNumeric, isWhitespace } from '../common/helpers/expression';
 import type { ExpressionToken } from '../models/expression';
 import { ExpressionTokenType } from '../models/expression';
-import { equals } from '@microsoft/utils-logic-apps';
+import { equals } from '../../../utils/src';
 
 export class ExpressionScanner {
   private _expression: string;

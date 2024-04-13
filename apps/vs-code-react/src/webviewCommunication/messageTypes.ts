@@ -2,7 +2,7 @@ import type { ApiHubServiceDetails, SchemaType } from '@microsoft/logic-apps-sha
 import type { ITargetDirectory } from '../run-service/types';
 import type { InitializeUnitTestPayload } from '../state/UnitTestSlice';
 import type { InitializePayload, Status } from '../state/WorkflowSlice';
-import type { MapDefinitionData, ExtensionCommand, ConnectionsData, IDesignerPanelMetadata } from '@microsoft/vscode-extension';
+import { ConnectionsData, ExtensionCommand, IDesignerPanelMetadata, MapDefinitionData } from '@microsoft/vscode-extension-logic-apps';
 
 type FetchSchemaData = { fileName: string; type: SchemaType };
 export type XsltData = { filename: string; fileContents: string };

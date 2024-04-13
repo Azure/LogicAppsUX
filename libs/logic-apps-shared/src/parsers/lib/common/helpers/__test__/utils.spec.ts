@@ -1,10 +1,10 @@
 import { DynamicSchemaType, DynamicValuesType } from '../../../models/operation';
 import { ExtensionProperties } from '../../constants';
 import { getParameterDynamicSchema, getParameterDynamicValues } from '../utils';
-import type { OpenAPIV2 } from '@microsoft/utils-logic-apps';
+import type { OpenAPIV2 } from '../../../../../utils/src';
 
 type SchemaObject = OpenAPIV2.SchemaObject;
-
+import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 describe('Parser common utilities tests', () => {
   describe('getParameterDynamicValues', () => {
     it('should prefer old, x-ms-dynamic-values extension when present', () => {

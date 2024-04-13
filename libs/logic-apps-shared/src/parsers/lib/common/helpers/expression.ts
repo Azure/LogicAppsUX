@@ -1,6 +1,6 @@
 import type { Expression, ExpressionFunction, ExpressionLiteral, ExpressionStringInterpolation } from '../../models/expression';
 import { ExpressionFunctionNames, ExpressionType } from '../../models/expression';
-import { equals, isNullOrEmpty } from '@microsoft/utils-logic-apps';
+import { equals, isNullOrEmpty } from '../../../../utils/src';
 
 export function isNumeric(ch: string) {
   return /[0-9]/g.test(ch);
@@ -53,10 +53,9 @@ export function isWhitespace(ch: string) {
 }
 
 export function isTemplateExpression(value: string): boolean {
-  if (isNullOrEmpty(value) || value.length < 2) {
+  if (isNullOrEmpty(value) || typeof value !== 'string' || value.length < 2) {
     return false;
   }
-
   return value.charAt(0) === '@' || value.indexOf('@{') > 0;
 }
 

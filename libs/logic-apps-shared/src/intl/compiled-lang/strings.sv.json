@@ -877,6 +877,12 @@
       "value": "(UTC+10:30) Lord Howeön"
     }
   ],
+  "3n6GJG": [
+    {
+      "type": 0,
+      "value": "Ange en giltig JSON."
+    }
+  ],
   "3rzrWf": [
     {
       "type": 0,
@@ -2849,12 +2855,6 @@
       "value": "Förklara flödet"
     }
   ],
-  "GXXLuT": [
-    {
-      "type": 0,
-      "value": "Ange ett giltigt booleskt värde."
-    }
-  ],
   "GYvF54": [
     {
       "type": 0,
@@ -3343,6 +3343,12 @@
       "value": "Metod"
     }
   ],
+  "JgugQX": [
+    {
+      "type": 0,
+      "value": "Ange en giltig matris."
+    }
+  ],
   "Ji6663": [
     {
       "type": 0,
@@ -3755,12 +3761,6 @@
       "value": "Returnerar den aktuella tidsstämpeln som en sträng"
     }
   ],
-  "MVrv+N": [
-    {
-      "type": 0,
-      "value": "Ange en giltig matris."
-    }
-  ],
   "MYgKHu": [
     {
       "type": 0,
@@ -3788,7 +3788,7 @@
   "Mcvr0B": [
     {
       "type": 0,
-      "value": "To use modules or dependecies, please add at Custom Code Dependenncies in Portal TOC"
+      "value": "Om du vill använda moduler eller beroenden lägger du till dem i Anpassade kodberoenden i portalens innehållsförteckning"
     }
   ],
   "MfAdfx": [
@@ -6157,6 +6157,12 @@
       "value": "Lägg till eller välj ett källschema som ska användas för kartan."
     }
   ],
+  "b7BQdu": [
+    {
+      "type": 0,
+      "value": "Ange ett giltigt booleskt värde."
+    }
+  ],
   "b9/1dK": [
     {
       "type": 0,
@@ -6251,12 +6257,6 @@
     {
       "type": 0,
       "value": "Information"
-    }
-  ],
-  "bYwqkV": [
-    {
-      "type": 0,
-      "value": "Ange en giltig JSON."
     }
   ],
   "ba9yGJ": [
@@ -6497,6 +6497,12 @@
     {
       "type": 0,
       "value": "Läs mer"
+    }
+  ],
+  "dEe6Ob": [
+    {
+      "type": 0,
+      "value": "Ange en giltig JSON."
     }
   ],
   "dKCp2j": [
@@ -7669,12 +7675,6 @@
     {
       "type": 0,
       "value": "Autentiseringstypegenskapen saknas: typ."
-    }
-  ],
-  "kxMDyM": [
-    {
-      "type": 0,
-      "value": "Ange en giltig JSON."
     }
   ],
   "l/3yJr": [

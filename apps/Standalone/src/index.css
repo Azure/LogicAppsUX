@@ -1,0 +1,11 @@
+@import "@microsoft/logic-apps-designer/build/lib/index.css";
+@import '@microsoft/logic-apps-chatbot/build/lib/index.css';
+@import '@microsoft/designer-ui/build/lib/index.css';
+/* You can add global styles to this file, and also import other style files */
+html,
+body,
+#root {
+  height: 100%;
+  overflow-y: hidden;
+  margin: 0;
+}

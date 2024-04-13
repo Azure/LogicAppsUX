@@ -24,7 +24,6 @@ import {
   updateParameterValidation,
   DynamicLoadStatus,
   addDynamicInputs,
-  clearDynamicInputs,
   updateNodeParameters,
 } from '../../state/operation/operationMetadataSlice';
 import type { VariableDeclaration } from '../../state/tokens/tokensSlice';
@@ -116,6 +115,7 @@ import {
   getRecordEntry,
   replaceWhiteSpaceWithUnderscore,
   isRecordNotEmpty,
+  isStringNonPrimitive,
 } from '@microsoft/logic-apps-shared';
 import type {
   AuthProps,
@@ -871,7 +871,10 @@ export function loadParameterValue(parameter: InputParameter): ValueSegment[] {
   if (parameter.isNotificationUrl) {
     valueObject = `@${constants.HTTP_WEBHOOK_LIST_CALLBACK_URL_NAME}`;
   } else {
-    valueObject = parameter?.value ?? parameter?.default;
+    valueObject = parameter?.value;
+    if (parameter?.required && valueObject === undefined) {
+      valueObject = parameter?.default;
+    }
   }
 
   let valueSegments = convertToValueSegments(valueObject, !parameter.suppressCasting /* shouldUncast */);
@@ -1571,6 +1574,9 @@ function reduceRedundantSegments(segments: Segment[]): void {
 }
 
 export function transformInputParameter(inputParameter: InputParameter, parameterValue: any, invisible = false): InputParameter {
+  if (inputParameter.type === constants.SWAGGER.TYPE.ANY && typeof parameterValue === 'string' && isStringNonPrimitive(parameterValue)) {
+    parameterValue = `"${parameterValue}"`;
+  }
   return { ...inputParameter, hideInUI: invisible, value: parameterValue };
 }
 
@@ -1879,26 +1885,28 @@ export async function updateDynamicDataInNode(
   const { operations, workflowParameters } = getState();
   const nodeDependencies = getRecordEntry(operations.dependencies, nodeId) ?? { inputs: {}, outputs: {} };
   const nodeInputParameters = getRecordEntry(operations.inputParameters, nodeId) ?? { parameterGroups: {} };
+
+  const parameterDynamicValues = [] as any;
   for (const parameterKey of Object.keys(nodeDependencies?.inputs ?? {})) {
-    const dependencyInfo = nodeDependencies.inputs[parameterKey];
-    if (dependencyInfo.dependencyType === 'ListValues') {
-      const details = getGroupAndParameterFromParameterKey(nodeInputParameters, parameterKey);
-      if (details) {
-        loadDynamicValuesForParameter(
-          nodeId,
-          details.groupId,
-          details.parameter.id,
-          operationInfo,
-          connectionReference,
-          nodeInputParameters,
-          nodeDependencies,
-          false /* showErrorWhenNotReady */,
-          dispatch,
-          /* idReplacements */ undefined,
-          workflowParameters.definitions
-        );
-      }
-    }
+    if (nodeDependencies.inputs?.[parameterKey]?.dependencyType !== 'ListValues') continue;
+    const details = getGroupAndParameterFromParameterKey(nodeInputParameters, parameterKey);
+    if (!details) continue;
+    parameterDynamicValues.push(
+      await fetchDynamicValuesForParameter(
+        details.groupId,
+        details.parameter.id,
+        operationInfo,
+        connectionReference,
+        nodeInputParameters,
+        nodeDependencies,
+        false /* showErrorWhenNotReady */,
+        undefined /* idReplacements */,
+        workflowParameters.definitions
+      )
+    );
+  }
+  if (parameterDynamicValues.length > 0) {
+    dispatch(updateNodeParameters({ nodeId, parameters: parameterDynamicValues }));
   }
 }
 
@@ -1960,8 +1968,6 @@ async function loadDynamicContentForInputsInNode(
   for (const inputKey of Object.keys(inputDependencies)) {
     const info = inputDependencies[inputKey];
     if (info.dependencyType === 'ApiSchema') {
-      dispatch(clearDynamicInputs(nodeId));
-
       if (isDynamicDataReadyToLoad(info)) {
         try {
           const inputSchema = await tryGetInputDynamicSchema(
@@ -2172,6 +2178,53 @@ export async function loadDynamicValuesForParameter(
   dispatch(updateNodeParameters({ nodeId, parameters: [{ parameterId, groupId, propertiesToUpdate }] }));
 }
 
+export async function fetchDynamicValuesForParameter(
+  groupId: string,
+  parameterId: string,
+  operationInfo: NodeOperation,
+  connectionReference: ConnectionReference | undefined,
+  nodeInputs: NodeInputs,
+  dependencies: NodeDependencies,
+  showErrorWhenNotReady: boolean,
+  idReplacements: Record<string, string> = {},
+  workflowParameters: Record<string, WorkflowParameterDefinition>
+): Promise<{ parameterId: string; groupId: string; propertiesToUpdate: any } | undefined> {
+  const groupParameters = nodeInputs.parameterGroups[groupId].parameters;
+  const parameter = groupParameters.find((parameter) => parameter.id === parameterId) as ParameterInfo;
+  if (!parameter) {
+    return;
+  }
+
+  const dependencyInfo = dependencies.inputs[parameter.parameterKey];
+  if (!dependencyInfo) return;
+  if (!isDynamicDataReadyToLoad(dependencyInfo)) {
+    if (showErrorWhenNotReady)
+      fetchErrorWhenDependenciesNotReady(groupId, parameterId, dependencyInfo, groupParameters, /* isTreeCall */ false);
+    return;
+  }
+
+  let propertiesToUpdate: any = { dynamicData: { status: DynamicCallStatus.STARTED }, editorOptions: { options: [] } };
+
+  try {
+    const dynamicValues = await getDynamicValues(
+      dependencyInfo,
+      nodeInputs,
+      operationInfo,
+      connectionReference,
+      idReplacements,
+      workflowParameters
+    );
+
+    propertiesToUpdate = { dynamicData: { status: DynamicCallStatus.SUCCEEDED }, editorOptions: { options: dynamicValues } };
+  } catch (error: any) {
+    const rootMessage = parseErrorMessage(error);
+    const message = error?.response?.data?.error?.message ?? rootMessage;
+    propertiesToUpdate = { dynamicData: { status: DynamicCallStatus.FAILED, error: { ...error, message } } };
+  }
+
+  return { parameterId, groupId, propertiesToUpdate };
+}
+
 export function shouldLoadDynamicInputs(nodeInputs: NodeInputs): boolean {
   return nodeInputs.dynamicLoadStatus === DynamicLoadStatus.FAILED || nodeInputs.dynamicLoadStatus === DynamicLoadStatus.NOTSTARTED;
 }
@@ -2270,6 +2323,40 @@ function showErrorWhenDependenciesNotReady(
       ],
     })
   );
+}
+
+export function fetchErrorWhenDependenciesNotReady(
+  groupId: string,
+  parameterId: string,
+  dependencyInfo: DependencyInfo,
+  groupParameters: ParameterInfo[],
+  isTreeCall: boolean
+): any {
+  const intl = getIntl();
+  const invalidParameterNames = Object.keys(dependencyInfo.dependentParameters)
+    .filter((key) => !dependencyInfo.dependentParameters[key].isValid)
+    .map((id) => groupParameters.find((param) => param.id === id)?.parameterName);
+
+  return {
+    parameterId,
+    groupId,
+    propertiesToUpdate: {
+      dynamicData: {
+        error: {
+          name: isTreeCall ? 'DynamicTreeFailed' : 'DynamicListFailed',
+          message: intl.formatMessage(
+            {
+              defaultMessage: 'Required parameters {parameters} not set or invalid',
+              id: '3Y8a6G',
+              description: 'Error message to show when required parameters are not set or invalid',
+            },
+            { parameters: `${invalidParameterNames.join(' , ')}` }
+          ),
+        },
+        status: DynamicCallStatus.FAILED,
+      },
+    },
+  };
 }
 
 export function getStringifiedValueFromEditorViewModel(
@@ -2533,18 +2620,18 @@ export const getCustomCodeFileName = (nodeId: string, nodeInputs?: NodeInputs, i
 
 export const getCustomCodeFilesWithData = (state: CustomCodeState): CustomCodeFileNameMapping => {
   const { files, fileData } = state;
-  const customCodeFileWithData: CustomCodeFileNameMapping = {};
+  const customCodeFilesWithData: CustomCodeFileNameMapping = {};
   Object.entries(files).forEach(([fileName, fileInfo]) => {
     const { nodeId } = fileInfo;
     const fileDataInfo = getRecordEntry(fileData, nodeId);
     if (fileDataInfo || fileInfo.isDeleted) {
-      customCodeFileWithData[fileName] = {
+      customCodeFilesWithData[fileName] = {
         ...fileInfo,
         fileData: fileDataInfo ?? '',
       };
     }
   });
-  return customCodeFileWithData;
+  return customCodeFilesWithData;
 };
 
 export function getInputsValueFromDefinitionForManifest(

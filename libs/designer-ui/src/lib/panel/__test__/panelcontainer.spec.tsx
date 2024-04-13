@@ -3,7 +3,7 @@ import type { PanelContainerProps } from '../panelcontainer';
 import { PanelContainer } from '../panelcontainer';
 import * as React from 'react';
 import * as ReactShallowRenderer from 'react-test-renderer/shallow';
-
+import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 describe('ui/workflowparameters/workflowparameter', () => {
   let minimal: PanelContainerProps, renderer: ReactShallowRenderer.ShallowRenderer;
   beforeEach(() => {
@@ -17,11 +17,11 @@ describe('ui/workflowparameters/workflowparameter', () => {
       tabs: {},
       title: 'test title',
       width: '630px',
-      onCommentChange: jest.fn(),
-      trackEvent: jest.fn(),
-      setSelectedTab: jest.fn(),
-      toggleCollapse: jest.fn(),
-      onTitleChange: jest.fn(),
+      onCommentChange: vi.fn(),
+      trackEvent: vi.fn(),
+      setSelectedTab: vi.fn(),
+      toggleCollapse: vi.fn(),
+      onTitleChange: vi.fn(),
     };
     renderer = ReactShallowRenderer.createRenderer();
   });

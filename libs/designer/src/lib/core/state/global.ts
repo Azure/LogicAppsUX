@@ -1,3 +1,4 @@
+import { resetCustomCode } from './customcode/customcodeSlice';
 import { useIsWorkflowDirty } from './workflow/workflowSelectors';
 import { setIsWorkflowDirty } from './workflow/workflowSlice';
 import { setIsWorkflowParametersDirty } from './workflowparameters/workflowparametersSlice';
@@ -17,4 +18,5 @@ export const resetDesignerDirtyState = createAsyncThunk('resetDesignerDirtyState
   const dispatch = thunkAPI.dispatch;
   dispatch(setIsWorkflowDirty(false));
   dispatch(setIsWorkflowParametersDirty(false));
+  dispatch(resetCustomCode());
 });

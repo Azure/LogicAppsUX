@@ -1,7 +1,5 @@
-import type { ICustomCodeService, UploadCustomCode, VFSObject } from '../customcode';
-import { CustomCodeConstants } from '../customcode';
+import type { ICustomCodeService, UploadCustomCodeAppFilePayload, UploadCustomCodePayload } from '../customcode';
 import type { IHttpClient } from '../httpClient';
-import { equals } from '@microsoft/logic-apps-shared';
 
 export interface CustomCodeServiceOptions {
   apiVersion: string;
@@ -33,64 +31,38 @@ export class StandardCustomCodeService implements ICustomCodeService {
     }
   }
 
-  isCustomCode(editor?: string, language?: string): boolean {
-    return equals(editor, CustomCodeConstants.EDITOR.CODE) && !equals(language, CustomCodeConstants.EDITOR_OPTIONS.LANGUAGE.JAVASCRIPT);
-  }
-
-  async getAllCustomCodeFiles(): Promise<VFSObject[]> {
-    const { apiVersion, baseUrl, subscriptionId, resourceGroup, appName, workflowName, httpClient } = this.options;
-    const uri = `${baseUrl}/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Web/sites/${appName}/hostruntime/admin/vfs/${workflowName}`;
+  async uploadCustomCodeAppFile({ fileName, fileData }: UploadCustomCodeAppFilePayload): Promise<void> {
+    const { apiVersion, baseUrl, subscriptionId, resourceGroup, appName, httpClient } = this.options;
+    if (!(fileName && fileData)) return;
+    const uri = `${baseUrl}/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Web/sites/${appName}/hostruntime/admin/vfs/${fileName}`;
 
     const queryParameters = {
       relativePath: 1,
       'api-version': apiVersion,
     };
 
-    try {
-      const response = await httpClient.get<VFSObject[]>({
-        uri,
-        queryParameters,
-      });
-
-      return response;
-    } catch (error: any) {
-      if (error?.httpStatusCode === 404) {
-        return [];
-      } else {
-        throw error;
-      }
-    }
-  }
-
-  async getCustomCodeFile(fileName: string): Promise<string> {
-    const { apiVersion, baseUrl, subscriptionId, resourceGroup, appName, workflowName, httpClient } = this.options;
-    const uri = `${baseUrl}/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Web/sites/${appName}/hostruntime/admin/vfs/${workflowName}/${fileName}`;
-    const headers: Record<string, string | string[]> = {
-      'If-Match': ['*'],
+    const headers = {
+      'Cache-Control': 'no-cache',
+      'If-Match': '*',
     };
-
-    const queryParameters = {
-      relativePath: 1,
-      'api-version': apiVersion,
-    };
-
+    const blobifiedData = new Blob([fileData]);
     try {
-      const response = await httpClient.get<string>({
+      await httpClient.put<any, Blob>({
         uri,
         queryParameters,
         headers,
+        content: blobifiedData,
       });
-      return response;
     } catch (error: any) {
       if (error?.httpStatusCode !== 404) {
         throw error;
       }
-      return '';
     }
   }
 
-  async uploadCustomCode({ fileData, fileName, fileExtension }: UploadCustomCode): Promise<void> {
+  async uploadCustomCode({ fileData, fileName, fileExtension }: UploadCustomCodePayload): Promise<void> {
     const { apiVersion, baseUrl, subscriptionId, resourceGroup, appName, workflowName, httpClient } = this.options;
+    const contentType = fileExtension.substring(fileExtension.indexOf('.') + 1) ?? 'plain/text';
     const uri = `${baseUrl}/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Web/sites/${appName}/hostruntime/admin/vfs/${workflowName}/${fileName}`;
 
     const queryParameters = {
@@ -100,15 +72,16 @@ export class StandardCustomCodeService implements ICustomCodeService {
 
     const headers = {
       'Cache-Control': 'no-cache',
-      'Content-Type': fileExtension.substring(fileExtension.indexOf('.') + 1) ?? 'plain/text',
+      'Content-Type': contentType,
       'If-Match': '*',
     };
+    const blobifiedData = new Blob([fileData], { type: contentType });
     try {
-      await httpClient.put({
+      await httpClient.put<any, Blob>({
         uri,
         queryParameters,
         headers,
-        content: fileData,
+        content: blobifiedData,
       });
     } catch (error: any) {
       if (error?.httpStatusCode !== 404) {

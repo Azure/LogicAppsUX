@@ -20,9 +20,9 @@ import { OpenMonitoringViewBase } from './openMonitoringViewBase';
 import type { ServiceClientCredentials } from '@azure/ms-rest-js';
 import { HTTP_METHODS } from '@microsoft/logic-apps-shared';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
-import type { IDesignerPanelMetadata, IWorkflowFileContent } from '@microsoft/vscode-extension';
-import { ExtensionCommand, ProjectName } from '@microsoft/vscode-extension';
 import * as path from 'path';
+import type { IDesignerPanelMetadata, IWorkflowFileContent } from '@microsoft/vscode-extension-logic-apps';
+import { ExtensionCommand, ProjectName } from '@microsoft/vscode-extension-logic-apps';
 import * as vscode from 'vscode';
 import { ViewColumn, Uri, type WebviewPanel } from 'vscode';
 

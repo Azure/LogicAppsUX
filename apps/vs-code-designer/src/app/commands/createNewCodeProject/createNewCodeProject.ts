@@ -15,16 +15,21 @@ import { showPreviewWarning } from '../../utils/taskUtils';
 import { getGlobalSetting, getWorkspaceSetting } from '../../utils/vsCodeConfig/settings';
 import { OpenBehaviorStep } from '../createNewProject/OpenBehaviorStep';
 import { FolderListStep } from '../createNewProject/createProjectSteps/FolderListStep';
+import { NewCodeProjectTypeStep } from './CodeProjectBase/NewCodeProjectTypeStep';
 import { OpenFolderStepCodeProject } from './CodeProjectBase/OpenFolderStepCodeProject';
-import { NewCodeProjectTypeStep } from './createCodeProjectSteps/NewCodeProjectTypeStep';
-import { setWorkspaceName } from './createCodeProjectSteps/SetWorkspaceName';
-import { setMethodName } from './createCodeProjectSteps/createFunction/setMethodName';
-import { setNamespace } from './createCodeProjectSteps/createFunction/setNamepSpace';
+import { SetLogicAppName } from './CodeProjectBase/SetLogicAppNameStep';
+import { setWorkspaceName } from './CodeProjectBase/SetWorkspaceName';
+import { SetLogicAppType } from './CodeProjectBase/setLogicAppType';
 import { isString } from '@microsoft/logic-apps-shared';
 import { AzureWizard } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
-import { latestGAVersion, OpenBehavior } from '@microsoft/vscode-extension';
-import type { ICreateFunctionOptions, IFunctionWizardContext, ProjectLanguage, ProjectVersion } from '@microsoft/vscode-extension';
+import { latestGAVersion, OpenBehavior } from '@microsoft/vscode-extension-logic-apps';
+import type {
+  ICreateFunctionOptions,
+  IFunctionWizardContext,
+  ProjectLanguage,
+  ProjectVersion,
+} from '@microsoft/vscode-extension-logic-apps';
 import * as fse from 'fs-extra';
 import * as path from 'path';
 import { window } from 'vscode';
@@ -79,8 +84,8 @@ export async function createNewCodeProjectInternal(context: IActionContext, opti
     promptSteps: [
       new FolderListStep(),
       new setWorkspaceName(),
-      new setMethodName(),
-      new setNamespace(),
+      new SetLogicAppType(),
+      new SetLogicAppName(),
       new NewCodeProjectTypeStep(options.templateId, options.functionSettings),
       new OpenBehaviorStep(),
     ],
@@ -91,6 +96,7 @@ export async function createNewCodeProjectInternal(context: IActionContext, opti
   await wizard.execute();
 
   await createArtifactsFolder(context as IFunctionWizardContext);
+  await createLibFolder(context as IFunctionWizardContext);
 
   window.showInformationMessage(localize('finishedCreating', 'Finished creating project.'));
 }
@@ -98,4 +104,10 @@ export async function createNewCodeProjectInternal(context: IActionContext, opti
 async function createArtifactsFolder(context: IFunctionWizardContext): Promise<void> {
   fse.mkdirSync(path.join(context.projectPath, 'Artifacts', 'Maps'), { recursive: true });
   fse.mkdirSync(path.join(context.projectPath, 'Artifacts', 'Schemas'), { recursive: true });
+}
+
+async function createLibFolder(context: IFunctionWizardContext): Promise<void> {
+  fse.mkdirSync(path.join(context.projectPath, 'lib', 'builtinOperationSdks', 'JAR'), { recursive: true });
+  fse.mkdirSync(path.join(context.projectPath, 'lib', 'builtinOperationSdks', 'net472'), { recursive: true });
+  fse.mkdirSync(path.join(context.projectPath, 'lib', 'custom', 'net472'), { recursive: true });
 }
