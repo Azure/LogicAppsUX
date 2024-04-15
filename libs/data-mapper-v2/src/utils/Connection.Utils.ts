@@ -8,7 +8,7 @@ import { LogCategory, LogService } from './Logging.Utils';
 //import { addReactFlowPrefix, addTargetReactFlowPrefix } from './ReactFlow.Util';
 import { isSchemaNodeExtended } from './Schema.Utils';
 import type { SchemaNodeExtended } from '@microsoft/logic-apps-shared';
-import { NormalizedDataType, SchemaNodeProperty, SchemaType } from '@microsoft/logic-apps-shared';
+import { NormalizedDataType, SchemaNodeProperty } from '@microsoft/logic-apps-shared';
 import type { WritableDraft } from 'immer/dist/internal';
 
 // danielle do we need this?
@@ -459,7 +459,7 @@ export const getFunctionConnectionUnits = (
 
 export const bringInParentSourceNodesForRepeating = (
   parentTargetNode: WritableDraft<SchemaNodeExtended> | undefined,
-  newState: DataMapOperationState
+  _newState: DataMapOperationState
 ) => {
   if (parentTargetNode) {
     // const inputsToParentTarget = newState.dataMapConnections[addTargetReactFlowPrefix(parentTargetNode?.key)]?.inputs;
