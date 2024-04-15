@@ -25,7 +25,6 @@ import {
 import { getFramework, validateDotnetInstalled } from '../../../utils/dotnet/executeDotnetTemplateCommand';
 import { writeFormattedJson } from '../../../utils/fs';
 import { parseJson } from '../../../utils/parseJson';
-import { validateDotNetIsInstalled } from '../../dotnet/validateDotNetInstalled';
 import { WorkflowCreateStepBase } from './WorkflowCreateStepBase';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { DialogResponses, nonNullProp, parseError } from '@microsoft/vscode-azext-utils';
