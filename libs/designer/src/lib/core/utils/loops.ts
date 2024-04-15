@@ -454,18 +454,15 @@ export const isForeachActionNameForLoopsource = (
   operations: Operations,
   nodesMetadata: NodesMetadata
 ): boolean => {
-  const operationInfos = Object.keys(operations).reduce(
-    (result: Record<string, NodeOperation>, operationId) => ({
-      ...result,
-      [operationId]: {
-        type: operations[operationId]?.type,
-        kind: operations[operationId]?.kind,
-        connectorId: '',
-        operationId: '',
-      },
-    }),
-    {}
-  );
+  const operationInfos: Record<string, NodeOperation> = {};
+  for (const operationId of Object.keys(operations)) {
+    operationInfos[operationId] = {
+      type: operations[operationId]?.type,
+      kind: operations[operationId]?.kind,
+      connectorId: '',
+      operationId: '',
+    };
+  }
   const repetitionNodeIds = getRepetitionNodeIds(nodeId, nodesMetadata, operationInfos);
   const sanitizedPath = sanitizeKey(expression);
   const foreachAction = first((item) => {

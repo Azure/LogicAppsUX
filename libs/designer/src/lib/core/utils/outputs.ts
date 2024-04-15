@@ -333,13 +333,11 @@ export const getUpdatedManifestForSchemaDependency = (manifest: OperationManifes
               const parameters = parameterSegments.map((parameter) => parameter.slice(1, -1));
               schemaToReplace = {
                 properties: parameters.reduce((properties: Record<string, any>, parameter: string) => {
-                  return {
-                    ...properties,
-                    [parameter]: {
-                      type: Constants.SWAGGER.TYPE.STRING,
-                      title: parameter,
-                    },
+                  properties[parameter] = {
+                    type: Constants.SWAGGER.TYPE.STRING,
+                    title: parameter,
                   };
+                  return properties;
                 }, {}),
                 required: parameters,
               };
@@ -488,10 +486,10 @@ export const loadDynamicOutputsInNode = async (
             schemaOutputs = updateOutputsForBatchingTrigger(schemaOutputs, settings.splitOn?.value?.value);
           }
 
-          const dynamicOutputs = Object.entries(schemaOutputs).reduce((result: Record<string, OutputInfo>, [outputKey, outputValue]) => {
-            return { ...result, [outputKey]: toOutputInfo(outputValue) };
-          }, {});
-
+          const dynamicOutputs: Record<string, OutputInfo> = {};
+          for (const [outputKey, outputValue] of Object.entries(schemaOutputs)) {
+            dynamicOutputs[outputKey] = toOutputInfo(outputValue);
+          }
           dispatch(addDynamicOutputs({ nodeId, outputs: dynamicOutputs }));
 
           let iconUri: string, brandColor: string;

@@ -2,25 +2,17 @@ import { encodeStringSegmentTokensInDomContext } from '../../../../editor/base/u
 import type { ValueSegment } from '@microsoft/logic-apps-shared';
 import DomPurify from 'dompurify';
 
+const encodeReduceFunction = (acc: Record<string, string>, key: string) => {
+  acc[key] = encodeURIComponent(key);
+  return acc;
+};
 const htmlUnsafeCharacters = ['<', '>'];
-const htmlUnsafeCharacterEncodingMap: Record<string, string> = htmlUnsafeCharacters.reduce(
-  (acc, key) => ({ ...acc, [key]: encodeURIComponent(key) }),
-  {}
-);
-const htmlUnsafeCharacterDecodingMap: Record<string, string> = htmlUnsafeCharacters.reduce(
-  (acc, key) => ({ ...acc, [encodeURIComponent(key)]: key }),
-  {}
-);
+const htmlUnsafeCharacterEncodingMap: Record<string, string> = htmlUnsafeCharacters.reduce(encodeReduceFunction, {});
+const htmlUnsafeCharacterDecodingMap: Record<string, string> = htmlUnsafeCharacters.reduce(encodeReduceFunction, {});
 
 const lexicalUnsafeCharacters = ['&', '"'];
-const lexicalUnsafeCharacterEncodingMap: Record<string, string> = lexicalUnsafeCharacters.reduce(
-  (acc, key) => ({ ...acc, [key]: encodeURIComponent(key) }),
-  {}
-);
-const lexicalUnsafeCharacterDecodingMap: Record<string, string> = lexicalUnsafeCharacters.reduce(
-  (acc, key) => ({ ...acc, [encodeURIComponent(key)]: key }),
-  {}
-);
+const lexicalUnsafeCharacterEncodingMap: Record<string, string> = lexicalUnsafeCharacters.reduce(encodeReduceFunction, {});
+const lexicalUnsafeCharacterDecodingMap: Record<string, string> = lexicalUnsafeCharacters.reduce(encodeReduceFunction, {});
 
 const lexicalSupportedTagNames = new Set([
   'a',
