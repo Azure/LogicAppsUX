@@ -75,7 +75,7 @@
     "start": "turbo run dev",
     "start:arm": "npm run generateArmToken && npm run start",
     "start:e2e": "turbo run e2e",
-    "test": "turbo run test:unit",
+    "test:lib": "turbo run test:lib",
     "test:e2e": "playwright test",
     "testgen": "playwright codegen https://localhost:4200",
     "vscode:designer:pack": "turbo run vscode:designer:pack"
