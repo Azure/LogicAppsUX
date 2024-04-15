@@ -142,7 +142,7 @@ export const functionsForLocation = (functions: FunctionDictionary, targetKey: s
 
 export const getFunctionLocationsForAllFunctions = (
   dataMapConnections: ConnectionDictionary,
-  flattenedTargetSchema: SchemaNodeDictionary
+  _flattenedTargetSchema: SchemaNodeDictionary
 ): FunctionDictionary => {
   const functionNodes: FunctionDictionary = {};
   for (const connectionKey in dataMapConnections) {

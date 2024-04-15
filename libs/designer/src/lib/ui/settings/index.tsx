@@ -28,8 +28,8 @@ import {
   equals,
   getRecordEntry,
   isObject,
-  UploadChunkMetadata,
-  DownloadChunkMetadata,
+  type UploadChunkMetadata,
+  type DownloadChunkMetadata,
 } from '@microsoft/logic-apps-shared';
 import { useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';

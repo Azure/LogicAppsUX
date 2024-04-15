@@ -51,7 +51,6 @@ import {
 import { FunctionCategory } from '../models/Function';
 import { LogCategory, LogService } from './Logging.Utils';
 import { FontIcon } from '@fluentui/react';
-import { tokens } from '@fluentui/react-components';
 import {
   AddRegular,
   AddSubtractCircle16Filled,
@@ -79,10 +78,8 @@ import {
   Cube16Regular,
   Cube24Filled,
   Cube24Regular,
-  DismissCircleFilled,
   EqualOffRegular,
   GatherRegular,
-  InfoFilled,
   MathSymbols20Regular,
   MathSymbolsRegular,
   NumberSymbol16Filled,
@@ -90,13 +87,11 @@ import {
   NumberSymbol24Filled,
   NumberSymbol24Regular,
   NumberSymbolRegular,
-  QuestionCircleFilled,
   ReOrderRegular,
   TextCaseLowercaseRegular,
   TextCaseUppercaseRegular,
   TextNumberFormatRegular,
   TextWholeWordRegular,
-  WarningFilled,
   Wrench20Regular,
 } from '@fluentui/react-icons';
 import { NormalizedDataType, SchemaNodeProperty } from '@microsoft/logic-apps-shared';
@@ -217,8 +212,6 @@ export const iconForFunctionCategory = (functionCategory: FunctionCategory) => {
 export const iconUriForIconImageName = (iconImageName: string) => {
   return `${iconBaseUrl}${iconImageName}`;
 };
-
-const mapCheckerIconStyle = { minHeight: '20px', minWidth: '20px' };
 
 // export const iconForMapCheckerSeverity = (severity: MapCheckerItemSeverity) => {
 //   switch (severity) {

@@ -8,7 +8,8 @@ import { OperationManifestService, SwaggerParser, getObjectPropertyValue, getRec
 import type { LAOperation, OperationManifest } from '@microsoft/logic-apps-shared';
 import { createSelector } from '@reduxjs/toolkit';
 import { useMemo } from 'react';
-import { UseQueryResult, useQuery } from 'react-query';
+import type { UseQueryResult } from 'react-query';
+import { useQuery } from 'react-query';
 import { useSelector } from 'react-redux';
 
 interface QueryResult {
