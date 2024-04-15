@@ -27,7 +27,6 @@ import {
 } from '../../../../core/utils/connectors/connections';
 import { CreateConnection } from './createConnection';
 import { Spinner } from '@fluentui/react-components';
-import type { ConnectionCreationInfo, ConnectionParametersMetadata } from '@microsoft/logic-apps-shared';
 import {
   ConnectionService,
   LogEntryLevel,
@@ -36,6 +35,8 @@ import {
   getIconUriFromConnector,
   getRecordEntry,
   safeSetObjectPropertyValue,
+  type ConnectionCreationInfo,
+  type ConnectionParametersMetadata,
   type Connection,
   type ConnectionParameterSet,
   type ConnectionParameterSetValues,

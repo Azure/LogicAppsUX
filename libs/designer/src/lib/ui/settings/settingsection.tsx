@@ -8,7 +8,6 @@ import { CustomizableMessageBar } from './validation/errorbar';
 import type { ValidationError } from './validation/validation';
 import { ValidationErrorType } from './validation/validation';
 import type { IDropdownOption } from '@fluentui/react';
-import { useTheme } from '@fluentui/react';
 import { Button, Divider, Tooltip } from '@fluentui/react-components';
 import {
   bundleIcon,
@@ -21,7 +20,6 @@ import {
 } from '@fluentui/react-icons';
 import { MessageBarType } from '@fluentui/react/lib/MessageBar';
 import {
-  isHighContrastBlack,
   MultiSelectSetting,
   MultiAddExpressionEditor,
   ExpressionsEditor,

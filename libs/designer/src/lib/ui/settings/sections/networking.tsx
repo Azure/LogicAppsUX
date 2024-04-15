@@ -1,4 +1,4 @@
-import { DownloadChunkMetadata, UploadChunkMetadata } from '@microsoft/logic-apps-shared';
+import type { DownloadChunkMetadata, UploadChunkMetadata } from '@microsoft/logic-apps-shared';
 import type { DropdownSelectionChangeHandler, SectionProps, TextChangeHandler, ToggleHandler } from '..';
 import { SettingSectionName } from '..';
 import constants from '../../../common/constants';
@@ -168,18 +168,18 @@ export const Networking = ({
   });
   const uploadContentTransferDescription = intl.formatMessage({
     defaultMessage: 'Specify the behavior and capabilities for transferring content over HTTP.',
-    id: 'SenWwt',
+    id: '4BuCdw',
     description: 'description of upload content transfer setting',
   });
   const uploadContentTransferTooltip = intl.formatMessage({
     defaultMessage:
       'Large messages may be split up into smaller requests to the connector to allow large message upload. More details can be found at http://aka.ms/logicapps-chunk#upload-content-in-chunks',
-    id: 'SenWwt',
+    id: 'lbq5E1',
     description: 'description of upload content transfer setting',
   });
   const downloadContentTransferDescription = intl.formatMessage({
     defaultMessage: 'Specify the behavior and capabilities for transferring content over HTTP.',
-    id: 'SfnWwt',
+    id: 'pfmki/',
     description: 'description of download content transfer setting',
   });
   const contentTransferSublabel = intl.formatMessage({
@@ -189,13 +189,13 @@ export const Networking = ({
   });
   const chunkedTransferNodeSizeLabel = intl.formatMessage({
     defaultMessage: 'Chunk size',
-    id: 'iMf2TA',
+    id: 'STWbak',
     description: 'label for chunked transfer node size',
   });
   const uploadChunkSizePlaceholder = intl.formatMessage(
     {
       defaultMessage: 'Specify upload chunk size between {minimumSize} and {maximumSize} Mb. Example: 10',
-      id: 'kMf2TA',
+      id: 'D6KzoS',
       description: 'tooltip for upload chunk size setting',
     },
     { minimumSize, maximumSize }
@@ -203,7 +203,7 @@ export const Networking = ({
   const downloadChunkSizePlaceholder = intl.formatMessage(
     {
       defaultMessage: 'Specify download chunk size between {minimumSize} and {maximumSize} Mb. Example: 10',
-      id: 'lMf2TA',
+      id: 'IqNEui',
       description: 'tooltip for download chunk size setting',
     },
     { minimumSize, maximumSize }

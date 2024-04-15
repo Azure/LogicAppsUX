@@ -22,9 +22,9 @@
 // import type { Edge as ReactFlowEdge, Node as ReactFlowNode, XYPosition } from 'reactflow';
 // import { Position } from 'reactflow';
 
-import { guid, SchemaType } from '@microsoft/logic-apps-shared';
+import { guid, type SchemaType } from '@microsoft/logic-apps-shared';
 import { sourcePrefix, targetPrefix } from '../constants/ReactFlowConstants';
-import { FunctionData } from 'models';
+import { type FunctionData } from 'models';
 
 export const addReactFlowPrefix = (key: string, type: SchemaType) => `${type}-${key}`;
 export const addSourceReactFlowPrefix = (key: string) => `${sourcePrefix}${key}`;

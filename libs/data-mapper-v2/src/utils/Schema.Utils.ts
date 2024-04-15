@@ -15,7 +15,6 @@ import type {
   SchemaNodeExtended,
 } from '@microsoft/logic-apps-shared';
 import { NormalizedDataType, SchemaNodeProperty, SchemaType } from '@microsoft/logic-apps-shared';
-import Fuse from 'fuse.js';
 
 export const convertSchemaToSchemaExtended = (schema: DataMapSchema): SchemaExtended => {
   const extendedSchema: SchemaExtended = {

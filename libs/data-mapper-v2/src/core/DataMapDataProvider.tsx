@@ -29,8 +29,6 @@ export interface DataMapDataProviderProps {
 const DataProviderInner = ({
   xsltFilename,
   xsltContent,
-  mapDefinition,
-  dataMapMetadata,
   sourceSchema,
   targetSchema,
   availableSchemas,

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import type { RootState } from '../../core/state/Store';
 import { FileDropdown } from '../fileDropdown/fileDropdown';
 import { SchemaType } from '@microsoft/logic-apps-shared';
