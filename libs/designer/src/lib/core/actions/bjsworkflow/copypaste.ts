@@ -133,8 +133,7 @@ export const pasteScopeOperation = createAsyncThunk(
     const workflowActions = { [nodeId]: serializedValue as ActionDefinition };
     const allActionNames = getAllActionNames(workflowActions);
     let [nodes, edges, actions, actionNodesMetadata] = buildGraphFromActions(workflowActions, graphId, parentId, allActionNames, {
-      existingNodesMetadata: nodesMetadata,
-      renamedActions: {},
+      existingActionNames: Object.keys(nodesMetadata),
     });
 
     dispatch(

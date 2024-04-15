@@ -394,7 +394,8 @@ export const getTriggerNodeManifest = async (
   return undefined;
 };
 
-export const getNonDuplicateId = (nodesMetadata: NodesMetadata, actionId: string): string => {
+export const getNonDuplicateId = (nodesMetadata: NodesMetadata, actionId: string, unusableIds?: string[]): string => {
+  actionId = actionId.replaceAll(' ', '_');
   const splitActionId = actionId.split('_');
   let nodeId = actionId;
   let count = 1;
@@ -403,7 +404,8 @@ export const getNonDuplicateId = (nodesMetadata: NodesMetadata, actionId: string
     actionId = splitActionId.join('_');
   }
 
-  while (getRecordEntry(nodesMetadata, nodeId)) {
+  console.log(unusableIds);
+  while (getRecordEntry(nodesMetadata, nodeId) || unusableIds?.includes(nodeId)) {
     nodeId = `${actionId}_${count}`;
     count++;
   }

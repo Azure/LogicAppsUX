@@ -64,6 +64,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
   const parenRunData = useRunData(parentRunId ?? '');
   const nodesMetaData = useNodesMetadata();
   const repetitionName = getRepetitionName(parentRunIndex, scopeId, nodesMetaData, operationsInfo);
+  const [rootRef, setRef] = useState<HTMLDivElement | null>(null);
 
   const { status: statusRun, error: errorRun, code: codeRun, repetitionCount } = runData ?? {};
 
@@ -189,7 +190,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
       <CopyMenuItem key={'copy'} isTrigger={false} isScope={true} onClick={copyClick} showKey />,
       ...(runData?.canResubmit ? [<ResubmitMenuItem key={'resubmit'} onClick={resubmitClick} />] : []),
     ],
-    [deleteClick, resubmitClick, runData?.canResubmit]
+    [deleteClick, resubmitClick, copyClick, runData?.canResubmit]
   );
 
   const opQuery = useOperationQuery(scopeId);
@@ -287,76 +288,63 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
   const isFooter = id.endsWith('#footer');
   const showEmptyGraphComponents = isLeaf && !graphCollapsed && !isFooter;
 
-  const implementedGraphTypes = [
-    constants.NODE.TYPE.IF,
-    constants.NODE.TYPE.SWITCH,
-    constants.NODE.TYPE.FOREACH,
-    constants.NODE.TYPE.SCOPE,
-    constants.NODE.TYPE.UNTIL,
-  ];
-  if (implementedGraphTypes.includes(normalizedType)) {
-    const copiedText = intl.formatMessage({
-      defaultMessage: 'Copied!',
-      id: 'NE54Uu',
-      description: 'Copied text',
-    });
+  const copiedText = intl.formatMessage({
+    defaultMessage: 'Copied!',
+    id: 'NE54Uu',
+    description: 'Copied text',
+  });
 
-    const [rootRef, setRef] = useState<HTMLDivElement | null>(null);
-
-    return (
-      <>
-        <div className="msla-scope-card nopan" ref={setRef}>
-          <Handle className="node-handle top" type="target" position={targetPosition} isConnectable={false} />
-          <ScopeCard
-            brandColor={brandColor}
-            icon={iconUri}
-            isLoading={isLoading}
-            collapsed={graphCollapsed}
-            handleCollapse={handleGraphCollapse}
-            drag={drag}
-            draggable={!readOnly}
-            dragPreview={dragPreview}
-            errorLevel={errorLevel}
-            errorMessage={errorMessage}
-            isDragging={isDragging}
-            id={scopeId}
-            isMonitoringView={isMonitoringView}
-            title={label}
-            readOnly={readOnly}
-            onClick={nodeClick}
-            onDeleteClick={deleteClick}
-            selected={selected}
-            contextMenuItems={contextMenuItems}
-            runData={runData}
-            commentBox={comment}
-          />
-          <Tooltip
-            positioning={{ target: rootRef, position: 'below', align: 'end' }}
-            withArrow
-            content={copiedText}
-            relationship="description"
-            visible={showCopyCallout}
-          />
-          {isMonitoringView && normalizedType === constants.NODE.TYPE.FOREACH ? (
-            <LoopsPager metadata={metadata} scopeId={scopeId} collapsed={graphCollapsed} />
-          ) : null}
-          <Handle className="node-handle bottom" type="source" position={sourcePosition} isConnectable={false} />
-        </div>
-        {graphCollapsed && !isFooter ? <p className="no-actions-text">{collapsedText}</p> : null}
-        {showEmptyGraphComponents ? (
-          !readOnly ? (
-            <div className={'edge-drop-zone-container'}>
-              <DropZone graphId={scopeId} parentId={id} isLeaf={isLeaf} />
-            </div>
-          ) : (
-            <p className="no-actions-text">No Actions</p>
-          )
+  return (
+    <>
+      <div className="msla-scope-card nopan" ref={setRef}>
+        <Handle className="node-handle top" type="target" position={targetPosition} isConnectable={false} />
+        <ScopeCard
+          brandColor={brandColor}
+          icon={iconUri}
+          isLoading={isLoading}
+          collapsed={graphCollapsed}
+          handleCollapse={handleGraphCollapse}
+          drag={drag}
+          draggable={!readOnly}
+          dragPreview={dragPreview}
+          errorLevel={errorLevel}
+          errorMessage={errorMessage}
+          isDragging={isDragging}
+          id={scopeId}
+          isMonitoringView={isMonitoringView}
+          title={label}
+          readOnly={readOnly}
+          onClick={nodeClick}
+          onDeleteClick={deleteClick}
+          selected={selected}
+          contextMenuItems={contextMenuItems}
+          runData={runData}
+          commentBox={comment}
+        />
+        <Tooltip
+          positioning={{ target: rootRef, position: 'below', align: 'end' }}
+          withArrow
+          content={copiedText}
+          relationship="description"
+          visible={showCopyCallout}
+        />
+        {isMonitoringView && normalizedType === constants.NODE.TYPE.FOREACH ? (
+          <LoopsPager metadata={metadata} scopeId={scopeId} collapsed={graphCollapsed} />
         ) : null}
-      </>
-    );
-  } else {
-    return <h1>{'GENERIC'}</h1>;
-  }
+        <Handle className="node-handle bottom" type="source" position={sourcePosition} isConnectable={false} />
+      </div>
+      {graphCollapsed && !isFooter ? <p className="no-actions-text">{collapsedText}</p> : null}
+      {showEmptyGraphComponents ? (
+        !readOnly ? (
+          <div className={'edge-drop-zone-container'}>
+            <DropZone graphId={scopeId} parentId={id} isLeaf={isLeaf} />
+          </div>
+        ) : (
+          <p className="no-actions-text">No Actions</p>
+        )
+      ) : null}
+    </>
+  );
 };
 
 ScopeCardNode.displayName = 'ScopeNode';

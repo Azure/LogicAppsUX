@@ -361,7 +361,17 @@ export const processScopeActions = (
   };
 
   if (isSwitchAction(action)) {
-    for (const [caseName, caseAction] of Object.entries(action.cases || {})) {
+    const renamedCases: string[] = [];
+    for (let [caseName, caseAction] of Object.entries(action.cases || {})) {
+      if (pasteScopeParams) {
+        const { existingNodesMetadata, renamedActions } = pasteScopeParams;
+        const newCaseName = getNonDuplicateId(existingNodesMetadata, caseName, renamedCases);
+        if (caseName !== newCaseName && renamedActions) {
+          renamedActions[caseName] = newCaseName;
+          renamedCases.push(newCaseName);
+          caseName = newCaseName;
+        }
+      }
       applySubgraphActions(actionName, caseName, caseAction.actions, SUBGRAPH_TYPES.SWITCH_CASE, 'cases');
     }
     applySubgraphActions(actionName, `${actionName}-addCase`, undefined, SUBGRAPH_TYPES.SWITCH_ADD_CASE, undefined /* subGraphLocation */);
