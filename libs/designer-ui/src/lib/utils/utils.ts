@@ -373,9 +373,10 @@ export function getStatusString(status: string, hasRetries: boolean): string {
 }
 
 export const filterRecord = <T>(data: Record<string, T>, filter: (_key: string, _val: any) => boolean): Record<string, T> => {
-  return Object.entries(data)
-    .filter(([key, value]) => filter(key, value))
-    .reduce((res: any, [key, value]: any) => ({ ...res, [key]: value }), {});
+  const keyValuePropArray = Object.entries(data).filter(([key, value]) => filter(key, value));
+  const output: Record<string, T> = {};
+  keyValuePropArray.forEach(([key, value]) => (output[key] = value));
+  return output;
 };
 
 export const getConnectorCategoryString = (connector: Connector | OperationApi | string): string => {

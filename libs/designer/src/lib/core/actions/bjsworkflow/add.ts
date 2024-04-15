@@ -334,9 +334,11 @@ export const addTokensAndVariables = (
     operationMetadata: { iconUri, brandColor },
     manifest,
   } = nodeData;
-  const nodeMap = Object.keys(operations).reduce((actionNodes: Record<string, string>, id: string) => ({ ...actionNodes, [id]: id }), {
-    [nodeId]: nodeId,
-  });
+  const nodeMap: Record<string, string> = { nodeId };
+  for (const key of Object.keys(operations)) {
+    nodeMap[key] = key;
+  }
+
   const upstreamNodeIds = getTokenNodeIds(
     nodeId,
     graph as WorkflowNode,
