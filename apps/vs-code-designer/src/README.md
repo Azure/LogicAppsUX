@@ -6,7 +6,7 @@ In Visual Studio Code, you can use the Azure Logic Apps (Standard) extension to 
 
 ## Azure Logic Apps - Automated Deployment Scripts Generation (preview)
 
-Starting with version 4.4.2, the Azure Logic Apps (Standard) extension for Visual Studio Code supports the ability to generate ARM templates for Logic Apps Standard applications and Azure Managed Connections. It will also support the generation of Azure DevOps YAML pipelines, sppeding up the move from Local development to cloud using DevOps best practics. For more information, see [Automate build and deployment for Standard logic app workflows with Azure DevOps (preview)](https://go.microsoft.com/fwlink/?linkid=2268158).
+Starting with version 4.4.3, the Azure Logic Apps (Standard) extension for Visual Studio Code supports the ability to generate ARM templates for Logic Apps Standard applications and Azure Managed Connections. It will also support the generation of Azure DevOps YAML pipelines, sppeding up the move from Local development to cloud using DevOps best practics. For more information, see [Automate build and deployment for Standard logic app workflows with Azure DevOps (preview)](https://go.microsoft.com/fwlink/?linkid=2268158).
 
 ## Azure Logic Apps - Improved Onboarding Experience
 
