@@ -1,13 +1,18 @@
 {
   "root": true,
-  "ignorePatterns": [
-    "**/*"
-  ],
+  "parser": "@typescript-eslint/parser",
   "plugins": [
     "formatjs",
     "react",
-    "react-hooks"
+    "react-hooks",
+    "@typescript-eslint"
   ],
+  "settings": {
+    "react": {
+      "version": "detect"
+    }
+  },
+  "extends": "eslint:recommended",
   "overrides": [
     {
       "files": [
@@ -21,6 +26,9 @@
         "plugin:import/typescript"
       ],
       "rules": {
+        "no-unused-vars": "off",
+        "no-redeclare": "off",
+        "no-undef": "off",
         "no-restricted-syntax": [
           "error",
           {

@@ -13,7 +13,6 @@ import {
   ConnectorService,
   Types,
   getPropertyValue,
-  equals,
   getJSONValue,
   getObjectPropertyValue,
   isNullOrUndefined,

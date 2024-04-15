@@ -5,16 +5,17 @@ import { getConnectionReference, isConnectionMultiAuthManagedIdentityType } from
 import { useNodeConnectorId } from '../operation/operationSelector';
 import { useOperationManifest, useOperationInfo } from '../selectors/actionMetadataSelector';
 import {
+  type Gateway,
   ConnectionService,
   GatewayService,
   OperationManifestService,
   isServiceProviderOperation,
   getRecordEntry,
   type Connector,
-  Gateway,
 } from '@microsoft/logic-apps-shared';
 import { useMemo } from 'react';
-import { UseQueryResult, useQuery } from 'react-query';
+import type { UseQueryResult } from 'react-query';
+import { useQuery } from 'react-query';
 import { useSelector } from 'react-redux';
 
 export const useConnector = (connectorId: string | undefined, enabled = true): UseQueryResult<Connector | undefined, unknown> => {

@@ -10,14 +10,7 @@ import {
   indexPseudoFunction,
   indexPseudoFunctionKey,
 } from '../models/Function';
-import { findLast } from './Array.Utils';
-import {
-  applyConnectionValue,
-  flattenInputs,
-  isCustomValue,
-  nodeHasSourceNodeEventually,
-  nodeHasSpecificInputEventually,
-} from './Connection.Utils';
+import { flattenInputs, isCustomValue, nodeHasSourceNodeEventually } from './Connection.Utils';
 import {
   findFunctionForFunctionName,
   findFunctionForKey,
@@ -29,7 +22,7 @@ import {
 //import { addReactFlowPrefix, addSourceReactFlowPrefix } from './ReactFlow.Util';
 import { findNodeForKey, isSchemaNodeExtended } from './Schema.Utils';
 import type { MapDefinitionEntry, SchemaExtended, SchemaNodeDictionary, SchemaNodeExtended } from '@microsoft/logic-apps-shared';
-import { isAGuid, SchemaType } from '@microsoft/logic-apps-shared';
+import { isAGuid } from '@microsoft/logic-apps-shared';
 
 // danielle remove unused after deserialization refactor
 
