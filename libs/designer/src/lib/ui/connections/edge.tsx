@@ -76,7 +76,7 @@ const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
 
   const filteredRunAfters: Record<string, string[]> = useMemo(
     () =>
-      Object.entries(operationData?.runAfter ?? {}).reduce((pv, [id, cv]) => {
+      Object.entries(operationData?.runAfter ?? {}).reduce((pv: Record<string, string[]>, [id, cv]) => {
         if ((cv ?? []).some((status) => status.toUpperCase() !== RUN_AFTER_STATUS.SUCCEEDED)) {
           pv[id] = cv;
         }
