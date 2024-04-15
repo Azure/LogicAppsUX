@@ -241,15 +241,13 @@ export const workflowSlice = createSlice({
         return;
       }
       const stack: WorkflowNode[] = [state.graph];
-      const dimensionChangesById = dimensionChanges.reduce<Record<string, NodeDimensionChange>>((acc, val) => {
-        if (val.type !== 'dimensions') {
-          return acc;
-        }
-        return {
-          ...acc,
-          [val.id]: val,
-        };
-      }, {});
+
+      let dimensionChangesById: Record<string, NodeDimensionChange> = {};
+      for (const val of dimensionChanges) {
+        if (val.type !== 'dimensions') continue;
+        dimensionChangesById[val.id] = val as NodeDimensionChange;
+      }
+
       while (stack.length) {
         const node = stack.shift();
         const change = getRecordEntry(dimensionChangesById, node?.id ?? '');

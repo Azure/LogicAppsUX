@@ -350,10 +350,11 @@ const updateTokenMetadataInParameters = (
   repetitionInfos: Record<string, RepetitionContext>
 ) => {
   const nodesData = map(nodes, 'id');
-  const actionNodes = nodes
-    .map((node) => node.id)
-    .filter((nodeId) => nodeId !== triggerNodeId)
-    .reduce((actionNodes: Record<string, string>, id: string) => ({ ...actionNodes, [id]: id }), {});
+  const actionNodesArray = nodes.map((node) => node.id).filter((nodeId) => nodeId !== triggerNodeId);
+  const actionNodes: Record<string, string> = {};
+  for (const id of actionNodesArray) {
+    actionNodes[id] = id;
+  }
 
   for (const nodeData of nodes) {
     const { id, nodeInputs } = nodeData;
@@ -406,21 +407,18 @@ const initializeOutputTokensForOperations = (
   graph: WorkflowNode,
   nodesMetadata: NodesMetadata
 ): Record<string, NodeTokens> => {
-  const nodeMap = Object.keys(operations).reduce((actionNodes: Record<string, string>, id: string) => ({ ...actionNodes, [id]: id }), {});
-  const nodesWithData = allNodesData.reduce(
-    (actionNodes: Record<string, NodeDataWithOperationMetadata>, nodeData: NodeDataWithOperationMetadata) => ({
-      ...actionNodes,
-      [nodeData.id]: nodeData,
-    }),
-    {}
-  );
-  const operationInfos = allNodesData.reduce(
-    (result: Record<string, NodeOperation>, nodeData: NodeDataWithOperationMetadata) => ({
-      ...result,
-      [nodeData.id]: nodeData.operationInfo as NodeOperation,
-    }),
-    {}
-  );
+  const nodeMap: Record<string, string> = {};
+  for (const id of Object.keys(operations)) {
+    nodeMap[id] = id;
+  }
+  const nodesWithData: Record<string, NodeDataWithOperationMetadata> = {};
+  for (const nodeData of allNodesData) {
+    nodesWithData[nodeData.id] = nodeData;
+  }
+  const operationInfos: Record<string, NodeOperation> = {};
+  for (const nodeData of allNodesData) {
+    operationInfos[nodeData.id] = nodeData.operationInfo as NodeOperation;
+  }
 
   const result: Record<string, NodeTokens> = {};
 
@@ -488,20 +486,15 @@ const initializeRepetitionInfos = async (
   nodesMetadata: NodesMetadata
 ): Promise<Record<string, RepetitionContext>> => {
   const promises: Promise<{ id: string; repetition: RepetitionContext }>[] = [];
-  const { operationInfos, inputs, settings } = nodesData.reduce(
-    (
-      result: { operationInfos: Record<string, NodeOperation>; inputs: Record<string, NodeInputs>; settings: Record<string, any> },
-      currentNode: NodeDataWithOperationMetadata
-    ) => {
-      const { id, nodeInputs, operationInfo, settings } = currentNode;
-      result.operationInfos[id] = operationInfo as NodeOperation;
-      result.inputs[id] = nodeInputs;
-      result.settings[id] = settings;
-
-      return result;
-    },
-    { operationInfos: {}, inputs: {}, settings: {} }
-  );
+  const operationInfos: Record<string, any> = {};
+  const inputs: Record<string, any> = {};
+  const settings: Record<string, any> = {};
+  for (const nodeData of nodesData) {
+    const { id, nodeInputs, operationInfo, settings: _settings } = nodeData;
+    operationInfos[id] = operationInfo as NodeOperation;
+    inputs[id] = nodeInputs;
+    settings[id] = _settings;
+  }
 
   const splitOn = settings[triggerNodeId]
     ? settings[triggerNodeId].splitOn?.value?.enabled
@@ -521,13 +514,11 @@ const initializeRepetitionInfos = async (
   }
 
   const allRepetitions = (await Promise.all(promises)).filter((data) => !!data);
-  return allRepetitions.reduce(
-    (result: Record<string, RepetitionContext>, { id, repetition }: { id: string; repetition: RepetitionContext }) => ({
-      ...result,
-      [id]: repetition,
-    }),
-    {}
-  );
+  const mappedRepitions: Record<string, RepetitionContext> = {};
+  for (const { id, repetition } of allRepetitions) {
+    mappedRepitions[id] = repetition;
+  }
+  return mappedRepitions;
 };
 
 export const initializeDynamicDataInNodes = async (getState: () => RootState, dispatch: Dispatch): Promise<void> => {

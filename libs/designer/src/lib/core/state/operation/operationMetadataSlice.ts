@@ -527,9 +527,10 @@ export const operationMetadataSlice = createSlice({
     builder.addCase(addDynamicOutputs, (state, action) => {
       const { outputs } = action.payload;
 
-      const tokenTitles = Object.values(outputs).reduce((result: Record<string, string>, outputValue: OutputInfo) => {
-        return { ...result, [outputValue.key]: getTokenTitle(outputValue) };
-      }, {});
+      let tokenTitles: Record<string, string> = {};
+      for (const outputValue of Object.values(outputs)) {
+        tokenTitles[outputValue.key] = getTokenTitle(outputValue);
+      }
 
       Object.entries(state.inputParameters).forEach(([nodeId, nodeInputs]) => {
         Object.entries(nodeInputs.parameterGroups).forEach(([parameterId, parameterGroup]) => {

@@ -50,7 +50,9 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({ isRefres
       ignoreNonCriticalErrors: true,
     });
 
-    const validationErrorsList = Object.entries(designerState.operations.inputParameters).reduce((acc, [id, nodeInputs]) => {
+    let validationErrorsList: Record<string, boolean> = {};
+    const arr = Object.entries(designerState.operations.inputParameters);
+    for (const [id, nodeInputs] of arr) {
       const hasValidationErrors = Object.values(nodeInputs.parameterGroups).some((parameterGroup) => {
         return parameterGroup.parameters.some((parameter) => {
           const validationErrors = validateParameter(parameter, parameter.value);
@@ -60,8 +62,10 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({ isRefres
           return validationErrors.length;
         });
       });
-      return hasValidationErrors ? { ...acc, [id]: hasValidationErrors } : { ...acc };
-    }, {});
+      if (hasValidationErrors) {
+        validationErrorsList[id] = hasValidationErrors;
+      }
+    }
 
     const hasParametersErrors = !isNullOrEmpty(validationErrorsList);
 
