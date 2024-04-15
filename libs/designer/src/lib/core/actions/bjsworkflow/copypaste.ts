@@ -53,12 +53,6 @@ export const copyScopeOperation = createAsyncThunk('copyScopeOperation', async (
     scopeNodeId = removeIdTag(scopeNodeId);
     const newNodeId = createIdCopy(scopeNodeId);
 
-    // const nodeData = getNodeOperationData(state.operations, scopeNodeId);
-    // const nodeOperationInfo = getRecordEntry(state.operations.operationInfo, scopeNodeId);
-    // const nodeConnectionData = getRecordEntry(state.connections.connectionsMapping, scopeNodeId);
-
-    // console.log(nodeData, nodeOperationInfo, nodeConnectionData);
-
     const serializedOperation = await serializeOperation(state, scopeNodeId, {
       skipValidation: true,
       ignoreNonCriticalErrors: true,
