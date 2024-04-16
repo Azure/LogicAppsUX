@@ -45,7 +45,9 @@ export class ConsumptionConnectionService extends BaseConnectionService {
 
     try {
       const connection = await this.createConnectionInApiHub(connectionName, connector.id, connectionInfo);
-      if (shouldTestConnection) await this.testConnection(connection);
+      if (shouldTestConnection) {
+        await this.testConnection(connection);
+      }
       LoggerService().endTrace(logId, { status: Status.Success });
       return connection;
     } catch (error) {
@@ -85,7 +87,8 @@ export class ConsumptionConnectionService extends BaseConnectionService {
       const loginResponse = await oAuthPopupInstance.loginPromise;
       if (loginResponse.error) {
         throw new Error(atob(loginResponse.error));
-      } else if (loginResponse.code) {
+      }
+      if (loginResponse.code) {
         await oAuthService.confirmConsentCodeForConnection(connectionId, loginResponse.code);
       }
 

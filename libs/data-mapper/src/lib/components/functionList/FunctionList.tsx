@@ -64,8 +64,8 @@ export const FunctionList = () => {
         const newPosition: FunctionPositionMetadata = {
           targetKey: currentTargetSchemaNode.key,
           position: {
-            x: parseInt(inlineFunctionInputOutputKeys[inlineFunctionInputOutputKeys.length - 2]) - 30,
-            y: parseInt(inlineFunctionInputOutputKeys[inlineFunctionInputOutputKeys.length - 1]),
+            x: Number.parseInt(inlineFunctionInputOutputKeys[inlineFunctionInputOutputKeys.length - 2]) - 30,
+            y: Number.parseInt(inlineFunctionInputOutputKeys[inlineFunctionInputOutputKeys.length - 1]),
           },
         };
         // eslint-disable-next-line no-param-reassign
@@ -174,7 +174,8 @@ export const FunctionList = () => {
           message: error,
         });
         throw new Error(`Function List Error: ${error}`);
-      } else if (error instanceof Error) {
+      }
+      if (error instanceof Error) {
         LogService.error(LogCategory.FunctionList, 'functionListError', {
           message: error.message,
         });

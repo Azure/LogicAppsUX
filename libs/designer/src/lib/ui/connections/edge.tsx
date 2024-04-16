@@ -6,7 +6,8 @@ import { CollapsedRunAfterIndicator, RunAfterIndicator } from './runAfterIndicat
 import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import { containsIdTag, removeIdTag, getEdgeCenter, RUN_AFTER_STATUS } from '@microsoft/logic-apps-shared';
 import type { ElkExtendedEdge } from 'elkjs/lib/elk-api';
-import React, { memo, useMemo } from 'react';
+import type React from 'react';
+import { memo, useMemo } from 'react';
 import { getSmoothStepPath, useReactFlow } from 'reactflow';
 import type { EdgeProps } from 'reactflow';
 
@@ -110,7 +111,9 @@ const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
   let dynamicMidEdgeY =
     multipleSources && !multipleTargets ? targetY - 64 : multipleTargets && !multipleSources ? sourceY + 64 : edgeCenterY;
 
-  if (numRunAfters !== 0) dynamicMidEdgeY -= 7;
+  if (numRunAfters !== 0) {
+    dynamicMidEdgeY -= 7;
+  }
 
   const [d] = useMemo(() => {
     return getSmoothStepPath({
@@ -142,7 +145,7 @@ const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
       />
 
       {/* ADD ACTION / BRANCH BUTTONS */}
-      {!readOnly ? (
+      {readOnly ? null : (
         <>
           {/* TOP BUTTON */}
           {((multipleTargets && showSourceButton) || multipleSources) && (
@@ -151,7 +154,7 @@ const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
               y={sourceY + 28 - foreignObjectHeight / 2}
               graphId={graphId}
               parentId={source}
-              childId={!multipleTargets ? target : undefined}
+              childId={multipleTargets ? undefined : target}
             />
           )}
 
@@ -172,13 +175,13 @@ const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
               x={targetX - foreignObjectWidth / 2}
               y={targetY - 32 - foreignObjectHeight / 2 - (numRunAfters !== 0 ? 4 : 0)} // Make a little more room for run after
               graphId={graphId}
-              parentId={!multipleSources ? source : undefined}
+              parentId={multipleSources ? undefined : source}
               childId={target}
               isLeaf={isLeaf}
             />
           )}
         </>
-      ) : null}
+      )}
 
       {/* RUN AFTER INDICATOR */}
       {showRunAfter ? (

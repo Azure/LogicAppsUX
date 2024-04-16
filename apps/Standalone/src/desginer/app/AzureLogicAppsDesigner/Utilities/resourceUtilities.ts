@@ -35,7 +35,9 @@ export const fetchAppsByQuery = async (query: string): Promise<any[]> => {
       const $skipToken = data.$skipToken;
       const newValues = data.data.rows;
       value.push(...newValues);
-      if ($skipToken && newValues.length !== 0) return await requestPage(value, pageNum + 1, $skipToken);
+      if ($skipToken && newValues.length !== 0) {
+        return await requestPage(value, pageNum + 1, $skipToken);
+      }
       return value;
     } catch (error) {
       return value;

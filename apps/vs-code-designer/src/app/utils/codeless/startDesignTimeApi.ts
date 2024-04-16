@@ -19,7 +19,7 @@ import {
 } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
-import { type settingsFileContent } from '../../commands/dataMapper/extensionConfig';
+import type { settingsFileContent } from '../../commands/dataMapper/extensionConfig';
 import { addOrUpdateLocalAppSettings } from '../appSettings/localSettings';
 import { updateFuncIgnore } from '../codeless/common';
 import { writeFormattedJson } from '../fs';
@@ -137,9 +137,8 @@ export async function waitForDesignTimeStartUp(url: string, initialTime: number)
   }
   if (await isDesignTimeUp(url)) {
     return Promise.resolve();
-  } else {
-    return Promise.reject();
   }
+  return Promise.reject();
 }
 
 export async function isDesignTimeUp(url: string): Promise<boolean> {
@@ -199,7 +198,7 @@ export function stopDesignTimeApi(): void {
   }
 
   if (os.platform() === Platform.windows) {
-    cp.exec('taskkill /pid ' + `${ext.designChildProcess.pid}` + ' /t /f');
+    cp.exec(`taskkill /pid ${ext.designChildProcess.pid} /t /f`);
   } else {
     ext.designChildProcess.kill();
   }

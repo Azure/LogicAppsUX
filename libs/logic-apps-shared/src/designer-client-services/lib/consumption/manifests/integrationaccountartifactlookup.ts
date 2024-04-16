@@ -6,7 +6,7 @@ export const integrationAccountArtifactLookupManifest = {
   properties: {
     iconUri: integrationAccountGroup.properties.iconUri,
     brandColor: integrationAccountGroup.properties.brandColor,
-    description: `Integration Account Operation Lookup`,
+    description: 'Integration Account Operation Lookup',
     summary: 'Integration Account Operation Lookup',
 
     inputs: {

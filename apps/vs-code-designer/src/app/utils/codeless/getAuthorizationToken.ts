@@ -12,7 +12,7 @@ export async function getAuthorizationToken(credentials?: ServiceClientCredentia
 }
 
 export async function getCloudHost(credentials?: any, tenantId?: string): Promise<string> {
-  credentials = !credentials ? await getAccountCredentials(tenantId) : credentials;
+  credentials = credentials ? credentials : await getAccountCredentials(tenantId);
 
   return credentials ? credentials?.environment?.managementEndpointUrl : '';
 }

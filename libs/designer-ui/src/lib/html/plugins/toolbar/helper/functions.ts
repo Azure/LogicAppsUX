@@ -39,14 +39,15 @@ export const processNodeType = (currNode: LexicalNode): ListNode | HeadingNode |
   if ($isHeadingNode(currNode)) {
     const headingNodeType = currNode.getTag();
     return $createHeadingNode(headingNodeType);
-  } else if ($isListNode(currNode)) {
+  }
+  if ($isListNode(currNode)) {
     const listNodeType = currNode.getListType();
     return $createListNode(listNodeType);
-  } else if ($isParagraphNode(currNode)) {
-    return $createParagraphNode();
-  } else {
+  }
+  if ($isParagraphNode(currNode)) {
     return $createParagraphNode();
   }
+  return $createParagraphNode();
 };
 
 const VERTICAL_GAP = 10;

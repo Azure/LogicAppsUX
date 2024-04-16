@@ -9,7 +9,9 @@ export class OAuthPopup implements IOAuthPopup {
     const windowName: string = Date.now().toString();
     const authUrl = consentUrl;
     const oAuthWindow = window.open(authUrl, windowName, 'scrollbars=1, resizable=1, width=500, height=600, popup=1');
-    if (!oAuthWindow) throw new Error('The browser has blocked the popup window.');
+    if (!oAuthWindow) {
+      throw new Error('The browser has blocked the popup window.');
+    }
 
     this.loginPromise = new Promise<LoginResult>((resolve) => {
       // Check for authorization status every 1000 ms.
@@ -19,9 +21,11 @@ export class OAuthPopup implements IOAuthPopup {
           const code = url.searchParams.get('code');
           const error = url.searchParams.get('error');
 
-          if (code) resolve({ timerId, code });
-          else if (error) resolve({ timerId, error });
-          else if (oAuthWindow?.closed) {
+          if (code) {
+            resolve({ timerId, code });
+          } else if (error) {
+            resolve({ timerId, error });
+          } else if (oAuthWindow?.closed) {
             resolve({
               timerId,
               error: 'The popup window has been closed.',
@@ -44,13 +48,15 @@ export class OAuthPopup implements IOAuthPopup {
 }
 
 export class BaseOAuthService implements IOAuthService {
-  constructor(private readonly options: IOAuthServiceOptions) {
+  constructor(options: IOAuthServiceOptions) {
     const { apiVersion, baseUrl, httpClient } = options;
     if (!apiVersion) {
       throw new ArgumentException('apiVersion required');
-    } else if (!baseUrl) {
+    }
+    if (!baseUrl) {
       throw new ArgumentException('baseUrl required');
-    } else if (!httpClient) {
+    }
+    if (!httpClient) {
       throw new ArgumentException('httpClient required');
     }
   }

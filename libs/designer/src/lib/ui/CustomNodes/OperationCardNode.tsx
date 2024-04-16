@@ -176,10 +176,15 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
   const showLeafComponents = useMemo(() => !readOnly && isLeaf, [readOnly, isLeaf]);
 
   const nodeClick = useCallback(() => {
-    if (nodeSelectCallbackOverride) nodeSelectCallbackOverride(id);
+    if (nodeSelectCallbackOverride) {
+      nodeSelectCallbackOverride(id);
+    }
 
-    if (suppressDefaultNodeSelect) dispatch(setSelectedNodeId(id));
-    else dispatch(changePanelNode(id));
+    if (suppressDefaultNodeSelect) {
+      dispatch(setSelectedNodeId(id));
+    } else {
+      dispatch(changePanelNode(id));
+    }
   }, [dispatch, id, nodeSelectCallbackOverride, suppressDefaultNodeSelect]);
 
   const { brandColor, iconUri } = useOperationVisuals(id);

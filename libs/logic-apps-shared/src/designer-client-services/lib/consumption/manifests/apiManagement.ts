@@ -23,7 +23,7 @@ export const apiManagementActionManifest = {
     iconUri,
     brandColor,
     summary: 'Choose an Azure API Management action',
-    description: `Show API Management APIs in my subscription`,
+    description: 'Show API Management APIs in my subscription',
 
     environmentBadge: coreBadge,
 
@@ -165,7 +165,7 @@ export const apiManagementTriggerManifest = {
   properties: {
     ...apiManagementActionManifest.properties,
     summary: 'Choose an Azure API Management trigger',
-    description: `Show API Management APIs in my subscription`,
+    description: 'Show API Management APIs in my subscription',
 
     recurrence: {
       type: RecurrenceType.Basic,

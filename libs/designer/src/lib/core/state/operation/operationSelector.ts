@@ -66,7 +66,9 @@ export const useAllConnectionErrors = (): Record<string, string> =>
       Object.entries(state.errors ?? {}).reduce((acc: any, [nodeId, errors]) => {
         const connectionError = errors?.[ErrorLevel.Connection];
         // eslint-disable-next-line no-param-reassign
-        if (connectionError) acc[nodeId] = connectionError.message;
+        if (connectionError) {
+          acc[nodeId] = connectionError.message;
+        }
         return acc;
       }, {})
     )
@@ -131,19 +133,23 @@ export const useNodesAndDynamicDataInitialized = () =>
 const getTopErrorInOperation = (errors?: Record<ErrorLevel, ErrorInfo | undefined>): ErrorInfo | undefined => {
   if (!errors) {
     return undefined;
-  } else if (errors[ErrorLevel.Critical]) {
-    return errors[ErrorLevel.Critical];
-  } else if (errors[ErrorLevel.Connection]) {
-    return errors[ErrorLevel.Connection];
-  } else if (errors[ErrorLevel.DynamicInputs]) {
-    return errors[ErrorLevel.DynamicInputs];
-  } else if (errors[ErrorLevel.DynamicOutputs]) {
-    return errors[ErrorLevel.DynamicOutputs];
-  } else if (errors[ErrorLevel.Default]) {
-    return errors[ErrorLevel.Default];
-  } else {
-    return undefined;
   }
+  if (errors[ErrorLevel.Critical]) {
+    return errors[ErrorLevel.Critical];
+  }
+  if (errors[ErrorLevel.Connection]) {
+    return errors[ErrorLevel.Connection];
+  }
+  if (errors[ErrorLevel.DynamicInputs]) {
+    return errors[ErrorLevel.DynamicInputs];
+  }
+  if (errors[ErrorLevel.DynamicOutputs]) {
+    return errors[ErrorLevel.DynamicOutputs];
+  }
+  if (errors[ErrorLevel.Default]) {
+    return errors[ErrorLevel.Default];
+  }
+  return undefined;
 };
 
 export const useBrandColor = (nodeId: string) =>

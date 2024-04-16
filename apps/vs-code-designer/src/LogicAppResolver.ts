@@ -41,12 +41,12 @@ export class LogicAppResolver implements AppResourceResolver {
     const logicAppsSites = ext.logicAppSitesMap.get(subContext.subscriptionId);
     let site: Site;
 
-    if (!logicAppsSites) {
+    if (logicAppsSites) {
+      site = ext.logicAppSitesMap.get(subContext.subscriptionId).get(resource.id);
+    } else {
       const subscriptionSites = await LogicAppResolver.getSubscriptionSites(context, subContext);
 
       site = subscriptionSites.get(resource.id);
-    } else {
-      site = ext.logicAppSitesMap.get(subContext.subscriptionId).get(resource.id);
     }
     return site;
   }

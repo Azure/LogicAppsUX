@@ -22,7 +22,8 @@ export function getSplitOnArrayAliasMetadata(schema: SchemaObject, required: boo
       propertyName,
       required,
     };
-  } else if (schema.type === SwaggerConstants.Types.Object) {
+  }
+  if (schema.type === SwaggerConstants.Types.Object) {
     const keys = Object.keys(schema.properties || {});
 
     if (keys.length >= 1) {
@@ -131,9 +132,9 @@ export class ManifestParser {
       OutputsProcessor.convertSchemaPropertyToOutputParameter(item, SwaggerConstants.OutputSource.Outputs, 'outputs')
     );
 
-    const filteredOutputParameters = !this._operationManifest.properties.includeRootOutputs
-      ? outputParameters.filter((parameter) => parameter.key !== 'outputs.$')
-      : outputParameters;
+    const filteredOutputParameters = this._operationManifest.properties.includeRootOutputs
+      ? outputParameters
+      : outputParameters.filter((parameter) => parameter.key !== 'outputs.$');
 
     return map(filteredOutputParameters, SwaggerConstants.OutputMapKey);
   }

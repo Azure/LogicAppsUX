@@ -246,7 +246,7 @@ export const MonacoEditor = forwardRef<editor.IStandaloneCodeEditor, MonacoProps
       editor.addAction(openTokenPickerAction);
       // temporary handling for where paste is not working in monaco editor
       // monoaco bug: https://github.com/microsoft/monaco-editor/issues/4438
-      editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyV, async function () {
+      editor.addCommand(monaco.KeyMod.CtrlCmd | monaco.KeyCode.KeyV, async () => {
         const pasteText = await navigator.clipboard.readText();
         currentRef.current?.executeEdits(null, [
           {

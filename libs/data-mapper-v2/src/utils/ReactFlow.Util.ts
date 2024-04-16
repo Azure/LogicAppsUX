@@ -24,7 +24,7 @@
 
 import { guid, type SchemaType } from '@microsoft/logic-apps-shared';
 import { sourcePrefix, targetPrefix } from '../constants/ReactFlowConstants';
-import { type FunctionData } from 'models';
+import type { FunctionData } from 'models';
 
 export const addReactFlowPrefix = (key: string, type: SchemaType) => `${type}-${key}`;
 export const addSourceReactFlowPrefix = (key: string) => `${sourcePrefix}${key}`;

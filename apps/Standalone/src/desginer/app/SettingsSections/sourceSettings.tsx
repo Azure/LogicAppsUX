@@ -17,7 +17,9 @@ const SourceSettings = () => {
 
   const armToken = environment.armToken;
   useEffect(() => {
-    if (!armToken) dispatch(setIsLocalSelected(true));
+    if (!armToken) {
+      dispatch(setIsLocalSelected(true));
+    }
   }, [armToken, dispatch]);
 
   return (

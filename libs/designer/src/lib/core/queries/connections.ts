@@ -42,13 +42,16 @@ export const useConnectionById = (connectionId: string, connectorId: string) => 
   const isLoading = areConnectionsLoading || isConnectionLoading;
 
   return useMemo(() => {
-    if (!connectionId || !connectorId) return { isLoading: false, result: undefined };
+    if (!connectionId || !connectorId) {
+      return { isLoading: false, result: undefined };
+    }
 
-    if (!connections)
+    if (!connections) {
       return {
         isLoading,
         result: undefined,
       };
+    }
 
     const foundConnection = connections.find((connection: any) => equals(connection.id, connectionId));
     return {

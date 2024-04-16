@@ -19,7 +19,9 @@ export class ConsumptionSearchService extends BaseSearchService {
 
   //#region Operations
   public async getAllOperations(): Promise<DiscoveryOpArray> {
-    if (this._isDev) return Promise.resolve(this.getBuiltInOperations());
+    if (this._isDev) {
+      return Promise.resolve(this.getBuiltInOperations());
+    }
 
     return Promise.all([this.getAllAzureOperations(), this.getAllCustomApiOperations(), this.getBuiltInOperations()]).then((values) =>
       values.flat()
@@ -42,13 +44,17 @@ export class ConsumptionSearchService extends BaseSearchService {
   }
 
   public async getCustomOperationsByPage(page: number): Promise<DiscoveryOpArray> {
-    if (this._isDev) return Promise.resolve([]);
+    if (this._isDev) {
+      return Promise.resolve([]);
+    }
 
     try {
       const {
         apiHubServiceDetails: { apiVersion, subscriptionId, location },
       } = this.options;
-      if (this._isDev) return Promise.resolve([]);
+      if (this._isDev) {
+        return Promise.resolve([]);
+      }
 
       const uri = `/subscriptions/${subscriptionId}/providers/Microsoft.Web/locations/${location}/apiOperations`;
       const queryParameters: QueryParameters = {
@@ -110,16 +116,17 @@ export class ConsumptionSearchService extends BaseSearchService {
 
         return operation;
       });
-    } else {
-      return operations;
     }
+    return operations;
   }
 
   //#endregion
 
   //#region Connectors
   public override async getAllConnectors(): Promise<Connector[]> {
-    if (this._isDev) return Promise.resolve(this.getBuiltInConnectors());
+    if (this._isDev) {
+      return Promise.resolve(this.getBuiltInConnectors());
+    }
 
     return Promise.all([this.getAllAzureConnectors(), this.getAllCustomApiConnectors(), this.getBuiltInConnectors()]).then((values) =>
       values.flat()
@@ -147,7 +154,9 @@ export class ConsumptionSearchService extends BaseSearchService {
   }
 
   public async getCustomConnectorsByNextlink(prevNextlink?: string): Promise<any> {
-    if (this._isDev) return Promise.resolve({ value: [] });
+    if (this._isDev) {
+      return Promise.resolve({ value: [] });
+    }
 
     try {
       const {

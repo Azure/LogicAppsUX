@@ -17,10 +17,9 @@ export const IFrameTermsOfService = (props: IFrameTermsOfServiceProps) => {
   if (url && url.toUpperCase().indexOf('HTTPS://') === 0) {
     return (
       <div className="msla-iframe-terms-of-service">
-        <iframe title={title} src={url} sandbox="allow-popups"></iframe>
+        <iframe title={title} src={url} sandbox="allow-popups" />
       </div>
     );
-  } else {
-    return null;
   }
+  return null;
 };

@@ -39,7 +39,9 @@ export const convertStringToSegments = (
   nodeMap: Map<string, ValueSegment>,
   options?: SegmentParserOptions
 ): ValueSegment[] => {
-  if (!value) return [];
+  if (!value) {
+    return [];
+  }
 
   const { tokensEnabled } = options ?? {};
 

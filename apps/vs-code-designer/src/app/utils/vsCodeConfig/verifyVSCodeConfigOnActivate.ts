@@ -20,7 +20,7 @@ import type { WorkspaceFolder, MessageItem } from 'vscode';
 
 export async function verifyVSCodeConfigOnActivate(
   context: IActionContext,
-  folders: ReadonlyArray<WorkspaceFolder> | undefined
+  folders: readonly WorkspaceFolder[] | undefined
 ): Promise<void> {
   context.telemetry.suppressIfSuccessful = true;
   context.telemetry.properties.isActivationEvent = 'true';
@@ -47,9 +47,10 @@ export async function verifyVSCodeConfigOnActivate(
           const projectLanguage: string | undefined = getWorkspaceSetting(projectLanguageSetting, workspacePath);
           context.telemetry.properties.projectLanguage = projectLanguage;
           switch (projectLanguage) {
-            case ProjectLanguage.CSharp:
+            case ProjectLanguage.CSharp: {
               await verifyTargetFramework(projectLanguage, folder, projectPath, context);
               break;
+            }
             default:
           }
         } else if (isNullOrUndefined(version)) {

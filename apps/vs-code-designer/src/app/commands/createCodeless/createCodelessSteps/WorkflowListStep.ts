@@ -47,9 +47,8 @@ export class WorkflowListStep extends AzureWizardPromptStep<IFunctionWizardConte
       }
 
       return { promptSteps, executeSteps, title };
-    } else {
-      return undefined;
     }
+    return undefined;
   }
 
   public async prompt(context: IFunctionWizardContext): Promise<void> {
@@ -64,9 +63,8 @@ export class WorkflowListStep extends AzureWizardPromptStep<IFunctionWizardConte
       if (result === TemplatePromptResult.skipForNow) {
         context.telemetry.properties.templateId = TemplatePromptResult.skipForNow;
         break;
-      } else {
-        context.functionTemplate = result;
       }
+      context.functionTemplate = result;
     }
   }
 

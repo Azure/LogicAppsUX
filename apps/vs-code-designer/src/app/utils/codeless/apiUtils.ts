@@ -47,10 +47,9 @@ export async function getParameterFileContent(context: IActionContext, node: Slo
   } catch (error) {
     if (error.statusCode === 404) {
       return {};
-    } else {
-      vscode.window.showErrorMessage(error.message, localize('OK', 'OK'));
-      throw error;
     }
+    vscode.window.showErrorMessage(error.message, localize('OK', 'OK'));
+    throw error;
   }
 }
 
@@ -72,9 +71,8 @@ export async function listWorkflows(node: SlotTreeItem, context: IActionContext)
   } catch (error) {
     if (error.statusCode === 404) {
       return [];
-    } else {
-      throw error;
     }
+    throw error;
   }
 }
 
@@ -84,10 +82,9 @@ export async function getOptionalFileContent(context: IActionContext, node: Slot
   } catch (error) {
     if (error.statusCode === 404) {
       return '{}';
-    } else {
-      vscode.window.showErrorMessage(error.message, localize('OK', 'OK'));
-      throw error;
     }
+    vscode.window.showErrorMessage(error.message, localize('OK', 'OK'));
+    throw error;
   }
 }
 
@@ -102,10 +99,9 @@ async function getArtifactFiles(context: IActionContext, node: SlotTreeItem, fol
   } catch (error) {
     if (error.statusCode === 404) {
       return [];
-    } else {
-      vscode.window.showErrorMessage(error.message, localize('OK', 'OK'));
-      throw error;
     }
+    vscode.window.showErrorMessage(error.message, localize('OK', 'OK'));
+    throw error;
   }
 }
 

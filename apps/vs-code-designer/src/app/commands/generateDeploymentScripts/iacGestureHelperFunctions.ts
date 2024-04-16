@@ -19,7 +19,9 @@ export class FileManagement {
       const existingFolders = vscode.workspace.workspaceFolders || [];
       const isAlreadyInWorkspace = existingFolders.some((folder) => folder.uri.fsPath === folderPath);
 
-      if (!isAlreadyInWorkspace) {
+      if (isAlreadyInWorkspace) {
+        ext.outputChannel.appendLog(localize('folderAlreadyInWorkspace', `Folder is already in the workspace: ${folderPath}`));
+      } else {
         const result = vscode.workspace.updateWorkspaceFolders(0, null, { uri });
         if (result) {
           ext.outputChannel.appendLog(localize('folderAddedSuccessfully', `Folder added successfully: ${folderPath}`));
@@ -28,8 +30,6 @@ export class FileManagement {
             localize('failedToAddFolder', `Failed to add folder to workspace (updateWorkspaceFolders returned false): ${folderPath}`)
           );
         }
-      } else {
-        ext.outputChannel.appendLog(localize('folderAlreadyInWorkspace', `Folder is already in the workspace: ${folderPath}`));
       }
     } catch (error) {
       ext.outputChannel.appendLog(localize('errorAddingFolder', `Error in addFolderToWorkspace: ${error}`));
@@ -66,11 +66,10 @@ export class FileManagement {
             ? localize('failedToAddFolderToWorkspace', 'Failed to add folder to workspace')
             : localize('failedToCreateWorkspace', 'Failed to create workspace')
         );
-      } else {
-        ext.outputChannel.appendLog(
-          localize('workspaceFoldersUpdated', `Workspace folders updated successfully with new directory: ${targetDirectory}`)
-        );
       }
+      ext.outputChannel.appendLog(
+        localize('workspaceFoldersUpdated', `Workspace folders updated successfully with new directory: ${targetDirectory}`)
+      );
     } catch (error) {
       ext.outputChannel.appendLog(localize('errorConvertingToWorkspace', `Error in convertToValidWorkspace: ${error}`));
       vscode.window.showErrorMessage(

@@ -2,8 +2,8 @@ import type { WorkflowsList, SelectedWorkflowsList } from '../../../run-service'
 import { AdvancedOptionsTypes } from '../../../run-service';
 import type { IDropdownOption } from '@fluentui/react';
 
-export const parseResourceGroups = (workflowItems: Array<WorkflowsList>): IDropdownOption[] => {
-  const resourceGroups: Array<string> = workflowItems.reduce((acc: Array<string>, curr: WorkflowsList): Array<string> => {
+export const parseResourceGroups = (workflowItems: WorkflowsList[]): IDropdownOption[] => {
+  const resourceGroups: string[] = workflowItems.reduce((acc: string[], curr: WorkflowsList): string[] => {
     acc.push(curr.resourceGroup);
     return acc;
   }, []);
@@ -15,7 +15,7 @@ export const parseResourceGroups = (workflowItems: Array<WorkflowsList>): IDropd
   return dropdownGroups;
 };
 
-export const filterWorkflows = (workflowItems: Array<WorkflowsList>, resourceGroups: IDropdownOption[], newSearchString: string) => {
+export const filterWorkflows = (workflowItems: WorkflowsList[], resourceGroups: IDropdownOption[], newSearchString: string) => {
   const selectedFilters: Array<string | number> = resourceGroups
     .filter((resourceGroup: IDropdownOption) => resourceGroup.selected)
     .map((resourceGroup: IDropdownOption) => resourceGroup.key);
@@ -75,10 +75,8 @@ export const getSelectedItems = (allItemsSelected: SelectedWorkflowsList[], curr
       if (isWorkflowInRender && !isWorkflowInSelection) {
         updatedWorkflow.selected = false;
       }
-    } else {
-      if (isWorkflowInSelection) {
-        updatedWorkflow.selected = true;
-      }
+    } else if (isWorkflowInSelection) {
+      updatedWorkflow.selected = true;
     }
     return updatedWorkflow;
   });

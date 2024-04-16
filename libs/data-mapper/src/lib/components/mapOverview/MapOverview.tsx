@@ -99,9 +99,9 @@ export const MapOverview = () => {
         fitView
       >
         <Stack horizontal horizontalAlign="space-around" verticalAlign="center" style={{ height: '100%' }}>
-          <SelectSchemaCard schemaType={SchemaType.Source} style={{ visibility: !sourceSchema ? 'visible' : 'hidden' }} />
+          <SelectSchemaCard schemaType={SchemaType.Source} style={{ visibility: sourceSchema ? 'hidden' : 'visible' }} />
 
-          <SelectSchemaCard schemaType={SchemaType.Target} style={{ visibility: !targetSchema ? 'visible' : 'hidden' }} />
+          <SelectSchemaCard schemaType={SchemaType.Target} style={{ visibility: targetSchema ? 'hidden' : 'visible' }} />
         </Stack>
 
         {sourceSchema && <SchemaNameBadge schemaName={sourceSchema.name} schemaTreeRootXPos={srcSchemaTreeRootXPos} />}

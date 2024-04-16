@@ -144,7 +144,8 @@ export async function setLocalAppSetting(
   settings.Values = settings.Values || {};
   if (settings.Values[key] === value) {
     return;
-  } else if (settings.Values[key]) {
+  }
+  if (settings.Values[key]) {
     if (behavior === MismatchBehavior.Prompt) {
       const message: string = localize('SettingAlreadyExists', "Local app setting '{0}' already exists. Overwrite?", key);
       if (

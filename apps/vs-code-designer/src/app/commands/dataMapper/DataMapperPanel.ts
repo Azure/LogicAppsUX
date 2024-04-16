@@ -63,8 +63,12 @@ export default class DataMapperPanel {
     this.panel.onDidDispose(
       () => {
         delete ext.dataMapPanelManagers[this.dataMapName];
-        if (schemaFolderWatcher) schemaFolderWatcher.dispose();
-        if (customXsltFolderWatcher) customXsltFolderWatcher.dispose();
+        if (schemaFolderWatcher) {
+          schemaFolderWatcher.dispose();
+        }
+        if (customXsltFolderWatcher) {
+          customXsltFolderWatcher.dispose();
+        }
       },
       null,
       ext.context.subscriptions
@@ -102,7 +106,7 @@ export default class DataMapperPanel {
         });
         break;
       }
-      case ExtensionCommand.webviewLoaded:
+      case ExtensionCommand.webviewLoaded: {
         // Send runtime port to webview
         this.sendMsgToWebview({ command: ExtensionCommand.setRuntimePort, data: `${ext.designTimePort}` });
 
@@ -110,10 +114,12 @@ export default class DataMapperPanel {
         this.handleLoadMapDefinitionIfAny();
 
         break;
-      case ExtensionCommand.webviewRscLoadError:
+      }
+      case ExtensionCommand.webviewRscLoadError: {
         // Handle DM top-level errors (such as loading schemas added from file, or general function manifest fetching issues)
         ext.showError(localize('WebviewRscLoadError', `Error loading Data Mapper resource: "{0}"`, msg.data));
         break;
+      }
       case ExtensionCommand.addSchemaFromFile: {
         this.addSchemaFromFile(msg.data.path, msg.data.type);
         break;
@@ -220,11 +226,11 @@ export default class DataMapperPanel {
       const filesToDisplay: string[] = [];
       result.forEach((file) => {
         this.getNestedFilePaths(file, '', folderPath, filesToDisplay, fileTypes);
-      }),
-        this.sendMsgToWebview({
-          command,
-          data: filesToDisplay,
-        });
+      });
+      this.sendMsgToWebview({
+        command,
+        data: filesToDisplay,
+      });
     });
   }
 

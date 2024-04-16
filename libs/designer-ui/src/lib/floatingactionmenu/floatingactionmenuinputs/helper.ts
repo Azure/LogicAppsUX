@@ -94,7 +94,9 @@ export function deserialize(value: ValueSegment[], isRequestApiConnectionTrigger
 export function serialize(models: DynamicallyAddedParameterInputsModel[], isRequestApiConnectionTrigger = false): ValueSegment[] {
   const requiredArray: string[] = [];
   models.forEach((model) => {
-    if (model.required) requiredArray.push(model.schemaKey);
+    if (model.required) {
+      requiredArray.push(model.schemaKey);
+    }
   });
 
   const properties = models
@@ -166,30 +168,46 @@ export function createDynamicallyAddedParameterProperties(
   itemType: DynamicallyAddedParameterTypeType,
   schemaKey: string
 ): DynamicallyAddedParameterInputsProperties {
-  let format, fileProperties;
+  let format: string | undefined;
+  let fileProperties:
+    | {
+        name: {
+          type: string;
+        };
+        contentBytes: {
+          type: string;
+          format: string;
+        };
+      }
+    | undefined;
   let type = '';
   switch (itemType) {
     case DynamicallyAddedParameterType.Date:
-    case DynamicallyAddedParameterType.Email:
+    case DynamicallyAddedParameterType.Email: {
       type = constants.SWAGGER.TYPE.STRING;
       format = itemType.toLowerCase();
       break;
-    case DynamicallyAddedParameterType.Text:
+    }
+    case DynamicallyAddedParameterType.Text: {
       type = constants.SWAGGER.TYPE.STRING;
       break;
-    case DynamicallyAddedParameterType.File:
+    }
+    case DynamicallyAddedParameterType.File: {
       type = constants.SWAGGER.TYPE.OBJECT;
       fileProperties = {
         contentBytes: { type: constants.SWAGGER.TYPE.STRING, format: constants.SWAGGER.FORMAT.BYTE },
         name: { type: constants.SWAGGER.TYPE.STRING },
       };
       break;
-    case DynamicallyAddedParameterType.Boolean:
+    }
+    case DynamicallyAddedParameterType.Boolean: {
       type = constants.SWAGGER.TYPE.BOOLEAN;
       break;
-    case DynamicallyAddedParameterType.Number:
+    }
+    case DynamicallyAddedParameterType.Number: {
       type = constants.SWAGGER.TYPE.NUMBER;
       break;
+    }
   }
 
   return {

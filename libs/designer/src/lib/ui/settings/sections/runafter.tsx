@@ -40,7 +40,9 @@ export const RunAfter = ({ nodeId, readOnly = false, expanded, onHeaderClick }: 
   });
 
   const handleStatusChange = (predecessorId: string, status: string, checked?: boolean) => {
-    if (!nodeData?.runAfter) return;
+    if (!nodeData?.runAfter) {
+      return;
+    }
     const updatedStatus: string[] = [...(getRecordEntry(nodeData.runAfter, predecessorId) ?? [])].filter(
       (x) => x?.toLowerCase() !== status?.toLowerCase()
     );
@@ -59,9 +61,11 @@ export const RunAfter = ({ nodeId, readOnly = false, expanded, onHeaderClick }: 
         },
       ]);
       return;
-    } else if (!updatedStatus.length) {
+    }
+    if (!updatedStatus.length) {
       return;
-    } else if (errors.some(({ key }) => key === ValidationErrorKeys.CANNOT_DELETE_LAST_STATUS)) {
+    }
+    if (errors.some(({ key }) => key === ValidationErrorKeys.CANNOT_DELETE_LAST_STATUS)) {
       setErrors(errors.filter(({ key }) => key !== ValidationErrorKeys.CANNOT_DELETE_LAST_STATUS));
     }
 
@@ -102,9 +106,11 @@ export const RunAfter = ({ nodeId, readOnly = false, expanded, onHeaderClick }: 
               },
             ]);
             return;
-          } else if (arr.length < 2) {
+          }
+          if (arr.length < 2) {
             return;
-          } else if (errors.some(({ key }) => key === ValidationErrorKeys.CANNOT_DELETE_LAST_ACTION)) {
+          }
+          if (errors.some(({ key }) => key === ValidationErrorKeys.CANNOT_DELETE_LAST_ACTION)) {
             setErrors(errors.filter(({ key }) => key !== ValidationErrorKeys.CANNOT_DELETE_LAST_ACTION));
           }
 

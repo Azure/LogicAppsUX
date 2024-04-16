@@ -108,7 +108,8 @@ export function getAssistedConnectionProps(connector: Connector, manifest?: Oper
       getSubResourceName,
       fetchSubResourcesCallback,
     };
-  } else if (manifest?.properties.connection?.type === ConnectionType.ApiManagement) {
+  }
+  if (manifest?.properties.connection?.type === ConnectionType.ApiManagement) {
     const apiInstancesCallback = () => ApiManagementService().fetchApiManagementInstances();
     const apisCallback = (apim?: any) => ApiManagementService().fetchApisInApiM(apim.id ?? '');
     const apimInstancesLoadingText = intl.formatMessage({
@@ -155,7 +156,8 @@ export async function getConnectionParametersForAzureConnection(connectionType?:
         value: authCodeValue,
       },
     };
-  } else if (connectionType === ConnectionType.ApiManagement) {
+  }
+  if (connectionType === ConnectionType.ApiManagement) {
     // TODO - Need to find apps which have authentication set, check with Alex.
     const apimApiId = selectedSubResource?.id;
     const { api } = await ApiManagementService().fetchApiMSwagger(apimApiId);

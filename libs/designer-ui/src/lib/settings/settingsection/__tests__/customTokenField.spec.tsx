@@ -4,7 +4,7 @@ import { CustomTokenField, isCustomEditor, toCustomEditorAndOptions } from '../c
 import { TokenField } from '../settingTokenField';
 import type { IRenderDefaultEditorParams } from '@microsoft/logic-apps-shared';
 import * as ReactShallowRenderer from 'react-test-renderer/shallow';
-import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
+import { describe, vi, beforeEach, afterEach, it, expect } from 'vitest';
 describe('ui/settings/customTokenField', () => {
   describe('isCustomEditor', () => {
     it.each`

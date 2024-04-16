@@ -27,7 +27,9 @@ export const useConnectorAndSwagger = (connectorId: string | undefined, enabled 
   return useQuery(
     ['apiWithSwaggers', { connectorId }],
     async () => {
-      if (!connectorId) return;
+      if (!connectorId) {
+        return;
+      }
       return await ConnectionService().getConnectorAndSwagger(connectorId);
     },
     {
@@ -85,7 +87,9 @@ const useConnectionByNodeId = (nodeId: string) => {
   return useQuery(
     ['connection', { connectorId: operationInfo?.connectorId }, { connectionId }],
     () => {
-      if (!connectionId || !operationInfo?.connectorId) return;
+      if (!connectionId || !operationInfo?.connectorId) {
+        return;
+      }
       return getConnection(connectionId, operationInfo.connectorId);
     },
     {

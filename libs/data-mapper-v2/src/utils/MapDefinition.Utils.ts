@@ -16,9 +16,8 @@ export const loadMapDefinition = (mapDefinitionString: string | undefined): MapD
     fixMapDefinitionCustomValues(mapDefinition);
 
     return mapDefinition;
-  } else {
-    return {};
   }
+  return {};
 };
 
 const fixMapDefinitionCustomValues = (mapDefinition: MapDefinitionEntry) => {

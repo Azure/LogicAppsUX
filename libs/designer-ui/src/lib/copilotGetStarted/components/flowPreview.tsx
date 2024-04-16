@@ -3,7 +3,7 @@ import Constants from '../../constants';
 import { getCaseDisplayName, isControlFlowOperation, isVariableOperation, toOperationInfo } from '../helpers/flowPreviewHelper';
 import { FontIcon, Icon } from '@fluentui/react/lib/Icon';
 import { css } from '@fluentui/react/lib/Utilities';
-import React from 'react';
+import type React from 'react';
 import { useIntl } from 'react-intl';
 
 export interface IFlowDefinition {
@@ -157,12 +157,13 @@ const OperationPreview: React.FC<OperationPreviewProps> = ({ operationName, oper
     switch (operation.type) {
       case Constants.NODE.TYPE.FOREACH:
       case Constants.NODE.TYPE.SCOPE:
-      case Constants.NODE.TYPE.UNTIL:
+      case Constants.NODE.TYPE.UNTIL: {
         subOperations.push({
           operations: operation.actions,
         });
         break;
-      case Constants.NODE.TYPE.IF:
+      }
+      case Constants.NODE.TYPE.IF: {
         if (operation.actions) {
           subOperations.push({
             displayName: intlText.flowPreviewConditionTrueLabel,
@@ -179,7 +180,8 @@ const OperationPreview: React.FC<OperationPreviewProps> = ({ operationName, oper
           });
         }
         break;
-      case Constants.NODE.TYPE.SWITCH:
+      }
+      case Constants.NODE.TYPE.SWITCH: {
         subOperations.push(
           ...Object.keys(operation.cases).map((caseName) => ({
             displayName: getCaseDisplayName(caseName),
@@ -193,6 +195,7 @@ const OperationPreview: React.FC<OperationPreviewProps> = ({ operationName, oper
           });
         }
         break;
+      }
 
       default:
         break;

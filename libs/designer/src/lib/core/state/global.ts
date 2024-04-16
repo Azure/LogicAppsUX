@@ -14,7 +14,7 @@ export const useIsDesignerDirty = () => {
   return isWorkflowDirty || isWorkflowParametersDirty;
 };
 
-export const resetDesignerDirtyState = createAsyncThunk('resetDesignerDirtyState', async (_: void, thunkAPI: any) => {
+export const resetDesignerDirtyState = createAsyncThunk('resetDesignerDirtyState', async (_: unknown, thunkAPI: any) => {
   const dispatch = thunkAPI.dispatch;
   dispatch(setIsWorkflowDirty(false));
   dispatch(setIsWorkflowParametersDirty(false));

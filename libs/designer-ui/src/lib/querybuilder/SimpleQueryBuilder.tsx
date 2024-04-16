@@ -144,18 +144,17 @@ const convertRootPropToValue = (rootProps: RowItemProps): ValueSegment[] => {
   const { operator, operand1, operand2 } = rootProps;
   const negatory = operator.includes('not');
   const op1: ValueSegment = getOperationValue(operand1[0]) ?? createLiteralValueSegment('');
-  const separatorLiteral: ValueSegment = createLiteralValueSegment(`,`);
+  const separatorLiteral: ValueSegment = createLiteralValueSegment(',');
   const op2: ValueSegment = getOperationValue(operand2[0]) ?? createLiteralValueSegment('');
   if (negatory) {
     const newOperator = operator.replace('not', '');
     const negatoryOperatorLiteral: ValueSegment = createLiteralValueSegment(`@not(${newOperator}(`);
-    const endingLiteral: ValueSegment = createLiteralValueSegment(`))`);
+    const endingLiteral: ValueSegment = createLiteralValueSegment('))');
     return [negatoryOperatorLiteral, op1, separatorLiteral, op2, endingLiteral];
-  } else {
-    const operatorLiteral: ValueSegment = createLiteralValueSegment(`@${operator}(`);
-    const endingLiteral: ValueSegment = createLiteralValueSegment(`)`);
-    return [operatorLiteral, op1, separatorLiteral, op2, endingLiteral];
   }
+  const operatorLiteral: ValueSegment = createLiteralValueSegment(`@${operator}(`);
+  const endingLiteral: ValueSegment = createLiteralValueSegment(')');
+  return [operatorLiteral, op1, separatorLiteral, op2, endingLiteral];
 };
 
 const convertAdvancedValueToRootProp = (value: ValueSegment[]): RowItemProps | undefined => {
@@ -174,13 +173,15 @@ const convertAdvancedValueToRootProp = (value: ValueSegment[]): RowItemProps | u
   if (!stringValue.includes('@') || !stringValue.includes(',')) {
     return undefined;
   }
-  let operator: string, operand1: ValueSegment[], operand2: ValueSegment[];
+  let operator: string;
+  let operand1: ValueSegment[];
+  let operand2: ValueSegment[];
   try {
     operator = stringValue.substring(stringValue.indexOf('@') + 1, stringValue.indexOf('('));
     const negatory = operator === 'not';
     if (negatory) {
       stringValue = stringValue.replace('@not(', '@');
-      operator = 'not' + stringValue.substring(stringValue.indexOf('@') + 1, stringValue.indexOf('('));
+      operator = `not${stringValue.substring(stringValue.indexOf('@') + 1, stringValue.indexOf('('))}`;
     }
     // if operator is not of the dropdownlist, it cannot be converted into row format
     if (!Object.values(RowDropdownOptions).includes(operator as RowDropdownOptions)) {

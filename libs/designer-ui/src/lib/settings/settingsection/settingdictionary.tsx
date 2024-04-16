@@ -31,9 +31,8 @@ export function SettingDictionary({
         customLabel={customLabel}
       />
     );
-  } else {
-    return <ValuesInTextField values={values} readOnly={readOnly} onTextFieldChange={onTextFieldChange} ariaLabel={ariaLabel} />;
   }
+  return <ValuesInTextField values={values} readOnly={readOnly} onTextFieldChange={onTextFieldChange} ariaLabel={ariaLabel} />;
 }
 
 function ValuesInDictionary({ values, readOnly, onDictionaryChange, customLabel, ariaLabel }: SettingDictionaryProps): JSX.Element {

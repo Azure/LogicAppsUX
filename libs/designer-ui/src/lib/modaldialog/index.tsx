@@ -3,7 +3,7 @@ import type { IDialogContentProps, IDialogStyleProps, IDialogStyles } from '@flu
 import { Dialog, DialogFooter, DialogType } from '@fluentui/react/lib/Dialog';
 import type { IModalProps } from '@fluentui/react/lib/Modal';
 import type { IStyleFunction } from '@fluentui/react/lib/Utilities';
-import * as React from 'react';
+import type * as React from 'react';
 
 export interface ModalDialogProps {
   confirmText: string;

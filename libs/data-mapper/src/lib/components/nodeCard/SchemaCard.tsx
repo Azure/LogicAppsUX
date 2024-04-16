@@ -312,7 +312,7 @@ export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
           onClick={onClick}
           appearance={'transparent'}
           className={classes.contentButton}
-          style={{ paddingRight: !showOutputChevron ? '10px' : '0px' }}
+          style={{ paddingRight: showOutputChevron ? '0px' : '10px' }}
         >
           <span className={classes.cardIcon}>
             <BundledTypeIcon />

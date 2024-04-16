@@ -9,7 +9,7 @@ const encodeReduceFunction = (acc: Record<string, string>, key: string) => {
 const decodeReduceFunction = (acc: Record<string, string>, key: string) => {
   acc[encodeURIComponent(key)] = key;
   return acc;
-}
+};
 const htmlUnsafeCharacters = ['<', '>'];
 const htmlUnsafeCharacterEncodingMap: Record<string, string> = htmlUnsafeCharacters.reduce(encodeReduceFunction, {});
 const htmlUnsafeCharacterDecodingMap: Record<string, string> = htmlUnsafeCharacters.reduce(decodeReduceFunction, {});
@@ -124,6 +124,7 @@ export const isHtmlStringValueSafeForLexical = (htmlEditorString: string, nodeMa
   const tempElement = getDomFromHtmlEditorString(htmlEditorString, nodeMap);
 
   const elements = tempElement.querySelectorAll('*');
+  // biome-ignore lint/style/useForOf:Node List is not iterable
   for (let i = 0; i < elements.length; i++) {
     const element = elements[i];
     if (!isTagNameSupportedByLexical(element.tagName)) {
@@ -131,8 +132,7 @@ export const isHtmlStringValueSafeForLexical = (htmlEditorString: string, nodeMa
     }
 
     const attributes = Array.from(element.attributes);
-    for (let j = 0; j < attributes.length; j++) {
-      const attribute = attributes[j];
+    for (const attribute of attributes) {
       if (!isAttributeSupportedByHtmlEditor(element.tagName, attribute.name)) {
         return false;
       }
@@ -146,6 +146,8 @@ export const isTagNameSupportedByLexical = (tagName: string): boolean =>
   tagName.length > 0 && lexicalSupportedTagNames.has(tagName.toLowerCase());
 
 export const dropDownActiveClass = (active: boolean) => {
-  if (active) return 'active msla-dropdown-item-active';
-  else return '';
+  if (active) {
+    return 'active msla-dropdown-item-active';
+  }
+  return '';
 };

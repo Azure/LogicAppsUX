@@ -128,27 +128,33 @@ export const FloatingActionMenuOutputs = (props: FloatingActionMenuOutputsProps)
       let format = undefined;
       let type = '';
       switch (item.type) {
-        case DynamicallyAddedParameterType.Date:
+        case DynamicallyAddedParameterType.Date: {
           type = constants.SWAGGER.TYPE.STRING;
           format = constants.SWAGGER.FORMAT.DATE;
           break;
-        case DynamicallyAddedParameterType.Email:
+        }
+        case DynamicallyAddedParameterType.Email: {
           type = constants.SWAGGER.TYPE.STRING;
           format = constants.SWAGGER.FORMAT.EMAIL;
           break;
-        case DynamicallyAddedParameterType.Text:
+        }
+        case DynamicallyAddedParameterType.Text: {
           type = constants.SWAGGER.TYPE.STRING;
           break;
-        case DynamicallyAddedParameterType.File:
+        }
+        case DynamicallyAddedParameterType.File: {
           type = constants.SWAGGER.TYPE.STRING;
           format = constants.SWAGGER.FORMAT.BYTE;
           break;
-        case DynamicallyAddedParameterType.Boolean:
+        }
+        case DynamicallyAddedParameterType.Boolean: {
           type = constants.SWAGGER.TYPE.BOOLEAN;
           break;
-        case DynamicallyAddedParameterType.Number:
+        }
+        case DynamicallyAddedParameterType.Number: {
           type = constants.SWAGGER.TYPE.NUMBER;
           break;
+        }
       }
       viewModel.schema.properties[schemaKey] = {
         title: '',

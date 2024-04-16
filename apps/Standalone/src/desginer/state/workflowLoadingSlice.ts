@@ -62,7 +62,7 @@ type RunPayload = {
   runInstance: LogicAppsV2.RunInstanceDefinition;
 };
 
-export const loadWorkflow = createAsyncThunk('workflowLoadingState/loadWorkflow', async (_: void, thunkAPI) => {
+export const loadWorkflow = createAsyncThunk('workflowLoadingState/loadWorkflow', async (_: unknown, thunkAPI) => {
   const currentState: RootState = thunkAPI.getState() as RootState;
 
   const wf = await import(`../../../../../__mocks__/workflows/${currentState.workflowLoader.resourcePath?.split('.')[0]}.json`);
@@ -72,7 +72,7 @@ export const loadWorkflow = createAsyncThunk('workflowLoadingState/loadWorkflow'
   } as WorkflowPayload;
 });
 
-export const loadRun = createAsyncThunk('runLoadingState/loadRun', async (_: void, thunkAPI) => {
+export const loadRun = createAsyncThunk('runLoadingState/loadRun', async (_: unknown, thunkAPI) => {
   const currentState: RootState = thunkAPI.getState() as RootState;
   try {
     const runInstance = await import(`../../../../../__mocks__/runs/${currentState.workflowLoader.resourcePath?.split('.')[0]}.json`);
@@ -141,7 +141,9 @@ export const workflowLoadingSlice = createSlice({
     },
     loadLastWorkflow: (state) => {
       const lastWorkflow = getStateHistory() as WorkflowLoadingState;
-      if (!lastWorkflow) return;
+      if (!lastWorkflow) {
+        return;
+      }
       // Load last workflow state object
       state.resourcePath = lastWorkflow.resourcePath;
       state.appId = lastWorkflow.appId;
@@ -170,7 +172,9 @@ export const workflowLoadingSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder.addCase(loadWorkflow.fulfilled, (state, action: PayloadAction<WorkflowPayload | null>) => {
-      if (!action.payload) return;
+      if (!action.payload) {
+        return;
+      }
       state.workflowDefinition = action.payload?.workflowDefinition;
       state.connections = action.payload?.connectionReferences ?? {};
     });
@@ -178,7 +182,9 @@ export const workflowLoadingSlice = createSlice({
       state.workflowDefinition = null;
     });
     builder.addCase(loadRun.fulfilled, (state, action: PayloadAction<RunPayload | null>) => {
-      if (!action.payload) return;
+      if (!action.payload) {
+        return;
+      }
       state.runInstance = action.payload?.runInstance;
     });
     builder.addCase(loadRun.rejected, (state) => {

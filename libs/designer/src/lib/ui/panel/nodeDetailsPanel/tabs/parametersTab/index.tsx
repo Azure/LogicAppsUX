@@ -93,9 +93,15 @@ export const ParametersTab = () => {
   });
 
   const isLoading = useMemo(() => {
-    if (!operationInfo && !nodeMetadata?.subgraphType) return true;
-    if (!nodesInitialized) return true;
-    if (inputs?.dynamicLoadStatus === DynamicLoadStatus.STARTED) return true;
+    if (!operationInfo && !nodeMetadata?.subgraphType) {
+      return true;
+    }
+    if (!nodesInitialized) {
+      return true;
+    }
+    if (inputs?.dynamicLoadStatus === DynamicLoadStatus.STARTED) {
+      return true;
+    }
     return false;
   }, [inputs?.dynamicLoadStatus, nodeMetadata?.subgraphType, nodesInitialized, operationInfo]);
 
@@ -508,7 +514,9 @@ export const getEditorAndOptions = (
       editorOptions: {
         options: getAvailableVariables(variables, upstreamNodeIds)
           .filter((variable) => {
-            if (supportedTypes?.length === 0) return true;
+            if (supportedTypes?.length === 0) {
+              return true;
+            }
             return supportedTypes.includes(variable.type);
           })
           .map((variable) => ({

@@ -215,7 +215,9 @@ export const operationMetadataSlice = createSlice({
     },
     initializeNodes: (state, action: PayloadAction<(NodeData | undefined)[]>) => {
       for (const nodeData of action.payload) {
-        if (!nodeData) return;
+        if (!nodeData) {
+          return;
+        }
 
         const { id, nodeInputs, nodeOutputs, nodeDependencies, settings, operationMetadata, actionMetadata, staticResult, repetitionInfo } =
           nodeData;
@@ -279,7 +281,9 @@ export const operationMetadataSlice = createSlice({
     addDynamicOutputs: (state, action: PayloadAction<AddDynamicOutputsPayload>) => {
       const { nodeId, outputs } = action.payload;
       const outputParameters = getRecordEntry(state.outputParameters, nodeId);
-      if (outputParameters) outputParameters.outputs = { ...outputParameters.outputs, ...outputs };
+      if (outputParameters) {
+        outputParameters.outputs = { ...outputParameters.outputs, ...outputs };
+      }
     },
     clearDynamicIO: (state, action: PayloadAction<ClearDynamicIOPayload>) => {
       const { nodeId, nodeIds: _nodeIds, inputs = true, outputs = true } = action.payload;
@@ -318,7 +322,9 @@ export const operationMetadataSlice = createSlice({
     updateNodeSettings: (state, action: PayloadAction<AddSettingsPayload>) => {
       const { id, settings } = action.payload;
       const nodeSettings = getRecordEntry(state.settings, id);
-      if (!nodeSettings) state.settings[id] = {};
+      if (!nodeSettings) {
+        state.settings[id] = {};
+      }
       state.settings[id] = { ...nodeSettings, ...settings };
 
       LoggerService().log({
@@ -331,11 +337,12 @@ export const operationMetadataSlice = createSlice({
     updateStaticResults: (state, action: PayloadAction<AddStaticResultsPayload>) => {
       const { id, staticResults } = action.payload;
       const nodeStaticResults = getRecordEntry(state.staticResults, id);
-      if (!nodeStaticResults)
+      if (!nodeStaticResults) {
         state.staticResults[id] = {
           name: '',
           staticResultOptions: StaticResultOption.DISABLED,
         };
+      }
       state.staticResults[id] = { ...nodeStaticResults, ...staticResults };
 
       LoggerService().log({
@@ -390,7 +397,9 @@ export const operationMetadataSlice = createSlice({
       const { nodeId, groupId, parameterId, value } = action.payload;
       const inputParameters = getRecordEntry(state.inputParameters, nodeId);
       const parameterGroup = getRecordEntry(inputParameters?.parameterGroups, groupId);
-      if (!inputParameters || !parameterGroup) return;
+      if (!inputParameters || !parameterGroup) {
+        return;
+      }
       const index = parameterGroup.parameters.findIndex((parameter) => parameter.id === parameterId);
       if (index > -1) {
         parameterGroup.parameters[index].conditionalVisibility = value;
@@ -419,7 +428,9 @@ export const operationMetadataSlice = createSlice({
       const { nodeId, groupId, parameterId, editorViewModel } = action.payload;
       const inputParameters = getRecordEntry(state.inputParameters, nodeId);
       const parameterGroup = getRecordEntry(inputParameters?.parameterGroups, groupId);
-      if (!inputParameters || !parameterGroup) return;
+      if (!inputParameters || !parameterGroup) {
+        return;
+      }
       const index = parameterGroup.parameters.findIndex((parameter) => parameter.id === parameterId);
       if (index > -1) {
         parameterGroup.parameters[index].editorViewModel = editorViewModel;
@@ -437,7 +448,9 @@ export const operationMetadataSlice = createSlice({
       const { nodeId, groupId, parameterId, validationErrors } = action.payload;
       const inputParameters = getRecordEntry(state.inputParameters, nodeId);
       const parameterGroup = getRecordEntry(inputParameters?.parameterGroups, groupId);
-      if (!inputParameters || !parameterGroup) return;
+      if (!inputParameters || !parameterGroup) {
+        return;
+      }
       const index = parameterGroup.parameters.findIndex((parameter) => parameter.id === parameterId);
       if (index > -1) {
         parameterGroup.parameters[index].validationErrors = validationErrors;
@@ -455,7 +468,9 @@ export const operationMetadataSlice = createSlice({
       const { nodeId, groupId, parameterId, validationError } = action.payload;
       const inputParameters = getRecordEntry(state.inputParameters, nodeId);
       const parameterGroup = getRecordEntry(inputParameters?.parameterGroups, groupId);
-      if (!inputParameters || !parameterGroup) return;
+      if (!inputParameters || !parameterGroup) {
+        return;
+      }
       const index = parameterGroup.parameters.findIndex((parameter) => parameter.id === parameterId);
       if (index > -1) {
         parameterGroup.parameters[index].validationErrors = parameterGroup.parameters[index].validationErrors?.filter(
@@ -466,7 +481,9 @@ export const operationMetadataSlice = createSlice({
     updateOutputs: (state, action: PayloadAction<{ id: string; nodeOutputs: NodeOutputs }>) => {
       const { id, nodeOutputs } = action.payload;
       const outputParameters = getRecordEntry(state.outputParameters, id);
-      if (outputParameters) state.outputParameters[id] = nodeOutputs;
+      if (outputParameters) {
+        state.outputParameters[id] = nodeOutputs;
+      }
     },
     updateActionMetadata: (state, action: PayloadAction<{ id: string; actionMetadata: Record<string, any> }>) => {
       const { id, actionMetadata } = action.payload;
@@ -527,7 +544,7 @@ export const operationMetadataSlice = createSlice({
     builder.addCase(addDynamicOutputs, (state, action) => {
       const { outputs } = action.payload;
 
-      let tokenTitles: Record<string, string> = {};
+      const tokenTitles: Record<string, string> = {};
       for (const outputValue of Object.values(outputs)) {
         tokenTitles[outputValue.key] = getTokenTitle(outputValue);
       }

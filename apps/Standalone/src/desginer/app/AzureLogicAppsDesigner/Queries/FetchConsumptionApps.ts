@@ -7,7 +7,9 @@ export const useFetchConsumptionApps = () => {
   return useQuery<FetchLogicAppsData[]>(
     ['listAllLogicApps', 'consumption'],
     async () => {
-      if (!environment.armToken) return [];
+      if (!environment.armToken) {
+        return [];
+      }
       const query = `resources | where type =~ 'microsoft.logic/workflows' or (type =~ 'microsoft.web/sites' and kind contains 'workflowapp') | extend plan = case(kind contains 'workflowapp', 'Standard', 'Consumption') | where (plan =~ ('consumption'))`;
       const data = await fetchAppsByQuery(query);
       return data.map((item: any) => ({

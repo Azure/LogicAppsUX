@@ -6,7 +6,7 @@ import Like from '../images/Like.svg';
 import LikeFilled from '../images/LikeFilled.svg';
 import LikeDark from '../images/Like_Dark.svg';
 import { IconButton, useTheme } from '@fluentui/react';
-import React from 'react';
+import type React from 'react';
 import { useIntl } from 'react-intl';
 
 export interface IThumbsReactionButtonProps {

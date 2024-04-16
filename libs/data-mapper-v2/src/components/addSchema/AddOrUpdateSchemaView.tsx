@@ -114,15 +114,14 @@ export const AddOrUpdateSchemaView = ({
           description: 'label to inform to upload or select source schema to be used',
         }),
       ];
-    } else {
-      return [
-        intl.formatMessage({
-          defaultMessage: 'Add or select a target schema to use for your map.',
-          id: 'jA6Wrp',
-          description: 'label to inform to upload or select target schema to be used',
-        }),
-      ];
     }
+    return [
+      intl.formatMessage({
+        defaultMessage: 'Add or select a target schema to use for your map.',
+        id: 'jA6Wrp',
+        description: 'label to inform to upload or select target schema to be used',
+      }),
+    ];
   }, [intl, schemaType]);
 
   return (

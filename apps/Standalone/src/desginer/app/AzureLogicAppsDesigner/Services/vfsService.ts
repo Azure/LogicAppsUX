@@ -1,4 +1,4 @@
-import { VFSObject } from '@microsoft/logic-apps-shared';
+import type { VFSObject } from '@microsoft/logic-apps-shared';
 import axios from 'axios';
 import { environment } from '../../../../environments/environment';
 

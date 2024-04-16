@@ -1,6 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import type { RootState } from '../../core/state/Store';
-import { FileDropdown } from '../fileDropdown/fileDropdown';
 import { SchemaType } from '@microsoft/logic-apps-shared';
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
@@ -77,13 +76,12 @@ export const SelectExistingSchema = (props: SelectExistingSchemaProps) => {
         id: '3eeli7',
         description: 'Source schema dropdown placeholder',
       });
-    } else {
-      return intl.formatMessage({
-        defaultMessage: 'Select a target schema',
-        id: 'XkBxv5',
-        description: 'Target schema dropdown placeholder',
-      });
     }
+    return intl.formatMessage({
+      defaultMessage: 'Select a target schema',
+      id: 'XkBxv5',
+      description: 'Target schema dropdown placeholder',
+    });
   }, [intl, props.schemaType]);
 
   const availableSchemaList = useSelector((state: RootState) => state.schema.availableSchemas);
@@ -101,13 +99,12 @@ export const SelectExistingSchema = (props: SelectExistingSchemaProps) => {
           <Tree>{childElements}</Tree>
         </TreeItem>
       );
-    } else {
-      return (
-        <TreeItem itemType="leaf">
-          <TreeItemLayout>{item.name}</TreeItemLayout>
-        </TreeItem>
-      );
     }
+    return (
+      <TreeItem itemType="leaf">
+        <TreeItemLayout>{item.name}</TreeItemLayout>
+      </TreeItem>
+    );
   };
 
   return <Tree>{fileTree(mockFileTree)}</Tree>;

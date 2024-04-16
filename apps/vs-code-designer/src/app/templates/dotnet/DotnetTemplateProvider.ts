@@ -2,7 +2,6 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { validateDotNetIsInstalled } from '../../commands/dotnet/validateDotNetInstalled';
 import { getLatestVersion, getRelease } from '../../utils/cliFeed';
 import { getTemplateKeyFromFeedEntry, getTemplateKeyFromProjFile } from '../../utils/dotnet/dotnet';
 import {
@@ -43,9 +42,8 @@ export class DotnetTemplateProvider extends TemplateProviderBase {
     const cachedDotnetTemplates: object[] | undefined = await this.getCachedValue(projKey);
     if (cachedDotnetTemplates) {
       return await parseDotnetTemplates(cachedDotnetTemplates);
-    } else {
-      return undefined;
     }
+    return undefined;
   }
 
   public async getLatestTemplateVersion(context: IActionContext): Promise<string> {

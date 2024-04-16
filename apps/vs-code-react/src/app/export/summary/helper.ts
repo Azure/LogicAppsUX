@@ -31,7 +31,7 @@ export const getListColumns = () => {
   ];
 };
 
-export const getExportDetails = (details: Array<IExportDetails>): Array<IExportDetailsList> => {
+export const getExportDetails = (details: IExportDetails[]): IExportDetailsList[] => {
   const listDetails = details.map((detail) => {
     const { exportDetailCategory, exportDetailMessage } = detail;
 
@@ -47,7 +47,7 @@ export const getSummaryData = (summaryData: ISummaryData) => {
   return { exportDetails };
 };
 
-export const parseResourceGroupsData = (resourceGroupsData: { resourceGroups: Array<IResourceGroup> }): Array<IDropDownOption> => {
+export const parseResourceGroupsData = (resourceGroupsData: { resourceGroups: IResourceGroup[] }): IDropDownOption[] => {
   const { resourceGroups } = resourceGroupsData;
 
   return resourceGroups.map((resourceGroup: IResourceGroup) => {
@@ -63,14 +63,16 @@ export const isNameValid = (name: string, intlText: any, resourceGroups: IDropdo
 
   if (trimmedName.length < resourceGroupNamingRules.minLength || trimmedName.length > resourceGroupNamingRules.maxLength) {
     return { validName, validationError: '' };
-  } else if (trimmedName.match(resourceGroupNamingRules.invalidCharsRegExp) !== null) {
-    return { validName, validationError: intlText.INVALID_CHARS };
-  } else if (trimmedName.endsWith('.')) {
-    return { validName, validationError: intlText.INVALID_ENDING_CHAR };
-  } else if (resourceGroups.find((resourceGroup) => resourceGroup.key === trimmedName)) {
-    return { validName, validationError: intlText.INVALID_EXISTING_NAME };
-  } else {
-    validName = true;
-    return { validName, validationError: '' };
   }
+  if (trimmedName.match(resourceGroupNamingRules.invalidCharsRegExp) !== null) {
+    return { validName, validationError: intlText.INVALID_CHARS };
+  }
+  if (trimmedName.endsWith('.')) {
+    return { validName, validationError: intlText.INVALID_ENDING_CHAR };
+  }
+  if (resourceGroups.find((resourceGroup) => resourceGroup.key === trimmedName)) {
+    return { validName, validationError: intlText.INVALID_EXISTING_NAME };
+  }
+  validName = true;
+  return { validName, validationError: '' };
 };

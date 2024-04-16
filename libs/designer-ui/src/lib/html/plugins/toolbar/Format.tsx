@@ -140,10 +140,10 @@ export const Format = ({ activeEditor, readonly }: FormatProps) => {
   );
 
   const insertLink = useCallback(() => {
-    if (!isLink) {
-      activeEditor.dispatchCommand(TOGGLE_LINK_COMMAND, sanitizeUrl('https://'));
-    } else {
+    if (isLink) {
       activeEditor.dispatchCommand(TOGGLE_LINK_COMMAND, null);
+    } else {
+      activeEditor.dispatchCommand(TOGGLE_LINK_COMMAND, sanitizeUrl('https://'));
     }
   }, [activeEditor, isLink]);
 
@@ -222,7 +222,7 @@ export const Format = ({ activeEditor, readonly }: FormatProps) => {
         onClick={() => {
           activeEditor.dispatchCommand(FORMAT_TEXT_COMMAND, 'bold');
         }}
-        className={'toolbar-item spaced ' + (isBold ? 'active' : '')}
+        className={`toolbar-item spaced ${isBold ? 'active' : ''}`}
         title={isApple() ? boldTitleMac : boldTitleNonMac}
         aria-label={isApple() ? boldTitleMacAriaLabel : boldTitleNonMacAriaLabel}
         disabled={readonly}
@@ -234,7 +234,7 @@ export const Format = ({ activeEditor, readonly }: FormatProps) => {
         onClick={() => {
           activeEditor.dispatchCommand(FORMAT_TEXT_COMMAND, 'italic');
         }}
-        className={'toolbar-item spaced ' + (isItalic ? 'active' : '')}
+        className={`toolbar-item spaced ${isItalic ? 'active' : ''}`}
         title={isApple() ? italicTitleMac : italicTitleNonMac}
         aria-label={isApple() ? italicTitleMacAriaLabel : italicTitleNonMacAriaLabel}
         disabled={readonly}
@@ -246,7 +246,7 @@ export const Format = ({ activeEditor, readonly }: FormatProps) => {
         onClick={() => {
           activeEditor.dispatchCommand(FORMAT_TEXT_COMMAND, 'underline');
         }}
-        className={'toolbar-item spaced ' + (isUnderline ? 'active' : '')}
+        className={`toolbar-item spaced ${isUnderline ? 'active' : ''}`}
         title={isApple() ? underlineTitleMac : underlineTitleNonMac}
         aria-label={isApple() ? underlineTitleMacAriaLabel : underlineTitleNonMacAriaLabel}
         disabled={readonly}
@@ -257,7 +257,7 @@ export const Format = ({ activeEditor, readonly }: FormatProps) => {
         onMouseDown={(e) => e.preventDefault()}
         disabled={readonly}
         onClick={insertLink}
-        className={'toolbar-item spaced ' + (isLink ? 'active' : '')}
+        className={`toolbar-item spaced ${isLink ? 'active' : ''}`}
         aria-label={insertLinkLabel}
         title={insertLinkLabel}
       >

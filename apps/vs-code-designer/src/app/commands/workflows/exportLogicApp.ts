@@ -18,7 +18,7 @@ import { getAccountCredentials } from '../../utils/credentials';
 import { getRandomHexString } from '../../utils/fs';
 import { delay } from '@azure/ms-rest-js';
 import type { ServiceClientCredentials } from '@azure/ms-rest-js';
-import { type IActionContext } from '@microsoft/vscode-azext-utils';
+import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { ExtensionCommand, ProjectName, getBaseGraphApi } from '@microsoft/vscode-extension-logic-apps';
 import axios from 'axios';
 import { writeFileSync } from 'fs';
@@ -347,7 +347,7 @@ export async function exportLogicApp(context: IActionContext): Promise<void> {
   };
   panel.webview.html = await getWebViewHTML('vs-code-react', panel);
 
-  let interval;
+  let interval: NodeJS.Timeout;
 
   panel.webview.onDidReceiveMessage(async (message) => {
     switch (message.command) {

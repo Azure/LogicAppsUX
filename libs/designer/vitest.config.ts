@@ -1,6 +1,6 @@
-import { defineProject } from 'vitest/config'
-import react from '@vitejs/plugin-react'
-import packageJson from './package.json'
+import { defineProject } from 'vitest/config';
+import react from '@vitejs/plugin-react';
+import packageJson from './package.json';
 
 export default defineProject({
   plugins: [react()],
@@ -15,10 +15,8 @@ export default defineProject({
     alias: [
       {
         find: /^monaco-editor$/,
-        replacement:
-          __dirname + "/node_modules/monaco-editor/esm/vs/editor/editor.api",
+        replacement: `${__dirname}/node_modules/monaco-editor/esm/vs/editor/editor.api`,
       },
     ],
-
   },
-})
+});

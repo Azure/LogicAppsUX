@@ -69,7 +69,7 @@ export function WorkflowParameter({ definition, isReadOnly, useLegacy, isInverte
         <div>
           <Button
             appearance="subtle"
-            data-testid={name + '-parameter-heading-button'}
+            data-testid={`${name}-parameter-heading-button`}
             className="msla-workflow-parameter-heading-button"
             onClick={handleToggleExpand}
             icon={expanded ? <CollapseIcon /> : <ExpandIcon />}
@@ -95,7 +95,7 @@ export function WorkflowParameter({ definition, isReadOnly, useLegacy, isInverte
           />
         ) : null}
       </div>
-      {!isReadOnly ? (
+      {isReadOnly ? null : (
         <div className="msla-workflow-parameter-edit-or-delete-button">
           <EditOrDeleteButton
             onDelete={props.onDelete}
@@ -105,7 +105,7 @@ export function WorkflowParameter({ definition, isReadOnly, useLegacy, isInverte
             setExpanded={setExpanded}
           />
         </div>
-      ) : null}
+      )}
     </div>
   );
 }

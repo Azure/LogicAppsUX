@@ -15,7 +15,7 @@ export default defineProject({
     alias: [
       {
         find: /^monaco-editor$/,
-        replacement: __dirname + '/node_modules/monaco-editor/esm/vs/editor/editor.api',
+        replacement: `${__dirname}/node_modules/monaco-editor/esm/vs/editor/editor.api`,
       },
     ],
   },

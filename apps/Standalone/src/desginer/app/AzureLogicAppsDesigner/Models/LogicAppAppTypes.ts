@@ -312,7 +312,7 @@ export interface SiteConfig {
 export type AppCommandLine = '' | '.';
 
 // eslint-disable-next-line @typescript-eslint/no-empty-interface
-export interface AzureStorageAccounts {}
+export type AzureStorageAccounts = NonNullable<unknown>;
 
 export interface Cors {
   allowedOrigins?: string[] | null;

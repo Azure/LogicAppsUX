@@ -102,8 +102,12 @@ export const usePreloadOperationsQuery = (): any => {
   } = useAzureOperationsLazyQuery();
 
   useEffect(() => {
-    if (azureIsLoading || isFetchingNextAzurePage) return;
-    if (!hasNextAzurePage) return;
+    if (azureIsLoading || isFetchingNextAzurePage) {
+      return;
+    }
+    if (!hasNextAzurePage) {
+      return;
+    }
     fetchNextAzurePage();
   }, [azureIsLoading, fetchNextAzurePage, hasNextAzurePage, isFetchingNextAzurePage]);
 
@@ -115,8 +119,12 @@ export const usePreloadOperationsQuery = (): any => {
   } = useCustomOperationsLazyQuery();
 
   useEffect(() => {
-    if (customIsLoading || isFetchingNextCustomPage) return;
-    if (!hasNextCustomPage) return;
+    if (customIsLoading || isFetchingNextCustomPage) {
+      return;
+    }
+    if (!hasNextCustomPage) {
+      return;
+    }
     fetchNextCustomPage();
   }, [customIsLoading, fetchNextCustomPage, hasNextCustomPage, isFetchingNextCustomPage]);
 
@@ -201,8 +209,12 @@ export const usePreloadConnectorsQuery = (): any => {
   } = useAzureConnectorsLazyQuery();
 
   useEffect(() => {
-    if (azureIsLoading || isFetchingNextAzurePage) return;
-    if (!hasNextAzurePage) return;
+    if (azureIsLoading || isFetchingNextAzurePage) {
+      return;
+    }
+    if (!hasNextAzurePage) {
+      return;
+    }
     fetchNextAzurePage();
   }, [azureIsLoading, fetchNextAzurePage, hasNextAzurePage, isFetchingNextAzurePage]);
 
@@ -214,8 +226,12 @@ export const usePreloadConnectorsQuery = (): any => {
   } = useCustomConnectorsLazyQuery();
 
   useEffect(() => {
-    if (customIsLoading || isFetchingNextCustomPage) return;
-    if (!hasNextCustomPage) return;
+    if (customIsLoading || isFetchingNextCustomPage) {
+      return;
+    }
+    if (!hasNextCustomPage) {
+      return;
+    }
     fetchNextCustomPage();
   }, [customIsLoading, fetchNextCustomPage, hasNextCustomPage, isFetchingNextCustomPage]);
 

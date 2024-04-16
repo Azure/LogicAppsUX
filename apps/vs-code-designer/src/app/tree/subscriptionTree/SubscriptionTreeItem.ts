@@ -76,9 +76,8 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
         // In that case, we know there are no Function Apps, so we can return an empty array
         // (The provider will be registered automatically if the user creates a new Function App)
         return [];
-      } else {
-        throw error;
       }
+      throw error;
     }
 
     return await this.createTreeItemsWithErrorHandling(
@@ -137,21 +136,19 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
       wizardContext.runtimeFilter = getFunctionsWorkerRuntime(language);
       executeSteps.push(new StorageAccountCreateStep(storageAccountCreateOptions));
       executeSteps.push(new AppInsightsCreateStep());
+    } else if (wizardContext.customLocation) {
+      promptSteps.push(new CustomLocationStorageAccountStep(context));
     } else {
-      if (wizardContext.customLocation) {
-        promptSteps.push(new CustomLocationStorageAccountStep(context));
-      } else {
-        promptSteps.push(
-          new StorageAccountListStep(storageAccountCreateOptions, {
-            kind: [StorageAccountKind.BlobStorage],
-            performance: [StorageAccountPerformance.Premium],
-            replication: [StorageAccountReplication.ZRS],
-            learnMoreLink: 'https://aka.ms/Cfqnrc',
-          })
-        );
-        promptSteps.push(new AzureStorageAccountStep());
-        promptSteps.push(new AppInsightsListStep());
-      }
+      promptSteps.push(
+        new StorageAccountListStep(storageAccountCreateOptions, {
+          kind: [StorageAccountKind.BlobStorage],
+          performance: [StorageAccountPerformance.Premium],
+          replication: [StorageAccountReplication.ZRS],
+          learnMoreLink: 'https://aka.ms/Cfqnrc',
+        })
+      );
+      promptSteps.push(new AzureStorageAccountStep());
+      promptSteps.push(new AppInsightsListStep());
     }
 
     executeSteps.push(new VerifyProvidersStep(['Microsoft.Web', 'Microsoft.Storage', 'Microsoft.Insights']));

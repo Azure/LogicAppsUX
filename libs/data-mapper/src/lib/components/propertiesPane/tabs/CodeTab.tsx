@@ -48,29 +48,26 @@ export const CodeTab = ({ currentNode, contentHeight }: CodeTabProps) => {
 
       if (!fnNodeConnection) {
         return `${currentNode.functionName}()`;
-      } else {
-        return collectFunctionValue(currentNode, fnNodeConnection, connectionDictionary, false);
       }
-    } else {
-      const srcSchemaNode = sourceSchemaDictionary[addSourceReactFlowPrefix(currentNode.key)];
-
-      // If source schema node, just return its path/key
-      if (srcSchemaNode) {
-        return srcSchemaNode.key;
-      } else {
-        // Get target schema node's map definition chunk
-        const reducedConnectionDictionary: ConnectionDictionary = {
-          ...connectionDictionary,
-        };
-        Object.keys(reducedConnectionDictionary).forEach((conKey) => {
-          if (conKey.includes(targetPrefix) && !conKey.includes(currentNode.key)) {
-            delete reducedConnectionDictionary[conKey];
-          }
-        });
-
-        return convertToMapDefinition(reducedConnectionDictionary, sourceSchema, targetSchema, targetSchemaSortArray, false);
-      }
+      return collectFunctionValue(currentNode, fnNodeConnection, connectionDictionary, false);
     }
+    const srcSchemaNode = sourceSchemaDictionary[addSourceReactFlowPrefix(currentNode.key)];
+
+    // If source schema node, just return its path/key
+    if (srcSchemaNode) {
+      return srcSchemaNode.key;
+    }
+    // Get target schema node's map definition chunk
+    const reducedConnectionDictionary: ConnectionDictionary = {
+      ...connectionDictionary,
+    };
+    Object.keys(reducedConnectionDictionary).forEach((conKey) => {
+      if (conKey.includes(targetPrefix) && !conKey.includes(currentNode.key)) {
+        delete reducedConnectionDictionary[conKey];
+      }
+    });
+
+    return convertToMapDefinition(reducedConnectionDictionary, sourceSchema, targetSchema, targetSchemaSortArray, false);
   }, [currentNode, selectedItemKey, connectionDictionary, sourceSchemaDictionary, sourceSchema, targetSchema, targetSchemaSortArray]);
 
   return (

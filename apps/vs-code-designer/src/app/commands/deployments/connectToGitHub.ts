@@ -12,13 +12,13 @@ import type { GenericTreeItem, IActionContext } from '@microsoft/vscode-azext-ut
 export async function connectToGitHub(context: IActionContext, target?: GenericTreeItem): Promise<void> {
   let deployments: DeploymentsTreeItem;
 
-  if (!target) {
+  if (target) {
+    deployments = target.parent as DeploymentsTreeItem;
+  } else {
     deployments = await ext.rgApi.pickAppResource<DeploymentsTreeItem>(context, {
       filter: logicAppFilter,
       expectedChildContextValue: new RegExp(DeploymentsTreeItem.contextValueUnconnected),
     });
-  } else {
-    deployments = target.parent as DeploymentsTreeItem;
   }
 
   if (deployments.parent && isSlotTreeItem(deployments.parent)) {

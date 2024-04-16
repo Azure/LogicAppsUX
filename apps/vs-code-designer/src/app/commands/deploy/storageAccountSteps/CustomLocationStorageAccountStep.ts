@@ -51,23 +51,21 @@ export class CustomLocationStorageAccountStep extends AzureWizardPromptStep<IFun
         return {
           executeSteps: [new StorageAccountCreateStep(storageAccountCreateOptions), new AppInsightsCreateStep()],
         };
-      } else {
-        return {
-          promptSteps: [
-            new StorageAccountListStep(storageAccountCreateOptions, {
-              kind: [StorageAccountKind.BlobStorage],
-              performance: [StorageAccountPerformance.Premium],
-              replication: [StorageAccountReplication.ZRS],
-              learnMoreLink: 'https://aka.ms/Cfqnrc',
-            }),
-            new AppInsightsListStep(),
-          ],
-        };
       }
-    } else {
       return {
-        promptSteps: [new SQLStringNameStep()],
+        promptSteps: [
+          new StorageAccountListStep(storageAccountCreateOptions, {
+            kind: [StorageAccountKind.BlobStorage],
+            performance: [StorageAccountPerformance.Premium],
+            replication: [StorageAccountReplication.ZRS],
+            learnMoreLink: 'https://aka.ms/Cfqnrc',
+          }),
+          new AppInsightsListStep(),
+        ],
       };
     }
+    return {
+      promptSteps: [new SQLStringNameStep()],
+    };
   }
 }

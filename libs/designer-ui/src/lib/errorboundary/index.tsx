@@ -66,31 +66,31 @@ export class ErrorBoundaryInternal extends React.Component<ErrorBoundaryProps & 
 
     if (!hasError) {
       return children;
-    } else if (fallback !== undefined) {
-      return fallback;
-    } else {
-      const iconStyles = {
-        ...errorStyle,
-        color: isInverted ? errorDark : errorLight,
-      };
-      const spanStyle = {
-        ...errorTextStyle,
-        color: isInverted ? errorDark : errorLight,
-      };
-
-      return (
-        <div className={className ? className : 'msla-panel-container-error'}>
-          <Icon className="msla-card-title-button-icon" iconName="Error" styles={iconStyles} />
-          <span style={spanStyle}>
-            {intl.formatMessage({
-              defaultMessage: 'Error loading component.',
-              id: 'cmTCsW',
-              description: 'This is a generic error message shown when something in the app fails to load.',
-            })}
-          </span>
-        </div>
-      );
     }
+    if (fallback !== undefined) {
+      return fallback;
+    }
+    const iconStyles = {
+      ...errorStyle,
+      color: isInverted ? errorDark : errorLight,
+    };
+    const spanStyle = {
+      ...errorTextStyle,
+      color: isInverted ? errorDark : errorLight,
+    };
+
+    return (
+      <div className={className ? className : 'msla-panel-container-error'}>
+        <Icon className="msla-card-title-button-icon" iconName="Error" styles={iconStyles} />
+        <span style={spanStyle}>
+          {intl.formatMessage({
+            defaultMessage: 'Error loading component.',
+            id: 'cmTCsW',
+            description: 'This is a generic error message shown when something in the app fails to load.',
+          })}
+        </span>
+      </div>
+    );
   }
 
   private _handleThemeChange = ({ isInverted }: ITheme) => {
@@ -100,4 +100,4 @@ export class ErrorBoundaryInternal extends React.Component<ErrorBoundaryProps & 
   };
 }
 
-export const ErrorBoundary : React.FC = injectIntl<'intl', ErrorBoundaryProps & WrappedComponentProps<'intl'>>(ErrorBoundaryInternal);
+export const ErrorBoundary: React.FC = injectIntl<'intl', ErrorBoundaryProps & WrappedComponentProps<'intl'>>(ErrorBoundaryInternal);

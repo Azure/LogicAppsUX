@@ -132,7 +132,7 @@ export const DesignerCommandBar = ({
           return isSaving ? (
             <Spinner size={SpinnerSize.small} />
           ) : (
-            <FontIcon aria-label="Save" iconName="Save" className={!saveIsDisabled ? classNames.azureBlue : classNames.azureGrey} />
+            <FontIcon aria-label="Save" iconName="Save" className={saveIsDisabled ? classNames.azureGrey : classNames.azureBlue} />
           );
         },
         onClick: () => {

@@ -30,7 +30,9 @@ export const DropDownItems = ({ children, dropDownRef, stopCloseOnClickSelf, onC
 
   // keyboard navigation
   const handleKeyDown = (event: React.KeyboardEvent<HTMLDivElement>) => {
-    if (!items) return;
+    if (!items) {
+      return;
+    }
 
     const key = event.key;
 
@@ -42,13 +44,17 @@ export const DropDownItems = ({ children, dropDownRef, stopCloseOnClickSelf, onC
       onClose();
     } else if (key === 'ArrowUp') {
       setHighlightedItem((prev) => {
-        if (!prev) return items[0];
+        if (!prev) {
+          return items[0];
+        }
         const index = items.indexOf(prev) - 1;
         return items[index === -1 ? items.length - 1 : index];
       });
     } else if (key === 'ArrowDown') {
       setHighlightedItem((prev) => {
-        if (!prev) return items[0];
+        if (!prev) {
+          return items[0];
+        }
         return items[items.indexOf(prev) + 1];
       });
     }
@@ -78,7 +84,9 @@ export const DropDownItems = ({ children, dropDownRef, stopCloseOnClickSelf, onC
         ref={dropDownRef}
         onKeyDown={handleKeyDown}
         onClick={() => {
-          if (stopCloseOnClickSelf) return;
+          if (stopCloseOnClickSelf) {
+            return;
+          }
           onClose();
         }}
         onBlur={(e) => {
@@ -90,9 +98,8 @@ export const DropDownItems = ({ children, dropDownRef, stopCloseOnClickSelf, onC
             e.target.classList.contains('default-color-buttons')
           ) {
             return;
-          } else {
-            onClose();
           }
+          onClose();
         }}
       >
         {children}

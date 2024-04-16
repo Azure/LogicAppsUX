@@ -4,9 +4,10 @@ import { initializeIcons } from '@fluentui/react';
 import * as React from 'react';
 import { useIntl } from 'react-intl';
 import * as ReactShallowRenderer from 'react-test-renderer/shallow';
-import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
+import { describe, vi, beforeEach, afterEach, it, expect } from 'vitest';
 describe('ui/workflowparameters/workflowparameterField', () => {
-  let minimal: WorkflowparameterFieldProps, renderer: ReactShallowRenderer.ShallowRenderer;
+  let minimal: WorkflowparameterFieldProps;
+  let renderer: ReactShallowRenderer.ShallowRenderer;
 
   beforeEach(() => {
     minimal = {

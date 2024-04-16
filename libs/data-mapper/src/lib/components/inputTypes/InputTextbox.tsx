@@ -60,12 +60,7 @@ export const InputTextbox = ({ input, functionNode, loadedInputValue }: InputTex
 
   return (
     <Tooltip relationship="label" content={input.tooltip || ''}>
-      <Textarea
-        style={{ width: '100%' }}
-        value={inputText}
-        placeholder={input.placeHolder}
-        onChange={(_e, d) => onChange(d.value)}
-      ></Textarea>
+      <Textarea style={{ width: '100%' }} value={inputText} placeholder={input.placeHolder} onChange={(_e, d) => onChange(d.value)} />
     </Tooltip>
   );
 };

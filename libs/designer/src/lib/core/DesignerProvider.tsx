@@ -10,7 +10,8 @@ import { ThemeProvider } from '@fluentui/react';
 import { FluentProvider, webDarkTheme, webLightTheme } from '@fluentui/react-components';
 import type { OnErrorFn as OnIntlErrorFn } from '@formatjs/intl';
 import { IntlProvider } from '@microsoft/logic-apps-shared';
-import React, { useCallback, useEffect, useMemo } from 'react';
+import type React from 'react';
+import { useCallback, useEffect, useMemo } from 'react';
 import { Provider as ReduxProvider, useDispatch } from 'react-redux';
 
 export interface DesignerProviderProps {
@@ -23,7 +24,9 @@ export interface DesignerProviderProps {
 const OptionsStateSet = ({ options, children }: any) => {
   const dispatch = useDispatch();
   useEffect(() => {
-    if (!options) return;
+    if (!options) {
+      return;
+    }
     dispatch(initDesignerOptions(options));
   }, [dispatch, options]);
   return <>{children}</>;
@@ -31,12 +34,12 @@ const OptionsStateSet = ({ options, children }: any) => {
 
 export const DesignerProvider = ({ key, locale = 'en', options, children }: DesignerProviderProps) => {
   const { isDarkMode } = options;
-  const azTheme = !isDarkMode ? AzureThemeLight : AzureThemeDark;
-  const webTheme = !isDarkMode ? webLightTheme : webDarkTheme;
-  const themeName = useMemo(() => (!isDarkMode ? 'light' : 'dark'), [isDarkMode]);
+  const azTheme = isDarkMode ? AzureThemeDark : AzureThemeLight;
+  const webTheme = isDarkMode ? webDarkTheme : webLightTheme;
+  const themeName = useMemo(() => (isDarkMode ? 'dark' : 'light'), [isDarkMode]);
   const onError = useCallback<OnIntlErrorFn>((err) => {
     if (err.code === 'MISSING_TRANSLATION' || err.code === 'MISSING_DATA') {
-      console.log(`IntlProvider error ${err.code} - ${err.message} - ${err.stack}`);
+      console.error(`IntlProvider error ${err.code} - ${err.message} - ${err.stack}`);
       return;
     }
     throw err;

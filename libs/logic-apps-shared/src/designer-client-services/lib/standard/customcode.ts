@@ -16,24 +16,32 @@ export class StandardCustomCodeService implements ICustomCodeService {
     const { apiVersion, baseUrl, subscriptionId, resourceGroup, appName, workflowName, httpClient } = this.options;
     if (!apiVersion) {
       throw new Error('apiVersion required');
-    } else if (!baseUrl) {
+    }
+    if (!baseUrl) {
       throw new Error('baseUrl required');
-    } else if (!subscriptionId) {
+    }
+    if (!subscriptionId) {
       throw new Error('subscriptionId required');
-    } else if (!resourceGroup) {
+    }
+    if (!resourceGroup) {
       throw new Error('resourceGroup required');
-    } else if (!appName) {
+    }
+    if (!appName) {
       throw new Error('appName required');
-    } else if (!workflowName) {
+    }
+    if (!workflowName) {
       throw new Error('workflowName required');
-    } else if (!httpClient) {
+    }
+    if (!httpClient) {
       throw new Error('httpClient required');
     }
   }
 
   async uploadCustomCodeAppFile({ fileName, fileData }: UploadCustomCodeAppFilePayload): Promise<void> {
     const { apiVersion, baseUrl, subscriptionId, resourceGroup, appName, httpClient } = this.options;
-    if (!(fileName && fileData)) return;
+    if (!(fileName && fileData)) {
+      return;
+    }
     const uri = `${baseUrl}/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Web/sites/${appName}/hostruntime/admin/vfs/${fileName}`;
 
     const queryParameters = {

@@ -91,7 +91,7 @@ export const ExpandedComplexArray = ({
     const { title } = schemaItem;
     return (
       <div className="msla-array-editor-label">
-        <Label required={isRequired ?? false}> {title + ' - ' + (index + 1)}</Label>
+        <Label required={isRequired ?? false}> {`${title} - ${index + 1}`}</Label>
       </div>
     );
   };

@@ -6,7 +6,7 @@ export const inlineCodeManifest = {
   properties: {
     iconUri: 'https://logicappsv2resources.blob.core.windows.net/icons/inline_code.svg',
     brandColor: '#ba5d00',
-    description: `Execute JavaScript Code`,
+    description: 'Execute JavaScript Code',
     summary: 'Execute JavaScript Code',
 
     environmentBadge: coreBadge,

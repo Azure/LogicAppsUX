@@ -96,7 +96,7 @@ export const TargetSchemaTreeHeader = ({ status }: TargetSchemaTreeHeaderProps) 
         paddingLeft: '8px',
         marginBottom: 0,
         cursor: 'pointer',
-        backgroundColor: !currentTargetSchemaNode ? tokens.colorNeutralBackground4Selected : undefined,
+        backgroundColor: currentTargetSchemaNode ? undefined : tokens.colorNeutralBackground4Selected,
       }}
       onClick={() => dispatch(setCurrentTargetSchemaNode(undefined))}
     >

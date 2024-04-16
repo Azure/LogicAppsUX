@@ -12,7 +12,9 @@ export function isArmResourceId(resourceId: string): boolean {
 }
 
 export const isBuiltInConnectorId = (connectorId: string) => {
-  if (connectorsShownAsAzure.includes(connectorId)) return false;
+  if (connectorsShownAsAzure.includes(connectorId)) {
+    return false;
+  }
   return !isArmResourceId(connectorId);
 };
 
@@ -21,13 +23,25 @@ export const getConnectorName = (connectorId: string): string => connectorId?.sp
 export const isCustomConnectorId = (connectorId: string) => {
   // Note: connectorId format: /subscriptions/{sub}/resourceGroups/{rg}/providers/Microsoft.Web/customApis/{connector}
   const fields = connectorId.split('/');
-  if (fields.length !== 9) return false;
+  if (fields.length !== 9) {
+    return false;
+  }
 
-  if (!equals(fields[1], 'subscriptions')) return false;
-  if (!equals(fields[3], 'resourcegroups')) return false;
-  if (!equals(fields[5], 'providers')) return false;
-  if (!equals(fields[6], 'microsoft.web')) return false;
-  if (!equals(fields[7], 'customApis')) return false;
+  if (!equals(fields[1], 'subscriptions')) {
+    return false;
+  }
+  if (!equals(fields[3], 'resourcegroups')) {
+    return false;
+  }
+  if (!equals(fields[5], 'providers')) {
+    return false;
+  }
+  if (!equals(fields[6], 'microsoft.web')) {
+    return false;
+  }
+  if (!equals(fields[7], 'customApis')) {
+    return false;
+  }
 
   return true;
 };
@@ -35,14 +49,28 @@ export const isCustomConnectorId = (connectorId: string) => {
 export const isManagedConnectorId = (connectorId: string) => {
   // Note: connectorId format: /subscriptions/{sub}/resourceGroups/{rg}/providers/Microsoft.Logic/integrationServiceEnvironments/{ise}/managedApis/{connector}
   const fields = connectorId.split('/');
-  if (fields.length !== 11) return false;
+  if (fields.length !== 11) {
+    return false;
+  }
 
-  if (!equals(fields[1], 'subscriptions')) return false;
-  if (!equals(fields[3], 'resourcegroups')) return false;
-  if (!equals(fields[5], 'providers')) return false;
-  if (!equals(fields[6], 'microsoft.logic')) return false;
-  if (!equals(fields[7], 'integrationserviceenvironments')) return false;
-  if (!equals(fields[9], 'managedapis')) return false;
+  if (!equals(fields[1], 'subscriptions')) {
+    return false;
+  }
+  if (!equals(fields[3], 'resourcegroups')) {
+    return false;
+  }
+  if (!equals(fields[5], 'providers')) {
+    return false;
+  }
+  if (!equals(fields[6], 'microsoft.logic')) {
+    return false;
+  }
+  if (!equals(fields[7], 'integrationserviceenvironments')) {
+    return false;
+  }
+  if (!equals(fields[9], 'managedapis')) {
+    return false;
+  }
 
   return true;
 };
@@ -50,13 +78,25 @@ export const isManagedConnectorId = (connectorId: string) => {
 export const isSharedManagedConnectorId = (connectorId: string) => {
   // Note: connectorId format: /subscriptions/{sub}/providers/Microsoft.Web/locations/{location}/managedApis/{connector}
   const fields = connectorId.split('/');
-  if (fields.length !== 9) return false;
+  if (fields.length !== 9) {
+    return false;
+  }
 
-  if (!equals(fields[1], 'subscriptions')) return false;
-  if (!equals(fields[3], 'providers')) return false;
-  if (!equals(fields[4], 'microsoft.web')) return false;
-  if (!equals(fields[5], 'locations')) return false;
-  if (!equals(fields[7], 'managedapis')) return false;
+  if (!equals(fields[1], 'subscriptions')) {
+    return false;
+  }
+  if (!equals(fields[3], 'providers')) {
+    return false;
+  }
+  if (!equals(fields[4], 'microsoft.web')) {
+    return false;
+  }
+  if (!equals(fields[5], 'locations')) {
+    return false;
+  }
+  if (!equals(fields[7], 'managedapis')) {
+    return false;
+  }
 
   return true;
 };
@@ -64,20 +104,34 @@ export const isSharedManagedConnectorId = (connectorId: string) => {
 export const isSharedManagedConnectorIdFromPApps = (connectorId: string) => {
   // Note: connectorId format: /providers/Microsoft.PowerApps/apis/{connector}
   const fields = connectorId.split('/');
-  if (fields.length !== 5) return false;
+  if (fields.length !== 5) {
+    return false;
+  }
 
-  if (!equals(fields[1], 'providers')) return false;
-  if (!equals(fields[2], 'microsoft.powerapps')) return false;
-  if (!equals(fields[3], 'apis')) return false;
-  if (!fields[4].startsWith('shared_')) return false;
+  if (!equals(fields[1], 'providers')) {
+    return false;
+  }
+  if (!equals(fields[2], 'microsoft.powerapps')) {
+    return false;
+  }
+  if (!equals(fields[3], 'apis')) {
+    return false;
+  }
+  if (!fields[4].startsWith('shared_')) {
+    return false;
+  }
 
   return true;
 };
 
 export function getAuthRedirect(connector?: Connector): string | undefined {
-  if (!connector) return undefined;
+  if (!connector) {
+    return undefined;
+  }
   const authParameters = getConnectionParametersWithType(connector, ConnectionParameterTypes.oauthSetting);
-  if (authParameters?.[0]) return authParameters?.[0].oAuthSettings?.redirectUrl;
+  if (authParameters?.[0]) {
+    return authParameters?.[0].oAuthSettings?.redirectUrl;
+  }
   return undefined;
 }
 
@@ -103,7 +157,9 @@ export function getConnectionParametersWithType(
       connector.properties.connectionParameterSets !== undefined
         ? _getConnectionParameterSetParametersUsingType(connector, connectionParameterType)
         : connector.properties.connectionParameters;
-    if (!connectionParameters) return [];
+    if (!connectionParameters) {
+      return [];
+    }
     return Object.keys(connectionParameters || {})
       .filter((connectionParameterKey) => !isHiddenConnectionParameter(connectionParameters, connectionParameterKey, showServicePrincipal))
       .map((connectionParameterKey) => connectionParameters[connectionParameterKey])
@@ -177,7 +233,9 @@ export function usesLegacyManagedIdentity(alternativeParameters?: Record<string,
 
 export function getIdentityDropdownOptions(managedIdentity: ManagedIdentity | undefined, intl: IntlShape): any[] {
   const options: any[] = [];
-  if (!managedIdentity) return options;
+  if (!managedIdentity) {
+    return options;
+  }
   const { type, userAssignedIdentities } = managedIdentity;
   const systemAssigned = intl.formatMessage({
     defaultMessage: 'System-assigned managed identity',

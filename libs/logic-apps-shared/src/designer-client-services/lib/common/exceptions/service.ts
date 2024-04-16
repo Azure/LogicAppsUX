@@ -38,7 +38,8 @@ export interface HttpResponse<T> {
 export const throwWhenNotOk = (response: HttpResponse<any>) => {
   if (!response) {
     throw new ServiceException('Unexpected HTTP response', ServiceExceptionCode.RESPONSE_NOT_DEFINED);
-  } else if (!response.ok) {
+  }
+  if (!response.ok) {
     const { body } = response;
     if (!body) {
       throw new ServiceException(`Unexpected HTTP response: ${response.status}`, ServiceExceptionCode.RESPONSE_BODY_NOT_DEFINED);

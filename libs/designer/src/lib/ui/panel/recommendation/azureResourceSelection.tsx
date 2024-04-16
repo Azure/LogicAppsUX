@@ -117,7 +117,7 @@ export const AzureResourceSelection = (props: AzureResourceSelectionProps) => {
   useEffect(() => {
     switch (operation.id?.toLowerCase()) {
       case Constants.AZURE_RESOURCE_ACTION_TYPES.SELECT_APIMANAGEMENT_ACTION:
-      case Constants.AZURE_RESOURCE_ACTION_TYPES.SELECT_APIMANAGEMENT_TRIGGER:
+      case Constants.AZURE_RESOURCE_ACTION_TYPES.SELECT_APIMANAGEMENT_TRIGGER: {
         setTitleText(apimTitleText);
         setResourceTypes(['apiManagement', 'action']);
         setGetResourcesCallbacks(() => [
@@ -135,9 +135,10 @@ export const AzureResourceSelection = (props: AzureResourceSelectionProps) => {
           });
         });
         break;
+      }
 
       case Constants.AZURE_RESOURCE_ACTION_TYPES.SELECT_APPSERVICE_ACTION:
-      case Constants.AZURE_RESOURCE_ACTION_TYPES.SELECT_APPSERVICE_TRIGGER:
+      case Constants.AZURE_RESOURCE_ACTION_TYPES.SELECT_APPSERVICE_TRIGGER: {
         setTitleText(appServiceTitleText);
         setResourceTypes(['appService']);
         setGetResourcesCallbacks(() => [() => AppServiceService().fetchAppServices()]);
@@ -152,8 +153,9 @@ export const AzureResourceSelection = (props: AzureResourceSelectionProps) => {
           });
         });
         break;
+      }
 
-      case Constants.AZURE_RESOURCE_ACTION_TYPES.SELECT_FUNCTION_ACTION:
+      case Constants.AZURE_RESOURCE_ACTION_TYPES.SELECT_FUNCTION_ACTION: {
         setTitleText(functionAppTitleText);
         setResourceTypes(['functionApp', 'function']);
         setGetResourcesCallbacks(() => [
@@ -169,8 +171,9 @@ export const AzureResourceSelection = (props: AzureResourceSelectionProps) => {
           });
         });
         break;
+      }
 
-      case Constants.AZURE_RESOURCE_ACTION_TYPES.SELECT_SWAGGER_FUNCTION_ACTION:
+      case Constants.AZURE_RESOURCE_ACTION_TYPES.SELECT_SWAGGER_FUNCTION_ACTION: {
         setTitleText(swaggerFunctionAppTitleText);
         setResourceTypes(['functionApp']);
         setGetResourcesCallbacks(() => [() => FunctionService().fetchFunctionApps()]);
@@ -183,8 +186,9 @@ export const AzureResourceSelection = (props: AzureResourceSelectionProps) => {
           });
         });
         break;
+      }
 
-      case Constants.AZURE_RESOURCE_ACTION_TYPES.SELECT_MANUAL_WORKFLOW_ACTION:
+      case Constants.AZURE_RESOURCE_ACTION_TYPES.SELECT_MANUAL_WORKFLOW_ACTION: {
         setTitleText(manualWorkflowTitleText);
         setResourceTypes(['manualWorkflow', 'trigger']);
         setGetResourcesCallbacks(() => [
@@ -201,8 +205,9 @@ export const AzureResourceSelection = (props: AzureResourceSelectionProps) => {
           });
         });
         break;
+      }
 
-      case Constants.AZURE_RESOURCE_ACTION_TYPES.SELECT_BATCH_WORKFLOW_ACTION:
+      case Constants.AZURE_RESOURCE_ACTION_TYPES.SELECT_BATCH_WORKFLOW_ACTION: {
         setTitleText(batchWorkflowTitleText);
         setResourceTypes(['batchWorkflow', 'trigger']);
         setGetResourcesCallbacks(() => [
@@ -219,6 +224,7 @@ export const AzureResourceSelection = (props: AzureResourceSelectionProps) => {
           });
         });
         break;
+      }
 
       default:
         throw new Error(`Unexpected API category type '${operation.id}'`);
@@ -285,7 +291,9 @@ export const AzureResourceSelection = (props: AzureResourceSelectionProps) => {
         appearance={'primary'}
         disabled={!readyToSubmit}
         onClick={() => {
-          if (!readyToSubmit) return;
+          if (!readyToSubmit) {
+            return;
+          }
           submitCallback();
         }}
       >

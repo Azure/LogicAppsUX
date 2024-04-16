@@ -1,24 +1,23 @@
 import { StyledWorkflowPart, ValidationStatus, WorkflowPart } from '../../../run-service';
 import type { IValidationData, IGroupedItem, IGroupedGroup, IWorkflowValidation } from '../../../run-service';
 
-const getDetailsErrors = (itemsSchema: any, actionName: string): Array<IGroupedItem> => {
+const getDetailsErrors = (itemsSchema: any, actionName: string): IGroupedItem[] => {
   const { details, validationState } = itemsSchema;
-  const errors: Array<IGroupedItem> = Object.values(details).map((detail: any) => {
+  const errors: IGroupedItem[] = Object.values(details).map((detail: any) => {
     return { action: actionName, status: validationState, message: detail.message };
   });
   return errors;
 };
 
-const getStatusFromChildren = (children: Array<IGroupedGroup>) => {
+const getStatusFromChildren = (children: IGroupedGroup[]) => {
   if (children.length) {
     const hasWarning = children.find((item) => item?.status === ValidationStatus.succeeded_with_warnings);
     const hasError = children.find((item) => item?.status === ValidationStatus.failed);
 
     if (!hasWarning && !hasError) {
       return ValidationStatus.succeeded;
-    } else {
-      return hasError ? ValidationStatus.failed : ValidationStatus.succeeded_with_warnings;
     }
+    return hasError ? ValidationStatus.failed : ValidationStatus.succeeded_with_warnings;
   }
 
   return undefined;
@@ -50,7 +49,7 @@ const getValidationGroup = (
   level: number,
   startIndex: number,
   count: number,
-  children: Array<IGroupedGroup>
+  children: IGroupedGroup[]
 ): IGroupedGroup => {
   const status = workflowSchema?.validationState ?? getStatusFromChildren(children);
   const isCollapsed = status === ValidationStatus.succeeded;
@@ -69,9 +68,9 @@ const getValidationGroup = (
 };
 
 const getItemsValidation = (itemsSchema: any, innerStart: number) => {
-  const items: Array<IGroupedItem> = [];
-  const validationGroups: Array<IGroupedGroup> = [];
-  const itemsIds: Array<string> = Object.keys(itemsSchema);
+  const items: IGroupedItem[] = [];
+  const validationGroups: IGroupedGroup[] = [];
+  const itemsIds: string[] = Object.keys(itemsSchema);
 
   itemsIds.forEach((itemId: string) => {
     const item = itemsSchema[itemId];
@@ -94,7 +93,7 @@ const getItemsValidation = (itemsSchema: any, innerStart: number) => {
   return { items, validationGroups };
 };
 
-const getIndexStart = (workflowsGroups: Array<IGroupedGroup>, children: Array<IGroupedGroup>, groupIndex: number) => {
+const getIndexStart = (workflowsGroups: IGroupedGroup[], children: IGroupedGroup[], groupIndex: number) => {
   const workflowsLength = workflowsGroups.length;
   const childrenLength = children.length;
 
@@ -110,15 +109,15 @@ const getIndexStart = (workflowsGroups: Array<IGroupedGroup>, children: Array<IG
 
 export const parseValidationData = (validationData: IValidationData | undefined, workflowGroupDisplayName?: string) => {
   const workflowsSchema: Record<string, IWorkflowValidation> = validationData?.workflows ?? {};
-  const workflowsGroups: Array<IGroupedGroup> = [];
-  const workflowsItems: Array<IGroupedItem> = [];
+  const workflowsGroups: IGroupedGroup[] = [];
+  const workflowsItems: IGroupedItem[] = [];
 
-  const workflowsIds: Array<string> = Object.keys(workflowsSchema);
+  const workflowsIds: string[] = Object.keys(workflowsSchema);
 
   workflowsIds.forEach((workflowId: string) => {
     const workflowSchema: IWorkflowValidation = workflowsSchema[workflowId];
     let detailsCount = 0;
-    const children: Array<IGroupedGroup> = [];
+    const children: IGroupedGroup[] = [];
 
     if (workflowSchema.details) {
       workflowsItems.push({ action: workflowId, status: workflowSchema.validationState, message: workflowSchema.details.error?.message });

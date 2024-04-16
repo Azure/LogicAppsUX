@@ -38,7 +38,8 @@ import { useBoolean } from '@fluentui/react-hooks';
 import type { FunctionPositionMetadata } from '@microsoft/logic-apps-shared';
 import { SchemaType } from '@microsoft/logic-apps-shared';
 import type { MouseEvent as ReactMouseEvent } from 'react';
-import React, { useEffect, useMemo, useRef, useState } from 'react';
+import type React from 'react';
+import { useEffect, useMemo, useRef, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import type {
   NodeDragHandler,

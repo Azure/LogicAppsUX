@@ -83,7 +83,9 @@ export const EditorBreadcrumb = ({ isCodeViewOpen, setIsCodeViewOpen }: EditorBr
   const isCodeViewButtonDisabled = useMemo<boolean>(() => breadcrumbItems.length === 0, [breadcrumbItems]);
 
   const onRenderBreadcrumbContent = useCallback((item?: IBreadcrumbItem) => {
-    if (!item) return null;
+    if (!item) {
+      return null;
+    }
 
     if (item.key === placeholderItemKey) {
       return (
@@ -91,9 +93,8 @@ export const EditorBreadcrumb = ({ isCodeViewOpen, setIsCodeViewOpen }: EditorBr
           {item.text}
         </Text>
       );
-    } else {
-      return <Text>{item.text}</Text>;
     }
+    return <Text>{item.text}</Text>;
   }, []);
 
   const getMenu = (props: IContextualMenuProps): JSX.Element => {

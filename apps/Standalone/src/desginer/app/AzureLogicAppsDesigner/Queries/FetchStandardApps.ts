@@ -7,7 +7,9 @@ export const useFetchStandardApps = () => {
   return useQuery<FetchLogicAppsData[]>(
     ['listAllLogicApps', 'standard'],
     async () => {
-      if (!environment.armToken) return [];
+      if (!environment.armToken) {
+        return [];
+      }
       const query = `resources | where type == "microsoft.web/sites" and kind contains "workflowapp"`;
       const data = await fetchAppsByQuery(query);
       return data.map((item: any) => ({

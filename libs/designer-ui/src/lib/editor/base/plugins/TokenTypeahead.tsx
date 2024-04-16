@@ -13,13 +13,13 @@ import { useIntl } from 'react-intl';
 
 class TokenOption extends MenuOption {
   title: string;
-  keywords: Array<string>;
+  keywords: string[];
   icon: (selected: boolean, inverted: boolean) => ReactNode;
   constructor(
     title: string,
     key: string,
     options: {
-      keywords?: Array<string>;
+      keywords?: string[];
       icon: (selected: boolean, inverted: boolean) => ReactNode;
     }
   ) {
@@ -56,7 +56,7 @@ function TokenMenuItem({
       ref={option.setRefElement}
       role="option"
       aria-selected={isSelected}
-      id={'typeahead-item-' + index}
+      id={`typeahead-item-${index}`}
       onMouseEnter={onMouseEnter}
       onClick={onClick}
     >

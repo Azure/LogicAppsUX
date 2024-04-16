@@ -59,7 +59,9 @@ export const NodeSearchPanel = (props: NodeSearchPanelProps) => {
     );
   }, [allNodeNames]);
   const searchNodeNames = useMemo(() => {
-    if (!searchTerm) return allNodeNames;
+    if (!searchTerm) {
+      return allNodeNames;
+    }
     return fuseObject.search(searchTerm).map((result) => result.item.id);
   }, [allNodeNames, fuseObject, searchTerm]);
 

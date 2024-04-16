@@ -23,13 +23,17 @@ export class ChildWorkflowService {
 
     if (!apiVersion) {
       throw new Error('apiVersion required');
-    } else if (!baseUrl) {
+    }
+    if (!baseUrl) {
       throw new Error('baseUrl required');
-    } else if (!siteResourceId) {
+    }
+    if (!siteResourceId) {
       throw new Error('siteResourceId required');
-    } else if (!workflowName) {
+    }
+    if (!workflowName) {
       throw new Error('workflowName required');
-    } else if (!httpClient) {
+    }
+    if (!httpClient) {
       throw new Error('httpClient required');
     }
   }

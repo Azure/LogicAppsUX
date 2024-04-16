@@ -17,8 +17,8 @@ export async function runWithDurationTelemetry<T>(context: IActionContext, prefi
     return await callback();
   } finally {
     const end = Date.now();
-    const durationKey = prefix + 'Duration';
-    const countKey = prefix + 'Count';
+    const durationKey = `${prefix}Duration`;
+    const countKey = `${prefix}Count`;
     const duration = (end - start) / 1000;
 
     context.telemetry.measurements[durationKey] = duration + (context.telemetry.measurements[durationKey] || 0);

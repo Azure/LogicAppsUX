@@ -33,7 +33,8 @@ export class ConsumptionRunService implements IRunService {
     const { apiVersion, baseUrl, isDev } = options;
     if (!baseUrl) {
       throw new ArgumentException('baseUrl required');
-    } else if (!apiVersion) {
+    }
+    if (!apiVersion) {
       throw new ArgumentException('apiVersion required');
     }
     this._isDev = isDev || false;
@@ -143,7 +144,7 @@ export class ConsumptionRunService implements IRunService {
   async getScopeRepetitions(
     action: { nodeId: string; runId: string | undefined },
     status?: string
-  ): Promise<{ value: Array<LogicAppsV2.RunRepetition> }> {
+  ): Promise<{ value: LogicAppsV2.RunRepetition[] }> {
     const { nodeId, runId } = action;
 
     if (this._isDev) {
@@ -157,7 +158,7 @@ export class ConsumptionRunService implements IRunService {
     const uri = `${baseUrl}${runId}/actions/${nodeId}/scopeRepetitions?api-version=${apiVersion}${filter}`;
 
     try {
-      const response = await httpClient.get<{ value: Array<LogicAppsV2.RunRepetition> }>({
+      const response = await httpClient.get<{ value: LogicAppsV2.RunRepetition[] }>({
         uri,
         headers: headers as Record<string, any>,
       });

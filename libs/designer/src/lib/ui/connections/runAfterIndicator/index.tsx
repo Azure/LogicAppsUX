@@ -88,7 +88,7 @@ export function RunAfterIndicator({ statuses, sourceNodeId }: RunAfterIndicatorP
     <div className="msla-run-after-tooltip-container">
       <Text style={{ fontWeight: '600' }}>{tooltipHeaderText}</Text>
       {normalizedStatuses.map((status) => (
-        <StatusLabel key={status} text={StatusStrings[status + '_STATUS']} status={status} />
+        <StatusLabel key={status} text={StatusStrings[`${status}_STATUS`]} status={status} />
       ))}
     </div>
   );
@@ -166,7 +166,7 @@ export function CollapsedRunAfterIndicator({ filteredRunAfters, runAfterCount }:
       <div className="msla-run-after-tooltip-container">
         <Text style={{ fontWeight: '600' }}>{tooltipHeaderText}</Text>
         {normalizedStatuses.map((status) => (
-          <StatusLabel key={status} text={StatusStrings[status + '_STATUS']} status={status} />
+          <StatusLabel key={status} text={StatusStrings[`${status}_STATUS`]} status={status} />
         ))}
         {index !== runAfterCount - 1 && <Divider />}
       </div>

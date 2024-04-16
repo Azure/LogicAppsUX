@@ -56,7 +56,8 @@ export async function getWorkspaceFolder(context: IActionContext): Promise<vscod
 
     context.errorHandling.suppressDisplay = true;
     throw new NoWorkspaceError();
-  } else if (vscode.workspace.workspaceFolders.length === 1) {
+  }
+  if (vscode.workspace.workspaceFolders.length === 1) {
     folder = vscode.workspace.workspaceFolders[0];
   } else {
     const logicAppsWorkspaces = [];

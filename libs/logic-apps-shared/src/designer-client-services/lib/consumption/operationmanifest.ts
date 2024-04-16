@@ -35,7 +35,8 @@ export class ConsumptionOperationManifestService extends BaseOperationManifestSe
     const { subscriptionId, location } = options;
     if (!subscriptionId) {
       throw new ArgumentException('subscriptionId required');
-    } else if (!location) {
+    }
+    if (!location) {
       throw new ArgumentException('location required');
     }
   }
@@ -60,7 +61,8 @@ export class ConsumptionOperationManifestService extends BaseOperationManifestSe
         default:
           return getBuiltInOperationInfo(definition, isTrigger);
       }
-    } else if (startsWith(definition.type, openapiconnection)) {
+    }
+    if (startsWith(definition.type, openapiconnection)) {
       const { subscriptionId, location } = this.options;
       return {
         connectorId: `/subscriptions/${subscriptionId}/providers/Microsoft.Web/locations/${location}${definition.inputs.host.apiId}`,

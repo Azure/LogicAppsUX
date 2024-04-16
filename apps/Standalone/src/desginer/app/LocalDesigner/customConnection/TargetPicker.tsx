@@ -1,5 +1,5 @@
 import { ConnectionParameterRow, UniversalConnectionParameter } from '@microsoft/logic-apps-designer';
-import { IConnectionParameterEditorProps } from '@microsoft/logic-apps-shared';
+import type { IConnectionParameterEditorProps } from '@microsoft/logic-apps-shared';
 import { useEffect, useState } from 'react';
 
 // string parameter to dropdown options with manual value.
@@ -34,7 +34,7 @@ export const TargetPicker = (props: IConnectionParameterEditorProps) => {
           value: props.value,
         }
       : {
-          text: `Custom value`,
+          text: 'Custom value',
           value: '',
         };
 

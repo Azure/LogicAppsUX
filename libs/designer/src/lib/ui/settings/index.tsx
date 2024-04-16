@@ -105,7 +105,7 @@ export const SettingsPanel = (): JSX.Element => {
   const getPropsBasedOnSection = (settingSection: SettingSectionName): { isExpanded: boolean; validationErrors: ValidationError[] } => {
     const validationErrors: ValidationError[] = [];
     switch (settingSection) {
-      case SettingSectionName.GENERAL:
+      case SettingSectionName.GENERAL: {
         validationErrors.push(
           ...nodeSettingValidationErrors.filter(({ key }) => {
             return (
@@ -116,7 +116,8 @@ export const SettingsPanel = (): JSX.Element => {
           })
         );
         break;
-      case SettingSectionName.NETWORKING:
+      }
+      case SettingSectionName.NETWORKING: {
         validationErrors.push(
           ...nodeSettingValidationErrors.filter(({ key }) => {
             return (
@@ -128,6 +129,7 @@ export const SettingsPanel = (): JSX.Element => {
           })
         );
         break;
+      }
       default:
         break;
     }
@@ -356,7 +358,8 @@ function GeneralSettings({
         onClientTrackingIdChange={onClientTrackingIdChange}
       />
     );
-  } else return null;
+  }
+  return null;
 }
 
 function NetworkingSettings({
@@ -476,7 +479,7 @@ function NetworkingSettings({
           isSupported: !!uploadChunk?.isSupported,
           value: {
             ...(uploadChunk?.value as any),
-            ...{ uploadChunkSize: newVal === '' ? undefined : parseInt(newVal, 10) },
+            ...{ uploadChunkSize: newVal === '' ? undefined : Number.parseInt(newVal, 10) },
           },
         },
       },
@@ -489,7 +492,7 @@ function NetworkingSettings({
       {
         downloadChunkSize: {
           isSupported: !!downloadChunkSize?.isSupported,
-          value: newVal === '' ? undefined : parseInt(newVal, 10),
+          value: newVal === '' ? undefined : Number.parseInt(newVal, 10),
         },
       },
       true
@@ -519,7 +522,7 @@ function NetworkingSettings({
           isSupported: !!retryPolicy?.isSupported,
           value: {
             ...(retryPolicy?.value as any),
-            count: !isNaN(Number(newVal)) ? Number(newVal) : newVal,
+            count: Number.isNaN(Number(newVal)) ? newVal : Number(newVal),
           },
         },
       },
@@ -619,7 +622,8 @@ function NetworkingSettings({
         onRetryMaxIntervalChange={onRetryMaxIntervalChange}
       />
     );
-  } else return null;
+  }
+  return null;
 }
 
 function RunAfterSettings({ nodeId, readOnly, isExpanded, validationErrors, dispatch }: SettingSectionProps): JSX.Element | null {
@@ -756,5 +760,6 @@ function TrackingSettings({
         onTrackedPropertiesStringValueChange={onTrackedPropertiesStringValueChange}
       />
     );
-  } else return null;
+  }
+  return null;
 }

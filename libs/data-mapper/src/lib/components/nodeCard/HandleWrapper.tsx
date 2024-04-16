@@ -148,9 +148,8 @@ const isValidConnectionFromFunctionNode = (connection: ReactFlowConnection) => {
       // Verify that the Function<->Function connection won't create circular logic
       if (newConnectionWillHaveCircularLogic(connection.target, connection.source, connectionDictionary)) {
         return false;
-      } else {
-        return isFunctionInputSlotAvailable(targetNodeConnection, targetFunctionNode.maxNumberOfInputs);
       }
+      return isFunctionInputSlotAvailable(targetNodeConnection, targetFunctionNode.maxNumberOfInputs);
     }
 
     return true;

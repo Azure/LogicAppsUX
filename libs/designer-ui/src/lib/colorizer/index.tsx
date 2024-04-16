@@ -16,7 +16,9 @@ export const Colorizer: React.FC<ColorizerProps> = ({ ariaLabel, code, language 
   const elementRef = useRef<HTMLPreElement | null>(null);
   const [_, copyToClipboard] = useCopyToClipboard();
   const selectText = useCallback(() => {
-    if (!elementRef.current) return;
+    if (!elementRef.current) {
+      return;
+    }
     const range = document.createRange();
     range.selectNodeContents(elementRef.current);
     const sel = window.getSelection();
@@ -70,4 +72,4 @@ export const Colorizer: React.FC<ColorizerProps> = ({ ariaLabel, code, language 
   );
 };
 
-export { type Language };
+export type { Language };

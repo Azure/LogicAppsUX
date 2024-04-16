@@ -21,9 +21,8 @@ class ParsedHostJsonV2 implements IParsedHostJson {
   public get routePrefix(): string {
     if (this.data.extensions && this.data.extensions.http && this.data.extensions.http.routePrefix !== undefined) {
       return this.data.extensions.http.routePrefix;
-    } else {
-      return defaultRoutePrefix;
     }
+    return defaultRoutePrefix;
   }
 
   public get bundle(): IBundleMetadata | undefined {
@@ -45,9 +44,8 @@ class ParsedHostJsonV1 implements IParsedHostJson {
   public get routePrefix(): string {
     if (this.data.http && this.data.http.routePrefix !== undefined) {
       return this.data.http.routePrefix;
-    } else {
-      return defaultRoutePrefix;
     }
+    return defaultRoutePrefix;
   }
 }
 

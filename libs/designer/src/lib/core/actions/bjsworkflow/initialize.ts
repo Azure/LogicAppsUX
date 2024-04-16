@@ -88,7 +88,7 @@ export interface ServiceOptions {
 }
 
 export const updateWorkflowParameters = (parameters: Record<string, WorkflowParameter>, dispatch: Dispatch): void => {
-  let parametersObj: Record<string, WorkflowParameterDefinition> = {};
+  const parametersObj: Record<string, WorkflowParameterDefinition> = {};
   for (const [key, param] of Object.entries(parameters)) {
     parametersObj[key] = { name: key, isEditable: false, ...param };
   }
@@ -452,7 +452,9 @@ export const updateCustomCodeInInputs = async (
   nodeInputs: NodeInputs,
   customCode: CustomCodeFileNameMapping
 ) => {
-  if (isNullOrEmpty(customCode)) return;
+  if (isNullOrEmpty(customCode)) {
+    return;
+  }
   // getCustomCodeFileName does not return the file extension because the editor view model is not populated yet
   const fileName = getCustomCodeFileName(nodeId, nodeInputs) + fileExtension;
   try {
@@ -526,12 +528,14 @@ const getSwaggerFromService = async (serviceDetails: CustomSwaggerServiceDetails
   const { name, operationId, parameters } = serviceDetails;
   let service: any;
   switch (name) {
-    case CustomSwaggerServiceNames.Function:
+    case CustomSwaggerServiceNames.Function: {
       service = FunctionService();
       break;
-    case CustomSwaggerServiceNames.ApiManagement:
+    }
+    case CustomSwaggerServiceNames.ApiManagement: {
       service = ApiManagementService();
       break;
+    }
     default:
       throw new UnsupportedException(`The custom swagger service name '${name}' is not supported`);
   }

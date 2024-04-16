@@ -17,6 +17,7 @@ import { window, type ExtensionContext, type WebviewPanel } from 'vscode';
 
 type DataMapperPanelDictionary = { [key: string]: DataMapperPanel }; // key == dataMapName
 
+// biome-ignore lint/style/noNamespace:
 export namespace ext {
   export let context: ExtensionContext;
   export let designTimePort: number;

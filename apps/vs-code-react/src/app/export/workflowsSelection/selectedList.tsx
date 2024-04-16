@@ -42,7 +42,7 @@ export const SelectedList: React.FC<ISelectedListProps> = ({ isLoading, deselect
           <div key={workflow.key} className="msla-export-workflows-panel-selected-list-item">
             {deselectButton}
             <Text variant="large" nowrap block className="msla-export-workflows-panel-selected-list-item-text">
-              {name + ' '}
+              {`${name} `}
             </Text>
             <div className="msla-export-workflows-panel-selected-list-item-subtext">
               (

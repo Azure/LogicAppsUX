@@ -170,9 +170,9 @@ export const LocalDesigner = () => {
   connectionParameterEditorService.areCustomEditorsEnabled = !!areCustomEditorsEnabled;
   const designerProviderProps = {
     services: {
-      connectionService: !isConsumption ? connectionServiceStandard : connectionServiceConsumption,
-      operationManifestService: !isConsumption ? operationManifestServiceStandard : operationManifestServiceConsumption,
-      searchService: !isConsumption ? searchServiceStandard : searchServiceConsumption,
+      connectionService: isConsumption ? connectionServiceConsumption : connectionServiceStandard,
+      operationManifestService: isConsumption ? operationManifestServiceConsumption : operationManifestServiceStandard,
+      searchService: isConsumption ? searchServiceConsumption : searchServiceStandard,
       oAuthService,
       gatewayService,
       functionService,

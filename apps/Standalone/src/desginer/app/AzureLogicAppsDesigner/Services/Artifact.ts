@@ -33,11 +33,14 @@ export class ArtifactService {
 
     if (!apiVersion) {
       throw new Error('apiVersion required');
-    } else if (!baseUrl) {
+    }
+    if (!baseUrl) {
       throw new Error('baseUrl required');
-    } else if (!siteResourceId) {
+    }
+    if (!siteResourceId) {
       throw new Error('siteResourceId required');
-    } else if (!httpClient) {
+    }
+    if (!httpClient) {
       throw new Error('httpClient required');
     }
   }
@@ -45,9 +48,8 @@ export class ArtifactService {
   public getMapArtifacts(mapType: string, mapSource: string): Promise<ListDynamicValue[]> {
     if (mapSource === 'IntegrationAccount') {
       return this._getMapArtifactsFromIA(mapType);
-    } else {
-      return this._getMapArtifactsFromLA(mapType);
     }
+    return this._getMapArtifactsFromLA(mapType);
   }
 
   private async _getMapArtifactsFromIA(mapType: string): Promise<ListDynamicValue[]> {
@@ -128,9 +130,8 @@ export class ArtifactService {
   public getSchemaArtifacts(schemaSource: string): Promise<ListDynamicValue[]> {
     if (schemaSource === 'IntegrationAccount') {
       return this._getSchemaArtifactsFromIA();
-    } else {
-      return this._getSchemaArtifactsFromLA();
     }
+    return this._getSchemaArtifactsFromLA();
   }
 
   private async _getSchemaArtifactsFromIA(): Promise<ListDynamicValue[]> {

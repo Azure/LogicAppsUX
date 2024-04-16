@@ -124,7 +124,8 @@ export const getUpdatedManifestForSplitOn = (manifest: OperationManifest, splitO
 
   if (splitOn === undefined || splitOn === Constants.SETTINGS.SPLITON.AUTOLOAD) {
     return manifest;
-  } else if (typeof splitOn === 'string') {
+  }
+  if (typeof splitOn === 'string') {
     const updatedManifest = clone(manifest);
     if (!isTemplateExpression(splitOn)) {
       throw new AssertionException(AssertionErrorCode.INVALID_SPLITON, invalidSplitOn);
@@ -268,7 +269,9 @@ export const getSplitOnOptions = (outputs: NodeOutputs | undefined, isManifestBa
 
   // make sure keys are not redundant due to aliasing key format
   arrayOutputs = arrayOutputs.map((output) => {
-    if (!output.alias) return output;
+    if (!output.alias) {
+      return output;
+    }
     return { ...output, key: removeAliasingKeyRedundancies(output.key) };
   });
 
@@ -304,15 +307,16 @@ export const getUpdatedManifestForSchemaDependency = (manifest: OperationManifes
       const segment = inputParameter.value[0];
       let schemaToReplace: OpenAPIV2.SchemaObject | undefined;
       switch (schema) {
-        case 'Value':
+        case 'Value': {
           if (segment.type === ValueSegmentType.LITERAL) {
             try {
               schemaToReplace = JSON.parse(segment.value);
             } catch {} // eslint-disable-line no-empty
           }
           break;
+        }
 
-        case 'ValueSchema':
+        case 'ValueSchema': {
           if (segment.type === ValueSegmentType.TOKEN) {
             // We only support getting schema from array tokens for now.
             if (segment.token?.type === Constants.SWAGGER.TYPE.ARRAY) {
@@ -325,8 +329,9 @@ export const getUpdatedManifestForSchemaDependency = (manifest: OperationManifes
             } catch {} // eslint-disable-line no-empty
           }
           break;
+        }
 
-        case 'UriTemplate':
+        case 'UriTemplate': {
           if (segment.type === ValueSegmentType.LITERAL) {
             const parameterSegments = segment.value ? segment.value.match(/{(.*?)}/g) : undefined;
             if (parameterSegments) {
@@ -345,6 +350,7 @@ export const getUpdatedManifestForSchemaDependency = (manifest: OperationManifes
           }
 
           break;
+        }
 
         default:
           break;
@@ -391,12 +397,11 @@ const getSplitOnArrayName = (splitOnValue: string): string | undefined => {
       const parsedValue = ExpressionParser.parseTemplateExpression(splitOnValue);
       if (isSupportedSplitOnExpression(parsedValue)) {
         const { dereferences } = parsedValue as ExpressionFunction;
-        return !dereferences.length
-          ? undefined
-          : dereferences.map((dereference) => (dereference.expression as ExpressionLiteral).value).join('.');
-      } else {
-        return undefined;
+        return dereferences.length
+          ? dereferences.map((dereference) => (dereference.expression as ExpressionLiteral).value).join('.')
+          : undefined;
       }
+      return undefined;
     } catch {
       // If parsing fails, the splitOn expression is not supported.
       return undefined;
@@ -492,7 +497,8 @@ export const loadDynamicOutputsInNode = async (
           }
           dispatch(addDynamicOutputs({ nodeId, outputs: dynamicOutputs }));
 
-          let iconUri: string, brandColor: string;
+          let iconUri: string;
+          let brandColor: string;
           if (OperationManifestService().isSupported(operationInfo.type, operationInfo.kind)) {
             const manifest = await getOperationManifest(operationInfo);
             iconUri = manifest.properties.iconUri;
@@ -548,8 +554,7 @@ const getExpressionValueForTriggerOutput = ({ key, required, source }: OutputInf
       /* actionName */ undefined,
       !!required
     )}`;
-  } else {
-    const method = getTokenExpressionMethodFromKey(key, /* actionName */ undefined, source);
-    return `@${generateExpressionFromKey(method, key, /* actionName */ undefined, /* isInsideArray */ false, !!required)}`;
   }
+  const method = getTokenExpressionMethodFromKey(key, /* actionName */ undefined, source);
+  return `@${generateExpressionFromKey(method, key, /* actionName */ undefined, /* isInsideArray */ false, !!required)}`;
 };

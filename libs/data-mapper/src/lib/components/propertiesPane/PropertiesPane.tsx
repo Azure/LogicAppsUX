@@ -9,7 +9,8 @@ import { TestTab } from './tabs/TestTab';
 import { Stack } from '@fluentui/react';
 import { Button, Divider, Tab, TabList, Text, makeStyles, shorthands, tokens, typographyStyles } from '@fluentui/react-components';
 import { ChevronDoubleDown20Regular, ChevronDoubleUp20Regular, Delete20Regular } from '@fluentui/react-icons';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import type React from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -231,9 +232,7 @@ export const PropertiesPane = (props: PropertiesPaneProps) => {
         onDrag={onDrag}
         onDragEnd={onDragEnd}
       >
-        {!currentNode ? (
-          <Text className={styles.noItemSelectedText}>{selectElementLoc}</Text>
-        ) : (
+        {currentNode ? (
           <>
             <Text className={styles.title}>{paneTitle}</Text>
             <Divider className={styles.titleDivider} vertical />
@@ -247,6 +246,8 @@ export const PropertiesPane = (props: PropertiesPaneProps) => {
               {/*isTargetSchemaNode && <Tab value={PropertiesPaneTabs.Test}>{testLoc}</Tab>*/}
             </TabList>
           </>
+        ) : (
+          <Text className={styles.noItemSelectedText}>{selectElementLoc}</Text>
         )}
 
         <div style={{ marginLeft: 'auto' }}>
@@ -263,11 +264,11 @@ export const PropertiesPane = (props: PropertiesPaneProps) => {
           <Button
             appearance="subtle"
             size="medium"
-            icon={!isExpanded ? <ChevronDoubleUp20Regular /> : <ChevronDoubleDown20Regular />}
+            icon={isExpanded ? <ChevronDoubleDown20Regular /> : <ChevronDoubleUp20Regular />}
             onClick={() => setIsExpanded(!isExpanded)}
             disabled={!currentNode}
-            title={!isExpanded ? expandLoc : collapseLoc}
-            aria-label={!isExpanded ? expandLoc : collapseLoc}
+            title={isExpanded ? collapseLoc : expandLoc}
+            aria-label={isExpanded ? collapseLoc : expandLoc}
           />
         </div>
       </Stack>

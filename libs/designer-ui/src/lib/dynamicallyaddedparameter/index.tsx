@@ -1,6 +1,6 @@
 import type { IContextualMenuProps } from '@fluentui/react';
 import { DirectionalHint, IconButton, TextField, TooltipHost } from '@fluentui/react';
-import React from 'react';
+import type React from 'react';
 import { useIntl } from 'react-intl';
 
 export const DynamicallyAddedParameterType = {
@@ -83,7 +83,7 @@ export const DynamicallyAddedParameter = (props: DynamicallyAddedParameterProps)
 
     return (
       <div className="msla-dynamic-added-param-header">
-        <div className="msla-dynamic-added-param-icon" style={iconStyle}></div>
+        <div className="msla-dynamic-added-param-icon" style={iconStyle} />
         <div className="msla-dynamic-added-param-inputs-container">
           <TextField
             className="msla-dynamic-added-param-title"

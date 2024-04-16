@@ -198,18 +198,17 @@ export const parseSegments = (valueSegments: ValueSegment[], options?: SegmentPa
     if (segment.type === ValueSegmentType.TOKEN && segment.token) {
       const token = createTokenNodeFromSegment(segment, options);
       token && paragraph.append(token);
-    } else {
+
       // there are some cases where segmentValue comes in as a JSON
-      if (typeof segmentValue === 'string') {
-        const splitSegment = segmentValue.split('\n');
-        paragraph.append($createTextNode(splitSegment[0]));
-        for (let i = 1; i < splitSegment.length; i++) {
-          paragraph.append($createLineBreakNode());
-          paragraph.append($createTextNode(splitSegment[i]));
-        }
-      } else {
-        paragraph.append($createTextNode(JSON.stringify(segmentValue)));
+    } else if (typeof segmentValue === 'string') {
+      const splitSegment = segmentValue.split('\n');
+      paragraph.append($createTextNode(splitSegment[0]));
+      for (let i = 1; i < splitSegment.length; i++) {
+        paragraph.append($createLineBreakNode());
+        paragraph.append($createTextNode(splitSegment[i]));
       }
+    } else {
+      paragraph.append($createTextNode(JSON.stringify(segmentValue)));
     }
   });
   root.append(paragraph);

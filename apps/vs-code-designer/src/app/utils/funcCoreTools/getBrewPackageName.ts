@@ -25,20 +25,18 @@ export async function tryGetInstalledBrewPackageName(version: FuncVersion): Prom
   const brewPackageName: string = getBrewPackageName(version);
   if (await isBrewPackageInstalled(brewPackageName)) {
     return brewPackageName;
-  } else {
-    let oldPackageName: string | undefined;
-    if (version === FuncVersion.v2) {
-      oldPackageName = funcPackageName;
-    } else if (version === FuncVersion.v3) {
-      oldPackageName = funcPackageName + '-v3-preview';
-    }
-
-    if (oldPackageName && (await isBrewPackageInstalled(oldPackageName))) {
-      return oldPackageName;
-    } else {
-      return undefined;
-    }
   }
+  let oldPackageName: string | undefined;
+  if (version === FuncVersion.v2) {
+    oldPackageName = funcPackageName;
+  } else if (version === FuncVersion.v3) {
+    oldPackageName = `${funcPackageName}-v3-preview`;
+  }
+
+  if (oldPackageName && (await isBrewPackageInstalled(oldPackageName))) {
+    return oldPackageName;
+  }
+  return undefined;
 }
 
 /**

@@ -59,9 +59,8 @@ class GetSubscriptionDetailsStep extends AzureWizardPromptStep<IAzureConnectorsC
       azurePromptSteps.push(new ResourceGroupListStep());
 
       return { promptSteps: azurePromptSteps };
-    } else {
-      return undefined;
     }
+    return undefined;
   }
 }
 

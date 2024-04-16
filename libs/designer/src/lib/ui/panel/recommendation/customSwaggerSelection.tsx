@@ -101,7 +101,9 @@ export const CustomSwaggerSelection = (props: CustomSwaggerSelectionProps) => {
       <PrimaryButton
         disabled={!readyToSubmit}
         onClick={() => {
-          if (!readyToSubmit) return;
+          if (!readyToSubmit) {
+            return;
+          }
           submitCallback();
         }}
       >

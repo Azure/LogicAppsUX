@@ -37,7 +37,7 @@ export const validateParameter = (
   const intl = getIntl();
 
   switch (keyToValidate?.toLowerCase()) {
-    case 'name':
+    case 'name': {
       const { name } = data;
       if (!name) {
         return intl.formatMessage({
@@ -58,13 +58,16 @@ export const validateParameter = (
             description: 'Error message when the workflow parameter name already exists.',
           })
         : undefined;
+    }
 
     case 'value':
-    case 'defaultvalue':
+    case 'defaultvalue': {
       const valueToValidate = equals(keyToValidate, 'value') ? data.value : data.defaultValue;
       const { type } = data;
       if (valueToValidate === '' || valueToValidate === undefined) {
-        if (!required) return undefined;
+        if (!required) {
+          return undefined;
+        }
         return intl.formatMessage({
           defaultMessage: 'Must provide value for parameter.',
           id: 'VL9wOu',
@@ -75,11 +78,12 @@ export const validateParameter = (
       const swaggerType = convertWorkflowParameterTypeToSwaggerType(type);
       let error = validateType(swaggerType, /* parameterFormat */ '', valueToValidate);
 
-      if (error) return error;
+      if (error) {
+        return error;
+      }
 
       switch (swaggerType) {
-        case Constants.SWAGGER.TYPE.ARRAY:
-          // eslint-disable-next-line no-case-declarations
+        case Constants.SWAGGER.TYPE.ARRAY: {
           let isInvalid = false;
           try {
             isInvalid = !Array.isArray(JSON.parse(valueToValidate));
@@ -91,9 +95,10 @@ export const validateParameter = (
             ? intl.formatMessage({ defaultMessage: 'Enter a valid Array.', id: 'JgugQX', description: 'Error validation message' })
             : undefined;
           break;
+        }
 
         case Constants.SWAGGER.TYPE.OBJECT:
-        case Constants.SWAGGER.TYPE.BOOLEAN:
+        case Constants.SWAGGER.TYPE.BOOLEAN: {
           try {
             JSON.parse(valueToValidate);
           } catch {
@@ -103,11 +108,13 @@ export const validateParameter = (
                 : intl.formatMessage({ defaultMessage: 'Enter a valid JSON.', id: 'dEe6Ob', description: 'Error validation message' });
           }
           break;
+        }
 
         default:
           break;
       }
       return error;
+    }
 
     default:
       return undefined;
@@ -163,9 +170,15 @@ export const workflowParametersSlice = createSlice({
         ...(getRecordEntry(state.validationErrors, id) ?? {}),
         ...validationErrors,
       };
-      if (!newErrorObj.name) delete newErrorObj.name;
-      if (!newErrorObj.value) delete newErrorObj.value;
-      if (!newErrorObj.defaultValue) delete newErrorObj.defaultValue;
+      if (!newErrorObj.name) {
+        delete newErrorObj.name;
+      }
+      if (!newErrorObj.value) {
+        delete newErrorObj.value;
+      }
+      if (!newErrorObj.defaultValue) {
+        delete newErrorObj.defaultValue;
+      }
       if (Object.keys(newErrorObj).length === 0) {
         delete state.validationErrors[id];
       } else {

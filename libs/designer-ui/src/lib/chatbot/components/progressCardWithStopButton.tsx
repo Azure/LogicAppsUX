@@ -8,7 +8,7 @@ import type { IStyle } from '@fluentui/react';
 import { useTheme, keyframes, mergeStyleSets } from '@fluentui/react';
 import type { IButtonStyles } from '@fluentui/react/lib/Button';
 import { ActionButton } from '@fluentui/react/lib/Button';
-import React from 'react';
+import type React from 'react';
 import { useIntl } from 'react-intl';
 
 export type ProgressCardWithStopButtonProps = {
@@ -49,7 +49,7 @@ export const ProgressCardWithStopButton: React.FC<ProgressCardWithStopButtonProp
             iconProps={{ styles: { root: { paddingBottom: 3 } } }}
             styles={mergeStyleSets(getActionButtonStyles(isInverted), styles?.actionButton)}
             onClick={onStopButtonClick}
-          ></ActionButton>
+          />
         </div>
       )}
     </div>

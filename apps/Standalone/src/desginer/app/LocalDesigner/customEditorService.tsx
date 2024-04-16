@@ -43,7 +43,7 @@ const IncrementVariableEditor = ({ value, onValueChange, renderDefaultEditor, ed
     });
   };
 
-  if (value && value[0] && (value.length > 1 || value[0].type !== 'literal' || isNaN(inputValue))) {
+  if (value && value[0] && (value.length > 1 || value[0].type !== 'literal' || Number.isNaN(inputValue))) {
     return renderDefaultEditor?.({
       editor,
       editorOptions,

@@ -10,8 +10,12 @@ export const convertDesignerWorkflowToConsumptionWorkflow = async (_workflow: an
   const isOpenApiSchema = isOpenApiSchemaVersion(workflow.definition);
 
   // Initialize parameters if they don't exist
-  if (!workflow?.parameters) workflow['parameters'] = {};
-  if (!workflow?.definition?.parameters) workflow.definition['parameters'] = {};
+  if (!workflow?.parameters) {
+    workflow['parameters'] = {};
+  }
+  if (!workflow?.definition?.parameters) {
+    workflow.definition['parameters'] = {};
+  }
 
   // Move parameter data around
   const parameterEntries = Object.entries(workflow?.parameters ?? {});
@@ -19,8 +23,11 @@ export const convertDesignerWorkflowToConsumptionWorkflow = async (_workflow: an
     const value = param?.value;
     workflow.definition.parameters[key] = clone(param);
     delete workflow.definition.parameters[key]?.value;
-    if (value) workflow.parameters[key] = { value };
-    else delete workflow.parameters[key];
+    if (value) {
+      workflow.parameters[key] = { value };
+    } else {
+      delete workflow.parameters[key];
+    }
   });
 
   if (isOpenApiSchema) {

@@ -38,17 +38,16 @@ export class ExpressionBuilder {
   public buildTemplateExpression(expression: Expression): string {
     if (isStringLiteral(expression)) {
       return this._buildSingleString(expression.value);
-    } else if (isStringInterpolation(expression)) {
+    }
+    if (isStringInterpolation(expression)) {
       const segments = this._mergeSegments(expression.segments);
       if (segments.length === 1 && segments[0].type === ExpressionType.StringLiteral) {
         return this._buildSingleString((segments[0] as ExpressionLiteral).value);
-      } else {
-        const length = segments.length;
-        return segments.map((segment, index) => this._buildSegment(segment, length, index)).join('');
       }
-    } else {
-      return `@${this.buildExpression(expression)}`;
+      const length = segments.length;
+      return segments.map((segment, index) => this._buildSegment(segment, length, index)).join('');
     }
+    return `@${this.buildExpression(expression)}`;
   }
 
   /**
@@ -89,9 +88,8 @@ export class ExpressionBuilder {
   private _buildSingleString(value: string): string {
     if (value.length > 1 && value.charAt(0) === '@') {
       return `@${value}`;
-    } else {
-      return value.replace(/@{/g, '@@{');
     }
+    return value.replace(/@{/g, '@@{');
   }
 
   private _buildSegment(expression: Expression, length: number, index: number): string {
@@ -102,12 +100,10 @@ export class ExpressionBuilder {
 
       if ((isFirst && value[0] === '@') || (!isLast && value[value.length - 1] === '@')) {
         return `@{${convertToStringLiteral(value)}}`;
-      } else {
-        return value.replace(/@{/g, '@@{');
       }
-    } else {
-      return `@{${this.buildExpression(expression)}}`;
+      return value.replace(/@{/g, '@@{');
     }
+    return `@{${this.buildExpression(expression)}}`;
   }
 
   private _mergeSegments(segments: Expression[]): Expression[] {

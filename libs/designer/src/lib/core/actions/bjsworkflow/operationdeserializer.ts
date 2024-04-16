@@ -112,7 +112,9 @@ export const initializeOperationMetadata = async (
   let triggerNodeId = '';
 
   for (const [operationId, operation] of Object.entries(operations)) {
-    if (operationId === Constants.NODE.TYPE.PLACEHOLDER_TRIGGER) continue;
+    if (operationId === Constants.NODE.TYPE.PLACEHOLDER_TRIGGER) {
+      continue;
+    }
     const isTrigger = isRootNodeInGraph(operationId, 'root', nodesMetadata);
 
     if (isTrigger) {
@@ -215,7 +217,9 @@ export const initializeOperationDetailsForManifest = async (
     const staticResultService = StaticResultService();
     const operationInfo = await getOperationInfo(nodeId, operation, isTrigger);
 
-    if (!operationInfo) return;
+    if (!operationInfo) {
+      return;
+    }
     const nodeOperationInfo = { ...operationInfo, type: operation.type, kind: operation.kind };
     const manifest = await getOperationManifest(operationInfo);
     const { iconUri, brandColor } = manifest.properties;
@@ -531,14 +535,20 @@ export const initializeDynamicDataInNodes = async (getState: () => RootState, di
   } = rootState;
   const allVariables = getAllVariables(variables);
   for (const [nodeId, operation] of Object.entries(operations)) {
-    if (nodeId === Constants.NODE.TYPE.PLACEHOLDER_TRIGGER) continue;
-    if (getRecordEntry(errors, nodeId)?.[ErrorLevel.Critical]) continue;
+    if (nodeId === Constants.NODE.TYPE.PLACEHOLDER_TRIGGER) {
+      continue;
+    }
+    if (getRecordEntry(errors, nodeId)?.[ErrorLevel.Critical]) {
+      continue;
+    }
 
     const nodeOperationInfo = getRecordEntry(operationInfo, nodeId);
     const nodeDependencies = getRecordEntry(dependencies, nodeId);
     const nodeInputs = getRecordEntry(inputParameters, nodeId);
     const nodeSettings = getRecordEntry(settings, nodeId);
-    if (!nodeOperationInfo || !nodeDependencies || !nodeInputs || !nodeSettings) continue;
+    if (!nodeOperationInfo || !nodeDependencies || !nodeInputs || !nodeSettings) {
+      continue;
+    }
 
     const isTrigger = isRootNodeInGraph(nodeId, 'root', nodesMetadata);
     const connectionReference = getConnectionReference(connections, nodeId);

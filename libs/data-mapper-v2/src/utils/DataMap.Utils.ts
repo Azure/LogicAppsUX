@@ -48,18 +48,18 @@ export const getInputValues = (
           // Handle custom values, source schema node, and Function inputs for Function nodes
           if (isCustomValue(input)) {
             return input;
-          } else if (isSchemaNodeExtended(input.node)) {
-            return shouldLocalizePaths && input.node.qName.startsWith('@') ? `./${input.node.key}` : input.node.key;
-          } else {
-            if (input.node.key === indexPseudoFunctionKey) {
-              return getIndexValueForCurrentConnection(connections[input.reactFlowKey], connections);
-            } else if (input.node.key.startsWith(directAccessPseudoFunctionKey)) {
-              const functionValues = getInputValues(connections[input.reactFlowKey], connections, false);
-              return formatDirectAccess(functionValues[0], functionValues[1], functionValues[2]);
-            } else {
-              return collectFunctionValue(input.node, connections[input.reactFlowKey], connections, shouldLocalizePaths);
-            }
           }
+          if (isSchemaNodeExtended(input.node)) {
+            return shouldLocalizePaths && input.node.qName.startsWith('@') ? `./${input.node.key}` : input.node.key;
+          }
+          if (input.node.key === indexPseudoFunctionKey) {
+            return getIndexValueForCurrentConnection(connections[input.reactFlowKey], connections);
+          }
+          if (input.node.key.startsWith(directAccessPseudoFunctionKey)) {
+            const functionValues = getInputValues(connections[input.reactFlowKey], connections, false);
+            return formatDirectAccess(functionValues[0], functionValues[1], functionValues[2]);
+          }
+          return collectFunctionValue(input.node, connections[input.reactFlowKey], connections, shouldLocalizePaths);
         })
         .filter((mappedInput) => !!mappedInput) as string[])
     : [];
@@ -226,22 +226,21 @@ export const getSourceNode = (
     // eslint-disable-next-line no-param-reassign
     createdNodes[sourceKey] = sourceKey; // Bypass below block since we already have rfKey here
     return indexPseudoFunction;
-  } else if (sourceKey.startsWith(directAccessPseudoFunctionKey)) {
+  }
+  if (sourceKey.startsWith(directAccessPseudoFunctionKey)) {
     return directAccessPseudoFunction;
-  } else if (
-    (sourceKey.startsWith(ifPseudoFunctionKey) && sourceKey.charAt(ifPseudoFunctionKey.length) === '(') ||
-    isIfAndGuid(sourceKey)
-  ) {
+  }
+  if ((sourceKey.startsWith(ifPseudoFunctionKey) && sourceKey.charAt(ifPseudoFunctionKey.length) === '(') || isIfAndGuid(sourceKey)) {
     // We don't want if-else to be caught here
     // eslint-disable-next-line no-param-reassign
     createdNodes[sourceKey] = sourceKey;
     return ifPseudoFunction;
-  } else if (endOfFunctionIndex > -1) {
+  }
+  if (endOfFunctionIndex > -1) {
     // We found a Function in source key -> let's find its data
     return findFunctionForFunctionName(sourceKey.substring(0, endOfFunctionIndex), functions);
-  } else {
-    return findNodeForKey(sourceKey, sourceSchema.schemaTreeRoot, false);
   }
+  return findNodeForKey(sourceKey, sourceSchema.schemaTreeRoot, false);
 };
 
 export const getDestinationNode = (targetKey: string, functions: FunctionData[], schemaTreeRoot: SchemaNodeExtended): UnknownNode => {
@@ -298,21 +297,19 @@ export const splitKeyIntoChildren = (sourceKey: string): string[] => {
       } else {
         currentWord += element;
       }
-    } else {
-      if (element === '"') {
-        currentWord += element;
-        if (openParenthesis === 0 && functionParams[index + 1] && functionParams[index + 1] === ',') {
-          results.push(currentWord.trim());
-          currentWord = '';
+    } else if (element === '"') {
+      currentWord += element;
+      if (openParenthesis === 0 && functionParams[index + 1] && functionParams[index + 1] === ',') {
+        results.push(currentWord.trim());
+        currentWord = '';
 
-          // Skip the next comma
-          index++;
-        }
-
-        isCustom = false;
-      } else {
-        currentWord += element;
+        // Skip the next comma
+        index++;
       }
+
+      isCustom = false;
+    } else {
+      currentWord += element;
     }
   }
 
@@ -335,22 +332,21 @@ export const getSourceValueFromLoop = (sourceKey: string, targetKey: string, sou
   // Deserialize dot accessors as their parent loop's source node
   if (constructedSourceKey === '.') {
     return srcKeyWithinFor;
-  } else {
-    let idxOfDotAccess = constructedSourceKey.indexOf('.');
-    while (idxOfDotAccess > -1) {
-      const preChar = constructedSourceKey[idxOfDotAccess - 1];
-      const postChar = constructedSourceKey[idxOfDotAccess + 1];
+  }
+  let idxOfDotAccess = constructedSourceKey.indexOf('.');
+  while (idxOfDotAccess > -1) {
+    const preChar = constructedSourceKey[idxOfDotAccess - 1];
+    const postChar = constructedSourceKey[idxOfDotAccess + 1];
 
-      // Make sure the input is just '.'
-      let newStartIdx = idxOfDotAccess + 1;
-      if ((preChar === '(' || preChar === ' ') && (postChar === ')' || postChar === ',')) {
-        constructedSourceKey =
-          constructedSourceKey.substring(0, idxOfDotAccess) + srcKeyWithinFor + constructedSourceKey.substring(idxOfDotAccess + 1);
-        newStartIdx += srcKeyWithinFor.length;
-      }
-
-      idxOfDotAccess = constructedSourceKey.indexOf('.', newStartIdx);
+    // Make sure the input is just '.'
+    let newStartIdx = idxOfDotAccess + 1;
+    if ((preChar === '(' || preChar === ' ') && (postChar === ')' || postChar === ',')) {
+      constructedSourceKey =
+        constructedSourceKey.substring(0, idxOfDotAccess) + srcKeyWithinFor + constructedSourceKey.substring(idxOfDotAccess + 1);
+      newStartIdx += srcKeyWithinFor.length;
     }
+
+    idxOfDotAccess = constructedSourceKey.indexOf('.', newStartIdx);
   }
 
   const relativeSrcKeyArr = sourceKey
@@ -397,7 +393,7 @@ export const getSourceValueFromLoop = (sourceKey: string, targetKey: string, sou
             fullyQualifiedSourceKey = fullyQualifiedSourceKey.substring(0, lastElem);
             backoutCount--;
           }
-          fullyQualifiedSourceKey += '/' + relativeKeyNoBackouts;
+          fullyQualifiedSourceKey += `/${relativeKeyNoBackouts}`;
         } else {
           // Replace './' to deal with relative attribute paths
           fullyQualifiedSourceKey = `${srcKeyWithinFor}/${relativeKeyMatch.replace('./', '')}`;
@@ -451,14 +447,13 @@ export const lexThisThing = (targetKey: string): string[] => {
         tokens.push(currentChar);
         i++;
         continue;
-      } else {
-        // if it is a function or identifier token
-        tokens.push(currentToken);
-        currentToken = '';
-        tokens.push(currentChar);
-        i++;
-        continue;
       }
+      // if it is a function or identifier token
+      tokens.push(currentToken);
+      currentToken = '';
+      tokens.push(currentChar);
+      i++;
+      continue;
     }
 
     currentToken = currentToken + currentChar;
@@ -513,7 +508,7 @@ export const removeSequenceFunction = (tokens: string[]): string => {
     if (tokens[i] === ReservedToken.for) {
       const idk = createTargetOrFunction(tokens.slice(i + 2));
       const src = getInput(idk.term);
-      result += 'for(' + src;
+      result += `for(${src}`;
       i += idk.nextIndex;
     } else {
       result += tokens[i];
@@ -688,9 +683,8 @@ export const flattenMapDefinitionValues = (node: MapDefinitionEntry | MapDefinit
   return Object.values(node).flatMap((nodeValue) => {
     if (typeof nodeValue === 'string') {
       return [nodeValue];
-    } else {
-      return flattenMapDefinitionValues(nodeValue);
     }
+    return flattenMapDefinitionValues(nodeValue);
   });
 };
 

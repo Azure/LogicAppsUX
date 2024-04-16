@@ -60,7 +60,9 @@ const SubgraphCardNode = ({ data, targetPosition = Position.Top, sourcePosition 
       if (isAddCase && graphNode) {
         dispatch(addSwitchCase({ caseId: newCaseId, nodeId: subgraphId }));
         const rootManifest = await getOperationManifest(operationInfo);
-        if (!rootManifest?.properties?.subGraphDetails) return;
+        if (!rootManifest?.properties?.subGraphDetails) {
+          return;
+        }
         const caseManifestData = Object.values(rootManifest.properties.subGraphDetails).find((data) => data.isAdditive);
         const subGraphManifest = {
           properties: { ...caseManifestData, iconUri: iconUri ?? '', brandColor: '' },
@@ -114,8 +116,9 @@ const SubgraphCardNode = ({ data, targetPosition = Position.Top, sourcePosition 
   });
 
   const { errorMessage, errorLevel } = useMemo(() => {
-    if (parameterValidationErrors?.length > 0)
+    if (parameterValidationErrors?.length > 0) {
       return { errorMessage: parameterValidationErrorText, errorLevel: MessageBarType.severeWarning };
+    }
     return { errorMessage: undefined, errorLevel: undefined };
   }, [parameterValidationErrors?.length, parameterValidationErrorText]);
 
@@ -150,12 +153,12 @@ const SubgraphCardNode = ({ data, targetPosition = Position.Top, sourcePosition 
       </div>
       {graphCollapsed ? <p className="no-actions-text">{collapsedText}</p> : null}
       {showEmptyGraphComponents ? (
-        !readOnly ? (
+        readOnly ? (
+          <p className="no-actions-text">No Actions</p>
+        ) : (
           <div className={'edge-drop-zone-container'}>
             <DropZone graphId={subgraphId} parentId={id} isLeaf={isLeaf} />
           </div>
-        ) : (
-          <p className="no-actions-text">No Actions</p>
         )
       ) : null}
     </div>

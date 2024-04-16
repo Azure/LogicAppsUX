@@ -18,7 +18,7 @@ export interface LoopsPagerProps {
 
 export const LoopsPager = ({ metadata, scopeId, collapsed }: LoopsPagerProps) => {
   const [currentPage, setCurrentPage] = useState(1);
-  const [failedRepetitions, setFailedRepetitions] = useState<Array<number>>([]);
+  const [failedRepetitions, setFailedRepetitions] = useState<number[]>([]);
   const runInstance = useRunInstance();
   const dispatch = useDispatch<AppDispatch>();
   const node = useActionMetadata(scopeId);
@@ -30,10 +30,10 @@ export const LoopsPager = ({ metadata, scopeId, collapsed }: LoopsPagerProps) =>
     return RunService().getScopeRepetitions({ nodeId: scopeId, runId: runInstance?.id }, constants.FLOW_STATUS.FAILED);
   };
 
-  const onRunRepetitionsSuccess = async (repetitionValues: { value: Array<LogicAppsV2.RunRepetition> }) => {
+  const onRunRepetitionsSuccess = async (repetitionValues: { value: LogicAppsV2.RunRepetition[] }) => {
     const { value } = repetitionValues;
-    const sortedFailedRepetitions: Array<number> = value
-      .reduce((acc: Array<number>, current: LogicAppsV2.RunRepetition) => {
+    const sortedFailedRepetitions: number[] = value
+      .reduce((acc: number[], current: LogicAppsV2.RunRepetition) => {
         const scopeObject = current.properties?.repetitionIndexes?.find((item) => item.scopeName === scopeId);
         const indexOfFail = isNullOrUndefined(scopeObject) ? undefined : scopeObject.itemIndex;
         acc.push(indexOfFail ?? []);

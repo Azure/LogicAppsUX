@@ -87,9 +87,9 @@ export const Deserialize = (
     }
   }
 
-  const [remainingChildren, edges, actions, actionNodesMetadata] = !isNullOrUndefined(definition.actions)
-    ? buildGraphFromActions(definition.actions, 'root', undefined /* parentNodeId */, allActionNames)
-    : [[], [], {}];
+  const [remainingChildren, edges, actions, actionNodesMetadata] = isNullOrUndefined(definition.actions)
+    ? [[], [], {}]
+    : buildGraphFromActions(definition.actions, 'root', undefined /* parentNodeId */, allActionNames);
   allActions = { ...allActions, ...actions };
   nodesMetadata = { ...nodesMetadata, ...actionNodesMetadata };
 
@@ -254,7 +254,9 @@ const processScopeActions = (
     subGraphLocation: string | undefined
   ) => {
     const [graph, operations, metadata] = processNestedActions(subgraphId, graphId, actions, allActionNames, true);
-    if (!graph?.edges) graph.edges = [];
+    if (!graph?.edges) {
+      graph.edges = [];
+    }
 
     graph.subGraphLocation = subGraphLocation;
 
@@ -266,7 +268,9 @@ const processScopeActions = (
     const subgraphCardNode = createWorkflowNode(rootId, WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE);
 
     const isAddCase = subgraphType === SUBGRAPH_TYPES.SWITCH_ADD_CASE;
-    if (isAddCase) graph.type = WORKFLOW_NODE_TYPES.HIDDEN_NODE;
+    if (isAddCase) {
+      graph.type = WORKFLOW_NODE_TYPES.HIDDEN_NODE;
+    }
 
     // Connect graph header to subgraph node
     edges.push(createWorkflowEdge(headerId, subgraphId, isAddCase ? WORKFLOW_EDGE_TYPES.HIDDEN_EDGE : WORKFLOW_EDGE_TYPES.ONLY_EDGE));
@@ -374,9 +378,9 @@ const processNestedActions = (
   allActionNames: string[],
   isSubgraph?: boolean
 ): [WorkflowNode, Operations, NodesMetadata] => {
-  const [children, edges, scopeActions, scopeNodesMetadata] = !isNullOrUndefined(actions)
-    ? buildGraphFromActions(actions, graphId, parentNodeId, allActionNames)
-    : [[], [], {}, {}];
+  const [children, edges, scopeActions, scopeNodesMetadata] = isNullOrUndefined(actions)
+    ? [[], [], {}, {}]
+    : buildGraphFromActions(actions, graphId, parentNodeId, allActionNames);
   return [
     {
       id: graphId,
@@ -451,20 +455,30 @@ const addActionsInstanceMetaData = (nodesMetadata: NodesMetadata, runInstance: L
 };
 
 const getAllActionNames = (actions: LogicAppsV2.Actions | undefined, names: string[] = []): string[] => {
-  if (isNullOrUndefined(actions)) return [];
+  if (isNullOrUndefined(actions)) {
+    return [];
+  }
 
   for (const [actionName, action] of Object.entries(actions)) {
     names.push(actionName);
     if (isScopeAction(action)) {
-      if (action.actions) names.push(...getAllActionNames(action.actions));
+      if (action.actions) {
+        names.push(...getAllActionNames(action.actions));
+      }
       if (isIfAction(action)) {
-        if (action.else?.actions) names.push(...getAllActionNames(action.else.actions));
+        if (action.else?.actions) {
+          names.push(...getAllActionNames(action.else.actions));
+        }
       }
       if (isSwitchAction(action)) {
-        if (action.default?.actions) names.push(...getAllActionNames(action.default.actions));
+        if (action.default?.actions) {
+          names.push(...getAllActionNames(action.default.actions));
+        }
         if (action.cases) {
           for (const caseAction of Object.values(action.cases)) {
-            if (caseAction.actions) names.push(...getAllActionNames(caseAction.actions));
+            if (caseAction.actions) {
+              names.push(...getAllActionNames(caseAction.actions));
+            }
           }
         }
       }

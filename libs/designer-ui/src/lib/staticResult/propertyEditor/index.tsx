@@ -186,7 +186,7 @@ export const PropertyEditor = ({ properties, schema, updateProperties }: Propert
           );
         })}
         <div className="msla-property-editor-new-property">
-          {!schema ? (
+          {schema ? null : (
             <TextField
               styles={newPropertyTextFieldStyles}
               placeholder={newPropertyPlaceholderText}
@@ -197,12 +197,12 @@ export const PropertyEditor = ({ properties, schema, updateProperties }: Propert
               }}
               errorMessage={newPropertyNameErrorMessage}
             />
-          ) : null}
+          )}
           <DefaultButton
             className="msla-property-editor-add-new-property-button"
             iconProps={addItemButtonIconProps}
             text={addItemButtonLabel}
-            onClick={() => (!schema ? addNewProperty() : addNewPropertyWithSchema())}
+            onClick={() => (schema ? addNewPropertyWithSchema() : addNewProperty())}
           />
         </div>
         {showRenameCallout ? (

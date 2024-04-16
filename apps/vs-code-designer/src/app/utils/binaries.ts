@@ -23,7 +23,7 @@ import { isNodeJsInstalled } from '../commands/nodeJs/validateNodeJsInstalled';
 import { executeCommand } from './funcCoreTools/cpUtils';
 import { getNpmCommand } from './nodeJs/nodeJsVersion';
 import { getGlobalSetting, getWorkspaceSetting, updateGlobalSetting } from './vsCodeConfig/settings';
-import { type IActionContext } from '@microsoft/vscode-azext-utils';
+import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type { IGitHubReleaseInfo } from '@microsoft/vscode-extension-logic-apps';
 import axios from 'axios';
 import * as fs from 'fs';
@@ -77,9 +77,9 @@ export async function downloadAndExtractDependency(
         fs.chmodSync(dependencyFilePath, 0o777);
 
         // Extract to targetFolder
-        if (dependencyName == dotnetDependencyName) {
+        if (dependencyName === dotnetDependencyName) {
           const version = dotNetVersion ?? semver.major(DependencyVersion.dotnet6);
-          process.platform == Platform.windows
+          process.platform === Platform.windows
             ? await executeCommand(
                 ext.outputChannel,
                 undefined,
@@ -203,7 +203,7 @@ export async function getLatestNodeJsVersion(context: IActionContext, majorVersi
 }
 
 export function getNodeJsBinariesReleaseUrl(version: string, osPlatform: string, arch: string): string {
-  if (osPlatform != 'win') {
+  if (osPlatform !== 'win') {
     return `https://nodejs.org/dist/v${version}/node-v${version}-${osPlatform}-${arch}.tar.gz`;
   }
 
@@ -215,7 +215,7 @@ export function getFunctionCoreToolsBinariesReleaseUrl(version: string, osPlatfo
 }
 
 export function getDotNetBinariesReleaseUrl(): string {
-  return process.platform == Platform.windows ? 'https://dot.net/v1/dotnet-install.ps1' : 'https://dot.net/v1/dotnet-install.sh';
+  return process.platform === Platform.windows ? 'https://dot.net/v1/dotnet-install.ps1' : 'https://dot.net/v1/dotnet-install.sh';
 }
 
 export function getCpuArchitecture() {
@@ -251,9 +251,8 @@ async function readJsonFromUrl(url: string): Promise<any> {
     const response = await axios.get(url);
     if (response.status === 200) {
       return response.data;
-    } else {
-      throw new Error(`Request failed with status: ${response.status}`);
     }
+    throw new Error(`Request failed with status: ${response.status}`);
   } catch (error) {
     vscode.window.showErrorMessage(`Error reading JSON from URL ${url} : ${error.message}`);
     throw error;
@@ -291,7 +290,7 @@ async function extractDependency(dependencyFilePath: string, targetFolder: strin
       const zip = new AdmZip(dependencyFilePath);
       await zip.extractAllTo(targetFolder, /* overwrite */ true, /* Permissions */ true);
     } else {
-      await executeCommand(ext.outputChannel, undefined, 'tar', `-xzvf`, dependencyFilePath, '-C', targetFolder);
+      await executeCommand(ext.outputChannel, undefined, 'tar', '-xzvf', dependencyFilePath, '-C', targetFolder);
     }
     cleanupContainerFolder(targetFolder);
     await executeCommand(ext.outputChannel, undefined, 'echo', `Extraction ${dependencyName} successfully completed.`);
@@ -334,7 +333,7 @@ function cleanupContainerFolder(targetFolder: string) {
 export function getDependencyTimeout(): number {
   const dependencyTimeoutValue: number | undefined = getWorkspaceSetting<number>(dependencyTimeoutSettingKey);
   const timeoutInSeconds = Number(dependencyTimeoutValue);
-  if (isNaN(timeoutInSeconds)) {
+  if (Number.isNaN(timeoutInSeconds)) {
     throw new Error(
       localize(
         'invalidSettingValue',

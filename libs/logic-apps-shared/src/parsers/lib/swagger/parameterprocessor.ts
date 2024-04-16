@@ -75,11 +75,11 @@ export class ParametersProcessor {
   }
 
   getParameters(keyProjectionOption: KeyProjectionOptions = {}): InputParameters {
-    const parameters = this.parameters.map((parameter) => this._getParameters(parameter, keyProjectionOption)),
-      allParameters = aggregate(parameters)
-        .filter((parameter) => !this.isReservedParameter(parameter))
-        .filter((parameter) => !(this.options.excludeInternal && equals(parameter.visibility, Constants.Visibility.Internal)))
-        .filter((parameter) => !(this.options.excludeAdvanced && equals(parameter.visibility, Constants.Visibility.Advanced)));
+    const parameters = this.parameters.map((parameter) => this._getParameters(parameter, keyProjectionOption));
+    const allParameters = aggregate(parameters)
+      .filter((parameter) => !this.isReservedParameter(parameter))
+      .filter((parameter) => !(this.options.excludeInternal && equals(parameter.visibility, Constants.Visibility.Internal)))
+      .filter((parameter) => !(this.options.excludeAdvanced && equals(parameter.visibility, Constants.Visibility.Advanced)));
 
     return {
       byId: map(allParameters, 'key'), // TODO: key should not be used as id when we support multiple items in array.
@@ -108,11 +108,11 @@ export class ParametersProcessor {
     let type = parameter.type;
 
     switch (location) {
-      case Constants.ParameterLocations.Body:
+      case Constants.ParameterLocations.Body: {
         type = parameter.schema.type;
 
         switch (type) {
-          case Constants.Types.Array:
+          case Constants.Types.Array: {
             const processor = new SchemaProcessor({
               prefix: parameter.name ? encodePropertySegment(parameter.name) : undefined,
               isInputSchema: true,
@@ -131,6 +131,7 @@ export class ParametersProcessor {
 
             const inputs = processor.getSchemaProperties(schema);
             return inputs.map((item) => ({ ...toInputParameter(item), in: location }));
+          }
 
           case Constants.Types.Boolean:
           case Constants.Types.Integer:
@@ -139,31 +140,33 @@ export class ParametersProcessor {
           case Constants.Types.String:
             return [this._getParameterFromSchema(parameter, keyProjectionOption)];
 
-          case Constants.Types.Object:
+          case Constants.Types.Object: {
             const hasDynamicSchema = schema[Constants.ExtensionProperties.DynamicSchema];
             let parameters: InputParameter[] = [];
             if (Object.keys(schema.properties || {}).length || hasDynamicSchema) {
               const processor = new SchemaProcessor({
-                  prefix: hasDynamicSchema ? encodePropertySegment(parameter.name) : undefined,
-                  keyPrefix: create(this._getMergedKeySegments(location, keyProjectionOption)),
-                  isInputSchema: true,
-                  expandArrayOutputs: !!this.options.expandArray,
-                  expandArrayOutputsDepth: this.options.expandArrayDepth,
-                  required: parameter.required,
-                  excludeAdvanced: this.options.excludeAdvanced,
-                  excludeInternal: this.options.excludeInternal,
-                  includeParentObject: this.options.includeParentObject,
-                }),
-                schemaProperties = processor.getSchemaProperties(schema);
+                prefix: hasDynamicSchema ? encodePropertySegment(parameter.name) : undefined,
+                keyPrefix: create(this._getMergedKeySegments(location, keyProjectionOption)),
+                isInputSchema: true,
+                expandArrayOutputs: !!this.options.expandArray,
+                expandArrayOutputsDepth: this.options.expandArrayDepth,
+                required: parameter.required,
+                excludeAdvanced: this.options.excludeAdvanced,
+                excludeInternal: this.options.excludeInternal,
+                includeParentObject: this.options.includeParentObject,
+              });
+              const schemaProperties = processor.getSchemaProperties(schema);
 
               parameters = schemaProperties.map((schemaProperty) => ({ ...toInputParameter(schemaProperty), in: location }));
             }
 
             return parameters.length ? parameters : [this._getParameterFromSchema(parameter, keyProjectionOption)];
+          }
 
           default:
             return [{ ...this._getParameterFromSchema(parameter, keyProjectionOption), type: Constants.Types.Any }];
         }
+      }
 
       case Constants.ParameterLocations.FormData:
         switch (type) {
@@ -222,22 +225,22 @@ export class ParametersProcessor {
 
   private _getScalarParameter(parameter: Parameter, key?: string, keyProjectionOption: KeyProjectionOptions = {}): InputParameter {
     const dynamicValues = getParameterDynamicValues(parameter as unknown as OpenAPIV2.SchemaObject);
-    const $default = parameter.default,
-      description = parameter.description,
-      editor = getEditorForParameter(parameter as unknown as OpenAPIV2.SchemaObject, dynamicValues),
-      editorOptions = dynamicValues ? { options: [] } : parameter[Constants.ExtensionProperties.EditorOptions],
-      encode = parameter[Constants.ExtensionProperties.Encode],
-      $enum = getEnum(parameter as unknown as OpenAPIV2.SchemaObject, parameter.required),
-      format = parameter.format,
-      $in = parameter.in,
-      name = encodePropertySegment(parameter.name),
-      recommended = parameter[Constants.ExtensionProperties.SchedulerRecommendation],
-      required = !!parameter.required,
-      summary = parameter[Constants.ExtensionProperties.Summary],
-      schema = toSwaggerSchema(parameter),
-      type = parameter.type,
-      visibility = parameter[Constants.ExtensionProperties.Visibility],
-      isNotificationUrl = parameter[Constants.ExtensionProperties.NotificationUrl];
+    const $default = parameter.default;
+    const description = parameter.description;
+    const editor = getEditorForParameter(parameter as unknown as OpenAPIV2.SchemaObject, dynamicValues);
+    const editorOptions = dynamicValues ? { options: [] } : parameter[Constants.ExtensionProperties.EditorOptions];
+    const encode = parameter[Constants.ExtensionProperties.Encode];
+    const $enum = getEnum(parameter as unknown as OpenAPIV2.SchemaObject, parameter.required);
+    const format = parameter.format;
+    const $in = parameter.in;
+    const name = encodePropertySegment(parameter.name);
+    const recommended = parameter[Constants.ExtensionProperties.SchedulerRecommendation];
+    const required = !!parameter.required;
+    const summary = parameter[Constants.ExtensionProperties.Summary];
+    const schema = toSwaggerSchema(parameter);
+    const type = parameter.type;
+    const visibility = parameter[Constants.ExtensionProperties.Visibility];
+    const isNotificationUrl = parameter[Constants.ExtensionProperties.NotificationUrl];
 
     return {
       key: key ?? (create([...this._getMergedKeySegments($in, keyProjectionOption), name]) as string),
@@ -284,33 +287,32 @@ export class ParametersProcessor {
     );
     if (parameter[Constants.ExtensionProperties.Format] === Constants.Formats.ContentOnly) {
       return [fileContent];
-    } else {
-      const intl = getIntl();
-      const fileName = {
-        key: create([...this._getMergedKeySegments(parameter.in, keyProjectionOption, parameter.name), '$filename']) as string,
-        in: Constants.ParameterLocations.FormData,
-        name: parameter.name,
-        description: undefined,
-        type: Constants.Types.String,
-        format: undefined,
-        required: false,
-        default: undefined,
-        enum: undefined,
-        dynamicValues: undefined,
-        editor: parameter[Constants.ExtensionProperties.Editor],
-        editorOptions: parameter[Constants.ExtensionProperties.EditorOptions],
-        recommended: undefined,
-        summary: intl.formatMessage(
-          { defaultMessage: '{fileName} (file name)', id: 'UYRIS/', description: 'Title for file name parameter' },
-          { fileName: parameter[Constants.ExtensionProperties.Summary] }
-        ),
-        visibility: undefined,
-        options: {
-          forceStringInterpolation: true,
-        },
-      };
-      return [fileContent, fileName];
     }
+    const intl = getIntl();
+    const fileName = {
+      key: create([...this._getMergedKeySegments(parameter.in, keyProjectionOption, parameter.name), '$filename']) as string,
+      in: Constants.ParameterLocations.FormData,
+      name: parameter.name,
+      description: undefined,
+      type: Constants.Types.String,
+      format: undefined,
+      required: false,
+      default: undefined,
+      enum: undefined,
+      dynamicValues: undefined,
+      editor: parameter[Constants.ExtensionProperties.Editor],
+      editorOptions: parameter[Constants.ExtensionProperties.EditorOptions],
+      recommended: undefined,
+      summary: intl.formatMessage(
+        { defaultMessage: '{fileName} (file name)', id: 'UYRIS/', description: 'Title for file name parameter' },
+        { fileName: parameter[Constants.ExtensionProperties.Summary] }
+      ),
+      visibility: undefined,
+      options: {
+        forceStringInterpolation: true,
+      },
+    };
+    return [fileContent, fileName];
   }
 
   private _getMergedKeySegments($in: string, keyProjectionOption: KeyProjectionOptions = {}, parameterName?: string): string[] {
