@@ -6,13 +6,17 @@ const encodeReduceFunction = (acc: Record<string, string>, key: string) => {
   acc[key] = encodeURIComponent(key);
   return acc;
 };
+const decodeReduceFunction = (acc: Record<string, string>, key: string) => {
+  acc[encodeURIComponent(key)] = key;
+  return acc;
+}
 const htmlUnsafeCharacters = ['<', '>'];
 const htmlUnsafeCharacterEncodingMap: Record<string, string> = htmlUnsafeCharacters.reduce(encodeReduceFunction, {});
-const htmlUnsafeCharacterDecodingMap: Record<string, string> = htmlUnsafeCharacters.reduce(encodeReduceFunction, {});
+const htmlUnsafeCharacterDecodingMap: Record<string, string> = htmlUnsafeCharacters.reduce(decodeReduceFunction, {});
 
 const lexicalUnsafeCharacters = ['&', '"'];
 const lexicalUnsafeCharacterEncodingMap: Record<string, string> = lexicalUnsafeCharacters.reduce(encodeReduceFunction, {});
-const lexicalUnsafeCharacterDecodingMap: Record<string, string> = lexicalUnsafeCharacters.reduce(encodeReduceFunction, {});
+const lexicalUnsafeCharacterDecodingMap: Record<string, string> = lexicalUnsafeCharacters.reduce(decodeReduceFunction, {});
 
 const lexicalSupportedTagNames = new Set([
   'a',
