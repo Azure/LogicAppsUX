@@ -105,7 +105,8 @@ export function serialize(models: DynamicallyAddedParameterInputsModel[], isRequ
     .reduce((resultPropertiesObj, nextProperty) => {
       // Convert array to object; replace array index key with schemaKey
       const [schemaKey, propertyValue] = Object.entries(nextProperty)[0];
-      return { ...resultPropertiesObj, [schemaKey]: propertyValue };
+      resultPropertiesObj[schemaKey] = propertyValue;
+      return resultPropertiesObj;
     }, {});
 
   let rootObject: OpenApiSchema;

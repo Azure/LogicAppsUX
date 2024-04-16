@@ -75,7 +75,7 @@ export const OverviewApp = () => {
   const runItems = useMemo(
     () =>
       data?.pages?.reduce<RunDisplayItem[]>((acc, val) => {
-        return [...acc, ...val.runs.map(mapToRunItem)];
+        return acc.concat(val.runs.map(mapToRunItem));
       }, []),
     [data?.pages]
   );

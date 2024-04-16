@@ -37,11 +37,9 @@ export const SimpleDictionary: React.FC<SimpleDictionaryProps> = ({
     onChange?.(
       values
         .filter((x) => x.key && x.key !== '')
-        .reduce((acc, val) => {
-          return {
-            ...acc,
-            [val.key]: val.value,
-          };
+        .reduce((acc: any, val) => {
+          acc[val.key] = val.value;
+          return acc;
         }, {})
     );
     // eslint-disable-next-line react-hooks/exhaustive-deps

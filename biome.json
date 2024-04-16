@@ -26,8 +26,7 @@
       "recommended": false,
       "performance": {
         "all": true,
-        "noDelete": "off",
-        "noAccumulatingSpread": "off"
+        "noDelete": "off"
       },
       "a11y": {
         "all": false

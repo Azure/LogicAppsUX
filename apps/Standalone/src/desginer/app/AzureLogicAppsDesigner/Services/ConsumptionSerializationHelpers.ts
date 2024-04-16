@@ -81,13 +81,13 @@ const traverseDefinition = (operation: any, callback: (operation: any) => void) 
     ...(operation?.actions ?? {}),
     ...(operation?.else?.actions ?? {}),
     ...(operation?.default?.actions ?? {}),
-    ...(Object.values(operation?.cases ?? {}).reduce(
-      (acc: any, curr: any) => ({
+    ...(Object.values(operation?.cases ?? {}).reduce((acc: any, curr: any) => {
+      return {
+        // biome-ignore lint/performance/noAccumulatingSpread: There are probably better ways to do this but this is a more complex one to fix
         ...acc,
         ...curr.actions,
-      }),
-      {}
-    ) as any),
+      };
+    }, {}) as any),
   };
 
   Object.values(children).forEach((child: any) => {

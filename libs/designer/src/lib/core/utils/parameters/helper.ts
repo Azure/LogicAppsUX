@@ -270,10 +270,7 @@ export const getDependentParameters = (
     if (!parameter) return result;
     const operationInput = getParameterFromName(inputs, parameter?.parameter ?? parameter?.parameterReference ?? 'undefined');
     if (operationInput) {
-      return {
-        ...result,
-        [operationInput.id]: { isValid: parameterValidForDynamicCall(operationInput) },
-      };
+      result[operationInput.id] = { isValid: parameterValidForDynamicCall(operationInput) };
     }
 
     return result;
@@ -960,7 +957,7 @@ export function shouldUseParameterInGroup(parameter: ParameterInfo, allParameter
     const dependentParameters = dependencies.parameters.reduce((result: Dependency[], dependentParameter: DependentParameterInfo) => {
       const parameterInfo = allParameters.find((param) => param.parameterName === dependentParameter.name);
       if (parameterInfo) {
-        return [...result, { ...dependentParameter, actualValue: parameterValueWithoutCasting(parameterInfo) }];
+        result.push({ ...dependentParameter, actualValue: parameterValueWithoutCasting(parameterInfo) });
       }
 
       return result;
@@ -2860,18 +2857,18 @@ export function updateTokenMetadataInParameters(nodeId: string, parameters: Para
 
   const actionNodes = Object.keys(operations)
     .filter((nodeId) => nodeId !== triggerNodeId)
-    .reduce((actionNodes: Record<string, string>, id: string) => ({ ...actionNodes, [id]: id }), {});
-  const nodesData = Object.keys(operations).reduce(
-    (data: Record<string, Partial<NodeDataWithOperationMetadata>>, id: string) => ({
-      ...data,
-      [id]: {
-        settings: getRecordEntry(settings, id),
-        nodeOutputs: getRecordEntry(outputParameters, id),
-        operationMetadata: getRecordEntry(operationMetadata, id),
-      },
-    }),
-    {}
-  );
+    .reduce((actionNodes: Record<string, string>, id: string) => {
+      actionNodes[id] = id;
+      return actionNodes;
+    }, {});
+  const nodesData = Object.keys(operations).reduce((data: Record<string, Partial<NodeDataWithOperationMetadata>>, id: string) => {
+    data[id] = {
+      settings: getRecordEntry(settings, id),
+      nodeOutputs: getRecordEntry(outputParameters, id),
+      operationMetadata: getRecordEntry(operationMetadata, id),
+    };
+    return data;
+  }, {});
 
   const repetitionContext = getRecordEntry(rootState.operations.repetitionInfos, nodeId) ?? { repetitionReferences: [] };
   for (const parameter of parameters) {

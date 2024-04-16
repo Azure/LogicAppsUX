@@ -36,7 +36,8 @@ export const LoopsPager = ({ metadata, scopeId, collapsed }: LoopsPagerProps) =>
       .reduce((acc: Array<number>, current: LogicAppsV2.RunRepetition) => {
         const scopeObject = current.properties?.repetitionIndexes?.find((item) => item.scopeName === scopeId);
         const indexOfFail = isNullOrUndefined(scopeObject) ? undefined : scopeObject.itemIndex;
-        return [...acc, indexOfFail ?? []];
+        acc.push(indexOfFail ?? []);
+        return acc;
       }, [])
       .sort();
 
