@@ -39,12 +39,6 @@
         "all": false
       },
       "complexity": {
-        "useSimplifiedLogicExpression": "off",
-        "noBannedTypes": "off",
-        "noExcessiveCognitiveComplexity": "off",
-        "useSimpleNumberKeys": "off",
-        "noForEach": "off",
-        "noStaticOnlyClass": "off",
         "noEmptyTypeParameters": "error",
         "noExtraBooleanCast": "error",
         "noMultipleSpacesInRegularExpressionLiterals": "error",
