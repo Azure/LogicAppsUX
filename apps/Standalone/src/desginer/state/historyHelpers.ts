@@ -18,14 +18,16 @@ export const setStateHistory = (state: WorkflowLoadingState): void => {
     };
     window.localStorage.setItem('msla-standalone-stateHistory', JSON.stringify(filteredState));
   } catch (e) {
-    return undefined;
+    return;
   }
 };
 
 export const getStateHistory = (): any => {
   try {
     const state = window.localStorage.getItem('msla-standalone-stateHistory');
-    if (!state) return undefined;
+    if (!state) {
+      return undefined;
+    }
     return JSON.parse(state);
   } catch (e) {
     return undefined;

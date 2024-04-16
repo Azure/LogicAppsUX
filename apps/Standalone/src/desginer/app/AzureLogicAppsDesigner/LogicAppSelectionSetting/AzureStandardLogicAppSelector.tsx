@@ -30,7 +30,9 @@ export const AzureStandardLogicAppSelector = () => {
   const dispatch = useDispatch<AppDispatch>();
 
   const { data: workflows, isLoading: isWorkflowsLoading } = useQuery(['getListOfWorkflows', appId], async () => {
-    if (!validApp) return null;
+    if (!validApp) {
+      return null;
+    }
     const results = await axios.get<WorkflowList>(`https://management.azure.com${appId}/workflows?api-version=2018-11-01`, {
       headers: {
         Authorization: `Bearer ${environment.armToken}`,
@@ -46,7 +48,9 @@ export const AzureStandardLogicAppSelector = () => {
   } = useQuery(
     ['getListOfRunInstances', appId, workflowName],
     async () => {
-      if (!validApp) return null;
+      if (!validApp) {
+        return null;
+      }
       const results = await axios.get<RunList>(
         `https://management.azure.com${appId}/hostruntime/runtime/webhooks/workflow/api/management/workflows/${workflowName}/runs?api-version=2018-11-01`,
         {
@@ -98,7 +102,7 @@ export const AzureStandardLogicAppSelector = () => {
     <Stack {...columnProps}>
       <div style={{ position: 'relative' }}>
         <ComboBox
-          placeholder={!isAppsLoading ? (appOptions.length > 0 ? 'Select an App' : 'No Apps to Select') : ''}
+          placeholder={isAppsLoading ? '' : appOptions.length > 0 ? 'Select an App' : 'No Apps to Select'}
           label="Standard Logic Apps"
           allowFreeform={true}
           autoComplete={'on'}
@@ -121,13 +125,13 @@ export const AzureStandardLogicAppSelector = () => {
       <div style={{ position: 'relative' }}>
         <Dropdown
           placeholder={
-            !isWorkflowsLoading
-              ? appId
+            isWorkflowsLoading
+              ? ''
+              : appId
                 ? workflowOptions.length > 0
                   ? 'Select a Workflow'
                   : 'No Workflows to Select'
                 : 'Select a Logic App First'
-              : ''
           }
           label="Workflow"
           options={workflowOptions}
@@ -147,13 +151,13 @@ export const AzureStandardLogicAppSelector = () => {
         <div style={{ position: 'relative' }}>
           <Dropdown
             placeholder={
-              !isRunInstancesLoading
-                ? appId
+              isRunInstancesLoading
+                ? ''
+                : appId
                   ? runOptions.length > 0
                     ? 'Select a Run Instance'
                     : 'No Run Instances to Select'
                   : 'Select a Workflow First'
-                : ''
             }
             label="RunInstance"
             options={runOptions}

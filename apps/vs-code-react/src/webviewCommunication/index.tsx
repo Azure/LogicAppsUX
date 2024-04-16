@@ -47,18 +47,22 @@ export const WebViewCommunication: React.FC<{ children: ReactNode }> = ({ childr
     switch (projectState?.project ?? message?.data?.project) {
       case ProjectName.designer: {
         switch (message.command) {
-          case ExtensionCommand.initialize_frame:
+          case ExtensionCommand.initialize_frame: {
             dispatch(initializeDesigner(message.data));
             break;
-          case ExtensionCommand.receiveCallback:
+          }
+          case ExtensionCommand.receiveCallback: {
             dispatch(updateCallbackUrl(message.data));
             break;
-          case ExtensionCommand.completeFileSystemConnection:
+          }
+          case ExtensionCommand.completeFileSystemConnection: {
             dispatch(updateFileSystemConnection(message.data));
             break;
-          case ExtensionCommand.update_panel_metadata:
+          }
+          case ExtensionCommand.update_panel_metadata: {
             dispatch(updatePanelMetadata(message.data));
             break;
+          }
           default:
             throw new Error('Unknown post message received');
         }
@@ -66,36 +70,43 @@ export const WebViewCommunication: React.FC<{ children: ReactNode }> = ({ childr
       }
       case ProjectName.dataMapper: {
         switch (message.command) {
-          case ExtensionCommand.setRuntimePort:
+          case ExtensionCommand.setRuntimePort: {
             dispatch(changeRuntimePort(message.data));
             break;
-          case ExtensionCommand.fetchSchema:
+          }
+          case ExtensionCommand.fetchSchema: {
             if (message.data.type === SchemaType.Source) {
               dispatch(changeSourceSchemaFilename(message.data.fileName));
             } else {
               dispatch(changeTargetSchemaFilename(message.data.fileName));
             }
             break;
-          case ExtensionCommand.loadDataMap:
+          }
+          case ExtensionCommand.loadDataMap: {
             // NOTE: DataMapDataProvider ensures the functions and schemas are loaded before loading the mapDefinition connections
             dispatch(changeSourceSchemaFilename(message.data.sourceSchemaFileName));
             dispatch(changeTargetSchemaFilename(message.data.targetSchemaFileName));
             dispatch(changeMapDefinition(message.data.mapDefinition));
             dispatch(changeDataMapMetadata(message.data.metadata));
             break;
-          case ExtensionCommand.showAvailableSchemas:
+          }
+          case ExtensionCommand.showAvailableSchemas: {
             dispatch(changeSchemaList(message.data));
             break;
-          case ExtensionCommand.getAvailableCustomXsltPaths:
+          }
+          case ExtensionCommand.getAvailableCustomXsltPaths: {
             dispatch(changeCustomXsltPathList(message.data));
             break;
-          case ExtensionCommand.setXsltData:
+          }
+          case ExtensionCommand.setXsltData: {
             dispatch(changeXsltFilename(message.data.filename));
             dispatch(changeXsltContent(message.data.fileContents));
             break;
-          case ExtensionCommand.getConfigurationSetting:
+          }
+          case ExtensionCommand.getConfigurationSetting: {
             dispatch(changeUseExpandedFunctionCards(message.data));
             break;
+          }
           default:
             throw new Error('Unknown post message received');
         }
@@ -103,9 +114,10 @@ export const WebViewCommunication: React.FC<{ children: ReactNode }> = ({ childr
       }
       case ProjectName.unitTest: {
         switch (message.command) {
-          case ExtensionCommand.initialize_frame:
+          case ExtensionCommand.initialize_frame: {
             dispatch(initializeUnitTest(message.data as InitializeUnitTestPayload));
             break;
+          }
           default:
             throw new Error('Unknown post message received');
         }
@@ -113,21 +125,26 @@ export const WebViewCommunication: React.FC<{ children: ReactNode }> = ({ childr
       }
       default:
         switch (message.command) {
-          case ExtensionCommand.initialize_frame:
+          case ExtensionCommand.initialize_frame: {
             dispatch(initializeWorkflow(message.data as InitializePayload));
             break;
-          case ExtensionCommand.update_access_token:
+          }
+          case ExtensionCommand.update_access_token: {
             dispatch(updateAccessToken(message.data.accessToken));
             break;
-          case ExtensionCommand.update_export_path:
+          }
+          case ExtensionCommand.update_export_path: {
             dispatch(updateTargetDirectory(message.data));
             break;
-          case ExtensionCommand.add_status:
+          }
+          case ExtensionCommand.add_status: {
             dispatch(addStatus(message.data));
             break;
-          case ExtensionCommand.set_final_status:
+          }
+          case ExtensionCommand.set_final_status: {
             dispatch(setFinalStatus(message.data));
             break;
+          }
           default:
             throw new Error('Unknown post message received');
         }

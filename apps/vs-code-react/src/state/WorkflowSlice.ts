@@ -116,7 +116,7 @@ export const workflowSlice = createSlice({
     updateAccessToken: (state: WorkflowState, action: PayloadAction<string | undefined>) => {
       state.accessToken = action.payload;
     },
-    updateSelectedWorkFlows: (state: WorkflowState, action: PayloadAction<{ selectedWorkflows: Array<WorkflowsList> }>) => {
+    updateSelectedWorkFlows: (state: WorkflowState, action: PayloadAction<{ selectedWorkflows: WorkflowsList[] }>) => {
       const { selectedWorkflows } = action.payload;
       state.exportData.selectedWorkflows = selectedWorkflows;
     },
@@ -160,10 +160,7 @@ export const workflowSlice = createSlice({
         initializedState.statuses = [];
       }
     },
-    updateSelectedAdvanceOptions: (
-      state: WorkflowState,
-      action: PayloadAction<{ selectedAdvanceOptions: Array<AdvancedOptionsTypes> }>
-    ) => {
+    updateSelectedAdvanceOptions: (state: WorkflowState, action: PayloadAction<{ selectedAdvanceOptions: AdvancedOptionsTypes[] }>) => {
       const { selectedAdvanceOptions } = action.payload;
       state.exportData.selectedAdvanceOptions = selectedAdvanceOptions;
     },

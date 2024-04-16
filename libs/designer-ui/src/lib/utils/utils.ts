@@ -11,7 +11,7 @@ import { equals, getIntl } from '@microsoft/logic-apps-shared';
  */
 export function getDurationString(milliseconds: number, abbreviated = true): string {
   const intl = getIntl();
-  if (isNaN(milliseconds)) {
+  if (Number.isNaN(milliseconds)) {
     return '--';
   }
 
@@ -28,18 +28,17 @@ export function getDurationString(milliseconds: number, abbreviated = true): str
           seconds,
         }
       );
-    } else {
-      return intl.formatMessage(
-        {
-          defaultMessage: '{seconds, plural, one {# second} other {# seconds}}',
-          id: 'hN7iBP',
-          description: 'A duration of time shown in seconds',
-        },
-        {
-          seconds,
-        }
-      );
     }
+    return intl.formatMessage(
+      {
+        defaultMessage: '{seconds, plural, one {# second} other {# seconds}}',
+        id: 'hN7iBP',
+        description: 'A duration of time shown in seconds',
+      },
+      {
+        seconds,
+      }
+    );
   }
 
   const minutes = Math.round(Math.abs(milliseconds / 60 / 1000));
@@ -55,18 +54,17 @@ export function getDurationString(milliseconds: number, abbreviated = true): str
           minutes,
         }
       );
-    } else {
-      return intl.formatMessage(
-        {
-          defaultMessage: '{minutes, plural, one {# minute} other {# minutes}}',
-          id: 'RhH4pF',
-          description: 'A duration of time shown in minutes',
-        },
-        {
-          minutes,
-        }
-      );
     }
+    return intl.formatMessage(
+      {
+        defaultMessage: '{minutes, plural, one {# minute} other {# minutes}}',
+        id: 'RhH4pF',
+        description: 'A duration of time shown in minutes',
+      },
+      {
+        minutes,
+      }
+    );
   }
 
   const hours = Math.round(Math.abs(milliseconds / 60 / 60 / 1000));
@@ -82,18 +80,17 @@ export function getDurationString(milliseconds: number, abbreviated = true): str
           hours,
         }
       );
-    } else {
-      return intl.formatMessage(
-        {
-          defaultMessage: '{hours, plural, one {# hour} other {# hours}}',
-          id: 'FXLR5M',
-          description: 'A duration of time shown in hours',
-        },
-        {
-          hours,
-        }
-      );
     }
+    return intl.formatMessage(
+      {
+        defaultMessage: '{hours, plural, one {# hour} other {# hours}}',
+        id: 'FXLR5M',
+        description: 'A duration of time shown in hours',
+      },
+      {
+        hours,
+      }
+    );
   }
 
   const days = Math.round(Math.abs(milliseconds / 24 / 60 / 60 / 1000));
@@ -108,18 +105,17 @@ export function getDurationString(milliseconds: number, abbreviated = true): str
         days,
       }
     );
-  } else {
-    return intl.formatMessage(
-      {
-        defaultMessage: '{days, plural, one {# day} other {# days}}',
-        id: 'qUWBUX',
-        description: 'A duration of time shown in days',
-      },
-      {
-        days,
-      }
-    );
   }
+  return intl.formatMessage(
+    {
+      defaultMessage: '{days, plural, one {# day} other {# days}}',
+      id: 'qUWBUX',
+      description: 'A duration of time shown in days',
+    },
+    {
+      days,
+    }
+  );
 }
 
 /**
@@ -142,7 +138,7 @@ export function getDurationStringFromTimes(startTime: string, endTime: string, a
  * @return {string}
  */
 export function getDurationStringPanelMode(milliseconds: number, abbreviated = true): string {
-  if (isNaN(milliseconds)) {
+  if (Number.isNaN(milliseconds)) {
     return '--';
   }
 
@@ -160,18 +156,17 @@ export function getDurationStringPanelMode(milliseconds: number, abbreviated = t
           seconds: millisecondsRounded,
         }
       );
-    } else {
-      return intl.formatMessage(
-        {
-          defaultMessage: '{seconds, plural, one {# second} other {# seconds}}',
-          id: 'hN7iBP',
-          description: 'A duration of time shown in seconds',
-        },
-        {
-          seconds: millisecondsRounded,
-        }
-      );
     }
+    return intl.formatMessage(
+      {
+        defaultMessage: '{seconds, plural, one {# second} other {# seconds}}',
+        id: 'hN7iBP',
+        description: 'A duration of time shown in seconds',
+      },
+      {
+        seconds: millisecondsRounded,
+      }
+    );
   }
 
   const seconds = Math.round(Math.abs(milliseconds / 1000));
@@ -187,18 +182,17 @@ export function getDurationStringPanelMode(milliseconds: number, abbreviated = t
           seconds,
         }
       );
-    } else {
-      return intl.formatMessage(
-        {
-          defaultMessage: '{seconds, plural, one {# second} other {# seconds}}',
-          id: 'hN7iBP',
-          description: 'A duration of time shown in seconds',
-        },
-        {
-          seconds,
-        }
-      );
     }
+    return intl.formatMessage(
+      {
+        defaultMessage: '{seconds, plural, one {# second} other {# seconds}}',
+        id: 'hN7iBP',
+        description: 'A duration of time shown in seconds',
+      },
+      {
+        seconds,
+      }
+    );
   }
 
   const minutes = Math.floor(Math.abs(milliseconds / 60 / 1000));
@@ -217,19 +211,18 @@ export function getDurationStringPanelMode(milliseconds: number, abbreviated = t
           minutes,
         }
       );
-    } else {
-      return intl.formatMessage(
-        {
-          defaultMessage: '{minutes} minutes {seconds} seconds',
-          id: 'XTuxmH',
-          description: 'This is a time duration in full non abbreviated format',
-        },
-        {
-          seconds: secondsCarry,
-          minutes,
-        }
-      );
     }
+    return intl.formatMessage(
+      {
+        defaultMessage: '{minutes} minutes {seconds} seconds',
+        id: 'XTuxmH',
+        description: 'This is a time duration in full non abbreviated format',
+      },
+      {
+        seconds: secondsCarry,
+        minutes,
+      }
+    );
   }
 
   const hours = Math.floor(Math.abs(milliseconds / 60 / 60 / 1000));
@@ -247,19 +240,18 @@ export function getDurationStringPanelMode(milliseconds: number, abbreviated = t
           minutes: minutesCarry,
         }
       );
-    } else {
-      return intl.formatMessage(
-        {
-          defaultMessage: '{hours} hours {minutes} minutes',
-          id: 'l36V56',
-          description: 'This is a time duration in full non abbreviated format',
-        },
-        {
-          hours,
-          minutes: minutesCarry,
-        }
-      );
     }
+    return intl.formatMessage(
+      {
+        defaultMessage: '{hours} hours {minutes} minutes',
+        id: 'l36V56',
+        description: 'This is a time duration in full non abbreviated format',
+      },
+      {
+        hours,
+        minutes: minutesCarry,
+      }
+    );
   }
 
   const days = Math.floor(Math.abs(milliseconds / 24 / 60 / 60 / 1000));
@@ -276,19 +268,18 @@ export function getDurationStringPanelMode(milliseconds: number, abbreviated = t
         days,
       }
     );
-  } else {
-    return intl.formatMessage(
-      {
-        defaultMessage: '{days} days {hours} hours',
-        id: 'X8JjjT',
-        description: 'This is a time duration in full non abbreviated format',
-      },
-      {
-        hours: hoursCarry,
-        days,
-      }
-    );
   }
+  return intl.formatMessage(
+    {
+      defaultMessage: '{days} days {hours} hours',
+      id: 'X8JjjT',
+      description: 'This is a time duration in full non abbreviated format',
+    },
+    {
+      hours: hoursCarry,
+      days,
+    }
+  );
 }
 
 export function getStatusString(status: string, hasRetries: boolean): string {

@@ -26,7 +26,8 @@ export const BodyLinkValue: React.FC<ValueProps> = (props) => {
 
   if (!visible) {
     return null;
-  } else if (!isContentLink(value)) {
+  }
+  if (!isContentLink(value)) {
     return <RawValue {...props} />;
   }
 

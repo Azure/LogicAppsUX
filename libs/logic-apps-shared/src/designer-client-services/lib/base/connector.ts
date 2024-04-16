@@ -41,15 +41,20 @@ export abstract class BaseConnectorService implements IConnectorService {
     const { apiVersion, baseUrl, httpClient, clientSupportedOperations, schemaClient, valuesClient } = options;
     if (!apiVersion) {
       throw new ArgumentException('apiVersion required');
-    } else if (!baseUrl) {
+    }
+    if (!baseUrl) {
       throw new ArgumentException('baseUrl required');
-    } else if (!httpClient) {
+    }
+    if (!httpClient) {
       throw new ArgumentException('httpClient required');
-    } else if (!clientSupportedOperations) {
+    }
+    if (!clientSupportedOperations) {
       throw new ArgumentException('clientSupportedOperations required');
-    } else if (!schemaClient) {
+    }
+    if (!schemaClient) {
       throw new ArgumentException('schemaClient required');
-    } else if (!valuesClient) {
+    }
+    if (!valuesClient) {
       throw new ArgumentException('valuesClient required');
     }
   }
@@ -116,16 +121,15 @@ export abstract class BaseConnectorService implements IConnectorService {
     const connectorResponse = responseJson.response ?? responseJson;
     if (connectorResponse.statusCode === 'OK') {
       return connectorResponse.body;
-    } else {
-      const clientRequestId = getClientRequestIdFromHeaders(connectorResponse.headers);
-      const defaultErrorMessage = intl.formatMessage(
-        { defaultMessage: 'Error executing the api - {url}', id: '8BoVtZ', description: 'Error message to show on dynamic call failure' },
-        { url: requestUrl }
-      );
-      const errorMessage = this._getErrorMessageFromConnectorResponse(connectorResponse, defaultErrorMessage, intl, clientRequestId);
-
-      throw new ConnectorServiceException(ConnectorServiceErrorCode.API_EXECUTION_FAILED_WITH_ERROR, errorMessage, { connectorResponse });
     }
+    const clientRequestId = getClientRequestIdFromHeaders(connectorResponse.headers);
+    const defaultErrorMessage = intl.formatMessage(
+      { defaultMessage: 'Error executing the api - {url}', id: '8BoVtZ', description: 'Error message to show on dynamic call failure' },
+      { url: requestUrl }
+    );
+    const errorMessage = this._getErrorMessageFromConnectorResponse(connectorResponse, defaultErrorMessage, intl, clientRequestId);
+
+    throw new ConnectorServiceException(ConnectorServiceErrorCode.API_EXECUTION_FAILED_WITH_ERROR, errorMessage, { connectorResponse });
   }
 
   private _getErrorMessageFromConnectorResponse(
@@ -201,25 +205,24 @@ export abstract class BaseConnectorService implements IConnectorService {
           content: { request, properties: managedIdentityProperties },
         });
         return this._getResponseFromDynamicApi(response, uri);
-      } else {
-        const apiVersion = isArmResourceId(connectorId) ? apiHubServiceDetails?.apiVersion ?? _apiVersion : _apiVersion;
-        const options = {
-          uri,
-          queryParameters: { 'api-version': apiVersion, ...parameters['queries'] },
-          headers: parameters['headers'],
-        };
-        const bodyContent = parameters['body'];
+      }
+      const apiVersion = isArmResourceId(connectorId) ? apiHubServiceDetails?.apiVersion ?? _apiVersion : _apiVersion;
+      const options = {
+        uri,
+        queryParameters: { 'api-version': apiVersion, ...parameters['queries'] },
+        headers: parameters['headers'],
+      };
+      const bodyContent = parameters['body'];
 
-        switch (method.toLowerCase()) {
-          case 'get':
-            return httpClient.get(options);
-          case 'post':
-            return httpClient.post(bodyContent ? { ...options, content: bodyContent } : options);
-          case 'put':
-            return httpClient.put(bodyContent ? { ...options, content: bodyContent } : options);
-          default:
-            throw new UnsupportedException(`Unsupported dynamic call connector method - '${method}'`);
-        }
+      switch (method.toLowerCase()) {
+        case 'get':
+          return httpClient.get(options);
+        case 'post':
+          return httpClient.post(bodyContent ? { ...options, content: bodyContent } : options);
+        case 'put':
+          return httpClient.put(bodyContent ? { ...options, content: bodyContent } : options);
+        default:
+          throw new UnsupportedException(`Unsupported dynamic call connector method - '${method}'`);
       }
     } catch (ex: any) {
       throw new ConnectorServiceException(

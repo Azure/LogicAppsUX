@@ -101,9 +101,13 @@ export const usePanelTabs = () => {
   );
 
   const tabs = useMemo(() => {
-    if (isUnitTestView) return [mockResultsTabItem];
+    if (isUnitTestView) {
+      return [mockResultsTabItem];
+    }
     // Switch cases should only show parameters tab
-    if (nodeMetaData && nodeMetaData.subgraphType === SUBGRAPH_TYPES.SWITCH_CASE) return [parametersTabItem];
+    if (nodeMetaData && nodeMetaData.subgraphType === SUBGRAPH_TYPES.SWITCH_CASE) {
+      return [parametersTabItem];
+    }
 
     return [
       monitoringTabItem,

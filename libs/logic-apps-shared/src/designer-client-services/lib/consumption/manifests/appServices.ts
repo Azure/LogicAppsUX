@@ -24,7 +24,7 @@ export const appServiceActionManifest = {
     iconUri,
     brandColor,
     summary: 'Choose an App Services action',
-    description: `Show APIs for App Services in my subscription`,
+    description: 'Show APIs for App Services in my subscription',
 
     environmentBadge: coreBadge,
 
@@ -165,7 +165,7 @@ export const appServiceTriggerManifest = {
   properties: {
     ...appServiceActionManifest.properties,
     summary: 'Choose an App Services trigger',
-    description: `Show APIs for App Services in my subscription`,
+    description: 'Show APIs for App Services in my subscription',
 
     recurrence: {
       type: RecurrenceType.Basic,

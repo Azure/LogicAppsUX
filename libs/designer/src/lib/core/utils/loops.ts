@@ -83,7 +83,9 @@ export const shouldAddForeach = async (
   }
 
   const operationInfo = getRecordEntry(state.operations.operationInfo, nodeId);
-  if (!operationInfo) return { shouldAdd: false };
+  if (!operationInfo) {
+    return { shouldAdd: false };
+  }
 
   const inputParameters = getRecordEntry(state.operations.inputParameters, nodeId) ?? { parameterGroups: {} };
   const parameter = getParameterFromId(inputParameters, parameterId);
@@ -366,7 +368,8 @@ const getParentArrayExpression = (
         equals(tokenOwnerActionName, repetitionReference.repetitionStep))
     ) {
       return { expression: repetitionReference.repetitionValue, output: parentArrayOutput, token: parentArrayTokenInfo };
-    } else if (
+    }
+    if (
       isAncestorKey(sanitizedParentArrayKey, repetitionReference.repetitionPath) &&
       ((isNullOrUndefined(tokenOwnerActionName) && isNullOrUndefined(repetitionReference.repetitionStep)) ||
         equals(tokenOwnerActionName, repetitionReference.repetitionStep))
@@ -485,7 +488,9 @@ const getRepetitionReference = async (
   idReplacements?: Record<string, string>
 ): Promise<RepetitionReference | undefined> => {
   const operationInfo = getRecordEntry(operationInfos, nodeId);
-  if (!operationInfo) return undefined;
+  if (!operationInfo) {
+    return undefined;
+  }
   const service = OperationManifestService();
   if (service.isSupported(operationInfo.type, operationInfo.kind)) {
     const manifest = await getOperationManifest(operationInfo);
@@ -536,8 +541,7 @@ export const parseForeach = (repetitionValue: string, repetitionContext: Repetit
 
     if (foreachExpression) {
       switch (foreachExpression.type) {
-        case ExpressionType.Function:
-          // eslint-disable-next-line no-case-declarations
+        case ExpressionType.Function: {
           const functionExpression = foreachExpression as ExpressionFunction;
           if (TokenSegmentConvertor.isOutputToken(functionExpression) || TokenSegmentConvertor.isVariableToken(functionExpression)) {
             foreach.fullPath = getFullPath(functionExpression, splitOnExpression);
@@ -598,6 +602,7 @@ export const parseForeach = (repetitionValue: string, repetitionContext: Repetit
             }
           }
           break;
+        }
         default:
           break;
       }
@@ -618,9 +623,8 @@ const getRepetitionValue = (repetitionContext: RepetitionContext, actionName?: s
 const getRepetitionReferenceFromContext = (repetitionContext: RepetitionContext, actionName?: string): RepetitionReference | undefined => {
   if (actionName) {
     return first((item) => equals(item.actionName, actionName), repetitionContext.repetitionReferences);
-  } else {
-    return repetitionContext?.repetitionReferences?.at(0);
   }
+  return repetitionContext?.repetitionReferences?.at(0);
 };
 
 const isExpressionEqualToNodeSplitOn = (test: string | any[], splitOn: string | undefined): boolean => {

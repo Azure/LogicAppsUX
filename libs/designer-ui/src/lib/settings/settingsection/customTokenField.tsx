@@ -55,7 +55,7 @@ export const isCustomEditor = (props: { editor?: string | undefined; editorOptio
   const { editor, editorOptions } = props;
   return (
     equals(editor, customEditorName) &&
-    typeof editorOptions == 'object' &&
+    typeof editorOptions === 'object' &&
     !!editorOptions &&
     typeof (editorOptions as { EditorComponent: unknown }).EditorComponent === 'function'
   );

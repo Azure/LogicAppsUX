@@ -101,9 +101,8 @@ export function getRequestUrl(options: HttpRequestOptions<unknown>): string {
   const uriPath = queryString ? `${uri}?${queryString}` : uri;
   if (uriPath.startsWith('/subscriptions/')) {
     return `https://management.azure.com${uriPath}`;
-  } else {
-    return uriPath;
   }
+  return uriPath;
 }
 
 export function isSuccessResponse(statusCode: number): boolean {
@@ -112,7 +111,7 @@ export function isSuccessResponse(statusCode: number): boolean {
 
 export function getExtraHeaders(): Record<string, string> {
   return {
-    'x-ms-user-agent': `LogicAppsDesigner/(host localdesigner)`,
+    'x-ms-user-agent': 'LogicAppsDesigner/(host localdesigner)',
   };
 }
 

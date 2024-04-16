@@ -135,10 +135,7 @@ export class DataMapperApiService {
       statusText: response.statusText,
     };
 
-    if (!response.ok) {
-      const errorResponse: DmErrorResponse = (await response.json()).error;
-      testMapResponse.statusText = `${errorResponse.code}: ${errorResponse.message}`;
-    } else {
+    if (response.ok) {
       const respJson = await response.json();
       // Decode base64 response content
       respJson.outputInstance.$content = Buffer.from(respJson.outputInstance.$content, 'base64').toString('utf-8');
@@ -146,8 +143,11 @@ export class DataMapperApiService {
       testMapResponse.outputInstance = respJson.outputInstance;
 
       if (!testMapResponse?.outputInstance) {
-        throw new Error(`Test Map error: Schema output instance not properly set on successful response`);
+        throw new Error('Test Map error: Schema output instance not properly set on successful response');
       }
+    } else {
+      const errorResponse: DmErrorResponse = (await response.json()).error;
+      testMapResponse.statusText = `${errorResponse.code}: ${errorResponse.message}`;
     }
 
     return testMapResponse;

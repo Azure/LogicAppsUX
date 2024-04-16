@@ -42,9 +42,8 @@ export class DotnetTemplateProvider extends TemplateProviderBase {
     const cachedDotnetTemplates: object[] | undefined = await this.getCachedValue(projKey);
     if (cachedDotnetTemplates) {
       return await parseDotnetTemplates(cachedDotnetTemplates);
-    } else {
-      return undefined;
     }
+    return undefined;
   }
 
   public async getLatestTemplateVersion(context: IActionContext): Promise<string> {

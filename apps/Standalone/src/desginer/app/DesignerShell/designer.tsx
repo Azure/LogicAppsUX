@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import type { ReactNode } from 'react';
 import { loadToken } from '../../../environments/environment';
 import { SettingsBox } from '../../components/settings_box';
 import { useIsConsumption, useIsLocal, useResourcePath } from '../../state/workflowLoadingSelectors';

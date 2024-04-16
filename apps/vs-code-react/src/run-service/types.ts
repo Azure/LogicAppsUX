@@ -1,16 +1,16 @@
 export interface IApiService {
   getWorkflows(subscriptionId: string, iseId?: string, location?: string): Promise<WorkflowsList[]>;
-  getSubscriptions(): Promise<Array<ISubscription>>;
-  getIse(selectedSubscription: string): Promise<Array<IIse>>;
+  getSubscriptions(): Promise<ISubscription[]>;
+  getIse(selectedSubscription: string): Promise<IIse[]>;
   getRegions(subscriptionId: string): Promise<IRegion[]>;
   validateWorkflows(
-    selectedWorkflows: Array<WorkflowsList>,
+    selectedWorkflows: WorkflowsList[],
     selectedSubscription: string,
     selectedLocation: string,
     selectedAdvanceOptions: AdvancedOptionsTypes[]
   ): Promise<any>;
   exportWorkflows(
-    selectedWorkflows: Array<WorkflowsList>,
+    selectedWorkflows: WorkflowsList[],
     selectedSubscription: string,
     selectedLocation: string,
     selectedAdvanceOptions: AdvancedOptionsTypes[]
@@ -54,7 +54,7 @@ export interface SelectedWorkflowsList extends WorkflowsList {
 export interface OutletContext {
   accessToken: string;
   baseUrl: string;
-  selectedWorkflows: Array<WorkflowsList>;
+  selectedWorkflows: WorkflowsList[];
 }
 
 export const QueryKeys = {
@@ -83,7 +83,7 @@ export interface ManagedConnections {
 }
 
 export type ExportData = {
-  selectedWorkflows: Array<WorkflowsList>;
+  selectedWorkflows: WorkflowsList[];
   selectedSubscription: string;
   selectedIse?: string;
   location: string;
@@ -91,7 +91,7 @@ export type ExportData = {
   targetDirectory: ITargetDirectory;
   packageUrl: string;
   managedConnections: ManagedConnections;
-  selectedAdvanceOptions: Array<AdvancedOptionsTypes>;
+  selectedAdvanceOptions: AdvancedOptionsTypes[];
 };
 
 export const ResourceType = {
@@ -166,7 +166,7 @@ export interface IValidationData {
 }
 
 export interface IGroupedGroup {
-  children: Array<IGroupedGroup>;
+  children: IGroupedGroup[];
   isCollapsed: boolean;
   key: string;
   level: number;
@@ -211,7 +211,7 @@ export interface IExportDetailsList {
 export interface ISummaryData {
   properties: {
     packageLink: Record<string, string>;
-    details: Array<IExportDetails>;
+    details: IExportDetails[];
   };
 }
 

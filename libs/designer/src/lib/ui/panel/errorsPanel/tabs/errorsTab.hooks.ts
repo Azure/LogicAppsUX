@@ -38,7 +38,9 @@ export const useAllSettingErrors = () => {
     const validationErrorToShow: Record<string, string[]> = {};
     for (const [nodeId, v] of Object.entries(allRawSettingErrors ?? {})) {
       const errors = v.map((setting) => setting.message ?? '');
-      if (errors.length > 0) validationErrorToShow[nodeId] = errors;
+      if (errors.length > 0) {
+        validationErrorToShow[nodeId] = errors;
+      }
     }
     return validationErrorToShow;
   }, [allRawSettingErrors]);
@@ -76,7 +78,9 @@ export const useHostCheckerErrors = () =>
     const errorMessages = state.workflow.hostData.errorMessages[MessageLevel.Error] || [];
     errorMessages.forEach((message: ErrorMessage) => {
       // Check if a node with matching id at least exists
-      if (!(message.nodeId in state.workflow.nodesMetadata)) return;
+      if (!(message.nodeId in state.workflow.nodesMetadata)) {
+        return;
+      }
 
       const messagesBySubtitle = (errorMessagesToShow[message.nodeId] ||= {});
       (messagesBySubtitle[message.subtitle] ||= []).push(message);

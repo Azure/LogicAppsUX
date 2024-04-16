@@ -63,7 +63,7 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
       ignoreNonCriticalErrors: true,
     });
 
-    let validationErrorsList: Record<string, boolean> = {};
+    const validationErrorsList: Record<string, boolean> = {};
     const arr = Object.entries(designerState.operations.inputParameters);
     for (const [id, nodeInputs] of arr) {
       const hasValidationErrors = Object.values(nodeInputs.parameterGroups).some((parameterGroup) => {

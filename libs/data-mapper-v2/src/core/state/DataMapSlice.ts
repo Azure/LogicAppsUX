@@ -9,35 +9,19 @@
 //import { convertConnectionShorthandToId, generateFunctionConnectionMetadata } from '../../mapDefinitions';
 import type { ConnectionDictionary, ConnectionUnit, InputConnection } from '../../models/Connection';
 import type { FunctionData, FunctionDictionary } from '../../models/Function';
-import { directAccessPseudoFunctionKey, indexPseudoFunction } from '../../models/Function';
-import { findLast } from '../../utils/Array.Utils';
 import {
   applyConnectionValue,
-  bringInParentSourceNodesForRepeating,
-  collectSourceNodesForConnectionChain,
-  collectTargetNodesForConnectionChain,
-  createConnectionEntryIfNeeded,
   flattenInputs,
   generateInputHandleId,
-  getConnectedSourceSchemaNodes,
   getConnectedTargetSchemaNodes,
-  getTargetSchemaNodeConnections,
   isConnectionUnit,
-  nodeHasSpecificInputEventually,
 } from '../../utils/Connection.Utils';
 import {
-  //addAncestorNodesToCanvas,
-  addNodeToCanvasIfDoesNotExist,
   //addParentConnectionForRepeatingElementsNested,
   getParentId,
 } from '../../utils/DataMap.Utils';
-import {
-  functionsForLocation,
-  getConnectedSourceSchema,
-  getFunctionLocationsForAllFunctions,
-  isFunctionData,
-} from '../../utils/Function.Utils';
-import { LogCategory, LogService } from '../../utils/Logging.Utils';
+import { isFunctionData } from '../../utils/Function.Utils';
+import { LogService } from '../../utils/Logging.Utils';
 // import type { ReactFlowIdParts } from '../../utils/ReactFlow.Util';
 // import {
 //   addReactFlowPrefix,
@@ -48,14 +32,7 @@ import { LogCategory, LogService } from '../../utils/Logging.Utils';
 //   getSplitIdsFromReactFlowConnectionId,
 // } from '../../utils/ReactFlow.Util';
 import { flattenSchemaIntoDictionary, flattenSchemaIntoSortArray, isSchemaNodeExtended } from '../../utils/Schema.Utils';
-import type {
-  FunctionMetadata,
-  FunctionPositionMetadata,
-  MapMetadata,
-  SchemaExtended,
-  SchemaNodeDictionary,
-  SchemaNodeExtended,
-} from '@microsoft/logic-apps-shared';
+import type { FunctionMetadata, MapMetadata, SchemaExtended, SchemaNodeDictionary, SchemaNodeExtended } from '@microsoft/logic-apps-shared';
 import { SchemaNodeProperty, SchemaType } from '@microsoft/logic-apps-shared';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
@@ -681,7 +658,7 @@ export const deleteConnectionFromConnections = (
 
 export const deleteParentRepeatingConnections = (connections: ConnectionDictionary, inputKey: string /* contains prefix */) => {
   const parentId = getParentId(inputKey);
-  if (parentId.endsWith(SchemaType.Source + '-')) {
+  if (parentId.endsWith(`${SchemaType.Source}-`)) {
     return;
   }
 

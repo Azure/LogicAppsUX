@@ -21,33 +21,31 @@ const initialState: SchemaLoadingState = {
   outputResourcePath: '',
 };
 
-export const loadSourceSchema = createAsyncThunk('schema/loadSourceSchema', async (_: void, thunkAPI) => {
+export const loadSourceSchema = createAsyncThunk('schema/loadSourceSchema', async (_: unknown, thunkAPI) => {
   const currentState: RootState = thunkAPI.getState() as RootState;
   const inputResourcePath = currentState.schemaDataLoader.inputResourcePath;
 
   // TODO ARM loading
   if (currentState.schemaDataLoader.loadingMethod === LoadingMethod.Arm) {
     return undefined;
-  } else {
-    if (inputResourcePath) {
-      return loadSchemaFromMock(inputResourcePath);
-    }
+  }
+  if (inputResourcePath) {
+    return loadSchemaFromMock(inputResourcePath);
   }
 
   return undefined;
 });
 
-export const loadTargetSchema = createAsyncThunk('schema/loadTargetSchema', async (_: void, thunkAPI) => {
+export const loadTargetSchema = createAsyncThunk('schema/loadTargetSchema', async (_: unknown, thunkAPI) => {
   const currentState: RootState = thunkAPI.getState() as RootState;
   const outputResourcePath = currentState.schemaDataLoader.outputResourcePath;
 
   // TODO ARM loading
   if (currentState.schemaDataLoader.loadingMethod === LoadingMethod.Arm) {
     return undefined;
-  } else {
-    if (outputResourcePath) {
-      return loadSchemaFromMock(outputResourcePath);
-    }
+  }
+  if (outputResourcePath) {
+    return loadSchemaFromMock(outputResourcePath);
   }
 
   return undefined;

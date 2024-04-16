@@ -1,5 +1,5 @@
 import { css, FontIcon, Spinner, SpinnerSize } from '@fluentui/react';
-import React from 'react';
+import type React from 'react';
 import { useIntl } from 'react-intl';
 
 type ConnectionStatusProps = {

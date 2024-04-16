@@ -57,12 +57,12 @@ export const getDesignerServices = (
   hostVersion: string,
   queryClient: QueryClient
 ): DesignerServices => {
-  let authToken = '',
-    panelId = '',
-    workflowDetails: Record<string, any> = {},
-    appSettings = {},
-    isStateful = false,
-    connectionsData = { ...connectionData };
+  let authToken = '';
+  let panelId = '';
+  let workflowDetails: Record<string, any> = {};
+  let appSettings = {};
+  let isStateful = false;
+  let connectionsData = { ...connectionData };
 
   const { subscriptionId = 'subscriptionId', resourceGroup, location } = apiHubDetails;
 
@@ -251,12 +251,11 @@ export const getDesignerServices = (
           method: HTTP_METHODS.POST,
           value: 'Url not available during authoring in local project. Check Overview page.',
         });
-      } else {
-        return Promise.resolve({
-          method: HTTP_METHODS.POST,
-          value: 'Url not available during authoring in local project. Check Overview page.',
-        });
       }
+      return Promise.resolve({
+        method: HTTP_METHODS.POST,
+        value: 'Url not available during authoring in local project. Check Overview page.',
+      });
     },
     getAppIdentity: () => {
       return {
@@ -314,9 +313,8 @@ const addConnectionInJson = (connectionAndSetting: ConnectionAndAppSetting, conn
 
     if (pathToSetConnectionsData && pathToSetConnectionsData[path][connectionKey]) {
       break;
-    } else {
-      pathToSetConnectionsData[path][connectionKey] = connectionData;
     }
+    pathToSetConnectionsData[path][connectionKey] = connectionData;
   }
 
   return pathToSetConnectionsData as ConnectionsData;

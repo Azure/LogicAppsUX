@@ -44,7 +44,9 @@ export const SearchResultsGrid: React.FC<PropsWithChildren<SearchResultsGridProp
 
   const onRenderOperationCell = React.useCallback(
     (operation: DiscoveryOperation<DiscoveryResultTypes> | undefined, _index: number | undefined) => {
-      if (!operation) return;
+      if (!operation) {
+        return;
+      }
       return (
         <OperationSearchCard
           key={operation.id}
@@ -61,9 +63,13 @@ export const SearchResultsGrid: React.FC<PropsWithChildren<SearchResultsGridProp
 
   const onRenderOperationGroup = React.useCallback(
     (apiId: string | undefined, _index: number | undefined) => {
-      if (!apiId) return;
+      if (!apiId) {
+        return;
+      }
       const operations = operationSearchResults.filter((res) => res?.properties.api.id === apiId);
-      if (operations.length === 0) return null;
+      if (operations.length === 0) {
+        return null;
+      }
       const api = operations[0].properties.api;
       return (
         <div style={{ marginBottom: '24px' }}>
@@ -98,20 +104,22 @@ export const SearchResultsGrid: React.FC<PropsWithChildren<SearchResultsGridProp
     description: 'Message to show when loading search results',
   });
 
-  if (isLoadingSearch)
+  if (isLoadingSearch) {
     return (
       <div>
         <Spinner label={loadingText} size="extra-small" />
       </div>
     );
+  }
 
-  if (!isLoadingMore && !isLoadingSearch && operationSearchResults.length === 0)
+  if (!isLoadingMore && !isLoadingSearch && operationSearchResults.length === 0) {
     return (
       <div className="msla-no-results-container">
         <img src={NoResultsSvg} alt={noResultsText?.toString()} />
         <Text role="alert">{noResultsText}</Text>
       </div>
     );
+  }
 
   return (
     <div className="msla-result-list">
@@ -122,12 +130,12 @@ export const SearchResultsGrid: React.FC<PropsWithChildren<SearchResultsGridProp
       )}
       {groupByConnector ? (
         <>
-          <AriaSearchResultsAlert resultCount={apiIds.length} resultDescription={'Connector'}></AriaSearchResultsAlert>
+          <AriaSearchResultsAlert resultCount={apiIds.length} resultDescription={'Connector'} />
           <List items={apiIds} onRenderCell={onRenderOperationGroup} />
         </>
       ) : (
         <>
-          <AriaSearchResultsAlert resultCount={operationSearchResults.length} resultDescription={'action'}></AriaSearchResultsAlert>
+          <AriaSearchResultsAlert resultCount={operationSearchResults.length} resultDescription={'action'} />
           <List items={operationSearchResults} onRenderCell={onRenderOperationCell} />
         </>
       )}

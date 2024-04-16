@@ -6,7 +6,7 @@ import { getOperationManifest } from '../../queries/operation';
 import type { NodeInputs, NodeOperation, ParameterGroup } from '../../state/operation/operationMetadataSlice';
 import { ErrorLevel } from '../../state/operation/operationMetadataSlice';
 import { getOperationInputParameters } from '../../state/operation/operationSelector';
-import { type OutputMock } from '../../state/unitTest/unitTestInterfaces';
+import type { OutputMock } from '../../state/unitTest/unitTestInterfaces';
 import type { WorkflowParameterDefinition } from '../../state/workflowparameters/workflowparametersSlice';
 import type { RootState } from '../../store';
 import { getNode, getTriggerNodeId, isRootNode, isRootNodeInGraph } from '../../utils/graph';
@@ -268,7 +268,9 @@ export const serializeOperation = async (
   }
 
   const operation = getRecordEntry(rootState.operations.operationInfo, operationId);
-  if (!operation) return null;
+  if (!operation) {
+    return null;
+  }
 
   let serializedOperation: LogicAppsV2.OperationDefinition;
   if (OperationManifestService().isSupported(operation.type, operation.kind)) {
@@ -277,11 +279,12 @@ export const serializeOperation = async (
     switch (operation.type.toLowerCase()) {
       case Constants.NODE.TYPE.API_CONNECTION:
       case Constants.NODE.TYPE.API_CONNECTION_NOTIFICATION:
-      case Constants.NODE.TYPE.API_CONNECTION_WEBHOOK:
+      case Constants.NODE.TYPE.API_CONNECTION_WEBHOOK: {
         serializedOperation = await serializeSwaggerBasedOperation(rootState, operationId);
         break;
+      }
 
-      default:
+      default: {
         LoggerService().log({
           level: LogEntryLevel.Error,
           area: 'operation serializer',
@@ -289,6 +292,7 @@ export const serializeOperation = async (
         });
         serializedOperation = (getRecordEntry(rootState.workflow.operations, operationId) as any) ?? {};
         break;
+      }
     }
   }
 
@@ -303,7 +307,9 @@ export const serializeOperation = async (
 const serializeManifestBasedOperation = async (rootState: RootState, operationId: string): Promise<LogicAppsV2.OperationDefinition> => {
   const idReplacements = rootState.workflow.idReplacements;
   const operation = getRecordEntry(rootState.operations.operationInfo, operationId);
-  if (!operation) throw new AssertionException(AssertionErrorCode.OPERATION_NOT_FOUND, `Operation with id ${operationId} not found`);
+  if (!operation) {
+    throw new AssertionException(AssertionErrorCode.OPERATION_NOT_FOUND, `Operation with id ${operationId} not found`);
+  }
   const manifest = await getOperationManifest(operation);
   const isTrigger = isRootNodeInGraph(operationId, 'root', rootState.workflow.nodesMetadata);
   const inputsToSerialize = getOperationInputsToSerialize(rootState, operationId);
@@ -427,58 +433,57 @@ export const constructInputValues = (key: string, inputs: SerializedParameter[],
       result = encodePathValue(result, encodeCount);
     }
     return result !== undefined ? result : rootParameter.required ? null : undefined;
-  } else {
-    const propertyNameParameters: SerializedParameter[] = [];
-    const pathTemplateParameters: SerializedParameter[] = [];
-    const isPathTemplateParameter = (param: SerializedParameter) =>
-      param.info.deserialization?.type === DeserializationType.PathTemplateProperties;
+  }
+  const propertyNameParameters: SerializedParameter[] = [];
+  const pathTemplateParameters: SerializedParameter[] = [];
+  const isPathTemplateParameter = (param: SerializedParameter) =>
+    param.info.deserialization?.type === DeserializationType.PathTemplateProperties;
 
-    const serializedParameters = inputs
-      .filter((item) => isAncestorKey(item.parameterKey, key))
-      .map((descendantParameter) => {
-        let parameterValue = getJSONValueFromString(descendantParameter.value, descendantParameter.type);
-        if (encodePathComponents) {
-          const encodeCount = getEncodeValue(descendantParameter.info.encode ?? '');
-          parameterValue = encodePathValue(parameterValue, encodeCount);
-        }
-
-        const serializedParameter = { ...descendantParameter, value: parameterValue };
-        if (descendantParameter.info.serialization?.property?.type === PropertySerializationType.ParentObject) {
-          propertyNameParameters.push(serializedParameter);
-        }
-
-        if (isPathTemplateParameter(descendantParameter)) {
-          pathTemplateParameters.push(serializedParameter);
-        }
-
-        return serializedParameter;
-      });
-
-    const pathParameters = pathTemplateParameters.reduce((allPathParams: Record<string, string>, current: SerializedParameter) => {
-      allPathParams[current.parameterName.split('.').at(-1) as string] = current.value;
-      return allPathParams;
-    }, {});
-    const parametersToSerialize = serializedParameters.filter((param) => !isPathTemplateParameter(param));
-    for (const serializedParameter of parametersToSerialize) {
-      if (serializedParameter.info.serialization?.property?.type === PropertySerializationType.PathTemplate) {
-        serializedParameter.value = replaceTemplatePlaceholders(pathParameters, serializedParameter.value);
-        result = serializeParameterWithPath(result, serializedParameter.value, key, serializedParameter);
-      } else if (serializedParameter.info.serialization?.value) {
-        result = serializeParameterWithPath(
-          result,
-          serializedParameter.value ? serializedParameter.value : serializedParameter.info.serialization.value,
-          key,
-          serializedParameter
-        );
-      } else if (!propertyNameParameters.find((param) => param.parameterKey === serializedParameter.parameterKey)) {
-        let parameterKey = serializedParameter.parameterKey;
-        for (const propertyNameParameter of propertyNameParameters) {
-          const propertyName = propertyNameParameter.info.serialization?.property?.name as string;
-          parameterKey = parameterKey.replace(propertyName, propertyNameParameter.value);
-        }
-
-        result = serializeParameterWithPath(result, serializedParameter.value, key, { ...serializedParameter, parameterKey });
+  const serializedParameters = inputs
+    .filter((item) => isAncestorKey(item.parameterKey, key))
+    .map((descendantParameter) => {
+      let parameterValue = getJSONValueFromString(descendantParameter.value, descendantParameter.type);
+      if (encodePathComponents) {
+        const encodeCount = getEncodeValue(descendantParameter.info.encode ?? '');
+        parameterValue = encodePathValue(parameterValue, encodeCount);
       }
+
+      const serializedParameter = { ...descendantParameter, value: parameterValue };
+      if (descendantParameter.info.serialization?.property?.type === PropertySerializationType.ParentObject) {
+        propertyNameParameters.push(serializedParameter);
+      }
+
+      if (isPathTemplateParameter(descendantParameter)) {
+        pathTemplateParameters.push(serializedParameter);
+      }
+
+      return serializedParameter;
+    });
+
+  const pathParameters = pathTemplateParameters.reduce((allPathParams: Record<string, string>, current: SerializedParameter) => {
+    allPathParams[current.parameterName.split('.').at(-1) as string] = current.value;
+    return allPathParams;
+  }, {});
+  const parametersToSerialize = serializedParameters.filter((param) => !isPathTemplateParameter(param));
+  for (const serializedParameter of parametersToSerialize) {
+    if (serializedParameter.info.serialization?.property?.type === PropertySerializationType.PathTemplate) {
+      serializedParameter.value = replaceTemplatePlaceholders(pathParameters, serializedParameter.value);
+      result = serializeParameterWithPath(result, serializedParameter.value, key, serializedParameter);
+    } else if (serializedParameter.info.serialization?.value) {
+      result = serializeParameterWithPath(
+        result,
+        serializedParameter.value ? serializedParameter.value : serializedParameter.info.serialization.value,
+        key,
+        serializedParameter
+      );
+    } else if (!propertyNameParameters.find((param) => param.parameterKey === serializedParameter.parameterKey)) {
+      let parameterKey = serializedParameter.parameterKey;
+      for (const propertyNameParameter of propertyNameParameters) {
+        const propertyName = propertyNameParameter.info.serialization?.property?.name as string;
+        parameterKey = parameterKey.replace(propertyName, propertyNameParameter.value);
+      }
+
+      result = serializeParameterWithPath(result, serializedParameter.value, key, { ...serializedParameter, parameterKey });
     }
   }
 
@@ -600,7 +605,7 @@ const swapInputsLocationIfNeeded = (parametersValue: any, swapMap: LocationSwapM
     }
 
     const value = { ...excludePathValueFromTarget(parametersValue, source, target), ...getObjectPropertyValue(parametersValue, source) };
-    finalValue = !target.length ? { ...finalValue, ...value } : safeSetObjectPropertyValue(finalValue, target, value);
+    finalValue = target.length ? safeSetObjectPropertyValue(finalValue, target, value) : { ...finalValue, ...value };
   }
 
   return finalValue;
@@ -678,7 +683,7 @@ const serializeHost = (
           operationId,
         },
       };
-    case ConnectionReferenceKeyFormat.OpenApiConnection:
+    case ConnectionReferenceKeyFormat.OpenApiConnection: {
       // eslint-disable-next-line no-case-declarations
       const connectorSegments = connectorId.split('/');
       return {
@@ -690,6 +695,7 @@ const serializeHost = (
           operationId,
         },
       };
+    }
     case ConnectionReferenceKeyFormat.ServiceProvider:
       return {
         serviceProviderConfiguration: {
@@ -927,17 +933,15 @@ const getSerializedRuntimeConfiguration = (
         );
       }
     }
-  } else {
-    if (!settings.singleInstance) {
-      const runs = settings.concurrency?.value?.enabled ? settings.concurrency.value.value : undefined;
+  } else if (!settings.singleInstance) {
+    const runs = settings.concurrency?.value?.enabled ? settings.concurrency.value.value : undefined;
 
-      if (runs !== undefined) {
-        safeSetObjectPropertyValue(
-          runtimeConfiguration,
-          [Constants.SETTINGS.PROPERTY_NAMES.CONCURRENCY, Constants.SETTINGS.PROPERTY_NAMES.RUNS],
-          runs
-        );
-      }
+    if (runs !== undefined) {
+      safeSetObjectPropertyValue(
+        runtimeConfiguration,
+        [Constants.SETTINGS.PROPERTY_NAMES.CONCURRENCY, Constants.SETTINGS.PROPERTY_NAMES.RUNS],
+        runs
+      );
     }
   }
 

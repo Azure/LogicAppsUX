@@ -26,7 +26,9 @@ export const MoveWrapper = ({ className, style, onChange, children }: MoveWrappe
   };
 
   const onMouseDown = (e: React.MouseEvent): void => {
-    if (e.button !== 0) return;
+    if (e.button !== 0) {
+      return;
+    }
 
     move(e);
 

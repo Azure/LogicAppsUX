@@ -9,7 +9,8 @@ import { setAvailableSchemas } from './state/SchemaSlice';
 import type { AppDispatch } from './state/Store';
 import type { MapMetadata, MapDefinitionEntry, DataMapSchema } from '@microsoft/logic-apps-shared';
 import { Theme as ThemeType, SchemaType } from '@microsoft/logic-apps-shared';
-import React, { useContext, useEffect, useMemo } from 'react';
+import type React from 'react';
+import { useContext, useEffect, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 
 export interface DataMapDataProviderProps {

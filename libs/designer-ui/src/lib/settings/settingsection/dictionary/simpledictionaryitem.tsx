@@ -3,7 +3,7 @@ import { IconButton } from '@fluentui/react/lib/Button';
 import type { IIconProps } from '@fluentui/react/lib/Icon';
 import { TextField } from '@fluentui/react/lib/TextField';
 import { TooltipHost } from '@fluentui/react/lib/Tooltip';
-import * as React from 'react';
+import type * as React from 'react';
 import { useIntl } from 'react-intl';
 
 export interface SimpleDictionaryRowModel {

@@ -122,8 +122,12 @@ const DesignerEditorConsumption = () => {
 
   React.useEffect(() => {
     (async () => {
-      if (!services) return;
-      if (!(definition as any)?.actions) return;
+      if (!services) {
+        return;
+      }
+      if (!(definition as any)?.actions) {
+        return;
+      }
       setParsedDefinition(definition);
     })();
   }, [definition, services]);
@@ -141,10 +145,14 @@ const DesignerEditorConsumption = () => {
     return <></>;
   }
 
-  if (isWorklowAndArtifactsError) throw workflowAndArtifactsError;
+  if (isWorklowAndArtifactsError) {
+    throw workflowAndArtifactsError;
+  }
 
   const saveWorkflowFromDesigner = async (workflowFromDesigner: Workflow): Promise<void> => {
-    if (!workflowAndArtifactsData) return;
+    if (!workflowAndArtifactsData) {
+      return;
+    }
     const { definition, connectionReferences, parameters } = workflowFromDesigner;
     const workflowToSave = {
       ...workflow,
@@ -173,11 +181,11 @@ const DesignerEditorConsumption = () => {
       workflowToSave.connections = newConnectionsObj;
 
       const response = await saveWorkflowConsumption(workflowAndArtifactsData, workflowToSave);
-      alert(`Workflow saved successfully!`);
+      alert('Workflow saved successfully!');
       return response;
     } catch (e: any) {
       console.error(e);
-      alert(`Error saving workflow, check console for error object`);
+      alert('Error saving workflow, check console for error object');
       return;
     }
   };
@@ -323,7 +331,9 @@ const getDesignerServices = (
       getApimOperationSchema: (args: any) => {
         const { parameters, isInput = false } = args;
         const { apiId, operationId } = parameters;
-        if (!apiId || !operationId) return Promise.resolve();
+        if (!apiId || !operationId) {
+          return Promise.resolve();
+        }
         return apimService.getOperationSchema(apiId, operationId, isInput);
       },
       getSwaggerOperationSchema: (args: any) => {
@@ -356,7 +366,9 @@ const getDesignerServices = (
       getApimOperations: (args: any) => {
         const { parameters } = args;
         const { apiId } = parameters;
-        if (!apiId) throw new Error('Missing api information to make dynamic operations call');
+        if (!apiId) {
+          throw new Error('Missing api information to make dynamic operations call');
+        }
         return apimService.getOperations(apiId);
       },
       getSwaggerFunctionOperations: (args: any) => {
@@ -508,7 +520,9 @@ const formatConnectionReferenceForConsumption = (connectionReference: any): any 
 const formatWorkflowParametersForConsumption = (properties: any): ParametersData => {
   const parameters = removeProperties(properties?.definition?.parameters, ['$connections']) as ParametersData;
   Object.entries(properties?.parameters ?? {}).forEach(([key, parameter]: [key: string, parameter: any]) => {
-    if (parameters[key]) parameters[key].value = parameter?.value;
+    if (parameters[key]) {
+      parameters[key].value = parameter?.value;
+    }
   });
   return parameters;
 };
