@@ -2,10 +2,10 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
+import { validateDotNetIsInstalled } from '../../commands/dotnet/validateDotNetInstalled';
 import { getLatestVersion, getRelease } from '../../utils/cliFeed';
 import { getTemplateKeyFromFeedEntry, getTemplateKeyFromProjFile } from '../../utils/dotnet/dotnet';
 import {
-  validateDotnetInstalled,
   executeDotnetTemplateCommand,
   getDotnetItemTemplatePath,
   getDotnetProjectTemplatePath,
@@ -53,8 +53,6 @@ export class DotnetTemplateProvider extends TemplateProviderBase {
   }
 
   public async getLatestTemplates(context: IActionContext, latestTemplateVersion: string): Promise<ITemplates> {
-    await validateDotnetInstalled(context);
-
     const projKey = await this.getProjKey(context);
     const projectFilePath: string = getDotnetProjectTemplatePath(this.version, projKey);
     const itemFilePath: string = getDotnetItemTemplatePath(this.version, projKey);
