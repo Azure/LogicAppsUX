@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 import { localize } from '../../../../../localize';
 import { AzureWizardPromptStep } from '@microsoft/vscode-azext-utils';
-import type { IProjectWizardContext } from '@microsoft/vscode-extension';
+import type { IProjectWizardContext } from '@microsoft/vscode-extension-logic-apps';
 
 export class setMethodName extends AzureWizardPromptStep<IProjectWizardContext> {
   public hideStepCount = true;
@@ -24,7 +24,8 @@ export class setMethodName extends AzureWizardPromptStep<IProjectWizardContext> 
   private async validateFunctionName(name: string | undefined): Promise<string | undefined> {
     if (!name) {
       return localize('emptyTemplateNameError', 'The function name cannot be empty.');
-    } else if (!/^[a-z][a-z\d_]*$/i.test(name)) {
+    }
+    if (!/^[a-z][a-z\d_]*$/i.test(name)) {
       return localize('functionNameInvalidMessage', 'Function name must start with a letter and can only contain letters, digits and "_".');
     }
   }

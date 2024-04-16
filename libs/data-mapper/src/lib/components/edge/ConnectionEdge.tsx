@@ -18,7 +18,8 @@ import { Button, Tooltip, makeStyles, shorthands, tokens } from '@fluentui/react
 import { Add20Filled } from '@fluentui/react-icons';
 import { CardContextMenu, useCardContextMenu } from '@microsoft/designer-ui';
 import { DeleteMenuItem } from '@microsoft/logic-apps-designer';
-import React, { useMemo, useState } from 'react';
+import type React from 'react';
+import { useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 import type { EdgeProps } from 'reactflow';
@@ -34,9 +35,8 @@ const getLineColor = (isSelected: boolean, isHighlighted: boolean, isHovered: bo
   }
   if (isHighlighted) {
     return tokens.colorBrandStroke2;
-  } else {
-    return isHovered ? tokens.colorNeutralStroke1Hover : tokens.colorNeutralStroke1;
   }
+  return isHovered ? tokens.colorNeutralStroke1Hover : tokens.colorNeutralStroke1;
 };
 
 const btnStyles = {
@@ -92,6 +92,7 @@ export const ConnectionEdge = (props: EdgeProps) => {
 
   const insertFnLoc = intl.formatMessage({
     defaultMessage: 'Insert function',
+    id: 'MnThTq',
     description: 'Message to insert function',
   });
 

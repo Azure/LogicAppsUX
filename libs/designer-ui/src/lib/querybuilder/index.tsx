@@ -1,11 +1,10 @@
 import type { ValueSegment } from '../editor';
-import { ValueSegmentType } from '../editor';
 import type { ChangeHandler, GetTokenPickerHandler } from '../editor/base';
+import { createEmptyLiteralValueSegment } from '../editor/base/utils/helper';
 import { Group } from './Group';
 import { GroupDropdownOptions } from './GroupDropdown';
 import { RowDropdownOptions } from './RowDropdown';
 import { checkHeights, getGroupedItems } from './helper';
-import { guid } from '@microsoft/utils-logic-apps';
 import { useFunctionalState, useUpdateEffect } from '@react-hookz/web';
 import { useEffect, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -49,8 +48,6 @@ export interface QueryBuilderProps {
   showDescription?: boolean;
 }
 
-const emptyValue = [{ id: guid(), type: ValueSegmentType.LITERAL, value: '' }];
-
 export const QueryBuilderEditor = ({
   getTokenPicker,
   groupProps,
@@ -68,7 +65,7 @@ export const QueryBuilderEditor = ({
   const [getRootProp, setRootProp] = useFunctionalState<GroupItemProps>(groupProps);
 
   useUpdateEffect(() => {
-    onChange?.({ value: emptyValue, viewModel: JSON.parse(JSON.stringify({ items: getRootProp() })) });
+    onChange?.({ value: [createEmptyLiteralValueSegment()], viewModel: JSON.parse(JSON.stringify({ items: getRootProp() })) });
     setHeights(checkHeights(getRootProp(), [], 0));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [getRootProp()]);
@@ -86,10 +83,11 @@ export const QueryBuilderEditor = ({
     setRootProp(newProps);
   };
 
-  let description;
+  let description = '';
   if (showDescription) {
     description = intl.formatMessage({
       defaultMessage: 'Provide the values to compare and select the operator to use.',
+      id: '5gOG+F',
       description: 'Text description for how to use the Condition action.',
     });
   }

@@ -6,7 +6,7 @@ import { localize } from '../../../../localize';
 import { gitInit, isGitInstalled, isInsideRepo } from '../../../utils/git';
 import { AzureWizardExecuteStep, callWithTelemetryAndErrorHandling } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
-import type { IProjectWizardContext } from '@microsoft/vscode-extension';
+import type { IProjectWizardContext } from '@microsoft/vscode-extension-logic-apps';
 import * as fse from 'fs-extra';
 import type { Progress } from 'vscode';
 
@@ -49,8 +49,8 @@ export abstract class ProjectCodeCreateStepBase extends AzureWizardExecuteStep<I
     await this.executeCore(context, progress);
 
     // Initialize a git repository if one is not already present
-    if ((await isGitInstalled(context.workspacePath)) && !(await isInsideRepo(context.workspacePath))) {
-      await gitInit(context.workspacePath);
+    if ((await isGitInstalled(context.customWorkspaceFolderPath)) && !(await isInsideRepo(context.customWorkspaceFolderPath))) {
+      await gitInit(context.customWorkspaceFolderPath);
     }
 
     // Log telemetry for the step

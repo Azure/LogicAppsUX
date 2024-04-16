@@ -10,16 +10,16 @@ export const IFrameTermsOfService = (props: IFrameTermsOfServiceProps) => {
   const intl = useIntl();
   const title = intl.formatMessage({
     defaultMessage: 'Terms of Service',
+    id: '3ERi+E',
     description: 'Title for terms of service iframe.',
   });
 
   if (url && url.toUpperCase().indexOf('HTTPS://') === 0) {
     return (
       <div className="msla-iframe-terms-of-service">
-        <iframe title={title} src={url} sandbox="allow-popups"></iframe>
+        <iframe title={title} src={url} sandbox="allow-popups" />
       </div>
     );
-  } else {
-    return null;
   }
+  return null;
 };

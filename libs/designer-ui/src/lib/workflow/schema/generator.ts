@@ -1,7 +1,6 @@
 import { InvalidJsonSchemaTypeException } from '../exceptions/invalidjsonschematype';
-import { isTemplateExpression } from '@microsoft/parsers-logic-apps';
-import type { OpenAPIV2 } from '@microsoft/utils-logic-apps';
-import { createCopy, clone } from '@microsoft/utils-logic-apps';
+import { isTemplateExpression, createCopy, clone } from '@microsoft/logic-apps-shared';
+import type { OpenAPIV2 } from '@microsoft/logic-apps-shared';
 
 export const Types = {
   object: 'object',
@@ -28,12 +27,10 @@ export function generateSchemaFromJsonString(jsonString: string): SchemaObject {
 
 export function generateSchemaFromValue(value: any): SchemaObject {
   const type = typeof value;
-  let valueType;
   switch (type) {
     case 'number':
-      valueType = Number.isInteger(value) ? Types.integer : Types.number;
       return {
-        type: valueType,
+        type: Number.isInteger(value) ? Types.integer : Types.number,
       };
 
     case 'boolean':
@@ -46,7 +43,7 @@ export function generateSchemaFromValue(value: any): SchemaObject {
         type: Types.string,
       };
 
-    case 'object':
+    case 'object': {
       if (value === null) {
         return {};
       }
@@ -56,6 +53,7 @@ export function generateSchemaFromValue(value: any): SchemaObject {
       }
 
       return generateSchemaForObject(value);
+    }
 
     default:
       throw new InvalidJsonSchemaTypeException(`Unsupported type '${type}'.`);
@@ -135,14 +133,15 @@ function getJsonSchemaType(value: any): string {
     case 'string':
       return Types.string;
 
-    case 'object':
+    case 'object': {
       if (value === null) {
         return Types.null;
-      } else if (Array.isArray(value)) {
-        return Types.array;
-      } else {
-        return Types.object;
       }
+      if (Array.isArray(value)) {
+        return Types.array;
+      }
+      return Types.object;
+    }
 
     default:
       throw new InvalidJsonSchemaTypeException(`Unsupported type '${type}' in getJsonSchemaType.`);
@@ -153,10 +152,8 @@ export function tryConvertStringToExpression(value: string): string {
   if (isTemplateExpression(value)) {
     if (value.charAt(0) === '@') {
       return `@${value}`;
-    } else {
-      return value.replace(/@{/g, '@@{');
     }
-  } else {
-    return value;
+    return value.replace(/@{/g, '@@{');
   }
+  return value;
 }

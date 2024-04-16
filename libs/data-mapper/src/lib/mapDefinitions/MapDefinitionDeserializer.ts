@@ -24,8 +24,8 @@ import { isFunctionData, isKeyAnIndexValue } from '../utils/Function.Utils';
 import { LogCategory, LogService } from '../utils/Logging.Utils';
 import { createReactFlowFunctionKey } from '../utils/ReactFlow.Util';
 import { findNodeForKey, flattenSchemaIntoDictionary } from '../utils/Schema.Utils';
-import type { MapDefinitionEntry, SchemaExtended, SchemaNodeDictionary, SchemaNodeExtended } from '@microsoft/utils-logic-apps';
-import { isAGuid, SchemaType } from '@microsoft/utils-logic-apps';
+import type { MapDefinitionEntry, SchemaExtended, SchemaNodeDictionary, SchemaNodeExtended } from '@microsoft/logic-apps-shared';
+import { isAGuid, SchemaType } from '@microsoft/logic-apps-shared';
 
 export class MapDefinitionDeserializer {
   private readonly _mapDefinition: MapDefinitionEntry;
@@ -96,13 +96,13 @@ export class MapDefinitionDeserializer {
   ) => {
     if (Array.isArray(sourceNodeObject)) {
       // TODO Support for multiple array entries
-      for (let index = 0; index < sourceNodeObject.length; index++) {
-        const element = sourceNodeObject[index];
+      for (const element of sourceNodeObject) {
         this._parseDefinitionToConnection(element, targetKey, targetArrayDepth + 1, connections);
       }
 
       return;
-    } else if (typeof sourceNodeObject === 'string') {
+    }
+    if (typeof sourceNodeObject === 'string') {
       this._createConnections(sourceNodeObject, targetKey, targetArrayDepth, connections);
       return;
     }
@@ -202,8 +202,8 @@ export class MapDefinitionDeserializer {
               flattenedChildValueParents.length > 1
                 ? flattenedChildValueParents.reduce((a, b) => (a.lastIndexOf('/') <= b.lastIndexOf('/') ? a : b))
                 : flattenedChildValueParents.length === 1
-                ? flattenedChildValueParents[0]
-                : undefined;
+                  ? flattenedChildValueParents[0]
+                  : undefined;
             const ifConnectionEntry = Object.entries(connections).find(
               ([_connectionKey, connectionValue]) =>
                 connectionValue.self.node.key === ifPseudoFunctionKey &&
@@ -367,8 +367,8 @@ export class MapDefinitionDeserializer {
 
         const targetTokens = lexThisThing(targetKey);
         let lookForSequence = false;
-        for (let i = 0; i < targetTokens.length; i++) {
-          if (targetTokens[i] === ReservedToken.for) {
+        for (const token of targetTokens) {
+          if (token === ReservedToken.for) {
             lookForSequence = true;
           }
           if (lookForSequence && targetKey !== sequencesRemovedTargetKey) {

@@ -8,11 +8,11 @@ import { localize } from '../../../localize';
 import { getLocalSettingsJson } from '../../utils/appSettings/localSettings';
 import { getLocalSettingsFile } from './getLocalSettingsFile';
 import type { StringDictionary } from '@azure/arm-appservice';
-import { isString } from '@microsoft/utils-logic-apps';
+import { isString } from '@microsoft/logic-apps-shared';
 import { AppSettingsTreeItem, confirmOverwriteSettings } from '@microsoft/vscode-azext-azureappservice';
 import type { IAppSettingsClient } from '@microsoft/vscode-azext-azureappservice';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
-import type { ILocalSettingsJson } from '@microsoft/vscode-extension';
+import type { ILocalSettingsJson } from '@microsoft/vscode-extension-logic-apps';
 import * as vscode from 'vscode';
 
 /**

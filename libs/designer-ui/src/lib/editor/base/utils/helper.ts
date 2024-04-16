@@ -2,9 +2,31 @@ import constants from '../../../constants';
 import type { ValueSegment, TokenType } from '../../models/parameter';
 import { ValueSegmentType } from '../../models/parameter';
 import { $isTokenNode } from '../nodes/tokenNode';
-import { guid } from '@microsoft/utils-logic-apps';
+import { guid } from '@microsoft/logic-apps-shared';
 import type { ElementNode } from 'lexical';
-import { $getNodeByKey, $isElementNode, $isTextNode } from 'lexical';
+import { $getNodeByKey, $isElementNode, $isLineBreakNode, $isTextNode } from 'lexical';
+
+/**
+ * Creates a literal value segment.
+ * @arg {string} value - The literal value.
+ * @arg {string} [segmentId] - The segment id.
+ * @return {ValueSegment}
+ */
+export function createLiteralValueSegment(value: string, segmentId?: string): ValueSegment {
+  return {
+    id: segmentId ? segmentId : guid(),
+    type: ValueSegmentType.LITERAL,
+    value,
+  };
+}
+
+export function createEmptyLiteralValueSegment(): ValueSegment {
+  return {
+    id: guid(),
+    type: ValueSegmentType.LITERAL,
+    value: '',
+  };
+}
 
 export const removeFirstAndLast = (segments: ValueSegment[], removeFirst?: string, removeLast?: string): ValueSegment[] => {
   const n = segments.length - 1;
@@ -56,6 +78,52 @@ export const getChildrenNodes = (node: ElementNode, nodeMap?: Map<string, ValueS
   return text;
 };
 
+// interpolate tokens if they have not been interpolated
+export const getChildrenNodesWithTokenInterpolation = (node: ElementNode, nodeMap?: Map<string, ValueSegment>): string => {
+  let text = '';
+  let lastNodeWasText = '';
+  let lastNodeWasToken = '';
+  let numberOfDoubleQuotes = 0;
+  let numberOfQuotesAdded = 0;
+  node.getChildren().forEach((child) => {
+    const childNode = $getNodeByKey(child.getKey());
+    if (childNode && $isElementNode(childNode)) {
+      return (text += getChildrenNodesWithTokenInterpolation(childNode, nodeMap));
+    }
+    if ($isTextNode(childNode)) {
+      const childNodeText = childNode.__text.trim();
+      if (childNodeText.includes('"')) {
+        numberOfQuotesAdded = 0; // reset, the interpolation will be added with childNode
+      }
+      const missingAClosingInterpolation = numberOfQuotesAdded !== 0 && numberOfQuotesAdded % 2 === 1;
+      if (lastNodeWasToken === childNode.__prev && missingAClosingInterpolation) {
+        text += `"`;
+      }
+      text += childNodeText;
+      lastNodeWasText = childNode.__key;
+    } else if ($isTokenNode(childNode)) {
+      numberOfDoubleQuotes = (text.replace(/\\"/g, '').match(/"/g) || []).length;
+      if (lastNodeWasText === childNode.__prev && numberOfDoubleQuotes % 2 !== 1) {
+        text += `"`;
+        numberOfQuotesAdded++;
+      }
+      text += childNode.toString();
+      nodeMap?.set(childNode.toString(), childNode.convertToSegment());
+      lastNodeWasToken = childNode.__key;
+    }
+    if ($isLineBreakNode(childNode)) {
+      if (lastNodeWasText === childNode.__prev) {
+        lastNodeWasText = childNode.__key;
+      }
+      if (lastNodeWasToken === childNode.__prev) {
+        lastNodeWasToken = childNode.__key;
+      }
+    }
+    return text;
+  });
+  return text;
+};
+
 export const findChildNode = (node: ElementNode, nodeKey: string, tokenType?: TokenType): ValueSegment | null => {
   let foundNode: ValueSegment | null = null;
   node.getChildren().find((child) => {
@@ -99,7 +167,7 @@ export const insertQutationForStringType = (segments: ValueSegment[], type?: str
 };
 
 const addStringLiteralSegment = (segments: ValueSegment[]): void => {
-  segments.push({ id: guid(), type: ValueSegmentType.LITERAL, value: `"` });
+  segments.push(createLiteralValueSegment(`"`));
 };
 
 export const removeQuotes = (s: string): string => {

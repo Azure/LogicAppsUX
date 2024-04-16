@@ -1,11 +1,10 @@
 import type { DictionaryEditorItemProps, DictionaryEditorProps } from '../dictionary';
 import { DictionaryEditor, DictionaryType } from '../dictionary';
-import { ValueSegmentType } from '../editor';
 import type { ChangeState } from '../editor/base';
+import { createEmptyLiteralValueSegment } from '../editor/base/utils/helper';
 import type { IDropdownOption, IDropdownStyles } from '@fluentui/react';
 import { Dropdown } from '@fluentui/react';
-import { getIntl } from '@microsoft/intl-logic-apps';
-import { guid } from '@microsoft/utils-logic-apps';
+import { getIntl } from '@microsoft/logic-apps-shared';
 import type { FormEvent } from 'react';
 import { useState } from 'react';
 
@@ -62,20 +61,27 @@ export const TableEditor: React.FC<TableEditorProps> = ({
   const columnOptions = [
     {
       key: ColumnMode.Automatic,
-      text: intl.formatMessage({ defaultMessage: 'Automatic', description: 'Option text for table column type in table editor' }),
+      text: intl.formatMessage({
+        defaultMessage: 'Automatic',
+        id: 'Az0QvG',
+        description: 'Option text for table column type in table editor',
+      }),
     },
     {
       key: ColumnMode.Custom,
-      text: intl.formatMessage({ defaultMessage: 'Custom', description: 'Option text for table column type in table editor' }),
+      text: intl.formatMessage({
+        defaultMessage: 'Custom',
+        id: 'Tiqnir',
+        description: 'Option text for table column type in table editor',
+      }),
     },
   ];
-  const emptyValue = [{ id: guid(), type: ValueSegmentType.LITERAL, value: '' }];
   const [selectedKey, setSelectedKey] = useState<ColumnMode>(columnMode);
   const [items] = useState<DictionaryEditorItemProps[]>(initialItems ?? []);
   const onOptionChange = (_event: FormEvent<HTMLDivElement>, option?: IDropdownOption): void => {
     if (option) {
       setSelectedKey(option.key as ColumnMode);
-      onChange?.({ value: emptyValue, viewModel: { items, columnMode: option.key } });
+      onChange?.({ value: [createEmptyLiteralValueSegment()], viewModel: { items, columnMode: option.key } });
     }
   };
 

@@ -17,8 +17,8 @@ import {
 import { formatDirectAccess, getIndexValueForCurrentConnection, isFunctionData } from '../utils/Function.Utils';
 import { addTargetReactFlowPrefix } from '../utils/ReactFlow.Util';
 import { isObjectType, isSchemaNodeExtended } from '../utils/Schema.Utils';
-import type { MapDefinitionEntry, PathItem, SchemaExtended, SchemaNodeExtended } from '@microsoft/utils-logic-apps';
-import { extend, SchemaNodeProperty } from '@microsoft/utils-logic-apps';
+import type { MapDefinitionEntry, PathItem, SchemaExtended, SchemaNodeExtended } from '@microsoft/logic-apps-shared';
+import { extend, SchemaNodeProperty } from '@microsoft/logic-apps-shared';
 import yaml from 'js-yaml';
 
 interface OutputPathItem {
@@ -58,7 +58,7 @@ export const convertToMapDefinition = (
 
 const yamlReplacer = (key: string, value: any) => {
   if (typeof value === 'string' && key === reservedMapDefinitionKeys.version) {
-    return parseFloat(value);
+    return Number.parseFloat(value);
   }
 
   return value;
@@ -90,9 +90,8 @@ const getConnectionsToTargetNodes = (connections: ConnectionDictionary) => {
     const selfNode = connection.self.node;
     if (key.startsWith(targetPrefix) && isSchemaNodeExtended(selfNode)) {
       return selfNode.nodeProperties.every((property) => property !== SchemaNodeProperty.Repeating);
-    } else {
-      return false;
     }
+    return false;
   });
 };
 
@@ -121,10 +120,7 @@ const createSourcePath = (
   input: InputConnection,
   array: PathItem[]
 ): string => {
-  if (!isFinalPath) {
-    // Still have objects to traverse down
-    newPath.push({ key: pathItem.qName.startsWith('@') ? `$${pathItem.qName}` : pathItem.qName });
-  } else {
+  if (isFinalPath) {
     // Handle custom values, source schema nodes, or Functions applied to the current target schema node
     let value = '';
     if (input) {
@@ -132,25 +128,26 @@ const createSourcePath = (
         value = input;
       } else if (isSchemaNodeExtended(input.node)) {
         value = input.node.key;
+      } else if (input.node.key.startsWith(ifPseudoFunctionKey)) {
+        const values = collectConditionalValues(connections[input.reactFlowKey], connections);
+        value = values[1];
+      } else if (input.node.key.startsWith(directAccessPseudoFunctionKey)) {
+        const functionValues = getInputValues(connections[input.reactFlowKey], connections, false);
+        value = formatDirectAccess(functionValues[0], functionValues[1], functionValues[2]);
       } else {
-        if (input.node.key.startsWith(ifPseudoFunctionKey)) {
-          const values = collectConditionalValues(connections[input.reactFlowKey], connections);
-          value = values[1];
-        } else if (input.node.key.startsWith(directAccessPseudoFunctionKey)) {
-          const functionValues = getInputValues(connections[input.reactFlowKey], connections, false);
-          value = formatDirectAccess(functionValues[0], functionValues[1], functionValues[2]);
-        } else {
-          value = collectFunctionValue(
-            input.node,
-            connections[input.reactFlowKey],
-            connections,
-            array.some((arrayItems) => arrayItems.repeating)
-          );
-        }
+        value = collectFunctionValue(
+          input.node,
+          connections[input.reactFlowKey],
+          connections,
+          array.some((arrayItems) => arrayItems.repeating)
+        );
       }
     }
     return value;
+
+    // Still have objects to traverse down
   }
+  newPath.push({ key: pathItem.qName.startsWith('@') ? `$${pathItem.qName}` : pathItem.qName });
   return '';
 };
 
@@ -431,20 +428,19 @@ const applyValueAtPath = (mapDefinition: MapDefinitionEntry, path: OutputPathIte
 
       // Return false to break loop
       return false;
-    } else {
-      if (!mapDefinition[pathItem.key]) {
-        mapDefinition[pathItem.key] = {};
-      }
+    }
+    if (!mapDefinition[pathItem.key]) {
+      mapDefinition[pathItem.key] = {};
+    }
 
-      if (pathItem.value) {
-        mapDefinition[pathItem.key] = pathItem.value;
-      }
+    if (pathItem.value) {
+      mapDefinition[pathItem.key] = pathItem.value;
+    }
 
-      // Look ahead to see if we need to stay in our current location
-      const nextPathItem = path[pathIndex + 1];
-      if (!nextPathItem || nextPathItem.arrayIndex === undefined) {
-        mapDefinition = mapDefinition[pathItem.key] as MapDefinitionEntry;
-      }
+    // Look ahead to see if we need to stay in our current location
+    const nextPathItem = path[pathIndex + 1];
+    if (!nextPathItem || nextPathItem.arrayIndex === undefined) {
+      mapDefinition = mapDefinition[pathItem.key] as MapDefinitionEntry;
     }
 
     return true;

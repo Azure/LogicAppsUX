@@ -25,14 +25,16 @@ export interface PanelHeaderTitleProps {
   titleValue?: string;
   titleId?: string;
   onChange: TitleChangeHandler;
+  onBlur?: (prevTitle: string) => void;
 }
 
 export const PanelHeaderTitle = ({
   titleValue,
-  onChange,
   titleId,
   readOnlyMode,
   renameTitleDisabled,
+  onChange,
+  onBlur,
 }: PanelHeaderTitleProps): JSX.Element => {
   const intl = useIntl();
 
@@ -40,20 +42,22 @@ export const PanelHeaderTitle = ({
 
   const [newTitleValue, setNewTitleValue] = useState(titleValue);
   const [validValue, setValidValue] = useState(titleValue);
+  const [titleBeforeBlur, setTitleBeforeBlur] = useState(titleValue ?? '');
   const [errorMessage, setErrorMessage] = useState('');
 
   const onTitleChange = (_: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string): void => {
     const result = onChange(newValue || '');
-    if (!result.valid) {
+    if (result.valid) {
+      setErrorMessage('');
+    } else {
       setErrorMessage(
         intl.formatMessage({
           defaultMessage: 'The name already exists or is invalid. Update the name before you continue.',
+          id: '0xLWzG',
           description: 'Text for invalid operation title name',
         })
       );
       setValidValue(result.oldValue);
-    } else {
-      setErrorMessage('');
     }
 
     setNewTitleValue(newValue || '');
@@ -64,12 +68,16 @@ export const PanelHeaderTitle = ({
       onChange(validValue || '');
       setNewTitleValue(validValue);
       setErrorMessage('');
+    } else {
+      onBlur?.(titleBeforeBlur);
+      setTitleBeforeBlur(newTitleValue ?? '');
     }
   };
 
   const readOnly = readOnlyMode || renameTitleDisabled;
   const panelHeaderCardTitle = intl.formatMessage({
     defaultMessage: 'Card Title',
+    id: 'rCl53e',
     description: 'Label for the title for panel header card',
   });
 

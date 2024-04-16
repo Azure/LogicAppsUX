@@ -7,6 +7,8 @@ const getPanelState = (state: RootState) => state.panel;
 
 export const useIsPanelCollapsed = () => useSelector(createSelector(getPanelState, (state: PanelState) => state.collapsed));
 
+export const useFocusReturnElementId = () => useSelector(createSelector(getPanelState, (state: PanelState) => state.focusReturnElementId));
+
 export const useCurrentPanelMode = () => useSelector(createSelector(getPanelState, (state: PanelState) => state.currentPanelMode));
 
 export const useReferencePanelMode = () => useSelector(createSelector(getPanelState, (state: PanelState) => state.referencePanelMode));
@@ -39,3 +41,6 @@ export const usePanelLocation = () => useSelector(createSelector(getPanelState, 
 export const useIsLoadingPanel = () => useSelector(createSelector(getPanelState, (state: PanelState) => !!state.isLoading));
 
 export const useIsCreatingConnection = () => useSelector(createSelector(getPanelState, (state: PanelState) => state.creatingConnection));
+
+export const useSelectedErrorsPanelTabId = () =>
+  useSelector(createSelector(getPanelState, (state: PanelState) => state.selectedErrorsPanelTabId));

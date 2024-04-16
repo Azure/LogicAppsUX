@@ -1,5 +1,6 @@
 import type { TokenNodeProps } from '../nodes/tokenNode';
 import { $createTokenNode, TokenNode } from '../nodes/tokenNode';
+import { CLOSE_TOKENPICKER } from './CloseTokenPicker';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import type { LexicalCommand } from 'lexical';
 import { $getSelection, $isRangeSelection, COMMAND_PRIORITY_EDITOR, createCommand } from 'lexical';
@@ -24,6 +25,7 @@ export default function InsertTokenNode(): null {
           const tokenNode = $createTokenNode({ ...payload, value, readonly: false });
           selection.insertNodes([tokenNode]);
         }
+        editor.dispatchCommand(CLOSE_TOKENPICKER, { focusEditorAfter: true });
         return true;
       },
       COMMAND_PRIORITY_EDITOR

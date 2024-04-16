@@ -6,7 +6,7 @@ import Like from '../images/Like.svg';
 import LikeFilled from '../images/LikeFilled.svg';
 import LikeDark from '../images/Like_Dark.svg';
 import { IconButton, useTheme } from '@fluentui/react';
-import React from 'react';
+import type React from 'react';
 import { useIntl } from 'react-intl';
 
 export interface IThumbsReactionButtonProps {
@@ -22,21 +22,23 @@ export const ThumbsReactionButton: React.FC<IThumbsReactionButtonProps> = ({ isV
     ? isVoted
       ? DislikeFilled
       : isInverted
-      ? DislikeDark
-      : Dislike
+        ? DislikeDark
+        : Dislike
     : isVoted
-    ? LikeFilled
-    : isInverted
-    ? LikeDark
-    : Like;
+      ? LikeFilled
+      : isInverted
+        ? LikeDark
+        : Like;
   const intl = useIntl();
   const intlText = {
     upvote: intl.formatMessage({
       defaultMessage: 'Like',
+      id: 'XR4Sd/',
       description: 'Chatbot user feedback like button title',
     }),
     downvote: intl.formatMessage({
       defaultMessage: 'Dislike',
+      id: 'yk7L+4',
       description: 'Chatbot user feedback dislike button title',
     }),
   };

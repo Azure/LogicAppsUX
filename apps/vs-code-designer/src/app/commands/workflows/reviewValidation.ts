@@ -7,7 +7,7 @@ import { localize } from '../../../localize';
 import { cacheWebviewPanel, removeWebviewPanelFromCache, tryGetWebviewPanel } from '../../utils/codeless/common';
 import { getWebViewHTML } from '../../utils/codeless/getWebViewHTML';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
-import { ProjectName } from '@microsoft/vscode-extension';
+import { ProjectName } from '@microsoft/vscode-extension-logic-apps';
 import { readFileSync } from 'fs';
 import * as vscode from 'vscode';
 
@@ -42,8 +42,6 @@ export async function reviewValidation(_context: IActionContext, node: vscode.Ur
   );
   panel.webview.html = await getWebViewHTML('vs-code-react', panel);
 
-  let interval;
-
   await vscode.window.withProgress(progressOptions, async () => {
     try {
       const reviewFilePath = node.fsPath;
@@ -75,7 +73,6 @@ export async function reviewValidation(_context: IActionContext, node: vscode.Ur
   panel.onDidDispose(
     () => {
       removeWebviewPanelFromCache(panelGroupKey, panelName);
-      clearInterval(interval);
     },
     null,
     ext.context.subscriptions

@@ -18,7 +18,7 @@ import { validateDotNetIsLatest } from '../dotnet/validateDotNetIsLatest';
 import { validateFuncCoreToolsIsLatest } from '../funcCoreTools/validateFuncCoreToolsIsLatest';
 import { validateNodeJsIsLatest } from '../nodeJs/validateNodeJsIsLatest';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
-import type { IBundleDependencyFeed } from '@microsoft/vscode-extension';
+import type { IBundleDependencyFeed } from '@microsoft/vscode-extension-logic-apps';
 import * as vscode from 'vscode';
 
 export async function validateAndInstallBinaries(context: IActionContext) {
@@ -37,7 +37,7 @@ export async function validateAndInstallBinaries(context: IActionContext) {
       });
 
       context.telemetry.properties.lastStep = 'getGlobalSetting';
-      progress.report({ increment: 10, message: `Get Settings` });
+      progress.report({ increment: 10, message: 'Get Settings' });
 
       const dependencyTimeout = (await getDependencyTimeout()) * 1000;
 
@@ -48,7 +48,7 @@ export async function validateAndInstallBinaries(context: IActionContext) {
       }
 
       context.telemetry.properties.lastStep = 'getDependenciesVersion';
-      progress.report({ increment: 10, message: `Get dependency version from CDN` });
+      progress.report({ increment: 10, message: 'Get dependency version from CDN' });
       let dependenciesVersions: IBundleDependencyFeed;
       try {
         dependenciesVersions = await getDependenciesVersion(context);
@@ -62,7 +62,7 @@ export async function validateAndInstallBinaries(context: IActionContext) {
 
       try {
         await runWithDurationTelemetry(context, 'azureLogicAppsStandard.validateNodeJsIsLatest', async () => {
-          progress.report({ increment: 20, message: `NodeJS` });
+          progress.report({ increment: 20, message: 'NodeJS' });
           await timeout(
             validateNodeJsIsLatest,
             'NodeJs',
@@ -75,7 +75,7 @@ export async function validateAndInstallBinaries(context: IActionContext) {
 
         context.telemetry.properties.lastStep = 'validateFuncCoreToolsIsLatest';
         await runWithDurationTelemetry(context, 'azureLogicAppsStandard.validateFuncCoreToolsIsLatest', async () => {
-          progress.report({ increment: 20, message: `Functions Runtime` });
+          progress.report({ increment: 20, message: 'Functions Runtime' });
           await timeout(
             validateFuncCoreToolsIsLatest,
             'Functions Runtime',
@@ -88,10 +88,10 @@ export async function validateAndInstallBinaries(context: IActionContext) {
 
         context.telemetry.properties.lastStep = 'validateDotNetIsLatest';
         await runWithDurationTelemetry(context, 'azureLogicAppsStandard.validateDotNetIsLatest', async () => {
-          progress.report({ increment: 20, message: `.NET SDK` });
+          progress.report({ increment: 20, message: '.NET SDK' });
           await timeout(
             validateDotNetIsLatest,
-            `.NET SDK`,
+            '.NET SDK',
             dependencyTimeout,
             'https://dotnet.microsoft.com/en-us/download/dotnet/6.0',
             dependenciesVersions?.dotnet

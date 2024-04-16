@@ -4,7 +4,12 @@
  *--------------------------------------------------------------------------------------------*/
 import { Platform, autoRuntimeDependenciesPathSettingKey, nodeJsDependencyName } from '../../../constants';
 import { ext } from '../../../extensionVariables';
-import { downloadAndExtractBinaries, getCpuArchitecture, getLatestNodeJsVersion, getNodeJsBinariesReleaseUrl } from '../../utils/binaries';
+import {
+  downloadAndExtractDependency,
+  getCpuArchitecture,
+  getLatestNodeJsVersion,
+  getNodeJsBinariesReleaseUrl,
+} from '../../utils/binaries';
 import { getGlobalSetting } from '../../utils/vsCodeConfig/settings';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 
@@ -14,23 +19,26 @@ export async function installNodeJs(context: IActionContext, majorVersion?: stri
   const targetDirectory = getGlobalSetting<string>(autoRuntimeDependenciesPathSettingKey);
   context.telemetry.properties.lastStep = 'getLatestNodeJsVersion';
   const version = await getLatestNodeJsVersion(context, majorVersion);
-  let nodeJsReleaseUrl;
+  let nodeJsReleaseUrl: string;
 
   context.telemetry.properties.lastStep = 'getNodeJsBinariesReleaseUrl';
   switch (process.platform) {
-    case Platform.windows:
+    case Platform.windows: {
       nodeJsReleaseUrl = getNodeJsBinariesReleaseUrl(version, 'win', arch);
       break;
+    }
 
-    case Platform.linux:
+    case Platform.linux: {
       nodeJsReleaseUrl = getNodeJsBinariesReleaseUrl(version, 'linux', arch);
       break;
+    }
 
-    case Platform.mac:
+    case Platform.mac: {
       nodeJsReleaseUrl = getNodeJsBinariesReleaseUrl(version, 'darwin', arch);
       break;
+    }
   }
 
   context.telemetry.properties.lastStep = 'downloadAndExtractBinaries';
-  await downloadAndExtractBinaries(nodeJsReleaseUrl, targetDirectory, nodeJsDependencyName);
+  await downloadAndExtractDependency(nodeJsReleaseUrl, targetDirectory, nodeJsDependencyName);
 }

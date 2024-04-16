@@ -1,14 +1,9 @@
+import type { SettingProps } from './';
 import type { IToggleProps } from '@fluentui/react';
 import { Toggle } from '@fluentui/react';
 import { useIntl } from 'react-intl';
 
 export type ToggleChangeHandler = (e: React.MouseEvent<HTMLElement>, checked?: boolean) => void;
-
-export interface SettingProps {
-  readOnly?: boolean;
-  ariaLabel?: string;
-  customLabel?: JSX.Element;
-}
 
 export interface SettingToggleProps extends IToggleProps, SettingProps {
   onToggleInputChange?: ToggleChangeHandler;
@@ -27,10 +22,12 @@ export const SettingToggle = ({
   const intl = useIntl();
   const defaultOnText = intl.formatMessage({
     defaultMessage: 'On',
+    id: '2tTQ0A',
     description: 'label when setting is on',
   });
   const defaultOffText = intl.formatMessage({
     defaultMessage: 'Off',
+    id: '1htSs7',
     description: 'label when setting is off',
   });
   return (

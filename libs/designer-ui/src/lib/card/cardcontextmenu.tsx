@@ -1,6 +1,6 @@
 import type { MenuOpenChangeData } from '@fluentui/react-components';
 import { Menu, MenuPopover, MenuList } from '@fluentui/react-components';
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useOnViewportChange } from 'reactflow';
 
@@ -31,6 +31,7 @@ export const CardContextMenu: React.FC<CardContextMenuProps> = ({ contextMenuLoc
   const CARD_CONTEXT_MENU_ARIA_LABEL = intl.formatMessage(
     {
       defaultMessage: 'Context menu for {title} card',
+      id: '+ZSBrq',
       description: 'Accessibility label',
     },
     {
@@ -38,26 +39,25 @@ export const CardContextMenu: React.FC<CardContextMenuProps> = ({ contextMenuLoc
     }
   );
 
-  const offset = contextMenuLocation ? { mainAxis: contextMenuLocation.y, crossAxis: contextMenuLocation.x } : undefined;
-  const getBoundingClientRect = () => ({
-    x: contextMenuLocation?.x ?? 0,
-    y: contextMenuLocation?.y ?? 0,
-    width: 0,
-    height: 0,
-    top: 0,
-    right: 0,
-    bottom: 0,
-    left: 0,
-  });
+  const onOpenChange = useCallback((_e: any, data: MenuOpenChangeData) => setOpen(data.open), [setOpen]);
+
+  const positioning = useMemo(() => {
+    const offset = contextMenuLocation ? { mainAxis: contextMenuLocation.y, crossAxis: contextMenuLocation.x } : undefined;
+    const getBoundingClientRect = () => ({
+      x: contextMenuLocation?.x ?? 0,
+      y: contextMenuLocation?.y ?? 0,
+      width: 0,
+      height: 0,
+      top: 0,
+      right: 0,
+      bottom: 0,
+      left: 0,
+    });
+    return { target: { getBoundingClientRect }, offset };
+  }, [contextMenuLocation]);
 
   return (
-    <Menu
-      open={open}
-      aria-label={CARD_CONTEXT_MENU_ARIA_LABEL}
-      onOpenChange={(_e: any, data: MenuOpenChangeData) => setOpen(data.open)}
-      positioning={{ target: { getBoundingClientRect }, offset }}
-      closeOnScroll
-    >
+    <Menu open={open} aria-label={CARD_CONTEXT_MENU_ARIA_LABEL} onOpenChange={onOpenChange} positioning={positioning} closeOnScroll>
       <MenuPopover>
         <MenuList>{menuItems}</MenuList>
       </MenuPopover>

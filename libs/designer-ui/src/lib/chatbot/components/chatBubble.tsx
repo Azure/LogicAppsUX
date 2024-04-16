@@ -4,7 +4,7 @@ import { ThumbsReactionButton } from './thumbsReactionButton';
 import { ActionButton, IconButton, css, useTheme } from '@fluentui/react';
 import type { IButtonProps, IButtonStyles } from '@fluentui/react';
 import { useConst } from '@fluentui/react-hooks';
-import React from 'react';
+import type React from 'react';
 import { useIntl } from 'react-intl';
 
 export const ChatEntryReaction = {
@@ -20,6 +20,7 @@ type ChatBubbleProps = {
   isAIGenerated?: boolean;
   hideFooter?: boolean;
   isEmphasized?: boolean;
+  additionalLinksSection?: JSX.Element;
   additionalFooterActions?: IButtonProps[];
   className?: string;
   selectedReaction?: ChatEntryReaction;
@@ -32,6 +33,7 @@ export const ChatBubble: React.FC<ChatBubbleProps> = ({
   isUserMessage,
   children,
   isAIGenerated,
+  additionalLinksSection,
   additionalFooterActions,
   hideFooter,
   className,
@@ -53,10 +55,12 @@ export const ChatBubble: React.FC<ChatBubbleProps> = ({
   const intlText = {
     aIGeneratedDisclaimer: intl.formatMessage({
       defaultMessage: 'AI-generated content may be incorrect',
+      id: 'SHXdzU',
       description: 'Chatbot disclaimer message on AI-generated content potentially being incorrect',
     }),
     copyText: intl.formatMessage({
       defaultMessage: 'Copy',
+      id: 'N7zEUZ',
       description: 'Chatbot copy button title',
     }),
   };
@@ -82,6 +86,7 @@ export const ChatBubble: React.FC<ChatBubbleProps> = ({
       )}
     >
       <div className={css('msla-bubble', isUserMessage && USER_MESSAGE_CLASS)}>{children}</div>
+      {additionalLinksSection && additionalLinksSection}
       {(additionalFooterActions && additionalFooterActions.length > 0) || (isAIGenerated && !hideFooter) ? (
         <div className={'msla-bubble-footer'}>
           {additionalFooterActions && (

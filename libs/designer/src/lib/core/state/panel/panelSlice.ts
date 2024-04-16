@@ -1,5 +1,6 @@
+import { resetWorkflowState } from '../global';
 import type { RelationshipIds, PanelState, PanelMode } from './panelInterfaces';
-import { LogEntryLevel, LoggerService } from '@microsoft/designer-client-services-logic-apps';
+import { LogEntryLevel, LoggerService, cleanConnectorId } from '@microsoft/logic-apps-shared';
 import { PanelLocation } from '@microsoft/designer-ui';
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
@@ -19,6 +20,7 @@ const initialState: PanelState = {
   creatingConnection: false,
   currentPanelMode: undefined,
   referencePanelMode: undefined,
+  selectedErrorsPanelTabId: undefined,
 };
 
 export const panelSlice = createSlice({
@@ -42,6 +44,7 @@ export const panelSlice = createSlice({
       state.addingTrigger = false;
       state.creatingConnection = false;
       state.selectedTabId = undefined;
+      state.selectedErrorsPanelTabId = undefined;
     },
     updatePanelLocation: (state, action: PayloadAction<PanelLocation | undefined>) => {
       if (action.payload && action.payload !== state.panelLocation) {
@@ -55,9 +58,13 @@ export const panelSlice = createSlice({
       state.selectedNodes = action.payload;
     },
     changePanelNode: (state, action: PayloadAction<string>) => {
-      if (!action) return;
+      if (!action) {
+        return;
+      }
       clearPanel();
-      if (state.collapsed) state.collapsed = false;
+      if (state.collapsed) {
+        state.collapsed = false;
+      }
       state.selectedNodes = [action.payload];
       state.currentPanelMode = 'Operation';
       state.selectedTabId = undefined;
@@ -71,7 +78,13 @@ export const panelSlice = createSlice({
     },
     expandDiscoveryPanel: (
       state,
-      action: PayloadAction<{ relationshipIds: RelationshipIds; nodeId: string; isParallelBranch?: boolean; addingTrigger?: boolean }>
+      action: PayloadAction<{
+        relationshipIds: RelationshipIds;
+        nodeId: string;
+        isParallelBranch?: boolean;
+        focusReturnElementId?: string;
+        addingTrigger?: boolean;
+      }>
     ) => {
       state.collapsed = false;
       state.currentPanelMode = 'Discovery';
@@ -79,6 +92,7 @@ export const panelSlice = createSlice({
       state.selectedNodes = [action.payload.nodeId];
       state.isParallelBranch = action.payload?.isParallelBranch ?? false;
       state.addingTrigger = !!action.payload?.addingTrigger;
+      state.focusReturnElementId = action.payload.focusReturnElementId;
 
       LoggerService().log({
         level: LogEntryLevel.Verbose,
@@ -88,7 +102,7 @@ export const panelSlice = createSlice({
       });
     },
     selectOperationGroupId: (state, action: PayloadAction<string>) => {
-      state.selectedOperationGroupId = action.payload;
+      state.selectedOperationGroupId = cleanConnectorId(action.payload);
 
       LoggerService().log({
         level: LogEntryLevel.Verbose,
@@ -107,6 +121,7 @@ export const panelSlice = createSlice({
         nodeIds?: string[];
         panelMode: PanelMode;
         referencePanelMode?: PanelMode;
+        focusReturnElementId?: string;
       }>
     ) => {
       const { nodeId, nodeIds, panelMode, referencePanelMode } = action?.payload ?? {};
@@ -115,6 +130,7 @@ export const panelSlice = createSlice({
       state.currentPanelMode = panelMode;
       state.referencePanelMode = referencePanelMode;
       state.selectedNodes = nodeIds ? nodeIds : nodeId ? [nodeId] : [];
+      state.focusReturnElementId = action?.payload.focusReturnElementId;
     },
     selectPanelTab: (state, action: PayloadAction<string | undefined>) => {
       state.selectedTabId = action.payload;
@@ -132,6 +148,19 @@ export const panelSlice = createSlice({
     setIsCreatingConnection: (state, action: PayloadAction<boolean>) => {
       state.creatingConnection = action.payload;
     },
+    selectErrorsPanelTab: (state, action: PayloadAction<string>) => {
+      state.selectedErrorsPanelTabId = action.payload;
+
+      LoggerService().log({
+        level: LogEntryLevel.Verbose,
+        area: 'Designer:Panel Slice',
+        message: action.type,
+        args: [action.payload],
+      });
+    },
+  },
+  extraReducers: (builder) => {
+    builder.addCase(resetWorkflowState, () => initialState);
   },
 });
 
@@ -151,6 +180,7 @@ export const {
   selectPanelTab,
   setIsPanelLoading,
   setIsCreatingConnection,
+  selectErrorsPanelTab,
 } = panelSlice.actions;
 
 export default panelSlice.reducer;

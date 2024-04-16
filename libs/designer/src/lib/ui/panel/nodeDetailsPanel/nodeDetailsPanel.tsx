@@ -1,32 +1,41 @@
+import constants from '../../../common/constants';
 import type { AppDispatch, RootState } from '../../../core';
 import {
-  useSelectedNodeId,
-  useNodeDisplayName,
-  useNodeMetadata,
-  useOperationInfo,
   clearPanel,
   collapsePanel,
-  validateParameter,
   updateParameterValidation,
+  useNodeDisplayName,
+  useNodeMetadata,
+  useSelectedNodeId,
+  validateParameter,
 } from '../../../core';
-import { deleteGraphNode, deleteOperation } from '../../../core/actions/bjsworkflow/delete';
-import type { WorkflowNode } from '../../../core/parsers/models/workflowNode';
+import { renameCustomCode } from '../../../core/state/customcode/customcodeSlice';
 import { useReadOnly } from '../../../core/state/designerOptions/designerOptionsSelectors';
-import { ErrorLevel } from '../../../core/state/operation/operationMetadataSlice';
-import { useOperationErrorInfo } from '../../../core/state/operation/operationSelector';
+import { setShowDeleteModal } from '../../../core/state/designerView/designerViewSlice';
+import { ErrorLevel, updateParameterEditorViewModel } from '../../../core/state/operation/operationMetadataSlice';
+import { useIconUri, useOperationErrorInfo } from '../../../core/state/operation/operationSelector';
 import { useIsPanelCollapsed, useSelectedPanelTabId } from '../../../core/state/panel/panelSelectors';
-import { expandPanel, updatePanelLocation, selectPanelTab } from '../../../core/state/panel/panelSlice';
-import { useIconUri, useOperationQuery } from '../../../core/state/selectors/actionMetadataSelector';
-import { useWorkflowNode, useNodeDescription } from '../../../core/state/workflow/workflowSelectors';
-import { deleteSwitchCase, setNodeDescription, replaceId } from '../../../core/state/workflow/workflowSlice';
-import { isRootNodeInGraph, isOperationNameValid } from '../../../core/utils/graph';
+import { expandPanel, selectPanelTab, setSelectedNodeId, updatePanelLocation } from '../../../core/state/panel/panelSlice';
+import { useOperationQuery } from '../../../core/state/selectors/actionMetadataSelector';
+import { useNodeDescription, useRunData, useRunInstance } from '../../../core/state/workflow/workflowSelectors';
+import { replaceId, setNodeDescription } from '../../../core/state/workflow/workflowSlice';
+import { isOperationNameValid, isRootNodeInGraph } from '../../../core/utils/graph';
+import { ParameterGroupKeys, getCustomCodeFileName, getParameterFromName } from '../../../core/utils/parameters/helper';
 import { CommentMenuItem } from '../../menuItems/commentMenuItem';
 import { DeleteMenuItem } from '../../menuItems/deleteMenuItem';
 import { usePanelTabs } from './usePanelTabs';
 import type { CommonPanelProps, PageActionTelemetryData } from '@microsoft/designer-ui';
-import { DeleteNodeModal, PanelContainer, PanelLocation, PanelScope, PanelSize } from '@microsoft/designer-ui';
-import { isNullOrUndefined, isScopeOperation, isSubGraphNode } from '@microsoft/utils-logic-apps';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import { PanelContainer, PanelScope, PanelSize, isCustomCode } from '@microsoft/designer-ui';
+import {
+  WorkflowService,
+  SUBGRAPH_TYPES,
+  isNullOrUndefined,
+  replaceWhiteSpaceWithUnderscore,
+  splitFileName,
+} from '@microsoft/logic-apps-shared';
+import type { ReactElement } from 'react';
+import type React from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
 export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
@@ -41,6 +50,7 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
 
   const collapsed = useIsPanelCollapsed();
   const selectedNode = useSelectedNodeId();
+  const runData = useRunData(selectedNode);
   const { isTriggerNode, nodesMetadata, idReplacements } = useSelector((state: RootState) => ({
     isTriggerNode: isRootNodeInGraph(selectedNode, 'root', state.workflow.nodesMetadata),
     nodesMetadata: state.workflow.nodesMetadata,
@@ -48,15 +58,12 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
   }));
   const selectedNodeDisplayName = useNodeDisplayName(selectedNode);
 
-  const graphNode = useWorkflowNode(selectedNode) as WorkflowNode;
-
-  const [width, setWidth] = useState<PanelSize>(PanelSize.Auto);
+  const [width, setWidth] = useState<string>(PanelSize.Auto);
 
   const inputs = useSelector((state: RootState) => state.operations.inputParameters[selectedNode]);
   const comment = useNodeDescription(selectedNode);
   const iconUri = useIconUri(selectedNode);
   const nodeMetaData = useNodeMetadata(selectedNode);
-  const operationInfo = useOperationInfo(selectedNode);
   let showCommentBox = !isNullOrUndefined(comment);
   const errorInfo = useOperationErrorInfo(selectedNode);
 
@@ -76,30 +83,28 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
     dispatch(expandPanel());
   }, [dispatch]);
 
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const handleDeleteClick = () => setShowDeleteModal(true);
-  const handleDelete = () => {
-    // TODO: 12798935 Analytics (event logging)
-    if (operationInfo && isScopeOperation(operationInfo.type)) {
-      dispatch(deleteGraphNode({ graphId: selectedNode, graphNode }));
-    } else if (isSubGraphNode(graphNode.type)) {
-      dispatch(deleteGraphNode({ graphId: selectedNode, graphNode: graphNode }));
-      dispatch(deleteSwitchCase({ caseId: selectedNode, nodeId: nodeMetaData?.graphId ?? '' }));
-    } else {
-      dispatch(deleteOperation({ nodeId: selectedNode, isTrigger: isTriggerNode }));
-    }
-    setShowDeleteModal(false);
-  };
+  const deleteClick = useCallback(() => {
+    dispatch(setSelectedNodeId(selectedNode));
+    dispatch(setShowDeleteModal(true));
+  }, [dispatch, selectedNode]);
 
   const handleCommentMenuClick = (_: React.MouseEvent<HTMLElement>): void => {
     showCommentBox = !showCommentBox;
-    dispatch(setNodeDescription({ nodeId: selectedNode, ...(showCommentBox && { description: '' }) }));
+    dispatch(
+      setNodeDescription({
+        nodeId: selectedNode,
+        ...(showCommentBox && { description: '' }),
+      })
+    );
   };
 
-  const headerMenuItems = [
-    <CommentMenuItem key={'comment'} onClick={handleCommentMenuClick} hasComment={showCommentBox} />,
-    <DeleteMenuItem key={'delete'} onClick={handleDeleteClick} />,
-  ];
+  // Removing the 'add a note' button for subgraph nodes
+  const isSubgraphContainer = nodeMetaData?.subgraphType === SUBGRAPH_TYPES.SWITCH_CASE;
+  const headerMenuItems: ReactElement[] = [];
+  if (!isSubgraphContainer) {
+    headerMenuItems.push(<CommentMenuItem key={'comment'} onClick={handleCommentMenuClick} hasComment={showCommentBox} />);
+  }
+  headerMenuItems.push(<DeleteMenuItem key={'delete'} onClick={deleteClick} />);
 
   const onTitleChange = (newId: string): { valid: boolean; oldValue?: string } => {
     const isValid = isOperationNameValid(selectedNode, newId, isTriggerNode, nodesMetadata, idReplacements);
@@ -108,19 +113,68 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
     return { valid: isValid, oldValue: isValid ? newId : selectedNode };
   };
 
+  // if is customcode file, on blur title,
+  // delete the existing custom code file name and upload the new file with updated name
+  const onTitleBlur = (prevTitle: string) => {
+    const parameter = getParameterFromName(inputs, constants.DEFAULT_CUSTOM_CODE_INPUT);
+    if (parameter && isCustomCode(parameter?.editor, parameter?.editorOptions?.language)) {
+      const newFileName = getCustomCodeFileName(selectedNode, inputs, idReplacements);
+      const [, fileExtension] = splitFileName(newFileName);
+      const oldFileName = replaceWhiteSpaceWithUnderscore(prevTitle) + fileExtension;
+      if (newFileName === oldFileName) {
+        return;
+      }
+      // update the view model with the latest file name
+      dispatch(
+        updateParameterEditorViewModel({
+          nodeId: selectedNode,
+          groupId: ParameterGroupKeys.DEFAULT,
+          parameterId: parameter.id,
+          editorViewModel: {
+            ...(parameter.editorViewModel ?? {}),
+            customCodeData: {
+              ...(parameter.editorViewModel?.customCodeData ?? {}),
+              fileName: newFileName,
+            },
+          },
+        })
+      );
+
+      dispatch(
+        renameCustomCode({
+          nodeId: selectedNode,
+          newFileName,
+          oldFileName,
+        })
+      );
+    }
+  };
+
   const onCommentChange = (newDescription?: string) => {
     dispatch(setNodeDescription({ nodeId: selectedNode, description: newDescription }));
   };
 
-  const togglePanel = (): void => (!collapsed ? collapse() : expand());
+  const togglePanel = (): void => (collapsed ? expand() : collapse());
   const dismissPanel = () => dispatch(clearPanel());
 
   const opQuery = useOperationQuery(selectedNode);
 
   const isLoading = useMemo(() => {
-    if (nodeMetaData?.subgraphType) return false;
+    if (nodeMetaData?.subgraphType) {
+      return false;
+    }
     return opQuery.isLoading;
   }, [nodeMetaData?.subgraphType, opQuery.isLoading]);
+
+  const runInstance = useRunInstance();
+
+  const resubmitClick = useCallback(() => {
+    if (!runInstance) {
+      return;
+    }
+    WorkflowService().resubmitWorkflow?.(runInstance?.name ?? '', [selectedNode]);
+    dispatch(clearPanel());
+  }, [dispatch, runInstance, selectedNode]);
 
   const layerProps = {
     hostId: 'msla-layer-host',
@@ -132,56 +186,57 @@ export const NodeDetailsPanel = (props: CommonPanelProps): JSX.Element => {
     toggleCollapse: dismissPanel,
     width,
     layerProps,
-    panelLocation: panelLocation ?? PanelLocation.Right,
+    panelLocation,
+    isResizeable: props.isResizeable,
   };
 
   return (
-    <>
-      <PanelContainer
-        {...commonPanelProps}
-        cardIcon={iconUri}
-        comment={comment}
-        noNodeSelected={!selectedNode}
-        isError={errorInfo?.level === ErrorLevel.Critical || opQuery?.isError}
-        errorMessage={errorInfo?.message}
-        isLoading={isLoading}
-        panelScope={PanelScope.CardLevel}
-        headerMenuItems={headerMenuItems}
-        showCommentBox={showCommentBox}
-        tabs={panelTabs}
-        selectedTab={selectedTab}
-        selectTab={(tabId: string) => dispatch(selectPanelTab(tabId))}
-        nodeId={selectedNode}
-        readOnlyMode={readOnly}
-        toggleCollapse={() => {
-          // Only run validation when collapsing the panel
-          if (!collapsed) {
-            Object.keys(inputs?.parameterGroups ?? {}).forEach((parameterGroup) => {
-              inputs.parameterGroups[parameterGroup].parameters.forEach((parameter: any) => {
-                const validationErrors = validateParameter(parameter, parameter.value);
-                dispatch(
-                  updateParameterValidation({ nodeId: selectedNode, groupId: parameterGroup, parameterId: parameter.id, validationErrors })
-                );
-              });
+    <PanelContainer
+      {...commonPanelProps}
+      cardIcon={iconUri}
+      comment={comment}
+      noNodeSelected={!selectedNode}
+      isError={errorInfo?.level === ErrorLevel.Critical || opQuery?.isError}
+      errorMessage={errorInfo?.message}
+      isLoading={isLoading}
+      panelScope={PanelScope.CardLevel}
+      headerMenuItems={headerMenuItems}
+      showCommentBox={showCommentBox}
+      tabs={panelTabs}
+      selectedTab={selectedTab}
+      selectTab={(tabId: string) => {
+        dispatch(selectPanelTab(tabId));
+      }}
+      nodeId={selectedNode}
+      readOnlyMode={readOnly}
+      canResubmit={runData?.canResubmit ?? false}
+      resubmitOperation={resubmitClick}
+      toggleCollapse={() => {
+        // Only run validation when collapsing the panel
+        if (!collapsed) {
+          Object.keys(inputs?.parameterGroups ?? {}).forEach((parameterGroup) => {
+            inputs.parameterGroups[parameterGroup].parameters.forEach((parameter: any) => {
+              const validationErrors = validateParameter(parameter, parameter.value);
+              dispatch(
+                updateParameterValidation({
+                  nodeId: selectedNode,
+                  groupId: parameterGroup,
+                  parameterId: parameter.id,
+                  validationErrors,
+                })
+              );
             });
-          }
-          togglePanel();
-        }}
-        trackEvent={handleTrackEvent}
-        onCommentChange={onCommentChange}
-        title={selectedNodeDisplayName}
-        onTitleChange={onTitleChange}
-      />
-      {graphNode?.type && (
-        <DeleteNodeModal
-          nodeId={selectedNode}
-          nodeType={graphNode.type}
-          isOpen={showDeleteModal}
-          onDismiss={() => setShowDeleteModal(false)}
-          onConfirm={handleDelete}
-        />
-      )}
-    </>
+          });
+        }
+        togglePanel();
+      }}
+      trackEvent={handleTrackEvent}
+      onCommentChange={onCommentChange}
+      title={selectedNodeDisplayName}
+      onTitleChange={onTitleChange}
+      onTitleBlur={onTitleBlur}
+      setCurrWidth={setWidth}
+    />
   );
 };
 

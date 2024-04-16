@@ -1,7 +1,7 @@
 import { Value } from '../values';
 import { DefaultButton } from '@fluentui/react';
-import type { BoundParameters } from '@microsoft/utils-logic-apps';
-import { equals } from '@microsoft/utils-logic-apps';
+import type { BoundParameters } from '@microsoft/logic-apps-shared';
+import { equals } from '@microsoft/logic-apps-shared';
 import { useIntl } from 'react-intl';
 
 export interface ValueListProps {
@@ -17,10 +17,12 @@ export const ValueList: React.FC<ValueListProps> = ({ labelledBy, noValuesText, 
   const Resources = {
     VALUES_PANEL_TOGGLE_LESS_TEXT: intl.formatMessage({
       defaultMessage: 'Show less',
+      id: 'V0ZbQO',
       description: 'Toggle button text for hiding advanced parameters',
     }),
     VALUES_PANEL_TOGGLE_MORE_TEXT: intl.formatMessage({
       defaultMessage: 'Show more',
+      id: '7yEdSt',
       description: 'Toggle button text for showing advanced parameters',
     }),
   };

@@ -5,7 +5,8 @@ import { ErrorBanner } from '../errorbanner';
 import { useCardContextMenu, useCardKeyboardInteraction } from '../hooks';
 import { Gripper } from '../images/dynamicsvgs/gripper';
 import type { CardProps } from '../index';
-import { css, Icon, Spinner, SpinnerSize, TooltipHost } from '@fluentui/react';
+import { css, Icon } from '@fluentui/react';
+import { Spinner, Tooltip } from '@fluentui/react-components';
 
 export interface ScopeCardProps extends CardProps {
   collapsed?: boolean;
@@ -50,7 +51,7 @@ export const ScopeCard: React.FC<ScopeCardProps> = ({
 
   const colorVars = { ['--brand-color' as any]: brandColor };
   const cardIcon = isLoading ? (
-    <Spinner className="msla-card-header-spinner" size={SpinnerSize.small} />
+    <Spinner className="msla-card-header-spinner" size={'tiny'} appearance="inverted" />
   ) : icon ? (
     <img className="scope-icon" alt="" role="presentation" src={icon} />
   ) : null;
@@ -81,24 +82,26 @@ export const ScopeCard: React.FC<ScopeCardProps> = ({
             <button className="msla-scope-card-title-button" onClick={handleClick}>
               <div className="msla-scope-card-title-box">
                 <div className={css('gripper-section', draggable && 'draggable')}>{draggable ? <Gripper /> : null}</div>
-                {cardIcon}
+                <div className="panel-card-content-icon-section">{cardIcon}</div>
                 <div className="msla-scope-title">{title}</div>
               </div>
               {errorMessage ? <ErrorBanner errorLevel={errorLevel} errorMessage={errorMessage} /> : null}
             </button>
             <NodeCollapseToggle collapsed={collapsed} handleCollapse={handleCollapse} />
           </div>
-          <div>
+          <div className="msla-card-v2-footer" onClick={handleClick}>
             <div className="msla-badges">
               {badges.map(({ title, content, darkBackground, iconProps }) => (
-                <TooltipHost key={title} content={content}>
-                  <Icon
-                    className={css('panel-card-v2-badge', 'active', darkBackground && 'darkBackground')}
-                    {...iconProps}
-                    ariaLabel={`${title}: ${content}`}
-                    tabIndex={0}
-                  />
-                </TooltipHost>
+                <Tooltip key={title} relationship={'label'} withArrow={true} content={content}>
+                  <div>
+                    <Icon
+                      className={css('panel-card-v2-badge', 'active', darkBackground && 'darkBackground')}
+                      {...iconProps}
+                      ariaLabel={`${title}: ${content}`}
+                      tabIndex={0}
+                    />
+                  </div>
+                </Tooltip>
               ))}
             </div>
           </div>

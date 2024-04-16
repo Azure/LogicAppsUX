@@ -46,21 +46,25 @@ export const SidePane = ({ isExpanded, setIsExpanded, sidePaneTab, setSidePaneTa
 
   const targetSchemaLoc = intl.formatMessage({
     defaultMessage: 'Target schema',
+    id: 'N0pS6Y',
     description: 'Target schema',
   });
 
   const mapCheckerLoc = intl.formatMessage({
     defaultMessage: 'Map checker',
+    id: 'm/jJ/5',
     description: 'Map checker',
   });
 
   const expandLoc = intl.formatMessage({
     defaultMessage: 'Expand',
+    id: 'LBH8UV',
     description: 'Button to expand a pane',
   });
 
   const collapseLoc = intl.formatMessage({
     defaultMessage: 'Collapse',
+    id: 'w8ijDZ',
     description: 'Button to collapse a pane',
   });
 
@@ -77,7 +81,7 @@ export const SidePane = ({ isExpanded, setIsExpanded, sidePaneTab, setSidePaneTa
   };
 
   const collapsedButtonTextStyle: CSSProperties = {
-    color: !targetSchema ? tokens.colorNeutralForegroundDisabled : undefined,
+    color: targetSchema ? undefined : tokens.colorNeutralForegroundDisabled,
     writingMode: 'vertical-rl',
   };
 
@@ -88,12 +92,12 @@ export const SidePane = ({ isExpanded, setIsExpanded, sidePaneTab, setSidePaneTa
           icon={isExpanded ? <ChevronDoubleRight20Regular /> : <ChevronDoubleLeft20Regular />}
           size="medium"
           appearance="transparent"
-          style={{ color: !targetSchema ? tokens.colorNeutralForegroundDisabled : tokens.colorNeutralForeground2 }}
+          style={{ color: targetSchema ? tokens.colorNeutralForeground2 : tokens.colorNeutralForegroundDisabled }}
           onClick={() => expandAndChangeTab(!isExpanded, sidePaneTab)}
           disabled={!targetSchema}
-          aria-label={!isExpanded ? expandLoc : collapseLoc}
+          aria-label={isExpanded ? collapseLoc : expandLoc}
         />
-        {!isExpanded ? (
+        {isExpanded ? undefined : (
           <Button
             size="medium"
             appearance="transparent"
@@ -105,8 +109,8 @@ export const SidePane = ({ isExpanded, setIsExpanded, sidePaneTab, setSidePaneTa
               {targetSchemaLoc}
             </Text>
           </Button>
-        ) : undefined}
-        {!isExpanded ? (
+        )}
+        {isExpanded ? undefined : (
           <Button
             size="medium"
             appearance="transparent"
@@ -118,7 +122,7 @@ export const SidePane = ({ isExpanded, setIsExpanded, sidePaneTab, setSidePaneTa
               {mapCheckerLoc}
             </Text>
           </Button>
-        ) : undefined}
+        )}
         {isExpanded ? (
           <TabList selectedValue={sidePaneTab} onTabSelect={onTabSelect}>
             <Tab id={SidePanelTabValue.OutputTree} value={SidePanelTabValue.OutputTree}>
@@ -132,9 +136,9 @@ export const SidePane = ({ isExpanded, setIsExpanded, sidePaneTab, setSidePaneTa
       </Stack>
       <Stack
         style={
-          !isExpanded
-            ? { display: 'none' }
-            : { display: 'flex', flexDirection: 'column', marginLeft: '40px', marginTop: '8px', width: '290px', height: '100%' }
+          isExpanded
+            ? { display: 'flex', flexDirection: 'column', marginLeft: '40px', marginTop: '8px', width: '290px', height: '100%' }
+            : { display: 'none' }
         }
         horizontal={false}
         verticalFill={true}

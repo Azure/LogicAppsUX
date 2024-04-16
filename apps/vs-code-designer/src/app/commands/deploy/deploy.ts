@@ -14,6 +14,7 @@ import {
   workflowAppAADTenantId,
   kubernetesKind,
   showDeployConfirmationSetting,
+  logicAppFilter,
 } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
@@ -37,13 +38,13 @@ import { notifyDeployComplete } from './notifyDeployComplete';
 import { updateAppSettingsWithIdentityDetails } from './updateAppSettings';
 import { verifyAppSettings } from './verifyAppSettings';
 import type { SiteConfigResource, StringDictionary, Site } from '@azure/arm-appservice';
-import { ResolutionService } from '@microsoft/parsers-logic-apps';
+import { ResolutionService } from '@microsoft/logic-apps-shared';
 import { deploy as innerDeploy, getDeployFsPath, runPreDeployTask, getDeployNode } from '@microsoft/vscode-azext-azureappservice';
 import type { IDeployContext } from '@microsoft/vscode-azext-azureappservice';
 import { ScmType } from '@microsoft/vscode-azext-azureappservice/out/src/ScmType';
 import type { AzExtParentTreeItem, IActionContext, IAzureQuickPickItem, ISubscriptionContext } from '@microsoft/vscode-azext-utils';
 import { AzureWizard, DialogResponses } from '@microsoft/vscode-azext-utils';
-import type { ConnectionsData, FuncVersion, IIdentityWizardContext, ProjectLanguage } from '@microsoft/vscode-extension';
+import type { ConnectionsData, FuncVersion, IIdentityWizardContext, ProjectLanguage } from '@microsoft/vscode-extension-logic-apps';
 import * as fse from 'fs-extra';
 import * as path from 'path';
 import type { Uri, MessageItem, WorkspaceFolder } from 'vscode';
@@ -68,7 +69,7 @@ async function deploy(
   actionContext: IActionContext,
   target: Uri | string | SlotTreeItem | undefined,
   functionAppId: string | Record<string, any> | undefined,
-  _expectedContextValue?: string | RegExp
+  expectedContextValue?: string | RegExp
 ): Promise<void> {
   addLocalFuncTelemetry(actionContext);
 
@@ -80,9 +81,21 @@ async function deploy(
 
   ext.deploymentFolderPath = originalDeployFsPath;
 
-  const node: SlotTreeItem = await getDeployNode(context, ext.rgApi.appResourceTree, target, functionAppId, async () =>
-    getDeployLogicAppNode(actionContext)
-  );
+  let node: SlotTreeItem;
+
+  if (expectedContextValue) {
+    node = await getDeployNode(context, ext.rgApi.appResourceTree, target, functionAppId, async () =>
+      ext.rgApi.pickAppResource(
+        { ...context, suppressCreatePick: false },
+        {
+          filter: logicAppFilter,
+          expectedChildContextValue: expectedContextValue,
+        }
+      )
+    );
+  } else {
+    node = await getDeployNode(context, ext.rgApi.appResourceTree, target, functionAppId, async () => getDeployLogicAppNode(actionContext));
+  }
 
   const nodeKind = node.site.kind && node.site.kind.toLowerCase();
   const isWorkflowApp = nodeKind?.includes(logicAppKind);
@@ -188,13 +201,11 @@ async function getDeployLogicAppNode(context: IActionContext): Promise<SlotTreeI
   if (!site) {
     if (isAdvance) {
       return await createLogicAppAdvanced(context, sub);
-    } else {
-      return await createLogicApp(context, sub);
     }
-  } else {
-    const resourceTree = new LogicAppResourceTree(sub.subscription, site);
-    return new SlotTreeItem(sub, resourceTree);
+    return await createLogicApp(context, sub);
   }
+  const resourceTree = new LogicAppResourceTree(sub.subscription, site);
+  return new SlotTreeItem(sub, resourceTree);
 }
 
 async function getLogicAppsPicks(
@@ -301,7 +312,12 @@ async function getProjectPathToDeploy(
     for (const [referenceKey, managedConnection] of Object.entries(parametizedConnections.managedApiConnections)) {
       try {
         const connection = connectionsData.managedApiConnections[referenceKey].connection;
-        await createAclInConnectionIfNeeded(identityWizardContext, connection.id, node);
+        await createAclInConnectionIfNeeded(identityWizardContext, connection.id, node.site);
+
+        if (node.site.isSlot) {
+          const parentTreeItem = node.parent?.parent as SlotTreeItem;
+          await createAclInConnectionIfNeeded(identityWizardContext, connection.id, parentTreeItem.site);
+        }
       } catch (error) {
         throw new Error(`Error in creating access policy for connection in reference - '${referenceKey}'. ${error}`);
       }

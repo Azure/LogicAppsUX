@@ -40,23 +40,14 @@ const WORKFLOW_PARAMETER_SERIALIZED_TYPE = {
 };
 const PANEL_TAB_NAMES = {
   ABOUT: 'ABOUT',
-  AUTH_CONNECTION: 'AUTH_CONNECTION',
   CODE_VIEW: 'CODE_VIEW',
-  CONNECTION_SELECTOR: 'CONNECTION_SELECTOR',
-  CONNECTION_CREATE: 'CONNECTION_CREATE',
-  CONNECTION_CREATE_ASSISTED: 'CREATE_CONNECTION_ASSISTED',
-  CONNECTION_CREATE_PARAMETER_SET: 'CREATE_PARAMETER_SET_CONNECTION',
-  EXPRESSION_TRACE: 'EXPRESSION_TRACE',
   FUNCTION_CREATE: 'FUNCTION_CREATE',
   OPERATION_SELECTOR: 'OPERATION_SELECTOR',
   PARAMETERS: 'PARAMETERS',
-  QUERY_PARAMETERS: 'QUERY_PARAMETERS',
-  RECOMMENDATION: 'RECOMMENDATION',
   REQUEST_HISTORY: 'REQUEST_HISTORY',
   RETRY_HISTORY: 'RETRY_HISTORY',
   RUN_AFTER: 'RUN_AFTER',
   SETTINGS: 'SETTINGS',
-  STATE_VIEWER: 'STATE_VIEWER',
   STATIC_RESULT: 'STATIC_RESULT',
   SWAGGER_ENDPOINT: 'SWAGGER_ENDPOINT',
 };
@@ -258,6 +249,7 @@ export default {
       SECURITY_CENTER_ALERT: 'securitycenteralert',
       SUBTRACTFROMTIME: 'subtractfromtime',
       TEAMS: 'teams',
+      TEAMSWEBHOOK: 'teamswebhook',
       VIRTUALAGENT: 'virtualagent',
       XML_TO_JSON: 'xmltojson',
       XML_TO_TEXT: 'xmltotext',
@@ -441,6 +433,34 @@ export default {
     VALUE_OFFSET: -7,
   },
   DROPDOWN_CALLOUT_MAX_HEIGHT: 380,
+
+  PARAMETER: {
+    EDITOR: {
+      ARRAY: 'array',
+      AUTHENTICATION: 'authentication',
+      CODE: 'code',
+      COMBOBOX: 'combobox',
+      COPYABLE: 'copyable',
+      CONDITION: 'condition',
+      DICTIONARY: 'dictionary',
+      DROPDOWN: 'dropdown',
+      FLOATINGACTIONMENU: 'floatingactionmenu',
+      FILEPICKER: 'filepicker',
+      HTML: 'html',
+      RECURRENCE: 'recurrence',
+      SCHEMA: 'schema',
+      STRING: 'string',
+      TABLE: 'table',
+    },
+    EDITOR_OPTIONS: {
+      LANGUAGE: {
+        CSHARP: 'csharp',
+        JAVASCRIPT: 'javascript',
+        JSON: 'json',
+        POWERSHELL: 'powershell',
+      },
+    },
+  },
 };
 
 export const FxBrandColor = '#AD008C';

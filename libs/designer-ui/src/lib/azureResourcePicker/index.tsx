@@ -1,5 +1,6 @@
-import { ChoiceGroup, css, Label, List, MessageBar, MessageBarType, SearchBox, Spinner, Text } from '@fluentui/react';
-import { labelCase } from '@microsoft/utils-logic-apps';
+import { ChoiceGroup, css, Label, List, MessageBar, MessageBarType, SearchBox, Text } from '@fluentui/react';
+import { Spinner } from '@fluentui/react-components';
+import { labelCase } from '@microsoft/logic-apps-shared';
 import Fuse from 'fuse.js';
 import { useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -59,11 +60,12 @@ export const AzureResourcePicker = (props: AzureResourcePickerProps) => {
   const resources = useMemo(() => ((itemsQuery?.data ?? []) as any[]).sort((a, b) => a.name.localeCompare(b.name)), [itemsQuery.data]);
   const resourceNames = useMemo(() => resources.map((resource) => resource.name), [resources]);
 
-  const gridTemplateColumns = useMemo(() => '2fr '.repeat(headers.length - 1) + '1fr', [headers.length]);
+  const gridTemplateColumns = useMemo(() => `${'2fr '.repeat(headers.length - 1)}1fr`, [headers.length]);
 
   const [searchTerm, setSearchTerm] = useState<string | null>(null);
   const searchText = intl.formatMessage({
     defaultMessage: 'Search',
+    id: 'qVgQfW',
     description: 'Search box placeholder text',
   });
   const fuseObject = useMemo(
@@ -75,7 +77,9 @@ export const AzureResourcePicker = (props: AzureResourcePickerProps) => {
     [resourceNames]
   );
   const searchResourceNames = useMemo(() => {
-    if (!searchTerm) return resourceNames;
+    if (!searchTerm) {
+      return resourceNames;
+    }
     return fuseObject.search(searchTerm).map((result) => result.item.id);
   }, [resourceNames, fuseObject, searchTerm]);
 
@@ -96,7 +100,7 @@ export const AzureResourcePicker = (props: AzureResourcePickerProps) => {
           ))}
         </div>
         {itemsQuery?.isLoading ? (
-          <Spinner label={loadingText} style={{ margin: '16px' }} />
+          <Spinner size="tiny" label={loadingText} style={{ margin: '16px' }} />
         ) : itemsQuery?.isSuccess ? (
           <div className="msla-azure-resources-list-container" style={{ gridTemplateColumns }} data-is-scrollable>
             <List
@@ -164,12 +168,13 @@ export const ResourceEntry = (props: ResourceEntryProps) => {
 
   const noSubResourceText = intl.formatMessage({
     defaultMessage: 'No resources of this type found under this subscription.',
+    id: 'jZjgYZ',
     description: 'Message to show when no resources are found',
   });
 
   const columns = useMemo(() => getColumns(resource), [resource, getColumns]);
 
-  const gridTemplateColumns = useMemo(() => '2fr '.repeat(columns.length - 1) + '1fr', [columns.length]);
+  const gridTemplateColumns = useMemo(() => `${'2fr '.repeat(columns.length - 1)}1fr`, [columns.length]);
 
   return (
     <div className="msla-azure-resource-entry">
@@ -185,7 +190,7 @@ export const ResourceEntry = (props: ResourceEntryProps) => {
       {hasSubResources && expanded && (
         <div className="msla-azure-resource-entry-content">
           {subResourcesQuery?.isLoading ? (
-            <Spinner label={subResourceLoadingText} style={{ margin: '8px' }} />
+            <Spinner size="tiny" label={subResourceLoadingText} style={{ margin: '8px' }} />
           ) : subResourcesQuery?.isSuccess ? (
             <>
               {(subResourcesQuery?.data as any[])?.length === 0 ? (

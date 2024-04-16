@@ -88,7 +88,9 @@ export const ArrayEditor: React.FC<ArrayEditorProps> = ({
   const isComplex = useMemo(() => arrayType === ArrayType.COMPLEX, [arrayType]);
 
   const dimensionalSchema: ItemSchemaItemProps[] = useMemo(() => {
-    if (!isComplex) return [];
+    if (!isComplex) {
+      return [];
+    }
     return getOneDimensionalSchema(itemSchema);
   }, [isComplex, itemSchema]);
 
@@ -142,11 +144,13 @@ export const ArrayEditor: React.FC<ArrayEditorProps> = ({
 
   const expandedLabel: string = intl.formatMessage({
     defaultMessage: 'Switch to input entire array',
+    id: 'EdeHLs',
     description: 'Label for editor toggle button when in expanded mode',
   });
 
   const collapsedLabel: string = intl.formatMessage({
     defaultMessage: 'Switch to detail inputs for array item',
+    id: 'HfinO2',
     description: 'Label for editor toggle button when in collapsed mode',
   });
 
@@ -186,14 +190,14 @@ export const ArrayEditor: React.FC<ArrayEditorProps> = ({
         />
       )}
       <div className="msla-array-commands">
-        {!disableToggle ? (
+        {disableToggle ? null : (
           <EditorCollapseToggle
             label={collapsed ? collapsedLabel : expandedLabel}
             collapsed={collapsed}
             disabled={!isValid && collapsed}
             toggleCollapsed={toggleCollapsed}
           />
-        ) : null}
+        )}
       </div>
     </div>
   );

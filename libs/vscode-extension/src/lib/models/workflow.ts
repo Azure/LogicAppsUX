@@ -1,6 +1,6 @@
 import type { Artifacts, FileDetails } from './artifact';
 import type { Parameter } from './parameter';
-import type { LogicAppsV2 } from '@microsoft/utils-logic-apps';
+import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
 
 export interface ILocalSettingsJson {
   IsEncrypted?: boolean;
@@ -48,7 +48,8 @@ export interface AzureConnectorDetails {
 
 export interface WorkflowParameter {
   type: string;
-  defaultValue: any;
+  value?: any;
+  defaultValue?: any;
   allowedValues?: any[];
   metadata?: any;
 }

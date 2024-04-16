@@ -18,8 +18,9 @@ import {
 } from '../Connection.Utils';
 import { isSchemaNodeExtended } from '../Schema.Utils';
 import { fullConnectionDictionaryForOneToManyLoop, fullMapForSimplifiedLoop } from '../__mocks__';
-import type { SchemaNodeExtended } from '@microsoft/utils-logic-apps';
-import { NormalizedDataType, SchemaNodeProperty } from '@microsoft/utils-logic-apps';
+import type { SchemaNodeExtended } from '@microsoft/logic-apps-shared';
+import { NormalizedDataType, SchemaNodeProperty } from '@microsoft/logic-apps-shared';
+import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 
 const mockBoundedFunctionInputs: FunctionInput[] = [
   {
@@ -39,7 +40,6 @@ const mockBoundedFunctionInputs: FunctionInput[] = [
     placeHolder: 'The scope',
   },
 ];
-
 describe('utils/Connections', () => {
   describe('createConnectionEntryIfNeeded', () => {
     const connections: ConnectionDictionary = {};

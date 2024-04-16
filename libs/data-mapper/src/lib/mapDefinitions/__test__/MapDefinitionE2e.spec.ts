@@ -3,10 +3,10 @@ import { loadMapDefinition } from '../../utils/MapDefinition.Utils';
 import { convertSchemaToSchemaExtended, flattenSchemaIntoSortArray } from '../../utils/Schema.Utils';
 import { MapDefinitionDeserializer } from '../MapDefinitionDeserializer';
 import { convertToMapDefinition } from '../MapDefinitionSerializer';
-import type { SchemaExtended } from '@microsoft/utils-logic-apps';
-import { comprehensiveMapDefinition, transcriptJsonMapDefinitionString } from '__mocks__/mapDefinitions';
-import { comprehensiveSourceSchema, comprehensiveTargetSchema, sourceMockJsonSchema, targetMockJsonSchema } from '__mocks__/schemas';
-
+import type { SchemaExtended } from '@microsoft/logic-apps-shared';
+import { comprehensiveMapDefinition, transcriptJsonMapDefinitionString } from '../../../__mocks__/mapDefinitions';
+import { comprehensiveSourceSchema, comprehensiveTargetSchema, sourceMockJsonSchema, targetMockJsonSchema } from '../../../__mocks__/schemas';
+import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 describe('mapDefinitions/MapDefinitionE2e', () => {
   it('XML to XML', () => {
     const mockSourceSchema: SchemaExtended = convertSchemaToSchemaExtended(comprehensiveSourceSchema);

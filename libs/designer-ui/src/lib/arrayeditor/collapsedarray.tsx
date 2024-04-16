@@ -51,6 +51,7 @@ export const CollapsedArray = ({
 
   const editorPlaceHolder = intl.formatMessage({
     defaultMessage: 'Enter an Array',
+    id: 'mAuMD+',
     description: 'Placeholder for empty collapsed array',
   });
 
@@ -69,7 +70,6 @@ export const CollapsedArray = ({
           onBlur={onBlur}
         >
           <CollapsedArrayValidation
-            className={'msla-collapsed-editor-validation'}
             itemSchema={itemSchema}
             isComplex={isComplex}
             setCollapsedValue={setCollapsedValue}

@@ -1,17 +1,19 @@
 import type { Workflow } from '../../common/models/workflow';
 import { getConnectionsApiAndMapping } from '../actions/bjsworkflow/connections';
 import { updateWorkflowParameters } from '../actions/bjsworkflow/initialize';
-import { initializeOperationMetadata, updateDynamicDataInNodes } from '../actions/bjsworkflow/operationdeserializer';
+import { initializeOperationMetadata, initializeDynamicDataInNodes } from '../actions/bjsworkflow/operationdeserializer';
 import { getConnectionsQuery } from '../queries/connections';
 import { initializeConnectionReferences } from '../state/connection/connectionSlice';
 import { initializeStaticResultProperties } from '../state/staticresultschema/staticresultsSlice';
 import type { RootState } from '../store';
+import { getCustomCodeFilesWithData } from '../utils/parameters/helper';
 import type { DeserializedWorkflow } from './BJSWorkflow/BJSDeserializer';
 import { Deserialize as BJSDeserialize } from './BJSWorkflow/BJSDeserializer';
 import type { WorkflowNode } from './models/workflowNode';
-import { LoggerService, Status } from '@microsoft/designer-client-services-logic-apps';
-import type { LogicAppsV2 } from '@microsoft/utils-logic-apps';
+import { LoggerService, Status } from '@microsoft/logic-apps-shared';
+import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import { createAsyncThunk } from '@reduxjs/toolkit';
+import { batch } from 'react-redux';
 
 interface InitWorkflowPayload {
   deserializedWorkflow: DeserializedWorkflow;
@@ -24,7 +26,7 @@ export const initializeGraphState = createAsyncThunk<
   { state: RootState }
 >('parser/deserialize', async (graphState: { workflowDefinition: Workflow; runInstance: any }, thunkAPI): Promise<InitWorkflowPayload> => {
   const { workflowDefinition, runInstance } = graphState;
-  const { workflow } = thunkAPI.getState() as RootState;
+  const { workflow, designerOptions } = thunkAPI.getState() as RootState;
   const spec = workflow.workflowSpec;
 
   if (spec === undefined) {
@@ -48,23 +50,37 @@ export const initializeGraphState = createAsyncThunk<
     thunkAPI.dispatch(initializeStaticResultProperties(deserializedWorkflow.staticResults ?? {}));
     updateWorkflowParameters(parameters ?? {}, thunkAPI.dispatch);
 
+    const { connections, customCode } = thunkAPI.getState();
+    const customCodeWithData = getCustomCodeFilesWithData(customCode);
+
     const asyncInitialize = async () => {
-      await initializeOperationMetadata(
-        deserializedWorkflow,
-        thunkAPI.getState().connections.connectionReferences,
-        parameters ?? {},
-        thunkAPI.dispatch
-      );
-      const actionsAndTriggers = deserializedWorkflow.actionData;
-      await getConnectionsApiAndMapping(actionsAndTriggers, thunkAPI.getState, thunkAPI.dispatch);
-      await updateDynamicDataInNodes(thunkAPI.getState, thunkAPI.dispatch);
+      batch(async () => {
+        try {
+          await Promise.all([
+            initializeOperationMetadata(
+              deserializedWorkflow,
+              connections.connectionReferences,
+              parameters ?? {},
+              customCodeWithData,
+              workflow.workflowKind,
+              designerOptions.hostOptions.forceEnableSplitOn ?? false,
+              thunkAPI.dispatch
+            ),
+            getConnectionsApiAndMapping(deserializedWorkflow, thunkAPI.dispatch),
+          ]);
+          await initializeDynamicDataInNodes(thunkAPI.getState, thunkAPI.dispatch);
+
+          LoggerService().endTrace(traceId, { status: Status.Success });
+        } catch (e) {
+          LoggerService().endTrace(traceId, { status: Status.Failure });
+        }
+      });
     };
-    asyncInitialize()
-      .then(() => LoggerService().endTrace(traceId, { status: Status.Success }))
-      .catch(() => LoggerService().endTrace(traceId, { status: Status.Failure }));
+    asyncInitialize();
 
     return { deserializedWorkflow, originalDefinition: definition };
-  } else if (spec === 'CNCF') {
+  }
+  if (spec === 'CNCF') {
     throw new Error('Spec not implemented.');
   }
   throw new Error('Invalid Workflow Spec');

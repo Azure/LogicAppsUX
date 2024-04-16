@@ -93,6 +93,7 @@ export const extensionCommand = {
   createLogicApp: 'azureLogicAppsStandard.createLogicApp',
   createLogicAppAdvanced: 'azureLogicAppsStandard.createLogicAppAdvanced',
   deploy: 'azureLogicAppsStandard.deploy',
+  generateDeploymentScripts: 'azureLogicAppsStandard.generateDeploymentScripts',
   deploySlot: 'azureLogicAppsStandard.deploySlot',
   redeploy: 'azureLogicAppsStandard.redeploy',
   showOutputChannel: 'azureLogicAppsStandard.showOutputChannel',
@@ -141,7 +142,9 @@ export const extensionCommand = {
   reportIssue: 'azureLogicAppsStandard.reportIssue',
   validateAndInstallBinaries: 'azureLogicAppsStandard.validateAndInstallBinaries',
   resetValidateAndInstallBinaries: 'azureLogicAppsStandard.resetValidateAndInstallBinaries',
+  disableValidateAndInstallBinaries: 'azureLogicAppsStandard.disableValidateAndInstallBinaries',
   azureAzuriteStart: 'azurite.start',
+  parameterizeConnections: 'azureLogicAppsStandard.parameterizeConnections',
   loadDataMapFile: 'azureLogicAppsStandard.dataMap.loadDataMapFile',
   dataMapAddSchemaFromFile: 'azureLogicAppsStandard.dataMap.addSchemaFromFile',
   dataMapAttemptToResolveMissingSchemaFile: 'azureLogicAppsStandard.dataMap.attemptToResolveMissingSchemaFile',
@@ -187,6 +190,7 @@ export const showStartDesignTimeMessageSetting = 'showStartDesignTimeMessage';
 export const autoStartDesignTimeSetting = 'autoStartDesignTime';
 export const autoRuntimeDependenciesValidationAndInstallationSetting = 'autoRuntimeDependenciesValidationAndInstallation';
 export const azuriteBinariesLocationSetting = 'azuriteLocationSetting';
+export const parameterizeConnectionsInProjectLoadSetting = 'parameterizeConnectionsInProjectLoad';
 export const showAutoStartAzuriteWarning = 'showAutoStartAzuriteWarning';
 export const autoStartAzuriteSetting = 'autoStartAzurite';
 export const autoRuntimeDependenciesPathSettingKey = 'autoRuntimeDependenciesPath';
@@ -194,6 +198,14 @@ export const dotNetBinaryPathSettingKey = 'dotnetBinaryPath';
 export const nodeJsBinaryPathSettingKey = 'nodeJsBinaryPath';
 export const funcCoreToolsBinaryPathSettingKey = 'funcCoreToolsBinaryPath';
 export const dependencyTimeoutSettingKey = 'dependencyTimeout';
+
+// host.json
+export const extensionBundleId = 'Microsoft.Azure.Functions.ExtensionBundle.Workflows';
+export const targetBundleKey = 'FUNCTIONS_EXTENSIONBUNDLE_SOURCE_URI';
+
+// local.settings.json
+export const localEmulatorConnectionString = 'UseDevelopmentStorage=true';
+export const appKindSetting = 'APP_KIND';
 
 // Project
 export const defaultBundleId = 'Microsoft.Azure.Functions.ExtensionBundle';
@@ -205,20 +217,21 @@ export const tasksVersion = '2.0.0';
 export const launchVersion = '0.2.0';
 export const dotnetPublishTaskLabel = 'publish';
 export const defaultLogicAppsFolder = '.azurelogicapps';
+export const defaultFunctionCoreToolsFolder = '.azure-functions-core-tools';
 export const defaultAzuritePathValue = path.join(os.homedir(), defaultLogicAppsFolder, '.azurite');
 export const defaultDependencyPathValue = path.join(os.homedir(), defaultLogicAppsFolder, 'dependencies');
-
-// local.settings.json
-export const localEmulatorConnectionString = 'UseDevelopmentStorage=true';
-
-// host.json
-export const extensionBundleId = 'Microsoft.Azure.Functions.ExtensionBundle.Workflows';
-export const targetBundleKey = 'FUNCTIONS_EXTENSIONBUNDLE_SOURCE_URI';
+export const defaultExtensionBundlePathValue = path.join(
+  os.homedir(),
+  defaultFunctionCoreToolsFolder,
+  'Functions',
+  'ExtensionBundles',
+  extensionBundleId
+);
 
 // Fallback Dependency Versions
 export const DependencyVersion = {
   dotnet6: '6.0.413',
-  funcCoreTools: '4.0.5198',
+  funcCoreTools: '4.0.5455',
   nodeJs: '18.17.1',
 } as const;
 export type DependencyVersion = (typeof DependencyVersion)[keyof typeof DependencyVersion];
@@ -281,3 +294,10 @@ export const logicAppFilter = {
   type: 'microsoft.web/sites',
   kind: 'functionapp,workflowapp',
 };
+
+export const COMMON_ERRORS = {
+  OPERATION_CANCELLED: 'Operation cancelled',
+} as const;
+export type COMMON_ERRORS = (typeof COMMON_ERRORS)[keyof typeof COMMON_ERRORS];
+// Environment Variables
+export const azurePublicBaseUrl = 'https://management.azure.com';

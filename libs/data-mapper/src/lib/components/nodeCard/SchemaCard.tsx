@@ -35,8 +35,8 @@ import {
   bundleIcon,
 } from '@fluentui/react-icons';
 import { CardContextMenu, useCardContextMenu } from '@microsoft/designer-ui';
-import type { SchemaNodeExtended } from '@microsoft/utils-logic-apps';
-import { SchemaNodeProperty, SchemaType } from '@microsoft/utils-logic-apps';
+import type { SchemaNodeExtended } from '@microsoft/logic-apps-shared';
+import { SchemaNodeProperty, SchemaType } from '@microsoft/logic-apps-shared';
 import { useMemo, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
@@ -259,12 +259,14 @@ export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
   const contextMenu = useCardContextMenu();
   const ariaDescribeChevron = intl.formatMessage({
     defaultMessage: 'Navigate to element and view children',
+    id: 'vvSHR8',
     description: "Change context of the canvas to view that element's children",
   });
 
   const RemoveMenuItem = () => {
     const deleteNode = intl.formatMessage({
       defaultMessage: 'Remove',
+      id: 'WcnIF8',
       description: 'Remove card from canvas',
     });
     return (
@@ -283,8 +285,8 @@ export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
     isCurrentNodeSelected || sourceNodeConnectionBeingDrawnFromId === reactFlowId
       ? selectedCardStyles
       : isCurrentNodeHighlighted
-      ? highlightedCardStyles
-      : undefined;
+        ? highlightedCardStyles
+        : undefined;
 
   return (
     <div className={classes.badgeContainer}>
@@ -310,7 +312,7 @@ export const SchemaCard = (props: NodeProps<SchemaCardProps>) => {
           onClick={onClick}
           appearance={'transparent'}
           className={classes.contentButton}
-          style={{ paddingRight: !showOutputChevron ? '10px' : '0px' }}
+          style={{ paddingRight: showOutputChevron ? '0px' : '10px' }}
         >
           <span className={classes.cardIcon}>
             <BundledTypeIcon />
@@ -362,6 +364,7 @@ const NBadge = ({ isOutput }: NBadgeProps) => {
 
   const arrayMappingLabel = intl.formatMessage({
     defaultMessage: 'Repeating',
+    id: 'j5z8Vd',
     description: 'Label for array connection',
   });
 

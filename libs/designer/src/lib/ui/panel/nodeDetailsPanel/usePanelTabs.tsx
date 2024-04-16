@@ -1,7 +1,7 @@
 import constants from '../../../common/constants';
 import type { RootState } from '../../../core';
 import { useNodeMetadata, useOperationInfo } from '../../../core';
-import { useMonitoringView } from '../../../core/state/designerOptions/designerOptionsSelectors';
+import { usePanelTabHideKeys, useMonitoringView } from '../../../core/state/designerOptions/designerOptionsSelectors';
 import { useParameterValidationErrors } from '../../../core/state/operation/operationSelector';
 import { useSelectedNodeId } from '../../../core/state/panel/panelSelectors';
 import { useSettingValidationErrors } from '../../../core/state/setting/settingSelector';
@@ -16,7 +16,7 @@ import { monitorRetryTab } from './tabs/retryTab';
 import { scratchTab } from './tabs/scratchTab';
 import { settingsTab } from './tabs/settingsTab';
 import { testingTab } from './tabs/testingTab';
-import { SUBGRAPH_TYPES } from '@microsoft/utils-logic-apps';
+import { SUBGRAPH_TYPES } from '@microsoft/logic-apps-shared';
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useSelector } from 'react-redux';
@@ -25,6 +25,7 @@ export const usePanelTabs = () => {
   const intl = useIntl();
 
   const isMonitoringView = useMonitoringView();
+  const panelTabHideKeys = usePanelTabHideKeys();
 
   const selectedNode = useSelectedNodeId();
   const isTriggerNode = useSelector((state: RootState) => isRootNodeInGraph(selectedNode, 'root', state.workflow.nodesMetadata));
@@ -81,11 +82,19 @@ export const usePanelTabs = () => {
     [intl, isMonitoringView, runHistory]
   );
 
-  const scratchTabItem = useMemo(() => scratchTab, []);
+  const scratchTabItem = useMemo(
+    () => ({
+      ...scratchTab,
+      visible: process.env.NODE_ENV !== 'production',
+    }),
+    []
+  );
 
   const tabs = useMemo(() => {
     // Switch cases should only show parameters tab
-    if (nodeMetaData && nodeMetaData.subgraphType === SUBGRAPH_TYPES.SWITCH_CASE) return [parametersTabItem];
+    if (nodeMetaData && nodeMetaData.subgraphType === SUBGRAPH_TYPES.SWITCH_CASE) {
+      return [parametersTabItem];
+    }
 
     return [
       monitoringTabItem,
@@ -98,6 +107,7 @@ export const usePanelTabs = () => {
       scratchTabItem,
     ]
       .slice()
+      .filter((a) => !panelTabHideKeys.includes(a.id as any))
       .filter((a) => a.visible)
       .sort((a, b) => a.order - b.order);
   }, [
@@ -110,6 +120,7 @@ export const usePanelTabs = () => {
     scratchTabItem,
     settingsTabItem,
     testingTabItem,
+    panelTabHideKeys,
   ]);
 
   return tabs;

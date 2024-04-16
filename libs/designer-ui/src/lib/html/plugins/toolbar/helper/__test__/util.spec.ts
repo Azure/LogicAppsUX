@@ -5,10 +5,12 @@ import {
   decodeSegmentValueInLexicalContext,
   encodeSegmentValueInDomContext,
   encodeSegmentValueInLexicalContext,
-  isAttributeSupportedByLexical,
+  isAttributeSupportedByHtmlEditor,
+  isHtmlStringValueSafeForLexical,
   isTagNameSupportedByLexical,
 } from '../util';
-
+import type { ValueSegment } from '@microsoft/logic-apps-shared';
+import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 describe('lib/html/plugins/toolbar/helper/util', () => {
   describe('cleanHtmlString', () => {
     it.each([
@@ -105,7 +107,7 @@ describe('lib/html/plugins/toolbar/helper/util', () => {
     });
   });
 
-  describe('isAttributeSupportedByLexical', () => {
+  describe('isAttributeSupportedByHtmlEditor', () => {
     it.each<[string, string, boolean]>([
       ['', 'href', false],
       ['a', '', false],
@@ -118,8 +120,29 @@ describe('lib/html/plugins/toolbar/helper/util', () => {
       ['p', 'href', false],
       ['p', 'id', true],
       ['p', 'style', true],
+      ['img', 'id', true],
+      ['img', 'alt', true],
+      ['img', 'script', false],
+      ['img', 'src', true],
     ])('should return <%s %s="..." /> as supported=%p', (inputTag, inputAttr, expected) => {
-      expect(isAttributeSupportedByLexical(inputTag, inputAttr)).toBe(expected);
+      expect(isAttributeSupportedByHtmlEditor(inputTag, inputAttr)).toBe(expected);
+    });
+  });
+
+  describe('isHtmlStringValueSafeForLexical', () => {
+    const case1 = '';
+    const case2 = '<h1>hello</h1>';
+    const case3 = `<h3>dfg<span style="background-color: rgb(184, 233, 134);">dfg</span><span style="background-color: rgb(184, 233, 134); font-size: 11px;">dfg</span><a href="https://www.bing.com"><span style="background-color: rgb(184, 233, 134); font-family: Georgia; font-size: 11px;">dfgdfg dfgdfg dg zd</span></a><span style="background-color: rgb(184, 233, 134); font-family: Georgia; font-size: 11px;"> </span><u>asa</u></h3>`;
+    const case4 = '<section>hello</section>';
+
+    it.each<[string, boolean, string]>([
+      ['empty string', true, case1],
+      ['small string using <h1>', true, case2],
+      ['large string using <a>, <u>, <h3>, <span>', true, case3],
+      ['small string using <section>', false, case4],
+    ])('should return %p as supported=%p', (_caseName, expected, inputString) => {
+      const nodeMap = new Map<string, ValueSegment>();
+      expect(isHtmlStringValueSafeForLexical(inputString, nodeMap)).toBe(expected);
     });
   });
 
@@ -127,9 +150,12 @@ describe('lib/html/plugins/toolbar/helper/util', () => {
     it.each<[string, boolean]>([
       ['', false],
       ['*', false],
+      ['SeCtIoN', false],
       ['section', false],
       ['script', false],
       ['style', false],
+      ['a', true],
+      ['A', true],
       ['b', true],
       ['br', true],
       ['em', true],
@@ -140,11 +166,14 @@ describe('lib/html/plugins/toolbar/helper/util', () => {
       ['h5', true],
       ['h6', true],
       ['i', true],
+      ['img', false],
       ['li', true],
       ['ol', true],
       ['p', true],
       ['span', true],
+      ['sTrOnG', true],
       ['strong', true],
+      ['u', true],
       ['ul', true],
     ])('should return <%s /> as supported=%p', (inputTag, expected) => {
       expect(isTagNameSupportedByLexical(inputTag)).toBe(expected);

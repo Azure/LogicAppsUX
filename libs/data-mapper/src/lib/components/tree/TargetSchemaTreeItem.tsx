@@ -6,7 +6,7 @@ import { TreeIndicator } from './TreeBranch';
 import { Stack } from '@fluentui/react';
 import { mergeClasses, Text, tokens } from '@fluentui/react-components';
 import { CheckmarkCircle12Filled, Circle12Regular, CircleHalfFill12Regular, Document20Regular } from '@fluentui/react-icons';
-import type { SchemaNodeExtended } from '@microsoft/utils-logic-apps';
+import type { SchemaNodeExtended } from '@microsoft/logic-apps-shared';
 import { useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -96,7 +96,7 @@ export const TargetSchemaTreeHeader = ({ status }: TargetSchemaTreeHeaderProps) 
         paddingLeft: '8px',
         marginBottom: 0,
         cursor: 'pointer',
-        backgroundColor: !currentTargetSchemaNode ? tokens.colorNeutralBackground4Selected : undefined,
+        backgroundColor: currentTargetSchemaNode ? undefined : tokens.colorNeutralBackground4Selected,
       }}
       onClick={() => dispatch(setCurrentTargetSchemaNode(undefined))}
     >

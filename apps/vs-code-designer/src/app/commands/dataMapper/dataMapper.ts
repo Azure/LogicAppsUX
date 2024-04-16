@@ -1,10 +1,9 @@
-/* eslint-disable no-param-reassign */
 import { extensionCommand } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import DataMapperExt from './DataMapperExt';
 import { dataMapDefinitionsPath, draftMapDefinitionSuffix, schemasPath, supportedDataMapDefinitionFileExts } from './extensionConfig';
-import type { MapDefinitionEntry } from '@microsoft/utils-logic-apps';
+import type { MapDefinitionEntry } from '@microsoft/logic-apps-shared';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { callWithTelemetryAndErrorHandling } from '@microsoft/vscode-azext-utils';
 import { existsSync as fileExistsSync, promises as fs } from 'fs';
@@ -20,7 +19,7 @@ export const createNewDataMapCmd = (context: IActionContext) => {
 
     context.telemetry.properties.result = 'Succeeded';
 
-    DataMapperExt.openDataMapperPanel(newDataMapName);
+    DataMapperExt.openDataMapperPanel(newDataMapName, context);
   });
 };
 
@@ -165,7 +164,7 @@ export const loadDataMapFileCmd = async (context: IActionContext, uri: Uri) => {
   const dataMapName = path.basename(mapDefinitionPath, path.extname(mapDefinitionPath)).replace(draftMapDefinitionSuffix, ''); // Gets filename w/o ext (and w/o draft suffix)
 
   // Set map definition data to be loaded once webview sends webviewLoaded msg
-  DataMapperExt.openDataMapperPanel(dataMapName, {
+  DataMapperExt.openDataMapperPanel(dataMapName, context, {
     mapDefinition,
     sourceSchemaFileName: path.basename(srcSchemaPath),
     targetSchemaFileName: path.basename(tgtSchemaPath),

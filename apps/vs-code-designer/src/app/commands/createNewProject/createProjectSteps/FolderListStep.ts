@@ -5,8 +5,8 @@
 import { localize } from '../../../../localize';
 import { getContainingWorkspace, selectWorkspaceFolder } from '../../../utils/workspace';
 import { AzureWizardPromptStep } from '@microsoft/vscode-azext-utils';
-import { OpenBehavior } from '@microsoft/vscode-extension';
-import type { IProjectWizardContext } from '@microsoft/vscode-extension';
+import { OpenBehavior } from '@microsoft/vscode-extension-logic-apps';
+import type { IProjectWizardContext } from '@microsoft/vscode-extension-logic-apps';
 
 export class FolderListStep extends AzureWizardPromptStep<IProjectWizardContext> {
   public hideStepCount = true;

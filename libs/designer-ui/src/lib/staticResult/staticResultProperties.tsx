@@ -1,11 +1,11 @@
-import type { ChangeState, StaticResultRootSchemaType } from '..';
+import type { StaticResultRootSchemaType } from '..';
 import { Label, DropdownEditor } from '..';
 import { StaticResultProperty } from './staticResultProperty';
 import { formatShownProperties, getOptions, initializeShownProperties } from './util';
-import type { OpenAPIV2 } from '@microsoft/utils-logic-apps';
-import { createCopy } from '@microsoft/utils-logic-apps';
-import isEqual from 'lodash.isequal';
-import { useEffect, useState } from 'react';
+import type { IDropdownOption } from '@fluentui/react';
+import type { OpenAPIV2 } from '@microsoft/logic-apps-shared';
+import type { Dispatch, SetStateAction } from 'react';
+import { useState } from 'react';
 import { useIntl } from 'react-intl';
 
 interface StaticResultPropertiesProps {
@@ -14,7 +14,7 @@ interface StaticResultPropertiesProps {
   required: string[];
   additionalPropertiesSchema?: boolean;
   propertyValues: OpenAPIV2.SchemaObject;
-  setPropertyValues: (newPropertyValue: OpenAPIV2.SchemaObject) => void;
+  setPropertyValues: Dispatch<SetStateAction<OpenAPIV2.SchemaObject>>;
 }
 
 export const StaticResultProperties = ({
@@ -29,43 +29,29 @@ export const StaticResultProperties = ({
     initializeShownProperties(required, propertiesSchema, propertyValues)
   );
 
-  useEffect(() => {
-    if (!isEqual(shownProperties, initializeShownProperties(required, propertiesSchema, propertyValues))) {
-      const newPropertyValues: Record<string, any> = createCopy(propertyValues);
-      Object.keys(shownProperties).forEach((propertyName) => {
-        if (!shownProperties[propertyName]) {
-          delete newPropertyValues[propertyName];
-        } else {
-          // todo: save previous values, so propertyEditor does not clear when removing item from dropdown
-          newPropertyValues[propertyName] = propertyValues?.[propertyName];
+  const updateShownProperties = (_event: React.FormEvent<HTMLDivElement>, option?: IDropdownOption) => {
+    const optionKey = option?.key;
+    if (optionKey) {
+      // delete the properties if the option is unchecked
+      setPropertyValues((prevState) => {
+        if (prevState[optionKey]) {
+          // eslint-disable-next-line @typescript-eslint/no-unused-vars
+          const { [optionKey]: deletedProperty, ...otherProperties } = prevState;
+          return otherProperties;
         }
+        return prevState;
       });
-      setPropertyValues(newPropertyValues);
+      setShownProperties((prevState) => ({ ...prevState, [optionKey]: !prevState[optionKey] }));
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [shownProperties]);
-
-  useEffect(() => {
-    initializeShownProperties(required, propertiesSchema, propertyValues);
-  }, [propertiesSchema, propertyValues, required]);
-
-  const updateShownProperties = (newState: ChangeState) => {
-    const updatedShownProperties: Record<string, boolean> = {};
-    const checkedValues = newState.value[0].value.split(',');
-    Object.keys(propertiesSchema).forEach((propertyName) => {
-      updatedShownProperties[propertyName] = checkedValues.includes(propertyName);
-    });
-    setShownProperties(updatedShownProperties);
   };
 
   const updatePropertyValues = (propertyName: string, newPropertyValue: any) => {
-    if (!isEqual(propertyValues?.[propertyName], newPropertyValue)) {
-      setPropertyValues({ ...propertyValues, [propertyName]: newPropertyValue });
-    }
+    setPropertyValues((prevState) => ({ ...prevState, [propertyName]: newPropertyValue }));
   };
 
   const fieldLabels = intl.formatMessage({
     defaultMessage: 'Select Fields',
+    id: 'kBOAkT',
     description: 'Label to select Fields',
   });
 
@@ -78,11 +64,12 @@ export const StaticResultProperties = ({
             initialValue={formatShownProperties(shownProperties)}
             options={getOptions(propertiesSchema, required)}
             multiSelect={true}
-            onChange={updateShownProperties}
+            //onChange={updateShownProperties}
+            customOnChangeHandler={updateShownProperties}
           />
         </div>
       </div>
-      <div className={!isRoot ? 'msla-static-result-properties-inner' : undefined}>
+      <div className={isRoot ? undefined : 'msla-static-result-properties-inner'}>
         {Object.entries(shownProperties).map(([propertyName, showProperty], key) => {
           return showProperty && propertiesSchema[propertyName] ? (
             <StaticResultProperty

@@ -20,27 +20,43 @@ export const AdvancedOptions: React.FC = () => {
   const intlText = {
     ADVANCED_OPTIONS: intl.formatMessage({
       defaultMessage: 'Advanced options',
+      id: 'AANqXs',
       description: 'Advanced options title',
     }),
     EXPORT_CONNECTION: intl.formatMessage({
       defaultMessage: 'Export connection credentials',
+      id: 'IasIBo',
       description: 'Export connection credentials title',
     }),
     EXPORT_CONNECTION_DESCRIPTION: intl.formatMessage({
       defaultMessage: 'Export the connection credentials for each application',
+      id: 'qMrEa5',
       description: 'Export the connection credentials for each application description',
     }),
     OFF: intl.formatMessage({
       defaultMessage: 'Off',
+      id: 'nwlaY0',
       description: 'Off text',
     }),
     CLONE_CONNECTIONS: intl.formatMessage({
       defaultMessage: 'Clone connections credentials',
+      id: 'Okr6Rk',
       description: 'Clone connections text',
     }),
     GENERATE_INFRAESTRUCTURE: intl.formatMessage({
       defaultMessage: 'Generate infrastructure templates',
+      id: '1ilzLi',
       description: 'Generate infrastructure templates',
+    }),
+    INTEGRATION_ACCOUNT_SOURCE: intl.formatMessage({
+      defaultMessage: 'Default to integration account as source for transformations and schema validation',
+      id: 'Wr+bL6',
+      description: 'Default to integration account as source for transformations and schema validation',
+    }),
+    EXPORT_CUSTOM_API_ACTIONS_TO_API_MANAGEMENT_ACTIONS: intl.formatMessage({
+      defaultMessage: 'Export custom connector actions as API Management actions',
+      id: 'KMOkYN',
+      description: 'Export custom connector actions as API Management actions',
     }),
   };
 
@@ -51,6 +67,16 @@ export const AdvancedOptions: React.FC = () => {
       text: intlText.CLONE_CONNECTIONS,
       selected: false,
       disabled: isCloneConnectionsAvailable(selectedAdvanceOptions),
+    },
+    {
+      key: AdvancedOptionsTypes.integrationAccountSource,
+      text: intlText.INTEGRATION_ACCOUNT_SOURCE,
+      selected: false,
+    },
+    {
+      key: AdvancedOptionsTypes.exportCustomApiActionsToAPIManagementActions,
+      text: intlText.EXPORT_CUSTOM_API_ACTIONS_TO_API_MANAGEMENT_ACTIONS,
+      selected: false,
     },
   ];
 
@@ -83,6 +109,7 @@ export const AdvancedOptions: React.FC = () => {
         onChange={onChangeOptions}
         selectedKeys={selectedAdvanceOptions}
         multiSelect
+        className="msla-export-workflows-advanced-options-dropdown"
       />
     </div>
   );

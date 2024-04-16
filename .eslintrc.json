@@ -1,36 +1,34 @@
 {
   "root": true,
-  "ignorePatterns": ["**/*"],
-  "plugins": ["@nrwl/nx", "formatjs", "react", "react-hooks"],
+  "parser": "@typescript-eslint/parser",
+  "plugins": [
+    "formatjs",
+    "react",
+    "react-hooks",
+    "@typescript-eslint"
+  ],
+  "settings": {
+    "react": {
+      "version": "detect"
+    }
+  },
+  "extends": "eslint:recommended",
   "overrides": [
     {
-      "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
-      "rules": {
-        "@nrwl/nx/enforce-module-boundaries": [
-          "error",
-          {
-            "enforceBuildableLibDependency": true,
-            "allow": [],
-            "depConstraints": [
-              {
-                "sourceTag": "*",
-                "onlyDependOnLibsWithTags": ["*"]
-              }
-            ]
-          }
-        ]
-      }
-    },
-    {
-      "files": ["*.ts", "*.tsx"],
+      "files": [
+        "*.ts",
+        "*.tsx"
+      ],
       "extends": [
-        "plugin:@nrwl/nx/typescript",
         "plugin:react/recommended",
         "plugin:react-hooks/recommended",
         "plugin:import/recommended",
         "plugin:import/typescript"
       ],
       "rules": {
+        "no-unused-vars": "off",
+        "no-redeclare": "off",
+        "no-undef": "off",
         "no-restricted-syntax": [
           "error",
           {
@@ -73,24 +71,35 @@
             "disallowTypeAnnotations": true
           }
         ],
+        "formatjs/enforce-id": [
+          "error",
+          {
+            "idInterpolationPattern": "[sha512:contenthash:base64:6]"
+          }
+        ],
         "formatjs/enforce-placeholders": [
           "error",
           {
-            "ignoreList": ["foo"]
+            "ignoreList": [
+              "foo"
+            ]
           }
         ],
-        "no-param-reassign": [
+        "no-param-reassign": "off",
+        "formatjs/enforce-default-message": [
           "error",
-          {
-            "props": true,
-            "ignorePropertyModificationsFor": ["state"]
-          }
+          "literal"
         ],
-        "formatjs/enforce-default-message": ["error", "literal"],
-        "formatjs/enforce-description": ["error", "literal"],
-        "formatjs/no-multiple-whitespaces": [1],
-        "formatjs/no-multiple-plurals": ["error"],
-        "formatjs/no-id": ["error"],
+        "formatjs/enforce-description": [
+          "error",
+          "literal"
+        ],
+        "formatjs/no-multiple-whitespaces": [
+          1
+        ],
+        "formatjs/no-multiple-plurals": [
+          "error"
+        ],
         "formatjs/no-complex-selectors": [
           "error",
           {
@@ -100,11 +109,6 @@
         "react/react-in-jsx-scope": 0,
         "react/prop-types": 0
       }
-    },
-    {
-      "files": ["*.js", "*.jsx"],
-      "extends": ["plugin:@nrwl/nx/javascript"],
-      "rules": {}
     },
     {
       "files": "*.json",

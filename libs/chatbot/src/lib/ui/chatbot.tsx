@@ -5,8 +5,8 @@ import { CopilotPanelHeader } from './panelheader';
 import type { ITextField } from '@fluentui/react';
 import { useTheme, Panel, PanelType, css, getId } from '@fluentui/react';
 import { ShieldCheckmarkRegular } from '@fluentui/react-icons';
-import { LogEntryLevel, LoggerService, ChatbotService } from '@microsoft/designer-client-services-logic-apps';
-import type { ConversationItem, ChatEntryReaction } from '@microsoft/designer-ui';
+import { LogEntryLevel, LoggerService, ChatbotService, guid } from '@microsoft/logic-apps-shared';
+import type { ConversationItem, ChatEntryReaction, AdditionalParametersItem } from '@microsoft/designer-ui';
 import {
   PanelLocation,
   ChatInput,
@@ -18,7 +18,6 @@ import {
   ChatSuggestion,
 } from '@microsoft/designer-ui';
 import type { Workflow } from '@microsoft/logic-apps-designer';
-import { guid } from '@microsoft/utils-logic-apps';
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 
@@ -72,40 +71,49 @@ export const Chatbot = ({
     return {
       chatInputPlaceholder: intl.formatMessage({
         defaultMessage: 'Ask a question about this workflow or about Azure Logic Apps as a whole ...',
+        id: 'kXn5e0',
         description: 'Chabot input placeholder text',
       }),
       protectedMessage: intl.formatMessage({
         defaultMessage: 'Your personal and company data are protected in this chat',
+        id: 'Yrw/Qt',
         description: 'Letting user know that their data is protected in the chatbot',
       }),
       submitButtonTitle: intl.formatMessage({
         defaultMessage: 'Submit',
+        id: 'Oep6va',
         description: 'Submit button',
       }),
       actionsButtonTitle: intl.formatMessage({
         defaultMessage: 'Actions',
+        id: 'Vqs8hE',
         description: 'Actions button',
       }),
       queryTemplates: {
         createFlow1SentenceStart: intl.formatMessage({
           defaultMessage: 'Send me an email when ',
+          id: '4Levd5',
           description: 'Chatbot input start of sentence for creating a flow that the user should complete. Trailing space is intentional.',
         }),
         createFlow2SentenceStart: intl.formatMessage({
           defaultMessage: 'Every week on Monday ',
+          id: '635Koz',
           description: 'Chatbot input start of sentence for creating a flow that the user should complete. Trailing space is intentional.',
         }),
         createFlow3SentenceStart: intl.formatMessage({
           defaultMessage: 'When a new item ',
+          id: 'IsbbsG',
           description: 'Chatbot input start of sentence for creating a flow that the user should complete. Trailing space is intentional.',
         }),
         addActionSentenceStart: intl.formatMessage({
           defaultMessage: 'Add an action ',
+          id: 'iXW+2l',
           description: 'Chatbot input start of sentence for adding an action that the user should complete. Trailing space is intentional.',
         }),
         replaceActionSentenceStartFormat: intl.formatMessage(
           {
-            defaultMessage: `Replace "{selectedOperation}" with `,
+            defaultMessage: 'Replace "{selectedOperation}" with ',
+            id: '9QS9a3',
             description:
               'Chatbot input start of sentence for replacing an action that the user should complete. Trailing space is intentional.',
           },
@@ -113,52 +121,63 @@ export const Chatbot = ({
         ),
         explainActionSentenceFormat: intl.formatMessage(
           {
-            defaultMessage: `Explain what the "{selectedOperation}" action does in this flow`,
+            defaultMessage: 'Explain what the "{selectedOperation}" action does in this flow',
+            id: 'VEbE93',
             description: 'Chatbot input sentence asking to explain what the selected action does in the flow.',
           },
           { selectedOperation }
         ),
         explainFlowSentence: intl.formatMessage({
           defaultMessage: 'Explain what this flow does',
+          id: 'vF+gWH',
           description: 'Chatbot query sentence that asks to explain what the workflow does',
         }),
         questionSentenceStart: intl.formatMessage({
           defaultMessage: 'Tell me more about ',
+          id: 'dKCp2j',
           description: 'Chatbot query start of sentence for asking for more explaination on an item that the user can should complete.',
         }),
         editFlowSentenceStart: intl.formatMessage({
           defaultMessage: 'Edit this flow to ',
+          id: 'eI00kb',
           description: 'Chatbot query start of sentence for editing the workflow that the user can should complete.',
         }),
       },
       chatSuggestion: {
         saveButton: intl.formatMessage({
           defaultMessage: 'Save this workflow',
+          id: 'OYWZE4',
           description: 'Chatbot suggestion button to save workflow',
         }),
         testButton: intl.formatMessage({
           defaultMessage: 'Test this workflow',
+          id: 'tTIsTX',
           description: 'Chatbot suggestion button to test this workflow',
         }),
       },
       assistantErrorMessage: intl.formatMessage({
         defaultMessage: 'Sorry, something went wrong. Please try again.',
+        id: 'fvGvnA',
         description: 'Chatbot error message',
       }),
       progressCardText: intl.formatMessage({
         defaultMessage: '🖊️ Working on it...',
+        id: 'O0tSvb',
         description: 'Chatbot card telling user that the AI response is being generated',
       }),
       progressCardSaveText: intl.formatMessage({
         defaultMessage: '💾 Saving this flow...',
+        id: '4iyEAY',
         description: 'Chatbot card telling user that the workflow is being saved',
       }),
       progressCardStopButtonLabel: intl.formatMessage({
         defaultMessage: 'Stop generating',
+        id: 'wP0/uB',
         description: 'Label for the button on the progress card that stops AI response generation',
       }),
       cancelGenerationText: intl.formatMessage({
         defaultMessage: 'Copilot chat canceled',
+        id: 'JKZpcd',
         description: 'Chatbot card telling user that the AI response is being canceled',
       }),
     };
@@ -198,7 +217,9 @@ export const Chatbot = ({
   const onSubmitInputQuery = useCallback(
     async (input: string) => {
       const query = input.trim();
-      if (!query) return;
+      if (!query) {
+        return;
+      }
       const date = new Date();
       setConversation((current) => [
         {
@@ -224,7 +245,7 @@ export const Chatbot = ({
         }
         const queryResponse: string = response.data.properties.response;
         // commenting out usage of additionalParameters until Logic Apps backend is updated to include this response property
-        // const additionalParameters: string[] | undefined = response.data.properties.additionalParameters;
+        const additionalParameters: AdditionalParametersItem = response.data.properties.additionalParameters;
         setConversation((current) => [
           {
             type: ConversationItemType.Reply,
@@ -236,6 +257,7 @@ export const Chatbot = ({
             __rawRequest: requestPayload,
             __rawResponse: response,
             reaction: undefined,
+            additionalDocURL: additionalParameters?.url ?? undefined,
             azureButtonCallback:
               /*additionalParameters?.includes(constants.WorkflowResponseAdditionalParameters.SendToAzure)*/ queryResponse ===
                 constants.DefaultAzureResponseCallback && openAzureCopilotPanel

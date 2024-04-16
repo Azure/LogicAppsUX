@@ -1,5 +1,6 @@
 import { EmptyContent } from '../card/emptycontent';
 import type { PageActionTelemetryData } from '../telemetry/models';
+import { PanelResizer } from './panelResizer';
 import type { CommonPanelProps, PanelTab } from './panelUtil';
 import { PanelScope, PanelLocation } from './panelUtil';
 import { PanelContent } from './panelcontent';
@@ -14,12 +15,19 @@ import { useCallback } from 'react';
 import { useIntl } from 'react-intl';
 
 const horizontalPadding = '2rem';
-const verticalPadding = '1rem';
 
 const panelStyles: Partial<IPanelStyles> = {
-  content: { padding: verticalPadding + ' ' + horizontalPadding },
+  content: {
+    padding: '1rem 2rem 0rem',
+    overflow: 'hidden',
+    height: '100%',
+  },
   main: { overflow: 'hidden' },
-  scrollableContent: { height: '100%' },
+  scrollableContent: {
+    height: '100%',
+    display: 'flex',
+    flexDirection: 'column',
+  },
 };
 
 const panelStylesCollapsed: Partial<IPanelStyles> = {
@@ -46,11 +54,15 @@ export type PanelContainerProps = {
   nodeId: string;
   title?: string;
   layerProps?: ILayerProps;
+  canResubmit?: boolean;
+  resubmitOperation?: () => void;
   trackEvent(data: PageActionTelemetryData): void;
   toggleCollapse: () => void;
   onCommentChange: (panelCommentChangeEvent?: string) => void;
   renderHeader?: (props?: IPanelProps, defaultrender?: IPanelHeaderRenderer, headerTextId?: string) => JSX.Element;
   onTitleChange: TitleChangeHandler;
+  onTitleBlur?: (prevTitle: string) => void;
+  setCurrWidth: (width: string) => void;
 } & CommonPanelProps;
 
 export const PanelContainer = ({
@@ -66,6 +78,8 @@ export const PanelContainer = ({
   headerMenuItems,
   selectedTab,
   selectTab,
+  canResubmit,
+  resubmitOperation,
   showCommentBox,
   readOnlyMode,
   tabs,
@@ -78,6 +92,9 @@ export const PanelContainer = ({
   renderHeader,
   onCommentChange,
   onTitleChange,
+  onTitleBlur,
+  setCurrWidth,
+  isResizeable,
 }: PanelContainerProps) => {
   const intl = useIntl();
 
@@ -99,10 +116,13 @@ export const PanelContainer = ({
           isError={isError}
           isLoading={isLoading}
           comment={comment}
+          canResubmit={canResubmit}
+          resubmitOperation={resubmitOperation}
           horizontalPadding={horizontalPadding}
           commentChange={onCommentChange}
           toggleCollapse={toggleCollapse}
           onTitleChange={onTitleChange}
+          onTitleBlur={onTitleBlur}
         />
       );
     },
@@ -120,19 +140,24 @@ export const PanelContainer = ({
       isError,
       isLoading,
       comment,
+      canResubmit,
+      resubmitOperation,
       onCommentChange,
       toggleCollapse,
       onTitleChange,
+      onTitleBlur,
     ]
   );
 
   const panelLabel = intl.formatMessage({
     defaultMessage: 'panel',
+    id: 'c6XbVI',
     description: 'label for panel component',
   });
 
   const panelErrorMessage = intl.formatMessage({
     defaultMessage: 'Error loading operation data',
+    id: '62Ypnr',
     description: 'label for panel error',
   });
 
@@ -165,6 +190,7 @@ export const PanelContainer = ({
           ) : (
             <PanelContent tabs={tabs} trackEvent={trackEvent} nodeId={nodeId} selectedTab={selectedTab} selectTab={selectTab} />
           )}
+          {isResizeable ? <PanelResizer updatePanelWidth={setCurrWidth} /> : null}
         </>
       )}
     </Panel>

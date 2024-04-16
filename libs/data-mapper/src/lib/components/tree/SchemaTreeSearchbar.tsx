@@ -14,7 +14,7 @@ import {
   Tooltip,
 } from '@fluentui/react-components';
 import { Dismiss20Regular, Filter20Regular, Checkmark20Filled } from '@fluentui/react-icons';
-import { NormalizedDataType, SchemaNodeProperty } from '@microsoft/utils-logic-apps';
+import { NormalizedDataType, SchemaNodeProperty } from '@microsoft/logic-apps-shared';
 import { useDebouncedCallback } from '@react-hookz/web';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -60,16 +60,19 @@ export const SchemaTreeSearchbar = ({ onSearch, onClear, filteredDataTypes, setF
 
   const searchLoc = intl.formatMessage({
     defaultMessage: 'Search',
+    id: '2NXYYu',
     description: 'Search',
   });
 
   const clearLoc = intl.formatMessage({
     defaultMessage: 'Clear',
+    id: 'e9OvzW',
     description: 'Clear',
   });
 
   const filterLoc = intl.formatMessage({
     defaultMessage: 'Filter by data type',
+    id: 'GIUSQs',
     description: 'Filter by data type',
   });
 

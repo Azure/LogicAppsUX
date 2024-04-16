@@ -12,8 +12,8 @@ import type {
   IWorkflowTemplate,
   IFunctionWizardContext,
   ProjectLanguage,
-} from '@microsoft/vscode-extension';
-import { TemplateCategory, TemplatePromptResult } from '@microsoft/vscode-extension';
+} from '@microsoft/vscode-extension-logic-apps';
+import { TemplateCategory, TemplatePromptResult } from '@microsoft/vscode-extension-logic-apps';
 
 export class WorkflowListStep extends AzureWizardPromptStep<IFunctionWizardContext> {
   public hideStepCount = true;
@@ -47,9 +47,8 @@ export class WorkflowListStep extends AzureWizardPromptStep<IFunctionWizardConte
       }
 
       return { promptSteps, executeSteps, title };
-    } else {
-      return undefined;
     }
+    return undefined;
   }
 
   public async prompt(context: IFunctionWizardContext): Promise<void> {
@@ -64,9 +63,8 @@ export class WorkflowListStep extends AzureWizardPromptStep<IFunctionWizardConte
       if (result === TemplatePromptResult.skipForNow) {
         context.telemetry.properties.templateId = TemplatePromptResult.skipForNow;
         break;
-      } else {
-        context.functionTemplate = result;
       }
+      context.functionTemplate = result;
     }
   }
 

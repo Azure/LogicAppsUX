@@ -1,7 +1,9 @@
 import type { ValueSegment } from '../../models/parameter';
 import { ValueSegmentType } from '../../models/parameter';
 import { $isTokenNode } from '../nodes/tokenNode';
-import { guid } from '@microsoft/utils-logic-apps';
+import { createLiteralValueSegment } from './helper';
+import type { SegmentParserOptions } from './parsesegments';
+import { guid } from '@microsoft/logic-apps-shared';
 import type { EditorState, ElementNode } from 'lexical';
 import { $getNodeByKey, $getRoot, $isElementNode, $isLineBreakNode, $isTextNode } from 'lexical';
 
@@ -18,42 +20,100 @@ const getChildrenNodesToSegments = (node: ElementNode, segments: ValueSegment[],
     const childNode = $getNodeByKey(child.getKey());
     if (childNode && $isElementNode(childNode)) {
       if (!trimLiteral && /* ignore first paragraph node */ index > 0) {
-        segments.push({ id: guid(), type: ValueSegmentType.LITERAL, value: '\n' });
+        segments.push(createLiteralValueSegment('\n'));
       }
       return getChildrenNodesToSegments(childNode, segments, trimLiteral);
     }
     if ($isTextNode(childNode)) {
-      segments.push({ id: guid(), type: ValueSegmentType.LITERAL, value: trimLiteral ? childNode.__text.trim() : childNode.__text });
+      segments.push(createLiteralValueSegment(trimLiteral ? childNode.__text.trim() : childNode.__text));
     } else if ($isTokenNode(childNode)) {
       segments.push(childNode.__data);
     } else if ($isLineBreakNode(childNode)) {
-      segments.push({ id: guid(), type: ValueSegmentType.LITERAL, value: '\n' });
+      segments.push(createLiteralValueSegment('\n'));
     }
   });
 };
 
-export const convertStringToSegments = (value: string, tokensEnabled?: boolean, nodeMap?: Map<string, ValueSegment>): ValueSegment[] => {
-  if (!value) return [];
-  if (typeof value !== 'string') return [{ id: guid(), type: ValueSegmentType.LITERAL, value }];
-  let currIndex = 0;
-  let prevIndex = 0;
-  const returnSegments: ValueSegment[] = [];
-  while (currIndex < value.length) {
-    if (value.substring(currIndex - 2, currIndex) === '@{') {
-      if (value.substring(prevIndex, currIndex - 2)) {
-        returnSegments.push({ id: guid(), type: ValueSegmentType.LITERAL, value: value.substring(prevIndex, currIndex - 2) });
-      }
-      const newIndex = value.indexOf('}', currIndex) + 1;
-      if (nodeMap && tokensEnabled) {
-        const token = nodeMap.get(value.substring(currIndex - 2, newIndex));
-        if (token) {
-          returnSegments.push(token);
-        }
-      }
-      prevIndex = currIndex = newIndex;
-    }
-    currIndex++;
+export const convertStringToSegments = (
+  value: string,
+  nodeMap: Map<string, ValueSegment>,
+  options?: SegmentParserOptions
+): ValueSegment[] => {
+  if (!value) {
+    return [];
   }
-  returnSegments.push({ id: guid(), type: ValueSegmentType.LITERAL, value: value.substring(prevIndex, currIndex) });
+
+  const { tokensEnabled } = options ?? {};
+
+  if (typeof value !== 'string' || !tokensEnabled) {
+    return [createLiteralValueSegment(value)];
+  }
+
+  const returnSegments: ValueSegment[] = [];
+
+  let currSegmentType: ValueSegmentType = ValueSegmentType.LITERAL;
+  let isInQuotedString = false;
+  let segmentSoFar = '';
+
+  for (let currIndex = 0; currIndex < value.length; currIndex++) {
+    const currChar = value[currIndex];
+    const nextChar = value[currIndex + 1];
+
+    if (currChar === `'`) {
+      if (isInQuotedString) {
+        isInQuotedString = false;
+      } else if (currSegmentType === ValueSegmentType.TOKEN) {
+        // Quoted strings should only be handled inside `@{}` contexts.
+        isInQuotedString = true;
+      }
+    }
+
+    if (!isInQuotedString && currChar === '@' && nextChar === '{') {
+      if (segmentSoFar) {
+        // If we found a new token, then even if `currSegmentType` is `ValueSegmentType.TOKEN`, we treat the
+        // value as a literal since the token did not close. Worth noting: This means that if a token has `@{`
+        // inside of it (outside of single-quotes), it will not be supported as a token. (e.g. `@{@{}`)
+        returnSegments.push({ id: guid(), type: ValueSegmentType.LITERAL, value: segmentSoFar });
+        segmentSoFar = '';
+      }
+      currSegmentType = ValueSegmentType.TOKEN;
+    }
+
+    segmentSoFar += currChar;
+
+    if (!isInQuotedString && currChar === '}' && currSegmentType === ValueSegmentType.TOKEN) {
+      const token = nodeMap.get(segmentSoFar);
+      if (token) {
+        returnSegments.push(token);
+        currSegmentType = ValueSegmentType.LITERAL;
+        segmentSoFar = '';
+      }
+    }
+  }
+
+  if (segmentSoFar) {
+    // Treat anything remaining as `ValueSegmentType.LITERAL`, even if `currSegmentType` is not; this is to
+    // ensure that if we opened a token with `@{`, but it has no end, we just treat the remaining text as a literal.
+    returnSegments.push(createLiteralValueSegment(segmentSoFar));
+  }
+
+  collapseLiteralSegments(returnSegments);
+
   return returnSegments;
+};
+
+const collapseLiteralSegments = (segments: ValueSegment[]): void => {
+  let index = 0;
+  while (index < segments.length) {
+    const currSegment = segments[index];
+    const nextSegment = segments[index + 1];
+
+    if (currSegment?.type === ValueSegmentType.LITERAL && nextSegment?.type === ValueSegmentType.LITERAL) {
+      currSegment.value += nextSegment.value;
+      segments.splice(index + 1, 1);
+      continue;
+    }
+
+    index++;
+  }
 };

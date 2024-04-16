@@ -2,7 +2,7 @@ import { directAccessPseudoFunctionKey, functionMock, ifPseudoFunctionKey, index
 import type { Connection, ConnectionUnit } from '../../models/Connection';
 import { convertSchemaToSchemaExtended } from '../../utils/Schema.Utils';
 import { getLoopTargetNodeWithJson, MapDefinitionDeserializer } from '../MapDefinitionDeserializer';
-import type { MapDefinitionEntry, Schema, SchemaExtended, SchemaNodeExtended } from '@microsoft/utils-logic-apps';
+import type { MapDefinitionEntry, Schema, SchemaExtended, SchemaNodeExtended } from '@microsoft/logic-apps-shared';
 import {
   comprehensiveSourceSchema,
   comprehensiveTargetSchema,
@@ -11,8 +11,8 @@ import {
   sourceMockSchema,
   targetMockJsonSchema,
   targetMockSchema,
-} from '__mocks__/schemas';
-
+} from '../../../__mocks__/schemas';
+import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 describe('mapDefinitions/MapDefinitionDeserializer', () => {
   describe('XML', () => {
     let simpleMap: MapDefinitionEntry = {};

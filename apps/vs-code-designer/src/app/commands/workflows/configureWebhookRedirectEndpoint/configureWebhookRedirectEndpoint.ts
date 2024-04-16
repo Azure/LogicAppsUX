@@ -9,17 +9,17 @@ import { getContainingWorkspace, getWorkspaceFolder } from '../../../utils/works
 import { createWebhookWizard } from './webhookWizard';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { nonNullValue } from '@microsoft/vscode-azext-utils';
-import type { ILocalSettingsJson } from '@microsoft/vscode-extension';
+import type { ILocalSettingsJson } from '@microsoft/vscode-extension-logic-apps';
 import * as path from 'path';
 import type { Uri, WorkspaceFolder } from 'vscode';
 
 export async function configureWebhookRedirectEndpoint(context: IActionContext, data: Uri): Promise<void> {
   let workspaceFolder: WorkspaceFolder;
 
-  if (!data?.fsPath) {
-    workspaceFolder = await getWorkspaceFolder(context);
-  } else {
+  if (data?.fsPath) {
     workspaceFolder = nonNullValue(getContainingWorkspace(data.fsPath), 'workspaceFolder');
+  } else {
+    workspaceFolder = await getWorkspaceFolder(context);
   }
 
   const workspacePath = workspaceFolder.uri.fsPath;

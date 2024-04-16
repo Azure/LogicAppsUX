@@ -100,6 +100,7 @@ export const Group = ({
 
   const deleteButton = intl.formatMessage({
     defaultMessage: 'Delete',
+    id: 'bGtEPd',
     description: 'delete button',
   });
 
@@ -115,11 +116,13 @@ export const Group = ({
 
   const makeGroupButton = intl.formatMessage({
     defaultMessage: 'Make Group',
+    id: 'ERVorY',
     description: 'Make group button',
   });
 
   const unGroupButton = intl.formatMessage({
     defaultMessage: 'Ungroup',
+    id: 'OdNhwc',
     description: 'Ungroup button',
   });
 
@@ -197,13 +200,11 @@ export const Group = ({
         }
         handleUpdateParent(newItems, index);
       }
+    } else if (groupProps.items.length <= 1) {
+      handleDeleteChild?.(index);
     } else {
-      if (groupProps.items.length <= 1) {
-        handleDeleteChild?.(index);
-      } else {
-        newItems.items.splice(indicesToDelete, 1);
-        handleUpdateParent(newItems, index);
-      }
+      newItems.items.splice(indicesToDelete, 1);
+      handleUpdateParent(newItems, index);
     }
   };
 
@@ -224,6 +225,7 @@ export const Group = ({
   const onRenderOverflowButton = (): JSX.Element => {
     const groupCommands = intl.formatMessage({
       defaultMessage: 'More commands',
+      id: 'GdGm4T',
       description: 'Label for commands in row',
     });
     return (
@@ -248,6 +250,7 @@ export const Group = ({
 
   const collapseLabel = intl.formatMessage({
     defaultMessage: 'Collapse',
+    id: 'BoMvF2',
     description: 'Label for collapsing group',
   });
 
@@ -257,11 +260,13 @@ export const Group = ({
 
   return (
     <div className={css('msla-querybuilder-group-container', isRootGroup && 'firstGroup')}>
-      {!isRootGroup ? <div className="msla-querybuilder-group-gutter-hook" /> : null}
+      {isRootGroup ? null : <div className="msla-querybuilder-group-gutter-hook" />}
       <div className={css('msla-querybuilder-group-content', collapsed && 'collapsed', isRootGroup && 'firstGroup')}>
-        {!collapsed ? (
+        {collapsed ? (
+          <GroupDropdown condition={groupProps.condition} onChange={handleSelectedOption} key={groupProps.condition} readonly={readonly} />
+        ) : (
           <>
-            {!isRootGroup ? (
+            {isRootGroup ? null : (
               <Checkbox
                 disabled={readonly}
                 className="msla-querybuilder-group-checkbox"
@@ -269,7 +274,7 @@ export const Group = ({
                 onChange={handleCheckbox}
                 key={JSON.stringify(groupProps.checked)}
               />
-            ) : null}
+            )}
             <div className="msla-querybuilder-row-section">
               <GroupDropdown
                 condition={groupProps.condition}
@@ -328,7 +333,7 @@ export const Group = ({
                   {groupProps.items.length === 0 ? (
                     <Row
                       readonly={readonly}
-                      key={`row 0`}
+                      key={'row 0'}
                       index={0}
                       isGroupable={isGroupable}
                       showDisabledDelete={groupProps.items.length <= 1 && mustHaveItem}
@@ -352,11 +357,9 @@ export const Group = ({
               }
             </div>
           </>
-        ) : (
-          <GroupDropdown condition={groupProps.condition} onChange={handleSelectedOption} key={groupProps.condition} readonly={readonly} />
         )}
         <div className={css('msla-querybuilder-group-controlbar', collapsed && 'collapsed')}>
-          {!isRootGroup ? (
+          {isRootGroup ? null : (
             <>
               <TooltipHost calloutProps={calloutProps} content={collapseLabel}>
                 <IconButton
@@ -372,12 +375,12 @@ export const Group = ({
                 items={[]}
                 overflowItems={groupMenuItems}
                 onRenderOverflowButton={onRenderOverflowButton}
-                onRenderItem={function (_item: IOverflowSetItemProps) {
+                onRenderItem={(_item: IOverflowSetItemProps) => {
                   throw new Error('No items in overflowset');
                 }}
               />
             </>
-          ) : null}
+          )}
         </div>
       </div>
     </div>

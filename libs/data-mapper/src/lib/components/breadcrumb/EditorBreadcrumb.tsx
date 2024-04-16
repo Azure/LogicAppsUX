@@ -5,7 +5,7 @@ import type { IBreadcrumbItem, IContextualMenuItem, IContextualMenuProps, IDivid
 import { Breadcrumb, ContextualMenu, IconButton } from '@fluentui/react';
 import { Button, tokens, makeStyles, Text, typographyStyles } from '@fluentui/react-components';
 import { Code20Regular } from '@fluentui/react-icons';
-import type { SchemaExtended, SchemaNodeExtended } from '@microsoft/utils-logic-apps';
+import type { SchemaExtended, SchemaNodeExtended } from '@microsoft/logic-apps-shared';
 import { useCallback, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
@@ -50,21 +50,25 @@ export const EditorBreadcrumb = ({ isCodeViewOpen, setIsCodeViewOpen }: EditorBr
 
   const startMappingLoc = intl.formatMessage({
     defaultMessage: 'Select a target schema node to start mapping',
+    id: '0IRUjM',
     description: 'Breadcrumb message shown in overview',
   });
 
   const showCodeLoc = intl.formatMessage({
     defaultMessage: 'Show code',
+    id: 'MirIsS',
     description: 'Button to display the code view',
   });
 
   const hideCodeLoc = intl.formatMessage({
     defaultMessage: 'Hide code',
+    id: 'UR1CS5',
     description: 'Button to hide the code view',
   });
 
   const chevronAriaDescription = intl.formatMessage({
     defaultMessage: 'Expant list of sibling elements',
+    id: 'BUutcC',
     description: 'Button that toggles list of elements to view',
   });
 
@@ -79,7 +83,9 @@ export const EditorBreadcrumb = ({ isCodeViewOpen, setIsCodeViewOpen }: EditorBr
   const isCodeViewButtonDisabled = useMemo<boolean>(() => breadcrumbItems.length === 0, [breadcrumbItems]);
 
   const onRenderBreadcrumbContent = useCallback((item?: IBreadcrumbItem) => {
-    if (!item) return null;
+    if (!item) {
+      return null;
+    }
 
     if (item.key === placeholderItemKey) {
       return (
@@ -87,9 +93,8 @@ export const EditorBreadcrumb = ({ isCodeViewOpen, setIsCodeViewOpen }: EditorBr
           {item.text}
         </Text>
       );
-    } else {
-      return <Text>{item.text}</Text>;
     }
+    return <Text>{item.text}</Text>;
   }, []);
 
   const getMenu = (props: IContextualMenuProps): JSX.Element => {

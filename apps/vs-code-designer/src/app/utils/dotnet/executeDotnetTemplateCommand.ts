@@ -8,7 +8,7 @@ import { useBinariesDependencies } from '../binaries';
 import { executeCommand, wrapArgInQuotes } from '../funcCoreTools/cpUtils';
 import { getDotNetCommand, getLocalDotNetVersionFromBinaries } from './dotnet';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
-import type { FuncVersion } from '@microsoft/vscode-extension';
+import type { FuncVersion } from '@microsoft/vscode-extension-logic-apps';
 import * as path from 'path';
 import type { SemVer } from 'semver';
 import { coerce as semVerCoerce } from 'semver';
@@ -137,9 +137,8 @@ export async function getFramework(context: IActionContext, workingDirectory: st
           'You must have the [.NET Core SDK](https://aka.ms/AA4ac70) installed to perform this operation. See [here](https://aka.ms/AA1tpij) for supported versions.'
         )
       );
-    } else {
-      cachedFramework = `${pickedVersion.major < 4 ? 'netcoreapp' : 'net'}${pickedVersion.major}.${pickedVersion.minor}`;
     }
+    cachedFramework = `${pickedVersion.major < 4 ? 'netcoreapp' : 'net'}${pickedVersion.major}.${pickedVersion.minor}`;
   }
 
   return cachedFramework;

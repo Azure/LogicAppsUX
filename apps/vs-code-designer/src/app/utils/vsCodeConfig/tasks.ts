@@ -8,7 +8,7 @@ import type { ProjectFile } from '../dotnet/dotnet';
 import { getDotnetDebugSubpath, getProjFiles, getTargetFramework } from '../dotnet/dotnet';
 import { tryGetLogicAppProjectRoot } from '../verifyIsProject';
 import { DialogResponses, openUrl, type IActionContext } from '@microsoft/vscode-azext-utils';
-import { ProjectLanguage, type ITask, type ITaskInputs } from '@microsoft/vscode-extension';
+import { ProjectLanguage, type ITask, type ITaskInputs } from '@microsoft/vscode-extension-logic-apps';
 import * as fse from 'fs-extra';
 import * as path from 'path';
 import { workspace } from 'vscode';
@@ -84,7 +84,7 @@ function getTasksConfig(folder: WorkspaceFolder): WorkspaceConfiguration {
 /**
  * Validates the tasks.json is compatible with binary dependency use.
  */
-export async function validateTasksJson(context: IActionContext, folders: ReadonlyArray<WorkspaceFolder> | undefined): Promise<void> {
+export async function validateTasksJson(context: IActionContext, folders: readonly WorkspaceFolder[] | undefined): Promise<void> {
   context.telemetry.properties.lastStep = 'validateTasksJson';
   let overwrite = false;
 
@@ -138,7 +138,7 @@ async function overwriteTasksJson(context: IActionContext, projectPath: string):
       '\n\nContinue with the update?';
 
     const tasksJsonPath: string = path.join(projectPath, '.vscode', 'tasks.json');
-    let tasksJsonContent;
+    let tasksJsonContent: any;
 
     const projectFiles = [
       ...(await getProjFiles(context, ProjectLanguage.CSharp, projectPath)),
@@ -168,7 +168,7 @@ async function overwriteTasksJson(context: IActionContext, projectPath: string):
           localize(
             'projNotFound',
             'Expected to find a single {0} file in folder "{1}", but found multiple instead: {2}.',
-            `csproj or fsproj`,
+            'csproj or fsproj',
             path.basename(projectPath),
             projFiles.join(', ')
           )

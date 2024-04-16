@@ -12,7 +12,7 @@ import { getWorkspaceSetting } from '../../utils/vsCodeConfig/settings';
 import { installFuncCoreToolsBinaries, installFuncCoreToolsSystem } from './installFuncCoreTools';
 import { callWithTelemetryAndErrorHandling, DialogResponses, openUrl } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
-import type { FuncVersion } from '@microsoft/vscode-extension';
+import type { FuncVersion } from '@microsoft/vscode-extension-logic-apps';
 import type { MessageItem } from 'vscode';
 
 /**
@@ -35,12 +35,10 @@ export async function validateFuncCoreToolsInstalled(context: IActionContext, me
       installed = true;
     } else if (await isFuncToolsInstalled()) {
       installed = true;
+    } else if (useBinariesDependencies()) {
+      installed = await validateFuncCoreToolsInstalledBinaries(innerContext, message, install, input, installed);
     } else {
-      if (useBinariesDependencies()) {
-        installed = await validateFuncCoreToolsInstalledBinaries(innerContext, message, install, input, installed);
-      } else {
-        installed = await validateFuncCoreToolsInstalledSystem(innerContext, message, install, input, installed, fsPath);
-      }
+      installed = await validateFuncCoreToolsInstalledSystem(innerContext, message, install, input, installed, fsPath);
     }
   });
 

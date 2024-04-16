@@ -44,12 +44,13 @@ export const FloatingPanel = (props: FloatingPanelProps) => {
 
   const xLabel = intl.formatMessage({
     defaultMessage: 'Close panel',
+    id: '0SSwxD',
     description: 'Label on button that closes floating panel',
   });
 
   const innerStyle: React.CSSProperties = useMemo(
     () => ({
-      display: !isOpen ? 'none' : undefined,
+      display: isOpen ? undefined : 'none',
       position: 'absolute',
       zIndex: panelOrdering ? floatingPanelZIndex + panelOrdering : floatingPanelZIndex,
       boxShadow: tokens.shadow4,

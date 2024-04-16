@@ -1,7 +1,7 @@
 import type { CardProps } from '../index';
 import { Card } from '../index';
 import renderer from 'react-test-renderer';
-
+import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 describe('lib/card', () => {
   let minimal: CardProps;
 
@@ -43,9 +43,20 @@ describe('lib/card', () => {
     expect(tree).toMatchSnapshot();
   });
 
-  it('should render with an icon', () => {
+  it.each<[string, string | undefined, string | undefined]>([
+    ['a connector name', 'SharePoint', undefined],
+    ['an operation name', undefined, 'Get an item'],
+    ['an operation name and connector name', 'SharePoint', 'Get an item'],
+  ])('should render with an icon and %s (%#)', (_caseName, connectorName, operationName) => {
     const tree = renderer
-      .create(<Card {...minimal} icon="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7" />)
+      .create(
+        <Card
+          {...minimal}
+          connectorName={connectorName}
+          icon="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
+          operationName={operationName}
+        />
+      )
       .toJSON();
     expect(tree).toMatchSnapshot();
   });

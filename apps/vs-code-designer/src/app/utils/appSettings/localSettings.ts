@@ -11,8 +11,8 @@ import { writeFormattedJson } from '../fs';
 import { parseJson } from '../parseJson';
 import { DialogResponses, parseError } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
-import { MismatchBehavior } from '@microsoft/vscode-extension';
-import type { ILocalSettingsJson } from '@microsoft/vscode-extension';
+import { MismatchBehavior } from '@microsoft/vscode-extension-logic-apps';
+import type { ILocalSettingsJson } from '@microsoft/vscode-extension-logic-apps';
 import * as fse from 'fs-extra';
 import * as path from 'path';
 import type { MessageItem } from 'vscode';
@@ -144,7 +144,8 @@ export async function setLocalAppSetting(
   settings.Values = settings.Values || {};
   if (settings.Values[key] === value) {
     return;
-  } else if (settings.Values[key]) {
+  }
+  if (settings.Values[key]) {
     if (behavior === MismatchBehavior.Prompt) {
       const message: string = localize('SettingAlreadyExists', "Local app setting '{0}' already exists. Overwrite?", key);
       if (

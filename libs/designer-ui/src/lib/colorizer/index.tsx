@@ -1,7 +1,5 @@
 import { IconButton, useTheme } from '@fluentui/react';
-import Highlight, { defaultProps, type Language } from 'prism-react-renderer';
-import dark from 'prism-react-renderer/themes/vsDark';
-import light from 'prism-react-renderer/themes/vsLight';
+import { type Language, themes, Highlight } from 'prism-react-renderer';
 import { useMemo, useRef, useCallback } from 'react';
 import { useIntl } from 'react-intl';
 import { useCopyToClipboard } from 'react-use';
@@ -14,11 +12,13 @@ export interface ColorizerProps {
 
 export const Colorizer: React.FC<ColorizerProps> = ({ ariaLabel, code, language = 'json' }) => {
   const { isInverted } = useTheme();
-  const theme = useMemo(() => (isInverted ? dark : light), [isInverted]);
+  const theme = useMemo(() => (isInverted ? themes.vsDark : themes.vsDark), [isInverted]);
   const elementRef = useRef<HTMLPreElement | null>(null);
   const [_, copyToClipboard] = useCopyToClipboard();
   const selectText = useCallback(() => {
-    if (!elementRef.current) return;
+    if (!elementRef.current) {
+      return;
+    }
     const range = document.createRange();
     range.selectNodeContents(elementRef.current);
     const sel = window.getSelection();
@@ -31,7 +31,8 @@ export const Colorizer: React.FC<ColorizerProps> = ({ ariaLabel, code, language 
   const intl = useIntl();
   const copyAria = intl.formatMessage(
     {
-      defaultMessage: "Copy the value of '{label}' to the clipboard",
+      defaultMessage: `Copy the value of ''{label}'' to the clipboard`,
+      id: 'lA/sHA',
       description: 'Accessibility label for a button to copy all text in a value box',
     },
     {
@@ -41,6 +42,7 @@ export const Colorizer: React.FC<ColorizerProps> = ({ ariaLabel, code, language 
   const selectAria = intl.formatMessage(
     {
       defaultMessage: 'Select all text in {label}',
+      id: 'WK6hZX',
       description: 'Accessibility label for a button to select all text in a value box',
     },
     {
@@ -53,7 +55,7 @@ export const Colorizer: React.FC<ColorizerProps> = ({ ariaLabel, code, language 
         <IconButton ariaLabel={selectAria} iconProps={{ iconName: 'SelectAll' }} onClick={selectText} />
         <IconButton ariaLabel={copyAria} iconProps={{ iconName: 'Copy' }} onClick={copyText} />
       </div>
-      <Highlight {...defaultProps} code={code} language={language} theme={theme}>
+      <Highlight code={code} language={language} theme={theme}>
         {({ className, style, tokens, getLineProps, getTokenProps }) => (
           <pre ref={elementRef} className={className} style={style}>
             {tokens.map((line, i) => (
@@ -70,4 +72,4 @@ export const Colorizer: React.FC<ColorizerProps> = ({ ariaLabel, code, language 
   );
 };
 
-export { type Language };
+export type { Language };

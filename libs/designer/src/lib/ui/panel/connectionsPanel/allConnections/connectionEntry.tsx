@@ -10,8 +10,7 @@ import {
   ErrorCircle24Filled,
   PlugDisconnected24Filled,
 } from '@fluentui/react-icons';
-import { HostService } from '@microsoft/designer-client-services-logic-apps';
-import { getConnectionErrors } from '@microsoft/utils-logic-apps';
+import { HostService, getConnectionErrors } from '@microsoft/logic-apps-shared';
 import { useCallback, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
@@ -36,30 +35,37 @@ export const ConnectionEntry = ({ connectorId, refId, connectionReference, iconU
   const intl = useIntl();
   const openConnectionTooltipText = intl.formatMessage({
     defaultMessage: 'Open connection',
+    id: '41drjl',
     description: 'Tooltip for the button to open a connection',
   });
   const connectedActionsText = intl.formatMessage({
     defaultMessage: 'Actions',
+    id: 'WvvJYw',
     description: 'Header for the connected actions section',
   });
   const reassignButtonText = intl.formatMessage({
     defaultMessage: 'Reassign',
+    id: 'en/5A3',
     description: 'Button text to reassign actions',
   });
   const reassignConnectionTooltipText = intl.formatMessage({
     defaultMessage: 'Reassign all connected actions to a new connection',
+    id: 'evyGYj',
     description: 'Tooltip for the button to reassign actions',
   });
   const connectionValidStatusText = intl.formatMessage({
     defaultMessage: 'Connection is valid',
+    id: 'cZv9J0',
     description: 'Tooltip for the button to reassign actions',
   });
   const connectionInvalidStatusText = intl.formatMessage({
     defaultMessage: 'Connection is invalid',
+    id: 'mUURJW',
     description: 'Tooltip for the button to reassign actions',
   });
   const disconnectedText = intl.formatMessage({
     defaultMessage: 'Disconnected',
+    id: 'TsJbGH',
     description: 'Text to show when a connection is disconnected',
   });
 
@@ -68,21 +74,29 @@ export const ConnectionEntry = ({ connectorId, refId, connectionReference, iconU
   }, [dispatch, nodeIds]);
 
   const errors = useMemo(() => {
-    if (connection?.isLoading) return [];
-    if (!connection?.result) return [connectionInvalidStatusText];
+    if (connection?.isLoading) {
+      return [];
+    }
+    if (!connection?.result) {
+      return [connectionInvalidStatusText];
+    }
     return getConnectionErrors(connection?.result);
   }, [connection, connectionInvalidStatusText]);
 
   const statusIconComponent = useMemo(() => {
-    if (connection?.isLoading) return <Spinner size="extra-small" />;
-    if (disconnected) return <PlugDisconnected24Filled />;
+    if (connection?.isLoading) {
+      return <Spinner size="extra-small" />;
+    }
+    if (disconnected) {
+      return <PlugDisconnected24Filled />;
+    }
     const hasErrors = errors.length > 0;
     return (
       <Tooltip content={hasErrors ? connectionInvalidStatusText : connectionValidStatusText} relationship="label">
-        {!hasErrors ? (
-          <CheckmarkCircle24Filled className={'msla-connection-status-icon--success'} />
-        ) : (
+        {hasErrors ? (
           <ErrorCircle24Filled className={'msla-connection-status-icon--error'} />
+        ) : (
+          <CheckmarkCircle24Filled className={'msla-connection-status-icon--success'} />
         )}
       </Tooltip>
     );
@@ -91,7 +105,9 @@ export const ConnectionEntry = ({ connectorId, refId, connectionReference, iconU
   // Only show the open connection button if the service method is supplied
   const openConnectionSupported = useMemo(() => HostService().openConnectionResource !== undefined, []);
   const openConnectionCallback = useCallback(() => {
-    if (!connection?.result?.id) return;
+    if (!connection?.result?.id) {
+      return;
+    }
     HostService().openConnectionResource?.(connection?.result?.id);
   }, [connection?.result?.id]);
 

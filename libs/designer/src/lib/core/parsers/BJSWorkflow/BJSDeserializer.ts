@@ -4,11 +4,10 @@ import { UnsupportedException, UnsupportedExceptionCode } from '../../../common/
 import type { Operations, NodesMetadata } from '../../state/workflow/workflowInterfaces';
 import { createWorkflowNode, createWorkflowEdge } from '../../utils/graph';
 import type { WorkflowNode, WorkflowEdge } from '../models/workflowNode';
-import { LoggerService, Status } from '@microsoft/designer-client-services-logic-apps';
-import { getDurationStringPanelMode } from '@microsoft/designer-ui';
-import { getIntl } from '@microsoft/intl-logic-apps';
-import type { LogicAppsV2, SubgraphType } from '@microsoft/utils-logic-apps';
 import {
+  LoggerService,
+  Status,
+  getIntl,
   containsIdTag,
   WORKFLOW_NODE_TYPES,
   WORKFLOW_EDGE_TYPES,
@@ -17,7 +16,10 @@ import {
   isNullOrEmpty,
   isNullOrUndefined,
   getUniqueName,
-} from '@microsoft/utils-logic-apps';
+  getRecordEntry,
+} from '@microsoft/logic-apps-shared';
+import { getDurationStringPanelMode } from '@microsoft/designer-ui';
+import type { LogicAppsV2, SubgraphType } from '@microsoft/logic-apps-shared';
 
 const hasMultipleTriggers = (definition: LogicAppsV2.WorkflowDefinition): boolean => {
   return definition && definition.triggers ? Object.keys(definition.triggers).length > 1 : false;
@@ -85,9 +87,9 @@ export const Deserialize = (
     }
   }
 
-  const [remainingChildren, edges, actions, actionNodesMetadata] = !isNullOrUndefined(definition.actions)
-    ? buildGraphFromActions(definition.actions, 'root', undefined /* parentNodeId */, allActionNames)
-    : [[], [], {}];
+  const [remainingChildren, edges, actions, actionNodesMetadata] = isNullOrUndefined(definition.actions)
+    ? [[], [], {}]
+    : buildGraphFromActions(definition.actions, 'root', undefined /* parentNodeId */, allActionNames);
   allActions = { ...allActions, ...actions };
   nodesMetadata = { ...nodesMetadata, ...actionNodesMetadata };
 
@@ -237,7 +239,9 @@ const processScopeActions = (
 
     // Connect graph header to all top level nodes
     for (const child of graph.children ?? []) {
-      if (metadata[child.id]?.isRoot) edges.push(createWorkflowEdge(headerId, child.id, WORKFLOW_EDGE_TYPES.HEADING_EDGE));
+      if (getRecordEntry(metadata, child.id)?.isRoot) {
+        edges.push(createWorkflowEdge(headerId, child.id, WORKFLOW_EDGE_TYPES.HEADING_EDGE));
+      }
     }
   };
 
@@ -250,7 +254,9 @@ const processScopeActions = (
     subGraphLocation: string | undefined
   ) => {
     const [graph, operations, metadata] = processNestedActions(subgraphId, graphId, actions, allActionNames, true);
-    if (!graph?.edges) graph.edges = [];
+    if (!graph?.edges) {
+      graph.edges = [];
+    }
 
     graph.subGraphLocation = subGraphLocation;
 
@@ -262,13 +268,17 @@ const processScopeActions = (
     const subgraphCardNode = createWorkflowNode(rootId, WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE);
 
     const isAddCase = subgraphType === SUBGRAPH_TYPES.SWITCH_ADD_CASE;
-    if (isAddCase) graph.type = WORKFLOW_NODE_TYPES.HIDDEN_NODE;
+    if (isAddCase) {
+      graph.type = WORKFLOW_NODE_TYPES.HIDDEN_NODE;
+    }
 
     // Connect graph header to subgraph node
     edges.push(createWorkflowEdge(headerId, subgraphId, isAddCase ? WORKFLOW_EDGE_TYPES.HIDDEN_EDGE : WORKFLOW_EDGE_TYPES.ONLY_EDGE));
     // Connect subgraph node to all top level nodes
     for (const child of graph.children ?? []) {
-      if (metadata[child.id]?.isRoot) graph.edges.push(createWorkflowEdge(rootId, child.id, WORKFLOW_EDGE_TYPES.HEADING_EDGE));
+      if (getRecordEntry(metadata, child.id)?.isRoot) {
+        graph.edges.push(createWorkflowEdge(rootId, child.id, WORKFLOW_EDGE_TYPES.HEADING_EDGE));
+      }
     }
 
     graph.children = [subgraphCardNode, ...(graph.children ?? [])];
@@ -314,7 +324,9 @@ const processScopeActions = (
 
     // Connect graph header to all top level nodes
     for (const child of graph.children ?? []) {
-      if (metadata[child.id]?.isRoot) edges.push(createWorkflowEdge(scopeCardNode.id, child.id, WORKFLOW_EDGE_TYPES.HEADING_EDGE));
+      if (getRecordEntry(metadata, child.id)?.isRoot) {
+        edges.push(createWorkflowEdge(scopeCardNode.id, child.id, WORKFLOW_EDGE_TYPES.HEADING_EDGE));
+      }
     }
 
     const footerId = `${graphId}-#footer`;
@@ -366,9 +378,9 @@ const processNestedActions = (
   allActionNames: string[],
   isSubgraph?: boolean
 ): [WorkflowNode, Operations, NodesMetadata] => {
-  const [children, edges, scopeActions, scopeNodesMetadata] = !isNullOrUndefined(actions)
-    ? buildGraphFromActions(actions, graphId, parentNodeId, allActionNames)
-    : [[], [], {}, {}];
+  const [children, edges, scopeActions, scopeNodesMetadata] = isNullOrUndefined(actions)
+    ? [[], [], {}, {}]
+    : buildGraphFromActions(actions, graphId, parentNodeId, allActionNames);
   return [
     {
       id: graphId,
@@ -388,6 +400,7 @@ const throwIfMultipleTriggers = (definition: LogicAppsV2.WorkflowDefinition) => 
     throw new UnsupportedException(
       intl.formatMessage({
         defaultMessage: 'Cannot render designer due to multiple triggers in definition.',
+        id: '8L+oIz',
         description:
           "This is an error message shown when a user tries to load a workflow defintion that contains Multiple entry points which isn't supported",
       }),
@@ -442,20 +455,30 @@ const addActionsInstanceMetaData = (nodesMetadata: NodesMetadata, runInstance: L
 };
 
 const getAllActionNames = (actions: LogicAppsV2.Actions | undefined, names: string[] = []): string[] => {
-  if (isNullOrUndefined(actions)) return [];
+  if (isNullOrUndefined(actions)) {
+    return [];
+  }
 
   for (const [actionName, action] of Object.entries(actions)) {
     names.push(actionName);
     if (isScopeAction(action)) {
-      if (action.actions) names.push(...getAllActionNames(action.actions));
+      if (action.actions) {
+        names.push(...getAllActionNames(action.actions));
+      }
       if (isIfAction(action)) {
-        if (action.else?.actions) names.push(...getAllActionNames(action.else.actions));
+        if (action.else?.actions) {
+          names.push(...getAllActionNames(action.else.actions));
+        }
       }
       if (isSwitchAction(action)) {
-        if (action.default?.actions) names.push(...getAllActionNames(action.default.actions));
+        if (action.default?.actions) {
+          names.push(...getAllActionNames(action.default.actions));
+        }
         if (action.cases) {
           for (const caseAction of Object.values(action.cases)) {
-            if (caseAction.actions) names.push(...getAllActionNames(caseAction.actions));
+            if (caseAction.actions) {
+              names.push(...getAllActionNames(caseAction.actions));
+            }
           }
         }
       }

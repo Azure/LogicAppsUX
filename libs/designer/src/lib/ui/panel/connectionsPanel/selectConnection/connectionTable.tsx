@@ -9,8 +9,8 @@ import {
   DataGridRow,
   createTableColumn,
 } from '@fluentui/react-components';
-import type { Connection } from '@microsoft/utils-logic-apps';
-import { getConnectionErrors, getIdLeaf } from '@microsoft/utils-logic-apps';
+import type { Connection } from '@microsoft/logic-apps-shared';
+import { getConnectionErrors, getIdLeaf } from '@microsoft/logic-apps-shared';
 import { useCallback, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 
@@ -55,9 +55,11 @@ export const ConnectionTable = (props: ConnectionTableProps): JSX.Element => {
 
   const onConnectionSelect = useCallback(
     (connection: Connection) => {
-      if (!areIdLeavesEqual(connection.id, currentConnectionId))
+      if (areIdLeavesEqual(connection.id, currentConnectionId)) {
+        cancelSelectionCallback(); // User clicked the existing connection, keep selection the same and return
+      } else {
         saveSelectionCallback(connection); // User clicked a different connection, save selection and return
-      else cancelSelectionCallback(); // User clicked the existing connection, keep selection the same and return
+      }
     },
     [cancelSelectionCallback, currentConnectionId, saveSelectionCallback]
   );
@@ -68,6 +70,7 @@ export const ConnectionTable = (props: ConnectionTableProps): JSX.Element => {
       renderHeaderCell: () =>
         intl.formatMessage({
           defaultMessage: 'Invalid',
+          id: '7lvqST',
           description: 'Column header for invalid connections',
         }),
       renderCell: (item) => item.invalid,
@@ -77,6 +80,7 @@ export const ConnectionTable = (props: ConnectionTableProps): JSX.Element => {
       renderHeaderCell: () =>
         intl.formatMessage({
           defaultMessage: 'Display Name',
+          id: 'tsmuoF',
           description: 'Column header for connection display name',
         }),
       renderCell: (item) => item.displayName,
@@ -87,10 +91,12 @@ export const ConnectionTable = (props: ConnectionTableProps): JSX.Element => {
         isXrmConnectionReferenceMode
           ? intl.formatMessage({
               defaultMessage: 'Logical Name',
+              id: 'UIWX6p',
               description: 'Column header for connection reference logical name',
             })
           : intl.formatMessage({
               defaultMessage: 'Name',
+              id: 'T6VIym',
               description: 'Column header for connection name',
             }),
       renderCell: (item) => item.name,
@@ -100,6 +106,7 @@ export const ConnectionTable = (props: ConnectionTableProps): JSX.Element => {
       renderHeaderCell: () =>
         intl.formatMessage({
           defaultMessage: 'Gateway',
+          id: 'LvpxiA',
           description: 'Column header for connection gateway',
         }),
       renderCell: (item) => item.gateway,
@@ -128,9 +135,13 @@ export const ConnectionTable = (props: ConnectionTableProps): JSX.Element => {
   const onSelectionChange: DataGridProps['onSelectionChange'] = useCallback(
     (e: any, data: any) => {
       const index = data.selectedItems.values().next().value;
-      if (items[index]?.invalid) return; // Don't allow selection of invalid connections (they are disabled)
+      if (items[index]?.invalid) {
+        return; // Don't allow selection of invalid connections (they are disabled)
+      }
       const connection = connections[index];
-      if (!connection) return;
+      if (!connection) {
+        return;
+      }
       onConnectionSelect(connection);
     },
     [connections, items, onConnectionSelect]

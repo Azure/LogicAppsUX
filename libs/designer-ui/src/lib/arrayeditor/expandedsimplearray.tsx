@@ -6,7 +6,7 @@ import { Label } from '../label';
 import type { LabelProps } from '../label';
 import type { IContextualMenuProps, IIconProps, IIconStyles } from '@fluentui/react';
 import { IconButton, TooltipHost, DefaultButton } from '@fluentui/react';
-import { guid } from '@microsoft/utils-logic-apps';
+import { guid } from '@microsoft/logic-apps-shared';
 import { useIntl } from 'react-intl';
 
 const addItemButtonIconProps: IIconProps = {
@@ -57,6 +57,7 @@ export const ExpandedSimpleArray = ({
 
   const addItemButtonLabel = intl.formatMessage({
     defaultMessage: 'Add new item',
+    id: 'JWl/LD',
     description: 'Label to add item to array editor',
   });
 
@@ -135,7 +136,7 @@ export const ExpandedSimpleArray = ({
 const renderLabel = (index: number, labelName?: string, isRequired?: boolean): JSX.Element => {
   return (
     <div className="msla-array-editor-label">
-      <Label text={labelName + ' - ' + (index + 1)} isRequiredField={isRequired ?? false} />
+      <Label text={`${labelName} - ${index + 1}`} isRequiredField={isRequired ?? false} />
     </div>
   );
 };
@@ -154,11 +155,13 @@ export const ItemMenuButton = ({ disabled, itemKey, visible, onDeleteItem }: Ite
   }
   const deleteButton = intl.formatMessage({
     defaultMessage: 'Delete',
+    id: 'JErLDT',
     description: 'Delete label',
   });
 
   const menuButton = intl.formatMessage({
     defaultMessage: 'Menu',
+    id: 'z3VuE+',
     description: 'Menu label',
   });
 

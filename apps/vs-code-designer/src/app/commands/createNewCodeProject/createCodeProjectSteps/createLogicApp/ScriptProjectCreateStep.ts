@@ -8,8 +8,8 @@ import { confirmOverwriteFile, writeFormattedJson } from '../../../../utils/fs';
 import { ProjectCodeCreateStepBase } from '../../CodeProjectBase/ProjectCodeCreateStepBase';
 import { nonNullProp } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
-import type { IHostJsonV1, IHostJsonV2, ILocalSettingsJson, IProjectWizardContext } from '@microsoft/vscode-extension';
-import { FuncVersion } from '@microsoft/vscode-extension';
+import type { IHostJsonV1, IHostJsonV2, ILocalSettingsJson, IProjectWizardContext } from '@microsoft/vscode-extension-logic-apps';
+import { FuncVersion } from '@microsoft/vscode-extension-logic-apps';
 import * as fse from 'fs-extra';
 import * as os from 'os';
 import * as path from 'path';
@@ -81,8 +81,14 @@ obj
 appsettings.json
 local.settings.json
 __blobstorage__
+.debug
 __queuestorage__
-__azurite_db*__.json`)
+__azurite_db*__.json
+
+# Added folders and file patterns
+workflow-designtime/
+.vscode/
+*.code-workspace`)
       );
     }
 

@@ -1,0 +1,10207 @@
+{
+  "++ZVe/": [
+    {
+      "type": 0,
+      "value": "Test"
+    }
+  ],
+  "+0H8Or": [
+    {
+      "type": 0,
+      "value": "Avviso: il tipo del nodo di input non corrisponde al tipo di nodo dello schema."
+    }
+  ],
+  "+0yxlR": [
+    {
+      "type": 0,
+      "value": "Visualizzazione della funzione"
+    }
+  ],
+  "+3rROX": [
+    {
+      "type": 0,
+      "value": "Protetta"
+    }
+  ],
+  "+FcXe9": [
+    {
+      "type": 0,
+      "value": "Con errori"
+    }
+  ],
+  "+HcevX": [
+    {
+      "type": 0,
+      "value": "Immetti un valore booleano valido."
+    }
+  ],
+  "+Jryh+": [
+    {
+      "type": 0,
+      "value": "Trigger"
+    }
+  ],
+  "+M72+a": [
+    {
+      "type": 0,
+      "value": "Informazioni generali"
+    }
+  ],
+  "+Uvo/p": [
+    {
+      "type": 0,
+      "value": "Testo alternativo per freccia di espansione in giù"
+    }
+  ],
+  "+ZSBrq": [
+    {
+      "type": 0,
+      "value": "Menu contestuale per la scheda "
+    },
+    {
+      "type": 1,
+      "value": "title"
+    }
+  ],
+  "+ijo/2": [
+    {
+      "type": 0,
+      "value": "Incollare l'ultima espressione usata"
+    }
+  ],
+  "+mAJR3": [
+    {
+      "type": 0,
+      "value": "(UTC + 8.00 h) Kuala Lumpur, Singapore"
+    }
+  ],
+  "+oelX4": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Stringa da esaminare."
+    }
+  ],
+  "+powfX": [
+    {
+      "type": 0,
+      "value": "Fuso orario"
+    }
+  ],
+  "+v1RlQ": [
+    {
+      "type": 0,
+      "value": "Elimina intestazioni del flusso di lavoro nella risposta"
+    }
+  ],
+  "+xXHdp": [
+    {
+      "type": 0,
+      "value": "Nessun output"
+    }
+  ],
+  "/2V8bQ": [
+    {
+      "type": 0,
+      "value": "Scaduto"
+    }
+  ],
+  "/EU/oJ": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Stringa contenente il nome del fuso orario di origine. Vedi \"Fusi orari predefiniti\" in \"https://go.microsoft.com/fwlink/?linkid=2238292\"."
+    }
+  ],
+  "/I/U8L": [
+    {
+      "type": 0,
+      "value": "Corpo"
+    }
+  ],
+  "/KRvvg": [
+    {
+      "type": 0,
+      "value": "Nessun valore corrispondente alla ricerca."
+    }
+  ],
+  "/NtebP": [
+    {
+      "type": 0,
+      "value": "(UTC + 5.00 h) Islamabad, Karachi"
+    }
+  ],
+  "/QqADs": [
+    {
+      "type": 0,
+      "value": "Restituisce gli elementi nella matrice a partire dal numero di indice"
+    }
+  ],
+  "/RS9F7": [
+    {
+      "type": 0,
+      "value": "(UTC-06:00) Saskatchewan"
+    }
+  ],
+  "/ULFwg": [
+    {
+      "type": 0,
+      "value": "Modifica connessione"
+    }
+  ],
+  "/VcZ9g": [
+    {
+      "type": 0,
+      "value": "Questo connettore ha più versioni, predefinite e ospitate in Azure. Usa le funzionalità predefinite per ottenere prestazioni ottimali, autenticazione con stringa di connessione e altre funzionalità. Usa Azure-hosted per altre opzioni di autenticazione."
+    }
+  ],
+  "/WW7If": [
+    {
+      "type": 0,
+      "value": "True"
+    }
+  ],
+  "/X2+cq": [
+    {
+      "type": 0,
+      "value": "Apri Azure Copilot"
+    }
+  ],
+  "/c1l10": [
+    {
+      "type": 0,
+      "value": "⌘+C"
+    }
+  ],
+  "/doURb": [
+    {
+      "type": 0,
+      "value": "Converte l'input in una matrice"
+    }
+  ],
+  "/km5eO": [
+    {
+      "type": 0,
+      "value": "(UTC-04:00) Asunción"
+    }
+  ],
+  "/mjH84": [
+    {
+      "type": 0,
+      "value": "Mostra output non elaborati"
+    }
+  ],
+  "/n13VL": [
+    {
+      "type": 0,
+      "value": "Proprietà"
+    }
+  ],
+  "/qchXQ": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Raccolta da cui unire gli elementi."
+    }
+  ],
+  "/qu3zt": [
+    {
+      "type": 0,
+      "value": "0"
+    }
+  ],
+  "/ut0u7": [
+    {
+      "type": 0,
+      "value": "Restituisce i primi elementi Count dalla matrice o dalla stringa passata"
+    }
+  ],
+  "/vWMKW": [
+    {
+      "type": 0,
+      "value": "Input obbligatori mancanti"
+    }
+  ],
+  "/yYyOq": [
+    {
+      "type": 0,
+      "value": "Gruppo di risorse"
+    }
+  ],
+  "00xlpa": [
+    {
+      "type": 0,
+      "value": "Condiviso"
+    }
+  ],
+  "02vyBk": [
+    {
+      "type": 0,
+      "value": "Trigger"
+    }
+  ],
+  "03RO5d": [
+    {
+      "type": 0,
+      "value": "Modifica parametro"
+    }
+  ],
+  "04AwK7": [
+    {
+      "type": 0,
+      "value": "Codice di errore: '"
+    },
+    {
+      "type": 1,
+      "value": "errorCode"
+    },
+    {
+      "type": 0,
+      "value": "', messaggio: '"
+    },
+    {
+      "type": 1,
+      "value": "message"
+    },
+    {
+      "type": 0,
+      "value": "'."
+    }
+  ],
+  "06zKZg": [
+    {
+      "type": 0,
+      "value": "(UTC+04:00) Tbilisi"
+    }
+  ],
+  "07ZsoY": [
+    {
+      "type": 0,
+      "value": "Restituisce l'inizio dell'ora del timestamp in formato stringa passato"
+    }
+  ],
+  "07oZoX": [
+    {
+      "type": 0,
+      "value": "(UTC + 12.00) Anadyr, Petropavlovsk-Kamčatskij"
+    }
+  ],
+  "08e2rO": [
+    {
+      "type": 0,
+      "value": "L'identità gestita utilizzata per questa operazione non esiste più. Per continuare, configura un'identità o modifica la connessione."
+    }
+  ],
+  "09B9CU": [
+    {
+      "type": 0,
+      "value": "Restituisce l'URL per richiamare il trigger o l'azione. Nota: questa funzione può essere usata solo nei trigger httpWebhook e apiConnectionWebhook e non nei trigger di tipo Manual, Recurrence, HTTP o apiConnection."
+    }
+  ],
+  "0B5xDu": [
+    {
+      "type": 0,
+      "value": "(UTC + 05.30 h) Sri Jayawardenepura"
+    }
+  ],
+  "0CPsxh": [
+    {
+      "type": 0,
+      "value": "CANC"
+    }
+  ],
+  "0CvRZW": [
+    {
+      "type": 0,
+      "value": "Salva"
+    }
+  ],
+  "0F6jmK": [
+    {
+      "type": 0,
+      "value": "Input o output protetti abilitati."
+    }
+  ],
+  "0FzNJV": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Stringa con codifica Base64."
+    }
+  ],
+  "0GT0SI": [
+    {
+      "type": 0,
+      "value": "Annulla"
+    }
+  ],
+  "0GqNGo": [
+    {
+      "type": 0,
+      "value": "L'URL decodifica la stringa di input"
+    }
+  ],
+  "0IRUjM": [
+    {
+      "type": 0,
+      "value": "Seleziona un nodo dello schema di destinazione per avviare il mapping"
+    }
+  ],
+  "0JTHTZ": [
+    {
+      "type": 0,
+      "value": "Mostra menu Esegui"
+    }
+  ],
+  "0KMjv6": [
+    {
+      "type": 0,
+      "value": "Verifica"
+    }
+  ],
+  "0R2D5l": [
+    {
+      "type": 0,
+      "value": "Restituisce una rappresentazione binaria di una stringa con codifica URI"
+    }
+  ],
+  "0SSwxD": [
+    {
+      "type": 0,
+      "value": "Chiudi il pannello"
+    }
+  ],
+  "0Vzp0l": [
+    {
+      "type": 0,
+      "value": "Comprimi"
+    }
+  ],
+  "0i/6TR": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Stringa da convertire in lettere maiuscole. Se un carattere nella stringa non ha un equivalente in lettere maiuscole, il carattere verrà riportato invariato nella stringa restituita."
+    }
+  ],
+  "0m2Y1/": [
+    {
+      "type": 0,
+      "value": "Valore"
+    }
+  ],
+  "0oebOm": [
+    {
+      "type": 0,
+      "value": "Output"
+    }
+  ],
+  "0p+pJq": [
+    {
+      "type": 0,
+      "value": "Restituisce il resto dopo la divisione dei due numeri (modulo)"
+    }
+  ],
+  "0qV0Qe": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Stringa che può contenere il valore."
+    }
+  ],
+  "0uj1Li": [
+    {
+      "type": 0,
+      "value": "Restituisce una rappresentazione binaria di una stringa di input dell'URI di dati"
+    }
+  ],
+  "0upuCv": [
+    {
+      "type": 0,
+      "value": "Ora"
+    }
+  ],
+  "0vfdFS": [
+    {
+      "type": 0,
+      "value": "ogni giorno"
+    }
+  ],
+  "0xLWzG": [
+    {
+      "type": 0,
+      "value": "Il nome esiste già o non è valido. Aggiorna il nome prima di continuare."
+    }
+  ],
+  "0y5eia": [
+    {
+      "type": 0,
+      "value": "Altri comandi"
+    }
+  ],
+  "1+Z8n9": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. URI di dati da convertire nella rappresentazione stringa."
+    }
+  ],
+  "109OPL": [
+    {
+      "type": 0,
+      "value": "Restituisce la porta da un URI. Se la porta non è specificata, restituisce la porta predefinita per il protocollo"
+    }
+  ],
+  "14lYtE": [
+    {
+      "type": 0,
+      "value": "18"
+    }
+  ],
+  "1A1P5b": [
+    {
+      "type": 0,
+      "value": "Commento"
+    }
+  ],
+  "1D047X": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Valore da convertire in XML."
+    }
+  ],
+  "1Fn5n+": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Stringa con codifica URI."
+    }
+  ],
+  "1KFpTX": [
+    {
+      "type": 0,
+      "value": "(UTC+03:00) Minsk"
+    }
+  ],
+  "1NBvKu": [
+    {
+      "type": 0,
+      "value": "Converte l'argomento del parametro in un numero a virgola mobile"
+    }
+  ],
+  "1ZSzl6": [
+    {
+      "type": 0,
+      "value": "Ogni esecuzione dopo la configurazione deve avere almeno uno stato controllato"
+    }
+  ],
+  "1dlfUe": [
+    {
+      "type": 0,
+      "value": "Le azioni eseguono operazioni sui dati, comunicano tra sistemi o eseguono altre attività."
+    }
+  ],
+  "1eKQwo": [
+    {
+      "type": 0,
+      "value": "(UTC+08:00) Perth"
+    }
+  ],
+  "1ejxkP": [
+    {
+      "type": 0,
+      "value": "Input sicuri"
+    }
+  ],
+  "1hHFdx": [
+    {
+      "type": 0,
+      "value": "(UTC-01:00) Azzorre"
+    }
+  ],
+  "1hPZqe": [
+    {
+      "type": 0,
+      "value": "Numero di tentativi per la richiesta"
+    }
+  ],
+  "1htSs7": [
+    {
+      "type": 0,
+      "value": "Disattivato"
+    }
+  ],
+  "1jhzOM": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Oggetto da controllare per verificare se è minore del valore con cui è confrontato."
+    }
+  ],
+  "1nODUD": [
+    {
+      "type": 0,
+      "value": "Nascondi funzioni"
+    }
+  ],
+  "1nvvw1": [
+    {
+      "type": 0,
+      "value": "Immettere il valore dell'intestazione dell'autorizzazione"
+    }
+  ],
+  "1pjO9s": [
+    {
+      "type": 0,
+      "value": "Nascondi schema di origine"
+    }
+  ],
+  "1r9ljA": [
+    {
+      "type": 0,
+      "value": "Immetti un URI valido."
+    }
+  ],
+  "1uGBLP": [
+    {
+      "type": 0,
+      "value": "5"
+    }
+  ],
+  "20oqsp": [
+    {
+      "type": 0,
+      "value": "Aggiungi elementi figlio (ricorsivo)"
+    }
+  ],
+  "23fENy": [
+    {
+      "type": 0,
+      "value": "Restituisce una rappresentazione binaria di una stringa con codifica Base 64"
+    }
+  ],
+  "23szE+": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Valore da convertire in URI di dati."
+    }
+  ],
+  "23uZn1": [
+    {
+      "type": 0,
+      "value": "Ricerca globale"
+    }
+  ],
+  "27Nhhv": [
+    {
+      "type": 0,
+      "value": "Seleziona un'API da un'istanza di Gestione API"
+    }
+  ],
+  "2CXCOt": [
+    {
+      "type": 0,
+      "value": "Selezionare un file da caricare"
+    }
+  ],
+  "2Gh+Gd": [
+    {
+      "type": 0,
+      "value": "Assistente del flusso di lavoro"
+    }
+  ],
+  "2JA3gY": [
+    {
+      "type": 0,
+      "value": "Espandi nodo albero"
+    }
+  ],
+  "2K2fAj": [
+    {
+      "type": 0,
+      "value": "Ora di fine"
+    }
+  ],
+  "2MOA1x": [
+    {
+      "type": 0,
+      "value": "Controllare la modalità di accodamento delle nuove esecuzioni"
+    }
+  ],
+  "2NXYYu": [
+    {
+      "type": 0,
+      "value": "Cerca"
+    }
+  ],
+  "2Noh96": [
+    {
+      "type": 0,
+      "value": "17"
+    }
+  ],
+  "2TMGk7": [
+    {
+      "type": 0,
+      "value": "Identità gestita"
+    }
+  ],
+  "2ZfzaY": [
+    {
+      "type": 0,
+      "value": "Seleziona esistente"
+    }
+  ],
+  "2cVEMV": [
+    {
+      "type": 0,
+      "value": "Restituisce un singolo valore corrispondente al nome della chiave dall'output dell'azione dei dati del modulo o con codifica per il modulo"
+    }
+  ],
+  "2gOfQI": [
+    {
+      "type": 0,
+      "value": "Schemi esistenti da"
+    }
+  ],
+  "2gzGrJ": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Nome dell'azione con una risposta con dati del modulo o codifica per il modulo."
+    }
+  ],
+  "2hrQOL": [
+    {
+      "type": 0,
+      "value": "(UTC + 00.00) Dublino, Edimburgo, Lisbona, Londra"
+    }
+  ],
+  "2kWLLc": [
+    {
+      "type": 0,
+      "value": "Ora di inizio"
+    }
+  ],
+  "2pCFsW": [
+    {
+      "type": 0,
+      "value": "Il conteggio delle pagine non è valido. Il valore deve essere un numero maggiore di 0"
+    }
+  ],
+  "2pRsUf": [
+    {
+      "type": 0,
+      "value": "Immetti una matrice valida."
+    }
+  ],
+  "2r30S9": [
+    {
+      "type": 0,
+      "value": "Inserisci un nuovo passaggio dopo "
+    },
+    {
+      "type": 1,
+      "value": "parentName"
+    }
+  ],
+  "2tTQ0A": [
+    {
+      "type": 0,
+      "value": "Sì"
+    }
+  ],
+  "2uINs9": [
+    {
+      "type": 0,
+      "value": "Predefinito"
+    }
+  ],
+  "2vnYre": [
+    {
+      "type": 0,
+      "value": "Aggiungi azione"
+    }
+  ],
+  "2y24a/": [
+    {
+      "type": 0,
+      "value": "Salva"
+    }
+  ],
+  "2z5HGT": [
+    {
+      "type": 0,
+      "value": "Facoltativo. Codice delle impostazioni locali RFC 4646 da utilizzare. Se non è specificato, vengono utilizzate le impostazioni locali predefinite. Se le impostazioni locali non sono un valore valido, viene generato un errore che indica che le impostazioni locali specificate non sono valide o non hanno impostazioni locali associate."
+    }
+  ],
+  "3+TQMa": [
+    {
+      "type": 0,
+      "value": "Caricamento connessione in corso..."
+    }
+  ],
+  "33+WHG": [
+    {
+      "type": 0,
+      "value": "Identificatore"
+    }
+  ],
+  "34Nt/B": [
+    {
+      "type": 0,
+      "value": "testo alternativo per l'icona del pulsante"
+    }
+  ],
+  "36RiST": [
+    {
+      "type": 0,
+      "value": "Identità gestita assegnata dal sistema"
+    }
+  ],
+  "3AWwVl": [
+    {
+      "type": 0,
+      "value": "Codice"
+    }
+  ],
+  "3BZnxY": [
+    {
+      "type": 0,
+      "value": "Aggiungi contenuto dinamico"
+    }
+  ],
+  "3ERi+E": [
+    {
+      "type": 0,
+      "value": "Condizioni d'uso"
+    }
+  ],
+  "3GINhd": [
+    {
+      "type": 0,
+      "value": "Trigger"
+    }
+  ],
+  "3KPLpx": [
+    {
+      "type": 0,
+      "value": "Rimuovi prima tutti i mapping all'interno dell'elemento di origine {nodeName}."
+    }
+  ],
+  "3MTSYZ": [
+    {
+      "type": 0,
+      "value": "(UTC-03:00) Salvador"
+    }
+  ],
+  "3NhwIJ": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Separatore."
+    }
+  ],
+  "3O0i4j": [
+    {
+      "type": 0,
+      "value": "Non è disponibile alcun contenuto"
+    }
+  ],
+  "3PJZH0": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Stringa da esaminare."
+    }
+  ],
+  "3QXY3z": [
+    {
+      "type": 0,
+      "value": "La sostituzione di uno schema esistente con uno schema incompatibile potrebbe causare errori nella mappa."
+    }
+  ],
+  "3RoD4h": [
+    {
+      "type": 0,
+      "value": "Restituisce la raccolta in ordine inverso"
+    }
+  ],
+  "3X4FHS": [
+    {
+      "type": 0,
+      "value": "Scegliere il tipo di input utente"
+    }
+  ],
+  "3Y8a6G": [
+    {
+      "type": 0,
+      "value": "I parametri obbligatori "
+    },
+    {
+      "type": 1,
+      "value": "parameters"
+    },
+    {
+      "type": 0,
+      "value": " non sono impostati o non sono validi"
+    }
+  ],
+  "3cZZKj": [
+    {
+      "type": 0,
+      "value": "Divisore"
+    }
+  ],
+  "3eeli7": [
+    {
+      "type": 0,
+      "value": "Selezionare uno schema di origine"
+    }
+  ],
+  "3ewBbk": [
+    {
+      "type": 0,
+      "value": "L'identità specificata non è associata a questa app per la logica."
+    }
+  ],
+  "3n5pnv": [
+    {
+      "type": 0,
+      "value": "(UTC + 10.30) Isola Lord Howe"
+    }
+  ],
+  "3rzrWf": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Oggetto da cui rimuovere la proprietà."
+    }
+  ],
+  "3sJlV+": [
+    {
+      "type": 0,
+      "value": "Chiudi visualizzazione codice"
+    }
+  ],
+  "3uA4ml": [
+    {
+      "type": 0,
+      "value": "Immetti un valore datetime valido."
+    }
+  ],
+  "3vCCY7": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Numero di un'unità di tempo specificata da sottrarre."
+    }
+  ],
+  "3vqfeV": [
+    {
+      "type": 0,
+      "value": "3"
+    }
+  ],
+  "3z6rhG": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Valore corrispondente all'intero successivo dopo l’intero più elevato che è stato restituito."
+    }
+  ],
+  "41drjl": [
+    {
+      "type": 0,
+      "value": "Apri connessione"
+    }
+  ],
+  "41eMpW": [
+    {
+      "type": 0,
+      "value": "In attesa"
+    }
+  ],
+  "43xObP": [
+    {
+      "type": 0,
+      "value": "(UTC + 10.00 h) Canberra, Melbourne, Sydney"
+    }
+  ],
+  "45ubha": [
+    {
+      "type": 0,
+      "value": "Autenticazione"
+    }
+  ],
+  "47kOXr": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Integer più basso che può essere restituito."
+    }
+  ],
+  "49YUXK": [
+    {
+      "type": 0,
+      "value": "'"
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "' è obbligatorio."
+    }
+  ],
+  "4BH9uU": [
+    {
+      "type": 0,
+      "value": "Errori"
+    }
+  ],
+  "4BrA0z": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Numero di giorni da aggiungere. Può essere negativo per sottrarre i giorni."
+    }
+  ],
+  "4D7H4R": [
+    {
+      "type": 0,
+      "value": "In esecuzione "
+    },
+    {
+      "type": 1,
+      "value": "onDays"
+    }
+  ],
+  "4Ekn9t": [
+    {
+      "type": 0,
+      "value": "Annulla"
+    }
+  ],
+  "4IS4yp": [
+    {
+      "type": 0,
+      "value": "Criteri di ripetizione"
+    }
+  ],
+  "4Q7WzU": [
+    {
+      "type": 0,
+      "value": "Aggiungi una nuova connessione"
+    }
+  ],
+  "4YKQAF": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Unità di tempo specificata nell'intervallo."
+    }
+  ],
+  "4aaixN": [
+    {
+      "type": 0,
+      "value": "Presentazione"
+    }
+  ],
+  "4c0uPQ": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Nome del parametro di cui si desidera ottenere i valori."
+    }
+  ],
+  "4hi3ks": [
+    {
+      "type": 0,
+      "value": "Il flusso è stato aggiornato."
+    }
+  ],
+  "4iyEAY": [
+    {
+      "type": 0,
+      "value": "💾 Salvataggio di questo flusso in corso..."
+    }
+  ],
+  "4izAMi": [
+    {
+      "type": 0,
+      "value": "Immettere un valore con cui rispondere"
+    }
+  ],
+  "4j2MEv": [
+    {
+      "type": 0,
+      "value": "Attiva/disattiva minimappa"
+    }
+  ],
+  "4vcnOA": [
+    {
+      "type": 0,
+      "value": "Restituisce il valore minimo nella matrice di input di numeri"
+    }
+  ],
+  "4vmGh0": [
+    {
+      "type": 0,
+      "value": "ID richiesta servizio"
+    }
+  ],
+  "4wjJs0": [
+    {
+      "type": 0,
+      "value": "14"
+    }
+  ],
+  "5+P3ef": [
+    {
+      "type": 0,
+      "value": "(UTC+08:45) Eucla"
+    }
+  ],
+  "50W8FI": [
+    {
+      "type": 0,
+      "value": "Spiega l'azione"
+    }
+  ],
+  "53MgCQ": [
+    {
+      "type": 0,
+      "value": "Apri pannello"
+    }
+  ],
+  "595Baw": [
+    {
+      "type": 0,
+      "value": "(UTC + 9.00 h) Osaka, Sapporo, Tokyo"
+    }
+  ],
+  "5J9jne": [
+    {
+      "type": 0,
+      "value": "Indicare a Microsoft cosa si è apprezzato di questa funzionalità"
+    }
+  ],
+  "5LV34t": [
+    {
+      "type": 0,
+      "value": "Le proprietà '"
+    },
+    {
+      "type": 1,
+      "value": "invalidProperties"
+    },
+    {
+      "type": 0,
+      "value": "' non sono valide per il tipo di autenticazione '"
+    },
+    {
+      "type": 1,
+      "value": "authType"
+    },
+    {
+      "type": 0,
+      "value": "'."
+    }
+  ],
+  "5OvGgn": [
+    {
+      "type": 0,
+      "value": "Corpo"
+    }
+  ],
+  "5SAQOb": [
+    {
+      "type": 0,
+      "value": "Autorità"
+    }
+  ],
+  "5WTRY8": [
+    {
+      "type": 0,
+      "value": "Errori"
+    }
+  ],
+  "5akc1Q": [
+    {
+      "type": 0,
+      "value": "Valore 'in' non supportato: '"
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "' nel parametro"
+    }
+  ],
+  "5b0sKi": [
+    {
+      "type": 0,
+      "value": "Restituisce true se un oggetto, una matrice o una stringa è vuota"
+    }
+  ],
+  "5cPiWA": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Nome del ciclo di cui si desidera ottenere l'elemento."
+    }
+  ],
+  "5dCAjy": [
+    {
+      "type": 0,
+      "value": "Giorno"
+    }
+  ],
+  "5fmV2Q": [
+    {
+      "type": 0,
+      "value": "I parametri usati nell'app per la logica verranno convertiti in un modello di Azure Resource Manager durante la generazione del modello di distribuzione."
+    }
+  ],
+  "5gOG+F": [
+    {
+      "type": 0,
+      "value": "Specificare i valori da confrontare e selezionare l'operatore da utilizzare."
+    }
+  ],
+  "5hWg4V": [
+    {
+      "type": 0,
+      "value": "Seleziona elemento"
+    }
+  ],
+  "5qzZMo": [
+    {
+      "type": 0,
+      "value": "Caricamento..."
+    }
+  ],
+  "5rkegy": [
+    {
+      "type": 0,
+      "value": "Elimina parametro"
+    }
+  ],
+  "5ytHcK": [
+    {
+      "type": 0,
+      "value": "Caricamento..."
+    }
+  ],
+  "6+RwRp": [
+    {
+      "type": 0,
+      "value": "Connettore ibrido"
+    }
+  ],
+  "61iT9C": [
+    {
+      "type": 0,
+      "value": "Inserire i dati del passaggio precedente (è anche possibile aggiungere digitando ALT+/nell'editor)"
+    }
+  ],
+  "62Ypnr": [
+    {
+      "type": 0,
+      "value": "Errore durante il caricamento dei dati dell'operazione"
+    }
+  ],
+  "63/zYN": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Oggetto da controllare per verificare se è maggiore del valore con cui è confrontato."
+    }
+  ],
+  "632t9E": [
+    {
+      "type": 0,
+      "value": "Input sicuri dell'operazione"
+    }
+  ],
+  "63CC7M": [
+    {
+      "type": 0,
+      "value": "Errore durante il caricamento degli input"
+    }
+  ],
+  "63fQWE": [
+    {
+      "type": 0,
+      "value": "Mostra tutti i parametri avanzati"
+    }
+  ],
+  "6OSgRP": [
+    {
+      "type": 0,
+      "value": "Test mappa"
+    }
+  ],
+  "6PdOcy": [
+    {
+      "type": 0,
+      "value": "Annulla"
+    }
+  ],
+  "6VV7OY": [
+    {
+      "type": 0,
+      "value": "Il valore del timeout non è valido. Deve corrispondere al formato di durata ISO 8601"
+    }
+  ],
+  "6fDYzG": [
+    {
+      "type": 0,
+      "value": "Non è stato possibile caricare lo schema. Riprova."
+    }
+  ],
+  "6gZ4I3": [
+    {
+      "type": 0,
+      "value": "Alla funzione '"
+    },
+    {
+      "type": 1,
+      "value": "functionName"
+    },
+    {
+      "type": 0,
+      "value": "' sono assegnati troppi input"
+    }
+  ],
+  "6gblzt": [
+    {
+      "type": 0,
+      "value": "Questa azione è stata aggiornata"
+    }
+  ],
+  "6jiO7t": [
+    {
+      "type": 0,
+      "value": "Mostra esecuzione"
+    }
+  ],
+  "6jsWn/": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Raccolta in cui eseguire la ricerca."
+    }
+  ],
+  "6kSpHL": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Nome dell'azione con una risposta a più parti."
+    }
+  ],
+  "6lLsi+": [
+    {
+      "type": 0,
+      "value": "Questo passaggio verrà rimosso dall'app per la logica."
+    }
+  ],
+  "6oqk+A": [
+    {
+      "type": 0,
+      "value": "Indietro"
+    }
+  ],
+  "6pISgk": [
+    {
+      "type": 0,
+      "value": "Per preparare il flusso di lavoro, completare la configurazione di queste azioni:"
+    }
+  ],
+  "6qkBwz": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Numero in base a cui moltiplicare il moltiplicando 2."
+    }
+  ],
+  "6sGj3J": [
+    {
+      "type": 0,
+      "value": "Crea flusso"
+    }
+  ],
+  "6sSPNb": [
+    {
+      "type": 0,
+      "value": "Connettore "
+    },
+    {
+      "type": 1,
+      "value": "connectorName"
+    }
+  ],
+  "6u6CS+": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Valore per il quale trovare l'indice."
+    }
+  ],
+  "6uCEoM": [
+    {
+      "type": 0,
+      "value": "Immettere un valore valido per '"
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "'."
+    }
+  ],
+  "6ueRYm": [
+    {
+      "type": 0,
+      "value": "Ora di inizio"
+    }
+  ],
+  "6xRvni": [
+    {
+      "type": 0,
+      "value": "Tipo di dati"
+    }
+  ],
+  "6yFUar": [
+    {
+      "type": 0,
+      "value": "Outputs are required when status is \"Succeeded\""
+    }
+  ],
+  "70eoQu": [
+    {
+      "type": 0,
+      "value": "Selezionare funzione da"
+    }
+  ],
+  "73iM9+": [
+    {
+      "type": 0,
+      "value": "Aggiorna schema di origine"
+    }
+  ],
+  "74e2xB": [
+    {
+      "type": 0,
+      "value": "Crea una nuova connessione"
+    }
+  ],
+  "78Vggn": [
+    {
+      "type": 0,
+      "value": "Immetti nome utente"
+    }
+  ],
+  "7EZ2oY": [
+    {
+      "type": 0,
+      "value": "(UTC - 04.00) Turks e Caicos"
+    }
+  ],
+  "7Fyq1F": [
+    {
+      "type": 0,
+      "value": "Nessun input"
+    }
+  ],
+  "7GSk99": [
+    {
+      "type": 0,
+      "value": "OK"
+    }
+  ],
+  "7LmpNN": [
+    {
+      "type": 0,
+      "value": "Parametro \" "
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "> non è stato trovato per questa operazione"
+    }
+  ],
+  "7PtWvu": [
+    {
+      "type": 0,
+      "value": "(UTC - 5.00 h) Fuso orientale (USA e Canada)"
+    }
+  ],
+  "7QymrD": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Stringa da cui viene recuperata la sottostringa."
+    }
+  ],
+  "7S2wtE": [
+    {
+      "type": 0,
+      "value": "Convalida dello schema"
+    }
+  ],
+  "7ZR1xr": [
+    {
+      "type": 0,
+      "value": "Aggiungerei un'azione"
+    }
+  ],
+  "7aJqIH": [
+    {
+      "type": 0,
+      "value": "Facoltativo. Impostazioni locali da usare per la formattazione (valore predefinito 'en-us')."
+    }
+  ],
+  "7gUE8h": [
+    {
+      "type": 0,
+      "value": "Il flusso di lavoro verrà ripristinato allo stato in cui si trovava prima della modifica di Copilot. Se sono state apportate modifiche aggiuntive al flusso di lavoro dopo il copilot, queste saranno perdute. Questa azione non può essere annullata. Continuare?"
+    }
+  ],
+  "7jcTNd": [
+    {
+      "type": 0,
+      "value": "Immetti un indirizzo Email valido."
+    }
+  ],
+  "7k9jXx": [
+    {
+      "type": 0,
+      "value": "Codice stato"
+    }
+  ],
+  "7lnElz": [
+    {
+      "type": 0,
+      "value": "Restituisce il numero di tick (intervallo di 100 nanosecondi) dal 1° gennaio 0001 00:00:00 UT di un timestamp in formato stringa"
+    }
+  ],
+  "7lvqST": [
+    {
+      "type": 0,
+      "value": "Non valido"
+    }
+  ],
+  "7yEdSt": [
+    {
+      "type": 0,
+      "value": "Mostra altro"
+    }
+  ],
+  "7yFLpB": [
+    {
+      "type": 0,
+      "value": "Copia URL"
+    }
+  ],
+  "7zDk9N": [
+    {
+      "type": 0,
+      "value": "Intervallo esponenziale"
+    }
+  ],
+  "7zsUT3": [
+    {
+      "type": 0,
+      "value": "Tipo di autenticazione '"
+    },
+    {
+      "type": 1,
+      "value": "authType"
+    },
+    {
+      "type": 0,
+      "value": "' non supportato."
+    }
+  ],
+  "7zzPsK": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Stringa che può contenere il valore."
+    }
+  ],
+  "8+0teU": [
+    {
+      "type": 0,
+      "value": "Il nome del parametro esiste già."
+    }
+  ],
+  "83G5rr": [
+    {
+      "type": 0,
+      "value": "Specifica l'intervallo."
+    }
+  ],
+  "83PYuA": [
+    {
+      "type": 0,
+      "value": "(UTC - 6.00 h) Fuso centrale (USA e Canada)"
+    }
+  ],
+  "84D91Y": [
+    {
+      "type": 0,
+      "value": "PFX"
+    }
+  ],
+  "8BoVtZ": [
+    {
+      "type": 0,
+      "value": "Errore durante l'esecuzione dell'API - "
+    },
+    {
+      "type": 1,
+      "value": "url"
+    }
+  ],
+  "8CWFEh": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Valore da restituire se l'espressione è 'true'."
+    }
+  ],
+  "8DFwxH": [
+    {
+      "type": 0,
+      "value": "Restituisce una stringa numerica formattata"
+    }
+  ],
+  "8FjOSh": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Oggetto da controllare per verificare se è maggiore o uguale al valore con cui è confrontato."
+    }
+  ],
+  "8JEHiY": [
+    {
+      "type": 0,
+      "value": "Sabato"
+    }
+  ],
+  "8L+oIz": [
+    {
+      "type": 0,
+      "value": "Non è possibile eseguire il rendering dell'area di progettazione a causa della presenza di più trigger nella definizione."
+    }
+  ],
+  "8LhQeL": [
+    {
+      "type": 0,
+      "value": "Passa alla modalità di visualizzazione Codice"
+    }
+  ],
+  "8ND+Yc": [
+    {
+      "type": 0,
+      "value": "Abilitare l'identità gestita per l'app per la logica."
+    }
+  ],
+  "8NFfuB": [
+    {
+      "type": 0,
+      "value": "Azioni"
+    }
+  ],
+  "8NUqpR": [
+    {
+      "type": 0,
+      "value": "Descrivere come deve essere modificato il flusso. Aggiungere i dettagli laddove possibile, come il connettore da usare e se deve essere incluso un eventuale contenuto."
+    }
+  ],
+  "8Q7ns/": [
+    {
+      "type": 0,
+      "value": "Modifica questo flusso in"
+    }
+  ],
+  "8U0KPg": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Stringa da codificare in URI."
+    }
+  ],
+  "8UfIAk": [
+    {
+      "type": 0,
+      "value": "Immettere il segreto come testo normale o usare un parametro protetto"
+    }
+  ],
+  "8Y5xpK": [
+    {
+      "type": 0,
+      "value": "Giovedì"
+    }
+  ],
+  "8ZfbyZ": [
+    {
+      "type": 0,
+      "value": "(UTC+06:00) Astana"
+    }
+  ],
+  "8baaNC": [
+    {
+      "type": 0,
+      "value": "Tipo di token non supportato: "
+    },
+    {
+      "type": 1,
+      "value": "expressions"
+    }
+  ],
+  "8eKf/c": [
+    {
+      "type": 0,
+      "value": "(UTC+08:00) Irkutsk"
+    }
+  ],
+  "8eTWaf": [
+    {
+      "type": 0,
+      "value": "Rinomina"
+    }
+  ],
+  "8j+a0n": [
+    {
+      "type": 0,
+      "value": "Con il modello asincrono, se il server remoto indica che la richiesta è stata accettata per l'elaborazione con una risposta 202 (Accettata), il motore di App per la logica continua a eseguire il poll dell'URL specificato nell'intestazione Location della risposta, fino a raggiungere uno stato terminale."
+    }
+  ],
+  "8mDG0V": [
+    {
+      "type": 0,
+      "value": "Il flusso di lavoro contiene errori di convalida dei parametri nelle operazioni seguenti: "
+    },
+    {
+      "type": 1,
+      "value": "invalidNodes"
+    }
+  ],
+  "8wr0zO": [
+    {
+      "type": 0,
+      "value": "Aggiunge un numero intero di giorni al timestamp in formato stringa passato"
+    }
+  ],
+  "8zkvmc": [
+    {
+      "type": 0,
+      "value": "Test"
+    }
+  ],
+  "9/UeTh": [
+    {
+      "type": 0,
+      "value": "Restituisce una singola matrice o oggetto contenente elementi comuni tra le matrici o gli oggetti passati"
+    }
+  ],
+  "90Q7Pw": [
+    {
+      "type": 0,
+      "value": "Valore"
+    }
+  ],
+  "90o7sB": [
+    {
+      "type": 0,
+      "value": "File"
+    }
+  ],
+  "93Gj/n": [
+    {
+      "type": 0,
+      "value": "Posizione di riga"
+    }
+  ],
+  "93svjx": [
+    {
+      "type": 0,
+      "value": "L'identità utente non è supportata quando per l'app per la logica è abilitata l'identità gestita assegnata dal sistema."
+    }
+  ],
+  "96JG8I": [
+    {
+      "type": 0,
+      "value": "Operazione "
+    },
+    {
+      "type": 1,
+      "value": "operationName"
+    }
+  ],
+  "99vsJy": [
+    {
+      "type": 0,
+      "value": "Connettore"
+    }
+  ],
+  "9EmN2M": [
+    {
+      "type": 0,
+      "value": "Annulla"
+    }
+  ],
+  "9IDWMU": [
+    {
+      "type": 0,
+      "value": "Chiudi"
+    }
+  ],
+  "9JuvQ4": [
+    {
+      "type": 0,
+      "value": "Restituisce un URI di dati di un valore"
+    }
+  ],
+  "9Jv3+1": [
+    {
+      "type": 0,
+      "value": "Restituisce un oggetto con una coppia proprietà-valore aggiuntiva"
+    }
+  ],
+  "9LLnyJ": [
+    {
+      "type": 0,
+      "value": "(UTC-03:00) Brasilia"
+    }
+  ],
+  "9QNZSj": [
+    {
+      "type": 0,
+      "value": "Ripristina il flusso"
+    }
+  ],
+  "9SuA/E": [
+    {
+      "type": 0,
+      "value": "12"
+    }
+  ],
+  "9W0lck": [
+    {
+      "type": 0,
+      "value": "Il valore '"
+    },
+    {
+      "type": 1,
+      "value": "splitOn"
+    },
+    {
+      "type": 0,
+      "value": "'' non è valido. Non è stato trovato negli output."
+    }
+  ],
+  "9YGcT2": [
+    {
+      "type": 0,
+      "value": "ChildErrors"
+    }
+  ],
+  "9YZ873": [
+    {
+      "type": 0,
+      "value": "Testo"
+    }
+  ],
+  "9aj+el": [
+    {
+      "type": 0,
+      "value": "Predefinito"
+    }
+  ],
+  "9atGYe": [
+    {
+      "type": 0,
+      "value": "Aggiungi"
+    }
+  ],
+  "9djnqI": [
+    {
+      "type": 0,
+      "value": "Restituisce il risultato dell'aggiunta dei due numeri"
+    }
+  ],
+  "9u/Ae3": [
+    {
+      "type": 0,
+      "value": "Restituisce true se entrambi i parametri sono true"
+    }
+  ],
+  "9wX3u9": [
+    {
+      "type": 0,
+      "value": "Invia feedback"
+    }
+  ],
+  "9x8hg8": [
+    {
+      "type": 0,
+      "value": "Modifica in modalità di base"
+    }
+  ],
+  "9yLPwo": [
+    {
+      "type": 0,
+      "value": "Per informazioni più dettagliate, è possibile fare riferimento alle risorse seguenti"
+    }
+  ],
+  "A5Ferh": [
+    {
+      "type": 0,
+      "value": "Elemento di origine rimosso dalla visualizzazione."
+    }
+  ],
+  "A8l+k7": [
+    {
+      "type": 0,
+      "value": "Si è verificato un errore durante l'esecuzione dei parametri API seguenti: '"
+    },
+    {
+      "type": 1,
+      "value": "parameters"
+    },
+    {
+      "type": 0,
+      "value": "'"
+    }
+  ],
+  "ADM1Z8": [
+    {
+      "type": 0,
+      "value": "Tipo di autenticazione"
+    }
+  ],
+  "AEguAy": [
+    {
+      "type": 0,
+      "value": "Valore vuoto"
+    }
+  ],
+  "AGCm1p": [
+    {
+      "type": 0,
+      "value": "Nome"
+    }
+  ],
+  "AHB418": [
+    {
+      "type": 0,
+      "value": "Filtra azioni"
+    }
+  ],
+  "ANGw2o": [
+    {
+      "type": 0,
+      "value": "Click for more information on Static Result"
+    }
+  ],
+  "AO6T9u": [
+    {
+      "type": 0,
+      "value": "Fine"
+    }
+  ],
+  "AQ7Zxc": [
+    {
+      "type": 0,
+      "value": "Restituisce l'indice per l'occorrenza n° di un valore in una stringa (senza distinzione tra maiuscole e minuscole, impostazioni cultura invarianti)."
+    }
+  ],
+  "Af+Ve0": [
+    {
+      "type": 0,
+      "value": "(UTC + 11.00) Bougainville"
+    }
+  ],
+  "AheXMN": [
+    {
+      "type": 0,
+      "value": "Seleziona la frequenza."
+    }
+  ],
+  "AhvQ7r": [
+    {
+      "type": 0,
+      "value": "Rimuovere e cancellare tutti i parametri avanzati e i relativi valori"
+    }
+  ],
+  "Ak2Lka": [
+    {
+      "type": 0,
+      "value": "Non connesso a"
+    }
+  ],
+  "AnX5yC": [
+    {
+      "type": 0,
+      "value": "Nome utente"
+    }
+  ],
+  "AoalgS": [
+    {
+      "type": 0,
+      "value": "Caricamento di altri risultati..."
+    }
+  ],
+  "ArTh0/": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Stringa da codificare nella rappresentazione Base64."
+    }
+  ],
+  "AsqIUa": [
+    {
+      "type": 0,
+      "value": "Intervallo massimo"
+    }
+  ],
+  "Az0QvG": [
+    {
+      "type": 0,
+      "value": "Automatico"
+    }
+  ],
+  "B/JzwK": [
+    {
+      "offset": 0,
+      "options": {
+        "=0": {
+          "value": [
+            {
+              "type": 0,
+              "value": "0 azioni"
+            }
+          ]
+        },
+        "many": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " azioni"
+            }
+          ]
+        },
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " azione"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " azioni"
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "actionCount"
+    }
+  ],
+  "B/gCWM": [
+    {
+      "type": 0,
+      "value": "Errore"
+    }
+  ],
+  "B2s0iG": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Indice della parte da recuperare."
+    }
+  ],
+  "B59BCg": [
+    {
+      "type": 0,
+      "value": "Non è disponibile alcun contenuto dinamico"
+    }
+  ],
+  "B999mz": [
+    {
+      "type": 0,
+      "value": "Riga eliminata."
+    }
+  ],
+  "BBD8Em": [
+    {
+      "type": 0,
+      "value": "Chiave"
+    }
+  ],
+  "BCAnZP": [
+    {
+      "type": 0,
+      "value": "Singolo carattere identificatore del formato o modello di formato personalizzato che indica come formattare il valore di questo timestamp. Se il formato non viene specificato, verrà usato il formato ISO 8601 ('o')."
+    }
+  ],
+  "BCgiRh": [
+    {
+      "type": 0,
+      "value": "Avviso: il valore personalizzato non corrisponde a uno dei tipi consentiti per questo input"
+    }
+  ],
+  "BFTwRN": [
+    {
+      "type": 0,
+      "value": "Operazione riuscita in più tentativi"
+    }
+  ],
+  "BGw6eH": [
+    {
+      "type": 0,
+      "value": "Proprietà obbligatorie '"
+    },
+    {
+      "type": 1,
+      "value": "missingProperties"
+    },
+    {
+      "type": 0,
+      "value": "' mancanti per il tipo di autenticazione '"
+    },
+    {
+      "type": 1,
+      "value": "authType"
+    },
+    {
+      "type": 0,
+      "value": "'"
+    }
+  ],
+  "BHe7qY": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Stringa con codifica URI."
+    }
+  ],
+  "BIzX3S": [
+    {
+      "type": 0,
+      "value": "Altre informazioni sulle operazioni di annullamento"
+    }
+  ],
+  "BJNUxN": [
+    {
+      "type": 0,
+      "value": "Parametri del percorso"
+    }
+  ],
+  "BKL0ZG": [
+    {
+      "type": 0,
+      "value": "Ora di inizio"
+    }
+  ],
+  "BPYdTX": [
+    {
+      "type": 0,
+      "value": "Non specificato"
+    }
+  ],
+  "BQCPY7": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Stringa da cui decodificare caratteri non sicuri per gli URL."
+    }
+  ],
+  "BQSRV0": [
+    {
+      "type": 0,
+      "value": "Immettere la password come testo normale o usare un parametro protetto"
+    }
+  ],
+  "BQyLiu": [
+    {
+      "type": 0,
+      "value": "risultati trovati"
+    }
+  ],
+  "BS3gy8": [
+    {
+      "type": 0,
+      "value": "Si è verificato un errore. Riprovare."
+    }
+  ],
+  "BSgavq": [
+    {
+      "type": 0,
+      "value": "Esempio: Lunedì, Venerdì"
+    }
+  ],
+  "BUutcC": [
+    {
+      "type": 0,
+      "value": "Espandi lista di elementi di pari livello"
+    }
+  ],
+  "BYrP8F": [
+    {
+      "type": 0,
+      "value": "Numero"
+    }
+  ],
+  "BeqBP7": [
+    {
+      "type": 0,
+      "value": "Decompressione automatica"
+    }
+  ],
+  "Bewmet": [
+    {
+      "type": 0,
+      "value": "Matrice"
+    }
+  ],
+  "Bl4Iv0": [
+    {
+      "type": 0,
+      "value": "(UTC+08:00) Ulan-Bator"
+    }
+  ],
+  "Bn8iTS": [
+    {
+      "type": 0,
+      "value": "Tipo di stato:"
+    }
+  ],
+  "BoMvF2": [
+    {
+      "type": 0,
+      "value": "Comprimi"
+    }
+  ],
+  "BogxJl": [
+    {
+      "type": 0,
+      "value": "(UTC + 04.00) Izhevsk, Samara"
+    }
+  ],
+  "BrWQ0Z": [
+    {
+      "type": 0,
+      "value": "Selezionare un'identità gestita"
+    }
+  ],
+  "BtL7UI": [
+    {
+      "type": 0,
+      "value": "Non sono necessarie ulteriori informazioni per questo passaggio. Sarà possibile usare gli output nei passaggi successivi."
+    }
+  ],
+  "BuYrD3": [
+    {
+      "type": 0,
+      "value": "Identificatore di formato singolo che indica come formattare il valore di questo GUID."
+    }
+  ],
+  "BvCnOv": [
+    {
+      "type": 0,
+      "value": "Impostare l'ID di traccia per l'esecuzione. Per le operazioni di suddivisione, l'ID di traccia è per la richiesta di avvio"
+    }
+  ],
+  "BxITRH": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Oggetto da controllare per verificare se è maggiore del valore con cui è confrontato."
+    }
+  ],
+  "BynK4X": [
+    {
+      "type": 0,
+      "value": "Invia una domanda"
+    }
+  ],
+  "C1cy54": [
+    {
+      "type": 0,
+      "value": "Corpo"
+    }
+  ],
+  "C4NQ1J": [
+    {
+      "type": 0,
+      "value": "Recuperare gli elementi per raggiungere la soglia specificata seguendo il token di continuazione. A causa delle dimensioni della pagina del connettore, il numero restituito potrebbe superare la soglia."
+    }
+  ],
+  "CBzSJo": [
+    {
+      "type": 0,
+      "value": "True"
+    }
+  ],
+  "CG772M": [
+    {
+      "type": 0,
+      "value": "Connessione richiesta"
+    }
+  ],
+  "CaajcD": [
+    {
+      "type": 0,
+      "value": "(UTC+13:00) Samoa"
+    }
+  ],
+  "Cb6IEq": [
+    {
+      "type": 0,
+      "value": "(UTC-05:00) L'Avana"
+    }
+  ],
+  "Cb8pv0": [
+    {
+      "type": 0,
+      "value": "(UTC - 2.00 h) Medioatlantico - Vecchio"
+    }
+  ],
+  "Ci41Od": [
+    {
+      "type": 0,
+      "value": "(UTC + 12.00 h) Auckland, Wellington"
+    }
+  ],
+  "Ciol6I": [
+    {
+      "type": 0,
+      "value": "Output"
+    }
+  ],
+  "Cj3/LJ": [
+    {
+      "type": 0,
+      "value": "È necessario specificare il nome del parametro."
+    }
+  ],
+  "ClZW2r": [
+    {
+      "type": 0,
+      "value": "Valore"
+    }
+  ],
+  "CsPY74": [
+    {
+      "type": 0,
+      "value": "Tipo di credenziali"
+    }
+  ],
+  "CvoqQ6": [
+    {
+      "type": 0,
+      "value": "Immettere o selezionare una data (AAAA-MM-GG)"
+    }
+  ],
+  "Cy0pyB": [
+    {
+      "type": 0,
+      "value": "(UTC+09:30) Adelaide"
+    }
+  ],
+  "CyT8H7": [
+    {
+      "type": 0,
+      "value": "Accetta i tipi \"Number\", \"Integer\" e \"Decimal\"."
+    }
+  ],
+  "CypYLs": [
+    {
+      "type": 0,
+      "value": "Inserisci un nuovo passaggio tra "
+    },
+    {
+      "type": 1,
+      "value": "parentName"
+    },
+    {
+      "type": 0,
+      "value": " e "
+    },
+    {
+      "type": 1,
+      "value": "childName"
+    }
+  ],
+  "Czt6YV": [
+    {
+      "type": 0,
+      "value": "alle "
+    },
+    {
+      "type": 1,
+      "value": "times"
+    }
+  ],
+  "D+Ptnq": [
+    {
+      "type": 0,
+      "value": "Restituisce il percorso e la query da un URI"
+    }
+  ],
+  "D/xTXV": [
+    {
+      "type": 0,
+      "value": "Mostra schema di origine"
+    }
+  ],
+  "D1lgsT": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Stringa da cui rimuovere lo spazio vuoto iniziale e finale."
+    }
+  ],
+  "D5FIKL": [
+    {
+      "type": 0,
+      "value": "Incolla dall'esempio"
+    }
+  ],
+  "DDIIAQ": [
+    {
+      "type": 0,
+      "value": "Nodo"
+    }
+  ],
+  "DEKsll": [
+    {
+      "type": 0,
+      "value": "L'intervallo tra i criteri di ripetizione dei tentativi non è valido. Deve corrispondere al formato di durata ISO 8601"
+    }
+  ],
+  "DEu7oK": [
+    {
+      "type": 0,
+      "value": "(UTC-07:00) Arizona"
+    }
+  ],
+  "DGMwU4": [
+    {
+      "type": 0,
+      "value": "Usare il payload di esempio per generare lo schema"
+    }
+  ],
+  "DJW8RE": [
+    {
+      "type": 0,
+      "value": "Selezionare un valore"
+    }
+  ],
+  "DMuwuJ": [
+    {
+      "type": 0,
+      "value": "Data"
+    }
+  ],
+  "DQV7aK": [
+    {
+      "type": 0,
+      "value": "ALT/OPZIONI + clic per scaricare {displayName}"
+    }
+  ],
+  "DS/WmZ": [
+    {
+      "type": 0,
+      "value": "Funzioni aggiunte"
+    }
+  ],
+  "DWd9vy": [
+    {
+      "type": 0,
+      "value": "ogni settimana"
+    }
+  ],
+  "DWsh56": [
+    {
+      "type": 0,
+      "value": "Immetti ID client"
+    }
+  ],
+  "DYXoEM": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Chişinău"
+    }
+  ],
+  "DZZ3fj": [
+    {
+      "type": 0,
+      "value": "Durata"
+    }
+  ],
+  "DfXxoX": [
+    {
+      "type": 0,
+      "value": "Selezionare una connessione esistente o crearne una nuova"
+    }
+  ],
+  "Dhu3IS": [
+    {
+      "type": 0,
+      "value": "Mostra mini-mappa"
+    }
+  ],
+  "DjbVKU": [
+    {
+      "type": 0,
+      "value": "OAuth"
+    }
+  ],
+  "DkF25I": [
+    {
+      "type": 0,
+      "value": "Espandi risultato statico"
+    }
+  ],
+  "Dm0zAO": [
+    {
+      "type": 0,
+      "value": "Durata massima di una singola richiesta in uscita da questa azione. Se la richiesta non termina entro questo limite dopo l'esecuzione di nuovi tentativi, l'azione non riesce"
+    }
+  ],
+  "DsPDVB": [
+    {
+      "type": 0,
+      "value": "La condizione del trigger non può essere vuota"
+    }
+  ],
+  "DuoHXI": [
+    {
+      "type": 0,
+      "value": "Aggiungi un input"
+    }
+  ],
+  "DyYcJZ": [
+    {
+      "type": 0,
+      "value": "Esegui dopo"
+    }
+  ],
+  "DysO/Q": [
+    {
+      "type": 0,
+      "value": "CTRL+Y"
+    }
+  ],
+  "E+HsWF": [
+    {
+      "type": 0,
+      "value": "Accesso..."
+    }
+  ],
+  "E+iim4": [
+    {
+      "type": 0,
+      "value": "Seleziona fuso orario."
+    }
+  ],
+  "E3+TAA": [
+    {
+      "type": 0,
+      "value": "Il nodo dello schema '"
+    },
+    {
+      "type": 1,
+      "value": "nodeName"
+    },
+    {
+      "type": 0,
+      "value": "' contiene un input con un tipo non corrispondente"
+    }
+  ],
+  "E7NzDN": [
+    {
+      "type": 0,
+      "value": "Impostazioni"
+    }
+  ],
+  "E8iqLl": [
+    {
+      "type": 0,
+      "value": "(UTC+11:00) Sakhalin"
+    }
+  ],
+  "ECZC6Y": [
+    {
+      "type": 0,
+      "value": "Converte il parametro in un numero decimale"
+    }
+  ],
+  "ERAWZA": [
+    {
+      "type": 0,
+      "value": "Risposta"
+    }
+  ],
+  "ERVorY": [
+    {
+      "type": 0,
+      "value": "Imposta come gruppo"
+    }
+  ],
+  "ESZXfC": [
+    {
+      "type": 0,
+      "value": "A questi minuti"
+    }
+  ],
+  "EUQDM6": [
+    {
+      "type": 0,
+      "value": "Aggiungi un'azione"
+    }
+  ],
+  "EZz5q7": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Indice della posizione in cui avviare l'estrazione della sottostringa."
+    }
+  ],
+  "Ea/fr+": [
+    {
+      "type": 0,
+      "value": "Ogni "
+    },
+    {
+      "type": 1,
+      "value": "interval"
+    },
+    {
+      "type": 0,
+      "value": " giorni"
+    }
+  ],
+  "EaTGcN": [
+    {
+      "type": 0,
+      "value": "(UTC + 1.00 h) Africa centro-occidentale"
+    }
+  ],
+  "EdeHLs": [
+    {
+      "type": 0,
+      "value": "Passa all'input dell'intera matrice"
+    }
+  ],
+  "EdzoIs": [
+    {
+      "type": 0,
+      "value": "1"
+    }
+  ],
+  "EiRMD4": [
+    {
+      "type": 0,
+      "value": "Eseguire l'accesso per creare una connessione a "
+    },
+    {
+      "type": 1,
+      "value": "connectorDisplayName"
+    },
+    {
+      "type": 0,
+      "value": "."
+    }
+  ],
+  "EjXdAm": [
+    {
+      "type": 0,
+      "value": "Password"
+    }
+  ],
+  "Ek0mSE": [
+    {
+      "type": 0,
+      "value": "Visualizzare la cronologia delle richieste per questa operazione"
+    }
+  ],
+  "EptZhD": [
+    {
+      "type": 0,
+      "value": "Immettere una tabella valida."
+    }
+  ],
+  "EqX3Mi": [
+    {
+      "type": 0,
+      "value": "Configurare queste connessioni per usarle nel flusso."
+    }
+  ],
+  "EurkzL": [
+    {
+      "type": 0,
+      "value": "Scegliere Sì o No"
+    }
+  ],
+  "F3IDl8": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Numero di un'unità di tempo specificata da aggiungere."
+    }
+  ],
+  "F6+icQ": [
+    {
+      "type": 0,
+      "value": "L'intervallo massimo tra i criteri di ripetizione dei tentativi non è valido. Deve corrispondere al formato di durata ISO 8601"
+    }
+  ],
+  "F9dR1Q": [
+    {
+      "type": 0,
+      "value": "Aggiungi"
+    }
+  ],
+  "FBNevf": [
+    {
+      "type": 0,
+      "value": "Vai all'operazione"
+    }
+  ],
+  "FDF4Qb": [
+    {
+      "type": 0,
+      "value": "Restituisce un valore di parametro specificato nella definizione"
+    }
+  ],
+  "FDWfqM": [
+    {
+      "type": 0,
+      "value": "Output sicuri"
+    }
+  ],
+  "FIL1Nt": [
+    {
+      "type": 0,
+      "value": "La condizione è troppo complessa o non è valida. Non è possibile passare alla modalità di base"
+    }
+  ],
+  "FIT7i0": [
+    {
+      "type": 0,
+      "value": "20"
+    }
+  ],
+  "FL/0Zp": [
+    {
+      "type": 0,
+      "value": "(UTC - 7.00 h) Chihuahua, La Paz, Mazatlan"
+    }
+  ],
+  "FMA0Q0": [
+    {
+      "type": 0,
+      "value": "Il flusso è stato aggiornato."
+    }
+  ],
+  "FN5zHQ": [
+    {
+      "type": 0,
+      "value": "Restituisce una sezione di una stringa definita dall'indice iniziale e dall'indice finale"
+    }
+  ],
+  "FT3jt6": [
+    {
+      "type": 0,
+      "value": "Informazioni di riferimento del webhook"
+    }
+  ],
+  "FUhNu4": [
+    {
+      "type": 0,
+      "value": "Dividi al"
+    }
+  ],
+  "FUuFlC": [
+    {
+      "type": 0,
+      "value": "Predefinito"
+    }
+  ],
+  "FXLR5M": [
+    {
+      "offset": 0,
+      "options": {
+        "many": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " ore"
+            }
+          ]
+        },
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " ora"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " ore"
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "hours"
+    }
+  ],
+  "FYtDP0": [
+    {
+      "type": 0,
+      "value": "Immetti un indirizzo e-mail."
+    }
+  ],
+  "Fcvgvg": [
+    {
+      "type": 0,
+      "value": "Cerca"
+    }
+  ],
+  "FiyQjU": [
+    {
+      "type": 0,
+      "value": "2"
+    }
+  ],
+  "FslNgF": [
+    {
+      "type": 0,
+      "value": "Stato"
+    }
+  ],
+  "FxQ2Ts": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Tripoli"
+    }
+  ],
+  "G+XvKn": [
+    {
+      "type": 0,
+      "value": "Restituisce una stringa con ogni elemento di una matrice unito da un delimitatore"
+    }
+  ],
+  "G/CC5/": [
+    {
+      "type": 0,
+      "value": "Il formato dell'opzione SplitOn in {splitOn} non è valido."
+    }
+  ],
+  "G0XYrd": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Stringa che può contenere il valore."
+    }
+  ],
+  "GAY7b8": [
+    {
+      "type": 0,
+      "value": "Restituisce la query da un URI"
+    }
+  ],
+  "GD3m4X": [
+    {
+      "type": 0,
+      "value": "Espansa"
+    }
+  ],
+  "GDUGlm": [
+    {
+      "type": 0,
+      "value": "Immetti autorità"
+    }
+  ],
+  "GE14Xd": [
+    {
+      "type": 0,
+      "value": "(UTC - 03.00) Città di Buenos Aires"
+    }
+  ],
+  "GEB1on": [
+    {
+      "type": 0,
+      "value": "Contiene un valore diverso da 0 a 59"
+    }
+  ],
+  "GIUSQs": [
+    {
+      "type": 0,
+      "value": "Filtra per tipo di dati"
+    }
+  ],
+  "GLd3MU": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Oggetto da trovare all'interno della raccolta."
+    }
+  ],
+  "GQnN3U": [
+    {
+      "type": 0,
+      "value": "Spiega il flusso"
+    }
+  ],
+  "GXXLuT": [
+    {
+      "type": 0,
+      "value": "Immetti un valore booleano valido."
+    }
+  ],
+  "GYvF54": [
+    {
+      "type": 0,
+      "value": "Funzioni di riferimento"
+    }
+  ],
+  "GZ8MDP": [
+    {
+      "type": 1,
+      "value": "s1"
+    },
+    {
+      "type": 0,
+      "value": " di "
+    },
+    {
+      "type": 1,
+      "value": "s2"
+    }
+  ],
+  "GcG0qf": [
+    {
+      "type": 0,
+      "value": "Restituisce true se i parametri sono false"
+    }
+  ],
+  "GdGm4T": [
+    {
+      "type": 0,
+      "value": "Altri comandi"
+    }
+  ],
+  "Ggkf4s": [
+    {
+      "type": 0,
+      "value": "Attività iniziali"
+    }
+  ],
+  "Gi7czD": [
+    {
+      "type": 0,
+      "value": "Elemento dello schema di origine"
+    }
+  ],
+  "Gl5khw": [
+    {
+      "type": 0,
+      "value": "A queste ore"
+    }
+  ],
+  "Gmya+V": [
+    {
+      "type": 0,
+      "value": "Non disponibile"
+    }
+  ],
+  "GreYWQ": [
+    {
+      "type": 0,
+      "value": "Immettere il nome del parametro."
+    }
+  ],
+  "GtDOFg": [
+    {
+      "type": 0,
+      "value": "Annulla la selezione"
+    }
+  ],
+  "GyUe4C": [
+    {
+      "type": 0,
+      "value": "Modifica le opzioni relative alle funzioni"
+    }
+  ],
+  "GzQQqH": [
+    {
+      "type": 0,
+      "value": "Array"
+    }
+  ],
+  "Gziyq8": [
+    {
+      "type": 0,
+      "value": "Contenuto file"
+    }
+  ],
+  "H/QVod": [
+    {
+      "type": 0,
+      "value": "Il flusso di lavoro contiene errori di convalida delle impostazioni per le operazioni seguenti: "
+    },
+    {
+      "type": 1,
+      "value": "invalidNodes"
+    }
+  ],
+  "H17jEE": [
+    {
+      "type": 0,
+      "value": "Funzioni di analisi dell'URI"
+    }
+  ],
+  "H1wnHr": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Stringa in sezione."
+    }
+  ],
+  "H2WdiZ": [
+    {
+      "type": 0,
+      "value": "Immettere i valori validi per i minuti (da 0 a 59) separati da una virgola, ad esempio 15,30"
+    }
+  ],
+  "H5VikC": [
+    {
+      "type": 0,
+      "value": "Connessione non valida. Il mapping non deve formare un ciclo chiuso."
+    }
+  ],
+  "H8bEUn": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Numero da cui viene sottratto il sottraendo."
+    }
+  ],
+  "H9CZTr": [
+    {
+      "type": 0,
+      "value": "Espressione non valida. Assicurarsi di usare le virgolette singole."
+    }
+  ],
+  "HDqP2g": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Nome della chiave del valore dei dati del modulo da restituire."
+    }
+  ],
+  "HGA9iU": [
+    {
+      "type": 0,
+      "value": "The Error and its code is required when status is \"Failed\""
+    }
+  ],
+  "HH970i": [
+    {
+      "type": 0,
+      "value": "Mese"
+    }
+  ],
+  "HILmmE": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Raccolta da ordinare."
+    }
+  ],
+  "HMiE+4": [
+    {
+      "type": 0,
+      "value": "Esci dalla visualizzazione a schermo intero"
+    }
+  ],
+  "HSJLCu": [
+    {
+      "type": 0,
+      "value": "Intestazioni"
+    }
+  ],
+  "HYhDYB": [
+    {
+      "type": 0,
+      "value": "(UTC - 02.00 h) Coordinated Universal Time-02"
+    }
+  ],
+  "Hbqlzk": [
+    {
+      "type": 0,
+      "value": "Inserisci espressione"
+    }
+  ],
+  "HfinO2": [
+    {
+      "type": 0,
+      "value": "Passa a input dettagli per l'elemento matrice"
+    }
+  ],
+  "HfmDk9": [
+    {
+      "type": 0,
+      "value": "Modifica flusso"
+    }
+  ],
+  "HfrUId": [
+    {
+      "type": 0,
+      "value": "Selezionare una scheda per visualizzare il contenuto"
+    }
+  ],
+  "HmcHoE": [
+    {
+      "type": 0,
+      "value": "Errore durante il recupero del manifesto"
+    }
+  ],
+  "HsO1Rd": [
+    {
+      "type": 1,
+      "value": "addIcon"
+    },
+    {
+      "type": 0,
+      "value": " Installa gateway"
+    }
+  ],
+  "HzS2gJ": [
+    {
+      "type": 0,
+      "value": "Il contenuto dinamico non è supportato come proprietà nell'autenticazione."
+    }
+  ],
+  "I+85NV": [
+    {
+      "type": 0,
+      "value": "Invia da questa azione"
+    }
+  ],
+  "I1CYNA": [
+    {
+      "type": 0,
+      "value": "Proprietà non valida '"
+    },
+    {
+      "type": 1,
+      "value": "invalidProperties"
+    },
+    {
+      "type": 0,
+      "value": "' per il tipo di autenticazione '"
+    },
+    {
+      "type": 1,
+      "value": "authType"
+    },
+    {
+      "type": 0,
+      "value": "'."
+    }
+  ],
+  "I3mifR": [
+    {
+      "type": 0,
+      "value": "È stato ignorato"
+    }
+  ],
+  "I41vZ/": [
+    {
+      "type": 0,
+      "value": "(UTC - 11.00 h) Coordinated Universal Time-11"
+    }
+  ],
+  "IA+Ogm": [
+    {
+      "type": 0,
+      "value": "22"
+    }
+  ],
+  "IAmvpa": [
+    {
+      "type": 0,
+      "value": "(UTC - 08.00) Coordinated Universal Time-08"
+    }
+  ],
+  "IHMd3X": [
+    {
+      "type": 0,
+      "value": "Esempio: "
+    },
+    {
+      "type": 1,
+      "value": "url"
+    }
+  ],
+  "IPbMdl": [
+    {
+      "type": 0,
+      "value": "Visualizzazione Codice"
+    }
+  ],
+  "IPwWgu": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Gerusalemme"
+    }
+  ],
+  "IQyOth": [
+    {
+      "type": 0,
+      "value": "Se disponibile, il contenuto dinamico viene generato automaticamente dai connettori e dalle azioni scelti per il flusso."
+    }
+  ],
+  "IS4vNX": [
+    {
+      "type": 0,
+      "value": "(UTC - 12.00 h) Linea cambiamento data internazionale (occidentale)"
+    }
+  ],
+  "ISaPr+": [
+    {
+      "type": 0,
+      "value": "Consente di creare e gestire i parametri delle app per la logica e assegnare loro un valore predefinito."
+    }
+  ],
+  "IW2MjQ": [
+    {
+      "type": 0,
+      "value": "Converte il timestamp in formato stringa passato da UTIC al fuso orario di destinazione"
+    }
+  ],
+  "IXy91L": [
+    {
+      "type": 0,
+      "value": "Aggiungi uno schema di destinazione"
+    }
+  ],
+  "IdOhPY": [
+    {
+      "type": 1,
+      "value": "label"
+    },
+    {
+      "type": 0,
+      "value": " Per aggiungere dati dinamici, premi ALT+ '/'."
+    }
+  ],
+  "If+p6C": [
+    {
+      "type": 0,
+      "value": "(UTC+09:00) Yakutsk"
+    }
+  ],
+  "IsVhkH": [
+    {
+      "type": 0,
+      "value": "Nessuna proprietà"
+    }
+  ],
+  "IxWip7": [
+    {
+      "type": 0,
+      "value": "(UTC+3.00) Mosca, S. Pietroburgo, Volgograd"
+    }
+  ],
+  "J/Kz1j": [
+    {
+      "type": 0,
+      "value": "Modello asincrono"
+    }
+  ],
+  "J2Su6x": [
+    {
+      "type": 0,
+      "value": "Opzioni di formattazione per le dimensioni del carattere"
+    }
+  ],
+  "J5/7vN": [
+    {
+      "type": 0,
+      "value": "Converte una stringa in lettere minuscole usando le regole per l'utilizzo di maiuscole e minuscole delle impostazioni cultura inglese non dipendenti da paese/area geografica"
+    }
+  ],
+  "J55HA9": [
+    {
+      "type": 0,
+      "value": "Operazione non valida. Numero di elementi: "
+    },
+    {
+      "type": 1,
+      "value": "length"
+    },
+    {
+      "type": 0,
+      "value": "."
+    }
+  ],
+  "J5TTF6": [
+    {
+      "type": 0,
+      "value": "Tipi di dati accettati: "
+    },
+    {
+      "type": 1,
+      "value": "type"
+    }
+  ],
+  "J62n9E": [
+    {
+      "type": 0,
+      "value": "Non riuscito"
+    }
+  ],
+  "J9wWry": [
+    {
+      "type": 0,
+      "value": "Parametri"
+    }
+  ],
+  "JAIV0h": [
+    {
+      "type": 0,
+      "value": "La mappa corrente contiene "
+    },
+    {
+      "type": 1,
+      "value": "numOfIssues"
+    },
+    {
+      "type": 0,
+      "value": " "
+    },
+    {
+      "type": 1,
+      "value": "issue"
+    },
+    {
+      "type": 0,
+      "value": "."
+    }
+  ],
+  "JErLDT": [
+    {
+      "type": 0,
+      "value": "Elimina"
+    }
+  ],
+  "JJyT88": [
+    {
+      "type": 0,
+      "value": "Azione annullata"
+    }
+  ],
+  "JKZpcd": [
+    {
+      "type": 0,
+      "value": "Chat di Copilot annullata"
+    }
+  ],
+  "JNQHws": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Stringa contenente l'ora."
+    }
+  ],
+  "JSfWJ0": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Valore convertito in un valore booleano."
+    }
+  ],
+  "JWl/LD": [
+    {
+      "type": 0,
+      "value": "Aggiungi nuovo elemento"
+    }
+  ],
+  "Jaz3EC": [
+    {
+      "type": 0,
+      "value": "Converte un timestamp stringa passato dal fuso orario di origine al fuso orario di destinazione"
+    }
+  ],
+  "JbgTET": [
+    {
+      "type": 0,
+      "value": "Metodo"
+    }
+  ],
+  "Ji6663": [
+    {
+      "type": 0,
+      "value": "Restituisce true se un dizionario contiene una chiave, se una matrice contiene un valore o se una stringa contiene una sottostringa"
+    }
+  ],
+  "Jil/Wa": [
+    {
+      "type": 0,
+      "value": "Impostazioni non valide"
+    }
+  ],
+  "JjTfC7": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Numero da formattare."
+    }
+  ],
+  "JnlcZQ": [
+    {
+      "type": 0,
+      "value": "Nome:"
+    }
+  ],
+  "Jq2Y/o": [
+    {
+      "type": 0,
+      "value": "Necessario. Stringa di formato numerico."
+    }
+  ],
+  "JzRzVp": [
+    {
+      "type": 0,
+      "value": "(UTC-09:00) Alaska"
+    }
+  ],
+  "K50znc": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Oggetto a cui aggiungere una nuova proprietà."
+    }
+  ],
+  "K7/DnZ": [
+    {
+      "type": 0,
+      "value": "Output"
+    }
+  ],
+  "KBaGkS": [
+    {
+      "type": 0,
+      "value": "Modifica riferimento alla connessione"
+    }
+  ],
+  "KNDVnN": [
+    {
+      "type": 0,
+      "value": "Sostituisci \""
+    },
+    {
+      "type": 1,
+      "value": "selectedOperation"
+    },
+    {
+      "type": 0,
+      "value": "\" con"
+    }
+  ],
+  "KV4uky": [
+    {
+      "type": 0,
+      "value": "Quando un nuovo elemento..."
+    }
+  ],
+  "KX1poC": [
+    {
+      "offset": 0,
+      "options": {
+        "=0": {
+          "value": [
+            {
+              "type": 0,
+              "value": "0 casi"
+            }
+          ]
+        },
+        "many": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " casi"
+            }
+          ]
+        },
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " caso"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " casi"
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "actionCount"
+    }
+  ],
+  "KYX5Do": [
+    {
+      "type": 0,
+      "value": "Sottolineatura (⌘U)"
+    }
+  ],
+  "KZOa5l": [
+    {
+      "type": 0,
+      "value": "Annulla"
+    }
+  ],
+  "KlDW+5": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Beirut"
+    }
+  ],
+  "KnjcUV": [
+    {
+      "type": 0,
+      "value": "Ignorato"
+    }
+  ],
+  "KwGA+K": [
+    {
+      "type": 0,
+      "value": "Seleziona una risorsa dell'app per le funzioni"
+    }
+  ],
+  "L+PY+j": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Numero di oggetti da recuperare dalla raccolta. Deve essere un intero positivo."
+    }
+  ],
+  "L0UAzs": [
+    {
+      "type": 0,
+      "value": "Restituisce il componente giorno della settimana di un timestamp in formato stringa"
+    }
+  ],
+  "L0hujG": [
+    {
+      "type": 0,
+      "value": "Pulsante per aggiungere contenuto dinamico se TokenPicker è visualizzato"
+    }
+  ],
+  "L4RJF0": [
+    {
+      "type": 0,
+      "value": "La ricerca non ha restituito risultati"
+    }
+  ],
+  "LBH8UV": [
+    {
+      "type": 0,
+      "value": "Espandi"
+    }
+  ],
+  "LBbhCu": [
+    {
+      "type": 0,
+      "value": "Elimina grafo flusso di lavoro"
+    }
+  ],
+  "LCRHQ9": [
+    {
+      "type": 0,
+      "value": "(UTC+12:00) Figi"
+    }
+  ],
+  "LCXZLM": [
+    {
+      "type": 0,
+      "value": "Caricamento delle app per le funzioni in corso..."
+    }
+  ],
+  "LElaX3": [
+    {
+      "type": 0,
+      "value": "Suggerimento flusso successivo"
+    }
+  ],
+  "LMB8am": [
+    {
+      "type": 0,
+      "value": "Creazione in corso..."
+    }
+  ],
+  "LPdGu/": [
+    {
+      "type": 0,
+      "value": "Ouputs should not be provided when status is \"Failed\""
+    }
+  ],
+  "LR/3Lr": [
+    {
+      "type": 0,
+      "value": "Configura"
+    }
+  ],
+  "LRAhSA": [
+    {
+      "type": 0,
+      "value": "Se abilitata, questa azione viene eseguita con l'utente dall'impostazione \"Esegui come\" nel trigger Dataverse"
+    }
+  ],
+  "LS8rfZ": [
+    {
+      "type": 0,
+      "value": "Restituisce lo schema da un URI"
+    }
+  ],
+  "LTTgWN": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Raccolta da cui recuperare il primo oggetto."
+    }
+  ],
+  "LV/BTE": [
+    {
+      "type": 0,
+      "value": "Caricamento delle istanze del servizio Gestione API in corso..."
+    }
+  ],
+  "LV3k48": [
+    {
+      "type": 0,
+      "value": "(UTC + 1.00 h) Belgrado, Bratislava, Budapest, Lubiana, Praga"
+    }
+  ],
+  "LZm3ze": [
+    {
+      "type": 0,
+      "value": "Aggiungi un ramo parallelo"
+    }
+  ],
+  "LaFlFh": [
+    {
+      "type": 0,
+      "value": "Questa azione è stata rimossa"
+    }
+  ],
+  "LdITnG": [
+    {
+      "type": 0,
+      "value": "(UTC - 3.00 h) Caienna, Fortaleza"
+    }
+  ],
+  "Lft/is": [
+    {
+      "type": 0,
+      "value": "Aggiungi nuovo"
+    }
+  ],
+  "LlYz9c": [
+    {
+      "type": 0,
+      "value": "Vedi altro"
+    }
+  ],
+  "Lm9bnN": [
+    {
+      "type": 0,
+      "value": "Elenco puntato"
+    }
+  ],
+  "Lnqh6h": [
+    {
+      "type": 0,
+      "value": "Grassetto (CTRL + B)"
+    }
+  ],
+  "LoGUT3": [
+    {
+      "type": 0,
+      "value": "Quando usata all'interno di un ciclo for-each, questa funzione restituisce l'elemento corrente del ciclo specificato."
+    }
+  ],
+  "LpPNAD": [
+    {
+      "type": 0,
+      "value": "Aggiungi"
+    }
+  ],
+  "LtbkS7": [
+    {
+      "type": 0,
+      "value": "Restituisce l'inizio del giorno relativo al timestamp in formato stringa passato."
+    }
+  ],
+  "Lub7NN": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Le espressioni che possono essere true."
+    }
+  ],
+  "LvLksz": [
+    {
+      "type": 0,
+      "value": "Caricamento degli output"
+    }
+  ],
+  "LvpxiA": [
+    {
+      "type": 0,
+      "value": "Gateway"
+    }
+  ],
+  "Lx8HRl": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Damasco"
+    }
+  ],
+  "M/gUE8": [
+    {
+      "type": 0,
+      "value": "Informazioni su"
+    }
+  ],
+  "M0bbZk": [
+    {
+      "type": 0,
+      "value": "Verifica flusso"
+    }
+  ],
+  "M0xrm+": [
+    {
+      "type": 0,
+      "value": "Visualizzazione Codice"
+    }
+  ],
+  "M3kJsI": [
+    {
+      "type": 0,
+      "value": "Ogni settimana di lunedì"
+    }
+  ],
+  "M4H0gh": [
+    {
+      "type": 0,
+      "value": "Rimuovi"
+    }
+  ],
+  "M6U2LE": [
+    {
+      "type": 0,
+      "value": "I parametri verranno salvati quando viene salvato il flusso di lavoro. È possibile modificarlo qui prima di salvarlo o modificarlo nella pagina dei parametri dopo il salvataggio."
+    }
+  ],
+  "M8Aqm4": [
+    {
+      "type": 0,
+      "value": "Facoltativo. Nome dell'azione con ambito che dovrà contenere gli input e gli output delle azioni di primo livello all'interno di tale ambito."
+    }
+  ],
+  "MCzWDc": [
+    {
+      "type": 0,
+      "value": "Anteprima"
+    }
+  ],
+  "MDbmMw": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Raccolte da valutare. Un oggetto deve essere presente in tutte le raccolte passate per essere visualizzato nei risultati."
+    }
+  ],
+  "MGZRu4": [
+    {
+      "type": 0,
+      "value": "Aggiungi un'azione"
+    }
+  ],
+  "MIX4f9": [
+    {
+      "type": 0,
+      "value": "Linguaggio di programmazione non supportato."
+    }
+  ],
+  "MKTdNk": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. URI di dati da convertire nella rappresentazione binaria."
+    }
+  ],
+  "MLCQzX": [
+    {
+      "type": 0,
+      "value": "Identità gestita"
+    }
+  ],
+  "MLckJz": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Stringa contenente l'ora di inizio."
+    }
+  ],
+  "MOsuw2": [
+    {
+      "type": 0,
+      "value": "(UTC + 10.00 h) Guam, Port Moresby"
+    }
+  ],
+  "MPPyI6": [
+    {
+      "type": 0,
+      "value": "(UTC+04:00) Baku"
+    }
+  ],
+  "MTR4Vg": [
+    {
+      "type": 0,
+      "value": "Restituisce il timestamp corrente in formato stringa"
+    }
+  ],
+  "MVrv+N": [
+    {
+      "type": 0,
+      "value": "Immetti una matrice valida."
+    }
+  ],
+  "MYgKHu": [
+    {
+      "type": 0,
+      "value": "Azioni"
+    }
+  ],
+  "Mb+Eaq": [
+    {
+      "type": 0,
+      "value": "Booleano"
+    }
+  ],
+  "Mb/Vp8": [
+    {
+      "type": 0,
+      "value": "Errore successivo"
+    }
+  ],
+  "Mc6ITJ": [
+    {
+      "type": 0,
+      "value": "Cerca"
+    }
+  ],
+  "MfAdfx": [
+    {
+      "type": 0,
+      "value": "Modifica in modalità avanzata"
+    }
+  ],
+  "MirIsS": [
+    {
+      "type": 0,
+      "value": "Mostra codice"
+    }
+  ],
+  "MmBfD1": [
+    {
+      "type": 0,
+      "value": "Errore imprevisto"
+    }
+  ],
+  "MnThTq": [
+    {
+      "type": 0,
+      "value": "Inserisci funzione"
+    }
+  ],
+  "MsCHhQ": [
+    {
+      "type": 0,
+      "value": "Scaduto"
+    }
+  ],
+  "N0pS6Y": [
+    {
+      "type": 0,
+      "value": "Schema di destinazione"
+    }
+  ],
+  "N2CF0J": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Nome della chiave dei valori dei dati del modulo da restituire."
+    }
+  ],
+  "N4dEVo": [
+    {
+      "type": 0,
+      "value": "Intestazioni"
+    }
+  ],
+  "N7E9hd": [
+    {
+      "type": 0,
+      "value": "(UTC + 2.00 h) Helsinki, Kiev, Riga, Sofia, Tallinn, Vilnius"
+    }
+  ],
+  "N7zEUZ": [
+    {
+      "type": 0,
+      "value": "Copia"
+    }
+  ],
+  "NE54Uu": [
+    {
+      "type": 0,
+      "value": "Copia completata."
+    }
+  ],
+  "NFgfP4": [
+    {
+      "type": 0,
+      "value": "elemento"
+    }
+  ],
+  "NGJ00e": [
+    {
+      "type": 0,
+      "value": "(UTC - 4.00 h) Georgetown, La Paz, Manaus, San Juan"
+    }
+  ],
+  "NHnG2S": [
+    {
+      "type": 0,
+      "value": "L'XSLT generato non corrisponde al mapping corrente."
+    }
+  ],
+  "NMpFs6": [
+    {
+      "type": 0,
+      "value": "(UTC-03:00) Araguaina"
+    }
+  ],
+  "NPUFgH": [
+    {
+      "type": 0,
+      "value": "Stato"
+    }
+  ],
+  "NWxGWN": [
+    {
+      "type": 0,
+      "value": "Immettere un nome proprietà univoco"
+    }
+  ],
+  "NdOhXD": [
+    {
+      "type": 0,
+      "value": "Crea connessione"
+    }
+  ],
+  "Nh91qA": [
+    {
+      "type": 0,
+      "value": "Restituisce il valore della variabile specificata."
+    }
+  ],
+  "NhJPUn": [
+    {
+      "type": 0,
+      "value": "Come posso chiamare un endpoint esterno?"
+    }
+  ],
+  "NnD8gF": [
+    {
+      "type": 0,
+      "value": "Valore di input del percorso dell'operazione non valido. Valore percorso: "
+    },
+    {
+      "type": 1,
+      "value": "pathValue"
+    },
+    {
+      "type": 0,
+      "value": " Modello percorso: "
+    },
+    {
+      "type": 1,
+      "value": "pathTemplate"
+    }
+  ],
+  "NnrHK3": [
+    {
+      "type": 0,
+      "value": "(UTC+10:00) Vladivostok"
+    }
+  ],
+  "No6CS+": [
+    {
+      "type": 0,
+      "value": "Immetti tenant"
+    }
+  ],
+  "NoXs0l": [
+    {
+      "type": 0,
+      "value": "Selezionare un'identità"
+    }
+  ],
+  "NvJDn/": [
+    {
+      "type": 0,
+      "value": "Martedì"
+    }
+  ],
+  "NzPnFS": [
+    {
+      "type": 0,
+      "value": "Esempio:"
+    }
+  ],
+  "O+3Y9f": [
+    {
+      "type": 0,
+      "value": "ha avuto esito negativo"
+    }
+  ],
+  "O+8vRv": [
+    {
+      "type": 0,
+      "value": "Restituisce una rappresentazione binaria di un valore"
+    }
+  ],
+  "O/fh9A": [
+    {
+      "type": 0,
+      "value": "Entità servizio"
+    }
+  ],
+  "O0tSvb": [
+    {
+      "type": 0,
+      "value": "🖊️ Attendere..."
+    }
+  ],
+  "O1tedM": [
+    {
+      "type": 0,
+      "value": "Non sono stati trovati errori."
+    }
+  ],
+  "O27gKq": [
+    {
+      "type": 0,
+      "value": "Caricamento file..."
+    }
+  ],
+  "O6VHe0": [
+    {
+      "type": 0,
+      "value": "Avvisi sull'operazione"
+    }
+  ],
+  "O7HhyP": [
+    {
+      "type": 0,
+      "value": "per configurarlo"
+    }
+  ],
+  "O9ZExg": [
+    {
+      "type": 0,
+      "value": "OK"
+    }
+  ],
+  "OBO/HE": [
+    {
+      "type": 0,
+      "value": "Valore di autenticazione non valido"
+    }
+  ],
+  "ODQCKj": [
+    {
+      "type": 0,
+      "value": "Converte l'input in un valore di tipo JSON."
+    }
+  ],
+  "OEEuUu": [
+    {
+      "type": 0,
+      "value": "Segreto"
+    }
+  ],
+  "OFKZzQ": [
+    {
+      "type": 0,
+      "value": "Opzioni dell'operazione:"
+    }
+  ],
+  "OH9xlX": [
+    {
+      "type": 0,
+      "value": "10"
+    }
+  ],
+  "OIOexo": [
+    {
+      "type": 0,
+      "value": "In questi giorni"
+    }
+  ],
+  "OKszbi": [
+    {
+      "type": 0,
+      "value": "Nome connessione"
+    }
+  ],
+  "OOUSLP": [
+    {
+      "type": 0,
+      "value": "Questa funzione non richiede alcun input."
+    }
+  ],
+  "OOUTdW": [
+    {
+      "type": 0,
+      "value": "Caricamento di tutti i connettori in corso..."
+    }
+  ],
+  "OQud51": [
+    {
+      "type": 0,
+      "value": "Altre informazioni su"
+    }
+  ],
+  "OSHNZ2": [
+    {
+      "type": 0,
+      "value": "Commento"
+    }
+  ],
+  "OSP9JY": [
+    {
+      "type": 0,
+      "value": "Immetti il gruppo di destinatari."
+    }
+  ],
+  "OVDEFP": [
+    {
+      "type": 0,
+      "value": "Segnala un bug"
+    }
+  ],
+  "OVvieE": [
+    {
+      "type": 0,
+      "value": "Restituisce i risultati delle azioni di primo livello nell'azione con ambito specificata, ad esempio un'azione For_each, Until o Scope."
+    }
+  ],
+  "OYWZE4": [
+    {
+      "type": 0,
+      "value": "Salva questo flusso di lavoro"
+    }
+  ],
+  "OdNhwc": [
+    {
+      "type": 0,
+      "value": "Separa"
+    }
+  ],
+  "OdoUEu": [
+    {
+      "type": 0,
+      "value": "Abilita risultato statico"
+    }
+  ],
+  "Oep6va": [
+    {
+      "type": 0,
+      "value": "Invia"
+    }
+  ],
+  "OgJ9eG": [
+    {
+      "type": 0,
+      "value": "(UTC+08:00) Taipei"
+    }
+  ],
+  "OhbvXz": [
+    {
+      "type": 0,
+      "value": "(UTC + 11.00) Norfolk"
+    }
+  ],
+  "Oib1mL": [
+    {
+      "type": 1,
+      "value": "hours"
+    },
+    {
+      "type": 0,
+      "value": "h "
+    },
+    {
+      "type": 1,
+      "value": "minutes"
+    },
+    {
+      "type": 0,
+      "value": "m "
+    },
+    {
+      "type": 1,
+      "value": "seconds"
+    },
+    {
+      "type": 0,
+      "value": "s"
+    }
+  ],
+  "OihxQE": [
+    {
+      "type": 0,
+      "value": "Facoltativo. Impostazioni locali da usare per l'analisi della stringa data e ora."
+    }
+  ],
+  "OjGJ8Y": [
+    {
+      "type": 0,
+      "value": "Restituisce l'host da un URI"
+    }
+  ],
+  "OnrO5/": [
+    {
+      "type": 0,
+      "value": "Selezionare un'identità gestita"
+    }
+  ],
+  "Ov7Ckz": [
+    {
+      "type": 0,
+      "value": "Proprietà obbligatoria '"
+    },
+    {
+      "type": 1,
+      "value": "missingProperties"
+    },
+    {
+      "type": 0,
+      "value": "' mancante per il tipo di autenticazione '"
+    },
+    {
+      "type": 1,
+      "value": "authType"
+    },
+    {
+      "type": 0,
+      "value": "'"
+    }
+  ],
+  "P+7G62": [
+    {
+      "type": 0,
+      "value": "Intestazione 3"
+    }
+  ],
+  "P+mWgV": [
+    {
+      "type": 0,
+      "value": "PFX"
+    }
+  ],
+  "P/S+q5": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Una delle stringhe da combinare in una singola stringa."
+    }
+  ],
+  "P/dnfK": [
+    {
+      "type": 0,
+      "value": "(UTC+06:00) Dacca"
+    }
+  ],
+  "P2A5dB": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Valore corrispondene al numero di integer nella matrice."
+    }
+  ],
+  "P4XUjW": [
+    {
+      "type": 0,
+      "value": "Gli spazi vuoti devono essere codificati per gli URI"
+    }
+  ],
+  "P4rEwD": [
+    {
+      "type": 0,
+      "value": "Funzioni di raccolta"
+    }
+  ],
+  "P6I90y": [
+    {
+      "type": 0,
+      "value": "Input"
+    }
+  ],
+  "PDMP/Z": [
+    {
+      "type": 0,
+      "value": "Compressa"
+    }
+  ],
+  "PNk3n4": [
+    {
+      "type": 0,
+      "value": "In esecuzione "
+    },
+    {
+      "type": 1,
+      "value": "onTime"
+    }
+  ],
+  "PORNMZ": [
+    {
+      "type": 0,
+      "value": "Input"
+    }
+  ],
+  "PP63jY": [
+    {
+      "type": 0,
+      "value": "altri pannelli"
+    }
+  ],
+  "PQOiAc": [
+    {
+      "type": 0,
+      "value": "Comprimi"
+    }
+  ],
+  "PRnqYA": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Numero di secondi da aggiungere. Può essere negativo per sottrarre i secondi."
+    }
+  ],
+  "PSrCNL": [
+    {
+      "type": 0,
+      "value": "Funzione"
+    }
+  ],
+  "PXa0D4": [
+    {
+      "type": 0,
+      "value": "False"
+    }
+  ],
+  "PZgHf/": [
+    {
+      "type": 0,
+      "value": "URI schema"
+    }
+  ],
+  "Pa+UkC": [
+    {
+      "type": 0,
+      "value": "Restituisce la lunghezza in byte di UTF-8 di una stringa di input"
+    }
+  ],
+  "Peg6ZT": [
+    {
+      "type": 0,
+      "value": "Errori impostazioni"
+    }
+  ],
+  "PfCJlN": [
+    {
+      "type": 0,
+      "value": "Funzioni del flusso di lavoro"
+    }
+  ],
+  "PjBcG3": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Amman"
+    }
+  ],
+  "Pk4cb+": [
+    {
+      "type": 0,
+      "value": "Proprietà rilevate"
+    }
+  ],
+  "Pl/fcn": [
+    {
+      "type": 0,
+      "value": "ID di traccia suddivisione"
+    }
+  ],
+  "Pnt0Xj": [
+    {
+      "type": 0,
+      "value": "Spiegare come ricevere i file dal server SFTP."
+    }
+  ],
+  "Pq+4a+": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Il Cairo"
+    }
+  ],
+  "PqUAbF": [
+    {
+      "type": 0,
+      "value": "Decomprimere il corpo della richiesta se è compresso tramite GZip o Deflate. Questa impostazione è applicabile solo per il trigger HTTP"
+    }
+  ],
+  "PsmHyH": [
+    {
+      "type": 0,
+      "value": "Errori di connessione"
+    }
+  ],
+  "Pudllg": [
+    {
+      "type": 0,
+      "value": "(UTC+07:00) Hovd"
+    }
+  ],
+  "PvWTxR": [
+    {
+      "type": 0,
+      "value": "Mostra funzioni"
+    }
+  ],
+  "Pvm0xB": [
+    {
+      "type": 0,
+      "value": "Restituisce la rappresentazione Base 64 della stringa di input"
+    }
+  ],
+  "PytMJ0": [
+    {
+      "type": 0,
+      "value": "Esegui dopo "
+    },
+    {
+      "type": 1,
+      "value": "sourceNodeId"
+    }
+  ],
+  "Q+ZZHI": [
+    {
+      "type": 0,
+      "value": "(UTC-10:00) Hawaii"
+    }
+  ],
+  "Q/7unA": [
+    {
+      "type": 0,
+      "value": "Oggetto"
+    }
+  ],
+  "Q0xpPQ": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Oggetto da controllare per verificare se è minore o uguale al valore con cui è confrontato."
+    }
+  ],
+  "Q4TUFX": [
+    {
+      "type": 0,
+      "value": "Rimuovi"
+    }
+  ],
+  "Q5Fh2R": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Stringa da cui calcolare la lunghezza di UTF-16."
+    }
+  ],
+  "Q5w4Do": [
+    {
+      "type": 0,
+      "value": "Aggiungi dati dinamici o espressioni inserendo un oggetto /"
+    }
+  ],
+  "Q8HCYK": [
+    {
+      "type": 0,
+      "value": "Nessun elemento"
+    }
+  ],
+  "Q8zxeb": [
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": " chiave"
+    }
+  ],
+  "QGbUXX": [
+    {
+      "type": 0,
+      "value": "Codice stato"
+    }
+  ],
+  "QZBPUx": [
+    {
+      "type": 0,
+      "value": "Restituisce un singolo valore corrispondente al nome della chiave dall'output del trigger dei dati del modulo o con codifica per il modulo"
+    }
+  ],
+  "QZrxUk": [
+    {
+      "type": 0,
+      "value": "Funzioni stringa"
+    }
+  ],
+  "QbJDi7": [
+    {
+      "type": 0,
+      "value": "Elemento"
+    }
+  ],
+  "QdJUaS": [
+    {
+      "type": 0,
+      "value": "Icona a matita"
+    }
+  ],
+  "QdhS3y": [
+    {
+      "type": 0,
+      "value": "Parametri flusso di lavoro"
+    }
+  ],
+  "QhKk80": [
+    {
+      "type": 0,
+      "value": "Il conteggio delle pagine supera il valore massimo di "
+    },
+    {
+      "type": 1,
+      "value": "max"
+    }
+  ],
+  "Qn8qxn": [
+    {
+      "type": 0,
+      "value": "Restituisce una stringa in formato data"
+    }
+  ],
+  "QoPTod": [
+    {
+      "type": 0,
+      "value": "Questa operazione verrà eseguita dal flusso"
+    }
+  ],
+  "QpRRt3": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Stringa con cui delimitare gli elementi."
+    }
+  ],
+  "QpX2+j": [
+    {
+      "type": 0,
+      "value": "Posizione"
+    }
+  ],
+  "QrQDdp": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Stringa contenente l'unità di tempo specificata nell'intervallo da sottrarre."
+    }
+  ],
+  "Qu1HkA": [
+    {
+      "type": 1,
+      "value": "hours"
+    },
+    {
+      "type": 0,
+      "value": " h"
+    }
+  ],
+  "R/aiRy": [
+    {
+      "type": 0,
+      "value": "(UTC + 12.00 h) Coordinated Universal Time+12"
+    }
+  ],
+  "RFjYpH": [
+    {
+      "type": 0,
+      "value": "Nome"
+    }
+  ],
+  "RJ3DuE": [
+    {
+      "type": 0,
+      "value": "Anteprima"
+    }
+  ],
+  "RJes1w": [
+    {
+      "type": 0,
+      "value": "(UTC+04:00) Erevan"
+    }
+  ],
+  "RX2Shm": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Stringa che viene divisa."
+    }
+  ],
+  "RbJNVk": [
+    {
+      "type": 0,
+      "value": "Schema"
+    }
+  ],
+  "RhH4pF": [
+    {
+      "offset": 0,
+      "options": {
+        "many": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " minuti"
+            }
+          ]
+        },
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " minuto"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " minuti"
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "minutes"
+    }
+  ],
+  "RjvpD+": [
+    {
+      "type": 0,
+      "value": "Inserire un nuovo passaggio in "
+    },
+    {
+      "type": 1,
+      "value": "parentSubgraphName"
+    }
+  ],
+  "RkgScy": [
+    {
+      "type": 0,
+      "value": "6"
+    }
+  ],
+  "RnBddN": [
+    {
+      "type": 0,
+      "value": "problema"
+    }
+  ],
+  "Rp5pHU": [
+    {
+      "type": 0,
+      "value": "(UTC + 00.00) Reykjavik"
+    }
+  ],
+  "Rq2U5n": [
+    {
+      "type": 0,
+      "value": "Espressione '"
+    },
+    {
+      "type": 1,
+      "value": "expression"
+    },
+    {
+      "type": 0,
+      "value": "' non riconosciuta"
+    }
+  ],
+  "Rs7j3V": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Le espressioni che devono essere true."
+    }
+  ],
+  "RvpHdu": [
+    {
+      "type": 0,
+      "value": "(UTC + 11.00 h) Is. Salomone, Nuova Caledonia"
+    }
+  ],
+  "RxGxr+": [
+    {
+      "type": 0,
+      "value": "Numero riga"
+    }
+  ],
+  "S138/4": [
+    {
+      "type": 0,
+      "value": "Formatta il testo in grassetto. Collegamento: ⌘B"
+    }
+  ],
+  "SCCE6s": [
+    {
+      "type": 0,
+      "value": "Password"
+    }
+  ],
+  "SGnTpt": [
+    {
+      "type": 0,
+      "value": "Intestazione 2"
+    }
+  ],
+  "SHXdzU": [
+    {
+      "type": 0,
+      "value": "Il contenuto generato dall'intelligenza artificiale potrebbe non essere corretto"
+    }
+  ],
+  "SJFVxf": [
+    {
+      "type": 0,
+      "value": "problemi"
+    }
+  ],
+  "SKXopi": [
+    {
+      "type": 0,
+      "value": "Converte il parametro nel tipo integer"
+    }
+  ],
+  "SLJkRn": [
+    {
+      "type": 0,
+      "value": "Rimuovi input"
+    }
+  ],
+  "SLZ0n4": [
+    {
+      "type": 0,
+      "value": "Verifica se la stringa inizia con un valore (senza distinzione tra maiuscole/minuscole, impostazioni cultura inglese non dipendenti da paese/area geografica)"
+    }
+  ],
+  "SToblZ": [
+    {
+      "type": 0,
+      "value": "Configurare i parametri per questo nodo"
+    }
+  ],
+  "SXb47U": [
+    {
+      "type": 1,
+      "value": "minutes"
+    },
+    {
+      "type": 0,
+      "value": " m"
+    }
+  ],
+  "SY04wn": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Nome dell'azione con una risposta con dati del modulo o codifica per il modulo."
+    }
+  ],
+  "SenWwt": [
+    {
+      "type": 0,
+      "value": "Specificare il comportamento e le funzionalità per il trasferimento del contenuto su HTTP. È possibile suddividere i messaggi in richieste più piccole al connettore per consentire il caricamento di messaggi di grandi dimensioni."
+    }
+  ],
+  "SgiTAh": [
+    {
+      "type": 0,
+      "value": "Immettere l'input"
+    }
+  ],
+  "Sh10cw": [
+    {
+      "type": 0,
+      "value": "Salva"
+    }
+  ],
+  "SmCQys": [
+    {
+      "type": 0,
+      "value": "ID di traccia personalizzato"
+    }
+  ],
+  "Smo/VO": [
+    {
+      "type": 0,
+      "value": "Immettere un nome"
+    }
+  ],
+  "Sr8PcK": [
+    {
+      "type": 0,
+      "value": "Non sono state trovate operazioni."
+    }
+  ],
+  "SvQyvs": [
+    {
+      "type": 0,
+      "value": "Fine"
+    }
+  ],
+  "SyFXM3": [
+    {
+      "type": 0,
+      "value": "Meno informazioni"
+    }
+  ],
+  "Sz8KN3": [
+    {
+      "type": 0,
+      "value": "Test"
+    }
+  ],
+  "T6VIym": [
+    {
+      "type": 0,
+      "value": "Nome"
+    }
+  ],
+  "TEN+cR": [
+    {
+      "type": 0,
+      "value": "Invia feedback"
+    }
+  ],
+  "TNEttQ": [
+    {
+      "type": 0,
+      "value": "Venerdì"
+    }
+  ],
+  "TNH/nK": [
+    {
+      "type": 0,
+      "value": "Cerca azioni flusso di lavoro"
+    }
+  ],
+  "TO7qos": [
+    {
+      "type": 0,
+      "value": "Restituisce l'inizio del mese di un timestamp in formato stringa"
+    }
+  ],
+  "TRpSCQ": [
+    {
+      "type": 0,
+      "value": "Tipo di azione"
+    }
+  ],
+  "TX4Kdr": [
+    {
+      "type": 0,
+      "value": "Crea una nuova connessione"
+    }
+  ],
+  "TY4HzZ": [
+    {
+      "type": 0,
+      "value": "Aggiungere o sostituire gli schemi."
+    }
+  ],
+  "TZh8nV": [
+    {
+      "type": 0,
+      "value": "in "
+    },
+    {
+      "type": 1,
+      "value": "weekDays"
+    },
+    {
+      "type": 0,
+      "value": " "
+    },
+    {
+      "type": 1,
+      "value": "frequencyDesc"
+    }
+  ],
+  "Tayrub": [
+    {
+      "type": 0,
+      "value": "Non elaborato"
+    }
+  ],
+  "Tb2QLA": [
+    {
+      "type": 0,
+      "value": "ID richiesta client"
+    }
+  ],
+  "TgcgXE": [
+    {
+      "type": 0,
+      "value": "Tag"
+    }
+  ],
+  "Tiqnir": [
+    {
+      "type": 0,
+      "value": "Personalizzata"
+    }
+  ],
+  "TjMkDP": [
+    {
+      "type": 0,
+      "value": "(UTC - 06.00) Isola di Pasqua"
+    }
+  ],
+  "TlX98E": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Kaliningrad"
+    }
+  ],
+  "Tla33B": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Valore per il quale trovare l'indice."
+    }
+  ],
+  "Tmr/9e": [
+    {
+      "type": 0,
+      "value": "Parametri non validi"
+    }
+  ],
+  "To3RNy": [
+    {
+      "type": 0,
+      "value": "Errori dei parametri del flusso di lavoro"
+    }
+  ],
+  "Ts5Pzr": [
+    {
+      "type": 0,
+      "value": "Nota"
+    }
+  ],
+  "TsJbGH": [
+    {
+      "type": 0,
+      "value": "Disconnessa"
+    }
+  ],
+  "Ttc0SM": [
+    {
+      "type": 0,
+      "value": "Intestazione 1"
+    }
+  ],
+  "TvPOXI": [
+    {
+      "type": 0,
+      "value": "Ecco il flusso."
+    }
+  ],
+  "Twfck/": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Numero in base a cui moltiplicare il moltiplicando 1."
+    }
+  ],
+  "U086AA": [
+    {
+      "type": 0,
+      "value": "Elemento dello schema di destinazione"
+    }
+  ],
+  "U0I10w": [
+    {
+      "type": 0,
+      "value": "(UTC+05:00) Ekaterinburg"
+    }
+  ],
+  "U3guPp": [
+    {
+      "type": 0,
+      "value": "Raggruppa per connettore"
+    }
+  ],
+  "U3iWVd": [
+    {
+      "type": 0,
+      "value": "Genera una matrice di interi a partire da un numero specifico"
+    }
+  ],
+  "U4zovj": [
+    {
+      "type": 0,
+      "value": "In esecuzione "
+    },
+    {
+      "type": 1,
+      "value": "onTime"
+    },
+    {
+      "type": 0,
+      "value": " "
+    },
+    {
+      "type": 1,
+      "value": "onDays"
+    }
+  ],
+  "U7yRwM": [
+    {
+      "type": 0,
+      "value": "Errore di convalida"
+    }
+  ],
+  "UCNM4L": [
+    {
+      "type": 0,
+      "value": "Per fare riferimento a un parametro, usare l'elenco contenuto dinamico."
+    }
+  ],
+  "UEryJE": [
+    {
+      "type": 0,
+      "value": "Elimina azione flusso di lavoro"
+    }
+  ],
+  "UF3KjL": [
+    {
+      "type": 0,
+      "value": "Provare a usare una funzione di conversione, ad esempio: "
+    },
+    {
+      "type": 1,
+      "value": "conversionFunctions"
+    }
+  ],
+  "UHCVNK": [
+    {
+      "type": 0,
+      "value": "Sostituisce una stringa con una stringa specifica"
+    }
+  ],
+  "UIWX6p": [
+    {
+      "type": 0,
+      "value": "Nome logico"
+    }
+  ],
+  "UMPuUJ": [
+    {
+      "type": 0,
+      "value": "Elimina "
+    },
+    {
+      "type": 1,
+      "value": "expressionValue"
+    }
+  ],
+  "UR1CS5": [
+    {
+      "type": 0,
+      "value": "Nascondi il codice"
+    }
+  ],
+  "USVffu": [
+    {
+      "type": 0,
+      "value": "Il contenuto non è visualizzato a causa della configurazione di sicurezza."
+    }
+  ],
+  "UT2ozj": [
+    {
+      "type": 0,
+      "value": "(UTC - 7.00 h) Fuso occidentale (USA e Canada)"
+    }
+  ],
+  "UVAfYj": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Raccolta da cui recuperare l'ultimo oggetto."
+    }
+  ],
+  "UW+fkB": [
+    {
+      "type": 0,
+      "value": "Inviami un messaggio di posta elettronica quando"
+    }
+  ],
+  "UYRIS/": [
+    {
+      "type": 1,
+      "value": "fileName"
+    },
+    {
+      "type": 0,
+      "value": " (nome file)"
+    }
+  ],
+  "UZiXVh": [
+    {
+      "type": 0,
+      "value": "Output"
+    }
+  ],
+  "Ufv5m9": [
+    {
+      "type": 0,
+      "value": "Il nodo dello schema '"
+    },
+    {
+      "type": 1,
+      "value": "nodeName"
+    },
+    {
+      "type": 0,
+      "value": "' contiene una catena di connessioni non fatale"
+    }
+  ],
+  "Ug4sWZ": [
+    {
+      "type": 0,
+      "value": "Espandi"
+    }
+  ],
+  "UgaIRz": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Lunghezza di ogni blocco."
+    }
+  ],
+  "Umpr3z": [
+    {
+      "type": 0,
+      "value": "Ogni "
+    },
+    {
+      "type": 1,
+      "value": "interval"
+    },
+    {
+      "type": 0,
+      "value": " settimane"
+    }
+  ],
+  "Unc2tG": [
+    {
+      "type": 0,
+      "value": "Restituisce true se due valori sono uguali."
+    }
+  ],
+  "UnrrzF": [
+    {
+      "type": 0,
+      "value": "Schema di origine"
+    }
+  ],
+  "UnytRl": [
+    {
+      "type": 0,
+      "value": "Il tipo per '"
+    },
+    {
+      "type": 1,
+      "value": "authenticationKey"
+    },
+    {
+      "type": 0,
+      "value": "' è '"
+    },
+    {
+      "type": 1,
+      "value": "propertyType"
+    },
+    {
+      "type": 0,
+      "value": "''."
+    }
+  ],
+  "Ur+wph": [
+    {
+      "type": 0,
+      "value": "Fare clic per eliminare l'elemento"
+    }
+  ],
+  "UtyRCH": [
+    {
+      "type": 0,
+      "value": "Immettere un nome per la connessione"
+    }
+  ],
+  "Uxckds": [
+    {
+      "type": 0,
+      "value": "Flusso suggerito"
+    }
+  ],
+  "V+/c21": [
+    {
+      "type": 0,
+      "value": "Generale"
+    }
+  ],
+  "V+xi3c": [
+    {
+      "type": 0,
+      "value": "Per altri dettagli, vedere http://aka.ms/logicapps-chunk#upload-content-in-chunks"
+    }
+  ],
+  "V0ZbQO": [
+    {
+      "type": 0,
+      "value": "Mostra meno"
+    }
+  ],
+  "V3vpin": [
+    {
+      "type": 0,
+      "value": "'"
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "' non è più presente nello schema dell'operazione. Deve essere rimosso prima di salvare nuovamente il flusso di lavoro."
+    }
+  ],
+  "V5f3ha": [
+    {
+      "type": 0,
+      "value": "Settimana"
+    }
+  ],
+  "V7k/GN": [
+    {
+      "type": 0,
+      "value": "Elimina switch case"
+    }
+  ],
+  "V8A+1J": [
+    {
+      "type": 0,
+      "value": "Intervallo"
+    }
+  ],
+  "VA7M1u": [
+    {
+      "type": 0,
+      "value": "In-app"
+    }
+  ],
+  "VEbE93": [
+    {
+      "type": 0,
+      "value": "Spiega cosa fa l'azione \""
+    },
+    {
+      "type": 1,
+      "value": "selectedOperation"
+    },
+    {
+      "type": 0,
+      "value": "\" in questo flusso"
+    }
+  ],
+  "VHm1Sr": [
+    {
+      "type": 0,
+      "value": "Seleziona una risorsa del servizio app"
+    }
+  ],
+  "VI5Sa8": [
+    {
+      "type": 0,
+      "value": "Espandi"
+    }
+  ],
+  "VI7EqG": [
+    {
+      "type": 0,
+      "value": "Non è stato trovato alcun risultato per "
+    },
+    {
+      "type": 1,
+      "value": "searchTerm"
+    }
+  ],
+  "VIN7lB": [
+    {
+      "type": 0,
+      "value": "Il flusso inizia quando si verifica ciò"
+    }
+  ],
+  "VKAk5g": [
+    {
+      "type": 0,
+      "value": "Il nome dell'esecuzione del flusso di lavoro specificato non è valido."
+    }
+  ],
+  "VL9wOu": [
+    {
+      "type": 0,
+      "value": "È necessario fornire un valore per il parametro."
+    }
+  ],
+  "VLc3FV": [
+    {
+      "type": 0,
+      "value": "Schema di origine"
+    }
+  ],
+  "VPh9Jo": [
+    {
+      "type": 0,
+      "value": "(UTC+06:00) Novosibirsk"
+    }
+  ],
+  "VUH9aj": [
+    {
+      "type": 0,
+      "value": "23"
+    }
+  ],
+  "VVfYvq": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Numero da dividere per il divisore."
+    }
+  ],
+  "VXBWrq": [
+    {
+      "type": 0,
+      "value": "Commento"
+    }
+  ],
+  "VZHick": [
+    {
+      "type": 0,
+      "value": "Durata"
+    }
+  ],
+  "Vaacox": [
+    {
+      "type": 0,
+      "value": "Cronologia esecuzioni"
+    }
+  ],
+  "VbMYd8": [
+    {
+      "type": 0,
+      "value": "I trigger indicano all'app quando avviare l'esecuzione. Ogni flusso di lavoro richiede almeno un trigger."
+    }
+  ],
+  "Vfce7b": [
+    {
+      "type": 0,
+      "value": "Tipo di errore"
+    }
+  ],
+  "Vi5TIV": [
+    {
+      "type": 0,
+      "value": "Non sono stati trovati avvisi."
+    }
+  ],
+  "VlvlX1": [
+    {
+      "type": 0,
+      "value": "Certificato"
+    }
+  ],
+  "VptXzY": [
+    {
+      "type": 0,
+      "value": "Usa \""
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "\" come valore personalizzato"
+    }
+  ],
+  "Vqs8hE": [
+    {
+      "type": 0,
+      "value": "Azioni"
+    }
+  ],
+  "Vx6fwP": [
+    {
+      "type": 0,
+      "value": "Aggiunta di questa azione"
+    }
+  ],
+  "W+mUyI": [
+    {
+      "type": 0,
+      "value": "Avanti"
+    }
+  ],
+  "W070M2": [
+    {
+      "type": 0,
+      "value": "di "
+    },
+    {
+      "type": 1,
+      "value": "max"
+    }
+  ],
+  "W6FdMh": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Nome della nuova proprietà."
+    }
+  ],
+  "WCASt1": [
+    {
+      "type": 0,
+      "value": "Descrivere un elemento nel flusso che deve essere sostituito e con cosa. Aggiungere i dettagli laddove possibile, come il connettore da usare e se deve essere incluso un eventuale contenuto."
+    }
+  ],
+  "WGwH45": [
+    {
+      "type": 0,
+      "value": "Cancella"
+    }
+  ],
+  "WK6hZX": [
+    {
+      "type": 0,
+      "value": "Seleziona tutto il testo in "
+    },
+    {
+      "type": 1,
+      "value": "label"
+    }
+  ],
+  "WMX2ig": [
+    {
+      "type": 0,
+      "value": "Qual è l'impostazione di concorrenza di questo flusso di lavoro?"
+    }
+  ],
+  "WR1K3z": [
+    {
+      "type": 0,
+      "value": "(UTC + 04.00) Astrakhan, Ulyanovsk"
+    }
+  ],
+  "WS55UF": [
+    {
+      "type": 0,
+      "value": "Specificare la durata nel formato ISO 8601"
+    }
+  ],
+  "WS9kXD": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Primo integer nella matrice."
+    }
+  ],
+  "WTZvGW": [
+    {
+      "type": 0,
+      "value": "Il flusso di lavoro ha connessioni non valide per le operazioni seguenti: "
+    },
+    {
+      "type": 1,
+      "value": "invalidNodes"
+    }
+  ],
+  "WToL/O": [
+    {
+      "type": 0,
+      "value": "Immettere un'istruzione di condizione valida."
+    }
+  ],
+  "WUe3DY": [
+    {
+      "type": 0,
+      "value": "Abbreviazione per trigger().outputs"
+    }
+  ],
+  "WaTsxR": [
+    {
+      "type": 0,
+      "value": "Cronologia richiesta"
+    }
+  ],
+  "Wb/cBR": [
+    {
+      "type": 0,
+      "value": "Intervallo fisso"
+    }
+  ],
+  "WcnIF8": [
+    {
+      "type": 0,
+      "value": "Rimuovi"
+    }
+  ],
+  "WgChTm": [
+    {
+      "type": 0,
+      "value": "(Valore personalizzato)"
+    }
+  ],
+  "WgoP7R": [
+    {
+      "type": 0,
+      "value": "Restituisce il risultato della moltiplicazione dei due numeri"
+    }
+  ],
+  "WnU9v0": [
+    {
+      "type": 0,
+      "value": "Un'identità gestita non è configurata nell'app per la logica."
+    }
+  ],
+  "WvvJYw": [
+    {
+      "type": 0,
+      "value": "Azioni"
+    }
+  ],
+  "X/7je+": [
+    {
+      "type": 0,
+      "value": "Minuto"
+    }
+  ],
+  "X2idLs": [
+    {
+      "type": 0,
+      "value": "(UTC-03:00) Montevideo"
+    }
+  ],
+  "X4SuNU": [
+    {
+      "type": 0,
+      "value": "L'intervallo minimo tra i criteri di ripetizione dei tentativi non è valido. Deve corrispondere al formato di durata ISO 8601"
+    }
+  ],
+  "X4gDhV": [
+    {
+      "type": 0,
+      "value": "Tenant"
+    }
+  ],
+  "X7X5ew": [
+    {
+      "type": 0,
+      "value": "Parametri"
+    }
+  ],
+  "X8JjjT": [
+    {
+      "type": 1,
+      "value": "days"
+    },
+    {
+      "type": 0,
+      "value": " giorni "
+    },
+    {
+      "type": 1,
+      "value": "hours"
+    },
+    {
+      "type": 0,
+      "value": " ore"
+    }
+  ],
+  "XCunbR": [
+    {
+      "type": 0,
+      "value": "Abbreviazione per actions('actionName').outputs"
+    }
+  ],
+  "XEuptL": [
+    {
+      "type": 0,
+      "value": "Combina un qualsiasi numero di stringhe"
+    }
+  ],
+  "XFFpu/": [
+    {
+      "type": 0,
+      "value": "Riprova"
+    }
+  ],
+  "XFzzaw": [
+    {
+      "type": 0,
+      "value": "Parametri avanzati"
+    }
+  ],
+  "XH94im": [
+    {
+      "type": 0,
+      "value": "Verificare che le parole siano scritte correttamente."
+    }
+  ],
+  "XJkBrZ": [
+    {
+      "type": 0,
+      "value": "Specificare una o più espressioni che devono essere vere per l'attivazione del trigger"
+    }
+  ],
+  "XKDZXi": [
+    {
+      "type": 0,
+      "value": "Timeout azione"
+    }
+  ],
+  "XLUs2P": [
+    {
+      "type": 0,
+      "value": "Tipo di token non supportato: "
+    },
+    {
+      "type": 1,
+      "value": "var"
+    }
+  ],
+  "XOAcjQ": [
+    {
+      "type": 0,
+      "value": "(UTC+03:00) Nairobi"
+    }
+  ],
+  "XOzn/3": [
+    {
+      "type": 0,
+      "value": "Nome della connessione"
+    }
+  ],
+  "XQ4OCV": [
+    {
+      "type": 0,
+      "value": "(UTC+03:00) Baghdad"
+    }
+  ],
+  "XR4Sd/": [
+    {
+      "type": 0,
+      "value": "Mi piace"
+    }
+  ],
+  "XRK+gt": [
+    {
+      "type": 0,
+      "value": "La funzione '"
+    },
+    {
+      "type": 1,
+      "value": "functionName"
+    },
+    {
+      "type": 0,
+      "value": "' ha una catena di connessione non fatale"
+    }
+  ],
+  "XTeLIw": [
+    {
+      "type": 0,
+      "value": "(UTC+07:00) Krasnoyarsk"
+    }
+  ],
+  "XTuxmH": [
+    {
+      "type": 1,
+      "value": "minutes"
+    },
+    {
+      "type": 0,
+      "value": " minuti "
+    },
+    {
+      "type": 1,
+      "value": "seconds"
+    },
+    {
+      "type": 0,
+      "value": " secondi"
+    }
+  ],
+  "XVTQT6": [
+    {
+      "type": 0,
+      "value": "Intervallo"
+    }
+  ],
+  "XbtEq9": [
+    {
+      "type": 0,
+      "value": "Conteggio"
+    }
+  ],
+  "Xew1Df": [
+    {
+      "type": 0,
+      "value": "Altre informazioni di diagnostica: x-ms-client-request-id è '"
+    },
+    {
+      "type": 1,
+      "value": "clientRequestId"
+    },
+    {
+      "type": 0,
+      "value": "'."
+    }
+  ],
+  "Xj0Gr/": [
+    {
+      "type": 0,
+      "value": "Impossibile eliminare l'elemento dello schema di destinazione."
+    }
+  ],
+  "Xj4xwI": [
+    {
+      "type": 0,
+      "value": "L'identità gestita utilizzata per questa operazione non esiste più. Per continuare, selezionare un'identità disponibile o modificare la connessione."
+    }
+  ],
+  "XkBxv5": [
+    {
+      "type": 0,
+      "value": "Selezionare uno schema di destinazione"
+    }
+  ],
+  "Xkt2vD": [
+    {
+      "type": 0,
+      "value": "Seleziona una funzione dell'app per le funzioni"
+    }
+  ],
+  "Xnn0uj": [
+    {
+      "type": 0,
+      "value": "Richiesta"
+    }
+  ],
+  "XqamWZ": [
+    {
+      "type": 0,
+      "value": "Elimina"
+    }
+  ],
+  "XsktQ/": [
+    {
+      "type": 0,
+      "value": "Limita le app per la logica per non includere le intestazioni dei metadati del flusso di lavoro nella risposta."
+    }
+  ],
+  "XtuP5e": [
+    {
+      "type": 0,
+      "value": "Funzioni matematiche"
+    }
+  ],
+  "Xv5CGN": [
+    {
+      "type": 0,
+      "value": "(UTC - 5.00 h) Indiana (Est)"
+    }
+  ],
+  "Xx/naD": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Nome dell'azione di cui si desidera ottenere gli output del corpo."
+    }
+  ],
+  "Y/bcmG": [
+    {
+      "type": 0,
+      "value": "Password"
+    }
+  ],
+  "Y04+GH": [
+    {
+      "type": 0,
+      "value": "Aggiungi un'azione"
+    }
+  ],
+  "Y0H9aX": [
+    {
+      "type": 0,
+      "value": "Altre informazioni"
+    }
+  ],
+  "Y5XAbg": [
+    {
+      "type": 0,
+      "value": "Selezionare una risorsa dell'app per le funzioni Swagger"
+    }
+  ],
+  "Y9kBz5": [
+    {
+      "type": 0,
+      "value": "Restituisce una rappresentazione binaria di un URI di dati"
+    }
+  ],
+  "YABOLz": [
+    {
+      "type": 0,
+      "value": "Elemento corpo"
+    }
+  ],
+  "YCDF7A": [
+    {
+      "type": 0,
+      "value": "Tutti i parametri obbligatori sono impostati"
+    }
+  ],
+  "YCFhzp": [
+    {
+      "type": 0,
+      "value": "Aggiungi elementi figlio"
+    }
+  ],
+  "YDoc9z": [
+    {
+      "type": 0,
+      "value": "Condizioni del trigger"
+    }
+  ],
+  "YEHutH": [
+    {
+      "type": 0,
+      "value": "Cancella editor"
+    }
+  ],
+  "YF1yZk": [
+    {
+      "type": 0,
+      "value": "chat-session-id:"
+    }
+  ],
+  "YHsAKl": [
+    {
+      "type": 0,
+      "value": "Nota operazione"
+    }
+  ],
+  "YIBDSH": [
+    {
+      "type": 1,
+      "value": "days"
+    },
+    {
+      "type": 0,
+      "value": " g"
+    }
+  ],
+  "YJJ+gQ": [
+    {
+      "type": 0,
+      "value": "Stringa"
+    }
+  ],
+  "YJlS8E": [
+    {
+      "type": 0,
+      "value": "Formatta il testo come sottolineato. Scelta rapida: CTRL+U"
+    }
+  ],
+  "YKXmKD": [
+    {
+      "type": 0,
+      "value": "Consente a un'espressione di derivare il proprio valore da altre coppie nome-valore JSON o dall'output del trigger di runtime"
+    }
+  ],
+  "YOUfNf": [
+    {
+      "type": 0,
+      "value": "Immetti file PFX"
+    }
+  ],
+  "YR1uWE": [
+    {
+      "type": 0,
+      "value": "Formatta il testo in grassetto. Scelta rapida: CTRL+B"
+    }
+  ],
+  "YRk271": [
+    {
+      "type": 0,
+      "value": "Autenticazione"
+    }
+  ],
+  "YUbSFS": [
+    {
+      "type": 0,
+      "value": "Sì/No"
+    }
+  ],
+  "YWOKlU": [
+    {
+      "type": 0,
+      "value": "Elenco numerato"
+    }
+  ],
+  "YWws/r": [
+    {
+      "type": 0,
+      "value": "I nomi di output non devono essere vuoti."
+    }
+  ],
+  "YZ5Kwe": [
+    {
+      "type": 0,
+      "value": "(UTC - 4.00 h) Ora costa atlantica (Canada)"
+    }
+  ],
+  "YaFjJQ": [
+    {
+      "type": 0,
+      "value": "Restituisce un singolo oggetto o matrice con tutti gli elementi inclusi nella matrice o nell'oggetto passato a questa funzione. I parametri per la funzione possono essere costituiti da un set di oggetti o un set di matrici, ma non da una combinazione di entrambi. Se nell'output finale sono presenti due oggetti con lo stesso nome, nell'oggetto finale sarà visualizzato l'ultimo oggetto con tale nome."
+    }
+  ],
+  "Ybzoim": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Nome dell'azione con i valori desiderati."
+    }
+  ],
+  "YdQw4/": [
+    {
+      "type": 0,
+      "value": "Formatta il testo in corsivo. Collegamento: ⌘I"
+    }
+  ],
+  "YfwZJO": [
+    {
+      "type": 0,
+      "value": "Suggerimenti per la ricerca"
+    }
+  ],
+  "Yg/vvm": [
+    {
+      "type": 0,
+      "value": "Chiudi pannello Aggiungi azione"
+    }
+  ],
+  "YgU88A": [
+    {
+      "type": 0,
+      "value": "(UTC+05.30) Chennai, Kolkata (Calcutta), Mumbai, Nuova Delhi"
+    }
+  ],
+  "YiOybp": [
+    {
+      "type": 0,
+      "value": "(UTC + 1.00 h) Bruxelles, Copenaghen, Madrid, Parigi"
+    }
+  ],
+  "YlesUQ": [
+    {
+      "type": 0,
+      "value": "La mappa è in condizioni ideali"
+    }
+  ],
+  "YoQara": [
+    {
+      "type": 0,
+      "value": "Nessuno"
+    }
+  ],
+  "Yrw/Qt": [
+    {
+      "type": 0,
+      "value": "I dati personali e aziendali sono protetti in questa chat"
+    }
+  ],
+  "Yuu5CD": [
+    {
+      "type": 0,
+      "value": "Zoom indietro"
+    }
+  ],
+  "Yuxprm": [
+    {
+      "type": 0,
+      "value": "Ti diamo il benvenuto nell'assistente del flusso di lavoro."
+    }
+  ],
+  "Yw7Nfl": [
+    {
+      "type": 0,
+      "value": "Disabilita risultato statico"
+    }
+  ],
+  "Yz9o1k": [
+    {
+      "type": 0,
+      "value": "Non connesso."
+    }
+  ],
+  "Z8tBFS": [
+    {
+      "type": 0,
+      "value": "L'assistente del flusso di lavoro è progettato solo per fornire assistenza e non supporta la creazione o la modifica di flussi di lavoro."
+    }
+  ],
+  "Z9PWl/": [
+    {
+      "type": 0,
+      "value": "Il numero di criteri di ripetizione dei tentativi non è valido (deve essere compreso tra "
+    },
+    {
+      "type": 1,
+      "value": "min"
+    },
+    {
+      "type": 0,
+      "value": " e "
+    },
+    {
+      "type": 1,
+      "value": "max"
+    },
+    {
+      "type": 0,
+      "value": ")"
+    }
+  ],
+  "ZAdaBl": [
+    {
+      "type": 0,
+      "value": "Selezionare un riferimento alla connessione esistente o creane uno nuovo."
+    }
+  ],
+  "ZBJiuD": [
+    {
+      "type": 0,
+      "value": "Stato"
+    }
+  ],
+  "ZCFMoe": [
+    {
+      "type": 0,
+      "value": "Corpo"
+    }
+  ],
+  "ZM1mRy": [
+    {
+      "type": 0,
+      "value": "Controllo concorrenza"
+    }
+  ],
+  "ZME5hh": [
+    {
+      "type": 0,
+      "value": "Restituisce il componente giorno del mese di un timestamp in formato stringa"
+    }
+  ],
+  "ZRdkFN": [
+    {
+      "type": 0,
+      "value": "Comprimi risultato statico"
+    }
+  ],
+  "ZUCTVP": [
+    {
+      "type": 0,
+      "value": "Incolla un'azione"
+    }
+  ],
+  "ZUaz3Y": [
+    {
+      "type": 0,
+      "value": "Abbreviazione per trigger().outputs.body"
+    }
+  ],
+  "ZaIeDG": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Valore con cui può iniziare la stringa."
+    }
+  ],
+  "ZbCS4a": [
+    {
+      "type": 0,
+      "value": "Altre informazioni"
+    }
+  ],
+  "Zg3IjD": [
+    {
+      "type": 0,
+      "value": "Chiudi"
+    }
+  ],
+  "Zi9gQK": [
+    {
+      "type": 0,
+      "value": "Aggiungi nuovo elemento"
+    }
+  ],
+  "ZihyUf": [
+    {
+      "type": 0,
+      "value": "Chiudi"
+    }
+  ],
+  "ZkjTbp": [
+    {
+      "type": 0,
+      "value": "Altre informazioni sul contenuto dinamico."
+    }
+  ],
+  "ZyDq4/": [
+    {
+      "type": 0,
+      "value": "Mostra un suggerimento diverso"
+    }
+  ],
+  "a7j3gS": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Numero da dividere per il divisore."
+    }
+  ],
+  "aAXnqw": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Numero di occorrenze della sottostringa da trovare."
+    }
+  ],
+  "aE+2gr": [
+    {
+      "type": 0,
+      "value": "False"
+    }
+  ],
+  "aGyVJT": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Numero di oggetti da rimuovere dalla parte iniziale della raccolta. Deve essere un intero positivo."
+    }
+  ],
+  "aK4iLW": [
+    {
+      "type": 0,
+      "value": "Gestione dei dati"
+    }
+  ],
+  "aP1wk9": [
+    {
+      "type": 0,
+      "value": "Restituisce il primo indice di un valore all'interno di una stringa (senza distinzione tra maiuscole/minuscole, impostazioni cultura inglese non dipendenti da paese/area geografica)"
+    }
+  ],
+  "aSnCCB": [
+    {
+      "type": 0,
+      "value": "Posizione"
+    }
+  ],
+  "aV/nLS": [
+    {
+      "type": 0,
+      "value": "Seconda"
+    }
+  ],
+  "aYTy7X": [
+    {
+      "type": 0,
+      "value": "Annullato"
+    }
+  ],
+  "ae7W0a": [
+    {
+      "type": 0,
+      "value": "Schermo intero"
+    }
+  ],
+  "ahFd/S": [
+    {
+      "type": 0,
+      "value": "ID di rilevamento distinto per ogni istanza di suddivisione"
+    }
+  ],
+  "ahsVI/": [
+    {
+      "type": 0,
+      "value": "Immetti file PFX"
+    }
+  ],
+  "aoUT/3": [
+    {
+      "type": 0,
+      "value": "Caricamento risorse..."
+    }
+  ],
+  "auUI93": [
+    {
+      "type": 0,
+      "value": "Aggiungere o selezionare uno schema di origine da usare per la mappa."
+    }
+  ],
+  "b9/1dK": [
+    {
+      "type": 0,
+      "value": "Valore"
+    }
+  ],
+  "b9P8SA": [
+    {
+      "type": 0,
+      "value": "Tipo di token non supportato: "
+    },
+    {
+      "type": 1,
+      "value": "controls"
+    }
+  ],
+  "b9Rvl9": [
+    {
+      "type": 0,
+      "value": "Corpo"
+    }
+  ],
+  "bG9rjv": [
+    {
+      "type": 0,
+      "value": "Azioni"
+    }
+  ],
+  "bGtEPd": [
+    {
+      "type": 0,
+      "value": "Elimina"
+    }
+  ],
+  "bIyTi7": [
+    {
+      "type": 0,
+      "value": "Sottoscrizione"
+    }
+  ],
+  "bJ7DWe": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Valore convertito in un valore binario."
+    }
+  ],
+  "bJEJoL": [
+    {
+      "type": 0,
+      "value": "Facoltativo. Chiave da utilizzare per ordinare gli oggetti nella raccolta."
+    }
+  ],
+  "bSZ0lL": [
+    {
+      "type": 0,
+      "value": "URL callback"
+    }
+  ],
+  "bTrk+S": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Oggetto da controllare per verificare se è maggiore o uguale al valore con cui è confrontato."
+    }
+  ],
+  "bWBMhe": [
+    {
+      "type": 0,
+      "value": "Per impostazione predefinita, le istanze dell'app per la logica vengono eseguite contemporaneamente o in parallelo. Questo controllo cambia la modalità di accodamento delle nuove esecuzioni e non può essere modificato dopo l'abilitazione. Per eseguire il numero massimo possibile di istanze parallele, lasciare disattivato questo controllo. Per limitare il numero di esecuzioni parallele, attivare questo controllo e selezionare un limite. Per l'esecuzione sequenziale, impostare 1 come limite."
+    }
+  ],
+  "bWOsvo": [
+    {
+      "type": 0,
+      "value": "Usa connessione dell'invoker"
+    }
+  ],
+  "bXFGpe": [
+    {
+      "type": 0,
+      "value": "Info"
+    }
+  ],
+  "bYwqkV": [
+    {
+      "type": 0,
+      "value": "Immetti un JSON valido."
+    }
+  ],
+  "ba9yGJ": [
+    {
+      "type": 0,
+      "value": "Carica altro"
+    }
+  ],
+  "bf7078": [
+    {
+      "type": 0,
+      "value": "Restituisce il valore massimo nella matrice di input di numeri"
+    }
+  ],
+  "blRFVt": [
+    {
+      "type": 0,
+      "value": "Configurare queste connessioni per usarle nel flusso."
+    }
+  ],
+  "bldzuj": [
+    {
+      "type": 0,
+      "value": "Cronologia tentativi"
+    }
+  ],
+  "bt2CaQ": [
+    {
+      "type": 0,
+      "value": "Cancella tutto"
+    }
+  ],
+  "bwlAWn": [
+    {
+      "type": 0,
+      "value": "Apri operazione"
+    }
+  ],
+  "byRkj+": [
+    {
+      "type": 0,
+      "value": "Per questa operazione sono abilitati input o output sicuri."
+    }
+  ],
+  "byTBrn": [
+    {
+      "type": 0,
+      "value": "Personalizzata"
+    }
+  ],
+  "c/+j08": [
+    {
+      "type": 0,
+      "value": "Fare"
+    }
+  ],
+  "c2XklE": [
+    {
+      "type": 0,
+      "value": "Cerca"
+    }
+  ],
+  "c3FLox": [
+    {
+      "type": 0,
+      "value": "(UTC+10:00) Hobart"
+    }
+  ],
+  "c3G/zq": [
+    {
+      "type": 0,
+      "value": "Restituisce un oggetto con una proprietà impostata sul valore specificato"
+    }
+  ],
+  "c4GQZE": [
+    {
+      "type": 0,
+      "value": "Selezionare lo schema per l'elenco a discesa"
+    }
+  ],
+  "c6XbVI": [
+    {
+      "type": 0,
+      "value": "pannello"
+    }
+  ],
+  "c7kfkV": [
+    {
+      "type": 0,
+      "value": "Immettere un oggetto JSON valido."
+    }
+  ],
+  "c8UPLp": [
+    {
+      "type": 0,
+      "value": "È possibile aggiungere contenuto dinamico anche da altre origini."
+    }
+  ],
+  "cHiBAn": [
+    {
+      "type": 0,
+      "value": "(UTC+09:00) Seoul"
+    }
+  ],
+  "cJkSrD": [
+    {
+      "type": 0,
+      "value": "Recuperare altri risultati fino al limite di impaginazione"
+    }
+  ],
+  "cK2A/V": [
+    {
+      "type": 0,
+      "value": "Visualizza documentazione"
+    }
+  ],
+  "cR9RtV": [
+    {
+      "type": 0,
+      "value": "Rimuovi le modifiche"
+    }
+  ],
+  "cZXqqf": [
+    {
+      "type": 0,
+      "value": "Cambia connessione"
+    }
+  ],
+  "cZv9J0": [
+    {
+      "type": 0,
+      "value": "La connessione è valida"
+    }
+  ],
+  "ca/QIc": [
+    {
+      "type": 0,
+      "value": "Messaggio di errore"
+    }
+  ],
+  "ceVB5l": [
+    {
+      "type": 0,
+      "value": "Restituisce il corpo per una parte nell'output multiparte di un'azione."
+    }
+  ],
+  "cfUHfs": [
+    {
+      "type": 0,
+      "value": "Restituisce la differenza tra due date come stringa di intervallo di tempo"
+    }
+  ],
+  "cgq/+y": [
+    {
+      "type": 0,
+      "value": "Selezionare un'identità"
+    }
+  ],
+  "ciLkfU": [
+    {
+      "type": 0,
+      "value": "Grassetto (⌘B)"
+    }
+  ],
+  "cmTCsW": [
+    {
+      "type": 0,
+      "value": "Si è verificato un errore durante il caricamento del componente."
+    }
+  ],
+  "cqiqcf": [
+    {
+      "type": 0,
+      "value": "Ora di avvio"
+    }
+  ],
+  "cr0UnG": [
+    {
+      "type": 0,
+      "value": "9"
+    }
+  ],
+  "cscezV": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Raccolta in cui ignorare i primi oggetti Count."
+    }
+  ],
+  "ctI9Pp": [
+    {
+      "type": 0,
+      "value": "Genera XSLT prima di provare a testare i mapping."
+    }
+  ],
+  "cvp9VP": [
+    {
+      "type": 0,
+      "value": "Codice errore"
+    }
+  ],
+  "cyEBus": [
+    {
+      "type": 0,
+      "value": "(UTC-04:00) Cuiaba"
+    }
+  ],
+  "d020eg": [
+    {
+      "type": 0,
+      "value": "Restituisce il primo elemento dalla matrice o dalla stringa passata."
+    }
+  ],
+  "d4Ddhp": [
+    {
+      "type": 0,
+      "value": "Scarica (ALT o OPZIONE + selezione)"
+    }
+  ],
+  "dBWIjR": [
+    {
+      "type": 0,
+      "value": "Nello schema mancano gli input obbligatori"
+    }
+  ],
+  "dBxX0M": [
+    {
+      "type": 0,
+      "value": "Aggiungi un trigger"
+    }
+  ],
+  "dD8y1n": [
+    {
+      "type": 0,
+      "value": "Passa a modalità chiave-valore"
+    }
+  ],
+  "dDYCuU": [
+    {
+      "type": 0,
+      "value": "Altre informazioni"
+    }
+  ],
+  "dL9V5t": [
+    {
+      "type": 0,
+      "value": "Identità gestita"
+    }
+  ],
+  "dMAC4C": [
+    {
+      "type": 0,
+      "value": "Sostituisci azione"
+    }
+  ],
+  "dOpdsP": [
+    {
+      "type": 0,
+      "value": "Aggiorna"
+    }
+  ],
+  "dQmi91": [
+    {
+      "type": 0,
+      "value": "Frequenza"
+    }
+  ],
+  "dUbKuK": [
+    {
+      "type": 0,
+      "value": "Ignora"
+    }
+  ],
+  "daoo3l": [
+    {
+      "type": 0,
+      "value": "Connesso a "
+    },
+    {
+      "type": 1,
+      "value": "connectionName"
+    },
+    {
+      "type": 0,
+      "value": "."
+    }
+  ],
+  "dfKsgg": [
+    {
+      "type": 0,
+      "value": "Non sono riuscito a comprendere la richiesta. Riformularla e riprovare."
+    }
+  ],
+  "dfNjw1": [
+    {
+      "type": 0,
+      "value": "Chiudi"
+    }
+  ],
+  "dfmH55": [
+    {
+      "type": 0,
+      "value": "Corsivo (CTRL + L)"
+    }
+  ],
+  "dhvk0u": [
+    {
+      "type": 0,
+      "value": "Restituisce una rappresentazione stringa di una stringa con codifica Base 64"
+    }
+  ],
+  "dqgt9y": [
+    {
+      "type": 0,
+      "value": "Converte il parametro nel tipo booleano"
+    }
+  ],
+  "drM9Sl": [
+    {
+      "type": 0,
+      "value": "Restituisce una matrice di valori corrispondenti al nome della chiave dall'output dell'azione dei dati del modulo o con codifica per il modulo"
+    }
+  ],
+  "dsz+Ae": [
+    {
+      "type": 0,
+      "value": "Divide la stringa usando un separatore"
+    }
+  ],
+  "dwrqEc": [
+    {
+      "type": 0,
+      "value": "Avvisi"
+    }
+  ],
+  "e+GuGo": [
+    {
+      "type": 0,
+      "value": "Input"
+    }
+  ],
+  "e00zot": [
+    {
+      "type": 0,
+      "value": "Specificare la frequenza in base a cui verificare gli elementi"
+    }
+  ],
+  "e4JZEY": [
+    {
+      "type": 0,
+      "value": "(UTC+07:00) Tomsk"
+    }
+  ],
+  "e9OvzW": [
+    {
+      "type": 0,
+      "value": "Cancella"
+    }
+  ],
+  "e9bIKh": [
+    {
+      "type": 0,
+      "value": "Non è stato possibile generare XSLT."
+    }
+  ],
+  "eESljX": [
+    {
+      "type": 0,
+      "value": "Ripristina"
+    }
+  ],
+  "eFet4K": [
+    {
+      "type": 0,
+      "value": "ID di traccia azione"
+    }
+  ],
+  "eFnLWK": [
+    {
+      "type": 0,
+      "value": "(UTC - 6.00 h) America centrale"
+    }
+  ],
+  "eHgfpz": [
+    {
+      "type": 0,
+      "value": "Immettere un URL valido"
+    }
+  ],
+  "eHgi14": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Nome della variabile di cui si desidera ottenere il valore."
+    }
+  ],
+  "eHsOsm": [
+    {
+      "type": 0,
+      "value": "Specificare la durata nel formato ISO 8601"
+    }
+  ],
+  "eO1h/h": [
+    {
+      "type": 0,
+      "value": "Questo assistente consente di ottenere informazioni sui flussi di lavoro e sulle funzionalità e i connettori della piattaforma App per la logica di Azure."
+    }
+  ],
+  "eRvRWs": [
+    {
+      "type": 0,
+      "value": "Ora di avvio"
+    }
+  ],
+  "eT+b9W": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Numero in base a cui dividere il dividendo."
+    }
+  ],
+  "egLI8P": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Indice della posizione di inizio della sottostringa nel parametro 1."
+    }
+  ],
+  "ehIBkh": [
+    {
+      "type": 0,
+      "value": "Immetti un numero intero"
+    }
+  ],
+  "elD6+N": [
+    {
+      "type": 0,
+      "value": "Corsivo (⌘I)"
+    }
+  ],
+  "en/5A3": [
+    {
+      "type": 0,
+      "value": "Riassegna"
+    }
+  ],
+  "eo1YKX": [
+    {
+      "type": 0,
+      "value": "Abilita la suddivisione per avviare un'istanza del flusso di lavoro per ogni elemento nella matrice selezionata. Ogni istanza può anche avere un ID di traccia distinto"
+    }
+  ],
+  "epOMnV": [
+    {
+      "type": 0,
+      "value": "Condivisa"
+    }
+  ],
+  "eqAUdj": [
+    {
+      "type": 0,
+      "value": "Quando un nuovo elemento"
+    }
+  ],
+  "evyGYj": [
+    {
+      "type": 0,
+      "value": "Riassegna tutte le azioni connesse a una nuova connessione"
+    }
+  ],
+  "f/lWTW": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Oggetti da controllare per verificare se sono Null."
+    }
+  ],
+  "f1j0to": [
+    {
+      "type": 0,
+      "value": "Facoltativo. Indice della posizione in cui interrompere l'estrazione della sottostringa."
+    }
+  ],
+  "f7Janv": [
+    {
+      "type": 0,
+      "value": "Esempio: PT1S"
+    }
+  ],
+  "f81ClO": [
+    {
+      "type": 0,
+      "value": "Icona contenuto dinamico vuoto"
+    }
+  ],
+  "fBQBw/": [
+    {
+      "type": 0,
+      "value": "Restituisce true se il primo argomento è maggiore o uguale al secondo"
+    }
+  ],
+  "fDisLL": [
+    {
+      "type": 0,
+      "value": "Creazione ACL non riuscita per la connessione. Eliminazione della connessione."
+    }
+  ],
+  "fElufw": [
+    {
+      "type": 0,
+      "value": "Seleziona una risorsa API Management"
+    }
+  ],
+  "fKYuwf": [
+    {
+      "type": 0,
+      "value": "Selezionare un file o un'immagine"
+    }
+  ],
+  "fVG5aD": [
+    {
+      "type": 0,
+      "value": "(UTC-05:00) Haiti"
+    }
+  ],
+  "faUrud": [
+    {
+      "type": 0,
+      "value": "Caricamento dei dati di connessione in corso..."
+    }
+  ],
+  "fc1AV8": [
+    {
+      "type": 0,
+      "value": "URL "
+    },
+    {
+      "type": 1,
+      "value": "method"
+    },
+    {
+      "type": 0,
+      "value": " HTTP"
+    }
+  ],
+  "fg/34o": [
+    {
+      "type": 0,
+      "value": "Funzioni logiche"
+    }
+  ],
+  "fifSPb": [
+    {
+      "type": 0,
+      "value": "(UTC-03:30) Terranova"
+    }
+  ],
+  "fmm7Ik": [
+    {
+      "type": 0,
+      "value": "Funzione"
+    }
+  ],
+  "fp8Ry3": [
+    {
+      "type": 0,
+      "value": "(UTC + 8.00 h) Pechino, Chongqing, Hong Kong, Urumqi"
+    }
+  ],
+  "fvGvnA": [
+    {
+      "type": 0,
+      "value": "Si è verificato un errore. Riprovare."
+    }
+  ],
+  "g076bL": [
+    {
+      "type": 0,
+      "value": "Email"
+    }
+  ],
+  "g1zwch": [
+    {
+      "type": 0,
+      "value": "Zoom avanti"
+    }
+  ],
+  "g4igOR": [
+    {
+      "type": 0,
+      "value": "Pubblica"
+    }
+  ],
+  "g5A6Bn": [
+    {
+      "type": 0,
+      "value": "Runtime"
+    }
+  ],
+  "g7/EKC": [
+    {
+      "type": 0,
+      "value": "Limite"
+    }
+  ],
+  "g7my78": [
+    {
+      "type": 0,
+      "value": "Esegui test"
+    }
+  ],
+  "gA1dde": [
+    {
+      "type": 0,
+      "value": "Attiva/Disattiva visualizzazione codice"
+    }
+  ],
+  "gCXOd5": [
+    {
+      "type": 0,
+      "value": "URI"
+    }
+  ],
+  "gDDfek": [
+    {
+      "type": 0,
+      "value": "Restituisce un timestamp corrispondente all'ora corrente più l'intervallo di tempo specificato."
+    }
+  ],
+  "gDY9xk": [
+    {
+      "type": 0,
+      "value": "Restituisce il risultato della divisione dei due numeri"
+    }
+  ],
+  "gIK0WG": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Valore booleano che determina il valore che deve essere restituito dall'espressione."
+    }
+  ],
+  "gIx5ys": [
+    {
+      "type": 0,
+      "value": "Formatta il testo in corsivo. Scelta rapida: CTRL+I"
+    }
+  ],
+  "gKEaXI": [
+    {
+      "type": 0,
+      "value": "Copia il valore di {label} negli Appunti"
+    }
+  ],
+  "gKq3Jv": [
+    {
+      "type": 0,
+      "value": "Operazione precedente non riuscita"
+    }
+  ],
+  "gL4rVQ": [
+    {
+      "type": 0,
+      "value": "Nessuno"
+    }
+  ],
+  "gQt/0f": [
+    {
+      "type": 0,
+      "value": "Funzioni di conversione"
+    }
+  ],
+  "gRUmiA": [
+    {
+      "type": 0,
+      "value": "Info"
+    }
+  ],
+  "gWyYg0": [
+    {
+      "type": 0,
+      "value": "(UTC+5.00) Ashkhabat, Tashkent"
+    }
+  ],
+  "gYaVvl": [
+    {
+      "type": 0,
+      "value": "Immetti un valore float valido."
+    }
+  ],
+  "gc6v4X": [
+    {
+      "type": 0,
+      "value": "Identità gestita assegnata dal sistema"
+    }
+  ],
+  "gfBWfH": [
+    {
+      "type": 0,
+      "value": "Email"
+    }
+  ],
+  "ginGIZ": [
+    {
+      "type": 0,
+      "value": "(UTC - 6.00 h) Guadalajara, Città del Messico, Monterrey"
+    }
+  ],
+  "gkY5ya": [
+    {
+      "type": 0,
+      "value": "Elimina"
+    }
+  ],
+  "gpUphl": [
+    {
+      "type": 0,
+      "value": "Immetti il gruppo di destinatari."
+    }
+  ],
+  "gtQYgr": [
+    {
+      "type": 0,
+      "value": "Restituisce un valore booleano che indica se una stringa è un numero a virgola mobile"
+    }
+  ],
+  "gu9o9z": [
+    {
+      "type": 0,
+      "value": "Quando usata all'interno di un ciclo until, questa funzione restituisce l'indice dell'iterazione corrente del ciclo specificato."
+    }
+  ],
+  "gusZw5": [
+    {
+      "type": 0,
+      "value": "I nomi di output devono essere univoci."
+    }
+  ],
+  "gvDMuq": [
+    {
+      "type": 0,
+      "value": "Seleziona una risorsa flusso di lavoro Batch"
+    }
+  ],
+  "gwEKLM": [
+    {
+      "type": 0,
+      "value": "Caricamento..."
+    }
+  ],
+  "h+W3VW": [
+    {
+      "type": 0,
+      "value": "Numero"
+    }
+  ],
+  "h1lQDa": [
+    {
+      "type": 0,
+      "value": "Immettere o incollare un payload JSON di esempio."
+    }
+  ],
+  "h40rpg": [
+    {
+      "type": 0,
+      "value": "Specificare l'intervallo nel formato ISO 8601."
+    }
+  ],
+  "h6vVbX": [
+    {
+      "type": 0,
+      "value": "Aggiungi prima uno schema di origine, quindi seleziona gli elementi per compilare la mappa"
+    }
+  ],
+  "hH/wAd": [
+    {
+      "type": 0,
+      "value": "Invia di nuovo un flusso di lavoro eseguito da questa azione"
+    }
+  ],
+  "hJbr09": [
+    {
+      "type": 0,
+      "value": "Fare clic per comprimere"
+    }
+  ],
+  "hLOIwp": [
+    {
+      "type": 0,
+      "value": "Avvisi"
+    }
+  ],
+  "hMf2TA": [
+    {
+      "type": 0,
+      "value": "Consenti la divisione in blocchi"
+    }
+  ],
+  "hN7iBP": [
+    {
+      "offset": 0,
+      "options": {
+        "many": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " secondi"
+            }
+          ]
+        },
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " secondo"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " secondi"
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "seconds"
+    }
+  ],
+  "hPM6iC": [
+    {
+      "type": 0,
+      "value": "Restituisce il risultato della sottrazione di due numeri"
+    }
+  ],
+  "hRVVdR": [
+    {
+      "type": 0,
+      "value": "Annulla"
+    }
+  ],
+  "hZqQdt": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Gaza, Hebron"
+    }
+  ],
+  "hbOvB4": [
+    {
+      "type": 0,
+      "value": "Non è quello che sto cercando"
+    }
+  ],
+  "hihfHd": [
+    {
+      "type": 0,
+      "value": "Il valore è troppo grande."
+    }
+  ],
+  "hq1mk6": [
+    {
+      "type": 0,
+      "value": "Il valore del percorso dell'operazione non corrisponde al modello per il segmento. Percorso "
+    },
+    {
+      "type": 1,
+      "value": "pathValue"
+    },
+    {
+      "type": 0,
+      "value": ", Modello "
+    },
+    {
+      "type": 1,
+      "value": "pathTemplate"
+    }
+  ],
+  "hrbDu6": [
+    {
+      "type": 0,
+      "value": "Durata"
+    }
+  ],
+  "htj+eZ": [
+    {
+      "type": 0,
+      "value": "Aggiorna schema di destinazione"
+    }
+  ],
+  "hvbclb": [
+    {
+      "type": 0,
+      "value": "Destinatari"
+    }
+  ],
+  "hwj1Ht": [
+    {
+      "type": 0,
+      "value": "Modifica flusso"
+    }
+  ],
+  "hza/cT": [
+    {
+      "type": 0,
+      "value": "(UTC+00:00) Casablanca"
+    }
+  ],
+  "i/SguY": [
+    {
+      "type": 0,
+      "value": "Identità gestita assegnata dal sistema"
+    }
+  ],
+  "i/b3Ko": [
+    {
+      "type": 0,
+      "value": "Risposta asincrona"
+    }
+  ],
+  "i0XjL5": [
+    {
+      "type": 0,
+      "value": "Cerca operazioni"
+    }
+  ],
+  "i1EQYm": [
+    {
+      "type": 0,
+      "value": "(UTC + 2.00 h) Harare, Pretoria"
+    }
+  ],
+  "i1Tufp": [
+    {
+      "type": 0,
+      "value": "Fornire i dati di input con cui testare la mappa"
+    }
+  ],
+  "i1cwra": [
+    {
+      "type": 0,
+      "value": "Ripeti"
+    }
+  ],
+  "i1vHaT": [
+    {
+      "type": 0,
+      "value": "Copia azione"
+    }
+  ],
+  "i4C4aB": [
+    {
+      "type": 0,
+      "value": "Rete"
+    }
+  ],
+  "i4Om5O": [
+    {
+      "type": 0,
+      "value": "Contiene un valore non valido"
+    }
+  ],
+  "i8xPfO": [
+    {
+      "type": 0,
+      "value": "Nessuna azione"
+    }
+  ],
+  "iB8YKD": [
+    {
+      "type": 0,
+      "value": "Scheda Informazioni"
+    }
+  ],
+  "iCSHJG": [
+    {
+      "type": 0,
+      "value": "Converte una stringa in lettere maiuscole usando le regole per l'utilizzo di maiuscole e minuscole delle impostazioni cultura inglese non dipendenti da paese/area geografica"
+    }
+  ],
+  "iE2+sy": [
+    {
+      "type": 0,
+      "value": "Scegliere il tipo di output"
+    }
+  ],
+  "iEy9pT": [
+    {
+      "type": 0,
+      "value": "Contenuto dinamico"
+    }
+  ],
+  "iHVVTl": [
+    {
+      "type": 0,
+      "value": "Eliminare "
+    },
+    {
+      "type": 1,
+      "value": "nodeId"
+    },
+    {
+      "type": 0,
+      "value": "?"
+    }
+  ],
+  "iJOIca": [
+    {
+      "type": 0,
+      "value": "Avanti"
+    }
+  ],
+  "iMicOQ": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. URI da analizzare."
+    }
+  ],
+  "iRe/g7": [
+    {
+      "type": 0,
+      "value": "21"
+    }
+  ],
+  "iRjBf4": [
+    {
+      "type": 0,
+      "value": "Questa azione ha il testing configurato."
+    }
+  ],
+  "iSb/hp": [
+    {
+      "type": 0,
+      "value": "Identità gestita"
+    }
+  ],
+  "iSiVB0": [
+    {
+      "type": 0,
+      "value": "Output sicuri dell'operazione e riferimenti delle proprietà di output"
+    }
+  ],
+  "iTKrs8": [
+    {
+      "type": 0,
+      "value": "Impaginazione"
+    }
+  ],
+  "iU1OJh": [
+    {
+      "type": 0,
+      "value": "Espandi"
+    }
+  ],
+  "iU5Fdh": [
+    {
+      "type": 0,
+      "value": "Funzioni di manipolazione"
+    }
+  ],
+  "iUs7pv": [
+    {
+      "type": 0,
+      "value": "Annulla"
+    }
+  ],
+  "iVMVAt": [
+    {
+      "type": 0,
+      "value": "Esempio: 0, 10"
+    }
+  ],
+  "id4DBb": [
+    {
+      "type": 0,
+      "value": "Dopo aver esaminato questo suggerimento di flusso generato dall'intelligenza artificiale, selezionare"
+    }
+  ],
+  "idQjOP": [
+    {
+      "type": 0,
+      "value": "Proprietà"
+    }
+  ],
+  "ifnOUI": [
+    {
+      "type": 0,
+      "value": "Scheda Visualizzazione Codice"
+    }
+  ],
+  "ihCdw4": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Numero da aggiungere all'addendo 2."
+    }
+  ],
+  "iq+tiv": [
+    {
+      "type": 0,
+      "value": "11"
+    }
+  ],
+  "iql+jn": [
+    {
+      "type": 1,
+      "value": "seconds"
+    },
+    {
+      "type": 0,
+      "value": " s"
+    }
+  ],
+  "iy8rNf": [
+    {
+      "type": 0,
+      "value": "Test"
+    }
+  ],
+  "j5z8Vd": [
+    {
+      "type": 0,
+      "value": "Ripetizione in corso"
+    }
+  ],
+  "jA6Wrp": [
+    {
+      "type": 0,
+      "value": "Aggiungere o selezionare uno schema di destinazione da usare per la mappa."
+    }
+  ],
+  "jHHF/u": [
+    {
+      "type": 0,
+      "value": "Restituisce un numero intero casuale da un intervallo specificato, che include solo l'estremità iniziale."
+    }
+  ],
+  "jHKc3w": [
+    {
+      "type": 0,
+      "value": "Altro"
+    }
+  ],
+  "jKsMS6": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Espressione che verrà negata."
+    }
+  ],
+  "jMLmag": [
+    {
+      "type": 0,
+      "value": "Crea nuovo"
+    }
+  ],
+  "jN0YES": [
+    {
+      "type": 0,
+      "value": "Indicare a Microsoft come è possibile migliorare questa funzionalità"
+    }
+  ],
+  "jO5Fet": [
+    {
+      "type": 0,
+      "value": "Opzioni richiesta - Timeout"
+    }
+  ],
+  "jQ0Aqj": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Valore convertito in una stringa."
+    }
+  ],
+  "jQ7UzV": [
+    {
+      "type": 0,
+      "value": "(UTC - 10.00) Isole Aleutine"
+    }
+  ],
+  "jQjteB": [
+    {
+      "type": 0,
+      "value": "Aggiungi uno schema di origine"
+    }
+  ],
+  "jTHUFb": [
+    {
+      "type": 0,
+      "value": "Visualizzazione di "
+    },
+    {
+      "type": 1,
+      "value": "countShowing"
+    },
+    {
+      "type": 0,
+      "value": " di "
+    },
+    {
+      "type": 1,
+      "value": "countTotal"
+    }
+  ],
+  "jUDhbs": [
+    {
+      "type": 0,
+      "value": "Schema di destinazione"
+    }
+  ],
+  "jVIgz1": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Stringa o matrice da dividere."
+    }
+  ],
+  "jVpanH": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Stringa di input Base64."
+    }
+  ],
+  "jZjgYZ": [
+    {
+      "type": 0,
+      "value": "Non sono state trovate risorse di questo tipo in questa sottoscrizione."
+    }
+  ],
+  "jcA3Ig": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Nome della chiave dei valori dei dati del modulo da restituire."
+    }
+  ],
+  "jfInxm": [
+    {
+      "type": 0,
+      "value": "Modificare in JSON"
+    }
+  ],
+  "jfU6pn": [
+    {
+      "type": 0,
+      "value": "L'abilitazione degli input sicuri garantirà automaticamente la sicurezza degli output."
+    }
+  ],
+  "jgOaTX": [
+    {
+      "type": 0,
+      "value": "Non è possibile generare lo schema."
+    }
+  ],
+  "jlcMGg": [
+    {
+      "type": 0,
+      "value": "Descrivere le operazioni che il flusso deve eseguire. Aggiungere i dettagli laddove possibile, come il connettore da usare e se deve essere incluso un eventuale contenuto."
+    }
+  ],
+  "juvF+0": [
+    {
+      "type": 0,
+      "value": "Gateway"
+    }
+  ],
+  "k/oqFL": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Stringa con codifica Base64."
+    }
+  ],
+  "k5tGEr": [
+    {
+      "type": 0,
+      "value": "Sì"
+    }
+  ],
+  "k8cbQ1": [
+    {
+      "type": 0,
+      "value": "Errori parametri"
+    }
+  ],
+  "kBOAkT": [
+    {
+      "type": 0,
+      "value": "Seleziona i campi"
+    }
+  ],
+  "kBSLfu": [
+    {
+      "type": 0,
+      "value": "Nome proprietà duplicato"
+    }
+  ],
+  "kEI2xx": [
+    {
+      "type": 0,
+      "value": "Messaggio"
+    }
+  ],
+  "kEjmTx": [
+    {
+      "type": 0,
+      "value": "Alcune cose che si possono chiedere:"
+    }
+  ],
+  "kHcCxH": [
+    {
+      "type": 1,
+      "value": "minutes"
+    },
+    {
+      "type": 0,
+      "value": "m "
+    },
+    {
+      "type": 1,
+      "value": "seconds"
+    },
+    {
+      "type": 0,
+      "value": "s"
+    }
+  ],
+  "kHs5R4": [
+    {
+      "type": 0,
+      "value": "Controllare queste azioni per verificare se è necessario impostare parametri."
+    }
+  ],
+  "kKJMeM": [
+    {
+      "type": 0,
+      "value": "Ogni settimana di lunedì..."
+    }
+  ],
+  "kM+Mr0": [
+    {
+      "type": 0,
+      "value": "Caricamento..."
+    }
+  ],
+  "kN6kce": [
+    {
+      "type": 0,
+      "value": "Restituisce una rappresentazione stringa di una stringa di input con codifica Base 64"
+    }
+  ],
+  "kSK9Pq": [
+    {
+      "type": 0,
+      "value": "(UTC - 05.00 h) Bogotá, Lima, Quito, Rio Branco"
+    }
+  ],
+  "kVwJXt": [
+    {
+      "type": 0,
+      "value": "(UTC + 4.00 h) Abu Dhabi, Mascate"
+    }
+  ],
+  "kXn5e0": [
+    {
+      "type": 0,
+      "value": "Porre una domanda su questo flusso di lavoro o sulle App per la logica di Azure nel suo complesso..."
+    }
+  ],
+  "kZCX7t": [
+    {
+      "type": 0,
+      "value": "Lunedì"
+    }
+  ],
+  "kcOhfh": [
+    {
+      "type": 0,
+      "value": "Gli elementi e i mapping non connessi a un elemento di destinazione vengono rimossi."
+    }
+  ],
+  "klY9UN": [
+    {
+      "offset": 0,
+      "options": {
+        "=0": {
+          "value": [
+            {
+              "type": 0,
+              "value": "nessun elemento corrispondente."
+            }
+          ]
+        },
+        "many": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " elementi corrispondenti."
+            }
+          ]
+        },
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " elemento corrispondente."
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " elementi corrispondenti."
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "count"
+    }
+  ],
+  "kq+I5o": [
+    {
+      "type": 0,
+      "value": "Aggiungere un output"
+    }
+  ],
+  "kuFK3E": [
+    {
+      "type": 0,
+      "value": "Manca la proprietà del tipo di autenticazione: 'type'."
+    }
+  ],
+  "kxMDyM": [
+    {
+      "type": 0,
+      "value": "Immetti un JSON valido."
+    }
+  ],
+  "l/3yJr": [
+    {
+      "type": 0,
+      "value": "La connessione non è valida"
+    }
+  ],
+  "l/9YHQ": [
+    {
+      "type": 0,
+      "value": "(UTC+01:00) Windhoek"
+    }
+  ],
+  "l2YXln": [
+    {
+      "type": 0,
+      "value": "Sostituisci azione con"
+    }
+  ],
+  "l36V56": [
+    {
+      "type": 1,
+      "value": "hours"
+    },
+    {
+      "type": 0,
+      "value": " ore "
+    },
+    {
+      "type": 1,
+      "value": "minutes"
+    },
+    {
+      "type": 0,
+      "value": " minuti"
+    }
+  ],
+  "l536iI": [
+    {
+      "type": 0,
+      "value": "Scheda Monitoraggio"
+    }
+  ],
+  "l72gf4": [
+    {
+      "type": 0,
+      "value": "Identità gestita"
+    }
+  ],
+  "lB56l2": [
+    {
+      "type": 0,
+      "value": "Immetti un numero valido."
+    }
+  ],
+  "lM9qrG": [
+    {
+      "type": 0,
+      "value": "(UTC+13:00) Nuku'alofa"
+    }
+  ],
+  "lPTdSf": [
+    {
+      "type": 0,
+      "value": "Esegui trigger"
+    }
+  ],
+  "lQNKUB": [
+    {
+      "type": 0,
+      "value": "Una riga per l'elemento padre viene aggiunta automaticamente."
+    }
+  ],
+  "lR7V87": [
+    {
+      "type": 0,
+      "value": "Funzioni"
+    }
+  ],
+  "lX30/R": [
+    {
+      "type": 0,
+      "value": "Comprimi"
+    }
+  ],
+  "lZT0JI": [
+    {
+      "type": 0,
+      "value": "Aggiungi gruppo"
+    }
+  ],
+  "lckgnb": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Raccolta da invertire."
+    }
+  ],
+  "lexzgJ": [
+    {
+      "type": 0,
+      "value": "Rimuovi tutti i riferimenti all'elemento ' "
+    },
+    {
+      "type": 1,
+      "value": "nodeName"
+    },
+    {
+      "type": 0,
+      "value": " ' prima di rimuovere l'elemento."
+    }
+  ],
+  "lgs5sf": [
+    {
+      "type": 0,
+      "value": "Modalità di esecuzione senza stato:"
+    }
+  ],
+  "lh0TuF": [
+    {
+      "type": 0,
+      "value": "Elenco a discesa per selezionare il percorso file"
+    }
+  ],
+  "lhL/KL": [
+    {
+      "type": 0,
+      "value": "Normale"
+    }
+  ],
+  "ljAOR6": [
+    {
+      "type": 0,
+      "value": "Abbreviazione per actions('actionName').outputs.body"
+    }
+  ],
+  "lkgjxD": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Stringa contenente l'ora di fine."
+    }
+  ],
+  "loxzZD": [
+    {
+      "type": 0,
+      "value": "Inserisci espressione (è anche possibile aggiungere digitando /nell'editor)"
+    }
+  ],
+  "lsH37F": [
+    {
+      "type": 0,
+      "value": "Convalidare il corpo della richiesta in base allo schema specificato. In caso di mancata corrispondenza, viene restituito il codice HTTP 400"
+    }
+  ],
+  "lsKVU6": [
+    {
+      "type": 0,
+      "value": "Selezionare un tipo di azione"
+    }
+  ],
+  "lwlg2K": [
+    {
+      "type": 0,
+      "value": "Sottolineato (CTRL + U)"
+    }
+  ],
+  "lztiwS": [
+    {
+      "type": 0,
+      "value": "Valore effettivo"
+    }
+  ],
+  "m/jJ/5": [
+    {
+      "type": 0,
+      "value": "Controllo mappa"
+    }
+  ],
+  "m7Y6Qf": [
+    {
+      "type": 0,
+      "value": "Test"
+    }
+  ],
+  "m8Q61y": [
+    {
+      "type": 0,
+      "value": "Nome"
+    }
+  ],
+  "m8z4Yr": [
+    {
+      "type": 0,
+      "value": "Soglia per gli elementi da restituire"
+    }
+  ],
+  "mAuMD+": [
+    {
+      "type": 0,
+      "value": "Immettere una matrice"
+    }
+  ],
+  "mCKsFw": [
+    {
+      "type": 0,
+      "value": "(UTC + 07.00) Barnaul, Gorno-Altaysk"
+    }
+  ],
+  "mCzkXX": [
+    {
+      "type": 0,
+      "value": "Aggiungi un'azione"
+    }
+  ],
+  "mE7w9G": [
+    {
+      "type": 0,
+      "value": "Funzione eliminata."
+    }
+  ],
+  "mGUdCO": [
+    {
+      "type": 0,
+      "value": "Restituisce un timestamp corrispondente all'ora corrente meno l'intervallo di tempo specificato."
+    }
+  ],
+  "mGpKsl": [
+    {
+      "type": 0,
+      "value": "Restituisce una rappresentazione stringa di un URI di dati"
+    }
+  ],
+  "mNaBPE": [
+    {
+      "type": 0,
+      "value": "Immettere un oggetto JSON valido."
+    }
+  ],
+  "mPakaD": [
+    {
+      "type": 0,
+      "value": "L'URL codifica la stringa di input"
+    }
+  ],
+  "mPuXlv": [
+    {
+      "type": 0,
+      "value": "Tipo non valido per il valore '"
+    },
+    {
+      "type": 1,
+      "value": "splitOn"
+    },
+    {
+      "type": 0,
+      "value": "'. Il valore SplitOn non è presente nella matrice."
+    }
+  ],
+  "mUURJW": [
+    {
+      "type": 0,
+      "value": "La connessione non è valida"
+    }
+  ],
+  "mYQFtf": [
+    {
+      "type": 0,
+      "value": "Mancano le proprietà 'secret' o 'pfx' e 'password' obbligatorie per il tipo di autenticazione 'ActiveDirectoryOAuth'."
+    }
+  ],
+  "mZQYLv": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Espressione XPath da valutare."
+    }
+  ],
+  "mZRMD9": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Stringa da convertire in lettere minuscole. Se un carattere nella stringa non ha un equivalente in lettere minuscole, il carattere verrà riportato invariato nella stringa restituita."
+    }
+  ],
+  "mca3Ml": [
+    {
+      "type": 0,
+      "value": "Accedere al connettore"
+    }
+  ],
+  "meVkB6": [
+    {
+      "type": 0,
+      "value": "Nome di proprietà vuoto"
+    }
+  ],
+  "mej02C": [
+    {
+      "type": 0,
+      "value": "(UTC+08:30) Pyongyang"
+    }
+  ],
+  "mjS/k1": [
+    {
+      "type": 0,
+      "value": "Limita le app per la logica per non includere le intestazioni dei metadati del flusso di lavoro nella richiesta in uscita."
+    }
+  ],
+  "mlU+AC": [
+    {
+      "type": 0,
+      "value": "Connessioni"
+    }
+  ],
+  "mvrlkP": [
+    {
+      "type": 0,
+      "value": "Immettere la password come testo normale o usare un parametro protetto"
+    }
+  ],
+  "mvu5xN": [
+    {
+      "type": 0,
+      "value": "Valore nome"
+    }
+  ],
+  "mwEHSX": [
+    {
+      "type": 0,
+      "value": "Funzione"
+    }
+  ],
+  "mx2IMJ": [
+    {
+      "type": 0,
+      "value": "13"
+    }
+  ],
+  "n+F7e2": [
+    {
+      "type": 0,
+      "value": "15"
+    }
+  ],
+  "n20T2h": [
+    {
+      "type": 0,
+      "value": "7"
+    }
+  ],
+  "n35O/+": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Valore convertito in un numero a virgola mobile."
+    }
+  ],
+  "n42uAO": [
+    {
+      "type": 0,
+      "value": "(UTC-04:00) Santiago"
+    }
+  ],
+  "n4V2Hi": [
+    {
+      "type": 0,
+      "value": "Autenticazione OAuth Active Directory"
+    }
+  ],
+  "n7wxxN": [
+    {
+      "type": 0,
+      "value": "Provare a usare parole chiave meno specifiche."
+    }
+  ],
+  "nCa0KG": [
+    {
+      "type": 0,
+      "value": "Errori interni"
+    }
+  ],
+  "nGds/r": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Oggetto da controllare per verificare se è minore o uguale al valore con cui è confrontato."
+    }
+  ],
+  "nHIeXp": [
+    {
+      "type": 0,
+      "value": "Ignorato"
+    }
+  ],
+  "nHseED": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Numero di unità di tempo dell'ora desiderata nel futuro."
+    }
+  ],
+  "nNWAAh": [
+    {
+      "type": 0,
+      "value": "Non viene aggiunto alcuno schema."
+    }
+  ],
+  "nOWGAV": [
+    {
+      "type": 0,
+      "value": "Ora di fine"
+    }
+  ],
+  "nOhve4": [
+    {
+      "type": 0,
+      "value": "Sì/No"
+    }
+  ],
+  "nPgYuI": [
+    {
+      "type": 0,
+      "value": "Nuovo parametro"
+    }
+  ],
+  "nRpM02": [
+    {
+      "type": 0,
+      "value": "Personalizzata"
+    }
+  ],
+  "nSUXtP": [
+    {
+      "type": 0,
+      "value": "Questa modifica modificherà più azioni."
+    }
+  ],
+  "nSan4V": [
+    {
+      "type": 0,
+      "value": "Reimposta"
+    }
+  ],
+  "nTA155": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Nome della proprietà da rimuovere."
+    }
+  ],
+  "nVDG00": [
+    {
+      "type": 0,
+      "value": "(UTC + 14.00 h) Isola di Kiritimati"
+    }
+  ],
+  "nZ4nLn": [
+    {
+      "type": 0,
+      "value": "Elimina intestazioni del flusso di lavoro"
+    }
+  ],
+  "ncW1Sw": [
+    {
+      "type": 0,
+      "value": "Operazione "
+    },
+    {
+      "type": 1,
+      "value": "operationName"
+    },
+    {
+      "type": 0,
+      "value": ", connettore "
+    },
+    {
+      "type": 1,
+      "value": "connectorName"
+    }
+  ],
+  "ngsC44": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Oggetto da controllare per verificare se è minore del valore con cui è confrontato."
+    }
+  ],
+  "njGstq": [
+    {
+      "type": 0,
+      "value": "(UTC+05:45) Katmandu"
+    }
+  ],
+  "nkk1mu": [
+    {
+      "type": 0,
+      "value": "Aggiunge un numero intero di minuti al timestamp in formato stringa passato"
+    }
+  ],
+  "nmFupX": [
+    {
+      "type": 0,
+      "value": "È scaduto"
+    }
+  ],
+  "no/SMg": [
+    {
+      "type": 0,
+      "value": "(UTC+10:00) Brisbane"
+    }
+  ],
+  "nx25nq": [
+    {
+      "type": 0,
+      "value": "19"
+    }
+  ],
+  "ny75Ly": [
+    {
+      "type": 0,
+      "value": "Immettere il valore predefinito per il parametro."
+    }
+  ],
+  "o/0SEj": [
+    {
+      "type": 0,
+      "value": "Restituisce l'ultimo elemento nella matrice o nella stringa passata"
+    }
+  ],
+  "o/FgET": [
+    {
+      "type": 0,
+      "value": "La funzione è stata rimossa dalla posizione corrente ed è attualmente presente altrove."
+    }
+  ],
+  "o14STH": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. XML per cui valutare l'espressione XPath."
+    }
+  ],
+  "o1HOyf": [
+    {
+      "type": 1,
+      "value": "current_page"
+    },
+    {
+      "type": 0,
+      "value": " di "
+    },
+    {
+      "type": 1,
+      "value": "max_page"
+    }
+  ],
+  "o3SfI4": [
+    {
+      "type": 0,
+      "value": "Adatta alla finestra"
+    }
+  ],
+  "o5fYVy": [
+    {
+      "type": 0,
+      "value": "Descrivere questo flusso di lavoro."
+    }
+  ],
+  "o7bd1o": [
+    {
+      "type": 0,
+      "value": "(UTC+03:30) Teheran"
+    }
+  ],
+  "o8ohVV": [
+    {
+      "type": 0,
+      "value": "ID schema"
+    }
+  ],
+  "oAFcW6": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. URI di dati da codificare in una rappresentazione binaria."
+    }
+  ],
+  "oDHXKh": [
+    {
+      "type": 0,
+      "value": "Elemento"
+    }
+  ],
+  "oLtwMw": [
+    {
+      "type": 0,
+      "value": "Trasferimento di contenuto"
+    }
+  ],
+  "oMphsh": [
+    {
+      "type": 0,
+      "value": "Impostazioni"
+    }
+  ],
+  "oO12r6": [
+    {
+      "type": 0,
+      "value": "(UTC - 8.00 h) Bassa California"
+    }
+  ],
+  "oQjIWf": [
+    {
+      "type": 0,
+      "value": "Errori"
+    }
+  ],
+  "oR2x4N": [
+    {
+      "type": 0,
+      "value": "Valore Integer non valido"
+    }
+  ],
+  "oRxmXb": [
+    {
+      "type": 0,
+      "value": "Copia trigger"
+    }
+  ],
+  "oTBkbU": [
+    {
+      "type": 0,
+      "value": "Output"
+    }
+  ],
+  "oV0xQ9": [
+    {
+      "type": 0,
+      "value": "Immettere l'identificatore di esecuzione per aprire l'esecuzione"
+    }
+  ],
+  "oVVPst": [
+    {
+      "type": 0,
+      "value": "Annullare tutte le modifiche non salvate?"
+    }
+  ],
+  "oWGaw9": [
+    {
+      "type": 0,
+      "value": "Vedi meno"
+    }
+  ],
+  "oZMhX/": [
+    {
+      "type": 0,
+      "value": "Espandi"
+    }
+  ],
+  "odQ554": [
+    {
+      "type": 0,
+      "value": "Corpo della risposta"
+    }
+  ],
+  "onXUu0": [
+    {
+      "type": 0,
+      "value": "Aggiungi una nota"
+    }
+  ],
+  "osKNnl": [
+    {
+      "type": 0,
+      "value": "Immetti un numero double valido."
+    }
+  ],
+  "ox2Ou7": [
+    {
+      "type": 0,
+      "value": "Immetti un JSON valido"
+    }
+  ],
+  "oxXV4+": [
+    {
+      "type": 0,
+      "value": "Restituisce il primo oggetto non Null nei valori degli argomenti passati."
+    }
+  ],
+  "p/0r2N": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Nome della chiave del valore dei dati del modulo da restituire."
+    }
+  ],
+  "p16/4S": [
+    {
+      "type": 0,
+      "value": "Intestazioni"
+    }
+  ],
+  "p1IEXb": [
+    {
+      "type": 0,
+      "value": "Immetti i dati del passaggio precedente. È anche possibile aggiungere dati digitando il carattere '/'."
+    }
+  ],
+  "p1Qtm5": [
+    {
+      "type": 0,
+      "value": "In-app"
+    }
+  ],
+  "p5ZID0": [
+    {
+      "type": 0,
+      "value": "(UTC + 3.00 h) Al Kuwait, Riyadh"
+    }
+  ],
+  "pC2nr2": [
+    {
+      "type": 0,
+      "value": "Immetti la chiave"
+    }
+  ],
+  "pH2uak": [
+    {
+      "type": 0,
+      "value": "Comprimi"
+    }
+  ],
+  "pIczsS": [
+    {
+      "type": 0,
+      "value": "Ora di fine"
+    }
+  ],
+  "pMms92": [
+    {
+      "type": 0,
+      "value": "Inserisci contenuto dinamico"
+    }
+  ],
+  "pOTcUO": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Valori da combinare in una matrice."
+    }
+  ],
+  "pOVDll": [
+    {
+      "type": 0,
+      "value": "Immetti un numero intero valido."
+    }
+  ],
+  "pXmFGf": [
+    {
+      "type": 0,
+      "value": "Converte l'input in un valore di tipo XML"
+    }
+  ],
+  "pYNzbj": [
+    {
+      "type": 0,
+      "value": "Percorso"
+    }
+  ],
+  "pYtSyE": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Numero in base a cui dividere il dividendo. Dopo la divisione, viene preso il resto."
+    }
+  ],
+  "pc0FCg": [
+    {
+      "type": 0,
+      "value": "Pulsante per aggiungere contenuto dinamico se TokenPicker è nascosto"
+    }
+  ],
+  "pcGqoB": [
+    {
+      "type": 0,
+      "value": "Errore durante il caricamento degli output"
+    }
+  ],
+  "pcuZKB": [
+    {
+      "type": 0,
+      "value": "Restituisce una singola matrice o oggetto contenente elementi comuni tra le matrici o gli oggetti passati. I parametri per la funzione possono essere costituiti da un set di oggetti o un set di matrici, ma non da una combinazione di entrambi. Se sono presenti due oggetti con lo stesso nome, nell'oggetto finale sarà visualizzato l'ultimo oggetto con tale nome."
+    }
+  ],
+  "piaRy6": [
+    {
+      "type": 0,
+      "value": "Trigger"
+    }
+  ],
+  "pozypE": [
+    {
+      "type": 0,
+      "value": "Elimina lo spazio vuoto iniziale e finale da una stringa"
+    }
+  ],
+  "pr9GwA": [
+    {
+      "type": 0,
+      "value": "Aggiorna"
+    }
+  ],
+  "ptkf0D": [
+    {
+      "type": 0,
+      "value": "Sicurezza"
+    }
+  ],
+  "q+ZZjX": [
+    {
+      "type": 0,
+      "value": "Cronologia tentativi"
+    }
+  ],
+  "q/+Uex": [
+    {
+      "type": 0,
+      "value": "Restituisce un valore, un set di nodi o un nodo XML come JSON dall'espressione XPath specificata"
+    }
+  ],
+  "q/DRBW": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Stringa da cui calcolare la lunghezza di UTF-8."
+    }
+  ],
+  "q1gfIs": [
+    {
+      "type": 0,
+      "value": "Aggiungere un trigger"
+    }
+  ],
+  "q2OCEx": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Valore da assegnare alla proprietà."
+    }
+  ],
+  "q2w8Sk": [
+    {
+      "type": 0,
+      "value": "Converte il parametro in una stringa"
+    }
+  ],
+  "q4ChjK": [
+    {
+      "type": 0,
+      "value": "Seleziona il flusso di lavoro con il trigger 'manual'"
+    }
+  ],
+  "q5TkqE": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Valore da restituire se l'espressione è 'false'."
+    }
+  ],
+  "q87X20": [
+    {
+      "type": 0,
+      "value": "Aggiunge un numero intero di secondi al timestamp in formato stringa passato"
+    }
+  ],
+  "qAlTD5": [
+    {
+      "type": 0,
+      "value": "Formato riferimento della connessione del manifesto non supportato: '"
+    },
+    {
+      "type": 1,
+      "value": "referenceKeyFormat"
+    },
+    {
+      "type": 0,
+      "value": "'"
+    }
+  ],
+  "qBNM3e": [
+    {
+      "type": 0,
+      "value": "Connessione ad app e servizi"
+    }
+  ],
+  "qBkxGU": [
+    {
+      "type": 0,
+      "value": "Formatta il testo come sottolineato. Collegamento: ⌘U"
+    }
+  ],
+  "qGfwxW": [
+    {
+      "type": 0,
+      "value": "Identità gestita"
+    }
+  ],
+  "qJpnIL": [
+    {
+      "type": 0,
+      "value": "Verifica se la stringa termina con un valore (senza distinzione tra maiuscole/minuscole, impostazioni cultura inglese non dipendenti da paese/area geografica)"
+    }
+  ],
+  "qSejoi": [
+    {
+      "type": 0,
+      "value": "Restituisce true se il primo argomento è minore o uguale al secondo"
+    }
+  ],
+  "qSt0Sb": [
+    {
+      "type": 0,
+      "value": "Obbligatorio"
+    }
+  ],
+  "qUMXpq": [
+    {
+      "type": 0,
+      "value": "Endpoint Swagger"
+    }
+  ],
+  "qUWBUX": [
+    {
+      "offset": 0,
+      "options": {
+        "many": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " giorni"
+            }
+          ]
+        },
+        "one": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " giorno"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " giorni"
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "days"
+    }
+  ],
+  "qVgQfW": [
+    {
+      "type": 0,
+      "value": "Cerca"
+    }
+  ],
+  "qc5S69": [
+    {
+      "type": 0,
+      "value": "Restituisce il numero di elementi in una matrice o in una stringa"
+    }
+  ],
+  "qdUeUk": [
+    {
+      "type": 0,
+      "value": "Fare clic per espandere"
+    }
+  ],
+  "qiIs4V": [
+    {
+      "type": 0,
+      "value": "Esempio: "
+    },
+    {
+      "type": 1,
+      "value": "example"
+    }
+  ],
+  "qij+Vf": [
+    {
+      "type": 0,
+      "value": "Passa alla modalità di visualizzazione predefinita"
+    }
+  ],
+  "qnI4Y1": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Valore convertito in un valore integer."
+    }
+  ],
+  "qr1lLG": [
+    {
+      "type": 0,
+      "value": "La funzione '"
+    },
+    {
+      "type": 1,
+      "value": "nodeName"
+    },
+    {
+      "type": 0,
+      "value": "' contiene un input con un tipo non corrispondente"
+    }
+  ],
+  "qrxi0L": [
+    {
+      "type": 0,
+      "value": "La risposta asincrona consente a un'app per la logica di rispondere con un codice 202 (Accettata) per indicare che la richiesta è stata accettata per l'elaborazione. Verrà fornita un'intestazione Location per recuperare lo stato finale."
+    }
+  ],
+  "qy5WqY": [
+    {
+      "type": 0,
+      "value": "Suggerimento flusso precedente"
+    }
+  ],
+  "qzaoRR": [
+    {
+      "type": 0,
+      "value": "Limitare la durata massima tra i tentativi e le risposte asincrone per questa azione. Nota: questo non modifica il timeout della richiesta di una singola richiesta"
+    }
+  ],
+  "r/n6/9": [
+    {
+      "type": 0,
+      "value": "Immetti un valore"
+    }
+  ],
+  "r43nMc": [
+    {
+      "type": 0,
+      "value": "Annulla"
+    }
+  ],
+  "r4zp7m": [
+    {
+      "type": 0,
+      "value": "Espansa"
+    }
+  ],
+  "r7vZ5a": [
+    {
+      "type": 0,
+      "value": "Intervallo minimo"
+    }
+  ],
+  "r8aZXs": [
+    {
+      "type": 0,
+      "value": "Consente a un'espressione di derivare il proprio valore da altre coppie nome-valore JSON o dall'output dell'azione di runtime"
+    }
+  ],
+  "r9SVE4": [
+    {
+      "type": 0,
+      "value": "Int"
+    }
+  ],
+  "rAwCdh": [
+    {
+      "type": 0,
+      "value": "Connetti tramite gateway dati locale"
+    }
+  ],
+  "rAyuzv": [
+    {
+      "type": 0,
+      "value": "No"
+    }
+  ],
+  "rCl53e": [
+    {
+      "type": 0,
+      "value": "Titolo scheda"
+    }
+  ],
+  "rDDPpJ": [
+    {
+      "type": 0,
+      "value": "Segreto"
+    }
+  ],
+  "rNi5Y3": [
+    {
+      "type": 0,
+      "value": "Seleziona questa casella di controllo se si sta configurando una connessione locale."
+    }
+  ],
+  "rSIBjh": [
+    {
+      "type": 0,
+      "value": "Immetti il valore per il parametro."
+    }
+  ],
+  "rSa1Id": [
+    {
+      "type": 0,
+      "value": "Non sono stati trovati file in "
+    },
+    {
+      "type": 1,
+      "value": "filePath"
+    },
+    {
+      "type": 0,
+      "value": ". Salvare XSLT nel percorso specificato per usare questa funzione"
+    }
+  ],
+  "raBiud": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Matrice di valori in cui trovare il valore massimo o il primo valore di un set."
+    }
+  ],
+  "rcz4w4": [
+    {
+      "type": 0,
+      "value": "Restituisce una rappresentazione con codifica URI di un valore"
+    }
+  ],
+  "rd6fai": [
+    {
+      "type": 0,
+      "value": "Usare i tasti freccia SINISTRA e DESTRA per spostarsi tra i comandi"
+    }
+  ],
+  "rh5g4p": [
+    {
+      "type": 0,
+      "value": "Ha avuto esito positivo"
+    }
+  ],
+  "rsdJcV": [
+    {
+      "type": 0,
+      "value": "Seleziona gli elementi dello schema di origine per compilare la mappa"
+    }
+  ],
+  "rv0Pn+": [
+    {
+      "type": 0,
+      "value": "Aggiungi nuovo"
+    }
+  ],
+  "rxIJfD": [
+    {
+      "type": 0,
+      "value": "(UTC+09:30) Darwin"
+    }
+  ],
+  "rxMXmZ": [
+    {
+      "type": 0,
+      "value": "(UTC + 4.00 h) Port Louis"
+    }
+  ],
+  "s+4LEa": [
+    {
+      "type": 0,
+      "value": "Apri cartella"
+    }
+  ],
+  "s5RV9B": [
+    {
+      "type": 0,
+      "value": "Restituisce il componente giorno dell'anno di un timestamp in formato stringa"
+    }
+  ],
+  "s7nGyC": [
+    {
+      "type": 0,
+      "value": "Elimina"
+    }
+  ],
+  "sBBLuh": [
+    {
+      "type": 0,
+      "value": "Per salvare questo flusso di lavoro, completare la configurazione di queste azioni:"
+    }
+  ],
+  "sDkAVZ": [
+    {
+      "type": 0,
+      "value": "Restituisce una matrice di valori corrispondenti al nome della chiave dall'output del trigger dei dati del modulo o con codifica per il modulo"
+    }
+  ],
+  "sEqLTV": [
+    {
+      "type": 0,
+      "value": "Scheda di test"
+    }
+  ],
+  "sFbnCs": [
+    {
+      "type": 0,
+      "value": "(UTC-05:00) Chetumal"
+    }
+  ],
+  "sFwHQc": [
+    {
+      "type": 0,
+      "value": "Annulla la creazione di una connessione"
+    }
+  ],
+  "sQ2vRs": [
+    {
+      "type": 0,
+      "value": "Aggiungi caso"
+    }
+  ],
+  "sRpETS": [
+    {
+      "type": 0,
+      "value": "Avviso: il valore personalizzato non corrisponde al tipo del nodo dello schema"
+    }
+  ],
+  "sVQe34": [
+    {
+      "type": 0,
+      "value": "Specificare i parametri per il test dell'output."
+    }
+  ],
+  "sW47JR": [
+    {
+      "type": 0,
+      "value": "Grado di parallelismo"
+    }
+  ],
+  "sYQDN+": [
+    {
+      "type": 0,
+      "value": "Opzioni di formattazione per la famiglia di caratteri"
+    }
+  ],
+  "sZ0G/Z": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Stringa contenente l'unità di tempo specificata nell'intervallo da aggiungere."
+    }
+  ],
+  "sZHTQV": [
+    {
+      "type": 0,
+      "value": "(UTC+09:00) Chita"
+    }
+  ],
+  "sbPZ9S": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Raccolta da controllare per verificare se è vuota."
+    }
+  ],
+  "sfJTHV": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Numero da sottrarre dal minuendo."
+    }
+  ],
+  "shF9tZ": [
+    {
+      "type": 0,
+      "value": "Chiave"
+    }
+  ],
+  "snJFUi": [
+    {
+      "type": 0,
+      "value": "CTRL+C"
+    }
+  ],
+  "soqP+Z": [
+    {
+      "type": 0,
+      "value": "Restituisce true se uno dei parametri è true"
+    }
+  ],
+  "srMbm9": [
+    {
+      "type": 0,
+      "value": "Annulla"
+    }
+  ],
+  "srpZD2": [
+    {
+      "type": 0,
+      "value": "ID client"
+    }
+  ],
+  "ss5JPH": [
+    {
+      "type": 0,
+      "value": "Nuovo parametro"
+    }
+  ],
+  "sv+IcU": [
+    {
+      "type": 0,
+      "value": "Non è possibile generare la definizione della mappa dati"
+    }
+  ],
+  "svaqnp": [
+    {
+      "type": 0,
+      "value": "Error should not be provided when status is \"Succeeded\""
+    }
+  ],
+  "sw6EXK": [
+    {
+      "type": 0,
+      "value": "Stato"
+    }
+  ],
+  "syiNc+": [
+    {
+      "type": 0,
+      "value": "Esplora"
+    }
+  ],
+  "sys5gu": [
+    {
+      "type": 0,
+      "value": "Certificato client"
+    }
+  ],
+  "sytRna": [
+    {
+      "type": 0,
+      "value": "Non è stato possibile recuperare gli input dinamici. Dettagli errore: '"
+    },
+    {
+      "type": 1,
+      "value": "message"
+    },
+    {
+      "type": 0,
+      "value": "'"
+    }
+  ],
+  "t+XCkg": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Stringa contenente il nome del fuso orario del fuso orario di destinazione. Per informazioni dettagliate, vedere https://msdn.microsoft.com/en-us/library/gg154758.aspx."
+    }
+  ],
+  "t9RwOi": [
+    {
+      "type": 0,
+      "value": "Espressione non valida."
+    }
+  ],
+  "tAbbH8": [
+    {
+      "type": 0,
+      "value": "Troppi input assegnati"
+    }
+  ],
+  "tAeKNh": [
+    {
+      "type": 0,
+      "value": "Semplice"
+    }
+  ],
+  "tE7Zam": [
+    {
+      "type": 0,
+      "value": "Restituisce l'URL per richiamare il trigger o l'azione"
+    }
+  ],
+  "tH2pT1": [
+    {
+      "type": 0,
+      "value": "Tornare alla ricerca"
+    }
+  ],
+  "tImHz/": [
+    {
+      "type": 1,
+      "value": "days"
+    },
+    {
+      "type": 0,
+      "value": "g "
+    },
+    {
+      "type": 1,
+      "value": "hours"
+    },
+    {
+      "type": 0,
+      "value": "h"
+    }
+  ],
+  "tLZ9Sh": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Indice della parte da recuperare."
+    }
+  ],
+  "tMRPnG": [
+    {
+      "type": 0,
+      "value": "Questa funzione fornisce i dettagli per il flusso di lavoro stesso in fase di runtime"
+    }
+  ],
+  "tMdcE1": [
+    {
+      "type": 0,
+      "value": "Connessione non valida. Aggiorna la connessione per caricare i dettagli completi"
+    }
+  ],
+  "tNoZx2": [
+    {
+      "type": 0,
+      "value": "Tipo"
+    }
+  ],
+  "tTIsTX": [
+    {
+      "type": 0,
+      "value": "Testa questo flusso di lavoro"
+    }
+  ],
+  "tUCptx": [
+    {
+      "type": 0,
+      "value": "Inserisci il collegamento"
+    }
+  ],
+  "tUU4ak": [
+    {
+      "type": 0,
+      "value": "(UTC+11:00) Chokurdakh"
+    }
+  ],
+  "tUYXRA": [
+    {
+      "type": 0,
+      "value": "Ad esempio: 2017-03-24T15:00:00Z"
+    }
+  ],
+  "tUlRzr": [
+    {
+      "type": 0,
+      "value": "Di base"
+    }
+  ],
+  "tWV2mC": [
+    {
+      "type": 0,
+      "value": "alle "
+    },
+    {
+      "type": 1,
+      "value": "times"
+    },
+    {
+      "type": 0,
+      "value": " ogni ora"
+    }
+  ],
+  "tZIlCA": [
+    {
+      "type": 0,
+      "value": "(UTC - 8.00 h) Pacifico (USA e Canada)"
+    }
+  ],
+  "tZj2Xn": [
+    {
+      "type": 0,
+      "value": "Restituisce true se il primo argomento è maggiore del secondo"
+    }
+  ],
+  "taPCmY": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Numero di ore da aggiungere. Può essere negativo per sottrarre le ore."
+    }
+  ],
+  "tarDYT": [
+    {
+      "type": 0,
+      "value": "Restituisce true se il primo argomento è minore del secondo."
+    }
+  ],
+  "td5//c": [
+    {
+      "type": 0,
+      "value": "Comprimi nodo albero"
+    }
+  ],
+  "ti5TEd": [
+    {
+      "type": 0,
+      "value": "Annulla"
+    }
+  ],
+  "tqqUHX": [
+    {
+      "type": 0,
+      "value": "(UTC + 12.45) Isole Chatham"
+    }
+  ],
+  "tsmuoF": [
+    {
+      "type": 0,
+      "value": "Nome visualizzato"
+    }
+  ],
+  "tu4TTM": [
+    {
+      "type": 0,
+      "value": "Anteprima"
+    }
+  ],
+  "u81zB9": [
+    {
+      "type": 0,
+      "value": "(UTC - 09.00) Coordinated Universal Time-09"
+    }
+  ],
+  "u9tr3k": [
+    {
+      "type": 0,
+      "value": "Selezionare un elemento per avviare la configurazione"
+    }
+  ],
+  "uDI1Um": [
+    {
+      "type": 0,
+      "value": "Codice di stato"
+    }
+  ],
+  "uE0A0s": [
+    {
+      "type": 0,
+      "value": "(UTC) Coordinated Universal Time"
+    }
+  ],
+  "uIurld": [
+    {
+      "type": 0,
+      "value": "Salva"
+    }
+  ],
+  "uM1i27": [
+    {
+      "type": 0,
+      "value": "Specificare un numero di tentativi compreso tra 1 e 90"
+    }
+  ],
+  "uN4zFU": [
+    {
+      "type": 0,
+      "value": "OK"
+    }
+  ],
+  "uNHpGB": [
+    {
+      "type": 0,
+      "value": "(UTC + 7.00 h) Bangkok, Hanoi, Giacarta"
+    }
+  ],
+  "uOWkHS": [
+    {
+      "type": 0,
+      "value": "Non è stato possibile recuperare gli output dinamici. Di conseguenza, gli output di questa operazione potrebbero non essere visibili nelle azioni successive. Dettagli errore: "
+    },
+    {
+      "type": 1,
+      "value": "message"
+    }
+  ],
+  "uR9WuI": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Raccolte da valutare. Un oggetto presente in qualsiasi raccolta verrà visualizzato anche nel risultato."
+    }
+  ],
+  "uTnqzQ": [
+    {
+      "type": 0,
+      "value": "Vedi altri ("
+    },
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": ")"
+    }
+  ],
+  "uUlBZ8": [
+    {
+      "type": 0,
+      "value": "Aggiunge un numero intero di ore al timestamp in formato stringa passato"
+    }
+  ],
+  "uWf/I5": [
+    {
+      "type": 0,
+      "value": "Mostra"
+    }
+  ],
+  "uZpzqY": [
+    {
+      "type": 0,
+      "value": "Copilot ha raggiunto la massima capacità e temporaneamente non è disponibile. Riprovare tra qualche minuto."
+    }
+  ],
+  "uanMWm": [
+    {
+      "type": 0,
+      "value": "Operazione riuscita"
+    }
+  ],
+  "uc/PoD": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Numero di unità di tempo dell'ora desiderata nel passato."
+    }
+  ],
+  "uc3ytS": [
+    {
+      "type": 0,
+      "value": "Seleziona un runtime"
+    }
+  ],
+  "uczA5c": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Stringa che può contenere il valore."
+    }
+  ],
+  "uesaee": [
+    {
+      "type": 0,
+      "value": "Espressione"
+    }
+  ],
+  "uh/+ZN": [
+    {
+      "type": 0,
+      "value": "(UTC-03:00) Groenlandia"
+    }
+  ],
+  "ui3KuP": [
+    {
+      "type": 0,
+      "value": "Errori dell'operazione"
+    }
+  ],
+  "ui7GCl": [
+    {
+      "type": 0,
+      "value": "16"
+    }
+  ],
+  "unMG8m": [
+    {
+      "type": 0,
+      "value": "Tipo di connettore"
+    }
+  ],
+  "unMaeV": [
+    {
+      "type": 0,
+      "value": "Variabili"
+    }
+  ],
+  "urAHv1": [
+    {
+      "type": 0,
+      "value": "4"
+    }
+  ],
+  "usCZ7R": [
+    {
+      "type": 0,
+      "value": "(UTC+11:00) Magadan"
+    }
+  ],
+  "ut5Med": [
+    {
+      "type": 0,
+      "value": "Valore predefinito"
+    }
+  ],
+  "uwuGU0": [
+    {
+      "type": 0,
+      "value": "(UTC+06:30) Yangon (Rangoon)"
+    }
+  ],
+  "uxKRO/": [
+    {
+      "type": 0,
+      "value": "Parametri"
+    }
+  ],
+  "uxQ143": [
+    {
+      "type": 0,
+      "value": "Porre una domanda relativa al flusso di lavoro o alle app per la logica."
+    }
+  ],
+  "uxt1xW": [
+    {
+      "type": 0,
+      "value": "Rimuovere il parametro '"
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "' e il relativo valore"
+    }
+  ],
+  "uzsleE": [
+    {
+      "type": 0,
+      "value": "Crea una matrice dai parametri"
+    }
+  ],
+  "v+keTP": [
+    {
+      "type": 0,
+      "value": "Data di attivazione"
+    }
+  ],
+  "v39HKj": [
+    {
+      "type": 0,
+      "value": "Genera una stringa univoca globale (GUID)"
+    }
+  ],
+  "v7ipqH": [
+    {
+      "type": 0,
+      "value": "Per ogni azione è necessario eseguire una o più operazioni dopo le configurazioni"
+    }
+  ],
+  "vDYFIF": [
+    {
+      "type": 0,
+      "value": "Restituisce la lunghezza in byte di UTF-16 di una stringa di input"
+    }
+  ],
+  "vEBhDX": [
+    {
+      "type": 0,
+      "value": "Restituisce l'ultimo indice di un valore all'interno di una stringa (senza distinzione tra maiuscole/minuscole, impostazioni cultura inglese non dipendenti da paese/area geografica)"
+    }
+  ],
+  "vF+gWH": [
+    {
+      "type": 0,
+      "value": "Spiega le operazioni eseguite da questo flusso"
+    }
+  ],
+  "vLereV": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Raccolta da cui recuperare i primi oggetti Count."
+    }
+  ],
+  "vQcQkU": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Valore con cui può terminare la stringa."
+    }
+  ],
+  "vSlNPe": [
+    {
+      "type": 0,
+      "value": "Eliminare"
+    }
+  ],
+  "vT0DCP": [
+    {
+      "type": 0,
+      "value": "Output"
+    }
+  ],
+  "vX9WYS": [
+    {
+      "type": 0,
+      "value": "Destinatari"
+    }
+  ],
+  "va40BJ": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Nome dell'azione di cui si desidera ottenere gli output."
+    }
+  ],
+  "vdKLiR": [
+    {
+      "type": 0,
+      "value": "Impostazioni della richiesta"
+    }
+  ],
+  "vdtKjT": [
+    {
+      "type": 0,
+      "value": "Per creare e usare una connessione API, è necessario configurare un'identità gestita in questa app per la logica."
+    }
+  ],
+  "viee6C": [
+    {
+      "type": 0,
+      "value": "Durata"
+    }
+  ],
+  "vlDynP": [
+    {
+      "type": 0,
+      "value": "Rimuovi"
+    }
+  ],
+  "vmlhVB": [
+    {
+      "type": 0,
+      "value": "Per preparare il flusso di lavoro, completare la configurazione di questa azione:"
+    }
+  ],
+  "vr70Gn": [
+    {
+      "type": 0,
+      "value": "Crea una connessione per "
+    },
+    {
+      "type": 1,
+      "value": "connectorName"
+    },
+    {
+      "type": 0,
+      "value": "."
+    }
+  ],
+  "vrYqUF": [
+    {
+      "type": 0,
+      "value": "Immetti valore personalizzato"
+    }
+  ],
+  "vvSHR8": [
+    {
+      "type": 0,
+      "value": "Passa all'elemento e visualizza gli elementi figlio"
+    }
+  ],
+  "vwH/XV": [
+    {
+      "type": 0,
+      "value": "Creare parametro"
+    }
+  ],
+  "vxOc/M": [
+    {
+      "type": 0,
+      "value": "Contiene un valore duplicato"
+    }
+  ],
+  "vz2gZC": [
+    {
+      "type": 0,
+      "value": "Proprietà flusso di lavoro"
+    }
+  ],
+  "w0pI5M": [
+    {
+      "type": 0,
+      "value": "Non sono stati trovati risultati per i filtri specificati"
+    }
+  ],
+  "w16qh+": [
+    {
+      "type": 0,
+      "value": "Query"
+    }
+  ],
+  "w5Hhig": [
+    {
+      "type": 0,
+      "value": "Domenica"
+    }
+  ],
+  "w8ijDZ": [
+    {
+      "type": 0,
+      "value": "Comprimi"
+    }
+  ],
+  "wEaGWn": [
+    {
+      "type": 0,
+      "value": "Sottrae un numero intero di un'unità di tempo specificata dal timestamp in formato stringa passato"
+    }
+  ],
+  "wF7C+h": [
+    {
+      "type": 0,
+      "value": "Annulla"
+    }
+  ],
+  "wFCkpM": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Matrice di valori in cui trovare il valore minimo o il primo valore di un set."
+    }
+  ],
+  "wGYmui": [
+    {
+      "type": 0,
+      "value": "Inclusione di contenuto dinamico"
+    }
+  ],
+  "wP0/uB": [
+    {
+      "type": 0,
+      "value": "Interrompi generazione"
+    }
+  ],
+  "wPlTDB": [
+    {
+      "type": 0,
+      "value": "Percorso completo"
+    }
+  ],
+  "wQcEXt": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Stringa in cui viene cercato il parametro 2 e aggiornata con il parametro 3 quando il parametro 2 viene trovato nel parametro 1."
+    }
+  ],
+  "wQsEwc": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Lunghezza della sottostringa."
+    }
+  ],
+  "wV3Lmd": [
+    {
+      "type": 0,
+      "value": "Fare clic per eliminare l'elemento"
+    }
+  ],
+  "wWVQuK": [
+    {
+      "type": 0,
+      "value": "Restituisce un valore specificato a seconda del fatto che l'espressione abbia restituito true o false"
+    }
+  ],
+  "wXJALc": [
+    {
+      "type": 0,
+      "value": "Menu"
+    }
+  ],
+  "wkiETV": [
+    {
+      "type": 0,
+      "value": "ID di traccia client"
+    }
+  ],
+  "wkvUUA": [
+    {
+      "type": 0,
+      "value": "Tipo di input non corrispondente"
+    }
+  ],
+  "wl7X0l": [
+    {
+      "type": 0,
+      "value": "Nascondi mini-mappa"
+    }
+  ],
+  "wmDUGV": [
+    {
+      "type": 0,
+      "value": "Converte un timestamp in formato stringa passato dal fuso orario di origine a UTC"
+    }
+  ],
+  "wmw/ai": [
+    {
+      "type": 0,
+      "value": "Restituisce una singola matrice o oggetto con tutti gli elementi presenti nella matrice o nell'oggetto passato a questa funzione"
+    }
+  ],
+  "woJQhv": [
+    {
+      "type": 0,
+      "value": "URL callback:"
+    }
+  ],
+  "wtj07J": [
+    {
+      "type": 0,
+      "value": "(UTC - 09.30) Isole Marquesas"
+    }
+  ],
+  "ww1mN/": [
+    {
+      "type": 0,
+      "value": "Area di disegno"
+    }
+  ],
+  "wxaQwD": [
+    {
+      "type": 0,
+      "value": "(UTC+04:30) Kabul"
+    }
+  ],
+  "wzEneQ": [
+    {
+      "type": 0,
+      "value": "Chiudi"
+    }
+  ],
+  "x+6ccf": [
+    {
+      "type": 0,
+      "value": "Mercoledì"
+    }
+  ],
+  "x0or2o": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Raccolta per cui recuperare la lunghezza."
+    }
+  ],
+  "x10E1p": [
+    {
+      "type": 0,
+      "value": "Codice di stato"
+    }
+  ],
+  "x2JTW5": [
+    {
+      "type": 0,
+      "value": "Restituisce un oggetto con la proprietà specificata rimossa."
+    }
+  ],
+  "x3dWOL": [
+    {
+      "type": 0,
+      "value": "(UTC + 1.00 h) Amsterdam, Berlino, Berna, Roma, Stoccolma, Vienna"
+    }
+  ],
+  "x7IYBg": [
+    {
+      "type": 0,
+      "value": "Interrotto"
+    }
+  ],
+  "x8kTAX": [
+    {
+      "type": 0,
+      "value": "Eliminare nota"
+    }
+  ],
+  "xC1zg3": [
+    {
+      "type": 0,
+      "value": "Schemi"
+    }
+  ],
+  "xFQXAI": [
+    {
+      "type": 0,
+      "value": "CTRL+Z"
+    }
+  ],
+  "xJ6vjn": [
+    {
+      "type": 0,
+      "value": "Restituisce una rappresentazione stringa di una stringa con codifica URI"
+    }
+  ],
+  "xJQeeC": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00) Istanbul"
+    }
+  ],
+  "xLF2Zr": [
+    {
+      "type": 0,
+      "value": "Aggiungi riga"
+    }
+  ],
+  "xN3GEX": [
+    {
+      "type": 0,
+      "value": "Immettere la password come testo normale o usare un parametro protetto"
+    }
+  ],
+  "xQQ9ko": [
+    {
+      "type": 0,
+      "value": "Soglia"
+    }
+  ],
+  "xSMbKr": [
+    {
+      "type": 0,
+      "value": "Mostra input non elaborati"
+    }
+  ],
+  "xSSfKC": [
+    {
+      "type": 0,
+      "value": "(UTC - 03.00) Saint-Pierre e Miquelon"
+    }
+  ],
+  "xV/oyK": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Nome della proprietà nuova o esistente."
+    }
+  ],
+  "xV4Koe": [
+    {
+      "type": 0,
+      "value": "Codice"
+    }
+  ],
+  "xXVu2y": [
+    {
+      "type": 0,
+      "value": "Passa a modalità testo"
+    }
+  ],
+  "xYyPR8": [
+    {
+      "type": 0,
+      "value": "Restituisce il percorso da un URI. Se il percorso non è specificato, restituisce '/'"
+    }
+  ],
+  "xi2tn6": [
+    {
+      "type": 0,
+      "value": "Parametri"
+    }
+  ],
+  "xt5TeT": [
+    {
+      "type": 0,
+      "value": "I parametri vengono condivisi tra flussi di lavoro in un'app per la logica."
+    }
+  ],
+  "xvav7+": [
+    {
+      "type": 0,
+      "value": "Connesso a"
+    }
+  ],
+  "xwD1VZ": [
+    {
+      "type": 0,
+      "value": "Caricamento degli input"
+    }
+  ],
+  "xwEX2/": [
+    {
+      "type": 0,
+      "value": "Valore"
+    }
+  ],
+  "y1e9yw": [
+    {
+      "type": 0,
+      "value": "Accedi"
+    }
+  ],
+  "y3AZQB": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. L'oggetto di cui confrontare l'uguaglianza."
+    }
+  ],
+  "y6BcVN": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Stringa in cui applicare la sequenza di escape per i caratteri non sicuri per gli URL."
+    }
+  ],
+  "yB6PB/": [
+    {
+      "type": 0,
+      "value": "Il valore contiene espressioni di funzione che non possono essere risolte. Sono supportati solo valori costanti"
+    }
+  ],
+  "yBrsFJ": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Valore convertito in una matrice."
+    }
+  ],
+  "yF2R//": [
+    {
+      "type": 0,
+      "value": "Restituisce un subset di caratteri da una stringa."
+    }
+  ],
+  "yKOsmK": [
+    {
+      "type": 0,
+      "value": "Restituisce una matrice in ordine crescente"
+    }
+  ],
+  "yNtBUV": [
+    {
+      "type": 0,
+      "value": "Avviso: il tipo di nodo di input non corrisponde a uno dei tipi consentiti per questo input."
+    }
+  ],
+  "yRDuqj": [
+    {
+      "type": 0,
+      "value": "Mostra tutto"
+    }
+  ],
+  "yVFIAQ": [
+    {
+      "type": 0,
+      "value": "(UTC - 1.00 h) Is. di Cabo Verde"
+    }
+  ],
+  "yVh9kr": [
+    {
+      "type": 0,
+      "value": "8"
+    }
+  ],
+  "yc0GcM": [
+    {
+      "type": 0,
+      "value": "Dividere una stringa o una matrice in blocchi di uguale lunghezza"
+    }
+  ],
+  "ydqOly": [
+    {
+      "type": 0,
+      "value": "Scegli un valore"
+    }
+  ],
+  "yjierd": [
+    {
+      "type": 0,
+      "value": "Tipo di espressione '"
+    },
+    {
+      "type": 1,
+      "value": "type"
+    },
+    {
+      "type": 0,
+      "value": "' non valido."
+    }
+  ],
+  "yk7L+4": [
+    {
+      "type": 0,
+      "value": "Non mi piace"
+    }
+  ],
+  "ylfgv1": [
+    {
+      "type": 0,
+      "value": "Genera XSLT"
+    }
+  ],
+  "ypZV9w": [
+    {
+      "type": 0,
+      "value": "Restituisce il corpo per una parte nell'output multiparte del trigger"
+    }
+  ],
+  "yqRrQ/": [
+    {
+      "type": 0,
+      "value": "Funzioni di data e ora"
+    }
+  ],
+  "yrYEmk": [
+    {
+      "type": 0,
+      "value": "Inviami un messaggio di posta elettronica quando..."
+    }
+  ],
+  "ysoumb": [
+    {
+      "type": 0,
+      "value": "Aggiungi campo"
+    }
+  ],
+  "yuJBmK": [
+    {
+      "type": 0,
+      "value": "Immettere un numero"
+    }
+  ],
+  "yucvJE": [
+    {
+      "type": 0,
+      "value": "(UTC + 1.00 h) Sarajevo, Skopje, Varsavia, Zagabria"
+    }
+  ],
+  "yzqXMp": [
+    {
+      "type": 0,
+      "value": "Altre informazioni"
+    }
+  ],
+  "z/UY4k": [
+    {
+      "type": 0,
+      "value": "Passa alla cartella "
+    },
+    {
+      "type": 1,
+      "value": "folderName"
+    }
+  ],
+  "z3VuE+": [
+    {
+      "type": 0,
+      "value": "Menu"
+    }
+  ],
+  "z9kH+0": [
+    {
+      "type": 0,
+      "value": "Verranno rimossi anche tutti i passaggi figlio."
+    }
+  ],
+  "zBMVKg": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Valore convertito in un numero decimale."
+    }
+  ],
+  "zCsGWP": [
+    {
+      "type": 0,
+      "value": "Immetti il valore"
+    }
+  ],
+  "zEv8dd": [
+    {
+      "type": 0,
+      "value": "Editor espressioni"
+    }
+  ],
+  "zIDVd9": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Stringa convertita in un valore di tipo nativo."
+    }
+  ],
+  "zNesUZ": [
+    {
+      "type": 0,
+      "value": "I criteri per i tentativi si applicano a errori intermittenti, caratterizzati dai codici di stato HTTP 408, 429 e 5xx, nonché a tutte le eccezioni di connettività. Il valore predefinito è costituito da criteri con un intervallo esponenziale impostato per eseguire 4 tentativi."
+    }
+  ],
+  "zOvGF8": [
+    {
+      "type": 0,
+      "value": "(UTC + 2.00 h) Atene, Bucarest"
+    }
+  ],
+  "zTKAc9": [
+    {
+      "type": 0,
+      "value": "Seleziona azioni"
+    }
+  ],
+  "zUWAsJ": [
+    {
+      "type": 0,
+      "value": "Restituisce un valore booleano che indica se una stringa è un numero intero"
+    }
+  ],
+  "zUgja+": [
+    {
+      "type": 0,
+      "value": "Cancella valore personalizzato"
+    }
+  ],
+  "zViEGr": [
+    {
+      "type": 0,
+      "value": "(UTC + 12.00 h) Petropavlovsk-Kamčatskij - Vecchio"
+    }
+  ],
+  "zb3lE6": [
+    {
+      "type": 0,
+      "value": "Per salvare il flusso di lavoro, completare la configurazione di questa azione:"
+    }
+  ],
+  "zcZpHT": [
+    {
+      "type": 0,
+      "value": "Converte una stringa, facoltativamente con impostazioni locali e un formato in una data"
+    }
+  ],
+  "zec5Ay": [
+    {
+      "type": 0,
+      "value": "Arresta"
+    }
+  ],
+  "ziYCiA": [
+    {
+      "type": 0,
+      "value": "Riepilogo"
+    }
+  ],
+  "zjDJwP": [
+    {
+      "type": 0,
+      "value": "Float"
+    }
+  ],
+  "zkeKWE": [
+    {
+      "type": 0,
+      "value": "(UTC-04:00) Caracas"
+    }
+  ],
+  "znGyyU": [
+    {
+      "type": 0,
+      "value": "Aggiunge un numero intero di un'unità di tempo specificata al timestamp in formato stringa passato"
+    }
+  ],
+  "zsPNYN": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Numero da aggiungere all'addendo 1."
+    }
+  ],
+  "zxe9hh": [
+    {
+      "type": 0,
+      "value": "Obbligatorio. Numero di minuti da aggiungere. Può essere negativo per sottrarre i minuti."
+    }
+  ]
+}

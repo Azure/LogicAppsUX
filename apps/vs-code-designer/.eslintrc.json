@@ -1,21 +1,39 @@
 {
-  "extends": ["../../.eslintrc.json"],
-  "ignorePatterns": ["!**/*"],
-  "overrides": [
-    {
-      "files": ["*.ts"],
-      "rules": {
-        "no-param-reassign": "off",
-        "react-hooks/rules-of-hooks": "off"
-      }
-    },
-    {
-      "files": ["*.ts", "*.tsx", "*.js", "*.jsx"],
-      "rules": {}
-    },
-    {
-      "files": ["*.js", "*.jsx"],
-      "rules": {}
-    }
-  ]
+    "extends": [
+        "../../.eslintrc.json"
+    ],
+    "ignorePatterns": [
+        "!**/*",
+        "**/node_modules/**",
+        "**/build/**",
+        "**/__test__/**",
+        "**/__tests__/**"
+    ],
+    "overrides": [
+        {
+            "files": [
+                "*.ts",
+                "*.tsx",
+                "*.js",
+                "*.jsx"
+            ],
+            "rules": {}
+        },
+        {
+            "files": [
+                "*.ts",
+                "*.tsx"
+            ],
+            "rules": {
+                "react-hooks/rules-of-hooks": "off"
+            }
+        },
+        {
+            "files": [
+                "*.js",
+                "*.jsx"
+            ],
+            "rules": {}
+        }
+    ]
 }

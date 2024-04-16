@@ -17,8 +17,8 @@ import {
   type Schema,
   type SchemaExtended,
   type SchemaNodeDictionary,
-} from '@microsoft/utils-logic-apps';
-
+} from '@microsoft/logic-apps-shared';
+import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 describe('utils/Functions', () => {
   describe('getFunctionOutputValue', () => {
     const functionName = 'testFunction';

@@ -8,9 +8,8 @@ import {
   getIconForDynamicallyAddedParameterType,
 } from '../../dynamicallyaddedparameter/helper';
 import type { ValueSegment } from '../../editor';
-import { ValueSegmentType } from '../../editor';
-import type { Schema } from '@microsoft/parsers-logic-apps';
-import { guid } from '@microsoft/utils-logic-apps';
+import { createLiteralValueSegment } from '../../editor/base/utils/helper';
+import type { OpenApiSchema } from '@microsoft/logic-apps-shared';
 
 type PartialDynamicallyAddedParameterInputsModel = Pick<
   DynamicallyAddedParameterInputsModel,
@@ -95,7 +94,9 @@ export function deserialize(value: ValueSegment[], isRequestApiConnectionTrigger
 export function serialize(models: DynamicallyAddedParameterInputsModel[], isRequestApiConnectionTrigger = false): ValueSegment[] {
   const requiredArray: string[] = [];
   models.forEach((model) => {
-    if (model.required) requiredArray.push(model.schemaKey);
+    if (model.required) {
+      requiredArray.push(model.schemaKey);
+    }
   });
 
   const properties = models
@@ -106,10 +107,11 @@ export function serialize(models: DynamicallyAddedParameterInputsModel[], isRequ
     .reduce((resultPropertiesObj, nextProperty) => {
       // Convert array to object; replace array index key with schemaKey
       const [schemaKey, propertyValue] = Object.entries(nextProperty)[0];
-      return { ...resultPropertiesObj, [schemaKey]: propertyValue };
+      resultPropertiesObj[schemaKey] = propertyValue;
+      return resultPropertiesObj;
     }, {});
 
-  let rootObject: Schema;
+  let rootObject: OpenApiSchema;
 
   rootObject = {
     type: 'object',
@@ -130,17 +132,11 @@ export function serialize(models: DynamicallyAddedParameterInputsModel[], isRequ
     };
   }
 
-  return [
-    {
-      id: guid(),
-      type: ValueSegmentType.LITERAL,
-      value: JSON.stringify(rootObject),
-    },
-  ];
+  return [createLiteralValueSegment(JSON.stringify(rootObject))];
 }
 
 export function getEmptySchemaValueSegmentForInitialization(useStaticInputs: boolean, isRequestApiConnectionTrigger = false) {
-  let rootObject: Schema;
+  let rootObject: OpenApiSchema;
 
   rootObject = {
     type: 'object',
@@ -165,43 +161,53 @@ export function getEmptySchemaValueSegmentForInitialization(useStaticInputs: boo
     rootObject = rootObjectWithStaticInputs;
   }
 
-  return [
-    {
-      id: guid(),
-      type: ValueSegmentType.LITERAL,
-      value: JSON.stringify(rootObject),
-    },
-  ];
+  return [createLiteralValueSegment(JSON.stringify(rootObject))];
 }
 
 export function createDynamicallyAddedParameterProperties(
   itemType: DynamicallyAddedParameterTypeType,
   schemaKey: string
 ): DynamicallyAddedParameterInputsProperties {
-  let format, fileProperties;
+  let format: string | undefined;
+  let fileProperties:
+    | {
+        name: {
+          type: string;
+        };
+        contentBytes: {
+          type: string;
+          format: string;
+        };
+      }
+    | undefined;
   let type = '';
   switch (itemType) {
     case DynamicallyAddedParameterType.Date:
-    case DynamicallyAddedParameterType.Email:
+    case DynamicallyAddedParameterType.Email: {
       type = constants.SWAGGER.TYPE.STRING;
       format = itemType.toLowerCase();
       break;
-    case DynamicallyAddedParameterType.Text:
+    }
+    case DynamicallyAddedParameterType.Text: {
       type = constants.SWAGGER.TYPE.STRING;
       break;
-    case DynamicallyAddedParameterType.File:
+    }
+    case DynamicallyAddedParameterType.File: {
       type = constants.SWAGGER.TYPE.OBJECT;
       fileProperties = {
         contentBytes: { type: constants.SWAGGER.TYPE.STRING, format: constants.SWAGGER.FORMAT.BYTE },
         name: { type: constants.SWAGGER.TYPE.STRING },
       };
       break;
-    case DynamicallyAddedParameterType.Boolean:
+    }
+    case DynamicallyAddedParameterType.Boolean: {
       type = constants.SWAGGER.TYPE.BOOLEAN;
       break;
-    case DynamicallyAddedParameterType.Number:
+    }
+    case DynamicallyAddedParameterType.Number: {
       type = constants.SWAGGER.TYPE.NUMBER;
       break;
+    }
   }
 
   return {

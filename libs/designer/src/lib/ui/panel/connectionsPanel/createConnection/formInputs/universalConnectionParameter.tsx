@@ -2,8 +2,8 @@ import { ConnectionParameterRow } from '../connectionParameterRow';
 import GatewayPicker from './gatewayPicker';
 import type { IDropdownOption } from '@fluentui/react';
 import { Checkbox, Dropdown, TextField } from '@fluentui/react';
-import type { ConnectionParameter, ConnectionParameterAllowedValue } from '@microsoft/utils-logic-apps';
-import { ConnectionParameterTypes } from '@microsoft/utils-logic-apps';
+import type { ConnectionParameter, ConnectionParameterAllowedValue } from '@microsoft/logic-apps-shared';
+import { ConnectionParameterTypes } from '@microsoft/logic-apps-shared';
 
 export interface ConnectionParameterProps {
   parameterKey: string;
@@ -56,14 +56,18 @@ export const UniversalConnectionParameter = (props: ConnectionParameterProps) =>
 
   // Boolean parameter
   else if (parameter?.type === ConnectionParameterTypes.bool) {
-    if (value === undefined) setValue(false);
+    if (value === undefined) {
+      setValue(false);
+    }
     inputComponent = <Checkbox checked={value} onChange={(e: any, checked?: boolean) => setValue(checked)} label={description} />;
   }
 
   // Dropdown Parameter
   else if ((constraints?.allowedValues?.length ?? 0) > 0) {
     const selectedKey = constraints?.allowedValues?.findIndex((_value) => _value.value === value);
-    if (selectedKey === -1) setValue(constraints?.allowedValues?.[0].value);
+    if (selectedKey === -1) {
+      setValue(constraints?.allowedValues?.[0].value);
+    }
     inputComponent = (
       <Dropdown
         id={`connection-param-${parameterKey}`}

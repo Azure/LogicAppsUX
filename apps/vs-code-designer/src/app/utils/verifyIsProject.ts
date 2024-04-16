@@ -6,10 +6,10 @@ import { extensionBundleId, hostFileName, localSettingsFileName } from '../../co
 import { localize } from '../../localize';
 import { createNewProjectInternal } from '../commands/createNewProject/createNewProject';
 import { getWorkspaceSetting, updateWorkspaceSetting } from './vsCodeConfig/settings';
-import { isString } from '@microsoft/utils-logic-apps';
+import { isString } from '@microsoft/logic-apps-shared';
 import { DialogResponses } from '@microsoft/vscode-azext-utils';
 import type { IActionContext, IAzureQuickPickItem } from '@microsoft/vscode-azext-utils';
-import type { ICreateFunctionOptions } from '@microsoft/vscode-extension';
+import type { ICreateFunctionOptions } from '@microsoft/vscode-extension-logic-apps';
 import * as fse from 'fs-extra';
 import * as path from 'path';
 import type { MessageItem, WorkspaceFolder } from 'vscode';
@@ -48,26 +48,26 @@ export async function tryGetLogicAppProjectRoot(
   if (!subpath) {
     if (!(await fse.pathExists(folderPath))) {
       return undefined;
-    } else if (await isLogicAppProject(folderPath)) {
+    }
+    if (await isLogicAppProject(folderPath)) {
       return folderPath;
-    } else {
-      const subpaths: string[] = await fse.readdir(folderPath);
-      const matchingSubpaths: string[] = [];
-      await Promise.all(
-        subpaths.map(async (s) => {
-          if (await isLogicAppProject(path.join(folderPath, s))) {
-            matchingSubpaths.push(s);
-          }
-        })
-      );
+    }
+    const subpaths: string[] = await fse.readdir(folderPath);
+    const matchingSubpaths: string[] = [];
+    await Promise.all(
+      subpaths.map(async (s) => {
+        if (await isLogicAppProject(path.join(folderPath, s))) {
+          matchingSubpaths.push(s);
+        }
+      })
+    );
 
-      if (matchingSubpaths.length === 1) {
-        subpath = matchingSubpaths[0];
-      } else if (matchingSubpaths.length !== 0 && !suppressPrompt) {
-        subpath = await promptForProjectSubpath(context, folderPath, matchingSubpaths);
-      } else {
-        return undefined;
-      }
+    if (matchingSubpaths.length === 1) {
+      subpath = matchingSubpaths[0];
+    } else if (matchingSubpaths.length !== 0 && !suppressPrompt) {
+      subpath = await promptForProjectSubpath(context, folderPath, matchingSubpaths);
+    } else {
+      return undefined;
     }
   }
 
@@ -119,7 +119,6 @@ export async function verifyAndPromptToCreateProject(
     options.folderPath = fsPath;
     await createNewProjectInternal(context, options);
     return undefined;
-  } else {
-    return projectPath;
   }
+  return projectPath;
 }

@@ -3,9 +3,11 @@ import { RequiredMarkerSide, Label } from '..';
 import constants from '../constants';
 import { StaticResult } from './StaticResult';
 import { PropertyEditor } from './propertyEditor';
+import { initializePropertyValueInput } from './util';
 import type { IDropdownOption, IDropdownStyles, ITextFieldStyles } from '@fluentui/react';
 import { Dropdown, TextField } from '@fluentui/react';
-import type { OpenAPIV2 } from '@microsoft/utils-logic-apps';
+import type { OpenAPIV2 } from '@microsoft/logic-apps-shared';
+import { useMountEffect, useUpdateEffect } from '@react-hookz/web';
 import React, { useState } from 'react';
 import { useIntl } from 'react-intl';
 
@@ -61,22 +63,32 @@ function WrappedStaticResultProperty({
   isRoot = false,
   required = false,
   schema,
-  properties = {},
+  properties,
   updateParentProperties,
 }: StaticResultPropertyProps): JSX.Element {
   const intl = useIntl();
-  const [inputValue, setInputValue] = useState(
-    (typeof properties === 'string' || typeof properties === 'number' || typeof properties === 'boolean'
-      ? properties
-      : Object.keys(properties).length > 0
-      ? JSON.stringify(properties, null, 2)
-      : schema?.default ?? '') as string
-  );
-
+  const [inputValue, setInputValue] = useState<string>('');
   const [errorMessage, setErrorMessage] = useState<string>('');
+  const [currProperties, setCurrProperties] = useState<OpenAPIV2.SchemaObject>(properties ?? {});
+
+  // only done on initialization - when a dropdown is selected and a component is rendered, to update
+  // the parent with required/default value
+  useMountEffect(() => {
+    if (schema.type !== constants.SWAGGER.TYPE.ARRAY && schema.type !== constants.SWAGGER.TYPE.OBJECT) {
+      const inputVal = initializePropertyValueInput(currProperties, schema);
+      setInputValue(inputVal);
+      updateParentProperties(inputVal);
+    }
+  });
+  // only done when the properties are updated (ignore mount)
+  useUpdateEffect(() => {
+    updateParentProperties(currProperties);
+  }, [currProperties]);
 
   const getEnumValues = (): IDropdownOption[] => {
-    if (!schema.enum) return [];
+    if (!schema.enum) {
+      return [];
+    }
     return schema.enum.map((value) => {
       return {
         key: value,
@@ -94,23 +106,30 @@ function WrappedStaticResultProperty({
 
   const dropdownPlaceHolder = intl.formatMessage({
     defaultMessage: 'Select a value',
+    id: 'DJW8RE',
     description: 'Placeholder for dropdown',
   });
 
   const textFieldPlaceHolder = intl.formatMessage({
     defaultMessage: 'Enter a value',
+    id: 'r/n6/9',
     description: 'Placeholder for text field',
   });
   const integerTextFieldPlaceHolder = intl.formatMessage({
     defaultMessage: 'Enter an integer',
+    id: 'ehIBkh',
     description: 'Placeholder for integer text field',
   });
 
   const validateInteger = (_event: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: any) => {
-    if (isNaN(newValue)) {
+    if (Number.isNaN(newValue)) {
       setInputValue(inputValue ?? '');
       setErrorMessage(
-        intl.formatMessage({ defaultMessage: 'Invalid integer value', description: 'Error message for invalid integer value' })
+        intl.formatMessage({
+          defaultMessage: 'Invalid integer value',
+          id: 'oR2x4N',
+          description: 'Error message for invalid integer value',
+        })
       );
     } else {
       setInputValue(newValue);
@@ -128,13 +147,9 @@ function WrappedStaticResultProperty({
     }
   };
 
-  const updateParentPropsWithObject = (input: any) => {
-    updateParentProperties(input);
-  };
-
   const renderItems = (): JSX.Element => {
     switch (schema.type) {
-      case constants.SWAGGER.TYPE.STRING:
+      case constants.SWAGGER.TYPE.STRING: {
         if (schema.enum) {
           return (
             <Dropdown
@@ -148,24 +163,24 @@ function WrappedStaticResultProperty({
               placeholder={dropdownPlaceHolder}
             />
           );
-        } else {
-          return (
-            <TextField
-              className="msla-static-result-property-textField"
-              styles={textFieldStyles}
-              onRenderLabel={() => onRenderLabel(schema.title ?? '', required, isRoot)}
-              value={inputValue}
-              placeholder={textFieldPlaceHolder}
-              onChange={(_e, newVal) => {
-                setInputValue(newVal ?? '');
-              }}
-              onBlur={updateParentProps}
-              multiline
-              autoAdjustHeight
-              rows={1}
-            />
-          );
         }
+        return (
+          <TextField
+            className="msla-static-result-property-textField"
+            styles={textFieldStyles}
+            onRenderLabel={() => onRenderLabel(schema.title ?? '', required, isRoot)}
+            value={inputValue}
+            placeholder={textFieldPlaceHolder}
+            onChange={(_e, newVal) => {
+              setInputValue(newVal ?? '');
+            }}
+            onBlur={updateParentProps}
+            multiline
+            autoAdjustHeight
+            rows={1}
+          />
+        );
+      }
       case constants.SWAGGER.TYPE.INTEGER:
         return (
           <TextField
@@ -180,34 +195,35 @@ function WrappedStaticResultProperty({
           />
         );
       case constants.SWAGGER.TYPE.ARRAY:
-      case constants.SWAGGER.TYPE.OBJECT:
+      case constants.SWAGGER.TYPE.OBJECT: {
         if (schema.items) {
           return (
             <>
               <Label text={schema.title ?? ''} isRequiredField={required} requiredMarkerSide={RequiredMarkerSide.RIGHT} />
-              <PropertyEditor schema={schema.items} properties={properties} updateProperties={updateParentPropsWithObject} />
+              <PropertyEditor schema={schema.items} properties={currProperties} updateProperties={setCurrProperties} />
             </>
           );
-        } else if (schema.additionalProperties) {
+        }
+        if (schema.additionalProperties) {
           return (
             <>
               <Label text={schema.title ?? ''} isRequiredField={required} requiredMarkerSide={RequiredMarkerSide.RIGHT} />
-              <PropertyEditor properties={properties} updateProperties={updateParentPropsWithObject} />
+              <PropertyEditor properties={currProperties} updateProperties={setCurrProperties} />
             </>
           );
-        } else {
-          return (
-            <div className="msla-static-result-property-inner">
-              <StaticResult
-                propertiesSchema={schema.properties}
-                title={schema?.title ?? ''}
-                required={schema.required}
-                propertyValues={properties}
-                setPropertyValues={updateParentPropsWithObject}
-              />
-            </div>
-          );
         }
+        return (
+          <div className="msla-static-result-property-inner">
+            <StaticResult
+              propertiesSchema={schema.properties}
+              title={schema?.title ?? ''}
+              required={schema.required}
+              propertyValues={currProperties}
+              setPropertyValues={setCurrProperties}
+            />
+          </div>
+        );
+      }
       default:
         return (
           <TextField

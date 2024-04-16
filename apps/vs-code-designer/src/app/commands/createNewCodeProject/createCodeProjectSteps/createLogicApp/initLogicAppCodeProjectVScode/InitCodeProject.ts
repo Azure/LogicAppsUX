@@ -47,8 +47,8 @@ import type {
   ITasksJson,
   ILaunchJson,
   IExtensionsJson,
-} from '@microsoft/vscode-extension';
-import { WorkflowProjectType, FuncVersion } from '@microsoft/vscode-extension';
+} from '@microsoft/vscode-extension-logic-apps';
+import { WorkflowProjectType, FuncVersion } from '@microsoft/vscode-extension-logic-apps';
 import * as fse from 'fs-extra';
 import * as path from 'path';
 import type { TaskDefinition, DebugConfiguration, WorkspaceFolder } from 'vscode';
@@ -225,9 +225,8 @@ export abstract class InitCodeProject extends AzureWizardExecuteStep<IProjectWiz
                 // Worst case the user has an extra task in their tasks.json
                 return false;
             }
-          } else {
-            return false;
           }
+          return false;
         })
     );
     existingTasks.push(...newTasks);
@@ -235,7 +234,7 @@ export abstract class InitCodeProject extends AzureWizardExecuteStep<IProjectWiz
   }
 
   private insertNewTaskInputs(context: IProjectWizardContext, existingInputs: ITaskInputs[] = [], newInputs: ITaskInputs[]): ITaskInputs[] {
-    if (context.workflowProjectType == WorkflowProjectType.Bundle) {
+    if (context.workflowProjectType === WorkflowProjectType.Bundle) {
       // Remove inputs that match the ones we're about to add
       existingInputs = existingInputs.filter(
         (t1) =>

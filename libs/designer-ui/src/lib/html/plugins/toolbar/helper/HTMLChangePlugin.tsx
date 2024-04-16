@@ -11,7 +11,7 @@ import {
   cleanStyleAttribute,
   encodeSegmentValueInLexicalContext,
   getDomFromHtmlEditorString,
-  isAttributeSupportedByLexical,
+  isAttributeSupportedByHtmlEditor,
   isHtmlStringValueSafeForLexical,
 } from './util';
 import { $generateHtmlFromNodes } from '@lexical/html';
@@ -21,18 +21,27 @@ import { $getRoot } from 'lexical';
 
 interface HTMLChangePluginProps {
   isValuePlaintext: boolean;
+  setIsSwitchFromPlaintextBlocked: (value: boolean) => void;
   setIsValuePlaintext: (isValuePlaintext: boolean) => void;
   setValue: (newVal: ValueSegment[]) => void;
 }
 
-export const HTMLChangePlugin = ({ isValuePlaintext, setIsValuePlaintext, setValue }: HTMLChangePluginProps) => {
+export const HTMLChangePlugin = ({
+  isValuePlaintext,
+  setIsSwitchFromPlaintextBlocked,
+  setIsValuePlaintext,
+  setValue,
+}: HTMLChangePluginProps) => {
   const onChange = (editorState: EditorState, editor: LexicalEditor) => {
     const nodeMap = new Map<string, ValueSegment>();
     let isNewValuePlaintext = isValuePlaintext;
 
     editorState.read(() => {
       const editorString = getChildrenNodes($getRoot(), nodeMap);
-      if (!isHtmlStringValueSafeForLexical(editorString, nodeMap)) {
+      const isSafeForLexical = isHtmlStringValueSafeForLexical(editorString, nodeMap);
+
+      setIsSwitchFromPlaintextBlocked(!isSafeForLexical);
+      if (!isSafeForLexical) {
         isNewValuePlaintext = true;
         setIsValuePlaintext(isNewValuePlaintext);
       }
@@ -67,12 +76,12 @@ export const convertEditorState = (
 
       // Loop through all elements and remove unwanted attributes
       const elements = tempElement.querySelectorAll('*');
+      // biome-ignore lint/style/useForOf: Node List isn't iterable
       for (let i = 0; i < elements.length; i++) {
         const element = elements[i];
         const attributes = Array.from(element.attributes);
-        for (let j = 0; j < attributes.length; j++) {
-          const attribute = attributes[j];
-          if (!isAttributeSupportedByLexical(element.tagName, attribute.name)) {
+        for (const attribute of attributes) {
+          if (!isAttributeSupportedByHtmlEditor(element.tagName, attribute.name)) {
             element.removeAttribute(attribute.name);
             continue;
           }
@@ -86,7 +95,6 @@ export const convertEditorState = (
           if (attribute.name === 'style') {
             const newAttributeValue = cleanStyleAttribute(attribute.value);
             newAttributeValue ? element.setAttribute('style', newAttributeValue) : element.removeAttribute(attribute.name);
-            continue;
           }
         }
       }
@@ -101,11 +109,10 @@ export const convertEditorState = (
       const noTokenSpansString = decodedLexicalString.replace(spanIdPattern, (match, idValue) => {
         if (nodeMap.get(idValue)) {
           return idValue;
-        } else {
-          return match;
         }
+        return match;
       });
-      const valueSegments: ValueSegment[] = convertStringToSegments(noTokenSpansString, true, nodeMap);
+      const valueSegments: ValueSegment[] = convertStringToSegments(noTokenSpansString, nodeMap, { tokensEnabled: true });
       resolve(valueSegments);
     });
   });

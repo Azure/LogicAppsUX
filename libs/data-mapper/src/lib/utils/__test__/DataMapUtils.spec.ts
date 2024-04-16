@@ -1,4 +1,5 @@
 import { FunctionCategory } from '../../models';
+import type { FunctionData } from '../../models';
 import type { ConnectionDictionary, ConnectionUnit } from '../../models/Connection';
 import type { ParseFunc } from '../DataMap.Utils';
 import {
@@ -6,6 +7,7 @@ import {
   Separators,
   addAncestorNodesToCanvas,
   addParentConnectionForRepeatingElementsNested,
+  getDestinationNode,
   getSourceValueFromLoop,
   getTargetValueWithoutLoops,
   lexThisThing as separateIntoTokens,
@@ -29,10 +31,10 @@ import {
   manyToOneConnectionSourceName,
   manyToOneConnectionTargetName,
 } from '../__mocks__';
-import type { Schema, SchemaExtended, SchemaNodeExtended } from '@microsoft/utils-logic-apps';
-import { NormalizedDataType, SchemaNodeProperty, SchemaType } from '@microsoft/utils-logic-apps';
-import { comprehensiveSourceSchema, comprehensiveTargetSchema, sourceMockSchema } from '__mocks__/schemas';
-
+import type { Schema, SchemaExtended, SchemaNodeExtended } from '@microsoft/logic-apps-shared';
+import { NormalizedDataType, SchemaNodeProperty, SchemaType } from '@microsoft/logic-apps-shared';
+import { comprehensiveSourceSchema, comprehensiveTargetSchema, sourceMockSchema } from '../../../__mocks__/schemas';
+import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 describe('utils/DataMap', () => {
   describe('isValidToMakeMapDefinition', () => {
     it('includes a function node that is not connected to any input and outputs', () => {
@@ -766,6 +768,12 @@ describe('utils/DataMap', () => {
         )
       ).toBe('/ns0:TargetSchemaRoot/Looping/ManyToOne/$for(/ns0:SourceSchemaRoot/Looping/ManyToOne/Simple, $a)/RandomKey');
     });
+
+    it('two loops with child name in source name', () => {
+      expect(qualifyLoopRelativeSourceKeys('/ns0:X12_00401_856/$for(/Shipment/HL-S)/ns0:HL-SLoop/$for(HL)/ns0:HL/HL01')).toBe(
+        '/ns0:X12_00401_856/$for(/Shipment/HL-S)/ns0:HL-SLoop/$for(/Shipment/HL-S/HL)/ns0:HL/HL01'
+      );
+    });
   });
 
   describe('getTargetValueWithoutLoops', () => {
@@ -1048,6 +1056,59 @@ describe('utils/DataMap', () => {
         'directAccess(/root/Array2/*[1], /root/Array/*, /root/Array/*/Property)',
         'directAccess(/root/Array2/*[1], /root/Array/*, /root/Array/*/Property)',
       ]);
+    });
+  });
+
+  describe('getDestinationNode', () => {
+    const mockSchemaNodeExtended: SchemaNodeExtended = {
+      key: '/root',
+      name: 'root',
+      qName: 'root',
+      type: NormalizedDataType.String,
+      properties: SchemaNodeProperty.None,
+      nodeProperties: [SchemaNodeProperty.None],
+      children: [
+        {
+          key: '/root/Some-String-Property-With-A-Dash-And-Longer-Than-A-Guid',
+          name: 'Some-String-Property-With-A-Dash-And-Longer-Than-A-Guid',
+          qName: 'Some-String-Property-With-A-Dash-And-Longer-Than-A-Guid',
+          type: NormalizedDataType.String,
+          properties: SchemaNodeProperty.None,
+          nodeProperties: [SchemaNodeProperty.None],
+          children: [],
+          pathToRoot: [],
+          arrayItemIndex: undefined,
+          parentKey: '/root',
+        },
+      ],
+      pathToRoot: [],
+      arrayItemIndex: undefined,
+      parentKey: undefined,
+    };
+
+    const mockFunctionData: FunctionData = {
+      key: 'some-function',
+      functionName: 'Some',
+      displayName: 'Some',
+      category: FunctionCategory.Custom,
+      description: 'Some',
+      inputs: [],
+      maxNumberOfInputs: 0,
+      outputValueType: NormalizedDataType.String,
+    };
+
+    it('returns function data for function target key', () => {
+      const result = getDestinationNode('some-function-4C117648-E570-4CDA-BA8E-DAFC66ECD402', [mockFunctionData], mockSchemaNodeExtended);
+      expect(result).toBe(mockFunctionData);
+    });
+
+    it('returns schema node for node target key', () => {
+      const result = getDestinationNode(
+        '/root/Some-String-Property-With-A-Dash-And-Longer-Than-A-Guid',
+        [mockFunctionData],
+        mockSchemaNodeExtended
+      );
+      expect(result).toBe(mockSchemaNodeExtended.children[0]);
     });
   });
 });

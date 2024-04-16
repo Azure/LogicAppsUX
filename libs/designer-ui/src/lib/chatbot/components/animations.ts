@@ -134,7 +134,7 @@ const slideFromBottom = keyframes({
 });
 
 const enterDuration = 500;
-const enterDurationInSecond = (enterDuration / 1000).toFixed(1) + 's';
+const enterDurationInSecond = `${(enterDuration / 1000).toFixed(1)}s`;
 const messageTimingFunction = 'cubic-bezier(0.55,0.55,0,1)';
 const glintSpeed = 1000;
 

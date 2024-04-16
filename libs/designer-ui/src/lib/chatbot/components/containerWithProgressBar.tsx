@@ -1,7 +1,7 @@
 import constants from '../constants';
 import type { IStyle } from '@fluentui/react';
 import { keyframes, mergeStyleSets, useTheme } from '@fluentui/react';
-import React from 'react';
+import type React from 'react';
 
 type ContainerWithProgressBarProps = {
   percentComplete?: number;

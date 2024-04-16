@@ -1,4 +1,4 @@
-import { SchemaType } from '@microsoft/utils-logic-apps';
+import { SchemaType } from '@microsoft/logic-apps-shared';
 import { createSlice } from '@reduxjs/toolkit';
 
 export const ConfigPanelView = {

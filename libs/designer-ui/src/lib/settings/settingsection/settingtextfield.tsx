@@ -1,6 +1,7 @@
-import type { SettingProps } from './settingtoggle';
+import type { SettingProps } from './';
 import { TextField } from '@fluentui/react';
-import React, { useState } from 'react';
+import type React from 'react';
+import { useState } from 'react';
 import type { FormEvent } from 'react';
 
 export type TextInputChangeHandler = (event: FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string | undefined) => void;
@@ -40,7 +41,7 @@ export const SettingTextField: React.FC<SettingTextFieldProps> = ({
       <TextField
         className="msla-setting-section-textField"
         id={id}
-        label={!customLabel ? label : ''}
+        label={customLabel ? '' : label}
         ariaLabel={ariaLabel}
         value={textValue}
         defaultValue={defaultValue}

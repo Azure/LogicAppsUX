@@ -7,7 +7,6 @@ import { CollapsedDictionaryValidation } from './plugins/CollapsedDictionaryVali
 import { useIntl } from 'react-intl';
 
 export type CollapsedDictionaryProps = {
-  isValid?: boolean;
   readonly?: boolean;
   collapsedValue: ValueSegment[];
   keyType?: string;
@@ -23,7 +22,6 @@ export type CollapsedDictionaryProps = {
 };
 
 export const CollapsedDictionary = ({
-  isValid,
   collapsedValue,
   keyType,
   valueType,
@@ -37,6 +35,7 @@ export const CollapsedDictionary = ({
 
   const editorPlaceHolder = intl.formatMessage({
     defaultMessage: 'Enter a valid JSON',
+    id: 'ox2Ou7',
     description: 'Placeholder for empty collapsed dictionary',
   });
 
@@ -54,13 +53,10 @@ export const CollapsedDictionary = ({
           onBlur={onBlur}
         >
           <CollapsedDictionaryValidation
-            className={'msla-collapsed-editor-validation'}
-            isValid={isValid}
             setIsValid={setIsValid}
             keyType={keyType}
             valueType={valueType}
             setItems={setItems}
-            collapsedValue={collapsedValue}
             setCollapsedValue={setCollapsedValue}
           />
         </EditorWrapper>

@@ -1,13 +1,13 @@
 import constants from '../../../../common/constants';
 import type { AppDispatch, RootState } from '../../../../core';
-import { getIconUriFromConnector, useOperationInfo, useSelectedNodeId, useSelectedNodeIds } from '../../../../core';
+import { useOperationInfo, useSelectedNodeId, useSelectedNodeIds } from '../../../../core';
 import type { ConnectionPayload } from '../../../../core/actions/bjsworkflow/connections';
 import {
+  getApiHubAuthentication,
   getConnectionMetadata,
   getConnectionProperties,
-  getApiHubAuthentication,
-  updateNodeConnection,
   needsOAuth,
+  updateNodeConnection,
 } from '../../../../core/actions/bjsworkflow/connections';
 import { getUniqueConnectionName } from '../../../../core/queries/connections';
 import {
@@ -23,18 +23,26 @@ import {
   getAssistedConnectionProps,
   getConnectionParametersForAzureConnection,
   getSupportedParameterSets,
+  isUserAssignedIdentitySupportedForInApp,
 } from '../../../../core/utils/connectors/connections';
 import { CreateConnection } from './createConnection';
 import { Spinner } from '@fluentui/react-components';
-import type { ConnectionCreationInfo, ConnectionParametersMetadata } from '@microsoft/designer-client-services-logic-apps';
-import { ConnectionService, LogEntryLevel, LoggerService, WorkflowService } from '@microsoft/designer-client-services-logic-apps';
-import type {
-  Connection,
-  ConnectionParameterSet,
-  ConnectionParameterSetValues,
-  Connector,
-  ManagedIdentity,
-} from '@microsoft/utils-logic-apps';
+import {
+  ConnectionService,
+  LogEntryLevel,
+  LoggerService,
+  WorkflowService,
+  getIconUriFromConnector,
+  getRecordEntry,
+  safeSetObjectPropertyValue,
+  type ConnectionCreationInfo,
+  type ConnectionParametersMetadata,
+  type Connection,
+  type ConnectionParameterSet,
+  type ConnectionParameterSetValues,
+  type Connector,
+  type ManagedIdentity,
+} from '@microsoft/logic-apps-shared';
 import { useCallback, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
@@ -50,7 +58,7 @@ export const CreateConnectionWrapper = () => {
   const operationInfo = useOperationInfo(nodeId);
   const { data: operationManifest } = useOperationManifest(operationInfo);
   const connectionMetadata = getConnectionMetadata(operationManifest);
-  const hasExistingConnection = useSelector((state: RootState) => !!state.connections.connectionsMapping[nodeId]);
+  const hasExistingConnection = useSelector((state: RootState) => !!getRecordEntry(state.connections.connectionsMapping, nodeId));
 
   const subscriptionsQuery = useSubscriptions();
   const subscriptions = useMemo(() => subscriptionsQuery.data, [subscriptionsQuery.data]);
@@ -58,6 +66,8 @@ export const CreateConnectionWrapper = () => {
   const gatewaysQuery = useGateways(selectedSubscriptionId, connector?.id ?? '');
   const availableGateways = useMemo(() => gatewaysQuery.data, [gatewaysQuery]);
   const gatewayServiceConfig = useGatewayServiceConfig();
+
+  const existingReferences = useSelector((state: RootState) => Object.keys(state.connections.connectionReferences));
 
   const identity = WorkflowService().getAppIdentity?.() as ManagedIdentity;
 
@@ -126,9 +136,12 @@ export const CreateConnectionWrapper = () => {
       parameterValues: Record<string, any> = {},
       isOAuthConnection?: boolean,
       alternativeParameterValues?: Record<string, any>,
-      identitySelected?: string
+      identitySelected?: string,
+      additionalParameterValues?: Record<string, any>
     ) => {
-      if (!connector?.id) return;
+      if (!connector?.id) {
+        return;
+      }
 
       setIsLoading(true);
       setErrorMessage(undefined);
@@ -156,6 +169,15 @@ export const CreateConnectionWrapper = () => {
           outputParameterValues = { ...outputParameterValues, ...assistedParams };
         }
 
+        // Assign identity selected in parameter values for in-app connectors
+        if (
+          isUserAssignedIdentitySupportedForInApp(connector.properties.capabilities) &&
+          identitySelected &&
+          identitySelected !== constants.SYSTEM_ASSIGNED_MANAGED_IDENTITY
+        ) {
+          safeSetObjectPropertyValue(outputParameterValues, ['identity'], identitySelected);
+        }
+
         // If oauth, find the oauth parameter and assign the redirect url
         if (isOAuthConnection && selectedParameterSet) {
           const oAuthParameter = Object.entries(selectedParameterSet?.parameters).find(
@@ -169,20 +191,14 @@ export const CreateConnectionWrapper = () => {
           }
         }
 
-        const connectionParameterSetValues: ConnectionParameterSetValues = {
-          name: selectedParameterSet?.name ?? '',
-          values: Object.keys(outputParameterValues).reduce((acc: any, key) => {
-            // eslint-disable-next-line no-param-reassign
-            acc[key] = { value: outputParameterValues[key] };
-            return acc;
-          }, {}),
-        };
-
         const connectionInfo: ConnectionCreationInfo = {
           displayName,
-          connectionParametersSet: selectedParameterSet ? connectionParameterSetValues : undefined,
+          connectionParametersSet: selectedParameterSet
+            ? getConnectionParameterSetValues(selectedParameterSet.name, outputParameterValues)
+            : undefined,
           connectionParameters: outputParameterValues,
           alternativeParameterValues,
+          additionalParameterValues,
         };
 
         const parametersMetadata: ConnectionParametersMetadata = {
@@ -191,9 +207,10 @@ export const CreateConnectionWrapper = () => {
           connectionParameters: selectedParameterSet?.parameters ?? connector?.properties.connectionParameters,
         };
 
-        let connection, err;
+        let connection: Connection | undefined;
+        let err: string | undefined;
 
-        const newName = await getUniqueConnectionName(connector.id);
+        const newName = await getUniqueConnectionName(connector.id, existingReferences);
         if (isOAuthConnection) {
           await ConnectionService()
             .createAndAuthorizeOAuthConnection(newName, connector?.id ?? '', connectionInfo, parametersMetadata)
@@ -210,7 +227,9 @@ export const CreateConnectionWrapper = () => {
         }
 
         if (connection) {
-          for (const nodeId of nodeIds) applyNewConnection(nodeId, connection, identitySelected);
+          for (const nodeId of nodeIds) {
+            applyNewConnection(nodeId, connection, identitySelected);
+          }
           closeConnectionsFlow();
         } else if (err) {
           setErrorMessage(String(err));
@@ -236,6 +255,7 @@ export const CreateConnectionWrapper = () => {
       closeConnectionsFlow,
       nodeIds,
       applyNewConnection,
+      existingReferences,
     ]
   );
 
@@ -245,15 +265,17 @@ export const CreateConnectionWrapper = () => {
 
   const loadingText = intl.formatMessage({
     defaultMessage: 'Loading connection data...',
+    id: 'faUrud',
     description: 'Message to show under the loading icon when loading connection parameters',
   });
 
-  if (connector?.properties === undefined)
+  if (connector?.properties === undefined) {
     return (
       <div className="msla-loading-container">
         <Spinner size={'large'} label={loadingText} />
       </div>
     );
+  }
 
   return (
     <CreateConnection
@@ -263,7 +285,11 @@ export const CreateConnectionWrapper = () => {
       connectorDisplayName={connector.properties.displayName}
       connectorCapabilities={connector.properties.capabilities}
       connectionParameters={connector.properties.connectionParameters}
-      connectionParameterSets={getSupportedParameterSets(connector.properties.connectionParameterSets, operationInfo.type)}
+      connectionParameterSets={getSupportedParameterSets(
+        connector.properties.connectionParameterSets,
+        operationInfo.type,
+        connector.properties.capabilities
+      )}
       connectionAlternativeParameters={connector.properties?.connectionAlternativeParameters}
       identity={identity}
       createConnectionCallback={createConnectionCallback}
@@ -282,3 +308,23 @@ export const CreateConnectionWrapper = () => {
     />
   );
 };
+
+export function getConnectionParameterSetValues(
+  selectedParameterSetName: string,
+  outputParameterValues: Record<string, any>
+): ConnectionParameterSetValues {
+  return {
+    name: selectedParameterSetName,
+    values: Object.keys(outputParameterValues).reduce((acc: any, key) => {
+      // eslint-disable-next-line no-param-reassign
+      acc[key] = {
+        value:
+          outputParameterValues[key] ??
+          // Avoid 'undefined', which causes the 'value' property to be removed when serializing as JSON object,
+          // and breaks contracts validation.
+          null,
+      };
+      return acc;
+    }, {}),
+  };
+}

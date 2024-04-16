@@ -3,7 +3,7 @@ import { FontSizes, Link } from '@fluentui/react';
 import { Tooltip } from '@fluentui/react-components';
 import { ShieldCheckmarkRegular } from '@fluentui/react-icons';
 import { IconButton } from '@fluentui/react/lib/Button';
-import { LogEntryLevel, LoggerService } from '@microsoft/designer-client-services-logic-apps';
+import { LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
 import { useIntl } from 'react-intl';
 
 interface CopilotPanelHeaderProps {
@@ -14,22 +14,27 @@ export const CopilotPanelHeader = ({ closeCopilot }: CopilotPanelHeaderProps): J
   const intl = useIntl();
   const headerTitle = intl.formatMessage({
     defaultMessage: 'Workflow assistant',
+    id: '2Gh+Gd',
     description: 'Chatbot header title',
   });
   const subtitleText = intl.formatMessage({
     defaultMessage: 'Preview',
+    id: 'tu4TTM',
     description: 'Label in the chatbot header stating the chatbot feature is a preview',
   });
   const protectedPillText = intl.formatMessage({
     defaultMessage: 'Protected',
+    id: '+3rROX',
     description: 'Label in the chatbot header stating that the users information is protected in this chatbot',
   });
   const protectedMessage = intl.formatMessage({
     defaultMessage: 'Your personal and company data are protected in this chat',
+    id: 'Yrw/Qt',
     description: 'Letting user know that their data is protected in the chatbot',
   });
   const closeButtonTitle = intl.formatMessage({
     defaultMessage: 'Close',
+    id: 'ZihyUf',
     description: 'Label for the close button in the chatbot header',
   });
 

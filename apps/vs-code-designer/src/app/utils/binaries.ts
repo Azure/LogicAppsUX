@@ -3,18 +3,18 @@
  *  Licensed under the MIT License. See LICENSE.md in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import {
-  DependencyDefaultPath,
   DependencyVersion,
   Platform,
   autoRuntimeDependenciesValidationAndInstallationSetting,
   autoRuntimeDependenciesPathSettingKey,
   dependencyTimeoutSettingKey,
-  dotNetBinaryPathSettingKey,
   dotnetDependencyName,
-  funcCoreToolsBinaryPathSettingKey,
   funcPackageName,
-  nodeJsBinaryPathSettingKey,
   defaultLogicAppsFolder,
+  dotNetBinaryPathSettingKey,
+  DependencyDefaultPath,
+  nodeJsBinaryPathSettingKey,
+  funcCoreToolsBinaryPathSettingKey,
 } from '../../constants';
 import { ext } from '../../extensionVariables';
 import { localize } from '../../localize';
@@ -23,8 +23,8 @@ import { isNodeJsInstalled } from '../commands/nodeJs/validateNodeJsInstalled';
 import { executeCommand } from './funcCoreTools/cpUtils';
 import { getNpmCommand } from './nodeJs/nodeJsVersion';
 import { getGlobalSetting, getWorkspaceSetting, updateGlobalSetting } from './vsCodeConfig/settings';
-import { DialogResponses, type IActionContext } from '@microsoft/vscode-azext-utils';
-import type { IGitHubReleaseInfo } from '@microsoft/vscode-extension';
+import type { IActionContext } from '@microsoft/vscode-azext-utils';
+import type { IGitHubReleaseInfo } from '@microsoft/vscode-extension-logic-apps';
 import axios from 'axios';
 import * as fs from 'fs';
 import * as os from 'os';
@@ -36,60 +36,71 @@ import AdmZip = require('adm-zip');
 import request = require('request');
 
 /**
- * Download and Extracts Binaries zip.
- * @param {string} binariesUrl - Binaries release url.
+ * Download and Extracts dependency zip.
+ * @param {string} downloadUrl - download url.
  * @param {string} targetFolder - Module name to check.
- * @param {string} dependencyName - The Dedepency name.
+ * @param {string} dependencyName - The Dedependency name.
+ * @param {string} folderName - Optional Folder name. Will default to dependency name if empty.
  * @param {string} dotNetVersion - The .NET Major Version from CDN.
  */
 
-export async function downloadAndExtractBinaries(
-  binariesUrl: string,
+export async function downloadAndExtractDependency(
+  downloadUrl: string,
   targetFolder: string,
   dependencyName: string,
+  folderName?: string,
   dotNetVersion?: string
 ): Promise<void> {
-  const tempFolderPath = path.join(os.tmpdir(), defaultLogicAppsFolder, dependencyName);
-  targetFolder = path.join(targetFolder, dependencyName);
+  folderName = folderName || dependencyName;
+  const tempFolderPath = path.join(os.tmpdir(), defaultLogicAppsFolder, folderName);
+  targetFolder = path.join(targetFolder, folderName);
   fs.mkdirSync(targetFolder, { recursive: true });
 
   // Read and write permissions
   fs.chmodSync(targetFolder, 0o777);
 
-  const binariesFileExtension = getCompressionFileExtension(binariesUrl);
-  const binariesFilePath = path.join(tempFolderPath, `${dependencyName}${binariesFileExtension}`);
+  const dependencyFileExtension = getCompressionFileExtension(downloadUrl);
+  const dependencyFilePath = path.join(tempFolderPath, `${dependencyName}${dependencyFileExtension}`);
 
   try {
     await executeCommand(ext.outputChannel, undefined, 'echo', `Creating temporary folder... ${tempFolderPath}`);
     fs.mkdirSync(tempFolderPath, { recursive: true });
     fs.chmodSync(tempFolderPath, 0o777);
 
-    // Download the compressed binaries
+    // Download the compressed dependency
     await new Promise<void>((resolve, reject) => {
-      executeCommand(ext.outputChannel, undefined, 'echo', `Downloading binaries from: ${binariesUrl}`);
-      const downloadStream = request(binariesUrl).pipe(fs.createWriteStream(binariesFilePath));
+      executeCommand(ext.outputChannel, undefined, 'echo', `Downloading dependency from: ${downloadUrl}`);
+      const downloadStream = request(downloadUrl).pipe(fs.createWriteStream(dependencyFilePath));
       downloadStream.on('finish', async () => {
-        await executeCommand(ext.outputChannel, undefined, 'echo', `Successfullly downloaded ${dependencyName} binaries.`);
+        await executeCommand(ext.outputChannel, undefined, 'echo', `Successfullly downloaded ${dependencyName} dependency.`);
 
-        fs.chmodSync(binariesFilePath, 0o777);
+        fs.chmodSync(dependencyFilePath, 0o777);
 
         // Extract to targetFolder
-        if (dependencyName == dotnetDependencyName) {
+        if (dependencyName === dotnetDependencyName) {
           const version = dotNetVersion ?? semver.major(DependencyVersion.dotnet6);
-          process.platform == Platform.windows
+          process.platform === Platform.windows
             ? await executeCommand(
                 ext.outputChannel,
                 undefined,
                 'powershell -ExecutionPolicy Bypass -File',
-                binariesFilePath,
+                dependencyFilePath,
                 '-InstallDir',
                 targetFolder,
                 '-Channel',
                 `${version}.0`
               )
-            : await executeCommand(ext.outputChannel, undefined, binariesFilePath, '-InstallDir', targetFolder, '-Channel', `${version}.0`);
+            : await executeCommand(
+                ext.outputChannel,
+                undefined,
+                dependencyFilePath,
+                '-InstallDir',
+                targetFolder,
+                '-Channel',
+                `${version}.0`
+              );
         } else {
-          await extractBinaries(binariesFilePath, targetFolder, dependencyName);
+          await extractDependency(dependencyFilePath, targetFolder, dependencyName);
           vscode.window.showInformationMessage(localize('successInstall', `Successfully installed ${dependencyName}`));
         }
         resolve();
@@ -192,7 +203,7 @@ export async function getLatestNodeJsVersion(context: IActionContext, majorVersi
 }
 
 export function getNodeJsBinariesReleaseUrl(version: string, osPlatform: string, arch: string): string {
-  if (osPlatform != 'win') {
+  if (osPlatform !== 'win') {
     return `https://nodejs.org/dist/v${version}/node-v${version}-${osPlatform}-${arch}.tar.gz`;
   }
 
@@ -204,7 +215,7 @@ export function getFunctionCoreToolsBinariesReleaseUrl(version: string, osPlatfo
 }
 
 export function getDotNetBinariesReleaseUrl(): string {
-  return process.platform == Platform.windows ? 'https://dot.net/v1/dotnet-install.ps1' : 'https://dot.net/v1/dotnet-install.sh';
+  return process.platform === Platform.windows ? 'https://dot.net/v1/dotnet-install.ps1' : 'https://dot.net/v1/dotnet-install.sh';
 }
 
 export function getCpuArchitecture() {
@@ -240,11 +251,10 @@ async function readJsonFromUrl(url: string): Promise<any> {
     const response = await axios.get(url);
     if (response.status === 200) {
       return response.data;
-    } else {
-      throw new Error(`Request failed with status: ${response.status}`);
     }
+    throw new Error(`Request failed with status: ${response.status}`);
   } catch (error) {
-    vscode.window.showErrorMessage(`Error reading JSON from URL: ${error.message}`);
+    vscode.window.showErrorMessage(`Error reading JSON from URL ${url} : ${error.message}`);
     throw error;
   }
 }
@@ -273,14 +283,14 @@ function getCompressionFileExtension(binariesUrl: string): string {
   throw new Error(localize('UnsupportedCompressionFileExtension', `Unsupported compression file extension: ${binariesUrl}`));
 }
 
-async function extractBinaries(binariesFilePath: string, targetFolder: string, dependencyName: string): Promise<void> {
-  await executeCommand(ext.outputChannel, undefined, 'echo', `Extracting ${binariesFilePath}`);
+async function extractDependency(dependencyFilePath: string, targetFolder: string, dependencyName: string): Promise<void> {
+  await executeCommand(ext.outputChannel, undefined, 'echo', `Extracting ${dependencyFilePath}`);
   try {
-    if (binariesFilePath.endsWith('.zip')) {
-      const zip = new AdmZip(binariesFilePath);
+    if (dependencyFilePath.endsWith('.zip')) {
+      const zip = new AdmZip(dependencyFilePath);
       await zip.extractAllTo(targetFolder, /* overwrite */ true, /* Permissions */ true);
     } else {
-      await executeCommand(ext.outputChannel, undefined, 'tar', `-xzvf`, binariesFilePath, '-C', targetFolder);
+      await executeCommand(ext.outputChannel, undefined, 'tar', '-xzvf', dependencyFilePath, '-C', targetFolder);
     }
     cleanupContainerFolder(targetFolder);
     await executeCommand(ext.outputChannel, undefined, 'echo', `Extraction ${dependencyName} successfully completed.`);
@@ -323,7 +333,7 @@ function cleanupContainerFolder(targetFolder: string) {
 export function getDependencyTimeout(): number {
   const dependencyTimeoutValue: number | undefined = getWorkspaceSetting<number>(dependencyTimeoutSettingKey);
   const timeoutInSeconds = Number(dependencyTimeoutValue);
-  if (isNaN(timeoutInSeconds)) {
+  if (Number.isNaN(timeoutInSeconds)) {
     throw new Error(
       localize(
         'invalidSettingValue',
@@ -341,26 +351,17 @@ export function getDependencyTimeout(): number {
  * Propmts warning message to decide the auto validation/installation of dependency binaries.
  * @param {IActionContext} context - Activation context.
  */
-export async function promptInstallBinariesOption(context: IActionContext) {
-  const message = localize('useBinaries', 'Allow auto runtime dependencies validation and installation at extension launch (Preview)');
-  const confirm = { title: localize('yesRecommended', 'Yes (Recommended)') };
-  let result: vscode.MessageItem;
+export async function installBinaries(context: IActionContext) {
+  const useBinaries = useBinariesDependencies();
 
-  const binariesInstallation = getGlobalSetting(autoRuntimeDependenciesValidationAndInstallationSetting);
-
-  if (binariesInstallation === null) {
-    result = await context.ui.showWarningMessage(message, confirm, DialogResponses.dontWarnAgain);
-    if (result === confirm) {
-      await updateGlobalSetting(autoRuntimeDependenciesValidationAndInstallationSetting, true);
-      await onboardBinaries(context);
-      context.telemetry.properties.autoRuntimeDependenciesValidationAndInstallationSetting = 'true';
-    } else if (result === DialogResponses.dontWarnAgain) {
-      await updateGlobalSetting(autoRuntimeDependenciesValidationAndInstallationSetting, false);
-      await updateGlobalSetting(dotNetBinaryPathSettingKey, DependencyDefaultPath.dotnet);
-      await updateGlobalSetting(nodeJsBinaryPathSettingKey, DependencyDefaultPath.node);
-      await updateGlobalSetting(funcCoreToolsBinaryPathSettingKey, DependencyDefaultPath.funcCoreTools);
-      context.telemetry.properties.autoRuntimeDependenciesValidationAndInstallationSetting = 'false';
-    }
+  if (useBinaries) {
+    await onboardBinaries(context);
+    context.telemetry.properties.autoRuntimeDependenciesValidationAndInstallationSetting = 'true';
+  } else {
+    await updateGlobalSetting(dotNetBinaryPathSettingKey, DependencyDefaultPath.dotnet);
+    await updateGlobalSetting(nodeJsBinaryPathSettingKey, DependencyDefaultPath.node);
+    await updateGlobalSetting(funcCoreToolsBinaryPathSettingKey, DependencyDefaultPath.funcCoreTools);
+    context.telemetry.properties.autoRuntimeDependenciesValidationAndInstallationSetting = 'false';
   }
 }
 

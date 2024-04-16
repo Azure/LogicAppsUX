@@ -6,8 +6,7 @@ import { validateType } from '../../utils/validation';
 import { resetWorkflowState } from '../global';
 import type { WorkflowParameterUpdateEvent } from '@microsoft/designer-ui';
 import { UIConstants } from '@microsoft/designer-ui';
-import { getIntl } from '@microsoft/intl-logic-apps';
-import { equals, guid } from '@microsoft/utils-logic-apps';
+import { getIntl, equals, getRecordEntry, guid } from '@microsoft/logic-apps-shared';
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 
@@ -38,11 +37,12 @@ export const validateParameter = (
   const intl = getIntl();
 
   switch (keyToValidate?.toLowerCase()) {
-    case 'name':
+    case 'name': {
       const { name } = data;
       if (!name) {
         return intl.formatMessage({
           defaultMessage: 'Must provide the parameter name.',
+          id: 'Cj3/LJ',
           description: 'Error message when the workflow parameter name is empty.',
         });
       }
@@ -54,18 +54,23 @@ export const validateParameter = (
       return duplicateParameters.length > 0
         ? intl.formatMessage({
             defaultMessage: 'Parameter name already exists.',
+            id: '8+0teU',
             description: 'Error message when the workflow parameter name already exists.',
           })
         : undefined;
+    }
 
     case 'value':
-    case 'defaultvalue':
+    case 'defaultvalue': {
       const valueToValidate = equals(keyToValidate, 'value') ? data.value : data.defaultValue;
       const { type } = data;
       if (valueToValidate === '' || valueToValidate === undefined) {
-        if (!required) return undefined;
+        if (!required) {
+          return undefined;
+        }
         return intl.formatMessage({
           defaultMessage: 'Must provide value for parameter.',
+          id: 'VL9wOu',
           description: 'Error message when the workflow parameter value is empty.',
         });
       }
@@ -73,11 +78,12 @@ export const validateParameter = (
       const swaggerType = convertWorkflowParameterTypeToSwaggerType(type);
       let error = validateType(swaggerType, /* parameterFormat */ '', valueToValidate);
 
-      if (error) return error;
+      if (error) {
+        return error;
+      }
 
       switch (swaggerType) {
-        case Constants.SWAGGER.TYPE.ARRAY:
-          // eslint-disable-next-line no-case-declarations
+        case Constants.SWAGGER.TYPE.ARRAY: {
           let isInvalid = false;
           try {
             isInvalid = !Array.isArray(JSON.parse(valueToValidate));
@@ -86,26 +92,29 @@ export const validateParameter = (
           }
 
           error = isInvalid
-            ? intl.formatMessage({ defaultMessage: 'Enter a valid array.', description: 'Error validation message' })
+            ? intl.formatMessage({ defaultMessage: 'Enter a valid Array.', id: 'JgugQX', description: 'Error validation message' })
             : undefined;
           break;
+        }
 
         case Constants.SWAGGER.TYPE.OBJECT:
-        case Constants.SWAGGER.TYPE.BOOLEAN:
+        case Constants.SWAGGER.TYPE.BOOLEAN: {
           try {
             JSON.parse(valueToValidate);
           } catch {
             error =
               swaggerType === Constants.SWAGGER.TYPE.BOOLEAN
-                ? intl.formatMessage({ defaultMessage: 'Enter a valid boolean.', description: 'Error validation message' })
-                : intl.formatMessage({ defaultMessage: 'Enter a valid json.', description: 'Error validation message' });
+                ? intl.formatMessage({ defaultMessage: 'Enter a valid Boolean.', id: 'b7BQdu', description: 'Error validation message' })
+                : intl.formatMessage({ defaultMessage: 'Enter a valid JSON.', id: 'dEe6Ob', description: 'Error validation message' });
           }
           break;
+        }
 
         default:
           break;
       }
       return error;
+    }
 
     default:
       return undefined;
@@ -151,19 +160,25 @@ export const workflowParametersSlice = createSlice({
       };
 
       state.definitions[id] = {
-        ...state.definitions[id],
+        ...(getRecordEntry(state.definitions, id) ?? ({} as any)),
         type,
         value,
         name: name ?? '',
         ...(useLegacy ? { defaultValue } : {}),
       };
       const newErrorObj = {
-        ...(state.validationErrors?.[id] ?? {}),
+        ...(getRecordEntry(state.validationErrors, id) ?? {}),
         ...validationErrors,
       };
-      if (!newErrorObj.name) delete newErrorObj.name;
-      if (!newErrorObj.value) delete newErrorObj.value;
-      if (!newErrorObj.defaultValue) delete newErrorObj.defaultValue;
+      if (!newErrorObj.name) {
+        delete newErrorObj.name;
+      }
+      if (!newErrorObj.value) {
+        delete newErrorObj.value;
+      }
+      if (!newErrorObj.defaultValue) {
+        delete newErrorObj.defaultValue;
+      }
       if (Object.keys(newErrorObj).length === 0) {
         delete state.validationErrors[id];
       } else {

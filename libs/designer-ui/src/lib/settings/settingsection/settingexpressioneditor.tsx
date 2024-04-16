@@ -1,10 +1,11 @@
-import type { SettingProps } from './settingtoggle';
+import type { SettingProps } from './';
 import { ActionButton, IconButton } from '@fluentui/react/lib/Button';
 import type { IIconProps } from '@fluentui/react/lib/Icon';
 import { TextField } from '@fluentui/react/lib/TextField';
 import type { ITextFieldStyles } from '@fluentui/react/lib/TextField';
 import { TooltipHost } from '@fluentui/react/lib/Tooltip';
-import React, { useState } from 'react';
+import type React from 'react';
+import { useState } from 'react';
 import { useIntl } from 'react-intl';
 
 export type ExpressionChangeHandler = (updatedExpressions: string[]) => void;
@@ -13,16 +14,23 @@ export interface MultiAddExpressionEditorProps extends SettingProps {
   onExpressionsChange: ExpressionChangeHandler;
 }
 
+// TODO: MultiAddExpressionEditor seems to be overfactored, and can be simplified
 export const MultiAddExpressionEditor = ({
   initialExpressions = [],
   readOnly = false,
   customLabel,
+  ariaLabel,
   onExpressionsChange,
 }: MultiAddExpressionEditorProps): JSX.Element | null => {
   return (
     <>
       {customLabel ? customLabel : null}
-      <ExpressionsEditor initialExpressions={initialExpressions ?? []} readOnly={readOnly} onChange={onExpressionsChange} />
+      <ExpressionsEditor
+        initialExpressions={initialExpressions ?? []}
+        readOnly={readOnly}
+        onChange={onExpressionsChange}
+        ariaLabel={ariaLabel}
+      />
     </>
   );
 };
@@ -53,10 +61,12 @@ export const ExpressionsEditor = ({
   const intl = useIntl();
   const addCondition = intl.formatMessage({
     defaultMessage: 'Add',
+    id: 'LpPNAD',
     description: 'label to add a condition',
   });
   const expressionEditorLabel = intl.formatMessage({
     defaultMessage: 'Expression Editor',
+    id: 'zEv8dd',
     description: 'label for expression editor',
   });
 
@@ -116,6 +126,13 @@ export interface ExpressionsProps extends SettingProps {
 }
 
 export const Expressions = ({ expressions, readOnly = false, onChange, onDelete, ariaLabel }: ExpressionsProps): JSX.Element => {
+  const intl = useIntl();
+  const indexItem = intl.formatMessage({
+    defaultMessage: 'item',
+    id: 'NFgfP4',
+    description: 'Label for users to know which item they are on in the dictionary',
+  });
+
   return (
     <>
       {expressions.map((expression, index) => {
@@ -127,7 +144,7 @@ export const Expressions = ({ expressions, readOnly = false, onChange, onDelete,
             readOnly={readOnly}
             onChange={onChange}
             onDelete={onDelete}
-            ariaLabel={`${ariaLabel} ${index}`}
+            ariaLabel={`${ariaLabel} ${indexItem} ${index + 1}`}
           />
         );
       })}
@@ -149,6 +166,7 @@ export const Expression = ({ expression, index, readOnly = false, onChange, onDe
   const deleteValue = intl.formatMessage(
     {
       defaultMessage: 'Delete {expressionValue}',
+      id: 'UMPuUJ',
       description: 'Label to delete a value',
     },
     {

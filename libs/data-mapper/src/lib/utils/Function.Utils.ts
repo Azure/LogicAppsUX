@@ -1,6 +1,7 @@
 import {
   collectionBranding,
   conversionBranding,
+  customBranding,
   dateTimeBranding,
   logicalBranding,
   mathBranding,
@@ -16,7 +17,7 @@ import { getInputValues } from './DataMap.Utils';
 import { LogCategory, LogService } from './Logging.Utils';
 import { addTargetReactFlowPrefix } from './ReactFlow.Util';
 import { isSchemaNodeExtended } from './Schema.Utils';
-import { isAGuid, InputFormat, type SchemaNodeDictionary, type SchemaNodeExtended } from '@microsoft/utils-logic-apps';
+import { isAGuid, InputFormat, type SchemaNodeDictionary, type SchemaNodeExtended } from '@microsoft/logic-apps-shared';
 
 export const getFunctionBrandingForCategory = (functionCategory: FunctionCategory) => {
   switch (functionCategory) {
@@ -24,7 +25,7 @@ export const getFunctionBrandingForCategory = (functionCategory: FunctionCategor
       return collectionBranding;
     }
     case FunctionCategory.Custom: {
-      return collectionBranding;
+      return customBranding;
     }
     case FunctionCategory.DateTime: {
       return dateTimeBranding;
@@ -88,24 +89,23 @@ export const getIndexValueForCurrentConnection = (currentConnection: Connection,
 
   if (isCustomValue(firstInput)) {
     return firstInput;
-  } else if (isConnectionUnit(firstInput)) {
+  }
+  if (isConnectionUnit(firstInput)) {
     const node = firstInput.node;
     if (isSchemaNodeExtended(node)) {
       return calculateIndexValue(node);
-    } else {
-      // Function, try moving back the chain to find the source
-      return getIndexValueForCurrentConnection(connections[firstInput.reactFlowKey], connections);
     }
-  } else {
-    LogService.error(LogCategory.FunctionUtils, 'getIndexValueForCurrentConnection', {
-      message: `Didn't find inputNode to make index value`,
-      data: {
-        connection: currentConnection,
-      },
-    });
-
-    return '';
+    // Function, try moving back the chain to find the source
+    return getIndexValueForCurrentConnection(connections[firstInput.reactFlowKey], connections);
   }
+  LogService.error(LogCategory.FunctionUtils, 'getIndexValueForCurrentConnection', {
+    message: `Didn't find inputNode to make index value`,
+    data: {
+      connection: currentConnection,
+    },
+  });
+
+  return '';
 };
 
 export const calculateIndexValue = (currentNode: SchemaNodeExtended): string => {
@@ -202,9 +202,8 @@ export const functionDropDownItemText = (key: string, node: FunctionData, connec
 
           if (functionInputHasInputs(input.reactFlowKey, connections)) {
             return `${input.node.functionName}(...)`;
-          } else {
-            return `${input.node.functionName}()`;
           }
+          return `${input.node.functionName}()`;
         }
 
         // Source schema node
@@ -236,8 +235,8 @@ export const getInputName = (inputConnection: InputConnection | undefined, conne
     return isCustomValue(inputConnection)
       ? inputConnection
       : isSchemaNodeExtended(inputConnection.node)
-      ? inputConnection.node.name
-      : functionDropDownItemText(inputConnection.reactFlowKey, inputConnection.node, connectionDictionary);
+        ? inputConnection.node.name
+        : functionDropDownItemText(inputConnection.reactFlowKey, inputConnection.node, connectionDictionary);
   }
 
   return undefined;

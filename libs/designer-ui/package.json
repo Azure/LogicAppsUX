@@ -1,11 +1,82 @@
 {
   "name": "@microsoft/designer-ui",
-  "version": "2.99.0",
-  "scripts": {
-    "yalcpush": "yalc push ../../dist/libs/designer-ui"
+  "version": "4.4.1",
+  "dependencies": {
+    "@fluentui/react": "8.110.2",
+    "@fluentui/react-components": "9.42.0",
+    "@fluentui/react-hooks": "8.6.20",
+    "@fluentui/react-icons": "2.0.224",
+    "@fluentui/theme": "2.6.25",
+    "@fluentui/utilities": "8.15.0",
+    "@lexical/html": "0.12.4",
+    "@lexical/link": "0.12.4",
+    "@lexical/list": "0.12.4",
+    "@lexical/react": "0.12.4",
+    "@lexical/rich-text": "0.12.4",
+    "@lexical/selection": "0.12.4",
+    "@lexical/utils": "0.12.4",
+    "@microsoft/logic-apps-shared": "workspace:*",
+    "@monaco-editor/react": "4.6.0",
+    "@react-hookz/web": "22.0.0",
+    "dompurify": "3.0.11",
+    "fuse.js": "6.6.2",
+    "lexical": "0.12.4",
+    "monaco-editor": "0.47.0",
+    "prism-react-renderer": "2.3.1",
+    "react-dnd": "16.0.1",
+    "react-infinite-scroll-component": "6.1.0",
+    "react-intl": "6.3.0",
+    "react-markdown": "8.0.5",
+    "react-query": "3.39.3",
+    "react-use": "17.4.0",
+    "reactflow": "11.11.1"
   },
+  "devDependencies": {
+    "@types/dompurify": "3.0.5"
+  },
+  "engines": {
+    "node": ">=12"
+  },
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "import": "./src/index.ts",
+      "default": "./src/index.ts"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "build/lib/**/*",
+    "src"
+  ],
+  "license": "MIT",
+  "main": "src/index.ts",
+  "module": "src/index.ts",
   "peerDependencies": {
     "react": "^16.4.0 || ^17.0.0 || ^18.0.0",
     "react-dom": "^16.4.0 || ^17.0.0 || ^18.0.0"
-  }
+  },
+  "publishConfig": {
+    "main": "build/lib/index.cjs",
+    "module": "build/lib/index.js",
+    "types": "build/lib/index.d.ts",
+    "exports": {
+      ".": {
+        "types:": "./build/lib/index.d.ts",
+        "import": "./build/lib/index.js",
+        "default": "./build/lib/index.cjs"
+      },
+      "./package.json": "./package.json",
+      "./build/lib/index.css": "./build/lib/index.css"
+    }
+  },
+  "scripts": {
+    "build:lib": "tsup && tsc --emitDeclarationOnly",
+    "publish:local": "pnpm unpublish --force && pnpm publish --no-git-checks --registry http://localhost:4873",
+    "test:lib": "vitest --retry=3",
+    "unpublish:local": "pnpm unpublish --force"
+  },
+  "sideEffects": false,
+  "type": "module",
+  "types": "src/index.ts"
 }

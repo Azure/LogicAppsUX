@@ -2,8 +2,8 @@ import type { DictionaryEditorItemProps } from '..';
 import constants from '../../constants';
 import type { ValueSegment } from '../../editor';
 import { convertStringToSegments } from '../../editor/base/utils/editorToSegment';
-import { getChildrenNodes, removeQuotes } from '../../editor/base/utils/helper';
-import { guid } from '@microsoft/utils-logic-apps';
+import { getChildrenNodesWithTokenInterpolation, removeQuotes } from '../../editor/base/utils/helper';
+import { guid } from '@microsoft/logic-apps-shared';
 import type { LexicalEditor } from 'lexical';
 import { $getRoot } from 'lexical';
 
@@ -16,8 +16,8 @@ export const serializeDictionary = (
 ) => {
   editor.getEditorState().read(() => {
     const nodeMap = new Map<string, ValueSegment>();
-    const editorString = getChildrenNodes($getRoot(), nodeMap);
-    let jsonEditor;
+    const editorString = getChildrenNodesWithTokenInterpolation($getRoot(), nodeMap);
+    let jsonEditor: any;
     try {
       jsonEditor = JSON.parse(editorString);
       const returnItems: DictionaryEditorItemProps[] = [];
@@ -27,8 +27,8 @@ export const serializeDictionary = (
         const newValue = valueType === constants.SWAGGER.TYPE.STRING ? (value as string) : removeQuotes(JSON.stringify(value));
         returnItems.push({
           id: guid(),
-          key: convertStringToSegments(newKey, true, nodeMap),
-          value: convertStringToSegments(newValue, true, nodeMap),
+          key: convertStringToSegments(newKey, nodeMap, { tokensEnabled: true }),
+          value: convertStringToSegments(newValue, nodeMap, { tokensEnabled: true }),
         });
       }
       setItems(returnItems);

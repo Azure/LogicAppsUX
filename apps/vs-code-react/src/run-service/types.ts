@@ -1,21 +1,20 @@
 import type { InitializePayload, Status } from '../state/WorkflowSlice';
-import type { ApiHubServiceDetails } from '@microsoft/designer-client-services-logic-apps';
-import type { SchemaType } from '@microsoft/utils-logic-apps';
-import type { MapDefinitionData, ExtensionCommand, ConnectionsData, IDesignerPanelMetadata } from '@microsoft/vscode-extension';
+import type { ApiHubServiceDetails, SchemaType } from '@microsoft/logic-apps-shared';
+import type { MapDefinitionData, ExtensionCommand, ConnectionsData, IDesignerPanelMetadata } from '@microsoft/vscode-extension-logic-apps';
 
 export interface IApiService {
   getWorkflows(subscriptionId: string, iseId?: string, location?: string): Promise<WorkflowsList[]>;
-  getSubscriptions(): Promise<any>;
-  getIse(selectedSubscription: string): Promise<any>;
+  getSubscriptions(): Promise<ISubscription[]>;
+  getIse(selectedSubscription: string): Promise<IIse[]>;
   getRegions(subscriptionId: string): Promise<IRegion[]>;
   validateWorkflows(
-    selectedWorkflows: Array<WorkflowsList>,
+    selectedWorkflows: WorkflowsList[],
     selectedSubscription: string,
     selectedLocation: string,
     selectedAdvanceOptions: AdvancedOptionsTypes[]
   ): Promise<any>;
   exportWorkflows(
-    selectedWorkflows: Array<WorkflowsList>,
+    selectedWorkflows: WorkflowsList[],
     selectedSubscription: string,
     selectedLocation: string,
     selectedAdvanceOptions: AdvancedOptionsTypes[]
@@ -59,7 +58,7 @@ export interface SelectedWorkflowsList extends WorkflowsList {
 export interface OutletContext {
   accessToken: string;
   baseUrl: string;
-  selectedWorkflows: Array<WorkflowsList>;
+  selectedWorkflows: WorkflowsList[];
 }
 
 export const QueryKeys = {
@@ -88,7 +87,7 @@ export interface ManagedConnections {
 }
 
 export type ExportData = {
-  selectedWorkflows: Array<WorkflowsList>;
+  selectedWorkflows: WorkflowsList[];
   selectedSubscription: string;
   selectedIse?: string;
   location: string;
@@ -96,7 +95,7 @@ export type ExportData = {
   targetDirectory: ITargetDirectory;
   packageUrl: string;
   managedConnections: ManagedConnections;
-  selectedAdvanceOptions: Array<AdvancedOptionsTypes>;
+  selectedAdvanceOptions: AdvancedOptionsTypes[];
 };
 
 export const ResourceType = {
@@ -170,7 +169,7 @@ export interface IValidationData {
 }
 
 export interface IGroupedGroup {
-  children: Array<IGroupedGroup>;
+  children: IGroupedGroup[];
   isCollapsed: boolean;
   key: string;
   level: number;
@@ -263,10 +262,9 @@ export interface UpdatePanelMetadataMessage {
 // Rest of Message Interfaces
 export interface InjectValuesMessage {
   command: typeof ExtensionCommand.initialize_frame;
-  data:
-    | InitializePayload & {
-        project: string;
-      };
+  data: InitializePayload & {
+    project: string;
+  };
 }
 
 export interface UpdateAccessTokenMessage {
@@ -311,7 +309,7 @@ export interface IExportDetailsList {
 export interface ISummaryData {
   properties: {
     packageLink: Record<string, string>;
-    details: Array<IExportDetails>;
+    details: IExportDetails[];
   };
 }
 
@@ -346,5 +344,7 @@ export const AdvancedOptionsTypes = {
   off: 'Off',
   cloneConnections: 'cloneConnections',
   generateInfrastructureTemplates: 'generateInfrastructureTemplates',
+  integrationAccountSource: 'integrationAccountSource',
+  exportCustomApiActionsToAPIManagementActions: 'exportCustomApiActionsToAPIManagementActions',
 };
 export type AdvancedOptionsTypes = (typeof AdvancedOptionsTypes)[keyof typeof AdvancedOptionsTypes];

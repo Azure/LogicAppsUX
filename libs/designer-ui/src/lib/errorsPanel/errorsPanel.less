@@ -5,24 +5,42 @@
 }
 
 .msla-error-category-container {
-  .msla-error-dot {
+  .msla-dot() {
     width: 8px;
     height: 8px;
     border-radius: 50%;
-    background-color: @ms-color-errorLight;
     margin-right: 8px;
     display: inline-block;
   }
 
-  .msla-error-number-dot {
+  .msla-error-dot {
+    .msla-dot();
+    background-color: @ms-color-errorLight;
+  }
+
+  .msla-warning-dot {
+    .msla-dot();
+    background-color: @ms-color-warningLight;
+  }
+
+  .msla-number-dot() {
     padding: 0px 8px;
     border-radius: 12px;
     min-width: 24px;
     min-height: 24px;
     font: 14px/24px @semibold-font-family;
     color: white;
-    background-color: @ms-color-errorLight;
     text-align: center;
+  }
+
+  .msla-error-number-dot {
+    .msla-number-dot();
+    background-color: @ms-color-errorLight;
+  }
+
+  .msla-warning-number-dot {
+    .msla-number-dot();
+    background-color: @ms-color-warningLight;
   }
 
   .msla-error-category-header {

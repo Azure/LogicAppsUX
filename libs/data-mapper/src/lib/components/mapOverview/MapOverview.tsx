@@ -9,7 +9,7 @@ import { checkNodeStatuses } from '../sidePane/tabs/targetSchemaTab/TargetSchema
 import type { NodeToggledStateDictionary } from '../tree/TargetSchemaTreeItem';
 import { Stack } from '@fluentui/react';
 import { makeStyles, shorthands, tokens } from '@fluentui/react-components';
-import { SchemaType } from '@microsoft/utils-logic-apps';
+import { SchemaType } from '@microsoft/logic-apps-shared';
 import { useEffect, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 // eslint-disable-next-line import/no-named-as-default
@@ -99,9 +99,9 @@ export const MapOverview = () => {
         fitView
       >
         <Stack horizontal horizontalAlign="space-around" verticalAlign="center" style={{ height: '100%' }}>
-          <SelectSchemaCard schemaType={SchemaType.Source} style={{ visibility: !sourceSchema ? 'visible' : 'hidden' }} />
+          <SelectSchemaCard schemaType={SchemaType.Source} style={{ visibility: sourceSchema ? 'hidden' : 'visible' }} />
 
-          <SelectSchemaCard schemaType={SchemaType.Target} style={{ visibility: !targetSchema ? 'visible' : 'hidden' }} />
+          <SelectSchemaCard schemaType={SchemaType.Target} style={{ visibility: targetSchema ? 'hidden' : 'visible' }} />
         </Stack>
 
         {sourceSchema && <SchemaNameBadge schemaName={sourceSchema.name} schemaTreeRootXPos={srcSchemaTreeRootXPos} />}

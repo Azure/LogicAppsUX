@@ -4,7 +4,7 @@ import type { ValueSegment } from '../../editor';
 import type { CastHandler } from '../../editor/base';
 import { convertStringToSegments } from '../../editor/base/utils/editorToSegment';
 import { convertSegmentsToString } from '../../editor/base/utils/parsesegments';
-import { guid } from '@microsoft/utils-logic-apps';
+import { guid } from '@microsoft/logic-apps-shared';
 
 export interface ItemSchemaItemProps {
   key: string;
@@ -115,14 +115,13 @@ export const convertComplexItemsToArray = (
           }
         });
         return arrayVal;
-      } else {
-        const segments = complexItem.value;
-
-        // we need to convert to string to extract tokens to repopulate later
-        const stringValue = convertSegmentsToString(segments, nodeMap);
-        const castedValue = castParameter?.(segments, itemSchema.type, itemSchema.format, suppressCasting);
-        return suppressCasting ? stringValue : castedValue;
       }
+      const segments = complexItem.value;
+
+      // we need to convert to string to extract tokens to repopulate later
+      const stringValue = convertSegmentsToString(segments, nodeMap);
+      const castedValue = castParameter?.(segments, itemSchema.type, itemSchema.format, suppressCasting);
+      return suppressCasting ? stringValue : castedValue;
     }
   }
   return returnItem;
@@ -158,9 +157,9 @@ export const validationAndSerializeSimpleArray = (
       for (const [, value] of Object.entries(jsonEditor)) {
         returnItems.push({
           value: convertStringToSegments(
-            valueType === constants.SWAGGER.TYPE.STRING ? (value as string) : JSON.stringify(value, undefined, 4),
-            /*tokensEnabled*/ true,
-            nodeMap
+            valueType === constants.SWAGGER.TYPE.STRING ? (value as string) : JSON.stringify(value, null, 4),
+            nodeMap,
+            { tokensEnabled: true }
           ),
           key: guid(),
         });
@@ -232,14 +231,16 @@ const convertObjectToComplexArrayItemArray = (
         key: itemSchema.key,
         title: handleTitle(itemSchema.key, itemSchema.title),
         description: itemSchema.description ?? '',
-        value: convertStringToSegments(obj, /*tokensEnabled*/ true, nodeMap),
+        value: convertStringToSegments(obj, nodeMap, { tokensEnabled: true }),
       },
     ];
   }
 
   Object.keys(obj).forEach((key: string) => {
     const value = obj[key];
-    if (!itemSchema.properties) return;
+    if (!itemSchema.properties) {
+      return;
+    }
     const itemSchemaProperty = itemSchema.properties[key];
 
     if (Array.isArray(value)) {
@@ -267,7 +268,7 @@ const convertObjectToComplexArrayItemArray = (
         key: itemSchemaProperty.key,
         title: handleTitle(itemSchema.key, itemSchemaProperty.title),
         description: itemSchemaProperty.description ?? '',
-        value: convertStringToSegments(value, true, nodeMap),
+        value: convertStringToSegments(value, nodeMap, { tokensEnabled: true }),
       });
     }
   });

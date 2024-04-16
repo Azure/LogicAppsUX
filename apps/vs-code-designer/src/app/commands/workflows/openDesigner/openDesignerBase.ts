@@ -5,9 +5,10 @@
 import { tryGetWebviewPanel } from '../../../utils/codeless/common';
 import { getWebViewHTML } from '../../../utils/codeless/getWebViewHTML';
 import type { IAzureConnectorsContext } from '../azureConnectorWizard';
-import { ResolutionService } from '@microsoft/parsers-logic-apps';
+import { ResolutionService, getRecordEntry, isEmptyString } from '@microsoft/logic-apps-shared';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
-import type { Artifacts, AzureConnectorDetails, ConnectionsData, FileDetails, Parameter } from '@microsoft/vscode-extension';
+import type { Artifacts, AzureConnectorDetails, ConnectionsData, FileDetails, Parameter } from '@microsoft/vscode-extension-logic-apps';
+import { azurePublicBaseUrl, workflowManagementBaseURIKey } from '../../../../constants';
 import type { WebviewPanel, WebviewOptions, WebviewPanelOptions } from 'vscode';
 
 export interface IDesingerOptions {
@@ -94,16 +95,11 @@ export abstract class OpenDesignerBase {
     }
 
     const parametersResolutionService = new ResolutionService(parameters, localSettings);
+    const parsedConnections = isEmptyString(connectionsData) ? {} : JSON.parse(connectionsData);
+    const resolvedConnections: ConnectionsData = parametersResolutionService.resolve(parsedConnections);
 
-    const resolvedConnections = parametersResolutionService.resolve(connectionsData);
-    let parsedConnections: ConnectionsData = {};
-    try {
-      parsedConnections = JSON.parse(resolvedConnections);
-    } catch (e) {
-      console.log(e);
-    }
-    this.connectionData = parsedConnections;
-    this.apiHubServiceDetails = this.getApiHubServiceDetails(azureDetails);
+    this.connectionData = resolvedConnections;
+    this.apiHubServiceDetails = this.getApiHubServiceDetails(azureDetails, localSettings);
     this.mapArtifacts = mapArtifacts;
     this.schemaArtifacts = artifacts.schemas;
 
@@ -119,12 +115,12 @@ export abstract class OpenDesignerBase {
       const canHavekeyWord = i + 12 <= stringLength;
 
       if (interpolationString[i] === '@' && canHavekeyWord && this.haveKeyWord(interpolationString.substring(i, i + 12))) {
-        resolvedString += interpolationString[i] + '{';
+        resolvedString += `${interpolationString[i]}{`;
         const closeTagIndex = interpolationString.indexOf(')', i);
-        interpolationString =
-          interpolationString.substring(0, closeTagIndex + 1) +
-          '}' +
-          interpolationString.substring(closeTagIndex + 1, interpolationString.length);
+        interpolationString = `${interpolationString.substring(0, closeTagIndex + 1)}}${interpolationString.substring(
+          closeTagIndex + 1,
+          interpolationString.length
+        )}`;
         stringLength = interpolationString.length;
       } else {
         resolvedString += interpolationString[i];
@@ -141,7 +137,7 @@ export abstract class OpenDesignerBase {
     if (!connectionsData) {
       return connectionsData;
     }
-    const parseConnectionsData = JSON.parse(connectionsData);
+    const parseConnectionsData: ConnectionsData = JSON.parse(connectionsData);
     const managedApiConnections = Object.keys(parseConnectionsData?.managedApiConnections ?? {});
 
     managedApiConnections?.forEach((apiConnection: any) => {
@@ -157,13 +153,14 @@ export abstract class OpenDesignerBase {
     return JSON.stringify(parseConnectionsData);
   }
 
-  protected getApiHubServiceDetails(azureDetails: AzureConnectorDetails) {
+  protected getApiHubServiceDetails(azureDetails: AzureConnectorDetails, localSettings: Record<string, any>) {
     const isApiHubEnabled = azureDetails.enabled;
+    const workflowManagementBaseUrl = getRecordEntry(localSettings, workflowManagementBaseURIKey) ?? azurePublicBaseUrl;
 
     return isApiHubEnabled
       ? {
           apiVersion: '2018-07-01-preview',
-          baseUrl: 'https://management.azure.com',
+          baseUrl: workflowManagementBaseUrl,
           subscriptionId: azureDetails.subscriptionId,
           location: azureDetails.location,
           resourceGroup: azureDetails.resourceGroupName,

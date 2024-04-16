@@ -12,18 +12,19 @@ import {
   BaseApiManagementService,
   BaseFunctionService,
   BaseAppServiceService,
-} from '@microsoft/designer-client-services-logic-apps';
+  HTTP_METHODS,
+  clone,
+} from '@microsoft/logic-apps-shared';
 import type {
   ApiHubServiceDetails,
   ConnectionCreationInfo,
   ContentType,
   IHostService,
   IWorkflowService,
-} from '@microsoft/designer-client-services-logic-apps';
-import type { ManagedIdentity } from '@microsoft/utils-logic-apps';
-import { HTTP_METHODS, clone } from '@microsoft/utils-logic-apps';
-import type { ConnectionAndAppSetting, ConnectionsData, IDesignerPanelMetadata } from '@microsoft/vscode-extension';
-import { ExtensionCommand, HttpClient } from '@microsoft/vscode-extension';
+  ManagedIdentity,
+} from '@microsoft/logic-apps-shared';
+import type { ConnectionAndAppSetting, ConnectionsData, IDesignerPanelMetadata } from '@microsoft/vscode-extension-logic-apps';
+import { ExtensionCommand, HttpClient } from '@microsoft/vscode-extension-logic-apps';
 import type { QueryClient } from 'react-query';
 import type { WebviewApi } from 'vscode-webview';
 
@@ -52,12 +53,12 @@ export const getDesignerServices = (
   apimService: BaseApiManagementService;
   functionService: BaseFunctionService;
 } => {
-  let authToken = '',
-    panelId = '',
-    workflowDetails: Record<string, any> = {},
-    appSettings = {},
-    isStateful = false,
-    connectionsData = { ...connectionData } ?? {};
+  let authToken = '';
+  let panelId = '';
+  let workflowDetails: Record<string, any> = {};
+  let appSettings = {};
+  let isStateful = false;
+  let connectionsData = { ...connectionData };
 
   const { subscriptionId = 'subscriptionId', resourceGroup, location } = apiHubDetails;
 
@@ -246,12 +247,11 @@ export const getDesignerServices = (
           method: HTTP_METHODS.POST,
           value: 'Url not available during authoring in local project. Check Overview page.',
         });
-      } else {
-        return Promise.resolve({
-          method: HTTP_METHODS.POST,
-          value: 'Url not available during authoring in local project. Check Overview page.',
-        });
       }
+      return Promise.resolve({
+        method: HTTP_METHODS.POST,
+        value: 'Url not available during authoring in local project. Check Overview page.',
+      });
     },
     getAppIdentity: () => {
       return {
@@ -309,9 +309,8 @@ const addConnectionInJson = (connectionAndSetting: ConnectionAndAppSetting, conn
 
     if (pathToSetConnectionsData && pathToSetConnectionsData[path][connectionKey]) {
       break;
-    } else {
-      pathToSetConnectionsData[path][connectionKey] = connectionData;
     }
+    pathToSetConnectionsData[path][connectionKey] = connectionData;
   }
 
   return pathToSetConnectionsData as ConnectionsData;

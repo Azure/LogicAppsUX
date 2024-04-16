@@ -1,5 +1,4 @@
 import type { HeaderClickHandler, SettingSectionName } from '.';
-import constants from '../../common/constants';
 import { useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
 import { updateParameterConditionalVisibility } from '../../core/state/operation/operationMetadataSlice';
 import { useSelectedNodeId } from '../../core/state/panel/panelSelectors';
@@ -9,12 +8,18 @@ import { CustomizableMessageBar } from './validation/errorbar';
 import type { ValidationError } from './validation/validation';
 import { ValidationErrorType } from './validation/validation';
 import type { IDropdownOption } from '@fluentui/react';
-import { Separator, useTheme, Icon } from '@fluentui/react';
 import { Button, Divider, Tooltip } from '@fluentui/react-components';
-import { bundleIcon, Dismiss24Filled, Dismiss24Regular } from '@fluentui/react-icons';
+import {
+  bundleIcon,
+  ChevronDown24Filled,
+  ChevronDown24Regular,
+  ChevronRight24Filled,
+  ChevronRight24Regular,
+  Dismiss24Filled,
+  Dismiss24Regular,
+} from '@fluentui/react-icons';
 import { MessageBarType } from '@fluentui/react/lib/MessageBar';
 import {
-  isHighContrastBlack,
   MultiSelectSetting,
   MultiAddExpressionEditor,
   ExpressionsEditor,
@@ -50,9 +55,12 @@ import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
 
 const ClearIcon = bundleIcon(Dismiss24Filled, Dismiss24Regular);
+const ChevronDownIcon = bundleIcon(ChevronDown24Filled, ChevronDown24Regular);
+const ChevronRightIcon = bundleIcon(ChevronRight24Filled, ChevronRight24Regular);
 
 type SettingBase = {
   visible?: boolean;
+  nodeTitle?: string;
 };
 
 export type Settings = SettingBase &
@@ -139,37 +147,41 @@ export const SettingsSection: FC<SettingsSectionProps> = ({
   validationErrors,
   onDismiss,
 }) => {
-  const theme = useTheme();
-  const isInverted = isHighContrastBlack() || theme.isInverted;
-
-  const separatorStyles = {
-    root: { color: isInverted ? constants.Settings.SETTING_SEPARATOR_COLOR_DARK : constants.Settings.SETTING_SEPARATOR_COLOR_LIGHT },
-  };
   const intl = useIntl();
+  const expandedLabel = intl.formatMessage({
+    defaultMessage: 'Expanded',
+    id: 'r4zp7m',
+    description: 'A label to represent setting section being expanded',
+  });
+  const collapsedLabel = intl.formatMessage({
+    defaultMessage: 'Collapsed',
+    id: 'PDMP/Z',
+    description: 'A label to represent setting section being collapsed',
+  });
   const expandAriaLabel = intl.formatMessage({
-    defaultMessage: 'Expand',
-    description: 'An accessible label for expand toggle icon',
+    defaultMessage: 'Click to Collapse',
+    id: 'hJbr09',
+    description: 'An accessible label for button to collapse setting section',
   });
   const collapseAriaLabel = intl.formatMessage({
-    defaultMessage: 'Collapse',
-    description: 'An accessible label for collapse toggle icon',
+    defaultMessage: 'Click to Expand',
+    id: 'qdUeUk',
+    description: 'An accessible label for button to expand setting section',
   });
   const internalSettings = (
     <>
-      {expanded || !showHeading ? <Setting id={id} isReadOnly={isReadOnly} settings={settings} /> : null}
       {expanded
-        ? (validationErrors ?? []).map(({ key: errorKey, errorType, message }, i) => {
-            return (
-              <CustomizableMessageBar
-                key={i}
-                type={matchErrorTypeToMessageBar(errorType)}
-                message={message}
-                onWarningDismiss={onDismiss ? () => onDismiss?.(errorKey) : undefined}
-              />
-            );
-          })
+        ? (validationErrors ?? []).map(({ key: errorKey, errorType, message }, i) => (
+            <CustomizableMessageBar
+              key={i}
+              type={matchErrorTypeToMessageBar(errorType)}
+              message={message}
+              onWarningDismiss={onDismiss ? () => onDismiss?.(errorKey) : undefined}
+            />
+          ))
         : null}
-      {showSeparator ? <Separator className="msla-setting-section-separator" styles={separatorStyles} /> : null}
+      {expanded || !showHeading ? <Setting id={id} isReadOnly={isReadOnly} settings={settings} /> : null}
+      {expanded && showSeparator ? <Divider className="msla-setting-section-divider" /> : null}
     </>
   );
   if (!showHeading) {
@@ -184,15 +196,15 @@ export const SettingsSection: FC<SettingsSectionProps> = ({
   return (
     <div className="msla-setting-section">
       <div className="msla-setting-section-content">
-        <button className="msla-setting-section-header" onClick={() => handleSectionClick(sectionName as SettingSectionName | undefined)}>
-          <Icon
-            className="msla-setting-section-header-icon"
-            aria-label={expanded ? `${collapseAriaLabel} ${title}` : `${expandAriaLabel} ${title}`}
-            iconName={expanded ? 'ChevronDownMed' : 'ChevronRightMed'}
-            styles={{ root: { fontSize: 14, color: isInverted ? 'white' : constants.Settings.CHEVRON_ROOT_COLOR_LIGHT } }}
-          />
-          <div className="msla-setting-section-header-text">{title}</div>
-        </button>
+        <Button
+          className="msla-setting-section-header"
+          onClick={() => handleSectionClick(sectionName as SettingSectionName | undefined)}
+          icon={expanded ? <ChevronDownIcon /> : <ChevronRightIcon />}
+          appearance={'subtle'}
+          aria-label={`${expanded ? expandedLabel : collapsedLabel} ${title}, ${expanded ? expandAriaLabel : collapseAriaLabel}`}
+        >
+          {title}
+        </Button>
         {internalSettings}
       </div>
     </div>
@@ -223,6 +235,7 @@ const Setting = ({ id, settings, isReadOnly }: { id?: string; settings: Settings
   const addNewParamText = intl.formatMessage(
     {
       defaultMessage: 'Showing {countShowing} of {countTotal}',
+      id: 'jTHUFb',
       description: 'Placeholder text for the number of advanced parameters showing',
     },
     {
@@ -233,37 +246,39 @@ const Setting = ({ id, settings, isReadOnly }: { id?: string; settings: Settings
 
   const addAllButtonText = intl.formatMessage({
     defaultMessage: 'Show all',
+    id: 'yRDuqj',
     description: 'Button text to add all advanced parameters',
   });
   const removeAllButtonText = intl.formatMessage({
     defaultMessage: 'Clear all',
+    id: 'bt2CaQ',
     description: 'Button text to clear all advanced parameters',
   });
   const addAllButtonTooltip = intl.formatMessage({
     defaultMessage: 'Show all advanced parameters',
+    id: '63fQWE',
     description: 'Button tooltip to add all advanced parameters',
   });
   const removeAllButtonTooltip = intl.formatMessage({
     defaultMessage: 'Remove and clear all advanced parameters and their values',
+    id: 'AhvQ7r',
     description: 'Button tooltip to remove all advanced parameters',
   });
   const advancedParametersLabel = intl.formatMessage({
     defaultMessage: 'Advanced parameters',
+    id: 'XFzzaw',
     description: 'The label for advanced parameters',
   });
 
   const renderSetting = (setting: Settings, i: number) => {
     const { settingType, settingProp, visible = true } = setting;
     const { id: parameterId, conditionalVisibility, readOnly, validationErrors } = settingProp as any;
-    if (!readOnly) settingProp.readOnly = isReadOnly;
-    const errorMessage = validationErrors?.reduce((acc: string, message: any) => acc + message + ' ', '');
+    if (!readOnly) {
+      settingProp.readOnly = isReadOnly;
+    }
+    const errorMessage = validationErrors?.reduce((acc: string, message: any) => `${acc + message} `, '');
 
-    const getClassName = (): string =>
-      settingType === 'RunAfter'
-        ? 'msla-setting-section-run-after-setting'
-        : settingType === 'MultiAddExpressionEditor'
-        ? 'msla-setting-section-expression-field'
-        : 'msla-setting-section-setting';
+    const getClassName = (): string => (settingType === 'MultiAddExpressionEditor' ? 'msla-setting-section-expression-field' : '');
     const renderSetting = (): JSX.Element | null => {
       switch (settingType) {
         case 'MultiSelectSetting':
@@ -312,7 +327,8 @@ const Setting = ({ id, settings, isReadOnly }: { id?: string; settings: Settings
 
     const removeParamTooltip = intl.formatMessage(
       {
-        defaultMessage: "Remove parameter ''{parameterName}'' and its value",
+        defaultMessage: `Remove parameter ''{parameterName}'' and its value`,
+        id: 'uxt1xW',
         description:
           'Tooltip for button to remove parameter. Do not remove the double single quotes around the display name, as it is needed to wrap the placeholder text.',
       },
@@ -321,7 +337,7 @@ const Setting = ({ id, settings, isReadOnly }: { id?: string; settings: Settings
 
     return visible && conditionalVisibility !== false ? (
       <div key={i} style={{ display: 'flex', gap: '4px' }}>
-        <div className={getClassName()} style={{ flex: '1 1 auto' }}>
+        <div className={getClassName()} style={{ flex: '1 1 auto', width: '100%' }}>
           {renderSetting()}
           {errorMessage && !hideErrorMessage[i] && (
             <span className="msla-input-parameter-error" role="alert">
@@ -335,7 +351,7 @@ const Setting = ({ id, settings, isReadOnly }: { id?: string; settings: Settings
               appearance="subtle"
               onClick={removeParamCallback}
               icon={<ClearIcon />}
-              style={{ marginTop: '30px', color: 'var(--colorBrandForeground1)' }}
+              style={{ marginTop: '30px', color: 'var(--colorBrandForeground1)', height: '32px' }}
             />
           </Tooltip>
         ) : null}
@@ -402,7 +418,7 @@ const Setting = ({ id, settings, isReadOnly }: { id?: string; settings: Settings
         </div>
       ) : null}
       {/* Render all advanced parameters that are conditionally visible */}
-      {settings?.filter((setting) => (setting.settingProp as any).conditionalVisibility === true).map(renderSetting)}
+      {settings?.filter((setting) => (setting.settingProp as any)?.conditionalVisibility === true).map(renderSetting)}
     </div>
   );
 };

@@ -3,13 +3,13 @@ import { TokenPickerMode } from '../';
 import type { ValueSegment } from '../../editor';
 import { INSERT_TOKEN_NODE } from '../../editor/base/plugins/InsertTokenNode';
 import { SINGLE_VALUE_SEGMENT } from '../../editor/base/plugins/SingleValueSegment';
-import { convertUIElementNameToAutomationId } from '../../utils';
 import type { Token, TokenGroup } from '../models/token';
+import { getReducedTokenList, hasAdvanced } from './tokenpickerhelpers';
 import type { TokenPickerBaseProps } from './tokenpickersection';
-import { Icon } from '@fluentui/react';
+import { Icon, useTheme } from '@fluentui/react';
 import { useBoolean } from '@fluentui/react-hooks';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
-import { hex2rgb, lighten } from '@microsoft/utils-logic-apps';
+import { darken, hex2rgb, lighten, replaceWhiteSpaceWithUnderscore } from '@microsoft/logic-apps-shared';
 import Fuse from 'fuse.js';
 import type { LexicalEditor } from 'lexical';
 import type { Dispatch, SetStateAction } from 'react';
@@ -33,13 +33,14 @@ export const TokenPickerOptions = ({
   index,
   expressionEditorRef,
   expression,
-  closeTokenPicker,
   setExpression,
   setTokenLength,
   getValueSegmentFromToken,
   tokenClickedCallback,
 }: TokenPickerOptionsProps): JSX.Element => {
   const intl = useIntl();
+  const { isInverted } = useTheme();
+
   let editor: LexicalEditor | null;
   try {
     [editor] = useLexicalComposerContext();
@@ -67,6 +68,7 @@ export const TokenPickerOptions = ({
   const buttonTextMore = intl.formatMessage(
     {
       defaultMessage: 'See More ({count})',
+      id: 'uTnqzQ',
       description: 'Click to view more token options. {count} indicates the number of total tokens.',
     },
     { count: section.tokens.length }
@@ -74,6 +76,7 @@ export const TokenPickerOptions = ({
 
   const buttonTextLess = intl.formatMessage({
     defaultMessage: 'See Less',
+    id: 'oWGaw9',
     description: 'Click to view less token options.',
   });
 
@@ -148,7 +151,6 @@ export const TokenPickerOptions = ({
         value,
         data: segment,
       });
-      closeTokenPicker();
     }
   };
 
@@ -166,7 +168,9 @@ export const TokenPickerOptions = ({
 
   const sectionBrandColorRgb = hex2rgb(getSectionBrandColor());
   const sectionHeaderColorRgb = lighten(sectionBrandColorRgb, 0.9);
+  const sectionHeaderColorRgbDark = darken(sectionBrandColorRgb, 0.5);
   const sectionHeaderColorCss = `rgb(${sectionHeaderColorRgb.red}, ${sectionHeaderColorRgb.green}, ${sectionHeaderColorRgb.blue})`;
+  const sectionHeaderColorCssDark = `rgb(${sectionHeaderColorRgbDark.red}, ${sectionHeaderColorRgbDark.green}, ${sectionHeaderColorRgbDark.blue})`;
 
   const maxRowsShown = selectedKey === TokenPickerMode.EXPRESSION ? section.tokens.length : maxTokensPerSection;
   const showSeeMoreOrLessButton = !searchQuery && (hasAdvanced(section.tokens) || section.tokens.length > maxRowsShown);
@@ -175,7 +179,10 @@ export const TokenPickerOptions = ({
     <>
       {(searchQuery && filteredTokens.length > 0) || !searchQuery ? (
         <>
-          <div className="msla-token-picker-section-header" style={{ backgroundColor: sectionHeaderColorCss }}>
+          <div
+            className="msla-token-picker-section-header"
+            style={{ backgroundColor: isInverted ? sectionHeaderColorCssDark : sectionHeaderColorCss }}
+          >
             <img src={getSectionIcon()} alt="token icon" />
             {getSectionSecurity() ? (
               <div className="msla-token-picker-secure-token">
@@ -183,23 +190,23 @@ export const TokenPickerOptions = ({
               </div>
             ) : null}
             <span>{section.label}</span>
-            {!showSeeMoreOrLessButton ? null : (
+            {showSeeMoreOrLessButton ? (
               <button
                 className="msla-token-picker-section-header-button"
                 onClick={handleMoreLess}
-                data-automation-id={`msla-token-picker-section-header-button-${convertUIElementNameToAutomationId(section.label)}`}
+                data-automation-id={`msla-token-picker-section-header-button-${replaceWhiteSpaceWithUnderscore(section.label)}`}
               >
                 <span>{moreOptions ? buttonTextMore : buttonTextLess}</span>
               </button>
-            )}
+            ) : null}
           </div>
-          <div className="msla-token-picker-section-options">
-            {(!searchQuery ? section.tokens : filteredTokens).map((token, j) => {
-              if ((token.isAdvanced || j >= maxRowsShown) && moreOptions && !searchQuery) {
-                return null;
-              }
-
-              return (
+          <ul className="msla-token-picker-section-options" aria-label={section.label}>
+            {getReducedTokenList(searchQuery ? filteredTokens : section.tokens, {
+              hasSearchQuery: !!searchQuery,
+              maxRowsShown,
+              showAllOptions: !moreOptions,
+            }).map((token, j) => (
+              <li key={`token-picker-option-li-${j}`}>
                 <button
                   className="msla-token-picker-section-option"
                   data-automation-id={`msla-token-picker-section-option-${j}`}
@@ -215,15 +222,11 @@ export const TokenPickerOptions = ({
                     </div>
                   </div>
                 </button>
-              );
-            })}
-          </div>
+              </li>
+            ))}
+          </ul>
         </>
       ) : null}
     </>
   );
 };
-
-function hasAdvanced(tokens: OutputToken[]): boolean {
-  return tokens.some((token) => token.isAdvanced);
-}

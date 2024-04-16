@@ -19,7 +19,7 @@ import FunctionListHeader from './FunctionListHeader';
 import FunctionListItem from './FunctionListItem';
 import { Button, Input, Tooltip } from '@fluentui/react-components';
 import { Dismiss20Regular } from '@fluentui/react-icons';
-import type { FunctionPositionMetadata } from '@microsoft/utils-logic-apps';
+import type { FunctionPositionMetadata } from '@microsoft/logic-apps-shared';
 import Fuse from 'fuse.js';
 import { useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -64,8 +64,8 @@ export const FunctionList = () => {
         const newPosition: FunctionPositionMetadata = {
           targetKey: currentTargetSchemaNode.key,
           position: {
-            x: parseInt(inlineFunctionInputOutputKeys[inlineFunctionInputOutputKeys.length - 2]) - 30,
-            y: parseInt(inlineFunctionInputOutputKeys[inlineFunctionInputOutputKeys.length - 1]),
+            x: Number.parseInt(inlineFunctionInputOutputKeys[inlineFunctionInputOutputKeys.length - 2]) - 30,
+            y: Number.parseInt(inlineFunctionInputOutputKeys[inlineFunctionInputOutputKeys.length - 1]),
           },
         };
         // eslint-disable-next-line no-param-reassign
@@ -130,7 +130,7 @@ export const FunctionList = () => {
       if (functionData) {
         const functionCategoryDictionary: { [key: string]: FunctionDataTreeItem } = {};
         let functionsList: FunctionData[] = [...functionData];
-        functionsList.sort((a, b) => a.displayName.localeCompare(b.displayName)); // Alphabetically sort Functions
+        functionsList.sort((a, b) => a.displayName?.localeCompare(b.displayName)); // Alphabetically sort Functions
 
         // Create dictionary for Function Categories
         Object.values(FunctionCategory).forEach((category) => {
@@ -174,7 +174,8 @@ export const FunctionList = () => {
           message: error,
         });
         throw new Error(`Function List Error: ${error}`);
-      } else if (error instanceof Error) {
+      }
+      if (error instanceof Error) {
         LogService.error(LogCategory.FunctionList, 'functionListError', {
           message: error.message,
         });
@@ -187,11 +188,13 @@ export const FunctionList = () => {
 
   const searchLoc = intl.formatMessage({
     defaultMessage: 'Search',
+    id: '2NXYYu',
     description: 'Search',
   });
 
   const clearLoc = intl.formatMessage({
     defaultMessage: 'Clear',
+    id: 'e9OvzW',
     description: 'Clear',
   });
 

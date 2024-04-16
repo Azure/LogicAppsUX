@@ -1,4 +1,7 @@
+// biome-ignore lint/correctness/noUnusedImports: actually is used
+import type { editor } from 'monaco-editor';
 import type { ValueSegment } from '../editor';
+import { CLOSE_TOKENPICKER } from '../editor/base/plugins/CloseTokenPicker';
 import type { ExpressionEditorEvent } from '../expressioneditor';
 import { ExpressionEditor } from '../expressioneditor';
 import { PanelSize } from '../panel/panelUtil';
@@ -11,10 +14,9 @@ import { TokenPickerPivot } from './tokenpickerpivot';
 import type { GetValueSegmentHandler } from './tokenpickersection/tokenpickeroption';
 import { TokenPickerSection } from './tokenpickersection/tokenpickersection';
 import type { ICalloutContentStyles, ISearchBox, PivotItem } from '@fluentui/react';
-import { SearchBox, Callout, DirectionalHint } from '@fluentui/react';
+import { SearchBox, DirectionalHint, Callout } from '@fluentui/react';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import type { LexicalEditor, NodeKey } from 'lexical';
-import type { editor } from 'monaco-editor';
 import { useEffect, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 
@@ -48,9 +50,9 @@ export interface TokenPickerProps {
   expressionGroup?: TokenGroup[];
   // if initialMode is undefined, it is Legacy TokenPicker
   initialMode?: TokenPickerMode;
-  setIsTokenPickerOpened?: (b: boolean) => void;
   // tokenClickedCallback is used for the code Editor TokenPicker(Legacy Token Picker)
   tokenClickedCallback?: (token: ValueSegment) => void;
+  hideUTFExpressions?: boolean;
 }
 export function TokenPicker({
   editorId,
@@ -59,7 +61,7 @@ export function TokenPicker({
   filteredTokenGroup,
   expressionGroup,
   initialMode,
-  setIsTokenPickerOpened,
+  hideUTFExpressions,
   getValueSegmentFromToken,
   tokenClickedCallback,
 }: TokenPickerProps): JSX.Element {
@@ -74,6 +76,7 @@ export function TokenPicker({
   const [expressionEditorDragDistance, setExpressionEditorDragDistance] = useState(0);
   const [expressionEditorCurrentHeight, setExpressionEditorCurrentHeight] = useState(windowDimensions.height < 400 ? 50 : 100);
   const [expressionEditorError, setExpressionEditorError] = useState<string>('');
+  const containerRef = useRef<HTMLDivElement | null>(null);
   const expressionEditorRef = useRef<editor.IStandaloneCodeEditor | null>(null);
   const searchBoxRef = useRef<ISearchBox | null>(null);
   const isExpression = initialMode === TokenPickerMode.EXPRESSION;
@@ -147,6 +150,7 @@ export function TokenPicker({
 
   const tokenPickerPlaceHolderText = intl.formatMessage({
     defaultMessage: 'Search',
+    id: 'Mc6ITJ',
     description: 'Placeholder text to search token picker',
   });
 
@@ -156,10 +160,6 @@ export function TokenPicker({
   } catch {
     editor = null;
   }
-
-  const closeTokenPicker = () => {
-    setIsTokenPickerOpened?.(false);
-  };
 
   return (
     <>
@@ -178,9 +178,10 @@ export function TokenPicker({
         }}
         onDismiss={(e) => {
           if (e?.type === 'keydown' && (e as React.KeyboardEvent<HTMLElement>).key === 'Escape') {
-            editor?.focus();
+            editor?.dispatchCommand(CLOSE_TOKENPICKER, { focusEditorAfter: true });
+          } else {
+            editor?.dispatchCommand(CLOSE_TOKENPICKER, { focusEditorAfter: false });
           }
-          closeTokenPicker();
         }}
         onRestoreFocus={() => {
           return;
@@ -197,19 +198,19 @@ export function TokenPicker({
               ? {
                   height: Math.max(windowDimensions.height - 100, Math.min(windowDimensions.height, 550)),
                   width: Math.max(
-                    windowDimensions.width - (parseInt(PanelSize.Medium, 10) + 40),
+                    windowDimensions.width - (Number.parseInt(PanelSize.Medium, 10) + 40),
                     Math.min(windowDimensions.width - 16, 400)
                   ),
                 }
               : { maxHeight: Math.min(windowDimensions.height, 550), width: Math.min(windowDimensions.width - 16, 400) }
           }
+          ref={containerRef}
         >
           <div className="msla-token-picker">
             {initialMode ? (
               <TokenPickerHeader
                 fullScreen={fullScreen}
                 isExpression={isExpression}
-                closeTokenPicker={closeTokenPicker}
                 setFullScreen={setFullScreen}
                 pasteLastUsedExpression={pasteLastUsedExpression}
               />
@@ -227,6 +228,7 @@ export function TokenPicker({
                   currentHeight={expressionEditorCurrentHeight}
                   setCurrentHeight={setExpressionEditorCurrentHeight}
                   setExpressionEditorError={setExpressionEditorError}
+                  hideUTFExpressions={hideUTFExpressions}
                 />
                 <div className="msla-token-picker-expression-editor-error">{expressionEditorError}</div>
                 <TokenPickerPivot selectedKey={selectedKey} selectKey={handleSelectKey} hideExpressions={!!tokenClickedCallback} />
@@ -257,7 +259,6 @@ export function TokenPicker({
               getValueSegmentFromToken={getValueSegmentFromToken}
               tokenClickedCallback={tokenClickedCallback}
               noDynamicContent={!isDynamicContentAvailable(filteredTokenGroup ?? [])}
-              closeTokenPicker={closeTokenPicker}
               expressionEditorCurrentHeight={expressionEditorCurrentHeight}
             />
             {isExpression ? (
@@ -267,7 +268,6 @@ export function TokenPicker({
                 expressionToBeUpdated={expressionToBeUpdated}
                 getValueSegmentFromToken={getValueSegmentFromToken}
                 setExpressionEditorError={setExpressionEditorError}
-                closeTokenPicker={closeTokenPicker}
               />
             ) : null}
           </div>

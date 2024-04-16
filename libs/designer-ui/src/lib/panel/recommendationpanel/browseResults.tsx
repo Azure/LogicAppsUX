@@ -3,7 +3,7 @@ import { ConnectorSummaryCard } from '../../connectorsummarycard';
 import { getConnectorCategoryString } from '../../utils';
 import { List, Text } from '@fluentui/react';
 import { Spinner } from '@fluentui/react-components';
-import type { Connector } from '@microsoft/utils-logic-apps';
+import type { Connector } from '@microsoft/logic-apps-shared';
 import { useCallback, useLayoutEffect, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 
@@ -29,20 +29,17 @@ export const BrowseGrid = (props: BrowseGridProps) => {
 
   const onRenderCell = useCallback(
     (connector?: Connector, _index?: number) => {
-      if (!connector) return;
-      const { displayName, description, iconUri, brandColor, generalInformation } = connector.properties;
+      if (!connector) {
+        return;
+      }
       return (
         <div className="mlsa-browse-list-tile-wrapper">
           <div className="msla-browse-list-tile" style={{ width: forceSingleCol ? '100%' : '50%' }}>
             <ConnectorSummaryCard
               key={connector.id}
-              id={connector.id}
-              connectorName={displayName}
-              description={description || generalInformation?.description}
-              iconUrl={iconUri}
-              brandColor={brandColor}
+              connector={connector}
               onClick={onConnectorSelected}
-              category={getConnectorCategoryString(connector.id)}
+              category={getConnectorCategoryString(connector)}
               displayRuntimeInfo={displayRuntimeInfo}
             />
           </div>
@@ -54,21 +51,24 @@ export const BrowseGrid = (props: BrowseGridProps) => {
 
   const noResultsText = intl.formatMessage({
     defaultMessage: 'No results found for the specified filters',
+    id: 'w0pI5M',
     description: 'Text to show when there are no browse results with the given filters',
   });
 
   const loadingText = intl.formatMessage({
     defaultMessage: 'Loading all connectors...',
+    id: 'OOUTdW',
     description: 'Message to show under the loading icon when loading connectors',
   });
 
-  if (!isLoading && connectors.length === 0)
+  if (!isLoading && connectors.length === 0) {
     return (
       <div className="msla-no-results-container">
         <img src={NoResultsSvg} alt={noResultsText?.toString()} />
         <Text>{noResultsText}</Text>
       </div>
     );
+  }
 
   return (
     <div ref={ref} className="msla-browse-list">

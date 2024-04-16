@@ -1,9 +1,11 @@
 import { LogicAppResolver } from './LogicAppResolver';
 import { runPostWorkflowCreateStepsFromCache } from './app/commands/createCodeless/createCodelessSteps/WorkflowCreateStepBase';
 import { supportedDataMapDefinitionFileExts, supportedSchemaFileExts } from './app/commands/dataMapper/extensionConfig';
+import { promptParameterizeConnections } from './app/commands/parameterizeConnections';
 import { registerCommands } from './app/commands/registerCommands';
 import { getResourceGroupsApi } from './app/resourcesExtension/getExtensionApi';
 import type { AzureAccountTreeItemWithProjects } from './app/tree/AzureAccountTreeItemWithProjects';
+import { downloadExtensionBundle } from './app/utils/bundleFeed';
 import { stopDesignTimeApi } from './app/utils/codeless/startDesignTimeApi';
 import { UriHandler } from './app/utils/codeless/urihandler';
 import { getExtensionVersion } from './app/utils/extension';
@@ -41,15 +43,6 @@ export async function activate(context: vscode.ExtensionContext) {
     ...supportedSchemaFileExts,
   ]);
 
-  // temporary fix to uninstall the old DM extension if it exists
-  const legacyExtension = vscode.extensions.getExtension('ms-azuretools.data-mapper-vscode-extension');
-  if (legacyExtension !== undefined) {
-    vscode.commands.executeCommand('workbench.extensions.uninstallExtension', legacyExtension.id);
-    vscode.window.showWarningMessage(
-      'The Azure Logic Apps (Standard) extension now includes the Data Mapper capabilities. To avoid conflicts, the standalone Data Mapper extension has been removed. Please restart Visual Studio Code to complete this update.'
-    );
-  }
-
   ext.context = context;
 
   ext.outputChannel = createAzExtOutputChannel('Azure Logic Apps (Standard)', ext.prefix);
@@ -63,11 +56,12 @@ export async function activate(context: vscode.ExtensionContext) {
 
     runPostWorkflowCreateStepsFromCache();
 
+    await downloadExtensionBundle(activateContext);
+    promptParameterizeConnections(activateContext);
     await startOnboarding(activateContext);
 
     ext.extensionVersion = getExtensionVersion();
     ext.rgApi = await getResourceGroupsApi();
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     ext.azureAccountTreeItem = ext.rgApi.appResourceTree._rootTreeItem as AzureAccountTreeItemWithProjects;
 

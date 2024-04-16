@@ -1,8 +1,7 @@
 import type { DropdownItem } from '../dropdown';
 import { DropdownEditor } from '../dropdown';
-import { ValueSegmentType } from '../editor';
 import type { ChangeHandler } from '../editor/base';
-import { guid } from '@microsoft/utils-logic-apps';
+import { createLiteralValueSegment } from '../editor/base/utils/helper';
 
 export const GroupDropdownOptions = {
   AND: 'and',
@@ -25,11 +24,7 @@ export const GroupDropdown = ({ condition, readonly, onChange }: GroupDropdownPr
   return (
     <div className="msla-querybuilder-group-dropdown-container">
       <DropdownEditor
-        initialValue={
-          condition
-            ? [{ id: guid(), type: ValueSegmentType.LITERAL, value: condition }]
-            : [{ id: guid(), type: ValueSegmentType.LITERAL, value: GroupDropdownOptions.AND }]
-        }
+        initialValue={condition ? [createLiteralValueSegment(condition)] : [createLiteralValueSegment(GroupDropdownOptions.AND)]}
         options={items}
         onChange={onChange}
         readonly={readonly}

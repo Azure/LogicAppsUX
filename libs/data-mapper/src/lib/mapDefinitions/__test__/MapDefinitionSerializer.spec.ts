@@ -6,8 +6,8 @@ import { applyConnectionValue } from '../../utils/Connection.Utils';
 import { addReactFlowPrefix, createReactFlowFunctionKey } from '../../utils/ReactFlow.Util';
 import { convertSchemaToSchemaExtended } from '../../utils/Schema.Utils';
 import { generateMapDefinitionBody, generateMapDefinitionHeader } from '../MapDefinitionSerializer';
-import type { MapDefinitionEntry, Schema, SchemaExtended, SchemaNodeExtended } from '@microsoft/utils-logic-apps';
-import { SchemaFileFormat, SchemaType } from '@microsoft/utils-logic-apps';
+import type { MapDefinitionEntry, Schema, SchemaExtended, SchemaNodeExtended } from '@microsoft/logic-apps-shared';
+import { SchemaFileFormat, SchemaType } from '@microsoft/logic-apps-shared';
 import {
   deepNestedSequenceAndObject,
   comprehensiveSourceSchema,
@@ -16,8 +16,8 @@ import {
   sourceMockSchema,
   targetMockJsonSchema,
   targetMockSchema,
-} from '__mocks__/schemas';
-
+} from '../../../__mocks__/schemas';
+import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 describe('mapDefinitions/MapDefinitionSerializer', () => {
   describe('XML to XML', () => {
     describe('generateMapDefinitionHeader', () => {

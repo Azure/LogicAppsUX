@@ -1,10 +1,10 @@
 import type { DictionaryEditorItemProps } from '.';
 import type { ChangeState, TokenPickerButtonEditorProps, ValueSegment } from '..';
 import type { GetTokenPickerHandler } from '../editor/base';
+import { isEmptySegments } from '../editor/base/utils/parsesegments';
 import { StringEditor } from '../editor/string';
 import { DictionaryDeleteButton } from './expandeddictionarydelete';
-import { isEmpty } from './util/helper';
-import { guid } from '@microsoft/utils-logic-apps';
+import { guid } from '@microsoft/logic-apps-shared';
 import { useRef } from 'react';
 import { useIntl } from 'react-intl';
 
@@ -43,10 +43,12 @@ export const ExpandedDictionary = ({
 
   const keyPlaceholder = intl.formatMessage({
     defaultMessage: 'Enter key',
+    id: 'pC2nr2',
     description: 'Placeholder text for Key',
   });
   const valuePlaceholder = intl.formatMessage({
     defaultMessage: 'Enter value',
+    id: 'zCsGWP',
     description: 'Placeholder text for Value',
   });
 
@@ -108,4 +110,8 @@ export const ExpandedDictionary = ({
       })}
     </div>
   );
+};
+
+export const isEmpty = (item: DictionaryEditorItemProps) => {
+  return isEmptySegments(item.key) && isEmptySegments(item.value);
 };

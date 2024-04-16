@@ -2,19 +2,34 @@ import { QueryKeys } from '../../run-service';
 import type { RunDisplayItem } from '../../run-service';
 import type { RootState } from '../../state/store';
 import { VSCodeContext } from '../../webviewCommunication';
-import { StandardRunService } from '@microsoft/designer-client-services-logic-apps';
-import type { CallbackInfo } from '@microsoft/designer-client-services-logic-apps';
+import './overview.less';
+import { StandardRunService } from '@microsoft/logic-apps-shared';
 import { Overview, isRunError, mapToRunItem } from '@microsoft/designer-ui';
-import type { Runs } from '@microsoft/utils-logic-apps';
-import { ExtensionCommand, HttpClient } from '@microsoft/vscode-extension';
+import type { Runs } from '@microsoft/logic-apps-shared';
+import { ExtensionCommand, HttpClient } from '@microsoft/vscode-extension-logic-apps';
 import { useCallback, useContext, useMemo } from 'react';
 import { useInfiniteQuery, useMutation } from 'react-query';
 import { useSelector } from 'react-redux';
 import invariant from 'tiny-invariant';
+import { useIntl } from 'react-intl';
 
+export interface CallbackInfo {
+  method?: string;
+  value: string;
+}
 export const OverviewApp = () => {
   const workflowState = useSelector((state: RootState) => state.workflow);
   const vscode = useContext(VSCodeContext);
+  const { isWorkflowRuntimeRunning } = workflowState;
+  const intl = useIntl();
+
+  const intlText = {
+    DEBUG_PROJECT_ERROR: intl.formatMessage({
+      defaultMessage: 'Please start the project by pressing F5 or run it through the Run and Debug view',
+      id: 'e1gQAz',
+      description: 'Debug logic app project error text',
+    }),
+  };
 
   const runService = useMemo(() => {
     const httpClient = new HttpClient({
@@ -53,13 +68,14 @@ export const OverviewApp = () => {
       getNextPageParam: (lastPage) => lastPage.nextLink,
       refetchInterval: 5000, // 5 seconds refresh interval
       refetchIntervalInBackground: false, // It will automatically refetch when window is focused
+      enabled: isWorkflowRuntimeRunning,
     }
   );
 
   const runItems = useMemo(
     () =>
       data?.pages?.reduce<RunDisplayItem[]>((acc, val) => {
-        return [...acc, ...val.runs.map(mapToRunItem)];
+        return acc.concat(val.runs.map(mapToRunItem));
       }, []),
     [data?.pages]
   );
@@ -82,6 +98,9 @@ export const OverviewApp = () => {
   );
 
   const errorMessage = useMemo((): string | undefined => {
+    if (!isWorkflowRuntimeRunning) {
+      return intlText.DEBUG_PROJECT_ERROR;
+    }
     let loadingErrorMessage: string | undefined;
     let triggerErrorMessage: string | undefined;
     if (error instanceof Error) {
@@ -101,27 +120,29 @@ export const OverviewApp = () => {
     }
 
     return loadingErrorMessage ?? triggerErrorMessage;
-  }, [error, runTriggerError]);
+  }, [error, runTriggerError, isWorkflowRuntimeRunning, intlText.DEBUG_PROJECT_ERROR]);
 
   return (
-    <Overview
-      corsNotice={workflowState.corsNotice}
-      errorMessage={errorMessage}
-      hasMoreRuns={hasNextPage}
-      loading={isLoading || runTriggerLoading}
-      runItems={runItems ?? []}
-      workflowProperties={workflowState.workflowProperties}
-      isRefreshing={isRefetching}
-      onLoadMoreRuns={fetchNextPage}
-      onLoadRuns={refetch}
-      onOpenRun={(run: RunDisplayItem) => {
-        vscode.postMessage({
-          command: ExtensionCommand.loadRun,
-          item: run,
-        });
-      }}
-      onRunTrigger={runTriggerCall}
-      onVerifyRunId={onVerifyRunId}
-    />
+    <div className="msla-overview">
+      <Overview
+        corsNotice={workflowState.corsNotice}
+        errorMessage={errorMessage}
+        hasMoreRuns={hasNextPage}
+        loading={isLoading || runTriggerLoading}
+        runItems={runItems ?? []}
+        workflowProperties={workflowState.workflowProperties}
+        isRefreshing={isRefetching}
+        onLoadMoreRuns={fetchNextPage}
+        onLoadRuns={refetch}
+        onOpenRun={(run: RunDisplayItem) => {
+          vscode.postMessage({
+            command: ExtensionCommand.loadRun,
+            item: run,
+          });
+        }}
+        onRunTrigger={runTriggerCall}
+        onVerifyRunId={onVerifyRunId}
+      />
+    </div>
   );
 };

@@ -1,5 +1,7 @@
+import type { CustomCodeFileNameMapping } from '../../..';
 import Constants from '../../../common/constants';
-import { ImpersonationSource, type ConnectionReferences, type WorkflowParameter } from '../../../common/models/workflow';
+import type { ConnectionReferences, WorkflowParameter } from '../../../common/models/workflow';
+import { ImpersonationSource } from '../../../common/models/workflow';
 import type { WorkflowNode } from '../../parsers/models/workflowNode';
 import { getConnectorWithSwagger, getSwaggerFromEndpoint } from '../../queries/connections';
 import { getOperationManifest } from '../../queries/operation';
@@ -7,15 +9,16 @@ import type { DependencyInfo, NodeInputs, NodeOperation, NodeOutputs, OutputInfo
 import { updateNodeSettings, updateNodeParameters, DynamicLoadStatus, updateOutputs } from '../../state/operation/operationMetadataSlice';
 import type { UpdateUpstreamNodesPayload } from '../../state/tokens/tokensSlice';
 import { updateTokens, updateUpstreamNodes } from '../../state/tokens/tokensSlice';
+import { WorkflowKind } from '../../state/workflow/workflowInterfaces';
 import type { WorkflowParameterDefinition } from '../../state/workflowparameters/workflowparametersSlice';
 import { initializeParameters } from '../../state/workflowparameters/workflowparametersSlice';
 import type { RootState } from '../../store';
-import { getBrandColorFromConnector, getIconUriFromConnector } from '../../utils/card';
 import { getTriggerNodeId, isRootNodeInGraph } from '../../utils/graph';
 import { getSplitOnOptions, getUpdatedManifestForSchemaDependency, getUpdatedManifestForSplitOn, toOutputInfo } from '../../utils/outputs';
 import {
   addRecurrenceParametersInGroup,
   getAllInputParameters,
+  getCustomCodeFileName,
   getDependentParameters,
   getInputsValueFromDefinitionForManifest,
   getParameterFromName,
@@ -36,7 +39,15 @@ import type {
   ISearchService,
   IOAuthService,
   IWorkflowService,
-} from '@microsoft/designer-client-services-logic-apps';
+  CustomSwaggerServiceDetails,
+  InputParameter,
+  OperationInfo,
+  OperationManifest,
+  OperationManifestProperties,
+  OutputParameter,
+  SchemaProperty,
+  SwaggerParser,
+} from '@microsoft/logic-apps-shared';
 import {
   WorkflowService,
   LoggerService,
@@ -44,36 +55,28 @@ import {
   OperationManifestService,
   FunctionService,
   ApiManagementService,
-} from '@microsoft/designer-client-services-logic-apps';
-import type { OutputToken, ParameterInfo } from '@microsoft/designer-ui';
-import { getIntl } from '@microsoft/intl-logic-apps';
-import type { SchemaProperty, InputParameter, SwaggerParser, OutputParameter } from '@microsoft/parsers-logic-apps';
-import {
+  clone,
+  ConnectionReferenceKeyFormat,
+  CustomSwaggerServiceNames,
+  DynamicSchemaType,
+  equals,
+  getBrandColorFromConnector,
+  getIconUriFromConnector,
+  getObjectPropertyValue,
+  getRecordEntry,
   isDynamicListExtension,
   isDynamicPropertiesExtension,
   isDynamicSchemaExtension,
   isDynamicTreeExtension,
   isLegacyDynamicValuesExtension,
   isLegacyDynamicValuesTreeExtension,
-  DynamicSchemaType,
   ManifestParser,
   PropertyName,
-} from '@microsoft/parsers-logic-apps';
-import {
-  CustomSwaggerServiceNames,
-  UnsupportedException,
-  clone,
-  equals,
-  ConnectionReferenceKeyFormat,
   unmap,
-  getObjectPropertyValue,
-} from '@microsoft/utils-logic-apps';
-import type {
-  CustomSwaggerServiceDetails,
-  OperationInfo,
-  OperationManifest,
-  OperationManifestProperties,
-} from '@microsoft/utils-logic-apps';
+  UnsupportedException,
+  isNullOrEmpty,
+} from '@microsoft/logic-apps-shared';
+import type { OutputToken, ParameterInfo } from '@microsoft/designer-ui';
 import type { Dispatch } from '@reduxjs/toolkit';
 
 export interface ServiceOptions {
@@ -85,17 +88,12 @@ export interface ServiceOptions {
 }
 
 export const updateWorkflowParameters = (parameters: Record<string, WorkflowParameter>, dispatch: Dispatch): void => {
-  dispatch(
-    initializeParameters(
-      Object.keys(parameters).reduce(
-        (result: Record<string, WorkflowParameterDefinition>, currentKey: string) => ({
-          ...result,
-          [currentKey]: { name: currentKey, isEditable: false, ...parameters[currentKey] },
-        }),
-        {}
-      )
-    )
-  );
+  const parametersObj: Record<string, WorkflowParameterDefinition> = {};
+  for (const [key, param] of Object.entries(parameters)) {
+    parametersObj[key] = { name: key, isEditable: false, ...param };
+  }
+
+  dispatch(initializeParameters(parametersObj));
 };
 
 export const getInputParametersFromManifest = (
@@ -207,12 +205,11 @@ export const getOutputParametersFromManifest = (
       undefined /* data */,
       true /* selectAllOneOfSchemas */
     );
-    originalOutputs = Object.values(originalOperationOutputs).reduce((result: Record<string, OutputInfo>, output: SchemaProperty) => {
-      return {
-        ...result,
-        [output.key]: toOutputInfo(output),
-      };
-    }, {});
+
+    originalOutputs = {};
+    for (const output of Object.values(originalOperationOutputs)) {
+      originalOutputs[output.key] = toOutputInfo(output);
+    }
 
     manifestToParse = getUpdatedManifestForSplitOn(manifestToParse, splitOnValue);
   }
@@ -294,7 +291,9 @@ export const updateOutputsAndTokens = async (
   isTrigger: boolean,
   inputs: NodeInputs,
   settings: Settings,
-  shouldProcessSettings = false
+  shouldProcessSettings = false,
+  workflowKind?: WorkflowKind,
+  forceEnableSplitOn?: boolean
 ): Promise<void> => {
   const { type, kind, connectorId } = operationInfo;
   const supportsManifest = OperationManifestService().isSupported(type, kind);
@@ -330,7 +329,7 @@ export const updateOutputsAndTokens = async (
   dispatch(updateTokens({ id: nodeId, tokens }));
 
   // NOTE: Split On setting changes as outputs of trigger changes, so we will be recalculating such settings in this block for triggers.
-  if (shouldProcessSettings && isTrigger) {
+  if (shouldProcessSettings && isTrigger && (workflowKind !== WorkflowKind.STATELESS || forceEnableSplitOn)) {
     const isSplitOnSupported = getSplitOnOptions(nodeOutputs, supportsManifest).length > 0;
     if (settings.splitOn?.isSupported !== isSplitOnSupported) {
       dispatch(updateNodeSettings({ id: nodeId, settings: { splitOn: { ...settings.splitOn, isSupported: isSplitOnSupported } } }));
@@ -422,16 +421,15 @@ export const updateCallbackUrlInInputs = async (
   { type, kind }: NodeOperation,
   nodeInputs: NodeInputs
 ): Promise<ParameterInfo | undefined> => {
-  if (equals(type, Constants.NODE.TYPE.REQUEST) && equals(kind, Constants.NODE.KIND.HTTP)) {
+  if (
+    equals(type, Constants.NODE.TYPE.REQUEST) &&
+    (equals(kind, Constants.NODE.KIND.HTTP) || equals(kind, Constants.NODE.KIND.TEAMSWEBHOOK))
+  ) {
     try {
       const callbackInfo = await WorkflowService().getCallbackUrl(nodeId);
       const parameter = getParameterFromName(nodeInputs, 'callbackUrl');
 
       if (parameter && callbackInfo) {
-        parameter.label = getIntl().formatMessage(
-          { defaultMessage: 'HTTP {method} URL', description: 'Callback url method' },
-          { method: callbackInfo.method }
-        );
         parameter.value = [createLiteralValueSegment(callbackInfo.value)];
 
         return parameter;
@@ -448,13 +446,45 @@ export const updateCallbackUrlInInputs = async (
   return;
 };
 
+export const updateCustomCodeInInputs = async (
+  nodeId: string,
+  fileExtension: string,
+  nodeInputs: NodeInputs,
+  customCode: CustomCodeFileNameMapping
+) => {
+  if (isNullOrEmpty(customCode)) {
+    return;
+  }
+  // getCustomCodeFileName does not return the file extension because the editor view model is not populated yet
+  const fileName = getCustomCodeFileName(nodeId, nodeInputs) + fileExtension;
+  try {
+    const customCodeValue = getRecordEntry(customCode, fileName)?.fileData;
+    const parameter = getParameterFromName(nodeInputs, Constants.DEFAULT_CUSTOM_CODE_INPUT);
+
+    if (parameter && customCodeValue) {
+      parameter.editorViewModel = {
+        customCodeData: { fileData: customCodeValue, fileExtension, fileName },
+      };
+    }
+  } catch (error) {
+    const errorMessage = `Failed to populate code file ${fileName}: ${error}`;
+    LoggerService().log({
+      level: LogEntryLevel.Error,
+      area: 'fetchCustomCode',
+      message: errorMessage,
+      error: error instanceof Error ? error : undefined,
+    });
+    return;
+  }
+};
+
 export const updateAllUpstreamNodes = (state: RootState, dispatch: Dispatch): void => {
   const allOperations = state.workflow.operations;
   const payload: UpdateUpstreamNodesPayload = {};
-  const nodeMap = Object.keys(allOperations).reduce(
-    (actionNodes: Record<string, string>, id: string) => ({ ...actionNodes, [id]: id }),
-    {}
-  );
+  const nodeMap: Record<string, string> = {};
+  for (const id of Object.keys(allOperations)) {
+    nodeMap[id] = id;
+  }
 
   for (const nodeId of Object.keys(allOperations)) {
     if (!isRootNodeInGraph(nodeId, 'root', state.workflow.nodesMetadata)) {
@@ -498,12 +528,14 @@ const getSwaggerFromService = async (serviceDetails: CustomSwaggerServiceDetails
   const { name, operationId, parameters } = serviceDetails;
   let service: any;
   switch (name) {
-    case CustomSwaggerServiceNames.Function:
+    case CustomSwaggerServiceNames.Function: {
       service = FunctionService();
       break;
-    case CustomSwaggerServiceNames.ApiManagement:
+    }
+    case CustomSwaggerServiceNames.ApiManagement: {
       service = ApiManagementService();
       break;
+    }
     default:
       throw new UnsupportedException(`The custom swagger service name '${name}' is not supported`);
   }
@@ -520,20 +552,19 @@ const getSwaggerFromService = async (serviceDetails: CustomSwaggerServiceDetails
 
 export const updateInvokerSettings = (
   isTrigger: boolean,
-  tiggerNodeManifest: OperationManifest | undefined,
-  nodeId: string,
+  triggerNodeManifest: OperationManifest | undefined,
   settings: Settings,
-  dispatch: Dispatch,
+  updateNodeSettingsCallback: (invokerSettings: Settings) => void,
   references?: ConnectionReferences
 ): void => {
-  if (!isTrigger && tiggerNodeManifest?.properties?.settings?.invokerConnection) {
-    dispatch(updateNodeSettings({ id: nodeId, settings: { invokerConnection: { ...settings.invokerConnection, isSupported: true } } }));
+  if (!isTrigger && triggerNodeManifest?.properties?.settings?.invokerConnection) {
+    updateNodeSettingsCallback({ invokerConnection: { ...settings.invokerConnection, isSupported: true } });
   }
   if (references) {
     Object.keys(references).forEach((key) => {
       const impersonationSource = references[key].impersonation?.source;
       if (impersonationSource === ImpersonationSource.Invoker) {
-        dispatch(updateNodeSettings({ id: nodeId, settings: { invokerConnection: { isSupported: true, value: { enabled: true } } } }));
+        updateNodeSettingsCallback({ invokerConnection: { isSupported: true, value: { enabled: true } } });
       }
     });
   }

@@ -15,9 +15,12 @@ import {
   logicAppKind,
   showStartDesignTimeMessageSetting,
   designerApiLoadTimeout,
+  type hostFileContent,
 } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
+import type { settingsFileContent } from '../../commands/dataMapper/extensionConfig';
+import { addOrUpdateLocalAppSettings } from '../appSettings/localSettings';
 import { updateFuncIgnore } from '../codeless/common';
 import { writeFormattedJson } from '../fs';
 import { getFunctionsCommand } from '../funcCoreTools/funcVersion';
@@ -32,7 +35,7 @@ import {
   type IAzExtOutputChannel,
   callWithTelemetryAndErrorHandling,
 } from '@microsoft/vscode-azext-utils';
-import { WorkerRuntime } from '@microsoft/vscode-extension';
+import { WorkerRuntime } from '@microsoft/vscode-extension-logic-apps';
 import axios from 'axios';
 import * as cp from 'child_process';
 import * as fs from 'fs';
@@ -40,8 +43,7 @@ import * as os from 'os';
 import * as path from 'path';
 import * as portfinder from 'portfinder';
 import * as vscode from 'vscode';
-import { Uri, window, workspace } from 'vscode';
-import type { MessageItem } from 'vscode';
+import { Uri, window, workspace, type MessageItem } from 'vscode';
 
 export async function startDesignTimeApi(projectPath: string): Promise<void> {
   await callWithTelemetryAndErrorHandling('azureLogicAppsStandard.startDesignTimeApi', async (actionContext: IActionContext) => {
@@ -86,11 +88,15 @@ export async function startDesignTimeApi(projectPath: string): Promise<void> {
       );
 
       const designTimeDirectory: Uri | undefined = await getOrCreateDesignTimeDirectory(designTimeDirectoryName, projectPath);
-      settingsFileContent.Values[ProjectDirectoryPath] = path.join(projectPath);
+      settingsFileContent.Values[ProjectDirectoryPath] = projectPath;
 
       if (designTimeDirectory) {
         await createJsonFile(designTimeDirectory, hostFileName, hostFileContent);
         await createJsonFile(designTimeDirectory, localSettingsFileName, settingsFileContent);
+        await addOrUpdateLocalAppSettings(actionContext, designTimeDirectory.fsPath, {
+          APP_KIND: logicAppKind,
+          ProjectDirectoryPath: projectPath,
+        });
         await updateFuncIgnore(projectPath, [`${designTimeDirectoryName}/`]);
         const cwd: string = designTimeDirectory.fsPath;
         const portArgs = `--port ${ext.designTimePort}`;
@@ -125,22 +131,14 @@ export async function getOrCreateDesignTimeDirectory(designTimeDirectory: string
   return designTimeDirectoryUri;
 }
 
-async function createJsonFile(directory: Uri, fileName: string, fileContent: any): Promise<void> {
-  const filePath: Uri = Uri.file(path.join(directory.fsPath, fileName));
-  if (!fs.existsSync(filePath.fsPath)) {
-    await writeFormattedJson(filePath.fsPath, fileContent);
-  }
-}
-
 export async function waitForDesignTimeStartUp(url: string, initialTime: number): Promise<void> {
   while (!(await isDesignTimeUp(url)) && new Date().getTime() - initialTime < designerApiLoadTimeout) {
     await delay(2000);
   }
   if (await isDesignTimeUp(url)) {
     return Promise.resolve();
-  } else {
-    return Promise.reject();
   }
+  return Promise.reject();
 }
 
 export async function isDesignTimeUp(url: string): Promise<boolean> {
@@ -200,7 +198,7 @@ export function stopDesignTimeApi(): void {
   }
 
   if (os.platform() === Platform.windows) {
-    cp.exec('taskkill /pid ' + `${ext.designChildProcess.pid}` + ' /t /f');
+    cp.exec(`taskkill /pid ${ext.designChildProcess.pid} /t /f`);
   } else {
     ext.designChildProcess.kill();
   }
@@ -213,6 +211,7 @@ export async function promptStartDesignTimeOption(context: IActionContext) {
     const projectPath = await tryGetLogicAppProjectRoot(context, workspaceFolder);
     const autoStartDesignTime = !!getWorkspaceSetting<boolean>(autoStartDesignTimeSetting);
     const showStartDesignTimeMessage = !!getWorkspaceSetting<boolean>(showStartDesignTimeMessageSetting);
+
     if (projectPath) {
       if (autoStartDesignTime) {
         startDesignTimeApi(projectPath);
@@ -236,5 +235,26 @@ export async function promptStartDesignTimeOption(context: IActionContext) {
         } while (result === DialogResponses.learnMore);
       }
     }
+  }
+}
+
+/**
+ * Creates a JSON file in the specified directory with the given file name and content.
+ * If the file already exists, it will not be overwritten.
+ * @param {Uri} directory - The directory where the file will be created.
+ * @param {string} fileName - The name of the file to be created.
+ * @param {hostFileContent | settingsFileContent}fileContent - The content of the file to be created.
+ * @returns A Promise that resolves when the file is created successfully.
+ */
+export async function createJsonFile(
+  directory: Uri,
+  fileName: string,
+  fileContent: typeof hostFileContent | typeof settingsFileContent
+): Promise<void> {
+  const filePath: Uri = Uri.file(path.join(directory.fsPath, fileName));
+
+  // Create file
+  if (!fs.existsSync(filePath.fsPath)) {
+    await writeFormattedJson(filePath.fsPath, fileContent);
   }
 }

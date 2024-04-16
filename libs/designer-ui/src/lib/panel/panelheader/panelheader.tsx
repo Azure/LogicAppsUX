@@ -38,10 +38,13 @@ export interface PanelHeaderProps {
   title?: string;
   nodeId: string;
   horizontalPadding: string;
+  canResubmit?: boolean;
+  resubmitOperation?: () => void;
   commentChange(panelCommentChangeEvent?: string): void;
   onRenderWarningMessage?(): JSX.Element;
   toggleCollapse: () => void;
   onTitleChange: TitleChangeHandler;
+  onTitleBlur?: (prevtitle: string) => void;
 }
 
 const DismissIcon = bundleIcon(ChevronRight24Filled, ChevronRight24Regular);
@@ -64,15 +67,23 @@ export const PanelHeader = ({
   title,
   nodeId,
   horizontalPadding,
+  canResubmit,
+  resubmitOperation,
   commentChange,
   onRenderWarningMessage,
   toggleCollapse,
   onTitleChange,
+  onTitleBlur,
 }: PanelHeaderProps): JSX.Element => {
   const intl = useIntl();
 
   const menuButtonRef = React.createRef<IButton>();
 
+  const resubmitButtonText = intl.formatMessage({
+    defaultMessage: 'Submit from this action',
+    id: 'I+85NV',
+    description: 'Button label for submitting a workflow to rerun from this action',
+  });
   useEffect(() => {
     menuButtonRef.current?.focus();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -104,10 +115,12 @@ export const PanelHeader = ({
   const CollapseButton = (): JSX.Element => {
     const panelCollapseTitle = intl.formatMessage({
       defaultMessage: 'Collapse',
+      id: 'lX30/R',
       description: 'Text of Tooltip to collapse',
     });
     const panelExpandTitle = intl.formatMessage({
       defaultMessage: 'Expand',
+      id: 'oZMhX/',
       description: 'Text of Tooltip to expand',
     });
     const buttonText = isCollapsed ? panelExpandTitle : panelCollapseTitle;
@@ -131,6 +144,7 @@ export const PanelHeader = ({
   const OverflowButton = (): JSX.Element => {
     const PanelHeaderMenuCommands = intl.formatMessage({
       defaultMessage: 'More commands',
+      id: '0y5eia',
       description: 'Label for commands in panel header',
     });
 
@@ -168,6 +182,7 @@ export const PanelHeader = ({
                 renameTitleDisabled={renameTitleDisabled}
                 titleValue={title}
                 onChange={onTitleChange}
+                onBlur={onTitleBlur}
               />
             </div>
             <OverflowButton />
@@ -181,6 +196,15 @@ export const PanelHeader = ({
               readOnlyMode={readOnlyMode}
               commentChange={commentChange}
             />
+          ) : null}
+          {canResubmit ? (
+            <Button
+              style={{ marginLeft: '2rem', marginTop: '1rem', marginBottom: 0 }}
+              icon={<Icon iconName="PlaybackRate1x" />}
+              onClick={() => resubmitOperation?.()}
+            >
+              {resubmitButtonText}
+            </Button>
           ) : null}
         </>
       ) : null}

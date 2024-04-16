@@ -14,8 +14,8 @@ import { DMTooltip } from '../tooltip/tooltip';
 import { Stack } from '@fluentui/react';
 import type { ComboboxProps } from '@fluentui/react-components';
 import { Combobox, Option, Text, makeStyles, tokens, typographyStyles } from '@fluentui/react-components';
-import type { SchemaNodeExtended } from '@microsoft/utils-logic-apps';
-import { isNullOrEmpty, NormalizedDataType, numericalDataType } from '@microsoft/utils-logic-apps';
+import type { SchemaNodeExtended } from '@microsoft/logic-apps-shared';
+import { isNullOrEmpty, NormalizedDataType, numericalDataType } from '@microsoft/logic-apps-shared';
 import React, { useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
@@ -93,38 +93,38 @@ export const InputDropdown = (props: InputDropdownProps) => {
 
   const customValueSchemaNodeTypeMismatchLoc = intl.formatMessage({
     defaultMessage: `Warning: custom value does not match the schema node's type`,
+    id: 'sRpETS',
     description: 'Warning message for when custom value does not match schema node type',
   });
 
   const customValueAllowedTypesMismatchLoc = intl.formatMessage({
-    defaultMessage: `Warning: custom value does not match one of the allowed types for this input`,
+    defaultMessage: 'Warning: custom value does not match one of the allowed types for this input',
+    id: 'BCgiRh',
     description: `Warning message for when custom value does not match one of the function node input's allowed types`,
   });
 
   const nodeTypeSchemaNodeTypeMismatchLoc = intl.formatMessage({
     defaultMessage: `Warning: input node type does not match the schema node's type`,
+    id: '+0H8Or',
     description: 'Warning message for when input node type does not match schema node type',
   });
 
   const nodeTypeAllowedTypesMismatchLoc = intl.formatMessage({
-    defaultMessage: `Warning: input node type does not match one of the allowed types for this input.`,
+    defaultMessage: 'Warning: input node type does not match one of the allowed types for this input.',
+    id: 'yNtBUV',
     description: `Warning message for when input node type does not match one of the function node input's allowed types`,
   });
 
   const customValueLoc = intl.formatMessage({
-    defaultMessage: `(Custom value)`,
-    description: `Suffix for a custom value drop down value.`,
+    defaultMessage: '(Custom value)',
+    id: 'WgChTm',
+    description: 'Suffix for a custom value drop down value.',
   });
 
   const validateAndCreateConnection = (optionValue: string | undefined) => {
     const option = matchingOptions.find((opt) => opt.value === optionValue);
     if (optionValue) {
-      if (!option) {
-        // Create custom value connection
-        const srcConUnit: InputConnection = optionValue;
-
-        updateInput(srcConUnit);
-      } else {
+      if (option) {
         const selectedInputKey = option.value;
         const isSelectedInputFunction = option.isFunction;
 
@@ -146,6 +146,11 @@ export const InputDropdown = (props: InputDropdownProps) => {
           node: source,
           reactFlowKey: selectedInputKey,
         };
+
+        updateInput(srcConUnit);
+      } else {
+        // Create custom value connection
+        const srcConUnit: InputConnection = optionValue;
 
         updateInput(srcConUnit);
       }
@@ -226,13 +231,12 @@ export const InputDropdown = (props: InputDropdownProps) => {
             </Stack>
           </Option>
         );
-      } else {
-        return (
-          <Option key={option.key} text={option.text} value={option.key}>
-            {option.text}
-          </Option>
-        );
       }
+      return (
+        <Option key={option.key} text={option.text} value={option.key}>
+          {option.text}
+        </Option>
+      );
     });
 
     return options;
@@ -261,9 +265,9 @@ export const InputDropdown = (props: InputDropdownProps) => {
   };
 
   const changeValue = (value: string) => {
-    const matches = !isNullOrEmpty(value)
-      ? originalOptions.filter((option) => option.text.toLowerCase().indexOf(value.toLowerCase()) === 0)
-      : originalOptions;
+    const matches = isNullOrEmpty(value)
+      ? originalOptions
+      : originalOptions.filter((option) => option.text.toLowerCase().indexOf(value.toLowerCase()) === 0);
 
     setMatchingOptions(matches);
 
@@ -302,7 +306,7 @@ export const InputDropdown = (props: InputDropdownProps) => {
             currentNode.inputs[isUnboundedInput ? 0 : inputIndex].allowedTypes.forEach((type) => {
               const conversion = functions.find((func) => func.category === FunctionCategory.Conversion && func.outputValueType === type);
               if (conversion) {
-                possibleConversionFunctions += conversion?.displayName + ', ';
+                possibleConversionFunctions += `${conversion?.displayName}, `;
               }
               if (isValidConnectionByType(selectedOption.type, type)) {
                 someTypesMatched = true;
@@ -316,14 +320,15 @@ export const InputDropdown = (props: InputDropdownProps) => {
                 conversionMessage = intl.formatMessage(
                   {
                     defaultMessage: ' Try using a Conversion function such as: {conversionFunctions}',
-                    description: `Suggest to the user to try a conversion function instead`,
+                    id: 'ur3P27',
+                    description: 'Suggest to the user to try a conversion function instead',
                   },
                   {
                     conversionFunctions: possibleConversionFunctions,
                   }
                 );
               }
-              return nodeTypeAllowedTypesMismatchLoc + ' ' + conversionMessage;
+              return `${nodeTypeAllowedTypesMismatchLoc} ${conversionMessage}`;
             }
           }
         }
@@ -349,7 +354,7 @@ export const InputDropdown = (props: InputDropdownProps) => {
 
   return (
     <Stack horizontal={false}>
-      <DataTypeLabel inputIndex={inputIndex} currentNode={currentNode} comboboxId={id?.toString() || ''}></DataTypeLabel>
+      <DataTypeLabel inputIndex={inputIndex} currentNode={currentNode} comboboxId={id?.toString() || ''} />
       <Combobox
         id={id}
         aria-labelledby={labelId}
@@ -405,13 +410,15 @@ const DataTypeLabel = (props: DataTypeLabelProps) => {
   }
 
   const numericalMessage = intl.formatMessage({
-    defaultMessage: "Accepts 'Number', 'Integer', and 'Decimal' types.",
-    description: `Explains that numerical type allows three different number types`,
+    defaultMessage: `Accepts 'Number', 'Integer', and 'Decimal' types.`,
+    id: 'CyT8H7',
+    description: 'Explains that numerical type allows three different number types',
   });
   const dataTypeMessage = intl.formatMessage(
     {
       defaultMessage: 'Accepted data types: {type}',
-      description: `Explains that numerical type allows three different number types`,
+      id: 'J5TTF6',
+      description: 'Explains that numerical type allows three different number types',
     },
     {
       type: inputType,
@@ -427,10 +434,9 @@ const DataTypeLabel = (props: DataTypeLabelProps) => {
     return (
       <div style={{ display: 'flex' }}>
         {label}
-        <DMTooltip text={numericalMessage}></DMTooltip>
+        <DMTooltip text={numericalMessage} />
       </div>
     );
-  } else {
-    return label;
   }
+  return label;
 };

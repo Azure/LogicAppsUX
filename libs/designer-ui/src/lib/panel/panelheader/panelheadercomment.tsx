@@ -5,7 +5,8 @@ import { bundleIcon, Comment20Filled, Comment20Regular } from '@fluentui/react-i
 import type { ITextField, ITextFieldStyles } from '@fluentui/react/lib/TextField';
 import { TextField } from '@fluentui/react/lib/TextField';
 import { css } from '@fluentui/react/lib/Utilities';
-import React, { useEffect, useRef, useState } from 'react';
+import type React from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 
 const CommentIcon = bundleIcon(Comment20Filled, Comment20Regular);
@@ -38,6 +39,7 @@ export const PanelHeaderComment = ({
 
   const commentLabel = intl.formatMessage({
     defaultMessage: 'Comment',
+    id: '1A1P5b',
     description: 'Comment Label',
   });
 
@@ -54,6 +56,7 @@ export const PanelHeaderComment = ({
     const commentClassName = commentHasFocus ? 'msla-card-comment-focused' : 'msla-card-comment';
     const commentTitle = intl.formatMessage({
       defaultMessage: 'Comment',
+      id: 'OSHNZ2',
       description: 'Label for the comment textfield',
     });
 
@@ -103,8 +106,8 @@ export const PanelHeaderComment = ({
   };
   return (
     <div className="msla-panel-comment-container" hidden={isCollapsed}>
-      {!noNodeSelected ? getCommentIcon() : null}
-      {!noNodeSelected ? getCommentEditor() : null}
+      {noNodeSelected ? null : getCommentIcon()}
+      {noNodeSelected ? null : getCommentEditor()}
     </div>
   );
 };

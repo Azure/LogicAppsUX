@@ -17,7 +17,7 @@ import { Stack } from '@fluentui/react';
 import type { SelectTabData, SelectTabEvent } from '@fluentui/react-components';
 import { Button, MenuItem, Text, mergeClasses, tokens, typographyStyles } from '@fluentui/react-components';
 import { CubeTree20Filled, CubeTree20Regular, MathFormula20Filled, MathFormula20Regular } from '@fluentui/react-icons';
-import type { SchemaNodeExtended } from '@microsoft/utils-logic-apps';
+import type { SchemaNodeExtended } from '@microsoft/logic-apps-shared';
 import { useCallback, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
@@ -54,41 +54,49 @@ export const CanvasToolbox = ({ canvasBlockHeight }: CanvasToolboxProps) => {
 
   const showSourceSchemaLoc = intl.formatMessage({
     defaultMessage: 'Show source schema',
+    id: 'D/xTXV',
     description: 'Label to open source schema toolbox',
   });
 
   const hideSourceSchemaLoc = intl.formatMessage({
     defaultMessage: 'Hide source schema',
+    id: '1pjO9s',
     description: 'Label to close source schema toolbox',
   });
 
   const showFunctionsLoc = intl.formatMessage({
     defaultMessage: 'Show functions',
+    id: 'PvWTxR',
     description: 'Label to open Functions list',
   });
 
   const hideFunctionsLoc = intl.formatMessage({
     defaultMessage: 'Hide functions',
+    id: '1nODUD',
     description: 'Label to close Functions list',
   });
 
   const functionLoc = intl.formatMessage({
     defaultMessage: 'Function',
+    id: 'PSrCNL',
     description: 'Function',
   });
 
   const sourceSchemaLoc = intl.formatMessage({
     defaultMessage: 'Source schema',
+    id: 'VLc3FV',
     description: 'Source schema',
   });
 
   const addSrcSchemaLoc = intl.formatMessage({
     defaultMessage: 'Add a source schema first, then select elements to build your map',
+    id: 'h6vVbX',
     description: 'Message to add a source schema',
   });
 
   const addLoc = intl.formatMessage({
     defaultMessage: 'Add',
+    id: 'F9dR1Q',
     description: 'Add',
   });
 
@@ -128,6 +136,7 @@ export const CanvasToolbox = ({ canvasBlockHeight }: CanvasToolboxProps) => {
     const nodeList = [node, ...node.children];
     const text = intl.formatMessage({
       defaultMessage: 'Add children',
+      id: 'YCFhzp',
       description: 'Add the current node and its children to the map',
     });
     return (
@@ -145,6 +154,7 @@ export const CanvasToolbox = ({ canvasBlockHeight }: CanvasToolboxProps) => {
     const nodeList = flattenSchemaNode(node);
     const text = intl.formatMessage({
       defaultMessage: 'Add children (recursive)',
+      id: '20oqsp',
       description: 'Add the current node and its children to the map',
     });
     return (

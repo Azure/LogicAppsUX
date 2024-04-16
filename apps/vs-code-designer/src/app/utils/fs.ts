@@ -3,10 +3,10 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { localize } from '../../localize';
-import { isEmptyString } from '@microsoft/utils-logic-apps';
+import { isEmptyString } from '@microsoft/logic-apps-shared';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { DialogResponses } from '@microsoft/vscode-azext-utils';
-import type { pathRelativeFunc } from '@microsoft/vscode-extension';
+import type { pathRelativeFunc } from '@microsoft/vscode-extension-logic-apps';
 import * as crypto from 'crypto';
 import * as fse from 'fs-extra';
 import * as path from 'path';
@@ -63,12 +63,10 @@ export async function confirmOverwriteFile(context: IActionContext, fsPath: stri
     );
     if (result === DialogResponses.yes) {
       return true;
-    } else {
-      return false;
     }
-  } else {
-    return true;
+    return false;
   }
+  return true;
 }
 
 /**

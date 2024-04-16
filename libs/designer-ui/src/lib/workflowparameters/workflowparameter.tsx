@@ -4,7 +4,7 @@ import { EditOrDeleteButton } from './workflowparametersButtons';
 import { WorkflowparameterField } from './workflowparametersField';
 import { Button } from '@fluentui/react-components';
 import { bundleIcon, ChevronRight24Regular, ChevronRight24Filled, ChevronDown24Regular, ChevronDown24Filled } from '@fluentui/react-icons';
-import { RUN_AFTER_COLORS } from '@microsoft/utils-logic-apps';
+import { RUN_AFTER_COLORS } from '@microsoft/logic-apps-shared';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
 
@@ -59,6 +59,7 @@ export function WorkflowParameter({ definition, isReadOnly, useLegacy, isInverte
 
   const headingTitle = intl.formatMessage({
     defaultMessage: 'New parameter',
+    id: 'ss5JPH',
     description: 'Heading Title for a Parameter Without Name',
   });
 
@@ -68,7 +69,7 @@ export function WorkflowParameter({ definition, isReadOnly, useLegacy, isInverte
         <div>
           <Button
             appearance="subtle"
-            data-testid={name + '-parameter-heading-button'}
+            data-testid={`${name}-parameter-heading-button`}
             className="msla-workflow-parameter-heading-button"
             onClick={handleToggleExpand}
             icon={expanded ? <CollapseIcon /> : <ExpandIcon />}
@@ -94,7 +95,7 @@ export function WorkflowParameter({ definition, isReadOnly, useLegacy, isInverte
           />
         ) : null}
       </div>
-      {!isReadOnly ? (
+      {isReadOnly ? null : (
         <div className="msla-workflow-parameter-edit-or-delete-button">
           <EditOrDeleteButton
             onDelete={props.onDelete}
@@ -104,7 +105,7 @@ export function WorkflowParameter({ definition, isReadOnly, useLegacy, isInverte
             setExpanded={setExpanded}
           />
         </div>
-      ) : null}
+      )}
     </div>
   );
 }
