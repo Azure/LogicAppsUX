@@ -25,7 +25,7 @@ import {
   addLibToPublishPath,
 } from '../../utils/codeless/updateBuildFile';
 import { getLocalDotNetVersionFromBinaries, getProjFiles, getTemplateKeyFromProjFile } from '../../utils/dotnet/dotnet';
-import { validateDotnetInstalled, getFramework, executeDotnetTemplateCommand } from '../../utils/dotnet/executeDotnetTemplateCommand';
+import { getFramework, executeDotnetTemplateCommand } from '../../utils/dotnet/executeDotnetTemplateCommand';
 import { wrapArgInQuotes } from '../../utils/funcCoreTools/cpUtils';
 import { tryGetMajorVersion, tryParseFuncVersion } from '../../utils/funcCoreTools/funcVersion';
 import { getWorkspaceSetting } from '../../utils/vsCodeConfig/settings';
@@ -38,9 +38,13 @@ import { ProjectLanguage } from '@microsoft/vscode-extension-logic-apps';
 import * as fse from 'fs-extra';
 import * as path from 'path';
 import * as vscode from 'vscode';
+import { validateDotNetIsInstalled } from '../dotnet/validateDotNetInstalled';
 
 export async function switchToDotnetProject(context: IProjectWizardContext, target: vscode.Uri) {
-  await validateDotnetInstalled(context);
+  const isDotNetInstalled = await validateDotNetIsInstalled(context, target.fsPath);
+  if (!isDotNetInstalled) {
+    return;
+  }
 
   if (target === undefined) {
     const workspaceFolders = vscode.workspace.workspaceFolders;
