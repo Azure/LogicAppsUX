@@ -191,11 +191,12 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
         await addConnectionData(this.context, this.workflowFilePath, msg.connectionAndSetting);
         break;
       }
-      case ExtensionCommand.openOauthLoginPopup:
+      case ExtensionCommand.openOauthLoginPopup: {
         await env.openExternal(msg.url);
         break;
+      }
 
-      case ExtensionCommand.createFileSystemConnection:
+      case ExtensionCommand.createFileSystemConnection: {
         {
           const connectionName = msg.connectionName;
           const { connection, errorMessage } = await this.createFileSystemConnection(msg.connectionInfo);
@@ -209,6 +210,7 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
           });
         }
         break;
+      }
 
       default:
         break;
@@ -316,7 +318,7 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
   private _traverseAction(action: any, migrationOptions: Record<string, any>): void {
     const type = action?.type;
     switch ((type || '').toLowerCase()) {
-      case 'liquid':
+      case 'liquid': {
         if (migrationOptions['liquidJsonToJson']?.inputs?.properties?.map?.properties?.source) {
           const map = action?.inputs?.map;
           if (map && map.source === undefined) {
@@ -324,7 +326,8 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
           }
         }
         break;
-      case 'xmlvalidation':
+      }
+      case 'xmlvalidation': {
         if (migrationOptions['xmlValidation']?.inputs?.properties?.schema?.properties?.source) {
           const schema = action?.inputs?.schema;
           if (schema && schema.source === undefined) {
@@ -332,7 +335,8 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
           }
         }
         break;
-      case 'xslt':
+      }
+      case 'xslt': {
         if (migrationOptions['xslt']?.inputs?.properties?.map?.properties?.source) {
           const map = action?.inputs?.map;
           if (map && map.source === undefined) {
@@ -340,8 +344,9 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
           }
         }
         break;
+      }
       case 'flatfileencoding':
-      case 'flatfiledecoding':
+      case 'flatfiledecoding': {
         if (migrationOptions['flatFileEncoding']?.inputs?.properties?.schema?.properties?.source) {
           const schema = action?.inputs?.schema;
           if (schema && schema.source === undefined) {
@@ -349,22 +354,26 @@ export default class OpenDesignerForLocalProject extends OpenDesignerBase {
           }
         }
         break;
-      case 'if':
+      }
+      case 'if': {
         this._traverseActions(action.else?.actions, migrationOptions);
-      // fall through
+        break;
+      }
       case 'scope':
       case 'foreach':
       case 'changeset':
-      case 'until':
+      case 'until': {
         this._traverseActions(action.actions, migrationOptions);
         break;
-      case 'switch':
+      }
+      case 'switch': {
         for (const caseKey of Object.keys(action.cases || {})) {
           this._traverseActions(action.cases[caseKey]?.actions, migrationOptions);
         }
         this._traverseActions(action.default?.actions, migrationOptions);
 
         break;
+      }
     }
   }
 

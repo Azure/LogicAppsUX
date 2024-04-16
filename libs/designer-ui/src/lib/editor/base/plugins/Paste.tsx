@@ -71,9 +71,8 @@ export const PastePlugin = ({ segmentMapping, loadParameterValueFromString }: Pa
             selection?.insertNodes([paragraphNode]);
           });
           return true;
-        } else {
-          return false;
         }
+        return false;
       },
       COMMAND_PRIORITY_LOW
     );

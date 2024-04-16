@@ -16,10 +16,10 @@ import type { Uri, WorkspaceFolder } from 'vscode';
 export async function configureWebhookRedirectEndpoint(context: IActionContext, data: Uri): Promise<void> {
   let workspaceFolder: WorkspaceFolder;
 
-  if (!data?.fsPath) {
-    workspaceFolder = await getWorkspaceFolder(context);
-  } else {
+  if (data?.fsPath) {
     workspaceFolder = nonNullValue(getContainingWorkspace(data.fsPath), 'workspaceFolder');
+  } else {
+    workspaceFolder = await getWorkspaceFolder(context);
   }
 
   const workspacePath = workspaceFolder.uri.fsPath;

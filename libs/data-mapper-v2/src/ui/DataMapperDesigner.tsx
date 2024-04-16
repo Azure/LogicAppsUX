@@ -269,9 +269,8 @@ export const DataMapperDesigner = ({
 
     if (isPropPaneExpanded) {
       return centerViewHeight;
-    } else {
-      return centerViewHeight;
     }
+    return centerViewHeight;
   };
 
   return (

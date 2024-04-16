@@ -13,7 +13,9 @@ export const ErrorCategory = (props: ErrorCategoryProps) => {
 
   const [isExpanded, setIsExpanded] = useState(true);
 
-  if (numMessages === 0) return null;
+  if (numMessages === 0) {
+    return null;
+  }
 
   return (
     <div className="msla-error-category-container">

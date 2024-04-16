@@ -20,9 +20,8 @@ export async function getLocalNodeJsVersion(): Promise<string | null> {
     const version: string | null = semver.clean(output);
     if (version) {
       return version;
-    } else {
-      return null;
     }
+    return null;
   } catch (error) {
     return null;
   }
@@ -39,7 +38,7 @@ export function getNpmCommand(): string {
   if (binariesExist) {
     // windows the executable is at root folder, linux & macos its in the bin
     command = path.join(nodeJsBinariesPath, ext.npmCliPath);
-    if (process.platform != Platform.windows) {
+    if (process.platform !== Platform.windows) {
       const nodeSubFolder = getNodeSubFolder(command);
       command = path.join(nodeJsBinariesPath, nodeSubFolder, 'bin', ext.npmCliPath);
     }
@@ -63,7 +62,7 @@ export async function setNodeJsCommand(): Promise<void> {
   if (binariesExist) {
     // windows the executable is at root folder, linux & macos its in the bin
     command = path.join(nodeJsBinariesPath, ext.nodeJsCliPath);
-    if (process.platform != Platform.windows) {
+    if (process.platform !== Platform.windows) {
       const nodeSubFolder = getNodeSubFolder(command);
       command = path.join(nodeJsBinariesPath, nodeSubFolder, 'bin', ext.nodeJsCliPath);
 

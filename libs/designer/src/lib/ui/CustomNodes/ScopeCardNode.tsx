@@ -234,10 +234,15 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
   });
 
   const { errorMessage, errorLevel } = useMemo(() => {
-    if (opQuery?.isError) return { errorMessage: opManifestErrorText, errorLevel: MessageBarType.error };
-    if (settingValidationErrors?.length > 0) return { errorMessage: settingValidationErrorText, errorLevel: MessageBarType.severeWarning };
-    if (parameterValidationErrors?.length > 0)
+    if (opQuery?.isError) {
+      return { errorMessage: opManifestErrorText, errorLevel: MessageBarType.error };
+    }
+    if (settingValidationErrors?.length > 0) {
+      return { errorMessage: settingValidationErrorText, errorLevel: MessageBarType.severeWarning };
+    }
+    if (parameterValidationErrors?.length > 0) {
       return { errorMessage: parameterValidationErrorText, errorLevel: MessageBarType.severeWarning };
+    }
 
     if (isMonitoringView) {
       return getMonitoringError(errorRun, statusRun, codeRun);
@@ -335,12 +340,12 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
       </div>
       {graphCollapsed && !isFooter ? <p className="no-actions-text">{collapsedText}</p> : null}
       {showEmptyGraphComponents ? (
-        !readOnly ? (
+        readOnly ? (
+          <p className="no-actions-text">No Actions</p>
+        ) : (
           <div className={'edge-drop-zone-container'}>
             <DropZone graphId={scopeId} parentId={id} isLeaf={isLeaf} />
           </div>
-        ) : (
-          <p className="no-actions-text">No Actions</p>
         )
       ) : null}
     </>

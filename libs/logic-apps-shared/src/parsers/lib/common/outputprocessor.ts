@@ -92,16 +92,16 @@ export class OutputsProcessor {
         (startsWith(responseCode, '2') && responseCodes.some((code) => equals(responseCode, code))))
     ) {
       return responses[responseCode];
-    } else {
-      if (responses[ResponseCodes.$200]) {
-        return responses[ResponseCodes.$200];
-      } else if (responses[ResponseCodes.$201]) {
-        return responses[ResponseCodes.$201];
-      } else if (responses[ResponseCodes.$default]) {
-        return responses[ResponseCodes.$default];
-      } else {
-        return {};
-      }
     }
+    if (responses[ResponseCodes.$200]) {
+      return responses[ResponseCodes.$200];
+    }
+    if (responses[ResponseCodes.$201]) {
+      return responses[ResponseCodes.$201];
+    }
+    if (responses[ResponseCodes.$default]) {
+      return responses[ResponseCodes.$default];
+    }
+    return {};
   }
 }

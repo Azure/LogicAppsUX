@@ -47,7 +47,9 @@ export const AzureConsumptionLogicAppSelector = () => {
   } = useQuery(
     ['getListOfRunInstances', appId, workflowName],
     async () => {
-      if (!validApp) return null;
+      if (!validApp) {
+        return null;
+      }
       const results = await axios.get<RunList>(`https://management.azure.com${appId}/runs?api-version=2016-10-01`, {
         headers: {
           Authorization: `Bearer ${environment.armToken}`,
@@ -76,7 +78,7 @@ export const AzureConsumptionLogicAppSelector = () => {
     <Stack {...columnProps}>
       <div style={{ position: 'relative' }}>
         <ComboBox
-          placeholder={!isAppsLoading ? (appOptions.length > 0 ? 'Select an App' : 'No Apps to Select') : ''}
+          placeholder={isAppsLoading ? '' : appOptions.length > 0 ? 'Select an App' : 'No Apps to Select'}
           label="Consumption Logic Apps"
           allowFreeform={true}
           autoComplete={'on'}
@@ -84,7 +86,9 @@ export const AzureConsumptionLogicAppSelector = () => {
           options={appOptions}
           onChange={(_, option) => {
             const selectedAppId = (option?.key ?? '') as string;
-            if (!selectedAppId) return;
+            if (!selectedAppId) {
+              return;
+            }
             dispatch(setAppid(selectedAppId));
             dispatch(setResourcePath(selectedAppId));
             dispatch(setWorkflowName(option?.data.name as string));
@@ -104,13 +108,13 @@ export const AzureConsumptionLogicAppSelector = () => {
         <div style={{ position: 'relative' }}>
           <Dropdown
             placeholder={
-              !isRunInstancesLoading
-                ? appId
+              isRunInstancesLoading
+                ? ''
+                : appId
                   ? runOptions.length > 0
                     ? 'Select a Run Instance'
                     : 'No Run Instances to Select'
                   : 'Select a Logic App first'
-                : ''
             }
             label="RunInstance"
             options={runOptions}

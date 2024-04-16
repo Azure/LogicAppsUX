@@ -137,10 +137,8 @@ export const serializeWorkflow = async (rootState: RootState, options?: Serializ
       return references;
     }
 
-    return {
-      ...references,
-      [referenceKey]: referencesObject[referenceKey],
-    };
+    references[referenceKey] = referencesObject[referenceKey];
+    return references;
   }, {});
 
   const parameters = getWorkflowParameters(filterRecord(rootState.workflowParameters.definitions, (key, _) => key !== '')) ?? {};
@@ -185,10 +183,8 @@ const getActions = async (rootState: RootState, options?: SerializeOptions): Pro
     (actions: LogicAppsV2.Actions, action: LogicAppsV2.ActionDefinition | null, index: number) => {
       const originalId = actionsInRootGraph[index].id;
       if (!isNullOrEmpty(action)) {
-        return {
-          ...actions,
-          [getRecordEntry(idReplacements, originalId) ?? originalId]: action as LogicAppsV2.ActionDefinition,
-        };
+        actions[getRecordEntry(idReplacements, originalId) ?? originalId] = action as LogicAppsV2.ActionDefinition;
+        return actions;
       }
 
       return actions;
@@ -242,8 +238,8 @@ const getWorkflowParameters = (
         : typeof defaultValue !== 'string'
           ? defaultValue
           : JSON.parse(defaultValue);
-
-    return { ...result, [parameter?.name ?? parameterId]: parameterDefinition };
+    result[parameter?.name ?? parameterId] = parameterDefinition;
+    return result;
   }, {});
 };
 
@@ -259,7 +255,9 @@ export const serializeOperation = async (
   }
 
   const operation = getRecordEntry(rootState.operations.operationInfo, operationId);
-  if (!operation) return null;
+  if (!operation) {
+    return null;
+  }
 
   let serializedOperation: LogicAppsV2.OperationDefinition;
   if (OperationManifestService().isSupported(operation.type, operation.kind)) {
@@ -268,11 +266,12 @@ export const serializeOperation = async (
     switch (operation.type.toLowerCase()) {
       case Constants.NODE.TYPE.API_CONNECTION:
       case Constants.NODE.TYPE.API_CONNECTION_NOTIFICATION:
-      case Constants.NODE.TYPE.API_CONNECTION_WEBHOOK:
+      case Constants.NODE.TYPE.API_CONNECTION_WEBHOOK: {
         serializedOperation = await serializeSwaggerBasedOperation(rootState, operationId);
         break;
+      }
 
-      default:
+      default: {
         LoggerService().log({
           level: LogEntryLevel.Error,
           area: 'operation serializer',
@@ -280,6 +279,7 @@ export const serializeOperation = async (
         });
         serializedOperation = (getRecordEntry(rootState.workflow.operations, operationId) as any) ?? {};
         break;
+      }
     }
   }
 
@@ -294,7 +294,9 @@ export const serializeOperation = async (
 const serializeManifestBasedOperation = async (rootState: RootState, operationId: string): Promise<LogicAppsV2.OperationDefinition> => {
   const idReplacements = rootState.workflow.idReplacements;
   const operation = getRecordEntry(rootState.operations.operationInfo, operationId);
-  if (!operation) throw new AssertionException(AssertionErrorCode.OPERATION_NOT_FOUND, `Operation with id ${operationId} not found`);
+  if (!operation) {
+    throw new AssertionException(AssertionErrorCode.OPERATION_NOT_FOUND, `Operation with id ${operationId} not found`);
+  }
   const manifest = await getOperationManifest(operation);
   const isTrigger = isRootNodeInGraph(operationId, 'root', rootState.workflow.nodesMetadata);
   const inputsToSerialize = getOperationInputsToSerialize(rootState, operationId);
@@ -376,10 +378,8 @@ const getRunAfter = (operation: LogicAppsV2.ActionDefinition, idReplacements: Re
     return {};
   }
   return Object.entries(operation.runAfter).reduce((acc: LogicAppsV2.RunAfter, [key, value]) => {
-    return {
-      ...acc,
-      [getRecordEntry(idReplacements, key) ?? key]: value,
-    };
+    acc[getRecordEntry(idReplacements, key) ?? key] = value;
+    return acc;
   }, {});
 };
 
@@ -420,61 +420,57 @@ export const constructInputValues = (key: string, inputs: SerializedParameter[],
       result = encodePathValue(result, encodeCount);
     }
     return result !== undefined ? result : rootParameter.required ? null : undefined;
-  } else {
-    const propertyNameParameters: SerializedParameter[] = [];
-    const pathTemplateParameters: SerializedParameter[] = [];
-    const isPathTemplateParameter = (param: SerializedParameter) =>
-      param.info.deserialization?.type === DeserializationType.PathTemplateProperties;
+  }
+  const propertyNameParameters: SerializedParameter[] = [];
+  const pathTemplateParameters: SerializedParameter[] = [];
+  const isPathTemplateParameter = (param: SerializedParameter) =>
+    param.info.deserialization?.type === DeserializationType.PathTemplateProperties;
 
-    const serializedParameters = inputs
-      .filter((item) => isAncestorKey(item.parameterKey, key))
-      .map((descendantParameter) => {
-        let parameterValue = getJSONValueFromString(descendantParameter.value, descendantParameter.type);
-        if (encodePathComponents) {
-          const encodeCount = getEncodeValue(descendantParameter.info.encode ?? '');
-          parameterValue = encodePathValue(parameterValue, encodeCount);
-        }
-
-        const serializedParameter = { ...descendantParameter, value: parameterValue };
-        if (descendantParameter.info.serialization?.property?.type === PropertySerializationType.ParentObject) {
-          propertyNameParameters.push(serializedParameter);
-        }
-
-        if (isPathTemplateParameter(descendantParameter)) {
-          pathTemplateParameters.push(serializedParameter);
-        }
-
-        return serializedParameter;
-      });
-
-    const pathParameters = pathTemplateParameters.reduce(
-      (allPathParams: Record<string, string>, current: SerializedParameter) => ({
-        ...allPathParams,
-        [current.parameterName.split('.').at(-1) as string]: current.value,
-      }),
-      {}
-    );
-    const parametersToSerialize = serializedParameters.filter((param) => !isPathTemplateParameter(param));
-    for (const serializedParameter of parametersToSerialize) {
-      if (serializedParameter.info.serialization?.property?.type === PropertySerializationType.PathTemplate) {
-        serializedParameter.value = replaceTemplatePlaceholders(pathParameters, serializedParameter.value);
-        result = serializeParameterWithPath(result, serializedParameter.value, key, serializedParameter);
-      } else if (serializedParameter.info.serialization?.value) {
-        result = serializeParameterWithPath(
-          result,
-          serializedParameter.value ? serializedParameter.value : serializedParameter.info.serialization.value,
-          key,
-          serializedParameter
-        );
-      } else if (!propertyNameParameters.find((param) => param.parameterKey === serializedParameter.parameterKey)) {
-        let parameterKey = serializedParameter.parameterKey;
-        for (const propertyNameParameter of propertyNameParameters) {
-          const propertyName = propertyNameParameter.info.serialization?.property?.name as string;
-          parameterKey = parameterKey.replace(propertyName, propertyNameParameter.value);
-        }
-
-        result = serializeParameterWithPath(result, serializedParameter.value, key, { ...serializedParameter, parameterKey });
+  const serializedParameters = inputs
+    .filter((item) => isAncestorKey(item.parameterKey, key))
+    .map((descendantParameter) => {
+      let parameterValue = getJSONValueFromString(descendantParameter.value, descendantParameter.type);
+      if (encodePathComponents) {
+        const encodeCount = getEncodeValue(descendantParameter.info.encode ?? '');
+        parameterValue = encodePathValue(parameterValue, encodeCount);
       }
+
+      const serializedParameter = { ...descendantParameter, value: parameterValue };
+      if (descendantParameter.info.serialization?.property?.type === PropertySerializationType.ParentObject) {
+        propertyNameParameters.push(serializedParameter);
+      }
+
+      if (isPathTemplateParameter(descendantParameter)) {
+        pathTemplateParameters.push(serializedParameter);
+      }
+
+      return serializedParameter;
+    });
+
+  const pathParameters = pathTemplateParameters.reduce((allPathParams: Record<string, string>, current: SerializedParameter) => {
+    allPathParams[current.parameterName.split('.').at(-1) as string] = current.value;
+    return allPathParams;
+  }, {});
+  const parametersToSerialize = serializedParameters.filter((param) => !isPathTemplateParameter(param));
+  for (const serializedParameter of parametersToSerialize) {
+    if (serializedParameter.info.serialization?.property?.type === PropertySerializationType.PathTemplate) {
+      serializedParameter.value = replaceTemplatePlaceholders(pathParameters, serializedParameter.value);
+      result = serializeParameterWithPath(result, serializedParameter.value, key, serializedParameter);
+    } else if (serializedParameter.info.serialization?.value) {
+      result = serializeParameterWithPath(
+        result,
+        serializedParameter.value ? serializedParameter.value : serializedParameter.info.serialization.value,
+        key,
+        serializedParameter
+      );
+    } else if (!propertyNameParameters.find((param) => param.parameterKey === serializedParameter.parameterKey)) {
+      let parameterKey = serializedParameter.parameterKey;
+      for (const propertyNameParameter of propertyNameParameters) {
+        const propertyName = propertyNameParameter.info.serialization?.property?.name as string;
+        parameterKey = parameterKey.replace(propertyName, propertyNameParameter.value);
+      }
+
+      result = serializeParameterWithPath(result, serializedParameter.value, key, { ...serializedParameter, parameterKey });
     }
   }
 
@@ -596,7 +592,7 @@ const swapInputsLocationIfNeeded = (parametersValue: any, swapMap: LocationSwapM
     }
 
     const value = { ...excludePathValueFromTarget(parametersValue, source, target), ...getObjectPropertyValue(parametersValue, source) };
-    finalValue = !target.length ? { ...finalValue, ...value } : safeSetObjectPropertyValue(finalValue, target, value);
+    finalValue = target.length ? safeSetObjectPropertyValue(finalValue, target, value) : { ...finalValue, ...value };
   }
 
   return finalValue;
@@ -674,7 +670,7 @@ const serializeHost = (
           operationId,
         },
       };
-    case ConnectionReferenceKeyFormat.OpenApiConnection:
+    case ConnectionReferenceKeyFormat.OpenApiConnection: {
       // eslint-disable-next-line no-case-declarations
       const connectorSegments = connectorId.split('/');
       return {
@@ -686,6 +682,7 @@ const serializeHost = (
           operationId,
         },
       };
+    }
     case ConnectionReferenceKeyFormat.ServiceProvider:
       return {
         serviceProviderConfiguration: {
@@ -812,10 +809,8 @@ const serializeSubGraph = async (
     nestedActions.reduce((actions: LogicAppsV2.Actions, action: LogicAppsV2.OperationDefinition, index: number) => {
       if (!isNullOrEmpty(action)) {
         const actionId = nestedNodes[index].id;
-        return {
-          ...actions,
-          [getRecordEntry(idReplacements, actionId) ?? actionId]: action,
-        };
+        actions[getRecordEntry(idReplacements, actionId) ?? actionId] = action;
+        return actions;
       }
 
       return actions;
@@ -925,17 +920,15 @@ const getSerializedRuntimeConfiguration = (
         );
       }
     }
-  } else {
-    if (!settings.singleInstance) {
-      const runs = settings.concurrency?.value?.enabled ? settings.concurrency.value.value : undefined;
+  } else if (!settings.singleInstance) {
+    const runs = settings.concurrency?.value?.enabled ? settings.concurrency.value.value : undefined;
 
-      if (runs !== undefined) {
-        safeSetObjectPropertyValue(
-          runtimeConfiguration,
-          [Constants.SETTINGS.PROPERTY_NAMES.CONCURRENCY, Constants.SETTINGS.PROPERTY_NAMES.RUNS],
-          runs
-        );
-      }
+    if (runs !== undefined) {
+      safeSetObjectPropertyValue(
+        runtimeConfiguration,
+        [Constants.SETTINGS.PROPERTY_NAMES.CONCURRENCY, Constants.SETTINGS.PROPERTY_NAMES.RUNS],
+        runs
+      );
     }
   }
 

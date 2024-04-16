@@ -26,15 +26,13 @@ export async function initProjectForVSCode(context: IActionContext, fsPath?: str
   if (fsPath === undefined) {
     if (!workspace.workspaceFolders || workspace.workspaceFolders.length === 0) {
       throw new NoWorkspaceError();
-    } else {
-      const placeHolder: string = localize('selectFunctionAppFolderNew', 'Select the folder to initialize for use with VS Code');
-      workspaceFolder = await window.showWorkspaceFolderPick({ placeHolder });
-      if (!workspaceFolder) {
-        throw new UserCancelledError();
-      } else {
-        workspacePath = workspaceFolder.uri.fsPath;
-      }
     }
+    const placeHolder: string = localize('selectFunctionAppFolderNew', 'Select the folder to initialize for use with VS Code');
+    workspaceFolder = await window.showWorkspaceFolderPick({ placeHolder });
+    if (!workspaceFolder) {
+      throw new UserCancelledError();
+    }
+    workspacePath = workspaceFolder.uri.fsPath;
   } else {
     workspaceFolder = getContainingWorkspace(fsPath);
     workspacePath = workspaceFolder ? workspaceFolder.uri.fsPath : fsPath;

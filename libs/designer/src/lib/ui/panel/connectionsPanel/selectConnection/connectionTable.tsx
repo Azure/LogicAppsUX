@@ -55,9 +55,11 @@ export const ConnectionTable = (props: ConnectionTableProps): JSX.Element => {
 
   const onConnectionSelect = useCallback(
     (connection: Connection) => {
-      if (!areIdLeavesEqual(connection.id, currentConnectionId))
+      if (areIdLeavesEqual(connection.id, currentConnectionId)) {
+        cancelSelectionCallback(); // User clicked the existing connection, keep selection the same and return
+      } else {
         saveSelectionCallback(connection); // User clicked a different connection, save selection and return
-      else cancelSelectionCallback(); // User clicked the existing connection, keep selection the same and return
+      }
     },
     [cancelSelectionCallback, currentConnectionId, saveSelectionCallback]
   );
@@ -133,9 +135,13 @@ export const ConnectionTable = (props: ConnectionTableProps): JSX.Element => {
   const onSelectionChange: DataGridProps['onSelectionChange'] = useCallback(
     (e: any, data: any) => {
       const index = data.selectedItems.values().next().value;
-      if (items[index]?.invalid) return; // Don't allow selection of invalid connections (they are disabled)
+      if (items[index]?.invalid) {
+        return; // Don't allow selection of invalid connections (they are disabled)
+      }
       const connection = connections[index];
-      if (!connection) return;
+      if (!connection) {
+        return;
+      }
       onConnectionSelect(connection);
     },
     [connections, items, onConnectionSelect]

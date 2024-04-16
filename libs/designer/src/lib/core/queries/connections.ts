@@ -2,8 +2,8 @@ import { getReactQueryClient } from '../ReactQueryProvider';
 import { ConnectionService, SwaggerParser, equals } from '@microsoft/logic-apps-shared';
 import type { Connection, Connector } from '@microsoft/logic-apps-shared';
 import { useMemo } from 'react';
-import { UseQueryResult, useQuery } from 'react-query';
-
+import type { UseQueryResult } from 'react-query';
+import { useQuery } from 'react-query';
 
 const connectionKey = 'connections';
 export interface ConnectorWithParsedSwagger {
@@ -42,13 +42,16 @@ export const useConnectionById = (connectionId: string, connectorId: string) => 
   const isLoading = areConnectionsLoading || isConnectionLoading;
 
   return useMemo(() => {
-    if (!connectionId || !connectorId) return { isLoading: false, result: undefined };
+    if (!connectionId || !connectorId) {
+      return { isLoading: false, result: undefined };
+    }
 
-    if (!connections)
+    if (!connections) {
       return {
         isLoading,
         result: undefined,
       };
+    }
 
     const foundConnection = connections.find((connection: any) => equals(connection.id, connectionId));
     return {

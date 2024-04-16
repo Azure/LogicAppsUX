@@ -2,7 +2,6 @@ import { useOperationVisuals } from '../../../../core/state/operation/operationS
 import { useNodeDisplayName } from '../../../../core/state/workflow/workflowSelectors';
 import { RunAfterActionStatuses } from './runafteractionstatuses';
 import { RunAfterTrafficLights } from './runaftertrafficlights';
-import { useTheme } from '@fluentui/react';
 import { Button, Divider } from '@fluentui/react-components';
 import { useBoolean } from '@fluentui/react-hooks';
 import {

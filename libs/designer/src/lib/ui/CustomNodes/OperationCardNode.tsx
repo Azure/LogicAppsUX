@@ -202,10 +202,14 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
   });
 
   const nodeClick = useCallback(() => {
-    if (nodeSelectCallbackOverride) nodeSelectCallbackOverride(id);
-
-    if (suppressDefaultNodeSelect) dispatch(setSelectedNodeId(id));
-    else dispatch(changePanelNode(id));
+    if (nodeSelectCallbackOverride) {
+      nodeSelectCallbackOverride(id);
+    }
+    if (suppressDefaultNodeSelect) {
+      dispatch(setSelectedNodeId(id));
+    } else {
+      dispatch(changePanelNode(id));
+    }
   }, [dispatch, id, nodeSelectCallbackOverride, suppressDefaultNodeSelect]);
 
   const deleteClick = useCallback(() => {

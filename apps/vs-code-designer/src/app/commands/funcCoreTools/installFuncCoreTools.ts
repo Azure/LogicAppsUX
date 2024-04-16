@@ -24,21 +24,24 @@ export async function installFuncCoreToolsBinaries(context: IActionContext, majo
   const targetDirectory = getGlobalSetting<string>(autoRuntimeDependenciesPathSettingKey);
   context.telemetry.properties.lastStep = 'getLatestFunctionCoreToolsVersion';
   const version = await getLatestFunctionCoreToolsVersion(context, majorVersion);
-  let azureFunctionCoreToolsReleasesUrl;
+  let azureFunctionCoreToolsReleasesUrl: string;
 
   context.telemetry.properties.lastStep = 'getFunctionCoreToolsBinariesReleaseUrl';
   switch (process.platform) {
-    case Platform.windows:
+    case Platform.windows: {
       azureFunctionCoreToolsReleasesUrl = getFunctionCoreToolsBinariesReleaseUrl(version, 'win', arch);
       break;
+    }
 
-    case Platform.linux:
+    case Platform.linux: {
       azureFunctionCoreToolsReleasesUrl = getFunctionCoreToolsBinariesReleaseUrl(version, 'linux', arch);
       break;
+    }
 
-    case Platform.mac:
+    case Platform.mac: {
       azureFunctionCoreToolsReleasesUrl = getFunctionCoreToolsBinariesReleaseUrl(version, 'osx', arch);
       break;
+    }
   }
   context.telemetry.properties.lastStep = 'downloadAndExtractBinaries';
   await downloadAndExtractDependency(azureFunctionCoreToolsReleasesUrl, targetDirectory, funcDependencyName);
@@ -57,13 +60,15 @@ export async function installFuncCoreToolsSystem(
   const brewPackageName: string = getBrewPackageName(version);
 
   switch (packageManagers[0]) {
-    case PackageManager.npm:
+    case PackageManager.npm: {
       await executeCommand(ext.outputChannel, undefined, 'npm', 'install', '-g', `${funcPackageName}@${distTag.tag}`);
       break;
-    case PackageManager.brew:
+    }
+    case PackageManager.brew: {
       await executeCommand(ext.outputChannel, undefined, 'brew', 'tap', 'azure/functions');
       await executeCommand(ext.outputChannel, undefined, 'brew', 'install', brewPackageName);
       break;
+    }
     default:
       throw new RangeError(localize('invalidPackageManager', 'Invalid package manager "{0}".', packageManagers[0]));
   }

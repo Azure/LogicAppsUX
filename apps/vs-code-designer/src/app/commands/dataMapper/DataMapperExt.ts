@@ -68,9 +68,8 @@ export default class DataMapperExt {
       DataMapperExt.fixMapDefinitionCustomValues(mapDefinition);
 
       return mapDefinition;
-    } else {
-      return {};
     }
+    return {};
   };
 
   static fixMapDefinitionCustomValues = (mapDefinition: MapDefinitionEntry) => {
@@ -85,7 +84,6 @@ export default class DataMapperExt {
           DataMapperExt.fixMapDefinitionCustomValues(curElement);
         }
       } else if (Object.prototype.hasOwnProperty.call(mapDefinition, key) && typeof curElement === 'string') {
-        // eslint-disable-next-line no-param-reassign
         mapDefinition[key] = curElement.replaceAll('\\"', '"');
       }
     }

@@ -145,9 +145,8 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId, 
   const newParentId = useMemo(() => {
     if (nodeMetadata?.subgraphType) {
       return nodeMetadata.parentNodeId;
-    } else {
-      return parentId;
     }
+    return parentId;
   }, [nodeMetadata, parentId]);
   const upstreamNodesOfChild = useUpstreamNodes(removeIdTag(childId ?? newParentId ?? graphId));
   const immediateAncestor = useGetAllOperationNodesWithin(parentId && !containsIdTag(parentId) ? parentId : '');

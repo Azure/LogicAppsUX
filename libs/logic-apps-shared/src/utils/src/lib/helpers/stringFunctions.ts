@@ -35,10 +35,15 @@ export const escapeString = (s: string): string => {
 };
 
 export const isStringNonPrimitive = (s: string): boolean => {
-  if (s === '') return false;
-  if (typeof s !== 'string') return false;
-  if (s === 'true' || s === 'false' || s === 'null') return true;
-  if (!isNaN(Number(s))) return true;
+  if (typeof s !== 'string') {
+    return false;
+  }
+  if (s === 'true' || s === 'false' || s === 'null') {
+    return true;
+  }
+  if (!Number.isNaN(Number(s))) {
+    return true;
+  }
   return false;
 };
 

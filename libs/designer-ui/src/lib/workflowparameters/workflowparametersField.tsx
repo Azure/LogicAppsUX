@@ -331,28 +331,7 @@ export const WorkflowparameterField = ({
           <Text className="msla-workflow-parameter-read-only">{type}</Text>
         )}
       </div>
-      {!useLegacy ? (
-        <div className="msla-workflow-parameter-field">
-          <Label styles={labelStyles} required={true} htmlFor={parameterDetails.value}>
-            {valueTitle}
-          </Label>
-          {isEditable ? (
-            <TextField
-              data-testid={parameterDetails.value}
-              id={parameterDetails.value}
-              ariaLabel={valueTitle}
-              placeholder={valueDescription}
-              value={value}
-              errorMessage={errors[VALUE_KEY]}
-              styles={textFieldStyles}
-              onChange={onValueChange}
-              disabled={isReadOnly}
-            />
-          ) : (
-            <Text className="msla-workflow-parameter-read-only">{value}</Text>
-          )}
-        </div>
-      ) : (
+      {useLegacy ? (
         <>
           <div className="msla-workflow-parameter-field">
             <Label styles={labelStyles} required={true} htmlFor={parameterDetails.defaultValue}>
@@ -395,6 +374,27 @@ export const WorkflowparameterField = ({
             )}
           </div>
         </>
+      ) : (
+        <div className="msla-workflow-parameter-field">
+          <Label styles={labelStyles} required={true} htmlFor={parameterDetails.value}>
+            {valueTitle}
+          </Label>
+          {isEditable ? (
+            <TextField
+              data-testid={parameterDetails.value}
+              id={parameterDetails.value}
+              ariaLabel={valueTitle}
+              placeholder={valueDescription}
+              value={value}
+              errorMessage={errors[VALUE_KEY]}
+              styles={textFieldStyles}
+              onChange={onValueChange}
+              disabled={isReadOnly}
+            />
+          ) : (
+            <Text className="msla-workflow-parameter-read-only">{value}</Text>
+          )}
+        </div>
       )}
     </>
   );

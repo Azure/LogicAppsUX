@@ -37,7 +37,9 @@ const Minimap = () => {
   const { isInverted } = useTheme();
   const nodeColors = useMemo(() => (isInverted ? nodeColorsDark : nodeColorsLight), [isInverted]);
 
-  if (!showMinimap) return null;
+  if (!showMinimap) {
+    return null;
+  }
 
   const nodeColor = (node: any) => nodeColors[node.type as WorkflowNodeType].fill;
   const nodeStrokeColor = (node: any) => nodeColors[node.type as WorkflowNodeType].stroke;

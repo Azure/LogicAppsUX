@@ -158,7 +158,7 @@ export const TokenField = ({
           tokenPickerButtonProps={tokenpickerButtonProps}
         />
       );
-    case constants.PARAMETER.EDITOR.CODE:
+    case constants.PARAMETER.EDITOR.CODE: {
       const customCodeEditor = isCustomCode(editor, editorOptions?.language);
       let customCodeData = editorViewModel?.customCodeData?.fileData ?? '';
       if (typeof customCodeData !== 'string') {
@@ -180,7 +180,7 @@ export const TokenField = ({
           nodeTitle={nodeTitle}
         />
       );
-
+    }
     case constants.PARAMETER.EDITOR.COMBOBOX:
       return (
         <Combobox

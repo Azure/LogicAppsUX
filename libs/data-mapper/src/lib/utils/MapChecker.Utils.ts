@@ -66,18 +66,16 @@ export const collectWarningsForMapChecker = (connections: ConnectionDictionary, 
           reactFlowId: connectionValue.self.reactFlowKey,
         });
       }
-    } else {
-      if (!connectionValue.self.reactFlowKey.startsWith(sourcePrefix) && !areInputTypesValidForSchemaNode(node, connectionValue)) {
-        warnings.push({
-          title: { message: mapCheckerResources.inputTypeMismatchTitle },
-          description: {
-            message: mapCheckerResources.schemaInputTypeMismatchBody,
-            value: { nodeName: node.name },
-          },
-          severity: MapCheckerItemSeverity.Warning,
-          reactFlowId: connectionValue.self.reactFlowKey,
-        });
-      }
+    } else if (!connectionValue.self.reactFlowKey.startsWith(sourcePrefix) && !areInputTypesValidForSchemaNode(node, connectionValue)) {
+      warnings.push({
+        title: { message: mapCheckerResources.inputTypeMismatchTitle },
+        description: {
+          message: mapCheckerResources.schemaInputTypeMismatchBody,
+          value: { nodeName: node.name },
+        },
+        severity: MapCheckerItemSeverity.Warning,
+        reactFlowId: connectionValue.self.reactFlowKey,
+      });
     }
   });
 
@@ -119,13 +117,11 @@ export const areInputTypesValidForSchemaNode = (selfNode: SchemaNodeExtended, co
 
   if (isCustomValue(input)) {
     return isValidCustomValueByType(input, selfNode.type);
-  } else {
-    if (isSchemaNodeExtended(input.node)) {
-      return isValidConnectionByType(selfNode.type, input.node.type);
-    } else {
-      return isValidConnectionByType(selfNode.type, input.node.outputValueType);
-    }
   }
+  if (isSchemaNodeExtended(input.node)) {
+    return isValidConnectionByType(selfNode.type, input.node.type);
+  }
+  return isValidConnectionByType(selfNode.type, input.node.outputValueType);
 };
 
 export const areInputTypesValidForFunction = (functionData: FunctionData, connection: Connection): boolean => {
@@ -141,14 +137,12 @@ export const areInputTypesValidForFunction = (functionData: FunctionData, connec
             if (isValidCustomValueByType(inputVal, allowedInputType)) {
               inputValMatchedOneOfAllowedTypes = true;
             }
-          } else {
-            if (isSchemaNodeExtended(inputVal.node)) {
-              if (isValidConnectionByType(allowedInputType, inputVal.node.type)) {
-                inputValMatchedOneOfAllowedTypes = true;
-              }
-            } else if (isValidConnectionByType(allowedInputType, inputVal.node.outputValueType)) {
+          } else if (isSchemaNodeExtended(inputVal.node)) {
+            if (isValidConnectionByType(allowedInputType, inputVal.node.type)) {
               inputValMatchedOneOfAllowedTypes = true;
             }
+          } else if (isValidConnectionByType(allowedInputType, inputVal.node.outputValueType)) {
+            inputValMatchedOneOfAllowedTypes = true;
           }
         } else {
           // Ignore undefined for type checking
