@@ -11,10 +11,13 @@ import {
   updateParameterValidation,
   openPanel,
   useAssertionsValidationErrors,
+  useWorkflowParameterValidationErrors,
+  useAllSettingsValidationErrors,
+  useAllConnectionErrors,
 } from '@microsoft/logic-apps-designer';
 import type { RootState } from '@microsoft/logic-apps-designer';
 import { RUN_AFTER_COLORS, isNullOrEmpty } from '@microsoft/logic-apps-shared';
-import { ExtensionCommand } from '@microsoft/vscode-extension';
+import { ExtensionCommand } from '@microsoft/vscode-extension-logic-apps';
 import { createSelector } from '@reduxjs/toolkit';
 import { useContext, useMemo } from 'react';
 import { useIntl } from 'react-intl';
@@ -51,6 +54,8 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
     )
   );
 
+  const designerIsDirty = useIsDesignerDirty();
+
   const { isLoading: isSaving, mutate: saveWorkflowMutate } = useMutation(async () => {
     const designerState = DesignerStore.getState();
     const { definition, parameters, connectionReferences } = await serializeBJSWorkflow(designerState, {
@@ -58,7 +63,9 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
       ignoreNonCriticalErrors: true,
     });
 
-    const validationErrorsList = Object.entries(designerState.operations.inputParameters).reduce((acc, [id, nodeInputs]) => {
+    let validationErrorsList: Record<string, boolean> = {};
+    const arr = Object.entries(designerState.operations.inputParameters);
+    for (const [id, nodeInputs] of arr) {
       const hasValidationErrors = Object.values(nodeInputs.parameterGroups).some((parameterGroup) => {
         return parameterGroup.parameters.some((parameter) => {
           const validationErrors = validateParameter(parameter, parameter.value);
@@ -68,8 +75,10 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
           return validationErrors.length;
         });
       });
-      return hasValidationErrors ? { ...acc, [id]: hasValidationErrors } : { ...acc };
-    }, {});
+      if (hasValidationErrors) {
+        validationErrorsList[id] = hasValidationErrors;
+      }
+    }
 
     const hasParametersErrors = !isNullOrEmpty(validationErrorsList);
 
@@ -117,6 +126,11 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
       id: '+0ua83',
       description: 'Button text for parameters',
     }),
+    DESIGNER_ERRORS: intl.formatMessage({
+      defaultMessage: 'Errors',
+      id: 'ohOaXj',
+      description: 'Button text for errors',
+    }),
     MONITORING_VIEW_REFRESH: intl.formatMessage({
       defaultMessage: 'Refresh',
       id: 'pr9GwA',
@@ -155,8 +169,6 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
     disableGrey: [{ color: 'rgb(121, 119, 117)' }, iconClass],
   });
 
-  const designerIsDirty = useIsDesignerDirty();
-
   const allInputErrors = useSelector((state: RootState) => {
     return (Object.entries(state.operations.inputParameters) ?? []).filter(([_id, nodeInputs]) =>
       Object.values(nodeInputs.parameterGroups).some((parameterGroup) =>
@@ -165,30 +177,29 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
     );
   });
 
-  const allWorkflowParameterErrors = useSelector((state: RootState) => {
-    let validationErrorToShow = null;
-    for (const parameter of Object.entries(state.workflowParameters.validationErrors) ?? []) {
-      if (parameter?.[1]?.value) {
-        validationErrorToShow = {
-          name: state.workflowParameters.definitions[parameter[0]]?.name,
-          msg: parameter[1].value,
-        };
-      }
-    }
-    return validationErrorToShow;
-  });
+  const haveInputErrors = allInputErrors.length > 0;
+  const allWorkflowParameterErrors = useWorkflowParameterValidationErrors();
+  const haveWorkflowParameterErrors = Object.keys(allWorkflowParameterErrors ?? {}).length > 0;
+  const allSettingsErrors = useAllSettingsValidationErrors();
+  const haveSettingsErrors = Object.keys(allSettingsErrors ?? {}).length > 0;
+  const allConnectionErrors = useAllConnectionErrors();
+  const haveConnectionErrors = Object.keys(allConnectionErrors ?? {}).length > 0;
 
-  const haveErrors = useMemo(() => allInputErrors.length > 0 || !!allWorkflowParameterErrors, [allInputErrors, allWorkflowParameterErrors]);
   const allAssertionsErrors = useAssertionsValidationErrors();
   const haveAssertionErrors = Object.keys(allAssertionsErrors ?? {}).length > 0;
 
-  const isSaveWorkflowDisabled = isSaving || haveErrors || !designerIsDirty;
   const isSaveUnitTestDisabled = isSavingUnitTest || haveAssertionErrors;
+  const haveErrors = useMemo(
+    () => haveInputErrors || haveWorkflowParameterErrors || haveSettingsErrors || haveConnectionErrors,
+    [haveInputErrors, haveWorkflowParameterErrors, haveSettingsErrors, haveConnectionErrors]
+  );
+
+  const isSaveDisabled = useMemo(() => isSaving || haveErrors || !designerIsDirty, [isSaving, haveErrors, designerIsDirty]);
 
   const desingerItems: ICommandBarItemProps[] = [
     {
       key: 'Save',
-      disabled: isSaveWorkflowDisabled,
+      disabled: isSaveDisabled,
       text: Resources.DESIGNER_SAVE,
       onRenderIcon: () => {
         return isSaving ? (
@@ -197,7 +208,7 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
           <FontIcon
             aria-label={Resources.DESIGNER_SAVE}
             iconName="Save"
-            className={isSaveWorkflowDisabled ? classNames.disableGrey : classNames.azureBlue}
+            className={isSaveDisabled ? classNames.disableGrey : classNames.azureBlue}
           />
         );
       },
@@ -214,7 +225,7 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
         return (
           <>
             {item.text}
-            {allWorkflowParameterErrors ? (
+            {haveWorkflowParameterErrors ? (
               <div style={{ display: 'inline-block', marginLeft: 8 }}>
                 <TrafficLightDot fill={RUN_AFTER_COLORS[isDarkMode ? 'dark' : 'light']['FAILED']} />
               </div>
@@ -223,6 +234,17 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
         );
       },
       onClick: () => !!dispatch(openPanel({ panelMode: 'WorkflowParameters' })),
+    },
+    {
+      key: 'errors',
+      disabled: !haveErrors,
+      text: Resources.DESIGNER_ERRORS,
+      ariaLabel: Resources.DESIGNER_ERRORS,
+      iconProps: {
+        iconName: haveErrors ? 'StatusErrorFull' : 'ErrorBadge',
+        style: haveErrors ? { color: RUN_AFTER_COLORS[isDarkMode ? 'dark' : 'light']['FAILED'] } : undefined,
+      },
+      onClick: () => !!dispatch(openPanel({ panelMode: 'Error' })),
     },
   ];
 
@@ -308,7 +330,7 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({
       items={isUnitTest ? unitTestItems : isMonitoringView ? monitoringViewItems : desingerItems}
       ariaLabel="Use left and right arrow keys to navigate between commands"
       styles={{
-        root: { borderBottom: `1px solid ${isDarkMode ? '#333333' : '#d6d6d6'}` },
+        root: { borderBottom: `1px solid ${isDarkMode ? '#333333' : '#d6d6d6'}`, padding: '0 20px' },
       }}
     />
   );

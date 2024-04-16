@@ -13,8 +13,8 @@ import {
 } from '@microsoft/logic-apps-data-mapper';
 import { getTheme, useThemeObserver } from '@microsoft/logic-apps-designer';
 import type { Theme, SchemaType } from '@microsoft/logic-apps-shared';
-import type { MessageToVsix } from '@microsoft/vscode-extension';
-import { ExtensionCommand } from '@microsoft/vscode-extension';
+import type { MessageToVsix } from '@microsoft/vscode-extension-logic-apps';
+import { ExtensionCommand } from '@microsoft/vscode-extension-logic-apps';
 import { useCallback, useContext, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 

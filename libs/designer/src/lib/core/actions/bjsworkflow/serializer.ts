@@ -144,16 +144,14 @@ export const serializeWorkflow = async (rootState: RootState, options?: Serializ
   }
 
   const { connectionsMapping, connectionReferences: referencesObject } = rootState.connections;
-  const connectionReferences = Object.keys(connectionsMapping).reduce((references: ConnectionReferences, nodeId: string) => {
+  const connectionReferences = Object.keys(connectionsMapping ?? {}).reduce((references: ConnectionReferences, nodeId: string) => {
     const referenceKey = getRecordEntry(connectionsMapping, nodeId);
     if (!referenceKey || !referencesObject[referenceKey]) {
       return references;
     }
 
-    return {
-      ...references,
-      [referenceKey]: referencesObject[referenceKey],
-    };
+    references[referenceKey] = referencesObject[referenceKey];
+    return references;
   }, {});
 
   const parameters = getWorkflowParameters(filterRecord(rootState.workflowParameters.definitions, (key, _) => key !== '')) ?? {};
@@ -164,7 +162,7 @@ export const serializeWorkflow = async (rootState: RootState, options?: Serializ
       $schema:
         WorkflowService().getDefinitionSchema?.(unmap(rootState.operations.operationInfo)) ?? rootState.workflow.originalDefinition.$schema,
       actions: await getActions(rootState, options),
-      ...(Object.keys(rootState?.staticResults?.properties).length > 0 ? { staticResults: rootState.staticResults.properties } : {}),
+      ...(Object.keys(rootState?.staticResults?.properties ?? {}).length > 0 ? { staticResults: rootState.staticResults.properties } : {}),
       triggers: await getTrigger(rootState, options),
     },
     connectionReferences,
@@ -198,10 +196,8 @@ const getActions = async (rootState: RootState, options?: SerializeOptions): Pro
     (actions: LogicAppsV2.Actions, action: LogicAppsV2.ActionDefinition | null, index: number) => {
       const originalId = actionsInRootGraph[index].id;
       if (!isNullOrEmpty(action)) {
-        return {
-          ...actions,
-          [getRecordEntry(idReplacements, originalId) ?? originalId]: action as LogicAppsV2.ActionDefinition,
-        };
+        actions[getRecordEntry(idReplacements, originalId) ?? originalId] = action as LogicAppsV2.ActionDefinition;
+        return actions;
       }
 
       return actions;
@@ -255,8 +251,8 @@ const getWorkflowParameters = (
         : typeof defaultValue !== 'string'
           ? defaultValue
           : JSON.parse(defaultValue);
-
-    return { ...result, [parameter?.name ?? parameterId]: parameterDefinition };
+    result[parameter?.name ?? parameterId] = parameterDefinition;
+    return result;
   }, {});
 };
 
@@ -389,10 +385,8 @@ const getRunAfter = (operation: LogicAppsV2.ActionDefinition, idReplacements: Re
     return {};
   }
   return Object.entries(operation.runAfter).reduce((acc: LogicAppsV2.RunAfter, [key, value]) => {
-    return {
-      ...acc,
-      [getRecordEntry(idReplacements, key) ?? key]: value,
-    };
+    acc[getRecordEntry(idReplacements, key) ?? key] = value;
+    return acc;
   }, {});
 };
 
@@ -460,13 +454,10 @@ export const constructInputValues = (key: string, inputs: SerializedParameter[],
         return serializedParameter;
       });
 
-    const pathParameters = pathTemplateParameters.reduce(
-      (allPathParams: Record<string, string>, current: SerializedParameter) => ({
-        ...allPathParams,
-        [current.parameterName.split('.').at(-1) as string]: current.value,
-      }),
-      {}
-    );
+    const pathParameters = pathTemplateParameters.reduce((allPathParams: Record<string, string>, current: SerializedParameter) => {
+      allPathParams[current.parameterName.split('.').at(-1) as string] = current.value;
+      return allPathParams;
+    }, {});
     const parametersToSerialize = serializedParameters.filter((param) => !isPathTemplateParameter(param));
     for (const serializedParameter of parametersToSerialize) {
       if (serializedParameter.info.serialization?.property?.type === PropertySerializationType.PathTemplate) {
@@ -825,10 +816,8 @@ const serializeSubGraph = async (
     nestedActions.reduce((actions: LogicAppsV2.Actions, action: LogicAppsV2.OperationDefinition, index: number) => {
       if (!isNullOrEmpty(action)) {
         const actionId = nestedNodes[index].id;
-        return {
-          ...actions,
-          [getRecordEntry(idReplacements, actionId) ?? actionId]: action,
-        };
+        actions[getRecordEntry(idReplacements, actionId) ?? actionId] = action;
+        return actions;
       }
 
       return actions;
@@ -1126,9 +1115,9 @@ const parseOutputMock = (outputs: Record<string, ValueSegment[]>): Record<string
   return Object.entries(outputs).reduce((acc: Record<string, any[]>, [key, value]) => {
     const parsedValueSegment = value.reduce((accumulator: any[], valueObject) => {
       // Explicitly define the type of the accumulator array
-      return [...accumulator, { type: valueObject.type, value: valueObject.value }];
+      return accumulator.concat({ type: valueObject.type, value: valueObject.value });
     }, []);
-    return { ...acc, [key]: parsedValueSegment };
+    return Object.assign({}, acc, { [key]: parsedValueSegment });
   }, {});
 };
 

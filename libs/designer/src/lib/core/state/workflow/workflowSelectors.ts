@@ -9,6 +9,8 @@ import { createSelector } from '@reduxjs/toolkit';
 import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import Queue from 'yocto-queue';
+import type {} from 'reselect';
+import type {} from 'react-query';
 
 export const getWorkflowState = (state: RootState): WorkflowState => state.workflow;
 
@@ -53,14 +55,18 @@ const reduceCollapsed =
   (nodes: WorkflowNode[]): any => {
     return nodes.reduce((acc: any, child: WorkflowNode) => {
       const shouldFilter = condition(child);
-      if (!shouldFilter) return [...acc, { ...child, ...{ children: reduceCollapsed(condition)(child.children ?? []) } }];
+      if (!shouldFilter) {
+        acc.push({ ...child, ...{ children: reduceCollapsed(condition)(child.children ?? []) } });
+        return acc;
+      }
 
       const filteredChildren = filterOutGraphChildren(child.children ?? []);
       const filteredEdges =
         filteredChildren.length === 2
           ? [createWorkflowEdge(filteredChildren[0]?.id, filteredChildren[1]?.id, WORKFLOW_EDGE_TYPES.HIDDEN_EDGE)]
           : [];
-      return [...acc, { ...child, ...{ children: filteredChildren, edges: filteredEdges } }];
+      acc.push({ ...child, ...{ children: filteredChildren, edges: filteredEdges } });
+      return acc;
     }, []);
   };
 

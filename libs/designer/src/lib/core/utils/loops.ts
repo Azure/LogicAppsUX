@@ -205,14 +205,19 @@ export const addForeachToNode = createAsyncThunk(
   }
 );
 
+interface GetRepetitionNodeIdsOptions {
+  includeSelf?: boolean;
+  ignoreUntil?: boolean;
+}
+
 export const getRepetitionNodeIds = (
   nodeId: string,
   nodesMetadata: NodesMetadata,
   operationInfos: Record<string, NodeOperation>,
-  includeSelf?: boolean
+  { includeSelf = false, ignoreUntil = false }: GetRepetitionNodeIdsOptions = {}
 ): string[] => {
   const allParentNodeIds = getAllParentsForNode(nodeId, nodesMetadata);
-  const repetitionNodeIds = allParentNodeIds.filter((parentId) => isLoopingNode(parentId, operationInfos));
+  const repetitionNodeIds = allParentNodeIds.filter((parentId) => isLoopingNode(parentId, operationInfos, ignoreUntil));
 
   if (includeSelf) {
     repetitionNodeIds.unshift(nodeId);
@@ -230,7 +235,7 @@ export const getRepetitionContext = async (
   splitOn: string | undefined,
   idReplacements?: Record<string, string>
 ): Promise<RepetitionContext> => {
-  const repetitionNodeIds = getRepetitionNodeIds(nodeId, nodesMetadata, operationInfos, includeSelf);
+  const repetitionNodeIds = getRepetitionNodeIds(nodeId, nodesMetadata, operationInfos, { includeSelf });
   const repetitionReferences = (
     await Promise.all(
       repetitionNodeIds.map((repetitionNodeId) => getRepetitionReference(repetitionNodeId, operationInfos, allInputs, idReplacements))
@@ -421,9 +426,9 @@ const checkArrayInRepetition = (
 
 // Directly checking the node type, because cannot make async calls while adding token from picker to editor.
 // TODO - See if this can be made async and looked at manifest.
-export const isLoopingNode = (nodeId: string, operationInfos: Record<string, NodeOperation>): boolean => {
+export const isLoopingNode = (nodeId: string, operationInfos: Record<string, NodeOperation>, ignoreUntil: boolean): boolean => {
   const nodeType = getRecordEntry(operationInfos, nodeId)?.type;
-  return equals(nodeType, Constants.NODE.TYPE.FOREACH) || equals(nodeType, Constants.NODE.TYPE.UNTIL);
+  return equals(nodeType, Constants.NODE.TYPE.FOREACH) || (!ignoreUntil && equals(nodeType, Constants.NODE.TYPE.UNTIL));
 };
 
 export const getForeachActionName = (
@@ -449,18 +454,15 @@ export const isForeachActionNameForLoopsource = (
   operations: Operations,
   nodesMetadata: NodesMetadata
 ): boolean => {
-  const operationInfos = Object.keys(operations).reduce(
-    (result: Record<string, NodeOperation>, operationId) => ({
-      ...result,
-      [operationId]: {
-        type: operations[operationId]?.type,
-        kind: operations[operationId]?.kind,
-        connectorId: '',
-        operationId: '',
-      },
-    }),
-    {}
-  );
+  const operationInfos: Record<string, NodeOperation> = {};
+  for (const operationId of Object.keys(operations)) {
+    operationInfos[operationId] = {
+      type: operations[operationId]?.type,
+      kind: operations[operationId]?.kind,
+      connectorId: '',
+      operationId: '',
+    };
+  }
   const repetitionNodeIds = getRepetitionNodeIds(nodeId, nodesMetadata, operationInfos);
   const sanitizedPath = sanitizeKey(expression);
   const foreachAction = first((item) => {

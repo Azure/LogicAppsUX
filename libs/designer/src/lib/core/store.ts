@@ -10,8 +10,10 @@ import tokens from './state/tokens/tokensSlice';
 import unitTestReducer from './state/unitTest/unitTestSlice';
 import workflowReducer from './state/workflow/workflowSlice';
 import workflowParametersReducer from './state/workflowparameters/workflowparametersSlice';
-import { configureStore } from '@reduxjs/toolkit';
+import devReducer from './state/dev/devSlice';
 
+import { configureStore } from '@reduxjs/toolkit';
+import type {} from 'redux-thunk';
 export const store = configureStore({
   reducer: {
     workflow: workflowReducer,
@@ -26,6 +28,8 @@ export const store = configureStore({
     staticResults: staticResultsSchemasReducer,
     unitTest: unitTestReducer,
     customCode: customCodeReducer,
+    // if is in dev environment, add devSlice to store
+    ...(process.env.NODE_ENV === 'development' ? { dev: devReducer } : {}),
   },
   middleware: (getDefaultMiddleware) =>
     getDefaultMiddleware({

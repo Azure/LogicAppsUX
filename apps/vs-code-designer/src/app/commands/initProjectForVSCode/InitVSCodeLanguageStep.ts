@@ -6,11 +6,11 @@ import { localize } from '../../../localize';
 import { WorkflowInitCodeProject } from '../createNewCodeProject/createCodeProjectSteps/createLogicApp/initLogicAppCodeProjectVScode/WorkflowCode';
 import { DotnetInitVSCodeStep } from './DotnetInitVSCodeStep';
 import { WorkflowInitVSCodeStep } from './WorkflowInitVSCodeStep';
-import { isEmptyString } from '@microsoft/utils-logic-apps';
+import { isEmptyString } from '@microsoft/logic-apps-shared';
 import { AzureWizardPromptStep } from '@microsoft/vscode-azext-utils';
 import type { AzureWizardExecuteStep, IWizardOptions } from '@microsoft/vscode-azext-utils';
-import type { IProjectWizardContext } from '@microsoft/vscode-extension';
-import { ProjectLanguage, WorkflowProjectType } from '@microsoft/vscode-extension';
+import type { IProjectWizardContext } from '@microsoft/vscode-extension-logic-apps';
+import { ProjectLanguage, WorkflowProjectType } from '@microsoft/vscode-extension-logic-apps';
 import type { QuickPickItem, QuickPickOptions } from 'vscode';
 
 export class InitVSCodeLanguageStep extends AzureWizardPromptStep<IProjectWizardContext> {

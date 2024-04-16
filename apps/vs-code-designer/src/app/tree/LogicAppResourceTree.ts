@@ -32,8 +32,14 @@ import type { IDeployContext } from '@microsoft/vscode-azext-azureappservice';
 import { AzureWizard, DeleteConfirmationStep, nonNullValue } from '@microsoft/vscode-azext-utils';
 import type { AzExtTreeItem, IActionContext, ISubscriptionContext, TreeItemIconPath } from '@microsoft/vscode-azext-utils';
 import type { ResolvedAppResourceBase } from '@microsoft/vscode-azext-utils/hostapi';
-import { ProjectResource, ProjectSource, latestGAVersion } from '@microsoft/vscode-extension';
-import type { ApplicationSettings, FuncHostRequest, FuncVersion, ILocalSettingsJson, IParsedHostJson } from '@microsoft/vscode-extension';
+import { ProjectResource, ProjectSource, latestGAVersion } from '@microsoft/vscode-extension-logic-apps';
+import type {
+  ApplicationSettings,
+  FuncHostRequest,
+  FuncVersion,
+  ILocalSettingsJson,
+  IParsedHostJson,
+} from '@microsoft/vscode-extension-logic-apps';
 import * as path from 'path';
 
 export function isLogicAppResourceTree(ti: unknown): ti is ResolvedAppResourceBase {
@@ -179,10 +185,8 @@ export class LogicAppResourceTree implements ResolvedAppResourceBase {
   public async getHostJson(context: IActionContext): Promise<IParsedHostJson> {
     let result: IParsedHostJson | undefined = this._cachedHostJson;
     if (!result) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       let data: any;
       try {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         data = JSON.parse((await getFile(context, this.site, 'site/wwwroot/host.json')).data);
       } catch {
         // ignore and use default

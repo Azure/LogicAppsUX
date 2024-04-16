@@ -1,6 +1,7 @@
 import { ArrayEditor } from '../../arrayeditor';
 import { AuthenticationEditor } from '../../authentication';
 import { CodeEditor } from '../../code';
+import { isCustomCode } from '../../code/util';
 import { Combobox } from '../../combobox';
 import constants from '../../constants';
 import { CopyInputControl } from '../../copyinputcontrol';
@@ -157,28 +158,29 @@ export const TokenField = ({
           tokenPickerButtonProps={tokenpickerButtonProps}
         />
       );
-    case constants.PARAMETER.EDITOR.CODE:
-      return (() => {
-        const isCustomCode = editorOptions?.language !== constants.PARAMETER.EDITOR_OPTIONS.LANGUAGE.JAVASCRIPT;
-        const initialValue =
-          editorOptions?.language && isCustomCode ? [createLiteralValueSegment(editorViewModel?.customCodeData?.fileData)] : value;
-        const language = editorOptions.language ?? EditorLanguage.javascript;
+    case constants.PARAMETER.EDITOR.CODE: {
+      const customCodeEditor = isCustomCode(editor, editorOptions?.language);
+      let customCodeData = editorViewModel?.customCodeData?.fileData ?? '';
+      if (typeof customCodeData !== 'string') {
+        customCodeData = JSON.stringify(customCodeData);
+      }
+      const initialValue = editorOptions?.language && customCodeEditor ? [createLiteralValueSegment(customCodeData)] : value;
+      const language = editorOptions.language ?? EditorLanguage.javascript;
 
-        return (
-          <CodeEditor
-            labelId={labelId}
-            initialValue={initialValue}
-            getTokenPicker={getTokenPicker}
-            language={language}
-            onChange={onValueChange}
-            readonly={readOnly}
-            placeholder={placeholder}
-            isCustomCode={isCustomCode}
-            nodeTitle={nodeTitle}
-          />
-        );
-      })();
-
+      return (
+        <CodeEditor
+          labelId={labelId}
+          initialValue={initialValue}
+          getTokenPicker={getTokenPicker}
+          language={language}
+          onChange={onValueChange}
+          readonly={readOnly}
+          placeholder={placeholder}
+          customCodeEditor={customCodeEditor}
+          nodeTitle={nodeTitle}
+        />
+      );
+    }
     case constants.PARAMETER.EDITOR.COMBOBOX:
       return (
         <Combobox
@@ -187,7 +189,11 @@ export const TokenField = ({
           placeholder={placeholder}
           readonly={readOnly}
           initialValue={value}
-          options={dropdownOptions.map((option: any, index: number) => ({ key: index.toString(), ...option }))}
+          options={dropdownOptions.map((option: any, index: number) => ({
+            key: index.toString(),
+            ...option,
+            displayName: typeof option.displayName === 'string' ? option.displayName : JSON.stringify(option.displayName),
+          }))}
           useOption={true}
           isLoading={isLoading}
           errorDetails={errorDetails}

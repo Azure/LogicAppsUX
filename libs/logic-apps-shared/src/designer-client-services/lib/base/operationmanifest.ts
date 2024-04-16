@@ -135,7 +135,8 @@ const rosettanetConnectorId = 'connectionProviders/rosettaNetOperations';
 export const flatFileConnectorId = 'connectionProviders/flatFileOperations';
 const liquidConnectorId = 'connectionProviders/liquidOperations';
 const dataMapperConnectorId = 'connectionProviders/dataMapperOperations';
-const x12connectorId = 'connectionProviders/x12Operations';
+const x12ConnectorId = 'connectionProviders/x12Operations';
+const xmlOperationsConnectionId = 'connectionProviders/xmlOperations';
 const edifactConnectorId = 'connectionProviders/edifactOperations';
 export const inlineCodeConnectorId = 'connectionProviders/inlineCode';
 
@@ -281,6 +282,8 @@ export function isBuiltInOperation(definition: any): boolean {
     case switchType:
     case workflow:
     case xslt:
+    case xmlcompose:
+    case xmlparse:
     case xmlvalidation:
     case flatfiledecoding:
     case flatfileencoding:
@@ -525,7 +528,7 @@ const builtInOperationsMetadata: Record<string, OperationInfo> = {
   },
   [csharpcode]: {
     connectorId: inlineCodeConnectorId,
-    operationId: 'cSharpScriptCode',
+    operationId: csharpcode,
   },
   [join]: {
     connectorId: dataOperationConnectorId,
@@ -563,8 +566,16 @@ const builtInOperationsMetadata: Record<string, OperationInfo> = {
     connectorId: 'connectionProviders/localWorkflowOperation',
     operationId: 'invokeWorkflow',
   },
+  [xmlcompose]: {
+    connectorId: xmlOperationsConnectionId,
+    operationId: 'XmlCompose',
+  },
+  [xmlparse]: {
+    connectorId: xmlOperationsConnectionId,
+    operationId: 'XmlParse',
+  },
   [xmlvalidation]: {
-    connectorId: 'connectionProviders/xmlOperations',
+    connectorId: xmlOperationsConnectionId,
     operationId: 'xmlValidation',
   },
   [xslt]: {
@@ -628,15 +639,15 @@ const builtInOperationsMetadata: Record<string, OperationInfo> = {
     operationId: 'xsltTransform',
   },
   [x12decode]: {
-    connectorId: x12connectorId,
+    connectorId: x12ConnectorId,
     operationId: x12decode,
   },
   [x12encode]: {
-    connectorId: x12connectorId,
+    connectorId: x12ConnectorId,
     operationId: x12encode,
   },
   [x12batchencode]: {
-    connectorId: x12connectorId,
+    connectorId: x12ConnectorId,
     operationId: x12batchencode,
   },
   [edifactdecode]: {

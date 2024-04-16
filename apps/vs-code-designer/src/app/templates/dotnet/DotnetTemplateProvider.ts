@@ -5,7 +5,6 @@
 import { getLatestVersion, getRelease } from '../../utils/cliFeed';
 import { getTemplateKeyFromFeedEntry, getTemplateKeyFromProjFile } from '../../utils/dotnet/dotnet';
 import {
-  validateDotnetInstalled,
   executeDotnetTemplateCommand,
   getDotnetItemTemplatePath,
   getDotnetProjectTemplatePath,
@@ -16,8 +15,8 @@ import { downloadFile } from '../../utils/requestUtils';
 import { TemplateProviderBase } from '../TemplateProviderBase';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { AzExtFsExtra, nonNullValue } from '@microsoft/vscode-azext-utils';
-import type { IRelease, ITemplates, IWorkerRuntime } from '@microsoft/vscode-extension';
-import { ProjectLanguage, TemplateType } from '@microsoft/vscode-extension';
+import type { IRelease, ITemplates, IWorkerRuntime } from '@microsoft/vscode-extension-logic-apps';
+import { ProjectLanguage, TemplateType } from '@microsoft/vscode-extension-logic-apps';
 import * as path from 'path';
 
 export class DotnetTemplateProvider extends TemplateProviderBase {
@@ -53,8 +52,6 @@ export class DotnetTemplateProvider extends TemplateProviderBase {
   }
 
   public async getLatestTemplates(context: IActionContext, latestTemplateVersion: string): Promise<ITemplates> {
-    await validateDotnetInstalled(context);
-
     const projKey = await this.getProjKey(context);
     const projectFilePath: string = getDotnetProjectTemplatePath(this.version, projKey);
     const itemFilePath: string = getDotnetItemTemplatePath(this.version, projKey);

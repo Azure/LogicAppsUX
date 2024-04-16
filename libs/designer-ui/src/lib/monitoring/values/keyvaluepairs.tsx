@@ -46,7 +46,11 @@ export const KeyValuePairs: React.FC<ValueProps> = ({ displayName, value = {}, v
       targetWidthProportion: 1,
     },
   ];
-  const items = Object.entries(value).reduce((pairs: Record<string, unknown>[], [$key, $value]) => [...pairs, { $key, $value }], []);
+  const items = Object.entries(value).reduce((pairs: Record<string, any>[], [$key, $value]) => {
+    let pVal = { $key, $value };
+    pairs.push(pVal);
+    return pairs;
+  }, []);
 
   return (
     <section className="msla-trace-value-label">

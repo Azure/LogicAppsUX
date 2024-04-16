@@ -253,10 +253,8 @@ export const getOutputParametersFromSwagger = (
   let originalOutputs: Record<string, OutputInfo> | undefined;
   if (isTrigger) {
     originalOutputs = Object.values(operationOutputs).reduce((result: Record<string, OutputInfo>, output: OutputParameter) => {
-      return {
-        ...result,
-        [output.key]: toOutputInfo(output),
-      };
+      result[output.key] = toOutputInfo(output);
+      return result;
     }, {});
   }
   const updatedOutputs = updateOutputsForBatchingTrigger(operationOutputs, splitOnValue);

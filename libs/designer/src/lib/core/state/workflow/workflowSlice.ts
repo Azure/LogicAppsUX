@@ -33,7 +33,7 @@ import {
 } from '@microsoft/logic-apps-shared';
 import type { MessageLevel } from '@microsoft/designer-ui';
 import { getDurationStringPanelMode } from '@microsoft/designer-ui';
-import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
+import type * as LogicAppsV2 from '@microsoft/logic-apps-shared/src/utils/src/lib/models/logicAppsV2';
 import { createSlice, isAnyOf } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import type { NodeChange, NodeDimensionChange } from 'reactflow';
@@ -241,15 +241,13 @@ export const workflowSlice = createSlice({
         return;
       }
       const stack: WorkflowNode[] = [state.graph];
-      const dimensionChangesById = dimensionChanges.reduce<Record<string, NodeDimensionChange>>((acc, val) => {
-        if (val.type !== 'dimensions') {
-          return acc;
-        }
-        return {
-          ...acc,
-          [val.id]: val,
-        };
-      }, {});
+
+      let dimensionChangesById: Record<string, NodeDimensionChange> = {};
+      for (const val of dimensionChanges) {
+        if (val.type !== 'dimensions') continue;
+        dimensionChangesById[val.id] = val as NodeDimensionChange;
+      }
+
       while (stack.length) {
         const node = stack.shift();
         const change = getRecordEntry(dimensionChangesById, node?.id ?? '');

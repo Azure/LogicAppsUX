@@ -27,7 +27,6 @@ import {
 
 type DataMapperPanelDictionary = { [key: string]: DataMapperPanel }; // key == dataMapName
 
-// eslint-disable-next-line @typescript-eslint/no-namespace
 export namespace ext {
   export let context: ExtensionContext;
   export let designTimePort: number;

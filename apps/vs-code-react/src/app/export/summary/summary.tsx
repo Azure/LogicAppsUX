@@ -7,7 +7,7 @@ import { VSCodeContext } from '../../../webviewCommunication';
 import { getListColumns, getSummaryData } from './helper';
 import { ManagedConnections } from './managedConnections';
 import { MessageBar, MessageBarType, PrimaryButton, SelectionMode, ShimmeredDetailsList, Text, TextField } from '@fluentui/react';
-import { ExtensionCommand } from '@microsoft/vscode-extension';
+import { ExtensionCommand } from '@microsoft/vscode-extension-logic-apps';
 import { useContext, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useQuery } from 'react-query';

@@ -155,62 +155,75 @@ export async function getDynamicSchema(
   const { parameter, definition } = dependencyInfo;
   const emptySchema = { ...parameter?.schema };
   try {
-    if (isDynamicPropertiesExtension(definition)) {
-      const { dynamicState, parameters } = definition.extension;
-      const operationParameters = getParameterValuesForDynamicInvoke(parameters, nodeInputs, idReplacements, workflowParameters);
-      let schema: OpenAPIV2.SchemaObject;
+    const queryClient = getReactQueryClient();
+    const outputSchema = await queryClient.fetchQuery(
+      [
+        'getDynamicSchema',
+        connectionReference?.connection.id,
+        operationInfo.connectorId,
+        operationInfo.operationId,
+        dependencyInfo.parameter?.key,
+      ],
+      async () => {
+        if (isDynamicPropertiesExtension(definition)) {
+          const { dynamicState, parameters } = definition.extension;
+          const operationParameters = getParameterValuesForDynamicInvoke(parameters, nodeInputs, idReplacements, workflowParameters);
+          let schema: OpenAPIV2.SchemaObject;
 
-      switch (dynamicState?.extension?.builtInOperation) {
-        case 'getVariableSchema':
-          schema = {
-            type: getSwaggerTypeFromVariableType(operationParameters['type']?.toLowerCase() ?? 'boolean'),
-            enum: getSwaggerEnumFromVariableType(operationParameters['type']?.toLowerCase() ?? 'boolean'),
-          };
+          switch (dynamicState?.extension?.builtInOperation) {
+            case 'getVariableSchema':
+              schema = {
+                type: getSwaggerTypeFromVariableType(operationParameters['type']?.toLowerCase() ?? 'boolean'),
+                enum: getSwaggerEnumFromVariableType(operationParameters['type']?.toLowerCase() ?? 'boolean'),
+              };
 
-          break;
-        case 'getVariable':
-          // eslint-disable-next-line no-case-declarations
-          const variable = variables.find((variable) => variable.name === operationParameters['name']);
-          schema = variable
-            ? {
-                type: getSwaggerTypeFromVariableType(variable.type?.toLowerCase()),
-                enum: getSwaggerEnumFromVariableType(variable.type?.toLowerCase()),
-              }
-            : {};
-          break;
-        default:
-          schema = await getDynamicSchemaProperties(
-            connectionReference?.connection.id,
-            operationInfo.connectorId,
-            operationInfo.operationId,
-            operationParameters,
-            dynamicState
+              break;
+            case 'getVariable':
+              // eslint-disable-next-line no-case-declarations
+              const variable = variables.find((variable) => variable.name === operationParameters['name']);
+              schema = variable
+                ? {
+                    type: getSwaggerTypeFromVariableType(variable.type?.toLowerCase()),
+                    enum: getSwaggerEnumFromVariableType(variable.type?.toLowerCase()),
+                  }
+                : {};
+              break;
+            default:
+              schema = await getDynamicSchemaProperties(
+                connectionReference?.connection.id,
+                operationInfo.connectorId,
+                operationInfo.operationId,
+                operationParameters,
+                dynamicState
+              );
+              break;
+          }
+
+          return schema ? { ...emptySchema, ...schema } : schema;
+        } else {
+          const { connectorId } = operationInfo;
+          const { parameters, operationId } = definition.extension;
+          const { connector, parsedSwagger } = await getConnectorWithSwagger(connectorId);
+          const inputs = getParameterValuesForLegacyDynamicOperation(
+            parsedSwagger,
+            operationId,
+            parameters,
+            nodeInputs,
+            idReplacements,
+            workflowParameters
           );
-          break;
+          const connectionId = (connectionReference as ConnectionReference).connection.id;
+          const managedIdentityRequestProperties = await getManagedIdentityRequestProperties(
+            connector,
+            connectionId,
+            connectionReference as ConnectionReference
+          );
+
+          return getLegacyDynamicSchema(connectionId, connectorId, inputs, definition.extension, managedIdentityRequestProperties);
+        }
       }
-
-      return schema ? { ...emptySchema, ...schema } : schema;
-    } else {
-      const { connectorId } = operationInfo;
-      const { parameters, operationId } = definition.extension;
-      const { connector, parsedSwagger } = await getConnectorWithSwagger(connectorId);
-      const inputs = getParameterValuesForLegacyDynamicOperation(
-        parsedSwagger,
-        operationId,
-        parameters,
-        nodeInputs,
-        idReplacements,
-        workflowParameters
-      );
-      const connectionId = (connectionReference as ConnectionReference).connection.id;
-      const managedIdentityRequestProperties = await getManagedIdentityRequestProperties(
-        connector,
-        connectionId,
-        connectionReference as ConnectionReference
-      );
-
-      return getLegacyDynamicSchema(connectionId, connectorId, inputs, definition.extension, managedIdentityRequestProperties);
-    }
+    );
+    return outputSchema;
   } catch (error: any) {
     if (
       (error.name === UnsupportedExceptionName && error.code === UnsupportedExceptionCode.RUNTIME_EXPRESSION) ||
@@ -248,16 +261,10 @@ export function getDynamicOutputsFromSchema(schema: OpenAPIV2.SchemaObject, dyna
 
   const outputs = map(outputParameters, OutputMapKey);
 
-  return Object.keys(outputs).reduce(
-    (previous, key) => ({
-      ...previous,
-      [key]: {
-        ...outputs[key],
-        isDynamic: true,
-      },
-    }),
-    outputs
-  );
+  for (const key of Object.keys(outputs)) {
+    outputs[key].isDynamic = true;
+  }
+  return outputs;
 }
 
 export async function getDynamicInputsFromSchema(
@@ -345,19 +352,18 @@ export async function getFolderItems(
     const { connectorId } = operationInfo;
     const connectionId = connectionReference?.connection.id as string;
     const { operationId, parameters: referenceParameters } = selectedValue ? browse : open;
-    const pickerParameters = Object.keys(referenceParameters ?? {}).reduce((result: Record<string, any>, paramKey: string) => {
-      if (referenceParameters?.[paramKey]?.selectedItemValuePath || referenceParameters?.[paramKey]?.['value-property']) {
-        return {
-          ...result,
-          [paramKey]: getPropertyValue(
-            selectedValue,
-            referenceParameters?.[paramKey]?.selectedItemValuePath ?? referenceParameters[paramKey]?.['value-property'] ?? ''
-          ),
-        };
+    let pickerParameters: Record<string, any> = {};
+    for (const [paramKey, paramValue] of Object.entries(referenceParameters ?? {})) {
+      if (paramValue?.selectedItemValuePath || paramValue?.['value-property']) {
+        pickerParameters[paramKey] = getPropertyValue(
+          selectedValue,
+          paramValue.selectedItemValuePath ?? paramValue['value-property'] ?? ''
+        );
+      } else {
+        pickerParameters[paramKey] = referenceParameters?.[paramKey];
       }
+    }
 
-      return { ...result, [paramKey]: referenceParameters?.[paramKey] };
-    }, {});
     const parameters = { ...definition.extension.parameters, ...pickerParameters };
     const { connector, parsedSwagger } = await getConnectorWithSwagger(connectorId);
     const inputs = getParameterValuesForLegacyDynamicOperation(
@@ -405,10 +411,12 @@ function getParameterValuesForDynamicInvoke(
   idReplacements: Record<string, string>,
   workflowParameters: Record<string, WorkflowParameterDefinition>
 ): Record<string, any> {
-  return getParametersForDynamicInvoke(referenceParameters, nodeInputs, idReplacements, workflowParameters).reduce(
-    (result: Record<string, any>, parameter: SerializedParameter) => ({ ...result, [parameter.parameterName]: parameter.value }),
-    {}
-  );
+  const retVal: Record<string, any> = {};
+  const iter = getParametersForDynamicInvoke(referenceParameters, nodeInputs, idReplacements, workflowParameters);
+  for (const parameter of iter) {
+    retVal[parameter.parameterName] = parameter.value;
+  }
+  return retVal;
 }
 
 function getParameterValuesForLegacyDynamicOperation(
@@ -784,14 +792,10 @@ function evaluateTemplateExpressions(
     return;
   }
 
-  const outputParameters = Object.keys(workflowParameters).reduce(
-    (result: Record<string, any>, parameterId: string) => ({
-      ...result,
-      [workflowParameters[parameterId].name as string]:
-        workflowParameters[parameterId].defaultValue ?? workflowParameters[parameterId].value,
-    }),
-    {}
-  );
+  const outputParameters: Record<string, any> = {};
+  for (const value of Object.values(workflowParameters)) {
+    outputParameters[value.name as string] = value.defaultValue ?? value.value;
+  }
 
   const options: ExpressionEvaluatorOptions = {
     fuzzyEvaluation: true,

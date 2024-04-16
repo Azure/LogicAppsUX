@@ -1,5 +1,5 @@
 import { lighten } from '../color';
-
+import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 describe('lib/helpers/color', () => {
   it.each<[number, number, number, number, number, number, number]>([
     [0, 0, 0, 0.5, 128, 128, 128],

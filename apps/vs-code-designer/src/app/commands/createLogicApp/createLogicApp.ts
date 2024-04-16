@@ -9,7 +9,7 @@ import { SubscriptionTreeItem } from '../../tree/subscriptionTree/SubscriptionTr
 import { notifyCreateLogicAppComplete } from './notifyCreateLogicAppComplete';
 import { isString } from '@microsoft/logic-apps-shared';
 import type { AzExtParentTreeItem, IActionContext } from '@microsoft/vscode-azext-utils';
-import type { ICreateLogicAppContext } from '@microsoft/vscode-extension';
+import type { ICreateLogicAppContext } from '@microsoft/vscode-extension-logic-apps';
 
 export async function createLogicApp(
   context: IActionContext & Partial<ICreateLogicAppContext>,

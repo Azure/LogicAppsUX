@@ -873,6 +873,12 @@
       "value": "(UTC+10:30) Lord Howe"
     }
   ],
+  "3n6GJG": [
+    {
+      "type": 0,
+      "value": "Wprowadź prawidłowy kod JSON."
+    }
+  ],
   "3rzrWf": [
     {
       "type": 0,
@@ -2905,12 +2911,6 @@
       "value": "Objaśnij przepływ"
     }
   ],
-  "GXXLuT": [
-    {
-      "type": 0,
-      "value": "Wprowadź prawidłową wartość logiczną."
-    }
-  ],
   "GYvF54": [
     {
       "type": 0,
@@ -3399,6 +3399,12 @@
       "value": "Metoda"
     }
   ],
+  "JgugQX": [
+    {
+      "type": 0,
+      "value": "Wprowadź prawidłową tablicę."
+    }
+  ],
   "Ji6663": [
     {
       "type": 0,
@@ -3831,12 +3837,6 @@
     {
       "type": 0,
       "value": "Zwraca bieżącą sygnaturę czasową jako ciąg"
-    }
-  ],
-  "MVrv+N": [
-    {
-      "type": 0,
-      "value": "Wprowadź prawidłową tablicę."
     }
   ],
   "MYgKHu": [
@@ -6273,6 +6273,12 @@
       "value": "Dodaj lub wybierz schemat źródłowy, który ma być używany dla mapy."
     }
   ],
+  "b7BQdu": [
+    {
+      "type": 0,
+      "value": "Wprowadź prawidłową wartość logiczną."
+    }
+  ],
   "b9/1dK": [
     {
       "type": 0,
@@ -6367,12 +6373,6 @@
     {
       "type": 0,
       "value": "Informacje"
-    }
-  ],
-  "bYwqkV": [
-    {
-      "type": 0,
-      "value": "Wprowadź prawidłowy kod JSON."
     }
   ],
   "ba9yGJ": [
@@ -6613,6 +6613,12 @@
     {
       "type": 0,
       "value": "Dowiedz się więcej"
+    }
+  ],
+  "dEe6Ob": [
+    {
+      "type": 0,
+      "value": "Wprowadź prawidłowy kod JSON."
     }
   ],
   "dKCp2j": [
@@ -7845,12 +7851,6 @@
     {
       "type": 0,
       "value": "Brak właściwości typu uwierzytelniania: „type”."
-    }
-  ],
-  "kxMDyM": [
-    {
-      "type": 0,
-      "value": "Wprowadź prawidłowy kod JSON."
     }
   ],
   "l/3yJr": [

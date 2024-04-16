@@ -1,6 +1,7 @@
 import { LogicAppResolver } from './LogicAppResolver';
 import { runPostWorkflowCreateStepsFromCache } from './app/commands/createCodeless/createCodelessSteps/WorkflowCreateStepBase';
 import { supportedDataMapDefinitionFileExts, supportedSchemaFileExts } from './app/commands/dataMapper/extensionConfig';
+import { promptParameterizeConnections } from './app/commands/parameterizeConnections';
 import { registerCommands } from './app/commands/registerCommands';
 import { getResourceGroupsApi } from './app/resourcesExtension/getExtensionApi';
 import type { AzureAccountTreeItemWithProjects } from './app/tree/AzureAccountTreeItemWithProjects';
@@ -57,12 +58,12 @@ export async function activate(context: vscode.ExtensionContext) {
     runPostWorkflowCreateStepsFromCache();
 
     await downloadExtensionBundle(activateContext);
+    promptParameterizeConnections(activateContext);
     await startOnboarding(activateContext);
     await prepareTestExplorer(context, activateContext);
 
     ext.extensionVersion = getExtensionVersion();
     ext.rgApi = await getResourceGroupsApi();
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     ext.azureAccountTreeItem = ext.rgApi.appResourceTree._rootTreeItem as AzureAccountTreeItemWithProjects;
 

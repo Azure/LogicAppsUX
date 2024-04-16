@@ -1,11 +1,11 @@
-import type { ConnectionReference, ConnectionReferences } from '../../../common/models/workflow';
+import type { ConnectionMapping, ConnectionReference, ConnectionReferences } from '../../../common/models/workflow';
 import { getConnection } from '../../queries/connections';
 import type { RootState } from '../../store';
 import { getConnectionReference, isConnectionMultiAuthManagedIdentityType } from '../../utils/connectors/connections';
 import { useNodeConnectorId } from '../operation/operationSelector';
 import { useOperationManifest, useOperationInfo } from '../selectors/actionMetadataSelector';
-import type { ConnectionMapping } from './connectionSlice';
 import {
+  type Gateway,
   ConnectionService,
   GatewayService,
   OperationManifestService,
@@ -14,11 +14,12 @@ import {
   type Connector,
 } from '@microsoft/logic-apps-shared';
 import { useMemo } from 'react';
+import type { UseQueryResult } from 'react-query';
 import { useQuery } from 'react-query';
 import { useSelector } from 'react-redux';
 
-export const useConnector = (connectorId: string | undefined, enabled = true) => {
-  const { data, ...rest } = useConnectorAndSwagger(connectorId, enabled);
+export const useConnector = (connectorId: string | undefined, enabled = true): UseQueryResult<Connector | undefined, unknown> => {
+  const { data, ...rest }: any = useConnectorAndSwagger(connectorId, enabled);
   return { data: data?.connector, ...rest };
 };
 
@@ -39,7 +40,7 @@ export const useConnectorAndSwagger = (connectorId: string | undefined, enabled 
   );
 };
 
-export const useGateways = (subscriptionId: string, connectorName: string) => {
+export const useGateways = (subscriptionId: string, connectorName: string): UseQueryResult<Gateway[], unknown> => {
   return useQuery(
     ['gateways', { subscriptionId }, { connectorName }],
     async () => GatewayService().getGateways(subscriptionId, connectorName),
@@ -117,7 +118,7 @@ export const useConnectionRefsByConnectorId = (connectorId?: string) => {
 
 export const useIsOperationMissingConnection = (nodeId: string) => {
   const connectionsMapping = useSelector((state: RootState) => state.connections.connectionsMapping);
-  return Object.keys(connectionsMapping).includes(nodeId) && getRecordEntry(connectionsMapping, nodeId) === null;
+  return Object.keys(connectionsMapping ?? {}).includes(nodeId) && getRecordEntry(connectionsMapping, nodeId) === null;
 };
 
 export const useShowIdentitySelectorQuery = (nodeId: string) => {

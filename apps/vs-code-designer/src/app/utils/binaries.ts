@@ -24,7 +24,7 @@ import { executeCommand } from './funcCoreTools/cpUtils';
 import { getNpmCommand } from './nodeJs/nodeJsVersion';
 import { getGlobalSetting, getWorkspaceSetting, updateGlobalSetting } from './vsCodeConfig/settings';
 import { type IActionContext } from '@microsoft/vscode-azext-utils';
-import type { IGitHubReleaseInfo } from '@microsoft/vscode-extension';
+import type { IGitHubReleaseInfo } from '@microsoft/vscode-extension-logic-apps';
 import axios from 'axios';
 import * as fs from 'fs';
 import * as os from 'os';
@@ -255,7 +255,7 @@ async function readJsonFromUrl(url: string): Promise<any> {
       throw new Error(`Request failed with status: ${response.status}`);
     }
   } catch (error) {
-    vscode.window.showErrorMessage(`Error reading JSON from URL: ${error.message}`);
+    vscode.window.showErrorMessage(`Error reading JSON from URL ${url} : ${error.message}`);
     throw error;
   }
 }

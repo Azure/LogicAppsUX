@@ -1,3 +1,4 @@
+import type { DownloadChunkMetadata, UploadChunkMetadata } from '@microsoft/logic-apps-shared';
 import type { DropdownSelectionChangeHandler, SectionProps, TextChangeHandler, ToggleHandler } from '..';
 import { SettingSectionName } from '..';
 import constants from '../../../common/constants';
@@ -8,6 +9,8 @@ import { useIntl } from 'react-intl';
 
 export interface NetworkingSectionProps extends SectionProps {
   chunkedTransferMode: boolean;
+  uploadChunkMetadata: UploadChunkMetadata | undefined;
+  downloadChunkMetadata: DownloadChunkMetadata | undefined;
   onAsyncPatternToggle: ToggleHandler;
   onAsyncResponseToggle: ToggleHandler;
   onRequestOptionsChange: TextChangeHandler;
@@ -21,6 +24,8 @@ export interface NetworkingSectionProps extends SectionProps {
   onRetryIntervalChange: TextChangeHandler;
   onRetryMinIntervalChange: TextChangeHandler;
   onRetryMaxIntervalChange: TextChangeHandler;
+  onUploadChunkSizeChange: TextChangeHandler;
+  onDownloadChunkSizeChange: TextChangeHandler;
 }
 
 export const Networking = ({
@@ -32,6 +37,8 @@ export const Networking = ({
   suppressWorkflowHeadersOnResponse,
   paging,
   uploadChunk,
+  uploadChunkMetadata,
+  downloadChunkMetadata,
   downloadChunkSize,
   asynchronous,
   disableAsyncPattern,
@@ -45,6 +52,8 @@ export const Networking = ({
   onPaginationValueChange,
   onHeadersOnResponseToggle,
   onContentTransferToggle,
+  onUploadChunkSizeChange,
+  onDownloadChunkSizeChange,
   onRetryPolicyChange,
   onRetryCountChange,
   onRetryIntervalChange,
@@ -52,6 +61,9 @@ export const Networking = ({
   onRetryMaxIntervalChange,
   onHeaderClick,
 }: NetworkingSectionProps): JSX.Element => {
+  const minimumSize = uploadChunkMetadata?.minimumSize ?? downloadChunkMetadata?.minimumSize;
+  const maximumSize = uploadChunkMetadata?.maximumSize ?? downloadChunkMetadata?.maximumSize;
+
   const intl = useIntl();
   const asyncPatternTitle = intl.formatMessage({
     defaultMessage: 'Asynchronous Pattern',
@@ -154,22 +166,48 @@ export const Networking = ({
     id: 'oLtwMw',
     description: 'title for content transfer setting',
   });
-  const contentTransferTooltip = intl.formatMessage({
-    defaultMessage: 'More details can be found at http://aka.ms/logicapps-chunk#upload-content-in-chunks',
-    id: 'V+xi3c',
-    description: 'description of content transfer setting',
+  const uploadContentTransferDescription = intl.formatMessage({
+    defaultMessage: 'Specify the behavior and capabilities for transferring content over HTTP.',
+    id: '4BuCdw',
+    description: 'description of upload content transfer setting',
   });
-  const contentTransferDescription = intl.formatMessage({
+  const uploadContentTransferTooltip = intl.formatMessage({
     defaultMessage:
-      'Specify the behavior and capabilities for transferring content over HTTP. Large messages may be split up into smaller requests to the connector to allow large message upload.',
-    id: 'SenWwt',
-    description: 'description of content transfer setting',
+      'Large messages may be split up into smaller requests to the connector to allow large message upload. More details can be found at http://aka.ms/logicapps-chunk#upload-content-in-chunks',
+    id: 'lbq5E1',
+    description: 'description of upload content transfer setting',
+  });
+  const downloadContentTransferDescription = intl.formatMessage({
+    defaultMessage: 'Specify the behavior and capabilities for transferring content over HTTP.',
+    id: 'pfmki/',
+    description: 'description of download content transfer setting',
   });
   const contentTransferSublabel = intl.formatMessage({
     defaultMessage: 'Allow chunking',
     id: 'hMf2TA',
     description: 'sublabel for content transfer setting',
   });
+  const chunkedTransferNodeSizeLabel = intl.formatMessage({
+    defaultMessage: 'Chunk size',
+    id: 'STWbak',
+    description: 'label for chunked transfer node size',
+  });
+  const uploadChunkSizePlaceholder = intl.formatMessage(
+    {
+      defaultMessage: 'Specify upload chunk size between {minimumSize} and {maximumSize} Mb. Example: 10',
+      id: 'D6KzoS',
+      description: 'tooltip for upload chunk size setting',
+    },
+    { minimumSize, maximumSize }
+  );
+  const downloadChunkSizePlaceholder = intl.formatMessage(
+    {
+      defaultMessage: 'Specify download chunk size between {minimumSize} and {maximumSize} Mb. Example: 10',
+      id: 'IqNEui',
+      description: 'tooltip for download chunk size setting',
+    },
+    { minimumSize, maximumSize }
+  );
 
   // RETRY POLICY
   const retryPolicyTypeTitle = intl.formatMessage({
@@ -349,14 +387,49 @@ export const Networking = ({
         onToggleInputChange: (_, checked) => onContentTransferToggle(!!checked),
         customLabel: getSettingLabel(
           contentTransferTitle,
-          contentTransferTooltip,
-          contentTransferDescription,
+          uploadContentTransferTooltip,
+          uploadContentTransferDescription,
           contentTransferSublabel,
           /* isSubLabelToggle*/ true
         ),
         ariaLabel: contentTransferTitle,
       },
-      visible: uploadChunk?.isSupported || downloadChunkSize?.isSupported,
+      visible: !!uploadChunk?.isSupported,
+    };
+  };
+
+  const getUploadChunkSizeSetting = (): Settings => {
+    return {
+      settingType: 'SettingTextField',
+      settingProp: {
+        readOnly,
+        value: uploadChunk?.value?.uploadChunkSize?.toString() ?? '',
+        placeholder: uploadChunkSizePlaceholder,
+        customLabel: getSettingLabel('', /* infoTooltipText */ undefined, /* SettingDescription */ undefined, chunkedTransferNodeSizeLabel),
+        onValueChange: (_, newVal) => onUploadChunkSizeChange(newVal as string),
+        ariaLabel: chunkedTransferNodeSizeLabel,
+      },
+      visible: uploadChunk?.isSupported && uploadChunkMetadata?.acceptUploadSize && chunkedTransferMode,
+    };
+  };
+
+  const getDownloadChunkSizeSetting = (): Settings => {
+    return {
+      settingType: 'SettingTextField',
+      settingProp: {
+        readOnly,
+        value: downloadChunkSize?.value?.toString() ?? '',
+        placeholder: downloadChunkSizePlaceholder,
+        customLabel: getSettingLabel(
+          contentTransferTitle,
+          /* infoTooltipText */ undefined,
+          downloadContentTransferDescription,
+          chunkedTransferNodeSizeLabel
+        ),
+        onValueChange: (_, newVal) => onDownloadChunkSizeChange(newVal as string),
+        ariaLabel: chunkedTransferNodeSizeLabel,
+      },
+      visible: downloadChunkMetadata?.acceptDownloadSize,
     };
   };
 
@@ -491,6 +564,8 @@ export const Networking = ({
       getAsyncPatternSetting(),
       getAsyncResponseSetting(),
       getContentTransferSetting(),
+      getUploadChunkSizeSetting(),
+      getDownloadChunkSizeSetting(),
       getPaginationSetting(),
       getRequestOptionSetting(),
       getSuppressHeadersSetting(),

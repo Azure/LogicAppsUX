@@ -22,17 +22,17 @@ import {
   updateFunctionsSDKVersion,
   writeBuildFileToDisk,
 } from '../../../../utils/codeless/updateBuildFile';
-import { getFramework, validateDotnetInstalled } from '../../../../utils/dotnet/executeDotnetTemplateCommand';
+import { getFramework } from '../../../../utils/dotnet/executeDotnetTemplateCommand';
 import { writeFormattedJson } from '../../../../utils/fs';
 import { parseJson } from '../../../../utils/parseJson';
 import { WorkflowCreateStepBase } from '../../../createCodeless/createCodelessSteps/WorkflowCreateStepBase';
-import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { DialogResponses, nonNullProp, parseError } from '@microsoft/vscode-azext-utils';
-import { WorkflowProjectType, MismatchBehavior } from '@microsoft/vscode-extension';
-import type { IFunctionWizardContext, IWorkflowTemplate, IHostJsonV2, StandardApp } from '@microsoft/vscode-extension';
+import { WorkflowProjectType, MismatchBehavior } from '@microsoft/vscode-extension-logic-apps';
+import type { IFunctionWizardContext, IWorkflowTemplate, IHostJsonV2, StandardApp } from '@microsoft/vscode-extension-logic-apps';
 import * as fse from 'fs-extra';
 import * as path from 'path';
 import type { MessageItem } from 'vscode';
+import { validateDotNetIsInstalled } from '../../../dotnet/validateDotNetInstalled';
 
 // This class creates a new workflow for a codeless Azure Function project
 export class CodelessFunctionWorkflow extends WorkflowCreateStepBase<IFunctionWizardContext> {
@@ -42,9 +42,13 @@ export class CodelessFunctionWorkflow extends WorkflowCreateStepBase<IFunctionWi
   }
 
   // Static method that creates a new instance of the CodelessFunctionProjectWorkflowCreateStep class and returns it
-  public static async createStep(context: IActionContext): Promise<CodelessFunctionWorkflow> {
+  public static async createStep(context: IFunctionWizardContext): Promise<CodelessFunctionWorkflow> {
     // Ensure that the .NET Core SDK is installed on the user's machine
-    await validateDotnetInstalled(context);
+    const projectPath = nonNullProp(context, 'logicAppFolderPath');
+    const isDotNetInstalled = await validateDotNetIsInstalled(context, projectPath);
+    if (!isDotNetInstalled) {
+      return;
+    }
     return new CodelessFunctionWorkflow();
   }
 

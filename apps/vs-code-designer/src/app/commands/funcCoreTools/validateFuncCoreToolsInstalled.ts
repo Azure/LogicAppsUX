@@ -12,7 +12,7 @@ import { getWorkspaceSetting } from '../../utils/vsCodeConfig/settings';
 import { installFuncCoreToolsBinaries, installFuncCoreToolsSystem } from './installFuncCoreTools';
 import { callWithTelemetryAndErrorHandling, DialogResponses, openUrl } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
-import type { FuncVersion } from '@microsoft/vscode-extension';
+import type { FuncVersion } from '@microsoft/vscode-extension-logic-apps';
 import type { MessageItem } from 'vscode';
 
 /**

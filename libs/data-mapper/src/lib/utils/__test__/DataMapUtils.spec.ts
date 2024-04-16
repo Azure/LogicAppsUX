@@ -30,8 +30,8 @@ import {
 } from '../__mocks__';
 import type { Schema, SchemaExtended, SchemaNodeExtended } from '@microsoft/logic-apps-shared';
 import { NormalizedDataType, SchemaNodeProperty, SchemaType } from '@microsoft/logic-apps-shared';
-import { comprehensiveSourceSchema, comprehensiveTargetSchema, sourceMockSchema } from '__mocks__/schemas';
-
+import { comprehensiveSourceSchema, comprehensiveTargetSchema, sourceMockSchema } from '../../../__mocks__/schemas';
+import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 describe('utils/DataMap', () => {
   describe('isValidToMakeMapDefinition', () => {
     it('includes a function node that is not connected to any input and outputs', () => {
@@ -764,6 +764,12 @@ describe('utils/DataMap', () => {
           '/ns0:TargetSchemaRoot/Looping/ManyToOne/$for(/ns0:SourceSchemaRoot/Looping/ManyToOne/Simple, $a)/RandomKey'
         )
       ).toBe('/ns0:TargetSchemaRoot/Looping/ManyToOne/$for(/ns0:SourceSchemaRoot/Looping/ManyToOne/Simple, $a)/RandomKey');
+    });
+
+    it('two loops with child name in source name', () => {
+      expect(qualifyLoopRelativeSourceKeys('/ns0:X12_00401_856/$for(/Shipment/HL-S)/ns0:HL-SLoop/$for(HL)/ns0:HL/HL01')).toBe(
+        '/ns0:X12_00401_856/$for(/Shipment/HL-S)/ns0:HL-SLoop/$for(/Shipment/HL-S/HL)/ns0:HL/HL01'
+      );
     });
   });
 

@@ -4,7 +4,7 @@ import { startBackendRuntime } from './FxWorkflowRuntime';
 import { webviewType } from './extensionConfig';
 import type { MapDefinitionEntry } from '@microsoft/logic-apps-shared';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
-import type { MapDefinitionData } from '@microsoft/vscode-extension';
+import type { MapDefinitionData } from '@microsoft/vscode-extension-logic-apps';
 import * as yaml from 'js-yaml';
 import * as path from 'path';
 import { Uri, ViewColumn, window } from 'vscode';
@@ -85,7 +85,6 @@ export default class DataMapperExt {
           DataMapperExt.fixMapDefinitionCustomValues(curElement);
         }
       } else if (Object.prototype.hasOwnProperty.call(mapDefinition, key) && typeof curElement === 'string') {
-        // eslint-disable-next-line no-param-reassign
         mapDefinition[key] = curElement.replaceAll('\\"', '"');
       }
     }

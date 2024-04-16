@@ -118,6 +118,7 @@ export const designerOptionsSlice = createSlice({
         ...state.hostOptions,
         ...action.payload.hostOptions,
       };
+      state.showPerformanceDebug = action.payload.showPerformanceDebug;
       state.designerOptionsInitialized = true;
     },
   },

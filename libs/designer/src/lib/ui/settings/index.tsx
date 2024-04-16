@@ -6,6 +6,7 @@ import { useReadOnly } from '../../core/state/designerOptions/designerOptionsSel
 import { updateNodeSettings } from '../../core/state/operation/operationMetadataSlice';
 import { useRawInputParameters } from '../../core/state/operation/operationSelector';
 import { useSelectedNodeId } from '../../core/state/panel/panelSelectors';
+import { useOperationDownloadChunkMetadata, useOperationUploadChunkMetadata } from '../../core/state/selectors/actionMetadataSelector';
 import { useExpandedSections } from '../../core/state/setting/settingSelector';
 import { setExpandedSections } from '../../core/state/setting/settingSlice';
 import { updateTokenSecureStatus } from '../../core/state/tokens/tokensSlice';
@@ -22,7 +23,14 @@ import { Tracking } from './sections/tracking';
 import type { ValidationError } from './validation/validation';
 import { ValidationErrorKeys, validateNodeSettings } from './validation/validation';
 import type { IDropdownOption } from '@fluentui/react';
-import { type LogicAppsV2, equals, getRecordEntry, isObject } from '@microsoft/logic-apps-shared';
+import {
+  type LogicAppsV2,
+  equals,
+  getRecordEntry,
+  isObject,
+  type UploadChunkMetadata,
+  type DownloadChunkMetadata,
+} from '@microsoft/logic-apps-shared';
 import { useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -67,6 +75,9 @@ export const SettingsPanel = (): JSX.Element => {
   const selectedNode = useSelectedNodeId();
   const readOnly = useReadOnly();
   const expandedSections = useExpandedSections();
+  const operationInfo = useOperationInfo(selectedNode);
+  const { result: uploadChunkMetadata } = useOperationUploadChunkMetadata(operationInfo);
+  const { result: downloadChunkMetadata } = useOperationDownloadChunkMetadata(operationInfo);
 
   const { nodeSettings, nodeSettingValidationErrors } = useSelector((state: RootState) => {
     return {
@@ -139,6 +150,8 @@ export const SettingsPanel = (): JSX.Element => {
       />
       <NetworkingSettings
         {...baseSettingProps}
+        uploadChunkMetadata={uploadChunkMetadata}
+        downloadChunkMetadata={downloadChunkMetadata}
         updateSettings={(settings, validateSetting) => handleUpdateSettings(settings, SettingSectionName.NETWORKING, validateSetting)}
         {...getPropsBasedOnSection(SettingSectionName.NETWORKING)}
       />
@@ -354,7 +367,12 @@ function NetworkingSettings({
   validationErrors,
   updateSettings,
   dispatch,
-}: SettingSectionProps): JSX.Element | null {
+  uploadChunkMetadata,
+  downloadChunkMetadata,
+}: SettingSectionProps & {
+  uploadChunkMetadata: UploadChunkMetadata | undefined;
+  downloadChunkMetadata: DownloadChunkMetadata | undefined;
+}): JSX.Element | null {
   const {
     asynchronous,
     disableAsyncPattern,
@@ -446,12 +464,36 @@ function NetworkingSettings({
     updateSettings({
       uploadChunk: {
         isSupported: !!uploadChunk?.isSupported,
-        value: {
-          ...uploadChunk?.value,
-          transferMode: checked ? constants.SETTINGS.TRANSFER_MODE.CHUNKED : undefined,
-        },
+        value: checked ? { ...uploadChunk?.value, transferMode: constants.SETTINGS.TRANSFER_MODE.CHUNKED } : undefined,
       },
     });
+  };
+
+  const onUploadChunkSizeChange = (newVal: string): void => {
+    updateSettings(
+      {
+        uploadChunk: {
+          isSupported: !!uploadChunk?.isSupported,
+          value: {
+            ...(uploadChunk?.value as any),
+            ...{ uploadChunkSize: newVal === '' ? undefined : parseInt(newVal, 10) },
+          },
+        },
+      },
+      true
+    );
+  };
+
+  const onDownloadChunkSizeChange = (newVal: string): void => {
+    updateSettings(
+      {
+        downloadChunkSize: {
+          isSupported: !!downloadChunkSize?.isSupported,
+          value: newVal === '' ? undefined : parseInt(newVal, 10),
+        },
+      },
+      true
+    );
   };
 
   const onRetryPolicyChange = (selectedOption: IDropdownOption): void => {
@@ -554,6 +596,8 @@ function NetworkingSettings({
         requestOptions={requestOptions}
         disableAsyncPattern={disableAsyncPattern}
         chunkedTransferMode={equals(uploadChunk?.value?.transferMode, constants.SETTINGS.TRANSFER_MODE.CHUNKED)}
+        uploadChunkMetadata={uploadChunkMetadata}
+        downloadChunkMetadata={downloadChunkMetadata}
         retryPolicy={retryPolicy}
         uploadChunk={uploadChunk}
         downloadChunkSize={downloadChunkSize}
@@ -561,6 +605,8 @@ function NetworkingSettings({
         onAsyncPatternToggle={onAsyncPatternToggle}
         onAsyncResponseToggle={onAsyncResponseToggle}
         onContentTransferToggle={onContentTransferToggle}
+        onUploadChunkSizeChange={onUploadChunkSizeChange}
+        onDownloadChunkSizeChange={onDownloadChunkSizeChange}
         onPaginationToggle={onPaginationToggle}
         onPaginationValueChange={onPaginationValueChange}
         onRequestOptionsChange={onRequestOptionsChange}

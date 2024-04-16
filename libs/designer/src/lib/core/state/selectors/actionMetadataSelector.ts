@@ -5,9 +5,10 @@ import type { RootState } from '../../store';
 import { useConnector, useConnectorAndSwagger, useNodeConnectionId } from '../connection/connectionSelector';
 import type { NodeOperation, OperationMetadataState } from '../operation/operationMetadataSlice';
 import { OperationManifestService, SwaggerParser, getObjectPropertyValue, getRecordEntry } from '@microsoft/logic-apps-shared';
-import type { LAOperation } from '@microsoft/logic-apps-shared';
+import type { LAOperation, OperationManifest } from '@microsoft/logic-apps-shared';
 import { createSelector } from '@reduxjs/toolkit';
 import { useMemo } from 'react';
+import type { UseQueryResult } from 'react-query';
 import { useQuery } from 'react-query';
 import { useSelector } from 'react-redux';
 
@@ -65,7 +66,10 @@ export const useOutputParameters = (nodeId: string) => {
   return useSelector((state: RootState) => selector(state, nodeId));
 };
 
-export const useOperationManifest = (operationInfo?: NodeOperation, enabled = true) => {
+export const useOperationManifest = (
+  operationInfo?: NodeOperation,
+  enabled = true
+): UseQueryResult<OperationManifest | undefined, unknown> => {
   const operationManifestService = OperationManifestService();
   const connectorId = operationInfo?.connectorId?.toLowerCase();
   const operationId = operationInfo?.operationId?.toLowerCase();
@@ -146,6 +150,46 @@ export const useOperationSummary = (operationInfo: NodeOperation): QueryResult =
   const result = useNodeAttributeOrSwagger(operationInfo, ['summary'], ['summary'], 'summary', { useManifest });
   if (result.result === undefined && operationInfo?.operationId) {
     result.result = titleCase(operationInfo.operationId);
+  }
+
+  return result;
+};
+
+export const useOperationUploadChunkMetadata = (operationInfo: NodeOperation): QueryResult => {
+  const operationManifestService = OperationManifestService();
+  const useManifest = operationManifestService.isSupported(operationInfo?.type ?? '', operationInfo?.kind ?? '');
+
+  const result = useNodeAttributeOrSwagger(operationInfo, ['settings', 'chunking'], ['uploadChunkMetadata'], 'uploadChunkMetadata', {
+    useManifest,
+  });
+
+  if (!result.isLoading) {
+    if (useManifest && result?.result) {
+      return { result: result.result.options, isLoading: false };
+    }
+  }
+
+  return result;
+};
+
+export const useOperationDownloadChunkMetadata = (operationInfo: NodeOperation): QueryResult => {
+  const operationManifestService = OperationManifestService();
+  const useManifest = operationManifestService.isSupported(operationInfo?.type ?? '', operationInfo?.kind ?? '');
+
+  const result = useNodeAttributeOrSwagger(
+    operationInfo,
+    ['settings', 'downloadChunking'],
+    ['downloadChunkMetadata'],
+    'downloadChunkMetadata',
+    {
+      useManifest,
+    }
+  );
+
+  if (!result.isLoading) {
+    if (useManifest && result.result) {
+      return { result: result.result.options, isLoading: false };
+    }
   }
 
   return result;

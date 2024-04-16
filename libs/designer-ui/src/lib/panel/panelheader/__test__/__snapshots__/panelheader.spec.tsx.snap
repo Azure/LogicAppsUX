@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`lib/panel/panelHeader/main should render 1`] = `
+exports[`lib/panel/panelHeader/main > should render 1`] = `
 <div
   className="msla-panel-header"
 >
@@ -50,25 +50,18 @@ exports[`lib/panel/panelHeader/main should render 1`] = `
   </button>
   <div
     className="msla-panel-card-header"
-    style={Object {}}
+    style={{}}
   >
     <div
-      className="fui-Spinner msla-card-header-spinner ___p104zz0_oywd6f0 f22iagw f122n59 f4d9j23 fez10in f4px1ci fn67r4l f1063pyq"
+      className="fui-Spinner r1k3z50n msla-card-header-spinner"
       role="progressbar"
     >
       <span
-        className="fui-Spinner__spinner ___1lv4f9l_18iydzw f1or16p5 f1grzc83 f19shzzi f5tbecn fn4mtlg f1y80fxs f1r2crtq f1wsi8sr f1bkm2qd f1urqz7h f1da2vov f11rfva0 f1exc66 f1j4wmu2 f1vppzuq fv1u54w fngtx1d f11ditju f1m9nikz fq8a5sv f1b4lwqj f1najlst fjxod4 fu3xdw0 f1ttdh6v f1eseayc folzdkc fhlfkde f13qeqtg flglbw1"
+        className="fui-Spinner__spinner rvgcg50 ___ruqntd0_k4fqbj0 fjamq6b f64fuq3 f1v3ph3m"
       >
-        <svg
-          className="fui-Spinner__Progressbar"
-        >
-          <circle
-            className="fui-Spinner__Track"
-          />
-          <circle
-            className="fui-Spinner__Tail"
-          />
-        </svg>
+        <span
+          className="fui-Spinner__spinnerTail r1lregi5"
+        />
       </span>
     </div>
     <div
@@ -105,7 +98,7 @@ exports[`lib/panel/panelHeader/main should render 1`] = `
       aria-label="More commands"
       className="fui-Button r1alrhcs ___1p24v7a_y4hy550 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f4xjyn1 f1et0tmh f9ddjv3 f1wi8ngl f1sbtcvk fwiuce9 fdghr9 f15vdbe4 fwbmr0d f44c6la"
       data-automation-id="msla-panel-header-more-options"
-      data-tabster="{\\"restorer\\":{\\"type\\":1}}"
+      data-tabster="{"restorer":{"type":1}}"
       id="menur2"
       onBlur={[Function]}
       onClick={[Function]}
@@ -159,7 +152,7 @@ exports[`lib/panel/panelHeader/main should render 1`] = `
 </div>
 `;
 
-exports[`lib/panel/panelHeader/main should render with panel header menu 1`] = `
+exports[`lib/panel/panelHeader/main > should render with panel header menu 1`] = `
 <div
   className="msla-panel-header"
 >
@@ -209,25 +202,18 @@ exports[`lib/panel/panelHeader/main should render with panel header menu 1`] = `
   </button>
   <div
     className="msla-panel-card-header"
-    style={Object {}}
+    style={{}}
   >
     <div
-      className="fui-Spinner msla-card-header-spinner ___p104zz0_oywd6f0 f22iagw f122n59 f4d9j23 fez10in f4px1ci fn67r4l f1063pyq"
+      className="fui-Spinner r1k3z50n msla-card-header-spinner"
       role="progressbar"
     >
       <span
-        className="fui-Spinner__spinner ___1lv4f9l_18iydzw f1or16p5 f1grzc83 f19shzzi f5tbecn fn4mtlg f1y80fxs f1r2crtq f1wsi8sr f1bkm2qd f1urqz7h f1da2vov f11rfva0 f1exc66 f1j4wmu2 f1vppzuq fv1u54w fngtx1d f11ditju f1m9nikz fq8a5sv f1b4lwqj f1najlst fjxod4 fu3xdw0 f1ttdh6v f1eseayc folzdkc fhlfkde f13qeqtg flglbw1"
+        className="fui-Spinner__spinner rvgcg50 ___ruqntd0_k4fqbj0 fjamq6b f64fuq3 f1v3ph3m"
       >
-        <svg
-          className="fui-Spinner__Progressbar"
-        >
-          <circle
-            className="fui-Spinner__Track"
-          />
-          <circle
-            className="fui-Spinner__Tail"
-          />
-        </svg>
+        <span
+          className="fui-Spinner__spinnerTail r1lregi5"
+        />
       </span>
     </div>
     <div
@@ -264,7 +250,7 @@ exports[`lib/panel/panelHeader/main should render with panel header menu 1`] = `
       aria-label="More commands"
       className="fui-Button r1alrhcs ___1p24v7a_y4hy550 fhovq9v f1p3nwhy f11589ue f1q5o8ev f1pdflbu fkfq4zb f1t94bn6 f1s2uweq fr80ssc f1ukrpxl fecsdlb fnwyq0v ft1hn21 fuxngvv fy5bs14 fsv2rcd f1h0usnq fs4ktlq f16h9ulv fx2bmrt f1omzyqd f1dfjoow f1j98vj9 fj8yq94 f4xjyn1 f1et0tmh f9ddjv3 f1wi8ngl f1sbtcvk fwiuce9 fdghr9 f15vdbe4 fwbmr0d f44c6la"
       data-automation-id="msla-panel-header-more-options"
-      data-tabster="{\\"restorer\\":{\\"type\\":1}}"
+      data-tabster="{"restorer":{"type":1}}"
       id="menur6"
       onBlur={[Function]}
       onClick={[Function]}
