@@ -1,3 +1,5 @@
+// biome-ignore lint/correctness/noUnusedImports: actually is used
+import type { editor } from 'monaco-editor';
 import type { ValueSegment } from '../editor';
 import { CLOSE_TOKENPICKER } from '../editor/base/plugins/CloseTokenPicker';
 import type { ExpressionEditorEvent } from '../expressioneditor';
