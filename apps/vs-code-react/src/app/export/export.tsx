@@ -1,4 +1,3 @@
-// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
 import type { OutletContext } from '../../run-service';
 import type { RootState } from '../../state/store';
 import './export.less';
