@@ -260,7 +260,8 @@ export function resolveSettingsInConnection(
             value = settings[settingKey];
           }
 
-          return { ...result, [parameterKey]: value };
+          result[parameterKey] = value;
+          return result;
         }, {}),
       }
     : connectionInfo;

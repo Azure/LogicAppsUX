@@ -4,7 +4,8 @@ import type { IDropdownOption } from '@fluentui/react';
 
 export const parseResourceGroups = (workflowItems: Array<WorkflowsList>): IDropdownOption[] => {
   const resourceGroups: Array<string> = workflowItems.reduce((acc: Array<string>, curr: WorkflowsList): Array<string> => {
-    return [...acc, curr?.resourceGroup];
+    acc.push(curr.resourceGroup);
+    return acc;
   }, []);
 
   const dropdownGroups: IDropdownOption[] = [...new Set(resourceGroups)].map((resourceGroup) => {

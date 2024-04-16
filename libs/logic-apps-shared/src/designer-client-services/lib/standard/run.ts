@@ -263,8 +263,9 @@ export class StandardRunService implements IRunService {
         ? { [isInput ? 'Inputs' : 'Outputs']: response }
         : response;
 
-    return Object.keys(dictionaryResponse).reduce((prev, current) => {
-      return { ...prev, [current]: { displayName: current, value: dictionaryResponse[current]?.content ?? dictionaryResponse[current] } };
+    return Object.keys(dictionaryResponse).reduce((prev: any, current) => {
+      prev[current] = { displayName: current, value: dictionaryResponse[current]?.content ?? dictionaryResponse[current] };
+      return prev;
     }, {});
   }
 
