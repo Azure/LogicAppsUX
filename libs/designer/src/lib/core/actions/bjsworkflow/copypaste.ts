@@ -1,21 +1,22 @@
 import type { ReferenceKey } from '../../../common/models/workflow';
-import { setFocusNode, type RootState } from '../..';
+import { serializeWorkflow, setFocusNode, type RootState } from '../..';
 import { initCopiedConnectionMap } from '../../state/connection/connectionSlice';
 import type { NodeData, NodeOperation } from '../../state/operation/operationMetadataSlice';
 import { initializeNodes, initializeOperationInfo } from '../../state/operation/operationMetadataSlice';
 import type { RelationshipIds } from '../../state/panel/panelInterfaces';
 import { setIsPanelLoading } from '../../state/panel/panelSlice';
 import { pasteNode, pasteScopeNode } from '../../state/workflow/workflowSlice';
-import { getNonDuplicateId, initializeOperationDetails } from './add';
+import { getNonDuplicateId, getNonDuplicateNodeId, initializeOperationDetails } from './add';
 import { LogicAppsV2, Operations, createIdCopy, getRecordEntry, removeIdTag } from '@microsoft/logic-apps-shared';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { batch } from 'react-redux';
 import { getNodeOperationData } from '../../state/operation/operationSelector';
 import { serializeOperation } from './serializer';
-import { buildGraphFromActions, getAllActionNames } from '../../parsers/BJSWorkflow/BJSDeserializer';
+import { PasteScopeParams, buildGraphFromActions, getAllActionNames } from '../../parsers/BJSWorkflow/BJSDeserializer';
 import { ActionDefinition } from '@microsoft/logic-apps-shared/src/utils/src/lib/models/logicAppsV2';
 import { initializeOperationMetadata } from './operationdeserializer';
 import { getWorkflowNodeFromGraphState } from '../../state/workflow/workflowSelectors';
+import { NodesMetadata } from 'lib/core/state/workflow/workflowInterfaces';
 
 type CopyOperationPayload = {
   nodeId: string;
@@ -81,7 +82,7 @@ export const pasteOperation = createAsyncThunk('pasteOperation', async (payload:
   const { nodeId: actionId, relationshipIds, nodeData, operationInfo, connectionData } = payload;
   if (!actionId || !relationshipIds || !nodeData) throw new Error('Operation does not exist');
 
-  const nodeId = getNonDuplicateId((getState() as RootState).workflow.nodesMetadata, actionId);
+  const nodeId = getNonDuplicateNodeId((getState() as RootState).workflow.nodesMetadata, actionId);
 
   dispatch(setIsPanelLoading(true));
 
@@ -123,12 +124,18 @@ export const pasteScopeOperation = createAsyncThunk(
     const { graphId, parentId, childId } = relationshipIds;
 
     const nodesMetadata = (getState() as RootState).workflow.nodesMetadata;
-    const nodeId = getNonDuplicateId(nodesMetadata, actionId);
+    const nodeId = getNonDuplicateNodeId(nodesMetadata, actionId);
+
     const workflowActions = { [nodeId]: serializedValue as ActionDefinition };
-    const allActionNames = getAllActionNames(workflowActions);
-    let [nodes, edges, actions, actionNodesMetadata] = buildGraphFromActions(workflowActions, graphId, parentId, allActionNames, {
-      existingActionNames: Object.keys(nodesMetadata),
-    });
+    const allActionNames = getAllActionNames(workflowActions, [], true);
+    const pasteParams = buildScopeParams(nodesMetadata, allActionNames);
+    let [nodes, edges, actions, actionNodesMetadata] = buildGraphFromActions(
+      workflowActions,
+      graphId,
+      parentId,
+      Object.keys(nodesMetadata),
+      pasteParams
+    );
 
     dispatch(
       pasteScopeNode({
@@ -177,3 +184,21 @@ export const pasteScopeOperation = createAsyncThunk(
     dispatch(setIsPanelLoading(false));
   }
 );
+
+// creates a mapping of nodeIds with a 1:1 mapping of the new NodeIds to the old NodeIds
+// TODO: bring in IdReplacements
+const buildScopeParams = (existingNodesMetdata: NodesMetadata, newActionNodes: string[]): PasteScopeParams => {
+  // temporary mapping to make sure we don't have any repeat nodeIds from both the existing workflow nodes and new paste nodes
+  const allActionNames: Record<string, string> = Object.fromEntries(Object.keys(existingNodesMetdata).map((key) => [key, key]));
+  const pasteActionNames: string[] = [];
+  const renamedNodes: Record<string, string> = {};
+
+  newActionNodes.forEach((nodeId) => {
+    const newNodeId = getNonDuplicateId(allActionNames, nodeId);
+    renamedNodes[nodeId] = newNodeId;
+    allActionNames[newNodeId] = nodeId;
+    pasteActionNames.push(newNodeId);
+  });
+
+  return { pasteActionNames, renamedNodes };
+};

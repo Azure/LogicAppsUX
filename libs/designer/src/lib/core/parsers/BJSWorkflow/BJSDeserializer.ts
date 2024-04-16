@@ -17,10 +17,12 @@ import {
   isNullOrUndefined,
   getUniqueName,
   getRecordEntry,
+  flipRecord,
 } from '@microsoft/logic-apps-shared';
 import { getDurationStringPanelMode } from '@microsoft/designer-ui';
 import type { LogicAppsV2, SubgraphType } from '@microsoft/logic-apps-shared';
 import { getNonDuplicateId } from '../../actions/bjsworkflow/add';
+import { g } from 'vitest/dist/suite-ynYMzeLu';
 
 const hasMultipleTriggers = (definition: LogicAppsV2.WorkflowDefinition): boolean => {
   return definition && definition.triggers ? Object.keys(definition.triggers).length > 1 : false;
@@ -127,9 +129,10 @@ const isSwitchAction = (action: LogicAppsV2.ActionDefinition): action is LogicAp
 
 const isUntilAction = (action: LogicAppsV2.ActionDefinition) => action?.type?.toLowerCase() === 'until';
 
-interface PasteScopeParams {
-  existingNodesMetadata: NodesMetadata /* To prevent duplicates when pasting scope */;
-  renamedActions: Record<string, string> /* renamed values of duplicates */;
+export interface PasteScopeParams {
+  pasteActionNames: string[];
+  // Mapping of nodes added in paste with oldId as key and newId as value
+  renamedNodes: Record<string, string>;
 }
 
 export const buildGraphFromActions = (
@@ -145,12 +148,7 @@ export const buildGraphFromActions = (
   let nodesMetadata: NodesMetadata = {};
   for (let [actionName, _action] of Object.entries(actions)) {
     if (pasteScopeParams) {
-      const { existingNodesMetadata, renamedActions } = pasteScopeParams;
-      const newActionName = getNonDuplicateId(existingNodesMetadata, actionName);
-      if (actionName !== newActionName && renamedActions) {
-        renamedActions[actionName] = newActionName;
-        actionName = newActionName;
-      }
+      actionName = pasteScopeParams.renamedNodes[actionName] ?? actionName;
     }
     // Making action extensible
     const action = Object.assign({}, _action);
@@ -167,7 +165,7 @@ export const buildGraphFromActions = (
           continue;
         }
         const caseAction: any = action.cases?.[key];
-        const { name: newCaseId } = getUniqueName(allActionNames, key);
+        const newCaseId = pasteScopeParams ? pasteScopeParams.renamedNodes[key] ?? key : getUniqueName(allActionNames, key).name;
         allActionNames.push(newCaseId);
         if (caseAction) {
           action.cases = {
@@ -202,11 +200,7 @@ export const buildGraphFromActions = (
     nodesMetadata[actionName] = { ...nodesMetadata[actionName], ...(isRoot && { isRoot: true }) };
     if (!isRoot) {
       for (const [runAfterAction] of Object.entries(action.runAfter ?? {})) {
-        if (pasteScopeParams) {
-          edges.push(createWorkflowEdge(pasteScopeParams.renamedActions[runAfterAction] ?? runAfterAction, actionName));
-        } else {
-          edges.push(createWorkflowEdge(runAfterAction, actionName));
-        }
+        edges.push(createWorkflowEdge(pasteScopeParams?.renamedNodes[runAfterAction] || runAfterAction, actionName));
       }
     }
 
@@ -318,7 +312,7 @@ export const processScopeActions = (
   // Do-Until nodes are set up very different from all other scope nodes,
   //   having the main node at the bottom and a subgraph node at the top,
   //   use this instead of complicating the other setup functions
-  const applyUntilActions = (graphId: string, actions: LogicAppsV2.Actions | undefined, pasteScopeParams?: PasteScopeParams) => {
+  const applyUntilActions = (graphId: string, actions: LogicAppsV2.Actions | undefined) => {
     scopeCardNode.id = scopeCardNode.id.replace('#scope', '#subgraph');
     scopeCardNode.type = WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE;
 
@@ -361,17 +355,7 @@ export const processScopeActions = (
   };
 
   if (isSwitchAction(action)) {
-    const renamedCases: string[] = [];
     for (let [caseName, caseAction] of Object.entries(action.cases || {})) {
-      if (pasteScopeParams) {
-        const { existingNodesMetadata, renamedActions } = pasteScopeParams;
-        const newCaseName = getNonDuplicateId(existingNodesMetadata, caseName, renamedCases);
-        if (caseName !== newCaseName && renamedActions) {
-          renamedActions[caseName] = newCaseName;
-          renamedCases.push(newCaseName);
-          caseName = newCaseName;
-        }
-      }
       applySubgraphActions(actionName, caseName, caseAction.actions, SUBGRAPH_TYPES.SWITCH_CASE, 'cases');
     }
     applySubgraphActions(actionName, `${actionName}-addCase`, undefined, SUBGRAPH_TYPES.SWITCH_ADD_CASE, undefined /* subGraphLocation */);
@@ -396,7 +380,7 @@ export const processScopeActions = (
       },
     };
   } else if (isUntilAction(action)) {
-    applyUntilActions(actionName, action.actions, pasteScopeParams);
+    applyUntilActions(actionName, action.actions);
   } else {
     applyActions(actionName, action.actions);
   }
@@ -487,21 +471,22 @@ const addActionsInstanceMetaData = (nodesMetadata: NodesMetadata, runInstance: L
   return updatedNodesData;
 };
 
-export const getAllActionNames = (actions: LogicAppsV2.Actions | undefined, names: string[] = []): string[] => {
+export const getAllActionNames = (actions: LogicAppsV2.Actions | undefined, names: string[] = [], includeCase?: boolean): string[] => {
   if (isNullOrUndefined(actions)) return [];
 
   for (const [actionName, action] of Object.entries(actions)) {
     names.push(actionName);
     if (isScopeAction(action)) {
-      if (action.actions) names.push(...getAllActionNames(action.actions));
+      if (action.actions) names.push(...getAllActionNames(action.actions, [], includeCase));
       if (isIfAction(action)) {
-        if (action.else?.actions) names.push(...getAllActionNames(action.else.actions));
+        if (action.else?.actions) names.push(...getAllActionNames(action.else.actions, [], includeCase));
       }
       if (isSwitchAction(action)) {
-        if (action.default?.actions) names.push(...getAllActionNames(action.default.actions));
+        if (action.default?.actions) names.push(...getAllActionNames(action.default.actions, [], includeCase));
         if (action.cases) {
-          for (const caseAction of Object.values(action.cases)) {
-            if (caseAction.actions) names.push(...getAllActionNames(caseAction.actions));
+          for (const [caseName, caseAction] of Object.entries(action.cases)) {
+            names.push(caseName);
+            if (caseAction.actions) names.push(...getAllActionNames(caseAction.actions, [], includeCase));
           }
         }
       }

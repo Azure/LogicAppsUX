@@ -72,7 +72,7 @@ export const addOperation = createAsyncThunk('addOperation', async (payload: Add
   batch(() => {
     const { operation, nodeId: actionId, presetParameterValues, actionMetadata } = payload;
     if (!operation) throw new Error('Operation does not exist'); // Just an optional catch, should never happen
-    const nodeId = getNonDuplicateId((getState() as RootState).workflow.nodesMetadata, actionId);
+    const nodeId = getNonDuplicateNodeId((getState() as RootState).workflow.nodesMetadata, actionId);
 
     const newPayload = { ...payload, nodeId };
 
@@ -394,7 +394,17 @@ export const getTriggerNodeManifest = async (
   return undefined;
 };
 
-export const getNonDuplicateId = (nodesMetadata: NodesMetadata, actionId: string, unusableIds?: string[]): string => {
+export const getNonDuplicateNodeId = (nodesMetadata: NodesMetadata, actionId: string) => {
+  let count = 1;
+  let nodeId = actionId;
+  while (getRecordEntry(nodesMetadata, nodeId)) {
+    nodeId = `${actionId}_${count}`;
+    count++;
+  }
+  return nodeId;
+};
+
+export const getNonDuplicateId = (existingActionNames: Record<string, string>, actionId: string): string => {
   actionId = actionId.replaceAll(' ', '_');
   const splitActionId = actionId.split('_');
   let nodeId = actionId;
@@ -404,8 +414,7 @@ export const getNonDuplicateId = (nodesMetadata: NodesMetadata, actionId: string
     actionId = splitActionId.join('_');
   }
 
-  console.log(unusableIds);
-  while (getRecordEntry(nodesMetadata, nodeId) || unusableIds?.includes(nodeId)) {
+  while (getRecordEntry(existingActionNames, nodeId)) {
     nodeId = `${actionId}_${count}`;
     count++;
   }

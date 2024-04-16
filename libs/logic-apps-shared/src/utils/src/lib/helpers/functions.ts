@@ -1076,6 +1076,15 @@ export const isRecordNotEmpty = (record: Record<string, any> | undefined) => {
   return record && Object.keys(record).length > 0;
 };
 
+/**
+ * Flips a <string, string> Record.
+ * @param record - The record to flip.
+ * @returns {record} - The flipped Record
+ */
+export const flipRecord = (record: Record<string, string>) => {
+  return Object.fromEntries(Object.entries(record).map(([key, value]) => [value, key]));
+};
+
 export const FindPreviousAndNextPage = (page: number, bookmarks: number[]) => {
   let left = 0;
   let right = bookmarks.length - 1;
