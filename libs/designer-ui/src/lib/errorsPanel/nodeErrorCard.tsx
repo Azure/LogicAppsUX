@@ -66,7 +66,9 @@ const ErrorSubsection = (props: ErrorSubsectionProps) => {
 
   // create new messages array with no empty values
   const filteredMessages = messages?.filter((m: NodeMessage) => m.content);
-  if (!filteredMessages?.length) return null;
+  if (!filteredMessages?.length) {
+    return null;
+  }
 
   return (
     <div className="msla-error-card-subsection">

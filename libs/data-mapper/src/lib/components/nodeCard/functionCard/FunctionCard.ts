@@ -77,7 +77,6 @@ export const inputsValid = (reactFlowId: string, functionData: FunctionData, con
 
   if (connection) {
     return areInputTypesValidForFunction(functionData, connection);
-  } else {
-    return true;
   }
+  return true;
 };

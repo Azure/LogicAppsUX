@@ -263,8 +263,8 @@ const DesignerEditor = () => {
 
     const connectionsToUpdate = getConnectionsToUpdate(originalConnectionsData, connectionsData ?? {});
     const customCodeToUpdate = await getCustomCodeToUpdate(originalCustomCodeData, customCode ?? {}, appId);
-    const parametersToUpdate = !isEqual(originalParametersData, parameters) ? (parameters as ParametersData) : undefined;
-    const settingsToUpdate = !isEqual(settingsData?.properties, originalSettings) ? settingsData?.properties : undefined;
+    const parametersToUpdate = isEqual(originalParametersData, parameters) ? undefined : (parameters as ParametersData);
+    const settingsToUpdate = isEqual(settingsData?.properties, originalSettings) ? undefined : settingsData?.properties;
 
     return saveWorkflowStandard(
       siteResourceId,
@@ -723,7 +723,9 @@ const getCustomCodeToUpdate = async (
 ): Promise<AllCustomCodeFiles | undefined> => {
   const filteredCustomCodeMapping: CustomCodeFileNameMapping = {};
   const appFilesToAdd: Record<string, string> = {};
-  if (!customCode || Object.keys(customCode).length === 0) return;
+  if (!customCode || Object.keys(customCode).length === 0) {
+    return;
+  }
   const appFiles = await getCustomCodeAppFiles(appId);
 
   Object.entries(customCode).forEach(([fileName, customCodeData]) => {

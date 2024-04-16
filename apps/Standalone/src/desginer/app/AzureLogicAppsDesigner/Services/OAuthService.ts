@@ -87,7 +87,9 @@ export class StandaloneOAuthPopup implements IOAuthPopup {
       .map(([key, value]) => `${key}=${value}`)
       .join(',');
     const oAuthWindow = window.open(authUrl.href, this._popupId, windowOptions);
-    if (!oAuthWindow) throw new Error('The browser has blocked the popup window.');
+    if (!oAuthWindow) {
+      throw new Error('The browser has blocked the popup window.');
+    }
     this._popupWindow = oAuthWindow;
 
     if (!this._popupWindow) {
@@ -101,7 +103,9 @@ export class StandaloneOAuthPopup implements IOAuthPopup {
     const listener = (event: MessageEvent) => {
       const origin = event.origin;
       const redirectOrigin = new URL(redirectUrl).origin;
-      if (origin !== redirectOrigin) return;
+      if (origin !== redirectOrigin) {
+        return;
+      }
       this._msg = decodeURIComponent(event.data);
       window.removeEventListener('message', listener);
       this._popupWindow?.close();
@@ -199,10 +203,9 @@ export class StandaloneOAuthService implements IOAuthService {
 
       if (response?.value[0]?.link) {
         return response.value[0].link;
-      } else {
-        // TODO: Add error handling
-        throw new Error('Error fetching consent URL');
       }
+      // TODO: Add error handling
+      throw new Error('Error fetching consent URL');
     } catch (error) {
       console.error(error);
       // TODO: Add error handling

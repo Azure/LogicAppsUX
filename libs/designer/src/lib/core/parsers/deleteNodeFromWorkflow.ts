@@ -15,7 +15,9 @@ export const deleteNodeFromWorkflow = (
   nodesMetadata: NodesMetadata,
   state: WorkflowState
 ) => {
-  if (!workflowGraph.id) throw new Error('Workflow graph is missing an id');
+  if (!workflowGraph.id) {
+    throw new Error('Workflow graph is missing an id');
+  }
   const { nodeId, isTrigger } = payload;
 
   const currentRunAfter = (getRecordEntry(state.operations, nodeId) as LogicAppsV2.ActionDefinition)?.runAfter;
@@ -26,7 +28,9 @@ export const deleteNodeFromWorkflow = (
     const childIds = (workflowGraph.edges ?? []).filter((edge) => edge.source === nodeId).map((edge) => edge.target);
     childIds.forEach((childId) => {
       const childMetadata = getRecordEntry(nodesMetadata, childId);
-      if (childMetadata) childMetadata.isRoot = true;
+      if (childMetadata) {
+        childMetadata.isRoot = true;
+      }
     });
   }
 

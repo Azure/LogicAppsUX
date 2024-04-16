@@ -63,12 +63,10 @@ export async function confirmOverwriteFile(context: IActionContext, fsPath: stri
     );
     if (result === DialogResponses.yes) {
       return true;
-    } else {
-      return false;
     }
-  } else {
-    return true;
+    return false;
   }
+  return true;
 }
 
 /**

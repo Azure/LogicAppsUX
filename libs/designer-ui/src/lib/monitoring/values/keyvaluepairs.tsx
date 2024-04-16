@@ -47,7 +47,7 @@ export const KeyValuePairs: React.FC<ValueProps> = ({ displayName, value = {}, v
     },
   ];
   const items = Object.entries(value).reduce((pairs: Record<string, any>[], [$key, $value]) => {
-    let pVal = { $key, $value };
+    const pVal = { $key, $value };
     pairs.push(pVal);
     return pairs;
   }, []);

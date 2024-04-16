@@ -68,9 +68,8 @@ export default class DataMapperExt {
       DataMapperExt.fixMapDefinitionCustomValues(mapDefinition);
 
       return mapDefinition;
-    } else {
-      return {};
     }
+    return {};
   };
 
   static fixMapDefinitionCustomValues = (mapDefinition: MapDefinitionEntry) => {

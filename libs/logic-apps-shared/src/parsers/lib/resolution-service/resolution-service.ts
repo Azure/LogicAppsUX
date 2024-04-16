@@ -53,7 +53,8 @@ export class ResolutionService {
   private _resolve(root: any) {
     if (!!root && typeof root === 'object') {
       return this._resolveObject(root);
-    } else if (typeof root === 'string') {
+    }
+    if (typeof root === 'string') {
       return this._resolveString(root);
     }
 
@@ -71,13 +72,14 @@ export class ResolutionService {
 
     if (isStringInterpolation(parsedExpression)) {
       return this._resolveStringInterpolationExpression(parsedExpression);
-    } else if (isFunction(parsedExpression)) {
-      return this._resolveFunction(parsedExpression);
-    } else if (isLiteralExpression(parsedExpression)) {
-      return this._resolveLiteralExpression(parsedExpression);
-    } else {
-      throw new ExpressionException(ExpressionExceptionCode.UNEXPECTED_CHARACTER, ExpressionExceptionCode.UNEXPECTED_CHARACTER);
     }
+    if (isFunction(parsedExpression)) {
+      return this._resolveFunction(parsedExpression);
+    }
+    if (isLiteralExpression(parsedExpression)) {
+      return this._resolveLiteralExpression(parsedExpression);
+    }
+    throw new ExpressionException(ExpressionExceptionCode.UNEXPECTED_CHARACTER, ExpressionExceptionCode.UNEXPECTED_CHARACTER);
   }
 
   private _resolveStringInterpolationExpression(expression: ExpressionStringInterpolation) {
@@ -104,9 +106,8 @@ export class ResolutionService {
     const expression = `@${functionExpression.expression}`;
     if (this._isFunctionParameterOrAppSetting(functionExpression.name)) {
       return this._evaluate(expression);
-    } else {
-      return expression;
     }
+    return expression;
   }
 
   private _resolveObject(root: any) {
@@ -137,7 +138,7 @@ export class ResolutionService {
 
     if (isFunction(segment)) {
       const evaluatedExpression = this._evaluateFunctionExpression(segment, isStringInterpolationExpression);
-      return !isNullOrUndefined(evaluatedExpression) ? evaluatedExpression : expression;
+      return isNullOrUndefined(evaluatedExpression) ? expression : evaluatedExpression;
     }
 
     return this._evaluateUsingRegex(expression);

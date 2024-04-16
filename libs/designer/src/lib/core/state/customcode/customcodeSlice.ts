@@ -15,7 +15,9 @@ export const customCodeSlice = createSlice({
   reducers: {
     initCustomCode: (state, action: PayloadAction<Record<string, string> | undefined>) => {
       const customCodeData = action.payload;
-      if (!customCodeData) return;
+      if (!customCodeData) {
+        return;
+      }
       Object.entries(customCodeData).forEach(([fileName, fileData]) => {
         const [nodeId, fileExtension] = splitFileName(fileName);
         state.files[fileName] = {
