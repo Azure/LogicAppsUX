@@ -601,6 +601,12 @@ const updateDynamicDataForValidConnection = async (
       operation
     );
   } else {
+    LoggerService().log({
+      level: LogEntryLevel.Warning,
+      area: 'OperationDeserializer:UpdateDynamicData',
+      message: 'Invalid connection message shown on the card.',
+    });
+
     const intl = getIntl();
     dispatch(
       updateErrorDetails({
