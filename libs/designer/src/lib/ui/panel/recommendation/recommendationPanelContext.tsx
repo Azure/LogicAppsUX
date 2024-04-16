@@ -70,8 +70,12 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
   useDebouncedEffect(
     () => {
       // if preload is complete, no need to actively search
-      if (!isLoadingOperations) return;
-      if (searchedTerms.includes(searchTerm)) return;
+      if (!isLoadingOperations) {
+        return;
+      }
+      if (searchedTerms.includes(searchTerm)) {
+        return;
+      }
       // We are still preloading, perform active search
       const activeSearchResults =
         SearchService().getActiveSearchOperations?.(searchTerm, filters['actionType'], filters['runtime']) ??
@@ -95,7 +99,9 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
 
   // effect to set the current list of operations by group
   useEffect(() => {
-    if (!selectedOperationGroupId) return;
+    if (!selectedOperationGroupId) {
+      return;
+    }
 
     const searchOperation = SearchService().getOperationsByConnector?.bind(SearchService());
 
@@ -154,7 +160,9 @@ export const RecommendationPanelContext = (props: CommonPanelProps) => {
         : Promise.resolve((allOperations ?? []).find((o) => (apiId ? o.id === id && o.properties?.api?.id === apiId : o.id === id)));
 
       searchResultPromise.then((operation) => {
-        if (!operation) return;
+        if (!operation) {
+          return;
+        }
         dispatch(selectOperationId(operation.id));
         setSelectedOperation(operation);
         dispatch(selectOperationGroupId(''));

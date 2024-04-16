@@ -115,12 +115,12 @@ export abstract class OpenDesignerBase {
       const canHavekeyWord = i + 12 <= stringLength;
 
       if (interpolationString[i] === '@' && canHavekeyWord && this.haveKeyWord(interpolationString.substring(i, i + 12))) {
-        resolvedString += interpolationString[i] + '{';
+        resolvedString += `${interpolationString[i]}{`;
         const closeTagIndex = interpolationString.indexOf(')', i);
-        interpolationString =
-          interpolationString.substring(0, closeTagIndex + 1) +
-          '}' +
-          interpolationString.substring(closeTagIndex + 1, interpolationString.length);
+        interpolationString = `${interpolationString.substring(0, closeTagIndex + 1)}}${interpolationString.substring(
+          closeTagIndex + 1,
+          interpolationString.length
+        )}`;
         stringLength = interpolationString.length;
       } else {
         resolvedString += interpolationString[i];

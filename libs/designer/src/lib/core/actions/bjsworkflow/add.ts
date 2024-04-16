@@ -70,7 +70,9 @@ type AddOperationPayload = {
 export const addOperation = createAsyncThunk('addOperation', async (payload: AddOperationPayload, { dispatch, getState }) => {
   batch(() => {
     const { operation, nodeId: actionId, presetParameterValues, actionMetadata } = payload;
-    if (!operation) throw new Error('Operation does not exist'); // Just an optional catch, should never happen
+    if (!operation) {
+      throw new Error('Operation does not exist'); // Just an optional catch, should never happen
+    }
     let count = 1;
     let nodeId = actionId;
     const nodesMetadata = (getState() as RootState).workflow.nodesMetadata;
@@ -379,13 +381,13 @@ export const addTokensAndVariables = (
 
 const getOperationType = (operation: DiscoveryOperation<DiscoveryResultTypes>): string => {
   const operationType = operation.properties.operationType;
-  return !operationType
-    ? (operation.properties as SomeKindOfAzureOperationDiscovery).isWebhook
+  return operationType
+    ? operationType
+    : (operation.properties as SomeKindOfAzureOperationDiscovery).isWebhook
       ? Constants.NODE.TYPE.API_CONNECTION_WEBHOOK
       : (operation.properties as SomeKindOfAzureOperationDiscovery).isNotification
         ? Constants.NODE.TYPE.API_CONNECTION_NOTIFICATION
-        : Constants.NODE.TYPE.API_CONNECTION
-    : operationType;
+        : Constants.NODE.TYPE.API_CONNECTION;
 };
 
 export const getTriggerNodeManifest = async (

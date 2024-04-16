@@ -4,13 +4,14 @@ import * as Core from './core/index';
 import * as UI from './ui/index';
 
 if (process.env.NODE_ENV === 'development') {
-  if (process.env)
+  if (process.env) {
     (window as any).DesignerModule = {
       UI,
       Core,
       Models,
       serializeBJSWorkflow,
     };
+  }
 }
 export * from './ui/index';
 export * from './core/index';

@@ -77,7 +77,7 @@ export async function generateDeploymentScripts(context: IActionContext, project
     const deploymentScriptLocation = `workspace/${scriptContext.sourceControlPath}`;
     const localizedLogMessage = localize(
       'scriptGenSuccess',
-      `Deployment script generation completed successfully. The scripts are added at location: {0}. Warning: One or more workflows in your logic app may contain user-based authentication for managed connectors. You are required to manually authenticate the connection from the Azure portal after the resource is deployed by the DevOps pipeline.`,
+      'Deployment script generation completed successfully. The scripts are added at location: {0}. Warning: One or more workflows in your logic app may contain user-based authentication for managed connectors. You are required to manually authenticate the connection from the Azure portal after the resource is deployed by the DevOps pipeline.',
       deploymentScriptLocation
     );
     ext.outputChannel.appendLog(localizedLogMessage);
@@ -112,7 +112,7 @@ async function setupWizardScriptContext(context: IActionContext, projectRoot: vs
     scriptContext.projectPath = parentDirPath;
     return scriptContext;
   } catch (error) {
-    const errorMessage = localize('executeAzureWizardError', `Error in setupWizardScriptContext`, error.message ?? error);
+    const errorMessage = localize('executeAzureWizardError', 'Error in setupWizardScriptContext', error.message ?? error);
     ext.outputChannel.appendLog(errorMessage);
     throw new Error(errorMessage);
   }
@@ -364,7 +364,7 @@ async function callManagedConnectionsApi(
  * @returns - Object containing validated inputs.
  */
 async function gatherAndValidateInputs(scriptContext: IAzureScriptWizard, folder: vscode.Uri) {
-  let localSettings;
+  let localSettings: ILocalSettingsJson;
 
   try {
     localSettings = await getLocalSettings(scriptContext, folder);
@@ -409,7 +409,7 @@ async function gatherAndValidateInputs(scriptContext: IAzureScriptWizard, folder
     await wizard.execute();
     ext.outputChannel.appendLog(localize('executeAzureWizardSuccess', 'Azure Wizard executed successfully.'));
   } catch (error) {
-    const errorMessage = localize('executeAzureWizardError', `Error executing Azure Wizard: {0}`, error.message ?? error);
+    const errorMessage = localize('executeAzureWizardError', 'Error executing Azure Wizard: {0}', error.message ?? error);
     ext.outputChannel.appendLog(errorMessage);
     throw new Error(errorMessage);
   }

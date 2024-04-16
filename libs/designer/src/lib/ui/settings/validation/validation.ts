@@ -97,7 +97,7 @@ export const validateNodeSettings = (
   const validationErrors: ValidationError[] = [];
 
   switch (settingSection) {
-    case SettingSectionName.GENERAL:
+    case SettingSectionName.GENERAL: {
       {
         const { conditionExpressions } = settingsToValidate;
         if (conditionExpressions?.value?.some((conditionExpression) => !conditionExpression)) {
@@ -109,12 +109,13 @@ export const validateNodeSettings = (
         }
       }
       break;
-    case SettingSectionName.NETWORKING:
+    }
+    case SettingSectionName.NETWORKING: {
       {
         const { paging, retryPolicy, requestOptions } = settingsToValidate;
         if (paging?.value?.enabled) {
           const { value } = paging.value;
-          if (isNaN(Number(value)) || !value || value <= 0) {
+          if (Number.isNaN(Number(value)) || !value || value <= 0) {
             validationErrors.push({
               key: ValidationErrorKeys.PAGING_COUNT,
               errorType: ValidationErrorType.ERROR,
@@ -134,7 +135,7 @@ export const validateNodeSettings = (
             const retryCount = Number(count);
             // Invalid retry count
             if (
-              (!isTemplateExpression(count?.toString() ?? '') && isNaN(retryCount)) ||
+              (!isTemplateExpression(count?.toString() ?? '') && Number.isNaN(retryCount)) ||
               retryCount < constants.RETRY_POLICY_LIMITS.MIN_COUNT ||
               retryCount > constants.RETRY_POLICY_LIMITS.MAX_COUNT
             ) {
@@ -177,6 +178,7 @@ export const validateNodeSettings = (
         }
       }
       break;
+    }
   }
   dispatch(setValidationError({ nodeId: selectedNode, errors: validationErrors }));
 };

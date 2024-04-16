@@ -16,7 +16,9 @@ export const addNewEdge = (state: WorkflowState, source: string, target: string,
     target,
     type: WORKFLOW_EDGE_TYPES.BUTTON_EDGE,
   };
-  if (!graph?.edges) graph.edges = [];
+  if (!graph?.edges) {
+    graph.edges = [];
+  }
   graph?.edges.push(workflowEdge);
 
   const targetOp = getRecordEntry(state.operations, target) as any;
@@ -26,10 +28,14 @@ export const addNewEdge = (state: WorkflowState, source: string, target: string,
 };
 
 export const removeEdge = (state: WorkflowState, sourceId: string, targetId: string, graph: WorkflowNode) => {
-  if (!state) return;
+  if (!state) {
+    return;
+  }
   graph.edges = graph.edges?.filter((edge) => !(edge.source === sourceId && edge.target === targetId));
   const targetRunAfter = (getRecordEntry(state.operations, targetId) as any)?.runAfter;
-  if (targetRunAfter) delete targetRunAfter?.[sourceId as any];
+  if (targetRunAfter) {
+    delete targetRunAfter?.[sourceId as any];
+  }
 };
 
 const setEdgeSource = (edge: WorkflowEdge, newSource: string) => {
@@ -55,11 +61,15 @@ export const reassignEdgeSources = (
   graph: WorkflowNode,
   shouldHaveRunAfters = true
 ) => {
-  if (!state) return;
+  if (!state) {
+    return;
+  }
 
   // Remove would-be duplicate edges
   const targetEdges = graph.edges?.filter((edge) => edge.source === oldSourceId) ?? [];
-  if (targetEdges.length === 0) return;
+  if (targetEdges.length === 0) {
+    return;
+  }
   targetEdges.forEach((tEdge) => {
     if (graph.edges?.some((aEdge) => aEdge.source === newSourceId && aEdge.target === tEdge.target)) {
       removeEdge(state, oldSourceId, tEdge.target, graph);
@@ -90,7 +100,9 @@ export const reassignEdgeTargets = (state: WorkflowState, oldTargetId: string, n
 };
 
 export const moveRunAfterTarget = (state: WorkflowState | undefined, oldTargetId: string, newTargetId: string) => {
-  if (!state) return;
+  if (!state) {
+    return;
+  }
   const targetRunAfter = (getRecordEntry(state.operations, oldTargetId) as any)?.runAfter;
   if (targetRunAfter) {
     (getRecordEntry(state.operations, newTargetId) as LogicAppsV2.ActionDefinition).runAfter = targetRunAfter;
@@ -105,7 +117,9 @@ export const moveRunAfterSource = (
   newSourceId: string,
   shouldHaveRunAfters: boolean
 ) => {
-  if (!getRecordEntry(state?.operations, nodeId)) return;
+  if (!getRecordEntry(state?.operations, nodeId)) {
+    return;
+  }
   const targetRunAfter = (getRecordEntry(state?.operations, nodeId) as LogicAppsV2.ActionDefinition)?.runAfter ?? {};
   if (shouldHaveRunAfters && !getRecordEntry(targetRunAfter, newSourceId)) {
     targetRunAfter[newSourceId] = getRecordEntry(targetRunAfter, oldSourceId) ?? [RUN_AFTER_STATUS.SUCCEEDED];
@@ -124,7 +138,7 @@ export const applyIsRootNode = (state: WorkflowState, graph: WorkflowNode, metad
   const rootNodeIds: string[] =
     graph.edges?.reduce(
       (acc, edge) => {
-        return !containsIdTag(edge.source) ? acc?.filter((id) => id !== edge.target) : acc;
+        return containsIdTag(edge.source) ? acc : acc?.filter((id) => id !== edge.target);
       },
       graph.children?.filter((node) => isWorkflowOperationNode(node))?.map((node) => node.id) ?? []
     ) ?? [];
@@ -132,7 +146,11 @@ export const applyIsRootNode = (state: WorkflowState, graph: WorkflowNode, metad
   (graph.children ?? []).forEach((node) => {
     const isRoot = node.id === constants.NODE.TYPE.PLACEHOLDER_TRIGGER ? true : rootNodeIds?.includes(node.id) ?? false;
     const nodeMetadata = getRecordEntry(metadata, node.id);
-    if (nodeMetadata) nodeMetadata.isRoot = isRoot;
-    if (isRoot) delete (getRecordEntry(state.operations, node.id) as LogicAppsV2.ActionDefinition)?.runAfter;
+    if (nodeMetadata) {
+      nodeMetadata.isRoot = isRoot;
+    }
+    if (isRoot) {
+      delete (getRecordEntry(state.operations, node.id) as LogicAppsV2.ActionDefinition)?.runAfter;
+    }
   });
 };

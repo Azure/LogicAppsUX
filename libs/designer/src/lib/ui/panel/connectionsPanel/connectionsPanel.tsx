@@ -9,7 +9,7 @@ import { SelectConnection } from './selectConnection/selectConnection';
 import { Text } from '@fluentui/react';
 import { Button } from '@fluentui/react-components';
 import { bundleIcon, Dismiss24Filled, Dismiss24Regular } from '@fluentui/react-icons';
-import { type CommonPanelProps } from '@microsoft/designer-ui';
+import type { CommonPanelProps } from '@microsoft/designer-ui';
 import { useCallback, useEffect, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
@@ -26,12 +26,15 @@ export const ConnectionPanel = (props: CommonPanelProps) => {
   const isCreatingConnection = useIsCreatingConnection();
 
   useEffect(() => {
-    if (selectedNodeId && !connectionQuery.isLoading && !connectionQuery.isError && connections.length === 0)
+    if (selectedNodeId && !connectionQuery.isLoading && !connectionQuery.isError && connections.length === 0) {
       dispatch(setIsCreatingConnection(true));
+    }
   }, [connectionQuery.isError, connectionQuery.isLoading, connections, dispatch, selectedNodeId]);
 
   const panelStatus = useMemo(() => {
-    if (!selectedNodeId) return 'default';
+    if (!selectedNodeId) {
+      return 'default';
+    }
     return isCreatingConnection ? 'create' : 'select';
   }, [isCreatingConnection, selectedNodeId]);
 

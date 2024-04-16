@@ -67,7 +67,7 @@ export class CodelessFunctionWorkflow extends WorkflowCreateStepBase<IFunctionWi
           Call_a_local_function_in_this_logic_app: {
             type: 'InvokeFunction',
             inputs: {
-              functionName: '' + methodName + '',
+              functionName: `${methodName}`,
               parameters: {
                 zipCode: 85396,
                 temperatureScale: 'Celsius',
@@ -107,7 +107,7 @@ export class CodelessFunctionWorkflow extends WorkflowCreateStepBase<IFunctionWi
           Call_a_local_function_in_this_logic_app: {
             type: 'InvokeFunction',
             inputs: {
-              functionName: '' + methodName + '',
+              functionName: `${methodName}`,
               parameters: {
                 zipCode: 85396,
                 temperatureScale: 'Celsius',

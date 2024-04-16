@@ -32,10 +32,10 @@ export class UriTemplateParser {
   }
 
   parse(template: string): Segment[] {
-    let literal = '',
-      mode = Modes.Literal,
-      pos = 0,
-      variable = '';
+    let literal = '';
+    let mode = Modes.Literal;
+    let pos = 0;
+    let variable = '';
     const segments: Segment[] = [];
 
     while (pos < template.length) {
@@ -43,7 +43,7 @@ export class UriTemplateParser {
 
       switch (mode) {
         // TODO Limit characters to those specified in RFC 6570 section 2.1
-        case Modes.Literal:
+        case Modes.Literal: {
           if (ch === '{') {
             mode = Modes.LeftBrace;
           } else {
@@ -51,8 +51,9 @@ export class UriTemplateParser {
             pos++;
           }
           break;
+        }
 
-        case Modes.LeftBrace:
+        case Modes.LeftBrace: {
           if (ch === '{') {
             if (literal) {
               segments.push({
@@ -67,9 +68,10 @@ export class UriTemplateParser {
             throw new Error(`unexpected character '${ch}', mode ${Modes.LeftBrace}, position ${pos}`);
           }
           break;
+        }
 
         // TODO Limit characters to those specified in RFC 6570 section 2.3
-        case Modes.Variable:
+        case Modes.Variable: {
           if (ch === '}') {
             mode = Modes.RightBrace;
           } else if (ch === '/') {
@@ -79,8 +81,9 @@ export class UriTemplateParser {
             pos++;
           }
           break;
+        }
 
-        case Modes.RightBrace:
+        case Modes.RightBrace: {
           if (ch === '}') {
             segments.push({
               variable,
@@ -93,6 +96,7 @@ export class UriTemplateParser {
             throw new Error(`unexpected character '${ch}', mode ${Modes.RightBrace}, position ${pos}`);
           }
           break;
+        }
 
         default:
           throw new Error(`unexpected mode ${mode}`);
@@ -100,7 +104,7 @@ export class UriTemplateParser {
     }
 
     switch (mode) {
-      case Modes.Literal:
+      case Modes.Literal: {
         if (literal) {
           segments.push({
             literal,
@@ -108,6 +112,7 @@ export class UriTemplateParser {
           });
         }
         break;
+      }
 
       default:
         throw new Error(`unexpected mode ${mode} at end of template`);

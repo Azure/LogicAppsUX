@@ -83,10 +83,14 @@ const LegacyMultiAuth = ({
 
   // Make sure a valid option is selected on startup
   useEffect(() => {
-    if (legacyMultiAuthOptions.map((opt) => opt.key).includes(value)) return;
+    if (legacyMultiAuthOptions.map((opt) => opt.key).includes(value)) {
+      return;
+    }
     const firstOption = legacyMultiAuthOptions[0];
     const event = {} as FormEvent<HTMLDivElement>;
-    if (firstOption) onChange(event, firstOption);
+    if (firstOption) {
+      onChange(event, firstOption);
+    }
   }, [legacyMultiAuthOptions, onChange, value]);
 
   return (

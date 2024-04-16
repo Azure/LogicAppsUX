@@ -49,17 +49,7 @@ export const StaticResult = ({
   });
   return (
     <div className="msla-static-result-container">
-      {!isRoot ? (
-        <button className="msla-static-result-container-header" onClick={() => setExpanded(!expanded)}>
-          <div className="msla-static-result-container-header-text">{title}</div>
-          <Icon
-            className="msla-static-result-container-header-icon"
-            aria-label={expanded ? `${expandLabel}` : `${collapseLabel}`}
-            iconName={expanded ? 'ChevronDownMed' : 'ChevronLeftMed'}
-            styles={{ root: { fontSize: 14, color: isInverted ? constants.INVERTED_TEXT_COLOR : constants.CHEVRON_ROOT_COLOR_LIGHT } }}
-          />
-        </button>
-      ) : (
+      {isRoot ? (
         <div>
           <div className="msla-static-result-container-header-root">
             <div className="msla-static-result-container-header-text">{title}</div>
@@ -72,6 +62,16 @@ export const StaticResult = ({
             </a>
           </div>
         </div>
+      ) : (
+        <button className="msla-static-result-container-header" onClick={() => setExpanded(!expanded)}>
+          <div className="msla-static-result-container-header-text">{title}</div>
+          <Icon
+            className="msla-static-result-container-header-icon"
+            aria-label={expanded ? `${expandLabel}` : `${collapseLabel}`}
+            iconName={expanded ? 'ChevronDownMed' : 'ChevronLeftMed'}
+            styles={{ root: { fontSize: 14, color: isInverted ? constants.INVERTED_TEXT_COLOR : constants.CHEVRON_ROOT_COLOR_LIGHT } }}
+          />
+        </button>
       )}
       {expanded ? (
         <StaticResultProperties

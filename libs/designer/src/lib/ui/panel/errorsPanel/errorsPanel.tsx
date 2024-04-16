@@ -10,7 +10,7 @@ import { FocusTrapZone, Text } from '@fluentui/react';
 import type { SelectTabData, SelectTabEvent } from '@fluentui/react-components';
 import { Button, Tab, TabList } from '@fluentui/react-components';
 import { bundleIcon, Dismiss24Filled, Dismiss24Regular } from '@fluentui/react-icons';
-import { type CommonPanelProps } from '@microsoft/designer-ui';
+import type { CommonPanelProps } from '@microsoft/designer-ui';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
 

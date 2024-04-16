@@ -139,7 +139,9 @@ export const CreateConnectionWrapper = () => {
       identitySelected?: string,
       additionalParameterValues?: Record<string, any>
     ) => {
-      if (!connector?.id) return;
+      if (!connector?.id) {
+        return;
+      }
 
       setIsLoading(true);
       setErrorMessage(undefined);
@@ -205,7 +207,8 @@ export const CreateConnectionWrapper = () => {
           connectionParameters: selectedParameterSet?.parameters ?? connector?.properties.connectionParameters,
         };
 
-        let connection, err;
+        let connection: Connection | undefined;
+        let err: string | undefined;
 
         const newName = await getUniqueConnectionName(connector.id, existingReferences);
         if (isOAuthConnection) {
@@ -266,12 +269,13 @@ export const CreateConnectionWrapper = () => {
     description: 'Message to show under the loading icon when loading connection parameters',
   });
 
-  if (connector?.properties === undefined)
+  if (connector?.properties === undefined) {
     return (
       <div className="msla-loading-container">
         <Spinner size={'large'} label={loadingText} />
       </div>
     );
+  }
 
   return (
     <CreateConnection

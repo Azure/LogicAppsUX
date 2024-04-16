@@ -42,8 +42,6 @@ export async function reviewValidation(_context: IActionContext, node: vscode.Ur
   );
   panel.webview.html = await getWebViewHTML('vs-code-react', panel);
 
-  let interval;
-
   await vscode.window.withProgress(progressOptions, async () => {
     try {
       const reviewFilePath = node.fsPath;
@@ -75,7 +73,6 @@ export async function reviewValidation(_context: IActionContext, node: vscode.Ur
   panel.onDidDispose(
     () => {
       removeWebviewPanelFromCache(panelGroupKey, panelName);
-      clearInterval(interval);
     },
     null,
     ext.context.subscriptions

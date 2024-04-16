@@ -31,9 +31,8 @@ export const getAccountCredentials = async (tenantId?: string): Promise<any | un
 
 const getCredentialsForSessions = (sessions: any, tenantId?: string): ServiceClientCredentials => {
   if (tenantId) {
-    const tenantDetails = sessions.filter((session) => session.tenantId.toLowerCase() == tenantId);
+    const tenantDetails = sessions.filter((session) => session.tenantId.toLowerCase() === tenantId);
     return tenantDetails.length ? tenantDetails[0].credentials2 : sessions[0].credentials2;
-  } else {
-    return sessions[0].credentials2;
   }
+  return sessions[0].credentials2;
 };

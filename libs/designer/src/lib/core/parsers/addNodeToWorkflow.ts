@@ -40,7 +40,9 @@ export const addNodeToWorkflow = (
     handleExtraScopeNodeSetup(operation, workflowNode, nodesMetadata, state);
   }
 
-  if (workflowNode.id) workflowGraph.children = [...(workflowGraph?.children ?? []), workflowNode];
+  if (workflowNode.id) {
+    workflowGraph.children = [...(workflowGraph?.children ?? []), workflowNode];
+  }
 
   // Update metadata
   const isTrigger = !!operation.properties?.trigger;
@@ -91,7 +93,9 @@ export const addNodeToWorkflow = (
   }
 
   // If the added node is a do-until, we need to set the subgraphtype for the header
-  if (operation.type.toLowerCase() === 'until') nodesMetadata[newNodeId].subgraphType = SUBGRAPH_TYPES.UNTIL_DO;
+  if (operation.type.toLowerCase() === 'until') {
+    nodesMetadata[newNodeId].subgraphType = SUBGRAPH_TYPES.UNTIL_DO;
+  }
 };
 
 export const addChildNode = (graph: WorkflowNode, node: WorkflowNode): void => {

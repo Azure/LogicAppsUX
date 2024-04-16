@@ -86,7 +86,9 @@ export const DropdownColorPicker = ({
   }, [selfColor, onChange]);
 
   useEffect(() => {
-    if (color === undefined) return;
+    if (color === undefined) {
+      return;
+    }
     const newColor = transformColor('hex', color);
     setSelfColor(newColor);
     setInputColor(newColor.hex);

@@ -192,7 +192,7 @@ export const useWorkflowApp = (siteResourceId: string, isConsumption = false) =>
   return useQuery(
     ['workflowApp', siteResourceId],
     async () => {
-      const uri = `${baseUrl}${siteResourceId}?api-version=${!isConsumption ? '2018-11-01' : '2016-10-01'}`;
+      const uri = `${baseUrl}${siteResourceId}?api-version=${isConsumption ? '2016-10-01' : '2018-11-01'}`;
       const response = await axios.get(uri, {
         headers: {
           Authorization: `Bearer ${environment.armToken}`,
@@ -282,7 +282,9 @@ export const getConnectionConsumption = async (connectionId: string) => {
 
 export const saveCustomCodeStandard = async (allCustomCodeFiles?: AllCustomCodeFiles): Promise<void> => {
   const { customCodeFiles: customCode, appFiles } = allCustomCodeFiles ?? {};
-  if (!customCode || Object.keys(customCode).length === 0) return;
+  if (!customCode || Object.keys(customCode).length === 0) {
+    return;
+  }
   try {
     // to prevent 404's we first check which custom code files are already present before deleting
     Object.entries(customCode).forEach(([fileName, customCodeData]) => {

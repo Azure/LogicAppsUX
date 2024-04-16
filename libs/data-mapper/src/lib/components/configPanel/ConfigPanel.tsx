@@ -53,7 +53,8 @@ export const ConfigPanel = ({
       if (selectedSourceSchema) {
         const [fileName, filePath] = getFileNameAndPath(selectedSourceSchema);
         return await getSelectedSchema(fileName ?? '', filePath);
-      } else return await getSelectedSchema(selectedSourceSchema ?? '', '');
+      }
+      return await getSelectedSchema(selectedSourceSchema ?? '', '');
     },
     {
       ...schemaFileQuerySettings,
@@ -68,7 +69,8 @@ export const ConfigPanel = ({
         const [fileName, filePath] = getFileNameAndPath(selectedTargetSchema);
 
         return await getSelectedSchema(fileName ?? '', filePath);
-      } else return await getSelectedSchema(selectedTargetSchema ?? '', '');
+      }
+      return await getSelectedSchema(selectedTargetSchema ?? '', '');
     },
     {
       ...schemaFileQuerySettings,
