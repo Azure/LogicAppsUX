@@ -1,9 +1,9 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`lib/card should render 1`] = `
+exports[`lib/card > should render 1`] = `
 <div
   style={
-    Object {
+    {
       "position": "relative",
     }
   }
@@ -17,12 +17,12 @@ exports[`lib/card should render 1`] = `
     onKeyDown={[Function]}
     onKeyUp={[Function]}
     style={
-      Object {
+      {
         "borderLeft": "4px solid rgba(71,71,71, 1)",
         "borderRadius": "2px",
       }
     }
-    tabIndex={1}
+    tabIndex={2}
   >
     <div
       className="msla-selection-box"
@@ -31,6 +31,7 @@ exports[`lib/card should render 1`] = `
       className="panel-card-main"
     >
       <div
+        aria-label=" operation"
         className="panel-card-header"
         role="button"
       >
@@ -44,11 +45,16 @@ exports[`lib/card should render 1`] = `
             className="panel-card-content-icon-section"
           >
             <div
-              className="ms-Spinner msla-card-header-spinner root-110"
+              className="fui-Spinner r1k3z50n msla-card-header-spinner"
+              role="progressbar"
             >
-              <div
-                className="ms-Spinner-circle ms-Spinner--medium circle-111"
-              />
+              <span
+                className="fui-Spinner__spinner rvgcg50 ___ruqntd0_k4fqbj0 fjamq6b f64fuq3 f1v3ph3m"
+              >
+                <span
+                  className="fui-Spinner__spinnerTail r1lregi5"
+                />
+              </span>
             </div>
           </div>
           <div
@@ -74,10 +80,10 @@ exports[`lib/card should render 1`] = `
 </div>
 `;
 
-exports[`lib/card should render as cloned 1`] = `
+exports[`lib/card > should render as cloned 1`] = `
 <div
   style={
-    Object {
+    {
       "position": "relative",
     }
   }
@@ -91,12 +97,12 @@ exports[`lib/card should render as cloned 1`] = `
     onKeyDown={[Function]}
     onKeyUp={[Function]}
     style={
-      Object {
+      {
         "borderLeft": "4px solid rgba(71,71,71, 1)",
         "borderRadius": "2px",
       }
     }
-    tabIndex={1}
+    tabIndex={2}
   >
     <div
       className="msla-selection-box"
@@ -105,6 +111,7 @@ exports[`lib/card should render as cloned 1`] = `
       className="panel-card-main"
     >
       <div
+        aria-label=" operation"
         className="panel-card-header"
         role="button"
       >
@@ -118,11 +125,16 @@ exports[`lib/card should render as cloned 1`] = `
             className="panel-card-content-icon-section"
           >
             <div
-              className="ms-Spinner msla-card-header-spinner root-110"
+              className="fui-Spinner r1k3z50n msla-card-header-spinner"
+              role="progressbar"
             >
-              <div
-                className="ms-Spinner-circle ms-Spinner--medium circle-111"
-              />
+              <span
+                className="fui-Spinner__spinner rvgcg50 ___ruqntd0_k4fqbj0 fjamq6b f64fuq3 f1v3ph3m"
+              >
+                <span
+                  className="fui-Spinner__spinnerTail r1lregi5"
+                />
+              </span>
             </div>
           </div>
           <div
@@ -148,10 +160,10 @@ exports[`lib/card should render as cloned 1`] = `
 </div>
 `;
 
-exports[`lib/card should render as draggable 1`] = `
+exports[`lib/card > should render as draggable 1`] = `
 <div
   style={
-    Object {
+    {
       "position": "relative",
     }
   }
@@ -165,12 +177,12 @@ exports[`lib/card should render as draggable 1`] = `
     onKeyDown={[Function]}
     onKeyUp={[Function]}
     style={
-      Object {
+      {
         "borderLeft": "4px solid rgba(71,71,71, 1)",
         "borderRadius": "2px",
       }
     }
-    tabIndex={1}
+    tabIndex={2}
   >
     <div
       className="msla-selection-box"
@@ -179,6 +191,7 @@ exports[`lib/card should render as draggable 1`] = `
       className="panel-card-main"
     >
       <div
+        aria-label=" operation"
         className="panel-card-header"
         role="button"
       >
@@ -205,11 +218,16 @@ exports[`lib/card should render as draggable 1`] = `
             className="panel-card-content-icon-section"
           >
             <div
-              className="ms-Spinner msla-card-header-spinner root-110"
+              className="fui-Spinner r1k3z50n msla-card-header-spinner"
+              role="progressbar"
             >
-              <div
-                className="ms-Spinner-circle ms-Spinner--medium circle-111"
-              />
+              <span
+                className="fui-Spinner__spinner rvgcg50 ___ruqntd0_k4fqbj0 fjamq6b f64fuq3 f1v3ph3m"
+              >
+                <span
+                  className="fui-Spinner__spinnerTail r1lregi5"
+                />
+              </span>
             </div>
           </div>
           <div
@@ -235,10 +253,10 @@ exports[`lib/card should render as draggable 1`] = `
 </div>
 `;
 
-exports[`lib/card should render as inactive 1`] = `
+exports[`lib/card > should render as inactive 1`] = `
 <div
   style={
-    Object {
+    {
       "position": "relative",
     }
   }
@@ -252,12 +270,12 @@ exports[`lib/card should render as inactive 1`] = `
     onKeyDown={[Function]}
     onKeyUp={[Function]}
     style={
-      Object {
+      {
         "borderLeft": "4px solid rgba(71,71,71, 1)",
         "borderRadius": "2px",
       }
     }
-    tabIndex={1}
+    tabIndex={2}
   >
     <div
       className="msla-selection-box"
@@ -266,6 +284,7 @@ exports[`lib/card should render as inactive 1`] = `
       className="panel-card-main"
     >
       <div
+        aria-label=" operation"
         className="panel-card-header"
         role="button"
       >
@@ -279,11 +298,16 @@ exports[`lib/card should render as inactive 1`] = `
             className="panel-card-content-icon-section"
           >
             <div
-              className="ms-Spinner msla-card-header-spinner root-110"
+              className="fui-Spinner r1k3z50n msla-card-header-spinner"
+              role="progressbar"
             >
-              <div
-                className="ms-Spinner-circle ms-Spinner--medium circle-111"
-              />
+              <span
+                className="fui-Spinner__spinner rvgcg50 ___ruqntd0_k4fqbj0 fjamq6b f64fuq3 f1v3ph3m"
+              >
+                <span
+                  className="fui-Spinner__spinnerTail r1lregi5"
+                />
+              </span>
             </div>
           </div>
           <div
@@ -309,10 +333,10 @@ exports[`lib/card should render as inactive 1`] = `
 </div>
 `;
 
-exports[`lib/card should render as selected 1`] = `
+exports[`lib/card > should render as selected 1`] = `
 <div
   style={
-    Object {
+    {
       "position": "relative",
     }
   }
@@ -326,12 +350,12 @@ exports[`lib/card should render as selected 1`] = `
     onKeyDown={[Function]}
     onKeyUp={[Function]}
     style={
-      Object {
+      {
         "borderLeft": "4px solid rgba(71,71,71, 1)",
         "borderRadius": "2px",
       }
     }
-    tabIndex={1}
+    tabIndex={2}
   >
     <div
       className="msla-selection-box selected"
@@ -340,6 +364,7 @@ exports[`lib/card should render as selected 1`] = `
       className="panel-card-main"
     >
       <div
+        aria-label=" operation"
         className="panel-card-header"
         role="button"
       >
@@ -353,11 +378,16 @@ exports[`lib/card should render as selected 1`] = `
             className="panel-card-content-icon-section"
           >
             <div
-              className="ms-Spinner msla-card-header-spinner root-110"
+              className="fui-Spinner r1k3z50n msla-card-header-spinner"
+              role="progressbar"
             >
-              <div
-                className="ms-Spinner-circle ms-Spinner--medium circle-111"
-              />
+              <span
+                className="fui-Spinner__spinner rvgcg50 ___ruqntd0_k4fqbj0 fjamq6b f64fuq3 f1v3ph3m"
+              >
+                <span
+                  className="fui-Spinner__spinnerTail r1lregi5"
+                />
+              </span>
             </div>
           </div>
           <div
@@ -383,10 +413,10 @@ exports[`lib/card should render as selected 1`] = `
 </div>
 `;
 
-exports[`lib/card should render with a context menu 1`] = `
+exports[`lib/card > should render with an icon and a connector name (0) 1`] = `
 <div
   style={
-    Object {
+    {
       "position": "relative",
     }
   }
@@ -400,12 +430,12 @@ exports[`lib/card should render with a context menu 1`] = `
     onKeyDown={[Function]}
     onKeyUp={[Function]}
     style={
-      Object {
+      {
         "borderLeft": "4px solid rgba(71,71,71, 1)",
         "borderRadius": "2px",
       }
     }
-    tabIndex={1}
+    tabIndex={2}
   >
     <div
       className="msla-selection-box"
@@ -414,80 +444,7 @@ exports[`lib/card should render with a context menu 1`] = `
       className="panel-card-main"
     >
       <div
-        className="panel-card-header"
-        role="button"
-      >
-        <div
-          className="panel-card-content-container"
-        >
-          <div
-            className="panel-card-content-gripper-section"
-          />
-          <div
-            className="panel-card-content-icon-section"
-          >
-            <div
-              className="ms-Spinner msla-card-header-spinner root-110"
-            >
-              <div
-                className="ms-Spinner-circle ms-Spinner--medium circle-111"
-              />
-            </div>
-          </div>
-          <div
-            className="panel-card-top-content"
-          >
-            <div
-              className="panel-msla-title"
-            >
-              title
-            </div>
-          </div>
-        </div>
-      </div>
-      <div
-        className="msla-card-v2-footer"
-      >
-        <div
-          className="msla-badges"
-        />
-      </div>
-    </div>
-  </div>
-</div>
-`;
-
-exports[`lib/card should render with an icon 1`] = `
-<div
-  style={
-    Object {
-      "position": "relative",
-    }
-  }
->
-  <div
-    className="msla-panel-card-container"
-    data-automation-id="card-title"
-    data-testid="card-title"
-    onClick={[Function]}
-    onContextMenu={[Function]}
-    onKeyDown={[Function]}
-    onKeyUp={[Function]}
-    style={
-      Object {
-        "borderLeft": "4px solid rgba(71,71,71, 1)",
-        "borderRadius": "2px",
-      }
-    }
-    tabIndex={1}
-  >
-    <div
-      className="msla-selection-box"
-    />
-    <div
-      className="panel-card-main"
-    >
-      <div
+        aria-label="SharePoint connector"
         className="panel-card-header"
         role="button"
       >
@@ -501,7 +458,153 @@ exports[`lib/card should render with an icon 1`] = `
             className="panel-card-content-icon-section"
           >
             <img
-              alt=" connector icon"
+              alt=""
+              className="panel-card-icon"
+              src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
+            />
+          </div>
+          <div
+            className="panel-card-top-content"
+          >
+            <div
+              className="panel-msla-title"
+            >
+              title
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        className="msla-card-v2-footer"
+      >
+        <div
+          className="msla-badges"
+        />
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`lib/card > should render with an icon and an operation name (1) 1`] = `
+<div
+  style={
+    {
+      "position": "relative",
+    }
+  }
+>
+  <div
+    className="msla-panel-card-container"
+    data-automation-id="card-title"
+    data-testid="card-title"
+    onClick={[Function]}
+    onContextMenu={[Function]}
+    onKeyDown={[Function]}
+    onKeyUp={[Function]}
+    style={
+      {
+        "borderLeft": "4px solid rgba(71,71,71, 1)",
+        "borderRadius": "2px",
+      }
+    }
+    tabIndex={2}
+  >
+    <div
+      className="msla-selection-box"
+    />
+    <div
+      className="panel-card-main"
+    >
+      <div
+        aria-label="Get an item operation"
+        className="panel-card-header"
+        role="button"
+      >
+        <div
+          className="panel-card-content-container"
+        >
+          <div
+            className="panel-card-content-gripper-section"
+          />
+          <div
+            className="panel-card-content-icon-section"
+          >
+            <img
+              alt=""
+              className="panel-card-icon"
+              src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
+            />
+          </div>
+          <div
+            className="panel-card-top-content"
+          >
+            <div
+              className="panel-msla-title"
+            >
+              title
+            </div>
+          </div>
+        </div>
+      </div>
+      <div
+        className="msla-card-v2-footer"
+      >
+        <div
+          className="msla-badges"
+        />
+      </div>
+    </div>
+  </div>
+</div>
+`;
+
+exports[`lib/card > should render with an icon and an operation name and connector name (2) 1`] = `
+<div
+  style={
+    {
+      "position": "relative",
+    }
+  }
+>
+  <div
+    className="msla-panel-card-container"
+    data-automation-id="card-title"
+    data-testid="card-title"
+    onClick={[Function]}
+    onContextMenu={[Function]}
+    onKeyDown={[Function]}
+    onKeyUp={[Function]}
+    style={
+      {
+        "borderLeft": "4px solid rgba(71,71,71, 1)",
+        "borderRadius": "2px",
+      }
+    }
+    tabIndex={2}
+  >
+    <div
+      className="msla-selection-box"
+    />
+    <div
+      className="panel-card-main"
+    >
+      <div
+        aria-label="Get an item operation, SharePoint connector"
+        className="panel-card-header"
+        role="button"
+      >
+        <div
+          className="panel-card-content-container"
+        >
+          <div
+            className="panel-card-content-gripper-section"
+          />
+          <div
+            className="panel-card-content-icon-section"
+          >
+            <img
+              alt=""
               className="panel-card-icon"
               src="data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7"
             />

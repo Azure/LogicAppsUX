@@ -11,6 +11,8 @@ import { editAppSetting } from './appSettings/editAppSetting';
 import { renameAppSetting } from './appSettings/renameAppSetting';
 import { toggleSlotSetting } from './appSettings/toggleSlotSetting';
 import { uploadAppSettings } from './appSettings/uploadAppSettings';
+import { disableValidateAndInstallBinaries, resetValidateAndInstallBinaries } from './binaries/resetValidateAndInstallBinaries';
+import { validateAndInstallBinaries } from './binaries/validateAndInstallBinaries';
 import { browseWebsite } from './browseWebsite';
 import { configureDeploymentSource } from './configureDeploymentSource';
 import { createChildNode } from './createChildNode';
@@ -19,6 +21,7 @@ import { createLogicApp, createLogicAppAdvanced } from './createLogicApp/createL
 import { createNewCodeProjectFromCommand } from './createNewCodeProject/createNewCodeProject';
 import { createNewProjectFromCommand } from './createNewProject/createNewProject';
 import { createSlot } from './createSlot';
+import { createNewDataMapCmd, loadDataMapFileCmd } from './dataMapper/dataMapper';
 import { deleteLogicApp } from './deleteLogicApp/deleteLogicApp';
 import { deleteNode } from './deleteNode';
 import { deployProductionSlot, deploySlot } from './deploy/deploy';
@@ -27,11 +30,13 @@ import { disconnectRepo } from './deployments/disconnectRepo';
 import { redeployDeployment } from './deployments/redeployDeployment';
 import { viewCommitInGitHub } from './deployments/viewCommitInGitHub';
 import { viewDeploymentLogs } from './deployments/viewDeploymentLogs';
+import { generateDeploymentScripts } from './generateDeploymentScripts/generateDeploymentScripts';
 import { initProjectForVSCode } from './initProjectForVSCode/initProjectForVSCode';
 import { startStreamingLogs } from './logstream/startStreamingLogs';
 import { stopStreamingLogs } from './logstream/stopStreamingLogs';
 import { openFile } from './openFile';
 import { openInPortal } from './openInPortal';
+import { parameterizeConnections } from './parameterizeConnections';
 import { pickFuncProcess } from './pickFuncProcess';
 import { startRemoteDebug } from './remoteDebug/startRemoteDebug';
 import { restartLogicApp } from './restartLogicApp';
@@ -54,6 +59,7 @@ import { AppSettingsTreeItem, AppSettingTreeItem, registerSiteCommand } from '@m
 import type { FileTreeItem } from '@microsoft/vscode-azext-azureappservice';
 import { registerCommand, registerCommandWithTreeNodeUnwrapping, unwrapTreeNodeCommandCallback } from '@microsoft/vscode-azext-utils';
 import type { AzExtTreeItem, IActionContext, AzExtParentTreeItem } from '@microsoft/vscode-azext-utils';
+import type { Uri } from 'vscode';
 
 export function registerCommands(): void {
   registerCommandWithTreeNodeUnwrapping(extensionCommand.openDesigner, openDesigner);
@@ -68,6 +74,7 @@ export function registerCommands(): void {
   registerCommandWithTreeNodeUnwrapping(extensionCommand.createLogicAppAdvanced, createLogicAppAdvanced);
   registerSiteCommand(extensionCommand.deploy, unwrapTreeNodeCommandCallback(deployProductionSlot));
   registerSiteCommand(extensionCommand.deploySlot, unwrapTreeNodeCommandCallback(deploySlot));
+  registerCommand(extensionCommand.generateDeploymentScripts, generateDeploymentScripts);
   registerSiteCommand(extensionCommand.redeploy, unwrapTreeNodeCommandCallback(redeployDeployment));
   registerCommandWithTreeNodeUnwrapping(extensionCommand.showOutputChannel, () => {
     ext.outputChannel.show();
@@ -124,4 +131,11 @@ export function registerCommands(): void {
   registerCommand(extensionCommand.initProjectForVSCode, initProjectForVSCode);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.configureDeploymentSource, configureDeploymentSource);
   registerCommandWithTreeNodeUnwrapping(extensionCommand.startRemoteDebug, startRemoteDebug);
+  registerCommand(extensionCommand.parameterizeConnections, parameterizeConnections);
+  registerCommandWithTreeNodeUnwrapping(extensionCommand.validateAndInstallBinaries, validateAndInstallBinaries);
+  registerCommandWithTreeNodeUnwrapping(extensionCommand.resetValidateAndInstallBinaries, resetValidateAndInstallBinaries);
+  registerCommandWithTreeNodeUnwrapping(extensionCommand.disableValidateAndInstallBinaries, disableValidateAndInstallBinaries);
+  // Data Mapper Commands
+  registerCommand(extensionCommand.createNewDataMap, (context: IActionContext) => createNewDataMapCmd(context));
+  registerCommand(extensionCommand.loadDataMapFile, (context: IActionContext, uri: Uri) => loadDataMapFileCmd(context, uri));
 }

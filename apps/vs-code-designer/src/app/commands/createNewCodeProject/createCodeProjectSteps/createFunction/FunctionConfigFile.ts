@@ -1,5 +1,10 @@
+/*---------------------------------------------------------------------------------------------
+ *  Copyright (c) Microsoft Corporation. All rights reserved.
+ *  Licensed under the MIT License. See License.txt in the project root for license information.
+ *--------------------------------------------------------------------------------------------*/
+import { dotnetExtensionId, functionsExtensionId } from '../../../../../constants';
 import { AzureWizardPromptStep } from '@microsoft/vscode-azext-utils';
-import type { IProjectWizardContext } from '@microsoft/vscode-extension';
+import type { IProjectWizardContext } from '@microsoft/vscode-extension-logic-apps';
 import * as fs from 'fs-extra';
 import * as path from 'path';
 
@@ -51,7 +56,7 @@ export class FunctionConfigFile extends AzureWizardPromptStep<IProjectWizardCont
   private async generateExtensionsJson(folderPath: string): Promise<void> {
     const filePath = path.join(folderPath, 'extensions.json');
     const content = {
-      recommendations: ['ms-azuretools.vscode-azurefunctions', 'ms-dotnettools.csharp'],
+      recommendations: [functionsExtensionId, dotnetExtensionId],
     };
     await fs.writeJson(filePath, content, { spaces: 2 });
   }
@@ -106,7 +111,7 @@ export class FunctionConfigFile extends AzureWizardPromptStep<IProjectWizardCont
       tasks: [
         {
           label: 'build',
-          command: 'dotnet',
+          command: '${config:azureLogicAppsStandard.dotnetBinaryPath}',
           type: 'process',
           args: ['build', '${workspaceFolder}'],
           group: {

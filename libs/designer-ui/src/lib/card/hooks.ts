@@ -1,6 +1,5 @@
 import { isDeleteKey, isEnterKey, isSpaceKey } from '../utils';
-import type { MenuItemOption } from './types';
-import { equals } from '@microsoft/utils-logic-apps';
+import { equals } from '@microsoft/logic-apps-shared';
 import { useState } from 'react';
 
 export const useCardContextMenu = () => {
@@ -26,7 +25,7 @@ export const useCardContextMenu = () => {
   };
 };
 
-export const useCardKeyboardInteraction = (onPrimaryClick: any, contextMenuOptions: MenuItemOption[]) => {
+export const useCardKeyboardInteraction = (onPrimaryClick?: () => void, onDeleteClick?: () => void, onCopyClick?: () => void) => {
   // Prevent Enter and space bar keypresses from scrolling the page down when used to select a card.
   const handleKeyDown: React.KeyboardEventHandler<HTMLElement> = (e) => {
     if (isEnterKey(e) || isSpaceKey(e)) {
@@ -43,11 +42,11 @@ export const useCardKeyboardInteraction = (onPrimaryClick: any, contextMenuOptio
     } else if (isDeleteKey(e)) {
       e.preventDefault();
       e.stopPropagation();
-      for (const contextMenuOption of contextMenuOptions) {
-        if (equals(contextMenuOption.key, 'delete') && !contextMenuOption.disabled) {
-          contextMenuOption.onClick?.(e);
-        }
-      }
+      onDeleteClick?.();
+    } else if (equals(e.key, 'c', true) && e.ctrlKey) {
+      e.preventDefault();
+      e.stopPropagation();
+      onCopyClick?.();
     }
   };
 

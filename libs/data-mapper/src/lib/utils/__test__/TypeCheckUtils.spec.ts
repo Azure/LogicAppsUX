@@ -1,12 +1,12 @@
-import type { SchemaNodeExtended } from '../../models';
-import { NormalizedDataType, SchemaNodeProperty } from '../../models';
 import type { ConnectionUnit, InputConnection } from '../../models/Connection';
 import type { FunctionData } from '../../models/Function';
 import { FunctionCategory } from '../../models/Function';
 import { isConnectionUnit, isCustomValue } from '../Connection.Utils';
 import { isFunctionData } from '../Function.Utils';
 import { isSchemaNodeExtended } from '../Schema.Utils';
-
+import type { SchemaNodeExtended } from '@microsoft/logic-apps-shared';
+import { NormalizedDataType, SchemaNodeProperty } from '@microsoft/logic-apps-shared';
+import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 describe('utils/type-checker-utils', () => {
   const mockSchemaNodeExtended: SchemaNodeExtended = {
     key: '',

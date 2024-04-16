@@ -1,9 +1,9 @@
 import { ReactFlowNodeType } from '../../constants/ReactFlowConstants';
 import type { RootState } from '../../core/state/Store';
 import { store } from '../../core/state/Store';
-import { SchemaType } from '../../models';
 import { isFunctionInputSlotAvailable, newConnectionWillHaveCircularLogic } from '../../utils/Connection.Utils';
 import { makeStaticStyles, tokens } from '@fluentui/react-components';
+import { SchemaType } from '@microsoft/logic-apps-shared';
 import { useCallback, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
 import type { Position as HandlePosition, HandleType, Connection as ReactFlowConnection } from 'reactflow';
@@ -14,8 +14,8 @@ const useStaticStyles = makeStaticStyles({
   '.react-flow__handle': {
     // Default handle
     zIndex: 5,
-    width: '10px',
-    height: '10px',
+    width: '15px',
+    height: '15px',
     border: `${tokens.strokeWidthThick} solid ${tokens.colorCompoundBrandForeground1}`,
     backgroundColor: tokens.colorNeutralBackground1,
   },
@@ -148,9 +148,8 @@ const isValidConnectionFromFunctionNode = (connection: ReactFlowConnection) => {
       // Verify that the Function<->Function connection won't create circular logic
       if (newConnectionWillHaveCircularLogic(connection.target, connection.source, connectionDictionary)) {
         return false;
-      } else {
-        return isFunctionInputSlotAvailable(targetNodeConnection, targetFunctionNode.maxNumberOfInputs);
       }
+      return isFunctionInputSlotAvailable(targetNodeConnection, targetFunctionNode.maxNumberOfInputs);
     }
 
     return true;

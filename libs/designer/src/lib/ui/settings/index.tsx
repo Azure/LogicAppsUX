@@ -1,12 +1,16 @@
 import constants from '../../common/constants';
+import { useOperationInfo } from '../../core';
 import { updateOutputsAndTokens } from '../../core/actions/bjsworkflow/initialize';
 import type { Settings } from '../../core/actions/bjsworkflow/settings';
 import { useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
 import { updateNodeSettings } from '../../core/state/operation/operationMetadataSlice';
+import { useRawInputParameters } from '../../core/state/operation/operationSelector';
 import { useSelectedNodeId } from '../../core/state/panel/panelSelectors';
+import { useOperationDownloadChunkMetadata, useOperationUploadChunkMetadata } from '../../core/state/selectors/actionMetadataSelector';
 import { useExpandedSections } from '../../core/state/setting/settingSelector';
 import { setExpandedSections } from '../../core/state/setting/settingSlice';
 import { updateTokenSecureStatus } from '../../core/state/tokens/tokensSlice';
+import { useActionMetadata } from '../../core/state/workflow/workflowSelectors';
 import type { AppDispatch, RootState } from '../../core/store';
 import { isRootNodeInGraph } from '../../core/utils/graph';
 import { isSecureOutputsLinkedToInputs } from '../../core/utils/setting';
@@ -19,8 +23,14 @@ import { Tracking } from './sections/tracking';
 import type { ValidationError } from './validation/validation';
 import { ValidationErrorKeys, validateNodeSettings } from './validation/validation';
 import type { IDropdownOption } from '@fluentui/react';
-import type { LogicAppsV2 } from '@microsoft/utils-logic-apps';
-import { equals, isObject } from '@microsoft/utils-logic-apps';
+import {
+  type LogicAppsV2,
+  equals,
+  getRecordEntry,
+  isObject,
+  type UploadChunkMetadata,
+  type DownloadChunkMetadata,
+} from '@microsoft/logic-apps-shared';
 import { useMemo } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -29,14 +39,15 @@ export type TextChangeHandler = (newVal: string) => void;
 export type NumberChangeHandler = (newVal: number) => void;
 export type DropdownSelectionChangeHandler = (selectedOption: IDropdownOption) => void;
 
-export enum SettingSectionName {
-  DATAHANDLING = 'datahandling',
-  GENERAL = 'general',
-  NETWORKING = 'networking',
-  RUNAFTER = 'runafter',
-  SECURITY = 'security',
-  TRACKING = 'tracking',
-}
+export const SettingSectionName = {
+  DATAHANDLING: 'datahandling',
+  GENERAL: 'general',
+  NETWORKING: 'networking',
+  RUNAFTER: 'runafter',
+  SECURITY: 'security',
+  TRACKING: 'tracking',
+} as const;
+export type SettingSectionName = (typeof SettingSectionName)[keyof typeof SettingSectionName];
 
 export interface SectionProps extends Settings {
   readOnly: boolean | undefined;
@@ -64,11 +75,14 @@ export const SettingsPanel = (): JSX.Element => {
   const selectedNode = useSelectedNodeId();
   const readOnly = useReadOnly();
   const expandedSections = useExpandedSections();
+  const operationInfo = useOperationInfo(selectedNode);
+  const { result: uploadChunkMetadata } = useOperationUploadChunkMetadata(operationInfo);
+  const { result: downloadChunkMetadata } = useOperationDownloadChunkMetadata(operationInfo);
 
   const { nodeSettings, nodeSettingValidationErrors } = useSelector((state: RootState) => {
     return {
-      nodeSettings: state.operations.settings?.[selectedNode] ?? {},
-      nodeSettingValidationErrors: state.settings.validationErrors?.[selectedNode] ?? [],
+      nodeSettings: getRecordEntry(state.operations.settings, selectedNode) ?? {},
+      nodeSettingValidationErrors: getRecordEntry(state.settings.validationErrors, selectedNode) ?? [],
     };
   });
 
@@ -91,7 +105,7 @@ export const SettingsPanel = (): JSX.Element => {
   const getPropsBasedOnSection = (settingSection: SettingSectionName): { isExpanded: boolean; validationErrors: ValidationError[] } => {
     const validationErrors: ValidationError[] = [];
     switch (settingSection) {
-      case SettingSectionName.GENERAL:
+      case SettingSectionName.GENERAL: {
         validationErrors.push(
           ...nodeSettingValidationErrors.filter(({ key }) => {
             return (
@@ -102,7 +116,8 @@ export const SettingsPanel = (): JSX.Element => {
           })
         );
         break;
-      case SettingSectionName.NETWORKING:
+      }
+      case SettingSectionName.NETWORKING: {
         validationErrors.push(
           ...nodeSettingValidationErrors.filter(({ key }) => {
             return (
@@ -114,6 +129,7 @@ export const SettingsPanel = (): JSX.Element => {
           })
         );
         break;
+      }
       default:
         break;
     }
@@ -136,6 +152,8 @@ export const SettingsPanel = (): JSX.Element => {
       />
       <NetworkingSettings
         {...baseSettingProps}
+        uploadChunkMetadata={uploadChunkMetadata}
+        downloadChunkMetadata={downloadChunkMetadata}
         updateSettings={(settings, validateSetting) => handleUpdateSettings(settings, SettingSectionName.NETWORKING, validateSetting)}
         {...getPropsBasedOnSection(SettingSectionName.NETWORKING)}
       />
@@ -212,17 +230,13 @@ function GeneralSettings({
   dispatch,
   updateSettings,
 }: SettingSectionProps): JSX.Element | null {
-  const { isTrigger, nodeInputs, operationInfo } = useSelector((state: RootState) => {
-    return {
-      isTrigger: isRootNodeInGraph(nodeId, 'root', state.workflow.nodesMetadata),
-      nodeInputs: state.operations.inputParameters[nodeId],
-      operationInfo: state.operations.operationInfo[nodeId],
-      operations: state.operations,
-    };
-  });
+  const isTrigger = useSelector((state: RootState) => isRootNodeInGraph(nodeId, 'root', state.workflow.nodesMetadata));
+
+  const operationInfo = useOperationInfo(nodeId) ?? ({} as any);
+  const nodeInputs = useRawInputParameters(nodeId) ?? ({} as any);
 
   const { timeout, splitOn, splitOnConfiguration, concurrency, conditionExpressions, invokerConnection } = useSelector(
-    (state: RootState) => state.operations.settings?.[nodeId] ?? {}
+    (state: RootState) => getRecordEntry(state.operations.settings, nodeId) ?? {}
   );
 
   const onConcurrencyToggle = (checked: boolean): void => {
@@ -344,7 +358,8 @@ function GeneralSettings({
         onClientTrackingIdChange={onClientTrackingIdChange}
       />
     );
-  } else return null;
+  }
+  return null;
 }
 
 function NetworkingSettings({
@@ -355,7 +370,12 @@ function NetworkingSettings({
   validationErrors,
   updateSettings,
   dispatch,
-}: SettingSectionProps): JSX.Element | null {
+  uploadChunkMetadata,
+  downloadChunkMetadata,
+}: SettingSectionProps & {
+  uploadChunkMetadata: UploadChunkMetadata | undefined;
+  downloadChunkMetadata: DownloadChunkMetadata | undefined;
+}): JSX.Element | null {
   const {
     asynchronous,
     disableAsyncPattern,
@@ -447,12 +467,36 @@ function NetworkingSettings({
     updateSettings({
       uploadChunk: {
         isSupported: !!uploadChunk?.isSupported,
-        value: {
-          ...uploadChunk?.value,
-          transferMode: checked ? constants.SETTINGS.TRANSFER_MODE.CHUNKED : undefined,
-        },
+        value: checked ? { ...uploadChunk?.value, transferMode: constants.SETTINGS.TRANSFER_MODE.CHUNKED } : undefined,
       },
     });
+  };
+
+  const onUploadChunkSizeChange = (newVal: string): void => {
+    updateSettings(
+      {
+        uploadChunk: {
+          isSupported: !!uploadChunk?.isSupported,
+          value: {
+            ...(uploadChunk?.value as any),
+            ...{ uploadChunkSize: newVal === '' ? undefined : Number.parseInt(newVal, 10) },
+          },
+        },
+      },
+      true
+    );
+  };
+
+  const onDownloadChunkSizeChange = (newVal: string): void => {
+    updateSettings(
+      {
+        downloadChunkSize: {
+          isSupported: !!downloadChunkSize?.isSupported,
+          value: newVal === '' ? undefined : Number.parseInt(newVal, 10),
+        },
+      },
+      true
+    );
   };
 
   const onRetryPolicyChange = (selectedOption: IDropdownOption): void => {
@@ -478,7 +522,7 @@ function NetworkingSettings({
           isSupported: !!retryPolicy?.isSupported,
           value: {
             ...(retryPolicy?.value as any),
-            count: !isNaN(Number(newVal)) ? Number(newVal) : newVal,
+            count: Number.isNaN(Number(newVal)) ? newVal : Number(newVal),
           },
         },
       },
@@ -555,6 +599,8 @@ function NetworkingSettings({
         requestOptions={requestOptions}
         disableAsyncPattern={disableAsyncPattern}
         chunkedTransferMode={equals(uploadChunk?.value?.transferMode, constants.SETTINGS.TRANSFER_MODE.CHUNKED)}
+        uploadChunkMetadata={uploadChunkMetadata}
+        downloadChunkMetadata={downloadChunkMetadata}
         retryPolicy={retryPolicy}
         uploadChunk={uploadChunk}
         downloadChunkSize={downloadChunkSize}
@@ -562,6 +608,8 @@ function NetworkingSettings({
         onAsyncPatternToggle={onAsyncPatternToggle}
         onAsyncResponseToggle={onAsyncResponseToggle}
         onContentTransferToggle={onContentTransferToggle}
+        onUploadChunkSizeChange={onUploadChunkSizeChange}
+        onDownloadChunkSizeChange={onDownloadChunkSizeChange}
         onPaginationToggle={onPaginationToggle}
         onPaginationValueChange={onPaginationValueChange}
         onRequestOptionsChange={onRequestOptionsChange}
@@ -574,11 +622,12 @@ function NetworkingSettings({
         onRetryMaxIntervalChange={onRetryMaxIntervalChange}
       />
     );
-  } else return null;
+  }
+  return null;
 }
 
 function RunAfterSettings({ nodeId, readOnly, isExpanded, validationErrors, dispatch }: SettingSectionProps): JSX.Element | null {
-  const nodeData = useSelector((state: RootState) => state.workflow.operations[nodeId] as LogicAppsV2.ActionDefinition);
+  const nodeData = useActionMetadata(nodeId) as LogicAppsV2.ActionDefinition;
   const showRunAfterSettings = useMemo(() => Object.keys(nodeData?.runAfter ?? {}).length > 0, [nodeData]);
 
   return showRunAfterSettings ? (
@@ -601,10 +650,10 @@ function SecuritySettings({
   updateSettings,
 }: SettingSectionProps): JSX.Element | null {
   const { secureInputs, secureOutputs } = nodeSettings;
-  const operationInfo = useSelector((state: RootState) => state.operations.operationInfo[nodeId]);
+  const operationInfo = useOperationInfo(nodeId);
   const onSecureInputsChange = (checked: boolean): void => {
     updateSettings({ secureInputs: { isSupported: !!secureInputs?.isSupported, value: checked } });
-    if (isSecureOutputsLinkedToInputs(operationInfo.type)) {
+    if (isSecureOutputsLinkedToInputs(operationInfo?.type)) {
       dispatch(updateTokenSecureStatus({ id: nodeId, isSecure: checked }));
     }
   };
@@ -711,5 +760,6 @@ function TrackingSettings({
         onTrackedPropertiesStringValueChange={onTrackedPropertiesStringValueChange}
       />
     );
-  } else return null;
+  }
+  return null;
 }

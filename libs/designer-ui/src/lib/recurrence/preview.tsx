@@ -1,8 +1,7 @@
 import type { Recurrence } from '.';
 import constants from '../constants';
 import { getIntervalValue } from './util';
-import { getIntl } from '@microsoft/intl-logic-apps';
-import { equals, getPropertyValue } from '@microsoft/utils-logic-apps';
+import { getIntl, equals, getPropertyValue } from '@microsoft/logic-apps-shared';
 import { useIntl } from 'react-intl';
 
 interface PreviewProps {
@@ -12,7 +11,7 @@ interface PreviewProps {
 export const Preview = ({ recurrence }: PreviewProps): JSX.Element => {
   const intl = useIntl();
   const { frequency, interval, schedule, startTime } = recurrence;
-  const previewTitle = intl.formatMessage({ defaultMessage: 'Preview', description: 'Recurrence preview title' });
+  const previewTitle = intl.formatMessage({ defaultMessage: 'Preview', id: 'MCzWDc', description: 'Recurrence preview title' });
   const scheduleHours = (schedule?.hours ?? []).map((hour) => {
     return getIntervalValue(hour);
   });
@@ -52,6 +51,7 @@ const convertRecurrenceToExpression = (
       frequencyDesc = intl.formatMessage(
         {
           defaultMessage: 'Every {interval} weeks',
+          id: 'Umpr3z',
           description: 'Recurrence schedule description every interval weeks',
         },
         { interval }
@@ -60,17 +60,24 @@ const convertRecurrenceToExpression = (
       frequencyDesc = intl.formatMessage(
         {
           defaultMessage: 'Every {interval} days',
+          id: 'Ea/fr+',
           description: 'Recurrence schedule description every interval days',
         },
         { interval }
       );
     }
-  } else {
-    if (equals(frequency, constants.FREQUENCY.WEEK)) {
-      frequencyDesc = intl.formatMessage({ defaultMessage: 'every week', description: 'Recurrence schedule description every week' });
-    } else if (equals(frequency, constants.FREQUENCY.DAY)) {
-      frequencyDesc = intl.formatMessage({ defaultMessage: 'every day', description: 'Recurrence schedule description every day' });
-    }
+  } else if (equals(frequency, constants.FREQUENCY.WEEK)) {
+    frequencyDesc = intl.formatMessage({
+      defaultMessage: 'every week',
+      id: 'DWd9vy',
+      description: 'Recurrence schedule description every week',
+    });
+  } else if (equals(frequency, constants.FREQUENCY.DAY)) {
+    frequencyDesc = intl.formatMessage({
+      defaultMessage: 'every day',
+      id: '0vfdFS',
+      description: 'Recurrence schedule description every day',
+    });
   }
   let onDays: string | undefined;
   if (frequencyDesc) {
@@ -79,6 +86,7 @@ const convertRecurrenceToExpression = (
       onDays = intl.formatMessage(
         {
           defaultMessage: 'on {weekDays} {frequencyDesc}',
+          id: 'TZh8nV',
           description: 'Recurrence schedule description on days of week',
         },
         { weekDays, frequencyDesc }
@@ -98,7 +106,7 @@ const convertRecurrenceToExpression = (
     }
 
     onTime = intl.formatMessage(
-      { defaultMessage: 'at {times}', description: 'Recurrence schedule description at times' },
+      { defaultMessage: 'at {times}', id: 'Czt6YV', description: 'Recurrence schedule description at times' },
       { times: projectTimes.join(', ') }
     );
   } else if (hours && hours.length) {
@@ -108,7 +116,7 @@ const convertRecurrenceToExpression = (
     }
 
     onTime = intl.formatMessage(
-      { defaultMessage: 'at {times}', description: 'Recurrence schedule description at times' },
+      { defaultMessage: 'at {times}', id: 'Czt6YV', description: 'Recurrence schedule description at times' },
       { times: projectTimes.join(', ') }
     );
   } else if (minutes && minutes.length) {
@@ -118,7 +126,7 @@ const convertRecurrenceToExpression = (
     }
 
     onTime = intl.formatMessage(
-      { defaultMessage: 'at {times} every hour', description: 'Recurrence schedule description at times' },
+      { defaultMessage: 'at {times} every hour', id: 'tWV2mC', description: 'Recurrence schedule description at times' },
       { times: projectTimes.join(', ') }
     );
   }
@@ -126,17 +134,17 @@ const convertRecurrenceToExpression = (
   let summary: string;
   if (onTime && onDays) {
     summary = intl.formatMessage(
-      { defaultMessage: 'Runs {onTime} {onDays}', description: 'Recurrence schedule description on days of week at times' },
+      { defaultMessage: 'Runs {onTime} {onDays}', id: 'U4zovj', description: 'Recurrence schedule description on days of week at times' },
       { onTime, onDays }
     );
   } else if (onTime) {
     summary = intl.formatMessage(
-      { defaultMessage: 'Runs {onTime}', description: 'Recurrence schedule description on days of week at times' },
+      { defaultMessage: 'Runs {onTime}', id: 'PNk3n4', description: 'Recurrence schedule description on days of week at times' },
       { onTime }
     );
   } else {
     summary = intl.formatMessage(
-      { defaultMessage: 'Runs {onDays}', description: 'Recurrence schedule description on days of week at times' },
+      { defaultMessage: 'Runs {onDays}', id: '4D7H4R', description: 'Recurrence schedule description on days of week at times' },
       { onDays }
     );
   }
@@ -159,11 +167,11 @@ function byISOOrder(a: string, b: string): number {
   const bOrdinal = getPropertyValue(ISO_DAY_ORDER, b);
   if (aOrdinal < bOrdinal) {
     return -1;
-  } else if (aOrdinal > bOrdinal) {
-    return 1;
-  } else {
-    return 0;
   }
+  if (aOrdinal > bOrdinal) {
+    return 1;
+  }
+  return 0;
 }
 
 function byNumber(a: number, b: number): number {
@@ -172,18 +180,20 @@ function byNumber(a: number, b: number): number {
 
   if (aNumber < bNumber) {
     return -1;
-  } else if (aNumber > bNumber) {
-    return 1;
-  } else {
-    return 0;
   }
+  if (aNumber > bNumber) {
+    return 1;
+  }
+  return 0;
 }
 
 const getMinuteValueFromDatetimeString = (value?: string): number | undefined => {
-  if (!value) return undefined;
+  if (!value) {
+    return undefined;
+  }
   let date: Date;
   const dateTimeInNumber = Date.parse(value);
-  if (!isNaN(dateTimeInNumber)) {
+  if (!Number.isNaN(dateTimeInNumber)) {
     date = new Date(dateTimeInNumber);
     return date.getMinutes();
   }

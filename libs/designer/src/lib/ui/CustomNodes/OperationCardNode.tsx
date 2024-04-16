@@ -3,7 +3,6 @@ import constants from '../../common/constants';
 import { getMonitoringError } from '../../common/utilities/error';
 import type { AppDispatch } from '../../core';
 import { copyOperation } from '../../core/actions/bjsworkflow/copypaste';
-import { deleteOperation } from '../../core/actions/bjsworkflow/delete';
 import { moveOperation } from '../../core/actions/bjsworkflow/move';
 import {
   useMonitoringView,
@@ -11,6 +10,7 @@ import {
   useReadOnly,
   useSuppressDefaultNodeSelectFunctionality,
 } from '../../core/state/designerOptions/designerOptionsSelectors';
+import { setShowDeleteModal } from '../../core/state/designerView/designerViewSlice';
 import { ErrorLevel } from '../../core/state/operation/operationMetadataSlice';
 import {
   useOperationErrorInfo,
@@ -18,23 +18,21 @@ import {
   useParameterStaticResult,
   useParameterValidationErrors,
   useTokenDependencies,
+  useOperationVisuals,
 } from '../../core/state/operation/operationSelector';
 import { useIsNodeSelected } from '../../core/state/panel/panelSelectors';
-import { changePanelNode, setSelectedNodeId, showDefaultTabs } from '../../core/state/panel/panelSlice';
+import { changePanelNode, setSelectedNodeId } from '../../core/state/panel/panelSlice';
 import {
   useAllOperations,
-  useBrandColor,
   useConnectorName,
-  useIconUri,
   useIsConnectionRequired,
   useNodeConnectionName,
   useOperationInfo,
   useOperationQuery,
+  useOperationSummary,
 } from '../../core/state/selectors/actionMetadataSelector';
 import { useSettingValidationErrors } from '../../core/state/setting/settingSelector';
-import { useStaticResultSchema } from '../../core/state/staticresultschema/staitcresultsSelector';
 import {
-  useIsLeafNode,
   useNodeDescription,
   useNodeDisplayName,
   useNodeMetadata,
@@ -43,19 +41,20 @@ import {
   useParentRunIndex,
   useRunInstance,
   useShouldNodeFocus,
-  useRetryHistory,
   useParentRunId,
+  useIsLeafNode,
 } from '../../core/state/workflow/workflowSelectors';
 import { setRepetitionRunData } from '../../core/state/workflow/workflowSlice';
 import { getRepetitionName } from '../common/LoopsPager/helper';
 import { DropZone } from '../connections/dropzone';
-import type { ICalloutContentStyles } from '@fluentui/react';
-import { Callout, DirectionalHint, MessageBarType } from '@fluentui/react';
-import { RunService, WorkflowService } from '@microsoft/designer-client-services-logic-apps';
-import type { MenuItemOption } from '@microsoft/designer-ui';
-import { Card, MenuItemType, DeleteNodeModal, useId } from '@microsoft/designer-ui';
-import type { LogicAppsV2 } from '@microsoft/utils-logic-apps';
-import { WORKFLOW_NODE_TYPES } from '@microsoft/utils-logic-apps';
+import { CopyMenuItem } from '../menuItems/copyMenuItem';
+import { DeleteMenuItem } from '../menuItems/deleteMenuItem';
+import { ResubmitMenuItem } from '../menuItems/resubmitMenuItem';
+import { MessageBarType } from '@fluentui/react';
+import { Tooltip } from '@fluentui/react-components';
+import { RunService, WorkflowService } from '@microsoft/logic-apps-shared';
+import { Card } from '@microsoft/designer-ui';
+import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import { memo, useCallback, useEffect, useMemo, useState } from 'react';
 import { useDrag } from 'react-dnd';
 import { useIntl } from 'react-intl';
@@ -64,15 +63,10 @@ import { useDispatch } from 'react-redux';
 import { Handle, Position, useOnViewportChange } from 'reactflow';
 import type { NodeProps } from 'reactflow';
 
-const copyCalloutStyles: Partial<ICalloutContentStyles> = {
-  root: { padding: 10 },
-};
-
 const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.Bottom, id }: NodeProps) => {
   const readOnly = useReadOnly();
   const isMonitoringView = useMonitoringView();
   const intl = useIntl();
-  const tooltipId = useId();
 
   const dispatch = useDispatch<AppDispatch>();
   const operationsInfo = useAllOperations();
@@ -80,6 +74,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
   const metadata = useNodeMetadata(id);
   const operationInfo = useOperationInfo(id);
   const connectorName = useConnectorName(operationInfo);
+  const operationSummary = useOperationSummary(operationInfo);
   const isTrigger = useMemo(() => metadata?.graphId === 'root' && metadata?.isRoot, [metadata]);
   const parentRunIndex = useParentRunIndex(id);
   const runInstance = useRunInstance();
@@ -88,7 +83,6 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
   const parenRunData = useRunData(parentRunId ?? '');
   const nodesMetaData = useNodesMetadata();
   const repetitionName = getRepetitionName(parentRunIndex, id, nodesMetaData, operationsInfo);
-  const runHistory = useRetryHistory(id);
   const isSecureInputsOutputs = useSecureInputsOutputs(id);
   const { status: statusRun, error: errorRun, code: codeRun, repetitionCount } = runData ?? {};
 
@@ -177,25 +171,23 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
   const nodeComment = useNodeDescription(id);
   const connectionResult = useNodeConnectionName(id);
   const isConnectionRequired = useIsConnectionRequired(operationInfo);
-  const hasSchema = useStaticResultSchema(operationInfo?.connectorId ?? '', operationInfo?.operationId ?? '');
   const isLeaf = useIsLeafNode(id);
 
   const showLeafComponents = useMemo(() => !readOnly && isLeaf, [readOnly, isLeaf]);
 
   const nodeClick = useCallback(() => {
-    dispatch(setSelectedNodeId(id));
-
     if (nodeSelectCallbackOverride) {
       nodeSelectCallbackOverride(id);
     }
 
-    if (suppressDefaultNodeSelect) return;
-    dispatch(changePanelNode(id));
-    dispatch(showDefaultTabs({ isMonitoringView, hasSchema: !!hasSchema, showRunHistory: !!runHistory }));
-  }, [dispatch, hasSchema, id, isMonitoringView, nodeSelectCallbackOverride, runHistory, suppressDefaultNodeSelect]);
+    if (suppressDefaultNodeSelect) {
+      dispatch(setSelectedNodeId(id));
+    } else {
+      dispatch(changePanelNode(id));
+    }
+  }, [dispatch, id, nodeSelectCallbackOverride, suppressDefaultNodeSelect]);
 
-  const brandColor = useBrandColor(id);
-  const iconUri = useIconUri(id);
+  const { brandColor, iconUri } = useOperationVisuals(id);
 
   const comment = useMemo(
     () =>
@@ -212,7 +204,6 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
 
   const label = useNodeDisplayName(id);
 
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [showCopyCallout, setShowCopyCallout] = useState(false);
 
   useOnViewportChange({
@@ -223,90 +214,31 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
     }, [showCopyCallout]),
   });
 
-  const handleDeleteClick = () => setShowDeleteModal(true);
-  const handleCopyClick = () => {
+  const deleteClick = useCallback(() => {
+    dispatch(setSelectedNodeId(id));
+    dispatch(setShowDeleteModal(true));
+  }, [dispatch, id]);
+
+  const copyClick = useCallback(() => {
     setShowCopyCallout(true);
     dispatch(copyOperation({ nodeId: id }));
     setTimeout(() => {
       setShowCopyCallout(false);
     }, 3000);
-  };
-  const handleDelete = () => dispatch(deleteOperation({ nodeId: id, isTrigger: !!isTrigger }));
+  }, [dispatch, id]);
 
-  const getMenuItems = (): MenuItemOption[] => {
-    const deleteDescription = intl.formatMessage({
-      defaultMessage: 'Delete',
-      description: 'Delete text',
-    });
-    const disableTriggerDeleteText = intl.formatMessage({
-      defaultMessage: 'Triggers cannot be deleted.',
-      description: 'Text to explain that triggers cannot be deleted',
-    });
+  const resubmitClick = useCallback(() => {
+    WorkflowService().resubmitWorkflow?.(runInstance?.name ?? '', [id]);
+  }, [runInstance, id]);
 
-    const copyAction = intl.formatMessage({
-      defaultMessage: 'Copy Action',
-      description: 'Copy Action text',
-    });
-
-    const copyTrigger = intl.formatMessage({
-      defaultMessage: 'Copy Trigger',
-      description: 'Copy Trigger text',
-    });
-
-    const copyDisabledText = intl.formatMessage({
-      defaultMessage: 'This Action/Trigger cannot be copied.',
-      description: 'Text to explain this action/trigger cannot be copied',
-    });
-
-    return [
-      {
-        key: deleteDescription,
-        disabled: readOnly,
-        disabledReason: disableTriggerDeleteText,
-        iconName: 'Delete',
-        title: deleteDescription,
-        type: MenuItemType.Advanced,
-        onClick: handleDeleteClick,
-      },
-      {
-        key: isTrigger ? copyTrigger : copyAction,
-        disabled: readOnly,
-        disabledReason: copyDisabledText,
-        iconName: 'Copy',
-        title: isTrigger ? copyTrigger : copyAction,
-        type: MenuItemType.Advanced,
-        onClick: handleCopyClick,
-      },
-    ];
-  };
-
-  const getResubmitMenuItem = () => {
-    const resubmitDescription = intl.formatMessage({
-      defaultMessage: 'Resubmit a workflow run from this action',
-      description: 'accessability text for the resubmit button',
-    });
-
-    const resubmitButtonText = intl.formatMessage({
-      defaultMessage: 'Submit from this action',
-      description: 'Button label for submitting a workflow to rerun from this action',
-    });
-
-    const handleResubmitClick = () => {
-      WorkflowService().resubmitWorkflow?.(runInstance?.name ?? '', [id]);
-    };
-    return {
-      key: resubmitDescription,
-      disabled: false,
-      iconName: 'PlaybackRate1x',
-      title: resubmitButtonText,
-      type: MenuItemType.Advanced,
-      onClick: handleResubmitClick,
-    };
-  };
-  const contextMenuOptions: MenuItemOption[] = getMenuItems();
-  if (runData?.canResubmit) {
-    contextMenuOptions.push(getResubmitMenuItem());
-  }
+  const contextMenuItems: JSX.Element[] = useMemo(
+    () => [
+      <DeleteMenuItem key={'delete'} onClick={deleteClick} showKey />,
+      <CopyMenuItem key={'copy'} isTrigger={isTrigger} onClick={copyClick} showKey />,
+      ...(runData?.canResubmit ? [<ResubmitMenuItem key={'resubmit'} onClick={resubmitClick} />] : []),
+    ],
+    [copyClick, deleteClick, isTrigger, resubmitClick, runData?.canResubmit]
+  );
 
   const opQuery = useOperationQuery(id);
 
@@ -317,18 +249,21 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
 
   const opManifestErrorText = intl.formatMessage({
     defaultMessage: 'Error fetching manifest',
+    id: 'HmcHoE',
     description: 'Error message when manifest fails to load',
   });
 
   const settingValidationErrors = useSettingValidationErrors(id);
   const settingValidationErrorText = intl.formatMessage({
     defaultMessage: 'Invalid settings',
+    id: 'Jil/Wa',
     description: 'Text to explain that there are invalid settings for this node',
   });
 
   const parameterValidationErrors = useParameterValidationErrors(id);
   const parameterValidationErrorText = intl.formatMessage({
     defaultMessage: 'Invalid parameters',
+    id: 'Tmr/9e',
     description: 'Text to explain that there are invalid parameters for this node',
   });
 
@@ -378,12 +313,15 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
 
   const copiedText = intl.formatMessage({
     defaultMessage: 'Copied!',
+    id: 'NE54Uu',
     description: 'Copied text',
   });
 
+  const [rootRef, setRef] = useState<HTMLDivElement | null>(null);
+
   return (
     <>
-      <div className="nopan" id={tooltipId}>
+      <div className="nopan" ref={setRef}>
         <Handle className="node-handle top" type="target" position={targetPosition} isConnectable={false} />
         <Card
           title={label}
@@ -405,17 +343,22 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
           runData={runData}
           readOnly={readOnly}
           onClick={nodeClick}
+          onDeleteClick={deleteClick}
+          onCopyClick={copyClick}
+          operationName={operationSummary?.result}
           selected={selected}
-          contextMenuOptions={contextMenuOptions}
+          contextMenuItems={contextMenuItems}
           setFocus={shouldFocus}
           staticResultsEnabled={!!staticResults}
           isSecureInputsOutputs={isSecureInputsOutputs}
         />
-        {showCopyCallout ? (
-          <Callout target={`#${tooltipId}`} styles={copyCalloutStyles} directionalHint={DirectionalHint.bottomRightEdge}>
-            {copiedText}
-          </Callout>
-        ) : null}
+        <Tooltip
+          positioning={{ target: rootRef, position: 'below', align: 'end' }}
+          withArrow
+          content={copiedText}
+          relationship="description"
+          visible={showCopyCallout}
+        />
         <Handle className="node-handle bottom" type="source" position={sourcePosition} isConnectable={false} />
       </div>
       {showLeafComponents ? (
@@ -423,13 +366,6 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
           <DropZone graphId={metadata?.graphId ?? ''} parentId={id} isLeaf={isLeaf} />
         </div>
       ) : null}
-      <DeleteNodeModal
-        nodeId={id}
-        nodeType={WORKFLOW_NODE_TYPES.OPERATION_NODE}
-        isOpen={showDeleteModal}
-        onDismiss={() => setShowDeleteModal(false)}
-        onConfirm={handleDelete}
-      />
     </>
   );
 };

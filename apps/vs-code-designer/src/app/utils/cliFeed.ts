@@ -6,7 +6,7 @@ import { localize } from '../../localize';
 import { getJsonFeed } from './feed';
 import { tryGetMajorVersion } from './funcCoreTools/funcVersion';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
-import type { FuncVersion, ICliFeed, IRelease } from '@microsoft/vscode-extension';
+import type { FuncVersion, ICliFeed, IRelease } from '@microsoft/vscode-extension-logic-apps';
 
 /**
  * Gets latest template version.
@@ -18,7 +18,7 @@ export async function getLatestVersion(context: IActionContext, version: FuncVer
   const cliFeed: ICliFeed = await getCliFeed(context);
 
   const majorVersion: string = tryGetMajorVersion(version);
-  const tag: string = 'v' + majorVersion;
+  const tag: string = `v${majorVersion}`;
   const releaseData = cliFeed.tags[tag];
 
   if (!releaseData) {

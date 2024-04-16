@@ -5,21 +5,21 @@ import {
   simpleFunctionCardDiameter,
 } from '../constants/NodeConstants';
 import { targetPrefix } from '../constants/ReactFlowConstants';
-import type { SchemaNodeDictionary, SchemaNodeExtended } from '../models';
 import type { ConnectionDictionary } from '../models/Connection';
 import type { FunctionDictionary } from '../models/Function';
 import { generateInputHandleId, isConnectionUnit } from './Connection.Utils';
 import { isFunctionData } from './Function.Utils';
 import { LogCategory, LogService } from './Logging.Utils';
 import { addSourceReactFlowPrefix, addTargetReactFlowPrefix, functionPlaceholderPosition } from './ReactFlow.Util';
+import type { SchemaNodeDictionary, SchemaNodeExtended } from '@microsoft/logic-apps-shared';
 
 const rootLayoutNodeId = 'root';
-enum LayoutContainer {
-  SourceSchema = 'sourceSchemaBlock',
-  Functions = 'functionsBlock',
-  TargetSchema = 'targetSchemaBlock',
-}
-
+const LayoutContainer = {
+  SourceSchema: 'sourceSchemaBlock',
+  Functions: 'functionsBlock',
+  TargetSchema: 'targetSchemaBlock',
+} as const;
+type LayoutContainer = (typeof LayoutContainer)[keyof typeof LayoutContainer];
 type GraphCoord = [number, number]; // [x, y]
 
 export interface LayoutEdge {

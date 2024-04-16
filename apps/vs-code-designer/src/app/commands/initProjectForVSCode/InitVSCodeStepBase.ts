@@ -16,8 +16,8 @@ import {
   launchFileName,
   extensionsFileName,
   extensionCommand,
-  functionsExtensionId,
   vscodeFolderName,
+  logicAppsStandardExtensionId,
 } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
@@ -43,8 +43,8 @@ import type {
   ITasksJson,
   ILaunchJson,
   IExtensionsJson,
-} from '@microsoft/vscode-extension';
-import { WorkflowProjectType, FuncVersion } from '@microsoft/vscode-extension';
+} from '@microsoft/vscode-extension-logic-apps';
+import { WorkflowProjectType, FuncVersion } from '@microsoft/vscode-extension-logic-apps';
 import * as fse from 'fs-extra';
 import * as path from 'path';
 import type { TaskDefinition, DebugConfiguration, WorkspaceFolder } from 'vscode';
@@ -182,9 +182,8 @@ export abstract class InitVSCodeStepBase extends AzureWizardExecuteStep<IProject
                 // Worst case the user has an extra task in their tasks.json
                 return false;
             }
-          } else {
-            return false;
           }
+          return false;
         })
     );
     existingTasks.push(...newTasks);
@@ -192,7 +191,7 @@ export abstract class InitVSCodeStepBase extends AzureWizardExecuteStep<IProject
   }
 
   private insertNewTaskInputs(context: IProjectWizardContext, existingInputs: ITaskInputs[] = [], newInputs: ITaskInputs[]): ITaskInputs[] {
-    if (context.workflowProjectType == WorkflowProjectType.Bundle) {
+    if (context.workflowProjectType === WorkflowProjectType.Bundle) {
       // Remove inputs that match the ones we're about to add
       existingInputs = existingInputs.filter(
         (t1) =>
@@ -310,7 +309,7 @@ export abstract class InitVSCodeStepBase extends AzureWizardExecuteStep<IProject
   private async writeExtensionsJson(context: IActionContext, vscodePath: string, language: ProjectLanguage): Promise<void> {
     const extensionsJsonPath: string = path.join(vscodePath, extensionsFileName);
     await confirmEditJsonFile(context, extensionsJsonPath, (data: IExtensionsJson): Record<string, any> => {
-      const recommendations: string[] = [functionsExtensionId];
+      const recommendations: string[] = [logicAppsStandardExtensionId];
       if (this.getRecommendedExtensions) {
         recommendations.push(...this.getRecommendedExtensions(language));
       }

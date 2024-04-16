@@ -1,14 +1,13 @@
 import { QueryKeys } from '../../../run-service';
 import type { ISummaryData } from '../../../run-service';
 import { ApiService } from '../../../run-service/export';
+import { updatePackageUrl } from '../../../state/WorkflowSlice';
 import type { AppDispatch, RootState } from '../../../state/store';
-import { updatePackageUrl } from '../../../state/vscodeSlice';
-import type { InitializedVscodeState } from '../../../state/vscodeSlice';
 import { VSCodeContext } from '../../../webviewCommunication';
 import { getListColumns, getSummaryData } from './helper';
 import { ManagedConnections } from './managedConnections';
 import { MessageBar, MessageBarType, PrimaryButton, SelectionMode, ShimmeredDetailsList, Text, TextField } from '@fluentui/react';
-import { ExtensionCommand } from '@microsoft/vscode-extension';
+import { ExtensionCommand } from '@microsoft/vscode-extension-logic-apps';
 import { useContext, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useQuery } from 'react-query';
@@ -18,42 +17,49 @@ export const Summary: React.FC = () => {
   const intl = useIntl();
   const vscode = useContext(VSCodeContext);
   const dispatch: AppDispatch = useDispatch();
-  const vscodeState = useSelector((state: RootState) => state.vscode);
-  const { baseUrl, accessToken, exportData, cloudHost } = vscodeState as InitializedVscodeState;
+  const workflowState = useSelector((state: RootState) => state.workflow);
+  const { baseUrl, accessToken, exportData, cloudHost } = workflowState;
   const { selectedWorkflows, location, selectedSubscription, targetDirectory, packageUrl, selectedAdvanceOptions } = exportData;
 
   const intlText = {
     COMPLETE_EXPORT_TITLE: intl.formatMessage({
       defaultMessage: 'Finish export',
+      id: 'K7KJ+a',
       description: 'Finish export title',
     }),
     SELECT_LOCATION: intl.formatMessage({
       defaultMessage: 'Select a destination to export your logic apps',
+      id: 'LzXRBP',
       description: 'Select a location description',
     }),
     OPEN_FILE_EXPLORER: intl.formatMessage({
       defaultMessage: 'Browse',
+      id: 'GIoHnS',
       description: 'Browse with file explorer text',
     }),
     EXPORT_LOCATION: intl.formatMessage({
       defaultMessage: 'Export location',
+      id: 'POHdG+',
       description: 'Export location text',
     }),
     NO_DETAILS: intl.formatMessage({
       defaultMessage: 'No more details',
+      id: 'eSQI+e',
       description: 'No more details text',
     }),
     AFTER_EXPORT: intl.formatMessage({
       defaultMessage: 'After export steps',
+      id: 'uWEWvx',
       description: 'After export steps title',
     }),
     ADDITIONAL_STEPS: intl.formatMessage({
-      defaultMessage:
-        "After export, the following workflows require more steps to reestablish connections. You can find these steps in the following list or by reviewing the README file that's exported with the package.",
+      defaultMessage: `After export, the following workflows require more steps to reestablish connections. You can find these steps in the following list or by reviewing the README file that's exported with the package.`,
+      id: 'AlO/m6',
       description: 'Post export required steps text',
     }),
     PACKAGE_WARNING: intl.formatMessage({
       defaultMessage: 'The export package URL experienced an unknown problem.',
+      id: 'YvBfGx',
       description: 'Package warning text',
     }),
   };
@@ -63,8 +69,9 @@ export const Summary: React.FC = () => {
       baseUrl,
       accessToken,
       cloudHost,
+      vscodeContext: vscode,
     });
-  }, [accessToken, baseUrl, cloudHost]);
+  }, [accessToken, baseUrl, cloudHost, vscode]);
 
   const exportWorkflows = () => {
     return apiService.exportWorkflows(selectedWorkflows, selectedSubscription, location, selectedAdvanceOptions);

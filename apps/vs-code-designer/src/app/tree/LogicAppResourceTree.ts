@@ -16,7 +16,7 @@ import type { SlotTreeItem } from './slotsTree/SlotTreeItem';
 import { SlotsTreeItem } from './slotsTree/SlotsTreeItem';
 import { ArtifactsTreeItem } from './slotsTree/artifactsTree/ArtifactsTreeItem';
 import type { Site, SiteConfig, SiteSourceControl, StringDictionary } from '@azure/arm-appservice';
-import { isString } from '@microsoft/utils-logic-apps';
+import { isString } from '@microsoft/logic-apps-shared';
 import {
   DeleteLastServicePlanStep,
   DeleteSiteStep,
@@ -32,8 +32,14 @@ import type { IDeployContext } from '@microsoft/vscode-azext-azureappservice';
 import { AzureWizard, DeleteConfirmationStep, nonNullValue } from '@microsoft/vscode-azext-utils';
 import type { AzExtTreeItem, IActionContext, ISubscriptionContext, TreeItemIconPath } from '@microsoft/vscode-azext-utils';
 import type { ResolvedAppResourceBase } from '@microsoft/vscode-azext-utils/hostapi';
-import { ProjectResource, ProjectSource, latestGAVersion } from '@microsoft/vscode-extension';
-import type { ApplicationSettings, FuncHostRequest, FuncVersion, ILocalSettingsJson, IParsedHostJson } from '@microsoft/vscode-extension';
+import { ProjectResource, ProjectSource, latestGAVersion } from '@microsoft/vscode-extension-logic-apps';
+import type {
+  ApplicationSettings,
+  FuncHostRequest,
+  FuncVersion,
+  ILocalSettingsJson,
+  IParsedHostJson,
+} from '@microsoft/vscode-extension-logic-apps';
 import * as path from 'path';
 
 export function isLogicAppResourceTree(ti: unknown): ti is ResolvedAppResourceBase {
@@ -104,7 +110,7 @@ export class LogicAppResourceTree implements ResolvedAppResourceBase {
 
   public static createLogicAppResourceTree(context: IActionContext, subscription: ISubscriptionContext, site: Site): LogicAppResourceTree {
     const resource = new LogicAppResourceTree(subscription, site);
-    void resource.site.createClient(context).then(async (client) => (resource.data.siteConfig = await client.getSiteConfig()));
+    resource.site.createClient(context).then(async (client) => (resource.data.siteConfig = await client.getSiteConfig()));
     return resource;
   }
 
@@ -179,10 +185,8 @@ export class LogicAppResourceTree implements ResolvedAppResourceBase {
   public async getHostJson(context: IActionContext): Promise<IParsedHostJson> {
     let result: IParsedHostJson | undefined = this._cachedHostJson;
     if (!result) {
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
       let data: any;
       try {
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
         data = JSON.parse((await getFile(context, this.site, 'site/wwwroot/host.json')).data);
       } catch {
         // ignore and use default
@@ -354,8 +358,8 @@ export class LogicAppResourceTree implements ResolvedAppResourceBase {
     const confirmationMessage: string = isSlot
       ? localize('confirmDeleteSlot', 'Are you sure you want to delete slot "{0}"?', fullName)
       : isFunctionApp
-      ? localize('confirmDeleteFunctionApp', 'Are you sure you want to delete function app "{0}"?', fullName)
-      : localize('confirmDeleteWebApp', 'Are you sure you want to delete web app "{0}"?', fullName);
+        ? localize('confirmDeleteFunctionApp', 'Are you sure you want to delete function app "{0}"?', fullName)
+        : localize('confirmDeleteWebApp', 'Are you sure you want to delete web app "{0}"?', fullName);
 
     const wizardContext = Object.assign(context, {
       site: this.site,
@@ -380,12 +384,11 @@ function matchContextValue(expectedContextValue: RegExp | string, matches: (stri
       }
       return expectedContextValue.test(match);
     });
-  } else {
-    return matches.some((match) => {
-      if (match instanceof RegExp) {
-        return match.test(expectedContextValue);
-      }
-      return expectedContextValue === match;
-    });
   }
+  return matches.some((match) => {
+    if (match instanceof RegExp) {
+      return match.test(expectedContextValue);
+    }
+    return expectedContextValue === match;
+  });
 }

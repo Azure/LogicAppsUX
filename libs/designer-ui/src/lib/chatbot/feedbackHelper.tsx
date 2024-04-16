@@ -1,7 +1,7 @@
 import type { ChatEntryReaction, ReactionItem } from './components/conversationItem';
 import { FeedbackMessage } from './components/feedbackMessage';
 import Constants from './constants';
-import type { IButtonProps } from '@fluentui/react';
+import { Link, type IButtonProps } from '@fluentui/react';
 import { useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 
@@ -10,6 +10,7 @@ export function useReportBugButton(disabled: boolean): IButtonProps {
   const intlText = {
     reportBugButtonText: intl.formatMessage({
       defaultMessage: 'Report a bug',
+      id: 'OVDEFP',
       description: 'Text for button that allows user to report a bug in the chatbot experience',
     }),
   };
@@ -29,20 +30,71 @@ export function useReportBugButton(disabled: boolean): IButtonProps {
   };
 }
 
+export function useExternalLink(additionalDocURL?: string) {
+  const intl = useIntl();
+  const intlText = {
+    guideMoreInfoText: intl.formatMessage({
+      defaultMessage: 'For more detailed information, you can refer to the following resources',
+      id: '9yLPwo',
+      description: 'Message instructing to follow below links for more detailed information',
+    }),
+  };
+  return (
+    <div>
+      {`${intlText.guideMoreInfoText}:`}
+      <ul>
+        <li>
+          <Link href={additionalDocURL} target="_blank">
+            {additionalDocURL}
+          </Link>
+        </li>
+      </ul>
+    </div>
+  );
+}
+
+export function useAzureCopilotButton(azureButtonCallback?: () => void): IButtonProps {
+  const intl = useIntl();
+  const intlText = {
+    azureCopilotButtonText: intl.formatMessage({
+      defaultMessage: 'Open Azure Copilot',
+      id: '/X2+cq',
+      description: 'Text for button that allows user to open azure copilot',
+    }),
+  };
+  return {
+    text: intlText.azureCopilotButtonText,
+    onClick: azureButtonCallback,
+    iconProps: {
+      iconName: 'AzureLogo',
+      styles: {
+        root: {
+          color: Constants.NEUTRAL_PRIMARY,
+          backgroundColor: 'transparent',
+        },
+      },
+    },
+  };
+}
+
 export function useFeedbackMessage(item: ReactionItem): {
   feedbackMessage: JSX.Element;
   onMessageReactionClicked: (chatEntryReaction: ChatEntryReaction) => void;
   reaction: ChatEntryReaction | undefined;
-  askFeedback: boolean;
 } {
-  const [reaction, setReaction] = useState(item.reaction);
-  const [askFeedback, setAskFeedback] = useState(item.askFeedback);
+  const { id, date, reaction: itemReaction, openFeedback, logFeedbackVote } = item;
+  const [reaction, setReaction] = useState(itemReaction);
+  const [askFeedback, setAskFeedback] = useState(false);
 
   const onMessageReactionClicked = (chatReaction: ChatEntryReaction) => {
+    if (reaction) {
+      logFeedbackVote?.(chatReaction, /*isRemovedVote*/ true);
+    }
     if (reaction === chatReaction) {
       setReaction(undefined);
       setAskFeedback(false);
     } else {
+      logFeedbackVote?.(chatReaction);
       setReaction(chatReaction);
       setAskFeedback(true);
     }
@@ -51,16 +103,15 @@ export function useFeedbackMessage(item: ReactionItem): {
   const feedbackMessage = useMemo(() => {
     return (
       <div>
-        <FeedbackMessage id={item.id} date={item.date} reaction={reaction} askFeedback={askFeedback} />
+        <FeedbackMessage id={id} date={date} reaction={reaction} askFeedback={askFeedback} openFeedback={openFeedback} />
       </div>
     );
-  }, [askFeedback, item.date, item.id, reaction]);
+  }, [askFeedback, date, id, openFeedback, reaction]);
 
   return {
     feedbackMessage,
-    onMessageReactionClicked,
     reaction,
-    askFeedback,
+    onMessageReactionClicked,
   };
 }
 

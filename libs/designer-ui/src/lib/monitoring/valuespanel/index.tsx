@@ -3,8 +3,8 @@ import Constants from '../../constants';
 import { ValueDownload } from './valuedownload';
 import { ValueLink } from './valuelink';
 import { ValueList } from './valuelist';
-import type { BoundParameters } from '@microsoft/utils-logic-apps';
-import React from 'react';
+import type { BoundParameters } from '@microsoft/logic-apps-shared';
+import type React from 'react';
 
 export interface ValuesPanelProps {
   brandColor?: string;

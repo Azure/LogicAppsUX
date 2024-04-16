@@ -1,13 +1,12 @@
 import type { SimpleArrayItem, ComplexArrayItems, ArrayItemSchema } from '..';
 import type { ValueSegment } from '../../editor';
-import { serializeEditorState } from '../../editor/base/utils/editorToSegement';
+import { serializeEditorState } from '../../editor/base/utils/editorToSegment';
 import { serializeSimpleArray, serializeComplexArray } from '../util/serializecollapsedarray';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
 import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
 import type { EditorState } from 'lexical';
 
 export interface CollapsedArrayValidationProps {
-  className?: string;
   itemSchema: ArrayItemSchema;
   isComplex: boolean;
   setIsValid: (b: boolean) => void;
@@ -16,7 +15,6 @@ export interface CollapsedArrayValidationProps {
 }
 
 export const CollapsedArrayValidation = ({
-  className,
   itemSchema,
   isComplex,
   setIsValid,
@@ -36,9 +34,5 @@ export const CollapsedArrayValidation = ({
     });
   };
 
-  return (
-    <div className={className ?? 'msla-base-editor-validation'}>
-      <OnChangePlugin ignoreSelectionChange onChange={onChange} />
-    </div>
-  );
+  return <OnChangePlugin ignoreSelectionChange onChange={onChange} />;
 };

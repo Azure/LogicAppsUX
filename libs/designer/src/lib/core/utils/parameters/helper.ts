@@ -1,9 +1,12 @@
 /* eslint-disable no-case-declarations  */
+import type { CustomCodeFileNameMapping } from '../../..';
 import constants from '../../../common/constants';
 import type { ConnectionReference, WorkflowParameter } from '../../../common/models/workflow';
+import { getReactQueryClient } from '../../ReactQueryProvider';
 import type { NodeDataWithOperationMetadata } from '../../actions/bjsworkflow/operationdeserializer';
 import type { Settings } from '../../actions/bjsworkflow/settings';
 import { getConnectorWithSwagger } from '../../queries/connections';
+import type { CustomCodeState } from '../../state/customcode/customcodeInterfaces';
 import type {
   DependencyInfo,
   NodeDependencies,
@@ -21,7 +24,6 @@ import {
   updateParameterValidation,
   DynamicLoadStatus,
   addDynamicInputs,
-  clearDynamicInputs,
   updateNodeParameters,
 } from '../../state/operation/operationMetadataSlice';
 import type { VariableDeclaration } from '../../state/tokens/tokensSlice';
@@ -52,54 +54,16 @@ import {
   isParameterToken,
   isTokenValueSegment,
   isValueSegment,
+  isValueSegmentArray,
   isVariableToken,
   ValueSegmentConvertor,
 } from './segment';
-import { OperationManifestService, WorkflowService } from '@microsoft/designer-client-services-logic-apps';
-import type {
-  AuthProps,
-  ComboboxItem,
-  DictionaryEditorItemProps,
-  FloatingActionMenuOutputViewModel,
-  GroupItemProps,
-  OutputToken,
-  ParameterInfo,
-  RowItemProps,
-  Token as SegmentToken,
-  Token,
-  ValueSegment,
-} from '@microsoft/designer-ui';
 import {
-  removeQuotes,
-  ArrayType,
-  FloatingActionMenuKind,
-  getOuterMostCommaIndex,
-  RowDropdownOptions,
-  GroupDropdownOptions,
-  GroupType,
-  AuthenticationType,
-  ColumnMode,
-  DynamicCallStatus,
-  ValueSegmentType,
-  TokenType,
-  AuthenticationOAuthType,
-} from '@microsoft/designer-ui';
-import { getIntl } from '@microsoft/intl-logic-apps';
-import type {
-  DependentParameterInfo,
-  DynamicParameters,
-  Expression,
-  ExpressionFunction,
-  ExpressionLiteral,
-  InputParameter,
-  OutputParameter,
-  ResolvedParameter,
-  SchemaProcessorOptions,
-  SchemaProperty,
-  Segment,
-  SwaggerParser,
-} from '@microsoft/parsers-logic-apps';
-import {
+  LogEntryLevel,
+  LoggerService,
+  OperationManifestService,
+  WorkflowService,
+  getIntl,
   isDynamicTreeExtension,
   isLegacyDynamicValuesTreeExtension,
   DeserializationType,
@@ -123,9 +87,6 @@ import {
   SegmentType,
   Visibility,
   PropertyName,
-} from '@microsoft/parsers-logic-apps';
-import type { Exception, OpenAPIV2, OperationManifest, RecurrenceSetting } from '@microsoft/utils-logic-apps';
-import {
   createCopy,
   deleteObjectProperties,
   deleteObjectProperty,
@@ -150,7 +111,59 @@ import {
   ValidationErrorCode,
   ValidationException,
   nthLastIndexOf,
-} from '@microsoft/utils-logic-apps';
+  parseErrorMessage,
+  getRecordEntry,
+  replaceWhiteSpaceWithUnderscore,
+  isRecordNotEmpty,
+  isStringNonPrimitive,
+} from '@microsoft/logic-apps-shared';
+import type {
+  AuthProps,
+  ComboboxItem,
+  DictionaryEditorItemProps,
+  DropdownItem,
+  FloatingActionMenuOutputViewModel,
+  GroupItemProps,
+  OutputToken,
+  ParameterInfo,
+  RowItemProps,
+  Token as SegmentToken,
+  Token,
+  ValueSegment,
+} from '@microsoft/designer-ui';
+import {
+  removeQuotes,
+  ArrayType,
+  FloatingActionMenuKind,
+  getOuterMostCommaIndex,
+  RowDropdownOptions,
+  GroupDropdownOptions,
+  GroupType,
+  AuthenticationType,
+  ColumnMode,
+  DynamicCallStatus,
+  ValueSegmentType,
+  TokenType,
+  AuthenticationOAuthType,
+} from '@microsoft/designer-ui';
+import type {
+  DependentParameterInfo,
+  DynamicParameters,
+  Expression,
+  ExpressionFunction,
+  ExpressionLiteral,
+  InputParameter,
+  OutputParameter,
+  ResolvedParameter,
+  SchemaProcessorOptions,
+  SchemaProperty,
+  Segment,
+  SwaggerParser,
+  Exception,
+  OpenAPIV2,
+  OperationManifest,
+  RecurrenceSetting,
+} from '@microsoft/logic-apps-shared';
 import type { Dispatch } from '@reduxjs/toolkit';
 
 // import { debounce } from 'lodash';
@@ -194,18 +207,43 @@ export interface RepetitionReference {
 }
 
 export function getParametersSortedByVisibility(parameters: ParameterInfo[]): ParameterInfo[] {
-  // Sorted by ( Required, Important, Advanced, Other )
   return parameters.sort((a, b) => {
-    if (a.required && !b.required) return -1;
-    if (!a.required && b.required) return 1;
+    // Sort by dynamic data dependencies
+    const aDeps = Object.keys(a?.schema?.['x-ms-dynamic-values']?.parameters ?? {});
+    if (aDeps.includes(b.parameterName)) {
+      return 1;
+    }
+    const bDeps = Object.keys(b?.schema?.['x-ms-dynamic-values']?.parameters ?? {});
+    if (bDeps.includes(a.parameterName)) {
+      return -1;
+    }
 
+    // Sorted by Required first
+    if (a.required && !b.required) {
+      return -1;
+    }
+    if (!a.required && b.required) {
+      return 1;
+    }
+
+    // Sorted by visibility ( Important, Advanced, Other )
     const aVisibility = getVisibility(a);
     const bVisibility = getVisibility(b);
-    if (aVisibility === bVisibility) return 0;
-    if (aVisibility === Visibility.Important) return -1;
-    if (bVisibility === Visibility.Important) return 1;
-    if (aVisibility === Visibility.Advanced) return -1;
-    if (bVisibility === Visibility.Advanced) return 1;
+    if (aVisibility === bVisibility) {
+      return 0;
+    }
+    if (aVisibility === Visibility.Important) {
+      return -1;
+    }
+    if (bVisibility === Visibility.Important) {
+      return 1;
+    }
+    if (aVisibility === Visibility.Advanced) {
+      return -1;
+    }
+    if (bVisibility === Visibility.Advanced) {
+      return 1;
+    }
     return 0;
   });
 }
@@ -232,6 +270,7 @@ export function addRecurrenceParametersInGroup(
         id: ParameterGroupKeys.RECURRENCE,
         description: intl.formatMessage({
           defaultMessage: 'How often do you want to check for items?',
+          id: 'e00zot',
           description: 'Recurrence parameter group title',
         }),
         parameters: recurrenceParameters,
@@ -246,13 +285,12 @@ export const getDependentParameters = (
 ): Record<string, { isValid: boolean }> => {
   return Object.keys(parameters).reduce((result: Record<string, { isValid: boolean }>, key: string) => {
     const parameter = parameters[key];
-    if (!parameter) return result;
+    if (!parameter) {
+      return result;
+    }
     const operationInput = getParameterFromName(inputs, parameter?.parameter ?? parameter?.parameterReference ?? 'undefined');
     if (operationInput) {
-      return {
-        ...result,
-        [operationInput.id]: { isValid: parameterValidForDynamicCall(operationInput) },
-      };
+      result[operationInput.id] = { isValid: parameterValidForDynamicCall(operationInput) };
     }
 
     return result;
@@ -358,7 +396,7 @@ export function getParameterEditorProps(
 ): ParameterEditorProps {
   const { dynamicValues, type, itemSchema, visibility, value, enum: schemaEnum, format } = parameter;
   let { editor, editorOptions, schema } = parameter;
-  let editorViewModel;
+  let editorViewModel: any;
   if (!editor) {
     if (format === constants.EDITOR.HTML) {
       editor = constants.EDITOR.HTML;
@@ -412,8 +450,8 @@ export function getParameterEditorProps(
     editorViewModel = editorOptions?.isOldFormat
       ? toSimpleQueryBuilderViewModel(value)
       : editorOptions?.isHybridEditor
-      ? toHybridConditionViewModel(value)
-      : toConditionViewModel(value);
+        ? toHybridConditionViewModel(value)
+        : toConditionViewModel(value);
   } else if (dynamicValues && isLegacyDynamicValuesExtension(dynamicValues) && dynamicValues.extension.builtInOperation) {
     editor = undefined;
   } else if (editor === constants.EDITOR.FILEPICKER && dynamicValues) {
@@ -434,6 +472,31 @@ export function getParameterEditorProps(
     if (parameterValue.some(isTokenValueSegment)) {
       editor = undefined;
     }
+  } else if (editor === constants.EDITOR.DROPDOWN) {
+    // making dropdown editor backwards compatible with old format
+    const dropdownOptions: DropdownItem[] = (editorOptions?.items ?? []).map((item: any) => {
+      const { disabled, key, value, title: displayName, type } = item;
+      return {
+        disabled,
+        key: key ?? displayName,
+        value: value?.toString(),
+        displayName,
+        type,
+      };
+    });
+
+    const modifiedOptions = editorOptions?.options?.map((option: any) => {
+      return {
+        ...option,
+        value: option?.value?.toString(),
+      };
+    });
+
+    editorOptions = {
+      ...editorOptions,
+      serialization: { ...editorOptions?.serialization, separator: editorOptions?.titleSeparator },
+      options: dropdownOptions.length > 0 ? dropdownOptions : modifiedOptions ?? [],
+    };
   } else if (editor === constants.EDITOR.FLOATINGACTIONMENU && editorOptions?.menuKind === FloatingActionMenuKind.outputs) {
     editorViewModel = toFloatingActionMenuOutputsViewModel(value);
   }
@@ -444,6 +507,16 @@ export function getParameterEditorProps(
 // Helper Functions for Creating Editor View Models
 const containsExpression = (operand: string): boolean => {
   return operand.includes('(') && operand.includes(')');
+};
+
+export const loadParameterValueFromString = (
+  value: string,
+  removeQuotesFromExpression?: boolean,
+  trimExpression?: boolean,
+  convertIfContainsExpression?: boolean
+) => {
+  const inputParameter = convertStringToInputParameter(value, removeQuotesFromExpression, trimExpression, convertIfContainsExpression);
+  return loadParameterValue(inputParameter);
 };
 
 const convertStringToInputParameter = (
@@ -495,7 +568,7 @@ const parseArrayItemSchema = (itemSchema: any, itemPath = itemSchema?.title?.toL
     return itemSchema.map((item) => parseArrayItemSchema(item, itemPath));
   }
   // parse the initial item schema
-  else if (!isNullOrUndefined(itemSchema) && typeof itemSchema === constants.SWAGGER.TYPE.OBJECT) {
+  if (!isNullOrUndefined(itemSchema) && typeof itemSchema === constants.SWAGGER.TYPE.OBJECT) {
     // updated item schema
     const result: { [key: string]: any } = { key: itemPath };
     Object.keys(itemSchema).forEach((key) => {
@@ -515,10 +588,12 @@ const toSimpleQueryBuilderViewModel = (
   input: any
 ): { isOldFormat: boolean; itemValue: ValueSegment[] | undefined; isRowFormat: boolean } => {
   const advancedModeResult = { isOldFormat: true, isRowFormat: false, itemValue: undefined };
-  let operand1: ValueSegment, operand2: ValueSegment, operationLiteral: ValueSegment;
+  let operand1: ValueSegment;
+  let operand2: ValueSegment;
+  let operationLiteral: ValueSegment;
   // default value
   if (!input || input.length === 0) {
-    return { isOldFormat: true, isRowFormat: true, itemValue: [{ id: guid(), type: ValueSegmentType.LITERAL, value: "@equals('','')" }] };
+    return { isOldFormat: true, isRowFormat: true, itemValue: [createLiteralValueSegment("@equals('','')")] };
   }
 
   if (!input.includes('@') || !input.includes(',')) {
@@ -534,12 +609,12 @@ const toSimpleQueryBuilderViewModel = (
     if (negatory) {
       stringValue = stringValue.replace('@not(', '@');
       const baseOperator = stringValue.substring(stringValue.indexOf('@') + 1, stringValue.indexOf('('));
-      operator = 'not' + baseOperator;
-      operationLiteral = { id: guid(), type: ValueSegmentType.LITERAL, value: `@not(${baseOperator}(` };
-      endingLiteral = { id: guid(), type: ValueSegmentType.LITERAL, value: `))` };
+      operator = `not${baseOperator}`;
+      operationLiteral = createLiteralValueSegment(`@not(${baseOperator}(`);
+      endingLiteral = createLiteralValueSegment('))');
     } else {
-      operationLiteral = { id: guid(), type: ValueSegmentType.LITERAL, value: `@${operator}(` };
-      endingLiteral = { id: guid(), type: ValueSegmentType.LITERAL, value: ')' };
+      operationLiteral = createLiteralValueSegment(`@${operator}(`);
+      endingLiteral = createLiteralValueSegment(')');
     }
 
     // if operator is not of the dropdownlist, it cannot be converted into row format
@@ -549,9 +624,9 @@ const toSimpleQueryBuilderViewModel = (
     const operandSubstring = stringValue.substring(stringValue.indexOf('(') + 1, nthLastIndexOf(stringValue, ')', negatory ? 2 : 1));
     const operand1String = removeQuotes(operandSubstring.substring(0, getOuterMostCommaIndex(operandSubstring)).trim());
     const operand2String = removeQuotes(operandSubstring.substring(getOuterMostCommaIndex(operandSubstring) + 1).trim());
-    operand1 = loadParameterValue(convertStringToInputParameter(operand1String, true, true, true))[0];
-    operand2 = loadParameterValue(convertStringToInputParameter(operand2String, true, true, true))[0];
-    const separatorLiteral: ValueSegment = { id: guid(), type: ValueSegmentType.LITERAL, value: `,` };
+    operand1 = loadParameterValueFromString(operand1String, true, true, true)[0];
+    operand2 = loadParameterValueFromString(operand2String, true, true, true)[0];
+    const separatorLiteral: ValueSegment = createLiteralValueSegment(',');
     return {
       isOldFormat: true,
       isRowFormat: true,
@@ -615,7 +690,8 @@ export const toConditionViewModel = (input: any): { items: GroupItemProps } => {
 const getConditionalSelectedOption = (input: any): GroupDropdownOptions | undefined => {
   if (input?.['and']) {
     return GroupDropdownOptions.AND;
-  } else if (input?.['or']) {
+  }
+  if (input?.['or']) {
     return GroupDropdownOptions.OR;
   }
   return undefined;
@@ -627,7 +703,9 @@ function recurseConditionalItems(input: any, selectedOption?: GroupDropdownOptio
     const items = input[selectedOption];
     items.forEach((item: any) => {
       const condition = getConditionalSelectedOption(item);
-      if (!condition) {
+      if (condition) {
+        output.push({ type: GroupType.GROUP, condition: condition, items: recurseConditionalItems(item, condition) });
+      } else {
         let not = '';
         let dropdownVal = '';
         if (item?.['not']) {
@@ -639,15 +717,9 @@ function recurseConditionalItems(input: any, selectedOption?: GroupDropdownOptio
         output.push({
           type: GroupType.ROW,
           operator: not + dropdownVal,
-          operand1: loadParameterValue(
-            convertStringToInputParameter(not ? item[not][dropdownVal][0] : item[dropdownVal][0], true, true, true)
-          ),
-          operand2: loadParameterValue(
-            convertStringToInputParameter(not ? item[not][dropdownVal][1] : item[dropdownVal][1], true, true, true)
-          ),
+          operand1: loadParameterValueFromString(not ? item[not][dropdownVal][0] : item[dropdownVal][0], true, true, true),
+          operand2: loadParameterValueFromString(not ? item[not][dropdownVal][1] : item[dropdownVal][1], true, true, true),
         });
-      } else {
-        output.push({ type: GroupType.GROUP, condition: condition, items: recurseConditionalItems(item, condition) });
       }
     });
   }
@@ -665,8 +737,8 @@ function toDictionaryViewModel(value: any): { items: DictionaryEditorItemProps[]
     for (const itemKey of keys) {
       items.push({
         id: guid(),
-        key: loadParameterValue(convertStringToInputParameter(itemKey)),
-        value: loadParameterValue(convertStringToInputParameter(valueToParse[itemKey])),
+        key: loadParameterValueFromString(itemKey),
+        value: loadParameterValueFromString(valueToParse[itemKey]),
       });
     }
 
@@ -689,12 +761,12 @@ function toTableViewModel(value: any, editorOptions: any): { items: DictionaryEd
     for (const item of value) {
       items.push({
         id: guid(),
-        key: loadParameterValue(convertStringToInputParameter(item[keys[0]])),
-        value: loadParameterValue(convertStringToInputParameter(item[keys[1]])),
+        key: loadParameterValueFromString(item[keys[0]]),
+        value: loadParameterValueFromString(item[keys[1]]),
       });
     }
 
-    return { items: !value.length ? [placeholderItem] : items, columnMode: ColumnMode.Custom };
+    return { items: value.length ? items : [placeholderItem], columnMode: ColumnMode.Custom };
   }
 
   return { items: [placeholderItem], columnMode: ColumnMode.Automatic };
@@ -711,8 +783,8 @@ function toAuthenticationViewModel(value: any): { type: AuthenticationType; auth
           type: value.type,
           authenticationValue: {
             basic: {
-              basicUsername: loadParameterValue(convertStringToInputParameter(value.username)),
-              basicPassword: loadParameterValue(convertStringToInputParameter(value.password)),
+              basicUsername: loadParameterValueFromString(value.username),
+              basicPassword: loadParameterValueFromString(value.password),
             },
           },
         };
@@ -721,8 +793,8 @@ function toAuthenticationViewModel(value: any): { type: AuthenticationType; auth
           type: value.type,
           authenticationValue: {
             clientCertificate: {
-              clientCertificatePfx: loadParameterValue(convertStringToInputParameter(value.pfx)),
-              clientCertificatePassword: loadParameterValue(convertStringToInputParameter(value.password)),
+              clientCertificatePfx: loadParameterValueFromString(value.pfx),
+              clientCertificatePassword: loadParameterValueFromString(value.password),
             },
           },
         };
@@ -732,14 +804,14 @@ function toAuthenticationViewModel(value: any): { type: AuthenticationType; auth
           type: value.type,
           authenticationValue: {
             aadOAuth: {
-              oauthTenant: loadParameterValue(convertStringToInputParameter(value.tenant)),
-              oauthAudience: loadParameterValue(convertStringToInputParameter(value.audience)),
-              oauthAuthority: loadParameterValue(convertStringToInputParameter(value.authority)),
-              oauthClientId: loadParameterValue(convertStringToInputParameter(value.clientId)),
+              oauthTenant: loadParameterValueFromString(value.tenant),
+              oauthAudience: loadParameterValueFromString(value.audience),
+              oauthAuthority: loadParameterValueFromString(value.authority),
+              oauthClientId: loadParameterValueFromString(value.clientId),
               oauthType: loadOauthType(value),
-              oauthTypeSecret: loadParameterValue(convertStringToInputParameter(value.secret)),
-              oauthTypeCertificatePfx: loadParameterValue(convertStringToInputParameter(value.pfx)),
-              oauthTypeCertificatePassword: loadParameterValue(convertStringToInputParameter(value.password)),
+              oauthTypeSecret: loadParameterValueFromString(value.secret),
+              oauthTypeCertificatePfx: loadParameterValueFromString(value.pfx),
+              oauthTypeCertificatePassword: loadParameterValueFromString(value.password),
             },
           },
         };
@@ -749,7 +821,7 @@ function toAuthenticationViewModel(value: any): { type: AuthenticationType; auth
           type: value.type,
           authenticationValue: {
             raw: {
-              rawValue: loadParameterValue(convertStringToInputParameter(value.value)),
+              rawValue: loadParameterValueFromString(value.value),
             },
           },
         };
@@ -759,7 +831,7 @@ function toAuthenticationViewModel(value: any): { type: AuthenticationType; auth
           type: value.type,
           authenticationValue: {
             msi: {
-              msiAudience: loadParameterValue(convertStringToInputParameter(value.audience)),
+              msiAudience: loadParameterValueFromString(value.audience),
               msiIdentity: value.identity,
             },
           },
@@ -785,7 +857,7 @@ function toFloatingActionMenuOutputsViewModel(value: any) {
   const outputValueMap = clonedValue?.additionalProperties?.outputValueMap;
   if (outputValueMap) {
     Object.entries(outputValueMap).forEach(([key, outputValue]) => {
-      outputValueSegmentsMap[key] = loadParameterValue(convertStringToInputParameter(outputValue as string));
+      outputValueSegmentsMap[key] = loadParameterValueFromString(outputValue as string);
     });
 
     // So editor does not need to worry about keeping this in sync with outputValueSegmentsMap
@@ -814,7 +886,16 @@ export function shouldIncludeSelfForRepetitionReference(manifest: OperationManif
 }
 
 export function loadParameterValue(parameter: InputParameter): ValueSegment[] {
-  const valueObject = parameter.isNotificationUrl ? `@${constants.HTTP_WEBHOOK_LIST_CALLBACK_URL_NAME}` : parameter.value;
+  let valueObject: unknown = undefined;
+
+  if (parameter.isNotificationUrl) {
+    valueObject = `@${constants.HTTP_WEBHOOK_LIST_CALLBACK_URL_NAME}`;
+  } else {
+    valueObject = parameter?.value;
+    if (parameter?.required && valueObject === undefined) {
+      valueObject = parameter?.default;
+    }
+  }
 
   let valueSegments = convertToValueSegments(valueObject, !parameter.suppressCasting /* shouldUncast */);
 
@@ -862,11 +943,11 @@ export function compressSegments(segments: ValueSegment[], addInsertAnchorIfNeed
 export function convertToTokenExpression(value: any): string {
   if (isNullOrUndefined(value)) {
     return '';
-  } else if (typeof value === 'object') {
-    return JSON.stringify(value, null, 2);
-  } else {
-    return value.toString();
   }
+  if (typeof value === 'object') {
+    return JSON.stringify(value, null, 2);
+  }
+  return value.toString();
 }
 
 export function convertToValueSegments(value: any, shouldUncast: boolean): ValueSegment[] {
@@ -899,7 +980,7 @@ export function shouldUseParameterInGroup(parameter: ParameterInfo, allParameter
     const dependentParameters = dependencies.parameters.reduce((result: Dependency[], dependentParameter: DependentParameterInfo) => {
       const parameterInfo = allParameters.find((param) => param.parameterName === dependentParameter.name);
       if (parameterInfo) {
-        return [...result, { ...dependentParameter, actualValue: parameterValueWithoutCasting(parameterInfo) }];
+        result.push({ ...dependentParameter, actualValue: parameterValueWithoutCasting(parameterInfo) });
       }
 
       return result;
@@ -909,8 +990,12 @@ export function shouldUseParameterInGroup(parameter: ParameterInfo, allParameter
       const { actualValue, values, excludeValues } = dependentParameter;
       const isArray = Array.isArray(actualValue);
       const includesValue = (value: any) => (isArray ? actualValue.includes(value) : actualValue === value);
-      if (values) return values.some(includesValue);
-      if (excludeValues) return !excludeValues.some(includesValue);
+      if (values) {
+        return values.some(includesValue);
+      }
+      if (excludeValues) {
+        return !excludeValues.some(includesValue);
+      }
       return false; // Should always have one or the other
     });
   }
@@ -929,8 +1014,12 @@ export function getExpressionValueForOutputToken(token: OutputToken, nodeType: s
   const {
     key,
     name,
-    outputInfo: { type: tokenType, actionName, required, arrayDetails, functionArguments },
+    outputInfo: { type: tokenType, actionName, required, arrayDetails, functionArguments, source },
   } = token;
+  // get the expression value for webhook list callback url
+  if (key === constants.HTTP_WEBHOOK_LIST_CALLBACK_URL_KEY) {
+    return constants.HTTP_WEBHOOK_LIST_CALLBACK_URL_NAME;
+  }
   let method: string;
   switch (tokenType) {
     case TokenType.PARAMETER:
@@ -940,44 +1029,65 @@ export function getExpressionValueForOutputToken(token: OutputToken, nodeType: s
     case TokenType.ITERATIONINDEX:
       return `iterationIndexes(${convertToStringLiteral(actionName as string)})`;
 
-    case TokenType.ITEM:
+    case TokenType.ITEM: {
       if (nodeType.toLowerCase() === constants.NODE.TYPE.FOREACH && key === constants.FOREACH_CURRENT_ITEM_KEY) {
         return `items(${convertToStringLiteral(actionName as string)})`;
-      } else {
-        let propertyPath: string;
-        if (
-          !name ||
-          equals(name, OutputKeys.Queries) ||
-          equals(name, OutputKeys.Headers) ||
-          equals(name, OutputKeys.Body) ||
-          endsWith(name, OutputKeys.Item) ||
-          equals(name, OutputKeys.Outputs) ||
-          equals(name, OutputKeys.StatusCode) ||
-          equals(name, OutputKeys.Name) ||
-          equals(name, OutputKeys.Properties) ||
-          equals(name, OutputKeys.PathParameters)
-        ) {
-          propertyPath = '';
-        } else {
-          propertyPath = convertPathToBracketsFormat(name, !required);
-        }
-        return `items(${convertToStringLiteral(actionName as string)})${propertyPath}`;
       }
+      let propertyPath: string;
+      if (
+        !name ||
+        equals(name, OutputKeys.Queries) ||
+        equals(name, OutputKeys.Headers) ||
+        equals(name, OutputKeys.Body) ||
+        endsWith(name, OutputKeys.Item) ||
+        equals(name, OutputKeys.Outputs) ||
+        equals(name, OutputKeys.StatusCode) ||
+        equals(name, OutputKeys.Name) ||
+        equals(name, OutputKeys.Properties) ||
+        equals(name, OutputKeys.PathParameters)
+      ) {
+        propertyPath = '';
+      } else {
+        propertyPath = convertPathToBracketsFormat(name, !required);
+      }
+      return `items(${convertToStringLiteral(actionName as string)})${propertyPath}`;
+    }
 
-    default:
-      method = arrayDetails ? constants.ITEM : getTokenExpressionMethodFromKey(key, actionName);
-
+    default: {
+      method = arrayDetails ? constants.ITEM : getTokenExpressionMethodFromKey(key, actionName, source);
       return generateExpressionFromKey(method, key, actionName, !!arrayDetails, !!required);
+    }
   }
 }
 
-export function getTokenExpressionMethodFromKey(key: string, actionName: string | undefined): string {
+export function getTokenExpressionMethodFromKey(key: string, actionName: string | undefined, source: string | undefined): string {
   const segments = parseEx(key);
-  if (segments.length >= 2 && segments[0].value === OutputSource.Body && segments[1].value === '$') {
+  if (segmentsAreBodyReference(segments)) {
     return actionName ? `${OutputSource.Body}(${convertToStringLiteral(actionName)})` : constants.TRIGGER_BODY_OUTPUT;
-  } else {
-    return actionName ? `${constants.OUTPUTS}(${convertToStringLiteral(actionName)})` : constants.TRIGGER_OUTPUTS_OUTPUT;
   }
+  if (actionName) {
+    return `${OutputSource.Outputs}(${convertToStringLiteral(actionName)})`;
+  }
+  if (source) {
+    if (equals(source, OutputSource.Queries)) {
+      return constants.TRIGGER_QUERIES_OUTPUT;
+    }
+    if (equals(source, OutputSource.Headers)) {
+      return constants.TRIGGER_HEADERS_OUTPUT;
+    }
+    if (equals(source, OutputSource.StatusCode)) {
+      return constants.TRIGGER_STATUS_CODE_OUTPUT;
+    }
+  }
+  return constants.TRIGGER_OUTPUTS_OUTPUT;
+}
+
+function segmentsAreBodyReference(segments: Segment[]): boolean {
+  if (segments.length < 2 || segments[1].value !== '$') {
+    return false;
+  }
+
+  return segments[0].value === OutputSource.Body;
 }
 
 // NOTE: For example, if tokenKey is outputs.$.foo.[*].bar, which means
@@ -1006,10 +1116,9 @@ export function generateExpressionFromKey(
     const segment = segments.pop() as Segment;
     if (segment.type === SegmentType.Index) {
       break;
-    } else {
-      const propertyName = segment.value as string;
-      result.push(required ? `[${convertToStringLiteral(propertyName)}]` : `?[${convertToStringLiteral(propertyName)}]`);
     }
+    const propertyName = segment.value as string;
+    result.push(required ? `[${convertToStringLiteral(propertyName)}]` : `?[${convertToStringLiteral(propertyName)}]`);
   }
 
   result.push(rootMethod);
@@ -1020,8 +1129,8 @@ export function getTokenValueFromToken(tokenType: TokenType, functionArguments: 
   return tokenType === TokenType.PARAMETER
     ? `parameters(${convertToStringLiteral(functionArguments[0])})`
     : tokenType === TokenType.VARIABLE
-    ? `variables(${convertToStringLiteral(functionArguments[0])})`
-    : undefined;
+      ? `variables(${convertToStringLiteral(functionArguments[0])})`
+      : undefined;
 }
 
 export function getTokenExpressionValue(token: SegmentToken, currentValue?: string): string {
@@ -1029,26 +1138,27 @@ export function getTokenExpressionValue(token: SegmentToken, currentValue?: stri
 
   if (isExpressionToken(token) || isParameterToken(token) || isVariableToken(token) || isIterationIndexToken(token)) {
     return currentValue as string;
-  } else if (isItemToken(token)) {
+  }
+  if (isItemToken(token)) {
     if (currentValue) {
       return currentValue as string;
-    } else if (arrayDetails?.loopSource) {
+    }
+    if (arrayDetails?.loopSource) {
       return `items(${convertToStringLiteral(arrayDetails.loopSource)})`;
-    } else if (actionName) {
-      return `items(${convertToStringLiteral(actionName)})`;
-    } else {
-      return `${constants.ITEM}`;
     }
-  } else if (isOutputToken(token)) {
+    if (actionName) {
+      return `items(${convertToStringLiteral(actionName)})`;
+    }
+    return `${constants.ITEM}`;
+  }
+  if (isOutputToken(token)) {
     if (currentValue) {
       return currentValue as string;
-    } else {
-      if (name && equals(name, constants.HTTP_WEBHOOK_LIST_CALLBACK_URL_NAME)) {
-        return name;
-      } else {
-        return getNonOpenApiTokenExpressionValue(token);
-      }
     }
+    if (name && equals(name, constants.HTTP_WEBHOOK_LIST_CALLBACK_URL_NAME)) {
+      return name;
+    }
+    return getNonOpenApiTokenExpressionValue(token);
   }
 
   return currentValue as string;
@@ -1081,9 +1191,8 @@ function getNonOpenApiTokenExpressionValue(token: SegmentToken): string {
   if (arrayDetails) {
     if (arrayDetails.loopSource) {
       return `items(${convertToStringLiteral(arrayDetails.loopSource)})${propertyPath}`;
-    } else {
-      return `${constants.ITEM}${propertyPath}`;
     }
+    return `${constants.ITEM}${propertyPath}`;
   }
 
   let expressionValue: string;
@@ -1092,23 +1201,7 @@ function getNonOpenApiTokenExpressionValue(token: SegmentToken): string {
   const propertyInOutputs = !!source && equals(source, OutputSource.Outputs);
   const propertyInStatusCode = !!source && equals(source, OutputSource.StatusCode);
 
-  if (!actionName) {
-    if (propertyInQueries) {
-      expressionValue = `${constants.TRIGGER_QUERIES_OUTPUT}${propertyPath}`;
-    } else if (propertyInHeaders) {
-      expressionValue = `${constants.TRIGGER_HEADERS_OUTPUT}${propertyPath}`;
-    } else if (propertyInStatusCode) {
-      expressionValue = `${constants.TRIGGER_OUTPUTS_OUTPUT}['${constants.OUTPUT_LOCATIONS.STATUS_CODE}']`;
-    } else if (propertyInOutputs) {
-      if (equals(name, OutputKeys.PathParameters) || includes(key, OutputKeys.PathParameters)) {
-        expressionValue = `${constants.TRIGGER_OUTPUTS_OUTPUT}['${constants.OUTPUT_LOCATIONS.RELATIVE_PATH_PARAMETERS}']${propertyPath}`;
-      } else {
-        expressionValue = `${constants.TRIGGER_OUTPUTS_OUTPUT}${propertyPath}`;
-      }
-    } else {
-      expressionValue = `${constants.TRIGGER_BODY_OUTPUT}${propertyPath}`;
-    }
-  } else {
+  if (actionName) {
     // Note: We escape the characters in step name to convert it to string literal for generating the expression.
     const stepName = convertToStringLiteral(actionName);
     if (propertyInQueries) {
@@ -1122,6 +1215,20 @@ function getNonOpenApiTokenExpressionValue(token: SegmentToken): string {
     } else {
       expressionValue = `${constants.OUTPUT_LOCATIONS.BODY}(${stepName})${propertyPath}`;
     }
+  } else if (propertyInQueries) {
+    expressionValue = `${constants.TRIGGER_QUERIES_OUTPUT}${propertyPath}`;
+  } else if (propertyInHeaders) {
+    expressionValue = `${constants.TRIGGER_HEADERS_OUTPUT}${propertyPath}`;
+  } else if (propertyInStatusCode) {
+    expressionValue = `${constants.TRIGGER_STATUS_CODE_OUTPUT}`;
+  } else if (propertyInOutputs) {
+    if (equals(name, OutputKeys.PathParameters) || includes(key, OutputKeys.PathParameters)) {
+      expressionValue = `${constants.TRIGGER_OUTPUTS_OUTPUT}['${constants.OUTPUT_LOCATIONS.RELATIVE_PATH_PARAMETERS}']${propertyPath}`;
+    } else {
+      expressionValue = `${constants.TRIGGER_OUTPUTS_OUTPUT}${propertyPath}`;
+    }
+  } else {
+    expressionValue = `${constants.TRIGGER_BODY_OUTPUT}${propertyPath}`;
   }
 
   return expressionValue;
@@ -1162,7 +1269,17 @@ export function loadParameterValuesFromDefault(inputParameters: Record<string, I
 }
 
 export function loadParameterValuesArrayFromDefault(inputParameters: InputParameter[]): void {
-  for (const inputParameter of inputParameters) if (inputParameter.default !== undefined) inputParameter.value = inputParameter.default;
+  const queryClient = getReactQueryClient();
+  const workflowKind = queryClient.getQueryData(['workflowKind']);
+  for (const inputParameter of inputParameters) {
+    if (inputParameter.default !== undefined) {
+      if (inputParameter.default === 'PT1H' && workflowKind === 'stateless') {
+        inputParameter.value = inputParameter.schema?.['x-ms-stateless-default'] ?? inputParameter.default;
+      } else {
+        inputParameter.value = inputParameter.default;
+      }
+    }
+  }
 }
 
 export function updateParameterWithValues(
@@ -1182,155 +1299,152 @@ export function updateParameterWithValues(
   if (isNullOrUndefined(clonedParameterValue) && useDefault) {
     // assign the default value to input parameter
     parameters.push(...availableInputParameters.map((parameter) => transformInputParameter(parameter, parameter.default)));
+  } else if (Array.isArray(clonedParameterValue) && clonedParameterValue.length !== 1 && inputParameter) {
+    // if inputParameter type is array, and the value is also array, but it contains more than one item
+    // just assign the array value to input directly
+    parameters.push(transformInputParameter(inputParameter, clonedParameterValue, /* invisible */ false));
   } else {
-    if (Array.isArray(clonedParameterValue) && clonedParameterValue.length !== 1 && inputParameter) {
-      // if inputParameter type is array, and the value is also array, but it contains more than one item
-      // just assign the array value to input directly
-      parameters.push(transformInputParameter(inputParameter, clonedParameterValue, /* invisible */ false));
-    } else {
-      const keySegments = parseEx(parameterKey);
-      const descendantInputParameters = availableInputParameters.filter((item) => isAncestorKey(item.key, parameterKey));
+    const keySegments = parseEx(parameterKey);
+    const descendantInputParameters = availableInputParameters.filter((item) => isAncestorKey(item.key, parameterKey));
 
-      if (descendantInputParameters.length > 0) {
-        if (isNullOrUndefined(clonedParameterValue)) {
-          parameters.push(
-            ...descendantInputParameters.map((parameter) => transformInputParameter(parameter, /* parameterValue */ undefined))
-          );
-        } else {
-          const valueExpandable =
-            isObject(clonedParameterValue) || (Array.isArray(clonedParameterValue) && clonedParameterValue.length === 1);
-          if (valueExpandable) {
-            const dynamicSchemaKeyPrefixes: string[] = [];
-            for (const descendantInputParameter of descendantInputParameters) {
-              const extraSegments = getExtraSegments(descendantInputParameter.key, parameterKey);
-              if (descendantInputParameter.alias) {
-                reduceRedundantSegments(extraSegments);
-                if (descendantInputParameter.dynamicSchema) {
-                  dynamicSchemaKeyPrefixes.push(`${descendantInputParameter.alias}/`);
-                }
+    if (descendantInputParameters.length > 0) {
+      if (isNullOrUndefined(clonedParameterValue)) {
+        parameters.push(
+          ...descendantInputParameters.map((parameter) => transformInputParameter(parameter, /* parameterValue */ undefined))
+        );
+      } else {
+        const valueExpandable =
+          isObject(clonedParameterValue) || (Array.isArray(clonedParameterValue) && clonedParameterValue.length === 1);
+        if (valueExpandable) {
+          const dynamicSchemaKeyPrefixes: string[] = [];
+          for (const descendantInputParameter of descendantInputParameters) {
+            const extraSegments = getExtraSegments(descendantInputParameter.key, parameterKey);
+            if (descendantInputParameter.alias) {
+              reduceRedundantSegments(extraSegments);
+              if (descendantInputParameter.dynamicSchema) {
+                dynamicSchemaKeyPrefixes.push(`${descendantInputParameter.alias}/`);
               }
-              const descendantValue = getPropertyValueWithSpecifiedPathSegments(clonedParameterValue, extraSegments);
-              let alternativeParameterKeyExtraSegment: Segment[] | null = null;
+            }
+            const descendantValue = getPropertyValueWithSpecifiedPathSegments(clonedParameterValue, extraSegments);
+            let alternativeParameterKeyExtraSegment: Segment[] | null = null;
 
-              if (descendantInputParameter.alternativeKey) {
-                alternativeParameterKeyExtraSegment = getExtraSegments(descendantInputParameter.alternativeKey, parameterKey);
-                const alternativeParameterKeyDescendantValue = getPropertyValueWithSpecifiedPathSegments(
-                  clonedParameterValue,
-                  alternativeParameterKeyExtraSegment
+            if (descendantInputParameter.alternativeKey) {
+              alternativeParameterKeyExtraSegment = getExtraSegments(descendantInputParameter.alternativeKey, parameterKey);
+              const alternativeParameterKeyDescendantValue = getPropertyValueWithSpecifiedPathSegments(
+                clonedParameterValue,
+                alternativeParameterKeyExtraSegment
+              );
+              if (alternativeParameterKeyDescendantValue !== descendantValue) {
+                throw new ValidationException(
+                  ValidationErrorCode.UNSPECIFIED,
+                  format(
+                    "The value '{0}' in '{1}' section and value '{2}' in '{3}' section should match.",
+                    descendantValue,
+                    descendantInputParameter.key.replace('$.', ''),
+                    alternativeParameterKeyDescendantValue,
+                    descendantInputParameter.alternativeKey.replace('$.', '')
+                  )
                 );
-                if (alternativeParameterKeyDescendantValue !== descendantValue) {
-                  throw new ValidationException(
-                    ValidationErrorCode.UNSPECIFIED,
-                    format(
-                      "The value '{0}' in '{1}' section and value '{2}' in '{3}' section should match.",
-                      descendantValue,
-                      descendantInputParameter.key.replace('$.', ''),
-                      alternativeParameterKeyDescendantValue,
-                      descendantInputParameter.alternativeKey.replace('$.', '')
-                    )
-                  );
-                }
-              }
-
-              parameters.push(transformInputParameter(descendantInputParameter, descendantValue, /* invisible */ false));
-              deletePropertyValueWithSpecifiedPathSegment(clonedParameterValue, extraSegments);
-              if (alternativeParameterKeyExtraSegment) {
-                deletePropertyValueWithSpecifiedPathSegment(clonedParameterValue, alternativeParameterKeyExtraSegment);
               }
             }
 
-            // for the rest properties, create corresponding invisible parameter to preserve the value when serialize
-            if (createInvisibleParameter) {
-              for (const restPropertyName of Object.keys(clonedParameterValue)) {
-                if (dynamicSchemaKeyPrefixes.some((prefix) => restPropertyName.startsWith(prefix))) {
-                  continue;
-                }
-                const propertyValue = clonedParameterValue[restPropertyName];
-                if (propertyValue !== undefined) {
-                  const childKeySegments = [...keySegments, { value: restPropertyName, type: SegmentType.Property }];
-                  const restInputParameter: ResolvedParameter = {
-                    key: createEx(childKeySegments) as string,
-                    name: restPropertyName,
-                    type: constants.SWAGGER.TYPE.ANY,
-                    in: parameterLocation,
-                    required: false,
-                    isUnknown: true,
-                  };
-
-                  parameters.push(transformInputParameter(restInputParameter, propertyValue, /* invisible */ false));
-                }
-              }
-            }
-          } else {
-            // NOTE: the value is not expandable, we should create a raw input for the specified parameterKey
-            // if the input parameter is not exist, then create the corresponding input parameter with specified key
-            if (inputParameter) {
-              parameters.push(transformInputParameter(inputParameter, clonedParameterValue, /* invisible */ false));
-            } else {
-              const segments = parseEx(parameterKey);
-              const lastSegment = segments[segments.length - 1];
-              const required = descendantInputParameters.some((item) => item.required);
-              let name: string = lastSegment.value as string;
-              let summary = name;
-
-              if (lastSegment.value === '$' && lastSegment.type === SegmentType.Property) {
-                name = parameterLocation;
-                summary = 'Raw inputs';
-              }
-
-              inputParameter = {
-                key: parameterKey,
-                name,
-                type: constants.SWAGGER.TYPE.OBJECT,
-                summary,
-                in: parameterLocation,
-                required,
-              };
-
-              parameters.push(transformInputParameter(inputParameter, clonedParameterValue, /* invisible */ false));
+            parameters.push(transformInputParameter(descendantInputParameter, descendantValue, /* invisible */ false));
+            deletePropertyValueWithSpecifiedPathSegment(clonedParameterValue, extraSegments);
+            if (alternativeParameterKeyExtraSegment) {
+              deletePropertyValueWithSpecifiedPathSegment(clonedParameterValue, alternativeParameterKeyExtraSegment);
             }
           }
-        }
-      } else {
-        let invisible = false;
-        if (!inputParameter && createInvisibleParameter) {
-          invisible = true;
-        }
 
-        if (inputParameter) {
-          parameters.push(transformInputParameter(inputParameter, clonedParameterValue, invisible));
+          // for the rest properties, create corresponding invisible parameter to preserve the value when serialize
+          if (createInvisibleParameter) {
+            for (const restPropertyName of Object.keys(clonedParameterValue)) {
+              if (dynamicSchemaKeyPrefixes.some((prefix) => restPropertyName.startsWith(prefix))) {
+                continue;
+              }
+              const propertyValue = clonedParameterValue[restPropertyName];
+              if (propertyValue !== undefined) {
+                const childKeySegments = [...keySegments, { value: restPropertyName, type: SegmentType.Property }];
+                const restInputParameter: ResolvedParameter = {
+                  key: createEx(childKeySegments) as string,
+                  name: restPropertyName,
+                  type: constants.SWAGGER.TYPE.ANY,
+                  in: parameterLocation,
+                  required: false,
+                  isUnknown: true,
+                };
+
+                parameters.push(transformInputParameter(restInputParameter, propertyValue, /* invisible */ false));
+              }
+            }
+          }
+
+          // NOTE: the value is not expandable, we should create a raw input for the specified parameterKey
+          // if the input parameter is not exist, then create the corresponding input parameter with specified key
+        } else if (inputParameter) {
+          parameters.push(transformInputParameter(inputParameter, clonedParameterValue, /* invisible */ false));
         } else {
           const segments = parseEx(parameterKey);
           const lastSegment = segments[segments.length - 1];
-          if (
-            lastSegment.value === '$' &&
-            lastSegment.type === SegmentType.Property &&
-            typeof clonedParameterValue === constants.SWAGGER.TYPE.OBJECT &&
-            Object.keys(clonedParameterValue).length > 0
-          ) {
-            // expand the object
-            for (const propertyName of Object.keys(clonedParameterValue)) {
-              const childInputParameter = {
-                key: createEx([...segments, { type: SegmentType.Property, value: propertyName }]) as string,
-                name: propertyName,
-                type: constants.SWAGGER.TYPE.ANY,
-                in: parameterLocation,
-                required: false,
-              };
+          const required = descendantInputParameters.some((item) => item.required);
+          let name: string = lastSegment.value as string;
+          let summary = name;
 
-              parameters.push(transformInputParameter(childInputParameter, clonedParameterValue[propertyName], invisible));
-            }
-          } else {
-            inputParameter = {
-              key: parameterKey,
-              name: lastSegment.value as string,
+          if (lastSegment.value === '$' && lastSegment.type === SegmentType.Property) {
+            name = parameterLocation;
+            summary = 'Raw inputs';
+          }
+
+          inputParameter = {
+            key: parameterKey,
+            name,
+            type: constants.SWAGGER.TYPE.OBJECT,
+            summary,
+            in: parameterLocation,
+            required,
+          };
+
+          parameters.push(transformInputParameter(inputParameter, clonedParameterValue, /* invisible */ false));
+        }
+      }
+    } else {
+      let invisible = false;
+      if (!inputParameter && createInvisibleParameter) {
+        invisible = true;
+      }
+
+      if (inputParameter) {
+        parameters.push(transformInputParameter(inputParameter, clonedParameterValue, invisible));
+      } else {
+        const segments = parseEx(parameterKey);
+        const lastSegment = segments[segments.length - 1];
+        if (
+          lastSegment.value === '$' &&
+          lastSegment.type === SegmentType.Property &&
+          typeof clonedParameterValue === constants.SWAGGER.TYPE.OBJECT &&
+          Object.keys(clonedParameterValue).length > 0
+        ) {
+          // expand the object
+          for (const propertyName of Object.keys(clonedParameterValue)) {
+            const childInputParameter = {
+              key: createEx([...segments, { type: SegmentType.Property, value: propertyName }]) as string,
+              name: propertyName,
               type: constants.SWAGGER.TYPE.ANY,
               in: parameterLocation,
               required: false,
             };
 
-            parameters.push(transformInputParameter(inputParameter, clonedParameterValue, invisible));
+            parameters.push(transformInputParameter(childInputParameter, clonedParameterValue[propertyName], invisible));
           }
+        } else {
+          inputParameter = {
+            key: parameterKey,
+            name: lastSegment.value as string,
+            type: constants.SWAGGER.TYPE.ANY,
+            in: parameterLocation,
+            required: false,
+          };
+
+          parameters.push(transformInputParameter(inputParameter, clonedParameterValue, invisible));
         }
       }
     }
@@ -1421,12 +1535,10 @@ export function tryConvertStringToExpression(value: string): string {
   if (isTemplateExpression(value)) {
     if (value.charAt(0) === '@') {
       return `@${value}`;
-    } else {
-      return value.replace(/@{/g, '@@{');
     }
-  } else {
-    return value;
+    return value.replace(/@{/g, '@@{');
   }
+  return value;
 }
 
 function getExtraSegments(key: string, ancestorKey: string): Segment[] {
@@ -1480,6 +1592,9 @@ function reduceRedundantSegments(segments: Segment[]): void {
 }
 
 export function transformInputParameter(inputParameter: InputParameter, parameterValue: any, invisible = false): InputParameter {
+  if (inputParameter.type === constants.SWAGGER.TYPE.ANY && typeof parameterValue === 'string' && isStringNonPrimitive(parameterValue)) {
+    parameterValue = `"${parameterValue}"`;
+  }
   return { ...inputParameter, hideInUI: invisible, value: parameterValue };
 }
 
@@ -1494,14 +1609,16 @@ export function transformInputParameter(inputParameter: InputParameter, paramete
 export function isArrayOrObjectValueCompatibleWithSchema(value: any, schema: any, isArray: boolean, shallowArrayCheck = false): boolean {
   if (isNullOrUndefined(schema)) {
     return false;
-  } else if (isNullOrUndefined(value)) {
+  }
+  if (isNullOrUndefined(value)) {
     return true;
   }
 
   if (isArray) {
     if (shallowArrayCheck) {
       return Array.isArray(value);
-    } else if (!Array.isArray(value)) {
+    }
+    if (!Array.isArray(value)) {
       return false;
     }
   } else if (typeof value !== 'object') {
@@ -1603,13 +1720,11 @@ export function isArrayOrObjectValueCompatibleWithSchema(value: any, schema: any
             isCompatible = false;
             break;
           }
-          continue;
         } else if (isObject(propertyValue)) {
           if (!isArrayOrObjectValueCompatibleWithSchema(propertyValue, propertySchema, /* isArray */ false, shallowArrayCheck)) {
             isCompatible = false;
             break;
           }
-          continue;
         } else if (inputKeys.indexOf(valueKey) < 0) {
           isCompatible = false;
           break;
@@ -1664,9 +1779,15 @@ export async function updateParameterAndDependencies(
     const inputDependencies = dependenciesToUpdate.inputs;
     for (const key of Object.keys(inputDependencies)) {
       if (inputDependencies[key].dependencyType === 'ListValues' && inputDependencies[key].dependentParameters[parameterId]) {
-        const dependentParameter = nodeInputs.parameterGroups[groupId].parameters.find(
-          (param) => param.parameterKey === key
-        ) as ParameterInfo;
+        const dependentParameter = nodeInputs.parameterGroups[groupId].parameters.find((param) => param.parameterKey === key);
+        if (!dependentParameter) {
+          LoggerService().log({
+            level: LogEntryLevel.Verbose,
+            area: 'UpdateParameterAndDependencies',
+            message: `Dependent parameter was not set. Connection name: ${connectionReference.connectionName} - Parameter key: ${key}`,
+          });
+          continue;
+        }
         payload.parameters.push({
           groupId,
           parameterId: dependentParameter.id,
@@ -1780,26 +1901,34 @@ export async function updateDynamicDataInNode(
   );
 
   const { operations, workflowParameters } = getState();
-  for (const parameterKey of Object.keys(operations.dependencies[nodeId]?.inputs ?? {})) {
-    const dependencyInfo = operations.dependencies[nodeId].inputs[parameterKey];
-    if (dependencyInfo.dependencyType === 'ListValues') {
-      const details = getGroupAndParameterFromParameterKey(operations.inputParameters[nodeId] ?? {}, parameterKey);
-      if (details) {
-        loadDynamicValuesForParameter(
-          nodeId,
-          details.groupId,
-          details.parameter.id,
-          operationInfo,
-          connectionReference,
-          operations.inputParameters[nodeId],
-          operations.dependencies[nodeId],
-          false /* showErrorWhenNotReady */,
-          dispatch,
-          /* idReplacements */ undefined,
-          workflowParameters.definitions
-        );
-      }
+  const nodeDependencies = getRecordEntry(operations.dependencies, nodeId) ?? { inputs: {}, outputs: {} };
+  const nodeInputParameters = getRecordEntry(operations.inputParameters, nodeId) ?? { parameterGroups: {} };
+
+  const parameterDynamicValues = [] as any;
+  for (const parameterKey of Object.keys(nodeDependencies?.inputs ?? {})) {
+    if (nodeDependencies.inputs?.[parameterKey]?.dependencyType !== 'ListValues') {
+      continue;
     }
+    const details = getGroupAndParameterFromParameterKey(nodeInputParameters, parameterKey);
+    if (!details) {
+      continue;
+    }
+    parameterDynamicValues.push(
+      await fetchDynamicValuesForParameter(
+        details.groupId,
+        details.parameter.id,
+        operationInfo,
+        connectionReference,
+        nodeInputParameters,
+        nodeDependencies,
+        false /* showErrorWhenNotReady */,
+        undefined /* idReplacements */,
+        workflowParameters.definitions
+      )
+    );
+  }
+  if (parameterDynamicValues.length > 0) {
+    dispatch(updateNodeParameters({ nodeId, parameters: parameterDynamicValues }));
   }
 }
 
@@ -1826,6 +1955,8 @@ async function loadDynamicData(
       nodeInputs,
       settings,
       rootState.workflowParameters.definitions,
+      rootState.workflow.workflowKind,
+      rootState.designerOptions.hostOptions.forceEnableSplitOn ?? false,
       dispatch
     );
   }
@@ -1859,8 +1990,6 @@ async function loadDynamicContentForInputsInNode(
   for (const inputKey of Object.keys(inputDependencies)) {
     const info = inputDependencies[inputKey];
     if (info.dependencyType === 'ApiSchema') {
-      dispatch(clearDynamicInputs(nodeId));
-
       if (isDynamicDataReadyToLoad(info)) {
         try {
           const inputSchema = await tryGetInputDynamicSchema(
@@ -1911,10 +2040,12 @@ async function loadDynamicContentForInputsInNode(
             addDynamicInputs({ nodeId, groupId: ParameterGroupKeys.DEFAULT, inputs: inputParameters, newInputs: schemaInputs, swagger })
           );
         } catch (error: any) {
-          const message = error.message ?? (error.content.message as string);
-          const errorMessage = getIntl().formatMessage(
+          const message = parseErrorMessage(error);
+          const intl = getIntl();
+          const errorMessage = intl.formatMessage(
             {
               defaultMessage: `Failed to retrieve dynamic inputs. Error details: ''{message}''`,
+              id: 'sytRna',
               description: 'Error message to show when loading dynamic inputs failed',
             },
             { message }
@@ -2038,61 +2169,88 @@ export async function loadDynamicValuesForParameter(
   }
 
   const dependencyInfo = dependencies.inputs[parameter.parameterKey];
-  if (dependencyInfo) {
-    if (isDynamicDataReadyToLoad(dependencyInfo)) {
-      dispatch(
-        updateNodeParameters({
-          nodeId,
-          parameters: [
-            {
-              parameterId,
-              groupId,
-              propertiesToUpdate: { dynamicData: { status: DynamicCallStatus.STARTED }, editorOptions: { options: [] } },
-            },
-          ],
-        })
-      );
-
-      try {
-        const dynamicValues = await getDynamicValues(
-          dependencyInfo,
-          nodeInputs,
-          operationInfo,
-          connectionReference,
-          idReplacements,
-          workflowParameters
-        );
-
-        dispatch(
-          updateNodeParameters({
-            nodeId,
-            parameters: [
-              {
-                parameterId,
-                groupId,
-                propertiesToUpdate: { dynamicData: { status: DynamicCallStatus.SUCCEEDED }, editorOptions: { options: dynamicValues } },
-              },
-            ],
-          })
-        );
-      } catch (error: any) {
-        dispatch(
-          updateNodeParameters({
-            nodeId,
-            parameters: [
-              {
-                parameterId,
-                groupId,
-                propertiesToUpdate: { dynamicData: { status: DynamicCallStatus.FAILED, error: { ...error, message: error.message } } },
-              },
-            ],
-          })
-        );
-      }
-    } else if (showErrorWhenNotReady) {
+  if (!dependencyInfo) {
+    return;
+  }
+  if (!isDynamicDataReadyToLoad(dependencyInfo)) {
+    if (showErrorWhenNotReady) {
       showErrorWhenDependenciesNotReady(nodeId, groupId, parameterId, dependencyInfo, groupParameters, /* isTreeCall */ false, dispatch);
     }
+    return;
   }
+
+  let propertiesToUpdate: any = { dynamicData: { status: DynamicCallStatus.STARTED }, editorOptions: { options: [] } };
+
+  dispatch(updateNodeParameters({ nodeId, parameters: [{ parameterId, groupId, propertiesToUpdate }] }));
+
+  try {
+    const dynamicValues = await getDynamicValues(
+      dependencyInfo,
+      nodeInputs,
+      operationInfo,
+      connectionReference,
+      idReplacements,
+      workflowParameters
+    );
+
+    propertiesToUpdate = { dynamicData: { status: DynamicCallStatus.SUCCEEDED }, editorOptions: { options: dynamicValues } };
+  } catch (error: any) {
+    const rootMessage = parseErrorMessage(error);
+    const message = error?.response?.data?.error?.message ?? rootMessage;
+    propertiesToUpdate = { dynamicData: { status: DynamicCallStatus.FAILED, error: { ...error, message } } };
+  }
+
+  dispatch(updateNodeParameters({ nodeId, parameters: [{ parameterId, groupId, propertiesToUpdate }] }));
+}
+
+export async function fetchDynamicValuesForParameter(
+  groupId: string,
+  parameterId: string,
+  operationInfo: NodeOperation,
+  connectionReference: ConnectionReference | undefined,
+  nodeInputs: NodeInputs,
+  dependencies: NodeDependencies,
+  showErrorWhenNotReady: boolean,
+  idReplacements: Record<string, string> = {},
+  workflowParameters: Record<string, WorkflowParameterDefinition>
+): Promise<{ parameterId: string; groupId: string; propertiesToUpdate: any } | undefined> {
+  const groupParameters = nodeInputs.parameterGroups[groupId].parameters;
+  const parameter = groupParameters.find((parameter) => parameter.id === parameterId) as ParameterInfo;
+  if (!parameter) {
+    return;
+  }
+
+  const dependencyInfo = dependencies.inputs[parameter.parameterKey];
+  if (!dependencyInfo) {
+    return;
+  }
+  if (!isDynamicDataReadyToLoad(dependencyInfo)) {
+    if (showErrorWhenNotReady) {
+      fetchErrorWhenDependenciesNotReady(groupId, parameterId, dependencyInfo, groupParameters, /* isTreeCall */ false);
+    }
+    return;
+  }
+
+  let propertiesToUpdate: any = { dynamicData: { status: DynamicCallStatus.STARTED }, editorOptions: { options: [] } };
+
+  try {
+    const dynamicValues = await getDynamicValues(
+      dependencyInfo,
+      nodeInputs,
+      operationInfo,
+      connectionReference,
+      idReplacements,
+      workflowParameters
+    );
+
+    propertiesToUpdate = { dynamicData: { status: DynamicCallStatus.SUCCEEDED }, editorOptions: { options: dynamicValues } };
+  } catch (error: any) {
+    const rootMessage = parseErrorMessage(error);
+    const message = error?.response?.data?.error?.message ?? rootMessage;
+    propertiesToUpdate = { dynamicData: { status: DynamicCallStatus.FAILED, error: { ...error, message } } };
+  }
+
+  return { parameterId, groupId, propertiesToUpdate };
 }
 
 export function shouldLoadDynamicInputs(nodeInputs: NodeInputs): boolean {
@@ -2129,10 +2287,12 @@ async function tryGetInputDynamicSchema(
       throw error;
     }
 
-    const message = error.message as string;
-    const errorMessage = getIntl().formatMessage(
+    const message = parseErrorMessage(error);
+    const intl = getIntl();
+    const errorMessage = intl.formatMessage(
       {
         defaultMessage: `Failed to retrieve dynamic inputs. Error details: ''{message}''`,
+        id: 'sytRna',
         description: 'Error message to show when loading dynamic inputs failed',
       },
       { message }
@@ -2178,6 +2338,7 @@ function showErrorWhenDependenciesNotReady(
                 message: intl.formatMessage(
                   {
                     defaultMessage: 'Required parameters {parameters} not set or invalid',
+                    id: '3Y8a6G',
                     description: 'Error message to show when required parameters are not set or invalid',
                   },
                   { parameters: `${invalidParameterNames.join(' , ')}` }
@@ -2192,10 +2353,48 @@ function showErrorWhenDependenciesNotReady(
   );
 }
 
-function getStringifiedValueFromEditorViewModel(parameter: ParameterInfo, isDefinitionValue: boolean): string | undefined {
+function fetchErrorWhenDependenciesNotReady(
+  groupId: string,
+  parameterId: string,
+  dependencyInfo: DependencyInfo,
+  groupParameters: ParameterInfo[],
+  isTreeCall: boolean
+): any {
+  const intl = getIntl();
+  const invalidParameterNames = Object.keys(dependencyInfo.dependentParameters)
+    .filter((key) => !dependencyInfo.dependentParameters[key].isValid)
+    .map((id) => groupParameters.find((param) => param.id === id)?.parameterName);
+
+  return {
+    parameterId,
+    groupId,
+    propertiesToUpdate: {
+      dynamicData: {
+        error: {
+          name: isTreeCall ? 'DynamicTreeFailed' : 'DynamicListFailed',
+          message: intl.formatMessage(
+            {
+              defaultMessage: 'Required parameters {parameters} not set or invalid',
+              id: '3Y8a6G',
+              description: 'Error message to show when required parameters are not set or invalid',
+            },
+            { parameters: `${invalidParameterNames.join(' , ')}` }
+          ),
+        },
+        status: DynamicCallStatus.FAILED,
+      },
+    },
+  };
+}
+
+function getStringifiedValueFromEditorViewModel(
+  parameter: ParameterInfo,
+  isDefinitionValue: boolean,
+  idReplacements?: Record<string, string>
+): string | undefined {
   const { editor, editorOptions, editorViewModel } = parameter;
   switch (editor?.toLowerCase()) {
-    case constants.EDITOR.TABLE:
+    case constants.EDITOR.TABLE: {
       if (editorViewModel?.columnMode === ColumnMode.Custom && editorOptions?.columns) {
         const { keys, types } = editorOptions.columns;
         const value: any = [];
@@ -2203,8 +2402,16 @@ function getStringifiedValueFromEditorViewModel(parameter: ParameterInfo, isDefi
 
         // We do not parse here, since the type is string for table columns [assumed currently may change later]
         for (const item of editorViewModel.items) {
-          const keyValue = parameterValueToString({ type: types[0], value: item.key, ...commonProperties } as any, isDefinitionValue);
-          const valueValue = parameterValueToString({ type: types[1], value: item.value, ...commonProperties } as any, isDefinitionValue);
+          const keyValue = parameterValueToString(
+            { type: types[0], value: item.key, ...commonProperties } as any,
+            isDefinitionValue,
+            idReplacements
+          );
+          const valueValue = parameterValueToString(
+            { type: types[1], value: item.value, ...commonProperties } as any,
+            isDefinitionValue,
+            idReplacements
+          );
 
           if (keyValue || valueValue) {
             value.push({ [keys[0]]: keyValue, [keys[1]]: valueValue });
@@ -2214,16 +2421,18 @@ function getStringifiedValueFromEditorViewModel(parameter: ParameterInfo, isDefi
         return JSON.stringify(value);
       }
       return undefined;
+    }
     case constants.EDITOR.CONDITION:
       return editorOptions?.isOldFormat
-        ? iterateSimpleQueryBuilderEditor(editorViewModel.itemValue, editorViewModel.isRowFormat)
-        : JSON.stringify(recurseSerializeCondition(parameter, editorViewModel.items, isDefinitionValue));
-    case constants.EDITOR.FLOATINGACTIONMENU:
+        ? iterateSimpleQueryBuilderEditor(editorViewModel.itemValue, editorViewModel.isRowFormat, idReplacements)
+        : JSON.stringify(recurseSerializeCondition(parameter, editorViewModel.items, isDefinitionValue, idReplacements));
+    case constants.EDITOR.FLOATINGACTIONMENU: {
       if (!editorViewModel || editorOptions?.menuKind !== FloatingActionMenuKind.outputs) {
         return undefined;
       }
 
       return getStringifiedValueFromFloatingActionMenuOutputsViewModel(parameter, editorViewModel);
+    }
     default:
       return undefined;
   }
@@ -2266,14 +2475,19 @@ const getStringifiedValueFromFloatingActionMenuOutputsViewModel = (
   return JSON.stringify(value);
 };
 
-const iterateSimpleQueryBuilderEditor = (itemValue: ValueSegment[], isRowFormat: boolean): string | undefined => {
+const iterateSimpleQueryBuilderEditor = (
+  itemValue: ValueSegment[],
+  isRowFormat: boolean,
+  idReplacements?: Record<string, string>
+): string | undefined => {
   // if it is in advanced mode, we use loadParameterValue to get the value
   if (!isRowFormat) {
     return undefined;
   }
+  const { value: remappedItemValue } = idReplacements ? remapValueSegmentsWithNewIds(itemValue, idReplacements) : { value: itemValue };
   // otherwise we iterate through row items and concatenate the values
   let stringValue = '';
-  itemValue.forEach((segment) => {
+  remappedItemValue.forEach((segment) => {
     stringValue += segment.value;
   });
   return stringValue;
@@ -2283,6 +2497,7 @@ export const recurseSerializeCondition = (
   parameter: ParameterInfo,
   editorViewModel: any,
   isDefinitionValue: boolean,
+  idReplacements?: Record<string, string>,
   errors?: string[]
 ): any => {
   const returnVal: any = {};
@@ -2299,13 +2514,23 @@ export const recurseSerializeCondition = (
       operator = RowDropdownOptions.EQUALS;
     }
 
-    const operand1String = parameterValueToString({ type: 'any', value: operand1, ...commonProperties } as any, isDefinitionValue);
-    const operand2String = parameterValueToString({ type: 'any', value: operand2, ...commonProperties } as any, isDefinitionValue);
+    const operand1String = parameterValueToString(
+      { type: 'any', value: operand1, ...commonProperties } as any,
+      isDefinitionValue,
+      idReplacements
+    );
+    const operand2String = parameterValueToString(
+      { type: 'any', value: operand2, ...commonProperties } as any,
+      isDefinitionValue,
+      idReplacements
+    );
     if (errors && errors.length === 0 && (operand1String || operand2String)) {
       if (!operand1String) {
+        const intl = getIntl();
         errors.push(
-          getIntl().formatMessage({
+          intl.formatMessage({
             defaultMessage: 'Enter a valid condition statement.',
+            id: 'WToL/O',
             description: 'Error validation message for invalid condition statement',
           })
         );
@@ -2329,13 +2554,13 @@ export const recurseSerializeCondition = (
         {
           type: GroupType.ROW,
           operator: RowDropdownOptions.EQUALS,
-          operand1: [{ id: guid(), type: ValueSegmentType.LITERAL, value: '' }],
-          operand2: [{ id: guid(), type: ValueSegmentType.LITERAL, value: '' }],
+          operand1: [createLiteralValueSegment('')],
+          operand2: [createLiteralValueSegment('')],
         },
       ];
     }
     returnVal[condition] = items.map((item: any) => {
-      return recurseSerializeCondition(parameter, item, isDefinitionValue, errors);
+      return recurseSerializeCondition(parameter, item, isDefinitionValue, idReplacements, errors);
     });
   }
   return returnVal;
@@ -2409,6 +2634,36 @@ export function getGroupAndParameterFromParameterKey(
   return undefined;
 }
 
+export const getCustomCodeFileName = (nodeId: string, nodeInputs?: NodeInputs, idReplacements?: Record<string, string>): string => {
+  const updatedNodeId = idReplacements?.[nodeId] || nodeId;
+  let fileName = replaceWhiteSpaceWithUnderscore(updatedNodeId);
+
+  if (nodeInputs) {
+    const parameter = getParameterFromName(nodeInputs, constants.DEFAULT_CUSTOM_CODE_INPUT);
+    const fileExtension = parameter?.editorViewModel?.customCodeData?.fileExtension;
+    if (fileExtension) {
+      fileName = `${fileName}${fileExtension}`;
+    }
+  }
+  return fileName;
+};
+
+export const getCustomCodeFilesWithData = (state: CustomCodeState): CustomCodeFileNameMapping => {
+  const { files, fileData } = state;
+  const customCodeFilesWithData: CustomCodeFileNameMapping = {};
+  Object.entries(files).forEach(([fileName, fileInfo]) => {
+    const { nodeId } = fileInfo;
+    const fileDataInfo = getRecordEntry(fileData, nodeId);
+    if (fileDataInfo || fileInfo.isDeleted) {
+      customCodeFilesWithData[fileName] = {
+        ...fileInfo,
+        fileData: fileDataInfo ?? '',
+      };
+    }
+  });
+  return customCodeFilesWithData;
+};
+
 export function getInputsValueFromDefinitionForManifest(
   inputsLocation: string[],
   manifest: OperationManifest,
@@ -2462,7 +2717,7 @@ function swapInputsValueIfNeeded(inputsValue: any, manifest: OperationManifest) 
       }
     }
 
-    finalValue = !source.length ? { ...finalValue, ...value } : safeSetObjectPropertyValue(finalValue, source, value);
+    finalValue = source.length ? safeSetObjectPropertyValue(finalValue, source, value) : { ...finalValue, ...value };
   }
   return finalValue;
 }
@@ -2486,7 +2741,7 @@ function updateInputsValueForSpecialCases(inputsValue: any, allInputs: InputPara
       const parameterReference = serialization.property.parameterReference as string;
 
       switch (serialization?.property?.type?.toLowerCase()) {
-        case PropertySerializationType.ParentObject:
+        case PropertySerializationType.ParentObject: {
           const parentPropertyName = parameterReference.substring(0, parameterReference.lastIndexOf('.'));
           const parentPropertySegments = parentPropertyName.split('.');
           const objectValue = getObjectPropertyValue(finalValue, parentPropertySegments);
@@ -2506,8 +2761,9 @@ function updateInputsValueForSpecialCases(inputsValue: any, allInputs: InputPara
             },
           });
           break;
+        }
 
-        case PropertySerializationType.PathTemplate:
+        case PropertySerializationType.PathTemplate: {
           const parameterLocation = propertyParameter.name.split('.');
           const pathParametersLocation = parameterReference.split('.');
           const uriValue = getObjectPropertyValue(finalValue, parameterLocation);
@@ -2520,6 +2776,7 @@ function updateInputsValueForSpecialCases(inputsValue: any, allInputs: InputPara
           safeSetObjectPropertyValue(finalValue, pathParametersLocation, pathParameters);
           safeSetObjectPropertyValue(finalValue, parameterLocation, propertyParameter.default);
           break;
+        }
 
         default:
           break;
@@ -2536,7 +2793,7 @@ function updateInputsValueForSpecialCases(inputsValue: any, allInputs: InputPara
       const propertySegments = parameterReference.split('.');
 
       switch (type) {
-        case DeserializationType.ParentObjectProperties:
+        case DeserializationType.ParentObjectProperties: {
           const objectValue = getObjectPropertyValue(finalValue, propertySegments);
 
           if (isNullOrUndefined(objectValue)) {
@@ -2547,8 +2804,9 @@ function updateInputsValueForSpecialCases(inputsValue: any, allInputs: InputPara
           objectValue[name.split('.').at(-1) as string] = value;
           safeSetObjectPropertyValue(finalValue, propertySegments, objectValue);
           break;
+        }
 
-        case DeserializationType.SwaggerOperationId:
+        case DeserializationType.SwaggerOperationId: {
           const method = getObjectPropertyValue(finalValue, options?.swaggerOperation.methodPath as string[]);
           const uri = options?.swaggerOperation.uriPath ? getObjectPropertyValue(finalValue, options?.swaggerOperation.uriPath) : undefined;
           const templatePath = options?.swaggerOperation.templatePath
@@ -2570,6 +2828,7 @@ function updateInputsValueForSpecialCases(inputsValue: any, allInputs: InputPara
           );
           safeSetObjectPropertyValue(finalValue, propertySegments, operationId);
           break;
+        }
 
         default:
           break;
@@ -2612,9 +2871,8 @@ export function getNormalizedName(name: string): string {
 export function getRepetitionReference(repetitionContext: RepetitionContext, actionName?: string): RepetitionReference | undefined {
   if (actionName) {
     return first((item) => equals(item.actionName, actionName), repetitionContext.repetitionReferences);
-  } else {
-    return getClosestRepetitionReference(repetitionContext);
   }
+  return getClosestRepetitionReference(repetitionContext);
 }
 
 function getClosestRepetitionReference(repetitionContext: RepetitionContext): RepetitionReference | undefined {
@@ -2635,20 +2893,20 @@ export function updateTokenMetadataInParameters(nodeId: string, parameters: Para
 
   const actionNodes = Object.keys(operations)
     .filter((nodeId) => nodeId !== triggerNodeId)
-    .reduce((actionNodes: Record<string, string>, id: string) => ({ ...actionNodes, [id]: id }), {});
-  const nodesData = Object.keys(operations).reduce(
-    (data: Record<string, Partial<NodeDataWithOperationMetadata>>, id: string) => ({
-      ...data,
-      [id]: {
-        settings: settings[id],
-        nodeOutputs: outputParameters[id],
-        operationMetadata: operationMetadata[id],
-      },
-    }),
-    {}
-  );
+    .reduce((actionNodes: Record<string, string>, id: string) => {
+      actionNodes[id] = id;
+      return actionNodes;
+    }, {});
+  const nodesData = Object.keys(operations).reduce((data: Record<string, Partial<NodeDataWithOperationMetadata>>, id: string) => {
+    data[id] = {
+      settings: getRecordEntry(settings, id),
+      nodeOutputs: getRecordEntry(outputParameters, id),
+      operationMetadata: getRecordEntry(operationMetadata, id),
+    };
+    return data;
+  }, {});
 
-  const repetitionContext = rootState.operations.repetitionInfos[nodeId];
+  const repetitionContext = getRecordEntry(rootState.operations.repetitionInfos, nodeId) ?? { repetitionReferences: [] };
   for (const parameter of parameters) {
     const segments = parameter.value;
 
@@ -2699,11 +2957,15 @@ export const flattenAndUpdateViewModel = (
   nodesMetadata: NodesMetadata,
   parameterType?: string
 ) => {
-  if (!items) return;
+  if (!items) {
+    return;
+  }
   // check if on bottom-most level (array of valueSegments)
   if (Array.isArray(items) && items.every((item) => isValueSegment(item))) {
     return items.map((keyItem: ValueSegment) => {
-      if (!isTokenValueSegment(keyItem)) return keyItem;
+      if (!isTokenValueSegment(keyItem)) {
+        return keyItem;
+      }
       const valueSegmentToUpdate = updateTokenMetadata(
         keyItem,
         repetitionContext,
@@ -2715,7 +2977,9 @@ export const flattenAndUpdateViewModel = (
         nodesMetadata,
         parameterType
       );
-      if (valueSegmentToUpdate) return valueSegmentToUpdate;
+      if (valueSegmentToUpdate) {
+        return valueSegmentToUpdate;
+      }
       return keyItem;
     }) as ValueSegment[];
   }
@@ -2761,21 +3025,26 @@ export function updateTokenMetadata(
 ): ValueSegment {
   const token = valueSegment.token as SegmentToken;
   switch (token?.tokenType) {
-    case TokenType.VARIABLE:
+    case TokenType.VARIABLE: {
       token.brandColor = VariableBrandColor;
       token.icon = VariableIcon;
       return valueSegment;
-    case TokenType.PARAMETER:
+    }
+    case TokenType.PARAMETER: {
       token.brandColor = ParameterBrandColor;
       token.icon = ParameterIcon;
       token.type = convertWorkflowParameterTypeToSwaggerType(workflowParameters[token.title]?.type);
+      token.value = valueSegment.value;
       return valueSegment;
+    }
 
-    case TokenType.FX:
+    case TokenType.FX: {
       token.brandColor = FxBrandColor;
       token.icon = FxIcon;
       token.title = getExpressionTokenTitle(token.expression as Expression);
+      token.value = valueSegment.value;
       return valueSegment;
+    }
 
     case TokenType.ITERATIONINDEX:
       // TODO - Need implementation for until
@@ -2834,17 +3103,7 @@ export function updateTokenMetadata(
   );
 
   // If we do not get any nodeOutputInfo, we need to check if it is a body parameter or not
-  if (!nodeOutputInfo) {
-    if (!name) {
-      token.title = getKnownTitles(OutputKeys.Body);
-    } else if (token.tokenType === TokenType.ITEM) {
-      // TODO: Remove this and other parts in this method when the Feature flag (foreach tokens) is removed.
-      token.title = 'Current item';
-      token.type = constants.SWAGGER.TYPE.ANY;
-    } else {
-      token.title = getTitleFromTokenName(name, arrayDetails?.parentArrayName ?? '', parentArrayOutput?.title);
-    }
-  } else {
+  if (nodeOutputInfo) {
     if (!nodeOutputInfo.title && name) {
       token.title = getTitleFromTokenName(name, nodeOutputInfo.parentArray as string);
     } else {
@@ -2879,6 +3138,14 @@ export function updateTokenMetadata(
         token.arrayDetails.loopSource = actionName;
       }
     }
+  } else if (!name) {
+    token.title = getKnownTitles(OutputKeys.Body);
+  } else if (token.tokenType === TokenType.ITEM) {
+    // TODO: Remove this and other parts in this method when the Feature flag (foreach tokens) is removed.
+    token.title = 'Current item';
+    token.type = constants.SWAGGER.TYPE.ANY;
+  } else {
+    token.title = getTitleFromTokenName(name, arrayDetails?.parentArrayName ?? '', parentArrayOutput?.title);
   }
 
   token.icon = iconUri;
@@ -2895,10 +3162,11 @@ export function getExpressionTokenTitle(expression: Expression): string {
     case ExpressionType.NumberLiteral:
     case ExpressionType.StringLiteral:
       return (expression as ExpressionLiteral).value;
-    case ExpressionType.Function:
+    case ExpressionType.Function: {
       // eslint-disable-next-line no-case-declarations
       const functionExpression = expression as ExpressionFunction;
       return `${functionExpression.name}(${functionExpression.arguments.length > 0 ? '...' : ''})`;
+    }
     default:
       throw new UnsupportedException(`Unsupported expression type ${expression.type}.`);
   }
@@ -2960,9 +3228,8 @@ function isOutputInSameArray(token: SegmentToken, output: OutputInfo): boolean {
         : output.parentArray;
 
     return equals(getNormalizedName(tokenArray), getNormalizedName(outputArray));
-  } else {
-    return equals(getNormalizedName(arrayDetails?.parentArrayName || ''), getNormalizedName(output.parentArray || ''));
   }
+  return equals(getNormalizedName(arrayDetails?.parentArrayName || ''), getNormalizedName(output.parentArray || ''));
 }
 
 function getOutputsByType(allOutputs: OutputInfo[], type = constants.SWAGGER.TYPE.ANY): OutputInfo[] {
@@ -2978,12 +3245,11 @@ function getOutputsByType(allOutputs: OutputInfo[], type = constants.SWAGGER.TYP
 export function getTitleFromTokenName(tokenName: string, parentArray: string, parentArrayTitle?: string): string {
   if (equals(tokenName, OutputKeys.Body)) {
     return getKnownTitles(OutputKeys.Body);
-  } else if (equals(tokenName, OutputKeys.Headers)) {
+  }
+  if (equals(tokenName, OutputKeys.Headers)) {
     return getKnownTitles(OutputKeys.Headers);
-  } else if (
-    equals(tokenName, OutputKeys.Item) ||
-    (!!parentArray && equals(tokenName, `${getNormalizedName(parentArray)}-${OutputKeys.Item}`))
-  ) {
+  }
+  if (equals(tokenName, OutputKeys.Item) || (!!parentArray && equals(tokenName, `${getNormalizedName(parentArray)}-${OutputKeys.Item}`))) {
     let parentArrayDisplayName = parentArrayTitle;
 
     if (!parentArrayDisplayName) {
@@ -2993,20 +3259,22 @@ export function getTitleFromTokenName(tokenName: string, parentArray: string, pa
 
     const itemToken = getKnownTitles(OutputKeys.Item);
     return parentArrayDisplayName ? format(`{0} - ${itemToken}`, parentArrayDisplayName) : itemToken;
-  } else if (equals(tokenName, OutputKeys.Outputs)) {
-    return getKnownTitles(OutputKeys.Outputs);
-  } else if (equals(tokenName, OutputKeys.StatusCode)) {
-    return getKnownTitles(OutputKeys.StatusCode);
-  } else if (equals(tokenName, OutputKeys.Queries)) {
-    return getKnownTitles(OutputKeys.Queries);
-  } else {
-    // Remove all the '?' from token name.
-    const tokenNameWithoutOptionalOperator = tokenName.replace(/\?/g, '');
-    return tokenNameWithoutOptionalOperator
-      .split('.')
-      .map((segment) => decodePropertySegment(segment))
-      .join('.');
   }
+  if (equals(tokenName, OutputKeys.Outputs)) {
+    return getKnownTitles(OutputKeys.Outputs);
+  }
+  if (equals(tokenName, OutputKeys.StatusCode)) {
+    return getKnownTitles(OutputKeys.StatusCode);
+  }
+  if (equals(tokenName, OutputKeys.Queries)) {
+    return getKnownTitles(OutputKeys.Queries);
+  }
+  // Remove all the '?' from token name.
+  const tokenNameWithoutOptionalOperator = tokenName.replace(/\?/g, '');
+  return tokenNameWithoutOptionalOperator
+    .split('.')
+    .map((segment) => decodePropertySegment(segment))
+    .join('.');
 }
 
 export function getNormalizedTokenName(tokenName: string): string {
@@ -3032,11 +3300,11 @@ export function getRepetitionValue(manifest: OperationManifest, nodeInputs: Para
 export function getInterpolatedExpression(expression: string, parameterType: string, parameterFormat: string): string {
   if (isUndefinedOrEmptyString(expression)) {
     return expression;
-  } else if (parameterType === constants.SWAGGER.TYPE.STRING && parameterFormat !== constants.SWAGGER.FORMAT.BINARY) {
-    return `@{${expression}}`;
-  } else {
-    return `@${expression}`;
   }
+  if (parameterType === constants.SWAGGER.TYPE.STRING && parameterFormat !== constants.SWAGGER.FORMAT.BINARY) {
+    return `@{${expression}}`;
+  }
+  return `@${expression}`;
 }
 
 export function parameterValueToString(
@@ -3044,12 +3312,20 @@ export function parameterValueToString(
   isDefinitionValue: boolean,
   idReplacements?: Record<string, string>
 ): string | undefined {
-  const { value: remappedValue, didRemap } = idReplacements
-    ? remapValueSegmentsWithNewIds(parameterInfo.value, idReplacements)
+  const { value: remappedValue, didRemap } = isRecordNotEmpty(idReplacements)
+    ? remapValueSegmentsWithNewIds(parameterInfo.value, idReplacements ?? {})
     : { value: parameterInfo.value, didRemap: false };
-  const remappedParameterInfo = idReplacements ? { ...parameterInfo, value: remappedValue } : parameterInfo;
+  const remappedEditorViewModel = isRecordNotEmpty(idReplacements)
+    ? remapEditorViewModelWithNewIds(parameterInfo.editorViewModel, idReplacements ?? {})
+    : parameterInfo.editorViewModel;
 
-  if (didRemap) delete remappedParameterInfo.preservedValue;
+  const remappedParameterInfo = isRecordNotEmpty(idReplacements)
+    ? { ...parameterInfo, value: remappedValue, editorViewModel: remappedEditorViewModel }
+    : parameterInfo;
+
+  if (didRemap) {
+    delete remappedParameterInfo.preservedValue;
+  }
 
   const preservedValue = remappedParameterInfo.preservedValue;
   if (preservedValue !== undefined && isDefinitionValue) {
@@ -3061,7 +3337,7 @@ export function parameterValueToString(
     }
   }
 
-  const valueFromEditor = getStringifiedValueFromEditorViewModel(remappedParameterInfo, isDefinitionValue);
+  const valueFromEditor = getStringifiedValueFromEditorViewModel(remappedParameterInfo, isDefinitionValue, idReplacements);
   if (valueFromEditor !== undefined) {
     return valueFromEditor;
   }
@@ -3074,12 +3350,10 @@ export function parameterValueToString(
     if (isPathParameter && isDefinitionValue) {
       if (parameter.required) {
         return encodePathValueWithFunction("''", parameter.info.encode);
-      } else {
-        return '';
       }
-    } else {
-      return parameter.required ? '' : undefined;
+      return '';
     }
+    return parameter.required ? '' : undefined;
   }
 
   const parameterType = getInferredParameterType(value, parameter.type);
@@ -3104,9 +3378,8 @@ export function parameterValueToString(
     const segmentValues = segmentsAfterCasting.map((segment) => {
       if (!isTokenValueSegment(segment)) {
         return convertToStringLiteral(segment.value);
-      } else {
-        return segment.value;
       }
+      return segment.value;
     });
 
     return encodePathValueWithFunction(fold(segmentValues, parameter.type) ?? '', parameter.info.encode);
@@ -3119,15 +3392,13 @@ export function parameterValueToString(
       if (isTokenValueSegment(segment)) {
         if (shouldInterpolate) {
           expressionValue = parameterType === constants.SWAGGER.TYPE.STRING ? `@{${expressionValue}}` : `@${expressionValue}`;
-        } else {
-          if (!isUndefinedOrEmptyString(expressionValue)) {
-            // Note: Token segment should be auto casted using interpolation if token type is
-            // non string and referred in a string parameter.
-            expressionValue =
-              !remappedParameterInfo.suppressCasting && parameterType === 'string' && segment.token?.type !== 'string'
-                ? `@{${expressionValue}}`
-                : `@${expressionValue}`;
-          }
+        } else if (!isUndefinedOrEmptyString(expressionValue)) {
+          // Note: Token segment should be auto casted using interpolation if token type is
+          // non string and referred in a string parameter.
+          expressionValue =
+            !remappedParameterInfo.suppressCasting && parameterType === 'string' && segment.token?.type !== 'string'
+              ? `@{${expressionValue}}`
+              : `@${expressionValue}`;
         }
       }
 
@@ -3137,9 +3408,9 @@ export function parameterValueToString(
 }
 
 export function parameterValueToJSONString(parameterValue: ValueSegment[], applyCasting = true, forValidation = false): string {
-  let shouldInterpolate = false,
-    parameterValueString = '',
-    numberOfDoubleQuotes = 0;
+  let shouldInterpolate = false;
+  let parameterValueString = '';
+  let numberOfDoubleQuotes = 0;
   const rawStringFormat = parameterValueToStringWithoutCasting(parameterValue, forValidation);
   const updatedParameterValue: ValueSegment[] = parameterValue.map((expression) => ({ ...expression }));
 
@@ -3224,6 +3495,25 @@ export function getJSONValueFromString(value: any, type: string): any {
   return parameterValue;
 }
 
+export function remapEditorViewModelWithNewIds(editorViewModel: any, idReplacements: Record<string, string>): any {
+  if (Array.isArray(editorViewModel)) {
+    if (isValueSegmentArray(editorViewModel)) {
+      return remapValueSegmentsWithNewIds(editorViewModel, idReplacements).value;
+    }
+    return editorViewModel.map((value: any) => {
+      return remapEditorViewModelWithNewIds(value, idReplacements);
+    });
+  }
+  if (isObject(editorViewModel)) {
+    const updatedEditorViewModel = { ...editorViewModel };
+    Object.entries(editorViewModel).forEach(([key, value]) => {
+      updatedEditorViewModel[key] = remapEditorViewModelWithNewIds(value, idReplacements);
+    });
+    return updatedEditorViewModel;
+  }
+  return editorViewModel;
+}
+
 export function remapValueSegmentsWithNewIds(
   segments: ValueSegment[],
   idReplacements: Record<string, string>
@@ -3232,7 +3522,7 @@ export function remapValueSegmentsWithNewIds(
   const value = segments.map((segment) => {
     if (isTokenValueSegment(segment)) {
       const result = remapTokenSegmentValue(segment, idReplacements);
-      didRemap = result.didRemap;
+      didRemap = didRemap || result.didRemap;
       return result.value;
     }
 
@@ -3269,7 +3559,7 @@ export function remapTokenSegmentValue(
       if (!didRemap && newSegmentValue?.includes(`'${id}`)) {
         didRemap = true;
       }
-      newSegmentValue = newSegmentValue?.replaceAll(`'${id}'`, `'${idReplacements[id]}'`);
+      newSegmentValue = newSegmentValue?.replaceAll(`'${id}'`, `'${getRecordEntry(idReplacements, id)}'`);
     }
 
     newSegment = { ...segment, value: newSegmentValue, token: { ...segment.token, value: newSegmentValue } } as ValueSegment;
@@ -3288,7 +3578,7 @@ function parameterValueToStringWithoutCasting(value: ValueSegment[], forValidati
 
   return value
     .map((expression) => {
-      let expressionValue = !forValidation ? expression.value : expression.value || null;
+      let expressionValue = forValidation ? expression.value || null : expression.value;
       if (isTokenValueSegment(expression)) {
         expressionValue = shouldInterpolateTokens ? `@{${expressionValue}}` : `@${expressionValue}`;
       }
@@ -3310,10 +3600,9 @@ function castParameterValueToString(value: ValueSegment[], parameterFormat: stri
     const castExpression = addCastToExpression(segmentFormat, parameterFormat, uncastExpression, valueType, parameterType);
 
     return getInterpolatedExpression(castExpression, parameterType, parameterFormat);
-  } else {
-    // TODO: We might need to revisit adding encodeURIComponent if path parameters contains format
-    return addFoldingCastToExpression(parameterFormat, value, parameterType, parameterFormat);
   }
+  // TODO: We might need to revisit adding encodeURIComponent if path parameters contains format
+  return addFoldingCastToExpression(parameterFormat, value, parameterType, parameterFormat);
 }
 
 function castTokenSegmentsInValue(parameterValue: ValueSegment[], parameterType: string, parameterFormat: string): ValueSegment[] {
@@ -3361,7 +3650,8 @@ function requiresCast(
     }
 
     return true;
-  } else if (parameterValue.length === 1) {
+  }
+  if (parameterValue.length === 1) {
     const { token } = parameterValue[0];
     return (
       parameterType === constants.SWAGGER.TYPE.STRING &&
@@ -3396,9 +3686,8 @@ function getInferredParameterType(value: ValueSegment[], type: string): string {
 function fold(expressions: string[], type: string): string | undefined {
   if (expressions.length === 0) {
     return type === constants.SWAGGER.TYPE.STRING ? '' : undefined;
-  } else {
-    return expressions.join(',');
   }
+  return expressions.join(',');
 }
 
 function isValidJSONObjectFormat(value: string): boolean {

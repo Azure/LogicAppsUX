@@ -1,4 +1,4 @@
-import type { ComboboxItem, ComplexArrayItems, TokenPickerButtonEditorProps } from '..';
+import type { ComboboxItem, ComplexArrayItems, TokenPickerButtonEditorProps, ValueSegment } from '..';
 import { Combobox, StringEditor } from '..';
 import constants from '../constants';
 import type { ChangeState, GetTokenPickerHandler } from '../editor/base';
@@ -6,7 +6,7 @@ import { ItemMenuButton } from './expandedsimplearray';
 import { hideComplexArray, type ItemSchemaItemProps } from './util/util';
 import type { IIconProps } from '@fluentui/react';
 import { Label, css, DefaultButton } from '@fluentui/react';
-import { guid } from '@microsoft/utils-logic-apps';
+import { guid } from '@microsoft/logic-apps-shared';
 import { useIntl } from 'react-intl';
 
 const addItemButtonIconProps: IIconProps = {
@@ -19,10 +19,13 @@ export interface ExpandedComplexArrayProps {
   canDeleteLastItem: boolean;
   readonly?: boolean;
   tokenPickerButtonProps?: TokenPickerButtonEditorProps;
-  getTokenPicker: GetTokenPickerHandler;
   setItems: (newItems: ComplexArrayItems[]) => void;
   itemKey?: string;
   isNested?: boolean;
+  options?: ComboboxItem[];
+  getTokenPicker: GetTokenPickerHandler;
+  tokenMapping?: Record<string, ValueSegment>;
+  loadParameterValueFromString?: (value: string) => ValueSegment[];
 }
 
 export const ExpandedComplexArray = ({
@@ -31,12 +34,14 @@ export const ExpandedComplexArray = ({
   canDeleteLastItem,
   setItems,
   isNested = false,
+  options,
   ...props
 }: ExpandedComplexArrayProps): JSX.Element => {
   const intl = useIntl();
 
   const addItemButtonLabel = intl.formatMessage({
     defaultMessage: 'Add new item',
+    id: 'JWl/LD',
     description: 'Label to add item to array editor',
   });
 
@@ -86,7 +91,7 @@ export const ExpandedComplexArray = ({
     const { title } = schemaItem;
     return (
       <div className="msla-array-editor-label">
-        <Label required={isRequired ?? false}> {title + ' - ' + (index + 1)}</Label>
+        <Label required={isRequired ?? false}> {`${title} - ${index + 1}`}</Label>
       </div>
     );
   };
@@ -98,6 +103,16 @@ export const ExpandedComplexArray = ({
           <div key={item.key + index} className={css('msla-array-item', 'complex', isNested && 'isNested')}>
             {dimensionalSchema.map((schemaItem: ItemSchemaItemProps, i) => {
               const complexItem = item.items.find((complexItem) => complexItem.key === schemaItem.key);
+              const comboboxOptions =
+                options ??
+                schemaItem.enum?.map(
+                  (val: string): ComboboxItem => ({
+                    displayName: val,
+                    key: val,
+                    value: val,
+                  })
+                );
+
               return (
                 <div key={schemaItem.key + i}>
                   {schemaItem.type === constants.SWAGGER.TYPE.ARRAY && schemaItem.items && !hideComplexArray(schemaItem.items) ? (
@@ -134,16 +149,10 @@ export const ExpandedComplexArray = ({
                                 </div>
                               ) : null}
                             </div>
-                            {schemaItem.enum && schemaItem.enum.length > 0 ? (
+                            {comboboxOptions ? (
                               <Combobox
                                 {...props}
-                                options={schemaItem.enum.map(
-                                  (val: string): ComboboxItem => ({
-                                    displayName: val,
-                                    key: val,
-                                    value: val,
-                                  })
-                                )}
+                                options={comboboxOptions}
                                 placeholder={schemaItem.description}
                                 initialValue={complexItem?.value ?? []}
                                 onChange={(newState) => handleArrayElementSaved(newState, index, schemaItem)}

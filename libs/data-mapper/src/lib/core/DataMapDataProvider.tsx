@@ -1,9 +1,5 @@
 import { MapDefinitionDeserializer } from '../mapDefinitions';
-import type { MapMetadata } from '../models';
 import type { FunctionData } from '../models/Function';
-import type { MapDefinitionEntry } from '../models/MapDefinition';
-import type { Schema } from '../models/Schema';
-import { SchemaType } from '../models/Schema';
 import { convertSchemaToSchemaExtended } from '../utils/Schema.Utils';
 import { DataMapperWrappedContext } from './DataMapperDesignerContext';
 import { changeTheme } from './state/AppSlice';
@@ -11,8 +7,10 @@ import { setInitialDataMap, setInitialSchema, setXsltContent, setXsltFilename } 
 import { loadCustomXsltFilePaths, loadFunctions } from './state/FunctionSlice';
 import { setAvailableSchemas } from './state/SchemaSlice';
 import type { AppDispatch } from './state/Store';
-import { Theme as ThemeType } from '@microsoft/utils-logic-apps';
-import React, { useContext, useEffect, useMemo } from 'react';
+import type { MapMetadata, MapDefinitionEntry, DataMapSchema } from '@microsoft/logic-apps-shared';
+import { Theme as ThemeType, SchemaType } from '@microsoft/logic-apps-shared';
+import type React from 'react';
+import { useContext, useEffect, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 
 export interface DataMapDataProviderProps {
@@ -20,8 +18,8 @@ export interface DataMapDataProviderProps {
   xsltContent: string;
   mapDefinition?: MapDefinitionEntry;
   dataMapMetadata?: MapMetadata;
-  sourceSchema?: Schema;
-  targetSchema?: Schema;
+  sourceSchema?: DataMapSchema;
+  targetSchema?: DataMapSchema;
   availableSchemas?: string[];
   customXsltPaths?: string[];
   fetchedFunctions?: FunctionData[];

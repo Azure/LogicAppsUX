@@ -7,10 +7,14 @@ const getPanelState = (state: RootState) => state.panel;
 
 export const useIsPanelCollapsed = () => useSelector(createSelector(getPanelState, (state: PanelState) => state.collapsed));
 
-export const useCurrentPanelModePanelMode = () => useSelector(createSelector(getPanelState, (state: PanelState) => state.currentState));
+export const useFocusReturnElementId = () => useSelector(createSelector(getPanelState, (state: PanelState) => state.focusReturnElementId));
+
+export const useCurrentPanelMode = () => useSelector(createSelector(getPanelState, (state: PanelState) => state.currentPanelMode));
+
+export const useReferencePanelMode = () => useSelector(createSelector(getPanelState, (state: PanelState) => state.referencePanelMode));
 
 export const useIsNodeSearchMode = () =>
-  useSelector(createSelector(getPanelState, (state: PanelState) => state.currentState === 'NodeSearch'));
+  useSelector(createSelector(getPanelState, (state: PanelState) => state.currentPanelMode === 'NodeSearch'));
 
 export const useIsAddingTrigger = () => useSelector(createSelector(getPanelState, (state: PanelState) => state.addingTrigger));
 
@@ -24,29 +28,19 @@ export const useSelectedSearchOperationGroupId = () =>
 export const useSelectedSearchOperationId = () =>
   useSelector(createSelector(getPanelState, (state: PanelState) => state.selectedOperationId));
 
-export const useSelectedNodeId = () => useSelector(createSelector(getPanelState, (state: PanelState) => state.selectedNode));
+export const useSelectedNodeId = () => useSelector(createSelector(getPanelState, (state: PanelState) => state.selectedNodes?.[0] ?? ''));
+export const useSelectedNodeIds = () => useSelector(createSelector(getPanelState, (state: PanelState) => state.selectedNodes));
 
 export const useIsNodeSelected = (nodeId: string) =>
-  useSelector(createSelector(getPanelState, (state: PanelState) => state.selectedNode === nodeId));
+  useSelector(createSelector(getPanelState, (state: PanelState) => state.selectedNodes.includes(nodeId)));
 
-export const useRegisteredPanelTabs = () => useSelector(createSelector(getPanelState, (state: PanelState) => state.registeredTabs));
-
-export const usePanelTabByName = (tabName: string) =>
-  useSelector(createSelector(getPanelState, (state: PanelState) => state.registeredTabs[tabName]));
-
-export const useVisiblePanelTabs = () =>
-  useSelector(
-    createSelector(getPanelState, (state: PanelState) => {
-      const visibleTabs = Object.values(state.registeredTabs).filter((tab) => tab.visible !== false);
-      return visibleTabs.sort((a, b) => a.order - b.order);
-    })
-  );
-
-export const useSelectedPanelTabName = () => useSelector(createSelector(getPanelState, (state: PanelState) => state.selectedTabName));
-
-export const useSelectedPanelTab = () => {
-  const selectedPanelTabName = useSelectedPanelTabName();
-  return useSelector(createSelector(getPanelState, (state: PanelState) => state.registeredTabs[selectedPanelTabName ?? '']));
-};
+export const useSelectedPanelTabId = () => useSelector(createSelector(getPanelState, (state: PanelState) => state.selectedTabId));
 
 export const usePanelLocation = () => useSelector(createSelector(getPanelState, (state: PanelState) => state.panelLocation));
+
+export const useIsLoadingPanel = () => useSelector(createSelector(getPanelState, (state: PanelState) => !!state.isLoading));
+
+export const useIsCreatingConnection = () => useSelector(createSelector(getPanelState, (state: PanelState) => state.creatingConnection));
+
+export const useSelectedErrorsPanelTabId = () =>
+  useSelector(createSelector(getPanelState, (state: PanelState) => state.selectedErrorsPanelTabId));

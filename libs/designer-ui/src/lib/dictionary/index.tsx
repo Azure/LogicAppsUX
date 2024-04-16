@@ -5,14 +5,15 @@ import type { BaseEditorProps } from '../editor/base';
 import { convertKeyValueItemToSegments } from '../editor/base/utils/keyvalueitem';
 import { CollapsedDictionary } from './collapsedDictionary';
 import { ExpandedDictionary } from './expandeddictionary';
-import { guid } from '@microsoft/utils-logic-apps';
+import { guid } from '@microsoft/logic-apps-shared';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
 
-export enum DictionaryType {
-  DEFAULT = 'default',
-  TABLE = 'table',
-}
+export const DictionaryType = {
+  DEFAULT: 'default',
+  TABLE: 'table',
+} as const;
+export type DictionaryType = (typeof DictionaryType)[keyof typeof DictionaryType];
 export interface DictionaryEditorItemProps {
   id: string;
   key: ValueSegment[];
@@ -42,7 +43,7 @@ export const DictionaryEditor: React.FC<DictionaryEditorProps> = ({
   ...baseEditorProps
 }): JSX.Element => {
   const intl = useIntl();
-  const [collapsed, setCollapsed] = useState(!initialItems ?? false);
+  const [collapsed, setCollapsed] = useState(!initialItems);
   const [items, setItems] = useState(initialItems);
   const [collapsedValue, setCollapsedValue] = useState<ValueSegment[]>(initialValue);
   const [isValid, setIsValid] = useState(false);
@@ -67,11 +68,13 @@ export const DictionaryEditor: React.FC<DictionaryEditorProps> = ({
 
   const expandedLabel: string = intl.formatMessage({
     defaultMessage: 'Switch to text mode',
+    id: 'xXVu2y',
     description: 'Label for editor toggle button when in expanded mode',
   });
 
   const collapsedLabel: string = intl.formatMessage({
     defaultMessage: 'Switch to key value mode',
+    id: 'dD8y1n',
     description: 'Label for editor toggle button when in collapsed mode',
   });
 
@@ -79,7 +82,6 @@ export const DictionaryEditor: React.FC<DictionaryEditorProps> = ({
     <div className="msla-dictionary-editor-container" data-automation-id={baseEditorProps.dataAutomationId}>
       {collapsed && !(dictionaryType === DictionaryType.TABLE) ? (
         <CollapsedDictionary
-          isValid={isValid}
           readonly={baseEditorProps.readonly}
           collapsedValue={collapsedValue}
           keyType={keyType}
@@ -90,6 +92,8 @@ export const DictionaryEditor: React.FC<DictionaryEditorProps> = ({
           setIsValid={setIsValid}
           setCollapsedValue={(val: ValueSegment[]) => setCollapsedValue(val)}
           onBlur={handleCollapsedBlur}
+          tokenMapping={baseEditorProps.tokenMapping}
+          loadParameterValueFromString={baseEditorProps.loadParameterValueFromString}
         />
       ) : (
         <ExpandedDictionary
@@ -102,6 +106,8 @@ export const DictionaryEditor: React.FC<DictionaryEditorProps> = ({
           setItems={updateItems}
           tokenPickerButtonProps={baseEditorProps.tokenPickerButtonProps}
           getTokenPicker={getTokenPicker}
+          tokenMapping={baseEditorProps.tokenMapping}
+          loadParameterValueFromString={baseEditorProps.loadParameterValueFromString}
         />
       )}
 

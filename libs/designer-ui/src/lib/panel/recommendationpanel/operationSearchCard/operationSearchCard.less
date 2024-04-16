@@ -5,7 +5,6 @@
   border: none;
   outline: none;
   box-shadow: 0px 0.3px 4px 0px rgba(0, 0, 0, 0.1), 0px 1.6px 4px 0px rgba(0, 0, 0, 0.14);
-  color: #323130;
   cursor: pointer;
   display: flex;
   flex-wrap: nowrap;
@@ -16,7 +15,7 @@
   overflow: hidden;
 
   &:focus {
-    outline: 0;
+    outline: 1px solid #605e5c;
   }
 
   &:focus,
@@ -66,6 +65,10 @@
 .msla-theme-dark {
   .msla-op-search-card-container {
     background-color: @ms-color-primaryBackground;
+
+    &:focus {
+      outline: 1px solid #fff;
+    }
 
     &:hover {
       background-color: @ms-color-primaryBackgroundHover;

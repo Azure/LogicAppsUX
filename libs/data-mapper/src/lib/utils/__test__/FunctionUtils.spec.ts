@@ -1,6 +1,5 @@
 import { heavyRepeatingMockSchema } from '../../__mocks__';
 import { minFunction } from '../../__mocks__/FunctionMock';
-import { NormalizedDataType, SchemaNodeProperty, type Schema, type SchemaExtended, type SchemaNodeDictionary } from '../../models';
 import type { ConnectionDictionary } from '../../models/Connection';
 import type { FunctionData } from '../../models/Function';
 import {
@@ -12,7 +11,14 @@ import {
   removeQuotesFromString,
 } from '../Function.Utils';
 import { convertSchemaToSchemaExtended } from '../Schema.Utils';
-
+import {
+  NormalizedDataType,
+  SchemaNodeProperty,
+  type Schema,
+  type SchemaExtended,
+  type SchemaNodeDictionary,
+} from '@microsoft/logic-apps-shared';
+import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 describe('utils/Functions', () => {
   describe('getFunctionOutputValue', () => {
     const functionName = 'testFunction';

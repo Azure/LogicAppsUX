@@ -1,7 +1,7 @@
 import constants from '../constants';
 import type { ValueSegment } from '../editor';
-import { ValueSegmentType } from '../editor';
 import type { ChangeHandler } from '../editor/base';
+import { createLiteralValueSegment } from '../editor/base/utils/helper';
 import { DropdownControl, DropdownType } from './dropdownControl';
 import { Preview } from './preview';
 import { MinuteTextInput, TextInput } from './textInput';
@@ -13,9 +13,8 @@ import {
   getScheduleDayValues,
   getScheduleHourValues,
   getTimezoneValues,
-  guid,
   RecurrenceType,
-} from '@microsoft/utils-logic-apps';
+} from '@microsoft/logic-apps-shared';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
 
@@ -51,7 +50,7 @@ export const ScheduleEditor = ({
 
   const updateRecurrence = (newRecurrence: Recurrence) => {
     setRecurrence(newRecurrence);
-    onChange?.({ value: [{ id: guid(), type: ValueSegmentType.LITERAL, value: JSON.stringify(newRecurrence) }] });
+    onChange?.({ value: [createLiteralValueSegment(JSON.stringify(newRecurrence))] });
   };
 
   const renderScheduleSection = (): JSX.Element | null => {
@@ -71,7 +70,7 @@ export const ScheduleEditor = ({
               onChange={(values) =>
                 updateRecurrence({
                   ...recurrence,
-                  schedule: { ...recurrence.schedule, weekDays: !(values as string[]).length ? undefined : (values as string[]) },
+                  schedule: { ...recurrence.schedule, weekDays: (values as string[]).length ? (values as string[]) : undefined },
                 })
               }
               readOnly={readOnly}
@@ -88,7 +87,7 @@ export const ScheduleEditor = ({
             onChange={(values) => {
               updateRecurrence({
                 ...recurrence,
-                schedule: { ...recurrence.schedule, hours: !(values as string[]).length ? undefined : (values as string[]) },
+                schedule: { ...recurrence.schedule, hours: (values as string[]).length ? (values as string[]) : undefined },
               });
             }}
             readOnly={readOnly}
@@ -102,7 +101,7 @@ export const ScheduleEditor = ({
             onChange={(value) => {
               updateRecurrence({
                 ...recurrence,
-                schedule: { ...recurrence.schedule, minutes: !value ? undefined : value },
+                schedule: { ...recurrence.schedule, minutes: value ? value : undefined },
               });
             }}
             readOnly={readOnly}
@@ -110,9 +109,8 @@ export const ScheduleEditor = ({
           {showPreview ? <Preview recurrence={recurrence} /> : null}
         </div>
       );
-    } else {
-      return null;
     }
+    return null;
   };
 
   const handleFrequencyUpdate = (frequency: string) => {
@@ -168,7 +166,7 @@ export const ScheduleEditor = ({
         required={false}
         initialValue={recurrence.startTime}
         placeholder={resources.startTime.description}
-        onChange={(value) => updateRecurrence({ ...recurrence, startTime: !value ? undefined : value })}
+        onChange={(value) => updateRecurrence({ ...recurrence, startTime: value ? value : undefined })}
         readOnly={readOnly}
       />
       {type === RecurrenceType.Advanced ? renderScheduleSection() : null}

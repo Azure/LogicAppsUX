@@ -15,8 +15,8 @@ import {
 import type { INewStorageAccountDefaults } from '@microsoft/vscode-azext-azureutils';
 import type { IWizardOptions } from '@microsoft/vscode-azext-utils';
 import { AzureWizardPromptStep } from '@microsoft/vscode-azext-utils';
-import type { ILogicAppWizardContext, ICreateLogicAppContext } from '@microsoft/vscode-extension';
-import { StorageOptions } from '@microsoft/vscode-extension';
+import type { ILogicAppWizardContext, ICreateLogicAppContext } from '@microsoft/vscode-extension-logic-apps';
+import { StorageOptions } from '@microsoft/vscode-extension-logic-apps';
 import type { QuickPickItem, QuickPickOptions } from 'vscode';
 
 export class CustomLocationStorageAccountStep extends AzureWizardPromptStep<ILogicAppWizardContext> {
@@ -51,23 +51,21 @@ export class CustomLocationStorageAccountStep extends AzureWizardPromptStep<ILog
         return {
           executeSteps: [new StorageAccountCreateStep(storageAccountCreateOptions), new AppInsightsCreateStep()],
         };
-      } else {
-        return {
-          promptSteps: [
-            new StorageAccountListStep(storageAccountCreateOptions, {
-              kind: [StorageAccountKind.BlobStorage],
-              performance: [StorageAccountPerformance.Premium],
-              replication: [StorageAccountReplication.ZRS],
-              learnMoreLink: 'https://aka.ms/Cfqnrc',
-            }),
-            new AppInsightsListStep(),
-          ],
-        };
       }
-    } else {
       return {
-        promptSteps: [new SQLStringNameStep()],
+        promptSteps: [
+          new StorageAccountListStep(storageAccountCreateOptions, {
+            kind: [StorageAccountKind.BlobStorage],
+            performance: [StorageAccountPerformance.Premium],
+            replication: [StorageAccountReplication.ZRS],
+            learnMoreLink: 'https://aka.ms/Cfqnrc',
+          }),
+          new AppInsightsListStep(),
+        ],
       };
     }
+    return {
+      promptSteps: [new SQLStringNameStep()],
+    };
   }
 }

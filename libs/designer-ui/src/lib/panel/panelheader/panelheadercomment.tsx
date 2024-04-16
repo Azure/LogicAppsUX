@@ -1,12 +1,15 @@
 import constants from '../../constants';
 import { isEscapeKey } from '../../utils/keyboardUtils';
 import { handleOnEscapeDown } from './panelheader';
-import { Icon } from '@fluentui/react/lib/Icon';
+import { bundleIcon, Comment20Filled, Comment20Regular } from '@fluentui/react-icons';
 import type { ITextField, ITextFieldStyles } from '@fluentui/react/lib/TextField';
 import { TextField } from '@fluentui/react/lib/TextField';
 import { css } from '@fluentui/react/lib/Utilities';
-import React, { useEffect, useRef, useState } from 'react';
+import type React from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
+
+const CommentIcon = bundleIcon(Comment20Filled, Comment20Regular);
 
 export interface PanelHeaderCommentProps {
   comment?: string;
@@ -36,11 +39,12 @@ export const PanelHeaderComment = ({
 
   const commentLabel = intl.formatMessage({
     defaultMessage: 'Comment',
+    id: '1A1P5b',
     description: 'Comment Label',
   });
 
   const getCommentIcon = (): JSX.Element => {
-    return <Icon className={'msla-comment-icon'} ariaLabel={commentLabel} iconName="Comment" />;
+    return <CommentIcon className={'msla-comment-icon'} aria-label={commentLabel} />;
   };
 
   useEffect(() => {
@@ -52,6 +56,7 @@ export const PanelHeaderComment = ({
     const commentClassName = commentHasFocus ? 'msla-card-comment-focused' : 'msla-card-comment';
     const commentTitle = intl.formatMessage({
       defaultMessage: 'Comment',
+      id: 'OSHNZ2',
       description: 'Label for the comment textfield',
     });
 
@@ -101,8 +106,8 @@ export const PanelHeaderComment = ({
   };
   return (
     <div className="msla-panel-comment-container" hidden={isCollapsed}>
-      {!noNodeSelected ? getCommentIcon() : null}
-      {!noNodeSelected ? getCommentEditor() : null}
+      {noNodeSelected ? null : getCommentIcon()}
+      {noNodeSelected ? null : getCommentEditor()}
     </div>
   );
 };

@@ -2,7 +2,7 @@ import type { AppDispatch } from '../../../core';
 import { addOperation } from '../../../core/actions/bjsworkflow/add';
 import { useRelationshipIds, useIsParallelBranch, useIsAddingTrigger } from '../../../core/state/panel/panelSelectors';
 import { PrimaryButton, Text, TextField } from '@fluentui/react';
-import type { DiscoveryOperation, DiscoveryResultTypes } from '@microsoft/utils-logic-apps';
+import type { DiscoveryOperation, DiscoveryResultTypes } from '@microsoft/logic-apps-shared';
 import { useCallback, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
@@ -43,12 +43,14 @@ export const CustomSwaggerSelection = (props: CustomSwaggerSelectionProps) => {
 
   const inputLabel = intl.formatMessage({
     defaultMessage: 'Swagger Endpoint',
+    id: 'qUMXpq',
     description: 'Swagger endpoint input label',
   });
 
   const inputPlaceholder = intl.formatMessage(
     {
       defaultMessage: 'Example: {url}',
+      id: 'IHMd3X',
       description: 'Swagger url input placeholder',
     },
     {
@@ -58,6 +60,7 @@ export const CustomSwaggerSelection = (props: CustomSwaggerSelectionProps) => {
 
   const urlErrorMessage = intl.formatMessage({
     defaultMessage: 'Please enter a valid URL',
+    id: 'eHgfpz',
     description: 'Swagger url input error message',
   });
 
@@ -98,11 +101,13 @@ export const CustomSwaggerSelection = (props: CustomSwaggerSelectionProps) => {
       <PrimaryButton
         disabled={!readyToSubmit}
         onClick={() => {
-          if (!readyToSubmit) return;
+          if (!readyToSubmit) {
+            return;
+          }
           submitCallback();
         }}
       >
-        {intl.formatMessage({ defaultMessage: 'Add Action', description: 'Add action button text' })}
+        {intl.formatMessage({ defaultMessage: 'Add Action', id: '2vnYre', description: 'Add action button text' })}
       </PrimaryButton>
     </div>
   );

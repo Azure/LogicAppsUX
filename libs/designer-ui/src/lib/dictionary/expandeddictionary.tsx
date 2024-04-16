@@ -1,17 +1,19 @@
 import type { DictionaryEditorItemProps } from '.';
-import type { ChangeState, TokenPickerButtonEditorProps } from '..';
+import type { ChangeState, TokenPickerButtonEditorProps, ValueSegment } from '..';
 import type { GetTokenPickerHandler } from '../editor/base';
+import { isEmptySegments } from '../editor/base/utils/parsesegments';
 import { StringEditor } from '../editor/string';
 import { DictionaryDeleteButton } from './expandeddictionarydelete';
-import { isEmpty } from './util/helper';
-import { guid } from '@microsoft/utils-logic-apps';
+import { guid } from '@microsoft/logic-apps-shared';
 import { useRef } from 'react';
 import { useIntl } from 'react-intl';
 
-export enum ExpandedDictionaryEditorType {
-  KEY = 'key',
-  VALUE = 'value',
-}
+export const ExpandedDictionaryEditorType = {
+  KEY: 'key',
+  VALUE: 'value',
+} as const;
+export type ExpandedDictionaryEditorType = (typeof ExpandedDictionaryEditorType)[keyof typeof ExpandedDictionaryEditorType];
+
 export interface ExpandedDictionaryProps {
   items: DictionaryEditorItemProps[];
   readonly?: boolean;
@@ -22,6 +24,8 @@ export interface ExpandedDictionaryProps {
   setItems: (items: DictionaryEditorItemProps[]) => void;
   tokenPickerButtonProps?: TokenPickerButtonEditorProps;
   getTokenPicker: GetTokenPickerHandler;
+  tokenMapping?: Record<string, ValueSegment>;
+  loadParameterValueFromString?: (value: string) => ValueSegment[];
 }
 
 export const ExpandedDictionary = ({
@@ -39,10 +43,12 @@ export const ExpandedDictionary = ({
 
   const keyPlaceholder = intl.formatMessage({
     defaultMessage: 'Enter key',
+    id: 'pC2nr2',
     description: 'Placeholder text for Key',
   });
   const valuePlaceholder = intl.formatMessage({
     defaultMessage: 'Enter value',
+    id: 'zCsGWP',
     description: 'Placeholder text for Value',
   });
 
@@ -80,7 +86,7 @@ export const ExpandedDictionary = ({
                 className="msla-dictionary-editor-container-expanded"
                 placeholder={keyPlaceholder}
                 initialValue={item.key ?? []}
-                BasePlugins={{ tokens: true, clearEditor: true, autoFocus: false }}
+                basePlugins={{ tokens: true, clearEditor: true, autoFocus: false }}
                 onFocus={() => addItem(index)}
                 valueType={keyType}
                 editorBlur={(newState: ChangeState) => handleBlur(newState, index, ExpandedDictionaryEditorType.KEY)}
@@ -92,7 +98,7 @@ export const ExpandedDictionary = ({
                 className="msla-dictionary-editor-container-expanded"
                 placeholder={valuePlaceholder}
                 initialValue={item.value ?? []}
-                BasePlugins={{ tokens: true, autoFocus: false }}
+                basePlugins={{ tokens: true, autoFocus: false }}
                 onFocus={() => addItem(index)}
                 valueType={valueType}
                 editorBlur={(newState: ChangeState) => handleBlur(newState, index, ExpandedDictionaryEditorType.VALUE)}
@@ -104,4 +110,8 @@ export const ExpandedDictionary = ({
       })}
     </div>
   );
+};
+
+export const isEmpty = (item: DictionaryEditorItemProps) => {
+  return isEmptySegments(item.key) && isEmptySegments(item.value);
 };

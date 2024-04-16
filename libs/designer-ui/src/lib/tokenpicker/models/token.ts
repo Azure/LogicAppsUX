@@ -1,5 +1,5 @@
 import type { TokenType } from '../../editor';
-import type { OpenAPIV2 } from '@microsoft/utils-logic-apps';
+import type { OpenAPIV2 } from '@microsoft/logic-apps-shared';
 
 export interface Token {
   key: string;
@@ -25,6 +25,7 @@ export interface Token {
     schema?: OpenAPIV2.SchemaObject;
     actionName?: string;
     functionName?: string; // For now, the only allowed values are 'variables' and 'parameters'.
+    triggerName?: string; // If the outputToken is from a trigger, this will be the trigger name.
     functionArguments?: string[]; //For now, the only allowed values are 'variables' and 'parameters'.
   };
 }

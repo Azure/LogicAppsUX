@@ -1,5 +1,5 @@
 import { css, Icon, Image, ImageFit, Link } from '@fluentui/react';
-import { fallbackConnectorIconUrl } from '@microsoft/utils-logic-apps';
+import { fallbackConnectorIconUrl } from '@microsoft/logic-apps-shared';
 import { useMeasure } from '@react-hookz/web';
 import { useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -20,6 +20,7 @@ export const OperationGroupHeader = (props: OperationGroupHeaderProps) => {
 
   const readMoreText = intl.formatMessage({
     defaultMessage: 'Read more',
+    id: 'ZbCS4a',
     description: 'Text for read more button',
   });
   const ReadMoreButton = () => (
@@ -33,6 +34,7 @@ export const OperationGroupHeader = (props: OperationGroupHeaderProps) => {
 
   const readLessText = intl.formatMessage({
     defaultMessage: 'Read less',
+    id: 'SyFXM3',
     description: 'Text for read less button',
   });
   const ReadLessButton = () => (
@@ -43,6 +45,7 @@ export const OperationGroupHeader = (props: OperationGroupHeaderProps) => {
 
   const viewDocsText = intl.formatMessage({
     defaultMessage: 'View Documentation',
+    id: 'cK2A/V',
     description: 'Text for view docs button',
   });
 
@@ -56,7 +59,7 @@ export const OperationGroupHeader = (props: OperationGroupHeaderProps) => {
   return (
     <div id={id} className="msla-op-group-header">
       <Image className="msla-op-group-image" alt={title} src={imgSrc} imageFit={ImageFit.contain} />
-      <div className={css(`msla-op-group-info`, !descriptionExpanded && 'limited')}>
+      <div className={css('msla-op-group-info', !descriptionExpanded && 'limited')}>
         <div className="msla-op-group-title-row">
           <span className="msla-op-group-title">{title}</span>
           {docsUrl ? (

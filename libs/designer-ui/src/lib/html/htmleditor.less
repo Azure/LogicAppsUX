@@ -1,5 +1,6 @@
 .msla-html-editor-toolbar {
   display: flex;
+  justify-content: space-between;
   margin-bottom: 1px;
   background: #fff;
   padding: 4px;
@@ -13,7 +14,7 @@
     display: flex;
     background: none;
     border-radius: 10px;
-    padding: 8px;
+    padding: 8px 6px;
     cursor: pointer;
     vertical-align: middle;
     flex-shrink: 0;
@@ -32,7 +33,7 @@
     display: flex;
     opacity: 0.6;
   }
-  button.toolbar-item:disabled img.format {
+  button.toolbar-item:disabled img {
     opacity: 0.2;
   }
   button.toolbar-item.active {
@@ -67,7 +68,7 @@
       line-height: 20px;
       vertical-align: middle;
       font-size: 14px;
-      color: #777;
+      color: #757575;
       text-overflow: ellipsis;
       overflow: hidden;
       height: 20px;

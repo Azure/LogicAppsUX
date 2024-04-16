@@ -1,5 +1,4 @@
 import constants from '../../../constants';
-import { isApple } from '../../../helper';
 import fontColorSvgDark from '../icons/dark/font-color.svg';
 import linkDark from '../icons/dark/link.svg';
 import paintBucketSvgDark from '../icons/dark/paint-bucket.svg';
@@ -18,6 +17,7 @@ import { useTheme } from '@fluentui/react';
 import { $isLinkNode, TOGGLE_LINK_COMMAND } from '@lexical/link';
 import { $patchStyleText, $getSelectionStyleValueForProperty } from '@lexical/selection';
 import { mergeRegister } from '@lexical/utils';
+import { isApple } from '@microsoft/logic-apps-shared';
 import type { LexicalEditor } from 'lexical';
 import {
   COMMAND_PRIORITY_NORMAL,
@@ -140,65 +140,78 @@ export const Format = ({ activeEditor, readonly }: FormatProps) => {
   );
 
   const insertLink = useCallback(() => {
-    if (!isLink) {
-      activeEditor.dispatchCommand(TOGGLE_LINK_COMMAND, sanitizeUrl('https://'));
-    } else {
+    if (isLink) {
       activeEditor.dispatchCommand(TOGGLE_LINK_COMMAND, null);
+    } else {
+      activeEditor.dispatchCommand(TOGGLE_LINK_COMMAND, sanitizeUrl('https://'));
     }
   }, [activeEditor, isLink]);
 
   const boldTitleMac = intl.formatMessage({
     defaultMessage: 'Bold (⌘B)',
+    id: 'ciLkfU',
     description: 'Command for bold text for Mac users',
   });
   const boldTitleMacAriaLabel = intl.formatMessage({
     defaultMessage: 'Format text as bold. Shortcut: ⌘B',
+    id: 'S138/4',
     description: 'label to make bold text for Mac users',
   });
   const boldTitleNonMac = intl.formatMessage({
     defaultMessage: 'Bold (Ctrl+B)',
+    id: 'Lnqh6h',
     description: 'Command for bold text for non-mac users',
   });
   const boldTitleNonMacAriaLabel = intl.formatMessage({
     defaultMessage: 'Format text as bold. Shortcut: Ctrl+B',
+    id: 'YR1uWE',
     description: 'label to make bold text for nonMac users',
   });
 
   const italicTitleMac = intl.formatMessage({
     defaultMessage: 'Italic (⌘I)',
+    id: 'elD6+N',
     description: 'Command for italic text for Mac users',
   });
   const italicTitleMacAriaLabel = intl.formatMessage({
     defaultMessage: 'Format text as italic. Shortcut: ⌘I',
+    id: 'YdQw4/',
     description: 'label to make italic text for Mac users',
   });
   const italicTitleNonMac = intl.formatMessage({
     defaultMessage: 'Italic (Ctrl+I)',
+    id: 'dfmH55',
     description: 'Command for italic text for non-mac users',
   });
   const italicTitleNonMacAriaLabel = intl.formatMessage({
     defaultMessage: 'Format text as italic. Shortcut: Ctrl+I',
+    id: 'gIx5ys',
     description: 'label to make italic text for nonMac users',
   });
 
   const underlineTitleMac = intl.formatMessage({
     defaultMessage: 'Underline (⌘U)',
+    id: 'KYX5Do',
     description: 'Command for underline text for Mac users',
   });
   const underlineTitleMacAriaLabel = intl.formatMessage({
     defaultMessage: 'Format text as underline. Shortcut: ⌘U',
+    id: 'qBkxGU',
     description: 'label to make underline text for Mac users',
   });
   const underlineTitleNonMac = intl.formatMessage({
     defaultMessage: 'Underline (Ctrl+U)',
+    id: 'lwlg2K',
     description: 'Command for underline text for non-mac users',
   });
   const underlineTitleNonMacAriaLabel = intl.formatMessage({
     defaultMessage: 'Format text as underline. Shortcut: Ctrl+U',
+    id: 'YJlS8E',
     description: 'label to make underline text for nonMac users',
   });
   const insertLinkLabel = intl.formatMessage({
     defaultMessage: 'Insert Link',
+    id: 'tUCptx',
     description: 'label to insert link',
   });
 
@@ -209,7 +222,7 @@ export const Format = ({ activeEditor, readonly }: FormatProps) => {
         onClick={() => {
           activeEditor.dispatchCommand(FORMAT_TEXT_COMMAND, 'bold');
         }}
-        className={'toolbar-item spaced ' + (isBold ? 'active' : '')}
+        className={`toolbar-item spaced ${isBold ? 'active' : ''}`}
         title={isApple() ? boldTitleMac : boldTitleNonMac}
         aria-label={isApple() ? boldTitleMacAriaLabel : boldTitleNonMacAriaLabel}
         disabled={readonly}
@@ -221,7 +234,7 @@ export const Format = ({ activeEditor, readonly }: FormatProps) => {
         onClick={() => {
           activeEditor.dispatchCommand(FORMAT_TEXT_COMMAND, 'italic');
         }}
-        className={'toolbar-item spaced ' + (isItalic ? 'active' : '')}
+        className={`toolbar-item spaced ${isItalic ? 'active' : ''}`}
         title={isApple() ? italicTitleMac : italicTitleNonMac}
         aria-label={isApple() ? italicTitleMacAriaLabel : italicTitleNonMacAriaLabel}
         disabled={readonly}
@@ -233,7 +246,7 @@ export const Format = ({ activeEditor, readonly }: FormatProps) => {
         onClick={() => {
           activeEditor.dispatchCommand(FORMAT_TEXT_COMMAND, 'underline');
         }}
-        className={'toolbar-item spaced ' + (isUnderline ? 'active' : '')}
+        className={`toolbar-item spaced ${isUnderline ? 'active' : ''}`}
         title={isApple() ? underlineTitleMac : underlineTitleNonMac}
         aria-label={isApple() ? underlineTitleMacAriaLabel : underlineTitleNonMacAriaLabel}
         disabled={readonly}
@@ -241,9 +254,10 @@ export const Format = ({ activeEditor, readonly }: FormatProps) => {
         <img className={'format'} src={isInverted ? underlineDark : underlineLight} alt={'underline icon'} />
       </button>
       <button
+        onMouseDown={(e) => e.preventDefault()}
         disabled={readonly}
         onClick={insertLink}
-        className={'toolbar-item spaced ' + (isLink ? 'active' : '')}
+        className={`toolbar-item spaced ${isLink ? 'active' : ''}`}
         aria-label={insertLinkLabel}
         title={insertLinkLabel}
       >

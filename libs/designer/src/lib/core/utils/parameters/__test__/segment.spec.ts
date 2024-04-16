@@ -2,8 +2,8 @@ import { ParameterIcon, VariableIcon } from '../helper';
 import { ValueSegmentConvertor } from '../segment';
 import type { ValueSegment } from '@microsoft/designer-ui';
 import { TokenType, ValueSegmentType } from '@microsoft/designer-ui';
-import { convertToStringLiteral, OutputSource } from '@microsoft/parsers-logic-apps';
-
+import { convertToStringLiteral, OutputSource } from '@microsoft/logic-apps-shared';
+import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 describe('core/utils/parameters/segment', () => {
   describe('ValueSegmentConvertor', () => {
     it('should convert primatives to token segment successfully.', () => {
@@ -50,9 +50,6 @@ describe('core/utils/parameters/segment', () => {
 
     it('should convert template expression to token segment successfully with uncasting.', () => {
       const convertor = new ValueSegmentConvertor({
-        repetitionContext: {
-          repetitionReferences: [],
-        },
         shouldUncast: true,
         rawModeEnabled: true,
       });
@@ -194,7 +191,7 @@ describe('core/utils/parameters/segment', () => {
       expectLiteralSegment(segments[8], ': ');
       expectLiteralSegment(segments[9], '"');
       expectOutputTokenSegment(segments[10], undefined, OutputSource.Body, 'foo', 'outputs.$.body.foo', undefined, true);
-      expectVariableTokenSegment(segments[11], 'v');
+      expectVariableTokenSegment(segments[11], 'v', "variables('v')");
       expectLiteralSegment(segments[12], '"');
       expectLiteralSegment(segments[13], ',\n  ');
       expectLiteralSegment(segments[14], '"expression"');
@@ -205,9 +202,6 @@ describe('core/utils/parameters/segment', () => {
 
     it('should convert FX token expression to token segment successfully.', () => {
       const convertor = new ValueSegmentConvertor({
-        repetitionContext: {
-          repetitionReferences: [],
-        },
         shouldUncast: false,
         rawModeEnabled: true,
       });
@@ -259,7 +253,7 @@ export function expectExpressionTokenSegment(segment: ValueSegment | undefined |
   expect(segment?.value).toEqual(value);
 }
 
-export function expectVariableTokenSegment(segment: ValueSegment | undefined | null, variableName: string, value?: string): void {
+export function expectVariableTokenSegment(segment: ValueSegment | undefined | null, variableName: string, value: string): void {
   expect(segment).toBeDefined();
   expect(segment).not.toBeNull();
   expect(segment?.type).toEqual(ValueSegmentType.TOKEN);
@@ -269,7 +263,7 @@ export function expectVariableTokenSegment(segment: ValueSegment | undefined | n
     key: variableName,
     name: variableName,
     title: variableName,
-    value: variableName,
+    value: value,
     description: variableName,
     brandColor: '#770bd6',
     icon: VariableIcon,

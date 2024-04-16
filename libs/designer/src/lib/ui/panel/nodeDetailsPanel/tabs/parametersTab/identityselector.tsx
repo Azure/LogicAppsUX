@@ -6,9 +6,8 @@ import type { AppDispatch, RootState } from '../../../../../core/store';
 import { getConnectionReference, isIdentityPresentInLogicApp } from '../../../../../core/utils/connectors/connections';
 import type { IDropdownOption, IDropdownStyles } from '@fluentui/react';
 import { Dropdown, FontSizes, Label } from '@fluentui/react';
-import { WorkflowService } from '@microsoft/designer-client-services-logic-apps';
-import type { ManagedIdentity } from '@microsoft/utils-logic-apps';
-import { isIdentityAssociatedWithLogicApp, equals, getIdentityDropdownOptions } from '@microsoft/utils-logic-apps';
+import { WorkflowService, isIdentityAssociatedWithLogicApp, equals, getIdentityDropdownOptions } from '@microsoft/logic-apps-shared';
+import type { ManagedIdentity } from '@microsoft/logic-apps-shared';
 import type { FormEvent } from 'react';
 import { useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -65,11 +64,13 @@ export const IdentitySelector = (props: IdentitySelectorProps) => {
               ? intl.formatMessage({
                   defaultMessage:
                     'The managed identity used with this operation no longer exists. To continue, select an available identity or change the connection.',
+                  id: 'Xj4xwI',
                   description: 'Erorr mesade when managed identity is not present in logic apps',
                 })
               : intl.formatMessage({
                   defaultMessage:
                     'The managed identity used with this operation no longer exists. To continue, set up an identity or change the connection.',
+                  id: '08e2rO',
                   description: 'Error message when logic app doesnt have managed identities',
                 }),
           },
@@ -88,15 +89,17 @@ export const IdentitySelector = (props: IdentitySelectorProps) => {
 
   const labelText = intl.formatMessage({
     defaultMessage: 'Managed identity',
+    id: 'dL9V5t',
     description: 'Text to show label for managed identity selector',
   });
   const placeholderText = intl.formatMessage({
     defaultMessage: 'Select a managed identity',
+    id: 'BrWQ0Z',
     description: 'Placeholder text for identity selection',
   });
 
   return (
-    <div className="connection-info">
+    <div className="identity-selector">
       <Label className="label">{labelText}</Label>
       <Dropdown
         ariaLabel={labelText}

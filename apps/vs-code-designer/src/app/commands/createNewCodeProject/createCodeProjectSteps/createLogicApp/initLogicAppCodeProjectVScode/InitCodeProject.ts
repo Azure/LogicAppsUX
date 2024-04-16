@@ -14,7 +14,7 @@ import {
   launchFileName,
   extensionsFileName,
   extensionCommand,
-  functionsExtensionId,
+  logicAppsStandardExtensionId,
 } from '../../../../../../constants';
 import { ext } from '../../../../../../extensionVariables';
 import { localize } from '../../../../../../localize';
@@ -47,8 +47,8 @@ import type {
   ITasksJson,
   ILaunchJson,
   IExtensionsJson,
-} from '@microsoft/vscode-extension';
-import { WorkflowProjectType, FuncVersion } from '@microsoft/vscode-extension';
+} from '@microsoft/vscode-extension-logic-apps';
+import { WorkflowProjectType, FuncVersion } from '@microsoft/vscode-extension-logic-apps';
 import * as fse from 'fs-extra';
 import * as path from 'path';
 import type { TaskDefinition, DebugConfiguration, WorkspaceFolder } from 'vscode';
@@ -118,37 +118,43 @@ export abstract class InitCodeProject extends AzureWizardExecuteStep<IProjectWiz
   public async overwriteTasksJson(context: IProjectWizardContext): Promise<void> {
     const tasksJsonPath: string = path.join(context.projectPath, '.vscode', 'Tasks.json');
     const tasksJsonContent = `{
-    "version": "2.0.0",
-    "tasks": [
-      {
-        "label": "generateDebugSymbols",
-        "command": "dotnet",
-        "args": [
-          "\${input:getDebugSymbolDll}"
+        "version": "2.0.0",
+        "tasks": [
+          {
+            "label": "generateDebugSymbols",
+            "command": '\${config:azureLogicAppsStandard.dotnetBinaryPath}',
+            "args": [
+              "\${input:getDebugSymbolDll}"
+            ],
+            "type": "process",
+            "problemMatcher": "$msCompile"
+          },
+          {
+            "type": "shell",
+            "command":"\${config:azureLogicAppsStandard.funcCoreToolsBinaryPath}",
+            "args" : ["host", "start"],
+            "options": {
+              "env": {
+                "PATH": "\${config:azureLogicAppsStandard.autoRuntimeDependenciesPath}\\\\NodeJs;\${config:azureLogicAppsStandard.autoRuntimeDependenciesPath}\\\\DotNetSDK;$env:PATH"
+              }
+            },
+            "problemMatcher": "$func-watch",
+            "isBackground": true,
+            "label": "func: host start",
+            "group": {
+              "kind": "build",
+              "isDefault": true
+            }
+          }
         ],
-        "type": "process",
-        "problemMatcher": "$msCompile"
-      },
-      {
-        "type": "func",
-        "command": "host start",
-        "problemMatcher": "$func-watch",
-        "isBackground": true,
-        "label": "func: host start",
-        "group": {
-          "kind": "build",
-          "isDefault": true
-        }
-      }
-    ],
-    "inputs": [
-      {
-        "id": "getDebugSymbolDll",
-        "type": "command",
-        "command": "azureLogicAppsStandard.getDebugSymbolDll"
-      }
-    ]
-  }`;
+        "inputs": [
+          {
+            "id": "getDebugSymbolDll",
+            "type": "command",
+            "command": "azureLogicAppsStandard.getDebugSymbolDll"
+          }
+        ]
+      }`;
 
     if (await confirmOverwriteFile(context, tasksJsonPath)) {
       await fse.writeFile(tasksJsonPath, tasksJsonContent);
@@ -219,9 +225,8 @@ export abstract class InitCodeProject extends AzureWizardExecuteStep<IProjectWiz
                 // Worst case the user has an extra task in their tasks.json
                 return false;
             }
-          } else {
-            return false;
           }
+          return false;
         })
     );
     existingTasks.push(...newTasks);
@@ -229,7 +234,7 @@ export abstract class InitCodeProject extends AzureWizardExecuteStep<IProjectWiz
   }
 
   private insertNewTaskInputs(context: IProjectWizardContext, existingInputs: ITaskInputs[] = [], newInputs: ITaskInputs[]): ITaskInputs[] {
-    if (context.workflowProjectType == WorkflowProjectType.Bundle) {
+    if (context.workflowProjectType === WorkflowProjectType.Bundle) {
       // Remove inputs that match the ones we're about to add
       existingInputs = existingInputs.filter(
         (t1) =>
@@ -347,7 +352,7 @@ export abstract class InitCodeProject extends AzureWizardExecuteStep<IProjectWiz
   private async writeExtensionsJson(context: IActionContext, vscodePath: string, language: ProjectLanguage): Promise<void> {
     const extensionsJsonPath: string = path.join(vscodePath, extensionsFileName);
     await confirmEditJsonFile(context, extensionsJsonPath, (data: IExtensionsJson): Record<string, any> => {
-      const recommendations: string[] = [functionsExtensionId];
+      const recommendations: string[] = [logicAppsStandardExtensionId];
       if (this.getRecommendedExtensions) {
         recommendations.push(...this.getRecommendedExtensions(language));
       }

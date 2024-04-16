@@ -1,51 +1,80 @@
-import LogicApps from '../images/LogicApps.svg';
-import { FontSizes } from '@fluentui/react';
+import Workflow from '../images/Workflow.svg';
+import { FontSizes, Link } from '@fluentui/react';
+import { Tooltip } from '@fluentui/react-components';
+import { ShieldCheckmarkRegular } from '@fluentui/react-icons';
 import { IconButton } from '@fluentui/react/lib/Button';
+import { LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
 import { useIntl } from 'react-intl';
 
 interface CopilotPanelHeaderProps {
-  collapsed: boolean;
-  toggleCollapse: (b: boolean) => void;
+  closeCopilot: () => void;
 }
 
-export const CopilotPanelHeader = ({ collapsed, toggleCollapse }: CopilotPanelHeaderProps): JSX.Element => {
+export const CopilotPanelHeader = ({ closeCopilot }: CopilotPanelHeaderProps): JSX.Element => {
   const intl = useIntl();
   const headerTitle = intl.formatMessage({
-    defaultMessage: 'Copilot',
+    defaultMessage: 'Workflow assistant',
+    id: '2Gh+Gd',
     description: 'Chatbot header title',
   });
-  const pillText = intl.formatMessage({
-    defaultMessage: 'In-Development',
-    description: 'Label in the chatbot header stating the chatbot feature is still in-development',
+  const subtitleText = intl.formatMessage({
+    defaultMessage: 'Preview',
+    id: 'tu4TTM',
+    description: 'Label in the chatbot header stating the chatbot feature is a preview',
   });
-
-  const collapseButtonTitle = intl.formatMessage({
-    defaultMessage: 'Collapse',
-    description: 'Label for the collapse button in the chatbot header',
+  const protectedPillText = intl.formatMessage({
+    defaultMessage: 'Protected',
+    id: '+3rROX',
+    description: 'Label in the chatbot header stating that the users information is protected in this chatbot',
   });
-  const expandButtonTitle = intl.formatMessage({
-    defaultMessage: 'Expand',
-    description: 'Label for the expand button in the chatbot header',
+  const protectedMessage = intl.formatMessage({
+    defaultMessage: 'Your personal and company data are protected in this chat',
+    id: 'Yrw/Qt',
+    description: 'Letting user know that their data is protected in the chatbot',
+  });
+  const closeButtonTitle = intl.formatMessage({
+    defaultMessage: 'Close',
+    id: 'ZihyUf',
+    description: 'Label for the close button in the chatbot header',
   });
 
   return (
-    <div className={collapsed ? 'msla-chatbot-header-collapsed' : 'msla-chatbot-header'}>
-      {collapsed ? null : (
-        <>
-          <div className={'msla-chatbot-header-icon'}>
-            <img src={LogicApps} alt="Logic Apps" />
+    <div className={'msla-chatbot-header'}>
+      <div className={'msla-chatbot-header-icon'}>
+        <img src={Workflow} alt="Logic Apps" />
+      </div>
+      <div className={'msla-chatbot-header-title-container'}>
+        <div className={'msla-chatbot-header-title'}>{headerTitle}</div>
+        <div className={'msla-chatbot-header-subtitle'}>{subtitleText}</div>
+      </div>
+      <div>
+        <Tooltip content={protectedMessage} relationship="label" positioning="below" withArrow>
+          <div className={'msla-chatbot-header-mode-protected-pill'}>
+            <ShieldCheckmarkRegular className="shield-checkmark-regular" />
+            <Link
+              className="msla-protectedmessage-link"
+              onClick={() => {
+                window.open('https://aka.ms/azurecopilot/privacystatement', '_blank');
+                LoggerService().log({
+                  level: LogEntryLevel.Warning,
+                  area: 'chatbot',
+                  message: 'protection link opened',
+                });
+              }}
+              underline={true}
+            >
+              {protectedPillText}
+            </Link>
           </div>
-          <div className={'msla-chatbot-header-title'}>{headerTitle}</div>
-          <div className={'msla-chatbot-header-mode-pill'}>{pillText}</div>{' '}
-        </>
-      )}
+        </Tooltip>
+      </div>
       <IconButton
         className={'msla-chatbot-collapse-button'}
-        title={collapsed ? expandButtonTitle : collapseButtonTitle}
+        title={closeButtonTitle}
         styles={{ icon: { fontSize: FontSizes.small } }}
-        iconProps={{ iconName: collapsed ? 'DoubleChevronRight' : 'DoubleChevronLeft' }}
+        iconProps={{ iconName: 'Clear' }}
         onClick={() => {
-          toggleCollapse(!collapsed);
+          closeCopilot();
         }}
       />
     </div>

@@ -9,7 +9,7 @@ import { getWorkspaceSetting, updateWorkspaceSetting } from './settings';
 import { getTasks, updateTasks } from './tasks';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { DialogResponses } from '@microsoft/vscode-azext-utils';
-import type { ProjectLanguage, ITask } from '@microsoft/vscode-extension';
+import type { ProjectLanguage, ITask } from '@microsoft/vscode-extension-logic-apps';
 import type { WorkspaceFolder, MessageItem } from 'vscode';
 
 interface IVerifyFrameworkResult {

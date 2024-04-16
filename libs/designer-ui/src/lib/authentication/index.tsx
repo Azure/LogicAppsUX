@@ -11,25 +11,25 @@ import { CollapsedAuthentication } from './CollapsedAuthentication';
 import { MSIAuthentication } from './MSIAuth/MSIAuth';
 import { RawAuthentication } from './RawAuth';
 import { parseAuthEditor } from './util';
-import { useBoolean } from '@fluentui/react-hooks';
 import type { IDropdownOption } from '@fluentui/react/lib/Dropdown';
-import { getIntl } from '@microsoft/intl-logic-apps';
-import type { ManagedIdentity } from '@microsoft/utils-logic-apps';
-import { AssertionErrorCode, AssertionException, format } from '@microsoft/utils-logic-apps';
+import { AssertionErrorCode, AssertionException, format, getIntl } from '@microsoft/logic-apps-shared';
+import type { ManagedIdentity } from '@microsoft/logic-apps-shared';
 import { useUpdateEffect } from '@react-hookz/web';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
 
 export { AuthenticationOAuthType } from './AADOAuth/AADOAuth';
 
-export enum AuthenticationType {
-  NONE = 'None',
-  BASIC = 'Basic',
-  CERTIFICATE = 'ClientCertificate',
-  OAUTH = 'ActiveDirectoryOAuth',
-  RAW = 'Raw',
-  MSI = 'ManagedServiceIdentity',
-}
+export const AuthenticationType = {
+  NONE: 'None',
+  BASIC: 'Basic',
+  CERTIFICATE: 'ClientCertificate',
+  OAUTH: 'ActiveDirectoryOAuth',
+  RAW: 'Raw',
+  MSI: 'ManagedServiceIdentity',
+} as const;
+export type AuthenticationType = (typeof AuthenticationType)[keyof typeof AuthenticationType];
+
 export interface BasicProps {
   basicUsername?: ValueSegment[];
   basicPassword?: ValueSegment[];
@@ -85,26 +85,23 @@ export const AuthenticationEditor = ({
   getTokenPicker,
   onChange,
   readonly,
+  tokenMapping,
+  loadParameterValueFromString,
   ...props
 }: AuthenticationEditorProps): JSX.Element => {
   const intl = useIntl();
-  const [codeView, { toggle: toggleCodeView }] = useBoolean(initializeCollapsedView(initialValue));
+  const [expandedView, setExpandedView] = useState<boolean>(!isTokenValueSegment(initialValue));
+  const [collapsedErrorMessage, setCollapsedErrorMessage] = useState('');
   const [option, setOption] = useState<AuthenticationType>(type);
   const [collapsedValue, setCollapsedValue] = useState(initialValue);
   const [currentProps, setCurrentProps] = useState<AuthProps>(authenticationValue);
-  const [isValid, setIsValid] = useState(false);
   const { basic = {}, clientCertificate = {}, raw = {}, msi = {}, aadOAuth = {} } = currentProps;
 
-  const serializeCollapsedValue = (value: ValueSegment[]): void => {
-    if (isTokenValueSegment(value)) {
-      onChange?.({
-        value: value,
-        viewModel: {
-          type: AuthenticationType.NONE,
-          authenticationValue: { basic: {}, clientCertificate: {}, raw: {}, msi: {}, aadOAuth: {} },
-        },
-      });
-    }
+  const serializeCodeCollapsedValue = (value: ValueSegment[]): void => {
+    setCollapsedValue(value);
+    onChange?.({
+      value: value,
+    });
   };
 
   useUpdateEffect(() => {
@@ -120,9 +117,11 @@ export const AuthenticationEditor = ({
           <BasicAuthentication
             basicProps={basic}
             tokenPickerButtonProps={props.tokenPickerButtonProps}
-            getTokenPicker={getTokenPicker}
             readonly={readonly}
             setCurrentProps={setCurrentProps}
+            getTokenPicker={getTokenPicker}
+            tokenMapping={tokenMapping}
+            loadParameterValueFromString={loadParameterValueFromString}
           />
         );
       case AuthenticationType.CERTIFICATE:
@@ -130,9 +129,11 @@ export const AuthenticationEditor = ({
           <CertificateAuthentication
             clientCertificateProps={clientCertificate}
             tokenPickerButtonProps={props.tokenPickerButtonProps}
-            getTokenPicker={getTokenPicker}
             readonly={readonly}
             setCurrentProps={setCurrentProps}
+            getTokenPicker={getTokenPicker}
+            tokenMapping={tokenMapping}
+            loadParameterValueFromString={loadParameterValueFromString}
           />
         );
       case AuthenticationType.RAW:
@@ -143,6 +144,8 @@ export const AuthenticationEditor = ({
             readonly={readonly}
             getTokenPicker={getTokenPicker}
             setCurrentProps={setCurrentProps}
+            tokenMapping={tokenMapping}
+            loadParameterValueFromString={loadParameterValueFromString}
           />
         );
       case AuthenticationType.MSI:
@@ -152,8 +155,10 @@ export const AuthenticationEditor = ({
             msiProps={msi}
             readonly={readonly}
             tokenPickerButtonProps={props.tokenPickerButtonProps}
-            getTokenPicker={getTokenPicker}
             setCurrentProps={setCurrentProps}
+            getTokenPicker={getTokenPicker}
+            tokenMapping={tokenMapping}
+            loadParameterValueFromString={loadParameterValueFromString}
           />
         );
       case AuthenticationType.OAUTH:
@@ -162,8 +167,10 @@ export const AuthenticationEditor = ({
             OauthProps={aadOAuth}
             readonly={readonly}
             tokenPickerButtonProps={props.tokenPickerButtonProps}
-            getTokenPicker={getTokenPicker}
             setCurrentProps={setCurrentProps}
+            getTokenPicker={getTokenPicker}
+            tokenMapping={tokenMapping}
+            loadParameterValueFromString={loadParameterValueFromString}
           />
         );
       case AuthenticationType.NONE:
@@ -185,34 +192,25 @@ export const AuthenticationEditor = ({
 
   const authenticationTypeLabel = intl.formatMessage({
     defaultMessage: 'Authentication Type',
+    id: 'ADM1Z8',
     description: 'Label for Authentication Type dropdown',
   });
 
   const expandedLabel: string = intl.formatMessage({
     defaultMessage: 'Switch to code view mode',
+    id: '8LhQeL',
     description: 'Label for editor toggle button when in expanded mode',
   });
 
   const collapsedLabel: string = intl.formatMessage({
     defaultMessage: 'Switch to default view mode',
+    id: 'qij+Vf',
     description: 'Label for editor toggle button when in collapsed mode',
   });
 
   return (
     <div className="msla-authentication-editor-container">
-      {codeView ? (
-        <CollapsedAuthentication
-          collapsedValue={collapsedValue}
-          isValid={isValid}
-          setCollapsedValue={setCollapsedValue}
-          getTokenPicker={getTokenPicker}
-          setIsValid={setIsValid}
-          setCurrentProps={setCurrentProps}
-          setOption={setOption}
-          serializeValue={serializeCollapsedValue}
-          readonly={readonly}
-        />
-      ) : (
+      {expandedView ? (
         <div className="msla-authentication-editor-expanded-container">
           <AuthenticationDropdown
             readonly={readonly}
@@ -223,13 +221,28 @@ export const AuthenticationEditor = ({
           />
           {renderAuthentication()}
         </div>
+      ) : (
+        <>
+          <CollapsedAuthentication
+            collapsedValue={collapsedValue}
+            setErrorMessage={setCollapsedErrorMessage}
+            setCurrentProps={setCurrentProps}
+            setOption={setOption}
+            serializeValue={serializeCodeCollapsedValue}
+            readonly={readonly}
+            getTokenPicker={getTokenPicker}
+            tokenMapping={tokenMapping}
+            loadParameterValueFromString={loadParameterValueFromString}
+          />
+          <div className="msla-auth-editor-validation">{collapsedErrorMessage}</div>
+        </>
       )}
       <div className="msla-authentication-default-view-mode">
         <EditorCollapseToggle
-          label={codeView ? collapsedLabel : expandedLabel}
-          collapsed={codeView}
-          toggleCollapsed={toggleCodeView}
-          disabled={codeView && !isValid}
+          label={expandedView ? expandedLabel : collapsedLabel}
+          collapsed={!expandedView}
+          toggleCollapsed={() => setExpandedView(!expandedView)}
+          disabled={!expandedView && (isTokenValueSegment(collapsedValue) || collapsedErrorMessage.length > 0)}
         />
       </div>
     </div>
@@ -243,37 +256,34 @@ const getAuthenticationTypes = (supportedTypes: AuthenticationType[]): IDropdown
       case AuthenticationType.BASIC:
         return {
           key: type,
-          text: intl.formatMessage({ defaultMessage: 'Basic', description: 'Authentication type' }),
+          text: intl.formatMessage({ defaultMessage: 'Basic', id: 'tUlRzr', description: 'Authentication type' }),
         };
       case AuthenticationType.CERTIFICATE:
         return {
           key: type,
-          text: intl.formatMessage({ defaultMessage: 'Client Certificate', description: 'Authentication type' }),
+          text: intl.formatMessage({ defaultMessage: 'Client Certificate', id: 'sys5gu', description: 'Authentication type' }),
         };
 
       case AuthenticationType.OAUTH:
         return {
           key: type,
-          text: intl.formatMessage({ defaultMessage: 'Active Directory OAuth', description: 'Authentication type' }),
+          text: intl.formatMessage({ defaultMessage: 'Active Directory OAuth', id: 'n4V2Hi', description: 'Authentication type' }),
         };
 
       case AuthenticationType.RAW:
         return {
           key: type,
-          text: intl.formatMessage({ defaultMessage: 'Raw', description: 'Authentication type' }),
+          text: intl.formatMessage({ defaultMessage: 'Raw', id: 'Tayrub', description: 'Authentication type' }),
         };
 
       case AuthenticationType.MSI:
         return {
           key: type,
-          text: intl.formatMessage({ defaultMessage: 'Managed Identity', description: 'Authentication type' }),
+          text: intl.formatMessage({ defaultMessage: 'Managed Identity', id: 'iSb/hp', description: 'Authentication type' }),
         };
 
       default:
         return { key: type, text: type };
     }
   });
-};
-const initializeCollapsedView = (initialValue: ValueSegment[]): boolean => {
-  return isTokenValueSegment(initialValue);
 };

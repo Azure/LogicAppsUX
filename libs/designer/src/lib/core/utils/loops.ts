@@ -22,15 +22,14 @@ import {
   getParameterFromName,
   parameterValueToString,
   shouldIncludeSelfForRepetitionReference,
+  getCustomCodeFilesWithData,
 } from './parameters/helper';
 import { isTokenValueSegment } from './parameters/segment';
 import { TokenSegmentConvertor } from './parameters/tokensegment';
 import { getSplitOnValue } from './setting';
-import { foreachOperationInfo, OperationManifestService } from '@microsoft/designer-client-services-logic-apps';
-import type { OutputToken, Token } from '@microsoft/designer-ui';
-import { TokenType } from '@microsoft/designer-ui';
-import type { Dereference, Expression, ExpressionFunction, ExpressionLiteral, Segment } from '@microsoft/parsers-logic-apps';
 import {
+  foreachOperationInfo,
+  OperationManifestService,
   OutputKeys,
   containsWildIndexSegment,
   convertToStringLiteral,
@@ -44,9 +43,22 @@ import {
   isTemplateExpression,
   parseEx,
   SegmentType,
-} from '@microsoft/parsers-logic-apps';
-import type { OperationManifest } from '@microsoft/utils-logic-apps';
-import { clone, equals, first, isNullOrUndefined } from '@microsoft/utils-logic-apps';
+  clone,
+  equals,
+  first,
+  getRecordEntry,
+  isNullOrUndefined,
+} from '@microsoft/logic-apps-shared';
+import type { OutputToken, Token } from '@microsoft/designer-ui';
+import { TokenType } from '@microsoft/designer-ui';
+import type {
+  Dereference,
+  Expression,
+  ExpressionFunction,
+  ExpressionLiteral,
+  Segment,
+  OperationManifest,
+} from '@microsoft/logic-apps-shared';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 
 interface ImplicitForeachArrayDetails {
@@ -70,8 +82,13 @@ export const shouldAddForeach = async (
     return { shouldAdd: false };
   }
 
-  const operationInfo = state.operations.operationInfo[nodeId];
-  const parameter = getParameterFromId(state.operations.inputParameters[nodeId], parameterId);
+  const operationInfo = getRecordEntry(state.operations.operationInfo, nodeId);
+  if (!operationInfo) {
+    return { shouldAdd: false };
+  }
+
+  const inputParameters = getRecordEntry(state.operations.inputParameters, nodeId) ?? { parameterGroups: {} };
+  const parameter = getParameterFromId(inputParameters, parameterId);
   const manifest = OperationManifestService().isSupported(operationInfo.type, operationInfo.kind)
     ? await getOperationManifest(operationInfo)
     : undefined;
@@ -138,10 +155,14 @@ export const addForeachToNode = createAsyncThunk(
 
       // Initializing details for newly added foreach operation.
       const foreachOperation = newState.workflow.operations[foreachNodeId];
+      const customCodeWithData = getCustomCodeFilesWithData(state.customCode);
       const [{ nodeInputs, nodeOutputs, nodeDependencies, settings }] = (await initializeOperationDetailsForManifest(
         foreachNodeId,
         foreachOperation,
+        customCodeWithData,
         /* isTrigger */ false,
+        state.workflow.workflowKind,
+        state.designerOptions.hostOptions.forceEnableSplitOn ?? false,
         dispatch
       )) as NodeDataWithOperationMetadata[];
 
@@ -186,14 +207,19 @@ export const addForeachToNode = createAsyncThunk(
   }
 );
 
+interface GetRepetitionNodeIdsOptions {
+  includeSelf?: boolean;
+  ignoreUntil?: boolean;
+}
+
 export const getRepetitionNodeIds = (
   nodeId: string,
   nodesMetadata: NodesMetadata,
   operationInfos: Record<string, NodeOperation>,
-  includeSelf?: boolean
+  { includeSelf = false, ignoreUntil = false }: GetRepetitionNodeIdsOptions = {}
 ): string[] => {
   const allParentNodeIds = getAllParentsForNode(nodeId, nodesMetadata);
-  const repetitionNodeIds = allParentNodeIds.filter((parentId) => isLoopingNode(parentId, operationInfos));
+  const repetitionNodeIds = allParentNodeIds.filter((parentId) => isLoopingNode(parentId, operationInfos, ignoreUntil));
 
   if (includeSelf) {
     repetitionNodeIds.unshift(nodeId);
@@ -211,7 +237,7 @@ export const getRepetitionContext = async (
   splitOn: string | undefined,
   idReplacements?: Record<string, string>
 ): Promise<RepetitionContext> => {
-  const repetitionNodeIds = getRepetitionNodeIds(nodeId, nodesMetadata, operationInfos, includeSelf);
+  const repetitionNodeIds = getRepetitionNodeIds(nodeId, nodesMetadata, operationInfos, { includeSelf });
   const repetitionReferences = (
     await Promise.all(
       repetitionNodeIds.map((repetitionNodeId) => getRepetitionReference(repetitionNodeId, operationInfos, allInputs, idReplacements))
@@ -342,7 +368,8 @@ const getParentArrayExpression = (
         equals(tokenOwnerActionName, repetitionReference.repetitionStep))
     ) {
       return { expression: repetitionReference.repetitionValue, output: parentArrayOutput, token: parentArrayTokenInfo };
-    } else if (
+    }
+    if (
       isAncestorKey(sanitizedParentArrayKey, repetitionReference.repetitionPath) &&
       ((isNullOrUndefined(tokenOwnerActionName) && isNullOrUndefined(repetitionReference.repetitionStep)) ||
         equals(tokenOwnerActionName, repetitionReference.repetitionStep))
@@ -386,7 +413,7 @@ const checkArrayInRepetition = (
   }
 
   if (areOutputsManifestBased && tokenKey) {
-    const method = getTokenExpressionMethodFromKey(tokenKey, actionName);
+    const method = getTokenExpressionMethodFromKey(tokenKey, actionName, outputInfo?.source);
     const sanitizedValue = `@${generateExpressionFromKey(
       method,
       tokenKey,
@@ -402,9 +429,9 @@ const checkArrayInRepetition = (
 
 // Directly checking the node type, because cannot make async calls while adding token from picker to editor.
 // TODO - See if this can be made async and looked at manifest.
-export const isLoopingNode = (nodeId: string, operationInfos: Record<string, NodeOperation>): boolean => {
-  const nodeType = operationInfos[nodeId]?.type;
-  return equals(nodeType, Constants.NODE.TYPE.FOREACH) || equals(nodeType, Constants.NODE.TYPE.UNTIL);
+export const isLoopingNode = (nodeId: string, operationInfos: Record<string, NodeOperation>, ignoreUntil: boolean): boolean => {
+  const nodeType = getRecordEntry(operationInfos, nodeId)?.type;
+  return equals(nodeType, Constants.NODE.TYPE.FOREACH) || (!ignoreUntil && equals(nodeType, Constants.NODE.TYPE.UNTIL));
 };
 
 export const getForeachActionName = (
@@ -430,18 +457,15 @@ export const isForeachActionNameForLoopsource = (
   operations: Operations,
   nodesMetadata: NodesMetadata
 ): boolean => {
-  const operationInfos = Object.keys(operations).reduce(
-    (result: Record<string, NodeOperation>, operationId) => ({
-      ...result,
-      [operationId]: {
-        type: operations[operationId]?.type,
-        kind: operations[operationId]?.kind,
-        connectorId: '',
-        operationId: '',
-      },
-    }),
-    {}
-  );
+  const operationInfos: Record<string, NodeOperation> = {};
+  for (const operationId of Object.keys(operations)) {
+    operationInfos[operationId] = {
+      type: operations[operationId]?.type,
+      kind: operations[operationId]?.kind,
+      connectorId: '',
+      operationId: '',
+    };
+  }
   const repetitionNodeIds = getRepetitionNodeIds(nodeId, nodesMetadata, operationInfos);
   const sanitizedPath = sanitizeKey(expression);
   const foreachAction = first((item) => {
@@ -463,12 +487,16 @@ const getRepetitionReference = async (
   allInputs: Record<string, NodeInputs>,
   idReplacements?: Record<string, string>
 ): Promise<RepetitionReference | undefined> => {
-  const operationInfo = operationInfos[nodeId];
+  const operationInfo = getRecordEntry(operationInfos, nodeId);
+  if (!operationInfo) {
+    return undefined;
+  }
   const service = OperationManifestService();
   if (service.isSupported(operationInfo.type, operationInfo.kind)) {
     const manifest = await getOperationManifest(operationInfo);
     const parameterName = manifest.properties.repetition?.loopParameter;
-    const parameter = parameterName ? getParameterFromName(allInputs[nodeId], parameterName) : undefined;
+    const nodeInputs = getRecordEntry(allInputs, nodeId) ?? { parameterGroups: {} };
+    const parameter = parameterName ? getParameterFromName(nodeInputs, parameterName) : undefined;
     if (parameter) {
       const repetitionValue = getJSONValueFromString(
         parameterValueToString(parameter, /* isDefinitionValue */ true, idReplacements),
@@ -513,8 +541,7 @@ export const parseForeach = (repetitionValue: string, repetitionContext: Repetit
 
     if (foreachExpression) {
       switch (foreachExpression.type) {
-        case ExpressionType.Function:
-          // eslint-disable-next-line no-case-declarations
+        case ExpressionType.Function: {
           const functionExpression = foreachExpression as ExpressionFunction;
           if (TokenSegmentConvertor.isOutputToken(functionExpression) || TokenSegmentConvertor.isVariableToken(functionExpression)) {
             foreach.fullPath = getFullPath(functionExpression, splitOnExpression);
@@ -575,6 +602,7 @@ export const parseForeach = (repetitionValue: string, repetitionContext: Repetit
             }
           }
           break;
+        }
         default:
           break;
       }
@@ -595,9 +623,8 @@ const getRepetitionValue = (repetitionContext: RepetitionContext, actionName?: s
 const getRepetitionReferenceFromContext = (repetitionContext: RepetitionContext, actionName?: string): RepetitionReference | undefined => {
   if (actionName) {
     return first((item) => equals(item.actionName, actionName), repetitionContext.repetitionReferences);
-  } else {
-    return repetitionContext?.repetitionReferences?.at(0);
   }
+  return repetitionContext?.repetitionReferences?.at(0);
 };
 
 const isExpressionEqualToNodeSplitOn = (test: string | any[], splitOn: string | undefined): boolean => {
@@ -629,8 +656,8 @@ export const getTokenExpressionValueForManifestBasedOperation = (
       ? `items(${convertToStringLiteral(loopSource)})`
       : Constants.ITEM
     : actionName
-    ? `${Constants.OUTPUTS}(${convertToStringLiteral(actionName)})`
-    : Constants.TRIGGER_OUTPUTS_OUTPUT;
+      ? `${Constants.OUTPUTS}(${convertToStringLiteral(actionName)})`
+      : Constants.TRIGGER_OUTPUTS_OUTPUT;
 
   return generateExpressionFromKey(method, key, actionName, isInsideArray, required, /* overrideMethod */ false);
 };
@@ -799,6 +826,6 @@ const normalizeKeyPath = (path: string | undefined): string | undefined => {
   return path && path.startsWith('outputs.$.body.')
     ? path.replace('outputs.$.body.', 'body.$.')
     : path === 'outputs.$.body'
-    ? 'body.$'
-    : path;
+      ? 'body.$'
+      : path;
 };

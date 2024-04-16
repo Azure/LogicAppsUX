@@ -1,9 +1,9 @@
 import type { ValueSegment } from '../editor';
 import { ValueSegmentType } from '../editor';
 import type { ChangeHandler } from '../editor/base';
+import { createLiteralValueSegment } from '../editor/base/utils/helper';
 import type { IDropdownOption, IDropdownStyles } from '@fluentui/react';
 import { SelectableOptionMenuItemType, Dropdown } from '@fluentui/react';
-import { guid } from '@microsoft/utils-logic-apps';
 import type { FormEvent } from 'react';
 import { useMemo, useState } from 'react';
 
@@ -23,6 +23,8 @@ interface DropdownEditorProps {
   label?: string;
   dataAutomationId?: string;
   onChange?: ChangeHandler;
+  // to be used if we don't want to convert result to valueSegmentArray
+  customOnChangeHandler?: (event: React.FormEvent<HTMLDivElement>, option?: IDropdownOption) => void;
 }
 
 export interface DropdownItem {
@@ -44,6 +46,7 @@ export const DropdownEditor = ({
   label,
   dataAutomationId,
   onChange,
+  customOnChangeHandler,
 }: DropdownEditorProps): JSX.Element => {
   const [selectedKey, setSelectedKey] = useState<string | undefined>(multiSelect ? undefined : getSelectedKey(options, initialValue));
   const [selectedKeys, setSelectedKeys] = useState<string[] | undefined>(
@@ -72,7 +75,7 @@ export const DropdownEditor = ({
   const handleOptionSelect = (_event: FormEvent<HTMLDivElement>, option?: IDropdownOption): void => {
     if (option) {
       setSelectedKey(option.key as string);
-      onChange?.({ value: [{ id: guid(), value: getSelectedValue(options, option.key as string), type: ValueSegmentType.LITERAL }] });
+      onChange?.({ value: [createLiteralValueSegment(getSelectedValue(options, option.key as string))] });
     }
   };
 
@@ -84,11 +87,9 @@ export const DropdownEditor = ({
       const selectedValues = newKeys.map((key) => getSelectedValue(options, key));
       onChange?.({
         value: [
-          {
-            id: guid(),
-            value: serialization?.valueType === 'array' ? JSON.stringify(selectedValues) : selectedValues.join(serialization?.separator),
-            type: ValueSegmentType.LITERAL,
-          },
+          createLiteralValueSegment(
+            serialization?.valueType === 'array' ? JSON.stringify(selectedValues) : selectedValues.join(serialization?.separator)
+          ),
         ],
       });
     }
@@ -102,9 +103,13 @@ export const DropdownEditor = ({
         disabled={readonly}
         options={dropdownOptions}
         multiSelect={multiSelect}
+        multiSelectDelimiter={serialization?.separator}
         selectedKey={selectedKey}
         selectedKeys={selectedKeys}
-        onChange={multiSelect ? handleOptionMultiSelect : handleOptionSelect}
+        onChange={(event: React.FormEvent<HTMLDivElement>, option?: IDropdownOption) => {
+          customOnChangeHandler?.(event, option);
+          multiSelect ? handleOptionMultiSelect(event, option) : handleOptionSelect(event, option);
+        }}
       />
     </div>
   );
@@ -113,14 +118,14 @@ export const DropdownEditor = ({
 const getOptions = (options: DropdownItem[]): IDropdownOption[] => {
   return [
     ...options.map((option: DropdownItem) => {
-      const { key, displayName, disabled, type } = option;
+      const { key, displayName, disabled, type, value } = option;
       switch (key) {
         case 'divider':
           return { key: key, text: displayName, itemType: SelectableOptionMenuItemType.Divider, disabled: disabled, data: type };
         case 'header':
           return { key: key, text: displayName, itemType: SelectableOptionMenuItemType.Header, data: type, disabed: disabled };
         default:
-          return { key: key, text: displayName, disabled: disabled, data: type };
+          return { key: key, text: displayName, disabled: disabled, data: type, value: value };
       }
     }),
   ];

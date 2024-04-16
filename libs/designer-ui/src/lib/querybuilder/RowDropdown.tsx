@@ -1,8 +1,7 @@
 import type { DropdownItem } from '../dropdown';
 import { DropdownEditor } from '../dropdown';
-import { ValueSegmentType } from '../editor';
 import type { ChangeHandler } from '../editor/base';
-import { guid } from '@microsoft/utils-logic-apps';
+import { createLiteralValueSegment } from '../editor/base/utils/helper';
 
 interface RowDropdownProps {
   condition?: string;
@@ -10,20 +9,21 @@ interface RowDropdownProps {
   onChange: ChangeHandler;
 }
 
-export enum RowDropdownOptions {
-  CONTAINS = 'contains',
-  NOTCONTAINS = 'notcontains',
-  EQUALS = 'equals',
-  NOTEQUALS = 'notequals',
-  GREATER = 'greater',
-  GREATEROREQUALS = 'greaterOrEquals',
-  LESS = 'less',
-  LESSOREQUALS = 'lessOrEquals',
-  STARTSWITH = 'startsWith',
-  NOTSTARTSWITH = 'notstartsWith',
-  ENDSWITH = 'endsWith',
-  NOTENDSWITH = 'notendsWith',
-}
+export const RowDropdownOptions = {
+  CONTAINS: 'contains',
+  NOTCONTAINS: 'notcontains',
+  EQUALS: 'equals',
+  NOTEQUALS: 'notequals',
+  GREATER: 'greater',
+  GREATEROREQUALS: 'greaterOrEquals',
+  LESS: 'less',
+  LESSOREQUALS: 'lessOrEquals',
+  STARTSWITH: 'startsWith',
+  NOTSTARTSWITH: 'notstartsWith',
+  ENDSWITH: 'endsWith',
+  NOTENDSWITH: 'notendsWith',
+} as const;
+export type RowDropdownOptions = (typeof RowDropdownOptions)[keyof typeof RowDropdownOptions];
 
 const items: DropdownItem[] = [
   { key: RowDropdownOptions.CONTAINS, displayName: 'contains', value: RowDropdownOptions.CONTAINS },
@@ -45,11 +45,7 @@ export const RowDropdown = ({ condition, disabled, onChange }: RowDropdownProps)
     <div className="msla-querybuilder-row-dropdown-container">
       <DropdownEditor
         readonly={disabled}
-        initialValue={
-          condition
-            ? [{ id: guid(), type: ValueSegmentType.LITERAL, value: condition }]
-            : [{ id: guid(), type: ValueSegmentType.LITERAL, value: 'equals' }]
-        }
+        initialValue={condition ? [createLiteralValueSegment(condition)] : [createLiteralValueSegment('equals')]}
         onChange={onChange}
         options={items}
         height={24}

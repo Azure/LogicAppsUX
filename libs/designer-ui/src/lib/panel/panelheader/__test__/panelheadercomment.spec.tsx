@@ -2,7 +2,7 @@ import type { PanelHeaderCommentProps } from '../panelheadercomment';
 import { PanelHeaderComment } from '../panelheadercomment';
 import * as React from 'react';
 import * as ReactShallowRenderer from 'react-test-renderer/shallow';
-
+import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 describe('ui/panel/panelheadercomment', () => {
   let minimal: PanelHeaderCommentProps, renderer: ReactShallowRenderer.ShallowRenderer;
 
@@ -29,8 +29,6 @@ describe('ui/panel/panelheadercomment', () => {
 
     const [icon, comment]: any[] = React.Children.toArray(commentContainer.props.children);
     expect(icon.props.className).toBe('msla-comment-icon');
-    expect(icon.props.ariaLabel).toBe('Comment');
-    expect(icon.props.iconName).toBe('Comment');
 
     expect(comment.props.className).toBe('msla-card-comment');
     expect(comment.props.ariaLabel).toBe('Comment');

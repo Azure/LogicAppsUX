@@ -1,8 +1,7 @@
-import type { ConnectionReferences } from '../../../common/models/workflow';
+import type { ConnectionMapping, ConnectionReferences, NodeId, ReferenceKey } from '../../../common/models/workflow';
 import type { UpdateConnectionPayload } from '../../actions/bjsworkflow/connections';
 import { resetWorkflowState } from '../global';
-import { LogEntryLevel, LoggerService } from '@microsoft/designer-client-services-logic-apps';
-import { deepCompareObjects, equals, getUniqueName } from '@microsoft/utils-logic-apps';
+import { LogEntryLevel, LoggerService, deepCompareObjects, equals, getUniqueName } from '@microsoft/logic-apps-shared';
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 
@@ -10,10 +9,6 @@ export interface ConnectionsStoreState {
   connectionsMapping: ConnectionMapping;
   connectionReferences: ConnectionReferences;
 }
-
-type NodeId = string;
-type ReferenceKey = string | null;
-export type ConnectionMapping = Record<NodeId, ReferenceKey>;
 
 export const initialConnectionsState: ConnectionsStoreState = {
   connectionsMapping: {},
@@ -67,6 +62,12 @@ export const connectionSlice = createSlice({
     initEmptyConnectionMap: (state, action: PayloadAction<NodeId>) => {
       state.connectionsMapping[action.payload] = null;
     },
+    initCopiedConnectionMap: (state, action: PayloadAction<{ nodeId: NodeId; referenceKey: ReferenceKey }>) => {
+      const { nodeId, referenceKey } = action.payload;
+      if (referenceKey && state.connectionReferences[referenceKey]) {
+        state.connectionsMapping[nodeId] = referenceKey;
+      }
+    },
     removeNodeConnectionData: (state, action: PayloadAction<{ nodeId: NodeId }>) => {
       const { nodeId } = action.payload;
       delete state.connectionsMapping[nodeId];
@@ -83,6 +84,7 @@ export const {
   initializeConnectionsMappings,
   changeConnectionMapping,
   initEmptyConnectionMap,
+  initCopiedConnectionMap,
   removeNodeConnectionData,
 } = connectionSlice.actions;
 

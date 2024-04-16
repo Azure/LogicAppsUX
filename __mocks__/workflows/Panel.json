@@ -34,7 +34,7 @@
       "Parse_JSON": {
         "type": "ParseJson",
         "inputs": {
-          "content": "@triggerBody()?['string']",
+          "content": "@{triggerBody()?['string']}@{variables('ArrayVariable')}",
           "schema": {
             "type": "array",
             "items": {
@@ -61,11 +61,27 @@
       "Filter_array": {
         "type": "Query",
         "inputs": {
-          "from": "@triggerBody()?['array']",
+          "from": "@body('Parse_JSON')",
           "where": "@not(contains(length(split(item(), '|')?[0]),length(split(item(), '|')?[0])))"
         },
         "runAfter": {
           "Parse_JSON": ["SUCCEEDED"]
+        }
+      },
+      "HTTP": {
+        "type": "Http",
+        "inputs": {
+          "uri": "http://test.com",
+          "method": "GET",
+          "body": "@variables('ArrayVariable')"
+        },
+        "runAfter": {
+          "Filter_array": ["SUCCEEDED"]
+        },
+        "runtimeConfiguration": {
+          "contentTransfer": {
+            "transferMode": "Chunked"
+          }
         }
       }
     },

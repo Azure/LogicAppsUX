@@ -18,12 +18,12 @@ import { getAccountCredentials } from '../../utils/credentials';
 import { getRandomHexString } from '../../utils/fs';
 import { delay } from '@azure/ms-rest-js';
 import type { ServiceClientCredentials } from '@azure/ms-rest-js';
-import { HTTP_METHODS } from '@microsoft/utils-logic-apps';
-import { ExtensionCommand, getBaseGraphApi } from '@microsoft/vscode-extension';
+import type { IActionContext } from '@microsoft/vscode-azext-utils';
+import { ExtensionCommand, ProjectName, getBaseGraphApi } from '@microsoft/vscode-extension-logic-apps';
+import axios from 'axios';
 import { writeFileSync } from 'fs';
 import * as fse from 'fs-extra';
 import * as path from 'path';
-import * as requestP from 'request-promise';
 import * as vscode from 'vscode';
 
 import AdmZip = require('adm-zip');
@@ -51,6 +51,22 @@ interface Deployment {
 }
 
 class ExportEngine {
+  private intlText = {
+    SUCESSFULL_EXPORTED_MESSAGE: localize('workflowsExportedSuccessfully', 'The selected workflows exported successfully.'),
+    DONE: localize('done', 'Done.'),
+    DEPLOYING_CONNECTIONS: localize('deployConnections', 'Deploying connections ...'),
+    DOWNLOADING_PACKAGE: localize('downloadingPackage', 'Downloading package ...'),
+    UNZIP_PACKAGE: localize('unzipPackage', 'Unzipping package ...'),
+    FETCH_CONNECTION: localize('fetchConnectionKeys', 'Retrieving connection keys ...'),
+    UPDATE_FILES: localize('updateFiles', 'Updating parameters and settings ...'),
+  };
+
+  private finalStatus = {
+    InProgress: 'InProgress',
+    Succeeded: 'Succeeded',
+    Failed: 'Failed',
+  };
+
   public constructor(
     private getAccessToken: () => string,
     private packageUrl: string,
@@ -60,38 +76,42 @@ class ExportEngine {
     private location: string,
     private addStatus: (status: string) => void,
     private setFinalStatus: (status: string) => void,
-    private baseGraphUri: string
+    private baseGraphUri: string,
+    private context: IActionContext
   ) {}
 
   public async export(): Promise<void> {
     try {
-      this.setFinalStatus('InProgress');
-      this.addStatus(localize('downloadPackage', 'Downloading package ...'));
-      const flatFile = await requestP({
-        json: false,
-        method: HTTP_METHODS.GET,
-        encoding: null,
-        uri: this.packageUrl,
+      this.setFinalStatus(this.finalStatus.InProgress);
+      this.addStatus(this.intlText.DOWNLOADING_PACKAGE);
+      ext.logTelemetry(this.context, 'exportLastStep', 'downloadPackage');
+      const flatFile = await axios.get(this.packageUrl, {
+        responseType: 'arraybuffer',
+        responseEncoding: 'binary',
       });
 
-      const buffer = Buffer.from(flatFile);
-      this.addStatus(localize('done', 'Done.'));
-      this.addStatus(localize('unzipPackage', 'Unzipping package ...'));
+      const buffer = Buffer.from(flatFile.data);
+      this.addStatus(this.intlText.DONE);
+      this.addStatus(this.intlText.UNZIP_PACKAGE);
+      ext.logTelemetry(this.context, 'exportLastStep', 'unzipPackage');
       const zip = new AdmZip(buffer);
       zip.extractAllTo(/*target path*/ this.targetDirectory, /*overwrite*/ true);
-      this.addStatus(localize('done', 'Done.'));
+      this.addStatus(this.intlText.DONE);
 
       const templatePath = `${this.targetDirectory}/.development/deployment/LogicAppStandardConnections.template.json`;
 
       const templateExists = await fse.pathExists(templatePath);
       if (!this.resourceGroupName || !templateExists) {
-        this.setFinalStatus('Succeeded');
+        this.setFinalStatus(this.finalStatus.Succeeded);
+        this.addStatus(this.intlText.SUCESSFULL_EXPORTED_MESSAGE);
+        ext.logTelemetry(this.context, 'exportLastStep', 'workflowsExportedSuccessfully');
         const uri: vscode.Uri = vscode.Uri.file(this.targetDirectory);
         vscode.commands.executeCommand('vscode.openFolder', uri, { forceNewWindow: true });
         return;
       }
 
-      this.addStatus(localize('deployConnections', 'Deploying connections ...'));
+      this.addStatus(this.intlText.DEPLOYING_CONNECTIONS);
+      ext.logTelemetry(this.context, 'exportLastStep', 'deployConnections');
 
       const connectionsTemplate = await fse.readJSON(templatePath);
       const parametersFile = await fse.readJSON(`${this.targetDirectory}/parameters.json`);
@@ -104,33 +124,38 @@ class ExportEngine {
       }
 
       const output = await this.deployConnectionsTemplate(connectionsTemplate);
-      this.addStatus(localize('done', 'Done.'));
+      this.addStatus(this.intlText.DONE);
 
       await this.fetchConnectionKeys(output);
       await this.updateParametersAndSettings(output, parametersFile, localSettingsFile);
 
-      this.setFinalStatus('Succeeded');
+      this.setFinalStatus(this.finalStatus.Succeeded);
+      this.addStatus(this.intlText.SUCESSFULL_EXPORTED_MESSAGE);
+      ext.logTelemetry(this.context, 'exportLastStep', 'workflowsExportedSuccessfully');
       const uri: vscode.Uri = vscode.Uri.file(this.targetDirectory);
       vscode.commands.executeCommand('vscode.openFolder', uri, { forceNewWindow: true });
     } catch (error) {
       this.addStatus(localize('exportFailed', 'Export failed. {0}', error?.message ?? ''));
-      this.setFinalStatus('Failed');
+      this.setFinalStatus(this.finalStatus.Failed);
+      ext.logTelemetry(this.context, 'exportError', error?.message ?? '');
     }
   }
 
   private async getResourceGroup(): Promise<void> {
     const uri = `${this.baseGraphUri}/subscriptions/${this.subscriptionId}/resourcegroups/${this.resourceGroupName}?api-version=2021-04-01`;
-    const options = {
-      method: HTTP_METHODS.GET,
-      uri,
-      headers: { authorization: this.getAccessToken() },
-    };
 
-    return requestP(options).catch((error) => {
-      throw new Error(
-        localize('getResourceGroupFailure', 'Failed to get resource group "{0}". {1}', this.resourceGroupName, error.message ?? '')
-      );
-    });
+    return axios
+      .get(uri, {
+        headers: {
+          authorization: this.getAccessToken(),
+        },
+      })
+      .then(({ data }) => data)
+      .catch((error) => {
+        throw new Error(
+          localize('getResourceGroupFailure', 'Failed to get resource group "{0}". {1}', this.resourceGroupName, error.message ?? '')
+        );
+      });
   }
 
   private async createResourceGroup(): Promise<void> {
@@ -138,19 +163,17 @@ class ExportEngine {
     const body = {
       location: this.location,
     };
-    const options = {
-      method: HTTP_METHODS.PUT,
-      uri,
-      headers: { authorization: this.getAccessToken() },
-      body,
-      json: true,
-    };
 
-    return requestP(options).catch((error) => {
-      throw new Error(
-        localize('resourceGroupCreateFailure', 'Failed to create resource group "{0}". {1}', this.resourceGroupName, error.message ?? '')
-      );
-    });
+    return axios
+      .put(uri, body, {
+        headers: { authorization: this.getAccessToken() },
+      })
+      .then(({ data }) => data)
+      .catch((error) => {
+        throw new Error(
+          localize('resourceGroupCreateFailure', 'Failed to create resource group "{0}". {1}', this.resourceGroupName, error.message ?? '')
+        );
+      });
   }
 
   private async deployConnectionsTemplate(connectionsTemplate: any): Promise<ConnectionsDeploymentOutput> {
@@ -163,17 +186,14 @@ class ExportEngine {
         template: connectionsTemplate,
       },
     };
-    const options = {
-      method: HTTP_METHODS.PUT,
-      uri,
-      headers: { authorization: this.getAccessToken() },
-      body,
-      json: true,
-    };
 
-    await requestP(options).catch((error) => {
-      throw new Error(localize('templateDeploymentFailure', 'Failed to deploy connections template. {0}', error.message ?? ''));
-    });
+    await axios
+      .put(uri, body, {
+        headers: { authorization: this.getAccessToken() },
+      })
+      .catch((error) => {
+        throw new Error(localize('templateDeploymentFailure', 'Failed to deploy connections template. {0}', error.message ?? ''));
+      });
 
     return await this.getDeploymentOutput(uri);
   }
@@ -202,39 +222,33 @@ class ExportEngine {
   }
 
   private async getDeployment(uri: string): Promise<Deployment> {
-    const options = {
-      method: HTTP_METHODS.GET,
-      uri,
-      headers: { authorization: this.getAccessToken() },
-      json: true,
-    };
-
-    return requestP(options).catch((error) => {
-      throw new Error(localize('getDeploymentFailure', 'Failed to get deployment. {1}', error.message ?? ''));
-    });
+    return axios
+      .get(uri, { headers: { authorization: this.getAccessToken() } })
+      .then(({ data }) => data)
+      .catch((error) => {
+        throw new Error(localize('getDeploymentFailure', 'Failed to get deployment. {1}', error.message ?? ''));
+      });
   }
 
   private async fetchConnectionKeys(output: ConnectionsDeploymentOutput): Promise<void> {
-    this.addStatus(localize('fetchConnectionKeys', 'Retrieving connection keys ...'));
+    this.addStatus(this.intlText.FETCH_CONNECTION);
+    ext.logTelemetry(this.context, 'exportLastStep', 'retrieveConnectionKeys');
     for (const connectionKey of Object.keys(output?.connections?.value || {})) {
       const connectionItem = output.connections.value[connectionKey];
       connectionItem.authKey = await this.getConnectionKey(connectionItem.connectionId);
     }
-    this.addStatus(localize('done', 'Done.'));
+    this.addStatus(this.intlText.DONE);
   }
 
   private async getConnectionKey(connectionId: string): Promise<string> {
-    const options = {
-      method: HTTP_METHODS.POST,
-      uri: `${this.baseGraphUri}${connectionId}/listConnectionKeys?api-version=2018-07-01-preview`,
-      headers: { authorization: this.getAccessToken() },
-      body: { validityTimeSpan: '7' },
-      json: true,
-    };
-
-    return requestP(options)
+    return axios
+      .post(
+        `${this.baseGraphUri}${connectionId}/listConnectionKeys?api-version=2018-07-01-preview`,
+        { validityTimeSpan: '7' },
+        { headers: { authorization: this.getAccessToken() } }
+      )
       .then((response) => {
-        return response.connectionKey;
+        return response.data?.connectionKey;
       })
       .catch((error) => {
         throw new Error(
@@ -255,18 +269,17 @@ class ExportEngine {
 
   private async getSubscription(): Promise<any> {
     const uri = `${this.baseGraphUri}/subscriptions/${this.subscriptionId}/?api-version=2021-04-01`;
-    const options = {
-      method: HTTP_METHODS.GET,
-      uri,
-      headers: { authorization: this.getAccessToken() },
-      json: true,
-    };
 
-    return requestP(options).catch((error) => {
-      throw new Error(
-        localize('getSubscriptionFailured', 'Failed to get subscription "{0}". {1}', this.subscriptionId, error.message ?? '')
-      );
-    });
+    return axios
+      .get(uri, {
+        headers: { authorization: this.getAccessToken() },
+      })
+      .then(({ data }) => data)
+      .catch((error) => {
+        throw new Error(
+          localize('getSubscriptionFailured', 'Failed to get subscription "{0}". {1}', this.subscriptionId, error.message ?? '')
+        );
+      });
   }
 
   private async updateParametersAndSettings(
@@ -274,7 +287,8 @@ class ExportEngine {
     parametersFile: any,
     localSettingsFile: any
   ): Promise<void> {
-    this.addStatus(localize('updateFiles', 'Updating parameters and settings ...'));
+    this.addStatus(this.intlText.UPDATE_FILES);
+    ext.logTelemetry(this.context, 'exportLastStep', 'updatingParametersAndSettings');
 
     const { value } = output.connections;
     for (const key of Object.keys(value)) {
@@ -292,28 +306,26 @@ class ExportEngine {
 
     writeFileSync(`${this.targetDirectory}/parameters.json`, JSON.stringify(parametersFile, null, 4));
     writeFileSync(`${this.targetDirectory}/local.settings.json`, JSON.stringify(localSettingsFile, null, 4));
-    this.addStatus(localize('done', 'Done.'));
+    this.addStatus(this.intlText.DONE);
   }
 }
 
-export async function exportLogicApp(): Promise<void> {
+const exportDialogOptions: vscode.OpenDialogOptions = {
+  canSelectMany: false,
+  openLabel: localize('selectFolder', 'Select folder'),
+  canSelectFiles: false,
+  canSelectFolders: true,
+};
+
+export async function exportLogicApp(context: IActionContext): Promise<void> {
   const panelName: string = localize('export', 'Export');
   const panelGroupKey = ext.webViewKey.export;
-  let accessToken: string;
   const credentials: ServiceClientCredentials | undefined = await getAccountCredentials();
   const apiVersion = '2021-03-01';
-
-  const dialogOptions: vscode.OpenDialogOptions = {
-    canSelectMany: false,
-    openLabel: 'Select folder',
-    canSelectFiles: false,
-    canSelectFolders: true,
-  };
-
   const existingPanel: vscode.WebviewPanel | undefined = tryGetWebviewPanel(panelGroupKey, panelName);
-
-  accessToken = await getAuthorizationToken(credentials);
   const cloudHost = await getCloudHost(credentials);
+  let accessToken: string;
+  accessToken = await getAuthorizationToken(credentials);
 
   if (existingPanel) {
     if (!existingPanel.active) {
@@ -335,7 +347,7 @@ export async function exportLogicApp(): Promise<void> {
   };
   panel.webview.html = await getWebViewHTML('vs-code-react', panel);
 
-  let interval;
+  let interval: NodeJS.Timeout;
 
   panel.webview.onDidReceiveMessage(async (message) => {
     switch (message.command) {
@@ -346,7 +358,7 @@ export async function exportLogicApp(): Promise<void> {
             apiVersion,
             accessToken,
             cloudHost,
-            project: 'export',
+            project: ProjectName.export,
             hostVersion: ext.extensionVersion,
           },
         });
@@ -365,7 +377,7 @@ export async function exportLogicApp(): Promise<void> {
         break;
       }
       case ExtensionCommand.select_folder: {
-        vscode.window.showOpenDialog(dialogOptions).then((fileUri) => {
+        vscode.window.showOpenDialog(exportDialogOptions).then((fileUri) => {
           if (fileUri && fileUri[0]) {
             panel.webview.postMessage({
               command: ExtensionCommand.update_export_path,
@@ -406,9 +418,14 @@ export async function exportLogicApp(): Promise<void> {
               },
             });
           },
-          baseGraphUri
+          baseGraphUri,
+          context
         );
         engine.export();
+        break;
+      }
+      case ExtensionCommand.log_telemtry: {
+        ext.logTelemetry(context, message.key, message.value);
         break;
       }
       default:

@@ -1,7 +1,7 @@
-import { SchemaNodeProperty } from '../../models';
 import { convertSchemaToSchemaExtended, findNodeForKey, getFileNameAndPath, parsePropertiesIntoNodeProperties } from '../Schema.Utils';
-import { targetMockSchema } from '__mocks__/schemas';
-
+import { SchemaNodeProperty } from '@microsoft/logic-apps-shared';
+import { targetMockSchema } from '../../../.../../__mocks__/schemas';
+import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 describe('utils/Schema', () => {
   describe('parsePropertiesIntoNodeProperties', () => {
     it('No input', () => {
@@ -27,12 +27,12 @@ describe('utils/Schema', () => {
     const extendedTarget = convertSchemaToSchemaExtended(targetMockSchema);
 
     it('finds loop value for key', () => {
-      const node = findNodeForKey('/ns0:Root/Looping/$for(/ns0:Root/Looping/Employee)/Person/Name', extendedTarget.schemaTreeRoot);
+      const node = findNodeForKey('/ns0:Root/Looping/$for(/ns0:Root/Looping/Employee)/Person/Name', extendedTarget.schemaTreeRoot, false);
       expect(node?.key).toEqual('/ns0:Root/Looping/Person/Name');
     });
 
     it('finds node for key', () => {
-      const node = findNodeForKey('/ns0:Root/Looping/Person/Name', extendedTarget.schemaTreeRoot);
+      const node = findNodeForKey('/ns0:Root/Looping/Person/Name', extendedTarget.schemaTreeRoot, false);
       expect(node?.key).toEqual('/ns0:Root/Looping/Person/Name');
     });
   });

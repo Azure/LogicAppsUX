@@ -7,7 +7,7 @@
   padding: 12px;
   border-radius: 8px;
   background: white;
-  box-shadow: rgba(0, 0, 0, 0.133) 0px 1.6px 3.6px 0px, rgba(0, 0, 0, 0.11) 0px 0.3px 0.9px 0px;
+  box-shadow: rgba(0, 0, 0, 0.333) 0px 1.6px 3.6px 0px, rgba(0, 0, 0, 0.41) 0px 0.3px 0.9px 0px;
 
   &.is-user-message {
     box-shadow: none;
@@ -23,10 +23,14 @@
   width: 100%;
   border-radius: 10px;
   text-align: start;
+  @-moz-document url-prefix() {
+    li {
+      margin-left: 12px;
+    }
+  }
 }
 
 .msla-bubble-footer {
-  padding-top: 12px;
   gap: 4px;
   flex-direction: column;
 }
@@ -62,10 +66,17 @@
   text-align: right;
 }
 
+.msla-copy-button {
+  color: #323130;
+}
+
+.msla-copy-button:hover {
+  color: #323130;
+}
+
 .msla-assistant-error-container {
   border: 1px solid rgb(237, 235, 233);
   border-radius: 10px;
-  background: rgb(250, 249, 248);
   padding: 12px;
   margin-top: 12px;
   white-space: pre-wrap;
@@ -219,7 +230,7 @@
   align-items: center;
   font-size: 14px;
   background: @ms-color-black;
-  box-shadow: rgba(0, 0, 0, 0.133) 0px 1.6px 3.6px 0px, rgba(0, 0, 0, 0.11) 0px 0.3px 0.9px 0px;
+  box-shadow: rgba(0, 0, 0, 0.333) 0px 1.6px 3.6px 0px, rgba(0, 0, 0, 0.41) 0px 0.3px 0.9px 0px;
 
   &.is-button {
     cursor: pointer;
@@ -366,4 +377,16 @@
   justify-content: flex-end;
   gap: 8px;
   margin-bottom: 8px;
+}
+
+.msla-theme-dark {
+  .msla-bubble-container {
+    background-color: #323130;
+  }
+  .msla-bubble-footer-disclaimer {
+    color: #a9a9a9;
+  }
+  .msla-copy-button {
+    color: #f3f2f1;
+  }
 }

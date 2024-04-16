@@ -4,10 +4,10 @@
  *--------------------------------------------------------------------------------------------*/
 import { defaultFuncPort, localSettingsFileName, stopFuncTaskPostDebugSetting } from '../../../constants';
 import { getLocalSettingsJson } from '../appSettings/localSettings';
-import { tryGetFunctionProjectRoot } from '../verifyIsProject';
+import { tryGetLogicAppProjectRoot } from '../verifyIsProject';
 import { getWorkspaceSetting } from '../vsCodeConfig/settings';
 import { delay } from '@azure/ms-rest-js';
-import { isString } from '@microsoft/utils-logic-apps';
+import { isString } from '@microsoft/logic-apps-shared';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { registerEvent } from '@microsoft/vscode-azext-utils';
 import * as path from 'path';
@@ -27,6 +27,12 @@ export const runningFuncTaskMap: Map<vscode.WorkspaceFolder | vscode.TaskScope, 
  */
 export function isFuncHostTask(task: vscode.Task): boolean {
   const commandLine: string | undefined = task.execution && (task.execution as vscode.ShellExecution).commandLine;
+  if (task.definition.type === 'shell') {
+    const command = (task.execution as vscode.ShellExecution).command?.toString();
+    const funcRegex = /\$\{config:azureLogicAppsStandard\.funcCoreToolsBinaryPath\}/;
+    // check for args?
+    return funcRegex.test(command);
+  }
   return /func (host )?start/i.test(commandLine || '');
 }
 
@@ -111,7 +117,7 @@ export async function getFuncPortFromTaskOrProject(
     if (isString(projectPathOrTaskScope)) {
       projectPath = projectPathOrTaskScope;
     } else if (typeof projectPathOrTaskScope === 'object') {
-      projectPath = await tryGetFunctionProjectRoot(context, projectPathOrTaskScope);
+      projectPath = await tryGetLogicAppProjectRoot(context, projectPathOrTaskScope);
     }
 
     if (projectPath) {

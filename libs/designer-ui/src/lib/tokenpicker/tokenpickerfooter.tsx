@@ -1,6 +1,6 @@
 import constants from '../constants';
 import type { Token } from '../editor';
-import { ValueSegmentType, TokenType } from '../editor';
+import { TokenType, ValueSegmentType } from '../editor';
 import type { TokenNodeProps } from '../editor/base/nodes/tokenNode';
 import { INSERT_TOKEN_NODE } from '../editor/base/plugins/InsertTokenNode';
 import { SINGLE_VALUE_SEGMENT } from '../editor/base/plugins/SingleValueSegment';
@@ -8,12 +8,18 @@ import type { ExpressionEditorEvent } from '../expressioneditor';
 import type { TokenGroup, Token as TokenGroupToken } from './models/token';
 import { UPDATE_TOKEN_NODE } from './plugins/UpdateTokenNode';
 import type { GetValueSegmentHandler } from './tokenpickersection/tokenpickeroption';
-import { getExpressionTokenTitle, getExpressionOutput } from './util';
+import { getExpressionOutput, getExpressionTokenTitle } from './util';
 import { PrimaryButton } from '@fluentui/react';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
-import type { Expression } from '@microsoft/parsers-logic-apps';
-import { ExpressionParser } from '@microsoft/parsers-logic-apps';
-import { guid } from '@microsoft/utils-logic-apps';
+import {
+  LogEntryLevel,
+  LoggerService,
+  ExpressionExceptionCode,
+  ExpressionParser,
+  ScannerException,
+  guid,
+} from '@microsoft/logic-apps-shared';
+import type { Expression } from '@microsoft/logic-apps-shared';
 import type { LexicalEditor, NodeKey } from 'lexical';
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
@@ -58,20 +64,30 @@ export function TokenPickerFooter({
 
   const tokenPickerAdd = intl.formatMessage({
     defaultMessage: 'Add',
+    id: '9atGYe',
     description: 'Insert Expression',
   });
   const tokenPickerUpdate = intl.formatMessage({
     defaultMessage: 'Update',
+    id: 'dOpdsP',
     description: 'Update Expression',
   });
   const invalidExpression = intl.formatMessage({
     defaultMessage: 'The expression is invalid.',
-    description: 'invalid expression alert',
+    id: 't9RwOi',
+    description: 'Invalid expression alert',
+  });
+  const invalidExpressionQuotations = intl.formatMessage({
+    defaultMessage: 'The expression is invalid. Make sure to use single quotes.',
+    id: 'H9CZTr',
+    description: 'Invalid expression due to misused double quotes',
   });
 
   const insertToken = (tokenProps: TokenNodeProps) => {
     const { brandColor, icon, title, description, value, data } = tokenProps;
-    if (!editor) return;
+    if (!editor) {
+      return;
+    }
     editor?.dispatchCommand(SINGLE_VALUE_SEGMENT, true);
     editor?.dispatchCommand(INSERT_TOKEN_NODE, {
       brandColor,
@@ -94,8 +110,27 @@ export function TokenPickerFooter({
     try {
       currExpression = ExpressionParser.parseExpression(expression.value);
     } catch (ex) {
-      setExpressionEditorError(invalidExpression);
+      if (ex instanceof ScannerException && (ex as any).message === ExpressionExceptionCode.MISUSED_DOUBLE_QUOTES) {
+        // if the expression contains misused double quotes, we'll show a different error message
+        setExpressionEditorError(invalidExpressionQuotations);
+      } else {
+        setExpressionEditorError(invalidExpression);
+      }
+    }
+
+    LoggerService().log({
+      area: 'TokenPickerFooter:onUpdateOrAddClicked',
+      args: [expressionToBeUpdated ? 'update' : 'add', currExpression ? 'valid' : 'invalid'],
+      level: LogEntryLevel.Verbose,
+      message: 'Expression add/update button clicked.',
+    });
+
+    if (!currExpression) {
       return;
+    }
+
+    if (expression.value && window.localStorage.getItem('msla-tokenpicker-expression') !== expression.value) {
+      window.localStorage.setItem('msla-tokenpicker-expression', expression.value);
     }
     // if the expression is just an output token, instead of creating an expression, we'll just insert the token
     const outputToken = getExpressionOutput(currExpression, outputTokenMap);

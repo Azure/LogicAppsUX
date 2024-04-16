@@ -1,11 +1,63 @@
 {
   "name": "@microsoft/logic-apps-chatbot",
-  "version": "2.74.0",
-  "scripts": {
-    "yalcpush": "yalc push ../../dist/libs/chatbot"
+  "version": "4.4.1",
+  "dependencies": {
+    "@fluentui/react": "8.110.2",
+    "@fluentui/react-components": "9.42.0",
+    "@fluentui/react-icons": "2.0.224",
+    "@microsoft/designer-ui": "workspace:*",
+    "@microsoft/logic-apps-designer": "workspace:*",
+    "@microsoft/logic-apps-shared": "workspace:*",
+    "monaco-editor": "0.47.0",
+    "react-intl": "6.3.0"
   },
+  "devDependencies": {
+    "@types/react": "^18.2.69",
+    "react": "18.2.0"
+  },
+  "engines": {
+    "node": ">=12"
+  },
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "import": "./src/index.ts",
+      "default": "./src/index.ts"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "build/lib/**/*",
+    "src"
+  ],
+  "license": "MIT",
+  "main": "src/index.ts",
+  "module": "src/index.ts",
   "peerDependencies": {
     "react": "^16.4.0 || ^17.0.0 || ^18.0.0",
     "react-dom": "^16.4.0 || ^17.0.0 || ^18.0.0"
-  }
+  },
+  "publishConfig": {
+    "main": "build/lib/index.cjs",
+    "module": "build/lib/index.js",
+    "types": "build/lib/index.d.ts",
+    "exports": {
+      ".": {
+        "types:": "./build/lib/index.d.ts",
+        "import": "./build/lib/index.js",
+        "default": "./build/lib/index.cjs"
+      },
+      "./package.json": "./package.json",
+      "./build/lib/index.css": "./build/lib/index.css"
+    }
+  },
+  "scripts": {
+    "build:lib": "tsup && tsc --emitDeclarationOnly",
+    "publish:local": "pnpm unpublish --force && pnpm publish --no-git-checks --registry http://localhost:4873",
+    "test:lib": "vitest --retry=3",
+    "unpublish:local": "pnpm unpublish --force"
+  },
+  "sideEffects": false,
+  "type": "module",
+  "types": "src/index.ts"
 }

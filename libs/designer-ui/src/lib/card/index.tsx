@@ -1,15 +1,16 @@
 import { StatusPill } from '../monitoring';
-import { convertUIElementNameToAutomationId } from '../utils';
 import { CardContextMenu } from './cardcontextmenu';
 import { CardFooter } from './cardfooter';
 import { ErrorBanner } from './errorbanner';
 import { useCardContextMenu, useCardKeyboardInteraction } from './hooks';
 import { Gripper } from './images/dynamicsvgs/gripper';
-import type { CommentBoxProps, MenuItemOption } from './types';
+import type { CommentBoxProps } from './types';
 import { getCardStyle } from './utils';
 import type { ISpinnerStyles, MessageBarType } from '@fluentui/react';
-import { Icon, Spinner, SpinnerSize, css } from '@fluentui/react';
-import type { LogicAppsV2 } from '@microsoft/utils-logic-apps';
+import { Icon, css } from '@fluentui/react';
+import { Spinner } from '@fluentui/react-components';
+import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
+import { replaceWhiteSpaceWithUnderscore } from '@microsoft/logic-apps-shared';
 import { useEffect, useMemo, useRef } from 'react';
 import type { ConnectDragPreview, ConnectDragSource } from 'react-dnd';
 import { useIntl } from 'react-intl';
@@ -22,7 +23,7 @@ export interface CardProps {
   connectionDisplayName?: string;
   connectionRequired?: boolean;
   connectorName?: string;
-  contextMenuOptions?: MenuItemOption[];
+  contextMenuItems?: JSX.Element[];
   describedBy?: string;
   drag: ConnectDragSource;
   draggable: boolean;
@@ -34,12 +35,15 @@ export interface CardProps {
   isDragging?: boolean;
   isMonitoringView?: boolean;
   isLoading?: boolean;
+  operationName?: string;
   readOnly?: boolean;
   rootRef?: React.RefObject<HTMLDivElement>;
   selected?: boolean;
   staticResultsEnabled?: boolean;
   title: string;
   onClick?(): void;
+  onDeleteClick?(): void;
+  onCopyClick?(): void;
   runData?: LogicAppsV2.WorkflowRunAction | LogicAppsV2.WorkflowRunTrigger;
   setFocus?: boolean;
   isSecureInputsOutputs?: boolean;
@@ -65,7 +69,7 @@ export const Card: React.FC<CardProps> = ({
   connectionDisplayName,
   connectionRequired,
   connectorName,
-  contextMenuOptions = [],
+  contextMenuItems = [],
   describedBy,
   drag,
   draggable,
@@ -76,10 +80,13 @@ export const Card: React.FC<CardProps> = ({
   isDragging,
   isMonitoringView,
   isLoading,
+  operationName,
   selected,
   staticResultsEnabled,
   title,
   onClick,
+  onDeleteClick,
+  onCopyClick,
   runData,
   setFocus,
   isSecureInputsOutputs,
@@ -89,7 +96,7 @@ export const Card: React.FC<CardProps> = ({
     onClick?.();
   };
   const focusRef = useRef<HTMLElement | null>(null);
-  const keyboardInteraction = useCardKeyboardInteraction(onClick, contextMenuOptions);
+  const keyboardInteraction = useCardKeyboardInteraction(onClick, onDeleteClick, onCopyClick);
   const contextMenu = useCardContextMenu();
 
   useEffect(() => {
@@ -100,30 +107,60 @@ export const Card: React.FC<CardProps> = ({
 
   const intl = useIntl();
 
-  const connectorIconAltText = intl.formatMessage(
-    {
-      defaultMessage: '{connectorName} connector icon',
-      description: 'Alt text for connector image',
-    },
-    {
+  const cardAltTexts = useMemo(() => {
+    const cardAltTextArgs = {
       connectorName,
-    }
-  );
+      operationName,
+    };
+
+    return {
+      withConnectorOnly: intl.formatMessage(
+        {
+          defaultMessage: '{connectorName} connector',
+          id: '6sSPNb',
+          description: 'Alt text on action/trigger card when there is a connector name but no operation name',
+        },
+        cardAltTextArgs
+      ),
+      withOperationOnly: intl.formatMessage(
+        {
+          defaultMessage: '{operationName} operation',
+          id: '96JG8I',
+          description: 'Alt text on action/trigger card when there is an operation name but no connector name',
+        },
+        cardAltTextArgs
+      ),
+      withConnectorAndOperation: intl.formatMessage(
+        {
+          defaultMessage: '{operationName} operation, {connectorName} connector',
+          id: 'ncW1Sw',
+          description: 'Alt text on action/trigger card when there are both an operation name and connector name',
+        },
+        cardAltTextArgs
+      ),
+    };
+  }, [connectorName, intl, operationName]);
+
+  const cardAltText = connectorName
+    ? operationName
+      ? cardAltTexts.withConnectorAndOperation
+      : cardAltTexts.withConnectorOnly
+    : cardAltTexts.withOperationOnly;
 
   const cardIcon = useMemo(
     () =>
       isLoading ? (
-        <Spinner className="msla-card-header-spinner" size={SpinnerSize.medium} />
+        <Spinner className="msla-card-header-spinner" size={'tiny'} />
       ) : icon ? (
-        <img className="panel-card-icon" src={icon} alt={connectorIconAltText} />
+        <img className="panel-card-icon" src={icon} alt="" />
       ) : errorMessage ? (
         <div className="panel-card-icon default">
           <Icon iconName="PlugDisconnected" style={{ fontSize: '16px', textAlign: 'center' }} />
         </div>
       ) : (
-        <Spinner className="msla-card-header-spinner" size={SpinnerSize.medium} />
+        <Spinner className="msla-card-header-spinner" size={'tiny'} />
       ),
-    [icon, isLoading, errorMessage, connectorIconAltText]
+    [icon, isLoading, errorMessage]
   );
 
   return (
@@ -143,11 +180,11 @@ export const Card: React.FC<CardProps> = ({
         )}
         style={getCardStyle(brandColor)}
         data-testid={`card-${title}`}
-        data-automation-id={`card-${convertUIElementNameToAutomationId(title)}`}
+        data-automation-id={`card-${replaceWhiteSpaceWithUnderscore(title)}`}
         onClick={handleClick}
         onContextMenu={contextMenu.handle}
         onKeyDown={keyboardInteraction.keyDown}
-        tabIndex={1}
+        tabIndex={2}
         onKeyUp={keyboardInteraction.keyUp}
       >
         {isMonitoringView ? (
@@ -162,7 +199,7 @@ export const Card: React.FC<CardProps> = ({
         ) : null}
         <div className={css('msla-selection-box', selected && 'selected')} />
         <div className="panel-card-main">
-          <div className="panel-card-header" role="button">
+          <div aria-label={cardAltText} className="panel-card-header" role="button">
             <div className="panel-card-content-container">
               <div className={css('panel-card-content-gripper-section', draggable && 'draggable')}>{draggable ? <Gripper /> : null}</div>
               <div className="panel-card-content-icon-section">{cardIcon}</div>
@@ -180,16 +217,16 @@ export const Card: React.FC<CardProps> = ({
             isSecureInputsOutputs={isSecureInputsOutputs}
           />
         </div>
-        {contextMenuOptions?.length > 0 ? (
-          <CardContextMenu
-            contextMenuLocation={contextMenu.location}
-            contextMenuOptions={contextMenuOptions}
-            showContextMenu={contextMenu.isShowing}
-            title={title}
-            onSetShowContextMenu={contextMenu.setIsShowing}
-          />
-        ) : null}
       </div>
+      {contextMenuItems.length > 0 && (
+        <CardContextMenu
+          contextMenuLocation={contextMenu.location}
+          menuItems={contextMenuItems}
+          open={contextMenu.isShowing}
+          title={title}
+          setOpen={contextMenu.setIsShowing}
+        />
+      )}
     </div>
   );
 };

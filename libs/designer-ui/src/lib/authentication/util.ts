@@ -2,16 +2,12 @@ import type { AuthProps } from '.';
 import { AuthenticationType } from '.';
 import constants from '../constants';
 import type { ValueSegment } from '../editor';
-import { ValueSegmentType } from '../editor';
-import { convertStringToSegments } from '../editor/base/utils/editorToSegement';
-import { getChildrenNodes } from '../editor/base/utils/helper';
+import { convertStringToSegments } from '../editor/base/utils/editorToSegment';
+import { createLiteralValueSegment } from '../editor/base/utils/helper';
 import { convertKeyValueItemToSegments } from '../editor/base/utils/keyvalueitem';
 import { AuthenticationOAuthType } from './AADOAuth/AADOAuth';
-import { getIntl } from '@microsoft/intl-logic-apps';
-import type { ManagedIdentity } from '@microsoft/utils-logic-apps';
-import { guid, equals, ResourceIdentityType } from '@microsoft/utils-logic-apps';
-import { $getRoot } from 'lexical';
-import type { LexicalEditor } from 'lexical';
+import type { ManagedIdentity } from '@microsoft/logic-apps-shared';
+import { ResourceIdentityType, equals, getIntl, guid } from '@microsoft/logic-apps-shared';
 
 export interface AuthProperty {
   displayName: string;
@@ -34,6 +30,7 @@ export const AUTHENTICATION_PROPERTIES = {
   AAD_OAUTH_AUDIENCE: {
     displayName: intl.formatMessage({
       defaultMessage: 'Audience',
+      id: 'vX9WYS',
       description: 'Audience Label Display Name',
     }),
     name: 'audience',
@@ -41,6 +38,7 @@ export const AUTHENTICATION_PROPERTIES = {
     key: 'aadOAuthAudience',
     placeHolder: intl.formatMessage({
       defaultMessage: 'Enter the audience.',
+      id: 'gpUphl',
       description: 'Audience Placeholder Text',
     }),
     type: constants.SWAGGER.TYPE.STRING,
@@ -49,6 +47,7 @@ export const AUTHENTICATION_PROPERTIES = {
   AAD_OAUTH_AUTHORITY: {
     displayName: intl.formatMessage({
       defaultMessage: 'Authority',
+      id: '5SAQOb',
       description: 'Authority Label Display Name',
     }),
     name: 'authority',
@@ -56,6 +55,7 @@ export const AUTHENTICATION_PROPERTIES = {
     key: 'aadOAuthAuthority',
     placeHolder: intl.formatMessage({
       defaultMessage: 'Enter authority',
+      id: 'GDUGlm',
       description: 'Authority Placeholder Text',
     }),
     type: constants.SWAGGER.TYPE.STRING,
@@ -64,6 +64,7 @@ export const AUTHENTICATION_PROPERTIES = {
   AAD_OAUTH_CERTIFICATE_PASSWORD: {
     displayName: intl.formatMessage({
       defaultMessage: 'Password',
+      id: 'EjXdAm',
       description: 'OAuth Password Label Display Name',
     }),
     name: 'password',
@@ -71,6 +72,7 @@ export const AUTHENTICATION_PROPERTIES = {
     key: 'aadOAuthTypeCertificatePassword',
     placeHolder: intl.formatMessage({
       defaultMessage: 'Enter password as plain text or use a secure parameter',
+      id: 'mvrlkP',
       description: 'OAuth Password Placeholder Text',
     }),
     type: constants.SWAGGER.TYPE.STRING,
@@ -79,6 +81,7 @@ export const AUTHENTICATION_PROPERTIES = {
   AAD_OAUTH_CERTIFICATE_PFX: {
     displayName: intl.formatMessage({
       defaultMessage: 'Pfx',
+      id: '84D91Y',
       description: 'OAuth Pfx Label Display Name',
     }),
     format: constants.SWAGGER.FORMAT.BYTE,
@@ -87,6 +90,7 @@ export const AUTHENTICATION_PROPERTIES = {
     key: 'aadOAuthTypeCertificatePfx',
     placeHolder: intl.formatMessage({
       defaultMessage: 'Enter Pfx',
+      id: 'ahsVI/',
       description: 'OAuth Pfx Placeholder Text',
     }),
     type: constants.SWAGGER.TYPE.STRING,
@@ -95,6 +99,7 @@ export const AUTHENTICATION_PROPERTIES = {
   AAD_OAUTH_CLIENT_ID: {
     displayName: intl.formatMessage({
       defaultMessage: 'Client ID',
+      id: 'srpZD2',
       description: 'Client ID Label Display Name',
     }),
     name: 'clientId',
@@ -102,6 +107,7 @@ export const AUTHENTICATION_PROPERTIES = {
     key: 'aadOAuthClientId',
     placeHolder: intl.formatMessage({
       defaultMessage: 'Enter client ID',
+      id: 'DWsh56',
       description: 'Client ID Placeholder Text',
     }),
     type: constants.SWAGGER.TYPE.STRING,
@@ -110,6 +116,7 @@ export const AUTHENTICATION_PROPERTIES = {
   AAD_OAUTH_SECRET: {
     displayName: intl.formatMessage({
       defaultMessage: 'Secret',
+      id: 'OEEuUu',
       description: 'Secret Label Display Name',
     }),
     name: 'secret',
@@ -117,6 +124,7 @@ export const AUTHENTICATION_PROPERTIES = {
     key: 'aadOAuthTypeSecret',
     placeHolder: intl.formatMessage({
       defaultMessage: 'Enter secret as plain text or use a secure parameter',
+      id: '8UfIAk',
       description: 'Secret Placeholder Text',
     }),
     type: constants.SWAGGER.TYPE.STRING,
@@ -125,6 +133,7 @@ export const AUTHENTICATION_PROPERTIES = {
   AAD_OAUTH_TENANT: {
     displayName: intl.formatMessage({
       defaultMessage: 'Tenant',
+      id: 'X4gDhV',
       description: 'Tenant Label Display Name',
     }),
     name: 'tenant',
@@ -132,6 +141,7 @@ export const AUTHENTICATION_PROPERTIES = {
     key: 'aadOAuthTenant',
     placeHolder: intl.formatMessage({
       defaultMessage: 'Enter tenant',
+      id: 'No6CS+',
       description: 'Tenant Placeholder Text',
     }),
     type: constants.SWAGGER.TYPE.STRING,
@@ -140,6 +150,7 @@ export const AUTHENTICATION_PROPERTIES = {
   BASIC_USERNAME: {
     displayName: intl.formatMessage({
       defaultMessage: 'Username',
+      id: 'AnX5yC',
       description: 'Username Label Display Name',
     }),
     name: 'username',
@@ -147,6 +158,7 @@ export const AUTHENTICATION_PROPERTIES = {
     key: 'basicUsername',
     placeHolder: intl.formatMessage({
       defaultMessage: 'Enter username',
+      id: '78Vggn',
       description: 'Username placeholder text',
     }),
     type: constants.SWAGGER.TYPE.STRING,
@@ -155,6 +167,7 @@ export const AUTHENTICATION_PROPERTIES = {
   BASIC_PASSWORD: {
     displayName: intl.formatMessage({
       defaultMessage: 'Password',
+      id: 'SCCE6s',
       description: 'Basic Password Label Display Name',
     }),
     name: 'password',
@@ -162,6 +175,7 @@ export const AUTHENTICATION_PROPERTIES = {
     key: 'basicPassword',
     placeHolder: intl.formatMessage({
       defaultMessage: 'Enter password as plain text or use a secure parameter',
+      id: 'BQSRV0',
       description: 'Basic Password Placeholder Text',
     }),
     type: constants.SWAGGER.TYPE.STRING,
@@ -170,6 +184,7 @@ export const AUTHENTICATION_PROPERTIES = {
   SERIALIZED_VALUE: {
     displayName: intl.formatMessage({
       defaultMessage: 'Authentication',
+      id: '45ubha',
       description: 'Authentication Label Display Name',
     }),
     name: '',
@@ -182,6 +197,7 @@ export const AUTHENTICATION_PROPERTIES = {
   CLIENT_CERTIFICATE_PASSWORD: {
     displayName: intl.formatMessage({
       defaultMessage: 'Password',
+      id: 'Y/bcmG',
       description: 'Client Certificate Password Label Display Name',
     }),
     name: 'password',
@@ -189,6 +205,7 @@ export const AUTHENTICATION_PROPERTIES = {
     key: 'clientCertificatePassword',
     placeHolder: intl.formatMessage({
       defaultMessage: 'Enter password as plain text or use a secure parameter',
+      id: 'xN3GEX',
       description: 'Client Certificate Password Placeholder Text',
     }),
     type: constants.SWAGGER.TYPE.STRING,
@@ -197,6 +214,7 @@ export const AUTHENTICATION_PROPERTIES = {
   CLIENT_CERTIFICATE_PFX: {
     displayName: intl.formatMessage({
       defaultMessage: 'Pfx',
+      id: 'P+mWgV',
       description: 'Client Certificate Pfx Label Display Name',
     }),
     format: constants.SWAGGER.FORMAT.BYTE,
@@ -205,6 +223,7 @@ export const AUTHENTICATION_PROPERTIES = {
     key: 'clientCertificatePfx',
     placeHolder: intl.formatMessage({
       defaultMessage: 'Enter Pfx',
+      id: 'YOUfNf',
       description: 'Client Certificate Pfx Placeholder Text',
     }),
     type: constants.SWAGGER.TYPE.STRING,
@@ -213,6 +232,7 @@ export const AUTHENTICATION_PROPERTIES = {
   MSI_AUDIENCE: {
     displayName: intl.formatMessage({
       defaultMessage: 'Audience',
+      id: 'hvbclb',
       description: 'MSI Audience Label Display Name',
     }),
     name: 'audience',
@@ -221,6 +241,7 @@ export const AUTHENTICATION_PROPERTIES = {
     // TODO: Replace audience placeholder specific to environment (public azure, fairfax, mooncake)
     placeHolder: intl.formatMessage({
       defaultMessage: 'Enter the audience.',
+      id: 'OSP9JY',
       description: 'MSI Audience Placeholder Text',
     }),
     type: constants.SWAGGER.TYPE.STRING,
@@ -229,6 +250,7 @@ export const AUTHENTICATION_PROPERTIES = {
   MSI_IDENTITY: {
     displayName: intl.formatMessage({
       defaultMessage: 'Managed identity',
+      id: 'MLCQzX',
       description: 'Managed Identity Label Display Name',
     }),
     name: 'identity',
@@ -236,6 +258,7 @@ export const AUTHENTICATION_PROPERTIES = {
     key: 'identity',
     placeHolder: intl.formatMessage({
       defaultMessage: 'Please select an identity',
+      id: 'NoXs0l',
       description: 'MSI Identity Placeholder Text',
     }),
     type: constants.SWAGGER.TYPE.STRING,
@@ -244,6 +267,7 @@ export const AUTHENTICATION_PROPERTIES = {
   RAW_VALUE: {
     displayName: intl.formatMessage({
       defaultMessage: 'Value',
+      id: '90Q7Pw',
       description: 'Raw Value Label Display Name',
     }),
     name: 'value',
@@ -251,6 +275,7 @@ export const AUTHENTICATION_PROPERTIES = {
     key: 'rawValue',
     placeHolder: intl.formatMessage({
       defaultMessage: 'Enter the value of the Authorization header',
+      id: '1nvvw1',
       description: 'Raw Value Placeholder Text',
     }),
     type: constants.SWAGGER.TYPE.STRING,
@@ -268,8 +293,8 @@ export const AUTHENTICATION_PROPERTIES = {
 
 export const PROPERTY_NAMES_FOR_AUTHENTICATION_TYPE: Record<string, AuthProperty[]> = {
   Basic: [AUTHENTICATION_PROPERTIES.BASIC_USERNAME, AUTHENTICATION_PROPERTIES.BASIC_PASSWORD],
-  'Client Certificate': [AUTHENTICATION_PROPERTIES.CLIENT_CERTIFICATE_PFX, AUTHENTICATION_PROPERTIES.CLIENT_CERTIFICATE_PASSWORD],
-  'Active Directory OAuth': [
+  ClientCertificate: [AUTHENTICATION_PROPERTIES.CLIENT_CERTIFICATE_PFX, AUTHENTICATION_PROPERTIES.CLIENT_CERTIFICATE_PASSWORD],
+  ActiveDirectoryOAuth: [
     AUTHENTICATION_PROPERTIES.AAD_OAUTH_TENANT,
     AUTHENTICATION_PROPERTIES.AAD_OAUTH_AUDIENCE,
     AUTHENTICATION_PROPERTIES.AAD_OAUTH_AUTHORITY,
@@ -279,7 +304,7 @@ export const PROPERTY_NAMES_FOR_AUTHENTICATION_TYPE: Record<string, AuthProperty
     AUTHENTICATION_PROPERTIES.AAD_OAUTH_CERTIFICATE_PASSWORD,
   ],
   Raw: [AUTHENTICATION_PROPERTIES.RAW_VALUE],
-  'Managed Identity': [AUTHENTICATION_PROPERTIES.MSI_AUDIENCE, AUTHENTICATION_PROPERTIES.MSI_IDENTITY],
+  ManagedServiceIdentity: [AUTHENTICATION_PROPERTIES.MSI_AUDIENCE, AUTHENTICATION_PROPERTIES.MSI_IDENTITY],
   None: [],
 };
 
@@ -308,27 +333,29 @@ export function containsUserAssignedIdentities(identity: ManagedIdentity | undef
 export function parseAuthEditor(authType: AuthenticationType, items: AuthProps): ValueSegment[] {
   const values: CollapsedAuthEditorItems[] = [];
   switch (authType) {
-    case AuthenticationType.BASIC:
+    case AuthenticationType.BASIC: {
       updateValues(values, AUTHENTICATION_PROPERTIES.BASIC_USERNAME, items.basic?.basicUsername);
       updateValues(values, AUTHENTICATION_PROPERTIES.BASIC_PASSWORD, items.basic?.basicPassword);
       break;
-    case AuthenticationType.CERTIFICATE:
+    }
+    case AuthenticationType.CERTIFICATE: {
       updateValues(values, AUTHENTICATION_PROPERTIES.CLIENT_CERTIFICATE_PFX, items.clientCertificate?.clientCertificatePfx);
       updateValues(values, AUTHENTICATION_PROPERTIES.CLIENT_CERTIFICATE_PASSWORD, items.clientCertificate?.clientCertificatePassword);
       break;
-    case AuthenticationType.RAW:
+    }
+    case AuthenticationType.RAW: {
       updateValues(values, AUTHENTICATION_PROPERTIES.RAW_VALUE, items.raw?.rawValue);
       break;
-    case AuthenticationType.MSI:
+    }
+    case AuthenticationType.MSI: {
       if (items.msi?.msiIdentity) {
-        updateValues(values, AUTHENTICATION_PROPERTIES.MSI_IDENTITY, [
-          { id: guid(), type: ValueSegmentType.LITERAL, value: items.msi.msiIdentity },
-        ]);
+        updateValues(values, AUTHENTICATION_PROPERTIES.MSI_IDENTITY, [createLiteralValueSegment(items.msi.msiIdentity)]);
       }
 
       updateValues(values, AUTHENTICATION_PROPERTIES.MSI_AUDIENCE, items.msi?.msiAudience);
       break;
-    case AuthenticationType.OAUTH:
+    }
+    case AuthenticationType.OAUTH: {
       updateValues(values, AUTHENTICATION_PROPERTIES.AAD_OAUTH_AUTHORITY, items.aadOAuth?.oauthAuthority);
       updateValues(values, AUTHENTICATION_PROPERTIES.AAD_OAUTH_TENANT, items.aadOAuth?.oauthTenant);
       updateValues(values, AUTHENTICATION_PROPERTIES.AAD_OAUTH_AUDIENCE, items.aadOAuth?.oauthAudience);
@@ -340,11 +367,12 @@ export function parseAuthEditor(authType: AuthenticationType, items: AuthProps):
         updateValues(values, AUTHENTICATION_PROPERTIES.AAD_OAUTH_SECRET, items.aadOAuth?.oauthTypeSecret);
       }
       break;
+    }
   }
   const currentItems: CollapsedAuthEditorItems[] = [
     {
-      key: [{ type: ValueSegmentType.LITERAL, id: guid(), value: AUTHENTICATION_PROPERTIES.TYPE.name }],
-      value: [{ type: ValueSegmentType.LITERAL, id: guid(), value: authType }],
+      key: [createLiteralValueSegment(AUTHENTICATION_PROPERTIES.TYPE.name)],
+      value: [createLiteralValueSegment(authType)],
       id: guid(),
     },
     ...values,
@@ -356,169 +384,141 @@ export function parseAuthEditor(authType: AuthenticationType, items: AuthProps):
 const updateValues = (values: CollapsedAuthEditorItems[], property: AuthProperty, val?: ValueSegment[]) => {
   if (property.isRequired || (val && val.length > 0)) {
     values.push({
-      key: [{ type: ValueSegmentType.LITERAL, id: guid(), value: property.name }],
-      value: val ?? [{ type: ValueSegmentType.LITERAL, id: guid(), value: '' }],
+      key: [createLiteralValueSegment(property.name)],
+      value: val ?? [createLiteralValueSegment('')],
       id: guid(),
     });
   }
 };
 
 export const serializeAuthentication = (
-  editor: LexicalEditor,
+  editorString: string,
   setCurrentProps: (items: AuthProps) => void,
-  setOption: (s: AuthenticationType) => void
-) => {
-  editor.getEditorState().read(() => {
-    const nodeMap = new Map<string, ValueSegment>();
-    const editorString = getChildrenNodes($getRoot(), nodeMap);
-    let jsonEditor = Object.create(null);
-    try {
-      jsonEditor = JSON.parse(editorString);
-    } catch (e) {
-      throw new Error(`Invalid Authentication value. ${e}`);
+  setOption: (s: AuthenticationType) => void,
+  nodeMap: Map<string, ValueSegment>
+): boolean => {
+  let jsonEditor = Object.create(null);
+  try {
+    jsonEditor = JSON.parse(editorString);
+  } catch (e) {
+    throw new Error(`Invalid Authentication value. ${e}`);
+  }
+  const returnItems: AuthProps = {};
+  switch (jsonEditor.type) {
+    case AuthenticationType.BASIC: {
+      returnItems.basic = {
+        basicUsername: convertStringToSegments(jsonEditor.username, nodeMap, {
+          tokensEnabled: true,
+        }),
+        basicPassword: convertStringToSegments(jsonEditor.password, nodeMap, {
+          tokensEnabled: true,
+        }),
+      };
+      break;
     }
-    const returnItems: AuthProps = {};
-    setOption(jsonEditor.type);
-    switch (jsonEditor.type) {
-      case AuthenticationType.BASIC:
-        returnItems.basic = {
-          basicUsername: convertStringToSegments(jsonEditor.username, true, nodeMap),
-          basicPassword: convertStringToSegments(jsonEditor.password, true, nodeMap),
-        };
-        break;
-      case AuthenticationType.CERTIFICATE:
-        returnItems.clientCertificate = {
-          clientCertificatePfx: convertStringToSegments(jsonEditor.pfx, true, nodeMap),
-          clientCertificatePassword: convertStringToSegments(jsonEditor.password, true, nodeMap),
-        };
-        break;
-      case AuthenticationType.RAW:
-        returnItems.raw = {
-          rawValue: convertStringToSegments(jsonEditor.value, true, nodeMap),
-        };
-        break;
-      case AuthenticationType.MSI:
-        returnItems.msi = {
-          msiIdentity: jsonEditor.identity,
-          msiAudience: convertStringToSegments(jsonEditor.audience, true, nodeMap),
-        };
-        break;
-      case AuthenticationType.OAUTH:
-        returnItems.aadOAuth = {
-          oauthTenant: convertStringToSegments(jsonEditor.tenant, true, nodeMap),
-          oauthAudience: convertStringToSegments(jsonEditor.audience, true, nodeMap),
-          oauthClientId: convertStringToSegments(jsonEditor.clientId, true, nodeMap),
-        };
-        if (jsonEditor.authority) {
-          returnItems.aadOAuth.oauthAuthority = convertStringToSegments(jsonEditor.authority, true, nodeMap);
-        }
-        if (jsonEditor.secret) {
-          returnItems.aadOAuth.oauthType = AuthenticationOAuthType.SECRET;
-          returnItems.aadOAuth.oauthTypeSecret = convertStringToSegments(jsonEditor.secret, true, nodeMap);
-        }
-        if (jsonEditor.pfx && jsonEditor.password) {
-          returnItems.aadOAuth.oauthType = AuthenticationOAuthType.CERTIFICATE;
-          returnItems.aadOAuth.oauthTypeCertificatePfx = convertStringToSegments(jsonEditor.pfx, true, nodeMap);
-          returnItems.aadOAuth.oauthTypeCertificatePassword = convertStringToSegments(jsonEditor.password, true, nodeMap);
-        }
-        break;
+    case AuthenticationType.CERTIFICATE: {
+      returnItems.clientCertificate = {
+        clientCertificatePfx: convertStringToSegments(jsonEditor.pfx, nodeMap, {
+          tokensEnabled: true,
+        }),
+        clientCertificatePassword: convertStringToSegments(jsonEditor.password, nodeMap, { tokensEnabled: true }),
+      };
+      break;
     }
-    setCurrentProps(returnItems);
-  });
+    case AuthenticationType.RAW: {
+      returnItems.raw = {
+        rawValue: convertStringToSegments(jsonEditor.value, nodeMap, {
+          tokensEnabled: true,
+        }),
+      };
+      break;
+    }
+    case AuthenticationType.MSI: {
+      returnItems.msi = {
+        msiIdentity: jsonEditor.identity,
+        msiAudience: convertStringToSegments(jsonEditor.audience, nodeMap, {
+          tokensEnabled: true,
+        }),
+      };
+      break;
+    }
+    case AuthenticationType.OAUTH: {
+      returnItems.aadOAuth = {
+        oauthTenant: convertStringToSegments(jsonEditor.tenant, nodeMap, {
+          tokensEnabled: true,
+        }),
+        oauthAudience: convertStringToSegments(jsonEditor.audience, nodeMap, {
+          tokensEnabled: true,
+        }),
+        oauthClientId: convertStringToSegments(jsonEditor.clientId, nodeMap, {
+          tokensEnabled: true,
+        }),
+      };
+      if (jsonEditor.authority) {
+        returnItems.aadOAuth.oauthAuthority = convertStringToSegments(jsonEditor.authority, nodeMap, { tokensEnabled: true });
+      }
+      if (jsonEditor.secret) {
+        returnItems.aadOAuth.oauthType = AuthenticationOAuthType.SECRET;
+        returnItems.aadOAuth.oauthTypeSecret = convertStringToSegments(jsonEditor.secret, nodeMap, { tokensEnabled: true });
+      }
+      if (jsonEditor.pfx && jsonEditor.password) {
+        returnItems.aadOAuth.oauthType = AuthenticationOAuthType.CERTIFICATE;
+        returnItems.aadOAuth.oauthTypeCertificatePfx = convertStringToSegments(jsonEditor.pfx, nodeMap, { tokensEnabled: true });
+        returnItems.aadOAuth.oauthTypeCertificatePassword = convertStringToSegments(jsonEditor.password, nodeMap, {
+          tokensEnabled: true,
+        });
+      }
+      break;
+    }
+    default:
+      return false;
+  }
+  setOption(jsonEditor.type);
+  setCurrentProps(returnItems);
+  return true;
 };
 
 export function containsToken(value: string): boolean {
-  if (value.indexOf('$[') !== -1 && value.indexOf(']$') !== -1) {
+  if (value.indexOf('@{') !== -1 && value.indexOf('}') !== -1) {
     return true;
-  } else {
-    return false;
   }
+  return false;
 }
-
-export const validateAuthentication = (s: string, setErrorMessage: (s: string) => void): string => {
-  const intl = getIntl();
-  const invalidJsonErrorMessage = intl.formatMessage(
-    {
-      defaultMessage: 'Invalid json format. Missing beginning {openingBracket} or ending {closingBracket}.',
-      description: 'Invalid JSON format',
-    },
-    {
-      openingBracket: '{',
-      closingBracket: '}',
-    }
-  );
-  if (!(s.startsWith('{') && s.endsWith('}'))) {
-    setErrorMessage(invalidJsonErrorMessage);
-    return invalidJsonErrorMessage;
-  }
-  const errorMessage = validateAuthenticationString(s);
-  if (errorMessage) {
-    setErrorMessage(errorMessage);
-    return errorMessage;
-  }
-  return '';
-};
 
 export const validateAuthenticationString = (s: string): string => {
   const intl = getIntl();
   let parsedSerializedValue = Object.create(null);
-  try {
-    parsedSerializedValue = JSON.parse(s);
-    if (parsedSerializedValue.type === undefined) {
-      return intl.formatMessage({
-        defaultMessage: "Missing authentication type property: 'type'.",
-        description: 'Invalid authentication without type property',
-      });
-    } else {
-      const authType = parsedSerializedValue.type;
-      if (!Object.values(AuthenticationType).find((val) => authType === val)) {
-        if (containsToken(authType)) {
-          return intl.formatMessage({
-            defaultMessage: "Missing authentication type property: 'type'.",
-            description: 'Invalid authentication without type property',
-          });
-        }
-        return intl.formatMessage(
-          {
-            defaultMessage: "Unsupported authentication type ''{authType}''.",
-            description: 'Invalid authentication type',
-          },
-          { authType }
-        );
-      } else {
-        let errorMessage = checkForMissingOrInvalidProperties(parsedSerializedValue, authType);
-        if (errorMessage) {
-          return errorMessage;
-        }
-        errorMessage = checkForUnknownProperties(parsedSerializedValue, authType);
-        if (errorMessage) {
-          return errorMessage;
-        }
-        errorMessage = checkForInvalidValues(parsedSerializedValue);
-        if (errorMessage) {
-          return errorMessage;
-        }
-      }
-    }
-  } catch {
+  parsedSerializedValue = JSON.parse(s);
+  if (parsedSerializedValue.type === undefined) {
     return intl.formatMessage({
-      defaultMessage: 'Enter a valid JSON.',
-      description: 'Invalid JSON',
+      defaultMessage: `Missing authentication type property: 'type'.`,
+      id: 'kuFK3E',
+      description: 'Invalid authentication without type property',
     });
   }
-
-  return '';
-};
-
-const authTypeConversion = (s: string): string => {
-  if (s === AuthenticationType.CERTIFICATE) {
-    return 'Client Certificate';
-  } else if (s === AuthenticationType.MSI) {
-    return 'Managed Service Identity';
-  } else if (s === AuthenticationType.OAUTH) {
-    return 'Active Directory OAuth';
+  const authType = parsedSerializedValue.type;
+  if (!Object.values(AuthenticationType).find((val) => authType === val)) {
+    if (containsToken(authType)) {
+      return intl.formatMessage({
+        defaultMessage: `Missing authentication type property: 'type'.`,
+        id: 'kuFK3E',
+        description: 'Invalid authentication without type property',
+      });
+    }
+    return intl.formatMessage(
+      {
+        defaultMessage: `Unsupported authentication type ''{authType}''.`,
+        id: '7zsUT3',
+        description: 'Invalid authentication type',
+      },
+      { authType }
+    );
   }
-  return s;
+  const errorMessage =
+    checkForMissingOrInvalidProperties(parsedSerializedValue, authType) ||
+    checkForUnknownProperties(parsedSerializedValue, authType) ||
+    checkForInvalidValues(parsedSerializedValue);
+  return errorMessage;
 };
 
 /**
@@ -530,8 +530,7 @@ const authTypeConversion = (s: string): string => {
 function checkForMissingOrInvalidProperties(authentication: any, authType: AuthenticationType): string {
   const intl = getIntl();
   let missingProperties: string[] = [];
-  const convertedAuthType = authTypeConversion(authType);
-  for (const key of PROPERTY_NAMES_FOR_AUTHENTICATION_TYPE[convertedAuthType]) {
+  for (const key of PROPERTY_NAMES_FOR_AUTHENTICATION_TYPE[authType]) {
     if (key.isRequired && authentication[key.name] === undefined) {
       missingProperties.push(key.name);
     }
@@ -557,7 +556,8 @@ function checkForMissingOrInvalidProperties(authentication: any, authType: Authe
         (hasSecret && hasPassword)
       ) {
         return intl.formatMessage({
-          defaultMessage: "Missing required properties 'secret' or 'pfx' and 'password' for authentication type 'ActiveDirectoryOAuth'.",
+          defaultMessage: `Missing required properties 'secret' or 'pfx' and 'password' for authentication type 'ActiveDirectoryOAuth'.`,
+          id: 'mYQFtf',
           description: 'OAuth Error message when missing properties',
         });
       }
@@ -568,23 +568,24 @@ function checkForMissingOrInvalidProperties(authentication: any, authType: Authe
       missingProperties.length === 1
         ? intl.formatMessage(
             {
-              defaultMessage: "Missing required property ''{missingProperties}'' for authentication type ''{convertedAuthType}''",
+              defaultMessage: `Missing required property ''{missingProperties}'' for authentication type ''{authType}''`,
+              id: 'Ov7Ckz',
               description: 'Error message when missing a required authentication property',
             },
-            { missingProperties: missingProperties[0], convertedAuthType }
+            { missingProperties: missingProperties[0], authType }
           )
         : intl.formatMessage(
             {
-              defaultMessage: "Missing required properties ''{missingProperties}'' for authentication type ''{convertedAuthType}''",
+              defaultMessage: `Missing required properties ''{missingProperties}'' for authentication type ''{authType}''`,
+              id: 'BGw6eH',
               description: 'Error message when missing multiple required authentication properties',
             },
-            { missingProperties: missingProperties.join(', '), convertedAuthType }
+            { missingProperties: missingProperties.join(', '), authType }
           );
 
     return errorMessage;
-  } else {
-    return '';
   }
+  return '';
 }
 
 /**
@@ -595,8 +596,7 @@ function checkForMissingOrInvalidProperties(authentication: any, authType: Authe
  */
 function checkForUnknownProperties(authentication: any, authType: AuthenticationType): string {
   const intl = getIntl();
-  const convertedAuthType = authTypeConversion(authType);
-  const validKeyNames = PROPERTY_NAMES_FOR_AUTHENTICATION_TYPE[convertedAuthType].map((key) => key.name);
+  const validKeyNames = PROPERTY_NAMES_FOR_AUTHENTICATION_TYPE[authType].map((key) => key.name);
   const authenticationKeys = Object.keys(authentication);
   const invalidProperties: string[] = [];
 
@@ -604,6 +604,7 @@ function checkForUnknownProperties(authentication: any, authType: Authentication
     if (containsToken(authenticationKey)) {
       return intl.formatMessage({
         defaultMessage: 'Dynamic content not supported as properties in authentication.',
+        id: 'HzS2gJ',
         description: 'Error message for when putting token in authentication property',
       });
     }
@@ -616,23 +617,24 @@ function checkForUnknownProperties(authentication: any, authType: Authentication
       invalidProperties.length === 1
         ? intl.formatMessage(
             {
-              defaultMessage: "Invalid property ''{invalidProperties}'' for authentication type ''{convertedAuthType}''.",
+              defaultMessage: `Invalid property ''{invalidProperties}'' for authentication type ''{authType}''.`,
+              id: 'I1CYNA',
               description: 'Error message when having an invalid authentication property',
             },
-            { invalidProperties: invalidProperties[0], convertedAuthType }
+            { invalidProperties: invalidProperties[0], authType }
           )
         : intl.formatMessage(
             {
-              defaultMessage: "The ''{invalidProperties}'' properties are invalid for the ''{convertedAuthType}'' authentication type.",
+              defaultMessage: `The ''{invalidProperties}'' properties are invalid for the ''{authType}'' authentication type.`,
+              id: '5LV34t',
               description: 'Error message when having multiple invalid authentication properties',
             },
-            { invalidProperties: invalidProperties.join(', '), convertedAuthType }
+            { invalidProperties: invalidProperties.join(', '), authType }
           );
 
     return errorMessage;
-  } else {
-    return '';
   }
+  return '';
 }
 
 /**
@@ -642,8 +644,7 @@ function checkForUnknownProperties(authentication: any, authType: Authentication
  */
 function checkForInvalidValues(authentication: any): string {
   const intl = getIntl();
-  const convertedAuthType = authTypeConversion(authentication.type);
-  const validProperties = PROPERTY_NAMES_FOR_AUTHENTICATION_TYPE[convertedAuthType];
+  const validProperties = PROPERTY_NAMES_FOR_AUTHENTICATION_TYPE[authentication.type];
   const errorMessages: string[] = [];
   const authenticationKeys = Object.keys(authentication);
   for (const authenticationKey of authenticationKeys) {
@@ -659,7 +660,8 @@ function checkForInvalidValues(authentication: any): string {
       errorMessages.push(
         intl.formatMessage(
           {
-            defaultMessage: "The type for ''{authenticationKey}'' is ''{propertyType}''.",
+            defaultMessage: `The type for ''{authenticationKey}'' is ''{propertyType}''.`,
+            id: 'UnytRl',
             description: 'Error message when having invalid authentication property types',
           },
           { authenticationKey, propertyType: currentProperty.type }

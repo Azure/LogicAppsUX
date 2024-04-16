@@ -3,7 +3,7 @@ import Constants from '../../constants';
 import { getCaseDisplayName, isControlFlowOperation, isVariableOperation, toOperationInfo } from '../helpers/flowPreviewHelper';
 import { FontIcon, Icon } from '@fluentui/react/lib/Icon';
 import { css } from '@fluentui/react/lib/Utilities';
-import React from 'react';
+import type React from 'react';
 import { useIntl } from 'react-intl';
 
 export interface IFlowDefinition {
@@ -30,18 +30,22 @@ export const FlowPreview: React.FC<FlowPreviewProps> = ({ definition, dataAutoma
   const intlText = {
     flowPreviewTrigger: intl.formatMessage({
       defaultMessage: 'Trigger',
+      id: '+Jryh+',
       description: 'Title for the triggers section in the suggested flow',
     }),
     flowPreviewTriggerDescription: intl.formatMessage({
       defaultMessage: 'The flow starts when this happens',
+      id: 'VIN7lB',
       description: 'Description text for triggers in the suggested flow',
     }),
     flowPreviewActions: intl.formatMessage({
       defaultMessage: 'Actions',
+      id: '8NFfuB',
       description: 'Title text for actions in the suggested flow',
     }),
     flowPreviewActionsDescription: intl.formatMessage({
       defaultMessage: 'This is what the flow will do',
+      id: 'QoPTod',
       description: 'Description text for actions in the suggested flow',
     }),
   };
@@ -128,14 +132,17 @@ const OperationPreview: React.FC<OperationPreviewProps> = ({ operationName, oper
   const intlText = {
     flowPreviewConditionTrueLabel: intl.formatMessage({
       defaultMessage: 'True',
+      id: 'CBzSJo',
       description: 'Short label to represent when a condition is met.',
     }),
     flowPreviewConditionFalseLabel: intl.formatMessage({
       defaultMessage: 'False',
+      id: 'aE+2gr',
       description: 'Short label to represent when a condition is not met.',
     }),
     flowPreviewSwitchDefaultLabel: intl.formatMessage({
       defaultMessage: 'Default',
+      id: '9aj+el',
       description: 'Short label to represent the fallback behavior used by default if no other conditions were met.',
     }),
   };
@@ -150,12 +157,13 @@ const OperationPreview: React.FC<OperationPreviewProps> = ({ operationName, oper
     switch (operation.type) {
       case Constants.NODE.TYPE.FOREACH:
       case Constants.NODE.TYPE.SCOPE:
-      case Constants.NODE.TYPE.UNTIL:
+      case Constants.NODE.TYPE.UNTIL: {
         subOperations.push({
           operations: operation.actions,
         });
         break;
-      case Constants.NODE.TYPE.IF:
+      }
+      case Constants.NODE.TYPE.IF: {
         if (operation.actions) {
           subOperations.push({
             displayName: intlText.flowPreviewConditionTrueLabel,
@@ -172,7 +180,8 @@ const OperationPreview: React.FC<OperationPreviewProps> = ({ operationName, oper
           });
         }
         break;
-      case Constants.NODE.TYPE.SWITCH:
+      }
+      case Constants.NODE.TYPE.SWITCH: {
         subOperations.push(
           ...Object.keys(operation.cases).map((caseName) => ({
             displayName: getCaseDisplayName(caseName),
@@ -186,6 +195,7 @@ const OperationPreview: React.FC<OperationPreviewProps> = ({ operationName, oper
           });
         }
         break;
+      }
 
       default:
         break;

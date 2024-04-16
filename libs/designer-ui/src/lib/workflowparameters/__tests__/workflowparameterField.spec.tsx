@@ -4,16 +4,17 @@ import { initializeIcons } from '@fluentui/react';
 import * as React from 'react';
 import { useIntl } from 'react-intl';
 import * as ReactShallowRenderer from 'react-test-renderer/shallow';
-
+import { describe, vi, beforeEach, afterEach, it, expect } from 'vitest';
 describe('ui/workflowparameters/workflowparameterField', () => {
-  let minimal: WorkflowparameterFieldProps, renderer: ReactShallowRenderer.ShallowRenderer;
+  let minimal: WorkflowparameterFieldProps;
+  let renderer: ReactShallowRenderer.ShallowRenderer;
 
   beforeEach(() => {
     minimal = {
       isEditable: true,
       name: 'test',
       definition: { id: 'id', value: 'blue', name: 'test', type: 'String' },
-      setName: jest.fn(),
+      setName: vi.fn(),
     };
     renderer = ReactShallowRenderer.createRenderer();
     initializeIcons();
@@ -40,10 +41,12 @@ describe('ui/workflowparameters/workflowparameterField', () => {
 
     const nameTitle = intl.formatMessage({
       defaultMessage: 'Name',
+      id: 'm8Q61y',
       description: 'Parameter Field Name Title',
     });
     const nameDescription = intl.formatMessage({
       defaultMessage: 'Enter parameter name.',
+      id: 'GreYWQ',
       description: 'Parameter Field Name Description',
     });
     expect(name.props.className).toBe(textFieldClassName);
@@ -60,6 +63,7 @@ describe('ui/workflowparameters/workflowparameterField', () => {
 
     const typeTitle = intl.formatMessage({
       defaultMessage: 'Type',
+      id: 'tNoZx2',
       description: 'Parameter Field Type Title',
     });
     expect(type.props.className).toBe(textFieldClassName);
@@ -76,10 +80,12 @@ describe('ui/workflowparameters/workflowparameterField', () => {
 
     const defaultValueTitle = intl.formatMessage({
       defaultMessage: 'Value',
+      id: 'mOxbN1',
       description: 'Parameter Field Default Value Title',
     });
     const defaultValueDescription = intl.formatMessage({
       defaultMessage: 'Enter value for parameter.',
+      id: '7jAQar',
       description: 'Parameter Field Default Value Placeholder Text',
     });
     expect(defaultValue.props.className).toBe(textFieldClassName);

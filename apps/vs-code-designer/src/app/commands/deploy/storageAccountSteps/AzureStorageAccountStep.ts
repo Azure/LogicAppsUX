@@ -7,8 +7,8 @@ import { SQLStringNameStep } from './SQLStringNameStep';
 import type { IAppServiceWizardContext } from '@microsoft/vscode-azext-azureappservice';
 import type { IWizardOptions } from '@microsoft/vscode-azext-utils';
 import { AzureWizardPromptStep } from '@microsoft/vscode-azext-utils';
-import type { ILogicAppWizardContext } from '@microsoft/vscode-extension';
-import { StorageOptions } from '@microsoft/vscode-extension';
+import type { ILogicAppWizardContext } from '@microsoft/vscode-extension-logic-apps';
+import { StorageOptions } from '@microsoft/vscode-extension-logic-apps';
 import type { QuickPickItem, QuickPickOptions } from 'vscode';
 
 export class AzureStorageAccountStep extends AzureWizardPromptStep<ILogicAppWizardContext> {
@@ -31,9 +31,8 @@ export class AzureStorageAccountStep extends AzureWizardPromptStep<ILogicAppWiza
       return {
         promptSteps: [new SQLStringNameStep()],
       };
-    } else {
-      wizardContext.storageType = StorageOptions.AzureStorage;
-      return undefined;
     }
+    wizardContext.storageType = StorageOptions.AzureStorage;
+    return undefined;
   }
 }

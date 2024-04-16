@@ -1,6 +1,6 @@
 import { isRunError, mapToRunItem } from '../utils';
-import type { Run, RunError } from '@microsoft/utils-logic-apps';
-
+import type { Run, RunError } from '@microsoft/logic-apps-shared';
+import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 describe('lib/overview/utils', () => {
   describe('isRunError', () => {
     it('should return true when passed a run error object', () => {

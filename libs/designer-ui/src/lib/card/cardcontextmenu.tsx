@@ -1,68 +1,37 @@
-import type { CardProps } from './index';
-import type { MenuItemOption } from './types';
-import type { ICalloutProps, IContextualMenuItem, Target } from '@fluentui/react';
-import { ContextualMenu, DirectionalHint } from '@fluentui/react';
+import type { MenuOpenChangeData } from '@fluentui/react-components';
+import { Menu, MenuPopover, MenuList } from '@fluentui/react-components';
+import { useCallback, useMemo } from 'react';
 import { useIntl } from 'react-intl';
+import { useOnViewportChange } from 'reactflow';
 
-export interface CardContextMenuProps extends Pick<CardProps, 'contextMenuOptions' | 'title'> {
-  contextMenuLocation: Target | undefined;
-  showContextMenu: boolean;
-  onSetShowContextMenu(value: boolean): void;
+export interface CardContextMenuProps {
+  contextMenuLocation?: { x: number; y: number };
+  menuItems: JSX.Element[];
+  open: boolean;
+  setOpen: (open: boolean) => void;
+  title: string;
 }
 
-const calloutProps: ICalloutProps = {
-  preventDismissOnLostFocus: false, // danielle use prevent on preventDismissOnEvent
-  preventDismissOnResize: false,
-  preventDismissOnScroll: false, // danielle this might be it, true
-};
+export interface FUIReactMenuItem {
+  key: string;
+  text: string;
+  subtext?: string;
+  disabled?: boolean;
+  icon?: JSX.Element;
+  onClick?: (e: any) => void;
+}
 
-// const preventDismiss = (ev: Event | React.FocusEvent | React.KeyboardEvent | React.MouseEvent):boolean => {
-//   if (ev) {
-//     return true;
-//   }
-//   return false;
-// }
-
-export const CardContextMenu: React.FC<CardContextMenuProps> = ({
-  contextMenuLocation,
-  contextMenuOptions = [],
-  showContextMenu,
-  title,
-  onSetShowContextMenu,
-}) => {
+export const CardContextMenu: React.FC<CardContextMenuProps> = ({ contextMenuLocation, menuItems, open, title, setOpen }) => {
   const intl = useIntl();
 
-  if (!showContextMenu) {
-    return null;
-  }
-
-  const getMenuItems = (): IContextualMenuItem[] => {
-    return contextMenuOptions.map((item: MenuItemOption) => ({
-      key: item.key,
-      disabled: item.disabled,
-      iconOnly: true,
-      iconProps: {
-        iconName: item.iconName,
-      },
-      name: item.title,
-      onClick(e) {
-        e?.stopPropagation();
-
-        if (item?.onClick) {
-          onSetShowContextMenu(false);
-          item.onClick(e);
-        }
-      },
-    }));
-  };
-
-  const handleDismiss = () => {
-    onSetShowContextMenu(false);
-  };
+  useOnViewportChange({
+    onStart: useCallback(() => open && setOpen(false), [open, setOpen]),
+  });
 
   const CARD_CONTEXT_MENU_ARIA_LABEL = intl.formatMessage(
     {
       defaultMessage: 'Context menu for {title} card',
+      id: '+ZSBrq',
       description: 'Accessibility label',
     },
     {
@@ -70,15 +39,28 @@ export const CardContextMenu: React.FC<CardContextMenuProps> = ({
     }
   );
 
+  const onOpenChange = useCallback((_e: any, data: MenuOpenChangeData) => setOpen(data.open), [setOpen]);
+
+  const positioning = useMemo(() => {
+    const offset = contextMenuLocation ? { mainAxis: contextMenuLocation.y, crossAxis: contextMenuLocation.x } : undefined;
+    const getBoundingClientRect = () => ({
+      x: contextMenuLocation?.x ?? 0,
+      y: contextMenuLocation?.y ?? 0,
+      width: 0,
+      height: 0,
+      top: 0,
+      right: 0,
+      bottom: 0,
+      left: 0,
+    });
+    return { target: { getBoundingClientRect }, offset };
+  }, [contextMenuLocation]);
+
   return (
-    <ContextualMenu
-      ariaLabel={CARD_CONTEXT_MENU_ARIA_LABEL}
-      calloutProps={calloutProps}
-      directionalHint={DirectionalHint.bottomLeftEdge}
-      isBeakVisible={false}
-      items={getMenuItems()}
-      target={contextMenuLocation}
-      onDismiss={handleDismiss}
-    />
+    <Menu open={open} aria-label={CARD_CONTEXT_MENU_ARIA_LABEL} onOpenChange={onOpenChange} positioning={positioning} closeOnScroll>
+      <MenuPopover>
+        <MenuList>{menuItems}</MenuList>
+      </MenuPopover>
+    </Menu>
   );
 };

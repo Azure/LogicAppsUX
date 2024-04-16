@@ -1,6 +1,6 @@
 import type { Artifacts, FileDetails } from './artifact';
 import type { Parameter } from './parameter';
-import type { LogicAppsV2 } from '@microsoft/utils-logic-apps';
+import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
 
 export interface ILocalSettingsJson {
   IsEncrypted?: boolean;
@@ -48,7 +48,8 @@ export interface AzureConnectorDetails {
 
 export interface WorkflowParameter {
   type: string;
-  defaultValue: any;
+  value?: any;
+  defaultValue?: any;
   allowedValues?: any[];
   metadata?: any;
 }
@@ -72,11 +73,12 @@ export interface ICallbackUrlResponse {
   queries?: Record<string, any>;
 }
 
-export enum WorkflowProjectType {
-  Nuget = 'Nuget',
-  Bundle = 'Bundle',
-  Functions = 'Functions',
-}
+export const WorkflowProjectType = {
+  Nuget: 'Nuget',
+  Bundle: 'Bundle',
+  Functions: 'Functions',
+} as const;
+export type WorkflowProjectType = (typeof WorkflowProjectType)[keyof typeof WorkflowProjectType];
 
 export interface ISettingToAdd {
   key: string;
@@ -90,19 +92,20 @@ export interface IWorkflowStateTypeStepOptions {
   triggerSettings: { [key: string]: string | undefined } | undefined;
 }
 
-export enum MismatchBehavior {
+export const MismatchBehavior = {
   /**
    * Asks the user if they want to overwrite
    */
-  Prompt,
+  Prompt: 'Prompt',
 
   /**
    * Overwrites without prompting
    */
-  Overwrite,
+  Overwrite: 'Overwrite',
 
   /**
    * Returns without changing anything
    */
-  DontChange,
-}
+  DontChange: 'DontChange',
+} as const;
+export type MismatchBehavior = (typeof MismatchBehavior)[keyof typeof MismatchBehavior];

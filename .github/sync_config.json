@@ -1,0 +1,37 @@
+{
+  "log_level": "debug",
+  "ado": {
+    "organization": "msazure",
+    "project": "one",
+    "wit": "Task",
+    "states": {
+      "new": "To Do",
+      "closed": "Done",
+      "reopened": "Active",
+      "deleted": "Removed",
+      "active": "Active"
+    },
+    "bypassRules": false,
+    "autoCreate": true,
+    "assignee": "travisharris@microsoft.com",
+    "areaPath": "One\\Azure\\LogicApps\\UX",
+    "iterationPath": "One\\Custom\\Azure\\LogicApps",
+    "mappings": {
+      "handles": {
+        "hartra344": "travisharris@microsoft.com",
+        "Eric-B-Wu": "wue@microsoft.com",
+        "valentina-vallalta": "vvallalta@microsoft.com",
+        "preetriti1": "psamband@microsoft.com",
+        "DanielleCogs": "dacogbur@microsoft.com",
+        "Elaina-Lee": "hyehwalee@microsoft.com",
+        "ccastrotrejo": "ccastrotrejo@microsoft.com",
+        "ek68794998": "erickum@microsoft.com",
+        "takyyon": "krmitta@microsoft.com",
+        "Ram-G": "ramgup@microsoft.com",
+        "Aleks-gdb": "aleksd@microsoft.com",
+        "rllyy97": "rileyevans@microsoft.com",
+        "refortie": "refortie@microsoft.com"
+      }
+    }
+  }
+}

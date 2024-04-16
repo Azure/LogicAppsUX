@@ -1,13 +1,17 @@
-import { isApple } from '../../../helper';
+import { getChildrenNodes } from '../../../editor/base/utils/helper';
+import { parseHtmlSegments, parseSegments } from '../../../editor/base/utils/parsesegments';
 import clockWiseArrowDark from '../icons/dark/arrow-clockwise.svg';
 import counterClockWiseArrowDark from '../icons/dark/arrow-counterclockwise.svg';
+import codeToggleDark from '../icons/dark/code-toggle.svg';
 import clockWiseArrowLight from '../icons/light/arrow-clockwise.svg';
 import counterClockWiseArrowLight from '../icons/light/arrow-counterclockwise.svg';
+import codeToggleLight from '../icons/light/code-toggle.svg';
 import { BlockFormatDropDown } from './DropdownBlockFormat';
 import { Format } from './Format';
 import { CLOSE_DROPDOWN_COMMAND } from './helper/Dropdown';
 import { FontDropDown, FontDropDownType } from './helper/FontDropDown';
-import { useTheme } from '@fluentui/react';
+import { convertEditorState } from './helper/HTMLChangePlugin';
+import { css, useTheme } from '@fluentui/react';
 import { TOGGLE_LINK_COMMAND } from '@lexical/link';
 import { $isListNode, ListNode } from '@lexical/list';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
@@ -16,7 +20,10 @@ import { ListPlugin } from '@lexical/react/LexicalListPlugin';
 import { $isHeadingNode } from '@lexical/rich-text';
 import { $getSelectionStyleValueForProperty } from '@lexical/selection';
 import { mergeRegister, $getNearestNodeOfType, $findMatchingParent } from '@lexical/utils';
+import type { ValueSegment } from '@microsoft/logic-apps-shared';
+import { isApple } from '@microsoft/logic-apps-shared';
 import {
+  $getRoot,
   $getSelection,
   $isRangeSelection,
   $isRootOrShadowRoot,
@@ -29,30 +36,36 @@ import {
   UNDO_COMMAND,
 } from 'lexical';
 import { useCallback, useEffect, useState } from 'react';
+import { useIntl } from 'react-intl';
 
-export enum blockTypeToBlockName {
-  bullet = 'Bulleted List',
-  check = 'Check List',
-  code = 'Code Block',
-  h1 = 'Heading 1',
-  h2 = 'Heading 2',
-  h3 = 'Heading 3',
-  h4 = 'Heading 4',
-  h5 = 'Heading 5',
-  h6 = 'Heading 6',
-  number = 'Numbered List',
-  paragraph = 'Normal',
-  quote = 'Quote',
-}
+export const blockTypeToBlockName = {
+  bullet: 'Bulleted List',
+  check: 'Check List',
+  code: 'Code Block',
+  h1: 'Heading 1',
+  h2: 'Heading 2',
+  h3: 'Heading 3',
+  h4: 'Heading 4',
+  h5: 'Heading 5',
+  h6: 'Heading 6',
+  number: 'Numbered List',
+  paragraph: 'Normal',
+  quote: 'Quote',
+} as const;
+export type blockTypeToBlockName = (typeof blockTypeToBlockName)[keyof typeof blockTypeToBlockName];
 
-interface toolbarProps {
+interface ToolbarProps {
+  isRawText?: boolean;
+  isSwitchFromPlaintextBlocked?: boolean;
   readonly?: boolean;
+  setIsRawText?: (newValue: boolean) => void;
 }
 
-export const Toolbar = ({ readonly = false }: toolbarProps): JSX.Element => {
+export const Toolbar = ({ isRawText, isSwitchFromPlaintextBlocked, readonly = false, setIsRawText }: ToolbarProps): JSX.Element => {
   const [editor] = useLexicalComposerContext();
   const [activeEditor, setActiveEditor] = useState(editor);
   const { isInverted } = useTheme();
+  const intl = useIntl();
 
   const [canUndo, setCanUndo] = useState(false);
   const [canRedo, setCanRedo] = useState(false);
@@ -62,7 +75,7 @@ export const Toolbar = ({ readonly = false }: toolbarProps): JSX.Element => {
 
   const updateToolbar = useCallback(() => {
     const selection = $getSelection();
-    // Currently a bug affecting the toolbug due to $getSelection https://github.com/facebook/lexical/issues/4011
+    // Currently a bug affecting the tool due to $getSelection https://github.com/facebook/lexical/issues/4011
     if ($isRangeSelection(selection)) {
       const anchorNode = selection.anchor.getNode();
       let element =
@@ -161,6 +174,14 @@ export const Toolbar = ({ readonly = false }: toolbarProps): JSX.Element => {
     };
   }, [activeEditor]);
 
+  const toggleCodeViewMessage = intl.formatMessage({
+    defaultMessage: 'Toggle code view',
+    id: 'gA1dde',
+    description: 'Label used for the toolbar button which switches between raw HTML (code) view and WYSIWIG (rich text) view',
+  });
+
+  const formattingButtonsDisabled = readonly || !!isRawText;
+
   return (
     <div className="msla-html-editor-toolbar">
       <button
@@ -198,13 +219,49 @@ export const Toolbar = ({ readonly = false }: toolbarProps): JSX.Element => {
         <img className={'format'} src={isInverted ? clockWiseArrowDark : clockWiseArrowLight} alt={'clockwise arrow'} />
       </button>
       <Divider />
-      <BlockFormatDropDown disabled={readonly} blockType={blockType} editor={editor} />
-      <FontDropDown fontDropdownType={FontDropDownType.FONTFAMILY} value={fontFamily} editor={editor} disabled={readonly} />
-      <FontDropDown fontDropdownType={FontDropDownType.FONTSIZE} value={fontSize} editor={editor} disabled={readonly} />
+      <BlockFormatDropDown disabled={formattingButtonsDisabled} blockType={blockType} editor={editor} />
+      <FontDropDown
+        fontDropdownType={FontDropDownType.FONTFAMILY}
+        value={fontFamily}
+        editor={editor}
+        disabled={formattingButtonsDisabled}
+      />
+      <FontDropDown fontDropdownType={FontDropDownType.FONTSIZE} value={fontSize} editor={editor} disabled={formattingButtonsDisabled} />
       <Divider />
-      <Format activeEditor={activeEditor} readonly={readonly} />
+      <Format activeEditor={activeEditor} readonly={formattingButtonsDisabled} />
       <ListPlugin />
       <LinkPlugin />
+      {setIsRawText ? (
+        <button
+          aria-label="Raw code toggle"
+          className={css('toolbar-item', isRawText && 'active')}
+          disabled={readonly || (isRawText && isSwitchFromPlaintextBlocked)}
+          onMouseDown={(e) => {
+            e.preventDefault();
+          }}
+          onClick={() => {
+            const nodeMap = new Map<string, ValueSegment>();
+            activeEditor.getEditorState().read(() => {
+              getChildrenNodes($getRoot(), nodeMap);
+            });
+            convertEditorState(activeEditor, nodeMap, { isValuePlaintext: !!isRawText }).then((valueSegments) => {
+              activeEditor.update(() => {
+                $getRoot().clear().select();
+                if (isRawText) {
+                  parseHtmlSegments(valueSegments, { tokensEnabled: true, readonly });
+                  setIsRawText(false);
+                } else {
+                  parseSegments(valueSegments, { tokensEnabled: true, readonly });
+                  setIsRawText(true);
+                }
+              });
+            });
+          }}
+          title={toggleCodeViewMessage}
+        >
+          <img className={'format'} src={isInverted ? codeToggleDark : codeToggleLight} alt={'code view'} />
+        </button>
+      ) : null}
     </div>
   );
 };

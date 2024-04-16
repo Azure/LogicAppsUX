@@ -6,7 +6,7 @@ import { Label } from '../label';
 import type { LabelProps } from '../label';
 import type { IContextualMenuProps, IIconProps, IIconStyles } from '@fluentui/react';
 import { IconButton, TooltipHost, DefaultButton } from '@fluentui/react';
-import { guid } from '@microsoft/utils-logic-apps';
+import { guid } from '@microsoft/logic-apps-shared';
 import { useIntl } from 'react-intl';
 
 const addItemButtonIconProps: IIconProps = {
@@ -34,8 +34,11 @@ export interface ExpandedSimpleArrayProps {
   itemEnum?: string[];
   readonly?: boolean;
   tokenPickerButtonProps?: TokenPickerButtonEditorProps;
-  getTokenPicker: GetTokenPickerHandler;
   setItems: (newItems: SimpleArrayItem[]) => void;
+  options?: ComboboxItem[];
+  getTokenPicker: GetTokenPickerHandler;
+  tokenMapping?: Record<string, ValueSegment>;
+  loadParameterValueFromString?: (value: string) => ValueSegment[];
 }
 
 export const ExpandedSimpleArray = ({
@@ -47,12 +50,14 @@ export const ExpandedSimpleArray = ({
   itemEnum,
   setItems,
   readonly,
+  options,
   ...props
 }: ExpandedSimpleArrayProps): JSX.Element => {
   const intl = useIntl();
 
   const addItemButtonLabel = intl.formatMessage({
     defaultMessage: 'Add new item',
+    id: 'JWl/LD',
     description: 'Label to add item to array editor',
   });
 
@@ -67,6 +72,16 @@ export const ExpandedSimpleArray = ({
       setItems(newItems);
     }
   };
+
+  const comboboxOptions =
+    options ??
+    itemEnum?.map(
+      (val: string): ComboboxItem => ({
+        displayName: val,
+        key: val,
+        value: val,
+      })
+    );
 
   return (
     <div className="msla-array-container msla-array-item-container">
@@ -84,16 +99,10 @@ export const ExpandedSimpleArray = ({
                 />
               </div>
             </div>
-            {itemEnum && itemEnum.length > 0 ? (
+            {comboboxOptions ? (
               <Combobox
                 {...props}
-                options={itemEnum.map(
-                  (val: string): ComboboxItem => ({
-                    displayName: val,
-                    key: val,
-                    value: val,
-                  })
-                )}
+                options={comboboxOptions}
                 initialValue={item.value ?? []}
                 placeholder={placeholder}
                 onChange={(newState) => handleArrayElementSaved(item.value ?? [], newState, index)}
@@ -127,7 +136,7 @@ export const ExpandedSimpleArray = ({
 const renderLabel = (index: number, labelName?: string, isRequired?: boolean): JSX.Element => {
   return (
     <div className="msla-array-editor-label">
-      <Label text={labelName + ' - ' + (index + 1)} isRequiredField={isRequired ?? false} />
+      <Label text={`${labelName} - ${index + 1}`} isRequiredField={isRequired ?? false} />
     </div>
   );
 };
@@ -146,11 +155,13 @@ export const ItemMenuButton = ({ disabled, itemKey, visible, onDeleteItem }: Ite
   }
   const deleteButton = intl.formatMessage({
     defaultMessage: 'Delete',
+    id: 'JErLDT',
     description: 'Delete label',
   });
 
   const menuButton = intl.formatMessage({
     defaultMessage: 'Menu',
+    id: 'z3VuE+',
     description: 'Menu label',
   });
 

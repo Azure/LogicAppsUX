@@ -1,5 +1,5 @@
 import { css, FontIcon, Spinner, SpinnerSize } from '@fluentui/react';
-import React from 'react';
+import type React from 'react';
 import { useIntl } from 'react-intl';
 
 type ConnectionStatusProps = {
@@ -12,14 +12,17 @@ export const ConnectionStatus: React.FC<ConnectionStatusProps> = ({ apiName, isC
   const intlText = {
     connectionsSetupCardDescription: intl.formatMessage({
       defaultMessage: 'Set up these connections to use them in your flow.',
+      id: 'blRFVt',
       description: 'Chatbot connections setup card description',
     }),
     connectedText: intl.formatMessage({
       defaultMessage: 'Connected to',
+      id: 'xvav7+',
       description: 'Chatbot text stating connection to api was made',
     }),
     notConnectedText: intl.formatMessage({
       defaultMessage: 'Not connected to',
+      id: 'Ak2Lka',
       description: 'Chatbot text stating connection to api not made',
     }),
   };
@@ -57,6 +60,7 @@ export const ConnectionsLoading: React.FC = () => {
   const intlText = {
     connectionsLoading: intl.formatMessage({
       defaultMessage: 'Connecting to apps and services',
+      id: 'qBNM3e',
       description: 'Chatbot connections loading text',
     }),
   };

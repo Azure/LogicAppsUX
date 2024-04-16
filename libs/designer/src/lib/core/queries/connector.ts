@@ -4,12 +4,19 @@ import type {
   ManagedIdentityRequestProperties,
   TreeDynamicExtension,
   TreeDynamicValue,
-} from '@microsoft/designer-client-services-logic-apps';
-import { ConnectorService } from '@microsoft/designer-client-services-logic-apps';
-import type { FilePickerInfo, LegacyDynamicSchemaExtension, LegacyDynamicValuesExtension } from '@microsoft/parsers-logic-apps';
-import { Types } from '@microsoft/parsers-logic-apps';
-import type { OpenAPIV2 } from '@microsoft/utils-logic-apps';
-import { getPropertyValue, equals, getJSONValue, getObjectPropertyValue, isNullOrUndefined } from '@microsoft/utils-logic-apps';
+  FilePickerInfo,
+  LegacyDynamicSchemaExtension,
+  LegacyDynamicValuesExtension,
+  OpenAPIV2,
+} from '@microsoft/logic-apps-shared';
+import {
+  ConnectorService,
+  Types,
+  getPropertyValue,
+  getJSONValue,
+  getObjectPropertyValue,
+  isNullOrUndefined,
+} from '@microsoft/logic-apps-shared';
 
 export const getLegacyDynamicValues = async (
   connectionId: string,
@@ -36,7 +43,8 @@ export const getLegacyDynamicValues = async (
   const values = getObjectPropertyValue(response, extension['value-collection'] ? extension['value-collection'].split('/') : []);
   if (values && values.length) {
     return values.map((property: any) => {
-      let value: any, displayName: any;
+      let value: any;
+      let displayName: any;
       let isSelectable = true;
 
       if (parameterArrayType && parameterArrayType !== Types.Object) {
@@ -112,13 +120,8 @@ export const getLegacyDynamicSchema = async (
     return null;
   }
 
-  const schemaPath = extension['value-path'] ? extension['value-path'].split('/') : undefined;
-  return schemaPath
-    ? getObjectPropertyValue(
-        response,
-        schemaPath.length && equals(schemaPath[schemaPath.length - 1], 'properties') ? schemaPath.splice(-1, 1) : schemaPath
-      ) ?? null
-    : { properties: response, type: Types.Object };
+  const schemaPath = extension['value-path'] ? extension['value-path'].split('/').filter((s) => s) : undefined;
+  return schemaPath ? getObjectPropertyValue(response, schemaPath) ?? null : { properties: response, type: Types.Object };
 };
 
 export const getDynamicSchemaProperties = async (

@@ -1,11 +1,8 @@
 /* eslint-disable no-param-reassign */
 import { mapDefinitionVersion, mapNodeParams, reservedMapDefinitionKeys } from '../constants/MapDefinitionConstants';
 import { sourcePrefix, targetPrefix } from '../constants/ReactFlowConstants';
-import type { Connection, ConnectionDictionary, InputConnection } from '../models/Connection';
+import type { Connection, ConnectionDictionary, ConnectionUnit, InputConnection } from '../models/Connection';
 import { directAccessPseudoFunctionKey, ifPseudoFunctionKey, indexPseudoFunctionKey } from '../models/Function';
-import type { MapDefinitionEntry } from '../models/MapDefinition';
-import type { PathItem, SchemaExtended, SchemaNodeExtended } from '../models/Schema';
-import { SchemaNodeProperty } from '../models/Schema';
 import { findLast } from '../utils/Array.Utils';
 import { collectTargetNodesForConnectionChain, flattenInputs, isConnectionUnit, isCustomValue } from '../utils/Connection.Utils';
 import {
@@ -20,8 +17,9 @@ import {
 import { formatDirectAccess, getIndexValueForCurrentConnection, isFunctionData } from '../utils/Function.Utils';
 import { addTargetReactFlowPrefix } from '../utils/ReactFlow.Util';
 import { isObjectType, isSchemaNodeExtended } from '../utils/Schema.Utils';
+import type { MapDefinitionEntry, PathItem, SchemaExtended, SchemaNodeExtended } from '@microsoft/logic-apps-shared';
+import { extend, SchemaNodeProperty } from '@microsoft/logic-apps-shared';
 import yaml from 'js-yaml';
-import { merge } from 'lodash';
 
 interface OutputPathItem {
   key: string;
@@ -60,7 +58,7 @@ export const convertToMapDefinition = (
 
 const yamlReplacer = (key: string, value: any) => {
   if (typeof value === 'string' && key === reservedMapDefinitionKeys.version) {
-    return parseFloat(value);
+    return Number.parseFloat(value);
   }
 
   return value;
@@ -87,17 +85,20 @@ export const generateMapDefinitionHeader = (
   }
 };
 
-// Exported for testing purposes
-export const generateMapDefinitionBody = (mapDefinition: MapDefinitionEntry, connections: ConnectionDictionary): void => {
-  // Filter to just the target node connections, all the rest will be picked up be traversing up the chain
-  const targetSchemaConnections = Object.entries(connections).filter(([key, connection]) => {
+const getConnectionsToTargetNodes = (connections: ConnectionDictionary) => {
+  return Object.entries(connections).filter(([key, connection]) => {
     const selfNode = connection.self.node;
     if (key.startsWith(targetPrefix) && isSchemaNodeExtended(selfNode)) {
       return selfNode.nodeProperties.every((property) => property !== SchemaNodeProperty.Repeating);
-    } else {
-      return false;
     }
+    return false;
   });
+};
+
+// Exported for testing purposes
+export const generateMapDefinitionBody = (mapDefinition: MapDefinitionEntry, connections: ConnectionDictionary): void => {
+  // Filter to just the target node connections, all the rest will be picked up be traversing up the chain
+  const targetSchemaConnections = getConnectionsToTargetNodes(connections);
 
   targetSchemaConnections.forEach(([_key, connection]) => {
     const flattenedInputs = flattenInputs(connection?.inputs);
@@ -111,103 +112,149 @@ export const generateMapDefinitionBody = (mapDefinition: MapDefinitionEntry, con
   });
 };
 
+const createSourcePath = (
+  newPath: OutputPathItem[],
+  isFinalPath: boolean,
+  pathItem: PathItem,
+  connections: ConnectionDictionary,
+  input: InputConnection,
+  array: PathItem[]
+): string => {
+  if (isFinalPath) {
+    // Handle custom values, source schema nodes, or Functions applied to the current target schema node
+    let value = '';
+    if (input) {
+      if (isCustomValue(input)) {
+        value = input;
+      } else if (isSchemaNodeExtended(input.node)) {
+        value = input.node.key;
+      } else if (input.node.key.startsWith(ifPseudoFunctionKey)) {
+        const values = collectConditionalValues(connections[input.reactFlowKey], connections);
+        value = values[1];
+      } else if (input.node.key.startsWith(directAccessPseudoFunctionKey)) {
+        const functionValues = getInputValues(connections[input.reactFlowKey], connections, false);
+        value = formatDirectAccess(functionValues[0], functionValues[1], functionValues[2]);
+      } else {
+        value = collectFunctionValue(
+          input.node,
+          connections[input.reactFlowKey],
+          connections,
+          array.some((arrayItems) => arrayItems.repeating)
+        );
+      }
+    }
+    return value;
+
+    // Still have objects to traverse down
+  }
+  newPath.push({ key: pathItem.qName.startsWith('@') ? `$${pathItem.qName}` : pathItem.qName });
+  return '';
+};
+
+const getSrcPathRelativeToLoop = (newPath: OutputPathItem[]) => {
+  const valueToTrim = newPath
+    .map((pathItem) => (pathItem.key.startsWith(mapNodeParams.for) ? getSourceKeyOfLastLoop(pathItem.key) : ''))
+    .filter((path) => path !== '')
+    .join('/');
+  return valueToTrim;
+};
+
+const getPathForSrcSchemaNode = (sourceNode: ConnectionUnit, formattedLmlSnippetForTarget: string) => {
+  const res = findLast(
+    (sourceNode.node as SchemaNodeExtended).pathToRoot,
+    (pathItem) => pathItem.repeating && pathItem.key !== formattedLmlSnippetForTarget
+  )?.key;
+  return res;
+};
+
 const createNewPathItems = (input: InputConnection, targetNode: SchemaNodeExtended, connections: ConnectionDictionary) => {
   const newPath: OutputPathItem[] = [];
-  const isObjectValue = targetNode.nodeProperties.some((property) => property === SchemaNodeProperty.Complex);
+  const isTargetObjectType = targetNode.nodeProperties.some((property) => property === SchemaNodeProperty.Complex);
 
-  targetNode.pathToRoot.forEach((pathItem, index, array) => {
-    const rootTargetConnection = connections[addTargetReactFlowPrefix(pathItem.key)];
+  // build the target section of the yml starting with 'root' going down to the target node
+  const lastLoop = { loop: '' };
+  targetNode.pathToRoot.forEach((targetPath, index, pathToRoot) => {
+    const connectionsIntoCurrentTargetPath = connections[addTargetReactFlowPrefix(targetPath.key)];
 
     // If there is no rootTargetConnection that means there is a looping node in the source structure, but we aren't using it
     // Probably used for direct index access
-    if (pathItem.repeating && rootTargetConnection) {
+    if (targetPath.repeating && connectionsIntoCurrentTargetPath) {
       // Looping schema node
-      addLoopingToNewPathItems(pathItem, rootTargetConnection, connections, newPath);
+      addLoopingToNewPathItems(targetPath, connectionsIntoCurrentTargetPath, connections, newPath, lastLoop);
     } else {
-      if (rootTargetConnection) {
+      if (connectionsIntoCurrentTargetPath) {
         // Conditionals
-        const rootSourceNodes = rootTargetConnection.inputs[0];
+        const rootSourceNodes = connectionsIntoCurrentTargetPath.inputs[0];
         const sourceNode = rootSourceNodes[0];
         if (sourceNode && isConnectionUnit(sourceNode) && sourceNode.node.key.startsWith(ifPseudoFunctionKey)) {
           addConditionalToNewPathItems(connections[sourceNode.reactFlowKey], connections, newPath);
         }
       }
 
-      if (index + 1 < array.length) {
-        // Still have objects to traverse down
-        newPath.push({ key: pathItem.qName.startsWith('@') ? `$${pathItem.qName}` : pathItem.qName });
-      } else {
-        // Handle custom values, source schema nodes, or Functions applied to the current target schema node
-        let value = '';
-        if (input) {
-          if (isCustomValue(input)) {
-            value = input;
-          } else if (isSchemaNodeExtended(input.node)) {
-            value = input.node.key;
-          } else {
-            if (input.node.key.startsWith(ifPseudoFunctionKey)) {
-              const values = collectConditionalValues(connections[input.reactFlowKey], connections);
-              value = values[1];
-            } else if (input.node.key.startsWith(directAccessPseudoFunctionKey)) {
-              const functionValues = getInputValues(connections[input.reactFlowKey], connections, false);
-              value = formatDirectAccess(functionValues[0], functionValues[1], functionValues[2]);
-            } else {
-              value = collectFunctionValue(
-                input.node,
-                connections[input.reactFlowKey],
-                connections,
-                array.some((arrayItems) => arrayItems.repeating)
-              );
-            }
-          }
-        }
+      const isFinalPath = targetNode.key === targetPath.key;
 
-        const rootTargetConnection = connections[addTargetReactFlowPrefix(pathItem.key)];
-        const rootSourceNodes = rootTargetConnection.inputs[0];
-        const sourceNode = rootSourceNodes[0];
-        if (sourceNode && isConnectionUnit(sourceNode)) {
-          if (isFunctionData(sourceNode.node)) {
-            const valueToTrim = newPath
-              .map((pathItem) => (pathItem.key.startsWith(mapNodeParams.for) ? getSourceKeyOfLastLoop(pathItem.key) : ''))
-              .filter((path) => path !== '')
-              .join('/');
+      let formattedLmlSnippetForSource = createSourcePath(newPath, isFinalPath, targetPath, connections, input, pathToRoot);
+
+      // construct source side of LML for connection
+      if (isFinalPath) {
+        const connectionsToTarget = connections[addTargetReactFlowPrefix(targetPath.key)];
+        const inputIntoTargetNode = connectionsToTarget.inputs[0];
+        const inputNode = inputIntoTargetNode[0];
+        if (inputNode && isConnectionUnit(inputNode)) {
+          if (isFunctionData(inputNode.node)) {
+            const valueToTrim = getSrcPathRelativeToLoop(newPath);
 
             if (valueToTrim) {
               // Need local variables for functions
-              if (value === valueToTrim) {
-                value = '';
+              if (formattedLmlSnippetForSource === valueToTrim) {
+                formattedLmlSnippetForSource = '';
               } else {
-                value = value.replaceAll(`${valueToTrim}/`, '');
+                formattedLmlSnippetForSource = formattedLmlSnippetForSource.replaceAll(`${valueToTrim}/`, '');
 
                 // Handle dot access
-                if (!value.includes('[') && !value.includes(']')) {
-                  value = value.replaceAll(`${valueToTrim}`, '.');
+                if (!formattedLmlSnippetForSource.includes('[') && !formattedLmlSnippetForSource.includes(']')) {
+                  formattedLmlSnippetForSource = formattedLmlSnippetForSource.replaceAll(`${valueToTrim}`, '.');
                 }
               }
             }
           } else {
             // Need local variables for non-functions
-            const valueToTrim = findLast(sourceNode.node.pathToRoot, (pathItem) => pathItem.repeating && pathItem.key !== value)?.key;
-
-            if (value === sourceNode.node.key && sourceNode.node.nodeProperties.includes(SchemaNodeProperty.Repeating)) {
-              value = '.';
+            const valueToTrim = getPathForSrcSchemaNode(inputNode, formattedLmlSnippetForSource);
+            if (
+              formattedLmlSnippetForSource === inputNode.node.key &&
+              inputNode.node.nodeProperties.includes(SchemaNodeProperty.Repeating)
+            ) {
+              formattedLmlSnippetForSource = '.';
             } else if (valueToTrim) {
-              value = value.replace(`${valueToTrim}/`, '');
+              // account for source elements at different level of loop
+              let backoutValue = '';
+              if (valueToTrim !== lastLoop.loop && !valueToTrim.includes('/*')) {
+                // second condition is temporary fix for json arrays
+                const loopDifference = lastLoop.loop.replace(valueToTrim || ' ', '');
+                for (const i of loopDifference) {
+                  if (i === '/') {
+                    backoutValue += '../';
+                  }
+                }
+              }
+              formattedLmlSnippetForSource = backoutValue + formattedLmlSnippetForSource.replace(`${valueToTrim}/`, '');
             }
 
-            value = value.startsWith('@') ? `./${value}` : value;
+            formattedLmlSnippetForSource = formattedLmlSnippetForSource.startsWith('@')
+              ? `./${formattedLmlSnippetForSource}`
+              : formattedLmlSnippetForSource;
           }
         }
 
-        if (isObjectValue) {
+        if (isTargetObjectType) {
           // $Value
-          newPath.push({ key: pathItem.qName.startsWith('@') ? `$${pathItem.qName}` : pathItem.qName });
-          newPath.push({ key: mapNodeParams.value, value });
+          newPath.push({ key: targetPath.qName.startsWith('@') ? `$${targetPath.qName}` : targetPath.qName });
+          newPath.push({ key: mapNodeParams.value, value: formattedLmlSnippetForSource });
         } else {
           // Standard property to value
           newPath.push({
-            key: pathItem.qName.startsWith('@') ? `$${pathItem.qName}` : pathItem.qName,
-            value: value && !isObjectType(targetNode.type) ? value : undefined,
+            key: targetPath.qName.startsWith('@') ? `$${targetPath.qName}` : targetPath.qName,
+            value: formattedLmlSnippetForSource && !isObjectType(targetNode.type) ? formattedLmlSnippetForSource : undefined,
           });
         }
       }
@@ -237,7 +284,8 @@ const addLoopingToNewPathItems = (
   pathItem: PathItem,
   rootTargetConnection: Connection,
   connections: ConnectionDictionary,
-  newPath: OutputPathItem[]
+  newPath: OutputPathItem[],
+  currentLoop: { loop: string }
 ) => {
   const rootSourceNodes = [...rootTargetConnection.inputs[0]];
 
@@ -340,6 +388,7 @@ const addLoopingToNewPathItems = (
 
           // For entry
           newPath.push({ key: loopValue });
+          currentLoop.loop = sourceNode.node.key;
         }
 
         prevPathItemWasConditional = false;
@@ -372,26 +421,26 @@ const applyValueAtPath = (mapDefinition: MapDefinitionEntry, path: OutputPathIte
       const arrayItem: MapDefinitionEntry = {};
       applyValueAtPath(arrayItem, path.slice(pathIndex + 1));
 
-      const combinedArrayItem = merge(newArray[pathItem.arrayIndex], arrayItem);
+      const combinedArrayItem = extend({}, newArray[pathItem.arrayIndex], arrayItem);
+
       newArray[pathItem.arrayIndex] = combinedArrayItem;
       mapDefinition[curPathItem.key] = newArray;
 
       // Return false to break loop
       return false;
-    } else {
-      if (!mapDefinition[pathItem.key]) {
-        mapDefinition[pathItem.key] = {};
-      }
+    }
+    if (!mapDefinition[pathItem.key]) {
+      mapDefinition[pathItem.key] = {};
+    }
 
-      if (pathItem.value) {
-        mapDefinition[pathItem.key] = pathItem.value;
-      }
+    if (pathItem.value) {
+      mapDefinition[pathItem.key] = pathItem.value;
+    }
 
-      // Look ahead to see if we need to stay in our current location
-      const nextPathItem = path[pathIndex + 1];
-      if (!nextPathItem || nextPathItem.arrayIndex === undefined) {
-        mapDefinition = mapDefinition[pathItem.key] as MapDefinitionEntry;
-      }
+    // Look ahead to see if we need to stay in our current location
+    const nextPathItem = path[pathIndex + 1];
+    if (!nextPathItem || nextPathItem.arrayIndex === undefined) {
+      mapDefinition = mapDefinition[pathItem.key] as MapDefinitionEntry;
     }
 
     return true;

@@ -1,20 +1,23 @@
 import type { MSIProps } from '..';
+import type { ValueSegment } from '../../editor';
 import type { ChangeHandler, GetTokenPickerHandler } from '../../editor/base';
 import type { TokenPickerButtonEditorProps } from '../../editor/base/plugins/tokenpickerbutton';
 import { AuthenticationDropdown } from '../AuthenticationDropdown';
 import { AuthenticationProperty } from '../AuthenticationProperty';
 import { AUTHENTICATION_PROPERTIES } from '../util';
 import type { IDropdownOption } from '@fluentui/react';
-import { ResourceIdentityType } from '@microsoft/utils-logic-apps';
+import { ResourceIdentityType } from '@microsoft/logic-apps-shared';
 import { useIntl } from 'react-intl';
 
 interface MSIAuthenticationDefaultProps {
   msiProps: MSIProps;
   readonly?: boolean;
   tokenPickerButtonProps?: TokenPickerButtonEditorProps;
-  getTokenPicker: GetTokenPickerHandler;
   onManagedIdentityChange(event: React.FormEvent<HTMLDivElement>, item: IDropdownOption): void;
   onBlur: ChangeHandler;
+  getTokenPicker: GetTokenPickerHandler;
+  tokenMapping?: Record<string, ValueSegment>;
+  loadParameterValueFromString?: (value: string) => ValueSegment[];
 }
 
 export const MSIAuthenticationDefault = ({
@@ -27,20 +30,24 @@ export const MSIAuthenticationDefault = ({
 
   const authNotEnabledError = intl.formatMessage({
     defaultMessage: 'Please enable managed identity for the logic app.',
+    id: '8ND+Yc',
     description: 'Error Message for disabled managed identity',
   });
 
   const systemAssignedManagedIdentity = intl.formatMessage({
     defaultMessage: 'System-assigned managed identity',
+    id: '36RiST',
     description: 'System-assigned managed identity dropdown option text',
   });
 
   const MSIAuthLabel = intl.formatMessage({
     defaultMessage: 'Managed identity',
+    id: '2TMGk7',
     description: 'Managed Identity Label',
   });
   const MSIAuthPlaceholder = intl.formatMessage({
     defaultMessage: 'Please select an identity',
+    id: 'cgq/+y',
     description: 'Placehodler text for dropdown',
   });
 

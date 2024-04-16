@@ -1,11 +1,12 @@
 import { ActionButtonV2 } from '../../actionbuttonv2';
 import NodeCollapseToggle from '../../nodeCollapseToggle';
 import { CardContextMenu } from '../cardcontextmenu';
+import { ErrorBanner } from '../errorbanner';
 import { useCardContextMenu, useCardKeyboardInteraction } from '../hooks';
-import type { MenuItemOption } from '../types';
+import type { MessageBarType } from '@fluentui/react';
 import { css } from '@fluentui/react';
-import type { SubgraphType } from '@microsoft/utils-logic-apps';
-import { SUBGRAPH_TYPES } from '@microsoft/utils-logic-apps';
+import type { SubgraphType } from '@microsoft/logic-apps-shared';
+import { SUBGRAPH_TYPES } from '@microsoft/logic-apps-shared';
 import { useIntl } from 'react-intl';
 
 interface SubgraphCardProps {
@@ -18,8 +19,11 @@ interface SubgraphCardProps {
   selected?: boolean;
   readOnly?: boolean;
   onClick?(id?: string): void;
+  onDeleteClick?(): void;
   showAddButton?: boolean;
-  contextMenuOptions?: MenuItemOption[];
+  contextMenuItems?: JSX.Element[];
+  errorLevel?: MessageBarType;
+  errorMessage?: string;
 }
 
 export const SubgraphCard: React.FC<SubgraphCardProps> = ({
@@ -32,20 +36,26 @@ export const SubgraphCard: React.FC<SubgraphCardProps> = ({
   selected = false,
   readOnly = false,
   onClick,
-  contextMenuOptions = [],
+  onDeleteClick,
+  contextMenuItems = [],
+  errorLevel,
+  errorMessage,
 }) => {
   const intl = useIntl();
 
-  const keyboardInteraction = useCardKeyboardInteraction(() => onClick?.(data.id), contextMenuOptions);
+  const keyboardInteraction = useCardKeyboardInteraction(() => onClick?.(data.id), onDeleteClick);
   const contextMenu = useCardContextMenu();
 
   const addCaseLabel = intl.formatMessage({
     defaultMessage: 'Add Case',
+    id: 'sQ2vRs',
     description: 'add a case to switch statement',
   });
 
   if (subgraphType === SUBGRAPH_TYPES['SWITCH_ADD_CASE']) {
-    if (readOnly) return null;
+    if (readOnly) {
+      return null;
+    }
     return (
       <div style={{ display: 'grid', placeItems: 'center', width: '100%', height: '100%' }}>
         <ActionButtonV2 title={addCaseLabel} onClick={() => onClick?.()} />
@@ -58,6 +68,7 @@ export const SubgraphCard: React.FC<SubgraphCardProps> = ({
       color: '#428000',
       title: intl.formatMessage({
         defaultMessage: 'True',
+        id: '/WW7If',
         description: 'True',
       }),
       size: 'small',
@@ -67,6 +78,7 @@ export const SubgraphCard: React.FC<SubgraphCardProps> = ({
       color: '#A4262C',
       title: intl.formatMessage({
         defaultMessage: 'False',
+        id: 'PXa0D4',
         description: 'False',
       }),
       size: 'small',
@@ -82,6 +94,7 @@ export const SubgraphCard: React.FC<SubgraphCardProps> = ({
       color: '#484F58',
       title: intl.formatMessage({
         defaultMessage: 'Default',
+        id: 'FUuFlC',
         description: 'Default, the backup option if none other apply',
       }),
       size: 'small',
@@ -91,6 +104,7 @@ export const SubgraphCard: React.FC<SubgraphCardProps> = ({
       color: '#486991',
       title: intl.formatMessage({
         defaultMessage: 'Do',
+        id: 'c/+j08',
         description: 'Do, as in "to do an action"',
       }),
       size: 'small',
@@ -119,21 +133,23 @@ export const SubgraphCard: React.FC<SubgraphCardProps> = ({
           onKeyDown={keyboardInteraction.keyUp}
           onKeyUp={keyboardInteraction.keyDown}
         >
-          {data.title}
+          <div className="msla-subgraph-title-text">{data.title}</div>
+          {errorMessage ? <ErrorBanner errorLevel={errorLevel} errorMessage={errorMessage} /> : null}
         </button>
         <NodeCollapseToggle collapsed={collapsed} handleCollapse={handleCollapse} />
-        {contextMenuOptions?.length > 0 ? (
+        {contextMenuItems?.length > 0 ? (
           <CardContextMenu
             contextMenuLocation={contextMenu.location}
-            contextMenuOptions={contextMenuOptions}
-            showContextMenu={contextMenu.isShowing}
+            menuItems={contextMenuItems}
+            open={contextMenu.isShowing}
             title={data.title}
-            onSetShowContextMenu={contextMenu.setIsShowing}
+            setOpen={contextMenu.setIsShowing}
           />
         ) : null}
       </div>
     );
-  } else if (data.size === 'small') {
+  }
+  if (data.size === 'small') {
     return (
       <div style={{ width: 200, display: 'grid', placeItems: 'center' }}>
         <div
@@ -147,10 +163,11 @@ export const SubgraphCard: React.FC<SubgraphCardProps> = ({
           onKeyUp={keyboardInteraction.keyDown}
         >
           <div className={css('msla-selection-box', 'white-outline', selected && 'selected')} tabIndex={-1} />
-          <div className="msla-subgraph-title">{data.title}</div>
+          <div className="msla-subgraph-title msla-subgraph-title-text">{data.title}</div>
           <NodeCollapseToggle disabled collapsed={collapsed} onSmallCard />
         </div>
       </div>
     );
-  } else return null;
+  }
+  return null;
 };

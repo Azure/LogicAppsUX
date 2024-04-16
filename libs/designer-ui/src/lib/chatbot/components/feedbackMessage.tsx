@@ -7,42 +7,38 @@ type FeedbackMessageProps = {
   id: string;
   date: Date;
   reaction: ChatEntryReaction | undefined;
-  askFeedback: boolean;
+  askFeedback?: boolean;
+  openFeedback?: () => void;
 };
 
-export const FeedbackMessage = ({ id, date, reaction, askFeedback }: FeedbackMessageProps) => {
+export const FeedbackMessage = ({ id, date, reaction, askFeedback, openFeedback }: FeedbackMessageProps) => {
   const intl = useIntl();
   const intlText = {
     feedbackCardPanelTitle: intl.formatMessage({
       defaultMessage: 'Send feedback',
+      id: '9wX3u9',
       description: 'Chatbot feedback card title',
     }),
     feedbackCardThumbsDownLinkText: intl.formatMessage({
       defaultMessage: 'Tell Microsoft how this feature could be improved',
+      id: 'jN0YES',
       description: 'Chatbot feedback card link asking how we can improve this feature',
     }),
     feedbackCardThumbsUpLinkText: intl.formatMessage({
       defaultMessage: 'Tell Microsoft what you liked about this feature',
+      id: '5J9jne',
       description: 'Chatbot feedback card link asking what user liked about the feature',
     }),
   };
   return askFeedback ? (
     <ChatBubble key={id} isUserMessage={false} isAIGenerated={false} date={date} className={mergeStyles({ marginTop: 8 })}>
       {reaction === ChatEntryReaction.thumbsUp && (
-        <Link
-          className="msla-feedbackmessage-link"
-          // TODO: onClick={} openFeedbackPanel(item)}
-          isUnderlinedStyle={true}
-        >
+        <Link className="msla-feedbackmessage-link" onClick={openFeedback}>
           {intlText.feedbackCardThumbsUpLinkText}
         </Link>
       )}
       {reaction === ChatEntryReaction.thumbsDown && (
-        <Link
-          className="msla-feedbackmessage-link"
-          // TODO: onClick={} openFeedbackPanel(item)}
-          isUnderlinedStyle={true}
-        >
+        <Link className="msla-feedbackmessage-link" onClick={openFeedback}>
           {intlText.feedbackCardThumbsDownLinkText}
         </Link>
       )}

@@ -1,0 +1,54 @@
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
+
+exports[`ui/workflowparameters/workflowparameter > should construct. 1`] = `
+<div
+  id="msla-node-details-panel-"
+>
+  <ForwardRef
+    aria-label="more panels"
+  >
+    <TabList
+      onTabSelect={[Function]}
+      style={
+        {
+          "margin": "0px -12px",
+        }
+      }
+    >
+      <OverflowMenu
+        tabs={[]}
+      />
+    </TabList>
+  </ForwardRef>
+  <div
+    className="msla-panel-content-container"
+  />
+</div>
+`;
+
+exports[`ui/workflowparameters/workflowparameter > should construct. 2`] = `
+<div
+  className="msla-node-details-panel"
+  id="msla-node-details-panel-"
+>
+  <ForwardRef
+    aria-label="more panels"
+  >
+    <TabList
+      onTabSelect={[Function]}
+      style={
+        {
+          "margin": "0px -12px",
+        }
+      }
+    >
+      <OverflowMenu
+        tabs={[]}
+      />
+    </TabList>
+  </ForwardRef>
+  <div
+    className="msla-panel-content-container"
+  />
+</div>
+`;

@@ -2,12 +2,13 @@ import type { IDropdownOption, IDropdownStyles } from '@fluentui/react';
 import { css, Dropdown, Label, FontSizes } from '@fluentui/react';
 import { useState } from 'react';
 
-export enum DropdownType {
-  Frequency = 'frequency',
-  Timezone = 'timezone',
-  Days = 'days',
-  Hours = 'hours',
-}
+export const DropdownType = {
+  Frequency: 'frequency',
+  Timezone: 'timezone',
+  Days: 'days',
+  Hours: 'hours',
+} as const;
+export type DropdownType = (typeof DropdownType)[keyof typeof DropdownType];
 
 const dropdownStyle: Partial<IDropdownStyles> = {
   caretDown: {
@@ -79,11 +80,9 @@ export const DropdownControl = ({
         : selectedOptions.filter((key: string) => key !== option?.key);
       setSelectedOptions(newKeys);
       onChange(newKeys);
-    } else {
-      if (option) {
-        setSelectedOption(option.key as string);
-        onChange(option.key as string);
-      }
+    } else if (option) {
+      setSelectedOption(option.key as string);
+      onChange(option.key as string);
     }
   };
 

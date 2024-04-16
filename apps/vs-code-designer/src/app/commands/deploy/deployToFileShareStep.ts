@@ -18,13 +18,12 @@ import {
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import { getArtifactsPathInLocalProject, getWorkflowsPathInLocalProject, type File } from '../../utils/codeless/common';
-import { tryGetFunctionProjectRoot } from '../../utils/verifyIsProject';
+import { tryGetLogicAppProjectRoot } from '../../utils/verifyIsProject';
 import { getWorkspaceFolderPath } from '../workflows/switchDebugMode/switchDebugMode';
 import type { StringDictionary } from '@azure/arm-appservice';
-import { type ShareClient, ShareServiceClient } from '@azure/storage-file-share';
-import type { ShareDirectoryClient } from '@azure/storage-file-share';
+import  { type ShareDirectoryClient, type ShareClient, ShareServiceClient} from '@azure/storage-file-share';
 import type { ParsedSite } from '@microsoft/vscode-azext-azureappservice';
-import { type IActionContext } from '@microsoft/vscode-azext-utils';
+import type {  IActionContext } from '@microsoft/vscode-azext-utils';
 import * as fse from 'fs-extra';
 import * as path from 'path';
 import { ProgressLocation, window } from 'vscode';
@@ -45,7 +44,7 @@ export const deployToFileShare = async (context: IActionContext, site: ParsedSit
 
     if (await shareClient.exists()) {
       const workspaceFolder = await getWorkspaceFolderPath(context);
-      const projectPath: string | undefined = await tryGetFunctionProjectRoot(context, workspaceFolder, true /* suppressPrompt */);
+      const projectPath: string | undefined = await tryGetLogicAppProjectRoot(context, workspaceFolder, true /* suppressPrompt */);
 
       const directoryClient = shareClient.getDirectoryClient(wwwrootDirectory);
       if (await directoryClient.exists()) {

@@ -1,4 +1,4 @@
-import type { LogicAppsV2 } from '@microsoft/utils-logic-apps';
+import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
 
 export interface Workflow {
   definition: LogicAppsV2.WorkflowDefinition;
@@ -27,12 +27,16 @@ export interface Impersonation {
   objectId?: string;
 }
 
-export enum ImpersonationSource {
-  Invoker = 'invoker',
-}
+export const ImpersonationSource = {
+  Invoker: 'invoker',
+} as const;
+export type ImpersonationSource = (typeof ImpersonationSource)[keyof typeof ImpersonationSource];
 
-type ReferenceKey = string;
+export type ReferenceKey = string;
 export type ConnectionReferences = Record<ReferenceKey, ConnectionReference>;
+
+export type NodeId = string;
+export type ConnectionMapping = Record<NodeId, ReferenceKey | null>;
 
 export interface WorkflowParameter {
   name?: string;

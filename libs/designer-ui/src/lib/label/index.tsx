@@ -1,10 +1,11 @@
 import { css, Label as FluentLabel } from '@fluentui/react';
 import { useIntl } from 'react-intl';
 
-export enum RequiredMarkerSide {
-  LEFT = 'left',
-  RIGHT = 'right',
-}
+export const RequiredMarkerSide = {
+  LEFT: 'left',
+  RIGHT: 'right',
+} as const;
+export type RequiredMarkerSide = (typeof RequiredMarkerSide)[keyof typeof RequiredMarkerSide];
 export interface LabelProps {
   className?: string;
   htmlFor?: string;
@@ -48,6 +49,7 @@ const RequiredParameterMarker: React.FC<RequiredParameterMarkerProps> = ({ isReq
 
   const ariaLabel = intl.formatMessage({
     defaultMessage: 'Required',
+    id: 'qSt0Sb',
     description: 'Accessibility prefix for the input label',
   });
 

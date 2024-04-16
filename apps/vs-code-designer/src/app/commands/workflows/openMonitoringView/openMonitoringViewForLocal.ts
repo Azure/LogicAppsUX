@@ -14,13 +14,13 @@ import {
   getArtifactsInLocalProject,
   getStandardAppData,
 } from '../../../utils/codeless/common';
-import { getConnectionsFromFile, getFunctionProjectRoot, getParametersFromFile } from '../../../utils/codeless/connection';
+import { getConnectionsFromFile, getLogicAppProjectRoot, getParametersFromFile } from '../../../utils/codeless/connection';
 import { sendRequest } from '../../../utils/requestUtils';
 import { OpenMonitoringViewBase } from './openMonitoringViewBase';
-import { HTTP_METHODS } from '@microsoft/utils-logic-apps';
+import { HTTP_METHODS } from '@microsoft/logic-apps-shared';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
-import type { AzureConnectorDetails, IDesignerPanelMetadata, Parameter } from '@microsoft/vscode-extension';
-import { ExtensionCommand } from '@microsoft/vscode-extension';
+import type { AzureConnectorDetails, IDesignerPanelMetadata, Parameter } from '@microsoft/vscode-extension-logic-apps';
+import { ExtensionCommand, ProjectName } from '@microsoft/vscode-extension-logic-apps';
 import { promises, readFileSync } from 'fs';
 import * as path from 'path';
 import * as vscode from 'vscode';
@@ -56,7 +56,7 @@ export default class OpenMonitoringViewForLocal extends OpenMonitoringViewBase {
       this.getPanelOptions()
     );
 
-    this.projectPath = await getFunctionProjectRoot(this.context, this.workflowFilePath);
+    this.projectPath = await getLogicAppProjectRoot(this.context, this.workflowFilePath);
     const connectionsData = await getConnectionsFromFile(this.context, this.workflowFilePath);
     const parametersData = await getParametersFromFile(this.context, this.workflowFilePath);
     this.baseUrl = `http://localhost:${ext.workflowRuntimePort}${managementApiPrefix}`;
@@ -102,6 +102,7 @@ export default class OpenMonitoringViewForLocal extends OpenMonitoringViewBase {
         this.sendMsgToWebview({
           command: ExtensionCommand.initialize_frame,
           data: {
+            project: ProjectName.designer,
             panelMetadata: this.panelMetadata,
             connectionData: this.connectionData,
             workflowDetails: this.workflowDetails,
@@ -154,7 +155,7 @@ export default class OpenMonitoringViewForLocal extends OpenMonitoringViewBase {
 
   private async _getDesignerPanelMetadata(): Promise<IDesignerPanelMetadata> {
     const connectionsData: string = await getConnectionsFromFile(this.context, this.workflowFilePath);
-    const projectPath: string | undefined = await getFunctionProjectRoot(this.context, this.workflowFilePath);
+    const projectPath: string | undefined = await getLogicAppProjectRoot(this.context, this.workflowFilePath);
     const workflowContent: any = JSON.parse(readFileSync(this.workflowFilePath, 'utf8'));
     const parametersData: Record<string, Parameter> = await getParametersFromFile(this.context, this.workflowFilePath);
     let localSettings: Record<string, string>;

@@ -1,9 +1,15 @@
 import constants from '../../../../../common/constants';
 import { useShowIdentitySelectorQuery } from '../../../../../core/state/connection/connectionSelector';
-import { useReadOnly } from '../../../../../core/state/designerOptions/designerOptionsSelectors';
+import { addOrUpdateCustomCode } from '../../../../../core/state/customcode/customcodeSlice';
+import { useHostOptions, useReadOnly } from '../../../../../core/state/designerOptions/designerOptionsSelectors';
 import type { ParameterGroup } from '../../../../../core/state/operation/operationMetadataSlice';
 import { DynamicLoadStatus, ErrorLevel } from '../../../../../core/state/operation/operationMetadataSlice';
-import { useNodesInitialized, useOperationErrorInfo } from '../../../../../core/state/operation/operationSelector';
+import {
+  useDependencies,
+  useNodesInitialized,
+  useOperationErrorInfo,
+  useRawInputParameters,
+} from '../../../../../core/state/operation/operationSelector';
 import { usePanelLocation, useSelectedNodeId } from '../../../../../core/state/panel/panelSelectors';
 import {
   useAllowUserToChangeConnection,
@@ -13,14 +19,16 @@ import {
 } from '../../../../../core/state/selectors/actionMetadataSelector';
 import type { VariableDeclaration } from '../../../../../core/state/tokens/tokensSlice';
 import { updateVariableInfo } from '../../../../../core/state/tokens/tokensSlice';
-import { useNodeMetadata, useReplacedIds } from '../../../../../core/state/workflow/workflowSelectors';
+import { useNodeDisplayName, useNodeMetadata, useReplacedIds } from '../../../../../core/state/workflow/workflowSelectors';
 import type { AppDispatch, RootState } from '../../../../../core/store';
 import { getConnectionReference } from '../../../../../core/utils/connectors/connections';
 import { isRootNodeInGraph } from '../../../../../core/utils/graph';
 import {
   loadDynamicTreeItemsForParameter,
   loadDynamicValuesForParameter,
+  loadParameterValueFromString,
   parameterValueToString,
+  remapEditorViewModelWithNewIds,
   remapValueSegmentsWithNewIds,
   shouldUseParameterInGroup,
   updateParameterAndDependencies,
@@ -33,19 +41,27 @@ import type { Settings } from '../../../../settings/settingsection';
 import { ConnectionDisplay } from './connectionDisplay';
 import { IdentitySelector } from './identityselector';
 import { MessageBar, MessageBarType, Spinner, SpinnerSize } from '@fluentui/react';
-import { EditorService } from '@microsoft/designer-client-services-logic-apps';
+import { Divider } from '@fluentui/react-components';
 import {
   DynamicCallStatus,
   PanelLocation,
   TokenPicker,
   TokenPickerButtonLocation,
   TokenType,
+  isCustomCode,
   toCustomEditorAndOptions,
 } from '@microsoft/designer-ui';
 import type { ChangeState, ParameterInfo, ValueSegment, OutputToken, TokenPickerMode, PanelTabFn } from '@microsoft/designer-ui';
-import type { OperationInfo } from '@microsoft/utils-logic-apps';
-import { equals, getPropertyValue } from '@microsoft/utils-logic-apps';
-import { useCallback, useMemo, useState } from 'react';
+import {
+  EditorService,
+  equals,
+  getPropertyValue,
+  getRecordEntry,
+  isRecordNotEmpty,
+  replaceWhiteSpaceWithUnderscore,
+} from '@microsoft/logic-apps-shared';
+import type { OperationInfo } from '@microsoft/logic-apps-shared';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -66,18 +82,26 @@ export const ParametersTab = () => {
   const showConnectionDisplay = useAllowUserToChangeConnection(operationInfo);
   const showIdentitySelector = useShowIdentitySelectorQuery(selectedNodeId);
   const errorInfo = useOperationErrorInfo(selectedNodeId);
-
+  const { hideUTFExpressions } = useHostOptions();
   const replacedIds = useReplacedIds();
 
-  const emptyParametersMessage = useIntl().formatMessage({
+  const intl = useIntl();
+  const emptyParametersMessage = intl.formatMessage({
     defaultMessage: 'No additional information is needed for this step. You will be able to use the outputs in subsequent steps.',
+    id: 'BtL7UI',
     description: 'Message to show when there are no parameters to author in operation.',
   });
 
   const isLoading = useMemo(() => {
-    if (!operationInfo && !nodeMetadata?.subgraphType) return true;
-    if (!nodesInitialized) return true;
-    if (inputs?.dynamicLoadStatus === DynamicLoadStatus.STARTED) return true;
+    if (!operationInfo && !nodeMetadata?.subgraphType) {
+      return true;
+    }
+    if (!nodesInitialized) {
+      return true;
+    }
+    if (inputs?.dynamicLoadStatus === DynamicLoadStatus.STARTED) {
+      return true;
+    }
     return false;
   }, [inputs?.dynamicLoadStatus, nodeMetadata?.subgraphType, nodesInitialized, operationInfo]);
 
@@ -98,7 +122,7 @@ export const ParametersTab = () => {
   }
 
   const tokenGroup = getOutputTokenSections(selectedNodeId, nodeType, tokenState, workflowParametersState, replacedIds);
-  const expressionGroup = getExpressionTokenSections();
+  const expressionGroup = getExpressionTokenSections(hideUTFExpressions);
 
   return (
     <>
@@ -108,8 +132,8 @@ export const ParametersTab = () => {
             errorInfo.level === ErrorLevel.DynamicInputs || errorInfo.level === ErrorLevel.Default
               ? MessageBarType.severeWarning
               : errorInfo.level === ErrorLevel.DynamicOutputs
-              ? MessageBarType.warning
-              : MessageBarType.error
+                ? MessageBarType.warning
+                : MessageBarType.error
           }
         >
           {errorInfo.message}
@@ -129,14 +153,18 @@ export const ParametersTab = () => {
         </div>
       ))}
       {operationInfo && showConnectionDisplay && connectionName.isLoading !== undefined ? (
-        <ConnectionDisplay
-          connectionName={connectionName.result}
-          nodeId={selectedNodeId}
-          isLoading={connectionName.isLoading}
-          readOnly={!!readOnly}
-        />
+        <>
+          <Divider style={{ padding: '16px 0px' }} />
+          <ConnectionDisplay
+            connectionName={connectionName.result}
+            nodeId={selectedNodeId}
+            isLoading={connectionName.isLoading}
+            readOnly={!!readOnly}
+            hasError={errorInfo?.level === ErrorLevel.Connection}
+          />
+        </>
       ) : null}
-      {showIdentitySelector.data ? <IdentitySelector nodeId={selectedNodeId} readOnly={!!readOnly} /> : null}
+      {showIdentitySelector ? <IdentitySelector nodeId={selectedNodeId} readOnly={!!readOnly} /> : null}
     </>
   );
 };
@@ -156,11 +184,11 @@ const ParameterSection = ({
 }) => {
   const dispatch = useDispatch<AppDispatch>();
   const [sectionExpanded, setSectionExpanded] = useState<boolean>(false);
+  const isTrigger = useSelector((state: RootState) => isRootNodeInGraph(nodeId, 'root', state.workflow.nodesMetadata));
+  const nodeInputs = useRawInputParameters(nodeId) ?? { parameterGroups: {} };
+  const operationInfo = useOperationInfo(nodeId);
+  const dependencies = useDependencies(nodeId);
   const {
-    isTrigger,
-    nodeInputs,
-    operationInfo,
-    dependencies,
     settings: nodeSettings,
     variables,
     upstreamNodeIds,
@@ -170,14 +198,12 @@ const ParameterSection = ({
     workflowParameters,
   } = useSelector((state: RootState) => {
     return {
-      isTrigger: isRootNodeInGraph(nodeId, 'root', state.workflow.nodesMetadata),
-      nodeInputs: state.operations.inputParameters[nodeId],
-      operationInfo: state.operations.operationInfo[nodeId],
-      dependencies: state.operations.dependencies[nodeId],
-      settings: state.operations.settings[nodeId],
-      upstreamNodeIds: state.tokens.outputTokens[nodeId]?.upstreamNodeIds,
+      settings: getRecordEntry(state.operations.settings, nodeId) ?? {},
+      upstreamNodeIds: getRecordEntry(state.tokens.outputTokens, nodeId)?.upstreamNodeIds,
       variables: state.tokens.variables,
-      operationDefinition: state.workflow.newlyAddedOperations[nodeId] ? undefined : state.workflow.operations[nodeId],
+      operationDefinition: getRecordEntry(state.workflow.newlyAddedOperations, nodeId)
+        ? undefined
+        : getRecordEntry(state.workflow.operations, nodeId),
       connectionReference: getConnectionReference(state.connections, nodeId),
       idReplacements: state.workflow.idReplacements,
       workflowParameters: state.workflowParameters.definitions,
@@ -186,23 +212,37 @@ const ParameterSection = ({
   const rootState = useSelector((state: RootState) => state);
   const displayNameResult = useConnectorName(operationInfo);
   const panelLocation = usePanelLocation();
+  const nodeTitle = replaceWhiteSpaceWithUnderscore(useNodeDisplayName(nodeId));
+
+  const { suppressCastingForSerialize, hideUTFExpressions } = useHostOptions();
+
+  const [tokenMapping, setTokenMapping] = useState<Record<string, ValueSegment>>({});
 
   const onValueChange = useCallback(
     (id: string, newState: ChangeState) => {
       const { value, viewModel } = newState;
       const parameter = nodeInputs.parameterGroups[group.id].parameters.find((param: any) => param.id === id);
 
-      const propertiesToUpdate = { value, preservedValue: undefined } as Partial<ParameterInfo>;
+      const propertiesToUpdate = {
+        value,
+        preservedValue: undefined,
+      } as Partial<ParameterInfo>;
 
       if (viewModel !== undefined) {
         propertiesToUpdate.editorViewModel = viewModel;
       }
-      if (variables[nodeId]) {
+
+      if (getRecordEntry(variables, nodeId)) {
         if (parameter?.parameterKey === 'inputs.$.name') {
           dispatch(updateVariableInfo({ id: nodeId, name: value[0]?.value }));
         } else if (parameter?.parameterKey === 'inputs.$.type') {
           dispatch(updateVariableInfo({ id: nodeId, type: value[0]?.value }));
         }
+      }
+
+      if (isCustomCode(parameter?.editor, parameter?.editorOptions?.language)) {
+        const { fileData, fileExtension, fileName } = viewModel.customCodeData;
+        dispatch(addOrUpdateCustomCode({ nodeId, fileData, fileExtension, fileName }));
       }
 
       updateParameterAndDependencies(
@@ -286,14 +326,17 @@ const ParameterSection = ({
     },
   });
 
-  const getValueSegmentFromToken = async (
-    parameterId: string,
-    token: OutputToken,
-    addImplicitForeachIfNeeded: boolean,
-    addLatestActionName: boolean
-  ): Promise<ValueSegment> => {
-    return createValueSegmentFromToken(nodeId, parameterId, token, addImplicitForeachIfNeeded, addLatestActionName, rootState, dispatch);
-  };
+  const getValueSegmentFromToken = useCallback(
+    async (
+      parameterId: string,
+      token: OutputToken,
+      addImplicitForeachIfNeeded: boolean,
+      addLatestActionName: boolean
+    ): Promise<ValueSegment> => {
+      return createValueSegmentFromToken(nodeId, parameterId, token, addImplicitForeachIfNeeded, addLatestActionName, rootState, dispatch);
+    },
+    [dispatch, nodeId, rootState]
+  );
 
   const getTokenPicker = (
     parameterId: string,
@@ -302,8 +345,6 @@ const ParameterSection = ({
     tokenPickerMode?: TokenPickerMode,
     editorType?: string,
     isCodeEditor?: boolean,
-    closeTokenPicker?: () => void,
-    tokenPickerClicked?: (b: boolean) => void,
     tokenClickedCallback?: (token: ValueSegment) => void
   ): JSX.Element => {
     const parameterType =
@@ -337,16 +378,33 @@ const ParameterSection = ({
         tokenGroup={tokenGroup}
         filteredTokenGroup={filteredTokenGroup}
         expressionGroup={expressionGroup}
-        tokenPickerFocused={tokenPickerClicked}
+        hideUTFExpressions={hideUTFExpressions}
         initialMode={tokenPickerMode}
         getValueSegmentFromToken={(token: OutputToken, addImplicitForeach: boolean) =>
           getValueSegmentFromToken(parameterId, token, addImplicitForeach, !!isCodeEditor)
         }
         tokenClickedCallback={tokenClickedCallback}
-        closeTokenPicker={closeTokenPicker}
       />
     );
   };
+
+  useEffect(() => {
+    const callback = async () => {
+      const mapping: Record<string, ValueSegment> = {};
+      for (const group of tokenGroup) {
+        for (const token of group.tokens) {
+          if (!token.value) {
+            continue;
+          }
+
+          mapping[token.value] = await getValueSegmentFromToken(nodeId, token, false, false);
+        }
+      }
+      setTokenMapping(mapping);
+    };
+
+    callback();
+  }, [getValueSegmentFromToken, nodeId, tokenGroup]);
 
   const onExpandSection = (sectionName: string) => {
     if (sectionName) {
@@ -359,10 +417,22 @@ const ParameterSection = ({
     .map((param) => {
       const { id, label, value, required, showTokens, placeholder, editorViewModel, dynamicData, conditionalVisibility, validationErrors } =
         param;
-      const paramSubset = { id, label, required, showTokens, placeholder, editorViewModel, conditionalVisibility };
+      const remappedEditorViewModel = isRecordNotEmpty(idReplacements)
+        ? remapEditorViewModelWithNewIds(editorViewModel, idReplacements)
+        : editorViewModel;
+      const paramSubset = {
+        id,
+        label,
+        required,
+        showTokens,
+        placeholder,
+        editorViewModel: remappedEditorViewModel,
+        conditionalVisibility,
+      };
       const { editor, editorOptions } = getEditorAndOptions(operationInfo, param, upstreamNodeIds ?? [], variables);
 
-      const { value: remappedValues } = remapValueSegmentsWithNewIds(value, idReplacements);
+      const { value: remappedValues } = isRecordNotEmpty(idReplacements) ? remapValueSegmentsWithNewIds(value, idReplacements) : { value };
+      const isCodeEditor = editor?.toLowerCase() === constants.EDITOR.CODE;
 
       return {
         settingType: 'SettingTokenField',
@@ -376,34 +446,34 @@ const ParameterSection = ({
           isLoading: dynamicData?.status === DynamicCallStatus.STARTED,
           errorDetails: dynamicData?.error ? { message: dynamicData.error.message } : undefined,
           validationErrors,
+          tokenMapping,
+          nodeTitle,
+          loadParameterValueFromString: (value: string) => loadParameterValueFromString(value),
           onValueChange: (newState: ChangeState) => onValueChange(id, newState),
           onComboboxMenuOpen: () => onComboboxMenuOpen(param),
           pickerCallbacks: getPickerCallbacks(param),
           tokenpickerButtonProps: {
             location: panelLocation === PanelLocation.Left ? TokenPickerButtonLocation.Right : TokenPickerButtonLocation.Left,
           },
+          suppressCastingForSerialize: suppressCastingForSerialize ?? false,
           onCastParameter: (value: ValueSegment[], type?: string, format?: string, suppressCasting?: boolean) =>
-            parameterValueToString({ value, type: type ?? 'string', info: { format }, suppressCasting } as ParameterInfo, false) ?? '',
+            parameterValueToString(
+              {
+                value,
+                type: type ?? 'string',
+                info: { format },
+                suppressCasting,
+              } as ParameterInfo,
+              false,
+              idReplacements
+            ) ?? '',
           getTokenPicker: (
             editorId: string,
             labelId: string,
             tokenPickerMode?: TokenPickerMode,
             editorType?: string,
-            closeTokenPicker?: () => void,
-            tokenPickerClicked?: (b: boolean) => void,
             tokenClickedCallback?: (token: ValueSegment) => void
-          ) =>
-            getTokenPicker(
-              id,
-              editorId,
-              labelId,
-              tokenPickerMode,
-              editorType,
-              editor?.toLowerCase() === constants.EDITOR.CODE,
-              closeTokenPicker,
-              tokenPickerClicked,
-              tokenClickedCallback
-            ),
+          ) => getTokenPicker(id, editorId, labelId, tokenPickerMode, editorType, isCodeEditor, tokenClickedCallback),
         },
       };
     });
@@ -444,7 +514,9 @@ export const getEditorAndOptions = (
       editorOptions: {
         options: getAvailableVariables(variables, upstreamNodeIds)
           .filter((variable) => {
-            if (supportedTypes?.length === 0) return true;
+            if (supportedTypes?.length === 0) {
+              return true;
+            }
             return supportedTypes.includes(variable.type);
           })
           .map((variable) => ({
@@ -463,9 +535,17 @@ const hasParametersToAuthor = (parameterGroups: Record<string, ParameterGroup>):
 };
 
 export const parametersTab: PanelTabFn = (intl) => ({
-  title: intl.formatMessage({ defaultMessage: 'Parameters', description: 'Parameters tab title' }),
-  name: constants.PANEL_TAB_NAMES.PARAMETERS,
-  description: intl.formatMessage({ defaultMessage: 'Configure parameters for this node', description: 'Parameters tab description' }),
+  id: constants.PANEL_TAB_NAMES.PARAMETERS,
+  title: intl.formatMessage({
+    defaultMessage: 'Parameters',
+    id: 'uxKRO/',
+    description: 'Parameters tab title',
+  }),
+  description: intl.formatMessage({
+    defaultMessage: 'Configure parameters for this node',
+    id: 'SToblZ',
+    description: 'Parameters tab description',
+  }),
   visible: true,
   content: <ParametersTab />,
   order: 0,

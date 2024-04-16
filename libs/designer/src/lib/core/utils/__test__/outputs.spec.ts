@@ -1,8 +1,7 @@
 import { getUpdatedManifestForSplitOn } from '../outputs';
-import { onNewEmail } from '@microsoft/parsers-logic-apps';
-import type { OperationManifest } from '@microsoft/utils-logic-apps';
-import { ConnectionReferenceKeyFormat } from '@microsoft/utils-logic-apps';
-
+import { onNewEmail, ConnectionReferenceKeyFormat } from '@microsoft/logic-apps-shared';
+import type { OperationManifest } from '@microsoft/logic-apps-shared';
+import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 describe('Outputs Utilities', () => {
   describe('getUpdatedManifestForSpiltOn', () => {
     it('properly deserializes OpenAPI property aliases', () => {

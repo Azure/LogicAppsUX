@@ -6,8 +6,8 @@ import type { RunDisplayItem } from './types';
 import { isRunError, mapToRunItem } from './utils';
 import type { IIconProps, ITextFieldStyles } from '@fluentui/react';
 import { IconButton, MessageBar, MessageBarType, Pivot, PivotItem, TextField } from '@fluentui/react';
-import type { Run, RunError, getCallbackUrl } from '@microsoft/utils-logic-apps';
-import { isCallbackInfoWithRelativePath } from '@microsoft/utils-logic-apps';
+import type { Run, RunError, getCallbackUrl } from '@microsoft/logic-apps-shared';
+import { isCallbackInfoWithRelativePath } from '@microsoft/logic-apps-shared';
 import { useState } from 'react';
 import InfiniteScroll from 'react-infinite-scroll-component';
 import { useIntl } from 'react-intl';
@@ -56,26 +56,32 @@ export const Overview: React.FC<OverviewProps> = ({
   const Resources = {
     LOAD_MORE: intl.formatMessage({
       defaultMessage: 'Load more',
+      id: 'ba9yGJ',
       description: 'Button text for loading more runs',
     }),
     RUN_HISTORY: intl.formatMessage({
       defaultMessage: 'Run History',
+      id: 'Vaacox',
       description: 'Pivot item header text for run history',
     }),
     SUMMARY: intl.formatMessage({
       defaultMessage: 'Summary',
+      id: 'ziYCiA',
       description: 'Header text for summary',
     }),
     WORKFLOW_OVERVIEW_FILTER_TEXT: intl.formatMessage({
       defaultMessage: 'Enter the run identifier to open the run',
+      id: 'oV0xQ9',
       description: 'Placeholder text for workflow overview filter input',
     }),
     WORKFLOW_OVERVIEW_NAVIGATE_EMPTY: intl.formatMessage({
       defaultMessage: 'The provided workflow run name is not valid.',
+      id: 'VKAk5g',
       description: 'Message text for an invalid run ID',
     }),
     LOADING_BOTTOM: intl.formatMessage({
       defaultMessage: 'Loading...',
+      id: '5qzZMo',
       description: 'A message shown at the bottom of a list when the next set of data is loading',
     }),
   };
@@ -99,11 +105,10 @@ export const Overview: React.FC<OverviewProps> = ({
     const response = await onVerifyRunId(value);
     if (isRunError(response)) {
       return (response as RunError).error.message;
-    } else {
-      setRunItem(mapToRunItem(response));
-      setNavigateDisabled(false);
-      return '';
     }
+    setRunItem(mapToRunItem(response));
+    setNavigateDisabled(false);
+    return '';
   };
 
   return (
@@ -164,5 +169,5 @@ export const Overview: React.FC<OverviewProps> = ({
   );
 };
 
-export { isRunError, isCallbackInfoWithRelativePath, getCallbackUrl, mapToRunItem };
+export { isRunError, isCallbackInfoWithRelativePath, type getCallbackUrl, mapToRunItem };
 export type { OverviewPropertiesProps };

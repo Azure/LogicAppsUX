@@ -1,7 +1,5 @@
 import { concatFunction } from '../../__mocks__/FunctionMock';
 import type { DataMapOperationState } from '../../core/state/DataMapSlice';
-import type { SchemaNodeExtended } from '../../models';
-import { NormalizedDataType, SchemaNodeProperty } from '../../models';
 import type { Connection, ConnectionDictionary, ConnectionUnit } from '../../models/Connection';
 import type { FunctionData, FunctionInput } from '../../models/Function';
 import { FunctionCategory, functionMock } from '../../models/Function';
@@ -20,6 +18,9 @@ import {
 } from '../Connection.Utils';
 import { isSchemaNodeExtended } from '../Schema.Utils';
 import { fullConnectionDictionaryForOneToManyLoop, fullMapForSimplifiedLoop } from '../__mocks__';
+import type { SchemaNodeExtended } from '@microsoft/logic-apps-shared';
+import { NormalizedDataType, SchemaNodeProperty } from '@microsoft/logic-apps-shared';
+import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 
 const mockBoundedFunctionInputs: FunctionInput[] = [
   {
@@ -39,7 +40,6 @@ const mockBoundedFunctionInputs: FunctionInput[] = [
     placeHolder: 'The scope',
   },
 ];
-
 describe('utils/Connections', () => {
   describe('createConnectionEntryIfNeeded', () => {
     const connections: ConnectionDictionary = {};

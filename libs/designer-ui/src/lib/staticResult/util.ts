@@ -2,12 +2,12 @@ import type { StaticResultRootSchemaType } from '.';
 import constants from '../constants';
 import type { DropdownItem } from '../dropdown';
 import type { ValueSegment } from '../editor';
-import { ValueSegmentType } from '../editor';
+import { createLiteralValueSegment } from '../editor/base/utils/helper';
 import { SchemaPropertyValueType } from './propertyEditor/PropertyEditorItem';
-import type { OpenAPIV2 } from '@microsoft/utils-logic-apps';
-import { capitalizeFirstLetter, guid } from '@microsoft/utils-logic-apps';
+import type { OpenAPIV2 } from '@microsoft/logic-apps-shared';
+import { capitalizeFirstLetter } from '@microsoft/logic-apps-shared';
 
-export const parseStaticResultSchema = (staticResultSchema: OpenAPIV2.SchemaObject) => {
+export const parseStaticResultSchema = (staticResultSchema: any) => {
   const { additionalProperties, properties, required, type } = staticResultSchema;
   return {
     additionalProperties,
@@ -129,19 +129,21 @@ export const initializeShownProperties = (
 };
 
 export const formatShownProperties = (propertiesSchema: Record<string, boolean>): ValueSegment[] => {
-  if (!propertiesSchema) return [];
+  if (!propertiesSchema) {
+    return [];
+  }
   const filteredProperties: Record<string, boolean> = Object.fromEntries(Object.entries(propertiesSchema).filter(([, value]) => value));
-  return [{ id: guid(), type: ValueSegmentType.LITERAL, value: Object.keys(filteredProperties).toString() }];
+  return [createLiteralValueSegment(Object.keys(filteredProperties).toString())];
 };
 
 export const getOptions = (propertiesSchema: StaticResultRootSchemaType, required: string[]): DropdownItem[] => {
   const options: DropdownItem[] = [];
   if (propertiesSchema) {
-    Object.keys(propertiesSchema).forEach((propertyName, i) => {
+    Object.keys(propertiesSchema).forEach((propertyName) => {
       options.push({
-        key: i.toString(),
-        displayName: `${capitalizeFirstLetter(propertyName)}`,
+        key: propertyName,
         value: propertyName,
+        displayName: `${capitalizeFirstLetter(propertyName)}`,
         disabled: required.includes(propertyName),
       });
     });
@@ -153,7 +155,9 @@ export const initializeCheckedDropdown = (
   propertyValue: OpenAPIV2.SchemaObject | string,
   propertyType: SchemaPropertyValueType
 ): Record<string, boolean> => {
-  if (propertyType === SchemaPropertyValueType.STRING) return {};
+  if (propertyType === SchemaPropertyValueType.STRING) {
+    return {};
+  }
   const returnDropdown: Record<string, boolean> = {};
 
   Object.keys(propertyValue).forEach((propertyValueKey) => {
@@ -166,6 +170,22 @@ export const initializePropertyValueText = (
   propertyValue: OpenAPIV2.SchemaObject | string,
   propertyType: SchemaPropertyValueType
 ): string => {
-  if (propertyType === SchemaPropertyValueType.OBJECT) return '';
+  if (propertyType === SchemaPropertyValueType.OBJECT) {
+    return '';
+  }
   return propertyValue as string;
+};
+
+export const initializePropertyValueInput = (
+  currProperties: OpenAPIV2.SchemaObject,
+  schema: StaticResultRootSchemaType | OpenAPIV2.SchemaObject
+): string => {
+  const inputVal = (
+    typeof currProperties === 'string' || typeof currProperties === 'number' || typeof currProperties === 'boolean'
+      ? currProperties
+      : Object.keys(currProperties).length > 0
+        ? JSON.stringify(currProperties, null, 2)
+        : schema?.default ?? ''
+  ) as string;
+  return inputVal;
 };

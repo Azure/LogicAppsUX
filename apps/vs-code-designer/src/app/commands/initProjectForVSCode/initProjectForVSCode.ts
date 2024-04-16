@@ -10,12 +10,14 @@ import { verifyAndPromptToCreateProject } from '../../utils/verifyIsProject';
 import { getGlobalSetting } from '../../utils/vsCodeConfig/settings';
 import { getContainingWorkspace } from '../../utils/workspace';
 import { InitVSCodeLanguageStep } from './InitVSCodeLanguageStep';
-import type { IActionContext } from '@microsoft/vscode-azext-utils';
-import { AzureWizard, UserCancelledError } from '@microsoft/vscode-azext-utils';
-import { latestGAVersion } from '@microsoft/vscode-extension';
-import type { ProjectLanguage, FuncVersion, IProjectWizardContext } from '@microsoft/vscode-extension';
-import type { WorkspaceFolder } from 'vscode';
-import { window, workspace } from 'vscode';
+import { type IActionContext, AzureWizard, UserCancelledError } from '@microsoft/vscode-azext-utils';
+import {
+  latestGAVersion,
+  type ProjectLanguage,
+  type FuncVersion,
+  type IProjectWizardContext,
+} from '@microsoft/vscode-extension-logic-apps';
+import { window, workspace, type WorkspaceFolder } from 'vscode';
 
 export async function initProjectForVSCode(context: IActionContext, fsPath?: string, language?: ProjectLanguage): Promise<void> {
   let workspaceFolder: WorkspaceFolder | undefined;
@@ -24,15 +26,13 @@ export async function initProjectForVSCode(context: IActionContext, fsPath?: str
   if (fsPath === undefined) {
     if (!workspace.workspaceFolders || workspace.workspaceFolders.length === 0) {
       throw new NoWorkspaceError();
-    } else {
-      const placeHolder: string = localize('selectFunctionAppFolderNew', 'Select the folder to initialize for use with VS Code');
-      workspaceFolder = await window.showWorkspaceFolderPick({ placeHolder });
-      if (!workspaceFolder) {
-        throw new UserCancelledError();
-      } else {
-        workspacePath = workspaceFolder.uri.fsPath;
-      }
     }
+    const placeHolder: string = localize('selectFunctionAppFolderNew', 'Select the folder to initialize for use with VS Code');
+    workspaceFolder = await window.showWorkspaceFolderPick({ placeHolder });
+    if (!workspaceFolder) {
+      throw new UserCancelledError();
+    }
+    workspacePath = workspaceFolder.uri.fsPath;
   } else {
     workspaceFolder = getContainingWorkspace(fsPath);
     workspacePath = workspaceFolder ? workspaceFolder.uri.fsPath : fsPath;

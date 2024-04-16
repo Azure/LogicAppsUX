@@ -6,7 +6,7 @@ import { workflowFileName } from '../../../../constants';
 import { localize } from '../../../../localize';
 import type { IAzureQuickPickItem } from '@microsoft/vscode-azext-utils';
 import { AzureWizardPromptStep } from '@microsoft/vscode-azext-utils';
-import type { IDebugModeContext } from '@microsoft/vscode-extension';
+import type { IDebugModeContext } from '@microsoft/vscode-extension-logic-apps';
 import { lstat, pathExists, readdir, readFileSync } from 'fs-extra';
 import * as path from 'path';
 

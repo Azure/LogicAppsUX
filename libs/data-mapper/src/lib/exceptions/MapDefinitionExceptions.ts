@@ -1,10 +1,11 @@
-import { BaseException } from '@microsoft/utils-logic-apps';
+import { BaseException } from '@microsoft/logic-apps-shared';
 
-export enum InvalidFormatExceptionCode {
-  MISSING_MAPPINGS_PARAM = 'MissingMappingParam',
-  MISSING_SCHEMA_NAME = 'MissingSchemaName',
-  INVALID_YAML_FORMAT = 'InvalidYamlFormat',
-}
+export const InvalidFormatExceptionCode = {
+  MISSING_MAPPINGS_PARAM: 'MissingMappingParam',
+  MISSING_SCHEMA_NAME: 'MissingSchemaName',
+  INVALID_YAML_FORMAT: 'InvalidYamlFormat',
+} as const;
+export type InvalidFormatExceptionCode = (typeof InvalidFormatExceptionCode)[keyof typeof InvalidFormatExceptionCode];
 
 export const InvalidFormatExceptionName = 'Workflow.InvalidFormatExceptionName';
 

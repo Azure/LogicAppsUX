@@ -6,35 +6,16 @@
       "type": "extensionHost",
       "request": "launch",
       "runtimeExecutable": "${execPath}",
-      "args": ["--extensionDevelopmentPath=${workspaceFolder}/dist/apps/vs-code-designer"],
+      "args": [
+        "--extensionDevelopmentPath=${workspaceFolder}/apps/vs-code-designer/dist"
+      ],
       "trace": false,
       "internalConsoleOptions": "openOnFirstSessionStart",
-      "outFiles": ["${workspaceFolder}/dist/apps/vs-code-designer/*.js"],
-      "preLaunchTask": "npm: build:vscode-designer",
+      "outFiles": ["${workspaceFolder}/apps/vs-code-designer/dist/*.js"],
+      "preLaunchTask": "npm: build",
       "env": {
         "DEBUGTELEMETRY": "v"
       }
-    },
-    {
-      "name": "Build, Run, and Debug Data Mapper Extension in Dev Mode",
-      "type": "extensionHost",
-      "request": "launch",
-      "runtimeExecutable": "${execPath}",
-      "args": ["--extensionDevelopmentPath=${workspaceFolder}/dist/apps/vs-code-data-mapper"],
-      "trace": false,
-      "internalConsoleOptions": "openOnFirstSessionStart",
-      "preLaunchTask": "npm: build:vscode-datamapper",
-      "outFiles": ["${workspaceFolder}/dist/apps/vs-code-data-mapper/*.js"]
-    },
-    {
-      "name": "Run Data Mapper Extension in Dev Mode",
-      "type": "extensionHost",
-      "request": "launch",
-      "runtimeExecutable": "${execPath}",
-      "args": ["--extensionDevelopmentPath=${workspaceFolder}/dist/apps/vs-code-data-mapper"],
-      "trace": false,
-      "internalConsoleOptions": "openOnFirstSessionStart",
-      "outFiles": ["${workspaceFolder}/dist/apps/vs-code-data-mapper/*.js"]
     }
   ]
 }

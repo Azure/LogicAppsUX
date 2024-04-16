@@ -7,8 +7,8 @@ import type {
   ICustomEditorOptions,
   IEditorProps,
   IRenderDefaultEditorParams,
-} from '@microsoft/designer-client-services-logic-apps';
-import { equals } from '@microsoft/utils-logic-apps';
+} from '@microsoft/logic-apps-shared';
+import { equals } from '@microsoft/logic-apps-shared';
 import { useCallback } from 'react';
 
 export type CustomTokenFieldProps = Omit<TokenFieldProps, 'editor' | 'editorOptions'> & ICustomEditorAndOptions;
@@ -24,6 +24,7 @@ export const CustomTokenField = (props: CustomTokenFieldProps) => {
     value: props.value,
     onValueChange: props.onValueChange as CustomEditorChangeHandler,
     renderDefaultEditor,
+    disabled: props.readOnly,
   };
   return <EditorComponent {...customEditorProps} />;
 };
@@ -54,7 +55,7 @@ export const isCustomEditor = (props: { editor?: string | undefined; editorOptio
   const { editor, editorOptions } = props;
   return (
     equals(editor, customEditorName) &&
-    typeof editorOptions == 'object' &&
+    typeof editorOptions === 'object' &&
     !!editorOptions &&
     typeof (editorOptions as { EditorComponent: unknown }).EditorComponent === 'function'
   );

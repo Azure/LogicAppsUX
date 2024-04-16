@@ -6,15 +6,6 @@ import {
   NotificationTypes,
 } from '../../components/notification/Notification';
 import { convertConnectionShorthandToId, generateFunctionConnectionMetadata } from '../../mapDefinitions';
-import type {
-  FunctionMetadata,
-  FunctionPositionMetadata,
-  MapMetadata,
-  SchemaExtended,
-  SchemaNodeDictionary,
-  SchemaNodeExtended,
-} from '../../models';
-import { SchemaNodeProperty, SchemaType } from '../../models';
 import type { ConnectionDictionary, ConnectionUnit, InputConnection } from '../../models/Connection';
 import type { FunctionData, FunctionDictionary } from '../../models/Function';
 import { directAccessPseudoFunctionKey, indexPseudoFunction } from '../../models/Function';
@@ -56,6 +47,15 @@ import {
   getSplitIdsFromReactFlowConnectionId,
 } from '../../utils/ReactFlow.Util';
 import { flattenSchemaIntoDictionary, flattenSchemaIntoSortArray, isSchemaNodeExtended } from '../../utils/Schema.Utils';
+import type {
+  FunctionMetadata,
+  FunctionPositionMetadata,
+  MapMetadata,
+  SchemaExtended,
+  SchemaNodeDictionary,
+  SchemaNodeExtended,
+} from '@microsoft/logic-apps-shared';
+import { SchemaNodeProperty, SchemaType } from '@microsoft/logic-apps-shared';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 
@@ -113,7 +113,7 @@ const initialState: DataMapState = {
 
 export interface InitialSchemaAction {
   schema: SchemaExtended;
-  schemaType: SchemaType.Source | SchemaType.Target;
+  schemaType: typeof SchemaType.Source | typeof SchemaType.Target;
 }
 
 export interface InitialDataMapAction {
@@ -353,17 +353,17 @@ export const dataMapSlice = createSlice({
         let fnData: FunctionData;
 
         // Default - just provide the FunctionData and the key will be handled under the hood
-        if (!('newReactFlowKey' in action.payload)) {
-          fnData = { ...action.payload, isNewNode: true };
-          fnReactFlowKey = createReactFlowFunctionKey(fnData);
+        if ('newReactFlowKey' in action.payload) {
+          // Alternative - specify the key you want to use (needed for adding inline Functions)
+          fnData = action.payload.functionData;
+          fnReactFlowKey = action.payload.newReactFlowKey;
           newState.functionNodes[fnReactFlowKey] = {
             functionData: fnData,
             functionLocations: [state.curDataMapOperation.currentTargetSchemaNode],
           };
         } else {
-          // Alternative - specify the key you want to use (needed for adding inline Functions)
-          fnData = action.payload.functionData;
-          fnReactFlowKey = action.payload.newReactFlowKey;
+          fnData = { ...action.payload, isNewNode: true };
+          fnReactFlowKey = createReactFlowFunctionKey(fnData);
           newState.functionNodes[fnReactFlowKey] = {
             functionData: fnData,
             functionLocations: [state.curDataMapOperation.currentTargetSchemaNode],
@@ -540,9 +540,7 @@ export const dataMapSlice = createSlice({
     ) => {
       const newState: DataMapOperationState = { ...state.curDataMapOperation };
 
-      if (!action.payload) {
-        newState.inlineFunctionInputOutputKeys = [];
-      } else {
+      if (action.payload) {
         newState.inlineFunctionInputOutputKeys = [action.payload.inputKey, action.payload.outputKey];
         if (action.payload.port) {
           newState.inlineFunctionInputOutputKeys.push(action.payload.port);
@@ -553,6 +551,8 @@ export const dataMapSlice = createSlice({
         if (action.payload.y) {
           newState.inlineFunctionInputOutputKeys.push(action.payload.y);
         }
+      } else {
+        newState.inlineFunctionInputOutputKeys = [];
       }
 
       doDataMapOperation(state, newState, 'Set inline function creation i/o keys');
@@ -677,7 +677,7 @@ export const deleteConnectionFromConnections = (
 
 export const deleteParentRepeatingConnections = (connections: ConnectionDictionary, inputKey: string /* contains prefix */) => {
   const parentId = getParentId(inputKey);
-  if (parentId.endsWith(SchemaType.Source + '-')) {
+  if (parentId.endsWith(`${SchemaType.Source}-`)) {
     return;
   }
 
@@ -893,17 +893,7 @@ export const addParentConnectionForRepeatingElements = (
         );
 
         if (!parentsAlreadyConnected) {
-          if (!indexFnRfKey) {
-            applyConnectionValue(dataMapConnections, {
-              targetNode: parentTargetNode,
-              targetNodeReactFlowKey: parentPrefixedTargetKey,
-              findInputSlot: true,
-              input: {
-                reactFlowKey: parentPrefixedSourceKey,
-                node: parentSourceNode,
-              },
-            });
-          } else {
+          if (indexFnRfKey) {
             // If provided, we need to plug in an index() between the parent loop elements
             // Source schema node -> Index()
             applyConnectionValue(dataMapConnections, {
@@ -924,6 +914,16 @@ export const addParentConnectionForRepeatingElements = (
               input: {
                 reactFlowKey: indexFnRfKey,
                 node: indexPseudoFunction,
+              },
+            });
+          } else {
+            applyConnectionValue(dataMapConnections, {
+              targetNode: parentTargetNode,
+              targetNodeReactFlowKey: parentPrefixedTargetKey,
+              findInputSlot: true,
+              input: {
+                reactFlowKey: parentPrefixedSourceKey,
+                node: parentSourceNode,
               },
             });
           }

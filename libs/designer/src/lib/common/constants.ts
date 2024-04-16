@@ -188,6 +188,16 @@ export default {
     HTML: 'html',
     RECURRENCE: 'recurrence',
   },
+  EDITOR_OPTIONS: {
+    LANGUAGE: {
+      CSHARP: 'csharp',
+      JAVASCRIPT: 'javascript',
+      JSON: 'json',
+      POWERSHELL: 'powershell',
+    },
+  },
+  DEFAULT_CUSTOM_CODE_INPUT: 'CodeFile',
+  INLINECODE: 'connectionProviders/inlineCode',
   EVENT_AUTH_COMPLETED: 'MSLA_AUTH_COMPLETED',
   ERROR_MESSAGES: {
     FAILED_TO_FETCH: 'Failed to fetch',
@@ -217,6 +227,7 @@ export default {
   GATEWAY_CHECKBOX_KEY: '__GATEWAY_CHECKBOX',
   GATEWAY_DEFAULT_REFRESH_INTERVAL_IN_MILLISECONDS: 15000,
   HTTP_WEBHOOK_LIST_CALLBACK_URL_NAME: 'listCallbackUrl()',
+  HTTP_WEBHOOK_LIST_CALLBACK_URL_KEY: 'system.$.function.listCallbackUrl()',
   HTTP_WEBHOOK_PARAMETER_KEYS: {
     SUBSCRIBE_AUTHENTICATION: 'subscribe_authentication',
     SUBSCRIBE_BODY: 'subscribe_body',
@@ -390,6 +401,7 @@ export default {
       SECURITY_CENTER_ALERT: 'securitycenteralert',
       SUBTRACTFROMTIME: 'subtractfromtime',
       TEAMS: 'teams',
+      TEAMSWEBHOOK: 'teamswebhook',
       VIRTUALAGENT: 'virtualagent',
       XML_TO_JSON: 'xmltojson',
       XML_TO_TEXT: 'xmltotext',
@@ -438,31 +450,23 @@ export default {
   },
   PANEL_TAB_NAMES: {
     ABOUT: 'ABOUT',
-    AUTH_CONNECTION: 'AUTH_CONNECTION',
     CODE_VIEW: 'CODE_VIEW',
-    CONNECTION_SELECTOR: 'CONNECTION_SELECTOR',
-    CONNECTION_CREATE: 'CONNECTION_CREATE',
-    CONNECTION_CREATE_ASSISTED: 'CREATE_CONNECTION_ASSISTED',
-    CONNECTION_CREATE_PARAMETER_SET: 'CREATE_PARAMETER_SET_CONNECTION',
-    EXPRESSION_TRACE: 'EXPRESSION_TRACE',
     FUNCTION_CREATE: 'FUNCTION_CREATE',
-    LOADING: 'LOADING',
     MONITORING: 'MONITORING',
     OPERATION_SELECTOR: 'OPERATION_SELECTOR',
     PARAMETERS: 'PARAMETERS',
-    QUERY_PARAMETERS: 'QUERY_PARAMETERS',
-    RECOMMENDATION: 'RECOMMENDATION',
     REQUEST_HISTORY: 'REQUEST_HISTORY',
     RETRY_HISTORY: 'RETRY_HISTORY',
     RUN_AFTER: 'RUN_AFTER',
     SCRATCH: 'SCRATCH',
     SETTINGS: 'SETTINGS',
-    SETTINGS_2: 'SETTINGS_2',
-    STATE_VIEWER: 'STATE_VIEWER',
     STATIC_RESULT: 'STATIC_RESULT',
     SWAGGER_ENDPOINT: 'SWAGGER_ENDPOINT',
-    WORKFLOW_PARAMETERS: 'WORKFLOW_PARAMETERS',
     TESTING: 'TESTING',
+  },
+  ERRORS_PANEL_TAB_NAMES: {
+    ERRORS: 'ERRORS',
+    WARNINGS: 'WARNINGS',
   },
   PROFILE_KEY_TYPE: {
     DESIGNER: 'designer:',
@@ -493,6 +497,24 @@ export default {
   DEFAULT_RECURRENCE: {
     interval: 3,
     frequency: 'Minute',
+  },
+  RECURRENCE_OPTIONS: {
+    FREE: {
+      interval: 1,
+      frequency: 'Hour',
+    },
+    STANDARD: {
+      interval: 1,
+      frequency: 'Minute',
+    },
+    PREMIUM: {
+      interval: 15,
+      frequency: 'Second',
+    },
+    CONSUMPTION: {
+      interval: 3,
+      frequency: 'Minute',
+    },
   },
   RECURRENCE_FREQUENCY_VALUES: ['Month', 'Week', 'Day', 'Hour', 'Minute', 'Second'],
   RECURRENCE_TITLE_JOIN_SEPARATOR: ',',
@@ -820,9 +842,12 @@ export default {
       INPUTS: 'inputs',
       OUTPUTS: 'outputs',
     },
+    SPLITON: {
+      AUTOLOAD: '@autoload()',
+    },
   },
   SWAGGER,
-  SYSTEM_ASSIGNED_MANAGED_IDENTITY: 'System-assigned managed identity',
+  SYSTEM_ASSIGNED_MANAGED_IDENTITY: 'SystemAssigned_Managed_Identity',
   TIP_LOGGING_KEYS: {
     ACTION_RECOMMENDATION: 'ACTION_RECOMMENDATION',
     AUTO_CASTING_TOKEN_FOR_PARAMETER: 'AUTO_CASTING_TOKEN_FOR_PARAMETER',
@@ -845,6 +870,7 @@ export default {
   TRIGGER_BODY_OUTPUT: 'triggerBody()',
   TRIGGER_QUERIES_OUTPUT: `triggerOutputs()['queries']`,
   TRIGGER_HEADERS_OUTPUT: `triggerOutputs()['headers']`,
+  TRIGGER_STATUS_CODE_OUTPUT: `triggerOutputs()['statusCode']`,
   TRIGGER_OUTPUTS_OUTPUT: 'triggerOutputs()',
   UIDEFINITION_TYPES: {
     BOOLEAN: 'bool',

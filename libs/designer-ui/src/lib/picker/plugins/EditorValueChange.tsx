@@ -1,5 +1,5 @@
 import type { ValueSegment } from '../../editor';
-import { serializeEditorState } from '../../editor/base/utils/editorToSegement';
+import { serializeEditorState } from '../../editor/base/utils/editorToSegment';
 import { notEqual } from '../../editor/base/utils/helper';
 import { OnChangePlugin } from '@lexical/react/LexicalOnChangePlugin';
 import type { EditorState } from 'lexical';

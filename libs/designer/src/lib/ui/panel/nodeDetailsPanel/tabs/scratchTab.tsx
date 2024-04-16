@@ -7,7 +7,7 @@ import type {
   /*TokenPickerMode, ValueSegment*/
 } from '@microsoft/designer-ui';
 import {
-  // BaseEditor,
+  // EditorWrapper,
   //testTokenSegment, // AuthenticationType,
   // Combobox, // RowDropdownOptions,
   // GroupType,
@@ -30,11 +30,14 @@ import {
   // outputToken2,
   //ArrayType,
   CreateNaturalLanguageToFlowInput,
-  SuggestedFlowsSection, // RowDropdownOptions,
+  SuggestedFlowsSection,
+  ConversationMessage,
+  ConversationItemType, // RowDropdownOptions,
 } from '@microsoft/designer-ui';
+import { guid } from '@microsoft/logic-apps-shared';
 import { useCallback, useState } from 'react';
 
-//import { guid } from '@microsoft/utils-logic-apps';
+//import { guid } from '@microsoft/logic-apps-shared';
 
 // const testTokenGroup: TokenGroup[] = [
 //   { id: guid(), label: 'Checks if Blob exists in Azure Storage', tokens: [outputToken, outputToken2] },
@@ -106,9 +109,30 @@ export const ScratchTab = () => {
     setNaturalLanguageQueryInput(example);
   }, []);
 
+  const azureCallback = (prompt?: string) => {
+    alert(prompt);
+  };
+
   const children = (): React.ReactNode => {
     return (
       <>
+        {
+          <ConversationMessage
+            item={{
+              type: ConversationItemType.Reply,
+              id: 'test',
+              date: new Date(),
+              text: "Your question seems like it's outside the scope of Logic Apps, perhaps Azure Copilot would be better suited for your question",
+              isMarkdownText: false,
+              correlationId: guid(),
+              __rawRequest: {},
+              __rawResponse:
+                "Your question seems like it's outside the scope of Logic Apps, perhaps Azure Copilot would be better suited for your question",
+              reaction: undefined,
+              azureButtonCallback: () => azureCallback('what is the meaning of life?'),
+            }}
+          />
+        }
         {
           <CreateNaturalLanguageToFlowInput
             searchString={naturalLanguageQueryInput}
@@ -424,7 +448,7 @@ getTokenPicker={GetTokenPicker}
             items={{ type: GroupType.ROW, operand1: [], operand2: [], operator: RowDropdownOptions.EQUALS }}
           />
         } */}
-        {/* <BaseEditor initialValue={[testTokenSegment]} getTokenPicker={GetTokenPicker} BasePlugins={{ treeView: true, tokens: true }} /> */}
+        {/* <EditorWrapper initialValue={[testTokenSegment]} getTokenPicker={GetTokenPicker} basePlugins={{ treeView: true, tokens: true }} /> */}
       </>
     );
   };
@@ -433,7 +457,7 @@ getTokenPicker={GetTokenPicker}
 
 export const scratchTab: PanelTab = {
   title: 'Scratch',
-  name: constants.PANEL_TAB_NAMES.SCRATCH,
+  id: constants.PANEL_TAB_NAMES.SCRATCH,
   description: 'To be removed',
   visible: true,
   content: <ScratchTab />,

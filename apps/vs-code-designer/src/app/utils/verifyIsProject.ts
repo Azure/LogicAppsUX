@@ -2,31 +2,43 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { hostFileName } from '../../constants';
+import { extensionBundleId, hostFileName, localSettingsFileName } from '../../constants';
 import { localize } from '../../localize';
 import { createNewProjectInternal } from '../commands/createNewProject/createNewProject';
 import { getWorkspaceSetting, updateWorkspaceSetting } from './vsCodeConfig/settings';
-import { isString } from '@microsoft/utils-logic-apps';
+import { isString } from '@microsoft/logic-apps-shared';
 import { DialogResponses } from '@microsoft/vscode-azext-utils';
 import type { IActionContext, IAzureQuickPickItem } from '@microsoft/vscode-azext-utils';
-import type { ICreateFunctionOptions } from '@microsoft/vscode-extension';
+import type { ICreateFunctionOptions } from '@microsoft/vscode-extension-logic-apps';
 import * as fse from 'fs-extra';
 import * as path from 'path';
 import type { MessageItem, WorkspaceFolder } from 'vscode';
 
 const projectSubpathKey = 'projectSubpath';
 
-// Use 'host.json' as an indicator that this is a functions project
-export async function isFunctionProject(folderPath: string): Promise<boolean> {
-  return await fse.pathExists(path.join(folderPath, hostFileName));
+// Use 'host.json' and 'local.settings.json' as an indicator that this is a functions project
+export async function isLogicAppProject(folderPath: string): Promise<boolean> {
+  const hostFilePath = path.join(folderPath, hostFileName);
+  const hasHostJson: boolean = await fse.pathExists(hostFilePath);
+  const hasLocalSettingsJson: boolean = await fse.pathExists(path.join(folderPath, localSettingsFileName));
+
+  if (hasHostJson) {
+    const hostJsonData = fse.readFileSync(hostFilePath, 'utf-8');
+    const hostJson = JSON.parse(hostJsonData);
+
+    const hasWorfklowBundle = hostJson?.extensionBundle?.id === extensionBundleId;
+    return hasHostJson && hasLocalSettingsJson && hasWorfklowBundle;
+  }
+
+  return false;
 }
 
 /**
  * Checks root folder and subFolders one level down
- * If a single function project is found, returns that path.
+ * If a single logic app project is found, return that path.
  * If multiple projects are found, prompt to pick the project.
  */
-export async function tryGetFunctionProjectRoot(
+export async function tryGetLogicAppProjectRoot(
   context: IActionContext,
   workspaceFolder: WorkspaceFolder | string,
   suppressPrompt = false
@@ -36,26 +48,26 @@ export async function tryGetFunctionProjectRoot(
   if (!subpath) {
     if (!(await fse.pathExists(folderPath))) {
       return undefined;
-    } else if (await isFunctionProject(folderPath)) {
+    }
+    if (await isLogicAppProject(folderPath)) {
       return folderPath;
-    } else {
-      const subpaths: string[] = await fse.readdir(folderPath);
-      const matchingSubpaths: string[] = [];
-      await Promise.all(
-        subpaths.map(async (s) => {
-          if (await isFunctionProject(path.join(folderPath, s))) {
-            matchingSubpaths.push(s);
-          }
-        })
-      );
+    }
+    const subpaths: string[] = await fse.readdir(folderPath);
+    const matchingSubpaths: string[] = [];
+    await Promise.all(
+      subpaths.map(async (s) => {
+        if (await isLogicAppProject(path.join(folderPath, s))) {
+          matchingSubpaths.push(s);
+        }
+      })
+    );
 
-      if (matchingSubpaths.length === 1) {
-        subpath = matchingSubpaths[0];
-      } else if (matchingSubpaths.length !== 0 && !suppressPrompt) {
-        subpath = await promptForProjectSubpath(context, folderPath, matchingSubpaths);
-      } else {
-        return undefined;
-      }
+    if (matchingSubpaths.length === 1) {
+      subpath = matchingSubpaths[0];
+    } else if (matchingSubpaths.length !== 0 && !suppressPrompt) {
+      subpath = await promptForProjectSubpath(context, folderPath, matchingSubpaths);
+    } else {
+      return undefined;
     }
   }
 
@@ -96,7 +108,7 @@ export async function verifyAndPromptToCreateProject(
 ): Promise<string | undefined> {
   options = options || {};
 
-  const projectPath: string | undefined = await tryGetFunctionProjectRoot(context, fsPath);
+  const projectPath: string | undefined = await tryGetLogicAppProjectRoot(context, fsPath);
   if (!projectPath) {
     if (!options.suppressCreateProjectPrompt) {
       const message: string = localize('notLogicApp', 'The selected folder is not a logic app project. Create new project?');
@@ -107,7 +119,6 @@ export async function verifyAndPromptToCreateProject(
     options.folderPath = fsPath;
     await createNewProjectInternal(context, options);
     return undefined;
-  } else {
-    return projectPath;
   }
+  return projectPath;
 }

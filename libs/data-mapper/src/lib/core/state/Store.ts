@@ -6,9 +6,8 @@ import panelReducer from './PanelSlice';
 import schemaReducer from './SchemaSlice';
 import { configureStore } from '@reduxjs/toolkit';
 import undoable, { includeAction } from 'redux-undo';
-
+import type { } from 'redux-thunk';
 const includedActions = [
-  'dataMap/setInitialSchema',
   'dataMap/doDataMapOperation',
   'dataMap/makeConnection',
   'dataMap/addFunctionNode',

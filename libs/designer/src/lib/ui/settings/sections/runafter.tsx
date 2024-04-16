@@ -1,46 +1,51 @@
 import type { SectionProps } from '../';
 import { SettingSectionName } from '../';
-import type { AppDispatch, RootState } from '../../../core';
+import type { AppDispatch } from '../../../core';
 import { addEdgeFromRunAfterOperation, removeEdgeFromRunAfterOperation } from '../../../core/actions/bjsworkflow/runafter';
+import { useActionMetadata } from '../../../core/state/workflow/workflowSelectors';
 import { updateRunAfter } from '../../../core/state/workflow/workflowSlice';
 import type { SettingsSectionProps } from '../settingsection';
 import { SettingsSection } from '../settingsection';
 import type { ValidationError } from '../validation/validation';
 import { ValidationErrorKeys, ValidationErrorType } from '../validation/validation';
 import type { RunAfterActionDetailsProps } from './runafterconfiguration';
-import type { LogicAppsV2 } from '@microsoft/utils-logic-apps';
+import { getRecordEntry, type LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import { useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 
 export const RunAfter = ({ nodeId, readOnly = false, expanded, onHeaderClick }: SectionProps): JSX.Element | null => {
-  const nodeData = useSelector((state: RootState) => state.workflow.operations[nodeId] as LogicAppsV2.ActionDefinition);
+  const nodeData = useActionMetadata(nodeId) as LogicAppsV2.ActionDefinition;
   const dispatch = useDispatch<AppDispatch>();
   const [errors, setErrors] = useState<ValidationError[]>([]);
 
-  const showRunAfter = useMemo(() => {
-    return Object.keys(nodeData?.runAfter ?? {}).length > 0;
-  }, [nodeData?.runAfter]);
+  const showRunAfter = useMemo(() => Object.keys(nodeData?.runAfter ?? {}).length > 0, [nodeData?.runAfter]);
 
   const intl = useIntl();
+
   const runAfterTitle = intl.formatMessage({
     defaultMessage: 'Run After',
+    id: 'DyYcJZ',
     description: 'title for run after setting section',
   });
   const lastActionErrorMessage = intl.formatMessage({
     defaultMessage: 'Each action must have one or more run after configurations',
+    id: 'v7ipqH',
     description: 'error message for deselection of last run after action',
   });
   const lastStatusErrorMessage = intl.formatMessage({
     defaultMessage: 'Each run after configuration must have at least one status checked',
+    id: '1ZSzl6',
     description: 'error message for deselection of last run after status',
   });
 
   const handleStatusChange = (predecessorId: string, status: string, checked?: boolean) => {
-    if (!nodeData.runAfter) {
+    if (!nodeData?.runAfter) {
       return;
     }
-    const updatedStatus: string[] = [...nodeData.runAfter[predecessorId]].filter((x) => x.toLowerCase() !== status.toLowerCase());
+    const updatedStatus: string[] = [...(getRecordEntry(nodeData.runAfter, predecessorId) ?? [])].filter(
+      (x) => x?.toLowerCase() !== status?.toLowerCase()
+    );
 
     if (checked) {
       updatedStatus.push(status);
@@ -56,9 +61,11 @@ export const RunAfter = ({ nodeId, readOnly = false, expanded, onHeaderClick }: 
         },
       ]);
       return;
-    } else if (!updatedStatus.length) {
+    }
+    if (!updatedStatus.length) {
       return;
-    } else if (errors.some(({ key }) => key === ValidationErrorKeys.CANNOT_DELETE_LAST_STATUS)) {
+    }
+    if (errors.some(({ key }) => key === ValidationErrorKeys.CANNOT_DELETE_LAST_STATUS)) {
       setErrors(errors.filter(({ key }) => key !== ValidationErrorKeys.CANNOT_DELETE_LAST_STATUS));
     }
 
@@ -99,9 +106,11 @@ export const RunAfter = ({ nodeId, readOnly = false, expanded, onHeaderClick }: 
               },
             ]);
             return;
-          } else if (arr.length < 2) {
+          }
+          if (arr.length < 2) {
             return;
-          } else if (errors.some(({ key }) => key === ValidationErrorKeys.CANNOT_DELETE_LAST_ACTION)) {
+          }
+          if (errors.some(({ key }) => key === ValidationErrorKeys.CANNOT_DELETE_LAST_ACTION)) {
             setErrors(errors.filter(({ key }) => key !== ValidationErrorKeys.CANNOT_DELETE_LAST_ACTION));
           }
 

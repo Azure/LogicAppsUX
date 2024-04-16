@@ -15,23 +15,28 @@ export const AssistantError = ({ item }: AssistantErrorProps) => {
   const intl = useIntl();
   const intlText = {
     flowCreatedDefaultMessage: intl.formatMessage({
-      defaultMessage: 'Here’s your flow.',
+      defaultMessage: `Here's your flow.`,
+      id: 'TvPOXI',
       description: 'Chatbot report a bug button',
     }),
     technicalErrorDefaultMessage: intl.formatMessage({
       defaultMessage: 'Sorry, something went wrong. Please try again.',
+      id: 'BS3gy8',
       description: 'Chatbot report a bug button',
     }),
     throttlingErrorDefaultMessage: intl.formatMessage({
       defaultMessage: 'Sorry, Copilot is at capacity and temporarily unavailable — please try again in a little while.',
+      id: 'uZpzqY',
       description: 'Chatbot report a bug button',
     }),
     noAnswerDefaultMessage: intl.formatMessage({
-      defaultMessage: 'Sorry, I couldn’t understand your request. Please rephrase it and try again.',
+      defaultMessage: `Sorry, I couldn't understand your request. Please rephrase it and try again.`,
+      id: 'dfKsgg',
       description: 'Chatbot report a bug button',
     }),
     flowUpdatedWithNoDiffDefaultMessage: intl.formatMessage({
       defaultMessage: 'Your flow has been updated.',
+      id: 'FMA0Q0',
       description: 'Chatbot report a bug button',
     }),
   };

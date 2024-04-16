@@ -1,6 +1,6 @@
 import type { IFontIconProps } from '@fluentui/react';
 import { FontIcon, css } from '@fluentui/react';
-import React from 'react';
+import type React from 'react';
 import { useIntl } from 'react-intl';
 
 export interface IFlowDiffPreviewProps {
@@ -15,19 +15,23 @@ export const FlowDiffPreview: React.FC<IFlowDiffPreviewProps> = (/*TODO: add pro
   const intlText = {
     checkActions: intl.formatMessage({
       defaultMessage: 'Check these actions to see if any parameters need to be set.',
+      id: 'kHs5R4',
       description: 'Chatbot flow preview message reminding user to check workflow actions',
     }),
     updatingFlowCard: {
       addedOperation: intl.formatMessage({
         defaultMessage: 'Added this action',
+        id: 'Vx6fwP',
         description: 'Chatbot added operation sentence format',
       }),
       removedOperation: intl.formatMessage({
         defaultMessage: 'Removed this action',
+        id: 'LaFlFh',
         description: 'Chatbot removed operation sentence format',
       }),
       changedOperation: intl.formatMessage({
         defaultMessage: 'Updated this action',
+        id: '6gblzt',
         description: 'Chatbot changed operation sentence format',
       }),
     },
@@ -84,7 +88,7 @@ export const OperationItem: React.FC<OperationItemProps> = ({ operation, isActio
         <span className={'msla-flowpreview-operation-name'}>{operation.operationName /*getOperationDisplayName(operation)*/}</span>
         <span className={'msla-flowpreview-operation-connection'}>{operation.connectionName /*actionSubtitle*/}</span>
       </div>
-      {statusIcon && <FontIcon {...statusIcon} className={(css('msla-flowpreview-operation-statusicon'), statusIcon.className)} />}
+      {statusIcon && <FontIcon {...statusIcon} className={css('msla-flowpreview-operation-statusicon', statusIcon.className)} />}
     </div>
   );
 };

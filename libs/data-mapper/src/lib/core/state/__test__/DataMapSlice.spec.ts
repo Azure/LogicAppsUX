@@ -1,7 +1,7 @@
 import { simpleMockSchema } from '../../../__mocks__';
 import { concatFunction } from '../../../__mocks__/FunctionMock';
-import type { FunctionData, FunctionDictionary, FunctionMetadata, FunctionPositionMetadata, Schema, SchemaExtended } from '../../../models';
-import { FunctionCategory, NormalizedDataType, SchemaNodeProperty, SchemaType, functionMock } from '../../../models';
+import type { FunctionData, FunctionDictionary } from '../../../models';
+import { FunctionCategory, functionMock } from '../../../models';
 import type { ConnectionDictionary } from '../../../models/Connection';
 import { applyConnectionValue, flattenInputs } from '../../../utils/Connection.Utils';
 import { addReactFlowPrefix, createReactFlowFunctionKey } from '../../../utils/ReactFlow.Util';
@@ -18,8 +18,10 @@ import {
   deleteNodeFromConnections,
   deleteParentRepeatingConnections,
 } from '../DataMapSlice';
-
-// NOTE: Functions with an unbounded input (like our concatFunction mock) will have two empty (undefined) values/fields by default
+import type { FunctionMetadata, FunctionPositionMetadata, Schema, SchemaExtended } from '@microsoft/logic-apps-shared';
+import { NormalizedDataType, SchemaNodeProperty, SchemaType } from '@microsoft/logic-apps-shared';
+import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
+// NOTE: Functions with an unbounded input (like our concatFunction mock) will have two empty (undefined) values/fields by defaultimport { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 describe('DataMapSlice', () => {
   const schema: Schema = simpleMockSchema;
   const extendedSchema: SchemaExtended = convertSchemaToSchemaExtended(schema);
@@ -354,7 +356,11 @@ describe('DataMapSlice', () => {
         functionKey: 'ToLower',
         reactFlowGuid: 'ToLower-C7328819-6073-42FE-98F2-53E20D2DBC4B',
         positions: [expectedPosition],
-        connections: ['source-/ns0:Root/DirectTranslation/EmployeeName', '/ns0:Root/DirectTranslation/Employee/Name'],
+        connections: [
+          { name: 'source-/ns0:Root/DirectTranslation/EmployeeName', inputOrder: 0 },
+          { name: '/ns0:Root/DirectTranslation/Employee/Name', inputOrder: 1 },
+        ],
+        connectionShorthand: '',
       };
       assignFunctionNodePositionsFromMetadata(connectionDict, [mockManifest], functionDict);
       expect(functionDict['ToLower-C7328819-6073-42FE-98F2-53E20D2DBC4B'].functionData.positions).toEqual([expectedPosition]);

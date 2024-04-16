@@ -62,8 +62,7 @@ export class LogicAppHostingPlanStep extends AzureWizardPromptStep<ILogicAppWiza
       };
     } else if (!useConsumptionPlan) {
       return { promptSteps: [new AppServicePlanListStep(suppressCreate)] };
-    } else {
-      return undefined;
     }
+    return undefined;
   }
 }

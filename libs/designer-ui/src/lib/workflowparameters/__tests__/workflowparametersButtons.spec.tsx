@@ -1,17 +1,17 @@
 import type { EditOrDeleteButtonProps } from '../workflowparametersButtons';
 import { EditOrDeleteButton } from '../workflowparametersButtons';
-import * as React from 'react';
 import * as ReactShallowRenderer from 'react-test-renderer/shallow';
-
+import { describe, vi, beforeEach, afterEach, it, expect } from 'vitest';
 describe('ui/workflowparameters/workflowparametersButtons', () => {
-  let minimal: EditOrDeleteButtonProps, renderer: ReactShallowRenderer.ShallowRenderer;
+  let minimal: EditOrDeleteButtonProps;
+  let renderer: ReactShallowRenderer.ShallowRenderer;
 
   beforeEach(() => {
     minimal = {
       //   showDelete: true,
       definition: { id: 'test' },
-      setIsEditable: jest.fn(),
-      setExpanded: jest.fn(),
+      setIsEditable: vi.fn(),
+      setExpanded: vi.fn(),
     };
     renderer = ReactShallowRenderer.createRenderer();
   });

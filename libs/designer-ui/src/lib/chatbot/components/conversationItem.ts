@@ -1,25 +1,26 @@
 import type { OperationInfo } from './flowDiffPreview';
 
-export enum FlowOrigin {
-  FromNL2Flow = 'fromNL2Flow',
-  // We may want to define other flow origins in future
-  Default = 'default',
-}
+export const FlowOrigin = {
+  Default: 'default',
+} as const;
+export type FlowOrigin = (typeof FlowOrigin)[keyof typeof FlowOrigin];
 
-export enum ChatEntryReaction {
-  thumbsUp = 'thumbsUp',
-  thumbsDown = 'thumbsDown',
-}
+export const ChatEntryReaction = {
+  thumbsUp: 'thumbsUp',
+  thumbsDown: 'thumbsDown',
+} as const;
+export type ChatEntryReaction = (typeof ChatEntryReaction)[keyof typeof ChatEntryReaction];
 
-export type ConversationItem = //TODO: Add other types of items
+export type ConversationItem =
+  //TODO: Add other types of items
 
-    | UserQueryItem
-    | AssistantReplyItem
-    | AssistantReplyWithFlowItem
-    | AssistantGreetingItem
-    | AssistantErrorItem
-    | ConnectionsSetupItem
-    | OperationsNeedingAttentionItem;
+  | UserQueryItem
+  | AssistantReplyItem
+  | AssistantReplyWithFlowItem
+  | AssistantGreetingItem
+  | AssistantErrorItem
+  | ConnectionsSetupItem
+  | OperationsNeedingAttentionItem;
 
 export type ReactionItem =
   | AssistantReplyItem
@@ -35,18 +36,24 @@ type BaseConversationItem = {
   date: Date;
 };
 
-export enum ConversationItemType {
-  Query = 'query',
-  Reply = 'reply',
-  ReplyWithFlow = 'replyWithFlow',
-  ReplyError = 'replyError',
-  ConnectionsSetup = 'connectionsSetup',
-  Greeting = 'greeting',
-  OperationsNeedingAttention = 'operationsNeedingAttention',
-}
+type BaseAssistantMessageItem = BaseConversationItem & {
+  openFeedback?: () => void;
+  logFeedbackVote?: (reaction: ChatEntryReaction, isRemovedVote?: boolean) => void;
+};
+
+export const ConversationItemType = {
+  Query: 'query',
+  Reply: 'reply',
+  ReplyWithFlow: 'replyWithFlow',
+  ReplyError: 'replyError',
+  ConnectionsSetup: 'connectionsSetup',
+  Greeting: 'greeting',
+  OperationsNeedingAttention: 'operationsNeedingAttention',
+} as const;
+export type ConversationItemType = (typeof ConversationItemType)[keyof typeof ConversationItemType];
 
 export type UserQueryItem = BaseConversationItem & {
-  type: ConversationItemType.Query;
+  type: typeof ConversationItemType.Query;
   text: string;
 };
 
@@ -54,72 +61,77 @@ export function isUserQueryItem(item: ConversationItem): item is UserQueryItem {
   return item.type === ConversationItemType.Query;
 }
 
-export type AssistantGreetingItem = BaseConversationItem & {
-  type: ConversationItemType.Greeting;
+export type AssistantGreetingItem = BaseAssistantMessageItem & {
+  type: typeof ConversationItemType.Greeting;
   origin: FlowOrigin;
   reaction: ChatEntryReaction | undefined;
-  askFeedback: boolean;
 };
 
-export type AssistantErrorItem = BaseConversationItem & {
-  type: ConversationItemType.ReplyError;
+export type AssistantErrorItem = BaseAssistantMessageItem & {
+  type: typeof ConversationItemType.ReplyError;
   error: any;
   reaction: ChatEntryReaction | undefined;
-  askFeedback: boolean;
   chatSessionId: string;
   __rawRequest: any;
   __rawResponse: any;
 };
 
-export type AssistantReplyItem = BaseConversationItem & {
-  type: ConversationItemType.Reply;
+export type AssistantReplyItem = BaseAssistantMessageItem & {
+  type: typeof ConversationItemType.Reply;
   text: string;
   reaction: ChatEntryReaction | undefined;
-  askFeedback: boolean;
   isMarkdownText: boolean;
   correlationId?: string;
   hideFooter?: boolean;
   __rawRequest: any;
   __rawResponse: any;
+  additionalDocURL?: string | undefined;
+  azureButtonCallback?: (prompt?: string) => void;
 };
 
-export type ConnectionsSetupItem = BaseConversationItem & {
-  type: ConversationItemType.ConnectionsSetup;
+export type ConnectionsSetupItem = BaseAssistantMessageItem & {
+  type: typeof ConversationItemType.ConnectionsSetup;
   // connectionReferences: ConnectionReference[]; // TODO: Later change this to Record<string, ConnectionReference>
   // connectionReferencesNeedingSetup: string[];
   reaction: ChatEntryReaction | undefined;
-  askFeedback: boolean;
   // The setup UX is displayed until connections are setup or the user skips.
   isSetupComplete: boolean;
   correlationId?: string;
 };
 
-export type AssistantReplyWithFlowItem = BaseConversationItem & {
-  type: ConversationItemType.ReplyWithFlow;
+export type AssistantReplyWithFlowItem = BaseAssistantMessageItem & {
+  type: typeof ConversationItemType.ReplyWithFlow;
   text: string;
   reaction: ChatEntryReaction | undefined;
-  askFeedback: boolean;
   undoStatus: UndoStatus;
   correlationId?: string;
   __rawRequest: any;
   __rawResponse: any;
 };
 
-export enum UndoStatus {
-  Unavailable = 0,
-  UndoAvailable,
-  Undone,
-}
+export const UndoStatus = {
+  Unavailable: 0,
+  UndoAvailable: 1,
+  Undone: 2,
+} as const;
+export type UndoStatus = (typeof UndoStatus)[keyof typeof UndoStatus];
 
-export enum OperationsNeedingAttentionOnUserAction {
-  editing = 1,
-  saving,
-}
+export const OperationsNeedingAttentionOnUserAction = {
+  editing: 1,
+  saving: 2,
+} as const;
+export type OperationsNeedingAttentionOnUserAction =
+  (typeof OperationsNeedingAttentionOnUserAction)[keyof typeof OperationsNeedingAttentionOnUserAction];
 
-export type OperationsNeedingAttentionItem = BaseConversationItem & {
-  type: ConversationItemType.OperationsNeedingAttention;
+export type OperationsNeedingAttentionItem = BaseAssistantMessageItem & {
+  type: typeof ConversationItemType.OperationsNeedingAttention;
   userAction: OperationsNeedingAttentionOnUserAction;
   operationsNeedingAttention: OperationInfo[];
   reaction: ChatEntryReaction | undefined;
-  askFeedback: boolean;
+};
+
+export type AdditionalParametersItem = {
+  sendToAzure: string | null;
+  error: string | null;
+  url: string | null;
 };

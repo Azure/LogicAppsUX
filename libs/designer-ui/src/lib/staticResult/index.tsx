@@ -1,10 +1,9 @@
+import constants from '../constants';
 import { StaticResult } from './StaticResult';
 import { deserializePropertyValues, parseStaticResultSchema, serializePropertyValues } from './util';
 import type { IButtonStyles } from '@fluentui/react';
 import { DefaultButton, PrimaryButton, Toggle } from '@fluentui/react';
-import type { Schema } from '@microsoft/parsers-logic-apps';
-import type { OpenAPIV2 } from '@microsoft/utils-logic-apps';
-import isEqual from 'lodash.isequal';
+import type { OpenApiSchema, OpenAPIV2 } from '@microsoft/logic-apps-shared';
 import { useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 
@@ -17,10 +16,12 @@ const actionButtonStyles: IButtonStyles = {
   },
 };
 
-export enum StaticResultOption {
-  ENABLED = 'Enabled',
-  DISABLED = 'Disabled',
-}
+export const StaticResultOption = {
+  ENABLED: 'Enabled',
+  DISABLED: 'Disabled',
+} as const;
+export type StaticResultOption = (typeof StaticResultOption)[keyof typeof StaticResultOption];
+
 export type StaticResultChangeHandler = (newState: OpenAPIV2.SchemaObject, staticResultOption: StaticResultOption) => void;
 
 export interface StaticResultContainerProps {
@@ -29,16 +30,14 @@ export interface StaticResultContainerProps {
   properties: OpenAPIV2.SchemaObject;
   savePropertiesCallback?: StaticResultChangeHandler;
   cancelPropertiesCallback?: () => void;
-  // prop only passed to inner StaticResults
-  updateParentProperties?: (input: any) => void;
 }
 
 export type StaticResultRootSchemaType = OpenAPIV2.SchemaObject & {
   properties: {
-    status: Schema;
-    code: Schema;
-    error: Schema;
-    outputs?: Schema;
+    status: OpenApiSchema;
+    code: OpenApiSchema;
+    error: OpenApiSchema;
+    outputs?: OpenApiSchema;
   };
 };
 
@@ -46,7 +45,6 @@ export const StaticResultContainer = ({
   enabled = false,
   staticResultSchema,
   properties,
-  updateParentProperties,
   cancelPropertiesCallback,
   savePropertiesCallback,
 }: StaticResultContainerProps): JSX.Element => {
@@ -55,41 +53,79 @@ export const StaticResultContainer = ({
 
   const [showStaticResults, setShowStaticResults] = useState<boolean>(enabled);
   const [propertyValues, setPropertyValues] = useState<OpenAPIV2.SchemaObject>(initialPropertyValues);
+  const [errorMessage, setErrorMessage] = useState('');
 
+  // static result validation that trigger whenever the properties change
   useEffect(() => {
-    // we want to update parentProps whenever our inner properties change
-    if (!isEqual(propertyValues, properties)) {
-      updateParentProperties?.(propertyValues);
+    const serializedValue = serializePropertyValues(propertyValues, staticResultSchema);
+    if (serializedValue['status'] === constants.STATUS.SUCCEEDED && !serializedValue['outputs']) {
+      setErrorMessage(
+        intl.formatMessage({
+          defaultMessage: 'Outputs are required when status is "Succeeded"',
+          id: '6yFUar',
+          description: 'Error message for when status is succeded and outputs are not provided',
+        })
+      );
+    } else if (serializedValue['status'] === constants.STATUS.SUCCEEDED && serializedValue['error']) {
+      setErrorMessage(
+        intl.formatMessage({
+          defaultMessage: 'Error should not be provided when status is "Succeeded"',
+          id: 'svaqnp',
+          description: 'Error message for when status is succeded and error is provided',
+        })
+      );
+    } else if (serializedValue['status'] === constants.STATUS.FAILED && !(serializedValue['error'] && serializedValue['error']['code'])) {
+      setErrorMessage(
+        intl.formatMessage({
+          defaultMessage: 'The Error and its code is required when status is "Failed"',
+          id: 'HGA9iU',
+          description: 'Error message for when status is failed and error and error code are not provided',
+        })
+      );
+    } else if (serializedValue['status'] === constants.STATUS.FAILED && serializedValue['outputs']) {
+      setErrorMessage(
+        intl.formatMessage({
+          defaultMessage: 'Ouputs should not be provided when status is "Failed"',
+          id: 'LPdGu/',
+          description: 'Error message for when status is failed and outputs are provided',
+        })
+      );
+    } else {
+      setErrorMessage('');
     }
-  }, [properties, propertyValues, updateParentProperties]);
+  }, [intl, properties, propertyValues, staticResultSchema]);
 
   const toggleLabelOn = intl.formatMessage({
     defaultMessage: 'Disable Static Result',
+    id: 'Yw7Nfl',
     description: 'Label for toggle to disable static result',
   });
 
   const toggleLabelOff = intl.formatMessage({
     defaultMessage: 'Enable Static Result',
+    id: 'OdoUEu',
     description: 'Label for toggle to enable static result',
   });
 
   const testingTitle = intl.formatMessage({
     defaultMessage: 'Testing',
+    id: '++ZVe/',
     description: 'Title for testing section',
   });
 
   const saveButtonLabel = intl.formatMessage({
     defaultMessage: 'Save',
+    id: 'uIurld',
     description: 'Label for save button',
   });
 
   const cancelButtonLabel = intl.formatMessage({
     defaultMessage: 'Cancel',
+    id: 'KZOa5l',
     description: 'Label for cancel button',
   });
 
   const saveStaticResults = () => {
-    // console.log(JSON.stringify(serializePropertyValues(propertyValues, staticResultSchema), null, 2));
     savePropertiesCallback?.(
       serializePropertyValues(propertyValues, staticResultSchema),
       showStaticResults ? StaticResultOption.ENABLED : StaticResultOption.DISABLED
@@ -106,7 +142,12 @@ export const StaticResultContainer = ({
   };
 
   const isLabelDisabled = (): boolean => {
-    return JSON.stringify(propertyValues) === JSON.stringify(initialPropertyValues) && showStaticResults === enabled;
+    return (
+      // disable label if no change
+      (JSON.stringify(propertyValues) === JSON.stringify(initialPropertyValues) && showStaticResults === enabled) ||
+      // disable if there is an error
+      (!!errorMessage && showStaticResults)
+    );
   };
 
   const {
@@ -137,6 +178,8 @@ export const StaticResultContainer = ({
           setPropertyValues={setPropertyValues}
         />
       ) : null}
+
+      <div className="msla-static-results-validation">{errorMessage && showStaticResults ? errorMessage : null}</div>
       <div className="msla-static-result-actions">
         <PrimaryButton
           className={'msla-static-result-action-button'}

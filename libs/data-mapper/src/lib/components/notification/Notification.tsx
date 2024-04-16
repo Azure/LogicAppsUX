@@ -7,20 +7,21 @@ import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
 import { ActionCreators } from 'redux-undo';
 
-export enum NotificationTypes {
-  GenerateFailed = 'generateFailed',
-  MapHasErrorsAtSave = 'mapHasErrorsAtSave',
-  SourceNodeRemoved = 'sourceNodeRemoved',
-  SourceNodeRemoveFailed = 'sourceNodeRemoveFailed',
-  TargetNodeCannotDelete = 'targetNodeCannotDelete',
-  RepeatingConnectionCannotDelete = 'repeatingConnectionCannotDelete',
-  FunctionNodePartiallyDeleted = 'functionNodePartiallyDeleted',
-  FunctionNodeDeleted = 'functionNodeDeleted',
-  ConnectionDeleted = 'connectionDeleted',
-  ArrayConnectionAdded = 'arrayConnectionAdded',
-  CircularLogicError = 'circularLogicError',
-  ElementsAndMappingsRemoved = 'elementsMappingsRemoved',
-}
+export const NotificationTypes = {
+  GenerateFailed: 'generateFailed',
+  MapHasErrorsAtSave: 'mapHasErrorsAtSave',
+  SourceNodeRemoved: 'sourceNodeRemoved',
+  SourceNodeRemoveFailed: 'sourceNodeRemoveFailed',
+  TargetNodeCannotDelete: 'targetNodeCannotDelete',
+  RepeatingConnectionCannotDelete: 'repeatingConnectionCannotDelete',
+  FunctionNodePartiallyDeleted: 'functionNodePartiallyDeleted',
+  FunctionNodeDeleted: 'functionNodeDeleted',
+  ConnectionDeleted: 'connectionDeleted',
+  ArrayConnectionAdded: 'arrayConnectionAdded',
+  CircularLogicError: 'circularLogicError',
+  ElementsAndMappingsRemoved: 'elementsMappingsRemoved',
+} as const;
+export type NotificationTypes = (typeof NotificationTypes)[keyof typeof NotificationTypes];
 
 export interface NotificationData {
   type: NotificationTypes;
@@ -106,21 +107,25 @@ export const Notification = (props: NotificationProps) => {
 
   const undoLoc = intl.formatMessage({
     defaultMessage: 'Undo',
+    id: '4Ekn9t',
     description: 'Undo',
   });
 
   const showMeLoc = intl.formatMessage({
     defaultMessage: 'Show me',
+    id: 'uWf/I5',
     description: 'Button to open map checker',
   });
 
   const issueLoc = intl.formatMessage({
     defaultMessage: 'issue',
+    id: 'RnBddN',
     description: 'Issue, singular',
   });
 
   const issuesLoc = intl.formatMessage({
     defaultMessage: 'issues',
+    id: 'SJFVxf',
     description: 'Issues, plural',
   });
 
@@ -128,11 +133,13 @@ export const Notification = (props: NotificationProps) => {
     () => ({
       [NotificationTypes.GenerateFailed]: intl.formatMessage({
         defaultMessage: 'Failed to generate XSLT.',
+        id: 'e9bIKh',
         description: 'Message on failed generation',
       }),
       [NotificationTypes.MapHasErrorsAtSave]: intl.formatMessage(
         {
           defaultMessage: 'The current map contains {numOfIssues} {issue}.',
+          id: 'JAIV0h',
           description: 'Message when failing to save due to errors',
         },
         {
@@ -142,11 +149,13 @@ export const Notification = (props: NotificationProps) => {
       ),
       [NotificationTypes.SourceNodeRemoved]: intl.formatMessage({
         defaultMessage: 'Source element removed from view.',
+        id: 'A5Ferh',
         description: 'Message on removing source node',
       }),
       [NotificationTypes.SourceNodeRemoveFailed]: intl.formatMessage(
         {
           defaultMessage: `Remove all references to element ' {nodeName} ' before you remove the element.`,
+          id: 'lexzgJ',
           description: 'Message on failure to remove source node',
         },
         {
@@ -156,36 +165,44 @@ export const Notification = (props: NotificationProps) => {
       [NotificationTypes.RepeatingConnectionCannotDelete]: intl.formatMessage(
         {
           defaultMessage: 'Remove all mappings within source element `{nodeName}` first.',
+          id: '3KPLpx',
           description: 'Message informing that mapping to child elements need to be deleted prior to selected one.',
         },
         { nodeName: msgParam ?? '' }
       ),
       [NotificationTypes.TargetNodeCannotDelete]: intl.formatMessage({
-        defaultMessage: `Target schema element cannot be deleted.`,
+        defaultMessage: 'Target schema element cannot be deleted.',
+        id: 'Xj0Gr/',
         description: 'Message informing that target element cannot be removed',
       }),
       [NotificationTypes.FunctionNodePartiallyDeleted]: intl.formatMessage({
-        defaultMessage: `Function was removed from the current location and currently exists elsewhere.`,
+        defaultMessage: 'Function was removed from the current location and currently exists elsewhere.',
+        id: 'o/FgET',
         description: 'Message to show when deleting a connection that exists in multiple places.',
       }),
       [NotificationTypes.FunctionNodeDeleted]: intl.formatMessage({
-        defaultMessage: `Function deleted.`,
+        defaultMessage: 'Function deleted.',
+        id: 'mE7w9G',
         description: 'Message on deleting connection',
       }),
       [NotificationTypes.ConnectionDeleted]: intl.formatMessage({
-        defaultMessage: `Line deleted.`,
+        defaultMessage: 'Line deleted.',
+        id: 'B999mz',
         description: 'Message on deleting connection',
       }),
       [NotificationTypes.ArrayConnectionAdded]: intl.formatMessage({
         defaultMessage: 'A line for the parent element is added automatically.',
+        id: 'lQNKUB',
         description: 'Describes connection being added',
       }),
       [NotificationTypes.CircularLogicError]: intl.formatMessage({
         defaultMessage: 'Invalid connection, mapping must not form a closed loop.',
+        id: 'H5VikC',
         description: 'Error message for circular logic connection validation',
       }),
       [NotificationTypes.ElementsAndMappingsRemoved]: intl.formatMessage({
-        defaultMessage: "Elements and mappings that aren't connected to a target element are removed.",
+        defaultMessage: `Elements and mappings that aren't connected to a target element are removed.`,
+        id: 'kcOhfh',
         description: 'The message to show when switching levels without connecting nodes or mappings to a target schema node.',
       }),
     }),

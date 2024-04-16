@@ -1,4 +1,4 @@
-import { useFeedbackMessage, useReportBugButton } from '../feedbackHelper';
+import { useAzureCopilotButton, useExternalLink, useFeedbackMessage } from '../feedbackHelper';
 import { AssistantError } from './assistantError';
 import { AssistantGreeting } from './assistantGreeting';
 import { AssistantReplyWithFlow } from './assistantReplyWithFlow';
@@ -7,6 +7,7 @@ import { ConnectionsSetupMessage } from './connectionsSetupMessage';
 import { ConversationItemType } from './conversationItem';
 import type { ConversationItem, UserQueryItem, AssistantReplyItem } from './conversationItem';
 import { OperationsNeedingAttentionMessage } from './operationsNeedAttentionMessage';
+import { useRef } from 'react';
 import Markdown from 'react-markdown';
 
 type ConversationMessageProps = {
@@ -43,9 +44,11 @@ const UserMessage = ({ item }: { item: UserQueryItem }) => {
 };
 
 const AssistantReply = ({ item }: { item: AssistantReplyItem }) => {
-  const { id, text, hideFooter, date } = item;
-  const reportBugButton = useReportBugButton(false);
+  const { id, text, hideFooter, date, additionalDocURL, azureButtonCallback } = item;
+  const azureCopilotButton = useAzureCopilotButton(azureButtonCallback);
+  const additionalDocSection = useExternalLink(additionalDocURL ?? undefined);
   const { feedbackMessage, onMessageReactionClicked, reaction } = useFeedbackMessage(item);
+  const textRef = useRef<HTMLDivElement | null>(null);
   return (
     <div>
       <ChatBubble
@@ -56,10 +59,14 @@ const AssistantReply = ({ item }: { item: AssistantReplyItem }) => {
         selectedReaction={reaction}
         onThumbsReactionClicked={(reaction) => onMessageReactionClicked(reaction)}
         disabled={false} //TODO: add isBlockingOperationInProgress}
-        additionalFooterActions={hideFooter ? [] : [reportBugButton]}
+        additionalLinksSection={additionalDocURL ? additionalDocSection : undefined}
+        additionalFooterActions={hideFooter ? [] : azureButtonCallback ? [azureCopilotButton] : []}
         hideFooter={hideFooter}
+        textRef={textRef}
       >
-        <Markdown>{text}</Markdown>
+        <div ref={textRef}>
+          <Markdown>{text}</Markdown>
+        </div>
       </ChatBubble>
       {feedbackMessage}
     </div>

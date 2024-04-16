@@ -3,8 +3,9 @@ import type {
   InputDependencies,
   ParameterDeserializationOptions,
   ParameterSerializationOptions,
-} from '@microsoft/parsers-logic-apps';
-import type { Exception, OpenAPIV2 } from '@microsoft/utils-logic-apps';
+  Exception,
+  OpenAPIV2,
+} from '@microsoft/logic-apps-shared';
 
 export interface ParameterInfo {
   alternativeKey?: string;
@@ -51,12 +52,13 @@ export interface ParameterDetails {
   deserialization?: ParameterDeserializationOptions;
 }
 
-export enum DynamicCallStatus {
-  STARTED,
-  SUCCEEDED,
-  FAILED,
-  NOTSTARTED,
-}
+export const DynamicCallStatus = {
+  STARTED: 'started',
+  SUCCEEDED: 'succeeded',
+  FAILED: 'failed',
+  NOTSTARTED: 'notstarted',
+} as const;
+export type DynamicCallStatus = (typeof DynamicCallStatus)[keyof typeof DynamicCallStatus];
 
 export interface ValueSegment {
   id: string;
@@ -65,10 +67,11 @@ export interface ValueSegment {
   token?: Token;
 }
 
-export enum ValueSegmentType {
-  LITERAL = 'literal',
-  TOKEN = 'token',
-}
+export const ValueSegmentType = {
+  LITERAL: 'literal',
+  TOKEN: 'token',
+} as const;
+export type ValueSegmentType = (typeof ValueSegmentType)[keyof typeof ValueSegmentType];
 
 export interface Token {
   actionName?: string;
@@ -95,11 +98,12 @@ export interface Token {
   value?: string;
 }
 
-export enum TokenType {
-  FX,
-  ITEM,
-  ITERATIONINDEX,
-  OUTPUTS,
-  PARAMETER,
-  VARIABLE,
-}
+export const TokenType = {
+  FX: 'fx',
+  ITEM: 'item',
+  ITERATIONINDEX: 'iterationIndex',
+  OUTPUTS: 'outputs',
+  PARAMETER: 'parameter',
+  VARIABLE: 'variable',
+} as const;
+export type TokenType = (typeof TokenType)[keyof typeof TokenType];

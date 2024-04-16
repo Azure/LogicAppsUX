@@ -1,6 +1,7 @@
 import type { GroupedItems, GroupItemProps, RowItemProps } from '.';
 import { RowDropdownOptions, GroupType } from '.';
 import { Checkbox } from '../checkbox';
+import type { ValueSegment } from '../editor';
 import type { ChangeState, GetTokenPickerHandler } from '../editor/base';
 import { AddSection } from './AddSection';
 import type { GroupDropdownOptions } from './GroupDropdown';
@@ -26,14 +27,14 @@ const calloutProps: ICalloutProps = {
   directionalHint: DirectionalHint.leftCenter,
 };
 
-export enum MoveOption {
-  UP = 'up',
-  DOWN = 'down',
-}
+export const MoveOption = {
+  UP: 'up',
+  DOWN: 'down',
+};
+export type MoveOption = (typeof MoveOption)[keyof typeof MoveOption];
 
 interface GroupProps {
   readonly?: boolean;
-  checked?: boolean;
   groupProps: GroupItemProps;
   isRootGroup?: boolean;
   isGroupable: boolean;
@@ -42,8 +43,10 @@ interface GroupProps {
   mustHaveItem?: boolean;
   isTop: boolean;
   isBottom: boolean;
+  tokenMapping?: Record<string, ValueSegment>;
+  loadParameterValueFromString?: (value: string) => ValueSegment[];
   getTokenPicker: GetTokenPickerHandler;
-  handleMove?: (childIndex: number, moveOption: MoveOption) => void;
+  // handleMove?: (childIndex: number, moveOption: MoveOption) => void;
   handleDeleteChild?: (indexToDelete: number | number[]) => void;
   handleUngroupChild?: (indexToInsertAt: number) => void;
   handleUpdateParent: (newProps: GroupItemProps, index: number) => void;
@@ -64,6 +67,7 @@ export const Group = ({
   handleDeleteChild,
   handleUngroupChild,
   handleUpdateParent,
+  ...baseEditorProps
 }: GroupProps) => {
   const intl = useIntl();
   const [collapsed, setCollapsed] = useState(false);
@@ -96,6 +100,7 @@ export const Group = ({
 
   const deleteButton = intl.formatMessage({
     defaultMessage: 'Delete',
+    id: 'bGtEPd',
     description: 'delete button',
   });
 
@@ -111,11 +116,13 @@ export const Group = ({
 
   const makeGroupButton = intl.formatMessage({
     defaultMessage: 'Make Group',
+    id: 'ERVorY',
     description: 'Make group button',
   });
 
   const unGroupButton = intl.formatMessage({
     defaultMessage: 'Ungroup',
+    id: 'OdNhwc',
     description: 'Ungroup button',
   });
 
@@ -193,33 +200,32 @@ export const Group = ({
         }
         handleUpdateParent(newItems, index);
       }
+    } else if (groupProps.items.length <= 1) {
+      handleDeleteChild?.(index);
     } else {
-      if (groupProps.items.length <= 1) {
-        handleDeleteChild?.(index);
-      } else {
-        newItems.items.splice(indicesToDelete, 1);
-        handleUpdateParent(newItems, index);
-      }
-    }
-  };
-
-  const handleMoveChild = (childIndex: number, moveOption: MoveOption) => {
-    if (childIndex <= 0 && moveOption === MoveOption.UP) {
-      // const newItems = { ...groupProps };
-    } else if (childIndex >= groupProps.items.length - 1 && moveOption === MoveOption.DOWN) {
-      // come back
-    } else {
-      const newItems = { ...groupProps };
-      const child = newItems.items[childIndex];
-      newItems.items[childIndex] = newItems.items[childIndex + (moveOption === MoveOption.UP ? -1 : 1)];
-      newItems.items[childIndex + (moveOption === MoveOption.UP ? -1 : 1)] = child;
+      newItems.items.splice(indicesToDelete, 1);
       handleUpdateParent(newItems, index);
     }
   };
 
+  // const handleMoveChild = (childIndex: number, moveOption: MoveOption) => {
+  //   if (childIndex <= 0 && moveOption === MoveOption.UP) {
+  //     // const newItems = { ...groupProps };
+  //   } else if (childIndex >= groupProps.items.length - 1 && moveOption === MoveOption.DOWN) {
+  //     // come back
+  //   } else {
+  //     const newItems = { ...groupProps };
+  //     const child = newItems.items[childIndex];
+  //     newItems.items[childIndex] = newItems.items[childIndex + (moveOption === MoveOption.UP ? -1 : 1)];
+  //     newItems.items[childIndex + (moveOption === MoveOption.UP ? -1 : 1)] = child;
+  //     handleUpdateParent(newItems, index);
+  //   }
+  // };
+
   const onRenderOverflowButton = (): JSX.Element => {
     const groupCommands = intl.formatMessage({
       defaultMessage: 'More commands',
+      id: 'GdGm4T',
       description: 'Label for commands in row',
     });
     return (
@@ -244,6 +250,7 @@ export const Group = ({
 
   const collapseLabel = intl.formatMessage({
     defaultMessage: 'Collapse',
+    id: 'BoMvF2',
     description: 'Label for collapsing group',
   });
 
@@ -253,11 +260,13 @@ export const Group = ({
 
   return (
     <div className={css('msla-querybuilder-group-container', isRootGroup && 'firstGroup')}>
-      {!isRootGroup ? <div className="msla-querybuilder-group-gutter-hook" /> : null}
+      {isRootGroup ? null : <div className="msla-querybuilder-group-gutter-hook" />}
       <div className={css('msla-querybuilder-group-content', collapsed && 'collapsed', isRootGroup && 'firstGroup')}>
-        {!collapsed ? (
+        {collapsed ? (
+          <GroupDropdown condition={groupProps.condition} onChange={handleSelectedOption} key={groupProps.condition} readonly={readonly} />
+        ) : (
           <>
-            {!isRootGroup ? (
+            {isRootGroup ? null : (
               <Checkbox
                 disabled={readonly}
                 className="msla-querybuilder-group-checkbox"
@@ -265,7 +274,7 @@ export const Group = ({
                 onChange={handleCheckbox}
                 key={JSON.stringify(groupProps.checked)}
               />
-            ) : null}
+            )}
             <div className="msla-querybuilder-row-section">
               <GroupDropdown
                 condition={groupProps.condition}
@@ -286,12 +295,13 @@ export const Group = ({
                     isGroupable={isGroupable}
                     showDisabledDelete={groupProps.items.length <= 1 && mustHaveItem}
                     groupedItems={groupedItems}
-                    isTop={isTop && currIndex === 0 && !!isRootGroup}
-                    isBottom={isBottom && index === groupProps.items.length - 1 && !!isRootGroup}
+                    // isTop={isTop && currIndex === 0 && !!isRootGroup}
+                    // isBottom={isBottom && index === groupProps.items.length - 1 && !!isRootGroup}
                     getTokenPicker={getTokenPicker}
-                    handleMove={handleMoveChild}
+                    // handleMove={handleMoveChild}
                     handleDeleteChild={handleDelete}
                     handleUpdateParent={handleUpdateNewParent}
+                    {...baseEditorProps}
                   />
                 ) : (
                   <Group
@@ -310,10 +320,11 @@ export const Group = ({
                     isTop={isTop && currIndex === 0}
                     isBottom={isBottom && currIndex === groupProps.items.length - 1}
                     getTokenPicker={getTokenPicker}
-                    handleMove={handleMoveChild}
+                    // handleMove={handleMoveChild}
                     handleDeleteChild={handleDelete}
                     handleUngroupChild={() => handleUngroup(currIndex, item.items)}
                     handleUpdateParent={handleUpdateNewParent}
+                    {...baseEditorProps}
                   />
                 );
               })}
@@ -322,17 +333,18 @@ export const Group = ({
                   {groupProps.items.length === 0 ? (
                     <Row
                       readonly={readonly}
-                      key={`row 0`}
+                      key={'row 0'}
                       index={0}
                       isGroupable={isGroupable}
                       showDisabledDelete={groupProps.items.length <= 1 && mustHaveItem}
-                      isTop={isTop && !!isRootGroup}
-                      isBottom={isBottom && !!isRootGroup}
+                      // isTop={isTop && !!isRootGroup}
+                      // isBottom={isBottom && !!isRootGroup}
                       groupedItems={groupedItems}
                       getTokenPicker={getTokenPicker}
-                      handleMove={handleMoveChild}
+                      // handleMove={handleMoveChild}
                       handleDeleteChild={handleDeleteChild}
                       handleUpdateParent={handleUpdateNewParent}
+                      {...baseEditorProps}
                     />
                   ) : null}
                   <AddSection
@@ -345,11 +357,9 @@ export const Group = ({
               }
             </div>
           </>
-        ) : (
-          <GroupDropdown condition={groupProps.condition} onChange={handleSelectedOption} key={groupProps.condition} readonly={readonly} />
         )}
         <div className={css('msla-querybuilder-group-controlbar', collapsed && 'collapsed')}>
-          {!isRootGroup ? (
+          {isRootGroup ? null : (
             <>
               <TooltipHost calloutProps={calloutProps} content={collapseLabel}>
                 <IconButton
@@ -365,12 +375,12 @@ export const Group = ({
                 items={[]}
                 overflowItems={groupMenuItems}
                 onRenderOverflowButton={onRenderOverflowButton}
-                onRenderItem={function (_item: IOverflowSetItemProps) {
+                onRenderItem={(_item: IOverflowSetItemProps) => {
                   throw new Error('No items in overflowset');
                 }}
               />
             </>
-          ) : null}
+          )}
         </div>
       </div>
     </div>

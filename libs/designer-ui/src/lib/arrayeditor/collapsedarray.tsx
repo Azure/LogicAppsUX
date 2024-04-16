@@ -1,7 +1,7 @@
 import type { SimpleArrayItem, ComplexArrayItems, ArrayItemSchema } from '.';
 import type { ValueSegment } from '../editor';
 import type { GetTokenPickerHandler } from '../editor/base';
-import { BaseEditor } from '../editor/base';
+import { EditorWrapper } from '../editor/base/EditorWrapper';
 import type { TokenPickerButtonEditorProps } from '../editor/base/plugins/tokenpickerbutton';
 import { Label } from '../label';
 import type { LabelProps } from '../label';
@@ -14,13 +14,15 @@ export interface CollapsedArrayProps {
   collapsedValue: ValueSegment[];
   readonly?: boolean;
   tokenPickerButtonProps?: TokenPickerButtonEditorProps;
-  getTokenPicker: GetTokenPickerHandler;
   itemSchema: ArrayItemSchema;
   isComplex: boolean;
   setCollapsedValue: (val: ValueSegment[]) => void;
   setItems: ((simpleItems: SimpleArrayItem[]) => void) | ((complexItems: ComplexArrayItems[]) => void);
   setIsValid: (b: boolean) => void;
   onBlur?: () => void;
+  getTokenPicker: GetTokenPickerHandler;
+  tokenMapping?: Record<string, ValueSegment>;
+  loadParameterValueFromString?: (value: string) => ValueSegment[];
 }
 
 export const CollapsedArray = ({
@@ -49,6 +51,7 @@ export const CollapsedArray = ({
 
   const editorPlaceHolder = intl.formatMessage({
     defaultMessage: 'Enter an Array',
+    id: 'mAuMD+',
     description: 'Placeholder for empty collapsed array',
   });
 
@@ -56,11 +59,10 @@ export const CollapsedArray = ({
     <div className="msla-array-container msla-array-editor-collapsed">
       {labelProps ? renderLabel() : null}
       <div className="msla-array-content">
-        <BaseEditor
+        <EditorWrapper
           {...props}
           className="msla-collapsed-editor-container"
-          BasePlugins={{
-            tokens: true,
+          basePlugins={{
             tabbable: true,
           }}
           placeholder={editorPlaceHolder}
@@ -68,14 +70,13 @@ export const CollapsedArray = ({
           onBlur={onBlur}
         >
           <CollapsedArrayValidation
-            className={'msla-collapsed-editor-validation'}
             itemSchema={itemSchema}
             isComplex={isComplex}
             setCollapsedValue={setCollapsedValue}
             setIsValid={setIsValid}
             setItems={setItems}
           />
-        </BaseEditor>
+        </EditorWrapper>
       </div>
     </div>
   );

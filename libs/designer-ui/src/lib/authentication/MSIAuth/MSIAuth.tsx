@@ -1,4 +1,5 @@
 import type { AuthProps, MSIProps } from '..';
+import type { ValueSegment } from '../../editor';
 import type { ChangeState, GetTokenPickerHandler } from '../../editor/base';
 import type { TokenPickerButtonEditorProps } from '../../editor/base/plugins/tokenpickerbutton';
 import { AuthenticationDropdown } from '../AuthenticationDropdown';
@@ -6,8 +7,8 @@ import { AuthenticationProperty } from '../AuthenticationProperty';
 import { AUTHENTICATION_PROPERTIES, containsUserAssignedIdentities } from '../util';
 import { MSIAuthenticationDefault } from './MSIAuthDefault';
 import type { IDropdownOption } from '@fluentui/react';
-import type { ManagedIdentity } from '@microsoft/utils-logic-apps';
-import { ResourceIdentityType, equals } from '@microsoft/utils-logic-apps';
+import { isTemplateExpression, ResourceIdentityType, equals } from '@microsoft/logic-apps-shared';
+import type { ManagedIdentity } from '@microsoft/logic-apps-shared';
 import type { Dispatch, SetStateAction } from 'react';
 import { useState } from 'react';
 import type { IntlShape } from 'react-intl';
@@ -18,8 +19,10 @@ interface MSIAuthenticationProps {
   identity?: ManagedIdentity;
   readonly?: boolean;
   tokenPickerButtonProps?: TokenPickerButtonEditorProps;
-  getTokenPicker: GetTokenPickerHandler;
   setCurrentProps: Dispatch<SetStateAction<AuthProps>>;
+  getTokenPicker: GetTokenPickerHandler;
+  tokenMapping?: Record<string, ValueSegment>;
+  loadParameterValueFromString?: (value: string) => ValueSegment[];
 }
 
 export const MSIAuthentication = ({ identity, msiProps, setCurrentProps, ...props }: MSIAuthenticationProps): JSX.Element => {
@@ -46,10 +49,12 @@ export const MSIAuthentication = ({ identity, msiProps, setCurrentProps, ...prop
 
   const MSIAuthLabel = intl.formatMessage({
     defaultMessage: 'Managed identity',
+    id: '2TMGk7',
     description: 'Managed Identity Label',
   });
   const MSIAuthPlaceholder = intl.formatMessage({
     defaultMessage: 'Please select an identity',
+    id: 'cgq/+y',
     description: 'Placehodler text for dropdown',
   });
 
@@ -97,14 +102,17 @@ const getManagedIdentityData = (
 
   const invalidUserAssignedManagedIdentity = intl.formatMessage({
     defaultMessage: 'The entered identity is not associated with this Logic App.',
+    id: '3ewBbk',
     description: 'error message for invalid user',
   });
   const systemAssignedManagedIdentity = intl.formatMessage({
     defaultMessage: 'System-assigned managed identity',
+    id: 'i/SguY',
     description: 'Text for dropdown of system-assigned managed identity',
   });
   const userIdentityNotSupported = intl.formatMessage({
     defaultMessage: 'User identity is not supported when Logic App has system assigned managed identity enabled.',
+    id: '93svjx',
     description: 'error message for unspported identity',
   });
   const userAssignedIdentities = containsUserAssignedIdentities(identity) ? getUserAssignedIdentities(identity) : undefined;
@@ -129,8 +137,9 @@ const getManagedIdentityData = (
 
     if (
       selectedManagedIdentityKey &&
-      !isSystemAssignedIdentity(selectedManagedIdentityKey) &&
-      !userAssignedIdentities?.find((userIdentity) => userIdentity.key === selectedManagedIdentityKey)
+      ((!isSystemAssignedIdentity(selectedManagedIdentityKey) &&
+        !userAssignedIdentities?.find((userIdentity) => userIdentity.key === selectedManagedIdentityKey)) ||
+        isTemplateExpression(selectedManagedIdentityKey))
     ) {
       identityOptions.push({ key: selectedManagedIdentityKey, text: getIdentityDisplayName(selectedManagedIdentityKey) });
       errorMessage = invalidUserAssignedManagedIdentity;

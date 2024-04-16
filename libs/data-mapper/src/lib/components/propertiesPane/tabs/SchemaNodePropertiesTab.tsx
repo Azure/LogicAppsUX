@@ -1,5 +1,4 @@
 import type { RootState } from '../../../core/state/Store';
-import type { SchemaNodeExtended } from '../../../models';
 import type { Connection } from '../../../models/Connection';
 import { isSchemaNodeExtended } from '../../../utils';
 import { isCustomValue } from '../../../utils/Connection.Utils';
@@ -9,6 +8,7 @@ import { addTargetReactFlowPrefix } from '../../../utils/ReactFlow.Util';
 import { InputDropdown } from '../../inputTypes/InputDropdown';
 import { Stack } from '@fluentui/react';
 import { Label, makeStyles, Text, tokens, typographyStyles } from '@fluentui/react-components';
+import type { SchemaNodeExtended } from '@microsoft/logic-apps-shared';
 import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useSelector } from 'react-redux';
@@ -44,21 +44,25 @@ export const SchemaNodePropertiesTab = ({ currentNode }: SchemaNodePropertiesTab
 
   const nameLoc = intl.formatMessage({
     defaultMessage: 'Name',
+    id: 'RFjYpH',
     description: 'Name of current node',
   });
 
   const fullPathLoc = intl.formatMessage({
     defaultMessage: 'Full path',
+    id: 'wPlTDB',
     description: 'Full path of current node',
   });
 
   const dataTypeLoc = intl.formatMessage({
     defaultMessage: 'Data type',
+    id: '6xRvni',
     description: 'The data type of the current node.',
   });
 
   const inputLoc = intl.formatMessage({
     defaultMessage: 'Input',
+    id: 'P6I90y',
     description: 'Input',
   });
 
@@ -77,10 +81,10 @@ export const SchemaNodePropertiesTab = ({ currentNode }: SchemaNodePropertiesTab
       return input === undefined
         ? undefined
         : isCustomValue(input)
-        ? input
-        : isSchemaNodeExtended(input.node)
-        ? input.node.name
-        : functionDropDownItemText(input.reactFlowKey, input.node, connectionDictionary);
+          ? input
+          : isSchemaNodeExtended(input.node)
+            ? input.node.name
+            : functionDropDownItemText(input.reactFlowKey, input.node, connectionDictionary);
     }
 
     return undefined;

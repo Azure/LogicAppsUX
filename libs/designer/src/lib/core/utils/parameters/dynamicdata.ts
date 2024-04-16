@@ -1,5 +1,6 @@
 import Constants from '../../../common/constants';
 import type { ConnectionReference } from '../../../common/models/workflow';
+import { getReactQueryClient } from '../../ReactQueryProvider';
 import { getCustomSwaggerIfNeeded } from '../../actions/bjsworkflow/initialize';
 import type { SerializedParameter } from '../../actions/bjsworkflow/serializer';
 import { getConnection, getConnectorWithSwagger } from '../../queries/connections';
@@ -27,12 +28,10 @@ import {
   toParameterInfoMap,
   tryConvertStringToExpression,
 } from './helper';
-import type { ListDynamicValue, ManagedIdentityRequestProperties, TreeDynamicValue } from '@microsoft/designer-client-services-logic-apps';
-import { OperationManifestService } from '@microsoft/designer-client-services-logic-apps';
-import type { ParameterInfo } from '@microsoft/designer-ui';
-import { TokenType, ValueSegmentType } from '@microsoft/designer-ui';
-import { getIntl } from '@microsoft/intl-logic-apps';
 import type {
+  ListDynamicValue,
+  ManagedIdentityRequestProperties,
+  TreeDynamicValue,
   DynamicParameters,
   ExpressionEvaluatorOptions,
   InputParameter,
@@ -41,8 +40,15 @@ import type {
   ResolvedParameter,
   SchemaProcessorOptions,
   SwaggerParser,
-} from '@microsoft/parsers-logic-apps';
+  Connection,
+  Connector,
+  OpenAPIV2,
+  OperationInfo,
+  OperationManifest,
+} from '@microsoft/logic-apps-shared';
 import {
+  OperationManifestService,
+  getIntl,
   ExpressionEvaluator,
   isTemplateExpression,
   isLegacyDynamicValuesTreeExtension,
@@ -62,9 +68,6 @@ import {
   SchemaProcessor,
   WildIndexSegment,
   replaceSubsegmentSeparator,
-} from '@microsoft/parsers-logic-apps';
-import type { Connection, Connector, OpenAPIV2, OperationInfo, OperationManifest } from '@microsoft/utils-logic-apps';
-import {
   first,
   getObjectPropertyValue,
   safeSetObjectPropertyValue,
@@ -84,7 +87,9 @@ import {
   map,
   copy,
   unmap,
-} from '@microsoft/utils-logic-apps';
+} from '@microsoft/logic-apps-shared';
+import type { ParameterInfo } from '@microsoft/designer-ui';
+import { TokenType, ValueSegmentType } from '@microsoft/designer-ui';
 
 export async function getDynamicValues(
   dependencyInfo: DependencyInfo,
@@ -106,7 +111,8 @@ export async function getDynamicValues(
       operationParameters,
       dynamicState
     );
-  } else if (isLegacyDynamicValuesExtension(definition)) {
+  }
+  if (isLegacyDynamicValuesExtension(definition)) {
     const { connectorId } = operationInfo;
     const connectionId = connectionReference?.connection.id as string;
     const { parameters, operationId } = definition.extension;
@@ -150,62 +156,76 @@ export async function getDynamicSchema(
   const { parameter, definition } = dependencyInfo;
   const emptySchema = { ...parameter?.schema };
   try {
-    if (isDynamicPropertiesExtension(definition)) {
-      const { dynamicState, parameters } = definition.extension;
-      const operationParameters = getParameterValuesForDynamicInvoke(parameters, nodeInputs, idReplacements, workflowParameters);
-      let schema: OpenAPIV2.SchemaObject;
+    const queryClient = getReactQueryClient();
+    const outputSchema = await queryClient.fetchQuery(
+      [
+        'getDynamicSchema',
+        connectionReference?.connection.id,
+        operationInfo.connectorId,
+        operationInfo.operationId,
+        dependencyInfo.parameter?.key,
+      ],
+      async () => {
+        if (isDynamicPropertiesExtension(definition)) {
+          const { dynamicState, parameters } = definition.extension;
+          const operationParameters = getParameterValuesForDynamicInvoke(parameters, nodeInputs, idReplacements, workflowParameters);
+          let schema: OpenAPIV2.SchemaObject;
 
-      switch (dynamicState?.extension?.builtInOperation) {
-        case 'getVariableSchema':
-          schema = {
-            type: getSwaggerTypeFromVariableType(operationParameters['type']?.toLowerCase() ?? 'boolean'),
-            enum: getSwaggerEnumFromVariableType(operationParameters['type']?.toLowerCase() ?? 'boolean'),
-          };
+          switch (dynamicState?.extension?.builtInOperation) {
+            case 'getVariableSchema': {
+              schema = {
+                type: getSwaggerTypeFromVariableType(operationParameters['type']?.toLowerCase() ?? 'boolean'),
+                enum: getSwaggerEnumFromVariableType(operationParameters['type']?.toLowerCase() ?? 'boolean'),
+              };
 
-          break;
-        case 'getVariable':
-          // eslint-disable-next-line no-case-declarations
-          const variable = variables.find((variable) => variable.name === operationParameters['name']);
-          schema = variable
-            ? {
-                type: getSwaggerTypeFromVariableType(variable.type?.toLowerCase()),
-                enum: getSwaggerEnumFromVariableType(variable.type?.toLowerCase()),
-              }
-            : {};
-          break;
-        default:
-          schema = await getDynamicSchemaProperties(
-            connectionReference?.connection.id,
-            operationInfo.connectorId,
-            operationInfo.operationId,
-            operationParameters,
-            dynamicState
-          );
-          break;
+              break;
+            }
+            case 'getVariable': {
+              const variable = variables.find((variable) => variable.name === operationParameters['name']);
+              schema = variable
+                ? {
+                    type: getSwaggerTypeFromVariableType(variable.type?.toLowerCase()),
+                    enum: getSwaggerEnumFromVariableType(variable.type?.toLowerCase()),
+                  }
+                : {};
+              break;
+            }
+            default: {
+              schema = await getDynamicSchemaProperties(
+                connectionReference?.connection.id,
+                operationInfo.connectorId,
+                operationInfo.operationId,
+                operationParameters,
+                dynamicState
+              );
+              break;
+            }
+          }
+
+          return schema ? { ...emptySchema, ...schema } : schema;
+        }
+        const { connectorId } = operationInfo;
+        const { parameters, operationId } = definition.extension;
+        const { connector, parsedSwagger } = await getConnectorWithSwagger(connectorId);
+        const inputs = getParameterValuesForLegacyDynamicOperation(
+          parsedSwagger,
+          operationId,
+          parameters,
+          nodeInputs,
+          idReplacements,
+          workflowParameters
+        );
+        const connectionId = (connectionReference as ConnectionReference).connection.id;
+        const managedIdentityRequestProperties = await getManagedIdentityRequestProperties(
+          connector,
+          connectionId,
+          connectionReference as ConnectionReference
+        );
+
+        return getLegacyDynamicSchema(connectionId, connectorId, inputs, definition.extension, managedIdentityRequestProperties);
       }
-
-      return schema ? { ...emptySchema, ...schema } : schema;
-    } else {
-      const { connectorId } = operationInfo;
-      const { parameters, operationId } = definition.extension;
-      const { connector, parsedSwagger } = await getConnectorWithSwagger(connectorId);
-      const inputs = getParameterValuesForLegacyDynamicOperation(
-        parsedSwagger,
-        operationId,
-        parameters,
-        nodeInputs,
-        idReplacements,
-        workflowParameters
-      );
-      const connectionId = (connectionReference as ConnectionReference).connection.id;
-      const managedIdentityRequestProperties = await getManagedIdentityRequestProperties(
-        connector,
-        connectionId,
-        connectionReference as ConnectionReference
-      );
-
-      return getLegacyDynamicSchema(connectionId, connectorId, inputs, definition.extension, managedIdentityRequestProperties);
-    }
+    );
+    return outputSchema;
   } catch (error: any) {
     if (
       (error.name === UnsupportedExceptionName && error.code === UnsupportedExceptionCode.RUNTIME_EXPRESSION) ||
@@ -243,16 +263,10 @@ export function getDynamicOutputsFromSchema(schema: OpenAPIV2.SchemaObject, dyna
 
   const outputs = map(outputParameters, OutputMapKey);
 
-  return Object.keys(outputs).reduce(
-    (previous, key) => ({
-      ...previous,
-      [key]: {
-        ...outputs[key],
-        isDynamic: true,
-      },
-    }),
-    outputs
-  );
+  for (const key of Object.keys(outputs)) {
+    outputs[key].isDynamic = true;
+  }
+  return outputs;
 }
 
 export async function getDynamicInputsFromSchema(
@@ -263,6 +277,7 @@ export async function getDynamicInputsFromSchema(
   operationDefinition?: any
 ): Promise<InputParameter[]> {
   const isParameterNested = dynamicParameter.isNested;
+  const schemaHasRequiredParameters = schema?.required && schema.required.length > 0;
   const processorOptions: SchemaProcessorOptions = {
     prefix: isParameterNested ? dynamicParameter.name : '',
     currentKey: isParameterNested ? undefined : dynamicParameter.name,
@@ -270,7 +285,7 @@ export async function getDynamicInputsFromSchema(
     parentProperty: {
       visibility: dynamicParameter.visibility,
     },
-    required: dynamicParameter.required,
+    required: dynamicParameter.required || schemaHasRequiredParameters,
     useAliasedIndexing: true,
     excludeAdvanced: false,
     excludeInternal: false,
@@ -280,6 +295,7 @@ export async function getDynamicInputsFromSchema(
     ...toInputParameter(schemaProperty),
     isDynamic: true,
     in: dynamicParameter.in,
+    required: (schemaProperty.schema?.required as any) ?? schemaProperty.required ?? false,
   }));
 
   // We are recieving some swagger parameters with keys in the following format, ex:
@@ -316,10 +332,9 @@ export async function getDynamicInputsFromSchema(
     const manifest = await getOperationManifest(operationInfo);
     const customSwagger = await getCustomSwaggerIfNeeded(manifest.properties, operationDefinition);
     return getManifestBasedInputParameters(dynamicInputs, dynamicParameter, allInputKeys, manifest, customSwagger, operationDefinition);
-  } else {
-    const { parsedSwagger } = await getConnectorWithSwagger(operationInfo.connectorId);
-    return getSwaggerBasedInputParameters(dynamicInputs, dynamicParameter, parsedSwagger, operationInfo, operationDefinition);
   }
+  const { parsedSwagger } = await getConnectorWithSwagger(operationInfo.connectorId);
+  return getSwaggerBasedInputParameters(dynamicInputs, dynamicParameter, parsedSwagger, operationInfo, operationDefinition);
 }
 
 export async function getFolderItems(
@@ -338,19 +353,18 @@ export async function getFolderItems(
     const { connectorId } = operationInfo;
     const connectionId = connectionReference?.connection.id as string;
     const { operationId, parameters: referenceParameters } = selectedValue ? browse : open;
-    const pickerParameters = Object.keys(referenceParameters ?? {}).reduce((result: Record<string, any>, paramKey: string) => {
-      if (referenceParameters?.[paramKey]?.selectedItemValuePath || referenceParameters?.[paramKey]?.['value-property']) {
-        return {
-          ...result,
-          [paramKey]: getPropertyValue(
-            selectedValue,
-            referenceParameters?.[paramKey]?.selectedItemValuePath ?? referenceParameters[paramKey]?.['value-property'] ?? ''
-          ),
-        };
+    const pickerParameters: Record<string, any> = {};
+    for (const [paramKey, paramValue] of Object.entries(referenceParameters ?? {})) {
+      if (paramValue?.selectedItemValuePath || paramValue?.['value-property']) {
+        pickerParameters[paramKey] = getPropertyValue(
+          selectedValue,
+          paramValue.selectedItemValuePath ?? paramValue['value-property'] ?? ''
+        );
+      } else {
+        pickerParameters[paramKey] = referenceParameters?.[paramKey];
       }
+    }
 
-      return { ...result, [paramKey]: referenceParameters?.[paramKey] };
-    }, {});
     const parameters = { ...definition.extension.parameters, ...pickerParameters };
     const { connector, parsedSwagger } = await getConnectorWithSwagger(connectorId);
     const inputs = getParameterValuesForLegacyDynamicOperation(
@@ -368,7 +382,8 @@ export async function getFolderItems(
     );
 
     return getLegacyDynamicTreeItems(connectionId, connectorId, operationId, inputs, filePickerInfo, managedIdentityRequestProperties);
-  } else if (isDynamicTreeExtension(definition) && filePickerInfo) {
+  }
+  if (isDynamicTreeExtension(definition) && filePickerInfo) {
     const { open, browse } = filePickerInfo;
     const { connectorId } = operationInfo;
     const connectionId = connectionReference?.connection.id as string;
@@ -398,10 +413,12 @@ function getParameterValuesForDynamicInvoke(
   idReplacements: Record<string, string>,
   workflowParameters: Record<string, WorkflowParameterDefinition>
 ): Record<string, any> {
-  return getParametersForDynamicInvoke(referenceParameters, nodeInputs, idReplacements, workflowParameters).reduce(
-    (result: Record<string, any>, parameter: SerializedParameter) => ({ ...result, [parameter.parameterName]: parameter.value }),
-    {}
-  );
+  const retVal: Record<string, any> = {};
+  const iter = getParametersForDynamicInvoke(referenceParameters, nodeInputs, idReplacements, workflowParameters);
+  for (const parameter of iter) {
+    retVal[parameter.parameterName] = parameter.value;
+  }
+  return retVal;
 }
 
 function getParameterValuesForLegacyDynamicOperation(
@@ -443,6 +460,10 @@ function getParametersForDynamicInvoke(
   const intl = getIntl();
   const operationParameters: SerializedParameter[] = [];
 
+  // Get app settings from query client
+  const queryClient = getReactQueryClient();
+  const appSettings = queryClient.getQueryData(['appSettings']);
+
   for (const [parameterName, parameter] of Object.entries(referenceParameters ?? {})) {
     const referenceParameterName = (parameter?.parameterReference ?? parameter?.parameter ?? 'undefined') as string;
     const operationParameter = operationInputs?.[parameterName];
@@ -465,6 +486,7 @@ function getParametersForDynamicInvoke(
           intl.formatMessage(
             {
               defaultMessage: 'Parameter "{parameterName}" cannot be found for this operation',
+              id: '7LmpNN',
               description: 'Error message to show in dropdown when dependent parameter is not found',
             },
             { parameterName: referenceParameterName }
@@ -483,6 +505,7 @@ function getParametersForDynamicInvoke(
           ValidationErrorCode.INVALID_VALUE_SEGMENT_TYPE,
           intl.formatMessage({
             defaultMessage: 'Value contains function expressions which cannot be resolved. Only constant values supported',
+            id: 'yB6PB/',
             description: 'Error message to show in dropdown when dependent parameter value cannot be resolved',
           })
         );
@@ -499,7 +522,7 @@ function getParametersForDynamicInvoke(
     }
   }
 
-  evaluateTemplateExpressions(operationParameters, workflowParameters);
+  evaluateTemplateExpressions(operationParameters, workflowParameters, appSettings);
 
   return operationParameters;
 }
@@ -562,7 +585,9 @@ function getManifestBasedInputParameters(
           OpenApi:   inputs.$.foo.foo/bar.foo/bar/baz    => foo/bar/baz
       */
       let inputPath = inputParameter.key.replace(`${keyPrefix}.`, '');
-      if (isOpenApiParameter(inputParameter)) inputPath = splitEx(inputPath)?.at(-1) ?? '';
+      if (isOpenApiParameter(inputParameter)) {
+        inputPath = splitEx(inputPath)?.at(-1) ?? '';
+      }
       clonedInputParameter.value = stepInputsAreNonEmptyObject ? getObjectValue(inputPath, stepInputs) : undefined;
     }
     result.push(clonedInputParameter);
@@ -651,10 +676,10 @@ function getSwaggerBasedInputParameters(
     key === 'inputs.$'
       ? undefined
       : key.indexOf('inputs.$') === 0
-      ? key.replace('inputs.$.', '')
-      : key.indexOf('body.$') === 0
-      ? key.replace('.$', '')
-      : '';
+        ? key.replace('inputs.$.', '')
+        : key.indexOf('body.$') === 0
+          ? key.replace('.$', '')
+          : '';
   const propertyNames = parseEx(parameterKey).map((segment) => segment.value?.toString()) as string[];
   const dynamicInputDefinition = safeSetObjectPropertyValue(
     {},
@@ -690,9 +715,8 @@ function getSwaggerBasedInputParameters(
     }
 
     return result;
-  } else {
-    return dynamicInputParameters;
   }
+  return dynamicInputParameters;
 }
 
 function _getKeyPrefixFromParameter(parameterKey: string): string {
@@ -764,33 +788,40 @@ function isOpenApiParameter(param: InputParameter): boolean {
 
 function evaluateTemplateExpressions(
   parameters: SerializedParameter[],
-  workflowParameters: Record<string, WorkflowParameterDefinition>
+  workflowParameters: Record<string, WorkflowParameterDefinition>,
+  appSettings: any
 ): void {
   if (!Object.keys(workflowParameters).length) {
     return;
   }
 
+  const outputParameters: Record<string, any> = {};
+  for (const value of Object.values(workflowParameters)) {
+    outputParameters[value.name as string] = value.defaultValue ?? value.value;
+  }
+
   const options: ExpressionEvaluatorOptions = {
     fuzzyEvaluation: true,
     context: {
-      parameters: Object.keys(workflowParameters).reduce(
-        (result: Record<string, any>, parameterId: string) => ({
-          ...result,
-          [workflowParameters[parameterId].name as string]:
-            workflowParameters[parameterId].defaultValue ?? workflowParameters[parameterId].value,
-        }),
-        {}
-      ),
-      appsettings: {},
+      parameters: outputParameters,
+      appsettings: appSettings,
     },
   };
 
   const evaluator = new ExpressionEvaluator(options);
-
   for (const parameter of parameters) {
-    const value = parameter.value;
-    if (isTemplateExpression(value)) {
-      parameter.value = evaluator.evaluate(value);
-    }
+    evaluateParameter(parameter, evaluator);
+  }
+}
+
+// Recursively evaluate in case there is a expression within the expression
+function evaluateParameter(parameter: SerializedParameter, evaluator: ExpressionEvaluator): void {
+  const value = parameter.value;
+  if (isTemplateExpression(value)) {
+    // eslint-disable-next-line no-param-reassign
+    parameter.value = evaluator.evaluate(value);
+  }
+  if (value !== parameter.value) {
+    evaluateParameter(parameter, evaluator);
   }
 }

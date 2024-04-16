@@ -1,14 +1,18 @@
 import type { RootState } from '../../store';
+import { getRecordEntry } from '@microsoft/logic-apps-shared';
+import { createSelector } from '@reduxjs/toolkit';
 import { useSelector } from 'react-redux';
 
+const getSettingsState = (state: RootState) => state.settings;
+
 export const useExpandedSections = () => {
-  return useSelector((rootState: RootState) => rootState.settings.expandedSections);
+  return useSelector(createSelector(getSettingsState, (settings) => settings.expandedSections));
 };
 
 export const useAllSettingsValidationErrors = () => {
-  return useSelector((rootState: RootState) => rootState.settings.validationErrors);
+  return useSelector(createSelector(getSettingsState, (settings) => settings.validationErrors));
 };
 
 export const useSettingValidationErrors = (nodeId: string) => {
-  return useSelector((rootState: RootState) => rootState.settings.validationErrors?.[nodeId] ?? []);
+  return useSelector(createSelector(getSettingsState, (settings) => getRecordEntry(settings.validationErrors, nodeId) ?? []));
 };

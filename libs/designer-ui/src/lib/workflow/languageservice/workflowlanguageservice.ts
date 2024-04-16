@@ -2,9 +2,8 @@ import Constants from '../../constants';
 import { isHighContrastBlack } from '../../utils';
 import type { FunctionDefinition, SignatureInfo } from './templatefunctions';
 import { FunctionGroupDefinitions } from './templatefunctions';
-import { ExpressionScanner, ExpressionTokenType } from '@microsoft/parsers-logic-apps';
-import type { ExpressionToken } from '@microsoft/parsers-logic-apps';
-import { first, getPropertyValue, map } from '@microsoft/utils-logic-apps';
+import { ExpressionScanner, ExpressionTokenType, equals, first, getPropertyValue, map } from '@microsoft/logic-apps-shared';
+import type { ExpressionToken } from '@microsoft/logic-apps-shared';
 import type { languages, editor, Position } from 'monaco-editor';
 
 type CompletionList = languages.CompletionList;
@@ -18,12 +17,13 @@ export type SignatureHelpProvider = languages.SignatureHelpProvider;
 type SignatureInformation = languages.SignatureInformation;
 type SignatureHelpResult = languages.SignatureHelpResult;
 
-const enum tokenNames {
-  FUNCTION = 'function-name',
-  KEYWORD = 'keywords',
-  NUMBER = 'number-literal',
-  STRING = 'string-literal',
-}
+const tokenNames = {
+  FUNCTION: 'function-name',
+  KEYWORD: 'keywords',
+  NUMBER: 'number-literal',
+  STRING: 'string-literal',
+} as const;
+export type TokenNames = (typeof tokenNames)[keyof typeof tokenNames];
 
 export const CompletionItemKind = {
   Method: 0,
@@ -69,9 +69,13 @@ interface IdentifierTokenInfo {
   argumentsCovered: number;
 }
 
-export function registerWorkflowLanguageProviders(monacoLanguages: typeof languages, monacoEditor: typeof editor): void {
+export function registerWorkflowLanguageProviders(
+  monacoLanguages: typeof languages,
+  monacoEditor: typeof editor,
+  hideUTFExpressions?: boolean
+): void {
   const languageName = Constants.LANGUAGE_NAMES.WORKFLOW;
-  const templateFunctions = getTemplateFunctions();
+  const templateFunctions = getTemplateFunctions(hideUTFExpressions);
 
   monacoLanguages.register({ id: languageName });
 
@@ -292,7 +296,8 @@ function getSignaturesInfo(expressionInfo: ExpressionInfo): SignatureHelpResult 
         activeParameter,
       },
     };
-  } else if (signatureWithVariableParameters.length === 1) {
+  }
+  if (signatureWithVariableParameters.length === 1) {
     const staticSignatures = signaturesWithFixedParameters.map(mapSignature);
     const variableSignatures = generateSignaturesForVariableParameters(
       templateFunction.name,
@@ -433,10 +438,10 @@ function parseExpression(value: string, position: Position, templateFunctions: R
   };
 }
 
-export function getTemplateFunctions(): FunctionDefinition[] {
+export function getTemplateFunctions(hideUTFExpressions?: boolean): FunctionDefinition[] {
   const templateFunctions: FunctionDefinition[] = [];
   for (const functionGroup of FunctionGroupDefinitions) {
-    templateFunctions.push(...functionGroup.functions);
+    templateFunctions.push(...(hideUTFExpressions ? removeUTFExpressions(functionGroup.functions) : functionGroup.functions));
   }
 
   return templateFunctions;
@@ -444,4 +449,8 @@ export function getTemplateFunctions(): FunctionDefinition[] {
 
 function signatureHasVariableParameters(signature: SignatureInfo): boolean {
   return signature.parameters.some((parameter) => !!parameter.isVariable);
+}
+
+export function removeUTFExpressions(functionGroupFunctions: FunctionDefinition[]): FunctionDefinition[] {
+  return functionGroupFunctions.filter((func) => !equals(func.name, 'utf8Length') && !equals(func.name, 'utf16Length'));
 }

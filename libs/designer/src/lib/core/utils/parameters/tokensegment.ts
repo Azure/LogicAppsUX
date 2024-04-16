@@ -3,9 +3,8 @@ import { getNormalizedName } from './helper';
 import { createOutputToken, createParameterToken, createTokenValueSegment, createVariableToken } from './segment';
 import { TokenType } from '@microsoft/designer-ui';
 import type { ValueSegment } from '@microsoft/designer-ui';
-import { encodePropertySegment, ExpressionType, isStringLiteral, OutputKeys, OutputSource } from '@microsoft/parsers-logic-apps';
-import type { Dereference, Expression, ExpressionFunction, ExpressionLiteral } from '@microsoft/parsers-logic-apps';
-import { equals } from '@microsoft/utils-logic-apps';
+import { encodePropertySegment, ExpressionType, isStringLiteral, OutputKeys, OutputSource, equals } from '@microsoft/logic-apps-shared';
+import type { Dereference, Expression, ExpressionFunction, ExpressionLiteral } from '@microsoft/logic-apps-shared';
 
 /**
  * The token segment convertor.
@@ -27,17 +26,20 @@ export class TokenSegmentConvertor {
       const name = this._getTokenName(expression, source);
       const outputKey = this._getOutputKey(expression);
       const required = !!this._isTokenRequired(expression, source);
-
-      return createTokenValueSegment(createOutputToken(outputKey, step, source, name, required), value);
-    } else if (this._isParameterToken(expression)) {
+      const outputToken = createOutputToken(outputKey, step, source, name, required, value);
+      return createTokenValueSegment(outputToken, value);
+    }
+    if (this._isParameterToken(expression)) {
       const parameterName = (expression.arguments[0] as ExpressionLiteral).value;
 
       return createTokenValueSegment(createParameterToken(parameterName), value);
-    } else if (TokenSegmentConvertor.isVariableToken(expression)) {
+    }
+    if (TokenSegmentConvertor.isVariableToken(expression)) {
       const variableName = (expression.arguments[0] as ExpressionLiteral).value;
-
-      return createTokenValueSegment(createVariableToken(variableName), value);
-    } else if (TokenSegmentConvertor.isItemToken(expression)) {
+      const variableToken = createVariableToken(variableName, expression.expression);
+      return createTokenValueSegment(variableToken, value);
+    }
+    if (TokenSegmentConvertor.isItemToken(expression)) {
       const source = this._getTokenSource(expression);
       const name = this._getTokenName(expression, source);
       const outputKey = this._getOutputKey(expression);
@@ -56,7 +58,8 @@ export class TokenSegmentConvertor {
         },
         value
       );
-    } else if (TokenSegmentConvertor.isItemsToken(expression)) {
+    }
+    if (TokenSegmentConvertor.isItemsToken(expression)) {
       const actionExpression = expression.arguments[0] as ExpressionLiteral;
       const loopSource = actionExpression.value;
       const source = this._getTokenSource(expression);
@@ -80,7 +83,8 @@ export class TokenSegmentConvertor {
         },
         value
       );
-    } else if (TokenSegmentConvertor.isIterationIndexesToken(expression)) {
+    }
+    if (TokenSegmentConvertor.isIterationIndexesToken(expression)) {
       const functionArguments = expression.arguments;
       const actionExpression = functionArguments[0] as ExpressionLiteral;
       const loopSource = actionExpression.value;
@@ -94,9 +98,8 @@ export class TokenSegmentConvertor {
         },
         value
       );
-    } else {
-      return null;
     }
+    return null;
   }
 
   public static isOutputToken(expression: ExpressionFunction): boolean {
@@ -105,20 +108,22 @@ export class TokenSegmentConvertor {
 
     switch (expression.name.toUpperCase()) {
       case 'TRIGGERBODY':
-      case 'TRIGGEROUTPUTS':
+      case 'TRIGGEROUTPUTS': {
         if (numberOfArguments !== 0) {
           return false;
         }
         break;
+      }
 
       case 'BODY':
       case 'OUTPUTS':
       case 'ACTIONBODY':
-      case 'ACTIONOUTPUTS':
+      case 'ACTIONOUTPUTS': {
         if (numberOfArguments !== 1) {
           return false;
         }
         break;
+      }
 
       default:
         return false;
@@ -249,9 +254,8 @@ export class TokenSegmentConvertor {
   public static getTokenStep(functionArguments: Expression[]): string | undefined {
     if (functionArguments.length > 0) {
       return (functionArguments[0] as ExpressionLiteral).value;
-    } else {
-      return undefined;
     }
+    return undefined;
   }
 
   private _getTokenSource(expression: ExpressionFunction): string {
@@ -272,11 +276,14 @@ export class TokenSegmentConvertor {
         const value = dereferenceExpression.value;
         if (equals(value, OutputSource.StatusCode)) {
           return OutputSource.StatusCode;
-        } else if (equals(value, OutputSource.Queries)) {
+        }
+        if (equals(value, OutputSource.Queries)) {
           return OutputSource.Queries;
-        } else if (equals(value, OutputSource.Headers)) {
+        }
+        if (equals(value, OutputSource.Headers)) {
           return OutputSource.Headers;
-        } else if (equals(value, OutputSource.Body)) {
+        }
+        if (equals(value, OutputSource.Body)) {
           return OutputSource.Body;
         }
       }
@@ -290,12 +297,14 @@ export class TokenSegmentConvertor {
     switch (source) {
       case OutputSource.StatusCode:
       case OutputSource.Queries:
-      case OutputSource.Headers:
+      case OutputSource.Headers: {
         dereferences = expression.dereferences.slice(1);
         break;
-      default:
+      }
+      default: {
         dereferences = expression.dereferences;
         break;
+      }
     }
 
     return dereferences;
@@ -306,9 +315,10 @@ export class TokenSegmentConvertor {
     switch (expression.name.toUpperCase()) {
       case 'TRIGGERBODY':
       case 'BODY':
-      case 'ACTIONBODY':
+      case 'ACTIONBODY': {
         prefix = 'outputs.$.body';
         break;
+      }
 
       default:
         prefix = 'outputs.$';
@@ -324,13 +334,14 @@ export class TokenSegmentConvertor {
 
     if (dereferences.length === 0) {
       return undefined;
-    } else if (dereferences.every((dref) => dref.isSafe)) {
-      return false;
-    } else if (dereferences.every((dref) => !dref.isSafe)) {
-      return true;
-    } else {
-      return undefined;
     }
+    if (dereferences.every((dref) => dref.isSafe)) {
+      return false;
+    }
+    if (dereferences.every((dref) => !dref.isSafe)) {
+      return true;
+    }
+    return undefined;
   }
 
   private _getTokenName(expression: ExpressionFunction, source: string, isItem = false, parentArray?: string): string {
@@ -345,18 +356,22 @@ export class TokenSegmentConvertor {
 
     if (path) {
       return path;
-    } else if (source === OutputSource.Headers) {
-      return OutputKeys.Headers;
-    } else if (source === OutputSource.Outputs) {
-      return OutputKeys.Outputs;
-    } else if (source === OutputSource.StatusCode) {
-      return OutputKeys.StatusCode;
-    } else if (source === OutputSource.Queries) {
-      return OutputKeys.Queries;
-    } else if (isItem) {
-      return parentArray ? `${getNormalizedName(parentArray)}-${OutputKeys.Item}` : OutputKeys.Item;
-    } else {
-      return OutputKeys.Body;
     }
+    if (source === OutputSource.Headers) {
+      return OutputKeys.Headers;
+    }
+    if (source === OutputSource.Outputs) {
+      return OutputKeys.Outputs;
+    }
+    if (source === OutputSource.StatusCode) {
+      return OutputKeys.StatusCode;
+    }
+    if (source === OutputSource.Queries) {
+      return OutputKeys.Queries;
+    }
+    if (isItem) {
+      return parentArray ? `${getNormalizedName(parentArray)}-${OutputKeys.Item}` : OutputKeys.Item;
+    }
+    return OutputKeys.Body;
   }
 }

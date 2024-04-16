@@ -1,18 +1,21 @@
 import { isEnterKey, isSpaceKey } from '../utils';
+import type { NodeMessage } from './errorsPanel.types';
+import { MessageLevel } from './errorsPanel.types';
 import { Text, Icon } from '@fluentui/react';
-import { fallbackConnectorIconUrl } from '@microsoft/utils-logic-apps';
+import { fallbackConnectorIconUrl } from '@microsoft/logic-apps-shared';
 import { useIntl } from 'react-intl';
 
-export interface NodeErrorCardProps {
+interface NodeErrorCardProps {
   id: string;
+  level: MessageLevel;
   title: string;
   brandColor: string;
   iconUri?: string;
   onClick?(): void;
-  errors?: Record<string, string[]>;
+  messagesBySubtitle?: Record<string, NodeMessage[]>;
 }
 
-export const NodeErrorCard: React.FC<NodeErrorCardProps> = ({ id, title, iconUri, onClick, errors }) => {
+export const NodeErrorCard: React.FC<NodeErrorCardProps> = ({ id, level, title, iconUri, onClick, messagesBySubtitle }) => {
   const intl = useIntl();
 
   const handleClick: React.MouseEventHandler<HTMLElement> = (e) => {
@@ -29,6 +32,7 @@ export const NodeErrorCard: React.FC<NodeErrorCardProps> = ({ id, title, iconUri
 
   const buttonHint = intl.formatMessage({
     defaultMessage: 'Open operation',
+    id: 'bwlAWn',
     description: 'Hint for the button on the error card',
   });
 
@@ -43,8 +47,8 @@ export const NodeErrorCard: React.FC<NodeErrorCardProps> = ({ id, title, iconUri
         </span>
       </div>
       <div className="msla-error-card-body">
-        {Object.entries(errors ?? {}).map(([subtitle, values]) => (
-          <ErrorSubsection key={subtitle} subtitle={subtitle} errors={values} />
+        {Object.entries(messagesBySubtitle ?? {}).map(([subtitle, values]) => (
+          <ErrorSubsection key={subtitle} level={level} subtitle={subtitle} messages={values} />
         ))}
       </div>
     </div>
@@ -52,26 +56,30 @@ export const NodeErrorCard: React.FC<NodeErrorCardProps> = ({ id, title, iconUri
 };
 
 interface ErrorSubsectionProps {
+  level: MessageLevel;
   subtitle: string;
-  errors: string[];
+  messages: NodeMessage[];
 }
 
 const ErrorSubsection = (props: ErrorSubsectionProps) => {
-  const { subtitle, errors } = props;
+  const { level, subtitle, messages } = props;
 
-  // create new errors array with no empty values
-  const filteredErrors = errors?.filter((e: string) => e);
-  if (!filteredErrors?.length) return null;
+  // create new messages array with no empty values
+  const filteredMessages = messages?.filter((m: NodeMessage) => m.content);
+  if (!filteredMessages?.length) {
+    return null;
+  }
 
   return (
     <div className="msla-error-card-subsection">
       <span className="msla-error-card-subtitle">{subtitle}</span>
-      {errors.map((e: string) => (
-        <div key={e}>
-          <div className="msla-error-dot" />
-          <Text key={e} variant="medium">
-            {e}
+      {messages.map((m: NodeMessage) => (
+        <div key={m.content}>
+          <div className={level === MessageLevel.Warning ? 'msla-warning-dot' : 'msla-error-dot'} />
+          <Text key={m.content} variant="medium">
+            {m.content}
           </Text>
+          {m.onRenderDetails?.()}
         </div>
       ))}
     </div>

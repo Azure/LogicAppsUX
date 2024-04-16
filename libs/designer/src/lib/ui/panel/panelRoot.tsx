@@ -1,25 +1,31 @@
 import type { AppDispatch } from '../../core';
 import { useIsDarkMode } from '../../core/state/designerOptions/designerOptionsSelectors';
-import { useCurrentPanelModePanelMode, useIsPanelCollapsed } from '../../core/state/panel/panelSelectors';
+import {
+  useCurrentPanelMode,
+  useIsLoadingPanel,
+  useIsPanelCollapsed,
+  useFocusReturnElementId,
+} from '../../core/state/panel/panelSelectors';
 import { clearPanel } from '../../core/state/panel/panelSlice';
-import { ErrorPanel } from './errorsPanel/errorsPanel';
+import { ConnectionPanel } from './connectionsPanel/connectionsPanel';
+import { ErrorsPanel } from './errorsPanel/errorsPanel';
 import { NodeDetailsPanel } from './nodeDetailsPanel/nodeDetailsPanel';
-import { usePanelTabs } from './nodeDetailsPanel/tabInitialization';
 import { NodeSearchPanel } from './nodeSearchPanel/nodeSearchPanel';
 import { RecommendationPanelContext } from './recommendation/recommendationPanelContext';
 import { WorkflowParametersPanel } from './workflowParametersPanel/workflowParametersPanel';
 import { WorkflowParametersPanelFooter } from './workflowParametersPanel/workflowParametersPanelFooter';
 import { Panel, PanelType } from '@fluentui/react';
+import { Spinner } from '@fluentui/react-components';
 import { isUndefined } from '@microsoft/applicationinsights-core-js';
 import type { CommonPanelProps, CustomPanelLocation } from '@microsoft/designer-ui';
-import { PanelLocation, PanelSize } from '@microsoft/designer-ui';
+import { PanelLocation, PanelResizer, PanelSize } from '@microsoft/designer-ui';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useDispatch } from 'react-redux';
 
 export interface PanelRootProps {
   panelLocation?: PanelLocation;
   customPanelLocations?: CustomPanelLocation[];
-  displayRuntimeInfo: boolean;
+  isResizeable?: boolean;
 }
 
 const layerProps = {
@@ -28,17 +34,15 @@ const layerProps = {
 };
 
 export const PanelRoot = (props: PanelRootProps): JSX.Element => {
-  const { panelLocation, customPanelLocations, displayRuntimeInfo } = props;
+  const { panelLocation = PanelLocation.Right, customPanelLocations, isResizeable } = props;
   const dispatch = useDispatch<AppDispatch>();
-
   const isDarkMode = useIsDarkMode();
 
   const collapsed = useIsPanelCollapsed();
-  const currentPanelMode = useCurrentPanelModePanelMode();
+  const currentPanelMode = useCurrentPanelMode();
+  const focusReturnElementId = useFocusReturnElementId();
 
-  usePanelTabs(); // This initializes tabs for the node details panel, can't be run twice so it lives here instead of in the panel
-
-  const [width, setWidth] = useState(PanelSize.Auto);
+  const [width, setWidth] = useState<PanelSize | string>(PanelSize.Auto);
 
   useEffect(() => {
     setWidth(collapsed ? PanelSize.Auto : PanelSize.Medium);
@@ -54,26 +58,37 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element => {
       width,
       layerProps,
       panelLocation: customLocation ?? panelLocation ?? PanelLocation.Right,
+      isResizeable,
     };
-  }, [customPanelLocations, currentPanelMode, collapsed, dismissPanel, panelLocation, width]);
+  }, [customPanelLocations, collapsed, dismissPanel, width, panelLocation, isResizeable, currentPanelMode]);
 
-  const onRenderFooterContent = useCallback(
-    () => (currentPanelMode === 'WorkflowParameters' ? <WorkflowParametersPanelFooter /> : null),
+  const onRenderFooterContent = useMemo(
+    () => (currentPanelMode === 'WorkflowParameters' ? () => <WorkflowParametersPanelFooter /> : undefined),
     [currentPanelMode]
   );
 
-  return isUndefined(currentPanelMode) ? (
+  const nonBlockingPanels = useMemo(() => ['Connection'], []);
+
+  const isLoadingPanel = useIsLoadingPanel();
+
+  const LoadingComponent = () => (
+    <div className="msla-loading-container">
+      <Spinner size={'large'} />
+    </div>
+  );
+
+  return (!isLoadingPanel && isUndefined(currentPanelMode)) || currentPanelMode === 'Operation' ? (
     <NodeDetailsPanel {...commonPanelProps} />
   ) : (
     <Panel
       className={`msla-panel-root-${currentPanelMode}`}
       isLightDismiss
-      type={commonPanelProps.panelLocation === PanelLocation.Right ? PanelType.medium : PanelType.customNear}
+      isBlocking={!isLoadingPanel && !nonBlockingPanels.includes(currentPanelMode ?? '')}
+      type={commonPanelProps.panelLocation === PanelLocation.Right ? PanelType.custom : PanelType.customNear}
       isOpen={!collapsed}
       onDismiss={dismissPanel}
       hasCloseButton={false}
       overlayProps={{ isDarkThemed: isDarkMode }}
-      focusTrapZoneProps={{ disabled: collapsed, forceFocusInsideTrap: true }}
       layerProps={layerProps}
       customWidth={width}
       onRenderFooterContent={onRenderFooterContent}
@@ -85,15 +100,20 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element => {
         },
       })}
     >
+      {isResizeable ? <PanelResizer updatePanelWidth={setWidth} /> : null}
       {
-        currentPanelMode === 'WorkflowParameters' ? (
+        isLoadingPanel ? (
+          <LoadingComponent />
+        ) : currentPanelMode === 'WorkflowParameters' ? (
           <WorkflowParametersPanel {...commonPanelProps} />
         ) : currentPanelMode === 'Discovery' ? (
-          <RecommendationPanelContext {...commonPanelProps} displayRuntimeInfo={displayRuntimeInfo} />
+          <RecommendationPanelContext {...commonPanelProps} />
         ) : currentPanelMode === 'NodeSearch' ? (
-          <NodeSearchPanel {...commonPanelProps} displayRuntimeInfo={displayRuntimeInfo} />
+          <NodeSearchPanel {...commonPanelProps} focusReturnElementId={focusReturnElementId} />
+        ) : currentPanelMode === 'Connection' ? (
+          <ConnectionPanel {...commonPanelProps} />
         ) : currentPanelMode === 'Error' ? (
-          <ErrorPanel {...commonPanelProps} />
+          <ErrorsPanel {...commonPanelProps} />
         ) : null // Caught above
       }
     </Panel>

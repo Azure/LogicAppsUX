@@ -3,12 +3,14 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { localize } from '../../../localize';
+import { WorkflowInitCodeProject } from '../createNewCodeProject/createCodeProjectSteps/createLogicApp/initLogicAppCodeProjectVScode/WorkflowCode';
 import { DotnetInitVSCodeStep } from './DotnetInitVSCodeStep';
 import { WorkflowInitVSCodeStep } from './WorkflowInitVSCodeStep';
+import { isEmptyString } from '@microsoft/logic-apps-shared';
 import { AzureWizardPromptStep } from '@microsoft/vscode-azext-utils';
 import type { AzureWizardExecuteStep, IWizardOptions } from '@microsoft/vscode-azext-utils';
-import type { IProjectWizardContext } from '@microsoft/vscode-extension';
-import { ProjectLanguage } from '@microsoft/vscode-extension';
+import type { IProjectWizardContext } from '@microsoft/vscode-extension-logic-apps';
+import { ProjectLanguage, WorkflowProjectType } from '@microsoft/vscode-extension-logic-apps';
 import type { QuickPickItem, QuickPickOptions } from 'vscode';
 
 export class InitVSCodeLanguageStep extends AzureWizardPromptStep<IProjectWizardContext> {
@@ -22,27 +24,32 @@ export class InitVSCodeLanguageStep extends AzureWizardPromptStep<IProjectWizard
   }
 
   public shouldPrompt(context: IProjectWizardContext): boolean {
-    return context.language === undefined;
+    return isEmptyString(context.language);
   }
 
   public async getSubWizard(context: IProjectWizardContext): Promise<IWizardOptions<IProjectWizardContext>> {
     const executeSteps: AzureWizardExecuteStep<IProjectWizardContext>[] = [];
     const promptSteps: AzureWizardPromptStep<IProjectWizardContext>[] = [];
-    await addInitVSCodeSteps(context, executeSteps);
+    await addInitVSCodeSteps(context, executeSteps, false);
     return { promptSteps, executeSteps };
   }
 }
 
 export async function addInitVSCodeSteps(
   context: IProjectWizardContext,
-  executeSteps: AzureWizardExecuteStep<IProjectWizardContext>[]
+  executeSteps: AzureWizardExecuteStep<IProjectWizardContext>[],
+  isCustomCode: boolean
 ): Promise<void> {
   switch (context.language) {
-    case ProjectLanguage.JavaScript:
-      executeSteps.push(new WorkflowInitVSCodeStep());
+    case ProjectLanguage.JavaScript: {
+      context.workflowProjectType = WorkflowProjectType.Bundle;
+      executeSteps.push(isCustomCode ? new WorkflowInitCodeProject() : new WorkflowInitVSCodeStep());
       break;
-    case ProjectLanguage.CSharp:
+    }
+    case ProjectLanguage.CSharp: {
+      context.workflowProjectType = WorkflowProjectType.Nuget;
       executeSteps.push(new DotnetInitVSCodeStep());
       break;
+    }
   }
 }
