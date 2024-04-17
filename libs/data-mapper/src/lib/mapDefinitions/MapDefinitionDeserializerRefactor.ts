@@ -189,7 +189,7 @@ export class MapDefinitionDeserializerRefactor {
         connections
       );
     }
-    // biome-ignore lint/style/useCollapsedElseIf: not working properly
+
     if (!sourceNode) {
       // get function node
 
