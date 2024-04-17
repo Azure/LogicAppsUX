@@ -53,11 +53,13 @@ export const convertStringToSegments = (
 
   let currSegmentType: ValueSegmentType = ValueSegmentType.LITERAL;
   let isInQuotedString = false;
+  let doubleQuotesStarted = false;
   let segmentSoFar = '';
 
   for (let currIndex = 0; currIndex < value.length; currIndex++) {
     const currChar = value[currIndex];
     const nextChar = value[currIndex + 1];
+    const prevChar = value[currIndex - 1];
 
     if (currChar === `'`) {
       if (isInQuotedString) {
@@ -68,16 +70,13 @@ export const convertStringToSegments = (
       }
     }
 
+    // If unescaped double quotes are encountered in string, they are not part of the value typed by user. It is likely from Json stringification for a key/value.
+    if (currChar === '"' && prevChar !== '\\' && currSegmentType === ValueSegmentType.LITERAL) {
+      doubleQuotesStarted = !doubleQuotesStarted;
+    }
+
     if (!isInQuotedString && currChar === '@' && nextChar === '{') {
       if (segmentSoFar) {
-        // check for whether it was closed quote or a new open quote before removing... should also check if it's single token...
-        // actually maybe this should be done at end while looping through segments... can easily check if it's single token like keyvalueitem does in converttype (starts with @{ + first location of } is at end of string).
-        // or should i be removing quote from when it converts to string instead in convertComplexItemsToArray? No can do since it's Json.stringify that's changing it.
-        // If it's suppressing casting, only then do this. Otherwise it doesn't stay a string for LAUX....
-        // Also do this only for array editor... check the new variable added to props.
-        if (segmentSoFar.endsWith('"')) {
-          segmentSoFar = segmentSoFar.slice(0, -2);
-        }
         // If we found a new token, then even if `currSegmentType` is `ValueSegmentType.TOKEN`, we treat the
         // value as a literal since the token did not close. Worth noting: This means that if a token has `@{`
         // inside of it (outside of single-quotes), it will not be supported as a token. (e.g. `@{@{}`)
@@ -92,13 +91,27 @@ export const convertStringToSegments = (
     if (!isInQuotedString && currChar === '}' && currSegmentType === ValueSegmentType.TOKEN) {
       const token = nodeMap.get(segmentSoFar);
       if (token) {
+        // If remove quotes param is set, remove the quotes from previous and next segments if it's a single token
+        if (options?.removeSingleTokenQuotes && doubleQuotesStarted && returnSegments.length > 0) {
+          const prevSegment = returnSegments.pop();
+
+          // If previous and next segments are not tokens (i.e. this is a single token), and they end and start with quotes, remove the quotes
+          if (prevSegment?.type === ValueSegmentType.LITERAL && prevSegment?.value.endsWith('"') && nextChar === '"') {
+            prevSegment.value = prevSegment.value.slice(0, -1);
+            doubleQuotesStarted = false;
+
+            // Skip quotes starting in next segment
+            currIndex++;
+          }
+
+          if (prevSegment) {
+            returnSegments.push(prevSegment);
+          }
+        }
+
         returnSegments.push(token);
         currSegmentType = ValueSegmentType.LITERAL;
         segmentSoFar = '';
-
-        if (value[currIndex + 1] === '"') {
-          currIndex++;
-        }
       }
     }
   }

@@ -309,7 +309,6 @@ const DesignerEditor = () => {
           hostOptions: {
             ...hostOptions,
             recurrenceInterval: { interval: 1, frequency: 'Minute' },
-            suppressCastingForSerialize: false,
           },
           showConnectionsPanel,
           showPerformanceDebug,
