@@ -35,7 +35,7 @@ jobs:
       shell: bash
       if: always()
       run: |
-        ZIP_DIR='run-${{ github.run_id }}-${{ github.run_attempt }}'
+        ZIP_DIR='run-${{ github.run_id }}-${{ github.run_attempt }}-${{matrix.browser}}'
         az storage blob upload-batch --account-name lauxtestreport --auth-mode key -d "deploymentzips/$ZIP_DIR" -s "./drop"
         echo "ZIP-URL=https://lauxtestreport.blob.core.windows.net/deploymentzips/$ZIP_DIR/test-app-1.zip" >> $GITHUB_ENV
   
