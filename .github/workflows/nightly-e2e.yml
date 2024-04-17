@@ -21,6 +21,12 @@ jobs:
         tenant-id: ${{ secrets.AZURE_TESTING_TENANT_ID }}
         subscription-id: ${{ secrets.AZURE_TESTING_SUBSCRIPTION_ID }}
         enable-AzPSSession: true 
+        
+    - uses: "finnp/create-file-action@master"
+      env:
+        FILE_NAME: "apps/standalone/src/environments/jsonImport/armToken.json"
+        FILE_DATA: ""
+
     - uses: pnpm/action-setup@v3
       with:
         version: 8
