@@ -70,6 +70,13 @@ jobs:
 
     - name: Scrub Secrets From Trace
       run: pnpm run scrub-secrets:e2e
+    
+    - name: Delete Resoruce Group
+      shell: bash
+      run:
+        az group delete -n lauxtestchromium --yes --no-wait
+        az group delete -n lauxtestfirefox --yes --no-wait
+        az group delete -n lauxtestwebkit --yes --no-wait
 
     - name: "Upload Playwright Report to Azure Blob Storage for static site access"
       shell: bash
