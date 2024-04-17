@@ -28,7 +28,7 @@ jobs:
       with:
         azcliversion: 2.30.0
         inlineScript: |
-            az group create -l westus -n lauxtest${{matrix.browser}}
+            az group create -l westus -n --subscription ${{ secrets.AZURE_TESTING_SUBSCRIPTION_ID }} lauxtest${{matrix.browser}}
             az deployment group create \
             --resource-group lauxtest${{matrix.browser}} \
             --subscription ${{ secrets.AZURE_TESTING_SUBSCRIPTION_ID }} \
@@ -50,9 +50,9 @@ jobs:
         subscription-id: ${{ secrets.AZURE_TESTING_SUBSCRIPTION_ID }}
         enable-AzPSSession: true 
 
-    - name: "extract AAD access token for MSI (valid for about an hour)"
+    - name: "extract AAD access token for Test Runs (valid for about an hour)"
       run: |
-        az account get-access-token --tenant 72f988bf-86f1-41af-91ab-2d7cd011db47 >> apps/Standalone/src/environments/jsonImport/armToken.json
+        az account get-access-token --tenant ${{ secrets.AZURE_TESTING_TENANT_ID }} >> apps/Standalone/src/environments/jsonImport/armToken.json
 
    
     - uses: pnpm/action-setup@v3
@@ -64,12 +64,14 @@ jobs:
 
     - name: Install Playwright Browsers
       run: pnpm run e2e:setup
+      
     - name: Run Playwright tests
       run: pnpm run test:e2e --grep @real
+
     - name: Scrub Secrets From Trace
       run: pnpm run scrub-secrets:e2e
 
-    - name: "extract AAD access token for MSI (valid for about an hour)"
+    - name: "Upload Playwright Report to Azure Blob Storage for static site access"
       shell: bash
       if: always()
       run: |
