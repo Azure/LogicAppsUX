@@ -14,17 +14,10 @@ export const ExportApp: React.FC = () => {
   const intlText = {
     EXPORT_LOGIC_APP: intl.formatMessage({
       defaultMessage: 'Export logic app',
-      id: 'UKKffr',
-      description: 'Export logic app text',
+      id: 'idw/7j',
+      description: 'Export logic app text.',
     }),
   };
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const testString = intl.formatMessage({
-    defaultMessage: 'Test',
-    id: 'Sz8KN3',
-    description: 'Test',
-  });
 
   return (
     <div className="msla-export">
