@@ -37,7 +37,8 @@ const getChildrenNodesToSegments = (node: ElementNode, segments: ValueSegment[],
 export const convertStringToSegments = (
   value: string,
   nodeMap: Map<string, ValueSegment>,
-  options?: SegmentParserOptions
+  options?: SegmentParserOptions,
+  convertSpaceToNewline?: boolean
 ): ValueSegment[] => {
   if (!value) {
     return [];
@@ -82,7 +83,8 @@ export const convertStringToSegments = (
     segmentSoFar += currChar;
 
     if (!isInQuotedString && currChar === '}' && currSegmentType === ValueSegmentType.TOKEN) {
-      const token = nodeMap.get(segmentSoFar);
+      const spaceModifiedSegmentSoFar = convertSpaceToNewline ? segmentSoFar.replace(/\s+/g, '\n') : segmentSoFar;
+      const token = nodeMap.get(spaceModifiedSegmentSoFar);
       if (token) {
         returnSegments.push(token);
         currSegmentType = ValueSegmentType.LITERAL;
