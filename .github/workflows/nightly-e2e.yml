@@ -59,6 +59,25 @@ jobs:
     - name: Scrub Secrets From Trace
       run: pnpm run scrub-secrets:e2e
 
+    - name: "extract AAD access token for MSI (valid for about an hour)"
+      shell: bash
+      run: |
+        REPORT_DIR='run-${{ github.run_id }}-${{ github.run_attempt }}'
+        az storage blob upload-batch --account-name lauxtestreport --auth-mode key -d '$web/$REPORT_DIR' -s "./playwright-report"
+        echo "::notice title=HTML report url::https://lauxtestreport.z1.web.core.windows.net/$REPORT_DIR/index.html"
+ 
+    # - name: Upload HTML report to Azure
+    #   shell: bash
+    #   run: |
+    #     REPORT_DIR='run-${{ github.run_id }}-${{ github.run_attempt }}'
+    #     azcopy cp --recursive "./playwright-report/*" "https://lauxtestreport.blob.core.windows.net/\$web/$REPORT_DIR"
+    #     echo "::notice title=HTML report url::https://lauxtestreport.z1.web.core.windows.net/$REPORT_DIR/index.html"
+    #   env:
+    #     AZCOPY_AUTO_LOGIN_TYPE: SPN
+    #     AZCOPY_SPA_APPLICATION_ID: '${{ secrets.AZURE_TESTING_CLIENT_ID }}'
+    #     AZCOPY_SPA_CLIENT_SECRET: '${{ secrets.AZCOPY_SPA_CLIENT_SECRET }}'
+    #     AZCOPY_TENANT_ID: '${{ secrets.AZCOPY_TENANT_ID }}'
+
     - uses: actions/upload-artifact@v4
       if: always()
       with:
