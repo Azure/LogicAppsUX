@@ -61,6 +61,7 @@ jobs:
 
     - name: "extract AAD access token for MSI (valid for about an hour)"
       shell: bash
+      if: always()
       run: |
         REPORT_DIR='run-${{ github.run_id }}-${{ github.run_attempt }}'
         az storage blob upload-batch --account-name lauxtestreport --auth-mode key -d '$web/$REPORT_DIR' -s "./playwright-report"
