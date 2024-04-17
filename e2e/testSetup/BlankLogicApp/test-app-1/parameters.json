@@ -1,0 +1,6 @@
+{
+    "test": {
+        "type": "String",
+        "value": "testvalue"
+    }
+}

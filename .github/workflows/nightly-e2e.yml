@@ -16,6 +16,10 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
+    - uses: montudor/action-zip@v1
+      with:
+        args: zip -qq -r test-app-1.zip ./e2e/testSetup/BlankLogicApp/test-app-1
+    
     - name: Azure login
       uses: azure/login@v2
       with:
@@ -23,6 +27,13 @@ jobs:
         tenant-id: ${{ secrets.AZURE_TESTING_TENANT_ID }}
         subscription-id: ${{ secrets.AZURE_TESTING_SUBSCRIPTION_ID }}
 
+    - name: "Upload Playwright Report to Azure Blob Storage for static site access"
+      shell: bash
+      if: always()
+      run: |
+        ZIP_DIR='run-${{ github.run_id }}-${{ github.run_attempt }}'
+        az storage blob upload-batch --account-name lauxtestreport --auth-mode key -d "deploymentZips/$REPORT_DIR" -s test-app-1.zip
+  
     - name: Deploy Logic Apps For Testing
       uses: azure/cli@v2
       with:
