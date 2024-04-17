@@ -21,28 +21,15 @@ jobs:
         tenant-id: ${{ secrets.AZURE_TESTING_TENANT_ID }}
         subscription-id: ${{ secrets.AZURE_TESTING_SUBSCRIPTION_ID }}
         enable-AzPSSession: true 
-    # - name: Genreate Token for test
-    #   uses: azure/cli@v2
-    #   id: genToken
-    #   with:
-    #     azcliversion: 2.58.0
-    #     inlineScript: |
-    #       tokenData=$(az account get-access-token --tenant 72f988bf-86f1-41af-91ab-2d7cd011db47)
-    #       echo "token=$(tokenData)" > $GITHUB_OUTPUT
-    #       echo $(tokenData)
-    - name: Run Azure PowerShell inline script
-      uses: azure/powershell@v2
-      id: genToken
+    - uses: pnpm/action-setup@v3
       with:
-        inlineScript: |
-          $tokenData = (Get-AzAccessToken -TenantId 72f988bf-86f1-41af-91ab-2d7cd011db47).Token
-          echo token=$tokenData >> $env:GITHUB_OUTPUT
-        azPSVersion: "latest"
-
-    - uses: "finnp/create-file-action@master"
-      env:
-        FILE_NAME: "apps/standalone/src/environments/jsonImport/armToken.json"
-        FILE_DATA: "{\"accessToken\":\"${{ steps.genToken.outputs.token }}\"}"
+        version: 8
+        run_install: |
+          - recursive: true
+            args: [--frozen-lockfile, --strict-peer-dependencies]
+    - name: "extract AAD access token for MSI (valid for about an hour)"
+      run: |
+        pnpm run generateArmToken
 
    
     - name: Deploy Logic Apps For Testing
@@ -54,15 +41,6 @@ jobs:
             --resource-group LAE2ETESTING \
             --subscription ${{ secrets.AZURE_TESTING_SUBSCRIPTION_ID }} \
             --template-file ./e2e/testSetup/BlankLogicApp/logicAppStandard.bicep
-            
-    
-         
-    - uses: pnpm/action-setup@v3
-      with:
-        version: 8
-        run_install: |
-          - recursive: true
-            args: [--frozen-lockfile, --strict-peer-dependencies]
 
     - name: Install Playwright Browsers
       run: pnpm run e2e:setup
