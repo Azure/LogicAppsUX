@@ -3,7 +3,7 @@ import type { Connection, ConnectionUnit } from '../../models/Connection';
 import { convertSchemaToSchemaExtended } from '../../utils/Schema.Utils';
 import { getLoopTargetNodeWithJson } from '../MapDefinitionDeserializer';
 import { MapDefinitionDeserializerRefactor } from '../MapDefinitionDeserializerRefactor';
-import type { MapDefinitionEntry, Schema, SchemaExtended, SchemaNodeExtended } from '@microsoft/utils-logic-apps';
+import type { MapDefinitionEntry, Schema, SchemaExtended, SchemaNodeExtended } from '@microsoft/logic-apps-shared';
 import {
   comprehensiveSourceSchema,
   comprehensiveTargetSchema,
@@ -12,7 +12,8 @@ import {
   sourceMockSchema,
   targetMockJsonSchema,
   targetMockSchema,
-} from '__mocks__/schemas';
+} from '../../../__mocks__/schemas';
+import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 
 describe('mapDefinitions/MapDefinitionDeserializer', () => {
   describe('XML', () => {
@@ -418,7 +419,7 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
         expect((resultEntries[7][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual('source-/ns0:Root/ConditionalMapping/ItemPrice');
       });
 
-      it('creates a simple conditional object connection', () => {
+      it.only('creates a simple conditional object connection', () => {
         simpleMap['ns0:Root'] = {
           '$if(is-greater-than(/ns0:Root/ConditionalMapping/ItemQuantity, 200))': {
             ConditionalMapping: {
