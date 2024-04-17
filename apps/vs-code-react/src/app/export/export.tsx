@@ -19,6 +19,13 @@ export const ExportApp: React.FC = () => {
     }),
   };
 
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const testString = intl.formatMessage({
+    defaultMessage: 'Test',
+    id: 'Sz8KN3',
+    description: 'Test',
+  });
+
   return (
     <div className="msla-export">
       <Text variant="xxLarge" className="msla-export-title" block>
