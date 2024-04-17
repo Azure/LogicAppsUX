@@ -64,7 +64,7 @@ jobs:
       if: always()
       run: |
         REPORT_DIR='run-${{ github.run_id }}-${{ github.run_attempt }}'
-        az storage blob upload-batch --account-name lauxtestreport --auth-mode key -d '$web/$REPORT_DIR' -s "./playwright-report"
+        az storage blob upload-batch --account-name lauxtestreport --auth-mode key -d "\$web/$REPORT_DIR" -s "./playwright-report"
         echo "::notice title=HTML report url::https://lauxtestreport.z1.web.core.windows.net/$REPORT_DIR/index.html"
  
     # - name: Upload HTML report to Azure
