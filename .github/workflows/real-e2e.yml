@@ -1,0 +1,111 @@
+name: Playwright Tests - Real APIs
+on:
+  workflow_dispatch:
+  schedule:
+    - cron: '0 * * * *'
+
+
+jobs:
+
+  deploy-test-app:
+    runs-on: ubuntu-latest
+    environment: E2ETesting
+    permissions:
+        id-token: write
+    strategy:
+      matrix:
+        browser: [chromium, firefox, webkit]
+    steps:
+    - uses: actions/checkout@v4
+
+    - uses: vimtor/action-zip@v1.2
+      with:
+        files: e2e/testSetup/BlankLogicApp/test-app-1
+        dest: drop/test-app-1.zip
+
+    - name: Azure login
+      uses: azure/login@v2
+      with:
+        client-id: ${{ secrets.AZURE_TESTING_CLIENT_ID }}
+        tenant-id: ${{ secrets.AZURE_TESTING_TENANT_ID }}
+        subscription-id: ${{ secrets.AZURE_TESTING_SUBSCRIPTION_ID }}
+    
+    - name: "Upload Playwright Report to Azure Blob Storage for static site access"
+      shell: bash
+      if: always()
+      run: |
+        ZIP_DIR='run-${{ github.run_id }}-${{ github.run_attempt }}-${{matrix.browser}}'
+        az storage blob upload-batch --account-name lauxtestreport --auth-mode key -d "deploymentzips/$ZIP_DIR" -s "./drop"
+        echo "ZIP-URL=https://lauxtestreport.blob.core.windows.net/deploymentzips/$ZIP_DIR/test-app-1.zip" >> $GITHUB_ENV
+  
+    - name: Deploy Logic Apps For Testing
+      uses: azure/cli@v2
+      with:
+        azcliversion: 2.30.0
+        inlineScript: |
+            az group create -l westus --subscription ${{ secrets.AZURE_TESTING_SUBSCRIPTION_ID }} -n lauxtest${{matrix.browser}}
+            az deployment group create \
+            --resource-group lauxtest${{matrix.browser}} \
+            --subscription ${{ secrets.AZURE_TESTING_SUBSCRIPTION_ID }} \
+            --template-file ./e2e/testSetup/BlankLogicApp/logicAppStandard.bicep \
+            --parameters "{ \"zipDeploymentLocation\": { \"value\": \"${{env.ZIP-URL}}\" } }"
+
+  run-tests:
+    runs-on: ubuntu-latest
+    environment: E2ETesting
+    needs: deploy-test-app
+    permissions:
+        id-token: write
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Azure login
+      uses: azure/login@v2
+      with:
+        client-id: ${{ secrets.AZURE_TESTING_CLIENT_ID }}
+        tenant-id: ${{ secrets.AZURE_TESTING_TENANT_ID }}
+        subscription-id: ${{ secrets.AZURE_TESTING_SUBSCRIPTION_ID }}
+        enable-AzPSSession: true 
+
+    - name: "extract AAD access token for Test Runs (valid for about an hour)"
+      run: |
+        az account get-access-token --tenant ${{ secrets.AZURE_TESTING_TENANT_ID }} >> apps/Standalone/src/environments/jsonImport/armToken.json
+
+   
+    - uses: pnpm/action-setup@v3
+      with:
+        version: 8
+        run_install: |
+          - recursive: true
+            args: [--frozen-lockfile, --strict-peer-dependencies]
+
+    - name: Install Playwright Browsers
+      run: pnpm run e2e:setup
+
+    - name: Run Playwright tests
+      run: pnpm run test:e2e --grep @real
+
+    - name: Scrub Secrets From Trace
+      run: pnpm run scrub-secrets:e2e
+    
+    - name: Delete Resoruce Group
+      shell: bash
+      run: |
+        az group delete -n lauxtestchromium --yes --no-wait
+        az group delete -n lauxtestfirefox --yes --no-wait
+        az group delete -n lauxtestwebkit --yes --no-wait
+
+    - name: "Upload Playwright Report to Azure Blob Storage for static site access"
+      shell: bash
+      if: always()
+      run: |
+        REPORT_DIR='run-${{ github.run_id }}-${{ github.run_attempt }}'
+        az storage blob upload-batch --account-name lauxtestreport --auth-mode key -d "\$web/$REPORT_DIR" -s "./playwright-report"
+        echo "::notice title=HTML report url::https://lauxtestreport.z13.web.core.windows.net/$REPORT_DIR/index.html"
+
+    - uses: actions/upload-artifact@v4
+      if: always()
+      with:
+        name: playwright-report
+        path: playwright-report/
+        retention-days: 30
