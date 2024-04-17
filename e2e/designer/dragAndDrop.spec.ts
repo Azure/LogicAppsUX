@@ -1,6 +1,8 @@
 import { test } from '@playwright/test';
 
-test('Should be able to drag and drop operations', async ({ page }) => {
+test('Should be able to drag and drop operations', {
+  tag: '@mock',
+}, async ({ page }) => {
   await page.goto('/');
 
   await page.locator('text=Select an option').click();
