@@ -32,7 +32,7 @@ jobs:
       if: always()
       run: |
         ZIP_DIR='run-${{ github.run_id }}-${{ github.run_attempt }}'
-        az storage blob upload-batch --account-name lauxtestreport --auth-mode key -d "deploymentZips/$REPORT_DIR" -s test-app-1.zip
+        az storage blob upload-batch --account-name lauxtestreport --auth-mode key -d "deploymentZips/$REPORT_DIR" -s "./e2e/testSetup/BlankLogicApp/test-app-1.zip"
   
     - name: Deploy Logic Apps For Testing
       uses: azure/cli@v2
