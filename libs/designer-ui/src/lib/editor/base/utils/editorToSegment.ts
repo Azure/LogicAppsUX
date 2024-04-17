@@ -70,6 +70,14 @@ export const convertStringToSegments = (
 
     if (!isInQuotedString && currChar === '@' && nextChar === '{') {
       if (segmentSoFar) {
+        // check for whether it was closed quote or a new open quote before removing... should also check if it's single token...
+        // actually maybe this should be done at end while looping through segments... can easily check if it's single token like keyvalueitem does in converttype (starts with @{ + first location of } is at end of string).
+        // or should i be removing quote from when it converts to string instead in convertComplexItemsToArray? No can do since it's Json.stringify that's changing it.
+        // If it's suppressing casting, only then do this. Otherwise it doesn't stay a string for LAUX....
+        // Also do this only for array editor... check the new variable added to props.
+        if (segmentSoFar.endsWith('"')) {
+          segmentSoFar = segmentSoFar.slice(0, -2);
+        }
         // If we found a new token, then even if `currSegmentType` is `ValueSegmentType.TOKEN`, we treat the
         // value as a literal since the token did not close. Worth noting: This means that if a token has `@{`
         // inside of it (outside of single-quotes), it will not be supported as a token. (e.g. `@{@{}`)
@@ -87,6 +95,10 @@ export const convertStringToSegments = (
         returnSegments.push(token);
         currSegmentType = ValueSegmentType.LITERAL;
         segmentSoFar = '';
+
+        if (value[currIndex + 1] === '"') {
+          currIndex++;
+        }
       }
     }
   }
