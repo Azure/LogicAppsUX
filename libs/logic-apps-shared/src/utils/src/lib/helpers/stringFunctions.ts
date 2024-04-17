@@ -33,3 +33,16 @@ export const splitFileName = (fileName: string) => {
 export const escapeString = (s: string): string => {
   return s.replace(/\\/g, '\\\\').replace(/\n/g, '\\n');
 };
+
+export const isStringNonPrimitive = (s: string): boolean => {
+  if (typeof s !== 'string') {
+    return false;
+  }
+  if (s === 'true' || s === 'false' || s === 'null') {
+    return true;
+  }
+  if (!Number.isNaN(Number(s))) {
+    return true;
+  }
+  return false;
+};

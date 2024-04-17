@@ -3,13 +3,14 @@ import type { CallbackInfo, ConnectionsData, ParametersData, Workflow } from '..
 import { Artifact } from '../Models/Workflow';
 import { validateResourceId } from '../Utilities/resourceUtilities';
 import { convertDesignerWorkflowToConsumptionWorkflow } from './ConsumptionSerializationHelpers';
-import type { CustomCodeFileNameMapping } from '@microsoft/logic-apps-designer';
-import { CustomCodeService, LogEntryLevel, LoggerService } from '@microsoft/logic-apps-shared';
+import type { AllCustomCodeFiles } from '@microsoft/logic-apps-designer';
+import { CustomCodeService, LogEntryLevel, LoggerService, getAppFiles, mapFileExtensionToAppFileName } from '@microsoft/logic-apps-shared';
 import type { LogicAppsV2, VFSObject } from '@microsoft/logic-apps-shared';
 import axios from 'axios';
 import jwt_decode from 'jwt-decode';
 import { useQuery } from 'react-query';
 import { isSuccessResponse } from './HttpClient';
+import { fetchFileData, fetchFilesFromFolder } from './vfsService';
 
 const baseUrl = 'https://management.azure.com';
 const standardApiVersion = '2020-06-01';
@@ -46,34 +47,21 @@ export const useAllCustomCodeFiles = (appId?: string, workflowName?: string) => 
   });
 };
 
-const getAllCustomCodeFiles = async (appId?: string, workflowName?: string) => {
+export const getCustomCodeAppFiles = async (appId?: string): Promise<Record<string, boolean>> => {
+  const uri = `${baseUrl}${appId}/hostruntime/admin/vfs`;
+  const vfsObjects: VFSObject[] = await fetchFilesFromFolder(uri);
+  return getAppFiles(vfsObjects);
+};
+
+const getAllCustomCodeFiles = async (appId?: string, workflowName?: string): Promise<Record<string, string>> => {
   const customCodeFiles: Record<string, string> = {};
   const uri = `${baseUrl}${appId}/hostruntime/admin/vfs/${workflowName}`;
-  const vfsObjects: VFSObject[] = (
-    await axios.get<VFSObject[]>(uri, {
-      headers: {
-        Authorization: `Bearer ${environment.armToken}`,
-      },
-      params: {
-        relativePath: 1,
-        'api-version': '2018-11-01',
-      },
-    })
-  ).data.filter((file) => file.name !== Artifact.WorkflowFile);
+  const vfsObjects: VFSObject[] = (await fetchFilesFromFolder(uri)).filter((file) => file.name !== Artifact.WorkflowFile);
 
   const filesData = await Promise.all(
     vfsObjects.map(async (file) => {
-      const response = await axios.get<string>(`${uri}/${file.name}`, {
-        headers: {
-          Authorization: `Bearer ${environment.armToken}`,
-          'If-Match': ['*'],
-        },
-        params: {
-          relativePath: 1,
-          'api-version': '2018-11-01',
-        },
-      });
-      return { name: file.name, data: response.data };
+      const response = await fetchFileData(`${uri}/${file.name}`);
+      return { name: file.name, data: response };
     })
   );
 
@@ -204,7 +192,7 @@ export const useWorkflowApp = (siteResourceId: string, isConsumption = false) =>
   return useQuery(
     ['workflowApp', siteResourceId],
     async () => {
-      const uri = `${baseUrl}${siteResourceId}?api-version=${!isConsumption ? '2018-11-01' : '2016-10-01'}`;
+      const uri = `${baseUrl}${siteResourceId}?api-version=${isConsumption ? '2016-10-01' : '2018-11-01'}`;
       const response = await axios.get(uri, {
         headers: {
           Authorization: `Bearer ${environment.armToken}`,
@@ -292,37 +280,38 @@ export const getConnectionConsumption = async (connectionId: string) => {
   return response.data;
 };
 
-export const saveCustomCodeStandard = async (customCode?: CustomCodeFileNameMapping): Promise<void> => {
-  if (!customCode || Object.keys(customCode).length === 0) return;
+export const saveCustomCodeStandard = async (allCustomCodeFiles?: AllCustomCodeFiles): Promise<void> => {
+  const { customCodeFiles: customCode, appFiles } = allCustomCodeFiles ?? {};
+  if (!customCode || Object.keys(customCode).length === 0) {
+    return;
+  }
   try {
-    const existingFiles = (await CustomCodeService().getAllCustomCodeFiles()).map((file) => file.name);
     // to prevent 404's we first check which custom code files are already present before deleting
     Object.entries(customCode).forEach(([fileName, customCodeData]) => {
       const { fileExtension, isModified, isDeleted, fileData } = customCodeData;
       if (isDeleted) {
-        if (existingFiles.includes(fileName)) {
-          CustomCodeService().deleteCustomCode(fileName);
-          LoggerService().log({
-            level: LogEntryLevel.Verbose,
-            area: 'serializeCustomcode',
-            message: `Deleting custom code file: ${fileName}`,
-          });
-        }
-      } else if (isModified) {
+        CustomCodeService().deleteCustomCode(fileName);
         LoggerService().log({
           level: LogEntryLevel.Verbose,
           area: 'serializeCustomcode',
-          message: `Uploading/Updating custom code file: ${fileName}`,
+          message: `Deleting custom code file: ${fileName}`,
         });
-
+      } else if (isModified && fileData) {
         CustomCodeService().uploadCustomCode({
           fileData,
           fileName,
           fileExtension,
         });
+        LoggerService().log({
+          level: LogEntryLevel.Verbose,
+          area: 'serializeCustomcode',
+          message: `Uploading/Updating custom code file: ${fileName}`,
+        });
       }
     });
-    return;
+    Object.entries(appFiles ?? {}).forEach(([fileExtension, fileData]) =>
+      CustomCodeService().uploadCustomCodeAppFile({ fileName: mapFileExtensionToAppFileName(fileExtension), fileData })
+    );
   } catch (error) {
     const errorMessage = `Failed to save custom code: ${error}`;
     LoggerService().log({
@@ -342,7 +331,7 @@ export const saveWorkflowStandard = async (
   connectionsData: ConnectionsData | undefined,
   parametersData: ParametersData | undefined,
   settings: Record<string, string> | undefined,
-  customCodeData: CustomCodeFileNameMapping | undefined,
+  customCodeData: AllCustomCodeFiles | undefined,
   clearDirtyState: () => void
 ): Promise<any> => {
   const data: any = {

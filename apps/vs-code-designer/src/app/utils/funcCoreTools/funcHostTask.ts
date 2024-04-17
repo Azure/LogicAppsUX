@@ -27,7 +27,7 @@ export const runningFuncTaskMap: Map<vscode.WorkspaceFolder | vscode.TaskScope, 
  */
 export function isFuncHostTask(task: vscode.Task): boolean {
   const commandLine: string | undefined = task.execution && (task.execution as vscode.ShellExecution).commandLine;
-  if (task.definition.type == 'shell') {
+  if (task.definition.type === 'shell') {
     const command = (task.execution as vscode.ShellExecution).command?.toString();
     const funcRegex = /\$\{config:azureLogicAppsStandard\.funcCoreToolsBinaryPath\}/;
     // check for args?

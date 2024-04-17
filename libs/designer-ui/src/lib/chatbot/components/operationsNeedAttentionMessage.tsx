@@ -5,7 +5,7 @@ import type { OperationInfoItemProps } from './flowDiffPreview';
 import { OperationItemsList } from './flowDiffPreview';
 import type { IFontIconProps } from '@fluentui/react';
 import { FontIcon, getTheme } from '@fluentui/react';
-import React from 'react';
+import type React from 'react';
 import { useIntl } from 'react-intl';
 
 type OperationsNeedingAttentionMessageProps = {

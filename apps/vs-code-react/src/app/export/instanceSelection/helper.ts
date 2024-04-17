@@ -5,7 +5,7 @@ import type { IIse, IRegion, ISubscription, IDropDownOption } from '../../../run
  * @param {Array<ISubscription>} subscriptions - List pf subscriptions.
  * @returns {Array<IDropDownOption>} An array of dropdown options.
  */
-export const parseSubscriptionsList = (subscriptions: Array<ISubscription>): Array<IDropDownOption> => {
+export const parseSubscriptionsList = (subscriptions: ISubscription[]): IDropDownOption[] => {
   return subscriptions.map((subscription: ISubscription) => {
     return { key: subscription.subscriptionId, text: subscription.subscriptionName };
   });
@@ -16,7 +16,7 @@ export const parseSubscriptionsList = (subscriptions: Array<ISubscription>): Arr
  * @param {Array<IIse>} iseList - The array of ISE instances to be parsed.
  * @returns {Array<IDropDownOption>} An array of dropdown options.
  */
-export const parseIseList = (iseList: Array<IIse>): Array<IDropDownOption> => {
+export const parseIseList = (iseList: IIse[]): IDropDownOption[] => {
   return iseList.map((iseInstance: IIse) => {
     return { key: `ise:${iseInstance.id}`, text: iseInstance.iseName, data: iseInstance.location };
   });
@@ -27,7 +27,7 @@ export const parseIseList = (iseList: Array<IIse>): Array<IDropDownOption> => {
  * @param {Array<IRegion>} regions - List pf subscriptions.
  * @returns {Array<IDropDownOption>} An array of dropdown options.
  */
-export function parseRegionList(regions: Array<IRegion>): Array<IDropDownOption> {
+export function parseRegionList(regions: IRegion[]): IDropDownOption[] {
   return regions.map((region: IRegion) => {
     return { key: `region:${region.name}`, text: `${region.displayName}`, data: region.name };
   });

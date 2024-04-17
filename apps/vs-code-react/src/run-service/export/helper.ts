@@ -5,7 +5,7 @@ export const getExportUri = (selectedSubscription: string, location: string, isV
   return `${baseGraphApi}/subscriptions/${selectedSubscription}/providers/Microsoft.Logic/locations/${location}/${exportStep}WorkflowExport?api-version=2022-09-01-preview`;
 };
 
-export const getValidationPayload = (selectedWorkflows: Array<WorkflowsList>, workflowExportOptions: string) => {
+export const getValidationPayload = (selectedWorkflows: WorkflowsList[], workflowExportOptions: string) => {
   const workflowsIds = selectedWorkflows.map((workflow: WorkflowsList) => {
     return { id: workflow.key };
   });

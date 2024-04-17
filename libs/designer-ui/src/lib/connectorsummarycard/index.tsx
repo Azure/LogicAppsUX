@@ -1,9 +1,9 @@
+import { isBuiltInConnector } from '../connectors/predicates';
+import { InfoDot } from '../infoDot';
 import { Text, css } from '@fluentui/react';
 import type { Connector, OperationApi } from '@microsoft/logic-apps-shared';
 import { getDescriptionFromConnector, getDisplayNameFromConnector, getIconUriFromConnector } from '@microsoft/logic-apps-shared';
 import { useCallback } from 'react';
-import { isBuiltInConnector } from '../connectors/predicates';
-import { InfoDot } from '../infoDot';
 
 export interface ConnectorSummaryCardProps {
   connector: Connector | OperationApi;
@@ -37,7 +37,7 @@ export const ConnectorSummaryCard = (props: ConnectorSummaryCardProps) => {
         <InfoDot
           title={connectorName}
           description={description}
-          style={!isCard ? { marginRight: '8px' } : undefined}
+          style={isCard ? undefined : { marginRight: '8px' }}
           innerAriaHidden="true"
         />
       </div>
@@ -47,7 +47,7 @@ export const ConnectorSummaryCard = (props: ConnectorSummaryCardProps) => {
     </>
   );
 
-  if (isCard)
+  if (isCard) {
     return (
       <button
         className="msla-connector-summary-card"
@@ -58,6 +58,7 @@ export const ConnectorSummaryCard = (props: ConnectorSummaryCardProps) => {
         <Content />
       </button>
     );
+  }
 
   return (
     <div className="msla-connector-summary-display" data-automation-id={id}>

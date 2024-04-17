@@ -9,7 +9,8 @@ import type { AppDispatch } from './store';
 import { parseWorkflowKind } from './utils/workflow';
 import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import { useDeepCompareEffect } from '@react-hookz/web';
-import React, { useContext, useEffect } from 'react';
+import type React from 'react';
+import { useContext, useEffect } from 'react';
 import { useQuery } from 'react-query';
 import { useDispatch } from 'react-redux';
 

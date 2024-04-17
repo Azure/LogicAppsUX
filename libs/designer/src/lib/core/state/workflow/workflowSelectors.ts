@@ -9,7 +9,7 @@ import { createSelector } from '@reduxjs/toolkit';
 import { useMemo } from 'react';
 import { useSelector } from 'react-redux';
 import Queue from 'yocto-queue';
-import type {} from "reselect";
+import type {} from 'reselect';
 import type {} from 'react-query';
 
 export const getWorkflowState = (state: RootState): WorkflowState => state.workflow;
@@ -39,8 +39,12 @@ export const useIsWorkflowDirty = () => useSelector(createSelector(getWorkflowSt
 export const getRootWorkflowGraphForLayout = createSelector(getWorkflowState, (data) => {
   const rootNode = data.graph;
   const collapsedIds = data.collapsedGraphIds;
-  if (Object.keys(collapsedIds).length === 0) return rootNode;
-  if (!rootNode) return undefined;
+  if (Object.keys(collapsedIds).length === 0) {
+    return rootNode;
+  }
+  if (!rootNode) {
+    return undefined;
+  }
   const newGraph = {
     ...rootNode,
     children: reduceCollapsed((node: WorkflowNode) => getRecordEntry(collapsedIds, node.id))(rootNode.children ?? []),
@@ -55,14 +59,18 @@ const reduceCollapsed =
   (nodes: WorkflowNode[]): any => {
     return nodes.reduce((acc: any, child: WorkflowNode) => {
       const shouldFilter = condition(child);
-      if (!shouldFilter) return [...acc, { ...child, ...{ children: reduceCollapsed(condition)(child.children ?? []) } }];
+      if (!shouldFilter) {
+        acc.push({ ...child, ...{ children: reduceCollapsed(condition)(child.children ?? []) } });
+        return acc;
+      }
 
       const filteredChildren = filterOutGraphChildren(child.children ?? []);
       const filteredEdges =
         filteredChildren.length === 2
           ? [createWorkflowEdge(filteredChildren[0]?.id, filteredChildren[1]?.id, WORKFLOW_EDGE_TYPES.HIDDEN_EDGE)]
           : [];
-      return [...acc, { ...child, ...{ children: filteredChildren, edges: filteredEdges } }];
+      acc.push({ ...child, ...{ children: filteredChildren, edges: filteredEdges } });
+      return acc;
     }, []);
   };
 
@@ -72,10 +80,14 @@ export const useIsGraphCollapsed = (graphId: string): boolean =>
 export const useEdgesBySource = (parentId?: string): WorkflowEdge[] =>
   useSelector(
     createSelector(getWorkflowState, (state: WorkflowState) => {
-      if (!parentId || !state.graph) return [];
+      if (!parentId || !state.graph) {
+        return [];
+      }
 
       const reduceGraph = (graph: WorkflowNode, arr: WorkflowEdge[] = []): WorkflowEdge[] => {
-        if (!graph.edges) return arr;
+        if (!graph.edges) {
+          return arr;
+        }
         const edges = graph.edges.filter((x) => x.source === parentId);
         const childEdges = graph.children?.reduce((acc, child) => reduceGraph(child, acc), edges) ?? [];
         return [...arr, ...childEdges];
@@ -86,20 +98,23 @@ export const useEdgesBySource = (parentId?: string): WorkflowEdge[] =>
 
 export const getWorkflowNodeFromGraphState = (state: WorkflowState, actionId: string) => {
   const graph = state.graph;
-  if (!graph) return undefined;
+  if (!graph) {
+    return undefined;
+  }
 
   const traverseGraph = (node: WorkflowNode): WorkflowNode | undefined => {
-    if (node.id === actionId) return node;
-    else {
-      let result;
-      for (const child of node.children ?? []) {
-        const childRes = traverseGraph(child);
-        if (childRes) {
-          result = childRes;
-        }
-      }
-      return result;
+    if (node.id === actionId) {
+      return node;
     }
+
+    let result: WorkflowNode | undefined;
+    for (const child of node.children ?? []) {
+      const childRes = traverseGraph(child);
+      if (childRes) {
+        result = childRes;
+      }
+    }
+    return result;
   };
 
   return traverseGraph(graph);
@@ -108,7 +123,9 @@ export const getWorkflowNodeFromGraphState = (state: WorkflowState, actionId: st
 export const useNodeEdgeTargets = (nodeId?: string): string[] => {
   return useSelector(
     createSelector(getWorkflowState, (state: WorkflowState) => {
-      if (!nodeId || !state.graph) return [];
+      if (!nodeId || !state.graph) {
+        return [];
+      }
       return getRecordEntry(state.edgeIdsBySource, nodeId) ?? [];
     })
   );
@@ -158,8 +175,10 @@ export const useNewSwitchCaseId = () =>
 export const useAllGraphParents = (graphId: string): string[] => {
   return useSelector(
     createSelector(getWorkflowState, (state: WorkflowState) => {
-      if (state.graph) return getWorkflowGraphPath(state.graph, graphId);
-      else return [];
+      if (state.graph) {
+        return getWorkflowGraphPath(state.graph, graphId);
+      }
+      return [];
     })
   );
 };
@@ -169,14 +188,18 @@ export const useNodeGraphId = (nodeId: string): string =>
 
 // BFS search for nodeId
 const getChildrenOfNodeId = (childrenNodes: string[], nodeId: string, rootNode?: WorkflowNode) => {
-  if (!rootNode) return undefined;
+  if (!rootNode) {
+    return undefined;
+  }
 
   const queue = new Queue<WorkflowNode>();
   queue.enqueue(rootNode);
 
   while (queue.size > 0) {
     const current = queue.dequeue();
-    if (current && current.id === nodeId) return getAllChildren(current, childrenNodes);
+    if (current && current.id === nodeId) {
+      return getAllChildren(current, childrenNodes);
+    }
     if (current?.id === nodeId) {
       return current;
     }
@@ -216,14 +239,15 @@ export const getWorkflowGraphPath = (graph: WorkflowNode, graphId: string) => {
   const traverseGraph = (node: WorkflowNode, path: string[] = []): string[] | undefined => {
     if (node.id === graphId) {
       return path;
-    } else {
-      let result;
-      for (const child of node.children ?? []) {
-        const childResult = traverseGraph(child, [...path, node.id]);
-        if (childResult) result = childResult;
-      }
-      return result;
     }
+    let result: string[] | undefined;
+    for (const child of node.children ?? []) {
+      const childResult = traverseGraph(child, [...path, node.id]);
+      if (childResult) {
+        result = childResult;
+      }
+    }
+    return result;
   };
 
   return [...(traverseGraph(graph) ?? []), graphId];
@@ -250,7 +274,9 @@ export const useNodesMetadata = (): NodesMetadata =>
 export const useParentRunIndex = (id: string | undefined): number | undefined => {
   return useSelector(
     createSelector(getWorkflowState, (state: WorkflowState) => {
-      if (!id) return undefined;
+      if (!id) {
+        return undefined;
+      }
       const parents = getAllParentsForNode(id, state.nodesMetadata).filter((x) => {
         const operationType = getRecordEntry(state.operations, x)?.type?.toLowerCase();
         return operationType ? operationType === constants.NODE.TYPE.FOREACH || operationType === constants.NODE.TYPE.UNTIL : false;
@@ -263,7 +289,9 @@ export const useParentRunIndex = (id: string | undefined): number | undefined =>
 export const useParentRunId = (id: string | undefined): string | undefined => {
   return useSelector(
     createSelector(getWorkflowState, (state: WorkflowState) => {
-      if (!id) return undefined;
+      if (!id) {
+        return undefined;
+      }
       const parentId = getRecordEntry(state.nodesMetadata, id)?.parentNodeId;
       if (parentId?.includes('elseActions') || parentId?.includes('actions')) {
         return getRecordEntry(state.nodesMetadata, parentId)?.parentNodeId;

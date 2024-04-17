@@ -92,7 +92,9 @@ export const usePanelTabs = () => {
 
   const tabs = useMemo(() => {
     // Switch cases should only show parameters tab
-    if (nodeMetaData && nodeMetaData.subgraphType === SUBGRAPH_TYPES.SWITCH_CASE) return [parametersTabItem];
+    if (nodeMetaData && nodeMetaData.subgraphType === SUBGRAPH_TYPES.SWITCH_CASE) {
+      return [parametersTabItem];
+    }
 
     return [
       monitoringTabItem,

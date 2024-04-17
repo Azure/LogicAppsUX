@@ -23,7 +23,6 @@ export class SQLStringNameStep extends AzureWizardPromptStep<IFunctionAppWizardC
 export async function validateSQLConnectionString(connectionString: string): Promise<string | undefined> {
   if (!connectionString) {
     return localize('emptySqlConnectionString', 'The SQL connection string value cannot be empty');
-  } else {
-    return undefined;
   }
+  return undefined;
 }

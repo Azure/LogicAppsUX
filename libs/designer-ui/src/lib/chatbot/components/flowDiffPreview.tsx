@@ -1,6 +1,6 @@
 import type { IFontIconProps } from '@fluentui/react';
 import { FontIcon, css } from '@fluentui/react';
-import React from 'react';
+import type React from 'react';
 import { useIntl } from 'react-intl';
 
 export interface IFlowDiffPreviewProps {
@@ -88,7 +88,7 @@ export const OperationItem: React.FC<OperationItemProps> = ({ operation, isActio
         <span className={'msla-flowpreview-operation-name'}>{operation.operationName /*getOperationDisplayName(operation)*/}</span>
         <span className={'msla-flowpreview-operation-connection'}>{operation.connectionName /*actionSubtitle*/}</span>
       </div>
-      {statusIcon && <FontIcon {...statusIcon} className={(css('msla-flowpreview-operation-statusicon'), statusIcon.className)} />}
+      {statusIcon && <FontIcon {...statusIcon} className={css('msla-flowpreview-operation-statusicon', statusIcon.className)} />}
     </div>
   );
 };

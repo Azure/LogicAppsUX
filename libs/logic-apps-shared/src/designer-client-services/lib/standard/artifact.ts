@@ -39,9 +39,11 @@ export class StandardArtifactService {
 
     if (!apiVersion) {
       throw new Error('apiVersion required');
-    } else if (!baseUrl) {
+    }
+    if (!baseUrl) {
       throw new Error('baseUrl required');
-    } else if (!httpClient) {
+    }
+    if (!httpClient) {
       throw new Error('httpClient required');
     }
     this._schemaArtifacts = schemaArtifacts;
@@ -51,9 +53,8 @@ export class StandardArtifactService {
   public getMapArtifacts(mapType: string, mapSource: string): Promise<ListDynamicValue[]> {
     if (mapSource === 'IntegrationAccount') {
       return this._getMapArtifactsFromIA(mapType);
-    } else {
-      return this._getMapArtifactsFromLA(mapType);
     }
+    return this._getMapArtifactsFromLA(mapType);
   }
 
   private async _getMapArtifactsFromIA(mapType: string): Promise<ListDynamicValue[]> {
@@ -86,7 +87,7 @@ export class StandardArtifactService {
     }
 
     const url = new URL(integrationAccountCallbackUrl);
-    if (url.pathname == '/') {
+    if (url.pathname === '/') {
       url.pathname += 'groups/common';
     }
 
@@ -119,9 +120,8 @@ export class StandardArtifactService {
   public getSchemaArtifacts(schemaSource: string): Promise<ListDynamicValue[]> {
     if (schemaSource === 'IntegrationAccount') {
       return this._getSchemaArtifactsFromIA();
-    } else {
-      return this._getSchemaArtifactsFromLA();
     }
+    return this._getSchemaArtifactsFromLA();
   }
 
   private async _getSchemaArtifactsFromIA(): Promise<ListDynamicValue[]> {
@@ -148,7 +148,7 @@ export class StandardArtifactService {
     }
 
     const url = new URL(integrationAccountCallbackUrl);
-    if (url.pathname == '/') {
+    if (url.pathname === '/') {
       url.pathname += 'groups/common';
     }
 

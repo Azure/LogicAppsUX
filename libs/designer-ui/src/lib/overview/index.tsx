@@ -105,11 +105,10 @@ export const Overview: React.FC<OverviewProps> = ({
     const response = await onVerifyRunId(value);
     if (isRunError(response)) {
       return (response as RunError).error.message;
-    } else {
-      setRunItem(mapToRunItem(response));
-      setNavigateDisabled(false);
-      return '';
     }
+    setRunItem(mapToRunItem(response));
+    setNavigateDisabled(false);
+    return '';
   };
 
   return (
@@ -170,5 +169,5 @@ export const Overview: React.FC<OverviewProps> = ({
   );
 };
 
-export { isRunError, isCallbackInfoWithRelativePath, getCallbackUrl, mapToRunItem };
+export { isRunError, isCallbackInfoWithRelativePath, type getCallbackUrl, mapToRunItem };
 export type { OverviewPropertiesProps };

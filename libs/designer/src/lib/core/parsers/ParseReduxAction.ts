@@ -1,7 +1,7 @@
 import type { Workflow } from '../../common/models/workflow';
 import { getConnectionsApiAndMapping } from '../actions/bjsworkflow/connections';
 import { updateWorkflowParameters } from '../actions/bjsworkflow/initialize';
-import { initializeOperationMetadata, updateDynamicDataInNodes } from '../actions/bjsworkflow/operationdeserializer';
+import { initializeOperationMetadata, initializeDynamicDataInNodes } from '../actions/bjsworkflow/operationdeserializer';
 import { getConnectionsQuery } from '../queries/connections';
 import { initializeConnectionReferences } from '../state/connection/connectionSlice';
 import { initializeStaticResultProperties } from '../state/staticresultschema/staticresultsSlice';
@@ -68,7 +68,7 @@ export const initializeGraphState = createAsyncThunk<
             ),
             getConnectionsApiAndMapping(deserializedWorkflow, thunkAPI.dispatch),
           ]);
-          await updateDynamicDataInNodes(thunkAPI.getState, thunkAPI.dispatch);
+          await initializeDynamicDataInNodes(thunkAPI.getState, thunkAPI.dispatch);
 
           LoggerService().endTrace(traceId, { status: Status.Success });
         } catch (e) {
@@ -79,7 +79,8 @@ export const initializeGraphState = createAsyncThunk<
     asyncInitialize();
 
     return { deserializedWorkflow, originalDefinition: definition };
-  } else if (spec === 'CNCF') {
+  }
+  if (spec === 'CNCF') {
     throw new Error('Spec not implemented.');
   }
   throw new Error('Invalid Workflow Spec');

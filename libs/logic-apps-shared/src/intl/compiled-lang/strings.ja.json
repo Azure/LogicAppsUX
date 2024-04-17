@@ -3324,7 +3324,7 @@
   "JgugQX": [
     {
       "type": 0,
-      "value": "Enter a valid Array."
+      "value": "有効な配列を入力してください。"
     }
   ],
   "Ji6663": [
@@ -6124,7 +6124,7 @@
   "b7BQdu": [
     {
       "type": 0,
-      "value": "Enter a valid Boolean."
+      "value": "有効なブール値を入力してください。"
     }
   ],
   "b9/1dK": [
@@ -6573,12 +6573,6 @@
     {
       "type": 0,
       "value": "項目を確認する頻度"
-    }
-  ],
-  "e1gQAz": [
-    {
-      "type": 0,
-      "value": "Please start the project by pressing F5 or run it through the Run and Debug view"
     }
   ],
   "e4JZEY": [

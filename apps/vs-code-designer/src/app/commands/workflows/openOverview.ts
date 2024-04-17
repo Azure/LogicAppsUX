@@ -43,7 +43,7 @@ export async function openOverview(context: IAzureConnectorsContext, node: vscod
   let corsNotice: string | undefined;
   let localSettings: Record<string, string> = {};
   let credentials: ServiceClientCredentials;
-  let isWorkflowRuntimeRunning;
+  let isWorkflowRuntimeRunning: boolean;
   const workflowNode = getWorkflowNode(node);
   const panelGroupKey = ext.webViewKey.overview;
 
@@ -114,13 +114,14 @@ export async function openOverview(context: IAzureConnectorsContext, node: vscod
 
   panel.webview.html = await getWebViewHTML('vs-code-react', panel);
 
-  let interval;
+  let interval: NodeJS.Timeout;
   panel.webview.onDidReceiveMessage(async (message) => {
     switch (message.command) {
-      case ExtensionCommand.loadRun:
+      case ExtensionCommand.loadRun: {
         openMonitoringView(context, workflowNode, message.item.id, workflowFilePath);
         break;
-      case ExtensionCommand.initialize:
+      }
+      case ExtensionCommand.initialize: {
         panel.webview.postMessage({
           command: ExtensionCommand.initialize_frame,
           data: {
@@ -150,6 +151,7 @@ export async function openOverview(context: IAzureConnectorsContext, node: vscod
           }
         }, 5000);
         break;
+      }
       default:
         break;
     }

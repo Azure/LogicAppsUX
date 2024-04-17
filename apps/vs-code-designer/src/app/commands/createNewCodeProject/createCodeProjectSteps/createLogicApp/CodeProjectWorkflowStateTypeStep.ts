@@ -76,9 +76,8 @@ export class CodeProjectWorkflowStateTypeStep extends AzureWizardPromptStep<IFun
 
       // Create the sub-wizard options object
       return { promptSteps, executeSteps, title };
-    } else {
-      return undefined;
     }
+    return undefined;
   }
 
   /**
@@ -99,10 +98,9 @@ export class CodeProjectWorkflowStateTypeStep extends AzureWizardPromptStep<IFun
       if (result === TemplatePromptResult.skipForNow) {
         context.telemetry.properties.templateId = TemplatePromptResult.skipForNow;
         break;
-      } else {
-        // Otherwise, set the selected workflow template in the context
-        context.functionTemplate = result;
       }
+      // Otherwise, set the selected workflow template in the context
+      context.functionTemplate = result;
     }
   }
 

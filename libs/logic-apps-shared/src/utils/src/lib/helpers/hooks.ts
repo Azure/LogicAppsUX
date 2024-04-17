@@ -62,4 +62,4 @@ export const useOutsideClick = (refs: MutableRefObject<any>[], callback: () => v
 };
 
 export const useConsoleLog = (value: any) =>
-  useEffect(() => console.log(`%c UseConsole>`, `color: #3386FF; font-weight: bold;`, value), [value]);
+  useEffect(() => console.log('%c UseConsole>', 'color: #3386FF; font-weight: bold;', value), [value]);

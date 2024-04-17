@@ -89,20 +89,22 @@ export class SchemaProcessor {
 
     let properties: SchemaProperty[];
     switch (schema.type) {
-      case SwaggerConstants.Types.Array:
+      case SwaggerConstants.Types.Array: {
         properties = this._getArrayProperties(schema);
         break;
+      }
 
       case SwaggerConstants.Types.Boolean:
       case SwaggerConstants.Types.Integer:
       case SwaggerConstants.Types.Null:
       case SwaggerConstants.Types.Number:
       case SwaggerConstants.Types.String:
-      case undefined:
+      case undefined: {
         properties = this._getScalarProperties(schema);
         break;
+      }
 
-      case SwaggerConstants.Types.Object:
+      case SwaggerConstants.Types.Object: {
         // TODO: this condition will go away once Button trigger can fupport Object in the UI
         if (
           this.options.fileParameterAware &&
@@ -114,10 +116,12 @@ export class SchemaProcessor {
           properties = this._getObjectProperties(schema, this.options.keyPrefix, this.options.titlePrefix, this.options.summaryPrefix);
         }
         break;
+      }
 
-      default:
+      default: {
         properties = [];
         break;
+      }
     }
 
     properties = properties
@@ -184,14 +188,13 @@ export class SchemaProcessor {
       if (itemsType === SwaggerConstants.Types.Object) {
         if (itemsSchema[SwaggerConstants.ExtensionProperties.DynamicSchema]) {
           return this._getScalarProperties(itemsSchema).concat(arrayOutputs);
-        } else {
-          const keyPrefix = this.options.keyPrefix
-            ? `${this.options.keyPrefix}.${ParameterKeyUtility.WildIndexSegment}`
-            : `$.${ParameterKeyUtility.WildIndexSegment}`;
-          const itemsOutputs = this._getObjectPropertyOutputs(itemsSchema, keyPrefix, this.options.titlePrefix, this.options.summaryPrefix);
-          if (itemsOutputs.length) {
-            return itemsOutputs.concat(arrayOutputs);
-          }
+        }
+        const keyPrefix = this.options.keyPrefix
+          ? `${this.options.keyPrefix}.${ParameterKeyUtility.WildIndexSegment}`
+          : `$.${ParameterKeyUtility.WildIndexSegment}`;
+        const itemsOutputs = this._getObjectPropertyOutputs(itemsSchema, keyPrefix, this.options.titlePrefix, this.options.summaryPrefix);
+        if (itemsOutputs.length) {
+          return itemsOutputs.concat(arrayOutputs);
         }
       } else if (itemsType === SwaggerConstants.Types.Array) {
         this.options.keyPrefix = itemParameter.key;
@@ -233,13 +236,11 @@ export class SchemaProcessor {
       }
 
       return properties;
-    } else {
-      if (propertyOutputs.length) {
-        return propertyOutputs;
-      } else {
-        return this._getScalarProperties(schema);
-      }
     }
+    if (propertyOutputs.length) {
+      return propertyOutputs;
+    }
+    return this._getScalarProperties(schema);
   }
 
   private _getObjectPropertyOutputs(
@@ -442,9 +443,8 @@ export class SchemaProcessor {
         return parentProperty.arrayName && parentProperty.arrayName !== SwaggerConstants.OutputKeys.Body
           ? `${parentProperty.arrayName}-${SwaggerConstants.OutputKeys.Item}`
           : SwaggerConstants.OutputKeys.Item;
-      } else {
-        return this.options.outputKey || SwaggerConstants.OutputKeys.Body;
       }
+      return this.options.outputKey || SwaggerConstants.OutputKeys.Body;
     }
 
     // Note: Prefix is not well defined for items in array of primitive types. Hence explicitly setting the name.
@@ -551,8 +551,8 @@ export class SchemaProcessor {
   }
 
   private _getSummary(summary: string, key: string): string {
-    const summaryText = summary || key,
-      summaryPrefix = this.options.summaryPrefix;
+    const summaryText = summary || key;
+    const summaryPrefix = this.options.summaryPrefix;
 
     return summaryPrefix && summaryText ? `${summaryPrefix} ${summaryText}` : summaryText;
   }

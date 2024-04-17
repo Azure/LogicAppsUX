@@ -13,7 +13,6 @@ import {
   ConnectorService,
   Types,
   getPropertyValue,
-  equals,
   getJSONValue,
   getObjectPropertyValue,
   isNullOrUndefined,
@@ -44,7 +43,8 @@ export const getLegacyDynamicValues = async (
   const values = getObjectPropertyValue(response, extension['value-collection'] ? extension['value-collection'].split('/') : []);
   if (values && values.length) {
     return values.map((property: any) => {
-      let value: any, displayName: any;
+      let value: any;
+      let displayName: any;
       let isSelectable = true;
 
       if (parameterArrayType && parameterArrayType !== Types.Object) {
@@ -120,13 +120,8 @@ export const getLegacyDynamicSchema = async (
     return null;
   }
 
-  const schemaPath = extension['value-path'] ? extension['value-path'].split('/') : undefined;
-  return schemaPath
-    ? getObjectPropertyValue(
-        response,
-        schemaPath.length && equals(schemaPath[schemaPath.length - 1], 'properties') ? schemaPath.splice(-1, 1) : schemaPath
-      ) ?? null
-    : { properties: response, type: Types.Object };
+  const schemaPath = extension['value-path'] ? extension['value-path'].split('/').filter((s) => s) : undefined;
+  return schemaPath ? getObjectPropertyValue(response, schemaPath) ?? null : { properties: response, type: Types.Object };
 };
 
 export const getDynamicSchemaProperties = async (

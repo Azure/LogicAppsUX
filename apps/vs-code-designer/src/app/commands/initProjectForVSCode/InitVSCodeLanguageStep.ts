@@ -41,13 +41,15 @@ export async function addInitVSCodeSteps(
   isCustomCode: boolean
 ): Promise<void> {
   switch (context.language) {
-    case ProjectLanguage.JavaScript:
+    case ProjectLanguage.JavaScript: {
       context.workflowProjectType = WorkflowProjectType.Bundle;
       executeSteps.push(isCustomCode ? new WorkflowInitCodeProject() : new WorkflowInitVSCodeStep());
       break;
-    case ProjectLanguage.CSharp:
+    }
+    case ProjectLanguage.CSharp: {
       context.workflowProjectType = WorkflowProjectType.Nuget;
       executeSteps.push(new DotnetInitVSCodeStep());
       break;
+    }
   }
 }

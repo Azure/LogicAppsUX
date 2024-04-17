@@ -157,28 +157,29 @@ export const TokenField = ({
           tokenPickerButtonProps={tokenpickerButtonProps}
         />
       );
-    case constants.PARAMETER.EDITOR.CODE:
-      return (() => {
-        const customCodeEditor = isCustomCode(editor, editorOptions?.language);
-        const initialValue =
-          editorOptions?.language && customCodeEditor ? [createLiteralValueSegment(editorViewModel?.customCodeData?.fileData)] : value;
-        const language = editorOptions.language ?? EditorLanguage.javascript;
+    case constants.PARAMETER.EDITOR.CODE: {
+      const customCodeEditor = isCustomCode(editor, editorOptions?.language);
+      let customCodeData = editorViewModel?.customCodeData?.fileData ?? '';
+      if (typeof customCodeData !== 'string') {
+        customCodeData = JSON.stringify(customCodeData);
+      }
+      const initialValue = editorOptions?.language && customCodeEditor ? [createLiteralValueSegment(customCodeData)] : value;
+      const language = editorOptions.language ?? EditorLanguage.javascript;
 
-        return (
-          <CodeEditor
-            labelId={labelId}
-            initialValue={initialValue}
-            getTokenPicker={getTokenPicker}
-            language={language}
-            onChange={onValueChange}
-            readonly={readOnly}
-            placeholder={placeholder}
-            customCodeEditor={customCodeEditor}
-            nodeTitle={nodeTitle}
-          />
-        );
-      })();
-
+      return (
+        <CodeEditor
+          labelId={labelId}
+          initialValue={initialValue}
+          getTokenPicker={getTokenPicker}
+          language={language}
+          onChange={onValueChange}
+          readonly={readOnly}
+          placeholder={placeholder}
+          customCodeEditor={customCodeEditor}
+          nodeTitle={nodeTitle}
+        />
+      );
+    }
     case constants.PARAMETER.EDITOR.COMBOBOX:
       return (
         <Combobox

@@ -96,9 +96,7 @@ export const DeleteNodeModal = (props: DeleteNodeModalProps) => {
   return (
     <Modal titleAriaId={title} isOpen={isOpen} onDismiss={onDismiss}>
       <div className="msla-modal-container">
-        {!nodeId ? (
-          <Spinner label={deleteLoadingMessage} />
-        ) : (
+        {nodeId ? (
           <>
             <h2>{title}</h2>
             <p>{bodyConfirmText}</p>
@@ -110,6 +108,8 @@ export const DeleteNodeModal = (props: DeleteNodeModalProps) => {
               <Button onClick={onDismiss}>{cancelText}</Button>
             </div>
           </>
+        ) : (
+          <Spinner label={deleteLoadingMessage} />
         )}
       </div>
     </Modal>

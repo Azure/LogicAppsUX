@@ -222,9 +222,11 @@ export abstract class BaseOperationManifestService implements IOperationManifest
     const { apiVersion, baseUrl, httpClient } = options;
     if (!apiVersion) {
       throw new ArgumentException('apiVersion required');
-    } else if (!baseUrl) {
+    }
+    if (!baseUrl) {
       throw new ArgumentException('baseUrl required');
-    } else if (!httpClient) {
+    }
+    if (!httpClient) {
       throw new ArgumentException('httpClient required');
     }
   }
@@ -344,24 +346,24 @@ export function getBuiltInOperationInfo(definition: any, isTrigger: boolean): Op
           throw new UnsupportedException(`Unsupported datetime kind '${definition.kind}'`);
       }
 
-    case http:
+    case http: {
       if (equals(definition?.metadata?.swaggerSource, 'website')) {
         return {
           connectorId: appServiceConnectorId,
           operationId: isTrigger ? appservicetrigger : appservice,
         };
-      } else {
-        return {
-          connectorId: httpConnectorId,
-          operationId: definition?.metadata?.apiDefinitionUrl
-            ? isTrigger
-              ? httpswaggertrigger
-              : httpswaggeraction
-            : isTrigger
-              ? httptrigger
-              : httpaction,
-        };
       }
+      return {
+        connectorId: httpConnectorId,
+        operationId: definition?.metadata?.apiDefinitionUrl
+          ? isTrigger
+            ? httpswaggertrigger
+            : httpswaggeraction
+          : isTrigger
+            ? httptrigger
+            : httpaction,
+      };
+    }
     case httpwebhook:
       return { connectorId: httpConnectorId, operationId: isTrigger ? httpwebhooktrigger : httpwebhookaction };
     case liquid:
@@ -528,7 +530,7 @@ const builtInOperationsMetadata: Record<string, OperationInfo> = {
   },
   [csharpcode]: {
     connectorId: inlineCodeConnectorId,
-    operationId: 'cSharpScriptCode',
+    operationId: csharpcode,
   },
   [join]: {
     connectorId: dataOperationConnectorId,

@@ -36,6 +36,7 @@ import { useQuery } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import { Background, ReactFlow, ReactFlowProvider, useNodes, useReactFlow, useStore, BezierEdge } from 'reactflow';
 import type { BackgroundProps, NodeChange } from 'reactflow';
+import { PerformanceDebugTool } from './common/PerformanceDebug/PerformanceDebug';
 
 export interface DesignerProps {
   backgroundProps?: BackgroundProps;
@@ -88,7 +89,9 @@ export const CanvasFinder = (props: CanvasFinderProps) => {
   const nodeData = useNodes().find((x) => x.id === focusNode);
   const dispatch = useDispatch<AppDispatch>();
   const handleTransform = useCallback(() => {
-    if (!focusNode) return;
+    if (!focusNode) {
+      return;
+    }
     if ((!nodeData?.position?.x && !nodeData?.position?.y) || !nodeData?.width || !nodeData?.height) {
       return;
     }
@@ -157,7 +160,7 @@ export const Designer = (props: DesignerProps) => {
     },
   ];
 
-  const nodesWithPlaceholder = !isEmpty ? nodes : isReadOnly ? [] : emptyWorkflowPlaceholderNodes;
+  const nodesWithPlaceholder = isEmpty ? (isReadOnly ? [] : emptyWorkflowPlaceholderNodes) : nodes;
 
   const graph = useSelector((state: RootState) => state.workflow.graph);
   useThrottledEffect(() => dispatch(buildEdgeIdsBySource()), [graph], 200);
@@ -182,7 +185,9 @@ export const Designer = (props: DesignerProps) => {
 
   useEffect(() => setLayerHostSelector('#msla-layer-host'), []);
   const KeyboardTransition = createTransition('keydown', (event) => {
-    if (!isKeyboardDragTrigger(event as KeyboardEvent)) return false;
+    if (!isKeyboardDragTrigger(event as KeyboardEvent)) {
+      return false;
+    }
     event.preventDefault();
     return true;
   });
@@ -261,6 +266,7 @@ export const Designer = (props: DesignerProps) => {
             <Controls />
             <Minimap />
           </div>
+          <PerformanceDebugTool />
           <CanvasFinder panelLocation={panelLocation} />
         </ReactFlowProvider>
         <div

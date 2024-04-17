@@ -20,7 +20,7 @@ test('Sanity Check', {
   await page.getByRole('button', { name: 'Collapsed Run After, Click to Expand' }).click();
   await page.getByRole('button', { name: 'Expanded Tracking, Click to Collapse' }).click();
   await page.getByRole('button', { name: 'Collapsed Tracking, Click to Expand' }).click();
-  await page.getByRole('button', { name: 'Expand Initialize variable Initialize variable Initialize variable' }).click();
-  await page.getByRole('button', { name: 'Collapse Initialize variable Initialize variable Initialize variable' }).click();
+  await page.getByRole('button', { name: 'Expand Initialize variable' }).click();
+  await page.getByRole('button', { name: 'Collapse Initialize variable' }).click();
   expect(true).toBeTruthy();
 });

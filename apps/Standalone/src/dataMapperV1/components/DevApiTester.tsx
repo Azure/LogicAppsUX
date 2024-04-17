@@ -119,7 +119,7 @@ export const DevApiTester = () => {
                     <Stack tokens={{ childrenGap: '8px' }}>
                       <TextField
                         label="Schema filename"
-                        placeholder="Schema filename (w/o extension)"
+                        placeholder="Schema filename WITH extension"
                         value={schemaFilename ?? ''}
                         onChange={(_e, newValue) => setSchemaFilename(newValue ?? '')}
                       />

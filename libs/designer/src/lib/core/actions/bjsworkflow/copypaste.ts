@@ -1,5 +1,5 @@
+import type { ReferenceKey } from '../../../common/models/workflow';
 import { setFocusNode, type RootState } from '../..';
-import type { ReferenceKey } from '../../state/connection/connectionSlice';
 import { initCopiedConnectionMap } from '../../state/connection/connectionSlice';
 import type { NodeData, NodeOperation } from '../../state/operation/operationMetadataSlice';
 import { initializeNodes, initializeOperationInfo } from '../../state/operation/operationMetadataSlice';
@@ -18,7 +18,9 @@ type CopyOperationPayload = {
 export const copyOperation = createAsyncThunk('copyOperation', async (payload: CopyOperationPayload, { getState }) => {
   batch(() => {
     const { nodeId } = payload;
-    if (!nodeId) throw new Error('Node does not exist'); // Just an optional catch, should never happen
+    if (!nodeId) {
+      throw new Error('Node does not exist'); // Just an optional catch, should never happen
+    }
     const state = getState() as RootState;
     const newNodeId = `${nodeId}_copy`;
 
@@ -58,7 +60,9 @@ interface PasteOperationPayload {
 
 export const pasteOperation = createAsyncThunk('pasteOperation', async (payload: PasteOperationPayload, { dispatch, getState }) => {
   const { nodeId: actionId, relationshipIds, nodeData, operationInfo, connectionData } = payload;
-  if (!actionId || !relationshipIds || !nodeData) throw new Error('Operation does not exist'); // Just an optional catch, should never happen
+  if (!actionId || !relationshipIds || !nodeData) {
+    throw new Error('Operation does not exist'); // Just an optional catch, should never happen
+  }
   let count = 1;
   let nodeId = actionId;
 

@@ -104,7 +104,8 @@ export async function validateFuncCoreToolsIsLatestSystem(): Promise<void> {
 
       if (packageManagers.length === 0) {
         return;
-      } else if (packageManagers.length === 1) {
+      }
+      if (packageManagers.length === 1) {
         packageManager = packageManagers[0];
         context.telemetry.properties.packageManager = packageManager;
       } else {

@@ -2,25 +2,21 @@ import { encodeStringSegmentTokensInDomContext } from '../../../../editor/base/u
 import type { ValueSegment } from '@microsoft/logic-apps-shared';
 import DomPurify from 'dompurify';
 
+const encodeReduceFunction = (acc: Record<string, string>, key: string) => {
+  acc[key] = encodeURIComponent(key);
+  return acc;
+};
+const decodeReduceFunction = (acc: Record<string, string>, key: string) => {
+  acc[encodeURIComponent(key)] = key;
+  return acc;
+};
 const htmlUnsafeCharacters = ['<', '>'];
-const htmlUnsafeCharacterEncodingMap: Record<string, string> = htmlUnsafeCharacters.reduce(
-  (acc, key) => ({ ...acc, [key]: encodeURIComponent(key) }),
-  {}
-);
-const htmlUnsafeCharacterDecodingMap: Record<string, string> = htmlUnsafeCharacters.reduce(
-  (acc, key) => ({ ...acc, [encodeURIComponent(key)]: key }),
-  {}
-);
+const htmlUnsafeCharacterEncodingMap: Record<string, string> = htmlUnsafeCharacters.reduce(encodeReduceFunction, {});
+const htmlUnsafeCharacterDecodingMap: Record<string, string> = htmlUnsafeCharacters.reduce(decodeReduceFunction, {});
 
 const lexicalUnsafeCharacters = ['&', '"'];
-const lexicalUnsafeCharacterEncodingMap: Record<string, string> = lexicalUnsafeCharacters.reduce(
-  (acc, key) => ({ ...acc, [key]: encodeURIComponent(key) }),
-  {}
-);
-const lexicalUnsafeCharacterDecodingMap: Record<string, string> = lexicalUnsafeCharacters.reduce(
-  (acc, key) => ({ ...acc, [encodeURIComponent(key)]: key }),
-  {}
-);
+const lexicalUnsafeCharacterEncodingMap: Record<string, string> = lexicalUnsafeCharacters.reduce(encodeReduceFunction, {});
+const lexicalUnsafeCharacterDecodingMap: Record<string, string> = lexicalUnsafeCharacters.reduce(decodeReduceFunction, {});
 
 const lexicalSupportedTagNames = new Set([
   'a',
@@ -55,9 +51,6 @@ export interface Position {
 
 export const cleanHtmlString = (html: string): string => {
   let cleanedHtmlString = html;
-
-  // Ensure that all newlines are treated as HTML line breaks.
-  cleanedHtmlString = cleanedHtmlString.replace(/\n/g, '<br>');
 
   // Remove extraneous <span> tags.
   cleanedHtmlString = cleanedHtmlString.replace(/<span>(.*?)<\/span>/g, '$1');
@@ -128,6 +121,7 @@ export const isHtmlStringValueSafeForLexical = (htmlEditorString: string, nodeMa
   const tempElement = getDomFromHtmlEditorString(htmlEditorString, nodeMap);
 
   const elements = tempElement.querySelectorAll('*');
+  // biome-ignore lint/style/useForOf:Node List is not iterable
   for (let i = 0; i < elements.length; i++) {
     const element = elements[i];
     if (!isTagNameSupportedByLexical(element.tagName)) {
@@ -135,8 +129,7 @@ export const isHtmlStringValueSafeForLexical = (htmlEditorString: string, nodeMa
     }
 
     const attributes = Array.from(element.attributes);
-    for (let j = 0; j < attributes.length; j++) {
-      const attribute = attributes[j];
+    for (const attribute of attributes) {
       if (!isAttributeSupportedByHtmlEditor(element.tagName, attribute.name)) {
         return false;
       }
@@ -150,6 +143,8 @@ export const isTagNameSupportedByLexical = (tagName: string): boolean =>
   tagName.length > 0 && lexicalSupportedTagNames.has(tagName.toLowerCase());
 
 export const dropDownActiveClass = (active: boolean) => {
-  if (active) return 'active msla-dropdown-item-active';
-  else return '';
+  if (active) {
+    return 'active msla-dropdown-item-active';
+  }
+  return '';
 };

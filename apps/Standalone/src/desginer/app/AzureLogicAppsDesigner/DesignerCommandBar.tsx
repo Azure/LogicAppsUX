@@ -67,7 +67,7 @@ export const DesignerCommandBar = ({
       ignoreNonCriticalErrors: true,
     });
 
-    const validationErrorsList = Object.entries(designerState.operations.inputParameters).reduce((acc, [id, nodeInputs]) => {
+    const validationErrorsList = Object.entries(designerState.operations.inputParameters).reduce((acc: any, [id, nodeInputs]) => {
       const hasValidationErrors = Object.values(nodeInputs.parameterGroups).some((parameterGroup) => {
         return parameterGroup.parameters.some((parameter) => {
           const validationErrors = validateParameter(parameter, parameter.value);
@@ -84,7 +84,10 @@ export const DesignerCommandBar = ({
           return validationErrors.length;
         });
       });
-      return hasValidationErrors ? { ...acc, [id]: hasValidationErrors } : { ...acc };
+      if (hasValidationErrors) {
+        acc[id] = hasValidationErrors;
+      }
+      return acc;
     }, {});
 
     const hasParametersErrors = !isNullOrEmpty(validationErrorsList);
@@ -129,7 +132,7 @@ export const DesignerCommandBar = ({
           return isSaving ? (
             <Spinner size={SpinnerSize.small} />
           ) : (
-            <FontIcon aria-label="Save" iconName="Save" className={!saveIsDisabled ? classNames.azureBlue : classNames.azureGrey} />
+            <FontIcon aria-label="Save" iconName="Save" className={saveIsDisabled ? classNames.azureGrey : classNames.azureBlue} />
           );
         },
         onClick: () => {

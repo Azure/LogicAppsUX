@@ -1,4 +1,57 @@
 # Logic Apps Designer
+### [4.4.1](https://github.com/Azure/LogicAppsUX/compare/v4.4.0...v4.4.1) (2024-04-11)
+
+
+### Features
+
+* **Designer:** Node details panel updates ([#4600](https://github.com/Azure/LogicAppsUX/issues/4600)) ([5fba416](https://github.com/Azure/LogicAppsUX/commit/5fba416b18d34ce759d84212ffca211fa3cab47f))
+* **vscode:** Introducing iac to vscode extension ([#4599](https://github.com/Azure/LogicAppsUX/issues/4599)) ([6b8f6e9](https://github.com/Azure/LogicAppsUX/commit/6b8f6e98be57ba4f2fd148e0d67aa58812536cb3)), closes [#2830](https://github.com/Azure/LogicAppsUX/issues/2830) [#3031](https://github.com/Azure/LogicAppsUX/issues/3031) [#3037](https://github.com/Azure/LogicAppsUX/issues/3037)
+
+## [4.4.0](https://github.com/Azure/LogicAppsUX/compare/v4.3.0...v4.4.0) (2024-04-11)
+
+
+### Features
+
+* **Data Mapper:** creating new data mapper library ([#4575](https://github.com/Azure/LogicAppsUX/issues/4575)) ([1bec11b](https://github.com/Azure/LogicAppsUX/commit/1bec11bb24832a396a246a7459e016cbc737b1ce))
+
+
+### Bug Fixes
+
+* **designer:** Adding upload and download chunk size missing settings ([#4594](https://github.com/Azure/LogicAppsUX/issues/4594)) ([027574f](https://github.com/Azure/LogicAppsUX/commit/027574f3d21eee15c91d9ea5ec366aca4c92dbe8))
+* **designer:** Fix issue that was causing designer to crashw hen clicking on settings ([#4598](https://github.com/Azure/LogicAppsUX/issues/4598)) ([0df2bf6](https://github.com/Azure/LogicAppsUX/commit/0df2bf6ad1447d4167b16dce7882a8877eb8b65f))
+* **Designer:** Fixed issue where we weren't handling null connection references fully ([#4596](https://github.com/Azure/LogicAppsUX/issues/4596)) ([62622f7](https://github.com/Azure/LogicAppsUX/commit/62622f74a77781cf9fbb7e22039a7098235ddd86))
+* **vscode:** Building vs-code-react with vite ([#4595](https://github.com/Azure/LogicAppsUX/issues/4595)) ([211e785](https://github.com/Azure/LogicAppsUX/commit/211e785f35b627ac3ec092af8d9ce563dc31204c))
+
+## [4.3.0](https://github.com/Azure/LogicAppsUX/compare/v4.2.2...v4.3.0) (2024-04-10)
+
+
+### Bug Fixes
+
+* **designer:** Ensure stringified parameter value type when initializing parameter ([#4588](https://github.com/Azure/LogicAppsUX/issues/4588)) ([86e554e](https://github.com/Azure/LogicAppsUX/commit/86e554eb7f51ece5b4af7e00e791775f4932af3b))
+* **designer:** Fix code editor when non-string gets uploaded to custom code file ([#4587](https://github.com/Azure/LogicAppsUX/issues/4587)) ([620f685](https://github.com/Azure/LogicAppsUX/commit/620f6850a8d23b2c05b47b9dc1bc34b682607aa1))
+* **designer:** Fix react-flow CSS path and a couple exports ([#4585](https://github.com/Azure/LogicAppsUX/issues/4585)) ([57869ac](https://github.com/Azure/LogicAppsUX/commit/57869ac5934191c6f3d3f2aedb1fb3832aec4621))
+* **Designer:** Fixed issue where dynamic data call would fail when value is non-string ([#4584](https://github.com/Azure/LogicAppsUX/issues/4584)) ([65e9ab6](https://github.com/Azure/LogicAppsUX/commit/65e9ab684ac27de51b48e2511c86ffe6cdc556aa))
+
+### [4.2.2](https://github.com/Azure/LogicAppsUX/compare/v4.2.1...v4.2.2) (2024-04-08)
+
+
+### Bug Fixes
+
+* **designer:** Fix custom code bug ([#4577](https://github.com/Azure/LogicAppsUX/issues/4577)) ([614178e](https://github.com/Azure/LogicAppsUX/commit/614178e7b7047d2b3ff6902ab974ea9a0bba0db8))
+
+### [4.2.1](https://github.com/Azure/LogicAppsUX/compare/v4.2.0...v4.2.1) (2024-04-08)
+
+
+### Features
+
+* **Designer:** Dynamic data performance improvements ([#4483](https://github.com/Azure/LogicAppsUX/issues/4483)) ([1f6477c](https://github.com/Azure/LogicAppsUX/commit/1f6477c8d3251b4f384c56d73e294027cd739345))
+
+
+### Bug Fixes
+
+* **Data Mapper:** deserialization string bug fix ([#4567](https://github.com/Azure/LogicAppsUX/issues/4567)) ([f48f2fe](https://github.com/Azure/LogicAppsUX/commit/f48f2fe40abf3869082caaaf6e8242ed3c01762c))
+* **designer:** Custom Code Fixes from Internal BugBash ([#4576](https://github.com/Azure/LogicAppsUX/issues/4576)) ([eb8803e](https://github.com/Azure/LogicAppsUX/commit/eb8803e71ffd80feff9c72c11f2519b5df29826b))
+
 ## [4.2.0](https://github.com/Azure/LogicAppsUX/compare/v4.1.1...v4.2.0) (2024-04-06)
 
 

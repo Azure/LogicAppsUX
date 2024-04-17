@@ -1,4 +1,4 @@
-import type { ICustomCodeService, UploadCustomCode, VFSObject } from '../customcode';
+import type { ICustomCodeService, UploadCustomCodeAppFilePayload, UploadCustomCodePayload } from '../customcode';
 import type { IHttpClient } from '../httpClient';
 
 export interface CustomCodeServiceOptions {
@@ -16,75 +16,61 @@ export class StandardCustomCodeService implements ICustomCodeService {
     const { apiVersion, baseUrl, subscriptionId, resourceGroup, appName, workflowName, httpClient } = this.options;
     if (!apiVersion) {
       throw new Error('apiVersion required');
-    } else if (!baseUrl) {
+    }
+    if (!baseUrl) {
       throw new Error('baseUrl required');
-    } else if (!subscriptionId) {
+    }
+    if (!subscriptionId) {
       throw new Error('subscriptionId required');
-    } else if (!resourceGroup) {
+    }
+    if (!resourceGroup) {
       throw new Error('resourceGroup required');
-    } else if (!appName) {
+    }
+    if (!appName) {
       throw new Error('appName required');
-    } else if (!workflowName) {
+    }
+    if (!workflowName) {
       throw new Error('workflowName required');
-    } else if (!httpClient) {
+    }
+    if (!httpClient) {
       throw new Error('httpClient required');
     }
   }
 
-  async getAllCustomCodeFiles(): Promise<VFSObject[]> {
-    const { apiVersion, baseUrl, subscriptionId, resourceGroup, appName, workflowName, httpClient } = this.options;
-    const uri = `${baseUrl}/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Web/sites/${appName}/hostruntime/admin/vfs/${workflowName}`;
-
-    const queryParameters = {
-      relativePath: 1,
-      'api-version': apiVersion,
-    };
-
-    try {
-      const response = await httpClient.get<VFSObject[]>({
-        uri,
-        queryParameters,
-      });
-
-      return response;
-    } catch (error: any) {
-      if (error?.httpStatusCode === 404) {
-        return [];
-      } else {
-        throw error;
-      }
+  async uploadCustomCodeAppFile({ fileName, fileData }: UploadCustomCodeAppFilePayload): Promise<void> {
+    const { apiVersion, baseUrl, subscriptionId, resourceGroup, appName, httpClient } = this.options;
+    if (!(fileName && fileData)) {
+      return;
     }
-  }
-
-  async getCustomCodeFile(fileName: string): Promise<string> {
-    const { apiVersion, baseUrl, subscriptionId, resourceGroup, appName, workflowName, httpClient } = this.options;
-    const uri = `${baseUrl}/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Web/sites/${appName}/hostruntime/admin/vfs/${workflowName}/${fileName}`;
-    const headers: Record<string, string | string[]> = {
-      'If-Match': ['*'],
-    };
+    const uri = `${baseUrl}/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Web/sites/${appName}/hostruntime/admin/vfs/${fileName}`;
 
     const queryParameters = {
       relativePath: 1,
       'api-version': apiVersion,
     };
 
+    const headers = {
+      'Cache-Control': 'no-cache',
+      'If-Match': '*',
+    };
+    const blobifiedData = new Blob([fileData]);
     try {
-      const response = await httpClient.get<string>({
+      await httpClient.put<any, Blob>({
         uri,
         queryParameters,
         headers,
+        content: blobifiedData,
       });
-      return response;
     } catch (error: any) {
       if (error?.httpStatusCode !== 404) {
         throw error;
       }
-      return '';
     }
   }
 
-  async uploadCustomCode({ fileData, fileName, fileExtension }: UploadCustomCode): Promise<void> {
+  async uploadCustomCode({ fileData, fileName, fileExtension }: UploadCustomCodePayload): Promise<void> {
     const { apiVersion, baseUrl, subscriptionId, resourceGroup, appName, workflowName, httpClient } = this.options;
+    const contentType = fileExtension.substring(fileExtension.indexOf('.') + 1) ?? 'plain/text';
     const uri = `${baseUrl}/subscriptions/${subscriptionId}/resourceGroups/${resourceGroup}/providers/Microsoft.Web/sites/${appName}/hostruntime/admin/vfs/${workflowName}/${fileName}`;
 
     const queryParameters = {
@@ -94,15 +80,16 @@ export class StandardCustomCodeService implements ICustomCodeService {
 
     const headers = {
       'Cache-Control': 'no-cache',
-      'Content-Type': fileExtension.substring(fileExtension.indexOf('.') + 1) ?? 'plain/text',
+      'Content-Type': contentType,
       'If-Match': '*',
     };
+    const blobifiedData = new Blob([fileData], { type: contentType });
     try {
-      await httpClient.put({
+      await httpClient.put<any, Blob>({
         uri,
         queryParameters,
         headers,
-        content: fileData,
+        content: blobifiedData,
       });
     } catch (error: any) {
       if (error?.httpStatusCode !== 404) {

@@ -26,9 +26,7 @@ const regex = {
   datetime:
     /^(\d{4})-(0[1-9]|1[012])-(0[1-9]|[12]\d|3[01])(?:[\sT])([01]\d|2[0-3]):([0-5]\d)(?::([0-5]\d|60))?(\.\d+)?(([Zz])|([+|-]([01]\d|2[0-3])))?$/,
   double: /^(?:[-+])?([0-9]*(\.[0-9]+([eE](?:[-+])[0-9]+)?)?)$/,
-  email:
-    // eslint-disable-next-line no-empty-character-class
-    /^([!#-'*+/-9=?A-Z^-~-]+(\.[!#-'*+/-9=?A-Z^-~-]+)*|"([]!#-[^-~ \t]|(\\[\t -~]))+")@([!#-'*+/-9=?A-Z^-~-]+(\.[!#-'*+/-9=?A-Z^-~-]+)*|\[[\t -Z^-~]*])$/,
+  email: /.+@.+/,
   integer: /^(?:[-+])?([0-9]+)$/,
   phone: /^(\+)?(?:[0-9]{5,15})$/,
   url: /^(?:(?:https?|ftp):\/\/)(?:\S+(?::\S*)?@)?(?:(?:[1-9]\d?|1\d\d|2[01]\d|22[0-3])(?:\.(?:1?\d{1,2}|2[0-4]\d|25[0-5])){2}(?:\.(?:[1-9]\d?|1\d\d|2[0-4]\d|25[0-4]))|(?:(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)(?:\.(?:[a-z\u00a1-\uffff0-9]-*)*[a-z\u00a1-\uffff0-9]+)*(?:\.(?:[a-z\u00a1-\uffff]{2,}))?)(?::\d{2,5})?(?:\/\S*)?$/i,
@@ -52,15 +50,15 @@ export function validateStaticParameterInfo(
   const intl = getIntl();
 
   const parameterTitle = getTitleOrSummary(parameterMetadata.schema) || parameterMetadata.parameterName;
-  const parameterFormat = parameterMetadata.info.format,
-    parameterName = capitalizeFirstLetter(parameterTitle),
-    pattern = parameterMetadata.pattern,
-    type = parameterMetadata.type,
-    editor = parameterMetadata.editor,
-    required = isParameterRequired(parameterMetadata),
-    parameterErrorMessages: string[] = [],
-    typeError = validateType(type, parameterFormat ?? '', parameterValue, editor),
-    isUnknown = parameterMetadata.info.isUnknown;
+  const parameterFormat = parameterMetadata.info.format;
+  const parameterName = capitalizeFirstLetter(parameterTitle);
+  const pattern = parameterMetadata.pattern;
+  const type = parameterMetadata.type;
+  const editor = parameterMetadata.editor;
+  const required = isParameterRequired(parameterMetadata);
+  const parameterErrorMessages: string[] = [];
+  const typeError = validateType(type, parameterFormat ?? '', parameterValue, editor);
+  const isUnknown = parameterMetadata.info.isUnknown;
 
   if (typeError) {
     parameterErrorMessages.push(typeError);
@@ -138,7 +136,7 @@ export function validateType(type: string, parameterFormat: string, parameterVal
     return;
   }
   switch (type.toLowerCase()) {
-    case Constants.SWAGGER.TYPE.INTEGER:
+    case Constants.SWAGGER.TYPE.INTEGER: {
       if (isExpression) {
         return;
       }
@@ -150,12 +148,13 @@ export function validateType(type: string, parameterFormat: string, parameterVal
         });
       }
       return validateIntegerFormat(parameterFormat, parameterValue);
+    }
 
-    case Constants.SWAGGER.TYPE.NUMBER:
+    case Constants.SWAGGER.TYPE.NUMBER: {
       if (isExpression) {
         return;
       }
-      if (isNaN(Number(parameterValue))) {
+      if (Number.isNaN(Number(parameterValue))) {
         return intl.formatMessage({
           defaultMessage: 'Enter a valid number.',
           id: 'lB56l2',
@@ -163,8 +162,9 @@ export function validateType(type: string, parameterFormat: string, parameterVal
         });
       }
       return validateNumberFormat(parameterFormat, parameterValue);
+    }
 
-    case Constants.SWAGGER.TYPE.BOOLEAN:
+    case Constants.SWAGGER.TYPE.BOOLEAN: {
       if (isExpression) {
         return;
       }
@@ -176,8 +176,9 @@ export function validateType(type: string, parameterFormat: string, parameterVal
         });
       }
       return;
+    }
 
-    case Constants.SWAGGER.TYPE.OBJECT:
+    case Constants.SWAGGER.TYPE.OBJECT: {
       if (isExpression) {
         return;
       }
@@ -189,8 +190,9 @@ export function validateType(type: string, parameterFormat: string, parameterVal
         });
       }
       return;
+    }
 
-    case Constants.SWAGGER.TYPE.ARRAY:
+    case Constants.SWAGGER.TYPE.ARRAY: {
       if (isExpression) {
         return;
       }
@@ -202,6 +204,7 @@ export function validateType(type: string, parameterFormat: string, parameterVal
         });
       }
       return;
+    }
     case Constants.SWAGGER.TYPE.STRING:
       return validateStringFormat(parameterFormat, parameterValue, isExpression);
 
@@ -236,7 +239,7 @@ function validateNumberFormat(parameterFormat: string, parameterValue: string): 
 
   const intl = getIntl();
   switch (parameterFormat.toLowerCase()) {
-    case Constants.SWAGGER.FORMAT.DOUBLE:
+    case Constants.SWAGGER.FORMAT.DOUBLE: {
       if (!regex.double.test(parameterValue)) {
         return intl.formatMessage({
           defaultMessage: 'Enter a valid Double number.',
@@ -245,8 +248,9 @@ function validateNumberFormat(parameterFormat: string, parameterValue: string): 
         });
       }
       break;
+    }
 
-    case Constants.SWAGGER.FORMAT.FLOAT:
+    case Constants.SWAGGER.FORMAT.FLOAT: {
       if (!regex.double.test(parameterValue)) {
         return intl.formatMessage({
           defaultMessage: 'Enter a valid float.',
@@ -255,6 +259,7 @@ function validateNumberFormat(parameterFormat: string, parameterValue: string): 
         });
       }
       break;
+    }
 
     default:
       return '';
@@ -271,12 +276,12 @@ function validateStringFormat(parameterFormat: string, parameterValue: string, i
   const intl = getIntl();
   switch (parameterFormat.toLowerCase()) {
     case 'datetime':
-    case Constants.SWAGGER.FORMAT.DATETIME:
+    case Constants.SWAGGER.FORMAT.DATETIME: {
       if (isTemplateExpression) {
         return '';
       }
       // RFC 3339
-      if (isNaN(Date.parse(parameterValue)) || !regex.datetime.test(parameterValue)) {
+      if (Number.isNaN(Date.parse(parameterValue)) || !regex.datetime.test(parameterValue)) {
         return intl.formatMessage({
           defaultMessage: 'Enter a valid datetime.',
           id: '3uA4ml',
@@ -284,6 +289,7 @@ function validateStringFormat(parameterFormat: string, parameterValue: string, i
         });
       }
       break;
+    }
 
     case Constants.SWAGGER.FORMAT.EMAIL:
       // RFC 5322
@@ -300,7 +306,7 @@ function validateStringFormat(parameterFormat: string, parameterValue: string, i
         return validateStringEmails(parameterValue);
       }
 
-    case Constants.SWAGGER.FORMAT.URI:
+    case Constants.SWAGGER.FORMAT.URI: {
       if (isTemplateExpression) {
         return '';
       }
@@ -315,6 +321,7 @@ function validateStringFormat(parameterFormat: string, parameterValue: string, i
         return intl.formatMessage({ defaultMessage: 'Enter a valid URI.', id: '1r9ljA', description: 'Error validation message for URIs' });
       }
       break;
+    }
 
     default:
       break;
@@ -445,7 +452,8 @@ function validateEmailLiteralsFromExpression(expressionString: string): string {
   const expression = ExpressionParser.parseTemplateExpression(expressionString);
   if (isStringLiteral(expression)) {
     return validateStringEmails(expression.value);
-  } else if (isStringInterpolation(expression)) {
+  }
+  if (isStringInterpolation(expression)) {
     for (const segment of expression.segments) {
       if (isStringLiteral(segment)) {
         const tokens = segment.value.split(';');

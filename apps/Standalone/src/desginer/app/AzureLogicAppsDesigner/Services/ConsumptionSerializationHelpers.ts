@@ -10,8 +10,12 @@ export const convertDesignerWorkflowToConsumptionWorkflow = async (_workflow: an
   const isOpenApiSchema = isOpenApiSchemaVersion(workflow.definition);
 
   // Initialize parameters if they don't exist
-  if (!workflow?.parameters) workflow['parameters'] = {};
-  if (!workflow?.definition?.parameters) workflow.definition['parameters'] = {};
+  if (!workflow?.parameters) {
+    workflow['parameters'] = {};
+  }
+  if (!workflow?.definition?.parameters) {
+    workflow.definition['parameters'] = {};
+  }
 
   // Move parameter data around
   const parameterEntries = Object.entries(workflow?.parameters ?? {});
@@ -19,8 +23,11 @@ export const convertDesignerWorkflowToConsumptionWorkflow = async (_workflow: an
     const value = param?.value;
     workflow.definition.parameters[key] = clone(param);
     delete workflow.definition.parameters[key]?.value;
-    if (value) workflow.parameters[key] = { value };
-    else delete workflow.parameters[key];
+    if (value) {
+      workflow.parameters[key] = { value };
+    } else {
+      delete workflow.parameters[key];
+    }
   });
 
   if (isOpenApiSchema) {
@@ -81,13 +88,13 @@ const traverseDefinition = (operation: any, callback: (operation: any) => void) 
     ...(operation?.actions ?? {}),
     ...(operation?.else?.actions ?? {}),
     ...(operation?.default?.actions ?? {}),
-    ...(Object.values(operation?.cases ?? {}).reduce(
-      (acc: any, curr: any) => ({
+    ...(Object.values(operation?.cases ?? {}).reduce((acc: any, curr: any) => {
+      return {
+        // biome-ignore lint/performance/noAccumulatingSpread: There are probably better ways to do this but this is a more complex one to fix
         ...acc,
         ...curr.actions,
-      }),
-      {}
-    ) as any),
+      };
+    }, {}) as any),
   };
 
   Object.values(children).forEach((child: any) => {
