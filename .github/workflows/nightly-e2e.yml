@@ -16,10 +16,10 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - uses: montudor/action-zip@v1
+    - uses: vimtor/action-zip@v1.2
       with:
-        args: zip -qq -r test-app-1.zip ./e2e/testSetup/BlankLogicApp/test-app-1
-    
+        files: e2e/testSetup/BlankLogicApp/test-app-1
+        dest: test-app-1.zip
     - name: Azure login
       uses: azure/login@v2
       with:
@@ -32,7 +32,7 @@ jobs:
       if: always()
       run: |
         ZIP_DIR='run-${{ github.run_id }}-${{ github.run_attempt }}'
-        az storage blob upload-batch --account-name lauxtestreport --auth-mode key -d "deploymentzips/$REPORT_DIR" -s "./test-app-1.zip"
+        az storage blob upload-batch --account-name lauxtestreport --auth-mode key -d "deploymentzips/$REPORT_DIR/test-app-1.zip" -s "./test-app-1.zip"
   
     - name: Deploy Logic Apps For Testing
       uses: azure/cli@v2
