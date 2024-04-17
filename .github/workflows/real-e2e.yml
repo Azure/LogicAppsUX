@@ -9,6 +9,7 @@ jobs:
 
   deploy-test-app:
     runs-on: ubuntu-latest
+    environment: E2ETesting
     permissions:
         id-token: write
     strategy:
@@ -51,6 +52,7 @@ jobs:
 
   run-tests:
     runs-on: ubuntu-latest
+    environment: E2ETesting
     needs: deploy-test-app
     permissions:
         id-token: write
