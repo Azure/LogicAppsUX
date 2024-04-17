@@ -27,6 +27,14 @@ jobs:
         tenant-id: ${{ secrets.AZURE_TESTING_TENANT_ID }}
         subscription-id: ${{ secrets.AZURE_TESTING_SUBSCRIPTION_ID }}
 
+    - name: "Main Directory ls"
+      run: ls -la
+    
+    - name: "Inner Directory ls"
+      run: ls -la e2e/testSetup/BlankLogicApp
+    
+    - name: "Inner Inner Directory ls"
+      run: ls -la e2e/testSetup/BlankLogicApp/test-app-1
     - name: "Upload Playwright Report to Azure Blob Storage for static site access"
       shell: bash
       if: always()
