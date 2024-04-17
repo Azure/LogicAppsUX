@@ -22,22 +22,19 @@ jobs:
         subscription-id: ${{ secrets.AZURE_TESTING_SUBSCRIPTION_ID }}
         enable-AzPSSession: true 
 
-    - uses: "finnp/create-file-action@master"
-      env:
-        FILE_NAME: "apps/standalone/src/environments/jsonImport/armToken.json"
-        FILE_DATA: ""
 
+    - name: "extract AAD access token for MSI (valid for about an hour)"
+      run: |
+        az account get-access-token --tenant 72f988bf-86f1-41af-91ab-2d7cd011db47 >> apps/standalone/src/environments/jsonImport/armToken.json
+
+   
     - uses: pnpm/action-setup@v3
       with:
         version: 8
         run_install: |
           - recursive: true
             args: [--frozen-lockfile, --strict-peer-dependencies]
-    - name: "extract AAD access token for MSI (valid for about an hour)"
-      run: |
-        sudo pnpm run generateArmToken
 
-   
     - name: Deploy Logic Apps For Testing
       uses: azure/cli@v2
       with:
