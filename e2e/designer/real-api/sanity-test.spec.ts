@@ -5,12 +5,11 @@ test.describe(
     {
         tag: '@real',
     }, () => {
-        test.skip(({ browserName }) => browserName !== 'chromium', 'Chromium only!');
 
-        test('Sanity Check', async ({ page, request }) => {
+        test('Sanity Check', async ({ page, request, browserName }) => {
             await page.goto('/');
             await page.getByPlaceholder('Select an App').click();
-            await page.getByPlaceholder('Select an App').fill('wapp-y3el2dnved3mi');
+            await page.getByPlaceholder('Select an App').fill(`wapp-lauxtest${browserName}`);
             await page.getByPlaceholder('Select an App').press('Enter');
             await page.getByLabel('Workflow').locator('span').filter({ hasText: '' }).click();
             await page.getByRole('option', { name: 'testWorkflow1' }).click();

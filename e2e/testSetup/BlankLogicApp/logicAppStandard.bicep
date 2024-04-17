@@ -1,4 +1,4 @@
-param webAppName string = uniqueString(resourceGroup().id) // Generate unique String for web app name
+param webAppName string = resourceGroup().name // Generate unique String for web app name
 param location string = resourceGroup().location // Location for all resources
 var appServicePlanName = toLower('AppServicePlan-${webAppName}')
 var webSiteName = toLower('wapp-${webAppName}')
