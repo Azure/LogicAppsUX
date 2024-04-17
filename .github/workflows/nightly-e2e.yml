@@ -14,6 +14,12 @@ jobs:
         id-token: write
     steps:
     - uses: actions/checkout@v4
+
+    - name: Open Token Directory
+      working-directory: apps
+      run: |
+        ls -la
+        
     - name: Azure login
       uses: azure/login@v2
       with:
@@ -21,6 +27,7 @@ jobs:
         tenant-id: ${{ secrets.AZURE_TESTING_TENANT_ID }}
         subscription-id: ${{ secrets.AZURE_TESTING_SUBSCRIPTION_ID }}
         enable-AzPSSession: true 
+
 
 
     - name: "extract AAD access token for MSI (valid for about an hour)"
