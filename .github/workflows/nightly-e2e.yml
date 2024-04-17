@@ -73,7 +73,7 @@ jobs:
     
     - name: Delete Resoruce Group
       shell: bash
-      run:
+      run: |
         az group delete -n lauxtestchromium --yes --no-wait
         az group delete -n lauxtestfirefox --yes --no-wait
         az group delete -n lauxtestwebkit --yes --no-wait
