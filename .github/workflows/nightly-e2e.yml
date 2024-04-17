@@ -28,7 +28,7 @@ jobs:
       with:
         azcliversion: 2.30.0
         inlineScript: |
-            az group create -l westus -n --subscription ${{ secrets.AZURE_TESTING_SUBSCRIPTION_ID }} lauxtest${{matrix.browser}}
+            az group create -l westus --subscription ${{ secrets.AZURE_TESTING_SUBSCRIPTION_ID }} -n lauxtest${{matrix.browser}}
             az deployment group create \
             --resource-group lauxtest${{matrix.browser}} \
             --subscription ${{ secrets.AZURE_TESTING_SUBSCRIPTION_ID }} \
@@ -64,7 +64,7 @@ jobs:
 
     - name: Install Playwright Browsers
       run: pnpm run e2e:setup
-      
+
     - name: Run Playwright tests
       run: pnpm run test:e2e --grep @real
 
