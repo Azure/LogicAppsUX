@@ -1,6 +1,8 @@
 import { expect, test } from '@playwright/test';
 
-test('Sanity Check', async ({ page }) => {
+test('Sanity Check', {
+  tag: '@mock',
+}, async ({ page }) => {
   await page.goto('/');
 
   await page.getByText('Select an option').click();
