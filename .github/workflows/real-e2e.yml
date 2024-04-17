@@ -1,7 +1,8 @@
-name: Playwright Tests - Nightly
+name: Playwright Tests - Real APIs
 on:
-  push:
-    branches: [e2eTesting]
+  workflow_dispatch:
+  schedule:
+    - cron: '0 * * * *'
 
 
 jobs:
@@ -27,9 +28,6 @@ jobs:
         client-id: ${{ secrets.AZURE_TESTING_CLIENT_ID }}
         tenant-id: ${{ secrets.AZURE_TESTING_TENANT_ID }}
         subscription-id: ${{ secrets.AZURE_TESTING_SUBSCRIPTION_ID }}
-
-    - name: "Main Directory ls"
-      run: ls -la drop/
     
     - name: "Upload Playwright Report to Azure Blob Storage for static site access"
       shell: bash
