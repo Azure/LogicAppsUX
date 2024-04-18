@@ -193,7 +193,7 @@ function CreateNaturalLanguageToFlowInputInternal<Suggestion extends string>({
 
   const onInputKeyDown = (ev: React.KeyboardEvent<HTMLInputElement>) => {
     switch (ev.which) {
-      case KeyCodes.down:
+      case KeyCodes.down: {
         if (isMenuOpen) {
           focusMenuOnMount();
         }
@@ -201,15 +201,17 @@ function CreateNaturalLanguageToFlowInputInternal<Suggestion extends string>({
         ev.preventDefault();
         ev.stopPropagation();
         break;
+      }
 
-      case KeyCodes.enter:
+      case KeyCodes.enter: {
         search(searchString);
 
         ev.preventDefault();
         ev.stopPropagation();
         break;
+      }
 
-      case KeyCodes.escape:
+      case KeyCodes.escape: {
         if (isMenuOpen) {
           ev.preventDefault();
           ev.stopPropagation();
@@ -217,12 +219,14 @@ function CreateNaturalLanguageToFlowInputInternal<Suggestion extends string>({
         onMenuDismissed();
 
         break;
+      }
 
-      default:
+      default: {
         if (ev.defaultPrevented) {
           ev.stopPropagation();
         }
         break;
+      }
     }
   };
 

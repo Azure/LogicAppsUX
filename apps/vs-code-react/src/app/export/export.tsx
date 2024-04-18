@@ -1,4 +1,3 @@
-// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
 import type { OutletContext } from '../../run-service';
 import type { RootState } from '../../state/store';
 import './export.less';
@@ -15,8 +14,8 @@ export const ExportApp: React.FC = () => {
   const intlText = {
     EXPORT_LOGIC_APP: intl.formatMessage({
       defaultMessage: 'Export logic app',
-      id: 'UKKffr',
-      description: 'Export logic app text',
+      id: 'idw/7j',
+      description: 'Export logic app text.',
     }),
   };
 

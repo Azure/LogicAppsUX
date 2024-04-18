@@ -141,8 +141,12 @@ export function includes(str: string, substring: string, caseInsensitive = true)
  * @return {number} - The nth last index of the substring, -1 if not found.
  */
 export function nthLastIndexOf(str: string, searchString: string, n: number): number {
-  if (!str || str.length === 0) return -1;
-  if (!n || Number.isNaN(n) || n <= 1) return str.lastIndexOf(searchString);
+  if (!str || str.length === 0) {
+    return -1;
+  }
+  if (!n || Number.isNaN(n) || n <= 1) {
+    return str.lastIndexOf(searchString);
+  }
   return str.lastIndexOf(searchString, nthLastIndexOf(str, searchString, n - 1) - 1);
 }
 
@@ -215,7 +219,9 @@ export function exclude(array: string[], itemsToExclude: string[]): void {
 export function getPropertyValue(object: Record<string, any> | null | undefined, propertyName: string, caseInsensitive = true): any {
   const defaultObject = object || {};
 
-  if (propertyName === '__proto__' || propertyName === 'constructor') throw new Error('attempting to access protected properties');
+  if (propertyName === '__proto__' || propertyName === 'constructor') {
+    throw new Error('attempting to access protected properties');
+  }
   // Note: This is an optimization for when property name matches case sensitively.
   const value = (defaultObject as any)[propertyName];
   if (value !== undefined) {
@@ -303,7 +309,9 @@ export function safeSetObjectPropertyValue(
   value: any,
   merge = false
 ): Record<string, any> | null | undefined {
-  if (properties.includes('__proto__') || properties.includes('constructor')) throw new Error('attempting to access protected properties');
+  if (properties.includes('__proto__') || properties.includes('constructor')) {
+    throw new Error('attempting to access protected properties');
+  }
   if (!properties.length) {
     return value;
   }
@@ -354,7 +362,9 @@ function deepMerge(target: any, source: any) {
   for (const key in source) {
     if (Object.prototype.hasOwnProperty.call(source, key) && key !== '__proto__' && key !== 'constructor') {
       if (source[key] instanceof Object && !(source[key] instanceof Function)) {
-        if (!target[key]) target[key] = {};
+        if (!target[key]) {
+          target[key] = {};
+        }
         deepMerge(target[key], source[key]);
       } else {
         target[key] = source[key];
@@ -384,7 +394,9 @@ function deepMerge(target: any, source: any) {
  * @return {void}
  */
 export function deleteObjectProperty(object: Record<string, unknown>, properties: string[]): void {
-  if (properties.includes('__proto__') || properties.includes('constructor')) throw new Error('attempting to access protected properties');
+  if (properties.includes('__proto__') || properties.includes('constructor')) {
+    throw new Error('attempting to access protected properties');
+  }
   if (!properties.length || !object) {
     return;
   }
@@ -1029,12 +1041,10 @@ export function getResourceName(obj: any): string {
  */
 
 export const filterRecord = <T>(data: Record<string, T>, filter: (_key: string, _val: T) => boolean): Record<string, T> => {
-  return Object.entries(data)
-    .filter(([key, value]) => filter(key, value))
-    .reduce((res: any, [key, value]: any) => {
-      res[key] = value;
-      return res;
-    }, {});
+  const keyValuePropArray = Object.entries(data).filter(([key, value]) => filter(key, value));
+  const output: Record<string, T> = {};
+  keyValuePropArray.forEach(([key, value]) => (output[key] = value));
+  return output;
 };
 
 /**
@@ -1048,12 +1058,10 @@ export const sortRecord = <T>(
   data: Record<string, T>,
   sort: (_key1: string, _val1: T, _key2: string, _val2: T) => number
 ): Record<string, T> => {
-  return Object.entries(data)
-    .sort(([key1, val1], [key2, val2]) => sort(key1, val1, key2, val2))
-    .reduce((res: any, [key, value]: any) => {
-      res[key] = value;
-      return res;
-    }, {});
+  const keyValuePropArray = Object.entries(data).sort(([key1, val1], [key2, val2]) => sort(key1, val1, key2, val2));
+  const output: Record<string, T> = {};
+  keyValuePropArray.forEach(([key, value]) => (output[key] = value));
+  return output;
 };
 
 /**
@@ -1063,7 +1071,9 @@ export const sortRecord = <T>(
  * @returns {T | undefined} - The value of the key in the record, if found. Otherwise, undefined.
  */
 export const getRecordEntry = <T>(record: Record<string, T> | undefined, key: string | undefined) => {
-  if (!record || !key || !Object.hasOwn(record, key)) return undefined;
+  if (!record || !key || !Object.hasOwn(record, key)) {
+    return undefined;
+  }
   return record[key];
 };
 

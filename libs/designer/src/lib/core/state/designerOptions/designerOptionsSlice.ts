@@ -76,13 +76,27 @@ export const initializeServices = createAsyncThunk(
     InitOAuthService(oAuthService);
     InitWorkflowService(workflowService);
 
-    if (connectorService) InitConnectorService(connectorService);
-    if (gatewayService) InitGatewayService(gatewayService);
-    if (apimService) InitApiManagementService(apimService);
-    if (functionService) InitFunctionService(functionService);
-    if (appServiceService) InitAppServiceService(appServiceService);
-    if (chatbotService) InitChatbotService(chatbotService);
-    if (customCodeService) InitCustomCodeService(customCodeService);
+    if (connectorService) {
+      InitConnectorService(connectorService);
+    }
+    if (gatewayService) {
+      InitGatewayService(gatewayService);
+    }
+    if (apimService) {
+      InitApiManagementService(apimService);
+    }
+    if (functionService) {
+      InitFunctionService(functionService);
+    }
+    if (appServiceService) {
+      InitAppServiceService(appServiceService);
+    }
+    if (chatbotService) {
+      InitChatbotService(chatbotService);
+    }
+    if (customCodeService) {
+      InitCustomCodeService(customCodeService);
+    }
 
     if (hostService) {
       InitHostService(hostService);

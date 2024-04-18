@@ -25,7 +25,9 @@ const DeleteModal = () => {
   const onDismiss = useCallback(() => dispatch(setShowDeleteModal(false)), [dispatch]);
 
   const handleDelete = useCallback(() => {
-    if (!nodeData) return;
+    if (!nodeData) {
+      return;
+    }
     const { type } = nodeData;
 
     if (type === WORKFLOW_NODE_TYPES.OPERATION_NODE) {

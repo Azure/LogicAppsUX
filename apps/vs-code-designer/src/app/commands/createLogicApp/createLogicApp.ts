@@ -24,10 +24,10 @@ export async function createLogicApp(
     if (!node) {
       throw new Error(localize('noMatchingSubscription', 'Failed to find a subscription matching id "{0}".', subscription));
     }
-  } else if (!subscription) {
-    node = await ext.rgApi.appResourceTree.showTreeItemPicker<AzExtParentTreeItem>(SubscriptionTreeItem.contextValue, context);
-  } else {
+  } else if (subscription) {
     node = subscription;
+  } else {
+    node = await ext.rgApi.appResourceTree.showTreeItemPicker<AzExtParentTreeItem>(SubscriptionTreeItem.contextValue, context);
   }
 
   context.newResourceGroupName = newResourceGroupName;

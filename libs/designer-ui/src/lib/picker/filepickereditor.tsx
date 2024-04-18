@@ -166,7 +166,9 @@ export const FilePickerEditor = ({
 };
 
 const filterItems = (items?: TreeDynamicValue[], type?: string, fileFilters?: string[]): TreeDynamicValue[] => {
-  if (!items || items.length === 0) return [];
+  if (!items || items.length === 0) {
+    return [];
+  }
   let returnItems = items;
   if (type === PickerItemType.FOLDER) {
     returnItems = items.filter((item) => item.isParent);
@@ -180,7 +182,9 @@ const filterItems = (items?: TreeDynamicValue[], type?: string, fileFilters?: st
 };
 
 const getInitialTitleSegments = (sourceName?: string, onRootClicked?: () => void): IBreadcrumbItem[] => {
-  if (!sourceName) return [];
+  if (!sourceName) {
+    return [];
+  }
   const items: IBreadcrumbItem[] = [{ key: sourceName, text: sourceName, onClick: onRootClicked }];
   return items;
 };

@@ -67,45 +67,45 @@ async function openLiveMetricsStream(context: IActionContext, site: ParsedSite, 
   if (!aiKey) {
     // https://github.com/microsoft/vscode-azurefunctions/issues/1432
     throw new Error(localize('mustConfigureAI', 'You must configure Application Insights to stream logs on Linux Function Apps.'));
-  } else {
-    const aiClient: ApplicationInsightsManagementClient = await createAppInsightsClient([context, node]);
-    const components = await aiClient.components.list();
-    let component: ApplicationInsightsComponent | undefined = undefined;
+  }
+  const aiClient: ApplicationInsightsManagementClient = await createAppInsightsClient([context, node]);
+  const components = await aiClient.components.list();
+  let component: ApplicationInsightsComponent | undefined = undefined;
 
-    for await (const itemComponent of components) {
-      if (itemComponent.instrumentationKey === aiKey) {
-        component = itemComponent;
-        break;
-      }
-    }
-
-    if (!component) {
-      throw new Error(localize('failedToFindAI', 'Failed to find application insights component.'));
-    } else {
-      const componentId: string = encodeURIComponent(
-        JSON.stringify({
-          Name: site.fullName,
-          SubscriptionId: node.subscription.subscriptionId,
-          ResourceGroup: site.resourceGroup,
-        })
-      );
-      const resourceId: string = encodeURIComponent(nonNullProp(component, 'id'));
-
-      const url = `${node.subscription.environment.portalUrl}/#blade/AppInsightsExtension/QuickPulseBladeV2/ComponentId/${componentId}/ResourceId/${resourceId}`;
-      await openUrl(url);
+  for await (const itemComponent of components) {
+    if (itemComponent.instrumentationKey === aiKey) {
+      component = itemComponent;
+      break;
     }
   }
+
+  if (!component) {
+    throw new Error(localize('failedToFindAI', 'Failed to find application insights component.'));
+  }
+  const componentId: string = encodeURIComponent(
+    JSON.stringify({
+      Name: site.fullName,
+      SubscriptionId: node.subscription.subscriptionId,
+      ResourceGroup: site.resourceGroup,
+    })
+  );
+  const resourceId: string = encodeURIComponent(nonNullProp(component, 'id'));
+
+  const url = `${node.subscription.environment.portalUrl}/#blade/AppInsightsExtension/QuickPulseBladeV2/ComponentId/${componentId}/ResourceId/${resourceId}`;
+  await openUrl(url);
 }
 
 function isApplicationLoggingEnabled(config: SiteLogsConfig): boolean {
   if (config.applicationLogs) {
     if (config.applicationLogs.fileSystem) {
       return config.applicationLogs.fileSystem.level !== undefined && config.applicationLogs.fileSystem.level.toLowerCase() !== 'off';
-    } else if (config.applicationLogs.azureBlobStorage) {
+    }
+    if (config.applicationLogs.azureBlobStorage) {
       return (
         config.applicationLogs.azureBlobStorage.level !== undefined && config.applicationLogs.azureBlobStorage.level.toLowerCase() !== 'off'
       );
-    } else if (config.applicationLogs.azureTableStorage) {
+    }
+    if (config.applicationLogs.azureTableStorage) {
       return (
         config.applicationLogs.azureTableStorage.level !== undefined &&
         config.applicationLogs.azureTableStorage.level.toLowerCase() !== 'off'

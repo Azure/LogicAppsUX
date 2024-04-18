@@ -516,7 +516,7 @@ export const createReactFlowConnectionId = (sourceId: string, targetId: string, 
   let result = `${sourceId}${reactFlowConnectionIdSeparator}${targetId}`;
 
   if (port) {
-    result = result + `${reactFlowConnectionPortSeparator}${port}`;
+    result = `${result}${reactFlowConnectionPortSeparator}${port}`;
   }
 
   return result;
@@ -558,7 +558,6 @@ export const isEdgeHighlighted = (
       selectedItemConnectedNodes.some((node) => node.reactFlowKey === currentItemSplit.sourceId) &&
       selectedItemConnectedNodes.some((node) => node.reactFlowKey === currentItemSplit.destinationId)
     );
-  } else {
-    return selectedItemConnectedNodes.some((node) => node.reactFlowKey === currentItemSplit.sourceId);
   }
+  return selectedItemConnectedNodes.some((node) => node.reactFlowKey === currentItemSplit.sourceId);
 };

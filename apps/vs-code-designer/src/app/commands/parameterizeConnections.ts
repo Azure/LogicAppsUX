@@ -16,7 +16,7 @@ import { getWorkspaceFolder } from '../utils/workspace';
 import { DialogResponses, type IActionContext } from '@microsoft/vscode-azext-utils';
 import * as path from 'path';
 import { window, workspace } from 'vscode';
-import { type ConnectionsData } from '@microsoft/vscode-extension-logic-apps';
+import type { ConnectionsData } from '@microsoft/vscode-extension-logic-apps';
 
 /**
  * Prompts the user to parameterize connections at project load.

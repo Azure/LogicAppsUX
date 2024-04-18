@@ -12,7 +12,7 @@ export interface IRunService {
   getScopeRepetitions(
     action: { nodeId: string; runId: string | undefined },
     status?: string
-  ): Promise<{ value: Array<LogicAppsV2.RunRepetition> }>;
+  ): Promise<{ value: LogicAppsV2.RunRepetition[] }>;
   getRepetition(action: { nodeId: string; runId: string | undefined }, repetitionId: string): Promise<LogicAppsV2.RunRepetition>;
 }
 

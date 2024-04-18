@@ -45,7 +45,9 @@ export const WorkflowParametersErrorCard: React.FC<WorkflowParametersErrorCardPr
   const getParameterName = useCallback(
     (parameterId: string) => {
       const name = parameterNames?.[parameterId];
-      if (!name || name === '') return noNameFallback;
+      if (!name || name === '') {
+        return noNameFallback;
+      }
       return name;
     },
     [noNameFallback, parameterNames]

@@ -37,9 +37,12 @@ const getChildrenNodesToSegments = (node: ElementNode, segments: ValueSegment[],
 export const convertStringToSegments = (
   value: string,
   nodeMap: Map<string, ValueSegment>,
-  options?: SegmentParserOptions
+  options?: SegmentParserOptions,
+  convertSpaceToNewline?: boolean
 ): ValueSegment[] => {
-  if (!value) return [];
+  if (!value) {
+    return [];
+  }
 
   const { tokensEnabled } = options ?? {};
 
@@ -80,7 +83,28 @@ export const convertStringToSegments = (
     segmentSoFar += currChar;
 
     if (!isInQuotedString && currChar === '}' && currSegmentType === ValueSegmentType.TOKEN) {
-      const token = nodeMap.get(segmentSoFar);
+      let token: ValueSegment | undefined = undefined;
+
+      // removes formatting compatibility issues between nodemap and HTML text in the editor
+      // when opening an action with an HTML editor
+      if (convertSpaceToNewline) {
+        // modifiedSegmentSoFar -> in segmentSoFar, replace spaces with no space
+        const modifiedSegmentSoFar = removeNewlinesAndSpaces(segmentSoFar);
+        // for each key in nodeMap
+        for (const key of nodeMap.keys()) {
+          // keyNoNewline = key, but replace all newlines with no space
+          const keyNoNewline = removeNewlinesAndSpaces(key);
+          // if the nodemap key and modified HTML segment match,
+          // take the corresponding HTML node in the nodemap
+          if (keyNoNewline === modifiedSegmentSoFar) {
+            token = nodeMap.get(key);
+            break;
+          }
+        }
+      } else {
+        token = nodeMap.get(segmentSoFar);
+      }
+
       if (token) {
         returnSegments.push(token);
         currSegmentType = ValueSegmentType.LITERAL;
@@ -114,4 +138,8 @@ const collapseLiteralSegments = (segments: ValueSegment[]): void => {
 
     index++;
   }
+};
+
+const removeNewlinesAndSpaces = (inputStr: string): string => {
+  return inputStr.replace(/\s+/g, '').replaceAll(/\n/g, '');
 };

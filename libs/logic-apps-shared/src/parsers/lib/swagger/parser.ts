@@ -341,9 +341,8 @@ export class SwaggerParser {
       if (basePath && basePath !== '/') {
         const normalizedBasePath = basePath.replace(/\/+$/, '');
         return { ...operation, [ExtensionProperties.BasePath]: normalizedBasePath };
-      } else {
-        return operation;
       }
+      return operation;
     });
     const filteredOperations = mappedOperations
       .filter(
@@ -561,14 +560,14 @@ function orderAdvancedAfterOthers(a: OpenAPIV2.OperationObject, b: OpenAPIV2.Ope
     equals(getPropertyValue(b, ExtensionProperties.Visibility), Visibility.Advanced)
   ) {
     return -1;
-  } else if (
+  }
+  if (
     equals(getPropertyValue(a, ExtensionProperties.Visibility), Visibility.Advanced) &&
     !equals(getPropertyValue(b, ExtensionProperties.Visibility), Visibility.Advanced)
   ) {
     return 1;
-  } else {
-    return 0;
   }
+  return 0;
 }
 
 function orderImportantBeforeOthers(a: OpenAPIV2.OperationObject, b: OpenAPIV2.OperationObject) {
@@ -577,12 +576,12 @@ function orderImportantBeforeOthers(a: OpenAPIV2.OperationObject, b: OpenAPIV2.O
     !equals(getPropertyValue(b, ExtensionProperties.Visibility), Visibility.Important)
   ) {
     return -1;
-  } else if (
+  }
+  if (
     !equals(getPropertyValue(a, ExtensionProperties.Visibility), Visibility.Important) &&
     equals(getPropertyValue(b, ExtensionProperties.Visibility), Visibility.Important)
   ) {
     return 1;
-  } else {
-    return 0;
   }
+  return 0;
 }
