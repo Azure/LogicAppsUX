@@ -1,4 +1,12 @@
 # Logic Apps Designer
+## [4.6.0](https://github.com/Azure/LogicAppsUX/compare/v4.5.1...v4.6.0) (2024-04-18)
+
+
+### Bug Fixes
+
+* **dataMapper:** Fix issue loading schemas in stand alone ([#4642](https://github.com/Azure/LogicAppsUX/issues/4642)) ([294ca75](https://github.com/Azure/LogicAppsUX/commit/294ca75768cf3433fabb2d556a57747396204b27))
+* **vscode:** Fix new typescript version issues and import libraries ([#4636](https://github.com/Azure/LogicAppsUX/issues/4636)) ([79d8e20](https://github.com/Azure/LogicAppsUX/commit/79d8e20badbafa835e1cbad27a4dd2ab9b1ef75b))
+
 ### [4.5.1](https://github.com/Azure/LogicAppsUX/compare/v4.5.0...v4.5.1) (2024-04-18)
 
 ## [4.5.0](https://github.com/Azure/LogicAppsUX/compare/v4.4.1...v4.5.0) (2024-04-18)
