@@ -4,6 +4,8 @@ import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 
 export interface DataMapState {
+  dataMapperVersion?: number;
+
   runtimePort?: string;
   armToken?: string;
   loadingMethod: 'file' | 'arm';
@@ -78,6 +80,9 @@ export const dataMapSlice = createSlice({
     changeUseExpandedFunctionCards: (state, action: PayloadAction<boolean>) => {
       state.useExpandedFunctionCards = action.payload;
     },
+    changeDataMapperVersion: (state, action: PayloadAction<number>) => {
+      state.dataMapperVersion = action.payload;
+    },
   },
 });
 
@@ -98,6 +103,7 @@ export const {
   changeCustomXsltPathList,
   changeFetchedFunctions,
   changeUseExpandedFunctionCards,
+  changeDataMapperVersion,
 } = dataMapSlice.actions;
 
 export default dataMapSlice.reducer;

@@ -158,6 +158,11 @@ export default class DataMapperPanel {
         this.getConfigurationSetting('useExpandedFunctionCards');
         break;
       }
+
+      case ExtensionCommand.getDataMapperVersion: {
+        this.getDataMapperVersion();
+        break;
+      }
     }
   }
 
@@ -419,6 +424,16 @@ export default class DataMapperPanel {
     const configValue = azureDataMapperConfig.get<boolean>(configSetting) ?? true;
     this.sendMsgToWebview({
       command: ExtensionCommand.getConfigurationSetting,
+      data: configValue,
+    });
+  }
+
+  public getDataMapperVersion() {
+    const azureDataMapperConfig = workspace.getConfiguration('azureDataMapper');
+    //TODO - Elaina: replace 1 with a constant value of defaultDataMapperVersion
+    const configValue = azureDataMapperConfig.get<number>('dataMapperVersion') ?? 1;
+    this.sendMsgToWebview({
+      command: ExtensionCommand.getDataMapperVersion,
       data: configValue,
     });
   }

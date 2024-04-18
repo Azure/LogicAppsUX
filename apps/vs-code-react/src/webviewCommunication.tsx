@@ -14,10 +14,12 @@ import type {
   UpdatePanelMetadataMessage,
   CompleteFileSystemConnectionMessage,
   ReceiveCallbackMessage,
+  GetDataMapperVersionMessage,
 } from './run-service';
 import {
   changeCustomXsltPathList,
   changeDataMapMetadata,
+  changeDataMapperVersion,
   changeMapDefinition,
   changeRuntimePort,
   changeSchemaList,
@@ -51,7 +53,8 @@ type DataMapperMessageType =
   | GetAvailableCustomXsltPathsMessage
   | SetXsltDataMessage
   | SetRuntimePortMessage
-  | GetConfigurationSettingMessage;
+  | GetConfigurationSettingMessage
+  | GetDataMapperVersionMessage;
 type WorkflowMessageType = UpdateAccessTokenMessage | UpdateExportPathMessage | AddStatusMessage | SetFinalStatusMessage;
 type MessageType = InjectValuesMessage | DesignerMessageType | DataMapperMessageType | WorkflowMessageType;
 
@@ -128,6 +131,11 @@ export const WebViewCommunication: React.FC<{ children: ReactNode }> = ({ childr
             dispatch(changeUseExpandedFunctionCards(message.data));
             break;
           }
+          case ExtensionCommand.getDataMapperVersion: {
+            dispatch(changeDataMapperVersion(message.data));
+            break;
+          }
+
           default:
             throw new Error('Unknown post message received');
         }
