@@ -69,9 +69,8 @@ export interface SettingTokenFieldProps extends SettingProps {
 export const SettingTokenField = ({ ...props }: SettingTokenFieldProps) => {
   const labelId = useId('msla-editor-label');
   const hideLabel =
-    (isCustomEditor(props) && props.editorOptions?.hideLabel === true) ||
-    equals(props.editor?.toLowerCase(), 'floatingactionmenu') ||
-    equals(props.editor?.toLowerCase(), 'displaytext');
+    (isCustomEditor(props) && props.editorOptions?.hideLabel === true) || equals(props.editor?.toLowerCase(), 'floatingactionmenu');
+
   return (
     <>
       {!hideLabel && (
@@ -375,18 +374,6 @@ export const TokenField = ({
           dataAutomationId={`msla-setting-token-editor-tableditor-${labelForAutomationId}`}
           tokenMapping={tokenMapping}
           loadParameterValueFromString={loadParameterValueFromString}
-        />
-      );
-
-    case constants.PARAMETER.EDITOR.DISPLAYTEXT:
-      return editorOptions?.displayText?.relativeLink === '/dataMapper' && !showDataMapperEditor ? (
-        <></>
-      ) : (
-        <DisplayTextEditor
-          text={editorOptions?.displayText?.text}
-          relativeLinkText={editorOptions?.displayText?.relativeLinkText}
-          relativeLink={editorOptions?.displayText?.relativeLink}
-          openRelativeLink={openRelativeLink}
         />
       );
 
