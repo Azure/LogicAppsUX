@@ -39,6 +39,7 @@ export const ExtensionCommand = {
   completeOauthLogin: 'CompleteOauthLogin',
   webviewLoaded: 'webviewLoaded',
   webviewRscLoadError: 'webviewRscLoadError',
+  openRelativeLink: 'openRelativeLink',
 } as const;
 export type ExtensionCommand = (typeof ExtensionCommand)[keyof typeof ExtensionCommand];
 
