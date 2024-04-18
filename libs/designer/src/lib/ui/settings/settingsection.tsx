@@ -1,5 +1,5 @@
 import type { HeaderClickHandler, SettingSectionName } from '.';
-import { useHostOptions, useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
+import { useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
 import { updateParameterConditionalVisibility } from '../../core/state/operation/operationMetadataSlice';
 import { useSelectedNodeId } from '../../core/state/panel/panelSelectors';
 import type { RunAfterProps } from './sections/runafterconfiguration';
@@ -49,7 +49,6 @@ import type {
   SettingDropdownProps,
   ChangeState,
 } from '@microsoft/designer-ui';
-import { WorkflowService } from '@microsoft/logic-apps-shared';
 import type { FC } from 'react';
 import { useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -309,7 +308,6 @@ const Setting = ({ id, settings, isReadOnly }: { id?: string; settings: Settings
                 hideValidationErrors: (newState: ChangeState) => {
                   updateHideErrorMessage(i, newState.viewModel.hideErrorMessage);
                 },
-                openRelativeLink: WorkflowService().openRelativeLink,
                 ...settingProp,
               }}
             />

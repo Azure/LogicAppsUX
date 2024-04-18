@@ -37,7 +37,6 @@ const initialState: DesignerOptionsState = {
     displayRuntimeInfo: true,
     suppressCastingForSerialize: false,
     recurrenceInterval: undefined,
-    showDataMapperEditor: false,
   },
 };
 

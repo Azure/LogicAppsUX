@@ -37,7 +37,6 @@ export interface DesignerOptionsState {
     recurrenceInterval?: LogicApps.Recurrence;
     forceEnableSplitOn?: boolean; // force enable split on (by default it is disabled on stateless workflows)
     hideUTFExpressions?: boolean; // hide UTF expressions in template functions
-    showDataMapperEditor?: boolean; // show displaytext editor
   };
   nodeSelectAdditionalCallback?: (nodeId: string) => any;
   showConnectionsPanel?: boolean;

@@ -19,7 +19,6 @@ import type {
   ApiHubServiceDetails,
   ConnectionCreationInfo,
   ContentType,
-  IEditorService,
   IHostService,
   IWorkflowService,
   ManagedIdentity,
@@ -264,12 +263,6 @@ export const getDesignerServices = (
       } as ManagedIdentity;
     },
     isExplicitAuthRequiredForManagedIdentity: () => true,
-    openRelativeLink: (relativeLink: string) => {
-      return vscode.postMessage({
-        command: ExtensionCommand.openRelativeLink,
-        content: relativeLink,
-      });
-    },
   };
 
   const hostService: IHostService = {
@@ -295,7 +288,6 @@ export const getDesignerServices = (
   const editorService = new CustomEditorService({
     areCustomEditorsEnabled: true,
     openRelativeLink: (relativeLink: string) => {
-      console.log('---Elaina: open relative link in services helper is called');
       return vscode.postMessage({
         command: ExtensionCommand.openRelativeLink,
         content: relativeLink,

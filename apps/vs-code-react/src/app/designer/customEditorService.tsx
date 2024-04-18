@@ -23,18 +23,7 @@ export class CustomEditorService implements IEditorService {
       return undefined;
     }
 
-    // TODO Elaina: this is the correct one
-    // if (connectorId === 'connectionProviders/dataMapperOperations' && operationId === 'xsltTransform' && parameterName === 'text') {
-    //   return {
-    //     EditorComponent: DisplayTextEditor,
-    //     hideLabel: true,
-    //     editor,
-    //     editorOptions,
-    //   };
-    // }
-
-    // TODO Elaina : checking with local manifest
-    if (parameterName === 'text') {
+    if (connectorId === 'connectionProviders/dataMapperOperations' && operationId === 'xsltTransform' && parameterName === 'text') {
       return {
         EditorComponent: this.DisplayTextEditor,
         hideLabel: true,
@@ -46,7 +35,7 @@ export class CustomEditorService implements IEditorService {
     return undefined;
   };
 
-  DisplayTextEditor = ({ value, onValueChange, renderDefaultEditor, editor, editorOptions, disabled }: IEditorProps) => {
+  DisplayTextEditor = ({ editorOptions }: IEditorProps) => {
     return (
       <>
         {editorOptions?.displayText?.text}
@@ -61,15 +50,3 @@ export class CustomEditorService implements IEditorService {
     );
   };
 }
-
-// const DisplayTextEditor = ({ value, onValueChange, renderDefaultEditor, editor, editorOptions, disabled }: IEditorProps) => {
-//   return (
-//     <>
-//       {editorOptions?.displayText?.text}
-//       <Link onClick={() => {
-//         // openRelativeLink?.(relativeLink ?? '')
-//         }}>{editorOptions?.displayText?.relativeLinkText}
-//       </Link>
-//     </>
-//   );
-// };

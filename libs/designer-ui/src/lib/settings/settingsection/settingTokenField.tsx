@@ -1,4 +1,3 @@
-import { Button } from '@fluentui/react-components';
 import { ArrayEditor } from '../../arrayeditor';
 import { AuthenticationEditor } from '../../authentication';
 import { CodeEditor } from '../../code';
@@ -31,7 +30,6 @@ import type { SettingProps } from './';
 import { CustomTokenField, isCustomEditor } from './customTokenField';
 import { Label } from '@fluentui/react';
 import { EditorLanguage, equals, getPropertyValue, replaceWhiteSpaceWithUnderscore } from '@microsoft/logic-apps-shared';
-import { DisplayTextEditor } from '../../displayText';
 
 export interface SettingTokenFieldProps extends SettingProps {
   id?: string;
@@ -42,7 +40,6 @@ export interface SettingTokenFieldProps extends SettingProps {
   editorOptions?: any;
   editorViewModel?: any;
   defaultValue?: string;
-  displayText?: string;
   placeholder?: string;
   label: string;
   readOnly?: boolean;
@@ -62,8 +59,6 @@ export interface SettingTokenFieldProps extends SettingProps {
   validationErrors?: string[];
   hideValidationErrors?: ChangeHandler;
   suppressCastingForSerialize?: boolean;
-  showDataMapperEditor?: boolean;
-  openRelativeLink?: (relativeLink: string) => void;
 }
 
 export const SettingTokenField = ({ ...props }: SettingTokenFieldProps) => {
@@ -112,8 +107,6 @@ export const TokenField = ({
   onCastParameter,
   getTokenPicker,
   suppressCastingForSerialize,
-  showDataMapperEditor,
-  openRelativeLink,
 }: TokenFieldProps) => {
   const dropdownOptions = editorOptions?.options?.value ?? editorOptions?.options ?? [];
   const labelForAutomationId = replaceWhiteSpaceWithUnderscore(label);
