@@ -6,7 +6,7 @@ import { ext } from '../../../extensionVariables';
 import { getUnitTestName } from '../../utils/unitTests';
 import { TestFile } from './testFile';
 import * as path from 'path';
-import { type TestController, type TestItem, type Uri } from 'vscode';
+import type { TestController, TestItem, Uri } from 'vscode';
 
 /**
  * Represents a test workflow.

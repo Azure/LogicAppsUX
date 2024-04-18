@@ -3,7 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { runUnitTest } from '../../commands/workflows/unitTest/runUnitTest';
-import { type IActionContext } from '@microsoft/vscode-azext-utils';
+import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { TestMessage, type TestItem, type TestRun } from 'vscode';
 
 /**
