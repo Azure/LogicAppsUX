@@ -8,7 +8,7 @@ import type {
   IEditorProps,
   IRenderDefaultEditorParams,
 } from '@microsoft/logic-apps-shared';
-import { equals } from '@microsoft/logic-apps-shared';
+import { equals, isObject } from '@microsoft/logic-apps-shared';
 import { useCallback } from 'react';
 
 export type CustomTokenFieldProps = Omit<TokenFieldProps, 'editor' | 'editorOptions'> & ICustomEditorAndOptions;
@@ -57,7 +57,7 @@ export const isCustomEditor = (props: { editor?: string | undefined; editorOptio
   return (
     editorOptions?.visibility === 'custom' ||
     (equals(editor, customEditorName) &&
-      typeof editorOptions === 'object' &&
+      isObject(editorOptions) &&
       !!editorOptions &&
       typeof (editorOptions as { EditorComponent: unknown }).EditorComponent === 'function')
   );

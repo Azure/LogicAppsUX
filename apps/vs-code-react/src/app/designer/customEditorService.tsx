@@ -11,17 +11,17 @@ export class CustomEditorService implements IEditorService {
 
   constructor(public readonly options: CustomEditorServiceOptions) {
     const { areCustomEditorsEnabled } = options;
-    this._areCustomEditorsEnabled = areCustomEditorsEnabled || true;
+    this._areCustomEditorsEnabled = areCustomEditorsEnabled ?? true;
   }
 
   public getEditor = (props: IEditorParameterInfo) => {
-    const { operationInfo, parameter } = props;
-    const { connectorId, operationId } = operationInfo ?? {};
-    const { parameterName, editor, editorOptions } = parameter ?? {};
-
     if (!this._areCustomEditorsEnabled) {
       return undefined;
     }
+
+    const { operationInfo, parameter } = props;
+    const { connectorId, operationId } = operationInfo ?? {};
+    const { parameterName, editor, editorOptions } = parameter ?? {};
 
     if (connectorId === 'connectionProviders/dataMapperOperations' && operationId === 'xsltTransform' && parameterName === 'text') {
       return {
