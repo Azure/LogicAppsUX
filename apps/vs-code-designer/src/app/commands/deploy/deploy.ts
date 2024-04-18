@@ -309,7 +309,7 @@ async function getProjectPathToDeploy(
 
     fse.mkdirSync(deployProjectPath);
 
-    await fse.copy(originalDeployFsPath, deployProjectPath, { overwrite: true, recursive: true });
+    await fse.copy(originalDeployFsPath, deployProjectPath, { overwrite: true });
 
     for (const [referenceKey, managedConnection] of Object.entries(parametizedConnections.managedApiConnections)) {
       try {
