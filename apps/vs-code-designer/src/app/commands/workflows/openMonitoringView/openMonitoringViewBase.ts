@@ -12,10 +12,7 @@ import type { WebviewPanel } from 'vscode';
 import * as vscode from 'vscode';
 
 export abstract class OpenMonitoringViewBase extends OpenDesignerBase {
-  protected panel: WebviewPanel;
-  protected panelGroupKey: ext.webViewKey;
-  protected baseUrl: string;
-  protected workflowName: string;
+  protected runName: string;
   protected workflowFilePath: string;
   protected localSettings: Record<string, string>;
 

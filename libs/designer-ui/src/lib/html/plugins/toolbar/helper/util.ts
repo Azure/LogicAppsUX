@@ -52,9 +52,6 @@ export interface Position {
 export const cleanHtmlString = (html: string): string => {
   let cleanedHtmlString = html;
 
-  // Ensure that all newlines are treated as HTML line breaks.
-  cleanedHtmlString = cleanedHtmlString.replace(/\n/g, '<br>');
-
   // Remove extraneous <span> tags.
   cleanedHtmlString = cleanedHtmlString.replace(/<span>(.*?)<\/span>/g, '$1');
 
@@ -66,6 +63,11 @@ export const cleanHtmlString = (html: string): string => {
   cleanedHtmlString = cleanedHtmlString.replace(/((<br>)+)(<\/p>)/g, (_match, brs, _br, tag) => `${tag}${brs}`);
 
   return cleanedHtmlString;
+};
+
+// If we can find the id in the nodemap, return true.
+export const canReplaceSpanWithId = (idValue: string, nodeMap: Map<string, ValueSegment>): boolean => {
+  return nodeMap.get(idValue) !== undefined;
 };
 
 export const cleanStyleAttribute = (styleAttributeValue: string): string | undefined => {
