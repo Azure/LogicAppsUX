@@ -109,3 +109,15 @@ jobs:
         name: playwright-report
         path: playwright-report/
         retention-days: 30
+        
+  notify:
+    name: Notify failed build
+    needs: run-tests
+    if: failure()
+    runs-on: ubuntu-latest
+    permissions:
+      issues: write
+    steps:
+      - uses: jayqi/failed-build-issue-action@v1
+        with:
+          github-token: ${{ secrets.GITHUB_TOKEN }}
