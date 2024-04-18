@@ -15,7 +15,7 @@ import { ProjectAccess, ProjectResource } from '@microsoft/vscode-extension-logi
 export class ParametersTreeItem extends AzExtParentTreeItem {
   public readonly label: string = localize('Parameters', 'Parameters');
   public readonly childTypeLabel: string = localize('Parameter', 'Parameter');
-  public readonly parent: ConfigurationsTreeItem;
+  public declare readonly parent: ConfigurationsTreeItem;
   public isReadOnly: boolean;
 
   private constructor(parent: ConfigurationsTreeItem) {

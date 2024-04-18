@@ -19,7 +19,7 @@ import type { Artifacts, Parameter } from '@microsoft/vscode-extension-logic-app
 export class RemoteWorkflowsTreeItem extends AzExtParentTreeItem {
   public readonly label: string = localize('Workflows', 'Workflows');
   public readonly childTypeLabel: string = localize('Workflow', 'Workflow');
-  public readonly parent: SlotTreeItem;
+  public declare readonly parent: SlotTreeItem;
   public isReadOnly: boolean;
 
   private _artifacts: Artifacts;

@@ -15,7 +15,7 @@ import { ProjectAccess, ProjectResource } from '@microsoft/vscode-extension-logi
 export class ConnectionsTreeItem extends AzExtParentTreeItem {
   public readonly label: string = localize('Connections', 'Connections');
   public readonly childTypeLabel: string = localize('Connection', 'Connection');
-  public readonly parent: ConfigurationsTreeItem;
+  public declare readonly parent: ConfigurationsTreeItem;
   public isReadOnly: boolean;
 
   private constructor(parent: ConfigurationsTreeItem) {

@@ -2,7 +2,7 @@ import extract from 'extract-zip';
 import fsP from 'fs/promises';
 import fs from 'fs';
 import path from 'path';
-import { glob, globSync, globStream, globStreamSync, Glob } from 'glob';
+import { glob } from 'glob';
 import { getGlobals } from 'common-es';
 import replace from 'replace-in-file';
 import archiver from 'archiver';
