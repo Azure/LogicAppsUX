@@ -2,7 +2,7 @@ import type { RootState } from '../../state/store';
 import { VSCodeContext } from '../../webviewCommunication';
 import './unitTest.less';
 import { FontIcon, Link, Text, mergeStyles } from '@fluentui/react';
-import { ExtensionCommand } from '@microsoft/vscode-extension';
+import { ExtensionCommand } from '@microsoft/vscode-extension-logic-apps';
 import { useContext } from 'react';
 import { useIntl } from 'react-intl';
 import { useSelector } from 'react-redux';

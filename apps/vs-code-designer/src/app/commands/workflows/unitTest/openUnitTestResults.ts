@@ -2,6 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
+import { ExtensionCommand, ProjectName } from '@microsoft/vscode-extension-logic-apps';
 import { testsDirectoryName, workflowFileName } from '../../../../constants';
 import { ext } from '../../../../extensionVariables';
 import { localize } from '../../../../localize';
@@ -10,8 +11,7 @@ import { getWebViewHTML } from '../../../utils/codeless/getWebViewHTML';
 import { getUnitTestName, pickUnitTest } from '../../../utils/unitTests';
 import { tryGetLogicAppProjectRoot } from '../../../utils/verifyIsProject';
 import { getWorkflowNode, getWorkspaceFolder } from '../../../utils/workspace';
-import { type IAzureConnectorsContext } from '../azureConnectorWizard';
-import { ExtensionCommand, ProjectName } from '@microsoft/vscode-extension';
+import type { IAzureConnectorsContext } from '../azureConnectorWizard';
 import * as path from 'path';
 import {
   type TestItem,
@@ -96,8 +96,6 @@ export async function openResultsWebview(workflowName: string, unitTestName: str
   };
   panel.webview.html = await getWebViewHTML('vs-code-react', panel);
 
-  let interval;
-
   await window.withProgress(progressOptions, async () => {
     try {
       panel.webview.onDidReceiveMessage(async (message) => {
@@ -130,7 +128,6 @@ export async function openResultsWebview(workflowName: string, unitTestName: str
   panel.onDidDispose(
     () => {
       removeWebviewPanelFromCache(panelGroupKey, panelName);
-      clearInterval(interval);
     },
     null,
     ext.context.subscriptions

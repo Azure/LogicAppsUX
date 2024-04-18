@@ -2,6 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
+import { isEmptyString } from '@microsoft/logic-apps-shared';
 import { unitTestExplorer } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
@@ -9,7 +10,6 @@ import { hasLogicAppProject } from '../../utils/workspace';
 import { TestFile } from './testFile';
 import { TestWorkflow } from './testWorkflow';
 import { TestWorkspace } from './testWorkspace';
-import { isEmptyString } from '@microsoft/utils-logic-apps';
 import { type IActionContext, callWithTelemetryAndErrorHandling } from '@microsoft/vscode-azext-utils';
 import * as path from 'path';
 import {
@@ -219,16 +219,15 @@ const getOrCreateFile = async (controller: TestController, uri: Uri) => {
     if (existingWorkflowTest) {
       const existingFileTest = existingWorkflowTest.children.get(`${workspaceName}/${workflowName}/${testName}`);
       return { file: existingFileTest, data: ext.testData.get(existingFileTest) as TestFile };
-    } else {
-      const workflowTestItem = controller.createTestItem(`${workspaceName}/${workflowName}`, workflowName, uri);
-      workflowTestItem.canResolveChildren = true;
-      controller.items.add(workflowTestItem);
-
-      const testWorkflow = new TestWorkflow(`${workspaceName}/${workflowName}`, [uri], workflowTestItem);
-      testWorkflow.createChild(controller);
-      ext.testData.set(workflowTestItem, testWorkflow);
-      existingWorkspaceTest.children.add(workflowTestItem);
     }
+    const workflowTestItem = controller.createTestItem(`${workspaceName}/${workflowName}`, workflowName, uri);
+    workflowTestItem.canResolveChildren = true;
+    controller.items.add(workflowTestItem);
+
+    const testWorkflow = new TestWorkflow(`${workspaceName}/${workflowName}`, [uri], workflowTestItem);
+    testWorkflow.createChild(controller);
+    ext.testData.set(workflowTestItem, testWorkflow);
+    existingWorkspaceTest.children.add(workflowTestItem);
   } else {
     const workspaceUri = Uri.file(uri.fsPath.split('/').slice(0, -4).join('/'));
     const workspaceTestItem = controller.createTestItem(workspaceName, workspaceName, workspaceUri);

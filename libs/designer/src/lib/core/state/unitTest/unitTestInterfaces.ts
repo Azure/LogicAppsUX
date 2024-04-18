@@ -1,4 +1,4 @@
-import type { ValueSegment , type Assertion, type AssertionDefintion } from '@microsoft/logic-apps-shared';
+import type { ValueSegment, Assertion, AssertionDefintion } from '@microsoft/logic-apps-shared';
 
 export interface updateMockResultPayload {
   operationName: string;
