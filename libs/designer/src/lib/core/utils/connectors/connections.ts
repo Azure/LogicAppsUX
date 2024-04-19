@@ -17,6 +17,7 @@ import {
   ConnectionType,
   getResourceName,
   getRecordEntry,
+  getObjectPropertyValue,
 } from '@microsoft/logic-apps-shared';
 import type { AssistedConnectionProps } from '@microsoft/designer-ui';
 import type {
@@ -141,20 +142,42 @@ export function getAssistedConnectionProps(connector: Connector, manifest?: Oper
   return undefined;
 }
 
-export async function getConnectionParametersForAzureConnection(connectionType?: ConnectionType, selectedSubResource?: any): Promise<any> {
+export async function getConnectionParametersForAzureConnection(
+  connectionType?: ConnectionType,
+  selectedSubResource?: any,
+  parameterValues?: Record<string, any>
+): Promise<any> {
   if (connectionType === ConnectionType.Function) {
     const functionId = selectedSubResource?.id;
-    const authCodeValue = await FunctionService().fetchFunctionKey(functionId);
     const triggerUrl = selectedSubResource?.properties?.invoke_url_template;
-    return {
-      function: { id: functionId },
-      triggerUrl,
-      authentication: {
-        type: 'QueryString',
-        name: 'Code',
+    // TODO - Should uncomment when MSI changes for functions are checked in in backend.
+    const isQueryString = true; // equals(getObjectPropertyValue(parameterValues ?? {}, ['type']), 'querystring')
+
+    if (isQueryString) {
+      const authCodeValue = await FunctionService().fetchFunctionKey(functionId);
+      /*return {
+        function: { id: functionId },
+        triggerUrl,
+        ...parameterValues,
         value: authCodeValue,
-      },
-    };
+      };*/
+      return {
+        function: { id: functionId },
+        triggerUrl,
+        authentication: {
+          type: 'QueryString',
+          name: 'Code',
+          value: authCodeValue,
+        },
+        ...parameterValues,
+      };
+    } else {
+      return {
+        function: { id: functionId },
+        triggerUrl,
+        ...parameterValues,
+      };
+    }
   } else if (connectionType === ConnectionType.ApiManagement) {
     // TODO - Need to find apps which have authentication set, check with Alex.
     const apimApiId = selectedSubResource?.id;
@@ -164,13 +187,14 @@ export async function getConnectionParametersForAzureConnection(connectionType?:
     const subscriptionKey = (api.securityDefinitions?.apiKeyHeader as any)?.name ?? 'NotFound';
 
     return {
+      ...parameterValues,
       apiId: apimApiId,
       baseUrl: fullUrl,
       subscriptionKey,
     };
   }
 
-  return {};
+  return parameterValues;
 }
 
 export function getSupportedParameterSets(
@@ -247,7 +271,7 @@ function isManagedIdentitySupported(operationType: string, connectorCapabilities
   return true;
 }
 
-export function isUserAssignedIdentitySupportedForInApp(connectorCapabilities: string[] = []) {
+function isUserAssignedIdentitySupportedForInApp(connectorCapabilities: string[] = []) {
   return !!connectorCapabilities?.find((capability) => equals(capability, 'supportsUserAssignedIdentity'));
 }
 
