@@ -1,4 +1,4 @@
-import { extensionCommand } from '../../../constants';
+import { dataMapperVersionSetting, defaultDataMapperVersion, extensionCommand } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import { getWebViewHTML } from '../../utils/codeless/getWebViewHTML';
@@ -420,7 +420,7 @@ export default class DataMapperPanel {
   }
 
   public getConfigurationSetting(configSetting: string) {
-    const azureDataMapperConfig = workspace.getConfiguration('azureLogicAppsStandard');
+    const azureDataMapperConfig = workspace.getConfiguration(ext.prefix);
     const configValue = azureDataMapperConfig.get<boolean>(configSetting) ?? true;
     this.sendMsgToWebview({
       command: ExtensionCommand.getConfigurationSetting,
@@ -429,9 +429,8 @@ export default class DataMapperPanel {
   }
 
   public getDataMapperVersion() {
-    const azureDataMapperConfig = workspace.getConfiguration('azureLogicAppsStandard');
-    //TODO - Elaina: replace 1 with a constant value of defaultDataMapperVersion
-    const configValue = azureDataMapperConfig.get<number>('dataMapperVersion') ?? 1;
+    const azureDataMapperConfig = workspace.getConfiguration(ext.prefix);
+    const configValue = azureDataMapperConfig.get<number>(dataMapperVersionSetting) ?? defaultDataMapperVersion;
     this.sendMsgToWebview({
       command: ExtensionCommand.getDataMapperVersion,
       data: configValue,

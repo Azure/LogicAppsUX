@@ -771,7 +771,7 @@
             "description": "The default version of Data Mapper to use when performing operations like \"Create new data map\".",
             "enumDescriptions": [
               "Version 1",
-              "Version 2"
+              "Version 2 (Beta)"
             ],
             "default": 1
           },
