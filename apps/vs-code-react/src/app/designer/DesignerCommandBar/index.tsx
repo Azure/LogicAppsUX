@@ -147,7 +147,7 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({ isRefres
 
   const isSaveDisabled = useMemo(() => isSaving || haveErrors || !designerIsDirty, [isSaving, haveErrors, designerIsDirty]);
 
-  const desingerItems: ICommandBarItemProps[] = [
+  const designerItems: ICommandBarItemProps[] = [
     {
       key: 'Save',
       disabled: isSaveDisabled,
@@ -222,7 +222,7 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({ isRefres
 
   return (
     <CommandBar
-      items={isMonitoringView ? monitoringViewItems : desingerItems}
+      items={isMonitoringView ? monitoringViewItems : designerItems}
       ariaLabel="Use left and right arrow keys to navigate between commands"
       styles={{
         root: { borderBottom: `1px solid ${isDarkMode ? '#333333' : '#d6d6d6'}`, padding: '0 20px' },

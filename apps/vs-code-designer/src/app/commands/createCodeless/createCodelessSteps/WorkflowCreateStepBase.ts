@@ -12,7 +12,7 @@ import * as fse from 'fs-extra';
 import { Uri, window, workspace } from 'vscode';
 import type { Progress } from 'vscode';
 
-interface ICachedWorfkflow {
+interface ICachedWorkflow {
   projectPath: string;
   newFilePath: string;
   isHttpTrigger: boolean;
@@ -21,7 +21,7 @@ interface ICachedWorfkflow {
 const cacheKey = 'azLAPostWorkflowCreate';
 
 export function runPostWorkflowCreateStepsFromCache(): void {
-  const cachedFunc: ICachedWorfkflow | undefined = ext.context.globalState.get(cacheKey);
+  const cachedFunc: ICachedWorkflow | undefined = ext.context.globalState.get(cacheKey);
   if (cachedFunc) {
     try {
       runPostWorkflowCreateSteps(cachedFunc);
@@ -47,7 +47,7 @@ export abstract class WorkflowCreateStepBase<T extends IFunctionWizardContext> e
 
     const newFilePath = await this.executeCore(context);
 
-    const cachedFunc: ICachedWorfkflow = { projectPath: context.projectPath, newFilePath, isHttpTrigger: template.isHttpTrigger };
+    const cachedFunc: ICachedWorkflow = { projectPath: context.projectPath, newFilePath, isHttpTrigger: template.isHttpTrigger };
 
     if (context.openBehavior) {
       // OpenFolderStep sometimes restarts the extension host, so we will cache this to run on the next extension activation
@@ -66,7 +66,7 @@ export abstract class WorkflowCreateStepBase<T extends IFunctionWizardContext> e
   }
 }
 
-function runPostWorkflowCreateSteps(workflow: ICachedWorfkflow): void {
+function runPostWorkflowCreateSteps(workflow: ICachedWorkflow): void {
   callWithTelemetryAndErrorHandling('postWorkflowCreate', async (context: IActionContext) => {
     context.telemetry.suppressIfSuccessful = true;
 
