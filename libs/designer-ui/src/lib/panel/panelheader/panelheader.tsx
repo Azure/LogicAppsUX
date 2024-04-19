@@ -32,6 +32,7 @@ export interface PanelHeaderProps {
   headerMenuItems: JSX.Element[];
   noNodeSelected?: boolean;
   panelScope: PanelScope;
+  suppressDefaultNodeSelectFunctionality?: boolean;
   readOnlyMode?: boolean;
   renameTitleDisabled?: boolean;
   showCommentBox?: boolean;
@@ -59,6 +60,7 @@ export const PanelHeader = ({
   isError,
   isLoading,
   panelScope,
+  suppressDefaultNodeSelectFunctionality,
   titleId,
   headerMenuItems,
   readOnlyMode,
@@ -92,6 +94,7 @@ export const PanelHeader = ({
   const isRight = headerLocation === PanelLocation.Right;
 
   const noNodeOnCardLevel = noNodeSelected && panelScope === PanelScope.CardLevel;
+  const shouldHideCollapseButton = noNodeOnCardLevel && suppressDefaultNodeSelectFunctionality;
 
   // collapsed -> loading -> connector icon -> error -> backup loading
   const iconComponent = useMemo(
@@ -169,7 +172,7 @@ export const PanelHeader = ({
 
   return (
     <div className="msla-panel-header" id={noNodeOnCardLevel ? titleId : title}>
-      <CollapseButton />
+      {shouldHideCollapseButton ? undefined : <CollapseButton />}
       {!noNodeOnCardLevel && !isCollapsed ? (
         <>
           <div className={'msla-panel-card-header'} style={isRight ? {} : { paddingLeft: horizontalPadding }}>
