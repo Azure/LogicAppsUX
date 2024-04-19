@@ -9,7 +9,7 @@ import { DataMapperAppV2 } from './appV2';
 
 export const DataMapperApp = () => {
   const vscode = useContext(VSCodeContext);
-  const dataMapperVersion = useSelector((state: RootState) => state.dataMapDataLoader.dataMapperVersion);
+  const dataMapperVersion = useSelector((state: RootState) => state.project.dataMapperVersion);
 
   const sendMsgToVsix = useCallback(
     (msg: MessageToVsix) => {

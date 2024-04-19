@@ -30,7 +30,7 @@ const initialState: DataMapState = {
 };
 
 export const dataMapSlice = createSlice({
-  name: 'dataMapDataLoader',
+  name: 'dataMapDataLoaderV2',
   initialState,
   reducers: {
     changeRuntimePort: (state, action: PayloadAction<string>) => {

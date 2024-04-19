@@ -22,19 +22,19 @@ export const DataMapperAppV2 = () => {
   const dispatch = useDispatch<AppDispatch>();
   const vscode = useContext(VSCodeContext);
   const [theme, setTheme] = useState<Theme>(getTheme(document.body));
-  const xsltFilename = useSelector((state: RootState) => state.dataMapDataLoader.xsltFilename);
-  const xsltContent = useSelector((state: RootState) => state.dataMapDataLoader.xsltContent);
-  const mapDefinition = useSelector((state: RootState) => state.dataMapDataLoader.mapDefinition);
-  const mapMetadata = useSelector((state: RootState) => state.dataMapDataLoader.dataMapMetadata);
-  const sourceSchemaFilename = useSelector((state: RootState) => state.dataMapDataLoader.sourceSchemaFilename);
-  const sourceSchema = useSelector((state: RootState) => state.dataMapDataLoader.sourceSchema);
-  const targetSchemaFilename = useSelector((state: RootState) => state.dataMapDataLoader.targetSchemaFilename);
-  const targetSchema = useSelector((state: RootState) => state.dataMapDataLoader.targetSchema);
-  const schemaFileList = useSelector((state: RootState) => state.dataMapDataLoader.schemaFileList);
-  const customXsltPathsList = useSelector((state: RootState) => state.dataMapDataLoader.customXsltPathsList);
-  const fetchedFunctions = useSelector((state: RootState) => state.dataMapDataLoader.fetchedFunctions);
+  const xsltFilename = useSelector((state: RootState) => state.dataMap.xsltFilename);
+  const xsltContent = useSelector((state: RootState) => state.dataMap.xsltContent);
+  const mapDefinition = useSelector((state: RootState) => state.dataMap.mapDefinition);
+  const mapMetadata = useSelector((state: RootState) => state.dataMap.dataMapMetadata);
+  const sourceSchemaFilename = useSelector((state: RootState) => state.dataMap.sourceSchemaFilename);
+  const sourceSchema = useSelector((state: RootState) => state.dataMap.sourceSchema);
+  const targetSchemaFilename = useSelector((state: RootState) => state.dataMap.targetSchemaFilename);
+  const targetSchema = useSelector((state: RootState) => state.dataMap.targetSchema);
+  const schemaFileList = useSelector((state: RootState) => state.dataMap.schemaFileList);
+  const customXsltPathsList = useSelector((state: RootState) => state.dataMap.customXsltPathsList);
+  const fetchedFunctions = useSelector((state: RootState) => state.dataMap.fetchedFunctions);
 
-  const runtimePort = useSelector((state: RootState) => state.dataMapDataLoader.runtimePort);
+  const runtimePort = useSelector((state: RootState) => state.dataMap.runtimePort);
 
   if (runtimePort) {
     InitDataMapperApiService({
