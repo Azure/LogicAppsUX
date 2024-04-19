@@ -67,6 +67,7 @@ const DesignerEditorConsumption = () => {
     showChatBot,
     hostOptions,
     showConnectionsPanel,
+    suppressDefaultNodeSelect,
     showPerformanceDebug,
     language,
   } = useSelector((state: RootState) => state.workflowLoader);
@@ -219,6 +220,7 @@ const DesignerEditorConsumption = () => {
           isMonitoringView,
           useLegacyWorkflowParameters: true,
           showConnectionsPanel,
+          suppressDefaultNodeSelectFunctionality: suppressDefaultNodeSelect,
           hostOptions: {
             ...hostOptions,
             recurrenceInterval: Constants.RECURRENCE_OPTIONS.CONSUMPTION,

@@ -24,6 +24,7 @@ export interface WorkflowLoadingState {
   workflowKind?: string;
   language: string;
   areCustomEditorsEnabled?: boolean;
+  suppressDefaultNodeSelect?: boolean;
   hostOptions: {
     displayRuntimeInfo: boolean; // show info about where the action is run(i.e. InApp/Shared/Custom)
     forceEnableSplitOn?: boolean; // force enable split on for all actions
@@ -47,6 +48,7 @@ const initialState: WorkflowLoadingState = {
   workflowKind: 'stateful',
   language: 'en',
   areCustomEditorsEnabled: false,
+  suppressDefaultNodeSelect: false,
   hostOptions: {
     displayRuntimeInfo: true,
   },
@@ -163,6 +165,9 @@ export const workflowLoadingSlice = createSlice({
     setAreCustomEditorsEnabled: (state, action: PayloadAction<boolean>) => {
       state.areCustomEditorsEnabled = action.payload;
     },
+    setSuppressDefaultNodeSelect: (state, action: PayloadAction<boolean>) => {
+      state.suppressDefaultNodeSelect = action.payload;
+    },
     setHostOptions: (state, action: PayloadAction<Partial<WorkflowLoadingState['hostOptions']>>) => {
       state.hostOptions = { ...state.hostOptions, ...action.payload };
     },
@@ -209,6 +214,7 @@ export const {
   setLanguage,
   loadLastWorkflow,
   setAreCustomEditorsEnabled,
+  setSuppressDefaultNodeSelect,
   setHostOptions,
   setShowPerformanceDebug,
 } = workflowLoadingSlice.actions;

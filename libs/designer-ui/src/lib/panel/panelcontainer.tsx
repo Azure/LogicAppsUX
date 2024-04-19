@@ -44,6 +44,7 @@ export type PanelContainerProps = {
   errorMessage?: string;
   isLoading?: boolean;
   panelScope: PanelScope;
+  suppressDefaultNodeSelectFunctionality?: boolean;
   pivotDisabled?: boolean;
   headerMenuItems: JSX.Element[];
   selectedTab?: string;
@@ -75,6 +76,7 @@ export const PanelContainer = ({
   errorMessage,
   isLoading,
   panelScope,
+  suppressDefaultNodeSelectFunctionality,
   headerMenuItems,
   selectedTab,
   selectTab,
@@ -109,6 +111,7 @@ export const PanelContainer = ({
           showCommentBox={showCommentBox}
           noNodeSelected={noNodeSelected}
           panelScope={panelScope}
+          suppressDefaultNodeSelectFunctionality={suppressDefaultNodeSelectFunctionality}
           headerMenuItems={headerMenuItems}
           readOnlyMode={readOnlyMode}
           titleId={headerTextId}
@@ -134,6 +137,7 @@ export const PanelContainer = ({
       showCommentBox,
       noNodeSelected,
       panelScope,
+      suppressDefaultNodeSelectFunctionality,
       headerMenuItems,
       readOnlyMode,
       title,

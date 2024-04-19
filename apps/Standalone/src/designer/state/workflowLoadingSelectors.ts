@@ -53,6 +53,10 @@ export const useAreCustomEditorsEnabled = () => {
   return useSelector((state: RootState) => state.workflowLoader.areCustomEditorsEnabled);
 };
 
+export const useSuppressDefaultNodeSelect = () => {
+  return useSelector((state: RootState) => state.workflowLoader.suppressDefaultNodeSelect);
+};
+
 export const useShowPerformanceDebug = () => {
   return useSelector((state: RootState) => state.workflowLoader.showPerformanceDebug);
 };
