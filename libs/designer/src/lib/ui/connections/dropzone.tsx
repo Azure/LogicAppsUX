@@ -5,7 +5,7 @@ import { useUpstreamNodes } from '../../core/state/tokens/tokenSelectors';
 import { useGetAllOperationNodesWithin, useNodeDisplayName, useNodeMetadata } from '../../core/state/workflow/workflowSelectors';
 import { AllowDropTarget } from './dynamicsvgs/allowdroptarget';
 import { BlockDropTarget } from './dynamicsvgs/blockdroptarget';
-import { MenuDivider, MenuItem, MenuList, Popover, PopoverSurface, PopoverTrigger } from '@fluentui/react-components';
+import { MenuDivider, MenuItem, MenuList, Popover, PopoverSurface, PopoverTrigger, Tooltip } from '@fluentui/react-components';
 import {
   ArrowBetweenDown24Filled,
   ArrowBetweenDown24Regular,
@@ -15,8 +15,6 @@ import {
   ClipboardPasteRegular,
   bundleIcon,
 } from '@fluentui/react-icons';
-// import AddBranchIcon from './edgeContextMenuSvgs/addBranchIcon.svg';
-// import AddNodeIcon from './edgeContextMenuSvgs/addNodeIcon.svg';
 import { css } from '@fluentui/utilities';
 import { ActionButtonV2 } from '@microsoft/designer-ui';
 import {
@@ -49,15 +47,29 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId, 
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
   const [showCallout, setShowCallout] = useState(false);
-  const localStorageClipboard = window.localStorage.getItem('msla-clipboard');
-  const copiedNode = localStorageClipboard ? JSON.parse(localStorageClipboard) : null;
+  const [showNoPasteCallout, setShowNoPasteCallout] = useState(false);
+  const [rootRef, setRef] = useState<HTMLDivElement | null>(null);
+
+  const nodeMetadata = useNodeMetadata(removeIdTag(parentId ?? ''));
+  // For subgraph nodes, we want to use the id of the scope node as the parentId to get the dependancies
+  const newParentId = useMemo(() => {
+    if (nodeMetadata?.subgraphType) {
+      return nodeMetadata.parentNodeId;
+    }
+    return parentId;
+  }, [nodeMetadata, parentId]);
+  const upstreamNodesOfChild = useUpstreamNodes(removeIdTag(childId ?? newParentId ?? graphId));
+  const immediateAncestor = useGetAllOperationNodesWithin(parentId && !containsIdTag(parentId) ? parentId : '');
+  const upstreamNodes = useMemo(() => new Set([...upstreamNodesOfChild, ...immediateAncestor]), [immediateAncestor, upstreamNodesOfChild]);
 
   useOnViewportChange({
     onStart: useCallback(() => {
       if (showCallout) {
         setShowCallout(false);
+      } else if (showNoPasteCallout) {
+        setShowNoPasteCallout(false);
       }
-    }, [showCallout]),
+    }, [showCallout, showNoPasteCallout]),
   });
 
   const newActionText = intl.formatMessage({
@@ -78,6 +90,12 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId, 
     description: 'Text for button to paste an action from clipboard',
   });
 
+  const noPasteText = intl.formatMessage({
+    defaultMessage: 'No action to paste',
+    id: 'MmldTM',
+    description: 'Text for tooltip when there is no action to paste',
+  });
+
   const openAddNodePanel = useCallback(() => {
     const newId = guid();
     const relationshipIds = { graphId, childId, parentId };
@@ -90,8 +108,9 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId, 
     });
   }, [dispatch, graphId, childId, parentId]);
 
-  const handlePasteClicked = useCallback(() => {
+  const handlePasteClicked = useCallback(async () => {
     const relationshipIds = { graphId, childId, parentId };
+    const copiedNode = await retrieveClipboardData();
     if (copiedNode) {
       if (copiedNode?.isScopeNode) {
         dispatch(
@@ -99,6 +118,8 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId, 
             relationshipIds,
             nodeId: copiedNode.nodeId,
             serializedValue: copiedNode.serializedOperation,
+            allConnectionData: copiedNode.allConnectionData,
+            upstreamNodeIds: upstreamNodesOfChild,
           })
         );
       } else {
@@ -112,15 +133,19 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId, 
           })
         );
       }
-
       LoggerService().log({
         area: 'DropZone:handlePasteClicked',
         level: LogEntryLevel.Verbose,
         message: 'New node added via paste.',
       });
+    } else {
+      setShowNoPasteCallout(true);
+      setTimeout(() => {
+        setShowNoPasteCallout(false);
+      }, 3000);
     }
     setShowCallout(false);
-  }, [graphId, childId, parentId, dispatch, copiedNode]);
+  }, [graphId, childId, parentId, dispatch, upstreamNodesOfChild]);
 
   const addParallelBranch = useCallback(() => {
     const newId = guid();
@@ -139,18 +164,6 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId, 
     });
     setShowCallout(false);
   }, [dispatch, graphId, parentId]);
-
-  const nodeMetadata = useNodeMetadata(removeIdTag(parentId ?? ''));
-  // For subgraph nodes, we want to use the id of the scope node as the parentId to get the dependancies
-  const newParentId = useMemo(() => {
-    if (nodeMetadata?.subgraphType) {
-      return nodeMetadata.parentNodeId;
-    }
-    return parentId;
-  }, [nodeMetadata, parentId]);
-  const upstreamNodesOfChild = useUpstreamNodes(removeIdTag(childId ?? newParentId ?? graphId));
-  const immediateAncestor = useGetAllOperationNodesWithin(parentId && !containsIdTag(parentId) ? parentId : '');
-  const upstreamNodes = useMemo(() => new Set([...upstreamNodesOfChild, ...immediateAncestor]), [immediateAncestor, upstreamNodesOfChild]);
 
   const [{ isOver, canDrop }, drop] = useDrop(
     () => ({
@@ -252,53 +265,76 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId, 
         height: '100%',
       }}
     >
-      {isOver && (
-        <div style={{ height: '24px', display: 'grid', placeItems: 'center' }}>
-          {canDrop ? <AllowDropTarget fill="#0078D4" /> : <BlockDropTarget fill="#797775" />}
-        </div>
-      )}
-      {!isOver && (
-        <Popover
-          open={showCallout}
-          positioning={'after'}
-          closeOnScroll={true}
-          withArrow
-          mouseLeaveDelay={500}
-          onOpenChange={(e, { open }) => setShowCallout(open)}
-        >
-          <PopoverTrigger disableButtonEnhancement>
-            <div tabIndex={-1}>
-              <ActionButtonV2
-                tabIndex={1}
-                id={buttonId}
-                title={tooltipText}
-                dataAutomationId={automationId('plus')}
-                onClick={actionButtonClick}
-              />
-            </div>
-          </PopoverTrigger>
-          <PopoverSurface style={{ padding: '4px' }}>
-            <MenuList>
-              <MenuItem icon={<AddIcon />} onClick={openAddNodePanel} data-automation-id={automationId('add')}>
-                {newActionText}
-              </MenuItem>
-              {showParallelBranchButton && (
-                <MenuItem icon={<ParallelIcon />} onClick={addParallelBranch} data-automation-id={automationId('add-parallel')}>
-                  {newBranchText}
+      <div ref={setRef}>
+        {isOver && (
+          <div style={{ height: '24px', display: 'grid', placeItems: 'center' }}>
+            {canDrop ? <AllowDropTarget fill="#0078D4" /> : <BlockDropTarget fill="#797775" />}
+          </div>
+        )}
+        {!isOver && (
+          <Popover
+            open={showCallout}
+            positioning={'after'}
+            closeOnScroll={true}
+            withArrow
+            mouseLeaveDelay={500}
+            onOpenChange={(e, { open }) => setShowCallout(open)}
+          >
+            <PopoverTrigger disableButtonEnhancement>
+              <div tabIndex={-1}>
+                <ActionButtonV2
+                  tabIndex={1}
+                  id={buttonId}
+                  title={tooltipText}
+                  dataAutomationId={automationId('plus')}
+                  onClick={actionButtonClick}
+                />
+              </div>
+            </PopoverTrigger>
+            <PopoverSurface style={{ padding: '4px' }}>
+              <MenuList>
+                <MenuItem icon={<AddIcon />} onClick={openAddNodePanel} data-automation-id={automationId('add')}>
+                  {newActionText}
                 </MenuItem>
-              )}
-              {copiedNode && (
+                {showParallelBranchButton && (
+                  <MenuItem icon={<ParallelIcon />} onClick={addParallelBranch} data-automation-id={automationId('add-parallel')}>
+                    {newBranchText}
+                  </MenuItem>
+                )}
                 <>
                   <MenuDivider />
                   <MenuItem icon={<ClipboardIcon />} onClick={handlePasteClicked}>
                     {pasteFromClipboard}
                   </MenuItem>
                 </>
-              )}
-            </MenuList>
-          </PopoverSurface>
-        </Popover>
-      )}
+              </MenuList>
+            </PopoverSurface>
+          </Popover>
+        )}
+      </div>
+      <Tooltip
+        positioning={{ target: rootRef, position: 'below', align: 'end' }}
+        withArrow
+        content={noPasteText}
+        relationship="description"
+        visible={showNoPasteCallout}
+      />
     </div>
   );
 };
+
+async function retrieveClipboardData() {
+  try {
+    const clipboardData = await navigator.clipboard.readText();
+    if (clipboardData) {
+      const parsedData = JSON.parse(clipboardData);
+      if (parsedData.mslaNode) {
+        return parsedData;
+      }
+    }
+    return null;
+  } catch (error) {
+    console.error('Error reading from clipboard:', error);
+    return null;
+  }
+}

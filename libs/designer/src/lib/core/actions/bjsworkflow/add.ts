@@ -174,6 +174,7 @@ export const initializeOperationDetails = async (
     dispatch(initializeNodes([initData]));
     addTokensAndVariables(nodeId, type, { ...initData, manifest }, state, dispatch);
   } else {
+    console.log(connectorId);
     const { connector: swaggerConnector, parsedSwagger } = await getConnectorWithSwagger(connectorId);
     swagger = parsedSwagger;
     connector = swaggerConnector;
@@ -409,17 +410,17 @@ export const getNonDuplicateNodeId = (nodesMetadata: NodesMetadata, actionId: st
 };
 
 export const getNonDuplicateId = (existingActionNames: Record<string, string>, actionId: string): string => {
-  actionId = actionId.replaceAll(' ', '_');
-  const splitActionId = actionId.split('_');
-  let nodeId = actionId;
+  let newActionId = actionId.replaceAll(' ', '_');
+  const splitActionId = newActionId.split('_');
+  let nodeId = newActionId;
   let count = 1;
   if (isNumber(splitActionId[splitActionId.length - 1])) {
     splitActionId.pop();
-    actionId = splitActionId.join('_');
+    newActionId = splitActionId.join('_');
   }
 
   while (getRecordEntry(existingActionNames, nodeId)) {
-    nodeId = `${actionId}_${count}`;
+    nodeId = `${newActionId}_${count}`;
     count++;
   }
   return nodeId;

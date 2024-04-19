@@ -489,6 +489,7 @@ export const workflowSlice = createSlice({
         deleteSwitchCase,
         addSwitchCase,
         addImplicitForeachNode,
+        pasteScopeNode,
         setNodeDescription,
         updateRunAfter,
         removeEdgeFromRunAfter,

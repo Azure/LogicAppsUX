@@ -12,3 +12,7 @@ export const useStaticResultSchema = (connectorId: string, operationId: string) 
 export const useStaticResultProperties = (propertyName: string) => {
   return useSelector((rootState: RootState) => rootState.staticResults.properties[propertyName]);
 };
+
+export const getStaticResultForNodeId = (rootState: RootState, nodeId: string) => {
+  return rootState.staticResults.properties[nodeId + 0];
+};

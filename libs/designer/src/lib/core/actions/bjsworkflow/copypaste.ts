@@ -1,6 +1,6 @@
-import type { ReferenceKey } from '../../../common/models/workflow';
-import { setFocusNode, type RootState } from '../..';
-import { initCopiedConnectionMap } from '../../state/connection/connectionSlice';
+import type { ConnectionReference, ReferenceKey } from '../../../common/models/workflow';
+import { getTriggerNodeId, setFocusNode, type RootState } from '../..';
+import { initCopiedConnectionMap, initScopeCopiedConnections } from '../../state/connection/connectionSlice';
 import type { NodeData, NodeOperation } from '../../state/operation/operationMetadataSlice';
 import { initializeNodes, initializeOperationInfo } from '../../state/operation/operationMetadataSlice';
 import type { RelationshipIds } from '../../state/panel/panelInterfaces';
@@ -12,11 +12,13 @@ import { createAsyncThunk } from '@reduxjs/toolkit';
 import { batch } from 'react-redux';
 import { getNodeOperationData } from '../../state/operation/operationSelector';
 import { serializeOperation } from './serializer';
-import { buildGraphFromActions, getAllActionNames, type PasteScopeParams } from '../../parsers/BJSWorkflow/BJSDeserializer';
+import { buildGraphFromActions, getAllActionNames } from '../../parsers/BJSWorkflow/BJSDeserializer';
 import type { ActionDefinition } from '@microsoft/logic-apps-shared/src/utils/src/lib/models/logicAppsV2';
-import { initializeOperationMetadata } from './operationdeserializer';
-import { getWorkflowNodeFromGraphState } from '../../state/workflow/workflowSelectors';
-import type { NodesMetadata } from 'lib/core/state/workflow/workflowInterfaces';
+import { initializeDynamicDataInNodes, initializeOperationMetadata } from './operationdeserializer';
+import type { NodesMetadata } from '../../state/workflow/workflowInterfaces';
+import { updateAllUpstreamNodes } from './initialize';
+import type { NodeTokens } from '../../state/tokens/tokensSlice';
+import { getConnectionReferenceForNodeId } from '../../state/connection/connectionSelector';
 
 type CopyOperationPayload = {
   nodeId: string;
@@ -35,14 +37,14 @@ export const copyOperation = createAsyncThunk('copyOperation', async (payload: C
     const nodeOperationInfo = getRecordEntry(state.operations.operationInfo, nodeId);
     const nodeConnectionData = getRecordEntry(state.connections.connectionsMapping, nodeId);
 
-    window.localStorage.setItem(
-      'msla-clipboard',
+    navigator.clipboard.writeText(
       JSON.stringify({
         nodeId: newNodeId,
         nodeData,
         nodeOperationInfo,
         nodeConnectionData,
         isScopeNode: false,
+        mslaNode: true,
       })
     );
   });
@@ -63,12 +65,28 @@ export const copyScopeOperation = createAsyncThunk('copyScopeOperation', async (
       ignoreNonCriticalErrors: true,
     });
 
-    window.localStorage.setItem(
-      'msla-clipboard',
+    const allActionNames = getAllActionNames({ [scopeNodeId]: serializedOperation as ActionDefinition });
+    const allConnectionData: Record<string, { connectionReference: ConnectionReference; referenceKey: string }> = {};
+    const staticResults: Record<string, any> = {};
+
+    allActionNames.forEach((actionName) => {
+      const connectionReference = getConnectionReferenceForNodeId(state.connections, actionName);
+      if (connectionReference) {
+        allConnectionData[actionName] = connectionReference;
+      }
+
+      const staticResult = getStaticResultForNodeId(state.staticResults, actionName);
+      if (staticResult) {
+        staticResults[actionName] = staticResult;
+      }
+    });
+    navigator.clipboard.writeText(
       JSON.stringify({
         nodeId: newNodeId,
         serializedOperation,
+        allConnectionData,
         isScopeNode: true,
+        mslaNode: true,
       })
     );
   });
@@ -102,15 +120,13 @@ export const pasteOperation = createAsyncThunk('pasteOperation', async (payload:
   );
 
   dispatch(setFocusNode(nodeId));
-
   dispatch(initializeOperationInfo({ id: nodeId, ...operationInfo }));
   await initializeOperationDetails(nodeId, operationInfo, getState as () => RootState, dispatch);
 
   // replace new nodeId if there exists a copy of the copied node
   dispatch(initializeNodes([{ ...nodeData, id: nodeId }]));
-
   if (connectionData) {
-    dispatch(initCopiedConnectionMap({ nodeId, referenceKey: connectionData }));
+    dispatch(initCopiedConnectionMap({ connectionReferences: { [nodeId]: connectionData } }));
   }
 
   dispatch(setIsPanelLoading(false));
@@ -120,31 +136,38 @@ interface PasteScopeOperationPayload {
   relationshipIds: RelationshipIds;
   nodeId: string;
   serializedValue: LogicAppsV2.OperationDefinition | null;
+  allConnectionData: Record<string, { connectionReference: ConnectionReference; referenceKey: string }>;
+  upstreamNodeIds: string[];
 }
 
 export const pasteScopeOperation = createAsyncThunk(
   'pasteScopeOperation',
   async (payload: PasteScopeOperationPayload, { dispatch, getState }) => {
-    const { nodeId: actionId, relationshipIds, serializedValue } = payload;
+    const { nodeId: actionId, relationshipIds, serializedValue, upstreamNodeIds, allConnectionData } = payload;
     if (!actionId || !relationshipIds || !serializedValue) {
       throw new Error('Operation does not exist');
     }
     const { graphId, parentId } = relationshipIds;
-
-    const nodesMetadata = (getState() as RootState).workflow.nodesMetadata;
-    const nodeId = getNonDuplicateNodeId(nodesMetadata, actionId);
+    const state = getState() as RootState;
+    const idReplacements = state.workflow.idReplacements;
+    const existingNodesMetadata = replaceIdsOfExistingNodes(state.workflow.nodesMetadata, idReplacements);
+    const nodeId = getNonDuplicateNodeId(existingNodesMetadata, actionId);
 
     const workflowActions = { [nodeId]: serializedValue as ActionDefinition };
     const allActionNames = getAllActionNames(workflowActions, [], true);
-    const pasteParams = buildScopeParams(nodesMetadata, allActionNames);
-    const [nodes, edges, actions, actionNodesMetadata] = buildGraphFromActions(
+
+    const pasteParams = buildScopeParams(existingNodesMetadata, allActionNames);
+    const [nodes, _edges, actions, actionNodesMetadata] = buildGraphFromActions(
       workflowActions,
       graphId,
       parentId,
-      Object.keys(nodesMetadata),
+      Object.keys(existingNodesMetadata),
       pasteParams
     );
-
+    actionNodesMetadata[nodeId] = { ...actionNodesMetadata[actionId], isRoot: false };
+    if (allConnectionData) {
+      dispatch(initScopeCopiedConnections(replaceIdsOfExistingNodes(allConnectionData, pasteParams.renamedNodes)));
+    }
     dispatch(
       pasteScopeNode({
         relationshipIds,
@@ -154,50 +177,70 @@ export const pasteScopeOperation = createAsyncThunk(
         allActions: allActionNames,
       })
     );
-    console.log(nodes, edges, actions, actionNodesMetadata);
 
     dispatch(setIsPanelLoading(true));
 
     dispatch(setFocusNode(nodeId));
 
-    const graph = getWorkflowNodeFromGraphState((getState() as RootState).workflow, relationshipIds.graphId);
-
-    if (graph) {
-      await Promise.all([
-        initializeOperationMetadata(
-          {
-            graph,
-            actionData: actions,
-            nodesMetadata: nodesMetadata,
-          },
-          {},
-          {},
-          {},
-          'stateful',
-          false,
-          dispatch
-        ),
-      ]);
+    const connectionReference = (getState() as RootState).connections.connectionReferences;
+    const workflowParameters = state.workflowParameters.definitions;
+    const workflowKind = state.workflow.workflowKind;
+    const enforceSplitOn = state.designerOptions.hostOptions.forceEnableSplitOn ?? false;
+    const operations = state.workflow.operations;
+    const nodeMap: Record<string, string> = {};
+    for (const id of Object.keys(operations)) {
+      nodeMap[id] = id;
     }
+    const upstreamOutputTokens = replaceIdsOfExistingNodes(filterRecordByArray(state.tokens.outputTokens, upstreamNodeIds), idReplacements);
+    const triggerId = getTriggerNodeId(state.workflow);
 
-    // await initializeOperationDetails(nodeId, operationInfo, getState as () => RootState, dispatch);
+    await Promise.all([
+      initializeOperationMetadata(
+        {
+          graph: nodes[0],
+          actionData: actions,
+          nodesMetadata: actionNodesMetadata,
+        },
+        connectionReference,
+        workflowParameters,
+        {},
+        workflowKind,
+        enforceSplitOn,
+        dispatch,
+        { ...pasteParams, existingOutputTokens: upstreamOutputTokens, rootTriggerId: triggerId }
+      ),
+    ]);
+    await initializeDynamicDataInNodes(getState as () => RootState, dispatch, pasteParams.pasteActionNames);
 
-    // // replace new nodeId if there exists a copy of the copied node
-    // dispatch(initializeNodes([{ ...nodeData, id: nodeId }]));
-
-    // if (connectionData) {
-    //   dispatch(initCopiedConnectionMap({ nodeId, referenceKey: connectionData }));
-    // }
-
+    updateAllUpstreamNodes(getState() as RootState, dispatch);
     dispatch(setIsPanelLoading(false));
   }
 );
 
+const replaceIdsOfExistingNodes = (nodesMetadata: Record<string, any>, idReplacements: Record<string, string>): Record<string, any> => {
+  const newNodesMetadata: NodesMetadata = {};
+  Object.keys(nodesMetadata).forEach((key) => {
+    const nodeMetadata = nodesMetadata[key];
+    const newNodeId = idReplacements[key] ?? key;
+    newNodesMetadata[newNodeId] = nodeMetadata;
+  });
+  return newNodesMetadata;
+};
+
+export interface PasteScopeParams {
+  pasteActionNames: string[];
+  // Mapping of nodes added in paste with oldId as key and newId as value
+  renamedNodes: Record<string, string>;
+}
+
 // creates a mapping of nodeIds with a 1:1 mapping of the new NodeIds to the old NodeIds
-// TODO: bring in IdReplacements
 const buildScopeParams = (existingNodesMetdata: NodesMetadata, newActionNodes: string[]): PasteScopeParams => {
   // temporary mapping to make sure we don't have any repeat nodeIds from both the existing workflow nodes and new paste nodes
-  const allActionNames: Record<string, string> = Object.fromEntries(Object.keys(existingNodesMetdata).map((key) => [key, key]));
+  const allActionNames: Record<string, string> = Object.fromEntries(
+    Object.keys(existingNodesMetdata).map((key) => {
+      return [key, key];
+    })
+  );
   const pasteActionNames: string[] = [];
   const renamedNodes: Record<string, string> = {};
 
@@ -209,4 +252,14 @@ const buildScopeParams = (existingNodesMetdata: NodesMetadata, newActionNodes: s
   });
 
   return { pasteActionNames, renamedNodes };
+};
+
+const filterRecordByArray = (record: Record<string, NodeTokens>, upstreamNodeIds: string[]) => {
+  const filteredRecord: Record<string, NodeTokens> = {};
+  for (const key of upstreamNodeIds) {
+    if (key in record) {
+      filteredRecord[key] = record[key];
+    }
+  }
+  return filteredRecord;
 };

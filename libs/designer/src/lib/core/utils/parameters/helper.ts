@@ -3,7 +3,7 @@ import type { CustomCodeFileNameMapping } from '../../..';
 import constants from '../../../common/constants';
 import type { ConnectionReference, WorkflowParameter } from '../../../common/models/workflow';
 import { getReactQueryClient } from '../../ReactQueryProvider';
-import type { NodeDataWithOperationMetadata } from '../../actions/bjsworkflow/operationdeserializer';
+import type { NodeDataWithOperationMetadata, PasteScopeAdditionalParams } from '../../actions/bjsworkflow/operationdeserializer';
 import type { Settings } from '../../actions/bjsworkflow/settings';
 import { getConnectorWithSwagger } from '../../queries/connections';
 import type { CustomCodeState } from '../../state/customcode/customcodeInterfaces';
@@ -27,7 +27,7 @@ import {
   updateNodeParameters,
 } from '../../state/operation/operationMetadataSlice';
 import type { VariableDeclaration } from '../../state/tokens/tokensSlice';
-import type { NodesMetadata, Operations as Actions } from '../../state/workflow/workflowInterfaces';
+import { type NodesMetadata, type Operations as Actions, WorkflowKind } from '../../state/workflow/workflowInterfaces';
 import type { WorkflowParameterDefinition } from '../../state/workflowparameters/workflowparametersSlice';
 import type { RootState } from '../../store';
 import { getAllParentsForNode, getFirstParentOfType, getTriggerNodeId } from '../graph';
@@ -397,49 +397,7 @@ export function getParameterEditorProps(
   const { dynamicValues, type, itemSchema, visibility, value, enum: schemaEnum, format } = parameter;
   let { editor, editorOptions, schema } = parameter;
   let editorViewModel: any;
-  if (!editor) {
-    if (format === constants.EDITOR.HTML) {
-      editor = constants.EDITOR.HTML;
-    } else if (type === constants.SWAGGER.TYPE.ARRAY && !!itemSchema && !equals(visibility, Visibility.Internal)) {
-      editor = constants.EDITOR.ARRAY;
-      editorViewModel = { ...toArrayViewModelSchema(itemSchema), uncastedValue: parameterValue };
-      schema = { ...schema, ...{ 'x-ms-editor': editor } };
-    } else if (
-      (schemaEnum || schema?.enum || (schemaEnum && schema?.[ExtensionProperties.CustomEnum])) &&
-      !equals(visibility, Visibility.Internal)
-    ) {
-      editor = constants.EDITOR.COMBOBOX;
-      schema = { ...schema, ...{ 'x-ms-editor': editor } };
-
-      let schemaEnumOptions: ComboboxItem[];
-      if (schema[ExtensionProperties.CustomEnum]) {
-        schemaEnumOptions = schema[ExtensionProperties.CustomEnum];
-      } else if (schemaEnum) {
-        schemaEnumOptions = schemaEnum.map((enumItem) => {
-          return {
-            ...enumItem,
-            value: enumItem.value?.toString(),
-            key: enumItem.displayName,
-          };
-        });
-      } else {
-        schemaEnumOptions = schema.enum.map(
-          (val: string): ComboboxItem => ({
-            displayName: val,
-            key: val,
-            value: val,
-          })
-        );
-      }
-
-      editorOptions = {
-        ...editorOptions,
-        options: schemaEnumOptions,
-      };
-    } else {
-      editorOptions = undefined;
-    }
-  } else if (editor === constants.EDITOR.DICTIONARY) {
+  if (editor === constants.EDITOR.DICTIONARY) {
     editorViewModel = toDictionaryViewModel(value);
   } else if (editor === constants.EDITOR.TABLE) {
     editorViewModel = toTableViewModel(value, editorOptions);
@@ -499,6 +457,48 @@ export function getParameterEditorProps(
     };
   } else if (editor === constants.EDITOR.FLOATINGACTIONMENU && editorOptions?.menuKind === FloatingActionMenuKind.outputs) {
     editorViewModel = toFloatingActionMenuOutputsViewModel(value);
+  } else if (!editor) {
+    if (format === constants.EDITOR.HTML) {
+      editor = constants.EDITOR.HTML;
+    } else if (type === constants.SWAGGER.TYPE.ARRAY && !!itemSchema && !equals(visibility, Visibility.Internal)) {
+      editor = constants.EDITOR.ARRAY;
+      editorViewModel = { ...toArrayViewModelSchema(itemSchema), uncastedValue: parameterValue };
+      schema = { ...schema, ...{ 'x-ms-editor': editor } };
+    } else if (
+      (schemaEnum || schema?.enum || (schemaEnum && schema?.[ExtensionProperties.CustomEnum])) &&
+      !equals(visibility, Visibility.Internal)
+    ) {
+      editor = constants.EDITOR.COMBOBOX;
+      schema = { ...schema, ...{ 'x-ms-editor': editor } };
+
+      let schemaEnumOptions: ComboboxItem[];
+      if (schema[ExtensionProperties.CustomEnum]) {
+        schemaEnumOptions = schema[ExtensionProperties.CustomEnum];
+      } else if (schemaEnum) {
+        schemaEnumOptions = schemaEnum.map((enumItem) => {
+          return {
+            ...enumItem,
+            value: enumItem.value?.toString(),
+            key: enumItem.displayName,
+          };
+        });
+      } else {
+        schemaEnumOptions = schema.enum.map(
+          (val: string): ComboboxItem => ({
+            displayName: val,
+            key: val,
+            value: val,
+          })
+        );
+      }
+
+      editorOptions = {
+        ...editorOptions,
+        options: schemaEnumOptions,
+      };
+    } else {
+      editorOptions = undefined;
+    }
   }
 
   return { editor, editorOptions, editorViewModel, schema };
@@ -1273,7 +1273,7 @@ export function loadParameterValuesArrayFromDefault(inputParameters: InputParame
   const workflowKind = queryClient.getQueryData(['workflowKind']);
   for (const inputParameter of inputParameters) {
     if (inputParameter.default !== undefined) {
-      if (inputParameter.default === 'PT1H' && workflowKind === 'stateless') {
+      if (inputParameter.default === 'PT1H' && workflowKind === WorkflowKind.STATELESS) {
         inputParameter.value = inputParameter.schema?.['x-ms-stateless-default'] ?? inputParameter.default;
       } else {
         inputParameter.value = inputParameter.default;
@@ -3011,6 +3011,61 @@ export const flattenAndUpdateViewModel = (
     : replacedItems;
 };
 
+export const updateScopePasteTokenMetadata = (
+  valueSegment: ValueSegment,
+  pasteParams: PasteScopeAdditionalParams
+): { updatedSegment: ValueSegment; error: string } => {
+  let error = '';
+  let token = valueSegment?.token;
+  if (token) {
+    token.actionName = token?.actionName ?? pasteParams.rootTriggerId;
+  }
+
+  if (token?.actionName) {
+    // first check the nodes within this graph
+    if (pasteParams.renamedNodes[token.actionName]) {
+      const newActionId = pasteParams.renamedNodes[token.actionName];
+      if (token.arrayDetails?.loopSource) {
+        token.arrayDetails.loopSource = newActionId;
+        token.tokenType = TokenType.ITEM;
+      }
+      token.value = token.value?.replaceAll(`('${token.actionName}')`, `('${newActionId}')`);
+      valueSegment.value = token.value ?? '';
+      token.actionName = newActionId;
+    }
+    // then check the nodes from the parent graph
+    else {
+      const existingOutputTokens = pasteParams.existingOutputTokens;
+      const outputTokens = existingOutputTokens[token.actionName];
+      const existingTokenInfo = outputTokens?.tokens.find((tokenInfo) => tokenInfo.key === token?.key);
+      // if there's an exact token match, we'll use the existing token info
+      if (existingTokenInfo) {
+        token = { ...token, ...existingTokenInfo, tokenType: TokenType.OUTPUTS };
+      }
+      // otherwise it may be a item output token, so we'll take the icon and brandColor from the outputInfo
+      else if (outputTokens) {
+        token = {
+          ...token,
+          icon: outputTokens.tokens?.[0].icon,
+          brandColor: outputTokens.tokens?.[0].brandColor,
+        };
+      }
+      // If there is no existing outputs with the same name, then they are pasting a token that doesn't exist in the current workflow
+      // we will use a default token when it doesn't exist
+      else {
+        const intl = getIntl();
+        error = intl.formatMessage({
+          defaultMessage: 'This operation contains a token that does not exist in the current workflow.',
+          id: 'k9Kt9P',
+          description: 'Error message to show when pasting a token that does not exist in the current workflow',
+        });
+      }
+    }
+    valueSegment.token = token;
+  }
+  return { updatedSegment: valueSegment, error: error };
+};
+
 export function updateTokenMetadata(
   valueSegment: ValueSegment,
   repetitionContext: RepetitionContext,
@@ -3148,9 +3203,9 @@ export function updateTokenMetadata(
     token.title = getTitleFromTokenName(name, arrayDetails?.parentArrayName ?? '', parentArrayOutput?.title);
   }
 
-  token.icon = iconUri;
-  token.brandColor = brandColor;
-  token.isSecure = isSecure;
+  token.icon = iconUri ?? token.icon;
+  token.brandColor = brandColor ?? token.brandColor;
+  token.isSecure = isSecure ?? token.isSecure;
 
   return valueSegment;
 }

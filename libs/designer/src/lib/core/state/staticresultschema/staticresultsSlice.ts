@@ -30,10 +30,12 @@ export const staticResultsSlice = createSlice({
       delete state.properties[id];
     },
     addResultSchema: (state, action: PayloadAction<StaticResultsSchemaUpdateEvent>) => {
-      state.schemas[action.payload.id] = action.payload.schema;
+      const { id, schema } = action.payload;
+      state.schemas[id] = schema;
     },
     updateStaticResultProperties: (state, action: PayloadAction<{ name: string; properties: any }>) => {
-      state.properties[action.payload.name] = action.payload.properties;
+      const { name, properties } = action.payload;
+      state.properties[name] = properties;
     },
   },
   extraReducers: (builder) => {

@@ -20,6 +20,7 @@ import {
 } from '@microsoft/logic-apps-shared';
 import { getDurationStringPanelMode } from '@microsoft/designer-ui';
 import type { LogicAppsV2, SubgraphType } from '@microsoft/logic-apps-shared';
+import type { PasteScopeParams } from '../../actions/bjsworkflow/copypaste';
 
 const hasMultipleTriggers = (definition: LogicAppsV2.WorkflowDefinition): boolean => {
   return definition && definition.triggers ? Object.keys(definition.triggers).length > 1 : false;
@@ -126,12 +127,6 @@ const isSwitchAction = (action: LogicAppsV2.ActionDefinition): action is LogicAp
 
 const isUntilAction = (action: LogicAppsV2.ActionDefinition) => action?.type?.toLowerCase() === 'until';
 
-export interface PasteScopeParams {
-  pasteActionNames: string[];
-  // Mapping of nodes added in paste with oldId as key and newId as value
-  renamedNodes: Record<string, string>;
-}
-
 export const buildGraphFromActions = (
   actions: Record<string, LogicAppsV2.ActionDefinition>,
   graphId: string,
@@ -196,8 +191,14 @@ export const buildGraphFromActions = (
     // Assign root prop
     nodesMetadata[actionName] = { ...nodesMetadata[actionName], ...(isRoot && { isRoot: true }) };
     if (!isRoot) {
-      for (const [runAfterAction] of Object.entries(action.runAfter ?? {})) {
-        edges.push(createWorkflowEdge(pasteScopeParams?.renamedNodes[runAfterAction] || runAfterAction, actionName));
+      for (let [runAfterAction, runAfterValue] of Object.entries(action.runAfter ?? {})) {
+        // update the run after with the updated ids
+        if (pasteScopeParams && action.runAfter) {
+          delete action.runAfter[runAfterAction];
+          runAfterAction = pasteScopeParams.renamedNodes[runAfterAction] ?? runAfterAction;
+          action.runAfter[runAfterAction] = runAfterValue;
+        }
+        edges.push(createWorkflowEdge(runAfterAction, actionName));
       }
     }
 
