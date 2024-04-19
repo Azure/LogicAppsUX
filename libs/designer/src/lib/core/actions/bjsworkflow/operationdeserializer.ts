@@ -227,7 +227,7 @@ export const initializeOperationDetailsForManifest = async (
     const schema = staticResultService.getOperationResultSchema(connectorId, operationId, parsedManifest);
     schema.then((schema) => {
       if (schema) {
-        dispatch(addResultSchema({ id: `${connectorId}-${operationId}`, schema }));
+        dispatch(addResultSchema({ id: `${connectorId}-${operationId}`, schema: schema }));
       }
     });
 
@@ -530,7 +530,7 @@ const initializeRepetitionInfos = async (
   );
 };
 
-export const initializeDynamicDataInNodes = async (getState: () => RootState, dispatch: Dispatch): Promise<void> => {
+export const updateDynamicDataInNodes = async (getState: () => RootState, dispatch: Dispatch): Promise<void> => {
   const rootState = getState();
   const {
     workflow: { nodesMetadata, operations },
@@ -541,32 +541,31 @@ export const initializeDynamicDataInNodes = async (getState: () => RootState, di
   const allVariables = getAllVariables(variables);
   for (const [nodeId, operation] of Object.entries(operations)) {
     if (nodeId === Constants.NODE.TYPE.PLACEHOLDER_TRIGGER) continue;
-    if (getRecordEntry(errors, nodeId)?.[ErrorLevel.Critical]) continue;
+    if (!getRecordEntry(errors, nodeId)?.[ErrorLevel.Critical]) {
+      const nodeDependencies = getRecordEntry(dependencies, nodeId);
+      const nodeInputs = getRecordEntry(inputParameters, nodeId);
+      const nodeSettings = getRecordEntry(settings, nodeId);
+      const isTrigger = isRootNodeInGraph(nodeId, 'root', nodesMetadata);
+      const nodeOperationInfo = getRecordEntry(operationInfo, nodeId);
+      const connectionReference = getConnectionReference(connections, nodeId);
 
-    const nodeOperationInfo = getRecordEntry(operationInfo, nodeId);
-    const nodeDependencies = getRecordEntry(dependencies, nodeId);
-    const nodeInputs = getRecordEntry(inputParameters, nodeId);
-    const nodeSettings = getRecordEntry(settings, nodeId);
-    if (!nodeOperationInfo || !nodeDependencies || !nodeInputs || !nodeSettings) continue;
-
-    const isTrigger = isRootNodeInGraph(nodeId, 'root', nodesMetadata);
-    const connectionReference = getConnectionReference(connections, nodeId);
-
-    updateDynamicDataForValidConnection(
-      nodeId,
-      isTrigger,
-      nodeOperationInfo,
-      connectionReference,
-      nodeDependencies,
-      nodeInputs,
-      nodeSettings,
-      allVariables,
-      dispatch,
-      getState,
-      operation
-    );
+      if (nodeOperationInfo && nodeDependencies && nodeInputs && nodeSettings) {
+        updateDynamicDataForValidConnection(
+          nodeId,
+          isTrigger,
+          nodeOperationInfo,
+          connectionReference,
+          nodeDependencies,
+          nodeInputs,
+          nodeSettings,
+          allVariables,
+          dispatch,
+          getState,
+          operation
+        );
+      }
+    }
   }
-
   dispatch(updateDynamicDataLoadStatus(true));
 };
 

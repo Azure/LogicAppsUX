@@ -28,7 +28,6 @@ export interface WorkflowLoadingState {
     displayRuntimeInfo: boolean; // show info about where the action is run(i.e. InApp/Shared/Custom)
     forceEnableSplitOn?: boolean; // force enable split on for all actions
   };
-  showPerformanceDebug?: boolean;
 }
 
 const initialState: WorkflowLoadingState = {
@@ -50,7 +49,6 @@ const initialState: WorkflowLoadingState = {
   hostOptions: {
     displayRuntimeInfo: true,
   },
-  showPerformanceDebug: false,
 };
 
 type WorkflowPayload = {
@@ -164,9 +162,6 @@ export const workflowLoadingSlice = createSlice({
     setHostOptions: (state, action: PayloadAction<Partial<WorkflowLoadingState['hostOptions']>>) => {
       state.hostOptions = { ...state.hostOptions, ...action.payload };
     },
-    setShowPerformanceDebug: (state, action: PayloadAction<boolean>) => {
-      state.showPerformanceDebug = action.payload;
-    },
   },
   extraReducers: (builder) => {
     builder.addCase(loadWorkflow.fulfilled, (state, action: PayloadAction<WorkflowPayload | null>) => {
@@ -204,7 +199,6 @@ export const {
   loadLastWorkflow,
   setAreCustomEditorsEnabled,
   setHostOptions,
-  setShowPerformanceDebug,
 } = workflowLoadingSlice.actions;
 
 export default workflowLoadingSlice.reducer;
