@@ -1,4 +1,16 @@
 # Logic Apps Designer
+### [4.3.1](https://github.com/Azure/LogicAppsUX/compare/v4.3.0...v4.3.1) (2024-04-19)
+
+
+### Features
+
+* **Data Mapper:** creating new data mapper library ([#4575](https://github.com/Azure/LogicAppsUX/issues/4575)) ([1bec11b](https://github.com/Azure/LogicAppsUX/commit/1bec11bb24832a396a246a7459e016cbc737b1ce))
+
+
+### Bug Fixes
+
+* **Designer:** Rolling back dynamic data optimization PR ([#4655](https://github.com/Azure/LogicAppsUX/issues/4655)) ([3c65a87](https://github.com/Azure/LogicAppsUX/commit/3c65a871e98a3a371b6571b45f0ac1143c0e0188))
+
 ## [4.3.0](https://github.com/Azure/LogicAppsUX/compare/v4.2.2...v4.3.0) (2024-04-10)
 
 
