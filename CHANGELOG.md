@@ -1,4 +1,11 @@
 # Logic Apps Designer
+## [4.8.0](https://github.com/Azure/LogicAppsUX/compare/v4.7.0...v4.8.0) (2024-04-19)
+
+
+### Features
+
+* **Designer:** Hide side panel when no node is selected and we are suppressing default node click functionality ([#4660](https://github.com/Azure/LogicAppsUX/issues/4660)) ([b37c660](https://github.com/Azure/LogicAppsUX/commit/b37c660b834b83b21f811f275ce25a4152d79fe8))
+
 ## [4.7.0](https://github.com/Azure/LogicAppsUX/compare/v4.6.0...v4.7.0) (2024-04-19)
 
 
