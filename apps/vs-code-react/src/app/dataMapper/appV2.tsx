@@ -1,4 +1,4 @@
-import { changeFetchedFunctions, changeSourceSchema, changeTargetSchema, changeUseExpandedFunctionCards } from '../../state/DataMapSlice';
+import { changeFetchedFunctions, changeSourceSchema, changeTargetSchema } from '../../state/DataMapSlice';
 import type { AppDispatch, RootState } from '../../state/store';
 import { VSCodeContext } from '../../webviewCommunication';
 import {
@@ -10,18 +10,13 @@ import {
   defaultDataMapperApiServiceOptions,
   getFunctions,
   getSelectedSchema,
-} from '@microsoft/logic-apps-data-mapper';
+} from '@microsoft/logic-apps-data-mapper-v2';
 import { getTheme, useThemeObserver } from '@microsoft/logic-apps-designer';
-import type { Theme, SchemaType } from '@microsoft/logic-apps-shared';
+import type { Theme } from '@microsoft/logic-apps-shared';
 import type { MessageToVsix } from '@microsoft/vscode-extension-logic-apps';
 import { ExtensionCommand } from '@microsoft/vscode-extension-logic-apps';
 import { useCallback, useContext, useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-
-interface SchemaFile {
-  path: string;
-  type: SchemaType;
-}
 
 export const DataMapperAppV2 = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -38,7 +33,6 @@ export const DataMapperAppV2 = () => {
   const schemaFileList = useSelector((state: RootState) => state.dataMapDataLoader.schemaFileList);
   const customXsltPathsList = useSelector((state: RootState) => state.dataMapDataLoader.customXsltPathsList);
   const fetchedFunctions = useSelector((state: RootState) => state.dataMapDataLoader.fetchedFunctions);
-  const useExpandedFunctionCards = useSelector((state: RootState) => state.dataMapDataLoader.useExpandedFunctionCards);
 
   const runtimePort = useSelector((state: RootState) => state.dataMapDataLoader.runtimePort);
 
@@ -56,12 +50,12 @@ export const DataMapperAppV2 = () => {
     [vscode]
   );
 
-  const addSchemaFromFile = (selectedSchemaFile: SchemaFile) => {
-    sendMsgToVsix({
-      command: ExtensionCommand.addSchemaFromFile,
-      data: { path: selectedSchemaFile.path, type: selectedSchemaFile.type as SchemaType },
-    });
-  };
+  // const addSchemaFromFile = (selectedSchemaFile: SchemaFile) => {
+  //   sendMsgToVsix({
+  //     command: ExtensionCommand.addSchemaFromFile,
+  //     data: { path: selectedSchemaFile.path, type: selectedSchemaFile.type as SchemaType },
+  //   });
+  // };
 
   const readLocalSchemaFileOptions = useCallback(() => {
     sendMsgToVsix({
@@ -105,10 +99,6 @@ export const DataMapperAppV2 = () => {
       command: ExtensionCommand.setIsMapStateDirty,
       data: isMapStateDirty,
     });
-  };
-
-  const setFunctionDisplayExpanded = (isFunctionDisplaySimple: boolean) => {
-    dispatch(changeUseExpandedFunctionCards(isFunctionDisplaySimple));
   };
 
   const handleRscLoadError = useCallback(
@@ -214,12 +204,10 @@ export const DataMapperAppV2 = () => {
             saveMapDefinitionCall={saveMapDefinitionCall}
             saveXsltCall={saveXsltCall}
             saveDraftStateCall={saveDraftDataMapDefinition}
-            addSchemaFromFile={addSchemaFromFile}
+            // addSchemaFromFile={addSchemaFromFile}
             readCurrentSchemaOptions={readLocalSchemaFileOptions}
             readCurrentCustomXsltPathOptions={readLocalxsltFileOptions}
             setIsMapStateDirty={setIsMapStateDirty}
-            setFunctionDisplayExpanded={setFunctionDisplayExpanded}
-            useExpandedFunctionCards={useExpandedFunctionCards}
           />
         </div>
       </DataMapDataProvider>

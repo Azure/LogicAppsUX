@@ -420,7 +420,7 @@ export default class DataMapperPanel {
   }
 
   public getConfigurationSetting(configSetting: string) {
-    const azureDataMapperConfig = workspace.getConfiguration('azureDataMapper');
+    const azureDataMapperConfig = workspace.getConfiguration('azureLogicAppsStandard');
     const configValue = azureDataMapperConfig.get<boolean>(configSetting) ?? true;
     this.sendMsgToWebview({
       command: ExtensionCommand.getConfigurationSetting,
@@ -429,7 +429,7 @@ export default class DataMapperPanel {
   }
 
   public getDataMapperVersion() {
-    const azureDataMapperConfig = workspace.getConfiguration('azureDataMapper');
+    const azureDataMapperConfig = workspace.getConfiguration('azureLogicAppsStandard');
     //TODO - Elaina: replace 1 with a constant value of defaultDataMapperVersion
     const configValue = azureDataMapperConfig.get<number>('dataMapperVersion') ?? 1;
     this.sendMsgToWebview({

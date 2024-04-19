@@ -772,7 +772,8 @@
             "enumDescriptions": [
               "Version 1",
               "Version 2"
-            ]
+            ],
+            "default": 1
           },
           "azureLogicAppsStandard.deploySubpath": {
             "scope": "resource",
