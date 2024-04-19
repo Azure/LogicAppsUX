@@ -40,10 +40,6 @@ export const useShowConnectionsPanel = () => {
   return useSelector((state: RootState) => state.designerOptions?.showConnectionsPanel ?? false);
 };
 
-export const useShowPerformanceDebug = () => {
-  return useSelector((state: RootState) => state.designerOptions.showPerformanceDebug ?? false);
-};
-
 export const useAreDesignerOptionsInitialized = () => {
   return useSelector((state: RootState) => state.designerOptions?.designerOptionsInitialized ?? false);
 };

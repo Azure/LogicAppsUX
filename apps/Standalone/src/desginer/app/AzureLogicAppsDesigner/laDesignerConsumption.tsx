@@ -67,7 +67,6 @@ const DesignerEditorConsumption = () => {
     showChatBot,
     hostOptions,
     showConnectionsPanel,
-    showPerformanceDebug,
     language,
   } = useSelector((state: RootState) => state.workflowLoader);
 
@@ -215,7 +214,6 @@ const DesignerEditorConsumption = () => {
             ...hostOptions,
             recurrenceInterval: Constants.RECURRENCE_OPTIONS.CONSUMPTION,
           },
-          showPerformanceDebug,
         }}
       >
         {workflow?.definition ? (
@@ -466,8 +464,8 @@ const getDesignerServices = (
     functionService,
     runService,
     hostService,
-    chatbotService,
     customCodeService,
+    chatbotService,
   };
 };
 
