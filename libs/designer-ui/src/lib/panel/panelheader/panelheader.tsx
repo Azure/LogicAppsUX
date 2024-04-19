@@ -94,7 +94,7 @@ export const PanelHeader = ({
   const isRight = headerLocation === PanelLocation.Right;
 
   const noNodeOnCardLevel = noNodeSelected && panelScope === PanelScope.CardLevel;
-  const shouldHideCollapseButton = noNodeOnCardLevel && suppressDefaultNodeSelectFunctionality;
+  const shouldHideCollapseButton = isCollapsed && suppressDefaultNodeSelectFunctionality;
 
   // collapsed -> loading -> connector icon -> error -> backup loading
   const iconComponent = useMemo(
