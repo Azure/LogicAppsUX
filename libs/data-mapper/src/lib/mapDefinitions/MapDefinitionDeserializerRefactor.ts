@@ -1,3 +1,4 @@
+// biome-ignore-disable lint/style/useCollapsedElseIf
 import { reservedMapDefinitionKeysArray } from "../constants/MapDefinitionConstants";
 import { targetPrefix } from "../constants/ReactFlowConstants";
 import type { FunctionData } from "../models";
@@ -222,39 +223,6 @@ export class MapDefinitionDeserializerRefactor {
         });
       } else { // custom value or index
         this.handleSingleValue(key, targetNode, connections);
-        // if (key.startsWith("$")) {
-        //   // index
-        //   const indexFnKey = this._createdNodes[key];
-        //   const indexFn = connections[indexFnKey];
-        //   if (indexFn) {
-        //     applyConnectionValue(connections, {
-        //       targetNode: targetNode,
-        //       targetNodeReactFlowKey: this.getTargetKey(targetNode),
-        //       findInputSlot: true,
-        //       input: {
-        //         reactFlowKey: indexFn.self.reactFlowKey,
-        //         node: indexFn.self.node,
-        //       },
-        //     });
-        //   }
-        // } else if (key.includes("[")) {
-        //   // direct access or index
-        //   const directAccessFunction =
-        //     amendSourceKeyForDirectAccessIfNeeded(key);
-        //   this.handleSingleValueOrFunction(
-        //     directAccessFunction[0],
-        //     undefined,
-        //     targetNode,
-        //     connections
-        //   );
-        // } else {
-        //   applyConnectionValue(connections, {
-        //     targetNode: targetNode,
-        //     targetNodeReactFlowKey: this.getTargetKey(targetNode),
-        //     findInputSlot: true,
-        //     input: key,
-        //   });
-        // }
       }
     } else {
       applyConnectionValue(connections, {
@@ -299,7 +267,7 @@ export class MapDefinitionDeserializerRefactor {
 
           applyConnectionValue(connections, {
             targetNode: targetNode,
-            targetNodeReactFlowKey: addTargetReactFlowPrefix(targetNode.key),
+            targetNodeReactFlowKey: this.getTargetKey(targetNode),
             findInputSlot: true,
             input: {
               reactFlowKey: key,
@@ -395,7 +363,6 @@ export class MapDefinitionDeserializerRefactor {
             connections
           );
         }
-        this._conditional = "";
       } else {
         // for statement
         this.processForStatement(
@@ -413,6 +380,7 @@ export class MapDefinitionDeserializerRefactor {
           true
         );
       });
+      this._conditional = "";
     }
   };
 
@@ -431,13 +399,13 @@ export class MapDefinitionDeserializerRefactor {
     const funcKey = createReactFlowFunctionKey(func);
     func.key = funcKey;
 
+    this._conditional = funcKey;
     this.handleSingleValueOrFunction(
       "",
       functionMetadata.inputs[0],
       func,
       connections
     );
-    this._conditional = funcKey;
   };
   private forHasIndex = (forSrc: ParseFunc) => forSrc.inputs.length > 1;
 
@@ -556,24 +524,22 @@ export class MapDefinitionDeserializerRefactor {
       ) as SchemaNodeExtended;
       applyConnectionValue(connections, {
         targetNode: targetNode,
-        targetNodeReactFlowKey: addTargetReactFlowPrefix(targetNode.key),
+        targetNodeReactFlowKey: this.getTargetKey(targetNode),
         findInputSlot: true,
         input: {
           reactFlowKey: addSourceReactFlowPrefix(loopNode.key),
           node: loopNode,
         },
       });
-    }
-    if (key.startsWith('"') || parseInt(key)) {
+    } else if (key.startsWith('"') || parseInt(key)) {
       // custom value danielle custom value can also be a number without quotes
       applyConnectionValue(connections, {
         targetNode: targetNode,
-        targetNodeReactFlowKey: addTargetReactFlowPrefix(targetNode.key),
+        targetNodeReactFlowKey: this.getTargetKey(targetNode),
         findInputSlot: true,
         input: key,
       });
-    }
-    if (key.startsWith("$")) {
+    } else if (key.startsWith("$")) {
       // custom value
       const indexFnKey = this._createdNodes[key];
       const indexFn = connections[indexFnKey];
@@ -593,7 +559,7 @@ export class MapDefinitionDeserializerRefactor {
     } else {
       applyConnectionValue(connections, {
         targetNode: targetNode,
-        targetNodeReactFlowKey: addTargetReactFlowPrefix(targetNode.key),
+        targetNodeReactFlowKey: this.getTargetKey(targetNode),
         findInputSlot: true,
         input: key,
       });
