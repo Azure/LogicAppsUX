@@ -156,6 +156,43 @@ export async function getDynamicSchema(
   const { parameter, definition } = dependencyInfo;
   const emptySchema = { ...parameter?.schema };
   try {
+    if (isDynamicPropertiesExtension(definition)) {
+      const { dynamicState, parameters } = definition.extension;
+      const operationParameters = getParameterValuesForDynamicInvoke(parameters, nodeInputs, idReplacements, workflowParameters);
+      let schema: OpenAPIV2.SchemaObject;
+      switch (dynamicState?.extension?.builtInOperation) {
+        case 'getVariableSchema': {
+          schema = {
+            type: getSwaggerTypeFromVariableType(operationParameters['type']?.toLowerCase() ?? 'boolean'),
+            enum: getSwaggerEnumFromVariableType(operationParameters['type']?.toLowerCase() ?? 'boolean'),
+          };
+
+          break;
+        }
+        case 'getVariable': {
+          const variable = variables.find((variable) => variable.name === operationParameters['name']);
+          schema = variable
+            ? {
+                type: getSwaggerTypeFromVariableType(variable.type?.toLowerCase()),
+                enum: getSwaggerEnumFromVariableType(variable.type?.toLowerCase()),
+              }
+            : {};
+          break;
+        }
+        default: {
+          schema = await getDynamicSchemaProperties(
+            connectionReference?.connection.id,
+            operationInfo.connectorId,
+            operationInfo.operationId,
+            operationParameters,
+            dynamicState
+          );
+          break;
+        }
+      }
+
+      return schema ? { ...emptySchema, ...schema } : schema;
+    }
     const queryClient = getReactQueryClient();
     const outputSchema = await queryClient.fetchQuery(
       [
@@ -166,44 +203,6 @@ export async function getDynamicSchema(
         dependencyInfo.parameter?.key,
       ],
       async () => {
-        if (isDynamicPropertiesExtension(definition)) {
-          const { dynamicState, parameters } = definition.extension;
-          const operationParameters = getParameterValuesForDynamicInvoke(parameters, nodeInputs, idReplacements, workflowParameters);
-          let schema: OpenAPIV2.SchemaObject;
-
-          switch (dynamicState?.extension?.builtInOperation) {
-            case 'getVariableSchema': {
-              schema = {
-                type: getSwaggerTypeFromVariableType(operationParameters['type']?.toLowerCase() ?? 'boolean'),
-                enum: getSwaggerEnumFromVariableType(operationParameters['type']?.toLowerCase() ?? 'boolean'),
-              };
-
-              break;
-            }
-            case 'getVariable': {
-              const variable = variables.find((variable) => variable.name === operationParameters['name']);
-              schema = variable
-                ? {
-                    type: getSwaggerTypeFromVariableType(variable.type?.toLowerCase()),
-                    enum: getSwaggerEnumFromVariableType(variable.type?.toLowerCase()),
-                  }
-                : {};
-              break;
-            }
-            default: {
-              schema = await getDynamicSchemaProperties(
-                connectionReference?.connection.id,
-                operationInfo.connectorId,
-                operationInfo.operationId,
-                operationParameters,
-                dynamicState
-              );
-              break;
-            }
-          }
-
-          return schema ? { ...emptySchema, ...schema } : schema;
-        }
         const { connectorId } = operationInfo;
         const { parameters, operationId } = definition.extension;
         const { connector, parsedSwagger } = await getConnectorWithSwagger(connectorId);
