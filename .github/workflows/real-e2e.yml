@@ -113,7 +113,7 @@ jobs:
   notify:
     name: Notify failed build
     needs: run-tests
-    if: failure()
+    if: ${{ always() && needs.run-tests.result == 'failure' }}
     runs-on: ubuntu-latest
     permissions:
       issues: write
