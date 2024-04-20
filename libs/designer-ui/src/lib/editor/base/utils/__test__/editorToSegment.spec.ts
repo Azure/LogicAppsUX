@@ -57,6 +57,31 @@ describe('lib/editor/base/utils/editorToSegment', () => {
       },
       value: "body('Create_new_folder')?['{Link}']",
     });
+    const getOneDriveFileContentToken = (): SimplifiedValueSegment => ({
+      type: 'token',
+      token: {
+        key: 'body.$',
+        name: 'key-body-output',
+        type: 'string',
+        title: 'File content',
+        brandColor: '#0078D4',
+        icon: 'https://connectoricons-prod.azureedge.net/releases/v1.0.1669/1.0.1669.3522/onedriveforbusiness/icon.png',
+        description: 'The content of the file.',
+        tokenType: 'outputs',
+        required: true,
+        format: 'binary',
+        isSecure: false,
+        source: 'body',
+        schema: {
+          format: 'binary',
+          description: 'The content of the file.',
+          type: 'string',
+          'x-ms-summary': 'File content',
+        },
+        value: "body('Get_file_content')",
+      },
+      value: "body('Get_file_content')",
+    });
 
     it('does not parse segments into tokens if tokensEnabled is not set', () => {
       const nodeMap = new Map<string, ValueSegment>();
@@ -164,6 +189,106 @@ describe('lib/editor/base/utils/editorToSegment', () => {
       const nodeMap = new Map<string, ValueSegment>();
 
       const segments = convertStringToSegments(input, nodeMap, { tokensEnabled: true });
+      const simplifiedSegments = segments.map(
+        (segment): SimplifiedValueSegment => ({
+          // Remove IDs for easier comparison.
+          token: segment.token,
+          type: segment.type,
+          value: segment.value,
+        })
+      );
+
+      expect(simplifiedSegments).toEqual(expectedTokens);
+    });
+
+    it.each<[string, SimplifiedValueSegment[]]>([
+      // Single token in quotes - removes quotes
+      [
+        `Text before "@{variables('abc')}" text after`,
+        [
+          { type: ValueSegmentType.LITERAL, value: 'Text before ' },
+          getInitializeVariableAbcToken(),
+          { type: ValueSegmentType.LITERAL, value: ' text after' },
+        ],
+      ],
+      // Quotes around words but next to single token - do not remove quotes
+      [
+        `Text "before"@{variables('abc')}"text" after`,
+        [
+          { type: ValueSegmentType.LITERAL, value: 'Text "before"' },
+          getInitializeVariableAbcToken(),
+          { type: ValueSegmentType.LITERAL, value: '"text" after' },
+        ],
+      ],
+      // Single token in quotes in array editor - remove quotes
+      [
+        `[{"Name": "sampleName", "ContentBytes": "@{body('Get_file_content')}"}]`,
+        [
+          { type: ValueSegmentType.LITERAL, value: `[{"Name": "sampleName", "ContentBytes": ` },
+          getOneDriveFileContentToken(),
+          { type: ValueSegmentType.LITERAL, value: `}]` },
+        ],
+      ],
+      [
+        `[{"Name": "sample\\\"Name", "ContentBytes": "@{body('Get_file_content')}"}]`,
+        [
+          { type: ValueSegmentType.LITERAL, value: `[{"Name": "sample\\\"Name", "ContentBytes": ` },
+          getOneDriveFileContentToken(),
+          { type: ValueSegmentType.LITERAL, value: `}]` },
+        ],
+      ],
+      // Two tokens in quotes in parameter - keep quotes
+      [
+        `[{"Name": "sampleName", "ContentBytes": "@{body('Get_file_content')}@{body('Get_file_content')}"}]`,
+        [
+          { type: ValueSegmentType.LITERAL, value: `[{"Name": "sampleName", "ContentBytes": "` },
+          getOneDriveFileContentToken(),
+          getOneDriveFileContentToken(),
+          { type: ValueSegmentType.LITERAL, value: `"}]` },
+        ],
+      ],
+      // remove quotes param is not set - should not remove quotes
+    ])('removes double quotes around single tokens if remove quotes parameter is true', (input, expectedTokens) => {
+      const nodeMap = new Map<string, ValueSegment>();
+      nodeMap.set(`@{variables('abc')}`, { id: '', ...getInitializeVariableAbcToken() });
+      nodeMap.set(`@{body('Get_file_content')}`, { id: '', ...getOneDriveFileContentToken() });
+
+      const segments = convertStringToSegments(input, nodeMap, { tokensEnabled: true, removeSingleTokenQuotes: true });
+      const simplifiedSegments = segments.map(
+        (segment): SimplifiedValueSegment => ({
+          // Remove IDs for easier comparison.
+          token: segment.token,
+          type: segment.type,
+          value: segment.value,
+        })
+      );
+
+      expect(simplifiedSegments).toEqual(expectedTokens);
+    });
+
+    it.each<[string, SimplifiedValueSegment[]]>([
+      [
+        `Text before "@{variables('abc')}" text after`,
+        [
+          { type: ValueSegmentType.LITERAL, value: 'Text before "' },
+          getInitializeVariableAbcToken(),
+          { type: ValueSegmentType.LITERAL, value: '" text after' },
+        ],
+      ],
+      [
+        `[{"Name": "sampleName", "ContentBytes": "@{body('Get_file_content')}"}]`,
+        [
+          { type: ValueSegmentType.LITERAL, value: `[{"Name": "sampleName", "ContentBytes": "` },
+          getOneDriveFileContentToken(),
+          { type: ValueSegmentType.LITERAL, value: `"}]` },
+        ],
+      ],
+    ])('keep double quotes around single tokens if remove quotes parameter is false', (input, expectedTokens) => {
+      const nodeMap = new Map<string, ValueSegment>();
+      nodeMap.set(`@{variables('abc')}`, { id: '', ...getInitializeVariableAbcToken() });
+      nodeMap.set(`@{body('Get_file_content')}`, { id: '', ...getOneDriveFileContentToken() });
+
+      const segments = convertStringToSegments(input, nodeMap, { tokensEnabled: true, removeSingleTokenQuotes: false });
       const simplifiedSegments = segments.map(
         (segment): SimplifiedValueSegment => ({
           // Remove IDs for easier comparison.
