@@ -10,6 +10,7 @@ import { useLexicalNodeSelection } from '@lexical/react/useLexicalNodeSelection'
 import { mergeRegister } from '@lexical/utils';
 import { $getNodeByKey, BLUR_COMMAND, COMMAND_PRIORITY_EDITOR, FOCUS_COMMAND } from 'lexical';
 import type { NodeKey } from 'lexical';
+import type { TokenNode } from '../editor/base/nodes/tokenNode';
 import { useEffect, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 
@@ -60,7 +61,8 @@ export const InputToken: React.FC<InputTokenProps> = ({ value, brandColor, icon,
     if (nodeKey) {
       editor.getEditorState().read(() => {
         // if it is an expression token we'll open the token picker in update mode
-        if ($getNodeByKey(nodeKey)?.['__data']?.token?.tokenType === TokenType.FX && !readonly) {
+        const node: TokenNode | null = $getNodeByKey(nodeKey);
+        if (node?.['__data']?.token?.tokenType === TokenType.FX && !readonly) {
           editor.dispatchCommand(OPEN_TOKEN_PICKER, nodeKey);
         }
         // otherwise we'll select the token
