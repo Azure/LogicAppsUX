@@ -17,7 +17,6 @@ import {
   ConnectionType,
   getResourceName,
   getRecordEntry,
-  getObjectPropertyValue,
 } from '@microsoft/logic-apps-shared';
 import type { AssistedConnectionProps } from '@microsoft/designer-ui';
 import type {
@@ -109,7 +108,8 @@ export function getAssistedConnectionProps(connector: Connector, manifest?: Oper
       getSubResourceName,
       fetchSubResourcesCallback,
     };
-  } else if (manifest?.properties.connection?.type === ConnectionType.ApiManagement) {
+  }
+  if (manifest?.properties.connection?.type === ConnectionType.ApiManagement) {
     const apiInstancesCallback = () => ApiManagementService().fetchApiManagementInstances();
     const apisCallback = (apim?: any) => ApiManagementService().fetchApisInApiM(apim.id ?? '');
     const apimInstancesLoadingText = intl.formatMessage({
@@ -171,13 +171,14 @@ export async function getConnectionParametersForAzureConnection(
         },
         ...parameterValues,
       };
-    } else {
-      return {
-        function: { id: functionId },
-        triggerUrl,
-        ...parameterValues,
-      };
     }
+
+    return {
+      function: { id: functionId },
+      triggerUrl,
+      ...parameterValues,
+    };
+    // biome-ignore lint/style/noUselessElse: needed for future implementation
   } else if (connectionType === ConnectionType.ApiManagement) {
     // TODO - Need to find apps which have authentication set, check with Alex.
     const apimApiId = selectedSubResource?.id;

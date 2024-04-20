@@ -66,20 +66,18 @@ const convertRecurrenceToExpression = (
         { interval }
       );
     }
-  } else {
-    if (equals(frequency, constants.FREQUENCY.WEEK)) {
-      frequencyDesc = intl.formatMessage({
-        defaultMessage: 'every week',
-        id: 'DWd9vy',
-        description: 'Recurrence schedule description every week',
-      });
-    } else if (equals(frequency, constants.FREQUENCY.DAY)) {
-      frequencyDesc = intl.formatMessage({
-        defaultMessage: 'every day',
-        id: '0vfdFS',
-        description: 'Recurrence schedule description every day',
-      });
-    }
+  } else if (equals(frequency, constants.FREQUENCY.WEEK)) {
+    frequencyDesc = intl.formatMessage({
+      defaultMessage: 'every week',
+      id: 'DWd9vy',
+      description: 'Recurrence schedule description every week',
+    });
+  } else if (equals(frequency, constants.FREQUENCY.DAY)) {
+    frequencyDesc = intl.formatMessage({
+      defaultMessage: 'every day',
+      id: '0vfdFS',
+      description: 'Recurrence schedule description every day',
+    });
   }
   let onDays: string | undefined;
   if (frequencyDesc) {
@@ -169,11 +167,11 @@ function byISOOrder(a: string, b: string): number {
   const bOrdinal = getPropertyValue(ISO_DAY_ORDER, b);
   if (aOrdinal < bOrdinal) {
     return -1;
-  } else if (aOrdinal > bOrdinal) {
-    return 1;
-  } else {
-    return 0;
   }
+  if (aOrdinal > bOrdinal) {
+    return 1;
+  }
+  return 0;
 }
 
 function byNumber(a: number, b: number): number {
@@ -182,18 +180,20 @@ function byNumber(a: number, b: number): number {
 
   if (aNumber < bNumber) {
     return -1;
-  } else if (aNumber > bNumber) {
-    return 1;
-  } else {
-    return 0;
   }
+  if (aNumber > bNumber) {
+    return 1;
+  }
+  return 0;
 }
 
 const getMinuteValueFromDatetimeString = (value?: string): number | undefined => {
-  if (!value) return undefined;
+  if (!value) {
+    return undefined;
+  }
   let date: Date;
   const dateTimeInNumber = Date.parse(value);
-  if (!isNaN(dateTimeInNumber)) {
+  if (!Number.isNaN(dateTimeInNumber)) {
     date = new Date(dateTimeInNumber);
     return date.getMinutes();
   }

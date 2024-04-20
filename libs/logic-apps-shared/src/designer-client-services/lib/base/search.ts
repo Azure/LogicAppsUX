@@ -60,7 +60,9 @@ export abstract class BaseSearchService implements ISearchService {
     pageNumber = 0,
     pageSize = 2500
   ): Promise<{ value: any[]; hasMore: boolean }> {
-    if (this._isDev) return { value: [], hasMore: false };
+    if (this._isDev) {
+      return { value: [], hasMore: false };
+    }
 
     const { httpClient } = this.options;
 
@@ -85,7 +87,9 @@ export abstract class BaseSearchService implements ISearchService {
       try {
         const { nextLink, value: newValue } = await httpClient.get<ContinuationTokenResponse<any[]>>({ uri, queryParameters });
         value.push(...newValue);
-        if (nextLink) return await requestPage(nextLink, value);
+        if (nextLink) {
+          return await requestPage(nextLink, value);
+        }
         return value;
       } catch (error) {
         return value;
@@ -105,7 +109,9 @@ export abstract class BaseSearchService implements ISearchService {
     const {
       apiHubServiceDetails: { location, subscriptionId },
     } = this.options;
-    if (this._isDev) return Promise.resolve(azureOperationsResponse);
+    if (this._isDev) {
+      return Promise.resolve(azureOperationsResponse);
+    }
 
     const uri = `/subscriptions/${subscriptionId}/providers/Microsoft.Web/locations/${location}/apiOperations`;
     const queryParameters: QueryParameters = {
@@ -124,8 +130,10 @@ export abstract class BaseSearchService implements ISearchService {
       apiHubServiceDetails: { location, subscriptionId, apiVersion },
     } = this.options;
     if (this._isDev) {
-      if (page === 0) return Promise.resolve(azureOperationsResponse);
-      else return Promise.resolve([]);
+      if (page === 0) {
+        return Promise.resolve(azureOperationsResponse);
+      }
+      return Promise.resolve([]);
     }
 
     const uri = `/subscriptions/${subscriptionId}/providers/Microsoft.Web/locations/${location}/apiOperations`;
@@ -269,7 +277,9 @@ export abstract class BaseSearchService implements ISearchService {
     const {
       apiHubServiceDetails: { location, subscriptionId, apiVersion },
     } = this.options;
-    if (this._isDev) return Promise.resolve([]);
+    if (this._isDev) {
+      return Promise.resolve([]);
+    }
 
     const traceId = LoggerService().startTrace({
       name: 'Get Active Search Operations',
@@ -281,8 +291,8 @@ export abstract class BaseSearchService implements ISearchService {
     const filters = [
       "type eq 'Microsoft.Web/locations/managedApis/apiOperations'",
       'properties/integrationServiceEnvironmentResourceId eq null',
-      ...(actionType == 'trigger' ? [`properties/trigger ne null`] : []),
-      ...(actionType == 'action' ? [`properties/trigger eq null`] : []),
+      ...(actionType === 'trigger' ? ['properties/trigger ne null'] : []),
+      ...(actionType === 'action' ? ['properties/trigger eq null'] : []),
     ];
     const queryParameters: QueryParameters = {
       $filter: filters.join(' and '),

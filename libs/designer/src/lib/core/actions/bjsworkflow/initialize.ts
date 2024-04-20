@@ -88,17 +88,12 @@ export interface ServiceOptions {
 }
 
 export const updateWorkflowParameters = (parameters: Record<string, WorkflowParameter>, dispatch: Dispatch): void => {
-  dispatch(
-    initializeParameters(
-      Object.keys(parameters).reduce(
-        (result: Record<string, WorkflowParameterDefinition>, currentKey: string) => ({
-          ...result,
-          [currentKey]: { name: currentKey, isEditable: false, ...parameters[currentKey] },
-        }),
-        {}
-      )
-    )
-  );
+  const parametersObj: Record<string, WorkflowParameterDefinition> = {};
+  for (const [key, param] of Object.entries(parameters)) {
+    parametersObj[key] = { name: key, isEditable: false, ...param };
+  }
+
+  dispatch(initializeParameters(parametersObj));
 };
 
 export const getInputParametersFromManifest = (
@@ -210,12 +205,11 @@ export const getOutputParametersFromManifest = (
       undefined /* data */,
       true /* selectAllOneOfSchemas */
     );
-    originalOutputs = Object.values(originalOperationOutputs).reduce((result: Record<string, OutputInfo>, output: SchemaProperty) => {
-      return {
-        ...result,
-        [output.key]: toOutputInfo(output),
-      };
-    }, {});
+
+    originalOutputs = {};
+    for (const output of Object.values(originalOperationOutputs)) {
+      originalOutputs[output.key] = toOutputInfo(output);
+    }
 
     manifestToParse = getUpdatedManifestForSplitOn(manifestToParse, splitOnValue);
   }
@@ -458,7 +452,9 @@ export const updateCustomCodeInInputs = async (
   nodeInputs: NodeInputs,
   customCode: CustomCodeFileNameMapping
 ) => {
-  if (isNullOrEmpty(customCode)) return;
+  if (isNullOrEmpty(customCode)) {
+    return;
+  }
   // getCustomCodeFileName does not return the file extension because the editor view model is not populated yet
   const fileName = getCustomCodeFileName(nodeId, nodeInputs) + fileExtension;
   try {
@@ -485,10 +481,10 @@ export const updateCustomCodeInInputs = async (
 export const updateAllUpstreamNodes = (state: RootState, dispatch: Dispatch): void => {
   const allOperations = state.workflow.operations;
   const payload: UpdateUpstreamNodesPayload = {};
-  const nodeMap = Object.keys(allOperations).reduce(
-    (actionNodes: Record<string, string>, id: string) => ({ ...actionNodes, [id]: id }),
-    {}
-  );
+  const nodeMap: Record<string, string> = {};
+  for (const id of Object.keys(allOperations)) {
+    nodeMap[id] = id;
+  }
 
   for (const nodeId of Object.keys(allOperations)) {
     if (!isRootNodeInGraph(nodeId, 'root', state.workflow.nodesMetadata)) {
@@ -532,12 +528,14 @@ const getSwaggerFromService = async (serviceDetails: CustomSwaggerServiceDetails
   const { name, operationId, parameters } = serviceDetails;
   let service: any;
   switch (name) {
-    case CustomSwaggerServiceNames.Function:
+    case CustomSwaggerServiceNames.Function: {
       service = FunctionService();
       break;
-    case CustomSwaggerServiceNames.ApiManagement:
+    }
+    case CustomSwaggerServiceNames.ApiManagement: {
       service = ApiManagementService();
       break;
+    }
     default:
       throw new UnsupportedException(`The custom swagger service name '${name}' is not supported`);
   }

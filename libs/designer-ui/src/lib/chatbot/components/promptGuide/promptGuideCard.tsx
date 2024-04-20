@@ -57,22 +57,26 @@ export const PromptGuideCard = ({ itemKey }: PromptGuideCardProps) => {
   let cardResources: undefined | { title: string; description: string };
 
   switch (itemKey) {
-    case PromptGuideItemKey.AddAction:
+    case PromptGuideItemKey.AddAction: {
       iconName = 'Add';
       cardResources = { title: intlText.addAction, description: intlText.addActionDescription };
       break;
-    case PromptGuideItemKey.ReplaceAction:
+    }
+    case PromptGuideItemKey.ReplaceAction: {
       iconName = 'Refresh';
       cardResources = { title: intlText.replaceAction, description: intlText.replaceActionDescription };
       break;
-    case PromptGuideItemKey.EditFlow:
+    }
+    case PromptGuideItemKey.EditFlow: {
       iconName = 'Refresh';
       cardResources = { title: intlText.editFlow, description: intlText.editFlowDescription };
       break;
-    case PromptGuideItemKey.Question:
+    }
+    case PromptGuideItemKey.Question: {
       iconName = 'Unknown';
       cardResources = { title: intlText.question, description: intlText.questionDescription };
       break;
+    }
     // Other items don't have a card: they directly trigger a query or open a sub-menu
     default:
       break;

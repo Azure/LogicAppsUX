@@ -47,7 +47,9 @@ export const PanelHeaderTitle = ({
 
   const onTitleChange = (_: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string): void => {
     const result = onChange(newValue || '');
-    if (!result.valid) {
+    if (result.valid) {
+      setErrorMessage('');
+    } else {
       setErrorMessage(
         intl.formatMessage({
           defaultMessage: 'The name already exists or is invalid. Update the name before you continue.',
@@ -56,8 +58,6 @@ export const PanelHeaderTitle = ({
         })
       );
       setValidValue(result.oldValue);
-    } else {
-      setErrorMessage('');
     }
 
     setNewTitleValue(newValue || '');

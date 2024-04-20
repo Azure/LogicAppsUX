@@ -81,7 +81,7 @@ export const SidePane = ({ isExpanded, setIsExpanded, sidePaneTab, setSidePaneTa
   };
 
   const collapsedButtonTextStyle: CSSProperties = {
-    color: !targetSchema ? tokens.colorNeutralForegroundDisabled : undefined,
+    color: targetSchema ? undefined : tokens.colorNeutralForegroundDisabled,
     writingMode: 'vertical-rl',
   };
 
@@ -92,12 +92,12 @@ export const SidePane = ({ isExpanded, setIsExpanded, sidePaneTab, setSidePaneTa
           icon={isExpanded ? <ChevronDoubleRight20Regular /> : <ChevronDoubleLeft20Regular />}
           size="medium"
           appearance="transparent"
-          style={{ color: !targetSchema ? tokens.colorNeutralForegroundDisabled : tokens.colorNeutralForeground2 }}
+          style={{ color: targetSchema ? tokens.colorNeutralForeground2 : tokens.colorNeutralForegroundDisabled }}
           onClick={() => expandAndChangeTab(!isExpanded, sidePaneTab)}
           disabled={!targetSchema}
-          aria-label={!isExpanded ? expandLoc : collapseLoc}
+          aria-label={isExpanded ? collapseLoc : expandLoc}
         />
-        {!isExpanded ? (
+        {isExpanded ? undefined : (
           <Button
             size="medium"
             appearance="transparent"
@@ -109,8 +109,8 @@ export const SidePane = ({ isExpanded, setIsExpanded, sidePaneTab, setSidePaneTa
               {targetSchemaLoc}
             </Text>
           </Button>
-        ) : undefined}
-        {!isExpanded ? (
+        )}
+        {isExpanded ? undefined : (
           <Button
             size="medium"
             appearance="transparent"
@@ -122,7 +122,7 @@ export const SidePane = ({ isExpanded, setIsExpanded, sidePaneTab, setSidePaneTa
               {mapCheckerLoc}
             </Text>
           </Button>
-        ) : undefined}
+        )}
         {isExpanded ? (
           <TabList selectedValue={sidePaneTab} onTabSelect={onTabSelect}>
             <Tab id={SidePanelTabValue.OutputTree} value={SidePanelTabValue.OutputTree}>
@@ -136,9 +136,9 @@ export const SidePane = ({ isExpanded, setIsExpanded, sidePaneTab, setSidePaneTa
       </Stack>
       <Stack
         style={
-          !isExpanded
-            ? { display: 'none' }
-            : { display: 'flex', flexDirection: 'column', marginLeft: '40px', marginTop: '8px', width: '290px', height: '100%' }
+          isExpanded
+            ? { display: 'flex', flexDirection: 'column', marginLeft: '40px', marginTop: '8px', width: '290px', height: '100%' }
+            : { display: 'none' }
         }
         horizontal={false}
         verticalFill={true}

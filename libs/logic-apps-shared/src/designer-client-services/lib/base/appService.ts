@@ -18,9 +18,11 @@ export class BaseAppServiceService implements IAppServiceService {
     const { apiVersion, subscriptionId, httpClient } = options;
     if (!apiVersion) {
       throw new ArgumentException('apiVersion required');
-    } else if (!subscriptionId) {
+    }
+    if (!subscriptionId) {
       throw new ArgumentException('subscriptionId required');
-    } else if (!httpClient) {
+    }
+    if (!httpClient) {
       throw new ArgumentException('httpClient required for workflow app');
     }
   }
@@ -44,11 +46,17 @@ export class BaseAppServiceService implements IAppServiceService {
     isInput: boolean,
     supportsAuthenticationParameter: boolean
   ): Promise<any> {
-    if (!swaggerUrl) return Promise.resolve();
+    if (!swaggerUrl) {
+      return Promise.resolve();
+    }
     const swagger = await this.fetchAppServiceApiSwagger(swaggerUrl);
-    if (!operationId) return Promise.resolve();
+    if (!operationId) {
+      return Promise.resolve();
+    }
     const operation = swagger.getOperationByOperationId(operationId);
-    if (!operation) throw new Error('Operation not found');
+    if (!operation) {
+      throw new Error('Operation not found');
+    }
 
     const paths = swagger.api.paths[operation.path];
     const rawOperation = paths[operation.method];
@@ -90,12 +98,20 @@ export class BaseAppServiceService implements IAppServiceService {
       const { responses } = rawOperation;
       let response: any = {};
 
-      if (responses[ResponseCodes.$200]) response = responses[ResponseCodes.$200];
-      else if (responses[ResponseCodes.$201]) response = responses[ResponseCodes.$201];
-      else if (responses[ResponseCodes.$default]) response = responses[ResponseCodes.$default];
+      if (responses[ResponseCodes.$200]) {
+        response = responses[ResponseCodes.$200];
+      } else if (responses[ResponseCodes.$201]) {
+        response = responses[ResponseCodes.$201];
+      } else if (responses[ResponseCodes.$default]) {
+        response = responses[ResponseCodes.$default];
+      }
 
-      if (response.schema) schema.properties['body'] = response.schema;
-      if (response.headers) schema.properties['headers'] = response.headers;
+      if (response.schema) {
+        schema.properties['body'] = response.schema;
+      }
+      if (response.headers) {
+        schema.properties['headers'] = response.headers;
+      }
     }
 
     return schema;
@@ -108,9 +124,13 @@ export class BaseAppServiceService implements IAppServiceService {
       case 'header':
       case 'query': {
         const property = $in === 'header' ? 'headers' : 'queries';
-        if (!schemaProperties[property]) schemaProperties[property] = { type: 'object', properties: {}, required: [] };
+        if (!schemaProperties[property]) {
+          schemaProperties[property] = { type: 'object', properties: {}, required: [] };
+        }
         schemaProperties[property].properties[name] = parameter;
-        if (required) schemaProperties[property].required.push(name);
+        if (required) {
+          schemaProperties[property].required.push(name);
+        }
         break;
       }
       case 'path': {
@@ -123,9 +143,11 @@ export class BaseAppServiceService implements IAppServiceService {
 
         schemaProperties[pathProperty].properties[name] = {
           ...parameter,
-          'x-ms-deserialization': { type: 'pathtemplateproperties', parameterReference: `inputs.operationDetails.uri` },
+          'x-ms-deserialization': { type: 'pathtemplateproperties', parameterReference: 'inputs.operationDetails.uri' },
         };
-        if (required) schemaProperties[pathProperty].required.push(name);
+        if (required) {
+          schemaProperties[pathProperty].required.push(name);
+        }
         break;
       }
       default: {
@@ -158,7 +180,9 @@ export class BaseAppServiceService implements IAppServiceService {
 }
 
 function connectorIsAppService(connector: any): boolean {
-  if (isFunctionContainer(connector.kind)) return false;
+  if (isFunctionContainer(connector.kind)) {
+    return false;
+  }
 
   const url = connector?.properties?.siteConfig?.apiDefinition?.url;
   const allowedOrigins = connector?.properties?.siteConfig?.cors;

@@ -56,9 +56,11 @@ export abstract class BaseConnectionService implements IConnectionService {
     const { apiVersion, baseUrl, httpClient } = options;
     if (!baseUrl) {
       throw new ArgumentException('baseUrl required');
-    } else if (!apiVersion) {
+    }
+    if (!apiVersion) {
       throw new ArgumentException('apiVersion required');
-    } else if (!httpClient) {
+    }
+    if (!httpClient) {
       throw new ArgumentException('httpclient required');
     }
 
@@ -209,14 +211,18 @@ export abstract class BaseConnectionService implements IConnectionService {
     try {
       if (testLink) {
         response = await this.requestTestConnection(testLink);
-        if (response) this.handleTestConnectionResponse(response);
+        if (response) {
+          this.handleTestConnectionResponse(response);
+        }
       }
     } catch (testLinkError: any) {
       try {
         const testRequest = connection.properties?.testRequests?.[0];
         if (testRequest) {
           response = await this.requestTestConnection(testRequest);
-          if (response) this.handleTestConnectionResponse(response);
+          if (response) {
+            this.handleTestConnectionResponse(response);
+          }
         }
       } catch (testRequestError: any) {
         throw testLinkError ?? testRequestError;
@@ -227,7 +233,9 @@ export abstract class BaseConnectionService implements IConnectionService {
   protected async requestTestConnection(testConnectionObj: TestConnectionObject): Promise<HttpResponse<any> | undefined> {
     const { httpClient } = this.options;
     const { method: httpMethod, requestUri: uri, body } = testConnectionObj;
-    if (!httpMethod || !uri) return;
+    if (!httpMethod || !uri) {
+      return;
+    }
     const method = httpMethod.toUpperCase() as HTTP_METHODS;
 
     try {
@@ -237,10 +245,15 @@ export abstract class BaseConnectionService implements IConnectionService {
         uri,
         ...(body ? { content: body } : {}),
       };
-      if (equals(method, HTTP_METHODS.GET)) response = await httpClient.get<any>(requestOptions);
-      else if (equals(method, HTTP_METHODS.POST)) response = await httpClient.post<any, any>(requestOptions);
-      else if (equals(method, HTTP_METHODS.PUT)) response = await httpClient.put<any, any>(requestOptions);
-      else if (equals(method, HTTP_METHODS.DELETE)) response = await httpClient.delete<any>(requestOptions);
+      if (equals(method, HTTP_METHODS.GET)) {
+        response = await httpClient.get<any>(requestOptions);
+      } else if (equals(method, HTTP_METHODS.POST)) {
+        response = await httpClient.post<any, any>(requestOptions);
+      } else if (equals(method, HTTP_METHODS.PUT)) {
+        response = await httpClient.put<any, any>(requestOptions);
+      } else if (equals(method, HTTP_METHODS.DELETE)) {
+        response = await httpClient.delete<any>(requestOptions);
+      }
       return response;
     } catch (error: any) {
       return Promise.reject(error?.content ?? error);
@@ -248,9 +261,16 @@ export abstract class BaseConnectionService implements IConnectionService {
   }
 
   protected handleTestConnectionResponse(response?: HttpResponse<any>): void {
-    if (!response) return;
-    if (response?.status) return this.handleTestLinkResponse(response);
-    if ((response as any)?.response) return this.handleTestRequestResponse((response as any)?.response);
+    if (!response) {
+      return;
+    }
+    if (response?.status) {
+      this.handleTestLinkResponse(response);
+      return;
+    }
+    if ((response as any)?.response) {
+      this.handleTestRequestResponse((response as any)?.response);
+    }
   }
 
   private handleTestLinkResponse(response: HttpResponse<any>): void {
@@ -259,7 +279,9 @@ export abstract class BaseConnectionService implements IConnectionService {
     if (status >= 400 && status < 500 && status !== 429) {
       let errorMessage = defaultErrorResponse;
       const body = response?.body;
-      if (body && typeof body === 'string') errorMessage = this.tryParseErrorMessage(JSON.parse(body), defaultErrorResponse);
+      if (body && typeof body === 'string') {
+        errorMessage = this.tryParseErrorMessage(JSON.parse(body), defaultErrorResponse);
+      }
       throw new UserException(UserErrorCode.TEST_CONNECTION_FAILED, errorMessage);
     }
   }
@@ -270,7 +292,9 @@ export abstract class BaseConnectionService implements IConnectionService {
     if (statusCode !== 'OK') {
       let errorMessage = defaultErrorResponse;
       const body = response?.body;
-      if (body) errorMessage = this.tryParseErrorMessage(body, defaultErrorResponse);
+      if (body) {
+        errorMessage = this.tryParseErrorMessage(body, defaultErrorResponse);
+      }
       throw new UserException(UserErrorCode.TEST_CONNECTION_FAILED, errorMessage);
     }
   }
@@ -314,15 +338,14 @@ export abstract class BaseConnectionService implements IConnectionService {
         },
       });
       return response.value;
-    } else {
-      if (!this._allConnectionsInitialized) {
-        await this.getConnections();
-      }
-
-      return Object.keys(this._connections)
-        .filter((connectionId) => equals(this._connections[connectionId].properties.api.id, connectorId))
-        .map((connectionId) => this._connections[connectionId]);
     }
+    if (!this._allConnectionsInitialized) {
+      await this.getConnections();
+    }
+
+    return Object.keys(this._connections)
+      .filter((connectionId) => equals(this._connections[connectionId].properties.api.id, connectorId))
+      .map((connectionId) => this._connections[connectionId]);
   }
 
   protected async getConnectionInApiHub(connectionId: string): Promise<Connection> {
@@ -388,7 +411,9 @@ export abstract class BaseConnectionService implements IConnectionService {
     if (!connectionNames.includes(connectionName)) {
       const connectionId = this.getAzureConnectionRequestPath(connectionName);
       const isUnique = await this._testConnectionIdUniquenessInApiHub(connectionId);
-      if (isUnique) return connectionName;
+      if (isUnique) {
+        return connectionName;
+      }
     }
     connectionName = `${connectorName}-${++i}`;
     return this._getUniqueConnectionNameInApiHub(connectorName, connectorId, connectionName, i, connectionNames);

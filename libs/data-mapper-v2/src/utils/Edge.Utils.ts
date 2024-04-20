@@ -37,7 +37,7 @@ interface GetSmoothStepEdgeParams {
   edgeBendOffsetRatio?: number;
 }
 
-const getLinearDistance = (a: XYPosition, b: XYPosition) => Math.sqrt(Math.pow(b.x - a.x, 2) + Math.pow(b.y - a.y, 2));
+const getLinearDistance = (a: XYPosition, b: XYPosition) => Math.sqrt((b.x - a.x) ** 2 + (b.y - a.y) ** 2);
 
 // Theoretically more efficient getLinearDistance for midpoint calculations
 const getLineStretchLength = (a: XYPosition, b: XYPosition) => (a.x === b.x ? Math.abs(a.y - b.y) : Math.abs(a.x - b.x));

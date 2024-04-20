@@ -37,9 +37,10 @@ export class NewProjectTypeStep extends AzureWizardPromptStep<IProjectWizardCont
     const projectType: WorkflowProjectType = nonNullProp(context, 'workflowProjectType');
 
     switch (projectType) {
-      case WorkflowProjectType.Bundle:
+      case WorkflowProjectType.Bundle: {
         executeSteps.push(new WorkflowProjectCreateStep());
         break;
+      }
     }
 
     await addInitVSCodeSteps(context, executeSteps, false);

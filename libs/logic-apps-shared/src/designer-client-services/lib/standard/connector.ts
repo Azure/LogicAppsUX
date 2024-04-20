@@ -20,7 +20,8 @@ export class StandardConnectorService extends BaseConnectorService {
     const { apiVersion, baseUrl, getConfiguration } = options;
     if (!apiVersion) {
       throw new ArgumentException('apiVersion required');
-    } else if (!baseUrl) {
+    }
+    if (!baseUrl) {
       throw new ArgumentException('baseUrl required');
     }
     if (!getConfiguration) {

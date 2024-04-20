@@ -50,7 +50,9 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({ isRefres
       ignoreNonCriticalErrors: true,
     });
 
-    const validationErrorsList = Object.entries(designerState.operations.inputParameters).reduce((acc, [id, nodeInputs]) => {
+    const validationErrorsList: Record<string, boolean> = {};
+    const arr = Object.entries(designerState.operations.inputParameters);
+    for (const [id, nodeInputs] of arr) {
       const hasValidationErrors = Object.values(nodeInputs.parameterGroups).some((parameterGroup) => {
         return parameterGroup.parameters.some((parameter) => {
           const validationErrors = validateParameter(parameter, parameter.value);
@@ -60,8 +62,10 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({ isRefres
           return validationErrors.length;
         });
       });
-      return hasValidationErrors ? { ...acc, [id]: hasValidationErrors } : { ...acc };
-    }, {});
+      if (hasValidationErrors) {
+        validationErrorsList[id] = hasValidationErrors;
+      }
+    }
 
     const hasParametersErrors = !isNullOrEmpty(validationErrorsList);
 
@@ -143,7 +147,7 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({ isRefres
 
   const isSaveDisabled = useMemo(() => isSaving || haveErrors || !designerIsDirty, [isSaving, haveErrors, designerIsDirty]);
 
-  const desingerItems: ICommandBarItemProps[] = [
+  const designerItems: ICommandBarItemProps[] = [
     {
       key: 'Save',
       disabled: isSaveDisabled,
@@ -218,7 +222,7 @@ export const DesignerCommandBar: React.FC<DesignerCommandBarProps> = ({ isRefres
 
   return (
     <CommandBar
-      items={isMonitoringView ? monitoringViewItems : desingerItems}
+      items={isMonitoringView ? monitoringViewItems : designerItems}
       ariaLabel="Use left and right arrow keys to navigate between commands"
       styles={{
         root: { borderBottom: `1px solid ${isDarkMode ? '#333333' : '#d6d6d6'}`, padding: '0 20px' },

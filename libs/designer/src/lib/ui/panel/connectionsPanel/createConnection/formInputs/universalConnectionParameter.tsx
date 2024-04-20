@@ -69,14 +69,18 @@ export const UniversalConnectionParameter = (props: ConnectionParameterProps) =>
 
   // Boolean parameter
   else if (parameter?.type === ConnectionParameterTypes.bool) {
-    if (value === undefined) setValue(false);
+    if (value === undefined) {
+      setValue(false);
+    }
     inputComponent = <Checkbox checked={value} onChange={(e: any, checked?: boolean) => setValue(checked)} label={description} />;
   }
 
   // Dropdown Parameter
   else if ((constraints?.allowedValues?.length ?? 0) > 0) {
     const selectedKey = constraints?.allowedValues?.findIndex((_value) => _value.value === value);
-    if (selectedKey === -1) setValue(constraints?.allowedValues?.[0].value);
+    if (selectedKey === -1) {
+      setValue(constraints?.allowedValues?.[0].value);
+    }
     inputComponent = (
       <Dropdown
         id={`connection-param-${parameterKey}`}

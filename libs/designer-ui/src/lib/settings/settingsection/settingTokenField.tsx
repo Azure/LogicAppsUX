@@ -65,6 +65,7 @@ export const SettingTokenField = ({ ...props }: SettingTokenFieldProps) => {
   const labelId = useId('msla-editor-label');
   const hideLabel =
     (isCustomEditor(props) && props.editorOptions?.hideLabel === true) || equals(props.editor?.toLowerCase(), 'floatingactionmenu');
+
   return (
     <>
       {!hideLabel && (
@@ -157,7 +158,7 @@ export const TokenField = ({
           tokenPickerButtonProps={tokenpickerButtonProps}
         />
       );
-    case constants.PARAMETER.EDITOR.CODE:
+    case constants.PARAMETER.EDITOR.CODE: {
       const customCodeEditor = isCustomCode(editor, editorOptions?.language);
       let customCodeData = editorViewModel?.customCodeData?.fileData ?? '';
       if (typeof customCodeData !== 'string') {
@@ -179,7 +180,7 @@ export const TokenField = ({
           nodeTitle={nodeTitle}
         />
       );
-
+    }
     case constants.PARAMETER.EDITOR.COMBOBOX:
       return (
         <Combobox

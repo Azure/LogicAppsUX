@@ -68,27 +68,24 @@ export class ExpressionParser {
           type: ExpressionType.StringLiteral,
           value: expression.substring(1),
         };
-      } else {
-        return ExpressionParser.parseExpression(expression.substring(1), isAliasPathParsingEnabled);
       }
-    } else {
-      return ExpressionParser._parseStringInterpolationExpression(expression, isAliasPathParsingEnabled);
+      return ExpressionParser.parseExpression(expression.substring(1), isAliasPathParsingEnabled);
     }
+    return ExpressionParser._parseStringInterpolationExpression(expression, isAliasPathParsingEnabled);
   }
 
   private static _parseExpressionRecursively(scanner: ExpressionScanner, index = 0, isAliasPathParsingEnabled: boolean): Expression {
-    if (index < this._tokenList.length) {
+    if (index < ExpressionParser._tokenList.length) {
       const token = scanner.getTokenForTypeAndValue(ExpressionParser._tokenList[index].tokenType, ExpressionParser._tokenList[index].value);
       if (token) {
         return {
-          type: this._tokenList[index].responseExpressionType,
+          type: ExpressionParser._tokenList[index].responseExpressionType,
           value: token.value,
         };
       }
       return ExpressionParser._parseExpressionRecursively(scanner, index + 1, isAliasPathParsingEnabled);
-    } else {
-      return this._parseFunctionExpression(scanner, isAliasPathParsingEnabled);
     }
+    return ExpressionParser._parseFunctionExpression(scanner, isAliasPathParsingEnabled);
   }
 
   private static _getTokenOrThrowException(scanner: ExpressionScanner, type: ExpressionTokenType, value?: string): ExpressionToken {
@@ -111,7 +108,7 @@ export class ExpressionParser {
     token = scanner.getTokenForTypeAndValue(ExpressionTokenType.RightParenthesis);
     if (!token) {
       do {
-        functionArguments.push(this._parseExpressionRecursively(scanner, 0, /*isAliasPathParsingEnabled*/ false));
+        functionArguments.push(ExpressionParser._parseExpressionRecursively(scanner, 0, /*isAliasPathParsingEnabled*/ false));
       } while (scanner.getTokenForTypeAndValue(ExpressionTokenType.Comma));
 
       token = ExpressionParser._getTokenOrThrowException(scanner, ExpressionTokenType.RightParenthesis);
@@ -137,7 +134,7 @@ export class ExpressionParser {
       }
 
       if (scanner.getTokenForTypeAndValue(ExpressionTokenType.LeftSquareBracket)) {
-        const expression = this._parseExpressionRecursively(scanner, 0, /*isAliasPathParsingEnabled*/ false);
+        const expression = ExpressionParser._parseExpressionRecursively(scanner, 0, /*isAliasPathParsingEnabled*/ false);
         token = ExpressionParser._getTokenOrThrowException(scanner, ExpressionTokenType.RightSquareBracket);
 
         // TODO: This might require to support string interpolation as well.
@@ -227,7 +224,7 @@ export class ExpressionParser {
         );
       }
 
-      segments.push(this.parseExpression(expression.substring(startPosition + 2, currentPosition), isAliasPathParsingEnabled));
+      segments.push(ExpressionParser.parseExpression(expression.substring(startPosition + 2, currentPosition), isAliasPathParsingEnabled));
       previousPosition = ++currentPosition;
     }
 

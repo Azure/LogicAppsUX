@@ -5,16 +5,17 @@ import { getConnectionReference, isConnectionMultiAuthManagedIdentityType } from
 import { useNodeConnectorId } from '../operation/operationSelector';
 import { useOperationManifest, useOperationInfo } from '../selectors/actionMetadataSelector';
 import {
+  type Gateway,
   ConnectionService,
   GatewayService,
   OperationManifestService,
   isServiceProviderOperation,
   getRecordEntry,
   type Connector,
-  Gateway,
 } from '@microsoft/logic-apps-shared';
 import { useMemo } from 'react';
-import { UseQueryResult, useQuery } from 'react-query';
+import type { UseQueryResult } from 'react-query';
+import { useQuery } from 'react-query';
 import { useSelector } from 'react-redux';
 
 export const useConnector = (connectorId: string | undefined, enabled = true): UseQueryResult<Connector | undefined, unknown> => {
@@ -26,7 +27,9 @@ export const useConnectorAndSwagger = (connectorId: string | undefined, enabled 
   return useQuery(
     ['apiWithSwaggers', { connectorId }],
     async () => {
-      if (!connectorId) return;
+      if (!connectorId) {
+        return;
+      }
       return await ConnectionService().getConnectorAndSwagger(connectorId);
     },
     {
@@ -84,7 +87,9 @@ const useConnectionByNodeId = (nodeId: string) => {
   return useQuery(
     ['connection', { connectorId: operationInfo?.connectorId }, { connectionId }],
     () => {
-      if (!connectionId || !operationInfo?.connectorId) return;
+      if (!connectionId || !operationInfo?.connectorId) {
+        return;
+      }
       return getConnection(connectionId, operationInfo.connectorId);
     },
     {

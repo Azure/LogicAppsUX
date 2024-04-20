@@ -4,7 +4,8 @@ import type { IIconProps } from '@fluentui/react/lib/Icon';
 import { TextField } from '@fluentui/react/lib/TextField';
 import type { ITextFieldStyles } from '@fluentui/react/lib/TextField';
 import { TooltipHost } from '@fluentui/react/lib/Tooltip';
-import React, { useState } from 'react';
+import type React from 'react';
+import { useState } from 'react';
 import { useIntl } from 'react-intl';
 
 export type ExpressionChangeHandler = (updatedExpressions: string[]) => void;

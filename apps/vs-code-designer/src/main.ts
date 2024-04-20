@@ -62,7 +62,6 @@ export async function activate(context: vscode.ExtensionContext) {
 
     ext.extensionVersion = getExtensionVersion();
     ext.rgApi = await getResourceGroupsApi();
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     // @ts-ignore
     ext.azureAccountTreeItem = ext.rgApi.appResourceTree._rootTreeItem as AzureAccountTreeItemWithProjects;
 

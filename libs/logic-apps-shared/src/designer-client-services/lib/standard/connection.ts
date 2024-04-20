@@ -124,7 +124,8 @@ export class StandardConnectionService extends BaseConnectionService implements 
     const { apiHubServiceDetails, readConnections } = _options;
     if (!readConnections) {
       throw new ArgumentException('readConnections required');
-    } else if (!apiHubServiceDetails) {
+    }
+    if (!apiHubServiceDetails) {
       throw new ArgumentException('apiHubServiceDetails required for workflow app');
     }
 
@@ -139,9 +140,9 @@ export class StandardConnectionService extends BaseConnectionService implements 
       });
 
       return response;
-    } else {
-      return this._getAzureConnector(connectorId);
     }
+
+    return this._getAzureConnector(connectorId);
   }
 
   override async getConnections(connectorId?: string): Promise<Connection[]> {
@@ -407,14 +408,13 @@ export class StandardConnectionService extends BaseConnectionService implements 
         equals(managedIdentity.type, ResourceIdentityType.SYSTEM_ASSIGNED_USER_ASSIGNED))
     ) {
       return { principalId: managedIdentity.principalId as string, tenantId: managedIdentity.tenantId as string };
-    } else {
-      const identityKeys = Object.keys(managedIdentity.userAssignedIdentities ?? {});
-      const selectedIdentity = identityKeys.find((identityKey) => equals(identityKey, identityIdForConnection)) ?? identityKeys[0];
-      return {
-        principalId: managedIdentity.userAssignedIdentities?.[selectedIdentity].principalId as string,
-        tenantId,
-      };
     }
+    const identityKeys = Object.keys(managedIdentity.userAssignedIdentities ?? {});
+    const selectedIdentity = identityKeys.find((identityKey) => equals(identityKey, identityIdForConnection)) ?? identityKeys[0];
+    return {
+      principalId: managedIdentity.userAssignedIdentities?.[selectedIdentity].principalId as string,
+      tenantId,
+    };
   }
 
   async createAndAuthorizeOAuthConnection(
@@ -441,7 +441,8 @@ export class StandardConnectionService extends BaseConnectionService implements 
       const loginResponse = await oAuthPopupInstance.loginPromise;
       if (loginResponse.error) {
         throw new Error(atob(loginResponse.error));
-      } else if (loginResponse.code) {
+      }
+      if (loginResponse.code) {
         await oAuthService.confirmConsentCodeForConnection(connectionId, loginResponse.code);
       }
 
@@ -474,8 +475,8 @@ export class StandardConnectionService extends BaseConnectionService implements 
     connection: Connection;
   }> {
     const connectionType = parametersMetadata?.connectionMetadata?.type;
-    let connectionsData;
-    let connection;
+    let connectionsData: ConnectionAndAppSetting<FunctionsConnectionModel | APIManagementConnectionModel | ServiceProviderConnectionModel>;
+    let connection: Connection;
     switch (connectionType) {
       case ConnectionType.Function: {
         connectionsData = convertToFunctionsConnectionsData(connectionName, connectionInfo, parametersMetadata);
@@ -709,13 +710,10 @@ function createLocalConnectionsData(
     ? connectionParameterMetadata.connectionParameterSet?.parameters
     : (connectionParameterMetadata.connectionParameters as Record<string, ConnectionParameter>);
   const parameterValues = connectionParametersSetValues
-    ? Object.keys(connectionParametersSetValues?.values ?? {}).reduce(
-        (result: Record<string, any>, currentKey: string) => ({
-          ...result,
-          [currentKey]: connectionParametersSetValues.values[currentKey].value,
-        }),
-        {}
-      )
+    ? Object.keys(connectionParametersSetValues?.values ?? {}).reduce((result: Record<string, any>, currentKey: string) => {
+        result[currentKey] = connectionParametersSetValues.values[currentKey].value;
+        return result;
+      }, {})
     : (connectionParameterValues as Record<string, any>);
 
   const result = {

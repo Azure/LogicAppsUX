@@ -106,7 +106,7 @@ export const InstanceSelection: React.FC = () => {
     return apiService.getRegions(selectedSubscription);
   };
 
-  const { data: subscriptionsList, isLoading: isSubscriptionsLoading } = useQuery<Array<ISubscription>>(
+  const { data: subscriptionsList, isLoading: isSubscriptionsLoading } = useQuery<ISubscription[]>(
     QueryKeys.subscriptionData,
     loadSubscriptions,
     {
@@ -120,7 +120,7 @@ export const InstanceSelection: React.FC = () => {
     data: regionData,
     isLoading: isRegionLoading,
     refetch: refetchRegion,
-  } = useQuery<Array<IRegion>>([QueryKeys.regionData, { subscriptionId: selectedSubscription }], loadRegion, {
+  } = useQuery<IRegion[]>([QueryKeys.regionData, { subscriptionId: selectedSubscription }], loadRegion, {
     refetchOnWindowFocus: false,
     enabled: !isEmptyString(selectedSubscription),
     retry: 4,
@@ -130,7 +130,7 @@ export const InstanceSelection: React.FC = () => {
     data: iseList,
     isLoading: isIseLoading,
     refetch: refetchIse,
-  } = useQuery<Array<IIse>>([QueryKeys.iseData, { subscriptionId: selectedSubscription }], loadIse, {
+  } = useQuery<IIse[]>([QueryKeys.iseData, { subscriptionId: selectedSubscription }], loadIse, {
     refetchOnWindowFocus: false,
     enabled: !isEmptyString(selectedSubscription),
     retry: 4,

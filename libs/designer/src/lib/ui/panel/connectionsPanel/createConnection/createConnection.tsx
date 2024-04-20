@@ -118,7 +118,9 @@ export const CreateConnection = (props: CreateConnectionProps) => {
   const isHiddenAuthKey = useCallback((key: string) => ConnectionService().getAuthSetHideKeys?.()?.includes(key) ?? false, []);
 
   const connectionParameterSets: ConnectionParameterSets | undefined = useMemo(() => {
-    if (!_connectionParameterSets) return undefined;
+    if (!_connectionParameterSets) {
+      return undefined;
+    }
     return {
       ..._connectionParameterSets,
       values: _connectionParameterSets.values.filter((set) => !isHiddenAuthKey(set.name)),
@@ -156,7 +158,9 @@ export const CreateConnection = (props: CreateConnectionProps) => {
   );
 
   useEffect(() => {
-    if (hasOnlyOnPremGateway && !enabledCapabilities.includes(Capabilities.gateway)) toggleCapability(Capabilities.gateway);
+    if (hasOnlyOnPremGateway && !enabledCapabilities.includes(Capabilities.gateway)) {
+      toggleCapability(Capabilities.gateway);
+    }
   }, [enabledCapabilities, hasOnlyOnPremGateway, toggleCapability]);
 
   const supportsOAuthConnection = useMemo(() => !isHiddenAuthKey('legacyoauth'), [isHiddenAuthKey]);
@@ -195,14 +199,25 @@ export const CreateConnection = (props: CreateConnectionProps) => {
   const isParamVisible = useCallback(
     (key: string, parameter: ParamType) => {
       const constraints = parameter?.uiDefinition?.constraints;
-      if (servicePrincipalSelected)
+      if (servicePrincipalSelected) {
         return isServicePrinicipalConnectionParameter(key) && isServicePrincipalParameterVisible(key, parameter);
-      if (legacyManagedIdentitySelected) return false; // TODO: Riley - Only show the managed identity parameters (which is none for now)
-      if (constraints?.hidden === 'true' || constraints?.hideInUI === 'true') return false;
+      }
+      if (legacyManagedIdentitySelected) {
+        return false; // TODO: Riley - Only show the managed identity parameters (which is none for now)
+      }
+      if (constraints?.hidden === 'true' || constraints?.hideInUI === 'true') {
+        return false;
+      }
       const dependentParam = constraints?.dependentParameter;
-      if (dependentParam?.parameter && getPropertyValue(parameterValues, dependentParam.parameter) !== dependentParam.value) return false;
-      if (parameter.type === ConnectionParameterTypes.oauthSetting) return false;
-      if (parameter.type === ConnectionParameterTypes.managedIdentity) return false;
+      if (dependentParam?.parameter && getPropertyValue(parameterValues, dependentParam.parameter) !== dependentParam.value) {
+        return false;
+      }
+      if (parameter.type === ConnectionParameterTypes.oauthSetting) {
+        return false;
+      }
+      if (parameter.type === ConnectionParameterTypes.managedIdentity) {
+        return false;
+      }
       return true;
     },
     [parameterValues, servicePrincipalSelected, legacyManagedIdentitySelected]
@@ -242,11 +257,12 @@ export const CreateConnection = (props: CreateConnectionProps) => {
   const capabilityEnabledParameters = useMemo(() => {
     let output: Record<string, ConnectionParameterSetParameter | ConnectionParameter> = parametersByCapability['general'];
     Object.entries(parametersByCapability).forEach(([capabilityText, parameters]) => {
-      if (enabledCapabilities.map((c) => Capabilities[c]).includes(capabilityText as any))
+      if (enabledCapabilities.map((c) => Capabilities[c]).includes(capabilityText as any)) {
         output = {
           ...output,
           ...parameters,
         };
+      }
     });
     return output ?? {};
   }, [enabledCapabilities, parametersByCapability]);
@@ -276,14 +292,19 @@ export const CreateConnection = (props: CreateConnectionProps) => {
 
   const [connectionDisplayName, setConnectionDisplayName] = useState<string>('');
   const validParams = useMemo(() => {
-    if (showNameInput && !connectionDisplayName) return false;
+    if (showNameInput && !connectionDisplayName) {
+      return false;
+    }
     if (
       resourceSelectorProps &&
       ((resourceSelectorProps?.fetchSubResourcesCallback && !resourceSelectorProps?.selectedSubResource) ||
         !resourceSelectorProps?.selectedResourceId)
-    )
+    ) {
       return false;
-    if (Object.keys(capabilityEnabledParameters ?? {}).length === 0) return true;
+    }
+    if (Object.keys(capabilityEnabledParameters ?? {}).length === 0) {
+      return true;
+    }
     return Object.entries(capabilityEnabledParameters).every(
       ([key, parameter]) => parameter?.uiDefinition?.constraints?.required !== 'true' || !!parameterValues[key]
     );
@@ -423,13 +444,19 @@ export const CreateConnection = (props: CreateConnectionProps) => {
   });
 
   const connectorDescription = useMemo(() => {
-    if (isUsingOAuth) return authDescriptionText;
-    if (Object.keys(parameters ?? {}).length === 0) return simpleDescriptionText;
+    if (isUsingOAuth) {
+      return authDescriptionText;
+    }
+    if (Object.keys(parameters ?? {}).length === 0) {
+      return simpleDescriptionText;
+    }
     return '';
   }, [authDescriptionText, isUsingOAuth, parameters, simpleDescriptionText]);
 
   const submitButtonText = useMemo(() => {
-    if (isLoading) return isUsingOAuth ? signInButtonLoadingText : createButtonLoadingText;
+    if (isLoading) {
+      return isUsingOAuth ? signInButtonLoadingText : createButtonLoadingText;
+    }
     return isUsingOAuth ? signInButtonText : createButtonText;
   }, [createButtonLoadingText, createButtonText, isLoading, isUsingOAuth, signInButtonLoadingText, signInButtonText]);
 
@@ -625,11 +652,11 @@ export const CreateConnection = (props: CreateConnectionProps) => {
         <Button appearance="primary" disabled={!canSubmit} aria-label={submitButtonAriaLabel} onClick={submitCallback}>
           {submitButtonText}
         </Button>
-        {!hideCancelButton ? (
+        {hideCancelButton ? null : (
           <Button disabled={isLoading} aria-label={cancelButtonAria} onClick={cancelCallback}>
             {cancelButtonText}
           </Button>
-        ) : null}
+        )}
       </div>
     </div>
   );
@@ -645,10 +672,13 @@ const isServicePrincipalParameterVisible = (key: string, parameter: any): boolea
     Object.values(hiddenOverrrideKeys)
       .map((key) => key.toLowerCase())
       .includes(key.toLowerCase())
-  )
+  ) {
     return true;
+  }
   const constraints = parameter?.uiDefinition?.constraints;
-  if (constraints?.hidden === 'true' || constraints?.hideInUI === 'true') return false;
+  if (constraints?.hidden === 'true' || constraints?.hideInUI === 'true') {
+    return false;
+  }
   return true;
 };
 

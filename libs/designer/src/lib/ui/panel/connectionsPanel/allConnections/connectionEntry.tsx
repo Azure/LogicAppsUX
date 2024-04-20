@@ -74,21 +74,29 @@ export const ConnectionEntry = ({ connectorId, refId, connectionReference, iconU
   }, [dispatch, nodeIds]);
 
   const errors = useMemo(() => {
-    if (connection?.isLoading) return [];
-    if (!connection?.result) return [connectionInvalidStatusText];
+    if (connection?.isLoading) {
+      return [];
+    }
+    if (!connection?.result) {
+      return [connectionInvalidStatusText];
+    }
     return getConnectionErrors(connection?.result);
   }, [connection, connectionInvalidStatusText]);
 
   const statusIconComponent = useMemo(() => {
-    if (connection?.isLoading) return <Spinner size="extra-small" />;
-    if (disconnected) return <PlugDisconnected24Filled />;
+    if (connection?.isLoading) {
+      return <Spinner size="extra-small" />;
+    }
+    if (disconnected) {
+      return <PlugDisconnected24Filled />;
+    }
     const hasErrors = errors.length > 0;
     return (
       <Tooltip content={hasErrors ? connectionInvalidStatusText : connectionValidStatusText} relationship="label">
-        {!hasErrors ? (
-          <CheckmarkCircle24Filled className={'msla-connection-status-icon--success'} />
-        ) : (
+        {hasErrors ? (
           <ErrorCircle24Filled className={'msla-connection-status-icon--error'} />
+        ) : (
+          <CheckmarkCircle24Filled className={'msla-connection-status-icon--success'} />
         )}
       </Tooltip>
     );
@@ -97,7 +105,9 @@ export const ConnectionEntry = ({ connectorId, refId, connectionReference, iconU
   // Only show the open connection button if the service method is supplied
   const openConnectionSupported = useMemo(() => HostService().openConnectionResource !== undefined, []);
   const openConnectionCallback = useCallback(() => {
-    if (!connection?.result?.id) return;
+    if (!connection?.result?.id) {
+      return;
+    }
     HostService().openConnectionResource?.(connection?.result?.id);
   }, [connection?.result?.id]);
 

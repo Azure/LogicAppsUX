@@ -53,9 +53,8 @@ export function getWorkspaceSettingFromAnyFolder(key: string, prefix: string = e
       }
     }
     return result;
-  } else {
-    return getGlobalSetting(key, prefix);
   }
+  return getGlobalSetting(key, prefix);
 }
 
 export function getFunctionsWorkerRuntime(language: string | undefined): WorkerRuntime | undefined {

@@ -29,7 +29,9 @@ export const BrowseGrid = (props: BrowseGridProps) => {
 
   const onRenderCell = useCallback(
     (connector?: Connector, _index?: number) => {
-      if (!connector) return;
+      if (!connector) {
+        return;
+      }
       return (
         <div className="mlsa-browse-list-tile-wrapper">
           <div className="msla-browse-list-tile" style={{ width: forceSingleCol ? '100%' : '50%' }}>
@@ -59,13 +61,14 @@ export const BrowseGrid = (props: BrowseGridProps) => {
     description: 'Message to show under the loading icon when loading connectors',
   });
 
-  if (!isLoading && connectors.length === 0)
+  if (!isLoading && connectors.length === 0) {
     return (
       <div className="msla-no-results-container">
         <img src={NoResultsSvg} alt={noResultsText?.toString()} />
         <Text>{noResultsText}</Text>
       </div>
     );
+  }
 
   return (
     <div ref={ref} className="msla-browse-list">

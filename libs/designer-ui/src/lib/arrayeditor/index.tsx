@@ -88,7 +88,9 @@ export const ArrayEditor: React.FC<ArrayEditorProps> = ({
   const isComplex = useMemo(() => arrayType === ArrayType.COMPLEX, [arrayType]);
 
   const dimensionalSchema: ItemSchemaItemProps[] = useMemo(() => {
-    if (!isComplex) return [];
+    if (!isComplex) {
+      return [];
+    }
     return getOneDimensionalSchema(itemSchema);
   }, [isComplex, itemSchema]);
 
@@ -188,14 +190,14 @@ export const ArrayEditor: React.FC<ArrayEditorProps> = ({
         />
       )}
       <div className="msla-array-commands">
-        {!disableToggle ? (
+        {disableToggle ? null : (
           <EditorCollapseToggle
             label={collapsed ? collapsedLabel : expandedLabel}
             collapsed={collapsed}
             disabled={!isValid && collapsed}
             toggleCollapsed={toggleCollapsed}
           />
-        ) : null}
+        )}
       </div>
     </div>
   );

@@ -125,7 +125,7 @@ export class LogicAppCreateStep extends AzureWizardExecuteStep<IFunctionAppWizar
     const appSettings: NameValuePair[] = [
       {
         name: extensionVersionKey,
-        value: '~' + tryGetMajorVersion(context.version),
+        value: `~${tryGetMajorVersion(context.version)}`,
       },
       {
         name: workerRuntimeKey,
@@ -188,7 +188,7 @@ export class LogicAppCreateStep extends AzureWizardExecuteStep<IFunctionAppWizar
       // v1 doesn't need this because it only supports one version of Node
       appSettings.push({
         name: 'WEBSITE_NODE_DEFAULT_VERSION',
-        value: '~' + getRuntimeVersion(runtime),
+        value: `~${getRuntimeVersion(runtime)}`,
       });
     }
 
@@ -268,18 +268,16 @@ async function getStorageConnectionStrings(context: IFunctionAppWizardContext): 
       connectionStrings.azureWebJobsDashboardValue = azureStorageConnectionString;
       connectionStrings.websiteContentAzureFileValue = azureStorageConnectionString;
     }
+  } else if (context.storageType === StorageOptions.SQL) {
+    connectionStrings.sqlConnectionStringValue = context.sqlConnectionString;
+    connectionStrings.azureWebJobsStorageKeyValue = azureStorageConnectionString;
+    connectionStrings.azureWebJobsDashboardValue = azureStorageConnectionString;
+    connectionStrings.websiteContentAzureFileValue = azureStorageConnectionString;
   } else {
-    if (context.storageType === StorageOptions.SQL) {
-      connectionStrings.sqlConnectionStringValue = context.sqlConnectionString;
-      connectionStrings.azureWebJobsStorageKeyValue = azureStorageConnectionString;
-      connectionStrings.azureWebJobsDashboardValue = azureStorageConnectionString;
-      connectionStrings.websiteContentAzureFileValue = azureStorageConnectionString;
-    } else {
-      connectionStrings.sqlConnectionStringValue = context.sqlConnectionString;
-      connectionStrings.azureWebJobsStorageKeyValue = azureStorageConnectionString;
-      connectionStrings.azureWebJobsDashboardValue = azureStorageConnectionString;
-      connectionStrings.websiteContentAzureFileValue = azureStorageConnectionString;
-    }
+    connectionStrings.sqlConnectionStringValue = context.sqlConnectionString;
+    connectionStrings.azureWebJobsStorageKeyValue = azureStorageConnectionString;
+    connectionStrings.azureWebJobsDashboardValue = azureStorageConnectionString;
+    connectionStrings.websiteContentAzureFileValue = azureStorageConnectionString;
   }
   return connectionStrings;
 }

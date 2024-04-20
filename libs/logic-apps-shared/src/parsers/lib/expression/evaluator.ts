@@ -61,9 +61,8 @@ export class ExpressionEvaluator {
   evaluate(expression: string): any {
     if (this._options.fuzzyEvaluation) {
       return this._fuzzyEvaluate(expression);
-    } else {
-      return this._evaluate(expression);
     }
+    return this._evaluate(expression);
   }
 
   private _evaluate(expression: string): any {

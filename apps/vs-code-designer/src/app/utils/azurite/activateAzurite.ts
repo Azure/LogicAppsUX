@@ -53,9 +53,9 @@ export async function activateAzurite(context: IActionContext): Promise<void> {
           DialogResponses.dontWarnAgain
         );
 
-        if (result == DialogResponses.dontWarnAgain) {
+        if (result === DialogResponses.dontWarnAgain) {
           await updateGlobalSetting(showAutoStartAzuriteWarning, false);
-        } else if (result == enableMessage) {
+        } else if (result === enableMessage) {
           await updateGlobalSetting(showAutoStartAzuriteWarning, false);
           await updateGlobalSetting(autoStartAzuriteSetting, true);
 
@@ -74,13 +74,11 @@ export async function activateAzurite(context: IActionContext): Promise<void> {
             }
           }
         }
-      } else {
-        if (autoStartAzurite && !azuriteLocationExtSetting) {
-          await updateGlobalSetting(azuriteBinariesLocationSetting, defaultAzuritePathValue);
-          vscode.window.showInformationMessage(
-            localize('autoAzuriteLocation', `Azurite is setup to auto start at ${defaultAzuritePathValue}`)
-          );
-        }
+      } else if (autoStartAzurite && !azuriteLocationExtSetting) {
+        await updateGlobalSetting(azuriteBinariesLocationSetting, defaultAzuritePathValue);
+        vscode.window.showInformationMessage(
+          localize('autoAzuriteLocation', `Azurite is setup to auto start at ${defaultAzuritePathValue}`)
+        );
       }
 
       const isAzuriteRunning = await validateEmulatorIsRunning(context, projectPath, false);

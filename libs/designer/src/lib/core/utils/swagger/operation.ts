@@ -253,10 +253,8 @@ export const getOutputParametersFromSwagger = (
   let originalOutputs: Record<string, OutputInfo> | undefined;
   if (isTrigger) {
     originalOutputs = Object.values(operationOutputs).reduce((result: Record<string, OutputInfo>, output: OutputParameter) => {
-      return {
-        ...result,
-        [output.key]: toOutputInfo(output),
-      };
+      result[output.key] = toOutputInfo(output);
+      return result;
     }, {});
   }
   const updatedOutputs = updateOutputsForBatchingTrigger(operationOutputs, splitOnValue);
@@ -297,7 +295,7 @@ const getOperationInfo = async (
   switch (type.toLowerCase()) {
     case Constants.NODE.TYPE.API_CONNECTION:
     case Constants.NODE.TYPE.API_CONNECTION_NOTIFICATION:
-    case Constants.NODE.TYPE.API_CONNECTION_WEBHOOK:
+    case Constants.NODE.TYPE.API_CONNECTION_WEBHOOK: {
       const reference = references[getLegacyConnectionReferenceKey(operation) ?? ''];
       if (!reference || !reference.api || !reference.api.id) {
         throw new Error(`Incomplete information for operation '${nodeId}'`);
@@ -320,6 +318,7 @@ const getOperationInfo = async (
       }
 
       return { connectorId, operationId };
+    }
 
     default:
       throw new Error(`Operation type '${type}' does not support swagger`);
@@ -463,10 +462,9 @@ function parsePathnameFromUri(uri: string): string {
   if (isTemplateExpression(uri)) {
     const { pathname } = parsePathnameAndQueryKeyFromUri(uri.replace(/\]\?\[/g, ']%3F[').replace(/\)\?\[/g, ')%3F['));
     return pathname.replace(/\]%3F\[/g, ']?[').replace(/\)%3F\[/g, ')?[');
-  } else {
-    const { pathname } = parsePathnameAndQueryKeyFromUri(uri);
-    return pathname;
   }
+  const { pathname } = parsePathnameAndQueryKeyFromUri(uri);
+  return pathname;
 }
 
 /**

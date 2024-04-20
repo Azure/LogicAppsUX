@@ -92,7 +92,8 @@ function getMaxVersion(version1, version2): string {
     if (arr1[i] > arr2[i]) {
       maxVersion = version1;
       break;
-    } else if (arr2[i] > arr1[i]) {
+    }
+    if (arr2[i] > arr1[i]) {
       maxVersion = version2;
       break;
     }
