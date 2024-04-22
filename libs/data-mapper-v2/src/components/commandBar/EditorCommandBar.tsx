@@ -82,11 +82,6 @@ export const EditorCommandBar = (props: EditorCommandBarProps) => {
         id: 'r43nMc',
         description: 'Button text for undo the last action',
       }),
-      REDO: intl.formatMessage({
-        defaultMessage: 'Redo',
-        id: 'i1cwra',
-        description: 'Button text for redo the last undone action',
-      }),
       DISCARD: intl.formatMessage({
         defaultMessage: 'Discard',
         id: 'Q4TUFX',
