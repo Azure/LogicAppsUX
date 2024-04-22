@@ -1,8 +1,7 @@
-// biome-ignore-disable lint/style/useCollapsedElseIf
 import { reservedMapDefinitionKeysArray } from "../constants/MapDefinitionConstants";
 import { targetPrefix } from "../constants/ReactFlowConstants";
 import type { FunctionData } from "../models";
-import { indexPseudoFunction } from "../models";
+import { directAccessPseudoFunction, indexPseudoFunction } from "../models";
 import type { ConnectionDictionary } from "../models/Connection";
 import { applyConnectionValue } from "../utils/Connection.Utils";
 import type {
@@ -15,6 +14,7 @@ import {
   DReservedToken,
   createTargetOrFunctionRefactor,
   addParentConnectionForRepeatingElementsNested,
+  amendSourceKeyForDirectAccessIfNeeded,
 } from "../utils/DataMap.Utils";
 import { isFunctionData } from "../utils/Function.Utils";
 import {
@@ -35,12 +35,16 @@ import type {
 } from "@microsoft/logic-apps-shared";
 import { SchemaType } from "@microsoft/logic-apps-shared";
 
+interface LoopMetadata {
+  needsConnection: boolean;
+  key: string;
+}
 export class MapDefinitionDeserializerRefactor {
   private readonly _mapDefinition: MapDefinitionEntry;
   private readonly _sourceSchema: SchemaExtended;
   private readonly _targetSchema: SchemaExtended;
   private readonly _functions: FunctionData[];
-  private _loop: { needsConnection: boolean; key: string }[];
+  private _loop: LoopMetadata[];
   private _loopDest: string;
   private _conditional: string;
 
@@ -131,6 +135,10 @@ export class MapDefinitionDeserializerRefactor {
     return targetNode;
   };
 
+  private getLowestLoop = () => {
+    return this._loop[this._loop.length - 1]
+  }
+
   private getSourceNodeForRelativeKeyInLoop = (
     key: string,
     _connections: ConnectionDictionary,
@@ -139,7 +147,7 @@ export class MapDefinitionDeserializerRefactor {
     let srcNode: SchemaNodeExtended | undefined;
     if (key === ".") {
       // current loop
-      const lowestLoopNodeKey = this._loop[this._loop.length - 1].key;
+      const lowestLoopNodeKey = this.getLowestLoop().key;
       srcNode = findNodeForKey(
         lowestLoopNodeKey,
         this._sourceSchema.schemaTreeRoot,
@@ -148,7 +156,7 @@ export class MapDefinitionDeserializerRefactor {
     } else if (key.startsWith("../")) {
       srcNode = this.getSourceNodeWithBackout(key);
     } else {
-      const lastLoop = this._loop[this._loop.length - 1].key;
+      const lastLoop = this.getLowestLoop().key;
       srcNode = findNodeForKey(
         `${lastLoop}/${key}`,
         this._sourceSchema.schemaTreeRoot,
@@ -267,7 +275,7 @@ export class MapDefinitionDeserializerRefactor {
 
           applyConnectionValue(connections, {
             targetNode: targetNode,
-            targetNodeReactFlowKey: this.getTargetKey(targetNode),
+            targetNodeReactFlowKey: addTargetReactFlowPrefix(targetNode.key),
             findInputSlot: true,
             input: {
               reactFlowKey: key,
@@ -363,6 +371,7 @@ export class MapDefinitionDeserializerRefactor {
             connections
           );
         }
+        this._conditional = "";
       } else {
         // for statement
         this.processForStatement(
@@ -380,7 +389,6 @@ export class MapDefinitionDeserializerRefactor {
           true
         );
       });
-      this._conditional = "";
     }
   };
 
@@ -399,13 +407,13 @@ export class MapDefinitionDeserializerRefactor {
     const funcKey = createReactFlowFunctionKey(func);
     func.key = funcKey;
 
-    this._conditional = funcKey;
     this.handleSingleValueOrFunction(
       "",
       functionMetadata.inputs[0],
       func,
       connections
     );
+    this._conditional = funcKey;
   };
   private forHasIndex = (forSrc: ParseFunc) => forSrc.inputs.length > 1;
 
@@ -438,7 +446,7 @@ export class MapDefinitionDeserializerRefactor {
     if (!sourceLoopKey.includes(this._sourceSchema.schemaTreeRoot.key)) {
       // relative path
       const lastLoop =
-        this._loop.length > 0 ? this._loop[this._loop.length - 1].key : "";
+        this._loop.length > 0 ? this.getLowestLoop().key : "";
       absoluteKey = `${lastLoop}/${sourceLoopKey}`;
     }
     let loopSource = findNodeForKey(
@@ -476,7 +484,7 @@ export class MapDefinitionDeserializerRefactor {
   };
 
   public getSourceNodeWithBackout = (key: string) => {
-    const lastLoop = this._loop[this._loop.length - 1];
+    const lastLoop = this.getLowestLoop();
     let loop =
       this._sourceSchemaFlattened[addSourceReactFlowPrefix(lastLoop.key)];
     if (key.startsWith("../")) {
@@ -531,7 +539,8 @@ export class MapDefinitionDeserializerRefactor {
           node: loopNode,
         },
       });
-    } else if (key.startsWith('"') || parseInt(key)) {
+    }
+    if (key.startsWith('"') || parseInt(key)) {
       // custom value danielle custom value can also be a number without quotes
       applyConnectionValue(connections, {
         targetNode: targetNode,
@@ -539,7 +548,8 @@ export class MapDefinitionDeserializerRefactor {
         findInputSlot: true,
         input: key,
       });
-    } else if (key.startsWith("$")) {
+    }
+    if (key.startsWith("$")) {
       // custom value
       const indexFnKey = this._createdNodes[key];
       const indexFn = connections[indexFnKey];
@@ -555,7 +565,37 @@ export class MapDefinitionDeserializerRefactor {
         });
       }
     } else if (key.includes("[")) {
-      // idk
+      // create a new function with input as 2: loop, 1: index in the brackets
+      const directAccessFnKey = createReactFlowFunctionKey(indexPseudoFunction);
+      const directAccessFn = {...directAccessPseudoFunction, name: directAccessFnKey};
+
+      // using this older function for now 
+      const amendedSourceKey = amendSourceKeyForDirectAccessIfNeeded(key);
+
+      // danielle can I just treat this as a normal function now?
+      const directAccessSeparated = separateFunctions(amendedSourceKey[0]);
+      const idk = createTargetOrFunctionRefactor(directAccessSeparated);
+
+      this.handleSingleValueOrFunction(
+        '',
+        idk.term,
+        targetNode,
+        connections
+      )
+      
+      // add index value connection if it is a number
+      const index = key.substring(1, key.indexOf("]"+1)); // danielle can be a $index or a number
+
+
+      // applyConnectionValue(connections, {
+      //   targetNode: directAccessFn,
+      //   targetNodeReactFlowKey: directAccessFnKey,
+      //   inputIndex: 1,
+      //   input:  {
+      //     reactFlowKey: loopNode.key,
+      //     node: loopNode,
+      //   },
+      // })
     } else {
       applyConnectionValue(connections, {
         targetNode: targetNode,
