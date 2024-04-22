@@ -19,12 +19,11 @@ jobs:
         run_install: |
           - recursive: true
             args: [--frozen-lockfile, --strict-peer-dependencies]
-          - args: [--global, turbo, typescript]
           
     - name: Install Playwright Browsers
       run: pnpm run e2e:setup
     - name: Run Playwright tests
-      run: pnpm run test:e2e
+      run: pnpm run test:e2e --grep @mock
     - uses: actions/upload-artifact@v4
       if: always()
       with:

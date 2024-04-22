@@ -82,6 +82,7 @@ const DesignerEditor = () => {
     hostOptions,
     showConnectionsPanel,
     showPerformanceDebug,
+    suppressDefaultNodeSelect,
   } = useSelector((state: RootState) => state.workflowLoader);
 
   const workflowName = workflowId.split('/').splice(-1)[0];
@@ -307,6 +308,7 @@ const DesignerEditor = () => {
           isDarkMode,
           readOnly: isReadOnly,
           isMonitoringView,
+          suppressDefaultNodeSelectFunctionality: suppressDefaultNodeSelect,
           hostOptions: {
             ...hostOptions,
             recurrenceInterval: { interval: 1, frequency: 'Minute' },
