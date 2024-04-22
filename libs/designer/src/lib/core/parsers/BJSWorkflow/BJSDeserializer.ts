@@ -173,7 +173,6 @@ export const buildGraphFromActions = (
 
     const isRoot = Object.keys(action.runAfter ?? {}).length === 0 && parentNodeId;
     nodesMetadata[actionName] = { graphId, ...(parentNodeId ? { parentNodeId: parentNodeId } : {}) };
-
     if (isScopeAction(action)) {
       const [scopeNodes, scopeEdges, scopeActions, scopeNodesMetadata] = processScopeActions(
         graphId,
@@ -194,8 +193,8 @@ export const buildGraphFromActions = (
       for (let [runAfterAction, runAfterValue] of Object.entries(action.runAfter ?? {})) {
         // update the run after with the updated ids
         if (pasteScopeParams && action.runAfter) {
-          delete action.runAfter[runAfterAction];
           runAfterAction = pasteScopeParams.renamedNodes[runAfterAction] ?? runAfterAction;
+          delete action.runAfter[runAfterAction];
           action.runAfter[runAfterAction] = runAfterValue;
         }
         edges.push(createWorkflowEdge(runAfterAction, actionName));

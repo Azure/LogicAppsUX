@@ -174,7 +174,6 @@ export const initializeOperationDetails = async (
     dispatch(initializeNodes([initData]));
     addTokensAndVariables(nodeId, type, { ...initData, manifest }, state, dispatch);
   } else {
-    console.log(connectorId);
     const { connector: swaggerConnector, parsedSwagger } = await getConnectorWithSwagger(connectorId);
     swagger = parsedSwagger;
     connector = swaggerConnector;

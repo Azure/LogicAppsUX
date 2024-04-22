@@ -81,7 +81,6 @@ export const connectionSlice = createSlice({
         if (referenceKey && state.connectionReferences[referenceKey]) {
           state.connectionsMapping[nodeId] = referenceKey;
         } else {
-          console.log('Connection reference not found for node:', nodeId, connectionReference);
           state.connectionReferences[referenceKey] = connectionReference;
           state.connectionsMapping[nodeId] = referenceKey;
         }

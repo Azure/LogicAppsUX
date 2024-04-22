@@ -19,6 +19,8 @@ import type { NodesMetadata } from '../../state/workflow/workflowInterfaces';
 import { updateAllUpstreamNodes } from './initialize';
 import type { NodeTokens } from '../../state/tokens/tokensSlice';
 import { getConnectionReferenceForNodeId } from '../../state/connection/connectionSelector';
+import { getStaticResultForNodeId } from '../../state/staticresultschema/staitcresultsSelector';
+import { initScopeCopiedStaticResultProperties } from '../../state/staticresultschema/staticresultsSlice';
 
 type CopyOperationPayload = {
   nodeId: string;
@@ -85,6 +87,7 @@ export const copyScopeOperation = createAsyncThunk('copyScopeOperation', async (
         nodeId: newNodeId,
         serializedOperation,
         allConnectionData,
+        staticResults,
         isScopeNode: true,
         mslaNode: true,
       })
@@ -137,13 +140,14 @@ interface PasteScopeOperationPayload {
   nodeId: string;
   serializedValue: LogicAppsV2.OperationDefinition | null;
   allConnectionData: Record<string, { connectionReference: ConnectionReference; referenceKey: string }>;
+  staticResults: Record<string, any>;
   upstreamNodeIds: string[];
 }
 
 export const pasteScopeOperation = createAsyncThunk(
   'pasteScopeOperation',
   async (payload: PasteScopeOperationPayload, { dispatch, getState }) => {
-    const { nodeId: actionId, relationshipIds, serializedValue, upstreamNodeIds, allConnectionData } = payload;
+    const { nodeId: actionId, relationshipIds, serializedValue, upstreamNodeIds, allConnectionData, staticResults } = payload;
     if (!actionId || !relationshipIds || !serializedValue) {
       throw new Error('Operation does not exist');
     }
@@ -153,7 +157,7 @@ export const pasteScopeOperation = createAsyncThunk(
     const existingNodesMetadata = replaceIdsOfExistingNodes(state.workflow.nodesMetadata, idReplacements);
     const nodeId = getNonDuplicateNodeId(existingNodesMetadata, actionId);
 
-    const workflowActions = { [nodeId]: serializedValue as ActionDefinition };
+    const workflowActions = { [nodeId]: { ...serializedValue } as ActionDefinition };
     const allActionNames = getAllActionNames(workflowActions, [], true);
 
     const pasteParams = buildScopeParams(existingNodesMetadata, allActionNames);
@@ -164,9 +168,12 @@ export const pasteScopeOperation = createAsyncThunk(
       Object.keys(existingNodesMetadata),
       pasteParams
     );
-    actionNodesMetadata[nodeId] = { ...actionNodesMetadata[actionId], isRoot: false };
-    if (allConnectionData) {
+    actionNodesMetadata[nodeId] = { ...actionNodesMetadata[actionId], isRoot: false, parentNodeId: parentId, graphId };
+    if (Object.keys(allConnectionData).length > 0) {
       dispatch(initScopeCopiedConnections(replaceIdsOfExistingNodes(allConnectionData, pasteParams.renamedNodes)));
+    }
+    if (Object.keys(staticResults).length > 0) {
+      dispatch(initScopeCopiedStaticResultProperties(replaceIdsOfExistingNodes(staticResults, pasteParams.renamedNodes)));
     }
     dispatch(
       pasteScopeNode({
@@ -200,6 +207,7 @@ export const pasteScopeOperation = createAsyncThunk(
           graph: nodes[0],
           actionData: actions,
           nodesMetadata: actionNodesMetadata,
+          staticResults: staticResults,
         },
         connectionReference,
         workflowParameters,

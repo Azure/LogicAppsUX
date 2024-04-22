@@ -3056,7 +3056,7 @@ export const updateScopePasteTokenMetadata = (
         const intl = getIntl();
         error = intl.formatMessage({
           defaultMessage: 'This operation contains a token that does not exist in the current workflow.',
-          id: 'k9Kt9P',
+          id: 'bMUkSN',
           description: 'Error message to show when pasting a token that does not exist in the current workflow',
         });
       }

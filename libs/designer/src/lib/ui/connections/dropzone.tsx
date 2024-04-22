@@ -119,6 +119,7 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId, 
             nodeId: copiedNode.nodeId,
             serializedValue: copiedNode.serializedOperation,
             allConnectionData: copiedNode.allConnectionData,
+            staticResults: copiedNode.staticResults,
             upstreamNodeIds: upstreamNodesOfChild,
           })
         );

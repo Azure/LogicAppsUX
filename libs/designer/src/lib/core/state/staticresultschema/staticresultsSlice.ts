@@ -25,6 +25,12 @@ export const staticResultsSlice = createSlice({
     initializeStaticResultProperties: (state, action: PayloadAction<Record<string, any>>) => {
       state.properties = action.payload;
     },
+    initScopeCopiedStaticResultProperties: (state, action: PayloadAction<Record<string, any>>) => {
+      const copiedConnections = action.payload;
+      Object.entries(copiedConnections).forEach(([nodeId, staticResultProperty]) => {
+        state.properties[nodeId + 0] = staticResultProperty;
+      });
+    },
     deinitializeStaticResultProperty: (state, action: PayloadAction<{ id: string }>) => {
       const { id } = action.payload;
       delete state.properties[id];
@@ -43,7 +49,12 @@ export const staticResultsSlice = createSlice({
   },
 });
 
-export const { initializeStaticResultProperties, deinitializeStaticResultProperty, addResultSchema, updateStaticResultProperties } =
-  staticResultsSlice.actions;
+export const {
+  initializeStaticResultProperties,
+  initScopeCopiedStaticResultProperties,
+  deinitializeStaticResultProperty,
+  addResultSchema,
+  updateStaticResultProperties,
+} = staticResultsSlice.actions;
 
 export default staticResultsSlice.reducer;
