@@ -3,7 +3,12 @@ import { getMonitoringError } from '../../common/utilities/error';
 import { moveOperation } from '../../core/actions/bjsworkflow/move';
 import { useMonitoringView, useReadOnly } from '../../core/state/designerOptions/designerOptionsSelectors';
 import { setShowDeleteModal } from '../../core/state/designerView/designerViewSlice';
-import { useBrandColor, useIconUri, useParameterValidationErrors } from '../../core/state/operation/operationSelector';
+import {
+  useBrandColor,
+  useIconUri,
+  useParameterValidationErrors,
+  useTokenDependencies,
+} from '../../core/state/operation/operationSelector';
 import { useIsNodeSelected } from '../../core/state/panel/panelSelectors';
 import { changePanelNode, setSelectedNodeId } from '../../core/state/panel/panelSlice';
 import { useAllOperations, useOperationQuery } from '../../core/state/selectors/actionMetadataSelector';
@@ -110,7 +115,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
       refetch();
     }
   }, [dispatch, parentRunIndex, isMonitoringView, refetch, repetitionName, parenRunData?.status]);
-
+  const dependencies = useTokenDependencies(scopeId);
   const [{ isDragging }, drag, dragPreview] = useDrag(
     () => ({
       type: 'BOX',
@@ -132,7 +137,9 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
         }
       },
       item: {
-        id: scopeId,
+        id: id,
+        dependencies,
+        isScope: true,
       },
       canDrag: !readOnly,
       collect: (monitor) => ({
