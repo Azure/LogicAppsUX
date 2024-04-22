@@ -83,9 +83,4 @@ export const pasteScopeInWorkflow = (
     delete (getRecordEntry(state.operations, nodeId) as any)?.runAfter;
   }
   applyIsRootNode(state, workflowGraph, nodesMetadata);
-
-  // Increase action count of graph
-  if (state.nodesMetadata?.[workflowGraph.id]) {
-    state.nodesMetadata[workflowGraph.id].actionCount = (state.nodesMetadata[workflowGraph.id].actionCount ?? 0) + allActions.length - 1;
-  }
 };
