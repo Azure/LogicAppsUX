@@ -253,7 +253,7 @@ describe('lib/editor/base/utils/editorToSegment', () => {
       nodeMap.set(`@{variables('abc')}`, { id: '', ...getInitializeVariableAbcToken() });
       nodeMap.set(`@{body('Get_file_content')}`, { id: '', ...getOneDriveFileContentToken() });
 
-      const segments = convertStringToSegments(input, nodeMap, { tokensEnabled: true, removeSingleTokenQuotes: true });
+      const segments = convertStringToSegments(input, nodeMap, { tokensEnabled: true, removeSingleTokenQuotesWrapping: true });
       const simplifiedSegments = segments.map(
         (segment): SimplifiedValueSegment => ({
           // Remove IDs for easier comparison.
@@ -288,7 +288,7 @@ describe('lib/editor/base/utils/editorToSegment', () => {
       nodeMap.set(`@{variables('abc')}`, { id: '', ...getInitializeVariableAbcToken() });
       nodeMap.set(`@{body('Get_file_content')}`, { id: '', ...getOneDriveFileContentToken() });
 
-      const segments = convertStringToSegments(input, nodeMap, { tokensEnabled: true, removeSingleTokenQuotes: false });
+      const segments = convertStringToSegments(input, nodeMap, { tokensEnabled: true, removeSingleTokenQuotesWrapping: false });
       const simplifiedSegments = segments.map(
         (segment): SimplifiedValueSegment => ({
           // Remove IDs for easier comparison.

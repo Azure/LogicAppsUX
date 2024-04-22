@@ -92,7 +92,7 @@ export const convertStringToSegments = (
       const token = nodeMap.get(segmentSoFar);
       if (token) {
         // If remove quotes param is set, remove the quotes from previous and next segments if it's a single token
-        if (options?.removeSingleTokenQuotes && doubleQuotesStarted && returnSegments.length > 0) {
+        if (options?.removeSingleTokenQuotesWrapping && doubleQuotesStarted && returnSegments.length > 0) {
           const prevSegment = returnSegments.pop();
 
           // If previous and next segments are not tokens (i.e. this is a single token), and they end and start with quotes, remove the quotes

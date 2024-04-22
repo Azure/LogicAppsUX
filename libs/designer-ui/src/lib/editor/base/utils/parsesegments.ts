@@ -37,7 +37,7 @@ import {
 export interface SegmentParserOptions {
   readonly?: boolean;
   tokensEnabled?: boolean;
-  removeSingleTokenQuotes?: boolean;
+  removeSingleTokenQuotesWrapping?: boolean;
 }
 
 export const isEmptySegments = (segments: ValueSegment[]): boolean => {
