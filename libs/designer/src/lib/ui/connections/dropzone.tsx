@@ -2,7 +2,12 @@ import type { AppDispatch } from '../../core';
 import { pasteOperation, pasteScopeOperation } from '../../core/actions/bjsworkflow/copypaste';
 import { expandDiscoveryPanel } from '../../core/state/panel/panelSlice';
 import { useUpstreamNodes } from '../../core/state/tokens/tokenSelectors';
-import { useGetAllOperationNodesWithin, useNodeDisplayName, useNodeMetadata } from '../../core/state/workflow/workflowSelectors';
+import {
+  useAllGraphParents,
+  useGetAllOperationNodesWithin,
+  useNodeDisplayName,
+  useNodeMetadata,
+} from '../../core/state/workflow/workflowSelectors';
 import { AllowDropTarget } from './dynamicsvgs/allowdroptarget';
 import { BlockDropTarget } from './dynamicsvgs/blockdroptarget';
 import { MenuDivider, MenuItem, MenuList, Popover, PopoverSurface, PopoverTrigger, Tooltip } from '@fluentui/react-components';
@@ -61,7 +66,8 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId, 
   const upstreamNodesOfChild = useUpstreamNodes(removeIdTag(childId ?? newParentId ?? graphId));
   const immediateAncestor = useGetAllOperationNodesWithin(parentId && !containsIdTag(parentId) ? parentId : '');
   const upstreamNodes = useMemo(() => new Set([...upstreamNodesOfChild, ...immediateAncestor]), [immediateAncestor, upstreamNodesOfChild]);
-
+  const upstreamScopeArr = useAllGraphParents(graphId);
+  const upstreamScopes = useMemo(() => new Set(upstreamScopeArr), [upstreamScopeArr]);
   useOnViewportChange({
     onStart: useCallback(() => {
       if (showCallout) {
@@ -174,10 +180,17 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId, 
         id: string;
         dependencies?: string[];
         graphId?: string;
+        isScope?: boolean;
       }) => {
         // This supports preventing moving a node with a dependency above its upstream node
         for (const dec of item.dependencies ?? []) {
           if (!upstreamNodes.has(dec)) {
+            return false;
+          }
+        }
+        if (item.isScope) {
+          const scopeNodeId = removeIdTag(item.id);
+          if (upstreamScopes.has(scopeNodeId)) {
             return false;
           }
         }
