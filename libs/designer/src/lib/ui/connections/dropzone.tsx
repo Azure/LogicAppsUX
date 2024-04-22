@@ -49,6 +49,7 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId, 
   const [showCallout, setShowCallout] = useState(false);
   const [showNoPasteCallout, setShowNoPasteCallout] = useState(false);
   const [rootRef, setRef] = useState<HTMLDivElement | null>(null);
+  const [isPasteEnabled, setIsPasteEnabled] = useState(false);
 
   const nodeMetadata = useNodeMetadata(removeIdTag(parentId ?? ''));
   // For subgraph nodes, we want to use the id of the scope node as the parentId to get the dependancies
@@ -232,8 +233,10 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId, 
         );
 
   const actionButtonClick = useCallback(
-    (e: React.MouseEvent<HTMLButtonElement>) => {
+    async (e: React.MouseEvent<HTMLButtonElement>) => {
       e.preventDefault();
+      const copiedNode = await retrieveClipboardData();
+      setIsPasteEnabled(!!copiedNode);
       setShowCallout(!showCallout);
     },
     [showCallout]
@@ -302,12 +305,14 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId, 
                     {newBranchText}
                   </MenuItem>
                 )}
-                <>
-                  <MenuDivider />
-                  <MenuItem icon={<ClipboardIcon />} onClick={handlePasteClicked}>
-                    {pasteFromClipboard}
-                  </MenuItem>
-                </>
+                {isPasteEnabled && (
+                  <>
+                    <MenuDivider />
+                    <MenuItem icon={<ClipboardIcon />} onClick={handlePasteClicked}>
+                      {pasteFromClipboard}
+                    </MenuItem>
+                  </>
+                )}
               </MenuList>
             </PopoverSurface>
           </Popover>
@@ -326,16 +331,18 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId, 
 
 async function retrieveClipboardData() {
   try {
-    const clipboardData = await navigator.clipboard.readText();
-    if (clipboardData) {
-      const parsedData = JSON.parse(clipboardData);
-      if (parsedData.mslaNode) {
-        return parsedData;
+    if (navigator.clipboard && typeof navigator.clipboard.readText === 'function') {
+      const clipboardData = await navigator.clipboard.readText();
+      if (clipboardData) {
+        const parsedData = JSON.parse(clipboardData);
+        if (parsedData.mslaNode) {
+          return parsedData;
+        }
       }
+      return null;
     }
-    return null;
+    return JSON.parse(localStorage.getItem('msla-clipboard') ?? '');
   } catch (error) {
-    console.error('Error reading from clipboard:', error);
     return null;
   }
 }

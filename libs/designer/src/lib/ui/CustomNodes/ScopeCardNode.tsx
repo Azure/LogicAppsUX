@@ -190,7 +190,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
       <CopyMenuItem key={'copy'} isTrigger={false} isScope={true} onClick={copyClick} showKey />,
       ...(runData?.canResubmit ? [<ResubmitMenuItem key={'resubmit'} onClick={resubmitClick} />] : []),
     ],
-    [deleteClick, resubmitClick, copyClick, runData?.canResubmit]
+    [deleteClick, copyClick, runData?.canResubmit, resubmitClick]
   );
 
   const opQuery = useOperationQuery(scopeId);

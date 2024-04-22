@@ -3043,7 +3043,7 @@ export const updateScopePasteTokenMetadata = (
         token = { ...token, ...existingTokenInfo, tokenType: TokenType.OUTPUTS };
       }
       // otherwise it may be a item output token, so we'll take the icon and brandColor from the outputInfo
-      else if (outputTokens) {
+      else if (outputTokens && outputTokens.tokens?.length > 0) {
         token = {
           ...token,
           icon: outputTokens.tokens?.[0].icon,
@@ -3052,7 +3052,7 @@ export const updateScopePasteTokenMetadata = (
       }
       // If there is no existing outputs with the same name, then they are pasting a token that doesn't exist in the current workflow
       // we will use a default token when it doesn't exist
-      else {
+      else if (token.tokenType !== TokenType.VARIABLE) {
         const intl = getIntl();
         error = intl.formatMessage({
           defaultMessage: 'This operation contains a token that does not exist in the current workflow.',

@@ -31,6 +31,33 @@
         },
         "runAfter": {}
       },
+      "Parse_JSON": {
+        "type": "ParseJson",
+        "inputs": {
+          "content": "@{triggerBody()?['string']}@{variables('ArrayVariable')}",
+          "schema": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "document": {
+                  "type": "string"
+                },
+                "min": {
+                  "type": "integer"
+                },
+                "policy": {
+                  "type": "string"
+                }
+              },
+              "required": ["document", "min", "policy"]
+            }
+          }
+        },
+        "runAfter": {
+          "Initialize_ArrayVariable": ["SUCCEEDED"]
+        }
+      },
       "Filter_array": {
         "type": "Query",
         "inputs": {
@@ -38,9 +65,7 @@
           "where": "@not(contains(length(split(item(), '|')?[0]),length(split(item(), '|')?[0])))"
         },
         "runAfter": {
-          "For_each": [
-            "SUCCEEDED"
-          ]
+          "Parse_JSON": ["SUCCEEDED"]
         }
       },
       "HTTP": {
@@ -51,53 +76,12 @@
           "body": "@variables('ArrayVariable')"
         },
         "runAfter": {
-          "Filter_array": [
-            "SUCCEEDED"
-          ]
+          "Filter_array": ["SUCCEEDED"]
         },
         "runtimeConfiguration": {
           "contentTransfer": {
             "transferMode": "Chunked"
           }
-        }
-      },
-      "For_each": {
-        "type": "foreach",
-        "foreach": "@triggerOutputs()?['body']?['array']",
-        "actions": {
-          "Parse_JSON": {
-            "type": "ParseJson",
-            "inputs": {
-              "content": "@{triggerBody()?['string']}@{variables('ArrayVariable')}@{item()?['item1']}",
-              "schema": {
-                "type": "array",
-                "items": {
-                  "type": "object",
-                  "properties": {
-                    "document": {
-                      "type": "string"
-                    },
-                    "min": {
-                      "type": "integer"
-                    },
-                    "policy": {
-                      "type": "string"
-                    }
-                  },
-                  "required": [
-                    "document",
-                    "min",
-                    "policy"
-                  ]
-                }
-              }
-            }
-          }
-        },
-        "runAfter": {
-          "Initialize_ArrayVariable": [
-            "SUCCEEDED"
-          ]
         }
       }
     },
@@ -120,9 +104,7 @@
                       "type": "string"
                     }
                   },
-                  "required": [
-                    "item1"
-                  ]
+                  "required": ["item1"]
                 }
               },
               "string": {

@@ -29,9 +29,9 @@ export const CopyMenuItem = (props: CopyMenuItemProps) => {
     description: 'Copy Trigger text',
   });
   const copyScope = intl.formatMessage({
-    defaultMessage: 'Copy Subgraph',
+    defaultMessage: 'Copy Entire Action',
     description: 'Copy Scope text',
-    id: '1FKDLa',
+    id: 'kDIgbw',
   });
   const copyKeyboardTextWin = intl.formatMessage({
     defaultMessage: 'Ctrl+C',

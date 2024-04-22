@@ -179,7 +179,6 @@ export const workflowSlice = createSlice({
         console.error('graph not set');
         return; // log exception
       }
-      console.log(action.payload);
       const oldGraph = getWorkflowNodeFromGraphState(state, action.payload.oldGraphId);
       if (!oldGraph) {
         throw new Error('graph not set');

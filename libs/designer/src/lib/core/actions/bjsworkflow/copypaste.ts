@@ -39,16 +39,19 @@ export const copyOperation = createAsyncThunk('copyOperation', async (payload: C
     const nodeOperationInfo = getRecordEntry(state.operations.operationInfo, nodeId);
     const nodeConnectionData = getRecordEntry(state.connections.connectionsMapping, nodeId);
 
-    navigator.clipboard.writeText(
-      JSON.stringify({
-        nodeId: newNodeId,
-        nodeData,
-        nodeOperationInfo,
-        nodeConnectionData,
-        isScopeNode: false,
-        mslaNode: true,
-      })
-    );
+    const clipboardItem = JSON.stringify({
+      nodeId: newNodeId,
+      nodeData,
+      nodeOperationInfo,
+      nodeConnectionData,
+      isScopeNode: false,
+      mslaNode: true,
+    });
+    if (navigator.clipboard && typeof navigator.clipboard.readText === 'function') {
+      navigator.clipboard.writeText(clipboardItem);
+    } else {
+      localStorage.setItem('msla-clipboard', clipboardItem);
+    }
   });
 });
 
@@ -82,16 +85,19 @@ export const copyScopeOperation = createAsyncThunk('copyScopeOperation', async (
         staticResults[actionName] = staticResult;
       }
     });
-    navigator.clipboard.writeText(
-      JSON.stringify({
-        nodeId: newNodeId,
-        serializedOperation,
-        allConnectionData,
-        staticResults,
-        isScopeNode: true,
-        mslaNode: true,
-      })
-    );
+    const clipboardItem = JSON.stringify({
+      nodeId: newNodeId,
+      serializedOperation,
+      allConnectionData,
+      staticResults,
+      isScopeNode: true,
+      mslaNode: true,
+    });
+    if (navigator.clipboard && typeof navigator.clipboard.readText === 'function') {
+      navigator.clipboard.writeText(clipboardItem);
+    } else {
+      localStorage.setItem('msla-clipboard', clipboardItem);
+    }
   });
 });
 
