@@ -2,7 +2,8 @@
   "name": "vscode-designer",
   "version": "3.3.0",
   "devDependencies": {
-    "@azure/arm-appservice": "13.0.3",
+    "@azure/arm-appservice": "^13.0.3",
+    "@azure/arm-appinsights": "^5.0.0-beta.7",
     "@azure/arm-storage": "17.2.1",
     "@azure/ms-rest-js": "^2.6.4",
     "@microsoft/logic-apps-shared": "workspace:*",

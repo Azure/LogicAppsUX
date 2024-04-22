@@ -65,6 +65,11 @@ export const cleanHtmlString = (html: string): string => {
   return cleanedHtmlString;
 };
 
+// If we can find the id in the nodemap, return true.
+export const canReplaceSpanWithId = (idValue: string, nodeMap: Map<string, ValueSegment>): boolean => {
+  return nodeMap.get(idValue) !== undefined;
+};
+
 export const cleanStyleAttribute = (styleAttributeValue: string): string | undefined => {
   const newValue = styleAttributeValue.replace('white-space: pre-wrap;', '').trim();
   return newValue.length ? newValue : undefined;

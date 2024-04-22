@@ -1,4 +1,58 @@
 # Logic Apps Designer
+## [4.8.0](https://github.com/Azure/LogicAppsUX/compare/v4.7.0...v4.8.0) (2024-04-19)
+
+
+### Features
+
+* **Designer:** Hide side panel when no node is selected and we are suppressing default node click functionality ([#4660](https://github.com/Azure/LogicAppsUX/issues/4660)) ([b37c660](https://github.com/Azure/LogicAppsUX/commit/b37c660b834b83b21f811f275ce25a4152d79fe8))
+
+## [4.7.0](https://github.com/Azure/LogicAppsUX/compare/v4.6.0...v4.7.0) (2024-04-19)
+
+
+### Features
+
+* **Designer:** Add Custom Editor for Vs-Code To Display DM Editor ([#4592](https://github.com/Azure/LogicAppsUX/issues/4592)) ([3a936cd](https://github.com/Azure/LogicAppsUX/commit/3a936cda0143801ffbb4874ad95f498af67a3552))
+* **Designer:** Hide side panel when no node is selected and we are suppressing default node click functionality ([#4653](https://github.com/Azure/LogicAppsUX/issues/4653)) ([24f8794](https://github.com/Azure/LogicAppsUX/commit/24f879471f5094c68e6fcf4ee835ffe41f84b841))
+
+
+### Bug Fixes
+
+* **Designer:** Renamed Desginer Typo to Designer ([#4647](https://github.com/Azure/LogicAppsUX/issues/4647)) ([88df97d](https://github.com/Azure/LogicAppsUX/commit/88df97dcb76f24b3e8ab24c974717aa68bc3cfed))
+* **Designer:** Updated HTML Editor to support newline characters (for dynamic content) ([#4635](https://github.com/Azure/LogicAppsUX/issues/4635)) ([f4e1f8b](https://github.com/Azure/LogicAppsUX/commit/f4e1f8bd2e287e4f254c55d0f0b9ea03593cb1a0))
+* **desinger:** Move non-outputschema dynamic data outside fetch ([#4656](https://github.com/Azure/LogicAppsUX/issues/4656)) ([3afadda](https://github.com/Azure/LogicAppsUX/commit/3afaddab2ba48440ecf6669bb6b8223cdb96120c))
+* **Doc:** Fixing Typo in the Development Doc ([#4646](https://github.com/Azure/LogicAppsUX/issues/4646)) ([7a6a2ac](https://github.com/Azure/LogicAppsUX/commit/7a6a2acf1a23af94c0792bd8674f40078cf36b8c))
+* **vscode:** Fix typos in code ([#4654](https://github.com/Azure/LogicAppsUX/issues/4654)) ([6648d7c](https://github.com/Azure/LogicAppsUX/commit/6648d7c3e496284aec4b4c82decd3a3aed8b5a5f))
+
+## [4.6.0](https://github.com/Azure/LogicAppsUX/compare/v4.5.1...v4.6.0) (2024-04-18)
+
+
+### Bug Fixes
+
+* **dataMapper:** Fix issue loading schemas in stand alone ([#4642](https://github.com/Azure/LogicAppsUX/issues/4642)) ([294ca75](https://github.com/Azure/LogicAppsUX/commit/294ca75768cf3433fabb2d556a57747396204b27))
+* **vscode:** Fix new typescript version issues and import libraries ([#4636](https://github.com/Azure/LogicAppsUX/issues/4636)) ([79d8e20](https://github.com/Azure/LogicAppsUX/commit/79d8e20badbafa835e1cbad27a4dd2ab9b1ef75b))
+
+### [4.5.1](https://github.com/Azure/LogicAppsUX/compare/v4.5.0...v4.5.1) (2024-04-18)
+
+## [4.5.0](https://github.com/Azure/LogicAppsUX/compare/v4.4.1...v4.5.0) (2024-04-18)
+
+
+### Features
+
+* **vscode:** Update README.md - Deployment Scripts ([#4612](https://github.com/Azure/LogicAppsUX/issues/4612)) ([1fd4d84](https://github.com/Azure/LogicAppsUX/commit/1fd4d840758ce63256e1b43e2019d78c987ccd54))
+
+
+### Bug Fixes
+
+* **all:** Fix ESLint for repo ([#4617](https://github.com/Azure/LogicAppsUX/issues/4617)) ([4d8ce84](https://github.com/Azure/LogicAppsUX/commit/4d8ce84ee521adad486171fcadeda74e313ae309))
+* **Designer:** Add a log when user sees invalid connection error on operation deserialization ([#4628](https://github.com/Azure/LogicAppsUX/issues/4628)) ([5f746d4](https://github.com/Azure/LogicAppsUX/commit/5f746d4f0b221ffc83c113190017806400fb0fb9))
+* **Designer:** Added proper settings to the Azure Function operation ([#4605](https://github.com/Azure/LogicAppsUX/issues/4605)) ([5f6aab5](https://github.com/Azure/LogicAppsUX/commit/5f6aab530b87a20779d5ed64f8d5d3b8de273c97))
+* **designer:** html editor styles not showing in v3 ([#4627](https://github.com/Azure/LogicAppsUX/issues/4627)) ([85430e3](https://github.com/Azure/LogicAppsUX/commit/85430e36aca6ece6c4e70fed996175a04fb2a342))
+* **designer:** Performance improvement by removing spread accumulators in the code ([#4619](https://github.com/Azure/LogicAppsUX/issues/4619)) ([3c8128c](https://github.com/Azure/LogicAppsUX/commit/3c8128cf5ed254c1946e0e08bb6c02695059ac4e))
+* **designer:** simplify the email validation regex ([#4626](https://github.com/Azure/LogicAppsUX/issues/4626)) ([f5c8485](https://github.com/Azure/LogicAppsUX/commit/f5c8485eafb6b5f5d6fe20cd5ffce34566a36812))
+* **vscode:** Add eslint configuration to vs-code-designer and vs-code-react ([#4620](https://github.com/Azure/LogicAppsUX/issues/4620)) ([efe4e50](https://github.com/Azure/LogicAppsUX/commit/efe4e500719adbf22199f782e63b44d9e8d27007))
+* **vscode:** Update calls to check for dotnet installation ([#4621](https://github.com/Azure/LogicAppsUX/issues/4621)) ([97706a6](https://github.com/Azure/LogicAppsUX/commit/97706a609bdf9bd58dc29277e3d87b2d667f7e6c))
+* **vscode:** Update version in README ([#4615](https://github.com/Azure/LogicAppsUX/issues/4615)) ([c555d59](https://github.com/Azure/LogicAppsUX/commit/c555d5983b123a4250dfab8fa5b8146a30a5df2c))
+
 ### [4.4.1](https://github.com/Azure/LogicAppsUX/compare/v4.4.0...v4.4.1) (2024-04-11)
 
 

@@ -26,8 +26,8 @@ export async function isLogicAppProject(folderPath: string): Promise<boolean> {
     const hostJsonData = fse.readFileSync(hostFilePath, 'utf-8');
     const hostJson = JSON.parse(hostJsonData);
 
-    const hasWorfklowBundle = hostJson?.extensionBundle?.id === extensionBundleId;
-    return hasHostJson && hasLocalSettingsJson && hasWorfklowBundle;
+    const hasWorkflowBundle = hostJson?.extensionBundle?.id === extensionBundleId;
+    return hasHostJson && hasLocalSettingsJson && hasWorkflowBundle;
   }
 
   return false;

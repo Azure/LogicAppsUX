@@ -7,6 +7,7 @@ import {
   useShowConnectionsPanel,
   useHostOptions,
   useShowPerformanceDebug,
+  useSuppressDefaultNodeSelect,
 } from '../../state/workflowLoadingSelectors';
 import {
   setDarkMode,
@@ -18,6 +19,7 @@ import {
   setShowConnectionsPanel,
   setHostOptions,
   setShowPerformanceDebug,
+  setSuppressDefaultNodeSelect,
 } from '../../state/workflowLoadingSlice';
 import { Checkbox } from '@fluentui/react';
 import { useCallback } from 'react';
@@ -29,6 +31,7 @@ const ContextSettings = () => {
   const isDarkMode = useIsDarkMode();
   const showConnectionsPanel = useShowConnectionsPanel();
   const areCustomEditorsEnabled = useAreCustomEditorsEnabled();
+  const suppressDefaultNodeSelect = useSuppressDefaultNodeSelect();
   const hostOptions = useHostOptions();
   const showPerformanceDebug = useShowPerformanceDebug();
   const dispatch = useDispatch<AppDispatch>();
@@ -73,6 +76,11 @@ const ContextSettings = () => {
         label="Force Enable Split-On"
         checked={hostOptions.forceEnableSplitOn}
         onChange={(_, checked) => dispatch(setHostOptions({ forceEnableSplitOn: !!checked }))}
+      />
+      <Checkbox
+        label="Suppress default node click"
+        checked={suppressDefaultNodeSelect}
+        onChange={(_, checked) => dispatch(setSuppressDefaultNodeSelect(!!checked))}
       />
       <Checkbox
         label="Show Performance Debug"
