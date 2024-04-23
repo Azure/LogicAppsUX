@@ -26,12 +26,30 @@ describe('CreateConnectionWrapper', () => {
       },
     };
 
-    it.each([
-      ['default case', outputParameterValues.default],
-      ['value property is undefined', outputParameterValues.withUndefinedValue],
-    ])(`returns ConnectionParameterSetValue when %s`, (_, outputParameterValues) => {
-      expect(getConnectionParameterSetValues(selectedParameterSetName, outputParameterValues)).toEqual(
-        expectedConnectionParameterSetValues
+    const expectedConnectionParameterSetValuesWithUndefined = {
+      name: selectedParameterSetName,
+      values: {
+        parameter1: {
+          value: 'value1',
+        },
+        parameter2: {
+          value: undefined,
+        },
+      },
+    };
+
+    it.each([['default case', outputParameterValues.default]])(
+      `returns ConnectionParameterSetValue when %s`,
+      (_, outputParameterValues) => {
+        expect(getConnectionParameterSetValues(selectedParameterSetName, outputParameterValues)).toEqual(
+          expectedConnectionParameterSetValues
+        );
+      }
+    );
+
+    it('returns ConnectionParameterSetValue with undefined value when value property is undefined', () => {
+      expect(getConnectionParameterSetValues(selectedParameterSetName, outputParameterValues.withUndefinedValue)).toEqual(
+        expectedConnectionParameterSetValuesWithUndefined
       );
     });
   });
