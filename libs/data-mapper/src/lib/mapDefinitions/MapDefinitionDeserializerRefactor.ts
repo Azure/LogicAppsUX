@@ -1,7 +1,7 @@
 import { reservedMapDefinitionKeysArray } from "../constants/MapDefinitionConstants";
 import { targetPrefix } from "../constants/ReactFlowConstants";
 import type { FunctionData } from "../models";
-import { directAccessPseudoFunction, indexPseudoFunction } from "../models";
+import { indexPseudoFunction } from "../models";
 import type { ConnectionDictionary } from "../models/Connection";
 import { applyConnectionValue } from "../utils/Connection.Utils";
 import type {
@@ -101,19 +101,23 @@ export class MapDefinitionDeserializerRefactor {
     return connections;
   };
 
+  private removePropertySymbolFromKey = (key: string) => {
+    let formattedTargetKey = "";
+    if (key.startsWith("$@")) {
+      formattedTargetKey = key.substring(2);
+    } else if (key.startsWith("$")) {
+      formattedTargetKey = key.substring(1);
+    } 
+    return formattedTargetKey
+  }
+
   private getTargetNodeInContextOfParent = (
     currentTargetKey: string,
     parentTargetNode: SchemaNodeExtended | undefined
   ) => {
     let targetNode: SchemaNodeExtended | undefined = undefined;
-    let formattedTargetKey = "";
-    if (currentTargetKey.startsWith("$@")) {
-      formattedTargetKey = currentTargetKey.substring(2); // danielle this probably needs to be done on source side too
-    } else if (currentTargetKey.startsWith("$")) {
-      formattedTargetKey = currentTargetKey.substring(1);
-    } else {
-      formattedTargetKey = currentTargetKey;
-    }
+    const formattedTargetKey = this.removePropertySymbolFromKey(currentTargetKey); // danielle this probably needs to be done on source side too
+
     if (parentTargetNode === undefined) {
       targetNode =
         this._targetSchemaFlattened[`${targetPrefix}${formattedTargetKey}`];
@@ -172,7 +176,6 @@ export class MapDefinitionDeserializerRefactor {
     targetNode: SchemaNodeExtended | FunctionData,
     connections: ConnectionDictionary
   ) => {
-    // danielle what is this for?
     const tokens = separateFunctions(key);
     const functionMetadata =
       funcMetadata || createTargetOrFunctionRefactor(tokens).term;
@@ -199,17 +202,15 @@ export class MapDefinitionDeserializerRefactor {
       );
     }
 
-    if (!sourceNode) {
-      // get function node
-
+    if (!sourceNode) { // get function node
       if (typeof functionMetadata !== "string") {
-        const func = getSourceNode(
+        const func = {...getSourceNode(
           functionMetadata.name,
           this._sourceSchema,
           functionMetadata.name.length + 1,
           this._functions,
           this._createdNodes
-        ) as FunctionData;
+        )} as FunctionData;
         const funcKey = createReactFlowFunctionKey(func);
         // eslint-disable-next-line no-param-reassign
         func.key = funcKey;
@@ -225,6 +226,7 @@ export class MapDefinitionDeserializerRefactor {
           },
         });
 
+        // connect inputs
         functionMetadata.inputs.forEach((input) => {
           const srcStr = typeof input === "string" ? input : input.name;
           this.handleSingleValueOrFunction(srcStr, input, func, connections);
@@ -330,6 +332,7 @@ export class MapDefinitionDeserializerRefactor {
       this.addConditionalConnectionIfNeeded(connections, targetNode);
 
       // must connect conditional
+      // danielle this is messsyyyyyy
       if (typeof rightSideStringOrObject === "string") {
         if (this._conditional) {
           const ifFunction = this._functions.find(
@@ -371,7 +374,6 @@ export class MapDefinitionDeserializerRefactor {
             connections
           );
         }
-        this._conditional = "";
       } else {
         // for statement
         this.processForStatement(
@@ -389,6 +391,7 @@ export class MapDefinitionDeserializerRefactor {
           true
         );
       });
+      this._conditional ='';
     }
   };
 
@@ -460,7 +463,6 @@ export class MapDefinitionDeserializerRefactor {
         this._sourceSchema.schemaTreeRoot
       ) as SchemaNodeExtended;
     }
-    console.log("loopSource", loopSource);
     return loopSource;
   };
 
@@ -479,6 +481,7 @@ export class MapDefinitionDeserializerRefactor {
         this.handleIndexFuncCreation(forFunc, loopSource, connections);
       }
     } else {
+      
       // must be a sequence function
     }
   };
@@ -540,7 +543,7 @@ export class MapDefinitionDeserializerRefactor {
         },
       });
     }
-    if (key.startsWith('"') || parseInt(key)) {
+    else if (key.startsWith('"') || parseInt(key)) {  // danielle make these into a function
       // custom value danielle custom value can also be a number without quotes
       applyConnectionValue(connections, {
         targetNode: targetNode,
@@ -549,7 +552,7 @@ export class MapDefinitionDeserializerRefactor {
         input: key,
       });
     }
-    if (key.startsWith("$")) {
+    else if (key.startsWith("$")) {
       // custom value
       const indexFnKey = this._createdNodes[key];
       const indexFn = connections[indexFnKey];
@@ -565,14 +568,9 @@ export class MapDefinitionDeserializerRefactor {
         });
       }
     } else if (key.includes("[")) {
-      // create a new function with input as 2: loop, 1: index in the brackets
-      const directAccessFnKey = createReactFlowFunctionKey(indexPseudoFunction);
-      const directAccessFn = {...directAccessPseudoFunction, name: directAccessFnKey};
-
       // using this older function for now 
       const amendedSourceKey = amendSourceKeyForDirectAccessIfNeeded(key);
 
-      // danielle can I just treat this as a normal function now?
       const directAccessSeparated = separateFunctions(amendedSourceKey[0]);
       const idk = createTargetOrFunctionRefactor(directAccessSeparated);
 
@@ -582,20 +580,7 @@ export class MapDefinitionDeserializerRefactor {
         targetNode,
         connections
       )
-      
-      // add index value connection if it is a number
-      const index = key.substring(1, key.indexOf("]"+1)); // danielle can be a $index or a number
 
-
-      // applyConnectionValue(connections, {
-      //   targetNode: directAccessFn,
-      //   targetNodeReactFlowKey: directAccessFnKey,
-      //   inputIndex: 1,
-      //   input:  {
-      //     reactFlowKey: loopNode.key,
-      //     node: loopNode,
-      //   },
-      // })
     } else {
       applyConnectionValue(connections, {
         targetNode: targetNode,
@@ -607,7 +592,7 @@ export class MapDefinitionDeserializerRefactor {
   };
 
   private isTargetKey = (key: string) => {
-    if (!key.includes("$for") && !key.includes("$if")) {
+    if (!key.includes(DReservedToken.for) && !key.includes(DReservedToken.if)) {
       return true;
     }
     return false;

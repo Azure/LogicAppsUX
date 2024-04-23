@@ -92,7 +92,7 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
         );
       });
 
-      it.skip('creates a connection between one source and target nodes value', () => {
+      it('creates a connection between one source and target nodes value', () => {
         // danielle does $value just mean itself?
         simpleMap['ns0:Root'] = {
           DataTranslation: {
@@ -693,6 +693,56 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
               Day1: {
                 Name: '"Day 1"',
                 Pressure: '/ns0:Root/LoopingWithIndex/WeatherReport[1]/@Pressure',
+              },
+              Day2: {
+                Name: '"Day 2"',
+                Temperature: '/ns0:Root/LoopingWithIndex/WeatherReport[2]/@Temperature',
+              },
+            },
+          },
+        };
+
+        const mapDefinitionDeserializer = new MapDefinitionDeserializerRefactor(simpleMap, extendedSource, extendedTarget, functionMock);
+        const result = mapDefinitionDeserializer.convertFromMapDefinition();
+
+        expect(Object.entries(result).length).toEqual(9);
+        expect(result['target-/ns0:Root/LoopingWithIndex/WeatherSummary/Day1/Name'].inputs[0][0] as string).toBe('"Day 1"');
+        expect(result['target-/ns0:Root/LoopingWithIndex/WeatherSummary/Day2/Name'].inputs[0][0] as string).toBe('"Day 2"');
+
+        const directAccess1Key = (result['target-/ns0:Root/LoopingWithIndex/WeatherSummary/Day1/Pressure'].inputs[0][0] as ConnectionUnit)
+          .reactFlowKey;
+        const directAccess2Key = (
+          result['target-/ns0:Root/LoopingWithIndex/WeatherSummary/Day2/Temperature'].inputs[0][0] as ConnectionUnit
+        ).reactFlowKey;
+
+        expect(directAccess1Key).toContain(directAccessPseudoFunctionKey);
+        expect(directAccess2Key).toContain(directAccessPseudoFunctionKey);
+
+        expect(result[directAccess1Key].inputs[0][0] as string).toBe('1');
+        expect((result[directAccess1Key].inputs[1][0] as ConnectionUnit).reactFlowKey).toBe(
+          'source-/ns0:Root/LoopingWithIndex/WeatherReport'
+        );
+        expect((result[directAccess1Key].inputs[2][0] as ConnectionUnit).reactFlowKey).toBe(
+          'source-/ns0:Root/LoopingWithIndex/WeatherReport/@Pressure'
+        );
+
+        expect(result[directAccess2Key].inputs[0][0] as string).toBe('2');
+        expect((result[directAccess2Key].inputs[1][0] as ConnectionUnit).reactFlowKey).toBe(
+          'source-/ns0:Root/LoopingWithIndex/WeatherReport'
+        );
+        expect((result[directAccess2Key].inputs[2][0] as ConnectionUnit).reactFlowKey).toBe(
+          'source-/ns0:Root/LoopingWithIndex/WeatherReport/@Temperature'
+        );
+      });
+
+      it('creates a custom value direct access connection without duplicate function', () => {
+        simpleMap['ns0:Root'] = {
+          LoopingWithIndex: {
+            WeatherSummary: {
+              Day1: {
+                Name: '"Day 1"',
+                Pressure: '/ns0:Root/LoopingWithIndex/WeatherReport[1]/@Pressure',
+                WindSpeed: '/ns0:Root/LoopingWithIndex/WeatherReport[1]/@Pressure',
               },
               Day2: {
                 Name: '"Day 2"',
