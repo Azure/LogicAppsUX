@@ -443,7 +443,7 @@ export const DReservedToken = {
 } as const;
 export type DReservedToken = (typeof ReservedToken)[keyof typeof ReservedToken];
 
-export const dReservedToken: string[] = [ReservedToken.for, ReservedToken.if, ReservedToken.backout]; // danielle maybe ideally we separate evertything out, so we don't need to change these functions if the definition changes
+export const dReservedToken: string[] = [DReservedToken.for, DReservedToken.if, DReservedToken.backout]; // danielle maybe ideally we separate evertything out, so we don't need to change these functions if the definition changes
 
 export const DSeparators = {
   OpenParenthesis: '(',
@@ -481,7 +481,7 @@ export const separateFunctions = (targetKey: string): string[] => {
   let currentToken = '';
   while (i < targetKey.length) {
     const currentChar = targetKey[i];
-    if (currentChar === ' ') {
+    if (currentChar === ' ') { // ignore whitespace
       i++;
       continue;
     }

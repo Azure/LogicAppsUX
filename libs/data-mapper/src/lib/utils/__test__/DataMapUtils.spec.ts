@@ -962,6 +962,20 @@ describe('utils/DataMap', () => {
     });
   });
 
+  describe('separateFunctions', () => {
+    it('separates an if-else function', () => {
+      const result = separateFunctions('if-then-else("a", /ns0:Root/DirectTranslation/EmployeeName, "Custom")');
+      expect(result[0]).toEqual('if-then-else');
+      expect(result[1]).toEqual(Separators.OpenParenthesis);
+      expect(result[2]).toEqual('"a"');
+      expect(result[5]).toEqual(Separators.Comma);
+      expect(result[6]).toEqual('/ns0:Root/DirectTranslation/EmployeeName');
+      expect(result[7]).toEqual(Separators.Comma);
+      expect(result[9]).toEqual('"Custom"');
+      expect(result[10]).toEqual(Separators.CloseParenthesis);
+    });
+  })
+
   describe('createTargetOrFunctionRefactor', () => {
     it('creates objects for nested functions', () => {
       const tokens = [
