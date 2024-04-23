@@ -24,7 +24,7 @@ env:
 
 jobs:
   bump-version:
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     steps:
       - name: 'Checkout Github Action'
         uses: actions/checkout@master
