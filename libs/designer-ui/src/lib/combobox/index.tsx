@@ -332,18 +332,26 @@ const getOptions = (options: ComboboxItem[]): IComboBoxOption[] => {
     description: 'Label for button to allow user to create custom value in combobox',
   });
 
+  const noOptionsExists = intl.formatMessage({
+    defaultMessage: 'No Items',
+    id: 'AiceEQ',
+    description: 'Label for when no items exist for combobox options',
+  });
+
   return [
-    ...options.map((option: ComboboxItem) => {
-      const { key, displayName, disabled, type } = option;
-      switch (key) {
-        case 'divider':
-          return { key: key, text: displayName, itemType: SelectableOptionMenuItemType.Divider, disabled: disabled, data: type };
-        case 'header':
-          return { key: key, text: displayName, itemType: SelectableOptionMenuItemType.Header, data: type, disabed: disabled };
-        default:
-          return { key: key, text: displayName, disabled: disabled, data: type };
-      }
-    }),
+    ...(options.length > 0
+      ? options.map((option: ComboboxItem) => {
+          const { key, displayName, disabled, type } = option;
+          switch (key) {
+            case 'divider':
+              return { key: key, text: displayName, itemType: SelectableOptionMenuItemType.Divider, disabled: disabled, data: type };
+            case 'header':
+              return { key: key, text: displayName, itemType: SelectableOptionMenuItemType.Header, data: type, disabed: disabled };
+            default:
+              return { key: key, text: displayName, disabled: disabled, data: type };
+          }
+        })
+      : [{ key: 'noOptions', text: noOptionsExists, itemType: SelectableOptionMenuItemType.Header, disabled: true }]),
     { key: 'customValue', text: customValueLabel, styles: customValueStyles, data: 'customrender' },
   ];
 };

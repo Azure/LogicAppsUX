@@ -8,7 +8,7 @@ on:
 jobs:
 
   deploy-test-app:
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     environment: E2ETesting
     permissions:
         id-token: write
@@ -51,7 +51,7 @@ jobs:
             --parameters "{ \"zipDeploymentLocation\": { \"value\": \"${{env.ZIP-URL}}\" } }"
 
   run-tests:
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     environment: E2ETesting
     needs: deploy-test-app
     permissions:
@@ -114,7 +114,7 @@ jobs:
     name: Notify failed build
     needs: run-tests
     if: ${{ always() && needs.run-tests.result == 'failure' }}
-    runs-on: ubuntu-latest
+    runs-on: macos-latest
     permissions:
       issues: write
     steps:

@@ -55,13 +55,14 @@ import { Tooltip } from '@fluentui/react-components';
 import { RunService, WorkflowService } from '@microsoft/logic-apps-shared';
 import { Card } from '@microsoft/designer-ui';
 import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
-import { memo, useCallback, useEffect, useMemo, useState } from 'react';
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useDrag } from 'react-dnd';
 import { useIntl } from 'react-intl';
 import { useQuery } from 'react-query';
 import { useDispatch } from 'react-redux';
 import { Handle, Position, useOnViewportChange } from 'reactflow';
 import type { NodeProps } from 'reactflow';
+import { useHotkeys } from 'react-hotkeys-hook';
 
 const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.Bottom, id }: NodeProps) => {
   const readOnly = useReadOnly();
@@ -172,20 +173,9 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
   const connectionResult = useNodeConnectionName(id);
   const isConnectionRequired = useIsConnectionRequired(operationInfo);
   const isLeaf = useIsLeafNode(id);
+  const label = useNodeDisplayName(id);
 
   const showLeafComponents = useMemo(() => !readOnly && isLeaf, [readOnly, isLeaf]);
-
-  const nodeClick = useCallback(() => {
-    if (nodeSelectCallbackOverride) {
-      nodeSelectCallbackOverride(id);
-    }
-
-    if (suppressDefaultNodeSelect) {
-      dispatch(setSelectedNodeId(id));
-    } else {
-      dispatch(changePanelNode(id));
-    }
-  }, [dispatch, id, nodeSelectCallbackOverride, suppressDefaultNodeSelect]);
 
   const { brandColor, iconUri } = useOperationVisuals(id);
 
@@ -202,8 +192,6 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
     [brandColor, nodeComment]
   );
 
-  const label = useNodeDisplayName(id);
-
   const [showCopyCallout, setShowCopyCallout] = useState(false);
 
   useOnViewportChange({
@@ -213,6 +201,17 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
       }
     }, [showCopyCallout]),
   });
+
+  const nodeClick = useCallback(() => {
+    if (nodeSelectCallbackOverride) {
+      nodeSelectCallbackOverride(id);
+    }
+    if (suppressDefaultNodeSelect) {
+      dispatch(setSelectedNodeId(id));
+    } else {
+      dispatch(changePanelNode(id));
+    }
+  }, [dispatch, id, nodeSelectCallbackOverride, suppressDefaultNodeSelect]);
 
   const deleteClick = useCallback(() => {
     dispatch(setSelectedNodeId(id));
@@ -230,7 +229,7 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
   const resubmitClick = useCallback(() => {
     WorkflowService().resubmitWorkflow?.(runInstance?.name ?? '', [id]);
   }, [runInstance, id]);
-
+  const ref = useHotkeys('meta+c', copyClick, { preventDefault: true });
   const contextMenuItems: JSX.Element[] = useMemo(
     () => [
       <DeleteMenuItem key={'delete'} onClick={deleteClick} showKey />,
@@ -317,49 +316,51 @@ const DefaultNode = ({ targetPosition = Position.Top, sourcePosition = Position.
     description: 'Copied text',
   });
 
-  const [rootRef, setRef] = useState<HTMLDivElement | null>(null);
+  const rootRef = useRef<HTMLDivElement | null>(null);
 
   return (
     <>
-      <div className="nopan" ref={setRef}>
-        <Handle className="node-handle top" type="target" position={targetPosition} isConnectable={false} />
-        <Card
-          title={label}
-          icon={iconUri}
-          draggable={!readOnly && !isTrigger}
-          brandColor={brandColor}
-          id={id}
-          connectionRequired={isConnectionRequired}
-          connectionDisplayName={connectionResult.isLoading ? '...' : connectionResult.result}
-          connectorName={connectorName?.result}
-          commentBox={comment}
-          drag={drag}
-          dragPreview={dragPreview}
-          errorMessage={errorMessage}
-          errorLevel={errorLevel}
-          isDragging={isDragging}
-          isLoading={isLoading}
-          isMonitoringView={isMonitoringView}
-          runData={runData}
-          readOnly={readOnly}
-          onClick={nodeClick}
-          onDeleteClick={deleteClick}
-          onCopyClick={copyClick}
-          operationName={operationSummary?.result}
-          selected={selected}
-          contextMenuItems={contextMenuItems}
-          setFocus={shouldFocus}
-          staticResultsEnabled={!!staticResults}
-          isSecureInputsOutputs={isSecureInputsOutputs}
-        />
-        <Tooltip
-          positioning={{ target: rootRef, position: 'below', align: 'end' }}
-          withArrow
-          content={copiedText}
-          relationship="description"
-          visible={showCopyCallout}
-        />
-        <Handle className="node-handle bottom" type="source" position={sourcePosition} isConnectable={false} />
+      <div className="nopan" ref={ref as any}>
+        <div ref={rootRef}>
+          <Handle className="node-handle top" type="target" position={targetPosition} isConnectable={false} />
+          <Card
+            title={label}
+            icon={iconUri}
+            draggable={!readOnly && !isTrigger}
+            brandColor={brandColor}
+            id={id}
+            connectionRequired={isConnectionRequired}
+            connectionDisplayName={connectionResult.isLoading ? '...' : connectionResult.result}
+            connectorName={connectorName?.result}
+            commentBox={comment}
+            drag={drag}
+            dragPreview={dragPreview}
+            errorMessage={errorMessage}
+            errorLevel={errorLevel}
+            isDragging={isDragging}
+            isLoading={isLoading}
+            isMonitoringView={isMonitoringView}
+            runData={runData}
+            readOnly={readOnly}
+            onClick={nodeClick}
+            onDeleteClick={deleteClick}
+            onCopyClick={copyClick}
+            operationName={operationSummary?.result}
+            selected={selected}
+            contextMenuItems={contextMenuItems}
+            setFocus={shouldFocus}
+            staticResultsEnabled={!!staticResults}
+            isSecureInputsOutputs={isSecureInputsOutputs}
+          />
+          <Tooltip
+            positioning={{ target: rootRef.current, position: 'below', align: 'end' }}
+            withArrow
+            content={copiedText}
+            relationship="description"
+            visible={showCopyCallout}
+          />
+          <Handle className="node-handle bottom" type="source" position={sourcePosition} isConnectable={false} />
+        </div>
       </div>
       {showLeafComponents ? (
         <div className={'edge-drop-zone-container'}>

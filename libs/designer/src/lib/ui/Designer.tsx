@@ -224,7 +224,13 @@ export const Designer = (props: DesignerProps) => {
 
   // Adding recurrence interval to the query to access outside of functional components
   const recurrenceInterval = useHostOptions().recurrenceInterval;
-  useQuery({ queryKey: ['recurrenceInterval'], initialData: recurrenceInterval });
+  useQuery({
+    queryKey: ['recurrenceInterval'],
+    initialData: recurrenceInterval,
+    queryFn: () => {
+      return recurrenceInterval;
+    },
+  });
 
   // Adding workflowKind (stateful or stateless) to the query to access outside of functional components
   const workflowKind = useSelector((state: RootState) => state.workflow.workflowKind);
