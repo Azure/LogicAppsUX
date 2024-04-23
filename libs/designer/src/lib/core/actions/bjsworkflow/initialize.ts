@@ -498,7 +498,6 @@ export const updateAllUpstreamNodes = (state: RootState, dispatch: Dispatch): vo
       );
     }
   }
-
   dispatch(updateUpstreamNodes(payload));
 };
 

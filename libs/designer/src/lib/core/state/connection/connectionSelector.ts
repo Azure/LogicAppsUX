@@ -17,6 +17,7 @@ import { useMemo } from 'react';
 import type { UseQueryResult } from 'react-query';
 import { useQuery } from 'react-query';
 import { useSelector } from 'react-redux';
+import type { ConnectionsStoreState } from './connectionSlice';
 
 export const useConnector = (connectorId: string | undefined, enabled = true): UseQueryResult<Connector | undefined, unknown> => {
   const { data, ...rest }: any = useConnectorAndSwagger(connectorId, enabled);
@@ -137,4 +138,13 @@ export const useShowIdentitySelectorQuery = (nodeId: string) => {
     }
     return false;
   }, [connectionQuery, connectionReference, connector, operationInfo?.type]);
+};
+
+export const getConnectionReferenceForNodeId = (
+  connectionState: ConnectionsStoreState,
+  nodeId: string
+): { connectionReference: ConnectionReference; referenceKey: string } | undefined => {
+  const { connectionReferences, connectionsMapping } = connectionState;
+  const referenceKey = connectionsMapping[nodeId];
+  return referenceKey ? { connectionReference: connectionReferences[referenceKey], referenceKey } : undefined;
 };

@@ -14,7 +14,7 @@ test(
 
     const originElement = await page.waitForSelector('div[role="button"]:has-text("Increment variable55")');
     const destinationElement = await page.waitForSelector(
-      'g:nth-child(51) > .edgebutton-foreignobject > div > .msla-drop-zone-viewmanager2'
+      'g:nth-child(51) > .edgebutton-foreignobject > div > div > .msla-drop-zone-viewmanager2'
     );
 
     await originElement.hover();

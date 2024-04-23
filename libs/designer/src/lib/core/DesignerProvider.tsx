@@ -16,6 +16,7 @@ import { Provider as ReduxProvider, useDispatch } from 'react-redux';
 
 export interface DesignerProviderProps {
   key?: string;
+  id?: string;
   locale?: string;
   options: Omit<DesignerOptionsState, 'servicesInitialized'> & { services: ServiceOptions };
   children: React.ReactNode;
@@ -32,7 +33,7 @@ const OptionsStateSet = ({ options, children }: any) => {
   return <>{children}</>;
 };
 
-export const DesignerProvider = ({ key, locale = 'en', options, children }: DesignerProviderProps) => {
+export const DesignerProvider = ({ id, locale = 'en', options, children }: DesignerProviderProps) => {
   const { isDarkMode } = options;
   const azTheme = isDarkMode ? AzureThemeDark : AzureThemeLight;
   const webTheme = isDarkMode ? webDarkTheme : webLightTheme;
@@ -54,7 +55,7 @@ export const DesignerProvider = ({ key, locale = 'en', options, children }: Desi
               <div data-color-scheme={themeName} className={`msla-theme-${themeName}`} style={{ height: '100vh', overflow: 'hidden' }}>
                 <ReactQueryProvider>
                   <IntlProvider locale={locale} defaultLocale={locale} onError={onError}>
-                    <ReduxReset key={key} />
+                    <ReduxReset id={id} />
                     {children}
                   </IntlProvider>
                 </ReactQueryProvider>
@@ -68,10 +69,10 @@ export const DesignerProvider = ({ key, locale = 'en', options, children }: Desi
 };
 
 // Redux state persists even through component re-mounts (like with changing the key prop in a parent), so we need to reset the state when the key changes manually
-const ReduxReset = ({ key }: { key?: string }) => {
+const ReduxReset = ({ id }: { id?: string }) => {
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(resetWorkflowState());
-  }, [key, dispatch]);
+  }, [id, dispatch]);
   return null;
 };

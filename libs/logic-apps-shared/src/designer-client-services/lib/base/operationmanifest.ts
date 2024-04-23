@@ -398,8 +398,15 @@ export function getBuiltInOperationInfo(definition: any, isTrigger: boolean): Op
             connectorId: 'connectionProviders/request',
             operationId: request,
           };
-        default:
+        default: {
+          if (kind === undefined) {
+            return {
+              connectorId: 'connectionProviders/request',
+              operationId: request,
+            };
+          }
           throw new UnsupportedException(`Unsupported operation kind ${kind} for request type`);
+        }
       }
     case response:
       switch (kind) {
@@ -408,8 +415,15 @@ export function getBuiltInOperationInfo(definition: any, isTrigger: boolean): Op
             connectorId: 'connectionProviders/request',
             operationId: response,
           };
-        default:
+        default: {
+          if (kind === undefined) {
+            return {
+              connectorId: 'connectionProviders/request',
+              operationId: response,
+            };
+          }
           throw new UnsupportedException(`Unsupported operation kind ${kind} for response type`);
+        }
       }
     case table:
       switch (definition.inputs?.format?.toLowerCase()) {

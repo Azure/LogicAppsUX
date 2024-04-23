@@ -70,7 +70,7 @@ export const PseudoCommandBar = () => {
         disabled={!isDirty}
         onClick={() => {
           alert("Congrats you saved the workflow! (Not really, you're in standalone)");
-          dispatch(resetDesignerDirtyState());
+          dispatch(resetDesignerDirtyState(undefined));
         }}
       />
       <ActionButton
@@ -78,7 +78,7 @@ export const PseudoCommandBar = () => {
         text="Discard"
         disabled={!isDirty}
         onClick={() => {
-          dispatch(resetDesignerDirtyState());
+          dispatch(resetDesignerDirtyState(undefined));
         }}
       />
       <ActionButton

@@ -33,7 +33,13 @@ const DataProviderInner: React.FC<BJSWorkflowProviderProps> = ({ workflow, child
   }, [runInstance, workflow, customCode]);
 
   // Store app settings in query to access outside of functional components
-  useQuery({ queryKey: ['appSettings'], initialData: appSettings });
+  useQuery({
+    queryKey: ['appSettings'],
+    initialData: appSettings,
+    queryFn: () => {
+      return appSettings;
+    },
+  });
 
   return <>{children}</>;
 };
