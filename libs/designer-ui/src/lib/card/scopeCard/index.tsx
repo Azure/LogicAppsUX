@@ -1,3 +1,4 @@
+import { useEffect, useRef } from 'react';
 import { StatusPill } from '../../monitoring';
 import NodeCollapseToggle from '../../nodeCollapseToggle';
 import { CardContextMenu } from '../cardcontextmenu';
@@ -33,14 +34,19 @@ export const ScopeCard: React.FC<ScopeCardProps> = ({
   handleCollapse,
   selected,
   contextMenuItems = [],
-  runData = {},
+  runData,
+  setFocus,
 }) => {
   const contextMenu = useCardContextMenu();
-
+  const focusRef = useRef<HTMLDivElement | null>(null);
   const handleClick: React.MouseEventHandler<HTMLElement> = () => {
     onClick?.();
   };
-
+  useEffect(() => {
+    if (setFocus) {
+      focusRef.current?.focus();
+    }
+  }, [setFocus]);
   const keyboardInteraction = useCardKeyboardInteraction(onClick, onDeleteClick);
 
   const badges = [
@@ -55,7 +61,6 @@ export const ScopeCard: React.FC<ScopeCardProps> = ({
   ) : icon ? (
     <img className="scope-icon" alt="" role="presentation" src={icon} />
   ) : null;
-
   return (
     <div ref={dragPreview} className="msla-content-fit" style={{ cursor: 'default' }}>
       <div aria-describedby={describedBy} className={'msla-content-fit'} aria-label={title}>
@@ -71,15 +76,15 @@ export const ScopeCard: React.FC<ScopeCardProps> = ({
           {isMonitoringView ? (
             <StatusPill
               id={`${title}-status`}
-              status={runData.status}
-              duration={runData.duration}
-              startTime={runData.startTime}
-              endTime={runData.endTime}
+              status={runData?.status}
+              duration={runData?.duration}
+              startTime={runData?.startTime}
+              endTime={runData?.endTime}
             />
           ) : null}
           <div className="msla-scope-card-content">
             <div className={css('msla-selection-box', 'white-outline', selected && 'selected')} />
-            <button className="msla-scope-card-title-button" onClick={handleClick}>
+            <button className="msla-scope-card-title-button" ref={focusRef as any} onClick={handleClick}>
               <div className="msla-scope-card-title-box">
                 <div className={css('gripper-section', draggable && 'draggable')}>{draggable ? <Gripper /> : null}</div>
                 <div className="panel-card-content-icon-section">{cardIcon}</div>
