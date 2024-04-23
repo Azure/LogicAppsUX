@@ -8,7 +8,7 @@ on:
 jobs:
 
   deploy-test-app:
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     environment: E2ETesting
     permissions:
         id-token: write
@@ -114,7 +114,7 @@ jobs:
     name: Notify failed build
     needs: run-tests
     if: ${{ always() && needs.run-tests.result == 'failure' }}
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     permissions:
       issues: write
     steps:
