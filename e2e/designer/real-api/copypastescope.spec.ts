@@ -21,12 +21,10 @@ test.describe(
       await page.getByRole('button', { name: 'Toolbox' }).click({ timeout: 20000 });
 
       await page.waitForLoadState('networkidle');
-      await page.getByTestId('rf__node-For_each-#scope').getByRole('button', { name: 'For each' }).click({
-        button: 'right',
-      });
-      await page.getByRole('menuitem', { name: 'Copy Entire Action ⌘+C' }).click();
-      await page.getByTestId('rf__edge-For_each-Filter_array').getByLabel('Insert a new step between For').click();
-      await page.getByRole('menuitem', { name: 'Paste an action' }).click();
+      await page.getByTestId('rf__node-For_each-#scope').getByRole('button', { name: 'For each' }).focus();
+      await page.keyboard.press('Meta+C');
+      await page.getByTestId('rf__edge-For_each-Filter_array').getByLabel('Insert a new step between For').focus();
+      await page.keyboard.press('Meta+V');
       const serialized: any = await page.evaluate(() => {
         return new Promise((resolve) => {
           setTimeout(() => {

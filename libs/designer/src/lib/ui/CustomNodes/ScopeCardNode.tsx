@@ -37,7 +37,7 @@ import { MessageBarType } from '@fluentui/react';
 import { RunService, WorkflowService, removeIdTag } from '@microsoft/logic-apps-shared';
 import { ScopeCard } from '@microsoft/designer-ui';
 import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
-import { memo, useCallback, useEffect, useMemo, useState } from 'react';
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useDrag } from 'react-dnd';
 import { useIntl } from 'react-intl';
 import { useQuery } from 'react-query';
@@ -47,6 +47,7 @@ import type { NodeProps } from 'reactflow';
 import { CopyMenuItem } from '../menuItems';
 import { copyScopeOperation } from '../../core/actions/bjsworkflow/copypaste';
 import { Tooltip } from '@fluentui/react-components';
+import { useHotkeys } from 'react-hotkeys-hook';
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
 const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = Position.Bottom, id }: NodeProps) => {
@@ -69,7 +70,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
   const parenRunData = useRunData(parentRunId ?? '');
   const nodesMetaData = useNodesMetadata();
   const repetitionName = getRepetitionName(parentRunIndex, scopeId, nodesMetaData, operationsInfo);
-  const [rootRef, setRef] = useState<HTMLDivElement | null>(null);
+  const rootRef = useRef<HTMLDivElement | null>(null);
 
   const { status: statusRun, error: errorRun, code: codeRun, repetitionCount } = runData ?? {};
 
@@ -191,6 +192,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
     WorkflowService().resubmitWorkflow?.(runInstance?.name ?? '', [id]);
   }, [runInstance, id]);
 
+  const ref = useHotkeys('meta+c', copyClick, { preventDefault: true });
   const contextMenuItems: JSX.Element[] = useMemo(
     () => [
       <DeleteMenuItem key={'delete'} onClick={deleteClick} showKey />,
@@ -308,42 +310,44 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
 
   return (
     <>
-      <div className="msla-scope-card nopan" ref={setRef}>
-        <Handle className="node-handle top" type="target" position={targetPosition} isConnectable={false} />
-        <ScopeCard
-          brandColor={brandColor}
-          icon={iconUri}
-          isLoading={isLoading}
-          collapsed={graphCollapsed}
-          handleCollapse={handleGraphCollapse}
-          drag={drag}
-          draggable={!readOnly}
-          dragPreview={dragPreview}
-          errorLevel={errorLevel}
-          errorMessage={errorMessage}
-          isDragging={isDragging}
-          id={scopeId}
-          isMonitoringView={isMonitoringView}
-          title={label}
-          readOnly={readOnly}
-          onClick={nodeClick}
-          onDeleteClick={deleteClick}
-          selected={selected}
-          contextMenuItems={contextMenuItems}
-          runData={runData}
-          commentBox={comment}
-        />
-        <Tooltip
-          positioning={{ target: rootRef, position: 'below', align: 'end' }}
-          withArrow
-          content={copiedText}
-          relationship="description"
-          visible={showCopyCallout}
-        />
-        {isMonitoringView && normalizedType === constants.NODE.TYPE.FOREACH ? (
-          <LoopsPager metadata={metadata} scopeId={scopeId} collapsed={graphCollapsed} />
-        ) : null}
-        <Handle className="node-handle bottom" type="source" position={sourcePosition} isConnectable={false} />
+      <div className="msla-scope-card nopan" ref={ref as any}>
+        <div ref={rootRef}>
+          <Handle className="node-handle top" type="target" position={targetPosition} isConnectable={false} />
+          <ScopeCard
+            brandColor={brandColor}
+            icon={iconUri}
+            isLoading={isLoading}
+            collapsed={graphCollapsed}
+            handleCollapse={handleGraphCollapse}
+            drag={drag}
+            draggable={!readOnly}
+            dragPreview={dragPreview}
+            errorLevel={errorLevel}
+            errorMessage={errorMessage}
+            isDragging={isDragging}
+            id={scopeId}
+            isMonitoringView={isMonitoringView}
+            title={label}
+            readOnly={readOnly}
+            onClick={nodeClick}
+            onDeleteClick={deleteClick}
+            selected={selected}
+            contextMenuItems={contextMenuItems}
+            runData={runData}
+            commentBox={comment}
+          />
+          <Tooltip
+            positioning={{ target: rootRef.current, position: 'below', align: 'end' }}
+            withArrow
+            content={copiedText}
+            relationship="description"
+            visible={showCopyCallout}
+          />
+          {isMonitoringView && normalizedType === constants.NODE.TYPE.FOREACH ? (
+            <LoopsPager metadata={metadata} scopeId={scopeId} collapsed={graphCollapsed} />
+          ) : null}
+          <Handle className="node-handle bottom" type="source" position={sourcePosition} isConnectable={false} />
+        </div>
       </div>
       {graphCollapsed && !isFooter ? <p className="no-actions-text">{collapsedText}</p> : null}
       {showEmptyGraphComponents ? (

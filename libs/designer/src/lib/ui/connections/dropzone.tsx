@@ -33,6 +33,7 @@ import {
 } from '@microsoft/logic-apps-shared';
 import { useCallback, useMemo, useState } from 'react';
 import { useDrop } from 'react-dnd';
+import { useHotkeys } from 'react-hotkeys-hook';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
 import { useOnViewportChange } from 'reactflow';
@@ -173,6 +174,18 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId, 
     setShowCallout(false);
   }, [dispatch, graphId, parentId]);
 
+  const ref = useHotkeys(
+    'meta+v',
+    async () => {
+      const copiedNode = await retrieveClipboardData();
+      const pasteEnabled = !!copiedNode;
+      if (pasteEnabled) {
+        handlePasteClicked();
+      }
+    },
+    { preventDefault: true }
+  );
+
   const [{ isOver, canDrop }, drop] = useDrop(
     () => ({
       accept: 'BOX',
@@ -272,72 +285,74 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId, 
   );
 
   return (
-    <div
-      ref={drop}
-      className={css('msla-drop-zone-viewmanager2', isOver && canDrop && 'canDrop', isOver && !canDrop && 'cannotDrop')}
-      style={{
-        display: 'grid',
-        placeItems: 'center',
-        width: '100%',
-        height: '100%',
-      }}
-    >
-      <div ref={setRef}>
-        {isOver && (
-          <div style={{ height: '24px', display: 'grid', placeItems: 'center' }}>
-            {canDrop ? <AllowDropTarget fill="#0078D4" /> : <BlockDropTarget fill="#797775" />}
-          </div>
-        )}
-        {!isOver && (
-          <Popover
-            open={showCallout}
-            positioning={'after'}
-            closeOnScroll={true}
-            withArrow
-            mouseLeaveDelay={500}
-            onOpenChange={(e, { open }) => setShowCallout(open)}
-          >
-            <PopoverTrigger disableButtonEnhancement>
-              <div tabIndex={-1}>
-                <ActionButtonV2
-                  tabIndex={1}
-                  id={buttonId}
-                  title={tooltipText}
-                  dataAutomationId={automationId('plus')}
-                  onClick={actionButtonClick}
-                />
-              </div>
-            </PopoverTrigger>
-            <PopoverSurface style={{ padding: '4px' }}>
-              <MenuList>
-                <MenuItem icon={<AddIcon />} onClick={openAddNodePanel} data-automation-id={automationId('add')}>
-                  {newActionText}
-                </MenuItem>
-                {showParallelBranchButton && (
-                  <MenuItem icon={<ParallelIcon />} onClick={addParallelBranch} data-automation-id={automationId('add-parallel')}>
-                    {newBranchText}
+    <div ref={ref as any}>
+      <div
+        ref={drop}
+        className={css('msla-drop-zone-viewmanager2', isOver && canDrop && 'canDrop', isOver && !canDrop && 'cannotDrop')}
+        style={{
+          display: 'grid',
+          placeItems: 'center',
+          width: '100%',
+          height: '100%',
+        }}
+      >
+        <div ref={setRef}>
+          {isOver && (
+            <div style={{ height: '24px', display: 'grid', placeItems: 'center' }}>
+              {canDrop ? <AllowDropTarget fill="#0078D4" /> : <BlockDropTarget fill="#797775" />}
+            </div>
+          )}
+          {!isOver && (
+            <Popover
+              open={showCallout}
+              positioning={'after'}
+              closeOnScroll={true}
+              withArrow
+              mouseLeaveDelay={500}
+              onOpenChange={(e, { open }) => setShowCallout(open)}
+            >
+              <PopoverTrigger disableButtonEnhancement>
+                <div tabIndex={-1}>
+                  <ActionButtonV2
+                    tabIndex={1}
+                    id={buttonId}
+                    title={tooltipText}
+                    dataAutomationId={automationId('plus')}
+                    onClick={actionButtonClick}
+                  />
+                </div>
+              </PopoverTrigger>
+              <PopoverSurface style={{ padding: '4px' }}>
+                <MenuList>
+                  <MenuItem icon={<AddIcon />} onClick={openAddNodePanel} data-automation-id={automationId('add')}>
+                    {newActionText}
                   </MenuItem>
-                )}
-                {isPasteEnabled && (
-                  <>
-                    <MenuDivider />
-                    <MenuItem icon={<ClipboardIcon />} onClick={handlePasteClicked}>
-                      {pasteFromClipboard}
+                  {showParallelBranchButton && (
+                    <MenuItem icon={<ParallelIcon />} onClick={addParallelBranch} data-automation-id={automationId('add-parallel')}>
+                      {newBranchText}
                     </MenuItem>
-                  </>
-                )}
-              </MenuList>
-            </PopoverSurface>
-          </Popover>
-        )}
+                  )}
+                  {isPasteEnabled && (
+                    <>
+                      <MenuDivider />
+                      <MenuItem icon={<ClipboardIcon />} onClick={handlePasteClicked}>
+                        {pasteFromClipboard}
+                      </MenuItem>
+                    </>
+                  )}
+                </MenuList>
+              </PopoverSurface>
+            </Popover>
+          )}
+        </div>
+        <Tooltip
+          positioning={{ target: rootRef, position: 'below', align: 'end' }}
+          withArrow
+          content={noPasteText}
+          relationship="description"
+          visible={showNoPasteCallout}
+        />
       </div>
-      <Tooltip
-        positioning={{ target: rootRef, position: 'below', align: 'end' }}
-        withArrow
-        content={noPasteText}
-        relationship="description"
-        visible={showNoPasteCallout}
-      />
     </div>
   );
 };

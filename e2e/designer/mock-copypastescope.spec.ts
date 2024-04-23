@@ -14,12 +14,10 @@ test(
     await page.getByRole('option', { name: 'Conditionals', exact: true }).click();
     await page.getByRole('button', { name: 'Toolbox' }).click();
     await page.waitForLoadState('networkidle');
-    await page.getByTestId('rf__node-Condition-#scope').getByRole('button', { name: 'Condition' }).click({
-      button: 'right',
-    });
-    await page.getByRole('menuitem', { name: 'Copy Entire Action ⌘+C' }).click();
-    await page.getByTestId('rf__edge-Initialize_variable-Condition').getByLabel('Insert a new step between').click();
-    await page.getByRole('menuitem', { name: 'Paste an action' }).click();
+    await page.getByTestId('rf__node-Condition-#scope').getByRole('button', { name: 'Condition' }).focus();
+    await page.keyboard.press('Meta+C');
+    await page.getByTestId('rf__edge-Initialize_variable-Condition').getByLabel('Insert a new step between').focus();
+    await page.keyboard.press('Meta+V');
     const serialized: any = await page.evaluate(() => {
       return new Promise((resolve) => {
         setTimeout(() => {
