@@ -18,7 +18,7 @@
     "immer": "9.0.15",
     "lodash.frompairs": "4.0.1",
     "lodash.merge": "4.6.2",
-    "monaco-editor": "0.47.0",
+    "monaco-editor": "0.44.0",
     "react-dnd": "16.0.1",
     "react-dnd-accessible-backend": "1.0.1",
     "react-dnd-html5-backend": "16.0.1",

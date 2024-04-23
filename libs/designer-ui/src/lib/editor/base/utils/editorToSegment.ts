@@ -54,11 +54,13 @@ export const convertStringToSegments = (
 
   let currSegmentType: ValueSegmentType = ValueSegmentType.LITERAL;
   let isInQuotedString = false;
+  let doubleQuotesStarted = false;
   let segmentSoFar = '';
 
   for (let currIndex = 0; currIndex < value.length; currIndex++) {
     const currChar = value[currIndex];
     const nextChar = value[currIndex + 1];
+    const prevChar = value[currIndex - 1];
 
     if (currChar === `'`) {
       if (isInQuotedString) {
@@ -67,6 +69,11 @@ export const convertStringToSegments = (
         // Quoted strings should only be handled inside `@{}` contexts.
         isInQuotedString = true;
       }
+    }
+
+    // If unescaped double quotes are encountered in string, they are not part of the value typed by user. It is likely from Json stringification for a key/value.
+    if (currChar === '"' && prevChar !== '\\' && currSegmentType === ValueSegmentType.LITERAL) {
+      doubleQuotesStarted = !doubleQuotesStarted;
     }
 
     if (!isInQuotedString && currChar === '@' && nextChar === '{') {
@@ -106,6 +113,24 @@ export const convertStringToSegments = (
       }
 
       if (token) {
+        // If remove quotes param is set, remove the quotes from previous and next segments if it's a single token
+        if (options?.removeSingleTokenQuotesWrapping && doubleQuotesStarted && returnSegments.length > 0) {
+          const prevSegment = returnSegments.pop();
+
+          // If previous and next segments are not tokens (i.e. this is a single token), and they end and start with quotes, remove the quotes
+          if (prevSegment?.type === ValueSegmentType.LITERAL && prevSegment?.value.endsWith('"') && nextChar === '"') {
+            prevSegment.value = prevSegment.value.slice(0, -1);
+            doubleQuotesStarted = false;
+
+            // Skip quotes starting in next segment
+            currIndex++;
+          }
+
+          if (prevSegment) {
+            returnSegments.push(prevSegment);
+          }
+        }
+
         returnSegments.push(token);
         currSegmentType = ValueSegmentType.LITERAL;
         segmentSoFar = '';

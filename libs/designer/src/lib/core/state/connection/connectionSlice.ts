@@ -1,4 +1,4 @@
-import type { ConnectionMapping, ConnectionReferences, NodeId, ReferenceKey } from '../../../common/models/workflow';
+import type { ConnectionMapping, ConnectionReference, ConnectionReferences, NodeId, ReferenceKey } from '../../../common/models/workflow';
 import type { UpdateConnectionPayload } from '../../actions/bjsworkflow/connections';
 import { resetWorkflowState } from '../global';
 import { LogEntryLevel, LoggerService, deepCompareObjects, equals, getUniqueName } from '@microsoft/logic-apps-shared';
@@ -14,6 +14,8 @@ export const initialConnectionsState: ConnectionsStoreState = {
   connectionsMapping: {},
   connectionReferences: {},
 };
+
+type ConnectionReferenceMap = Record<string, ReferenceKey>;
 
 export const connectionSlice = createSlice({
   name: 'connections',
@@ -62,11 +64,27 @@ export const connectionSlice = createSlice({
     initEmptyConnectionMap: (state, action: PayloadAction<NodeId>) => {
       state.connectionsMapping[action.payload] = null;
     },
-    initCopiedConnectionMap: (state, action: PayloadAction<{ nodeId: NodeId; referenceKey: ReferenceKey }>) => {
-      const { nodeId, referenceKey } = action.payload;
-      if (referenceKey && state.connectionReferences[referenceKey]) {
-        state.connectionsMapping[nodeId] = referenceKey;
-      }
+    initCopiedConnectionMap: (state, action: PayloadAction<{ connectionReferences: ConnectionReferenceMap }>) => {
+      const { connectionReferences } = action.payload;
+      Object.entries(connectionReferences).forEach(([nodeId, referenceKey]) => {
+        if (referenceKey && state.connectionReferences[referenceKey]) {
+          state.connectionsMapping[nodeId] = referenceKey;
+        }
+      });
+    },
+    initScopeCopiedConnections: (
+      state,
+      action: PayloadAction<Record<string, { connectionReference: ConnectionReference; referenceKey: string }>>
+    ) => {
+      const copiedConnections = action.payload;
+      Object.entries(copiedConnections).forEach(([nodeId, { connectionReference, referenceKey }]) => {
+        if (referenceKey && state.connectionReferences[referenceKey]) {
+          state.connectionsMapping[nodeId] = referenceKey;
+        } else {
+          state.connectionReferences[referenceKey] = connectionReference;
+          state.connectionsMapping[nodeId] = referenceKey;
+        }
+      });
     },
     removeNodeConnectionData: (state, action: PayloadAction<{ nodeId: NodeId }>) => {
       const { nodeId } = action.payload;
@@ -85,6 +103,7 @@ export const {
   changeConnectionMapping,
   initEmptyConnectionMap,
   initCopiedConnectionMap,
+  initScopeCopiedConnections,
   removeNodeConnectionData,
 } = connectionSlice.actions;
 
