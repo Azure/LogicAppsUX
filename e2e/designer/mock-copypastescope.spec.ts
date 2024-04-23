@@ -15,9 +15,10 @@ test(
     await page.getByRole('button', { name: 'Toolbox' }).click();
     await page.waitForLoadState('networkidle');
     await page.getByTestId('rf__node-Condition-#scope').getByRole('button', { name: 'Condition' }).focus();
-    await page.keyboard.press('Meta+C');
+    await page.keyboard.press('Control+C');
     await page.getByTestId('rf__edge-Initialize_variable-Condition').getByLabel('Insert a new step between').focus();
-    await page.keyboard.press('Meta+V');
+    await page.keyboard.press('Control+V');
+    await page.waitForTimeout(1000);
     const serialized: any = await page.evaluate(() => {
       return new Promise((resolve) => {
         setTimeout(() => {

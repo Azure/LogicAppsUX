@@ -51,7 +51,7 @@ jobs:
             --parameters "{ \"zipDeploymentLocation\": { \"value\": \"${{env.ZIP-URL}}\" } }"
 
   run-tests:
-    runs-on: macos-latest
+    runs-on: ubuntu-latest
     environment: E2ETesting
     needs: deploy-test-app
     permissions:

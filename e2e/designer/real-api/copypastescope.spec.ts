@@ -22,9 +22,9 @@ test.describe(
 
       await page.waitForLoadState('networkidle');
       await page.getByTestId('rf__node-For_each-#scope').getByRole('button', { name: 'For each' }).focus();
-      await page.keyboard.press('Meta+C');
+      await page.keyboard.press('Control+C');
       await page.getByTestId('rf__edge-For_each-Filter_array').getByLabel('Insert a new step between For').focus();
-      await page.keyboard.press('Meta+V');
+      await page.keyboard.press('Control+V');
       await page.waitForTimeout(1000);
       const serialized: any = await page.evaluate(() => {
         return new Promise((resolve) => {
