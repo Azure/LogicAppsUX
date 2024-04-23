@@ -102,7 +102,7 @@ export const ScopeCard: React.FC<ScopeCardProps> = ({
                     <Icon
                       className={css('panel-card-v2-badge', 'active', darkBackground && 'darkBackground')}
                       {...iconProps}
-                      ariaLabel={`${title}: ${content}`}
+                      aria-label={`${title}: ${content}`}
                       tabIndex={0}
                     />
                   </div>

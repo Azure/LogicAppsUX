@@ -175,7 +175,7 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId, 
   }, [dispatch, graphId, parentId]);
 
   const ref = useHotkeys(
-    'meta+v',
+    ['meta+v', 'ctrl+v'],
     async () => {
       const copiedNode = await retrieveClipboardData();
       const pasteEnabled = !!copiedNode;
