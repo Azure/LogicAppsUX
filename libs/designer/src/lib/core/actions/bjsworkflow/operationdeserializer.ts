@@ -557,7 +557,7 @@ export const initializeDynamicDataInNodes = async (
   } = rootState;
   const allVariables = getAllVariables(variables);
   for (const [nodeId, operation] of Object.entries(operations)) {
-    if (operationsToInitialize?.includes(nodeId) !== true) {
+    if (operationsToInitialize && !operationsToInitialize.includes(nodeId)) {
       continue;
     }
     if (nodeId === Constants.NODE.TYPE.PLACEHOLDER_TRIGGER) {
