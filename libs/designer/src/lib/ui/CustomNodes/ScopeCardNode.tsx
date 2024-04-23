@@ -193,7 +193,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
     WorkflowService().resubmitWorkflow?.(runInstance?.name ?? '', [id]);
   }, [runInstance, id]);
 
-  const ref = useHotkeys('meta+c', copyClick, { preventDefault: true });
+  const ref = useHotkeys(['meta+c', 'ctrl+c'], copyClick, { preventDefault: true });
   const contextMenuItems: JSX.Element[] = useMemo(
     () => [
       <DeleteMenuItem key={'delete'} onClick={deleteClick} showKey />,
