@@ -2906,7 +2906,7 @@ export function updateTokenMetadataInParameters(nodeId: string, parameters: Para
     return data;
   }, {});
 
-  const repetitionContext = getRecordEntry(rootState.operations.repetitionInfos, nodeId) ?? { repetitionReferences: [] };
+  const repetitionContext: RepetitionContext = getRecordEntry(rootState.operations.repetitionInfos, nodeId) ?? { repetitionReferences: [] };
   for (const parameter of parameters) {
     const segments = parameter.value;
 
