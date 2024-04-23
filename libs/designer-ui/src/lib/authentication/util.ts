@@ -333,6 +333,9 @@ export function containsUserAssignedIdentities(identity: ManagedIdentity | undef
 export function parseAuthEditor(authType: AuthenticationType, items: AuthProps): ValueSegment[] {
   const values: CollapsedAuthEditorItems[] = [];
   switch (authType) {
+    case AuthenticationType.NONE: {
+      return [];
+    }
     case AuthenticationType.BASIC: {
       updateValues(values, AUTHENTICATION_PROPERTIES.BASIC_USERNAME, items.basic?.basicUsername);
       updateValues(values, AUTHENTICATION_PROPERTIES.BASIC_PASSWORD, items.basic?.basicPassword);
