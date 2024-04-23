@@ -17,6 +17,7 @@ import {
   ConnectionType,
   getResourceName,
   getRecordEntry,
+  getPropertyValue,
 } from '@microsoft/logic-apps-shared';
 import type { AssistedConnectionProps } from '@microsoft/designer-ui';
 import type {
@@ -145,38 +146,26 @@ export function getAssistedConnectionProps(connector: Connector, manifest?: Oper
 export async function getConnectionParametersForAzureConnection(
   connectionType?: ConnectionType,
   selectedSubResource?: any,
-  parameterValues?: Record<string, any>
+  parameterValues?: Record<string, any>,
+  isMultiAuthConnection?: boolean // TODO - Should remove when backend bits are ready for multi-auth in resource picker connections
 ): Promise<any> {
   if (connectionType === ConnectionType.Function) {
     const functionId = selectedSubResource?.id;
     const triggerUrl = selectedSubResource?.properties?.invoke_url_template;
-    // TODO - Should uncomment when MSI changes for functions are checked in in backend.
-    const isQueryString = true; // equals(getObjectPropertyValue(parameterValues ?? {}, ['type']), 'querystring')
+    const isQueryString = isMultiAuthConnection ? equals(getPropertyValue(parameterValues ?? {}, 'type'), 'querystring') : true;
+    let updatedParameterValues = { ...parameterValues };
 
     if (isQueryString) {
       const authCodeValue = await FunctionService().fetchFunctionKey(functionId);
-      /*return {
-        function: { id: functionId },
-        triggerUrl,
-        ...parameterValues,
-        value: authCodeValue,
-      };*/
-      return {
-        function: { id: functionId },
-        triggerUrl,
-        authentication: {
-          type: 'QueryString',
-          name: 'Code',
-          value: authCodeValue,
-        },
-        ...parameterValues,
-      };
+      updatedParameterValues = isMultiAuthConnection
+        ? { ...updatedParameterValues, value: authCodeValue }
+        : { ...updatedParameterValues, authentication: { type: 'QueryString', name: 'Code', value: authCodeValue } };
     }
 
     return {
+      ...updatedParameterValues,
       function: { id: functionId },
       triggerUrl,
-      ...parameterValues,
     };
     // biome-ignore lint/style/noUselessElse: needed for future implementation
   } else if (connectionType === ConnectionType.ApiManagement) {

@@ -176,7 +176,8 @@ export const CreateConnectionWrapper = () => {
           outputParameterValues = await getConnectionParametersForAzureConnection(
             operationManifest?.properties.connection?.type,
             selectedSubResource,
-            outputParameterValues
+            outputParameterValues,
+            !!selectedParameterSet // TODO: Should remove this when backend updates all connection parameters for functions and apim
           );
         }
 
