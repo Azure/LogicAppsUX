@@ -25,6 +25,7 @@ import {
   useRunInstance,
   useParentRunId,
   useNodeDescription,
+  useShouldNodeFocus,
 } from '../../core/state/workflow/workflowSelectors';
 import { setRepetitionRunData, toggleCollapsedGraphId } from '../../core/state/workflow/workflowSlice';
 import type { AppDispatch } from '../../core/store';
@@ -53,7 +54,7 @@ import { useHotkeys } from 'react-hotkeys-hook';
 const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = Position.Bottom, id }: NodeProps) => {
   const scopeId = removeIdTag(id);
   const nodeComment = useNodeDescription(scopeId);
-
+  const shouldFocus = useShouldNodeFocus(scopeId);
   const node = useActionMetadata(scopeId);
   const operationsInfo = useAllOperations();
 
@@ -335,6 +336,7 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
             contextMenuItems={contextMenuItems}
             runData={runData}
             commentBox={comment}
+            setFocus={shouldFocus}
           />
           <Tooltip
             positioning={{ target: rootRef.current, position: 'below', align: 'end' }}
