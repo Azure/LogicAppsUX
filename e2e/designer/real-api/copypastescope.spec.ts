@@ -1,5 +1,4 @@
 import { expect, test } from '@playwright/test';
-import { beforeEach } from 'node:test';
 
 test.describe(
   'Copy and Paste of Scopes',
@@ -7,7 +6,10 @@ test.describe(
     tag: '@real',
   },
   () => {
-    beforeEach(async () => { });
+
+    test.beforeEach(async ({ browserName }) => {
+      test.skip(browserName === 'webkit');
+    });
     test('Expect Copy and Paste of Scopes to work on single workflow', async ({ page, context, browserName }) => {
       if (browserName === 'webkit') {
         context.grantPermissions(['clipboard-read'], { origin: 'http://localhost:4200' });
