@@ -1,3 +1,4 @@
+import { DynamicCallStatus } from '@microsoft/designer-ui';
 import type { SerializedParameter } from '../serializer';
 import { constructInputValues } from '../serializer';
 import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
@@ -213,7 +214,7 @@ describe('constructInputValues', () => {
   const rootArrayWithComplexObjectOpenApiParametersBase = [
     {
       dynamicData: {
-        status: 2,
+        status: DynamicCallStatus.SUCCEEDED,
       },
       editor: 'combobox',
       editorOptions: {
