@@ -29,6 +29,7 @@ import { isConnectionRequiredForOperation, updateNodeConnection } from './connec
 import {
   getInputParametersFromManifest,
   getOutputParametersFromManifest,
+  initializeCustomCodeDataInInputs,
   updateAllUpstreamNodes,
   updateInvokerSettings,
 } from './initialize';
@@ -127,6 +128,9 @@ export const initializeOperationDetails = async (
     const iconUri = getIconUriFromManifest(manifest);
     const brandColor = getBrandColorFromManifest(manifest);
     const { inputs: nodeInputs, dependencies: inputDependencies } = getInputParametersFromManifest(nodeId, manifest, presetParameterValues);
+    if (equals(operationInfo.connectorId, Constants.INLINECODE) && !equals(operationInfo.operationId, 'javascriptcode')) {
+      initializeCustomCodeDataInInputs(nodeInputs, nodeId, dispatch);
+    }
     const { outputs: nodeOutputs, dependencies: outputDependencies } = getOutputParametersFromManifest(
       manifest,
       isTrigger,
