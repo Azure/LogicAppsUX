@@ -313,7 +313,7 @@ export const PROPERTY_NAMES_FOR_AUTHENTICATION_TYPE: Record<string, AuthProperty
  * @param {ManagedIdentity} identity - The managed identity.
  * @return {boolean} - If the managed identity contains a user assigned identity or not.
  */
-export function containsUserAssignedIdentities(identity: ManagedIdentity | undefined): boolean {
+export const containsUserAssignedIdentities = (identity: ManagedIdentity | undefined): boolean => {
   return (
     !!identity &&
     !!identity.type &&
@@ -322,7 +322,7 @@ export function containsUserAssignedIdentities(identity: ManagedIdentity | undef
     !!identity.userAssignedIdentities &&
     Object.keys(identity.userAssignedIdentities).length > 0
   );
-}
+};
 
 /**
  * Converts AuthEditor Props into ValueSegment Array for the Collpased Authentication Editor.
@@ -330,7 +330,7 @@ export function containsUserAssignedIdentities(identity: ManagedIdentity | undef
  * @param {AuthProps} items - Authority Props.
  * @return {ValueSegment[]} - Collapsed ValueSegment Array.
  */
-export function parseAuthEditor(authType: AuthenticationType, items: AuthProps): ValueSegment[] {
+export const parseAuthEditor = (authType: AuthenticationType, items: AuthProps): ValueSegment[] => {
   const values: CollapsedAuthEditorItems[] = [];
   switch (authType) {
     case AuthenticationType.NONE: {
@@ -382,7 +382,7 @@ export function parseAuthEditor(authType: AuthenticationType, items: AuthProps):
   ];
 
   return convertKeyValueItemToSegments(currentItems, constants.SWAGGER.TYPE.STRING, constants.SWAGGER.TYPE.STRING);
-}
+};
 
 const updateValues = (values: CollapsedAuthEditorItems[], property: AuthProperty, val?: ValueSegment[]) => {
   if (property.isRequired || (val && val.length > 0)) {
@@ -530,7 +530,7 @@ export const validateAuthenticationString = (s: string): string => {
  * @arg {AuthenticationType} authType -  The authentication type.
  * @return {string} - The error message for missing a required property.
  */
-function checkForMissingOrInvalidProperties(authentication: any, authType: AuthenticationType): string {
+const checkForMissingOrInvalidProperties = (authentication: any, authType: AuthenticationType): string => {
   const intl = getIntl();
   let missingProperties: string[] = [];
   for (const key of PROPERTY_NAMES_FOR_AUTHENTICATION_TYPE[authType]) {
@@ -589,7 +589,7 @@ function checkForMissingOrInvalidProperties(authentication: any, authType: Authe
     return errorMessage;
   }
   return '';
-}
+};
 
 /**
  * Checks if any required property is missing.
@@ -597,7 +597,7 @@ function checkForMissingOrInvalidProperties(authentication: any, authType: Authe
  * @arg {AuthenticationType} authType -  The authentication type.
  * @return {string} - The error message for having an unknown property.
  */
-function checkForUnknownProperties(authentication: any, authType: AuthenticationType): string {
+const checkForUnknownProperties = (authentication: any, authType: AuthenticationType): string => {
   const intl = getIntl();
   const validKeyNames = PROPERTY_NAMES_FOR_AUTHENTICATION_TYPE[authType].map((key) => key.name);
   const authenticationKeys = Object.keys(authentication);
@@ -638,14 +638,14 @@ function checkForUnknownProperties(authentication: any, authType: Authentication
     return errorMessage;
   }
   return '';
-}
+};
 
 /**
  * Checks if value contains a property with invalid value.
  * @arg {any} authentication -  The parsed authentication value.
  * @return {string} - The error message for having a property with invalid values.
  */
-function checkForInvalidValues(authentication: any): string {
+const checkForInvalidValues = (authentication: any): string => {
   const intl = getIntl();
   const validProperties = PROPERTY_NAMES_FOR_AUTHENTICATION_TYPE[authentication.type];
   const errorMessages: string[] = [];
@@ -673,4 +673,4 @@ function checkForInvalidValues(authentication: any): string {
     }
   }
   return errorMessages.length > 0 ? errorMessages.join(' ') : '';
-}
+};
