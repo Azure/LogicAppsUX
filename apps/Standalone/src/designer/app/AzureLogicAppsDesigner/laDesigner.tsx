@@ -82,6 +82,7 @@ const DesignerEditor = () => {
     hostOptions,
     showConnectionsPanel,
     showPerformanceDebug,
+    suppressDefaultNodeSelect,
   } = useSelector((state: RootState) => state.workflowLoader);
 
   const workflowName = workflowId.split('/').splice(-1)[0];
@@ -299,6 +300,7 @@ const DesignerEditor = () => {
   return (
     <div key={designerID} style={{ height: 'inherit', width: 'inherit' }}>
       <DesignerProvider
+        id={designerID}
         key={designerID}
         locale={language}
         options={{
@@ -306,6 +308,7 @@ const DesignerEditor = () => {
           isDarkMode,
           readOnly: isReadOnly,
           isMonitoringView,
+          suppressDefaultNodeSelectFunctionality: suppressDefaultNodeSelect,
           hostOptions: {
             ...hostOptions,
             recurrenceInterval: { interval: 1, frequency: 'Minute' },
