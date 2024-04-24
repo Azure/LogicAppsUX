@@ -25,6 +25,7 @@ import {
   DynamicLoadStatus,
   addDynamicInputs,
   updateNodeParameters,
+  clearDynamicIO,
 } from '../../state/operation/operationMetadataSlice';
 import type { VariableDeclaration } from '../../state/tokens/tokensSlice';
 import type { NodesMetadata, Operations as Actions } from '../../state/workflow/workflowInterfaces';
@@ -1968,6 +1969,7 @@ async function loadDynamicContentForInputsInNode(
   for (const inputKey of Object.keys(inputDependencies)) {
     const info = inputDependencies[inputKey];
     if (info.dependencyType === 'ApiSchema') {
+      clearDynamicIO({ nodeId, inputs: true, outputs: false });
       if (isDynamicDataReadyToLoad(info)) {
         try {
           const inputSchema = await tryGetInputDynamicSchema(
