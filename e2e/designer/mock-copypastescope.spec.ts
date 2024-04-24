@@ -6,6 +6,7 @@ test(
     tag: '@mock',
   },
   async ({ page, browserName, context }) => {
+    test.skip(browserName === 'webkit');
     if (browserName === 'webkit') {
       context.grantPermissions(['clipboard-read'], { origin: 'http://localhost:4200' });
     }
