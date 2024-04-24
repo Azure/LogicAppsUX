@@ -41,10 +41,5 @@ test(
     await page.getByRole('option', { name: 'Boolean' }).click();
     await page.getByPlaceholder('Enter initial value').click();
     await page.getByRole('option', { name: 'true' }).click();
-    await page
-      .locator('div')
-      .filter({ hasText: /^NametestAdd dynamic data or expressions by inserting a \/TypeBooleanValue$/ })
-      .first()
-      .click();
   }
 );
