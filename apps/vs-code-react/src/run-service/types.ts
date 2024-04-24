@@ -239,6 +239,11 @@ export interface GetConfigurationSettingMessage {
   data: boolean;
 }
 
+export interface GetDataMapperVersionMessage {
+  command: typeof ExtensionCommand.getDataMapperVersion;
+  data: number;
+}
+
 // Designer Message Interfaces
 export interface ReceiveCallbackMessage {
   command: typeof ExtensionCommand.receiveCallback;

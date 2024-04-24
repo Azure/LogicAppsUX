@@ -4,6 +4,7 @@ import { createSlice } from '@reduxjs/toolkit';
 export interface ProjectState {
   initialized: boolean;
   project?: string;
+  dataMapperVersion?: number;
 }
 
 const initialState: ProjectState = {
@@ -18,9 +19,12 @@ export const projectSlice = createSlice({
       state.initialized = true;
       state.project = action.payload;
     },
+    changeDataMapperVersion: (state, action: PayloadAction<number>) => {
+      state.dataMapperVersion = action.payload;
+    },
   },
 });
 
-export const { initialize } = projectSlice.actions;
+export const { initialize, changeDataMapperVersion } = projectSlice.actions;
 
 export default projectSlice.reducer;
