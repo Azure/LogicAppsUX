@@ -1,4 +1,27 @@
 # Logic Apps Designer
+## [4.10.0](https://github.com/Azure/LogicAppsUX/compare/v4.9.0...v4.10.0) (2024-04-24)
+
+## [4.9.0](https://github.com/Azure/LogicAppsUX/compare/v4.8.0...v4.9.0) (2024-04-24)
+
+
+### Features
+
+* **designer:** Adding MSI capability for Azure functions ([#4662](https://github.com/Azure/LogicAppsUX/issues/4662)) ([4b60f37](https://github.com/Azure/LogicAppsUX/commit/4b60f37973cf53c1eacdc13203cc746b66e2c0b2))
+* **designer:** Scope Copy + Paste ([#4668](https://github.com/Azure/LogicAppsUX/issues/4668)) ([0429c55](https://github.com/Azure/LogicAppsUX/commit/0429c55f7b93f173679cff209f67f140b04a7118))
+* **designer:** Updates to Custom Code (boilerplate, host.json, optimizations) ([#4690](https://github.com/Azure/LogicAppsUX/issues/4690)) ([e911432](https://github.com/Azure/LogicAppsUX/commit/e911432d82e28b2f14f2bf8c3f84061a87bc6b5c))
+
+
+### Bug Fixes
+
+* **Designer:** Add Ctrl to our hotkeys bindings ([#4678](https://github.com/Azure/LogicAppsUX/issues/4678)) ([851c9b6](https://github.com/Azure/LogicAppsUX/commit/851c9b679da23ae7d319add56229000564f589d7))
+* **designer:** Auth Editor Changes ([#4691](https://github.com/Azure/LogicAppsUX/issues/4691)) ([9b11f86](https://github.com/Azure/LogicAppsUX/commit/9b11f867318a622efa673ad3f7fb184c4bfdbcd0))
+* **Designer:** Downgrade Monaco ([#4682](https://github.com/Azure/LogicAppsUX/issues/4682)) ([749a978](https://github.com/Azure/LogicAppsUX/commit/749a97882905aa9a37b46440c714a3d1aa95e3a3))
+* **designer:** fix issue where scope nodes didn't get focused when they were jumped to ([#4677](https://github.com/Azure/LogicAppsUX/issues/4677)) ([5676b12](https://github.com/Azure/LogicAppsUX/commit/5676b12a0fbc84c868939e5599051e700f31e89e))
+* **designer:** Fix issue where scopes could drag/drop into themselves ([#4669](https://github.com/Azure/LogicAppsUX/issues/4669)) ([419a9d9](https://github.com/Azure/LogicAppsUX/commit/419a9d98573c147e2b99bf51726eb3a551775da7))
+* **designer:** Make sure to only add the shouldAdd array expressions for implicit For Each ([#4683](https://github.com/Azure/LogicAppsUX/issues/4683)) ([a792a22](https://github.com/Azure/LogicAppsUX/commit/a792a22060cf88aef3cd76f088a408e5286b9ca2))
+* **designer:** Remove double quotes wrapping from uncasted single tokens in array editor ([#4670](https://github.com/Azure/LogicAppsUX/issues/4670)) ([a9639dd](https://github.com/Azure/LogicAppsUX/commit/a9639ddae9e579775f79eef321986c12638b4709))
+* **Designer:** Remove react query for dynamic data ([#4693](https://github.com/Azure/LogicAppsUX/issues/4693)) ([87340c3](https://github.com/Azure/LogicAppsUX/commit/87340c399d09c4765f5b912eba8bea85d695ce08))
+
 ## [4.8.0](https://github.com/Azure/LogicAppsUX/compare/v4.7.0...v4.8.0) (2024-04-19)
 
 
