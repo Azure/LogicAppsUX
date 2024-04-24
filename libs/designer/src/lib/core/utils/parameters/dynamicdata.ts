@@ -193,37 +193,27 @@ export async function getDynamicSchema(
 
       return schema ? { ...emptySchema, ...schema } : schema;
     }
-    const queryClient = getReactQueryClient();
-    const outputSchema = await queryClient.fetchQuery(
-      [
-        'getDynamicSchema',
-        connectionReference?.connection.id,
-        operationInfo.connectorId,
-        operationInfo.operationId,
-        dependencyInfo.parameter?.key,
-      ],
-      async () => {
-        const { connectorId } = operationInfo;
-        const { parameters, operationId } = definition.extension;
-        const { connector, parsedSwagger } = await getConnectorWithSwagger(connectorId);
-        const inputs = getParameterValuesForLegacyDynamicOperation(
-          parsedSwagger,
-          operationId,
-          parameters,
-          nodeInputs,
-          idReplacements,
-          workflowParameters
-        );
-        const connectionId = (connectionReference as ConnectionReference).connection.id;
-        const managedIdentityRequestProperties = await getManagedIdentityRequestProperties(
-          connector,
-          connectionId,
-          connectionReference as ConnectionReference
-        );
+    const outputSchema = async () => {
+      const { connectorId } = operationInfo;
+      const { parameters, operationId } = definition.extension;
+      const { connector, parsedSwagger } = await getConnectorWithSwagger(connectorId);
+      const inputs = getParameterValuesForLegacyDynamicOperation(
+        parsedSwagger,
+        operationId,
+        parameters,
+        nodeInputs,
+        idReplacements,
+        workflowParameters
+      );
+      const connectionId = (connectionReference as ConnectionReference).connection.id;
+      const managedIdentityRequestProperties = await getManagedIdentityRequestProperties(
+        connector,
+        connectionId,
+        connectionReference as ConnectionReference
+      );
 
-        return getLegacyDynamicSchema(connectionId, connectorId, inputs, definition.extension, managedIdentityRequestProperties);
-      }
-    );
+      return getLegacyDynamicSchema(connectionId, connectorId, inputs, definition.extension, managedIdentityRequestProperties);
+    };
     return outputSchema;
   } catch (error: any) {
     if (
