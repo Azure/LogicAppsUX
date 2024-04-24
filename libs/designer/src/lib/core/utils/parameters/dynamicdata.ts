@@ -165,7 +165,6 @@ export async function getDynamicSchema(
             type: getSwaggerTypeFromVariableType(operationParameters['type']?.toLowerCase() ?? 'boolean'),
             enum: getSwaggerEnumFromVariableType(operationParameters['type']?.toLowerCase() ?? 'boolean'),
           };
-
           break;
         }
         case 'getVariable': {

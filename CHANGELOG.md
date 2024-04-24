@@ -1,4 +1,18 @@
 # Logic Apps Designer
+### [4.3.3](https://github.com/Azure/LogicAppsUX/compare/v4.3.2...v4.3.3) (2024-04-24)
+
+
+### Bug Fixes
+
+* **Designer:** Remove react query in dynamic data ([#4694](https://github.com/Azure/LogicAppsUX/issues/4694)) ([11236e4](https://github.com/Azure/LogicAppsUX/commit/11236e47dd117c0fff2a9ced0b4d59c75e6f77d4)), closes [#4655](https://github.com/Azure/LogicAppsUX/issues/4655)
+
+### [4.3.2](https://github.com/Azure/LogicAppsUX/compare/v4.3.1...v4.3.2) (2024-04-19)
+
+
+### Bug Fixes
+
+* **designer:** Move non-outputschema dynamic data outside fetch ([#4657](https://github.com/Azure/LogicAppsUX/issues/4657)) ([54cb290](https://github.com/Azure/LogicAppsUX/commit/54cb290e11d63d185bc4f0e95c2e8cdd672d7ff0)), closes [#4655](https://github.com/Azure/LogicAppsUX/issues/4655)
+
 ### [4.3.1](https://github.com/Azure/LogicAppsUX/compare/v4.3.0...v4.3.1) (2024-04-19)
 
 
