@@ -24,7 +24,7 @@ export const ActionButtonV2: React.FC<ActionButtonV2Props> = ({
   onClick,
 }) => {
   return (
-    <Tooltip withArrow positioning={'after'} content={title} relationship="label">
+    <Tooltip withArrow positioning={'before'} content={title} relationship="label">
       <button
         id={id}
         data-automation-id={dataAutomationId}
