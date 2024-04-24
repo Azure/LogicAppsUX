@@ -47,6 +47,7 @@ import type {
   OutputParameter,
   SchemaProperty,
   SwaggerParser,
+  EditorLanguage,
 } from '@microsoft/logic-apps-shared';
 import {
   WorkflowService,
@@ -75,9 +76,13 @@ import {
   unmap,
   UnsupportedException,
   isNullOrEmpty,
+  generateDefaultCustomCodeValue,
+  getFileExtensionName,
+  replaceWhiteSpaceWithUnderscore,
 } from '@microsoft/logic-apps-shared';
 import type { OutputToken, ParameterInfo } from '@microsoft/designer-ui';
 import type { Dispatch } from '@reduxjs/toolkit';
+import { addOrUpdateCustomCode } from '../../state/customcode/customcodeSlice';
 
 export interface ServiceOptions {
   connectionService: IConnectionService;
@@ -444,6 +449,28 @@ export const updateCallbackUrlInInputs = async (
   }
 
   return;
+};
+
+export const initializeCustomCodeDataInInputs = (inputs: NodeInputs, nodeId: string, dispatch: Dispatch) => {
+  const parameter = getParameterFromName(inputs, Constants.DEFAULT_CUSTOM_CODE_INPUT);
+  const language: EditorLanguage = parameter?.editorOptions?.language;
+  if (parameter) {
+    const fileData = generateDefaultCustomCodeValue(language);
+    if (fileData) {
+      parameter.editorViewModel = {
+        customCodeData: { fileData },
+      };
+      parameter.value = [createLiteralValueSegment(replaceWhiteSpaceWithUnderscore(nodeId) + getFileExtensionName(language))];
+      dispatch(
+        addOrUpdateCustomCode({
+          nodeId,
+          fileData,
+          fileExtension: getFileExtensionName(language),
+          fileName: replaceWhiteSpaceWithUnderscore(nodeId),
+        })
+      );
+    }
+  }
 };
 
 export const updateCustomCodeInInputs = async (

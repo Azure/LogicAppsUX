@@ -18,9 +18,9 @@ export const fetchFilesFromFolder = async (uri: string): Promise<VFSObject[]> =>
   ).data;
 };
 
-export const fetchFileData = async (uri: string): Promise<string> => {
+export const fetchFileData = async <T>(uri: string): Promise<T> => {
   return (
-    await axios.get<string>(uri, {
+    await axios.get<T>(uri, {
       headers: {
         Authorization: `Bearer ${environment.armToken}`,
         'If-Match': ['*'],

@@ -4,13 +4,14 @@ import { Artifact } from '../Models/Workflow';
 import { validateResourceId } from '../Utilities/resourceUtilities';
 import { convertDesignerWorkflowToConsumptionWorkflow } from './ConsumptionSerializationHelpers';
 import type { AllCustomCodeFiles } from '@microsoft/logic-apps-designer';
-import { CustomCodeService, LogEntryLevel, LoggerService, getAppFiles, mapFileExtensionToAppFileName } from '@microsoft/logic-apps-shared';
+import { CustomCodeService, LogEntryLevel, LoggerService, getAppFileForFileExtension } from '@microsoft/logic-apps-shared';
 import type { LogicAppsV2, VFSObject } from '@microsoft/logic-apps-shared';
 import axios from 'axios';
 import jwt_decode from 'jwt-decode';
 import { useQuery } from 'react-query';
 import { isSuccessResponse } from './HttpClient';
 import { fetchFileData, fetchFilesFromFolder } from './vfsService';
+import type { CustomCodeFileNameMapping } from '@microsoft/logic-apps-designer';
 
 const baseUrl = 'https://management.azure.com';
 const standardApiVersion = '2020-06-01';
@@ -47,10 +48,53 @@ export const useAllCustomCodeFiles = (appId?: string, workflowName?: string) => 
   });
 };
 
-export const getCustomCodeAppFiles = async (appId?: string): Promise<Record<string, boolean>> => {
+interface HostJSON {
+  managedDependency?: {
+    enabled: boolean;
+  };
+  version?: string;
+  extensionBundle?: {
+    id?: string;
+    version?: string;
+  };
+}
+
+// we want to eventually move this logic to the backend that way we don't increase save time fetching files
+export const getCustomCodeAppFiles = async (
+  appId?: string,
+  customCodeFiles?: CustomCodeFileNameMapping
+): Promise<Record<string, string>> => {
+  // only powershell files have custom app files
+  // to reduce the number of requests, we only check if there are any modified powershell files
+  if (!customCodeFiles || !Object.values(customCodeFiles).some((file) => file.isModified && file.fileExtension === '.ps1')) {
+    return {};
+  }
+  const appFiles: Record<string, string> = {};
   const uri = `${baseUrl}${appId}/hostruntime/admin/vfs`;
   const vfsObjects: VFSObject[] = await fetchFilesFromFolder(uri);
-  return getAppFiles(vfsObjects);
+  if (vfsObjects.find((file) => file.name === 'host.json')) {
+    try {
+      const response = await fetchFileData<HostJSON>(`${uri}/host.json`);
+      if (!response.managedDependency?.enabled) {
+        response.managedDependency = {
+          enabled: true,
+        };
+        appFiles['host.json'] = JSON.stringify(response, null, 2);
+      }
+    } catch (error) {
+      const errorMessage = `Failed to parse Host.json: ${error}`;
+      LoggerService().log({
+        level: LogEntryLevel.Error,
+        area: 'serializeCustomcode',
+        message: errorMessage,
+        error: error instanceof Error ? error : undefined,
+      });
+    }
+  }
+  if (!vfsObjects.find((file) => file.name === 'requirements.psd1')) {
+    appFiles['requirements.psd1'] = getAppFileForFileExtension('.ps1');
+  }
+  return appFiles;
 };
 
 const getAllCustomCodeFiles = async (appId?: string, workflowName?: string): Promise<Record<string, string>> => {
@@ -60,7 +104,7 @@ const getAllCustomCodeFiles = async (appId?: string, workflowName?: string): Pro
 
   const filesData = await Promise.all(
     vfsObjects.map(async (file) => {
-      const response = await fetchFileData(`${uri}/${file.name}`);
+      const response = await fetchFileData<string>(`${uri}/${file.name}`);
       return { name: file.name, data: response };
     })
   );
@@ -309,9 +353,7 @@ export const saveCustomCodeStandard = async (allCustomCodeFiles?: AllCustomCodeF
         });
       }
     });
-    Object.entries(appFiles ?? {}).forEach(([fileExtension, fileData]) =>
-      CustomCodeService().uploadCustomCodeAppFile({ fileName: mapFileExtensionToAppFileName(fileExtension), fileData })
-    );
+    Object.entries(appFiles ?? {}).forEach(([fileName, fileData]) => CustomCodeService().uploadCustomCodeAppFile({ fileName, fileData }));
   } catch (error) {
     const errorMessage = `Failed to save custom code: ${error}`;
     LoggerService().log({
@@ -363,6 +405,7 @@ export const saveWorkflowStandard = async (
 
     // saving custom code must happen synchronously with deploying the workflow artifacts as they both cause
     // the host to go soft restart. We may need to look into if there's a race case where this may still happen
+    // eventually we want to move this logic to the backend to happen with deployWorkflowArtifacts
     saveCustomCodeStandard(customCodeData);
     const response = await axios.post(`${baseUrl}${siteResourceId}/deployWorkflowArtifacts?api-version=${standardApiVersion}`, data, {
       headers: {
