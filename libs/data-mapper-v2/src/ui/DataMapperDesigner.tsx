@@ -16,6 +16,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { ReactFlowProvider } from 'reactflow';
 import { AddSchemaDrawer } from '../components/addSchema/AddSchemaPanel';
 import { SchemaType } from '@microsoft/logic-apps-shared';
+import { EditorCommandBar } from '../components/commandBar/EditorCommandBar';
 
 // danielle to strip
 
@@ -190,6 +191,7 @@ export const DataMapperDesigner = ({
   //   targetSchema,
   // ]);
 
+  // NOTE: We don't have Generate anymore, this may be combined with save?
   // const onGenerateClick = useCallback(() => {
   //   const errors = collectErrorsForMapChecker(currentConnections, flattenedTargetSchema);
 
@@ -244,10 +246,6 @@ export const DataMapperDesigner = ({
   //   dispatch(ActionCreators.undo());
   // };
 
-  // const onRedoClick = () => {
-  //   dispatch(ActionCreators.redo());
-  // };
-
   // const setTestMapPanelOpen = (toOpen: boolean) => {
   //   setIsTestMapPanelOpen(toOpen);
 
@@ -277,15 +275,7 @@ export const DataMapperDesigner = ({
     <DndProvider backend={HTML5Backend}>
       <ReactFlowProvider>
         <div className={styles.dataMapperShell}>
-          {/* <EditorCommandBar
-            onSaveClick={onSaveClick}
-            onUndoClick={onUndoClick}
-            onRedoClick={onRedoClick}
-            onTestClick={() => setTestMapPanelOpen(true)}
-            showGlobalView={showGlobalView}
-            setShowGlobalView={setShowGlobalView}
-            onGenerateClick={onGenerateClick}
-          /> */}
+          <EditorCommandBar onSaveClick={() => {}} onUndoClick={() => {}} onTestClick={() => {}} />
           <AddSchemaDrawer
             onSubmitSchemaFileSelection={(schema) => console.log(schema)}
             readCurrentSchemaOptions={() => console.log('')}
