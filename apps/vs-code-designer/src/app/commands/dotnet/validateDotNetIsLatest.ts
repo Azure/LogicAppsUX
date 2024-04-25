@@ -18,7 +18,7 @@ export async function validateDotNetIsLatest(majorVersion?: string): Promise<voi
   await callWithTelemetryAndErrorHandling('azureLogicAppsStandard.validateDotNetIsLatest', async (context: IActionContext) => {
     context.errorHandling.suppressDisplay = true;
     context.telemetry.properties.isActivationEvent = 'true';
-    const majorVersions = ['6', '8'] ?? majorVersion.split(',');
+    const majorVersions = majorVersion.split(',');
 
     const showDotNetWarningKey = 'showDotNetWarning';
     const showDotNetWarning = !!getWorkspaceSetting<boolean>(showDotNetWarningKey);
