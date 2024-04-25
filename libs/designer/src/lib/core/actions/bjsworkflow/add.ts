@@ -233,7 +233,21 @@ export const initializeOperationDetails = async (
     addTokensAndVariables(nodeId, type, initData, state, dispatch);
   }
 
-  if (!isConnectionRequired) {
+  if (isConnectionRequired) {
+    try {
+      await trySetDefaultConnectionForNode(nodeId, connector as Connector, dispatch, isConnectionRequired);
+    } catch (e: any) {
+      dispatch(
+        updateErrorDetails({
+          id: nodeId,
+          errorInfo: {
+            level: ErrorLevel.Connection,
+            message: e?.message,
+          },
+        })
+      );
+    }
+  } else {
     updateDynamicDataInNode(
       nodeId,
       isTrigger,
@@ -246,25 +260,11 @@ export const initializeOperationDetails = async (
       dispatch,
       getState
     );
-  } else if (connector) {
-    try {
-      await trySetDefaultConnectionForNode(nodeId, connector, dispatch, isConnectionRequired);
-    } catch (e: any) {
-      dispatch(
-        updateErrorDetails({
-          id: nodeId,
-          errorInfo: {
-            level: ErrorLevel.Connection,
-            message: e?.message,
-          },
-        })
-      );
-      dispatch(setIsPanelLoading(false));
-    }
   }
 
-  const schemaService = staticResultService.getOperationResultSchema(connectorId, operationId, swagger || parsedManifest);
-  schemaService.then((schema) => {
+  dispatch(setIsPanelLoading(false));
+
+  staticResultService.getOperationResultSchema(connectorId, operationId, swagger || parsedManifest).then((schema) => {
     if (schema) {
       dispatch(addResultSchema({ id: `${connectorId}-${operationId}`, schema: schema }));
     }
@@ -279,7 +279,6 @@ export const initializeOperationDetails = async (
   }
 
   updateAllUpstreamNodes(getState() as RootState, dispatch);
-  dispatch(setIsPanelLoading(false));
 };
 
 export const initializeSwitchCaseFromManifest = async (id: string, manifest: OperationManifest, dispatch: Dispatch): Promise<void> => {
