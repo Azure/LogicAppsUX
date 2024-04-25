@@ -10,18 +10,18 @@ export interface RunHistoryProps {
   onOpenRun(run: RunDisplayItem): void;
 }
 
-enum ContextMenuKeys {
-  SHOW_RUN = 'SHOW_RUN',
-}
-
-enum RunHistoryColumnKeys {
-  CONTEXT_MENU = 'contextMenu',
-  DURATION = 'duration',
-  IDENTIFIER = 'identifier',
-  START_TIME = 'startTime',
-  STATUS = 'status',
-}
-
+const ContextMenuKeys = {
+  SHOW_RUN: 'SHOW_RUN',
+} as const;
+type ContextMenuKeys = (typeof ContextMenuKeys)[keyof typeof ContextMenuKeys];
+const RunHistoryColumnKeys = {
+  CONTEXT_MENU: 'contextMenu',
+  DURATION: 'duration',
+  IDENTIFIER: 'identifier',
+  START_TIME: 'startTime',
+  STATUS: 'status',
+} as const;
+export type RunHistoryColumnKeys = (typeof RunHistoryColumnKeys)[keyof typeof RunHistoryColumnKeys];
 const options: FormatDateOptions = {
   day: 'numeric',
   hour: 'numeric',
@@ -38,26 +38,32 @@ export const RunHistory: React.FC<RunHistoryProps> = ({ items, loading = false, 
   const Resources = {
     CONTEXT_MENU: intl.formatMessage({
       defaultMessage: 'Show run menu',
+      id: '0JTHTZ',
       description: 'Button text to show run menu',
     }),
     DURATION: intl.formatMessage({
       defaultMessage: 'Duration',
+      id: 'DZZ3fj',
       description: 'Column header text for duration',
     }),
     IDENTIFIER: intl.formatMessage({
       defaultMessage: 'Identifier',
+      id: '33+WHG',
       description: 'Column header text for identifier',
     }),
     SHOW_RUN: intl.formatMessage({
       defaultMessage: 'Show run',
+      id: '6jiO7t',
       description: 'Menu item text for show run',
     }),
     START_TIME: intl.formatMessage({
       defaultMessage: 'Start time',
+      id: 'BKL0ZG',
       description: 'Column header text for start time',
     }),
     STATUS: intl.formatMessage({
       defaultMessage: 'Status',
+      id: 'FslNgF',
       description: 'Column header text for status',
     }),
   };

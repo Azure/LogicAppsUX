@@ -1,15 +1,15 @@
-import { reactFlowFitViewOptions, ReactFlowNodeType } from '../../constants/ReactFlowConstants';
+import { ReactFlowNodeType, reactFlowFitViewOptions } from '../../constants/ReactFlowConstants';
 import type { RootState } from '../../core/state/Store';
-import { SchemaType } from '../../models';
 import { useGlobalViewLayout } from '../../utils/ReactFlow.Util';
 import { SchemaCard } from '../nodeCard/SchemaCard';
 import { SimpleFunctionCard } from '../nodeCard/functionCard/SimpleFunctionCard';
 import { SchemaNameBadge } from '../schemaSelection/SchemaNameBadge';
 import { makeStyles, shorthands, tokens } from '@fluentui/react-components';
+import { SchemaType } from '@microsoft/logic-apps-shared';
 import { useEffect, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 // eslint-disable-next-line import/no-named-as-default
-import ReactFlow, { ReactFlowProvider, useReactFlow } from 'reactflow';
+import ReactFlow, { useReactFlow } from 'reactflow';
 
 const reactFlowStyle: React.CSSProperties = {
   height: '100%',
@@ -27,30 +27,20 @@ const useStyles = makeStyles({
 });
 
 export const GlobalView = () => {
-  const styles = useStyles();
-
-  return (
-    <div className={styles.mapOverviewStyles}>
-      <ReactFlowProvider>
-        <GlobalViewReactFlowWrapper />
-      </ReactFlowProvider>
-    </div>
-  );
-};
-
-const GlobalViewReactFlowWrapper = () => {
   const { fitView } = useReactFlow();
 
-  const sourceSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.sourceSchema);
-  const targetSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.targetSchema);
-  const connectionDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
-  const sourceSchemaDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedSourceSchema);
-  const targetSchemaDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedTargetSchema);
+  const sourceSchema = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.sourceSchema);
+  const targetSchema = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.targetSchema);
+  const functionNodeDictionary = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.functionNodes);
+  const connectionDictionary = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.dataMapConnections);
+  const sourceSchemaDictionary = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.flattenedSourceSchema);
+  const targetSchemaDictionary = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.flattenedTargetSchema);
 
   const [reactFlowNodes, reactFlowEdges] = useGlobalViewLayout(
     undefined,
     sourceSchemaDictionary,
     targetSchemaDictionary,
+    functionNodeDictionary,
     connectionDictionary
   );
 
@@ -82,23 +72,27 @@ const GlobalViewReactFlowWrapper = () => {
     [reactFlowNodes]
   );
 
+  const styles = useStyles();
+
   return (
-    <ReactFlow
-      nodeTypes={nodeTypes}
-      nodes={reactFlowNodes}
-      edges={reactFlowEdges}
-      nodesDraggable={false}
-      proOptions={{
-        account: 'paid-sponsor',
-        hideAttribution: true,
-      }}
-      style={reactFlowStyle}
-      fitViewOptions={reactFlowFitViewOptions}
-      fitView
-      minZoom={0.05}
-    >
-      {sourceSchema && <SchemaNameBadge schemaName={sourceSchema.name} schemaTreeRootXPos={srcSchemaTreeRootXPos} />}
-      {targetSchema && <SchemaNameBadge schemaName={targetSchema.name} schemaTreeRootXPos={tgtSchemaTreeRootXPos} />}
-    </ReactFlow>
+    <div className={styles.mapOverviewStyles}>
+      <ReactFlow
+        nodeTypes={nodeTypes}
+        nodes={reactFlowNodes}
+        edges={reactFlowEdges}
+        nodesDraggable={false}
+        proOptions={{
+          account: 'paid-sponsor',
+          hideAttribution: true,
+        }}
+        style={reactFlowStyle}
+        fitViewOptions={reactFlowFitViewOptions}
+        fitView
+        minZoom={0.05}
+      >
+        {sourceSchema && <SchemaNameBadge schemaName={sourceSchema.name} schemaTreeRootXPos={srcSchemaTreeRootXPos} />}
+        {targetSchema && <SchemaNameBadge schemaName={targetSchema.name} schemaTreeRootXPos={tgtSchemaTreeRootXPos} />}
+      </ReactFlow>
+    </div>
   );
 };

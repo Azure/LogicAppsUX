@@ -1,17 +1,19 @@
-import { initializeArrayViewModel } from '../../editors/array';
 import {
+  canConvertToComplexCondition,
   getParameterEditorProps,
   parameterValueToJSONString,
   parameterValueToString,
   getExpressionValueForOutputToken,
   updateParameterWithValues,
   toArrayViewModelSchema,
+  toHybridConditionViewModel,
+  getTokenExpressionMethodFromKey,
 } from '../helper';
 import type { DictionaryEditorItemProps, ParameterInfo, ValueSegment, OutputToken } from '@microsoft/designer-ui';
-import { TokenType, ValueSegmentType } from '@microsoft/designer-ui';
-import type { DynamicListExtension, LegacyDynamicValuesExtension, InputParameter } from '@microsoft/parsers-logic-apps';
-import { DynamicValuesType, ExpressionType } from '@microsoft/parsers-logic-apps';
-
+import { GroupDropdownOptions, GroupType, TokenType, ValueSegmentType } from '@microsoft/designer-ui';
+import type { DynamicListExtension, LegacyDynamicValuesExtension, InputParameter } from '@microsoft/logic-apps-shared';
+import { DynamicValuesType, ExpressionType } from '@microsoft/logic-apps-shared';
+import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 describe('core/utils/parameters/helper', () => {
   describe('parameterValueToJSONString', () => {
     it('should parse user typed json containing null, array, numeric, and nested values', () => {
@@ -476,6 +478,189 @@ describe('core/utils/parameters/helper', () => {
       expect(parameterValueToJSONString(parameterValue, /* applyCasting */ false, /* forValidation */ true)).toBe(
         '{"newUnb3_1":"@{xpath(xml(triggerBody()), \'string(/*[local-name()=\\"DynamicsSOCSV\\"])\')}"}'
       );
+    });
+
+    it('should return key value input from dictionary editor without wrapping single token in @{}', () => {
+      const parameterValue = [
+          {
+            id: '1',
+            type: ValueSegmentType.LITERAL,
+            value: '{\n ',
+          },
+          {
+            id: '2',
+            type: ValueSegmentType.LITERAL,
+            value: '"',
+          },
+          {
+            id: '3',
+            type: ValueSegmentType.LITERAL,
+            value: 'Key of the row',
+          },
+          {
+            id: '4',
+            type: ValueSegmentType.LITERAL,
+            value: '"',
+          },
+          {
+            id: '5',
+            type: ValueSegmentType.LITERAL,
+            value: ' : ',
+          },
+          {
+            id: '6',
+            type: ValueSegmentType.TOKEN,
+            value: "item()?['someItem']",
+            token: {
+              key: 'outputs.$',
+              tokenType: TokenType.OUTPUTS,
+              type: 'string',
+              title: 'someItem',
+            },
+          },
+          {
+            id: '7',
+            type: ValueSegmentType.LITERAL,
+            value: '\n}',
+          },
+        ],
+        parameterJson = parameterValueToJSONString(parameterValue);
+
+      expect(parameterJson).toEqual(`{"Key of the row":"@item()?['someItem']"}`);
+    });
+
+    it('should return key value input from dictionary editor with wrapping token in @{} to honor the included string and stringify as a whole', () => {
+      const parameterValue = [
+          {
+            id: '1',
+            type: ValueSegmentType.LITERAL,
+            value: '{\n ',
+          },
+          {
+            id: '2',
+            type: ValueSegmentType.LITERAL,
+            value: '"',
+          },
+          {
+            id: '3',
+            type: ValueSegmentType.LITERAL,
+            value: 'Key of the row',
+          },
+          {
+            id: '4',
+            type: ValueSegmentType.LITERAL,
+            value: '"',
+          },
+          {
+            id: '5',
+            type: ValueSegmentType.LITERAL,
+            value: ' : ',
+          },
+          {
+            id: '6',
+            type: ValueSegmentType.LITERAL,
+            value: '"',
+          },
+          {
+            id: '7',
+            type: ValueSegmentType.LITERAL,
+            value: 'Value of the row:',
+          },
+          {
+            id: '8',
+            type: ValueSegmentType.TOKEN,
+            value: "item()?['someItem']",
+            token: {
+              key: 'outputs.$',
+              tokenType: TokenType.OUTPUTS,
+              type: 'string',
+              title: 'someItem',
+            },
+          },
+          {
+            id: '9',
+            type: ValueSegmentType.LITERAL,
+            value: '"',
+          },
+          {
+            id: '10',
+            type: ValueSegmentType.LITERAL,
+            value: '\n}',
+          },
+        ],
+        parameterJson = parameterValueToJSONString(parameterValue);
+
+      expect(parameterJson).toEqual(`{"Key of the row":"Value of the row:@{item()?['someItem']}"}`);
+    });
+
+    it('should return key value input from dictionary editor with wrapping token in @{} to honor the other token input and stringify as a whole', () => {
+      const parameterValue = [
+          {
+            id: '1',
+            type: ValueSegmentType.LITERAL,
+            value: '{\n ',
+          },
+          {
+            id: '2',
+            type: ValueSegmentType.LITERAL,
+            value: '"',
+          },
+          {
+            id: '3',
+            type: ValueSegmentType.LITERAL,
+            value: 'Key of the row',
+          },
+          {
+            id: '4',
+            type: ValueSegmentType.LITERAL,
+            value: '"',
+          },
+          {
+            id: '5',
+            type: ValueSegmentType.LITERAL,
+            value: ' : ',
+          },
+          {
+            id: '6',
+            type: ValueSegmentType.LITERAL,
+            value: '"',
+          },
+          {
+            id: '7',
+            type: ValueSegmentType.TOKEN,
+            value: "item()?['someItem1']",
+            token: {
+              key: 'outputs.$',
+              tokenType: TokenType.OUTPUTS,
+              type: 'string',
+              title: 'someItem1',
+            },
+          },
+          {
+            id: '8',
+            type: ValueSegmentType.TOKEN,
+            value: "item()?['someItem2']",
+            token: {
+              key: 'outputs.$',
+              tokenType: TokenType.OUTPUTS,
+              type: 'string',
+              title: 'someItem2',
+            },
+          },
+          {
+            id: '9',
+            type: ValueSegmentType.LITERAL,
+            value: '"',
+          },
+          {
+            id: '10',
+            type: ValueSegmentType.LITERAL,
+            value: '\n}',
+          },
+        ],
+        parameterJson = parameterValueToJSONString(parameterValue);
+
+      expect(parameterJson).toEqual(`{"Key of the row":"@{item()?['someItem1']}@{item()?['someItem2']}"}`);
     });
   });
 
@@ -968,7 +1153,7 @@ describe('core/utils/parameters/helper', () => {
     });
 
     // TODO - Need to check if this scenario makes sense after token picker is integrated
-    xit('should be correct for a parameter with user entered template functions', () => {
+    test.skip('should be correct for a parameter with user entered template functions', () => {
       parameter.value = [
         {
           id: '1',
@@ -1706,11 +1891,7 @@ describe('core/utils/parameters/helper', () => {
         expect(result).toMatchObject({
           editor: dataType,
           editorOptions: undefined,
-          editorViewModel: {
-            ...initializeArrayViewModel(inputParameter, false),
-            itemSchema: toArrayViewModelSchema(inputParameter.itemSchema),
-            complexArray: false,
-          },
+          editorViewModel: toArrayViewModelSchema(inputParameter.itemSchema),
           schema: inputSchema,
         });
       });
@@ -1755,35 +1936,7 @@ describe('core/utils/parameters/helper', () => {
           },
         });
 
-        const {
-          expanded: editorViewModelExpanded,
-          inputParameter: editorViewModelInputParameter,
-          itemInputParameter: editorViewModelItemInputParameter,
-          items: editorViewModelItems,
-        } = editorViewModel;
-
-        expect(editorViewModelExpanded).toBe(true);
-        expect(editorViewModelInputParameter).toMatchObject(inputParameter);
-
-        expect(editorViewModelItemInputParameter).toMatchObject({
-          isInsideArray: true,
-          isNested: false,
-          key: 'inputs.$.events.[*]',
-          name: 'events.[*]',
-          parentArray: 'events',
-          required: true,
-          schema: itemSchema,
-          summary: '',
-          title: 'Event Grid Events Item',
-          type: 'object',
-        });
-
-        expect(Array.isArray(editorViewModelItems)).toBe(true);
-        expect(editorViewModelItems.length).toBe(1);
-        expect(editorViewModelItems[0].expanded).toBe(true);
-        expect(editorViewModelItems[0].key).toBe('inputs.$.events.[0]');
-        expect(Array.isArray(editorViewModelItems[0].properties)).toBe(true);
-        expect(editorViewModelItems[0].properties.length).toBe(2);
+        expect(editorViewModel).toMatchObject(toArrayViewModelSchema(inputParameter.itemSchema));
       });
     });
 
@@ -2028,12 +2181,6 @@ describe('core/utils/parameters/helper', () => {
           editorOptions: options,
           editorViewModel: {
             ...options,
-            items: {
-              operand1: [],
-              operand2: [],
-              operator: 'equals',
-              type: 'row',
-            },
           },
           schema: inputSchema,
         });
@@ -2325,6 +2472,29 @@ describe('core/utils/parameters/helper', () => {
     });
   });
 
+  describe('getTokenExpressionMethodFromKey', () => {
+    it.each<[string, string | undefined, string]>([
+      // For `body.$` and its first-class properties, use BODY.
+      ['body.$', undefined, `triggerBody()`],
+      ['body.$.value', undefined, `triggerBody()`],
+      ['body.$', 'Create_item', `body('Create_item')`],
+      ['body.$.ID', 'Create_item', `body('Create_item')`],
+
+      // For `outputs.$` and its first-class properties, use OUTPUTS.
+      ['output', undefined, `triggerOutputs()`],
+      ['outputs.$', undefined, `triggerOutputs()`],
+      ['outputs.$.body', undefined, `triggerOutputs()`],
+      ['outputs.$.body/value', undefined, `triggerOutputs()`],
+      ['outputs.$.headers', undefined, `triggerOutputs()`],
+      ['outputs.$.relativePathParameters', undefined, `triggerOutputs()`],
+
+      // For values using `body/*` syntax, use OUTPUTS.
+      ['outputs.$.body/subject', 'Get_event_(V3)', `outputs('Get_event_(V3)')`],
+    ])('correctly gets the token expression for %p', (key, actionName, expected) => {
+      expect(getTokenExpressionMethodFromKey(key, actionName)).toBe(expected);
+    });
+  });
+
   describe('updateParameterWithValues', () => {
     test('populates inputs for OpenAPI parameters', () => {
       const availableInputParameters = [
@@ -2544,6 +2714,124 @@ describe('core/utils/parameters/helper', () => {
       expect(updatedInputParameters[1].value).toBe('test2');
       expect(updatedInputParameters[2].value).toBe('test1');
       expect(updatedInputParameters[9].value).toBe('Normal');
+    });
+  });
+
+  describe('canConvertToComplexCondition', () => {
+    const equalsObject = {
+      equals: ["@outputs('Get_manager')?['body/mail']", "@triggerOutputs()?['body/from']"],
+    };
+
+    const containsObject = {
+      contains: ["@outputs('Get_manager')?['body/mail']", "@triggerOutputs()?['body/from']"],
+    };
+
+    const invalidObject = {
+      invalidKey: ["@outputs('Get_manager')?['body/mail']", "@triggerOutputs()?['body/from']"],
+    };
+
+    test('returns true if input has only one key and it is a valid dropdown value', () => {
+      const result = canConvertToComplexCondition(equalsObject);
+      expect(result).toBe(true);
+    });
+
+    test('returns false if input has more than one key', () => {
+      const input = {
+        ...equalsObject,
+        ...containsObject,
+      };
+      const result = canConvertToComplexCondition(input);
+      expect(result).toBe(false);
+    });
+
+    test('returns false if input has "not" key but its value has more than one key', () => {
+      const input = {
+        not: {
+          ...equalsObject,
+          ...containsObject,
+        },
+      };
+      const result = canConvertToComplexCondition(input);
+      expect(result).toBe(false);
+    });
+
+    test('returns true if input has "not" key and its value has only one valid dropdown value', () => {
+      const input = {
+        not: {
+          ...containsObject,
+        },
+      };
+      const result = canConvertToComplexCondition(input);
+      expect(result).toBe(true);
+    });
+
+    test('returns false if input has "not" key but its value is not a valid dropdown value', () => {
+      const input = {
+        not: {
+          ...invalidObject,
+        },
+      };
+      const result = canConvertToComplexCondition(input);
+      expect(result).toBe(false);
+    });
+
+    test('returns false if input is an empty object', () => {
+      const input = {};
+      const result = canConvertToComplexCondition(input);
+      expect(result).toBe(false);
+    });
+
+    test('returns false if input is undefined', () => {
+      const result = canConvertToComplexCondition(undefined);
+      expect(result).toBe(false);
+    });
+
+    test('returns false if input is null', () => {
+      const result = canConvertToComplexCondition(null);
+      expect(result).toBe(false);
+    });
+  });
+
+  describe('toHybridConditionViewModel', () => {
+    const greaterObject = {
+      greater: ["@outputs('Get_manager')?['body/mail']", "@triggerOutputs()?['body/from']"],
+    };
+    const emptyCondition = { items: { condition: undefined, items: [], type: 'group' } };
+    test('returns empty array of items if input is an empty object', () => {
+      const input = {};
+      const result = toHybridConditionViewModel(input);
+      expect(result).toEqual(emptyCondition);
+    });
+
+    test('returns false if input is undefined', () => {
+      const result = toHybridConditionViewModel(undefined);
+      expect(result).toEqual(emptyCondition);
+    });
+
+    test('returns false if input is null', () => {
+      const result = toHybridConditionViewModel(null);
+      expect(result).toEqual(emptyCondition);
+    });
+
+    it('should return the correct view model with "and" condition added', () => {
+      const result = toHybridConditionViewModel(greaterObject);
+      expect(result.items.type).toEqual(GroupType.GROUP);
+      expect(result.items.condition).not.toBeUndefined();
+      expect(result.items.condition).toEqual(GroupDropdownOptions.AND);
+      expect(result.items.items.length).toEqual(1);
+      expect(result.items.items[0].type).toEqual('row');
+    });
+
+    it('should return the correct view model without adding "and" condition', () => {
+      const input = {
+        or: [greaterObject],
+      };
+      const result = toHybridConditionViewModel(input);
+      expect(result.items.type).toEqual(GroupType.GROUP);
+      expect(result.items.condition).not.toBeUndefined();
+      expect(result.items.condition).toEqual(GroupDropdownOptions.OR);
+      expect(result.items.items.length).toEqual(1);
+      expect(result.items.items[0].type).toEqual('row');
     });
   });
 });

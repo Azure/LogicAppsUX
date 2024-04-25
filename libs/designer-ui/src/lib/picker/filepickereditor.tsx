@@ -1,17 +1,17 @@
 import type { BaseEditorProps, ChangeHandler } from '../editor/base';
-import { BaseEditor } from '../editor/base';
-import { notEqual } from '../editor/base/utils/helper';
+import { EditorWrapper } from '../editor/base/EditorWrapper';
+import { TokenPickerButtonLocation } from '../editor/base/plugins/tokenpickerbutton';
+import { createLiteralValueSegment, notEqual } from '../editor/base/utils/helper';
 import type { ValueSegment } from '../editor/models/parameter';
-import { ValueSegmentType } from '../editor/models/parameter';
 import { Picker } from './picker';
 import { PickerItemType } from './pickerItem';
 import { EditorValueChange } from './plugins/EditorValueChange';
-import { UpdateEditorFromPicker } from './plugins/UpdateEditorFromPicker';
+import { UpdateEditorFromFilePicker } from './plugins/UpdateEditorFromFilePicker';
 import type { IBreadcrumbItem, IIconProps, ITooltipHostStyles } from '@fluentui/react';
 import { TooltipHost, IconButton } from '@fluentui/react';
 import { useId } from '@fluentui/react-hooks';
-import type { TreeDynamicValue } from '@microsoft/designer-client-services-logic-apps';
-import { equals, guid } from '@microsoft/utils-logic-apps';
+import type { TreeDynamicValue } from '@microsoft/logic-apps-shared';
+import { equals } from '@microsoft/logic-apps-shared';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
 
@@ -34,7 +34,9 @@ export interface FilePickerEditorProps extends BaseEditorProps {
 }
 
 const folderIcon: IIconProps = { iconName: 'FolderOpen' };
-const hostStyles: Partial<ITooltipHostStyles> = { root: { display: 'inline-block' } };
+const hostStyles: Partial<ITooltipHostStyles> = {
+  root: { display: 'inline-block' },
+};
 const calloutProps = { gapSpace: 0 };
 
 export const FilePickerEditor = ({
@@ -52,7 +54,7 @@ export const FilePickerEditor = ({
   const pickerIconId = useId();
   const intl = useIntl();
   const [selectedItem, setSelectedItem] = useState<any>();
-  const initialDisplayValue = displayValue ? [{ id: guid(), value: displayValue, type: ValueSegmentType.LITERAL }] : initialValue;
+  const initialDisplayValue = displayValue ? [createLiteralValueSegment(displayValue)] : initialValue;
   const [editorDisplayValue, setEditorDisplayValue] = useState<ValueSegment[]>(initialDisplayValue);
   const [pickerDisplayValue, setPickerDisplayValue] = useState<ValueSegment[]>(initialDisplayValue);
   const [showPicker, setShowPicker] = useState(false);
@@ -60,11 +62,16 @@ export const FilePickerEditor = ({
   const { onFolderNavigation, getFileSourceName, getDisplayValueFromSelectedItem, getValueFromSelectedItem } = pickerCallbacks;
   const fileSourceName = getFileSourceName();
 
-  const [titleSegments, setTitleSegments] = useState<IBreadcrumbItem[]>(getInitialTitleSegments(fileSourceName));
+  const [titleSegments, setTitleSegments] = useState<IBreadcrumbItem[]>([]);
+
+  const onRootClicked = () => {
+    setTitleSegments(getInitialTitleSegments(fileSourceName, onRootClicked));
+    onFolderNavigation(/* selectedItem */ undefined);
+  };
 
   const openFolderPicker = () => {
     if (!showPicker) {
-      setTitleSegments(getInitialTitleSegments(fileSourceName));
+      setTitleSegments(getInitialTitleSegments(fileSourceName, onRootClicked));
       onFolderNavigation(/* selectedItem */ undefined);
       setShowPicker(true);
     }
@@ -73,26 +80,37 @@ export const FilePickerEditor = ({
   const onFolderNavigated = (selectedItem: TreeDynamicValue) => {
     onFolderNavigation(selectedItem.value);
     const displayValue = selectedItem.displayName;
-    setTitleSegments([...titleSegments, { text: displayValue, key: displayValue, onClick: () => onFolderNavigated(selectedItem) }]);
+    setTitleSegments([
+      ...titleSegments,
+      {
+        text: displayValue,
+        key: displayValue,
+        onClick: () => onFolderNavigated(selectedItem),
+      },
+    ]);
   };
 
   const onFileFolderSelected = (selectedItem: TreeDynamicValue) => {
+    if (type === PickerItemType.FILE && selectedItem.isParent) {
+      return;
+    }
     if (showPicker) {
       setSelectedItem(selectedItem.value);
-      setPickerDisplayValue([{ id: guid(), value: getDisplayValueFromSelectedItem(selectedItem.value), type: ValueSegmentType.LITERAL }]);
+      setPickerDisplayValue([createLiteralValueSegment(getDisplayValueFromSelectedItem(selectedItem.value))]);
       setShowPicker(false);
     }
   };
 
   const handleBlur = () => {
     if (selectedItem) {
-      const valueSegmentValue: ValueSegment[] = [
-        { id: guid(), type: ValueSegmentType.LITERAL, value: getValueFromSelectedItem(selectedItem) },
-      ];
+      const valueSegmentValue: ValueSegment[] = [createLiteralValueSegment(getValueFromSelectedItem(selectedItem))];
 
       editorBlur?.({
         value: valueSegmentValue,
-        viewModel: { displayValue: pickerDisplayValue[0]?.value, selectedItem: selectedItem },
+        viewModel: {
+          displayValue: pickerDisplayValue[0]?.value,
+          selectedItem: selectedItem,
+        },
       });
     } else if (notEqual(editorDisplayValue, pickerDisplayValue)) {
       editorBlur?.({
@@ -107,28 +125,28 @@ export const FilePickerEditor = ({
     setPickerDisplayValue([]);
   };
 
-  const openFolderLabel = intl.formatMessage({ defaultMessage: 'Open folder', description: 'Open folder label' });
+  const openFolderLabel = intl.formatMessage({
+    defaultMessage: 'Open folder',
+    id: 's+4LEa',
+    description: 'Open folder label',
+  });
   return (
     <div className="msla-filepicker-editor-container">
-      <BaseEditor
-        readonly={baseEditorProps.readonly}
+      <EditorWrapper
+        {...baseEditorProps}
         className="msla-filepicker-editor"
-        BasePlugins={{ ...baseEditorProps.BasePlugins }}
+        basePlugins={{ ...baseEditorProps.basePlugins }}
         initialValue={editorDisplayValue}
         onBlur={handleBlur}
-        onFocus={baseEditorProps.onFocus}
-        getTokenPicker={baseEditorProps.getTokenPicker}
-        placeholder={baseEditorProps.placeholder}
-        isTrigger={baseEditorProps.isTrigger}
-        tokenPickerButtonEditorProps={{ showOnLeft: true }}
+        tokenPickerButtonProps={{ location: TokenPickerButtonLocation.Left }}
       >
         <EditorValueChange
           pickerDisplayValue={pickerDisplayValue}
           setEditorDisplayValue={setEditorDisplayValue}
           clearPickerInfo={clearPickerInfo}
         />
-        <UpdateEditorFromPicker pickerDisplayValue={pickerDisplayValue} />
-      </BaseEditor>
+        <UpdateEditorFromFilePicker pickerDisplayValue={pickerDisplayValue} />
+      </EditorWrapper>
       <TooltipHost content={openFolderLabel} calloutProps={calloutProps} styles={hostStyles}>
         <IconButton iconProps={folderIcon} aria-label={openFolderLabel} onClick={openFolderPicker} id={pickerIconId} />
       </TooltipHost>
@@ -148,21 +166,25 @@ export const FilePickerEditor = ({
 };
 
 const filterItems = (items?: TreeDynamicValue[], type?: string, fileFilters?: string[]): TreeDynamicValue[] => {
-  if (!items || items.length === 0) return [];
+  if (!items || items.length === 0) {
+    return [];
+  }
   let returnItems = items;
   if (type === PickerItemType.FOLDER) {
     returnItems = items.filter((item) => item.isParent);
   }
   if (fileFilters && fileFilters.length > 0) {
     returnItems = returnItems.filter((item) => {
-      return fileFilters.some((filter) => equals(filter, item.mediaType));
+      return fileFilters.some((filter) => equals(filter, item.mediaType) || item.isParent);
     });
   }
   return returnItems;
 };
 
-const getInitialTitleSegments = (sourceName?: string): IBreadcrumbItem[] => {
-  if (!sourceName) return [];
-  const items: IBreadcrumbItem[] = [{ key: sourceName, text: sourceName }];
+const getInitialTitleSegments = (sourceName?: string, onRootClicked?: () => void): IBreadcrumbItem[] => {
+  if (!sourceName) {
+    return [];
+  }
+  const items: IBreadcrumbItem[] = [{ key: sourceName, text: sourceName, onClick: onRootClicked }];
   return items;
 };

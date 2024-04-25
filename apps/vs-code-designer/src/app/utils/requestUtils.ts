@@ -8,12 +8,12 @@ import { localize } from '../../localize';
 import { getWorkspaceSetting } from './vsCodeConfig/settings';
 import { RestError, WebResource } from '@azure/ms-rest-js';
 import type { HttpOperationResponse, RequestPrepareOptions, ServiceClient } from '@azure/ms-rest-js';
-import { HTTP_METHODS, isString } from '@microsoft/utils-logic-apps';
+import { HTTP_METHODS, isString } from '@microsoft/logic-apps-shared';
 import { createGenericClient, sendRequestWithTimeout } from '@microsoft/vscode-azext-azureutils';
 import type { AzExtRequestPrepareOptions } from '@microsoft/vscode-azext-azureutils';
 import { nonNullProp, nonNullValue, parseError } from '@microsoft/vscode-azext-utils';
 import type { IActionContext, ISubscriptionContext } from '@microsoft/vscode-azext-utils';
-import type { IIdentityWizardContext } from '@microsoft/vscode-extension';
+import type { IIdentityWizardContext } from '@microsoft/vscode-extension-logic-apps';
 import * as fse from 'fs-extra';
 import * as path from 'path';
 
@@ -50,17 +50,15 @@ async function sendAndParseResponse(client: ServiceClient, options: RequestPrepa
         ? parseError(response.parsedBody || response.bodyAsText).message
         : localize('unexpectedStatusCode', 'Unexpected status code: {0}', response.status);
       throw new RestError(errorMessage, undefined, response.status, /*request*/ undefined, response, response.bodyAsText);
-    } else {
-      return response;
     }
+    return response;
   } catch (error) {
     if (isTimeoutError(error)) {
       throw new Error(
         localize('timeoutFeed', 'Request timed out. Modify setting "{0}.{1}" if you want to extend the timeout.', ext.prefix, timeoutKey)
       );
-    } else {
-      throw error;
     }
+    throw error;
   }
 }
 
@@ -83,9 +81,8 @@ export async function sendRequestWithExtTimeout(
       throw new Error(
         localize('timeoutFeed', 'Request timed out. Modify setting "{0}.{1}" if you want to extend the timeout.', ext.prefix, timeoutKey)
       );
-    } else {
-      throw error;
     }
+    throw new Error(localize('sendRequestError', `${options.url} request failed with error: ${error}`));
   }
 }
 

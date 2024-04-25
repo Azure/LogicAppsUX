@@ -1,23 +1,37 @@
 import { ResourceType } from '../types';
-import type { IApiService, WorkflowsList, ISummaryData, IRegion, GraphApiOptions, AdvancedOptionsTypes } from '../types';
+import type {
+  IApiService,
+  WorkflowsList,
+  ISummaryData,
+  IRegion,
+  GraphApiOptions,
+  AdvancedOptionsTypes,
+  ISubscription,
+  IIse,
+} from '../types';
 import { getValidationPayload, getExportUri } from './helper';
-import { getBaseGraphApi } from '@microsoft/vscode-extension';
+import { HTTP_METHODS } from '@microsoft/logic-apps-shared';
+import { ExtensionCommand, getBaseGraphApi } from '@microsoft/vscode-extension-logic-apps';
+import type { WebviewApi } from 'vscode-webview';
 
 export interface ApiServiceOptions {
   baseUrl?: string;
   accessToken?: string;
   cloudHost?: string;
+  vscodeContext: WebviewApi<unknown>;
 }
 
 export class ApiService implements IApiService {
   private options: ApiServiceOptions;
   private graphApiUri: string;
   private baseGraphApi: string;
+  private vscodeContext: WebviewApi<unknown>;
 
   constructor(options: ApiServiceOptions) {
     this.options = options;
     this.baseGraphApi = getBaseGraphApi(options.cloudHost);
     this.graphApiUri = `${this.baseGraphApi}/providers/Microsoft.ResourceGraph/resources?api-version=2021-03-01`;
+    this.vscodeContext = options.vscodeContext;
   }
 
   private getAccessTokenHeaders = () => {
@@ -64,12 +78,11 @@ export class ApiService implements IApiService {
         const location = properties?.location;
 
         return {
-          query:
-            `resources | where type =~ 'Microsoft.Logic/workflows' and isnotnull(properties) and ` +
-            (selectedIse
+          query: `resources | where type =~ 'Microsoft.Logic/workflows' and isnotnull(properties) and ${
+            selectedIse
               ? `properties.integrationServiceEnvironment.id =~ '${selectedIse}'`
-              : `isnull(properties.integrationServiceEnvironment) and location =~ '${location}'`) +
-            ' | project id, name, resourceGroup | sort by (tolower(tostring(name))) asc',
+              : `isnull(properties.integrationServiceEnvironment) and location =~ '${location}'`
+          } | project id, name, resourceGroup | sort by (tolower(tostring(name))) asc`,
           subscriptions: [subscriptionId],
           options: {
             $top: 1000,
@@ -96,10 +109,12 @@ export class ApiService implements IApiService {
         location,
         skipToken,
       });
-      const response = await fetch(this.graphApiUri, { headers, method: 'POST', body: JSON.stringify(payload) });
+      const response = await fetch(this.graphApiUri, { headers, method: HTTP_METHODS.POST, body: JSON.stringify(payload) });
 
       if (!response.ok) {
-        throw new Error(`${response.status} ${response.statusText}`);
+        const errorText = `${response.status} ${response.statusText}`;
+        this.logTelemetryError(errorText);
+        throw new Error(errorText);
       }
 
       const responseBody = await response.json();
@@ -131,43 +146,57 @@ export class ApiService implements IApiService {
     return separators[resourceGroupLocation];
   }
 
-  async getSubscriptions(): Promise<any> {
+  /**
+   * Retrieves the list of subscriptions.
+   * @returns {Promise<Array<ISubscription>>}  A promise that resolves to an array of subscriptions.
+   */
+  async getSubscriptions(): Promise<ISubscription[]> {
     const headers = this.getAccessTokenHeaders();
     const payload = this.getPayload(ResourceType.subscriptions);
-    const response = await fetch(this.graphApiUri, { headers, method: 'POST', body: JSON.stringify(payload) });
+    const response = await fetch(this.graphApiUri, { headers, method: HTTP_METHODS.POST, body: JSON.stringify(payload) });
 
     if (!response.ok) {
-      throw new Error(`${response.status} ${response.statusText}`);
+      const errorText = `${response.status} ${response.statusText}`;
+      this.logTelemetryError(errorText);
+      throw new Error(errorText);
     }
 
     const subscriptionsResponse: any = await response.json();
     const { data: subscriptions } = subscriptionsResponse;
 
-    return { subscriptions };
+    return subscriptions;
   }
 
-  async getIse(selectedSubscription: string): Promise<any> {
+  /**
+   * Retrieves the list of Ise objects for the selected subscription.
+   * @param {string} selectedSubscription - The ID of the selected subscription.
+   * @returns {Promise<Array<IIse>>}A promise that resolves to an array of IIse objects.
+   */
+  async getIse(selectedSubscription: string): Promise<IIse[]> {
     const headers = this.getAccessTokenHeaders();
     const payload = this.getPayload(ResourceType.ise, { selectedSubscription: selectedSubscription });
-    const response = await fetch(this.graphApiUri, { headers, method: 'POST', body: JSON.stringify(payload) });
+    const response = await fetch(this.graphApiUri, { headers, method: HTTP_METHODS.POST, body: JSON.stringify(payload) });
 
     if (!response.ok) {
-      throw new Error(`${response.status} ${response.statusText}`);
+      const errorText = `${response.status} ${response.statusText}`;
+      this.logTelemetryError(errorText);
+      throw new Error(errorText);
     }
 
     const iseResponse: any = await response.json();
     const { data: ise } = iseResponse;
-
-    return { ise };
+    return ise;
   }
 
   async getAllRegionWithDisplayName(subscriptionId: string): Promise<any[]> {
     const headers = this.getAccessTokenHeaders();
     const url = `${this.baseGraphApi}/subscriptions/${subscriptionId}/locations?api-version=2022-05-01`;
-    const response = await fetch(url, { headers, method: 'GET' });
+    const response = await fetch(url, { headers, method: HTTP_METHODS.GET });
 
     if (!response.ok) {
-      throw new Error(`${response.status} ${response.statusText}`);
+      const errorText = `${response.status} ${response.statusText}`;
+      this.logTelemetryError(errorText);
+      throw new Error(errorText);
     }
 
     return (await response.json()).value;
@@ -185,7 +214,9 @@ export class ApiService implements IApiService {
     const response = await fetch(this.graphApiUri, { headers, method: 'POST', body: JSON.stringify(payload) });
 
     if (!response.ok) {
-      throw new Error(`${response.status} ${response.statusText}`);
+      const errorText = `${response.status} ${response.statusText}`;
+      this.logTelemetryError(errorText);
+      throw new Error(errorText);
     }
 
     return (await response.json()).data;
@@ -216,7 +247,7 @@ export class ApiService implements IApiService {
   }
 
   async validateWorkflows(
-    selectedWorkflows: Array<WorkflowsList>,
+    selectedWorkflows: WorkflowsList[],
     selectedSubscription: string,
     selectedLocation: string,
     selectedAdvanceOptions: AdvancedOptionsTypes[]
@@ -225,17 +256,21 @@ export class ApiService implements IApiService {
     const validationUri = getExportUri(selectedSubscription, selectedLocation, true, this.baseGraphApi);
     const workflowExportOptions = selectedAdvanceOptions.join(',');
     const validationPayload = getValidationPayload(selectedWorkflows, workflowExportOptions);
-    const response = await fetch(validationUri, { headers, method: 'POST', body: JSON.stringify(validationPayload) });
+    const response = await fetch(validationUri, { headers, method: HTTP_METHODS.POST, body: JSON.stringify(validationPayload) });
 
     if (!response.ok) {
       let errorBody: any;
       try {
         errorBody = await response.json();
       } catch (_ex) {
-        throw new Error(`${response.status} ${response.statusText}`);
+        const parseErrorText = `${response.status} ${response.statusText}`;
+        this.logTelemetryError(parseErrorText);
+        throw new Error(parseErrorText);
       }
 
-      throw new Error(errorBody.error.message);
+      const errorText = errorBody.error.message;
+      this.logTelemetryError(errorText);
+      throw new Error(errorText);
     }
 
     const validationResponse: any = await response.json();
@@ -243,7 +278,7 @@ export class ApiService implements IApiService {
   }
 
   async exportWorkflows(
-    selectedWorkflows: Array<WorkflowsList>,
+    selectedWorkflows: WorkflowsList[],
     selectedSubscription: string,
     selectedLocation: string,
     selectedAdvanceOptions: AdvancedOptionsTypes[]
@@ -259,9 +294,13 @@ export class ApiService implements IApiService {
       try {
         errorBody = await response.json();
       } catch (_ex) {
-        throw new Error(`${response.status} ${response.statusText}`);
+        const parseErrorText = `${response.status} ${response.statusText}`;
+        this.logTelemetryError(parseErrorText);
+        throw new Error(parseErrorText);
       }
-      throw new Error(errorBody.error.message);
+      const errorText = errorBody.error.message;
+      this.logTelemetryError(errorText);
+      throw new Error(errorText);
     }
 
     if (!response.ok) {
@@ -278,7 +317,9 @@ export class ApiService implements IApiService {
     const response = await fetch(this.graphApiUri, { headers, method: 'POST', body: JSON.stringify(payload) });
 
     if (!response.ok) {
-      throw new Error(`${response.status} ${response.statusText}`);
+      const errorText = `${response.status} ${response.statusText}`;
+      this.logTelemetryError(errorText);
+      throw new Error(errorText);
     }
 
     const resourceGroupsResponse: any = await response.json();
@@ -286,4 +327,12 @@ export class ApiService implements IApiService {
 
     return { resourceGroups };
   }
+
+  private logTelemetryError = (error: any) => {
+    this.vscodeContext.postMessage({
+      command: ExtensionCommand.log_telemtry,
+      key: 'error',
+      value: error,
+    });
+  };
 }

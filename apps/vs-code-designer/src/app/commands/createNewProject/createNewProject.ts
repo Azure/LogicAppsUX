@@ -10,11 +10,16 @@ import { OpenBehaviorStep } from './OpenBehaviorStep';
 import { OpenFolderStep } from './OpenFolderStep';
 import { FolderListStep } from './createProjectSteps/FolderListStep';
 import { NewProjectTypeStep } from './createProjectSteps/NewProjectTypeStep';
-import { isString } from '@microsoft/utils-logic-apps';
+import { isString } from '@microsoft/logic-apps-shared';
 import { AzureWizard } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
-import { latestGAVersion, OpenBehavior } from '@microsoft/vscode-extension';
-import type { ICreateFunctionOptions, IFunctionWizardContext, ProjectLanguage, ProjectVersion } from '@microsoft/vscode-extension';
+import { latestGAVersion, OpenBehavior } from '@microsoft/vscode-extension-logic-apps';
+import type {
+  ICreateFunctionOptions,
+  IFunctionWizardContext,
+  ProjectLanguage,
+  ProjectVersion,
+} from '@microsoft/vscode-extension-logic-apps';
 import * as fse from 'fs-extra';
 import * as path from 'path';
 import { window } from 'vscode';
@@ -73,6 +78,7 @@ export async function createNewProjectInternal(context: IActionContext, options:
   await wizard.execute();
 
   await createArtifactsFolder(context as IFunctionWizardContext);
+  await createLibFolder(context as IFunctionWizardContext);
 
   window.showInformationMessage(localize('finishedCreating', 'Finished creating project.'));
 }
@@ -80,4 +86,10 @@ export async function createNewProjectInternal(context: IActionContext, options:
 async function createArtifactsFolder(context: IFunctionWizardContext): Promise<void> {
   fse.mkdirSync(path.join(context.projectPath, 'Artifacts', 'Maps'), { recursive: true });
   fse.mkdirSync(path.join(context.projectPath, 'Artifacts', 'Schemas'), { recursive: true });
+}
+
+async function createLibFolder(context: IFunctionWizardContext): Promise<void> {
+  fse.mkdirSync(path.join(context.projectPath, 'lib', 'builtinOperationSdks', 'JAR'), { recursive: true });
+  fse.mkdirSync(path.join(context.projectPath, 'lib', 'builtinOperationSdks', 'net472'), { recursive: true });
+  fse.mkdirSync(path.join(context.projectPath, 'lib', 'custom', 'net472'), { recursive: true });
 }

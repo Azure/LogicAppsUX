@@ -3,7 +3,7 @@ import { CardFooter } from '../cardfooter';
 import type { CommentBoxProps } from '../types';
 import { setIconOptions } from '@fluentui/react';
 import renderer from 'react-test-renderer';
-
+import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 describe('lib/card/cardfooter', () => {
   let minimal: CardFooterProps;
 
@@ -30,6 +30,11 @@ describe('lib/card/cardfooter', () => {
       isEditing: false,
     };
     const tree = renderer.create(<CardFooter {...minimal} commentBox={commentBox} />).toJSON();
+    expect(tree).toMatchSnapshot();
+  });
+
+  it('should render with a lock icon', () => {
+    const tree = renderer.create(<CardFooter {...minimal} isSecureInputsOutputs={true} />).toJSON();
     expect(tree).toMatchSnapshot();
   });
 

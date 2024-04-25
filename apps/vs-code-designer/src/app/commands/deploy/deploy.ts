@@ -2,6 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
+import { LogicAppResolver } from '../../../LogicAppResolver';
 import {
   logicAppKind,
   deploySubpathSetting,
@@ -18,13 +19,15 @@ import {
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import { LogicAppResourceTree } from '../../tree/LogicAppResourceTree';
-import type { SlotTreeItem } from '../../tree/slotsTree/SlotTreeItem';
+import { SlotTreeItem } from '../../tree/slotsTree/SlotTreeItem';
+import { SubscriptionTreeItem } from '../../tree/subscriptionTree/SubscriptionTreeItem';
 import { createAclInConnectionIfNeeded, getConnectionsJson } from '../../utils/codeless/connection';
 import { getParametersJson } from '../../utils/codeless/parameter';
 import { isPathEqual, writeFormattedJson } from '../../utils/fs';
 import { addLocalFuncTelemetry } from '../../utils/funcCoreTools/funcVersion';
 import { getWorkspaceSetting } from '../../utils/vsCodeConfig/settings';
 import { verifyInitForVSCode } from '../../utils/vsCodeConfig/verifyInitForVSCode';
+import { createLogicAppAdvanced, createLogicApp } from '../createLogicApp/createLogicApp';
 import {
   AdvancedIdentityObjectIdStep,
   AdvancedIdentityClientIdStep,
@@ -34,14 +37,14 @@ import {
 import { notifyDeployComplete } from './notifyDeployComplete';
 import { updateAppSettingsWithIdentityDetails } from './updateAppSettings';
 import { verifyAppSettings } from './verifyAppSettings';
-import type { SiteConfigResource, StringDictionary } from '@azure/arm-appservice';
-import { ResolutionService } from '@microsoft/parsers-logic-apps';
+import type { SiteConfigResource, StringDictionary, Site } from '@azure/arm-appservice';
+import { ResolutionService } from '@microsoft/logic-apps-shared';
 import { deploy as innerDeploy, getDeployFsPath, runPreDeployTask, getDeployNode } from '@microsoft/vscode-azext-azureappservice';
 import type { IDeployContext } from '@microsoft/vscode-azext-azureappservice';
 import { ScmType } from '@microsoft/vscode-azext-azureappservice/out/src/ScmType';
-import type { IActionContext } from '@microsoft/vscode-azext-utils';
+import type { AzExtParentTreeItem, IActionContext, IAzureQuickPickItem, ISubscriptionContext } from '@microsoft/vscode-azext-utils';
 import { AzureWizard, DialogResponses } from '@microsoft/vscode-azext-utils';
-import type { ConnectionsData, FuncVersion, IIdentityWizardContext, ProjectLanguage } from '@microsoft/vscode-extension';
+import type { ConnectionsData, FuncVersion, IIdentityWizardContext, ProjectLanguage } from '@microsoft/vscode-extension-logic-apps';
 import * as fse from 'fs-extra';
 import * as path from 'path';
 import type { Uri, MessageItem, WorkspaceFolder } from 'vscode';
@@ -78,15 +81,21 @@ async function deploy(
 
   ext.deploymentFolderPath = originalDeployFsPath;
 
-  const node: SlotTreeItem = await getDeployNode(context, ext.rgApi.appResourceTree, target, functionAppId, async () =>
-    ext.rgApi.pickAppResource(
-      { ...context, suppressCreatePick: false },
-      {
-        filter: logicAppFilter,
-        expectedChildContextValue: expectedContextValue,
-      }
-    )
-  );
+  let node: SlotTreeItem;
+
+  if (expectedContextValue) {
+    node = await getDeployNode(context, ext.rgApi.appResourceTree, target, functionAppId, async () =>
+      ext.rgApi.pickAppResource(
+        { ...context, suppressCreatePick: false },
+        {
+          filter: logicAppFilter,
+          expectedChildContextValue: expectedContextValue,
+        }
+      )
+    );
+  } else {
+    node = await getDeployNode(context, ext.rgApi.appResourceTree, target, functionAppId, async () => getDeployLogicAppNode(actionContext));
+  }
 
   const nodeKind = node.site.kind && node.site.kind.toLowerCase();
   const isWorkflowApp = nodeKind?.includes(logicAppKind);
@@ -163,6 +172,10 @@ async function deploy(
       ext.outputChannel.appendLog(noSubpathWarning);
     }
 
+    if (isWorkflowApp) {
+      await cleanupPublishBinPath(context, effectiveDeployFsPath);
+    }
+
     deployProjectPathForWorkflowApp = isWorkflowApp
       ? await getProjectPathToDeploy(node, workspaceFolder, settingsToExclude, deployFsPath, identityWizardContext)
       : undefined;
@@ -178,6 +191,56 @@ async function deploy(
 
   await node.loadAllChildren(context);
   await notifyDeployComplete(node, context.workspaceFolder, settingsToExclude);
+}
+
+async function getDeployLogicAppNode(context: IActionContext): Promise<SlotTreeItem> {
+  const placeHolder: string = localize('selectLogicApp', 'Select Logic App (Standard) in Azure');
+  const sub = await ext.rgApi.appResourceTree.showTreeItemPicker<AzExtParentTreeItem>(SubscriptionTreeItem.contextValue, context);
+
+  const [site, isAdvance] = (await context.ui.showQuickPick(getLogicAppsPicks(context, sub.subscription), { placeHolder })).data;
+  if (!site) {
+    if (isAdvance) {
+      return await createLogicAppAdvanced(context, sub);
+    }
+    return await createLogicApp(context, sub);
+  }
+  const resourceTree = new LogicAppResourceTree(sub.subscription, site);
+  return new SlotTreeItem(sub, resourceTree);
+}
+
+async function getLogicAppsPicks(
+  context: IActionContext,
+  subContext: ISubscriptionContext
+): Promise<IAzureQuickPickItem<[Site | undefined, boolean]>[]> {
+  const listOfLogicApps = await LogicAppResolver.getAppResourceSiteBySubscription(context, subContext);
+  const picks: { label: string; data: [Site, boolean]; description?: string }[] = Array.from(listOfLogicApps).map(([_id, site]) => {
+    return { label: site.name, data: [site, false] };
+  });
+
+  picks.sort((a, b) => a.label.localeCompare(b.label));
+  picks.unshift({
+    label: localize('selectLogicApp', '$(plus) Create new Logic App (Standard) in Azure...'),
+    data: [undefined, true],
+    description: localize('advanced', 'Advanced'),
+  });
+  picks.unshift({ label: localize('selectLogicApp', '$(plus) Create new Logic App (Standard) in Azure...'), data: [undefined, false] });
+
+  return picks;
+}
+
+/**
+ * Azure functions task `_GenerateFunctionsExtensionsMetadataPostPublish` moves `NetFxWorker`
+ * in `bin/` of publish path, It needs to be reverted as it's a special case where we have a
+ * Azure Function Extension inside a Logic App Extension.
+ * @param context {@link IActionContext}
+ * @param fsPath publish path for logic app extension
+ */
+async function cleanupPublishBinPath(context: IActionContext, fsPath: string): Promise<void> {
+  const netFxWorkerBinPath = path.join(fsPath, 'bin', 'NetFxWorker');
+  const netFxWorkerAssetPath = path.join(fsPath, 'NetFxWorker');
+  if (await fse.pathExists(netFxWorkerBinPath)) {
+    return fse.move(netFxWorkerBinPath, netFxWorkerAssetPath, { overwrite: true });
+  }
 }
 
 async function validateGlobSettings(context: IActionContext, fsPath: string): Promise<void> {
@@ -244,12 +307,17 @@ async function getProjectPathToDeploy(
 
     fse.mkdirSync(deployProjectPath);
 
-    await fse.copy(originalDeployFsPath, deployProjectPath, { overwrite: true, recursive: true });
+    await fse.copy(originalDeployFsPath, deployProjectPath, { overwrite: true });
 
     for (const [referenceKey, managedConnection] of Object.entries(parametizedConnections.managedApiConnections)) {
       try {
         const connection = connectionsData.managedApiConnections[referenceKey].connection;
-        await createAclInConnectionIfNeeded(identityWizardContext, connection.id, node);
+        await createAclInConnectionIfNeeded(identityWizardContext, connection.id, node.site);
+
+        if (node.site.isSlot) {
+          const parentTreeItem = node.parent?.parent as SlotTreeItem;
+          await createAclInConnectionIfNeeded(identityWizardContext, connection.id, parentTreeItem.site);
+        }
       } catch (error) {
         throw new Error(`Error in creating access policy for connection in reference - '${referenceKey}'. ${error}`);
       }

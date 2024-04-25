@@ -7,15 +7,15 @@ import { localize } from '../../../localize';
 import type { SlotTreeItem } from '../../tree/slotsTree/SlotTreeItem';
 import { SubscriptionTreeItem } from '../../tree/subscriptionTree/SubscriptionTreeItem';
 import { notifyCreateLogicAppComplete } from './notifyCreateLogicAppComplete';
-import { isString } from '@microsoft/utils-logic-apps';
+import { isString } from '@microsoft/logic-apps-shared';
 import type { AzExtParentTreeItem, IActionContext } from '@microsoft/vscode-azext-utils';
-import type { ICreateLogicAppContext } from '@microsoft/vscode-extension';
+import type { ICreateLogicAppContext } from '@microsoft/vscode-extension-logic-apps';
 
 export async function createLogicApp(
   context: IActionContext & Partial<ICreateLogicAppContext>,
   subscription?: AzExtParentTreeItem | string,
   nodesOrNewResourceGroupName?: string | (string | AzExtParentTreeItem)[]
-): Promise<string> {
+): Promise<SlotTreeItem> {
   const newResourceGroupName = Array.isArray(nodesOrNewResourceGroupName) ? undefined : nodesOrNewResourceGroupName;
   let node: AzExtParentTreeItem | undefined;
 
@@ -24,10 +24,10 @@ export async function createLogicApp(
     if (!node) {
       throw new Error(localize('noMatchingSubscription', 'Failed to find a subscription matching id "{0}".', subscription));
     }
-  } else if (!subscription) {
-    node = await ext.rgApi.appResourceTree.showTreeItemPicker<AzExtParentTreeItem>(SubscriptionTreeItem.contextValue, context);
-  } else {
+  } else if (subscription) {
     node = subscription;
+  } else {
+    node = await ext.rgApi.appResourceTree.showTreeItemPicker<AzExtParentTreeItem>(SubscriptionTreeItem.contextValue, context);
   }
 
   context.newResourceGroupName = newResourceGroupName;
@@ -38,7 +38,7 @@ export async function createLogicApp(
       node as SubscriptionTreeItem
     );
     await notifyCreateLogicAppComplete(logicAppNode);
-    return logicAppNode.fullId;
+    return logicAppNode;
   } catch (error) {
     throw new Error(`Error in creating logic app. ${error}`);
   }
@@ -48,6 +48,6 @@ export async function createLogicAppAdvanced(
   context: IActionContext,
   subscription?: AzExtParentTreeItem | string,
   nodesOrNewResourceGroupName?: string | (string | AzExtParentTreeItem)[]
-): Promise<string> {
+): Promise<SlotTreeItem> {
   return await createLogicApp({ ...context, advancedCreation: true }, subscription, nodesOrNewResourceGroupName);
 }

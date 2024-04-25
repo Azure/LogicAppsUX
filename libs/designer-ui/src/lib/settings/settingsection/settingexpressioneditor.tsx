@@ -1,10 +1,11 @@
-import type { SettingProps } from './settingtoggle';
+import type { SettingProps } from './';
 import { ActionButton, IconButton } from '@fluentui/react/lib/Button';
 import type { IIconProps } from '@fluentui/react/lib/Icon';
 import { TextField } from '@fluentui/react/lib/TextField';
 import type { ITextFieldStyles } from '@fluentui/react/lib/TextField';
 import { TooltipHost } from '@fluentui/react/lib/Tooltip';
-import React, { useState } from 'react';
+import type React from 'react';
+import { useState } from 'react';
 import { useIntl } from 'react-intl';
 
 export type ExpressionChangeHandler = (updatedExpressions: string[]) => void;
@@ -13,22 +14,25 @@ export interface MultiAddExpressionEditorProps extends SettingProps {
   onExpressionsChange: ExpressionChangeHandler;
 }
 
+// TODO: MultiAddExpressionEditor seems to be overfactored, and can be simplified
 export const MultiAddExpressionEditor = ({
   initialExpressions = [],
   readOnly = false,
   customLabel,
+  ariaLabel,
   onExpressionsChange,
 }: MultiAddExpressionEditorProps): JSX.Element | null => {
-  if (customLabel) {
-    return (
-      <>
-        {customLabel()}
-        <ExpressionsEditor initialExpressions={initialExpressions ?? []} readOnly={readOnly} onChange={onExpressionsChange} />
-      </>
-    );
-  } else {
-    return <ExpressionsEditor initialExpressions={initialExpressions ?? []} readOnly={readOnly} onChange={onExpressionsChange} />;
-  }
+  return (
+    <>
+      {customLabel ? customLabel : null}
+      <ExpressionsEditor
+        initialExpressions={initialExpressions ?? []}
+        readOnly={readOnly}
+        onChange={onExpressionsChange}
+        ariaLabel={ariaLabel}
+      />
+    </>
+  );
 };
 
 const styles: Partial<ITextFieldStyles> = {
@@ -57,7 +61,13 @@ export const ExpressionsEditor = ({
   const intl = useIntl();
   const addCondition = intl.formatMessage({
     defaultMessage: 'Add',
+    id: 'LpPNAD',
     description: 'label to add a condition',
+  });
+  const expressionEditorLabel = intl.formatMessage({
+    defaultMessage: 'Expression Editor',
+    id: 'zEv8dd',
+    description: 'label for expression editor',
   });
 
   const defaultProps: ExpressionsEditorProps = {
@@ -65,7 +75,7 @@ export const ExpressionsEditor = ({
     readOnly: false,
     onChange,
     maximumExpressions: maximumExpressions ?? 10,
-    customLabel: () => <div>{'Expression Editor'}</div>,
+    customLabel: <div>{expressionEditorLabel}</div>,
   };
 
   const addIconProps: IIconProps = {
@@ -116,6 +126,13 @@ export interface ExpressionsProps extends SettingProps {
 }
 
 export const Expressions = ({ expressions, readOnly = false, onChange, onDelete, ariaLabel }: ExpressionsProps): JSX.Element => {
+  const intl = useIntl();
+  const indexItem = intl.formatMessage({
+    defaultMessage: 'item',
+    id: 'NFgfP4',
+    description: 'Label for users to know which item they are on in the dictionary',
+  });
+
   return (
     <>
       {expressions.map((expression, index) => {
@@ -127,7 +144,7 @@ export const Expressions = ({ expressions, readOnly = false, onChange, onDelete,
             readOnly={readOnly}
             onChange={onChange}
             onDelete={onDelete}
-            ariaLabel={`${ariaLabel} ${index}`}
+            ariaLabel={`${ariaLabel} ${indexItem} ${index + 1}`}
           />
         );
       })}
@@ -145,18 +162,15 @@ export interface ExpressionProps extends SettingProps {
 export const Expression = ({ expression, index, readOnly = false, onChange, onDelete, ariaLabel }: ExpressionProps): JSX.Element => {
   const intl = useIntl();
 
-  const enterValueError = intl.formatMessage({
-    defaultMessage: 'Enter a value',
-    description: 'error displayed when no value is entered',
-  });
-
+  const expressionValue = expression ? `'${expression}'` : '';
   const deleteValue = intl.formatMessage(
     {
-      defaultMessage: 'Delete {name}',
-      description: 'type and label to delete a value',
+      defaultMessage: 'Delete {expressionValue}',
+      id: 'UMPuUJ',
+      description: 'Label to delete a value',
     },
     {
-      name: ariaLabel,
+      expressionValue,
     }
   );
 
@@ -172,21 +186,15 @@ export const Expression = ({ expression, index, readOnly = false, onChange, onDe
     onDelete(index);
   };
 
-  const handleGetErrorMessage = (value: string): string | undefined => {
-    return !value ? enterValueError : undefined;
-  };
-
   return (
     <div className="msla-trigger-condition-expression">
       <TextField
         autoComplete="off"
         disabled={readOnly}
-        required={true}
         spellCheck={false}
         styles={styles}
         value={expression}
         onChange={handleChange}
-        onGetErrorMessage={handleGetErrorMessage}
         ariaLabel={ariaLabel}
       />
       <TooltipHost content={deleteValue}>

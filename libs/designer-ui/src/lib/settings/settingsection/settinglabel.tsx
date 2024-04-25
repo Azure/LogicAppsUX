@@ -1,33 +1,52 @@
-import { IconButton, TooltipHost } from '@fluentui/react';
-import type { IIconStyles, IIconProps } from '@fluentui/react';
+import { css } from '@fluentui/react';
+import { Tooltip } from '@fluentui/react-components';
+import { Info16Regular } from '@fluentui/react-icons';
 
 export interface SettingLabelProps {
   labelText: string;
   infoTooltipText?: string;
-  isChild: boolean;
+  settingDescription?: string;
+  subLabelText?: string;
+  isSubLabelToggle?: boolean;
 }
 
-const infoIconProps: IIconProps = {
-  iconName: 'Info',
-};
-
-const infoIconStyles: IIconStyles = {
-  root: {
-    color: '#8d8686',
-  },
-};
-
-export function SettingLabel({ labelText, infoTooltipText, isChild }: SettingLabelProps): JSX.Element {
-  const className = isChild ? 'msla-setting-section-row-child-label' : 'msla-setting-section-row-label';
-  if (infoTooltipText) {
-    return (
-      <div className={className}>
-        <div className="msla-setting-section-row-text">{labelText}</div>
-        <TooltipHost hostClassName="msla-setting-section-row-info" content={infoTooltipText}>
-          <IconButton iconProps={infoIconProps} styles={infoIconStyles} className="msla-setting-section-row-info-icon" />
-        </TooltipHost>
+export function SettingLabel({
+  labelText,
+  infoTooltipText,
+  settingDescription,
+  subLabelText,
+  isSubLabelToggle,
+}: SettingLabelProps): JSX.Element {
+  return (
+    <>
+      <div className="msla-setting-label-container">
+        <div className="msla-setting-label-title">{labelText}</div>
+        {infoTooltipText ? (
+          <Tooltip relationship="label" content={infoTooltipText} aria-label={infoTooltipText}>
+            <Info16Regular className="msla-setting-label-tooltip-icon" tabIndex={0} />
+          </Tooltip>
+        ) : null}
       </div>
-    );
-  }
-  return <div className={className}>{labelText}</div>;
+      {settingDescription ? <div className="msla-setting-label-description">{settingDescription}</div> : null}
+      {subLabelText ? <div className={css('msla-setting-label-subLabel', isSubLabelToggle && 'isToggle')}>{subLabelText}</div> : null}
+    </>
+  );
+}
+
+export function getSettingLabel(
+  labelText: string,
+  infoTooltipText?: string,
+  settingDescription?: string,
+  subLabelText?: string,
+  isSubLabelToggle?: boolean
+): JSX.Element {
+  return (
+    <SettingLabel
+      labelText={labelText}
+      infoTooltipText={infoTooltipText}
+      settingDescription={settingDescription}
+      subLabelText={subLabelText}
+      isSubLabelToggle={isSubLabelToggle}
+    />
+  );
 }

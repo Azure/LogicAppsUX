@@ -3,6 +3,7 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import {
+  appKindSetting,
   azureWebJobsStorageKey,
   defaultVersionRange,
   extensionBundleId,
@@ -24,8 +25,8 @@ import { createWebSiteClient, WebsiteOS } from '@microsoft/vscode-azext-azureapp
 import type { CustomLocation } from '@microsoft/vscode-azext-azureappservice';
 import { LocationListStep } from '@microsoft/vscode-azext-azureutils';
 import { AzureWizardExecuteStep, nonNullOrEmptyValue, nonNullProp } from '@microsoft/vscode-azext-utils';
-import type { IFunctionAppWizardContext, ConnectionStrings } from '@microsoft/vscode-extension';
-import { StorageOptions, FuncVersion, WorkerRuntime } from '@microsoft/vscode-extension';
+import type { IFunctionAppWizardContext, ConnectionStrings } from '@microsoft/vscode-extension-logic-apps';
+import { StorageOptions, FuncVersion, WorkerRuntime } from '@microsoft/vscode-extension-logic-apps';
 import type { Progress } from 'vscode';
 
 export class LogicAppCreateStep extends AzureWizardExecuteStep<IFunctionAppWizardContext> {
@@ -124,7 +125,7 @@ export class LogicAppCreateStep extends AzureWizardExecuteStep<IFunctionAppWizar
     const appSettings: NameValuePair[] = [
       {
         name: extensionVersionKey,
-        value: '~' + tryGetMajorVersion(context.version),
+        value: `~${tryGetMajorVersion(context.version)}`,
       },
       {
         name: workerRuntimeKey,
@@ -157,7 +158,7 @@ export class LogicAppCreateStep extends AzureWizardExecuteStep<IFunctionAppWizar
     if (context.customLocation) {
       appSettings.push(
         {
-          name: 'APP_KIND',
+          name: appKindSetting,
           value: logicAppKindAppSetting,
         },
         {
@@ -187,7 +188,7 @@ export class LogicAppCreateStep extends AzureWizardExecuteStep<IFunctionAppWizar
       // v1 doesn't need this because it only supports one version of Node
       appSettings.push({
         name: 'WEBSITE_NODE_DEFAULT_VERSION',
-        value: '~' + getRuntimeVersion(runtime),
+        value: `~${getRuntimeVersion(runtime)}`,
       });
     }
 
@@ -267,18 +268,16 @@ async function getStorageConnectionStrings(context: IFunctionAppWizardContext): 
       connectionStrings.azureWebJobsDashboardValue = azureStorageConnectionString;
       connectionStrings.websiteContentAzureFileValue = azureStorageConnectionString;
     }
+  } else if (context.storageType === StorageOptions.SQL) {
+    connectionStrings.sqlConnectionStringValue = context.sqlConnectionString;
+    connectionStrings.azureWebJobsStorageKeyValue = azureStorageConnectionString;
+    connectionStrings.azureWebJobsDashboardValue = azureStorageConnectionString;
+    connectionStrings.websiteContentAzureFileValue = azureStorageConnectionString;
   } else {
-    if (context.storageType === StorageOptions.SQL) {
-      connectionStrings.sqlConnectionStringValue = context.sqlConnectionString;
-      connectionStrings.azureWebJobsStorageKeyValue = azureStorageConnectionString;
-      connectionStrings.azureWebJobsDashboardValue = azureStorageConnectionString;
-      connectionStrings.websiteContentAzureFileValue = azureStorageConnectionString;
-    } else {
-      connectionStrings.sqlConnectionStringValue = context.sqlConnectionString;
-      connectionStrings.azureWebJobsStorageKeyValue = azureStorageConnectionString;
-      connectionStrings.azureWebJobsDashboardValue = azureStorageConnectionString;
-      connectionStrings.websiteContentAzureFileValue = azureStorageConnectionString;
-    }
+    connectionStrings.sqlConnectionStringValue = context.sqlConnectionString;
+    connectionStrings.azureWebJobsStorageKeyValue = azureStorageConnectionString;
+    connectionStrings.azureWebJobsDashboardValue = azureStorageConnectionString;
+    connectionStrings.websiteContentAzureFileValue = azureStorageConnectionString;
   }
   return connectionStrings;
 }

@@ -2,11 +2,11 @@ import InformationImage from './info.svg';
 import { Text, TooltipHost } from '@fluentui/react';
 
 export const InfoDot = (props: any) => {
-  const { alt = '', title, description, style } = props;
+  const { alt = '', title, description, style, innerAriaHidden } = props;
 
   const tooltipProps = {
     onRenderContent: () => (
-      <div className="msla-info-dot-tooltip-content">
+      <div className="msla-info-dot-tooltip-content" aria-hidden={innerAriaHidden || 'false'}>
         <Text block variant="xLarge" style={{ marginBottom: '8px' }}>
           {title}
         </Text>
@@ -19,7 +19,7 @@ export const InfoDot = (props: any) => {
 
   return (
     <TooltipHost tooltipProps={tooltipProps}>
-      <img className="msla-info-dot" alt={alt} src={InformationImage} style={style} />
+      <img className="msla-info-dot" alt={alt} src={InformationImage} style={style} tabIndex={0} />
     </TooltipHost>
   );
 };

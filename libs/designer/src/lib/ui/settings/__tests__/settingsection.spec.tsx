@@ -1,9 +1,10 @@
 import { SettingsSection } from '../settingsection';
 import type { SettingsSectionProps } from '../settingsection';
 import * as ReactShallowRenderer from 'react-test-renderer/shallow';
-
+import { describe, beforeEach, afterEach, it, expect } from 'vitest';
 describe('ui/settings/settingsection', () => {
-  let minimal: SettingsSectionProps, renderer: ReactShallowRenderer.ShallowRenderer;
+  let minimal: SettingsSectionProps;
+  let renderer: ReactShallowRenderer.ShallowRenderer;
 
   beforeEach(() => {
     minimal = {
@@ -49,8 +50,8 @@ describe('ui/settings/settingsection', () => {
           settingProp: {
             textFieldValue: 'This is a test value',
             textFieldLabel: 'Test Label',
-            onToggleLabel: 'On',
-            offToggleLabel: 'Off',
+            onText: 'On',
+            offText: 'Off',
           },
           visible: true,
         },
@@ -90,6 +91,9 @@ describe('ui/settings/settingsection', () => {
           visible: true,
         },
       ],
+      onHeaderClick: () => {
+        jest.fn();
+      },
     };
     renderer = ReactShallowRenderer.createRenderer();
   });

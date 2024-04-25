@@ -5,13 +5,13 @@ import {
   errorNotificationAutoHideDuration,
   NotificationTypes,
 } from '../../components/notification/Notification';
-import type { SchemaExtended, SchemaNodeDictionary, SchemaNodeExtended } from '../../models';
-import { SchemaNodeProperty, SchemaType } from '../../models';
+import { convertConnectionShorthandToId, generateFunctionConnectionMetadata } from '../../mapDefinitions';
 import type { ConnectionDictionary, ConnectionUnit, InputConnection } from '../../models/Connection';
 import type { FunctionData, FunctionDictionary } from '../../models/Function';
 import { directAccessPseudoFunctionKey, indexPseudoFunction } from '../../models/Function';
 import { findLast } from '../../utils/Array.Utils';
 import {
+  applyConnectionValue,
   bringInParentSourceNodesForRepeating,
   collectSourceNodesForConnectionChain,
   collectTargetNodesForConnectionChain,
@@ -20,11 +20,9 @@ import {
   generateInputHandleId,
   getConnectedSourceSchemaNodes,
   getConnectedTargetSchemaNodes,
-  getFunctionConnectionUnits,
   getTargetSchemaNodeConnections,
   isConnectionUnit,
   nodeHasSpecificInputEventually,
-  applyConnectionValue,
 } from '../../utils/Connection.Utils';
 import {
   addAncestorNodesToCanvas,
@@ -32,7 +30,12 @@ import {
   addParentConnectionForRepeatingElementsNested,
   getParentId,
 } from '../../utils/DataMap.Utils';
-import { isFunctionData } from '../../utils/Function.Utils';
+import {
+  functionsForLocation,
+  getConnectedSourceSchema,
+  getFunctionLocationsForAllFunctions,
+  isFunctionData,
+} from '../../utils/Function.Utils';
 import { LogCategory, LogService } from '../../utils/Logging.Utils';
 import type { ReactFlowIdParts } from '../../utils/ReactFlow.Util';
 import {
@@ -44,6 +47,15 @@ import {
   getSplitIdsFromReactFlowConnectionId,
 } from '../../utils/ReactFlow.Util';
 import { flattenSchemaIntoDictionary, flattenSchemaIntoSortArray, isSchemaNodeExtended } from '../../utils/Schema.Utils';
+import type {
+  FunctionMetadata,
+  FunctionPositionMetadata,
+  MapMetadata,
+  SchemaExtended,
+  SchemaNodeDictionary,
+  SchemaNodeExtended,
+} from '@microsoft/logic-apps-shared';
+import { SchemaNodeProperty, SchemaType } from '@microsoft/logic-apps-shared';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createSlice } from '@reduxjs/toolkit';
 
@@ -51,8 +63,6 @@ export interface DataMapState {
   curDataMapOperation: DataMapOperationState;
   pristineDataMap: DataMapOperationState;
   isDirty: boolean;
-  undoStack: DataMapOperationState[];
-  redoStack: DataMapOperationState[];
   notificationData?: NotificationData;
   sourceNodeConnectionBeingDrawnFromId?: string;
   canvasToolboxTabToDisplay: ToolboxPanelTabs | '';
@@ -68,24 +78,27 @@ export interface DataMapOperationState {
   targetSchemaOrdering: string[];
   currentSourceSchemaNodes: SchemaNodeExtended[];
   currentTargetSchemaNode?: SchemaNodeExtended;
-  currentFunctionNodes: FunctionDictionary;
+  functionNodes: FunctionDictionary;
   selectedItemKey?: string;
   selectedItemKeyParts?: ReactFlowIdParts;
   selectedItemConnectedNodes: ConnectionUnit[];
   xsltFilename: string;
+  xsltContent: string;
   inlineFunctionInputOutputKeys: string[];
   lastAction: string;
+  loadedMapMetadata?: MapMetadata;
 }
 
 const emptyPristineState: DataMapOperationState = {
   dataMapConnections: {},
   currentSourceSchemaNodes: [],
-  currentFunctionNodes: {},
+  functionNodes: {},
   flattenedSourceSchema: {},
   sourceSchemaOrdering: [],
   flattenedTargetSchema: {},
   targetSchemaOrdering: [],
   xsltFilename: '',
+  xsltContent: '',
   inlineFunctionInputOutputKeys: [],
   selectedItemConnectedNodes: [],
   lastAction: 'Pristine',
@@ -95,20 +108,19 @@ const initialState: DataMapState = {
   pristineDataMap: emptyPristineState,
   curDataMapOperation: emptyPristineState,
   isDirty: false,
-  undoStack: [],
-  redoStack: [],
   canvasToolboxTabToDisplay: '',
 };
 
 export interface InitialSchemaAction {
   schema: SchemaExtended;
-  schemaType: SchemaType.Source | SchemaType.Target;
+  schemaType: typeof SchemaType.Source | typeof SchemaType.Target;
 }
 
 export interface InitialDataMapAction {
   sourceSchema: SchemaExtended;
   targetSchema: SchemaExtended;
   dataMapConnections: ConnectionDictionary;
+  metadata: MapMetadata | undefined;
 }
 
 export interface ConnectionAction {
@@ -141,6 +153,11 @@ export const dataMapSlice = createSlice({
       state.pristineDataMap.xsltFilename = action.payload;
     },
 
+    setXsltContent: (state, action: PayloadAction<string>) => {
+      state.curDataMapOperation.xsltContent = action.payload;
+      state.pristineDataMap.xsltContent = action.payload;
+    },
+
     setInitialSchema: (state, action: PayloadAction<InitialSchemaAction>) => {
       const flattenedSchema = flattenSchemaIntoDictionary(action.payload.schema, action.payload.schemaType);
 
@@ -164,16 +181,24 @@ export const dataMapSlice = createSlice({
         state.pristineDataMap.flattenedTargetSchema = flattenedSchema;
         state.pristineDataMap.targetSchemaOrdering = targetSchemaSortArray;
       }
+
+      if (state.curDataMapOperation.sourceSchema && state.curDataMapOperation.targetSchema) {
+        state.curDataMapOperation.currentTargetSchemaNode = state.curDataMapOperation.targetSchema.schemaTreeRoot;
+      }
     },
 
     setInitialDataMap: (state, action: PayloadAction<InitialDataMapAction>) => {
-      const { sourceSchema, targetSchema, dataMapConnections } = action.payload;
+      const { sourceSchema, targetSchema, dataMapConnections, metadata } = action.payload;
       const currentState = state.curDataMapOperation;
 
       const flattenedSourceSchema = flattenSchemaIntoDictionary(sourceSchema, SchemaType.Source);
       const sourceSchemaSortArray = flattenSchemaIntoSortArray(sourceSchema.schemaTreeRoot);
       const flattenedTargetSchema = flattenSchemaIntoDictionary(targetSchema, SchemaType.Target);
       const targetSchemaSortArray = flattenSchemaIntoSortArray(targetSchema.schemaTreeRoot);
+
+      let functionNodes: FunctionDictionary = getFunctionLocationsForAllFunctions(dataMapConnections, flattenedTargetSchema);
+      functionNodes = assignFunctionNodePositionsFromMetadata(dataMapConnections, metadata?.functionNodes || [], functionNodes) || {};
+      const connectedFlattenedSourceSchema = getConnectedSourceSchema(dataMapConnections, flattenedSourceSchema);
 
       const newState: DataMapOperationState = {
         ...currentState,
@@ -182,10 +207,12 @@ export const dataMapSlice = createSlice({
         flattenedSourceSchema,
         sourceSchemaOrdering: sourceSchemaSortArray,
         flattenedTargetSchema,
+        functionNodes,
         targetSchemaOrdering: targetSchemaSortArray,
         dataMapConnections: dataMapConnections ?? {},
-        currentSourceSchemaNodes: [],
-        currentTargetSchemaNode: undefined,
+        currentSourceSchemaNodes: Object.values(connectedFlattenedSourceSchema),
+        currentTargetSchemaNode: targetSchema.schemaTreeRoot,
+        loadedMapMetadata: metadata,
       };
 
       state.curDataMapOperation = newState;
@@ -198,8 +225,6 @@ export const dataMapSlice = createSlice({
       if (incomingDataMapOperation) {
         state.curDataMapOperation = incomingDataMapOperation;
         state.isDirty = true;
-        state.undoStack = [];
-        state.redoStack = [];
       }
     },
 
@@ -208,8 +233,6 @@ export const dataMapSlice = createSlice({
       if (incomingDataMapOperation) {
         state.curDataMapOperation = incomingDataMapOperation;
         state.isDirty = true;
-        state.undoStack = [];
-        state.redoStack = [];
       }
     },
 
@@ -255,73 +278,30 @@ export const dataMapSlice = createSlice({
     },
 
     setCurrentTargetSchemaNode: (state, action: PayloadAction<SchemaNodeExtended | undefined>) => {
-      const currentTargetSchemaNode = state.curDataMapOperation.currentTargetSchemaNode;
+      const connections = state.curDataMapOperation.dataMapConnections;
+      const functionNodes = state.curDataMapOperation.functionNodes;
       const newTargetSchemaNode = action.payload;
 
-      // Remove any nodes/connection-chains that don't connect to a target schema node on the current level
-      // - garbage collection for nodes that will never be displayed again
-
-      const cleanConnections = { ...state.curDataMapOperation.dataMapConnections };
-
-      const currentTargetSchemaNodeConnections = getTargetSchemaNodeConnections(
-        currentTargetSchemaNode,
-        state.curDataMapOperation.dataMapConnections
-      );
-      const currentFullyConnectedSourceSchemaNodes = getConnectedSourceSchemaNodes(
-        currentTargetSchemaNodeConnections,
-        state.curDataMapOperation.dataMapConnections
-      );
-      const currentFullyConnectedFunctionConnectionUnits = getFunctionConnectionUnits(
-        currentTargetSchemaNodeConnections,
-        state.curDataMapOperation.dataMapConnections
-      );
-
-      let wereNodesGarbageCollected = false;
-      state.curDataMapOperation.currentSourceSchemaNodes.forEach((node) => {
-        if (!currentFullyConnectedSourceSchemaNodes.some((fullyConnectedNode) => fullyConnectedNode.key === node.key)) {
-          /* Leaving out source schema node garbage collection for now as it could be part of a full connection chain
-            on a separate target schema level (thus we can't fully delete it just because it isn't connected on this current level)
-          delete cleanConnections[addSourceReactFlowPrefix(node.key)];
-          */
-
-          wereNodesGarbageCollected = true;
-        }
-      });
-
-      // Function nodes can be safely deleted because each node is unique, and thus can only be used on one target schema level
-      Object.keys(state.curDataMapOperation.currentFunctionNodes).forEach((fnKey) => {
-        if (
-          !currentFullyConnectedFunctionConnectionUnits.some((fullyConnectedFnConUnit) => fullyConnectedFnConUnit.reactFlowKey === fnKey)
-        ) {
-          delete cleanConnections[fnKey];
-          wereNodesGarbageCollected = true;
-        }
-      });
-
-      if (wereNodesGarbageCollected) {
-        state.notificationData = { type: NotificationTypes.ElementsAndMappingsRemoved };
-      }
-
       // Reset currentSourceSchema/FunctionNodes, and add back any nodes part of complete connection chains on the new target schema level
-      const newTargetSchemaNodeConnections = getTargetSchemaNodeConnections(newTargetSchemaNode, cleanConnections);
+      const newTargetSchemaNodeConnections = getTargetSchemaNodeConnections(newTargetSchemaNode, connections);
+
+      const localFunctionNodes = newTargetSchemaNode ? functionsForLocation(functionNodes, newTargetSchemaNode.key) : [];
+      const functionConnections = Object.keys(localFunctionNodes)
+        .map((key) => connections[key])
+        .filter((connection) => !!connection);
 
       // Get all the unique source nodes
-      const newFullyConnectedSourceSchemaNodes = getConnectedSourceSchemaNodes(newTargetSchemaNodeConnections, cleanConnections).filter(
-        (node, index, self) => {
-          return self.findIndex((subNode) => subNode.key === node.key) === index;
-        }
-      );
-      const newFullyConnectedFunctions: FunctionDictionary = {};
-      getFunctionConnectionUnits(newTargetSchemaNodeConnections, cleanConnections).forEach((conUnit) => {
-        newFullyConnectedFunctions[conUnit.reactFlowKey] = conUnit.node as FunctionData;
+      const newFullyConnectedSourceSchemaNodes = getConnectedSourceSchemaNodes(
+        [...functionConnections, ...newTargetSchemaNodeConnections],
+        connections
+      ).filter((node, index, self) => {
+        return self.findIndex((subNode) => subNode.key === node.key) === index;
       });
 
       const newState: DataMapOperationState = {
         ...state.curDataMapOperation,
         currentTargetSchemaNode: newTargetSchemaNode,
-        dataMapConnections: cleanConnections,
         currentSourceSchemaNodes: newFullyConnectedSourceSchemaNodes,
-        currentFunctionNodes: newFullyConnectedFunctions,
       };
 
       doDataMapOperation(state, newState, 'Set target schema node');
@@ -363,30 +343,40 @@ export const dataMapSlice = createSlice({
     },
 
     addFunctionNode: (state, action: PayloadAction<FunctionData | { functionData: FunctionData; newReactFlowKey: string }>) => {
-      const newState: DataMapOperationState = {
-        ...state.curDataMapOperation,
-        currentFunctionNodes: { ...state.curDataMapOperation.currentFunctionNodes },
-      };
+      if (state.curDataMapOperation.currentTargetSchemaNode) {
+        const newState: DataMapOperationState = {
+          ...state.curDataMapOperation,
+          functionNodes: { ...state.curDataMapOperation.functionNodes },
+        };
 
-      let fnReactFlowKey: string;
-      let fnData: FunctionData;
+        let fnReactFlowKey: string;
+        let fnData: FunctionData;
 
-      // Default - just provide the FunctionData and the key will be handled under the hood
-      if (!('newReactFlowKey' in action.payload)) {
-        fnData = action.payload;
-        fnReactFlowKey = createReactFlowFunctionKey(fnData);
-        newState.currentFunctionNodes[fnReactFlowKey] = fnData;
-      } else {
-        // Alternative - specify the key you want to use (needed for adding inline Functions)
-        fnData = action.payload.functionData;
-        fnReactFlowKey = action.payload.newReactFlowKey;
-        newState.currentFunctionNodes[fnReactFlowKey] = fnData;
+        // Default - just provide the FunctionData and the key will be handled under the hood
+        if ('newReactFlowKey' in action.payload) {
+          // Alternative - specify the key you want to use (needed for adding inline Functions)
+          fnData = action.payload.functionData;
+          fnReactFlowKey = action.payload.newReactFlowKey;
+          newState.functionNodes[fnReactFlowKey] = {
+            functionData: fnData,
+            functionLocations: [state.curDataMapOperation.currentTargetSchemaNode],
+          };
+        } else {
+          fnData = { ...action.payload, isNewNode: true };
+          fnReactFlowKey = createReactFlowFunctionKey(fnData);
+          newState.functionNodes[fnReactFlowKey] = {
+            functionData: fnData,
+            functionLocations: [state.curDataMapOperation.currentTargetSchemaNode],
+          };
+        }
+
+        // Create connection entry to instantiate default connection inputs
+        createConnectionEntryIfNeeded(newState.dataMapConnections, fnData, fnReactFlowKey);
+
+        updateFunctionNodeLocations(newState, fnReactFlowKey);
+
+        doDataMapOperation(state, newState, 'Add function node');
       }
-
-      // Create connection entry to instantiate default connection inputs
-      createConnectionEntryIfNeeded(newState.dataMapConnections, fnData, fnReactFlowKey);
-
-      doDataMapOperation(state, newState, 'Add function node');
     },
 
     deleteConnection: (state, action: PayloadAction<{ inputKey: string; outputKey: string; port?: string }>) => {
@@ -400,9 +390,15 @@ export const dataMapSlice = createSlice({
       const newState: DataMapOperationState = {
         ...state.curDataMapOperation,
         dataMapConnections: { ...state.curDataMapOperation.dataMapConnections },
+        functionNodes: { ...state.curDataMapOperation.functionNodes },
       };
 
       addConnection(newState.dataMapConnections, action.payload);
+
+      if (isFunctionData(action.payload.source)) {
+        updateFunctionNodeLocations(newState, action.payload.reactFlowSource);
+        doDataMapOperation(state, newState, 'Updated function node locations by adding');
+      }
 
       // Add any repeating parent nodes as well (except for Direct Access's)
       // Get all the source nodes in case we have sources from multiple source chains
@@ -484,32 +480,6 @@ export const dataMapSlice = createSlice({
       doDataMapOperation(state, newState, 'Set connection input value');
     },
 
-    undoDataMapOperation: (state) => {
-      const lastDataMap = state.undoStack.pop();
-      if (lastDataMap && state.curDataMapOperation) {
-        if (LogService.logToConsole) {
-          console.log(`Undo: ${state.curDataMapOperation.lastAction}`);
-        }
-
-        state.redoStack.push(state.curDataMapOperation);
-        state.curDataMapOperation = lastDataMap;
-        state.isDirty = true;
-      }
-    },
-
-    redoDataMapOperation: (state) => {
-      const lastDataMap = state.redoStack.pop();
-      if (lastDataMap && state.curDataMapOperation) {
-        if (LogService.logToConsole) {
-          console.log(`Redo: ${lastDataMap.lastAction}`);
-        }
-
-        state.undoStack.push(state.curDataMapOperation);
-        state.curDataMapOperation = lastDataMap;
-        state.isDirty = true;
-      }
-    },
-
     saveDataMap: (
       state,
       action: PayloadAction<{ sourceSchemaExtended: SchemaExtended | undefined; targetSchemaExtended: SchemaExtended | undefined }>
@@ -526,8 +496,6 @@ export const dataMapSlice = createSlice({
 
     discardDataMap: (state) => {
       state.curDataMapOperation = state.pristineDataMap;
-      state.undoStack = [];
-      state.redoStack = [];
       state.isDirty = false;
     },
 
@@ -543,20 +511,48 @@ export const dataMapSlice = createSlice({
       state.sourceNodeConnectionBeingDrawnFromId = action.payload;
     },
 
+    updateFunctionPosition: (state, action: PayloadAction<{ id: string; positionMetadata: FunctionPositionMetadata }>) => {
+      const newOp = { ...state.curDataMapOperation };
+      const node = newOp.functionNodes[action.payload.id];
+      if (!node) {
+        return;
+      }
+      let positions = node.functionData.positions;
+      if (positions) {
+        const positionToUpdate = positions.findIndex((pos) => pos.targetKey === action.payload.positionMetadata.targetKey);
+        if (positionToUpdate !== -1) {
+          positions[positionToUpdate] = action.payload.positionMetadata;
+        } else {
+          positions.push(action.payload.positionMetadata);
+        }
+      } else {
+        positions = [action.payload.positionMetadata];
+      }
+      newOp.functionNodes[action.payload.id].functionData.positions = positions;
+
+      state.curDataMapOperation = newOp;
+    },
+
     // Will always be either [] or [inputKey, outputKey]
     setInlineFunctionInputOutputKeys: (
       state,
-      action: PayloadAction<{ inputKey: string; outputKey: string; port?: string } | undefined>
+      action: PayloadAction<{ inputKey: string; outputKey: string; port?: string; x?: string; y?: string } | undefined>
     ) => {
       const newState: DataMapOperationState = { ...state.curDataMapOperation };
 
-      if (!action.payload) {
-        newState.inlineFunctionInputOutputKeys = [];
-      } else {
+      if (action.payload) {
         newState.inlineFunctionInputOutputKeys = [action.payload.inputKey, action.payload.outputKey];
         if (action.payload.port) {
           newState.inlineFunctionInputOutputKeys.push(action.payload.port);
         }
+        if (action.payload.x) {
+          newState.inlineFunctionInputOutputKeys.push(action.payload.x);
+        }
+        if (action.payload.y) {
+          newState.inlineFunctionInputOutputKeys.push(action.payload.y);
+        }
+      } else {
+        newState.inlineFunctionInputOutputKeys = [];
       }
 
       doDataMapOperation(state, newState, 'Set inline function creation i/o keys');
@@ -569,8 +565,10 @@ export const dataMapSlice = createSlice({
 });
 
 export const {
+  updateFunctionPosition,
   deleteConnection,
   setXsltFilename,
+  setXsltContent,
   setInitialSchema,
   setInitialDataMap,
   changeSourceSchema,
@@ -583,8 +581,6 @@ export const {
   addFunctionNode,
   makeConnection,
   setConnectionInput,
-  undoDataMapOperation,
-  redoDataMapOperation,
   saveDataMap,
   discardDataMap,
   deleteCurrentlySelectedItem,
@@ -605,10 +601,7 @@ const doDataMapOperation = (state: DataMapState, newCurrentState: DataMapOperati
     console.log(`Action: ${action}`);
   }
 
-  state.undoStack = state.undoStack.slice(-19);
-  state.undoStack.push(state.curDataMapOperation);
   state.curDataMapOperation = newCurrentState;
-  state.redoStack = [];
   state.isDirty = true;
 };
 
@@ -626,28 +619,32 @@ const addConnection = (newConnections: ConnectionDictionary, nodes: ConnectionAc
 };
 
 // Exported to be tested
-export const deleteNodeFromConnections = (connections: ConnectionDictionary, keyToDelete: string) => {
-  if (connections[keyToDelete]) {
+export const deleteNodeFromConnections = (connections: ConnectionDictionary, keyToDelete: string): ConnectionDictionary => {
+  const newConnections = { ...connections };
+
+  if (newConnections[keyToDelete]) {
     // Step through all the connected inputs and delete the selected key from their outputs
-    flattenInputs(connections[keyToDelete].inputs).forEach((input) => {
+    flattenInputs(newConnections[keyToDelete].inputs).forEach((input) => {
       if (isConnectionUnit(input)) {
-        connections[input.reactFlowKey].outputs = connections[input.reactFlowKey].outputs.filter(
+        newConnections[input.reactFlowKey].outputs = newConnections[input.reactFlowKey].outputs.filter(
           (output) => output.reactFlowKey !== keyToDelete
         );
       }
     });
 
     // Step through all the outputs and delete the selected key from their inputs
-    connections[keyToDelete].outputs.forEach((outputConnection) => {
-      Object.values(connections[outputConnection.reactFlowKey].inputs).forEach((outputConnectionInput, index) => {
-        connections[outputConnection.reactFlowKey].inputs[index] = outputConnectionInput.filter((input) =>
+    newConnections[keyToDelete].outputs.forEach((outputConnection) => {
+      Object.values(newConnections[outputConnection.reactFlowKey].inputs).forEach((outputConnectionInput, index) => {
+        newConnections[outputConnection.reactFlowKey].inputs[index] = outputConnectionInput.filter((input) =>
           isConnectionUnit(input) ? input.reactFlowKey !== keyToDelete : true
         );
       });
     });
   }
 
-  delete connections[keyToDelete];
+  delete newConnections[keyToDelete];
+
+  return newConnections;
 };
 
 export const deleteConnectionFromConnections = (
@@ -680,7 +677,7 @@ export const deleteConnectionFromConnections = (
 
 export const deleteParentRepeatingConnections = (connections: ConnectionDictionary, inputKey: string /* contains prefix */) => {
   const parentId = getParentId(inputKey);
-  if (parentId.endsWith(SchemaType.Source + '-')) {
+  if (parentId.endsWith(`${SchemaType.Source}-`)) {
     return;
   }
 
@@ -715,7 +712,8 @@ export const deleteParentRepeatingConnections = (connections: ConnectionDictiona
 };
 
 export const deleteNodeWithKey = (curDataMapState: DataMapState, reactFlowKey: string) => {
-  const targetNode = curDataMapState.curDataMapOperation.flattenedTargetSchema[reactFlowKey];
+  const currentDataMap = curDataMapState.curDataMapOperation;
+  const targetNode = currentDataMap.flattenedTargetSchema[reactFlowKey];
   if (targetNode) {
     curDataMapState.notificationData = {
       type: NotificationTypes.TargetNodeCannotDelete,
@@ -725,15 +723,15 @@ export const deleteNodeWithKey = (curDataMapState: DataMapState, reactFlowKey: s
   }
 
   // Handle deleting source schema node
-  const sourceNode = curDataMapState.curDataMapOperation.flattenedSourceSchema[reactFlowKey];
+  const sourceNode = currentDataMap.flattenedSourceSchema[reactFlowKey];
   if (sourceNode) {
     // Check if it has outputs *on the current canvas level* - if so, cancel it and show notification
-    const potentialSrcSchemaNodeConnection = curDataMapState.curDataMapOperation.dataMapConnections[reactFlowKey];
+    const potentialSrcSchemaNodeConnection = currentDataMap.dataMapConnections[reactFlowKey];
     if (potentialSrcSchemaNodeConnection && potentialSrcSchemaNodeConnection.outputs.length > 0) {
       // Check that there's no outputs on the current canvas level by checking for outputs in current function and target schema nodes
       const hasOutputsOnCurrentCanvasLevel = potentialSrcSchemaNodeConnection.outputs.some((output) => {
-        const potentialConnectedFnNode = curDataMapState.curDataMapOperation.currentFunctionNodes[output.reactFlowKey];
-        const potentialConnectedTargetNode = curDataMapState.curDataMapOperation.currentTargetSchemaNode;
+        const potentialConnectedFnNode = currentDataMap.functionNodes[output.reactFlowKey];
+        const potentialConnectedTargetNode = currentDataMap.currentTargetSchemaNode;
 
         if (potentialConnectedFnNode) {
           return true;
@@ -761,20 +759,18 @@ export const deleteNodeWithKey = (curDataMapState: DataMapState, reactFlowKey: s
       }
     }
 
-    const filteredCurrentSrcSchemaNodes = curDataMapState.curDataMapOperation.currentSourceSchemaNodes.filter(
-      (node) => node.key !== sourceNode.key
-    );
+    const filteredCurrentSrcSchemaNodes = currentDataMap.currentSourceSchemaNodes.filter((node) => node.key !== sourceNode.key);
 
     // NOTE: Do NOT delete source schema node from connections - at this stage, it's not guaranteed that
     // there are no connections to it, and we don't want to accidentally delete connections on other layers
-    curDataMapState.curDataMapOperation.selectedItemKey = undefined;
-    curDataMapState.curDataMapOperation.selectedItemKeyParts = undefined;
-    curDataMapState.curDataMapOperation.selectedItemConnectedNodes = [];
+    currentDataMap.selectedItemKey = undefined;
+    currentDataMap.selectedItemKeyParts = undefined;
+    currentDataMap.selectedItemConnectedNodes = [];
 
     doDataMapOperation(
       curDataMapState,
       {
-        ...curDataMapState.curDataMapOperation,
+        ...currentDataMap,
         currentSourceSchemaNodes: filteredCurrentSrcSchemaNodes,
       },
       'Delete schema node by key'
@@ -787,33 +783,48 @@ export const deleteNodeWithKey = (curDataMapState: DataMapState, reactFlowKey: s
   }
 
   // Handle deleting function node
-  const functionNode = curDataMapState.curDataMapOperation.currentFunctionNodes[reactFlowKey];
+  const functionNode = currentDataMap.functionNodes[reactFlowKey];
+  const newFunctionsState = { ...currentDataMap.functionNodes };
   if (functionNode) {
-    const newFunctionsState = { ...curDataMapState.curDataMapOperation.currentFunctionNodes };
-    delete newFunctionsState[reactFlowKey];
+    const filteredLocations = functionNode.functionLocations.filter(
+      (location) => location.key !== currentDataMap.currentTargetSchemaNode?.key
+    );
 
-    deleteNodeFromConnections(curDataMapState.curDataMapOperation.dataMapConnections, reactFlowKey);
+    let functionMultipleLocations = false;
+    if (filteredLocations.length === 0) {
+      delete newFunctionsState[reactFlowKey];
+    } else {
+      newFunctionsState[reactFlowKey].functionLocations = filteredLocations;
+      functionMultipleLocations = true;
+    }
 
-    curDataMapState.curDataMapOperation.selectedItemKey = undefined;
-    curDataMapState.curDataMapOperation.selectedItemKeyParts = undefined;
-    curDataMapState.curDataMapOperation.selectedItemConnectedNodes = [];
+    const newConnections = deleteNodeFromConnections(currentDataMap.dataMapConnections, reactFlowKey);
+
+    currentDataMap.selectedItemKey = undefined;
+    currentDataMap.selectedItemKeyParts = undefined;
+    currentDataMap.selectedItemConnectedNodes = [];
 
     doDataMapOperation(
       curDataMapState,
-      { ...curDataMapState.curDataMapOperation, currentFunctionNodes: newFunctionsState },
+      { ...currentDataMap, functionNodes: newFunctionsState, dataMapConnections: newConnections },
       'Delete function by key'
     );
 
-    curDataMapState.notificationData = {
-      type: NotificationTypes.FunctionNodeDeleted,
-      autoHideDurationMs: deletedNotificationAutoHideDuration,
-    };
+    functionMultipleLocations
+      ? (curDataMapState.notificationData = {
+          type: NotificationTypes.FunctionNodePartiallyDeleted,
+          autoHideDurationMs: deletedNotificationAutoHideDuration,
+        })
+      : (curDataMapState.notificationData = {
+          type: NotificationTypes.FunctionNodeDeleted,
+          autoHideDurationMs: deletedNotificationAutoHideDuration,
+        });
 
     return;
   }
 
   // Item to be deleted is a connection
-  const connections = { ...curDataMapState.curDataMapOperation.dataMapConnections };
+  const connections = { ...currentDataMap.dataMapConnections };
 
   const splitIds = getSplitIdsFromReactFlowConnectionId(reactFlowKey);
   if (splitIds.destinationId) {
@@ -833,7 +844,7 @@ export const deleteNodeWithKey = (curDataMapState: DataMapState, reactFlowKey: s
   doDataMapOperation(
     curDataMapState,
     {
-      ...curDataMapState.curDataMapOperation,
+      ...currentDataMap,
       dataMapConnections: { ...connections },
     },
     'Delete connection'
@@ -882,17 +893,7 @@ export const addParentConnectionForRepeatingElements = (
         );
 
         if (!parentsAlreadyConnected) {
-          if (!indexFnRfKey) {
-            applyConnectionValue(dataMapConnections, {
-              targetNode: parentTargetNode,
-              targetNodeReactFlowKey: parentPrefixedTargetKey,
-              findInputSlot: true,
-              input: {
-                reactFlowKey: parentPrefixedSourceKey,
-                node: parentSourceNode,
-              },
-            });
-          } else {
+          if (indexFnRfKey) {
             // If provided, we need to plug in an index() between the parent loop elements
             // Source schema node -> Index()
             applyConnectionValue(dataMapConnections, {
@@ -915,9 +916,51 @@ export const addParentConnectionForRepeatingElements = (
                 node: indexPseudoFunction,
               },
             });
+          } else {
+            applyConnectionValue(dataMapConnections, {
+              targetNode: parentTargetNode,
+              targetNodeReactFlowKey: parentPrefixedTargetKey,
+              findInputSlot: true,
+              input: {
+                reactFlowKey: parentPrefixedSourceKey,
+                node: parentSourceNode,
+              },
+            });
           }
         }
       }
     }
   }
+};
+
+export const updateFunctionNodeLocations = (newState: DataMapOperationState, functionKey: string) => {
+  const connection = newState.dataMapConnections[functionKey];
+  const targetNodes = getConnectedTargetSchemaNodes([connection], newState.dataMapConnections);
+  const functionNode = newState.functionNodes[functionKey];
+  targetNodes.forEach((targetNode) => {
+    functionNode.functionLocations.push(targetNode);
+
+    const uniqueLocations = functionNode.functionLocations.filter((location, index, self) => {
+      return self.findIndex((subLocation) => subLocation.key === location.key) === index;
+    });
+
+    functionNode.functionLocations = uniqueLocations;
+  });
+};
+
+export const assignFunctionNodePositionsFromMetadata = (
+  connections: ConnectionDictionary,
+  metadata: FunctionMetadata[],
+  functions: FunctionDictionary
+) => {
+  Object.keys(functions).forEach((key) => {
+    // find matching metadata
+    const generatedMetadata = generateFunctionConnectionMetadata(key, connections);
+    const id = convertConnectionShorthandToId(generatedMetadata);
+    const matchingMetadata = metadata.find((meta) => meta.connectionShorthand === id);
+
+    // assign position data to function in store
+    functions[key].functionData = { ...functions[key].functionData, positions: matchingMetadata?.positions };
+  });
+  return functions;
 };

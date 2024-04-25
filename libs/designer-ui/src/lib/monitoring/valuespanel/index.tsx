@@ -1,9 +1,10 @@
+import { getBrandColorRgbA } from '../../card/utils';
 import Constants from '../../constants';
+import { ValueDownload } from './valuedownload';
 import { ValueLink } from './valuelink';
 import { ValueList } from './valuelist';
-import type { BoundParameters } from '@microsoft/utils-logic-apps';
-import { hexToRgbA } from '@microsoft/utils-logic-apps';
-import React from 'react';
+import type { BoundParameters } from '@microsoft/logic-apps-shared';
+import type React from 'react';
 
 export interface ValuesPanelProps {
   brandColor?: string;
@@ -12,6 +13,8 @@ export interface ValuesPanelProps {
   linkText?: string;
   noValuesText: string;
   showLink?: boolean;
+  isDownload?: boolean;
+  link?: string;
   showMore: boolean;
   values: BoundParameters;
   onLinkClick?(): void;
@@ -29,9 +32,11 @@ export const ValuesPanel: React.FC<ValuesPanelProps> = ({
   values,
   onLinkClick,
   onMoreClick,
+  link,
+  isDownload,
 }) => {
   const borderStyle = {
-    borderColor: hexToRgbA(brandColor, 0.7),
+    borderColor: getBrandColorRgbA(brandColor, 0.7),
   };
 
   return (
@@ -42,7 +47,11 @@ export const ValuesPanel: React.FC<ValuesPanelProps> = ({
         </div>
         {linkText ? <ValueLink linkText={linkText} visible={showLink} onLinkClick={onLinkClick} /> : null}
       </div>
-      <ValueList labelledBy={labelledBy} noValuesText={noValuesText} showMore={showMore} values={values} onMoreClick={onMoreClick} />
+      {isDownload && link ? (
+        <ValueDownload href={link} />
+      ) : (
+        <ValueList labelledBy={labelledBy} noValuesText={noValuesText} showMore={showMore} values={values} onMoreClick={onMoreClick} />
+      )}
     </section>
   );
 };

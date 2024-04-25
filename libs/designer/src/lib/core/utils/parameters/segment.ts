@@ -4,7 +4,7 @@ import { TokenSegmentConvertor } from './tokensegment';
 import { UncastingUtility } from './uncast';
 import { TokenType, ValueSegmentType } from '@microsoft/designer-ui';
 import type { Token, ValueSegment } from '@microsoft/designer-ui';
-import type { Expression, ExpressionFunction, ExpressionLiteral } from '@microsoft/parsers-logic-apps';
+import type { Expression, ExpressionFunction, ExpressionLiteral } from '@microsoft/logic-apps-shared';
 import {
   ExpressionParser,
   ExpressionType,
@@ -12,8 +12,12 @@ import {
   isStringInterpolation,
   isStringLiteral,
   isTemplateExpression,
-} from '@microsoft/parsers-logic-apps';
-import { format, guid, isNullOrUndefined, startsWith, UnsupportedException } from '@microsoft/utils-logic-apps';
+  format,
+  guid,
+  isNullOrUndefined,
+  startsWith,
+  UnsupportedException,
+} from '@microsoft/logic-apps-shared';
 
 /**
  * The options for value segment convertor.
@@ -55,11 +59,11 @@ export class ValueSegmentConvertor {
   public convertToValueSegments(value: any): ValueSegment[] {
     if (isNullOrUndefined(value)) {
       return [createLiteralValueSegment('')];
-    } else if (typeof value === 'string') {
-      return this._convertStringToValueSegments(value);
-    } else {
-      return this._convertJsonToValueSegments(JSON.stringify(value, null, 2));
     }
+    if (typeof value === 'string') {
+      return this._convertStringToValueSegments(value);
+    }
+    return this._convertJsonToValueSegments(JSON.stringify(value, null, 2));
   }
 
   private _convertJsonToValueSegments(json: string): ValueSegment[] {
@@ -78,41 +82,36 @@ export class ValueSegmentConvertor {
   private _convertJsonSectionToSegments(section: string): ValueSegment[] {
     if (section.charAt(0) !== '"') {
       return [this._createLiteralValueSegment(section)];
-    } else {
-      const value = JSON.parse(section);
-      if (isTemplateExpression(value)) {
-        const expression = ExpressionParser.parseTemplateExpression(value);
-        const segments = this._convertTemplateExpressionToValueSegments(expression);
-
-        // Note: If an non-interpolated expression is turned into a signle TOKEN, we don't surround with double quote. Otherwise,
-        // double quotes are added to surround the expression. This is the existing behaviour.
-        if (segments.length === 1 && isTokenValueSegment(segments[0]) && !isStringInterpolation(expression)) {
-          return segments;
-        } else {
-          const escapedSegments = segments.map((segment) => {
-            // Note: All literal segments must be escaped since they are inside a JSON string.
-            if (isLiteralValueSegment(segment)) {
-              const json = JSON.stringify(segment.value);
-              return { ...segment, value: json.slice(1, -1) };
-            } else {
-              return segment;
-            }
-          });
-          return [this._createLiteralValueSegment('"'), ...escapedSegments, this._createLiteralValueSegment('"')];
-        }
-      } else {
-        return [this._createLiteralValueSegment(section)];
-      }
     }
+    const value = JSON.parse(section);
+    if (isTemplateExpression(value)) {
+      const expression = ExpressionParser.parseTemplateExpression(value);
+      const segments = this._convertTemplateExpressionToValueSegments(expression);
+
+      // Note: If an non-interpolated expression is turned into a signle TOKEN, we don't surround with double quote. Otherwise,
+      // double quotes are added to surround the expression. This is the existing behaviour.
+      if (segments.length === 1 && isTokenValueSegment(segments[0]) && !isStringInterpolation(expression)) {
+        return segments;
+      }
+      const escapedSegments = segments.map((segment) => {
+        // Note: All literal segments must be escaped since they are inside a JSON string.
+        if (isLiteralValueSegment(segment)) {
+          const json = JSON.stringify(segment.value);
+          return { ...segment, value: json.slice(1, -1) };
+        }
+        return segment;
+      });
+      return [this._createLiteralValueSegment('"'), ...escapedSegments, this._createLiteralValueSegment('"')];
+    }
+    return [this._createLiteralValueSegment(section)];
   }
 
   private _convertStringToValueSegments(value: string): ValueSegment[] {
     if (isTemplateExpression(value)) {
       const expression = ExpressionParser.parseTemplateExpression(value);
       return this._convertTemplateExpressionToValueSegments(expression);
-    } else {
-      return [this._createLiteralValueSegment(value)];
     }
+    return [this._createLiteralValueSegment(value)];
   }
 
   private _convertTemplateExpressionToValueSegments(expression: Expression): ValueSegment[] {
@@ -124,26 +123,23 @@ export class ValueSegmentConvertor {
         }
       }
       return segments;
-    } else {
-      // Note: If the string starts with @, we append @ to escape it if raw mode is enabled.
-      if (isStringLiteral(expression) && startsWith(expression.value, '@')) {
-        if (this._options.rawModeEnabled) {
-          return [this._createLiteralValueSegment(`@${expression.value}`)];
-        } else {
-          return [this._createLiteralValueSegment(expression.value)];
-        }
-      }
-
-      return this._uncastAndConvertExpressionToValueSegments(expression);
     }
+    // Note: If the string starts with @, we append @ to escape it if raw mode is enabled.
+    if (isStringLiteral(expression) && startsWith(expression.value, '@')) {
+      if (this._options.rawModeEnabled) {
+        return [this._createLiteralValueSegment(`@${expression.value}`)];
+      }
+      return [this._createLiteralValueSegment(expression.value)];
+    }
+
+    return this._uncastAndConvertExpressionToValueSegments(expression);
   }
 
   private _uncastAndConvertExpressionToValueSegments(expression: Expression): ValueSegment[] {
     if (this._options.shouldUncast && isFunction(expression)) {
       return this._uncastAndConvertFunctionExpressionToValueSegments(expression);
-    } else {
-      return [this._convertExpressionToValueSegment(expression)];
     }
+    return [this._convertExpressionToValueSegment(expression)];
   }
 
   private _uncastAndConvertFunctionExpressionToValueSegments(expression: ExpressionFunction): ValueSegment[] {
@@ -185,14 +181,13 @@ export class ValueSegmentConvertor {
     const dynamicContentTokenSegment = this._tokenSegmentConvertor.tryConvertToDynamicContentTokenSegment(expression);
     if (dynamicContentTokenSegment) {
       return dynamicContentTokenSegment;
-    } else {
-      // Note: We need to get the expression value if this is a sub expression resulted from uncasting.
-      const value =
-        expression.startPosition === 0
-          ? expression.expression
-          : expression.expression.substring(expression.startPosition, expression.endPosition);
-      return this._createExpressionTokenValueSegment(value, expression);
     }
+    // Note: We need to get the expression value if this is a sub expression resulted from uncasting.
+    const value =
+      expression.startPosition === 0
+        ? expression.expression
+        : expression.expression.substring(expression.startPosition, expression.endPosition);
+    return this._createExpressionTokenValueSegment(value, expression);
   }
 
   private _createLiteralValueSegment(value: string): ValueSegment {
@@ -202,6 +197,15 @@ export class ValueSegmentConvertor {
   private _createExpressionTokenValueSegment(value: string, expression: Expression): ValueSegment {
     return createTokenValueSegment(createExpressionToken(expression), value);
   }
+}
+
+/**
+ * Checks whether the array is a value segment.
+ * @arg {any[]} array - The value segment array.
+ * @return {boolean}
+ */
+export function isValueSegmentArray(array: any[]): boolean {
+  return array.every((item) => isValueSegment(item));
 }
 
 /**
@@ -337,7 +341,14 @@ export function isOutputToken(token: Token): token is Token {
  * @arg {string} [value] - The value.
  * @return {Token}
  */
-export function createOutputToken(key: string, actionName: string | undefined, source: string, name: string, required: boolean): Token {
+export function createOutputToken(
+  key: string,
+  actionName: string | undefined,
+  source: string,
+  name: string,
+  required: boolean,
+  value: string
+): Token {
   const token: Token = {
     actionName,
     source,
@@ -346,7 +357,7 @@ export function createOutputToken(key: string, actionName: string | undefined, s
     required,
     tokenType: TokenType.OUTPUTS,
     title: name,
-    value: name,
+    value,
   };
 
   return token;
@@ -366,6 +377,7 @@ export function createExpressionToken(expression: Expression): Token {
     title: (expression as ExpressionFunction).name,
     brandColor: '#AD008C',
     icon: FxIcon,
+    value: (expression as ExpressionFunction).expression,
   };
 }
 
@@ -375,10 +387,10 @@ export function createExpressionToken(expression: Expression): Token {
  * @arg {string} variableName - The variable name.
  * @return {Token}
  */
-export function createVariableToken(variableName: string): Token {
+export function createVariableToken(variableName: string, expression: string): Token {
   return {
     description: variableName,
-    value: variableName,
+    value: expression,
     key: variableName,
     title: variableName,
     name: variableName,

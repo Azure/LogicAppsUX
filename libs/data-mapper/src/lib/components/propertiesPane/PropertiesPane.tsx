@@ -7,17 +7,19 @@ import { FunctionNodePropertiesTab } from './tabs/FunctionNodePropertiesTab';
 import { SchemaNodePropertiesTab } from './tabs/SchemaNodePropertiesTab';
 import { TestTab } from './tabs/TestTab';
 import { Stack } from '@fluentui/react';
-import { Button, Divider, makeStyles, shorthands, Tab, TabList, Text, tokens, typographyStyles } from '@fluentui/react-components';
+import { Button, Divider, Tab, TabList, Text, makeStyles, shorthands, tokens, typographyStyles } from '@fluentui/react-components';
 import { ChevronDoubleDown20Regular, ChevronDoubleUp20Regular, Delete20Regular } from '@fluentui/react-icons';
-import React, { useCallback, useEffect, useMemo, useState } from 'react';
+import type React from 'react';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 
-enum PropertiesPaneTabs {
-  Properties = 1,
-  Code,
-  Test,
-}
+const PropertiesPaneTabs = {
+  Properties: 1,
+  Code: 2,
+  Test: 3,
+} as const;
+export type PropertiesPaneTabs = (typeof PropertiesPaneTabs)[keyof typeof PropertiesPaneTabs];
 
 export const canvasAreaAndPropPaneMargin = 8;
 export const propPaneTopBarHeight = 48;
@@ -69,9 +71,9 @@ export const PropertiesPane = (props: PropertiesPaneProps) => {
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
 
-  const sourceSchemaDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedSourceSchema);
-  const functionDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentFunctionNodes);
-  const targetSchemaDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedTargetSchema);
+  const sourceSchemaDictionary = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.flattenedSourceSchema);
+  const functionNodesDictionary = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.functionNodes);
+  const targetSchemaDictionary = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.flattenedTargetSchema);
 
   const [currentNode, setCurrentNode] = useState<UnknownNode>(undefined);
   const [tabToDisplay, setTabToDisplay] = useState<PropertiesPaneTabs>(PropertiesPaneTabs.Properties);
@@ -80,26 +82,31 @@ export const PropertiesPane = (props: PropertiesPaneProps) => {
 
   const sourceSchemaNodeLoc = intl.formatMessage({
     defaultMessage: 'Source schema element',
+    id: 'Gi7czD',
     description: 'Label for source schema node',
   });
 
   const targetSchemaNodeLoc = intl.formatMessage({
     defaultMessage: 'Target schema element',
+    id: 'U086AA',
     description: 'Label for target schema node',
   });
 
   const functionLoc = intl.formatMessage({
     defaultMessage: 'Function',
+    id: 'mwEHSX',
     description: 'Label for function node',
   });
 
   const propertiesLoc = intl.formatMessage({
     defaultMessage: 'Properties',
+    id: 'idQjOP',
     description: 'Label for properties tab',
   });
 
   const codeLoc = intl.formatMessage({
     defaultMessage: 'Code',
+    id: 'xV4Koe',
     description: 'Label for code tab',
   });
 
@@ -110,21 +117,25 @@ export const PropertiesPane = (props: PropertiesPaneProps) => {
 
   const selectElementLoc = intl.formatMessage({
     defaultMessage: 'Select an element to start configuring',
+    id: 'u9tr3k',
     description: 'Label for default message when no node selected',
   });
 
   const expandLoc = intl.formatMessage({
     defaultMessage: 'Expand',
+    id: 'VI5Sa8',
     description: 'Label to expand',
   });
 
   const collapseLoc = intl.formatMessage({
     defaultMessage: 'Collapse',
+    id: 'pH2uak',
     description: 'Label to collapse',
   });
 
   const removeLoc = intl.formatMessage({
     defaultMessage: 'Remove',
+    id: 'M4H0gh',
     description: 'Label to remove',
   });
 
@@ -199,10 +210,10 @@ export const PropertiesPane = (props: PropertiesPaneProps) => {
     // Spread operator to get new reference for each node so PropPane stuff re-renders properly
     const sourceSchemaNode = sourceSchemaDictionary[selectedItemKey] ? { ...sourceSchemaDictionary[selectedItemKey] } : undefined;
     const targetSchemaNode = targetSchemaDictionary[selectedItemKey] ? { ...targetSchemaDictionary[selectedItemKey] } : undefined;
-    const functionNode = functionDictionary[selectedItemKey] ? { ...functionDictionary[selectedItemKey] } : undefined;
+    const functionNode = functionNodesDictionary[selectedItemKey] ? { ...functionNodesDictionary[selectedItemKey] } : undefined;
 
-    setCurrentNode(sourceSchemaNode ?? targetSchemaNode ?? functionNode ?? undefined);
-  }, [selectedItemKey, sourceSchemaDictionary, functionDictionary, targetSchemaDictionary]);
+    setCurrentNode(sourceSchemaNode ?? targetSchemaNode ?? functionNode?.functionData ?? undefined);
+  }, [selectedItemKey, sourceSchemaDictionary, functionNodesDictionary, targetSchemaDictionary]);
 
   useEffect(() => {
     setTabToDisplay(PropertiesPaneTabs.Properties);
@@ -221,9 +232,7 @@ export const PropertiesPane = (props: PropertiesPaneProps) => {
         onDrag={onDrag}
         onDragEnd={onDragEnd}
       >
-        {!currentNode ? (
-          <Text className={styles.noItemSelectedText}>{selectElementLoc}</Text>
-        ) : (
+        {currentNode ? (
           <>
             <Text className={styles.title}>{paneTitle}</Text>
             <Divider className={styles.titleDivider} vertical />
@@ -237,6 +246,8 @@ export const PropertiesPane = (props: PropertiesPaneProps) => {
               {/*isTargetSchemaNode && <Tab value={PropertiesPaneTabs.Test}>{testLoc}</Tab>*/}
             </TabList>
           </>
+        ) : (
+          <Text className={styles.noItemSelectedText}>{selectElementLoc}</Text>
         )}
 
         <div style={{ marginLeft: 'auto' }}>
@@ -253,11 +264,11 @@ export const PropertiesPane = (props: PropertiesPaneProps) => {
           <Button
             appearance="subtle"
             size="medium"
-            icon={!isExpanded ? <ChevronDoubleUp20Regular /> : <ChevronDoubleDown20Regular />}
+            icon={isExpanded ? <ChevronDoubleDown20Regular /> : <ChevronDoubleUp20Regular />}
             onClick={() => setIsExpanded(!isExpanded)}
             disabled={!currentNode}
-            title={!isExpanded ? expandLoc : collapseLoc}
-            aria-label={!isExpanded ? expandLoc : collapseLoc}
+            title={isExpanded ? collapseLoc : expandLoc}
+            aria-label={isExpanded ? collapseLoc : expandLoc}
           />
         </div>
       </Stack>

@@ -1,8 +1,10 @@
+import { openPanel, useNodesInitialized } from '../core';
 import { useLayout } from '../core/graphlayout';
-import { useReadOnly } from '../core/state/designerOptions/designerOptionsSelectors';
+import { usePreloadOperationsQuery, usePreloadConnectorsQuery } from '../core/queries/browse';
+import { useMonitoringView, useReadOnly, useHostOptions } from '../core/state/designerOptions/designerOptionsSelectors';
 import { useClampPan } from '../core/state/designerView/designerViewSelectors';
 import { useIsPanelCollapsed } from '../core/state/panel/panelSelectors';
-import { switchToNodeSearchPanel } from '../core/state/panel/panelSlice';
+import { clearPanel } from '../core/state/panel/panelSlice';
 import { useIsGraphEmpty } from '../core/state/workflow/workflowSelectors';
 import { buildEdgeIdsBySource, clearFocusNode, updateNodeSizes } from '../core/state/workflow/workflowSlice';
 import type { AppDispatch, RootState } from '../core/store';
@@ -15,26 +17,33 @@ import PlaceholderNode from './CustomNodes/PlaceholderNode';
 import ScopeCardNode from './CustomNodes/ScopeCardNode';
 import SubgraphCardNode from './CustomNodes/SubgraphCardNode';
 import Minimap from './Minimap';
-import { ButtonEdge } from './connections/edge';
-import { HiddenEdge } from './connections/hiddenEdge';
-import { PanelRoot } from './panel/panelroot';
-import { setLayerHostSelector } from '@fluentui/react';
+import DeleteModal from './common/DeleteModal/DeleteModal';
+import ButtonEdge from './connections/edge';
+import HiddenEdge from './connections/hiddenEdge';
+import { PanelRoot } from './panel/panelRoot';
+import { css, setLayerHostSelector } from '@fluentui/react';
 import { PanelLocation } from '@microsoft/designer-ui';
-import type { WorkflowNodeType } from '@microsoft/utils-logic-apps';
-import { useWindowDimensions, WORKFLOW_NODE_TYPES, useThrottledEffect } from '@microsoft/utils-logic-apps';
+import type { CustomPanelLocation } from '@microsoft/designer-ui';
+import type { WorkflowNodeType } from '@microsoft/logic-apps-shared';
+import { useWindowDimensions, WORKFLOW_NODE_TYPES, useThrottledEffect } from '@microsoft/logic-apps-shared';
+import type { CSSProperties } from 'react';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import KeyboardBackendFactory, { isKeyboardDragTrigger } from 'react-dnd-accessible-backend';
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { DndProvider, createTransition, MouseTransition } from 'react-dnd-multi-backend';
 import { useHotkeys } from 'react-hotkeys-hook';
+import { useQuery } from 'react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import { Background, ReactFlow, ReactFlowProvider, useNodes, useReactFlow, useStore, BezierEdge } from 'reactflow';
 import type { BackgroundProps, NodeChange } from 'reactflow';
+import { PerformanceDebugTool } from './common/PerformanceDebug/PerformanceDebug';
 
 export interface DesignerProps {
   backgroundProps?: BackgroundProps;
   panelLocation?: PanelLocation;
+  customPanelLocations?: CustomPanelLocation[];
   displayRuntimeInfo?: boolean;
+  rightShift?: string; // How much we shift the canvas to the right (due to copilot)
 }
 
 type NodeTypesObj = {
@@ -80,7 +89,9 @@ export const CanvasFinder = (props: CanvasFinderProps) => {
   const nodeData = useNodes().find((x) => x.id === focusNode);
   const dispatch = useDispatch<AppDispatch>();
   const handleTransform = useCallback(() => {
-    if (!focusNode) return;
+    if (!focusNode) {
+      return;
+    }
     if ((!nodeData?.position?.x && !nodeData?.position?.y) || !nodeData?.width || !nodeData?.height) {
       return;
     }
@@ -118,13 +129,19 @@ export const CanvasFinder = (props: CanvasFinderProps) => {
   return null;
 };
 
+export const SearchPreloader = () => {
+  usePreloadOperationsQuery();
+  usePreloadConnectorsQuery();
+  return null;
+};
+
 export const Designer = (props: DesignerProps) => {
-  const { backgroundProps, panelLocation, displayRuntimeInfo } = props;
+  const { backgroundProps, panelLocation, customPanelLocations } = props;
 
   const [nodes, edges, flowSize] = useLayout();
   const isEmpty = useIsGraphEmpty();
   const isReadOnly = useReadOnly();
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
   const onNodesChange = useCallback(
     (changes: NodeChange[]) => {
       dispatch(updateNodeSizes(changes));
@@ -143,7 +160,7 @@ export const Designer = (props: DesignerProps) => {
     },
   ];
 
-  const nodesWithPlaceholder = !isEmpty ? nodes : isReadOnly ? [] : emptyWorkflowPlaceholderNodes;
+  const nodesWithPlaceholder = isEmpty ? (isReadOnly ? [] : emptyWorkflowPlaceholderNodes) : nodes;
 
   const graph = useSelector((state: RootState) => state.workflow.graph);
   useThrottledEffect(() => dispatch(buildEdgeIdsBySource()), [graph], 200);
@@ -168,15 +185,19 @@ export const Designer = (props: DesignerProps) => {
 
   useEffect(() => setLayerHostSelector('#msla-layer-host'), []);
   const KeyboardTransition = createTransition('keydown', (event) => {
-    if (!isKeyboardDragTrigger(event as KeyboardEvent)) return false;
+    if (!isKeyboardDragTrigger(event as KeyboardEvent)) {
+      return false;
+    }
     event.preventDefault();
     return true;
   });
 
-  useHotkeys(['meta+shift+p'], (event) => {
+  useHotkeys(['meta+shift+p', 'ctrl+shift+p'], (event) => {
     event.preventDefault();
-    dispatch(switchToNodeSearchPanel());
+    dispatch(openPanel({ panelMode: 'NodeSearch' }));
   });
+
+  const isMonitoringView = useMonitoringView();
   const DND_OPTIONS: any = {
     backends: [
       {
@@ -194,15 +215,33 @@ export const Designer = (props: DesignerProps) => {
     ],
   };
 
+  const copilotPadding: CSSProperties = {
+    marginLeft: props.rightShift,
+  };
+
+  const isInitialized = useNodesInitialized();
+  const preloadSearch = useMemo(() => !(isMonitoringView || isReadOnly) && isInitialized, [isMonitoringView, isReadOnly, isInitialized]);
+
+  // Adding recurrence interval to the query to access outside of functional components
+  const recurrenceInterval = useHostOptions().recurrenceInterval;
+  useQuery({ queryKey: ['recurrenceInterval'], initialData: recurrenceInterval });
+
+  // Adding workflowKind (stateful or stateless) to the query to access outside of functional components
+  const workflowKind = useSelector((state: RootState) => state.workflow.workflowKind);
+  // This delayes the query until the workflowKind is available
+  useQuery({ queryKey: ['workflowKind'], initialData: undefined, enabled: !!workflowKind, queryFn: () => workflowKind });
+
   return (
     <DndProvider options={DND_OPTIONS}>
-      <div className="msla-designer-canvas msla-panel-mode">
+      {preloadSearch ? <SearchPreloader /> : null}
+      <div className="msla-designer-canvas msla-panel-mode" style={copilotPadding}>
         <ReactFlowProvider>
           <ReactFlow
             nodeTypes={nodeTypes}
             nodes={nodesWithPlaceholder}
             edges={edges}
             onNodesChange={onNodesChange}
+            nodesConnectable={false}
             nodesDraggable={false}
             nodesFocusable={false}
             edgesFocusable={false}
@@ -212,18 +251,22 @@ export const Designer = (props: DesignerProps) => {
             zoomActivationKeyCode={['Ctrl', 'Meta', 'Alt', 'Control']}
             translateExtent={clampPan ? translateExtent : undefined}
             onMove={(_e, viewport) => setZoom(viewport.zoom)}
+            minZoom={0.05}
+            onPaneClick={() => dispatch(clearPanel())}
             proOptions={{
               account: 'paid-sponsor',
               hideAttribution: true,
             }}
           >
-            <PanelRoot panelLocation={panelLocation} displayRuntimeInfo={displayRuntimeInfo ?? true} />
+            <PanelRoot panelLocation={panelLocation} customPanelLocations={customPanelLocations} isResizeable={true} />
             {backgroundProps ? <Background {...backgroundProps} /> : null}
+            <DeleteModal />
           </ReactFlow>
-          <div className={`msla-designer-tools ${panelLocation === PanelLocation.Left ? 'msla-designer-tools-left-panel' : ''}`}>
+          <div className={css('msla-designer-tools', panelLocation === PanelLocation.Left && 'left-panel')} style={copilotPadding}>
             <Controls />
             <Minimap />
           </div>
+          <PerformanceDebugTool />
           <CanvasFinder panelLocation={panelLocation} />
         </ReactFlowProvider>
         <div

@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 import { localize } from '../../../../localize';
 import { AzureWizardPromptStep } from '@microsoft/vscode-azext-utils';
-import type { IFunctionAppWizardContext } from '@microsoft/vscode-extension';
+import type { IFunctionAppWizardContext } from '@microsoft/vscode-extension-logic-apps';
 
 export class SQLStringNameStep extends AzureWizardPromptStep<IFunctionAppWizardContext> {
   public async prompt(wizardContext: IFunctionAppWizardContext): Promise<void> {
@@ -23,7 +23,6 @@ export class SQLStringNameStep extends AzureWizardPromptStep<IFunctionAppWizardC
 export async function validateSQLConnectionString(connectionString: string): Promise<string | undefined> {
   if (!connectionString) {
     return localize('emptySqlConnectionString', 'The SQL connection string value cannot be empty');
-  } else {
-    return undefined;
   }
+  return undefined;
 }

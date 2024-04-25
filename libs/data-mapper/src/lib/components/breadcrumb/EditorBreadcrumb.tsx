@@ -1,11 +1,11 @@
 import { setCurrentTargetSchemaNode } from '../../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
-import type { SchemaExtended, SchemaNodeExtended } from '../../models/Schema';
 import { findNodeForKey } from '../../utils/Schema.Utils';
 import type { IBreadcrumbItem, IContextualMenuItem, IContextualMenuProps, IDividerAsProps } from '@fluentui/react';
 import { Breadcrumb, ContextualMenu, IconButton } from '@fluentui/react';
 import { Button, tokens, makeStyles, Text, typographyStyles } from '@fluentui/react-components';
 import { Code20Regular } from '@fluentui/react-icons';
+import type { SchemaExtended, SchemaNodeExtended } from '@microsoft/logic-apps-shared';
 import { useCallback, useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
@@ -44,27 +44,31 @@ interface EditorBreadcrumbProps {
 export const EditorBreadcrumb = ({ isCodeViewOpen, setIsCodeViewOpen }: EditorBreadcrumbProps): JSX.Element => {
   const intl = useIntl();
   const dispatch = useDispatch<AppDispatch>();
-  const targetSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.targetSchema);
-  const currentTargetSchemaNode = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentTargetSchemaNode);
+  const targetSchema = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.targetSchema);
+  const currentTargetSchemaNode = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.currentTargetSchemaNode);
   const styles = useStyles();
 
   const startMappingLoc = intl.formatMessage({
     defaultMessage: 'Select a target schema node to start mapping',
+    id: '0IRUjM',
     description: 'Breadcrumb message shown in overview',
   });
 
   const showCodeLoc = intl.formatMessage({
     defaultMessage: 'Show code',
+    id: 'MirIsS',
     description: 'Button to display the code view',
   });
 
   const hideCodeLoc = intl.formatMessage({
     defaultMessage: 'Hide code',
+    id: 'UR1CS5',
     description: 'Button to hide the code view',
   });
 
   const chevronAriaDescription = intl.formatMessage({
     defaultMessage: 'Expant list of sibling elements',
+    id: 'BUutcC',
     description: 'Button that toggles list of elements to view',
   });
 
@@ -79,7 +83,9 @@ export const EditorBreadcrumb = ({ isCodeViewOpen, setIsCodeViewOpen }: EditorBr
   const isCodeViewButtonDisabled = useMemo<boolean>(() => breadcrumbItems.length === 0, [breadcrumbItems]);
 
   const onRenderBreadcrumbContent = useCallback((item?: IBreadcrumbItem) => {
-    if (!item) return null;
+    if (!item) {
+      return null;
+    }
 
     if (item.key === placeholderItemKey) {
       return (
@@ -87,9 +93,8 @@ export const EditorBreadcrumb = ({ isCodeViewOpen, setIsCodeViewOpen }: EditorBr
           {item.text}
         </Text>
       );
-    } else {
-      return <Text>{item.text}</Text>;
     }
+    return <Text>{item.text}</Text>;
   }, []);
 
   const getMenu = (props: IContextualMenuProps): JSX.Element => {
@@ -101,7 +106,7 @@ export const EditorBreadcrumb = ({ isCodeViewOpen, setIsCodeViewOpen }: EditorBr
     let childItems: IContextualMenuItem[] = [];
     if (item && targetSchema) {
       const schemaKey = item.key;
-      const schemaNode = findNodeForKey(schemaKey, targetSchema.schemaTreeRoot);
+      const schemaNode = findNodeForKey(schemaKey, targetSchema.schemaTreeRoot, false);
       if (schemaNode) {
         childItems = schemaNode.children.map((childNode) => {
           return {
@@ -109,7 +114,7 @@ export const EditorBreadcrumb = ({ isCodeViewOpen, setIsCodeViewOpen }: EditorBr
             text: childNode.name,
             onClick: (_event, item) => {
               if (item) {
-                const newNode = findNodeForKey(item.key, schemaNode);
+                const newNode = findNodeForKey(item.key, schemaNode, false);
                 if (newNode) {
                   dispatch(setCurrentTargetSchemaNode(newNode));
                   return;
@@ -184,9 +189,7 @@ const convertToBreadcrumbItems = (
   const rootItem: IBreadcrumbItem = {
     key: schema.name,
     text: schema.name,
-    onClick: () => {
-      dispatch(setCurrentTargetSchemaNode(undefined));
-    },
+    disabled: true,
   };
 
   const breadcrumbItems = [rootItem];
@@ -198,7 +201,7 @@ const convertToBreadcrumbItems = (
         text: pathItem.name,
         onClick: (_event, item) => {
           if (item) {
-            const newNode = findNodeForKey(item.key, schema.schemaTreeRoot);
+            const newNode = findNodeForKey(item.key, schema.schemaTreeRoot, false);
             if (newNode) {
               dispatch(setCurrentTargetSchemaNode(newNode));
               return;

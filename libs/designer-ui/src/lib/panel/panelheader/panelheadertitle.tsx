@@ -13,41 +13,71 @@ const titleTextFieldStyle: Partial<ITextFieldStyles> = {
   root: {
     marginTop: '5px',
   },
+  errorMessage: {
+    paddingLeft: '8px',
+  },
 };
 
+export type TitleChangeHandler = (newValue: string) => { valid: boolean; oldValue?: string };
 export interface PanelHeaderTitleProps {
   readOnlyMode?: boolean;
   renameTitleDisabled?: boolean;
   titleValue?: string;
   titleId?: string;
-  onChange: (newValue: string) => void;
+  onChange: TitleChangeHandler;
+  onBlur?: (prevTitle: string) => void;
 }
 
 export const PanelHeaderTitle = ({
   titleValue,
-  onChange,
   titleId,
   readOnlyMode,
   renameTitleDisabled,
+  onChange,
+  onBlur,
 }: PanelHeaderTitleProps): JSX.Element => {
   const intl = useIntl();
 
   const titleTextFieldRef = React.createRef<ITextField>();
 
   const [newTitleValue, setNewTitleValue] = useState(titleValue);
+  const [validValue, setValidValue] = useState(titleValue);
+  const [titleBeforeBlur, setTitleBeforeBlur] = useState(titleValue ?? '');
+  const [errorMessage, setErrorMessage] = useState('');
 
   const onTitleChange = (_: React.FormEvent<HTMLInputElement | HTMLTextAreaElement>, newValue?: string): void => {
-    onChange(newValue || '');
+    const result = onChange(newValue || '');
+    if (result.valid) {
+      setErrorMessage('');
+    } else {
+      setErrorMessage(
+        intl.formatMessage({
+          defaultMessage: 'The name already exists or is invalid. Update the name before you continue.',
+          id: '0xLWzG',
+          description: 'Text for invalid operation title name',
+        })
+      );
+      setValidValue(result.oldValue);
+    }
+
     setNewTitleValue(newValue || '');
   };
 
   const onTitleBlur = (): void => {
-    onChange(newTitleValue || '');
+    if (errorMessage) {
+      onChange(validValue || '');
+      setNewTitleValue(validValue);
+      setErrorMessage('');
+    } else {
+      onBlur?.(titleBeforeBlur);
+      setTitleBeforeBlur(newTitleValue ?? '');
+    }
   };
 
   const readOnly = readOnlyMode || renameTitleDisabled;
   const panelHeaderCardTitle = intl.formatMessage({
     defaultMessage: 'Card Title',
+    id: 'rCl53e',
     description: 'Label for the title for panel header card',
   });
 
@@ -62,6 +92,7 @@ export const PanelHeaderTitle = ({
       maxLength={constants.PANEL.MAX_TITLE_LENGTH}
       borderless
       value={newTitleValue}
+      errorMessage={errorMessage}
       onChange={onTitleChange}
       onBlur={onTitleBlur}
       onKeyDown={handleOnEscapeDown}

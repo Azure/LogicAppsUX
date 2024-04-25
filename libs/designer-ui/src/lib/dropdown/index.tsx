@@ -1,11 +1,11 @@
 import type { ValueSegment } from '../editor';
 import { ValueSegmentType } from '../editor';
 import type { ChangeHandler } from '../editor/base';
+import { createLiteralValueSegment } from '../editor/base/utils/helper';
 import type { IDropdownOption, IDropdownStyles } from '@fluentui/react';
 import { SelectableOptionMenuItemType, Dropdown } from '@fluentui/react';
-import { guid } from '@microsoft/utils-logic-apps';
 import type { FormEvent } from 'react';
-import { useState } from 'react';
+import { useMemo, useState } from 'react';
 
 interface SerializationOptions {
   valueType: string;
@@ -21,7 +21,10 @@ interface DropdownEditorProps {
   height?: number;
   fontSize?: number;
   label?: string;
+  dataAutomationId?: string;
   onChange?: ChangeHandler;
+  // to be used if we don't want to convert result to valueSegmentArray
+  customOnChangeHandler?: (event: React.FormEvent<HTMLDivElement>, option?: IDropdownOption) => void;
 }
 
 export interface DropdownItem {
@@ -41,13 +44,15 @@ export const DropdownEditor = ({
   height,
   fontSize,
   label,
+  dataAutomationId,
   onChange,
+  customOnChangeHandler,
 }: DropdownEditorProps): JSX.Element => {
   const [selectedKey, setSelectedKey] = useState<string | undefined>(multiSelect ? undefined : getSelectedKey(options, initialValue));
   const [selectedKeys, setSelectedKeys] = useState<string[] | undefined>(
     multiSelect ? getSelectedKeys(options, initialValue, serialization) : undefined
   );
-  const [dropdownOptions] = useState<IDropdownOption[]>(getOptions(options));
+  const dropdownOptions = useMemo<IDropdownOption[]>(() => getOptions(options), [options]);
 
   const dropdownStyles: Partial<IDropdownStyles> = {
     root: {
@@ -70,7 +75,7 @@ export const DropdownEditor = ({
   const handleOptionSelect = (_event: FormEvent<HTMLDivElement>, option?: IDropdownOption): void => {
     if (option) {
       setSelectedKey(option.key as string);
-      onChange?.({ value: [{ id: guid(), value: getSelectedValue(options, option.key as string), type: ValueSegmentType.LITERAL }] });
+      onChange?.({ value: [createLiteralValueSegment(getSelectedValue(options, option.key as string))] });
     }
   };
 
@@ -82,27 +87,29 @@ export const DropdownEditor = ({
       const selectedValues = newKeys.map((key) => getSelectedValue(options, key));
       onChange?.({
         value: [
-          {
-            id: guid(),
-            value: serialization?.valueType === 'array' ? JSON.stringify(selectedValues) : selectedValues.join(serialization?.separator),
-            type: ValueSegmentType.LITERAL,
-          },
+          createLiteralValueSegment(
+            serialization?.valueType === 'array' ? JSON.stringify(selectedValues) : selectedValues.join(serialization?.separator)
+          ),
         ],
       });
     }
   };
 
   return (
-    <div className="msla-dropdown-editor-container">
+    <div className="msla-dropdown-editor-container" data-automation-id={dataAutomationId}>
       <Dropdown
         ariaLabel={label}
         styles={dropdownStyles}
         disabled={readonly}
         options={dropdownOptions}
         multiSelect={multiSelect}
+        multiSelectDelimiter={serialization?.separator}
         selectedKey={selectedKey}
         selectedKeys={selectedKeys}
-        onChange={multiSelect ? handleOptionMultiSelect : handleOptionSelect}
+        onChange={(event: React.FormEvent<HTMLDivElement>, option?: IDropdownOption) => {
+          customOnChangeHandler?.(event, option);
+          multiSelect ? handleOptionMultiSelect(event, option) : handleOptionSelect(event, option);
+        }}
       />
     </div>
   );
@@ -111,14 +118,14 @@ export const DropdownEditor = ({
 const getOptions = (options: DropdownItem[]): IDropdownOption[] => {
   return [
     ...options.map((option: DropdownItem) => {
-      const { key, displayName, disabled, type } = option;
+      const { key, displayName, disabled, type, value } = option;
       switch (key) {
         case 'divider':
           return { key: key, text: displayName, itemType: SelectableOptionMenuItemType.Divider, disabled: disabled, data: type };
         case 'header':
           return { key: key, text: displayName, itemType: SelectableOptionMenuItemType.Header, data: type, disabed: disabled };
         default:
-          return { key: key, text: displayName, disabled: disabled, data: type };
+          return { key: key, text: displayName, disabled: disabled, data: type, value: value };
       }
     }),
   ];

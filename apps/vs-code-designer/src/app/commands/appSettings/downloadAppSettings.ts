@@ -14,7 +14,7 @@ import type { StringDictionary } from '@azure/arm-appservice';
 import type { IAppSettingsClient } from '@microsoft/vscode-azext-azureappservice';
 import { AppSettingsTreeItem, confirmOverwriteSettings } from '@microsoft/vscode-azext-azureappservice';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
-import type { ILocalSettingsJson } from '@microsoft/vscode-extension';
+import type { ILocalSettingsJson } from '@microsoft/vscode-extension-logic-apps';
 import * as fse from 'fs-extra';
 import * as vscode from 'vscode';
 
@@ -70,7 +70,7 @@ export async function downloadAppSettingsInternal(context: IActionContext, clien
   ext.outputChannel.appendLog(localize('downloadedSettings', 'Successfully downloaded settings.'), { resourceName: client.fullName });
   const openFile: string = localize('openFile', 'Open File');
 
-  void vscode.window
+  vscode.window
     .showInformationMessage(
       localize('downloadedSettingsFrom', 'Successfully downloaded settings from "{0}".', client.fullName),
       openFile,

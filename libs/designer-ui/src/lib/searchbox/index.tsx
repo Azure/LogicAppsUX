@@ -1,5 +1,5 @@
 import { SearchBox } from '@fluentui/react/lib/SearchBox';
-import { getIntl } from '@microsoft/intl-logic-apps';
+import { getIntl } from '@microsoft/logic-apps-shared';
 
 export interface SearchBoxProps {
   searchCallback: (term: string) => void;
@@ -12,16 +12,19 @@ export const DesignerSearchBox: React.FC<SearchBoxProps> = (props) => {
   const intl = getIntl();
   const placeholder = intl.formatMessage({
     defaultMessage: 'Search',
+    id: 'c2XklE',
     description: 'Placeholder text for Operation/Connector search bar',
   });
 
   return (
     <SearchBox
+      autoFocus
       ariaLabel={placeholder}
       placeholder={placeholder}
       className="msla-search-box"
       onChange={(_event?: React.ChangeEvent<HTMLInputElement>, newValue?: string) => searchCallback(newValue ?? '')}
       value={searchTerm}
+      data-automation-id="msla-search-box"
     />
   );
 };

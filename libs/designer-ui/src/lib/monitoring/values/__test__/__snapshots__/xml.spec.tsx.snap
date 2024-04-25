@@ -1,8 +1,8 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`ui/monitoring/values/xml should not render when not visible 1`] = `null`;
+exports[`ui/monitoring/values/xml > should not render when not visible 1`] = `null`;
 
-exports[`ui/monitoring/values/xml should render XML 1`] = `
+exports[`ui/monitoring/values/xml > should render XML 1`] = `
 <section
   className="msla-trace-value-label"
 >
@@ -21,10 +21,74 @@ exports[`ui/monitoring/values/xml should render XML 1`] = `
       role="textbox"
       tabIndex={0}
     >
+      <div
+        className="buttons"
+      >
+        <button
+          aria-label="Select all text in XML"
+          className="ms-Button ms-Button--icon root-109"
+          data-is-focusable={true}
+          onClick={[Function]}
+          onKeyDown={[Function]}
+          onKeyPress={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onMouseUp={[Function]}
+          type="button"
+        >
+          <span
+            className="ms-Button-flexContainer flexContainer-110"
+            data-automationid="splitbuttonprimary"
+          >
+            <i
+              aria-hidden={true}
+              className="ms-Icon root-105 css-118 ms-Button-icon icon-112"
+              data-icon-name="SelectAll"
+              style={
+                {
+                  "fontFamily": ""FabricMDL2Icons-1"",
+                }
+              }
+            >
+              
+            </i>
+          </span>
+        </button>
+        <button
+          aria-label="Copy the value of 'XML' to the clipboard"
+          className="ms-Button ms-Button--icon root-109"
+          data-is-focusable={true}
+          onClick={[Function]}
+          onKeyDown={[Function]}
+          onKeyPress={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onMouseUp={[Function]}
+          type="button"
+        >
+          <span
+            className="ms-Button-flexContainer flexContainer-110"
+            data-automationid="splitbuttonprimary"
+          >
+            <i
+              aria-hidden={true}
+              className="ms-Icon root-105 css-120 ms-Button-icon icon-112"
+              data-icon-name="Copy"
+              style={
+                {
+                  "fontFamily": ""FabricMDL2Icons-2"",
+                }
+              }
+            >
+              
+            </i>
+          </span>
+        </button>
+      </div>
       <pre
         className="prism-code language-json"
         style={
-          Object {
+          {
             "backgroundColor": "#ffffff",
             "color": "#000000",
           }
@@ -33,7 +97,7 @@ exports[`ui/monitoring/values/xml should render XML 1`] = `
         <div
           className="token-line"
           style={
-            Object {
+            {
               "backgroundColor": null,
               "color": "#000000",
             }
@@ -51,7 +115,7 @@ exports[`ui/monitoring/values/xml should render XML 1`] = `
 </section>
 `;
 
-exports[`ui/monitoring/values/xml should render XML with encoded UTF-8 Chinese correctly 1`] = `
+exports[`ui/monitoring/values/xml > should render XML 2`] = `
 <section
   className="msla-trace-value-label"
 >
@@ -70,10 +134,187 @@ exports[`ui/monitoring/values/xml should render XML with encoded UTF-8 Chinese c
       role="textbox"
       tabIndex={0}
     >
+      <div
+        className="buttons"
+      >
+        <button
+          aria-label="Select all text in XML"
+          className="ms-Button ms-Button--icon root-109"
+          data-is-focusable={true}
+          onClick={[Function]}
+          onKeyDown={[Function]}
+          onKeyPress={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onMouseUp={[Function]}
+          type="button"
+        >
+          <span
+            className="ms-Button-flexContainer flexContainer-110"
+            data-automationid="splitbuttonprimary"
+          >
+            <i
+              aria-hidden={true}
+              className="ms-Icon root-105 css-118 ms-Button-icon icon-112"
+              data-icon-name="SelectAll"
+              style={
+                {
+                  "fontFamily": ""FabricMDL2Icons-1"",
+                }
+              }
+            >
+              
+            </i>
+          </span>
+        </button>
+        <button
+          aria-label="Copy the value of 'XML' to the clipboard"
+          className="ms-Button ms-Button--icon root-109"
+          data-is-focusable={true}
+          onClick={[Function]}
+          onKeyDown={[Function]}
+          onKeyPress={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onMouseUp={[Function]}
+          type="button"
+        >
+          <span
+            className="ms-Button-flexContainer flexContainer-110"
+            data-automationid="splitbuttonprimary"
+          >
+            <i
+              aria-hidden={true}
+              className="ms-Icon root-105 css-120 ms-Button-icon icon-112"
+              data-icon-name="Copy"
+              style={
+                {
+                  "fontFamily": ""FabricMDL2Icons-2"",
+                }
+              }
+            >
+              
+            </i>
+          </span>
+        </button>
+      </div>
       <pre
         className="prism-code language-json"
         style={
-          Object {
+          {
+            "backgroundColor": "#1E1E1E",
+            "color": "#9CDCFE",
+          }
+        }
+      >
+        <div
+          className="token-line"
+          style={
+            {
+              "backgroundColor": undefined,
+              "color": "#9CDCFE",
+            }
+          }
+        >
+          <span
+            className="token plain"
+          >
+            &lt;xml&gt;&lt;/xml&gt;
+          </span>
+        </div>
+      </pre>
+    </div>
+  </div>
+</section>
+`;
+
+exports[`ui/monitoring/values/xml > should render XML with encoded UTF-8 Chinese correctly 1`] = `
+<section
+  className="msla-trace-value-label"
+>
+  <label
+    className="msla-trace-value-display-name"
+  >
+    XML
+  </label>
+  <div
+    className="msla-colorizer-json-body"
+  >
+    <div
+      aria-label="XML"
+      aria-readonly={true}
+      className="msla-colorizer-wrapper"
+      role="textbox"
+      tabIndex={0}
+    >
+      <div
+        className="buttons"
+      >
+        <button
+          aria-label="Select all text in XML"
+          className="ms-Button ms-Button--icon root-109"
+          data-is-focusable={true}
+          onClick={[Function]}
+          onKeyDown={[Function]}
+          onKeyPress={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onMouseUp={[Function]}
+          type="button"
+        >
+          <span
+            className="ms-Button-flexContainer flexContainer-110"
+            data-automationid="splitbuttonprimary"
+          >
+            <i
+              aria-hidden={true}
+              className="ms-Icon root-105 css-118 ms-Button-icon icon-112"
+              data-icon-name="SelectAll"
+              style={
+                {
+                  "fontFamily": ""FabricMDL2Icons-1"",
+                }
+              }
+            >
+              
+            </i>
+          </span>
+        </button>
+        <button
+          aria-label="Copy the value of 'XML' to the clipboard"
+          className="ms-Button ms-Button--icon root-109"
+          data-is-focusable={true}
+          onClick={[Function]}
+          onKeyDown={[Function]}
+          onKeyPress={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onMouseUp={[Function]}
+          type="button"
+        >
+          <span
+            className="ms-Button-flexContainer flexContainer-110"
+            data-automationid="splitbuttonprimary"
+          >
+            <i
+              aria-hidden={true}
+              className="ms-Icon root-105 css-120 ms-Button-icon icon-112"
+              data-icon-name="Copy"
+              style={
+                {
+                  "fontFamily": ""FabricMDL2Icons-2"",
+                }
+              }
+            >
+              
+            </i>
+          </span>
+        </button>
+      </div>
+      <pre
+        className="prism-code language-json"
+        style={
+          {
             "backgroundColor": "#ffffff",
             "color": "#000000",
           }
@@ -82,7 +323,7 @@ exports[`ui/monitoring/values/xml should render XML with encoded UTF-8 Chinese c
         <div
           className="token-line"
           style={
-            Object {
+            {
               "backgroundColor": null,
               "color": "#000000",
             }
@@ -96,7 +337,7 @@ exports[`ui/monitoring/values/xml should render XML with encoded UTF-8 Chinese c
           <span
             className="token string"
             style={
-              Object {
+              {
                 "color": "rgb(163, 21, 21)",
               }
             }
@@ -111,7 +352,7 @@ exports[`ui/monitoring/values/xml should render XML with encoded UTF-8 Chinese c
           <span
             className="token string"
             style={
-              Object {
+              {
                 "color": "rgb(163, 21, 21)",
               }
             }
@@ -126,7 +367,7 @@ exports[`ui/monitoring/values/xml should render XML with encoded UTF-8 Chinese c
           <span
             className="token string"
             style={
-              Object {
+              {
                 "color": "rgb(163, 21, 21)",
               }
             }
@@ -141,7 +382,7 @@ exports[`ui/monitoring/values/xml should render XML with encoded UTF-8 Chinese c
           <span
             className="token string"
             style={
-              Object {
+              {
                 "color": "rgb(163, 21, 21)",
               }
             }
@@ -160,7 +401,7 @@ exports[`ui/monitoring/values/xml should render XML with encoded UTF-8 Chinese c
 </section>
 `;
 
-exports[`ui/monitoring/values/xml should render XML without the UTF-8 byte order mark (BOM) 1`] = `
+exports[`ui/monitoring/values/xml > should render XML with encoded UTF-8 Chinese correctly 2`] = `
 <section
   className="msla-trace-value-label"
 >
@@ -179,10 +420,187 @@ exports[`ui/monitoring/values/xml should render XML without the UTF-8 byte order
       role="textbox"
       tabIndex={0}
     >
+      <div
+        className="buttons"
+      >
+        <button
+          aria-label="Select all text in XML"
+          className="ms-Button ms-Button--icon root-109"
+          data-is-focusable={true}
+          onClick={[Function]}
+          onKeyDown={[Function]}
+          onKeyPress={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onMouseUp={[Function]}
+          type="button"
+        >
+          <span
+            className="ms-Button-flexContainer flexContainer-110"
+            data-automationid="splitbuttonprimary"
+          >
+            <i
+              aria-hidden={true}
+              className="ms-Icon root-105 css-118 ms-Button-icon icon-112"
+              data-icon-name="SelectAll"
+              style={
+                {
+                  "fontFamily": ""FabricMDL2Icons-1"",
+                }
+              }
+            >
+              
+            </i>
+          </span>
+        </button>
+        <button
+          aria-label="Copy the value of 'XML' to the clipboard"
+          className="ms-Button ms-Button--icon root-109"
+          data-is-focusable={true}
+          onClick={[Function]}
+          onKeyDown={[Function]}
+          onKeyPress={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onMouseUp={[Function]}
+          type="button"
+        >
+          <span
+            className="ms-Button-flexContainer flexContainer-110"
+            data-automationid="splitbuttonprimary"
+          >
+            <i
+              aria-hidden={true}
+              className="ms-Icon root-105 css-120 ms-Button-icon icon-112"
+              data-icon-name="Copy"
+              style={
+                {
+                  "fontFamily": ""FabricMDL2Icons-2"",
+                }
+              }
+            >
+              
+            </i>
+          </span>
+        </button>
+      </div>
       <pre
         className="prism-code language-json"
         style={
-          Object {
+          {
+            "backgroundColor": "#1E1E1E",
+            "color": "#9CDCFE",
+          }
+        }
+      >
+        <div
+          className="token-line"
+          style={
+            {
+              "backgroundColor": undefined,
+              "color": "#9CDCFE",
+            }
+          }
+        >
+          <span
+            className="token plain"
+          >
+            &lt;?xml version="1.0" encoding="utf-8"?&gt;&lt;root&gt;&lt;name username="JS1用户名"&gt;你好 John&lt;/name&gt;&lt;name username="MI1用户名"&gt;中文测试&lt;/name&gt;&lt;/root&gt;
+          </span>
+        </div>
+      </pre>
+    </div>
+  </div>
+</section>
+`;
+
+exports[`ui/monitoring/values/xml > should render XML without the UTF-8 byte order mark (BOM) 1`] = `
+<section
+  className="msla-trace-value-label"
+>
+  <label
+    className="msla-trace-value-display-name"
+  >
+    XML
+  </label>
+  <div
+    className="msla-colorizer-json-body"
+  >
+    <div
+      aria-label="XML"
+      aria-readonly={true}
+      className="msla-colorizer-wrapper"
+      role="textbox"
+      tabIndex={0}
+    >
+      <div
+        className="buttons"
+      >
+        <button
+          aria-label="Select all text in XML"
+          className="ms-Button ms-Button--icon root-109"
+          data-is-focusable={true}
+          onClick={[Function]}
+          onKeyDown={[Function]}
+          onKeyPress={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onMouseUp={[Function]}
+          type="button"
+        >
+          <span
+            className="ms-Button-flexContainer flexContainer-110"
+            data-automationid="splitbuttonprimary"
+          >
+            <i
+              aria-hidden={true}
+              className="ms-Icon root-105 css-118 ms-Button-icon icon-112"
+              data-icon-name="SelectAll"
+              style={
+                {
+                  "fontFamily": ""FabricMDL2Icons-1"",
+                }
+              }
+            >
+              
+            </i>
+          </span>
+        </button>
+        <button
+          aria-label="Copy the value of 'XML' to the clipboard"
+          className="ms-Button ms-Button--icon root-109"
+          data-is-focusable={true}
+          onClick={[Function]}
+          onKeyDown={[Function]}
+          onKeyPress={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onMouseUp={[Function]}
+          type="button"
+        >
+          <span
+            className="ms-Button-flexContainer flexContainer-110"
+            data-automationid="splitbuttonprimary"
+          >
+            <i
+              aria-hidden={true}
+              className="ms-Icon root-105 css-120 ms-Button-icon icon-112"
+              data-icon-name="Copy"
+              style={
+                {
+                  "fontFamily": ""FabricMDL2Icons-2"",
+                }
+              }
+            >
+              
+            </i>
+          </span>
+        </button>
+      </div>
+      <pre
+        className="prism-code language-json"
+        style={
+          {
             "backgroundColor": "#ffffff",
             "color": "#000000",
           }
@@ -191,7 +609,7 @@ exports[`ui/monitoring/values/xml should render XML without the UTF-8 byte order
         <div
           className="token-line"
           style={
-            Object {
+            {
               "backgroundColor": null,
               "color": "#000000",
             }
@@ -209,7 +627,7 @@ exports[`ui/monitoring/values/xml should render XML without the UTF-8 byte order
 </section>
 `;
 
-exports[`ui/monitoring/values/xml should render a zero-width space if value is empty 1`] = `
+exports[`ui/monitoring/values/xml > should render XML without the UTF-8 byte order mark (BOM) 2`] = `
 <section
   className="msla-trace-value-label"
 >
@@ -228,10 +646,187 @@ exports[`ui/monitoring/values/xml should render a zero-width space if value is e
       role="textbox"
       tabIndex={0}
     >
+      <div
+        className="buttons"
+      >
+        <button
+          aria-label="Select all text in XML"
+          className="ms-Button ms-Button--icon root-109"
+          data-is-focusable={true}
+          onClick={[Function]}
+          onKeyDown={[Function]}
+          onKeyPress={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onMouseUp={[Function]}
+          type="button"
+        >
+          <span
+            className="ms-Button-flexContainer flexContainer-110"
+            data-automationid="splitbuttonprimary"
+          >
+            <i
+              aria-hidden={true}
+              className="ms-Icon root-105 css-118 ms-Button-icon icon-112"
+              data-icon-name="SelectAll"
+              style={
+                {
+                  "fontFamily": ""FabricMDL2Icons-1"",
+                }
+              }
+            >
+              
+            </i>
+          </span>
+        </button>
+        <button
+          aria-label="Copy the value of 'XML' to the clipboard"
+          className="ms-Button ms-Button--icon root-109"
+          data-is-focusable={true}
+          onClick={[Function]}
+          onKeyDown={[Function]}
+          onKeyPress={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onMouseUp={[Function]}
+          type="button"
+        >
+          <span
+            className="ms-Button-flexContainer flexContainer-110"
+            data-automationid="splitbuttonprimary"
+          >
+            <i
+              aria-hidden={true}
+              className="ms-Icon root-105 css-120 ms-Button-icon icon-112"
+              data-icon-name="Copy"
+              style={
+                {
+                  "fontFamily": ""FabricMDL2Icons-2"",
+                }
+              }
+            >
+              
+            </i>
+          </span>
+        </button>
+      </div>
       <pre
         className="prism-code language-json"
         style={
-          Object {
+          {
+            "backgroundColor": "#1E1E1E",
+            "color": "#9CDCFE",
+          }
+        }
+      >
+        <div
+          className="token-line"
+          style={
+            {
+              "backgroundColor": undefined,
+              "color": "#9CDCFE",
+            }
+          }
+        >
+          <span
+            className="token plain"
+          >
+            &lt;xml&gt;&lt;/xml&gt;
+          </span>
+        </div>
+      </pre>
+    </div>
+  </div>
+</section>
+`;
+
+exports[`ui/monitoring/values/xml > should render a zero-width space if value is empty 1`] = `
+<section
+  className="msla-trace-value-label"
+>
+  <label
+    className="msla-trace-value-display-name"
+  >
+    XML
+  </label>
+  <div
+    className="msla-colorizer-json-body"
+  >
+    <div
+      aria-label="XML"
+      aria-readonly={true}
+      className="msla-colorizer-wrapper"
+      role="textbox"
+      tabIndex={0}
+    >
+      <div
+        className="buttons"
+      >
+        <button
+          aria-label="Select all text in XML"
+          className="ms-Button ms-Button--icon root-109"
+          data-is-focusable={true}
+          onClick={[Function]}
+          onKeyDown={[Function]}
+          onKeyPress={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onMouseUp={[Function]}
+          type="button"
+        >
+          <span
+            className="ms-Button-flexContainer flexContainer-110"
+            data-automationid="splitbuttonprimary"
+          >
+            <i
+              aria-hidden={true}
+              className="ms-Icon root-105 css-118 ms-Button-icon icon-112"
+              data-icon-name="SelectAll"
+              style={
+                {
+                  "fontFamily": ""FabricMDL2Icons-1"",
+                }
+              }
+            >
+              
+            </i>
+          </span>
+        </button>
+        <button
+          aria-label="Copy the value of 'XML' to the clipboard"
+          className="ms-Button ms-Button--icon root-109"
+          data-is-focusable={true}
+          onClick={[Function]}
+          onKeyDown={[Function]}
+          onKeyPress={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onMouseUp={[Function]}
+          type="button"
+        >
+          <span
+            className="ms-Button-flexContainer flexContainer-110"
+            data-automationid="splitbuttonprimary"
+          >
+            <i
+              aria-hidden={true}
+              className="ms-Icon root-105 css-120 ms-Button-icon icon-112"
+              data-icon-name="Copy"
+              style={
+                {
+                  "fontFamily": ""FabricMDL2Icons-2"",
+                }
+              }
+            >
+              
+            </i>
+          </span>
+        </button>
+      </div>
+      <pre
+        className="prism-code language-json"
+        style={
+          {
             "backgroundColor": "#ffffff",
             "color": "#000000",
           }
@@ -240,9 +835,122 @@ exports[`ui/monitoring/values/xml should render a zero-width space if value is e
         <div
           className="token-line"
           style={
-            Object {
+            {
               "backgroundColor": null,
               "color": "#000000",
+            }
+          }
+        >
+          <span
+            className="token plain"
+          >
+            ‌
+          </span>
+        </div>
+      </pre>
+    </div>
+  </div>
+</section>
+`;
+
+exports[`ui/monitoring/values/xml > should render a zero-width space if value is empty 2`] = `
+<section
+  className="msla-trace-value-label"
+>
+  <label
+    className="msla-trace-value-display-name"
+  >
+    XML
+  </label>
+  <div
+    className="msla-colorizer-json-body"
+  >
+    <div
+      aria-label="XML"
+      aria-readonly={true}
+      className="msla-colorizer-wrapper"
+      role="textbox"
+      tabIndex={0}
+    >
+      <div
+        className="buttons"
+      >
+        <button
+          aria-label="Select all text in XML"
+          className="ms-Button ms-Button--icon root-109"
+          data-is-focusable={true}
+          onClick={[Function]}
+          onKeyDown={[Function]}
+          onKeyPress={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onMouseUp={[Function]}
+          type="button"
+        >
+          <span
+            className="ms-Button-flexContainer flexContainer-110"
+            data-automationid="splitbuttonprimary"
+          >
+            <i
+              aria-hidden={true}
+              className="ms-Icon root-105 css-118 ms-Button-icon icon-112"
+              data-icon-name="SelectAll"
+              style={
+                {
+                  "fontFamily": ""FabricMDL2Icons-1"",
+                }
+              }
+            >
+              
+            </i>
+          </span>
+        </button>
+        <button
+          aria-label="Copy the value of 'XML' to the clipboard"
+          className="ms-Button ms-Button--icon root-109"
+          data-is-focusable={true}
+          onClick={[Function]}
+          onKeyDown={[Function]}
+          onKeyPress={[Function]}
+          onKeyUp={[Function]}
+          onMouseDown={[Function]}
+          onMouseUp={[Function]}
+          type="button"
+        >
+          <span
+            className="ms-Button-flexContainer flexContainer-110"
+            data-automationid="splitbuttonprimary"
+          >
+            <i
+              aria-hidden={true}
+              className="ms-Icon root-105 css-120 ms-Button-icon icon-112"
+              data-icon-name="Copy"
+              style={
+                {
+                  "fontFamily": ""FabricMDL2Icons-2"",
+                }
+              }
+            >
+              
+            </i>
+          </span>
+        </button>
+      </div>
+      <pre
+        className="prism-code language-json"
+        style={
+          {
+            "backgroundColor": "#1E1E1E",
+            "color": "#9CDCFE",
+          }
+        }
+      >
+        <div
+          className="token-line"
+          style={
+            {
+              "backgroundColor": undefined,
+              "color": "#9CDCFE",
             }
           }
         >

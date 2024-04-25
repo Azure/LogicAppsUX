@@ -2,7 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import type { IProcessInfo } from '@microsoft/vscode-extension';
+import type { IProcessInfo } from '@microsoft/vscode-extension-logic-apps';
 
 import processTree = require('process-tree');
 

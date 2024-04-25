@@ -49,103 +49,66 @@
   .msla-setting-section-content {
     width: 100%;
     height: auto;
+		margin-bottom: 8px;
 
     .msla-setting-section-header {
-      display: flex;
-      width: 100%;
-      vertical-align: middle;
-      border: none;
-
-      .msla-setting-section-header-icon {
-        padding-left: 10px;
-        padding-top: 12px;
-        padding-bottom: 12px;
-        width: 20px;
-      }
-
-      .msla-setting-section-header-text {
-        border: none;
-        text-align: left;
-        font-size: 14px;
-        font-weight: 600;
-        font-family: @font-family;
-        min-width: 80%;
-        line-height: 40px;
-        padding-left: 10px;
-      }
+      width: inherit;
+			justify-content: flex-start;
+			padding: 8px;
     }
 
     .msla-setting-section-dropdown {
       display: block;
       width: 50%;
-      // margin-left: 45%;
-      // margin-bottom: 8px;
     }
 
     .msla-setting-section-settings {
-      margin-top: 10px;
-      margin-bottom: -10px;
-    }
-
-    .msla-setting-section-setting {
-      margin-left: 46px;
-      margin-bottom: 8px;
-    }
-
-    .msla-setting-section-run-after-setting {
-      margin-left: 46px;
+			padding: 16px 0px 16px 36px;
+      display: flex;
+			flex-direction: column;
+			gap: 8px;
     }
 
     .msla-setting-section-row {
       display: flex;
 
-      .msla-setting-section-row-text {
+      .msla-setting-label-title {
         font-family: @font-family;
         padding-top: 3px;
       }
-
-      .msla-setting-section-row-text-input {
-        min-width: 200px;
-        width: 59%;
-      }
     }
 
-    .msla-setting-section-row-child {
-      margin-left: 50px;
+    .msla-setting-label-tooltip-icon {
+      padding: 3px 8px;
+      color: var(--colorNeutralForeground3);
     }
 
-    .msla-setting-section-row-info-icon {
-      margin-top: -6px;
+    .msla-setting-section-divider {
+      margin-top: 8px;
     }
 
-    .msla-setting-section-separator {
-      padding: 0px;
-      width: 100%;
-      display: inline-block;
-      color: #6b6b6b;
-    }
-
-    .msla-setting-section-row-label {
+    .msla-setting-label-container {
       display: flex;
-      width: 80%;
-      justify-content: left;
+      width: 100%;
+    }
+    .msla-setting-label-description {
+      font-size: 10px;
+      line-height: 12px;
+      margin-bottom: 5px;
+      font-style: italic;
+    }
 
-      .msla-operation-setting {
-        min-width: 400px;
+    .msla-setting-label-subLabel {
+      font-weight: 600;
+      font-size: 10px;
+      &.isToggle {
+        margin-left: 5px;
+        margin-bottom: -5px;
       }
     }
 
     .msla-operation-setting {
       width: 81%;
-    }
-
-    .msla-setting-section-row-child-label {
-      margin-right: 6px;
-      margin-top: 4px;
-      margin-bottom: 4px;
-      display: flex;
-      font-size: 12px;
-      text-align: left;
     }
 
     .msla-setting-tracked-properties-dictionary {
@@ -159,7 +122,6 @@
 
     .msla-setting-section-toggle {
       margin-top: 6px;
-      padding-left: 35px;
       justify-content: right;
     }
 
@@ -175,10 +137,6 @@
   }
 }
 
-.msla-card-section-description {
-  margin-bottom: 5px;
-}
-
 .msla-trigger-condition-expression {
   display: inherit;
   margin-left: 12px;
@@ -191,23 +149,18 @@
 }
 
 .msla-trigger-condition-expression-add {
-  margin-top: -4px;
+  margin-top: 0px;
 }
 
 .msla-setting-section-expression-field {
   display: flex;
   flex-wrap: wrap;
-  margin-left: 48px;
-  margin-bottom: 5px;
 
-  .msla-setting-section-row-label {
+  .msla-setting-label-container {
     display: flex;
-    width: 80%;
+    width: 100%;
     justify-content: left;
     margin-top: 9px;
-  }
-  .ms-Button--action {
-    margin-left: 36px;
   }
 }
 
@@ -243,31 +196,5 @@
 
   [class^='ms-Toggle-slider'] {
     display: inline-block;
-  }
-}
-
-.msla-theme-light {
-  .msla-setting-section-header {
-    background-color: white;
-    &:hover {
-      background-color: #f3f3f3;
-      cursor: pointer;
-    }
-    &:active {
-      background-color: #e9e9e9;
-    }
-  }
-}
-
-.msla-theme-dark {
-  .msla-setting-section-header {
-    background-color: @ms-color-secondaryBackground;
-    &:hover {
-      background-color: @ms-color-primaryBackground;
-      cursor: pointer;
-    }
-    &:active {
-      background-color: @ms-color-primaryBackgroundHover;
-    }
   }
 }

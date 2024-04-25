@@ -1,9 +1,10 @@
-export enum MenuItemType {
-  Normal = 0,
-  Divider = 1,
-  Header = 2,
-  Advanced = 3,
-}
+export const MenuItemType = {
+  Normal: 0,
+  Divider: 1,
+  Header: 2,
+  Advanced: 3,
+} as const;
+export type MenuItemType = (typeof MenuItemType)[keyof typeof MenuItemType];
 
 export interface CommentBoxProps {
   brandColor: string;
@@ -17,26 +18,6 @@ export interface CommentBoxProps {
   onCommentDismissed?(): void;
 }
 
-export interface MenuItemOption {
-  disabled?: boolean;
-  disabledReason?: string;
-  iconName?: string;
-  iconUri?: string;
-  checked?: boolean;
-  key: string;
-  subMenuItems?: MenuItemOption[]; // Sub-menus are only supported for basic menu items by Fluent UI.
-  subtitle?: SubtitleOption;
-  title: string;
-  type: MenuItemType;
-  onClick?(e?: React.SyntheticEvent<HTMLElement>): void;
-}
-
 interface CommentChangeEvent {
   value: string;
-}
-
-interface SubtitleOption {
-  disabled?: boolean;
-  iconUri?: string;
-  title: string;
 }

@@ -1,25 +1,26 @@
 import type { TestMapResponse } from '../../core';
-import { testDataMap } from '../../core/queries/datamap';
+import { generateDataMapXslt, testDataMap } from '../../core/queries/datamap';
 import type { RootState } from '../../core/state/Store';
-import { SchemaFileFormat } from '../../models';
 import { LogCategory, LogService } from '../../utils/Logging.Utils';
-import { ChoiceGroup, DefaultButton, Panel, PanelType, Pivot, PivotItem, PrimaryButton, Text } from '@fluentui/react';
+import { ChoiceGroup, DefaultButton, Panel, PanelType, Pivot, PivotItem, PrimaryButton, Stack, StackItem, Text } from '@fluentui/react';
 import { makeStyles, shorthands, tokens } from '@fluentui/react-components';
 import type { MonacoProps } from '@microsoft/designer-ui';
-import { EditorLanguage, MonacoEditor } from '@microsoft/designer-ui';
-import { guid } from '@microsoft/utils-logic-apps';
-import { useMemo, useState } from 'react';
+import { MonacoEditor } from '@microsoft/designer-ui';
+import { EditorLanguage, guid, isNullOrEmpty, SchemaFileFormat } from '@microsoft/logic-apps-shared';
+import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useSelector } from 'react-redux';
 
-enum PanelPivotItems {
-  Input = 'input',
-  Output = 'output',
-}
+const PanelPivotItems = {
+  Input: 'input',
+  Output: 'output',
+} as const;
+export type PanelPivotItems = (typeof PanelPivotItems)[keyof typeof PanelPivotItems];
 
-enum InputDataOptions {
-  PasteSample = 'pasteSample',
-}
+const InputDataOptions = {
+  PasteSample: 'pasteSample',
+} as const;
+export type InputDataOptions = (typeof InputDataOptions)[keyof typeof InputDataOptions];
 
 export const commonCodeEditorProps: Partial<MonacoProps> = {
   lineNumbers: 'on',
@@ -54,74 +55,133 @@ const useStyles = makeStyles({
 });
 
 export interface TestMapPanelProps {
+  mapDefinition: string;
   isOpen: boolean;
   onClose: () => void;
 }
 
-export const TestMapPanel = ({ isOpen, onClose }: TestMapPanelProps) => {
+export const TestMapPanel = ({ mapDefinition, isOpen, onClose }: TestMapPanelProps) => {
   const intl = useIntl();
   const styles = useStyles();
 
   const currentTheme = useSelector((state: RootState) => state.app.theme);
-  const dataMapXsltFilename = useSelector((state: RootState) => state.dataMap.curDataMapOperation.xsltFilename);
-  const sourceSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.sourceSchema);
-  const targetSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.targetSchema);
+  const xsltFilename = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.xsltFilename);
+  const fileXslt = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.xsltContent);
+  const sourceSchema = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.sourceSchema);
+  const targetSchema = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.targetSchema);
 
   const [selectedInputOption, setSelectedInputOption] = useState<InputDataOptions>(InputDataOptions.PasteSample);
   const [selectedPivotItem, setSelectedPivotItem] = useState<PanelPivotItems>(PanelPivotItems.Input);
   const [testMapInput, setTestMapInput] = useState<string>('');
   const [testMapResponse, setTestMapResponse] = useState<TestMapResponse | undefined>(undefined);
+  const [currentXslt, setCurrentXslt] = useState<string>(fileXslt);
 
+  //#region Loc
   const testMapLoc = intl.formatMessage({
     defaultMessage: 'Test map',
+    id: '6OSgRP',
     description: 'Test map panel header',
   });
 
   const testLoc = intl.formatMessage({
     defaultMessage: 'Test',
+    id: 'Sz8KN3',
     description: 'Test',
   });
 
   const closeLoc = intl.formatMessage({
     defaultMessage: 'Close',
+    id: 'wzEneQ',
     description: 'Close',
   });
 
   const inputLoc = intl.formatMessage({
     defaultMessage: 'Input',
+    id: 'P6I90y',
     description: 'Input',
   });
 
   const outputLoc = intl.formatMessage({
     defaultMessage: 'Output',
+    id: 'Ciol6I',
     description: 'Output',
   });
 
   const pasteFromSampleLoc = intl.formatMessage({
     defaultMessage: 'Paste from sample',
+    id: 'D5FIKL',
     description: 'Paste from sample',
   });
 
   const inputDataOptionsLabelLoc = intl.formatMessage({
     defaultMessage: 'Provide input data to test the map with',
+    id: 'i1Tufp',
     description: 'Label for input data option choice group',
   });
 
   const statusCodeLoc = intl.formatMessage({
     defaultMessage: 'Status code',
+    id: 'QGbUXX',
     description: 'Response status code for test map API',
   });
 
   const responseBodyLoc = intl.formatMessage({
     defaultMessage: 'Response body',
+    id: 'odQ554',
     description: 'Response body for test map API',
   });
 
+  const noXsltLoc = intl.formatMessage({
+    defaultMessage: 'Generate XSLT first before attempting to test mappings.',
+    id: 'ctI9Pp',
+    description: 'Message on missing XSLT and attempting to test maps',
+  });
+
+  const mismatchedXsltLoc = intl.formatMessage({
+    defaultMessage: 'The generated XSLT does not match the current mapping.',
+    id: 'NHnG2S',
+    description: 'Message on mismatched XSLT and attempting to test maps',
+  });
+  //#endregion
+
   const inputDataOptions = useMemo(() => [{ key: 'pasteSample', text: pasteFromSampleLoc }], [pasteFromSampleLoc]);
 
-  const testMap = () => {
+  useEffect(() => {
+    const generateXsltAsync = async () => {
+      let generatedXslt = '';
+      if (isOpen && !isNullOrEmpty(mapDefinition)) {
+        try {
+          generatedXslt = await generateDataMapXslt(mapDefinition);
+        } catch (error) {
+          console.log(error);
+        }
+      }
+
+      setCurrentXslt(generatedXslt);
+    };
+
+    generateXsltAsync();
+  }, [isOpen, mapDefinition]);
+
+  const isMismatchedXslt = currentXslt && fileXslt !== currentXslt;
+
+  const testMap = useCallback(async () => {
     if (!testMapInput) {
       return;
+    }
+
+    if (!xsltFilename) {
+      LogService.error(LogCategory.TestMapPanel, 'testDataMap', {
+        message: 'Missing XSLT filename',
+      });
+
+      return;
+    }
+
+    if (isMismatchedXslt) {
+      LogService.error(LogCategory.TestMapPanel, 'testDataMap', {
+        message: 'Mismatched XSLT content',
+      });
     }
 
     setSelectedPivotItem(PanelPivotItems.Output);
@@ -135,7 +195,7 @@ export const TestMapPanel = ({ isOpen, onClose }: TestMapPanelProps) => {
       },
     });
 
-    testDataMap(dataMapXsltFilename, testMapInput)
+    testDataMap(xsltFilename, testMapInput)
       .then((response) => {
         setTestMapResponse(response);
 
@@ -158,18 +218,40 @@ export const TestMapPanel = ({ isOpen, onClose }: TestMapPanelProps) => {
 
         setTestMapResponse(undefined);
       });
-  };
+  }, [isMismatchedXslt, testMapInput, xsltFilename]);
 
-  const getFooterContent = () => {
+  const getFooterContent = useCallback(() => {
     return (
-      <div>
-        <PrimaryButton onClick={testMap} style={{ marginRight: 8 }} disabled={!testMapInput}>
-          {testLoc}
-        </PrimaryButton>
-        <DefaultButton onClick={onClose}>{closeLoc}</DefaultButton>
-      </div>
+      <Stack horizontal={false} tokens={{ childrenGap: '8px' }}>
+        <StackItem>
+          {fileXslt ? (
+            isMismatchedXslt ? (
+              <Text
+                variant={'mediumPlus'}
+                style={{
+                  color: '#e4cc00' /*tokens.colorPaletteYellowForeground1*/,
+                }}
+              >
+                {mismatchedXsltLoc}
+              </Text>
+            ) : (
+              <Text variant={'mediumPlus'}>{/*Space holding*/}</Text>
+            )
+          ) : (
+            <Text variant={'mediumPlus'} style={{ color: '#d13438' /*tokens.colorPaletteRedBackground3*/ }}>
+              {noXsltLoc}
+            </Text>
+          )}
+        </StackItem>
+        <StackItem>
+          <PrimaryButton onClick={testMap} style={{ marginRight: 8 }} disabled={!testMapInput || !fileXslt}>
+            {testLoc}
+          </PrimaryButton>
+          <DefaultButton onClick={onClose}>{closeLoc}</DefaultButton>
+        </StackItem>
+      </Stack>
     );
-  };
+  }, [fileXslt, testMapInput, isMismatchedXslt, closeLoc, mismatchedXsltLoc, noXsltLoc, onClose, testLoc, testMap]);
 
   return (
     <Panel
@@ -182,6 +264,7 @@ export const TestMapPanel = ({ isOpen, onClose }: TestMapPanelProps) => {
       isFooterAtBottom={true}
       overlayProps={{ isDarkThemed: currentTheme === 'dark' }}
       isLightDismiss
+      layerProps={{ eventBubblingEnabled: true }}
     >
       <Pivot
         selectedKey={selectedPivotItem}
@@ -201,6 +284,7 @@ export const TestMapPanel = ({ isOpen, onClose }: TestMapPanelProps) => {
             value={testMapInput}
             onContentChanged={(e) => setTestMapInput(e.value ?? '')}
             className={styles.editorStyle}
+            contextMenu={true}
             {...commonCodeEditorProps}
           />
         </PivotItem>

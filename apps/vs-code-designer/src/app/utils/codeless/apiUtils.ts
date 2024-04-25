@@ -7,7 +7,7 @@ import { localize } from '../../../localize';
 import type { RemoteWorkflowTreeItem } from '../../tree/remoteWorkflowsTree/RemoteWorkflowTreeItem';
 import type { SlotTreeItem } from '../../tree/slotsTree/SlotTreeItem';
 import { sendAzureRequest } from '../requestUtils';
-import { HTTP_METHODS } from '@microsoft/utils-logic-apps';
+import { HTTP_METHODS } from '@microsoft/logic-apps-shared';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type {
   IParametersFileContent,
@@ -16,7 +16,7 @@ import type {
   IWorkflowFileContent,
   IArtifactFile,
   Artifacts,
-} from '@microsoft/vscode-extension';
+} from '@microsoft/vscode-extension-logic-apps';
 import * as path from 'path';
 import * as vscode from 'vscode';
 
@@ -47,10 +47,9 @@ export async function getParameterFileContent(context: IActionContext, node: Slo
   } catch (error) {
     if (error.statusCode === 404) {
       return {};
-    } else {
-      vscode.window.showErrorMessage(error.message, localize('OK', 'OK'));
-      throw error;
     }
+    vscode.window.showErrorMessage(error.message, localize('OK', 'OK'));
+    throw error;
   }
 }
 
@@ -72,9 +71,8 @@ export async function listWorkflows(node: SlotTreeItem, context: IActionContext)
   } catch (error) {
     if (error.statusCode === 404) {
       return [];
-    } else {
-      throw error;
     }
+    throw error;
   }
 }
 
@@ -84,10 +82,9 @@ export async function getOptionalFileContent(context: IActionContext, node: Slot
   } catch (error) {
     if (error.statusCode === 404) {
       return '{}';
-    } else {
-      vscode.window.showErrorMessage(error.message, localize('OK', 'OK'));
-      throw error;
     }
+    vscode.window.showErrorMessage(error.message, localize('OK', 'OK'));
+    throw error;
   }
 }
 
@@ -102,10 +99,9 @@ async function getArtifactFiles(context: IActionContext, node: SlotTreeItem, fol
   } catch (error) {
     if (error.statusCode === 404) {
       return [];
-    } else {
-      vscode.window.showErrorMessage(error.message, localize('OK', 'OK'));
-      throw error;
     }
+    vscode.window.showErrorMessage(error.message, localize('OK', 'OK'));
+    throw error;
   }
 }
 

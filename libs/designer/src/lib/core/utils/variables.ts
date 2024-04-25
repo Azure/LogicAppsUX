@@ -1,10 +1,10 @@
 import Constants from '../../common/constants';
 import type { NodeInputs } from '../state/operation/operationMetadataSlice';
-import type { NodeTokens, VariableDeclaration } from '../state/tokensSlice';
+import type { NodeTokens, VariableDeclaration } from '../state/tokens/tokensSlice';
 import { ParameterGroupKeys } from './parameters/helper';
 import type { OutputToken as Token } from '@microsoft/designer-ui';
 import { TokenType } from '@microsoft/designer-ui';
-import { aggregate } from '@microsoft/utils-logic-apps';
+import { aggregate, getRecordEntry } from '@microsoft/logic-apps-shared';
 
 let variableIcon = '';
 let variableBrandColor = '';
@@ -26,14 +26,14 @@ export const getVariableDeclarations = (nodeInputs: NodeInputs): VariableDeclara
 };
 
 export const getAllVariables = (variables: Record<string, VariableDeclaration[]>): VariableDeclaration[] => {
-  return aggregate(Object.keys(variables).map((nodeId) => variables[nodeId]));
+  return aggregate(Object.keys(variables).map((nodeId) => getRecordEntry(variables, nodeId) ?? []));
 };
 
 export const getAvailableVariables = (
   variables: Record<string, VariableDeclaration[]>,
   upstreamNodeIds: string[]
 ): VariableDeclaration[] => {
-  const allVariables = upstreamNodeIds.map((nodeId) => variables[nodeId] ?? []);
+  const allVariables = upstreamNodeIds.map((nodeId) => getRecordEntry(variables, nodeId) ?? []);
   return aggregate(allVariables);
 };
 

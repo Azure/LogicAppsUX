@@ -8,30 +8,37 @@ export const TokenPickerNoDynamicContent = () => {
   const intlText = {
     NO_DYNAMIC_CONTENT_HEADER: intl.formatMessage({
       defaultMessage: 'No dynamic content available',
+      id: 'B59BCg',
       description: 'Header for no dynamic content available card section',
     }),
     NO_DYNAMIC_CONTENT_TEXT: intl.formatMessage({
       defaultMessage: 'There is no content available',
+      id: '3O0i4j',
       description: 'No dynamic content available description',
     }),
     INCLUDING_DYNAMIC_CONTENT_HEADER: intl.formatMessage({
       defaultMessage: 'Including dynamic content',
+      id: 'wGYmui',
       description: 'Header for including dynamic content section',
     }),
     INCLUDING_DYNAMIC_CONTENT_TEXT1: intl.formatMessage({
       defaultMessage: 'If available, dynamic content is automatically generated from the connectors and actions you choose for your flow.',
+      id: 'IQyOth',
       description: 'Section 1 of text for including dynamic content section',
     }),
     INCLUDING_DYNAMIC_CONTENT_TEXT2: intl.formatMessage({
       defaultMessage: 'Dynamic content may also be added from other sources.',
+      id: 'c8UPLp',
       description: 'Section 2 of text for including dynamic content section',
     }),
     DYNAMIC_CONTENT_LINK_TEXT: intl.formatMessage({
       defaultMessage: 'Learn more about dynamic content.',
+      id: 'ZkjTbp',
       description: 'Text for dynamic content link',
     }),
     TOKEN_PICKER_EMPTY_DYNAMIC_CONTENT_ICON_ALT_TEXT: intl.formatMessage({
       defaultMessage: 'Empty dynamic content icon',
+      id: 'f81ClO',
       description: 'Alt text for empty dynamic content icon',
     }),
   };
@@ -46,6 +53,7 @@ export const TokenPickerNoDynamicContent = () => {
           src="data:image/svg+xml;base64,PHN2ZyBpZD0iTGF5ZXJfMSIgZGF0YS1uYW1lPSJMYXllciAxIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxNiAxMyI+PGRlZnM+PHN0eWxlPi5jbHMtMXtmaWxsOiMwMDU4YWQ7fTwvc3R5bGU+PC9kZWZzPjx0aXRsZT5keW5hbWljIGNvbnRlbnQ8L3RpdGxlPjxwYXRoIGNsYXNzPSJjbHMtMSIgZD0iTTM2LDEuNXYxM0g1MlYxLjVIMzZabTEsMTJWMi41SDQ4djExSDM3Wm0xNCwwSDQ5VjIuNWgydjExWiIgdHJhbnNmb3JtPSJ0cmFuc2xhdGUoLTM2IC0xLjUpIi8+PHBvbHlnb24gY2xhc3M9ImNscy0xIiBwb2ludHM9IjkgNiA3IDYgNyA0IDYgNCA2IDYgNCA2IDQgNyA2IDcgNiA5IDcgOSA3IDcgOSA3IDkgNiIvPjwvc3ZnPg=="
           height="13"
           alt={intlText.TOKEN_PICKER_EMPTY_DYNAMIC_CONTENT_ICON_ALT_TEXT}
+          style={{ position: 'relative', top: '2px' }}
         />
         <span>{intlText.NO_DYNAMIC_CONTENT_TEXT}</span>
       </div>

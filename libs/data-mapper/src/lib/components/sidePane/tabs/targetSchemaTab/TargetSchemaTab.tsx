@@ -1,6 +1,5 @@
 import { setCurrentTargetSchemaNode } from '../../../../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../../../../core/state/Store';
-import type { SchemaNodeExtended } from '../../../../models';
 import { isObjectType, searchSchemaTreeFromRoot } from '../../../../utils/Schema.Utils';
 import type { FilteredDataTypesDict } from '../../../tree/SchemaTreeSearchbar';
 import { getDefaultFilteredDataTypesDict, SchemaTreeSearchbar } from '../../../tree/SchemaTreeSearchbar';
@@ -10,6 +9,7 @@ import TargetSchemaTreeItem, { ItemToggledState, TargetSchemaTreeHeader } from '
 import type { ITreeNode } from '../../../tree/Tree';
 import Tree from '../../../tree/Tree';
 import { mergeClasses, tokens } from '@fluentui/react-components';
+import type { SchemaNodeExtended } from '@microsoft/logic-apps-shared';
 import { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -21,10 +21,10 @@ export const TargetSchemaTab = () => {
   const schemaNodeItemStyles = useSchemaTreeItemStyles();
   const dispatch = useDispatch<AppDispatch>();
 
-  const targetSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.targetSchema);
-  const targetSchemaDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedTargetSchema);
-  const connectionDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
-  const currentTargetSchemaNode = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentTargetSchemaNode);
+  const targetSchema = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.targetSchema);
+  const targetSchemaDictionary = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.flattenedTargetSchema);
+  const connectionDictionary = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.dataMapConnections);
+  const currentTargetSchemaNode = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.currentTargetSchemaNode);
 
   const [toggledStatesDictionary, setToggledStatesDictionary] = useState<NodeToggledStateDictionary | undefined>({});
   const [targetSchemaSearchTerm, setTargetSchemaSearchTerm] = useState<string>('');
@@ -128,7 +128,7 @@ export const TargetSchemaTab = () => {
 
       <div
         style={{
-          display: !shouldDisplayTree ? 'none' : undefined,
+          display: shouldDisplayTree ? undefined : 'none',
           overflowY: 'scroll',
           width: '100%',
           flex: '1 1 1px',
@@ -171,13 +171,13 @@ const handleObjectParentToggledState = (
   if (nodeChildrenToggledAmt === 0) {
     stateDict[nodeKey] = ItemToggledState.NotStarted;
     return 0;
-  } else if (nodeChildrenToggledAmt === nodeChildrenAmt) {
+  }
+  if (nodeChildrenToggledAmt === nodeChildrenAmt) {
     stateDict[nodeKey] = ItemToggledState.Completed;
     return 1;
-  } else {
-    stateDict[nodeKey] = ItemToggledState.InProgress;
-    return 0.5;
   }
+  stateDict[nodeKey] = ItemToggledState.InProgress;
+  return 0.5;
 };
 
 const handleNodeWithValue = (
@@ -188,10 +188,9 @@ const handleNodeWithValue = (
   if (nodeKey in targetNodesWithConnections) {
     stateDict[nodeKey] = ItemToggledState.Completed;
     return 1;
-  } else {
-    stateDict[nodeKey] = ItemToggledState.NotStarted;
-    return 0;
   }
+  stateDict[nodeKey] = ItemToggledState.NotStarted;
+  return 0;
 };
 
 export const checkNodeStatuses = (
@@ -208,8 +207,7 @@ export const checkNodeStatuses = (
   if (isObjectType(schemaNode.type) && schemaNode.children.length > 0) {
     // Object/parent/array-elements (if they don't have children, treat them as leaf nodes (below))
     return handleObjectParentToggledState(stateDict, schemaNode.key, numChildrenToggled, schemaNode.children.length);
-  } else {
-    // Node that can have value/connection (*could still have children, but its toggled state will be based off itself instead of them)
-    return handleNodeWithValue(stateDict, schemaNode.key, targetNodesWithConnections);
   }
+  // Node that can have value/connection (*could still have children, but its toggled state will be based off itself instead of them)
+  return handleNodeWithValue(stateDict, schemaNode.key, targetNodesWithConnections);
 };

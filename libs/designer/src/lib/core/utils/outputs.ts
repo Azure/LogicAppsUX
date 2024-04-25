@@ -5,38 +5,53 @@ import type { Settings } from '../actions/bjsworkflow/settings';
 import { getConnectorWithSwagger } from '../queries/connections';
 import { getOperationManifest } from '../queries/operation';
 import type { DependencyInfo, NodeInputs, NodeOperation, NodeOutputs, OutputInfo } from '../state/operation/operationMetadataSlice';
-import { ErrorLevel, updateErrorDetails, clearDynamicOutputs, addDynamicOutputs } from '../state/operation/operationMetadataSlice';
-import { addDynamicTokens } from '../state/tokensSlice';
-import { getBrandColorFromConnector, getIconUriFromConnector } from './card';
+import { ErrorLevel, addDynamicOutputs, clearDynamicIO, updateErrorDetails } from '../state/operation/operationMetadataSlice';
+import { addDynamicTokens } from '../state/tokens/tokensSlice';
+import type { WorkflowKind } from '../state/workflow/workflowInterfaces';
+import type { WorkflowParameterDefinition } from '../state/workflowparameters/workflowparametersSlice';
 import { getTokenExpressionValueForManifestBasedOperation } from './loops';
 import { getDynamicOutputsFromSchema, getDynamicSchema } from './parameters/dynamicdata';
-import { getAllInputParameters, isDynamicDataReadyToLoad } from './parameters/helper';
+import {
+  generateExpressionFromKey,
+  getAllInputParameters,
+  getTokenExpressionMethodFromKey,
+  isDynamicDataReadyToLoad,
+} from './parameters/helper';
 import { convertOutputsToTokens } from './tokens';
-import { OperationManifestService } from '@microsoft/designer-client-services-logic-apps';
-import { generateSchemaFromJsonString, ValueSegmentType } from '@microsoft/designer-ui';
-import { getIntl } from '@microsoft/intl-logic-apps';
-import type { Expression, ExpressionFunction, ExpressionLiteral, OutputParameter, OutputParameters } from '@microsoft/parsers-logic-apps';
 import {
-  create,
-  OutputKeys,
-  OutputSource,
-  ExpressionParser,
-  ExtensionProperties,
-  isTemplateExpression,
-  isFunction,
-  isStringLiteral,
-} from '@microsoft/parsers-logic-apps';
-import type { OpenAPIV2, OperationManifest } from '@microsoft/utils-logic-apps';
-import {
-  ConnectionReferenceKeyFormat,
-  getObjectPropertyValue,
-  safeSetObjectPropertyValue,
-  unmap,
+  OperationManifestService,
   AssertionErrorCode,
   AssertionException,
+  ConnectionReferenceKeyFormat,
+  ExpressionParser,
+  ExtensionProperties,
+  OutputKeys,
+  OutputSource,
   clone,
+  create,
   equals,
-} from '@microsoft/utils-logic-apps';
+  getBrandColorFromConnector,
+  getIconUriFromConnector,
+  getIntl,
+  getObjectPropertyValue,
+  isFunction,
+  isStringLiteral,
+  isTemplateExpression,
+  parseErrorMessage,
+  safeSetObjectPropertyValue,
+  unmap,
+} from '@microsoft/logic-apps-shared';
+import { ValueSegmentType, generateSchemaFromJsonString } from '@microsoft/designer-ui';
+import type {
+  Expression,
+  ExpressionFunction,
+  ExpressionLiteral,
+  OpenAPIV2,
+  OpenApiSchema,
+  OperationManifest,
+  OutputParameter,
+  OutputParameters,
+} from '@microsoft/logic-apps-shared';
 import type { Dispatch } from '@reduxjs/toolkit';
 
 export const toOutputInfo = (output: OutputParameter): OutputInfo => {
@@ -96,25 +111,29 @@ export const removeAliasingKeyRedundancies = (openAPIkey: string): string => {
   return pathSegments.join('.');
 };
 
-export const getUpdatedManifestForSpiltOn = (manifest: OperationManifest, splitOn: string | undefined): OperationManifest => {
+export const getUpdatedManifestForSplitOn = (manifest: OperationManifest, splitOn: string | undefined): OperationManifest => {
   const intl = getIntl();
   const invalidSplitOn = intl.formatMessage(
     {
-      defaultMessage: `Invalid split on format in '{splitOn}'.`,
+      defaultMessage: `Invalid split on format in ''{splitOn}''.`,
+      id: 'OrPVcU',
       description: 'Error message for invalid split on value.',
     },
     { splitOn }
   );
 
-  if (splitOn === undefined) {
+  if (splitOn === undefined || splitOn === Constants.SETTINGS.SPLITON.AUTOLOAD) {
     return manifest;
-  } else if (typeof splitOn === 'string') {
+  }
+  if (typeof splitOn === 'string') {
     const updatedManifest = clone(manifest);
     if (!isTemplateExpression(splitOn)) {
       throw new AssertionException(AssertionErrorCode.INVALID_SPLITON, invalidSplitOn);
     }
 
-    const isAliasPathParsingEnabled = manifest.properties.connectionReference?.referenceKeyFormat === ConnectionReferenceKeyFormat.OpenApi;
+    const isAliasPathParsingEnabled =
+      manifest.properties.connectionReference?.referenceKeyFormat === ConnectionReferenceKeyFormat.OpenApi ||
+      manifest.properties.connectionReference?.referenceKeyFormat === ConnectionReferenceKeyFormat.HybridTrigger;
     const parsedValue = ExpressionParser.parseTemplateExpression(splitOn, isAliasPathParsingEnabled);
     const properties: string[] = [];
     let manifestSection = updatedManifest.properties.outputs;
@@ -141,6 +160,7 @@ export const getUpdatedManifestForSpiltOn = (manifest: OperationManifest, splitO
           intl.formatMessage(
             {
               defaultMessage: `Invalid split on value ''{splitOn}'', cannot find in outputs.`,
+              id: '9W0lck',
               description:
                 'Error message for when split on value not found in operation outputs. Do not remove the double single quotes around the placeholder text, as it is needed to wrap the placeholder text in single quotes.',
             },
@@ -150,12 +170,21 @@ export const getUpdatedManifestForSpiltOn = (manifest: OperationManifest, splitO
       }
     }
 
+    if (manifestSection.type === undefined) {
+      updatedManifest.properties.outputs = {
+        properties: { ...updatedManifest.properties.outputs.properties, body: {} },
+        type: Constants.SWAGGER.TYPE.OBJECT,
+      };
+      return updatedManifest;
+    }
+
     if (manifestSection.type !== Constants.SWAGGER.TYPE.ARRAY) {
       throw new AssertionException(
         AssertionErrorCode.INVALID_SPLITON,
         intl.formatMessage(
           {
             defaultMessage: `Invalid type on split on value ''{splitOn}'', split on not in array.`,
+            id: 'mPuXlv',
             description:
               'Error message for when split on array is invalid. Do not remove the double single quotes around the placeholder text, as it is needed to wrap the placeholder text in single quotes.',
           },
@@ -164,20 +193,13 @@ export const getUpdatedManifestForSpiltOn = (manifest: OperationManifest, splitO
       );
     }
 
-    const manifestItems: OpenAPIV2.SchemaObject | undefined = manifestSection.items;
-    const clonedManifestItems = clone(manifestItems);
-    const clonedManifestProperties = clonedManifestItems?.properties;
-
-    if (clonedManifestProperties) {
-      for (const itemName of Object.keys(clonedManifestProperties)) {
-        const splitOnItem = clonedManifestProperties[itemName];
-        convertSchemaAliasesForSplitOn(splitOnItem);
-      }
-    }
+    const manifestItems: OpenAPIV2.SchemaObject | undefined = clone(manifestSection.items);
+    const updatedManifestItems = isAliasPathParsingEnabled ? getUpdatedAliasInItemProperties(manifestItems) : manifestItems;
 
     updatedManifest.properties.outputs = {
       properties: {
-        body: clonedManifestItems,
+        ...updatedManifest.properties.outputs.properties,
+        body: updatedManifestItems,
       },
       type: Constants.SWAGGER.TYPE.OBJECT,
     };
@@ -188,13 +210,29 @@ export const getUpdatedManifestForSpiltOn = (manifest: OperationManifest, splitO
   throw new AssertionException(AssertionErrorCode.INVALID_SPLITON, invalidSplitOn);
 };
 
+const getUpdatedAliasInItemProperties = (schemaItem: OpenAPIV2.SchemaObject | undefined): OpenAPIV2.SchemaObject | undefined => {
+  const properties = schemaItem?.properties;
+
+  if (properties) {
+    for (const itemName of Object.keys(properties)) {
+      const splitOnItem = properties[itemName];
+      convertSchemaAliasesForSplitOn(splitOnItem);
+    }
+  }
+
+  return schemaItem;
+};
+
 const convertSchemaAliasesForSplitOn = (schema: OpenAPIV2.SchemaObject): void => {
   // Copy to local scope since we intentionally want to modify it in-place.
   const schemaLocal = schema;
 
   const aliasExtension = ExtensionProperties.Alias;
   const originalSchemaAlias = schemaLocal[aliasExtension];
-  schemaLocal[aliasExtension] = `body/${originalSchemaAlias}`;
+
+  if (originalSchemaAlias) {
+    schemaLocal[aliasExtension] = `body/${originalSchemaAlias}`;
+  }
 
   const schemaProperties = schemaLocal.properties;
   if (schemaProperties) {
@@ -224,14 +262,16 @@ export const isSupportedSplitOnExpression = (expression: Expression): boolean =>
   return true;
 };
 
-export const getSplitOnOptions = (outputs: NodeOutputs): string[] => {
-  let arrayOutputs = unmap(outputs.originalOutputs ?? outputs.outputs).filter((output) =>
+export const getSplitOnOptions = (outputs: NodeOutputs | undefined, isManifestBasedOperation: boolean): string[] => {
+  let arrayOutputs = unmap(outputs?.originalOutputs ?? outputs?.outputs).filter((output) =>
     equals(output.type, Constants.SWAGGER.TYPE.ARRAY)
   );
 
   // make sure keys are not redundant due to aliasing key format
   arrayOutputs = arrayOutputs.map((output) => {
-    if (!output.alias) return output;
+    if (!output.alias) {
+      return output;
+    }
     return { ...output, key: removeAliasingKeyRedundancies(output.key) };
   });
 
@@ -241,10 +281,12 @@ export const getSplitOnOptions = (outputs: NodeOutputs): string[] => {
   // should not be included.
   const bodyLevelArrayMatches = arrayOutputs.filter((output) => output.key === 'body.$');
   if (bodyLevelArrayMatches.length === 1) {
-    return bodyLevelArrayMatches.map(getExpressionValue);
+    return bodyLevelArrayMatches.map((output) => getExpressionValueForTriggerOutput(output, isManifestBasedOperation));
   }
 
-  return arrayOutputs.filter((output) => !output.isInsideArray && !output.parentArray).map(getExpressionValue);
+  return arrayOutputs
+    .filter((output) => !output.isInsideArray && !output.parentArray)
+    .map((output) => getExpressionValueForTriggerOutput(output, isManifestBasedOperation));
 };
 
 export const getUpdatedManifestForSchemaDependency = (manifest: OperationManifest, inputs: NodeInputs): OperationManifest => {
@@ -265,15 +307,16 @@ export const getUpdatedManifestForSchemaDependency = (manifest: OperationManifes
       const segment = inputParameter.value[0];
       let schemaToReplace: OpenAPIV2.SchemaObject | undefined;
       switch (schema) {
-        case 'Value':
+        case 'Value': {
           if (segment.type === ValueSegmentType.LITERAL) {
             try {
               schemaToReplace = JSON.parse(segment.value);
             } catch {} // eslint-disable-line no-empty
           }
           break;
+        }
 
-        case 'ValueSchema':
+        case 'ValueSchema': {
           if (segment.type === ValueSegmentType.TOKEN) {
             // We only support getting schema from array tokens for now.
             if (segment.token?.type === Constants.SWAGGER.TYPE.ARRAY) {
@@ -281,23 +324,25 @@ export const getUpdatedManifestForSchemaDependency = (manifest: OperationManifes
             }
           } else {
             // TODO - Add code to generate schema from value input
-            schemaToReplace = generateSchemaFromJsonString(segment.value);
+            try {
+              schemaToReplace = generateSchemaFromJsonString(segment.value);
+            } catch {} // eslint-disable-line no-empty
           }
           break;
+        }
 
-        case 'UriTemplate':
+        case 'UriTemplate': {
           if (segment.type === ValueSegmentType.LITERAL) {
             const parameterSegments = segment.value ? segment.value.match(/{(.*?)}/g) : undefined;
             if (parameterSegments) {
               const parameters = parameterSegments.map((parameter) => parameter.slice(1, -1));
               schemaToReplace = {
                 properties: parameters.reduce((properties: Record<string, any>, parameter: string) => {
-                  return {
-                    [parameter]: {
-                      type: Constants.SWAGGER.TYPE.STRING,
-                      title: parameter,
-                    },
+                  properties[parameter] = {
+                    type: Constants.SWAGGER.TYPE.STRING,
+                    title: parameter,
                   };
+                  return properties;
                 }, {}),
                 required: parameters,
               };
@@ -305,13 +350,40 @@ export const getUpdatedManifestForSchemaDependency = (manifest: OperationManifes
           }
 
           break;
+        }
 
         default:
           break;
       }
 
       const currentSchemaValue = getObjectPropertyValue(updatedManifest.properties.outputs, outputLocation);
-      safeSetObjectPropertyValue(updatedManifest.properties.outputs, outputLocation, { ...currentSchemaValue, ...schemaToReplace });
+
+      const isRequestApiConnectionTrigger =
+        !!updatedManifest.properties?.inputs?.properties?.schema?.['x-ms-editor-options']?.isRequestApiConnectionTrigger;
+
+      let schemaValue: OpenApiSchema;
+      let shouldMerge: boolean;
+      // if schema contains static object returned from RP, merge the current schema value and new schema value
+      if (
+        isRequestApiConnectionTrigger &&
+        schemaToReplace &&
+        ('rows' in schemaToReplace || (schemaToReplace.properties && 'rows' in schemaToReplace.properties))
+      ) {
+        if ('rows' in currentSchemaValue) {
+          if (schemaToReplace.properties && 'rows' in schemaToReplace.properties) {
+            schemaValue = { ...currentSchemaValue, ...schemaToReplace.properties };
+          } else {
+            schemaValue = { ...currentSchemaValue, ...schemaToReplace };
+          }
+          shouldMerge = true;
+        } else {
+          continue;
+        }
+      } else {
+        schemaValue = { ...currentSchemaValue, ...schemaToReplace };
+        shouldMerge = false;
+      }
+      safeSetObjectPropertyValue(updatedManifest.properties.outputs, outputLocation, schemaValue, shouldMerge);
     }
   }
 
@@ -325,12 +397,11 @@ const getSplitOnArrayName = (splitOnValue: string): string | undefined => {
       const parsedValue = ExpressionParser.parseTemplateExpression(splitOnValue);
       if (isSupportedSplitOnExpression(parsedValue)) {
         const { dereferences } = parsedValue as ExpressionFunction;
-        return !dereferences.length
-          ? undefined
-          : dereferences.map((dereference) => (dereference.expression as ExpressionLiteral).value).join('.');
-      } else {
-        return undefined;
+        return dereferences.length
+          ? dereferences.map((dereference) => (dereference.expression as ExpressionLiteral).value).join('.')
+          : undefined;
       }
+      return undefined;
     } catch {
       // If parsing fails, the splitOn expression is not supported.
       return undefined;
@@ -380,34 +451,54 @@ export const loadDynamicOutputsInNode = async (
   connectionReference: ConnectionReference | undefined,
   outputDependencies: Record<string, DependencyInfo>,
   nodeInputs: NodeInputs,
-  nodeMetadata: any,
   settings: Settings,
+  workflowParameters: Record<string, WorkflowParameterDefinition>,
+  workflowKind: WorkflowKind | undefined,
+  forceEnableSplitOn: boolean,
   dispatch: Dispatch
 ): Promise<void> => {
+  dispatch(clearDynamicIO({ nodeId, inputs: false, outputs: true }));
+
   for (const outputKey of Object.keys(outputDependencies)) {
     const info = outputDependencies[outputKey];
-    dispatch(clearDynamicOutputs(nodeId));
-
     if (isDynamicDataReadyToLoad(info)) {
       if (info.dependencyType === 'StaticSchema') {
-        updateOutputsAndTokens(nodeId, operationInfo, dispatch, isTrigger, nodeInputs, settings, /* shouldProcessSettings */ true);
+        updateOutputsAndTokens(
+          nodeId,
+          operationInfo,
+          dispatch,
+          isTrigger,
+          nodeInputs,
+          settings,
+          true /* shouldProcessSettings */,
+          workflowKind,
+          forceEnableSplitOn
+        );
       } else {
         try {
-          const outputSchema = await getDynamicSchema(info, nodeInputs, nodeMetadata, operationInfo, connectionReference);
+          const outputSchema = await getDynamicSchema(
+            info,
+            nodeInputs,
+            operationInfo,
+            connectionReference,
+            /* variables */ undefined,
+            /* idReplacements */ undefined,
+            workflowParameters
+          );
           let schemaOutputs = outputSchema ? getDynamicOutputsFromSchema(outputSchema, info.parameter as OutputParameter) : {};
 
           if (settings.splitOn?.value?.enabled) {
             schemaOutputs = updateOutputsForBatchingTrigger(schemaOutputs, settings.splitOn?.value?.value);
           }
 
-          const dynamicOutputs = Object.keys(schemaOutputs).reduce((result: Record<string, OutputInfo>, outputKey: string) => {
-            const outputInfo = toOutputInfo(schemaOutputs[outputKey]);
-            return { ...result, [outputInfo.key]: outputInfo };
-          }, {});
-
+          const dynamicOutputs: Record<string, OutputInfo> = {};
+          for (const [outputKey, outputValue] of Object.entries(schemaOutputs)) {
+            dynamicOutputs[outputKey] = toOutputInfo(outputValue);
+          }
           dispatch(addDynamicOutputs({ nodeId, outputs: dynamicOutputs }));
 
-          let iconUri: string, brandColor: string;
+          let iconUri: string;
+          let brandColor: string;
           if (OperationManifestService().isSupported(operationInfo.type, operationInfo.kind)) {
             const manifest = await getOperationManifest(operationInfo);
             iconUri = manifest.properties.iconUri;
@@ -431,15 +522,15 @@ export const loadDynamicOutputsInNode = async (
             })
           );
         } catch (error: any) {
-          const message = error.message as string;
-          const errorMessage = getIntl().formatMessage(
+          const intl = getIntl();
+          const message = parseErrorMessage(error);
+          const errorMessage = intl.formatMessage(
             {
-              defaultMessage: `Failed to retrive dynamic outputs, outputs of this operation might not be visible in subsequent actions. Error details: {message}`,
+              defaultMessage: `Failed to retrieve dynamic outputs. As a result, this operation's outputs might not be visible in subsequent actions. Error details: {message}`,
+              id: 'uOWkHS',
               description: 'Error message to show when loading dynamic outputs failed.',
             },
-            {
-              message,
-            }
+            { message }
           );
 
           dispatch(
@@ -454,6 +545,16 @@ export const loadDynamicOutputsInNode = async (
   }
 };
 
-const getExpressionValue = ({ key, required }: OutputInfo): string => {
-  return `@${getTokenExpressionValueForManifestBasedOperation(key, false, undefined, undefined, !!required)}`;
+const getExpressionValueForTriggerOutput = ({ key, required, source }: OutputInfo, isManifestBasedOperation: boolean): string => {
+  if (isManifestBasedOperation) {
+    return `@${getTokenExpressionValueForManifestBasedOperation(
+      key,
+      /* isInsideArray */ false,
+      /* loopSource */ undefined,
+      /* actionName */ undefined,
+      !!required
+    )}`;
+  }
+  const method = getTokenExpressionMethodFromKey(key, /* actionName */ undefined, source);
+  return `@${generateExpressionFromKey(method, key, /* actionName */ undefined, /* isInsideArray */ false, !!required)}`;
 };

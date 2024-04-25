@@ -2,17 +2,20 @@ import constants from '../constants';
 import type { ValueSegment } from '../editor';
 import { EditorCollapseToggle } from '../editor';
 import type { BaseEditorProps } from '../editor/base';
-import { initializeDictionaryValidation } from '../editor/base/utils/helper';
+import { convertKeyValueItemToSegments } from '../editor/base/utils/keyvalueitem';
 import { CollapsedDictionary } from './collapsedDictionary';
 import { ExpandedDictionary } from './expandeddictionary';
-import { convertItemsToSegments } from './util/deserializecollapseddictionary';
+import { guid } from '@microsoft/logic-apps-shared';
 import { useState } from 'react';
+import { useIntl } from 'react-intl';
 
-export enum DictionaryType {
-  DEFAULT = 'default',
-  TABLE = 'table',
-}
+export const DictionaryType = {
+  DEFAULT: 'default',
+  TABLE: 'table',
+} as const;
+export type DictionaryType = (typeof DictionaryType)[keyof typeof DictionaryType];
 export interface DictionaryEditorItemProps {
+  id: string;
   key: ValueSegment[];
   value: ValueSegment[];
 }
@@ -34,15 +37,16 @@ export const DictionaryEditor: React.FC<DictionaryEditorProps> = ({
   valueTitle,
   dictionaryType = DictionaryType.DEFAULT,
   keyType = constants.SWAGGER.TYPE.STRING,
-  valueType,
+  valueType = constants.SWAGGER.TYPE.STRING,
   getTokenPicker,
   onChange,
   ...baseEditorProps
 }): JSX.Element => {
-  const [collapsed, setCollapsed] = useState(!initialItems ?? false);
+  const intl = useIntl();
+  const [collapsed, setCollapsed] = useState(!initialItems);
   const [items, setItems] = useState(initialItems);
   const [collapsedValue, setCollapsedValue] = useState<ValueSegment[]>(initialValue);
-  const [isValid, setIsValid] = useState(initializeDictionaryValidation(initialValue));
+  const [isValid, setIsValid] = useState(false);
 
   const toggleCollapsed = () => {
     setCollapsed(!collapsed);
@@ -50,7 +54,7 @@ export const DictionaryEditor: React.FC<DictionaryEditorProps> = ({
 
   const updateItems = (newItems: DictionaryEditorItemProps[]) => {
     setItems(newItems);
-    const objectValue = convertItemsToSegments(newItems);
+    const objectValue = convertKeyValueItemToSegments(newItems, keyType, valueType);
     setCollapsedValue(objectValue);
 
     if (!collapsed) {
@@ -58,41 +62,63 @@ export const DictionaryEditor: React.FC<DictionaryEditorProps> = ({
     }
   };
 
-  const handleBlur = (): void => {
+  const handleCollapsedBlur = (): void => {
     onChange?.({ value: collapsedValue, viewModel: { items: isValid ? items : undefined } });
   };
 
+  const expandedLabel: string = intl.formatMessage({
+    defaultMessage: 'Switch to text mode',
+    id: 'xXVu2y',
+    description: 'Label for editor toggle button when in expanded mode',
+  });
+
+  const collapsedLabel: string = intl.formatMessage({
+    defaultMessage: 'Switch to key value mode',
+    id: 'dD8y1n',
+    description: 'Label for editor toggle button when in collapsed mode',
+  });
+
   return (
-    <div className="msla-dictionary-editor-container">
+    <div className="msla-dictionary-editor-container" data-automation-id={baseEditorProps.dataAutomationId}>
       {collapsed && !(dictionaryType === DictionaryType.TABLE) ? (
         <CollapsedDictionary
-          isValid={isValid}
-          isTrigger={baseEditorProps.isTrigger}
           readonly={baseEditorProps.readonly}
           collapsedValue={collapsedValue}
+          keyType={keyType}
+          valueType={valueType}
+          tokenPickerButtonProps={baseEditorProps.tokenPickerButtonProps}
           getTokenPicker={getTokenPicker}
-          setItems={updateItems}
+          setItems={(newItems: DictionaryEditorItemProps[]) => setItems(newItems)}
           setIsValid={setIsValid}
           setCollapsedValue={(val: ValueSegment[]) => setCollapsedValue(val)}
-          onBlur={handleBlur}
+          onBlur={handleCollapsedBlur}
+          tokenMapping={baseEditorProps.tokenMapping}
+          loadParameterValueFromString={baseEditorProps.loadParameterValueFromString}
         />
       ) : (
         <ExpandedDictionary
-          items={items ?? [{ key: [], value: [] }]}
-          isTrigger={baseEditorProps.isTrigger}
+          items={items ?? [{ key: [], value: [], id: guid() }]}
           readonly={baseEditorProps.readonly}
           keyTitle={keyTitle}
           valueTitle={valueTitle}
           keyType={keyType}
           valueType={valueType}
           setItems={updateItems}
+          tokenPickerButtonProps={baseEditorProps.tokenPickerButtonProps}
           getTokenPicker={getTokenPicker}
+          tokenMapping={baseEditorProps.tokenMapping}
+          loadParameterValueFromString={baseEditorProps.loadParameterValueFromString}
         />
       )}
 
       <div className="msla-dictionary-commands">
         {!disableToggle && !(dictionaryType === DictionaryType.TABLE) ? (
-          <EditorCollapseToggle collapsed={collapsed} disabled={!isValid || baseEditorProps.readonly} toggleCollapsed={toggleCollapsed} />
+          <EditorCollapseToggle
+            label={collapsed ? collapsedLabel : expandedLabel}
+            collapsed={collapsed}
+            disabled={collapsed && !isValid}
+            toggleCollapsed={toggleCollapsed}
+          />
         ) : null}
       </div>
     </div>

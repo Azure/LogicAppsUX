@@ -1,7 +1,82 @@
 {
   "name": "@microsoft/logic-apps-data-mapper",
-  "version": "2.15.16",
+  "version": "4.7.0",
+  "dependencies": {
+    "@fluentui/azure-themes": "8.5.70",
+    "@fluentui/react": "8.110.2",
+    "@fluentui/react-components": "9.42.0",
+    "@fluentui/react-hooks": "8.6.20",
+    "@fluentui/react-icons": "2.0.224",
+    "@fluentui/react-migration-v8-v9": "^9.2.16",
+    "@fluentui/react-portal-compat": "^9.0.60",
+    "@microsoft/applicationinsights-react-js": "3.4.0",
+    "@microsoft/applicationinsights-web": "2.8.9",
+    "@microsoft/designer-ui": "workspace:*",
+    "@microsoft/logic-apps-designer": "workspace:*",
+    "@microsoft/logic-apps-shared": "workspace:*",
+    "@react-hookz/web": "22.0.0",
+    "@reduxjs/toolkit": "1.8.5",
+    "fuse.js": "6.6.2",
+    "immer": "9.0.15",
+    "js-yaml": "4.1.0",
+    "pathfinding": "0.4.18",
+    "react-dnd": "16.0.1",
+    "react-dnd-html5-backend": "16.0.1",
+    "react-icons": "4.8.0",
+    "react-intl": "6.3.0",
+    "react-query": "3.39.3",
+    "react-redux": "8.0.2",
+    "reactflow": "11.11.1",
+    "redux-thunk": "2.4.2",
+    "redux-undo": "1.1.0"
+  },
+  "devDependencies": {
+    "@types/js-yaml": "^4.0.9",
+    "@types/pathfinding": "^0.0.9"
+  },
+  "engines": {
+    "node": ">=12"
+  },
+  "exports": {
+    ".": {
+      "types": "./src/index.ts",
+      "import": "./src/index.ts",
+      "default": "./src/index.ts"
+    },
+    "./package.json": "./package.json"
+  },
+  "files": [
+    "build/lib/**/*",
+    "src"
+  ],
+  "license": "MIT",
+  "main": "src/index.ts",
+  "module": "src/index.ts",
+  "peerDependencies": {
+    "react": "^16.4.0 || ^17.0.0 || ^18.0.0",
+    "react-dom": "^16.4.0 || ^17.0.0 || ^18.0.0"
+  },
+  "publishConfig": {
+    "main": "build/lib/index.cjs",
+    "module": "build/lib/index.js",
+    "types": "build/lib/index.d.ts",
+    "exports": {
+      ".": {
+        "types:": "./build/lib/index.d.ts",
+        "import": "./build/lib/index.js",
+        "default": "./build/lib/index.cjs"
+      },
+      "./package.json": "./package.json",
+      "./build/lib/index.css": "./build/lib/index.css"
+    }
+  },
   "scripts": {
-    "yalcpush": "yalc push ../../dist/libs/data-mapper"
-  }
+    "build:lib": "tsup && tsc --emitDeclarationOnly",
+    "publish:local": "pnpm unpublish --force && pnpm publish --no-git-checks --registry http://localhost:4873",
+    "test:lib": "vitest --retry=3",
+    "unpublish:local": "pnpm unpublish --force"
+  },
+  "sideEffects": false,
+  "type": "module",
+  "types": "src/index.ts"
 }

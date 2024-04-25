@@ -2,12 +2,13 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
+import { Platform } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
-import { isString } from '@microsoft/utils-logic-apps';
+import { isString } from '@microsoft/logic-apps-shared';
 import type { IActionContext, IAzureQuickPickItem, IAzureQuickPickOptions } from '@microsoft/vscode-azext-utils';
 import { openUrl } from '@microsoft/vscode-azext-utils';
-import { FuncVersion, ProjectLanguage, WorkerRuntime } from '@microsoft/vscode-extension';
+import { FuncVersion, ProjectLanguage, WorkerRuntime } from '@microsoft/vscode-extension-logic-apps';
 import { ConfigurationTarget, Uri, workspace } from 'vscode';
 import type { WorkspaceConfiguration, WorkspaceFolder } from 'vscode';
 
@@ -19,8 +20,20 @@ import type { WorkspaceConfiguration, WorkspaceFolder } from 'vscode';
  */
 export function getGlobalSetting<T>(key: string, prefix: string = ext.prefix): T | undefined {
   const projectConfiguration: WorkspaceConfiguration = workspace.getConfiguration(prefix);
-  const result: { globalValue?: T } | undefined = projectConfiguration.inspect<T>(key);
-  return result && result.globalValue;
+  const result: { globalValue?: T; defaultValue?: T } | undefined = projectConfiguration.inspect<T>(key);
+  return result && (result.globalValue ?? result.defaultValue);
+}
+
+/**
+ * Updates a global setting in the VS Code configuration.
+ * @param {string} section - The section of the configuration to update.
+ * @param {T} value - The new value for the setting.
+ * @param {string} prefix - The prefix for the configuration section (default: ext.prefix).
+ * @returns A promise that resolves when the setting is updated.
+ */
+export async function updateGlobalSetting<T = string>(section: string, value: T, prefix: string = ext.prefix): Promise<void> {
+  const projectConfiguration: WorkspaceConfiguration = workspace.getConfiguration(prefix);
+  await projectConfiguration.update(section, value, ConfigurationTarget.Global);
 }
 
 /**
@@ -40,9 +53,8 @@ export function getWorkspaceSettingFromAnyFolder(key: string, prefix: string = e
       }
     }
     return result;
-  } else {
-    return getGlobalSetting(key, prefix);
   }
+  return getGlobalSetting(key, prefix);
 }
 
 export function getFunctionsWorkerRuntime(language: string | undefined): WorkerRuntime | undefined {
@@ -88,7 +100,7 @@ function getScope(fsPath: WorkspaceFolder | string | undefined): Uri | Workspace
 }
 
 function osSupportsVersion(version: FuncVersion | undefined): boolean {
-  return version !== FuncVersion.v1 || process.platform === 'win32';
+  return version !== FuncVersion.v1 || process.platform === Platform.windows;
 }
 
 /**
@@ -121,12 +133,4 @@ export async function promptForFuncVersion(context: IActionContext, message?: st
   } else {
     return version;
   }
-}
-
-/**
- * Uses ext.prefix 'azureFunctions' unless otherwise specified
- */
-export async function updateGlobalSetting<T = string>(section: string, value: T, prefix: string = ext.prefix): Promise<void> {
-  const projectConfiguration: WorkspaceConfiguration = workspace.getConfiguration(prefix);
-  await projectConfiguration.update(section, value, ConfigurationTarget.Global);
 }

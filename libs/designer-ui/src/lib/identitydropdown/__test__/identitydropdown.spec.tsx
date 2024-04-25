@@ -2,7 +2,7 @@ import type { IdentityDropdownProps } from '../index';
 import { IdentityDropdown } from '../index';
 import { setIconOptions } from '@fluentui/react';
 import renderer from 'react-test-renderer';
-
+import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 describe('lib/identitydropdown', () => {
   let minimal: IdentityDropdownProps;
 
@@ -16,7 +16,7 @@ describe('lib/identitydropdown', () => {
     minimal = {
       defaultSelectedKey: 'key1',
       dropdownOptions: [{ key: 'key1', text: 'text1' }],
-      handleChange: jest.fn(),
+      handleChange: vi.fn(),
       readOnly: false,
     };
   });

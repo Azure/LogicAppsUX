@@ -2,7 +2,7 @@ import constants from '../../../common/constants';
 import type { NodeOperation } from '../../../core/state/operation/operationMetadataSlice';
 import type { NodesMetadata } from '../../../core/state/workflow/workflowInterfaces';
 import { getAllParentsForNode } from '../../../core/utils/graph';
-import type { LogicAppsV2 } from '@microsoft/utils-logic-apps';
+import { getRecordEntry, type LogicAppsV2 } from '@microsoft/logic-apps-shared';
 
 /**
  * Gets number of loops for loop nodes.
@@ -17,10 +17,6 @@ export const getForeachItemsCount = (action: LogicAppsV2.WorkflowRunAction): num
     return iterationCount;
   }
 
-  if (typeof repetitionCount === 'number') {
-    return repetitionCount;
-  }
-
   // Foreach actions have a foreachItemsCount property in its inputsLink's metadata object when using the 2016-06-01 or later API.
   if (inputsLink) {
     const { metadata } = inputsLink;
@@ -30,6 +26,10 @@ export const getForeachItemsCount = (action: LogicAppsV2.WorkflowRunAction): num
         return foreachItemsCount;
       }
     }
+  }
+
+  if (typeof repetitionCount === 'number') {
+    return repetitionCount;
   }
 
   return undefined;
@@ -51,12 +51,10 @@ export const getRepetitionName = (
   let repetitionName = '';
   const parentsForNode = getAllParentsForNode(id, nodesMetadata);
   parentsForNode.forEach((parent) => {
-    const isLoopScope = operationInfo[parent]?.type
-      ? operationInfo[parent]?.type.toLowerCase() === constants.NODE.TYPE.FOREACH ||
-        operationInfo[parent]?.type.toLowerCase() === constants.NODE.TYPE.UNTIL
-      : false;
+    const parentType = getRecordEntry(operationInfo, parent)?.type?.toLowerCase();
+    const isLoopScope = parentType ? parentType === constants.NODE.TYPE.FOREACH || parentType === constants.NODE.TYPE.UNTIL : false;
     if (isLoopScope) {
-      const zeroBasedCurrent = nodesMetadata[parent]?.runIndex;
+      const zeroBasedCurrent = getRecordEntry(nodesMetadata, parent)?.runIndex;
       repetitionName = repetitionName ? `${String(zeroBasedCurrent).padStart(6, '0')}-${repetitionName}` : String(index).padStart(6, '0');
     }
   });

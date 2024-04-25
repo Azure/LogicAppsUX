@@ -3,15 +3,14 @@ import { GroupType } from '.';
 import { Checkbox } from '../checkbox';
 import constants from '../constants';
 import type { ValueSegment } from '../editor';
-import { ValueSegmentType } from '../editor';
 import type { ChangeState, GetTokenPickerHandler } from '../editor/base';
-import { notEqual } from '../editor/base/utils/helper';
+import { TokenPickerButtonLocation } from '../editor/base/plugins/tokenpickerbutton';
+import { createEmptyLiteralValueSegment, notEqual } from '../editor/base/utils/helper';
 import { StringEditor } from '../editor/string';
-import type { MoveOption } from './Group';
 import { RowDropdown, RowDropdownOptions } from './RowDropdown';
+import { operandNotEmpty } from './helper';
 import type { ICalloutProps, IIconProps, IOverflowSetItemProps, IOverflowSetStyles } from '@fluentui/react';
 import { css, IconButton, DirectionalHint, TooltipHost, OverflowSet } from '@fluentui/react';
-import { guid } from '@microsoft/utils-logic-apps';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
 
@@ -26,8 +25,6 @@ const menuIconProps: IIconProps = {
   iconName: 'More',
 };
 
-const emptyValueSegmentArray: ValueSegment[] = [{ type: ValueSegmentType.LITERAL, value: '', id: guid() }];
-
 type RowProps = {
   checked?: boolean;
   operand1?: ValueSegment[];
@@ -37,15 +34,18 @@ type RowProps = {
   showDisabledDelete?: boolean;
   isGroupable?: boolean;
   groupedItems: GroupedItems[];
-  isTop: boolean;
-  isBottom: boolean;
+  // isTop: boolean;
+  // isBottom: boolean;
+  tokenMapping?: Record<string, ValueSegment>;
+  loadParameterValueFromString?: (value: string) => ValueSegment[];
   getTokenPicker: GetTokenPickerHandler;
   readonly?: boolean;
-  handleMove?: (childIndex: number, moveOption: MoveOption) => void;
+  // handleMove?: (childIndex: number, moveOption: MoveOption) => void;
   handleDeleteChild?: (indexToDelete: number | number[]) => void;
   forceSingleCondition?: boolean;
   handleUpdateParent: (newProps: GroupItems, index: number) => void;
   clearEditorOnTokenInsertion?: boolean;
+  isSimpleQueryBuilder?: boolean;
 };
 
 export const Row = ({
@@ -64,8 +64,10 @@ export const Row = ({
   forceSingleCondition,
   readonly,
   clearEditorOnTokenInsertion,
+  isSimpleQueryBuilder,
   handleDeleteChild,
   handleUpdateParent,
+  ...baseEditorProps
 }: RowProps) => {
   const intl = useIntl();
   const [key, setKey] = useState<ValueSegment[]>(operand1);
@@ -87,6 +89,7 @@ export const Row = ({
 
   const deleteButton = intl.formatMessage({
     defaultMessage: 'Delete',
+    id: 'bGtEPd',
     description: 'delete button',
   });
 
@@ -102,6 +105,7 @@ export const Row = ({
 
   const makeGroupButton = intl.formatMessage({
     defaultMessage: 'Make Group',
+    id: 'ERVorY',
     description: 'Make group button',
   });
 
@@ -168,7 +172,7 @@ export const Row = ({
           checked: checked,
           operand1: newState.value,
           operator: operator ?? 'equals',
-          operand2: operandNotEmpty(operand2) ? operand2 : emptyValueSegmentArray,
+          operand2: operandNotEmpty(operand2) ? operand2 : [createEmptyLiteralValueSegment()],
         },
         index
       );
@@ -180,9 +184,9 @@ export const Row = ({
       {
         type: GroupType.ROW,
         checked: checked,
-        operand1: operandNotEmpty(operand1) ? operand1 : emptyValueSegmentArray,
+        operand1: operandNotEmpty(operand1) ? operand1 : [createEmptyLiteralValueSegment()],
         operator: newState.value[0].value,
-        operand2: operandNotEmpty(operand2) ? operand2 : emptyValueSegmentArray,
+        operand2: operandNotEmpty(operand2) ? operand2 : [createEmptyLiteralValueSegment()],
       },
       index
     );
@@ -194,7 +198,7 @@ export const Row = ({
         {
           type: GroupType.ROW,
           checked: checked,
-          operand1: operandNotEmpty(operand1) ? operand1 : emptyValueSegmentArray,
+          operand1: operandNotEmpty(operand1) ? operand1 : [createEmptyLiteralValueSegment()],
           operator: operator ?? 'equals',
           operand2: newState.value,
         },
@@ -217,6 +221,7 @@ export const Row = ({
 
     const rowCommands = intl.formatMessage({
       defaultMessage: 'More commands',
+      id: 'GdGm4T',
       description: 'Label for commands in row',
     });
     return (
@@ -233,6 +238,7 @@ export const Row = ({
 
   const rowValueInputPlaceholder = intl.formatMessage({
     defaultMessage: 'Choose a value',
+    id: 'ydqOly',
     description: 'placeholder text for row values',
   });
 
@@ -261,17 +267,25 @@ export const Row = ({
           clearEditorOnTokenInsertion={clearEditorOnTokenInsertion}
           onChange={handleKeyChange}
           editorBlur={handleKeySave}
+          tokenPickerButtonProps={{
+            location: TokenPickerButtonLocation.Left,
+            newlineVerticalOffset: 16,
+            horizontalOffSet: isSimpleQueryBuilder ? undefined /* uses default of 38*/ : 33,
+          }}
+          {...baseEditorProps}
         />
         <RowDropdown disabled={readonly || key.length === 0} condition={operator} onChange={handleSelectedOption} key={operator} />
         <StringEditor
           valueType={constants.SWAGGER.TYPE.ANY}
-          readonly={readonly || key.length === 0}
+          readonly={readonly || (key.length === 0 && operand2.length === 0)}
           className={'msla-querybuilder-row-value-input'}
           initialValue={operand2}
           placeholder={rowValueInputPlaceholder}
           getTokenPicker={getTokenPicker}
           editorBlur={handleValueSave}
           clearEditorOnTokenInsertion={clearEditorOnTokenInsertion}
+          tokenPickerButtonProps={{ location: TokenPickerButtonLocation.Left, newlineVerticalOffset: 16, horizontalOffSet: 33 }}
+          {...baseEditorProps}
         />
       </div>
       {forceSingleCondition ? null : (
@@ -281,15 +295,11 @@ export const Row = ({
           items={[]}
           overflowItems={rowMenuItems}
           onRenderOverflowButton={onRenderOverflowButton}
-          onRenderItem={function (_item: IOverflowSetItemProps) {
+          onRenderItem={(_item: IOverflowSetItemProps) => {
             throw new Error('No items in overflowset');
           }}
         />
       )}
     </div>
   );
-};
-
-const operandNotEmpty = (valSeg: ValueSegment[]): boolean => {
-  return valSeg.length > 0;
 };

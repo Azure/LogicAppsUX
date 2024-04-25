@@ -2,16 +2,25 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { dotnetPublishTaskLabel, func, funcWatchProblemMatcher, hostStartCommand, show64BitWarningSetting } from '../../../constants';
+import {
+  dotnetPublishTaskLabel,
+  funcDependencyName,
+  dotnetExtensionId,
+  func,
+  funcWatchProblemMatcher,
+  hostStartCommand,
+  show64BitWarningSetting,
+} from '../../../constants';
 import { localize } from '../../../localize';
+import { binariesExist } from '../../utils/binaries';
 import { getProjFiles, getTargetFramework, getDotnetDebugSubpath, tryGetFuncVersion } from '../../utils/dotnet/dotnet';
 import type { ProjectFile } from '../../utils/dotnet/dotnet';
 import { tryParseFuncVersion } from '../../utils/funcCoreTools/funcVersion';
 import { getWorkspaceSetting, updateGlobalSetting } from '../../utils/vsCodeConfig/settings';
 import { InitVSCodeStepBase } from './InitVSCodeStepBase';
 import { DialogResponses, nonNullProp, openUrl, parseError } from '@microsoft/vscode-azext-utils';
-import { FuncVersion, ProjectLanguage } from '@microsoft/vscode-extension';
-import type { IProjectWizardContext } from '@microsoft/vscode-extension';
+import { FuncVersion, ProjectLanguage } from '@microsoft/vscode-extension-logic-apps';
+import type { IProjectWizardContext } from '@microsoft/vscode-extension-logic-apps';
 import * as path from 'path';
 import type { MessageItem, TaskDefinition } from 'vscode';
 
@@ -20,7 +29,7 @@ export class DotnetInitVSCodeStep extends InitVSCodeStepBase {
   private debugSubpath: string;
 
   protected getRecommendedExtensions(language: ProjectLanguage): string[] {
-    const recs: string[] = ['ms-dotnettools.csharp'];
+    const recs: string[] = [dotnetExtensionId];
     if (language === ProjectLanguage.FSharp) {
       recs.push('ionide.ionide-fsharp');
     }
@@ -99,18 +108,28 @@ export class DotnetInitVSCodeStep extends InitVSCodeStepBase {
   protected getTasks(): TaskDefinition[] {
     const commonArgs: string[] = ['/property:GenerateFullPaths=true', '/consoleloggerparameters:NoSummary'];
     const releaseArgs: string[] = ['--configuration', 'Release'];
-
+    const funcBinariesExist = binariesExist(funcDependencyName);
+    const binariesOptions = funcBinariesExist
+      ? {
+          options: {
+            cwd: this.debugSubpath,
+            env: {
+              PATH: '${config:azureLogicAppsStandard.autoRuntimeDependenciesPath}\\NodeJs;${config:azureLogicAppsStandard.autoRuntimeDependenciesPath}\\DotNetSDK;$env:PATH',
+            },
+          },
+        }
+      : {};
     return [
       {
         label: 'clean',
-        command: 'dotnet',
+        command: '${config:azureLogicAppsStandard.dotnetBinaryPath}',
         args: ['clean', ...commonArgs],
         type: 'process',
         problemMatcher: '$msCompile',
       },
       {
         label: 'build',
-        command: 'dotnet',
+        command: '${config:azureLogicAppsStandard.dotnetBinaryPath}',
         args: ['build', ...commonArgs],
         type: 'process',
         dependsOn: 'clean',
@@ -122,26 +141,26 @@ export class DotnetInitVSCodeStep extends InitVSCodeStepBase {
       },
       {
         label: 'clean release',
-        command: 'dotnet',
+        command: '${config:azureLogicAppsStandard.dotnetBinaryPath}',
         args: ['clean', ...releaseArgs, ...commonArgs],
         type: 'process',
         problemMatcher: '$msCompile',
       },
       {
         label: dotnetPublishTaskLabel,
-        command: 'dotnet',
+        command: '${config:azureLogicAppsStandard.dotnetBinaryPath}',
         args: ['publish', ...releaseArgs, ...commonArgs],
         type: 'process',
         dependsOn: 'clean release',
         problemMatcher: '$msCompile',
       },
       {
-        type: func,
+        label: 'func: host start',
+        type: funcBinariesExist ? 'shell' : func,
         dependsOn: 'build',
-        options: {
-          cwd: this.debugSubpath,
-        },
-        command: hostStartCommand,
+        ...binariesOptions,
+        command: funcBinariesExist ? '${config:azureLogicAppsStandard.funcCoreToolsBinaryPath}' : hostStartCommand,
+        args: funcBinariesExist ? ['host', 'start'] : undefined,
         isBackground: true,
         problemMatcher: funcWatchProblemMatcher,
       },

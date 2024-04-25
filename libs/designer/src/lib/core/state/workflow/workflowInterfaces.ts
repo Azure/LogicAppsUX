@@ -1,5 +1,6 @@
 import type { WorkflowNode } from '../../parsers/models/workflowNode';
-import type { LogicAppsV2, SubgraphType } from '@microsoft/utils-logic-apps';
+import type { MessageLevel } from '@microsoft/designer-ui';
+import type { LogicAppsV2, SubgraphType } from '@microsoft/logic-apps-shared';
 
 export type SpecTypes = 'BJS' | 'CNCF';
 
@@ -16,8 +17,19 @@ export interface NodesMetadata {
   };
 }
 export type Operations = Record<string, LogicAppsV2.OperationDefinition>;
-export const operationIsAction = (operation: LogicAppsV2.OperationDefinition): operation is LogicAppsV2.ActionDefinition => {
-  return (operation as any).runAfter;
+
+export const WorkflowKind = {
+  STATEFUL: 'stateful',
+  STATELESS: 'stateless',
+} as const;
+export type WorkflowKind = (typeof WorkflowKind)[keyof typeof WorkflowKind] | undefined;
+
+export type ErrorMessage = {
+  nodeId: string;
+  level: MessageLevel;
+  subtitle: string; // ex. "Settings Errors"
+  content: string; // ex. "Trigger condition cannot be empty"
+  onRenderDetails?: () => React.ReactNode;
 };
 
 export interface WorkflowState {
@@ -32,4 +44,9 @@ export interface WorkflowState {
   newlyAddedOperations: Record<string, string>;
   runInstance: LogicAppsV2.RunInstanceDefinition | null;
   isDirty: boolean;
+  workflowKind: WorkflowKind;
+  originalDefinition: LogicAppsV2.WorkflowDefinition;
+  hostData: {
+    errorMessages: Partial<Record<MessageLevel, ErrorMessage[]>>;
+  };
 }

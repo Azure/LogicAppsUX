@@ -1,169 +1,256 @@
+import type { DownloadChunkMetadata, UploadChunkMetadata } from '@microsoft/logic-apps-shared';
 import type { DropdownSelectionChangeHandler, SectionProps, TextChangeHandler, ToggleHandler } from '..';
+import { SettingSectionName } from '..';
 import constants from '../../../common/constants';
 import type { Settings, SettingsSectionProps } from '../settingsection';
-import { SettingsSection, SettingLabel } from '../settingsection';
+import { SettingsSection } from '../settingsection';
+import { getSettingLabel } from '@microsoft/designer-ui';
 import { useIntl } from 'react-intl';
 
 export interface NetworkingSectionProps extends SectionProps {
+  chunkedTransferMode: boolean;
+  uploadChunkMetadata: UploadChunkMetadata | undefined;
+  downloadChunkMetadata: DownloadChunkMetadata | undefined;
   onAsyncPatternToggle: ToggleHandler;
   onAsyncResponseToggle: ToggleHandler;
   onRequestOptionsChange: TextChangeHandler;
   onSuppressHeadersToggle: ToggleHandler;
+  onPaginationToggle: ToggleHandler;
   onPaginationValueChange: TextChangeHandler;
   onHeadersOnResponseToggle: ToggleHandler;
   onContentTransferToggle: ToggleHandler;
-  chunkedTransferMode: boolean;
   onRetryPolicyChange: DropdownSelectionChangeHandler;
   onRetryCountChange: TextChangeHandler;
   onRetryIntervalChange: TextChangeHandler;
   onRetryMinIntervalChange: TextChangeHandler;
   onRetryMaxIntervalChange: TextChangeHandler;
+  onUploadChunkSizeChange: TextChangeHandler;
+  onDownloadChunkSizeChange: TextChangeHandler;
 }
 
 export const Networking = ({
   readOnly,
+  expanded,
+  validationErrors,
+  retryPolicy,
   suppressWorkflowHeaders,
   suppressWorkflowHeadersOnResponse,
   paging,
   uploadChunk,
+  uploadChunkMetadata,
+  downloadChunkMetadata,
   downloadChunkSize,
   asynchronous,
   disableAsyncPattern,
   requestOptions,
+  chunkedTransferMode,
   onAsyncPatternToggle,
   onAsyncResponseToggle,
   onRequestOptionsChange,
   onSuppressHeadersToggle,
+  onPaginationToggle,
   onPaginationValueChange,
   onHeadersOnResponseToggle,
   onContentTransferToggle,
-  chunkedTransferMode,
+  onUploadChunkSizeChange,
+  onDownloadChunkSizeChange,
   onRetryPolicyChange,
   onRetryCountChange,
   onRetryIntervalChange,
   onRetryMinIntervalChange,
   onRetryMaxIntervalChange,
-  expanded,
   onHeaderClick,
-  retryPolicy,
-  validationErrors,
 }: NetworkingSectionProps): JSX.Element => {
+  const minimumSize = uploadChunkMetadata?.minimumSize ?? downloadChunkMetadata?.minimumSize;
+  const maximumSize = uploadChunkMetadata?.maximumSize ?? downloadChunkMetadata?.maximumSize;
+
   const intl = useIntl();
-  const onText = intl.formatMessage({
-    defaultMessage: 'On',
-    description: 'label when setting is on',
-  });
-  const offText = intl.formatMessage({
-    defaultMessage: 'Off',
-    description: 'label when setting is off',
-  });
   const asyncPatternTitle = intl.formatMessage({
     defaultMessage: 'Asynchronous Pattern',
+    id: 'J/Kz1j',
     description: 'title for async pattern setting',
   });
   const asyncPatternTooltipText = intl.formatMessage({
-    defaultMessage:
-      "With the asynchronous pattern, if the remote server indicates that the request is accepted for processing with a 202 (Accepted) response, the Logic Apps engine will keep polling the URL specified in the response's location header until reaching a terminal state.",
+    defaultMessage: `With the asynchronous pattern, if the remote server indicates that the request is accepted for processing with a 202 (Accepted) response, the Logic Apps engine will keep polling the URL specified in the response's location header until reaching a terminal state.`,
+    id: '8j+a0n',
     description: 'description of asynchronous pattern setting',
   });
   const asyncResponseTitle = intl.formatMessage({
     defaultMessage: 'Asynchronous Response',
+    id: 'i/b3Ko',
     description: 'title for asynchronous response setting',
   });
   const asyncResponseTooltipText = intl.formatMessage({
     defaultMessage:
       'Asynchronous response allows a Logic App to respond with a 202 (Accepted) to indicate the request has been accepted for processing. A location header will be provided to retrieve the final state.',
+    id: 'qrxi0L',
     description: 'description of asynchronous response setting',
   });
   const requestOptionsTitle = intl.formatMessage({
-    defaultMessage: 'Request Options',
+    defaultMessage: 'Request Options - Timeout',
+    id: 'jO5Fet',
     description: 'title for request options setting',
   });
+  const requestOptionsPlaceholder = intl.formatMessage({
+    defaultMessage: 'Example: PT1S',
+    id: 'f7Janv',
+    description: 'Placeholder for time setting, leave PT1S untranslated',
+  });
   const requestOptionsTooltipText = intl.formatMessage({
-    defaultMessage:
-      "The maximum duration on a single outbound request from this action. If the request doesn't finish within this limit after running retries, the action fails.",
+    defaultMessage: `The maximum duration on a single outbound request from this action. If the request doesn't finish within this limit after running retries, the action fails`,
+    id: 'Dm0zAO',
     description: 'description of request options duration setting',
   });
-  const duration = intl.formatMessage({
+  const requestOptionsDescription = intl.formatMessage({
+    defaultMessage: 'Specify the duration in ISO 8601 format',
+    id: 'WS55UF',
+    description: 'description of request options duration setting',
+  });
+  const requestOptionsSublabel = intl.formatMessage({
     defaultMessage: 'Duration',
-    description: 'label for request options input',
+    id: 'viee6C',
+    description: 'sublabel for request options duration setting',
   });
   const suppressWorkflowHeadersTitle = intl.formatMessage({
     defaultMessage: 'Suppress workflow headers',
+    id: 'nZ4nLn',
     description: 'title for suppress workflow headers setting',
   });
   const suppressWorkflowHeadersTooltipText = intl.formatMessage({
     defaultMessage: 'Limit Logic Apps to not include workflow metadata headers in the outgoing request.',
+    id: 'mjS/k1',
     description: 'description of suppress woers setting',
   });
   const paginationTitle = intl.formatMessage({
     defaultMessage: 'Pagination',
-    description: 'title for pagination setting',
+    id: 'iTKrs8',
+    description: 'Title for pagination setting',
   });
   const paginationTooltipText = intl.formatMessage({
-    defaultMessage:
-      "Retrieve items to meet the specified threshold by following the continuation token. Due to connector's page size, the number returned may exceed the threshold.",
+    defaultMessage: 'Retrieve more results up to the pagination limit',
+    id: 'cJkSrD',
+    description: 'tooltip text of pagination setting',
+  });
+  const paginationDescription = intl.formatMessage({
+    defaultMessage: `Retrieve items to meet the specified threshold by following the continuation token. Due to connector's page size, the number returned may exceed the threshold.`,
+    id: 'C4NQ1J',
     description: 'description for pagination setting',
+  });
+  const paginationPlaceholder = intl.formatMessage({
+    defaultMessage: 'Threshold of items to return',
+    id: 'm8z4Yr',
+    description: 'placeholder for pagination setting',
   });
   const threshold = intl.formatMessage({
     defaultMessage: 'Threshold',
+    id: 'xQQ9ko',
     description: 'title for pagination user input',
   });
   const workflowHeadersOnResponseTitle = intl.formatMessage({
-    defaultMessage: 'Suppress workflow headers on response',
+    defaultMessage: 'Suppress Workflow Headers on Response',
+    id: '+v1RlQ',
     description: 'title for workflow headers on response setting',
   });
   const workflowHeadersOnResponseTooltipText = intl.formatMessage({
     defaultMessage: 'Limit Logic Apps to not include workflow metadata headers in the response.',
+    id: 'XsktQ/',
     description: 'description of workflow headers on response setting',
   });
   const networking = intl.formatMessage({
     defaultMessage: 'Networking',
+    id: 'i4C4aB',
     description: 'title for networking setting section',
   });
   const contentTransferTitle = intl.formatMessage({
     defaultMessage: 'Content Transfer',
+    id: 'oLtwMw',
     description: 'title for content transfer setting',
   });
-  const contentTransferDescription = intl.formatMessage({
-    defaultMessage:
-      'Specify the behavior and capabilities for transferring content over HTTP. Large messages may be split up into smaller requests to the connector to allow large message upload. Details can be found at http://aka.ms/logicapps-chunk#upload-content-in-chunks',
-    description: 'description of content transfer setting',
+  const uploadContentTransferDescription = intl.formatMessage({
+    defaultMessage: 'Specify the behavior and capabilities for transferring content over HTTP.',
+    id: '4BuCdw',
+    description: 'description of upload content transfer setting',
   });
+  const uploadContentTransferTooltip = intl.formatMessage({
+    defaultMessage:
+      'Large messages may be split up into smaller requests to the connector to allow large message upload. More details can be found at http://aka.ms/logicapps-chunk#upload-content-in-chunks',
+    id: 'lbq5E1',
+    description: 'description of upload content transfer setting',
+  });
+  const downloadContentTransferDescription = intl.formatMessage({
+    defaultMessage: 'Specify the behavior and capabilities for transferring content over HTTP.',
+    id: 'pfmki/',
+    description: 'description of download content transfer setting',
+  });
+  const contentTransferSublabel = intl.formatMessage({
+    defaultMessage: 'Allow chunking',
+    id: 'hMf2TA',
+    description: 'sublabel for content transfer setting',
+  });
+  const chunkedTransferNodeSizeLabel = intl.formatMessage({
+    defaultMessage: 'Chunk size',
+    id: 'STWbak',
+    description: 'label for chunked transfer node size',
+  });
+  const uploadChunkSizePlaceholder = intl.formatMessage(
+    {
+      defaultMessage: 'Specify upload chunk size between {minimumSize} and {maximumSize} Mb. Example: 10',
+      id: 'D6KzoS',
+      description: 'tooltip for upload chunk size setting',
+    },
+    { minimumSize, maximumSize }
+  );
+  const downloadChunkSizePlaceholder = intl.formatMessage(
+    {
+      defaultMessage: 'Specify download chunk size between {minimumSize} and {maximumSize} Mb. Example: 10',
+      id: 'IqNEui',
+      description: 'tooltip for download chunk size setting',
+    },
+    { minimumSize, maximumSize }
+  );
 
   // RETRY POLICY
   const retryPolicyTypeTitle = intl.formatMessage({
     defaultMessage: 'Retry Policy',
+    id: '4IS4yp',
     description: 'title for retry policy setting',
+  });
+  const retryPolicyTooltip = intl.formatMessage({
+    defaultMessage: 'The number of times to retry the request',
+    id: '1hPZqe',
+    description: 'description of retry count setting',
   });
   const retryPolicyTypeDescription = intl.formatMessage({
     defaultMessage:
       'A retry policy applies to intermittent failures, characterized as HTTP status codes 408, 429, and 5xx, in addition to any connectivity exceptions. The default is an exponential interval policy set to retry 4 times.',
+    id: 'zNesUZ',
     description: 'description of retry policy setting',
   });
   const retryPolicyCountTitle = intl.formatMessage({
     defaultMessage: 'Count',
+    id: 'XbtEq9',
     description: 'title for retry count setting',
   });
-  // const retryPolicyCountDescription = intl.formatMessage({
-  //   defaultMessage: 'The number of times to retry the request.',
-  //   description: 'description of retry count setting',
-  // });
+
   const retryPolicyCountPlaceholder = intl.formatMessage({
     defaultMessage: 'Specify a retry count from 1 to 90',
+    id: 'uM1i27',
     description: 'placeholder for retry count setting',
   });
   const retryPolicyIntervalTitle = intl.formatMessage({
     defaultMessage: 'Interval',
-    description: 'title for retry interval setting',
+    id: 'V8A+1J',
+    description: 'Title for retry interval setting',
   });
   const retryPolicyIntervalDescription = intl.formatMessage({
     defaultMessage: 'Specify interval in ISO 8601 format.',
+    id: 'h40rpg',
     description: 'description of retry interval setting',
   });
   const retryPolicyIntervalPlaceholder = intl.formatMessage(
     {
       defaultMessage: 'Example: {example}',
+      id: 'qiIs4V',
       description: 'placeholder for retry interval setting',
     },
     {
@@ -172,11 +259,13 @@ export const Networking = ({
   );
   const retryPolicyMinIntervalTitle = intl.formatMessage({
     defaultMessage: 'Minimum Interval',
+    id: 'r7vZ5a',
     description: 'title for retry minimum interval setting',
   });
   const retryPolicyMinIntervalPlaceholder = intl.formatMessage(
     {
       defaultMessage: 'Example: {example}',
+      id: 'qiIs4V',
       description: 'placeholder for retry interval setting',
     },
     {
@@ -185,11 +274,13 @@ export const Networking = ({
   );
   const retryPolicyMaxIntervalTitle = intl.formatMessage({
     defaultMessage: 'Maximum Interval',
+    id: 'AsqIUa',
     description: 'title for retry maximum interval setting',
   });
   const retryPolicyMaxIntervalPlaceholder = intl.formatMessage(
     {
       defaultMessage: 'Example: {example}',
+      id: 'qiIs4V',
       description: 'placeholder for retry interval setting',
     },
     {
@@ -198,19 +289,14 @@ export const Networking = ({
   );
 
   const getAsyncPatternSetting = (): Settings => {
-    const asyncPatternCustomLabel = (
-      <SettingLabel labelText={asyncPatternTitle} infoTooltipText={asyncPatternTooltipText} isChild={false} />
-    );
     return {
       settingType: 'SettingToggle',
       settingProp: {
         readOnly,
         checked: !disableAsyncPattern?.value,
         onToggleInputChange: (_, checked) => onAsyncPatternToggle(!checked),
-        customLabel: () => asyncPatternCustomLabel,
+        customLabel: getSettingLabel(asyncPatternTitle, asyncPatternTooltipText),
         inlineLabel: true,
-        onText,
-        offText,
         ariaLabel: asyncPatternTitle,
       },
       visible: disableAsyncPattern?.isSupported,
@@ -218,19 +304,13 @@ export const Networking = ({
   };
 
   const getAsyncResponseSetting = (): Settings => {
-    const asyncResponseCustomLabel = (
-      <SettingLabel labelText={asyncResponseTitle} infoTooltipText={asyncResponseTooltipText} isChild={false} />
-    );
-
     return {
       settingType: 'SettingToggle',
       settingProp: {
         readOnly,
         checked: asynchronous?.value,
         onToggleInputChange: (_, checked) => onAsyncResponseToggle(!!checked),
-        customLabel: () => asyncResponseCustomLabel,
-        onText,
-        offText,
+        customLabel: getSettingLabel(asyncResponseTitle, asyncResponseTooltipText),
         ariaLabel: asyncResponseTitle,
       },
       visible: asynchronous?.isSupported,
@@ -238,18 +318,13 @@ export const Networking = ({
   };
 
   const getRequestOptionSetting = (): Settings => {
-    const requestOptionsCustomLabel = (
-      <SettingLabel labelText={requestOptionsTitle} infoTooltipText={requestOptionsTooltipText} isChild={false} />
-    );
-
     return {
       settingType: 'SettingTextField',
       settingProp: {
         readOnly,
         value: requestOptions?.value?.timeout ?? '',
-        label: duration,
-        placeholder: 'Example: PT1S',
-        customLabel: () => requestOptionsCustomLabel,
+        placeholder: requestOptionsPlaceholder,
+        customLabel: getSettingLabel(requestOptionsTitle, requestOptionsTooltipText, requestOptionsDescription, requestOptionsSublabel),
         onValueChange: (_, newVal) => onRequestOptionsChange(newVal as string),
         ariaLabel: requestOptionsTitle,
       },
@@ -258,18 +333,12 @@ export const Networking = ({
   };
 
   const getSuppressHeadersSetting = (): Settings => {
-    const suppressWorkflowHeadersCustomlabel = (
-      <SettingLabel labelText={suppressWorkflowHeadersTitle} infoTooltipText={suppressWorkflowHeadersTooltipText} isChild={false} />
-    );
-
     return {
       settingType: 'SettingToggle',
       settingProp: {
         readOnly,
         checked: suppressWorkflowHeaders?.value,
-        customLabel: () => suppressWorkflowHeadersCustomlabel,
-        onText,
-        offText,
+        customLabel: getSettingLabel(suppressWorkflowHeadersTitle, suppressWorkflowHeadersTooltipText),
         onToggleInputChange: (_, checked) => onSuppressHeadersToggle(!!checked),
         ariaLabel: suppressWorkflowHeadersTitle,
       },
@@ -278,18 +347,17 @@ export const Networking = ({
   };
 
   const getPaginationSetting = (): Settings => {
-    const pagingCustomLabel = <SettingLabel labelText={paginationTitle} infoTooltipText={paginationTooltipText} isChild={false} />;
     return {
       settingType: 'ReactiveToggle',
       settingProp: {
         readOnly,
         textFieldLabel: threshold,
-        textFieldValue: paging?.value?.toString() ?? '',
+        textFieldValue: paging?.value?.value?.toString() ?? '',
+        textFieldPlaceholder: paginationPlaceholder,
         checked: paging?.value?.enabled,
-        onToggleLabel: onText,
-        offToggleLabel: offText,
+        onToggleInputChange: (_, checked) => onPaginationToggle(!!checked),
         onValueChange: (_, newVal) => onPaginationValueChange(newVal as string),
-        customLabel: () => pagingCustomLabel,
+        customLabel: getSettingLabel(paginationTitle, paginationTooltipText, paginationDescription),
         ariaLabel: paginationTitle,
       },
       visible: paging?.isSupported,
@@ -297,17 +365,12 @@ export const Networking = ({
   };
 
   const getWorkflowHeadersOnResponseSetting = (): Settings => {
-    const workflowHeadersOnResponseCustomLabel = (
-      <SettingLabel labelText={workflowHeadersOnResponseTitle} infoTooltipText={workflowHeadersOnResponseTooltipText} isChild={false} />
-    );
     return {
       settingType: 'SettingToggle',
       settingProp: {
         readOnly,
         checked: suppressWorkflowHeadersOnResponse?.value,
-        customLabel: () => workflowHeadersOnResponseCustomLabel,
-        onText,
-        offText,
+        customLabel: getSettingLabel(workflowHeadersOnResponseTitle, workflowHeadersOnResponseTooltipText),
         onToggleInputChange: (_, checked) => onHeadersOnResponseToggle(!!checked),
         ariaLabel: workflowHeadersOnResponseTitle,
       },
@@ -316,33 +379,94 @@ export const Networking = ({
   };
 
   const getContentTransferSetting = (): Settings => {
-    const contentTransferLabel = (
-      <SettingLabel labelText={contentTransferTitle} infoTooltipText={contentTransferDescription} isChild={false} />
-    );
-
     return {
       settingType: 'SettingToggle',
       settingProp: {
         checked: chunkedTransferMode,
         readOnly,
-        onText,
-        offText,
         onToggleInputChange: (_, checked) => onContentTransferToggle(!!checked),
-        customLabel: () => contentTransferLabel,
+        customLabel: getSettingLabel(
+          contentTransferTitle,
+          uploadContentTransferTooltip,
+          uploadContentTransferDescription,
+          contentTransferSublabel,
+          /* isSubLabelToggle*/ true
+        ),
         ariaLabel: contentTransferTitle,
       },
-      visible: uploadChunk?.isSupported || downloadChunkSize?.isSupported,
+      visible: !!uploadChunk?.isSupported,
+    };
+  };
+
+  const getUploadChunkSizeSetting = (): Settings => {
+    return {
+      settingType: 'SettingTextField',
+      settingProp: {
+        readOnly,
+        value: uploadChunk?.value?.uploadChunkSize?.toString() ?? '',
+        placeholder: uploadChunkSizePlaceholder,
+        customLabel: getSettingLabel('', /* infoTooltipText */ undefined, /* SettingDescription */ undefined, chunkedTransferNodeSizeLabel),
+        onValueChange: (_, newVal) => onUploadChunkSizeChange(newVal as string),
+        ariaLabel: chunkedTransferNodeSizeLabel,
+      },
+      visible: uploadChunk?.isSupported && uploadChunkMetadata?.acceptUploadSize && chunkedTransferMode,
+    };
+  };
+
+  const getDownloadChunkSizeSetting = (): Settings => {
+    return {
+      settingType: 'SettingTextField',
+      settingProp: {
+        readOnly,
+        value: downloadChunkSize?.value?.toString() ?? '',
+        placeholder: downloadChunkSizePlaceholder,
+        customLabel: getSettingLabel(
+          contentTransferTitle,
+          /* infoTooltipText */ undefined,
+          downloadContentTransferDescription,
+          chunkedTransferNodeSizeLabel
+        ),
+        onValueChange: (_, newVal) => onDownloadChunkSizeChange(newVal as string),
+        ariaLabel: chunkedTransferNodeSizeLabel,
+      },
+      visible: downloadChunkMetadata?.acceptDownloadSize,
     };
   };
 
   const getRetryPolicySetting = (): Settings => {
-    const retryPolicyLabel = <SettingLabel labelText={retryPolicyTypeTitle} infoTooltipText={retryPolicyTypeDescription} isChild={false} />;
-
     const items = [
-      { title: 'Default', value: constants.RETRY_POLICY_TYPE.DEFAULT },
-      { title: 'None', value: constants.RETRY_POLICY_TYPE.NONE },
-      { title: 'Exponential Interval', value: constants.RETRY_POLICY_TYPE.EXPONENTIAL },
-      { title: 'Fixed Interval', value: constants.RETRY_POLICY_TYPE.FIXED },
+      {
+        title: intl.formatMessage({
+          defaultMessage: 'Default',
+          id: '2uINs9',
+          description: 'title for retry policy default setting',
+        }),
+        value: constants.RETRY_POLICY_TYPE.DEFAULT,
+      },
+      {
+        title: intl.formatMessage({
+          defaultMessage: 'None',
+          id: 'gL4rVQ',
+          description: 'title for retry policy none setting',
+        }),
+        value: constants.RETRY_POLICY_TYPE.NONE,
+      },
+      {
+        title: intl.formatMessage({
+          defaultMessage: 'Exponential Interval',
+          id: '7zDk9N',
+          description: 'title for retry policy exponential interval setting',
+        }),
+        value: constants.RETRY_POLICY_TYPE.EXPONENTIAL,
+      },
+      {
+        title: intl.formatMessage({
+          defaultMessage: 'Fixed Interval',
+          id: 'Wb/cBR',
+          description: 'title for retry policy fixed interval setting',
+        }),
+        value: constants.RETRY_POLICY_TYPE.FIXED,
+      },
     ];
 
     // TODO: Implement custom retry policy logic (couldn't find any connectors that use this though)
@@ -355,7 +479,7 @@ export const Networking = ({
         items,
         selectedValue: retryPolicy?.value?.type,
         onSelectionChanged: onRetryPolicyChange,
-        customLabel: () => retryPolicyLabel,
+        customLabel: getSettingLabel(retryPolicyTypeTitle, retryPolicyTooltip, retryPolicyTypeDescription),
         ariaLabel: retryPolicyTypeTitle,
       },
       visible: retryPolicy?.isSupported,
@@ -363,15 +487,13 @@ export const Networking = ({
   };
 
   const getRetryCountSetting = (): Settings => {
-    const retryCountLabel = <SettingLabel labelText={retryPolicyCountTitle} isChild={false} />;
-
     return {
       settingType: 'SettingTextField',
       settingProp: {
         readOnly,
         value: retryPolicy?.value?.count?.toString() ?? '',
         placeholder: retryPolicyCountPlaceholder,
-        customLabel: () => retryCountLabel,
+        customLabel: getSettingLabel(retryPolicyCountTitle),
         onValueChange: (_, newVal) => onRetryCountChange(newVal as string),
         required: true,
         ariaLabel: retryPolicyCountTitle,
@@ -384,17 +506,13 @@ export const Networking = ({
   };
 
   const getRetryIntervalSetting = (): Settings => {
-    const retryIntervalLabel = (
-      <SettingLabel labelText={retryPolicyIntervalTitle} infoTooltipText={retryPolicyIntervalDescription} isChild={false} />
-    );
-
     return {
       settingType: 'SettingTextField',
       settingProp: {
         readOnly,
         value: retryPolicy?.value?.interval ?? '',
         placeholder: retryPolicyIntervalPlaceholder,
-        customLabel: () => retryIntervalLabel,
+        customLabel: getSettingLabel(retryPolicyIntervalTitle, retryPolicyIntervalDescription),
         onValueChange: (_, newVal) => onRetryIntervalChange(newVal as string),
         required: true,
         ariaLabel: retryPolicyIntervalTitle,
@@ -407,17 +525,13 @@ export const Networking = ({
   };
 
   const getRetryMinIntervalSetting = (): Settings => {
-    const retryMinIntervalLabel = (
-      <SettingLabel labelText={retryPolicyMinIntervalTitle} infoTooltipText={retryPolicyIntervalDescription} isChild={false} />
-    );
-
     return {
       settingType: 'SettingTextField',
       settingProp: {
         readOnly,
         value: retryPolicy?.value?.minimumInterval ?? '',
         placeholder: retryPolicyMinIntervalPlaceholder,
-        customLabel: () => retryMinIntervalLabel,
+        customLabel: getSettingLabel(retryPolicyMinIntervalTitle, retryPolicyIntervalDescription),
         onValueChange: (_, newVal) => onRetryMinIntervalChange(newVal as string),
         ariaLabel: retryPolicyMinIntervalTitle,
       },
@@ -426,17 +540,13 @@ export const Networking = ({
   };
 
   const getRetryMaxIntervalSetting = (): Settings => {
-    const retryMaxIntervalLabel = (
-      <SettingLabel labelText={retryPolicyMaxIntervalTitle} infoTooltipText={retryPolicyIntervalDescription} isChild={false} />
-    );
-
     return {
       settingType: 'SettingTextField',
       settingProp: {
         readOnly,
         value: retryPolicy?.value?.maximumInterval ?? '',
         placeholder: retryPolicyMaxIntervalPlaceholder,
-        customLabel: () => retryMaxIntervalLabel,
+        customLabel: getSettingLabel(retryPolicyMaxIntervalTitle, retryPolicyIntervalDescription),
         onValueChange: (_, newVal) => onRetryMaxIntervalChange(newVal as string),
         ariaLabel: retryPolicyMaxIntervalTitle,
       },
@@ -447,13 +557,15 @@ export const Networking = ({
   const networkingSectionProps: SettingsSectionProps = {
     id: 'networking',
     title: networking,
-    sectionName: constants.SETTINGSECTIONS.NETWORKING,
+    sectionName: SettingSectionName.NETWORKING,
     expanded,
     onHeaderClick,
     settings: [
       getAsyncPatternSetting(),
       getAsyncResponseSetting(),
       getContentTransferSetting(),
+      getUploadChunkSizeSetting(),
+      getDownloadChunkSizeSetting(),
       getPaginationSetting(),
       getRequestOptionSetting(),
       getSuppressHeadersSetting(),

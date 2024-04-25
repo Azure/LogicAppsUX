@@ -2,9 +2,8 @@ import Constants from '../../../common/constants';
 import type { SerializedParameter } from '../../actions/bjsworkflow/serializer';
 import { constructInputValues } from '../../actions/bjsworkflow/serializer';
 import { getAndEscapeSegment, transformInputParameter, updateParameterWithValues } from '../parameters/helper';
-import { getIntl } from '@microsoft/intl-logic-apps';
-import type { Expression, ExpressionFunction, InputParameter, Segment } from '@microsoft/parsers-logic-apps';
 import {
+  getIntl,
   create,
   ExpressionBuilder,
   ExpressionExceptionCode,
@@ -16,8 +15,6 @@ import {
   ParameterLocations,
   parseEx,
   PropertyName,
-} from '@microsoft/parsers-logic-apps';
-import {
   AssertionErrorCode,
   AssertionException,
   clone,
@@ -30,7 +27,8 @@ import {
   replaceTemplatePlaceholders,
   startsWith,
   UnsupportedException,
-} from '@microsoft/utils-logic-apps';
+} from '@microsoft/logic-apps-shared';
+import type { Expression, ExpressionFunction, InputParameter, Segment } from '@microsoft/logic-apps-shared';
 
 const operationPathDelimiter = '<DELIMITER>';
 
@@ -67,29 +65,36 @@ export function buildOperationDetailsFromControls(
 
   for (const parameter of parameters) {
     switch (parameter.info.in) {
-      case ParameterLocations.Body:
+      case ParameterLocations.Body: {
         bodyParameters.push(parameter);
         break;
-      case ParameterLocations.FormData:
+      }
+      case ParameterLocations.FormData: {
         formDataParameters.push(parameter);
         break;
-      case ParameterLocations.Header:
+      }
+      case ParameterLocations.Header: {
         headerParameters.push(parameter);
         break;
-      case ParameterLocations.Path:
+      }
+      case ParameterLocations.Path: {
         pathParameters.push(parameter);
         break;
-      case ParameterLocations.Query:
+      }
+      case ParameterLocations.Query: {
         queryParameters.push(parameter);
         break;
-      case undefined:
+      }
+      case undefined: {
         builtinParameters.push(parameter);
         break;
+      }
       default:
         throw new UnsupportedException(
           intl.formatMessage(
             {
               defaultMessage: `Unsupported 'in' value : ''{value}'' in Parameter`,
+              id: '5akc1Q',
               description:
                 'Error message for unsupported values. Do not remove the double single quotes around the placeholder text, as it is needed to wrap the placeholder text in single quotes.',
             },
@@ -151,9 +156,7 @@ export function loadInputValuesFromDefinition(
     const queriesInputs = getQueriesInputs(cloneInputValue, queriesInputParameters);
     result = result.concat(loadQueryValue(queriesInputs, queriesInputParameters));
 
-    const pathInputParameters = inputParameters.filter(
-      (parameter) => parameter.in === ParameterLocations.Path || parameter.schema.in === ParameterLocations.Path
-    );
+    const pathInputParameters = inputParameters.filter((parameter) => parameter.in === ParameterLocations.Path);
     const pathInputs = getPathInputs(cloneInputValue, pathInputParameters, operationPath, basePath, shouldUsePathTemplateFormat);
 
     result = result.concat(loadPathValue(pathInputs, pathInputParameters));
@@ -190,9 +193,8 @@ function serializeBody(bodyParameters: SerializedParameter[]): Partial<Operation
     return {
       body: bodyValue,
     };
-  } else {
-    return {};
   }
+  return {};
 }
 
 function serializeHeaders(headerParameters: SerializedParameter[]): Partial<OperationInputs> {
@@ -206,9 +208,8 @@ function serializeHeaders(headerParameters: SerializedParameter[]): Partial<Oper
     return {
       headers: headersValue,
     };
-  } else {
-    return {};
   }
+  return {};
 }
 
 function serializePath(
@@ -231,23 +232,21 @@ function serializePath(
         parameters: parametersValue,
       },
     };
-  } else {
-    let pathValue = operationPath;
-    if (pathParameters.length > 0) {
-      const value = constructInputValues(rootParameterKey, pathParameters, !!encodePathComponents);
-      if (value) {
-        pathValue = replaceTemplatePlaceholders(value, operationPath);
-      }
-    }
-
-    if (pathValue) {
-      return {
-        path: pathValue,
-      };
-    } else {
-      return {};
+  }
+  let pathValue = operationPath;
+  if (pathParameters.length > 0) {
+    const value = constructInputValues(rootParameterKey, pathParameters, !!encodePathComponents);
+    if (value) {
+      pathValue = replaceTemplatePlaceholders(value, operationPath);
     }
   }
+
+  if (pathValue) {
+    return {
+      path: pathValue,
+    };
+  }
+  return {};
 }
 
 function serializeQuery(queryParameters: SerializedParameter[]): Partial<OperationInputs> {
@@ -261,9 +260,8 @@ function serializeQuery(queryParameters: SerializedParameter[]): Partial<Operati
     return {
       queries: queriesValue,
     };
-  } else {
-    return {};
   }
+  return {};
 }
 
 function serializeFormData(formDataParameters: SerializedParameter[]): Partial<OperationInputs> {
@@ -276,24 +274,26 @@ function serializeFormData(formDataParameters: SerializedParameter[]): Partial<O
       if (items.length === 1) {
         // NOTE: This is item for non file type form data parameter.
         return createMultipart(name, items[0].value);
-      } else if (items.length === 2) {
+      }
+      if (items.length === 2) {
         // NOTE: These are items for file type form data parameter.
         const firstItemIsContent = endsWith(items[0].parameterKey, Constants.KEY_SEGMENTS.CONTENT);
         const fileContentItem = firstItemIsContent ? items[0] : items[1];
         const fileNameItem = firstItemIsContent ? items[1] : items[0];
         return createMultipart(name, fileContentItem.value, fileNameItem.value);
-      } else {
-        throw new AssertionException(
-          AssertionErrorCode.UNSPECIFIED,
-          getIntl().formatMessage(
-            {
-              defaultMessage: `Invalid operation. Number of items: {length}.`,
-              description: 'Exception message for invalid formdata operation.',
-            },
-            { length: items.length }
-          )
-        );
       }
+      const intl = getIntl();
+      throw new AssertionException(
+        AssertionErrorCode.UNSPECIFIED,
+        intl.formatMessage(
+          {
+            defaultMessage: 'Invalid operation. Number of items: {length}.',
+            id: 'J55HA9',
+            description: 'Exception message for invalid formdata operation.',
+          },
+          { length: items.length }
+        )
+      );
     })
     .filter((multipart) => multipart !== undefined);
 
@@ -304,9 +304,8 @@ function serializeFormData(formDataParameters: SerializedParameter[]): Partial<O
         $multipart: multiparts,
       },
     };
-  } else {
-    return {};
   }
+  return {};
 }
 
 function serializeInvisibleData(parameters: SerializedParameter[]): Partial<OperationInputs> {
@@ -507,14 +506,13 @@ function createMultipart(name: string, body: any, fileName?: string) {
 
   if (body === undefined && fileName === undefined) {
     return undefined;
-  } else {
-    return {
-      [PropertyName.HEADERS]: {
-        [PropertyName.CONTENT_DISPOSITION]: contentDisposition,
-      },
-      [PropertyName.BODY]: body,
-    };
   }
+  return {
+    [PropertyName.HEADERS]: {
+      [PropertyName.CONTENT_DISPOSITION]: contentDisposition,
+    },
+    [PropertyName.BODY]: body,
+  };
 }
 
 /**
@@ -549,7 +547,8 @@ export function processPathInputs(pathValue: string, pathTemplate: string): Reco
 
     const errorMessage = intl.formatMessage(
       {
-        defaultMessage: `Invalid operation path input value. Path value - {pathValue} Path template - {pathTemplate}`,
+        defaultMessage: 'Invalid operation path input value. Path value - {pathValue} Path template - {pathTemplate}',
+        id: 'NnD8gF',
         description: 'Error message while parsing ',
       },
       { pathValue, pathTemplate }
@@ -561,9 +560,8 @@ export function processPathInputs(pathValue: string, pathTemplate: string): Reco
       } catch (error: any) {
         if (error?.name === ExpressionExceptionCode) {
           throw new Error(errorMessage);
-        } else {
-          throw new AssertionException(AssertionErrorCode.INVALID_EXPRESSION_IN_PATH_VALUE_SEGMENT, errorMessage, { pathValue }, error);
         }
+        throw new AssertionException(AssertionErrorCode.INVALID_EXPRESSION_IN_PATH_VALUE_SEGMENT, errorMessage, { pathValue }, error);
       }
 
       if (!isStringInterpolation(result)) {
@@ -574,9 +572,8 @@ export function processPathInputs(pathValue: string, pathTemplate: string): Reco
       const sanitizedSegments = result.segments.map((segment) => {
         if (isFunction(segment)) {
           return { type: ExpressionType.StringLiteral, value: operationPathDelimiter };
-        } else {
-          return segment;
         }
+        return segment;
       });
 
       sanitizedValueString = builder.buildTemplateExpression({ type: ExpressionType.StringInterpolation, segments: sanitizedSegments });
@@ -591,7 +588,8 @@ export function processPathInputs(pathValue: string, pathTemplate: string): Reco
 
     const errorMismatchSegments = intl.formatMessage(
       {
-        defaultMessage: `Operation path value does not match the template for segment. Path {pathValue}, Template {pathTemplate}`,
+        defaultMessage: 'Operation path value does not match the template for segment. Path {pathValue}, Template {pathTemplate}',
+        id: 'hq1mk6',
         description: 'Error while parsing expression for path value',
       },
       { pathValue, pathTemplate }
@@ -793,23 +791,20 @@ function getFormDataValue(multipart: any[], key: string): any {
       if (contentDisposition === contentDispositionWithoutFilename) {
         return getPropertyValue(part, PropertyName.BODY);
       }
-    } else {
-      if (segments[3].value === Constants.KEY_SEGMENTS.CONTENT) {
-        // NOTE: Parameter is file content.
-        if (
-          startsWith(contentDisposition, contentDispositionWithFilenamePrefix) ||
-          contentDisposition === contentDispositionWithoutFilename
-        ) {
-          return getPropertyValue(part, PropertyName.BODY);
-        }
-      } else {
-        // NOTE: Parameter is file name.
-        if (startsWith(contentDisposition, contentDispositionWithFilenamePrefix)) {
-          return contentDisposition.substring(contentDispositionWithFilenamePrefix.length, contentDisposition.length - 1);
-        } else if (contentDisposition === contentDispositionWithoutFilename) {
-          return undefined;
-        }
+    } else if (segments[3].value === Constants.KEY_SEGMENTS.CONTENT) {
+      // NOTE: Parameter is file content.
+      if (
+        startsWith(contentDisposition, contentDispositionWithFilenamePrefix) ||
+        contentDisposition === contentDispositionWithoutFilename
+      ) {
+        return getPropertyValue(part, PropertyName.BODY);
       }
+
+      // NOTE: Parameter is file name.
+    } else if (startsWith(contentDisposition, contentDispositionWithFilenamePrefix)) {
+      return contentDisposition.substring(contentDispositionWithFilenamePrefix.length, contentDisposition.length - 1);
+    } else if (contentDisposition === contentDispositionWithoutFilename) {
+      return undefined;
     }
   }
 
@@ -933,8 +928,7 @@ function parsePathnameFromUri(uri: string): string {
   if (isTemplateExpression(uri)) {
     const { pathname } = parsePathnameAndQueryKeyFromUri(uri.replace(/\]\?\[/g, ']%3F[').replace(/\)\?\[/g, ')%3F['));
     return pathname.replace(/\]%3F\[/g, ']?[').replace(/\)%3F\[/g, ')?[');
-  } else {
-    const { pathname } = parsePathnameAndQueryKeyFromUri(uri);
-    return pathname;
   }
+  const { pathname } = parsePathnameAndQueryKeyFromUri(uri);
+  return pathname;
 }

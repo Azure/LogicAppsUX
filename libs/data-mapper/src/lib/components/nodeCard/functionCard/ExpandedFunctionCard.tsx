@@ -3,6 +3,7 @@ import { customTokens } from '../../../core';
 import { deleteCurrentlySelectedItem, setSelectedItem } from '../../../core/state/DataMapSlice';
 import type { RootState } from '../../../core/state/Store';
 import { generateInputHandleId } from '../../../utils/Connection.Utils';
+import { hasOnlyCustomInputType } from '../../../utils/Function.Utils';
 import { iconForNormalizedDataType } from '../../../utils/Icon.Utils';
 import { isNodeHighlighted } from '../../../utils/ReactFlow.Util';
 import { FunctionIcon } from '../../functionIcon/FunctionIcon';
@@ -12,10 +13,9 @@ import { inputsValid, useFunctionCardStyles } from './FunctionCard';
 import { Stack, StackItem } from '@fluentui/react';
 import { Button, Divider, PresenceBadge, Text, Tooltip, mergeClasses, tokens } from '@fluentui/react-components';
 import { useBoolean } from '@fluentui/react-hooks';
-import type { MenuItemOption } from '@microsoft/designer-ui';
-import { CardContextMenu, MenuItemType, useCardContextMenu } from '@microsoft/designer-ui';
+import { CardContextMenu, useCardContextMenu } from '@microsoft/designer-ui';
+import { DeleteMenuItem } from '@microsoft/logic-apps-designer';
 import { useMemo } from 'react';
-import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 import type { NodeProps } from 'reactflow';
 import { Handle, Position } from 'reactflow';
@@ -27,10 +27,14 @@ export const ExpandedFunctionCard = (props: NodeProps<FunctionCardProps>) => {
   const dispatch = useDispatch();
   const classes = useFunctionCardStyles();
 
-  const selectedItemKey = useSelector((state: RootState) => state.dataMap.curDataMapOperation.selectedItemKey);
-  const selectedItemConnectedNodes = useSelector((state: RootState) => state.dataMap.curDataMapOperation.selectedItemConnectedNodes);
-  const sourceNodeConnectionBeingDrawnFromId = useSelector((state: RootState) => state.dataMap.sourceNodeConnectionBeingDrawnFromId);
-  const connections = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
+  const selectedItemKey = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.selectedItemKey);
+  const selectedItemConnectedNodes = useSelector(
+    (state: RootState) => state.dataMap.present.curDataMapOperation.selectedItemConnectedNodes
+  );
+  const sourceNodeConnectionBeingDrawnFromId = useSelector(
+    (state: RootState) => state.dataMap.present.sourceNodeConnectionBeingDrawnFromId
+  );
+  const connections = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.dataMapConnections);
 
   const [isExpanded, { toggle: toggleIsExpanded }] = useBoolean(false);
 
@@ -39,23 +43,7 @@ export const ExpandedFunctionCard = (props: NodeProps<FunctionCardProps>) => {
     return isNodeHighlighted(isCurrentNodeSelected, reactFlowId, selectedItemConnectedNodes);
   }, [isCurrentNodeSelected, reactFlowId, selectedItemConnectedNodes]);
 
-  const intl = useIntl();
   const contextMenu = useCardContextMenu();
-  const getDeleteMenuItem = (): MenuItemOption => {
-    const deleteDescription = intl.formatMessage({
-      defaultMessage: 'Delete',
-      description: 'Delete text',
-    });
-
-    return {
-      key: deleteDescription,
-      disabled: false,
-      iconName: 'Delete',
-      title: deleteDescription,
-      type: MenuItemType.Advanced,
-      onClick: handleDeleteClick,
-    };
-  };
 
   const handleDeleteClick = () => {
     dispatch(setSelectedItem(reactFlowId));
@@ -139,16 +127,22 @@ export const ExpandedFunctionCard = (props: NodeProps<FunctionCardProps>) => {
           return (
             <StackItem key={input.name}>
               <div key={input.name} style={inputBodyStyles}>
-                <Handle
-                  id={input.name}
-                  type="target"
-                  position={Position.Left}
-                  style={{
-                    top: `${handleTop}px`,
-                    backgroundColor:
-                      typeof curInput === 'string' ? (input ? tokens.colorPaletteBlueBackground2 : tokens.colorPaletteRedBackground3) : '',
-                  }}
-                />
+                {!hasOnlyCustomInputType(functionData) && (
+                  <Handle
+                    id={input.name}
+                    type="target"
+                    position={Position.Left}
+                    style={{
+                      top: `${handleTop}px`,
+                      backgroundColor:
+                        typeof curInput === 'string'
+                          ? input
+                            ? tokens.colorPaletteBlueBackground2
+                            : tokens.colorPaletteRedBackground3
+                          : '',
+                    }}
+                  />
+                )}
                 {generateInputName(input.name, input.isOptional, input.tooltip)}
               </div>
             </StackItem>
@@ -235,9 +229,9 @@ export const ExpandedFunctionCard = (props: NodeProps<FunctionCardProps>) => {
       <CardContextMenu
         title={'Delete'}
         contextMenuLocation={contextMenu.location}
-        contextMenuOptions={[getDeleteMenuItem()]}
-        showContextMenu={contextMenu.isShowing}
-        onSetShowContextMenu={contextMenu.setIsShowing}
+        menuItems={[<DeleteMenuItem key="delete" onClick={handleDeleteClick} />]}
+        open={contextMenu.isShowing}
+        setOpen={contextMenu.setIsShowing}
       />
     </div>
   );

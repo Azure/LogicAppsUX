@@ -1,6 +1,5 @@
 import { reactFlowFitViewOptions, ReactFlowNodeType } from '../../constants/ReactFlowConstants';
 import type { RootState } from '../../core/state/Store';
-import { SchemaType } from '../../models/';
 import { useOverviewLayout } from '../../utils/ReactFlow.Util';
 import { SchemaCard } from '../nodeCard/SchemaCard';
 import { SchemaNameBadge } from '../schemaSelection/SchemaNameBadge';
@@ -10,10 +9,11 @@ import { checkNodeStatuses } from '../sidePane/tabs/targetSchemaTab/TargetSchema
 import type { NodeToggledStateDictionary } from '../tree/TargetSchemaTreeItem';
 import { Stack } from '@fluentui/react';
 import { makeStyles, shorthands, tokens } from '@fluentui/react-components';
+import { SchemaType } from '@microsoft/logic-apps-shared';
 import { useEffect, useMemo } from 'react';
 import { useSelector } from 'react-redux';
 // eslint-disable-next-line import/no-named-as-default
-import ReactFlow, { ReactFlowProvider, useReactFlow } from 'reactflow';
+import ReactFlow, { useReactFlow } from 'reactflow';
 
 const reactFlowStyle: React.CSSProperties = {
   height: '100%',
@@ -31,24 +31,12 @@ const useStyles = makeStyles({
 });
 
 export const MapOverview = () => {
-  const styles = useStyles();
-
-  return (
-    <div className={styles.mapOverviewStyles}>
-      <ReactFlowProvider>
-        <OverviewReactFlowWrapper />
-      </ReactFlowProvider>
-    </div>
-  );
-};
-
-const OverviewReactFlowWrapper = () => {
   const { fitView } = useReactFlow();
 
-  const sourceSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.sourceSchema);
-  const targetSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.targetSchema);
-  const connectionDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
-  const targetSchemaDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedTargetSchema);
+  const sourceSchema = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.sourceSchema);
+  const targetSchema = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.targetSchema);
+  const connectionDictionary = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.dataMapConnections);
+  const targetSchemaDictionary = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.flattenedTargetSchema);
 
   const targetSchemaStates = useMemo<NodeToggledStateDictionary>(() => {
     if (!targetSchema) {
@@ -94,27 +82,31 @@ const OverviewReactFlowWrapper = () => {
     [reactFlowNodes]
   );
 
+  const styles = useStyles();
+
   return (
-    <ReactFlow
-      nodeTypes={schemaNodeTypes}
-      nodes={reactFlowNodes}
-      nodesDraggable={false}
-      proOptions={{
-        account: 'paid-sponsor',
-        hideAttribution: true,
-      }}
-      style={reactFlowStyle}
-      fitViewOptions={reactFlowFitViewOptions}
-      fitView
-    >
-      <Stack horizontal horizontalAlign="space-around" verticalAlign="center" style={{ height: '100%' }}>
-        <SelectSchemaCard schemaType={SchemaType.Source} style={{ visibility: !sourceSchema ? 'visible' : 'hidden' }} />
+    <div className={styles.mapOverviewStyles}>
+      <ReactFlow
+        nodeTypes={schemaNodeTypes}
+        nodes={reactFlowNodes}
+        nodesDraggable={false}
+        proOptions={{
+          account: 'paid-sponsor',
+          hideAttribution: true,
+        }}
+        style={reactFlowStyle}
+        fitViewOptions={reactFlowFitViewOptions}
+        fitView
+      >
+        <Stack horizontal horizontalAlign="space-around" verticalAlign="center" style={{ height: '100%' }}>
+          <SelectSchemaCard schemaType={SchemaType.Source} style={{ visibility: sourceSchema ? 'hidden' : 'visible' }} />
 
-        <SelectSchemaCard schemaType={SchemaType.Target} style={{ visibility: !targetSchema ? 'visible' : 'hidden' }} />
-      </Stack>
+          <SelectSchemaCard schemaType={SchemaType.Target} style={{ visibility: targetSchema ? 'hidden' : 'visible' }} />
+        </Stack>
 
-      {sourceSchema && <SchemaNameBadge schemaName={sourceSchema.name} schemaTreeRootXPos={srcSchemaTreeRootXPos} />}
-      {targetSchema && <SchemaNameBadge schemaName={targetSchema.name} schemaTreeRootXPos={tgtSchemaTreeRootXPos} />}
-    </ReactFlow>
+        {sourceSchema && <SchemaNameBadge schemaName={sourceSchema.name} schemaTreeRootXPos={srcSchemaTreeRootXPos} />}
+        {targetSchema && <SchemaNameBadge schemaName={targetSchema.name} schemaTreeRootXPos={tgtSchemaTreeRootXPos} />}
+      </ReactFlow>
+    </div>
   );
 };

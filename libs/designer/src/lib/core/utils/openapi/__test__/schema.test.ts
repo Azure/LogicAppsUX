@@ -1,6 +1,6 @@
 import { getTitleOrSummary, isOneOf } from '../schema';
-import type { OpenAPIV2 } from '@microsoft/utils-logic-apps';
-
+import type { OpenAPIV2 } from '@microsoft/logic-apps-shared';
+import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 describe('OpenAPI schema utilities', () => {
   describe('getTitleOrSummary', () => {
     test.each<[OpenAPIV2.Schema, string | undefined]>([

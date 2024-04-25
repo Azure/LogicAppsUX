@@ -1,14 +1,17 @@
 import { InfoDot } from '../../../infoDot';
+import { getPreviewTag } from '../../../utils';
 import type { OperationActionData } from '../interfaces';
 import { Text, Image } from '@fluentui/react';
+import { Badge } from '@fluentui/react-components';
+import { replaceWhiteSpaceWithUnderscore } from '@microsoft/logic-apps-shared';
 import { useIntl } from 'react-intl';
 
 export type OperationSearchCardProps = {
   operationActionData: OperationActionData;
-  onClick: (operationId: string, apiId?: string) => void;
   displayRuntimeInfo: boolean;
   showImage?: boolean;
   style?: any;
+  onClick: (operationId: string, apiId?: string) => void;
 } & CommonCardProps;
 
 export interface CommonCardProps {
@@ -17,12 +20,14 @@ export interface CommonCardProps {
 
 export const OperationSearchCard = (props: OperationSearchCardProps) => {
   const { operationActionData, onClick, showImage = false, style, displayRuntimeInfo } = props;
-  const { title, description, category, isBuiltIn, isTrigger, brandColor = '#000', iconUri } = operationActionData;
+  const { title, description, category, isBuiltIn, isTrigger, brandColor = '#000', iconUri, releaseStatus } = operationActionData;
 
   const intl = useIntl();
+  const previewTag = getPreviewTag(releaseStatus);
 
   const triggerBadgeText = intl.formatMessage({
     defaultMessage: 'Trigger',
+    id: '02vyBk',
     description: 'Badge showing an action is a logic apps trigger',
   });
 
@@ -32,13 +37,37 @@ export const OperationSearchCard = (props: OperationSearchCardProps) => {
   };
 
   return (
-    <button className="msla-op-search-card-container" onClick={() => onCardClick()} style={style}>
+    <button
+      className="msla-op-search-card-container"
+      onClick={() => onCardClick()}
+      style={style}
+      data-automation-id={`msla-op-search-result-${replaceWhiteSpaceWithUnderscore(operationActionData.id)}`}
+      aria-label={`${title} ${description}`}
+    >
       <div className="msla-op-search-card-color-line" style={{ background: brandColor }} />
       {showImage && iconUri ? <Image className="msla-op-search-card-image" alt={title} src={iconUri} /> : null}
       <Text className="msla-op-search-card-name">{title}</Text>
-      {displayRuntimeInfo && isBuiltIn && category ? <Text className="msla-psuedo-badge">{category}</Text> : null}
-      {displayRuntimeInfo && isTrigger ? <Text className="msla-psuedo-badge">{triggerBadgeText}</Text> : null}
-      <InfoDot title={title} description={description} />
+      {displayRuntimeInfo && (
+        <>
+          {previewTag ? (
+            <Badge appearance="outline" shape="rounded">
+              {previewTag}
+            </Badge>
+          ) : null}
+          {isBuiltIn && category ? (
+            <Badge appearance="outline" shape="rounded">
+              {category}
+            </Badge>
+          ) : null}
+          {isTrigger ? (
+            <Badge appearance="outline" shape="rounded">
+              {triggerBadgeText}
+            </Badge>
+          ) : null}
+        </>
+      )}
+
+      <InfoDot description={description} innerAriaHidden="true" />
     </button>
   );
 };

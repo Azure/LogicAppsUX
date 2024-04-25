@@ -1,25 +1,27 @@
 import { MapDefinitionDeserializer } from '../mapDefinitions';
 import type { FunctionData } from '../models/Function';
-import type { MapDefinitionEntry } from '../models/MapDefinition';
-import type { Schema } from '../models/Schema';
-import { SchemaType } from '../models/Schema';
 import { convertSchemaToSchemaExtended } from '../utils/Schema.Utils';
 import { DataMapperWrappedContext } from './DataMapperDesignerContext';
 import { changeTheme } from './state/AppSlice';
-import { setInitialDataMap, setInitialSchema, setXsltFilename } from './state/DataMapSlice';
-import { loadFunctions } from './state/FunctionSlice';
+import { setInitialDataMap, setInitialSchema, setXsltContent, setXsltFilename } from './state/DataMapSlice';
+import { loadCustomXsltFilePaths, loadFunctions } from './state/FunctionSlice';
 import { setAvailableSchemas } from './state/SchemaSlice';
 import type { AppDispatch } from './state/Store';
-import { Theme as ThemeType } from '@microsoft/utils-logic-apps';
-import React, { useContext, useEffect, useMemo } from 'react';
+import type { MapMetadata, MapDefinitionEntry, DataMapSchema } from '@microsoft/logic-apps-shared';
+import { Theme as ThemeType, SchemaType } from '@microsoft/logic-apps-shared';
+import type React from 'react';
+import { useContext, useEffect, useMemo } from 'react';
 import { useDispatch } from 'react-redux';
 
 export interface DataMapDataProviderProps {
   xsltFilename?: string;
+  xsltContent: string;
   mapDefinition?: MapDefinitionEntry;
-  sourceSchema?: Schema;
-  targetSchema?: Schema;
+  dataMapMetadata?: MapMetadata;
+  sourceSchema?: DataMapSchema;
+  targetSchema?: DataMapSchema;
   availableSchemas?: string[];
+  customXsltPaths?: string[];
   fetchedFunctions?: FunctionData[];
   theme?: ThemeType;
   children?: React.ReactNode;
@@ -27,11 +29,14 @@ export interface DataMapDataProviderProps {
 
 const DataProviderInner = ({
   xsltFilename,
+  xsltContent,
   mapDefinition,
+  dataMapMetadata,
   sourceSchema,
   targetSchema,
   availableSchemas,
   fetchedFunctions,
+  customXsltPaths,
   theme = ThemeType.Light,
   children,
 }: DataMapDataProviderProps) => {
@@ -46,7 +51,8 @@ const DataProviderInner = ({
 
   useEffect(() => {
     dispatch(setXsltFilename(xsltFilename ?? ''));
-  }, [dispatch, xsltFilename]);
+    dispatch(setXsltContent(xsltContent ?? ''));
+  }, [dispatch, xsltFilename, xsltContent]);
 
   useEffect(() => {
     if (mapDefinition && extendedSourceSchema && extendedTargetSchema && fetchedFunctions) {
@@ -58,10 +64,15 @@ const DataProviderInner = ({
       );
       const connections = mapDefinitionDeserializer.convertFromMapDefinition();
       dispatch(
-        setInitialDataMap({ sourceSchema: extendedSourceSchema, targetSchema: extendedTargetSchema, dataMapConnections: connections })
+        setInitialDataMap({
+          sourceSchema: extendedSourceSchema,
+          targetSchema: extendedTargetSchema,
+          dataMapConnections: connections,
+          metadata: dataMapMetadata,
+        })
       );
     }
-  }, [dispatch, mapDefinition, extendedSourceSchema, extendedTargetSchema, fetchedFunctions]);
+  }, [dispatch, mapDefinition, extendedSourceSchema, extendedTargetSchema, fetchedFunctions, dataMapMetadata]);
 
   useEffect(() => {
     if (extendedSourceSchema) {
@@ -96,6 +107,12 @@ const DataProviderInner = ({
       dispatch(loadFunctions(fetchedFunctions ?? []));
     }
   }, [dispatch, fetchedFunctions]);
+
+  useEffect(() => {
+    if (customXsltPaths) {
+      dispatch(loadCustomXsltFilePaths(customXsltPaths ?? []));
+    }
+  }, [dispatch, customXsltPaths]);
 
   return <>{children}</>;
 };

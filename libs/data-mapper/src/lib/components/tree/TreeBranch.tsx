@@ -5,7 +5,8 @@ import { Button, mergeClasses } from '@fluentui/react-components';
 import { useBoolean } from '@fluentui/react-hooks';
 import { bundleIcon, ChevronDown12Regular, ChevronDown12Filled, ChevronRight12Regular, ChevronRight12Filled } from '@fluentui/react-icons';
 import { CardContextMenu, useCardContextMenu } from '@microsoft/designer-ui';
-import React, { useMemo } from 'react';
+import type React from 'react';
+import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
 
 const defaultChildPadding = 16;
@@ -32,20 +33,21 @@ const TreeBranch = <T extends ITreeNode<T>>(props: TreeBranchProps<T>) => {
   const styles = useTreeStyles();
   const contextMenu = useCardContextMenu();
 
-  const [isExpanded, { toggle: toggleExpanded }] = useBoolean(level === 0);
+  const [isNodeExpanded, { toggle: toggleExpanded }] = useBoolean(node.isExpanded !== undefined ? node.isExpanded : level === 0);
   const [isHovered, { setFalse: setNotHovered, setTrue: setIsHovered }] = useBoolean(false);
   const [isChevronHovered, { setFalse: setChevronNotHovered, setTrue: setChevronIsHovered }] = useBoolean(false);
 
   const hasChildren = useMemo<boolean>(() => !!(node.children && node.children.length > 0), [node]);
-  const isNodeExpanded = useMemo<boolean>(() => (node.isExpanded === undefined ? isExpanded : node.isExpanded), [node, isExpanded]);
 
   const expandTreeNodeLoc = intl.formatMessage({
     defaultMessage: 'Expand tree node',
+    id: '2JA3gY',
     description: 'Expand tree node',
   });
 
   const collapseTreeNodeLoc = intl.formatMessage({
     defaultMessage: 'Collapse tree node',
+    id: 'td5//c',
     description: 'Collapse tree node',
   });
 
@@ -123,12 +125,13 @@ const TreeBranch = <T extends ITreeNode<T>>(props: TreeBranchProps<T>) => {
       {hasChildren &&
         isNodeExpanded &&
         node.children?.map((childNode) => <TreeBranch<ITreeNode<T>> {...props} key={childNode.key} node={childNode} level={level + 1} />)}
+
       <CardContextMenu
         title={'contextMenu'}
         contextMenuLocation={contextMenu.location}
-        contextMenuOptions={contextMenuItems ? contextMenuItems(node) : []}
-        showContextMenu={contextMenu.isShowing}
-        onSetShowContextMenu={contextMenu.setIsShowing}
+        menuItems={contextMenuItems ? contextMenuItems(node) : []}
+        open={contextMenu.isShowing}
+        setOpen={contextMenu.setIsShowing}
       />
     </div>
   );

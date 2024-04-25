@@ -54,9 +54,10 @@ a.msla-picker {
 
 .msla-picker-items-error {
   color: rgb(224, 2, 2);
-  height: 30px;
-  padding-left: 20px;
-  padding-top: 10px;
+  overflow-y: auto;
+  min-height: 30px;
+  max-height: @maxPickerHeight;
+  padding: 10px 20px;
 }
 
 .msla-picker-items {
@@ -99,6 +100,7 @@ a.msla-picker {
       height: 100%;
       text-align: left;
       padding: 0;
+      border: 1px solid transparent;
       outline: none;
 
       .msla-icon {
@@ -125,6 +127,10 @@ a.msla-picker {
         -webkit-transition: background-color 0.5s ease;
         -moz-transition: background-color 0.5s ease;
         transition: background-color 0.5s ease;
+      }
+
+      &:focus-visible {
+        border-color: @ms-color-white;
       }
 
       &:after {
@@ -266,6 +272,10 @@ a.msla-picker {
         &:focus,
         &:active {
           background-color: @ms-color-themeLighter;
+        }
+
+        &:focus-visible {
+          border-color: @ms-color-black;
         }
       }
     }

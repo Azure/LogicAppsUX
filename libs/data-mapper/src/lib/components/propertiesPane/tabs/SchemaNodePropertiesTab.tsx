@@ -1,25 +1,15 @@
 import type { RootState } from '../../../core/state/Store';
-import type { SchemaNodeExtended } from '../../../models';
 import type { Connection } from '../../../models/Connection';
+import { isSchemaNodeExtended } from '../../../utils';
 import { isCustomValue } from '../../../utils/Connection.Utils';
+import { functionDropDownItemText } from '../../../utils/Function.Utils';
 import { iconForNormalizedDataType } from '../../../utils/Icon.Utils';
 import { addTargetReactFlowPrefix } from '../../../utils/ReactFlow.Util';
-import { InputDropdown } from '../../inputDropdown/InputDropdown';
+import { InputDropdown } from '../../inputTypes/InputDropdown';
 import { Stack } from '@fluentui/react';
-import {
-  Accordion,
-  AccordionHeader,
-  AccordionItem,
-  AccordionPanel,
-  Checkbox,
-  Input,
-  Label,
-  makeStyles,
-  Text,
-  tokens,
-  typographyStyles,
-} from '@fluentui/react-components';
-import { useEffect, useMemo, useState } from 'react';
+import { Label, makeStyles, Text, tokens, typographyStyles } from '@fluentui/react-components';
+import type { SchemaNodeExtended } from '@microsoft/logic-apps-shared';
+import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
 import { useSelector } from 'react-redux';
 
@@ -31,9 +21,8 @@ const useStyles = makeStyles({
     display: 'grid',
     width: '100%',
     rowGap: '16px',
-    columnGap: '12px',
-    gridTemplateColumns: 'repeat(6, 1fr)',
-    alignItems: 'center',
+    columnGap: '20px',
+    alignItems: 'start',
     justifyContent: 'start',
   },
   bodyText: {
@@ -50,45 +39,31 @@ export const SchemaNodePropertiesTab = ({ currentNode }: SchemaNodePropertiesTab
   const intl = useIntl();
   const styles = useStyles();
 
-  const targetSchemaDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedTargetSchema);
-  const connectionDictionary = useSelector((state: RootState) => state.dataMap.curDataMapOperation.dataMapConnections);
-
-  // Can be a node name/id or a constant value - only one input per target schema node
-  const [inputValue, setInputValue] = useState<string | undefined>(undefined);
+  const targetSchemaDictionary = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.flattenedTargetSchema);
+  const connectionDictionary = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.dataMapConnections);
 
   const nameLoc = intl.formatMessage({
     defaultMessage: 'Name',
+    id: 'RFjYpH',
     description: 'Name of current node',
   });
 
   const fullPathLoc = intl.formatMessage({
     defaultMessage: 'Full path',
+    id: 'wPlTDB',
     description: 'Full path of current node',
   });
 
   const dataTypeLoc = intl.formatMessage({
     defaultMessage: 'Data type',
-    description: 'Data type of current node',
-  });
-
-  const noValueLabelLoc = intl.formatMessage({
-    defaultMessage: 'Do not generate if no value',
-    description: 'Checkbox label to not generate if no value',
+    id: '6xRvni',
+    description: 'The data type of the current node.',
   });
 
   const inputLoc = intl.formatMessage({
     defaultMessage: 'Input',
+    id: 'P6I90y',
     description: 'Input',
-  });
-
-  const advOptLoc = intl.formatMessage({
-    defaultMessage: 'Advanced options',
-    description: 'Advanced options',
-  });
-
-  const defValLoc = intl.formatMessage({
-    defaultMessage: 'Default value',
-    description: 'Default value',
   });
 
   const isTargetSchemaNode = useMemo(
@@ -98,21 +73,31 @@ export const SchemaNodePropertiesTab = ({ currentNode }: SchemaNodePropertiesTab
 
   const DataTypeIcon = iconForNormalizedDataType(currentNode.type, 16, false, currentNode.nodeProperties);
 
-  const connection = useMemo<Connection | undefined>(
-    () => connectionDictionary[addTargetReactFlowPrefix(currentNode.key)],
-    [connectionDictionary, currentNode]
-  );
+  const connection = connectionDictionary[addTargetReactFlowPrefix(currentNode.key)];
 
-  useEffect(() => {
-    let newInputValue = undefined;
-
+  const getInputName = (connection: Connection | undefined) => {
     if (connection?.inputs && connection.inputs[0].length === 1) {
       const input = connection.inputs[0][0];
-      newInputValue = input === undefined ? undefined : isCustomValue(input) ? input : input.reactFlowKey;
+      return input === undefined
+        ? undefined
+        : isCustomValue(input)
+          ? input
+          : isSchemaNodeExtended(input.node)
+            ? input.node.name
+            : functionDropDownItemText(input.reactFlowKey, input.node, connectionDictionary);
     }
 
-    setInputValue(newInputValue);
-  }, [connection]);
+    return undefined;
+  };
+
+  const getInputValue = (connection: Connection | undefined) => {
+    if (connection?.inputs && connection.inputs[0].length === 1) {
+      const input = connection.inputs[0][0];
+      return input === undefined ? undefined : isCustomValue(input) ? input : input.reactFlowKey;
+    }
+
+    return undefined;
+  };
 
   return (
     <div>
@@ -132,11 +117,9 @@ export const SchemaNodePropertiesTab = ({ currentNode }: SchemaNodePropertiesTab
           <DataTypeIcon style={{ marginRight: '5px', color: tokens.colorNeutralForeground1 }} />
           <Text className={styles.bodyText}>{currentNode?.type}</Text>
         </Stack>
-      </div>
 
-      {isTargetSchemaNode && (
-        <div>
-          <div className={styles.nodeInfoGridContainer} style={{ marginTop: '16px' }}>
+        {isTargetSchemaNode && (
+          <>
             <Label id="label-for-target-node-input-dropdown" htmlFor="dropdown" style={{ gridColumn: gridColumnSpan1 }}>
               {inputLoc}
             </Label>
@@ -144,31 +127,13 @@ export const SchemaNodePropertiesTab = ({ currentNode }: SchemaNodePropertiesTab
               id="target-node-input-dropdown"
               labelId="label-for-target-node-input-dropdown"
               currentNode={currentNode}
-              inputValue={inputValue}
-              inputStyles={{ gridColumn: gridColumnSpan2 }}
+              inputName={getInputName(connection)}
+              inputValue={getInputValue(connection)}
               inputIndex={0}
             />
-          </div>
-
-          {false && ( // Hiding advanced options until implemented
-            <Accordion collapsible defaultOpenItems={'1'} style={{ width: '94%', marginTop: '16px', marginLeft: '-12px' }}>
-              <AccordionItem value="1">
-                <AccordionHeader className={styles.bodyText}>{advOptLoc}</AccordionHeader>
-                <AccordionPanel>
-                  <div className={styles.nodeInfoGridContainer} style={{ marginTop: '16px' }}>
-                    <Label style={{ gridColumn: gridColumnSpan1 }}>{defValLoc}</Label>
-                    <Input style={{ gridColumn: gridColumnSpan2 }} />
-                  </div>
-
-                  <Stack>
-                    <Checkbox label={noValueLabelLoc} defaultChecked style={{ marginTop: '16px' }} />
-                  </Stack>
-                </AccordionPanel>
-              </AccordionItem>
-            </Accordion>
-          )}
-        </div>
-      )}
+          </>
+        )}
+      </div>
     </div>
   );
 };

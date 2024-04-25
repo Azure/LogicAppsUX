@@ -2,12 +2,13 @@ import { useReadOnly } from '../../core/state/designerOptions/designerOptionsSel
 import { useActionMetadata, useNodeEdgeTargets, useNodeMetadata } from '../../core/state/workflow/workflowSelectors';
 import { DropZone } from './dropzone';
 import { ArrowCap } from './dynamicsvgs/arrowCap';
-import { RunAfterIndicator } from './runAfterIndicator';
-import type { LogicAppsV2 } from '@microsoft/utils-logic-apps';
-import { getEdgeCenter, RUN_AFTER_STATUS } from '@microsoft/utils-logic-apps';
+import { CollapsedRunAfterIndicator, RunAfterIndicator } from './runAfterIndicator';
+import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
+import { containsIdTag, removeIdTag, getEdgeCenter, RUN_AFTER_STATUS } from '@microsoft/logic-apps-shared';
 import type { ElkExtendedEdge } from 'elkjs/lib/elk-api';
-import React, { useMemo } from 'react';
-import { getSmoothStepPath } from 'reactflow';
+import type React from 'react';
+import { memo, useMemo } from 'react';
+import { getSmoothStepPath, useReactFlow } from 'reactflow';
 import type { EdgeProps } from 'reactflow';
 
 interface EdgeContentProps {
@@ -47,7 +48,7 @@ const foreignObjectWidth = 200;
 const runAfterWidth = 36;
 const runAfterHeight = 12;
 
-export const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
+const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
   id,
   sourceX,
   sourceY,
@@ -60,11 +61,12 @@ export const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
   style = {},
 }) => {
   const readOnly = useReadOnly();
+  const reactFlow = useReactFlow();
   const operationData = useActionMetadata(target) as LogicAppsV2.ActionDefinition;
   const edgeSources = Object.keys(operationData?.runAfter ?? {});
   const edgeTargets = useNodeEdgeTargets(source);
   const nodeMetadata = useNodeMetadata(source);
-  const sourceId = source.includes('-#') ? source.split('-#')[0] : undefined;
+  const sourceId = containsIdTag(source) ? removeIdTag(source) : undefined;
   const graphId = sourceId ?? nodeMetadata?.graphId ?? '';
   const [edgeCenterX, edgeCenterY] = getEdgeCenter({
     sourceX,
@@ -75,17 +77,28 @@ export const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
 
   const filteredRunAfters: Record<string, string[]> = useMemo(
     () =>
-      Object.entries(operationData?.runAfter ?? {}).reduce(
-        (pv, [id, cv]) => ((cv ?? []).some((status) => status.toUpperCase() !== RUN_AFTER_STATUS.SUCCEEDED) ? { ...pv, [id]: cv } : pv),
-        {}
-      ),
+      Object.entries(operationData?.runAfter ?? {}).reduce((pv: Record<string, string[]>, [id, cv]) => {
+        if ((cv ?? []).some((status) => status.toUpperCase() !== RUN_AFTER_STATUS.SUCCEEDED)) {
+          pv[id] = cv;
+        }
+
+        return pv;
+      }, {}),
     [operationData?.runAfter]
   );
   const numRunAfters = Object.keys(filteredRunAfters).length;
-  const raIndex = useMemo(() => Object.entries(filteredRunAfters).findIndex(([key]) => key === source), [filteredRunAfters, source]);
+  const raIndex: number = useMemo(() => {
+    const sortedRunAfters = Object.keys(filteredRunAfters)
+      .slice(0)
+      .sort((id1, id2) => (reactFlow.getNode(id2)?.position?.x ?? 0) - (reactFlow.getNode(id1)?.position?.x ?? 0));
+
+    return sortedRunAfters?.findIndex((key) => key === source);
+  }, [filteredRunAfters, reactFlow, source]);
 
   const runAfterStatuses = useMemo(() => filteredRunAfters?.[source] ?? [], [filteredRunAfters, source]);
-  const showRunAfter = runAfterStatuses.length;
+  const runAfterCount = Object.keys(filteredRunAfters).length;
+  const showRunAfter = runAfterStatuses.length && runAfterCount < 6;
+  const showCollapsedRunAfter = runAfterStatuses.length && runAfterCount > 5 && Object.keys(filteredRunAfters)[0] === source;
 
   const showSourceButton = edgeTargets[edgeTargets.length - 1] === target;
   const showTargetButton = edgeSources?.[edgeSources.length - 1] === source;
@@ -95,10 +108,12 @@ export const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
   const onlyEdge = !multipleSources && !multipleTargets;
   const isLeaf = edgeTargets.length === 0;
 
-  const dynamicMidEdgeY =
+  let dynamicMidEdgeY =
     multipleSources && !multipleTargets ? targetY - 64 : multipleTargets && !multipleSources ? sourceY + 64 : edgeCenterY;
 
-  // if (numRunAfters !== 0) dynamicMidEdgeY -= 4;
+  if (numRunAfters !== 0) {
+    dynamicMidEdgeY -= 7;
+  }
 
   const [d] = useMemo(() => {
     return getSmoothStepPath({
@@ -130,7 +145,7 @@ export const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
       />
 
       {/* ADD ACTION / BRANCH BUTTONS */}
-      {!readOnly ? (
+      {readOnly ? null : (
         <>
           {/* TOP BUTTON */}
           {((multipleTargets && showSourceButton) || multipleSources) && (
@@ -139,7 +154,7 @@ export const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
               y={sourceY + 28 - foreignObjectHeight / 2}
               graphId={graphId}
               parentId={source}
-              childId={!multipleTargets ? target : undefined}
+              childId={multipleTargets ? undefined : target}
             />
           )}
 
@@ -160,13 +175,13 @@ export const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
               x={targetX - foreignObjectWidth / 2}
               y={targetY - 32 - foreignObjectHeight / 2 - (numRunAfters !== 0 ? 4 : 0)} // Make a little more room for run after
               graphId={graphId}
-              parentId={!multipleSources ? source : undefined}
+              parentId={multipleSources ? undefined : source}
               childId={target}
               isLeaf={isLeaf}
             />
           )}
         </>
-      ) : null}
+      )}
 
       {/* RUN AFTER INDICATOR */}
       {showRunAfter ? (
@@ -180,6 +195,20 @@ export const ButtonEdge: React.FC<EdgeProps<LogicAppsEdgeProps>> = ({
           <RunAfterIndicator statuses={runAfterStatuses} sourceNodeId={source} />
         </foreignObject>
       ) : null}
+      {/* RUN AFTER INDICATOR WHEN COLLAPSED */}
+      {showCollapsedRunAfter ? (
+        <foreignObject
+          id="msla-run-after-traffic-light"
+          width={runAfterWidth}
+          height={runAfterHeight}
+          x={targetX - runAfterWidth / 2}
+          y={targetY - runAfterHeight}
+        >
+          <CollapsedRunAfterIndicator filteredRunAfters={filteredRunAfters} runAfterCount={runAfterCount} />
+        </foreignObject>
+      ) : null}
     </>
   );
 };
+
+export default memo(ButtonEdge);

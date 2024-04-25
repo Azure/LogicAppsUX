@@ -1,16 +1,15 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
 import type { EventHandler } from '../../../eventhandler';
-import { Label } from '../../../label';
 import { useId } from '../../../useId';
 import { SimpleDictionaryItem } from './simpledictionaryitem';
 import type { SimpleDictionaryRowModel, SimpleDictionaryChangeModel } from './simpledictionaryitem';
-import { useDebouncedEffect } from '@react-hookz/web';
-import React, { useState } from 'react';
+import type React from 'react';
+import { useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
 
 export interface SimpleDictionaryProps {
   disabled?: boolean;
-  title?: string;
+  customLabel?: JSX.Element;
   readOnly?: boolean;
   value?: Record<string, string>;
   ariaLabel?: string;
@@ -19,7 +18,7 @@ export interface SimpleDictionaryProps {
 
 export const SimpleDictionary: React.FC<SimpleDictionaryProps> = ({
   disabled,
-  title,
+  customLabel,
   readOnly,
   value,
   onChange,
@@ -35,24 +34,17 @@ export const SimpleDictionary: React.FC<SimpleDictionaryProps> = ({
   ]);
 
   const intl = useIntl();
-  useDebouncedEffect(
-    () => {
-      onChange?.(
-        values
-          .filter((x) => x.key && x.key !== '')
-          .reduce((acc, val) => {
-            return {
-              ...acc,
-              [val.key]: val.value,
-            };
-          }, {})
-      );
-    },
+  useEffect(() => {
+    onChange?.(
+      values
+        .filter((x) => x.key && x.key !== '')
+        .reduce((acc: any, val) => {
+          acc[val.key] = val.value;
+          return acc;
+        }, {})
+    );
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [values],
-    500,
-    1000
-  );
+  }, [values]);
 
   const handleItemDelete = (e: SimpleDictionaryRowModel): void => {
     setValues((oldValues) => oldValues.filter((x) => x.index !== e.index).map((x, i) => ({ ...x, index: i })));
@@ -79,24 +71,21 @@ export const SimpleDictionary: React.FC<SimpleDictionaryProps> = ({
 
   const dictionaryFieldID = useId('anInput');
 
-  //TODO: Move this to a proper setting
-  const trackedPropertiesString = intl.formatMessage({
-    defaultMessage: 'Tracked Properties',
-    description: 'Label for the Tracked Properties field in the settings section',
+  const indexItem = intl.formatMessage({
+    defaultMessage: 'item',
+    id: 'NFgfP4',
+    description: 'Label for users to know which item they are on in the dictionary',
   });
+
   return (
     <>
-      <div className="msla-input-parameter-label">
-        <div className="msla-dictionary-control-label">
-          <Label htmlFor={dictionaryFieldID} text={trackedPropertiesString} />
-        </div>
-      </div>
+      {customLabel ? customLabel : null}
       <div id={dictionaryFieldID}>
         {values.map((x) => (
           <SimpleDictionaryItem
             item={{ key: x.key, value: x.value, index: x.index }}
             key={x.index}
-            ariaLabel={`${ariaLabel} ${x.index}`}
+            ariaLabel={`${ariaLabel} ${indexItem} ${x.index + 1}`}
             allowDeletion={x.index + 1 !== values.length}
             disabled={disabled}
             readOnly={readOnly}

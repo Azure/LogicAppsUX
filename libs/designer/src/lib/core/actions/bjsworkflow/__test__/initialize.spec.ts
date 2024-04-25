@@ -4,7 +4,7 @@ import {
   mockPostTeamsAdaptiveCardOpenApiManifest,
   mockSendAnOfficeOutlookEmailOpenApiManifest,
 } from './initialize.mocks';
-
+import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 describe('bjsworkflow initialize', () => {
   describe('getInputParametersFromManifest', () => {
     test('works for an OpenAPI operation with input parameters and values', () => {
@@ -33,6 +33,7 @@ describe('bjsworkflow initialize', () => {
       const inputParameters = getInputParametersFromManifest(
         'Send_an_email',
         mockSendAnOfficeOutlookEmailOpenApiManifest,
+        undefined /* presetParameterValues */,
         undefined /* customSwagger */,
         stepDefinition
       );
@@ -72,6 +73,7 @@ describe('bjsworkflow initialize', () => {
       const inputParameters = getInputParametersFromManifest(
         'Post_an_adaptive_card',
         mockPostTeamsAdaptiveCardOpenApiManifest,
+        undefined /* presetParameterValues */,
         undefined /* customSwagger */,
         stepDefinition
       );
@@ -103,6 +105,7 @@ describe('bjsworkflow initialize', () => {
       const inputParameters = getInputParametersFromManifest(
         'Get_my_profile',
         mockGetMyOffice365ProfileOpenApiManifest,
+        undefined /* presetParameterValues */,
         undefined /* customSwagger */,
         stepDefinition
       );

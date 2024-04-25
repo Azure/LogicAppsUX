@@ -1,7 +1,10 @@
 import type { SectionProps, ToggleHandler } from '..';
-import constants from '../../../common/constants';
+import { SettingSectionName } from '..';
+import { useOperationInfo } from '../../../core';
+import { isSecureOutputsLinkedToInputs } from '../../../core/utils/setting';
 import type { SettingsSectionProps } from '../settingsection';
-import { SettingsSection, SettingLabel } from '../settingsection';
+import { SettingsSection } from '../settingsection';
+import { getSettingLabel } from '@microsoft/designer-ui';
 import { useIntl } from 'react-intl';
 
 export interface SecuritySectionProps extends SectionProps {
@@ -10,51 +13,62 @@ export interface SecuritySectionProps extends SectionProps {
 }
 
 export const Security = ({
+  nodeId,
+  expanded,
+  readOnly,
   secureInputs,
   secureOutputs,
-  readOnly,
   onSecureInputsChange,
   onSecureOutputsChange,
-  expanded,
   onHeaderClick,
 }: SecuritySectionProps): JSX.Element | null => {
   const intl = useIntl();
+  const operationInfo = useOperationInfo(nodeId);
   const onText = intl.formatMessage({
     defaultMessage: 'On',
+    id: '2tTQ0A',
     description: 'label when setting is on',
   });
   const offText = intl.formatMessage({
     defaultMessage: 'Off',
+    id: '1htSs7',
     description: 'label when setting is off',
   });
   const secureInputsTitle = intl.formatMessage({
     defaultMessage: 'Secure Inputs',
+    id: '1ejxkP',
     description: 'title for the secure inputs setting',
   });
+  const secureInputsDescription = intl.formatMessage({
+    defaultMessage: 'Enabling secure inputs will automatically secure outputs.',
+    id: 'jfU6pn',
+    description: 'description of the secure inputs setting',
+  });
   const secureInputsTooltipText = intl.formatMessage({
-    defaultMessage: 'Secure inputs of the operation.',
+    defaultMessage: 'Secure inputs of the operation',
+    id: '632t9E',
     description: 'description of the secure inputs setting',
   });
   const secureOutputsTitle = intl.formatMessage({
     defaultMessage: 'Secure Outputs',
+    id: 'FDWfqM',
     description: 'title for secure outputs setting',
   });
   const secureOutputsTooltipText = intl.formatMessage({
-    defaultMessage: 'Secure outputs of the operation and references of output properties.',
+    defaultMessage: 'Secure outputs of the operation and references of output properties',
+    id: 'iSiVB0',
     description: 'description of secure outputs setting',
   });
   const securityTitle = intl.formatMessage({
     defaultMessage: 'Security',
+    id: 'ptkf0D',
     description: 'title of security setting section',
   });
-
-  const secureInputsLabel = <SettingLabel labelText={secureInputsTitle} infoTooltipText={secureInputsTooltipText} isChild={false} />;
-  const secureOutputsLabel = <SettingLabel labelText={secureOutputsTitle} infoTooltipText={secureOutputsTooltipText} isChild={false} />;
 
   const securitySectionProps: SettingsSectionProps = {
     id: 'security',
     title: securityTitle,
-    sectionName: constants.SETTINGSECTIONS.SECURITY,
+    sectionName: SettingSectionName.SECURITY,
     isReadOnly: readOnly,
     expanded,
     onHeaderClick,
@@ -65,7 +79,11 @@ export const Security = ({
           readOnly,
           checked: secureInputs?.value,
           onToggleInputChange: (_, checked) => onSecureInputsChange(!!checked),
-          customLabel: () => secureInputsLabel,
+          customLabel: getSettingLabel(
+            secureInputsTitle,
+            secureInputsTooltipText,
+            isSecureOutputsLinkedToInputs(operationInfo?.type) ? secureInputsDescription : undefined
+          ),
           onText,
           offText,
           ariaLabel: secureInputsTitle,
@@ -78,7 +96,7 @@ export const Security = ({
           readOnly,
           checked: secureOutputs?.value,
           onToggleInputChange: (_, checked) => onSecureOutputsChange(!!checked),
-          customLabel: () => secureOutputsLabel,
+          customLabel: getSettingLabel(secureOutputsTitle, secureOutputsTooltipText),
           onText,
           offText,
           ariaLabel: secureOutputsTitle,

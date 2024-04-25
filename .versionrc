@@ -1,50 +1,42 @@
 {
-  "header": "# Logic Apps Designer",
-  "infile": "CHANGELOG.md",
-  "bumpFiles": [
-    {
-      "filename": "package.json",
-      "type": "json"
-    },
-    {
-      "filename": "libs/designer/package.json",
-      "type": "json"
-    },
-    {
-      "filename": "libs/designer-ui/package.json",
-      "type": "json"
-    },
-    {
-      "filename": "libs/utils/package.json",
-      "type": "json"
-    },
-    {
-      "filename": "libs/services/intl/package.json",
-      "type": "json"
-    },
-    {
-      "filename": "apps/vs-code-designer/src/package.json",
-      "type": "json"
-    },
-    {
-      "filename": "apps/vs-code-data-mapper/src/package.json",
-      "type": "json"
-    },
-    {
-      "filename": "libs/data-mapper/package.json",
-      "type": "json"
-    },
-    {
-      "filename": "libs/parsers/package.json",
-      "type": "json"
-    },
-    {
-      "filename": "libs/services/designer-client-services/package.json",
-      "type": "json"
-    },
-    {
-      "filename": "libs/vscode-extension/package.json",
-      "type": "json"
-    }
-  ]
+    "header": "# Logic Apps Designer",
+    "infile": "CHANGELOG.md",
+    "bumpFiles": [
+        {
+            "filename": "package.json",
+            "type": "json"
+        },
+        {
+            "filename": "libs/designer/package.json",
+            "type": "json"
+        },
+        {
+            "filename": "libs/designer-ui/package.json",
+            "type": "json"
+        },
+        {
+            "filename": "apps/vs-code-designer/src/package.json",
+            "type": "json"
+        },
+        {
+            "filename": "libs/data-mapper/package.json",
+            "type": "json"
+        },
+        {
+            "filename": "libs/logic-apps-shared/package.json",
+            "type": "json"
+        },
+        {
+            "filename": "libs/services/designer-client-services/package.json",
+            "type": "json"
+        },
+        {
+            "filename": "libs/vscode-extension/package.json",
+            "type": "json"
+        },
+        {
+            "filename": "libs/chatbot/package.json",
+            "type": "json"
+        }
+    ]
 }

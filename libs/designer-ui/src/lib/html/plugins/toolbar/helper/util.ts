@@ -1,137 +1,155 @@
+import { encodeStringSegmentTokensInDomContext } from '../../../../editor/base/utils/parsesegments';
+import type { ValueSegment } from '@microsoft/logic-apps-shared';
+import DomPurify from 'dompurify';
+
+const encodeReduceFunction = (acc: Record<string, string>, key: string) => {
+  acc[key] = encodeURIComponent(key);
+  return acc;
+};
+const decodeReduceFunction = (acc: Record<string, string>, key: string) => {
+  acc[encodeURIComponent(key)] = key;
+  return acc;
+};
+const htmlUnsafeCharacters = ['<', '>'];
+const htmlUnsafeCharacterEncodingMap: Record<string, string> = htmlUnsafeCharacters.reduce(encodeReduceFunction, {});
+const htmlUnsafeCharacterDecodingMap: Record<string, string> = htmlUnsafeCharacters.reduce(decodeReduceFunction, {});
+
+const lexicalUnsafeCharacters = ['&', '"'];
+const lexicalUnsafeCharacterEncodingMap: Record<string, string> = lexicalUnsafeCharacters.reduce(encodeReduceFunction, {});
+const lexicalUnsafeCharacterDecodingMap: Record<string, string> = lexicalUnsafeCharacters.reduce(decodeReduceFunction, {});
+
+const lexicalSupportedTagNames = new Set([
+  'a',
+  'b',
+  'br',
+  'em',
+  'h1',
+  'h2',
+  'h3',
+  'h4',
+  'h5',
+  'h6',
+  'i',
+  'li',
+  'ol',
+  'p',
+  'span',
+  'strong',
+  'u',
+  'ul',
+]);
+const htmlEditorSupportedAttributes: { '*': string[] } & Record<string, string[]> = {
+  '*': ['id', 'style'],
+  a: ['href'],
+  img: ['alt', 'src'],
+};
+
 export interface Position {
   x: number;
   y: number;
 }
 
-export interface RGB {
-  blue: number;
-  green: number;
-  red: number;
-}
-export interface HSV {
-  hue: number;
-  saturation: number;
-  value: number;
-}
-export interface Color {
-  hex: string;
-  hsv: HSV;
-  rgb: RGB;
-}
+export const cleanHtmlString = (html: string): string => {
+  let cleanedHtmlString = html;
 
-export const hex2rgb = (hex: string): RGB => {
-  const rbgArr = (
-    hex
-      .replace(/^#?([a-f\d])([a-f\d])([a-f\d])$/i, (m, r, g, b) => '#' + r + r + g + g + b + b)
-      .substring(1)
-      .match(/.{2}/g) || []
-  ).map((x) => parseInt(x, 16));
+  // Remove extraneous <span> tags.
+  cleanedHtmlString = cleanedHtmlString.replace(/<span>(.*?)<\/span>/g, '$1');
 
-  return {
-    blue: rbgArr[2],
-    green: rbgArr[1],
-    red: rbgArr[0],
-  };
+  // Remove wrapper tags around <br> elements.
+  // (Remove this when issue is fixed: https://github.com/facebook/lexical/issues/3879#issuecomment-1640215777)
+  cleanedHtmlString = cleanedHtmlString.replace(/<(p|h[1-4])>((<br>)+)<\/\1>/g, (_match, _tag, brs) => brs);
+
+  // Move <br> at the end of <p> outside of the block.
+  cleanedHtmlString = cleanedHtmlString.replace(/((<br>)+)(<\/p>)/g, (_match, brs, _br, tag) => `${tag}${brs}`);
+
+  return cleanedHtmlString;
 };
 
-const rgb2hsv = ({ red, green, blue }: RGB): HSV => {
-  const newRed = red / 255;
-  const newGreen = green / 255;
-  const newBlue = blue / 255;
-
-  const max = Math.max(newRed, newGreen, newBlue);
-  const difference = max - Math.min(newRed, newGreen, newBlue);
-
-  const hue = difference
-    ? (max === newRed
-        ? (newGreen - newBlue) / difference + (newGreen < newBlue ? 6 : 0)
-        : max === newGreen
-        ? 2 + (newBlue - newRed) / difference
-        : 4 + (newRed - newGreen) / difference) * 60
-    : 0;
-  const saturation = max ? (difference / max) * 100 : 0;
-  const value = max * 100;
-
-  return { hue, saturation, value };
+// If we can find the id in the nodemap, return true.
+export const canReplaceSpanWithId = (idValue: string, nodeMap: Map<string, ValueSegment>): boolean => {
+  return nodeMap.get(idValue) !== undefined;
 };
 
-export const hsv2rgb = ({ hue, saturation, value }: HSV): RGB => {
-  const currSaturation = saturation / 100;
-  const currValue = value / 100;
-
-  const i = ~~(hue / 60);
-  const f = hue / 60 - i;
-  const p = currValue * (1 - currSaturation);
-  const q = currValue * (1 - currSaturation * f);
-  const t = currValue * (1 - currSaturation * (1 - f));
-  const index = i % 6;
-
-  const red = Math.round([currValue, q, p, p, t, currValue][index] * 255);
-  const green = Math.round([t, currValue, currValue, q, p, p][index] * 255);
-  const blue = Math.round([p, p, t, currValue, currValue, q][index] * 255);
-
-  return { blue, green, red };
+export const cleanStyleAttribute = (styleAttributeValue: string): string | undefined => {
+  const newValue = styleAttributeValue.replace('white-space: pre-wrap;', '').trim();
+  return newValue.length ? newValue : undefined;
 };
 
-export const rgb2hex = ({ blue, green, red }: RGB): string => {
-  return '#' + [red, green, blue].map((x) => x.toString(16).padStart(2, '0')).join('');
+export const decodeSegmentValueInDomContext = (value: string): string => encodeOrDecodeSegmentValue(value, htmlUnsafeCharacterDecodingMap);
+
+export const encodeSegmentValueInDomContext = (value: string): string => encodeOrDecodeSegmentValue(value, htmlUnsafeCharacterEncodingMap);
+
+export const decodeSegmentValueInLexicalContext = (value: string): string =>
+  encodeOrDecodeSegmentValue(value, lexicalUnsafeCharacterDecodingMap);
+
+export const encodeSegmentValueInLexicalContext = (value: string): string =>
+  encodeOrDecodeSegmentValue(value, lexicalUnsafeCharacterEncodingMap);
+
+export const encodeOrDecodeSegmentValue = (value: string, encodingMap: Record<string, string>): string => {
+  let newValue = value;
+  Object.keys(encodingMap).forEach((key) => {
+    newValue = newValue.replaceAll(key, encodingMap[key]);
+  });
+  return newValue;
 };
 
-export function transformColor<M extends keyof Color, C extends Color[M]>(format: M, color: C): Color {
-  let hex: Color['hex'] = toHex('#121212');
-  let rgb: Color['rgb'] = hex2rgb(hex);
-  let hsv: Color['hsv'] = rgb2hsv(rgb);
+export const getDomFromHtmlEditorString = (htmlEditorString: string, nodeMap: Map<string, ValueSegment>): HTMLElement => {
+  // Comments at the start of a DOM are lost when parsing HTML strings, so we wrap the HTML string in a <div>.
+  const wrappedHtmlEditorString = `<div>${htmlEditorString}</div>`;
 
-  if (format === 'hex') {
-    const value = color as Color['hex'];
+  const purifiedHtmlEditorString = DomPurify.sanitize(wrappedHtmlEditorString, { ADD_TAGS: ['#comment'] });
+  const encodedHtmlEditorString = encodeStringSegmentTokensInDomContext(purifiedHtmlEditorString, nodeMap);
 
-    hex = toHex(value);
-    rgb = hex2rgb(hex);
-    hsv = rgb2hsv(rgb);
-  } else if (format === 'rgb') {
-    const value = color as Color['rgb'];
+  const tempElement = document.createElement('div', {});
+  tempElement.innerHTML = encodedHtmlEditorString;
 
-    rgb = value;
-    hex = rgb2hex(rgb);
-    hsv = rgb2hsv(rgb);
-  } else if (format === 'hsv') {
-    const value = color as Color['hsv'];
+  // Unwrap the wrapper <div>.
+  return tempElement.children[0] as HTMLElement;
+};
 
-    hsv = value;
-    rgb = hsv2rgb(hsv);
-    hex = rgb2hex(rgb);
+export const isAttributeSupportedByHtmlEditor = (tagName: string, attribute: string): boolean => {
+  if (tagName.length === 0 || attribute.length === 0) {
+    return false;
   }
 
-  return { hex, hsv, rgb };
-}
+  const tagNameLower = tagName.toLowerCase();
+  const attributeLower = attribute.toLowerCase();
 
-export const toHex = (value: string): string => {
-  let currValue = value;
-  if (!value.startsWith('#')) {
-    const ctx = document.createElement('canvas').getContext('2d');
+  if (htmlEditorSupportedAttributes[tagNameLower]?.includes(attributeLower)) {
+    return true;
+  }
 
-    if (!ctx) {
-      throw new Error('2d context not supported or canvas already initialized');
+  return htmlEditorSupportedAttributes['*'].includes(attributeLower);
+};
+
+export const isHtmlStringValueSafeForLexical = (htmlEditorString: string, nodeMap: Map<string, ValueSegment>): boolean => {
+  const tempElement = getDomFromHtmlEditorString(htmlEditorString, nodeMap);
+
+  const elements = tempElement.querySelectorAll('*');
+  // biome-ignore lint/style/useForOf:Node List is not iterable
+  for (let i = 0; i < elements.length; i++) {
+    const element = elements[i];
+    if (!isTagNameSupportedByLexical(element.tagName)) {
+      return false;
     }
 
-    ctx.fillStyle = value;
-
-    return ctx.fillStyle;
-  } else if (currValue.length === 4 || currValue.length === 5) {
-    currValue = value
-      .split('')
-      .map((v, i) => (i ? v + v : '#'))
-      .join('');
-
-    return currValue;
-  } else if (currValue.length === 7 || currValue.length === 9) {
-    return currValue;
+    const attributes = Array.from(element.attributes);
+    for (const attribute of attributes) {
+      if (!isAttributeSupportedByHtmlEditor(element.tagName, attribute.name)) {
+        return false;
+      }
+    }
   }
 
-  return '#000000';
+  return true;
 };
 
+export const isTagNameSupportedByLexical = (tagName: string): boolean =>
+  tagName.length > 0 && lexicalSupportedTagNames.has(tagName.toLowerCase());
+
 export const dropDownActiveClass = (active: boolean) => {
-  if (active) return 'active msla-dropdown-item-active';
-  else return '';
+  if (active) {
+    return 'active msla-dropdown-item-active';
+  }
+  return '';
 };

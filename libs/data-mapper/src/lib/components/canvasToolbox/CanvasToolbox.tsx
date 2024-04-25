@@ -1,7 +1,6 @@
 import { addSourceSchemaNodes, removeSourceSchemaNodes, setCanvasToolboxTabToDisplay } from '../../core/state/DataMapSlice';
 import { openAddSourceSchemaPanelView } from '../../core/state/PanelSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
-import type { SchemaNodeExtended } from '../../models';
 import { flattenSchemaNode, searchSchemaTreeFromRoot } from '../../utils/Schema.Utils';
 import type { ButtonPivotProps } from '../buttonPivot/ButtonPivot';
 import { ButtonPivot } from '../buttonPivot/ButtonPivot';
@@ -16,18 +15,18 @@ import type { ITreeNode } from '../tree/Tree';
 import Tree from '../tree/Tree';
 import { Stack } from '@fluentui/react';
 import type { SelectTabData, SelectTabEvent } from '@fluentui/react-components';
-import { Button, Text, mergeClasses, tokens, typographyStyles } from '@fluentui/react-components';
+import { Button, MenuItem, Text, mergeClasses, tokens, typographyStyles } from '@fluentui/react-components';
 import { CubeTree20Filled, CubeTree20Regular, MathFormula20Filled, MathFormula20Regular } from '@fluentui/react-icons';
-import type { MenuItemOption } from '@microsoft/designer-ui';
-import { MenuItemType } from '@microsoft/designer-ui';
+import type { SchemaNodeExtended } from '@microsoft/logic-apps-shared';
 import { useCallback, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 
-export enum ToolboxPanelTabs {
-  sourceSchemaTree = 'sourceSchemaTree',
-  functionsList = 'functionsList',
-}
+export const ToolboxPanelTabs = {
+  sourceSchemaTree: 'sourceSchemaTree',
+  functionsList: 'functionsList',
+} as const;
+export type ToolboxPanelTabs = (typeof ToolboxPanelTabs)[keyof typeof ToolboxPanelTabs];
 
 const generalToolboxPanelProps = {
   xPos: '16px',
@@ -45,51 +44,59 @@ export const CanvasToolbox = ({ canvasBlockHeight }: CanvasToolboxProps) => {
   const dispatch = useDispatch<AppDispatch>();
   const schemaNodeItemStyles = useSchemaTreeItemStyles();
 
-  const toolboxTabToDisplay = useSelector((state: RootState) => state.dataMap.canvasToolboxTabToDisplay);
-  const sourceSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.sourceSchema);
-  const flattenedSourceSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedSourceSchema);
-  const currentSourceSchemaNodes = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentSourceSchemaNodes);
+  const toolboxTabToDisplay = useSelector((state: RootState) => state.dataMap.present.canvasToolboxTabToDisplay);
+  const sourceSchema = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.sourceSchema);
+  const flattenedSourceSchema = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.flattenedSourceSchema);
+  const currentSourceSchemaNodes = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.currentSourceSchemaNodes);
 
   const [sourceSchemaSearchTerm, setSourceSchemaSearchTerm] = useState<string>('');
   const [sourceSchemaDataTypeFilters, setSourceSchemaDataTypeFilters] = useState<FilteredDataTypesDict>(getDefaultFilteredDataTypesDict());
 
   const showSourceSchemaLoc = intl.formatMessage({
     defaultMessage: 'Show source schema',
+    id: 'D/xTXV',
     description: 'Label to open source schema toolbox',
   });
 
   const hideSourceSchemaLoc = intl.formatMessage({
     defaultMessage: 'Hide source schema',
+    id: '1pjO9s',
     description: 'Label to close source schema toolbox',
   });
 
   const showFunctionsLoc = intl.formatMessage({
     defaultMessage: 'Show functions',
+    id: 'PvWTxR',
     description: 'Label to open Functions list',
   });
 
   const hideFunctionsLoc = intl.formatMessage({
     defaultMessage: 'Hide functions',
+    id: '1nODUD',
     description: 'Label to close Functions list',
   });
 
   const functionLoc = intl.formatMessage({
     defaultMessage: 'Function',
+    id: 'PSrCNL',
     description: 'Function',
   });
 
   const sourceSchemaLoc = intl.formatMessage({
     defaultMessage: 'Source schema',
+    id: 'VLc3FV',
     description: 'Source schema',
   });
 
   const addSrcSchemaLoc = intl.formatMessage({
     defaultMessage: 'Add a source schema first, then select elements to build your map',
+    id: 'h6vVbX',
     description: 'Message to add a source schema',
   });
 
   const addLoc = intl.formatMessage({
     defaultMessage: 'Add',
+    id: 'F9dR1Q',
     description: 'Add',
   });
 
@@ -121,36 +128,44 @@ export const CanvasToolbox = ({ canvasBlockHeight }: CanvasToolboxProps) => {
     }
   };
 
-  const getAllContextMenuItems = (node: SchemaNodeExtended): MenuItemOption[] => {
+  const getAllContextMenuItems = (node: SchemaNodeExtended): JSX.Element[] => {
     return [getAddAllNodesMenuItem(node), getAddAllNodesRecursiveMenuItem(node)];
   };
 
-  const getAddAllNodesMenuItem = (node: SchemaNodeExtended): MenuItemOption => {
+  const getAddAllNodesMenuItem = (node: SchemaNodeExtended): JSX.Element => {
     const nodeList = [node, ...node.children];
-    return {
-      key: 'addAll',
-      title: intl.formatMessage({
-        defaultMessage: 'Add children',
-        description: 'Add the current node and its children to the map',
-      }),
-      type: MenuItemType.Advanced,
-      onClick: () => dispatch(addSourceSchemaNodes(nodeList)),
-      disabled: nodeList.every((node) => currentSourceSchemaNodes.find((curNode) => node.key === curNode.key)),
-    };
+    const text = intl.formatMessage({
+      defaultMessage: 'Add children',
+      id: 'YCFhzp',
+      description: 'Add the current node and its children to the map',
+    });
+    return (
+      <MenuItem
+        key="addAll"
+        onClick={() => dispatch(addSourceSchemaNodes(nodeList))}
+        disabled={nodeList.every((node) => currentSourceSchemaNodes.find((curNode) => node.key === curNode.key))}
+      >
+        {text}
+      </MenuItem>
+    );
   };
 
-  const getAddAllNodesRecursiveMenuItem = (node: SchemaNodeExtended): MenuItemOption => {
+  const getAddAllNodesRecursiveMenuItem = (node: SchemaNodeExtended): JSX.Element => {
     const nodeList = flattenSchemaNode(node);
-    return {
-      key: 'addAllRecursive',
-      title: intl.formatMessage({
-        defaultMessage: 'Add children (recursive)',
-        description: 'Add the current node and its children to the map',
-      }),
-      type: MenuItemType.Advanced,
-      onClick: () => dispatch(addSourceSchemaNodes(nodeList)),
-      disabled: nodeList.every((node) => currentSourceSchemaNodes.find((curNode) => node.key === curNode.key)),
-    };
+    const text = intl.formatMessage({
+      defaultMessage: 'Add children (recursive)',
+      id: '20oqsp',
+      description: 'Add the current node and its children to the map',
+    });
+    return (
+      <MenuItem
+        key="addAllRecursive"
+        onClick={() => dispatch(addSourceSchemaNodes(nodeList))}
+        disabled={nodeList.every((node) => currentSourceSchemaNodes.find((curNode) => node.key === curNode.key))}
+      >
+        {text}
+      </MenuItem>
+    );
   };
 
   const searchedSourceSchemaTreeRoot = useMemo<ITreeNode<SchemaNodeExtended> | undefined>(() => {

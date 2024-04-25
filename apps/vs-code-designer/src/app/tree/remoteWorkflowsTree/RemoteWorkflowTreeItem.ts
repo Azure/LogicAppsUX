@@ -13,22 +13,22 @@ import { getProjectContextValue } from '../../utils/tree/projectContextValues';
 import type { RemoteWorkflowsTreeItem } from './RemoteWorkflowsTreeItem';
 import type { StringDictionary } from '@azure/arm-appservice';
 import type { ServiceClientCredentials } from '@azure/ms-rest-js';
-import { isEmptyString, HTTP_METHODS } from '@microsoft/utils-logic-apps';
+import { isEmptyString, HTTP_METHODS } from '@microsoft/logic-apps-shared';
 import { AzExtTreeItem, DialogResponses } from '@microsoft/vscode-azext-utils';
 import type { IActionContext, TreeItemIconPath } from '@microsoft/vscode-azext-utils';
-import { ProjectResource } from '@microsoft/vscode-extension';
+import { ProjectResource } from '@microsoft/vscode-extension-logic-apps';
 import type {
   ServiceProviderConnectionModel,
   IWorkflowFileContent,
   Artifacts,
   Parameter,
   ICallbackUrlResponse,
-} from '@microsoft/vscode-extension';
+} from '@microsoft/vscode-extension-logic-apps';
 import { ProgressLocation, window } from 'vscode';
 
 export class RemoteWorkflowTreeItem extends AzExtTreeItem {
   public readonly name: string;
-  public readonly parent: RemoteWorkflowsTreeItem;
+  public declare readonly parent: RemoteWorkflowsTreeItem;
   public readonly workflowFileContent: IWorkflowFileContent;
   public credentials: ServiceClientCredentials;
 

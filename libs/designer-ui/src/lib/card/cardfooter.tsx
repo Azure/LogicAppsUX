@@ -1,10 +1,14 @@
 import type { CardProps } from './index';
 import { getHeaderStyle } from './utils';
 import type { IIconProps } from '@fluentui/react';
-import { css, Icon, TooltipHost } from '@fluentui/react';
+import { css, Icon } from '@fluentui/react';
+import { Tooltip } from '@fluentui/react-components';
 import { useIntl } from 'react-intl';
 
-export type CardFooterProps = Pick<CardProps, 'commentBox' | 'connectionDisplayName' | 'connectionRequired' | 'staticResultsEnabled'>;
+export type CardFooterProps = Pick<
+  CardProps,
+  'commentBox' | 'connectionDisplayName' | 'connectionRequired' | 'staticResultsEnabled' | 'isSecureInputsOutputs'
+>;
 
 interface CardBadgeBarProps {
   badges: CardBadgeProps[];
@@ -31,28 +35,53 @@ const staticResultIconProps: IIconProps = {
   iconName: 'TestBeaker',
 };
 
-export const CardFooter: React.FC<CardFooterProps> = ({ commentBox, connectionDisplayName, connectionRequired, staticResultsEnabled }) => {
+const lockIconProps: IIconProps = {
+  iconName: 'Lock',
+};
+
+export const CardFooter: React.FC<CardFooterProps> = ({
+  commentBox,
+  connectionDisplayName,
+  connectionRequired,
+  staticResultsEnabled,
+  isSecureInputsOutputs,
+}) => {
   const intl = useIntl();
 
   const CONNECTION_NAME_DISPLAY = intl.formatMessage({
     defaultMessage: 'Connection name',
+    id: 'XOzn/3',
     description: 'This is for a label for a badge, it is used for screen readers and not shown on the screen.',
   });
   const CONNECTION_CONTAINER_CONNECTION_REQUIRED = intl.formatMessage({
     defaultMessage: 'Connection required',
+    id: 'CG772M',
     description: 'This is for a label for a badge, it is used for screen readers and not shown on the screen.',
   });
   const PANEL_STATIC_RESULT_TITLE = intl.formatMessage({
     defaultMessage: 'Testing',
+    id: 'm7Y6Qf',
     description: 'Title for a tab panel',
   });
   const MENU_STATIC_RESULT_ICON_TOOLTIP = intl.formatMessage({
     defaultMessage: 'This Action has testing configured.',
+    id: 'iRjBf4',
     description: "This is a tooltip for the Status results badge shown on a card. It's shown when the baged is hovered over.",
   });
   const COMMENT = intl.formatMessage({
     defaultMessage: 'Comment',
+    id: 'VXBWrq',
     description: 'This is for a label for a badge, it is used for screen readers and not shown on the screen.',
+  });
+  const SECURE_INPUTS_OUTPUTS_TITLE = intl.formatMessage({
+    defaultMessage: 'Secure inputs or outputs enabled.',
+    id: '0F6jmK',
+    description: 'Secure inputs or outputs enabled.',
+  });
+  const SECURE_INPUTS_OUTPUTS_TOOLTIP = intl.formatMessage({
+    defaultMessage: 'This operation has secure inputs or outputs enabled.',
+    id: 'byRkj+',
+    description: 'This operation has secure inputs or outputs enabled.',
   });
 
   const connectionTitle = connectionDisplayName ? CONNECTION_NAME_DISPLAY : CONNECTION_CONTAINER_CONNECTION_REQUIRED;
@@ -86,6 +115,9 @@ export const CardFooter: React.FC<CardFooterProps> = ({ commentBox, connectionDi
           },
         ]
       : []),
+    ...(isSecureInputsOutputs
+      ? [{ active: true, content: SECURE_INPUTS_OUTPUTS_TOOLTIP, iconProps: lockIconProps, title: SECURE_INPUTS_OUTPUTS_TITLE }]
+      : []),
   ];
 
   return (
@@ -108,18 +140,20 @@ const CardBadgeBar: React.FC<CardBadgeBarProps> = ({ badges, brandColor }) => {
 const CardBadge: React.FC<CardBadgeProps> = ({ active, content, darkBackground = false, iconProps, title }) => {
   if (!content) {
     return null;
-  } else if (active) {
-    return (
-      <TooltipHost content={content}>
-        <Icon
-          className={css('panel-card-v2-badge', 'active', darkBackground && 'darkBackground')}
-          {...iconProps}
-          ariaLabel={`${title}: ${content}`}
-          tabIndex={0}
-        />
-      </TooltipHost>
-    );
-  } else {
-    return <Icon className="panel-card-v2-badge inactive" {...iconProps} ariaLabel={title} tabIndex={0} />;
   }
+  if (active) {
+    return (
+      <Tooltip relationship={'label'} withArrow={true} content={content}>
+        <div>
+          <Icon
+            className={css('panel-card-v2-badge', 'active', darkBackground && 'darkBackground')}
+            {...iconProps}
+            ariaLabel={`${title}: ${content}`}
+            tabIndex={0}
+          />
+        </div>
+      </Tooltip>
+    );
+  }
+  return <Icon className="panel-card-v2-badge inactive" {...iconProps} ariaLabel={title} tabIndex={0} />;
 };

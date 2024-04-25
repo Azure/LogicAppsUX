@@ -1,9 +1,9 @@
-import * as React from 'react';
-import * as ReactShallowRenderer from 'react-test-renderer/shallow';
 import { BodyLinkValue } from '../bodylink';
 import { RawValue } from '../raw';
 import type { ValueProps } from '../types';
-
+import * as React from 'react';
+import * as ReactShallowRenderer from 'react-test-renderer/shallow';
+import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 describe('ui/monitoring/values/_bodylink', () => {
   const classNames = {
     displayName: 'msla-trace-value-display-name',
@@ -48,7 +48,7 @@ describe('ui/monitoring/values/_bodylink', () => {
 
     const link = React.Children.only(text.props.children);
     expect(link.props['aria-labelledby']).toBe(displayName.props.id);
-    expect(link.props.children).toBe('Download (Alt/Option + click)');
+    expect(link.props.children).toBe('Download (Alt or Option + select)');
     expect(link.props.href).toBe(props.value.uri);
     expect(link.props.rel).toBe('noopener');
     expect(link.props.target).toBe('_blank');

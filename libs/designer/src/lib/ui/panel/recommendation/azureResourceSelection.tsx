@@ -2,11 +2,18 @@ import Constants from '../../../common/constants';
 import type { AppDispatch } from '../../../core';
 import { addOperation } from '../../../core/actions/bjsworkflow/add';
 import { useRelationshipIds, useIsParallelBranch, useIsAddingTrigger } from '../../../core/state/panel/panelSelectors';
-import { PrimaryButton, Text } from '@fluentui/react';
-import { ApiManagementService, FunctionService, SearchService, AppServiceService } from '@microsoft/designer-client-services-logic-apps';
+import { Text } from '@fluentui/react';
+import { Button } from '@fluentui/react-components';
+import {
+  ApiManagementService,
+  FunctionService,
+  SearchService,
+  AppServiceService,
+  getResourceName,
+  getResourceGroupFromWorkflowId,
+} from '@microsoft/logic-apps-shared';
 import { AzureResourcePicker } from '@microsoft/designer-ui';
-import type { DiscoveryOperation, DiscoveryResultTypes } from '@microsoft/utils-logic-apps';
-import { getResourceGroupFromWorkflowId } from '@microsoft/utils-logic-apps';
+import type { DiscoveryOperation, DiscoveryResultTypes } from '@microsoft/logic-apps-shared';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch } from 'react-redux';
@@ -29,22 +36,32 @@ export const AzureResourceSelection = (props: AzureResourceSelectionProps) => {
   const intl = useIntl();
   const apimTitleText = intl.formatMessage({
     defaultMessage: 'Select an API Management resource',
+    id: 'fElufw',
     description: 'Select an API Management resource',
   });
   const appServiceTitleText = intl.formatMessage({
     defaultMessage: 'Select an App Service resource',
+    id: 'VHm1Sr',
     description: 'Select an App Service resource',
   });
   const functionAppTitleText = intl.formatMessage({
     defaultMessage: 'Select a Function App resource',
+    id: 'KwGA+K',
     description: 'Select a Function App resource',
   });
+  const swaggerFunctionAppTitleText = intl.formatMessage({
+    defaultMessage: 'Select a Swagger Function App resource',
+    id: 'Y5XAbg',
+    description: 'Select a Swagger Function App resource',
+  });
   const manualWorkflowTitleText = intl.formatMessage({
-    defaultMessage: 'Select a Manual Workflow resource',
-    description: 'Select a Manual Workflow resource',
+    defaultMessage: `Select workflow with 'manual' trigger`,
+    id: 'q4ChjK',
+    description: "Select workflow with 'manual' trigger",
   });
   const batchWorkflowTitleText = intl.formatMessage({
     defaultMessage: 'Select a Batch Workflow resource',
+    id: 'gvDMuq',
     description: 'Select a Batch Workflow resource',
   });
 
@@ -71,7 +88,7 @@ export const AzureResourceSelection = (props: AzureResourceSelectionProps) => {
   const addResourceOperation = useCallback(
     (props: AddResourceOperationParameters) => {
       const { name, presetParameterValues, actionMetadata } = props;
-      const newNodeId = name.replaceAll(' ', '_');
+      const newNodeId = name.replaceAll(' ', '_').replaceAll('/', '-');
       dispatch(
         addOperation({
           operation,
@@ -100,7 +117,7 @@ export const AzureResourceSelection = (props: AzureResourceSelectionProps) => {
   useEffect(() => {
     switch (operation.id?.toLowerCase()) {
       case Constants.AZURE_RESOURCE_ACTION_TYPES.SELECT_APIMANAGEMENT_ACTION:
-      case Constants.AZURE_RESOURCE_ACTION_TYPES.SELECT_APIMANAGEMENT_TRIGGER:
+      case Constants.AZURE_RESOURCE_ACTION_TYPES.SELECT_APIMANAGEMENT_TRIGGER: {
         setTitleText(apimTitleText);
         setResourceTypes(['apiManagement', 'action']);
         setGetResourcesCallbacks(() => [
@@ -118,9 +135,10 @@ export const AzureResourceSelection = (props: AzureResourceSelectionProps) => {
           });
         });
         break;
+      }
 
       case Constants.AZURE_RESOURCE_ACTION_TYPES.SELECT_APPSERVICE_ACTION:
-      case Constants.AZURE_RESOURCE_ACTION_TYPES.SELECT_APPSERVICE_TRIGGER:
+      case Constants.AZURE_RESOURCE_ACTION_TYPES.SELECT_APPSERVICE_TRIGGER: {
         setTitleText(appServiceTitleText);
         setResourceTypes(['appService']);
         setGetResourcesCallbacks(() => [() => AppServiceService().fetchAppServices()]);
@@ -128,15 +146,16 @@ export const AzureResourceSelection = (props: AzureResourceSelectionProps) => {
           const resource = selectedResources[0];
           addResourceOperation({
             name: getResourceName(resource),
-            actionMetadata: {
-              apiDefinitionUrl: resource?.properties?.siteConfig?.apiDefinition?.url,
-              swaggerSource: 'website',
+            presetParameterValues: {
+              'metadata.apiDefinitionUrl': resource?.properties?.siteConfig?.apiDefinition?.url,
+              'metadata.swaggerSource': 'website',
             },
           });
         });
         break;
+      }
 
-      case Constants.AZURE_RESOURCE_ACTION_TYPES.SELECT_FUNCTION_ACTION:
+      case Constants.AZURE_RESOURCE_ACTION_TYPES.SELECT_FUNCTION_ACTION: {
         setTitleText(functionAppTitleText);
         setResourceTypes(['functionApp', 'function']);
         setGetResourcesCallbacks(() => [
@@ -152,8 +171,24 @@ export const AzureResourceSelection = (props: AzureResourceSelectionProps) => {
           });
         });
         break;
+      }
 
-      case Constants.AZURE_RESOURCE_ACTION_TYPES.SELECT_MANUAL_WORKFLOW_ACTION:
+      case Constants.AZURE_RESOURCE_ACTION_TYPES.SELECT_SWAGGER_FUNCTION_ACTION: {
+        setTitleText(swaggerFunctionAppTitleText);
+        setResourceTypes(['functionApp']);
+        setGetResourcesCallbacks(() => [() => FunctionService().fetchFunctionApps()]);
+        setSubmitCallback(() => async () => {
+          addResourceOperation({
+            name: getResourceName(selectedResources[0]),
+            presetParameterValues: {
+              'functionApp.id': selectedResources[0].id,
+            },
+          });
+        });
+        break;
+      }
+
+      case Constants.AZURE_RESOURCE_ACTION_TYPES.SELECT_MANUAL_WORKFLOW_ACTION: {
         setTitleText(manualWorkflowTitleText);
         setResourceTypes(['manualWorkflow', 'trigger']);
         setGetResourcesCallbacks(() => [
@@ -170,8 +205,9 @@ export const AzureResourceSelection = (props: AzureResourceSelectionProps) => {
           });
         });
         break;
+      }
 
-      case Constants.AZURE_RESOURCE_ACTION_TYPES.SELECT_BATCH_WORKFLOW_ACTION:
+      case Constants.AZURE_RESOURCE_ACTION_TYPES.SELECT_BATCH_WORKFLOW_ACTION: {
         setTitleText(batchWorkflowTitleText);
         setResourceTypes(['batchWorkflow', 'trigger']);
         setGetResourcesCallbacks(() => [
@@ -188,6 +224,7 @@ export const AzureResourceSelection = (props: AzureResourceSelectionProps) => {
           });
         });
         break;
+      }
 
       default:
         throw new Error(`Unexpected API category type '${operation.id}'`);
@@ -198,6 +235,7 @@ export const AzureResourceSelection = (props: AzureResourceSelectionProps) => {
     appServiceTitleText,
     batchWorkflowTitleText,
     functionAppTitleText,
+    swaggerFunctionAppTitleText,
     getOptionsFromPaths,
     manualWorkflowTitleText,
     operation.id,
@@ -205,17 +243,16 @@ export const AzureResourceSelection = (props: AzureResourceSelectionProps) => {
   ]);
 
   const headers = [
-    intl.formatMessage({ defaultMessage: 'Name', description: 'Header for resource name' }),
-    intl.formatMessage({ defaultMessage: 'Resource Group', description: 'Header for resource group name' }),
-    intl.formatMessage({ defaultMessage: 'Location', description: 'Header for resource location' }),
+    intl.formatMessage({ defaultMessage: 'Name', id: 'AGCm1p', description: 'Header for resource name' }),
+    intl.formatMessage({ defaultMessage: 'Resource Group', id: '/yYyOq', description: 'Header for resource group name' }),
+    intl.formatMessage({ defaultMessage: 'Location', id: 'QpX2+j', description: 'Header for resource location' }),
   ];
 
   const loadingText = intl.formatMessage({
     defaultMessage: 'Loading resources...',
+    id: 'aoUT/3',
     description: 'Text for loading Azure Resources',
   });
-
-  const getResourceName = (resource: any) => resource?.properties?.name ?? resource?.name ?? resource?.id;
 
   const getColumns = (resource: any) => [
     getResourceName(resource),
@@ -250,15 +287,18 @@ export const AzureResourceSelection = (props: AzureResourceSelectionProps) => {
         fetchSubResourcesCallback={getResourcesCallbacks?.[1]}
         onSubResourceSelect={(subResource: any) => setResourceAtDepth(subResource, 1)}
       />
-      <PrimaryButton
+      <Button
+        appearance={'primary'}
         disabled={!readyToSubmit}
         onClick={() => {
-          if (!readyToSubmit) return;
+          if (!readyToSubmit) {
+            return;
+          }
           submitCallback();
         }}
       >
-        {intl.formatMessage({ defaultMessage: 'Add Action', description: 'Add action button text' })}
-      </PrimaryButton>
+        {intl.formatMessage({ defaultMessage: 'Add Action', id: '2vnYre', description: 'Add action button text' })}
+      </Button>
     </div>
   );
 };

@@ -1,4 +1,4 @@
-import type { SettingProps } from './settingtoggle';
+import type { SettingProps } from './';
 import { Slider, TextField } from '@fluentui/react';
 import { useCallback, useState } from 'react';
 
@@ -39,11 +39,19 @@ export const CustomValueSlider = ({
   const [textValue, setTextValue] = useState<string | undefined>((value ?? defaultValue).toString());
   const valTextToNumber = useCallback(
     (value: string | undefined) => {
-      if (!value) return;
-      let val = parseInt(value);
-      if (isNaN(val)) return;
-      if (val < minVal) val = minVal;
-      if (val > maxVal) val = maxVal;
+      if (!value) {
+        return;
+      }
+      let val = Number.parseInt(value);
+      if (Number.isNaN(val)) {
+        return;
+      }
+      if (val < minVal) {
+        val = minVal;
+      }
+      if (val > maxVal) {
+        val = maxVal;
+      }
       return val;
     },
     [maxVal, minVal]
@@ -52,7 +60,9 @@ export const CustomValueSlider = ({
     (_: any, value: string | undefined) => {
       setTextValue(value);
       const newValue = valTextToNumber(value);
-      if (newValue) setSliderValue(newValue);
+      if (newValue) {
+        setSliderValue(newValue);
+      }
     },
     [valTextToNumber]
   );
@@ -65,7 +75,7 @@ export const CustomValueSlider = ({
 
   return (
     <>
-      {customLabel && customLabel()}
+      {customLabel ? customLabel : null}
       <div style={{ width: '100%', display: 'flex', alignItems: 'flex-end', gap: '8px' }}>
         <div style={{ flex: '1 1 auto' }}>
           <Slider

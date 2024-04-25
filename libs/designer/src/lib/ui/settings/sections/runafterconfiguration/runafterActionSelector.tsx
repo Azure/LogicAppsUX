@@ -1,13 +1,13 @@
-import type { RootState } from '../../../../core';
+import type { AppDispatch, RootState } from '../../../../core';
+import { addEdgeFromRunAfterOperation, removeEdgeFromRunAfterOperation } from '../../../../core/actions/bjsworkflow/runafter';
+import { useOperationVisuals } from '../../../../core/state/operation/operationSelector';
 import { useSelectedNodeId } from '../../../../core/state/panel/panelSelectors';
-import { useIconUri } from '../../../../core/state/selectors/actionMetadataSelector';
 import { useNodeDisplayName } from '../../../../core/state/workflow/workflowSelectors';
-import { addEdgeFromRunAfter, removeEdgeFromRunAfter } from '../../../../core/state/workflow/workflowSlice';
-import { Menu, MenuTrigger, MenuList, MenuPopover, MenuButton, Label, MenuItemCheckbox, Input, Button } from '@fluentui/react-components';
-import { bundleIcon, Add20Regular, Add20Filled, Search24Regular, DismissRegular } from '@fluentui/react-icons';
-import type { LogicAppsV2 } from '@microsoft/utils-logic-apps';
+import { Button, Input, Label, Menu, MenuButton, MenuItemCheckbox, MenuList, MenuPopover, MenuTrigger } from '@fluentui/react-components';
+import { Add20Filled, Add20Regular, DismissRegular, Search24Regular, bundleIcon } from '@fluentui/react-icons';
+import { LogEntryLevel, LoggerService, getRecordEntry, type LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import Fuse from 'fuse.js';
-import { useState, useMemo } from 'react';
+import { useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 
@@ -21,7 +21,7 @@ const getSuccessorNodes = (state: RootState, nodeId: string) => {
     const node = nodes.shift();
     const newNodes = Object.entries(wfs.operations)
       // eslint-disable-next-line no-loop-func
-      .filter(([, op]: [string, LogicAppsV2.ActionDefinition]) => !!op.runAfter?.[node ?? ''])
+      .filter(([, op]: [string, LogicAppsV2.ActionDefinition]) => !!getRecordEntry(op.runAfter, node))
       .map(([key]) => key);
     successors = [...successors, ...newNodes];
     nodes = [...nodes, ...newNodes];
@@ -29,51 +29,59 @@ const getSuccessorNodes = (state: RootState, nodeId: string) => {
   return [...new Set(successors)];
 };
 
-const ActionMenuItem = ({ id }: { id: string; value: LogicAppsV2.ActionDefinition }) => {
-  const iconUri = useIconUri(id);
+const ActionMenuItem = ({ id, readOnly }: { id: string; readOnly: boolean }) => {
+  const iconUri = useOperationVisuals(id)?.iconUri;
   const actionName = useNodeDisplayName(id);
   return (
-    <MenuItemCheckbox name="actions" value={id} icon={<img style={{ height: '24px', width: '24px' }} src={iconUri} alt="" />} tabIndex={1}>
+    <MenuItemCheckbox
+      name="actions"
+      value={id}
+      icon={<img style={{ height: '24px', width: '24px' }} src={iconUri} alt="" />}
+      tabIndex={1}
+      disabled={readOnly}
+    >
       <Label style={{ overflow: 'hidden' }}>{actionName}</Label>
     </MenuItemCheckbox>
   );
 };
 
-export const RunAfterActionSelector = () => {
+export const RunAfterActionSelector = ({ readOnly }: { readOnly: boolean }) => {
   const intl = useIntl();
   const [searchText, setSearchText] = useState<string>('');
   const currentNodeId = useSelectedNodeId();
-  const currentNodeRunAfter = useSelector((state: RootState) => {
-    return state.workflow.operations[currentNodeId];
-  });
+  const currentNodeRunAfter = useSelector((state: RootState) => getRecordEntry(state.workflow.operations, currentNodeId));
   const actions = useSelector((state: RootState) => {
     if (!currentNodeRunAfter) {
       return [];
     }
     const subNodes = getSuccessorNodes(state, currentNodeId);
     return (Object.entries(state.workflow.operations) as [string, LogicAppsV2.ActionDefinition][])
-      .filter(([key]) => {
-        return state.workflow.nodesMetadata[currentNodeId].graphId === state.workflow.nodesMetadata[key].graphId;
-      })
+      .filter(
+        ([key]) =>
+          getRecordEntry(state.workflow.nodesMetadata, currentNodeId)?.graphId ===
+          getRecordEntry(state.workflow.nodesMetadata, key)?.graphId
+      )
       .filter(([key]) => !subNodes.includes(key) && key !== currentNodeId)
-      .map(([key, value]) => {
-        return {
-          ...value,
-          id: key,
-        };
-      });
+      .map(([key, value]) => ({ ...value, id: key }));
   });
-  const RUN_AFTER_CONFIGURATION_FILTER_ACTIONS = intl.formatMessage({ defaultMessage: 'Filter Actions', description: 'Filter Actions' });
+  const RUN_AFTER_CONFIGURATION_FILTER_ACTIONS = intl.formatMessage({
+    defaultMessage: 'Filter Actions',
+    id: 'AHB418',
+    description: 'Filter Actions',
+  });
   const RUN_AFTER_CONFIGURATION_SELECT_ACTIONS_TITLE = intl.formatMessage({
     defaultMessage: 'Select Actions',
+    id: 'zTKAc9',
     description: 'Select Actions',
   });
 
   const selectedValues = useSelector((state: RootState) => {
-    return { actions: Object.keys((state.workflow.operations[currentNodeId] as LogicAppsV2.ActionDefinition).runAfter ?? {}) };
+    return {
+      actions: Object.keys((getRecordEntry(state.workflow.operations, currentNodeId) as LogicAppsV2.ActionDefinition)?.runAfter ?? {}),
+    };
   });
 
-  const dispatch = useDispatch();
+  const dispatch = useDispatch<AppDispatch>();
 
   const searchResults = useMemo(() => {
     if (!searchText) {
@@ -92,14 +100,23 @@ export const RunAfterActionSelector = () => {
       hasIcons
       hasCheckmarks
       checkedValues={selectedValues}
-      onOpenChange={() => setSearchText('')}
+      onOpenChange={(_e, data) => {
+        setSearchText('');
+        LoggerService().log({
+          area: `RunAfterActionSelector:onOpenChange:${data.open}`,
+          level: LogEntryLevel.Verbose,
+          message: `Run after action selector ${data.open ? 'opened' : 'closed'}.`,
+        });
+      }}
       onCheckedValueChange={(e, data) => {
-        if (data.checkedItems.length === 0) return;
+        if (data.checkedItems.length === 0) {
+          return;
+        }
         const newItems = data.checkedItems.filter((x) => !selectedValues.actions.includes(x));
         const removedItems = selectedValues.actions.filter((x) => !data.checkedItems.includes(x));
         removedItems.forEach((item) => {
           dispatch(
-            removeEdgeFromRunAfter({
+            removeEdgeFromRunAfterOperation({
               parentOperationId: item,
               childOperationId: currentNodeId,
             })
@@ -107,16 +124,21 @@ export const RunAfterActionSelector = () => {
         });
         newItems.forEach((item) => {
           dispatch(
-            addEdgeFromRunAfter({
+            addEdgeFromRunAfterOperation({
               parentOperationId: item,
               childOperationId: currentNodeId,
             })
           );
         });
+        LoggerService().log({
+          area: 'RunAfterActionSelector:onCheckedValueChange',
+          level: LogEntryLevel.Verbose,
+          message: `Run after action selector set to ${data.checkedItems.length} items.`,
+        });
       }}
     >
       <MenuTrigger>
-        <MenuButton icon={<AddIcon />} size="large" appearance="transparent">
+        <MenuButton icon={<AddIcon />} size="large" appearance="subtle" style={{ padding: '8px', marginTop: '-8px' }}>
           {RUN_AFTER_CONFIGURATION_SELECT_ACTIONS_TITLE}
         </MenuButton>
       </MenuTrigger>
@@ -144,7 +166,7 @@ export const RunAfterActionSelector = () => {
 
           <div className="msla-run-after-action-menu-list">
             {(searchResults.length > 0 ? searchResults : actions).map((obj) => {
-              return <ActionMenuItem id={obj.id} key={obj.id} value={obj} />;
+              return <ActionMenuItem id={obj.id} key={obj.id} readOnly={readOnly} />;
             })}
           </div>
         </MenuList>

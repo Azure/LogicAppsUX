@@ -18,10 +18,10 @@ import { sendAzureRequest } from '../../../utils/requestUtils';
 import type { IAzureConnectorsContext } from '../azureConnectorWizard';
 import { OpenMonitoringViewBase } from './openMonitoringViewBase';
 import type { ServiceClientCredentials } from '@azure/ms-rest-js';
-import { HTTP_METHODS } from '@microsoft/utils-logic-apps';
+import { HTTP_METHODS } from '@microsoft/logic-apps-shared';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
-import type { IDesignerPanelMetadata, IWorkflowFileContent } from '@microsoft/vscode-extension';
-import { ExtensionCommand } from '@microsoft/vscode-extension';
+import type { IDesignerPanelMetadata, IWorkflowFileContent } from '@microsoft/vscode-extension-logic-apps';
+import { ExtensionCommand, ProjectName } from '@microsoft/vscode-extension-logic-apps';
 import * as vscode from 'vscode';
 import type { WebviewPanel } from 'vscode';
 import { ViewColumn } from 'vscode';
@@ -72,7 +72,7 @@ export default class openMonitoringViewForAzureResource extends OpenMonitoringVi
         enabled: true,
         accessToken,
         subscriptionId: this.node.subscription.subscriptionId,
-        resourceGroupName: (this.context as IAzureConnectorsContext).resourceGroup,
+        resourceGroupName: this.node?.parent?.parent?.site.resourceGroup,
         location: this.normalizeLocation(this.node?.parent?.parent?.site.location),
         workflowManagementBaseUrl: this.node?.parent?.subscription?.environment?.resourceManagerEndpointUrl,
       },
@@ -106,6 +106,7 @@ export default class openMonitoringViewForAzureResource extends OpenMonitoringVi
         this.sendMsgToWebview({
           command: ExtensionCommand.initialize_frame,
           data: {
+            project: ProjectName.designer,
             panelMetadata: this.panelMetadata,
             connectionData: this.connectionData,
             workflowDetails: this.workflowDetails,
@@ -117,6 +118,7 @@ export default class openMonitoringViewForAzureResource extends OpenMonitoringVi
             isLocal: this.isLocal,
             isMonitoringView: this.isMonitoringView,
             runId: this.runName,
+            hostVersion: ext.extensionVersion,
           },
         });
         break;
@@ -175,7 +177,7 @@ export default class openMonitoringViewForAzureResource extends OpenMonitoringVi
         tenantId: this.node?.parent?.subscription?.tenantId,
       },
       workflowName: this.workflowName,
-      standardApp: getStandardAppData(this.workflowName, { ...this.workflow, definition: {} }, parameters),
+      standardApp: getStandardAppData(this.workflowName, { ...this.workflow, definition: {} }),
       schemaArtifacts: this.schemaArtifacts,
       mapArtifacts: this.mapArtifacts,
     };

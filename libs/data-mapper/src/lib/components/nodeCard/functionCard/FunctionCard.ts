@@ -2,6 +2,7 @@ import type { FunctionGroupBranding } from '../../../constants/FunctionConstants
 import { simpleFunctionCardDiameter } from '../../../constants/NodeConstants';
 import type { ConnectionDictionary } from '../../../models/Connection';
 import type { FunctionData } from '../../../models/Function';
+import { hasOnlyCustomInputType } from '../../../utils/Function.Utils';
 import { areInputTypesValidForFunction } from '../../../utils/MapChecker.Utils';
 import type { CardProps } from '../NodeCard';
 import { createFocusOutlineStyle, makeStyles, shorthands, tokens } from '@fluentui/react-components';
@@ -60,6 +61,7 @@ export const shouldDisplayTargetHandle = (
 ) =>
   displayHandle &&
   functionData.maxNumberOfInputs !== 0 &&
+  !hasOnlyCustomInputType(functionData) &&
   !!sourceNodeConnectionBeingDrawnFromId &&
   sourceNodeConnectionBeingDrawnFromId !== reactFlowId;
 
@@ -75,7 +77,6 @@ export const inputsValid = (reactFlowId: string, functionData: FunctionData, con
 
   if (connection) {
     return areInputTypesValidForFunction(functionData, connection);
-  } else {
-    return true;
   }
+  return true;
 };

@@ -1,5 +1,8 @@
-import chevronDown from './../../icons/chevron-down.svg';
+import chevronDownDark from './../../icons/dark/chevron-down.svg';
+import chevronDownLight from './../../icons/light/chevron-down.svg';
 import { DropDownItems } from './DropdownItems';
+import { useTheme } from '@fluentui/react';
+import { useOutsideClick } from '@microsoft/logic-apps-shared';
 import type { LexicalCommand, LexicalEditor } from 'lexical';
 import { COMMAND_PRIORITY_CRITICAL, createCommand } from 'lexical';
 import type { ReactNode } from 'react';
@@ -30,10 +33,17 @@ export const DropDown = ({
   stopCloseOnClickSelf,
   editor,
 }: DropdownProps): JSX.Element => {
+  const { isInverted } = useTheme();
   const intl = useIntl();
   const dropDownRef = useRef<HTMLDivElement>(null);
   const buttonRef = useRef<HTMLButtonElement>(null);
   const [showDropDown, setShowDropDown] = useState(false);
+
+  useOutsideClick([dropDownRef, buttonRef], () => {
+    if (showDropDown) {
+      handleClose();
+    }
+  });
 
   const handleClose = () => {
     setShowDropDown(false);
@@ -69,12 +79,14 @@ export const DropDown = ({
 
   const altTextForButtonIcon = intl.formatMessage({
     defaultMessage: 'alt text for button icon',
+    id: '34Nt/B',
     description: 'alt text for button icon',
   });
 
   const altTextForChevronDown = intl.formatMessage({
-    defaultMessage: 'alt text for chevron down',
-    description: 'alt text for chevron down',
+    defaultMessage: 'Alt text for down chevron',
+    id: '+Uvo/p',
+    description: 'Alt text for down chevron',
   });
 
   return (
@@ -94,7 +106,7 @@ export const DropDown = ({
       >
         {buttonIconSrc ? <img src={buttonIconSrc} alt={altTextForButtonIcon} /> : null}
         {buttonLabel && <span className="text dropdown-button-text">{buttonLabel}</span>}
-        <img className="chevron-down" src={chevronDown} alt={altTextForChevronDown} />
+        <img className="chevron-down" src={isInverted ? chevronDownDark : chevronDownLight} alt={altTextForChevronDown} />
       </button>
 
       {showDropDown &&

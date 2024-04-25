@@ -1,53 +1,47 @@
 import { QueryClient, QueryClientProvider } from 'react-query';
-import { ReactQueryDevtools } from 'react-query/devtools';
+// import { ReactQueryDevtools } from 'react-query/devtools';
 
 interface ProviderProps {
   children: React.ReactNode;
 }
 
+const createQueryClient = () =>
+  new QueryClient({
+    defaultOptions: {
+      queries: {
+        refetchInterval: false,
+        refetchIntervalInBackground: false,
+        refetchOnWindowFocus: false,
+        refetchOnReconnect: false,
+        refetchOnMount: false,
+        staleTime: 1000 * 60 * 60 * 24, // 24 hours
+      },
+    },
+  });
+
 let reactQueryClient: QueryClient | undefined;
 
 export const getReactQueryClient = (): QueryClient => {
   if (!reactQueryClient) {
-    reactQueryClient = new QueryClient({
-      defaultOptions: {
-        queries: {
-          refetchInterval: false,
-          refetchIntervalInBackground: false,
-          refetchOnWindowFocus: false,
-          refetchOnReconnect: false,
-          refetchOnMount: false,
-        },
-      },
-    });
+    reactQueryClient = createQueryClient();
   }
   return reactQueryClient;
 };
 
 export const ReactQueryProvider = (props: ProviderProps) => {
   if (!reactQueryClient) {
-    reactQueryClient = new QueryClient({
-      defaultOptions: {
-        queries: {
-          refetchInterval: false,
-          refetchIntervalInBackground: false,
-          refetchOnWindowFocus: false,
-          refetchOnReconnect: false,
-          refetchOnMount: false,
-        },
-      },
-    });
+    reactQueryClient = createQueryClient();
   }
   return (
     <QueryClientProvider client={reactQueryClient}>
       {props.children}
-      <ReactQueryDevtools
+      {/* <ReactQueryDevtools
         initialIsOpen={false}
         position={'bottom-right'}
         panelProps={{ style: { zIndex: 9999999 } }}
         toggleButtonProps={{ style: { zIndex: 9999999 } }}
         closeButtonProps={{ style: { zIndex: 9999999 } }}
-      />
+      /> */}
     </QueryClientProvider>
   );
 };

@@ -3,9 +3,8 @@ import { DropDown } from './helper/Dropdown';
 import { MoveWrapper } from './helper/MoveWrapper';
 import { basicColors, COLORPICKER_HEIGHT as HEIGHT, COLORPICKER_WIDTH as WIDTH } from './helper/constants';
 import type { Position } from './helper/util';
-import { transformColor } from './helper/util';
 import { Text } from '@fluentui/react';
-import { capitalizeFirstLetter } from '@microsoft/utils-logic-apps';
+import { capitalizeFirstLetter, transformColor } from '@microsoft/logic-apps-shared';
 import type { LexicalEditor } from 'lexical';
 import type { ReactNode } from 'react';
 import { useEffect, useMemo, useRef, useState } from 'react';
@@ -87,7 +86,9 @@ export const DropdownColorPicker = ({
   }, [selfColor, onChange]);
 
   useEffect(() => {
-    if (color === undefined) return;
+    if (color === undefined) {
+      return;
+    }
     const newColor = transformColor('hex', color);
     setSelfColor(newColor);
     setInputColor(newColor.hex);

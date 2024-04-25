@@ -6,6 +6,7 @@ import {
   workflowLocationKey,
   workflowManagementBaseURIKey,
   managementApiPrefix,
+  azurePublicBaseUrl,
 } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
@@ -19,13 +20,13 @@ import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { DialogResponses } from '@microsoft/vscode-azext-utils';
 import type {
   IWorkflowFileContent,
-  Parameter,
   StandardApp,
   Artifacts,
   AzureConnectorDetails,
   ILocalSettingsJson,
+  Parameter,
   WorkflowParameter,
-} from '@microsoft/vscode-extension';
+} from '@microsoft/vscode-extension-logic-apps';
 import { readFileSync } from 'fs';
 import * as fse from 'fs-extra';
 import * as os from 'os';
@@ -53,22 +54,14 @@ export function removeWebviewPanelFromCache(category: string, name: string): voi
   }
 }
 
-export function getStandardAppData(
-  workflowName: string,
-  workflow: IWorkflowFileContent,
-  parameters: Record<string, Parameter>
-): StandardApp {
+export function getStandardAppData(workflowName: string, workflow: IWorkflowFileContent): StandardApp {
   const { definition, kind, runtimeConfiguration } = workflow;
   const statelessRunMode = runtimeConfiguration && runtimeConfiguration.statelessRunMode ? runtimeConfiguration.statelessRunMode : '';
   const operationOptions = runtimeConfiguration && runtimeConfiguration.operationOptions ? runtimeConfiguration.operationOptions : '';
-  const workflowParameters = getWorkflowParameters(parameters);
 
   return {
     statelessRunMode,
-    definition: {
-      ...definition,
-      parameters: workflowParameters,
-    },
+    definition,
     name: workflowName,
     stateful: kind === 'Stateful',
     kind,
@@ -76,7 +69,7 @@ export function getStandardAppData(
   };
 }
 
-function getWorkflowParameters(parameters: Record<string, Parameter>): Record<string, WorkflowParameter> {
+export function getWorkflowParameters(parameters: Record<string, Parameter>): Record<string, WorkflowParameter> {
   const workflowParameters: Record<string, WorkflowParameter> = {};
   for (const parameterKey of Object.keys(parameters)) {
     const parameter = parameters[parameterKey];
@@ -174,7 +167,7 @@ export async function getAzureConnectorDetailsForLocalProject(
   let credentials: ServiceClientCredentials;
 
   // Set default for customers who created Logic Apps before sovereign cloud support was added.
-  let workflowManagementBaseUrl = localSettings.Values[workflowManagementBaseURIKey] ?? 'https://management.azure.com/';
+  let workflowManagementBaseUrl = localSettings.Values[workflowManagementBaseURIKey] ?? `${azurePublicBaseUrl}/`;
 
   if (subscriptionId === undefined) {
     const wizard = createAzureWizard(connectorsContext, projectPath);

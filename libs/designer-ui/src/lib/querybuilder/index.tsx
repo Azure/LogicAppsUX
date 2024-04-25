@@ -1,12 +1,13 @@
 import type { ValueSegment } from '../editor';
-import { ValueSegmentType } from '../editor';
 import type { ChangeHandler, GetTokenPickerHandler } from '../editor/base';
+import { createEmptyLiteralValueSegment } from '../editor/base/utils/helper';
 import { Group } from './Group';
 import { GroupDropdownOptions } from './GroupDropdown';
 import { RowDropdownOptions } from './RowDropdown';
-import { guid } from '@microsoft/utils-logic-apps';
+import { checkHeights, getGroupedItems } from './helper';
 import { useFunctionalState, useUpdateEffect } from '@react-hookz/web';
 import { useEffect, useRef, useState } from 'react';
+import { useIntl } from 'react-intl';
 
 export { GroupDropdownOptions, RowDropdownOptions };
 
@@ -17,12 +18,13 @@ export interface GroupedItems {
 
 export type GroupItems = GroupItemProps | RowItemProps;
 
-export enum GroupType {
-  ROW = 'row',
-  GROUP = 'group',
-}
+export const GroupType = {
+  ROW: 'row',
+  GROUP: 'group',
+} as const;
+export type GroupType = (typeof GroupType)[keyof typeof GroupType];
 export interface RowItemProps {
-  type: GroupType.ROW;
+  type: typeof GroupType.ROW;
   checked?: boolean;
   operand1: ValueSegment[];
   operator: string;
@@ -30,7 +32,7 @@ export interface RowItemProps {
 }
 
 export interface GroupItemProps {
-  type: GroupType.GROUP;
+  type: typeof GroupType.GROUP;
   checked?: boolean;
   condition?: GroupDropdownOptions;
   items: GroupItems[];
@@ -39,13 +41,22 @@ export interface GroupItemProps {
 export interface QueryBuilderProps {
   readonly?: boolean;
   groupProps: GroupItemProps;
+  tokenMapping?: Record<string, ValueSegment>;
+  loadParameterValueFromString?: (value: string) => ValueSegment[];
   getTokenPicker: GetTokenPickerHandler;
   onChange?: ChangeHandler;
+  showDescription?: boolean;
 }
 
-const emptyValue = [{ id: guid(), type: ValueSegmentType.LITERAL, value: '' }];
-
-export const QueryBuilderEditor = ({ getTokenPicker, groupProps, readonly, onChange }: QueryBuilderProps) => {
+export const QueryBuilderEditor = ({
+  getTokenPicker,
+  groupProps,
+  readonly,
+  onChange,
+  showDescription,
+  ...baseEditorProps
+}: QueryBuilderProps) => {
+  const intl = useIntl();
   const containerRef = useRef<HTMLDivElement>(null);
   const [heights, setHeights] = useState<number[]>([]);
   const [groupedItems, setGroupedItems] = useState<GroupedItems[]>([]);
@@ -54,7 +65,7 @@ export const QueryBuilderEditor = ({ getTokenPicker, groupProps, readonly, onCha
   const [getRootProp, setRootProp] = useFunctionalState<GroupItemProps>(groupProps);
 
   useUpdateEffect(() => {
-    onChange?.({ value: emptyValue, viewModel: JSON.parse(JSON.stringify({ items: getRootProp() })) });
+    onChange?.({ value: [createEmptyLiteralValueSegment()], viewModel: JSON.parse(JSON.stringify({ items: getRootProp() })) });
     setHeights(checkHeights(getRootProp(), [], 0));
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [getRootProp()]);
@@ -72,8 +83,22 @@ export const QueryBuilderEditor = ({ getTokenPicker, groupProps, readonly, onCha
     setRootProp(newProps);
   };
 
+  let description = '';
+  if (showDescription) {
+    description = intl.formatMessage({
+      defaultMessage: 'Provide the values to compare and select the operator to use.',
+      id: '5gOG+F',
+      description: 'Text description for how to use the Condition action.',
+    });
+  }
+
   return (
     <div className="msla-querybuilder-container" ref={containerRef}>
+      {showDescription && (
+        <div className="msla-querybuilder-description" tabIndex={0}>
+          <span>{description}</span>
+        </div>
+      )}
       <Group
         readonly={readonly}
         isTop={true}
@@ -86,27 +111,8 @@ export const QueryBuilderEditor = ({ getTokenPicker, groupProps, readonly, onCha
         mustHaveItem={true}
         handleUpdateParent={handleUpdateParent}
         getTokenPicker={getTokenPicker}
+        {...baseEditorProps}
       />
     </div>
   );
-};
-
-const checkHeights = (item: GroupItemProps | RowItemProps, returnVal: number[], height: number): number[] => {
-  if (item.checked) {
-    returnVal.push(height);
-  }
-  if (item.type === GroupType.GROUP) {
-    item.items.map((childItem) => checkHeights(childItem, returnVal, height + 1));
-  }
-  return returnVal;
-};
-
-const getGroupedItems = (item: GroupItemProps | RowItemProps, returnVal: GroupedItems[], index: number): GroupedItems[] => {
-  if (item.checked) {
-    returnVal.push({ item: { ...item, checked: false }, index: index });
-  }
-  if (item.type === GroupType.GROUP) {
-    item.items.map((childItem, index) => getGroupedItems(childItem, returnVal, index));
-  }
-  return returnVal;
 };

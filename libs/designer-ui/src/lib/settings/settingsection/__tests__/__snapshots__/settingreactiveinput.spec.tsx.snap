@@ -1,6 +1,6 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`ui/settings/settingreactiveinput should construct 1`] = `
+exports[`ui/settings/settingreactiveinput > should construct 1`] = `
 <React.Fragment>
   <SettingToggle
     checked={false}
@@ -8,6 +8,14 @@ exports[`ui/settings/settingreactiveinput should construct 1`] = `
     onText="On"
     onToggleInputChange={[Function]}
     readOnly={false}
+  />
+  <div
+    style={
+      {
+        "marginBottom": "10px",
+        "marginTop": "-10px",
+      }
+    }
   />
 </React.Fragment>
 `;

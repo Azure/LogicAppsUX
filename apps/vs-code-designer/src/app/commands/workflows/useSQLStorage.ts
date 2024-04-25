@@ -5,7 +5,7 @@
 import { sqlStorageConnectionStringKey } from '../../../constants';
 import { localize } from '../../../localize';
 import { addOrUpdateLocalAppSettings } from '../../utils/appSettings/localSettings';
-import { getFunctionProjectRoot } from '../../utils/codeless/connection';
+import { getLogicAppProjectRoot } from '../../utils/codeless/connection';
 import { getLocalSettingsFile } from '../appSettings/getLocalSettingsFile';
 import { validateSQLConnectionString } from '../deploy/storageAccountSteps/SQLStringNameStep';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
@@ -20,7 +20,7 @@ export async function useSQLStorage(context: IActionContext) {
 
   const message: string = localize('selectLocalSettings', 'Select your local settings file.');
   const localSettingsFile: string = await getLocalSettingsFile(context, message);
-  const projectPath = await getFunctionProjectRoot(context, localSettingsFile);
+  const projectPath = await getLogicAppProjectRoot(context, localSettingsFile);
 
   if (!projectPath) {
     throw new Error(localize('FunctionRootFolderError', 'Unable to determine logic app project root folder.'));

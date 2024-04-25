@@ -1,8 +1,8 @@
 import Constants from '../../../common/constants';
 import { getInterpolatedExpression } from './helper';
-import { isOutputTokenValueSegment, isTokenValueSegment } from './segment';
+import { isTokenValueSegment } from './segment';
 import type { ValueSegment } from '@microsoft/designer-ui';
-import { equals, format } from '@microsoft/utils-logic-apps';
+import { equals, format } from '@microsoft/logic-apps-shared';
 
 /**
  * @arg {string} fromFormat - A string with the original format of the expression being cast.
@@ -42,16 +42,15 @@ export function addFoldingCastToExpression(
   if (template) {
     const stringifiedExpressions = valueSegments.map((expression) => {
       const { token, value } = expression;
-      return isOutputTokenValueSegment(expression)
+      return isTokenValueSegment(expression)
         ? addCastToExpression(token?.format ?? '', '', value, token?.type, Constants.SWAGGER.TYPE.STRING)
         : `'${value}'`;
     });
     const concatExpression = foldWithConcat(stringifiedExpressions, parameterType);
     const appliedTemplate = format(template, concatExpression);
     return getInterpolatedExpression(appliedTemplate, parameterType, parameterFormat);
-  } else {
-    return concatenateAndInterpolateExpressions(valueSegments);
   }
+  return concatenateAndInterpolateExpressions(valueSegments);
 }
 
 /**
@@ -104,9 +103,8 @@ function getCastingTemplate(fromType: string, fromFormat: string, toType: string
           default:
             return undefined;
         }
-      } else {
-        return undefined;
       }
+      return undefined;
     }
 
     if (fromType === Constants.SWAGGER.TYPE.FILE) {
@@ -119,9 +117,8 @@ function getCastingTemplate(fromType: string, fromFormat: string, toType: string
           default:
             return undefined;
         }
-      } else {
-        return undefined;
       }
+      return undefined;
     }
 
     return undefined;
@@ -185,9 +182,9 @@ function concatenateAndInterpolateExpressions(valueSegments: ValueSegment[]): st
 function foldWithConcat(expressions: string[], type: string): string | null {
   if (expressions.length === 0) {
     return type === Constants.SWAGGER.TYPE.STRING ? '' : null;
-  } else if (expressions.length === 1) {
-    return expressions[0];
-  } else {
-    return `concat(${expressions.join(',')})`;
   }
+  if (expressions.length === 1) {
+    return expressions[0];
+  }
+  return `concat(${expressions.join(',')})`;
 }

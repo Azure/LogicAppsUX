@@ -2,21 +2,19 @@ import { TrafficLightDot } from '../card/images/dynamicsvgs/trafficlightsvgs';
 import type { EventHandler } from '../eventhandler';
 import { EditOrDeleteButton } from './workflowparametersButtons';
 import { WorkflowparameterField } from './workflowparametersField';
-import type { IButtonStyles, IIconProps } from '@fluentui/react';
-import { CommandBarButton, FontWeights } from '@fluentui/react';
-import { RUN_AFTER_COLORS } from '@microsoft/utils-logic-apps';
+import { Button } from '@fluentui/react-components';
+import { bundleIcon, ChevronRight24Regular, ChevronRight24Filled, ChevronDown24Regular, ChevronDown24Filled } from '@fluentui/react-icons';
+import { RUN_AFTER_COLORS } from '@microsoft/logic-apps-shared';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
 
-const commandBarStyles: Partial<IButtonStyles> = {
-  label: {
-    fontWeight: FontWeights.semibold,
-  },
-};
+const ExpandIcon = bundleIcon(ChevronRight24Filled, ChevronRight24Regular);
+const CollapseIcon = bundleIcon(ChevronDown24Regular, ChevronDown24Filled);
+
 export interface WorkflowParameterUpdateEvent {
   id: string;
   newDefinition: WorkflowParameterDefinition;
-  isConsumption?: boolean;
+  useLegacy?: boolean;
 }
 
 export interface WorkflowParameterDeleteEvent {
@@ -39,7 +37,7 @@ export interface WorkflowParameterDefinition {
 export interface WorkflowParameterProps {
   definition: WorkflowParameterDefinition;
   isReadOnly?: boolean;
-  isConsumption?: boolean;
+  useLegacy?: boolean;
   validationErrors?: Record<string, string | undefined>;
   isInverted?: boolean;
   onChange?: WorkflowParameterUpdateHandler;
@@ -47,7 +45,7 @@ export interface WorkflowParameterProps {
   onRegisterLanguageProvider?: RegisterLanguageHandler;
 }
 
-export function WorkflowParameter({ definition, isReadOnly, isConsumption, isInverted, ...props }: WorkflowParameterProps): JSX.Element {
+export function WorkflowParameter({ definition, isReadOnly, useLegacy, isInverted, ...props }: WorkflowParameterProps): JSX.Element {
   const [expanded, setExpanded] = useState(!!definition.isEditable);
   const [isEditable, setIsEditable] = useState(definition.isEditable);
   const [name, setName] = useState(definition.name);
@@ -55,22 +53,13 @@ export function WorkflowParameter({ definition, isReadOnly, isConsumption, isInv
   const intl = useIntl();
   const themeName = isInverted ? 'dark' : 'light';
 
-  const iconProps: IIconProps = {
-    iconName: expanded ? 'ChevronDownMed' : 'ChevronRightMed',
-    styles: {
-      root: {
-        fontSize: 14,
-        color: isInverted ? 'white' : '#514f4e',
-      },
-    },
-  };
-
   const handleToggleExpand = (): void => {
     setExpanded(!expanded);
   };
 
   const headingTitle = intl.formatMessage({
     defaultMessage: 'New parameter',
+    id: 'ss5JPH',
     description: 'Heading Title for a Parameter Without Name',
   });
 
@@ -78,14 +67,15 @@ export function WorkflowParameter({ definition, isReadOnly, isConsumption, isInv
     <div className="msla-workflow-parameter">
       <div>
         <div>
-          <CommandBarButton
-            data-testid={name + '-parameter-heading-button'}
+          <Button
+            appearance="subtle"
+            data-testid={`${name}-parameter-heading-button`}
             className="msla-workflow-parameter-heading-button"
-            iconProps={iconProps}
             onClick={handleToggleExpand}
-            styles={commandBarStyles}
-            text={name ? name : headingTitle}
-          />
+            icon={expanded ? <CollapseIcon /> : <ExpandIcon />}
+          >
+            {name ? name : headingTitle}
+          </Button>
           {Object.values(props.validationErrors ?? {}).filter((x) => !!x).length > 0 ? (
             <span className="msla-workflow-parameter-error-dot">
               <TrafficLightDot fill={RUN_AFTER_COLORS[themeName]['FAILED']} />
@@ -101,11 +91,11 @@ export function WorkflowParameter({ definition, isReadOnly, isConsumption, isInv
             onChange={props.onChange}
             isEditable={isEditable}
             isReadOnly={isReadOnly}
-            isConsumption={isConsumption}
+            useLegacy={useLegacy}
           />
         ) : null}
       </div>
-      {!isReadOnly ? (
+      {isReadOnly ? null : (
         <div className="msla-workflow-parameter-edit-or-delete-button">
           <EditOrDeleteButton
             onDelete={props.onDelete}
@@ -115,7 +105,7 @@ export function WorkflowParameter({ definition, isReadOnly, isConsumption, isInv
             setExpanded={setExpanded}
           />
         </div>
-      ) : null}
+      )}
     </div>
   );
 }

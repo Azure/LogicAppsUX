@@ -2,9 +2,11 @@ import type { MultiSelectSettingProps, MultiSelectOption } from '../settingmulti
 import { MultiSelectSetting } from '../settingmultiselect';
 import * as React from 'react';
 import * as ReactShallowRenderer from 'react-test-renderer/shallow';
-
+import { describe, beforeEach, afterEach, it, expect } from 'vitest';
 describe('ui/settings/multiselectsettings', () => {
-  let minimal: MultiSelectSettingProps, renderer: ReactShallowRenderer.ShallowRenderer, defaultOptions: MultiSelectOption[];
+  let minimal: MultiSelectSettingProps;
+  let renderer: ReactShallowRenderer.ShallowRenderer;
+  let defaultOptions: MultiSelectOption[];
 
   beforeEach(() => {
     defaultOptions = [
@@ -29,7 +31,6 @@ describe('ui/settings/multiselectsettings', () => {
     minimal = {
       options: defaultOptions,
       selections: [],
-      visible: true,
     };
 
     renderer = ReactShallowRenderer.createRenderer();

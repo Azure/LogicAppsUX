@@ -5,8 +5,8 @@ import { initializeCheckedDropdown, initializePropertyValueText } from '../util'
 import { ItemMenuButton } from './ItemMenuButton';
 import type { IButtonStyles, IContextualMenuItem, IContextualMenuProps, IContextualMenuStyles, ITextFieldStyles } from '@fluentui/react';
 import { IconButton, TextField } from '@fluentui/react';
-import type { OpenAPIV2 } from '@microsoft/utils-logic-apps';
-import { clone } from '@microsoft/utils-logic-apps';
+import type { OpenAPIV2 } from '@microsoft/logic-apps-shared';
+import { clone } from '@microsoft/logic-apps-shared';
 import { useCallback, useEffect, useMemo, useState } from 'react';
 
 const dropwdownButtonStyles: Partial<IButtonStyles> = {
@@ -25,14 +25,15 @@ const dropdownMenuStyles: Partial<IContextualMenuStyles> = {
 };
 
 const textFieldStyles: Partial<ITextFieldStyles> = {
-  fieldGroup: { height: 30, width: '100%', fontSize: 14 },
-  wrapper: { width: '100%', maxHeight: 40, alignItems: 'center' },
+  fieldGroup: { width: '100%', fontSize: 14, minHeight: 30 },
+  wrapper: { width: '100%', alignItems: 'center', paddingBottom: 14 },
 };
 
-export enum SchemaPropertyValueType {
-  STRING = 'string',
-  OBJECT = 'schemaObject',
-}
+export const SchemaPropertyValueType = {
+  STRING: 'string',
+  OBJECT: 'schemaObject',
+} as const;
+export type SchemaPropertyValueType = (typeof SchemaPropertyValueType)[keyof typeof SchemaPropertyValueType];
 
 interface BasePropertyEditorItemProps {
   schema?: OpenAPIV2.SchemaObject;
@@ -48,11 +49,11 @@ interface BasePropertyEditorItemProps {
 }
 
 interface SchemaPropertyEditorValue {
-  propertyValueType: SchemaPropertyValueType.OBJECT;
+  propertyValueType: typeof SchemaPropertyValueType.OBJECT;
   propertyValue: OpenAPIV2.SchemaObject;
 }
 interface StringPropertyEditorValue {
-  propertyValueType: SchemaPropertyValueType.STRING;
+  propertyValueType: typeof SchemaPropertyValueType.STRING;
   propertyValue: string;
 }
 
@@ -210,6 +211,10 @@ export const PropertyEditorItem = ({
           value={propertyValueText}
           onChange={(_e, newVal) => setPropertyValueText(newVal ?? '')}
           onBlur={() => updateWithNewValue()}
+          multiline
+          autoAdjustHeight
+          resizable={false}
+          rows={1}
         />
       )}
     </div>

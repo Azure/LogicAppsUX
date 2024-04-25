@@ -1,17 +1,27 @@
 import constants from '../constants';
 import type { Token } from '../editor';
-import { ValueSegmentType, TokenType } from '../editor';
+import { TokenType, ValueSegmentType } from '../editor';
+import type { TokenNodeProps } from '../editor/base/nodes/tokenNode';
 import { INSERT_TOKEN_NODE } from '../editor/base/plugins/InsertTokenNode';
 import { SINGLE_VALUE_SEGMENT } from '../editor/base/plugins/SingleValueSegment';
 import type { ExpressionEditorEvent } from '../expressioneditor';
+import type { TokenGroup, Token as TokenGroupToken } from './models/token';
 import { UPDATE_TOKEN_NODE } from './plugins/UpdateTokenNode';
-import { getExpressionTokenTitle } from './util';
+import type { GetValueSegmentHandler } from './tokenpickersection/tokenpickeroption';
+import { getExpressionOutput, getExpressionTokenTitle } from './util';
 import { PrimaryButton } from '@fluentui/react';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
-import type { Expression } from '@microsoft/parsers-logic-apps';
-import { ExpressionParser } from '@microsoft/parsers-logic-apps';
-import { guid } from '@microsoft/utils-logic-apps';
+import {
+  LogEntryLevel,
+  LoggerService,
+  ExpressionExceptionCode,
+  ExpressionParser,
+  ScannerException,
+  guid,
+} from '@microsoft/logic-apps-shared';
+import type { Expression } from '@microsoft/logic-apps-shared';
 import type { LexicalEditor, NodeKey } from 'lexical';
+import { useMemo } from 'react';
 import { useIntl } from 'react-intl';
 
 const FxIcon =
@@ -20,10 +30,18 @@ const FxIcon =
 interface TokenPickerFooterProps {
   expression: ExpressionEditorEvent;
   expressionToBeUpdated: NodeKey | null;
+  tokenGroup: TokenGroup[];
+  getValueSegmentFromToken: GetValueSegmentHandler;
   setExpressionEditorError: (error: string) => void;
 }
 
-export function TokenPickerFooter({ expression, expressionToBeUpdated, setExpressionEditorError }: TokenPickerFooterProps) {
+export function TokenPickerFooter({
+  expression,
+  expressionToBeUpdated,
+  tokenGroup,
+  getValueSegmentFromToken,
+  setExpressionEditorError,
+}: TokenPickerFooterProps) {
   let editor: LexicalEditor | null;
   try {
     [editor] = useLexicalComposerContext();
@@ -32,71 +50,137 @@ export function TokenPickerFooter({ expression, expressionToBeUpdated, setExpres
   }
   const intl = useIntl();
 
+  const outputTokenMap = useMemo(() => {
+    const map: Record<string, TokenGroupToken> = {};
+    tokenGroup.forEach((group) => {
+      group.tokens.forEach((token) => {
+        if (token?.value) {
+          map[token.value] = token;
+        }
+      });
+    });
+    return map;
+  }, [tokenGroup]);
+
   const tokenPickerAdd = intl.formatMessage({
     defaultMessage: 'Add',
+    id: '9atGYe',
     description: 'Insert Expression',
   });
   const tokenPickerUpdate = intl.formatMessage({
     defaultMessage: 'Update',
+    id: 'dOpdsP',
     description: 'Update Expression',
   });
   const invalidExpression = intl.formatMessage({
     defaultMessage: 'The expression is invalid.',
-    description: 'invalid expression alert',
+    id: 't9RwOi',
+    description: 'Invalid expression alert',
   });
+  const invalidExpressionQuotations = intl.formatMessage({
+    defaultMessage: 'The expression is invalid. Make sure to use single quotes.',
+    id: 'H9CZTr',
+    description: 'Invalid expression due to misused double quotes',
+  });
+
+  const insertToken = (tokenProps: TokenNodeProps) => {
+    const { brandColor, icon, title, description, value, data } = tokenProps;
+    if (!editor) {
+      return;
+    }
+    editor?.dispatchCommand(SINGLE_VALUE_SEGMENT, true);
+    editor?.dispatchCommand(INSERT_TOKEN_NODE, {
+      brandColor,
+      description,
+      title,
+      icon,
+      value,
+      data,
+    });
+  };
+
+  const insertOutputToken = async (outputToken: TokenGroupToken) => {
+    const { brandColor, icon, title, description, value } = outputToken;
+    const segment = await getValueSegmentFromToken(outputToken, false);
+    insertToken({ brandColor, description, title, icon, value, data: segment });
+  };
 
   const onUpdateOrAddClicked = () => {
     let currExpression: Expression | null = null;
     try {
       currExpression = ExpressionParser.parseExpression(expression.value);
     } catch (ex) {
-      setExpressionEditorError(invalidExpression);
+      if (ex instanceof ScannerException && (ex as any).message === ExpressionExceptionCode.MISUSED_DOUBLE_QUOTES) {
+        // if the expression contains misused double quotes, we'll show a different error message
+        setExpressionEditorError(invalidExpressionQuotations);
+      } else {
+        setExpressionEditorError(invalidExpression);
+      }
+    }
+
+    LoggerService().log({
+      area: 'TokenPickerFooter:onUpdateOrAddClicked',
+      args: [expressionToBeUpdated ? 'update' : 'add', currExpression ? 'valid' : 'invalid'],
+      level: LogEntryLevel.Verbose,
+      message: 'Expression add/update button clicked.',
+    });
+
+    if (!currExpression) {
       return;
     }
-    const token: Token = {
-      tokenType: TokenType.FX,
-      expression: currExpression,
-      brandColor: constants.FX_COLOR,
-      icon: FxIcon,
-      title: getExpressionTokenTitle(currExpression),
-      // Todo: get Expression Token description
-      description: '',
-      key: guid(),
-      value: expression.value,
-    };
-    if (expressionToBeUpdated) {
-      editor?.dispatchCommand(UPDATE_TOKEN_NODE, {
-        updatedValue: expression.value,
-        updatedTitle: token.title,
-        updatedData: {
-          id: guid(),
-          type: ValueSegmentType.TOKEN,
-          value: expression.value,
-          token,
-        },
-        nodeKey: expressionToBeUpdated,
-      });
+
+    if (expression.value && window.localStorage.getItem('msla-tokenpicker-expression') !== expression.value) {
+      window.localStorage.setItem('msla-tokenpicker-expression', expression.value);
+    }
+    // if the expression is just an output token, instead of creating an expression, we'll just insert the token
+    const outputToken = getExpressionOutput(currExpression, outputTokenMap);
+    if (outputToken && !expressionToBeUpdated) {
+      insertOutputToken(outputToken);
     } else {
-      editor?.dispatchCommand(SINGLE_VALUE_SEGMENT, true);
-      editor?.dispatchCommand(INSERT_TOKEN_NODE, {
-        brandColor: token.brandColor,
-        description: token.description,
-        title: token.title,
-        icon: token.icon ?? FxIcon,
-        value: token.value,
-        data: {
-          id: guid(),
-          type: ValueSegmentType.TOKEN,
-          value: expression.value,
-          token,
-        },
-      });
+      const token: Token = {
+        tokenType: TokenType.FX,
+        expression: currExpression,
+        brandColor: constants.FX_COLOR,
+        icon: FxIcon,
+        title: getExpressionTokenTitle(currExpression),
+        // Todo: get Expression Token description
+        description: '',
+        key: guid(),
+        value: expression.value,
+      };
+
+      // if the expression is already in the expression editor, we'll update the token node
+      if (expressionToBeUpdated) {
+        editor?.dispatchCommand(UPDATE_TOKEN_NODE, {
+          updatedValue: expression.value,
+          updatedTitle: token.title,
+          updatedData: {
+            id: guid(),
+            type: ValueSegmentType.TOKEN,
+            value: expression.value,
+            token,
+          },
+          nodeKey: expressionToBeUpdated,
+        });
+      }
+      // otherwise, we'll insert the expression token
+      else {
+        insertToken({
+          brandColor: token.brandColor,
+          description: token.description,
+          title: token.title,
+          icon: token.icon,
+          value: token.value,
+          data: { id: guid(), type: ValueSegmentType.TOKEN, value: expression.value, token },
+        });
+      }
     }
   };
 
   return (
     <div className="msla-token-picker-footer">
       <PrimaryButton
+        data-automation-id="msla-token-picker-expression-addorupdate-button"
         text={expressionToBeUpdated ? tokenPickerUpdate : tokenPickerAdd}
         onClick={onUpdateOrAddClicked}
         style={{ marginLeft: '10px', height: '28px', fontSize: '14px' }}

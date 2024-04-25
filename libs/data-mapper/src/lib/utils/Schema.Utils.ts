@@ -3,13 +3,21 @@ import { arrayType } from '../components/tree/SchemaTreeSearchbar';
 import type { ITreeNode } from '../components/tree/Tree';
 import { mapNodeParams } from '../constants/MapDefinitionConstants';
 import { sourcePrefix, targetPrefix } from '../constants/ReactFlowConstants';
-import type { PathItem, Schema, SchemaExtended, SchemaNode, SchemaNodeDictionary, SchemaNodeExtended } from '../models';
-import { NormalizedDataType, SchemaNodeProperty, SchemaType } from '../models';
+import { getLoopTargetNodeWithJson } from '../mapDefinitions';
 import type { FunctionData } from '../models/Function';
 import { LogCategory, LogService } from './Logging.Utils';
+import type {
+  PathItem,
+  DataMapSchema,
+  SchemaExtended,
+  SchemaNode,
+  SchemaNodeDictionary,
+  SchemaNodeExtended,
+} from '@microsoft/logic-apps-shared';
+import { NormalizedDataType, SchemaNodeProperty, SchemaType } from '@microsoft/logic-apps-shared';
 import Fuse from 'fuse.js';
 
-export const convertSchemaToSchemaExtended = (schema: Schema): SchemaExtended => {
+export const convertSchemaToSchemaExtended = (schema: DataMapSchema): SchemaExtended => {
   const extendedSchema: SchemaExtended = {
     ...schema,
     schemaTreeRoot: convertSchemaNodeToSchemaNodeExtended(schema.schemaTreeRoot, undefined, []),
@@ -28,6 +36,14 @@ export const convertSchemaToSchemaExtended = (schema: Schema): SchemaExtended =>
   });
 
   return extendedSchema;
+};
+
+export const getFileNameAndPath = (fullPath: string): [string, string] => {
+  const normalizedPath = fullPath.replaceAll('\\', '/');
+  const lastIndexOfSlash = normalizedPath.lastIndexOf('/');
+  const fileName = lastIndexOfSlash !== -1 ? normalizedPath.slice(lastIndexOfSlash + 1, normalizedPath.length + 1) : normalizedPath;
+  const filePath = normalizedPath.slice(0, lastIndexOfSlash + 1);
+  return [fileName, filePath];
 };
 
 const convertSchemaNodeToSchemaNodeExtended = (
@@ -98,7 +114,19 @@ export const flattenSchemaNode = (schemaNode: SchemaNodeExtended): SchemaNodeExt
 
 export const isLeafNode = (schemaNode: SchemaNodeExtended): boolean => schemaNode.children.length < 1;
 
-export const findNodeForKey = (nodeKey: string, schemaNode: SchemaNodeExtended): SchemaNodeExtended | undefined => {
+/**
+ * Finds a node for a key, searching within a given schema structure
+ *
+ * @param nodeKey The key to search for
+ * @param schemaNode The root node search to search within
+ * @param collapseLoopFallback Should the search attempt to collapse multiple loops into a single one
+ * in order to find a a potential many-one situation.
+ */
+export const findNodeForKey = (
+  nodeKey: string,
+  schemaNode: SchemaNodeExtended,
+  collapseLoopFallback: boolean
+): SchemaNodeExtended | undefined => {
   let tempKey = nodeKey;
   if (tempKey.includes(mapNodeParams.for)) {
     const layeredArrayItemForRegex = new RegExp(/\$for\([^)]*(?:\/\*){2,}\)/g);
@@ -114,7 +142,27 @@ export const findNodeForKey = (nodeKey: string, schemaNode: SchemaNodeExtended):
     }
   }
 
-  return searchChildrenNodeForKey(tempKey, schemaNode);
+  let result = searchChildrenNodeForKey(tempKey, schemaNode);
+
+  if (!result) {
+    result = getLoopTargetNodeWithJson(tempKey, schemaNode) as SchemaNodeExtended | undefined;
+  }
+
+  if (result || !collapseLoopFallback) {
+    return result;
+  }
+
+  let lastInstanceOfMultiLoop = tempKey.lastIndexOf('*/*');
+  while (lastInstanceOfMultiLoop > -1 && !result) {
+    const start = tempKey.substring(0, lastInstanceOfMultiLoop);
+    const end = tempKey.substring(lastInstanceOfMultiLoop + 2);
+    tempKey = start + end;
+
+    result = searchChildrenNodeForKey(tempKey, schemaNode);
+    lastInstanceOfMultiLoop = tempKey.lastIndexOf('*/*');
+  }
+
+  return result;
 };
 
 const searchChildrenNodeForKey = (key: string, schemaNode: SchemaNodeExtended): SchemaNodeExtended | undefined => {

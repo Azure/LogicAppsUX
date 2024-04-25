@@ -1,16 +1,18 @@
-import { connectionsFileName } from '../../../constants';
+import { azurePublicBaseUrl, connectionsFileName } from '../../../constants';
 import { localize } from '../../../localize';
 import { isCSharpProject } from '../../commands/initProjectForVSCode/detectProjectLanguage';
-import type { SlotTreeItem } from '../../tree/slotsTree/SlotTreeItem';
 import { addOrUpdateLocalAppSettings } from '../appSettings/localSettings';
 import { writeFormattedJson } from '../fs';
 import { sendAzureRequest } from '../requestUtils';
-import { tryGetFunctionProjectRoot } from '../verifyIsProject';
+import { tryGetLogicAppProjectRoot } from '../verifyIsProject';
 import { getContainingWorkspace } from '../workspace';
+import { getWorkflowParameters } from './common';
 import { getAuthorizationToken } from './getAuthorizationToken';
-import { getParametersJson } from './parameter';
+import { getParametersJson, saveWorkflowParameterRecords } from './parameter';
+import * as parameterizer from './parameterizer';
 import { addNewFileInCSharpProject } from './updateBuildFile';
-import { HTTP_METHODS, isString } from '@microsoft/utils-logic-apps';
+import { HTTP_METHODS, isString } from '@microsoft/logic-apps-shared';
+import type { ParsedSite } from '@microsoft/vscode-azext-azureappservice';
 import { nonNullValue } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import type {
@@ -21,19 +23,19 @@ import type {
   ConnectionAcl,
   ConnectionAndAppSetting,
   Parameter,
-} from '@microsoft/vscode-extension';
+} from '@microsoft/vscode-extension-logic-apps';
+import axios from 'axios';
 import * as fse from 'fs-extra';
 import * as path from 'path';
-import * as requestP from 'request-promise';
 import * as vscode from 'vscode';
 
 export async function getConnectionsFromFile(context: IActionContext, workflowFilePath: string): Promise<string> {
-  const projectRoot: string = await getFunctionProjectRoot(context, workflowFilePath);
+  const projectRoot: string = await getLogicAppProjectRoot(context, workflowFilePath);
   return getConnectionsJson(projectRoot);
 }
 
 export async function getParametersFromFile(context: IActionContext, workflowFilePath: string): Promise<Record<string, Parameter>> {
-  const projectRoot: string = await getFunctionProjectRoot(context, workflowFilePath);
+  const projectRoot: string = await getLogicAppProjectRoot(context, workflowFilePath);
   return getParametersJson(projectRoot);
 }
 
@@ -54,20 +56,25 @@ export async function addConnectionData(
   filePath: string,
   ConnectionAndAppSetting: ConnectionAndAppSetting
 ): Promise<void> {
-  const projectPath = await getFunctionProjectRoot(context, filePath);
+  const jsonParameters = await getParametersFromFile(context, filePath);
+  const projectPath = await getLogicAppProjectRoot(context, filePath);
 
-  await addConnectionDataInJson(context, projectPath ?? '', ConnectionAndAppSetting);
+  await addConnectionDataInJson(context, projectPath ?? '', ConnectionAndAppSetting, jsonParameters);
 
   const { settings } = ConnectionAndAppSetting;
+  const workflowParameterRecords = getWorkflowParameters(jsonParameters);
+
   await addOrUpdateLocalAppSettings(context, projectPath ?? '', settings);
+  await saveWorkflowParameterRecords(context, filePath, workflowParameterRecords);
+
   await vscode.window.showInformationMessage(localize('azureFunctions.addConnection', 'Connection added.'));
 }
 
-export async function getFunctionProjectRoot(context: IActionContext, workflowFilePath: string): Promise<string> {
+export async function getLogicAppProjectRoot(context: IActionContext, workflowFilePath: string): Promise<string> {
   const workspaceFolder = nonNullValue(getContainingWorkspace(workflowFilePath), 'workspaceFolder');
   const workspacePath: string = workspaceFolder.uri.fsPath;
 
-  const projectRoot: string | undefined = await tryGetFunctionProjectRoot(context, workspacePath);
+  const projectRoot: string | undefined = await tryGetLogicAppProjectRoot(context, workspacePath);
 
   if (projectRoot === undefined) {
     throw new Error('Error in determining project root. Please confirm project structure is correct.');
@@ -79,7 +86,8 @@ export async function getFunctionProjectRoot(context: IActionContext, workflowFi
 async function addConnectionDataInJson(
   context: IActionContext,
   functionAppPath: string,
-  ConnectionAndAppSetting: ConnectionAndAppSetting
+  ConnectionAndAppSetting: ConnectionAndAppSetting,
+  parametersData: Record<string, Parameter>
 ): Promise<void> {
   const connectionsFilePath = path.join(functionAppPath, connectionsFileName);
   const connectionsFileExists = fse.pathExistsSync(connectionsFilePath);
@@ -87,7 +95,7 @@ async function addConnectionDataInJson(
   const connectionsJsonString = await getConnectionsJson(functionAppPath);
   const connectionsJson = connectionsJsonString === '' ? {} : JSON.parse(connectionsJsonString);
 
-  const { connectionData, connectionKey, pathLocation } = ConnectionAndAppSetting;
+  const { connectionData, connectionKey, pathLocation, settings } = ConnectionAndAppSetting;
 
   let pathToSetConnectionsData = connectionsJson;
 
@@ -105,6 +113,8 @@ async function addConnectionDataInJson(
     return;
   }
 
+  parameterizer.parameterizeConnection(connectionData, connectionKey, parametersData, settings);
+
   pathToSetConnectionsData[connectionKey] = connectionData;
   await writeFormattedJson(connectionsFilePath, connectionsJson);
 
@@ -118,27 +128,26 @@ async function getConnectionReference(
   reference: any,
   accessToken: string,
   workflowBaseManagementUri: string,
-  settingsToAdd: Record<string, string>
+  settingsToAdd: Record<string, string>,
+  parametersToAdd: any
 ): Promise<ConnectionReferenceModel> {
   const {
     api: { id: apiId },
     connection: { id: connectionId },
     connectionProperties,
   } = reference;
-  const options = {
-    json: true,
-    headers: { authorization: accessToken },
-    method: HTTP_METHODS.POST,
-    body: { validityTimeSpan: '7' },
-    uri: `${workflowBaseManagementUri}/${connectionId}/listConnectionKeys?api-version=2018-07-01-preview`,
-  };
 
-  return requestP(options)
-    .then((response) => {
+  return axios
+    .post(
+      `${workflowBaseManagementUri}/${connectionId}/listConnectionKeys?api-version=2018-07-01-preview`,
+      { validityTimeSpan: '7' },
+      { headers: { authorization: accessToken } }
+    )
+    .then(({ data: response }) => {
       const appSettingKey = `${referenceKey}-connectionKey`;
       settingsToAdd[appSettingKey] = response.connectionKey;
 
-      return {
+      const connectionReference: ConnectionReferenceModel = {
         api: { id: apiId },
         connection: { id: connectionId },
         connectionRuntimeUrl: response.runtimeUrls.length ? response.runtimeUrls[0] : '',
@@ -149,6 +158,10 @@ async function getConnectionReference(
         },
         connectionProperties,
       };
+
+      parameterizer.parameterizeConnection(connectionReference, referenceKey, parametersToAdd, settingsToAdd);
+
+      return connectionReference;
     })
     .catch((error) => {
       throw new Error(`Error in fetching connection keys for ${connectionId}. ${error}`);
@@ -160,9 +173,10 @@ export async function getConnectionsAndSettingsToUpdate(
   workflowFilePath: string,
   connectionReferences: any,
   azureTenantId: string,
-  workflowBaseManagementUri: string
+  workflowBaseManagementUri: string,
+  parametersFromDefinition: any
 ): Promise<ConnectionAndSettings> {
-  const projectPath = await getFunctionProjectRoot(context, workflowFilePath);
+  const projectPath = await getLogicAppProjectRoot(context, workflowFilePath);
   const connectionsDataString = projectPath ? await getConnectionsJson(projectPath) : '';
   const connectionsData = connectionsDataString === '' ? {} : JSON.parse(connectionsDataString);
 
@@ -174,13 +188,14 @@ export async function getConnectionsAndSettingsToUpdate(
     const reference = connectionReferences[referenceKey];
 
     if (isApiHubConnectionId(reference.connection.id) && !referencesToAdd[referenceKey]) {
-      accessToken = !accessToken ? await getAuthorizationToken(/* credentials */ undefined, azureTenantId) : accessToken;
+      accessToken = accessToken ? accessToken : await getAuthorizationToken(/* credentials */ undefined, azureTenantId);
       referencesToAdd[referenceKey] = await getConnectionReference(
         referenceKey,
         reference,
         accessToken,
         workflowBaseManagementUri,
-        settingsToAdd
+        settingsToAdd,
+        parametersFromDefinition
       );
     }
   }
@@ -198,7 +213,7 @@ export async function saveConnectionReferences(
   workflowFilePath: string,
   connectionAndSettingsToUpdate: ConnectionAndSettings
 ): Promise<void> {
-  const projectPath = await getFunctionProjectRoot(context, workflowFilePath);
+  const projectPath = await getLogicAppProjectRoot(context, workflowFilePath);
   const { connections, settings } = connectionAndSettingsToUpdate;
   const connectionsFilePath = path.join(projectPath, connectionsFileName);
   const connectionsFileExists = fse.pathExistsSync(connectionsFilePath);
@@ -245,7 +260,8 @@ export function resolveSettingsInConnection(
             value = settings[settingKey];
           }
 
-          return { ...result, [parameterKey]: value };
+          result[parameterKey] = value;
+          return result;
         }, {}),
       }
     : connectionInfo;
@@ -255,28 +271,25 @@ export function resolveSettingsInConnection(
  * Creates acknowledge connections to managed api connections.
  * @param {IIdentityWizardContext} identityWizardContext - Identity context.
  * @param {string} connectionId - Connection ID.
- * @param {SlotTreeItem} node - Logic app node structure.
+ * @param {ParsedSite} site - Logic app site.
  */
 export async function createAclInConnectionIfNeeded(
   identityWizardContext: IIdentityWizardContext,
   connectionId: string,
-  node: SlotTreeItem
+  site: ParsedSite
 ): Promise<void> {
-  if (
-    (!node.site || !node.site.rawSite.identity || node.site.rawSite.identity.type !== 'SystemAssigned') &&
-    !identityWizardContext?.useAdvancedIdentity
-  ) {
+  if ((!site || !site.rawSite.identity || site.rawSite.identity.type !== 'SystemAssigned') && !identityWizardContext?.useAdvancedIdentity) {
     return;
   }
 
   let connectionAcls: ConnectionAcl[];
   const identity = identityWizardContext?.useAdvancedIdentity
     ? { principalId: identityWizardContext.objectId, tenantId: identityWizardContext.tenantId }
-    : node.site.rawSite.identity;
+    : site.rawSite.identity;
   const url = `${connectionId}/accessPolicies?api-version=2018-07-01-preview`;
 
   try {
-    const response = await sendAzureRequest(url, identityWizardContext, HTTP_METHODS.GET, node.site.subscription);
+    const response = await sendAzureRequest(url, identityWizardContext, HTTP_METHODS.GET, site.subscription);
     connectionAcls = response.parsedBody.value;
   } catch (error) {
     connectionAcls = [];
@@ -289,14 +302,14 @@ export async function createAclInConnectionIfNeeded(
         acl.properties?.principal.identity.tenantId === identity?.tenantId
     )
   ) {
-    return createAccessPolicyInConnection(identityWizardContext, connectionId, node, identity);
+    return createAccessPolicyInConnection(identityWizardContext, connectionId, site, identity);
   }
 }
 
 async function createAccessPolicyInConnection(
   identityWizardContext: IIdentityWizardContext,
   connectionId: string,
-  node: SlotTreeItem,
+  site: ParsedSite,
   identity: any
 ): Promise<void> {
   const accessToken = await getAuthorizationToken(undefined, undefined);
@@ -304,18 +317,16 @@ async function createAccessPolicyInConnection(
   let connection: any;
 
   try {
-    const response = await sendAzureRequest(getUrl, identityWizardContext, HTTP_METHODS.GET, node.site.subscription);
+    const response = await sendAzureRequest(getUrl, identityWizardContext, HTTP_METHODS.GET, site.subscription);
     connection = response.parsedBody;
   } catch (error) {
     throw new Error(`Error in getting connection - ${connectionId}. ${error}`);
   }
 
   const { principalId: objectId, tenantId } = identity;
-  const name = `${node.site.fullName}-${objectId}`;
+  const name = `${site.fullName}-${objectId}`;
   const options = {
-    json: true,
     headers: { authorization: accessToken },
-    method: HTTP_METHODS.PUT,
     body: {
       name,
       type: 'Microsoft.Web/connections/accessPolicy',
@@ -327,10 +338,15 @@ async function createAccessPolicyInConnection(
         },
       },
     },
-    uri: `https://management.azure.com/${connectionId}/accessPolicies/${name}?api-version=2018-07-01-preview`,
+    uri: `${azurePublicBaseUrl}/${connectionId}/accessPolicies/${name}?api-version=2018-07-01-preview`,
   };
 
-  return requestP(options).catch((error) => {
-    throw new Error(`Error in creating accessPolicy - ${name} for connection - ${connectionId}. ${error}`);
-  });
+  return axios
+    .put(options.uri, options.body, {
+      headers: options.headers,
+    })
+    .then(({ data }) => data)
+    .catch((error) => {
+      throw new Error(`Error in creating accessPolicy - ${name} for connection - ${connectionId}. ${error}`);
+    });
 }

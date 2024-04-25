@@ -1,16 +1,25 @@
 import { isWorkflowGraph } from '../parsers/models/workflowNode';
 import type { WorkflowEdge, WorkflowNode } from '../parsers/models/workflowNode';
 import type { NodesMetadata, Operations, WorkflowState } from '../state/workflow/workflowInterfaces';
-import type { WorkflowEdgeType, WorkflowNodeType } from '@microsoft/utils-logic-apps';
-import { equals, WORKFLOW_EDGE_TYPES, WORKFLOW_NODE_TYPES } from '@microsoft/utils-logic-apps';
+import {
+  isTemplateExpression,
+  hasInvalidChars,
+  startsWith,
+  equals,
+  WORKFLOW_EDGE_TYPES,
+  WORKFLOW_NODE_TYPES,
+  getRecordEntry,
+} from '@microsoft/logic-apps-shared';
+import type { WorkflowEdgeType, WorkflowNodeType } from '@microsoft/logic-apps-shared';
 import type { ElkExtendedEdge, ElkNode } from 'elkjs';
 
 export const isRootNodeInGraph = (nodeId: string, graphId: string, nodesMetadata: NodesMetadata): boolean => {
-  return nodesMetadata[nodeId]?.graphId === graphId && !!nodesMetadata[nodeId]?.isRoot;
+  const nodeMetadata = getRecordEntry(nodesMetadata, nodeId);
+  return nodeMetadata?.graphId === graphId && !!nodeMetadata?.isRoot;
 };
 
 export const isRootNode = (nodeId: string, nodesMetadata: NodesMetadata) => {
-  return !!nodesMetadata[nodeId]?.isRoot;
+  return !!getRecordEntry(nodesMetadata, nodeId)?.isRoot;
 };
 
 export const getTriggerNode = (state: WorkflowState): WorkflowNode => {
@@ -78,43 +87,44 @@ export const getUpstreamNodeIds = (
   for (const parentNodeId of allParentNodeIds) {
     const graphContainingNode = getGraphNode(parentNodeId, rootGraph, nodesMetadata);
     if (graphContainingNode) {
-      sourceNodeIds.push(...getAllSourceNodeIds(graphContainingNode, parentNodeId, operationMap));
+      sourceNodeIds.push(...getAllSourceNodeIds(graphContainingNode, parentNodeId, operationMap), parentNodeId);
     }
   }
-
   return sourceNodeIds;
 };
 
 export const getNode = (nodeId: string, currentNode: WorkflowNode): WorkflowNode | undefined => {
   if (currentNode.id === nodeId) {
     return currentNode;
-  } else {
-    let result;
-    for (const child of currentNode.children ?? []) {
-      result = getNode(nodeId, child as WorkflowNode);
-
-      if (result) {
-        return result;
-      }
-    }
-
-    return result;
   }
+  let result: WorkflowNode | undefined;
+  for (const child of currentNode.children ?? []) {
+    result = getNode(nodeId, child as WorkflowNode);
+
+    if (result) {
+      return result;
+    }
+  }
+
+  return result;
 };
 
 export const getGraphNode = (nodeId: string, node: WorkflowNode, nodesMetadata: NodesMetadata): WorkflowNode | undefined => {
-  if (!nodesMetadata[nodeId]) return undefined;
-  return getNode(nodesMetadata[nodeId].graphId, node);
+  const nodeMetadata = getRecordEntry(nodesMetadata, nodeId);
+  if (!nodeMetadata) {
+    return undefined;
+  }
+  return getNode(nodeMetadata.graphId, node);
 };
 
 export const getImmediateSourceNodeIds = (graph: WorkflowNode, nodeId: string): string[] => {
-  return (graph.edges ?? []).filter((edge) => edge.target === nodeId && !edge.id.includes('#')).map((edge) => edge.source);
+  return (graph?.edges ?? []).filter((edge) => edge.target === nodeId && !edge.id.includes('#')).map((edge) => edge.source);
 };
 
 export const getNewNodeId = (state: WorkflowState, nodeId: string): string => {
   let newNodeId = nodeId;
   let count = 1;
-  while (state.operations[newNodeId]) {
+  while (getRecordEntry(state.operations, newNodeId)) {
     newNodeId = `${nodeId}_${count}`;
     count++;
   }
@@ -137,12 +147,12 @@ const getAllSourceNodeIds = (graph: WorkflowNode, nodeId: string, operationMap: 
 };
 
 export const getAllParentsForNode = (nodeId: string, nodesMetadata: NodesMetadata): string[] => {
-  let currentParent = nodesMetadata[nodeId]?.parentNodeId;
+  let currentParent = getRecordEntry(nodesMetadata, nodeId)?.parentNodeId;
   const result: string[] = [];
 
   while (currentParent) {
     result.push(currentParent);
-    currentParent = nodesMetadata[currentParent].parentNodeId;
+    currentParent = getRecordEntry(nodesMetadata, currentParent)?.parentNodeId;
   }
 
   return result;
@@ -155,7 +165,7 @@ export const getAllNodesInsideNode = (nodeId: string, graph: WorkflowNode, opera
   if (isWorkflowGraph(currentGraph)) {
     for (const child of currentGraph.children as WorkflowNode[]) {
       const childId = child.id;
-      if (operationMap[childId]) {
+      if (getRecordEntry(operationMap, childId)) {
         result.push(childId);
       }
 
@@ -172,17 +182,42 @@ export const getFirstParentOfType = (
   nodesMetadata: NodesMetadata,
   operations: Operations
 ): string | undefined => {
-  const parentNodeId = nodesMetadata[nodeId]?.parentNodeId;
+  const parentNodeId = getRecordEntry(nodesMetadata, nodeId)?.parentNodeId;
 
   if (parentNodeId) {
-    if (equals(operations[parentNodeId]?.type, type)) {
+    if (equals(getRecordEntry(operations, parentNodeId)?.type, type)) {
       return parentNodeId;
     }
 
-    return nodesMetadata[parentNodeId]?.parentNodeId
-      ? getFirstParentOfType(nodesMetadata[parentNodeId].parentNodeId as string, type, nodesMetadata, operations)
+    return getRecordEntry(nodesMetadata, parentNodeId)?.parentNodeId
+      ? getFirstParentOfType(getRecordEntry(nodesMetadata, parentNodeId)?.parentNodeId as string, type, nodesMetadata, operations)
       : getFirstParentOfType(parentNodeId, type, nodesMetadata, operations);
   }
 
   return undefined;
 };
+
+export const isOperationNameValid = (
+  nodeId: string,
+  newName: string,
+  isTrigger: boolean,
+  nodesMetadata: NodesMetadata,
+  idReplacements: Record<string, string>
+): boolean => {
+  const name = transformOperationTitle(newName);
+
+  // Check for invalid characters.
+  if (!getRecordEntry(nodesMetadata, nodeId)?.subgraphType && !isTrigger && startsWith(name, 'internal.')) {
+    return false;
+  }
+
+  if (!name || isTemplateExpression(name) || name.length > 80 || hasInvalidChars(name, [':', '#'])) {
+    return false;
+  }
+
+  // Check for name uniqueness.
+  const allNodes = Object.keys(nodesMetadata).map((id) => getRecordEntry(idReplacements, id) ?? id);
+  return !allNodes.some((nodeName) => equals(nodeName, name));
+};
+
+export const transformOperationTitle = (title: string): string => title.replaceAll(' ', '_');

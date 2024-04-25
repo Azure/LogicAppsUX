@@ -2,62 +2,48 @@
 
 .msla-token-picker {
   box-sizing: border-box;
-  padding: 1px;
   display: flex;
   flex-direction: column;
   max-height: inherit;
 }
 
 .msla-token-picker-header {
+  border-bottom: 1px solid #edebe9;
   display: flex;
   flex-direction: row-reverse;
   padding: 5px 5px 0px 5px;
-  border-bottom: 1px solid #f6f6f6;
+  background: #faf9f8;
+}
+
+.msla-token-picker-expression-subheader {
+  background: #faf9f8;
+  border-bottom: 1px solid #edebe9;
+  .msla-panel-menu {
+    [role='tablist'] {
+      padding-bottom: 0;
+    }
+    button[role='tab'] {
+      margin: 0;
+      &:hover {
+        background: none;
+      }
+    }
+  }
 }
 
 .msla-token-picker-footer {
-  padding: 5px;
-  border-top: 1px solid #f6f6f6;
+  padding: 8px 24px;
+  border-top: 1px solid #edebe9;
   position: relative;
   bottom: 0px;
 }
+
 .msla-token-picker-search-container {
-  padding: 10px;
+  padding: 12px 16px;
   .msla-token-picker-search {
     border: 1px solid @defaultBorderColor;
     box-sizing: border-box;
     height: 26px;
-    width: 90%;
-    margin: auto;
-  }
-}
-
-.msla-token-picker-expression {
-  background-color: #c8cac7;
-  position: relative;
-  padding: 12px;
-  img {
-    position: absolute;
-    left: 12px;
-    margin: 0;
-    border: 0;
-    padding: 0;
-  }
-  .msla-expression-editor {
-    height: 32px;
-    padding-left: 32px;
-    padding-bottom: 12px;
-  }
-  .msla-token-picker-action-bar {
-    background-color: #c8cac7;
-    position: relative;
-    height: 32px;
-    .msla-token-picker-OK {
-      height: 32px;
-      font-size: 14px;
-      font-family: 'Segoe UI', 'Segoe UI Web (West European)', 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, 'Helvetica Neue',
-        sans-serif;
-    }
   }
 }
 
@@ -69,27 +55,28 @@
 .msla-token-picker-sections {
   box-sizing: border-box;
   overflow-y: auto;
-  min-height: 100px;
+  // min-height: 100px;
 }
 
 .msla-token-picker-section-header {
   display: flex;
-  padding: 0 8px;
+  padding: 0 16px;
   align-items: center;
-  position: relative;
+  position: sticky;
+  top: 0;
+  z-index: 1;
   img {
     box-sizing: content-box;
     display: inline-block;
-    margin: 3px 10px 0 10px;
-    width: 26px;
-    height: 26px;
+    width: 24px;
+    height: 24px;
   }
   span {
-    color: #7a7574;
     display: block;
     flex: 1 1 auto;
     font-family: wf_segoe-ui_normal, 'Segoe UI', 'Segoe WP', Tahoma, Arial, sans-serif;
     font-size: 13px;
+    font-weight: 600;
     padding: 12px 8px;
     white-space: nowrap;
     overflow: hidden;
@@ -101,6 +88,7 @@
     cursor: pointer;
     flex: 0 0 auto;
     white-space: nowrap;
+    padding: 0;
     overflow: hidden;
     text-overflow: ellipsis;
     span {
@@ -108,17 +96,22 @@
       display: inline-block;
       font-family: wf_segoe-ui_normal, 'Segoe UI', 'Segoe WP', Tahoma, Arial, sans-serif;
       font-size: 13px;
-      padding: 8px;
+      padding: 0;
     }
   }
 }
 
 .msla-token-picker-section-options {
-  padding: 0 12px;
+  display: flex;
+  flex-direction: column;
+  padding: 0;
+  list-style-type: none;
+  margin-block-start: 0;
+  margin-block-end: 0;
   .msla-token-picker-section-option {
     background: none;
     border: none;
-    border-bottom: 1px solid #afacac;
+    border-bottom: 1px solid #f3f2f1;
     cursor: pointer;
     display: inline-block;
     font-family: wf_segoe-ui_normal, 'Segoe UI', 'Segoe WP', Tahoma, Arial, sans-serif;
@@ -136,7 +129,7 @@
     .msla-token-picker-section-option-text {
       display: inline-block;
       vertical-align: top;
-      width: calc(100% - 32px);
+      width: 100%;
       .msla-token-picker-option-inner {
         align-content: center;
         display: flex;
@@ -161,6 +154,15 @@
           white-space: nowrap;
         }
       }
+      // .msla-token-picker-option-type {
+      //   position: absolute;
+      //   right: 8px;
+      //   top: 12px;
+      //   color: @primary_hover_blue;
+      //   border: 1px solid @primary_hover_blue;
+      //   padding: 1px;
+      //   font-size: 10px;
+      // }
     }
   }
 }
@@ -231,6 +233,7 @@
 .msla-theme-dark {
   .msla-token-picker-header {
     border-bottom: 1px solid @ms-color-secondaryBackground;
+    background-color: @ms-color-primaryBackground;
   }
   .msla-token-picker-footer {
     border-top: 1px solid @ms-color-secondaryBackground;
@@ -242,8 +245,7 @@
     color: #fff;
   }
   .msla-token-picker-search,
-  .msla-token-picker-action-bar,
-  .msla-token-picker-expression {
+  .msla-token-picker-action-bar {
     background-color: @ms-color-primaryBackgroundHover;
   }
   .msla-token-picker-section-header {
@@ -270,5 +272,19 @@
 
   .ms-TextField-field {
     background: none;
+  }
+  .msla-token-picker-expression-subheader {
+    background: @ms-color-primaryBackground;
+    border-bottom: 1px solid @ms-color-secondaryBackground;
+    .msla-panel-menu {
+      button[role='tab'] {
+        .ms-Pivot-text {
+          color: #fff;
+          &:hover {
+            color: #0078d4;
+          }
+        }
+      }
+    }
   }
 }

@@ -4,7 +4,7 @@ import { updateAllUpstreamNodes } from '../actions/bjsworkflow/initialize';
 import type { NodeDataWithOperationMetadata } from '../actions/bjsworkflow/operationdeserializer';
 import { initializeOperationDetailsForManifest } from '../actions/bjsworkflow/operationdeserializer';
 import { getOperationManifest } from '../queries/operation';
-import type { NodeInputs, NodeOperation, NodeOutputs } from '../state/operation/operationMetadataSlice';
+import type { NodeInputs, NodeOperation, NodeOutputs, OutputInfo } from '../state/operation/operationMetadataSlice';
 import { initializeNodes } from '../state/operation/operationMetadataSlice';
 import type { NodesMetadata, Operations } from '../state/workflow/workflowInterfaces';
 import { addImplicitForeachNode } from '../state/workflow/workflowSlice';
@@ -12,6 +12,7 @@ import type { RootState } from '../store';
 import { getAllParentsForNode, getNewNodeId, getTriggerNodeId } from './graph';
 import type { RepetitionContext, RepetitionReference } from './parameters/helper';
 import {
+  getTokenExpressionMethodFromKey,
   generateExpressionFromKey,
   getAllInputParameters,
   updateTokenMetadata,
@@ -21,14 +22,14 @@ import {
   getParameterFromName,
   parameterValueToString,
   shouldIncludeSelfForRepetitionReference,
+  getCustomCodeFilesWithData,
 } from './parameters/helper';
 import { isTokenValueSegment } from './parameters/segment';
 import { TokenSegmentConvertor } from './parameters/tokensegment';
-import { foreachOperationInfo, OperationManifestService } from '@microsoft/designer-client-services-logic-apps';
-import type { OutputToken, Token } from '@microsoft/designer-ui';
-import { TokenType } from '@microsoft/designer-ui';
-import type { Dereference, Expression, ExpressionFunction, ExpressionLiteral, Segment } from '@microsoft/parsers-logic-apps';
+import { getSplitOnValue } from './setting';
 import {
+  foreachOperationInfo,
+  OperationManifestService,
   OutputKeys,
   containsWildIndexSegment,
   convertToStringLiteral,
@@ -42,14 +43,32 @@ import {
   isTemplateExpression,
   parseEx,
   SegmentType,
-} from '@microsoft/parsers-logic-apps';
-import { equals, first, isNullOrUndefined } from '@microsoft/utils-logic-apps';
+  clone,
+  equals,
+  first,
+  getRecordEntry,
+  isNullOrUndefined,
+} from '@microsoft/logic-apps-shared';
+import type { OutputToken, Token } from '@microsoft/designer-ui';
+import { TokenType } from '@microsoft/designer-ui';
+import type {
+  Dereference,
+  Expression,
+  ExpressionFunction,
+  ExpressionLiteral,
+  Segment,
+  OperationManifest,
+} from '@microsoft/logic-apps-shared';
 import { createAsyncThunk } from '@reduxjs/toolkit';
+
+interface ImplicitForeachArrayDetails {
+  parentArrayKey: string;
+  parentArrayValue: string;
+}
 
 interface ImplicitForeachDetails {
   shouldAdd: boolean;
-  parentArrayKey?: string;
-  parentArrayValue?: string;
+  arrayDetails?: ImplicitForeachArrayDetails[];
   repetitionContext?: RepetitionContext;
 }
 
@@ -63,109 +82,144 @@ export const shouldAddForeach = async (
     return { shouldAdd: false };
   }
 
-  const operationInfo = state.operations.operationInfo[nodeId];
-  const parameter = getParameterFromId(state.operations.inputParameters[nodeId], parameterId);
+  const operationInfo = getRecordEntry(state.operations.operationInfo, nodeId);
+  if (!operationInfo) {
+    return { shouldAdd: false };
+  }
+
+  const inputParameters = getRecordEntry(state.operations.inputParameters, nodeId) ?? { parameterGroups: {} };
+  const parameter = getParameterFromId(inputParameters, parameterId);
   const manifest = OperationManifestService().isSupported(operationInfo.type, operationInfo.kind)
     ? await getOperationManifest(operationInfo)
     : undefined;
   const includeSelf = manifest ? shouldIncludeSelfForRepetitionReference(manifest, parameter?.parameterName) : false;
   const repetitionContext = await getRepetitionContext(
     nodeId,
-    getTriggerNodeId(state.workflow),
     state.operations.operationInfo,
     state.operations.inputParameters,
-    state.operations.settings,
     state.workflow.nodesMetadata,
     includeSelf,
+    getSplitOnValue(state.workflow, state.operations),
     state.workflow.idReplacements
   );
   const tokenOwnerNodeId = token.outputInfo.actionName ?? getTriggerNodeId(state.workflow);
-  const parentArrayKey = getParentArrayKey(token.key);
-  const parentArrayValue = getParentArrayExpression(
-    token.outputInfo.actionName,
-    parentArrayKey,
+  const tokenOwnerOperationInfo = state.operations.operationInfo[tokenOwnerNodeId];
+  const areOutputsManifestBased = OperationManifestService().isSupported(tokenOwnerOperationInfo.type, tokenOwnerOperationInfo.kind);
+  const { shouldAdd, arrayDetails } = getArrayDetailsForNestedForeach(
+    token,
+    tokenOwnerNodeId,
+    areOutputsManifestBased,
     repetitionContext,
-    state.operations.outputParameters[tokenOwnerNodeId],
-    state.operations.operationInfo[tokenOwnerNodeId]
-  ) as string;
-  const isSplitOn = isExpressionEqualToNodeSplitOn(
-    parentArrayValue,
-    state.operations.settings[tokenOwnerNodeId].splitOn?.value?.enabled
-      ? state.operations.settings[tokenOwnerNodeId].splitOn?.value?.value
-      : undefined
-  );
-  // TODO: Need a way to determine if token is item token already
-  const alreadyInLoop = repetitionContext.repetitionReferences.some(
-    (repetitionReference) =>
-      typeof repetitionReference.repetitionValue === 'string' && equals(repetitionReference.repetitionValue, parentArrayValue)
+    state
   );
 
-  // TODO: Need to handle array of array as input.
-  return { shouldAdd: !isSplitOn && !alreadyInLoop, parentArrayKey, parentArrayValue, repetitionContext };
+  return { shouldAdd, arrayDetails, repetitionContext };
 };
 
 export const addForeachToNode = createAsyncThunk(
   'addForeachToNode',
-  async (payload: { nodeId: string; arrayName: string | undefined; token: OutputToken }, { dispatch, getState }): Promise<RootState> => {
-    const { nodeId, arrayName, token } = payload;
-    if (!arrayName) {
+  async (
+    payload: { nodeId: string; arrayDetails: ImplicitForeachArrayDetails[] | undefined; token: OutputToken },
+    { dispatch, getState }
+  ): Promise<RootState> => {
+    const { nodeId, arrayDetails, token } = payload;
+    if (!arrayDetails?.length) {
       throw new Error('The value for foreach property should not be empty');
     }
 
-    // Adding foreach node.
-    const foreachNodeId = getNewNodeId((getState() as RootState).workflow, 'For_each');
-    dispatch(addImplicitForeachNode({ nodeId, foreachNodeId, operation: { type: Constants.NODE.TYPE.FOREACH, foreach: arrayName } }));
+    const state = getState() as RootState;
+    const splitOn = getSplitOnValue(state.workflow, state.operations);
+    let manifest: OperationManifest | undefined;
+    const foreachNodeIds: string[] = [];
+    let currentNodeId = nodeId;
+    for (const arrayDetail of arrayDetails) {
+      const { parentArrayValue: arrayName } = arrayDetail;
 
-    const newState = getState() as RootState;
+      // Adding foreach node.
+      const foreachNodeId = getNewNodeId((getState() as RootState).workflow, 'For_each');
+      foreachNodeIds.push(foreachNodeId);
 
-    // Initializing details for newly added foreach operation.
-    const foreachOperation = newState.workflow.operations[foreachNodeId];
-    const [{ nodeInputs, nodeOutputs, nodeDependencies, settings }] = (await initializeOperationDetailsForManifest(
-      foreachNodeId,
-      foreachOperation,
-      /* isTrigger */ false,
-      dispatch
-    )) as NodeDataWithOperationMetadata[];
+      dispatch(
+        addImplicitForeachNode({
+          nodeId: currentNodeId,
+          foreachNodeId,
+          operation: { type: Constants.NODE.TYPE.FOREACH, foreach: arrayName },
+        })
+      );
+      currentNodeId = foreachNodeId;
+    }
 
-    const repetitionInfo = await getRepetitionContext(
-      foreachNodeId,
-      getTriggerNodeId(newState.workflow),
-      newState.operations.operationInfo,
-      { ...newState.operations.inputParameters, [foreachNodeId]: nodeInputs },
-      { ...newState.operations.settings, [foreachNodeId]: settings },
-      newState.workflow.nodesMetadata,
-      /* includeSelf */ false,
-      newState.workflow.idReplacements
-    );
+    for (let i = foreachNodeIds.length - 1; i >= 0; i--) {
+      const newState = getState() as RootState;
+      const foreachNodeId = foreachNodeIds[i];
 
-    updateTokenMetadataInForeachInputs(nodeInputs, token, repetitionInfo, newState);
-    const manifest = await getOperationManifest(foreachOperationInfo);
-    const { iconUri, brandColor } = manifest.properties;
-    const initData = {
-      id: foreachNodeId,
-      nodeInputs,
-      nodeOutputs,
-      nodeDependencies,
-      settings,
-      operationMetadata: { iconUri, brandColor },
-      repetitionInfo,
-    };
-    dispatch(initializeNodes([initData]));
-    addTokensAndVariables(foreachNodeId, Constants.NODE.TYPE.FOREACH, { ...initData, manifest }, newState, dispatch);
+      // Initializing details for newly added foreach operation.
+      const foreachOperation = newState.workflow.operations[foreachNodeId];
+      const customCodeWithData = getCustomCodeFilesWithData(state.customCode);
+      const [{ nodeInputs, nodeOutputs, nodeDependencies, settings }] = (await initializeOperationDetailsForManifest(
+        foreachNodeId,
+        foreachOperation,
+        customCodeWithData,
+        /* isTrigger */ false,
+        state.workflow.workflowKind,
+        state.designerOptions.hostOptions.forceEnableSplitOn ?? false,
+        dispatch
+      )) as NodeDataWithOperationMetadata[];
+
+      const repetitionInfo = await getRepetitionContext(
+        foreachNodeId,
+        newState.operations.operationInfo,
+        { ...newState.operations.inputParameters, [foreachNodeId]: nodeInputs },
+        newState.workflow.nodesMetadata,
+        /* includeSelf */ false,
+        splitOn,
+        newState.workflow.idReplacements
+      );
+
+      updateTokenMetadataInForeachInputs(
+        nodeInputs,
+        token,
+        /* loopSource */ i < foreachNodeIds.length - 1 ? foreachNodeIds[i + 1] : undefined,
+        repetitionInfo,
+        newState
+      );
+
+      if (!manifest) {
+        manifest = await getOperationManifest(foreachOperationInfo);
+      }
+
+      const { iconUri, brandColor } = manifest.properties;
+      const initData = {
+        id: foreachNodeId,
+        nodeInputs,
+        nodeOutputs,
+        nodeDependencies,
+        settings,
+        operationMetadata: { iconUri, brandColor },
+        repetitionInfo,
+      };
+      dispatch(initializeNodes([initData]));
+      addTokensAndVariables(foreachNodeId, Constants.NODE.TYPE.FOREACH, { ...initData, manifest }, newState, dispatch);
+    }
 
     updateAllUpstreamNodes(getState() as RootState, dispatch);
     return getState() as RootState;
   }
 );
 
+interface GetRepetitionNodeIdsOptions {
+  includeSelf?: boolean;
+  ignoreUntil?: boolean;
+}
+
 export const getRepetitionNodeIds = (
   nodeId: string,
   nodesMetadata: NodesMetadata,
   operationInfos: Record<string, NodeOperation>,
-  includeSelf?: boolean
+  { includeSelf = false, ignoreUntil = false }: GetRepetitionNodeIdsOptions = {}
 ): string[] => {
   const allParentNodeIds = getAllParentsForNode(nodeId, nodesMetadata);
-  const repetitionNodeIds = allParentNodeIds.filter((parentId) => isLoopingNode(parentId, operationInfos));
+  const repetitionNodeIds = allParentNodeIds.filter((parentId) => isLoopingNode(parentId, operationInfos, ignoreUntil));
 
   if (includeSelf) {
     repetitionNodeIds.unshift(nodeId);
@@ -176,20 +230,14 @@ export const getRepetitionNodeIds = (
 
 export const getRepetitionContext = async (
   nodeId: string,
-  triggerNodeId: string,
   operationInfos: Record<string, NodeOperation>,
   allInputs: Record<string, NodeInputs>,
-  allSettings: Record<string, any>,
   nodesMetadata: NodesMetadata,
   includeSelf: boolean,
+  splitOn: string | undefined,
   idReplacements?: Record<string, string>
 ): Promise<RepetitionContext> => {
-  const repetitionNodeIds = getRepetitionNodeIds(nodeId, nodesMetadata, operationInfos, includeSelf);
-  const splitOn =
-    triggerNodeId && allSettings[triggerNodeId].splitOn?.value?.enabled
-      ? (allSettings[triggerNodeId].splitOn?.value?.value as string)
-      : undefined;
-
+  const repetitionNodeIds = getRepetitionNodeIds(nodeId, nodesMetadata, operationInfos, { includeSelf });
   const repetitionReferences = (
     await Promise.all(
       repetitionNodeIds.map((repetitionNodeId) => getRepetitionReference(repetitionNodeId, operationInfos, allInputs, idReplacements))
@@ -222,13 +270,69 @@ export const getRepetitionContext = async (
   };
 };
 
+const getArrayDetailsForNestedForeach = (
+  token: OutputToken,
+  tokenOwnerNodeId: string,
+  areOutputsManifestBased: boolean,
+  repetitionContext: RepetitionContext,
+  state: RootState
+): ImplicitForeachDetails => {
+  let shouldAddAnyForeach = false;
+  const arrayDetails: ImplicitForeachArrayDetails[] = [];
+  const actionName = token.outputInfo.actionName;
+  let parentArrayKey = getParentArrayKey(token.key);
+  let parentArray = token.outputInfo.arrayDetails?.parentArray;
+
+  while (parentArrayKey !== undefined) {
+    const data = getParentArrayExpression(
+      actionName,
+      parentArrayKey,
+      parentArray,
+      repetitionContext,
+      state.operations.outputParameters[tokenOwnerNodeId],
+      areOutputsManifestBased
+    );
+    const isSplitOn = isExpressionEqualToNodeSplitOn(
+      data?.expression as string,
+      state.operations.settings[tokenOwnerNodeId].splitOn?.value?.enabled
+        ? state.operations.settings[tokenOwnerNodeId].splitOn?.value?.value
+        : undefined
+    );
+
+    // eslint-disable-next-line no-loop-func
+    const alreadyInLoop = repetitionContext.repetitionReferences.some((repetitionReference) => {
+      const { repetitionValue } = repetitionReference;
+      if (typeof repetitionValue !== 'string') {
+        return false;
+      }
+
+      return checkArrayInRepetition(actionName, repetitionValue, parentArrayKey, data?.expression, data?.output, areOutputsManifestBased);
+    });
+
+    const shouldAdd = !isSplitOn && !alreadyInLoop;
+    if (!shouldAddAnyForeach && shouldAdd) {
+      shouldAddAnyForeach = shouldAdd;
+    }
+
+    if (data?.expression) {
+      arrayDetails.push({ parentArrayKey, parentArrayValue: data.expression });
+    }
+
+    parentArrayKey = getParentArrayKey(parentArrayKey);
+    parentArray = data?.token.arrayDetails?.parentArrayName;
+  }
+
+  return { shouldAdd: shouldAddAnyForeach, arrayDetails };
+};
+
 const getParentArrayExpression = (
   tokenOwnerActionName: string | undefined,
   parentArrayKey: string | undefined,
+  parentArrayName: string | undefined,
   repetitionContext: RepetitionContext,
   nodeOutputs: NodeOutputs,
-  operationInfo: NodeOperation
-): string | undefined => {
+  areOutputsManifestBased: boolean
+): { expression: string; output: OutputInfo; token: Token } | undefined => {
   if (!parentArrayKey) {
     return undefined;
   }
@@ -236,21 +340,26 @@ const getParentArrayExpression = (
   const sanitizedParentArrayKey = sanitizeKey(parentArrayKey);
 
   const parentArrayOutput = nodeOutputs.outputs[parentArrayKey];
+  const parentArrayKeyOfParentArray = getParentArrayKey(parentArrayKey);
 
   const parentArrayTokenInfo: Token = {
     actionName: tokenOwnerActionName,
     key: parentArrayKey,
+    name: parentArrayName,
     tokenType: TokenType.OUTPUTS,
-    title: parentArrayKey,
+    arrayDetails: parentArrayKeyOfParentArray ? { parentArrayKey: parentArrayKeyOfParentArray } : undefined,
+    title: parentArrayName as string,
   };
 
   if (parentArrayOutput) {
     parentArrayTokenInfo.required = parentArrayOutput.required;
     parentArrayTokenInfo.name = parentArrayOutput.name;
+    parentArrayTokenInfo.title = parentArrayOutput.title;
     parentArrayTokenInfo.source = parentArrayOutput.source;
+    if (parentArrayOutput.parentArray) {
+      parentArrayTokenInfo.arrayDetails = { ...parentArrayTokenInfo.arrayDetails, parentArrayName: parentArrayOutput.parentArray };
+    }
   }
-
-  const areOutputsManifestBased = OperationManifestService().isSupported(operationInfo.type, operationInfo.kind);
 
   for (const repetitionReference of repetitionContext.repetitionReferences) {
     if (
@@ -258,8 +367,9 @@ const getParentArrayExpression = (
       ((isNullOrUndefined(tokenOwnerActionName) && isNullOrUndefined(repetitionReference.repetitionStep)) ||
         equals(tokenOwnerActionName, repetitionReference.repetitionStep))
     ) {
-      return repetitionReference.repetitionValue;
-    } else if (
+      return { expression: repetitionReference.repetitionValue, output: parentArrayOutput, token: parentArrayTokenInfo };
+    }
+    if (
       isAncestorKey(sanitizedParentArrayKey, repetitionReference.repetitionPath) &&
       ((isNullOrUndefined(tokenOwnerActionName) && isNullOrUndefined(repetitionReference.repetitionStep)) ||
         equals(tokenOwnerActionName, repetitionReference.repetitionStep))
@@ -275,22 +385,53 @@ const getParentArrayExpression = (
     }
   }
 
-  return areOutputsManifestBased
-    ? `@${getTokenExpressionValueForManifestBasedOperation(
-        parentArrayTokenInfo.key,
-        !!parentArrayTokenInfo.arrayDetails,
-        parentArrayTokenInfo.arrayDetails?.loopSource,
-        tokenOwnerActionName,
-        !!parentArrayTokenInfo.required
-      )}`
-    : `@${getTokenExpressionValue(parentArrayTokenInfo)}`;
+  return {
+    expression: areOutputsManifestBased
+      ? `@${getTokenExpressionValueForManifestBasedOperation(
+          parentArrayTokenInfo.key,
+          !!parentArrayTokenInfo.arrayDetails,
+          parentArrayTokenInfo.arrayDetails?.loopSource,
+          tokenOwnerActionName,
+          !!parentArrayTokenInfo.required
+        )}`
+      : `@${getTokenExpressionValue(parentArrayTokenInfo)}`,
+    output: parentArrayOutput,
+    token: parentArrayTokenInfo,
+  };
+};
+
+const checkArrayInRepetition = (
+  actionName: string | undefined,
+  repetitionValue: string,
+  tokenKey: string | undefined,
+  tokenValue: string | undefined,
+  outputInfo: OutputInfo | undefined,
+  areOutputsManifestBased: boolean
+): boolean => {
+  if (equals(repetitionValue, tokenValue)) {
+    return true;
+  }
+
+  if (areOutputsManifestBased && tokenKey) {
+    const method = getTokenExpressionMethodFromKey(tokenKey, actionName, outputInfo?.source);
+    const sanitizedValue = `@${generateExpressionFromKey(
+      method,
+      tokenKey,
+      actionName,
+      !!outputInfo?.isInsideArray,
+      !!outputInfo?.required
+    )}`;
+    return equals(repetitionValue, sanitizedValue);
+  }
+
+  return false;
 };
 
 // Directly checking the node type, because cannot make async calls while adding token from picker to editor.
 // TODO - See if this can be made async and looked at manifest.
-export const isLoopingNode = (nodeId: string, operationInfos: Record<string, NodeOperation>): boolean => {
-  const nodeType = operationInfos[nodeId]?.type;
-  return equals(nodeType, Constants.NODE.TYPE.FOREACH) || equals(nodeType, Constants.NODE.TYPE.UNTIL);
+export const isLoopingNode = (nodeId: string, operationInfos: Record<string, NodeOperation>, ignoreUntil: boolean): boolean => {
+  const nodeType = getRecordEntry(operationInfos, nodeId)?.type;
+  return equals(nodeType, Constants.NODE.TYPE.FOREACH) || (!ignoreUntil && equals(nodeType, Constants.NODE.TYPE.UNTIL));
 };
 
 export const getForeachActionName = (
@@ -316,18 +457,15 @@ export const isForeachActionNameForLoopsource = (
   operations: Operations,
   nodesMetadata: NodesMetadata
 ): boolean => {
-  const operationInfos = Object.keys(operations).reduce(
-    (result: Record<string, NodeOperation>, operationId) => ({
-      ...result,
-      [operationId]: {
-        type: operations[operationId]?.type,
-        kind: operations[operationId]?.kind,
-        connectorId: '',
-        operationId: '',
-      },
-    }),
-    {}
-  );
+  const operationInfos: Record<string, NodeOperation> = {};
+  for (const operationId of Object.keys(operations)) {
+    operationInfos[operationId] = {
+      type: operations[operationId]?.type,
+      kind: operations[operationId]?.kind,
+      connectorId: '',
+      operationId: '',
+    };
+  }
   const repetitionNodeIds = getRepetitionNodeIds(nodeId, nodesMetadata, operationInfos);
   const sanitizedPath = sanitizeKey(expression);
   const foreachAction = first((item) => {
@@ -349,12 +487,16 @@ const getRepetitionReference = async (
   allInputs: Record<string, NodeInputs>,
   idReplacements?: Record<string, string>
 ): Promise<RepetitionReference | undefined> => {
-  const operationInfo = operationInfos[nodeId];
+  const operationInfo = getRecordEntry(operationInfos, nodeId);
+  if (!operationInfo) {
+    return undefined;
+  }
   const service = OperationManifestService();
   if (service.isSupported(operationInfo.type, operationInfo.kind)) {
     const manifest = await getOperationManifest(operationInfo);
     const parameterName = manifest.properties.repetition?.loopParameter;
-    const parameter = parameterName ? getParameterFromName(allInputs[nodeId], parameterName) : undefined;
+    const nodeInputs = getRecordEntry(allInputs, nodeId) ?? { parameterGroups: {} };
+    const parameter = parameterName ? getParameterFromName(nodeInputs, parameterName) : undefined;
     if (parameter) {
       const repetitionValue = getJSONValueFromString(
         parameterValueToString(parameter, /* isDefinitionValue */ true, idReplacements),
@@ -399,8 +541,7 @@ export const parseForeach = (repetitionValue: string, repetitionContext: Repetit
 
     if (foreachExpression) {
       switch (foreachExpression.type) {
-        case ExpressionType.Function:
-          // eslint-disable-next-line no-case-declarations
+        case ExpressionType.Function: {
           const functionExpression = foreachExpression as ExpressionFunction;
           if (TokenSegmentConvertor.isOutputToken(functionExpression) || TokenSegmentConvertor.isVariableToken(functionExpression)) {
             foreach.fullPath = getFullPath(functionExpression, splitOnExpression);
@@ -461,6 +602,7 @@ export const parseForeach = (repetitionValue: string, repetitionContext: Repetit
             }
           }
           break;
+        }
         default:
           break;
       }
@@ -481,9 +623,8 @@ const getRepetitionValue = (repetitionContext: RepetitionContext, actionName?: s
 const getRepetitionReferenceFromContext = (repetitionContext: RepetitionContext, actionName?: string): RepetitionReference | undefined => {
   if (actionName) {
     return first((item) => equals(item.actionName, actionName), repetitionContext.repetitionReferences);
-  } else {
-    return repetitionContext?.repetitionReferences?.at(0);
   }
+  return repetitionContext?.repetitionReferences?.at(0);
 };
 
 const isExpressionEqualToNodeSplitOn = (test: string | any[], splitOn: string | undefined): boolean => {
@@ -515,10 +656,10 @@ export const getTokenExpressionValueForManifestBasedOperation = (
       ? `items(${convertToStringLiteral(loopSource)})`
       : Constants.ITEM
     : actionName
-    ? `${Constants.OUTPUTS}(${convertToStringLiteral(actionName)})`
-    : Constants.TRIGGER_OUTPUTS_OUTPUT;
+      ? `${Constants.OUTPUTS}(${convertToStringLiteral(actionName)})`
+      : Constants.TRIGGER_OUTPUTS_OUTPUT;
 
-  return generateExpressionFromKey(method, key, actionName, isInsideArray, required);
+  return generateExpressionFromKey(method, key, actionName, isInsideArray, required, /* overrideMethod */ false);
 };
 
 /**
@@ -527,7 +668,7 @@ export const getTokenExpressionValueForManifestBasedOperation = (
  * e.g, @triggerBody()?[attachements] with splitOn: @triggerBody()['value'], the result would be: body.$.value.attachments
  */
 const getFullPath = (expressionSegment: ExpressionFunction, splitOn?: Expression): string => {
-  const segments = ['body', '$'];
+  const segments = [equals(expressionSegment.name, 'outputs') ? 'outputs' : 'body', '$'];
 
   // handle the splitOn first
   // TODO: log the issue if splitOn is not functionExpression
@@ -614,10 +755,12 @@ const getExtraSegments = (key: string, ancestorKey: string | undefined): Segment
 };
 
 // NOTE: The implicit addition of Foreach node was governed by adding a token, so we will be only using that
-// tokenOwnerNodeId to populate the info. This method should only be used for Implicit Foreach node addition.
+// tokenOwnerNodeId to populate the info and loopSource for adding correct loopSource in multiple foreach additions.
+// This method should only be used for Implicit Foreach node addition.
 const updateTokenMetadataInForeachInputs = (
   inputs: NodeInputs,
   token: OutputToken,
+  loopSource: string | undefined,
   repetitionContext: RepetitionContext,
   rootState: RootState
 ): void => {
@@ -638,8 +781,14 @@ const updateTokenMetadataInForeachInputs = (
     if (segments && segments.length) {
       parameter.value = segments.map((segment) => {
         if (isTokenValueSegment(segment)) {
-          return updateTokenMetadata(
-            segment,
+          const updatedSegment = clone(segment);
+          (updatedSegment.token as Token).actionName = token.outputInfo.actionName;
+          (updatedSegment.token as Token).arrayDetails = updatedSegment.token?.arrayDetails
+            ? { ...updatedSegment.token.arrayDetails, loopSource }
+            : undefined;
+
+          const finalSegment = updateTokenMetadata(
+            updatedSegment,
             repetitionContext,
             actionNodes,
             triggerNodeId,
@@ -649,6 +798,18 @@ const updateTokenMetadataInForeachInputs = (
             rootState.workflow.nodesMetadata,
             parameter.type
           );
+
+          if (loopSource) {
+            finalSegment.value = getTokenExpressionValueForManifestBasedOperation(
+              finalSegment.token?.key as string,
+              !!finalSegment.token?.arrayDetails,
+              finalSegment.token?.arrayDetails?.loopSource,
+              finalSegment.token?.actionName,
+              !!finalSegment.token?.required
+            );
+          }
+
+          return finalSegment;
         }
 
         return segment;
@@ -665,6 +826,6 @@ const normalizeKeyPath = (path: string | undefined): string | undefined => {
   return path && path.startsWith('outputs.$.body.')
     ? path.replace('outputs.$.body.', 'body.$.')
     : path === 'outputs.$.body'
-    ? 'body.$'
-    : path;
+      ? 'body.$'
+      : path;
 };

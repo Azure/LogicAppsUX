@@ -10,8 +10,8 @@ import { tryParseFuncVersion } from '../../utils/funcCoreTools/funcVersion';
 import { getFunctionsWorkerRuntime } from '../../utils/vsCodeConfig/settings';
 import type { StringDictionary } from '@azure/arm-appservice';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
-import type { FuncVersion, ProjectLanguage } from '@microsoft/vscode-extension';
-import { WorkerRuntime } from '@microsoft/vscode-extension';
+import type { FuncVersion, ProjectLanguage } from '@microsoft/vscode-extension-logic-apps';
+import { WorkerRuntime } from '@microsoft/vscode-extension-logic-apps';
 import type { MessageItem } from 'vscode';
 
 /**
@@ -66,9 +66,9 @@ export async function verifyVersionAndLanguage(
   const localWorkerRuntime: WorkerRuntime | undefined = getFunctionsWorkerRuntime(localLanguage);
 
   if (
-    azureWorkerRuntime != WorkerRuntime.Node &&
-    azureWorkerRuntime != WorkerRuntime.Dotnet &&
-    azureWorkerRuntime != WorkerRuntime.DotnetIsolated
+    azureWorkerRuntime !== WorkerRuntime.Node &&
+    azureWorkerRuntime !== WorkerRuntime.Dotnet &&
+    azureWorkerRuntime !== WorkerRuntime.DotnetIsolated
   ) {
     throw new Error(
       localize(

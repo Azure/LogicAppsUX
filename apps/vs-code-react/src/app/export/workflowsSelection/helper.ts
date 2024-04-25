@@ -2,9 +2,10 @@ import type { WorkflowsList, SelectedWorkflowsList } from '../../../run-service'
 import { AdvancedOptionsTypes } from '../../../run-service';
 import type { IDropdownOption } from '@fluentui/react';
 
-export const parseResourceGroups = (workflowItems: Array<WorkflowsList>): IDropdownOption[] => {
-  const resourceGroups: Array<string> = workflowItems.reduce((acc: Array<string>, curr: WorkflowsList): Array<string> => {
-    return [...acc, curr?.resourceGroup];
+export const parseResourceGroups = (workflowItems: WorkflowsList[]): IDropdownOption[] => {
+  const resourceGroups: string[] = workflowItems.reduce((acc: string[], curr: WorkflowsList): string[] => {
+    acc.push(curr.resourceGroup);
+    return acc;
   }, []);
 
   const dropdownGroups: IDropdownOption[] = [...new Set(resourceGroups)].map((resourceGroup) => {
@@ -14,7 +15,7 @@ export const parseResourceGroups = (workflowItems: Array<WorkflowsList>): IDropd
   return dropdownGroups;
 };
 
-export const filterWorkflows = (workflowItems: Array<WorkflowsList>, resourceGroups: IDropdownOption[], newSearchString: string) => {
+export const filterWorkflows = (workflowItems: WorkflowsList[], resourceGroups: IDropdownOption[], newSearchString: string) => {
   const selectedFilters: Array<string | number> = resourceGroups
     .filter((resourceGroup: IDropdownOption) => resourceGroup.selected)
     .map((resourceGroup: IDropdownOption) => resourceGroup.key);
@@ -74,10 +75,8 @@ export const getSelectedItems = (allItemsSelected: SelectedWorkflowsList[], curr
       if (isWorkflowInRender && !isWorkflowInSelection) {
         updatedWorkflow.selected = false;
       }
-    } else {
-      if (isWorkflowInSelection) {
-        updatedWorkflow.selected = true;
-      }
+    } else if (isWorkflowInSelection) {
+      updatedWorkflow.selected = true;
     }
     return updatedWorkflow;
   });
@@ -96,7 +95,9 @@ export const getAdvanceOptionsSelection = (
   const updatedOptions = [...selectedAdvanceOptions];
 
   if (!!hasInfrastructureTemplates(updatedOptions) && selectedOption.key === AdvancedOptionsTypes.generateInfrastructureTemplates) {
-    return [];
+    return updatedOptions.filter(
+      (option) => option !== AdvancedOptionsTypes.cloneConnections && option !== AdvancedOptionsTypes.generateInfrastructureTemplates
+    );
   }
 
   const index = updatedOptions.indexOf(selectedOption.key as AdvancedOptionsTypes);
@@ -110,4 +111,29 @@ export const getAdvanceOptionsSelection = (
 
 export const isCloneConnectionsAvailable = (selectedAdvanceOptions: AdvancedOptionsTypes[]): boolean => {
   return !hasInfrastructureTemplates(selectedAdvanceOptions);
+};
+
+/**
+ * Parses the selected workflows and returns an array of selected workflows with additional properties.
+ * @param selectedWorkflows - The array of workflows to be parsed.
+ * @returns An array of selected workflows with additional properties.
+ */
+export const parsePreviousSelectedWorkflows = (selectedWorkflows: WorkflowsList[]): SelectedWorkflowsList[] => {
+  return selectedWorkflows.map((workflow: WorkflowsList) => {
+    return { ...workflow, selected: true, rendered: true };
+  });
+};
+
+/**
+ * Parses the selected workflows based on the provided workflows data and the list of all items selected.
+ * @param workflowsData - The array of workflows data.
+ * @param allItemsSelected - The array of all selected items.
+ * @returns An array of workflows with updated selection and rendering status.
+ */
+export const parseSelectedWorkflows = (workflowsData: WorkflowsList[], allItemsSelected: SelectedWorkflowsList[]) => {
+  const currentSelection = [...allItemsSelected];
+  return workflowsData.map((workflow: WorkflowsList) => {
+    const selectedIndex = currentSelection.findIndex((selectedItem: SelectedWorkflowsList) => selectedItem.key === workflow.key);
+    return { ...workflow, selected: selectedIndex !== -1, rendered: true };
+  });
 };

@@ -1,4 +1,4 @@
-import type { SettingProps } from './settingtoggle';
+import type { SettingProps } from './';
 import { Dropdown } from '@fluentui/react';
 import type { IDropdownOption } from '@fluentui/react';
 
@@ -53,7 +53,7 @@ export const SettingDropdown = ({
   };
   return (
     <>
-      {customLabel ? customLabel() : null}
+      {customLabel ? customLabel : null}
       <Dropdown
         className="msla-setting-section-dropdown"
         id={id}

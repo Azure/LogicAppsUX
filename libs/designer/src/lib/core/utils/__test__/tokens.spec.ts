@@ -1,7 +1,7 @@
 import { createWorkflowEdge, createWorkflowNode } from '../graph';
 import { getTokenNodeIds } from '../tokens';
-import { WORKFLOW_NODE_TYPES } from '@microsoft/utils-logic-apps';
-
+import { WORKFLOW_NODE_TYPES } from '@microsoft/logic-apps-shared';
+import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 describe('Token Picker Utilities', () => {
   const graph = {
     id: 'root',
@@ -145,7 +145,16 @@ describe('Token Picker Utilities', () => {
       expect(result).toEqual(['Execute_a_navigation_plan', 'manual']);
 
       result = getTokenNodeIds('Compose_8', graph, nodesMetadata, nodesManifest, operationInfos, operationMap);
-      expect(result).toEqual(['Compose_7', 'Compose_5', 'Compose_3', 'Response', 'Execute_a_navigation_plan', 'manual']);
+      expect(result).toEqual([
+        'Compose_7',
+        'Compose_5',
+        'Compose_3',
+        'Until_2',
+        'Response',
+        'Execute_a_navigation_plan',
+        'manual',
+        'Until',
+      ]);
     });
 
     it('should get all containing nodes for until operation along with its upstream nodes in graph', () => {
@@ -156,6 +165,7 @@ describe('Token Picker Utilities', () => {
         'Response',
         'Execute_a_navigation_plan',
         'manual',
+        'Until',
         'Compose_7',
         'Compose_8',
         'Compose_9',

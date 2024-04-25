@@ -1,21 +1,21 @@
 import { ReactFlowNodeType } from '../../constants/ReactFlowConstants';
-import { store } from '../../core/state/Store';
 import type { RootState } from '../../core/state/Store';
-import { SchemaType } from '../../models';
+import { store } from '../../core/state/Store';
 import { isFunctionInputSlotAvailable, newConnectionWillHaveCircularLogic } from '../../utils/Connection.Utils';
 import { makeStaticStyles, tokens } from '@fluentui/react-components';
+import { SchemaType } from '@microsoft/logic-apps-shared';
 import { useCallback, useMemo, useState } from 'react';
 import { useSelector } from 'react-redux';
+import type { Position as HandlePosition, HandleType, Connection as ReactFlowConnection } from 'reactflow';
 import { Handle } from 'reactflow';
-import type { HandleType, Position as HandlePosition, Connection as ReactFlowConnection } from 'reactflow';
 
 // Override ReactFlow's handle classes
 const useStaticStyles = makeStaticStyles({
   '.react-flow__handle': {
     // Default handle
     zIndex: 5,
-    width: '10px',
-    height: '10px',
+    width: '15px',
+    height: '15px',
     border: `${tokens.strokeWidthThick} solid ${tokens.colorCompoundBrandForeground1}`,
     backgroundColor: tokens.colorNeutralBackground1,
   },
@@ -63,7 +63,9 @@ interface HandleWrapperProps {
 const HandleWrapper = ({ type, position, shouldDisplay, nodeReactFlowType, nodeReactFlowId }: HandleWrapperProps) => {
   useStaticStyles();
 
-  const sourceNodeConnectionBeingDrawnFromId = useSelector((state: RootState) => state.dataMap.sourceNodeConnectionBeingDrawnFromId);
+  const sourceNodeConnectionBeingDrawnFromId = useSelector(
+    (state: RootState) => state.dataMap.present.sourceNodeConnectionBeingDrawnFromId
+  );
 
   const [isHandleHovered, setIsHandleHovered] = useState<boolean>(false);
 
@@ -110,10 +112,10 @@ const HandleWrapper = ({ type, position, shouldDisplay, nodeReactFlowType, nodeR
 export default HandleWrapper;
 
 const isValidConnectionFromSchemaNode = (connection: ReactFlowConnection): boolean => {
-  const flattenedSourceSchema = store.getState().dataMap.curDataMapOperation.flattenedSourceSchema;
-  const functionDictionary = store.getState().dataMap.curDataMapOperation.currentFunctionNodes;
-  const flattenedTargetSchema = store.getState().dataMap.curDataMapOperation.flattenedTargetSchema;
-  const connectionDictionary = store.getState().dataMap.curDataMapOperation.dataMapConnections;
+  const flattenedSourceSchema = store.getState().dataMap.present.curDataMapOperation.flattenedSourceSchema;
+  const functionDictionary = store.getState().dataMap.present.curDataMapOperation.functionNodes;
+  const flattenedTargetSchema = store.getState().dataMap.present.curDataMapOperation.flattenedTargetSchema;
+  const connectionDictionary = store.getState().dataMap.present.curDataMapOperation.dataMapConnections;
 
   if (
     connection.source &&
@@ -124,7 +126,7 @@ const isValidConnectionFromSchemaNode = (connection: ReactFlowConnection): boole
     connectionDictionary
   ) {
     // Target must be either a function or target schema node
-    const targetFunctionNode = functionDictionary[connection.target];
+    const targetFunctionNode = functionDictionary[connection.target]?.functionData;
     const currentTargetConnection = connectionDictionary[connection.target];
 
     return targetFunctionNode ? isFunctionInputSlotAvailable(currentTargetConnection, targetFunctionNode.maxNumberOfInputs) : true;
@@ -134,21 +136,20 @@ const isValidConnectionFromSchemaNode = (connection: ReactFlowConnection): boole
 };
 
 const isValidConnectionFromFunctionNode = (connection: ReactFlowConnection) => {
-  const functionDictionary = store.getState().dataMap.curDataMapOperation.currentFunctionNodes;
-  const flattenedTargetSchema = store.getState().dataMap.curDataMapOperation.flattenedTargetSchema;
-  const connectionDictionary = store.getState().dataMap.curDataMapOperation.dataMapConnections;
+  const functionDictionary = store.getState().dataMap.present.curDataMapOperation.functionNodes;
+  const flattenedTargetSchema = store.getState().dataMap.present.curDataMapOperation.flattenedTargetSchema;
+  const connectionDictionary = store.getState().dataMap.present.curDataMapOperation.dataMapConnections;
 
   if (connection.source && connection.target && flattenedTargetSchema && functionDictionary && connectionDictionary) {
-    const targetFunctionNode = functionDictionary[connection.target];
+    const targetFunctionNode = functionDictionary[connection.target]?.functionData;
     const targetNodeConnection = connectionDictionary[connection.target];
 
     if (targetFunctionNode) {
       // Verify that the Function<->Function connection won't create circular logic
       if (newConnectionWillHaveCircularLogic(connection.target, connection.source, connectionDictionary)) {
         return false;
-      } else {
-        return isFunctionInputSlotAvailable(targetNodeConnection, targetFunctionNode.maxNumberOfInputs);
       }
+      return isFunctionInputSlotAvailable(targetNodeConnection, targetFunctionNode.maxNumberOfInputs);
     }
 
     return true;

@@ -2,9 +2,10 @@ import type { ReactiveToggleProps } from '../settingreactiveinput';
 import { ReactiveToggle } from '../settingreactiveinput';
 import React from 'react';
 import * as ReactShallowRenderer from 'react-test-renderer/shallow';
-
+import { describe, beforeEach, afterEach, it, expect } from 'vitest';
 describe('ui/settings/settingreactiveinput', () => {
-  let minimal: ReactiveToggleProps, renderer: ReactShallowRenderer.ShallowRenderer;
+  let minimal: ReactiveToggleProps;
+  let renderer: ReactShallowRenderer.ShallowRenderer;
 
   beforeEach(() => {
     minimal = {
@@ -13,9 +14,8 @@ describe('ui/settings/settingreactiveinput', () => {
       textFieldLabel: 'text field label',
       textFieldValue: 'test',
       checked: false,
-      visible: true,
-      onToggleLabel: 'On',
-      offToggleLabel: 'Off',
+      onText: 'On',
+      offText: 'Off',
       onValueChange: () => null,
     };
     renderer = ReactShallowRenderer.createRenderer();
@@ -35,9 +35,10 @@ describe('ui/settings/settingreactiveinput', () => {
     renderer.render(<ReactiveToggle {...props} />);
 
     const reactiveToggle = renderer.getRenderOutput();
-    const [toggle, textField]: any[] = React.Children.toArray(reactiveToggle.props.children);
+    const [toggle, textFieldContainer]: any[] = React.Children.toArray(reactiveToggle.props.children);
 
     expect(toggle.props.checked).toBeTruthy();
+    const [textField]: any[] = React.Children.toArray(textFieldContainer.props.children);
     expect(textField.props.id).toBe(minimal.textFieldId);
     expect(textField.props.value).toBe(minimal.textFieldValue);
   });

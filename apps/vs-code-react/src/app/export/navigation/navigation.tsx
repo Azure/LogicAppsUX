@@ -1,10 +1,9 @@
 import { RouteName, ValidationStatus } from '../../../run-service';
+import { Status } from '../../../state/WorkflowSlice';
 import type { RootState } from '../../../state/store';
-import type { InitializedVscodeState } from '../../../state/vscodeSlice';
-import { Status } from '../../../state/vscodeSlice';
 import { VSCodeContext } from '../../../webviewCommunication';
 import { PrimaryButton } from '@fluentui/react';
-import { ExtensionCommand } from '@microsoft/vscode-extension';
+import { ExtensionCommand } from '@microsoft/vscode-extension-logic-apps';
 import { useContext } from 'react';
 import { useIntl } from 'react-intl';
 import { useSelector } from 'react-redux';
@@ -16,9 +15,9 @@ export const Navigation: React.FC = () => {
   const navigate = useNavigate();
   const location = useLocation();
 
-  const vscodeState = useSelector((state: RootState) => state.vscode) as InitializedVscodeState;
-  const { exportData } = vscodeState;
-  const { finalStatus } = vscodeState;
+  const workflowState = useSelector((state: RootState) => state.workflow);
+  const { exportData } = workflowState;
+  const { finalStatus } = workflowState;
   const {
     selectedSubscription,
     selectedIse,
@@ -34,22 +33,27 @@ export const Navigation: React.FC = () => {
   const intlText = {
     NEXT: intl.formatMessage({
       defaultMessage: 'Next',
+      id: '3Wcqsy',
       description: 'Next button',
     }),
     BACK: intl.formatMessage({
       defaultMessage: 'Back',
+      id: '2XH9oW',
       description: 'Back button',
     }),
     EXPORT: intl.formatMessage({
       defaultMessage: 'Export',
+      id: 'wPzyvX',
       description: 'Export button',
     }),
     EXPORT_WITH_WARNINGS: intl.formatMessage({
       defaultMessage: 'Export with warnings',
+      id: 'pK0Ir8',
       description: 'Export with warnings button',
     }),
     FINISH: intl.formatMessage({
       defaultMessage: 'finish',
+      id: 'mlxD6R',
       description: 'Finish  button',
     }),
   };
@@ -58,23 +62,39 @@ export const Navigation: React.FC = () => {
     navigate(-1);
   };
 
+  /**
+   * Logs the last step of the navigation.
+   * @param {string} pageName - The name of the page.
+   */
+  const logLastStep = (pageName: string) => {
+    vscode.postMessage({
+      command: ExtensionCommand.log_telemtry,
+      key: 'lastStep',
+      value: pageName,
+    });
+  };
+
   const onClickNext = () => {
     const { pathname } = location;
 
     switch (pathname) {
       case `/${RouteName.export}/${RouteName.instance_selection}`: {
+        logLastStep(RouteName.workflows_selection);
         navigate(`/${RouteName.export}/${RouteName.workflows_selection}`);
         break;
       }
       case `/${RouteName.export}/${RouteName.workflows_selection}`: {
+        logLastStep(RouteName.validation);
         navigate(`/${RouteName.export}/${RouteName.validation}`);
         break;
       }
       case `/${RouteName.export}/${RouteName.validation}`: {
+        logLastStep(RouteName.summary);
         navigate(`/${RouteName.export}/${RouteName.summary}`);
         break;
       }
       case `/${RouteName.export}/${RouteName.summary}`: {
+        logLastStep(RouteName.status);
         navigate(`/${RouteName.export}/${RouteName.status}`);
         vscode.postMessage({
           command: ExtensionCommand.export_package,

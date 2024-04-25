@@ -1,6 +1,5 @@
-import type { Expression, ExpressionFunction } from '@microsoft/parsers-logic-apps';
-import { isFunction, isStringLiteral } from '@microsoft/parsers-logic-apps';
-import { equals } from '@microsoft/utils-logic-apps';
+import type { Expression, ExpressionFunction } from '@microsoft/logic-apps-shared';
+import { isFunction, isStringLiteral, equals } from '@microsoft/logic-apps-shared';
 
 export interface UncastResult {
   expression: Expression;
@@ -86,9 +85,8 @@ export class UncastingUtility {
       const nextResult = this._uncastOnce(result[0].expression);
       if (nextResult === null) {
         return result;
-      } else {
-        result = nextResult;
       }
+      result = nextResult;
     }
 
     return result;
@@ -105,8 +103,6 @@ export class UncastingUtility {
           return this._uncastSingleFunction(expression, 'byte');
         case 'BASE64TOSTRING':
           return this._uncastSingleFunction(expression, 'byte');
-        case 'STRING':
-          return this._uncastSingleFunction(expression, '');
         case 'ENCODEURICOMPONENT':
           return this._uncastSingleFunction(expression, '');
         case 'DECODEDATAURI':
@@ -146,13 +142,15 @@ export class UncastingUtility {
         let format: string;
         switch (value.toUpperCase()) {
           case 'DATA:APPLICATION/OCTET-STREAM;BASE64,':
-          case 'DATA:;BASE64,':
+          case 'DATA:;BASE64,': {
             format = 'byte';
             break;
+          }
           case 'DATA:APPLICATION/OCTET-STREAM,':
-          case 'DATA:,':
+          case 'DATA:,': {
             format = '';
             break;
+          }
           default:
             return null;
         }

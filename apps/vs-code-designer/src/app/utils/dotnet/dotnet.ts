@@ -2,15 +2,29 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { DotnetVersion, isolatedSdkName } from '../../../constants';
+import {
+  DotnetVersion,
+  Platform,
+  autoRuntimeDependenciesPathSettingKey,
+  dotNetBinaryPathSettingKey,
+  dotnetDependencyName,
+  isolatedSdkName,
+} from '../../../constants';
+import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
+import { executeCommand } from '../funcCoreTools/cpUtils';
 import { runWithDurationTelemetry } from '../telemetry';
-import { findFiles } from '../workspace';
+import { tryGetLogicAppProjectRoot } from '../verifyIsProject';
+import { getGlobalSetting, updateGlobalSetting, updateWorkspaceSetting } from '../vsCodeConfig/settings';
+import { findFiles, getWorkspaceFolder } from '../workspace';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
 import { AzExtFsExtra } from '@microsoft/vscode-azext-utils';
-import type { IWorkerRuntime } from '@microsoft/vscode-extension';
-import { FuncVersion, ProjectLanguage } from '@microsoft/vscode-extension';
+import type { IWorkerRuntime } from '@microsoft/vscode-extension-logic-apps';
+import { FuncVersion, ProjectLanguage } from '@microsoft/vscode-extension-logic-apps';
+import * as fs from 'fs';
 import * as path from 'path';
+import * as semver from 'semver';
+import * as vscode from 'vscode';
 
 export class ProjectFile {
   public name: string;
@@ -87,9 +101,8 @@ async function getPropertyInProjFile(projFile: ProjectFile, property: string): P
   const matches: RegExpMatchArray | null = (await projFile.getContents()).match(regExp);
   if (!matches) {
     throw new Error(localize('failedToFindProp', 'Failed to find "{0}" in project file "{1}".', property, projFile.name));
-  } else {
-    return matches[1];
   }
+  return matches[1];
 }
 
 /**
@@ -119,18 +132,22 @@ export async function getTemplateKeyFromProjFile(
   let targetFramework: string;
 
   switch (version) {
-    case FuncVersion.v4:
+    case FuncVersion.v4: {
       targetFramework = DotnetVersion.net6;
       break;
-    case FuncVersion.v3:
+    }
+    case FuncVersion.v3: {
       targetFramework = DotnetVersion.net3;
       break;
-    case FuncVersion.v2:
+    }
+    case FuncVersion.v2: {
       targetFramework = DotnetVersion.net2;
       break;
-    case FuncVersion.v1:
+    }
+    case FuncVersion.v1: {
       targetFramework = DotnetVersion.net48;
       break;
+    }
   }
 
   if (projectPath && (await AzExtFsExtra.pathExists(projectPath))) {
@@ -169,4 +186,96 @@ export async function tryGetFuncVersion(projFile: ProjectFile): Promise<string |
 export function getTemplateKeyFromFeedEntry(runtimeInfo: IWorkerRuntime): string {
   const isIsolated = runtimeInfo.sdk.name.toLowerCase() === isolatedSdkName.toLowerCase();
   return getProjectTemplateKey(runtimeInfo.targetFramework, isIsolated);
+}
+
+export async function getLocalDotNetVersionFromBinaries(): Promise<string> {
+  const binariesLocation = getGlobalSetting<string>(autoRuntimeDependenciesPathSettingKey);
+  const dotNetBinariesPath = path.join(binariesLocation, dotnetDependencyName);
+  const sdkVersionFolder = path.join(dotNetBinariesPath, 'sdk');
+
+  // First try to get sdk from Binary installation folder
+  const files = fs.existsSync(sdkVersionFolder) ? fs.readdirSync(sdkVersionFolder, { withFileTypes: true }) : null;
+  if (Array.isArray(files)) {
+    for (const file of files) {
+      if (file.isDirectory()) {
+        const version = file.name;
+        await executeCommand(ext.outputChannel, undefined, 'echo', 'Local binary .NET SDK version', version);
+        return version;
+      }
+    }
+  }
+
+  try {
+    const output: string = await executeCommand(ext.outputChannel, undefined, `${getDotNetCommand()}`, '--version');
+    const version: string | null = semver.clean(output);
+    if (version) {
+      return version;
+    }
+  } catch (error) {
+    return null;
+  }
+
+  return null;
+}
+
+/**
+ * Get the nodejs binaries executable or use the system nodejs executable.
+ */
+export function getDotNetCommand(): string {
+  const command = getGlobalSetting<string>(dotNetBinaryPathSettingKey);
+  return command;
+}
+
+export async function setDotNetCommand(context: IActionContext): Promise<void> {
+  const binariesLocation = getGlobalSetting<string>(autoRuntimeDependenciesPathSettingKey);
+  const dotNetBinariesPath = path.join(binariesLocation, dotnetDependencyName);
+  const binariesExist = fs.existsSync(dotNetBinariesPath);
+  let command = ext.dotNetCliPath;
+  if (binariesExist) {
+    // Explicit executable for tasks.json
+    command =
+      process.platform === Platform.windows
+        ? path.join(dotNetBinariesPath, `${ext.dotNetCliPath}.exe`)
+        : path.join(dotNetBinariesPath, `${ext.dotNetCliPath}`);
+    const newPath = `${dotNetBinariesPath}${path.delimiter}\${env:PATH}`;
+    fs.chmodSync(dotNetBinariesPath, 0o777);
+
+    try {
+      if (vscode.workspace.workspaceFolders && vscode.workspace.workspaceFolders.length > 0) {
+        const workspaceFolder = await getWorkspaceFolder(context);
+        const projectPath = await tryGetLogicAppProjectRoot(context, workspaceFolder);
+
+        // Check if LogicAppProject to prevent updating LogicAppsUX settings.
+        if (projectPath) {
+          const pathEnv = {
+            PATH: newPath,
+          };
+
+          // Required for dotnet cli in VSCode Terminal
+          switch (process.platform) {
+            case Platform.windows: {
+              await updateWorkspaceSetting('integrated.env.windows', pathEnv, projectPath, 'terminal');
+              break;
+            }
+
+            case Platform.linux: {
+              await updateWorkspaceSetting('integrated.env.linux', pathEnv, projectPath, 'terminal');
+              break;
+            }
+
+            case Platform.mac: {
+              await updateWorkspaceSetting('integrated.env.osx', pathEnv, projectPath, 'terminal');
+              break;
+            }
+          }
+          // Required for CoreClr
+          await updateWorkspaceSetting('dotNetCliPaths', [dotNetBinariesPath], projectPath, 'omnisharp');
+        }
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+
+  await updateGlobalSetting<string>(dotNetBinaryPathSettingKey, command);
 }

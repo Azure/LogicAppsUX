@@ -2,7 +2,7 @@
 import type { NodesMetadata, WorkflowState } from '../state/workflow/workflowInterfaces';
 import type { WorkflowNode } from './models/workflowNode';
 import { removeEdge, reassignEdgeSources, reassignEdgeTargets } from './restructuringHelpers';
-import type { LogicAppsV2 } from '@microsoft/utils-logic-apps';
+import { getRecordEntry, type LogicAppsV2 } from '@microsoft/logic-apps-shared';
 
 export interface DeleteNodePayload {
   nodeId: string;
@@ -15,17 +15,22 @@ export const deleteNodeFromWorkflow = (
   nodesMetadata: NodesMetadata,
   state: WorkflowState
 ) => {
-  if (!workflowGraph.id) throw new Error('Workflow graph is missing an id');
+  if (!workflowGraph.id) {
+    throw new Error('Workflow graph is missing an id');
+  }
   const { nodeId, isTrigger } = payload;
 
-  const currentRunAfter = (state.operations[nodeId] as LogicAppsV2.ActionDefinition)?.runAfter;
+  const currentRunAfter = (getRecordEntry(state.operations, nodeId) as LogicAppsV2.ActionDefinition)?.runAfter;
   const multipleParents = Object.keys(currentRunAfter ?? {}).length > 1;
 
-  const isRoot = nodesMetadata[nodeId]?.isRoot;
+  const isRoot = getRecordEntry(nodesMetadata, nodeId)?.isRoot;
   if (isRoot && !isTrigger) {
     const childIds = (workflowGraph.edges ?? []).filter((edge) => edge.source === nodeId).map((edge) => edge.target);
     childIds.forEach((childId) => {
-      if (nodesMetadata[childId]) nodesMetadata[childId].isRoot = true;
+      const childMetadata = getRecordEntry(nodesMetadata, childId);
+      if (childMetadata) {
+        childMetadata.isRoot = true;
+      }
     });
   }
 
@@ -47,7 +52,8 @@ export const deleteNodeFromWorkflow = (
   } else {
     const parentId = (workflowGraph.edges ?? []).find((edge) => edge.target === nodeId)?.source ?? '';
     const graphId = workflowGraph.id;
-    const isAfterTrigger = nodesMetadata[parentId ?? '']?.isRoot && graphId === 'root';
+    const parentMetadata = getRecordEntry(nodesMetadata, parentId);
+    const isAfterTrigger = parentMetadata?.isRoot && graphId === 'root';
     const shouldAddRunAfters = !isRoot && !isAfterTrigger;
     reassignEdgeSources(state, nodeId, parentId, workflowGraph, shouldAddRunAfters);
     removeEdge(state, parentId, nodeId, workflowGraph);
@@ -58,11 +64,13 @@ export const deleteNodeFromWorkflow = (
   delete nodesMetadata[nodeId];
   delete state.operations[nodeId];
   delete state.newlyAddedOperations[nodeId];
+  delete state.idReplacements[nodeId];
   state.isDirty = true;
 
   // Decrease action count of graph
-  if (nodesMetadata[workflowGraph.id]) {
-    nodesMetadata[workflowGraph.id].actionCount = (nodesMetadata[workflowGraph.id].actionCount ?? 1) - 1;
+  const currentActionCount = getRecordEntry(nodesMetadata, workflowGraph.id)?.actionCount;
+  if (currentActionCount) {
+    nodesMetadata[workflowGraph.id].actionCount = (currentActionCount ?? 1) - 1;
   }
 };
 

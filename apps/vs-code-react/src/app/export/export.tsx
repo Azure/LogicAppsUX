@@ -1,56 +1,38 @@
-// eslint-disable-next-line @nrwl/nx/enforce-module-boundaries
-import messages from '../../../../../libs/services/intl/src/compiled-lang/strings.json';
 import type { OutletContext } from '../../run-service';
 import type { RootState } from '../../state/store';
 import './export.less';
 import { Navigation } from './navigation/navigation';
 import { Text } from '@fluentui/react';
-import type { OnErrorFn } from '@formatjs/intl';
-import { useCallback } from 'react';
-import { IntlProvider } from 'react-intl';
-import { QueryClient, QueryClientProvider } from 'react-query';
+import { useIntl } from 'react-intl';
 import { useSelector } from 'react-redux';
 import { Outlet, useOutletContext } from 'react-router-dom';
 
-const queryClient = new QueryClient({
-  defaultOptions: {
-    queries: {
-      refetchInterval: false,
-      refetchIntervalInBackground: false,
-      refetchOnWindowFocus: false,
-      refetchOnReconnect: false,
-      refetchOnMount: true,
-    },
-  },
-});
-
 export const ExportApp: React.FC = () => {
-  const vscodeState = useSelector((state: RootState) => state.vscode);
+  const workflowState = useSelector((state: RootState) => state.workflow);
+  const intl = useIntl();
 
-  const handleError: OnErrorFn = useCallback((err) => {
-    if (err.code !== 'MISSING_TRANSLATION') {
-      throw err;
-    }
-  }, []);
+  const intlText = {
+    EXPORT_LOGIC_APP: intl.formatMessage({
+      defaultMessage: 'Export logic app',
+      id: 'idw/7j',
+      description: 'Export logic app text.',
+    }),
+  };
 
-  return vscodeState.initialized ? (
-    <IntlProvider defaultLocale="en" locale="en-US" messages={messages} onError={handleError as any}>
-      <QueryClientProvider client={queryClient}>
-        <div className="msla-export">
-          <Text variant="xxLarge" className="msla-export-title" block>
-            Export logic app
-          </Text>
-          <Outlet
-            context={{
-              baseUrl: vscodeState.baseUrl,
-              accessToken: vscodeState.accessToken,
-            }}
-          />
-          <Navigation />
-        </div>
-      </QueryClientProvider>
-    </IntlProvider>
-  ) : null;
+  return (
+    <div className="msla-export">
+      <Text variant="xxLarge" className="msla-export-title" block>
+        {intlText.EXPORT_LOGIC_APP}
+      </Text>
+      <Outlet
+        context={{
+          baseUrl: workflowState.baseUrl,
+          accessToken: workflowState.accessToken,
+        }}
+      />
+      <Navigation />
+    </div>
+  );
 };
 
 export function useOutlet() {

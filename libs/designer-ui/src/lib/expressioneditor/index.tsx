@@ -1,6 +1,6 @@
-import { MonacoEditor as Editor, EditorLanguage } from '../editor/monaco';
+import { MonacoEditor } from '../editor/monaco';
 import type { EventHandler } from '../eventhandler';
-import { clamp } from '@microsoft/utils-logic-apps';
+import { EditorLanguage, clamp } from '@microsoft/logic-apps-shared';
 import type { editor } from 'monaco-editor';
 import type { MutableRefObject } from 'react';
 import { useState, useEffect } from 'react';
@@ -14,6 +14,7 @@ export interface ExpressionEditorEvent {
 export interface ExpressionEditorProps {
   initialValue: string;
   editorRef?: MutableRefObject<editor.IStandaloneCodeEditor | null>;
+  hideUTFExpressions?: boolean;
   isDragging: boolean;
   dragDistance?: number;
   currentHeight: number;
@@ -26,11 +27,12 @@ export interface ExpressionEditorProps {
 export function ExpressionEditor({
   initialValue,
   editorRef,
-  onBlur,
+  hideUTFExpressions,
   isDragging,
   dragDistance,
   currentHeight,
   setCurrentHeight,
+  onBlur,
   setIsDragging,
   setExpressionEditorError,
 }: ExpressionEditorProps): JSX.Element {
@@ -38,7 +40,7 @@ export function ExpressionEditor({
   const [heightOnMouseDown, setHeightOnMouseDown] = useState(0);
   useEffect(() => {
     if (isDragging && dragDistance) {
-      setCurrentHeight(clamp(heightOnMouseDown + dragDistance - mouseDownLocation, 100, 200));
+      setCurrentHeight(clamp(heightOnMouseDown + dragDistance - mouseDownLocation, 50, 200));
     }
   }, [isDragging, dragDistance, mouseDownLocation, currentHeight, setCurrentHeight, heightOnMouseDown]);
 
@@ -56,42 +58,16 @@ export function ExpressionEditor({
     }
   };
 
-  const handleChangeEvent = (e: editor.IModelContentChangedEvent): void => {
+  const handleChangeEvent = (): void => {
     setExpressionEditorError('');
-    const changedText = e.changes.length ? e.changes[0].text : '';
-    if (changedText === '\r\n' && editorRef?.current) {
-      const oldPosition = editorRef.current.getPosition();
-      const currentValue = editorRef.current.getValue();
-      const newValue = currentValue.replace(/\r\n/g, '');
-      editorRef.current.setValue(newValue);
-
-      if (oldPosition) {
-        const cursorPosition = oldPosition.column - 1;
-        setTimeout(() => setSelection(cursorPosition, cursorPosition));
-      }
-    }
-  };
-
-  const setSelection = (selectionStart: number, selectionEnd: number) => {
-    if (editorRef?.current) {
-      editorRef?.current.focus();
-
-      if (selectionStart !== undefined && selectionEnd !== undefined) {
-        editorRef?.current.setSelection({
-          startLineNumber: 1,
-          startColumn: selectionStart + 1,
-          endLineNumber: 1,
-          endColumn: selectionEnd + 1,
-        });
-      }
-    }
   };
 
   return (
     <div className="msla-expression-editor-container" style={{ height: currentHeight }}>
-      <Editor
+      <MonacoEditor
         ref={editorRef}
         language={EditorLanguage.templateExpressionLanguage}
+        hideUTFExpressions={hideUTFExpressions}
         lineNumbers="off"
         value={initialValue}
         scrollbar={{ horizontal: 'hidden', vertical: 'hidden' }}
@@ -105,6 +81,8 @@ export function ExpressionEditor({
         wordWrap="bounded"
         wordWrapColumn={200}
         automaticLayout={true}
+        data-automation-id="msla-expression-editor"
+        height={`${currentHeight}px`}
       />
       <div
         className="msla-expression-editor-expand"

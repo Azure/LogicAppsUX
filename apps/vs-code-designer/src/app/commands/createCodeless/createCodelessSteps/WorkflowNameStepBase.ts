@@ -4,7 +4,7 @@
  *--------------------------------------------------------------------------------------------*/
 import { localize } from '../../../../localize';
 import { AzureWizardPromptStep, nonNullProp } from '@microsoft/vscode-azext-utils';
-import type { IFunctionWizardContext, IWorkflowTemplate } from '@microsoft/vscode-extension';
+import type { IFunctionWizardContext, IWorkflowTemplate } from '@microsoft/vscode-extension-logic-apps';
 import * as fse from 'fs-extra';
 import * as path from 'path';
 
@@ -46,13 +46,13 @@ export abstract class WorkflowNameStepBase<T extends IFunctionWizardContext> ext
   private async validateFunctionName(context: T, name: string | undefined): Promise<string | undefined> {
     if (!name) {
       return localize('emptyTemplateNameError', 'The function name cannot be empty.');
-    } else if (!/^[a-z][a-z\d_-]*$/i.test(name)) {
+    }
+    if (!/^[a-z][a-z\d_-]*$/i.test(name)) {
       return localize(
         'functionNameInvalidMessage',
         'Function name must start with a letter and can only contain letters, digits, "_" and "-".'
       );
-    } else {
-      return await this.validateFunctionNameCore(context, name);
     }
+    return await this.validateFunctionNameCore(context, name);
   }
 }

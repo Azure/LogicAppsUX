@@ -10,6 +10,7 @@ import type { AppDispatch, RootState } from '../../core/state/Store';
 import type { FunctionData } from '../../models/Function';
 import { FunctionCategory } from '../../models/Function';
 import { inputFromHandleId } from '../../utils/Connection.Utils';
+import { hasOnlyCustomInputType } from '../../utils/Function.Utils';
 import { LogCategory, LogService } from '../../utils/Logging.Utils';
 import { createReactFlowFunctionKey } from '../../utils/ReactFlow.Util';
 import { isSchemaNodeExtended } from '../../utils/Schema.Utils';
@@ -18,6 +19,7 @@ import FunctionListHeader from './FunctionListHeader';
 import FunctionListItem from './FunctionListItem';
 import { Button, Input, Tooltip } from '@fluentui/react-components';
 import { Dismiss20Regular } from '@fluentui/react-icons';
+import type { FunctionPositionMetadata } from '@microsoft/logic-apps-shared';
 import Fuse from 'fuse.js';
 import { useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
@@ -43,10 +45,13 @@ export const FunctionList = () => {
   const dispatch = useDispatch<AppDispatch>();
 
   const functionData = useSelector((state: RootState) => state.function.availableFunctions);
-  const inlineFunctionInputOutputKeys = useSelector((state: RootState) => state.dataMap.curDataMapOperation.inlineFunctionInputOutputKeys);
-  const currentFunctionNodes = useSelector((state: RootState) => state.dataMap.curDataMapOperation.currentFunctionNodes);
-  const flattenedSourceSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedSourceSchema);
-  const flattenedTargetSchema = useSelector((state: RootState) => state.dataMap.curDataMapOperation.flattenedTargetSchema);
+  const currentTargetSchemaNode = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.currentTargetSchemaNode);
+  const inlineFunctionInputOutputKeys = useSelector(
+    (state: RootState) => state.dataMap.present.curDataMapOperation.inlineFunctionInputOutputKeys
+  );
+  const functionNodes = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.functionNodes);
+  const flattenedSourceSchema = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.flattenedSourceSchema);
+  const flattenedTargetSchema = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.flattenedTargetSchema);
 
   const [searchTerm, setSearchTerm] = useState<string>('');
 
@@ -55,6 +60,18 @@ export const FunctionList = () => {
   const onFunctionItemClick = (selectedFunction: FunctionData) => {
     if (isAddingInlineFunction) {
       const newReactFlowKey = createReactFlowFunctionKey(selectedFunction);
+      if (currentTargetSchemaNode) {
+        const newPosition: FunctionPositionMetadata = {
+          targetKey: currentTargetSchemaNode.key,
+          position: {
+            x: Number.parseInt(inlineFunctionInputOutputKeys[inlineFunctionInputOutputKeys.length - 2]) - 30,
+            y: Number.parseInt(inlineFunctionInputOutputKeys[inlineFunctionInputOutputKeys.length - 1]),
+          },
+        };
+        // eslint-disable-next-line no-param-reassign
+        selectedFunction.positions = [newPosition];
+      }
+
       dispatch(addFunctionNode({ functionData: selectedFunction, newReactFlowKey }));
 
       const reactFlowSource = inlineFunctionInputOutputKeys[0];
@@ -63,10 +80,10 @@ export const FunctionList = () => {
 
       const source = reactFlowSource.startsWith(sourcePrefix)
         ? flattenedSourceSchema[reactFlowSource]
-        : currentFunctionNodes[reactFlowSource];
+        : functionNodes[reactFlowSource].functionData;
       const destination = reactFlowDestination.startsWith(targetPrefix)
         ? flattenedTargetSchema[reactFlowDestination]
-        : currentFunctionNodes[reactFlowDestination];
+        : functionNodes[reactFlowDestination].functionData;
 
       dispatch(deleteConnection({ inputKey: reactFlowSource, outputKey: reactFlowDestination, port: reactFlowDestinationPort }));
 
@@ -113,11 +130,11 @@ export const FunctionList = () => {
       if (functionData) {
         const functionCategoryDictionary: { [key: string]: FunctionDataTreeItem } = {};
         let functionsList: FunctionData[] = [...functionData];
-        functionsList.sort((a, b) => a.displayName.localeCompare(b.displayName)); // Alphabetically sort Functions
+        functionsList.sort((a, b) => a.displayName?.localeCompare(b.displayName)); // Alphabetically sort Functions
 
         // Create dictionary for Function Categories
         Object.values(FunctionCategory).forEach((category) => {
-          const categoryItem = {} as FunctionDataTreeItem;
+          const categoryItem = { isExpanded: false } as FunctionDataTreeItem;
           categoryItem.children = [];
           categoryItem.key = `${functionCategoryItemKeyPrefix}${category}`;
 
@@ -128,6 +145,8 @@ export const FunctionList = () => {
         if (inlineFunctionInputOutputKeys.length === 2) {
           // Functions with no inputs shouldn't be shown when adding inline functions
           functionsList = functionsList.filter((functionNode) => functionNode.inputs.length !== 0);
+          // Functions with only custom input shouldn't be shown when adding inline either
+          functionsList = functionsList.filter((functionNode) => !hasOnlyCustomInputType(functionNode));
         }
 
         if (searchTerm) {
@@ -155,7 +174,8 @@ export const FunctionList = () => {
           message: error,
         });
         throw new Error(`Function List Error: ${error}`);
-      } else if (error instanceof Error) {
+      }
+      if (error instanceof Error) {
         LogService.error(LogCategory.FunctionList, 'functionListError', {
           message: error.message,
         });
@@ -168,11 +188,13 @@ export const FunctionList = () => {
 
   const searchLoc = intl.formatMessage({
     defaultMessage: 'Search',
+    id: '2NXYYu',
     description: 'Search',
   });
 
   const clearLoc = intl.formatMessage({
     defaultMessage: 'Clear',
+    id: 'e9OvzW',
     description: 'Clear',
   });
 

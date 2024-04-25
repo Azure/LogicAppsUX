@@ -2,8 +2,14 @@ import type { WorkflowNode } from '../parsers/models/workflowNode';
 import { isWorkflowNode } from '../parsers/models/workflowNode';
 import { useReadOnly } from '../state/designerOptions/designerOptionsSelectors';
 import { getRootWorkflowGraphForLayout } from '../state/workflow/workflowSelectors';
-import { LogEntryLevel, LoggerService, Status } from '@microsoft/designer-client-services-logic-apps';
-import { useThrottledEffect, WORKFLOW_NODE_TYPES, WORKFLOW_EDGE_TYPES } from '@microsoft/utils-logic-apps';
+import {
+  LogEntryLevel,
+  LoggerService,
+  Status,
+  useThrottledEffect,
+  WORKFLOW_NODE_TYPES,
+  WORKFLOW_EDGE_TYPES,
+} from '@microsoft/logic-apps-shared';
 import type { ElkExtendedEdge, ElkNode } from 'elkjs/lib/elk.bundled';
 import ELK from 'elkjs/lib/elk.bundled';
 import { useState } from 'react';
@@ -26,7 +32,8 @@ const defaultLayoutOptions: Record<string, string> = {
   'elk.hierarchyHandling': 'INCLUDE_CHILDREN',
   'elk.layered.nodePlacement.strategy': 'BRANDES_KOEPF',
   'elk.layered.nodePlacement.bk.fixedAlignment': 'BALANCED',
-  'elk.layered.spacing.edgeEdgeBetweenLayers': '0',
+  // Spacing values
+  'elk.spacing.edgeNode': '180',
   'elk.layered.spacing.edgeNodeBetweenLayers': layerSpacing.default,
   'elk.layered.spacing.nodeNodeBetweenLayers': layerSpacing.default,
   'elk.padding': '[top=0,left=16,bottom=16,right=16]',
@@ -90,8 +97,12 @@ const convertElkGraphToReactFlow = (graph: ElkNode): [Node[], Edge[], number[]] 
 
         const farWidth = (n?.x ?? 0) + (n?.width ?? 0);
         const farHeight = (n?.y ?? 0) + (n?.height ?? 0);
-        if (farWidth > flowWidth) flowWidth = farWidth;
-        if (farHeight > flowHeight) flowHeight = farHeight;
+        if (farWidth > flowWidth) {
+          flowWidth = farWidth;
+        }
+        if (farHeight > flowHeight) {
+          flowHeight = farHeight;
+        }
 
         processChildren(n);
       }
@@ -113,38 +124,37 @@ const convertWorkflowGraphToElkGraph = (node: WorkflowNode): ElkNode => {
         nodeType: node?.type ?? defaultNodeType,
       },
     };
-  } else {
-    const children = node.children?.map(convertWorkflowGraphToElkGraph);
-    return {
-      id: node.id,
-      height: node.height,
-      width: node.width,
-      children,
-      edges:
-        node.edges?.map((edge) => ({
-          id: edge.id,
-          sources: [edge.source],
-          targets: [edge.target],
-          layoutOptions: {
-            edgeType: edge?.type ?? defaultEdgeType,
-          },
-        })) ?? [],
-      layoutOptions: {
-        'elk.padding': '[top=0,left=16,bottom=48,right=16]', // allow space for add buttons
-        'elk.position': `(0, 0)`, // See 'crossingMinimization.semiInteractive' above
-        nodeType: node?.type ?? WORKFLOW_NODE_TYPES.GRAPH_NODE,
-        ...(node.edges?.some((edge) => edge.type === WORKFLOW_EDGE_TYPES.ONLY_EDGE) && {
-          'elk.layered.nodePlacement.strategy': 'SIMPLE',
-          'elk.layered.spacing.edgeNodeBetweenLayers': layerSpacing.onlyEdge,
-          'elk.layered.spacing.nodeNodeBetweenLayers': layerSpacing.onlyEdge,
-          'elk.layered.crossingMinimization.forceNodeModelOrder': 'true',
-        }),
-        ...(node.children?.findIndex((child) => child.id.endsWith('#footer')) !== -1 && {
-          'elk.padding': '[top=0,left=16,bottom=0,right=16]',
-        }),
-      },
-    };
   }
+  const children = node.children?.map(convertWorkflowGraphToElkGraph);
+  return {
+    id: node.id,
+    height: node.height,
+    width: node.width,
+    children,
+    edges:
+      node.edges?.map((edge) => ({
+        id: edge.id,
+        sources: [edge.source],
+        targets: [edge.target],
+        layoutOptions: {
+          edgeType: edge?.type ?? defaultEdgeType,
+        },
+      })) ?? [],
+    layoutOptions: {
+      'elk.padding': '[top=0,left=16,bottom=48,right=16]', // allow space for add buttons
+      'elk.position': '(0, 0)', // See 'crossingMinimization.semiInteractive' above
+      nodeType: node?.type ?? WORKFLOW_NODE_TYPES.GRAPH_NODE,
+      ...(node.edges?.some((edge) => edge.type === WORKFLOW_EDGE_TYPES.ONLY_EDGE) && {
+        'elk.layered.nodePlacement.strategy': 'SIMPLE',
+        'elk.layered.spacing.edgeNodeBetweenLayers': layerSpacing.onlyEdge,
+        'elk.layered.spacing.nodeNodeBetweenLayers': layerSpacing.onlyEdge,
+        'elk.layered.crossingMinimization.forceNodeModelOrder': 'true',
+      }),
+      ...(node.children?.findIndex((child) => child.id.endsWith('#footer')) !== -1 && {
+        'elk.padding': '[top=0,left=16,bottom=0,right=16]',
+      }),
+    },
+  };
 };
 
 export const useLayout = (): [Node[], Edge[], number[]] => {
@@ -152,12 +162,13 @@ export const useLayout = (): [Node[], Edge[], number[]] => {
   const [reactFlowEdges, setReactFlowEdges] = useState<Edge[]>([]);
   const [reactFlowSize, setReactFlowSize] = useState<number[]>([0, 0]);
   const workflowGraph = useSelector(getRootWorkflowGraphForLayout);
-
   const readOnly = useReadOnly();
 
   useThrottledEffect(
     () => {
-      if (!workflowGraph) return;
+      if (!workflowGraph) {
+        return;
+      }
       const elkGraph: ElkNode = convertWorkflowGraphToElkGraph(workflowGraph);
       const traceId = LoggerService().startTrace({
         action: 'useLayout',
@@ -174,11 +185,12 @@ export const useLayout = (): [Node[], Edge[], number[]] => {
           LoggerService().endTrace(traceId, { status: Status.Success });
         })
         .catch((err) => {
+          const graphAsString = JSON.stringify(elkGraph);
           LoggerService().log({
             level: LogEntryLevel.Error,
             area: 'useLayout',
             error: err,
-            message: err.message,
+            message: `${err?.message} - ${graphAsString}`,
             traceId: traceId,
           });
           LoggerService().endTrace(traceId, { status: Status.Failure });

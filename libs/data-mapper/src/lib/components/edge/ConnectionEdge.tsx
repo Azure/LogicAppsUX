@@ -16,9 +16,10 @@ import {
 import { ToolboxPanelTabs } from '../canvasToolbox/CanvasToolbox';
 import { Button, Tooltip, makeStyles, shorthands, tokens } from '@fluentui/react-components';
 import { Add20Filled } from '@fluentui/react-icons';
-import type { MenuItemOption } from '@microsoft/designer-ui';
-import { CardContextMenu, MenuItemType, useCardContextMenu } from '@microsoft/designer-ui';
-import React, { useMemo, useState } from 'react';
+import { CardContextMenu, useCardContextMenu } from '@microsoft/designer-ui';
+import { DeleteMenuItem } from '@microsoft/logic-apps-designer';
+import type React from 'react';
+import { useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useDispatch, useSelector } from 'react-redux';
 import type { EdgeProps } from 'reactflow';
@@ -34,9 +35,8 @@ const getLineColor = (isSelected: boolean, isHighlighted: boolean, isHovered: bo
   }
   if (isHighlighted) {
     return tokens.colorBrandStroke2;
-  } else {
-    return isHovered ? tokens.colorNeutralStroke1Hover : tokens.colorNeutralStroke1;
   }
+  return isHovered ? tokens.colorNeutralStroke1Hover : tokens.colorNeutralStroke1;
 };
 
 const btnStyles = {
@@ -81,15 +81,18 @@ export const ConnectionEdge = (props: EdgeProps) => {
   const reactFlowNodes = useNodes();
 
   const [sourceReactFlowKey, destinationRectFlowKey, _destinationPortReactFlowKey] = useSelector(
-    (state: RootState) => state.dataMap.curDataMapOperation.inlineFunctionInputOutputKeys
+    (state: RootState) => state.dataMap.present.curDataMapOperation.inlineFunctionInputOutputKeys
   );
-  const selectedItemKeyParts = useSelector((state: RootState) => state.dataMap.curDataMapOperation.selectedItemKeyParts);
-  const selectedItemConnectedNodes = useSelector((state: RootState) => state.dataMap.curDataMapOperation.selectedItemConnectedNodes);
+  const selectedItemKeyParts = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.selectedItemKeyParts);
+  const selectedItemConnectedNodes = useSelector(
+    (state: RootState) => state.dataMap.present.curDataMapOperation.selectedItemConnectedNodes
+  );
 
   const [isHovered, setIsHovered] = useState(false);
 
   const insertFnLoc = intl.formatMessage({
     defaultMessage: 'Insert function',
+    id: 'MnThTq',
     description: 'Message to insert function',
   });
 
@@ -132,6 +135,9 @@ export const ConnectionEdge = (props: EdgeProps) => {
     return isEdgeHighlighted(!!selected, currentItemSplitIds, selectedItemConnectedNodes);
   }, [currentItemSplitIds, selected, selectedItemConnectedNodes]);
 
+  const x = Math.round(labelX - parentTotalSize / 2);
+  const y = labelY - parentTotalSize / 2;
+
   const onAddFunctionClick = (event: React.MouseEvent) => {
     event.stopPropagation();
 
@@ -141,6 +147,8 @@ export const ConnectionEdge = (props: EdgeProps) => {
         inputKey: getSourceIdFromReactFlowConnectionId(id),
         outputKey: getDestinationIdFromReactFlowConnectionId(id),
         port: getPortFromReactFlowConnectionId(id),
+        x: x.toString(),
+        y: y.toString(),
       })
     );
 
@@ -148,21 +156,6 @@ export const ConnectionEdge = (props: EdgeProps) => {
   };
 
   const contextMenu = useCardContextMenu();
-  const getRemoveMenuItem = (): MenuItemOption => {
-    const deleteLine = intl.formatMessage({
-      defaultMessage: 'Delete',
-      description: 'Remove line from canvas',
-    });
-
-    return {
-      key: deleteLine,
-      disabled: false,
-      iconName: 'Delete',
-      title: deleteLine,
-      type: MenuItemType.Advanced,
-      onClick: handleDeleteClick,
-    };
-  };
 
   const handleDeleteClick = () => {
     dispatch(setSelectedItem(id));
@@ -186,8 +179,8 @@ export const ConnectionEdge = (props: EdgeProps) => {
       <foreignObject
         width={parentTotalSize}
         height={parentTotalSize}
-        x={Math.round(labelX - parentTotalSize / 2)}
-        y={labelY - parentTotalSize / 2}
+        x={x}
+        y={y}
         style={{
           borderRadius: tokens.borderRadiusCircular,
           padding: parentPadding,
@@ -216,9 +209,9 @@ export const ConnectionEdge = (props: EdgeProps) => {
       <CardContextMenu
         title={'Delete'}
         contextMenuLocation={contextMenu.location}
-        contextMenuOptions={[getRemoveMenuItem()]}
-        showContextMenu={contextMenu.isShowing}
-        onSetShowContextMenu={contextMenu.setIsShowing}
+        menuItems={[<DeleteMenuItem key="delete" onClick={handleDeleteClick} />]}
+        open={contextMenu.isShowing}
+        setOpen={contextMenu.setIsShowing}
       />
     </svg>
   );

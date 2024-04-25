@@ -1,8 +1,7 @@
-import { getUpdatedManifestForSpiltOn } from '../outputs';
-import { onNewEmail } from '@microsoft/parsers-logic-apps';
-import type { OperationManifest } from '@microsoft/utils-logic-apps';
-import { ConnectionReferenceKeyFormat } from '@microsoft/utils-logic-apps';
-
+import { getUpdatedManifestForSplitOn } from '../outputs';
+import { onNewEmail, ConnectionReferenceKeyFormat } from '@microsoft/logic-apps-shared';
+import type { OperationManifest } from '@microsoft/logic-apps-shared';
+import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 describe('Outputs Utilities', () => {
   describe('getUpdatedManifestForSpiltOn', () => {
     it('properly deserializes OpenAPI property aliases', () => {
@@ -69,7 +68,7 @@ describe('Outputs Utilities', () => {
       };
 
       const triggerOutputsSplitOn = "@triggerOutputs()?['body']";
-      const triggerOutputsSplitOnResult = getUpdatedManifestForSpiltOn(sampleManifest, triggerOutputsSplitOn);
+      const triggerOutputsSplitOnResult = getUpdatedManifestForSplitOn(sampleManifest, triggerOutputsSplitOn);
       // Ensure the original is not modified.
       expect(sampleManifest.properties.outputs.properties.body.items.properties.importance['x-ms-property-name-alias']).toBe('importance');
       // Ensure non-OpenAPI manifest has the correct format for alias.
@@ -78,14 +77,14 @@ describe('Outputs Utilities', () => {
       );
 
       const triggerBodySplitOn = "@triggerBody()?['value']";
-      const triggerBodySplitOnResult = getUpdatedManifestForSpiltOn(onNewEmail, triggerBodySplitOn);
+      const triggerBodySplitOnResult = getUpdatedManifestForSplitOn(onNewEmail, triggerBodySplitOn);
       // Ensure the original is not modified.
       expect(onNewEmail.properties.outputs.properties.body.properties.value.items.properties.From['x-ms-property-name-alias']).toBe('From');
       // Ensure OpenAPI manifest has the correct format for alias when using SplitOn string starting with triggerBody
       expect(triggerBodySplitOnResult.properties.outputs.properties.body.properties.From['x-ms-property-name-alias']).toBe('body/From');
 
       const aliasPathSplitOn = "@triggerOutputs()?['body/value']";
-      const aliasPathSplitOnResult = getUpdatedManifestForSpiltOn(onNewEmail, aliasPathSplitOn);
+      const aliasPathSplitOnResult = getUpdatedManifestForSplitOn(onNewEmail, aliasPathSplitOn);
       // Ensure the original is not modified.
       expect(onNewEmail.properties.outputs.properties.body.properties.value.items.properties.From['x-ms-property-name-alias']).toBe('From');
       // Ensure OpenAPI manifest has the correct alias format when using SplitOn with an alias path format.

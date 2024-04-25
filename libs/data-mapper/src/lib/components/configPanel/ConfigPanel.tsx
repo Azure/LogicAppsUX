@@ -2,15 +2,14 @@ import { getSelectedSchema } from '../../core';
 import { setInitialSchema } from '../../core/state/DataMapSlice';
 import { closePanel, ConfigPanelView, openDefaultConfigPanelView } from '../../core/state/PanelSlice';
 import type { AppDispatch, RootState } from '../../core/state/Store';
-import type { Schema } from '../../models';
-import { SchemaType } from '../../models';
 import { LogCategory, LogService } from '../../utils/Logging.Utils';
-import { convertSchemaToSchemaExtended } from '../../utils/Schema.Utils';
+import { convertSchemaToSchemaExtended, getFileNameAndPath } from '../../utils/Schema.Utils';
 import type { SchemaFile } from './AddOrUpdateSchemaView';
 import { AddOrUpdateSchemaView, UploadSchemaTypes } from './AddOrUpdateSchemaView';
 import { DefaultConfigView } from './DefaultConfigView';
-import type { IDropdownOption } from '@fluentui/react';
 import { DefaultButton, Panel, PrimaryButton } from '@fluentui/react';
+import type { DataMapSchema } from '@microsoft/logic-apps-shared';
+import { SchemaType } from '@microsoft/logic-apps-shared';
 import { useCallback, useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useQuery } from 'react-query';
@@ -37,20 +36,26 @@ export const ConfigPanel = ({
   const dispatch = useDispatch<AppDispatch>();
   const intl = useIntl();
 
-  const curDataMapOperation = useSelector((state: RootState) => state.dataMap.curDataMapOperation);
+  const curDataMapOperation = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation);
   const currentPanelView = useSelector((state: RootState) => state.panel.currentPanelView);
   const schemaType = useSelector((state: RootState) => state.panel.schemaType);
   const currentTheme = useSelector((state: RootState) => state.app.theme);
 
   const [uploadType, setUploadType] = useState<UploadSchemaTypes>(UploadSchemaTypes.SelectFrom);
-  const [selectedSourceSchema, setSelectedSourceSchema] = useState<IDropdownOption>();
-  const [selectedTargetSchema, setSelectedTargetSchema] = useState<IDropdownOption>();
+  const [selectedSourceSchema, setSelectedSourceSchema] = useState<string>();
+  const [selectedTargetSchema, setSelectedTargetSchema] = useState<string>();
   const [selectedSchemaFile, setSelectedSchemaFile] = useState<SchemaFile>();
   const [errorMessage, setErrorMessage] = useState('');
 
   const fetchedSourceSchema = useQuery(
-    [selectedSourceSchema?.text],
-    async () => await getSelectedSchema(selectedSourceSchema?.text ?? ''),
+    [selectedSourceSchema],
+    async () => {
+      if (selectedSourceSchema) {
+        const [fileName, filePath] = getFileNameAndPath(selectedSourceSchema);
+        return await getSelectedSchema(fileName ?? '', filePath);
+      }
+      return await getSelectedSchema(selectedSourceSchema ?? '', '');
+    },
     {
       ...schemaFileQuerySettings,
       enabled: selectedSourceSchema !== undefined,
@@ -58,8 +63,15 @@ export const ConfigPanel = ({
   );
 
   const fetchedTargetSchema = useQuery(
-    [selectedTargetSchema?.text],
-    async () => await getSelectedSchema(selectedTargetSchema?.text ?? ''),
+    [selectedTargetSchema],
+    async () => {
+      if (selectedTargetSchema) {
+        const [fileName, filePath] = getFileNameAndPath(selectedTargetSchema);
+
+        return await getSelectedSchema(fileName ?? '', filePath);
+      }
+      return await getSelectedSchema(selectedTargetSchema ?? '', '');
+    },
     {
       ...schemaFileQuerySettings,
       enabled: selectedTargetSchema !== undefined,
@@ -68,31 +80,37 @@ export const ConfigPanel = ({
 
   const addLoc = intl.formatMessage({
     defaultMessage: 'Add',
+    id: 'F9dR1Q',
     description: 'Add',
   });
 
   const saveLoc = intl.formatMessage({
     defaultMessage: 'Save',
+    id: '0CvRZW',
     description: 'Save',
   });
 
   const cancelLoc = intl.formatMessage({
     defaultMessage: 'Cancel',
+    id: '6PdOcy',
     description: 'Cancel',
   });
 
   const configureLoc = intl.formatMessage({
     defaultMessage: 'Configure',
+    id: 'LR/3Lr',
     description: 'Configure',
   });
 
   const closeLoc = intl.formatMessage({
     defaultMessage: 'Close',
+    id: 'wzEneQ',
     description: 'Close',
   });
 
   const genericErrorMsg = intl.formatMessage({
-    defaultMessage: 'Failed loading the schema. Please try again.',
+    defaultMessage: 'Failed to load the schema. Please try again.',
+    id: '6fDYzG',
     description: 'Load schema error message',
   });
 
@@ -107,7 +125,7 @@ export const ConfigPanel = ({
   }, [dispatch, setErrorMessage]);
 
   const onSubmitSchema = useCallback(
-    (schema: Schema) => {
+    (schema: DataMapSchema) => {
       if (schemaType) {
         const extendedSchema = convertSchemaToSchemaExtended(schema);
         dispatch(setInitialSchema({ schema: extendedSchema, schemaType: schemaType }));
@@ -146,7 +164,8 @@ export const ConfigPanel = ({
         return;
       }
 
-      const selectedSchema = schemaType === SchemaType.Source ? (fetchedSourceSchema.data as Schema) : (fetchedTargetSchema.data as Schema);
+      const selectedSchema =
+        schemaType === SchemaType.Source ? (fetchedSourceSchema.data as DataMapSchema) : (fetchedTargetSchema.data as DataMapSchema);
 
       if (uploadType === UploadSchemaTypes.SelectFrom && selectedSchema) {
         onSubmitSchema(selectedSchema);
@@ -192,9 +211,9 @@ export const ConfigPanel = ({
 
     if (uploadType === UploadSchemaTypes.SelectFrom) {
       if (schemaType === SchemaType.Source) {
-        isNoNewSchemaSelected = !selectedSourceSchema || selectedSourceSchema.key === curDataMapOperation.sourceSchema?.name;
+        isNoNewSchemaSelected = !selectedSourceSchema || selectedSourceSchema === curDataMapOperation.sourceSchema?.name;
       } else {
-        isNoNewSchemaSelected = !selectedTargetSchema || selectedTargetSchema.key === curDataMapOperation.targetSchema?.name;
+        isNoNewSchemaSelected = !selectedTargetSchema || selectedTargetSchema === curDataMapOperation.targetSchema?.name;
       }
     } else {
       isNoNewSchemaSelected = !selectedSchemaFile;

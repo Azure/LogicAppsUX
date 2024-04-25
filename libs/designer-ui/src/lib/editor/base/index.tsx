@@ -2,38 +2,34 @@ import { Toolbar } from '../../html/plugins/toolbar/Toolbar';
 import type { TokenPickerMode } from '../../tokenpicker';
 import { useId } from '../../useId';
 import type { ValueSegment } from '../models/parameter';
+import { ArrowNavigation } from './plugins/ArrowNavigation';
 import { AutoFocus } from './plugins/AutoFocus';
 import AutoLink from './plugins/AutoLink';
 import ClearEditor from './plugins/ClearEditor';
+import CloseTokenPicker from './plugins/CloseTokenPicker';
 import DeleteTokenNode from './plugins/DeleteTokenNode';
+import FloatingLinkEditorPlugin from './plugins/FloatingLinkEditor';
+import { FocusChangePlugin } from './plugins/FocusHandler';
 import IgnoreTab from './plugins/IgnoreTab';
 import InsertTokenNode from './plugins/InsertTokenNode';
-import OnBlur from './plugins/OnBlur';
-import OnFocus from './plugins/OnFocus';
 import OpenTokenPicker from './plugins/OpenTokenPicker';
+import { PastePlugin } from './plugins/Paste';
+import { PreventPropagationPlugin } from './plugins/PreventPropagation';
 import { ReadOnly } from './plugins/ReadOnly';
 import SingleValueSegment from './plugins/SingleValueSegment';
 import { TokenTypeAheadPlugin } from './plugins/TokenTypeahead';
 import { TreeView } from './plugins/TreeView';
 import type { TokenPickerButtonEditorProps } from './plugins/tokenpickerbutton';
 import { TokenPickerButton } from './plugins/tokenpickerbutton';
-import { defaultInitialConfig, defaultNodes, htmlNodes } from './utils/initialConfig';
-import { parseSegments, parseHtmlSegments } from './utils/parsesegments';
-import type { ICalloutProps } from '@fluentui/react';
-import { DirectionalHint, css, TooltipHost } from '@fluentui/react';
-import type { InitialConfigType } from '@lexical/react/LexicalComposer';
-import { LexicalComposer } from '@lexical/react/LexicalComposer';
+import { css } from '@fluentui/react';
 import { ContentEditable } from '@lexical/react/LexicalContentEditable';
 import LexicalErrorBoundary from '@lexical/react/LexicalErrorBoundary';
 import { HistoryPlugin as History } from '@lexical/react/LexicalHistoryPlugin';
-import { ListPlugin } from '@lexical/react/LexicalListPlugin';
+import { PlainTextPlugin } from '@lexical/react/LexicalPlainTextPlugin';
 import { RichTextPlugin } from '@lexical/react/LexicalRichTextPlugin';
-import { useFunctionalState } from '@react-hookz/web';
 import { useEffect, useRef, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { useIntl } from 'react-intl';
-
-export { testTokenSegment, outputToken, outputToken2 } from '../shared/testtokensegment';
 
 export interface ChangeState {
   value: ValueSegment[];
@@ -45,13 +41,12 @@ export type GetTokenPickerHandler = (
   labelId: string,
   tokenPickerMode?: TokenPickerMode,
   valueType?: string,
-  closeTokenPicker?: () => void,
-  tokenPickerClicked?: (b: boolean) => void,
   tokenClickedCallback?: (token: ValueSegment) => void
 ) => JSX.Element;
 
 export type ChangeHandler = (newState: ChangeState) => void;
 export type CallbackHandler = () => void;
+export type CastHandler = (value: ValueSegment[], type?: string, format?: string, suppressCasting?: boolean) => string;
 
 export interface DictionaryCallbackProps {
   addItem: (index: number) => void;
@@ -61,19 +56,22 @@ export interface BaseEditorProps {
   className?: string;
   readonly?: boolean;
   placeholder?: string;
-  BasePlugins?: BasePlugins;
+  basePlugins?: BasePlugins;
   initialValue: ValueSegment[];
   children?: React.ReactNode;
-  isTrigger?: boolean;
-  showCallbackTokens?: boolean;
   labelId?: string;
   label?: string;
   valueType?: string;
-  tokenPickerButtonEditorProps?: TokenPickerButtonEditorProps;
+  tokenPickerButtonProps?: TokenPickerButtonEditorProps;
+  dataAutomationId?: string;
+  tokenMapping?: Record<string, ValueSegment>;
+  isSwitchFromPlaintextBlocked?: boolean;
+  loadParameterValueFromString?: (value: string) => ValueSegment[];
   onChange?: ChangeHandler;
   onBlur?: () => void;
   onFocus?: () => void;
   getTokenPicker: GetTokenPickerHandler;
+  setIsValuePlaintext?: (isValuePlaintext: boolean) => void;
 }
 
 export interface BasePlugins {
@@ -83,7 +81,8 @@ export interface BasePlugins {
   history?: boolean;
   tokens?: boolean;
   treeView?: boolean;
-  toolbar?: boolean;
+  preventPropagation?: boolean;
+  htmlEditor?: 'rich-html' | 'raw-html' | false;
   tabbable?: boolean;
   singleValueSegment?: boolean;
 }
@@ -92,136 +91,151 @@ export const BaseEditor = ({
   className,
   readonly = false,
   placeholder,
-  BasePlugins = {},
-  initialValue,
+  basePlugins = {},
   children,
   labelId,
-  isTrigger,
-  showCallbackTokens,
-  tokenPickerButtonEditorProps,
+  tokenPickerButtonProps,
   valueType,
+  dataAutomationId,
+  tokenMapping,
+  isSwitchFromPlaintextBlocked,
+  loadParameterValueFromString,
   onFocus,
   onBlur,
   getTokenPicker,
+  setIsValuePlaintext,
 }: BaseEditorProps) => {
   const editorId = useId('msla-tokenpicker-callout-location');
   const intl = useIntl();
   const containerRef = useRef<HTMLDivElement>(null);
   const placeholderRef = useRef<HTMLDivElement>(null);
-  const [isOverflowed, setIsOverflowed] = useState(false);
   const [isEditorFocused, setIsEditorFocused] = useState(false);
-  const [getInTokenPicker, setInTokenPicker] = useFunctionalState(false);
+  const [isTokenPickerOpened, setIsTokenPickerOpened] = useState(false);
   const [tokenPickerMode, setTokenPickerMode] = useState<TokenPickerMode | undefined>();
+  const [floatingAnchorElem, setFloatingAnchorElem] = useState<HTMLDivElement | null>(null);
+
+  const onRef = (_floatingAnchorElem: HTMLDivElement) => {
+    if (_floatingAnchorElem !== null) {
+      setFloatingAnchorElem(_floatingAnchorElem);
+    }
+  };
 
   useEffect(() => {
     if (containerRef.current && placeholderRef.current) {
-      const containerWidth = containerRef.current.clientWidth;
-      const placeholderWidth = placeholderRef.current.clientWidth;
-      setIsOverflowed(placeholderWidth > containerWidth);
+      onRef(containerRef.current);
     }
   }, []);
 
-  const { autoFocus, autoLink, clearEditor, history = true, tokens, treeView, toolbar, tabbable, singleValueSegment } = BasePlugins;
+  const {
+    autoFocus,
+    autoLink,
+    clearEditor,
+    history = true,
+    tokens = true,
+    treeView,
+    htmlEditor = false,
+    tabbable,
+    singleValueSegment = false,
+    preventPropagation = true,
+  } = basePlugins;
+
   const describedByMessage = intl.formatMessage({
     defaultMessage: 'Add dynamic data or expressions by inserting a /',
+    id: 'Q5w4Do',
     description: 'This is an a11y message meant to help screen reader users figure out how to insert dynamic data',
   });
 
-  const initialConfig: InitialConfigType = {
-    ...defaultInitialConfig,
-    editable: !readonly,
-    nodes: toolbar ? htmlNodes : defaultNodes,
-    editorState:
-      initialValue &&
-      (() => {
-        toolbar ? parseHtmlSegments(initialValue, tokens) : parseSegments(initialValue, tokens);
-      }),
-  };
-
-  const closeTokenPicker = () => {
-    setInTokenPicker(false);
-  };
-
   const handleFocus = () => {
-    setIsEditorFocused(true);
-    setInTokenPicker(false);
     onFocus?.();
+    setIsEditorFocused(true);
   };
 
   const handleBlur = () => {
-    setIsEditorFocused(false);
-    if (!getInTokenPicker()) {
-      setTokenPickerMode(undefined);
-      setInTokenPicker(false);
+    if (!isTokenPickerOpened) {
       onBlur?.();
+    }
+    setIsEditorFocused(false);
+  };
+
+  const handleClick = () => {
+    if (isTokenPickerOpened) {
+      setIsTokenPickerOpened(false);
     }
   };
 
   const openTokenPicker = (mode: TokenPickerMode) => {
-    setInTokenPicker(true);
+    setIsTokenPickerOpened(true);
     setTokenPickerMode(mode);
   };
 
-  const tokenPickerClicked = (b: boolean) => {
-    setInTokenPicker(b);
-  };
+  const id = useId('msla-described-by-message');
+  const TextPlugin = htmlEditor === 'rich-html' ? RichTextPlugin : PlainTextPlugin;
 
-  const calloutProps: Partial<ICalloutProps> = {
-    gapSpace: 1,
-    isBeakVisible: false,
-    hidden: isEditorFocused || !isOverflowed,
-    directionalHint: DirectionalHint.bottomRightEdge,
-  };
-  const id = useId('deiosnoin');
   return (
-    <TooltipHost content={placeholder} calloutProps={calloutProps} styles={{ root: { width: '100%' } }}>
-      <LexicalComposer initialConfig={initialConfig}>
-        <div className={className ?? 'msla-editor-container'} id={editorId} ref={containerRef}>
-          {toolbar ? <Toolbar readonly={readonly} /> : null}
-          <RichTextPlugin
-            contentEditable={
-              <ContentEditable className={css('editor-input', readonly && 'readonly')} ariaLabelledBy={labelId} ariaDescribedBy={id} />
-            }
-            placeholder={
-              <span className="editor-placeholder" ref={placeholderRef}>
-                {placeholder}
-              </span>
-            }
-            ErrorBoundary={LexicalErrorBoundary}
+    <>
+      <div
+        className={className ?? 'msla-editor-container'}
+        id={editorId}
+        ref={containerRef}
+        data-automation-id={dataAutomationId}
+        title={placeholder}
+      >
+        {htmlEditor ? (
+          <Toolbar
+            isRawText={htmlEditor === 'raw-html'}
+            isSwitchFromPlaintextBlocked={isSwitchFromPlaintextBlocked}
+            readonly={readonly}
+            setIsRawText={setIsValuePlaintext}
           />
-          <span id={id} hidden={true}>
-            {describedByMessage}
-          </span>
-          {toolbar ? <ListPlugin /> : null}
-          {treeView ? <TreeView /> : null}
-          {autoFocus ? <AutoFocus /> : null}
-          {history ? <History /> : null}
-          {autoLink ? <AutoLink /> : null}
-          {clearEditor ? <ClearEditor showButton={false} /> : null}
-          {singleValueSegment ? <SingleValueSegment /> : null}
-          {tokens ? <TokenTypeAheadPlugin openTokenPicker={openTokenPicker} /> : null}
-          <OnBlur command={handleBlur} />
-          <OnFocus command={handleFocus} />
-          <ReadOnly readonly={readonly} />
-          {tabbable ? null : <IgnoreTab />}
-          {tokens ? <InsertTokenNode /> : null}
-          {tokens ? <DeleteTokenNode /> : null}
-          {tokens ? <OpenTokenPicker openTokenPicker={openTokenPicker} /> : null}
-          {children}
-          {(!isTrigger || showCallbackTokens) && tokens && getInTokenPicker()
-            ? getTokenPicker(editorId, labelId ?? '', tokenPickerMode, valueType, closeTokenPicker, tokenPickerClicked)
-            : null}
-        </div>
-
-        {(!isTrigger || showCallbackTokens) && tokens && isEditorFocused && !getInTokenPicker() ? (
-          createPortal(
-            <TokenPickerButton openTokenPicker={openTokenPicker} showOnLeft={tokenPickerButtonEditorProps?.showOnLeft} />,
-            document.body
-          )
-        ) : (
-          <div />
-        )}
-      </LexicalComposer>
-    </TooltipHost>
+        ) : null}
+        <TextPlugin
+          contentEditable={
+            <ContentEditable className={css('editor-input', readonly && 'readonly')} ariaLabelledBy={labelId} ariaDescribedBy={id} />
+          }
+          placeholder={
+            <span className="editor-placeholder" ref={placeholderRef}>
+              {placeholder}
+            </span>
+          }
+          ErrorBoundary={LexicalErrorBoundary}
+        />
+        <span id={id} hidden={true}>
+          {describedByMessage}
+        </span>
+        {treeView ? <TreeView /> : null}
+        {autoFocus ? <AutoFocus /> : null}
+        {history ? <History /> : null}
+        {autoLink ? <AutoLink /> : null}
+        {clearEditor ? <ClearEditor showButton={false} /> : null}
+        {singleValueSegment ? <SingleValueSegment /> : null}
+        {preventPropagation ? <PreventPropagationPlugin /> : null}
+        <FocusChangePlugin onFocus={handleFocus} onBlur={handleBlur} onClick={handleClick} />
+        <ReadOnly readonly={readonly} />
+        {tabbable ? null : <IgnoreTab />}
+        {htmlEditor === 'rich-html' ? null : <ArrowNavigation />}
+        {tokens ? (
+          <>
+            <InsertTokenNode />
+            <DeleteTokenNode />
+            <OpenTokenPicker openTokenPicker={openTokenPicker} />
+            <CloseTokenPicker closeTokenPicker={() => setIsTokenPickerOpened(false)} />
+            <TokenTypeAheadPlugin
+              openTokenPicker={openTokenPicker}
+              isEditorFocused={isEditorFocused}
+              hideTokenPickerOptions={tokenPickerButtonProps?.hideButtonOptions}
+            />
+          </>
+        ) : null}
+        {tokens ? <PastePlugin segmentMapping={tokenMapping} loadParameterValueFromString={loadParameterValueFromString} /> : null}
+        {htmlEditor && floatingAnchorElem ? (
+          <FloatingLinkEditorPlugin anchorElem={floatingAnchorElem} isMainEditorFocused={isEditorFocused} />
+        ) : null}
+        {children}
+        {tokens && isTokenPickerOpened ? getTokenPicker(editorId, labelId ?? '', tokenPickerMode, valueType) : null}
+      </div>
+      {tokens && isEditorFocused && !isTokenPickerOpened
+        ? createPortal(<TokenPickerButton {...tokenPickerButtonProps} openTokenPicker={openTokenPicker} />, document.body)
+        : null}
+    </>
   );
 };

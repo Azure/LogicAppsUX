@@ -1,5 +1,6 @@
-name: '🐞 Bug Report'
+name: '🐞 Logic Apps/Power Automate Bug Report'
 description: Create a report to help us improve Logic Apps
+labels: ['bug']
 body:
   - type: markdown
     attributes:
@@ -15,6 +16,7 @@ body:
          - Open Issue's tab: https://github.com/Azure/LogicAppsUX/issues?q=is%3Aissue+sort%3Aupdated-desc+position
          - Closed Issues tab: https://github.com/Azure/LogicAppsUX/issues?q=is%3Aissue+sort%3Aupdated-desc+position+is%3Aclosed
 
+        Please refer to the Troubleshooting Guide to help with filling in this information: https://aka.ms/lauxtsg
         The more information you fill in, the better we can help you.
 
   - type: textarea
@@ -35,18 +37,29 @@ body:
       label: What type of Logic App Is this happening in?
       options:
         - Consumption (Portal)
+        - Power Automate
         - Standard (Portal)
         - Standard (VSCode)
     validations:
       required: true
 
   - type: dropdown
-    id: deisgnerType
+    id: designerType
     attributes:
-      label: Are you using Preview Designer or GA Designer
+      label: Are you using new designer or old designer
       options:
-        - Preview
-        - Generally Available
+        - New Designer
+        - Old Designer
+    validations:
+      required: true
+
+  - type: dropdown
+    id: tsgchecked
+    attributes:
+      label: Did you refer to the TSG before filing this issue? https://aka.ms/lauxtsg
+      options:
+        - 'Yes'
+        - 'No'
     validations:
       required: true
 

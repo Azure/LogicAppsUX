@@ -3,12 +3,12 @@ import { Pager } from '../../pager';
 import { ErrorSection } from '../errorsection';
 import { calculateDuration } from '../utils';
 import { Value } from '../values';
-import type { RetryHistory } from './types';
-import { useState } from 'react';
+import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
+import { useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 
 export interface RetryPanelProps {
-  retryHistories: RetryHistory[];
+  retryHistories: LogicAppsV2.RetryHistory[];
   visible?: boolean;
 }
 
@@ -16,7 +16,9 @@ export const RetryPanel: React.FC<RetryPanelProps> = ({ retryHistories, visible 
   const intl = useIntl();
   const [currentPage, setCurrentPage] = useState(1);
   const [retryHistory, setRetryHistory] = useState(retryHistories[0]);
-  const [retryDuration, setRetryDuration] = useState(calculateDuration(retryHistory.startTime, retryHistory.endTime));
+  const retryDuration = useMemo(() => {
+    return calculateDuration(retryHistory.startTime, retryHistory.endTime);
+  }, [retryHistory.endTime, retryHistory.startTime]);
 
   if (!visible) {
     return null;
@@ -25,30 +27,37 @@ export const RetryPanel: React.FC<RetryPanelProps> = ({ retryHistories, visible 
   const Resources = {
     RETRY_HISTORY_CLIENT_REQUEST_ID: intl.formatMessage({
       defaultMessage: 'Client request ID',
+      id: 'Tb2QLA',
       description: 'Label text for retry client request ID',
     }),
     RETRY_HISTORY_DURATION: intl.formatMessage({
       defaultMessage: 'Duration',
+      id: 'hrbDu6',
       description: 'Label text for retry duration',
     }),
     RETRY_HISTORY_END_TIME: intl.formatMessage({
       defaultMessage: 'End time',
+      id: '2K2fAj',
       description: 'Label text for retry end time',
     }),
     RETRY_HISTORY_SERVICE_REQUEST_ID: intl.formatMessage({
       defaultMessage: 'Service request ID',
+      id: '4vmGh0',
       description: 'Label text for retry service request ID',
     }),
     RETRY_HISTORY_START_TIME: intl.formatMessage({
       defaultMessage: 'Start time',
+      id: 'cqiqcf',
       description: 'Label text for retry start time',
     }),
     RETRY_HISTORY_STATUS: intl.formatMessage({
       defaultMessage: 'Status',
+      id: 'NPUFgH',
       description: 'Label text for retry status',
     }),
     RETRY_PAGER_TITLE: intl.formatMessage({
       defaultMessage: 'Retry',
+      id: 'XFFpu/',
       description: 'Header text for retry history',
     }),
   };
@@ -58,11 +67,10 @@ export const RetryPanel: React.FC<RetryPanelProps> = ({ retryHistories, visible 
       const newRetryHistory = retryHistories[value - 1];
       setCurrentPage(value);
       setRetryHistory(newRetryHistory);
-      setRetryDuration(calculateDuration(newRetryHistory.startTime, newRetryHistory.endTime));
     }
   };
 
-  const { clientRequestId, code, endTime, error, serviceRequestId, startTime } = retryHistory;
+  const { clientRequestId, code, endTime, error, startTime, serviceRequestId } = retryHistory;
 
   return (
     <>
@@ -78,7 +86,7 @@ export const RetryPanel: React.FC<RetryPanelProps> = ({ retryHistories, visible 
         />
       </div>
       <div className="msla-panel-callout-content">
-        <ErrorSection className="msla-request-history-panel-error" error={error} />
+        <ErrorSection className="msla-request-history-panel-error" error={error?.error} />
         <div className="msla-trace-inputs-outputs">
           <div className="msla-trace-inputs-outputs-header">
             <div className="msla-trace-inputs-outputs-header-text">{Resources.RETRY_PAGER_TITLE}</div>
@@ -88,12 +96,8 @@ export const RetryPanel: React.FC<RetryPanelProps> = ({ retryHistories, visible 
             <Value displayName={Resources.RETRY_HISTORY_START_TIME} format="date-time" value={startTime} />
             <Value displayName={Resources.RETRY_HISTORY_END_TIME} format="date-time" value={endTime} visible={endTime !== undefined} />
             <Value displayName={Resources.RETRY_HISTORY_STATUS} value={code} />
-            <Value displayName={Resources.RETRY_HISTORY_CLIENT_REQUEST_ID} value={clientRequestId} />
-            <Value
-              displayName={Resources.RETRY_HISTORY_SERVICE_REQUEST_ID}
-              value={serviceRequestId}
-              visible={serviceRequestId !== undefined}
-            />
+            <Value displayName={Resources.RETRY_HISTORY_CLIENT_REQUEST_ID} value={clientRequestId} visible={!!clientRequestId} />
+            <Value displayName={Resources.RETRY_HISTORY_SERVICE_REQUEST_ID} value={serviceRequestId} visible={!!serviceRequestId} />
           </div>
         </div>
       </div>

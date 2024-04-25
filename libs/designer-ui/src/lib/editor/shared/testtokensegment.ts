@@ -1,7 +1,7 @@
 import type { OutputToken } from '../../tokenpicker';
 import type { ValueSegment } from '../models/parameter';
 import { TokenType, ValueSegmentType } from '../models/parameter';
-import { guid } from '@microsoft/utils-logic-apps';
+import { guid } from '@microsoft/logic-apps-shared';
 
 export const testTokenSegment: ValueSegment = {
   id: guid(),
@@ -26,7 +26,7 @@ export const outputToken: OutputToken = {
   description: 'this is a description',
   value: 'triggerBody()',
   name: 'test',
-  type: 'token',
+  type: 'any',
   isAdvanced: false,
   outputInfo: {
     type: TokenType.OUTPUTS,
@@ -48,7 +48,7 @@ export const outputToken2: OutputToken = {
   title: 'Outputs',
   description: "Outputs('Execute_JavaScript_Code')",
   name: 'outputs',
-  type: 'token',
+  type: 'any',
   isAdvanced: false,
   value: 'outputs()',
   outputInfo: {

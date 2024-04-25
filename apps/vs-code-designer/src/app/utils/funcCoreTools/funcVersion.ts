@@ -2,14 +2,21 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { funcVersionSetting } from '../../../constants';
+import {
+  autoRuntimeDependenciesPathSettingKey,
+  funcCoreToolsBinaryPathSettingKey,
+  funcDependencyName,
+  funcVersionSetting,
+} from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
-import { getWorkspaceSettingFromAnyFolder } from '../vsCodeConfig/settings';
+import { getGlobalSetting, getWorkspaceSettingFromAnyFolder, updateGlobalSetting } from '../vsCodeConfig/settings';
 import { executeCommand } from './cpUtils';
-import { isNullOrUndefined } from '@microsoft/utils-logic-apps';
+import { isNullOrUndefined } from '@microsoft/logic-apps-shared';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
-import { FuncVersion, latestGAVersion } from '@microsoft/vscode-extension';
+import { FuncVersion, latestGAVersion } from '@microsoft/vscode-extension-logic-apps';
+import * as fs from 'fs';
+import * as path from 'path';
 import * as semver from 'semver';
 
 /**
@@ -21,7 +28,7 @@ export function tryParseFuncVersion(data: string | undefined): FuncVersion | und
   if (data) {
     const majorVersion: string | undefined = tryGetMajorVersion(data);
     if (majorVersion) {
-      return Object.values(FuncVersion).find((version) => version === '~' + majorVersion);
+      return Object.values(FuncVersion).find((version) => version === `~${majorVersion}`);
     }
   }
 
@@ -82,11 +89,12 @@ export async function tryGetLocalFuncVersion(): Promise<FuncVersion | undefined>
  * @returns {Promise<string | null>} Functions core tools version.
  */
 export async function getLocalFuncCoreToolsVersion(): Promise<string | null> {
-  const output: string = await executeCommand(undefined, undefined, ext.funcCliPath, '--version');
-  const version: string | null = semver.clean(output);
-  if (version) {
-    return version;
-  } else {
+  try {
+    const output: string = await executeCommand(undefined, undefined, `${getFunctionsCommand()}`, '--version');
+    const version: string | null = semver.clean(output);
+    if (version) {
+      return version;
+    }
     // Old versions of the func cli do not support '--version', so we have to parse the command usage to get the version
     const matchResult: RegExpMatchArray | null = output.match(/(?:.*)Azure Functions Core Tools (.*)/);
     if (matchResult !== null) {
@@ -98,6 +106,8 @@ export async function getLocalFuncCoreToolsVersion(): Promise<string | null> {
       return semver.valid(localVersion);
     }
 
+    return null;
+  } catch (error) {
     return null;
   }
 }
@@ -133,4 +143,33 @@ export function checkSupportedFuncVersion(version: FuncVersion) {
       )
     );
   }
+}
+
+/**
+ * Get the functions binaries executable or use the system functions executable.
+ */
+export function getFunctionsCommand(): string {
+  const command = getGlobalSetting<string>(funcCoreToolsBinaryPathSettingKey);
+  if (!command) {
+    throw Error('Functions Core Tools Binary Path Setting is empty');
+  }
+  return command;
+}
+
+export async function setFunctionsCommand(): Promise<void> {
+  const binariesLocation = getGlobalSetting<string>(autoRuntimeDependenciesPathSettingKey);
+  const funcBinariesPath = path.join(binariesLocation, funcDependencyName);
+  const binariesExist = fs.existsSync(funcBinariesPath);
+  let command = ext.funcCliPath;
+  if (binariesExist) {
+    command = path.join(funcBinariesPath, ext.funcCliPath);
+    fs.chmodSync(funcBinariesPath, 0o777);
+
+    const funcExist = await fs.existsSync(command);
+    if (funcExist) {
+      fs.chmodSync(command, 0o777);
+    }
+  }
+
+  await updateGlobalSetting<string>(funcCoreToolsBinaryPathSettingKey, command);
 }

@@ -1,5 +1,5 @@
 import type { DesignerOptionsState, ServiceOptions } from './designerOptionsInterfaces';
-import type { ILoggerService } from '@microsoft/designer-client-services-logic-apps';
+import type { ILoggerService } from '@microsoft/logic-apps-shared';
 import {
   DevLogger,
   InitLoggerService,
@@ -15,7 +15,11 @@ import {
   InitFunctionService,
   InitAppServiceService,
   InitRunService,
-} from '@microsoft/designer-client-services-logic-apps';
+  InitEditorService,
+  InitConnectionParameterEditorService,
+  InitChatbotService,
+  InitCustomCodeService,
+} from '@microsoft/logic-apps-shared';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 
@@ -24,8 +28,16 @@ const initialState: DesignerOptionsState = {
   isMonitoringView: false,
   isDarkMode: false,
   servicesInitialized: false,
-  isConsumption: false,
+  designerOptionsInitialized: false,
+  useLegacyWorkflowParameters: false,
   isXrmConnectionReferenceMode: false,
+  showConnectionsPanel: false,
+  panelTabHideKeys: [],
+  hostOptions: {
+    displayRuntimeInfo: true,
+    suppressCastingForSerialize: false,
+    recurrenceInterval: undefined,
+  },
 };
 
 export const initializeServices = createAsyncThunk(
@@ -44,6 +56,10 @@ export const initializeServices = createAsyncThunk(
     hostService,
     apimService,
     runService,
+    editorService,
+    connectionParameterEditorService,
+    chatbotService,
+    customCodeService,
   }: ServiceOptions) => {
     const loggerServices: ILoggerService[] = [];
     if (loggerService) {
@@ -59,11 +75,27 @@ export const initializeServices = createAsyncThunk(
     InitOAuthService(oAuthService);
     InitWorkflowService(workflowService);
 
-    if (connectorService) InitConnectorService(connectorService);
-    if (gatewayService) InitGatewayService(gatewayService);
-    if (apimService) InitApiManagementService(apimService);
-    if (functionService) InitFunctionService(functionService);
-    if (appServiceService) InitAppServiceService(appServiceService);
+    if (connectorService) {
+      InitConnectorService(connectorService);
+    }
+    if (gatewayService) {
+      InitGatewayService(gatewayService);
+    }
+    if (apimService) {
+      InitApiManagementService(apimService);
+    }
+    if (functionService) {
+      InitFunctionService(functionService);
+    }
+    if (appServiceService) {
+      InitAppServiceService(appServiceService);
+    }
+    if (chatbotService) {
+      InitChatbotService(chatbotService);
+    }
+    if (customCodeService) {
+      InitCustomCodeService(customCodeService);
+    }
 
     if (hostService) {
       InitHostService(hostService);
@@ -72,6 +104,9 @@ export const initializeServices = createAsyncThunk(
     if (runService) {
       InitRunService(runService);
     }
+
+    InitEditorService(editorService);
+    InitConnectionParameterEditorService(connectionParameterEditorService);
 
     return true;
   }
@@ -85,8 +120,18 @@ export const designerOptionsSlice = createSlice({
       state.readOnly = action.payload.readOnly;
       state.isMonitoringView = action.payload.isMonitoringView;
       state.isDarkMode = action.payload.isDarkMode;
-      state.isConsumption = action.payload.isConsumption;
+      state.useLegacyWorkflowParameters = action.payload.useLegacyWorkflowParameters;
       state.isXrmConnectionReferenceMode = action.payload.isXrmConnectionReferenceMode;
+      state.suppressDefaultNodeSelectFunctionality = action.payload.suppressDefaultNodeSelectFunctionality;
+      state.nodeSelectAdditionalCallback = action.payload.nodeSelectAdditionalCallback;
+      state.showConnectionsPanel = action.payload.showConnectionsPanel;
+      state.panelTabHideKeys = action.payload.panelTabHideKeys;
+      state.hostOptions = {
+        ...state.hostOptions,
+        ...action.payload.hostOptions,
+      };
+      state.showPerformanceDebug = action.payload.showPerformanceDebug;
+      state.designerOptionsInitialized = true;
     },
   },
   extraReducers: (builder) => {

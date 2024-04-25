@@ -1,24 +1,10 @@
-import type { Connector, OperationManifest } from '@microsoft/utils-logic-apps';
-import { fallbackConnectorUrl, getObjectPropertyValue } from '@microsoft/utils-logic-apps';
+import type { OperationManifest } from '@microsoft/logic-apps-shared';
+import { getBrandColorFromConnector, getIconUriFromConnector } from '@microsoft/logic-apps-shared';
 
 export function getBrandColorFromManifest(manifest: OperationManifest): string {
-  return getObjectPropertyValue(manifest, ['properties', 'brandColor']);
+  return manifest.properties?.brandColor ?? getBrandColorFromConnector(manifest.properties?.connector);
 }
 
 export function getIconUriFromManifest(manifest: OperationManifest): string {
-  return getObjectPropertyValue(manifest, ['properties', 'iconUri']);
-}
-
-export function getBrandColorFromConnector(connector: Connector): string {
-  const {
-    properties: { brandColor, metadata },
-  } = connector;
-  return brandColor ?? metadata?.brandColor ?? '#000000';
-}
-
-export function getIconUriFromConnector(connector: Connector): string {
-  const {
-    properties: { iconUrl, iconUri, generalInformation },
-  } = connector;
-  return fallbackConnectorUrl(iconUrl ?? iconUri ?? generalInformation?.iconUrl);
+  return manifest.properties?.iconUri ?? getIconUriFromConnector(manifest.properties?.connector);
 }

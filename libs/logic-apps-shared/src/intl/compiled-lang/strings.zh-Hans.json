@@ -1,0 +1,10155 @@
+{
+  "++ZVe/": [
+    {
+      "type": 0,
+      "value": "测试"
+    }
+  ],
+  "+0H8Or": [
+    {
+      "type": 0,
+      "value": "警告: 输入节点类型与架构节点的类型不匹配"
+    }
+  ],
+  "+0yxlR": [
+    {
+      "type": 0,
+      "value": "函数显示"
+    }
+  ],
+  "+3rROX": [
+    {
+      "type": 0,
+      "value": "已受保护"
+    }
+  ],
+  "+FcXe9": [
+    {
+      "type": 0,
+      "value": "已出错"
+    }
+  ],
+  "+HcevX": [
+    {
+      "type": 0,
+      "value": "输入有效的布尔值。"
+    }
+  ],
+  "+Jryh+": [
+    {
+      "type": 0,
+      "value": "触发器"
+    }
+  ],
+  "+KXX+O": [
+    {
+      "type": 0,
+      "value": "选择函数来源"
+    }
+  ],
+  "+M72+a": [
+    {
+      "type": 0,
+      "value": "概述"
+    }
+  ],
+  "+Uvo/p": [
+    {
+      "type": 0,
+      "value": "向下 V 形的可选文字"
+    }
+  ],
+  "+ZSBrq": [
+    {
+      "type": 1,
+      "value": "title"
+    },
+    {
+      "type": 0,
+      "value": " 卡的上下文菜单"
+    }
+  ],
+  "+ijo/2": [
+    {
+      "type": 0,
+      "value": "粘贴上次使用的表达式"
+    }
+  ],
+  "+mAJR3": [
+    {
+      "type": 0,
+      "value": "(UTC+08:00)吉隆坡，新加坡"
+    }
+  ],
+  "+oelX4": [
+    {
+      "type": 0,
+      "value": "必填。要检查的字符串。"
+    }
+  ],
+  "+powfX": [
+    {
+      "type": 0,
+      "value": "时区"
+    }
+  ],
+  "+v1RlQ": [
+    {
+      "type": 0,
+      "value": "在响应时抑制工作流标头"
+    }
+  ],
+  "+xXHdp": [
+    {
+      "type": 0,
+      "value": "无输出"
+    }
+  ],
+  "/2V8bQ": [
+    {
+      "type": 0,
+      "value": "已超时"
+    }
+  ],
+  "/EU/oJ": [
+    {
+      "type": 0,
+      "value": "必填。包含源时区的时区名称的字符串。请参阅 https://go.microsoft.com/fwlink/?linkid=2238292 处的“默认时区”。"
+    }
+  ],
+  "/I/U8L": [
+    {
+      "type": 0,
+      "value": "正文"
+    }
+  ],
+  "/KRvvg": [
+    {
+      "type": 0,
+      "value": "没有与搜索匹配的值。"
+    }
+  ],
+  "/NtebP": [
+    {
+      "type": 0,
+      "value": "(UTC+05:00)伊斯兰堡，卡拉奇"
+    }
+  ],
+  "/QqADs": [
+    {
+      "type": 0,
+      "value": "返回数组中从索引计数开始计起的元素"
+    }
+  ],
+  "/RS9F7": [
+    {
+      "type": 0,
+      "value": "(UTC-06:00)萨斯喀彻温"
+    }
+  ],
+  "/ULFwg": [
+    {
+      "type": 0,
+      "value": "更改连接"
+    }
+  ],
+  "/VcZ9g": [
+    {
+      "type": 0,
+      "value": "此连接器具有多个内置和 Azure 托管版本。将内置版本用于获得最佳性能、连接字符串身份验证和其他功能。将 Azure 托管版本用于其他身份验证选项。"
+    }
+  ],
+  "/WW7If": [
+    {
+      "type": 0,
+      "value": "True"
+    }
+  ],
+  "/X2+cq": [
+    {
+      "type": 0,
+      "value": "打开 Azure Copilot"
+    }
+  ],
+  "/c1l10": [
+    {
+      "type": 0,
+      "value": "⌘+C"
+    }
+  ],
+  "/doURb": [
+    {
+      "type": 0,
+      "value": "将输入转换成数组"
+    }
+  ],
+  "/km5eO": [
+    {
+      "type": 0,
+      "value": "(UTC-04:00)亚松森"
+    }
+  ],
+  "/mjH84": [
+    {
+      "type": 0,
+      "value": "显示原始输出"
+    }
+  ],
+  "/n13VL": [
+    {
+      "type": 0,
+      "value": "属性"
+    }
+  ],
+  "/qchXQ": [
+    {
+      "type": 0,
+      "value": "必需。要从中联接项目的集合。"
+    }
+  ],
+  "/qu3zt": [
+    {
+      "type": 0,
+      "value": "0"
+    }
+  ],
+  "/ut0u7": [
+    {
+      "type": 0,
+      "value": "返回数组或字符串中传入的第一个计数元素"
+    }
+  ],
+  "/vWMKW": [
+    {
+      "type": 0,
+      "value": "缺少所需的输入"
+    }
+  ],
+  "/yYyOq": [
+    {
+      "type": 0,
+      "value": "资源组"
+    }
+  ],
+  "00xlpa": [
+    {
+      "type": 0,
+      "value": "已共享"
+    }
+  ],
+  "02vyBk": [
+    {
+      "type": 0,
+      "value": "触发器"
+    }
+  ],
+  "03RO5d": [
+    {
+      "type": 0,
+      "value": "编辑参数"
+    }
+  ],
+  "04AwK7": [
+    {
+      "type": 0,
+      "value": "错误代码: \""
+    },
+    {
+      "type": 1,
+      "value": "errorCode"
+    },
+    {
+      "type": 0,
+      "value": "\"，消息: \""
+    },
+    {
+      "type": 1,
+      "value": "message"
+    },
+    {
+      "type": 0,
+      "value": "\"。"
+    }
+  ],
+  "06zKZg": [
+    {
+      "type": 0,
+      "value": "(UTC+04:00)第比利斯"
+    }
+  ],
+  "07ZsoY": [
+    {
+      "type": 0,
+      "value": "返回传入的字符串时间戳的开始小时"
+    }
+  ],
+  "07oZoX": [
+    {
+      "type": 0,
+      "value": "(UTC+12:00) 阿纳德尔、堪察加彼得罗巴甫洛夫斯克"
+    }
+  ],
+  "08e2rO": [
+    {
+      "type": 0,
+      "value": "用于此操作的托管标识不再存在。若要继续，请设置标识或更改连接。"
+    }
+  ],
+  "09B9CU": [
+    {
+      "type": 0,
+      "value": "返回 URL 以调用触发器或操作。注意: 此函数仅可用于 httpWebhook 和 apiConnectionWebhook，不适用于 manual、recurrence、http 或 apiConnection。"
+    }
+  ],
+  "0B5xDu": [
+    {
+      "type": 0,
+      "value": "(UTC+05:30)斯里加亚渥登普拉"
+    }
+  ],
+  "0CPsxh": [
+    {
+      "type": 0,
+      "value": "Del"
+    }
+  ],
+  "0CvRZW": [
+    {
+      "type": 0,
+      "value": "保存"
+    }
+  ],
+  "0F6jmK": [
+    {
+      "type": 0,
+      "value": "已启用安全输入或输出。"
+    }
+  ],
+  "0FzNJV": [
+    {
+      "type": 0,
+      "value": "必需。base64 编码字符串。"
+    }
+  ],
+  "0GT0SI": [
+    {
+      "type": 0,
+      "value": "取消"
+    }
+  ],
+  "0GqNGo": [
+    {
+      "type": 0,
+      "value": "URL 对输入字符串进行解码"
+    }
+  ],
+  "0IRUjM": [
+    {
+      "type": 0,
+      "value": "选择目标架构节点以启动映射"
+    }
+  ],
+  "0JTHTZ": [
+    {
+      "type": 0,
+      "value": "显示运行菜单"
+    }
+  ],
+  "0KMjv6": [
+    {
+      "type": 0,
+      "value": "跟踪"
+    }
+  ],
+  "0R2D5l": [
+    {
+      "type": 0,
+      "value": "返回 URI 编码字符串的二进制表示形式"
+    }
+  ],
+  "0SSwxD": [
+    {
+      "type": 0,
+      "value": "关闭面板"
+    }
+  ],
+  "0Vzp0l": [
+    {
+      "type": 0,
+      "value": "折叠"
+    }
+  ],
+  "0i/6TR": [
+    {
+      "type": 0,
+      "value": "必需。要转换为大写的字符串。如果字符串中的某字符没有大写等效项，则该字符在返回的字符串中保持不变。"
+    }
+  ],
+  "0m2Y1/": [
+    {
+      "type": 0,
+      "value": "值"
+    }
+  ],
+  "0oebOm": [
+    {
+      "type": 0,
+      "value": "输出"
+    }
+  ],
+  "0p+pJq": [
+    {
+      "type": 0,
+      "value": "返回这两个数字相除后的余数(取模)"
+    }
+  ],
+  "0qV0Qe": [
+    {
+      "type": 0,
+      "value": "必需。可包含值的字符串。"
+    }
+  ],
+  "0uj1Li": [
+    {
+      "type": 0,
+      "value": "返回输入数据 URI 字符串的二进制表示形式"
+    }
+  ],
+  "0upuCv": [
+    {
+      "type": 0,
+      "value": "小时"
+    }
+  ],
+  "0vfdFS": [
+    {
+      "type": 0,
+      "value": "每天"
+    }
+  ],
+  "0xLWzG": [
+    {
+      "type": 0,
+      "value": "名称已存在或无效。请先更新名称，然后再继续。"
+    }
+  ],
+  "0y5eia": [
+    {
+      "type": 0,
+      "value": "更多命令"
+    }
+  ],
+  "1+Z8n9": [
+    {
+      "type": 0,
+      "value": "必需。要转换为字符串表示形式的数据 URI。"
+    }
+  ],
+  "109OPL": [
+    {
+      "type": 0,
+      "value": "返回 URI 的端口。如果未指定端口，则返回协议的默认端口"
+    }
+  ],
+  "14lYtE": [
+    {
+      "type": 0,
+      "value": "18 "
+    }
+  ],
+  "1A1P5b": [
+    {
+      "type": 0,
+      "value": "评论"
+    }
+  ],
+  "1D047X": [
+    {
+      "type": 0,
+      "value": "必需。要转换为 XML 的值。"
+    }
+  ],
+  "1Fn5n+": [
+    {
+      "type": 0,
+      "value": "必需。URI 编码字符串。"
+    }
+  ],
+  "1KFpTX": [
+    {
+      "type": 0,
+      "value": "(UTC+03:00)明斯克"
+    }
+  ],
+  "1NBvKu": [
+    {
+      "type": 0,
+      "value": "将参数转换为浮点数"
+    }
+  ],
+  "1ZSzl6": [
+    {
+      "type": 0,
+      "value": "配置后的每次运行必须选中至少一个状态"
+    }
+  ],
+  "1dlfUe": [
+    {
+      "type": 0,
+      "value": "操作会对数据执行操作，在系统之间通信或运行其他任务。"
+    }
+  ],
+  "1eKQwo": [
+    {
+      "type": 0,
+      "value": "(UTC+08:00)珀斯"
+    }
+  ],
+  "1ejxkP": [
+    {
+      "type": 0,
+      "value": "安全输入"
+    }
+  ],
+  "1hHFdx": [
+    {
+      "type": 0,
+      "value": "(UTC-01:00)亚速尔群岛"
+    }
+  ],
+  "1hPZqe": [
+    {
+      "type": 0,
+      "value": "重试请求的次数"
+    }
+  ],
+  "1htSs7": [
+    {
+      "type": 0,
+      "value": "关"
+    }
+  ],
+  "1jhzOM": [
+    {
+      "type": 0,
+      "value": "必需。要检查其是否小于被比较值的对象。"
+    }
+  ],
+  "1nODUD": [
+    {
+      "type": 0,
+      "value": "隐藏函数"
+    }
+  ],
+  "1nvvw1": [
+    {
+      "type": 0,
+      "value": "输入授权标头的值"
+    }
+  ],
+  "1pjO9s": [
+    {
+      "type": 0,
+      "value": "隐藏源架构"
+    }
+  ],
+  "1r9ljA": [
+    {
+      "type": 0,
+      "value": "输入有效的 URI。"
+    }
+  ],
+  "1uGBLP": [
+    {
+      "type": 0,
+      "value": "5"
+    }
+  ],
+  "20oqsp": [
+    {
+      "type": 0,
+      "value": "添加子级(递归)"
+    }
+  ],
+  "23fENy": [
+    {
+      "type": 0,
+      "value": "返回 Base 64 编码字符串的二进制表示形式"
+    }
+  ],
+  "23szE+": [
+    {
+      "type": 0,
+      "value": "必需。要转换为数据 URI 的值。"
+    }
+  ],
+  "23uZn1": [
+    {
+      "type": 0,
+      "value": "全局搜索"
+    }
+  ],
+  "27Nhhv": [
+    {
+      "type": 0,
+      "value": "从 API 管理实例中选择 API"
+    }
+  ],
+  "2CXCOt": [
+    {
+      "type": 0,
+      "value": "选择文件进行上传"
+    }
+  ],
+  "2Gh+Gd": [
+    {
+      "type": 0,
+      "value": "工作流助手"
+    }
+  ],
+  "2JA3gY": [
+    {
+      "type": 0,
+      "value": "展开树节点"
+    }
+  ],
+  "2K2fAj": [
+    {
+      "type": 0,
+      "value": "结束时间"
+    }
+  ],
+  "2MOA1x": [
+    {
+      "type": 0,
+      "value": "控制新运行的排队方式"
+    }
+  ],
+  "2NXYYu": [
+    {
+      "type": 0,
+      "value": "搜索"
+    }
+  ],
+  "2Noh96": [
+    {
+      "type": 0,
+      "value": "17"
+    }
+  ],
+  "2TMGk7": [
+    {
+      "type": 0,
+      "value": "托管标识"
+    }
+  ],
+  "2ZfzaY": [
+    {
+      "type": 0,
+      "value": "选择现有"
+    }
+  ],
+  "2cVEMV": [
+    {
+      "type": 0,
+      "value": "从表单数据或表单编码操作输出返回单个匹配键名称的值"
+    }
+  ],
+  "2gOfQI": [
+    {
+      "type": 0,
+      "value": "此中的现有架构: "
+    }
+  ],
+  "2gzGrJ": [
+    {
+      "type": 0,
+      "value": "必需。包含表单数据或表单编码响应的操作的名称。"
+    }
+  ],
+  "2hrQOL": [
+    {
+      "type": 0,
+      "value": "(UTC+00:00)都柏林，爱丁堡，里斯本，伦敦"
+    }
+  ],
+  "2kWLLc": [
+    {
+      "type": 0,
+      "value": "开始时间"
+    }
+  ],
+  "2pCFsW": [
+    {
+      "type": 0,
+      "value": "分页计数无效。值必须是大于 0 的数字"
+    }
+  ],
+  "2pRsUf": [
+    {
+      "type": 0,
+      "value": "输入有效的数组。"
+    }
+  ],
+  "2r30S9": [
+    {
+      "type": 0,
+      "value": "在 "
+    },
+    {
+      "type": 1,
+      "value": "parentName"
+    },
+    {
+      "type": 0,
+      "value": " 后插入新步骤"
+    }
+  ],
+  "2tTQ0A": [
+    {
+      "type": 0,
+      "value": "开"
+    }
+  ],
+  "2uINs9": [
+    {
+      "type": 0,
+      "value": "默认"
+    }
+  ],
+  "2vnYre": [
+    {
+      "type": 0,
+      "value": "添加操作"
+    }
+  ],
+  "2y24a/": [
+    {
+      "type": 0,
+      "value": "保存"
+    }
+  ],
+  "2z5HGT": [
+    {
+      "type": 0,
+      "value": "可选。要使用的 RFC 4646 区域设置代码。如果未指定，则使用默认区域设置。如果区域设置不是有效值，则会生成错误，指出提供的区域设置无效或没有关联的区域设置。"
+    }
+  ],
+  "3+TQMa": [
+    {
+      "type": 0,
+      "value": "正在加载连接..."
+    }
+  ],
+  "33+WHG": [
+    {
+      "type": 0,
+      "value": "标识符"
+    }
+  ],
+  "34Nt/B": [
+    {
+      "type": 0,
+      "value": "按钮图标的可选文字"
+    }
+  ],
+  "36RiST": [
+    {
+      "type": 0,
+      "value": "系统分配的托管标识"
+    }
+  ],
+  "3AWwVl": [
+    {
+      "type": 0,
+      "value": "代码"
+    }
+  ],
+  "3BZnxY": [
+    {
+      "type": 0,
+      "value": "添加动态内容"
+    }
+  ],
+  "3ERi+E": [
+    {
+      "type": 0,
+      "value": "服务条款"
+    }
+  ],
+  "3GINhd": [
+    {
+      "type": 0,
+      "value": "触发器"
+    }
+  ],
+  "3KPLpx": [
+    {
+      "type": 0,
+      "value": "首先删除源元素 `"
+    },
+    {
+      "type": 1,
+      "value": "nodeName"
+    },
+    {
+      "type": 0,
+      "value": "` 中的所有映射。"
+    }
+  ],
+  "3MTSYZ": [
+    {
+      "type": 0,
+      "value": "(UTC-03:00)萨尔瓦多"
+    }
+  ],
+  "3NhwIJ": [
+    {
+      "type": 0,
+      "value": "必需。分隔符。"
+    }
+  ],
+  "3O0i4j": [
+    {
+      "type": 0,
+      "value": "没有可用的内容"
+    }
+  ],
+  "3PJZH0": [
+    {
+      "type": 0,
+      "value": "必填。要检查的字符串。"
+    }
+  ],
+  "3QXY3z": [
+    {
+      "type": 0,
+      "value": "将现有架构替换为不兼容的架构可能会在映射中产生错误。"
+    }
+  ],
+  "3RoD4h": [
+    {
+      "type": 0,
+      "value": "按反向顺序返回集合"
+    }
+  ],
+  "3X4FHS": [
+    {
+      "type": 0,
+      "value": "选择用户输入的类型"
+    }
+  ],
+  "3Y8a6G": [
+    {
+      "type": 0,
+      "value": "所需参数 "
+    },
+    {
+      "type": 1,
+      "value": "parameters"
+    },
+    {
+      "type": 0,
+      "value": " 未设置或无效"
+    }
+  ],
+  "3cZZKj": [
+    {
+      "type": 0,
+      "value": "分隔线"
+    }
+  ],
+  "3eeli7": [
+    {
+      "type": 0,
+      "value": "选择源架构"
+    }
+  ],
+  "3ewBbk": [
+    {
+      "type": 0,
+      "value": "输入的标识未与此逻辑应用关联。"
+    }
+  ],
+  "3n5pnv": [
+    {
+      "type": 0,
+      "value": "(UTC+10:30) 豪勋爵岛"
+    }
+  ],
+  "3n6GJG": [
+    {
+      "type": 0,
+      "value": "输入有效的 JSON。"
+    }
+  ],
+  "3rzrWf": [
+    {
+      "type": 0,
+      "value": "必填。要从中删除属性的对象。"
+    }
+  ],
+  "3sJlV+": [
+    {
+      "type": 0,
+      "value": "关闭代码视图"
+    }
+  ],
+  "3uA4ml": [
+    {
+      "type": 0,
+      "value": "输入有效日期/时间。"
+    }
+  ],
+  "3vCCY7": [
+    {
+      "type": 0,
+      "value": "必需。要减去的指定时间单位数。"
+    }
+  ],
+  "3vqfeV": [
+    {
+      "type": 0,
+      "value": "3"
+    }
+  ],
+  "3z6rhG": [
+    {
+      "type": 0,
+      "value": "必需。此值为可返回的最大整数之后的下一个整数。"
+    }
+  ],
+  "41drjl": [
+    {
+      "type": 0,
+      "value": "打开连接"
+    }
+  ],
+  "41eMpW": [
+    {
+      "type": 0,
+      "value": "正在等待"
+    }
+  ],
+  "43xObP": [
+    {
+      "type": 0,
+      "value": "(UTC+10:00)堪培拉，墨尔本，悉尼"
+    }
+  ],
+  "45ubha": [
+    {
+      "type": 0,
+      "value": "身份验证"
+    }
+  ],
+  "47kOXr": [
+    {
+      "type": 0,
+      "value": "必需。可返回的最小整数。"
+    }
+  ],
+  "49YUXK": [
+    {
+      "type": 0,
+      "value": "“"
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "”是必需的。"
+    }
+  ],
+  "4BH9uU": [
+    {
+      "type": 0,
+      "value": "错误"
+    }
+  ],
+  "4BrA0z": [
+    {
+      "type": 0,
+      "value": "必需。要添加的天数。可以为负数以减去相应的天数。"
+    }
+  ],
+  "4D7H4R": [
+    {
+      "type": 0,
+      "value": "运行时间: "
+    },
+    {
+      "type": 1,
+      "value": "onDays"
+    }
+  ],
+  "4Ekn9t": [
+    {
+      "type": 0,
+      "value": "撤消"
+    }
+  ],
+  "4IS4yp": [
+    {
+      "type": 0,
+      "value": "重试策略"
+    }
+  ],
+  "4Levd5": [
+    {
+      "type": 0,
+      "value": "在以下情况向我发送一封电子邮件"
+    }
+  ],
+  "4Q7WzU": [
+    {
+      "type": 0,
+      "value": "添加新的连接"
+    }
+  ],
+  "4YKQAF": [
+    {
+      "type": 0,
+      "value": "必需。时间间隔所采用的指定时间单位。"
+    }
+  ],
+  "4aaixN": [
+    {
+      "type": 0,
+      "value": "教程"
+    }
+  ],
+  "4c0uPQ": [
+    {
+      "type": 0,
+      "value": "必需。需要获取其值的参数的名称。"
+    }
+  ],
+  "4hi3ks": [
+    {
+      "type": 0,
+      "value": "你的流已更新。"
+    }
+  ],
+  "4iyEAY": [
+    {
+      "type": 0,
+      "value": "💾 正在保存此流..."
+    }
+  ],
+  "4izAMi": [
+    {
+      "type": 0,
+      "value": "输入用于回复的值"
+    }
+  ],
+  "4j2MEv": [
+    {
+      "type": 0,
+      "value": "切换缩略图"
+    }
+  ],
+  "4vcnOA": [
+    {
+      "type": 0,
+      "value": "返回输入数字数组中的最小值"
+    }
+  ],
+  "4vmGh0": [
+    {
+      "type": 0,
+      "value": "服务请求 ID"
+    }
+  ],
+  "4wjJs0": [
+    {
+      "type": 0,
+      "value": "14 "
+    }
+  ],
+  "5+P3ef": [
+    {
+      "type": 0,
+      "value": "(UTC+08:45)尤克拉"
+    }
+  ],
+  "50W8FI": [
+    {
+      "type": 0,
+      "value": "解释操作"
+    }
+  ],
+  "53MgCQ": [
+    {
+      "type": 0,
+      "value": "打开面板"
+    }
+  ],
+  "595Baw": [
+    {
+      "type": 0,
+      "value": "(UTC+09:00)大阪，札幌，东京"
+    }
+  ],
+  "5J9jne": [
+    {
+      "type": 0,
+      "value": "告诉 Microsoft 你喜欢此功能的哪些方面"
+    }
+  ],
+  "5LV34t": [
+    {
+      "type": 0,
+      "value": "“"
+    },
+    {
+      "type": 1,
+      "value": "invalidProperties"
+    },
+    {
+      "type": 0,
+      "value": "”属性对于“"
+    },
+    {
+      "type": 1,
+      "value": "authType"
+    },
+    {
+      "type": 0,
+      "value": "”身份验证类型无效。"
+    }
+  ],
+  "5OvGgn": [
+    {
+      "type": 0,
+      "value": "正文"
+    }
+  ],
+  "5SAQOb": [
+    {
+      "type": 0,
+      "value": "机构"
+    }
+  ],
+  "5WTRY8": [
+    {
+      "type": 0,
+      "value": "错误"
+    }
+  ],
+  "5akc1Q": [
+    {
+      "type": 0,
+      "value": "不支持的 \"in\" 值: 参数中的 \""
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "\""
+    }
+  ],
+  "5b0sKi": [
+    {
+      "type": 0,
+      "value": "如果对象、数组或字符串为空，则返回 true"
+    }
+  ],
+  "5cPiWA": [
+    {
+      "type": 0,
+      "value": "必需。需要获取其项的循环的名称。"
+    }
+  ],
+  "5dCAjy": [
+    {
+      "type": 0,
+      "value": "天"
+    }
+  ],
+  "5fmV2Q": [
+    {
+      "type": 0,
+      "value": "在部署模板生成期间，逻辑应用中使用的参数将被转换为 Azure 资源管理器模板。"
+    }
+  ],
+  "5gOG+F": [
+    {
+      "type": 0,
+      "value": "提供要比较的值，并选择要使用的运算符。"
+    }
+  ],
+  "5hWg4V": [
+    {
+      "type": 0,
+      "value": "选择元素"
+    }
+  ],
+  "5qzZMo": [
+    {
+      "type": 0,
+      "value": "正在加载..."
+    }
+  ],
+  "5rkegy": [
+    {
+      "type": 0,
+      "value": "删除参数"
+    }
+  ],
+  "5ytHcK": [
+    {
+      "type": 0,
+      "value": "正在加载..."
+    }
+  ],
+  "6+RwRp": [
+    {
+      "type": 0,
+      "value": "混合连接器"
+    }
+  ],
+  "61iT9C": [
+    {
+      "type": 0,
+      "value": "插入上一步中的数据(还可以通过在编辑器中键入 Alt + / 来添加)"
+    }
+  ],
+  "62Ypnr": [
+    {
+      "type": 0,
+      "value": "加载操作数据时出错"
+    }
+  ],
+  "63/zYN": [
+    {
+      "type": 0,
+      "value": "必需。要检查其是否大于被比较值的对象。"
+    }
+  ],
+  "632t9E": [
+    {
+      "type": 0,
+      "value": "保护操作的输入"
+    }
+  ],
+  "635Koz": [
+    {
+      "type": 0,
+      "value": "每周的星期一"
+    }
+  ],
+  "63CC7M": [
+    {
+      "type": 0,
+      "value": "加载输入时出错"
+    }
+  ],
+  "63fQWE": [
+    {
+      "type": 0,
+      "value": "显示所有高级参数"
+    }
+  ],
+  "6OSgRP": [
+    {
+      "type": 0,
+      "value": "测试映射"
+    }
+  ],
+  "6PdOcy": [
+    {
+      "type": 0,
+      "value": "取消"
+    }
+  ],
+  "6VV7OY": [
+    {
+      "type": 0,
+      "value": "超时值无效，必须与 ISO 8601 持续时间格式匹配"
+    }
+  ],
+  "6fDYzG": [
+    {
+      "type": 0,
+      "value": "未能加载架构。请重试。"
+    }
+  ],
+  "6gZ4I3": [
+    {
+      "type": 0,
+      "value": "函数 \""
+    },
+    {
+      "type": 1,
+      "value": "functionName"
+    },
+    {
+      "type": 0,
+      "value": "\" 分配的输入太多"
+    }
+  ],
+  "6gblzt": [
+    {
+      "type": 0,
+      "value": "已更新此操作"
+    }
+  ],
+  "6jiO7t": [
+    {
+      "type": 0,
+      "value": "显示运行"
+    }
+  ],
+  "6jsWn/": [
+    {
+      "type": 0,
+      "value": "必需。在其中进行搜索的集合。"
+    }
+  ],
+  "6kSpHL": [
+    {
+      "type": 0,
+      "value": "必需。包含多部件响应的操作的名称。"
+    }
+  ],
+  "6lLsi+": [
+    {
+      "type": 0,
+      "value": "将从逻辑应用中删除此步骤。"
+    }
+  ],
+  "6oqk+A": [
+    {
+      "type": 0,
+      "value": "上一页"
+    }
+  ],
+  "6pISgk": [
+    {
+      "type": 0,
+      "value": "若要准备好此工作流，请设置完以下操作:"
+    }
+  ],
+  "6qkBwz": [
+    {
+      "type": 0,
+      "value": "必需。要与被乘数 2 相乘的数字。"
+    }
+  ],
+  "6sGj3J": [
+    {
+      "type": 0,
+      "value": "创建流"
+    }
+  ],
+  "6sSPNb": [
+    {
+      "type": 1,
+      "value": "connectorName"
+    },
+    {
+      "type": 0,
+      "value": " 连接器"
+    }
+  ],
+  "6u6CS+": [
+    {
+      "type": 0,
+      "value": "必填。要为其查找索引的值。"
+    }
+  ],
+  "6uCEoM": [
+    {
+      "type": 0,
+      "value": "输入“"
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "”的有效值。"
+    }
+  ],
+  "6ueRYm": [
+    {
+      "type": 0,
+      "value": "开始时间"
+    }
+  ],
+  "6xRvni": [
+    {
+      "type": 0,
+      "value": "数据类型"
+    }
+  ],
+  "6yFUar": [
+    {
+      "type": 0,
+      "value": "当状态为“成功”时需要提供输出"
+    }
+  ],
+  "73iM9+": [
+    {
+      "type": 0,
+      "value": "更新源架构"
+    }
+  ],
+  "74e2xB": [
+    {
+      "type": 0,
+      "value": "创建新连接"
+    }
+  ],
+  "78Vggn": [
+    {
+      "type": 0,
+      "value": "输入用户名"
+    }
+  ],
+  "7EZ2oY": [
+    {
+      "type": 0,
+      "value": "(UTC-04:00) 特克斯和凯科斯群岛"
+    }
+  ],
+  "7Fyq1F": [
+    {
+      "type": 0,
+      "value": "无输入"
+    }
+  ],
+  "7GSk99": [
+    {
+      "type": 0,
+      "value": "确定"
+    }
+  ],
+  "7LmpNN": [
+    {
+      "type": 0,
+      "value": "此操作找不到参数 \""
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "\""
+    }
+  ],
+  "7PtWvu": [
+    {
+      "type": 0,
+      "value": "(UTC-05:00)东部时间(美国和加拿大)"
+    }
+  ],
+  "7QymrD": [
+    {
+      "type": 0,
+      "value": "必需。要从中获取子字符串的字符串。"
+    }
+  ],
+  "7S2wtE": [
+    {
+      "type": 0,
+      "value": "架构验证"
+    }
+  ],
+  "7ZR1xr": [
+    {
+      "type": 0,
+      "value": "添加操作"
+    }
+  ],
+  "7aJqIH": [
+    {
+      "type": 0,
+      "value": "可选。设置格式时要使用的区域设置(默认为 \"en-us\")。"
+    }
+  ],
+  "7gUE8h": [
+    {
+      "type": 0,
+      "value": "这会将工作流还原到在 Copilot 编辑之前所处的状态。如果在 Copilot 编辑之后对工作流进行了其他编辑，则将丢失这些编辑。此操作无法撤消。是否要继续?"
+    }
+  ],
+  "7jcTNd": [
+    {
+      "type": 0,
+      "value": "输入有效的电子邮件。"
+    }
+  ],
+  "7k9jXx": [
+    {
+      "type": 0,
+      "value": "状态代码"
+    }
+  ],
+  "7lnElz": [
+    {
+      "type": 0,
+      "value": "返回字符串时间戳自 1 月 1 日 0001 00:00:00 UT 以来的计时周期(100 纳秒间隔)数"
+    }
+  ],
+  "7lvqST": [
+    {
+      "type": 0,
+      "value": "无效"
+    }
+  ],
+  "7yEdSt": [
+    {
+      "type": 0,
+      "value": "显示更多"
+    }
+  ],
+  "7yFLpB": [
+    {
+      "type": 0,
+      "value": "复制 URL"
+    }
+  ],
+  "7zDk9N": [
+    {
+      "type": 0,
+      "value": "指数间隔"
+    }
+  ],
+  "7zsUT3": [
+    {
+      "type": 0,
+      "value": "不支持的身份验证类型“"
+    },
+    {
+      "type": 1,
+      "value": "authType"
+    },
+    {
+      "type": 0,
+      "value": "”。"
+    }
+  ],
+  "7zzPsK": [
+    {
+      "type": 0,
+      "value": "必需。可包含值的字符串。"
+    }
+  ],
+  "8+0teU": [
+    {
+      "type": 0,
+      "value": "参数名称已存在。"
+    }
+  ],
+  "83G5rr": [
+    {
+      "type": 0,
+      "value": "指定间隔。"
+    }
+  ],
+  "83PYuA": [
+    {
+      "type": 0,
+      "value": "(UTC-06:00)中部时间(美国和加拿大)"
+    }
+  ],
+  "84D91Y": [
+    {
+      "type": 0,
+      "value": "Pfx"
+    }
+  ],
+  "8BoVtZ": [
+    {
+      "type": 0,
+      "value": "执行 API 时出错 - "
+    },
+    {
+      "type": 1,
+      "value": "url"
+    }
+  ],
+  "8CWFEh": [
+    {
+      "type": 0,
+      "value": "必需。表达式为 \"true\" 时要返回的值。"
+    }
+  ],
+  "8DFwxH": [
+    {
+      "type": 0,
+      "value": "返回已设置格式的数字字符串"
+    }
+  ],
+  "8FjOSh": [
+    {
+      "type": 0,
+      "value": "必需。要检查其是否大于或等于比较对象的对象。"
+    }
+  ],
+  "8JEHiY": [
+    {
+      "type": 0,
+      "value": "星期六"
+    }
+  ],
+  "8L+oIz": [
+    {
+      "type": 0,
+      "value": "由于定义中存在多个触发器，因此无法呈现设计器。"
+    }
+  ],
+  "8LhQeL": [
+    {
+      "type": 0,
+      "value": "切换到代码视图模式"
+    }
+  ],
+  "8ND+Yc": [
+    {
+      "type": 0,
+      "value": "请为逻辑应用启用托管标识。"
+    }
+  ],
+  "8NFfuB": [
+    {
+      "type": 0,
+      "value": "操作"
+    }
+  ],
+  "8NUqpR": [
+    {
+      "type": 0,
+      "value": "描述应如何更改流。请添加尽可能详细的信息，包括要使用的连接器以及是否应包含任何内容。"
+    }
+  ],
+  "8U0KPg": [
+    {
+      "type": 0,
+      "value": "必需。要进行 URI 编码的字符串。"
+    }
+  ],
+  "8UfIAk": [
+    {
+      "type": 0,
+      "value": "以纯文本形式输入机密或使用安全参数"
+    }
+  ],
+  "8Y5xpK": [
+    {
+      "type": 0,
+      "value": "星期四"
+    }
+  ],
+  "8ZfbyZ": [
+    {
+      "type": 0,
+      "value": "(UTC+06:00)阿斯塔纳"
+    }
+  ],
+  "8baaNC": [
+    {
+      "type": 0,
+      "value": "不支持的令牌类型: "
+    },
+    {
+      "type": 1,
+      "value": "expressions"
+    }
+  ],
+  "8eKf/c": [
+    {
+      "type": 0,
+      "value": "(UTC+08:00)伊尔库次克"
+    }
+  ],
+  "8eTWaf": [
+    {
+      "type": 0,
+      "value": "重命名"
+    }
+  ],
+  "8j+a0n": [
+    {
+      "type": 0,
+      "value": "在异步模式下，如果远程服务器指示处理 202 (已接受)响应的请求已被接受，逻辑应用将一直轮询在响应的位置标头中指定的 URL，直到达到终止状态。"
+    }
+  ],
+  "8mDG0V": [
+    {
+      "type": 0,
+      "value": "此工作流在以下操作中存在参数验证错误: "
+    },
+    {
+      "type": 1,
+      "value": "invalidNodes"
+    }
+  ],
+  "8wr0zO": [
+    {
+      "type": 0,
+      "value": "将天数的整数值添加到传入的字符串时间戳"
+    }
+  ],
+  "8zkvmc": [
+    {
+      "type": 0,
+      "value": "测试"
+    }
+  ],
+  "9/UeTh": [
+    {
+      "type": 0,
+      "value": "返回在数组之间或对象之间具有共同元素的传入的单个数组或对象"
+    }
+  ],
+  "90Q7Pw": [
+    {
+      "type": 0,
+      "value": "值"
+    }
+  ],
+  "90o7sB": [
+    {
+      "type": 0,
+      "value": "文件"
+    }
+  ],
+  "93Gj/n": [
+    {
+      "type": 0,
+      "value": "行位置"
+    }
+  ],
+  "93svjx": [
+    {
+      "type": 0,
+      "value": "当逻辑应用启用系统分配的托管标识时，不支持用户标识。"
+    }
+  ],
+  "96JG8I": [
+    {
+      "type": 1,
+      "value": "operationName"
+    },
+    {
+      "type": 0,
+      "value": " 操作"
+    }
+  ],
+  "99vsJy": [
+    {
+      "type": 0,
+      "value": "连接器"
+    }
+  ],
+  "9EmN2M": [
+    {
+      "type": 0,
+      "value": "取消"
+    }
+  ],
+  "9IDWMU": [
+    {
+      "type": 0,
+      "value": "关闭"
+    }
+  ],
+  "9JuvQ4": [
+    {
+      "type": 0,
+      "value": "返回值的数据 URI"
+    }
+  ],
+  "9Jv3+1": [
+    {
+      "type": 0,
+      "value": "返回一个对象，此对象具有其他的属性值对"
+    }
+  ],
+  "9LLnyJ": [
+    {
+      "type": 0,
+      "value": "(UTC-03:00)巴西利亚"
+    }
+  ],
+  "9QNZSj": [
+    {
+      "type": 0,
+      "value": "还原流"
+    }
+  ],
+  "9QS9a3": [
+    {
+      "type": 0,
+      "value": "将 \""
+    },
+    {
+      "type": 1,
+      "value": "selectedOperation"
+    },
+    {
+      "type": 0,
+      "value": "\" 替换为"
+    }
+  ],
+  "9SuA/E": [
+    {
+      "type": 0,
+      "value": "12"
+    }
+  ],
+  "9W0lck": [
+    {
+      "type": 0,
+      "value": "拆分对象值 \""
+    },
+    {
+      "type": 1,
+      "value": "splitOn"
+    },
+    {
+      "type": 0,
+      "value": "\" 无效，在输出中找不到它。"
+    }
+  ],
+  "9YGcT2": [
+    {
+      "type": 0,
+      "value": "ChildErrors"
+    }
+  ],
+  "9YZ873": [
+    {
+      "type": 0,
+      "value": "文本"
+    }
+  ],
+  "9aj+el": [
+    {
+      "type": 0,
+      "value": "默认"
+    }
+  ],
+  "9atGYe": [
+    {
+      "type": 0,
+      "value": "添加"
+    }
+  ],
+  "9djnqI": [
+    {
+      "type": 0,
+      "value": "返回这两个数字相加后的结果"
+    }
+  ],
+  "9u/Ae3": [
+    {
+      "type": 0,
+      "value": "如果两个参数均为 true，则返回 true"
+    }
+  ],
+  "9wX3u9": [
+    {
+      "type": 0,
+      "value": "发送反馈"
+    }
+  ],
+  "9x8hg8": [
+    {
+      "type": 0,
+      "value": "在基本模式下编辑"
+    }
+  ],
+  "9yLPwo": [
+    {
+      "type": 0,
+      "value": "有关更多详细信息，可以参阅以下资源"
+    }
+  ],
+  "A5Ferh": [
+    {
+      "type": 0,
+      "value": "已从视图中删除源元素。"
+    }
+  ],
+  "A8l+k7": [
+    {
+      "type": 0,
+      "value": "执行以下 API 参数时出错: \""
+    },
+    {
+      "type": 1,
+      "value": "parameters"
+    },
+    {
+      "type": 0,
+      "value": "\""
+    }
+  ],
+  "ADM1Z8": [
+    {
+      "type": 0,
+      "value": "身份验证类型"
+    }
+  ],
+  "AEguAy": [
+    {
+      "type": 0,
+      "value": "空值"
+    }
+  ],
+  "AGCm1p": [
+    {
+      "type": 0,
+      "value": "名称"
+    }
+  ],
+  "AHB418": [
+    {
+      "type": 0,
+      "value": "筛选器操作"
+    }
+  ],
+  "ANGw2o": [
+    {
+      "type": 0,
+      "value": "单击以获取有关静态结果的详细信息"
+    }
+  ],
+  "AO6T9u": [
+    {
+      "type": 0,
+      "value": "完成"
+    }
+  ],
+  "AQ7Zxc": [
+    {
+      "type": 0,
+      "value": "返回字符串中值的第 n 次匹配项的索引(不区分大小写，固定区域性)。"
+    }
+  ],
+  "Af+Ve0": [
+    {
+      "type": 0,
+      "value": "(UTC+11:00) 布干维尔岛"
+    }
+  ],
+  "AheXMN": [
+    {
+      "type": 0,
+      "value": "选择频率。"
+    }
+  ],
+  "AhvQ7r": [
+    {
+      "type": 0,
+      "value": "删除和清除所有高级参数及其值"
+    }
+  ],
+  "Ak2Lka": [
+    {
+      "type": 0,
+      "value": "未连接到"
+    }
+  ],
+  "AnX5yC": [
+    {
+      "type": 0,
+      "value": "用户名"
+    }
+  ],
+  "AoalgS": [
+    {
+      "type": 0,
+      "value": "正在加载更多结果..."
+    }
+  ],
+  "ArTh0/": [
+    {
+      "type": 0,
+      "value": "必需。要编码为 base64 表示形式的字符串。"
+    }
+  ],
+  "AsqIUa": [
+    {
+      "type": 0,
+      "value": "最大时间间隔"
+    }
+  ],
+  "Az0QvG": [
+    {
+      "type": 0,
+      "value": "自动"
+    }
+  ],
+  "B/JzwK": [
+    {
+      "offset": 0,
+      "options": {
+        "=0": {
+          "value": [
+            {
+              "type": 0,
+              "value": "0 个操作"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " 个操作"
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "actionCount"
+    }
+  ],
+  "B/gCWM": [
+    {
+      "type": 0,
+      "value": "错误"
+    }
+  ],
+  "B2s0iG": [
+    {
+      "type": 0,
+      "value": "必需。要检索的部件的索引。"
+    }
+  ],
+  "B59BCg": [
+    {
+      "type": 0,
+      "value": "没有可用的动态内容"
+    }
+  ],
+  "B999mz": [
+    {
+      "type": 0,
+      "value": "已删除行。"
+    }
+  ],
+  "BBD8Em": [
+    {
+      "type": 0,
+      "value": "密钥"
+    }
+  ],
+  "BCAnZP": [
+    {
+      "type": 0,
+      "value": "一个单格式说明符字符或一个自定义格式模式，它指示如何设置此时间戳的值的格式。如果未提供格式，则使用 ISO 8601 格式(\"o\")。"
+    }
+  ],
+  "BCgiRh": [
+    {
+      "type": 0,
+      "value": "警告: 自定义值与此输入的允许类型之一不匹配"
+    }
+  ],
+  "BFTwRN": [
+    {
+      "type": 0,
+      "value": "重试成功"
+    }
+  ],
+  "BGw6eH": [
+    {
+      "type": 0,
+      "value": "缺少身份验证类型“"
+    },
+    {
+      "type": 1,
+      "value": "authType"
+    },
+    {
+      "type": 0,
+      "value": "”所需的属性“"
+    },
+    {
+      "type": 1,
+      "value": "missingProperties"
+    },
+    {
+      "type": 0,
+      "value": "”"
+    }
+  ],
+  "BHe7qY": [
+    {
+      "type": 0,
+      "value": "必需。URI 编码字符串。"
+    }
+  ],
+  "BIzX3S": [
+    {
+      "type": 0,
+      "value": "了解有关撤消操作的详细信息"
+    }
+  ],
+  "BJNUxN": [
+    {
+      "type": 0,
+      "value": "路径参数"
+    }
+  ],
+  "BKL0ZG": [
+    {
+      "type": 0,
+      "value": "开始时间"
+    }
+  ],
+  "BPYdTX": [
+    {
+      "type": 0,
+      "value": "未指定"
+    }
+  ],
+  "BQCPY7": [
+    {
+      "type": 0,
+      "value": "必需。要从中解码 URL 不安全字符的字符串。"
+    }
+  ],
+  "BQSRV0": [
+    {
+      "type": 0,
+      "value": "以纯文本形式输入密码或使用安全参数"
+    }
+  ],
+  "BS3gy8": [
+    {
+      "type": 0,
+      "value": "对不起，出现错误。请重试。"
+    }
+  ],
+  "BSgavq": [
+    {
+      "type": 0,
+      "value": "示例: 周一、周五"
+    }
+  ],
+  "BUutcC": [
+    {
+      "type": 0,
+      "value": "展开同辈元素的列表"
+    }
+  ],
+  "BYrP8F": [
+    {
+      "type": 0,
+      "value": "数字"
+    }
+  ],
+  "BeqBP7": [
+    {
+      "type": 0,
+      "value": "自动解压缩"
+    }
+  ],
+  "Bewmet": [
+    {
+      "type": 0,
+      "value": "数组"
+    }
+  ],
+  "Bl4Iv0": [
+    {
+      "type": 0,
+      "value": "(UTC+08:00)乌兰巴托"
+    }
+  ],
+  "Bn8iTS": [
+    {
+      "type": 0,
+      "value": "状态类型:"
+    }
+  ],
+  "BoMvF2": [
+    {
+      "type": 0,
+      "value": "折叠"
+    }
+  ],
+  "BogxJl": [
+    {
+      "type": 0,
+      "value": "(UTC+04:00) 伊热夫斯克，萨马拉"
+    }
+  ],
+  "BrWQ0Z": [
+    {
+      "type": 0,
+      "value": "选择托管标识"
+    }
+  ],
+  "BtL7UI": [
+    {
+      "type": 0,
+      "value": "此步骤无需其他信息。可在后续步骤中使用该输出。"
+    }
+  ],
+  "BuYrD3": [
+    {
+      "type": 0,
+      "value": "一个格式说明符，用于指示如何设置此 Guid 值的格式。"
+    }
+  ],
+  "BvCnOv": [
+    {
+      "type": 0,
+      "value": "设置运行的跟踪 ID。对于拆分，此跟踪 ID 用于正在启动的请求。"
+    }
+  ],
+  "BxITRH": [
+    {
+      "type": 0,
+      "value": "必需。要检查其是否大于比较对象的对象。"
+    }
+  ],
+  "BynK4X": [
+    {
+      "type": 0,
+      "value": "提问"
+    }
+  ],
+  "C1cy54": [
+    {
+      "type": 0,
+      "value": "正文"
+    }
+  ],
+  "C4NQ1J": [
+    {
+      "type": 0,
+      "value": "按下述继续标记检索要满足指定阈值的项目。由于连接器的页面大小，返回的数量可能超出阈值。"
+    }
+  ],
+  "CBzSJo": [
+    {
+      "type": 0,
+      "value": "True"
+    }
+  ],
+  "CG772M": [
+    {
+      "type": 0,
+      "value": "需要连接"
+    }
+  ],
+  "CaajcD": [
+    {
+      "type": 0,
+      "value": "(UTC+13:00)萨摩亚"
+    }
+  ],
+  "Cb6IEq": [
+    {
+      "type": 0,
+      "value": "(UTC-05:00)哈瓦那"
+    }
+  ],
+  "Cb8pv0": [
+    {
+      "type": 0,
+      "value": "(UTC-02:00)中大西洋 - 旧称"
+    }
+  ],
+  "Ci41Od": [
+    {
+      "type": 0,
+      "value": "(UTC+12:00)奥克兰，惠灵顿"
+    }
+  ],
+  "Ciol6I": [
+    {
+      "type": 0,
+      "value": "输出"
+    }
+  ],
+  "Cj3/LJ": [
+    {
+      "type": 0,
+      "value": "必须提供参数名称。"
+    }
+  ],
+  "ClZW2r": [
+    {
+      "type": 0,
+      "value": "值"
+    }
+  ],
+  "CsPY74": [
+    {
+      "type": 0,
+      "value": "凭据类型"
+    }
+  ],
+  "CvoqQ6": [
+    {
+      "type": 0,
+      "value": "请输入或选择一个日期(YYYY-MM-DD)"
+    }
+  ],
+  "Cy0pyB": [
+    {
+      "type": 0,
+      "value": "(UTC+09:30)阿德莱德"
+    }
+  ],
+  "CyT8H7": [
+    {
+      "type": 0,
+      "value": "接受 \"Number\"、\"Integer\" 和 \"Decimal\" 类型。"
+    }
+  ],
+  "CypYLs": [
+    {
+      "type": 0,
+      "value": "在 "
+    },
+    {
+      "type": 1,
+      "value": "parentName"
+    },
+    {
+      "type": 0,
+      "value": " 和 "
+    },
+    {
+      "type": 1,
+      "value": "childName"
+    },
+    {
+      "type": 0,
+      "value": " 之间插入新步骤"
+    }
+  ],
+  "Czt6YV": [
+    {
+      "type": 0,
+      "value": "在 "
+    },
+    {
+      "type": 1,
+      "value": "times"
+    }
+  ],
+  "D+Ptnq": [
+    {
+      "type": 0,
+      "value": "返回 URI 的路径和查询"
+    }
+  ],
+  "D/xTXV": [
+    {
+      "type": 0,
+      "value": "显示源架构"
+    }
+  ],
+  "D1lgsT": [
+    {
+      "type": 0,
+      "value": "必填。要从中移除前导空格和尾随空格的字符串。"
+    }
+  ],
+  "D5FIKL": [
+    {
+      "type": 0,
+      "value": "从示例粘贴"
+    }
+  ],
+  "DDIIAQ": [
+    {
+      "type": 0,
+      "value": "节点"
+    }
+  ],
+  "DEKsll": [
+    {
+      "type": 0,
+      "value": "重试策略间隔无效，必须与 ISO 8601 持续时间格式匹配"
+    }
+  ],
+  "DEu7oK": [
+    {
+      "type": 0,
+      "value": "(UTC-07:00)亚利桑那州"
+    }
+  ],
+  "DGMwU4": [
+    {
+      "type": 0,
+      "value": "使用示例有效负载生成架构"
+    }
+  ],
+  "DJW8RE": [
+    {
+      "type": 0,
+      "value": "选择一个值"
+    }
+  ],
+  "DMuwuJ": [
+    {
+      "type": 0,
+      "value": "日期"
+    }
+  ],
+  "DQV7aK": [
+    {
+      "type": 0,
+      "value": "Alt/Option + 单击以下载 \""
+    },
+    {
+      "type": 1,
+      "value": "displayName"
+    },
+    {
+      "type": 0,
+      "value": "\""
+    }
+  ],
+  "DS/WmZ": [
+    {
+      "type": 0,
+      "value": "已添加函数"
+    }
+  ],
+  "DWd9vy": [
+    {
+      "type": 0,
+      "value": "每周"
+    }
+  ],
+  "DWsh56": [
+    {
+      "type": 0,
+      "value": "输入客户端 ID"
+    }
+  ],
+  "DYXoEM": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00)基希讷乌"
+    }
+  ],
+  "DZZ3fj": [
+    {
+      "type": 0,
+      "value": "持续时间"
+    }
+  ],
+  "DfXxoX": [
+    {
+      "type": 0,
+      "value": "选择现有连接或创建新连接"
+    }
+  ],
+  "Dhu3IS": [
+    {
+      "type": 0,
+      "value": "显示缩略图"
+    }
+  ],
+  "DjbVKU": [
+    {
+      "type": 0,
+      "value": "OAuth"
+    }
+  ],
+  "DkF25I": [
+    {
+      "type": 0,
+      "value": "展开静态结果"
+    }
+  ],
+  "Dm0zAO": [
+    {
+      "type": 0,
+      "value": "此操作单个出站请求的最大持续时间。如果请求在运行重试后未在此限制内完成，则操作会失败"
+    }
+  ],
+  "DsPDVB": [
+    {
+      "type": 0,
+      "value": "触发器条件不得为空"
+    }
+  ],
+  "DuoHXI": [
+    {
+      "type": 0,
+      "value": "添加输入"
+    }
+  ],
+  "DyYcJZ": [
+    {
+      "type": 0,
+      "value": "随后运行"
+    }
+  ],
+  "DysO/Q": [
+    {
+      "type": 0,
+      "value": "Ctrl + Y"
+    }
+  ],
+  "E+HsWF": [
+    {
+      "type": 0,
+      "value": "正在登录..."
+    }
+  ],
+  "E+iim4": [
+    {
+      "type": 0,
+      "value": "选择时区。"
+    }
+  ],
+  "E3+TAA": [
+    {
+      "type": 0,
+      "value": "架构节点 \""
+    },
+    {
+      "type": 1,
+      "value": "nodeName"
+    },
+    {
+      "type": 0,
+      "value": "\" 具有类型不匹配的输入"
+    }
+  ],
+  "E7NzDN": [
+    {
+      "type": 0,
+      "value": "设置"
+    }
+  ],
+  "E8iqLl": [
+    {
+      "type": 0,
+      "value": "(UTC+11:00)库页岛"
+    }
+  ],
+  "ECZC6Y": [
+    {
+      "type": 0,
+      "value": "将参数转换为小数"
+    }
+  ],
+  "ERAWZA": [
+    {
+      "type": 0,
+      "value": "响应"
+    }
+  ],
+  "ERVorY": [
+    {
+      "type": 0,
+      "value": "创建组"
+    }
+  ],
+  "ESZXfC": [
+    {
+      "type": 0,
+      "value": "在这些分钟"
+    }
+  ],
+  "EUQDM6": [
+    {
+      "type": 0,
+      "value": "添加操作"
+    }
+  ],
+  "EZz5q7": [
+    {
+      "type": 0,
+      "value": "必填。开始提取子字符串的位置的索引。"
+    }
+  ],
+  "Ea/fr+": [
+    {
+      "type": 0,
+      "value": "每 "
+    },
+    {
+      "type": 1,
+      "value": "interval"
+    },
+    {
+      "type": 0,
+      "value": " 天"
+    }
+  ],
+  "EaTGcN": [
+    {
+      "type": 0,
+      "value": "(UTC+01:00)中非西部"
+    }
+  ],
+  "EdeHLs": [
+    {
+      "type": 0,
+      "value": "切换到输入整个数组"
+    }
+  ],
+  "EdzoIs": [
+    {
+      "type": 0,
+      "value": "1"
+    }
+  ],
+  "EiRMD4": [
+    {
+      "type": 0,
+      "value": "登录以创建与 "
+    },
+    {
+      "type": 1,
+      "value": "connectorDisplayName"
+    },
+    {
+      "type": 0,
+      "value": " 的连接。"
+    }
+  ],
+  "EjXdAm": [
+    {
+      "type": 0,
+      "value": "密码"
+    }
+  ],
+  "Ek0mSE": [
+    {
+      "type": 0,
+      "value": "查看此操作的请求历史记录"
+    }
+  ],
+  "EptZhD": [
+    {
+      "type": 0,
+      "value": "输入有效的表。"
+    }
+  ],
+  "EqX3Mi": [
+    {
+      "type": 0,
+      "value": "设置这些连接以在流中使用它们。"
+    }
+  ],
+  "EurkzL": [
+    {
+      "type": 0,
+      "value": "请选择“是”或“否”"
+    }
+  ],
+  "F3IDl8": [
+    {
+      "type": 0,
+      "value": "必需。要加上的指定时间单位数。"
+    }
+  ],
+  "F6+icQ": [
+    {
+      "type": 0,
+      "value": "重试策略最大间隔无效，必须与 ISO 8601 持续时间格式匹配"
+    }
+  ],
+  "F9dR1Q": [
+    {
+      "type": 0,
+      "value": "添加"
+    }
+  ],
+  "FBNevf": [
+    {
+      "type": 0,
+      "value": "转到操作"
+    }
+  ],
+  "FDF4Qb": [
+    {
+      "type": 0,
+      "value": "返回定义中定义的参数值"
+    }
+  ],
+  "FDWfqM": [
+    {
+      "type": 0,
+      "value": "安全输出"
+    }
+  ],
+  "FIL1Nt": [
+    {
+      "type": 0,
+      "value": "条件过于复杂或无效。无法切换到基本模式"
+    }
+  ],
+  "FIT7i0": [
+    {
+      "type": 0,
+      "value": "20"
+    }
+  ],
+  "FL/0Zp": [
+    {
+      "type": 0,
+      "value": "(UTC-07:00)奇瓦瓦，拉巴斯，马扎特兰"
+    }
+  ],
+  "FMA0Q0": [
+    {
+      "type": 0,
+      "value": "你的流已更新。"
+    }
+  ],
+  "FN5zHQ": [
+    {
+      "type": 0,
+      "value": "返回由开始索引和结束索引定义的字符串部分"
+    }
+  ],
+  "FT3jt6": [
+    {
+      "type": 0,
+      "value": "Webhook 引用信息"
+    }
+  ],
+  "FUhNu4": [
+    {
+      "type": 0,
+      "value": "拆分对象"
+    }
+  ],
+  "FUuFlC": [
+    {
+      "type": 0,
+      "value": "默认"
+    }
+  ],
+  "FXLR5M": [
+    {
+      "offset": 0,
+      "options": {
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " 小时"
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "hours"
+    }
+  ],
+  "FYtDP0": [
+    {
+      "type": 0,
+      "value": "输入一个电子邮件地址。"
+    }
+  ],
+  "Fcvgvg": [
+    {
+      "type": 0,
+      "value": "搜索"
+    }
+  ],
+  "FiyQjU": [
+    {
+      "type": 0,
+      "value": "2"
+    }
+  ],
+  "FslNgF": [
+    {
+      "type": 0,
+      "value": "状态"
+    }
+  ],
+  "FxQ2Ts": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00)的黎波里"
+    }
+  ],
+  "G+XvKn": [
+    {
+      "type": 0,
+      "value": "返回数组的每一项都由分隔符联接的字符串"
+    }
+  ],
+  "G0XYrd": [
+    {
+      "type": 0,
+      "value": "必需。可包含值的字符串。"
+    }
+  ],
+  "GAY7b8": [
+    {
+      "type": 0,
+      "value": "返回 URI 的查询"
+    }
+  ],
+  "GD3m4X": [
+    {
+      "type": 0,
+      "value": "已展开"
+    }
+  ],
+  "GDUGlm": [
+    {
+      "type": 0,
+      "value": "输入机构"
+    }
+  ],
+  "GE14Xd": [
+    {
+      "type": 0,
+      "value": "(UTC-03:00) 布宜诺斯艾利斯"
+    }
+  ],
+  "GEB1on": [
+    {
+      "type": 0,
+      "value": "这包含一个介于 0 和 59 之间的值"
+    }
+  ],
+  "GIUSQs": [
+    {
+      "type": 0,
+      "value": "按数据类型筛选"
+    }
+  ],
+  "GLd3MU": [
+    {
+      "type": 0,
+      "value": "必需。要在“包含”集合中查找的对象。"
+    }
+  ],
+  "GQnN3U": [
+    {
+      "type": 0,
+      "value": "解释流"
+    }
+  ],
+  "GYvF54": [
+    {
+      "type": 0,
+      "value": "引用函数"
+    }
+  ],
+  "GZ8MDP": [
+    {
+      "type": 1,
+      "value": "s1"
+    },
+    {
+      "type": 0,
+      "value": "/"
+    },
+    {
+      "type": 1,
+      "value": "s2"
+    }
+  ],
+  "GcG0qf": [
+    {
+      "type": 0,
+      "value": "如果参数为 false，则返回 true"
+    }
+  ],
+  "GdGm4T": [
+    {
+      "type": 0,
+      "value": "更多命令"
+    }
+  ],
+  "Ggkf4s": [
+    {
+      "type": 0,
+      "value": "开始"
+    }
+  ],
+  "Gi7czD": [
+    {
+      "type": 0,
+      "value": "源架构元素"
+    }
+  ],
+  "Gl5khw": [
+    {
+      "type": 0,
+      "value": "在这些小时"
+    }
+  ],
+  "Gmya+V": [
+    {
+      "type": 0,
+      "value": "不可用"
+    }
+  ],
+  "GreYWQ": [
+    {
+      "type": 0,
+      "value": "输入参数名称。"
+    }
+  ],
+  "GtDOFg": [
+    {
+      "type": 0,
+      "value": "取消所选内容"
+    }
+  ],
+  "GyUe4C": [
+    {
+      "type": 0,
+      "value": "修改有关函数的选项"
+    }
+  ],
+  "GzQQqH": [
+    {
+      "type": 0,
+      "value": "数组"
+    }
+  ],
+  "Gziyq8": [
+    {
+      "type": 0,
+      "value": "文件内容"
+    }
+  ],
+  "H/QVod": [
+    {
+      "type": 0,
+      "value": "工作流在以下操作上存在设置验证错误: "
+    },
+    {
+      "type": 1,
+      "value": "invalidNodes"
+    }
+  ],
+  "H17jEE": [
+    {
+      "type": 0,
+      "value": "URI 分析函数"
+    }
+  ],
+  "H1wnHr": [
+    {
+      "type": 0,
+      "value": "必填。要切片的字符串。"
+    }
+  ],
+  "H2WdiZ": [
+    {
+      "type": 0,
+      "value": "输入有效的分钟值(0-59)并以逗号隔开，例如 15、30"
+    }
+  ],
+  "H5VikC": [
+    {
+      "type": 0,
+      "value": "连接无效，映射不得形成闭环。"
+    }
+  ],
+  "H8bEUn": [
+    {
+      "type": 0,
+      "value": "必需。要从中减除减数的数字。"
+    }
+  ],
+  "H9CZTr": [
+    {
+      "type": 0,
+      "value": "表达式无效。请确保使用单引号。"
+    }
+  ],
+  "HDqP2g": [
+    {
+      "type": 0,
+      "value": "必需。要返回的表单数据值的键名称。"
+    }
+  ],
+  "HGA9iU": [
+    {
+      "type": 0,
+      "value": "当状态为“失败”时需要提供错误及其代码"
+    }
+  ],
+  "HH970i": [
+    {
+      "type": 0,
+      "value": "月份"
+    }
+  ],
+  "HILmmE": [
+    {
+      "type": 0,
+      "value": "必填。要排序的集合。"
+    }
+  ],
+  "HMiE+4": [
+    {
+      "type": 0,
+      "value": "退出全屏"
+    }
+  ],
+  "HSJLCu": [
+    {
+      "type": 0,
+      "value": "标头"
+    }
+  ],
+  "HX3Xmx": [
+    {
+      "type": 0,
+      "value": "正在删除..."
+    }
+  ],
+  "HYhDYB": [
+    {
+      "type": 0,
+      "value": "(UTC-02:00)协调世界时-02"
+    }
+  ],
+  "Hbqlzk": [
+    {
+      "type": 0,
+      "value": "插入表达式"
+    }
+  ],
+  "HfinO2": [
+    {
+      "type": 0,
+      "value": "切换到数组项的详细信息输入"
+    }
+  ],
+  "HfmDk9": [
+    {
+      "type": 0,
+      "value": "编辑流"
+    }
+  ],
+  "HfrUId": [
+    {
+      "type": 0,
+      "value": "请选择卡片以查看内容"
+    }
+  ],
+  "HmcHoE": [
+    {
+      "type": 0,
+      "value": "提取清单时出错"
+    }
+  ],
+  "HsO1Rd": [
+    {
+      "type": 1,
+      "value": "addIcon"
+    },
+    {
+      "type": 0,
+      "value": " 安装网关"
+    }
+  ],
+  "HzS2gJ": [
+    {
+      "type": 0,
+      "value": "不支持将动态内容作为身份验证中的属性。"
+    }
+  ],
+  "I+85NV": [
+    {
+      "type": 0,
+      "value": "通过此操作提交"
+    }
+  ],
+  "I1CYNA": [
+    {
+      "type": 0,
+      "value": "身份验证类型“"
+    },
+    {
+      "type": 1,
+      "value": "authType"
+    },
+    {
+      "type": 0,
+      "value": "”的属性“"
+    },
+    {
+      "type": 1,
+      "value": "invalidProperties"
+    },
+    {
+      "type": 0,
+      "value": "”无效。"
+    }
+  ],
+  "I3mifR": [
+    {
+      "type": 0,
+      "value": "已跳过"
+    }
+  ],
+  "I41vZ/": [
+    {
+      "type": 0,
+      "value": "(UTC-11:00)协调世界时-11"
+    }
+  ],
+  "IA+Ogm": [
+    {
+      "type": 0,
+      "value": "22"
+    }
+  ],
+  "IAmvpa": [
+    {
+      "type": 0,
+      "value": "(UTC-08:00) 协调世界时-08"
+    }
+  ],
+  "IHMd3X": [
+    {
+      "type": 0,
+      "value": "示例: "
+    },
+    {
+      "type": 1,
+      "value": "url"
+    }
+  ],
+  "IPbMdl": [
+    {
+      "type": 0,
+      "value": "代码视图"
+    }
+  ],
+  "IPwWgu": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00)耶路撒冷"
+    }
+  ],
+  "IQyOth": [
+    {
+      "type": 0,
+      "value": "如果可用，将从你为流选择的连接器和操作中自动生成动态内容。"
+    }
+  ],
+  "IS4vNX": [
+    {
+      "type": 0,
+      "value": "(UTC-12:00)国际日期变更线西"
+    }
+  ],
+  "ISaPr+": [
+    {
+      "type": 0,
+      "value": "创建、管理逻辑应用参数，并为其指定一个默认值。"
+    }
+  ],
+  "IW2MjQ": [
+    {
+      "type": 0,
+      "value": "将传入的字符串时间戳从 UTC 转换为目标时区"
+    }
+  ],
+  "IXy91L": [
+    {
+      "type": 0,
+      "value": "添加目标架构"
+    }
+  ],
+  "IdOhPY": [
+    {
+      "type": 1,
+      "value": "label"
+    },
+    {
+      "type": 0,
+      "value": " 若要添加动态数据，请按 Alt + \"/\" 键。"
+    }
+  ],
+  "If+p6C": [
+    {
+      "type": 0,
+      "value": "(UTC+09:00)雅库茨克"
+    }
+  ],
+  "IsVhkH": [
+    {
+      "type": 0,
+      "value": "无属性"
+    }
+  ],
+  "IsbbsG": [
+    {
+      "type": 0,
+      "value": "当有新项时"
+    }
+  ],
+  "IxWip7": [
+    {
+      "type": 0,
+      "value": "(UTC+03:00)莫斯科，圣彼得堡，伏尔加格勒"
+    }
+  ],
+  "J/Kz1j": [
+    {
+      "type": 0,
+      "value": "异步模式"
+    }
+  ],
+  "J2Su6x": [
+    {
+      "type": 0,
+      "value": "字号的格式设置选项"
+    }
+  ],
+  "J5/7vN": [
+    {
+      "type": 0,
+      "value": "使用固定区域性的大小写规则将字符串转换为小写"
+    }
+  ],
+  "J55HA9": [
+    {
+      "type": 0,
+      "value": "操作无效。项目数: "
+    },
+    {
+      "type": 1,
+      "value": "length"
+    },
+    {
+      "type": 0,
+      "value": "。"
+    }
+  ],
+  "J5TTF6": [
+    {
+      "type": 0,
+      "value": "接受的数据类型: "
+    },
+    {
+      "type": 1,
+      "value": "type"
+    }
+  ],
+  "J62n9E": [
+    {
+      "type": 0,
+      "value": "失败"
+    }
+  ],
+  "J9wWry": [
+    {
+      "type": 0,
+      "value": "参数"
+    }
+  ],
+  "JAIV0h": [
+    {
+      "type": 0,
+      "value": "当前映射包含 "
+    },
+    {
+      "type": 1,
+      "value": "numOfIssues"
+    },
+    {
+      "type": 0,
+      "value": " 个 "
+    },
+    {
+      "type": 1,
+      "value": "issue"
+    },
+    {
+      "type": 0,
+      "value": "。"
+    }
+  ],
+  "JErLDT": [
+    {
+      "type": 0,
+      "value": "删除"
+    }
+  ],
+  "JJyT88": [
+    {
+      "type": 0,
+      "value": "操作已撤消"
+    }
+  ],
+  "JKZpcd": [
+    {
+      "type": 0,
+      "value": "Copilot 聊天已取消"
+    }
+  ],
+  "JNQHws": [
+    {
+      "type": 0,
+      "value": "必需。包含时间的一个字符串。"
+    }
+  ],
+  "JSfWJ0": [
+    {
+      "type": 0,
+      "value": "必需。转换为布尔值的值。"
+    }
+  ],
+  "JWl/LD": [
+    {
+      "type": 0,
+      "value": "添加新项"
+    }
+  ],
+  "Jaz3EC": [
+    {
+      "type": 0,
+      "value": "将传入的字符串时间戳从源时区转换为目标时区"
+    }
+  ],
+  "JbgTET": [
+    {
+      "type": 0,
+      "value": "方法"
+    }
+  ],
+  "JgugQX": [
+    {
+      "type": 0,
+      "value": "输入有效的数组。"
+    }
+  ],
+  "Ji6663": [
+    {
+      "type": 0,
+      "value": "如果字典包含密钥、数组包含值或字符串包含子字符串，则返回 true"
+    }
+  ],
+  "Jil/Wa": [
+    {
+      "type": 0,
+      "value": "设置无效"
+    }
+  ],
+  "JjTfC7": [
+    {
+      "type": 0,
+      "value": "必填。要设置格式的数字。"
+    }
+  ],
+  "JnlcZQ": [
+    {
+      "type": 0,
+      "value": "名称:"
+    }
+  ],
+  "Jq2Y/o": [
+    {
+      "type": 0,
+      "value": "必填。数值格式字符串。"
+    }
+  ],
+  "JzRzVp": [
+    {
+      "type": 0,
+      "value": "(UTC-09:00)阿拉斯加"
+    }
+  ],
+  "K50znc": [
+    {
+      "type": 0,
+      "value": "必填。要将新属性添加到的对象。"
+    }
+  ],
+  "K7/DnZ": [
+    {
+      "type": 0,
+      "value": "输出"
+    }
+  ],
+  "KBaGkS": [
+    {
+      "type": 0,
+      "value": "更改连接引用"
+    }
+  ],
+  "KV4uky": [
+    {
+      "type": 0,
+      "value": "当有新项时..."
+    }
+  ],
+  "KX1poC": [
+    {
+      "offset": 0,
+      "options": {
+        "=0": {
+          "value": [
+            {
+              "type": 0,
+              "value": "0 个案例"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " 个案例"
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "actionCount"
+    }
+  ],
+  "KYX5Do": [
+    {
+      "type": 0,
+      "value": "下划线(⌘U)"
+    }
+  ],
+  "KZOa5l": [
+    {
+      "type": 0,
+      "value": "取消"
+    }
+  ],
+  "KlDW+5": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00)贝鲁特"
+    }
+  ],
+  "KnjcUV": [
+    {
+      "type": 0,
+      "value": "已忽略"
+    }
+  ],
+  "KwGA+K": [
+    {
+      "type": 0,
+      "value": "选择函数应用资源"
+    }
+  ],
+  "L+PY+j": [
+    {
+      "type": 0,
+      "value": "必需。要从集合中获取的对象数。必须是一个正整数。"
+    }
+  ],
+  "L0UAzs": [
+    {
+      "type": 0,
+      "value": "返回字符串时间戳星期组件的某天"
+    }
+  ],
+  "L0hujG": [
+    {
+      "type": 0,
+      "value": "当显示令牌选取器时添加动态内容的按钮"
+    }
+  ],
+  "L4RJF0": [
+    {
+      "type": 0,
+      "value": "没有搜索到结果"
+    }
+  ],
+  "LBH8UV": [
+    {
+      "type": 0,
+      "value": "展开"
+    }
+  ],
+  "LBbhCu": [
+    {
+      "type": 0,
+      "value": "删除工作流图"
+    }
+  ],
+  "LCRHQ9": [
+    {
+      "type": 0,
+      "value": "(UTC+12:00)斐济"
+    }
+  ],
+  "LCXZLM": [
+    {
+      "type": 0,
+      "value": "正在加载函数应用..."
+    }
+  ],
+  "LElaX3": [
+    {
+      "type": 0,
+      "value": "下一个流建议"
+    }
+  ],
+  "LMB8am": [
+    {
+      "type": 0,
+      "value": "正在创建..."
+    }
+  ],
+  "LPdGu/": [
+    {
+      "type": 0,
+      "value": "当状态为“失败”时不应提供输出"
+    }
+  ],
+  "LR/3Lr": [
+    {
+      "type": 0,
+      "value": "配置"
+    }
+  ],
+  "LRAhSA": [
+    {
+      "type": 0,
+      "value": "启用后，此操作将使用 Dataverse 触发器中“运行方式”设置中的用户身份运行"
+    }
+  ],
+  "LS8rfZ": [
+    {
+      "type": 0,
+      "value": "返回 URI 的方案"
+    }
+  ],
+  "LTTgWN": [
+    {
+      "type": 0,
+      "value": "必填。要从中获取第一个对象的集合。"
+    }
+  ],
+  "LV/BTE": [
+    {
+      "type": 0,
+      "value": "正在加载 API 管理服务实例..."
+    }
+  ],
+  "LV3k48": [
+    {
+      "type": 0,
+      "value": "(UTC+01:00)贝尔格莱德，布拉迪斯拉发，布达佩斯，卢布尔雅那，布拉格"
+    }
+  ],
+  "LZm3ze": [
+    {
+      "type": 0,
+      "value": "添加并行分支"
+    }
+  ],
+  "LaFlFh": [
+    {
+      "type": 0,
+      "value": "已删除此操作"
+    }
+  ],
+  "LdITnG": [
+    {
+      "type": 0,
+      "value": "(UTC-03:00)卡宴，福塔雷萨"
+    }
+  ],
+  "Lft/is": [
+    {
+      "type": 0,
+      "value": "新增"
+    }
+  ],
+  "LlYz9c": [
+    {
+      "type": 0,
+      "value": "查看更多"
+    }
+  ],
+  "Lm9bnN": [
+    {
+      "type": 0,
+      "value": "项目符号列表"
+    }
+  ],
+  "Lnqh6h": [
+    {
+      "type": 0,
+      "value": "粗体(Ctrl+B)"
+    }
+  ],
+  "LoGUT3": [
+    {
+      "type": 0,
+      "value": "在内部使用 for-each 循环时，此函数返回指定循环的当前项。"
+    }
+  ],
+  "LpPNAD": [
+    {
+      "type": 0,
+      "value": "添加"
+    }
+  ],
+  "LtbkS7": [
+    {
+      "type": 0,
+      "value": "返回传入的字符串时间戳的当天开始时间。"
+    }
+  ],
+  "Lub7NN": [
+    {
+      "type": 0,
+      "value": "必填。可能为 true 的表达式。"
+    }
+  ],
+  "LvLksz": [
+    {
+      "type": 0,
+      "value": "正在加载输出"
+    }
+  ],
+  "LvpxiA": [
+    {
+      "type": 0,
+      "value": "网关"
+    }
+  ],
+  "Lx8HRl": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00)大马士革"
+    }
+  ],
+  "M/gUE8": [
+    {
+      "type": 0,
+      "value": "关于"
+    }
+  ],
+  "M0bbZk": [
+    {
+      "type": 0,
+      "value": "流检查器"
+    }
+  ],
+  "M0xrm+": [
+    {
+      "type": 0,
+      "value": "代码视图"
+    }
+  ],
+  "M4H0gh": [
+    {
+      "type": 0,
+      "value": "删除"
+    }
+  ],
+  "M6U2LE": [
+    {
+      "type": 0,
+      "value": "保存工作流时，将保存参数。你可以在保存前在此处进行编辑，也可以在保存后在参数页中进行编辑。"
+    }
+  ],
+  "M8Aqm4": [
+    {
+      "type": 0,
+      "value": "可选。范围内操作的名称，其输入和输出来自范围内的顶级操作。"
+    }
+  ],
+  "MCzWDc": [
+    {
+      "type": 0,
+      "value": "预览"
+    }
+  ],
+  "MDbmMw": [
+    {
+      "type": 0,
+      "value": "必需。要计算的集合。对象必须位于所有传入的集合中，才可在结果中显示。"
+    }
+  ],
+  "MGZRu4": [
+    {
+      "type": 0,
+      "value": "添加操作"
+    }
+  ],
+  "MIX4f9": [
+    {
+      "type": 0,
+      "value": "不支持的编程语言。"
+    }
+  ],
+  "MKTdNk": [
+    {
+      "type": 0,
+      "value": "必需。要转换为二进制表示形式的数据 URI。"
+    }
+  ],
+  "MLCQzX": [
+    {
+      "type": 0,
+      "value": "托管标识"
+    }
+  ],
+  "MLckJz": [
+    {
+      "type": 0,
+      "value": "必填。包含开始时间的字符串。"
+    }
+  ],
+  "MOsuw2": [
+    {
+      "type": 0,
+      "value": "(UTC+10:00)关岛，莫尔兹比港"
+    }
+  ],
+  "MPPyI6": [
+    {
+      "type": 0,
+      "value": "(UTC+04:00)巴库"
+    }
+  ],
+  "MTR4Vg": [
+    {
+      "type": 0,
+      "value": "以字符串形式返回当前时间戳"
+    }
+  ],
+  "MYgKHu": [
+    {
+      "type": 0,
+      "value": "操作"
+    }
+  ],
+  "Mb+Eaq": [
+    {
+      "type": 0,
+      "value": "布尔型"
+    }
+  ],
+  "Mb/Vp8": [
+    {
+      "type": 0,
+      "value": "下一次失败"
+    }
+  ],
+  "Mc6ITJ": [
+    {
+      "type": 0,
+      "value": "搜索"
+    }
+  ],
+  "Mcvr0B": [
+    {
+      "type": 0,
+      "value": "要使用模块或依赖项，请在门户 TOC 中的自定义代码依赖项处添加"
+    }
+  ],
+  "MfAdfx": [
+    {
+      "type": 0,
+      "value": "在高级模式中进行编辑"
+    }
+  ],
+  "MirIsS": [
+    {
+      "type": 0,
+      "value": "显示代码"
+    }
+  ],
+  "MmBfD1": [
+    {
+      "type": 0,
+      "value": "意外错误"
+    }
+  ],
+  "MnThTq": [
+    {
+      "type": 0,
+      "value": "插入函数"
+    }
+  ],
+  "MsCHhQ": [
+    {
+      "type": 0,
+      "value": "已超时"
+    }
+  ],
+  "N0pS6Y": [
+    {
+      "type": 0,
+      "value": "目标架构"
+    }
+  ],
+  "N2CF0J": [
+    {
+      "type": 0,
+      "value": "必需。要返回的表单数据值的键名称。"
+    }
+  ],
+  "N4dEVo": [
+    {
+      "type": 0,
+      "value": "标头"
+    }
+  ],
+  "N7E9hd": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00)赫尔辛基，基辅，里加，索非亚，塔林，维尔纽斯"
+    }
+  ],
+  "N7zEUZ": [
+    {
+      "type": 0,
+      "value": "复制"
+    }
+  ],
+  "NE54Uu": [
+    {
+      "type": 0,
+      "value": "已复制!"
+    }
+  ],
+  "NFgfP4": [
+    {
+      "type": 0,
+      "value": "项"
+    }
+  ],
+  "NGJ00e": [
+    {
+      "type": 0,
+      "value": "(UTC-04:00)乔治敦，拉巴斯，马瑙斯，圣胡安"
+    }
+  ],
+  "NHnG2S": [
+    {
+      "type": 0,
+      "value": "生成的 XSLT 与当前映射不匹配。"
+    }
+  ],
+  "NMpFs6": [
+    {
+      "type": 0,
+      "value": "(UTC-03:00)阿拉瓜伊纳"
+    }
+  ],
+  "NPUFgH": [
+    {
+      "type": 0,
+      "value": "状态"
+    }
+  ],
+  "NWxGWN": [
+    {
+      "type": 0,
+      "value": "输入唯一属性名"
+    }
+  ],
+  "NdOhXD": [
+    {
+      "type": 0,
+      "value": "创建连接"
+    }
+  ],
+  "Nh91qA": [
+    {
+      "type": 0,
+      "value": "返回指定变量的值。"
+    }
+  ],
+  "NhJPUn": [
+    {
+      "type": 0,
+      "value": "如何调用外部终结点?"
+    }
+  ],
+  "NnD8gF": [
+    {
+      "type": 0,
+      "value": "操作路径输入值无效。路径值 - "
+    },
+    {
+      "type": 1,
+      "value": "pathValue"
+    },
+    {
+      "type": 0,
+      "value": " 路径模板 - "
+    },
+    {
+      "type": 1,
+      "value": "pathTemplate"
+    }
+  ],
+  "NnrHK3": [
+    {
+      "type": 0,
+      "value": "(UTC+10:00)符拉迪沃斯托克"
+    }
+  ],
+  "No6CS+": [
+    {
+      "type": 0,
+      "value": "输入租户"
+    }
+  ],
+  "NoXs0l": [
+    {
+      "type": 0,
+      "value": "请选择一个标识"
+    }
+  ],
+  "NvJDn/": [
+    {
+      "type": 0,
+      "value": "星期二"
+    }
+  ],
+  "NzPnFS": [
+    {
+      "type": 0,
+      "value": "示例:"
+    }
+  ],
+  "O+3Y9f": [
+    {
+      "type": 0,
+      "value": "已失败"
+    }
+  ],
+  "O+8vRv": [
+    {
+      "type": 0,
+      "value": "返回值的二进制表示形式"
+    }
+  ],
+  "O/fh9A": [
+    {
+      "type": 0,
+      "value": "服务主体"
+    }
+  ],
+  "O0tSvb": [
+    {
+      "type": 0,
+      "value": "🖊️ 正在处理..."
+    }
+  ],
+  "O1tedM": [
+    {
+      "type": 0,
+      "value": "未发现错误。"
+    }
+  ],
+  "O27gKq": [
+    {
+      "type": 0,
+      "value": "正在加载文件..."
+    }
+  ],
+  "O6VHe0": [
+    {
+      "type": 0,
+      "value": "操作警告"
+    }
+  ],
+  "O7HhyP": [
+    {
+      "type": 0,
+      "value": "以进行配置"
+    }
+  ],
+  "O9ZExg": [
+    {
+      "type": 0,
+      "value": "确定"
+    }
+  ],
+  "OBO/HE": [
+    {
+      "type": 0,
+      "value": "身份验证值无效"
+    }
+  ],
+  "ODQCKj": [
+    {
+      "type": 0,
+      "value": "将输入转换为 JSON 类型的值。"
+    }
+  ],
+  "OEEuUu": [
+    {
+      "type": 0,
+      "value": "机密"
+    }
+  ],
+  "OFKZzQ": [
+    {
+      "type": 0,
+      "value": "操作选项:"
+    }
+  ],
+  "OH9xlX": [
+    {
+      "type": 0,
+      "value": "10"
+    }
+  ],
+  "OIOexo": [
+    {
+      "type": 0,
+      "value": "在这些天"
+    }
+  ],
+  "OKszbi": [
+    {
+      "type": 0,
+      "value": "连接名称"
+    }
+  ],
+  "OOUSLP": [
+    {
+      "type": 0,
+      "value": "此函数不需要任何输入。"
+    }
+  ],
+  "OOUTdW": [
+    {
+      "type": 0,
+      "value": "正在加载所有连接器..."
+    }
+  ],
+  "OSHNZ2": [
+    {
+      "type": 0,
+      "value": "评论"
+    }
+  ],
+  "OSP9JY": [
+    {
+      "type": 0,
+      "value": "输入受众。"
+    }
+  ],
+  "OVDEFP": [
+    {
+      "type": 0,
+      "value": "报告 bug"
+    }
+  ],
+  "OVvieE": [
+    {
+      "type": 0,
+      "value": "返回指定范围内操作中的顶级操作结果，如 For_each、Until 或 Scope 操作。"
+    }
+  ],
+  "OYWZE4": [
+    {
+      "type": 0,
+      "value": "保存此工作流"
+    }
+  ],
+  "OdNhwc": [
+    {
+      "type": 0,
+      "value": "取消组合"
+    }
+  ],
+  "OdoUEu": [
+    {
+      "type": 0,
+      "value": "启用静态结果"
+    }
+  ],
+  "Oep6va": [
+    {
+      "type": 0,
+      "value": "提交"
+    }
+  ],
+  "OgJ9eG": [
+    {
+      "type": 0,
+      "value": "(UTC+08:00)台北"
+    }
+  ],
+  "OhbvXz": [
+    {
+      "type": 0,
+      "value": "(UTC+11:00) 诺福克岛"
+    }
+  ],
+  "Oib1mL": [
+    {
+      "type": 1,
+      "value": "hours"
+    },
+    {
+      "type": 0,
+      "value": " 时 "
+    },
+    {
+      "type": 1,
+      "value": "minutes"
+    },
+    {
+      "type": 0,
+      "value": " 分"
+    }
+  ],
+  "OihxQE": [
+    {
+      "type": 0,
+      "value": "可选。解析日期时间字符串时使用的区域设置。"
+    }
+  ],
+  "OjGJ8Y": [
+    {
+      "type": 0,
+      "value": "返回 URI 的主机"
+    }
+  ],
+  "OnrO5/": [
+    {
+      "type": 0,
+      "value": "选择托管标识"
+    }
+  ],
+  "OrPVcU": [
+    {
+      "type": 0,
+      "value": "'"
+    },
+    {
+      "type": 1,
+      "value": "splitOn"
+    },
+    {
+      "type": 0,
+      "value": "' 中的格式拆分无效。"
+    }
+  ],
+  "Ov7Ckz": [
+    {
+      "type": 0,
+      "value": "缺少身份验证类型“"
+    },
+    {
+      "type": 1,
+      "value": "authType"
+    },
+    {
+      "type": 0,
+      "value": "”的必需属性“"
+    },
+    {
+      "type": 1,
+      "value": "missingProperties"
+    },
+    {
+      "type": 0,
+      "value": "”"
+    }
+  ],
+  "P+7G62": [
+    {
+      "type": 0,
+      "value": "标题 3"
+    }
+  ],
+  "P+mWgV": [
+    {
+      "type": 0,
+      "value": "Pfx"
+    }
+  ],
+  "P/S+q5": [
+    {
+      "type": 0,
+      "value": "必填。要合并到单个字符串中的一个字符串。"
+    }
+  ],
+  "P/dnfK": [
+    {
+      "type": 0,
+      "value": "(UTC+06:00)达卡"
+    }
+  ],
+  "P2A5dB": [
+    {
+      "type": 0,
+      "value": "必需。此值为数组中的整数数目。"
+    }
+  ],
+  "P4XUjW": [
+    {
+      "type": 0,
+      "value": "对于 URI，必须编码空格。"
+    }
+  ],
+  "P4rEwD": [
+    {
+      "type": 0,
+      "value": "集合函数"
+    }
+  ],
+  "P6I90y": [
+    {
+      "type": 0,
+      "value": "输入"
+    }
+  ],
+  "PDMP/Z": [
+    {
+      "type": 0,
+      "value": "已折叠"
+    }
+  ],
+  "PNk3n4": [
+    {
+      "type": 0,
+      "value": "运行时间: "
+    },
+    {
+      "type": 1,
+      "value": "onTime"
+    }
+  ],
+  "PORNMZ": [
+    {
+      "type": 0,
+      "value": "输入"
+    }
+  ],
+  "PP63jY": [
+    {
+      "type": 0,
+      "value": "更多面板"
+    }
+  ],
+  "PQOiAc": [
+    {
+      "type": 0,
+      "value": "折叠"
+    }
+  ],
+  "PRnqYA": [
+    {
+      "type": 0,
+      "value": "必需。要添加的秒数。可以为负数以减去相应的秒数。"
+    }
+  ],
+  "PSrCNL": [
+    {
+      "type": 0,
+      "value": "函数"
+    }
+  ],
+  "PXa0D4": [
+    {
+      "type": 0,
+      "value": "False"
+    }
+  ],
+  "PZgHf/": [
+    {
+      "type": 0,
+      "value": "架构 URI"
+    }
+  ],
+  "Pa+UkC": [
+    {
+      "type": 0,
+      "value": "返回输入字符串的 UTF-8 字节长度"
+    }
+  ],
+  "Peg6ZT": [
+    {
+      "type": 0,
+      "value": "设置错误"
+    }
+  ],
+  "PfCJlN": [
+    {
+      "type": 0,
+      "value": "工作流函数"
+    }
+  ],
+  "PjBcG3": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00)安曼"
+    }
+  ],
+  "Pk4cb+": [
+    {
+      "type": 0,
+      "value": "跟踪的属性"
+    }
+  ],
+  "Pl/fcn": [
+    {
+      "type": 0,
+      "value": "拆分跟踪 ID"
+    }
+  ],
+  "Pnt0Xj": [
+    {
+      "type": 0,
+      "value": "说明如何从 SFTP 服务器接收文件。"
+    }
+  ],
+  "Pq+4a+": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00)开罗"
+    }
+  ],
+  "PqUAbF": [
+    {
+      "type": 0,
+      "value": "如果使用 GZip 或 Deflate 压缩了请求正文，请解压缩请求正文。此设置仅适用于 HTTP 触发器"
+    }
+  ],
+  "PsmHyH": [
+    {
+      "type": 0,
+      "value": "连接错误"
+    }
+  ],
+  "Pudllg": [
+    {
+      "type": 0,
+      "value": "(UTC+07:00)科布多"
+    }
+  ],
+  "PvWTxR": [
+    {
+      "type": 0,
+      "value": "显示函数"
+    }
+  ],
+  "Pvm0xB": [
+    {
+      "type": 0,
+      "value": "返回输入字符串的 Base 64 表示形式"
+    }
+  ],
+  "PytMJ0": [
+    {
+      "type": 0,
+      "value": "在 "
+    },
+    {
+      "type": 1,
+      "value": "sourceNodeId"
+    },
+    {
+      "type": 0,
+      "value": " 之后运行"
+    }
+  ],
+  "Q+ZZHI": [
+    {
+      "type": 0,
+      "value": "(UTC-10:00)夏威夷"
+    }
+  ],
+  "Q/7unA": [
+    {
+      "type": 0,
+      "value": "对象"
+    }
+  ],
+  "Q0xpPQ": [
+    {
+      "type": 0,
+      "value": "必需。要检查其是否小于或等于比较对象的对象。"
+    }
+  ],
+  "Q4TUFX": [
+    {
+      "type": 0,
+      "value": "放弃"
+    }
+  ],
+  "Q5Fh2R": [
+    {
+      "type": 0,
+      "value": "必需。要从中计算 UTF-16 长度的字符串。"
+    }
+  ],
+  "Q5w4Do": [
+    {
+      "type": 0,
+      "value": "通过插入 / 来添加动态数据或表达式"
+    }
+  ],
+  "Q8HCYK": [
+    {
+      "type": 0,
+      "value": "无项目"
+    }
+  ],
+  "Q8zxeb": [
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": " 键"
+    }
+  ],
+  "QGbUXX": [
+    {
+      "type": 0,
+      "value": "状态代码"
+    }
+  ],
+  "QZBPUx": [
+    {
+      "type": 0,
+      "value": "从表单数据或表单编码触发器输出返回单个匹配键名称的值"
+    }
+  ],
+  "QZrxUk": [
+    {
+      "type": 0,
+      "value": "字符串函数"
+    }
+  ],
+  "QbJDi7": [
+    {
+      "type": 0,
+      "value": "项"
+    }
+  ],
+  "QdJUaS": [
+    {
+      "type": 0,
+      "value": "铅笔图标"
+    }
+  ],
+  "QdhS3y": [
+    {
+      "type": 0,
+      "value": "工作流参数"
+    }
+  ],
+  "QhKk80": [
+    {
+      "type": 0,
+      "value": "分页计数超过最大值 "
+    },
+    {
+      "type": 1,
+      "value": "max"
+    }
+  ],
+  "Qn8qxn": [
+    {
+      "type": 0,
+      "value": "以日期格式返回字符串"
+    }
+  ],
+  "QoPTod": [
+    {
+      "type": 0,
+      "value": "这是流将执行的操作"
+    }
+  ],
+  "QpRRt3": [
+    {
+      "type": 0,
+      "value": "必需。要用于分隔项目的字符串。"
+    }
+  ],
+  "QpX2+j": [
+    {
+      "type": 0,
+      "value": "位置"
+    }
+  ],
+  "QrQDdp": [
+    {
+      "type": 0,
+      "value": "必需。一个字符串，包含时间间隔中指定的要减去的时间单位。"
+    }
+  ],
+  "Qu1HkA": [
+    {
+      "type": 1,
+      "value": "hours"
+    },
+    {
+      "type": 0,
+      "value": " 小时"
+    }
+  ],
+  "R/aiRy": [
+    {
+      "type": 0,
+      "value": "(UTC+12:00)协调世界时+12"
+    }
+  ],
+  "RFjYpH": [
+    {
+      "type": 0,
+      "value": "名称"
+    }
+  ],
+  "RJ3DuE": [
+    {
+      "type": 0,
+      "value": "预览"
+    }
+  ],
+  "RJes1w": [
+    {
+      "type": 0,
+      "value": "(UTC+04:00)埃里温"
+    }
+  ],
+  "RX2Shm": [
+    {
+      "type": 0,
+      "value": "必需。拆分的字符串。"
+    }
+  ],
+  "RbJNVk": [
+    {
+      "type": 0,
+      "value": "架构"
+    }
+  ],
+  "RhH4pF": [
+    {
+      "offset": 0,
+      "options": {
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " 分钟"
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "minutes"
+    }
+  ],
+  "RjvpD+": [
+    {
+      "type": 0,
+      "value": "在 "
+    },
+    {
+      "type": 1,
+      "value": "parentSubgraphName"
+    },
+    {
+      "type": 0,
+      "value": " 中插入新步骤"
+    }
+  ],
+  "RkgScy": [
+    {
+      "type": 0,
+      "value": "6 "
+    }
+  ],
+  "RnBddN": [
+    {
+      "type": 0,
+      "value": "议题"
+    }
+  ],
+  "Rp5pHU": [
+    {
+      "type": 0,
+      "value": "(UTC+00:00) 蒙罗维亚，雷克雅未克"
+    }
+  ],
+  "Rq2U5n": [
+    {
+      "type": 0,
+      "value": "无法识别的表达式 \""
+    },
+    {
+      "type": 1,
+      "value": "expression"
+    },
+    {
+      "type": 0,
+      "value": "\""
+    }
+  ],
+  "Rs7j3V": [
+    {
+      "type": 0,
+      "value": "必填。必须为 true 的表达式。"
+    }
+  ],
+  "RvpHdu": [
+    {
+      "type": 0,
+      "value": "(UTC+11:00)所罗门群岛，新喀里多尼亚"
+    }
+  ],
+  "RxGxr+": [
+    {
+      "type": 0,
+      "value": "行号"
+    }
+  ],
+  "S138/4": [
+    {
+      "type": 0,
+      "value": "将文本格式设置为粗体。快捷方式: ⌘B"
+    }
+  ],
+  "SCCE6s": [
+    {
+      "type": 0,
+      "value": "密码"
+    }
+  ],
+  "SGnTpt": [
+    {
+      "type": 0,
+      "value": "标题 2"
+    }
+  ],
+  "SHXdzU": [
+    {
+      "type": 0,
+      "value": "AI 生成的内容可能不正确"
+    }
+  ],
+  "SJFVxf": [
+    {
+      "type": 0,
+      "value": "议题"
+    }
+  ],
+  "SKXopi": [
+    {
+      "type": 0,
+      "value": "将参数转换为整数"
+    }
+  ],
+  "SLJkRn": [
+    {
+      "type": 0,
+      "value": "删除输入"
+    }
+  ],
+  "SLZ0n4": [
+    {
+      "type": 0,
+      "value": "检查字符串是否以某个值开头(区分大小写，固定区域性)"
+    }
+  ],
+  "SToblZ": [
+    {
+      "type": 0,
+      "value": "为此节点配置参数"
+    }
+  ],
+  "SXb47U": [
+    {
+      "type": 1,
+      "value": "minutes"
+    },
+    {
+      "type": 0,
+      "value": " 分"
+    }
+  ],
+  "SY04wn": [
+    {
+      "type": 0,
+      "value": "必需。包含表单数据或表单编码响应的操作的名称。"
+    }
+  ],
+  "SenWwt": [
+    {
+      "type": 0,
+      "value": "指定通过 HTTP 传输内容的行为和功能。大型消息可能会拆分为对连接器的较小请求，以允许上传大型消息。"
+    }
+  ],
+  "SgiTAh": [
+    {
+      "type": 0,
+      "value": "请输入你的输入"
+    }
+  ],
+  "Sh10cw": [
+    {
+      "type": 0,
+      "value": "保存"
+    }
+  ],
+  "SmCQys": [
+    {
+      "type": 0,
+      "value": "自定义跟踪 ID"
+    }
+  ],
+  "Smo/VO": [
+    {
+      "type": 0,
+      "value": "输入名称"
+    }
+  ],
+  "Sr8PcK": [
+    {
+      "type": 0,
+      "value": "未找到操作"
+    }
+  ],
+  "SvQyvs": [
+    {
+      "type": 0,
+      "value": "完成"
+    }
+  ],
+  "SyFXM3": [
+    {
+      "type": 0,
+      "value": "阅读简略信息"
+    }
+  ],
+  "Sz8KN3": [
+    {
+      "type": 0,
+      "value": "测试"
+    }
+  ],
+  "T6VIym": [
+    {
+      "type": 0,
+      "value": "名称"
+    }
+  ],
+  "TEN+cR": [
+    {
+      "type": 0,
+      "value": "提供反馈"
+    }
+  ],
+  "TNEttQ": [
+    {
+      "type": 0,
+      "value": "星期五"
+    }
+  ],
+  "TNH/nK": [
+    {
+      "type": 0,
+      "value": "搜索工作流操作"
+    }
+  ],
+  "TO7qos": [
+    {
+      "type": 0,
+      "value": "返回字符串时间戳的月份开始月份"
+    }
+  ],
+  "TRpSCQ": [
+    {
+      "type": 0,
+      "value": "操作类型"
+    }
+  ],
+  "TUdPdI": [
+    {
+      "type": 0,
+      "value": "安全对象"
+    }
+  ],
+  "TX4Kdr": [
+    {
+      "type": 0,
+      "value": "创建新连接"
+    }
+  ],
+  "TY4HzZ": [
+    {
+      "type": 0,
+      "value": "添加或替换架构。"
+    }
+  ],
+  "TZh8nV": [
+    {
+      "type": 0,
+      "value": "在每 "
+    },
+    {
+      "type": 1,
+      "value": "frequencyDesc"
+    },
+    {
+      "type": 0,
+      "value": " 的 "
+    },
+    {
+      "type": 1,
+      "value": "weekDays"
+    }
+  ],
+  "Tayrub": [
+    {
+      "type": 0,
+      "value": "原始"
+    }
+  ],
+  "Tb2QLA": [
+    {
+      "type": 0,
+      "value": "客户端请求 ID"
+    }
+  ],
+  "TgcgXE": [
+    {
+      "type": 0,
+      "value": "标记"
+    }
+  ],
+  "Tiqnir": [
+    {
+      "type": 0,
+      "value": "自定义"
+    }
+  ],
+  "TjMkDP": [
+    {
+      "type": 0,
+      "value": "(UTC-06:00) 复活节岛"
+    }
+  ],
+  "TjkOzp": [
+    {
+      "type": 0,
+      "value": "关闭"
+    }
+  ],
+  "TlX98E": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00)加里宁格勒"
+    }
+  ],
+  "Tla33B": [
+    {
+      "type": 0,
+      "value": "必填。要为其查找索引的值。"
+    }
+  ],
+  "Tmr/9e": [
+    {
+      "type": 0,
+      "value": "参数无效"
+    }
+  ],
+  "To3RNy": [
+    {
+      "type": 0,
+      "value": "工作流参数错误"
+    }
+  ],
+  "Ts5Pzr": [
+    {
+      "type": 0,
+      "value": "备注"
+    }
+  ],
+  "TsJbGH": [
+    {
+      "type": 0,
+      "value": "已断开连接"
+    }
+  ],
+  "Ttc0SM": [
+    {
+      "type": 0,
+      "value": "标题 1"
+    }
+  ],
+  "TvPOXI": [
+    {
+      "type": 0,
+      "value": "这是你的流。"
+    }
+  ],
+  "Twfck/": [
+    {
+      "type": 0,
+      "value": "必需。要与被乘数 1 相乘的数字。"
+    }
+  ],
+  "U086AA": [
+    {
+      "type": 0,
+      "value": "目标架构元素"
+    }
+  ],
+  "U0I10w": [
+    {
+      "type": 0,
+      "value": "(UTC+05:00)叶卡捷琳堡"
+    }
+  ],
+  "U3guPp": [
+    {
+      "type": 0,
+      "value": "按连接器分组"
+    }
+  ],
+  "U3iWVd": [
+    {
+      "type": 0,
+      "value": "生成从特定数字开始计起的整数数组"
+    }
+  ],
+  "U4zovj": [
+    {
+      "type": 0,
+      "value": "运行时间: "
+    },
+    {
+      "type": 1,
+      "value": "onDays"
+    },
+    {
+      "type": 0,
+      "value": " "
+    },
+    {
+      "type": 1,
+      "value": "onTime"
+    }
+  ],
+  "U7yRwM": [
+    {
+      "type": 0,
+      "value": "验证错误"
+    }
+  ],
+  "UCNM4L": [
+    {
+      "type": 0,
+      "value": "若要引用参数，请使用动态内容列表。"
+    }
+  ],
+  "UEryJE": [
+    {
+      "type": 0,
+      "value": "删除工作流操作"
+    }
+  ],
+  "UHCVNK": [
+    {
+      "type": 0,
+      "value": "用给定字符串替换字符串"
+    }
+  ],
+  "UIWX6p": [
+    {
+      "type": 0,
+      "value": "逻辑名称"
+    }
+  ],
+  "UMPuUJ": [
+    {
+      "type": 0,
+      "value": "删除 "
+    },
+    {
+      "type": 1,
+      "value": "expressionValue"
+    }
+  ],
+  "UR1CS5": [
+    {
+      "type": 0,
+      "value": "隐藏代码"
+    }
+  ],
+  "USVffu": [
+    {
+      "type": 0,
+      "value": "由于安全配置而未显示内容。"
+    }
+  ],
+  "UT2ozj": [
+    {
+      "type": 0,
+      "value": "(UTC-07:00)山地时间(美国和加拿大)"
+    }
+  ],
+  "UVAfYj": [
+    {
+      "type": 0,
+      "value": "必需。要从中获取最后一个对象的集合。"
+    }
+  ],
+  "UYRIS/": [
+    {
+      "type": 1,
+      "value": "fileName"
+    },
+    {
+      "type": 0,
+      "value": " (文件名)"
+    }
+  ],
+  "UZiXVh": [
+    {
+      "type": 0,
+      "value": "输出"
+    }
+  ],
+  "Ufv5m9": [
+    {
+      "type": 0,
+      "value": "架构节点 \""
+    },
+    {
+      "type": 1,
+      "value": "nodeName"
+    },
+    {
+      "type": 0,
+      "value": "\" 具有非终止连接链"
+    }
+  ],
+  "Ug4sWZ": [
+    {
+      "type": 0,
+      "value": "展开"
+    }
+  ],
+  "UgaIRz": [
+    {
+      "type": 0,
+      "value": "必填。每个区块的长度。"
+    }
+  ],
+  "Umpr3z": [
+    {
+      "type": 0,
+      "value": "每 "
+    },
+    {
+      "type": 1,
+      "value": "interval"
+    },
+    {
+      "type": 0,
+      "value": " 周"
+    }
+  ],
+  "Unc2tG": [
+    {
+      "type": 0,
+      "value": "如果两个参数相等，则返回 true。"
+    }
+  ],
+  "UnrrzF": [
+    {
+      "type": 0,
+      "value": "源架构"
+    }
+  ],
+  "UnytRl": [
+    {
+      "type": 0,
+      "value": "“"
+    },
+    {
+      "type": 1,
+      "value": "authenticationKey"
+    },
+    {
+      "type": 0,
+      "value": "”的类型为“"
+    },
+    {
+      "type": 1,
+      "value": "propertyType"
+    },
+    {
+      "type": 0,
+      "value": "”。"
+    }
+  ],
+  "Ur+wph": [
+    {
+      "type": 0,
+      "value": "单击此处可删除项"
+    }
+  ],
+  "UtyRCH": [
+    {
+      "type": 0,
+      "value": "输入连接的名称"
+    }
+  ],
+  "Uxckds": [
+    {
+      "type": 0,
+      "value": "建议的流"
+    }
+  ],
+  "V+/c21": [
+    {
+      "type": 0,
+      "value": "常规"
+    }
+  ],
+  "V+xi3c": [
+    {
+      "type": 0,
+      "value": "有关更多详细信息，请访问 http://aka.ms/logicapps-chunk#upload-content-in-chunks"
+    }
+  ],
+  "V0ZbQO": [
+    {
+      "type": 0,
+      "value": "显示更少"
+    }
+  ],
+  "V3vpin": [
+    {
+      "type": 0,
+      "value": "“"
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "”不再出现在操作架构中。应在重新保存工作流前删除它。"
+    }
+  ],
+  "V5f3ha": [
+    {
+      "type": 0,
+      "value": "周"
+    }
+  ],
+  "V7k/GN": [
+    {
+      "type": 0,
+      "value": "删除 Switch Case"
+    }
+  ],
+  "V8A+1J": [
+    {
+      "type": 0,
+      "value": "间隔"
+    }
+  ],
+  "VA7M1u": [
+    {
+      "type": 0,
+      "value": "应用内"
+    }
+  ],
+  "VEbE93": [
+    {
+      "type": 0,
+      "value": "解释 \""
+    },
+    {
+      "type": 1,
+      "value": "selectedOperation"
+    },
+    {
+      "type": 0,
+      "value": "\" 操作在此流中的作用"
+    }
+  ],
+  "VHm1Sr": [
+    {
+      "type": 0,
+      "value": "选择应用服务资源"
+    }
+  ],
+  "VI5Sa8": [
+    {
+      "type": 0,
+      "value": "展开"
+    }
+  ],
+  "VI7EqG": [
+    {
+      "type": 0,
+      "value": "找不到 "
+    },
+    {
+      "type": 1,
+      "value": "searchTerm"
+    },
+    {
+      "type": 0,
+      "value": " 的结果"
+    }
+  ],
+  "VIN7lB": [
+    {
+      "type": 0,
+      "value": "发生此情况时，流将启动"
+    }
+  ],
+  "VKAk5g": [
+    {
+      "type": 0,
+      "value": "所提供的工作流运行名称无效。"
+    }
+  ],
+  "VL9wOu": [
+    {
+      "type": 0,
+      "value": "必须为参数提供值。"
+    }
+  ],
+  "VLc3FV": [
+    {
+      "type": 0,
+      "value": "源架构"
+    }
+  ],
+  "VPh9Jo": [
+    {
+      "type": 0,
+      "value": "(UTC+06:00)新西伯利亚"
+    }
+  ],
+  "VUH9aj": [
+    {
+      "type": 0,
+      "value": "23"
+    }
+  ],
+  "VVfYvq": [
+    {
+      "type": 0,
+      "value": "必需。要除以除数的数字。"
+    }
+  ],
+  "VXBWrq": [
+    {
+      "type": 0,
+      "value": "评论"
+    }
+  ],
+  "VZHick": [
+    {
+      "type": 0,
+      "value": "持续时间"
+    }
+  ],
+  "Vaacox": [
+    {
+      "type": 0,
+      "value": "运行历史记录"
+    }
+  ],
+  "VbMYd8": [
+    {
+      "type": 0,
+      "value": "触发器会告知应用何时开始运行。每个工作流至少需要一个触发器。"
+    }
+  ],
+  "Vfce7b": [
+    {
+      "type": 0,
+      "value": "错误类型"
+    }
+  ],
+  "Vi5TIV": [
+    {
+      "type": 0,
+      "value": "未找到警告。"
+    }
+  ],
+  "VlvlX1": [
+    {
+      "type": 0,
+      "value": "证书"
+    }
+  ],
+  "VptXzY": [
+    {
+      "type": 0,
+      "value": "使用“"
+    },
+    {
+      "type": 1,
+      "value": "value"
+    },
+    {
+      "type": 0,
+      "value": "”作为自定义值"
+    }
+  ],
+  "Vqs8hE": [
+    {
+      "type": 0,
+      "value": "操作"
+    }
+  ],
+  "Vx6fwP": [
+    {
+      "type": 0,
+      "value": "已添加此操作"
+    }
+  ],
+  "W+mUyI": [
+    {
+      "type": 0,
+      "value": "下一个"
+    }
+  ],
+  "W070M2": [
+    {
+      "type": 0,
+      "value": "共 "
+    },
+    {
+      "type": 1,
+      "value": "max"
+    },
+    {
+      "type": 0,
+      "value": " 个"
+    }
+  ],
+  "W6FdMh": [
+    {
+      "type": 0,
+      "value": "必填。新属性的名称。"
+    }
+  ],
+  "WCASt1": [
+    {
+      "type": 0,
+      "value": "描述流中的被替换项和替换项。添加尽可能详细的信息，包括要使用的连接器以及是否应包含任何内容。"
+    }
+  ],
+  "WGwH45": [
+    {
+      "type": 0,
+      "value": "清除"
+    }
+  ],
+  "WK6hZX": [
+    {
+      "type": 0,
+      "value": "选择 "
+    },
+    {
+      "type": 1,
+      "value": "label"
+    },
+    {
+      "type": 0,
+      "value": " 中的所有文本"
+    }
+  ],
+  "WMX2ig": [
+    {
+      "type": 0,
+      "value": "此工作流的并发设置是什么?"
+    }
+  ],
+  "WR1K3z": [
+    {
+      "type": 0,
+      "value": "(UTC+04:00) 阿斯特拉罕州，乌里扬诺夫斯克州"
+    }
+  ],
+  "WS55UF": [
+    {
+      "type": 0,
+      "value": "指定持续时间(按 ISO 8601 格式)"
+    }
+  ],
+  "WS9kXD": [
+    {
+      "type": 0,
+      "value": "必需。数组中的第一个整数。"
+    }
+  ],
+  "WTZvGW": [
+    {
+      "type": 0,
+      "value": "工作流在以下操作上具有无效的连接: "
+    },
+    {
+      "type": 1,
+      "value": "invalidNodes"
+    }
+  ],
+  "WToL/O": [
+    {
+      "type": 0,
+      "value": "输入有效的条件语句。"
+    }
+  ],
+  "WUe3DY": [
+    {
+      "type": 0,
+      "value": "trigger().outputs 的速记"
+    }
+  ],
+  "WaTsxR": [
+    {
+      "type": 0,
+      "value": "请求历史记录"
+    }
+  ],
+  "Wb/cBR": [
+    {
+      "type": 0,
+      "value": "固定间隔"
+    }
+  ],
+  "WcnIF8": [
+    {
+      "type": 0,
+      "value": "删除"
+    }
+  ],
+  "WgChTm": [
+    {
+      "type": 0,
+      "value": "(自定义值)"
+    }
+  ],
+  "WgoP7R": [
+    {
+      "type": 0,
+      "value": "返回这两个数字相乘后的结果"
+    }
+  ],
+  "WnU9v0": [
+    {
+      "type": 0,
+      "value": "未在逻辑应用上配置托管标识。"
+    }
+  ],
+  "WvvJYw": [
+    {
+      "type": 0,
+      "value": "操作"
+    }
+  ],
+  "X/7je+": [
+    {
+      "type": 0,
+      "value": "分钟"
+    }
+  ],
+  "X2idLs": [
+    {
+      "type": 0,
+      "value": "(UTC-03:00)蒙得维的亚"
+    }
+  ],
+  "X4SuNU": [
+    {
+      "type": 0,
+      "value": "重试策略最小间隔无效，必须与 ISO 8601 持续时间格式匹配"
+    }
+  ],
+  "X4gDhV": [
+    {
+      "type": 0,
+      "value": "租户"
+    }
+  ],
+  "X7X5ew": [
+    {
+      "type": 0,
+      "value": "参数"
+    }
+  ],
+  "X8JjjT": [
+    {
+      "type": 1,
+      "value": "days"
+    },
+    {
+      "type": 0,
+      "value": " 天 "
+    },
+    {
+      "type": 1,
+      "value": "hours"
+    },
+    {
+      "type": 0,
+      "value": " 小时"
+    }
+  ],
+  "XCunbR": [
+    {
+      "type": 0,
+      "value": "('actionName').outputs 的速记"
+    }
+  ],
+  "XEuptL": [
+    {
+      "type": 0,
+      "value": "将任意数量的字符串合并到一起"
+    }
+  ],
+  "XFFpu/": [
+    {
+      "type": 0,
+      "value": "重试"
+    }
+  ],
+  "XFzzaw": [
+    {
+      "type": 0,
+      "value": "高级参数"
+    }
+  ],
+  "XH94im": [
+    {
+      "type": 0,
+      "value": "请确保单词拼写正确。"
+    }
+  ],
+  "XJkBrZ": [
+    {
+      "type": 0,
+      "value": "指定一个或多个必须为 true 才能激发触发器的表达式"
+    }
+  ],
+  "XKDZXi": [
+    {
+      "type": 0,
+      "value": "操作超时"
+    }
+  ],
+  "XLUs2P": [
+    {
+      "type": 0,
+      "value": "不支持的令牌类型: "
+    },
+    {
+      "type": 1,
+      "value": "var"
+    }
+  ],
+  "XOAcjQ": [
+    {
+      "type": 0,
+      "value": "(UTC+03:00)内罗比"
+    }
+  ],
+  "XOzn/3": [
+    {
+      "type": 0,
+      "value": "连接名称"
+    }
+  ],
+  "XQ4OCV": [
+    {
+      "type": 0,
+      "value": "(UTC+03:00)巴格达"
+    }
+  ],
+  "XR4Sd/": [
+    {
+      "type": 0,
+      "value": "赞"
+    }
+  ],
+  "XRK+gt": [
+    {
+      "type": 0,
+      "value": "函数 \""
+    },
+    {
+      "type": 1,
+      "value": "functionName"
+    },
+    {
+      "type": 0,
+      "value": "\" 具有非终止连接链"
+    }
+  ],
+  "XTeLIw": [
+    {
+      "type": 0,
+      "value": "(UTC+07:00)克拉斯诺亚尔斯克"
+    }
+  ],
+  "XTuxmH": [
+    {
+      "type": 1,
+      "value": "minutes"
+    },
+    {
+      "type": 0,
+      "value": " 分钟 "
+    },
+    {
+      "type": 1,
+      "value": "seconds"
+    },
+    {
+      "type": 0,
+      "value": " 秒"
+    }
+  ],
+  "XVTQT6": [
+    {
+      "type": 0,
+      "value": "间隔"
+    }
+  ],
+  "XbtEq9": [
+    {
+      "type": 0,
+      "value": "计数"
+    }
+  ],
+  "Xew1Df": [
+    {
+      "type": 0,
+      "value": "更多诊断信息: x-ms-client-request-id 为 \""
+    },
+    {
+      "type": 1,
+      "value": "clientRequestId"
+    },
+    {
+      "type": 0,
+      "value": "\"。"
+    }
+  ],
+  "Xj0Gr/": [
+    {
+      "type": 0,
+      "value": "无法删除目标架构元素。"
+    }
+  ],
+  "Xj4xwI": [
+    {
+      "type": 0,
+      "value": "用于此操作的托管标识不再存在。若要继续，请选择可用标识或更改连接。"
+    }
+  ],
+  "XkBxv5": [
+    {
+      "type": 0,
+      "value": "选择目标架构"
+    }
+  ],
+  "Xkt2vD": [
+    {
+      "type": 0,
+      "value": "选择函数应用函数"
+    }
+  ],
+  "Xnn0uj": [
+    {
+      "type": 0,
+      "value": "请求"
+    }
+  ],
+  "XqamWZ": [
+    {
+      "type": 0,
+      "value": "删除"
+    }
+  ],
+  "XsktQ/": [
+    {
+      "type": 0,
+      "value": "限制逻辑应用，使其不在响应中包含工作流元数据标头。"
+    }
+  ],
+  "XtuP5e": [
+    {
+      "type": 0,
+      "value": "数学函数"
+    }
+  ],
+  "Xv5CGN": [
+    {
+      "type": 0,
+      "value": "(UTC-05:00)印地安那州(东部)"
+    }
+  ],
+  "Xx/naD": [
+    {
+      "type": 0,
+      "value": "必需。需要获取其正文输出的操作的名称。"
+    }
+  ],
+  "Y/bcmG": [
+    {
+      "type": 0,
+      "value": "密码"
+    }
+  ],
+  "Y0H9aX": [
+    {
+      "type": 0,
+      "value": "详细信息"
+    }
+  ],
+  "Y5XAbg": [
+    {
+      "type": 0,
+      "value": "选择 Swagger 函数应用资源"
+    }
+  ],
+  "Y9kBz5": [
+    {
+      "type": 0,
+      "value": "返回数据 URI 的二进制表示形式"
+    }
+  ],
+  "YABOLz": [
+    {
+      "type": 0,
+      "value": "正文项"
+    }
+  ],
+  "YCDF7A": [
+    {
+      "type": 0,
+      "value": "所有必需参数已设置"
+    }
+  ],
+  "YCFhzp": [
+    {
+      "type": 0,
+      "value": "添加子级"
+    }
+  ],
+  "YDoc9z": [
+    {
+      "type": 0,
+      "value": "触发器条件"
+    }
+  ],
+  "YEHutH": [
+    {
+      "type": 0,
+      "value": "清除编辑器"
+    }
+  ],
+  "YF1yZk": [
+    {
+      "type": 0,
+      "value": "chat-session-id:"
+    }
+  ],
+  "YHsAKl": [
+    {
+      "type": 0,
+      "value": "操作备注"
+    }
+  ],
+  "YIBDSH": [
+    {
+      "type": 1,
+      "value": "days"
+    },
+    {
+      "type": 0,
+      "value": " 天"
+    }
+  ],
+  "YJJ+gQ": [
+    {
+      "type": 0,
+      "value": "字符串"
+    }
+  ],
+  "YJlS8E": [
+    {
+      "type": 0,
+      "value": "将文本格式设置为下划线。快捷方式: Ctrl+U"
+    }
+  ],
+  "YKXmKD": [
+    {
+      "type": 0,
+      "value": "使表达式从其他 JSON 名称和值对或运行时触发器的输出中派生它的值"
+    }
+  ],
+  "YOUfNf": [
+    {
+      "type": 0,
+      "value": "输入 Pfx"
+    }
+  ],
+  "YR1uWE": [
+    {
+      "type": 0,
+      "value": "将文本格式设置为粗体。快捷方式: Ctrl+B"
+    }
+  ],
+  "YRk271": [
+    {
+      "type": 0,
+      "value": "身份验证"
+    }
+  ],
+  "YUbSFS": [
+    {
+      "type": 0,
+      "value": "是/否"
+    }
+  ],
+  "YWOKlU": [
+    {
+      "type": 0,
+      "value": "编号列表"
+    }
+  ],
+  "YWws/r": [
+    {
+      "type": 0,
+      "value": "输出名称不应为空。"
+    }
+  ],
+  "YZ5Kwe": [
+    {
+      "type": 0,
+      "value": "(UTC-04:00)大西洋时间(加拿大)"
+    }
+  ],
+  "YaFjJQ": [
+    {
+      "type": 0,
+      "value": "返回一个数组或对象，它的所有元素均位于传入此函数的数组或对象中。此函数的参数可以是一组对象或一组数据(不可两者混合)。如果两个对象在最终输出中的名称相同，则最终对象中将显示后一个对象的名称。"
+    }
+  ],
+  "Ybzoim": [
+    {
+      "type": 0,
+      "value": "必填。具有所需值的操作的名称。"
+    }
+  ],
+  "YdQw4/": [
+    {
+      "type": 0,
+      "value": "将文本格式设置为斜体。快捷方式: ⌘I"
+    }
+  ],
+  "YfwZJO": [
+    {
+      "type": 0,
+      "value": "搜索提示"
+    }
+  ],
+  "Yg/vvm": [
+    {
+      "type": 0,
+      "value": "关闭“添加操作”面板"
+    }
+  ],
+  "YgU88A": [
+    {
+      "type": 0,
+      "value": "(UTC+05:30)钦奈，加尔各答，孟买，新德里"
+    }
+  ],
+  "YiOybp": [
+    {
+      "type": 0,
+      "value": "(UTC+01:00)布鲁塞尔，哥本哈根，马德里，巴黎"
+    }
+  ],
+  "YlesUQ": [
+    {
+      "type": 0,
+      "value": "你的映射处于完美状态"
+    }
+  ],
+  "YoQara": [
+    {
+      "type": 0,
+      "value": "无"
+    }
+  ],
+  "Yrw/Qt": [
+    {
+      "type": 0,
+      "value": "你的个人和公司数据在此聊天中受到保护"
+    }
+  ],
+  "Yuu5CD": [
+    {
+      "type": 0,
+      "value": "缩小"
+    }
+  ],
+  "Yuxprm": [
+    {
+      "type": 0,
+      "value": "欢迎使用工作流助手!"
+    }
+  ],
+  "Yw7Nfl": [
+    {
+      "type": 0,
+      "value": "禁用静态结果"
+    }
+  ],
+  "Yz9o1k": [
+    {
+      "type": 0,
+      "value": "未连接。"
+    }
+  ],
+  "Z8tBFS": [
+    {
+      "type": 0,
+      "value": "工作流助手仅用于提供帮助，不支持创建或编辑工作流。"
+    }
+  ],
+  "Z9PWl/": [
+    {
+      "type": 0,
+      "value": "重试策略计数无效(必须介于 "
+    },
+    {
+      "type": 1,
+      "value": "min"
+    },
+    {
+      "type": 0,
+      "value": " 到 "
+    },
+    {
+      "type": 1,
+      "value": "max"
+    },
+    {
+      "type": 0,
+      "value": " 之间)"
+    }
+  ],
+  "ZAdaBl": [
+    {
+      "type": 0,
+      "value": "选择现有连接引用或创建新连接引用"
+    }
+  ],
+  "ZBJiuD": [
+    {
+      "type": 0,
+      "value": "状态"
+    }
+  ],
+  "ZCFMoe": [
+    {
+      "type": 0,
+      "value": "正文"
+    }
+  ],
+  "ZKnJnh": [
+    {
+      "type": 0,
+      "value": "安全字符串"
+    }
+  ],
+  "ZM1mRy": [
+    {
+      "type": 0,
+      "value": "并发控制"
+    }
+  ],
+  "ZME5hh": [
+    {
+      "type": 0,
+      "value": "返回字符串时间戳月份组件的某天"
+    }
+  ],
+  "ZRdkFN": [
+    {
+      "type": 0,
+      "value": "折叠静态结果"
+    }
+  ],
+  "ZUCTVP": [
+    {
+      "type": 0,
+      "value": "粘贴操作"
+    }
+  ],
+  "ZUaz3Y": [
+    {
+      "type": 0,
+      "value": "trigger().outputs.body 的速记"
+    }
+  ],
+  "ZaIeDG": [
+    {
+      "type": 0,
+      "value": "必需。字符串可以其开头的值。"
+    }
+  ],
+  "ZbCS4a": [
+    {
+      "type": 0,
+      "value": "阅读更多信息"
+    }
+  ],
+  "Zg3IjD": [
+    {
+      "type": 0,
+      "value": "关闭"
+    }
+  ],
+  "Zi9gQK": [
+    {
+      "type": 0,
+      "value": "添加新项"
+    }
+  ],
+  "ZihyUf": [
+    {
+      "type": 0,
+      "value": "关闭"
+    }
+  ],
+  "ZkjTbp": [
+    {
+      "type": 0,
+      "value": "详细了解动态内容。"
+    }
+  ],
+  "ZyDq4/": [
+    {
+      "type": 0,
+      "value": "显示其他建议"
+    }
+  ],
+  "a7j3gS": [
+    {
+      "type": 0,
+      "value": "必需。要除以除数的数字。"
+    }
+  ],
+  "aAXnqw": [
+    {
+      "type": 0,
+      "value": "必填。要查找的子字符串的出现次数。"
+    }
+  ],
+  "aE+2gr": [
+    {
+      "type": 0,
+      "value": "False"
+    }
+  ],
+  "aGyVJT": [
+    {
+      "type": 0,
+      "value": "必需。要从集合前面删除的对象数。必须是一个正整数。"
+    }
+  ],
+  "aK4iLW": [
+    {
+      "type": 0,
+      "value": "数据处理"
+    }
+  ],
+  "aP1wk9": [
+    {
+      "type": 0,
+      "value": "返回字符串内某值的第一个索引(区分大小写，固定区域性)"
+    }
+  ],
+  "aSnCCB": [
+    {
+      "type": 0,
+      "value": "位置"
+    }
+  ],
+  "aV/nLS": [
+    {
+      "type": 0,
+      "value": "秒"
+    }
+  ],
+  "aYTy7X": [
+    {
+      "type": 0,
+      "value": "已取消"
+    }
+  ],
+  "ae7W0a": [
+    {
+      "type": 0,
+      "value": "全屏"
+    }
+  ],
+  "ahFd/S": [
+    {
+      "type": 0,
+      "value": "每个拆分实例的非重复跟踪 ID"
+    }
+  ],
+  "ahsVI/": [
+    {
+      "type": 0,
+      "value": "输入 Pfx"
+    }
+  ],
+  "aoUT/3": [
+    {
+      "type": 0,
+      "value": "正在加载资源..."
+    }
+  ],
+  "auUI93": [
+    {
+      "type": 0,
+      "value": "添加或选择要用于映射的源架构。"
+    }
+  ],
+  "b7BQdu": [
+    {
+      "type": 0,
+      "value": "输入有效的布尔值。"
+    }
+  ],
+  "b9/1dK": [
+    {
+      "type": 0,
+      "value": "值"
+    }
+  ],
+  "b9P8SA": [
+    {
+      "type": 0,
+      "value": "不支持的令牌类型: "
+    },
+    {
+      "type": 1,
+      "value": "controls"
+    }
+  ],
+  "b9Rvl9": [
+    {
+      "type": 0,
+      "value": "正文"
+    }
+  ],
+  "bC2LBK": [
+    {
+      "type": 0,
+      "value": "不建议为类型“"
+    },
+    {
+      "type": 1,
+      "value": "type"
+    },
+    {
+      "type": 0,
+      "value": "”设置默认值，因为它将存储为纯文本。"
+    }
+  ],
+  "bG9rjv": [
+    {
+      "type": 0,
+      "value": "操作"
+    }
+  ],
+  "bGtEPd": [
+    {
+      "type": 0,
+      "value": "删除"
+    }
+  ],
+  "bIyTi7": [
+    {
+      "type": 0,
+      "value": "订阅"
+    }
+  ],
+  "bJ7DWe": [
+    {
+      "type": 0,
+      "value": "必需。要转换为二进制的值。"
+    }
+  ],
+  "bJEJoL": [
+    {
+      "type": 0,
+      "value": "可选。用于对集合中的对象进行排序的键。"
+    }
+  ],
+  "bSZ0lL": [
+    {
+      "type": 0,
+      "value": "回叫 URL"
+    }
+  ],
+  "bTrk+S": [
+    {
+      "type": 0,
+      "value": "必需。要检查其是否大于或等于被比较值的对象。"
+    }
+  ],
+  "bWBMhe": [
+    {
+      "type": 0,
+      "value": "默认情况下，逻辑应用实例同时运行或并行运行。此控件更改新运行的排队方式，并且在启用后无法更改。要运行尽可能多的并行实例，请禁用此控件。要限制并行运行的数量，请启用此控件，然后选择限制。如果要按顺序运行，请选择 1 作为限制。"
+    }
+  ],
+  "bWOsvo": [
+    {
+      "type": 0,
+      "value": "使用调用方的连接"
+    }
+  ],
+  "bXFGpe": [
+    {
+      "type": 0,
+      "value": "信息"
+    }
+  ],
+  "ba9yGJ": [
+    {
+      "type": 0,
+      "value": "加载更多内容"
+    }
+  ],
+  "bf7078": [
+    {
+      "type": 0,
+      "value": "返回输入数字数组中的最大值"
+    }
+  ],
+  "blRFVt": [
+    {
+      "type": 0,
+      "value": "设置这些连接以在流中使用它们。"
+    }
+  ],
+  "bldzuj": [
+    {
+      "type": 0,
+      "value": "重试历史记录"
+    }
+  ],
+  "bt2CaQ": [
+    {
+      "type": 0,
+      "value": "全部清除"
+    }
+  ],
+  "bwlAWn": [
+    {
+      "type": 0,
+      "value": "打开操作"
+    }
+  ],
+  "byRkj+": [
+    {
+      "type": 0,
+      "value": "此操作已启用安全输入或输出。"
+    }
+  ],
+  "byTBrn": [
+    {
+      "type": 0,
+      "value": "自定义"
+    }
+  ],
+  "c/+j08": [
+    {
+      "type": 0,
+      "value": "执行"
+    }
+  ],
+  "c2XklE": [
+    {
+      "type": 0,
+      "value": "搜索"
+    }
+  ],
+  "c3FLox": [
+    {
+      "type": 0,
+      "value": "(UTC+10:00)霍巴特"
+    }
+  ],
+  "c3G/zq": [
+    {
+      "type": 0,
+      "value": "返回一个对象，此对象的某个属性已设置为所提供的值"
+    }
+  ],
+  "c4GQZE": [
+    {
+      "type": 0,
+      "value": "选择下拉列表的架构"
+    }
+  ],
+  "c6XbVI": [
+    {
+      "type": 0,
+      "value": "面板"
+    }
+  ],
+  "c7kfkV": [
+    {
+      "type": 0,
+      "value": "输入有效的 JSON。"
+    }
+  ],
+  "c8UPLp": [
+    {
+      "type": 0,
+      "value": "也可以从其他源添加动态内容。"
+    }
+  ],
+  "cHiBAn": [
+    {
+      "type": 0,
+      "value": "(UTC+09:00)首尔"
+    }
+  ],
+  "cJkSrD": [
+    {
+      "type": 0,
+      "value": "检索更多结果，直到分页限制"
+    }
+  ],
+  "cK2A/V": [
+    {
+      "type": 0,
+      "value": "查看文档"
+    }
+  ],
+  "cR9RtV": [
+    {
+      "type": 0,
+      "value": "放弃更改"
+    }
+  ],
+  "cZXqqf": [
+    {
+      "type": 0,
+      "value": "更改连接"
+    }
+  ],
+  "cZv9J0": [
+    {
+      "type": 0,
+      "value": "连接有效"
+    }
+  ],
+  "ca/QIc": [
+    {
+      "type": 0,
+      "value": "错误消息"
+    }
+  ],
+  "ceVB5l": [
+    {
+      "type": 0,
+      "value": "返回操作的多部分输出中的一个部分的正文。"
+    }
+  ],
+  "cfUHfs": [
+    {
+      "type": 0,
+      "value": "以时间跨度字符串形式返回两个日期之间的差值"
+    }
+  ],
+  "cgq/+y": [
+    {
+      "type": 0,
+      "value": "请选择一个标识"
+    }
+  ],
+  "ciLkfU": [
+    {
+      "type": 0,
+      "value": "加粗(⌘B)"
+    }
+  ],
+  "cmTCsW": [
+    {
+      "type": 0,
+      "value": "加载组件时出错。"
+    }
+  ],
+  "cqiqcf": [
+    {
+      "type": 0,
+      "value": "开始时间"
+    }
+  ],
+  "cr0UnG": [
+    {
+      "type": 0,
+      "value": "9 "
+    }
+  ],
+  "cscezV": [
+    {
+      "type": 0,
+      "value": "必需。要从中跳过第一批计数对象的集合。"
+    }
+  ],
+  "ctI9Pp": [
+    {
+      "type": 0,
+      "value": "在尝试测试映射之前，请先生成 XSLT。"
+    }
+  ],
+  "cvp9VP": [
+    {
+      "type": 0,
+      "value": "错误代码"
+    }
+  ],
+  "cyEBus": [
+    {
+      "type": 0,
+      "value": "(UTC-04:00)库亚坝"
+    }
+  ],
+  "d020eg": [
+    {
+      "type": 0,
+      "value": "返回传入数组或字符串中的第一个元素。"
+    }
+  ],
+  "d4Ddhp": [
+    {
+      "type": 0,
+      "value": "下载(Alt 或 Option + select)"
+    }
+  ],
+  "dBWIjR": [
+    {
+      "type": 0,
+      "value": "架构缺少所需的输入"
+    }
+  ],
+  "dBxX0M": [
+    {
+      "type": 0,
+      "value": "添加触发器"
+    }
+  ],
+  "dD8y1n": [
+    {
+      "type": 0,
+      "value": "切换到键值模式"
+    }
+  ],
+  "dDYCuU": [
+    {
+      "type": 0,
+      "value": "了解详细信息"
+    }
+  ],
+  "dEe6Ob": [
+    {
+      "type": 0,
+      "value": "输入有效的 JSON。"
+    }
+  ],
+  "dKCp2j": [
+    {
+      "type": 0,
+      "value": "向我详细介绍"
+    }
+  ],
+  "dL9V5t": [
+    {
+      "type": 0,
+      "value": "托管标识"
+    }
+  ],
+  "dMAC4C": [
+    {
+      "type": 0,
+      "value": "替换操作"
+    }
+  ],
+  "dOpdsP": [
+    {
+      "type": 0,
+      "value": "更新"
+    }
+  ],
+  "dQmi91": [
+    {
+      "type": 0,
+      "value": "频率"
+    }
+  ],
+  "dUbKuK": [
+    {
+      "type": 0,
+      "value": "跳过"
+    }
+  ],
+  "daoo3l": [
+    {
+      "type": 0,
+      "value": "已连接到 "
+    },
+    {
+      "type": 1,
+      "value": "connectionName"
+    },
+    {
+      "type": 0,
+      "value": "。"
+    }
+  ],
+  "dfKsgg": [
+    {
+      "type": 0,
+      "value": "抱歉，我无法理解你的请求。请重新描述，然后重试。"
+    }
+  ],
+  "dfNjw1": [
+    {
+      "type": 0,
+      "value": "关闭"
+    }
+  ],
+  "dfmH55": [
+    {
+      "type": 0,
+      "value": "斜体(Ctrl+I)"
+    }
+  ],
+  "dhvk0u": [
+    {
+      "type": 0,
+      "value": "返回 Base 64 编码字符串的字符串表示形式"
+    }
+  ],
+  "dqgt9y": [
+    {
+      "type": 0,
+      "value": "将参数转换为布尔值"
+    }
+  ],
+  "drM9Sl": [
+    {
+      "type": 0,
+      "value": "从表单数据或表单编码操作输出返回一系列匹配键名称的值"
+    }
+  ],
+  "dsz+Ae": [
+    {
+      "type": 0,
+      "value": "使用分隔符拆分字符串"
+    }
+  ],
+  "dwrqEc": [
+    {
+      "type": 0,
+      "value": "警告"
+    }
+  ],
+  "e+GuGo": [
+    {
+      "type": 0,
+      "value": "输入"
+    }
+  ],
+  "e00zot": [
+    {
+      "type": 0,
+      "value": "你希望多久检查一次项目?"
+    }
+  ],
+  "e4JZEY": [
+    {
+      "type": 0,
+      "value": "(UTC+07:00)托木斯克"
+    }
+  ],
+  "e9OvzW": [
+    {
+      "type": 0,
+      "value": "清除"
+    }
+  ],
+  "e9bIKh": [
+    {
+      "type": 0,
+      "value": "未能生成 XSLT。"
+    }
+  ],
+  "eESljX": [
+    {
+      "type": 0,
+      "value": "还原"
+    }
+  ],
+  "eFet4K": [
+    {
+      "type": 0,
+      "value": "操作跟踪 ID"
+    }
+  ],
+  "eFnLWK": [
+    {
+      "type": 0,
+      "value": "(UTC-06:00)中美洲"
+    }
+  ],
+  "eHgfpz": [
+    {
+      "type": 0,
+      "value": "请输入有效的 URL"
+    }
+  ],
+  "eHgi14": [
+    {
+      "type": 0,
+      "value": "必需。需要获取其值的变量的名称。"
+    }
+  ],
+  "eHsOsm": [
+    {
+      "type": 0,
+      "value": "指定持续时间(按 ISO 8601 格式)"
+    }
+  ],
+  "eI00kb": [
+    {
+      "type": 0,
+      "value": "将此流编辑到"
+    }
+  ],
+  "eO1h/h": [
+    {
+      "type": 0,
+      "value": "此助手可帮助你了解工作流以及 Azure 逻辑应用平台的功能和连接器。"
+    }
+  ],
+  "eRvRWs": [
+    {
+      "type": 0,
+      "value": "开始时间"
+    }
+  ],
+  "eT+b9W": [
+    {
+      "type": 0,
+      "value": "必需。被除数要除以的数字。"
+    }
+  ],
+  "egLI8P": [
+    {
+      "type": 0,
+      "value": "必需。其中子字符换以参数 1 开头的索引。"
+    }
+  ],
+  "ehIBkh": [
+    {
+      "type": 0,
+      "value": "输入一个整数"
+    }
+  ],
+  "elD6+N": [
+    {
+      "type": 0,
+      "value": "斜体(⌘I)"
+    }
+  ],
+  "en/5A3": [
+    {
+      "type": 0,
+      "value": "重新分配"
+    }
+  ],
+  "eo1YKX": [
+    {
+      "type": 0,
+      "value": "启用拆分以启动所选数组中每个项的工作流实例。每个实例也可具有不同的跟踪 ID"
+    }
+  ],
+  "epOMnV": [
+    {
+      "type": 0,
+      "value": "共享"
+    }
+  ],
+  "evyGYj": [
+    {
+      "type": 0,
+      "value": "将所有连接的操作重新分配到新连接"
+    }
+  ],
+  "f/lWTW": [
+    {
+      "type": 0,
+      "value": "必需。要检查是否为 null 的对象。"
+    }
+  ],
+  "f1j0to": [
+    {
+      "type": 0,
+      "value": "可选。停止提取子字符串的位置的索引。"
+    }
+  ],
+  "f7Janv": [
+    {
+      "type": 0,
+      "value": "示例: PT1S"
+    }
+  ],
+  "f81ClO": [
+    {
+      "type": 0,
+      "value": "空动态内容图标"
+    }
+  ],
+  "fBQBw/": [
+    {
+      "type": 0,
+      "value": "如果第一个参数大于或等于第二个参数，则返回 true"
+    }
+  ],
+  "fDisLL": [
+    {
+      "type": 0,
+      "value": "Acl 创建因为连接而失败。正在删除连接。"
+    }
+  ],
+  "fElufw": [
+    {
+      "type": 0,
+      "value": "选择 API 管理资源"
+    }
+  ],
+  "fKYuwf": [
+    {
+      "type": 0,
+      "value": "请选择文件或图像"
+    }
+  ],
+  "fVG5aD": [
+    {
+      "type": 0,
+      "value": "(UTC-05:00)海地"
+    }
+  ],
+  "faUrud": [
+    {
+      "type": 0,
+      "value": "正在加载连接数据..."
+    }
+  ],
+  "fg/34o": [
+    {
+      "type": 0,
+      "value": "逻辑函数"
+    }
+  ],
+  "fifSPb": [
+    {
+      "type": 0,
+      "value": "(UTC-03:30)纽芬兰"
+    }
+  ],
+  "fmm7Ik": [
+    {
+      "type": 0,
+      "value": "函数"
+    }
+  ],
+  "fp8Ry3": [
+    {
+      "type": 0,
+      "value": "(UTC+08:00)北京，重庆，香港特別行政区，乌鲁木齐"
+    }
+  ],
+  "fvGvnA": [
+    {
+      "type": 0,
+      "value": "对不起，出现错误。请重试。"
+    }
+  ],
+  "g076bL": [
+    {
+      "type": 0,
+      "value": "电子邮件"
+    }
+  ],
+  "g1zwch": [
+    {
+      "type": 0,
+      "value": "放大"
+    }
+  ],
+  "g4igOR": [
+    {
+      "type": 0,
+      "value": "发布"
+    }
+  ],
+  "g5A6Bn": [
+    {
+      "type": 0,
+      "value": "运行时"
+    }
+  ],
+  "g7/EKC": [
+    {
+      "type": 0,
+      "value": "限制"
+    }
+  ],
+  "g7my78": [
+    {
+      "type": 0,
+      "value": "运行测试"
+    }
+  ],
+  "gA1dde": [
+    {
+      "type": 0,
+      "value": "切换代码视图"
+    }
+  ],
+  "gCXOd5": [
+    {
+      "type": 0,
+      "value": "URI"
+    }
+  ],
+  "gDDfek": [
+    {
+      "type": 0,
+      "value": "返回一个时间戳，此时间戳为当前的时间加上指定的时间间隔。"
+    }
+  ],
+  "gDY9xk": [
+    {
+      "type": 0,
+      "value": "返回这两个数字相除后的结果"
+    }
+  ],
+  "gIK0WG": [
+    {
+      "type": 0,
+      "value": "必需。确定表达式应返回哪个值的布尔值。"
+    }
+  ],
+  "gIx5ys": [
+    {
+      "type": 0,
+      "value": "将文本格式设置为斜体。快捷方式: Ctrl+I"
+    }
+  ],
+  "gKq3Jv": [
+    {
+      "type": 0,
+      "value": "上一次失败"
+    }
+  ],
+  "gL4rVQ": [
+    {
+      "type": 0,
+      "value": "无"
+    }
+  ],
+  "gQt/0f": [
+    {
+      "type": 0,
+      "value": "转换函数"
+    }
+  ],
+  "gRUmiA": [
+    {
+      "type": 0,
+      "value": "信息"
+    }
+  ],
+  "gWyYg0": [
+    {
+      "type": 0,
+      "value": "(UTC+05:00)阿什哈巴德，塔什干"
+    }
+  ],
+  "gYaVvl": [
+    {
+      "type": 0,
+      "value": "输入有效的浮点数。"
+    }
+  ],
+  "gc6v4X": [
+    {
+      "type": 0,
+      "value": "系统分配的托管标识"
+    }
+  ],
+  "gfBWfH": [
+    {
+      "type": 0,
+      "value": "电子邮件"
+    }
+  ],
+  "ginGIZ": [
+    {
+      "type": 0,
+      "value": "(UTC-06:00)瓜达拉哈拉，墨西哥市，蒙特雷"
+    }
+  ],
+  "gkY5ya": [
+    {
+      "type": 0,
+      "value": "删除"
+    }
+  ],
+  "gpUphl": [
+    {
+      "type": 0,
+      "value": "输入受众。"
+    }
+  ],
+  "gtQYgr": [
+    {
+      "type": 0,
+      "value": "返回一个布尔值，指示字符串是否为浮点数"
+    }
+  ],
+  "gu9o9z": [
+    {
+      "type": 0,
+      "value": "在内部使用 until 循环时，此函数返回指定循环的当前迭代索引。"
+    }
+  ],
+  "gusZw5": [
+    {
+      "type": 0,
+      "value": "输出名称应是唯一的。"
+    }
+  ],
+  "gvDMuq": [
+    {
+      "type": 0,
+      "value": "选择批处理工作流资源"
+    }
+  ],
+  "gwEKLM": [
+    {
+      "type": 0,
+      "value": "正在加载..."
+    }
+  ],
+  "h+W3VW": [
+    {
+      "type": 0,
+      "value": "数字"
+    }
+  ],
+  "h1lQDa": [
+    {
+      "type": 0,
+      "value": "输入或粘贴示例 JSON 有效负载。"
+    }
+  ],
+  "h40rpg": [
+    {
+      "type": 0,
+      "value": "指定 ISO 8601 格式的间隔时间。"
+    }
+  ],
+  "h6vVbX": [
+    {
+      "type": 0,
+      "value": "先添加源架构，然后选择元素以生成映射"
+    }
+  ],
+  "hH/wAd": [
+    {
+      "type": 0,
+      "value": "通过此操作重新提交工作流运行"
+    }
+  ],
+  "hJbr09": [
+    {
+      "type": 0,
+      "value": "单击以折叠"
+    }
+  ],
+  "hLOIwp": [
+    {
+      "type": 0,
+      "value": "警告"
+    }
+  ],
+  "hMf2TA": [
+    {
+      "type": 0,
+      "value": "允许分块"
+    }
+  ],
+  "hN7iBP": [
+    {
+      "offset": 0,
+      "options": {
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " 秒"
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "seconds"
+    }
+  ],
+  "hPM6iC": [
+    {
+      "type": 0,
+      "value": "返回这两个数字相减后的结果"
+    }
+  ],
+  "hRVVdR": [
+    {
+      "type": 0,
+      "value": "撤消"
+    }
+  ],
+  "hZqQdt": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00)加沙，希伯伦"
+    }
+  ],
+  "hbOvB4": [
+    {
+      "type": 0,
+      "value": "这不是我要查找的内容"
+    }
+  ],
+  "hihfHd": [
+    {
+      "type": 0,
+      "value": "值过大。"
+    }
+  ],
+  "hq1mk6": [
+    {
+      "type": 0,
+      "value": "操作路径值与段的模板不匹配。路径 "
+    },
+    {
+      "type": 1,
+      "value": "pathValue"
+    },
+    {
+      "type": 0,
+      "value": "，模板 "
+    },
+    {
+      "type": 1,
+      "value": "pathTemplate"
+    }
+  ],
+  "hrbDu6": [
+    {
+      "type": 0,
+      "value": "持续时间"
+    }
+  ],
+  "htj+eZ": [
+    {
+      "type": 0,
+      "value": "更新目标架构"
+    }
+  ],
+  "hvbclb": [
+    {
+      "type": 0,
+      "value": "受众"
+    }
+  ],
+  "hwj1Ht": [
+    {
+      "type": 0,
+      "value": "编辑流"
+    }
+  ],
+  "hza/cT": [
+    {
+      "type": 0,
+      "value": "(UTC+00:00)卡萨布兰卡"
+    }
+  ],
+  "i/SguY": [
+    {
+      "type": 0,
+      "value": "系统分配的托管标识"
+    }
+  ],
+  "i/b3Ko": [
+    {
+      "type": 0,
+      "value": "异步响应"
+    }
+  ],
+  "i0XjL5": [
+    {
+      "type": 0,
+      "value": "搜索操作"
+    }
+  ],
+  "i1EQYm": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00)哈拉雷，比勒陀利亚"
+    }
+  ],
+  "i1Tufp": [
+    {
+      "type": 0,
+      "value": "提供用于测试地图的输入数据"
+    }
+  ],
+  "i1cwra": [
+    {
+      "type": 0,
+      "value": "重做"
+    }
+  ],
+  "i1vHaT": [
+    {
+      "type": 0,
+      "value": "复制操作"
+    }
+  ],
+  "i4C4aB": [
+    {
+      "type": 0,
+      "value": "网络"
+    }
+  ],
+  "i4Om5O": [
+    {
+      "type": 0,
+      "value": "此项包含无效值"
+    }
+  ],
+  "i8xPfO": [
+    {
+      "type": 0,
+      "value": "无操作"
+    }
+  ],
+  "iB8YKD": [
+    {
+      "type": 0,
+      "value": "“关于”选项卡"
+    }
+  ],
+  "iCSHJG": [
+    {
+      "type": 0,
+      "value": "使用固定区域性的大小写规则将字符串转换为大写"
+    }
+  ],
+  "iE2+sy": [
+    {
+      "type": 0,
+      "value": "选择输出的类型"
+    }
+  ],
+  "iEy9pT": [
+    {
+      "type": 0,
+      "value": "动态内容"
+    }
+  ],
+  "iHVVTl": [
+    {
+      "type": 0,
+      "value": "是否确实要删除 "
+    },
+    {
+      "type": 1,
+      "value": "nodeId"
+    },
+    {
+      "type": 0,
+      "value": "?"
+    }
+  ],
+  "iJOIca": [
+    {
+      "type": 0,
+      "value": "下一页"
+    }
+  ],
+  "iMicOQ": [
+    {
+      "type": 0,
+      "value": "必填。要分析的 URI。"
+    }
+  ],
+  "iRe/g7": [
+    {
+      "type": 0,
+      "value": "21"
+    }
+  ],
+  "iRjBf4": [
+    {
+      "type": 0,
+      "value": "此操作已配置测试。"
+    }
+  ],
+  "iSb/hp": [
+    {
+      "type": 0,
+      "value": "托管标识"
+    }
+  ],
+  "iSiVB0": [
+    {
+      "type": 0,
+      "value": "保护操作的输出和输出属性的引用。"
+    }
+  ],
+  "iTKrs8": [
+    {
+      "type": 0,
+      "value": "分页"
+    }
+  ],
+  "iU1OJh": [
+    {
+      "type": 0,
+      "value": "展开"
+    }
+  ],
+  "iU5Fdh": [
+    {
+      "type": 0,
+      "value": "操作函数"
+    }
+  ],
+  "iUs7pv": [
+    {
+      "type": 0,
+      "value": "取消"
+    }
+  ],
+  "iVMVAt": [
+    {
+      "type": 0,
+      "value": "示例: 0、10"
+    }
+  ],
+  "iXW+2l": [
+    {
+      "type": 0,
+      "value": "添加操作"
+    }
+  ],
+  "id4DBb": [
+    {
+      "type": 0,
+      "value": "查看此 AI 生成的流建议后，选择"
+    }
+  ],
+  "idQjOP": [
+    {
+      "type": 0,
+      "value": "属性"
+    }
+  ],
+  "ifnOUI": [
+    {
+      "type": 0,
+      "value": "“代码视图”选项卡"
+    }
+  ],
+  "ihCdw4": [
+    {
+      "type": 0,
+      "value": "必需。要与被加数 2 相加的数字。"
+    }
+  ],
+  "iq+tiv": [
+    {
+      "type": 0,
+      "value": "11"
+    }
+  ],
+  "iql+jn": [
+    {
+      "type": 1,
+      "value": "seconds"
+    },
+    {
+      "type": 0,
+      "value": " 秒"
+    }
+  ],
+  "iy8rNf": [
+    {
+      "type": 0,
+      "value": "测试"
+    }
+  ],
+  "j5z8Vd": [
+    {
+      "type": 0,
+      "value": "重复"
+    }
+  ],
+  "jA6Wrp": [
+    {
+      "type": 0,
+      "value": "添加或选择要用于映射的目标架构。"
+    }
+  ],
+  "jHHF/u": [
+    {
+      "type": 0,
+      "value": "返回指定范围(只含起始界限值)内的随机整数"
+    }
+  ],
+  "jHKc3w": [
+    {
+      "type": 0,
+      "value": "其他"
+    }
+  ],
+  "jKsMS6": [
+    {
+      "type": 0,
+      "value": "必需。将进行求反的表达式。"
+    }
+  ],
+  "jMLmag": [
+    {
+      "type": 0,
+      "value": "新建"
+    }
+  ],
+  "jN0YES": [
+    {
+      "type": 0,
+      "value": "告诉 Microsoft 如何改进此功能"
+    }
+  ],
+  "jO5Fet": [
+    {
+      "type": 0,
+      "value": "请求选项 - 超时"
+    }
+  ],
+  "jQ0Aqj": [
+    {
+      "type": 0,
+      "value": "必需。转换为字符串的值。"
+    }
+  ],
+  "jQ7UzV": [
+    {
+      "type": 0,
+      "value": "(UTC-10:00) 阿留申群岛"
+    }
+  ],
+  "jQjteB": [
+    {
+      "type": 0,
+      "value": "添加源架构"
+    }
+  ],
+  "jTHUFb": [
+    {
+      "type": 0,
+      "value": "显示 "
+    },
+    {
+      "type": 1,
+      "value": "countShowing"
+    },
+    {
+      "type": 0,
+      "value": " 个，共 "
+    },
+    {
+      "type": 1,
+      "value": "countTotal"
+    },
+    {
+      "type": 0,
+      "value": " 个"
+    }
+  ],
+  "jUDhbs": [
+    {
+      "type": 0,
+      "value": "目标架构"
+    }
+  ],
+  "jVIgz1": [
+    {
+      "type": 0,
+      "value": "必填。要拆分的字符串或数组。"
+    }
+  ],
+  "jVpanH": [
+    {
+      "type": 0,
+      "value": "必需。一个 base64 输入字符串。"
+    }
+  ],
+  "jZjgYZ": [
+    {
+      "type": 0,
+      "value": "未在此订阅下找到此类型的资源。"
+    }
+  ],
+  "jcA3Ig": [
+    {
+      "type": 0,
+      "value": "必需。要返回的表单数据值的键名称。"
+    }
+  ],
+  "jfInxm": [
+    {
+      "type": 0,
+      "value": "在 JSON 中编辑"
+    }
+  ],
+  "jfU6pn": [
+    {
+      "type": 0,
+      "value": "启用安全输入将自动保护输出。"
+    }
+  ],
+  "jgOaTX": [
+    {
+      "type": 0,
+      "value": "无法生成架构"
+    }
+  ],
+  "jlcMGg": [
+    {
+      "type": 0,
+      "value": "描述你的流应执行的操作。请添加尽可能详细的信息，包括要使用的连接器以及是否应包含任何内容。"
+    }
+  ],
+  "juvF+0": [
+    {
+      "type": 0,
+      "value": "网关"
+    }
+  ],
+  "k/oqFL": [
+    {
+      "type": 0,
+      "value": "必需。base64 编码字符串。"
+    }
+  ],
+  "k5tGEr": [
+    {
+      "type": 0,
+      "value": "是"
+    }
+  ],
+  "k8cbQ1": [
+    {
+      "type": 0,
+      "value": "参数错误"
+    }
+  ],
+  "kBOAkT": [
+    {
+      "type": 0,
+      "value": "选择字段"
+    }
+  ],
+  "kBSLfu": [
+    {
+      "type": 0,
+      "value": "属性名重复"
+    }
+  ],
+  "kEI2xx": [
+    {
+      "type": 0,
+      "value": "消息"
+    }
+  ],
+  "kEjmTx": [
+    {
+      "type": 0,
+      "value": "你可以提出一些问题:"
+    }
+  ],
+  "kHcCxH": [
+    {
+      "type": 1,
+      "value": "minutes"
+    },
+    {
+      "type": 0,
+      "value": " 分 "
+    },
+    {
+      "type": 1,
+      "value": "seconds"
+    },
+    {
+      "type": 0,
+      "value": " 秒"
+    }
+  ],
+  "kHs5R4": [
+    {
+      "type": 0,
+      "value": "检查这些操作，看看是否需要设置任何参数。"
+    }
+  ],
+  "kKJMeM": [
+    {
+      "type": 0,
+      "value": "每周的星期一..."
+    }
+  ],
+  "kM+Mr0": [
+    {
+      "type": 0,
+      "value": "正在加载..."
+    }
+  ],
+  "kN6kce": [
+    {
+      "type": 0,
+      "value": "返回输入 based64 字符串的字符串表示形式"
+    }
+  ],
+  "kSK9Pq": [
+    {
+      "type": 0,
+      "value": "(UTC-05:00)波哥大，利马，基多，里约布兰科"
+    }
+  ],
+  "kVwJXt": [
+    {
+      "type": 0,
+      "value": "(UTC+04:00)阿尔扎比，马斯喀特"
+    }
+  ],
+  "kXn5e0": [
+    {
+      "type": 0,
+      "value": "询问关于此工作流或整个 Azure 逻辑应用的问题..."
+    }
+  ],
+  "kZCX7t": [
+    {
+      "type": 0,
+      "value": "星期一"
+    }
+  ],
+  "kcOhfh": [
+    {
+      "type": 0,
+      "value": "删除了未连接到目标元素的元素和映射。"
+    }
+  ],
+  "klY9UN": [
+    {
+      "offset": 0,
+      "options": {
+        "=0": {
+          "value": [
+            {
+              "type": 0,
+              "value": "没有任何项匹配。"
+            }
+          ]
+        },
+        "other": {
+          "value": [
+            {
+              "type": 0,
+              "value": "有 "
+            },
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " 项匹配。"
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "count"
+    }
+  ],
+  "kq+I5o": [
+    {
+      "type": 0,
+      "value": "添加输出"
+    }
+  ],
+  "kuFK3E": [
+    {
+      "type": 0,
+      "value": "缺少身份验证类型属性: \"type\"。"
+    }
+  ],
+  "l/3yJr": [
+    {
+      "type": 0,
+      "value": "连接无效"
+    }
+  ],
+  "l/9YHQ": [
+    {
+      "type": 0,
+      "value": "(UTC+01:00)温特和克"
+    }
+  ],
+  "l2YXln": [
+    {
+      "type": 0,
+      "value": "将操作替换为"
+    }
+  ],
+  "l36V56": [
+    {
+      "type": 1,
+      "value": "hours"
+    },
+    {
+      "type": 0,
+      "value": " 小时 "
+    },
+    {
+      "type": 1,
+      "value": "minutes"
+    },
+    {
+      "type": 0,
+      "value": " 分钟"
+    }
+  ],
+  "l536iI": [
+    {
+      "type": 0,
+      "value": "“监视”选项卡"
+    }
+  ],
+  "l72gf4": [
+    {
+      "type": 0,
+      "value": "托管标识"
+    }
+  ],
+  "lA/sHA": [
+    {
+      "type": 0,
+      "value": "将 \""
+    },
+    {
+      "type": 1,
+      "value": "label"
+    },
+    {
+      "type": 0,
+      "value": "\" 的值复制到剪贴板"
+    }
+  ],
+  "lB56l2": [
+    {
+      "type": 0,
+      "value": "请输入有效的数字。"
+    }
+  ],
+  "lM9qrG": [
+    {
+      "type": 0,
+      "value": "(UTC+13:00)努库阿洛法"
+    }
+  ],
+  "lPTdSf": [
+    {
+      "type": 0,
+      "value": "运行触发器"
+    }
+  ],
+  "lQNKUB": [
+    {
+      "type": 0,
+      "value": "自动添加父元素的行。"
+    }
+  ],
+  "lR7V87": [
+    {
+      "type": 0,
+      "value": "函数"
+    }
+  ],
+  "lX30/R": [
+    {
+      "type": 0,
+      "value": "折叠"
+    }
+  ],
+  "lZT0JI": [
+    {
+      "type": 0,
+      "value": "添加组"
+    }
+  ],
+  "lckgnb": [
+    {
+      "type": 0,
+      "value": "必填。要反向的集合。"
+    }
+  ],
+  "lexzgJ": [
+    {
+      "type": 0,
+      "value": "在删除元素之前，请删除对元素 \""
+    },
+    {
+      "type": 1,
+      "value": "nodeName"
+    },
+    {
+      "type": 0,
+      "value": "\" 的所有引用。"
+    }
+  ],
+  "lgs5sf": [
+    {
+      "type": 0,
+      "value": "无状态运行模式:"
+    }
+  ],
+  "lhL/KL": [
+    {
+      "type": 0,
+      "value": "常规"
+    }
+  ],
+  "ljAOR6": [
+    {
+      "type": 0,
+      "value": "actions('actionName').outputs.body 的速记"
+    }
+  ],
+  "lkgjxD": [
+    {
+      "type": 0,
+      "value": "必填。包含结束时间的字符串。"
+    }
+  ],
+  "loxzZD": [
+    {
+      "type": 0,
+      "value": "插入表达式(还可以通过在编辑器中键入 / 来添加)"
+    }
+  ],
+  "lsH37F": [
+    {
+      "type": 0,
+      "value": "根据提供的架构验证请求正文。如果存在不匹配项，将会返回 HTTP 400"
+    }
+  ],
+  "lsKVU6": [
+    {
+      "type": 0,
+      "value": "选择操作类型"
+    }
+  ],
+  "lwlg2K": [
+    {
+      "type": 0,
+      "value": "下划线(Ctrl+U)"
+    }
+  ],
+  "lztiwS": [
+    {
+      "type": 0,
+      "value": "实际值"
+    }
+  ],
+  "m/jJ/5": [
+    {
+      "type": 0,
+      "value": "映射检查器"
+    }
+  ],
+  "m7Y6Qf": [
+    {
+      "type": 0,
+      "value": "测试"
+    }
+  ],
+  "m8Q61y": [
+    {
+      "type": 0,
+      "value": "名称"
+    }
+  ],
+  "m8z4Yr": [
+    {
+      "type": 0,
+      "value": "要返回的项目阈值"
+    }
+  ],
+  "mAuMD+": [
+    {
+      "type": 0,
+      "value": "输入数组"
+    }
+  ],
+  "mCKsFw": [
+    {
+      "type": 0,
+      "value": "(UTC+07:00) 巴尔瑙尔，戈尔诺-阿尔泰斯克"
+    }
+  ],
+  "mCzkXX": [
+    {
+      "type": 0,
+      "value": "添加操作"
+    }
+  ],
+  "mE7w9G": [
+    {
+      "type": 0,
+      "value": "已删除函数。"
+    }
+  ],
+  "mGUdCO": [
+    {
+      "type": 0,
+      "value": "返回一个时间戳，此时间戳为当前的时间减去指定的时间间隔。"
+    }
+  ],
+  "mGpKsl": [
+    {
+      "type": 0,
+      "value": "返回数据 URI 的字符串表示形式"
+    }
+  ],
+  "mNaBPE": [
+    {
+      "type": 0,
+      "value": "输入有效的 JSON。"
+    }
+  ],
+  "mPakaD": [
+    {
+      "type": 0,
+      "value": "URL 对输入字符串进行编码"
+    }
+  ],
+  "mPuXlv": [
+    {
+      "type": 0,
+      "value": "拆分对象值 \""
+    },
+    {
+      "type": 1,
+      "value": "splitOn"
+    },
+    {
+      "type": 0,
+      "value": "\" 的类型无效，拆分对象不在数组中。"
+    }
+  ],
+  "mUURJW": [
+    {
+      "type": 0,
+      "value": "连接无效"
+    }
+  ],
+  "mYQFtf": [
+    {
+      "type": 0,
+      "value": "身份验证类型 \"ActiveDirectoryOAuth\" 缺少必需的属性 \"secret\" 或 \"pfx\" 和 \"password\"。"
+    }
+  ],
+  "mZQYLv": [
+    {
+      "type": 0,
+      "value": "必需。要计算的 XPath 表达式。"
+    }
+  ],
+  "mZRMD9": [
+    {
+      "type": 0,
+      "value": "必需。要转换为小写的字符串。如果字符串中的某字符没有小写等效项，则该字符在返回的字符串中保持不变。"
+    }
+  ],
+  "mca3Ml": [
+    {
+      "type": 0,
+      "value": "登录到连接器"
+    }
+  ],
+  "meVkB6": [
+    {
+      "type": 0,
+      "value": "属性名称为空"
+    }
+  ],
+  "mej02C": [
+    {
+      "type": 0,
+      "value": "(UTC+08:30)平壤"
+    }
+  ],
+  "mjS/k1": [
+    {
+      "type": 0,
+      "value": "限制逻辑应用，使其不在传出请求中包含工作流元数据标头。"
+    }
+  ],
+  "mlU+AC": [
+    {
+      "type": 0,
+      "value": "连接"
+    }
+  ],
+  "mvrlkP": [
+    {
+      "type": 0,
+      "value": "以纯文本形式输入密码或使用安全参数"
+    }
+  ],
+  "mvu5xN": [
+    {
+      "type": 1,
+      "value": "name"
+    },
+    {
+      "type": 0,
+      "value": " 值"
+    }
+  ],
+  "mwEHSX": [
+    {
+      "type": 0,
+      "value": "函数"
+    }
+  ],
+  "mx2IMJ": [
+    {
+      "type": 0,
+      "value": "13"
+    }
+  ],
+  "n+F7e2": [
+    {
+      "type": 0,
+      "value": "15"
+    }
+  ],
+  "n20T2h": [
+    {
+      "type": 0,
+      "value": "7 "
+    }
+  ],
+  "n35O/+": [
+    {
+      "type": 0,
+      "value": "必需。转换为浮点数的值。"
+    }
+  ],
+  "n42uAO": [
+    {
+      "type": 0,
+      "value": "(UTC-04:00)圣地亚哥"
+    }
+  ],
+  "n4V2Hi": [
+    {
+      "type": 0,
+      "value": "Active Directory OAuth"
+    }
+  ],
+  "n7wxxN": [
+    {
+      "type": 0,
+      "value": "请尝试不太特定的关键字。"
+    }
+  ],
+  "nCa0KG": [
+    {
+      "type": 0,
+      "value": "内部错误"
+    }
+  ],
+  "nGds/r": [
+    {
+      "type": 0,
+      "value": "必需。要检查其是否小于或等于被比较值的对象。"
+    }
+  ],
+  "nHIeXp": [
+    {
+      "type": 0,
+      "value": "已跳过"
+    }
+  ],
+  "nHseED": [
+    {
+      "type": 0,
+      "value": "必需。表示所需将来时间与当前时间相差的时间单位数。"
+    }
+  ],
+  "nNWAAh": [
+    {
+      "type": 0,
+      "value": "未添加任何架构。"
+    }
+  ],
+  "nOWGAV": [
+    {
+      "type": 0,
+      "value": "结束时间"
+    }
+  ],
+  "nOhve4": [
+    {
+      "type": 0,
+      "value": "是/否"
+    }
+  ],
+  "nPgYuI": [
+    {
+      "type": 0,
+      "value": "新建参数"
+    }
+  ],
+  "nRpM02": [
+    {
+      "type": 0,
+      "value": "自定义"
+    }
+  ],
+  "nSUXtP": [
+    {
+      "type": 0,
+      "value": "此更改将修改多个操作。"
+    }
+  ],
+  "nSan4V": [
+    {
+      "type": 0,
+      "value": "重置"
+    }
+  ],
+  "nTA155": [
+    {
+      "type": 0,
+      "value": "必填。要删除的属性名称。"
+    }
+  ],
+  "nVDG00": [
+    {
+      "type": 0,
+      "value": "(UTC+14:00)基里巴斯岛"
+    }
+  ],
+  "nZ4nLn": [
+    {
+      "type": 0,
+      "value": "抑制工作流标头"
+    }
+  ],
+  "ncW1Sw": [
+    {
+      "type": 1,
+      "value": "operationName"
+    },
+    {
+      "type": 0,
+      "value": " 操作，"
+    },
+    {
+      "type": 1,
+      "value": "connectorName"
+    },
+    {
+      "type": 0,
+      "value": " 连接器"
+    }
+  ],
+  "ngsC44": [
+    {
+      "type": 0,
+      "value": "必需。要检查其是否小于比较对象的对象。"
+    }
+  ],
+  "njGstq": [
+    {
+      "type": 0,
+      "value": "(UTC+05:45)加德满都"
+    }
+  ],
+  "nkk1mu": [
+    {
+      "type": 0,
+      "value": "将分钟数的整数值添加到传入的字符串时间戳"
+    }
+  ],
+  "nmFupX": [
+    {
+      "type": 0,
+      "value": "已超时"
+    }
+  ],
+  "no/SMg": [
+    {
+      "type": 0,
+      "value": "(UTC+10:00)布里斯班"
+    }
+  ],
+  "nwLd4b": [
+    {
+      "type": 0,
+      "value": "用于选择文件路径的下拉列表"
+    }
+  ],
+  "nx25nq": [
+    {
+      "type": 0,
+      "value": "19"
+    }
+  ],
+  "ny75Ly": [
+    {
+      "type": 0,
+      "value": "输入参数的默认值。"
+    }
+  ],
+  "o/0SEj": [
+    {
+      "type": 0,
+      "value": "返回数组或字符串中传入的最后一个元素"
+    }
+  ],
+  "o/FgET": [
+    {
+      "type": 0,
+      "value": "函数已从当前位置删除，目前存在于其他位置。"
+    }
+  ],
+  "o14STH": [
+    {
+      "type": 0,
+      "value": "必需。将在其上计算 XPath 表达式的 XML。"
+    }
+  ],
+  "o1HOyf": [
+    {
+      "type": 0,
+      "value": "第 "
+    },
+    {
+      "type": 1,
+      "value": "current_page"
+    },
+    {
+      "type": 0,
+      "value": " 页(共 "
+    },
+    {
+      "type": 1,
+      "value": "max_page"
+    },
+    {
+      "type": 0,
+      "value": " 页)"
+    }
+  ],
+  "o3SfI4": [
+    {
+      "type": 0,
+      "value": "缩放到合适大小"
+    }
+  ],
+  "o5fYVy": [
+    {
+      "type": 0,
+      "value": "描述此工作流。"
+    }
+  ],
+  "o7bd1o": [
+    {
+      "type": 0,
+      "value": "(UTC+03:30)德黑兰"
+    }
+  ],
+  "o8ohVV": [
+    {
+      "type": 0,
+      "value": "架构 ID"
+    }
+  ],
+  "oAFcW6": [
+    {
+      "type": 0,
+      "value": "必需。要解码为二进制表示形式的 dataURI。"
+    }
+  ],
+  "oDHXKh": [
+    {
+      "type": 0,
+      "value": "项"
+    }
+  ],
+  "oLtwMw": [
+    {
+      "type": 0,
+      "value": "内容传输"
+    }
+  ],
+  "oMphsh": [
+    {
+      "type": 0,
+      "value": "设置"
+    }
+  ],
+  "oO12r6": [
+    {
+      "type": 0,
+      "value": "(UTC-08:00)下加利福尼亚"
+    }
+  ],
+  "oQjIWf": [
+    {
+      "type": 0,
+      "value": "错误"
+    }
+  ],
+  "oR2x4N": [
+    {
+      "type": 0,
+      "value": "整数值无效"
+    }
+  ],
+  "oRxmXb": [
+    {
+      "type": 0,
+      "value": "复制触发器"
+    }
+  ],
+  "oTBkbU": [
+    {
+      "type": 0,
+      "value": "输出"
+    }
+  ],
+  "oV0xQ9": [
+    {
+      "type": 0,
+      "value": "输入运行标识符以打开运行"
+    }
+  ],
+  "oVVPst": [
+    {
+      "type": 0,
+      "value": "是否要放弃所有未保存的更改?"
+    }
+  ],
+  "oWGaw9": [
+    {
+      "type": 0,
+      "value": "查看更少"
+    }
+  ],
+  "oZMhX/": [
+    {
+      "type": 0,
+      "value": "展开"
+    }
+  ],
+  "odQ554": [
+    {
+      "type": 0,
+      "value": "响应正文"
+    }
+  ],
+  "onXUu0": [
+    {
+      "type": 0,
+      "value": "添加备注"
+    }
+  ],
+  "osKNnl": [
+    {
+      "type": 0,
+      "value": "输入有效的双精度数字。"
+    }
+  ],
+  "ox2Ou7": [
+    {
+      "type": 0,
+      "value": "输入有效的 JSON"
+    }
+  ],
+  "oxXV4+": [
+    {
+      "type": 0,
+      "value": "返回传入参数值中的第一个非 null 对象。"
+    }
+  ],
+  "p/0r2N": [
+    {
+      "type": 0,
+      "value": "必需。要返回的表单数据值的键名称。"
+    }
+  ],
+  "p16/4S": [
+    {
+      "type": 0,
+      "value": "标头"
+    }
+  ],
+  "p1IEXb": [
+    {
+      "type": 0,
+      "value": "输入上一步中的数据。还可以通过键入 \"/\" 字符来添加数据。"
+    }
+  ],
+  "p1Qtm5": [
+    {
+      "type": 0,
+      "value": "应用内"
+    }
+  ],
+  "p5ZID0": [
+    {
+      "type": 0,
+      "value": "(UTC+03:00)科威特，利雅得"
+    }
+  ],
+  "pC2nr2": [
+    {
+      "type": 0,
+      "value": "输入密钥"
+    }
+  ],
+  "pH2uak": [
+    {
+      "type": 0,
+      "value": "折叠"
+    }
+  ],
+  "pIczsS": [
+    {
+      "type": 0,
+      "value": "结束时间"
+    }
+  ],
+  "pMms92": [
+    {
+      "type": 0,
+      "value": "插入动态内容"
+    }
+  ],
+  "pOTcUO": [
+    {
+      "type": 0,
+      "value": "必需。要合并成数组的值。"
+    }
+  ],
+  "pOVDll": [
+    {
+      "type": 0,
+      "value": "输入有效的整数。"
+    }
+  ],
+  "pXmFGf": [
+    {
+      "type": 0,
+      "value": "将输入转换为 XML 类型的值"
+    }
+  ],
+  "pYNzbj": [
+    {
+      "type": 0,
+      "value": "路径"
+    }
+  ],
+  "pYtSyE": [
+    {
+      "type": 0,
+      "value": "必需。被除数要除以的数字。相除后，将取余数。"
+    }
+  ],
+  "pc0FCg": [
+    {
+      "type": 0,
+      "value": "当隐藏令牌选取器时添加动态内容的按钮"
+    }
+  ],
+  "pcGqoB": [
+    {
+      "type": 0,
+      "value": "加载输出时出错"
+    }
+  ],
+  "pcuZKB": [
+    {
+      "type": 0,
+      "value": "返回一个数组或对象，它在传入的数组或对象之间拥有共同元素。此函数的参数可以是一组对象或一组数据(不可两者混合)。如果两个对象的名称相同，则最终对象中将显示后一个对象的名称。"
+    }
+  ],
+  "piaRy6": [
+    {
+      "type": 0,
+      "value": "触发器"
+    }
+  ],
+  "pozypE": [
+    {
+      "type": 0,
+      "value": "删除字符串中的前导和尾随空格"
+    }
+  ],
+  "pr9GwA": [
+    {
+      "type": 0,
+      "value": "刷新"
+    }
+  ],
+  "ptkf0D": [
+    {
+      "type": 0,
+      "value": "安全"
+    }
+  ],
+  "q+ZZjX": [
+    {
+      "type": 0,
+      "value": "重试历史记录"
+    }
+  ],
+  "q/+Uex": [
+    {
+      "type": 0,
+      "value": "从提供 XPath 表达式返回 XML 节点、节点集或 JSON 形式的值"
+    }
+  ],
+  "q/DRBW": [
+    {
+      "type": 0,
+      "value": "必需。要从中计算 UTF-8 长度的字符串。"
+    }
+  ],
+  "q1gfIs": [
+    {
+      "type": 0,
+      "value": "添加触发器"
+    }
+  ],
+  "q2OCEx": [
+    {
+      "type": 0,
+      "value": "必填。要分配给属性的值。"
+    }
+  ],
+  "q2w8Sk": [
+    {
+      "type": 0,
+      "value": "将参数转换为字符串"
+    }
+  ],
+  "q4ChjK": [
+    {
+      "type": 0,
+      "value": "选择带有“手动”触发器的工作流"
+    }
+  ],
+  "q5TkqE": [
+    {
+      "type": 0,
+      "value": "必需。表达式为 false 时要返回的值。"
+    }
+  ],
+  "q87X20": [
+    {
+      "type": 0,
+      "value": "将秒数的整数值添加到传入的字符串时间戳"
+    }
+  ],
+  "qAlTD5": [
+    {
+      "type": 0,
+      "value": "清单连接引用格式 \""
+    },
+    {
+      "type": 1,
+      "value": "referenceKeyFormat"
+    },
+    {
+      "type": 0,
+      "value": "\" 不受支持"
+    }
+  ],
+  "qBNM3e": [
+    {
+      "type": 0,
+      "value": "正在连接到应用和服务"
+    }
+  ],
+  "qBkxGU": [
+    {
+      "type": 0,
+      "value": "将文本格式设置为下划线。快捷方式: ⌘U"
+    }
+  ],
+  "qGfwxW": [
+    {
+      "type": 0,
+      "value": "托管标识"
+    }
+  ],
+  "qJpnIL": [
+    {
+      "type": 0,
+      "value": "检查字符串是否以某个值结尾(区分大小写，固定区域性)"
+    }
+  ],
+  "qSejoi": [
+    {
+      "type": 0,
+      "value": "如果第一个参数小于或等于第二个参数，则返回 true"
+    }
+  ],
+  "qSt0Sb": [
+    {
+      "type": 0,
+      "value": "必需"
+    }
+  ],
+  "qUMXpq": [
+    {
+      "type": 0,
+      "value": "Swagger 终结点"
+    }
+  ],
+  "qUWBUX": [
+    {
+      "offset": 0,
+      "options": {
+        "other": {
+          "value": [
+            {
+              "type": 7
+            },
+            {
+              "type": 0,
+              "value": " 天"
+            }
+          ]
+        }
+      },
+      "pluralType": "cardinal",
+      "type": 6,
+      "value": "days"
+    }
+  ],
+  "qVgQfW": [
+    {
+      "type": 0,
+      "value": "搜索"
+    }
+  ],
+  "qc5S69": [
+    {
+      "type": 0,
+      "value": "返回数组或字符串中的元素数目"
+    }
+  ],
+  "qdUeUk": [
+    {
+      "type": 0,
+      "value": "单击以展开"
+    }
+  ],
+  "qiIs4V": [
+    {
+      "type": 0,
+      "value": "示例: "
+    },
+    {
+      "type": 1,
+      "value": "example"
+    }
+  ],
+  "qij+Vf": [
+    {
+      "type": 0,
+      "value": "切换到默认视图模式"
+    }
+  ],
+  "qnI4Y1": [
+    {
+      "type": 0,
+      "value": "必需。转换为整数的值。"
+    }
+  ],
+  "qr1lLG": [
+    {
+      "type": 0,
+      "value": "函数 \""
+    },
+    {
+      "type": 1,
+      "value": "nodeName"
+    },
+    {
+      "type": 0,
+      "value": "\" 具有类型不匹配的输入"
+    }
+  ],
+  "qrxi0L": [
+    {
+      "type": 0,
+      "value": "异步响应允许逻辑应用使用 202 (已接受)进行响应，指示已接受请求进行处理。将提供位置标头，用于检索最终状态。"
+    }
+  ],
+  "qy5WqY": [
+    {
+      "type": 0,
+      "value": "上一个流建议"
+    }
+  ],
+  "qzaoRR": [
+    {
+      "type": 0,
+      "value": "限制此操作的重试和异步响应之间的最大持续时间。注意: 这不会更改单个请求的请求超时"
+    }
+  ],
+  "r/n6/9": [
+    {
+      "type": 0,
+      "value": "输入一个值"
+    }
+  ],
+  "r43nMc": [
+    {
+      "type": 0,
+      "value": "撤消"
+    }
+  ],
+  "r4zp7m": [
+    {
+      "type": 0,
+      "value": "已展开"
+    }
+  ],
+  "r7vZ5a": [
+    {
+      "type": 0,
+      "value": "最小时间间隔"
+    }
+  ],
+  "r8aZXs": [
+    {
+      "type": 0,
+      "value": "使表达式从其他 JSON 名称和值对或运行时操作的输出中派生它的值"
+    }
+  ],
+  "r9SVE4": [
+    {
+      "type": 0,
+      "value": "Int"
+    }
+  ],
+  "rAwCdh": [
+    {
+      "type": 0,
+      "value": "通过本地数据网关连接"
+    }
+  ],
+  "rAyuzv": [
+    {
+      "type": 0,
+      "value": "否"
+    }
+  ],
+  "rCl53e": [
+    {
+      "type": 0,
+      "value": "卡标题"
+    }
+  ],
+  "rDDPpJ": [
+    {
+      "type": 0,
+      "value": "机密"
+    }
+  ],
+  "rNi5Y3": [
+    {
+      "type": 0,
+      "value": "如果要设置本地连接，请选中此复选框。"
+    }
+  ],
+  "rSIBjh": [
+    {
+      "type": 0,
+      "value": "输入参数的值。"
+    }
+  ],
+  "rSa1Id": [
+    {
+      "type": 0,
+      "value": "在 "
+    },
+    {
+      "type": 1,
+      "value": "filePath"
+    },
+    {
+      "type": 0,
+      "value": " 中找不到文件，请将 XSLT 保存到指定路径以使用此函数"
+    }
+  ],
+  "raBiud": [
+    {
+      "type": 0,
+      "value": "必需。要查找最大值的值数组，或集的第一个值。"
+    }
+  ],
+  "rcz4w4": [
+    {
+      "type": 0,
+      "value": "返回值的 URI 编码表示形式"
+    }
+  ],
+  "rd6fai": [
+    {
+      "type": 0,
+      "value": "使用向左键和向右键浏览命令"
+    }
+  ],
+  "rh5g4p": [
+    {
+      "type": 0,
+      "value": "成功"
+    }
+  ],
+  "rsdJcV": [
+    {
+      "type": 0,
+      "value": "选择源架构元素以生成映射"
+    }
+  ],
+  "rv0Pn+": [
+    {
+      "type": 0,
+      "value": "新增"
+    }
+  ],
+  "rxIJfD": [
+    {
+      "type": 0,
+      "value": "(UTC+09:30)达尔文"
+    }
+  ],
+  "rxMXmZ": [
+    {
+      "type": 0,
+      "value": "(UTC+04:00)路易港"
+    }
+  ],
+  "s+4LEa": [
+    {
+      "type": 0,
+      "value": "打开文件夹"
+    }
+  ],
+  "s5RV9B": [
+    {
+      "type": 0,
+      "value": "返回字符串时间戳年组件的某天"
+    }
+  ],
+  "s7nGyC": [
+    {
+      "type": 0,
+      "value": "删除"
+    }
+  ],
+  "sBBLuh": [
+    {
+      "type": 0,
+      "value": "若要保存此工作流，请设置完这些操作:"
+    }
+  ],
+  "sDkAVZ": [
+    {
+      "type": 0,
+      "value": "从表单数据或表单编码触发器输出返回一系列匹配密键名称的值"
+    }
+  ],
+  "sEqLTV": [
+    {
+      "type": 0,
+      "value": "“测试”选项卡"
+    }
+  ],
+  "sFbnCs": [
+    {
+      "type": 0,
+      "value": "(UTC-05:00)切图马尔"
+    }
+  ],
+  "sFwHQc": [
+    {
+      "type": 0,
+      "value": "取消创建连接"
+    }
+  ],
+  "sQ2vRs": [
+    {
+      "type": 0,
+      "value": "添加案例"
+    }
+  ],
+  "sRpETS": [
+    {
+      "type": 0,
+      "value": "警告: 自定义值与架构节点的类型不匹配"
+    }
+  ],
+  "sVQe34": [
+    {
+      "type": 0,
+      "value": "提供参数以测试输出。"
+    }
+  ],
+  "sW47JR": [
+    {
+      "type": 0,
+      "value": "并行度"
+    }
+  ],
+  "sYQDN+": [
+    {
+      "type": 0,
+      "value": "字体系列的格式设置选项"
+    }
+  ],
+  "sZ0G/Z": [
+    {
+      "type": 0,
+      "value": "必需。一个字符串，它包含要加上的时间间隔所采用的指定时间单位。"
+    }
+  ],
+  "sZHTQV": [
+    {
+      "type": 0,
+      "value": "(UTC+09:00)赤塔"
+    }
+  ],
+  "sbPZ9S": [
+    {
+      "type": 0,
+      "value": "必需。要检查其是否为空的集合。"
+    }
+  ],
+  "sfJTHV": [
+    {
+      "type": 0,
+      "value": "必需。要从被减数中减除的数字。"
+    }
+  ],
+  "shF9tZ": [
+    {
+      "type": 0,
+      "value": "密钥"
+    }
+  ],
+  "snJFUi": [
+    {
+      "type": 0,
+      "value": "Ctrl+C"
+    }
+  ],
+  "soqP+Z": [
+    {
+      "type": 0,
+      "value": "如果任一参数为 true，则返回 true"
+    }
+  ],
+  "srMbm9": [
+    {
+      "type": 0,
+      "value": "取消"
+    }
+  ],
+  "srpZD2": [
+    {
+      "type": 0,
+      "value": "客户端 ID"
+    }
+  ],
+  "ss5JPH": [
+    {
+      "type": 0,
+      "value": "新建参数"
+    }
+  ],
+  "sv+IcU": [
+    {
+      "type": 0,
+      "value": "无法生成数据映射定义"
+    }
+  ],
+  "svaqnp": [
+    {
+      "type": 0,
+      "value": "当状态为“成功”时不应提供错误"
+    }
+  ],
+  "sw6EXK": [
+    {
+      "type": 0,
+      "value": "状态"
+    }
+  ],
+  "syiNc+": [
+    {
+      "type": 0,
+      "value": "浏览"
+    }
+  ],
+  "sys5gu": [
+    {
+      "type": 0,
+      "value": "客户端证书"
+    }
+  ],
+  "sytRna": [
+    {
+      "type": 0,
+      "value": "无法检索动态输入。错误详细信息: \""
+    },
+    {
+      "type": 1,
+      "value": "message"
+    },
+    {
+      "type": 0,
+      "value": "\""
+    }
+  ],
+  "t+XCkg": [
+    {
+      "type": 0,
+      "value": "必需。一个字符串，它包含目标时区的时区名称。请访问 https://msdn.microsoft.com/en-us/library/gg154758.aspx 查看详细信息。"
+    }
+  ],
+  "t/RPwA": [
+    {
+      "type": 0,
+      "value": "找到的结果"
+    }
+  ],
+  "t9RwOi": [
+    {
+      "type": 0,
+      "value": "表达式无效。"
+    }
+  ],
+  "tAbbH8": [
+    {
+      "type": 0,
+      "value": "分配的输入过多"
+    }
+  ],
+  "tAeKNh": [
+    {
+      "type": 0,
+      "value": "简单"
+    }
+  ],
+  "tE7Zam": [
+    {
+      "type": 0,
+      "value": "返回 URL 以调用触发器或操作"
+    }
+  ],
+  "tH2pT1": [
+    {
+      "type": 0,
+      "value": "返回到搜索"
+    }
+  ],
+  "tImHz/": [
+    {
+      "type": 1,
+      "value": "days"
+    },
+    {
+      "type": 0,
+      "value": " 天 "
+    },
+    {
+      "type": 1,
+      "value": "hours"
+    },
+    {
+      "type": 0,
+      "value": " 小时"
+    }
+  ],
+  "tLZ9Sh": [
+    {
+      "type": 0,
+      "value": "必需。要检索的部件的索引。"
+    }
+  ],
+  "tMRPnG": [
+    {
+      "type": 0,
+      "value": "此函数提供运行时工作流本身的详细信息"
+    }
+  ],
+  "tMdcE1": [
+    {
+      "type": 0,
+      "value": "连接无效，请更新连接以加载完整的详细信息"
+    }
+  ],
+  "tNoZx2": [
+    {
+      "type": 0,
+      "value": "类型"
+    }
+  ],
+  "tTIsTX": [
+    {
+      "type": 0,
+      "value": "测试此工作流"
+    }
+  ],
+  "tUCptx": [
+    {
+      "type": 0,
+      "value": "插入链接"
+    }
+  ],
+  "tUU4ak": [
+    {
+      "type": 0,
+      "value": "(UTC+11:00)乔库尔达赫"
+    }
+  ],
+  "tUYXRA": [
+    {
+      "type": 0,
+      "value": "示例: 2017-03-24T15:00:00Z"
+    }
+  ],
+  "tUlRzr": [
+    {
+      "type": 0,
+      "value": "基本"
+    }
+  ],
+  "tWV2mC": [
+    {
+      "type": 0,
+      "value": "每小时 "
+    },
+    {
+      "type": 1,
+      "value": "times"
+    }
+  ],
+  "tZIlCA": [
+    {
+      "type": 0,
+      "value": "(UTC-08:00)太平洋时间(美国和加拿大)"
+    }
+  ],
+  "tZj2Xn": [
+    {
+      "type": 0,
+      "value": "如果第一个参数大于第二个参数，则返回 true"
+    }
+  ],
+  "taPCmY": [
+    {
+      "type": 0,
+      "value": "必需。要添加的小时数。可以为负数以减去相应的小时数。"
+    }
+  ],
+  "tarDYT": [
+    {
+      "type": 0,
+      "value": "如果第一个参数小于第二个参数，则返回 true。"
+    }
+  ],
+  "td5//c": [
+    {
+      "type": 0,
+      "value": "折叠树节点"
+    }
+  ],
+  "ti5TEd": [
+    {
+      "type": 0,
+      "value": "取消"
+    }
+  ],
+  "tqqUHX": [
+    {
+      "type": 0,
+      "value": "(UTC+12:45) 查塔姆群岛"
+    }
+  ],
+  "tsmuoF": [
+    {
+      "type": 0,
+      "value": "显示名称"
+    }
+  ],
+  "tu4TTM": [
+    {
+      "type": 0,
+      "value": "预览"
+    }
+  ],
+  "u81zB9": [
+    {
+      "type": 0,
+      "value": "(UTC-09:00) 协调世界时-09"
+    }
+  ],
+  "u9tr3k": [
+    {
+      "type": 0,
+      "value": "选择要开始配置的元素"
+    }
+  ],
+  "uDI1Um": [
+    {
+      "type": 0,
+      "value": "状态代码"
+    }
+  ],
+  "uE0A0s": [
+    {
+      "type": 0,
+      "value": "(UTC)协调世界时"
+    }
+  ],
+  "uIurld": [
+    {
+      "type": 0,
+      "value": "保存"
+    }
+  ],
+  "uM1i27": [
+    {
+      "type": 0,
+      "value": "指定 1 到 90 之间的数作为重试计数"
+    }
+  ],
+  "uN4zFU": [
+    {
+      "type": 0,
+      "value": "确定"
+    }
+  ],
+  "uNHpGB": [
+    {
+      "type": 0,
+      "value": "(UTC+07:00)曼谷，河内，雅加达"
+    }
+  ],
+  "uOWkHS": [
+    {
+      "type": 0,
+      "value": "无法检索动态输出。因此，此操作的输出可能在后续操作中不可见。错误详细信息: "
+    },
+    {
+      "type": 1,
+      "value": "message"
+    }
+  ],
+  "uR9WuI": [
+    {
+      "type": 0,
+      "value": "必需。要计算的集合。在任一集合中显示的对象也将在结果中显示。"
+    }
+  ],
+  "uTnqzQ": [
+    {
+      "type": 0,
+      "value": "查看更多("
+    },
+    {
+      "type": 1,
+      "value": "count"
+    },
+    {
+      "type": 0,
+      "value": " 个)"
+    }
+  ],
+  "uUlBZ8": [
+    {
+      "type": 0,
+      "value": "将小时数的整数值添加到传入的字符串时间戳"
+    }
+  ],
+  "uWf/I5": [
+    {
+      "type": 0,
+      "value": "为我展示"
+    }
+  ],
+  "uZpzqY": [
+    {
+      "type": 0,
+      "value": "很抱歉，Copilot 已满载，暂时不可用 - 请稍后重试。"
+    }
+  ],
+  "uanMWm": [
+    {
+      "type": 0,
+      "value": "成功"
+    }
+  ],
+  "uc/PoD": [
+    {
+      "type": 0,
+      "value": "必需。表示所需过去时间与当前时间相差的时间单位数。"
+    }
+  ],
+  "uc3ytS": [
+    {
+      "type": 0,
+      "value": "选择运行时"
+    }
+  ],
+  "uczA5c": [
+    {
+      "type": 0,
+      "value": "必需。可包含值的字符串。"
+    }
+  ],
+  "uesaee": [
+    {
+      "type": 0,
+      "value": "表达式"
+    }
+  ],
+  "uh/+ZN": [
+    {
+      "type": 0,
+      "value": "(UTC-03:00)格陵兰"
+    }
+  ],
+  "ui3KuP": [
+    {
+      "type": 0,
+      "value": "操作错误"
+    }
+  ],
+  "ui7GCl": [
+    {
+      "type": 0,
+      "value": "16"
+    }
+  ],
+  "unMG8m": [
+    {
+      "type": 0,
+      "value": "连接器类型"
+    }
+  ],
+  "unMaeV": [
+    {
+      "type": 0,
+      "value": "变量"
+    }
+  ],
+  "ur3P27": [
+    {
+      "type": 0,
+      "value": "尝试使用转换函数，例如: "
+    },
+    {
+      "type": 1,
+      "value": "conversionFunctions"
+    }
+  ],
+  "urAHv1": [
+    {
+      "type": 0,
+      "value": "4"
+    }
+  ],
+  "usCZ7R": [
+    {
+      "type": 0,
+      "value": "(UTC+11:00)马加丹"
+    }
+  ],
+  "ut5Med": [
+    {
+      "type": 0,
+      "value": "默认值"
+    }
+  ],
+  "uwuGU0": [
+    {
+      "type": 0,
+      "value": "(UTC+06:30)仰光"
+    }
+  ],
+  "uxKRO/": [
+    {
+      "type": 0,
+      "value": "参数"
+    }
+  ],
+  "uxQ143": [
+    {
+      "type": 0,
+      "value": "提出与工作流或逻辑应用相关的问题。"
+    }
+  ],
+  "uxt1xW": [
+    {
+      "type": 0,
+      "value": "删除参数“"
+    },
+    {
+      "type": 1,
+      "value": "parameterName"
+    },
+    {
+      "type": 0,
+      "value": "”及其值"
+    }
+  ],
+  "uzsleE": [
+    {
+      "type": 0,
+      "value": "通过参数创建数组"
+    }
+  ],
+  "v+keTP": [
+    {
+      "type": 0,
+      "value": "触发日期"
+    }
+  ],
+  "v39HKj": [
+    {
+      "type": 0,
+      "value": "生成全局唯一字符串(GUID)"
+    }
+  ],
+  "v7ipqH": [
+    {
+      "type": 0,
+      "value": "每个操作必须在配置后有一个或多个运行"
+    }
+  ],
+  "vDYFIF": [
+    {
+      "type": 0,
+      "value": "返回输入字符串的 UTF-16 字节长度"
+    }
+  ],
+  "vEBhDX": [
+    {
+      "type": 0,
+      "value": "返回字符串内某值的最后一个索引(区分大小写，固定区域性)"
+    }
+  ],
+  "vF+gWH": [
+    {
+      "type": 0,
+      "value": "解释此流的作用"
+    }
+  ],
+  "vLereV": [
+    {
+      "type": 0,
+      "value": "必需。要从中获取第一批计数对象的集合。"
+    }
+  ],
+  "vQcQkU": [
+    {
+      "type": 0,
+      "value": "必需。字符串可以其结尾的值。"
+    }
+  ],
+  "vSlNPe": [
+    {
+      "type": 0,
+      "value": "删除"
+    }
+  ],
+  "vT0DCP": [
+    {
+      "type": 0,
+      "value": "输出"
+    }
+  ],
+  "vX9WYS": [
+    {
+      "type": 0,
+      "value": "受众"
+    }
+  ],
+  "va40BJ": [
+    {
+      "type": 0,
+      "value": "必需。需要获取其输出的操作的名称。"
+    }
+  ],
+  "vdKLiR": [
+    {
+      "type": 0,
+      "value": "请求设置"
+    }
+  ],
+  "vdtKjT": [
+    {
+      "type": 0,
+      "value": "要创建和使用 API 连接，必须在此逻辑应用上配置托管标识。"
+    }
+  ],
+  "viee6C": [
+    {
+      "type": 0,
+      "value": "持续时间"
+    }
+  ],
+  "vlDynP": [
+    {
+      "type": 0,
+      "value": "放弃"
+    }
+  ],
+  "vmlhVB": [
+    {
+      "type": 0,
+      "value": "若要准备好此工作流，请设置完以下操作:"
+    }
+  ],
+  "vr70Gn": [
+    {
+      "type": 0,
+      "value": "为 "
+    },
+    {
+      "type": 1,
+      "value": "connectorName"
+    },
+    {
+      "type": 0,
+      "value": " 创建连接。"
+    }
+  ],
+  "vrYqUF": [
+    {
+      "type": 0,
+      "value": "输入自定义值"
+    }
+  ],
+  "vvSHR8": [
+    {
+      "type": 0,
+      "value": "导航到元素并查看子项"
+    }
+  ],
+  "vwH/XV": [
+    {
+      "type": 0,
+      "value": "创建参数"
+    }
+  ],
+  "vxOc/M": [
+    {
+      "type": 0,
+      "value": "这包含重复的值"
+    }
+  ],
+  "vz2gZC": [
+    {
+      "type": 0,
+      "value": "工作流属性"
+    }
+  ],
+  "w0pI5M": [
+    {
+      "type": 0,
+      "value": "找不到指定筛选器的结果"
+    }
+  ],
+  "w16qh+": [
+    {
+      "type": 0,
+      "value": "查询"
+    }
+  ],
+  "w5Hhig": [
+    {
+      "type": 0,
+      "value": "星期日"
+    }
+  ],
+  "w8ijDZ": [
+    {
+      "type": 0,
+      "value": "折叠"
+    }
+  ],
+  "wEaGWn": [
+    {
+      "type": 0,
+      "value": "从时间戳以其形式传递的字符串减去指定时间单位的整数值"
+    }
+  ],
+  "wF7C+h": [
+    {
+      "type": 0,
+      "value": "取消"
+    }
+  ],
+  "wFCkpM": [
+    {
+      "type": 0,
+      "value": "必需。要查找最小值的值数组，或集的第一个值。"
+    }
+  ],
+  "wGYmui": [
+    {
+      "type": 0,
+      "value": "包括动态内容"
+    }
+  ],
+  "wP0/uB": [
+    {
+      "type": 0,
+      "value": "停止生成"
+    }
+  ],
+  "wPlTDB": [
+    {
+      "type": 0,
+      "value": "完整路径"
+    }
+  ],
+  "wQcEXt": [
+    {
+      "type": 0,
+      "value": "必需。一个字符串，在参数 1 中找到参数 2 时，将在该字符串中搜索参数 2 并将更新为参数 3。"
+    }
+  ],
+  "wQsEwc": [
+    {
+      "type": 0,
+      "value": "必需。子字符串的长度。"
+    }
+  ],
+  "wV3Lmd": [
+    {
+      "type": 0,
+      "value": "单击此处可删除项"
+    }
+  ],
+  "wWVQuK": [
+    {
+      "type": 0,
+      "value": "根据表达式的 true 或 false 结果返回指定值"
+    }
+  ],
+  "wXJALc": [
+    {
+      "type": 0,
+      "value": "菜单"
+    }
+  ],
+  "wkiETV": [
+    {
+      "type": 0,
+      "value": "客户端跟踪 ID"
+    }
+  ],
+  "wkvUUA": [
+    {
+      "type": 0,
+      "value": "输入类型不匹配"
+    }
+  ],
+  "wl7X0l": [
+    {
+      "type": 0,
+      "value": "隐藏缩略图"
+    }
+  ],
+  "wmDUGV": [
+    {
+      "type": 0,
+      "value": "将时间戳以其形式传递的字符串从源时区转换为 UTC"
+    }
+  ],
+  "wmw/ai": [
+    {
+      "type": 0,
+      "value": "返回其中的所有元素都传递到此函数的单个数组或对象"
+    }
+  ],
+  "woJQhv": [
+    {
+      "type": 0,
+      "value": "回叫 URL:"
+    }
+  ],
+  "wtj07J": [
+    {
+      "type": 0,
+      "value": "(UTC-09:30) 马克萨斯群岛"
+    }
+  ],
+  "ww1mN/": [
+    {
+      "type": 0,
+      "value": "画布"
+    }
+  ],
+  "wxaQwD": [
+    {
+      "type": 0,
+      "value": "(UTC+04:30)喀布尔"
+    }
+  ],
+  "wzEneQ": [
+    {
+      "type": 0,
+      "value": "关闭"
+    }
+  ],
+  "x+6ccf": [
+    {
+      "type": 0,
+      "value": "星期三"
+    }
+  ],
+  "x0or2o": [
+    {
+      "type": 0,
+      "value": "必需。要获取其长度的集合。"
+    }
+  ],
+  "x10E1p": [
+    {
+      "type": 0,
+      "value": "状态代码"
+    }
+  ],
+  "x2JTW5": [
+    {
+      "type": 0,
+      "value": "返回已删除指定属性的对象。"
+    }
+  ],
+  "x3dWOL": [
+    {
+      "type": 0,
+      "value": "(UTC+01:00)阿姆斯特丹，柏林，伯尔尼，罗马，斯德哥尔摩，维也纳"
+    }
+  ],
+  "x7IYBg": [
+    {
+      "type": 0,
+      "value": "已中止"
+    }
+  ],
+  "x8kTAX": [
+    {
+      "type": 0,
+      "value": "删除备注"
+    }
+  ],
+  "xC1zg3": [
+    {
+      "type": 0,
+      "value": "架构"
+    }
+  ],
+  "xFQXAI": [
+    {
+      "type": 0,
+      "value": "Ctrl + Z"
+    }
+  ],
+  "xJ6vjn": [
+    {
+      "type": 0,
+      "value": "返回 URI 编码字符串的字符串表示形式"
+    }
+  ],
+  "xJQeeC": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00)伊斯坦布尔"
+    }
+  ],
+  "xLF2Zr": [
+    {
+      "type": 0,
+      "value": "添加行"
+    }
+  ],
+  "xN3GEX": [
+    {
+      "type": 0,
+      "value": "以纯文本形式输入密码或使用安全参数"
+    }
+  ],
+  "xQQ9ko": [
+    {
+      "type": 0,
+      "value": "阈值"
+    }
+  ],
+  "xSMbKr": [
+    {
+      "type": 0,
+      "value": "显示原始输入"
+    }
+  ],
+  "xSSfKC": [
+    {
+      "type": 0,
+      "value": "(UTC-03:00) 圣皮埃尔和密克隆"
+    }
+  ],
+  "xV/oyK": [
+    {
+      "type": 0,
+      "value": "必填。新属性或现有属性的名称。"
+    }
+  ],
+  "xV4Koe": [
+    {
+      "type": 0,
+      "value": "代码"
+    }
+  ],
+  "xXVu2y": [
+    {
+      "type": 0,
+      "value": "切换到文本模式"
+    }
+  ],
+  "xYyPR8": [
+    {
+      "type": 0,
+      "value": "返回 URI 的路径。如果未指定路径，则返回 \"/\""
+    }
+  ],
+  "xi2tn6": [
+    {
+      "type": 0,
+      "value": "参数"
+    }
+  ],
+  "xt5TeT": [
+    {
+      "type": 0,
+      "value": "在逻辑应用中的工作流之间共享参数。"
+    }
+  ],
+  "xvav7+": [
+    {
+      "type": 0,
+      "value": "已连接到"
+    }
+  ],
+  "xwD1VZ": [
+    {
+      "type": 0,
+      "value": "正在加载输入"
+    }
+  ],
+  "xwEX2/": [
+    {
+      "type": 0,
+      "value": "值"
+    }
+  ],
+  "y1e9yw": [
+    {
+      "type": 0,
+      "value": "登录"
+    }
+  ],
+  "y3AZQB": [
+    {
+      "type": 0,
+      "value": "必填。要比较相等性的对象。"
+    }
+  ],
+  "y6BcVN": [
+    {
+      "type": 0,
+      "value": "必需。要从中转义 URL 不安全字符的字符串。"
+    }
+  ],
+  "yB6PB/": [
+    {
+      "type": 0,
+      "value": "值包含无法解析的函数表达式。仅支持常量值"
+    }
+  ],
+  "yBrsFJ": [
+    {
+      "type": 0,
+      "value": "必需。要转换为数组的值。"
+    }
+  ],
+  "yF2R//": [
+    {
+      "type": 0,
+      "value": "从字符串返回部分字符。"
+    }
+  ],
+  "yKOsmK": [
+    {
+      "type": 0,
+      "value": "返回按升序排序的数组"
+    }
+  ],
+  "yNtBUV": [
+    {
+      "type": 0,
+      "value": "警告: 输入节点类型与此输入允许的类型之一不匹配。"
+    }
+  ],
+  "yRDuqj": [
+    {
+      "type": 0,
+      "value": "全部显示"
+    }
+  ],
+  "yVFIAQ": [
+    {
+      "type": 0,
+      "value": "(UTC-01:00)佛得角群岛"
+    }
+  ],
+  "yVh9kr": [
+    {
+      "type": 0,
+      "value": "8"
+    }
+  ],
+  "yc0GcM": [
+    {
+      "type": 0,
+      "value": "将字符串或数组拆分为长度相等的区块"
+    }
+  ],
+  "ydqOly": [
+    {
+      "type": 0,
+      "value": "选择一个值"
+    }
+  ],
+  "yjierd": [
+    {
+      "type": 0,
+      "value": "表达式类型 \""
+    },
+    {
+      "type": 1,
+      "value": "type"
+    },
+    {
+      "type": 0,
+      "value": "\" 无效。"
+    }
+  ],
+  "yk7L+4": [
+    {
+      "type": 0,
+      "value": "踩"
+    }
+  ],
+  "ylfgv1": [
+    {
+      "type": 0,
+      "value": "生成 XSLT"
+    }
+  ],
+  "ypZV9w": [
+    {
+      "type": 0,
+      "value": "返回触发器的多部分输出中的一个部分的正文"
+    }
+  ],
+  "yqRrQ/": [
+    {
+      "type": 0,
+      "value": "日期和时间函数"
+    }
+  ],
+  "yrYEmk": [
+    {
+      "type": 0,
+      "value": "在以下情况向我发送一封电子邮件..."
+    }
+  ],
+  "ysoumb": [
+    {
+      "type": 0,
+      "value": "添加字段"
+    }
+  ],
+  "yuJBmK": [
+    {
+      "type": 0,
+      "value": "请输入数字"
+    }
+  ],
+  "yucvJE": [
+    {
+      "type": 0,
+      "value": "(UTC+01:00)萨拉热窝，斯科普里，华沙，萨格勒布"
+    }
+  ],
+  "yzqXMp": [
+    {
+      "type": 0,
+      "value": "了解详细信息"
+    }
+  ],
+  "z/UY4k": [
+    {
+      "type": 0,
+      "value": "导航到 "
+    },
+    {
+      "type": 1,
+      "value": "folderName"
+    },
+    {
+      "type": 0,
+      "value": " 文件夹"
+    }
+  ],
+  "z3VuE+": [
+    {
+      "type": 0,
+      "value": "菜单"
+    }
+  ],
+  "z9kH+0": [
+    {
+      "type": 0,
+      "value": "这还将移除所有子步骤。"
+    }
+  ],
+  "zBMVKg": [
+    {
+      "type": 0,
+      "value": "必填。转换为小数的值。"
+    }
+  ],
+  "zCsGWP": [
+    {
+      "type": 0,
+      "value": "输入值"
+    }
+  ],
+  "zEv8dd": [
+    {
+      "type": 0,
+      "value": "表达式编辑器"
+    }
+  ],
+  "zIDVd9": [
+    {
+      "type": 0,
+      "value": "必需。转换为本机类型值的字符串。"
+    }
+  ],
+  "zNesUZ": [
+    {
+      "type": 0,
+      "value": "重试策略适用于间歇性故障，此故障的特征为出现 HTTP 状态代码 408、429 和 5xx，以及任何连接异常。默认的指数时间间隔策略设置为重试 4 次。"
+    }
+  ],
+  "zOvGF8": [
+    {
+      "type": 0,
+      "value": "(UTC+02:00)雅典，布加勒斯特"
+    }
+  ],
+  "zTKAc9": [
+    {
+      "type": 0,
+      "value": "选择操作"
+    }
+  ],
+  "zUWAsJ": [
+    {
+      "type": 0,
+      "value": "返回一个布尔值，指示字符串是否为整数"
+    }
+  ],
+  "zUgja+": [
+    {
+      "type": 0,
+      "value": "清除自定义值"
+    }
+  ],
+  "zViEGr": [
+    {
+      "type": 0,
+      "value": "(UTC+12:00)彼得罗巴甫洛夫斯克-堪察加 - 旧称"
+    }
+  ],
+  "zb3lE6": [
+    {
+      "type": 0,
+      "value": "若要保存此工作流，请设置以下此操作:"
+    }
+  ],
+  "zcZpHT": [
+    {
+      "type": 0,
+      "value": "将字符串(具有可选区域设置和格式)转换为日期"
+    }
+  ],
+  "zec5Ay": [
+    {
+      "type": 0,
+      "value": "停止"
+    }
+  ],
+  "ziYCiA": [
+    {
+      "type": 0,
+      "value": "摘要"
+    }
+  ],
+  "zjDJwP": [
+    {
+      "type": 0,
+      "value": "浮点型"
+    }
+  ],
+  "zkeKWE": [
+    {
+      "type": 0,
+      "value": "(UTC-04:00)加拉加斯"
+    }
+  ],
+  "znGyyU": [
+    {
+      "type": 0,
+      "value": "将指定时间单位的整数值添加到传入的字符串时间戳"
+    }
+  ],
+  "zsPNYN": [
+    {
+      "type": 0,
+      "value": "必需。要与被加数 1 相加的数字。"
+    }
+  ],
+  "zxe9hh": [
+    {
+      "type": 0,
+      "value": "必需。要添加的分钟数。可以为负数以减去相应的分钟数。"
+    }
+  ]
+}

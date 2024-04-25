@@ -1,6 +1,7 @@
 import {
   collectionBranding,
   conversionBranding,
+  customBranding,
   dateTimeBranding,
   logicalBranding,
   mathBranding,
@@ -8,19 +9,23 @@ import {
   utilityBranding,
 } from '../constants/FunctionConstants';
 import { reservedMapNodeParamsArray } from '../constants/MapDefinitionConstants';
-import type { SchemaNodeExtended } from '../models';
-import type { Connection, ConnectionDictionary } from '../models/Connection';
-import type { FunctionData } from '../models/Function';
-import { FunctionCategory, ifPseudoFunctionKey } from '../models/Function';
-import { isConnectionUnit } from './Connection.Utils';
+import type { Connection, ConnectionDictionary, InputConnection } from '../models/Connection';
+import type { FunctionData, FunctionDictionary } from '../models/Function';
+import { FunctionCategory, directAccessPseudoFunctionKey, ifPseudoFunctionKey, indexPseudoFunctionKey } from '../models/Function';
+import { getConnectedTargetSchemaNodes, isConnectionUnit, isCustomValue } from './Connection.Utils';
+import { getInputValues } from './DataMap.Utils';
 import { LogCategory, LogService } from './Logging.Utils';
+import { addTargetReactFlowPrefix } from './ReactFlow.Util';
 import { isSchemaNodeExtended } from './Schema.Utils';
-import { isAGuid } from '@microsoft/utils-logic-apps';
+import { isAGuid, InputFormat, type SchemaNodeDictionary, type SchemaNodeExtended } from '@microsoft/logic-apps-shared';
 
 export const getFunctionBrandingForCategory = (functionCategory: FunctionCategory) => {
   switch (functionCategory) {
     case FunctionCategory.Collection: {
       return collectionBranding;
+    }
+    case FunctionCategory.Custom: {
+      return customBranding;
     }
     case FunctionCategory.DateTime: {
       return dateTimeBranding;
@@ -79,23 +84,28 @@ export const functionInputHasInputs = (fnInputReactFlowKey: string, connections:
   return !!fnInputConnection && Object.values(fnInputConnection.inputs).some((inputConArr) => inputConArr.length > 0);
 };
 
-export const getIndexValueForCurrentConnection = (currentConnection: Connection): string => {
-  const inputNode =
-    isConnectionUnit(currentConnection.inputs[0][0]) && isSchemaNodeExtended(currentConnection.inputs[0][0].node)
-      ? currentConnection.inputs[0][0].node
-      : undefined;
-  if (inputNode) {
-    return calculateIndexValue(inputNode);
-  } else {
-    LogService.error(LogCategory.FunctionUtils, 'getIndexValueForCurrentConnection', {
-      message: `Didn't find inputNode to make index value`,
-      data: {
-        connection: currentConnection,
-      },
-    });
+export const getIndexValueForCurrentConnection = (currentConnection: Connection, connections: ConnectionDictionary): string => {
+  const firstInput = currentConnection.inputs[0][0];
 
-    return '';
+  if (isCustomValue(firstInput)) {
+    return firstInput;
   }
+  if (isConnectionUnit(firstInput)) {
+    const node = firstInput.node;
+    if (isSchemaNodeExtended(node)) {
+      return calculateIndexValue(node);
+    }
+    // Function, try moving back the chain to find the source
+    return getIndexValueForCurrentConnection(connections[firstInput.reactFlowKey], connections);
+  }
+  LogService.error(LogCategory.FunctionUtils, 'getIndexValueForCurrentConnection', {
+    message: `Didn't find inputNode to make index value`,
+    data: {
+      connection: currentConnection,
+    },
+  });
+
+  return '';
 };
 
 export const calculateIndexValue = (currentNode: SchemaNodeExtended): string => {
@@ -123,3 +133,147 @@ export const isKeyAnIndexValue = (key: string): boolean => key.startsWith('$') &
 export const isIfAndGuid = (key: string) => {
   return key.startsWith(ifPseudoFunctionKey) && isAGuid(key.substring(ifPseudoFunctionKey.length + 1));
 };
+
+export const functionsForLocation = (functions: FunctionDictionary, targetKey: string) =>
+  Object.fromEntries(
+    Object.entries(functions).filter(([_key, value]) => value.functionLocations.some((location) => location.key === targetKey))
+  );
+
+export const getFunctionLocationsForAllFunctions = (
+  dataMapConnections: ConnectionDictionary,
+  flattenedTargetSchema: SchemaNodeDictionary
+): FunctionDictionary => {
+  const functionNodes: FunctionDictionary = {};
+  for (const connectionKey in dataMapConnections) {
+    const func = dataMapConnections[connectionKey].self.node as FunctionData;
+    if (func.functionName !== undefined) {
+      const targetNodesConnectedToFunction = getConnectedTargetSchemaNodes([dataMapConnections[connectionKey]], dataMapConnections);
+
+      const parentNodes: SchemaNodeExtended[] = [];
+      targetNodesConnectedToFunction.forEach((childNode) => {
+        if (childNode.parentKey) {
+          parentNodes.push(flattenedTargetSchema[addTargetReactFlowPrefix(childNode.parentKey)]);
+        }
+      });
+
+      const combinedTargetNodes = targetNodesConnectedToFunction.concat(parentNodes);
+      functionNodes[connectionKey] = { functionData: func, functionLocations: combinedTargetNodes };
+    }
+  }
+  return functionNodes;
+};
+
+export const getConnectedSourceSchema = (
+  dataMapConnections: ConnectionDictionary,
+  flattenedSourceSchema: SchemaNodeDictionary
+): SchemaNodeDictionary => {
+  const connectedSourceSchema: SchemaNodeDictionary = {};
+
+  for (const connectionKey in dataMapConnections) {
+    if (flattenedSourceSchema?.[connectionKey]) {
+      connectedSourceSchema[connectionKey] = flattenedSourceSchema?.[connectionKey];
+    }
+  }
+
+  return connectedSourceSchema;
+};
+
+export const functionDropDownItemText = (key: string, node: FunctionData, connections: ConnectionDictionary) => {
+  let fnInputValues: string[] = [];
+  const connection = connections[key];
+
+  if (connection) {
+    fnInputValues = Object.values(connection.inputs)
+      .flat()
+      .map((input) => {
+        if (!input) {
+          return undefined;
+        }
+
+        if (isCustomValue(input)) {
+          return input;
+        }
+
+        if (isFunctionData(input.node)) {
+          if (input.node.key === indexPseudoFunctionKey) {
+            const sourceNode = connections[input.reactFlowKey].inputs[0][0];
+            return isConnectionUnit(sourceNode) && isSchemaNodeExtended(sourceNode.node) ? calculateIndexValue(sourceNode.node) : '';
+          }
+
+          if (functionInputHasInputs(input.reactFlowKey, connections)) {
+            return `${input.node.functionName}(...)`;
+          }
+          return `${input.node.functionName}()`;
+        }
+
+        // Source schema node
+        return input.node.name;
+      })
+      .filter((value) => !!value) as string[];
+  }
+
+  const inputs = connections?.[key]?.inputs?.[0];
+  const sourceNode = inputs && inputs[0];
+  let nodeName: string;
+  if (node.key === indexPseudoFunctionKey && isConnectionUnit(sourceNode) && isSchemaNodeExtended(sourceNode.node)) {
+    nodeName = calculateIndexValue(sourceNode.node);
+  } else if (node.key === directAccessPseudoFunctionKey) {
+    const functionValues = getInputValues(connections[key], connections);
+    nodeName =
+      functionValues.length === 3
+        ? formatDirectAccess(functionValues[0], functionValues[1], functionValues[2])
+        : getFunctionOutputValue(fnInputValues, node.functionName);
+  } else {
+    nodeName = getFunctionOutputValue(fnInputValues, node.functionName);
+  }
+
+  return nodeName;
+};
+
+export const getInputName = (inputConnection: InputConnection | undefined, connectionDictionary: ConnectionDictionary) => {
+  if (inputConnection) {
+    return isCustomValue(inputConnection)
+      ? inputConnection
+      : isSchemaNodeExtended(inputConnection.node)
+        ? inputConnection.node.name
+        : functionDropDownItemText(inputConnection.reactFlowKey, inputConnection.node, connectionDictionary);
+  }
+
+  return undefined;
+};
+
+export const getInputValue = (inputConnection: InputConnection | undefined) => {
+  if (inputConnection) {
+    return isCustomValue(inputConnection) ? inputConnection : inputConnection.reactFlowKey;
+  }
+
+  return undefined;
+};
+
+export const addQuotesToString = (value: string) => {
+  let formattedValue = value;
+
+  const quote = '"';
+  if (!value.startsWith(quote)) {
+    formattedValue = quote.concat(value);
+  }
+  if (!value.endsWith(quote)) {
+    formattedValue = formattedValue.concat(quote);
+  }
+  return formattedValue;
+};
+
+export const removeQuotesFromString = (value: string) => {
+  let formattedValue = value;
+  const quote = '"';
+  if (formattedValue.endsWith(quote)) {
+    formattedValue = formattedValue.substring(0, value.length - 1);
+  }
+  if (formattedValue.startsWith(quote)) {
+    formattedValue = formattedValue.replace(quote, '');
+  }
+  return formattedValue;
+};
+
+export const hasOnlyCustomInputType = (functionData: FunctionData) =>
+  functionData.inputs[0]?.inputEntryType === InputFormat.FilePicker || functionData.inputs[0]?.inputEntryType === InputFormat.TextBox;

@@ -2,15 +2,15 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { gitignoreFileName, hostFileName, localSettingsFileName, workerRuntimeKey } from '../../../../constants';
+import { gitignoreFileName, hostFileName, localSettingsFileName, logicAppKind, workerRuntimeKey } from '../../../../constants';
 import { addDefaultBundle } from '../../../utils/bundleFeed';
 import { confirmOverwriteFile, writeFormattedJson } from '../../../utils/fs';
 import { getFunctionsWorkerRuntime } from '../../../utils/vsCodeConfig/settings';
 import { ProjectCreateStepBase } from './ProjectCreateStepBase';
 import { nonNullProp } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
-import type { IHostJsonV1, IHostJsonV2, ILocalSettingsJson, IProjectWizardContext } from '@microsoft/vscode-extension';
-import { FuncVersion } from '@microsoft/vscode-extension';
+import type { IHostJsonV1, IHostJsonV2, ILocalSettingsJson, IProjectWizardContext } from '@microsoft/vscode-extension-logic-apps';
+import { FuncVersion } from '@microsoft/vscode-extension-logic-apps';
 import * as fse from 'fs-extra';
 import * as os from 'os';
 import * as path from 'path';
@@ -48,6 +48,8 @@ export class ScriptProjectCreateStep extends ProjectCreateStepBase {
         IsEncrypted: false,
         Values: {
           AzureWebJobsStorage: '',
+          APP_KIND: logicAppKind,
+          ProjectDirectoryPath: path.join(context.projectPath),
         },
       };
 
@@ -60,7 +62,13 @@ export class ScriptProjectCreateStep extends ProjectCreateStepBase {
       await writeFormattedJson(localSettingsJsonPath, localSettingsJson);
     }
 
-    const gitignorePath: string = path.join(context.projectPath, gitignoreFileName);
+    // Determine the base directory for the .gitignore file.
+    // If 'isCustomCodeLogicApp' is explicitly false (neither true nor null),
+    // use the parent directory of 'workspacePath'. Otherwise, use 'projectPath'.
+    const baseDirectory =
+      !context.isCustomCodeLogicApp && context.isCustomCodeLogicApp !== null ? path.dirname(context.workspacePath) : context.projectPath;
+    const gitignorePath = path.join(baseDirectory, gitignoreFileName);
+
     if (await confirmOverwriteFile(context, gitignorePath)) {
       await fse.writeFile(
         gitignorePath,
@@ -71,8 +79,14 @@ obj
 appsettings.json
 local.settings.json
 __blobstorage__
+.debug
 __queuestorage__
-__azurite_db*__.json`)
+__azurite_db*__.json
+
+# Added folders and file patterns
+workflow-designtime/
+.vscode/
+*.code-workspace`)
       );
     }
 

@@ -2,25 +2,92 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { PackageManager } from '../../../constants';
+import { PackageManager, funcDependencyName } from '../../../constants';
+import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import { executeOnFunctions } from '../../functionsExtension/executeOnFunctionsExt';
-import { getLocalFuncCoreToolsVersion, tryParseFuncVersion } from '../../utils/funcCoreTools/funcVersion';
+import { binariesExist, getLatestFunctionCoreToolsVersion, useBinariesDependencies } from '../../utils/binaries';
+import { startDesignTimeApi, stopDesignTimeApi } from '../../utils/codeless/startDesignTimeApi';
+import {
+  getFunctionsCommand,
+  getLocalFuncCoreToolsVersion,
+  setFunctionsCommand,
+  tryParseFuncVersion,
+} from '../../utils/funcCoreTools/funcVersion';
 import { getBrewPackageName } from '../../utils/funcCoreTools/getBrewPackageName';
 import { getFuncPackageManagers } from '../../utils/funcCoreTools/getFuncPackageManagers';
 import { getNpmDistTag } from '../../utils/funcCoreTools/getNpmDistTag';
 import { sendRequestWithExtTimeout } from '../../utils/requestUtils';
 import { getWorkspaceSetting, updateGlobalSetting } from '../../utils/vsCodeConfig/settings';
+import { installFuncCoreToolsBinaries } from './installFuncCoreTools';
 import { uninstallFuncCoreTools } from './uninstallFuncCoreTools';
 import { updateFuncCoreTools } from './updateFuncCoreTools';
-import { HTTP_METHODS } from '@microsoft/utils-logic-apps';
+import { HTTP_METHODS } from '@microsoft/logic-apps-shared';
 import { callWithTelemetryAndErrorHandling, DialogResponses, openUrl, parseError } from '@microsoft/vscode-azext-utils';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
-import type { FuncVersion } from '@microsoft/vscode-extension';
+import type { FuncVersion } from '@microsoft/vscode-extension-logic-apps';
 import * as semver from 'semver';
 import type { MessageItem } from 'vscode';
 
-export async function validateFuncCoreToolsIsLatest(): Promise<void> {
+export async function validateFuncCoreToolsIsLatest(majorVersion?: string): Promise<void> {
+  if (useBinariesDependencies()) {
+    await validateFuncCoreToolsIsLatestBinaries(majorVersion);
+  } else {
+    await validateFuncCoreToolsIsLatestSystem();
+  }
+}
+
+export async function validateFuncCoreToolsIsLatestBinaries(majorVersion?: string): Promise<void> {
+  await callWithTelemetryAndErrorHandling('azureLogicAppsStandard.validateFuncCoreToolsIsLatest', async (context: IActionContext) => {
+    context.errorHandling.suppressDisplay = true;
+    context.telemetry.properties.isActivationEvent = 'true';
+
+    const showCoreToolsWarningKey = 'showCoreToolsWarning';
+    const showCoreToolsWarning = !!getWorkspaceSetting<boolean>(showCoreToolsWarningKey);
+
+    const binaries = binariesExist(funcDependencyName);
+    context.telemetry.properties.binariesExist = `${binaries}`;
+
+    if (!binaries) {
+      await installFuncCoreToolsBinaries(context, majorVersion);
+      context.telemetry.properties.binaryCommand = `${getFunctionsCommand()}`;
+    } else if (showCoreToolsWarning) {
+      context.telemetry.properties.binaryCommand = `${getFunctionsCommand()}`;
+      const localVersion: string | null = await getLocalFuncCoreToolsVersion();
+      context.telemetry.properties.localVersion = localVersion;
+      const newestVersion: string | undefined = await getLatestFunctionCoreToolsVersion(context, majorVersion);
+      if (semver.major(newestVersion) === semver.major(localVersion) && semver.gt(newestVersion, localVersion)) {
+        context.telemetry.properties.outOfDateFunc = 'true';
+        const message: string = localize(
+          'outdatedFunctionRuntime',
+          'Update your local Azure Functions Core Tools version ({0}) to the latest version ({1}) for the best experience.',
+          localVersion,
+          newestVersion
+        );
+        const update: MessageItem = { title: localize('update', 'Update') };
+        let result: MessageItem;
+        do {
+          result =
+            newestVersion !== undefined
+              ? await context.ui.showWarningMessage(message, update, DialogResponses.learnMore, DialogResponses.dontWarnAgain)
+              : await context.ui.showWarningMessage(message, DialogResponses.learnMore, DialogResponses.dontWarnAgain);
+          if (result === DialogResponses.learnMore) {
+            await openUrl('https://aka.ms/azFuncOutdated');
+          } else if (result === update) {
+            stopDesignTimeApi();
+            await installFuncCoreToolsBinaries(context, majorVersion);
+            await setFunctionsCommand();
+            await startDesignTimeApi(ext.logicAppWorkspace);
+          } else if (result === DialogResponses.dontWarnAgain) {
+            await updateGlobalSetting(showCoreToolsWarningKey, false);
+          }
+        } while (result === DialogResponses.learnMore);
+      }
+    }
+  });
+}
+
+export async function validateFuncCoreToolsIsLatestSystem(): Promise<void> {
   await callWithTelemetryAndErrorHandling('azureLogicAppsStandard.validateFuncCoreToolsIsLatest', async (context: IActionContext) => {
     context.errorHandling.suppressDisplay = true;
     context.telemetry.properties.isActivationEvent = 'true';
@@ -37,7 +104,8 @@ export async function validateFuncCoreToolsIsLatest(): Promise<void> {
 
       if (packageManagers.length === 0) {
         return;
-      } else if (packageManagers.length === 1) {
+      }
+      if (packageManagers.length === 1) {
         packageManager = packageManagers[0];
         context.telemetry.properties.packageManager = packageManager;
       } else {
@@ -84,7 +152,7 @@ export async function validateFuncCoreToolsIsLatest(): Promise<void> {
             newestVersion
           );
 
-          const update: MessageItem = { title: 'Update' };
+          const update: MessageItem = { title: localize('update', 'Update') };
           let result: MessageItem;
 
           do {

@@ -3,10 +3,12 @@
   border-width: 0;
   cursor: pointer;
   font-size: @token-font-size;
+  font-weight: initial;
   height: @token-height;
   line-height: @token-height;
-  white-space: nowrap;
   padding-left: 0;
+  text-transform: initial;
+  white-space: nowrap;
 }
 
 .msla-input-token {
@@ -18,6 +20,15 @@
   padding-right: 4px;
   position: relative;
   gap: 4px;
+  user-select: none;
+  max-width: 120px;
+
+  .msla-token-title {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 100%;
+  }
 
   .msla-token-delete {
     align-self: center;
@@ -34,6 +45,9 @@
     position: absolute;
     left: 14px;
     top: 6px;
+  }
+  &.selected {
+    outline: 2px solid @primary_focus_blue;
   }
 }
 

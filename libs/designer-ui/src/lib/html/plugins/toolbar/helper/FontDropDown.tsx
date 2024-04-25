@@ -8,11 +8,11 @@ import { $isRangeSelection, $getSelection } from 'lexical';
 import { useCallback } from 'react';
 import { useIntl } from 'react-intl';
 
-export enum FontDropDownType {
-  FONTFAMILY = 'font-family',
-  FONTSIZE = 'font-size',
-}
-
+export const FontDropDownType = {
+  FONTFAMILY: 'font-family',
+  FONTSIZE: 'font-size',
+} as const;
+export type FontDropDownType = (typeof FontDropDownType)[keyof typeof FontDropDownType];
 interface FontDropdownProps {
   editor: LexicalEditor;
   value: string;
@@ -38,13 +38,21 @@ export function FontDropDown({ editor, value, fontDropdownType, disabled = false
 
   const buttonAriaLabel =
     fontDropdownType === FontDropDownType.FONTFAMILY
-      ? intl.formatMessage({ defaultMessage: 'Formatting options for font family', description: 'Label for Font family dropdown' })
-      : intl.formatMessage({ defaultMessage: 'Formatting options for font size', description: 'Label for Font size dropdown' });
+      ? intl.formatMessage({
+          defaultMessage: 'Formatting options for font family',
+          id: 'sYQDN+',
+          description: 'Label for Font family dropdown',
+        })
+      : intl.formatMessage({
+          defaultMessage: 'Formatting options for font size',
+          id: 'J2Su6x',
+          description: 'Label for Font size dropdown',
+        });
 
   return (
     <DropDown
       disabled={disabled}
-      buttonClassName={'toolbar-item ' + fontDropdownType}
+      buttonClassName={`toolbar-item ${fontDropdownType}`}
       buttonLabel={value}
       buttonAriaLabel={buttonAriaLabel}
       editor={editor}

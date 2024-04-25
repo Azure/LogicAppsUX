@@ -1,12 +1,16 @@
 import { getBrandColorRgbA } from '../card/utils';
 import { TokenType } from '../editor';
+import { CLOSE_TOKENPICKER } from '../editor/base/plugins/CloseTokenPicker';
 import { DELETE_TOKEN_NODE } from '../editor/base/plugins/DeleteTokenNode';
 import { OPEN_TOKEN_PICKER } from '../editor/base/plugins/OpenTokenPicker';
 import iconSvg from './icon/icon.svg';
-import { Icon } from '@fluentui/react';
+import { Icon, css } from '@fluentui/react';
 import { useLexicalComposerContext } from '@lexical/react/LexicalComposerContext';
-import { $getNodeByKey } from 'lexical';
+import { useLexicalNodeSelection } from '@lexical/react/useLexicalNodeSelection';
+import { mergeRegister } from '@lexical/utils';
+import { $getNodeByKey, BLUR_COMMAND, COMMAND_PRIORITY_EDITOR, FOCUS_COMMAND } from 'lexical';
 import type { NodeKey } from 'lexical';
+import { useEffect, useRef, useState } from 'react';
 import { useIntl } from 'react-intl';
 
 export interface InputTokenProps {
@@ -16,23 +20,56 @@ export interface InputTokenProps {
   icon?: string;
   isAdvanced?: boolean;
   isSecure?: boolean;
-  readOnly?: boolean;
+  readonly?: boolean;
   required?: boolean;
   title: string;
-  nodeKey?: NodeKey;
+  nodeKey: NodeKey;
   description?: string;
 }
 
 export const DELETE = '\u00D7';
-export const InputToken: React.FC<InputTokenProps> = ({ value, brandColor, icon, isSecure, readOnly, title, nodeKey }) => {
+export const InputToken: React.FC<InputTokenProps> = ({ value, brandColor, icon, isSecure, readonly, title, nodeKey }) => {
+  const [hasFocus, setFocus] = useState(true);
   const intl = useIntl();
   const [editor] = useLexicalComposerContext();
+  const [isSelected, setSelected, clearSelection] = useLexicalNodeSelection(nodeKey);
+  const tokenRef = useRef<null | HTMLDivElement>(null);
 
-  const handleTokenClicked = () => {
+  useEffect(() => {
+    return mergeRegister(
+      editor.registerCommand(
+        FOCUS_COMMAND,
+        () => {
+          setFocus(true);
+          return false;
+        },
+        COMMAND_PRIORITY_EDITOR
+      ),
+      editor.registerCommand(
+        BLUR_COMMAND,
+        () => {
+          setFocus(false);
+          return false;
+        },
+        COMMAND_PRIORITY_EDITOR
+      )
+    );
+  }, [editor]);
+
+  const handleTokenClicked = (e: React.MouseEvent<HTMLSpanElement, MouseEvent>) => {
     if (nodeKey) {
       editor.getEditorState().read(() => {
-        if ($getNodeByKey(nodeKey)?.['__data']?.token?.tokenType === TokenType.FX) {
+        // if it is an expression token we'll open the token picker in update mode
+        if ($getNodeByKey(nodeKey)?.['__data']?.token?.tokenType === TokenType.FX && !readonly) {
           editor.dispatchCommand(OPEN_TOKEN_PICKER, nodeKey);
+        }
+        // otherwise we'll select the token
+        else if (e.shiftKey) {
+          setSelected(!isSelected);
+        } else {
+          clearSelection();
+          setSelected(true);
+          editor.dispatchCommand(CLOSE_TOKENPICKER, { focusEditorAfter: true });
         }
       });
     }
@@ -45,17 +82,19 @@ export const InputToken: React.FC<InputTokenProps> = ({ value, brandColor, icon,
 
   const tokenDelete = intl.formatMessage({
     defaultMessage: 'Delete',
+    id: 'XqamWZ',
     description: 'Label of Delete Token Button',
   });
 
   const handleTokenDeleteClicked = () => {
     if (nodeKey) {
       editor.dispatchCommand(DELETE_TOKEN_NODE, nodeKey);
+      editor.focus();
     }
   };
 
   const renderTokenDeleteButton = (): JSX.Element | null => {
-    if (readOnly) {
+    if (readonly) {
       return null;
     }
 
@@ -64,6 +103,7 @@ export const InputToken: React.FC<InputTokenProps> = ({ value, brandColor, icon,
         title={tokenDelete}
         aria-label={tokenDelete}
         className="msla-button msla-token-delete"
+        data-automation-id={`msla-token-delete-${title}`}
         onClick={(e) => {
           e.stopPropagation();
           handleTokenDeleteClicked();
@@ -83,11 +123,19 @@ export const InputToken: React.FC<InputTokenProps> = ({ value, brandColor, icon,
   };
 
   return (
-    <div className="msla-token msla-input-token" onClick={handleTokenClicked} style={tokenStyle}>
-      <div className="msla-token-title" title={value}>
-        {title}
-      </div>
+    <span
+      className={css('msla-token msla-input-token', isSelected && hasFocus && 'selected')}
+      data-automation-id={`msla-token msla-input-token-${title}`}
+      onClick={(e) => {
+        handleTokenClicked(e);
+        e.stopPropagation();
+      }}
+      title={value}
+      style={tokenStyle}
+      ref={tokenRef}
+    >
+      <div className="msla-token-title">{title}</div>
       {renderTokenDeleteButton()}
-    </div>
+    </span>
   );
 };

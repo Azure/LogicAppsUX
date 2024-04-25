@@ -1,30 +1,44 @@
 import type { Workflow } from '../../common/models/workflow';
 import { getConnectionsApiAndMapping } from '../actions/bjsworkflow/connections';
-import { parseWorkflowParameters } from '../actions/bjsworkflow/initialize';
-import { initializeOperationMetadata, updateDynamicDataInNodes } from '../actions/bjsworkflow/operationdeserializer';
+import { updateWorkflowParameters } from '../actions/bjsworkflow/initialize';
+import { initializeOperationMetadata, initializeDynamicDataInNodes } from '../actions/bjsworkflow/operationdeserializer';
 import { getConnectionsQuery } from '../queries/connections';
 import { initializeConnectionReferences } from '../state/connection/connectionSlice';
 import { initializeStaticResultProperties } from '../state/staticresultschema/staticresultsSlice';
 import type { RootState } from '../store';
+import { getCustomCodeFilesWithData } from '../utils/parameters/helper';
 import type { DeserializedWorkflow } from './BJSWorkflow/BJSDeserializer';
 import { Deserialize as BJSDeserialize } from './BJSWorkflow/BJSDeserializer';
 import type { WorkflowNode } from './models/workflowNode';
-import type { LogicAppsV2 } from '@microsoft/utils-logic-apps';
+import { LoggerService, Status } from '@microsoft/logic-apps-shared';
+import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import { createAsyncThunk } from '@reduxjs/toolkit';
+import { batch } from 'react-redux';
+
+interface InitWorkflowPayload {
+  deserializedWorkflow: DeserializedWorkflow;
+  originalDefinition: LogicAppsV2.WorkflowDefinition;
+}
 
 export const initializeGraphState = createAsyncThunk<
-  DeserializedWorkflow,
+  InitWorkflowPayload,
   { workflowDefinition: Workflow; runInstance: LogicAppsV2.RunInstanceDefinition | null | undefined },
   { state: RootState }
->('parser/deserialize', async (graphState: { workflowDefinition: Workflow; runInstance: any }, thunkAPI): Promise<DeserializedWorkflow> => {
+>('parser/deserialize', async (graphState: { workflowDefinition: Workflow; runInstance: any }, thunkAPI): Promise<InitWorkflowPayload> => {
   const { workflowDefinition, runInstance } = graphState;
-  const { workflow } = thunkAPI.getState() as RootState;
+  const { workflow, designerOptions } = thunkAPI.getState() as RootState;
   const spec = workflow.workflowSpec;
 
   if (spec === undefined) {
     throw new Error('Trying to import workflow without specifying the workflow type');
   }
   if (spec === 'BJS') {
+    const traceId = LoggerService().startTrace({
+      name: 'Initialize Graph State',
+      action: 'initializeGraphState',
+      source: 'ParseReduxAction.ts',
+    });
+
     getConnectionsQuery();
     const { definition, connectionReferences, parameters } = workflowDefinition;
     const deserializedWorkflow = BJSDeserialize(definition, runInstance);
@@ -34,23 +48,39 @@ export const initializeGraphState = createAsyncThunk<
 
     thunkAPI.dispatch(initializeConnectionReferences(connectionReferences ?? {}));
     thunkAPI.dispatch(initializeStaticResultProperties(deserializedWorkflow.staticResults ?? {}));
-    parseWorkflowParameters(parameters ?? {}, thunkAPI.dispatch);
+    updateWorkflowParameters(parameters ?? {}, thunkAPI.dispatch);
+
+    const { connections, customCode } = thunkAPI.getState();
+    const customCodeWithData = getCustomCodeFilesWithData(customCode);
 
     const asyncInitialize = async () => {
-      await initializeOperationMetadata(
-        deserializedWorkflow,
-        thunkAPI.getState().connections.connectionReferences,
-        parameters ?? {},
-        thunkAPI.dispatch
-      );
-      const actionsAndTriggers = deserializedWorkflow.actionData;
-      await getConnectionsApiAndMapping(actionsAndTriggers, thunkAPI.getState, thunkAPI.dispatch);
-      await updateDynamicDataInNodes(thunkAPI.getState, thunkAPI.dispatch);
+      batch(async () => {
+        try {
+          await Promise.all([
+            initializeOperationMetadata(
+              deserializedWorkflow,
+              connections.connectionReferences,
+              parameters ?? {},
+              customCodeWithData,
+              workflow.workflowKind,
+              designerOptions.hostOptions.forceEnableSplitOn ?? false,
+              thunkAPI.dispatch
+            ),
+            getConnectionsApiAndMapping(deserializedWorkflow, thunkAPI.dispatch),
+          ]);
+          await initializeDynamicDataInNodes(thunkAPI.getState, thunkAPI.dispatch);
+
+          LoggerService().endTrace(traceId, { status: Status.Success });
+        } catch (e) {
+          LoggerService().endTrace(traceId, { status: Status.Failure });
+        }
+      });
     };
     asyncInitialize();
 
-    return deserializedWorkflow;
-  } else if (spec === 'CNCF') {
+    return { deserializedWorkflow, originalDefinition: definition };
+  }
+  if (spec === 'CNCF') {
     throw new Error('Spec not implemented.');
   }
   throw new Error('Invalid Workflow Spec');

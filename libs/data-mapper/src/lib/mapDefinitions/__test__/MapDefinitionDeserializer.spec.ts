@@ -1,17 +1,18 @@
-import type { MapDefinitionEntry } from '../../models';
 import { directAccessPseudoFunctionKey, functionMock, ifPseudoFunctionKey, indexPseudoFunctionKey } from '../../models';
-import type { ConnectionUnit } from '../../models/Connection';
+import type { Connection, ConnectionUnit } from '../../models/Connection';
 import { convertSchemaToSchemaExtended } from '../../utils/Schema.Utils';
-import { MapDefinitionDeserializer } from '../MapDefinitionDeserializer';
+import { getLoopTargetNodeWithJson, MapDefinitionDeserializer } from '../MapDefinitionDeserializer';
+import type { MapDefinitionEntry, Schema, SchemaExtended, SchemaNodeExtended } from '@microsoft/logic-apps-shared';
 import {
   comprehensiveSourceSchema,
   comprehensiveTargetSchema,
+  deepNestedSequenceAndObject,
   sourceMockJsonSchema,
   sourceMockSchema,
   targetMockJsonSchema,
   targetMockSchema,
-} from '__mocks__/schemas';
-
+} from '../../../__mocks__/schemas';
+import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 describe('mapDefinitions/MapDefinitionDeserializer', () => {
   describe('XML', () => {
     let simpleMap: MapDefinitionEntry = {};
@@ -1011,6 +1012,44 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
         ).toBe('source-/ns0:Root/NameValueTransforms/PurchaseOrderStatus/ns0:LineItem');
       });
 
+      it('creates a loop connection with backout access', () => {
+        const mockNestedTestSchema: Schema = deepNestedSequenceAndObject;
+        const extendedComprehensiveSourceSchema: SchemaExtended = convertSchemaToSchemaExtended(mockNestedTestSchema);
+        const mockComprehensiveTargetSchema: Schema = targetMockSchema;
+        const extendedComprehensiveTargetSchema: SchemaExtended = convertSchemaToSchemaExtended(mockComprehensiveTargetSchema);
+        simpleMap['ns0:Root'] = {
+          Looping: {
+            '$for(/ns0:bookstore/ns0:book)': {
+              '$for(ns0:book2)': {
+                '$for(ns0:book3)': {
+                  Person: {
+                    Address: 'ns0:name',
+                    Name: '../ns0:author/ns0:first-name',
+                  },
+                },
+              },
+            },
+          },
+        };
+        const mapDefinitionDeserializer = new MapDefinitionDeserializer(
+          simpleMap,
+          extendedComprehensiveSourceSchema,
+          extendedComprehensiveTargetSchema,
+          functionMock
+        );
+        const result = mapDefinitionDeserializer.convertFromMapDefinition();
+        const resultEntries = Object.entries(result);
+
+        // target-/ns0:Root/Looping/Person/Address
+        expect((resultEntries[4][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual(
+          'source-/ns0:bookstore/ns0:book/ns0:book2/ns0:book3/ns0:name'
+        );
+        // target-/ns0:Root/Looping/Person/Name
+        expect((resultEntries[6][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual(
+          'source-/ns0:bookstore/ns0:book/ns0:book2/ns0:author/ns0:first-name'
+        );
+      });
+
       it('If-Else test', () => {
         simpleMap['ns0:Root'] = {
           DirectTranslation: {
@@ -1132,6 +1171,141 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
         expect(resultEntries[7][0]).toEqual('target-/ns0:TargetSchemaRoot/Looping/OneToOne/StressTest/Direct');
         expect(resultEntries[7][1]).toBeTruthy();
         expect((resultEntries[7][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual(ifId);
+      });
+    });
+
+    const getFirstInputReactFlowKey = (conn: Connection) => (conn.inputs[0][0] as ConnectionUnit).reactFlowKey;
+    const getSecondInputReactFlowKey = (conn: Connection) => (conn.inputs[1][0] as ConnectionUnit).reactFlowKey;
+
+    describe('sequences', () => {
+      it('creates a simple sequence function', () => {
+        simpleMap['ns0:Root'] = {
+          Looping: {
+            '$for(reverse(/ns0:Root/Looping/Employee))': {
+              Person: {
+                Name: 'Name',
+              },
+            },
+          },
+        };
+
+        const mapDefinitionDeserializer = new MapDefinitionDeserializer(simpleMap, extendedSource, extendedTarget, functionMock);
+        const result = mapDefinitionDeserializer.convertFromMapDefinition();
+        const resultEntries = Object.entries(result);
+        resultEntries.sort();
+
+        expect(resultEntries[0][0].startsWith('Reverse')).toBeTruthy();
+        expect(getFirstInputReactFlowKey(resultEntries[0][1])).toEqual('source-/ns0:Root/Looping/Employee');
+
+        expect(resultEntries[1][0]).toEqual('source-/ns0:Root/Looping/Employee');
+        expect(resultEntries[2][0]).toEqual('source-/ns0:Root/Looping/Employee/Name');
+
+        expect(resultEntries[3][0]).toEqual('target-/ns0:Root/Looping/Person');
+        expect(getFirstInputReactFlowKey(resultEntries[3][1]).startsWith('Reverse')).toBeTruthy();
+
+        expect(resultEntries[4][0]).toEqual('target-/ns0:Root/Looping/Person/Name');
+        expect(getFirstInputReactFlowKey(resultEntries[4][1])).toEqual('source-/ns0:Root/Looping/Employee/Name');
+      });
+
+      it('creates nested sequences', () => {
+        simpleMap['ns0:Root'] = {
+          Looping: {
+            '$for(reverse(distinct-values(/ns0:Root/Looping/Employee,/ns0:Root/Looping/Employee/Name)))': {
+              Person: {
+                Name: 'Name',
+              },
+            },
+          },
+        };
+
+        const mapDefinitionDeserializer = new MapDefinitionDeserializer(simpleMap, extendedSource, extendedTarget, functionMock);
+        const result = mapDefinitionDeserializer.convertFromMapDefinition();
+        const resultEntries = Object.entries(result);
+        resultEntries.sort();
+
+        expect(resultEntries[0][0].startsWith('DistinctValues')).toBeTruthy();
+        expect(getFirstInputReactFlowKey(resultEntries[0][1])).toEqual('source-/ns0:Root/Looping/Employee');
+        expect(getSecondInputReactFlowKey(resultEntries[0][1])).toEqual('source-/ns0:Root/Looping/Employee/Name');
+
+        expect(resultEntries[1][0].startsWith('Reverse')).toBeTruthy();
+        expect(getFirstInputReactFlowKey(resultEntries[1][1]).startsWith('DistinctValues')).toBeTruthy();
+
+        expect(resultEntries[2][0]).toEqual('source-/ns0:Root/Looping/Employee');
+        expect(resultEntries[3][0]).toEqual('source-/ns0:Root/Looping/Employee/Name');
+
+        expect(resultEntries[4][0]).toEqual('target-/ns0:Root/Looping/Person');
+        expect(getFirstInputReactFlowKey(resultEntries[4][1]).startsWith('Reverse')).toBeTruthy();
+
+        expect(resultEntries[5][0]).toEqual('target-/ns0:Root/Looping/Person/Name');
+        expect(getFirstInputReactFlowKey(resultEntries[5][1])).toEqual('source-/ns0:Root/Looping/Employee/Name');
+      });
+
+      it('creates a simple sequence function with multiple mapped children', () => {
+        simpleMap['ns0:Root'] = {
+          Looping: {
+            '$for(reverse(/ns0:Root/Looping/Employee))': {
+              Person: {
+                Name: 'Name',
+                Other: 'TelephoneNumber',
+              },
+            },
+          },
+        };
+
+        const mapDefinitionDeserializer = new MapDefinitionDeserializer(simpleMap, extendedSource, extendedTarget, functionMock);
+        const result = mapDefinitionDeserializer.convertFromMapDefinition();
+        const resultEntries = Object.entries(result);
+        resultEntries.sort();
+
+        expect(resultEntries[0][0].startsWith('Reverse')).toBeTruthy();
+        expect(getFirstInputReactFlowKey(resultEntries[0][1])).toEqual('source-/ns0:Root/Looping/Employee');
+
+        expect(resultEntries[1][0]).toEqual('source-/ns0:Root/Looping/Employee');
+        expect(resultEntries[2][0]).toEqual('source-/ns0:Root/Looping/Employee/Name');
+        expect(resultEntries[3][0]).toEqual('source-/ns0:Root/Looping/Employee/TelephoneNumber');
+
+        expect(resultEntries[4][0]).toEqual('target-/ns0:Root/Looping/Person');
+        expect(getFirstInputReactFlowKey(resultEntries[4][1]).startsWith('Reverse')).toBeTruthy();
+
+        expect(resultEntries[5][0]).toEqual('target-/ns0:Root/Looping/Person/Name');
+        expect(getFirstInputReactFlowKey(resultEntries[5][1])).toEqual('source-/ns0:Root/Looping/Employee/Name');
+
+        expect(resultEntries[6][0]).toEqual('target-/ns0:Root/Looping/Person/Other');
+        expect(getFirstInputReactFlowKey(resultEntries[6][1])).toEqual('source-/ns0:Root/Looping/Employee/TelephoneNumber');
+      });
+
+      it('creates nested sequence functions with multiple inputs', () => {
+        simpleMap['ns0:Root'] = {
+          Looping: {
+            '$for(sub-sequence(reverse(/ns0:Root/Looping/Employee),/ns0:Root/Looping/Employee/Salary, 2))': {
+              Person: {
+                Name: 'Name',
+              },
+            },
+          },
+        };
+
+        const mapDefinitionDeserializer = new MapDefinitionDeserializer(simpleMap, extendedSource, extendedTarget, functionMock);
+        const result = mapDefinitionDeserializer.convertFromMapDefinition();
+        const resultEntries = Object.entries(result);
+        resultEntries.sort();
+
+        expect(resultEntries[0][0].startsWith('Reverse')).toBeTruthy();
+        expect(getFirstInputReactFlowKey(resultEntries[0][1])).toEqual('source-/ns0:Root/Looping/Employee');
+
+        expect(resultEntries[1][0].startsWith('Subsequence')).toBeTruthy();
+        expect(getFirstInputReactFlowKey(resultEntries[1][1]).startsWith('Reverse'));
+        expect(getSecondInputReactFlowKey(resultEntries[1][1])).toEqual('source-/ns0:Root/Looping/Employee/Salary');
+
+        expect(resultEntries[2][0]).toEqual('source-/ns0:Root/Looping/Employee');
+        expect(resultEntries[3][0]).toEqual('source-/ns0:Root/Looping/Employee/Name');
+        expect(resultEntries[4][0]).toEqual('source-/ns0:Root/Looping/Employee/Salary');
+
+        expect(resultEntries[5][0]).toEqual('target-/ns0:Root/Looping/Person');
+        expect(getFirstInputReactFlowKey(resultEntries[5][1]).startsWith('Subsequence')).toBeTruthy();
+
+        expect(resultEntries[6][0]).toEqual('target-/ns0:Root/Looping/Person/Name');
+        expect(getFirstInputReactFlowKey(resultEntries[6][1])).toEqual('source-/ns0:Root/Looping/Employee/Name');
       });
     });
   });
@@ -1379,11 +1553,9 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
       it('creates a loop connection', () => {
         simpleMap['root'] = {
           ComplexArray1: {
-            '$for(/root/Nums/*)': [
-              {
-                F1: 'Num',
-              },
-            ],
+            '$for(/root/Nums/*)': {
+              F1: 'Num',
+            },
           },
         };
 
@@ -1761,16 +1933,14 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
         expect((resultEntries[9][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual('source-/root/text/*/itemNumber');
       });
 
-      it.skip('creates a many-to-one loop connections', () => {
+      it('creates a many-to-one loop connections', () => {
         simpleMap['root'] = {
           TargetMadeUp: {
             ManySingleArray: {
               '$for(/root/SourceMadeUp/ManySingleArray/*)': {
-                '$for(*)': [
-                  {
-                    TargetMadeUp_NeedAProp: 'SourceMadeUp_NeedAProp',
-                  },
-                ],
+                '$for(*)': {
+                  TargetMadeUp_NeedAProp: 'SourceMadeUp_NeedAProp',
+                },
               },
             },
           },
@@ -1783,29 +1953,26 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
 
         expect(resultEntries.length).toEqual(5);
 
-        expect(resultEntries[1][0]).toEqual('source-/root/SourceMadeUp/ManySingleArray/*');
-        expect(resultEntries[1][1]).toBeTruthy();
-        expect(resultEntries[1][1].outputs[0].reactFlowKey).toEqual('target-/root/TargetMadeUp/ManySingleArray/*');
+        expect(resultEntries[0][0]).toEqual('source-/root/SourceMadeUp/ManySingleArray/*');
+        expect(resultEntries[0][1]).toBeTruthy();
+        expect(resultEntries[0][1].outputs[0].reactFlowKey).toEqual('target-/root/TargetMadeUp/ManySingleArray/*');
 
         expect(resultEntries[1][0]).toEqual('source-/root/SourceMadeUp/ManySingleArray/*/*');
         expect(resultEntries[1][1]).toBeTruthy();
-        expect(resultEntries[1][1].outputs[0].reactFlowKey).toEqual('target-/root/TargetMadeUp/ManySingleArray/*/*');
+        expect(resultEntries[1][1].outputs[0].reactFlowKey).toEqual('target-/root/TargetMadeUp/ManySingleArray/*');
 
-        expect(resultEntries[1][0]).toEqual('source-/root/SourceMadeUp/ManySingleArray/*/*/SourceMadeUp_NeedAProp');
-        expect(resultEntries[1][1]).toBeTruthy();
-        expect(resultEntries[1][1].outputs[0].reactFlowKey).toEqual('target-/root/TargetMadeUp/ManySingleArray/*/*/TargetMadeUp_NeedAProp');
+        expect(resultEntries[2][0]).toEqual('source-/root/SourceMadeUp/ManySingleArray/*/*/SourceMadeUp_NeedAProp');
+        expect(resultEntries[2][1]).toBeTruthy();
+        expect(resultEntries[2][1].outputs[0].reactFlowKey).toEqual('target-/root/TargetMadeUp/ManySingleArray/*/TargetMadeUp_NeedAProp');
 
-        expect(resultEntries[1][0]).toEqual('target-/root/TargetMadeUp/ManySingleArray/*');
-        expect(resultEntries[1][1]).toBeTruthy();
-        expect((resultEntries[1][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual('source-/root/SourceMadeUp/ManySingleArray/*');
+        expect(resultEntries[3][0]).toEqual('target-/root/TargetMadeUp/ManySingleArray/*');
+        expect(resultEntries[3][1]).toBeTruthy();
+        expect((resultEntries[3][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual('source-/root/SourceMadeUp/ManySingleArray/*/*');
+        expect((resultEntries[3][1].inputs[0][1] as ConnectionUnit).reactFlowKey).toEqual('source-/root/SourceMadeUp/ManySingleArray/*');
 
-        expect(resultEntries[1][0]).toEqual('target-/root/TargetMadeUp/ManySingleArray/*/*');
-        expect(resultEntries[1][1]).toBeTruthy();
-        expect((resultEntries[1][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual('source-/root/SourceMadeUp/ManySingleArray/*/*');
-
-        expect(resultEntries[1][0]).toEqual('target-/root/TargetMadeUp/ManySingleArray/*/*/TargetMadeUp_NeedAProp');
-        expect(resultEntries[1][1]).toBeTruthy();
-        expect((resultEntries[1][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual(
+        expect(resultEntries[4][0]).toEqual('target-/root/TargetMadeUp/ManySingleArray/*/TargetMadeUp_NeedAProp');
+        expect(resultEntries[4][1]).toBeTruthy();
+        expect((resultEntries[4][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual(
           'source-/root/SourceMadeUp/ManySingleArray/*/*/SourceMadeUp_NeedAProp'
         );
       });
@@ -1814,15 +1981,11 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
         simpleMap['root'] = {
           TargetMadeUp: {
             ManyManyArray: {
-              '$for(/root/SourceMadeUp/ManyManyArray/*)': [
-                {
-                  '$for(*)': [
-                    {
-                      TargetMadeUp_NeedAProp: 'SourceMadeUp_NeedAProp',
-                    },
-                  ],
+              '$for(/root/SourceMadeUp/ManyManyArray/*)': {
+                '$for(*)': {
+                  TargetMadeUp_NeedAProp: 'SourceMadeUp_NeedAProp',
                 },
-              ],
+              },
             },
           },
         };
@@ -1832,31 +1995,28 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
         const resultEntries = Object.entries(result);
         resultEntries.sort();
 
-        expect(resultEntries.length).toEqual(6);
+        expect(resultEntries.length).toEqual(5);
 
-        expect(resultEntries[1][0]).toEqual('source-/root/SourceMadeUp/ManyManyArray/*');
-        expect(resultEntries[1][1]).toBeTruthy();
-        expect(resultEntries[1][1].outputs[0].reactFlowKey).toEqual('target-/root/TargetMadeUp/ManyManyArray/*');
+        expect(resultEntries[0][0]).toEqual('source-/root/SourceMadeUp/ManyManyArray/*');
+        expect(resultEntries[0][1]).toBeTruthy();
+        expect(resultEntries[0][1].outputs[0].reactFlowKey).toEqual('target-/root/TargetMadeUp/ManyManyArray/*');
 
         expect(resultEntries[1][0]).toEqual('source-/root/SourceMadeUp/ManyManyArray/*/*');
         expect(resultEntries[1][1]).toBeTruthy();
-        expect(resultEntries[1][1].outputs[0].reactFlowKey).toEqual('target-/root/TargetMadeUp/ManyManyArray/*/*');
+        expect(resultEntries[1][1].outputs[0].reactFlowKey).toEqual('target-/root/TargetMadeUp/ManyManyArray/*');
 
-        expect(resultEntries[1][0]).toEqual('source-/root/SourceMadeUp/ManyManyArray/*/*/SourceMadeUp_NeedAProp');
-        expect(resultEntries[1][1]).toBeTruthy();
-        expect(resultEntries[1][1].outputs[0].reactFlowKey).toEqual('target-/root/TargetMadeUp/ManyManyArray/*/*/TargetMadeUp_NeedAProp');
+        expect(resultEntries[2][0]).toEqual('source-/root/SourceMadeUp/ManyManyArray/*/*/SourceMadeUp_NeedAProp');
+        expect(resultEntries[2][1]).toBeTruthy();
+        expect(resultEntries[2][1].outputs[0].reactFlowKey).toEqual('target-/root/TargetMadeUp/ManyManyArray/*/TargetMadeUp_NeedAProp');
 
-        expect(resultEntries[1][0]).toEqual('target-/root/TargetMadeUp/ManyManyArray/*');
-        expect(resultEntries[1][1]).toBeTruthy();
-        expect((resultEntries[1][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual('source-/root/SourceMadeUp/ManyManyArray/*');
+        expect(resultEntries[3][0]).toEqual('target-/root/TargetMadeUp/ManyManyArray/*');
+        expect(resultEntries[3][1]).toBeTruthy();
+        expect((resultEntries[3][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual('source-/root/SourceMadeUp/ManyManyArray/*/*');
+        expect((resultEntries[3][1].inputs[0][1] as ConnectionUnit).reactFlowKey).toEqual('source-/root/SourceMadeUp/ManyManyArray/*');
 
-        expect(resultEntries[1][0]).toEqual('target-/root/TargetMadeUp/ManyManyArray/*/*');
-        expect(resultEntries[1][1]).toBeTruthy();
-        expect((resultEntries[1][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual('source-/root/SourceMadeUp/ManyManyArray/*/*');
-
-        expect(resultEntries[1][0]).toEqual('target-/root/TargetMadeUp/ManyManyArray/*/*/TargetMadeUp_NeedAProp');
-        expect(resultEntries[1][1]).toBeTruthy();
-        expect((resultEntries[1][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual(
+        expect(resultEntries[4][0]).toEqual('target-/root/TargetMadeUp/ManyManyArray/*/TargetMadeUp_NeedAProp');
+        expect(resultEntries[4][1]).toBeTruthy();
+        expect((resultEntries[4][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual(
           'source-/root/SourceMadeUp/ManyManyArray/*/*/SourceMadeUp_NeedAProp'
         );
       });
@@ -1954,5 +2114,51 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
         expect((resultEntries[2][1].inputs[0][0] as ConnectionUnit).reactFlowKey).toEqual('source-/root/generalData/address/telephone/*');
       });
     });
+  });
+
+  describe('XSD to JSON', () => {
+    const simpleMap: MapDefinitionEntry = {
+      $version: '1',
+      $input: 'XSD',
+      $output: 'JSON',
+      $sourceSchema: 'SourceSchemaJson.json',
+      $targetSchema: 'TargetSchemaJson.json',
+    };
+
+    const extendedSource = convertSchemaToSchemaExtended(sourceMockSchema);
+    const extendedTarget = convertSchemaToSchemaExtended(targetMockJsonSchema);
+
+    it('maps a looping XSD to JSON', () => {
+      simpleMap['root'] = {
+        ComplexArray1: {
+          '$for(/ns0:Root/Looping/Employee)': {
+            F1: 'TelephoneNumber',
+          },
+        },
+      };
+
+      const mapDefinitionDeserializer = new MapDefinitionDeserializer(simpleMap, extendedSource, extendedTarget, functionMock);
+      const result = mapDefinitionDeserializer.convertFromMapDefinition();
+      const resultEntries = Object.entries(result);
+      resultEntries.sort();
+
+      expect(resultEntries.length).toEqual(4);
+
+      expect(resultEntries[0][0]).toEqual('source-/ns0:Root/Looping/Employee');
+      expect(resultEntries[0][1]).toBeTruthy();
+      expect(resultEntries[0][1].outputs[0].reactFlowKey).toEqual('target-/root/ComplexArray1/*');
+
+      expect(resultEntries[1][0]).toEqual('source-/ns0:Root/Looping/Employee/TelephoneNumber');
+      expect(resultEntries[1][1]).toBeTruthy();
+      expect(resultEntries[1][1].outputs[0].reactFlowKey).toEqual('target-/root/ComplexArray1/*/F1');
+    });
+  });
+
+  it('gets correct target node for json schema', () => {
+    const extendedTarget = convertSchemaToSchemaExtended(targetMockJsonSchema);
+    const root = extendedTarget.schemaTreeRoot;
+    const matchingTarget = getLoopTargetNodeWithJson('root/ComplexArray1/F1', root);
+
+    expect((matchingTarget as SchemaNodeExtended).name).toEqual('F1');
   });
 });

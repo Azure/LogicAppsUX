@@ -4,9 +4,10 @@ import { initializeIcons } from '@fluentui/react';
 import * as React from 'react';
 import { useIntl } from 'react-intl';
 import * as ReactShallowRenderer from 'react-test-renderer/shallow';
-
+import { describe, beforeEach, afterEach, it, expect } from 'vitest';
 describe('ui/workflowparameters/workflowparameters', () => {
-  let minimal: WorkflowParametersProps, renderer: ReactShallowRenderer.ShallowRenderer;
+  let minimal: WorkflowParametersProps;
+  let renderer: ReactShallowRenderer.ShallowRenderer;
 
   beforeEach(() => {
     minimal = {
@@ -48,6 +49,7 @@ describe('ui/workflowparameters/workflowparameters', () => {
 
     const headerTitle = intl.formatMessage({
       defaultMessage: 'Parameters',
+      id: 'pRUJff',
       description: 'Create Title',
     });
     expect(header.props.className).toBe('msla-workflow-parameters-heading');
@@ -59,11 +61,12 @@ describe('ui/workflowparameters/workflowparameters', () => {
 
     const addMessage = intl.formatMessage({
       defaultMessage: 'Create parameter',
+      id: 'vwH/XV',
       description: 'Create Parameter Text',
     });
     expect(add.props.className).toBe('msla-workflow-parameters-add');
     const addButton = add.props.children;
-    expect(addButton.props.text).toBe(addMessage);
+    expect(addButton.props.children).toBe(addMessage);
 
     expect(parameterList.props.items).toHaveLength(2);
   });

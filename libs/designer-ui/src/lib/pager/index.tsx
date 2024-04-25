@@ -1,6 +1,6 @@
 import type { IIconProps, IIconStyles, ITextFieldStyles } from '@fluentui/react';
 import { Icon, IconButton, Text, TextField, TooltipHost } from '@fluentui/react';
-import React, { useCallback } from 'react';
+import React, { useCallback, useEffect } from 'react';
 import { useIntl } from 'react-intl';
 
 export type PageChangeEventHandler = (e: PageChangeEventArgs) => void;
@@ -72,9 +72,14 @@ export const Pager: React.FC<PagerProps> = ({
 }) => {
   const [current, setCurrent] = React.useState(initialCurrent);
 
-  let failedMax = 0,
-    failedMin = 0;
-  let onClickNext: PageChangeEventHandler | undefined, onClickPrevious: PageChangeEventHandler | undefined;
+  useEffect(() => {
+    setCurrent(initialCurrent);
+  }, [initialCurrent]);
+
+  let failedMax = 0;
+  let failedMin = 0;
+  let onClickNext: PageChangeEventHandler | undefined;
+  let onClickPrevious: PageChangeEventHandler | undefined;
 
   if (failedIterationProps) {
     ({ max: failedMax, min: failedMin, onClickNext, onClickPrevious } = failedIterationProps);
@@ -82,7 +87,7 @@ export const Pager: React.FC<PagerProps> = ({
 
   const changeValue = useCallback(
     (newValue: string, changeHandler = onChange, minimum = min, maximum = max): void => {
-      const value = parseInt(newValue, 10);
+      const value = Number.parseInt(newValue, 10);
       if (value < minimum) {
         setCurrent(minimum);
         changeHandler && changeHandler({ value });
@@ -129,6 +134,7 @@ export const Pager: React.FC<PagerProps> = ({
 
   const pagerPreviousString = intl.formatMessage({
     defaultMessage: 'Previous',
+    id: '6oqk+A',
     description: 'Text of a button to go to previous page',
   });
 
@@ -140,12 +146,14 @@ export const Pager: React.FC<PagerProps> = ({
 
   const previousPagerFailedStrign = intl.formatMessage({
     defaultMessage: 'Previous failed',
+    id: 'gKq3Jv',
     description: 'Label of a button to go to the previous failed page option',
   });
 
   const pagerOfString = intl.formatMessage(
     {
       defaultMessage: 'of {max}',
+      id: 'W070M2',
       description: 'Text on a pager where people can select a page number out of {max}',
     },
     {
@@ -156,6 +164,7 @@ export const Pager: React.FC<PagerProps> = ({
   const pagerOfStringAria = intl.formatMessage(
     {
       defaultMessage: '{current_page} of {max_page}',
+      id: 'o1HOyf',
       description: 'Accessibility label telling that the user is on page {current} of {max} pages',
     },
     {
@@ -166,11 +175,13 @@ export const Pager: React.FC<PagerProps> = ({
 
   const pagerNextFailedString = intl.formatMessage({
     defaultMessage: 'Next failed',
+    id: 'Mb/Vp8',
     description: 'Button indicating to go to the next page with failed options',
   });
 
   const pagerNextString = intl.formatMessage({
     defaultMessage: 'Next',
+    id: 'iJOIca',
     description: 'Button indicating to go to the next page',
   });
 
@@ -220,6 +231,7 @@ const PagerButton: React.FC<PagerButtonProps> = ({ disabled, failed, iconProps, 
   const intl = useIntl();
   const previousPagerFailedString = intl.formatMessage({
     defaultMessage: 'Previous failed',
+    id: 'gKq3Jv',
     description: 'Label of a button to go to the previous failed page option',
   });
 

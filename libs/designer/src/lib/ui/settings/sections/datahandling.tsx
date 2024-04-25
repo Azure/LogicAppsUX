@@ -1,7 +1,7 @@
-import type { SectionProps, ToggleHandler } from '..';
-import constants from '../../../common/constants';
-import { SettingLabel, SettingsSection } from '../settingsection';
+import { SettingSectionName, type SectionProps, type ToggleHandler } from '..';
+import { SettingsSection } from '../settingsection';
 import type { SettingsSectionProps } from '../settingsection';
+import { getSettingLabel } from '@microsoft/designer-ui';
 import { useIntl } from 'react-intl';
 
 export interface DataHandlingSectionProps extends SectionProps {
@@ -10,64 +10,48 @@ export interface DataHandlingSectionProps extends SectionProps {
 }
 
 export const DataHandling = ({
+  readOnly,
+  expanded,
   requestSchemaValidation,
   disableAutomaticDecompression,
-  readOnly,
   onSchemaValidationChange,
   onAutomaticDecompressionChange,
-  expanded,
   onHeaderClick,
 }: DataHandlingSectionProps): JSX.Element => {
   const intl = useIntl();
-
   const dataHandlingTitle = intl.formatMessage({
     defaultMessage: 'Data Handling',
+    id: 'aK4iLW',
     description: 'title for data handling setting section',
   });
-  const onText = intl.formatMessage({
-    defaultMessage: 'On',
-    description: 'label when setting is on',
-  });
-  const offText = intl.formatMessage({
-    defaultMessage: 'Off',
-    description: 'label when setting is off',
-  });
-
   const requestSchemaValidationLabelText = intl.formatMessage({
     defaultMessage: 'Schema Validation',
+    id: '7S2wtE',
     description: 'A label for the schema validation setting',
+  });
+  const requestSchemaValidationLabelTooltip = intl.formatMessage({
+    defaultMessage: 'Validate request body against the schema provided. In case there is a mismatch, HTTP 400 will be returned',
+    id: 'lsH37F',
+    description: 'tool tip explaining what schema validation setting does',
   });
   const automaticDecompressionLabelText = intl.formatMessage({
     defaultMessage: 'Automatic Decompression',
+    id: 'BeqBP7',
     description: 'A label for the automatic decompression setting',
   });
-  const requestSchemaValidationLabel = (
-    <SettingLabel
-      labelText={requestSchemaValidationLabelText}
-      infoTooltipText={intl.formatMessage({
-        defaultMessage: 'Validate request body against the schema provided. In case there is a mismatch, HTTP 400 will be returned.',
-        description: 'tool tip explaining what schema validation setting does',
-      })}
-      isChild={false}
-    />
-  );
-  const automaticDecompressionLabel = (
-    <SettingLabel
-      labelText={automaticDecompressionLabelText}
-      infoTooltipText={intl.formatMessage({
-        defaultMessage:
-          'Decompress the request body if it is compressed using GZip or Deflate. This setting is only applicable for HTTP trigger.',
-        description: 'tool tip explaining what automatic decompression setting does',
-      })}
-      isChild={false}
-    />
-  );
+  const automaticDecompressionLabelTooltip = intl.formatMessage({
+    defaultMessage:
+      'Decompress the request body if it is compressed using GZip or Deflate. This setting is only applicable for HTTP trigger',
+    id: 'PqUAbF',
+    description: 'tool tip explaining what automatic decompression setting does',
+  });
+
   const dataHandlingSectionProps: SettingsSectionProps = {
     id: 'dataHandling',
     title: dataHandlingTitle,
     expanded,
     isReadOnly: readOnly,
-    sectionName: constants.SETTINGSECTIONS.DATAHANDLING,
+    sectionName: SettingSectionName.DATAHANDLING,
     onHeaderClick,
     settings: [
       {
@@ -76,10 +60,8 @@ export const DataHandling = ({
           readOnly,
           checked: !disableAutomaticDecompression?.value,
           onToggleInputChange: (_, checked) => onAutomaticDecompressionChange(!checked),
-          customLabel: () => automaticDecompressionLabel,
+          customLabel: getSettingLabel(automaticDecompressionLabelText, automaticDecompressionLabelTooltip),
           inlineLabel: true,
-          onText,
-          offText,
           ariaLabel: automaticDecompressionLabelText,
         },
         visible: disableAutomaticDecompression?.isSupported,
@@ -90,9 +72,7 @@ export const DataHandling = ({
           readOnly,
           checked: requestSchemaValidation?.value,
           onToggleInputChange: (_, checked) => onSchemaValidationChange(!!checked),
-          customLabel: () => requestSchemaValidationLabel,
-          onText,
-          offText,
+          customLabel: getSettingLabel(requestSchemaValidationLabelText, requestSchemaValidationLabelTooltip),
           ariaLabel: requestSchemaValidationLabelText,
         },
         visible: requestSchemaValidation?.isSupported,

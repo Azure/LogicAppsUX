@@ -6,7 +6,7 @@ import { DotnetVersion } from '../../../constants';
 import { localize } from '../../../localize';
 import { getProjFiles } from '../dotnet/dotnet';
 import type { IActionContext } from '@microsoft/vscode-azext-utils';
-import { ProjectLanguage } from '@microsoft/vscode-extension';
+import { ProjectLanguage } from '@microsoft/vscode-extension-logic-apps';
 import * as fs from 'fs';
 import * as path from 'path';
 import { Uri } from 'vscode';
@@ -40,9 +40,8 @@ export async function getDotnetBuildFile(context: IActionContext, projectPath: s
     const xmlString: string = fs.readFileSync(buildFileUri.fsPath, 'utf8').toString();
     const xmlObject: Record<string, any> | undefined = await getXMLString(xmlString, { explicitArray: false });
     return JSON.stringify(xmlObject);
-  } else {
-    throw new Error(localize('dotnetProjectFileNotFound', 'Dotnet project file could not be found.'));
   }
+  throw new Error(localize('dotnetProjectFileNotFound', 'Dotnet project file could not be found.'));
 }
 
 export function addFolderToBuildPath(xmlBuildFile: Record<string, any>, folderName: string): Record<string, any> {
@@ -55,6 +54,38 @@ export function addFolderToBuildPath(xmlBuildFile: Record<string, any>, folderNa
     },
   };
   xmlBuildFile['Project']['ItemGroup'].push(itemGroup);
+  return xmlBuildFile;
+}
+
+export function addLibToPublishPath(xmlBuildFile: Record<string, any>): Record<string, any> {
+  const itemGroup: Record<string, any> = {
+    Target: {
+      $: {
+        Name: 'CopyDynamicLibraries',
+        AfterTargets: '_GenerateFunctionsExtensionsMetadataPostPublish',
+      },
+      Copy: {
+        $: {
+          SourceFiles: '@(LibDirectory)',
+          DestinationFiles: `@(LibDirectory->'$(MSBuildProjectDirectory)${path.sep}$(PublishUrl)${path.sep}lib${path.sep}%(RecursiveDir)%(Filename)%(Extension)')`,
+        },
+      },
+    },
+  };
+  xmlBuildFile['Project'] = {
+    ...xmlBuildFile['Project'],
+    ...itemGroup,
+  };
+
+  const itemGroup1 = {
+    LibDirectory: {
+      $: {
+        Include: `$(MSBuildProjectDirectory)${path.sep}lib${path.sep}**${path.sep}*`,
+      },
+    },
+  };
+  xmlBuildFile['Project']['ItemGroup'].push(itemGroup1);
+
   return xmlBuildFile;
 }
 
@@ -83,7 +114,7 @@ export function suppressJavaScriptBuildWarnings(xmlBuildFile: Record<string, any
 
 export function updateFunctionsSDKVersion(xmlBuildFile: Record<string, any>, dotnetVersion: string): Record<string, any> {
   for (const item of xmlBuildFile['Project']['ItemGroup']) {
-    if ('PackageReference' in item && item['PackageReference']['$']['Include'] == 'Microsoft.NET.Sdk.Functions') {
+    if ('PackageReference' in item && item['PackageReference']['$']['Include'] === 'Microsoft.NET.Sdk.Functions') {
       const packageVersion = dotnetVersion === DotnetVersion.net6 ? '4.1.3' : '3.0.13';
       item['PackageReference']['$']['Version'] = packageVersion;
       break;

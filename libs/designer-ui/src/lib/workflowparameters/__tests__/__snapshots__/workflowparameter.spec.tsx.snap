@@ -1,35 +1,20 @@
-// Jest Snapshot v1, https://goo.gl/fbAQLP
+// Vitest Snapshot v1, https://vitest.dev/guide/snapshot.html
 
-exports[`ui/workflowparameters/workflowparameter should construct. 1`] = `
+exports[`ui/workflowparameters/workflowparameter > should construct. 1`] = `
 <div
   className="msla-workflow-parameter"
 >
   <div>
     <div>
-      <CustomizedCommandBarButton
+      <Button
+        appearance="subtle"
         className="msla-workflow-parameter-heading-button"
         data-testid="-parameter-heading-button"
-        iconProps={
-          Object {
-            "iconName": "ChevronRightMed",
-            "styles": Object {
-              "root": Object {
-                "color": "#514f4e",
-                "fontSize": 14,
-              },
-            },
-          }
-        }
+        icon={<CompoundIcon />}
         onClick={[Function]}
-        styles={
-          Object {
-            "label": Object {
-              "fontWeight": 600,
-            },
-          }
-        }
-        text="New parameter"
-      />
+      >
+        New parameter
+      </Button>
     </div>
   </div>
   <div
@@ -37,7 +22,7 @@ exports[`ui/workflowparameters/workflowparameter should construct. 1`] = `
   >
     <EditOrDeleteButton
       definition={
-        Object {
+        {
           "id": "id",
           "name": "",
           "type": "Array",

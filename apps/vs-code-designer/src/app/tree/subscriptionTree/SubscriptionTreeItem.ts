@@ -2,6 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
+import { LogicAppResolver } from '../../../LogicAppResolver';
 import { projectLanguageSetting, workflowappRuntime } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
@@ -19,7 +20,7 @@ import { getFunctionsWorkerRuntime, getWorkspaceSettingFromAnyFolder } from '../
 import { LogicAppResourceTree } from '../LogicAppResourceTree';
 import { SlotTreeItem } from '../slotsTree/SlotTreeItem';
 import type { Site, WebSiteManagementClient } from '@azure/arm-appservice';
-import { isNullOrUndefined } from '@microsoft/utils-logic-apps';
+import { isNullOrUndefined } from '@microsoft/logic-apps-shared';
 import {
   AppInsightsCreateStep,
   AppInsightsListStep,
@@ -47,8 +48,8 @@ import {
 } from '@microsoft/vscode-azext-azureutils';
 import type { AzExtTreeItem, AzureWizardExecuteStep, AzureWizardPromptStep, IActionContext } from '@microsoft/vscode-azext-utils';
 import { nonNullProp, parseError, AzureWizard } from '@microsoft/vscode-azext-utils';
-import type { IFunctionAppWizardContext, ICreateLogicAppContext } from '@microsoft/vscode-extension';
-import { FuncVersion } from '@microsoft/vscode-extension';
+import type { IFunctionAppWizardContext, ICreateLogicAppContext } from '@microsoft/vscode-extension-logic-apps';
+import { FuncVersion } from '@microsoft/vscode-extension-logic-apps';
 
 export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
   public readonly childTypeLabel: string = localize('LogicApp', 'Logic App (Standard) in Azure');
@@ -75,9 +76,8 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
         // In that case, we know there are no Function Apps, so we can return an empty array
         // (The provider will be registered automatically if the user creates a new Function App)
         return [];
-      } else {
-        throw error;
       }
+      throw error;
     }
 
     return await this.createTreeItemsWithErrorHandling(
@@ -136,21 +136,19 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
       wizardContext.runtimeFilter = getFunctionsWorkerRuntime(language);
       executeSteps.push(new StorageAccountCreateStep(storageAccountCreateOptions));
       executeSteps.push(new AppInsightsCreateStep());
+    } else if (wizardContext.customLocation) {
+      promptSteps.push(new CustomLocationStorageAccountStep(context));
     } else {
-      if (wizardContext.customLocation) {
-        promptSteps.push(new CustomLocationStorageAccountStep(context));
-      } else {
-        promptSteps.push(
-          new StorageAccountListStep(storageAccountCreateOptions, {
-            kind: [StorageAccountKind.BlobStorage],
-            performance: [StorageAccountPerformance.Premium],
-            replication: [StorageAccountReplication.ZRS],
-            learnMoreLink: 'https://aka.ms/Cfqnrc',
-          })
-        );
-        promptSteps.push(new AzureStorageAccountStep());
-        promptSteps.push(new AppInsightsListStep());
-      }
+      promptSteps.push(
+        new StorageAccountListStep(storageAccountCreateOptions, {
+          kind: [StorageAccountKind.BlobStorage],
+          performance: [StorageAccountPerformance.Premium],
+          replication: [StorageAccountReplication.ZRS],
+          learnMoreLink: 'https://aka.ms/Cfqnrc',
+        })
+      );
+      promptSteps.push(new AzureStorageAccountStep());
+      promptSteps.push(new AppInsightsListStep());
     }
 
     executeSteps.push(new VerifyProvidersStep(['Microsoft.Web', 'Microsoft.Storage', 'Microsoft.Insights']));
@@ -216,6 +214,7 @@ export class SubscriptionTreeItem extends SubscriptionTreeItemBase {
     }
 
     const resolved = new LogicAppResourceTree(subscription.subscription, nonNullProp(wizardContext, 'site'));
+    await LogicAppResolver.getSubscriptionSites(context, subscription.subscription);
     await ext.rgApi.appResourceTree.refresh(context);
     return new SlotTreeItem(subscription, resolved);
   }

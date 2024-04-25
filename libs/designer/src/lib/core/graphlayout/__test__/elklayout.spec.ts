@@ -1,8 +1,8 @@
 import type { WorkflowNode } from '../../parsers/models/workflowNode';
 import { createWorkflowNode, createWorkflowEdge, createElkNode, createElkEdge } from '../../utils/graph';
 import { exportForTesting } from '../elklayout';
-import type { WorkflowEdgeType } from '@microsoft/utils-logic-apps';
-import { WORKFLOW_NODE_TYPES, WORKFLOW_EDGE_TYPES } from '@microsoft/utils-logic-apps';
+import type { WorkflowEdgeType } from '@microsoft/logic-apps-shared';
+import { WORKFLOW_NODE_TYPES, WORKFLOW_EDGE_TYPES } from '@microsoft/logic-apps-shared';
 import type { ElkNode } from 'elkjs/lib/elk-api';
 import type { Edge, Node } from 'reactflow';
 
@@ -23,7 +23,7 @@ const elkSubgraphLayoutOptions = {
   nodeType: WORKFLOW_NODE_TYPES.SUBGRAPH_NODE,
 };
 
-const { convertWorkflowGraphToElkGraph, convertElkGraphToReactFlow, elkLayout } = exportForTesting;
+const { convertWorkflowGraphToElkGraph, convertElkGraphToReactFlow, elkLayout } = exportForTesting;import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 describe('elklayout', () => {
   describe('convertWorkflowGraphToElkGraph', () => {
     it('should properly convert a valid WorkflowGraph to an ElkNode', () => {

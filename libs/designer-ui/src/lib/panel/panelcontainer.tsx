@@ -1,26 +1,33 @@
 import { EmptyContent } from '../card/emptycontent';
-import type { MenuItemOption } from '../card/types';
 import type { PageActionTelemetryData } from '../telemetry/models';
+import { PanelResizer } from './panelResizer';
 import type { CommonPanelProps, PanelTab } from './panelUtil';
 import { PanelScope, PanelLocation } from './panelUtil';
 import { PanelContent } from './panelcontent';
-import type { PanelHeaderControlType } from './panelheader/panelheader';
 import { PanelHeader } from './panelheader/panelheader';
-import { PanelPivot } from './panelpivot';
+import type { TitleChangeHandler } from './panelheader/panelheadertitle';
 import type { ILayerProps } from '@fluentui/react';
-import { MessageBar, MessageBarType, Spinner, SpinnerSize } from '@fluentui/react';
+import { MessageBar, MessageBarType } from '@fluentui/react';
+import { Spinner } from '@fluentui/react-components';
 import type { IPanelHeaderRenderer, IPanelProps, IPanelStyles } from '@fluentui/react/lib/Panel';
 import { Panel, PanelType } from '@fluentui/react/lib/Panel';
 import { useCallback } from 'react';
 import { useIntl } from 'react-intl';
 
 const horizontalPadding = '2rem';
-const verticalPadding = '1rem';
 
 const panelStyles: Partial<IPanelStyles> = {
-  content: { padding: verticalPadding + ' ' + horizontalPadding },
+  content: {
+    padding: '1rem 2rem 0rem',
+    overflow: 'hidden',
+    height: '100%',
+  },
   main: { overflow: 'hidden' },
-  scrollableContent: { height: '100%' },
+  scrollableContent: {
+    height: '100%',
+    display: 'flex',
+    flexDirection: 'column',
+  },
 };
 
 const panelStylesCollapsed: Partial<IPanelStyles> = {
@@ -37,23 +44,26 @@ export type PanelContainerProps = {
   errorMessage?: string;
   isLoading?: boolean;
   panelScope: PanelScope;
+  suppressDefaultNodeSelectFunctionality?: boolean;
   pivotDisabled?: boolean;
-  panelHeaderControlType?: PanelHeaderControlType;
-  panelHeaderMenu: MenuItemOption[];
+  headerMenuItems: JSX.Element[];
   selectedTab?: string;
+  selectTab: (tabId: string) => void;
   showCommentBox: boolean;
   readOnlyMode?: boolean;
-  tabs: Record<string, PanelTab>;
+  tabs: PanelTab[];
   nodeId: string;
   title?: string;
   layerProps?: ILayerProps;
-  onDismissButtonClicked?(): void;
+  canResubmit?: boolean;
+  resubmitOperation?: () => void;
   trackEvent(data: PageActionTelemetryData): void;
-  setSelectedTab: (tabName: string | undefined) => void;
   toggleCollapse: () => void;
   onCommentChange: (panelCommentChangeEvent?: string) => void;
   renderHeader?: (props?: IPanelProps, defaultrender?: IPanelHeaderRenderer, headerTextId?: string) => JSX.Element;
-  onTitleChange: (newValue: string) => void;
+  onTitleChange: TitleChangeHandler;
+  onTitleBlur?: (prevTitle: string) => void;
+  setCurrWidth: (width: string) => void;
 } & CommonPanelProps;
 
 export const PanelContainer = ({
@@ -66,9 +76,12 @@ export const PanelContainer = ({
   errorMessage,
   isLoading,
   panelScope,
-  panelHeaderControlType,
-  panelHeaderMenu,
+  suppressDefaultNodeSelectFunctionality,
+  headerMenuItems,
   selectedTab,
+  selectTab,
+  canResubmit,
+  resubmitOperation,
   showCommentBox,
   readOnlyMode,
   tabs,
@@ -76,18 +89,16 @@ export const PanelContainer = ({
   title,
   width,
   layerProps,
-  onDismissButtonClicked,
-  setSelectedTab,
   toggleCollapse,
   trackEvent,
   renderHeader,
   onCommentChange,
   onTitleChange,
+  onTitleBlur,
+  setCurrWidth,
+  isResizeable,
 }: PanelContainerProps) => {
   const intl = useIntl();
-  const onTabChange = (itemKey: string): void => {
-    setSelectedTab && setSelectedTab(itemKey);
-  };
 
   const defaultRenderHeader = useCallback(
     (_props?: IPanelProps, _defaultrender?: IPanelHeaderRenderer, headerTextId?: string): JSX.Element => {
@@ -100,20 +111,21 @@ export const PanelContainer = ({
           showCommentBox={showCommentBox}
           noNodeSelected={noNodeSelected}
           panelScope={panelScope}
-          onDismissButtonClicked={onDismissButtonClicked}
-          panelHeaderMenu={panelHeaderMenu}
-          panelHeaderControlType={panelHeaderControlType}
+          suppressDefaultNodeSelectFunctionality={suppressDefaultNodeSelectFunctionality}
+          headerMenuItems={headerMenuItems}
           readOnlyMode={readOnlyMode}
           titleId={headerTextId}
           title={title}
-          includeTitle={true}
           isError={isError}
           isLoading={isLoading}
           comment={comment}
+          canResubmit={canResubmit}
+          resubmitOperation={resubmitOperation}
           horizontalPadding={horizontalPadding}
           commentChange={onCommentChange}
           toggleCollapse={toggleCollapse}
           onTitleChange={onTitleChange}
+          onTitleBlur={onTitleBlur}
         />
       );
     },
@@ -125,27 +137,31 @@ export const PanelContainer = ({
       showCommentBox,
       noNodeSelected,
       panelScope,
-      onDismissButtonClicked,
-      panelHeaderMenu,
-      panelHeaderControlType,
+      suppressDefaultNodeSelectFunctionality,
+      headerMenuItems,
       readOnlyMode,
       title,
       isError,
       isLoading,
       comment,
+      canResubmit,
+      resubmitOperation,
       onCommentChange,
       toggleCollapse,
       onTitleChange,
+      onTitleBlur,
     ]
   );
 
   const panelLabel = intl.formatMessage({
     defaultMessage: 'panel',
+    id: 'c6XbVI',
     description: 'label for panel component',
   });
 
   const panelErrorMessage = intl.formatMessage({
     defaultMessage: 'Error loading operation data',
+    id: '62Ypnr',
     description: 'label for panel error',
   });
 
@@ -171,23 +187,14 @@ export const PanelContainer = ({
             <EmptyContent />
           ) : isLoading ? (
             <div className="msla-loading-container">
-              <Spinner size={SpinnerSize.large} />
+              <Spinner size={'large'} />
             </div>
           ) : isError ? (
             <MessageBar messageBarType={MessageBarType.error}>{errorMessage ?? panelErrorMessage}</MessageBar>
           ) : (
-            <div className="msla-panel-page">
-              <PanelPivot
-                isCollapsed={isCollapsed}
-                tabs={tabs}
-                selectedTab={selectedTab}
-                onTabChange={onTabChange}
-                trackEvent={trackEvent}
-                nodeId={nodeId}
-              />
-              <PanelContent tabs={tabs} selectedTab={selectedTab} />
-            </div>
+            <PanelContent tabs={tabs} trackEvent={trackEvent} nodeId={nodeId} selectedTab={selectedTab} selectTab={selectTab} />
           )}
+          {isResizeable ? <PanelResizer updatePanelWidth={setCurrWidth} /> : null}
         </>
       )}
     </Panel>

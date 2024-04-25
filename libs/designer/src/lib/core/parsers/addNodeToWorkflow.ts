@@ -5,8 +5,15 @@ import type { NodesMetadata, WorkflowState } from '../state/workflow/workflowInt
 import { createWorkflowNode, createWorkflowEdge } from '../utils/graph';
 import type { WorkflowEdge, WorkflowNode } from './models/workflowNode';
 import { reassignEdgeSources, reassignEdgeTargets, addNewEdge, applyIsRootNode, removeEdge } from './restructuringHelpers';
-import type { DiscoveryOperation, DiscoveryResultTypes, SubgraphType } from '@microsoft/utils-logic-apps';
-import { SUBGRAPH_TYPES, WORKFLOW_EDGE_TYPES, isScopeOperation, WORKFLOW_NODE_TYPES } from '@microsoft/utils-logic-apps';
+import type { DiscoveryOperation, DiscoveryResultTypes, LogicAppsV2, SubgraphType } from '@microsoft/logic-apps-shared';
+import {
+  removeIdTag,
+  SUBGRAPH_TYPES,
+  WORKFLOW_EDGE_TYPES,
+  isScopeOperation,
+  WORKFLOW_NODE_TYPES,
+  getRecordEntry,
+} from '@microsoft/logic-apps-shared';
 
 export interface AddNodePayload {
   operation: DiscoveryOperation<DiscoveryResultTypes>;
@@ -22,47 +29,50 @@ export const addNodeToWorkflow = (
   nodesMetadata: NodesMetadata,
   state: WorkflowState
 ) => {
-  const { nodeId: newNodeId, operation } = payload;
-  const { graphId, parentId, childId } = payload.relationshipIds;
+  const { nodeId: newNodeId, operation, isParallelBranch, relationshipIds } = payload;
+  const { graphId, parentId, childId } = relationshipIds;
 
   // Add Node Data
   const workflowNode: WorkflowNode = createWorkflowNode(newNodeId);
 
   // Handle Extra node addition if is a scope operation
-  if (isScopeOperation(payload.operation.type)) {
-    handleExtraScopeNodeSetup(payload.operation, workflowNode, nodesMetadata, state);
+  if (isScopeOperation(operation.type)) {
+    handleExtraScopeNodeSetup(operation, workflowNode, nodesMetadata, state);
   }
 
-  if (workflowNode.id) workflowGraph.children = [...(workflowGraph?.children ?? []), workflowNode];
+  if (workflowNode.id) {
+    workflowGraph.children = [...(workflowGraph?.children ?? []), workflowNode];
+  }
 
   // Update metadata
   const isTrigger = !!operation.properties?.trigger;
-  const isRoot = isTrigger || (parentId ? parentId?.split('-#')[0] === graphId : false);
+  const isRoot = isTrigger || (parentId ? removeIdTag(parentId) === graphId : false);
   const parentNodeId = graphId !== 'root' ? graphId : undefined;
   nodesMetadata[newNodeId] = { graphId, parentNodeId, isRoot };
 
-  state.operations[newNodeId] = { ...state.operations[newNodeId], type: payload.operation.type };
+  state.operations[newNodeId] = { ...state.operations[newNodeId], type: operation.type };
   state.newlyAddedOperations[newNodeId] = newNodeId;
   state.isDirty = true;
 
-  const isAfterTrigger = nodesMetadata[parentId ?? '']?.isRoot && graphId === 'root';
+  const isAfterTrigger = getRecordEntry(nodesMetadata, parentId ?? '')?.isRoot && graphId === 'root';
   const shouldAddRunAfters = !isRoot && !isAfterTrigger;
-
   nodesMetadata[newNodeId] = { graphId, parentNodeId, isRoot };
-  state.operations[newNodeId] = { ...state.operations[newNodeId], type: payload.operation.type };
+  state.operations[newNodeId] = { ...state.operations[newNodeId], type: operation.type };
   state.newlyAddedOperations[newNodeId] = newNodeId;
 
   // Parallel Branch creation, just add the singular node
-  if (payload.isParallelBranch && parentId) {
+  if (isParallelBranch && parentId) {
     addNewEdge(state, parentId, newNodeId, workflowGraph, shouldAddRunAfters);
   }
   // 1 parent, 1 child
   else if (parentId && childId) {
-    const childRunAfter = (state.operations?.[childId] as any)?.runAfter;
+    const childRunAfter = (getRecordEntry(state.operations, childId) as any)?.runAfter;
     addNewEdge(state, parentId, newNodeId, workflowGraph, shouldAddRunAfters);
     addNewEdge(state, newNodeId, childId, workflowGraph, true);
     removeEdge(state, parentId, childId, workflowGraph);
-    if (childRunAfter && shouldAddRunAfters) (state.operations?.[newNodeId] as any).runAfter[parentId] = childRunAfter[parentId];
+    if (childRunAfter && shouldAddRunAfters) {
+      (getRecordEntry(state.operations, newNodeId) as any).runAfter[parentId] = getRecordEntry(childRunAfter, parentId);
+    }
   }
   // X parents, 1 child
   else if (childId) {
@@ -83,7 +93,9 @@ export const addNodeToWorkflow = (
   }
 
   // If the added node is a do-until, we need to set the subgraphtype for the header
-  if (payload.operation.type.toLowerCase() === 'until') nodesMetadata[newNodeId].subgraphType = SUBGRAPH_TYPES.UNTIL_DO;
+  if (operation.type.toLowerCase() === 'until') {
+    nodesMetadata[newNodeId].subgraphType = SUBGRAPH_TYPES.UNTIL_DO;
+  }
 };
 
 export const addChildNode = (graph: WorkflowNode, node: WorkflowNode): void => {
@@ -136,7 +148,7 @@ const handleExtraScopeNodeSetup = (
     createSubgraphNode(node, `${node.id}-actions`, SUBGRAPH_TYPES.CONDITIONAL_TRUE, 'actions', nodesMetadata);
     createSubgraphNode(node, `${node.id}-elseActions`, SUBGRAPH_TYPES.CONDITIONAL_FALSE, 'else', nodesMetadata);
     state.operations[node.id] = {
-      ...state.operations[node.id],
+      ...(getRecordEntry(state.operations, node.id) ?? ({} as any)),
       actions: {},
       else: {},
       expression: '',
@@ -164,7 +176,7 @@ const handleExtraScopeNodeSetup = (
     createSubgraphNode(node, `${node.id}-defaultCase`, SUBGRAPH_TYPES.SWITCH_DEFAULT as any, 'default', nodesMetadata);
 
     state.operations[node.id] = {
-      ...state.operations[node.id],
+      ...(getRecordEntry(state.operations, node.id) ?? ({} as any)),
       cases: {},
       default: {},
       expression: '',
@@ -195,7 +207,12 @@ export const addSwitchCaseToWorkflow = (caseId: string, switchNode: WorkflowNode
   addChildEdge(switchNode, createWorkflowEdge(`${switchNode.id}-#scope`, caseId, WORKFLOW_EDGE_TYPES.ONLY_EDGE));
 
   // Add Case to Switch operation data
-  (state.operations[switchNode.id] as any).cases[caseId] = { actions: {}, case: '' };
+  const switchAction = state.operations[switchNode.id] as LogicAppsV2.SwitchAction;
+  switchAction.cases = {
+    ...switchAction.cases,
+    [caseId]: { actions: {}, case: '' },
+  };
+
   // Increase action count of graph
   if (nodesMetadata[switchNode.id]) {
     nodesMetadata[switchNode.id].actionCount = nodesMetadata[switchNode.id].actionCount ?? 0 + 1;

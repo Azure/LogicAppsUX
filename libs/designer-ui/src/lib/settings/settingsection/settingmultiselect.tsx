@@ -1,6 +1,7 @@
-import type { SettingProps } from './settingtoggle';
+import type { SettingProps } from './';
 import { Checkbox } from '@fluentui/react';
-import React, { useState } from 'react';
+import type React from 'react';
+import { useState } from 'react';
 
 type StatusChangeHandler = (selections: MultiSelectOption[]) => void;
 
@@ -41,7 +42,7 @@ export const MultiSelectSetting: React.FC<MultiSelectSettingProps> = ({
               checked={userSelections.includes(option)}
               label={option.label}
               ariaLabel={ariaLabel}
-              onRenderLabel={customLabel}
+              onRenderLabel={() => customLabel ?? null}
               onChange={(_, checked) => handleSelectionChange(option, !!checked)}
             />
           </div>
