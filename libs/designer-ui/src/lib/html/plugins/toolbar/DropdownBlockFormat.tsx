@@ -20,7 +20,8 @@ import { $createHeadingNode } from '@lexical/rich-text';
 import type { HeadingTagType } from '@lexical/rich-text';
 import { $setBlocksType } from '@lexical/selection';
 import type { LexicalEditor } from 'lexical';
-import { $createParagraphNode, $isRangeSelection, DEPRECATED_$isGridSelection, $getSelection } from 'lexical';
+import { $createParagraphNode, $isRangeSelection, $getSelection } from 'lexical';
+import { $isTableSelection } from '@lexical/table';
 import { useIntl } from 'react-intl';
 
 interface BlockFormatDropDownProps {
@@ -36,7 +37,7 @@ export const BlockFormatDropDown = ({ editor, blockType, disabled = false }: Blo
   const formatParagraph = () => {
     editor.update(() => {
       const selection = $getSelection();
-      if ($isRangeSelection(selection) || DEPRECATED_$isGridSelection(selection)) {
+      if ($isRangeSelection(selection) || $isTableSelection(selection)) {
         $setBlocksType(selection, () => $createParagraphNode());
       }
     });
@@ -46,7 +47,7 @@ export const BlockFormatDropDown = ({ editor, blockType, disabled = false }: Blo
     if (blockType !== headingSize) {
       editor.update(() => {
         const selection = $getSelection();
-        if ($isRangeSelection(selection) || DEPRECATED_$isGridSelection(selection)) {
+        if ($isRangeSelection(selection) || $isTableSelection(selection)) {
           $setBlocksType(selection, () => $createHeadingNode(headingSize));
         }
       });

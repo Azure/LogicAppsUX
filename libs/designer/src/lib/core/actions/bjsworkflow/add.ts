@@ -16,7 +16,7 @@ import { changePanelNode, openPanel, setIsPanelLoading } from '../../state/panel
 import { addResultSchema } from '../../state/staticresultschema/staticresultsSlice';
 import type { NodeTokens, VariableDeclaration } from '../../state/tokens/tokensSlice';
 import { initializeTokensAndVariables } from '../../state/tokens/tokensSlice';
-import type { WorkflowState } from '../../state/workflow/workflowInterfaces';
+import type { NodesMetadata, WorkflowState } from '../../state/workflow/workflowInterfaces';
 import { addNode, setFocusNode } from '../../state/workflow/workflowSlice';
 import type { AppDispatch, RootState } from '../../store';
 import { getBrandColorFromManifest, getIconUriFromManifest } from '../../utils/card';
@@ -29,6 +29,7 @@ import { isConnectionRequiredForOperation, updateNodeConnection } from './connec
 import {
   getInputParametersFromManifest,
   getOutputParametersFromManifest,
+  initializeCustomCodeDataInInputs,
   updateAllUpstreamNodes,
   updateInvokerSettings,
 } from './initialize';
@@ -44,6 +45,7 @@ import {
   getBrandColorFromConnector,
   getIconUriFromConnector,
   getRecordEntry,
+  isNumber,
 } from '@microsoft/logic-apps-shared';
 import type {
   Connector,
@@ -73,13 +75,7 @@ export const addOperation = createAsyncThunk('addOperation', async (payload: Add
     if (!operation) {
       throw new Error('Operation does not exist'); // Just an optional catch, should never happen
     }
-    let count = 1;
-    let nodeId = actionId;
-    const nodesMetadata = (getState() as RootState).workflow.nodesMetadata;
-    while (getRecordEntry(nodesMetadata, nodeId)) {
-      nodeId = `${actionId}_${count}`;
-      count++;
-    }
+    const nodeId = getNonDuplicateNodeId((getState() as RootState).workflow.nodesMetadata, actionId);
 
     const newPayload = { ...payload, nodeId };
 
@@ -132,6 +128,9 @@ export const initializeOperationDetails = async (
     const iconUri = getIconUriFromManifest(manifest);
     const brandColor = getBrandColorFromManifest(manifest);
     const { inputs: nodeInputs, dependencies: inputDependencies } = getInputParametersFromManifest(nodeId, manifest, presetParameterValues);
+    if (equals(operationInfo.connectorId, Constants.INLINECODE) && !equals(operationInfo.operationId, 'javascriptcode')) {
+      initializeCustomCodeDataInInputs(nodeInputs, nodeId, dispatch);
+    }
     const { outputs: nodeOutputs, dependencies: outputDependencies } = getOutputParametersFromManifest(
       manifest,
       isTrigger,
@@ -401,4 +400,31 @@ export const getTriggerNodeManifest = async (
     return getOperationManifest({ connectorId, operationId });
   }
   return undefined;
+};
+
+export const getNonDuplicateNodeId = (nodesMetadata: NodesMetadata, actionId: string) => {
+  let count = 1;
+  let nodeId = actionId;
+  while (getRecordEntry(nodesMetadata, nodeId)) {
+    nodeId = `${actionId}_${count}`;
+    count++;
+  }
+  return nodeId;
+};
+
+export const getNonDuplicateId = (existingActionNames: Record<string, string>, actionId: string): string => {
+  let newActionId = actionId.replaceAll(' ', '_');
+  const splitActionId = newActionId.split('_');
+  let nodeId = newActionId;
+  let count = 1;
+  if (isNumber(splitActionId[splitActionId.length - 1])) {
+    splitActionId.pop();
+    newActionId = splitActionId.join('_');
+  }
+
+  while (getRecordEntry(existingActionNames, nodeId)) {
+    nodeId = `${newActionId}_${count}`;
+    count++;
+  }
+  return nodeId;
 };

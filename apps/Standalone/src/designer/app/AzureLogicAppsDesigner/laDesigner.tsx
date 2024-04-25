@@ -40,7 +40,6 @@ import {
   StandardSearchService,
   clone,
   equals,
-  getAppFileForFileExtension,
   guid,
   isArmResourceId,
   optional,
@@ -300,6 +299,7 @@ const DesignerEditor = () => {
   return (
     <div key={designerID} style={{ height: 'inherit', width: 'inherit' }}>
       <DesignerProvider
+        id={designerID}
         key={designerID}
         locale={language}
         options={{
@@ -724,28 +724,19 @@ const getCustomCodeToUpdate = async (
   appId?: string
 ): Promise<AllCustomCodeFiles | undefined> => {
   const filteredCustomCodeMapping: CustomCodeFileNameMapping = {};
-  const appFilesToAdd: Record<string, string> = {};
   if (!customCode || Object.keys(customCode).length === 0) {
     return;
   }
-  const appFiles = await getCustomCodeAppFiles(appId);
+  const appFiles = await getCustomCodeAppFiles(appId, customCode);
 
   Object.entries(customCode).forEach(([fileName, customCodeData]) => {
-    const { isModified, isDeleted, fileExtension } = customCodeData;
+    const { isModified, isDeleted } = customCodeData;
 
-    if (isDeleted && originalCustomCodeData.includes(fileName)) {
-      filteredCustomCodeMapping[fileName] = { ...customCodeData };
-    } else if (isModified && !isDeleted) {
-      if (!appFiles[fileExtension] && !appFilesToAdd[fileExtension]) {
-        const appFileData = getAppFileForFileExtension(fileExtension);
-        if (appFileData) {
-          appFilesToAdd[fileExtension] = appFileData;
-        }
-      }
+    if ((isDeleted && originalCustomCodeData.includes(fileName)) || (isModified && !isDeleted)) {
       filteredCustomCodeMapping[fileName] = { ...customCodeData };
     }
   });
-  return { customCodeFiles: filteredCustomCodeMapping, appFiles: appFilesToAdd };
+  return { customCodeFiles: filteredCustomCodeMapping, appFiles };
 };
 
 export default DesignerEditor;

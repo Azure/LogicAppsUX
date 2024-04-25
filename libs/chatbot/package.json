@@ -1,6 +1,6 @@
 {
   "name": "@microsoft/logic-apps-chatbot",
-  "version": "4.7.0",
+  "version": "4.11.0",
   "dependencies": {
     "@fluentui/react": "8.110.2",
     "@fluentui/react-components": "9.42.0",
@@ -8,7 +8,7 @@
     "@microsoft/designer-ui": "workspace:*",
     "@microsoft/logic-apps-designer": "workspace:*",
     "@microsoft/logic-apps-shared": "workspace:*",
-    "monaco-editor": "0.47.0",
+    "monaco-editor": "0.44.0",
     "react-intl": "6.3.0"
   },
   "devDependencies": {

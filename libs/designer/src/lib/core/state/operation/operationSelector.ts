@@ -1,7 +1,7 @@
 import type { NodeStaticResults } from '../../actions/bjsworkflow/staticresults';
 import type { RootState } from '../../store';
 import { shouldUseParameterInGroup } from '../../utils/parameters/helper';
-import type { ErrorInfo, NodeDependencies, NodeInputs } from './operationMetadataSlice';
+import type { ErrorInfo, NodeDependencies, NodeInputs, OperationMetadataState } from './operationMetadataSlice';
 import { ErrorLevel } from './operationMetadataSlice';
 import type { NodeOutputs } from '@microsoft/logic-apps-shared';
 import type { ParameterInfo } from '@microsoft/designer-ui';
@@ -16,6 +16,19 @@ export const useOperationVisuals = (nodeId: string) =>
   useSelector(
     createSelector(getOperationState, (state) => getRecordEntry(state.operationMetadata, nodeId) ?? { brandColor: '', iconUri: '' })
   );
+
+export const getNodeOperationData = (state: OperationMetadataState, nodeId: string) => {
+  return {
+    nodeInputs: getRecordEntry(state.inputParameters, nodeId),
+    nodeOutputs: getRecordEntry(state.outputParameters, nodeId),
+    nodeDependencies: getRecordEntry(state.dependencies, nodeId),
+    operationMetadata: getRecordEntry(state.operationMetadata, nodeId),
+    settings: getRecordEntry(state.settings, nodeId),
+    staticResult: getRecordEntry(state.staticResults, nodeId),
+    actionMetadata: getRecordEntry(state.actionMetadata, nodeId),
+    repetitionInfo: getRecordEntry(state.repetitionInfos, nodeId),
+  };
+};
 
 export const getOperationInputParameters = (rootState: RootState, nodeId: string): ParameterInfo[] => {
   const nodeInputs = getRecordEntry(rootState.operations.inputParameters, nodeId);

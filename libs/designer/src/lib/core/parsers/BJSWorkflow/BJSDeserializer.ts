@@ -20,6 +20,7 @@ import {
 } from '@microsoft/logic-apps-shared';
 import { getDurationStringPanelMode } from '@microsoft/designer-ui';
 import type { LogicAppsV2, SubgraphType } from '@microsoft/logic-apps-shared';
+import type { PasteScopeParams } from '../../actions/bjsworkflow/copypaste';
 
 const hasMultipleTriggers = (definition: LogicAppsV2.WorkflowDefinition): boolean => {
   return definition && definition.triggers ? Object.keys(definition.triggers).length > 1 : false;
@@ -126,17 +127,21 @@ const isSwitchAction = (action: LogicAppsV2.ActionDefinition): action is LogicAp
 
 const isUntilAction = (action: LogicAppsV2.ActionDefinition) => action?.type?.toLowerCase() === 'until';
 
-const buildGraphFromActions = (
+export const buildGraphFromActions = (
   actions: Record<string, LogicAppsV2.ActionDefinition>,
   graphId: string,
   parentNodeId: string | undefined,
-  allActionNames: string[]
+  allActionNames: string[],
+  pasteScopeParams?: PasteScopeParams
 ): [WorkflowNode[], WorkflowEdge[], Operations, NodesMetadata] => {
   const nodes: WorkflowNode[] = [];
   const edges: WorkflowEdge[] = [];
   let allActions: Operations = {};
   let nodesMetadata: NodesMetadata = {};
-  for (const [actionName, _action] of Object.entries(actions)) {
+  for (let [actionName, _action] of Object.entries(actions)) {
+    if (pasteScopeParams) {
+      actionName = pasteScopeParams.renamedNodes[actionName] ?? actionName;
+    }
     // Making action extensible
     const action = Object.assign({}, _action);
     const node = createWorkflowNode(
@@ -152,7 +157,7 @@ const buildGraphFromActions = (
           continue;
         }
         const caseAction: any = action.cases?.[key];
-        const { name: newCaseId } = getUniqueName(allActionNames, key);
+        const newCaseId = pasteScopeParams ? pasteScopeParams.renamedNodes[key] ?? key : getUniqueName(allActionNames, key).name;
         allActionNames.push(newCaseId);
         if (caseAction) {
           action.cases = {
@@ -168,9 +173,14 @@ const buildGraphFromActions = (
 
     const isRoot = Object.keys(action.runAfter ?? {}).length === 0 && parentNodeId;
     nodesMetadata[actionName] = { graphId, ...(parentNodeId ? { parentNodeId: parentNodeId } : {}) };
-
     if (isScopeAction(action)) {
-      const [scopeNodes, scopeEdges, scopeActions, scopeNodesMetadata] = processScopeActions(graphId, actionName, action, allActionNames);
+      const [scopeNodes, scopeEdges, scopeActions, scopeNodesMetadata] = processScopeActions(
+        graphId,
+        actionName,
+        action,
+        allActionNames,
+        pasteScopeParams
+      );
       node.children = scopeNodes;
       node.edges = scopeEdges;
       allActions = { ...allActions, ...scopeActions };
@@ -180,7 +190,13 @@ const buildGraphFromActions = (
     // Assign root prop
     nodesMetadata[actionName] = { ...nodesMetadata[actionName], ...(isRoot && { isRoot: true }) };
     if (!isRoot) {
-      for (const [runAfterAction] of Object.entries(action.runAfter ?? {})) {
+      for (let [runAfterAction, runAfterValue] of Object.entries(action.runAfter ?? {})) {
+        // update the run after with the updated ids
+        if (pasteScopeParams && action.runAfter) {
+          runAfterAction = pasteScopeParams.renamedNodes[runAfterAction] ?? runAfterAction;
+          delete action.runAfter[runAfterAction];
+          action.runAfter[runAfterAction] = runAfterValue;
+        }
         edges.push(createWorkflowEdge(runAfterAction, actionName));
       }
     }
@@ -198,11 +214,12 @@ const buildGraphFromActions = (
   return [nodes, edges, allActions, nodesMetadata];
 };
 
-const processScopeActions = (
+export const processScopeActions = (
   rootGraphId: string,
   actionName: string,
   action: LogicAppsV2.ScopeAction,
-  allActionNames: string[]
+  allActionNames: string[],
+  pasteScopeParams?: PasteScopeParams
 ): [WorkflowNode[], WorkflowEdge[], Operations, NodesMetadata] => {
   const nodes: WorkflowNode[] = [];
   const edges: WorkflowEdge[] = [];
@@ -216,7 +233,7 @@ const processScopeActions = (
 
   // For use on scope nodes with a single flow
   const applyActions = (graphId: string, actions?: LogicAppsV2.Actions) => {
-    const [graph, operations, metadata] = processNestedActions(graphId, graphId, actions, allActionNames);
+    const [graph, operations, metadata] = processNestedActions(graphId, graphId, actions, allActionNames, undefined, pasteScopeParams);
 
     nodes.push(...(graph.children as []));
     edges.push(...(graph.edges as []));
@@ -253,7 +270,7 @@ const processScopeActions = (
     subgraphType: SubgraphType,
     subGraphLocation: string | undefined
   ) => {
-    const [graph, operations, metadata] = processNestedActions(subgraphId, graphId, actions, allActionNames, true);
+    const [graph, operations, metadata] = processNestedActions(subgraphId, graphId, actions, allActionNames, true, pasteScopeParams);
     if (!graph?.edges) {
       graph.edges = [];
     }
@@ -300,7 +317,7 @@ const processScopeActions = (
     scopeCardNode.id = scopeCardNode.id.replace('#scope', '#subgraph');
     scopeCardNode.type = WORKFLOW_NODE_TYPES.SUBGRAPH_CARD_NODE;
 
-    const [graph, operations, metadata] = processNestedActions(graphId, graphId, actions, allActionNames);
+    const [graph, operations, metadata] = processNestedActions(graphId, graphId, actions, allActionNames, undefined, pasteScopeParams);
 
     nodes.push(...(graph?.children ?? []));
     edges.push(...(graph?.edges ?? []));
@@ -376,11 +393,12 @@ const processNestedActions = (
   parentNodeId: string | undefined,
   actions: LogicAppsV2.Actions | undefined,
   allActionNames: string[],
-  isSubgraph?: boolean
+  isSubgraph?: boolean,
+  pasteScopeParams?: PasteScopeParams
 ): [WorkflowNode, Operations, NodesMetadata] => {
   const [children, edges, scopeActions, scopeNodesMetadata] = isNullOrUndefined(actions)
     ? [[], [], {}, {}]
-    : buildGraphFromActions(actions, graphId, parentNodeId, allActionNames);
+    : buildGraphFromActions(actions, graphId, parentNodeId, allActionNames, pasteScopeParams);
   return [
     {
       id: graphId,
@@ -454,7 +472,7 @@ const addActionsInstanceMetaData = (nodesMetadata: NodesMetadata, runInstance: L
   return updatedNodesData;
 };
 
-const getAllActionNames = (actions: LogicAppsV2.Actions | undefined, names: string[] = []): string[] => {
+export const getAllActionNames = (actions: LogicAppsV2.Actions | undefined, names: string[] = [], includeCase?: boolean): string[] => {
   if (isNullOrUndefined(actions)) {
     return [];
   }
@@ -463,21 +481,22 @@ const getAllActionNames = (actions: LogicAppsV2.Actions | undefined, names: stri
     names.push(actionName);
     if (isScopeAction(action)) {
       if (action.actions) {
-        names.push(...getAllActionNames(action.actions));
+        names.push(...getAllActionNames(action.actions, [], includeCase));
       }
       if (isIfAction(action)) {
         if (action.else?.actions) {
-          names.push(...getAllActionNames(action.else.actions));
+          names.push(...getAllActionNames(action.else.actions, [], includeCase));
         }
       }
       if (isSwitchAction(action)) {
         if (action.default?.actions) {
-          names.push(...getAllActionNames(action.default.actions));
+          names.push(...getAllActionNames(action.default.actions, [], includeCase));
         }
         if (action.cases) {
-          for (const caseAction of Object.values(action.cases)) {
+          for (const [caseName, caseAction] of Object.entries(action.cases)) {
+            names.push(caseName);
             if (caseAction.actions) {
-              names.push(...getAllActionNames(caseAction.actions));
+              names.push(...getAllActionNames(caseAction.actions, [], includeCase));
             }
           }
         }

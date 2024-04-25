@@ -9,6 +9,8 @@ import type { WorkflowNode } from '../../parsers/models/workflowNode';
 import { isWorkflowNode } from '../../parsers/models/workflowNode';
 import type { MoveNodePayload } from '../../parsers/moveNodeInWorkflow';
 import { moveNodeInWorkflow } from '../../parsers/moveNodeInWorkflow';
+import { pasteScopeInWorkflow } from '../../parsers/pasteScopeInWorkflow';
+import type { PasteScopeNodePayload } from '../../parsers/pasteScopeInWorkflow';
 import { addNewEdge } from '../../parsers/restructuringHelpers';
 import { createWorkflowNode, getImmediateSourceNodeIds, transformOperationTitle } from '../../utils/graph';
 import { resetWorkflowState } from '../global';
@@ -163,6 +165,14 @@ export const workflowSlice = createSlice({
         state.nodesMetadata,
         state
       );
+    },
+    pasteScopeNode: (state: WorkflowState, action: PayloadAction<PasteScopeNodePayload>) => {
+      const { relationshipIds, scopeNode, operations, nodesMetadata, allActions } = action.payload;
+      const graph = getWorkflowNodeFromGraphState(state, relationshipIds.graphId);
+      if (!graph) {
+        throw new Error('graph not set');
+      }
+      pasteScopeInWorkflow(scopeNode, graph, relationshipIds, operations, nodesMetadata, allActions, state);
     },
     moveNode: (state: WorkflowState, action: PayloadAction<MoveNodePayload>) => {
       if (!state.graph) {
@@ -478,6 +488,7 @@ export const workflowSlice = createSlice({
         deleteSwitchCase,
         addSwitchCase,
         addImplicitForeachNode,
+        pasteScopeNode,
         setNodeDescription,
         updateRunAfter,
         removeEdgeFromRunAfter,
@@ -503,6 +514,7 @@ export const {
   addNode,
   addImplicitForeachNode,
   pasteNode,
+  pasteScopeNode,
   moveNode,
   deleteNode,
   deleteSwitchCase,
