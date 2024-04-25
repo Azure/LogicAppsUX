@@ -20,6 +20,7 @@
     "@microsoft/logic-apps-data-mapper-v2": "workspace:*",
     "@microsoft/logic-apps-designer": "workspace:*",
     "@microsoft/logic-apps-shared": "workspace:*",
+    "@microsoft/logic-apps-templates": "workspace:*",
     "@monaco-editor/react": "4.6.0",
     "@reduxjs/toolkit": "1.8.5",
     "axios": "1.6.8",
