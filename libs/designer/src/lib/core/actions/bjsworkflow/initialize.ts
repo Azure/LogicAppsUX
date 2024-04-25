@@ -466,7 +466,7 @@ export const initializeCustomCodeDataInInputs = (inputs: NodeInputs, nodeId: str
           nodeId,
           fileData,
           fileExtension: getFileExtensionName(language),
-          fileName: replaceWhiteSpaceWithUnderscore(nodeId),
+          fileName: replaceWhiteSpaceWithUnderscore(nodeId) + getFileExtensionName(language),
         })
       );
     }
