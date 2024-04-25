@@ -95,7 +95,7 @@ export const DesignerCommandBar = ({
     const customCodeFilesWithData = getCustomCodeFilesWithData(designerState.customCode);
 
     if (!hasParametersErrors) {
-      await saveWorkflow(serializedWorkflow, customCodeFilesWithData, () => dispatch(resetDesignerDirtyState()));
+      await saveWorkflow(serializedWorkflow, customCodeFilesWithData, () => dispatch(resetDesignerDirtyState(undefined)));
       updateCallbackUrl(designerState, DesignerStore.dispatch);
     }
   });
