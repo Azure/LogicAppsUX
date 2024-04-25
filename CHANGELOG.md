@@ -1,4 +1,19 @@
 # Logic Apps Designer
+## [4.11.0](https://github.com/Azure/LogicAppsUX/compare/v4.10.0...v4.11.0) (2024-04-25)
+
+
+### Features
+
+* **Data Mapper:** Data Mapper Command Bar v2 UI ([#4674](https://github.com/Azure/LogicAppsUX/issues/4674)) ([a317c2e](https://github.com/Azure/LogicAppsUX/commit/a317c2ea16351b6d303eff3ff4b453eb49d6481a))
+* **Data Mapper:** Display DM V2 for VsCode with Internal Setting ([#4661](https://github.com/Azure/LogicAppsUX/issues/4661)) ([b0d6343](https://github.com/Azure/LogicAppsUX/commit/b0d6343adf08c9bd609d186991f587a7311e74d6))
+* **Designer:** Add Custom Editor Type to align with backend type ([#4701](https://github.com/Azure/LogicAppsUX/issues/4701)) ([c308480](https://github.com/Azure/LogicAppsUX/commit/c3084801b09da0ea0c512b6d185b2af034be26db))
+
+
+### Bug Fixes
+
+* **designer:** Fixing clearing of dynamic inputs of parameter value changes ([#4702](https://github.com/Azure/LogicAppsUX/issues/4702)) ([ea76614](https://github.com/Azure/LogicAppsUX/commit/ea7661412866b8eb3686cc6b293865c2268d879c))
+* **designer:** Update Auth typo ([#4700](https://github.com/Azure/LogicAppsUX/issues/4700)) ([a1421e3](https://github.com/Azure/LogicAppsUX/commit/a1421e3ca1e5a4a92a34c99316e21d8f10873805))
+
 ## [4.10.0](https://github.com/Azure/LogicAppsUX/compare/v4.9.0...v4.10.0) (2024-04-24)
 
 ## [4.9.0](https://github.com/Azure/LogicAppsUX/compare/v4.8.0...v4.9.0) (2024-04-24)
