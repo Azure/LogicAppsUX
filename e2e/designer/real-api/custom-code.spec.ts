@@ -9,10 +9,10 @@ test.describe(
     test('Inline Javascript', async ({ page, request, browserName }) => {
       await page.goto('/');
       await page.getByPlaceholder('Select an App').click({ timeout: 20000 });
-      await page.getByPlaceholder('Select an App').fill(`Good-Test-Case`, { timeout: 20000 });
+      await page.getByPlaceholder('Select an App').fill(`wapp-lauxtest${browserName}`, { timeout: 20000 });
       await page.getByPlaceholder('Select an App').press('Enter', { timeout: 20000 });
       await page.getByLabel('Workflow').locator('span').filter({ hasText: '' }).click({ timeout: 20000 });
-      await page.getByRole('option', { name: 'empty' }).click({ timeout: 20000 });
+      await page.getByRole('option', { name: 'inlineJS' }).click({ timeout: 20000 });
       await page.getByRole('button', { name: 'Toolbox' }).click({ timeout: 20000 });
 
       await page.getByRole('button', { name: 'Insert a new step between' }).first().click();
