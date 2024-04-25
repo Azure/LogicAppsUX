@@ -1,4 +1,16 @@
 # Logic Apps Designer
+## [4.13.0](https://github.com/Azure/LogicAppsUX/compare/v4.12.0...v4.13.0) (2024-04-25)
+
+## [4.12.0](https://github.com/Azure/LogicAppsUX/compare/v4.11.0...v4.12.0) (2024-04-25)
+
+
+### Bug Fixes
+
+* **deisgner:** Fix a11y issue where info bubbles had no announcement to description in tooltip ([#4705](https://github.com/Azure/LogicAppsUX/issues/4705)) ([00600b6](https://github.com/Azure/LogicAppsUX/commit/00600b6b586a8f46f6329bf6d1a7ea2c5920e9c7))
+* **designer:** Adding dispatch call in clear dynamic inputs ([#4712](https://github.com/Azure/LogicAppsUX/issues/4712)) ([88da7bc](https://github.com/Azure/LogicAppsUX/commit/88da7bc34effb024d080bbec2e0de7c4a40cdd91))
+* **designer:** Small fix to get fileExtension on custom code action add ([#4711](https://github.com/Azure/LogicAppsUX/issues/4711)) ([8dff14c](https://github.com/Azure/LogicAppsUX/commit/8dff14c5e6c8acfc13a9967234b80fd1b21aad79))
+* **vite:** bypass cache when running dev ([624ce2e](https://github.com/Azure/LogicAppsUX/commit/624ce2e67c23c4b6f1c5cedd0dfe4e29e8bc02af))
+
 ## [4.11.0](https://github.com/Azure/LogicAppsUX/compare/v4.10.0...v4.11.0) (2024-04-25)
 
 

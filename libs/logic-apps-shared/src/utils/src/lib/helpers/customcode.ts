@@ -59,30 +59,30 @@ export const generateDefaultCustomCodeValue = (language: EditorLanguage): string
       return `$action = Get-ActionOutput -actionName "Compose" 
 
 $subId = $action["body"]["subscriptionId"] 
-      
+
 $resourceGroupName = $action["body"]["resourceGroupName"] 
-      
+
 $logicAppName = $action["body"]["logicAppName"] 
-      
+
 $result = Start-AzLogicApp -ResourceGroupName $resourceGroupName -Name $logicAppName -TriggerName "manual" -Confirm 
-      
+
 Push-ActionOutputs -body $result`;
     case EditorLanguage.csharp:
       return `// Add the required libraries
 const Newtonsoft = require("Newtonsoft.Json");
 const AzureScripting = require("Microsoft.Azure.Workflows.Scripting");
-      
+
 // Define the function to run
 async function run(context) {
   // Get the outputs from the 'compose' action
   const outputs = (await context.GetActionResults("compose")).Outputs;
-      
+
   // Generate random temperature within a range based on the temperature scale
   const temperatureScale = outputs["temperatureScale"].toString();
   const currentTemp = temperatureScale === "Celsius" ? Math.floor(Math.random() * (30 - 1 + 1)) + 1 : Math.floor(Math.random() * (90 - 40 + 1)) + 40;
   const lowTemp = currentTemp - 10;
   const highTemp = currentTemp + 10;
-      
+
   // Create a Weather object with the temperature information
   const weather = {
     ZipCode: parseInt(outputs["zipCode"]),
@@ -90,10 +90,10 @@ async function run(context) {
     DayLow: \`The low for the day is \${lowTemp} \${temperatureScale}\`,
     DayHigh: \`The high for the day is \${highTemp} \${temperatureScale}\`
   };
-      
+
   return weather;
 }
-      
+
 // Define the Weather class
 class Weather {
   constructor() {
@@ -103,7 +103,7 @@ class Weather {
       this.DayHigh = "";
     }
 } 
-    
+
 module.exports = run;`;
     default:
       return '';
