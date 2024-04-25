@@ -2,6 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
+import { isNullOrUndefined } from '@microsoft/logic-apps-shared';
 import {
   DotnetVersion,
   Platform,
@@ -188,31 +189,33 @@ export function getTemplateKeyFromFeedEntry(runtimeInfo: IWorkerRuntime): string
   return getProjectTemplateKey(runtimeInfo.targetFramework, isIsolated);
 }
 
-export async function getLocalDotNetVersionFromBinaries(): Promise<string> {
+export async function getLocalDotNetVersionFromBinaries(majorVersion?: string): Promise<string> {
   const binariesLocation = getGlobalSetting<string>(autoRuntimeDependenciesPathSettingKey);
-  const dotNetBinariesPath = path.join(binariesLocation, dotnetDependencyName);
-  const sdkVersionFolder = path.join(dotNetBinariesPath, 'sdk');
+  const sdkVersionFolder = path.join(binariesLocation, dotnetDependencyName, 'sdk');
 
-  // First try to get sdk from Binary installation folder
+  if (isNullOrUndefined(majorVersion)) {
+    try {
+      const output: string = await executeCommand(ext.outputChannel, undefined, `${getDotNetCommand()}`, '--version');
+      const version: string | null = semver.clean(output);
+      if (version) {
+        return version;
+      }
+    } catch (error) {
+      return null;
+    }
+  }
+
   const files = fs.existsSync(sdkVersionFolder) ? fs.readdirSync(sdkVersionFolder, { withFileTypes: true }) : null;
   if (Array.isArray(files)) {
     for (const file of files) {
       if (file.isDirectory()) {
         const version = file.name;
-        await executeCommand(ext.outputChannel, undefined, 'echo', 'Local binary .NET SDK version', version);
-        return version;
+        if (semver.major(version).toString() === majorVersion) {
+          await executeCommand(ext.outputChannel, undefined, 'echo', 'Local binary .NET SDK version', version);
+          return version;
+        }
       }
     }
-  }
-
-  try {
-    const output: string = await executeCommand(ext.outputChannel, undefined, `${getDotNetCommand()}`, '--version');
-    const version: string | null = semver.clean(output);
-    if (version) {
-      return version;
-    }
-  } catch (error) {
-    return null;
   }
 
   return null;
