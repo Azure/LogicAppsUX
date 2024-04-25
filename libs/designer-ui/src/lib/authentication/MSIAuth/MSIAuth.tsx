@@ -54,8 +54,8 @@ export const MSIAuthentication = ({ identity, msiProps, setCurrentProps, ...prop
     description: 'Managed Identity Label',
   });
   const MSIAuthPlaceholder = intl.formatMessage({
-    defaultMessage: 'Please select an identity',
-    id: 'cgq/+y',
+    defaultMessage: 'select an identity',
+    id: 'tGSsgZ',
     description: 'Placehodler text for dropdown',
   });
 
@@ -102,8 +102,8 @@ const getManagedIdentityData = (
   let errorMessage: string | undefined;
 
   const invalidUserAssignedManagedIdentity = intl.formatMessage({
-    defaultMessage: 'The entered identity is not associated with this Logic App.',
-    id: '3ewBbk',
+    defaultMessage: 'The entered identity is not associated with this logic app.',
+    id: 'UPsZSw',
     description: 'error message for invalid user',
   });
   const systemAssignedManagedIdentity = intl.formatMessage({
@@ -112,14 +112,14 @@ const getManagedIdentityData = (
     description: 'Text for dropdown of system-assigned managed identity',
   });
   const systemIdentityNotSupported = intl.formatMessage({
-    defaultMessage: 'The system-assigned identity is unavailable because is is not enabled.',
-    id: 'pM0Xl7',
-    description: 'error message for unsupported System-assigned Managed Identity',
+    defaultMessage: "The system-assigned identity is unavailable because it's not enabled.",
+    id: '8KpZmj',
+    description: 'error message for unsupported system-assigned managed identity',
   });
   const userAssignedIdentities = containsUserAssignedIdentities(identity) ? getUserAssignedIdentities(identity) : undefined;
   if (identity?.type) {
     const supportedIdentityTypes = identity.type.split(',').map((identity) => identity.trim());
-    // determines which identities to supports based on the identity type
+    // determines which identities to support based on the identity type
     const supportsUserAssignedIdentity = supportedIdentityTypes.some((type) => equals(type, ResourceIdentityType.USER_ASSIGNED));
     const supportsSystemAssignedIdentity = supportedIdentityTypes.some((type) => equals(type, ResourceIdentityType.SYSTEM_ASSIGNED));
 
