@@ -1969,7 +1969,7 @@ async function loadDynamicContentForInputsInNode(
   for (const inputKey of Object.keys(inputDependencies)) {
     const info = inputDependencies[inputKey];
     if (info.dependencyType === 'ApiSchema') {
-      clearDynamicIO({ nodeId, inputs: true, outputs: false });
+      dispatch(clearDynamicIO({ nodeId, inputs: true, outputs: false }));
       if (isDynamicDataReadyToLoad(info)) {
         try {
           const inputSchema = await tryGetInputDynamicSchema(
