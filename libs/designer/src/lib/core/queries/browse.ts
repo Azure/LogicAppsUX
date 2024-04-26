@@ -1,6 +1,6 @@
 import { SearchService, cleanConnectorId } from '@microsoft/logic-apps-shared';
 import { useEffect, useMemo } from 'react';
-import { useInfiniteQuery, useQuery } from 'react-query';
+import { useInfiniteQuery, useQuery } from '@tanstack/react-query';
 
 /*
   Riley - The general idea here is that each lazy query will fetch one 'page' at a time,

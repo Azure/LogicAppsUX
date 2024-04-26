@@ -23,7 +23,7 @@ import {
   resetDesignerDirtyState,
 } from '@microsoft/logic-apps-designer';
 import { useMemo } from 'react';
-import { useMutation } from 'react-query';
+import { useMutation } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
 
 const iconClass = mergeStyles({

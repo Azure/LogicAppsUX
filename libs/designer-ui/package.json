@@ -28,7 +28,6 @@
     "react-infinite-scroll-component": "6.1.0",
     "react-intl": "6.3.0",
     "react-markdown": "8.0.5",
-    "react-query": "3.39.3",
     "react-use": "17.4.0",
     "reactflow": "11.11.1"
   },
@@ -55,7 +54,9 @@
   "module": "src/index.ts",
   "peerDependencies": {
     "react": "^16.4.0 || ^17.0.0 || ^18.0.0",
-    "react-dom": "^16.4.0 || ^17.0.0 || ^18.0.0"
+    "react-dom": "^16.4.0 || ^17.0.0 || ^18.0.0",
+    "@tanstack/react-query": "4.36.1",
+    "@tanstack/react-query-devtools": "4.36.1"
   },
   "publishConfig": {
     "main": "build/lib/index.cjs",

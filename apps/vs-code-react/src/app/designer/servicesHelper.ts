@@ -25,7 +25,7 @@ import type {
 } from '@microsoft/logic-apps-shared';
 import type { ConnectionAndAppSetting, ConnectionsData, IDesignerPanelMetadata } from '@microsoft/vscode-extension-logic-apps';
 import { ExtensionCommand, HttpClient } from '@microsoft/vscode-extension-logic-apps';
-import type { QueryClient } from 'react-query';
+import type { QueryClient } from '@tanstack/react-query';
 import type { WebviewApi } from 'vscode-webview';
 import { CustomEditorService } from './customEditorService';
 

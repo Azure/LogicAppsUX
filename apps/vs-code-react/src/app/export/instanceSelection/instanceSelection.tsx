@@ -10,7 +10,7 @@ import type { IDropdownOption } from '@fluentui/react';
 import { isEmptyString } from '@microsoft/logic-apps-shared';
 import { useContext, useEffect, useMemo } from 'react';
 import { useIntl } from 'react-intl';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
 
 export const InstanceSelection: React.FC = () => {
@@ -107,7 +107,7 @@ export const InstanceSelection: React.FC = () => {
   };
 
   const { data: subscriptionsList, isLoading: isSubscriptionsLoading } = useQuery<ISubscription[]>(
-    QueryKeys.subscriptionData,
+    [QueryKeys.subscriptionData],
     loadSubscriptions,
     {
       refetchOnWindowFocus: false,

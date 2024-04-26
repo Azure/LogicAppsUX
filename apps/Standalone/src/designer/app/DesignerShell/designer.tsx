@@ -5,13 +5,11 @@ import { useIsConsumption, useIsLocal, useResourcePath } from '../../state/workf
 import LogicAppsDesignerStandard from '../AzureLogicAppsDesigner/laDesigner';
 import LogicAppsDesignerConsumption from '../AzureLogicAppsDesigner/laDesignerConsumption';
 import { LocalDesigner } from '../LocalDesigner/localDesigner';
-import { getReactQueryClient } from '@microsoft/logic-apps-designer';
-import { QueryClientProvider, useQuery } from 'react-query';
-
-const standaloneQueryClient = getReactQueryClient();
+import { ReactQueryProvider } from '@microsoft/logic-apps-designer';
+import { useQuery } from '@tanstack/react-query';
 
 const LoadWhenArmTokenIsLoaded = ({ children }: { children: ReactNode }) => {
-  const { isLoading } = useQuery('armToken', loadToken);
+  const { isLoading } = useQuery(['armToken'], loadToken);
   return isLoading ? null : <>{children}</>;
 };
 export const DesignerWrapper = () => {
@@ -20,7 +18,7 @@ export const DesignerWrapper = () => {
   const isConsumption = useIsConsumption();
 
   return (
-    <QueryClientProvider client={standaloneQueryClient}>
+    <ReactQueryProvider>
       <LoadWhenArmTokenIsLoaded>
         <SettingsBox />
         {isLocal ? (
@@ -33,6 +31,6 @@ export const DesignerWrapper = () => {
           )
         ) : null}
       </LoadWhenArmTokenIsLoaded>
-    </QueryClientProvider>
+    </ReactQueryProvider>
   );
 };
