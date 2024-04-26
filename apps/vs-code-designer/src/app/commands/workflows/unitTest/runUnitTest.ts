@@ -11,7 +11,7 @@ import * as vscode from 'vscode';
 import * as cp from 'child_process';
 import * as path from 'path';
 import { getExtensionBundleFolder } from '../getDebugSymbolDll';
-import { getLogicAppProjectRoot } from '../../../utils/codeless/connection';
+import { getWorkspacePath } from '../../../utils/workspace';
 
 /**
  * Runs a unit test for a given node in the Logic Apps designer.
@@ -35,7 +35,9 @@ export async function runUnitTest(context: IActionContext, node: vscode.Uri | vs
         await new Promise((resolve) => setTimeout(resolve, 1000 + Math.random() * 1000));
         const duration = Date.now() - start;
 
-        const projectPath: string | undefined = await getLogicAppProjectRoot(this.context, unitTestPath);
+        const workspacePath: string | undefined = await getWorkspacePath(unitTestPath);
+        const pathRootFolder = path.dirname(workspacePath);
+        const logicAppName = path.basename(workspacePath);
         const workflowName = path.basename(path.dirname(unitTestPath));
 
         const bundleFolderRoot = await getExtensionBundleFolder();
@@ -43,9 +45,9 @@ export async function runUnitTest(context: IActionContext, node: vscode.Uri | vs
         const pathToExe = path.join(bundleFolder, '1.69.0.5', 'UnitTestExecutor', 'Microsoft.Azure.Workflows.UnitTestExecutor.exe');
         const res = cp.spawn(pathToExe, [
           '-PathToRootFolder',
-          projectPath,
+          pathRootFolder,
           '-logicAppName',
-          workflowName,
+          logicAppName,
           '-workflowName',
           workflowName,
           '-unitTestName',
@@ -56,18 +58,6 @@ export async function runUnitTest(context: IActionContext, node: vscode.Uri | vs
           console.log('charles', chunk);
           vscode.window.showInformationMessage(`${chunk}`);
         }
-
-        res.stdout.on('data', (data: string | Buffer) => {
-          data = data.toString();
-          console.log('charles', data);
-          vscode.window.showInformationMessage(`${data}`);
-        });
-
-        res.stderr.on('data', (data: string | Buffer) => {
-          data = data.toString();
-          console.log('charles', data);
-          vscode.window.showInformationMessage(`${data}`);
-        });
 
         const testResult = {
           isSuccessful: start % 2 === 0,

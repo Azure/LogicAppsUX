@@ -9,7 +9,7 @@ import { NoWorkspaceError } from './errors';
 import { isPathEqual, isSubpath } from './fs';
 import { tryGetLogicAppProjectRoot } from './verifyIsProject';
 import { isNullOrUndefined, isString } from '@microsoft/logic-apps-shared';
-import { UserCancelledError } from '@microsoft/vscode-azext-utils';
+import { UserCancelledError, nonNullValue } from '@microsoft/vscode-azext-utils';
 import type { IActionContext, IAzureQuickPickItem } from '@microsoft/vscode-azext-utils';
 import globby from 'globby';
 import * as path from 'path';
@@ -41,6 +41,16 @@ export function getContainingWorkspace(fsPath: string): vscode.WorkspaceFolder |
     return isPathEqual(folder.uri.fsPath, fsPath) || isSubpath(folder.uri.fsPath, fsPath);
   });
 }
+
+/**
+ * Retrieves the path of the workspace folder containing the specified workflow file.
+ * @param workflowFilePath - The path of the workflow file.
+ * @returns The path of the workspace folder.
+ */
+export const getWorkspacePath = (workflowFilePath: string): string => {
+  const workspaceFolder = nonNullValue(getContainingWorkspace(workflowFilePath), 'workspaceFolder');
+  return workspaceFolder.uri.fsPath;
+};
 
 /**
  * Gets workspace folder of project.
