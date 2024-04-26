@@ -1,3 +1,4 @@
+import { isCustomCode } from '@microsoft/designer-ui';
 import Constants from '../../../common/constants';
 import type { WorkflowNode } from '../../parsers/models/workflowNode';
 import { getConnectionsForConnector, getConnectorWithSwagger } from '../../queries/connections';
@@ -21,7 +22,7 @@ import { addNode, setFocusNode } from '../../state/workflow/workflowSlice';
 import type { AppDispatch, RootState } from '../../store';
 import { getBrandColorFromManifest, getIconUriFromManifest } from '../../utils/card';
 import { getTriggerNodeId, isRootNodeInGraph } from '../../utils/graph';
-import { updateDynamicDataInNode } from '../../utils/parameters/helper';
+import { getParameterFromName, updateDynamicDataInNode } from '../../utils/parameters/helper';
 import { getInputParametersFromSwagger, getOutputParametersFromSwagger } from '../../utils/swagger/operation';
 import { convertOutputsToTokens, getBuiltInTokens, getTokenNodeIds } from '../../utils/tokens';
 import { getAllVariables, getVariableDeclarations, setVariableMetadata } from '../../utils/variables';
@@ -128,8 +129,9 @@ export const initializeOperationDetails = async (
     const iconUri = getIconUriFromManifest(manifest);
     const brandColor = getBrandColorFromManifest(manifest);
     const { inputs: nodeInputs, dependencies: inputDependencies } = getInputParametersFromManifest(nodeId, manifest, presetParameterValues);
-    if (equals(operationInfo.connectorId, Constants.INLINECODE) && !equals(operationInfo.operationId, 'javascriptcode')) {
-      initializeCustomCodeDataInInputs(nodeInputs, nodeId, dispatch);
+    const customCodeParameter = getParameterFromName(nodeInputs, Constants.DEFAULT_CUSTOM_CODE_INPUT);
+    if (customCodeParameter && isCustomCode(customCodeParameter?.editor, customCodeParameter?.editorOptions?.language)) {
+      initializeCustomCodeDataInInputs(customCodeParameter, nodeId, dispatch);
     }
     const { outputs: nodeOutputs, dependencies: outputDependencies } = getOutputParametersFromManifest(
       manifest,
