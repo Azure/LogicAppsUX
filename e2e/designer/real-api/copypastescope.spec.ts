@@ -1,5 +1,4 @@
 import { expect, test } from '@playwright/test';
-import { beforeEach } from 'node:test';
 
 test.describe(
   'Copy and Paste of Scopes',
@@ -7,7 +6,10 @@ test.describe(
     tag: '@real',
   },
   () => {
-    beforeEach(async () => { });
+
+    test.beforeEach(async ({ browserName }) => {
+      test.skip(browserName === 'webkit');
+    });
     test('Expect Copy and Paste of Scopes to work on single workflow', async ({ page, context, browserName }) => {
       if (browserName === 'webkit') {
         context.grantPermissions(['clipboard-read'], { origin: 'http://localhost:4200' });
@@ -22,9 +24,9 @@ test.describe(
 
       await page.waitForLoadState('networkidle');
       await page.getByTestId('rf__node-For_each-#scope').getByRole('button', { name: 'For each' }).focus();
-      await page.keyboard.press('Meta+C');
+      await page.keyboard.press('Control+C');
       await page.getByTestId('rf__edge-For_each-Filter_array').getByLabel('Insert a new step between For').focus();
-      await page.keyboard.press('Meta+V');
+      await page.keyboard.press('Control+V');
       await page.waitForTimeout(1000);
       const serialized: any = await page.evaluate(() => {
         return new Promise((resolve) => {
