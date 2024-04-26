@@ -1,4 +1,4 @@
-import { useMutation, useQueryClient } from 'react-query';
+import { useQueryClient } from 'react-query';
 import constants from '../../../../common/constants';
 import type { AppDispatch, RootState } from '../../../../core';
 import { useOperationInfo, useSelectedNodeId, useSelectedNodeIds } from '../../../../core';
@@ -129,11 +129,15 @@ export const CreateConnectionWrapper = () => {
   }, [dispatch, referencePanelMode, nodeIds]);
 
   const queryClient = useQueryClient();
-  const updateNewConnection = useMutation(async (newConnection: Connection) => {
-    return queryClient.setQueryData<Connection[]>(['connections', connector?.id?.toLowerCase()], (oldConnections) => {
-      return oldConnections ? [...oldConnections, newConnection] : [newConnection];
-    });
-  });
+  const updateNewConnection = useCallback(
+    async (newConnection: Connection) => {
+      return queryClient.setQueryData<Connection[]>(['connections', connector?.id?.toLowerCase()], (oldConnections) => [
+        ...(oldConnections ?? []),
+        newConnection,
+      ]);
+    },
+    [connector?.id, queryClient]
+  );
   const createConnectionCallback = useCallback(
     async (
       displayName?: string,
@@ -224,7 +228,7 @@ export const CreateConnectionWrapper = () => {
         }
 
         if (connection) {
-          useUpdateNewConnection.mutate(connection);
+          updateNewConnection(connection);
           for (const nodeId of nodeIds) {
             applyNewConnection(nodeId, connection, identitySelected);
           }
@@ -254,7 +258,7 @@ export const CreateConnectionWrapper = () => {
       nodeIds,
       applyNewConnection,
       existingReferences,
-      useUpdateNewConnection,
+      updateNewConnection,
     ]
   );
 
