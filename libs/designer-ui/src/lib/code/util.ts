@@ -125,8 +125,8 @@ function formatForPowershell(property: string, actionName?: string, source?: str
 
 function formatForCSharp(property: string, actionName?: string, source?: string): string {
   const result = actionName
-    ? `(await context.GetActionResult("${actionName}"))${source ? `.${source}` : ''}${property}`
-    : `(await context.GetTriggerResults())${source ? `.${source}` : ''}${property}`;
+    ? `(await context.GetActionResult("${actionName}").ConfigureAwait(false))${source ? `.${source}` : ''}${property}`
+    : `(await context.GetTriggerResults().ConfigureAwait(false))${source ? `.${source}` : ''}${property}`;
   return result;
 }
 
