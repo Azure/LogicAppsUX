@@ -195,7 +195,7 @@ export async function getLocalDotNetVersionFromBinaries(majorVersion?: string): 
 
   if (isNullOrUndefined(majorVersion)) {
     try {
-      const output: string = await executeCommand(ext.outputChannel, undefined, `${getDotNetCommand()}`, '--version');
+      const output: string = await executeCommand(ext.outputChannel, undefined, getDotNetCommand(), '--version');
       const version: string | null = semver.clean(output);
       if (version) {
         return version;
