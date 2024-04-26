@@ -204,7 +204,8 @@ const useNodeAttributeOrSwagger = (
   propertyInSwagger: keyof LAOperation,
   options: { useManifest: boolean }
 ): QueryResult => {
-  const { data: connectorData } = useConnectorAndSwagger(operationInfo?.connectorId, !options.useManifest);
+  const res = useConnectorAndSwagger(operationInfo?.connectorId, !options.useManifest);
+  const { data: connectorData } = res;
   const { result, isLoading } = useNodeAttribute(operationInfo, propertyInManifest, propertyInConnector);
   const { swagger } = connectorData ?? {};
   if (swagger) {

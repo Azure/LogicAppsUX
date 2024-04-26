@@ -29,7 +29,7 @@ export const useConnectorAndSwagger = (connectorId: string | undefined, enabled 
     ['apiWithSwaggers', { connectorId }],
     async () => {
       if (!connectorId) {
-        return;
+        return null;
       }
       return await ConnectionService().getConnectorAndSwagger(connectorId);
     },

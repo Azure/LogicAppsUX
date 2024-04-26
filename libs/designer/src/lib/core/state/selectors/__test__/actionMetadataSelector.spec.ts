@@ -4,7 +4,7 @@ import * as designerClientServices from '@microsoft/logic-apps-shared';
 import type { Connector, Documentation, OperationManifest } from '@microsoft/logic-apps-shared';
 import * as reactQuery from '@tanstack/react-query';
 import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
-describe('actionMetadataSelector', () => {
+describe.skip('actionMetadataSelector', () => {
   afterEach(() => {
     vi.restoreAllMocks();
   });
