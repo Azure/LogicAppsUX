@@ -25,7 +25,6 @@
     "react-dnd-multi-backend": "8.0.0",
     "react-hotkeys-hook": "4.3.8",
     "react-intl": "6.3.0",
-    "react-query": "3.39.3",
     "react-redux": "8.0.2",
     "reactflow": "11.11.1",
     "redux-thunk": "2.4.2",
@@ -60,7 +59,9 @@
   "module": "src/index.ts",
   "peerDependencies": {
     "react": "^16.4.0 || ^17.0.0 || ^18.0.0",
-    "react-dom": "^16.4.0 || ^17.0.0 || ^18.0.0"
+    "react-dom": "^16.4.0 || ^17.0.0 || ^18.0.0",
+    "@tanstack/react-query": "4.36.1",
+    "@tanstack/react-query-devtools": "4.36.1"
   },
   "publishConfig": {
     "main": "build/lib/index.cjs",

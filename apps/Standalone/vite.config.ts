@@ -8,10 +8,12 @@ import mkcert from 'vite-plugin-mkcert';
 // https://vitejs.dev/config/
 export default defineConfig({
   resolve: {
-    alias: [{
-      find: '~reactflow',
-      replacement: 'reactflow',
-    }],
+    alias: [
+      {
+        find: '~reactflow',
+        replacement: 'reactflow',
+      },
+    ],
   },
   plugins: [
     react(),
@@ -23,7 +25,7 @@ export default defineConfig({
     mkcert(),
   ],
   server: {
-    port: 4200
+    port: 4200,
   },
   define: {
     global: 'globalThis',
@@ -32,6 +34,7 @@ export default defineConfig({
   build: {
     rollupOptions: {
       plugins: [nodePolyfills()],
+      external: ['react', 'react-dom', '@tanstack/react-query', '@tanstack/react-query-devtools'],
     },
   },
 });

@@ -14,7 +14,7 @@ import type { FileSystemConnectionInfo, StandardApp } from '@microsoft/vscode-ex
 import { ExtensionCommand } from '@microsoft/vscode-extension-logic-apps';
 import { useContext, useMemo, useState, useEffect } from 'react';
 import { useIntl } from 'react-intl';
-import { useQuery, useQueryClient } from 'react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
 
 export const DesignerApp = () => {

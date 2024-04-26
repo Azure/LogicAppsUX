@@ -5,7 +5,7 @@ import { getAzureResourceRecursive } from '../common/azure';
 import type { ListDynamicValue } from '../connector';
 import type { IHttpClient } from '../httpClient';
 
-import type { QueryClient } from 'react-query';
+import type { QueryClient } from '@tanstack/react-query';
 
 export interface ApiManagementServiceOptions {
   apiVersion: string;
