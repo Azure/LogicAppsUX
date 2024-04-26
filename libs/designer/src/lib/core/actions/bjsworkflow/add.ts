@@ -76,11 +76,7 @@ export const addOperation = createAsyncThunk('addOperation', async (payload: Add
     }
 
     const workflowState = (getState() as RootState).workflow;
-    console.log(`(joebrown) addOperation actionId prior to getNonDuplicateNodeId: ${actionId}`);
-    console.log('(joebrown) addOperation workflow', (getState() as RootState).workflow);
     const nodeId = getNonDuplicateNodeId(workflowState.nodesMetadata, actionId, workflowState.idReplacements);
-    console.log(`(joebrown) addOperation actionId after getNonDuplicateNodeId: ${nodeId}`);
-
     const newPayload = { ...payload, nodeId };
 
     dispatch(addNode(newPayload as any));
@@ -407,6 +403,10 @@ export const getNonDuplicateNodeId = (nodesMetadata: NodesMetadata, actionId: st
   let count = 1;
   let nodeId = actionId;
 
+  // Note(joebrown): This is a temporary fix for the issue where the node id is not unique
+  // Because the workflow state isn't always up to date with action name changes unless flow is reloaded after saving
+  // To account for this we use the idReplacements to check for duplicates/changes in the same session
+  // This check should be once the workflow state is properly updated for all action name changes
   while (getRecordEntry(nodesMetadata, nodeId) || Object.values(idReplacements).includes(nodeId)) {
     nodeId = `${actionId}_${count}`;
     count++;
