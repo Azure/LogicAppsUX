@@ -74,7 +74,12 @@ export const addOperation = createAsyncThunk('addOperation', async (payload: Add
     if (!operation) {
       throw new Error('Operation does not exist'); // Just an optional catch, should never happen
     }
-    const nodeId = getNonDuplicateNodeId((getState() as RootState).workflow.nodesMetadata, actionId);
+
+    const workflowState = (getState() as RootState).workflow;
+    console.log(`(joebrown) addOperation actionId prior to getNonDuplicateNodeId: ${actionId}`);
+    console.log('(joebrown) addOperation workflow', (getState() as RootState).workflow);
+    const nodeId = getNonDuplicateNodeId(workflowState.nodesMetadata, actionId, workflowState.idReplacements);
+    console.log(`(joebrown) addOperation actionId after getNonDuplicateNodeId: ${nodeId}`);
 
     const newPayload = { ...payload, nodeId };
 
@@ -398,10 +403,11 @@ export const getTriggerNodeManifest = async (
   return undefined;
 };
 
-export const getNonDuplicateNodeId = (nodesMetadata: NodesMetadata, actionId: string) => {
+export const getNonDuplicateNodeId = (nodesMetadata: NodesMetadata, actionId: string, idReplacements: Record<string, string> = {}) => {
   let count = 1;
   let nodeId = actionId;
-  while (getRecordEntry(nodesMetadata, nodeId)) {
+
+  while (getRecordEntry(nodesMetadata, nodeId) || Object.values(idReplacements).includes(nodeId)) {
     nodeId = `${actionId}_${count}`;
     count++;
   }
