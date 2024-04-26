@@ -1,3 +1,4 @@
+import { useMutation, useQueryClient } from 'react-query';
 import constants from '../../../../common/constants';
 import type { AppDispatch, RootState } from '../../../../core';
 import { useOperationInfo, useSelectedNodeId, useSelectedNodeIds } from '../../../../core';
@@ -127,6 +128,12 @@ export const CreateConnectionWrapper = () => {
     dispatch(openPanel({ nodeId, panelMode }));
   }, [dispatch, referencePanelMode, nodeIds]);
 
+  const queryClient = useQueryClient();
+  const useUpdateNewConnection = useMutation(async (newConnection: Connection) => {
+    return queryClient.setQueryData<Connection[]>(['connections', connector?.id?.toLowerCase()], (oldConnections) => {
+      return oldConnections ? [...oldConnections, newConnection] : [newConnection];
+    });
+  });
   const createConnectionCallback = useCallback(
     async (
       displayName?: string,
@@ -217,6 +224,7 @@ export const CreateConnectionWrapper = () => {
         }
 
         if (connection) {
+          useUpdateNewConnection.mutate(connection);
           for (const nodeId of nodeIds) {
             applyNewConnection(nodeId, connection, identitySelected);
           }
@@ -246,6 +254,7 @@ export const CreateConnectionWrapper = () => {
       nodeIds,
       applyNewConnection,
       existingReferences,
+      useUpdateNewConnection,
     ]
   );
 
