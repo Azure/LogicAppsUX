@@ -38,6 +38,7 @@ export namespace ext {
   export let outputChannel: IAzExtOutputChannel;
   export let workflowRuntimePort: number;
   export let extensionVersion: string;
+  export let bundleFolderRoot: string | undefined;
   export const prefix = 'azureLogicAppsStandard';
 
   // Tree item view

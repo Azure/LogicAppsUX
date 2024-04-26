@@ -2,6 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
+import { isNullOrUndefined } from '@microsoft/logic-apps-shared';
 import { debugSymbolDll } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
@@ -34,7 +35,10 @@ export async function getDebugSymbolDll(): Promise<string> {
  * Gets extension bundle folder path.
  * @returns {string} Extension bundle folder path.
  */
-async function getExtensionBundleFolder(): Promise<string> {
+export async function getExtensionBundleFolder(): Promise<string> {
+  if (!isNullOrUndefined(ext.bundleFolderRoot)) {
+    return ext.bundleFolderRoot;
+  }
   const command = `${getFunctionsCommand()} GetExtensionBundlePath`;
   const outputChannel = ext.outputChannel;
 
@@ -58,6 +62,7 @@ async function getExtensionBundleFolder(): Promise<string> {
   if (outputChannel) {
     outputChannel.appendLog(localize('extensionBundlePath', 'Extension bundle path: "{0}"...', extensionBundlePath));
   }
+  ext.bundleFolderRoot = extensionBundlePath;
   return extensionBundlePath;
 }
 

@@ -5,9 +5,13 @@
 import { runUnitTestEvent } from '../../../../constants';
 import { ext } from '../../../../extensionVariables';
 import { localize } from '../../../../localize';
-import { type UnitTestResult } from '../../../utils/unitTests';
+import type { UnitTestResult } from '../../../utils/unitTests';
 import { type IActionContext, callWithTelemetryAndErrorHandling } from '@microsoft/vscode-azext-utils';
 import * as vscode from 'vscode';
+import * as cp from 'child_process';
+import * as path from 'path';
+import { getExtensionBundleFolder } from '../getDebugSymbolDll';
+import { getLogicAppProjectRoot } from '../../../utils/codeless/connection';
 
 /**
  * Runs a unit test for a given node in the Logic Apps designer.
@@ -26,10 +30,44 @@ export async function runUnitTest(context: IActionContext, node: vscode.Uri | vs
       // This is where we are going to run the unit test from extension bundle
       // Just put a random decision here in the meantime
       try {
-        const runId = node instanceof vscode.Uri ? node.fsPath : node.uri.fsPath;
+        const unitTestPath = node instanceof vscode.Uri ? node.fsPath : node.uri.fsPath;
         const start = Date.now();
         await new Promise((resolve) => setTimeout(resolve, 1000 + Math.random() * 1000));
         const duration = Date.now() - start;
+
+        const projectPath: string | undefined = await getLogicAppProjectRoot(this.context, unitTestPath);
+        const workflowName = path.basename(path.dirname(unitTestPath));
+
+        const bundleFolderRoot = await getExtensionBundleFolder();
+        const bundleFolder = path.join(bundleFolderRoot, 'Microsoft.Azure.Functions.ExtensionBundle.Workflows');
+        const pathToExe = path.join(bundleFolder, '1.69.0.5', 'UnitTestExecutor', 'Microsoft.Azure.Workflows.UnitTestExecutor.exe');
+        const res = cp.spawn(pathToExe, [
+          '-PathToRootFolder',
+          projectPath,
+          '-logicAppName',
+          workflowName,
+          '-workflowName',
+          workflowName,
+          '-unitTestName',
+          unitTestPath,
+        ]);
+
+        for await (const chunk of res.stdout) {
+          console.log('charles', chunk);
+          vscode.window.showInformationMessage(`${chunk}`);
+        }
+
+        res.stdout.on('data', (data: string | Buffer) => {
+          data = data.toString();
+          console.log('charles', data);
+          vscode.window.showInformationMessage(`${data}`);
+        });
+
+        res.stderr.on('data', (data: string | Buffer) => {
+          data = data.toString();
+          console.log('charles', data);
+          vscode.window.showInformationMessage(`${data}`);
+        });
 
         const testResult = {
           isSuccessful: start % 2 === 0,
@@ -37,8 +75,8 @@ export async function runUnitTest(context: IActionContext, node: vscode.Uri | vs
           duration,
         };
 
-        ext.testRuns.set(runId, {
-          runId,
+        ext.testRuns.set(unitTestPath, {
+          unitTestPath,
           results: testResult,
         });
 
@@ -48,25 +86,6 @@ export async function runUnitTest(context: IActionContext, node: vscode.Uri | vs
         context.telemetry.properties.errorMessage = error.message;
         throw error;
       }
-
-      // const pathToUnitTest = node.fsPath;
-      // const projectPath: string | undefined = await getLogicAppProjectRoot(this.context, pathToUnitTest);
-      // const workflowName = path.basename(path.dirname(pathToUnitTest));
-
-      // const UNIT_TEST_EXE_NAME = 'LogicAppsTest.exe';
-      // const pathToExe = path.join(projectPath, UNIT_TEST_EXE_NAME);
-
-      // try {
-      //   const res = child.spawn(pathToExe, ['-PathToRoot', projectPath, '-workflowName', workflowName, '-pathToUnitTest', pathToUnitTest]);
-
-      //   for await (const chunk of res.stdout) {
-      //     vscode.window.showInformationMessage(`${chunk}`);
-      //   }
-      // } catch (error) {
-      //   vscode.window.showErrorMessage(`${localize('runFailure', 'Error Running Unit Test.')} ${error.message}`, localize('OK', 'OK'));
-      //   context.telemetry.properties.errorMessage = error.message;
-      //   throw error;
-      // }
     });
   });
 }
