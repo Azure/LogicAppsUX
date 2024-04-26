@@ -406,7 +406,7 @@ export const getNonDuplicateNodeId = (nodesMetadata: NodesMetadata, actionId: st
   let count = 1;
   let nodeId = actionId;
 
-  // Note(joebrown): This is a temporary fix for the issue where the node id is not unique
+  // Note: This is a temporary fix for the issue where the node id is not unique
   // Because the workflow state isn't always up to date with action name changes unless flow is reloaded after saving
   // To account for this we use the idReplacements to check for duplicates/changes in the same session
   // This check should be once the workflow state is properly updated for all action name changes
