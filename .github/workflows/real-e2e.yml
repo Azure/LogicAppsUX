@@ -64,8 +64,7 @@ jobs:
       with:
         client-id: ${{ secrets.AZURE_TESTING_CLIENT_ID }}
         tenant-id: ${{ secrets.AZURE_TESTING_TENANT_ID }}
-        subscription-id: ${{ secrets.AZURE_TESTING_SUBSCRIPTION_ID }}
-        enable-AzPSSession: true 
+        subscription-id: ${{ secrets.AZURE_TESTING_SUBSCRIPTION_ID }} 
 
     - name: "extract AAD access token for Test Runs (valid for about an hour)"
       run: |
@@ -87,7 +86,14 @@ jobs:
 
     - name: Scrub Secrets From Trace
       run: pnpm run scrub-secrets:e2e
-    
+   
+    - name: Azure login
+      uses: azure/login@v2
+      with:
+        client-id: ${{ secrets.AZURE_TESTING_CLIENT_ID }}
+        tenant-id: ${{ secrets.AZURE_TESTING_TENANT_ID }}
+        subscription-id: ${{ secrets.AZURE_TESTING_SUBSCRIPTION_ID }} 
+        
     - name: Delete Resoruce Group
       shell: bash
       run: |
