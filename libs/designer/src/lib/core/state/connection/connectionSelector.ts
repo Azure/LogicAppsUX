@@ -14,8 +14,8 @@ import {
   type Connector,
 } from '@microsoft/logic-apps-shared';
 import { useMemo } from 'react';
-import type { UseQueryResult } from 'react-query';
-import { useQuery } from 'react-query';
+import type { UseQueryResult } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { useSelector } from 'react-redux';
 import type { ConnectionsStoreState } from './connectionSlice';
 
@@ -53,7 +53,7 @@ export const useGateways = (subscriptionId: string, connectorName: string): UseQ
   );
 };
 
-export const useSubscriptions = () => useQuery('subscriptions', async () => GatewayService().getSubscriptions());
+export const useSubscriptions = () => useQuery(['subscriptions'], async () => GatewayService().getSubscriptions());
 
 export const useGatewayServiceConfig = () => useMemo(() => GatewayService().getConfig?.() ?? {}, []);
 

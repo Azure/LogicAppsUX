@@ -2,7 +2,7 @@ import * as connectionSelector from '../../connection/connectionSelector';
 import { useOperationDescription, useOperationDocumentation, useOperationSummary } from '../actionMetadataSelector';
 import * as designerClientServices from '@microsoft/logic-apps-shared';
 import type { Connector, Documentation, OperationManifest } from '@microsoft/logic-apps-shared';
-import * as reactQuery from 'react-query';
+import * as reactQuery from '@tanstack/react-query';
 import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 describe('actionMetadataSelector', () => {
   afterEach(() => {
@@ -37,16 +37,15 @@ describe('actionMetadataSelector', () => {
           isSupported: () => true,
         };
 
-        vi
-          .spyOn(designerClientServices, 'OperationManifestService')
-          .mockReturnValue(partialOperationManifestService as designerClientServices.IOperationManifestService);
+        vi.spyOn(designerClientServices, 'OperationManifestService').mockReturnValue(
+          partialOperationManifestService as designerClientServices.IOperationManifestService
+        );
 
-        vi
-          .spyOn(reactQuery, 'useQuery')
-          .mockReturnValue({ data: operationManifest, isLoading: false, status: 'success' } as reactQuery.UseQueryResult<
-            OperationManifest | undefined,
-            unknown
-          >);
+        vi.spyOn(reactQuery, 'useQuery').mockReturnValue({
+          data: operationManifest,
+          isLoading: false,
+          status: 'success',
+        } as reactQuery.UseQueryResult<OperationManifest | undefined, unknown>);
 
         const result = useOperationDescription({ connectorId: 'connectorId', operationId: 'operationId', type: 'operation' });
         expect(result).toMatchObject({
@@ -82,9 +81,9 @@ describe('actionMetadataSelector', () => {
           isSupported: () => false, // Force call to `useConnector`.
         };
 
-        vi
-          .spyOn(designerClientServices, 'OperationManifestService')
-          .mockReturnValue(partialOperationManifestService as designerClientServices.IOperationManifestService);
+        vi.spyOn(designerClientServices, 'OperationManifestService').mockReturnValue(
+          partialOperationManifestService as designerClientServices.IOperationManifestService
+        );
 
         vi.spyOn(reactQuery, 'useQuery').mockReturnValue({
           data: undefined /* Force call to `useConnector`. */,
@@ -92,9 +91,11 @@ describe('actionMetadataSelector', () => {
           status: 'success',
         } as reactQuery.UseQueryResult<OperationManifest | undefined, unknown>);
 
-        vi
-          .spyOn(connectionSelector, 'useConnector')
-          .mockReturnValue({ data: connector, isLoading: false, status: 'success' } as reactQuery.UseQueryResult<any, unknown>);
+        vi.spyOn(connectionSelector, 'useConnector').mockReturnValue({
+          data: connector,
+          isLoading: false,
+          status: 'success',
+        } as reactQuery.UseQueryResult<any, unknown>);
 
         const result = useOperationDescription({ connectorId: 'connectorId', operationId: 'operationId', type: 'operation' });
         expect(result).toMatchObject({
@@ -135,16 +136,15 @@ describe('actionMetadataSelector', () => {
         isSupported: () => true,
       };
 
-      vi
-        .spyOn(designerClientServices, 'OperationManifestService')
-        .mockReturnValue(partialOperationManifestService as designerClientServices.IOperationManifestService);
+      vi.spyOn(designerClientServices, 'OperationManifestService').mockReturnValue(
+        partialOperationManifestService as designerClientServices.IOperationManifestService
+      );
 
-      vi
-        .spyOn(reactQuery, 'useQuery')
-        .mockReturnValue({ data: operationManifest, isLoading: false, status: 'success' } as reactQuery.UseQueryResult<
-          OperationManifest | undefined,
-          unknown
-        >);
+      vi.spyOn(reactQuery, 'useQuery').mockReturnValue({
+        data: operationManifest,
+        isLoading: false,
+        status: 'success',
+      } as reactQuery.UseQueryResult<OperationManifest | undefined, unknown>);
 
       const result = useOperationDocumentation({ connectorId: 'connectorId', operationId: 'operationId', type: 'operation' });
       expect(result).toMatchObject({
@@ -181,9 +181,9 @@ describe('actionMetadataSelector', () => {
         isSupported: () => false, // Force call to `useConnector`.
       };
 
-      vi
-        .spyOn(designerClientServices, 'OperationManifestService')
-        .mockReturnValue(partialOperationManifestService as designerClientServices.IOperationManifestService);
+      vi.spyOn(designerClientServices, 'OperationManifestService').mockReturnValue(
+        partialOperationManifestService as designerClientServices.IOperationManifestService
+      );
 
       vi.spyOn(reactQuery, 'useQuery').mockReturnValue({
         data: undefined /* Force call to `useConnector`. */,
@@ -191,9 +191,11 @@ describe('actionMetadataSelector', () => {
         status: 'success',
       } as reactQuery.UseQueryResult<OperationManifest | undefined, unknown>);
 
-      vi
-        .spyOn(connectionSelector, 'useConnector')
-        .mockReturnValue({ data: connector, isLoading: false, status: 'success' } as reactQuery.UseQueryResult<any, unknown>);
+      vi.spyOn(connectionSelector, 'useConnector').mockReturnValue({
+        data: connector,
+        isLoading: false,
+        status: 'success',
+      } as reactQuery.UseQueryResult<any, unknown>);
 
       const result = useOperationDocumentation({ connectorId: 'connectorId', operationId: 'operationId', type: 'operation' });
       expect(result).toMatchObject({
@@ -231,16 +233,15 @@ describe('actionMetadataSelector', () => {
           isSupported: () => true,
         };
 
-        vi
-          .spyOn(designerClientServices, 'OperationManifestService')
-          .mockReturnValue(partialOperationManifestService as designerClientServices.IOperationManifestService);
+        vi.spyOn(designerClientServices, 'OperationManifestService').mockReturnValue(
+          partialOperationManifestService as designerClientServices.IOperationManifestService
+        );
 
-        vi
-          .spyOn(reactQuery, 'useQuery')
-          .mockReturnValue({ data: operationManifest, isLoading: false, status: 'success' } as reactQuery.UseQueryResult<
-            OperationManifest | undefined,
-            unknown
-          >);
+        vi.spyOn(reactQuery, 'useQuery').mockReturnValue({
+          data: operationManifest,
+          isLoading: false,
+          status: 'success',
+        } as reactQuery.UseQueryResult<OperationManifest | undefined, unknown>);
 
         const result = useOperationSummary({ connectorId: 'connectorId', operationId: '', type: 'operation' });
         expect(result).toMatchObject({
@@ -274,16 +275,15 @@ describe('actionMetadataSelector', () => {
         isSupported: () => true,
       };
 
-      vi
-        .spyOn(designerClientServices, 'OperationManifestService')
-        .mockReturnValue(partialOperationManifestService as designerClientServices.IOperationManifestService);
+      vi.spyOn(designerClientServices, 'OperationManifestService').mockReturnValue(
+        partialOperationManifestService as designerClientServices.IOperationManifestService
+      );
 
-      vi
-        .spyOn(reactQuery, 'useQuery')
-        .mockReturnValue({ data: operationManifest, isLoading: false, status: 'success' } as reactQuery.UseQueryResult<
-          OperationManifest | undefined,
-          unknown
-        >);
+      vi.spyOn(reactQuery, 'useQuery').mockReturnValue({
+        data: operationManifest,
+        isLoading: false,
+        status: 'success',
+      } as reactQuery.UseQueryResult<OperationManifest | undefined, unknown>);
 
       const result = useOperationSummary({ connectorId: 'connectorId', operationId: 'operationId', type: 'operation' });
       expect(result).toMatchObject({
