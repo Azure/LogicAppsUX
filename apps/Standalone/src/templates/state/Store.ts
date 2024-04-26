@@ -1,11 +1,9 @@
-import { dataMapDataLoaderSlice } from './DataMapDataLoader';
-import { schemaDataLoaderSlice } from './SchemaDataLoader';
+import { templateDataLoaderSlice } from './TemplateDataLoader';
 import { configureStore } from '@reduxjs/toolkit';
 
 export const store = configureStore({
   reducer: {
-    dataMapDataLoader: dataMapDataLoaderSlice.reducer,
-    schemaDataLoader: schemaDataLoaderSlice.reducer,
+    templateDataLoader: templateDataLoaderSlice.reducer,
   },
 });
 

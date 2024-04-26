@@ -3,6 +3,7 @@ import { Provider } from 'react-redux';
 import { DesignerWrapper } from './designer/app/DesignerShell/designer';
 import { store as designerStore } from './designer/state/store';
 import { store as dataMapperStore } from './dataMapperV1/state/Store';
+import { store as templateStore } from './templates/state/Store';
 import { DataMapperStandaloneDesignerV1 } from './dataMapperV1/app/DataMapperStandaloneDesignerV1';
 import { DataMapperStandaloneDesignerV2 } from './dataMapperV1/app/DataMapperStandaloneDesignerV2';
 import { TemplatesStandaloneDesigner } from './templates/app/TemplatesStandaloneDesigner';
@@ -49,7 +50,7 @@ const DataMapperV2 = () => {
 
 const TemplatesStandalone = () => {
   return (
-    <Provider store={dataMapperStore}>
+    <Provider store={templateStore}>
       <TemplatesStandaloneDesigner />
     </Provider>
   );

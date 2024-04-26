@@ -1,164 +1,80 @@
-import { comprehensiveMapDefinition, fullTranscriptMapDefinitionString, transcriptJsonMapDefinitionString } from '../mapDefinitions';
-import { testMetadata } from '../mapMetadata';
-import { LoadingMethod, dataMapDataLoaderSlice, loadDataMap } from '../state/DataMapDataLoader';
-import { loadSourceSchema, loadTargetSchema, schemaDataLoaderSlice } from '../state/SchemaDataLoader';
 import type { AppDispatch, RootState } from '../state/Store';
-import { DevApiTester } from './DevApiTester';
-import { DevSerializationTester } from './DevSerializationTester';
 import type { IDropdownOption } from '@fluentui/react';
 import { Checkbox, Dropdown, Stack, StackItem, TextField } from '@fluentui/react';
 import { Accordion, AccordionHeader, AccordionItem, AccordionPanel, Tooltip, tokens } from '@fluentui/react-components';
-import { SchemaFileFormat, Theme as ThemeType } from '@microsoft/logic-apps-shared';
+import { Theme as ThemeType } from '@microsoft/logic-apps-shared';
 import { useCallback, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { LoadingMethod, loadCurrentTemplate, templateDataLoaderSlice } from '../state/TemplateDataLoader';
 
 const themeDropdownOptions = [
   { key: ThemeType.Light, text: 'Light' },
   { key: ThemeType.Dark, text: 'Dark' },
 ];
 
-interface MapDefDropdownData {
-  mapDefinitionString: string;
-  mapMetadataString?: string;
-  associatedSchemaIdx: number;
+interface TemplateFileData {
+  foldername: string;
 }
-export type MapDefDropdownOption = IDropdownOption<MapDefDropdownData>;
-const mapDefinitionDropdownOptions: MapDefDropdownOption[] = [
-  {
-    key: 'fullDemoScriptMapDefinition',
-    text: 'Transcript',
-    data: {
-      mapDefinitionString: fullTranscriptMapDefinitionString,
-      mapMetadataString: JSON.stringify(testMetadata),
-      associatedSchemaIdx: 1,
-    },
-  },
-  {
-    key: 'comprehensiveMapDefinition',
-    text: 'Comprehensive',
-    data: { mapDefinitionString: comprehensiveMapDefinition, associatedSchemaIdx: 2 },
-  },
-  {
-    key: 'jsonTranscriptMapDefinition',
-    text: 'JSON Transcript',
-    data: { mapDefinitionString: transcriptJsonMapDefinitionString, associatedSchemaIdx: 3 },
-  },
-];
+const templateFileOptions: TemplateFileData[] = [{ foldername: 'DeleteOldBlob' }, { foldername: 'SendMonthlyCost' }];
 
-interface SchemaFileData {
-  filename: string;
-  schemaFormat: SchemaFileFormat;
-}
-const sourceSchemaFileOptions: SchemaFileData[] = [
-  { filename: 'PlaygroundSourceSchema.json', schemaFormat: SchemaFileFormat.XML },
-  { filename: 'SourceSchema.json', schemaFormat: SchemaFileFormat.XML },
-  { filename: 'ComprehensiveSourceSchema.json', schemaFormat: SchemaFileFormat.XML },
-  { filename: 'SourceSchemaJson.json', schemaFormat: SchemaFileFormat.JSON },
-];
-const targetSchemaFileOptions: SchemaFileData[] = [
-  { filename: 'PlaygroundTargetSchema.json', schemaFormat: SchemaFileFormat.XML },
-  { filename: 'TargetSchema.json', schemaFormat: SchemaFileFormat.XML },
-  { filename: 'ComprehensiveTargetSchema.json', schemaFormat: SchemaFileFormat.XML },
-  { filename: 'TargetSchemaJson.json', schemaFormat: SchemaFileFormat.JSON },
-];
-const mapSchemaFileOptionsToDropdownOptions = (schemaFileData: SchemaFileData[]) =>
+// ];
+const mapSchemaFileOptionsToDropdownOptions = (schemaFileData: TemplateFileData[]) =>
   schemaFileData.map<IDropdownOption>((schemaOpt) => ({
-    key: schemaOpt.filename,
-    text: `[${schemaOpt.schemaFormat}] ${schemaOpt.filename.substring(0, schemaOpt.filename.lastIndexOf('.'))}`,
+    key: schemaOpt.foldername,
+    text: schemaOpt.foldername,
   }));
-const sourceSchemaDropdownOptions = mapSchemaFileOptionsToDropdownOptions(sourceSchemaFileOptions);
-const targetSchemaDropdownOptions = mapSchemaFileOptionsToDropdownOptions(targetSchemaFileOptions);
+const sourceSchemaDropdownOptions = mapSchemaFileOptionsToDropdownOptions(templateFileOptions);
 
 export const DevToolbox = () => {
   const dispatch = useDispatch<AppDispatch>();
 
-  const { theme, rawDefinition, armToken, loadingMethod, xsltFilename } = useSelector((state: RootState) => state.dataMapDataLoader);
-  const { inputResourcePath, outputResourcePath } = useSelector((state: RootState) => state.schemaDataLoader);
+  const { theme, armToken, loadingMethod, currentTemplateResourcePath } = useSelector((state: RootState) => state.templateDataLoader);
 
   const [isTooltipVisible, setIsTooltipVisible] = useState<boolean>(false);
 
-  const changeResourcePathCB = useCallback(
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    () => {
-      dispatch(dataMapDataLoaderSlice.actions.changeRawDefinition({} as MapDefDropdownOption));
-      dispatch(loadDataMap());
-    },
-    [dispatch]
-  );
+  // const changeResourcePathCB = useCallback(
+  //   // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  //   () => {
+  //     dispatch(dataMapDataLoaderSlice.actions.changeRawDefinition({} as MapDefDropdownOption));
+  //     dispatch(loadDataMap());
+  //   },
+  //   [dispatch]
+  // );
 
   const resetToUseARM = useCallback(() => {
-    dispatch(dataMapDataLoaderSlice.actions.changeRawDefinition({} as MapDefDropdownOption));
-    dispatch(loadDataMap());
+    // dispatch(dataMapDataLoaderSlice.actions.changeRawDefinition({} as MapDefDropdownOption));
+    dispatch(loadCurrentTemplate({}));
   }, [dispatch]);
-
-  const changeMapXsltFilenameCB = useCallback(
-    (newFilename?: string) => {
-      dispatch(dataMapDataLoaderSlice.actions.changeXsltFilename(newFilename ?? ''));
-    },
-    [dispatch]
-  );
-
-  const changeMapDefinitionResourcePathDropdownCB = useCallback(
-    (_: unknown, item: MapDefDropdownOption | undefined) => {
-      if (!item?.data) {
-        return;
-      }
-
-      dispatch(dataMapDataLoaderSlice.actions.changeRawDefinition(item));
-      const srcSchemaRscPath = sourceSchemaFileOptions[item.data.associatedSchemaIdx].filename;
-      const tgtSchemaRscPath = targetSchemaFileOptions[item.data.associatedSchemaIdx].filename;
-
-      dispatch(schemaDataLoaderSlice.actions.changeInputResourcePath(srcSchemaRscPath));
-      dispatch(schemaDataLoaderSlice.actions.changeOutputResourcePath(tgtSchemaRscPath));
-      dispatch(loadSourceSchema());
-      dispatch(loadTargetSchema());
-
-      dispatch(loadDataMap());
-    },
-    [dispatch]
-  );
 
   const changeSourceSchemaResourcePathDropdownCB = useCallback(
     (_: unknown, item: IDropdownOption | undefined) => {
-      dispatch(schemaDataLoaderSlice.actions.changeInputResourcePath((item?.key as string) ?? ''));
-      dispatch(loadSourceSchema());
-    },
-    [dispatch]
-  );
-
-  const changeTargetSchemaResourcePathDropdownCB = useCallback(
-    (_: unknown, item: IDropdownOption | undefined) => {
-      dispatch(schemaDataLoaderSlice.actions.changeOutputResourcePath((item?.key as string) ?? ''));
-      dispatch(loadTargetSchema());
+      dispatch(templateDataLoaderSlice.actions.changecurrentTemplateResourcePath((item?.key as string) ?? ''));
+      dispatch(loadCurrentTemplate({}));
     },
     [dispatch]
   );
 
   const changeArmTokenCB = useCallback(
     (_: unknown, newValue?: string) => {
-      dispatch(dataMapDataLoaderSlice.actions.changeArmToken(newValue ?? ''));
-      dispatch(schemaDataLoaderSlice.actions.changeArmToken(newValue ?? ''));
-      dispatch(loadDataMap());
-      dispatch(loadSourceSchema());
-      dispatch(loadTargetSchema());
+      dispatch(templateDataLoaderSlice.actions.changeArmToken(newValue ?? ''));
+      dispatch(templateDataLoaderSlice.actions.changeArmToken(newValue ?? ''));
+      dispatch(loadCurrentTemplate({}));
     },
     [dispatch]
   );
 
   const changeLoadingMethodCB = useCallback(
     (_: unknown, checked?: boolean) => {
-      dispatch(dataMapDataLoaderSlice.actions.changeLoadingMethod(checked ? LoadingMethod.Arm : LoadingMethod.File));
-      dispatch(schemaDataLoaderSlice.actions.changeLoadingMethod(checked ? LoadingMethod.Arm : LoadingMethod.File));
-      dispatch(loadDataMap());
-      dispatch(loadSourceSchema());
-      dispatch(loadTargetSchema());
+      dispatch(templateDataLoaderSlice.actions.changeLoadingMethod(checked ? LoadingMethod.Arm : LoadingMethod.File));
+      dispatch(templateDataLoaderSlice.actions.changeLoadingMethod(checked ? LoadingMethod.Arm : LoadingMethod.File));
+      dispatch(loadCurrentTemplate({}));
     },
     [dispatch]
   );
 
   const changeThemeCB = useCallback(
     (_: unknown, item: IDropdownOption | undefined) => {
-      dispatch(dataMapDataLoaderSlice.actions.changeTheme((item?.key as ThemeType) ?? ''));
+      dispatch(templateDataLoaderSlice.actions.changeTheme((item?.key as ThemeType) ?? ''));
     },
     [dispatch]
   );
@@ -168,54 +84,17 @@ export const DevToolbox = () => {
 
     if (loadingMethod === LoadingMethod.File) {
       newToolboxItems.push(
-        <StackItem key={'mapDefinitionDropDown'} style={{ width: '250px' }}>
+        <StackItem key={'templatesDropDown'} style={{ width: '250px' }}>
           <Dropdown
-            label="Map Definition"
-            selectedKey={rawDefinition?.key}
-            onChange={changeMapDefinitionResourcePathDropdownCB}
-            placeholder="Select a map definition"
-            options={mapDefinitionDropdownOptions}
-          />
-        </StackItem>
-      );
-      newToolboxItems.push(
-        <StackItem key={'sourceSchemaDropDown'} style={{ width: '250px' }}>
-          <Dropdown
-            label="Source Schema"
-            selectedKey={inputResourcePath}
+            label="Template"
+            selectedKey={currentTemplateResourcePath}
             onChange={changeSourceSchemaResourcePathDropdownCB}
-            placeholder="Select a source schema"
+            placeholder="Select a template folder to load template.json"
             options={sourceSchemaDropdownOptions}
           />
         </StackItem>
       );
-      newToolboxItems.push(
-        <StackItem key={'targetSchemaDropDown'} style={{ width: '250px' }}>
-          <Dropdown
-            label="Target Schema"
-            selectedKey={outputResourcePath}
-            onChange={changeTargetSchemaResourcePathDropdownCB}
-            placeholder="Select a target schema"
-            options={targetSchemaDropdownOptions}
-          />
-        </StackItem>
-      );
-      newToolboxItems.push(
-        <StackItem key={'mapXsltFilenameTextField'} style={{ width: '250px' }}>
-          <TextField label="XSLT Filename" value={xsltFilename} onChange={(_e, newValue) => changeMapXsltFilenameCB(newValue)} />
-        </StackItem>
-      );
     } else {
-      newToolboxItems.push(
-        <StackItem key={'resourceUriTextField'} style={{ width: '250px' }}>
-          <TextField
-            label="Resource Uri"
-            description="/subscriptions/{SubscriptionId}/resourceGroups/{ResourceGroupName}/providers/Microsoft.Web/sites/{LogicAppResource}"
-            onChange={changeResourcePathCB}
-            value={rawDefinition?.data?.mapDefinitionString ?? ''}
-          />
-        </StackItem>
-      );
       newToolboxItems.push(
         <StackItem key={'armTokenTextField'} style={{ width: '250px' }}>
           <TextField
@@ -234,21 +113,7 @@ export const DevToolbox = () => {
     }
 
     return newToolboxItems;
-  }, [
-    loadingMethod,
-    armToken,
-    changeArmTokenCB,
-    changeMapDefinitionResourcePathDropdownCB,
-    changeResourcePathCB,
-    changeSourceSchemaResourcePathDropdownCB,
-    changeTargetSchemaResourcePathDropdownCB,
-    inputResourcePath,
-    outputResourcePath,
-    rawDefinition,
-    resetToUseARM,
-    changeMapXsltFilenameCB,
-    xsltFilename,
-  ]);
+  }, [loadingMethod, armToken, changeArmTokenCB, changeSourceSchemaResourcePathDropdownCB, currentTemplateResourcePath, resetToUseARM]);
 
   return (
     <div style={{ marginBottom: '8px', backgroundColor: tokens.colorNeutralBackground2, padding: 4 }}>
@@ -299,9 +164,6 @@ export const DevToolbox = () => {
 
               {toolboxItems}
             </Stack>
-
-            <DevApiTester />
-            <DevSerializationTester />
           </AccordionPanel>
         </AccordionItem>
       </Accordion>

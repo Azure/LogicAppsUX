@@ -10,7 +10,10 @@ import { Theme as ThemeType } from '@microsoft/logic-apps-shared';
 import { useSelector } from 'react-redux';
 
 export const TemplatesStandaloneDesigner = () => {
-  const theme = useSelector((state: RootState) => state.dataMapDataLoader.theme);
+  const templateDataLoader = useSelector((state: RootState) => state.templateDataLoader);
+  const theme = useSelector((state: RootState) => state.templateDataLoader.theme);
+
+  console.log('000 ', templateDataLoader);
 
   const isLightMode = theme === ThemeType.Light;
 
