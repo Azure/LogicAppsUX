@@ -2636,6 +2636,10 @@ export function getGroupAndParameterFromParameterKey(
   return undefined;
 }
 
+export const getCustomCodeFileNameFromParameter = (parameter: ParameterInfo): string => {
+  return parameter.value?.[0].value ?? '';
+};
+
 export const getCustomCodeFileName = (nodeId: string, nodeInputs?: NodeInputs, idReplacements?: Record<string, string>): string => {
   const updatedNodeId = idReplacements?.[nodeId] || nodeId;
   let fileName = replaceWhiteSpaceWithUnderscore(updatedNodeId);

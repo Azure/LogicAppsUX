@@ -197,7 +197,6 @@ export default {
     },
   },
   DEFAULT_CUSTOM_CODE_INPUT: 'CodeFile',
-  INLINECODE: 'connectionProviders/inlineCode',
   EVENT_AUTH_COMPLETED: 'MSLA_AUTH_COMPLETED',
   ERROR_MESSAGES: {
     FAILED_TO_FETCH: 'Failed to fetch',
