@@ -93,7 +93,6 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
       });
 
       it('creates a connection between one source and target nodes value', () => {
-        // danielle does $value just mean itself?
         simpleMap['ns0:Root'] = {
           DataTranslation: {
             EmployeeName: {

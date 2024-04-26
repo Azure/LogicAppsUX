@@ -18,6 +18,7 @@ import {
 } from "../utils/DataMap.Utils";
 import { isFunctionData } from "../utils/Function.Utils";
 import {
+  addReactFlowPrefix,
   addSourceReactFlowPrefix,
   addTargetReactFlowPrefix,
   createReactFlowFunctionKey,
@@ -106,8 +107,6 @@ export class MapDefinitionDeserializerRefactor {
     let formattedTargetKey = key;
     if (key.startsWith("$@")) {
       formattedTargetKey = key.substring(2);
-    } else if (key.startsWith("$")) {
-      formattedTargetKey = key.substring(1);
     }
     return formattedTargetKey;
   };
@@ -115,11 +114,15 @@ export class MapDefinitionDeserializerRefactor {
   private getTargetNodeInContextOfParent = (
     currentTargetKey: string,
     parentTargetNode: SchemaNodeExtended | undefined
-  ) => {
+  ): SchemaNodeExtended => {
     let targetNode: SchemaNodeExtended | undefined = undefined;
-    const formattedTargetKey =
-      this.removePropertySymbolFromKey(currentTargetKey); // danielle this probably needs to be done on source side too
+    let formattedTargetKey = this.removePropertySymbolFromKey(currentTargetKey);
 
+    if (currentTargetKey.endsWith("$value") && parentTargetNode !== undefined) {
+      return parentTargetNode;
+    }
+
+    // root node
     if (parentTargetNode === undefined) {
       targetNode =
         this._targetSchemaFlattened[`${targetPrefix}${formattedTargetKey}`];
@@ -281,7 +284,8 @@ export class MapDefinitionDeserializerRefactor {
             false
           ) as SchemaNodeExtended;
           let key = addSourceReactFlowPrefix(loopSrc.key);
-          if (this._loopDest) { // danielle why do we need loop dest? not v clear
+          if (this._loopDest) {
+            // danielle why do we need loop dest? not v clear
             loopSrc = connections[this._loopDest].self.node;
             key = this._loopDest;
             this._loopDest = "";
@@ -301,6 +305,10 @@ export class MapDefinitionDeserializerRefactor {
         }
       });
     }
+  };
+
+  private getFunctionForKey = (key: string) => {
+    return this._functions.find((func) => func.key === key);
   };
 
   private addConditionalConnectionIfNeeded = (
@@ -348,8 +356,8 @@ export class MapDefinitionDeserializerRefactor {
       // danielle this is messsyyyyyy
       if (typeof rightSideStringOrObject === "string") {
         if (this._conditional) {
-          const ifFunction = this._functions.find(
-            (func) => func.key === this._conditional
+          const ifFunction = this.getFunctionForKey(
+            this._conditional
           ) as FunctionData;
           this.handleSingleValueOrFunction(
             rightSideStringOrObject,
@@ -376,7 +384,12 @@ export class MapDefinitionDeserializerRefactor {
         });
       }
     } else {
-      this.processLeftSideForOrIf(leftSideKey, parentTargetNode, rightSideStringOrObject, connections);
+      this.processLeftSideForOrIf(
+        leftSideKey,
+        parentTargetNode,
+        rightSideStringOrObject,
+        connections
+      );
     }
   };
 
@@ -417,7 +430,7 @@ export class MapDefinitionDeserializerRefactor {
 
   private handleIfFunction = (
     functionMetadata: ParseFunc,
-    _targetNode: SchemaNodeExtended | FunctionData,
+    parentTargetNode: SchemaNodeExtended | FunctionData,
     connections: ConnectionDictionary
   ) => {
     const func = getSourceNode(
@@ -436,6 +449,16 @@ export class MapDefinitionDeserializerRefactor {
       func,
       connections
     );
+    this.getFunctionForKey(funcKey);
+    // applyConnectionValue(connections, {
+    //   targetNode: func,
+    //   targetNodeReactFlowKey: funcKey,
+    //   findInputSlot: true,
+    //   input: {
+    //     reactFlowKey: addReactFlowPrefix(parentTargetNode.key, SchemaType.Source),
+    //     node: parentTargetNode,
+    //   },
+    // });
     this._conditional = funcKey;
   };
   private forHasIndex = (forSrc: ParseFunc) => forSrc.inputs.length > 1;
@@ -504,7 +527,11 @@ export class MapDefinitionDeserializerRefactor {
       while (typeof meta !== "string") {
         meta = meta.inputs[0];
       }
-      this._loop.push({ key: meta, needsConnection: true, sequence: sourceLoopKey });
+      this._loop.push({
+        key: meta,
+        needsConnection: true,
+        sequence: sourceLoopKey,
+      });
       // danielle nope we need to add the sequences here
       // this.handleSingleValueOrFunction('', forFunc.inputs[0], target, connections)
       // must be a sequence function
