@@ -46,14 +46,14 @@ export const useConnectionById = (connectionId: string, connectorId: string) => 
       return { isLoading: false, result: undefined };
     }
 
-    if (!connections) {
+    if (!connections && !connection) {
       return {
         isLoading,
         result: undefined,
       };
     }
 
-    const foundConnection = connections.find((connection: any) => equals(connection.id, connectionId));
+    const foundConnection = (connections ?? []).find((connection: any) => equals(connection.id, connectionId));
     return {
       isLoading,
       result: foundConnection ?? connection,
