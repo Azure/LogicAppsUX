@@ -1,5 +1,5 @@
 import type { ConnectionMapping, ConnectionReference, ConnectionReferences } from '../../../common/models/workflow';
-import { getConnection } from '../../queries/connections';
+import { useConnectionResource } from '../../queries/connections';
 import type { RootState } from '../../store';
 import { getConnectionReference, isConnectionMultiAuthManagedIdentityType } from '../../utils/connectors/connections';
 import { useNodeConnectorId } from '../operation/operationSelector';
@@ -82,28 +82,6 @@ export const useNodeConnectionId = (nodeId: string): string => {
   }, [connectionsMapping, connectionReferences, nodeId]);
 };
 
-const useConnectionByNodeId = (nodeId: string) => {
-  const operationInfo = useOperationInfo(nodeId);
-  const connectionId = useNodeConnectionId(nodeId);
-  return useQuery(
-    ['connection', { connectorId: operationInfo?.connectorId }, { connectionId }],
-    () => {
-      if (!connectionId || !operationInfo?.connectorId) {
-        return;
-      }
-      return getConnection(connectionId, operationInfo.connectorId);
-    },
-    {
-      enabled: !!connectionId && !!operationInfo?.connectorId,
-      placeholderData: undefined,
-      cacheTime: 1000 * 60 * 60 * 24,
-      refetchOnMount: false,
-      refetchOnWindowFocus: false,
-      refetchOnReconnect: false,
-    }
-  );
-};
-
 export const useConnectionMapping = (): ConnectionMapping => {
   return useSelector((state: RootState) => {
     return state.connections.connectionsMapping;
@@ -128,16 +106,22 @@ export const useIsOperationMissingConnection = (nodeId: string) => {
 
 export const useShowIdentitySelectorQuery = (nodeId: string) => {
   const connector = useConnectorByNodeId(nodeId);
-  const connectionQuery = useConnectionByNodeId(nodeId);
+  const connectionId = useNodeConnectionId(nodeId);
+  const { data: connection, isLoading } = useConnectionResource(connectionId);
   const operationInfo = useOperationInfo(nodeId);
   const connectionReference = useSelector((state: RootState) => getConnectionReference(state.connections, nodeId));
 
   return useMemo(() => {
-    if (connectionReference && !connectionQuery.isLoading && !isServiceProviderOperation(operationInfo?.type)) {
-      return isConnectionMultiAuthManagedIdentityType(connectionQuery.data, connector);
+    if (!connectionId || !connector?.id) {
+      return { isLoading: false, result: false };
     }
-    return false;
-  }, [connectionQuery, connectionReference, connector, operationInfo?.type]);
+
+    if (connectionReference && !isServiceProviderOperation(operationInfo?.type)) {
+      return { isLoading, result: isLoading ? undefined : isConnectionMultiAuthManagedIdentityType(connection, connector) };
+    }
+
+    return { isLoading: false, result: false };
+  }, [connectionId, connector, connectionReference, operationInfo?.type, isLoading, connection]);
 };
 
 export const getConnectionReferenceForNodeId = (

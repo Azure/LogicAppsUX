@@ -164,7 +164,9 @@ export const ParametersTab = () => {
           />
         </>
       ) : null}
-      {showIdentitySelector ? <IdentitySelector nodeId={selectedNodeId} readOnly={!!readOnly} /> : null}
+      {!showIdentitySelector.isLoading && showIdentitySelector.result ? (
+        <IdentitySelector nodeId={selectedNodeId} readOnly={!!readOnly} />
+      ) : null}
     </>
   );
 };
