@@ -129,7 +129,7 @@ export const CreateConnectionWrapper = () => {
   }, [dispatch, referencePanelMode, nodeIds]);
 
   const queryClient = useQueryClient();
-  const useUpdateNewConnection = useMutation(async (newConnection: Connection) => {
+  const updateNewConnection = useMutation(async (newConnection: Connection) => {
     return queryClient.setQueryData<Connection[]>(['connections', connector?.id?.toLowerCase()], (oldConnections) => {
       return oldConnections ? [...oldConnections, newConnection] : [newConnection];
     });
