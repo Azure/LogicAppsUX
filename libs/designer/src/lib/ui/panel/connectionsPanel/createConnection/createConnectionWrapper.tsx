@@ -1,4 +1,4 @@
-import { useQueryClient } from 'react-query';
+import { useQueryClient } from '@tanstack/react-query';
 import constants from '../../../../common/constants';
 import type { AppDispatch, RootState } from '../../../../core';
 import { useOperationInfo, useSelectedNodeId, useSelectedNodeIds } from '../../../../core';
@@ -131,10 +131,10 @@ export const CreateConnectionWrapper = () => {
   const queryClient = useQueryClient();
   const updateNewConnection = useCallback(
     async (newConnection: Connection) => {
-      return queryClient.setQueryData<Connection[]>(['connections', connector?.id?.toLowerCase()], (oldConnections) => [
-        ...(oldConnections ?? []),
-        newConnection,
-      ]);
+      return queryClient.setQueryData<Connection[]>(
+        ['connections', connector?.id?.toLowerCase()],
+        (oldConnections: Connection[] | undefined) => [...(oldConnections ?? []), newConnection]
+      );
     },
     [connector?.id, queryClient]
   );
