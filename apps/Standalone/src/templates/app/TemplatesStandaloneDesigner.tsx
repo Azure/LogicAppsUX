@@ -10,11 +10,8 @@ import { Theme as ThemeType } from '@microsoft/logic-apps-shared';
 import { useSelector } from 'react-redux';
 
 export const TemplatesStandaloneDesigner = () => {
-  const templateDataLoader = useSelector((state: RootState) => state.templateDataLoader);
   const theme = useSelector((state: RootState) => state.templateDataLoader.theme);
-
-  console.log('000 ', templateDataLoader);
-
+  const currentTemplate = useSelector((state: RootState) => state.templateDataLoader.currentTemplate);
   const isLightMode = theme === ThemeType.Light;
 
   return (
@@ -33,9 +30,9 @@ export const TemplatesStandaloneDesigner = () => {
 
       <div style={{ flex: '1 1 1px', display: 'flex', flexDirection: 'column' }}>
         <TemplatesDesignerProvider locale="en-US" theme={theme} options={{}}>
-          <TemplatesDataProvider>
+          <TemplatesDataProvider currentTemplate={currentTemplate} theme={theme}>
             {/* TODO: here should have TemplatesDesigner */}
-            {/* <></> */}
+            <>{JSON.stringify(currentTemplate)}</>
           </TemplatesDataProvider>
         </TemplatesDesignerProvider>
       </div>
