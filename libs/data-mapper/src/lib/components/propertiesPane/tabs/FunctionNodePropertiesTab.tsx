@@ -164,7 +164,6 @@ export const FunctionNodePropertiesTab = ({ functionData }: FunctionNodeProperti
           </Text>
         )}
       </div>
-
       <Stack horizontal className={styles.inputOutputContent}>
         <Stack className={styles.inputOutputStack}>
           <Text className={styles.inputOutputStackTitle}>{inputLoc}</Text>
@@ -219,7 +218,6 @@ export const FunctionNodePropertiesTab = ({ functionData }: FunctionNodeProperti
                     </Stack>
                   );
                 })}
-
               <div>
                 <Button
                   appearance="subtle"

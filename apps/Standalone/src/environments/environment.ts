@@ -26,5 +26,5 @@ export const environment: EnvironmentVars = {
 export const loadToken = async () => {
   const token = await getAccessToken('armToken');
   environment.armToken = token;
-  return token;
+  return token ?? null;
 };

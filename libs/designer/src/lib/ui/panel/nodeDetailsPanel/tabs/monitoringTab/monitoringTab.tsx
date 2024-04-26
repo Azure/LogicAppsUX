@@ -10,7 +10,7 @@ import { RunService, isNullOrUndefined } from '@microsoft/logic-apps-shared';
 import { ErrorSection } from '@microsoft/designer-ui';
 import type { PanelTabFn } from '@microsoft/designer-ui';
 import { useEffect } from 'react';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 
 export const MonitoringPanel: React.FC = () => {
   const selectedNodeId = useSelectedNodeId();

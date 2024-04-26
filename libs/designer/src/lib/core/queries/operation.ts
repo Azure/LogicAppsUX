@@ -36,7 +36,8 @@ export const getOperationManifest = async ({ connectorId, operationId }: Operati
   }
   connectorId = connectorId.toLowerCase();
   operationId = operationId.toLowerCase();
-  return queryClient.fetchQuery(['manifest', { connectorId }, { operationId }], () =>
-    operationManifestService.getOperationManifest(connectorId, operationId)
+  return queryClient.fetchQuery(
+    ['manifest', { connectorId }, { operationId }],
+    () => operationManifestService.getOperationManifest(connectorId, operationId) ?? null
   );
 };

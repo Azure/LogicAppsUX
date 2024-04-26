@@ -19,7 +19,7 @@ import { ExtensionCommand } from '@microsoft/vscode-extension-logic-apps';
 import { createSelector } from '@reduxjs/toolkit';
 import { useContext, useMemo } from 'react';
 import { useIntl } from 'react-intl';
-import { useMutation } from 'react-query';
+import { useMutation } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
 
 export interface DesignerCommandBarProps {

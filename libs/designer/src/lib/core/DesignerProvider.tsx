@@ -1,6 +1,5 @@
 import { resetWorkflowState } from '.';
 import { ProviderWrappedContext } from './ProviderWrappedContext';
-import { ReactQueryProvider } from './ReactQueryProvider';
 import type { DesignerOptionsState, ServiceOptions } from './state/designerOptions/designerOptionsInterfaces';
 import { initDesignerOptions } from './state/designerOptions/designerOptionsSlice';
 import { store } from './store';
@@ -53,12 +52,10 @@ export const DesignerProvider = ({ id, locale = 'en', options, children }: Desig
           <ThemeProvider theme={azTheme}>
             <FluentProvider theme={webTheme}>
               <div data-color-scheme={themeName} className={`msla-theme-${themeName}`} style={{ height: '100vh', overflow: 'hidden' }}>
-                <ReactQueryProvider>
-                  <IntlProvider locale={locale} defaultLocale={locale} onError={onError}>
-                    <ReduxReset id={id} />
-                    {children}
-                  </IntlProvider>
-                </ReactQueryProvider>
+                <IntlProvider locale={locale} defaultLocale={locale} onError={onError}>
+                  <ReduxReset id={id} />
+                  {children}
+                </IntlProvider>
               </div>
             </FluentProvider>
           </ThemeProvider>

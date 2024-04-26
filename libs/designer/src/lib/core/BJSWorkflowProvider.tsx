@@ -11,7 +11,7 @@ import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import { useDeepCompareEffect } from '@react-hookz/web';
 import type React from 'react';
 import { useContext, useEffect } from 'react';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import { useDispatch } from 'react-redux';
 
 export interface BJSWorkflowProviderProps {
@@ -37,7 +37,7 @@ const DataProviderInner: React.FC<BJSWorkflowProviderProps> = ({ workflow, child
     queryKey: ['appSettings'],
     initialData: appSettings,
     queryFn: () => {
-      return appSettings;
+      return appSettings ?? null;
     },
   });
 

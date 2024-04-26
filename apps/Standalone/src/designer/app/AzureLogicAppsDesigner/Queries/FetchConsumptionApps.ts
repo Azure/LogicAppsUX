@@ -1,7 +1,7 @@
 import { environment } from '../../../../environments/environment';
 import type { Data as FetchLogicAppsData } from '../Models/LogicAppAppTypes';
 import { fetchAppsByQuery } from '../Utilities/resourceUtilities';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 
 export const useFetchConsumptionApps = () => {
   return useQuery<FetchLogicAppsData[]>(
