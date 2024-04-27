@@ -5,7 +5,7 @@
 import { runUnitTestEvent } from '../../../../constants';
 import { ext } from '../../../../extensionVariables';
 import { localize } from '../../../../localize';
-import type { UnitTestResult } from '../../../utils/unitTests';
+import { getUnitTestName, type UnitTestResult } from '../../../utils/unitTests';
 import { type IActionContext, callWithTelemetryAndErrorHandling } from '@microsoft/vscode-azext-utils';
 import * as vscode from 'vscode';
 import * as cp from 'child_process';
@@ -39,6 +39,7 @@ export async function runUnitTest(context: IActionContext, node: vscode.Uri | vs
         const pathRootFolder = path.dirname(workspacePath);
         const logicAppName = path.basename(workspacePath);
         const workflowName = path.basename(path.dirname(unitTestPath));
+        const unitTestName = getUnitTestName(path.basename(unitTestPath));
 
         const bundleFolderRoot = await getExtensionBundleFolder();
         const bundleFolder = path.join(bundleFolderRoot, 'Microsoft.Azure.Functions.ExtensionBundle.Workflows');
@@ -51,7 +52,7 @@ export async function runUnitTest(context: IActionContext, node: vscode.Uri | vs
           '-workflowName',
           workflowName,
           '-unitTestName',
-          unitTestPath,
+          unitTestName,
         ]);
 
         for await (const chunk of res.stdout) {
