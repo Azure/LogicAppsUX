@@ -46,7 +46,6 @@ jobs:
             az group create -l westus --subscription ${{ secrets.AZURE_TESTING_SUBSCRIPTION_ID }} -n lauxtest2${{matrix.browser}}
             az deployment group create \
             --resource-group lauxtest2${{matrix.browser}} \
-            --name lauxdep
             --subscription ${{ secrets.AZURE_TESTING_SUBSCRIPTION_ID }} \
             --template-file ./e2e/testSetup/BlankLogicApp/logicAppStandard.bicep \
             --parameters "{ \"zipDeploymentLocation\": { \"value\": \"${{env.ZIP-URL}}\" } }"
