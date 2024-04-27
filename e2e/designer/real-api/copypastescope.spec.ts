@@ -1,4 +1,5 @@
 import { expect, test } from '@playwright/test';
+import { GoToWorkflow } from '../utils/GoToWorkflow';
 
 test.describe(
   'Copy and Paste of Scopes',
@@ -15,25 +16,19 @@ test.describe(
         context.grantPermissions(['clipboard-read'], { origin: 'http://localhost:4200' });
       }
       await page.goto('/');
-      await page.getByPlaceholder('Select an App').click({ timeout: 20000 });
-      await page.getByPlaceholder('Select an App').fill(`wapp-lauxtest${browserName}`, { timeout: 20000 });
-      await page.getByPlaceholder('Select an App').press('Enter', { timeout: 20000 });
-      await page.getByLabel('Workflow').locator('span').filter({ hasText: '' }).click({ timeout: 20000 });
-      await page.getByRole('option', { name: 'CopyPaste' }).click({ timeout: 20000 });
-      await page.getByRole('button', { name: 'Toolbox' }).click({ timeout: 20000 });
+      await GoToWorkflow(page, `wapp-lauxtest2${browserName}`, 'CopyPaste');
 
       await page.waitForLoadState('networkidle');
       await page.getByTestId('rf__node-For_each-#scope').getByRole('button', { name: 'For each' }).focus();
       await page.keyboard.press('Control+C');
       await page.getByTestId('rf__edge-For_each-Filter_array').getByLabel('Insert a new step between For').focus();
       await page.keyboard.press('Control+V');
-      await page.waitForTimeout(1000);
       const serialized: any = await page.evaluate(() => {
         return new Promise((resolve) => {
           setTimeout(() => {
             const state = (window as any).DesignerStore.getState();
             resolve((window as any).DesignerModule.serializeBJSWorkflow(state));
-          }, 5000);
+          }, 500);
         });
       });
       expect(serialized.definition).toEqual(verificationWorkflow);

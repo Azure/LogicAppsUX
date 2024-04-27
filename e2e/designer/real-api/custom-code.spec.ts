@@ -1,4 +1,5 @@
 import { test } from '@playwright/test';
+import { GoToWorkflow } from '../utils/GoToWorkflow';
 
 test.describe(
   'Custom Code',
@@ -8,12 +9,7 @@ test.describe(
   () => {
     test('Inline Javascript', async ({ page, request, browserName }) => {
       await page.goto('/');
-      await page.getByPlaceholder('Select an App').click({ timeout: 20000 });
-      await page.getByPlaceholder('Select an App').fill(`wapp-lauxtest${browserName}`, { timeout: 20000 });
-      await page.getByPlaceholder('Select an App').press('Enter', { timeout: 20000 });
-      await page.getByLabel('Workflow').locator('span').filter({ hasText: '' }).click({ timeout: 20000 });
-      await page.getByRole('option', { name: 'inlineJS' }).click({ timeout: 20000 });
-      await page.getByRole('button', { name: 'Toolbox' }).click({ timeout: 20000 });
+      await GoToWorkflow(page, `wapp-lauxtest2${browserName}`, 'inlineJS');
 
       await page.getByRole('button', { name: 'Insert a new step between' }).first().click();
       await page.getByText('Add an action').click();
@@ -34,7 +30,7 @@ test.describe(
 
       await page.waitForResponse((resp) => resp.url().includes('/deployWorkflowArtifacts') && resp.status() === 200);
       await page.waitForTimeout(6000);
-      await page.getByTestId('card-When a HTTP request is received').getByLabel('When a HTTP request is').click({ timeout: 20000 });
+      await page.getByTestId('card-When a HTTP request is received').getByLabel('When a HTTP request is').click();
       const value = await page.getByRole('textbox', { name: 'URL will be generated after' }).inputValue();
       const LAResult = await request.post(value, {
         data: `hello ${browserName}`,
