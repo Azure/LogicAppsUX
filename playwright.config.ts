@@ -21,9 +21,14 @@ export default defineConfig({
   workers: process.env.CI ? 1 : undefined,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: 'html',
-  timeout: 1_000 * 60 * 5,
+  timeout: 5 * 60 * 1_000,
+  expect: {
+    // expect timeout set to 20 seconds
+    timeout: 20 * 1000
+  },
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
+    actionTimeout: 20 * 1_000,
     /* Base URL to use in actions like `await page.goto('/')`. */
     baseURL: 'http://localhost:4200',
 
