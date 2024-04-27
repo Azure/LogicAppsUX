@@ -43,9 +43,9 @@ jobs:
       with:
         azcliversion: 2.30.0
         inlineScript: |
-            az group create -l westus --subscription ${{ secrets.AZURE_TESTING_SUBSCRIPTION_ID }} -n lauxtest${{matrix.browser}}
+            az group create -l westus --subscription ${{ secrets.AZURE_TESTING_SUBSCRIPTION_ID }} -n lauxtest2${{matrix.browser}}
             az deployment group create \
-            --resource-group lauxtest${{matrix.browser}} \
+            --resource-group lauxtest2${{matrix.browser}} \
             --subscription ${{ secrets.AZURE_TESTING_SUBSCRIPTION_ID }} \
             --template-file ./e2e/testSetup/BlankLogicApp/logicAppStandard.bicep \
             --parameters "{ \"zipDeploymentLocation\": { \"value\": \"${{env.ZIP-URL}}\" } }"
