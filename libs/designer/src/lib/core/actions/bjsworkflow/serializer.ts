@@ -299,6 +299,7 @@ const serializeManifestBasedOperation = async (rootState: RootState, operationId
   }
   const manifest = await getOperationManifest(operation);
   const isTrigger = isRootNodeInGraph(operationId, 'root', rootState.workflow.nodesMetadata);
+  console.log(operationId);
   const inputsToSerialize = getOperationInputsToSerialize(rootState, operationId);
   const nodeSettings = getRecordEntry(rootState.operations.settings, operationId) ?? {};
   const nodeStaticResults = getRecordEntry(rootState.operations.staticResults, operationId) ?? ({} as NodeStaticResults);
