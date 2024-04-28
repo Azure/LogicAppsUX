@@ -46,13 +46,13 @@
                 {
                   "not": {
                     "endsWith": [
-                      "@{concat(concat(concat(concat())))}",
+                      "@concat(concat(concat(concat())))",
                       "@variables('goalOwner')"
                     ]
                   }
                 },
                 {
-                  "equals": [null, "@variables('goalOwner')"]
+                  "equals": ["@null", "@variables('goalOwner')"]
                 }
               ]
             }
