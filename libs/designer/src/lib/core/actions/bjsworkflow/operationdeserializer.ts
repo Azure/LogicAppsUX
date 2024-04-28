@@ -221,7 +221,6 @@ export const initializeOperationDetailsForManifest = async (
   forceEnableSplitOn: boolean,
   dispatch: Dispatch
 ): Promise<NodeDataWithOperationMetadata[] | undefined> => {
-  console.log(nodeId);
   const operation = { ..._operation };
   try {
     const staticResultService = StaticResultService();
