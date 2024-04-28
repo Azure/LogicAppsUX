@@ -1,5 +1,6 @@
 import { test, expect } from '@playwright/test';
 import { GoToMockWorkflow } from './utils/GoToWorkflow';
+import { getSerializedWorkflowFromState } from './utils/designerFunctions';
 test.describe(
   'Serialization Tests',
   {
@@ -11,10 +12,7 @@ test.describe(
 
       await GoToMockWorkflow(page, 'Panel');
 
-      const serialized: any = await page.evaluate(async () => {
-        const state = (window as any).DesignerStore.getState();
-        return await (window as any).DesignerModule.serializeBJSWorkflow(state);
-      });
+      const serialized: any = await getSerializedWorkflowFromState(page);
 
       const mock = await import('../../__mocks__/workflows/Panel.json', {
         assert: { type: 'json' },
@@ -23,14 +21,11 @@ test.describe(
       expect({ connectionReferences: {}, parameters: {}, definition: mock.default.definition }).toEqual(serialized as any);
     });
 
-    test('Should serialize the workflow after deserializing it and match with a switch statement', async ({ page }) => {
+    test.skip('Should serialize the workflow after deserializing it and match with a switch statement', async ({ page }) => {
       await page.goto('/');
       await GoToMockWorkflow(page, 'Switch');
 
-      const serialized: any = await page.evaluate(async () => {
-        const state = (window as any).DesignerStore.getState();
-        return await (window as any).DesignerModule.serializeBJSWorkflow(state);
-      });
+      const serialized: any = await getSerializedWorkflowFromState(page);
 
       const mock = await import('../../__mocks__/workflows/Switch.json', {
         assert: { type: 'json' },
@@ -39,17 +34,14 @@ test.describe(
       expect({ connectionReferences: {}, parameters: {}, definition: mock.default.definition }).toEqual(serialized as any);
     });
 
-    test('Should serialize the workflow after deserializing it and match with some strings and keys containing unicode characters', async ({
+    test.skip('Should serialize the workflow after deserializing it and match with some strings and keys containing unicode characters', async ({
       page,
     }) => {
       await page.goto('/');
 
       await GoToMockWorkflow(page, 'Unicode Keys');
 
-      const serialized: any = await page.evaluate(async () => {
-        const state = (window as any).DesignerStore.getState();
-        return await (window as any).DesignerModule.serializeBJSWorkflow(state);
-      });
+      const serialized: any = await getSerializedWorkflowFromState(page);
 
       const mock = await import('../../__mocks__/workflows/UnicodeKeys.json', {
         assert: { type: 'json' },

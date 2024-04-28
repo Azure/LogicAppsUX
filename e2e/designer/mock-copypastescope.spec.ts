@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { getSerializedWorkflowFromState } from './utils/designerFunctions';
 
 test(
   'Mock: Expect Copy and Paste of Scopes to work on single workflow',
@@ -16,14 +17,7 @@ test(
     await page.getByTestId('rf__edge-Initialize_variable-Condition').getByLabel('Insert a new step between').focus();
     await page.keyboard.press('Control+V');
     await page.waitForTimeout(1000);
-    const serialized: any = await page.evaluate(() => {
-      return new Promise((resolve) => {
-        setTimeout(() => {
-          const state = (window as any).DesignerStore.getState();
-          resolve((window as any).DesignerModule.serializeBJSWorkflow(state));
-        }, 5000);
-      });
-    });
+    const serialized: any = await getSerializedWorkflowFromState(page);
     expect(serialized.definition).toEqual(verificationWorkflow);
   }
 );

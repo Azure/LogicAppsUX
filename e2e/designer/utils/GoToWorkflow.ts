@@ -7,6 +7,7 @@ export const GoToRealWorkflow = async (page: Page, appName: string, workflowName
   await page.getByLabel('Workflow').locator('span').filter({ hasText: '' }).click();
   await page.getByRole('option', { name: workflowName }).click();
   await page.getByRole('button', { name: 'Toolbox' }).click();
+  await page.getByLabel('fit view').click({ force: true });
 };
 
 export const GoToMockWorkflow = async (page: Page, workflowName: string) => {

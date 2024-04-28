@@ -1,5 +1,6 @@
 import { expect, test } from '@playwright/test';
 import { GoToRealWorkflow } from '../utils/GoToWorkflow';
+import { getSerializedWorkflowFromState } from '../utils/designerFunctions';
 
 test.describe(
   'Copy and Paste of Scopes',
@@ -22,14 +23,7 @@ test.describe(
       await page.keyboard.press('Control+C');
       await page.getByTestId('rf__edge-For_each-Filter_array').getByLabel('Insert a new step between For').focus();
       await page.keyboard.press('Control+V');
-      const serialized: any = await page.evaluate(() => {
-        return new Promise((resolve) => {
-          setTimeout(() => {
-            const state = (window as any).DesignerStore.getState();
-            resolve((window as any).DesignerModule.serializeBJSWorkflow(state));
-          }, 500);
-        });
-      });
+      const serialized: any = await getSerializedWorkflowFromState(page);
       expect(serialized.definition).toEqual(verificationWorkflow);
     });
   }
