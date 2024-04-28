@@ -54,11 +54,11 @@ const verificationWorkflow = {
             and: [
               {
                 not: {
-                  endsWith: ['@{concat(concat(concat(concat())))}', "@variables('goalOwner')"],
+                  endsWith: ['@concat(concat(concat(concat())))', "@variables('goalOwner')"],
                 },
               },
               {
-                equals: [null, "@variables('goalOwner')"],
+                equals: ['', "@variables('goalOwner')"],
               },
             ],
           },
