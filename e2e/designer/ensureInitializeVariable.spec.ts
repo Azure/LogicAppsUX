@@ -1,4 +1,5 @@
 import { test, expect } from '@playwright/test';
+import { GoToMockWorkflow } from './utils/GoToWorkflow';
 
 test(
   'Should be able to switch between Initialize Variable types',
@@ -7,9 +8,7 @@ test(
   },
   async ({ page }) => {
     await page.goto('/');
-    await page.getByText('Select an option').click();
-    await page.getByRole('option', { name: 'Recurrence' }).click();
-    await page.getByRole('button', { name: 'Toolbox' }).click();
+    await GoToMockWorkflow(page, 'Recurrence');
     await page.getByLabel('Insert a new step after').click();
     await page.getByText('Add an action').click();
     await page.getByPlaceholder('Search').click();

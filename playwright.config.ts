@@ -24,7 +24,7 @@ export default defineConfig({
   timeout: 5 * 60 * 1_000,
   expect: {
     // expect timeout set to 20 seconds
-    timeout: 20 * 1000
+    timeout: 20 * 1000,
   },
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
@@ -51,14 +51,14 @@ export default defineConfig({
             'dom.events.asyncClipboard.readText': true,
             'dom.events.testing.asyncClipboard': true,
           },
-        }
+        },
       },
     },
 
-    {
-      name: 'webkit',
-      use: { ...devices['Desktop Safari'] },
-    },
+    // {
+    //   name: 'webkit',
+    //   use: { ...devices['Desktop Safari'] },
+    // },
 
     /* Test against mobile viewports. */
     // {

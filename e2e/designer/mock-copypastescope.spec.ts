@@ -5,11 +5,7 @@ test(
   {
     tag: '@mock',
   },
-  async ({ page, browserName, context }) => {
-    test.skip(browserName === 'webkit');
-    if (browserName === 'webkit') {
-      context.grantPermissions(['clipboard-read'], { origin: 'http://localhost:4200' });
-    }
+  async ({ page }) => {
     await page.goto('/');
     await page.getByText('Select an option').click();
     await page.getByRole('option', { name: 'Conditionals', exact: true }).click();
