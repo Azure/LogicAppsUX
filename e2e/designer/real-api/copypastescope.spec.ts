@@ -8,13 +8,9 @@ test.describe(
     tag: '@real',
   },
   () => {
-    test.beforeEach(async ({ browserName }) => {
-      test.skip(browserName === 'webkit');
-    });
-    test('Expect Copy and Paste of Scopes to work on single workflow', async ({ page, context, browserName }) => {
-      if (browserName === 'webkit') {
-        context.grantPermissions(['clipboard-read'], { origin: 'http://localhost:4200' });
-      }
+
+    test('Expect Copy and Paste of Scopes to work on single workflow', async ({ page, browserName }) => {
+
       await page.goto('/');
       await GoToRealWorkflow(page, `wapp-lauxtest2${browserName}`, 'CopyPaste');
 

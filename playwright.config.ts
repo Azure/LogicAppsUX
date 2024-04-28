@@ -26,6 +26,10 @@ export default defineConfig({
     // expect timeout set to 20 seconds
     timeout: 20 * 1000,
   },
+  reportSlowTests: {
+    threshold: 60 * 1_000,
+    max: 10,
+  },
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     actionTimeout: 20 * 1_000,
