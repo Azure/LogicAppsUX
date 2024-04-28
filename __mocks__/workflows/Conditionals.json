@@ -52,7 +52,7 @@
                   }
                 },
                 {
-                  "equals": ["@null", "@variables('goalOwner')"]
+                  "equals": ["", "@variables('goalOwner')"]
                 }
               ]
             }
