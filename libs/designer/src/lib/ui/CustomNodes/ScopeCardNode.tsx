@@ -177,9 +177,9 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
   }, [dispatch, scopeId]);
 
   const deleteClick = useCallback(() => {
-    dispatch(setSelectedNodeId(id));
+    dispatch(setSelectedNodeId(scopeId));
     dispatch(setShowDeleteModal(true));
-  }, [dispatch, id]);
+  }, [dispatch, scopeId]);
 
   const copyClick = useCallback(() => {
     setShowCopyCallout(true);
