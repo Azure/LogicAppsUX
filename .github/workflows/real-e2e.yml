@@ -13,7 +13,7 @@ jobs:
         id-token: write
     strategy:
       matrix:
-        browser: [chromium, firefox, webkit]
+        browser: [chromium, firefox]
     steps:
     - uses: actions/checkout@v4
 
@@ -101,7 +101,6 @@ jobs:
       run: |
         az group delete -n lauxtest2chromium --yes --no-wait
         az group delete -n lauxtest2firefox --yes --no-wait
-        az group delete -n lauxtest2webkit --yes --no-wait
 
     - name: "Upload Playwright Report to Azure Blob Storage for static site access"
       shell: bash

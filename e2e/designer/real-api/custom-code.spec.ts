@@ -1,5 +1,5 @@
 import { test } from '@playwright/test';
-import { GoToWorkflow } from '../utils/GoToWorkflow';
+import { GoToRealWorkflow } from '../utils/GoToWorkflow';
 
 test.describe(
   'Custom Code',
@@ -9,7 +9,7 @@ test.describe(
   () => {
     test('Inline Javascript', async ({ page, request, browserName }) => {
       await page.goto('/');
-      await GoToWorkflow(page, `wapp-lauxtest2${browserName}`, 'inlineJS');
+      await GoToRealWorkflow(page, `wapp-lauxtest2${browserName}`, 'inlineJS');
 
       await page.getByRole('button', { name: 'Insert a new step between' }).first().click();
       await page.getByText('Add an action').click();
