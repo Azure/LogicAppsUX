@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [4.13.1](https://github.com/Azure/LogicAppsUX/compare/v4.13.0...v4.13.1) (2024-04-29)
+
+
+### Bug Fixes
+
+* **designer:** Cherry-pick hotfixes for scopes/customcode ([#4730](https://github.com/Azure/LogicAppsUX/issues/4730)) ([0c5367b](https://github.com/Azure/LogicAppsUX/commit/0c5367b98b2ac1a5c8369fc58ef5298bd03bf05c)), closes [#4720](https://github.com/Azure/LogicAppsUX/issues/4720) [#4725](https://github.com/Azure/LogicAppsUX/issues/4725) [#4726](https://github.com/Azure/LogicAppsUX/issues/4726)
+
 ## [4.13.0](https://github.com/Azure/LogicAppsUX/compare/v4.12.0...v4.13.0) (2024-04-25)
 
 ## [4.12.0](https://github.com/Azure/LogicAppsUX/compare/v4.11.0...v4.12.0) (2024-04-25)
