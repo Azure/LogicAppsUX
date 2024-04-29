@@ -5,7 +5,7 @@ import { AzureThemeLight } from '@fluentui/azure-themes/lib/azure/AzureThemeLigh
 import { ThemeProvider } from '@fluentui/react';
 import { FluentProvider, webDarkTheme, webLightTheme } from '@fluentui/react-components';
 import { PortalCompatProvider } from '@fluentui/react-portal-compat';
-import { TemplatesDataProvider, TemplatesDesignerProvider } from '@microsoft/logic-apps-templates';
+import { TemplatesDataProvider, TemplatesDesigner, TemplatesDesignerProvider } from '@microsoft/logic-apps-templates';
 import { Theme as ThemeType } from '@microsoft/logic-apps-shared';
 import { useSelector } from 'react-redux';
 
@@ -31,8 +31,7 @@ export const TemplatesStandaloneDesigner = () => {
       <div style={{ flex: '1 1 1px', display: 'flex', flexDirection: 'column' }}>
         <TemplatesDesignerProvider locale="en-US" theme={theme} options={{}}>
           <TemplatesDataProvider currentTemplate={currentTemplate} theme={theme}>
-            {/* TODO: here should have TemplatesDesigner */}
-            <>{JSON.stringify(currentTemplate)}</>
+            <TemplatesDesigner />
           </TemplatesDataProvider>
         </TemplatesDesignerProvider>
       </div>
