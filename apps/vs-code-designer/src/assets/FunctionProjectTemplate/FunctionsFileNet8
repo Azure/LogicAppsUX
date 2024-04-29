@@ -28,7 +28,7 @@ namespace <%= namespace %>
         /// </summary>
         /// <param name="zipCode">The zip code.</param>
         /// <param name="temperatureScale">The temperature scale (e.g., Celsius or Fahrenheit).</param>
-        [FunctionName("<%= methodName %>")]
+        [Function("<%= methodName %>")]
         public Task<Weather> Run([WorkflowActionTrigger] int zipCode, string temperatureScale)
         {
             this.logger.LogInformation("Starting <%= methodName %> with Zip Code: " + zipCode + " and Scale: " + temperatureScale);
