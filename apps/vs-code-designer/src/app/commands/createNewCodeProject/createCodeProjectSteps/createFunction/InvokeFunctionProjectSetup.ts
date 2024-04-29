@@ -35,7 +35,7 @@ export class InvokeFunctionProjectSetup extends AzureWizardPromptStep<IProjectWi
     // Create the .csproj file inside the functions folder
     await this.createCsprojFile(functionFolderPath, methodName, targetFramework);
 
-    if (context.targetFramework === TargetFramework.Net6) {
+    if (context.targetFramework === TargetFramework.Net6 || context.targetFramework === TargetFramework.Net8) {
       await this.createNugetConfigFile(functionFolderPath);
     }
 
@@ -65,8 +65,12 @@ export class InvokeFunctionProjectSetup extends AzureWizardPromptStep<IProjectWi
     namespace: string,
     targetFramework: TargetFramework
   ): Promise<void> {
-    const templateFile = targetFramework === TargetFramework.Net6 ? 'FunctionsFileNet6' : 'FunctionsFileNetFx';
-    const templatePath = path.join(__dirname, 'assets', 'FunctionProjectTemplate', templateFile);
+    const csFileName = {
+      [TargetFramework.NetFx]: 'FunctionsFileNetFx',
+      [TargetFramework.Net6]: 'FunctionsFileNet6',
+      [TargetFramework.Net8]: 'FunctionsFileNet8',
+    };
+    const templatePath = path.join(__dirname, 'assets', 'FunctionProjectTemplate', csFileName[targetFramework]);
     const templateContent = await fs.readFile(templatePath, 'utf-8');
 
     const csFilePath = path.join(functionFolderPath, `${methodName}.cs`);
@@ -81,8 +85,12 @@ export class InvokeFunctionProjectSetup extends AzureWizardPromptStep<IProjectWi
    * @param methodName The name of the Azure Function.
    */
   private async createCsprojFile(functionFolderPath: string, methodName: string, targetFramework: TargetFramework): Promise<void> {
-    const templateFile = targetFramework === TargetFramework.Net6 ? 'FunctionsProjNet6' : 'FunctionsProjNetFx';
-    const templatePath = path.join(__dirname, 'assets', 'FunctionProjectTemplate', templateFile);
+    const templateFileName = {
+      [TargetFramework.NetFx]: 'FunctionsProjNetFx',
+      [TargetFramework.Net6]: 'FunctionsProjNet6',
+      [TargetFramework.Net8]: 'FunctionsProjNet8',
+    };
+    const templatePath = path.join(__dirname, 'assets', 'FunctionProjectTemplate', templateFileName[targetFramework]);
     const templateContent = await fs.readFile(templatePath, 'utf-8');
 
     const csprojFilePath = path.join(functionFolderPath, `${methodName}.csproj`);
