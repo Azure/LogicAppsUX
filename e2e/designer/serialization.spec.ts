@@ -21,7 +21,7 @@ test.describe(
       expect({ connectionReferences: {}, parameters: {}, definition: mock.default.definition }).toEqual(serialized as any);
     });
 
-    test.skip('Should serialize the workflow after deserializing it and match with a switch statement', async ({ page }) => {
+    test('Should serialize the workflow after deserializing it and match with a switch statement', async ({ page }) => {
       await page.goto('/');
       await GoToMockWorkflow(page, 'Switch');
 
@@ -34,7 +34,7 @@ test.describe(
       expect({ connectionReferences: {}, parameters: {}, definition: mock.default.definition }).toEqual(serialized as any);
     });
 
-    test.skip('Should serialize the workflow after deserializing it and match with some strings and keys containing unicode characters', async ({
+    test('Should serialize the workflow after deserializing it and match with some strings and keys containing unicode characters', async ({
       page,
     }) => {
       await page.goto('/');
