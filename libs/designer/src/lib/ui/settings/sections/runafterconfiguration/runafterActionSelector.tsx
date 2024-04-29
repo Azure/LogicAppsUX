@@ -51,7 +51,9 @@ export const RunAfterActionSelector = ({ readOnly }: { readOnly: boolean }) => {
   const currentNodeId = useSelectedNodeId();
   const currentNodeRunAfter = useSelector((state: RootState) => getRecordEntry(state.workflow.operations, currentNodeId));
   const actions = useSelector((state: RootState) => {
-    if (!currentNodeRunAfter) return [];
+    if (!currentNodeRunAfter) {
+      return [];
+    }
     const subNodes = getSuccessorNodes(state, currentNodeId);
     return (Object.entries(state.workflow.operations) as [string, LogicAppsV2.ActionDefinition][])
       .filter(
@@ -82,7 +84,9 @@ export const RunAfterActionSelector = ({ readOnly }: { readOnly: boolean }) => {
   const dispatch = useDispatch<AppDispatch>();
 
   const searchResults = useMemo(() => {
-    if (!searchText) return [];
+    if (!searchText) {
+      return [];
+    }
     const options = {
       keys: ['id'],
       useExtendedSearch: true,
@@ -105,7 +109,9 @@ export const RunAfterActionSelector = ({ readOnly }: { readOnly: boolean }) => {
         });
       }}
       onCheckedValueChange={(e, data) => {
-        if (data.checkedItems.length === 0) return;
+        if (data.checkedItems.length === 0) {
+          return;
+        }
         const newItems = data.checkedItems.filter((x) => !selectedValues.actions.includes(x));
         const removedItems = selectedValues.actions.filter((x) => !data.checkedItems.includes(x));
         removedItems.forEach((item) => {
@@ -125,14 +131,14 @@ export const RunAfterActionSelector = ({ readOnly }: { readOnly: boolean }) => {
           );
         });
         LoggerService().log({
-          area: `RunAfterActionSelector:onCheckedValueChange`,
+          area: 'RunAfterActionSelector:onCheckedValueChange',
           level: LogEntryLevel.Verbose,
           message: `Run after action selector set to ${data.checkedItems.length} items.`,
         });
       }}
     >
       <MenuTrigger>
-        <MenuButton icon={<AddIcon />} size="large" appearance="subtle">
+        <MenuButton icon={<AddIcon />} size="large" appearance="subtle" style={{ padding: '8px', marginTop: '-8px' }}>
           {RUN_AFTER_CONFIGURATION_SELECT_ACTIONS_TITLE}
         </MenuButton>
       </MenuTrigger>

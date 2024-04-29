@@ -4,7 +4,7 @@ import { labelCase } from '@microsoft/logic-apps-shared';
 import Fuse from 'fuse.js';
 import { useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 
 export interface AssistedConnectionProps {
   resourceType: string;
@@ -60,7 +60,7 @@ export const AzureResourcePicker = (props: AzureResourcePickerProps) => {
   const resources = useMemo(() => ((itemsQuery?.data ?? []) as any[]).sort((a, b) => a.name.localeCompare(b.name)), [itemsQuery.data]);
   const resourceNames = useMemo(() => resources.map((resource) => resource.name), [resources]);
 
-  const gridTemplateColumns = useMemo(() => '2fr '.repeat(headers.length - 1) + '1fr', [headers.length]);
+  const gridTemplateColumns = useMemo(() => `${'2fr '.repeat(headers.length - 1)}1fr`, [headers.length]);
 
   const [searchTerm, setSearchTerm] = useState<string | null>(null);
   const searchText = intl.formatMessage({
@@ -77,7 +77,9 @@ export const AzureResourcePicker = (props: AzureResourcePickerProps) => {
     [resourceNames]
   );
   const searchResourceNames = useMemo(() => {
-    if (!searchTerm) return resourceNames;
+    if (!searchTerm) {
+      return resourceNames;
+    }
     return fuseObject.search(searchTerm).map((result) => result.item.id);
   }, [resourceNames, fuseObject, searchTerm]);
 
@@ -172,7 +174,7 @@ export const ResourceEntry = (props: ResourceEntryProps) => {
 
   const columns = useMemo(() => getColumns(resource), [resource, getColumns]);
 
-  const gridTemplateColumns = useMemo(() => '2fr '.repeat(columns.length - 1) + '1fr', [columns.length]);
+  const gridTemplateColumns = useMemo(() => `${'2fr '.repeat(columns.length - 1)}1fr`, [columns.length]);
 
   return (
     <div className="msla-azure-resource-entry">

@@ -24,23 +24,21 @@ export async function executeCommand(
     if (outputChannel) {
       outputChannel.show();
       throw new Error(localize('commandErrorWithOutput', 'Failed to run "{0}" command. Check output window for more details.', command));
-    } else {
-      throw new Error(
-        localize(
-          'commandError',
-          'Command "{0} {1}" failed with exit code "{2}":{3}{4}',
-          command,
-          result.formattedArgs,
-          result.code,
-          os.EOL,
-          result.cmdOutputIncludingStderr
-        )
-      );
     }
-  } else {
-    if (outputChannel && command != 'echo') {
-      outputChannel.appendLog(localize('finishedRunningCommand', 'Finished running command: "{0} {1}".', command, result.formattedArgs));
-    }
+    throw new Error(
+      localize(
+        'commandError',
+        'Command "{0} {1}" failed with exit code "{2}":{3}{4}',
+        command,
+        result.formattedArgs,
+        result.code,
+        os.EOL,
+        result.cmdOutputIncludingStderr
+      )
+    );
+  }
+  if (outputChannel && command !== 'echo') {
+    outputChannel.appendLog(localize('finishedRunningCommand', 'Finished running command: "{0} {1}".', command, result.formattedArgs));
   }
   return result.cmdOutput;
 }
@@ -63,7 +61,7 @@ export async function tryExecuteCommand(
     };
     const childProc: cp.ChildProcess = cp.spawn(command, args, options);
 
-    if (outputChannel && command != 'echo') {
+    if (outputChannel && command !== 'echo') {
       outputChannel.appendLog(localize('runningCommand', 'Running command: "{0} {1}"...', command, formattedArgs));
     }
 

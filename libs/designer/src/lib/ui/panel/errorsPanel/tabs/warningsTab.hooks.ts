@@ -1,4 +1,4 @@
-import { type RootState } from '../../../../core';
+import type { RootState } from '../../../../core';
 import type { ErrorMessage } from '../../../../core/state/workflow/workflowInterfaces';
 import { MessageLevel } from '@microsoft/designer-ui';
 import { useMemo } from 'react';
@@ -11,7 +11,9 @@ export const useHostCheckerWarnings = () =>
     const warningMessages = state.workflow.hostData.errorMessages[MessageLevel.Warning] || [];
     warningMessages.forEach((message: ErrorMessage) => {
       // Check if a node with matching id at least exists
-      if (!(message.nodeId in state.workflow.nodesMetadata)) return;
+      if (!(message.nodeId in state.workflow.nodesMetadata)) {
+        return;
+      }
 
       const messagesBySubtitle = (warningMessagesToShow[message.nodeId] ||= {});
       (messagesBySubtitle[message.subtitle] ||= []).push(message);

@@ -1,4 +1,3 @@
-/* eslint-disable no-param-reassign */
 import { extensionCommand } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';

@@ -15,12 +15,19 @@ import { useCallback } from 'react';
 import { useIntl } from 'react-intl';
 
 const horizontalPadding = '2rem';
-const verticalPadding = '1rem';
 
 const panelStyles: Partial<IPanelStyles> = {
-  content: { padding: verticalPadding + ' ' + horizontalPadding },
+  content: {
+    padding: '1rem 2rem 0rem',
+    overflow: 'hidden',
+    height: '100%',
+  },
   main: { overflow: 'hidden' },
-  scrollableContent: { height: '100%' },
+  scrollableContent: {
+    height: '100%',
+    display: 'flex',
+    flexDirection: 'column',
+  },
 };
 
 const panelStylesCollapsed: Partial<IPanelStyles> = {
@@ -37,6 +44,7 @@ export type PanelContainerProps = {
   errorMessage?: string;
   isLoading?: boolean;
   panelScope: PanelScope;
+  suppressDefaultNodeSelectFunctionality?: boolean;
   pivotDisabled?: boolean;
   headerMenuItems: JSX.Element[];
   selectedTab?: string;
@@ -68,6 +76,7 @@ export const PanelContainer = ({
   errorMessage,
   isLoading,
   panelScope,
+  suppressDefaultNodeSelectFunctionality,
   headerMenuItems,
   selectedTab,
   selectTab,
@@ -102,6 +111,7 @@ export const PanelContainer = ({
           showCommentBox={showCommentBox}
           noNodeSelected={noNodeSelected}
           panelScope={panelScope}
+          suppressDefaultNodeSelectFunctionality={suppressDefaultNodeSelectFunctionality}
           headerMenuItems={headerMenuItems}
           readOnlyMode={readOnlyMode}
           titleId={headerTextId}
@@ -127,6 +137,7 @@ export const PanelContainer = ({
       showCommentBox,
       noNodeSelected,
       panelScope,
+      suppressDefaultNodeSelectFunctionality,
       headerMenuItems,
       readOnlyMode,
       title,

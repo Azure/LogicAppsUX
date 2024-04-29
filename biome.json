@@ -18,7 +18,14 @@
   "formatter": {
     "enabled": true,
     "formatWithErrors": false,
-    "ignore": ["dist/*", "test-results/*", "tmp/*", "playwright-report/*"]
+    "ignore": [
+      "dist/*",
+      "**/build/**",
+      "**/*.d.ts",
+      "test-results/*",
+      "tmp/*",
+      "playwright-report/*"
+    ]
   },
   "linter": {
     "enabled": true,
@@ -26,26 +33,155 @@
       "recommended": false,
       "performance": {
         "all": true,
-        "noDelete": "off",
-        "noAccumulatingSpread": "off"
+        "noDelete": "off"
       },
       "a11y": {
         "all": false
       },
       "complexity": {
-        "all": false
+        "noEmptyTypeParameters": "error",
+        "noExtraBooleanCast": "error",
+        "noMultipleSpacesInRegularExpressionLiterals": "error",
+        "noThisInStatic": "error",
+        "noUselessCatch": "error",
+        "noUselessConstructor": "error",
+        "noUselessEmptyExport": "error",
+        "noUselessFragments": "error",
+        "noUselessLabel": "error",
+        "noUselessLoneBlockStatements": "error",
+        "noUselessRename": "error",
+        "noUselessThisAlias": "error",
+        "noUselessTypeConstraint": "error",
+        "noVoid": "error",
+        "noWith": "error",
+        "useArrowFunction": "error",
+        "useFlatMap": "error",
+        "useRegexLiterals": "error",
+        "useLiteralKeys": "off",
+        "useOptionalChain": "off",
+        "noUselessSwitchCase": "off"
       },
       "correctness": {
-        "all": false
+        "noConstantCondition": "error",
+        "noConstructorReturn": "error",
+        "noEmptyCharacterClassInRegex": "error",
+        "noEmptyPattern": "error",
+        "noGlobalObjectCalls": "error",
+        "noInnerDeclarations": "error",
+        "noInvalidConstructorSuper": "error",
+        "noInvalidNewBuiltin": "error",
+        "noInvalidUseBeforeDeclaration": "error",
+        "noNewSymbol": "error",
+        "noNonoctalDecimalEscape": "error",
+        "noPrecisionLoss": "error",
+        "noRenderReturnValue": "error",
+        "noSelfAssign": "error",
+        "noSetterReturn": "error",
+        "noStringCaseMismatch": "error",
+        "noSwitchDeclarations": "error",
+        "noUnnecessaryContinue": "error",
+        "noUnreachable": "error",
+        "noUnreachableSuper": "error",
+        "noUnsafeFinally": "error",
+        "noUnsafeOptionalChaining": "error",
+        "noUnusedImports": "error",
+        "noUnusedLabels": "error",
+        "noUnusedPrivateClassMembers": "error",
+        "noChildrenProp": "error",
+        "noVoidElementsWithChildren": "error",
+        "noVoidTypeReturn": "error",
+        "useIsNan": "error",
+        "useValidForDirection": "error",
+        "useYield": "error",
+        "noUnusedVariables": "off"
       },
       "security": {
         "all": true
       },
       "style": {
-        "all": false
+        "useTemplate": "error",
+        "useSingleVarDeclarator": "error",
+        "useSingleCaseStatement": "error",
+        "useShorthandFunctionType": "error",
+        "useWhile": "error",
+        "useSelfClosingElements": "error",
+        "useNumericLiterals": "error",
+        "useNumberNamespace": "error",
+        "useLiteralEnumMembers": "error",
+        "useImportType": "error",
+        "useFragmentSyntax": "error",
+        "useForOf": "error",
+        "useExportType": "error",
+        "useExponentiationOperator": "error",
+        "useEnumInitializers" : "error",
+        "useConst": "error",
+        "useConsistentArrayType": "error",
+        "useCollapsedElseIf": "error",
+        "useBlockStatements": "error",
+        "useAsConstAssertion": "error",
+        "noVar": "error",
+        "noUselessElse": "error",
+        "noUnusedTemplateLiteral": "error",
+        "noShoutyConstants": "error",
+        "noRestrictedGlobals": "error",
+        "noParameterAssign": "off",
+        "noNegationElse": "error",
+        "noNamespace": "error",
+        "noInferrableTypes": "error",
+        "noCommaOperator": "error",
+        "noArguments": "error",
+        "useDefaultParameterLast": "off",
+        "useNamingConvention": "off",
+        "useFilenamingConvention": "off",
+        "useShorthandArrayType": "off"
       },
       "suspicious": {
-        "all": false
+        "noApproximativeNumericConstant": "error",
+        "noAsyncPromiseExecutor": "error",
+        "noCatchAssign": "error",
+        "noClassAssign": "error",
+        "noCommentText": "error",
+        "noCompareNegZero": "error",
+        "noConfusingLabels": "error",
+        "noConfusingVoidType": "error",
+        "noConstEnum": "error",
+        "noControlCharactersInRegex": "error",
+        "noDebugger": "error",
+        "noDoubleEquals": "error",
+        "noDuplicateCase": "error",
+        "noDuplicateClassMembers": "error",
+        "noDuplicateJsxProps": "error",
+        "noDuplicateObjectKeys": "error",
+        "noDuplicateParameters": "error",
+        "noEmptyInterface": "error",
+        "noExtraNonNullAssertion": "error",
+        "noFallthroughSwitchClause": "error",
+        "noFunctionAssign": "error",
+        "noGlobalAssign": "error",
+        "noGlobalIsFinite": "error",
+        "noGlobalIsNan": "error",
+        "noImplicitAnyLet": "error",
+        "noImportAssign": "error",
+        "noLabelVar": "error",
+        "noMisleadingCharacterClass": "error",
+        "noMisleadingInstantiator": "error",
+        "noMisrefactoredShorthandAssign": "error",
+        "noPrototypeBuiltins": "error",
+        "noRedeclare": "error",
+        "noRedundantUseStrict": "error",
+        "noSelfCompare": "error",
+        "noShadowRestrictedNames": "error",
+        "noSparseArray": "error",
+        "noThenProperty": "error",
+        "noUnsafeDeclarationMerging": "error",
+        "noUnsafeNegation": "error",
+        "useDefaultSwitchClauseLast": "error",
+        "useGetterReturn": "error",
+        "useIsArray": "error",
+        "useNamespaceKeyword": "error",
+        "noArrayIndexKey": "off",
+        "noAssignInExpressions": "off",
+        "noConsoleLog": "off"
       }
     },
     "include": [
@@ -54,7 +190,15 @@
       "apps/**/*.ts",
       "apps/**/*.tsx"
     ],
-    "ignore": ["**/__test__/**"]
+    "ignore": [
+      "**/__test__/**",
+      "dist/*",
+      "**/build/**",
+      "**/*.d.ts",
+      "test-results/*",
+      "tmp/*",
+      "playwright-report/*"
+    ]
   },
   "organizeImports": {
     "enabled": false,
@@ -64,6 +208,11 @@
       "apps/**/*.ts",
       "apps/**/*.tsx"
     ],
-    "ignore": ["dist/*", "test-results/*", "tmp/*", "playwright-report/*"]
+    "ignore": [
+      "dist/*",
+      "test-results/*",
+      "tmp/*",
+      "playwright-report/*"
+    ]
   }
 }

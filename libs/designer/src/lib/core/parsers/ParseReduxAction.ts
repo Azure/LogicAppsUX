@@ -79,7 +79,8 @@ export const initializeGraphState = createAsyncThunk<
     asyncInitialize();
 
     return { deserializedWorkflow, originalDefinition: definition };
-  } else if (spec === 'CNCF') {
+  }
+  if (spec === 'CNCF') {
     throw new Error('Spec not implemented.');
   }
   throw new Error('Invalid Workflow Spec');

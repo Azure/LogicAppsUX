@@ -313,7 +313,7 @@ export const PROPERTY_NAMES_FOR_AUTHENTICATION_TYPE: Record<string, AuthProperty
  * @param {ManagedIdentity} identity - The managed identity.
  * @return {boolean} - If the managed identity contains a user assigned identity or not.
  */
-export function containsUserAssignedIdentities(identity: ManagedIdentity | undefined): boolean {
+export const containsUserAssignedIdentities = (identity: ManagedIdentity | undefined): boolean => {
   return (
     !!identity &&
     !!identity.type &&
@@ -322,7 +322,7 @@ export function containsUserAssignedIdentities(identity: ManagedIdentity | undef
     !!identity.userAssignedIdentities &&
     Object.keys(identity.userAssignedIdentities).length > 0
   );
-}
+};
 
 /**
  * Converts AuthEditor Props into ValueSegment Array for the Collpased Authentication Editor.
@@ -330,28 +330,35 @@ export function containsUserAssignedIdentities(identity: ManagedIdentity | undef
  * @param {AuthProps} items - Authority Props.
  * @return {ValueSegment[]} - Collapsed ValueSegment Array.
  */
-export function parseAuthEditor(authType: AuthenticationType, items: AuthProps): ValueSegment[] {
+export const parseAuthEditor = (authType: AuthenticationType, items: AuthProps): ValueSegment[] => {
   const values: CollapsedAuthEditorItems[] = [];
   switch (authType) {
-    case AuthenticationType.BASIC:
+    case AuthenticationType.NONE: {
+      return [];
+    }
+    case AuthenticationType.BASIC: {
       updateValues(values, AUTHENTICATION_PROPERTIES.BASIC_USERNAME, items.basic?.basicUsername);
       updateValues(values, AUTHENTICATION_PROPERTIES.BASIC_PASSWORD, items.basic?.basicPassword);
       break;
-    case AuthenticationType.CERTIFICATE:
+    }
+    case AuthenticationType.CERTIFICATE: {
       updateValues(values, AUTHENTICATION_PROPERTIES.CLIENT_CERTIFICATE_PFX, items.clientCertificate?.clientCertificatePfx);
       updateValues(values, AUTHENTICATION_PROPERTIES.CLIENT_CERTIFICATE_PASSWORD, items.clientCertificate?.clientCertificatePassword);
       break;
-    case AuthenticationType.RAW:
+    }
+    case AuthenticationType.RAW: {
       updateValues(values, AUTHENTICATION_PROPERTIES.RAW_VALUE, items.raw?.rawValue);
       break;
-    case AuthenticationType.MSI:
+    }
+    case AuthenticationType.MSI: {
       if (items.msi?.msiIdentity) {
         updateValues(values, AUTHENTICATION_PROPERTIES.MSI_IDENTITY, [createLiteralValueSegment(items.msi.msiIdentity)]);
       }
 
       updateValues(values, AUTHENTICATION_PROPERTIES.MSI_AUDIENCE, items.msi?.msiAudience);
       break;
-    case AuthenticationType.OAUTH:
+    }
+    case AuthenticationType.OAUTH: {
       updateValues(values, AUTHENTICATION_PROPERTIES.AAD_OAUTH_AUTHORITY, items.aadOAuth?.oauthAuthority);
       updateValues(values, AUTHENTICATION_PROPERTIES.AAD_OAUTH_TENANT, items.aadOAuth?.oauthTenant);
       updateValues(values, AUTHENTICATION_PROPERTIES.AAD_OAUTH_AUDIENCE, items.aadOAuth?.oauthAudience);
@@ -363,6 +370,7 @@ export function parseAuthEditor(authType: AuthenticationType, items: AuthProps):
         updateValues(values, AUTHENTICATION_PROPERTIES.AAD_OAUTH_SECRET, items.aadOAuth?.oauthTypeSecret);
       }
       break;
+    }
   }
   const currentItems: CollapsedAuthEditorItems[] = [
     {
@@ -374,7 +382,7 @@ export function parseAuthEditor(authType: AuthenticationType, items: AuthProps):
   ];
 
   return convertKeyValueItemToSegments(currentItems, constants.SWAGGER.TYPE.STRING, constants.SWAGGER.TYPE.STRING);
-}
+};
 
 const updateValues = (values: CollapsedAuthEditorItems[], property: AuthProperty, val?: ValueSegment[]) => {
   if (property.isRequired || (val && val.length > 0)) {
@@ -400,7 +408,7 @@ export const serializeAuthentication = (
   }
   const returnItems: AuthProps = {};
   switch (jsonEditor.type) {
-    case AuthenticationType.BASIC:
+    case AuthenticationType.BASIC: {
       returnItems.basic = {
         basicUsername: convertStringToSegments(jsonEditor.username, nodeMap, {
           tokensEnabled: true,
@@ -410,7 +418,8 @@ export const serializeAuthentication = (
         }),
       };
       break;
-    case AuthenticationType.CERTIFICATE:
+    }
+    case AuthenticationType.CERTIFICATE: {
       returnItems.clientCertificate = {
         clientCertificatePfx: convertStringToSegments(jsonEditor.pfx, nodeMap, {
           tokensEnabled: true,
@@ -418,14 +427,16 @@ export const serializeAuthentication = (
         clientCertificatePassword: convertStringToSegments(jsonEditor.password, nodeMap, { tokensEnabled: true }),
       };
       break;
-    case AuthenticationType.RAW:
+    }
+    case AuthenticationType.RAW: {
       returnItems.raw = {
         rawValue: convertStringToSegments(jsonEditor.value, nodeMap, {
           tokensEnabled: true,
         }),
       };
       break;
-    case AuthenticationType.MSI:
+    }
+    case AuthenticationType.MSI: {
       returnItems.msi = {
         msiIdentity: jsonEditor.identity,
         msiAudience: convertStringToSegments(jsonEditor.audience, nodeMap, {
@@ -433,7 +444,8 @@ export const serializeAuthentication = (
         }),
       };
       break;
-    case AuthenticationType.OAUTH:
+    }
+    case AuthenticationType.OAUTH: {
       returnItems.aadOAuth = {
         oauthTenant: convertStringToSegments(jsonEditor.tenant, nodeMap, {
           tokensEnabled: true,
@@ -460,6 +472,7 @@ export const serializeAuthentication = (
         });
       }
       break;
+    }
     default:
       return false;
   }
@@ -471,9 +484,8 @@ export const serializeAuthentication = (
 export function containsToken(value: string): boolean {
   if (value.indexOf('@{') !== -1 && value.indexOf('}') !== -1) {
     return true;
-  } else {
-    return false;
   }
+  return false;
 }
 
 export const validateAuthenticationString = (s: string): string => {
@@ -486,32 +498,30 @@ export const validateAuthenticationString = (s: string): string => {
       id: 'kuFK3E',
       description: 'Invalid authentication without type property',
     });
-  } else {
-    const authType = parsedSerializedValue.type;
-    if (!Object.values(AuthenticationType).find((val) => authType === val)) {
-      if (containsToken(authType)) {
-        return intl.formatMessage({
-          defaultMessage: `Missing authentication type property: 'type'.`,
-          id: 'kuFK3E',
-          description: 'Invalid authentication without type property',
-        });
-      }
-      return intl.formatMessage(
-        {
-          defaultMessage: `Unsupported authentication type ''{authType}''.`,
-          id: '7zsUT3',
-          description: 'Invalid authentication type',
-        },
-        { authType }
-      );
-    } else {
-      const errorMessage =
-        checkForMissingOrInvalidProperties(parsedSerializedValue, authType) ||
-        checkForUnknownProperties(parsedSerializedValue, authType) ||
-        checkForInvalidValues(parsedSerializedValue);
-      return errorMessage;
-    }
   }
+  const authType = parsedSerializedValue.type;
+  if (!Object.values(AuthenticationType).find((val) => authType === val)) {
+    if (containsToken(authType)) {
+      return intl.formatMessage({
+        defaultMessage: `Missing authentication type property: 'type'.`,
+        id: 'kuFK3E',
+        description: 'Invalid authentication without type property',
+      });
+    }
+    return intl.formatMessage(
+      {
+        defaultMessage: `Unsupported authentication type ''{authType}''.`,
+        id: '7zsUT3',
+        description: 'Invalid authentication type',
+      },
+      { authType }
+    );
+  }
+  const errorMessage =
+    checkForMissingOrInvalidProperties(parsedSerializedValue, authType) ||
+    checkForUnknownProperties(parsedSerializedValue, authType) ||
+    checkForInvalidValues(parsedSerializedValue);
+  return errorMessage;
 };
 
 /**
@@ -520,7 +530,7 @@ export const validateAuthenticationString = (s: string): string => {
  * @arg {AuthenticationType} authType -  The authentication type.
  * @return {string} - The error message for missing a required property.
  */
-function checkForMissingOrInvalidProperties(authentication: any, authType: AuthenticationType): string {
+const checkForMissingOrInvalidProperties = (authentication: any, authType: AuthenticationType): string => {
   const intl = getIntl();
   let missingProperties: string[] = [];
   for (const key of PROPERTY_NAMES_FOR_AUTHENTICATION_TYPE[authType]) {
@@ -577,10 +587,9 @@ function checkForMissingOrInvalidProperties(authentication: any, authType: Authe
           );
 
     return errorMessage;
-  } else {
-    return '';
   }
-}
+  return '';
+};
 
 /**
  * Checks if any required property is missing.
@@ -588,7 +597,7 @@ function checkForMissingOrInvalidProperties(authentication: any, authType: Authe
  * @arg {AuthenticationType} authType -  The authentication type.
  * @return {string} - The error message for having an unknown property.
  */
-function checkForUnknownProperties(authentication: any, authType: AuthenticationType): string {
+const checkForUnknownProperties = (authentication: any, authType: AuthenticationType): string => {
   const intl = getIntl();
   const validKeyNames = PROPERTY_NAMES_FOR_AUTHENTICATION_TYPE[authType].map((key) => key.name);
   const authenticationKeys = Object.keys(authentication);
@@ -627,17 +636,16 @@ function checkForUnknownProperties(authentication: any, authType: Authentication
           );
 
     return errorMessage;
-  } else {
-    return '';
   }
-}
+  return '';
+};
 
 /**
  * Checks if value contains a property with invalid value.
  * @arg {any} authentication -  The parsed authentication value.
  * @return {string} - The error message for having a property with invalid values.
  */
-function checkForInvalidValues(authentication: any): string {
+const checkForInvalidValues = (authentication: any): string => {
   const intl = getIntl();
   const validProperties = PROPERTY_NAMES_FOR_AUTHENTICATION_TYPE[authentication.type];
   const errorMessages: string[] = [];
@@ -665,4 +673,4 @@ function checkForInvalidValues(authentication: any): string {
     }
   }
   return errorMessages.length > 0 ? errorMessages.join(' ') : '';
-}
+};

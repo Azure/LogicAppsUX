@@ -52,7 +52,7 @@ export function FontDropDown({ editor, value, fontDropdownType, disabled = false
   return (
     <DropDown
       disabled={disabled}
-      buttonClassName={'toolbar-item ' + fontDropdownType}
+      buttonClassName={`toolbar-item ${fontDropdownType}`}
       buttonLabel={value}
       buttonAriaLabel={buttonAriaLabel}
       editor={editor}

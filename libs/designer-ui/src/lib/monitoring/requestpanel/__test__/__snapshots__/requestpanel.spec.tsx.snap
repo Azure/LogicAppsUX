@@ -258,8 +258,8 @@ exports[`lib/monitoring/requestpanel > should render 1`] = `
                 className="prism-code language-json"
                 style={
                   {
-                    "backgroundColor": "#ffffff",
-                    "color": "#000000",
+                    "backgroundColor": "#1E1E1E",
+                    "color": "#9CDCFE",
                   }
                 }
               >
@@ -267,25 +267,15 @@ exports[`lib/monitoring/requestpanel > should render 1`] = `
                   className="token-line"
                   style={
                     {
-                      "backgroundColor": null,
-                      "color": "#000000",
+                      "backgroundColor": undefined,
+                      "color": "#9CDCFE",
                     }
                   }
                 >
                   <span
-                    className="token number"
-                    style={
-                      {
-                        "color": "rgb(9, 134, 88)",
-                      }
-                    }
-                  >
-                    1
-                  </span>
-                  <span
                     className="token plain"
                   >
-                     minute
+                    1 minute
                   </span>
                 </div>
               </pre>
@@ -378,8 +368,8 @@ exports[`lib/monitoring/requestpanel > should render 1`] = `
                 className="prism-code language-json"
                 style={
                   {
-                    "backgroundColor": "#ffffff",
-                    "color": "#000000",
+                    "backgroundColor": "#1E1E1E",
+                    "color": "#9CDCFE",
                   }
                 }
               >
@@ -387,120 +377,15 @@ exports[`lib/monitoring/requestpanel > should render 1`] = `
                   className="token-line"
                   style={
                     {
-                      "backgroundColor": null,
-                      "color": "#000000",
+                      "backgroundColor": undefined,
+                      "color": "#9CDCFE",
                     }
                   }
                 >
                   <span
-                    className="token number"
-                    style={
-                      {
-                        "color": "rgb(9, 134, 88)",
-                      }
-                    }
-                  >
-                    2
-                  </span>
-                  <span
                     className="token plain"
                   >
-                    /
-                  </span>
-                  <span
-                    className="token number"
-                    style={
-                      {
-                        "color": "rgb(9, 134, 88)",
-                      }
-                    }
-                  >
-                    9
-                  </span>
-                  <span
-                    className="token plain"
-                  >
-                    /
-                  </span>
-                  <span
-                    className="token number"
-                    style={
-                      {
-                        "color": "rgb(9, 134, 88)",
-                      }
-                    }
-                  >
-                    2022
-                  </span>
-                  <span
-                    className="token punctuation"
-                    style={
-                      {
-                        "color": "rgb(4, 81, 165)",
-                      }
-                    }
-                  >
-                    ,
-                  </span>
-                  <span
-                    className="token plain"
-                  >
-                     
-                  </span>
-                  <span
-                    className="token number"
-                    style={
-                      {
-                        "color": "rgb(9, 134, 88)",
-                      }
-                    }
-                  >
-                    1
-                  </span>
-                  <span
-                    className="token operator"
-                    style={
-                      {
-                        "color": "rgb(0, 0, 0)",
-                      }
-                    }
-                  >
-                    :
-                  </span>
-                  <span
-                    className="token number"
-                    style={
-                      {
-                        "color": "rgb(9, 134, 88)",
-                      }
-                    }
-                  >
-                    52
-                  </span>
-                  <span
-                    className="token operator"
-                    style={
-                      {
-                        "color": "rgb(0, 0, 0)",
-                      }
-                    }
-                  >
-                    :
-                  </span>
-                  <span
-                    className="token number"
-                    style={
-                      {
-                        "color": "rgb(9, 134, 88)",
-                      }
-                    }
-                  >
-                    00
-                  </span>
-                  <span
-                    className="token plain"
-                  >
-                     PM
+                    2/9/2022, 1:52:00 PM
                   </span>
                 </div>
               </pre>
@@ -593,8 +478,8 @@ exports[`lib/monitoring/requestpanel > should render 1`] = `
                 className="prism-code language-json"
                 style={
                   {
-                    "backgroundColor": "#ffffff",
-                    "color": "#000000",
+                    "backgroundColor": "#1E1E1E",
+                    "color": "#9CDCFE",
                   }
                 }
               >
@@ -602,120 +487,15 @@ exports[`lib/monitoring/requestpanel > should render 1`] = `
                   className="token-line"
                   style={
                     {
-                      "backgroundColor": null,
-                      "color": "#000000",
+                      "backgroundColor": undefined,
+                      "color": "#9CDCFE",
                     }
                   }
                 >
                   <span
-                    className="token number"
-                    style={
-                      {
-                        "color": "rgb(9, 134, 88)",
-                      }
-                    }
-                  >
-                    2
-                  </span>
-                  <span
                     className="token plain"
                   >
-                    /
-                  </span>
-                  <span
-                    className="token number"
-                    style={
-                      {
-                        "color": "rgb(9, 134, 88)",
-                      }
-                    }
-                  >
-                    9
-                  </span>
-                  <span
-                    className="token plain"
-                  >
-                    /
-                  </span>
-                  <span
-                    className="token number"
-                    style={
-                      {
-                        "color": "rgb(9, 134, 88)",
-                      }
-                    }
-                  >
-                    2022
-                  </span>
-                  <span
-                    className="token punctuation"
-                    style={
-                      {
-                        "color": "rgb(4, 81, 165)",
-                      }
-                    }
-                  >
-                    ,
-                  </span>
-                  <span
-                    className="token plain"
-                  >
-                     
-                  </span>
-                  <span
-                    className="token number"
-                    style={
-                      {
-                        "color": "rgb(9, 134, 88)",
-                      }
-                    }
-                  >
-                    1
-                  </span>
-                  <span
-                    className="token operator"
-                    style={
-                      {
-                        "color": "rgb(0, 0, 0)",
-                      }
-                    }
-                  >
-                    :
-                  </span>
-                  <span
-                    className="token number"
-                    style={
-                      {
-                        "color": "rgb(9, 134, 88)",
-                      }
-                    }
-                  >
-                    53
-                  </span>
-                  <span
-                    className="token operator"
-                    style={
-                      {
-                        "color": "rgb(0, 0, 0)",
-                      }
-                    }
-                  >
-                    :
-                  </span>
-                  <span
-                    className="token number"
-                    style={
-                      {
-                        "color": "rgb(9, 134, 88)",
-                      }
-                    }
-                  >
-                    00
-                  </span>
-                  <span
-                    className="token plain"
-                  >
-                     PM
+                    2/9/2022, 1:53:00 PM
                   </span>
                 </div>
               </pre>
@@ -986,8 +766,8 @@ exports[`lib/monitoring/requestpanel > should render with a request 1`] = `
                 className="prism-code language-json"
                 style={
                   {
-                    "backgroundColor": "#ffffff",
-                    "color": "#000000",
+                    "backgroundColor": "#1E1E1E",
+                    "color": "#9CDCFE",
                   }
                 }
               >
@@ -995,25 +775,15 @@ exports[`lib/monitoring/requestpanel > should render with a request 1`] = `
                   className="token-line"
                   style={
                     {
-                      "backgroundColor": null,
-                      "color": "#000000",
+                      "backgroundColor": undefined,
+                      "color": "#9CDCFE",
                     }
                   }
                 >
                   <span
-                    className="token number"
-                    style={
-                      {
-                        "color": "rgb(9, 134, 88)",
-                      }
-                    }
-                  >
-                    1
-                  </span>
-                  <span
                     className="token plain"
                   >
-                     minute
+                    1 minute
                   </span>
                 </div>
               </pre>
@@ -1106,8 +876,8 @@ exports[`lib/monitoring/requestpanel > should render with a request 1`] = `
                 className="prism-code language-json"
                 style={
                   {
-                    "backgroundColor": "#ffffff",
-                    "color": "#000000",
+                    "backgroundColor": "#1E1E1E",
+                    "color": "#9CDCFE",
                   }
                 }
               >
@@ -1115,120 +885,15 @@ exports[`lib/monitoring/requestpanel > should render with a request 1`] = `
                   className="token-line"
                   style={
                     {
-                      "backgroundColor": null,
-                      "color": "#000000",
+                      "backgroundColor": undefined,
+                      "color": "#9CDCFE",
                     }
                   }
                 >
                   <span
-                    className="token number"
-                    style={
-                      {
-                        "color": "rgb(9, 134, 88)",
-                      }
-                    }
-                  >
-                    2
-                  </span>
-                  <span
                     className="token plain"
                   >
-                    /
-                  </span>
-                  <span
-                    className="token number"
-                    style={
-                      {
-                        "color": "rgb(9, 134, 88)",
-                      }
-                    }
-                  >
-                    9
-                  </span>
-                  <span
-                    className="token plain"
-                  >
-                    /
-                  </span>
-                  <span
-                    className="token number"
-                    style={
-                      {
-                        "color": "rgb(9, 134, 88)",
-                      }
-                    }
-                  >
-                    2022
-                  </span>
-                  <span
-                    className="token punctuation"
-                    style={
-                      {
-                        "color": "rgb(4, 81, 165)",
-                      }
-                    }
-                  >
-                    ,
-                  </span>
-                  <span
-                    className="token plain"
-                  >
-                     
-                  </span>
-                  <span
-                    className="token number"
-                    style={
-                      {
-                        "color": "rgb(9, 134, 88)",
-                      }
-                    }
-                  >
-                    1
-                  </span>
-                  <span
-                    className="token operator"
-                    style={
-                      {
-                        "color": "rgb(0, 0, 0)",
-                      }
-                    }
-                  >
-                    :
-                  </span>
-                  <span
-                    className="token number"
-                    style={
-                      {
-                        "color": "rgb(9, 134, 88)",
-                      }
-                    }
-                  >
-                    52
-                  </span>
-                  <span
-                    className="token operator"
-                    style={
-                      {
-                        "color": "rgb(0, 0, 0)",
-                      }
-                    }
-                  >
-                    :
-                  </span>
-                  <span
-                    className="token number"
-                    style={
-                      {
-                        "color": "rgb(9, 134, 88)",
-                      }
-                    }
-                  >
-                    00
-                  </span>
-                  <span
-                    className="token plain"
-                  >
-                     PM
+                    2/9/2022, 1:52:00 PM
                   </span>
                 </div>
               </pre>
@@ -1321,8 +986,8 @@ exports[`lib/monitoring/requestpanel > should render with a request 1`] = `
                 className="prism-code language-json"
                 style={
                   {
-                    "backgroundColor": "#ffffff",
-                    "color": "#000000",
+                    "backgroundColor": "#1E1E1E",
+                    "color": "#9CDCFE",
                   }
                 }
               >
@@ -1330,120 +995,15 @@ exports[`lib/monitoring/requestpanel > should render with a request 1`] = `
                   className="token-line"
                   style={
                     {
-                      "backgroundColor": null,
-                      "color": "#000000",
+                      "backgroundColor": undefined,
+                      "color": "#9CDCFE",
                     }
                   }
                 >
                   <span
-                    className="token number"
-                    style={
-                      {
-                        "color": "rgb(9, 134, 88)",
-                      }
-                    }
-                  >
-                    2
-                  </span>
-                  <span
                     className="token plain"
                   >
-                    /
-                  </span>
-                  <span
-                    className="token number"
-                    style={
-                      {
-                        "color": "rgb(9, 134, 88)",
-                      }
-                    }
-                  >
-                    9
-                  </span>
-                  <span
-                    className="token plain"
-                  >
-                    /
-                  </span>
-                  <span
-                    className="token number"
-                    style={
-                      {
-                        "color": "rgb(9, 134, 88)",
-                      }
-                    }
-                  >
-                    2022
-                  </span>
-                  <span
-                    className="token punctuation"
-                    style={
-                      {
-                        "color": "rgb(4, 81, 165)",
-                      }
-                    }
-                  >
-                    ,
-                  </span>
-                  <span
-                    className="token plain"
-                  >
-                     
-                  </span>
-                  <span
-                    className="token number"
-                    style={
-                      {
-                        "color": "rgb(9, 134, 88)",
-                      }
-                    }
-                  >
-                    1
-                  </span>
-                  <span
-                    className="token operator"
-                    style={
-                      {
-                        "color": "rgb(0, 0, 0)",
-                      }
-                    }
-                  >
-                    :
-                  </span>
-                  <span
-                    className="token number"
-                    style={
-                      {
-                        "color": "rgb(9, 134, 88)",
-                      }
-                    }
-                  >
-                    53
-                  </span>
-                  <span
-                    className="token operator"
-                    style={
-                      {
-                        "color": "rgb(0, 0, 0)",
-                      }
-                    }
-                  >
-                    :
-                  </span>
-                  <span
-                    className="token number"
-                    style={
-                      {
-                        "color": "rgb(9, 134, 88)",
-                      }
-                    }
-                  >
-                    00
-                  </span>
-                  <span
-                    className="token plain"
-                  >
-                     PM
+                    2/9/2022, 1:53:00 PM
                   </span>
                 </div>
               </pre>
@@ -1553,8 +1113,8 @@ exports[`lib/monitoring/requestpanel > should render with a request 1`] = `
                 className="prism-code language-json"
                 style={
                   {
-                    "backgroundColor": "#ffffff",
-                    "color": "#000000",
+                    "backgroundColor": "#1E1E1E",
+                    "color": "#9CDCFE",
                   }
                 }
               >
@@ -1562,8 +1122,8 @@ exports[`lib/monitoring/requestpanel > should render with a request 1`] = `
                   className="token-line"
                   style={
                     {
-                      "backgroundColor": null,
-                      "color": "#000000",
+                      "backgroundColor": undefined,
+                      "color": "#9CDCFE",
                     }
                   }
                 >
@@ -1663,8 +1223,8 @@ exports[`lib/monitoring/requestpanel > should render with a request 1`] = `
                 className="prism-code language-json"
                 style={
                   {
-                    "backgroundColor": "#ffffff",
-                    "color": "#000000",
+                    "backgroundColor": "#1E1E1E",
+                    "color": "#9CDCFE",
                   }
                 }
               >
@@ -1672,35 +1232,15 @@ exports[`lib/monitoring/requestpanel > should render with a request 1`] = `
                   className="token-line"
                   style={
                     {
-                      "backgroundColor": null,
-                      "color": "#000000",
+                      "backgroundColor": undefined,
+                      "color": "#9CDCFE",
                     }
                   }
                 >
                   <span
                     className="token plain"
                   >
-                    https
-                  </span>
-                  <span
-                    className="token operator"
-                    style={
-                      {
-                        "color": "rgb(0, 0, 0)",
-                      }
-                    }
-                  >
-                    :
-                  </span>
-                  <span
-                    className="token comment"
-                    style={
-                      {
-                        "color": "rgb(0, 128, 0)",
-                      }
-                    }
-                  >
-                    //httpbin.org/get
+                    https://httpbin.org/get
                   </span>
                 </div>
               </pre>
@@ -2151,8 +1691,8 @@ exports[`lib/monitoring/requestpanel > should render with a response 1`] = `
                 className="prism-code language-json"
                 style={
                   {
-                    "backgroundColor": "#ffffff",
-                    "color": "#000000",
+                    "backgroundColor": "#1E1E1E",
+                    "color": "#9CDCFE",
                   }
                 }
               >
@@ -2160,25 +1700,15 @@ exports[`lib/monitoring/requestpanel > should render with a response 1`] = `
                   className="token-line"
                   style={
                     {
-                      "backgroundColor": null,
-                      "color": "#000000",
+                      "backgroundColor": undefined,
+                      "color": "#9CDCFE",
                     }
                   }
                 >
                   <span
-                    className="token number"
-                    style={
-                      {
-                        "color": "rgb(9, 134, 88)",
-                      }
-                    }
-                  >
-                    1
-                  </span>
-                  <span
                     className="token plain"
                   >
-                     minute
+                    1 minute
                   </span>
                 </div>
               </pre>
@@ -2271,8 +1801,8 @@ exports[`lib/monitoring/requestpanel > should render with a response 1`] = `
                 className="prism-code language-json"
                 style={
                   {
-                    "backgroundColor": "#ffffff",
-                    "color": "#000000",
+                    "backgroundColor": "#1E1E1E",
+                    "color": "#9CDCFE",
                   }
                 }
               >
@@ -2280,120 +1810,15 @@ exports[`lib/monitoring/requestpanel > should render with a response 1`] = `
                   className="token-line"
                   style={
                     {
-                      "backgroundColor": null,
-                      "color": "#000000",
+                      "backgroundColor": undefined,
+                      "color": "#9CDCFE",
                     }
                   }
                 >
                   <span
-                    className="token number"
-                    style={
-                      {
-                        "color": "rgb(9, 134, 88)",
-                      }
-                    }
-                  >
-                    2
-                  </span>
-                  <span
                     className="token plain"
                   >
-                    /
-                  </span>
-                  <span
-                    className="token number"
-                    style={
-                      {
-                        "color": "rgb(9, 134, 88)",
-                      }
-                    }
-                  >
-                    9
-                  </span>
-                  <span
-                    className="token plain"
-                  >
-                    /
-                  </span>
-                  <span
-                    className="token number"
-                    style={
-                      {
-                        "color": "rgb(9, 134, 88)",
-                      }
-                    }
-                  >
-                    2022
-                  </span>
-                  <span
-                    className="token punctuation"
-                    style={
-                      {
-                        "color": "rgb(4, 81, 165)",
-                      }
-                    }
-                  >
-                    ,
-                  </span>
-                  <span
-                    className="token plain"
-                  >
-                     
-                  </span>
-                  <span
-                    className="token number"
-                    style={
-                      {
-                        "color": "rgb(9, 134, 88)",
-                      }
-                    }
-                  >
-                    1
-                  </span>
-                  <span
-                    className="token operator"
-                    style={
-                      {
-                        "color": "rgb(0, 0, 0)",
-                      }
-                    }
-                  >
-                    :
-                  </span>
-                  <span
-                    className="token number"
-                    style={
-                      {
-                        "color": "rgb(9, 134, 88)",
-                      }
-                    }
-                  >
-                    52
-                  </span>
-                  <span
-                    className="token operator"
-                    style={
-                      {
-                        "color": "rgb(0, 0, 0)",
-                      }
-                    }
-                  >
-                    :
-                  </span>
-                  <span
-                    className="token number"
-                    style={
-                      {
-                        "color": "rgb(9, 134, 88)",
-                      }
-                    }
-                  >
-                    00
-                  </span>
-                  <span
-                    className="token plain"
-                  >
-                     PM
+                    2/9/2022, 1:52:00 PM
                   </span>
                 </div>
               </pre>
@@ -2486,8 +1911,8 @@ exports[`lib/monitoring/requestpanel > should render with a response 1`] = `
                 className="prism-code language-json"
                 style={
                   {
-                    "backgroundColor": "#ffffff",
-                    "color": "#000000",
+                    "backgroundColor": "#1E1E1E",
+                    "color": "#9CDCFE",
                   }
                 }
               >
@@ -2495,120 +1920,15 @@ exports[`lib/monitoring/requestpanel > should render with a response 1`] = `
                   className="token-line"
                   style={
                     {
-                      "backgroundColor": null,
-                      "color": "#000000",
+                      "backgroundColor": undefined,
+                      "color": "#9CDCFE",
                     }
                   }
                 >
                   <span
-                    className="token number"
-                    style={
-                      {
-                        "color": "rgb(9, 134, 88)",
-                      }
-                    }
-                  >
-                    2
-                  </span>
-                  <span
                     className="token plain"
                   >
-                    /
-                  </span>
-                  <span
-                    className="token number"
-                    style={
-                      {
-                        "color": "rgb(9, 134, 88)",
-                      }
-                    }
-                  >
-                    9
-                  </span>
-                  <span
-                    className="token plain"
-                  >
-                    /
-                  </span>
-                  <span
-                    className="token number"
-                    style={
-                      {
-                        "color": "rgb(9, 134, 88)",
-                      }
-                    }
-                  >
-                    2022
-                  </span>
-                  <span
-                    className="token punctuation"
-                    style={
-                      {
-                        "color": "rgb(4, 81, 165)",
-                      }
-                    }
-                  >
-                    ,
-                  </span>
-                  <span
-                    className="token plain"
-                  >
-                     
-                  </span>
-                  <span
-                    className="token number"
-                    style={
-                      {
-                        "color": "rgb(9, 134, 88)",
-                      }
-                    }
-                  >
-                    1
-                  </span>
-                  <span
-                    className="token operator"
-                    style={
-                      {
-                        "color": "rgb(0, 0, 0)",
-                      }
-                    }
-                  >
-                    :
-                  </span>
-                  <span
-                    className="token number"
-                    style={
-                      {
-                        "color": "rgb(9, 134, 88)",
-                      }
-                    }
-                  >
-                    53
-                  </span>
-                  <span
-                    className="token operator"
-                    style={
-                      {
-                        "color": "rgb(0, 0, 0)",
-                      }
-                    }
-                  >
-                    :
-                  </span>
-                  <span
-                    className="token number"
-                    style={
-                      {
-                        "color": "rgb(9, 134, 88)",
-                      }
-                    }
-                  >
-                    00
-                  </span>
-                  <span
-                    className="token plain"
-                  >
-                     PM
+                    2/9/2022, 1:53:00 PM
                   </span>
                 </div>
               </pre>
@@ -2718,8 +2038,8 @@ exports[`lib/monitoring/requestpanel > should render with a response 1`] = `
                 className="prism-code language-json"
                 style={
                   {
-                    "backgroundColor": "#ffffff",
-                    "color": "#000000",
+                    "backgroundColor": "#1E1E1E",
+                    "color": "#9CDCFE",
                   }
                 }
               >
@@ -2727,18 +2047,13 @@ exports[`lib/monitoring/requestpanel > should render with a response 1`] = `
                   className="token-line"
                   style={
                     {
-                      "backgroundColor": null,
-                      "color": "#000000",
+                      "backgroundColor": undefined,
+                      "color": "#9CDCFE",
                     }
                   }
                 >
                   <span
-                    className="token number"
-                    style={
-                      {
-                        "color": "rgb(9, 134, 88)",
-                      }
-                    }
+                    className="token plain"
                   >
                     200
                   </span>
@@ -3013,8 +2328,8 @@ exports[`lib/monitoring/requestpanel > should render with a response 1`] = `
                 className="prism-code language-json"
                 style={
                   {
-                    "backgroundColor": "#ffffff",
-                    "color": "#000000",
+                    "backgroundColor": "#1E1E1E",
+                    "color": "#9CDCFE",
                   }
                 }
               >
@@ -3022,30 +2337,15 @@ exports[`lib/monitoring/requestpanel > should render with a response 1`] = `
                   className="token-line"
                   style={
                     {
-                      "backgroundColor": null,
-                      "color": "#000000",
+                      "backgroundColor": undefined,
+                      "color": "#9CDCFE",
                     }
                   }
                 >
                   <span
-                    className="token punctuation"
-                    style={
-                      {
-                        "color": "rgb(4, 81, 165)",
-                      }
-                    }
+                    className="token plain"
                   >
-                    {
-                  </span>
-                  <span
-                    className="token punctuation"
-                    style={
-                      {
-                        "color": "rgb(4, 81, 165)",
-                      }
-                    }
-                  >
-                    }
+                    {}
                   </span>
                 </div>
               </pre>
@@ -3316,8 +2616,8 @@ exports[`lib/monitoring/requestpanel > should render with a secured request 1`] 
                 className="prism-code language-json"
                 style={
                   {
-                    "backgroundColor": "#ffffff",
-                    "color": "#000000",
+                    "backgroundColor": "#1E1E1E",
+                    "color": "#9CDCFE",
                   }
                 }
               >
@@ -3325,25 +2625,15 @@ exports[`lib/monitoring/requestpanel > should render with a secured request 1`] 
                   className="token-line"
                   style={
                     {
-                      "backgroundColor": null,
-                      "color": "#000000",
+                      "backgroundColor": undefined,
+                      "color": "#9CDCFE",
                     }
                   }
                 >
                   <span
-                    className="token number"
-                    style={
-                      {
-                        "color": "rgb(9, 134, 88)",
-                      }
-                    }
-                  >
-                    1
-                  </span>
-                  <span
                     className="token plain"
                   >
-                     minute
+                    1 minute
                   </span>
                 </div>
               </pre>
@@ -3436,8 +2726,8 @@ exports[`lib/monitoring/requestpanel > should render with a secured request 1`] 
                 className="prism-code language-json"
                 style={
                   {
-                    "backgroundColor": "#ffffff",
-                    "color": "#000000",
+                    "backgroundColor": "#1E1E1E",
+                    "color": "#9CDCFE",
                   }
                 }
               >
@@ -3445,120 +2735,15 @@ exports[`lib/monitoring/requestpanel > should render with a secured request 1`] 
                   className="token-line"
                   style={
                     {
-                      "backgroundColor": null,
-                      "color": "#000000",
+                      "backgroundColor": undefined,
+                      "color": "#9CDCFE",
                     }
                   }
                 >
                   <span
-                    className="token number"
-                    style={
-                      {
-                        "color": "rgb(9, 134, 88)",
-                      }
-                    }
-                  >
-                    2
-                  </span>
-                  <span
                     className="token plain"
                   >
-                    /
-                  </span>
-                  <span
-                    className="token number"
-                    style={
-                      {
-                        "color": "rgb(9, 134, 88)",
-                      }
-                    }
-                  >
-                    9
-                  </span>
-                  <span
-                    className="token plain"
-                  >
-                    /
-                  </span>
-                  <span
-                    className="token number"
-                    style={
-                      {
-                        "color": "rgb(9, 134, 88)",
-                      }
-                    }
-                  >
-                    2022
-                  </span>
-                  <span
-                    className="token punctuation"
-                    style={
-                      {
-                        "color": "rgb(4, 81, 165)",
-                      }
-                    }
-                  >
-                    ,
-                  </span>
-                  <span
-                    className="token plain"
-                  >
-                     
-                  </span>
-                  <span
-                    className="token number"
-                    style={
-                      {
-                        "color": "rgb(9, 134, 88)",
-                      }
-                    }
-                  >
-                    1
-                  </span>
-                  <span
-                    className="token operator"
-                    style={
-                      {
-                        "color": "rgb(0, 0, 0)",
-                      }
-                    }
-                  >
-                    :
-                  </span>
-                  <span
-                    className="token number"
-                    style={
-                      {
-                        "color": "rgb(9, 134, 88)",
-                      }
-                    }
-                  >
-                    52
-                  </span>
-                  <span
-                    className="token operator"
-                    style={
-                      {
-                        "color": "rgb(0, 0, 0)",
-                      }
-                    }
-                  >
-                    :
-                  </span>
-                  <span
-                    className="token number"
-                    style={
-                      {
-                        "color": "rgb(9, 134, 88)",
-                      }
-                    }
-                  >
-                    00
-                  </span>
-                  <span
-                    className="token plain"
-                  >
-                     PM
+                    2/9/2022, 1:52:00 PM
                   </span>
                 </div>
               </pre>
@@ -3651,8 +2836,8 @@ exports[`lib/monitoring/requestpanel > should render with a secured request 1`] 
                 className="prism-code language-json"
                 style={
                   {
-                    "backgroundColor": "#ffffff",
-                    "color": "#000000",
+                    "backgroundColor": "#1E1E1E",
+                    "color": "#9CDCFE",
                   }
                 }
               >
@@ -3660,120 +2845,15 @@ exports[`lib/monitoring/requestpanel > should render with a secured request 1`] 
                   className="token-line"
                   style={
                     {
-                      "backgroundColor": null,
-                      "color": "#000000",
+                      "backgroundColor": undefined,
+                      "color": "#9CDCFE",
                     }
                   }
                 >
                   <span
-                    className="token number"
-                    style={
-                      {
-                        "color": "rgb(9, 134, 88)",
-                      }
-                    }
-                  >
-                    2
-                  </span>
-                  <span
                     className="token plain"
                   >
-                    /
-                  </span>
-                  <span
-                    className="token number"
-                    style={
-                      {
-                        "color": "rgb(9, 134, 88)",
-                      }
-                    }
-                  >
-                    9
-                  </span>
-                  <span
-                    className="token plain"
-                  >
-                    /
-                  </span>
-                  <span
-                    className="token number"
-                    style={
-                      {
-                        "color": "rgb(9, 134, 88)",
-                      }
-                    }
-                  >
-                    2022
-                  </span>
-                  <span
-                    className="token punctuation"
-                    style={
-                      {
-                        "color": "rgb(4, 81, 165)",
-                      }
-                    }
-                  >
-                    ,
-                  </span>
-                  <span
-                    className="token plain"
-                  >
-                     
-                  </span>
-                  <span
-                    className="token number"
-                    style={
-                      {
-                        "color": "rgb(9, 134, 88)",
-                      }
-                    }
-                  >
-                    1
-                  </span>
-                  <span
-                    className="token operator"
-                    style={
-                      {
-                        "color": "rgb(0, 0, 0)",
-                      }
-                    }
-                  >
-                    :
-                  </span>
-                  <span
-                    className="token number"
-                    style={
-                      {
-                        "color": "rgb(9, 134, 88)",
-                      }
-                    }
-                  >
-                    53
-                  </span>
-                  <span
-                    className="token operator"
-                    style={
-                      {
-                        "color": "rgb(0, 0, 0)",
-                      }
-                    }
-                  >
-                    :
-                  </span>
-                  <span
-                    className="token number"
-                    style={
-                      {
-                        "color": "rgb(9, 134, 88)",
-                      }
-                    }
-                  >
-                    00
-                  </span>
-                  <span
-                    className="token plain"
-                  >
-                     PM
+                    2/9/2022, 1:53:00 PM
                   </span>
                 </div>
               </pre>
@@ -4075,8 +3155,8 @@ exports[`lib/monitoring/requestpanel > should render with a secured response 1`]
                 className="prism-code language-json"
                 style={
                   {
-                    "backgroundColor": "#ffffff",
-                    "color": "#000000",
+                    "backgroundColor": "#1E1E1E",
+                    "color": "#9CDCFE",
                   }
                 }
               >
@@ -4084,25 +3164,15 @@ exports[`lib/monitoring/requestpanel > should render with a secured response 1`]
                   className="token-line"
                   style={
                     {
-                      "backgroundColor": null,
-                      "color": "#000000",
+                      "backgroundColor": undefined,
+                      "color": "#9CDCFE",
                     }
                   }
                 >
                   <span
-                    className="token number"
-                    style={
-                      {
-                        "color": "rgb(9, 134, 88)",
-                      }
-                    }
-                  >
-                    1
-                  </span>
-                  <span
                     className="token plain"
                   >
-                     minute
+                    1 minute
                   </span>
                 </div>
               </pre>
@@ -4195,8 +3265,8 @@ exports[`lib/monitoring/requestpanel > should render with a secured response 1`]
                 className="prism-code language-json"
                 style={
                   {
-                    "backgroundColor": "#ffffff",
-                    "color": "#000000",
+                    "backgroundColor": "#1E1E1E",
+                    "color": "#9CDCFE",
                   }
                 }
               >
@@ -4204,120 +3274,15 @@ exports[`lib/monitoring/requestpanel > should render with a secured response 1`]
                   className="token-line"
                   style={
                     {
-                      "backgroundColor": null,
-                      "color": "#000000",
+                      "backgroundColor": undefined,
+                      "color": "#9CDCFE",
                     }
                   }
                 >
                   <span
-                    className="token number"
-                    style={
-                      {
-                        "color": "rgb(9, 134, 88)",
-                      }
-                    }
-                  >
-                    2
-                  </span>
-                  <span
                     className="token plain"
                   >
-                    /
-                  </span>
-                  <span
-                    className="token number"
-                    style={
-                      {
-                        "color": "rgb(9, 134, 88)",
-                      }
-                    }
-                  >
-                    9
-                  </span>
-                  <span
-                    className="token plain"
-                  >
-                    /
-                  </span>
-                  <span
-                    className="token number"
-                    style={
-                      {
-                        "color": "rgb(9, 134, 88)",
-                      }
-                    }
-                  >
-                    2022
-                  </span>
-                  <span
-                    className="token punctuation"
-                    style={
-                      {
-                        "color": "rgb(4, 81, 165)",
-                      }
-                    }
-                  >
-                    ,
-                  </span>
-                  <span
-                    className="token plain"
-                  >
-                     
-                  </span>
-                  <span
-                    className="token number"
-                    style={
-                      {
-                        "color": "rgb(9, 134, 88)",
-                      }
-                    }
-                  >
-                    1
-                  </span>
-                  <span
-                    className="token operator"
-                    style={
-                      {
-                        "color": "rgb(0, 0, 0)",
-                      }
-                    }
-                  >
-                    :
-                  </span>
-                  <span
-                    className="token number"
-                    style={
-                      {
-                        "color": "rgb(9, 134, 88)",
-                      }
-                    }
-                  >
-                    52
-                  </span>
-                  <span
-                    className="token operator"
-                    style={
-                      {
-                        "color": "rgb(0, 0, 0)",
-                      }
-                    }
-                  >
-                    :
-                  </span>
-                  <span
-                    className="token number"
-                    style={
-                      {
-                        "color": "rgb(9, 134, 88)",
-                      }
-                    }
-                  >
-                    00
-                  </span>
-                  <span
-                    className="token plain"
-                  >
-                     PM
+                    2/9/2022, 1:52:00 PM
                   </span>
                 </div>
               </pre>
@@ -4410,8 +3375,8 @@ exports[`lib/monitoring/requestpanel > should render with a secured response 1`]
                 className="prism-code language-json"
                 style={
                   {
-                    "backgroundColor": "#ffffff",
-                    "color": "#000000",
+                    "backgroundColor": "#1E1E1E",
+                    "color": "#9CDCFE",
                   }
                 }
               >
@@ -4419,120 +3384,15 @@ exports[`lib/monitoring/requestpanel > should render with a secured response 1`]
                   className="token-line"
                   style={
                     {
-                      "backgroundColor": null,
-                      "color": "#000000",
+                      "backgroundColor": undefined,
+                      "color": "#9CDCFE",
                     }
                   }
                 >
                   <span
-                    className="token number"
-                    style={
-                      {
-                        "color": "rgb(9, 134, 88)",
-                      }
-                    }
-                  >
-                    2
-                  </span>
-                  <span
                     className="token plain"
                   >
-                    /
-                  </span>
-                  <span
-                    className="token number"
-                    style={
-                      {
-                        "color": "rgb(9, 134, 88)",
-                      }
-                    }
-                  >
-                    9
-                  </span>
-                  <span
-                    className="token plain"
-                  >
-                    /
-                  </span>
-                  <span
-                    className="token number"
-                    style={
-                      {
-                        "color": "rgb(9, 134, 88)",
-                      }
-                    }
-                  >
-                    2022
-                  </span>
-                  <span
-                    className="token punctuation"
-                    style={
-                      {
-                        "color": "rgb(4, 81, 165)",
-                      }
-                    }
-                  >
-                    ,
-                  </span>
-                  <span
-                    className="token plain"
-                  >
-                     
-                  </span>
-                  <span
-                    className="token number"
-                    style={
-                      {
-                        "color": "rgb(9, 134, 88)",
-                      }
-                    }
-                  >
-                    1
-                  </span>
-                  <span
-                    className="token operator"
-                    style={
-                      {
-                        "color": "rgb(0, 0, 0)",
-                      }
-                    }
-                  >
-                    :
-                  </span>
-                  <span
-                    className="token number"
-                    style={
-                      {
-                        "color": "rgb(9, 134, 88)",
-                      }
-                    }
-                  >
-                    53
-                  </span>
-                  <span
-                    className="token operator"
-                    style={
-                      {
-                        "color": "rgb(0, 0, 0)",
-                      }
-                    }
-                  >
-                    :
-                  </span>
-                  <span
-                    className="token number"
-                    style={
-                      {
-                        "color": "rgb(9, 134, 88)",
-                      }
-                    }
-                  >
-                    00
-                  </span>
-                  <span
-                    className="token plain"
-                  >
-                     PM
+                    2/9/2022, 1:53:00 PM
                   </span>
                 </div>
               </pre>

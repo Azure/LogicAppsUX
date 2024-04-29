@@ -6,7 +6,7 @@
  * order, until it finds one where predicate returns true. If such an element is found,
  * findLastIndex immediately returns that element. Otherwise, findLastIndex returns undefined.
  */
-export function findLast<T>(array: Array<T>, predicate: (value: T, index: number, obj: T[]) => boolean): T | undefined {
+export function findLast<T>(array: T[], predicate: (value: T, index: number, obj: T[]) => boolean): T | undefined {
   let l = array.length;
   while (l--) {
     if (predicate(array[l], l, array)) {

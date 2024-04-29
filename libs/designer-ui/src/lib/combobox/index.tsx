@@ -212,17 +212,15 @@ export const Combobox = ({
       setValue([createLiteralValueSegment(option.key === 'customValue' ? '' : option.key.toString())]);
       setMode(Mode.Custom);
       setCanAutoFocus(true);
-    } else {
-      if (setSelectedKey && option) {
-        const currSelectedKey = option.key.toString();
-        setSelectedKey(currSelectedKey);
-        setMode(Mode.Default);
-        const selectedValue = getSelectedValue(options, currSelectedKey);
-        const value = typeof selectedValue === 'object' ? JSON.stringify(selectedValue) : selectedValue.toString();
-        onChange?.({
-          value: [createLiteralValueSegment(currSelectedKey ? value : '')],
-        });
-      }
+    } else if (setSelectedKey && option) {
+      const currSelectedKey = option.key.toString();
+      setSelectedKey(currSelectedKey);
+      setMode(Mode.Default);
+      const selectedValue = getSelectedValue(options, currSelectedKey);
+      const value = typeof selectedValue === 'object' ? JSON.stringify(selectedValue) : selectedValue.toString();
+      onChange?.({
+        value: [createLiteralValueSegment(currSelectedKey ? value : '')],
+      });
     }
   };
 
@@ -231,22 +229,18 @@ export const Combobox = ({
       setValue([createLiteralValueSegment(option.key === 'customValue' ? '' : option.key.toString())]);
       setMode(Mode.Custom);
       setCanAutoFocus(true);
-    } else {
-      if (option && selectedKeys) {
-        const newKeys = option.selected
-          ? [...selectedKeys, option.key as string]
-          : selectedKeys.filter((key: string) => key !== option.key);
-        setSelectedKeys(newKeys);
-        setMode(Mode.Default);
-        const selectedValues = newKeys.map((key) => getSelectedValue(options, key));
-        onChange?.({
-          value: [
-            createLiteralValueSegment(
-              serialization?.valueType === 'array' ? JSON.stringify(selectedValues) : selectedValues.join(serialization?.separator)
-            ),
-          ],
-        });
-      }
+    } else if (option && selectedKeys) {
+      const newKeys = option.selected ? [...selectedKeys, option.key as string] : selectedKeys.filter((key: string) => key !== option.key);
+      setSelectedKeys(newKeys);
+      setMode(Mode.Default);
+      const selectedValues = newKeys.map((key) => getSelectedValue(options, key));
+      onChange?.({
+        value: [
+          createLiteralValueSegment(
+            serialization?.valueType === 'array' ? JSON.stringify(selectedValues) : selectedValues.join(serialization?.separator)
+          ),
+        ],
+      });
     }
   };
 
@@ -338,28 +332,40 @@ const getOptions = (options: ComboboxItem[]): IComboBoxOption[] => {
     description: 'Label for button to allow user to create custom value in combobox',
   });
 
+  const noOptionsExists = intl.formatMessage({
+    defaultMessage: 'No Items',
+    id: 'AiceEQ',
+    description: 'Label for when no items exist for combobox options',
+  });
+
   return [
-    ...options.map((option: ComboboxItem) => {
-      const { key, displayName, disabled, type } = option;
-      switch (key) {
-        case 'divider':
-          return { key: key, text: displayName, itemType: SelectableOptionMenuItemType.Divider, disabled: disabled, data: type };
-        case 'header':
-          return { key: key, text: displayName, itemType: SelectableOptionMenuItemType.Header, data: type, disabed: disabled };
-        default:
-          return { key: key, text: displayName, disabled: disabled, data: type };
-      }
-    }),
+    ...(options.length > 0
+      ? options.map((option: ComboboxItem) => {
+          const { key, displayName, disabled, type } = option;
+          switch (key) {
+            case 'divider':
+              return { key: key, text: displayName, itemType: SelectableOptionMenuItemType.Divider, disabled: disabled, data: type };
+            case 'header':
+              return { key: key, text: displayName, itemType: SelectableOptionMenuItemType.Header, data: type, disabed: disabled };
+            default:
+              return { key: key, text: displayName, disabled: disabled, data: type };
+          }
+        })
+      : [{ key: 'noOptions', text: noOptionsExists, itemType: SelectableOptionMenuItemType.Header, disabled: true }]),
     { key: 'customValue', text: customValueLabel, styles: customValueStyles, data: 'customrender' },
   ];
 };
 
 const getMode = (selectedKey: string, selectedKeys: string[], initialValue: ValueSegment[], isLoading?: boolean): Mode => {
-  if (isLoading) return Mode.Default;
+  if (isLoading) {
+    return Mode.Default;
+  }
   if (selectedKeys.length > 0) {
     for (const key of selectedKeys) {
       const hasValue = initialValue.length > 0 && initialValue[0].value;
-      if (hasValue && !key) return Mode.Custom;
+      if (hasValue && !key) {
+        return Mode.Custom;
+      }
     }
     return Mode.Default;
   }
@@ -368,7 +374,9 @@ const getMode = (selectedKey: string, selectedKeys: string[], initialValue: Valu
 };
 
 const getSelectedKey = (options: ComboboxItem[], initialValue?: ValueSegment[], isLoading?: boolean): string => {
-  if (isLoading) return '';
+  if (isLoading) {
+    return '';
+  }
   if (initialValue?.length === 1 && initialValue[0].type === ValueSegmentType.LITERAL) {
     return (
       options.find((option) => {

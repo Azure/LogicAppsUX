@@ -58,7 +58,7 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element => {
       width,
       layerProps,
       panelLocation: customLocation ?? panelLocation ?? PanelLocation.Right,
-      isResizeable: isResizeable,
+      isResizeable,
     };
   }, [customPanelLocations, collapsed, dismissPanel, width, panelLocation, isResizeable, currentPanelMode]);
 
@@ -77,7 +77,7 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element => {
     </div>
   );
 
-  return (!isLoadingPanel && isUndefined(currentPanelMode)) || currentPanelMode === 'Operation' ? (
+  return !isLoadingPanel && (isUndefined(currentPanelMode) || currentPanelMode === 'Operation') ? (
     <NodeDetailsPanel {...commonPanelProps} />
   ) : (
     <Panel

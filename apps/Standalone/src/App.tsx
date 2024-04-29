@@ -1,7 +1,7 @@
 import { Routes, Route } from 'react-router-dom';
 import { Provider } from 'react-redux';
-import { DesignerWrapper } from './desginer/app/DesignerShell/designer';
-import { store as designerStore } from './desginer/state/store';
+import { DesignerWrapper } from './designer/app/DesignerShell/designer';
+import { store as designerStore } from './designer/state/store';
 import { store as dataMapperStore } from './dataMapperV1/state/Store';
 import { DataMapperStandaloneDesignerV1 } from './dataMapperV1/app/DataMapperStandaloneDesignerV1';
 import { DataMapperStandaloneDesignerV2 } from './dataMapperV1/app/DataMapperStandaloneDesignerV2';
@@ -11,8 +11,8 @@ export const App = () => {
     <Routes>
       <Route index element={<DesignerStandalone />} />
       <Route path="/" element={<DesignerStandalone />} />
-      <Route path="datamapperv1" element={<DataMapperV1 />} />
-      <Route path="datamapperv2" element={<DataMapperV2 />} />
+      <Route path="/datamapperv1" element={<DataMapperV1 />} />
+      <Route path="/datamapperv2" element={<DataMapperV2 />} />
       {/* Using path="*"" means "match anything", so this route
                 acts like a catch-all for URLs that we don't have explicit
                 routes for. */}

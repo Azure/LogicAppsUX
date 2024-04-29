@@ -15,6 +15,7 @@ export const ExtensionCommand = {
   export_package: 'export-package',
   log_telemtry: 'log-telemetry',
   getFunctionDisplayExpanded: 'getFunctionDisplayExpanded',
+  getDataMapperVersion: 'getDataMapperVersion',
   add_status: 'add-status',
   saveDataMapDefinition: 'saveDataMapDefinition',
   saveDataMapMetadata: 'saveDataMapMetadata',
@@ -39,6 +40,7 @@ export const ExtensionCommand = {
   completeOauthLogin: 'CompleteOauthLogin',
   webviewLoaded: 'webviewLoaded',
   webviewRscLoadError: 'webviewRscLoadError',
+  openRelativeLink: 'openRelativeLink',
 } as const;
 export type ExtensionCommand = (typeof ExtensionCommand)[keyof typeof ExtensionCommand];
 

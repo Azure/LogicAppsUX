@@ -1,21 +1,23 @@
 import type { ConnectionMapping, ConnectionReference, ConnectionReferences } from '../../../common/models/workflow';
-import { getConnection } from '../../queries/connections';
+import { useConnectionResource } from '../../queries/connections';
 import type { RootState } from '../../store';
 import { getConnectionReference, isConnectionMultiAuthManagedIdentityType } from '../../utils/connectors/connections';
 import { useNodeConnectorId } from '../operation/operationSelector';
 import { useOperationManifest, useOperationInfo } from '../selectors/actionMetadataSelector';
 import {
+  type Gateway,
   ConnectionService,
   GatewayService,
   OperationManifestService,
   isServiceProviderOperation,
   getRecordEntry,
   type Connector,
-  Gateway
 } from '@microsoft/logic-apps-shared';
 import { useMemo } from 'react';
-import { UseQueryResult, useQuery } from 'react-query';
+import type { UseQueryResult } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { useSelector } from 'react-redux';
+import type { ConnectionsStoreState } from './connectionSlice';
 
 export const useConnector = (connectorId: string | undefined, enabled = true): UseQueryResult<Connector | undefined, unknown> => {
   const { data, ...rest }: any = useConnectorAndSwagger(connectorId, enabled);
@@ -26,7 +28,9 @@ export const useConnectorAndSwagger = (connectorId: string | undefined, enabled 
   return useQuery(
     ['apiWithSwaggers', { connectorId }],
     async () => {
-      if (!connectorId) return;
+      if (!connectorId) {
+        return null;
+      }
       return await ConnectionService().getConnectorAndSwagger(connectorId);
     },
     {
@@ -49,7 +53,7 @@ export const useGateways = (subscriptionId: string, connectorName: string): UseQ
   );
 };
 
-export const useSubscriptions = () => useQuery('subscriptions', async () => GatewayService().getSubscriptions());
+export const useSubscriptions = () => useQuery(['subscriptions'], async () => GatewayService().getSubscriptions());
 
 export const useGatewayServiceConfig = () => useMemo(() => GatewayService().getConfig?.() ?? {}, []);
 
@@ -78,26 +82,6 @@ export const useNodeConnectionId = (nodeId: string): string => {
   }, [connectionsMapping, connectionReferences, nodeId]);
 };
 
-const useConnectionByNodeId = (nodeId: string) => {
-  const operationInfo = useOperationInfo(nodeId);
-  const connectionId = useNodeConnectionId(nodeId);
-  return useQuery(
-    ['connection', { connectorId: operationInfo?.connectorId }, { connectionId }],
-    () => {
-      if (!connectionId || !operationInfo?.connectorId) return;
-      return getConnection(connectionId, operationInfo.connectorId);
-    },
-    {
-      enabled: !!connectionId && !!operationInfo?.connectorId,
-      placeholderData: undefined,
-      cacheTime: 1000 * 60 * 60 * 24,
-      refetchOnMount: false,
-      refetchOnWindowFocus: false,
-      refetchOnReconnect: false,
-    }
-  );
-};
-
 export const useConnectionMapping = (): ConnectionMapping => {
   return useSelector((state: RootState) => {
     return state.connections.connectionsMapping;
@@ -117,19 +101,34 @@ export const useConnectionRefsByConnectorId = (connectorId?: string) => {
 
 export const useIsOperationMissingConnection = (nodeId: string) => {
   const connectionsMapping = useSelector((state: RootState) => state.connections.connectionsMapping);
-  return Object.keys(connectionsMapping).includes(nodeId) && getRecordEntry(connectionsMapping, nodeId) === null;
+  return Object.keys(connectionsMapping ?? {}).includes(nodeId) && getRecordEntry(connectionsMapping, nodeId) === null;
 };
 
 export const useShowIdentitySelectorQuery = (nodeId: string) => {
   const connector = useConnectorByNodeId(nodeId);
-  const connectionQuery = useConnectionByNodeId(nodeId);
+  const connectionId = useNodeConnectionId(nodeId);
+  const { data: connection, isLoading } = useConnectionResource(connectionId);
   const operationInfo = useOperationInfo(nodeId);
   const connectionReference = useSelector((state: RootState) => getConnectionReference(state.connections, nodeId));
 
   return useMemo(() => {
-    if (connectionReference && !connectionQuery.isLoading && !isServiceProviderOperation(operationInfo?.type)) {
-      return isConnectionMultiAuthManagedIdentityType(connectionQuery.data, connector);
+    if (!connectionId || !connector?.id) {
+      return { isLoading: false, result: false };
     }
-    return false;
-  }, [connectionQuery, connectionReference, connector, operationInfo?.type]);
+
+    if (connectionReference && !isServiceProviderOperation(operationInfo?.type)) {
+      return { isLoading, result: isLoading ? undefined : isConnectionMultiAuthManagedIdentityType(connection, connector) };
+    }
+
+    return { isLoading: false, result: false };
+  }, [connectionId, connector, connectionReference, operationInfo?.type, isLoading, connection]);
+};
+
+export const getConnectionReferenceForNodeId = (
+  connectionState: ConnectionsStoreState,
+  nodeId: string
+): { connectionReference: ConnectionReference; referenceKey: string } | undefined => {
+  const { connectionReferences, connectionsMapping } = connectionState;
+  const referenceKey = connectionsMapping[nodeId];
+  return referenceKey ? { connectionReference: connectionReferences[referenceKey], referenceKey } : undefined;
 };

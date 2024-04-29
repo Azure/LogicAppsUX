@@ -13,7 +13,6 @@ import {
   ConnectorService,
   Types,
   getPropertyValue,
-  equals,
   getJSONValue,
   getObjectPropertyValue,
   isNullOrUndefined,
@@ -44,7 +43,8 @@ export const getLegacyDynamicValues = async (
   const values = getObjectPropertyValue(response, extension['value-collection'] ? extension['value-collection'].split('/') : []);
   if (values && values.length) {
     return values.map((property: any) => {
-      let value: any, displayName: any;
+      let value: any;
+      let displayName: any;
       let isSelectable = true;
 
       if (parameterArrayType && parameterArrayType !== Types.Object) {

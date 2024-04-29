@@ -52,7 +52,7 @@ export const PanelContent = ({ nodeId, tabs = [], selectedTab, selectTab }: Pane
   });
 
   return (
-    <div id={`msla-node-details-panel-${nodeId}`}>
+    <div id={`msla-node-details-panel-${nodeId}`} className="msla-node-details-panel">
       <Overflow aria-label={overflowLabel}>
         <TabList selectedValue={selectedTabId} onTabSelect={onTabSelected} style={{ margin: '0px -12px' }}>
           {tabs.map(({ id, visible, hasErrors, title }) =>
@@ -84,7 +84,9 @@ const OverflowMenu = (props: OverflowMenuProps) => {
 
   const onItemClick = (tabId: string) => onTabSelect?.(tabId);
 
-  if (!isOverflowing) return null;
+  if (!isOverflowing) {
+    return null;
+  }
 
   return (
     <Menu>

@@ -124,7 +124,8 @@ export class StandardConnectionService extends BaseConnectionService implements 
     const { apiHubServiceDetails, readConnections } = _options;
     if (!readConnections) {
       throw new ArgumentException('readConnections required');
-    } else if (!apiHubServiceDetails) {
+    }
+    if (!apiHubServiceDetails) {
       throw new ArgumentException('apiHubServiceDetails required for workflow app');
     }
 
@@ -134,12 +135,14 @@ export class StandardConnectionService extends BaseConnectionService implements 
   async getConnector(connectorId: string): Promise<Connector> {
     if (!isArmResourceId(connectorId)) {
       const { apiVersion, baseUrl, httpClient } = this._options;
-      return httpClient.get<Connector>({
+      const response = await httpClient.get<Connector>({
         uri: `${baseUrl}/operationGroups/${connectorId.split('/').at(-1)}?api-version=${apiVersion}`,
       });
-    } else {
-      return this._getAzureConnector(connectorId);
+
+      return response;
     }
+
+    return this._getAzureConnector(connectorId);
   }
 
   override async getConnections(connectorId?: string): Promise<Connection[]> {
@@ -405,14 +408,13 @@ export class StandardConnectionService extends BaseConnectionService implements 
         equals(managedIdentity.type, ResourceIdentityType.SYSTEM_ASSIGNED_USER_ASSIGNED))
     ) {
       return { principalId: managedIdentity.principalId as string, tenantId: managedIdentity.tenantId as string };
-    } else {
-      const identityKeys = Object.keys(managedIdentity.userAssignedIdentities ?? {});
-      const selectedIdentity = identityKeys.find((identityKey) => equals(identityKey, identityIdForConnection)) ?? identityKeys[0];
-      return {
-        principalId: managedIdentity.userAssignedIdentities?.[selectedIdentity].principalId as string,
-        tenantId,
-      };
     }
+    const identityKeys = Object.keys(managedIdentity.userAssignedIdentities ?? {});
+    const selectedIdentity = identityKeys.find((identityKey) => equals(identityKey, identityIdForConnection)) ?? identityKeys[0];
+    return {
+      principalId: managedIdentity.userAssignedIdentities?.[selectedIdentity].principalId as string,
+      tenantId,
+    };
   }
 
   async createAndAuthorizeOAuthConnection(
@@ -439,7 +441,8 @@ export class StandardConnectionService extends BaseConnectionService implements 
       const loginResponse = await oAuthPopupInstance.loginPromise;
       if (loginResponse.error) {
         throw new Error(atob(loginResponse.error));
-      } else if (loginResponse.code) {
+      }
+      if (loginResponse.code) {
         await oAuthService.confirmConsentCodeForConnection(connectionId, loginResponse.code);
       }
 
@@ -472,11 +475,11 @@ export class StandardConnectionService extends BaseConnectionService implements 
     connection: Connection;
   }> {
     const connectionType = parametersMetadata?.connectionMetadata?.type;
-    let connectionsData;
-    let connection;
+    let connectionsData: ConnectionAndAppSetting<FunctionsConnectionModel | APIManagementConnectionModel | ServiceProviderConnectionModel>;
+    let connection: Connection;
     switch (connectionType) {
       case ConnectionType.Function: {
-        connectionsData = convertToFunctionsConnectionsData(connectionName, connectionInfo);
+        connectionsData = convertToFunctionsConnectionsData(connectionName, connectionInfo, parametersMetadata);
         connection = convertFunctionsConnectionDataToConnection(
           connectionsData.connectionKey,
           connectionsData.connectionData as FunctionsConnectionModel
@@ -605,85 +608,63 @@ function convertToServiceProviderConnectionsData(
   connectionInfo: ConnectionCreationInfo,
   connectionParameterMetadata: ConnectionParametersMetadata
 ): { connectionAndSettings: ConnectionAndAppSetting<ServiceProviderConnectionModel>; rawConnection: ServiceProviderConnectionModel } {
-  const {
-    displayName,
-    connectionParameters: connectionParameterValues,
-    connectionParametersSet: connectionParametersSetValues,
-    additionalParameterValues,
-  } = connectionInfo;
-  const connectionParameters = connectionParametersSetValues
-    ? connectionParameterMetadata.connectionParameterSet?.parameters
-    : (connectionParameterMetadata.connectionParameters as Record<string, ConnectionParameter>);
-  const parameterValues = connectionParametersSetValues
-    ? Object.keys(connectionParametersSetValues.values).reduce(
-        (result: Record<string, any>, currentKey: string) => ({
-          ...result,
-          [currentKey]: connectionParametersSetValues.values[currentKey].value,
-        }),
-        {}
-      )
-    : (connectionParameterValues as Record<string, any>);
+  const { additionalParameterValues, connectionParametersSet: connectionParametersSetValues } = connectionInfo;
+  const { parameterValues, rawParameterValues, settings, displayName } = createLocalConnectionsData(
+    connectionKey,
+    connectionInfo,
+    connectionParameterMetadata
+  );
 
   const connectionsData: ConnectionAndAppSetting<ServiceProviderConnectionModel> = {
     connectionKey,
     connectionData: {
-      parameterValues: {},
+      parameterValues,
       ...optional('parameterSetName', connectionParametersSetValues?.name),
       serviceProvider: { id: connectorId },
       displayName,
       ...optional('additionalParameterValues', additionalParameterValues),
     },
-    settings: connectionInfo.appSettings ?? {},
+    settings,
     pathLocation: [serviceProviderLocation],
   };
   const rawConnection = createCopy(connectionsData.connectionData);
-
-  for (const parameterKey of Object.keys(parameterValues)) {
-    const connectionParameter = connectionParameters?.[parameterKey] as ConnectionParameter;
-    let parameterValue = parameterValues[parameterKey];
-    const rawValue = parameterValue;
-    if (connectionParameter?.parameterSource === ConnectionParameterSource.AppConfiguration) {
-      const appSettingName = `${escapeSpecialChars(connectionKey)}_${escapeSpecialChars(parameterKey)}`;
-      connectionsData.settings[appSettingName] = parameterValues[parameterKey];
-
-      parameterValue = `@appsetting('${appSettingName}')`;
-    }
-
-    safeSetObjectPropertyValue(
-      connectionsData.connectionData.parameterValues,
-      [...(connectionParameter?.uiDefinition?.constraints?.propertyPath ?? []), parameterKey],
-      parameterValue
-    );
-    safeSetObjectPropertyValue(
-      rawConnection.parameterValues,
-      [...(connectionParameter?.uiDefinition?.constraints?.propertyPath ?? []), parameterKey],
-      rawValue
-    );
-  }
+  rawConnection.parameterValues = rawParameterValues;
 
   return { connectionAndSettings: connectionsData, rawConnection };
 }
 
 function convertToFunctionsConnectionsData(
   connectionKey: string,
-  connectionInfo: ConnectionCreationInfo
+  connectionInfo: ConnectionCreationInfo,
+  connectionParameterMetadata: ConnectionParametersMetadata
 ): ConnectionAndAppSetting<FunctionsConnectionModel> {
-  const { displayName, connectionParameters } = connectionInfo;
-  const authentication = connectionParameters?.['authentication'];
-  const functionAppKey = authentication.value;
-  const appSettingName = `${escapeSpecialChars(connectionKey)}_functionAppKey`;
+  // TODO - This if block should be removed once backend new bits are deployed everywhere.
+  if (!connectionParameterMetadata.connectionParameterSet) {
+    const { displayName, connectionParameters } = connectionInfo;
+    const authentication = connectionParameters?.['authentication'];
+    const functionAppKey = authentication.value;
+    const appSettingName = `${escapeSpecialChars(connectionKey)}_functionAppKey`;
 
-  authentication.value = `@appsetting('${appSettingName}')`;
+    authentication.value = `@appsetting('${appSettingName}')`;
 
+    return {
+      connectionKey,
+      connectionData: {
+        function: connectionParameters?.['function'],
+        triggerUrl: connectionParameters?.['triggerUrl'],
+        authentication,
+        displayName,
+      },
+      settings: { [appSettingName]: functionAppKey },
+      pathLocation: [functionsLocation],
+    };
+  }
+
+  const { parameterValues, settings, displayName } = createLocalConnectionsData(connectionKey, connectionInfo, connectionParameterMetadata);
   return {
     connectionKey,
-    connectionData: {
-      function: connectionParameters?.['function'],
-      triggerUrl: connectionParameters?.['triggerUrl'],
-      authentication,
-      displayName,
-    },
-    settings: { [appSettingName]: functionAppKey },
+    connectionData: { ...(parameterValues as FunctionsConnectionModel), displayName },
+    settings,
     pathLocation: [functionsLocation],
   };
 }
@@ -708,6 +689,67 @@ function convertToApimConnectionsData(
     settings: { [appSettingName]: subscriptionKey },
     pathLocation: [apimLocation],
   };
+}
+
+function createLocalConnectionsData(
+  connectionKey: string,
+  connectionInfo: ConnectionCreationInfo,
+  connectionParameterMetadata: ConnectionParametersMetadata
+): {
+  parameterValues: Record<string, any>;
+  rawParameterValues: Record<string, any>;
+  settings: Record<string, string>;
+  displayName: string | undefined;
+} {
+  const {
+    displayName,
+    connectionParameters: connectionParameterValues,
+    connectionParametersSet: connectionParametersSetValues,
+  } = connectionInfo;
+  const connectionParameters = connectionParametersSetValues
+    ? connectionParameterMetadata.connectionParameterSet?.parameters
+    : (connectionParameterMetadata.connectionParameters as Record<string, ConnectionParameter>);
+  const parameterValues = connectionParametersSetValues
+    ? Object.keys(connectionParametersSetValues?.values ?? {}).reduce((result: Record<string, any>, currentKey: string) => {
+        result[currentKey] = connectionParametersSetValues.values[currentKey].value;
+        return result;
+      }, {})
+    : (connectionParameterValues as Record<string, any>);
+
+  const result = {
+    parameterValues: {},
+    displayName,
+    settings: connectionInfo.appSettings ?? {},
+    rawParameterValues: {},
+  };
+
+  for (const parameterKey of Object.keys(parameterValues)) {
+    const connectionParameter = connectionParameters?.[parameterKey] as ConnectionParameter;
+    let parameterValue = parameterValues[parameterKey];
+
+    if (parameterValue !== undefined) {
+      const rawValue = parameterValue;
+      if (connectionParameter?.parameterSource === ConnectionParameterSource.AppConfiguration) {
+        const appSettingName = `${escapeSpecialChars(connectionKey)}_${escapeSpecialChars(parameterKey)}`;
+        result.settings[appSettingName] = parameterValues[parameterKey];
+
+        parameterValue = `@appsetting('${appSettingName}')`;
+      }
+
+      safeSetObjectPropertyValue(
+        result.parameterValues,
+        [...(connectionParameter?.uiDefinition?.constraints?.propertyPath ?? []), parameterKey],
+        parameterValue
+      );
+      safeSetObjectPropertyValue(
+        result.rawParameterValues,
+        [...(connectionParameter?.uiDefinition?.constraints?.propertyPath ?? []), parameterKey],
+        rawValue
+      );
+    }
+  }
+
+  return result;
 }
 
 function escapeSpecialChars(value: string): string {

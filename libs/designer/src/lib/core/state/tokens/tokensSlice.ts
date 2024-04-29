@@ -57,22 +57,28 @@ export const tokensSlice = createSlice({
     updateVariableInfo: (state, action: PayloadAction<{ id: string; name?: string; type?: string }>) => {
       const { id, name, type } = action.payload;
       const variables = getRecordEntry(state.variables, id);
-      if (!variables) return;
-      if (name)
+      if (!variables) {
+        return;
+      }
+      if (name) {
         state.variables[id] = variables.map((variable) => ({
           ...variable,
           name,
         }));
-      if (type)
+      }
+      if (type) {
         state.variables[id] = variables.map((variable) => ({
           ...variable,
           type,
         }));
+      }
     },
     updateTokens: (state, action: PayloadAction<{ id: string; tokens: Token[] }>) => {
       const { id, tokens } = action.payload;
       const outputTokens = getRecordEntry(state.outputTokens, id);
-      if (outputTokens) outputTokens.tokens = tokens;
+      if (outputTokens) {
+        outputTokens.tokens = tokens;
+      }
     },
     updateTokenSecureStatus: (state, action: PayloadAction<{ id: string; isSecure: boolean }>) => {
       const { id, isSecure } = action.payload;
@@ -87,7 +93,9 @@ export const tokensSlice = createSlice({
     addDynamicTokens: (state, action: PayloadAction<AddDynamicTokensPayload>) => {
       const { nodeId, tokens } = action.payload;
       const outputTokens = getRecordEntry(state.outputTokens, nodeId);
-      if (!outputTokens) return;
+      if (!outputTokens) {
+        return;
+      }
       const newTokens = [...outputTokens.tokens];
       for (const token of tokens) {
         const index = newTokens.findIndex((t) => t.key === token.key);
@@ -102,7 +110,9 @@ export const tokensSlice = createSlice({
     updateUpstreamNodes: (state, action: PayloadAction<UpdateUpstreamNodesPayload>) => {
       for (const nodeId of Object.keys(action.payload)) {
         const outputTokens = getRecordEntry(state.outputTokens, nodeId);
-        if (outputTokens) outputTokens.upstreamNodeIds = getRecordEntry(action.payload, nodeId) ?? [];
+        if (outputTokens) {
+          outputTokens.upstreamNodeIds = getRecordEntry(action.payload, nodeId) ?? [];
+        }
       }
     },
   },

@@ -5,7 +5,7 @@ import { getAzureResourceRecursive } from '../common/azure';
 import type { ListDynamicValue } from '../connector';
 import type { IHttpClient } from '../httpClient';
 
-import type { QueryClient } from 'react-query';
+import type { QueryClient } from '@tanstack/react-query';
 
 export interface ApiManagementServiceOptions {
   apiVersion: string;
@@ -23,13 +23,17 @@ export class BaseApiManagementService implements IApiManagementService {
     const { apiVersion, baseUrl, subscriptionId, httpClient, queryClient } = options;
     if (!baseUrl) {
       throw new ArgumentException('baseUrl required');
-    } else if (!apiVersion) {
+    }
+    if (!apiVersion) {
       throw new ArgumentException('apiVersion required');
-    } else if (!subscriptionId) {
+    }
+    if (!subscriptionId) {
       throw new ArgumentException('subscriptionId required');
-    } else if (!httpClient) {
+    }
+    if (!httpClient) {
       throw new ArgumentException('httpClient required for api management service');
-    } else if (!queryClient) {
+    }
+    if (!queryClient) {
       throw new ArgumentException('queryClient required for api management service');
     }
   }
@@ -164,8 +168,7 @@ export class BaseApiManagementService implements IApiManagementService {
     const { in: $in, name, required, schema } = parameter;
     switch ($in) {
       case 'header':
-      case 'query':
-        // eslint-disable-next-line no-case-declarations
+      case 'query': {
         const property = $in === 'header' ? 'headers' : 'queries';
         if (!schemaProperties[property]) {
           schemaProperties[property] = { type: 'object', properties: {}, required: [] };
@@ -179,8 +182,8 @@ export class BaseApiManagementService implements IApiManagementService {
           }
         }
         break;
-      case 'path':
-        // eslint-disable-next-line no-case-declarations
+      }
+      case 'path': {
         const pathProperty = 'pathTemplate';
         if (!schemaProperties[pathProperty].properties.parameters) {
           schemaProperties[pathProperty].properties.parameters = { type: 'object', properties: {}, required: [] };
@@ -192,10 +195,12 @@ export class BaseApiManagementService implements IApiManagementService {
           schemaProperties[pathProperty].properties.parameters.required.push(name);
         }
         break;
-      default:
+      }
+      default: {
         // eslint-disable-next-line no-param-reassign
         finalSchema.properties[$in] = schema;
         break;
+      }
     }
   }
 }

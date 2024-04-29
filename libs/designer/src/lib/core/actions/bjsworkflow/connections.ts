@@ -230,7 +230,8 @@ export const getConnectionMappingForNode = (
   try {
     if (operationManifestService.isSupported(operation.type, operation.kind)) {
       return getManifestBasedConnectionMapping(nodeId, isTrigger, operation);
-    } else if (isApiConnectionType(operation.type)) {
+    }
+    if (isApiConnectionType(operation.type)) {
       const connectionReferenceKey = getLegacyConnectionReferenceKey(operation);
       if (connectionReferenceKey !== undefined) {
         const mapping = Promise.resolve({ [nodeId]: connectionReferenceKey });
@@ -303,7 +304,9 @@ export function getConnectionMetadata(manifest?: OperationManifest) {
 }
 
 export function needsConnection(connector: Connector | undefined): boolean {
-  if (!connector) return false;
+  if (!connector) {
+    return false;
+  }
   return (
     needsAuth(connector) || hasPrerequisiteConnection(connector) || needsSimpleConnection(connector) || needsConfigConnection(connector)
   );
@@ -320,14 +323,20 @@ export function needsOAuth(connectionParameters: Record<string, ConnectionParame
 
 // This only checks if this connector has any OAuth connection, it can be just part of Multi Auth
 function needsAuth(connector?: Connector): boolean {
-  if (!connector) return false;
+  if (!connector) {
+    return false;
+  }
   return getConnectionParametersWithType(connector, ConnectionParameterTypes.oauthSetting).length > 0;
 }
 
 export function getAuthRedirect(connector?: Connector): string | undefined {
-  if (!connector) return undefined;
+  if (!connector) {
+    return undefined;
+  }
   const authParameters = getConnectionParametersWithType(connector, ConnectionParameterTypes.oauthSetting);
-  if (authParameters?.[0]) return authParameters?.[0].oAuthSettings?.redirectUrl;
+  if (authParameters?.[0]) {
+    return authParameters?.[0].oAuthSettings?.redirectUrl;
+  }
   return undefined;
 }
 
@@ -349,7 +358,9 @@ export function getConnectionParametersWithType(connector: Connector, connection
       connector.properties.connectionParameterSets !== undefined
         ? _getConnectionParameterSetParametersUsingType(connector, connectionParameterType)
         : connector.properties.connectionParameters;
-    if (!connectionParameters) return [];
+    if (!connectionParameters) {
+      return [];
+    }
     return Object.keys(connectionParameters || {})
       .filter((connectionParameterKey) => !isHiddenConnectionParameter(connectionParameters, connectionParameterKey))
       .map((connectionParameterKey) => connectionParameters[connectionParameterKey])
@@ -375,7 +386,9 @@ export function hasPrerequisiteConnection(connector: Connector): boolean {
 }
 
 export function needsSimpleConnection(connector: Connector): boolean {
-  if (!connector) return false;
+  if (!connector) {
+    return false;
+  }
 
   if (connector.properties) {
     const connectionParameters = connector.properties.connectionParameters;
@@ -385,17 +398,16 @@ export function needsSimpleConnection(connector: Connector): boolean {
           (connectionParameterKey) => !isHiddenConnectionParameter(connectionParameters, connectionParameterKey)
         ).length === 0
       );
-    } else {
-      return true;
     }
+    return true;
   }
 
   return false;
 }
 
 export function needsConfigConnection(connector: Connector): boolean {
-  if (connector?.properties?.connectionParameters) {
-    const connectionParameters = connector.properties.connectionParameters;
+  const connectionParameters = connector?.properties?.connectionParameters;
+  if (connectionParameters) {
     return Object.keys(connectionParameters)
       .filter((connectionParameterKey) => !isHiddenConnectionParameter(connectionParameters, connectionParameterKey))
       .some((connectionParameterKey) => {
@@ -465,15 +477,13 @@ export function getLegacyConnectionReferenceKey(operationDefinition: any): strin
   const connObj = operationDefinition.inputs.host.connection;
   if (typeof connObj === 'string') {
     referenceKey = connObj;
-  } else {
-    if (connObj?.referenceName)
-      // Standard
-      referenceKey = connObj.referenceName;
-    else if (connObj?.name) {
-      // Consumption
-      // Example format: "@parameters('$connections')['servicebus']['connectionId']"
-      referenceKey = connObj.name.split('[')[1].split(']')[0].replace(/'/g, '');
-    }
+  } else if (connObj?.referenceName) {
+    // Standard
+    referenceKey = connObj.referenceName;
+  } else if (connObj?.name) {
+    // Consumption
+    // Example format: "@parameters('$connections')['servicebus']['connectionId']"
+    referenceKey = connObj.name.split('[')[1].split(']')[0].replace(/'/g, '');
   }
   return referenceKey;
 }

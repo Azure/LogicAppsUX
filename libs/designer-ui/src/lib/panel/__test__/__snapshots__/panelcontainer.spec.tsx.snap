@@ -19,12 +19,16 @@ exports[`ui/workflowparameters/workflowparameter > should construct. 1`] = `
   styles={
     {
       "content": {
-        "padding": "1rem 2rem",
+        "height": "100%",
+        "overflow": "hidden",
+        "padding": "1rem 2rem 0rem",
       },
       "main": {
         "overflow": "hidden",
       },
       "scrollableContent": {
+        "display": "flex",
+        "flexDirection": "column",
         "height": "100%",
       },
     }

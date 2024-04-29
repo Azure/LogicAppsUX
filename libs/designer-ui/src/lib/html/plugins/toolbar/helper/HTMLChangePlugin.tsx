@@ -7,6 +7,7 @@ import {
   encodeStringSegmentTokensInLexicalContext,
 } from '../../../../editor/base/utils/parsesegments';
 import {
+  canReplaceSpanWithId,
   cleanHtmlString,
   cleanStyleAttribute,
   encodeSegmentValueInLexicalContext,
@@ -74,20 +75,21 @@ export const convertEditorState = (
       // Create a temporary DOM element to parse the HTML string
       const tempElement = getDomFromHtmlEditorString(htmlEditorString, nodeMap);
 
+      let idValue = '';
       // Loop through all elements and remove unwanted attributes
       const elements = tempElement.querySelectorAll('*');
+      // biome-ignore lint/style/useForOf: Node List isn't iterable
       for (let i = 0; i < elements.length; i++) {
         const element = elements[i];
         const attributes = Array.from(element.attributes);
-        for (let j = 0; j < attributes.length; j++) {
-          const attribute = attributes[j];
+        for (const attribute of attributes) {
           if (!isAttributeSupportedByHtmlEditor(element.tagName, attribute.name)) {
             element.removeAttribute(attribute.name);
             continue;
           }
           if (attribute.name === 'id' && !isValuePlaintext) {
             // If we're in the rich HTML editor, encoding occurs at the element level since they are all wrapped in <span>.
-            const idValue = element.getAttribute('id') ?? ''; // e.g., "@{concat('&lt;', '"')}"
+            idValue = element.getAttribute('id') ?? ''; // e.g., "@{concat('&lt;', '"')}"
             const encodedIdValue = encodeSegmentValueInLexicalContext(idValue); // e.g., "@{concat('%26lt;', '%22')}"
             element.setAttribute('id', encodedIdValue);
             continue;
@@ -95,7 +97,6 @@ export const convertEditorState = (
           if (attribute.name === 'style') {
             const newAttributeValue = cleanStyleAttribute(attribute.value);
             newAttributeValue ? element.setAttribute('style', newAttributeValue) : element.removeAttribute(attribute.name);
-            continue;
           }
         }
       }
@@ -107,13 +108,11 @@ export const convertEditorState = (
 
       // Replace `<span id="..."></span>` with the captured `id` value if it is found in the viable IDs map.
       const spanIdPattern = /<span id="(.*?)"><\/span>/g;
-      const noTokenSpansString = decodedLexicalString.replace(spanIdPattern, (match, idValue) => {
-        if (nodeMap.get(idValue)) {
-          return idValue;
-        } else {
-          return match;
-        }
-      });
+      let noTokenSpansString = decodedLexicalString;
+      const decodedLexicalStringWithoutNewlines = decodedLexicalString.replace(/\n/g, '');
+      if (canReplaceSpanWithId(idValue, nodeMap)) {
+        noTokenSpansString = decodedLexicalStringWithoutNewlines.replace(spanIdPattern, idValue);
+      }
       const valueSegments: ValueSegment[] = convertStringToSegments(noTokenSpansString, nodeMap, { tokensEnabled: true });
       resolve(valueSegments);
     });

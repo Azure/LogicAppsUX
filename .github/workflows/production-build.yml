@@ -84,8 +84,8 @@ jobs:
       - name: 'Set Designer Extension VSIX aiKey in package.json'
         run: echo "`jq '.aiKey="${{ env.AI_KEY }}"' apps/vs-code-designer/src/package.json`" > apps/vs-code-designer/src/package.json
 
-      # - run: npm run build:vscode-designer
-      # - run: npm run vscode:designer:pack
+      - name: 'Pack VSCode Designer Extension'
+        run: pnpm run vscode:designer:pack
 
       - name: 'Get Previous tag'
         id: previoustag
@@ -93,16 +93,15 @@ jobs:
         with:
           fallback: 0.0.0
 
-      # - name: Archive VSIX
-      #   uses: actions/upload-artifact@v3
-      #   with:
-      #     path: |
-      #       dist/apps/vs-code-designer/*.vsix
+      - name: Archive VSIX
+        uses: actions/upload-artifact@v3
+        with:
+          path: |
+            apps/vs-code-designer/dist/*.vsix
 
       - uses: ncipollo/release-action@v1
         with:
-          # artifacts: 'LICENSE.md,dist/apps/vs-code-designer/*.vsix'
-          artifacts: 'LICENSE.md'
+          artifacts: 'LICENSE.md,apps/vs-code-designer/dist/*.vsix'
           generateReleaseNotes: true
           tag: '${{ steps.previoustag.outputs.tag }}'
           token: ${{ secrets.AUTOMATION_PAT }}
@@ -110,11 +109,22 @@ jobs:
   publish:
     needs: bump-version
     runs-on: ubuntu-latest
+    environment: E2ETesting
+    permissions:
+        id-token: write
     steps:
       - name: 'Checkout Github Action'
         uses: actions/checkout@master
         with:
           token: ${{ secrets.AUTOMATION_PAT }}
+
+      - name: Azure login
+        uses: azure/login@v2
+        with:
+          client-id: ${{ secrets.AZURE_TESTING_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TESTING_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_TESTING_SUBSCRIPTION_ID }}
+
       - name: Set up Node.js
         uses: actions/setup-node@v1
         with:
@@ -130,11 +140,15 @@ jobs:
     
       - name: 'Local Version Bump'
         run: ${{ env.BUMP_COMMAND }} --skip.commit --skip.tag
+        
       - run: pnpm install --frozen-lockfile --strict-peer-dependencies
 
-      - name: Use .npmrc
-        uses: bduff9/use-npmrc@v1.1
-        with:
-          dot-npmrc: ${{ secrets.PUBLISHING_PAT }}
-          
-      - run: pnpm run publish --no-git-checks --access public --tag latest
+      - name: 'Generate NPMRC'
+        shell: bash
+        run: |
+          token=`az account get-access-token --resource 499b84ac-1321-427f-aa17-267ca6975798 | jq -r .accessToken`
+          export ADO_TOKEN=$token
+          node ./productionNpmRCCreator.js
+
+      - name: 'Publish to NPM'
+        run: pnpm run publish --no-git-checks --access public --tag latest

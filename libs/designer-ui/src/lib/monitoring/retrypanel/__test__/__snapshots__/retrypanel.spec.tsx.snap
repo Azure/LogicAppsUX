@@ -258,8 +258,8 @@ exports[`lib/monitoring/retrypanel > should render 1`] = `
                 className="prism-code language-json"
                 style={
                   {
-                    "backgroundColor": "#ffffff",
-                    "color": "#000000",
+                    "backgroundColor": "#1E1E1E",
+                    "color": "#9CDCFE",
                   }
                 }
               >
@@ -267,8 +267,8 @@ exports[`lib/monitoring/retrypanel > should render 1`] = `
                   className="token-line"
                   style={
                     {
-                      "backgroundColor": null,
-                      "color": "#000000",
+                      "backgroundColor": undefined,
+                      "color": "#9CDCFE",
                     }
                   }
                 >
@@ -368,8 +368,8 @@ exports[`lib/monitoring/retrypanel > should render 1`] = `
                 className="prism-code language-json"
                 style={
                   {
-                    "backgroundColor": "#ffffff",
-                    "color": "#000000",
+                    "backgroundColor": "#1E1E1E",
+                    "color": "#9CDCFE",
                   }
                 }
               >
@@ -377,120 +377,15 @@ exports[`lib/monitoring/retrypanel > should render 1`] = `
                   className="token-line"
                   style={
                     {
-                      "backgroundColor": null,
-                      "color": "#000000",
+                      "backgroundColor": undefined,
+                      "color": "#9CDCFE",
                     }
                   }
                 >
                   <span
-                    className="token number"
-                    style={
-                      {
-                        "color": "rgb(9, 134, 88)",
-                      }
-                    }
-                  >
-                    2
-                  </span>
-                  <span
                     className="token plain"
                   >
-                    /
-                  </span>
-                  <span
-                    className="token number"
-                    style={
-                      {
-                        "color": "rgb(9, 134, 88)",
-                      }
-                    }
-                  >
-                    8
-                  </span>
-                  <span
-                    className="token plain"
-                  >
-                    /
-                  </span>
-                  <span
-                    className="token number"
-                    style={
-                      {
-                        "color": "rgb(9, 134, 88)",
-                      }
-                    }
-                  >
-                    2022
-                  </span>
-                  <span
-                    className="token punctuation"
-                    style={
-                      {
-                        "color": "rgb(4, 81, 165)",
-                      }
-                    }
-                  >
-                    ,
-                  </span>
-                  <span
-                    className="token plain"
-                  >
-                     
-                  </span>
-                  <span
-                    className="token number"
-                    style={
-                      {
-                        "color": "rgb(9, 134, 88)",
-                      }
-                    }
-                  >
-                    7
-                  </span>
-                  <span
-                    className="token operator"
-                    style={
-                      {
-                        "color": "rgb(0, 0, 0)",
-                      }
-                    }
-                  >
-                    :
-                  </span>
-                  <span
-                    className="token number"
-                    style={
-                      {
-                        "color": "rgb(9, 134, 88)",
-                      }
-                    }
-                  >
-                    52
-                  </span>
-                  <span
-                    className="token operator"
-                    style={
-                      {
-                        "color": "rgb(0, 0, 0)",
-                      }
-                    }
-                  >
-                    :
-                  </span>
-                  <span
-                    className="token number"
-                    style={
-                      {
-                        "color": "rgb(9, 134, 88)",
-                      }
-                    }
-                  >
-                    00
-                  </span>
-                  <span
-                    className="token plain"
-                  >
-                     PM
+                    2/8/2022, 7:52:00 PM
                   </span>
                 </div>
               </pre>
@@ -583,8 +478,8 @@ exports[`lib/monitoring/retrypanel > should render 1`] = `
                 className="prism-code language-json"
                 style={
                   {
-                    "backgroundColor": "#ffffff",
-                    "color": "#000000",
+                    "backgroundColor": "#1E1E1E",
+                    "color": "#9CDCFE",
                   }
                 }
               >
@@ -592,8 +487,8 @@ exports[`lib/monitoring/retrypanel > should render 1`] = `
                   className="token-line"
                   style={
                     {
-                      "backgroundColor": null,
-                      "color": "#000000",
+                      "backgroundColor": undefined,
+                      "color": "#9CDCFE",
                     }
                   }
                 >
@@ -693,8 +588,8 @@ exports[`lib/monitoring/retrypanel > should render 1`] = `
                 className="prism-code language-json"
                 style={
                   {
-                    "backgroundColor": "#ffffff",
-                    "color": "#000000",
+                    "backgroundColor": "#1E1E1E",
+                    "color": "#9CDCFE",
                   }
                 }
               >
@@ -702,8 +597,8 @@ exports[`lib/monitoring/retrypanel > should render 1`] = `
                   className="token-line"
                   style={
                     {
-                      "backgroundColor": null,
-                      "color": "#000000",
+                      "backgroundColor": undefined,
+                      "color": "#9CDCFE",
                     }
                   }
                 >
@@ -981,8 +876,8 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
                 className="prism-code language-json"
                 style={
                   {
-                    "backgroundColor": "#ffffff",
-                    "color": "#000000",
+                    "backgroundColor": "#1E1E1E",
+                    "color": "#9CDCFE",
                   }
                 }
               >
@@ -990,8 +885,8 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
                   className="token-line"
                   style={
                     {
-                      "backgroundColor": null,
-                      "color": "#000000",
+                      "backgroundColor": undefined,
+                      "color": "#9CDCFE",
                     }
                   }
                 >
@@ -1091,8 +986,8 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
                 className="prism-code language-json"
                 style={
                   {
-                    "backgroundColor": "#ffffff",
-                    "color": "#000000",
+                    "backgroundColor": "#1E1E1E",
+                    "color": "#9CDCFE",
                   }
                 }
               >
@@ -1100,120 +995,15 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
                   className="token-line"
                   style={
                     {
-                      "backgroundColor": null,
-                      "color": "#000000",
+                      "backgroundColor": undefined,
+                      "color": "#9CDCFE",
                     }
                   }
                 >
                   <span
-                    className="token number"
-                    style={
-                      {
-                        "color": "rgb(9, 134, 88)",
-                      }
-                    }
-                  >
-                    2
-                  </span>
-                  <span
                     className="token plain"
                   >
-                    /
-                  </span>
-                  <span
-                    className="token number"
-                    style={
-                      {
-                        "color": "rgb(9, 134, 88)",
-                      }
-                    }
-                  >
-                    8
-                  </span>
-                  <span
-                    className="token plain"
-                  >
-                    /
-                  </span>
-                  <span
-                    className="token number"
-                    style={
-                      {
-                        "color": "rgb(9, 134, 88)",
-                      }
-                    }
-                  >
-                    2022
-                  </span>
-                  <span
-                    className="token punctuation"
-                    style={
-                      {
-                        "color": "rgb(4, 81, 165)",
-                      }
-                    }
-                  >
-                    ,
-                  </span>
-                  <span
-                    className="token plain"
-                  >
-                     
-                  </span>
-                  <span
-                    className="token number"
-                    style={
-                      {
-                        "color": "rgb(9, 134, 88)",
-                      }
-                    }
-                  >
-                    7
-                  </span>
-                  <span
-                    className="token operator"
-                    style={
-                      {
-                        "color": "rgb(0, 0, 0)",
-                      }
-                    }
-                  >
-                    :
-                  </span>
-                  <span
-                    className="token number"
-                    style={
-                      {
-                        "color": "rgb(9, 134, 88)",
-                      }
-                    }
-                  >
-                    52
-                  </span>
-                  <span
-                    className="token operator"
-                    style={
-                      {
-                        "color": "rgb(0, 0, 0)",
-                      }
-                    }
-                  >
-                    :
-                  </span>
-                  <span
-                    className="token number"
-                    style={
-                      {
-                        "color": "rgb(9, 134, 88)",
-                      }
-                    }
-                  >
-                    00
-                  </span>
-                  <span
-                    className="token plain"
-                  >
-                     PM
+                    2/8/2022, 7:52:00 PM
                   </span>
                 </div>
               </pre>
@@ -1306,8 +1096,8 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
                 className="prism-code language-json"
                 style={
                   {
-                    "backgroundColor": "#ffffff",
-                    "color": "#000000",
+                    "backgroundColor": "#1E1E1E",
+                    "color": "#9CDCFE",
                   }
                 }
               >
@@ -1315,8 +1105,8 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
                   className="token-line"
                   style={
                     {
-                      "backgroundColor": null,
-                      "color": "#000000",
+                      "backgroundColor": undefined,
+                      "color": "#9CDCFE",
                     }
                   }
                 >
@@ -1416,8 +1206,8 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
                 className="prism-code language-json"
                 style={
                   {
-                    "backgroundColor": "#ffffff",
-                    "color": "#000000",
+                    "backgroundColor": "#1E1E1E",
+                    "color": "#9CDCFE",
                   }
                 }
               >
@@ -1425,8 +1215,8 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
                   className="token-line"
                   style={
                     {
-                      "backgroundColor": null,
-                      "color": "#000000",
+                      "backgroundColor": undefined,
+                      "color": "#9CDCFE",
                     }
                   }
                 >
@@ -1526,8 +1316,8 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
                 className="prism-code language-json"
                 style={
                   {
-                    "backgroundColor": "#ffffff",
-                    "color": "#000000",
+                    "backgroundColor": "#1E1E1E",
+                    "color": "#9CDCFE",
                   }
                 }
               >
@@ -1535,8 +1325,8 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
                   className="token-line"
                   style={
                     {
-                      "backgroundColor": null,
-                      "color": "#000000",
+                      "backgroundColor": undefined,
+                      "color": "#9CDCFE",
                     }
                   }
                 >
@@ -1814,8 +1604,8 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
                 className="prism-code language-json"
                 style={
                   {
-                    "backgroundColor": "#ffffff",
-                    "color": "#000000",
+                    "backgroundColor": "#1E1E1E",
+                    "color": "#9CDCFE",
                   }
                 }
               >
@@ -1823,25 +1613,15 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
                   className="token-line"
                   style={
                     {
-                      "backgroundColor": null,
-                      "color": "#000000",
+                      "backgroundColor": undefined,
+                      "color": "#9CDCFE",
                     }
                   }
                 >
                   <span
-                    className="token number"
-                    style={
-                      {
-                        "color": "rgb(9, 134, 88)",
-                      }
-                    }
-                  >
-                    18
-                  </span>
-                  <span
                     className="token plain"
                   >
-                     minutes
+                    18 minutes
                   </span>
                 </div>
               </pre>
@@ -1934,8 +1714,8 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
                 className="prism-code language-json"
                 style={
                   {
-                    "backgroundColor": "#ffffff",
-                    "color": "#000000",
+                    "backgroundColor": "#1E1E1E",
+                    "color": "#9CDCFE",
                   }
                 }
               >
@@ -1943,120 +1723,15 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
                   className="token-line"
                   style={
                     {
-                      "backgroundColor": null,
-                      "color": "#000000",
+                      "backgroundColor": undefined,
+                      "color": "#9CDCFE",
                     }
                   }
                 >
                   <span
-                    className="token number"
-                    style={
-                      {
-                        "color": "rgb(9, 134, 88)",
-                      }
-                    }
-                  >
-                    2
-                  </span>
-                  <span
                     className="token plain"
                   >
-                    /
-                  </span>
-                  <span
-                    className="token number"
-                    style={
-                      {
-                        "color": "rgb(9, 134, 88)",
-                      }
-                    }
-                  >
-                    8
-                  </span>
-                  <span
-                    className="token plain"
-                  >
-                    /
-                  </span>
-                  <span
-                    className="token number"
-                    style={
-                      {
-                        "color": "rgb(9, 134, 88)",
-                      }
-                    }
-                  >
-                    2022
-                  </span>
-                  <span
-                    className="token punctuation"
-                    style={
-                      {
-                        "color": "rgb(4, 81, 165)",
-                      }
-                    }
-                  >
-                    ,
-                  </span>
-                  <span
-                    className="token plain"
-                  >
-                     
-                  </span>
-                  <span
-                    className="token number"
-                    style={
-                      {
-                        "color": "rgb(9, 134, 88)",
-                      }
-                    }
-                  >
-                    7
-                  </span>
-                  <span
-                    className="token operator"
-                    style={
-                      {
-                        "color": "rgb(0, 0, 0)",
-                      }
-                    }
-                  >
-                    :
-                  </span>
-                  <span
-                    className="token number"
-                    style={
-                      {
-                        "color": "rgb(9, 134, 88)",
-                      }
-                    }
-                  >
-                    52
-                  </span>
-                  <span
-                    className="token operator"
-                    style={
-                      {
-                        "color": "rgb(0, 0, 0)",
-                      }
-                    }
-                  >
-                    :
-                  </span>
-                  <span
-                    className="token number"
-                    style={
-                      {
-                        "color": "rgb(9, 134, 88)",
-                      }
-                    }
-                  >
-                    00
-                  </span>
-                  <span
-                    className="token plain"
-                  >
-                     PM
+                    2/8/2022, 7:52:00 PM
                   </span>
                 </div>
               </pre>
@@ -2149,8 +1824,8 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
                 className="prism-code language-json"
                 style={
                   {
-                    "backgroundColor": "#ffffff",
-                    "color": "#000000",
+                    "backgroundColor": "#1E1E1E",
+                    "color": "#9CDCFE",
                   }
                 }
               >
@@ -2158,120 +1833,15 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
                   className="token-line"
                   style={
                     {
-                      "backgroundColor": null,
-                      "color": "#000000",
+                      "backgroundColor": undefined,
+                      "color": "#9CDCFE",
                     }
                   }
                 >
                   <span
-                    className="token number"
-                    style={
-                      {
-                        "color": "rgb(9, 134, 88)",
-                      }
-                    }
-                  >
-                    2
-                  </span>
-                  <span
                     className="token plain"
                   >
-                    /
-                  </span>
-                  <span
-                    className="token number"
-                    style={
-                      {
-                        "color": "rgb(9, 134, 88)",
-                      }
-                    }
-                  >
-                    8
-                  </span>
-                  <span
-                    className="token plain"
-                  >
-                    /
-                  </span>
-                  <span
-                    className="token number"
-                    style={
-                      {
-                        "color": "rgb(9, 134, 88)",
-                      }
-                    }
-                  >
-                    2022
-                  </span>
-                  <span
-                    className="token punctuation"
-                    style={
-                      {
-                        "color": "rgb(4, 81, 165)",
-                      }
-                    }
-                  >
-                    ,
-                  </span>
-                  <span
-                    className="token plain"
-                  >
-                     
-                  </span>
-                  <span
-                    className="token number"
-                    style={
-                      {
-                        "color": "rgb(9, 134, 88)",
-                      }
-                    }
-                  >
-                    8
-                  </span>
-                  <span
-                    className="token operator"
-                    style={
-                      {
-                        "color": "rgb(0, 0, 0)",
-                      }
-                    }
-                  >
-                    :
-                  </span>
-                  <span
-                    className="token number"
-                    style={
-                      {
-                        "color": "rgb(9, 134, 88)",
-                      }
-                    }
-                  >
-                    10
-                  </span>
-                  <span
-                    className="token operator"
-                    style={
-                      {
-                        "color": "rgb(0, 0, 0)",
-                      }
-                    }
-                  >
-                    :
-                  </span>
-                  <span
-                    className="token number"
-                    style={
-                      {
-                        "color": "rgb(9, 134, 88)",
-                      }
-                    }
-                  >
-                    00
-                  </span>
-                  <span
-                    className="token plain"
-                  >
-                     PM
+                    2/8/2022, 8:10:00 PM
                   </span>
                 </div>
               </pre>
@@ -2364,8 +1934,8 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
                 className="prism-code language-json"
                 style={
                   {
-                    "backgroundColor": "#ffffff",
-                    "color": "#000000",
+                    "backgroundColor": "#1E1E1E",
+                    "color": "#9CDCFE",
                   }
                 }
               >
@@ -2373,8 +1943,8 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
                   className="token-line"
                   style={
                     {
-                      "backgroundColor": null,
-                      "color": "#000000",
+                      "backgroundColor": undefined,
+                      "color": "#9CDCFE",
                     }
                   }
                 >
@@ -2474,8 +2044,8 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
                 className="prism-code language-json"
                 style={
                   {
-                    "backgroundColor": "#ffffff",
-                    "color": "#000000",
+                    "backgroundColor": "#1E1E1E",
+                    "color": "#9CDCFE",
                   }
                 }
               >
@@ -2483,8 +2053,8 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
                   className="token-line"
                   style={
                     {
-                      "backgroundColor": null,
-                      "color": "#000000",
+                      "backgroundColor": undefined,
+                      "color": "#9CDCFE",
                     }
                   }
                 >
@@ -2762,8 +2332,8 @@ exports[`lib/monitoring/retrypanel > should render an error when available 1`] =
                 className="prism-code language-json"
                 style={
                   {
-                    "backgroundColor": "#ffffff",
-                    "color": "#000000",
+                    "backgroundColor": "#1E1E1E",
+                    "color": "#9CDCFE",
                   }
                 }
               >
@@ -2771,8 +2341,8 @@ exports[`lib/monitoring/retrypanel > should render an error when available 1`] =
                   className="token-line"
                   style={
                     {
-                      "backgroundColor": null,
-                      "color": "#000000",
+                      "backgroundColor": undefined,
+                      "color": "#9CDCFE",
                     }
                   }
                 >
@@ -2872,8 +2442,8 @@ exports[`lib/monitoring/retrypanel > should render an error when available 1`] =
                 className="prism-code language-json"
                 style={
                   {
-                    "backgroundColor": "#ffffff",
-                    "color": "#000000",
+                    "backgroundColor": "#1E1E1E",
+                    "color": "#9CDCFE",
                   }
                 }
               >
@@ -2881,120 +2451,15 @@ exports[`lib/monitoring/retrypanel > should render an error when available 1`] =
                   className="token-line"
                   style={
                     {
-                      "backgroundColor": null,
-                      "color": "#000000",
+                      "backgroundColor": undefined,
+                      "color": "#9CDCFE",
                     }
                   }
                 >
                   <span
-                    className="token number"
-                    style={
-                      {
-                        "color": "rgb(9, 134, 88)",
-                      }
-                    }
-                  >
-                    2
-                  </span>
-                  <span
                     className="token plain"
                   >
-                    /
-                  </span>
-                  <span
-                    className="token number"
-                    style={
-                      {
-                        "color": "rgb(9, 134, 88)",
-                      }
-                    }
-                  >
-                    8
-                  </span>
-                  <span
-                    className="token plain"
-                  >
-                    /
-                  </span>
-                  <span
-                    className="token number"
-                    style={
-                      {
-                        "color": "rgb(9, 134, 88)",
-                      }
-                    }
-                  >
-                    2022
-                  </span>
-                  <span
-                    className="token punctuation"
-                    style={
-                      {
-                        "color": "rgb(4, 81, 165)",
-                      }
-                    }
-                  >
-                    ,
-                  </span>
-                  <span
-                    className="token plain"
-                  >
-                     
-                  </span>
-                  <span
-                    className="token number"
-                    style={
-                      {
-                        "color": "rgb(9, 134, 88)",
-                      }
-                    }
-                  >
-                    7
-                  </span>
-                  <span
-                    className="token operator"
-                    style={
-                      {
-                        "color": "rgb(0, 0, 0)",
-                      }
-                    }
-                  >
-                    :
-                  </span>
-                  <span
-                    className="token number"
-                    style={
-                      {
-                        "color": "rgb(9, 134, 88)",
-                      }
-                    }
-                  >
-                    52
-                  </span>
-                  <span
-                    className="token operator"
-                    style={
-                      {
-                        "color": "rgb(0, 0, 0)",
-                      }
-                    }
-                  >
-                    :
-                  </span>
-                  <span
-                    className="token number"
-                    style={
-                      {
-                        "color": "rgb(9, 134, 88)",
-                      }
-                    }
-                  >
-                    00
-                  </span>
-                  <span
-                    className="token plain"
-                  >
-                     PM
+                    2/8/2022, 7:52:00 PM
                   </span>
                 </div>
               </pre>
@@ -3087,8 +2552,8 @@ exports[`lib/monitoring/retrypanel > should render an error when available 1`] =
                 className="prism-code language-json"
                 style={
                   {
-                    "backgroundColor": "#ffffff",
-                    "color": "#000000",
+                    "backgroundColor": "#1E1E1E",
+                    "color": "#9CDCFE",
                   }
                 }
               >
@@ -3096,8 +2561,8 @@ exports[`lib/monitoring/retrypanel > should render an error when available 1`] =
                   className="token-line"
                   style={
                     {
-                      "backgroundColor": null,
-                      "color": "#000000",
+                      "backgroundColor": undefined,
+                      "color": "#9CDCFE",
                     }
                   }
                 >
@@ -3197,8 +2662,8 @@ exports[`lib/monitoring/retrypanel > should render an error when available 1`] =
                 className="prism-code language-json"
                 style={
                   {
-                    "backgroundColor": "#ffffff",
-                    "color": "#000000",
+                    "backgroundColor": "#1E1E1E",
+                    "color": "#9CDCFE",
                   }
                 }
               >
@@ -3206,8 +2671,8 @@ exports[`lib/monitoring/retrypanel > should render an error when available 1`] =
                   className="token-line"
                   style={
                     {
-                      "backgroundColor": null,
-                      "color": "#000000",
+                      "backgroundColor": undefined,
+                      "color": "#9CDCFE",
                     }
                   }
                 >

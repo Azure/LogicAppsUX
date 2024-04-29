@@ -83,7 +83,7 @@ export const QueryBuilderEditor = ({
     setRootProp(newProps);
   };
 
-  let description;
+  let description = '';
   if (showDescription) {
     description = intl.formatMessage({
       defaultMessage: 'Provide the values to compare and select the operator to use.',

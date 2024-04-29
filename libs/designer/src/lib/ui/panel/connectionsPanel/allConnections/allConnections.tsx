@@ -17,7 +17,9 @@ export const AllConnections = () => {
     const connections: any = {};
     // const connections: any = JSON.parse(JSON.stringify(connectionReferences));
     for (const [nodeId, connectionReference] of Object.entries(connectionMapping)) {
-      if (!connectionReference) continue; // Skip if no connection reference
+      if (!connectionReference) {
+        continue; // Skip if no connection reference
+      }
       if (!connections[connectionReference]) {
         connections[connectionReference] = {
           nodes: [],
@@ -34,7 +36,9 @@ export const AllConnections = () => {
     for (const [nodeId, connectionReference] of Object.entries(connectionMapping)) {
       if (!connectionReference) {
         const apiId = getRecordEntry(allOperationInfo, nodeId)?.connectorId;
-        if (!apiId) continue;
+        if (!apiId) {
+          continue;
+        }
         groups[apiId] = groups?.[apiId] || [];
         groups[apiId].push(nodeId);
       }
@@ -46,7 +50,9 @@ export const AllConnections = () => {
     const grouped: Record<string, Record<string, string[]>> = {};
     for (const connectionReference of Object.keys(connectionsWithNodes)) {
       const apiId = connectionReferences?.[connectionReference]?.api.id;
-      if (!apiId) continue;
+      if (!apiId) {
+        continue;
+      }
       grouped[apiId] = grouped?.[apiId] || {};
       grouped[apiId][connectionReference] = connectionsWithNodes[connectionReference];
     }

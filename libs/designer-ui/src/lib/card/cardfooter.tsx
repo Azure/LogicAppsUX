@@ -140,7 +140,8 @@ const CardBadgeBar: React.FC<CardBadgeBarProps> = ({ badges, brandColor }) => {
 const CardBadge: React.FC<CardBadgeProps> = ({ active, content, darkBackground = false, iconProps, title }) => {
   if (!content) {
     return null;
-  } else if (active) {
+  }
+  if (active) {
     return (
       <Tooltip relationship={'label'} withArrow={true} content={content}>
         <div>
@@ -153,7 +154,6 @@ const CardBadge: React.FC<CardBadgeProps> = ({ active, content, darkBackground =
         </div>
       </Tooltip>
     );
-  } else {
-    return <Icon className="panel-card-v2-badge inactive" {...iconProps} ariaLabel={title} tabIndex={0} />;
   }
+  return <Icon className="panel-card-v2-badge inactive" {...iconProps} ariaLabel={title} tabIndex={0} />;
 };

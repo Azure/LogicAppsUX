@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { getSelectedSchema } from '../../core';
 import { setInitialSchema } from '../../core/state/DataMapSlice';
 import { closePanel, ConfigPanelView, openDefaultConfigPanelView } from '../../core/state/PanelSlice';
@@ -7,12 +8,12 @@ import { convertSchemaToSchemaExtended, getFileNameAndPath } from '../../utils/S
 import type { SchemaFile } from './AddOrUpdateSchemaView';
 import { AddOrUpdateSchemaView, UploadSchemaTypes } from './AddOrUpdateSchemaView';
 //import { DefaultConfigView } from './DefaultConfigView';
-import { DefaultButton, Panel, PrimaryButton } from '@fluentui/react';
+import { DefaultButton, PrimaryButton } from '@fluentui/react';
 import type { DataMapSchema } from '@microsoft/logic-apps-shared';
 import { SchemaType } from '@microsoft/logic-apps-shared';
 import { useCallback, useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import { DrawerBody, DrawerHeader, DrawerHeaderTitle, InlineDrawer, makeStyles } from '@fluentui/react-components';
 
@@ -60,7 +61,8 @@ export const AddSchemaDrawer = ({ readCurrentSchemaOptions, onSubmitSchemaFileSe
       if (selectedSourceSchema) {
         const [fileName, filePath] = getFileNameAndPath(selectedSourceSchema);
         return await getSelectedSchema(fileName ?? '', filePath);
-      } else return await getSelectedSchema(selectedSourceSchema ?? '', '');
+      }
+      return await getSelectedSchema(selectedSourceSchema ?? '', '');
     },
     {
       ...schemaFileQuerySettings,
@@ -75,7 +77,8 @@ export const AddSchemaDrawer = ({ readCurrentSchemaOptions, onSubmitSchemaFileSe
         const [fileName, filePath] = getFileNameAndPath(selectedTargetSchema);
 
         return await getSelectedSchema(fileName ?? '', filePath);
-      } else return await getSelectedSchema(selectedTargetSchema ?? '', '');
+      }
+      return await getSelectedSchema(selectedTargetSchema ?? '', '');
     },
     {
       ...schemaFileQuerySettings,

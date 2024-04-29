@@ -89,8 +89,8 @@ exports[`ui/monitoring/values/xml > should render XML 1`] = `
         className="prism-code language-json"
         style={
           {
-            "backgroundColor": "#ffffff",
-            "color": "#000000",
+            "backgroundColor": "#1E1E1E",
+            "color": "#9CDCFE",
           }
         }
       >
@@ -98,8 +98,8 @@ exports[`ui/monitoring/values/xml > should render XML 1`] = `
           className="token-line"
           style={
             {
-              "backgroundColor": null,
-              "color": "#000000",
+              "backgroundColor": undefined,
+              "color": "#9CDCFE",
             }
           }
         >
@@ -202,8 +202,8 @@ exports[`ui/monitoring/values/xml > should render XML with encoded UTF-8 Chinese
         className="prism-code language-json"
         style={
           {
-            "backgroundColor": "#ffffff",
-            "color": "#000000",
+            "backgroundColor": "#1E1E1E",
+            "color": "#9CDCFE",
           }
         }
       >
@@ -211,75 +211,15 @@ exports[`ui/monitoring/values/xml > should render XML with encoded UTF-8 Chinese
           className="token-line"
           style={
             {
-              "backgroundColor": null,
-              "color": "#000000",
+              "backgroundColor": undefined,
+              "color": "#9CDCFE",
             }
           }
         >
           <span
             className="token plain"
           >
-            &lt;?xml version=
-          </span>
-          <span
-            className="token string"
-            style={
-              {
-                "color": "rgb(163, 21, 21)",
-              }
-            }
-          >
-            "1.0"
-          </span>
-          <span
-            className="token plain"
-          >
-             encoding=
-          </span>
-          <span
-            className="token string"
-            style={
-              {
-                "color": "rgb(163, 21, 21)",
-              }
-            }
-          >
-            "utf-8"
-          </span>
-          <span
-            className="token plain"
-          >
-            ?&gt;&lt;root&gt;&lt;name username=
-          </span>
-          <span
-            className="token string"
-            style={
-              {
-                "color": "rgb(163, 21, 21)",
-              }
-            }
-          >
-            "JS1用户名"
-          </span>
-          <span
-            className="token plain"
-          >
-            &gt;你好 John&lt;/name&gt;&lt;name username=
-          </span>
-          <span
-            className="token string"
-            style={
-              {
-                "color": "rgb(163, 21, 21)",
-              }
-            }
-          >
-            "MI1用户名"
-          </span>
-          <span
-            className="token plain"
-          >
-            &gt;中文测试&lt;/name&gt;&lt;/root&gt;
+            &lt;?xml version="1.0" encoding="utf-8"?&gt;&lt;root&gt;&lt;name username="JS1用户名"&gt;你好 John&lt;/name&gt;&lt;name username="MI1用户名"&gt;中文测试&lt;/name&gt;&lt;/root&gt;
           </span>
         </div>
       </pre>
@@ -375,8 +315,8 @@ exports[`ui/monitoring/values/xml > should render XML without the UTF-8 byte ord
         className="prism-code language-json"
         style={
           {
-            "backgroundColor": "#ffffff",
-            "color": "#000000",
+            "backgroundColor": "#1E1E1E",
+            "color": "#9CDCFE",
           }
         }
       >
@@ -384,8 +324,8 @@ exports[`ui/monitoring/values/xml > should render XML without the UTF-8 byte ord
           className="token-line"
           style={
             {
-              "backgroundColor": null,
-              "color": "#000000",
+              "backgroundColor": undefined,
+              "color": "#9CDCFE",
             }
           }
         >
@@ -488,8 +428,8 @@ exports[`ui/monitoring/values/xml > should render a zero-width space if value is
         className="prism-code language-json"
         style={
           {
-            "backgroundColor": "#ffffff",
-            "color": "#000000",
+            "backgroundColor": "#1E1E1E",
+            "color": "#9CDCFE",
           }
         }
       >
@@ -497,8 +437,8 @@ exports[`ui/monitoring/values/xml > should render a zero-width space if value is
           className="token-line"
           style={
             {
-              "backgroundColor": null,
-              "color": "#000000",
+              "backgroundColor": undefined,
+              "color": "#9CDCFE",
             }
           }
         >

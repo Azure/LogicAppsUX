@@ -37,7 +37,7 @@ export type LogEntry = {
   /**
    * Any additional arguments to be included in the log entry.
    */
-  readonly args?: ReadonlyArray<any>;
+  readonly args?: readonly any[];
 };
 
 export const LogEntryLevel = {

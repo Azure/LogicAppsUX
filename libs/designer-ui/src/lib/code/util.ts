@@ -79,7 +79,7 @@ export function buildInlineCodeTextFromToken(inputToken: Token, language: string
       return formatForPowershell(segmentedProperty, actionName, source);
     }
     case constants.PARAMETER.EDITOR_OPTIONS.LANGUAGE.CSHARP: {
-      return formatForCSharp(segmentedProperty, actionName, source);
+      return formatForCSharp(segmentedProperty, actionName, source ? capitalizeFirstLetter(source) : source);
     }
 
     default: {
@@ -124,9 +124,9 @@ function formatForPowershell(property: string, actionName?: string, source?: str
 }
 
 function formatForCSharp(property: string, actionName?: string, source?: string): string {
-  const result = `await context.GetActionResult("${actionName ?? capitalizeFirstLetter(OperationCategory.Trigger)}")${
-    source ? `["${source}"]` : ''
-  }${property}`;
+  const result = actionName
+    ? `(await context.GetActionResult("${actionName}").ConfigureAwait(false))${source ? `.${source}` : ''}${property}`
+    : `(await context.GetTriggerResults().ConfigureAwait(false))${source ? `.${source}` : ''}${property}`;
   return result;
 }
 
@@ -172,12 +172,12 @@ export const formatValue = (input: string): string => {
 
 // Monaco should be at least 3 rows high (19*3 px) but no more than 20 rows high (19*20 px).
 export const getEditorHeight = (input = ''): string => {
-  return Math.min(Math.max(input?.split('\n').length * 20, 120), 380) + 'px';
+  return `${Math.min(Math.max(input?.split('\n').length * 20, 120), 380)}px`;
 };
 
 // CodeEditor Height should be at least 12 rows high (19*12 px) but no more than 24 rows high (19*24 px).
 export const getCodeEditorHeight = (input = ''): string => {
-  return Math.min(Math.max(input?.split('\n').length * 20, 228), 456) + 'px';
+  return `${Math.min(Math.max(input?.split('\n').length * 20, 228), 456)}px`;
 };
 
 export const isCustomCode = (editor?: string, language?: string): boolean => {

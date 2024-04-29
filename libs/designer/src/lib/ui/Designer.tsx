@@ -32,7 +32,7 @@ import KeyboardBackendFactory, { isKeyboardDragTrigger } from 'react-dnd-accessi
 import { HTML5Backend } from 'react-dnd-html5-backend';
 import { DndProvider, createTransition, MouseTransition } from 'react-dnd-multi-backend';
 import { useHotkeys } from 'react-hotkeys-hook';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
 import { Background, ReactFlow, ReactFlowProvider, useNodes, useReactFlow, useStore, BezierEdge } from 'reactflow';
 import type { BackgroundProps, NodeChange } from 'reactflow';
@@ -89,7 +89,9 @@ export const CanvasFinder = (props: CanvasFinderProps) => {
   const nodeData = useNodes().find((x) => x.id === focusNode);
   const dispatch = useDispatch<AppDispatch>();
   const handleTransform = useCallback(() => {
-    if (!focusNode) return;
+    if (!focusNode) {
+      return;
+    }
     if ((!nodeData?.position?.x && !nodeData?.position?.y) || !nodeData?.width || !nodeData?.height) {
       return;
     }
@@ -158,7 +160,7 @@ export const Designer = (props: DesignerProps) => {
     },
   ];
 
-  const nodesWithPlaceholder = !isEmpty ? nodes : isReadOnly ? [] : emptyWorkflowPlaceholderNodes;
+  const nodesWithPlaceholder = isEmpty ? (isReadOnly ? [] : emptyWorkflowPlaceholderNodes) : nodes;
 
   const graph = useSelector((state: RootState) => state.workflow.graph);
   useThrottledEffect(() => dispatch(buildEdgeIdsBySource()), [graph], 200);
@@ -183,7 +185,9 @@ export const Designer = (props: DesignerProps) => {
 
   useEffect(() => setLayerHostSelector('#msla-layer-host'), []);
   const KeyboardTransition = createTransition('keydown', (event) => {
-    if (!isKeyboardDragTrigger(event as KeyboardEvent)) return false;
+    if (!isKeyboardDragTrigger(event as KeyboardEvent)) {
+      return false;
+    }
     event.preventDefault();
     return true;
   });
@@ -220,7 +224,13 @@ export const Designer = (props: DesignerProps) => {
 
   // Adding recurrence interval to the query to access outside of functional components
   const recurrenceInterval = useHostOptions().recurrenceInterval;
-  useQuery({ queryKey: ['recurrenceInterval'], initialData: recurrenceInterval });
+  useQuery({
+    queryKey: ['recurrenceInterval'],
+    initialData: recurrenceInterval,
+    queryFn: () => {
+      return recurrenceInterval ?? null;
+    },
+  });
 
   // Adding workflowKind (stateful or stateless) to the query to access outside of functional components
   const workflowKind = useSelector((state: RootState) => state.workflow.workflowKind);

@@ -89,8 +89,8 @@ exports[`ui/monitoring/values/_raw > should render 1`] = `
         className="prism-code language-json"
         style={
           {
-            "backgroundColor": "#ffffff",
-            "color": "#000000",
+            "backgroundColor": "#1E1E1E",
+            "color": "#9CDCFE",
           }
         }
       >
@@ -98,8 +98,8 @@ exports[`ui/monitoring/values/_raw > should render 1`] = `
           className="token-line"
           style={
             {
-              "backgroundColor": null,
-              "color": "#000000",
+              "backgroundColor": undefined,
+              "color": "#9CDCFE",
             }
           }
         >
@@ -202,8 +202,8 @@ exports[`ui/monitoring/values/_raw > should rendered a zero-width space if value
         className="prism-code language-json"
         style={
           {
-            "backgroundColor": "#ffffff",
-            "color": "#000000",
+            "backgroundColor": "#1E1E1E",
+            "color": "#9CDCFE",
           }
         }
       >
@@ -211,8 +211,8 @@ exports[`ui/monitoring/values/_raw > should rendered a zero-width space if value
           className="token-line"
           style={
             {
-              "backgroundColor": null,
-              "color": "#000000",
+              "backgroundColor": undefined,
+              "color": "#9CDCFE",
             }
           }
         >

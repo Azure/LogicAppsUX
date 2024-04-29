@@ -10,8 +10,8 @@ import { FluentProvider, themeToTokensObject, webDarkTheme, webLightTheme } from
 import { PortalCompatProvider } from '@fluentui/react-portal-compat';
 import { AppInsightsContext } from '@microsoft/applicationinsights-react-js';
 import { IntlProvider, Theme as ThemeType } from '@microsoft/logic-apps-shared';
-import React from 'react';
-import { QueryClient, QueryClientProvider } from 'react-query';
+import type React from 'react';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
 import { Provider as ReduxProvider } from 'react-redux';
 
 interface ExtendedTheme extends Theme {

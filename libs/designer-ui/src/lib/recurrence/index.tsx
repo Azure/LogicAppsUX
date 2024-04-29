@@ -70,7 +70,7 @@ export const ScheduleEditor = ({
               onChange={(values) =>
                 updateRecurrence({
                   ...recurrence,
-                  schedule: { ...recurrence.schedule, weekDays: !(values as string[]).length ? undefined : (values as string[]) },
+                  schedule: { ...recurrence.schedule, weekDays: (values as string[]).length ? (values as string[]) : undefined },
                 })
               }
               readOnly={readOnly}
@@ -87,7 +87,7 @@ export const ScheduleEditor = ({
             onChange={(values) => {
               updateRecurrence({
                 ...recurrence,
-                schedule: { ...recurrence.schedule, hours: !(values as string[]).length ? undefined : (values as string[]) },
+                schedule: { ...recurrence.schedule, hours: (values as string[]).length ? (values as string[]) : undefined },
               });
             }}
             readOnly={readOnly}
@@ -101,7 +101,7 @@ export const ScheduleEditor = ({
             onChange={(value) => {
               updateRecurrence({
                 ...recurrence,
-                schedule: { ...recurrence.schedule, minutes: !value ? undefined : value },
+                schedule: { ...recurrence.schedule, minutes: value ? value : undefined },
               });
             }}
             readOnly={readOnly}
@@ -109,9 +109,8 @@ export const ScheduleEditor = ({
           {showPreview ? <Preview recurrence={recurrence} /> : null}
         </div>
       );
-    } else {
-      return null;
     }
+    return null;
   };
 
   const handleFrequencyUpdate = (frequency: string) => {
@@ -167,7 +166,7 @@ export const ScheduleEditor = ({
         required={false}
         initialValue={recurrence.startTime}
         placeholder={resources.startTime.description}
-        onChange={(value) => updateRecurrence({ ...recurrence, startTime: !value ? undefined : value })}
+        onChange={(value) => updateRecurrence({ ...recurrence, startTime: value ? value : undefined })}
         readOnly={readOnly}
       />
       {type === RecurrenceType.Advanced ? renderScheduleSection() : null}

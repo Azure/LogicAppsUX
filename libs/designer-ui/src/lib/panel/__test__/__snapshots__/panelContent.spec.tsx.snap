@@ -2,6 +2,7 @@
 
 exports[`ui/workflowparameters/workflowparameter > should construct. 1`] = `
 <div
+  className="msla-node-details-panel"
   id="msla-node-details-panel-"
 >
   <ForwardRef

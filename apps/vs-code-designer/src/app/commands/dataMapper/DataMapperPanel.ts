@@ -1,4 +1,4 @@
-import { extensionCommand } from '../../../constants';
+import { dataMapperVersionSetting, defaultDataMapperVersion, extensionCommand } from '../../../constants';
 import { ext } from '../../../extensionVariables';
 import { localize } from '../../../localize';
 import { getWebViewHTML } from '../../utils/codeless/getWebViewHTML';
@@ -63,8 +63,12 @@ export default class DataMapperPanel {
     this.panel.onDidDispose(
       () => {
         delete ext.dataMapPanelManagers[this.dataMapName];
-        if (schemaFolderWatcher) schemaFolderWatcher.dispose();
-        if (customXsltFolderWatcher) customXsltFolderWatcher.dispose();
+        if (schemaFolderWatcher) {
+          schemaFolderWatcher.dispose();
+        }
+        if (customXsltFolderWatcher) {
+          customXsltFolderWatcher.dispose();
+        }
       },
       null,
       ext.context.subscriptions
@@ -102,7 +106,7 @@ export default class DataMapperPanel {
         });
         break;
       }
-      case ExtensionCommand.webviewLoaded:
+      case ExtensionCommand.webviewLoaded: {
         // Send runtime port to webview
         this.sendMsgToWebview({ command: ExtensionCommand.setRuntimePort, data: `${ext.designTimePort}` });
 
@@ -110,10 +114,12 @@ export default class DataMapperPanel {
         this.handleLoadMapDefinitionIfAny();
 
         break;
-      case ExtensionCommand.webviewRscLoadError:
+      }
+      case ExtensionCommand.webviewRscLoadError: {
         // Handle DM top-level errors (such as loading schemas added from file, or general function manifest fetching issues)
         ext.showError(localize('WebviewRscLoadError', `Error loading Data Mapper resource: "{0}"`, msg.data));
         break;
+      }
       case ExtensionCommand.addSchemaFromFile: {
         this.addSchemaFromFile(msg.data.path, msg.data.type);
         break;
@@ -150,6 +156,11 @@ export default class DataMapperPanel {
       }
       case ExtensionCommand.getFunctionDisplayExpanded: {
         this.getConfigurationSetting('useExpandedFunctionCards');
+        break;
+      }
+
+      case ExtensionCommand.getDataMapperVersion: {
+        this.getDataMapperVersion();
         break;
       }
     }
@@ -220,11 +231,11 @@ export default class DataMapperPanel {
       const filesToDisplay: string[] = [];
       result.forEach((file) => {
         this.getNestedFilePaths(file, '', folderPath, filesToDisplay, fileTypes);
-      }),
-        this.sendMsgToWebview({
-          command,
-          data: filesToDisplay,
-        });
+      });
+      this.sendMsgToWebview({
+        command,
+        data: filesToDisplay,
+      });
     });
   }
 
@@ -409,10 +420,19 @@ export default class DataMapperPanel {
   }
 
   public getConfigurationSetting(configSetting: string) {
-    const azureDataMapperConfig = workspace.getConfiguration('azureDataMapper');
+    const azureDataMapperConfig = workspace.getConfiguration(ext.prefix);
     const configValue = azureDataMapperConfig.get<boolean>(configSetting) ?? true;
     this.sendMsgToWebview({
       command: ExtensionCommand.getConfigurationSetting,
+      data: configValue,
+    });
+  }
+
+  public getDataMapperVersion() {
+    const azureDataMapperConfig = workspace.getConfiguration(ext.prefix);
+    const configValue = azureDataMapperConfig.get<number>(dataMapperVersionSetting) ?? defaultDataMapperVersion;
+    this.sendMsgToWebview({
+      command: ExtensionCommand.getDataMapperVersion,
       data: configValue,
     });
   }

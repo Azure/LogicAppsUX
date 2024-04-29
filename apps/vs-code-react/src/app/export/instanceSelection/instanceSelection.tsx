@@ -10,7 +10,7 @@ import type { IDropdownOption } from '@fluentui/react';
 import { isEmptyString } from '@microsoft/logic-apps-shared';
 import { useContext, useEffect, useMemo } from 'react';
 import { useIntl } from 'react-intl';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
 
 export const InstanceSelection: React.FC = () => {
@@ -106,8 +106,8 @@ export const InstanceSelection: React.FC = () => {
     return apiService.getRegions(selectedSubscription);
   };
 
-  const { data: subscriptionsList, isLoading: isSubscriptionsLoading } = useQuery<Array<ISubscription>>(
-    QueryKeys.subscriptionData,
+  const { data: subscriptionsList, isLoading: isSubscriptionsLoading } = useQuery<ISubscription[]>(
+    [QueryKeys.subscriptionData],
     loadSubscriptions,
     {
       refetchOnWindowFocus: false,
@@ -120,7 +120,7 @@ export const InstanceSelection: React.FC = () => {
     data: regionData,
     isLoading: isRegionLoading,
     refetch: refetchRegion,
-  } = useQuery<Array<IRegion>>([QueryKeys.regionData, { subscriptionId: selectedSubscription }], loadRegion, {
+  } = useQuery<IRegion[]>([QueryKeys.regionData, { subscriptionId: selectedSubscription }], loadRegion, {
     refetchOnWindowFocus: false,
     enabled: !isEmptyString(selectedSubscription),
     retry: 4,
@@ -130,7 +130,7 @@ export const InstanceSelection: React.FC = () => {
     data: iseList,
     isLoading: isIseLoading,
     refetch: refetchIse,
-  } = useQuery<Array<IIse>>([QueryKeys.iseData, { subscriptionId: selectedSubscription }], loadIse, {
+  } = useQuery<IIse[]>([QueryKeys.iseData, { subscriptionId: selectedSubscription }], loadIse, {
     refetchOnWindowFocus: false,
     enabled: !isEmptyString(selectedSubscription),
     retry: 4,

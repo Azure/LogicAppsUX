@@ -1,12 +1,5 @@
 /* eslint-disable @typescript-eslint/no-unused-vars */
-//import { CodeView, minCodeViewWidth } from '../components/codeView/CodeView';
-//import { EditorCommandBar } from '../components/commandBar/EditorCommandBar';
-//import type { SchemaFile } from '../components/configPanel/AddOrUpdateSchemaView';
-//import { SidePane, SidePanelTabValue } from '../components/sidePane/SidePane';
-//import { WarningModal } from '../components/warningModal/WarningModal';
-//import { saveDataMap, showNotification } from '../core/state/DataMapSlice';
 import type { AppDispatch, RootState } from '../core/state/Store';
-
 import { Stack } from '@fluentui/react';
 import { makeStaticStyles, makeStyles, shorthands, tokens } from '@fluentui/react-components';
 import { useEffect, useState } from 'react';
@@ -16,8 +9,7 @@ import { useDispatch, useSelector } from 'react-redux';
 import { ReactFlowProvider } from 'reactflow';
 import { AddSchemaDrawer } from '../components/addSchema/AddSchemaPanel';
 import { SchemaType } from '@microsoft/logic-apps-shared';
-
-// danielle to strip
+import { EditorCommandBar } from '../components/commandBar/EditorCommandBar';
 
 const centerViewId = 'centerView';
 
@@ -129,15 +121,15 @@ export const DataMapperDesigner = ({
 
     if (isPropPaneExpanded) {
       return centerViewHeight;
-    } else {
-      return centerViewHeight;
     }
+    return centerViewHeight;
   };
 
   return (
     <DndProvider backend={HTML5Backend}>
       <ReactFlowProvider>
         <div className={styles.dataMapperShell}>
+          <EditorCommandBar onSaveClick={() => {}} onUndoClick={() => {}} onTestClick={() => {}} />
           <AddSchemaDrawer
             onSubmitSchemaFileSelection={(schema) => console.log(schema)}
             readCurrentSchemaOptions={() => console.log('')}
@@ -160,7 +152,7 @@ export const DataMapperDesigner = ({
                       style={{
                         backgroundColor: tokens.colorNeutralBackground4,
                       }}
-                    ></div>
+                    />
                   </Stack>
                 </div>
               </div>

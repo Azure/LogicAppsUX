@@ -102,8 +102,8 @@ exports[`lib/monitoring/requestpanel/request > should render 1`] = `
             className="prism-code language-json"
             style={
               {
-                "backgroundColor": "#ffffff",
-                "color": "#000000",
+                "backgroundColor": "#1E1E1E",
+                "color": "#9CDCFE",
               }
             }
           >
@@ -111,8 +111,8 @@ exports[`lib/monitoring/requestpanel/request > should render 1`] = `
               className="token-line"
               style={
                 {
-                  "backgroundColor": null,
-                  "color": "#000000",
+                  "backgroundColor": undefined,
+                  "color": "#9CDCFE",
                 }
               }
             >
@@ -212,8 +212,8 @@ exports[`lib/monitoring/requestpanel/request > should render 1`] = `
             className="prism-code language-json"
             style={
               {
-                "backgroundColor": "#ffffff",
-                "color": "#000000",
+                "backgroundColor": "#1E1E1E",
+                "color": "#9CDCFE",
               }
             }
           >
@@ -221,35 +221,15 @@ exports[`lib/monitoring/requestpanel/request > should render 1`] = `
               className="token-line"
               style={
                 {
-                  "backgroundColor": null,
-                  "color": "#000000",
+                  "backgroundColor": undefined,
+                  "color": "#9CDCFE",
                 }
               }
             >
               <span
                 className="token plain"
               >
-                https
-              </span>
-              <span
-                className="token operator"
-                style={
-                  {
-                    "color": "rgb(0, 0, 0)",
-                  }
-                }
-              >
-                :
-              </span>
-              <span
-                className="token comment"
-                style={
-                  {
-                    "color": "rgb(0, 128, 0)",
-                  }
-                }
-              >
-                //httpbin.org/get
+                https://httpbin.org/get
               </span>
             </div>
           </pre>
@@ -542,8 +522,8 @@ exports[`lib/monitoring/requestpanel/request > should render a body 1`] = `
             className="prism-code language-json"
             style={
               {
-                "backgroundColor": "#ffffff",
-                "color": "#000000",
+                "backgroundColor": "#1E1E1E",
+                "color": "#9CDCFE",
               }
             }
           >
@@ -551,8 +531,8 @@ exports[`lib/monitoring/requestpanel/request > should render a body 1`] = `
               className="token-line"
               style={
                 {
-                  "backgroundColor": null,
-                  "color": "#000000",
+                  "backgroundColor": undefined,
+                  "color": "#9CDCFE",
                 }
               }
             >
@@ -652,8 +632,8 @@ exports[`lib/monitoring/requestpanel/request > should render a body 1`] = `
             className="prism-code language-json"
             style={
               {
-                "backgroundColor": "#ffffff",
-                "color": "#000000",
+                "backgroundColor": "#1E1E1E",
+                "color": "#9CDCFE",
               }
             }
           >
@@ -661,35 +641,15 @@ exports[`lib/monitoring/requestpanel/request > should render a body 1`] = `
               className="token-line"
               style={
                 {
-                  "backgroundColor": null,
-                  "color": "#000000",
+                  "backgroundColor": undefined,
+                  "color": "#9CDCFE",
                 }
               }
             >
               <span
                 className="token plain"
               >
-                https
-              </span>
-              <span
-                className="token operator"
-                style={
-                  {
-                    "color": "rgb(0, 0, 0)",
-                  }
-                }
-              >
-                :
-              </span>
-              <span
-                className="token comment"
-                style={
-                  {
-                    "color": "rgb(0, 128, 0)",
-                  }
-                }
-              >
-                //httpbin.org/post
+                https://httpbin.org/post
               </span>
             </div>
           </pre>
@@ -962,8 +922,8 @@ exports[`lib/monitoring/requestpanel/request > should render a body 1`] = `
             className="prism-code language-json"
             style={
               {
-                "backgroundColor": "#ffffff",
-                "color": "#000000",
+                "backgroundColor": "#1E1E1E",
+                "color": "#9CDCFE",
               }
             }
           >
@@ -971,92 +931,43 @@ exports[`lib/monitoring/requestpanel/request > should render a body 1`] = `
               className="token-line"
               style={
                 {
-                  "backgroundColor": null,
-                  "color": "#000000",
+                  "backgroundColor": undefined,
+                  "color": "#9CDCFE",
                 }
               }
             >
               <span
-                className="token punctuation"
-                style={
-                  {
-                    "color": "rgb(4, 81, 165)",
-                  }
-                }
+                className="token plain"
               >
                 {
               </span>
-              <span
-                className="token plain"
-              />
             </div>
             <div
               className="token-line"
               style={
                 {
-                  "backgroundColor": null,
-                  "color": "#000000",
+                  "backgroundColor": undefined,
+                  "color": "#9CDCFE",
                 }
               }
             >
               <span
                 className="token plain"
               >
-                  
+                  "hello": "world!"
               </span>
-              <span
-                className="token property"
-              >
-                "hello"
-              </span>
-              <span
-                className="token operator"
-                style={
-                  {
-                    "color": "rgb(0, 0, 0)",
-                  }
-                }
-              >
-                :
-              </span>
-              <span
-                className="token plain"
-              >
-                 
-              </span>
-              <span
-                className="token string"
-                style={
-                  {
-                    "color": "rgb(163, 21, 21)",
-                  }
-                }
-              >
-                "world!"
-              </span>
-              <span
-                className="token plain"
-              />
             </div>
             <div
               className="token-line"
               style={
                 {
-                  "backgroundColor": null,
-                  "color": "#000000",
+                  "backgroundColor": undefined,
+                  "color": "#9CDCFE",
                 }
               }
             >
               <span
                 className="token plain"
-              />
-              <span
-                className="token punctuation"
-                style={
-                  {
-                    "color": "rgb(4, 81, 165)",
-                  }
-                }
               >
                 }
               </span>
@@ -1171,8 +1082,8 @@ exports[`lib/monitoring/requestpanel/request > should render a body link 1`] = `
             className="prism-code language-json"
             style={
               {
-                "backgroundColor": "#ffffff",
-                "color": "#000000",
+                "backgroundColor": "#1E1E1E",
+                "color": "#9CDCFE",
               }
             }
           >
@@ -1180,8 +1091,8 @@ exports[`lib/monitoring/requestpanel/request > should render a body link 1`] = `
               className="token-line"
               style={
                 {
-                  "backgroundColor": null,
-                  "color": "#000000",
+                  "backgroundColor": undefined,
+                  "color": "#9CDCFE",
                 }
               }
             >
@@ -1281,8 +1192,8 @@ exports[`lib/monitoring/requestpanel/request > should render a body link 1`] = `
             className="prism-code language-json"
             style={
               {
-                "backgroundColor": "#ffffff",
-                "color": "#000000",
+                "backgroundColor": "#1E1E1E",
+                "color": "#9CDCFE",
               }
             }
           >
@@ -1290,35 +1201,15 @@ exports[`lib/monitoring/requestpanel/request > should render a body link 1`] = `
               className="token-line"
               style={
                 {
-                  "backgroundColor": null,
-                  "color": "#000000",
+                  "backgroundColor": undefined,
+                  "color": "#9CDCFE",
                 }
               }
             >
               <span
                 className="token plain"
               >
-                https
-              </span>
-              <span
-                className="token operator"
-                style={
-                  {
-                    "color": "rgb(0, 0, 0)",
-                  }
-                }
-              >
-                :
-              </span>
-              <span
-                className="token comment"
-                style={
-                  {
-                    "color": "rgb(0, 128, 0)",
-                  }
-                }
-              >
-                //httpbin.org/post
+                https://httpbin.org/post
               </span>
             </div>
           </pre>

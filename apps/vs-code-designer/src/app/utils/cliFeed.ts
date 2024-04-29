@@ -18,7 +18,7 @@ export async function getLatestVersion(context: IActionContext, version: FuncVer
   const cliFeed: ICliFeed = await getCliFeed(context);
 
   const majorVersion: string = tryGetMajorVersion(version);
-  const tag: string = 'v' + majorVersion;
+  const tag: string = `v${majorVersion}`;
   const releaseData = cliFeed.tags[tag];
 
   if (!releaseData) {

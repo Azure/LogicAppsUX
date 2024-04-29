@@ -10,7 +10,7 @@ import { Checkbox, Text } from '@fluentui/react';
 import type { IDropdownOption } from '@fluentui/react';
 import { useContext, useCallback, useEffect, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
 
 export const ManagedConnections: React.FC = () => {

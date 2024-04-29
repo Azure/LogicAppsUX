@@ -8,7 +8,8 @@ import { OperationManifestService, SwaggerParser, getObjectPropertyValue, getRec
 import type { LAOperation, OperationManifest } from '@microsoft/logic-apps-shared';
 import { createSelector } from '@reduxjs/toolkit';
 import { useMemo } from 'react';
-import { UseQueryResult, useQuery } from 'react-query';
+import type { UseQueryResult } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { useSelector } from 'react-redux';
 
 interface QueryResult {
@@ -18,7 +19,9 @@ interface QueryResult {
 
 export const useIsConnectionRequired = (operationInfo: NodeOperation) => {
   const result = useOperationManifest(operationInfo);
-  if (result.isLoading || !result.isFetched || result.isPlaceholderData) return false;
+  if (result.isLoading || !result.isFetched || result.isPlaceholderData) {
+    return false;
+  }
   const manifest = result.data;
   return manifest ? isConnectionRequiredForOperation(manifest) : true;
 };
@@ -34,13 +37,13 @@ export const useNodeConnectionName = (nodeId: string): QueryResult => {
     () =>
       nodeId && connectionId
         ? {
-          isLoading,
-          result: !isLoading ? connection?.properties?.displayName ?? connectionId.split('/').at(-1) : '',
-        }
+            isLoading,
+            result: isLoading ? '' : connection?.properties?.displayName ?? connectionId.split('/').at(-1),
+          }
         : {
-          isLoading: false,
-          result: undefined,
-        },
+            isLoading: false,
+            result: undefined,
+          },
     [nodeId, connection?.properties?.displayName, connectionId, isLoading]
   );
 };
@@ -63,17 +66,22 @@ export const useOutputParameters = (nodeId: string) => {
   return useSelector((state: RootState) => selector(state, nodeId));
 };
 
-export const useOperationManifest = (operationInfo?: NodeOperation, enabled = true): UseQueryResult<OperationManifest | undefined, unknown> => {
+export const useOperationManifest = (
+  operationInfo?: NodeOperation,
+  enabled = true
+): UseQueryResult<OperationManifest | undefined, unknown> => {
   const operationManifestService = OperationManifestService();
   const connectorId = operationInfo?.connectorId?.toLowerCase();
   const operationId = operationInfo?.operationId?.toLowerCase();
   return useQuery(
     ['manifest', { connectorId }, { operationId }],
     () => {
-      if (!operationInfo || !connectorId || !operationId) return;
+      if (!operationInfo || !connectorId || !operationId) {
+        return null;
+      }
       return operationManifestService.isSupported(operationInfo.type, operationInfo.kind)
         ? operationManifestService.getOperationManifest(connectorId, operationId)
-        : undefined;
+        : null;
     },
     {
       enabled: !!connectorId && !!operationId && enabled,
@@ -149,6 +157,46 @@ export const useOperationSummary = (operationInfo: NodeOperation): QueryResult =
   return result;
 };
 
+export const useOperationUploadChunkMetadata = (operationInfo: NodeOperation): QueryResult => {
+  const operationManifestService = OperationManifestService();
+  const useManifest = operationManifestService.isSupported(operationInfo?.type ?? '', operationInfo?.kind ?? '');
+
+  const result = useNodeAttributeOrSwagger(operationInfo, ['settings', 'chunking'], ['uploadChunkMetadata'], 'uploadChunkMetadata', {
+    useManifest,
+  });
+
+  if (!result.isLoading) {
+    if (useManifest && result?.result) {
+      return { result: result.result.options, isLoading: false };
+    }
+  }
+
+  return result;
+};
+
+export const useOperationDownloadChunkMetadata = (operationInfo: NodeOperation): QueryResult => {
+  const operationManifestService = OperationManifestService();
+  const useManifest = operationManifestService.isSupported(operationInfo?.type ?? '', operationInfo?.kind ?? '');
+
+  const result = useNodeAttributeOrSwagger(
+    operationInfo,
+    ['settings', 'downloadChunking'],
+    ['downloadChunkMetadata'],
+    'downloadChunkMetadata',
+    {
+      useManifest,
+    }
+  );
+
+  if (!result.isLoading) {
+    if (useManifest && result.result) {
+      return { result: result.result.options, isLoading: false };
+    }
+  }
+
+  return result;
+};
+
 const useNodeAttributeOrSwagger = (
   operationInfo: NodeOperation,
   propertyInManifest: string[],
@@ -156,7 +204,8 @@ const useNodeAttributeOrSwagger = (
   propertyInSwagger: keyof LAOperation,
   options: { useManifest: boolean }
 ): QueryResult => {
-  const { data: connectorData } = useConnectorAndSwagger(operationInfo?.connectorId, !options.useManifest);
+  const res = useConnectorAndSwagger(operationInfo?.connectorId, !options.useManifest);
+  const { data: connectorData } = res;
   const { result, isLoading } = useNodeAttribute(operationInfo, propertyInManifest, propertyInConnector);
   const { swagger } = connectorData ?? {};
   if (swagger) {

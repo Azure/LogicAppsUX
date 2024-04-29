@@ -141,8 +141,8 @@ exports[`ui/monitoring/values/value > should render a decimal value 1`] = `
         className="prism-code language-json"
         style={
           {
-            "backgroundColor": "#ffffff",
-            "color": "#000000",
+            "backgroundColor": "#1E1E1E",
+            "color": "#9CDCFE",
           }
         }
       >
@@ -150,18 +150,13 @@ exports[`ui/monitoring/values/value > should render a decimal value 1`] = `
           className="token-line"
           style={
             {
-              "backgroundColor": null,
-              "color": "#000000",
+              "backgroundColor": undefined,
+              "color": "#9CDCFE",
             }
           }
         >
           <span
-            className="token number"
-            style={
-              {
-                "color": "rgb(9, 134, 88)",
-              }
-            }
+            className="token plain"
           >
             -123.45
           </span>
@@ -618,8 +613,8 @@ exports[`ui/monitoring/values/value > should render a number value 1`] = `
         className="prism-code language-json"
         style={
           {
-            "backgroundColor": "#ffffff",
-            "color": "#000000",
+            "backgroundColor": "#1E1E1E",
+            "color": "#9CDCFE",
           }
         }
       >
@@ -627,18 +622,13 @@ exports[`ui/monitoring/values/value > should render a number value 1`] = `
           className="token-line"
           style={
             {
-              "backgroundColor": null,
-              "color": "#000000",
+              "backgroundColor": undefined,
+              "color": "#9CDCFE",
             }
           }
         >
           <span
-            className="token number"
-            style={
-              {
-                "color": "rgb(9, 134, 88)",
-              }
-            }
+            className="token plain"
           >
             -123.45
           </span>
@@ -736,8 +726,8 @@ exports[`ui/monitoring/values/value > should render a raw value 1`] = `
         className="prism-code language-json"
         style={
           {
-            "backgroundColor": "#ffffff",
-            "color": "#000000",
+            "backgroundColor": "#1E1E1E",
+            "color": "#9CDCFE",
           }
         }
       >
@@ -745,8 +735,8 @@ exports[`ui/monitoring/values/value > should render a raw value 1`] = `
           className="token-line"
           style={
             {
-              "backgroundColor": null,
-              "color": "#000000",
+              "backgroundColor": undefined,
+              "color": "#9CDCFE",
             }
           }
         >
@@ -849,8 +839,8 @@ exports[`ui/monitoring/values/value > should render an XML value 1`] = `
         className="prism-code language-json"
         style={
           {
-            "backgroundColor": "#ffffff",
-            "color": "#000000",
+            "backgroundColor": "#1E1E1E",
+            "color": "#9CDCFE",
           }
         }
       >
@@ -858,8 +848,8 @@ exports[`ui/monitoring/values/value > should render an XML value 1`] = `
           className="token-line"
           style={
             {
-              "backgroundColor": null,
-              "color": "#000000",
+              "backgroundColor": undefined,
+              "color": "#9CDCFE",
             }
           }
         >

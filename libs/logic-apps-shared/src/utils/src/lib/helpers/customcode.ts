@@ -35,35 +35,85 @@ export const getFileExtensionName = (language: EditorLanguage): string => {
   }
 };
 
-export const getFileExtensionNameFromOperationId = (operationId: string): string => {
-  switch (operationId) {
-    case 'csharpscriptcode':
-      return '.csx';
-    case 'powershellcode':
-      return '.ps1';
-    default:
-      return '.txt';
-  }
-};
-
-export const mapFileExtensionToAppFileName = (fileExtension: string) => {
-  switch (fileExtension) {
-    case '.ps1':
-      return 'requirements.psd1';
-    default:
-      return '';
-  }
-};
-
-export const getAppFiles = (files: VFSObject[]): Record<string, boolean> => {
-  const appFiles: Record<string, boolean> = {};
-  appFiles['.ps1'] = !!files.find((file) => file.name === 'requirements.psd1');
-  return appFiles;
-};
-
 export const getAppFileForFileExtension = (fileExtension: string): string => {
   if (fileExtension === '.ps1') {
     return "# This file enables modules to be automatically managed by the Functions service.\r\n# See https://aka.ms/functionsmanageddependency for additional information.\r\n#\r\n@{\r\n    # For latest supported version, go to 'https://www.powershellgallery.com/packages/Az'. Uncomment the next line and replace the MAJOR_VERSION, e.g., 'Az' = '5.*'\r\n     'Az' = '10.*'\r\n}";
   }
   return '';
+};
+
+export const generateDefaultCustomCodeValue = (language: EditorLanguage): string => {
+  switch (language) {
+    case EditorLanguage.powershell:
+      return `$action = Get-ActionOutput -actionName "Compose" 
+
+$subId = $action["body"]["subscriptionId"] 
+
+$resourceGroupName = $action["body"]["resourceGroupName"] 
+
+$logicAppName = $action["body"]["logicAppName"] 
+
+$result = Start-AzLogicApp -ResourceGroupName $resourceGroupName -Name $logicAppName -TriggerName "manual" -Confirm 
+
+Push-ActionOutputs -body $result`;
+    case EditorLanguage.csharp:
+      return `// Add the required libraries
+#r "Newtonsoft.Json"
+#r "Microsoft.Azure.Workflows.Scripting"
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Primitives;
+using Microsoft.Azure.Workflows.Scripting;g;
+
+/// <summary>
+/// Executes the inline csharp code.
+/// </summary>
+/// <param name="context">The workflow context.</param>
+public static async Task<Weather> Run(WorkflowContext context)
+{
+  var outputs = (await context.GetActionResults("compose").ConfigureAwait(false)).Outputs;
+
+  // Generate random temperature within a range based on the temperature scale
+  Random rnd = new Random();
+  var temperatureScale = outputs["temperatureScale"].ToString();
+  var currentTemp = temperatureScale == "Celsius" ? rnd.Next(1, 30) : rnd.Next(40, 90);
+  var lowTemp = currentTemp - 10;
+  var highTemp = currentTemp + 10;
+
+  // Create a Weather object with the temperature information
+  var weather = new Weather()
+  {
+    ZipCode = (int) outputs["zipCode"],
+    CurrentWeather = $"The current weather is {currentTemp} {temperatureScale}",
+    DayLow = $"The low for the day is {lowTemp} {temperatureScale}",
+    DayHigh = $"The high for the day is {highTemp} {temperatureScale}"
+  };
+
+  return weather;
+}
+
+/// <summary>
+/// Represents the weather information.
+/// </summary>
+public class Weather
+{
+    /// <summary>
+    /// Gets or sets the zip code.
+    /// </summary>
+    public int ZipCode { get; set; }
+    /// <summary>
+    /// Gets or sets the current weather.
+    /// </summary>
+    public string CurrentWeather { get; set; }
+    /// <summary>
+    /// Gets or sets the low temperature for the day.
+    /// </summary>
+    public string DayLow { get; set; }
+    /// <summary>
+    /// Gets or sets the high temperature for the day.
+    /// </summary>
+    public string DayHigh { get; set; }
+}`;
+    default:
+      return '';
+  }
 };

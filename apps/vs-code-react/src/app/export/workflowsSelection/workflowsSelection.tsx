@@ -22,7 +22,7 @@ import type { IDropdownOption } from '@fluentui/react';
 import { isNullOrUndefined } from '@microsoft/logic-apps-shared';
 import { useMemo, useRef, useState, useEffect, useContext } from 'react';
 import { useIntl } from 'react-intl';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
 
 export const WorkflowsSelection: React.FC = () => {
@@ -31,10 +31,10 @@ export const WorkflowsSelection: React.FC = () => {
   const { baseUrl, accessToken, exportData, cloudHost } = workflowState;
   const { selectedSubscription, selectedIse, selectedWorkflows, location } = exportData;
 
-  const [renderWorkflows, setRenderWorkflows] = useState<Array<WorkflowsList> | null>(null);
+  const [renderWorkflows, setRenderWorkflows] = useState<WorkflowsList[] | null>(null);
   const [resourceGroups, setResourceGroups] = useState<IDropdownOption[]>([]);
   const [searchString, setSearchString] = useState<string>('');
-  const allWorkflows = useRef<Array<WorkflowsList>>([]);
+  const allWorkflows = useRef<WorkflowsList[]>([]);
   const allItemsSelected = useRef<SelectedWorkflowsList[]>(parsePreviousSelectedWorkflows(selectedWorkflows));
 
   const intl = useIntl();
@@ -110,16 +110,16 @@ export const WorkflowsSelection: React.FC = () => {
   );
 
   useEffect(() => {
-    if (!isNullOrUndefined(workflowsData)) {
-      setRenderWorkflows(workflowsData);
-      setResourceGroups(parseResourceGroups(workflowsData));
-      allWorkflows.current = workflowsData;
-      allItemsSelected.current = parseSelectedWorkflows(workflowsData, allItemsSelected.current);
-    } else {
+    if (isNullOrUndefined(workflowsData)) {
       setRenderWorkflows([]);
       setResourceGroups([]);
       allWorkflows.current = [];
       allItemsSelected.current = [];
+    } else {
+      setRenderWorkflows(workflowsData);
+      setResourceGroups(parseResourceGroups(workflowsData));
+      allWorkflows.current = workflowsData;
+      allItemsSelected.current = parseSelectedWorkflows(workflowsData, allItemsSelected.current);
     }
   }, [workflowsData]);
 

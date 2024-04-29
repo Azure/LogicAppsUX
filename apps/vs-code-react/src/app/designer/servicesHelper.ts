@@ -25,8 +25,9 @@ import type {
 } from '@microsoft/logic-apps-shared';
 import type { ConnectionAndAppSetting, ConnectionsData, IDesignerPanelMetadata } from '@microsoft/vscode-extension-logic-apps';
 import { ExtensionCommand, HttpClient } from '@microsoft/vscode-extension-logic-apps';
-import type { QueryClient } from 'react-query';
+import type { QueryClient } from '@tanstack/react-query';
 import type { WebviewApi } from 'vscode-webview';
+import { CustomEditorService } from './customEditorService';
 
 export const getDesignerServices = (
   baseUrl: string,
@@ -50,15 +51,16 @@ export const getDesignerServices = (
   workflowService: IWorkflowService;
   hostService: IHostService;
   runService: StandardRunService;
+  editorService: CustomEditorService;
   apimService: BaseApiManagementService;
   functionService: BaseFunctionService;
 } => {
-  let authToken = '',
-    panelId = '',
-    workflowDetails: Record<string, any> = {},
-    appSettings = {},
-    isStateful = false,
-    connectionsData = { ...connectionData } ?? {};
+  let authToken = '';
+  let panelId = '';
+  let workflowDetails: Record<string, any> = {};
+  let appSettings = {};
+  let isStateful = false;
+  let connectionsData = { ...connectionData };
 
   const { subscriptionId = 'subscriptionId', resourceGroup, location } = apiHubDetails;
 
@@ -247,12 +249,11 @@ export const getDesignerServices = (
           method: HTTP_METHODS.POST,
           value: 'Url not available during authoring in local project. Check Overview page.',
         });
-      } else {
-        return Promise.resolve({
-          method: HTTP_METHODS.POST,
-          value: 'Url not available during authoring in local project. Check Overview page.',
-        });
       }
+      return Promise.resolve({
+        method: HTTP_METHODS.POST,
+        value: 'Url not available during authoring in local project. Check Overview page.',
+      });
     },
     getAppIdentity: () => {
       return {
@@ -284,6 +285,16 @@ export const getDesignerServices = (
     httpClient,
   });
 
+  const editorService = new CustomEditorService({
+    areCustomEditorsEnabled: true,
+    openRelativeLink: (relativeLink: string) => {
+      return vscode.postMessage({
+        command: ExtensionCommand.openRelativeLink,
+        content: relativeLink,
+      });
+    },
+  });
+
   return {
     connectionService,
     connectorService,
@@ -294,6 +305,7 @@ export const getDesignerServices = (
     workflowService,
     hostService,
     runService,
+    editorService,
     apimService,
     functionService,
   };
@@ -310,9 +322,8 @@ const addConnectionInJson = (connectionAndSetting: ConnectionAndAppSetting, conn
 
     if (pathToSetConnectionsData && pathToSetConnectionsData[path][connectionKey]) {
       break;
-    } else {
-      pathToSetConnectionsData[path][connectionKey] = connectionData;
     }
+    pathToSetConnectionsData[path][connectionKey] = connectionData;
   }
 
   return pathToSetConnectionsData as ConnectionsData;

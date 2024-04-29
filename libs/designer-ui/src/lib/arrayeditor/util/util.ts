@@ -115,14 +115,13 @@ export const convertComplexItemsToArray = (
           }
         });
         return arrayVal;
-      } else {
-        const segments = complexItem.value;
-
-        // we need to convert to string to extract tokens to repopulate later
-        const stringValue = convertSegmentsToString(segments, nodeMap);
-        const castedValue = castParameter?.(segments, itemSchema.type, itemSchema.format, suppressCasting);
-        return suppressCasting ? stringValue : castedValue;
       }
+      const segments = complexItem.value;
+
+      // we need to convert to string to extract tokens to repopulate later
+      const stringValue = convertSegmentsToString(segments, nodeMap);
+      const castedValue = castParameter?.(segments, itemSchema.type, itemSchema.format, suppressCasting);
+      return suppressCasting ? stringValue : castedValue;
     }
   }
   return returnItem;
@@ -239,7 +238,9 @@ const convertObjectToComplexArrayItemArray = (
 
   Object.keys(obj).forEach((key: string) => {
     const value = obj[key];
-    if (!itemSchema.properties) return;
+    if (!itemSchema.properties) {
+      return;
+    }
     const itemSchemaProperty = itemSchema.properties[key];
 
     if (Array.isArray(value)) {

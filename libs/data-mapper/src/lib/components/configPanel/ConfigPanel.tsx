@@ -12,7 +12,7 @@ import type { DataMapSchema } from '@microsoft/logic-apps-shared';
 import { SchemaType } from '@microsoft/logic-apps-shared';
 import { useCallback, useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
 
 const schemaFileQuerySettings = {
@@ -53,7 +53,8 @@ export const ConfigPanel = ({
       if (selectedSourceSchema) {
         const [fileName, filePath] = getFileNameAndPath(selectedSourceSchema);
         return await getSelectedSchema(fileName ?? '', filePath);
-      } else return await getSelectedSchema(selectedSourceSchema ?? '', '');
+      }
+      return await getSelectedSchema(selectedSourceSchema ?? '', '');
     },
     {
       ...schemaFileQuerySettings,
@@ -68,7 +69,8 @@ export const ConfigPanel = ({
         const [fileName, filePath] = getFileNameAndPath(selectedTargetSchema);
 
         return await getSelectedSchema(fileName ?? '', filePath);
-      } else return await getSelectedSchema(selectedTargetSchema ?? '', '');
+      }
+      return await getSelectedSchema(selectedTargetSchema ?? '', '');
     },
     {
       ...schemaFileQuerySettings,
