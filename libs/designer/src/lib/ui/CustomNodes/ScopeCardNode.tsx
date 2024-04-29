@@ -41,7 +41,7 @@ import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import { memo, useCallback, useEffect, useMemo, useRef, useState } from 'react';
 import { useDrag } from 'react-dnd';
 import { useIntl } from 'react-intl';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import { useDispatch } from 'react-redux';
 import { Handle, Position, useOnViewportChange } from 'reactflow';
 import type { NodeProps } from 'reactflow';
@@ -177,9 +177,9 @@ const ScopeCardNode = ({ data, targetPosition = Position.Top, sourcePosition = P
   }, [dispatch, scopeId]);
 
   const deleteClick = useCallback(() => {
-    dispatch(setSelectedNodeId(id));
+    dispatch(setSelectedNodeId(scopeId));
     dispatch(setShowDeleteModal(true));
-  }, [dispatch, id]);
+  }, [dispatch, scopeId]);
 
   const copyClick = useCallback(() => {
     setShowCopyCallout(true);

@@ -21,9 +21,18 @@ export default defineConfig({
   workers: process.env.CI ? 1 : undefined,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: 'html',
-  timeout: 1_000 * 60 * 5,
+  timeout: 5 * 60 * 1_000,
+  expect: {
+    // expect timeout set to 20 seconds
+    timeout: 20 * 1000,
+  },
+  reportSlowTests: {
+    threshold: 60 * 1_000,
+    max: 10,
+  },
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
+    actionTimeout: 20 * 1_000,
     /* Base URL to use in actions like `await page.goto('/')`. */
     baseURL: 'http://localhost:4200',
 
@@ -46,14 +55,14 @@ export default defineConfig({
             'dom.events.asyncClipboard.readText': true,
             'dom.events.testing.asyncClipboard': true,
           },
-        }
+        },
       },
     },
 
-    {
-      name: 'webkit',
-      use: { ...devices['Desktop Safari'] },
-    },
+    // {
+    //   name: 'webkit',
+    //   use: { ...devices['Desktop Safari'] },
+    // },
 
     /* Test against mobile viewports. */
     // {

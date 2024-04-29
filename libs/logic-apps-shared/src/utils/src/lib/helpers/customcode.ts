@@ -35,17 +35,6 @@ export const getFileExtensionName = (language: EditorLanguage): string => {
   }
 };
 
-export const getFileExtensionNameFromOperationId = (operationId: string): string => {
-  switch (operationId) {
-    case 'csharpscriptcode':
-      return '.csx';
-    case 'powershellcode':
-      return '.ps1';
-    default:
-      return '.txt';
-  }
-};
-
 export const getAppFileForFileExtension = (fileExtension: string): string => {
   if (fileExtension === '.ps1') {
     return "# This file enables modules to be automatically managed by the Functions service.\r\n# See https://aka.ms/functionsmanageddependency for additional information.\r\n#\r\n@{\r\n    # For latest supported version, go to 'https://www.powershellgallery.com/packages/Az'. Uncomment the next line and replace the MAJOR_VERSION, e.g., 'Az' = '5.*'\r\n     'Az' = '10.*'\r\n}";
@@ -69,42 +58,61 @@ $result = Start-AzLogicApp -ResourceGroupName $resourceGroupName -Name $logicApp
 Push-ActionOutputs -body $result`;
     case EditorLanguage.csharp:
       return `// Add the required libraries
-const Newtonsoft = require("Newtonsoft.Json");
-const AzureScripting = require("Microsoft.Azure.Workflows.Scripting");
+#r "Newtonsoft.Json"
+#r "Microsoft.Azure.Workflows.Scripting"
+using Microsoft.AspNetCore.Mvc;
+using Microsoft.Extensions.Primitives;
+using Microsoft.Azure.Workflows.Scripting;g;
 
-// Define the function to run
-async function run(context) {
-  // Get the outputs from the 'compose' action
-  const outputs = (await context.GetActionResults("compose")).Outputs;
+/// <summary>
+/// Executes the inline csharp code.
+/// </summary>
+/// <param name="context">The workflow context.</param>
+public static async Task<Weather> Run(WorkflowContext context)
+{
+  var outputs = (await context.GetActionResults("compose").ConfigureAwait(false)).Outputs;
 
   // Generate random temperature within a range based on the temperature scale
-  const temperatureScale = outputs["temperatureScale"].toString();
-  const currentTemp = temperatureScale === "Celsius" ? Math.floor(Math.random() * (30 - 1 + 1)) + 1 : Math.floor(Math.random() * (90 - 40 + 1)) + 40;
-  const lowTemp = currentTemp - 10;
-  const highTemp = currentTemp + 10;
+  Random rnd = new Random();
+  var temperatureScale = outputs["temperatureScale"].ToString();
+  var currentTemp = temperatureScale == "Celsius" ? rnd.Next(1, 30) : rnd.Next(40, 90);
+  var lowTemp = currentTemp - 10;
+  var highTemp = currentTemp + 10;
 
   // Create a Weather object with the temperature information
-  const weather = {
-    ZipCode: parseInt(outputs["zipCode"]),
-    CurrentWeather: \`The current weather is \${currentTemp} \${temperatureScale}\`,
-    DayLow: \`The low for the day is \${lowTemp} \${temperatureScale}\`,
-    DayHigh: \`The high for the day is \${highTemp} \${temperatureScale}\`
+  var weather = new Weather()
+  {
+    ZipCode = (int) outputs["zipCode"],
+    CurrentWeather = $"The current weather is {currentTemp} {temperatureScale}",
+    DayLow = $"The low for the day is {lowTemp} {temperatureScale}",
+    DayHigh = $"The high for the day is {highTemp} {temperatureScale}"
   };
 
   return weather;
 }
 
-// Define the Weather class
-class Weather {
-  constructor() {
-      this.ZipCode = 0;
-      this.CurrentWeather = "";
-      this.DayLow = "";
-      this.DayHigh = "";
-    }
-} 
-
-module.exports = run;`;
+/// <summary>
+/// Represents the weather information.
+/// </summary>
+public class Weather
+{
+    /// <summary>
+    /// Gets or sets the zip code.
+    /// </summary>
+    public int ZipCode { get; set; }
+    /// <summary>
+    /// Gets or sets the current weather.
+    /// </summary>
+    public string CurrentWeather { get; set; }
+    /// <summary>
+    /// Gets or sets the low temperature for the day.
+    /// </summary>
+    public string DayLow { get; set; }
+    /// <summary>
+    /// Gets or sets the high temperature for the day.
+    /// </summary>
+    public string DayHigh { get; set; }
+}`;
     default:
       return '';
   }

@@ -77,7 +77,7 @@ export const PanelRoot = (props: PanelRootProps): JSX.Element => {
     </div>
   );
 
-  return (!isLoadingPanel && isUndefined(currentPanelMode)) || currentPanelMode === 'Operation' ? (
+  return !isLoadingPanel && (isUndefined(currentPanelMode) || currentPanelMode === 'Operation') ? (
     <NodeDetailsPanel {...commonPanelProps} />
   ) : (
     <Panel

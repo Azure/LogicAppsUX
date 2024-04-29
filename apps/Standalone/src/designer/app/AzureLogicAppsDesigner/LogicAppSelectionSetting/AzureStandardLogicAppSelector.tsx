@@ -8,7 +8,7 @@ import type { IComboBoxOption, IDropdownOption, IStackProps, IComboBoxStyles } f
 import { ComboBox, Dropdown, Spinner, Stack } from '@fluentui/react';
 import axios from 'axios';
 import { useEffect } from 'react';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import { useDispatch } from 'react-redux';
 
 const columnProps: Partial<IStackProps> = {
