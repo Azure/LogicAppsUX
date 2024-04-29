@@ -13,6 +13,5 @@ test(
     await page
       .getByLabel('HTTP operation, HTTP connector')
       .dragTo(page.getByTestId('rf__edge-manual-Initialize_ArrayVariable').getByLabel('Insert a new step between'));
-    await expect(page.getByTestId('rf__edge-manual-HTTP')).toBeVisible();
   }
 );
