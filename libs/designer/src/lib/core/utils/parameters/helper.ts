@@ -2636,6 +2636,10 @@ export function getGroupAndParameterFromParameterKey(
   return undefined;
 }
 
+export const getCustomCodeFileNameFromParameter = (parameter: ParameterInfo): string => {
+  return parameter.value?.[0].value ?? '';
+};
+
 export const getCustomCodeFileName = (nodeId: string, nodeInputs?: NodeInputs, idReplacements?: Record<string, string>): string => {
   const updatedNodeId = idReplacements?.[nodeId] || nodeId;
   let fileName = replaceWhiteSpaceWithUnderscore(updatedNodeId);
@@ -3016,7 +3020,7 @@ export const flattenAndUpdateViewModel = (
 export const updateScopePasteTokenMetadata = (
   valueSegment: ValueSegment,
   pasteParams: PasteScopeAdditionalParams
-): { updatedSegment: ValueSegment; error: string } => {
+): { updatedTokenSegment: ValueSegment; tokenError: string } => {
   let error = '';
   let token = valueSegment?.token;
   if (token) {
@@ -3065,7 +3069,7 @@ export const updateScopePasteTokenMetadata = (
     }
     valueSegment.token = token;
   }
-  return { updatedSegment: valueSegment, error: error };
+  return { updatedTokenSegment: valueSegment, tokenError: error };
 };
 
 export function updateTokenMetadata(
