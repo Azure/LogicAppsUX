@@ -66,11 +66,8 @@ const useStaticStyles = makeStaticStyles({
 const useStyles = makeStyles({
   dataMapperShell: {
     backgroundColor: tokens.colorNeutralBackground4,
-    paddingLeft: '12px',
-    paddingRight: '12px',
     height: '100%',
     display: 'flex',
-    flexDirection: 'column',
     ...shorthands.flex(1, 1, '1px'),
   },
   canvasWrapper: {
@@ -120,149 +117,12 @@ export const DataMapperDesigner = ({
 
   useEffect(() => readCurrentCustomXsltPathOptions && readCurrentCustomXsltPathOptions(), [readCurrentCustomXsltPathOptions]);
 
-  // const dataMapDefinition = useMemo<string>(() => {
-  //   if (sourceSchema && targetSchema) {
-  //     try {
-  //       const newDataMapDefinition = convertToMapDefinition(currentConnections, sourceSchema, targetSchema, targetSchemaSortArray);
-
-  //       if (saveDraftStateCall) {
-  //         saveDraftStateCall(newDataMapDefinition);
-  //       }
-
-  //       return newDataMapDefinition;
-  //     } catch (error) {
-  //       let errorMessage = '';
-  //       if (typeof error === 'string') {
-  //         errorMessage = error;
-  //       } else if (error instanceof Error) {
-  //         errorMessage = error.message;
-  //       }
-
-  //       LogService.error(LogCategory.DataMapperDesigner, 'dataMapDefinition', {
-  //         message: errorMessage,
-  //       });
-
-  //       return '';
-  //     }
-  //   }
-
-  //   return '';
-  // }, [sourceSchema, targetSchema, currentConnections, targetSchemaSortArray, saveDraftStateCall]);
-
-  // const onSubmitSchemaFileSelection = (schemaFile: SchemaFile) => {
-  //   if (addSchemaFromFile) {
-  //     // Will cause DM to ping VS Code to check schema file is in appropriate folder, then we will make getSchema API call
-  //     addSchemaFromFile(schemaFile);
-  //   }
-  // };
-
-  // const onSaveClick = useCallback(() => {
-  //   const errors = collectErrorsForMapChecker(currentConnections, flattenedTargetSchema);
-
-  //   if (errors.length > 0) {
-  //     dispatch(
-  //       showNotification({
-  //         type: NotificationTypes.MapHasErrorsAtSave,
-  //         msgParam: errors.length,
-  //         autoHideDurationMs: errorNotificationAutoHideDuration,
-  //       })
-  //     );
-  //   }
-
-  //   const mapMetadata = JSON.stringify(generateMapMetadata(functions, currentConnections));
-
-  //   saveMapDefinitionCall(dataMapDefinition, mapMetadata);
-
-  //   dispatch(
-  //     saveDataMap({
-  //       sourceSchemaExtended: sourceSchema,
-  //       targetSchemaExtended: targetSchema,
-  //     })
-  //   );
-  // }, [
-  //   currentConnections,
-  //   flattenedTargetSchema,
-  //   functions,
-  //   saveMapDefinitionCall,
-  //   dataMapDefinition,
-  //   dispatch,
-  //   sourceSchema,
-  //   targetSchema,
-  // ]);
-
-  // const onGenerateClick = useCallback(() => {
-  //   const errors = collectErrorsForMapChecker(currentConnections, flattenedTargetSchema);
-
-  //   if (errors.length > 0) {
-  //     dispatch(
-  //       showNotification({
-  //         type: NotificationTypes.MapHasErrorsAtSave,
-  //         msgParam: errors.length,
-  //         autoHideDurationMs: errorNotificationAutoHideDuration,
-  //       })
-  //     );
-  //   }
-
-  // generateDataMapXslt(dataMapDefinition)
-  //   .then((xsltStr) => {
-  //     saveXsltCall(xsltStr);
-
-  //     LogService.log(LogCategory.DataMapperDesigner, 'onGenerateClick', {
-  //       message: 'Successfully generated xslt',
-  //     });
-  //   })
-  //   .catch((error: Error) => {
-  //     LogService.error(LogCategory.DataMapperDesigner, 'onGenerateClick', {
-  //       message: error.message,
-  //     });
-
-  //     dispatch(
-  //       showNotification({
-  //         type: NotificationTypes.GenerateFailed,
-  //         msgBody: error.message,
-  //         autoHideDurationMs: errorNotificationAutoHideDuration,
-  //       })
-  //     );
-  //   });
-  // }, [currentConnections, flattenedTargetSchema, dispatch]);
-
   // NOTE: Putting this useEffect here for vis next to onSave
   useEffect(() => {
     if (setIsMapStateDirty) {
       setIsMapStateDirty(isMapStateDirty);
     }
   }, [isMapStateDirty, setIsMapStateDirty]);
-
-  // const ctrlSPressed = useKeyPress(['Meta+s', 'ctrl+s']);
-  // useEffect(() => {
-  //   if (ctrlSPressed) {
-  //     onSaveClick();
-  //   }
-  // }, [ctrlSPressed, onSaveClick]);
-
-  // const onUndoClick = () => {
-  //   dispatch(ActionCreators.undo());
-  // };
-
-  // const onRedoClick = () => {
-  //   dispatch(ActionCreators.redo());
-  // };
-
-  // const setTestMapPanelOpen = (toOpen: boolean) => {
-  //   setIsTestMapPanelOpen(toOpen);
-
-  //   LogService.log(LogCategory.TestMapPanel, 'openOrCloseTestMapPanel', {
-  //     message: `${toOpen ? 'Opened' : 'Closed'} test map panel`,
-  //   });
-  // };
-
-  // const setCodeViewOpen = (toOpen: boolean) => {
-  //   setIsCodeViewOpen(toOpen);
-
-  //   LogService.log(LogCategory.CodeView, 'openOrCloseCodeView', {
-  //     message: `${toOpen ? 'Opened' : 'Closed'} code view`,
-  //   });
-  // };
 
   const getCanvasAreaHeight = () => {
     // PropPane isn't shown when in the other views, so canvas can use full height
@@ -278,22 +138,10 @@ export const DataMapperDesigner = ({
     <DndProvider backend={HTML5Backend}>
       <ReactFlowProvider>
         <div className={styles.dataMapperShell}>
-          {/* <EditorCommandBar
-            onSaveClick={onSaveClick}
-            onUndoClick={onUndoClick}
-            onRedoClick={onRedoClick}
-            onTestClick={() => setTestMapPanelOpen(true)}
-            showGlobalView={showGlobalView}
-            setShowGlobalView={setShowGlobalView}
-            onGenerateClick={onGenerateClick}
-          /> */}
           <AddSchemaDrawer
             onSubmitSchemaFileSelection={(schema) => console.log(schema)}
             readCurrentSchemaOptions={() => console.log('')}
             schemaType={SchemaType.Source}
-
-            // onSubmitSchemaFileSelection={onSubmitSchemaFileSelection}
-            // readCurrentSchemaOptions={readCurrentSchemaOptions}
           />
 
           <div id="editorView" style={{ display: 'flex', flex: '1 1 1px' }}>
@@ -310,34 +158,20 @@ export const DataMapperDesigner = ({
                     <div
                       className={styles.canvasWrapper}
                       style={{
-                        // width: isCodeViewOpen ? '75%' : '100%',
                         backgroundColor: tokens.colorNeutralBackground4,
                       }}
-                    >
-                      {/* <ReactFlowWrapper
-                          canvasBlockHeight={getCanvasAreaHeight()}
-                          canvasBlockWidth={centerViewWidth}
-                          useExpandedFunctionCards={useExpandedFunctionCards}
-                          openMapChecker={openMapChecker}
-                        /> */}
-                    </div>
-                    {/* 
-                    <CodeView
-                      dataMapDefinition={dataMapDefinition}
-                      isCodeViewOpen={isCodeViewOpen}
-                      setIsCodeViewOpen={setCodeViewOpen}
-                      canvasAreaHeight={getCanvasAreaHeight()}
-                      centerViewWidth={centerViewWidth}
-                      contentWidth={codeViewExpandedWidth}
-                      setContentWidth={setCodeViewExpandedWidth}
-                    /> */}
+                    ></div>
                   </Stack>
                 </div>
               </div>
             </div>
           </div>
 
-          {/* <TestMapPanel mapDefinition={dataMapDefinition} isOpen={isTestMapPanelOpen} onClose={() => setTestMapPanelOpen(false)} /> */}
+          <AddSchemaDrawer
+            onSubmitSchemaFileSelection={(schema) => console.log(schema)}
+            readCurrentSchemaOptions={() => console.log('')}
+            schemaType={SchemaType.Target}
+          />
         </div>
       </ReactFlowProvider>
     </DndProvider>

@@ -254,18 +254,7 @@ export const AddSchemaDrawer = ({ readCurrentSchemaOptions, onSubmitSchemaFileSe
 
   return (
     <div className={styles.root}>
-      <InlineDrawer
-        open={!!currentPanelView}
-        size="small"
-        className={styles.drawer}
-
-        // onDismiss={closeEntirePanel}
-        // closeButtonAriaLabel={closeLoc}
-        // onRenderFooterContent={onRenderFooterContent}
-        // isFooterAtBottom={true}
-        // overlayProps={{ isDarkThemed: currentTheme === 'dark' }}
-        // isLightDismiss
-      >
+      <InlineDrawer open={!!currentPanelView} size="small" className={styles.drawer}>
         {/* {currentPanelView === ConfigPanelView.DefaultConfig && (
           <DefaultConfigView setFunctionDisplayExpanded={setFunctionDisplayExpanded} useExpandedFunctionCards={useExpandedFunctionCards} />
         )} */}
