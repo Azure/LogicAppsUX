@@ -376,17 +376,19 @@ const updateTokenMetadataInParameters = (
     const allParameters = getAllInputParameters(nodeInputs);
     const repetitionInfo = getRecordEntry(repetitionInfos, id) ?? { repetitionReferences: [] };
     for (const parameter of allParameters) {
-      const segments = parameter.value;
+      const { value: segments, editorViewModel, type } = parameter;
       let error = '';
+      let hasToken = false;
       if (segments && segments.length) {
         parameter.value = segments.map((segment) => {
           let updatedSegment = segment;
 
           if (isTokenValueSegment(segment)) {
             if (pasteParams) {
-              const result = updateScopePasteTokenMetadata(segment, pasteParams);
-              updatedSegment = result.updatedSegment;
-              error = result.error;
+              const { updatedTokenSegment, tokenError } = updateScopePasteTokenMetadata(segment, pasteParams);
+              updatedSegment = updatedTokenSegment;
+              error = tokenError;
+              hasToken = true;
             }
             return updateTokenMetadata(
               updatedSegment,
@@ -397,20 +399,24 @@ const updateTokenMetadataInParameters = (
               operations,
               workflowParameters,
               nodesMetadata,
-              parameter.type
+              type
             );
           }
           return updatedSegment;
         });
       }
-      if (error) {
-        parameter.validationErrors = [error];
+      if (pasteParams) {
+        if (hasToken) {
+          parameter.preservedValue = undefined;
+        }
+        if (error) {
+          parameter.validationErrors = [error];
+        }
       }
-      const viewModel = parameter.editorViewModel;
-      if (viewModel) {
+      if (editorViewModel) {
         flattenAndUpdateViewModel(
           repetitionInfo,
-          viewModel,
+          editorViewModel,
           actionNodes,
           triggerNodeId,
           nodesData,

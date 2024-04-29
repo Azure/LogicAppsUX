@@ -193,8 +193,11 @@ export const buildGraphFromActions = (
       for (let [runAfterAction, runAfterValue] of Object.entries(action.runAfter ?? {})) {
         // update the run after with the updated ids
         if (pasteScopeParams && action.runAfter) {
-          runAfterAction = pasteScopeParams.renamedNodes[runAfterAction] ?? runAfterAction;
+          // delete existing runAfter action first
           delete action.runAfter[runAfterAction];
+          // get the new id from the renamed nodes
+          runAfterAction = pasteScopeParams.renamedNodes[runAfterAction] ?? runAfterAction;
+          // add the new id to the runAfter object
           action.runAfter[runAfterAction] = runAfterValue;
         }
         edges.push(createWorkflowEdge(runAfterAction, actionName));
@@ -494,7 +497,9 @@ export const getAllActionNames = (actions: LogicAppsV2.Actions | undefined, name
         }
         if (action.cases) {
           for (const [caseName, caseAction] of Object.entries(action.cases)) {
-            names.push(caseName);
+            if (includeCase) {
+              names.push(caseName);
+            }
             if (caseAction.actions) {
               names.push(...getAllActionNames(caseAction.actions, [], includeCase));
             }
