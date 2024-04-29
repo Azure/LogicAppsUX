@@ -12,6 +12,12 @@ export interface Template {
 
 export interface TemplateData {
   definition: WorkflowDefinition;
-  connections?: Record<string, any>; // TODO: this may change
-  parameters?: Record<string, any>;
+  connections?: Record<string, TemplateConnection>;
+  parameters?: Record<string, any>; //TODO: change this when working on parameters
+}
+
+export interface TemplateConnection {
+  id: string;
+  connectionId: string;
+  connectionName: string;
 }
