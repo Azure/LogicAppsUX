@@ -3020,7 +3020,7 @@ export const flattenAndUpdateViewModel = (
 export const updateScopePasteTokenMetadata = (
   valueSegment: ValueSegment,
   pasteParams: PasteScopeAdditionalParams
-): { updatedSegment: ValueSegment; error: string } => {
+): { updatedTokenSegment: ValueSegment; tokenError: string } => {
   let error = '';
   let token = valueSegment?.token;
   if (token) {
@@ -3069,7 +3069,7 @@ export const updateScopePasteTokenMetadata = (
     }
     valueSegment.token = token;
   }
-  return { updatedSegment: valueSegment, error: error };
+  return { updatedTokenSegment: valueSegment, tokenError: error };
 };
 
 export function updateTokenMetadata(
