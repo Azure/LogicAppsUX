@@ -5,6 +5,7 @@
 import { FunctionConfigFile } from './FunctionConfigFile';
 import { AzureWizardPromptStep } from '@microsoft/vscode-azext-utils';
 import type { IProjectWizardContext } from '@microsoft/vscode-extension-logic-apps';
+import { TargetFramework } from '@microsoft/vscode-extension-logic-apps';
 import * as fs from 'fs-extra';
 import * as path from 'path';
 
@@ -23,15 +24,20 @@ export class InvokeFunctionProjectSetup extends AzureWizardPromptStep<IProjectWi
     // Set the methodName and namespaceName properties from the context wizard
     const methodName = context.methodName;
     const namespace = context.namespaceName;
+    const targetFramework = context.targetFramework;
 
     // Define the functions folder path using the context property of the wizard
     const functionFolderPath = context.functionFolderPath;
 
     // Create the .cs file inside the functions folder
-    await this.createCsFile(functionFolderPath, methodName, namespace);
+    await this.createCsFile(functionFolderPath, methodName, namespace, targetFramework);
 
     // Create the .csproj file inside the functions folder
-    await this.createCsprojFile(functionFolderPath, methodName);
+    await this.createCsprojFile(functionFolderPath, methodName, targetFramework);
+
+    if (context.targetFramework === TargetFramework.Net6) {
+      await this.createNugetConfigFile(functionFolderPath);
+    }
 
     // Generate the Visual Studio Code configuration files in the specified folder.
     const createConfigFiles = new FunctionConfigFile();
@@ -53,8 +59,14 @@ export class InvokeFunctionProjectSetup extends AzureWizardPromptStep<IProjectWi
    * @param methodName The name of the method.
    * @param namespace The name of the namespace.
    */
-  private async createCsFile(functionFolderPath: string, methodName: string, namespace: string): Promise<void> {
-    const templatePath = path.join(__dirname, 'assets', 'FunctionProjectTemplate', 'FunctionsFile');
+  private async createCsFile(
+    functionFolderPath: string,
+    methodName: string,
+    namespace: string,
+    targetFramework: TargetFramework
+  ): Promise<void> {
+    const templateFile = targetFramework === TargetFramework.Net6 ? 'FunctionsFileNet6' : 'FunctionsFileNetFx';
+    const templatePath = path.join(__dirname, 'assets', 'FunctionProjectTemplate', templateFile);
     const templateContent = await fs.readFile(templatePath, 'utf-8');
 
     const csFilePath = path.join(functionFolderPath, `${methodName}.cs`);
@@ -68,12 +80,26 @@ export class InvokeFunctionProjectSetup extends AzureWizardPromptStep<IProjectWi
    * @param functionFolderPath The path to the folder where the .csproj file will be created.
    * @param methodName The name of the Azure Function.
    */
-  private async createCsprojFile(functionFolderPath: string, methodName: string): Promise<void> {
-    const templatePath = path.join(__dirname, 'assets', 'FunctionProjectTemplate', 'FunctionsProj');
+  private async createCsprojFile(functionFolderPath: string, methodName: string, targetFramework: TargetFramework): Promise<void> {
+    const templateFile = targetFramework === TargetFramework.Net6 ? 'FunctionsProjNet6' : 'FunctionsProjNetFx';
+    const templatePath = path.join(__dirname, 'assets', 'FunctionProjectTemplate', templateFile);
     const templateContent = await fs.readFile(templatePath, 'utf-8');
 
     const csprojFilePath = path.join(functionFolderPath, `${methodName}.csproj`);
     const csprojFileContent = templateContent.replace(/<%= methodName %>/g, methodName);
     await fs.writeFile(csprojFilePath, csprojFileContent);
+  }
+
+  /**
+   * Creates a NuGet configuration file in the specified function folder path.
+   * @param {string} functionFolderPath - The path to the function folder.
+   * @returns A Promise that resolves when the NuGet configuration file is created.
+   */
+  private async createNugetConfigFile(functionFolderPath: string): Promise<void> {
+    const templatePath = path.join(__dirname, 'assets', 'FunctionProjectTemplate', 'FunctionsNugetConfig');
+    const nugetConfigContent = await fs.readFile(templatePath, 'utf-8');
+
+    const nugetConfigFilePath = path.join(functionFolderPath, 'Nuget.config');
+    await fs.writeFile(nugetConfigFilePath, nugetConfigContent);
   }
 }

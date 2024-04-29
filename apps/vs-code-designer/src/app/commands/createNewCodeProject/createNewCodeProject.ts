@@ -33,6 +33,7 @@ import type {
 import * as fse from 'fs-extra';
 import * as path from 'path';
 import { window } from 'vscode';
+import { TargetFrameworkStep } from './createCodeProjectSteps/createFunction/TargetFrameworkStep';
 
 export async function createNewCodeProjectFromCommand(
   context: IActionContext,
@@ -84,6 +85,7 @@ export async function createNewCodeProjectInternal(context: IActionContext, opti
     promptSteps: [
       new FolderListStep(),
       new setWorkspaceName(),
+      new TargetFrameworkStep(),
       new SetLogicAppType(),
       new SetLogicAppName(),
       new NewCodeProjectTypeStep(options.templateId, options.functionSettings),
