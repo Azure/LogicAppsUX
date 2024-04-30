@@ -9,7 +9,7 @@ export const DisplayConnections = ({ connections }: DisplayConnectionsProps) => 
   return (
     <div>
       <div>Template Connections</div>
-      {Object.keys(connections)?.map((connection, index) => {
+      {Object.keys(connections).map((connection, index) => {
         return (
           <div key={index}>
             <b>

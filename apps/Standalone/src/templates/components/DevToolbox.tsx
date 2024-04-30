@@ -6,6 +6,9 @@ import { Theme as ThemeType } from '@microsoft/logic-apps-shared';
 import { useCallback, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import { LoadingMethod, loadCurrentTemplate, templateDataLoaderSlice } from '../state/TemplateDataLoader';
+import { AzureStandardLogicAppSelector } from '../../designer/app/AzureLogicAppsDesigner/LogicAppSelectionSetting/AzureStandardLogicAppSelector';
+import { AzureConsumptionLogicAppSelector } from '../../designer/app/AzureLogicAppsDesigner/LogicAppSelectionSetting/AzureConsumptionLogicAppSelector';
+import { useIsConsumption } from '../../designer/state/workflowLoadingSelectors';
 
 const themeDropdownOptions = [
   { key: ThemeType.Light, text: 'Light' },
@@ -78,6 +81,8 @@ export const DevToolbox = () => {
     },
     [dispatch]
   );
+
+  const isConsumption = useIsConsumption();
 
   const toolboxItems = useMemo(() => {
     const newToolboxItems = [];
@@ -163,6 +168,10 @@ export const DevToolbox = () => {
               </StackItem>
 
               {toolboxItems}
+
+              <StackItem style={{ width: '100%' }}>
+                {isConsumption ? <AzureConsumptionLogicAppSelector /> : <AzureStandardLogicAppSelector />}
+              </StackItem>
             </Stack>
           </AccordionPanel>
         </AccordionItem>

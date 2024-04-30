@@ -103,12 +103,12 @@ export const ConnectionEntry = ({ connectorId, refId, connectionReference, iconU
   }, [connection?.isLoading, connectionInvalidStatusText, connectionValidStatusText, errors.length, disconnected]);
 
   // Only show the open connection button if the service method is supplied
-  const openConnectionSupported = useMemo(() => HostService().openConnectionResource !== undefined, []);
+  const openConnectionSupported = useMemo(() => HostService()?.openConnectionResource !== undefined, []);
   const openConnectionCallback = useCallback(() => {
     if (!connection?.result?.id) {
       return;
     }
-    HostService().openConnectionResource?.(connection?.result?.id);
+    HostService()?.openConnectionResource?.(connection?.result?.id);
   }, [connection?.result?.id]);
 
   const cardTitle = connection?.result?.properties.displayName ?? refId ?? disconnectedText;
