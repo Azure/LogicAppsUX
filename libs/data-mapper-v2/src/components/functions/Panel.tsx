@@ -3,7 +3,7 @@ import { useStyles } from './styles';
 import { ChevronDoubleRightRegular, ChevronDoubleLeftRegular } from '@fluentui/react-icons';
 import { useIntl } from 'react-intl';
 import { InlineDrawer } from '@fluentui/react-components';
-import { SearchBox } from '@fluentui/react';
+import { SearchBox, Text } from '@fluentui/react';
 
 type PanelProps = {};
 
@@ -46,7 +46,7 @@ export const Panel = (_props: PanelProps) => {
       {expandFunctionsPanel ? (
         <div className={styles.expandedDrawerBodyWrapper}>
           <div className={styles.drawerHeaderWrapper}>
-            <h2 className={styles.drawerHeader}>{stringResources.FUNCTIONS}</h2>
+            <Text className={styles.drawerHeader}>{stringResources.FUNCTIONS}</Text>
             <ChevronDoubleLeftRegular
               fontSize={15}
               className={styles.drawerHeaderIcon}

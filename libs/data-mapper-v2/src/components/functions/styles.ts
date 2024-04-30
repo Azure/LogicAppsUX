@@ -24,6 +24,8 @@ export const useStyles = makeStyles({
   drawerHeaderWrapper: {
     display: 'flex',
     width: '100%',
+    marginTop: '20px',
+    marginBottom: '10px',
   },
   collapsedDrawerBodyWrapper: {
     display: 'flex',
@@ -37,6 +39,7 @@ export const useStyles = makeStyles({
   drawerHeader: {
     paddingLeft: '20px',
     fontWeight: 'initial',
+    fontSize: '20px',
   },
   functionSearchBox: {
     width: '85%',

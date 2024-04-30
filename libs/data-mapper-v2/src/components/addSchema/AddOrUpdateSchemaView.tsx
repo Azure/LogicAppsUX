@@ -1,6 +1,6 @@
 import { SelectExistingSchema } from './SelectExistingSchema';
 import { UploadNewSchema } from './UploadNewSchema';
-import { ChoiceGroup, SearchBox } from '@fluentui/react';
+import { ChoiceGroup, SearchBox, Text } from '@fluentui/react';
 import type { IChoiceGroupOption } from '@fluentui/react';
 import { SchemaType, equals } from '@microsoft/logic-apps-shared';
 import type React from 'react';
@@ -103,7 +103,9 @@ export const AddOrUpdateSchemaView = ({
   return (
     <div className={styles.wrapper}>
       <div className={styles.headerWrapper}>
-        <h2 className={styles.header}>{equals(schemaType, SchemaType.Source) ? stringResources.SOURCE : stringResources.DESTINATION}</h2>
+        <Text className={styles.header}>
+          {equals(schemaType, SchemaType.Source) ? stringResources.SOURCE : stringResources.DESTINATION}
+        </Text>
         {customHeaderChildren && <div className={styles.rightCustomHeader}>{customHeaderChildren}</div>}
       </div>
 

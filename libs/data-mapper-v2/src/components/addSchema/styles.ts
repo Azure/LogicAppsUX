@@ -7,6 +7,8 @@ export const useStyles = makeStyles({
   headerWrapper: {
     display: 'flex',
     width: '100%',
+    marginTop: '20px',
+    marginBottom: '10px',
   },
   rightCustomHeader: {
     alignSelf: 'center',
@@ -16,6 +18,7 @@ export const useStyles = makeStyles({
   header: {
     paddingLeft: '20px',
     fontWeight: 'initial',
+    fontSize: '20px',
   },
   bodyWrapper: {
     display: 'flex',
