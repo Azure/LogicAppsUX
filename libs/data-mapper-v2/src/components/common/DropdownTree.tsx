@@ -1,15 +1,20 @@
-import { Tree, TreeItem, TreeItemLayout, Input } from '@fluentui/react-components';
+import { Tree, TreeItem, TreeItemLayout, Text } from '@fluentui/react-components';
 import { SearchBox } from '@fluentui/react';
-import { ChevronRightRegular } from '@fluentui/react-icons';
+import { ChevronRightRegular, ChevronDownRegular } from '@fluentui/react-icons';
 import { useIntl } from 'react-intl';
 import type { ITreeItem } from 'models/Tree';
 import useStyles from './styles';
+import { useState, useMemo, useCallback } from 'react';
+import { isEmptyString } from '@microsoft/logic-apps-shared';
 
 interface DropdownTreeProps {
   items: ITreeItem[];
 }
 
 export const DropdownTree = (props: DropdownTreeProps) => {
+  const [showDropdownTree, setShowDropdownTree] = useState(false);
+  const [searchValue, setSearchValue] = useState('');
+
   const intl = useIntl();
   const styles = useStyles();
 
@@ -27,8 +32,34 @@ export const DropdownTree = (props: DropdownTreeProps) => {
 
   const onFileNameSelect: React.MouseEventHandler<HTMLDivElement> = (e) => {
     const value = e.currentTarget.getAttribute('data-fui-tree-item-value');
+    setShowDropdownTree(false);
     console.log(value);
   };
+
+  const filterDropdownItem = useCallback((item: ITreeItem, value: string): ITreeItem | undefined => {
+    if (isEmptyString(value) || item.name.includes(value)) {
+      return item;
+    }
+
+    if (item.type === 'directory') {
+      const children = item.children.map((child) => filterDropdownItem(child, value)).filter((child) => child !== undefined) as ITreeItem[];
+
+      if (children.length === 0) {
+        return undefined;
+      }
+      return {
+        ...item,
+        children: children,
+      };
+    }
+
+    return undefined;
+  }, []);
+
+  const filteredItems = useMemo(
+    () => props.items.map((item) => filterDropdownItem(item, searchValue)).filter((item) => item !== undefined) as ITreeItem[],
+    [props.items, searchValue, filterDropdownItem]
+  );
 
   const displayTree = (item: ITreeItem): JSX.Element => {
     if (item.type === 'directory') {
@@ -47,13 +78,37 @@ export const DropdownTree = (props: DropdownTreeProps) => {
     );
   };
 
+  const onSearchValueChange = (_event?: React.ChangeEvent<HTMLInputElement>, newValue?: string) => {
+    setSearchValue(newValue ?? '');
+  };
+
   return (
-    <>
-      <Input size="small" placeholder={selectSchema} contentAfter={<ChevronRightRegular />} disabled={true} />
-      <SearchBox placeholder={search} />
-      <Tree className={styles.treeWrapper}>{props.items.map((item) => displayTree(item))}</Tree>
-    </>
+    <div className={styles.componentWrapper}>
+      <div
+        className={styles.dropdownInputWrapper}
+        onClick={() => {
+          setShowDropdownTree(!showDropdownTree);
+        }}
+      >
+        <Text className={styles.dropdownInput} defaultValue={selectSchema}>
+          {selectSchema}
+        </Text>
+        {showDropdownTree ? (
+          <ChevronDownRegular className={styles.dropdownChevronIcon} />
+        ) : (
+          <ChevronRightRegular className={styles.dropdownChevronIcon} />
+        )}
+      </div>
+      {showDropdownTree && (
+        <div className={styles.dropdownInputValue}>
+          <SearchBox placeholder={search} onChange={onSearchValueChange} />
+          <Tree className={styles.treeWrapper} aria-label="tree">
+            {filteredItems.map((item: ITreeItem, index: number) => (
+              <span key={`tree-${index}`}>{displayTree(item)}</span>
+            ))}
+          </Tree>
+        </div>
+      )}
+    </div>
   );
 };
-
-export default DropdownTree;

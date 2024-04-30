@@ -1,4 +1,4 @@
-import DropdownTree from 'components/common/DropdownTree';
+import { DropdownTree } from '../common/DropdownTree';
 import type { ITreeItem } from 'models/Tree';
 import type { SchemaType } from '@microsoft/logic-apps-shared';
 
