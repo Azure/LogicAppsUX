@@ -9,6 +9,7 @@ import { isEmptyString } from '@microsoft/logic-apps-shared';
 
 interface DropdownTreeProps {
   items: ITreeItem[];
+  onItemSelect: (item: ITreeItem) => void;
 }
 
 export const DropdownTree = (props: DropdownTreeProps) => {
@@ -30,10 +31,10 @@ export const DropdownTree = (props: DropdownTreeProps) => {
     description: 'Search from file list',
   });
 
-  const onFileNameSelect: React.MouseEventHandler<HTMLDivElement> = (e) => {
-    const value = e.currentTarget.getAttribute('data-fui-tree-item-value');
+  const onFileNameSelect = (item: ITreeItem) => {
+    props.onItemSelect(item);
     setShowDropdownTree(false);
-    console.log(value);
+    console.log(item.name);
   };
 
   const filterDropdownItem = useCallback((item: ITreeItem, value: string): ITreeItem | undefined => {
@@ -72,7 +73,7 @@ export const DropdownTree = (props: DropdownTreeProps) => {
       );
     }
     return (
-      <TreeItem key={item.fullPath} value={item.fullPath} onClick={onFileNameSelect} itemType="leaf">
+      <TreeItem key={item.fullPath} value={item.fullPath} onClick={(_) => onFileNameSelect(item)} itemType="leaf">
         <TreeItemLayout>{item.name}</TreeItemLayout>
       </TreeItem>
     );

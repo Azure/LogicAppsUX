@@ -1,6 +1,7 @@
 import { DropdownTree } from '../common/DropdownTree';
-import type { ITreeItem } from 'models/Tree';
-import type { SchemaType } from '@microsoft/logic-apps-shared';
+import type { ITreeFile, ITreeItem } from 'models/Tree';
+import { SchemaType, equals } from '@microsoft/logic-apps-shared';
+import type { SchemaFile } from './AddOrUpdateSchemaView';
 
 const mockFileItems: ITreeItem[] = [
   {
@@ -27,11 +28,22 @@ const mockFileItems: ITreeItem[] = [
 ];
 
 export type SelectExistingSchemaProps = {
-  errorMessage: string;
   schemaType?: SchemaType;
-  setSelectedSchema: (item: string | undefined) => void;
+  errorMessage: string;
+  setSelectedSchema: (item: SchemaFile) => void;
 };
 
-export const SelectExistingSchema = (_props: SelectExistingSchemaProps) => {
-  return <DropdownTree items={mockFileItems} />;
+export const SelectExistingSchema = (props: SelectExistingSchemaProps) => {
+  return (
+    <DropdownTree
+      items={mockFileItems}
+      onItemSelect={(item: ITreeItem) => {
+        props.setSelectedSchema({
+          name: item.name ?? '',
+          path: equals(item.type, 'file') ? (item as ITreeFile).fullPath ?? '' : '',
+          type: props.schemaType ?? SchemaType.Source,
+        });
+      }}
+    />
+  );
 };

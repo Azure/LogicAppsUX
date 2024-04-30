@@ -1,5 +1,9 @@
+import { useState, useMemo } from 'react';
 import { useStyles } from './styles';
-import { ChevronDoubleRightRegular } from '@fluentui/react-icons';
+import { ChevronDoubleRightRegular, ChevronDoubleLeftRegular } from '@fluentui/react-icons';
+import { useIntl } from 'react-intl';
+import { InlineDrawer } from '@fluentui/react-components';
+import { SearchBox } from '@fluentui/react';
 
 type PanelProps = {};
 
@@ -13,14 +17,59 @@ const FunctionsSVG = () => (
 );
 
 export const Panel = (_props: PanelProps) => {
+  const [expandFunctionsPanel, setExpandFunctionsPanel] = useState(false);
   const styles = useStyles();
+  const intl = useIntl();
+
+  const stringResources = useMemo(
+    () => ({
+      FUNCTIONS: intl.formatMessage({
+        defaultMessage: 'Functions',
+        id: 'zsc+jp',
+        description: 'Functions',
+      }),
+      SEARCH_FUNCTIONS: intl.formatMessage({
+        defaultMessage: 'Search Functions',
+        id: '2xQWRt',
+        description: 'Search Functions',
+      }),
+    }),
+    [intl]
+  );
 
   return (
-    <div>
-      <div className={styles.dataMapperFunctionPanel}>
-        <FunctionsSVG />
-        <ChevronDoubleRightRegular className={styles.functionsChevronIcon} />
-      </div>
-    </div>
+    <InlineDrawer
+      className={expandFunctionsPanel ? styles.expandedDataMapperFunctionPanel : styles.collapsedDataMapperFunctionPanel}
+      open={true}
+      size="small"
+    >
+      {expandFunctionsPanel ? (
+        <div className={styles.expandedDrawerBodyWrapper}>
+          <div className={styles.drawerHeaderWrapper}>
+            <h2 className={styles.drawerHeader}>{stringResources.FUNCTIONS}</h2>
+            <ChevronDoubleLeftRegular
+              fontSize={15}
+              className={styles.drawerHeaderIcon}
+              onClick={() => {
+                setExpandFunctionsPanel(false);
+              }}
+            />
+          </div>
+          <div className={styles.functionList}>
+            <SearchBox placeholder={stringResources.SEARCH_FUNCTIONS} className={styles.functionSearchBox} />
+          </div>
+        </div>
+      ) : (
+        <div
+          className={styles.collapsedDrawerBodyWrapper}
+          onClick={() => {
+            setExpandFunctionsPanel(true);
+          }}
+        >
+          <FunctionsSVG />
+          <ChevronDoubleRightRegular className={styles.functionsChevronIcon} />
+        </div>
+      )}
+    </InlineDrawer>
   );
 };

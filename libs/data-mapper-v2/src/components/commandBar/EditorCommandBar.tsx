@@ -14,7 +14,7 @@ export interface EditorCommandBarProps {
 
 const useStyles = makeStyles({
   toolbar: {
-    backgroundColor: '#E8F3FE',
+    backgroundColor: '#F6FAFE',
     justifyContent: 'space-between',
     ...shorthands.borderBottom('1px', 'solid', '#ddd'),
   },
