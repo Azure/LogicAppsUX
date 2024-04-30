@@ -3457,7 +3457,10 @@ export function parameterValueToString(
           // Note: Token segment should be auto casted using interpolation if token type is
           // non string and referred in a string parameter.
           expressionValue =
-            !remappedParameterInfo.suppressCasting && parameterType === 'string' && segment.token?.type !== 'string'
+            !remappedParameterInfo.suppressCasting &&
+            parameterType === 'string' &&
+            segment.token?.type !== 'string' &&
+            !shouldUseLiteralValues(segment.token?.expression)
               ? `@{${expressionValue}}`
               : `@${expressionValue}`;
         }
@@ -3466,6 +3469,10 @@ export function parameterValueToString(
       return expressionValue;
     })
     .join('');
+}
+
+export function shouldUseLiteralValues(expression: Expression | undefined): boolean {
+  return (expression?.type as ExpressionType) === ExpressionType.NullLiteral;
 }
 
 export function parameterValueToJSONString(parameterValue: ValueSegment[], applyCasting = true, forValidation = false): string {
