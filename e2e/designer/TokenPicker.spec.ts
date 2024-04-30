@@ -7,7 +7,7 @@ test.describe(
     tag: '@mock',
   },
   async () => {
-    test('Should serialize the workflow after deserializing it and match', async ({ page }) => {
+    test('Token picker search should have robust name matching', async ({ page }) => {
       await page.goto('/');
 
       await GoToMockWorkflow(page, 'Panel');
