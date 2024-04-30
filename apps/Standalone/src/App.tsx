@@ -6,7 +6,7 @@ import { store as dataMapperStore } from './dataMapperV1/state/Store';
 import { store as templateStore } from './templates/state/Store';
 import { DataMapperStandaloneDesignerV1 } from './dataMapperV1/app/DataMapperStandaloneDesignerV1';
 import { DataMapperStandaloneDesignerV2 } from './dataMapperV1/app/DataMapperStandaloneDesignerV2';
-import { TemplatesDesignerWrapper } from './templates/app/TemplatesDesignerWrapper';
+import { TemplatesStandaloneDesigner } from './templates/app/TemplatesStandaloneDesigner';
 
 export const App = () => {
   return (
@@ -51,7 +51,7 @@ const DataMapperV2 = () => {
 const TemplatesStandalone = () => {
   return (
     <Provider store={templateStore}>
-      <TemplatesDesignerWrapper />
+      <TemplatesStandaloneDesigner />
     </Provider>
   );
 };

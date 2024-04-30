@@ -9,6 +9,10 @@ import { LoadingMethod, loadCurrentTemplate, templateDataLoaderSlice } from '../
 import { AzureStandardLogicAppSelector } from '../../designer/app/AzureLogicAppsDesigner/LogicAppSelectionSetting/AzureStandardLogicAppSelector';
 import { AzureConsumptionLogicAppSelector } from '../../designer/app/AzureLogicAppsDesigner/LogicAppSelectionSetting/AzureConsumptionLogicAppSelector';
 import { useIsConsumption } from '../../designer/state/workflowLoadingSelectors';
+import { ThemeProvider } from '@fluentui/react';
+import { FluentProvider, webDarkTheme, webLightTheme } from '@fluentui/react-components';
+import { AzureThemeDark } from '@fluentui/azure-themes/lib/azure/AzureThemeDark';
+import { AzureThemeLight } from '@fluentui/azure-themes/lib/azure/AzureThemeLight';
 
 const themeDropdownOptions = [
   { key: ThemeType.Light, text: 'Light' },
@@ -34,6 +38,7 @@ export const DevToolbox = () => {
   const { theme, armToken, loadingMethod, currentTemplateResourcePath } = useSelector((state: RootState) => state.templateDataLoader);
 
   const [isTooltipVisible, setIsTooltipVisible] = useState<boolean>(false);
+  const isLightMode = theme === ThemeType.Light;
 
   // const changeResourcePathCB = useCallback(
   //   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -121,61 +126,70 @@ export const DevToolbox = () => {
   }, [loadingMethod, armToken, changeArmTokenCB, changeSourceSchemaResourcePathDropdownCB, currentTemplateResourcePath, resetToUseARM]);
 
   return (
-    <div style={{ marginBottom: '8px', backgroundColor: tokens.colorNeutralBackground2, padding: 4 }}>
-      <Accordion defaultOpenItems={'1'} collapsible style={{ position: 'relative' }}>
-        <Tooltip
-          content="Clippy says hello!"
-          relationship="label"
-          positioning="below-start"
-          withArrow
-          showDelay={100}
-          hideDelay={500}
-          onVisibleChange={(_e, data) => setIsTooltipVisible(data.visible)}
-        >
-          <div
-            style={{
-              position: 'absolute',
-              top: 8,
-              right: 12,
-              padding: 4,
-              backgroundColor: tokens.colorNeutralBackground4,
-              borderRadius: tokens.borderRadiusMedium,
-              zIndex: 10,
-              cursor: 'pointer',
-            }}
-          >
-            <span role="img" aria-label="Clippy!" style={{ fontSize: 20 }}>
-              📎
-            </span>{' '}
-            Tooltip tester! It&apos;s {isTooltipVisible ? 'visible' : 'hidden'}
-          </div>
-        </Tooltip>
+    <ThemeProvider theme={isLightMode ? AzureThemeLight : AzureThemeDark}>
+      <FluentProvider theme={isLightMode ? webLightTheme : webDarkTheme}>
+        <div style={{ marginBottom: '8px', backgroundColor: tokens.colorNeutralBackground2, padding: 4 }}>
+          <Accordion defaultOpenItems={'1'} collapsible style={{ position: 'relative' }}>
+            <Tooltip
+              content="Clippy says hello!"
+              relationship="label"
+              positioning="below-start"
+              withArrow
+              showDelay={100}
+              hideDelay={500}
+              onVisibleChange={(_e, data) => setIsTooltipVisible(data.visible)}
+            >
+              <div
+                style={{
+                  position: 'absolute',
+                  top: 8,
+                  right: 12,
+                  padding: 4,
+                  backgroundColor: tokens.colorNeutralBackground4,
+                  borderRadius: tokens.borderRadiusMedium,
+                  zIndex: 10,
+                  cursor: 'pointer',
+                }}
+              >
+                <span role="img" aria-label="Clippy!" style={{ fontSize: 20 }}>
+                  📎
+                </span>{' '}
+                Tooltip tester! It&apos;s {isTooltipVisible ? 'visible' : 'hidden'}
+              </div>
+            </Tooltip>
 
-        <AccordionItem value="1">
-          <AccordionHeader>Dev Toolbox</AccordionHeader>
-          <AccordionPanel>
-            <Stack horizontal tokens={{ childrenGap: '12px' }} wrap>
-              <StackItem key={'themeDropDown'} style={{ width: '250px' }}>
-                <Dropdown
-                  label="Theme"
-                  selectedKey={theme}
-                  onChange={changeThemeCB}
-                  placeholder="Select a theme"
-                  options={themeDropdownOptions}
-                  style={{ marginBottom: '12px' }}
-                />
-                <Checkbox label="Load From Arm" checked={loadingMethod === LoadingMethod.Arm} onChange={changeLoadingMethodCB} disabled />
-              </StackItem>
+            <AccordionItem value="1">
+              <AccordionHeader>Dev Toolbox</AccordionHeader>
+              <AccordionPanel>
+                <Stack horizontal tokens={{ childrenGap: '12px' }} wrap>
+                  <StackItem key={'themeDropDown'} style={{ width: '250px' }}>
+                    <Dropdown
+                      label="Theme"
+                      selectedKey={theme}
+                      onChange={changeThemeCB}
+                      placeholder="Select a theme"
+                      options={themeDropdownOptions}
+                      style={{ marginBottom: '12px' }}
+                    />
+                    <Checkbox
+                      label="Load From Arm"
+                      checked={loadingMethod === LoadingMethod.Arm}
+                      onChange={changeLoadingMethodCB}
+                      disabled
+                    />
+                  </StackItem>
 
-              {toolboxItems}
+                  {toolboxItems}
 
-              <StackItem style={{ width: '100%' }}>
-                {isConsumption ? <AzureConsumptionLogicAppSelector /> : <AzureStandardLogicAppSelector />}
-              </StackItem>
-            </Stack>
-          </AccordionPanel>
-        </AccordionItem>
-      </Accordion>
-    </div>
+                  <StackItem style={{ width: '100%' }}>
+                    {isConsumption ? <AzureConsumptionLogicAppSelector /> : <AzureStandardLogicAppSelector />}
+                  </StackItem>
+                </Stack>
+              </AccordionPanel>
+            </AccordionItem>
+          </Accordion>
+        </div>
+      </FluentProvider>
+    </ThemeProvider>
   );
 };

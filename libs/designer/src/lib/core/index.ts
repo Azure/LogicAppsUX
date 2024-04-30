@@ -4,6 +4,7 @@ export * from './ProviderWrappedContext';
 export { getReactQueryClient } from './ReactQueryProvider';
 export type { RootState, AppDispatch } from './store';
 export { store } from './store';
+export { templateStore } from './state/templates/store';
 export {
   useConnectionMapping,
   useConnectionRefs,
