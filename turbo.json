@@ -26,6 +26,9 @@
         "build:vscode": {
             "cache": false
         },
+        "build:extension":{
+            "cache": false
+        },
         "dev": {
             "cache": false,
             "persistent": true
