@@ -2,8 +2,7 @@ name: Playwright Tests - Real APIs
 on:
   workflow_dispatch:
   schedule:
-    - cron: '0 * * * *'
-
+    - cron: '0 */6 * * *'
 
 jobs:
 
@@ -14,7 +13,7 @@ jobs:
         id-token: write
     strategy:
       matrix:
-        browser: [chromium, firefox, webkit]
+        browser: [chromium, firefox]
     steps:
     - uses: actions/checkout@v4
 
@@ -43,9 +42,9 @@ jobs:
       with:
         azcliversion: 2.30.0
         inlineScript: |
-            az group create -l westus --subscription ${{ secrets.AZURE_TESTING_SUBSCRIPTION_ID }} -n lauxtest${{matrix.browser}}
+            az group create -l westus --subscription ${{ secrets.AZURE_TESTING_SUBSCRIPTION_ID }} -n lauxtest2${{matrix.browser}}
             az deployment group create \
-            --resource-group lauxtest${{matrix.browser}} \
+            --resource-group lauxtest2${{matrix.browser}} \
             --subscription ${{ secrets.AZURE_TESTING_SUBSCRIPTION_ID }} \
             --template-file ./e2e/testSetup/BlankLogicApp/logicAppStandard.bicep \
             --parameters "{ \"zipDeploymentLocation\": { \"value\": \"${{env.ZIP-URL}}\" } }"
@@ -85,10 +84,12 @@ jobs:
       run: pnpm run test:e2e --grep @real
 
     - name: Scrub Secrets From Trace
+      if: always()
       run: pnpm run scrub-secrets:e2e
    
     - name: Azure login
       uses: azure/login@v2
+      if: always()
       with:
         client-id: ${{ secrets.AZURE_TESTING_CLIENT_ID }}
         tenant-id: ${{ secrets.AZURE_TESTING_TENANT_ID }}
@@ -96,10 +97,10 @@ jobs:
         
     - name: Delete Resoruce Group
       shell: bash
+      if: always()
       run: |
-        az group delete -n lauxtestchromium --yes --no-wait
-        az group delete -n lauxtestfirefox --yes --no-wait
-        az group delete -n lauxtestwebkit --yes --no-wait
+        az group delete -n lauxtest2chromium --yes --no-wait
+        az group delete -n lauxtest2firefox --yes --no-wait
 
     - name: "Upload Playwright Report to Azure Blob Storage for static site access"
       shell: bash
