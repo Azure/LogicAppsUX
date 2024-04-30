@@ -18,7 +18,7 @@ test.describe(
         assert: { type: 'json' },
       });
 
-      expect({ connectionReferences: {}, parameters: {}, definition: mock.default.definition }).toEqual(serialized as any);
+      expect({ connectionReferences: mock.default.connectionReferences, parameters: mock.default.parameters, definition: mock.default.definition }).toEqual(serialized as any);
     });
 
     test('Should serialize the workflow after deserializing it and match with a switch statement', async ({ page }) => {
