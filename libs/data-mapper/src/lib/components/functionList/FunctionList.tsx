@@ -30,6 +30,7 @@ const fuseFunctionSearchOptions: Fuse.IFuseOptions<FunctionData> = {
   minMatchCharLength: 2,
   includeMatches: true,
   threshold: 0.4,
+  ignoreLocation: true,
   keys: ['key', 'functionName', 'displayName', 'category'],
 };
 
