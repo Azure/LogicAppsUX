@@ -1,0 +1,3 @@
+[submodule "libs/templates/src/lib/templates"]
+	path = libs/templates/src/lib/templates
+	url = https://github.com/Azure/LogicAppsTemplates.git
