@@ -483,7 +483,7 @@ export const constructInputValues = (key: string, inputs: SerializedParameter[],
     }
   }
 
-  return { ...result, ...serializeFormData(formDataParameters) };
+  return formDataParameters.length ? { ...result, ...serializeFormData(formDataParameters) } : result;
 };
 
 const serializeParameterWithPath = (
