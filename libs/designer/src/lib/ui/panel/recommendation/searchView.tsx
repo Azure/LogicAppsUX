@@ -114,6 +114,7 @@ class DefaultSearchOperationsService implements Pick<ISearchService, 'searchOper
     return {
       includeScore: true,
       threshold: 0.4,
+      ignoreLocation: true,
       keys: [
         {
           name: 'properties.summary', // Operation 'name'
