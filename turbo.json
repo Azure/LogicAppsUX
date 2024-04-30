@@ -23,7 +23,10 @@
                 "build/**"
             ]
         },
-        "build:vscode": {
+        "build:vscode-react": {
+            "cache": false
+        },
+        "build:extension":{
             "cache": false
         },
         "dev": {
