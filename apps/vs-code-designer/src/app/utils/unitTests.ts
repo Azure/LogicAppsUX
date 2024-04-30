@@ -94,14 +94,15 @@ export const validateUnitTestName = async (
 ): Promise<string | undefined> => {
   if (!name) {
     return localize('emptyUnitTestNameError', 'The unit test name cannot be empty.');
-  } else if (!/^[a-z][a-z\d_-]*$/i.test(name)) {
+  }
+  if (!/^[a-z][a-z\d_-]*$/i.test(name)) {
     return localize(
       'unitTestNameInvalidMessage',
       'Unit test name must start with a letter and can only contain letters, digits, "_" and "-".'
     );
-  } else {
-    return await validateUnitTestNameCore(projectPath, workflowName, name);
   }
+
+  return await validateUnitTestNameCore(projectPath, workflowName, name);
 };
 
 /**
@@ -116,9 +117,8 @@ const validateUnitTestNameCore = async (projectPath: string, workflowName: strin
 
   if (await fse.pathExists(path.join(workflowTestsPath, `${name}${unitTestsFileName}`))) {
     return localize('existingUnitTestError', 'A unit test with the name "{0}" already exists.', name);
-  } else {
-    return undefined;
   }
+  return undefined;
 };
 
 /**
