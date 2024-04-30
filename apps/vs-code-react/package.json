@@ -36,7 +36,7 @@
   "private": true,
   "scripts": {
     "build": "vite build",
-    "build:vscode": "vite build --outDir ../../vs-code-designer/dist/vs-code-react",
+    "build:vscode-react": "vite build --outDir ../../vs-code-designer/dist/vs-code-react",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0"
   },
   "type": "module"
