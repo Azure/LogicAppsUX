@@ -30,6 +30,7 @@ const fuseOptions: Fuse.IFuseOptions<{ id: string; text: string }> = {
   includeScore: true,
   minMatchCharLength: 2,
   includeMatches: true,
+  ignoreLocation: true,
   threshold: 0.4,
   keys: ['text'],
 };

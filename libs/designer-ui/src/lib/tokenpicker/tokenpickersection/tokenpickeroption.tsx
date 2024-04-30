@@ -54,7 +54,7 @@ export const TokenPickerOptions = ({
     let tokens: Token[];
     if (searchQuery) {
       const query = searchQuery.trim();
-      const fuse = new Fuse(section.tokens, { keys: ['description', 'title'], threshold: 0.2 });
+      const fuse = new Fuse(section.tokens, { keys: ['description', 'title'], threshold: 0.4, ignoreLocation: true });
       tokens = fuse.search(query).map((token) => token.item);
       setFilteredTokens(tokens);
     }
