@@ -51,6 +51,7 @@ export {
 } from './state/panel/panelSelectors';
 export { initializeServices } from './state/designerOptions/designerOptionsSlice';
 export { resetWorkflowState, resetNodesLoadStatus } from './state/global';
+export { TemplatesDesignerProvider } from './templates/TemplatesDesignerProvider';
 export {
   validateParameter,
   getCustomCodeFilesWithData,

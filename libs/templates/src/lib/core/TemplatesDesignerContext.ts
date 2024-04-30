@@ -1,8 +1,5 @@
-import type { IConnectionService } from '@microsoft/logic-apps-shared';
 import { createContext } from 'react';
 
-export interface TemplatesDesignerContext {
-  connectionService?: IConnectionService;
-}
+// export interface TemplatesDesignerContext { }
 
-export const TemplatesWrappedContext = createContext<TemplatesDesignerContext | null>(null);
+export const TemplatesWrappedContext = createContext<null>(null);

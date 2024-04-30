@@ -4,7 +4,8 @@ import { QueryClientProvider, useQuery } from 'react-query';
 import { loadToken } from '../../environments/environment';
 import { DevToolbox } from '../components/DevToolbox';
 import type { RootState } from '../state/Store';
-import { TemplatesDataProvider, TemplatesDesigner, TemplatesDesignerProvider } from '@microsoft/logic-apps-templates';
+import { TemplatesDesigner, TemplatesDesignerProvider } from '@microsoft/logic-apps-designer';
+
 import { useSelector } from 'react-redux';
 
 const standaloneQueryClient = getReactQueryClient();
@@ -15,16 +16,14 @@ const LoadWhenArmTokenIsLoaded = ({ children }: { children: ReactNode }) => {
 };
 export const TemplatesStandaloneDesigner = () => {
   const theme = useSelector((state: RootState) => state.templateDataLoader.theme);
-  const currentTemplate = useSelector((state: RootState) => state.templateDataLoader.currentTemplate);
+  // const currentTemplate = useSelector((state: RootState) => state.templateDataLoader.currentTemplate); // moving this out
 
   return (
     <QueryClientProvider client={standaloneQueryClient}>
       <LoadWhenArmTokenIsLoaded>
         <DevToolbox />
-        <TemplatesDesignerProvider locale="en-US" theme={theme} options={{}}>
-          <TemplatesDataProvider currentTemplate={currentTemplate} theme={theme}>
-            <TemplatesDesigner />
-          </TemplatesDataProvider>
+        <TemplatesDesignerProvider locale="en-US" theme={theme}>
+          <TemplatesDesigner />
         </TemplatesDesignerProvider>
       </LoadWhenArmTokenIsLoaded>
     </QueryClientProvider>
