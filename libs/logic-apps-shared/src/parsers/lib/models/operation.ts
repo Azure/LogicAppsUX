@@ -202,6 +202,7 @@ export interface ParameterDeserializationOptions {
 }
 
 export const PropertySerializationType = {
+  FormData: 'formdata',
   ParentObject: 'parentobject',
   PathTemplate: 'pathtemplate',
   SwaggerUrl: 'swaggerurl',
