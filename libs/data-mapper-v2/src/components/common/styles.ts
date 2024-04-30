@@ -34,7 +34,7 @@ const useStyles = makeStyles({
     overflowBlock: 'scroll',
     ...shorthands.border('1px', 'solid', '#ddd'),
     ...shorthands.borderRadius(tokens.borderRadiusNone),
-    ...shorthands.padding(0, 0, '2px', 0),
+    ...shorthands.padding('2px'),
   },
 });
 

@@ -6,5 +6,14 @@ export const useStyles = makeStyles({
     maxWidth: '80px',
     minWidth: '50px',
     ...shorthands.borderRight('1px', 'solid', '#ddd'),
+    display: 'flex',
+    cursor: 'pointer',
+  },
+  functionsIcon: {
+    height: '20px',
+    width: '20px',
+  },
+  functionsChevronIcon: {
+    marginTop: '15px',
   },
 });
