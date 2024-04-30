@@ -128,8 +128,8 @@ export const DataMapperDesigner = ({
   return (
     <DndProvider backend={HTML5Backend}>
       <ReactFlowProvider>
+        <EditorCommandBar onSaveClick={() => {}} onUndoClick={() => {}} onTestClick={() => {}} />
         <div className={styles.dataMapperShell}>
-          <EditorCommandBar onSaveClick={() => {}} onUndoClick={() => {}} onTestClick={() => {}} />
           <AddSchemaDrawer
             onSubmitSchemaFileSelection={(schema) => console.log(schema)}
             readCurrentSchemaOptions={() => console.log('')}
@@ -137,7 +137,14 @@ export const DataMapperDesigner = ({
           />
 
           <div id="editorView" style={{ display: 'flex', flex: '1 1 1px' }}>
-            <div id="centerViewWithBreadcrumb" style={{ display: 'flex', flexDirection: 'column', flex: '1 1 1px' }}>
+            <div
+              id="centerViewWithBreadcrumb"
+              style={{
+                display: 'flex',
+                flexDirection: 'column',
+                flex: '1 1 1px',
+              }}
+            >
               <div id={centerViewId} style={{ minHeight: 400, flex: '1 1 1px' }}>
                 <div
                   style={{
@@ -158,7 +165,6 @@ export const DataMapperDesigner = ({
               </div>
             </div>
           </div>
-
           <AddSchemaDrawer
             onSubmitSchemaFileSelection={(schema) => console.log(schema)}
             readCurrentSchemaOptions={() => console.log('')}
