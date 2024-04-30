@@ -15,7 +15,15 @@ import { useCallback, useEffect, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useQuery } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
-import { DrawerBody, DrawerHeader, DrawerHeaderTitle, InlineDrawer, makeStyles } from '@fluentui/react-components';
+import {
+  DrawerBody,
+  DrawerHeader,
+  DrawerHeaderTitle,
+  InlineDrawer,
+  mergeClasses,
+  makeStyles,
+  shorthands,
+} from '@fluentui/react-components';
 
 const schemaFileQuerySettings = {
   cacheTime: 0,
@@ -29,6 +37,12 @@ const useStyles = makeStyles({
   },
   drawer: {
     backgroundColor: '#fff',
+  },
+  leftDrawer: {
+    ...shorthands.borderRight('1px', 'solid', '#ddd'),
+  },
+  rightDrawer: {
+    ...shorthands.borderLeft('1px', 'solid', '#ddd'),
   },
 });
 
@@ -257,7 +271,11 @@ export const AddSchemaDrawer = ({ readCurrentSchemaOptions, onSubmitSchemaFileSe
 
   return (
     <div className={styles.root}>
-      <InlineDrawer open={!!currentPanelView} size="small" className={styles.drawer}>
+      <InlineDrawer
+        open={!!currentPanelView}
+        size="small"
+        className={mergeClasses(styles.drawer, schemaType === SchemaType.Source ? styles.leftDrawer : styles.rightDrawer)}
+      >
         {/* {currentPanelView === ConfigPanelView.DefaultConfig && (
           <DefaultConfigView setFunctionDisplayExpanded={setFunctionDisplayExpanded} useExpandedFunctionCards={useExpandedFunctionCards} />
         )} */}

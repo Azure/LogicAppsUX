@@ -32,9 +32,9 @@ const useStyles = makeStyles({
     width: '187px',
     overflowY: 'auto',
     overflowBlock: 'scroll',
-    ...shorthands.border('1px', 'solid', tokens.colorNeutralForeground1),
+    ...shorthands.border('1px', 'solid', '#ddd'),
     ...shorthands.borderRadius(tokens.borderRadiusNone),
-    ...shorthands.padding('2px'),
+    ...shorthands.padding(0, 0, '2px', 0),
   },
 });
 

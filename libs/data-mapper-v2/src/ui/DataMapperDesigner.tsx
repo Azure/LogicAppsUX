@@ -1,71 +1,18 @@
-/* eslint-disable @typescript-eslint/no-unused-vars */
-import type { AppDispatch, RootState } from '../core/state/Store';
+import type { RootState } from '../core/state/Store';
 import { Stack } from '@fluentui/react';
-import { makeStaticStyles, makeStyles, shorthands, tokens } from '@fluentui/react-components';
+import { tokens } from '@fluentui/react-components';
 import { useEffect, useState } from 'react';
 import { DndProvider } from 'react-dnd';
 import { HTML5Backend } from 'react-dnd-html5-backend';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { ReactFlowProvider } from 'reactflow';
 import { AddSchemaDrawer } from '../components/addSchema/AddSchemaPanel';
 import { SchemaType } from '@microsoft/logic-apps-shared';
 import { EditorCommandBar } from '../components/commandBar/EditorCommandBar';
+import { useStaticStyles, useStyles } from './styles';
+import { Panel as FunctionPanel } from '../components/functions/Panel';
 
 const centerViewId = 'centerView';
-
-const useStaticStyles = makeStaticStyles({
-  // Firefox who's trying to early-adopt a WIP CSS standard (as of 11/2/2022)
-  '*': {
-    scrollbarColor: `${tokens.colorScrollbarOverlay} ${tokens.colorNeutralBackground1Hover}`,
-    scrollbarWidth: 'thin',
-  },
-  // Any WebKit browsers (essentially every other browser) - supposedly will eventually deprecate to the above
-  '*::-webkit-scrollbar': {
-    height: '8px',
-    width: '8px',
-  },
-  '*::-webkit-scrollbar-track:active': {
-    backgroundColor: tokens.colorNeutralBackground1Hover,
-    border: `0.5px solid ${tokens.colorNeutralStroke2}`,
-  },
-  '*::-webkit-scrollbar-thumb': {
-    backgroundClip: 'content-box',
-    border: '2px solid transparent',
-    borderRadius: '10000px',
-    backgroundColor: tokens.colorScrollbarOverlay,
-  },
-  '.react-flow svg': {
-    overflow: 'visible !important',
-  },
-  '.react-flow__minimap': {
-    borderRadius: tokens.borderRadiusMedium,
-    overflow: 'hidden',
-    boxShadow: tokens.shadow8,
-    backgroundColor: tokens.colorNeutralBackground1,
-    '& svg': {
-      width: '100%',
-      height: '100%',
-    },
-  },
-  '.react-flow__minimap-mask': {
-    stroke: tokens.colorBrandStroke1,
-    strokeWidth: '6px',
-    strokeLinejoin: 'round',
-    fillOpacity: '0',
-  },
-});
-
-const useStyles = makeStyles({
-  dataMapperShell: {
-    backgroundColor: tokens.colorNeutralBackground4,
-    height: '100%',
-    display: 'flex',
-    ...shorthands.flex(1, 1, '1px'),
-  },
-  canvasWrapper: {
-    height: '100%',
-  },
-});
 
 export interface DataMapperDesignerProps {
   saveMapDefinitionCall: (dataMapDefinition: string, mapMetadata: string) => void;
@@ -77,35 +24,15 @@ export interface DataMapperDesignerProps {
   setIsMapStateDirty?: (isMapStateDirty: boolean) => void;
 }
 
-export const DataMapperDesigner = ({
-  saveMapDefinitionCall,
-  //saveXsltCall,
-  saveDraftStateCall,
-  // addSchemaFromFile,
-  // readCurrentSchemaOptions,
-  readCurrentCustomXsltPathOptions,
-  setIsMapStateDirty,
-}: DataMapperDesignerProps) => {
-  const dispatch = useDispatch<AppDispatch>();
+export const DataMapperDesigner = ({ readCurrentCustomXsltPathOptions, setIsMapStateDirty }: DataMapperDesignerProps) => {
   useStaticStyles();
   const styles = useStyles();
 
   const isMapStateDirty = useSelector((state: RootState) => state.dataMap.present.isDirty);
-  const sourceSchema = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.sourceSchema);
-  const targetSchema = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.targetSchema);
-  const flattenedTargetSchema = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.flattenedTargetSchema);
-  const currentTargetSchemaNode = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.currentTargetSchemaNode);
-  const targetSchemaSortArray = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.targetSchemaOrdering);
-  const currentConnections = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.dataMapConnections);
-  const functions = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.functionNodes);
   const selectedItemKey = useSelector((state: RootState) => state.dataMap.present.curDataMapOperation.selectedItemKey);
 
-  const { centerViewHeight, centerViewWidth } = useCenterViewSize();
-  const [isPropPaneExpanded, setIsPropPaneExpanded] = useState(!!selectedItemKey);
-  // const [isCodeViewOpen, setIsCodeViewOpen] = useState(false);
-  // const [codeViewExpandedWidth, setCodeViewExpandedWidth] = useState(minCodeViewWidth);
-  const [isTestMapPanelOpen, setIsTestMapPanelOpen] = useState(false);
-  const [isSidePaneExpanded, setIsSidePaneExpanded] = useState(false);
+  const { centerViewHeight } = useCenterViewSize();
+  const [isPropPaneExpanded, _setIsPropPaneExpanded] = useState(!!selectedItemKey);
 
   useEffect(() => readCurrentCustomXsltPathOptions && readCurrentCustomXsltPathOptions(), [readCurrentCustomXsltPathOptions]);
 
@@ -130,6 +57,7 @@ export const DataMapperDesigner = ({
       <ReactFlowProvider>
         <EditorCommandBar onSaveClick={() => {}} onUndoClick={() => {}} onTestClick={() => {}} />
         <div className={styles.dataMapperShell}>
+          <FunctionPanel />
           <AddSchemaDrawer
             onSubmitSchemaFileSelection={(schema) => console.log(schema)}
             readCurrentSchemaOptions={() => console.log('')}
