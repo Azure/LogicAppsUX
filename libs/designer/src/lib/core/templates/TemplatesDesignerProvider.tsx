@@ -7,7 +7,6 @@ import { FluentProvider, themeToTokensObject, webDarkTheme, webLightTheme } from
 import { IntlProvider, Theme as ThemeType } from '@microsoft/logic-apps-shared';
 import type React from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
-import { ReactQueryProvider } from '../ReactQueryProvider';
 import { TemplatesWrappedContext } from './TemplatesDesignerContext';
 
 interface ExtendedTheme extends Theme {
@@ -56,20 +55,18 @@ export const TemplatesDesignerProvider = ({ theme = ThemeType.Light, locale = 'e
             theme={theme === ThemeType.Light ? extendedWebLightTheme : extendedWebDarkTheme}
             style={{ flex: '1 1 1px', display: 'flex', flexDirection: 'column' }}
           >
-            <ReactQueryProvider>
-              <IntlProvider
-                locale={locale}
-                defaultLocale={locale}
-                onError={(err) => {
-                  if (err.code === 'MISSING_TRANSLATION') {
-                    return;
-                  }
-                  throw err;
-                }}
-              >
-                {children}
-              </IntlProvider>
-            </ReactQueryProvider>
+            <IntlProvider
+              locale={locale}
+              defaultLocale={locale}
+              onError={(err) => {
+                if (err.code === 'MISSING_TRANSLATION') {
+                  return;
+                }
+                throw err;
+              }}
+            >
+              {children}
+            </IntlProvider>
           </FluentProvider>
         </ThemeProvider>
       </TemplatesWrappedContext.Provider>

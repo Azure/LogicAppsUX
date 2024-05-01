@@ -1,24 +1,21 @@
 import type { ReactNode } from 'react';
-import { TemplatesDataProvider, getReactQueryClient } from '@microsoft/logic-apps-designer';
-import { QueryClientProvider, useQuery } from 'react-query';
+import { ReactQueryProvider, TemplatesDataProvider } from '@microsoft/logic-apps-designer';
 import { loadToken } from '../../environments/environment';
 import { DevToolbox } from '../components/DevToolbox';
 import type { RootState } from '../state/Store';
 import { TemplatesDesigner, TemplatesDesignerProvider } from '@microsoft/logic-apps-designer';
-
+import { useQuery } from '@tanstack/react-query';
 import { useSelector } from 'react-redux';
 
-const standaloneQueryClient = getReactQueryClient();
-
 const LoadWhenArmTokenIsLoaded = ({ children }: { children: ReactNode }) => {
-  const { isLoading } = useQuery('armToken', loadToken);
+  const { isLoading } = useQuery(['armToken'], loadToken);
   return isLoading ? null : <>{children}</>;
 };
 export const TemplatesStandaloneDesigner = () => {
   const theme = useSelector((state: RootState) => state.workflowLoader.theme);
 
   return (
-    <QueryClientProvider client={standaloneQueryClient}>
+    <ReactQueryProvider>
       <LoadWhenArmTokenIsLoaded>
         <DevToolbox />
         <TemplatesDesignerProvider locale="en-US" theme={theme}>
@@ -27,6 +24,6 @@ export const TemplatesStandaloneDesigner = () => {
           </TemplatesDataProvider>
         </TemplatesDesignerProvider>
       </LoadWhenArmTokenIsLoaded>
-    </QueryClientProvider>
+    </ReactQueryProvider>
   );
 };
