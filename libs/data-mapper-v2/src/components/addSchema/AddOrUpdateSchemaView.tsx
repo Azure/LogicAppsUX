@@ -1,14 +1,12 @@
-import { ConfigPanelView } from '../../core/state/PanelSlice';
-import type { RootState } from '../../core/state/Store';
 import { SelectExistingSchema } from './SelectExistingSchema';
 import { UploadNewSchema } from './UploadNewSchema';
-import { ChoiceGroup, MessageBar, MessageBarType } from '@fluentui/react';
+import { ChoiceGroup, SearchBox, Text } from '@fluentui/react';
 import type { IChoiceGroupOption } from '@fluentui/react';
-import { Text } from '@fluentui/react-components';
-import { SchemaType } from '@microsoft/logic-apps-shared';
-import { useCallback, useMemo } from 'react';
+import { SchemaType, equals } from '@microsoft/logic-apps-shared';
+import type React from 'react';
+import { useCallback, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
-import { useSelector } from 'react-redux';
+import { useStyles } from './styles';
 
 const acceptedSchemaFileInputExtensions = '.xsd, .json';
 
@@ -31,57 +29,56 @@ export interface AddOrUpdateSchemaViewProps {
   schemaType?: SchemaType;
   selectedSchema?: string;
   selectedSchemaFile?: SchemaFile;
-  setSelectedSchema: (item: string | undefined) => void;
   setSelectedSchemaFile: (item?: SchemaFile) => void;
   errorMessage: string;
   uploadType: UploadSchemaTypes;
   setUploadType: (newUploadType: UploadSchemaTypes) => void;
+  customHeaderChildren?: React.ReactElement;
 }
 
 export const AddOrUpdateSchemaView = ({
   schemaType,
   selectedSchemaFile,
-  setSelectedSchema,
   setSelectedSchemaFile,
   errorMessage,
   uploadType,
   setUploadType,
+  customHeaderChildren,
 }: AddOrUpdateSchemaViewProps) => {
   const intl = useIntl();
-  const { sourceSchema: curSourceSchema, targetSchema: curTargetSchema } = useSelector(
-    (state: RootState) => state.dataMap.present.curDataMapOperation
+  const styles = useStyles();
+  const [selectSchemaVisible, setSelectSchemaVisible] = useState<boolean>(true);
+
+  const stringResources = useMemo(
+    () => ({
+      ADD_NEW: intl.formatMessage({
+        defaultMessage: 'Add new',
+        id: 'rv0Pn+',
+        description: 'Add new option',
+      }),
+      SELECT_EXISTING: intl.formatMessage({
+        defaultMessage: 'Select existing',
+        id: '2ZfzaY',
+        description: 'Select existing option',
+      }),
+      SOURCE: intl.formatMessage({
+        defaultMessage: 'Source',
+        id: 'nODesn',
+        description: 'Source',
+      }),
+      DESTINATION: intl.formatMessage({
+        defaultMessage: 'Destination',
+        id: 'EXEL2j',
+        description: 'Destination',
+      }),
+      SEARCH_PROPERTIES: intl.formatMessage({
+        defaultMessage: 'Search properties',
+        id: 'BnkCwH',
+        description: 'Seach source or target properties',
+      }),
+    }),
+    [intl]
   );
-  const currentPanelView = useSelector((state: RootState) => state.panel.currentPanelView);
-
-  const replaceSchemaWarningLoc = intl.formatMessage({
-    defaultMessage: 'Replacing an existing schema with an incompatible schema might create errors in your map.',
-    id: '3QXY3z',
-    description: 'Message bar warning about replacing existing schema',
-  });
-
-  const addNewLoc = intl.formatMessage({
-    defaultMessage: 'Add new',
-    id: 'rv0Pn+',
-    description: 'Add new option',
-  });
-
-  const selectExistingLoc = intl.formatMessage({
-    defaultMessage: 'Select existing',
-    id: '2ZfzaY',
-    description: 'Select existing option',
-  });
-
-  const updateSourceSchemaHeaderMsg = intl.formatMessage({
-    defaultMessage: 'Update source schema',
-    id: '73iM9+',
-    description: 'Header to update source schema',
-  });
-
-  const updateTargetSchemaHeaderMsg = intl.formatMessage({
-    defaultMessage: 'Update target schema',
-    id: 'htj+eZ',
-    description: 'Header to update target schema',
-  });
 
   const onChangeUploadType = useCallback(
     (option?: IChoiceGroupOption) => {
@@ -94,74 +91,62 @@ export const AddOrUpdateSchemaView = ({
 
   const uploadSchemaOptions: IChoiceGroupOption[] = useMemo(
     () => [
-      { key: UploadSchemaTypes.UploadNew, text: addNewLoc },
-      { key: UploadSchemaTypes.SelectFrom, text: selectExistingLoc },
+      { key: UploadSchemaTypes.UploadNew, text: stringResources.ADD_NEW },
+      {
+        key: UploadSchemaTypes.SelectFrom,
+        text: stringResources.SELECT_EXISTING,
+      },
     ],
-    [addNewLoc, selectExistingLoc]
+    [stringResources]
   );
-
-  const isOverwritingSchema = useMemo(
-    () => (schemaType === SchemaType.Source ? !!curSourceSchema : !!curTargetSchema),
-    [schemaType, curSourceSchema, curTargetSchema]
-  );
-
-  const [addOrSelectSchemaMsg] = useMemo(() => {
-    if (schemaType === SchemaType.Source) {
-      return [
-        intl.formatMessage({
-          defaultMessage: 'Add or select a source schema to use for your map.',
-          id: 'auUI93',
-          description: 'label to inform to upload or select source schema to be used',
-        }),
-      ];
-    }
-    return [
-      intl.formatMessage({
-        defaultMessage: 'Add or select a target schema to use for your map.',
-        id: 'jA6Wrp',
-        description: 'label to inform to upload or select target schema to be used',
-      }),
-    ];
-  }, [intl, schemaType]);
 
   return (
-    <div>
-      {currentPanelView === ConfigPanelView.UpdateSchema && (
-        <div style={{ marginTop: 24 }}>
-          <Text className="header-text">
-            {schemaType === SchemaType.Source ? updateSourceSchemaHeaderMsg : updateTargetSchemaHeaderMsg}
-          </Text>
+    <div className={styles.wrapper}>
+      <div className={styles.headerWrapper}>
+        <Text className={styles.header}>
+          {equals(schemaType, SchemaType.Source) ? stringResources.SOURCE : stringResources.DESTINATION}
+        </Text>
+        {customHeaderChildren && <div className={styles.rightCustomHeader}>{customHeaderChildren}</div>}
+      </div>
 
-          {isOverwritingSchema && (
-            <MessageBar messageBarType={MessageBarType.warning} styles={{ root: { marginTop: 20 } }}>
-              {replaceSchemaWarningLoc}
-            </MessageBar>
-          )}
-        </div>
-      )}
-
-      <p className="inform-text">{addOrSelectSchemaMsg}</p>
-
-      <ChoiceGroup
-        className="choice-group"
-        selectedKey={uploadType}
-        options={uploadSchemaOptions}
-        onChange={(_e, option) => onChangeUploadType(option)}
-        required={true}
-      />
-
-      {uploadType === UploadSchemaTypes.UploadNew && (
-        <UploadNewSchema
-          acceptedSchemaFileInputExtensions={acceptedSchemaFileInputExtensions}
-          selectedSchemaFile={selectedSchemaFile}
-          setSelectedSchemaFile={setSelectedSchemaFile}
-          schemaType={schemaType}
-        />
-      )}
-
-      {uploadType === UploadSchemaTypes.SelectFrom && (
-        <SelectExistingSchema errorMessage={errorMessage} schemaType={schemaType} setSelectedSchema={setSelectedSchema} />
-      )}
+      <div className={styles.bodyWrapper}>
+        {!selectedSchemaFile || selectSchemaVisible ? (
+          <div className={styles.selectSchemaWrapper}>
+            <ChoiceGroup
+              className="choice-group"
+              selectedKey={uploadType}
+              options={uploadSchemaOptions}
+              onChange={(_e, option) => onChangeUploadType(option)}
+              required={true}
+            />
+            {uploadType === UploadSchemaTypes.UploadNew && (
+              <UploadNewSchema
+                acceptedSchemaFileInputExtensions={acceptedSchemaFileInputExtensions}
+                selectedSchemaFile={selectedSchemaFile}
+                setSelectedSchemaFile={setSelectedSchemaFile}
+                schemaType={schemaType}
+              />
+            )}
+            {uploadType === UploadSchemaTypes.SelectFrom && (
+              <SelectExistingSchema
+                errorMessage={errorMessage}
+                schemaType={schemaType}
+                setSelectedSchema={(schema: SchemaFile) => {
+                  setSelectSchemaVisible(false);
+                  setSelectedSchemaFile(schema);
+                }}
+              />
+            )}
+          </div>
+        ) : (
+          <>
+            <div className={styles.searchBoxWrapper}>
+              <SearchBox placeholder={stringResources.SEARCH_PROPERTIES} className={styles.searchBox} />
+            </div>
+            <div />
+          </>
+        )}
+      </div>
     </div>
   );
 };

@@ -14,7 +14,9 @@ export interface EditorCommandBarProps {
 
 const useStyles = makeStyles({
   toolbar: {
+    backgroundColor: '#F6FAFE',
     justifyContent: 'space-between',
+    ...shorthands.borderBottom('1px', 'solid', '#ddd'),
   },
   button: {
     ...shorthands.padding('5px', '0px'),
@@ -100,7 +102,7 @@ export const EditorCommandBar = (props: EditorCommandBarProps) => {
   const bothSchemasDefined = sourceSchema && targetSchema;
 
   return (
-    <Toolbar size="medium" aria-label={Resources.COMMAND_BAR_ARIA} className={toolbarStyles.toolbar}>
+    <Toolbar size="small" aria-label={Resources.COMMAND_BAR_ARIA} className={toolbarStyles.toolbar}>
       <ToolbarGroup className={toolbarStyles.toolbarGroup}>
         <ToolbarButton
           aria-label={Resources.SAVE}
