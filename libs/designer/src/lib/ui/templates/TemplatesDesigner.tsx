@@ -7,9 +7,7 @@ import { DisplayConnections } from './connections/displayConnections';
 export const TemplatesDesigner = (
   // {}: TemplatesDesignerProps
 ) => {
-  const templateData = useSelector((state: RootState) => state.template.template?.data);
+  const templateConnections = useSelector((state: RootState) => state.template.connections);
 
-  return (
-    <div>{templateData?.connections ? <DisplayConnections connections={templateData?.connections} /> : <>no connections to be made</>}</div>
-  );
+  return <div>{templateConnections ? <DisplayConnections connections={templateConnections} /> : <>no connections to be made</>}</div>;
 };

@@ -1,31 +1,64 @@
-import type { Template } from '@microsoft/logic-apps-shared';
+import type { LogicAppsV2, Manifest, TemplateConnection } from '@microsoft/logic-apps-shared';
 import type { PayloadAction } from '@reduxjs/toolkit';
-import { createSlice } from '@reduxjs/toolkit';
+import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import type { RootState } from './store';
 
 export interface TemplateState {
-  // skuType?: 'Standard' | 'Consumption'; //TODO: change to pre-defined enum
-  template?: Template;
+  templateName?: string;
+  workflowDefinition?: LogicAppsV2.WorkflowDefinition;
+  manifest?: Manifest;
+  connections?: Record<string, TemplateConnection>;
+  parameters?: Record<string, any>;
 }
 
 const initialState: TemplateState = {};
+
+export const loadTemplate = createAsyncThunk('template/loadTemplate', async (_: unknown, thunkAPI) => {
+  const currentState: RootState = thunkAPI.getState() as RootState;
+  const currentTemplateResourcePath = currentState.template.templateName;
+
+  if (currentTemplateResourcePath) {
+    return loadTemplateFromGithub(currentTemplateResourcePath);
+  }
+
+  return undefined;
+});
 
 export const templateSlice = createSlice({
   name: 'template',
   initialState,
   reducers: {
-    // // TODO: below might not be used.
-    // changeSkuType: (state, action: PayloadAction<'Standard' | 'Consumption'>) => {
-    //   state.skuType = action.payload;
-    // },
-    setInitialTemplate: (state, action: PayloadAction<Template>) => {
-      state.template = action.payload;
+    changeCurrentTemplateName: (state, action: PayloadAction<string>) => {
+      state.templateName = action.payload;
     },
+    changeCurrentTemplateManifest: (state, action: PayloadAction<Manifest>) => {
+      state.manifest = action.payload;
+    },
+  },
+  extraReducers: (builder) => {
+    builder.addCase(loadTemplate.fulfilled, (state, action) => {
+      state.workflowDefinition = action.payload?.workflowDefinition;
+    });
+
+    builder.addCase(loadTemplate.rejected, (state) => {
+      // TODO change to null for error handling case
+      state.workflowDefinition = undefined;
+    });
   },
 });
 
-export const {
-  // changeSkuType,
-  setInitialTemplate,
-} = templateSlice.actions;
+export const { changeCurrentTemplateName, changeCurrentTemplateManifest } = templateSlice.actions;
 
-export default templateSlice.reducer;
+const loadTemplateFromGithub = async (manifestName: string): Promise<TemplateState | undefined> => {
+  try {
+    //TODO: work on how to import this correctly.
+    // const templateWorkflowDefinition: LogicAppsV2.WorkflowDefinition = await import(`../TODO_PATH/${manifestName}.json`);
+    const templateWorkflowDefinition = undefined;
+    return {
+      workflowDefinition: templateWorkflowDefinition,
+    };
+  } catch (ex) {
+    console.error(ex, manifestName);
+    return undefined;
+  }
+};

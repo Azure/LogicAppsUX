@@ -1,9 +1,8 @@
-import type { RootState } from './Store';
-import type { Template } from '@microsoft/logic-apps-shared';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { Theme as ThemeType } from '@microsoft/logic-apps-shared';
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit';
 
+//TODO: This file is deprecated; move data loader into library
 export const LoadingMethod = {
   File: 'file',
   Arm: 'arm',
@@ -15,7 +14,7 @@ export interface SchemaLoadingState {
   armToken?: string;
   loadingMethod: LoadingMethod;
   currentTemplateResourcePath?: string;
-  currentTemplate?: Template;
+  currentTemplate?: any;
   availableResourcesPaths?: string[];
   // availableSchemas?: DataMapSchema[];
 }
@@ -25,21 +24,6 @@ const initialState: SchemaLoadingState = {
   loadingMethod: LoadingMethod.File,
   currentTemplateResourcePath: '',
 };
-
-export const loadCurrentTemplate = createAsyncThunk('templateDataLoader/loadCurrentTemplate', async (_: unknown, thunkAPI) => {
-  const currentState: RootState = thunkAPI.getState() as RootState;
-  const currentTemplateResourcePath = currentState.templateDataLoader.currentTemplateResourcePath;
-
-  // TODO ARM loading
-  if (currentState.templateDataLoader.loadingMethod === LoadingMethod.Arm) {
-    return undefined;
-  }
-  if (currentTemplateResourcePath) {
-    return loadTemplateFromMock(currentTemplateResourcePath);
-  }
-
-  return undefined;
-});
 
 export const templateDataLoaderSlice = createSlice({
   name: 'templateDataLoader',
@@ -61,24 +45,4 @@ export const templateDataLoaderSlice = createSlice({
       state.loadingMethod = action.payload;
     },
   },
-  extraReducers: (builder) => {
-    builder.addCase(loadCurrentTemplate.fulfilled, (state, action) => {
-      state.currentTemplate = action.payload;
-    });
-
-    builder.addCase(loadCurrentTemplate.rejected, (state) => {
-      // TODO change to null for error handling case
-      state.currentTemplate = undefined;
-    });
-  },
 });
-
-const loadTemplateFromMock = async (resourcePath: string): Promise<Template | undefined> => {
-  try {
-    const template: Template = await import(`../__mocks__/${resourcePath}/template.json`);
-    return (template as any)?.default ?? template;
-  } catch (ex) {
-    console.error(ex);
-    return undefined;
-  }
-};

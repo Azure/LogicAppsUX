@@ -1,10 +1,12 @@
 import { configureStore } from '@reduxjs/toolkit';
 import type {} from 'redux-thunk';
-import templateReducer from './templateSlice';
+import { templateSlice } from './templateSlice';
+import { manifestSlice } from './manifestSlice';
 
 export const templateStore = configureStore({
   reducer: {
-    template: templateReducer,
+    template: templateSlice.reducer,
+    manifest: manifestSlice.reducer,
   },
 });
 
