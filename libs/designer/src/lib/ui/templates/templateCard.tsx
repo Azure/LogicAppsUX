@@ -1,0 +1,52 @@
+import type { AppDispatch, RootState } from '../../core/state/templates/store';
+import { changeCurrentTemplateName, loadTemplate } from '../../core/state/templates/templateSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import { Button } from '@fluentui/react-components';
+
+interface TemplateCardProps {
+  templateName: string;
+}
+
+export const TemplateCard = ({ templateName }: TemplateCardProps) => {
+  const dispatch = useDispatch<AppDispatch>();
+  const availableTemplates = useSelector((state: RootState) => state.manifest.availableTemplates);
+  const templateDetails = availableTemplates?.[templateName];
+  const workflowDefinition = useSelector((state: RootState) => state.template.workflowDefinition);
+
+  const onCreateWorkflowClick = () => {
+    dispatch(changeCurrentTemplateName(templateName));
+    dispatch(loadTemplate({}));
+  };
+
+  const onQuickViewClick = () => {
+    dispatch(changeCurrentTemplateName(templateName));
+    dispatch(loadTemplate({}));
+  };
+
+  return (
+    <div className="msla-template-card-wrapper">
+      <div>Thumbnail: {templateDetails?.thumbnail}</div>
+      {templateDetails?.images?.map((image, index) => (
+        <div key={index}>Image to show: {image}</div>
+      ))}
+      <div>
+        <b>{templateName}</b>
+      </div>
+      <div>{templateDetails?.description}</div>
+
+      <Button appearance="outline" onClick={onCreateWorkflowClick} aria-label={''}>
+        Create Workflow
+      </Button>
+      <Button appearance="subtle" onClick={onQuickViewClick} aria-label={''}>
+        Quick View
+      </Button>
+
+      <div>
+        {'======================='}
+        <div>{'TO BE DELETED - Display selected connection by clicking on the buttons;'}</div>
+        <div>{JSON.stringify(workflowDefinition)}</div>
+        {'======================='}
+      </div>
+    </div>
+  );
+};

@@ -1,16 +1,16 @@
 import type { RootState } from '../../core/state/templates/store';
 import { useSelector } from 'react-redux';
 import { DisplayConnections } from './connections/displayConnections';
+import { TemplateCard } from './templateCard';
 
 export const TemplatesDesigner = () => {
-  const availableManifestsNames = useSelector((state: RootState) => state.manifest.availableManifestNames);
+  const availableTemplatesNames = useSelector((state: RootState) => state.manifest.availableTemplateNames);
   const templateConnections = useSelector((state: RootState) => state.template.connections);
 
   return (
     <>
-      <div>AVAILABLE MANIFEST NAMES</div>
-      {availableManifestsNames?.map((manifestName: string) => (
-        <div key={manifestName}>{manifestName}</div>
+      {availableTemplatesNames?.map((templateName: string) => (
+        <TemplateCard key={templateName} templateName={templateName} />
       ))}
       <div>CURRENTLY SELECTED TEMPLATE</div>
       {templateConnections ? <DisplayConnections connections={templateConnections} /> : <>no connections to be made</>}

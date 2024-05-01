@@ -37,6 +37,7 @@ export const templateSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder.addCase(loadTemplate.fulfilled, (state, action) => {
+      console.log('---state: action.payload ', action.payload);
       state.workflowDefinition = action.payload?.workflowDefinition;
     });
 
@@ -49,15 +50,17 @@ export const templateSlice = createSlice({
 
 export const { changeCurrentTemplateName, changeCurrentTemplateManifest } = templateSlice.actions;
 
-const loadTemplateFromGithub = async (manifestName: string): Promise<TemplateState | undefined> => {
+const loadTemplateFromGithub = async (templateName: string): Promise<TemplateState | undefined> => {
   try {
-    const templateWorkflowDefinition: LogicAppsV2.WorkflowDefinition = await import(`${templatesPathFromState}/workflow.json`);
+    const templateWorkflowDefinition: LogicAppsV2.WorkflowDefinition = await import(
+      `${templatesPathFromState}/${templateName}/workflow.json`
+    );
 
     return {
-      workflowDefinition: templateWorkflowDefinition,
+      workflowDefinition: (templateWorkflowDefinition as any)?.default ?? templateWorkflowDefinition,
     };
   } catch (ex) {
-    console.error(ex, manifestName);
+    console.error(ex);
     return undefined;
   }
 };
