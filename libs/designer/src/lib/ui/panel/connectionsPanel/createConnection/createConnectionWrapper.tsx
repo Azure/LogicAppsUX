@@ -1,3 +1,4 @@
+import { useQueryClient } from '@tanstack/react-query';
 import constants from '../../../../common/constants';
 import type { AppDispatch, RootState } from '../../../../core';
 import { useOperationInfo, useSelectedNodeId, useSelectedNodeIds } from '../../../../core';
@@ -23,7 +24,6 @@ import {
   getAssistedConnectionProps,
   getConnectionParametersForAzureConnection,
   getSupportedParameterSets,
-  isUserAssignedIdentitySupportedForInApp,
 } from '../../../../core/utils/connectors/connections';
 import { CreateConnection } from './createConnection';
 import { Spinner } from '@fluentui/react-components';
@@ -34,7 +34,6 @@ import {
   WorkflowService,
   getIconUriFromConnector,
   getRecordEntry,
-  safeSetObjectPropertyValue,
   type ConnectionCreationInfo,
   type ConnectionParametersMetadata,
   type Connection,
@@ -129,6 +128,16 @@ export const CreateConnectionWrapper = () => {
     dispatch(openPanel({ nodeId, panelMode }));
   }, [dispatch, referencePanelMode, nodeIds]);
 
+  const queryClient = useQueryClient();
+  const updateNewConnection = useCallback(
+    async (newConnection: Connection) => {
+      return queryClient.setQueryData<Connection[]>(
+        ['connections', connector?.id?.toLowerCase()],
+        (oldConnections: Connection[] | undefined) => [...(oldConnections ?? []), newConnection]
+      );
+    },
+    [connector?.id, queryClient]
+  );
   const createConnectionCallback = useCallback(
     async (
       displayName?: string,
@@ -160,24 +169,6 @@ export const CreateConnectionWrapper = () => {
       }
 
       try {
-        // Assign connection parameters from resource selector experience
-        if (assistedConnectionProps) {
-          const assistedParams = await getConnectionParametersForAzureConnection(
-            operationManifest?.properties.connection?.type,
-            selectedSubResource
-          );
-          outputParameterValues = { ...outputParameterValues, ...assistedParams };
-        }
-
-        // Assign identity selected in parameter values for in-app connectors
-        if (
-          isUserAssignedIdentitySupportedForInApp(connector.properties.capabilities) &&
-          identitySelected &&
-          identitySelected !== constants.SYSTEM_ASSIGNED_MANAGED_IDENTITY
-        ) {
-          safeSetObjectPropertyValue(outputParameterValues, ['identity'], identitySelected);
-        }
-
         // If oauth, find the oauth parameter and assign the redirect url
         if (isOAuthConnection && selectedParameterSet) {
           const oAuthParameter = Object.entries(selectedParameterSet?.parameters).find(
@@ -189,6 +180,16 @@ export const CreateConnectionWrapper = () => {
             const redirectUrl = oAuthParameterObj?.oAuthSettings?.redirectUrl;
             outputParameterValues[oAuthParameterKey] = redirectUrl;
           }
+        }
+
+        // Assign connection parameters from resource selector experience
+        if (assistedConnectionProps) {
+          outputParameterValues = await getConnectionParametersForAzureConnection(
+            operationManifest?.properties.connection?.type,
+            selectedSubResource,
+            outputParameterValues,
+            !!selectedParameterSet // TODO: Should remove this when backend updates all connection parameters for functions and apim
+          );
         }
 
         const connectionInfo: ConnectionCreationInfo = {
@@ -227,6 +228,7 @@ export const CreateConnectionWrapper = () => {
         }
 
         if (connection) {
+          updateNewConnection(connection);
           for (const nodeId of nodeIds) {
             applyNewConnection(nodeId, connection, identitySelected);
           }
@@ -256,6 +258,7 @@ export const CreateConnectionWrapper = () => {
       nodeIds,
       applyNewConnection,
       existingReferences,
+      updateNewConnection,
     ]
   );
 
@@ -318,11 +321,7 @@ export function getConnectionParameterSetValues(
     values: Object.keys(outputParameterValues).reduce((acc: any, key) => {
       // eslint-disable-next-line no-param-reassign
       acc[key] = {
-        value:
-          outputParameterValues[key] ??
-          // Avoid 'undefined', which causes the 'value' property to be removed when serializing as JSON object,
-          // and breaks contracts validation.
-          null,
+        value: outputParameterValues[key],
       };
       return acc;
     }, {}),

@@ -9,7 +9,7 @@ import { getOverallValidationStatus, parseValidationData } from './helper';
 import { MessageBar, MessageBarType, Text } from '@fluentui/react';
 import { useContext, useMemo } from 'react';
 import { useIntl } from 'react-intl';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
 
 export const Validation: React.FC = () => {

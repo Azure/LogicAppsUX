@@ -21,7 +21,8 @@ export type MessageToWebview =
   | { command: typeof ExtensionCommand.getAvailableCustomXsltPaths; data: string[] }
   | { command: typeof ExtensionCommand.setXsltData; data: XsltData }
   | { command: typeof ExtensionCommand.setRuntimePort; data: string }
-  | { command: typeof ExtensionCommand.getConfigurationSetting; data: boolean };
+  | { command: typeof ExtensionCommand.getConfigurationSetting; data: boolean }
+  | { command: typeof ExtensionCommand.getDataMapperVersion; data: number };
 
 export type MessageToVsix =
   | {
@@ -56,4 +57,7 @@ export type MessageToVsix =
     }
   | {
       command: typeof ExtensionCommand.getFunctionDisplayExpanded;
+    }
+  | {
+      command: typeof ExtensionCommand.getDataMapperVersion;
     };

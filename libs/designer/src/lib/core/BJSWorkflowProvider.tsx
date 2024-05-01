@@ -13,7 +13,7 @@ import type { LogicAppsV2, UnitTestDefinition } from '@microsoft/logic-apps-shar
 import { useDeepCompareEffect } from '@react-hookz/web';
 import type React from 'react';
 import { useContext, useEffect } from 'react';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import { useDispatch } from 'react-redux';
 
 export interface BJSWorkflowProviderProps {
@@ -45,7 +45,13 @@ const DataProviderInner: React.FC<BJSWorkflowProviderProps> = ({
   }, [runInstance, workflow, customCode, unitTestDefinition]);
 
   // Store app settings in query to access outside of functional components
-  useQuery({ queryKey: ['appSettings'], initialData: appSettings });
+  useQuery({
+    queryKey: ['appSettings'],
+    initialData: appSettings,
+    queryFn: () => {
+      return appSettings ?? null;
+    },
+  });
 
   return <>{children}</>;
 };

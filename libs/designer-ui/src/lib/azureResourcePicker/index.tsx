@@ -4,7 +4,7 @@ import { labelCase } from '@microsoft/logic-apps-shared';
 import Fuse from 'fuse.js';
 import { useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 
 export interface AssistedConnectionProps {
   resourceType: string;
@@ -30,6 +30,7 @@ const fuseOptions: Fuse.IFuseOptions<{ id: string; text: string }> = {
   includeScore: true,
   minMatchCharLength: 2,
   includeMatches: true,
+  ignoreLocation: true,
   threshold: 0.4,
   keys: ['text'],
 };

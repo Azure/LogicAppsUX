@@ -1,6 +1,6 @@
 {
   "name": "@microsoft/logic-apps-designer",
-  "version": "4.6.0",
+  "version": "4.13.0",
   "dependencies": {
     "@fluentui/azure-themes": "8.5.70",
     "@fluentui/react": "8.110.2",
@@ -18,14 +18,13 @@
     "immer": "9.0.15",
     "lodash.frompairs": "4.0.1",
     "lodash.merge": "4.6.2",
-    "monaco-editor": "0.47.0",
+    "monaco-editor": "0.44.0",
     "react-dnd": "16.0.1",
     "react-dnd-accessible-backend": "1.0.1",
     "react-dnd-html5-backend": "16.0.1",
     "react-dnd-multi-backend": "8.0.0",
     "react-hotkeys-hook": "4.3.8",
     "react-intl": "6.3.0",
-    "react-query": "3.39.3",
     "react-redux": "8.0.2",
     "reactflow": "11.11.1",
     "redux-thunk": "2.4.2",
@@ -60,7 +59,9 @@
   "module": "src/index.ts",
   "peerDependencies": {
     "react": "^16.4.0 || ^17.0.0 || ^18.0.0",
-    "react-dom": "^16.4.0 || ^17.0.0 || ^18.0.0"
+    "react-dom": "^16.4.0 || ^17.0.0 || ^18.0.0",
+    "@tanstack/react-query": "4.36.1",
+    "@tanstack/react-query-devtools": "4.36.1"
   },
   "publishConfig": {
     "main": "build/lib/index.cjs",

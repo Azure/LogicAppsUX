@@ -4,6 +4,7 @@ export * from './ProviderWrappedContext';
 export { getReactQueryClient } from './ReactQueryProvider';
 export type { RootState, AppDispatch } from './store';
 export { store } from './store';
+export { templateStore } from './state/templates/store';
 export {
   useConnectionMapping,
   useConnectionRefs,
@@ -44,6 +45,8 @@ export {
 } from './state/panel/panelSelectors';
 export { initializeServices } from './state/designerOptions/designerOptionsSlice';
 export { resetWorkflowState, resetNodesLoadStatus } from './state/global';
+export { TemplatesDataProvider } from './templates/TemplatesDataProvider';
+export { TemplatesDesignerProvider } from './templates/TemplatesDesignerProvider';
 export {
   validateParameter,
   getCustomCodeFilesWithData,

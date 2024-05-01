@@ -21,7 +21,7 @@ import {
   addStatus,
   setFinalStatus,
 } from '../state/WorkflowSlice';
-import { initialize } from '../state/projectSlice';
+import { changeDataMapperVersion, initialize } from '../state/projectSlice';
 import type { AppDispatch, RootState } from '../state/store';
 import type { MessageType } from './messageTypes';
 import useEventListener from '@use-it/event-listener';
@@ -107,6 +107,11 @@ export const WebViewCommunication: React.FC<{ children: ReactNode }> = ({ childr
             dispatch(changeUseExpandedFunctionCards(message.data));
             break;
           }
+          case ExtensionCommand.getDataMapperVersion: {
+            dispatch(changeDataMapperVersion(message.data));
+            break;
+          }
+
           default:
             throw new Error('Unknown post message received');
         }

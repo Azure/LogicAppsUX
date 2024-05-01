@@ -11,7 +11,7 @@ import type { Artifacts, AzureConnectorDetails, ConnectionsData, FileDetails, Pa
 import { azurePublicBaseUrl, workflowManagementBaseURIKey } from '../../../../constants';
 import type { WebviewPanel, WebviewOptions, WebviewPanelOptions } from 'vscode';
 
-export interface IDesingerOptions {
+export interface IDesignerOptions {
   references?: any;
   connectionsData: string;
   parametersData: Record<string, Parameter>;
@@ -84,7 +84,7 @@ export abstract class OpenDesignerBase {
     this.panel.webview.postMessage(msg);
   }
 
-  protected async getWebviewContent(options: IDesingerOptions): Promise<string> {
+  protected async getWebviewContent(options: IDesignerOptions): Promise<string> {
     const { parametersData, localSettings, artifacts, azureDetails } = options;
     let { connectionsData } = options;
 

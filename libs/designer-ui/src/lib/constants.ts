@@ -457,6 +457,7 @@ export default {
       SCHEMA: 'schema',
       STRING: 'string',
       TABLE: 'table',
+      CUSTOM: 'custom', // To align with back-end types, not used to render editor
     },
     EDITOR_OPTIONS: {
       LANGUAGE: {

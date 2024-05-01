@@ -8,8 +8,8 @@ import { OperationManifestService, SwaggerParser, getObjectPropertyValue, getRec
 import type { LAOperation, OperationManifest } from '@microsoft/logic-apps-shared';
 import { createSelector } from '@reduxjs/toolkit';
 import { useMemo } from 'react';
-import type { UseQueryResult } from 'react-query';
-import { useQuery } from 'react-query';
+import type { UseQueryResult } from '@tanstack/react-query';
+import { useQuery } from '@tanstack/react-query';
 import { useSelector } from 'react-redux';
 
 interface QueryResult {
@@ -79,11 +79,11 @@ export const useOperationManifest = (
     ['manifest', { connectorId }, { operationId }],
     () => {
       if (!operationInfo || !connectorId || !operationId) {
-        return;
+        return null;
       }
       return operationManifestService.isSupported(operationInfo.type, operationInfo.kind)
         ? operationManifestService.getOperationManifest(connectorId, operationId)
-        : undefined;
+        : null;
     },
     {
       enabled: !!connectorId && !!operationId && enabled,
@@ -206,7 +206,8 @@ const useNodeAttributeOrSwagger = (
   propertyInSwagger: keyof LAOperation,
   options: { useManifest: boolean }
 ): QueryResult => {
-  const { data: connectorData } = useConnectorAndSwagger(operationInfo?.connectorId, !options.useManifest);
+  const res = useConnectorAndSwagger(operationInfo?.connectorId, !options.useManifest);
+  const { data: connectorData } = res;
   const { result, isLoading } = useNodeAttribute(operationInfo, propertyInManifest, propertyInConnector);
   const { swagger } = connectorData ?? {};
   if (swagger) {

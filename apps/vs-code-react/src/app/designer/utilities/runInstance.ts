@@ -1,5 +1,5 @@
-import { type DesignerServices } from '../servicesHelper';
-import { type LogicAppsV2, type ContentLink } from '@microsoft/utils-logic-apps';
+import type { DesignerServices } from '../servicesHelper';
+import type { LogicAppsV2, ContentLink } from '@microsoft/utils-logic-apps';
 
 /**
  * Retrieves the mock data for a run instance.
