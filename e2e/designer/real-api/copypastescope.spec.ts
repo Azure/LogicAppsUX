@@ -8,9 +8,7 @@ test.describe(
     tag: '@real',
   },
   () => {
-
     test('Expect Copy and Paste of Scopes to work on single workflow', async ({ page, browserName }) => {
-
       await page.goto('/');
       await GoToRealWorkflow(page, `wapp-lauxtest2${browserName}`, 'CopyPaste');
 
