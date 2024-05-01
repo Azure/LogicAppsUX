@@ -2636,6 +2636,10 @@ export function getGroupAndParameterFromParameterKey(
   return undefined;
 }
 
+export const getCustomCodeFileNameFromParameter = (parameter: ParameterInfo): string => {
+  return parameter.value?.[0].value ?? '';
+};
+
 export const getCustomCodeFileName = (nodeId: string, nodeInputs?: NodeInputs, idReplacements?: Record<string, string>): string => {
   const updatedNodeId = idReplacements?.[nodeId] || nodeId;
   let fileName = replaceWhiteSpaceWithUnderscore(updatedNodeId);
@@ -3016,7 +3020,7 @@ export const flattenAndUpdateViewModel = (
 export const updateScopePasteTokenMetadata = (
   valueSegment: ValueSegment,
   pasteParams: PasteScopeAdditionalParams
-): { updatedSegment: ValueSegment; error: string } => {
+): { updatedTokenSegment: ValueSegment; tokenError: string } => {
   let error = '';
   let token = valueSegment?.token;
   if (token) {
@@ -3065,7 +3069,7 @@ export const updateScopePasteTokenMetadata = (
     }
     valueSegment.token = token;
   }
-  return { updatedSegment: valueSegment, error: error };
+  return { updatedTokenSegment: valueSegment, tokenError: error };
 };
 
 export function updateTokenMetadata(
@@ -3453,7 +3457,10 @@ export function parameterValueToString(
           // Note: Token segment should be auto casted using interpolation if token type is
           // non string and referred in a string parameter.
           expressionValue =
-            !remappedParameterInfo.suppressCasting && parameterType === 'string' && segment.token?.type !== 'string'
+            !remappedParameterInfo.suppressCasting &&
+            parameterType === 'string' &&
+            segment.token?.type !== 'string' &&
+            !shouldUseLiteralValues(segment.token?.expression)
               ? `@{${expressionValue}}`
               : `@${expressionValue}`;
         }
@@ -3462,6 +3469,10 @@ export function parameterValueToString(
       return expressionValue;
     })
     .join('');
+}
+
+export function shouldUseLiteralValues(expression: Expression | undefined): boolean {
+  return (expression?.type as ExpressionType) === ExpressionType.NullLiteral;
 }
 
 export function parameterValueToJSONString(parameterValue: ValueSegment[], applyCasting = true, forValidation = false): string {

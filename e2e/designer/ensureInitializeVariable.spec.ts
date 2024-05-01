@@ -1,4 +1,6 @@
 import { test, expect } from '@playwright/test';
+import { GoToMockWorkflow } from './utils/GoToWorkflow';
+import { getSerializedWorkflowFromState } from './utils/designerFunctions';
 
 test(
   'Should be able to switch between Initialize Variable types',
@@ -7,9 +9,7 @@ test(
   },
   async ({ page }) => {
     await page.goto('/');
-    await page.getByText('Select an option').click();
-    await page.getByRole('option', { name: 'Recurrence' }).click();
-    await page.getByRole('button', { name: 'Toolbox' }).click();
+    await GoToMockWorkflow(page, 'Recurrence');
     await page.getByLabel('Insert a new step after').click();
     await page.getByText('Add an action').click();
     await page.getByPlaceholder('Search').click();
@@ -37,14 +37,7 @@ test(
       .first()
       .click();
 
-    const serialized: any = await page.evaluate(() => {
-      return new Promise((resolve) => {
-        setTimeout(() => {
-          const state = (window as any).DesignerStore.getState();
-          resolve((window as any).DesignerModule.serializeBJSWorkflow(state));
-        }, 5000);
-      });
-    });
+    const serialized: any = await getSerializedWorkflowFromState(page);
     expect(serialized.definition.actions.Initialize_variable.inputs.variables[0].type).toBe('integer');
     expect(serialized.definition.actions.Initialize_variable.inputs.variables[0].value).toEqual(12);
 
@@ -52,14 +45,7 @@ test(
     await page.getByRole('option', { name: 'Boolean' }).click();
     await page.getByPlaceholder('Enter initial value').click();
     await page.getByRole('option', { name: 'true' }).click();
-    const serialized2: any = await page.evaluate(() => {
-      return new Promise((resolve) => {
-        setTimeout(() => {
-          const state = (window as any).DesignerStore.getState();
-          resolve((window as any).DesignerModule.serializeBJSWorkflow(state));
-        }, 5000);
-      });
-    });
+    const serialized2: any = await getSerializedWorkflowFromState(page);
     expect(serialized2.definition.actions.Initialize_variable.inputs.variables[0].type).toBe('boolean');
     expect(serialized2.definition.actions.Initialize_variable.inputs.variables[0].value).toEqual(true);
   }

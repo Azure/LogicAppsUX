@@ -1,15 +1,12 @@
 import { test, expect } from '@playwright/test';
+import { getSerializedWorkflowFromState } from './utils/designerFunctions';
 
 test(
   'Mock: Expect Copy and Paste of Scopes to work on single workflow',
   {
     tag: '@mock',
   },
-  async ({ page, browserName, context }) => {
-    test.skip(browserName === 'webkit');
-    if (browserName === 'webkit') {
-      context.grantPermissions(['clipboard-read'], { origin: 'http://localhost:4200' });
-    }
+  async ({ page }) => {
     await page.goto('/');
     await page.getByText('Select an option').click();
     await page.getByRole('option', { name: 'Conditionals', exact: true }).click();
@@ -20,14 +17,7 @@ test(
     await page.getByTestId('rf__edge-Initialize_variable-Condition').getByLabel('Insert a new step between').focus();
     await page.keyboard.press('Control+V');
     await page.waitForTimeout(1000);
-    const serialized: any = await page.evaluate(() => {
-      return new Promise((resolve) => {
-        setTimeout(() => {
-          const state = (window as any).DesignerStore.getState();
-          resolve((window as any).DesignerModule.serializeBJSWorkflow(state));
-        }, 5000);
-      });
-    });
+    const serialized: any = await getSerializedWorkflowFromState(page);
     expect(serialized.definition).toEqual(verificationWorkflow);
   }
 );
@@ -54,11 +44,11 @@ const verificationWorkflow = {
             and: [
               {
                 not: {
-                  endsWith: ['@{concat(concat(concat(concat())))}', "@variables('goalOwner')"],
+                  endsWith: ['@concat(concat(concat(concat())))', "@variables('goalOwner')"],
                 },
               },
               {
-                equals: [null, "@variables('goalOwner')"],
+                equals: ['', "@variables('goalOwner')"],
               },
             ],
           },
@@ -122,11 +112,11 @@ const verificationWorkflow = {
             and: [
               {
                 not: {
-                  endsWith: ['@{concat(concat(concat(concat())))}', "@variables('goalOwner')"],
+                  endsWith: ['@concat(concat(concat(concat())))', "@variables('goalOwner')"],
                 },
               },
               {
-                equals: [null, "@variables('goalOwner')"],
+                equals: ['', "@variables('goalOwner')"],
               },
             ],
           },

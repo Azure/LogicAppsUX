@@ -7,7 +7,7 @@ import { RunService, FindPreviousAndNextPage, isNullOrUndefined, type LogicAppsV
 import type { PageChangeEventArgs, PageChangeEventHandler } from '@microsoft/designer-ui';
 import { Pager } from '@microsoft/designer-ui';
 import { useCallback, useEffect, useState } from 'react';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import { useDispatch } from 'react-redux';
 
 export interface LoopsPagerProps {

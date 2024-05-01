@@ -1,5 +1,5 @@
 import { environment } from '../../../../environments/environment';
-import { useQuery } from 'react-query';
+import { useQuery } from '@tanstack/react-query';
 import type { AppDispatch } from '../../../state/store';
 import { useAppId, useIsMonitoringView, useRunId, useWorkflowName } from '../../../state/workflowLoadingSelectors';
 import { changeRunId, setAppid, setResourcePath, setWorkflowName } from '../../../state/workflowLoadingSlice';
