@@ -15,8 +15,7 @@ const LoadWhenArmTokenIsLoaded = ({ children }: { children: ReactNode }) => {
   return isLoading ? null : <>{children}</>;
 };
 export const TemplatesStandaloneDesigner = () => {
-  const theme = useSelector((state: RootState) => state.templateDataLoader.theme);
-  // const currentTemplate = useSelector((state: RootState) => state.templateDataLoader.currentTemplate); // moving this out
+  const theme = useSelector((state: RootState) => state.workflowLoader.theme);
 
   return (
     <QueryClientProvider client={standaloneQueryClient}>

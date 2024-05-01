@@ -9,26 +9,22 @@ import { loadManifestNames, loadManifests } from '../state/templates/manifestSli
 export interface TemplatesDataProviderProps {
   kinds?: ('stateful' | 'stateless')[];
   skus?: ('Standard' | 'Consumption')[];
-  //   theme?: ThemeType;
   children?: React.ReactNode;
 }
 
 const DataProviderInner = ({
-  kinds,
-  skus,
-  //   theme = ThemeType.Light,
+  // kinds,
+  // skus,
   children,
 }: TemplatesDataProviderProps) => {
   const dispatch = useDispatch<AppDispatch>();
-  const { availableManifestNames, availableManifests } = useSelector((state: RootState) => state.manifest);
+  const { availableManifestNames } = useSelector((state: RootState) => state.manifest);
 
   useEffect(() => {
     if (availableManifestNames) {
       dispatch(loadManifests({}));
     }
   }, [dispatch, availableManifestNames]);
-
-  console.log('Kinds and SKUs; TODO: only show those qualified ones', kinds, skus, availableManifests);
 
   useEffect(() => {
     dispatch(loadManifestNames());

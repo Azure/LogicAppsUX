@@ -1,7 +1,7 @@
 import type { LogicAppsV2, Manifest, TemplateConnection } from '@microsoft/logic-apps-shared';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import type { RootState } from './store';
+import { templatesPathFromState, type RootState } from './store';
 
 export interface TemplateState {
   templateName?: string;
@@ -51,9 +51,8 @@ export const { changeCurrentTemplateName, changeCurrentTemplateManifest } = temp
 
 const loadTemplateFromGithub = async (manifestName: string): Promise<TemplateState | undefined> => {
   try {
-    //TODO: work on how to import this correctly.
-    // const templateWorkflowDefinition: LogicAppsV2.WorkflowDefinition = await import(`../TODO_PATH/${manifestName}.json`);
-    const templateWorkflowDefinition = undefined;
+    const templateWorkflowDefinition: LogicAppsV2.WorkflowDefinition = await import(`${templatesPathFromState}/workflow.json`);
+
     return {
       workflowDefinition: templateWorkflowDefinition,
     };

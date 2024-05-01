@@ -1,11 +1,9 @@
-import { templateDataLoaderSlice } from './TemplateDataLoader';
 import { workflowLoaderSlice } from './WorkflowLoader';
 import { configureStore } from '@reduxjs/toolkit';
 
 export const store = configureStore({
   reducer: {
-    templateDataLoader: templateDataLoaderSlice.reducer,
-    workflowLoader: workflowLoaderSlice.reducer,
+    workflowLoader: workflowLoaderSlice.reducer, // Aligning with Designer WorkflowLoader to utilize AppSelectors
   },
 });
 

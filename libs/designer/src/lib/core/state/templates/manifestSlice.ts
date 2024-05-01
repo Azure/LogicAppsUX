@@ -1,7 +1,7 @@
 import type { Manifest } from '@microsoft/logic-apps-shared';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
-import type { RootState } from './store';
+import { templatesPathFromState, type RootState } from './store';
 
 export interface ManifestState {
   availableManifestNames?: ManifestName[];
@@ -22,11 +22,16 @@ export const loadManifests = createAsyncThunk('manifest/loadManifests', async (_
   const currentState: RootState = thunkAPI.getState() as RootState;
   const manifestResourcePaths = currentState.manifest.availableManifestNames ?? [];
 
-  const manifestPromises = manifestResourcePaths.map((resourcePath) =>
-    loadManifestsFromGithub(resourcePath).then((response) => [resourcePath, response])
-  );
-  const manifestsArray = await Promise.all(manifestPromises);
-  return Object.fromEntries(manifestsArray);
+  try {
+    const manifestPromises = manifestResourcePaths.map((resourcePath) =>
+      loadManifestsFromGithub(resourcePath).then((response) => [resourcePath, response])
+    );
+    const manifestsArray = await Promise.all(manifestPromises);
+    return Object.fromEntries(manifestsArray);
+  } catch (ex) {
+    console.error(ex);
+    return undefined;
+  }
 });
 
 export const manifestSlice = createSlice({
@@ -67,7 +72,7 @@ export const manifestSlice = createSlice({
 
 const loadManifestNamesFromGithub = async (): Promise<ManifestName[] | undefined> => {
   try {
-    const manifestNames: ManifestName[] = await import('../../templates/samples/manifest.json');
+    const manifestNames: ManifestName[] = await import(`${templatesPathFromState}/manifest.json`);
     return (manifestNames as any)?.default ?? manifestNames;
   } catch (ex) {
     console.error(ex);
@@ -75,7 +80,7 @@ const loadManifestNamesFromGithub = async (): Promise<ManifestName[] | undefined
   }
 };
 
-const loadManifestsFromGithub = async (resourcePath: string): Promise<[string, Manifest]> => {
-  const manifestDetail: ManifestName[] = await import(`../../templates/samples/${resourcePath}/manifest.json`);
+const loadManifestsFromGithub = async (resourcePath: string): Promise<Manifest> => {
+  const manifestDetail: ManifestName[] = await import(`${templatesPathFromState}/${resourcePath}/manifest.json`);
   return (manifestDetail as any)?.default ?? manifestDetail;
 };

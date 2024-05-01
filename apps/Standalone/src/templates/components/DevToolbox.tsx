@@ -5,7 +5,6 @@ import { Accordion, AccordionHeader, AccordionItem, AccordionPanel, Tooltip, tok
 import { Theme as ThemeType } from '@microsoft/logic-apps-shared';
 import { useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { templateDataLoaderSlice } from '../state/TemplateDataLoader';
 import { AzureStandardLogicAppSelector } from '../../designer/app/AzureLogicAppsDesigner/LogicAppSelectionSetting/AzureStandardLogicAppSelector';
 import { AzureConsumptionLogicAppSelector } from '../../designer/app/AzureLogicAppsDesigner/LogicAppSelectionSetting/AzureConsumptionLogicAppSelector';
 import { useIsConsumption } from '../../designer/state/workflowLoadingSelectors';
@@ -13,6 +12,7 @@ import { ThemeProvider } from '@fluentui/react';
 import { FluentProvider, webDarkTheme, webLightTheme } from '@fluentui/react-components';
 import { AzureThemeDark } from '@fluentui/azure-themes/lib/azure/AzureThemeDark';
 import { AzureThemeLight } from '@fluentui/azure-themes/lib/azure/AzureThemeLight';
+import { workflowLoaderSlice } from '../state/WorkflowLoader';
 
 const themeDropdownOptions = [
   { key: ThemeType.Light, text: 'Light' },
@@ -22,23 +22,14 @@ const themeDropdownOptions = [
 export const DevToolbox = () => {
   const dispatch = useDispatch<AppDispatch>();
 
-  const { theme } = useSelector((state: RootState) => state.templateDataLoader);
+  const { theme } = useSelector((state: RootState) => state.workflowLoader);
 
   const [isTooltipVisible, setIsTooltipVisible] = useState<boolean>(false);
   const isLightMode = theme === ThemeType.Light;
 
-  // const changeResourcePathCB = useCallback(
-  //   // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  //   () => {
-  //     dispatch(dataMapDataLoaderSlice.actions.changeRawDefinition({} as MapDefDropdownOption));
-  //     dispatch(loadDataMap());
-  //   },
-  //   [dispatch]
-  // );
-
   const changeThemeCB = useCallback(
     (_: unknown, item: IDropdownOption | undefined) => {
-      dispatch(templateDataLoaderSlice.actions.changeTheme((item?.key as ThemeType) ?? ''));
+      dispatch(workflowLoaderSlice.actions.changeTheme((item?.key as ThemeType) ?? ''));
     },
     [dispatch]
   );

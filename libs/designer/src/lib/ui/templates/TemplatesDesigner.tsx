@@ -2,11 +2,7 @@ import type { RootState } from 'lib/core/state/templates/store';
 import { useSelector } from 'react-redux';
 import { DisplayConnections } from './connections/displayConnections';
 
-// export interface TemplatesDesignerProps {}
-
-export const TemplatesDesigner = (
-  // {}: TemplatesDesignerProps
-) => {
+export const TemplatesDesigner = () => {
   const availableManifestsNames = useSelector((state: RootState) => state.manifest.availableManifestNames);
   const templateConnections = useSelector((state: RootState) => state.template.connections);
 

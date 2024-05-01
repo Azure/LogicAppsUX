@@ -10,5 +10,6 @@ export const templateStore = configureStore({
   },
 });
 
+export const templatesPathFromState = '../../templates/samples';
 export type RootState = ReturnType<typeof templateStore.getState>;
 export type AppDispatch = typeof templateStore.dispatch;

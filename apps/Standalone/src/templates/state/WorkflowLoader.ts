@@ -1,9 +1,7 @@
 /* eslint-disable @typescript-eslint/no-empty-function */
-import type { ConnectionReferences } from '@microsoft/logic-apps-designer';
-import type { RootState } from './Store';
-import type { LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import type { PayloadAction } from '@reduxjs/toolkit';
-import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit';
+import { Theme as ThemeType } from '@microsoft/logic-apps-shared';
 
 export interface WorkflowLoadingState {
   resourcePath?: string;
@@ -11,41 +9,14 @@ export interface WorkflowLoadingState {
   workflowName?: string;
   runId?: string;
   isConsumption: boolean;
+  theme: ThemeType;
 }
 
 const initialState: WorkflowLoadingState = {
   appId: undefined,
   isConsumption: false,
+  theme: ThemeType.Light,
 };
-
-type WorkflowPayload = {
-  workflowDefinition: LogicAppsV2.WorkflowDefinition;
-  connectionReferences: ConnectionReferences;
-};
-
-type RunPayload = {
-  runInstance: LogicAppsV2.RunInstanceDefinition;
-};
-
-export const loadWorkflow = createAsyncThunk('workflowLoadingState/loadWorkflow', async (_: unknown, thunkAPI) => {
-  const currentState: RootState = thunkAPI.getState() as RootState;
-
-  const wf = await import(`../../../../../__mocks__/workflows/${currentState.workflowLoader.resourcePath?.split('.')[0]}.json`);
-  return {
-    workflowDefinition: wf.definition as LogicAppsV2.WorkflowDefinition,
-    connectionReferences: {},
-  } as WorkflowPayload;
-});
-
-export const loadRun = createAsyncThunk('runLoadingState/loadRun', async (_: unknown, thunkAPI) => {
-  const currentState: RootState = thunkAPI.getState() as RootState;
-  try {
-    const runInstance = await import(`../../../../../__mocks__/runs/${currentState.workflowLoader.resourcePath?.split('.')[0]}.json`);
-    return { runInstance: runInstance as LogicAppsV2.RunInstanceDefinition } as RunPayload;
-  } catch {
-    return thunkAPI.rejectWithValue(null);
-  }
-});
 
 export const workflowLoaderSlice = createSlice({
   name: 'workflowLoader',
@@ -74,6 +45,9 @@ export const workflowLoaderSlice = createSlice({
       state.appId = undefined;
       state.workflowName = undefined;
       state.resourcePath = '';
+    },
+    changeTheme: (state, action: PayloadAction<ThemeType>) => {
+      state.theme = action.payload;
     },
   },
 });
