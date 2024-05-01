@@ -1,5 +1,5 @@
 import type { ReactNode } from 'react';
-import { getReactQueryClient } from '@microsoft/logic-apps-designer';
+import { TemplatesDataProvider, getReactQueryClient } from '@microsoft/logic-apps-designer';
 import { QueryClientProvider, useQuery } from 'react-query';
 import { loadToken } from '../../environments/environment';
 import { DevToolbox } from '../components/DevToolbox';
@@ -23,7 +23,9 @@ export const TemplatesStandaloneDesigner = () => {
       <LoadWhenArmTokenIsLoaded>
         <DevToolbox />
         <TemplatesDesignerProvider locale="en-US" theme={theme}>
-          <TemplatesDesigner />
+          <TemplatesDataProvider>
+            <TemplatesDesigner />
+          </TemplatesDataProvider>
         </TemplatesDesignerProvider>
       </LoadWhenArmTokenIsLoaded>
     </QueryClientProvider>

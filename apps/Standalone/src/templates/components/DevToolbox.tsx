@@ -1,11 +1,11 @@
 import type { AppDispatch, RootState } from '../state/Store';
 import type { IDropdownOption } from '@fluentui/react';
-import { Checkbox, Dropdown, Stack, StackItem, TextField } from '@fluentui/react';
+import { Dropdown, Stack, StackItem } from '@fluentui/react';
 import { Accordion, AccordionHeader, AccordionItem, AccordionPanel, Tooltip, tokens } from '@fluentui/react-components';
 import { Theme as ThemeType } from '@microsoft/logic-apps-shared';
-import { useCallback, useMemo, useState } from 'react';
+import { useCallback, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { LoadingMethod, loadCurrentTemplate, templateDataLoaderSlice } from '../state/TemplateDataLoader';
+import { templateDataLoaderSlice } from '../state/TemplateDataLoader';
 import { AzureStandardLogicAppSelector } from '../../designer/app/AzureLogicAppsDesigner/LogicAppSelectionSetting/AzureStandardLogicAppSelector';
 import { AzureConsumptionLogicAppSelector } from '../../designer/app/AzureLogicAppsDesigner/LogicAppSelectionSetting/AzureConsumptionLogicAppSelector';
 import { useIsConsumption } from '../../designer/state/workflowLoadingSelectors';
@@ -19,23 +19,10 @@ const themeDropdownOptions = [
   { key: ThemeType.Dark, text: 'Dark' },
 ];
 
-interface TemplateFileData {
-  foldername: string;
-}
-const templateFileOptions: TemplateFileData[] = [{ foldername: 'DeleteOldBlob' }, { foldername: 'SendMonthlyCost' }];
-
-// ];
-const mapSchemaFileOptionsToDropdownOptions = (schemaFileData: TemplateFileData[]) =>
-  schemaFileData.map<IDropdownOption>((schemaOpt) => ({
-    key: schemaOpt.foldername,
-    text: schemaOpt.foldername,
-  }));
-const sourceSchemaDropdownOptions = mapSchemaFileOptionsToDropdownOptions(templateFileOptions);
-
 export const DevToolbox = () => {
   const dispatch = useDispatch<AppDispatch>();
 
-  const { theme, armToken, loadingMethod, currentTemplateResourcePath } = useSelector((state: RootState) => state.templateDataLoader);
+  const { theme } = useSelector((state: RootState) => state.templateDataLoader);
 
   const [isTooltipVisible, setIsTooltipVisible] = useState<boolean>(false);
   const isLightMode = theme === ThemeType.Light;
@@ -49,37 +36,6 @@ export const DevToolbox = () => {
   //   [dispatch]
   // );
 
-  const resetToUseARM = useCallback(() => {
-    // dispatch(dataMapDataLoaderSlice.actions.changeRawDefinition({} as MapDefDropdownOption));
-    dispatch(loadCurrentTemplate({}));
-  }, [dispatch]);
-
-  const changeSourceSchemaResourcePathDropdownCB = useCallback(
-    (_: unknown, item: IDropdownOption | undefined) => {
-      dispatch(templateDataLoaderSlice.actions.changecurrentTemplateResourcePath((item?.key as string) ?? ''));
-      dispatch(loadCurrentTemplate({}));
-    },
-    [dispatch]
-  );
-
-  const changeArmTokenCB = useCallback(
-    (_: unknown, newValue?: string) => {
-      dispatch(templateDataLoaderSlice.actions.changeArmToken(newValue ?? ''));
-      dispatch(templateDataLoaderSlice.actions.changeArmToken(newValue ?? ''));
-      dispatch(loadCurrentTemplate({}));
-    },
-    [dispatch]
-  );
-
-  const changeLoadingMethodCB = useCallback(
-    (_: unknown, checked?: boolean) => {
-      dispatch(templateDataLoaderSlice.actions.changeLoadingMethod(checked ? LoadingMethod.Arm : LoadingMethod.File));
-      dispatch(templateDataLoaderSlice.actions.changeLoadingMethod(checked ? LoadingMethod.Arm : LoadingMethod.File));
-      dispatch(loadCurrentTemplate({}));
-    },
-    [dispatch]
-  );
-
   const changeThemeCB = useCallback(
     (_: unknown, item: IDropdownOption | undefined) => {
       dispatch(templateDataLoaderSlice.actions.changeTheme((item?.key as ThemeType) ?? ''));
@@ -88,42 +44,6 @@ export const DevToolbox = () => {
   );
 
   const isConsumption = useIsConsumption();
-
-  const toolboxItems = useMemo(() => {
-    const newToolboxItems = [];
-
-    if (loadingMethod === LoadingMethod.File) {
-      newToolboxItems.push(
-        <StackItem key={'templatesDropDown'} style={{ width: '250px' }}>
-          <Dropdown
-            label="Template"
-            selectedKey={currentTemplateResourcePath}
-            onChange={changeSourceSchemaResourcePathDropdownCB}
-            placeholder="Select a template folder to load template.json"
-            options={sourceSchemaDropdownOptions}
-          />
-        </StackItem>
-      );
-    } else {
-      newToolboxItems.push(
-        <StackItem key={'armTokenTextField'} style={{ width: '250px' }}>
-          <TextField
-            label="ARM Token"
-            description="Auth token: include 'bearer' when pasting"
-            onChange={changeArmTokenCB}
-            value={armToken ?? ''}
-          />
-        </StackItem>
-      );
-      newToolboxItems.push(
-        <StackItem key={'resetArmButton'} style={{ width: '250px' }}>
-          <button onClick={resetToUseARM}>Set</button>
-        </StackItem>
-      );
-    }
-
-    return newToolboxItems;
-  }, [loadingMethod, armToken, changeArmTokenCB, changeSourceSchemaResourcePathDropdownCB, currentTemplateResourcePath, resetToUseARM]);
 
   return (
     <ThemeProvider theme={isLightMode ? AzureThemeLight : AzureThemeDark}>
@@ -171,15 +91,7 @@ export const DevToolbox = () => {
                       options={themeDropdownOptions}
                       style={{ marginBottom: '12px' }}
                     />
-                    <Checkbox
-                      label="Load From Arm"
-                      checked={loadingMethod === LoadingMethod.Arm}
-                      onChange={changeLoadingMethodCB}
-                      disabled
-                    />
                   </StackItem>
-
-                  {toolboxItems}
 
                   <StackItem style={{ width: '100%' }}>
                     {isConsumption ? <AzureConsumptionLogicAppSelector /> : <AzureStandardLogicAppSelector />}

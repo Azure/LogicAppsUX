@@ -8,6 +8,7 @@ import { IntlProvider, Theme as ThemeType } from '@microsoft/logic-apps-shared';
 import type React from 'react';
 import { Provider as ReduxProvider } from 'react-redux';
 import { ReactQueryProvider } from '../ReactQueryProvider';
+import { TemplatesWrappedContext } from './TemplatesDesignerContext';
 
 interface ExtendedTheme extends Theme {
   [key: string]: any;
@@ -46,30 +47,32 @@ export interface TemplatesDesignerProviderProps {
 export const TemplatesDesignerProvider = ({ theme = ThemeType.Light, locale = 'en', children }: TemplatesDesignerProviderProps) => {
   return (
     <ReduxProvider store={templateStore}>
-      <ThemeProvider
-        theme={theme === ThemeType.Light ? AzureThemeLight : AzureThemeDark}
-        style={{ flex: '1 1 1px', display: 'flex', flexDirection: 'column' }}
-      >
-        <FluentProvider
-          theme={theme === ThemeType.Light ? extendedWebLightTheme : extendedWebDarkTheme}
+      <TemplatesWrappedContext.Provider value={{}}>
+        <ThemeProvider
+          theme={theme === ThemeType.Light ? AzureThemeLight : AzureThemeDark}
           style={{ flex: '1 1 1px', display: 'flex', flexDirection: 'column' }}
         >
-          <ReactQueryProvider>
-            <IntlProvider
-              locale={locale}
-              defaultLocale={locale}
-              onError={(err) => {
-                if (err.code === 'MISSING_TRANSLATION') {
-                  return;
-                }
-                throw err;
-              }}
-            >
-              {children}
-            </IntlProvider>
-          </ReactQueryProvider>
-        </FluentProvider>
-      </ThemeProvider>
+          <FluentProvider
+            theme={theme === ThemeType.Light ? extendedWebLightTheme : extendedWebDarkTheme}
+            style={{ flex: '1 1 1px', display: 'flex', flexDirection: 'column' }}
+          >
+            <ReactQueryProvider>
+              <IntlProvider
+                locale={locale}
+                defaultLocale={locale}
+                onError={(err) => {
+                  if (err.code === 'MISSING_TRANSLATION') {
+                    return;
+                  }
+                  throw err;
+                }}
+              >
+                {children}
+              </IntlProvider>
+            </ReactQueryProvider>
+          </FluentProvider>
+        </ThemeProvider>
+      </TemplatesWrappedContext.Provider>
     </ReduxProvider>
   );
 };
