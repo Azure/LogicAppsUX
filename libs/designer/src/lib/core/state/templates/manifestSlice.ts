@@ -1,20 +1,32 @@
 import type { Manifest } from '@microsoft/logic-apps-shared';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
+import type { RootState } from './store';
 
 export interface ManifestState {
-  availableManifestNames: ManifestName[];
+  availableManifestNames?: ManifestName[];
   availableManifests?: Record<ManifestName, Manifest>;
 }
 
 type ManifestName = string;
 
 export const initialManifestState: ManifestState = {
-  availableManifestNames: [],
+  availableManifestNames: undefined,
 };
 
 export const loadManifestNames = createAsyncThunk('manifest/loadManifestNames', async () => {
-  return loadManifestsFromGithub();
+  return loadManifestNamesFromGithub();
+});
+
+export const loadManifests = createAsyncThunk('manifest/loadManifests', async (_: unknown, thunkAPI) => {
+  const currentState: RootState = thunkAPI.getState() as RootState;
+  const manifestResourcePaths = currentState.manifest.availableManifestNames ?? [];
+
+  const manifestPromises = manifestResourcePaths.map((resourcePath) =>
+    loadManifestsFromGithub(resourcePath).then((response) => [resourcePath, response])
+  );
+  const manifestsArray = await Promise.all(manifestPromises);
+  return Object.fromEntries(manifestsArray);
 });
 
 export const manifestSlice = createSlice({
@@ -41,10 +53,19 @@ export const manifestSlice = createSlice({
       // TODO change to null for error handling case
       state.availableManifestNames = [];
     });
+
+    builder.addCase(loadManifests.fulfilled, (state, action) => {
+      state.availableManifests = action.payload ?? [];
+    });
+
+    builder.addCase(loadManifests.rejected, (state) => {
+      // TODO some way of handling error
+      state.availableManifests = undefined;
+    });
   },
 });
 
-const loadManifestsFromGithub = async (): Promise<ManifestName[] | undefined> => {
+const loadManifestNamesFromGithub = async (): Promise<ManifestName[] | undefined> => {
   try {
     const manifestNames: ManifestName[] = await import('../../templates/samples/manifest.json');
     return (manifestNames as any)?.default ?? manifestNames;
@@ -52,4 +73,9 @@ const loadManifestsFromGithub = async (): Promise<ManifestName[] | undefined> =>
     console.error(ex);
     return undefined;
   }
+};
+
+const loadManifestsFromGithub = async (resourcePath: string): Promise<[string, Manifest]> => {
+  const manifestDetail: ManifestName[] = await import(`../../templates/samples/${resourcePath}/manifest.json`);
+  return (manifestDetail as any)?.default ?? manifestDetail;
 };

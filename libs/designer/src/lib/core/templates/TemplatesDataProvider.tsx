@@ -2,9 +2,9 @@ import { TemplatesWrappedContext } from './TemplatesDesignerContext';
 // import { Theme as ThemeType } from '@microsoft/logic-apps-shared';
 import type React from 'react';
 import { useContext, useEffect } from 'react';
-import { useDispatch } from 'react-redux';
-import type { AppDispatch } from '../state/templates/store';
-import { loadManifestNames } from '../state/templates/manifestSlice';
+import { useDispatch, useSelector } from 'react-redux';
+import type { AppDispatch, RootState } from '../state/templates/store';
+import { loadManifestNames, loadManifests } from '../state/templates/manifestSlice';
 
 export interface TemplatesDataProviderProps {
   kinds?: ('stateful' | 'stateless')[];
@@ -20,9 +20,15 @@ const DataProviderInner = ({
   children,
 }: TemplatesDataProviderProps) => {
   const dispatch = useDispatch<AppDispatch>();
+  const { availableManifestNames, availableManifests } = useSelector((state: RootState) => state.manifest);
 
-  console.log('Kinds and SKUs; TODO: only show those qualified ones', kinds, skus);
-  //TODO: load templates from ./samples folder.
+  useEffect(() => {
+    if (availableManifestNames) {
+      dispatch(loadManifests({}));
+    }
+  }, [dispatch, availableManifestNames]);
+
+  console.log('Kinds and SKUs; TODO: only show those qualified ones', kinds, skus, availableManifests);
 
   useEffect(() => {
     dispatch(loadManifestNames());
