@@ -17,5 +17,6 @@ import * as LogicApps from './logicApps';
 import * as LogicAppsV2 from './logicAppsV2';
 import * as OpenAPIV2 from './openApiV2';
 import * as Swagger from './swagger';
+import * as Template from './template';
 
-export { LogicApps, LogicAppsV2, OpenAPIV2, Swagger };
+export { LogicApps, LogicAppsV2, OpenAPIV2, Swagger, Template };
