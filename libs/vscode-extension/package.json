@@ -1,6 +1,6 @@
 {
   "name": "@microsoft/vscode-extension-logic-apps",
-  "version": "4.6.0",
+  "version": "4.13.0",
   "dependencies": {
     "@apidevtools/swagger-parser": "10.0.3",
     "@microsoft/logic-apps-shared": "workspace:*",
@@ -8,13 +8,16 @@
     "@microsoft/vscode-azext-utils": "0.4.6",
     "axios": "1.6.8",
     "react-intl": "6.3.0",
-    "react-query": "3.39.3",
     "reactflow": "11.11.1",
     "tslib": "2.4.0"
   },
   "devDependencies": {
     "@types/vscode": "1.76.0",
     "@types/vscode-webview": "1.57.1"
+  },
+  "peerDependencies": {
+    "@tanstack/react-query": "4.36.1",
+    "@tanstack/react-query-devtools": "4.36.1"
   },
   "engines": {
     "node": ">=12"

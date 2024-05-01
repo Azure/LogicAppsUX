@@ -50,12 +50,18 @@
                   "type": "string"
                 }
               },
-              "required": ["document", "min", "policy"]
+              "required": [
+                "document",
+                "min",
+                "policy"
+              ]
             }
           }
         },
         "runAfter": {
-          "Initialize_ArrayVariable": ["SUCCEEDED"]
+          "Initialize_ArrayVariable": [
+            "SUCCEEDED"
+          ]
         }
       },
       "Filter_array": {
@@ -65,7 +71,9 @@
           "where": "@not(contains(length(split(item(), '|')?[0]),length(split(item(), '|')?[0])))"
         },
         "runAfter": {
-          "Parse_JSON": ["SUCCEEDED"]
+          "Parse_JSON": [
+            "SUCCEEDED"
+          ]
         }
       },
       "HTTP": {
@@ -76,7 +84,9 @@
           "body": "@variables('ArrayVariable')"
         },
         "runAfter": {
-          "Filter_array": ["SUCCEEDED"]
+          "Filter_array": [
+            "SUCCEEDED"
+          ]
         },
         "runtimeConfiguration": {
           "contentTransfer": {
@@ -104,7 +114,9 @@
                       "type": "string"
                     }
                   },
-                  "required": ["item1"]
+                  "required": [
+                    "item1"
+                  ]
                 }
               },
               "string": {
@@ -120,5 +132,10 @@
     }
   },
   "connectionReferences": {},
-  "parameters": {}
+  "parameters": {
+    "EILCO Admin Nominations-OCSA List (cr773_EILCOAdminNominations_OCSA_L2)": {
+      "type": "String",
+      "value": "test"
+    }
+  }
 }

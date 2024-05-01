@@ -1,6 +1,5 @@
 import { resetWorkflowState } from '.';
 import { ProviderWrappedContext } from './ProviderWrappedContext';
-import { ReactQueryProvider } from './ReactQueryProvider';
 import type { DesignerOptionsState, ServiceOptions } from './state/designerOptions/designerOptionsInterfaces';
 import { initDesignerOptions } from './state/designerOptions/designerOptionsSlice';
 import { store } from './store';
@@ -16,6 +15,7 @@ import { Provider as ReduxProvider, useDispatch } from 'react-redux';
 
 export interface DesignerProviderProps {
   key?: string;
+  id?: string;
   locale?: string;
   options: Omit<DesignerOptionsState, 'servicesInitialized'> & { services: ServiceOptions };
   children: React.ReactNode;
@@ -32,7 +32,7 @@ const OptionsStateSet = ({ options, children }: any) => {
   return <>{children}</>;
 };
 
-export const DesignerProvider = ({ key, locale = 'en', options, children }: DesignerProviderProps) => {
+export const DesignerProvider = ({ id, locale = 'en', options, children }: DesignerProviderProps) => {
   const { isDarkMode } = options;
   const azTheme = isDarkMode ? AzureThemeDark : AzureThemeLight;
   const webTheme = isDarkMode ? webDarkTheme : webLightTheme;
@@ -52,12 +52,10 @@ export const DesignerProvider = ({ key, locale = 'en', options, children }: Desi
           <ThemeProvider theme={azTheme}>
             <FluentProvider theme={webTheme}>
               <div data-color-scheme={themeName} className={`msla-theme-${themeName}`} style={{ height: '100vh', overflow: 'hidden' }}>
-                <ReactQueryProvider>
-                  <IntlProvider locale={locale} defaultLocale={locale} onError={onError}>
-                    <ReduxReset key={key} />
-                    {children}
-                  </IntlProvider>
-                </ReactQueryProvider>
+                <IntlProvider locale={locale} defaultLocale={locale} onError={onError}>
+                  <ReduxReset id={id} />
+                  {children}
+                </IntlProvider>
               </div>
             </FluentProvider>
           </ThemeProvider>
@@ -68,10 +66,10 @@ export const DesignerProvider = ({ key, locale = 'en', options, children }: Desi
 };
 
 // Redux state persists even through component re-mounts (like with changing the key prop in a parent), so we need to reset the state when the key changes manually
-const ReduxReset = ({ key }: { key?: string }) => {
+const ReduxReset = ({ id }: { id?: string }) => {
   const dispatch = useDispatch();
   useEffect(() => {
     dispatch(resetWorkflowState());
-  }, [key, dispatch]);
+  }, [id, dispatch]);
   return null;
 };

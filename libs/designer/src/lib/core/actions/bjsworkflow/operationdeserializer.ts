@@ -1,4 +1,5 @@
 /* eslint-disable no-param-reassign */
+import { isCustomCode } from '@microsoft/designer-ui';
 import type { CustomCodeFileNameMapping } from '../../..';
 import Constants from '../../../common/constants';
 import type { ConnectionReference, ConnectionReferences, WorkflowParameter } from '../../../common/models/workflow';
@@ -34,14 +35,17 @@ import type { RepetitionContext } from '../../utils/parameters/helper';
 import {
   flattenAndUpdateViewModel,
   getAllInputParameters,
+  getParameterFromName,
   shouldIncludeSelfForRepetitionReference,
   updateDynamicDataInNode,
+  updateScopePasteTokenMetadata,
   updateTokenMetadata,
 } from '../../utils/parameters/helper';
 import { isTokenValueSegment } from '../../utils/parameters/segment';
 import { initializeOperationDetailsForSwagger } from '../../utils/swagger/operation';
 import { convertOutputsToTokens, getBuiltInTokens, getTokenNodeIds } from '../../utils/tokens';
 import { getAllVariables, getVariableDeclarations, setVariableMetadata } from '../../utils/variables';
+import type { PasteScopeParams } from './copypaste';
 import {
   getCustomSwaggerIfNeeded,
   getInputParametersFromManifest,
@@ -66,7 +70,6 @@ import {
   aggregate,
   equals,
   getRecordEntry,
-  getFileExtensionNameFromOperationId,
   parseErrorMessage,
 } from '@microsoft/logic-apps-shared';
 import type { InputParameter, OutputParameter, LogicAppsV2, OperationManifest } from '@microsoft/logic-apps-shared';
@@ -94,6 +97,11 @@ export interface OperationMetadata {
   brandColor: string;
 }
 
+export interface PasteScopeAdditionalParams extends PasteScopeParams {
+  existingOutputTokens: Record<string, NodeTokens>;
+  rootTriggerId: string;
+}
+
 export const initializeOperationMetadata = async (
   deserializedWorkflow: DeserializedWorkflow,
   references: ConnectionReferences,
@@ -101,7 +109,8 @@ export const initializeOperationMetadata = async (
   customCode: CustomCodeFileNameMapping,
   workflowKind: WorkflowKind,
   forceEnableSplitOn: boolean,
-  dispatch: Dispatch
+  dispatch: Dispatch,
+  pasteParams?: PasteScopeAdditionalParams
 ): Promise<void> => {
   initializeConnectorsForReferences(references);
 
@@ -133,7 +142,7 @@ export const initializeOperationMetadata = async (
 
   const allNodeData = aggregate((await Promise.all(promises)).filter((data) => !!data) as NodeDataWithOperationMetadata[][]);
   const repetitionInfos = await initializeRepetitionInfos(triggerNodeId, operations, allNodeData, nodesMetadata);
-  updateTokenMetadataInParameters(allNodeData, operations, workflowParameters, nodesMetadata, triggerNodeId, repetitionInfos);
+  updateTokenMetadataInParameters(allNodeData, operations, workflowParameters, nodesMetadata, triggerNodeId, repetitionInfos, pasteParams);
 
   const triggerNodeManifest = allNodeData.find((nodeData) => nodeData.id === triggerNodeId)?.manifest;
   if (triggerNodeManifest) {
@@ -248,9 +257,10 @@ export const initializeOperationDetailsForManifest = async (
       await updateCallbackUrlInInputs(nodeId, nodeOperationInfo, nodeInputs);
     }
 
+    const customCodeParameter = getParameterFromName(nodeInputs, Constants.DEFAULT_CUSTOM_CODE_INPUT);
     // Populate Customcode with values gotten from file system
-    if (equals(operationInfo.connectorId, Constants.INLINECODE) && !equals(operationInfo.operationId, 'javascriptcode')) {
-      updateCustomCodeInInputs(nodeId, getFileExtensionNameFromOperationId(operationInfo.operationId), nodeInputs, customCode);
+    if (customCodeParameter && isCustomCode(customCodeParameter?.editor, customCodeParameter?.editorOptions?.language)) {
+      updateCustomCodeInInputs(customCodeParameter, customCode);
     }
 
     const { outputs: nodeOutputs, dependencies: outputDependencies } = getOutputParametersFromManifest(
@@ -351,7 +361,8 @@ const updateTokenMetadataInParameters = (
   workflowParameters: Record<string, WorkflowParameter>,
   nodesMetadata: NodesMetadata,
   triggerNodeId: string,
-  repetitionInfos: Record<string, RepetitionContext>
+  repetitionInfos: Record<string, RepetitionContext>,
+  pasteParams?: PasteScopeAdditionalParams
 ) => {
   const nodesData = map(nodes, 'id');
   const actionNodesArray = nodes.map((node) => node.id).filter((nodeId) => nodeId !== triggerNodeId);
@@ -365,33 +376,47 @@ const updateTokenMetadataInParameters = (
     const allParameters = getAllInputParameters(nodeInputs);
     const repetitionInfo = getRecordEntry(repetitionInfos, id) ?? { repetitionReferences: [] };
     for (const parameter of allParameters) {
-      const segments = parameter.value;
-
+      const { value: segments, editorViewModel, type } = parameter;
+      let error = '';
+      let hasToken = false;
       if (segments && segments.length) {
         parameter.value = segments.map((segment) => {
+          let updatedSegment = segment;
+
           if (isTokenValueSegment(segment)) {
+            if (pasteParams) {
+              const { updatedTokenSegment, tokenError } = updateScopePasteTokenMetadata(segment, pasteParams);
+              updatedSegment = updatedTokenSegment;
+              error = tokenError;
+              hasToken = true;
+            }
             return updateTokenMetadata(
-              segment,
+              updatedSegment,
               repetitionInfo,
               actionNodes,
-              triggerNodeId,
+              pasteParams ? pasteParams.rootTriggerId : triggerNodeId,
               nodesData,
               operations,
               workflowParameters,
               nodesMetadata,
-              parameter.type
+              type
             );
           }
-
-          return segment;
+          return updatedSegment;
         });
       }
-
-      const viewModel = parameter.editorViewModel;
-      if (viewModel) {
+      if (pasteParams) {
+        if (hasToken) {
+          parameter.preservedValue = undefined;
+        }
+        if (error) {
+          parameter.validationErrors = [error];
+        }
+      }
+      if (editorViewModel) {
         flattenAndUpdateViewModel(
           repetitionInfo,
-          viewModel,
+          editorViewModel,
           actionNodes,
           triggerNodeId,
           nodesData,
@@ -409,7 +434,8 @@ const initializeOutputTokensForOperations = (
   allNodesData: NodeDataWithOperationMetadata[],
   operations: Operations,
   graph: WorkflowNode,
-  nodesMetadata: NodesMetadata
+  nodesMetadata: NodesMetadata,
+  existingOutputTokens: string[] = []
 ): Record<string, NodeTokens> => {
   const nodeMap: Record<string, string> = {};
   for (const id of Object.keys(operations)) {
@@ -428,7 +454,7 @@ const initializeOutputTokensForOperations = (
 
   for (const operationId of Object.keys(operations)) {
     const upstreamNodeIds = getTokenNodeIds(operationId, graph, nodesMetadata, nodesWithData, operationInfos, nodeMap);
-    const nodeTokens: NodeTokens = { tokens: [], upstreamNodeIds };
+    const nodeTokens: NodeTokens = { tokens: [], upstreamNodeIds: [...upstreamNodeIds, ...existingOutputTokens] };
 
     try {
       const nodeData = nodesWithData[operationId];
@@ -525,7 +551,11 @@ const initializeRepetitionInfos = async (
   return mappedRepitions;
 };
 
-export const initializeDynamicDataInNodes = async (getState: () => RootState, dispatch: Dispatch): Promise<void> => {
+export const initializeDynamicDataInNodes = async (
+  getState: () => RootState,
+  dispatch: Dispatch,
+  operationsToInitialize?: string[]
+): Promise<void> => {
   const rootState = getState();
   const {
     workflow: { nodesMetadata, operations },
@@ -535,6 +565,9 @@ export const initializeDynamicDataInNodes = async (getState: () => RootState, di
   } = rootState;
   const allVariables = getAllVariables(variables);
   for (const [nodeId, operation] of Object.entries(operations)) {
+    if (operationsToInitialize && !operationsToInitialize.includes(nodeId)) {
+      continue;
+    }
     if (nodeId === Constants.NODE.TYPE.PLACEHOLDER_TRIGGER) {
       continue;
     }

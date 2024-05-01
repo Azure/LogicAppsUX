@@ -1,4 +1,78 @@
 # Logic Apps Designer
+## [4.13.0](https://github.com/Azure/LogicAppsUX/compare/v4.12.0...v4.13.0) (2024-04-25)
+
+## [4.12.0](https://github.com/Azure/LogicAppsUX/compare/v4.11.0...v4.12.0) (2024-04-25)
+
+
+### Bug Fixes
+
+* **deisgner:** Fix a11y issue where info bubbles had no announcement to description in tooltip ([#4705](https://github.com/Azure/LogicAppsUX/issues/4705)) ([00600b6](https://github.com/Azure/LogicAppsUX/commit/00600b6b586a8f46f6329bf6d1a7ea2c5920e9c7))
+* **designer:** Adding dispatch call in clear dynamic inputs ([#4712](https://github.com/Azure/LogicAppsUX/issues/4712)) ([88da7bc](https://github.com/Azure/LogicAppsUX/commit/88da7bc34effb024d080bbec2e0de7c4a40cdd91))
+* **designer:** Small fix to get fileExtension on custom code action add ([#4711](https://github.com/Azure/LogicAppsUX/issues/4711)) ([8dff14c](https://github.com/Azure/LogicAppsUX/commit/8dff14c5e6c8acfc13a9967234b80fd1b21aad79))
+* **vite:** bypass cache when running dev ([624ce2e](https://github.com/Azure/LogicAppsUX/commit/624ce2e67c23c4b6f1c5cedd0dfe4e29e8bc02af))
+
+## [4.11.0](https://github.com/Azure/LogicAppsUX/compare/v4.10.0...v4.11.0) (2024-04-25)
+
+
+### Features
+
+* **Data Mapper:** Data Mapper Command Bar v2 UI ([#4674](https://github.com/Azure/LogicAppsUX/issues/4674)) ([a317c2e](https://github.com/Azure/LogicAppsUX/commit/a317c2ea16351b6d303eff3ff4b453eb49d6481a))
+* **Data Mapper:** Display DM V2 for VsCode with Internal Setting ([#4661](https://github.com/Azure/LogicAppsUX/issues/4661)) ([b0d6343](https://github.com/Azure/LogicAppsUX/commit/b0d6343adf08c9bd609d186991f587a7311e74d6))
+* **Designer:** Add Custom Editor Type to align with backend type ([#4701](https://github.com/Azure/LogicAppsUX/issues/4701)) ([c308480](https://github.com/Azure/LogicAppsUX/commit/c3084801b09da0ea0c512b6d185b2af034be26db))
+
+
+### Bug Fixes
+
+* **designer:** Fixing clearing of dynamic inputs of parameter value changes ([#4702](https://github.com/Azure/LogicAppsUX/issues/4702)) ([ea76614](https://github.com/Azure/LogicAppsUX/commit/ea7661412866b8eb3686cc6b293865c2268d879c))
+* **designer:** Update Auth typo ([#4700](https://github.com/Azure/LogicAppsUX/issues/4700)) ([a1421e3](https://github.com/Azure/LogicAppsUX/commit/a1421e3ca1e5a4a92a34c99316e21d8f10873805))
+
+## [4.10.0](https://github.com/Azure/LogicAppsUX/compare/v4.9.0...v4.10.0) (2024-04-24)
+
+## [4.9.0](https://github.com/Azure/LogicAppsUX/compare/v4.8.0...v4.9.0) (2024-04-24)
+
+
+### Features
+
+* **designer:** Adding MSI capability for Azure functions ([#4662](https://github.com/Azure/LogicAppsUX/issues/4662)) ([4b60f37](https://github.com/Azure/LogicAppsUX/commit/4b60f37973cf53c1eacdc13203cc746b66e2c0b2))
+* **designer:** Scope Copy + Paste ([#4668](https://github.com/Azure/LogicAppsUX/issues/4668)) ([0429c55](https://github.com/Azure/LogicAppsUX/commit/0429c55f7b93f173679cff209f67f140b04a7118))
+* **designer:** Updates to Custom Code (boilerplate, host.json, optimizations) ([#4690](https://github.com/Azure/LogicAppsUX/issues/4690)) ([e911432](https://github.com/Azure/LogicAppsUX/commit/e911432d82e28b2f14f2bf8c3f84061a87bc6b5c))
+
+
+### Bug Fixes
+
+* **Designer:** Add Ctrl to our hotkeys bindings ([#4678](https://github.com/Azure/LogicAppsUX/issues/4678)) ([851c9b6](https://github.com/Azure/LogicAppsUX/commit/851c9b679da23ae7d319add56229000564f589d7))
+* **designer:** Auth Editor Changes ([#4691](https://github.com/Azure/LogicAppsUX/issues/4691)) ([9b11f86](https://github.com/Azure/LogicAppsUX/commit/9b11f867318a622efa673ad3f7fb184c4bfdbcd0))
+* **Designer:** Downgrade Monaco ([#4682](https://github.com/Azure/LogicAppsUX/issues/4682)) ([749a978](https://github.com/Azure/LogicAppsUX/commit/749a97882905aa9a37b46440c714a3d1aa95e3a3))
+* **designer:** fix issue where scope nodes didn't get focused when they were jumped to ([#4677](https://github.com/Azure/LogicAppsUX/issues/4677)) ([5676b12](https://github.com/Azure/LogicAppsUX/commit/5676b12a0fbc84c868939e5599051e700f31e89e))
+* **designer:** Fix issue where scopes could drag/drop into themselves ([#4669](https://github.com/Azure/LogicAppsUX/issues/4669)) ([419a9d9](https://github.com/Azure/LogicAppsUX/commit/419a9d98573c147e2b99bf51726eb3a551775da7))
+* **designer:** Make sure to only add the shouldAdd array expressions for implicit For Each ([#4683](https://github.com/Azure/LogicAppsUX/issues/4683)) ([a792a22](https://github.com/Azure/LogicAppsUX/commit/a792a22060cf88aef3cd76f088a408e5286b9ca2))
+* **designer:** Remove double quotes wrapping from uncasted single tokens in array editor ([#4670](https://github.com/Azure/LogicAppsUX/issues/4670)) ([a9639dd](https://github.com/Azure/LogicAppsUX/commit/a9639ddae9e579775f79eef321986c12638b4709))
+* **Designer:** Remove react query for dynamic data ([#4693](https://github.com/Azure/LogicAppsUX/issues/4693)) ([87340c3](https://github.com/Azure/LogicAppsUX/commit/87340c399d09c4765f5b912eba8bea85d695ce08))
+
+## [4.8.0](https://github.com/Azure/LogicAppsUX/compare/v4.7.0...v4.8.0) (2024-04-19)
+
+
+### Features
+
+* **Designer:** Hide side panel when no node is selected and we are suppressing default node click functionality ([#4660](https://github.com/Azure/LogicAppsUX/issues/4660)) ([b37c660](https://github.com/Azure/LogicAppsUX/commit/b37c660b834b83b21f811f275ce25a4152d79fe8))
+
+## [4.7.0](https://github.com/Azure/LogicAppsUX/compare/v4.6.0...v4.7.0) (2024-04-19)
+
+
+### Features
+
+* **Designer:** Add Custom Editor for Vs-Code To Display DM Editor ([#4592](https://github.com/Azure/LogicAppsUX/issues/4592)) ([3a936cd](https://github.com/Azure/LogicAppsUX/commit/3a936cda0143801ffbb4874ad95f498af67a3552))
+* **Designer:** Hide side panel when no node is selected and we are suppressing default node click functionality ([#4653](https://github.com/Azure/LogicAppsUX/issues/4653)) ([24f8794](https://github.com/Azure/LogicAppsUX/commit/24f879471f5094c68e6fcf4ee835ffe41f84b841))
+
+
+### Bug Fixes
+
+* **Designer:** Renamed Desginer Typo to Designer ([#4647](https://github.com/Azure/LogicAppsUX/issues/4647)) ([88df97d](https://github.com/Azure/LogicAppsUX/commit/88df97dcb76f24b3e8ab24c974717aa68bc3cfed))
+* **Designer:** Updated HTML Editor to support newline characters (for dynamic content) ([#4635](https://github.com/Azure/LogicAppsUX/issues/4635)) ([f4e1f8b](https://github.com/Azure/LogicAppsUX/commit/f4e1f8bd2e287e4f254c55d0f0b9ea03593cb1a0))
+* **desinger:** Move non-outputschema dynamic data outside fetch ([#4656](https://github.com/Azure/LogicAppsUX/issues/4656)) ([3afadda](https://github.com/Azure/LogicAppsUX/commit/3afaddab2ba48440ecf6669bb6b8223cdb96120c))
+* **Doc:** Fixing Typo in the Development Doc ([#4646](https://github.com/Azure/LogicAppsUX/issues/4646)) ([7a6a2ac](https://github.com/Azure/LogicAppsUX/commit/7a6a2acf1a23af94c0792bd8674f40078cf36b8c))
+* **vscode:** Fix typos in code ([#4654](https://github.com/Azure/LogicAppsUX/issues/4654)) ([6648d7c](https://github.com/Azure/LogicAppsUX/commit/6648d7c3e496284aec4b4c82decd3a3aed8b5a5f))
+
 ## [4.6.0](https://github.com/Azure/LogicAppsUX/compare/v4.5.1...v4.6.0) (2024-04-18)
 
 

@@ -10,12 +10,12 @@ import { Spinner, SpinnerSize, Text } from '@fluentui/react';
 import type { ConnectionCreationInfo, LogicAppsV2 } from '@microsoft/logic-apps-shared';
 import type { ConnectionReferences } from '@microsoft/logic-apps-designer';
 import { DesignerProvider, BJSWorkflowProvider, Designer, getTheme, useThemeObserver } from '@microsoft/logic-apps-designer';
-import { isEmptyString, Theme, isNullOrUndefined } from '@microsoft/logic-apps-shared';
+import { isEmptyString, isNullOrUndefined, Theme } from '@microsoft/logic-apps-shared';
 import type { FileSystemConnectionInfo, StandardApp } from '@microsoft/vscode-extension-logic-apps';
 import { ExtensionCommand } from '@microsoft/vscode-extension-logic-apps';
 import { useContext, useMemo, useState, useEffect } from 'react';
 import { useIntl } from 'react-intl';
-import { useQuery, useQueryClient } from 'react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { useDispatch, useSelector } from 'react-redux';
 
 export const DesignerApp = () => {
@@ -110,51 +110,59 @@ export const DesignerApp = () => {
   }, [connectionData]);
 
   const getRunInstance = () => {
-    if ((isMonitoringView || isUnitTest) && !isEmptyString(runId) && panelMetaData !== null) {
-      return services.runService.getRun(runId);
-    }
-    return;
+    return services.runService.getRun(runId);
   };
 
-  const onRunInstanceSuccess = async (runDefinition: LogicAppsV2.RunInstanceDefinition) => {
-    if (isMonitoringView) {
-      const standardAppInstance = {
-        ...standardApp,
-        definition: runDefinition.properties.workflow.properties.definition,
-      } as StandardApp;
-      setRunInstance(runDefinition);
-      setStandardApp(standardAppInstance);
-    } else if (isUnitTest && isNullOrUndefined(unitTestDefinition)) {
-      const { triggerMocks, actionMocks } = await getRunInstanceMocks(runDefinition, services);
-
-      dispatch(
-        updateUnitTestDefinition({
-          unitTestDefinition: {
-            triggerMocks: triggerMocks,
-            actionMocks: actionMocks,
-            assertions: [],
-          },
-        })
-      );
-    }
-  };
-
-  const onRunInstanceError = async () => {
-    setRunInstance(null);
-    setStandardApp(undefined);
-  };
-
-  const { refetch, isError, isFetching, isLoading, isRefetching } = useQuery<any>(['runInstance', { runId }], getRunInstance, {
+  const {
+    refetch,
+    isError,
+    isFetching,
+    isLoading,
+    isRefetching,
+    data: runData,
+  } = useQuery<any>(['runInstance', { runId }], getRunInstance, {
     refetchOnWindowFocus: false,
     refetchOnMount: true,
     initialData: null,
-    onSuccess: onRunInstanceSuccess,
-    onError: onRunInstanceError,
+    enabled: (isMonitoringView || isUnitTest) && !isEmptyString(runId),
   });
 
   useEffect(() => {
-    refetch();
-  }, [isMonitoringView, runId, services, refetch]);
+    if (isMonitoringView) {
+      if (isNullOrUndefined(runData)) {
+        setRunInstance(null);
+        setStandardApp(undefined);
+      } else {
+        const standardAppInstance = {
+          ...standardApp,
+          definition: runData.properties.workflow.properties.definition,
+        } as StandardApp;
+        setRunInstance(runData);
+        setStandardApp(standardAppInstance);
+      }
+    } else if (isUnitTest && isNullOrUndefined(unitTestDefinition)) {
+      const updateTestDefinition = async () => {
+        const { triggerMocks, actionMocks } = await getRunInstanceMocks(runData, services);
+
+        dispatch(
+          updateUnitTestDefinition({
+            unitTestDefinition: {
+              triggerMocks: triggerMocks,
+              actionMocks: actionMocks,
+              assertions: [],
+            },
+          })
+        );
+      };
+      updateTestDefinition();
+    }
+  }, [runData, standardApp, isMonitoringView, isUnitTest, unitTestDefinition, services, dispatch]);
+
+  useEffect(() => {
+    if ((isMonitoringView || isUnitTest) && !isEmptyString(runId)) {
+      refetch();
+    }
+  }, [isMonitoringView, isUnitTest, runId, services, refetch]);
 
   useEffect(() => {
     setStandardApp(panelMetaData?.standardApp);

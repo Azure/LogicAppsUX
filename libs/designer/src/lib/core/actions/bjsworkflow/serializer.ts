@@ -18,7 +18,7 @@ import {
   getStringifiedValueFromEditorViewModel,
   parameterValueToString,
 } from '../../utils/parameters/helper';
-import { buildOperationDetailsFromControls } from '../../utils/swagger/inputsbuilder';
+import { buildOperationDetailsFromControls, serializeFormData } from '../../utils/swagger/inputsbuilder';
 import type { Settings } from './settings';
 import type { NodeStaticResults } from './staticresults';
 import {
@@ -436,8 +436,10 @@ export const constructInputValues = (key: string, inputs: SerializedParameter[],
   }
   const propertyNameParameters: SerializedParameter[] = [];
   const pathTemplateParameters: SerializedParameter[] = [];
+  const formDataParameters: SerializedParameter[] = [];
   const isPathTemplateParameter = (param: SerializedParameter) =>
     param.info.deserialization?.type === DeserializationType.PathTemplateProperties;
+  const isFormDataParameter = (param: SerializedParameter) => param.info.serialization?.property?.type === 'formdata';
 
   const serializedParameters = inputs
     .filter((item) => isAncestorKey(item.parameterKey, key))
@@ -457,6 +459,13 @@ export const constructInputValues = (key: string, inputs: SerializedParameter[],
         pathTemplateParameters.push(serializedParameter);
       }
 
+      if (isFormDataParameter(descendantParameter)) {
+        formDataParameters.push({
+          ...serializedParameter,
+          parameterKey: serializedParameter.info.serialization?.property?.parameterReference ?? serializedParameter.parameterKey,
+        });
+      }
+
       return serializedParameter;
     });
 
@@ -464,7 +473,7 @@ export const constructInputValues = (key: string, inputs: SerializedParameter[],
     allPathParams[current.parameterName.split('.').at(-1) as string] = current.value;
     return allPathParams;
   }, {});
-  const parametersToSerialize = serializedParameters.filter((param) => !isPathTemplateParameter(param));
+  const parametersToSerialize = serializedParameters.filter((param) => !isPathTemplateParameter(param) && !isFormDataParameter(param));
   for (const serializedParameter of parametersToSerialize) {
     if (serializedParameter.info.serialization?.property?.type === PropertySerializationType.PathTemplate) {
       serializedParameter.value = replaceTemplatePlaceholders(pathParameters, serializedParameter.value);
@@ -487,7 +496,7 @@ export const constructInputValues = (key: string, inputs: SerializedParameter[],
     }
   }
 
-  return result;
+  return formDataParameters.length ? { ...result, ...serializeFormData(formDataParameters) } : result;
 };
 
 const serializeParameterWithPath = (

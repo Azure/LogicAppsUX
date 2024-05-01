@@ -177,6 +177,7 @@ export const gitCommand = 'git';
 
 // Project settings
 export const projectLanguageSetting = 'projectLanguage';
+export const dataMapperVersionSetting = 'dataMapperVersion';
 export const funcVersionSetting = 'projectRuntime';
 export const projectSubpathSetting = 'projectSubpath';
 export const projectTemplateKeySetting = 'projectTemplateKey';
@@ -234,6 +235,7 @@ export const defaultExtensionBundlePathValue = path.join(
   'ExtensionBundles',
   extensionBundleId
 );
+export const defaultDataMapperVersion = 1;
 
 // Fallback Dependency Versions
 export const DependencyVersion = {

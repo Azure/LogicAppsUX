@@ -79,7 +79,7 @@ export function buildInlineCodeTextFromToken(inputToken: Token, language: string
       return formatForPowershell(segmentedProperty, actionName, source);
     }
     case constants.PARAMETER.EDITOR_OPTIONS.LANGUAGE.CSHARP: {
-      return formatForCSharp(segmentedProperty, actionName, source);
+      return formatForCSharp(segmentedProperty, actionName, source ? capitalizeFirstLetter(source) : source);
     }
 
     default: {
@@ -124,9 +124,9 @@ function formatForPowershell(property: string, actionName?: string, source?: str
 }
 
 function formatForCSharp(property: string, actionName?: string, source?: string): string {
-  const result = `await context.GetActionResult("${actionName ?? capitalizeFirstLetter(OperationCategory.Trigger)}")${
-    source ? `["${source}"]` : ''
-  }${property}`;
+  const result = actionName
+    ? `(await context.GetActionResult("${actionName}").ConfigureAwait(false))${source ? `.${source}` : ''}${property}`
+    : `(await context.GetTriggerResults().ConfigureAwait(false))${source ? `.${source}` : ''}${property}`;
   return result;
 }
 
