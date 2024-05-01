@@ -1,11 +1,11 @@
-import type { Manifest } from '@microsoft/logic-apps-shared';
+import type { Template } from '@microsoft/logic-apps-shared';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { templatesPathFromState, type RootState } from './store';
 
 export interface ManifestState {
   availableManifestNames?: ManifestName[];
-  availableManifests?: Record<ManifestName, Manifest>;
+  availableManifests?: Record<ManifestName, Template.Manifest>;
 }
 
 type ManifestName = string;
@@ -43,7 +43,7 @@ export const manifestSlice = createSlice({
         state.availableManifestNames = action.payload;
       }
     },
-    setAvailableManifests: (state, action: PayloadAction<Record<ManifestName, Manifest> | undefined>) => {
+    setAvailableManifests: (state, action: PayloadAction<Record<ManifestName, Template.Manifest> | undefined>) => {
       if (action.payload) {
         state.availableManifests = action.payload;
       }
@@ -80,7 +80,7 @@ const loadManifestNamesFromGithub = async (): Promise<ManifestName[] | undefined
   }
 };
 
-const loadManifestsFromGithub = async (resourcePath: string): Promise<Manifest> => {
+const loadManifestsFromGithub = async (resourcePath: string): Promise<Template.Manifest> => {
   const manifestDetail: ManifestName[] = await import(`${templatesPathFromState}/${resourcePath}/manifest.json`);
   return (manifestDetail as any)?.default ?? manifestDetail;
 };

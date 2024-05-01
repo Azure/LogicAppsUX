@@ -1,4 +1,4 @@
-import type { LogicAppsV2, Manifest, TemplateConnection } from '@microsoft/logic-apps-shared';
+import type { LogicAppsV2, Template } from '@microsoft/logic-apps-shared';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { templatesPathFromState, type RootState } from './store';
@@ -6,8 +6,8 @@ import { templatesPathFromState, type RootState } from './store';
 export interface TemplateState {
   templateName?: string;
   workflowDefinition?: LogicAppsV2.WorkflowDefinition;
-  manifest?: Manifest;
-  connections?: Record<string, TemplateConnection>;
+  manifest?: Template.Manifest;
+  connections?: Record<string, Template.Connection>;
   parameters?: Record<string, any>;
 }
 
@@ -31,7 +31,7 @@ export const templateSlice = createSlice({
     changeCurrentTemplateName: (state, action: PayloadAction<string>) => {
       state.templateName = action.payload;
     },
-    changeCurrentTemplateManifest: (state, action: PayloadAction<Manifest>) => {
+    changeCurrentTemplateManifest: (state, action: PayloadAction<Template.Manifest>) => {
       state.manifest = action.payload;
     },
   },

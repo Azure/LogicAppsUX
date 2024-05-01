@@ -1,8 +1,8 @@
 import { Button } from '@fluentui/react-components';
-import type { TemplateConnection } from '@microsoft/logic-apps-shared';
+import type { Template } from '@microsoft/logic-apps-shared';
 
 export interface DisplayConnectionsProps {
-  connections: Record<string, TemplateConnection>;
+  connections: Record<string, Template.Connection>;
 }
 
 export const DisplayConnections = ({ connections }: DisplayConnectionsProps) => {
@@ -25,8 +25,6 @@ export const DisplayConnections = ({ connections }: DisplayConnectionsProps) => 
             </b>
             <div>
               <div>- ID: {connections[connection]?.id}</div>
-              <div>- ConnectionID: {connections[connection]?.connectionId}</div>
-              <div>- ConnectionName: {connections[connection]?.connectionName}</div>
             </div>
           </div>
         );

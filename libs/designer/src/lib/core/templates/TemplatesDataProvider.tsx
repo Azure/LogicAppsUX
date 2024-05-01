@@ -5,10 +5,11 @@ import { useContext, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import type { AppDispatch, RootState } from '../state/templates/store';
 import { loadManifestNames, loadManifests } from '../state/templates/manifestSlice';
+import type { Template } from '@microsoft/logic-apps-shared';
 
 export interface TemplatesDataProviderProps {
-  kinds?: ('stateful' | 'stateless')[];
-  skus?: ('Standard' | 'Consumption')[];
+  kinds?: Template.Kind[];
+  skus?: Template.SkuType[];
   children?: React.ReactNode;
 }
 
