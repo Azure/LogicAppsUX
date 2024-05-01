@@ -7,7 +7,7 @@ export interface DisplayConnectionsProps {
 
 export const DisplayConnections = ({ connections }: DisplayConnectionsProps) => {
   return (
-    <div>
+    <>
       <div>Template Connections</div>
       {Object.keys(connections).map((connection, index) => {
         return (
@@ -23,12 +23,10 @@ export const DisplayConnections = ({ connections }: DisplayConnectionsProps) => 
                 CHOOSE
               </Button>
             </b>
-            <div>
-              <div>- ID: {connections[connection]?.id}</div>
-            </div>
+            <div>- ID: {connections[connection]?.id}</div>
           </div>
         );
       })}
-    </div>
+    </>
   );
 };
