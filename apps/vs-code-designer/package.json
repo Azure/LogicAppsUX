@@ -40,7 +40,7 @@
   "scripts": {
     "build:extension": "tsup && pnpm run copyFiles && pnpm -w run build:vscode-react",
     "copyFiles": "node extension-copy-svgs.js",
-    "vscode:designer:pack": "pnpm run build && pnpm run vscode:designer:pack:step1 && pnpm run vscode:designer:pack:step2",
+    "vscode:designer:pack": "pnpm run build:extension && pnpm run vscode:designer:pack:step1 && pnpm run vscode:designer:pack:step2",
     "vscode:designer:pack:step1": "cd ./dist && npm install",
     "vscode:designer:pack:step2": "cd ./dist && vsce package",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0"
