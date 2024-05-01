@@ -74,7 +74,8 @@
   "private": true,
   "scripts": {
     "build": "turbo run build",
-    "build:vscode": "turbo run build:vscode",
+    "build:vscode-react": "turbo run build:vscode-react",
+    "build:extension": "turbo run build:extension",
     "bump": "standard-version --no-verify",
     "check": "biome check --apply .",
     "compile:loc": "formatjs compile-folder --ast --format ./format.js \"Localize/lang\" \"libs/logic-apps-shared/src/intl/compiled-lang/\" ",
