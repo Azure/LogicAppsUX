@@ -13,26 +13,7 @@ export const TemplatePanel = () => {
   const dismissPanel = useCallback(() => dispatch(closePanel()), [dispatch]);
 
   return (
-    <Panel
-      //   className={`msla-panel-root-${currentPanelMode}`}
-      isLightDismiss
-      //   isBlocking={true}
-      type={PanelType.medium}
-      isOpen={isOpen}
-      onDismiss={dismissPanel}
-      hasCloseButton={true}
-      //   overlayProps={{ isDarkThemed: isDarkMode }}
-      //   layerProps={layerProps}
-      //   customWidth={width}
-      //   onRenderFooterContent={onRenderFooterContent}
-      //   isFooterAtBottom={true}
-      //   styles={({ theme }) => ({
-      //     footer: {
-      //       backgroundColor: theme?.semanticColors.bodyBackground,
-      //       borderTop: 0,
-      //     },
-      //   })}
-    >
+    <Panel isLightDismiss type={PanelType.medium} isOpen={isOpen} onDismiss={dismissPanel} hasCloseButton={true}>
       {currentPanelView === 'createWorkflow' ? <CreateWorkflowPanel /> : currentPanelView === 'quickView' ? <QuickViewPanel /> : undefined}
     </Panel>
   );

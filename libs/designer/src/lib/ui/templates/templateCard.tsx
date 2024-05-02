@@ -3,6 +3,7 @@ import { changeCurrentTemplateName, loadTemplate } from '../../core/state/templa
 import { useDispatch, useSelector } from 'react-redux';
 import { Button } from '@fluentui/react-components';
 import { openCreateWorkflowPanelView, openQuickViewPanelView } from '../../core/state/templates/panelSlice';
+import { useIntl } from 'react-intl';
 
 interface TemplateCardProps {
   templateName: string;
@@ -10,8 +11,22 @@ interface TemplateCardProps {
 
 export const TemplateCard = ({ templateName }: TemplateCardProps) => {
   const dispatch = useDispatch<AppDispatch>();
+  const intl = useIntl();
   const availableTemplates = useSelector((state: RootState) => state.manifest.availableTemplates);
   const templateManifest = availableTemplates?.[templateName];
+
+  const intlText = {
+    CREATE_WORKFLOW: intl.formatMessage({
+      defaultMessage: 'Create Workflow',
+      id: 'tsPPWB',
+      description: 'Button text to create workflow from this template',
+    }),
+    QUICK_VIEW: intl.formatMessage({
+      defaultMessage: 'Quick View',
+      id: 'm1BGgQ',
+      description: 'Button text to open quick view panel to display more information',
+    }),
+  };
 
   const onCreateWorkflowClick = () => {
     dispatch(changeCurrentTemplateName(templateName));
@@ -27,20 +42,16 @@ export const TemplateCard = ({ templateName }: TemplateCardProps) => {
 
   return (
     <div className="msla-template-card-wrapper">
-      <div>Thumbnail: {templateManifest?.thumbnail}</div>
-      {templateManifest?.images?.map((image, index) => (
-        <div key={index}>Image to show: {image}</div>
-      ))}
       <div>
         <b>{templateName}</b>
       </div>
       <div>{templateManifest?.description}</div>
 
       <Button appearance="outline" onClick={onCreateWorkflowClick} aria-label={''}>
-        Create Workflow
+        {intlText.CREATE_WORKFLOW}
       </Button>
       <Button appearance="subtle" onClick={onQuickViewClick} aria-label={''}>
-        Quick View
+        {intlText.QUICK_VIEW}
       </Button>
     </div>
   );
