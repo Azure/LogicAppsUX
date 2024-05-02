@@ -1,4 +1,32 @@
 # Logic Apps Designer
+## [4.14.0](https://github.com/Azure/LogicAppsUX/compare/v4.13.0...v4.14.0) (2024-05-02)
+
+
+### Features
+
+* **Data Mapper:**  Add initial schema ([#4740](https://github.com/Azure/LogicAppsUX/issues/4740)) ([705b846](https://github.com/Azure/LogicAppsUX/commit/705b846f742ee26ef74f0646df9a4882e48f44f7))
+* **designer:** Adding support for file parameters for Appservice and Api Management operations ([#4734](https://github.com/Azure/LogicAppsUX/issues/4734)) ([3ff85d7](https://github.com/Azure/LogicAppsUX/commit/3ff85d7ac918f78849ee9399abffc9d0097c6032))
+* **Template:** Set up Standalone with Submodule Connection + Models ([#4748](https://github.com/Azure/LogicAppsUX/issues/4748)) ([6c7ffba](https://github.com/Azure/LogicAppsUX/commit/6c7ffba8a8d739d1f0e14760eae81f57b94d18ae))
+
+
+### Bug Fixes
+
+* **designer:** [BREAKING]upgrade react-query and rework react-query integration to be singular and support devtools ([#4718](https://github.com/Azure/LogicAppsUX/issues/4718)) ([63c91e8](https://github.com/Azure/LogicAppsUX/commit/63c91e8ac9b9f915c8cd7b0f5650ad8048308d26))
+* **designer:** Adding an action in V3 could create a duplicate named action resulting in data loss.  ([#4721](https://github.com/Azure/LogicAppsUX/issues/4721)) ([730d34a](https://github.com/Azure/LogicAppsUX/commit/730d34aef29fbb8a5baf4823164211e6e22cfea4))
+* **Designer:** Copy Paste Fixes ([#4725](https://github.com/Azure/LogicAppsUX/issues/4725)) ([4f4e704](https://github.com/Azure/LogicAppsUX/commit/4f4e704c0214f9028cdebd459ff65c3f80de2a3e))
+* **designer:** Deleting a scope node brings panel to wrong id ([#4726](https://github.com/Azure/LogicAppsUX/issues/4726)) ([c0573d1](https://github.com/Azure/LogicAppsUX/commit/c0573d162a89639d27f8164761bc75c1218c8bc1))
+* **designer:** Fix issue where characters later in a token name would carry less relevence in a search ([#4736](https://github.com/Azure/LogicAppsUX/issues/4736)) ([2dfc193](https://github.com/Azure/LogicAppsUX/commit/2dfc19395a8209e989818db664cdc33843bcd8e0))
+* **designer:** Fix loading indicator while adding new action ([#4716](https://github.com/Azure/LogicAppsUX/issues/4716)) ([9f8f239](https://github.com/Azure/LogicAppsUX/commit/9f8f239f0bdd160cf3eef17c3491de736241b5e8))
+* **Designer:** Fix Request Body JSON Deserialization Bug ([#4745](https://github.com/Azure/LogicAppsUX/issues/4745)) ([f78a5e5](https://github.com/Azure/LogicAppsUX/commit/f78a5e533b8d94b175bfa4dba4c04e18ec74938c))
+* **designer:** Fixes Expression Editor styling to ensure it is not clipped/hidden. ([#4744](https://github.com/Azure/LogicAppsUX/issues/4744)) ([e9a5297](https://github.com/Azure/LogicAppsUX/commit/e9a52977e0763a2de17398d73670515c6e70681e))
+* **designer:** Managed Identity picker does not show up on new connection creation ([#4719](https://github.com/Azure/LogicAppsUX/issues/4719)) ([cbac876](https://github.com/Azure/LogicAppsUX/commit/cbac876bc779fc9b6b6c8bf48626b1c80772f9ac))
+* **designer:** More Custom Code improvements ([#4720](https://github.com/Azure/LogicAppsUX/issues/4720)) ([ecbcbfe](https://github.com/Azure/LogicAppsUX/commit/ecbcbfe5bda5e8d0774d17bf9a0df96e71b987ef))
+* **designer:** Null Literal are casted as String Literals ([#4733](https://github.com/Azure/LogicAppsUX/issues/4733)) ([e90a3d8](https://github.com/Azure/LogicAppsUX/commit/e90a3d80e6b8286390451e7c9e07110b78cc9f1a))
+* **Designer:** Removed css "webkit-fill-available" ([#4754](https://github.com/Azure/LogicAppsUX/issues/4754)) ([f2fb386](https://github.com/Azure/LogicAppsUX/commit/f2fb386d7d92ddab8c0a94872139b2e3f8c2b383))
+* **designer:** Small customcode boilerplate code fix ([#4742](https://github.com/Azure/LogicAppsUX/issues/4742)) ([1ade024](https://github.com/Azure/LogicAppsUX/commit/1ade024950f28729a67ebf3731d07faaccf842de))
+* **vscode:** Fix project build cache and designer loading ([#4739](https://github.com/Azure/LogicAppsUX/issues/4739)) ([27dd4c0](https://github.com/Azure/LogicAppsUX/commit/27dd4c0511904b52bedfd26eaa3eb792d6aa0f60))
+* **vscode:** Update pack command and function to check path exists ([#4746](https://github.com/Azure/LogicAppsUX/issues/4746)) ([ebad1be](https://github.com/Azure/LogicAppsUX/commit/ebad1beffaf8f7214378eed9ec6e510beffaa0d4))
+
 ## [4.13.0](https://github.com/Azure/LogicAppsUX/compare/v4.12.0...v4.13.0) (2024-04-25)
 
 ## [4.12.0](https://github.com/Azure/LogicAppsUX/compare/v4.11.0...v4.12.0) (2024-04-25)
