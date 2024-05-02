@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [4.5.2](https://github.com/Azure/LogicAppsUX/compare/v4.5.1...v4.5.2) (2024-05-02)
+
+
+### Bug Fixes
+
+* **Designer:** Removed css "webkit-fill-available" ([#4755](https://github.com/Azure/LogicAppsUX/issues/4755)) ([6a7a9ed](https://github.com/Azure/LogicAppsUX/commit/6a7a9ed7d7487420fd1632003db65a411298a45d))
+
 ### [4.5.1](https://github.com/Azure/LogicAppsUX/compare/v4.5.0...v4.5.1) (2024-04-18)
 
 ## [4.5.0](https://github.com/Azure/LogicAppsUX/compare/v4.4.1...v4.5.0) (2024-04-18)
