@@ -1,4 +1,4 @@
-import { Panel } from '@fluentui/react';
+import { Panel, PanelType } from '@fluentui/react';
 import type { AppDispatch, RootState } from '../../../core/state/templates/store';
 import { useCallback } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
@@ -17,7 +17,7 @@ export const TemplatePanel = () => {
       //   className={`msla-panel-root-${currentPanelMode}`}
       isLightDismiss
       //   isBlocking={true}
-      //   type={PanelType.medium}
+      type={PanelType.medium}
       isOpen={isOpen}
       onDismiss={dismissPanel}
       hasCloseButton={true}
