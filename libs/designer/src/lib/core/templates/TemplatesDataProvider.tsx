@@ -19,13 +19,13 @@ const DataProviderInner = ({
   children,
 }: TemplatesDataProviderProps) => {
   const dispatch = useDispatch<AppDispatch>();
-  const { availableManifestNames } = useSelector((state: RootState) => state.manifest);
+  const { availableTemplateNames } = useSelector((state: RootState) => state.manifest);
 
   useEffect(() => {
-    if (availableManifestNames) {
+    if (availableTemplateNames) {
       dispatch(loadManifests({}));
     }
-  }, [dispatch, availableManifestNames]);
+  }, [dispatch, availableTemplateNames]);
 
   useEffect(() => {
     dispatch(loadManifestNames());
