@@ -29,14 +29,21 @@ export const saveUnitTestDefinition = async (
     };
 
     await vscode.window.withProgress(options, async () => {
-      const unitTestsPath = getUnitTestsPath(projectPath, workflowName, unitTestName);
-      const workflowTestsPath = getWorkflowTestsPath(projectPath, workflowName);
+      const projectName = path.basename(projectPath);
+      const testsDirectory = getTestsDirectory(projectPath);
+      const unitTestsPath = getUnitTestsPath(testsDirectory.fsPath, projectName, workflowName, unitTestName);
+      const workflowTestsPath = getWorkflowTestsPath(testsDirectory.fsPath, projectName, workflowName);
 
       if (!fs.existsSync(workflowTestsPath)) {
         fs.mkdirSync(workflowTestsPath, { recursive: true });
       }
       try {
         fs.writeFileSync(unitTestsPath, JSON.stringify(unitTestDefinition, null, 4));
+        await vscode.workspace.updateWorkspaceFolders(
+          vscode.workspace.workspaceFolders ? vscode.workspace.workspaceFolders.length : 0,
+          null,
+          { uri: testsDirectory }
+        );
       } catch (error) {
         vscode.window.showErrorMessage(
           `${localize('saveFailure', 'Unit Test Definition not saved.')} ${error.message}`,
@@ -59,6 +66,12 @@ export const getUnitTestName = (filePath: string) => {
   return fileNameItems[0];
 };
 
+const getTestsDirectory = (projectPath: string) => {
+  const workspacePath = path.dirname(projectPath);
+  const testsDirectory = vscode.Uri.file(path.join(workspacePath, testsDirectoryName));
+  return testsDirectory;
+};
+
 /**
  * Returns the path of a unit test file for a given project, workflow, and unit test name.
  * @param {string} projectPath - The path of the project.
@@ -66,8 +79,8 @@ export const getUnitTestName = (filePath: string) => {
  * @param {string} unitTestName - The name of the unit test.
  * @returns The path of the unit test file.
  */
-const getUnitTestsPath = (projectPath: string, workflowName: string, unitTestName: string) => {
-  return path.join(projectPath, testsDirectoryName, workflowName, `${unitTestName}${unitTestsFileName}`);
+const getUnitTestsPath = (projectPath: string, projectName: string, workflowName: string, unitTestName: string) => {
+  return path.join(projectPath, projectName, workflowName, `${unitTestName}${unitTestsFileName}`);
 };
 
 /**
@@ -76,8 +89,8 @@ const getUnitTestsPath = (projectPath: string, workflowName: string, unitTestNam
  * @param {string} workflowName - The name of the workflow.
  * @returns The path to the workflow tests directory.
  */
-const getWorkflowTestsPath = (projectPath: string, workflowName: string) => {
-  return path.join(projectPath, testsDirectoryName, workflowName);
+const getWorkflowTestsPath = (projectPath: string, projectName: string, workflowName: string) => {
+  return path.join(projectPath, projectName, workflowName);
 };
 
 /**
@@ -113,7 +126,9 @@ export const validateUnitTestName = async (
  * @returns A string representing an error message if a unit test with the same name already exists, otherwise undefined.
  */
 const validateUnitTestNameCore = async (projectPath: string, workflowName: string, name: string): Promise<string | undefined> => {
-  const workflowTestsPath = getWorkflowTestsPath(projectPath, workflowName);
+  const projectName = path.basename(projectPath);
+  const testsDirectory = getTestsDirectory(projectPath);
+  const workflowTestsPath = getWorkflowTestsPath(testsDirectory.fsPath, projectName, workflowName);
 
   if (await fse.pathExists(path.join(workflowTestsPath, `${name}${unitTestsFileName}`))) {
     return localize('existingUnitTestError', 'A unit test with the name "{0}" already exists.', name);
