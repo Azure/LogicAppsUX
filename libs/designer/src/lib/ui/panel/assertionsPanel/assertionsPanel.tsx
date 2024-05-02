@@ -67,10 +67,15 @@ const useTokens = (): { outputTokensWithValues: TokenGroup[]; variableTokens: To
   const triggerNodeId = workflowState.graph ? getTriggerNodeId(workflowState) : null;
 
   const variableTokens = useMemo(() => {
+    const variableText = getIntl().formatMessage({
+      description: 'Heading section for Variable tokens',
+      id: 'unMaeV',
+      defaultMessage: 'Variables',
+    });
     return [
       {
         id: 'variables',
-        label: getIntl().formatMessage({ description: 'Heading section for Variable tokens', defaultMessage: 'Variables' }),
+        label: variableText,
         tokens: getVariableTokens(variables).map((token) => {
           const valueExpression = getTokenValueFromToken(token.outputInfo.type, token.outputInfo.functionArguments as string[]);
           return {

@@ -6,7 +6,7 @@ import { AssertionButtons } from './assertionButtons';
 import { AssertionField } from './assertionField';
 import { Button } from '@fluentui/react-components';
 import { bundleIcon, ChevronRight24Regular, ChevronRight24Filled, ChevronDown24Regular, ChevronDown24Filled } from '@fluentui/react-icons';
-import { RUN_AFTER_COLORS, type Assertion, type AssertionDefintion } from '@microsoft/logic-apps-shared';
+import { RUN_AFTER_COLORS, type Assertion as AssertionType, type AssertionDefintion } from '@microsoft/logic-apps-shared';
 import { useState } from 'react';
 
 const ExpandIcon = bundleIcon(ChevronRight24Filled, ChevronRight24Regular);
@@ -83,7 +83,7 @@ export function Assertion({
     setExpanded(!expanded);
   };
 
-  const handleUpdate = (newAssertion: Assertion) => {
+  const handleUpdate = (newAssertion: AssertionType) => {
     onAssertionUpdate({ ...newAssertion, id: assertion.id, isEditable: isEditable });
   };
 
@@ -92,7 +92,7 @@ export function Assertion({
       <div className="msla-workflow-assertion-header">
         <Button
           appearance="subtle"
-          data-testid={name + '-assertion-heading-button'}
+          data-testid={`${name}-assertion-heading-button`}
           onClick={handleToggleExpand}
           icon={expanded ? <CollapseIcon /> : <ExpandIcon />}
         >
