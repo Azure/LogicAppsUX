@@ -2,6 +2,7 @@ import type { AppDispatch, RootState } from '../../core/state/templates/store';
 import { changeCurrentTemplateName, loadTemplate } from '../../core/state/templates/templateSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { Button } from '@fluentui/react-components';
+import { openCreateWorkflowPanelView, openQuickViewPanelView } from '../../core/state/templates/panelSlice';
 
 interface TemplateCardProps {
   templateName: string;
@@ -11,16 +12,17 @@ export const TemplateCard = ({ templateName }: TemplateCardProps) => {
   const dispatch = useDispatch<AppDispatch>();
   const availableTemplates = useSelector((state: RootState) => state.manifest.availableTemplates);
   const templateDetails = availableTemplates?.[templateName];
-  const workflowDefinition = useSelector((state: RootState) => state.template.workflowDefinition);
 
   const onCreateWorkflowClick = () => {
     dispatch(changeCurrentTemplateName(templateName));
     dispatch(loadTemplate({}));
+    dispatch(openCreateWorkflowPanelView());
   };
 
   const onQuickViewClick = () => {
     dispatch(changeCurrentTemplateName(templateName));
     dispatch(loadTemplate({}));
+    dispatch(openQuickViewPanelView());
   };
 
   return (
@@ -40,13 +42,6 @@ export const TemplateCard = ({ templateName }: TemplateCardProps) => {
       <Button appearance="subtle" onClick={onQuickViewClick} aria-label={''}>
         Quick View
       </Button>
-
-      <div>
-        {'======================='}
-        <div>{'TO BE DELETED - Display selected connection by clicking on the buttons;'}</div>
-        <div>{JSON.stringify(workflowDefinition)}</div>
-        {'======================='}
-      </div>
     </div>
   );
 };
