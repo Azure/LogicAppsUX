@@ -78,7 +78,7 @@ export async function getLocalSettingsJson(
   localSettingsPath: string,
   allowOverwrite = false
 ): Promise<ILocalSettingsJson> {
-  if (await fse.existsSync(localSettingsPath)) {
+  if (fse.existsSync(localSettingsPath)) {
     const data: string = (await fse.readFile(localSettingsPath)).toString();
     const localSettingsUri: Uri = Uri.file(localSettingsPath);
 
