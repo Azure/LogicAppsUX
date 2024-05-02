@@ -3,10 +3,10 @@
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
 import { testsDirectoryName, workflowFileName } from '../../../../constants';
+import { localize } from '../../../../localize';
 import { getUnitTestName, pickUnitTest } from '../../../utils/unitTests';
-import { tryGetLogicAppProjectRoot } from '../../../utils/verifyIsProject';
-import { getWorkflowNode, getWorkspaceFolder } from '../../../utils/workspace';
-import { type IAzureConnectorsContext } from '../azureConnectorWizard';
+import { getWorkflowNode, isMultiRootWorkspace } from '../../../utils/workspace';
+import type { IAzureConnectorsContext } from '../azureConnectorWizard';
 import OpenDesignerForLocalProject from '../openDesigner/openDesignerForLocalProject';
 import { readFileSync } from 'fs';
 import * as path from 'path';
@@ -19,25 +19,28 @@ import * as vscode from 'vscode';
  * @returns A Promise that resolves when the unit test has been edited.
  */
 export async function editUnitTest(context: IAzureConnectorsContext, node: vscode.Uri | vscode.TestItem): Promise<void> {
-  let unitTestNode: vscode.Uri;
-  const workspaceFolder = await getWorkspaceFolder(context);
-  const projectPath = await tryGetLogicAppProjectRoot(context, workspaceFolder);
+  if (isMultiRootWorkspace()) {
+    let unitTestNode: vscode.Uri;
+    const workspacePath = path.dirname(vscode.workspace.workspaceFolders[0].uri.fsPath);
 
-  if (node && node instanceof vscode.Uri) {
-    unitTestNode = getWorkflowNode(node) as vscode.Uri;
-  } else if (node && !(node instanceof vscode.Uri) && node.uri instanceof vscode.Uri) {
-    unitTestNode = node.uri;
+    if (node && node instanceof vscode.Uri) {
+      unitTestNode = getWorkflowNode(node) as vscode.Uri;
+    } else if (node && !(node instanceof vscode.Uri) && node.uri instanceof vscode.Uri) {
+      unitTestNode = node.uri;
+    } else {
+      const unitTest = await pickUnitTest(context, path.join(workspacePath, testsDirectoryName));
+      unitTestNode = vscode.Uri.file(unitTest.data) as vscode.Uri;
+    }
+
+    const workflowName = path.relative(path.join(workspacePath, testsDirectoryName), path.dirname(unitTestNode.fsPath));
+    const workflowPath = path.join(workspacePath, workflowName, workflowFileName);
+    const workflowNode = vscode.Uri.file(workflowPath);
+    const unitTestDefinition = JSON.parse(readFileSync(unitTestNode.fsPath, 'utf8'));
+    const unitTestName = getUnitTestName(unitTestNode.fsPath);
+
+    const openDesignerObj = new OpenDesignerForLocalProject(context, workflowNode, unitTestName, unitTestDefinition);
+    await openDesignerObj?.createPanel();
   } else {
-    const unitTest = await pickUnitTest(context, path.join(projectPath, testsDirectoryName));
-    unitTestNode = vscode.Uri.file(unitTest.data) as vscode.Uri;
+    vscode.window.showInformationMessage(localize('expectedWorkspace', 'In order to create unit tests, you must have a workspace open.'));
   }
-
-  const workflowName = path.basename(path.dirname(unitTestNode.fsPath));
-  const workflowPath = path.join(projectPath, workflowName, workflowFileName);
-  const workflowNode = vscode.Uri.file(workflowPath);
-  const unitTestDefinition = JSON.parse(readFileSync(unitTestNode.fsPath, 'utf8'));
-  const unitTestName = getUnitTestName(unitTestNode.fsPath);
-
-  const openDesignerObj = new OpenDesignerForLocalProject(context, workflowNode, unitTestName, unitTestDefinition);
-  await openDesignerObj?.createPanel();
 }

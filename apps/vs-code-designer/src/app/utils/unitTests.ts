@@ -147,27 +147,28 @@ export async function getUnitTestInLocalProject(projectPath: string): Promise<Re
   }
 
   const unitTests: Record<string, any> = {};
-  const subPaths: string[] = await fse.readdir(projectPath);
-  for (const subPath of subPaths) {
-    const fullPath: string = path.join(projectPath, subPath);
-    const fileStats = await fse.lstat(fullPath);
 
-    if (fileStats.isDirectory()) {
-      try {
-        const unitTestFiles = await fse.readdir(fullPath);
-        for (const unitTestFile of unitTestFiles) {
-          if (unitTestFile.endsWith(unitTestsFileName)) {
-            const unitTestFilePath = path.join(fullPath, unitTestFile);
-            const unitTestFileNameWithoutExtension = unitTestFile.replace('.unit-test.json', '');
-            const fileNameWithSubPath = `${subPath} - ${unitTestFileNameWithoutExtension}`;
-            unitTests[fileNameWithSubPath] = unitTestFilePath;
-          }
+  const testFileSearch = async (directoryPath: string) => {
+    const subpaths: string[] = await fse.readdir(directoryPath);
+
+    for (const subPath of subpaths) {
+      const fullPath: string = path.join(directoryPath, subPath);
+      const fileStats = await fse.lstat(fullPath);
+      if (fileStats.isDirectory()) {
+        await testFileSearch(fullPath);
+      } else if (fileStats.isFile() && fullPath.endsWith(unitTestsFileName)) {
+        try {
+          const relativePath = path.relative(projectPath, path.dirname(fullPath));
+          const unitTestFileNameWithoutExtension = path.basename(fullPath).replace('.unit-test.json', '');
+          const fileNameWithSubPath = `${relativePath} - ${unitTestFileNameWithoutExtension}`;
+          unitTests[fileNameWithSubPath] = fullPath;
+        } catch {
+          // If unable to load the workflow or read the definition we skip the workflow
         }
-      } catch {
-        // If unable to load the workflow or read the definition we skip the workflow
       }
     }
-  }
+  };
+  await testFileSearch(projectPath);
 
   return unitTests;
 }
