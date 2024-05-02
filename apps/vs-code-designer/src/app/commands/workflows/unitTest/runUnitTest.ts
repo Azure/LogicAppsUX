@@ -2,7 +2,7 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { runUnitTestEvent } from '../../../../constants';
+import { defaultExtensionBundlePathValue, runUnitTestEvent } from '../../../../constants';
 import { ext } from '../../../../extensionVariables';
 import { localize } from '../../../../localize';
 import { getUnitTestName, type UnitTestResult } from '../../../utils/unitTests';
@@ -10,8 +10,8 @@ import { type IActionContext, callWithTelemetryAndErrorHandling } from '@microso
 import * as vscode from 'vscode';
 import * as cp from 'child_process';
 import * as path from 'path';
-import { getExtensionBundleFolder } from '../getDebugSymbolDll';
 import { getWorkspacePath } from '../../../utils/workspace';
+import { getLatestBundleVersion } from '../../../utils/bundleFeed';
 
 /**
  * Runs a unit test for a given node in the Logic Apps designer.
@@ -35,18 +35,21 @@ export async function runUnitTest(context: IActionContext, node: vscode.Uri | vs
         await new Promise((resolve) => setTimeout(resolve, 1000 + Math.random() * 1000));
         const duration = Date.now() - start;
 
-        const workspacePath: string | undefined = await getWorkspacePath(unitTestPath);
-        const pathRootFolder = path.dirname(workspacePath);
-        const logicAppName = path.basename(workspacePath);
+        const testDirectory = getWorkspacePath(unitTestPath);
+        const logicAppName = path.relative(testDirectory, unitTestPath).split(path.sep)[0];
         const workflowName = path.basename(path.dirname(unitTestPath));
         const unitTestName = getUnitTestName(path.basename(unitTestPath));
+        const bundleVersionNumber = await getLatestBundleVersion(defaultExtensionBundlePathValue);
 
-        const bundleFolderRoot = await getExtensionBundleFolder();
-        const bundleFolder = path.join(bundleFolderRoot, 'Microsoft.Azure.Functions.ExtensionBundle.Workflows');
-        const pathToExe = path.join(bundleFolder, '1.69.0.5', 'UnitTestExecutor', 'Microsoft.Azure.Workflows.UnitTestExecutor.exe');
+        const pathToExe = path.join(
+          defaultExtensionBundlePathValue,
+          bundleVersionNumber,
+          'UnitTestExecutor',
+          'Microsoft.Azure.Workflows.UnitTestExecutor.exe'
+        );
         const res = cp.spawn(pathToExe, [
           '-PathToRootFolder',
-          pathRootFolder,
+          path.dirname(testDirectory),
           '-logicAppName',
           logicAppName,
           '-workflowName',
@@ -56,7 +59,6 @@ export async function runUnitTest(context: IActionContext, node: vscode.Uri | vs
         ]);
 
         for await (const chunk of res.stdout) {
-          console.log('charles', chunk);
           vscode.window.showInformationMessage(`${chunk}`);
         }
 

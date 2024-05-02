@@ -32,8 +32,8 @@ export async function editUnitTest(context: IAzureConnectorsContext, node: vscod
       unitTestNode = vscode.Uri.file(unitTest.data) as vscode.Uri;
     }
 
-    const workflowName = path.relative(path.join(workspacePath, testsDirectoryName), path.dirname(unitTestNode.fsPath));
-    const workflowPath = path.join(workspacePath, workflowName, workflowFileName);
+    const projectName = path.relative(path.join(workspacePath, testsDirectoryName), path.dirname(unitTestNode.fsPath));
+    const workflowPath = path.join(workspacePath, projectName, workflowFileName);
     const workflowNode = vscode.Uri.file(workflowPath);
     const unitTestDefinition = JSON.parse(readFileSync(unitTestNode.fsPath, 'utf8'));
     const unitTestName = getUnitTestName(unitTestNode.fsPath);
