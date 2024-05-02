@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [4.13.2](https://github.com/Azure/LogicAppsUX/compare/v4.13.1...v4.13.2) (2024-05-02)
+
+
+### Bug Fixes
+
+* **vscode:** Update path exist function ([#4757](https://github.com/Azure/LogicAppsUX/issues/4757)) ([567a9af](https://github.com/Azure/LogicAppsUX/commit/567a9af398b577626ca4881c7fc706483b3e9548))
+
 ### [4.13.1](https://github.com/Azure/LogicAppsUX/compare/v4.13.0...v4.13.1) (2024-04-29)
 
 
