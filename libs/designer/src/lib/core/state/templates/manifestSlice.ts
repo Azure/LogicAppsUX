@@ -4,14 +4,15 @@ import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { templatesPathFromState, type RootState } from './store';
 
 export interface ManifestState {
-  availableManifestNames?: ManifestName[];
-  availableManifests?: Record<ManifestName, Template.Manifest>;
+  availableTemplateNames?: ManifestName[];
+  //TODO: rename this to availableTemplateManifests
+  availableTemplates?: Record<ManifestName, Template.Manifest>;
 }
 
 type ManifestName = string;
 
 export const initialManifestState: ManifestState = {
-  availableManifestNames: undefined,
+  availableTemplateNames: undefined,
 };
 
 export const loadManifestNames = createAsyncThunk('manifest/loadManifestNames', async () => {
@@ -20,7 +21,7 @@ export const loadManifestNames = createAsyncThunk('manifest/loadManifestNames', 
 
 export const loadManifests = createAsyncThunk('manifest/loadManifests', async (_: unknown, thunkAPI) => {
   const currentState: RootState = thunkAPI.getState() as RootState;
-  const manifestResourcePaths = currentState.manifest.availableManifestNames ?? [];
+  const manifestResourcePaths = currentState.manifest.availableTemplateNames ?? [];
 
   try {
     const manifestPromises = manifestResourcePaths.map((resourcePath) =>
@@ -38,34 +39,34 @@ export const manifestSlice = createSlice({
   name: 'manifest',
   initialState: initialManifestState,
   reducers: {
-    setAvailableManifestsNames: (state, action: PayloadAction<ManifestName[] | undefined>) => {
+    setavailableTemplatesNames: (state, action: PayloadAction<ManifestName[] | undefined>) => {
       if (action.payload) {
-        state.availableManifestNames = action.payload;
+        state.availableTemplateNames = action.payload;
       }
     },
-    setAvailableManifests: (state, action: PayloadAction<Record<ManifestName, Template.Manifest> | undefined>) => {
+    setavailableTemplates: (state, action: PayloadAction<Record<ManifestName, Template.Manifest> | undefined>) => {
       if (action.payload) {
-        state.availableManifests = action.payload;
+        state.availableTemplates = action.payload;
       }
     },
   },
   extraReducers: (builder) => {
     builder.addCase(loadManifestNames.fulfilled, (state, action) => {
-      state.availableManifestNames = action.payload ?? [];
+      state.availableTemplateNames = action.payload ?? [];
     });
 
     builder.addCase(loadManifestNames.rejected, (state) => {
       // TODO change to null for error handling case
-      state.availableManifestNames = [];
+      state.availableTemplateNames = [];
     });
 
     builder.addCase(loadManifests.fulfilled, (state, action) => {
-      state.availableManifests = action.payload ?? [];
+      state.availableTemplates = action.payload ?? [];
     });
 
     builder.addCase(loadManifests.rejected, (state) => {
       // TODO some way of handling error
-      state.availableManifests = undefined;
+      state.availableTemplates = undefined;
     });
   },
 });
