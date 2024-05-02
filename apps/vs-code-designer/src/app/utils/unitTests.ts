@@ -74,6 +74,11 @@ export const getUnitTestName = (filePath: string) => {
   return fileNameItems[0];
 };
 
+/**
+ * Retrieves the tests directory for a given project path.
+ * @param {string} projectPath - The path of the project.
+ * @returns The tests directory as a `vscode.Uri` object.
+ */
 const getTestsDirectory = (projectPath: string) => {
   const workspacePath = path.dirname(projectPath);
   const testsDirectory = vscode.Uri.file(path.join(workspacePath, testsDirectoryName));

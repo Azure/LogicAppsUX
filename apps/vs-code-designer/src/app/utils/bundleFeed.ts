@@ -202,6 +202,12 @@ export async function downloadExtensionBundle(context: IActionContext): Promise<
   }
 }
 
+/**
+ * Retrieves the latest version number of a bundle from the specified folder.
+ * @param {string} bundleFolder - The path to the folder containing the bundle.
+ * @returns The latest version number of the bundle.
+ * @throws An error if the bundle folder is empty.
+ */
 export const getLatestBundleVersion = async (bundleFolder: string) => {
   let bundleVersionNumber = '0.0.0';
 

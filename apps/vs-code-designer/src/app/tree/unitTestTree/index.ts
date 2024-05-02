@@ -161,7 +161,7 @@ const findInitialFiles = async (controller: TestController, pattern: RelativePat
   const unitTestFiles = await workspace.findFiles(pattern);
 
   const workspacesTestFiles = unitTestFiles.reduce((acc, file: Uri) => {
-    const workspaceName = file.fsPath.split('/').slice(-5)[0];
+    const workspaceName = file.fsPath.split(path.sep).slice(-5)[0];
 
     if (!acc[workspaceName]) {
       acc[workspaceName] = [];
@@ -188,8 +188,7 @@ const getOrCreateWorkspace = (controller: TestController, workspaceName: string,
     return { file: existing, data: ext.testData.get(existing) as TestWorkspace };
   }
   const filePath = files.length > 0 ? files[0].fsPath : '';
-  const workspaceUri = isEmptyString(filePath) ? undefined : Uri.file(filePath.split('/').slice(0, -4).join('/'));
-
+  const workspaceUri = isEmptyString(filePath) ? undefined : Uri.file(filePath.split(path.sep).slice(0, -4).join(path.sep));
   const workspaceTestItem = controller.createTestItem(workspaceName, workspaceName, workspaceUri);
   controller.items.add(workspaceTestItem);
 
@@ -207,7 +206,7 @@ const getOrCreateWorkspace = (controller: TestController, workspaceName: string,
  * @returns An object containing the file test and its associated data, if it exists.
  */
 const getOrCreateFile = async (controller: TestController, uri: Uri) => {
-  const workspaceName = uri.fsPath.split('/').slice(-5)[0];
+  const workspaceName = uri.fsPath.split(path.sep).slice(-5)[0];
   const testName = path.basename(uri.fsPath);
   const workflowName = path.basename(path.dirname(uri.fsPath));
 
@@ -229,7 +228,7 @@ const getOrCreateFile = async (controller: TestController, uri: Uri) => {
     ext.testData.set(workflowTestItem, testWorkflow);
     existingWorkspaceTest.children.add(workflowTestItem);
   } else {
-    const workspaceUri = Uri.file(uri.fsPath.split('/').slice(0, -4).join('/'));
+    const workspaceUri = Uri.file(uri.fsPath.split(path.sep).slice(0, -4).join(path.sep));
     const workspaceTestItem = controller.createTestItem(workspaceName, workspaceName, workspaceUri);
     workspaceTestItem.canResolveChildren = true;
     controller.items.add(workspaceTestItem);

@@ -27,8 +27,6 @@ export async function runUnitTest(context: IActionContext, node: vscode.Uri | vs
     };
 
     return await vscode.window.withProgress(options, async () => {
-      // This is where we are going to run the unit test from extension bundle
-      // Just put a random decision here in the meantime
       try {
         const unitTestPath = node instanceof vscode.Uri ? node.fsPath : node.uri.fsPath;
         const start = Date.now();
