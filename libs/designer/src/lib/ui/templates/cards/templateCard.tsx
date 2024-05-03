@@ -1,8 +1,8 @@
-import type { AppDispatch, RootState } from '../../core/state/templates/store';
-import { changeCurrentTemplateName, loadTemplate } from '../../core/state/templates/templateSlice';
+import type { AppDispatch, RootState } from '../../../core/state/templates/store';
+import { changeCurrentTemplateName, loadTemplate } from '../../../core/state/templates/templateSlice';
 import { useDispatch, useSelector } from 'react-redux';
 import { Button } from '@fluentui/react-components';
-import { openCreateWorkflowPanelView, openQuickViewPanelView } from '../../core/state/templates/panelSlice';
+import { openCreateWorkflowPanelView, openQuickViewPanelView } from '../../../core/state/templates/panelSlice';
 import { useIntl } from 'react-intl';
 
 interface TemplateCardProps {

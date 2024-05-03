@@ -2,18 +2,18 @@ import { Button } from '@fluentui/react-components';
 import type { Template } from '@microsoft/logic-apps-shared';
 
 export interface DisplayConnectionsProps {
-  connections: Record<string, Template.Connection>;
+  connections: Template.Connection[];
 }
 
 export const DisplayConnections = ({ connections }: DisplayConnectionsProps) => {
   return (
     <>
       <div>Template Connections</div>
-      {Object.keys(connections).map((connection, index) => {
+      {connections.map((connection, index) => {
         return (
           <div key={index}>
             <b>
-              {index + 1}: {connection}{' '}
+              {index + 1}: {connection?.id}{' '}
               <Button
                 appearance="outline"
                 onClick={() => {
@@ -23,7 +23,7 @@ export const DisplayConnections = ({ connections }: DisplayConnectionsProps) => 
                 CHOOSE
               </Button>
             </b>
-            <div>- ID: {connections[connection]?.id}</div>
+            <div>- ID: {connection?.id}</div>
           </div>
         );
       })}

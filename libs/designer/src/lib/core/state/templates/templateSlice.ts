@@ -5,13 +5,18 @@ import { templatesPathFromState, type RootState } from './store';
 
 export interface TemplateState {
   templateName?: string;
-  workflowDefinition?: LogicAppsV2.WorkflowDefinition;
-  manifest?: Template.Manifest;
-  connections?: Record<string, Template.Connection>;
-  parameters?: Record<string, any>;
+  workflowDefinition: LogicAppsV2.WorkflowDefinition | undefined;
+  manifest: Template.Manifest | undefined;
+  parameters: Template.Parameter[];
+  connections: Template.Connection[];
 }
 
-const initialState: TemplateState = {};
+const initialState: TemplateState = {
+  workflowDefinition: undefined,
+  manifest: undefined,
+  parameters: [],
+  connections: []
+};
 
 export const loadTemplate = createAsyncThunk(
   'template/loadTemplate',
@@ -37,18 +42,20 @@ export const templateSlice = createSlice({
   },
   extraReducers: (builder) => {
     builder.addCase(loadTemplate.fulfilled, (state, action) => {
-      state.workflowDefinition = action.payload?.workflowDefinition;
-      state.manifest = action.payload?.manifest;
-      state.connections = action.payload?.connections;
-      state.parameters = action.payload?.parameters;
+      if (action.payload) {
+        state.workflowDefinition = action.payload.workflowDefinition;
+        state.manifest = action.payload.manifest;
+        state.parameters = action.payload.parameters;
+        state.connections = action.payload.connections;
+      }
     });
 
     builder.addCase(loadTemplate.rejected, (state) => {
       // TODO change to null for error handling case
       state.workflowDefinition = undefined;
       state.manifest = undefined;
-      state.connections = undefined;
-      state.parameters = undefined;
+      state.parameters = [];
+      state.connections = [];
     });
   },
 });
@@ -70,8 +77,8 @@ const loadTemplateFromGithub = async (
     return {
       workflowDefinition: (templateWorkflowDefinition as any)?.default ?? templateWorkflowDefinition,
       manifest: templateManifest,
-      connections: templateManifest.connections,
       parameters: templateManifest.parameters,
+      connections: templateManifest.connections,
     };
   } catch (ex) {
     console.error(ex);
