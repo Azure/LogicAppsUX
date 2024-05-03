@@ -15,7 +15,7 @@ const initialState: TemplateState = {
   workflowDefinition: undefined,
   manifest: undefined,
   parameters: [],
-  connections: []
+  connections: [],
 };
 
 export const loadTemplate = createAsyncThunk(

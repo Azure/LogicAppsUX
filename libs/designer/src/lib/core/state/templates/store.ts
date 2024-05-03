@@ -8,14 +8,14 @@ const rootReducer = combineReducers({
   template: templateSlice.reducer,
   manifest: manifestSlice.reducer,
   panel: panelSlice.reducer,
-})
+});
 
 export const setupStore = (preloadedState?: Partial<RootState>) => {
   return configureStore({
     reducer: rootReducer,
-    preloadedState
-  })
-}
+    preloadedState,
+  });
+};
 
 export const templateStore = setupStore();
 export const templatesPathFromState = '../../templates/samples';
