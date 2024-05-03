@@ -7,10 +7,10 @@ import { localize } from '../../../../localize';
 import { getWorkflowsInLocalProject } from '../../../utils/codeless/common';
 import { validateUnitTestName } from '../../../utils/unitTests';
 import { tryGetLogicAppProjectRoot } from '../../../utils/verifyIsProject';
-import { getWorkflowNode, getWorkspaceFolder } from '../../../utils/workspace';
-import { type IAzureConnectorsContext } from '../azureConnectorWizard';
+import { getWorkflowNode, getWorkspaceFolder, isMultiRootWorkspace } from '../../../utils/workspace';
+import type { IAzureConnectorsContext } from '../azureConnectorWizard';
 import OpenDesignerForLocalProject from '../openDesigner/openDesignerForLocalProject';
-import { type IAzureQuickPickItem, type IActionContext } from '@microsoft/vscode-azext-utils';
+import type { IAzureQuickPickItem, IActionContext } from '@microsoft/vscode-azext-utils';
 import * as path from 'path';
 import * as vscode from 'vscode';
 
@@ -33,15 +33,19 @@ export async function createUnitTest(context: IAzureConnectorsContext, node: vsc
     workflowNode = vscode.Uri.file(workflow.data) as vscode.Uri;
   }
 
-  const workflowName = path.basename(path.dirname(workflowNode.fsPath));
-  const unitTestName = await context.ui.showInputBox({
-    prompt: localize('unitTestNamePrompt', 'Provide a unit test name'),
-    placeHolder: localize('unitTestNamePlaceholder', 'Unit test name'),
-    validateInput: async (name: string): Promise<string | undefined> => await validateUnitTestName(projectPath, workflowName, name),
-  });
+  if (isMultiRootWorkspace()) {
+    const workflowName = path.basename(path.dirname(workflowNode.fsPath));
+    const unitTestName = await context.ui.showInputBox({
+      prompt: localize('unitTestNamePrompt', 'Provide a unit test name'),
+      placeHolder: localize('unitTestNamePlaceholder', 'Unit test name'),
+      validateInput: async (name: string): Promise<string | undefined> => await validateUnitTestName(projectPath, workflowName, name),
+    });
 
-  const openDesignerObj = new OpenDesignerForLocalProject(context, workflowNode, unitTestName, null, runId);
-  await openDesignerObj?.createPanel();
+    const openDesignerObj = new OpenDesignerForLocalProject(context, workflowNode, unitTestName, null, runId);
+    await openDesignerObj?.createPanel();
+  } else {
+    vscode.window.showInformationMessage(localize('expectedWorkspace', 'In order to create unit tests, you must have a workspace open.'));
+  }
 }
 
 /**
