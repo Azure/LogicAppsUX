@@ -85,8 +85,8 @@ export async function createNewCodeProjectInternal(context: IActionContext, opti
     promptSteps: [
       new FolderListStep(),
       new setWorkspaceName(),
-      new TargetFrameworkStep(),
       new SetLogicAppType(),
+      new TargetFrameworkStep(),
       new SetLogicAppName(),
       new NewCodeProjectTypeStep(options.templateId, options.functionSettings),
       new OpenBehaviorStep(),

@@ -26,7 +26,7 @@
       <RemoveDir Directories="@(DirsToClean2)" />
  </Target>
  
-  <Target Name="CopyExtensionFiles" AfterTargets="ParameterizedFunctionJsonGenerator">
+  <Target Name="CopyExtensionFiles" AfterTargets="ParameterizedFunctionJsonGeneratorNetCore">
     <ItemGroup>
         <CopyFiles Include="$(MSBuildProjectDirectory)\bin\$(Configuration)\net8\**\*.*" CopyToOutputDirectory="PreserveNewest" Exclude="$(MSBuildProjectDirectory)\bin\$(Configuration)\net8\*.*" />
       <CopyFiles2 Include="$(MSBuildProjectDirectory)\bin\$(Configuration)\net8\*.*" />
