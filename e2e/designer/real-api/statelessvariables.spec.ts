@@ -71,7 +71,12 @@ test.describe(
       await page.waitForResponse((resp) => resp.url().includes('/deployWorkflowArtifacts') && resp.status() === 200);
       await page.getByTestId('card-When a HTTP request is received').getByLabel('When a HTTP request is').click({ timeout: 20000 });
       const value = await page.getByRole('textbox', { name: 'URL will be generated after' }).inputValue();
-      const LAResult = await request.get(value);
+      let LAResult = await request.get(value);
+      while (LAResult && (await LAResult.text()) === '') {
+        page.waitForTimeout(4000);
+        LAResult = await request.get(value);
+      }
+
       test.expect(LAResult.status()).toBe(200);
       test.expect(await LAResult.text()).toBe(`[1,2,3]foo${browserName}`);
     });

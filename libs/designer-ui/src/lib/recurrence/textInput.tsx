@@ -62,6 +62,7 @@ export const TextInput = ({
       <TextField
         ariaLabel={label}
         value={value}
+        required={required}
         placeholder={placeholder}
         styles={textFieldStyles}
         readOnly={readOnly}
