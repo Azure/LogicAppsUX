@@ -29,15 +29,23 @@ test.describe(
       await page.getByRole('menuitem', { name: 'Save' }).click();
 
       await page.waitForResponse((resp) => resp.url().includes('/deployWorkflowArtifacts') && resp.status() === 200);
-      await page.waitForTimeout(6000);
       await page.getByTestId('card-When a HTTP request is received').getByLabel('When a HTTP request is').click();
       const value = await page.getByRole('textbox', { name: 'URL will be generated after' }).inputValue();
-      const LAResult = await request.post(value, {
+      let LAResult = await request.post(value, {
         data: `hello ${browserName}`,
         headers: {
           'Content-Type': 'text/plain',
         },
       });
+      while (LAResult && (await LAResult.text()) === '') {
+        page.waitForTimeout(4000);
+        LAResult = await request.post(value, {
+          data: `hello ${browserName}`,
+          headers: {
+            'Content-Type': 'text/plain',
+          },
+        });
+      }
       test.expect(LAResult.status()).toBe(200);
       test.expect(await LAResult.text()).toBe(`javascript: hello ${browserName}`);
     });
