@@ -101,6 +101,7 @@ export const DropdownControl = ({
         disabled={readOnly}
         ariaLabel={label}
         options={options}
+        required={required}
         className={css('msla-authentication-dropdown')}
         multiSelect={isMultiSelect}
         onChange={handleOptionSelect}
