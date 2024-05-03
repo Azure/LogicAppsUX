@@ -44,3 +44,4 @@ jobs:
       # - run: npx nx affected --target=lint --parallel
       - run: turbo run build --cache-dir=.turbo
       - run: turbo run test:lib --cache-dir=.turbo
+      - run: turbo run build:extension --cache-dir=.turbo
