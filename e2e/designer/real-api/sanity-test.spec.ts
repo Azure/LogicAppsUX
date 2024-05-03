@@ -24,8 +24,12 @@ test.describe(
       await page.waitForResponse((resp) => resp.url().includes('/deployWorkflowArtifacts') && resp.status() === 200);
       await page.getByTestId('card-When a HTTP request is received').getByLabel('When a HTTP request is').click();
       const value = await page.getByRole('textbox', { name: 'URL will be generated after' }).inputValue();
-      await request.get(value);
-      const LAResult = await request.get(value);
+      let LAResult = await request.get(value);
+      while (LAResult && LAResult.status() === 202) {
+        page.waitForTimeout(4000);
+        LAResult = await request.get(value);
+      }
+
       expect(LAResult.status()).toBe(200);
       expect(await LAResult.text()).toBe('Test Body');
     });
