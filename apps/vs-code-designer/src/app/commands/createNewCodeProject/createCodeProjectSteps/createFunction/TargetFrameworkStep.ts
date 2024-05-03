@@ -13,14 +13,13 @@ export class TargetFrameworkStep extends AzureWizardPromptStep<IProjectWizardCon
     const placeHolder: string = localize('selectTargetFramework', 'Select a target framework.');
     const picks: IAzureQuickPickItem<TargetFramework>[] = [
       { label: localize('NetFx', '.NET Framework'), data: TargetFramework.NetFx },
-      { label: localize('Net6', '.NET 6'), data: TargetFramework.Net6 },
-      { label: localize('Net6', '.NET 8'), data: TargetFramework.Net8 },
+      { label: localize('Net8', '.NET 8'), data: TargetFramework.Net8 },
     ];
 
     context.targetFramework = (await context.ui.showQuickPick(picks, { placeHolder })).data;
   }
 
-  public shouldPrompt(_context: IProjectWizardContext): boolean {
+  public shouldPrompt(): boolean {
     return true;
   }
 }

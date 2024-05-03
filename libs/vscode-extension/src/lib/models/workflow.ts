@@ -112,7 +112,6 @@ export type MismatchBehavior = (typeof MismatchBehavior)[keyof typeof MismatchBe
 
 export const TargetFramework = {
   NetFx: 'net472',
-  Net6: 'net6',
   Net8: 'net8',
 } as const;
 export type TargetFramework = (typeof TargetFramework)[keyof typeof TargetFramework];

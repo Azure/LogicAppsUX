@@ -35,7 +35,7 @@ export class InvokeFunctionProjectSetup extends AzureWizardPromptStep<IProjectWi
     // Create the .csproj file inside the functions folder
     await this.createCsprojFile(functionFolderPath, methodName, targetFramework);
 
-    if (context.targetFramework === TargetFramework.Net6 || context.targetFramework === TargetFramework.Net8) {
+    if (context.targetFramework === TargetFramework.Net8) {
       await this.createNugetConfigFile(functionFolderPath);
     }
 
@@ -67,7 +67,6 @@ export class InvokeFunctionProjectSetup extends AzureWizardPromptStep<IProjectWi
   ): Promise<void> {
     const csFileName = {
       [TargetFramework.NetFx]: 'FunctionsFileNetFx',
-      [TargetFramework.Net6]: 'FunctionsFileNet6',
       [TargetFramework.Net8]: 'FunctionsFileNet8',
     };
     const templatePath = path.join(__dirname, 'assets', 'FunctionProjectTemplate', csFileName[targetFramework]);
@@ -87,7 +86,6 @@ export class InvokeFunctionProjectSetup extends AzureWizardPromptStep<IProjectWi
   private async createCsprojFile(functionFolderPath: string, methodName: string, targetFramework: TargetFramework): Promise<void> {
     const templateFileName = {
       [TargetFramework.NetFx]: 'FunctionsProjNetFx',
-      [TargetFramework.Net6]: 'FunctionsProjNet6',
       [TargetFramework.Net8]: 'FunctionsProjNet8',
     };
     const templatePath = path.join(__dirname, 'assets', 'FunctionProjectTemplate', templateFileName[targetFramework]);
