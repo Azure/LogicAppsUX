@@ -27,8 +27,14 @@
         "build:vscode-react": {
             "cache": false
         },
-        "build:extension":{
+        "vscode-designer#build:extension": {
             "cache": false
+        },
+        "vscode-react#build:extension": {
+            "cache": false,
+            "dependsOn": [
+                "vscode-designer#build:extension"
+            ]
         },
         "dev": {
             "cache": false,
@@ -49,7 +55,7 @@
                 "coverage/**"
             ]
         },
-        "vscode:designer:pack":{
+        "vscode:designer:pack": {
             "cache": false,
             "dependsOn": [
                 "build"
