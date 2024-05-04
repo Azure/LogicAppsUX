@@ -1,10 +1,10 @@
-import { isCustomCode } from '@microsoft/designer-ui';
+import { type ParameterInfo, isCustomCode } from '@microsoft/designer-ui';
 import type { RootState } from '../../..';
 import constants from '../../../common/constants';
 import type { WorkflowNode } from '../../parsers/models/workflowNode';
 import { removeNodeConnectionData } from '../../state/connection/connectionSlice';
 import { deleteCustomCode } from '../../state/customcode/customcodeSlice';
-import { deinitializeNodes, deinitializeOperationInfo } from '../../state/operation/operationMetadataSlice';
+import { deinitializeNodes, deinitializeOperationInfo, updateNodeParameters } from '../../state/operation/operationMetadataSlice';
 import { clearPanel } from '../../state/panel/panelSlice';
 import { setValidationError } from '../../state/setting/settingSlice';
 import { deinitializeStaticResultProperty } from '../../state/staticresultschema/staticresultsSlice';
@@ -16,6 +16,8 @@ import { WORKFLOW_NODE_TYPES, getRecordEntry } from '@microsoft/logic-apps-share
 import type { Dispatch } from '@reduxjs/toolkit';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { batch } from 'react-redux';
+import { deleteParameter } from '../../state/workflowparameters/workflowparametersSlice';
+import { isParameterToken, isTokenValueSegment, isVariableToken } from '../../utils/parameters/segment';
 
 type DeleteOperationPayload = {
   nodeId: string;
@@ -27,6 +29,10 @@ export type DeleteGraphPayload = {
   graphNode: WorkflowNode;
 };
 
+export const deleteWorkflowParameter = createAsyncThunk('deleteWorkflowParameter', async (parameterId: string, { getState, dispatch }) => {
+  removeAllTokensFromNode(getState() as RootState, dispatch, undefined, parameterId);
+  dispatch(deleteParameter(parameterId));
+});
 export const deleteOperation = createAsyncThunk(
   'deleteOperation',
   async (deletePayload: DeleteOperationPayload, { getState, dispatch }) => {
@@ -38,19 +44,71 @@ export const deleteOperation = createAsyncThunk(
 
       dispatch(deleteNode(deletePayload));
       deleteCustomCodeInfo(nodeId, dispatch, getState() as RootState);
-      deleteOperationDetails(nodeId, dispatch);
+      deleteOperationDetails(nodeId, dispatch, getState() as RootState);
       updateAllUpstreamNodes(getState() as RootState, dispatch);
     });
   }
 );
 
-const deleteOperationDetails = async (nodeId: string, dispatch: Dispatch): Promise<void> => {
+const deleteOperationDetails = async (nodeId: string, dispatch: Dispatch, state: RootState): Promise<void> => {
   dispatch(removeNodeConnectionData({ nodeId }));
   dispatch(deinitializeNodes([nodeId]));
+  removeAllTokensFromNode(state, dispatch, nodeId);
   dispatch(deinitializeTokensAndVariables({ id: nodeId }));
+
   dispatch(deinitializeOperationInfo({ id: nodeId }));
   dispatch(setValidationError({ nodeId, errors: [] }));
   dispatch(deinitializeStaticResultProperty({ id: nodeId + 0 }));
+};
+
+export const removeAllTokensFromNode = (state: RootState, dispatch: Dispatch, nodeId?: string, parameterId?: String): void => {
+  const variables = nodeId ? state.tokens.variables[nodeId] : [];
+  const nodeInputs = state.operations.inputParameters;
+  for (const [nid, inputParam] of Object.entries(nodeInputs)) {
+    for (const [, group] of Object.entries(inputParam.parameterGroups)) {
+      const parametersToUpdate: {
+        groupId: string;
+        parameterId: string;
+        propertiesToUpdate: Partial<ParameterInfo>;
+      }[] = [];
+      let updatedValue = false;
+      for (const param of group.parameters) {
+        let paramValue = [...param.value];
+        for (const value of param.value) {
+          if (isTokenValueSegment(value) && value.token) {
+            if (isVariableToken(value.token)) {
+              if (variables?.find((v) => v.name === value.token?.name)) {
+                paramValue = paramValue.filter((v) => v.id !== value.id);
+                updatedValue = true;
+              }
+            } else if (isParameterToken(value.token) && value.token?.name === parameterId) {
+              paramValue = paramValue.filter((v) => v.id !== value.id);
+              updatedValue = true;
+            } else if (value.token?.actionName === nodeId) {
+              paramValue = paramValue.filter((v) => v.id !== value.id);
+              updatedValue = true;
+            }
+          }
+        }
+        if (updatedValue) {
+          parametersToUpdate.push({
+            groupId: group.id,
+            parameterId: param.id,
+            propertiesToUpdate: { value: paramValue, preservedValue: undefined },
+          });
+        }
+      }
+      if (parametersToUpdate.length > 0) {
+        dispatch(
+          updateNodeParameters({
+            nodeId: nid,
+            isUserAction: true,
+            parameters: parametersToUpdate,
+          })
+        );
+      }
+    }
+  }
 };
 
 const deleteCustomCodeInfo = (nodeId: string, dispatch: Dispatch, state: RootState): void => {

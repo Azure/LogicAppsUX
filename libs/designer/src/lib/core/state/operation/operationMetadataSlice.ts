@@ -3,7 +3,7 @@ import type { Settings } from '../../actions/bjsworkflow/settings';
 import type { NodeStaticResults } from '../../actions/bjsworkflow/staticresults';
 import { StaticResultOption } from '../../actions/bjsworkflow/staticresults';
 import type { RepetitionContext } from '../../utils/parameters/helper';
-import { createTokenValueSegment, isTokenValueSegment } from '../../utils/parameters/segment';
+import { createTokenValueSegment, isParameterToken, isTokenValueSegment, isVariableToken } from '../../utils/parameters/segment';
 import { getTokenTitle, normalizeKey } from '../../utils/tokens';
 import { resetNodesLoadStatus, resetWorkflowState } from '../global';
 import { LogEntryLevel, LoggerService, filterRecord, getRecordEntry } from '@microsoft/logic-apps-shared';
@@ -19,6 +19,7 @@ import type {
 import { createSlice } from '@reduxjs/toolkit';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import type { WritableDraft } from 'immer/dist/internal';
+import type { VariableDeclaration } from '../tokens/tokensSlice';
 
 export interface ParameterGroup {
   id: string;
@@ -352,6 +353,32 @@ export const operationMetadataSlice = createSlice({
         args: [action.payload.id],
       });
     },
+    removeAllTokensFromNode: (
+      state,
+      action: PayloadAction<{ nodeId?: string; parameterId?: String; variables?: VariableDeclaration[] }>
+    ) => {
+      const { nodeId, parameterId, variables } = action.payload;
+      const nodeInputs = state.inputParameters;
+      for (const [, inputParam] of Object.entries(nodeInputs)) {
+        for (const [, group] of Object.entries(inputParam.parameterGroups)) {
+          for (const param of group.parameters) {
+            for (const value of param.value) {
+              if (isTokenValueSegment(value) && value.token) {
+                if (isVariableToken(value.token)) {
+                  if (variables?.find((v) => v.name === value.token?.name)) {
+                    param.value = param.value.filter((v) => v.id !== value.id);
+                  }
+                } else if (isParameterToken(value.token) && value.token?.name === parameterId) {
+                  param.value = param.value.filter((v) => v.id !== value.id);
+                } else if (value.token?.actionName === nodeId) {
+                  param.value = param.value.filter((v) => v.id !== value.id);
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     updateNodeParameters: (state, action: PayloadAction<UpdateParametersPayload>) => {
       const { nodeId, dependencies, parameters } = action.payload;
       const nodeInputs = getRecordEntry(state.inputParameters, nodeId);
@@ -572,6 +599,7 @@ export const operationMetadataSlice = createSlice({
 export const {
   initializeNodes,
   initializeOperationInfo,
+  removeAllTokensFromNode,
   updateNodeParameters,
   addDynamicInputs,
   addDynamicOutputs,
