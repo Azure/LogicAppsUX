@@ -13,22 +13,22 @@ import { TemplatesDataProvider } from '../core/templates/TemplatesDataProvider';
 // as allows the user to specify other things such as initialState, templateStore.
 interface ExtendedRenderOptions extends Omit<RenderOptions, 'queries'> {
   preloadedState?: Partial<RootState>;
-  templateStore?: AppStore;
+  store?: AppStore;
 }
 
 export function renderWithProviders(ui: React.ReactElement, extendedRenderOptions: ExtendedRenderOptions = {}) {
   const {
     preloadedState = {},
     // Automatically create a templateStore instance if no templateStore was passed in
-    templateStore = setupStore(preloadedState),
+    store = setupStore(preloadedState),
     ...renderOptions
   } = extendedRenderOptions;
 
-  const Wrapper = ({ children }: PropsWithChildren) => <ReduxProvider store={templateStore}>{children}</ReduxProvider>;
+  const Wrapper = ({ children }: PropsWithChildren) => <ReduxProvider store={store}>{children}</ReduxProvider>;
 
   // Return an object with the templateStore and all of RTL's query functions
   return {
-    templateStore,
+    store,
     ...render(ui, { wrapper: Wrapper, ...renderOptions }),
   };
 }
