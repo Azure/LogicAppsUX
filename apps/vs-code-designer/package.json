@@ -38,7 +38,7 @@
   },
   "private": true,
   "scripts": {
-    "build:extension": "tsup && pnpm run copyFiles && pnpm -w run build:vscode-react",
+    "build:extension": "tsup && pnpm run copyFiles",
     "copyFiles": "node extension-copy-svgs.js",
     "vscode:designer:pack": "pnpm run build:extension && pnpm run vscode:designer:pack:step1 && pnpm run vscode:designer:pack:step2",
     "vscode:designer:pack:step1": "cd ./dist && npm install",

@@ -74,7 +74,6 @@
   "private": true,
   "scripts": {
     "build": "turbo run build",
-    "build:vscode-react": "turbo run build:vscode-react",
     "build:extension": "turbo run build:extension",
     "bump": "standard-version --no-verify",
     "check": "biome check --apply .",
