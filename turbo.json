@@ -24,9 +24,6 @@
                 "build/**"
             ]
         },
-        "build:vscode-react": {
-            "cache": false
-        },
         "vscode-designer#build:extension": {
             "cache": false
         },
