@@ -28,15 +28,12 @@ jobs:
         subscription-id: ${{ secrets.AZURE_TESTING_SUBSCRIPTION_ID }} 
 
     - name: Deploy Logic Apps For Testing
-      uses: azure/cli@v2
-      with:
-        azcliversion: 2.30.0
-        inlineScript: |
-            az group create -l westus --subscription ${{ secrets.AZURE_TESTING_SUBSCRIPTION_ID }} -n $RGName
-            az deployment group create \
-            --resource-group $RGName \
-            --subscription ${{ secrets.AZURE_TESTING_SUBSCRIPTION_ID }} \
-            --template-file ./e2e/testSetup/BlankLogicApp/logicAppStandard.bicep
+      run: |
+          az group create -l westus --subscription ${{ secrets.AZURE_TESTING_SUBSCRIPTION_ID }} -n $RGName
+          az deployment group create \
+          --resource-group $RGName \
+          --subscription ${{ secrets.AZURE_TESTING_SUBSCRIPTION_ID }} \
+          --template-file ./e2e/testSetup/BlankLogicApp/logicAppStandard.bicep
   
     - uses: pnpm/action-setup@v3
       with:
