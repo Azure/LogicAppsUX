@@ -10,15 +10,17 @@ jobs:
     environment: E2ETesting
     permissions:
         id-token: write
+    env:
+      RGName : rg${{ github.run_id }}${{ github.run_attempt }}
     steps:
     - uses: actions/checkout@v4
 
-    - name: generate Resource Group Name
-      id: generate-rg-name
-      run: |
-        uuid=$(uuidgen | tr - . | sed 's/\.//g' | tr '[:upper:]' '[:lower:]')
-        echo "RGName=$uuid >> $GITHUB_ENV"
-      shell: bash
+    # - name: generate Resource Group Name
+    #   id: generate-rg-name
+    #   run: |
+    #     uuid=$(uuidgen | tr - . | sed 's/\.//g' | tr '[:upper:]' '[:lower:]')
+    #     echo "RGName=$uuid >> $GITHUB_ENV"
+    #   shell: bash
 
     - name: Azure login
       uses: azure/login@v2
