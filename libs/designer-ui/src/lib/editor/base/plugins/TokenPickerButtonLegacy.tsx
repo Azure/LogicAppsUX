@@ -85,6 +85,7 @@ export default function TokenPickerButtonLegacy({
       <button
         id={labelId}
         className={`msla-tokenpicker-button ${buttonClassName}`}
+        data-automation-id="msla-tokenpicker-button"
         onClick={() => {
           handleClick();
         }}
