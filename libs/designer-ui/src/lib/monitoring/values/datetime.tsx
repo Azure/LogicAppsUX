@@ -10,14 +10,19 @@ const options: FormatDateOptions = {
   minute: 'numeric',
   month: 'numeric',
   second: 'numeric',
-  timeZone: 'UTC',
   year: 'numeric',
 };
 
 export const DateTimeValue: React.FC<ValueProps> = (props) => {
   const { value } = props;
   const intl = useIntl();
-  const valueAsString = intl.formatDate(value, options);
+  const localTimeLabel = intl.formatMessage({
+    defaultMessage: 'Local time',
+    id: 'i/R+Q7',
+    description: 'Text for local time',
+  });
+  const valueAsString = `${intl.formatDate(value, options)}  (${localTimeLabel})`;
+  const valueAsUTCString = `${intl.formatDate(value, { ...options, timeZone: 'UTC' })} (UTC)`;
 
-  return <RawValue {...props} value={valueAsString} />;
+  return <RawValue {...props} value={valueAsString} utcDateTime={valueAsUTCString} />;
 };

@@ -4,6 +4,8 @@ export interface ValueProps {
   language?: string;
   value: any;
   visible?: boolean;
+  // only used when format is 'date-time'
+  utcDateTime?: string;
 }
 
 export interface Xml {
