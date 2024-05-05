@@ -81,10 +81,10 @@ export const removeAllTokensFromNode = (state: RootState, dispatch: Dispatch, no
                 paramValue = paramValue.filter((v) => v.id !== value.id);
                 updatedValue = true;
               }
-            } else if (isParameterToken(value.token) && value.token?.name === parameterId) {
+            } else if (parameterId && isParameterToken(value.token) && value.token?.name === parameterId) {
               paramValue = paramValue.filter((v) => v.id !== value.id);
               updatedValue = true;
-            } else if (value.token?.actionName === nodeId) {
+            } else if (nodeId && value.token?.actionName === nodeId) {
               paramValue = paramValue.filter((v) => v.id !== value.id);
               updatedValue = true;
             }
