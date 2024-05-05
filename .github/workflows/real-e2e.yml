@@ -29,9 +29,9 @@ jobs:
 
     - name: Deploy Logic Apps For Testing
       run: |
-          az group create -l westus --subscription ${{ secrets.AZURE_TESTING_SUBSCRIPTION_ID }} -n $RGName
+          az group create -l westus --subscription ${{ secrets.AZURE_TESTING_SUBSCRIPTION_ID }} -n ${{ env.RGName }} 
           az deployment group create \
-          --resource-group $RGName \
+          --resource-group ${{ env.RGName }} \
           --subscription ${{ secrets.AZURE_TESTING_SUBSCRIPTION_ID }} \
           --template-file ./e2e/testSetup/BlankLogicApp/logicAppStandard.bicep
   
