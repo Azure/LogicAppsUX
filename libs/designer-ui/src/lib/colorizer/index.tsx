@@ -1,5 +1,5 @@
 import { IconButton, css, useTheme } from '@fluentui/react';
-import { useToggle } from '@react-hookz/web';
+import type { UTCDateTimeProps } from '../monitoring/values/types';
 import { type Language, themes, Highlight } from 'prism-react-renderer';
 import { useMemo, useRef, useCallback } from 'react';
 import { useIntl } from 'react-intl';
@@ -10,13 +10,12 @@ export interface ColorizerProps {
   code: string;
   language?: Language;
   // only used when format is 'date-time'
-  utcDateTime?: string;
+  utcProps?: UTCDateTimeProps;
 }
 
-export const Colorizer: React.FC<ColorizerProps> = ({ ariaLabel, code, utcDateTime, language = 'json' }) => {
+export const Colorizer: React.FC<ColorizerProps> = ({ ariaLabel, code, utcProps, language = 'json' }) => {
   const { isInverted } = useTheme();
   const theme = useMemo(() => (isInverted ? themes.vsDark : themes.vsLight), [isInverted]);
-  const [useUtc, toggleUtc] = useToggle(false);
   const elementRef = useRef<HTMLPreElement | null>(null);
   const [_, copyToClipboard] = useCopyToClipboard();
   const selectText = useCallback(() => {
@@ -46,9 +45,9 @@ export const Colorizer: React.FC<ColorizerProps> = ({ ariaLabel, code, utcDateTi
   );
   const toggleUTCLabel = intl.formatMessage(
     {
-      defaultMessage: `Switch ''{label}'' to the utc time format`,
-      id: 'gNT/sd',
-      description: 'label for switching time format to utc',
+      defaultMessage: `Switch ''{label}'' to the UTC time format`,
+      id: 'vO/I7P',
+      description: 'label for switching time format to UTC',
     },
     {
       label: ariaLabel,
@@ -78,23 +77,23 @@ export const Colorizer: React.FC<ColorizerProps> = ({ ariaLabel, code, utcDateTi
     <div
       aria-label={ariaLabel}
       aria-readonly={true}
-      className={css('msla-colorizer-wrapper', utcDateTime && 'date-time')}
+      className={css('msla-colorizer-wrapper', utcProps && 'date-time')}
       role="textbox"
       tabIndex={0}
     >
       <div className="buttons">
-        {utcDateTime ? (
+        {utcProps ? (
           <IconButton
             ariaLabel={toggleUTCLabel}
             iconProps={{ iconName: 'DateTime' }}
-            onClick={toggleUtc}
-            title={useUtc ? toggleUTCLabel : toggleLocalLabel}
+            onClick={() => utcProps?.toggleUTC((prevState) => !prevState)}
+            title={utcProps?.showUTC ? toggleUTCLabel : toggleLocalLabel}
           />
         ) : null}
         <IconButton ariaLabel={selectAria} iconProps={{ iconName: 'SelectAll' }} onClick={selectText} title={selectAria} />
         <IconButton ariaLabel={copyAria} iconProps={{ iconName: 'Copy' }} onClick={copyText} title={copyAria} />
       </div>
-      <Highlight code={useUtc && utcDateTime ? utcDateTime : code} language={language} theme={theme}>
+      <Highlight code={code} language={language} theme={theme}>
         {({ className, style, tokens, getLineProps, getTokenProps }) => (
           <pre ref={elementRef} className={className} style={style}>
             {tokens.map((line, i) => (

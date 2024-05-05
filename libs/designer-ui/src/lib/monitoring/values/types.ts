@@ -5,7 +5,11 @@ export interface ValueProps {
   value: any;
   visible?: boolean;
   // only used when format is 'date-time'
-  utcDateTime?: string;
+  utcProps?: UTCDateTimeProps;
+}
+export interface UTCDateTimeProps {
+  toggleUTC: React.Dispatch<React.SetStateAction<boolean>>;
+  showUTC: boolean;
 }
 
 export interface Xml {
