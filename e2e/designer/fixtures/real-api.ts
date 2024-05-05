@@ -31,7 +31,7 @@ export class RealDataApi {
     await responsePromise;
   }
   async verifyWorkflowSaveWithRequest(expectedStatus: number, expectedBody: string, triggerName: string, dataToSend?: any) {
-    const listCallbackUrlCall = await this.request.post(
+    let listCallbackUrlCall = await this.request.post(
       `${Constants.managementUrl}${this.siteId}/hostruntime/runtime/webhooks/workflow/api/management/workflows/${this.workflowName}/triggers/${triggerName}/listCallbackUrl?api-version=${Constants.siteApiVersion}`,
       {
         headers: {
@@ -42,9 +42,9 @@ export class RealDataApi {
       }
     );
 
-    const listCallbackUrlResponseValue = await listCallbackUrlCall.json();
-    const listCallbackUrl: string = listCallbackUrlResponseValue.value;
-    const callbackMethod = listCallbackUrlResponseValue.method;
+    let listCallbackUrlResponseValue = await listCallbackUrlCall.json();
+    let listCallbackUrl: string = listCallbackUrlResponseValue.value;
+    let callbackMethod = listCallbackUrlResponseValue.method;
     let LAResult = await this.request.fetch(listCallbackUrl, {
       data: dataToSend,
       method: callbackMethod,
@@ -54,6 +54,20 @@ export class RealDataApi {
     });
     while (LAResult && LAResult.status() !== expectedStatus) {
       await this.page.waitForTimeout(1500);
+      listCallbackUrlCall = await this.request.post(
+        `${Constants.managementUrl}${this.siteId}/hostruntime/runtime/webhooks/workflow/api/management/workflows/${this.workflowName}/triggers/${triggerName}/listCallbackUrl?api-version=${Constants.siteApiVersion}`,
+        {
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: `Bearer ${process.env.AZURE_MANAGEMENT_TOKEN}`,
+            'If-Match': '*',
+          },
+        }
+      );
+
+      listCallbackUrlResponseValue = await listCallbackUrlCall.json();
+      listCallbackUrl = listCallbackUrlResponseValue.value;
+      callbackMethod = listCallbackUrlResponseValue.method;
       LAResult = await this.request.fetch(listCallbackUrl, {
         data: dataToSend,
         method: callbackMethod,
