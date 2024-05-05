@@ -15,13 +15,6 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    # - name: generate Resource Group Name
-    #   id: generate-rg-name
-    #   run: |
-    #     uuid=$(uuidgen | tr - . | sed 's/\.//g' | tr '[:upper:]' '[:lower:]')
-    #     echo "RGName=$uuid >> $GITHUB_ENV"
-    #   shell: bash
-
     - name: Azure login
       uses: azure/login@v2
       with:

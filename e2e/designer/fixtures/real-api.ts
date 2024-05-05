@@ -52,7 +52,7 @@ export class RealDataApi {
         'Content-Type': 'text/plain',
       },
     });
-    while (LAResult && LAResult.status() === 202) {
+    while (LAResult && LAResult.status() !== expectedStatus) {
       await this.page.waitForTimeout(1500);
       LAResult = await this.request.fetch(listCallbackUrl, {
         data: dataToSend,
