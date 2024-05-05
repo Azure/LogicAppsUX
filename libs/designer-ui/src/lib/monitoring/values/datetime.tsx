@@ -19,11 +19,11 @@ export const DateTimeValue: React.FC<ValueProps> = (props) => {
   const [showUTC, toggleUTC] = useState(false);
   const intl = useIntl();
   const localTimeLabel = intl.formatMessage({
-    defaultMessage: 'Local time',
-    id: 'i/R+Q7',
+    defaultMessage: 'Local Time',
+    id: 'ca7S+o',
     description: 'Text for local time',
   });
-  const valueAsString = `${intl.formatDate(value, options)}  (${localTimeLabel})`;
+  const valueAsString = `${intl.formatDate(value, options)} (${localTimeLabel})`;
   const valueAsUTCString = `${intl.formatDate(value, { ...options, timeZone: 'UTC' })} (UTC)`;
 
   return <RawValue {...props} value={showUTC ? valueAsUTCString : valueAsString} utcProps={{ showUTC, toggleUTC }} />;

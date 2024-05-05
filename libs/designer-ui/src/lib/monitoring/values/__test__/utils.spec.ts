@@ -1,4 +1,4 @@
-import type { ContentLink } from '../types';
+import { ContentLink } from '@microsoft/logic-apps-shared';
 import { isContentLink } from '../utils';
 import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
 describe('libs/monitoring/values/utils', () => {
