@@ -10,11 +10,9 @@ The Azure Logic Apps extension lets you quickly create, debug, manage, and deplo
 
 ## Prerequisites
 
-- Run `git clone` and then `npm install` in the **logic_apps_designer** repo.
-- If you haven't already, install **nx**: `npm install -g nx`
+- Follow the Prerequisites and Running the code instructions from the **Getting Started** section.
 
 - Install [.NET 6.0 SDK](https://dotnet.microsoft.com/en-us/download/dotnet/6.0).
-- Install [Azure Functions Core Tools](https://github.com/Azure/azure-functions-core-tools) manually or run the following command: `npm i -g azure-functions-core-tools --unsafe-perm true`
 - Install the following Visual Studio Code extensions:
   - [Azure Tools](https://marketplace.visualstudio.com/items?itemName=ms-vscode.vscode-node-azure-pack)
   - [Azure Account](https://marketplace.visualstudio.com/items?itemName=ms-vscode.azure-account)
@@ -25,7 +23,7 @@ The Azure Logic Apps extension lets you quickly create, debug, manage, and deplo
 To build, run the following commands from the root of the repo folder:
 
 ```bash
-npm run build:vscode-designer
+npm run build:extension
 ```
 
 ## Run (Dev/Debug)
@@ -34,9 +32,7 @@ To run the Visual Studio Code extension in debug mode, follow these steps:
 
 1.  In Visual Studio Code, open the repo folder.
 2.  On the Activity bar to the left side, select **Run and Debug**. (Keyboard: Ctrl+Shift+D)
-3.  From the drop-down list near the top, select ...
-    a. **Build, Run and Debug Designer Extension In Dev Mode**, then select **Start debugging**. This will build and run the extension. Breakpoints from 'vs-code-data-mapper' should be linked when running.
-    b. **Run Designer Extension In Dev Mode** will not build the extension but immediately run it.
+3.  From the drop-down list near the top, select **Run Designer Extension in Dev Mode**, then select **Start debugging**. This will build and run the extension. 
 
 When the debugging session starts, a new Visual Studio Code workspace displays prompts for the running app. You can now add [breakpoints](https://code.visualstudio.com/docs/editor/debugging#_breakpoints) and debug the app using the [debug actions](https://code.visualstudio.com/docs/editor/debugging#_debug-actions).
 
@@ -72,7 +68,7 @@ For more information, see [Visual Studio Code webviews](https://code.visualstudi
 
 Host a shared library with helpers and models that are used across all the projects related to the Visual Studio Code extension.
 
-To use the library, import `@microsoft/vscode-extension`.
+To use the library, import `@microsoft/vscode-extension-logic-apps`.
 
 ## Key Insights
 
