@@ -8,14 +8,22 @@ export interface Manifest {
   skus: SkuType[];
   kinds: Kind[];
   artifacts: Artifact[];
-  images: string[];
-  parameters: Record<string, any>; //TODO: change this when working on parameters
-  connections?: Record<string, Connection>;
+  images?: string[];
+  parameters: Parameter[];
+  connections: Connection[];
 }
 
 export interface Artifact {
   type: string;
   file: string;
+}
+
+export interface Parameter {
+  name: string;
+  type: string;
+  default?: string;
+  description: string;
+  required?: boolean;
 }
 
 export interface Connection {
