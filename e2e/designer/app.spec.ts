@@ -11,7 +11,7 @@ test(
 
     await GoToMockWorkflow(page, 'Simple Big Workflow');
 
-    await page.getByTestId('card-Increment variable').getByRole('button').click();
+    await page.getByTestId('card-increment_variable').getByRole('button').click();
     await page.getByLabel('Value').getByRole('paragraph').click();
     await page.getByLabel('Value').press('Escape');
     await page.getByRole('tab', { name: 'Code View' }).click();
