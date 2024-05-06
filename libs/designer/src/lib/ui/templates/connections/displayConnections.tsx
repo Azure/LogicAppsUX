@@ -13,7 +13,7 @@ export const DisplayConnections = ({ connections }: DisplayConnectionsProps) => 
         return (
           <div key={index}>
             <b>
-              {index + 1}: {connection?.id}{' '}
+              {index + 1}: {connection?.id}
               <Button
                 appearance="outline"
                 onClick={() => {
