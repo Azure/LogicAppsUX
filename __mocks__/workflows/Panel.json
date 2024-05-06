@@ -34,7 +34,7 @@
       "Parse_JSON": {
         "type": "ParseJson",
         "inputs": {
-          "content": "@{triggerBody()?['string']}@{variables('ArrayVariable')}",
+          "content": "@{triggerBody()?['string']}@{variables('ArrayVariable')}@{parameters('EILCO Admin Nominations-OCSA List (cr773_EILCOAdminNominations_OCSA_L2)')}",
           "schema": {
             "type": "array",
             "items": {
@@ -67,7 +67,7 @@
       "Filter_array": {
         "type": "Query",
         "inputs": {
-          "from": "@body('Parse_JSON')",
+          "from": "@{body('Parse_JSON')}test",
           "where": "@not(contains(length(split(item(), '|')?[0]),length(split(item(), '|')?[0])))"
         },
         "runAfter": {
