@@ -33,12 +33,6 @@ const directionalHint = DirectionalHint.leftTopEdge;
 const gapSpace = 10;
 const beakWidth = 20;
 
-const calloutStyles: Partial<ICalloutContentStyles> = {
-  calloutMain: {
-    overflow: 'visible',
-  },
-};
-
 export type SearchTextChangedEventHandler = (e: string) => void;
 
 export interface TokenPickerProps {
@@ -153,6 +147,12 @@ export function TokenPicker({
     id: 'Mc6ITJ',
     description: 'Placeholder text to search token picker',
   });
+
+  const calloutStyles: Partial<ICalloutContentStyles> = {
+    calloutMain: {
+      overflow: 'visible',
+    },
+  };
 
   let editor: LexicalEditor | null;
   try {
