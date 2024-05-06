@@ -3,7 +3,7 @@ import 'dotenv/config';
 
 export default defineConfig({
   testDir: './e2e',
-  reporter: process.env.SHARDED ? 'blob' : 'html',
+  reporter: process.env.TEST_SHARDED ? 'blob' : 'html',
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: 3,
