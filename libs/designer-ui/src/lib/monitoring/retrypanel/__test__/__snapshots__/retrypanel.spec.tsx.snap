@@ -277,7 +277,7 @@ exports[`lib/monitoring/retrypanel > should render 1`] = `
                   <span
                     className="token plain"
                   >
-                    --
+                    2 days
                   </span>
                 </div>
               </pre>
@@ -421,6 +421,149 @@ exports[`lib/monitoring/retrypanel > should render 1`] = `
                     className="token plain"
                   >
                     2/8/2022, 2:52:00 PM (Local Time)
+                  </span>
+                </div>
+              </pre>
+            </div>
+          </div>
+        </section>
+        <section
+          className="msla-trace-value-label"
+        >
+          <label
+            className="msla-trace-value-display-name"
+          >
+            End time
+          </label>
+          <div
+            className="msla-colorizer-json-body"
+          >
+            <div
+              aria-label="End time"
+              aria-readonly={true}
+              className="msla-colorizer-wrapper date-time"
+              role="textbox"
+              tabIndex={0}
+            >
+              <div
+                className="buttons"
+              >
+                <button
+                  aria-label="Switch 'End time' to the UTC time format"
+                  className="ms-Button ms-Button--icon root-121"
+                  data-is-focusable={true}
+                  onClick={[Function]}
+                  onKeyDown={[Function]}
+                  onKeyPress={[Function]}
+                  onKeyUp={[Function]}
+                  onMouseDown={[Function]}
+                  onMouseUp={[Function]}
+                  title="Switch 'End time' to the local time"
+                  type="button"
+                >
+                  <span
+                    className="ms-Button-flexContainer flexContainer-111"
+                    data-automationid="splitbuttonprimary"
+                  >
+                    <i
+                      aria-hidden={true}
+                      className="ms-Icon root-105 css-129 ms-Button-icon icon-122"
+                      data-icon-name="DateTime"
+                      style={
+                        {
+                          "fontFamily": ""FabricMDL2Icons-5"",
+                        }
+                      }
+                    >
+                      
+                    </i>
+                  </span>
+                </button>
+                <button
+                  aria-label="Select all text in 'End time'"
+                  className="ms-Button ms-Button--icon root-121"
+                  data-is-focusable={true}
+                  onClick={[Function]}
+                  onKeyDown={[Function]}
+                  onKeyPress={[Function]}
+                  onKeyUp={[Function]}
+                  onMouseDown={[Function]}
+                  onMouseUp={[Function]}
+                  title="Select all text in 'End time'"
+                  type="button"
+                >
+                  <span
+                    className="ms-Button-flexContainer flexContainer-111"
+                    data-automationid="splitbuttonprimary"
+                  >
+                    <i
+                      aria-hidden={true}
+                      className="ms-Icon root-105 css-125 ms-Button-icon icon-122"
+                      data-icon-name="SelectAll"
+                      style={
+                        {
+                          "fontFamily": ""FabricMDL2Icons-1"",
+                        }
+                      }
+                    >
+                      
+                    </i>
+                  </span>
+                </button>
+                <button
+                  aria-label="Copy the value of 'End time' to the clipboard"
+                  className="ms-Button ms-Button--icon root-121"
+                  data-is-focusable={true}
+                  onClick={[Function]}
+                  onKeyDown={[Function]}
+                  onKeyPress={[Function]}
+                  onKeyUp={[Function]}
+                  onMouseDown={[Function]}
+                  onMouseUp={[Function]}
+                  title="Copy the value of 'End time' to the clipboard"
+                  type="button"
+                >
+                  <span
+                    className="ms-Button-flexContainer flexContainer-111"
+                    data-automationid="splitbuttonprimary"
+                  >
+                    <i
+                      aria-hidden={true}
+                      className="ms-Icon root-105 css-127 ms-Button-icon icon-122"
+                      data-icon-name="Copy"
+                      style={
+                        {
+                          "fontFamily": ""FabricMDL2Icons-2"",
+                        }
+                      }
+                    >
+                      
+                    </i>
+                  </span>
+                </button>
+              </div>
+              <pre
+                className="prism-code language-json"
+                style={
+                  {
+                    "backgroundColor": "#ffffff",
+                    "color": "#000000",
+                  }
+                }
+              >
+                <div
+                  className="token-line"
+                  style={
+                    {
+                      "backgroundColor": undefined,
+                      "color": "#000000",
+                    }
+                  }
+                >
+                  <span
+                    className="token plain"
+                  >
+                    2/10/2022, 2:52:00 PM (Local Time)
                   </span>
                 </div>
               </pre>
@@ -715,7 +858,7 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
           </button>
           <div
             hidden={true}
-            id="tooltip79"
+            id="tooltip88"
             style={
               {
                 "border": 0,
@@ -791,7 +934,7 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
           </button>
           <div
             hidden={true}
-            id="tooltip83"
+            id="tooltip92"
             style={
               {
                 "border": 0,
@@ -934,7 +1077,7 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
                   <span
                     className="token plain"
                   >
-                    --
+                    2 days
                   </span>
                 </div>
               </pre>
@@ -1078,6 +1221,149 @@ exports[`lib/monitoring/retrypanel > should render a service request ID when ava
                     className="token plain"
                   >
                     2/8/2022, 2:52:00 PM (Local Time)
+                  </span>
+                </div>
+              </pre>
+            </div>
+          </div>
+        </section>
+        <section
+          className="msla-trace-value-label"
+        >
+          <label
+            className="msla-trace-value-display-name"
+          >
+            End time
+          </label>
+          <div
+            className="msla-colorizer-json-body"
+          >
+            <div
+              aria-label="End time"
+              aria-readonly={true}
+              className="msla-colorizer-wrapper date-time"
+              role="textbox"
+              tabIndex={0}
+            >
+              <div
+                className="buttons"
+              >
+                <button
+                  aria-label="Switch 'End time' to the UTC time format"
+                  className="ms-Button ms-Button--icon root-121"
+                  data-is-focusable={true}
+                  onClick={[Function]}
+                  onKeyDown={[Function]}
+                  onKeyPress={[Function]}
+                  onKeyUp={[Function]}
+                  onMouseDown={[Function]}
+                  onMouseUp={[Function]}
+                  title="Switch 'End time' to the local time"
+                  type="button"
+                >
+                  <span
+                    className="ms-Button-flexContainer flexContainer-111"
+                    data-automationid="splitbuttonprimary"
+                  >
+                    <i
+                      aria-hidden={true}
+                      className="ms-Icon root-105 css-129 ms-Button-icon icon-122"
+                      data-icon-name="DateTime"
+                      style={
+                        {
+                          "fontFamily": ""FabricMDL2Icons-5"",
+                        }
+                      }
+                    >
+                      
+                    </i>
+                  </span>
+                </button>
+                <button
+                  aria-label="Select all text in 'End time'"
+                  className="ms-Button ms-Button--icon root-121"
+                  data-is-focusable={true}
+                  onClick={[Function]}
+                  onKeyDown={[Function]}
+                  onKeyPress={[Function]}
+                  onKeyUp={[Function]}
+                  onMouseDown={[Function]}
+                  onMouseUp={[Function]}
+                  title="Select all text in 'End time'"
+                  type="button"
+                >
+                  <span
+                    className="ms-Button-flexContainer flexContainer-111"
+                    data-automationid="splitbuttonprimary"
+                  >
+                    <i
+                      aria-hidden={true}
+                      className="ms-Icon root-105 css-125 ms-Button-icon icon-122"
+                      data-icon-name="SelectAll"
+                      style={
+                        {
+                          "fontFamily": ""FabricMDL2Icons-1"",
+                        }
+                      }
+                    >
+                      
+                    </i>
+                  </span>
+                </button>
+                <button
+                  aria-label="Copy the value of 'End time' to the clipboard"
+                  className="ms-Button ms-Button--icon root-121"
+                  data-is-focusable={true}
+                  onClick={[Function]}
+                  onKeyDown={[Function]}
+                  onKeyPress={[Function]}
+                  onKeyUp={[Function]}
+                  onMouseDown={[Function]}
+                  onMouseUp={[Function]}
+                  title="Copy the value of 'End time' to the clipboard"
+                  type="button"
+                >
+                  <span
+                    className="ms-Button-flexContainer flexContainer-111"
+                    data-automationid="splitbuttonprimary"
+                  >
+                    <i
+                      aria-hidden={true}
+                      className="ms-Icon root-105 css-127 ms-Button-icon icon-122"
+                      data-icon-name="Copy"
+                      style={
+                        {
+                          "fontFamily": ""FabricMDL2Icons-2"",
+                        }
+                      }
+                    >
+                      
+                    </i>
+                  </span>
+                </button>
+              </div>
+              <pre
+                className="prism-code language-json"
+                style={
+                  {
+                    "backgroundColor": "#ffffff",
+                    "color": "#000000",
+                  }
+                }
+              >
+                <div
+                  className="token-line"
+                  style={
+                    {
+                      "backgroundColor": undefined,
+                      "color": "#000000",
+                    }
+                  }
+                >
+                  <span
+                    className="token plain"
+                  >
+                    2/10/2022, 2:52:00 PM (Local Time)
                   </span>
                 </div>
               </pre>
@@ -1484,7 +1770,7 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
           </button>
           <div
             hidden={true}
-            id="tooltip35"
+            id="tooltip44"
             style={
               {
                 "border": 0,
@@ -1560,7 +1846,7 @@ exports[`lib/monitoring/retrypanel > should render an end time and duration when
           </button>
           <div
             hidden={true}
-            id="tooltip39"
+            id="tooltip48"
             style={
               {
                 "border": 0,
@@ -2284,7 +2570,7 @@ exports[`lib/monitoring/retrypanel > should render an error when available 1`] =
           </button>
           <div
             hidden={true}
-            id="tooltip120"
+            id="tooltip138"
             style={
               {
                 "border": 0,
@@ -2360,7 +2646,7 @@ exports[`lib/monitoring/retrypanel > should render an error when available 1`] =
           </button>
           <div
             hidden={true}
-            id="tooltip124"
+            id="tooltip142"
             style={
               {
                 "border": 0,
@@ -2383,6 +2669,36 @@ exports[`lib/monitoring/retrypanel > should render an error when available 1`] =
   <div
     className="msla-panel-callout-content"
   >
+    <div
+      className="ms-MessageBar ms-MessageBar--severeWarning ms-MessageBar-multiline msla-request-history-panel-error root-130"
+    >
+      <div
+        className="ms-MessageBar-content content-131"
+      >
+        <div
+          aria-hidden={true}
+          className="ms-MessageBar-icon iconContainer-132"
+        >
+          <i
+            aria-hidden={true}
+            className="icon-140"
+            data-icon-name="Warning"
+          >
+            
+          </i>
+        </div>
+        <div
+          aria-live="assertive"
+          className="ms-MessageBar-text text-134"
+          id="MessageBar146"
+          role="alert"
+        >
+          <span
+            className="ms-MessageBar-innerText innerText-135"
+          />
+        </div>
+      </div>
+    </div>
     <div
       className="msla-trace-inputs-outputs"
     >
@@ -2503,7 +2819,7 @@ exports[`lib/monitoring/retrypanel > should render an error when available 1`] =
                   <span
                     className="token plain"
                   >
-                    --
+                    2 days
                   </span>
                 </div>
               </pre>
@@ -2647,6 +2963,149 @@ exports[`lib/monitoring/retrypanel > should render an error when available 1`] =
                     className="token plain"
                   >
                     2/8/2022, 2:52:00 PM (Local Time)
+                  </span>
+                </div>
+              </pre>
+            </div>
+          </div>
+        </section>
+        <section
+          className="msla-trace-value-label"
+        >
+          <label
+            className="msla-trace-value-display-name"
+          >
+            End time
+          </label>
+          <div
+            className="msla-colorizer-json-body"
+          >
+            <div
+              aria-label="End time"
+              aria-readonly={true}
+              className="msla-colorizer-wrapper date-time"
+              role="textbox"
+              tabIndex={0}
+            >
+              <div
+                className="buttons"
+              >
+                <button
+                  aria-label="Switch 'End time' to the UTC time format"
+                  className="ms-Button ms-Button--icon root-121"
+                  data-is-focusable={true}
+                  onClick={[Function]}
+                  onKeyDown={[Function]}
+                  onKeyPress={[Function]}
+                  onKeyUp={[Function]}
+                  onMouseDown={[Function]}
+                  onMouseUp={[Function]}
+                  title="Switch 'End time' to the local time"
+                  type="button"
+                >
+                  <span
+                    className="ms-Button-flexContainer flexContainer-111"
+                    data-automationid="splitbuttonprimary"
+                  >
+                    <i
+                      aria-hidden={true}
+                      className="ms-Icon root-105 css-129 ms-Button-icon icon-122"
+                      data-icon-name="DateTime"
+                      style={
+                        {
+                          "fontFamily": ""FabricMDL2Icons-5"",
+                        }
+                      }
+                    >
+                      
+                    </i>
+                  </span>
+                </button>
+                <button
+                  aria-label="Select all text in 'End time'"
+                  className="ms-Button ms-Button--icon root-121"
+                  data-is-focusable={true}
+                  onClick={[Function]}
+                  onKeyDown={[Function]}
+                  onKeyPress={[Function]}
+                  onKeyUp={[Function]}
+                  onMouseDown={[Function]}
+                  onMouseUp={[Function]}
+                  title="Select all text in 'End time'"
+                  type="button"
+                >
+                  <span
+                    className="ms-Button-flexContainer flexContainer-111"
+                    data-automationid="splitbuttonprimary"
+                  >
+                    <i
+                      aria-hidden={true}
+                      className="ms-Icon root-105 css-125 ms-Button-icon icon-122"
+                      data-icon-name="SelectAll"
+                      style={
+                        {
+                          "fontFamily": ""FabricMDL2Icons-1"",
+                        }
+                      }
+                    >
+                      
+                    </i>
+                  </span>
+                </button>
+                <button
+                  aria-label="Copy the value of 'End time' to the clipboard"
+                  className="ms-Button ms-Button--icon root-121"
+                  data-is-focusable={true}
+                  onClick={[Function]}
+                  onKeyDown={[Function]}
+                  onKeyPress={[Function]}
+                  onKeyUp={[Function]}
+                  onMouseDown={[Function]}
+                  onMouseUp={[Function]}
+                  title="Copy the value of 'End time' to the clipboard"
+                  type="button"
+                >
+                  <span
+                    className="ms-Button-flexContainer flexContainer-111"
+                    data-automationid="splitbuttonprimary"
+                  >
+                    <i
+                      aria-hidden={true}
+                      className="ms-Icon root-105 css-127 ms-Button-icon icon-122"
+                      data-icon-name="Copy"
+                      style={
+                        {
+                          "fontFamily": ""FabricMDL2Icons-2"",
+                        }
+                      }
+                    >
+                      
+                    </i>
+                  </span>
+                </button>
+              </div>
+              <pre
+                className="prism-code language-json"
+                style={
+                  {
+                    "backgroundColor": "#ffffff",
+                    "color": "#000000",
+                  }
+                }
+              >
+                <div
+                  className="token-line"
+                  style={
+                    {
+                      "backgroundColor": undefined,
+                      "color": "#000000",
+                    }
+                  }
+                >
+                  <span
+                    className="token plain"
+                  >
+                    2/10/2022, 2:52:00 PM (Local Time)
                   </span>
                 </div>
               </pre>

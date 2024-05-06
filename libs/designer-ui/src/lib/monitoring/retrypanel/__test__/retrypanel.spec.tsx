@@ -1,6 +1,7 @@
 import type { RetryPanelProps } from '../index';
 import { RetryPanel } from '../index';
 import { setIconOptions } from '@fluentui/react';
+import React from 'react';
 import renderer from 'react-test-renderer';
 import ShallowRenderer from 'react-test-renderer/shallow';
 import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
@@ -20,6 +21,7 @@ describe('lib/monitoring/retrypanel', () => {
           clientRequestId: 'clientRequestId',
           code: 'code',
           startTime: '2022-02-08T19:52:00Z',
+          endTime: '2022-02-10T19:52:00Z',
         },
       ],
     };
@@ -61,14 +63,16 @@ describe('lib/monitoring/retrypanel', () => {
   });
 
   it('should render an error when available', () => {
-    const props = {
+    const props: RetryPanelProps = {
       ...minimal,
       retryHistories: [
         {
           ...minimal.retryHistories[0],
           error: {
-            code: 'errorCode',
-            message: 'errorMessage',
+            error: {
+              code: 'errorCode',
+              message: 'errorMessage',
+            },
           },
         },
       ],
