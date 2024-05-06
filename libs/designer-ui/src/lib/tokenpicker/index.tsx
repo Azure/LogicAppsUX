@@ -148,14 +148,7 @@ export function TokenPicker({
     description: 'Placeholder text to search token picker',
   });
 
-  const topCalloutStyle = windowDimensions.height / 5.25;
-
   const calloutStyles: Partial<ICalloutContentStyles> = {
-    root: {
-      position: 'fixed',
-      top: `${topCalloutStyle}px !important`,
-      maxHeight: '470px !important',
-    },
     calloutMain: {
       overflow: 'visible',
     },
