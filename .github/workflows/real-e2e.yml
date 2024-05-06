@@ -10,8 +10,13 @@ jobs:
     environment: E2ETesting
     permissions:
         id-token: write
+    strategy:
+      fail-fast: false
+      matrix:
+        shardIndex: [1, 2, 3, 4]
+        shardTotal: [4]
     env:
-      RGName : rg${{ github.run_id }}${{ github.run_attempt }}
+      RGName : rg${{ github.run_id }}${{ github.run_attempt }}${{ matrix.shardIndex }}
     steps:
     - uses: actions/checkout@v4
 
@@ -54,13 +59,13 @@ jobs:
         echo "AZURE_MANAGEMENT_TOKEN=$AZURE_MANAGEMENT_TOKEN" >> $GITHUB_ENV
 
     - name: Run Playwright tests
-      run: pnpm run test:e2e --grep @real
+      run: pnpm run test:e2e --grep @real --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
       env:
         AZURE_RESOURCE_GROUP: ${{env.RGName}}
         AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_TESTING_SUBSCRIPTION_ID }} 
         AZURE_SITE_NAME: wapp-${{env.RGName}}
         AZURE_MANAGEMENT_TOKEN: ${{ env.AZURE_MANAGEMENT_TOKEN }}
-
+        TEST_SHARDED: true
     - name: Scrub Secrets From Trace
       if: always()
       run: pnpm run scrub-secrets:e2e
@@ -79,18 +84,57 @@ jobs:
       run: |
         az group delete -n ${{env.RGName}} --yes --no-wait
 
-    - name: "Upload Playwright Report to Azure Blob Storage for static site access"
-      shell: bash
-      if: always()
-      run: |
-        REPORT_DIR='run-${{ github.run_id }}-${{ github.run_attempt }}'
-        az storage blob upload-batch --account-name lauxtestreport --auth-mode key -d "\$web/$REPORT_DIR" -s "./playwright-report"
-        echo "::notice title=HTML report url::https://lauxtestreport.z13.web.core.windows.net/$REPORT_DIR/index.html"
-
-    - uses: actions/upload-artifact@v4
-      if: always()
+    - name: Upload blob report to GitHub Actions Artifacts
+      if: ${{ !cancelled() }}
+      uses: actions/upload-artifact@v4
       with:
-        name: playwright-report
-        path: playwright-report/
-        retention-days: 30
-        
+        name: blob-report-${{ matrix.shardIndex }}
+        path: blob-report
+        retention-days: 1
+
+  merge-reports:
+    # Merge reports after playwright-tests, even if some shards have failed
+    if: ${{ !cancelled() }}
+    needs: [run-tests]    
+    runs-on: ubuntu-latest
+    environment: E2ETesting
+    permissions:
+        id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Download blob reports from GitHub Actions Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: all-blob-reports
+          pattern: blob-report-*
+          merge-multiple: true
+
+      - name: Merge into HTML Report
+        run: npx playwright merge-reports --reporter html ./all-blob-reports 
+      
+      - name: Azure login
+        uses: azure/login@v2
+        if: always()
+        with:
+          client-id: ${{ secrets.AZURE_TESTING_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TESTING_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_TESTING_SUBSCRIPTION_ID }} 
+
+      - name: "Upload Playwright Report to Azure Blob Storage for static site access"
+        shell: bash
+        if: always()
+        run: |
+          REPORT_DIR='run-${{ github.run_id }}-${{ github.run_attempt }}'
+          az storage blob upload-batch --account-name lauxtestreport --auth-mode key -d "\$web/$REPORT_DIR" -s "./playwright-report"
+          echo "::notice title=HTML report url::https://lauxtestreport.z13.web.core.windows.net/$REPORT_DIR/index.html"
+
+      - name: Upload HTML report
+        uses: actions/upload-artifact@v4
+        with:
+          name: html-report--attempt-${{ github.run_attempt }}
+          path: playwright-report
+          retention-days: 14

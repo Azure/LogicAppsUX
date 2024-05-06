@@ -1,43 +1,26 @@
 import { defineConfig, devices } from '@playwright/test';
 import 'dotenv/config';
-/**
- * Read environment variables from file.
- * https://github.com/motdotla/dotenv
- */
-// require('dotenv').config();
 
-/**
- * See https://playwright.dev/docs/test-configuration.
- */
 export default defineConfig({
   testDir: './e2e',
-  /* Run tests in files in parallel */
+  reporter: process.env.SHARDED ? 'blob' : 'html',
   fullyParallel: true,
-  /* Fail the build on CI if you accidentally left test.only in the source code. */
   forbidOnly: !!process.env.CI,
-  /* Retry on CI only */
   retries: 3,
-  /* Opt out of parallel tests on CI. */
   workers: 1,
-  /* Reporter to use. See https://playwright.dev/docs/test-reporters */
-  reporter: 'html',
   timeout: 5 * 60 * 1_000,
   expect: {
-    // expect timeout set to 20 seconds
     timeout: 20 * 1000,
   },
   reportSlowTests: {
     threshold: 60 * 1_000,
     max: 10,
   },
-  /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
     testIdAttribute: 'data-automation-id',
     actionTimeout: 20 * 1_000,
-    /* Base URL to use in actions like `await page.goto('/')`. */
     baseURL: 'http://localhost:4200',
-
-    /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
+    video: 'on-first-retry',
     trace: 'on',
   },
 
