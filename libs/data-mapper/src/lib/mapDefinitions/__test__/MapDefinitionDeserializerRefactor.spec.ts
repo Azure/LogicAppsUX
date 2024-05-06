@@ -568,6 +568,32 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
         expect(resultEntries[3][1]).toBeTruthy();
       });
 
+      it('creates a loop connection with two connections to loop', () => {
+        simpleMap['ns0:Root'] = {
+          Looping: {
+            '$for(/ns0:Root/Looping/Employee)': {
+              Person: {
+                Name: 'TelephoneNumber',
+              },
+              Trips: {
+                Trip: {
+                  Distance: 'TelephoneNumber'
+                }
+              }
+            },
+          },
+        };
+
+        const mapDefinitionDeserializer = new MapDefinitionDeserializerRefactor(simpleMap, extendedSource, extendedTarget, []);
+        const result = mapDefinitionDeserializer.convertFromMapDefinition();
+        const resultEntries = Object.entries(result);
+        resultEntries.sort();
+
+        expect(result['source-/ns0:Root/Looping/Employee'].outputs[0]).toEqual('target-/ns0:Root/Looping/Person')
+        expect(result['source-/ns0:Root/Looping/Employee'].outputs[1]).toEqual('target-/ns0:Root/Looping/Trips/Trip')
+
+      });
+
       it('creates a loop connection and an index', () => {
         simpleMap['ns0:Root'] = {
           Looping: {
