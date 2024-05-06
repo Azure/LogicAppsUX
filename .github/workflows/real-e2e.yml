@@ -3,58 +3,23 @@ on:
   workflow_dispatch:
   schedule:
     - cron: '0 */6 * * *'
-
+concurrency:
+  group: e2e_tests
+  cancel-in-progress: true
+  
 jobs:
-
-  deploy-test-app:
+  run-tests:
     runs-on: ubuntu-latest
     environment: E2ETesting
     permissions:
         id-token: write
     strategy:
+      fail-fast: false
       matrix:
-        browser: [chromium, firefox]
-    steps:
-    - uses: actions/checkout@v4
-
-    - uses: vimtor/action-zip@v1.2
-      with:
-        files: e2e/testSetup/BlankLogicApp/test-app-1
-        dest: drop/test-app-1.zip
-
-    - name: Azure login
-      uses: azure/login@v2
-      with:
-        client-id: ${{ secrets.AZURE_TESTING_CLIENT_ID }}
-        tenant-id: ${{ secrets.AZURE_TESTING_TENANT_ID }}
-        subscription-id: ${{ secrets.AZURE_TESTING_SUBSCRIPTION_ID }}
-    
-    - name: "Upload Playwright Report to Azure Blob Storage for static site access"
-      shell: bash
-      if: always()
-      run: |
-        ZIP_DIR='run-${{ github.run_id }}-${{ github.run_attempt }}-${{matrix.browser}}'
-        az storage blob upload-batch --account-name lauxtestreport --auth-mode key -d "deploymentzips/$ZIP_DIR" -s "./drop"
-        echo "ZIP-URL=https://lauxtestreport.blob.core.windows.net/deploymentzips/$ZIP_DIR/test-app-1.zip" >> $GITHUB_ENV
-  
-    - name: Deploy Logic Apps For Testing
-      uses: azure/cli@v2
-      with:
-        azcliversion: 2.30.0
-        inlineScript: |
-            az group create -l westus --subscription ${{ secrets.AZURE_TESTING_SUBSCRIPTION_ID }} -n lauxtest2${{matrix.browser}}
-            az deployment group create \
-            --resource-group lauxtest2${{matrix.browser}} \
-            --subscription ${{ secrets.AZURE_TESTING_SUBSCRIPTION_ID }} \
-            --template-file ./e2e/testSetup/BlankLogicApp/logicAppStandard.bicep \
-            --parameters "{ \"zipDeploymentLocation\": { \"value\": \"${{env.ZIP-URL}}\" } }"
-
-  run-tests:
-    runs-on: ubuntu-latest
-    environment: E2ETesting
-    needs: deploy-test-app
-    permissions:
-        id-token: write
+        shardIndex: [1, 2, 3, 4, 5, 6]
+        shardTotal: [6]
+    env:
+      RGName : rg${{ github.run_id }}${{ github.run_attempt }}${{ matrix.shardIndex }}
     steps:
     - uses: actions/checkout@v4
 
@@ -65,11 +30,14 @@ jobs:
         tenant-id: ${{ secrets.AZURE_TESTING_TENANT_ID }}
         subscription-id: ${{ secrets.AZURE_TESTING_SUBSCRIPTION_ID }} 
 
-    - name: "extract AAD access token for Test Runs (valid for about an hour)"
+    - name: Deploy Logic Apps For Testing
       run: |
-        az account get-access-token --tenant ${{ secrets.AZURE_TESTING_TENANT_ID }} >> apps/Standalone/src/environments/jsonImport/armToken.json
-
-   
+          az group create -l westus --subscription ${{ secrets.AZURE_TESTING_SUBSCRIPTION_ID }} -n ${{ env.RGName }} 
+          az deployment group create \
+          --resource-group ${{ env.RGName }} \
+          --subscription ${{ secrets.AZURE_TESTING_SUBSCRIPTION_ID }} \
+          --template-file ./e2e/testSetup/BlankLogicApp/logicAppStandard.bicep
+  
     - uses: pnpm/action-setup@v3
       with:
         version: 8
@@ -80,9 +48,27 @@ jobs:
     - name: Install Playwright Browsers
       run: pnpm run e2e:setup
 
-    - name: Run Playwright tests
-      run: pnpm run test:e2e --grep @real
+    - name: Azure login
+      uses: azure/login@v2
+      with:
+        client-id: ${{ secrets.AZURE_TESTING_CLIENT_ID }}
+        tenant-id: ${{ secrets.AZURE_TESTING_TENANT_ID }}
+        subscription-id: ${{ secrets.AZURE_TESTING_SUBSCRIPTION_ID }} 
+    
+    - name: "extract AAD access token for Test Runs (valid for about an hour)"
+      run: |
+        export AZURE_MANAGEMENT_TOKEN=$(az account get-access-token --tenant ${{ secrets.AZURE_TESTING_TENANT_ID }} | jq -r .accessToken)
+        az account get-access-token --tenant ${{ secrets.AZURE_TESTING_TENANT_ID }} >> apps/Standalone/src/environments/jsonImport/armToken.json
+        echo "AZURE_MANAGEMENT_TOKEN=$AZURE_MANAGEMENT_TOKEN" >> $GITHUB_ENV
 
+    - name: Run Playwright tests
+      run: pnpm run test:e2e --grep @real --shard=${{ matrix.shardIndex }}/${{ matrix.shardTotal }}
+      env:
+        AZURE_RESOURCE_GROUP: ${{env.RGName}}
+        AZURE_SUBSCRIPTION_ID: ${{ secrets.AZURE_TESTING_SUBSCRIPTION_ID }} 
+        AZURE_SITE_NAME: wapp-${{env.RGName}}
+        AZURE_MANAGEMENT_TOKEN: ${{ env.AZURE_MANAGEMENT_TOKEN }}
+        TEST_SHARDED: true
     - name: Scrub Secrets From Trace
       if: always()
       run: pnpm run scrub-secrets:e2e
@@ -99,32 +85,59 @@ jobs:
       shell: bash
       if: always()
       run: |
-        az group delete -n lauxtest2chromium --yes --no-wait
-        az group delete -n lauxtest2firefox --yes --no-wait
+        az group delete -n ${{env.RGName}} --yes --no-wait
 
-    - name: "Upload Playwright Report to Azure Blob Storage for static site access"
-      shell: bash
-      if: always()
-      run: |
-        REPORT_DIR='run-${{ github.run_id }}-${{ github.run_attempt }}'
-        az storage blob upload-batch --account-name lauxtestreport --auth-mode key -d "\$web/$REPORT_DIR" -s "./playwright-report"
-        echo "::notice title=HTML report url::https://lauxtestreport.z13.web.core.windows.net/$REPORT_DIR/index.html"
-
-    - uses: actions/upload-artifact@v4
-      if: always()
+    - name: Upload blob report to GitHub Actions Artifacts
+      if: ${{ !cancelled() }}
+      uses: actions/upload-artifact@v4
       with:
-        name: playwright-report
-        path: playwright-report/
-        retention-days: 30
-        
-  # notify:
-  #   name: Notify failed build
-  #   needs: run-tests
-  #   if: ${{ always() && needs.run-tests.result == 'failure' }}
-  #   runs-on: ubuntu-latest
-  #   permissions:
-  #     issues: write
-  #   steps:
-  #     - uses: jayqi/failed-build-issue-action@v1
-  #       with:
-  #         github-token: ${{ secrets.GITHUB_TOKEN }}
+        name: blob-report-${{ matrix.shardIndex }}
+        path: blob-report
+        retention-days: 1
+
+  merge-reports:
+    # Merge reports after playwright-tests, even if some shards have failed
+    if: ${{ !cancelled() }}
+    needs: [run-tests]    
+    runs-on: ubuntu-latest
+    environment: E2ETesting
+    permissions:
+        id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 18
+
+      - name: Download blob reports from GitHub Actions Artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: all-blob-reports
+          pattern: blob-report-*
+          merge-multiple: true
+
+      - name: Merge into HTML Report
+        run: npx playwright merge-reports --reporter html ./all-blob-reports 
+      
+      - name: Azure login
+        uses: azure/login@v2
+        if: always()
+        with:
+          client-id: ${{ secrets.AZURE_TESTING_CLIENT_ID }}
+          tenant-id: ${{ secrets.AZURE_TESTING_TENANT_ID }}
+          subscription-id: ${{ secrets.AZURE_TESTING_SUBSCRIPTION_ID }} 
+
+      - name: "Upload Playwright Report to Azure Blob Storage for static site access"
+        shell: bash
+        if: always()
+        run: |
+          REPORT_DIR='run-${{ github.run_id }}-${{ github.run_attempt }}'
+          az storage blob upload-batch --account-name lauxtestreport --auth-mode key -d "\$web/$REPORT_DIR" -s "./playwright-report"
+          echo "::notice title=HTML report url::https://lauxtestreport.z13.web.core.windows.net/$REPORT_DIR/index.html"
+
+      - name: Upload HTML report
+        uses: actions/upload-artifact@v4
+        with:
+          name: html-report--attempt-${{ github.run_attempt }}
+          path: playwright-report
+          retention-days: 14

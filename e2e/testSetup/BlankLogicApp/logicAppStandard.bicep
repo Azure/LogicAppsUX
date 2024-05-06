@@ -10,7 +10,6 @@ param workerSizeId string = '3'
 param numberOfWorkers string = '1'
 param netFrameworkVersion string = 'v6.0'
 param ftpsState string = 'FtpsOnly'
-param zipDeploymentLocation string
 
 resource appServicePlan 'Microsoft.Web/serverfarms@2020-06-01' = {
   name: appServicePlanName
@@ -97,10 +96,3 @@ resource appService 'Microsoft.Web/sites@2020-06-01' = {
   kind: 'functionapp,workflowapp'
 }
 
-resource zipDeploy 'Microsoft.Web/sites/extensions@2021-02-01' = {
-  name: any('ZipDeploy')
-  parent: appService
-  properties: {
-    packageUri: zipDeploymentLocation
-  }
-}

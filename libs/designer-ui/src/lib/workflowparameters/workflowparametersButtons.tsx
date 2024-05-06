@@ -81,6 +81,7 @@ function EditButton({ onClick }: ButtonProps): JSX.Element {
       <Button
         appearance="subtle"
         data-testid="parameter-edit-icon-button"
+        data-automation-id="parameter-edit-icon-button"
         aria-label={editTitle}
         onClick={onClick}
         icon={<EditIcon style={{ color: 'var(--colorBrandForeground1)' }} />}
