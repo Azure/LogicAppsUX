@@ -53,7 +53,7 @@ export class RealDataApi {
       },
     });
     while (LAResult && (LAResult.status() !== expectedStatus || await LAResult.text() !== expectedBody)) {
-      await this.page.waitForTimeout(1500);
+      await this.page.waitForTimeout(4000);
       listCallbackUrlCall = await this.request.post(
         `${Constants.managementUrl}${this.siteId}/hostruntime/runtime/webhooks/workflow/api/management/workflows/${this.workflowName}/triggers/${triggerName}/listCallbackUrl?api-version=${Constants.siteApiVersion}`,
         {
