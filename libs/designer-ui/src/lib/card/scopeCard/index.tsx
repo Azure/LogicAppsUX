@@ -8,6 +8,7 @@ import { Gripper } from '../images/dynamicsvgs/gripper';
 import type { CardProps } from '../index';
 import { css, Icon } from '@fluentui/react';
 import { Spinner, Tooltip } from '@fluentui/react-components';
+import { replaceWhiteSpaceWithUnderscore } from '@microsoft/logic-apps-shared';
 
 export interface ScopeCardProps extends CardProps {
   collapsed?: boolean;
@@ -67,6 +68,7 @@ export const ScopeCard: React.FC<ScopeCardProps> = ({
         <div
           ref={drag}
           className="msla-scope-v2--header msla-scope-card-wrapper"
+          data-automation-id={`card-${replaceWhiteSpaceWithUnderscore(title)}`}
           draggable={draggable}
           style={colorVars}
           onContextMenu={contextMenu.handle}
