@@ -1,8 +1,8 @@
 name: Generate Coverage Report
 
 on:
-  push:
-    branches: [coverageReport]
+#   push:
+#     branches: [coverageReport]
   pull_request:
     branches: [main, dev/*, hotfix/*]
 jobs:
