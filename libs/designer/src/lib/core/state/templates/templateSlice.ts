@@ -2,21 +2,17 @@ import { getIntl, getRecordEntry, type LogicAppsV2, type Template } from '@micro
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { templatesPathFromState, type RootState } from './store';
-import type { WorkflowParameterUpdateEvent } from '@microsoft/designer-ui';
+import type { TemplateParameterUpdateEvent } from '@microsoft/designer-ui';
 import { convertWorkflowParameterTypeToSwaggerType } from '../../../core/utils/tokens';
 import { validateType } from '../../../core/utils/validation';
 import Constants from '../../../common/constants';
-
-export interface TemplateParameterDefinition extends Template.Parameter {
-  value?: any;
-}
 
 export interface TemplateState {
   templateName?: string;
   workflowDefinition: LogicAppsV2.WorkflowDefinition | undefined;
   manifest: Template.Manifest | undefined;
   parameters: {
-    definitions: Record<string, Template.Parameter>;
+    definitions: Record<string, Template.ParameterDefinition>;
     validationErrors: Record<string, string | undefined>;
   };
   connections: Template.Connection[];
@@ -50,6 +46,7 @@ export const validateParameterValue = (data: { type: string; value?: string }, r
   const intl = getIntl();
 
   const { value: valueToValidate, type } = data;
+
   if (valueToValidate === '' || valueToValidate === undefined) {
     if (!required) {
       return undefined;
@@ -109,18 +106,18 @@ export const templateSlice = createSlice({
     changeCurrentTemplateName: (state, action: PayloadAction<string>) => {
       state.templateName = action.payload;
     },
-    updateTemplateParameterValue: (state, action: PayloadAction<WorkflowParameterUpdateEvent>) => {
+    updateTemplateParameterValue: (state, action: PayloadAction<TemplateParameterUpdateEvent>) => {
       const {
-        id,
+        name,
         newDefinition: { type, value, required },
       } = action.payload;
       const validationError = validateParameterValue({ type, value }, required);
 
-      state.parameters.definitions[id] = {
-        ...(getRecordEntry(state.parameters.definitions, id) ?? ({} as any)),
+      state.parameters.definitions[name] = {
+        ...(getRecordEntry(state.parameters.definitions, name) ?? ({} as any)),
         value,
       };
-      state.parameters.validationErrors[id] = validationError;
+      state.parameters.validationErrors[name] = validationError;
     },
   },
   extraReducers: (builder) => {
@@ -159,7 +156,7 @@ const loadTemplateFromGithub = async (
 
     const templateManifest: Template.Manifest =
       manifest ?? (await import(`${templatesPathFromState}/${templateName}/manifest.json`)).default;
-    const parametersDefinitions = templateManifest.parameters?.reduce((result: Record<string, TemplateParameterDefinition>, parameter) => {
+    const parametersDefinitions = templateManifest.parameters?.reduce((result: Record<string, Template.ParameterDefinition>, parameter) => {
       result[parameter.name] = {
         ...parameter,
         value: parameter.default,
