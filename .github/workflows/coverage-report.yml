@@ -35,7 +35,7 @@ jobs:
               - recursive: true
                 args: [--frozen-lockfile, --strict-peer-dependencies]   
 
-        - run: pnpm turbo run test:lib --cache-dir=.turbo 
+        - run: pnpm turbo run test:lib --cache-dir=.turbo -- --changed origin/main
         - run: npx cobertura-merge-globby -o coverage.xml --files="**/cobertura-coverage.xml"
         - name: Generate Coverage Report
           uses: clearlyip/code-coverage-report-action@v4
