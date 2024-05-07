@@ -1,4 +1,4 @@
-import { idDisplayCase, labelCase } from '../stringFunctions';
+import { escapeString, idDisplayCase, labelCase } from '../stringFunctions';
 import { describe, it, expect } from 'vitest';
 describe('label_case', () => {
   it('should replace _ with spaces', () => {
@@ -25,5 +25,26 @@ describe('idDisplayCase', () => {
 
   it('should handle a string with only an ID tag', () => {
     expect(idDisplayCase('-#Scope')).toEqual('');
+  });
+});
+
+describe('escapeString', () => {
+  it('should correctly escape backslashes', () => {
+    expect(escapeString('\\')).toEqual('\\\\');
+    expect(escapeString('Test\\Test')).toEqual('Test\\\\Test');
+  });
+
+  it('should correctly escape newline characters', () => {
+    expect(escapeString('\n')).toEqual('\\n');
+    expect(escapeString('Test\nTest')).toEqual('Test\\nTest');
+  });
+
+  it('should correctly escape backslashes and newline characters together', () => {
+    expect(escapeString('\\\n')).toEqual('\\\\\\n');
+    expect(escapeString('Test\\\nTest')).toEqual('Test\\\\\\nTest');
+  });
+
+  it('should handle an empty string', () => {
+    expect(escapeString('')).toEqual('');
   });
 });
