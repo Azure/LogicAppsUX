@@ -60,7 +60,9 @@ jobs:
                 args: [--frozen-lockfile, --strict-peer-dependencies]   
 
         - run: pnpm turbo run test:lib --cache-dir=.turbo 
-        - run: ./merge-lcov.sh
+        - run: |
+            chmod +x ./merge-lcov.sh
+            ./merge-lcov.sh
           shell: bash
         
         - run: pnpm lcov-result-merger 'libs/*/coverage/lcov.info' './coverage'
