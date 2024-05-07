@@ -56,6 +56,7 @@ jobs:
 
         - name: Write to Job Summary
           run: cat CodeCoverage/SummaryGithub.md >> $GITHUB_STEP_SUMMARY
+        - run: node ./filterCoverageMarkdown.js
         - name: Add Coverage PR Comment
           #Make sure the report was generated and that the event is actually a pull request, run if failed or success
           uses: marocchino/sticky-pull-request-comment@v2
