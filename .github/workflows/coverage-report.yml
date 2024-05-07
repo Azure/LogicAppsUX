@@ -66,7 +66,7 @@ jobs:
         - name: Report code coverage
           uses: zgosalvez/github-actions-report-lcov@v3
           with:
-            coverage-files: "*/coverage/lcov.info"
+            coverage-files: "**/coverage/lcov.info"
             minimum-coverage: 0
             artifact-name: code-coverage-report
             github-token: ${{ secrets.GITHUB_TOKEN }}
