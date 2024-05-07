@@ -39,6 +39,14 @@ jobs:
         - name: 'Checkout Github Action'
           uses: actions/checkout@master
 
+        - name: Cache turbo build setup
+          uses: actions/cache@v4
+          with:
+            path: .turbo
+            key: ${{ runner.os }}-turbo-${{ github.sha }}
+            restore-keys: |
+              ${{ runner.os }}-turbo-
+                
         - name: Set up Node.js 
           uses: actions/setup-node@v1
           with:
@@ -54,7 +62,7 @@ jobs:
         - run: pnpm turbo run test:lib
         - name: Setup LCOV
           uses: hrishikesh-kadam/setup-lcov@v1
-          
+
         - name: Report code coverage
           uses: zgosalvez/github-actions-report-lcov@v3
           with:
