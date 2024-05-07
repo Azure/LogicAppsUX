@@ -5,7 +5,7 @@ import type { EventHandler } from '../../eventhandler';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
 
-export const labelStyles2: Partial<ILabelStyles> = {
+const labelStyles: Partial<ILabelStyles> = {
   root: {
     display: 'inline-block',
     minWidth: '120px',
@@ -25,7 +25,7 @@ const textFieldStyles: Partial<ITextFieldStyles> = {
   root: fieldStyles,
 };
 
-export interface ParameterFieldDetails2 {
+export interface TemplateParameterFieldDetails {
   name: string;
   value: string;
   description?: string;
@@ -48,15 +48,14 @@ export interface TemplateparameterFieldProps {
   definition: Template.ParameterDefinition;
   validationError: string | undefined;
   onChange?: TemplateParameterUpdateHandler;
-  isReadOnly?: boolean;
 }
 
-export const TemplateparameterField = ({ definition, validationError, onChange, isReadOnly }: TemplateparameterFieldProps): JSX.Element => {
+export const TemplateparameterField = ({ definition, validationError, onChange }: TemplateparameterFieldProps): JSX.Element => {
   const [value, setValue] = useState<string | undefined>(stringifyValue(definition.value));
 
   const intl = useIntl();
 
-  const parameterDetails: ParameterFieldDetails2 = {
+  const parameterDetails: TemplateParameterFieldDetails = {
     name: `${definition.name}-${NAME_KEY}`,
     value: `${definition.name}-${VALUE_KEY}`,
     description: `${definition.name}-${DESCRIPTION_KEY}`,
@@ -73,13 +72,11 @@ export const TemplateparameterField = ({ definition, validationError, onChange, 
     id: 'tNoZx2',
     description: 'Parameter Field Type Title',
   });
-
   const descriptionTitle = intl.formatMessage({
     defaultMessage: 'Description',
     id: 'UXDOiw',
     description: 'Parameter Field Description Title',
   });
-
   const valueTitle = intl.formatMessage({
     defaultMessage: 'Value',
     id: 'ClZW2r',
@@ -107,25 +104,25 @@ export const TemplateparameterField = ({ definition, validationError, onChange, 
   return (
     <>
       <div className="msla-workflow-parameter-field">
-        <Label styles={labelStyles2} required={false} htmlFor={parameterDetails.name}>
+        <Label styles={labelStyles} required={false} htmlFor={parameterDetails.name}>
           {nameTitle}
         </Label>
         <Text className="msla-workflow-parameter-read-only">{definition.name}</Text>
       </div>
       <div className="msla-workflow-parameter-field">
-        <Label styles={labelStyles2} required={false} htmlFor={parameterDetails.type}>
+        <Label styles={labelStyles} required={false} htmlFor={parameterDetails.type}>
           {typeTitle}
         </Label>
         <Text className="msla-workflow-parameter-read-only">{definition.type}</Text>
       </div>
       <div className="msla-workflow-parameter-field">
-        <Label styles={labelStyles2} required={false} htmlFor={parameterDetails.description}>
+        <Label styles={labelStyles} required={false} htmlFor={parameterDetails.description}>
           {descriptionTitle}
         </Label>
         <Text className="msla-workflow-parameter-read-only">{definition?.description}</Text>
       </div>
       <div className="msla-workflow-parameter-field">
-        <Label styles={labelStyles2} required={definition?.required} htmlFor={parameterDetails.value}>
+        <Label styles={labelStyles} required={definition?.required} htmlFor={parameterDetails.value}>
           {valueTitle}
         </Label>
         <TextField
@@ -137,7 +134,7 @@ export const TemplateparameterField = ({ definition, validationError, onChange, 
           errorMessage={validationError}
           styles={textFieldStyles}
           onChange={onValueChange}
-          disabled={isReadOnly}
+          disabled={false}
         />
       </div>
     </>
