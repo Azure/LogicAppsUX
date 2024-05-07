@@ -24,7 +24,6 @@ export const DisplayParameters = () => {
   });
 
   const renderParameter = (item?: TemplateParameterDefinition): JSX.Element => {
-    // const parameterErrors = validationErrors && item ? validationErrors[item.id] : undefined;
     return (
       <div className="msla-workflow-parameter">
         <div>
@@ -41,6 +40,9 @@ export const DisplayParameters = () => {
             }}
             isReadOnly={false}
             useLegacy={false}
+            required={{
+              [VALUE_KEY]: item?.required ?? false,
+            }}
           />
         </div>
       </div>

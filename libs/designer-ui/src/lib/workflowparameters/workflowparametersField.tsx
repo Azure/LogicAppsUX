@@ -57,17 +57,20 @@ const textStyles: Partial<ITextStyles> = {
   },
 };
 
-const NAME_KEY = 'name';
-const TYPE_KEY = 'type';
-const VALUE_KEY = 'value';
-const DEFAULT_VALUE_KEY = 'defaultValue';
-
 export interface ParameterFieldDetails {
   name: string;
   value: string;
   defaultValue?: string;
   type: string;
 }
+
+const PARAM_KEYS = {
+  NAME: 'name',
+  TYPE: 'type',
+  VALUE: 'value',
+  DEFAULT_VALUE: 'defaultValue',
+};
+type PARAM_KEYS = (typeof PARAM_KEYS)[keyof typeof PARAM_KEYS];
 
 export interface WorkflowparameterFieldProps {
   name?: string;
@@ -77,14 +80,8 @@ export interface WorkflowparameterFieldProps {
   onChange?: WorkflowParameterUpdateHandler;
   useLegacy?: boolean;
   isReadOnly?: boolean;
-  isEditable?:
-    | boolean
-    | {
-        [NAME_KEY]?: boolean;
-        [TYPE_KEY]?: boolean;
-        [VALUE_KEY]?: boolean;
-        [DEFAULT_VALUE_KEY]?: boolean;
-      };
+  isEditable?: boolean | Record<PARAM_KEYS, boolean>;
+  required?: boolean | Record<PARAM_KEYS, boolean>;
 }
 
 export const WorkflowparameterField = ({
@@ -96,6 +93,7 @@ export const WorkflowparameterField = ({
   isEditable,
   isReadOnly,
   useLegacy,
+  required = true,
 }: WorkflowparameterFieldProps): JSX.Element => {
   const [type, setType] = useState(definition.type);
   const [value, setValue] = useState<string | undefined>(stringifyValue(definition.value));
@@ -104,9 +102,9 @@ export const WorkflowparameterField = ({
   const intl = useIntl();
 
   const parameterDetails: ParameterFieldDetails = {
-    name: `${definition.id}-${NAME_KEY}`,
-    value: `${definition.id}-${VALUE_KEY}`,
-    defaultValue: `${definition.id}-default-${VALUE_KEY}`,
+    name: `${definition.id}-${PARAM_KEYS.NAME}`,
+    value: `${definition.id}-${PARAM_KEYS.VALUE}`,
+    defaultValue: `${definition.id}-default-${PARAM_KEYS.VALUE}`,
     type: `${definition.id}-type`,
   };
 
@@ -298,17 +296,13 @@ export const WorkflowparameterField = ({
     );
   };
 
-  const isFieldEditable = (fieldKey: string): boolean | undefined => {
-    return typeof isEditable === 'boolean' ? isEditable : getRecordEntry(isEditable, fieldKey);
-  };
-
   return (
     <>
       <div className="msla-workflow-parameter-field">
-        <Label styles={labelStyles} required={true} htmlFor={parameterDetails.name}>
+        <Label styles={labelStyles} required={getFieldBooleanValue(required, PARAM_KEYS.NAME)} htmlFor={parameterDetails.name}>
           {nameTitle}
         </Label>
-        {isFieldEditable(NAME_KEY) ? (
+        {getFieldBooleanValue(isEditable, PARAM_KEYS.NAME) ? (
           <TextField
             data-testid={parameterDetails.name}
             styles={textFieldStyles}
@@ -316,7 +310,7 @@ export const WorkflowparameterField = ({
             ariaLabel={nameTitle}
             placeholder={nameDescription}
             value={name}
-            errorMessage={errors[NAME_KEY]}
+            errorMessage={errors[PARAM_KEYS.NAME]}
             onChange={onNameChange}
             disabled={isReadOnly}
           />
@@ -325,10 +319,10 @@ export const WorkflowparameterField = ({
         )}
       </div>
       <div className="msla-workflow-parameter-field">
-        <Label styles={labelStyles} required={true} htmlFor={parameterDetails.type}>
+        <Label styles={labelStyles} required={getFieldBooleanValue(required, PARAM_KEYS.TYPE)} htmlFor={parameterDetails.type}>
           {typeTitle}
         </Label>
-        {isFieldEditable(TYPE_KEY) ? (
+        {getFieldBooleanValue(isEditable, PARAM_KEYS.TYPE) ? (
           <Dropdown
             data-testid={parameterDetails.type}
             id={parameterDetails.type}
@@ -346,10 +340,14 @@ export const WorkflowparameterField = ({
       {useLegacy ? (
         <>
           <div className="msla-workflow-parameter-field">
-            <Label styles={labelStyles} required={true} htmlFor={parameterDetails.defaultValue}>
+            <Label
+              styles={labelStyles}
+              required={getFieldBooleanValue(required, PARAM_KEYS.DEFAULT_VALUE)}
+              htmlFor={parameterDetails.defaultValue}
+            >
               {defaultValueTitle}
             </Label>
-            {isFieldEditable(DEFAULT_VALUE_KEY) ? (
+            {getFieldBooleanValue(isEditable, PARAM_KEYS.DEFAULT_VALUE) ? (
               <TextField
                 data-testid={parameterDetails.defaultValue}
                 id={parameterDetails.defaultValue}
@@ -357,7 +355,7 @@ export const WorkflowparameterField = ({
                 placeholder={defaultValueDescription}
                 description={defaultValueWarningMessage}
                 value={defaultValue}
-                errorMessage={errors[DEFAULT_VALUE_KEY]}
+                errorMessage={errors[PARAM_KEYS.DEFAULT_VALUE]}
                 styles={defaultValueWarningMessage ? textFieldWithWarningStyles : textFieldStyles}
                 onChange={onDefaultValueChange}
                 onRenderDescription={defaultValueWarningMessage ? onRenderDescription : undefined}
@@ -371,7 +369,7 @@ export const WorkflowparameterField = ({
             <Label styles={labelStyles} htmlFor={parameterDetails.value}>
               {actualValueTitle}
             </Label>
-            {isFieldEditable(VALUE_KEY) ? (
+            {getFieldBooleanValue(isEditable, PARAM_KEYS.VALUE) ? (
               <TextField
                 data-testid={parameterDetails.value}
                 id={parameterDetails.value}
@@ -388,17 +386,17 @@ export const WorkflowparameterField = ({
         </>
       ) : (
         <div className="msla-workflow-parameter-field">
-          <Label styles={labelStyles} required={true} htmlFor={parameterDetails.value}>
+          <Label styles={labelStyles} required={getFieldBooleanValue(required, PARAM_KEYS.VALUE)} htmlFor={parameterDetails.value}>
             {valueTitle}
           </Label>
-          {isFieldEditable(VALUE_KEY) ? (
+          {getFieldBooleanValue(isEditable, PARAM_KEYS.VALUE) ? (
             <TextField
               data-testid={parameterDetails.value}
               id={parameterDetails.value}
               ariaLabel={valueTitle}
               placeholder={valueDescription}
               value={value}
-              errorMessage={errors[VALUE_KEY]}
+              errorMessage={errors[PARAM_KEYS.VALUE]}
               styles={textFieldStyles}
               onChange={onValueChange}
               disabled={isReadOnly}
@@ -418,4 +416,8 @@ function isSecureParameter(type?: string): boolean {
 
 function stringifyValue(value: any): string {
   return typeof value !== 'string' ? JSON.stringify(value) : value;
+}
+
+function getFieldBooleanValue(value: boolean | Record<string, boolean> | undefined, fieldKey: string): boolean {
+  return typeof value === 'boolean' ? value : getRecordEntry(value, fieldKey) ?? false;
 }

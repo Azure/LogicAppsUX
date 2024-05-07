@@ -112,10 +112,9 @@ export const templateSlice = createSlice({
     updateTemplateParameterValue: (state, action: PayloadAction<WorkflowParameterUpdateEvent>) => {
       const {
         id,
-        newDefinition: { type, value }, //TODO: add required?
-        // useLegacy = false,
+        newDefinition: { type, value, required },
       } = action.payload;
-      const validationError = validateParameterValue({ type, value }, true);
+      const validationError = validateParameterValue({ type, value }, required);
 
       state.parameters.definitions[id] = {
         ...(getRecordEntry(state.parameters.definitions, id) ?? ({} as any)),
