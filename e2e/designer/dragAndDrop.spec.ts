@@ -10,8 +10,6 @@ test(
     await page.goto('/');
 
     await GoToMockWorkflow(page, 'Panel');
-    await page
-      .getByLabel('HTTP operation, HTTP connector')
-      .dragTo(page.getByTestId('rf__edge-manual-Initialize_ArrayVariable').getByLabel('Insert a new step between'));
+    await page.getByTestId('card-http').dragTo(page.getByTestId('msla-plus-button-manual-initialize_arrayvariable'));
   }
 );

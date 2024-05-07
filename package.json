@@ -44,6 +44,7 @@
     "jsdom": "^24.0.0",
     "jsonc-eslint-parser": "^2.4.0",
     "just-pnpm": "^1.0.2",
+    "lcov-result-merger": "^5.0.0",
     "lint-staged": "^15.2.2",
     "react-test-renderer": "^18.2.0",
     "replace-in-file": "^7.1.0",
@@ -93,5 +94,8 @@
     "testgen": "playwright codegen https://localhost:4200",
     "vscode:designer:pack": "turbo run vscode:designer:pack"
   },
-  "type": "module"
+  "type": "module",
+  "dependencies": {
+    "dotenv": "^16.4.5"
+  }
 }
