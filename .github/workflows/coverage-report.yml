@@ -6,34 +6,36 @@ on:
   pull_request:
     branches: [main, dev/*, hotfix/*]
 jobs:
-  base-coverage:
-    runs-on: ubuntu-latest
+#   base-coverage:
+#     runs-on: ubuntu-latest
 
-    steps:
-      # checkout the repo
-      - name: 'Checkout Github Action'
-        uses: actions/checkout@master
-        with:
-            ref: main
+#     steps:
+#       # checkout the repo
+#       - name: 'Checkout Github Action'
+#         uses: actions/checkout@master
+#         with:
+#             ref: main
 
-      - name: Set up Node.js 
-        uses: actions/setup-node@v1
-        with:
-          node-version: 20.x
+#       - name: Set up Node.js 
+#         uses: actions/setup-node@v1
+#         with:
+#           node-version: 20.x
 
-      - uses: pnpm/action-setup@v3
-        with:
-          version: 8
-          run_install: |
-            - recursive: true
-              args: [--frozen-lockfile, --strict-peer-dependencies]
+#       - uses: pnpm/action-setup@v3
+#         with:
+#           version: 8
+#           run_install: |
+#             - recursive: true
+#               args: [--frozen-lockfile, --strict-peer-dependencies]
             
-      - run: turbo run test:lib
+#       - run: turbo run test:lib
 
   pr-coverage:
-    runs-on: ubuntu-latest    
+    runs-on: ubuntu-latest
+    permissions:
+        issues: write
+        pull-requests: write    
     steps:
-        # checkout the repo
         - name: 'Checkout Github Action'
           uses: actions/checkout@master
 
@@ -50,7 +52,13 @@ jobs:
                 args: [--frozen-lockfile, --strict-peer-dependencies]   
 
         - run: pnpm turbo run test:lib
-        - uses: ScaCap/code-coverage-assistant@v1.1
+
+        - name: Report code coverage
+          uses: zgosalvez/github-actions-report-lcov@v3
           with:
-              github-token: ${{ secrets.AUTOMATION_PAT }}
-              monorepo-base-path: "."
+            coverage-files: "**/coverage/lcov.info"
+            minimum-coverage: 0
+            artifact-name: code-coverage-report
+            github-token: ${{ secrets.GITHUB_TOKEN }}
+            working-directory: .
+            update-comment: true
