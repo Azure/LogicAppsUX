@@ -60,6 +60,8 @@ export {
 export {
   createLiteralValueSegment,
   createTokenValueSegment,
+  ValueSegmentConvertor,
+  type ValueSegmentConvertorOptions
 } from './utils/parameters/segment';
 export {
   getOutputTokenSections,
