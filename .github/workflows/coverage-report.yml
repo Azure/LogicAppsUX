@@ -6,39 +6,8 @@ on:
   pull_request:
     branches: [main, dev/*, hotfix/*]
 jobs:
-  base-coverage:
-    runs-on: ubuntu-latest
-
-    steps:
-      # checkout the repo
-      - name: 'Checkout Github Action'
-        uses: actions/checkout@master
-        with:
-            ref: main
-
-      - name: Set up Node.js 
-        uses: actions/setup-node@v1
-        with:
-          node-version: 20.x
-
-      - uses: pnpm/action-setup@v3
-        with:
-          version: 8
-          run_install: |
-            - recursive: true
-              args: [--frozen-lockfile, --strict-peer-dependencies]
-            
-      - run: pnpm turbo run test:lib --cache-dir=.turbo 
-      - run: npx cobertura-merge-globby -o coverage.xml --files="**/cobertura-coverage.xml"
-      - uses: actions/upload-artifact@v4
-        if: always()
-        with:
-          name: coverage-main
-          path: coverage.xml
-          retention-days: 1
   pr-coverage:
     runs-on: ubuntu-latest
-    needs: base-coverage
     permissions:
         issues: write
         pull-requests: write    
@@ -76,6 +45,8 @@ jobs:
             filename: 'coverage.xml'
             github_token: ${{ secrets.GITHUB_TOKEN }}
             badge: true
+            fail_on_negative_difference: true
+            artifact_download_workflow_names: 'base-coverage'
         - name: Add Coverage PR Comment
           #Make sure the report was generated and that the event is actually a pull request, run if failed or success
           uses: marocchino/sticky-pull-request-comment@v2
