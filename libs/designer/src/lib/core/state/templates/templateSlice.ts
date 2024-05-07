@@ -3,9 +3,7 @@ import type { PayloadAction } from '@reduxjs/toolkit';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { templatesPathFromState, type RootState } from './store';
 import type { TemplateParameterUpdateEvent } from '@microsoft/designer-ui';
-import { convertWorkflowParameterTypeToSwaggerType } from '../../../core/utils/tokens';
-import { validateType } from '../../../core/utils/validation';
-import Constants from '../../../common/constants';
+import { validateParameterValueWithSwaggerType } from '../../../core/utils/validation';
 
 export interface TemplateState {
   templateName?: string;
@@ -58,45 +56,7 @@ export const validateParameterValue = (data: { type: string; value?: string }, r
     });
   }
 
-  const swaggerType = convertWorkflowParameterTypeToSwaggerType(type);
-  let error = validateType(swaggerType, /* parameterFormat */ '', valueToValidate);
-
-  if (error) {
-    return error;
-  }
-
-  switch (swaggerType) {
-    case Constants.SWAGGER.TYPE.ARRAY: {
-      let isInvalid = false;
-      try {
-        isInvalid = !Array.isArray(JSON.parse(valueToValidate));
-      } catch {
-        isInvalid = true;
-      }
-
-      error = isInvalid
-        ? intl.formatMessage({ defaultMessage: 'Enter a valid Array.', id: 'JgugQX', description: 'Error validation message' })
-        : undefined;
-      break;
-    }
-
-    case Constants.SWAGGER.TYPE.OBJECT:
-    case Constants.SWAGGER.TYPE.BOOLEAN: {
-      try {
-        JSON.parse(valueToValidate);
-      } catch {
-        error =
-          swaggerType === Constants.SWAGGER.TYPE.BOOLEAN
-            ? intl.formatMessage({ defaultMessage: 'Enter a valid Boolean.', id: 'b7BQdu', description: 'Error validation message' })
-            : intl.formatMessage({ defaultMessage: 'Enter a valid JSON.', id: 'dEe6Ob', description: 'Error validation message' });
-      }
-      break;
-    }
-
-    default:
-      break;
-  }
-  return error;
+  return validateParameterValueWithSwaggerType(type, valueToValidate, required, intl);
 };
 
 export const templateSlice = createSlice({
