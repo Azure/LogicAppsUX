@@ -60,10 +60,10 @@ jobs:
                 args: [--frozen-lockfile, --strict-peer-dependencies]   
 
         - run: pnpm turbo run test:lib --cache-dir=.turbo 
-        # - run: |
-        #     chmod +x ./merge-lcov.sh
-        #     ./merge-lcov.sh
-        #   shell: bash
+        - run: |
+            chmod +x ./merge-lcov.sh
+            ./merge-lcov.sh
+          shell: bash
         
         # - run: pnpm lcov-result-merger 'libs/*/coverage/lcov.info' './coverage'
         - name: Setup LCOV
@@ -76,5 +76,5 @@ jobs:
             minimum-coverage: 0
             artifact-name: code-coverage-report
             github-token: ${{ secrets.GITHUB_TOKEN }}
-            working-directory: ./libs
+            working-directory: .
             update-comment: true
