@@ -23,6 +23,11 @@ jobs:
           with:
             node-version: 20.x  
 
+        - uses: actions/setup-dotnet@v4
+          with:
+            dotnet-version: 6.x
+            cache: true
+
         - uses: pnpm/action-setup@v3
           with:
             version: 8
@@ -31,8 +36,14 @@ jobs:
                 args: [--frozen-lockfile, --strict-peer-dependencies]   
 
         - run: pnpm turbo run test:lib --cache-dir=.turbo 
-        - run: npx cobertura-merge-globby -o coverage.xml --files="**/cobertura-coverage.xml"
+        - name: Create code coverage report
+          run: |
+            dotnet tool install -g dotnet-reportgenerator-globaltool
+            reportgenerator -reports:"libs/*/coverage/cobertura-coverage.xml" -targetdir:CodeCoverage -reporttypes:'MarkdownSummaryGithub,Cobertura'
+
         - uses: clearlyip/code-coverage-report-action@v4
           with:
             #Location of the generated coverage file
-            filename: 'coverage.xml'
+            filename: 'CodeCoverage/Cobertura.xml'
+        - name: Write to Job Summary
+          run: cat CodeCoverage/SummaryGithub.md >> $GITHUB_STEP_SUMMARY
