@@ -7,6 +7,7 @@ import type React from 'react';
 import { useCallback, useMemo, useState } from 'react';
 import { useIntl } from 'react-intl';
 import { useStyles } from './styles';
+import { SchemaTree } from './tree/SchemaTree';
 
 const acceptedSchemaFileInputExtensions = '.xsd, .json';
 
@@ -139,12 +140,10 @@ export const AddOrUpdateSchemaView = ({
             )}
           </div>
         ) : (
-          <>
-            <div className={styles.searchBoxWrapper}>
-              <SearchBox placeholder={stringResources.SEARCH_PROPERTIES} className={styles.searchBox} />
-            </div>
-            <div />
-          </>
+          <div className={styles.treeWrapper}>
+            <SearchBox placeholder={stringResources.SEARCH_PROPERTIES} className={styles.searchBox} />
+            <SchemaTree schemaType={schemaType} />
+          </div>
         )}
       </div>
     </div>
