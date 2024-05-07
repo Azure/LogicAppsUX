@@ -3,18 +3,28 @@ import type { PayloadAction } from '@reduxjs/toolkit';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { templatesPathFromState, type RootState } from './store';
 
+export interface TemplateParameterDefinition extends Template.Parameter {
+  value?: any;
+}
+
 export interface TemplateState {
   templateName?: string;
   workflowDefinition: LogicAppsV2.WorkflowDefinition | undefined;
   manifest: Template.Manifest | undefined;
-  parameters: Template.Parameter[];
+  parameters: {
+    definitions: Record<string, Template.Parameter>;
+    validationErrors: Record<string, string | undefined>;
+  };
   connections: Template.Connection[];
 }
 
 const initialState: TemplateState = {
   workflowDefinition: undefined,
   manifest: undefined,
-  parameters: [],
+  parameters: {
+    definitions: {},
+    validationErrors: {},
+  },
   connections: [],
 };
 
@@ -54,7 +64,10 @@ export const templateSlice = createSlice({
       // TODO change to null for error handling case
       state.workflowDefinition = undefined;
       state.manifest = undefined;
-      state.parameters = [];
+      state.parameters = {
+        definitions: {},
+        validationErrors: {},
+      };
       state.connections = [];
     });
   },
@@ -73,11 +86,18 @@ const loadTemplateFromGithub = async (
 
     const templateManifest: Template.Manifest =
       manifest ?? (await import(`${templatesPathFromState}/${templateName}/manifest.json`)).default;
+    const parametersDefinitions = templateManifest.parameters?.reduce((result: Record<string, TemplateParameterDefinition>, parameter) => {
+      result[parameter.name] = parameter;
+      return result;
+    }, {});
 
     return {
       workflowDefinition: (templateWorkflowDefinition as any)?.default ?? templateWorkflowDefinition,
       manifest: templateManifest,
-      parameters: templateManifest.parameters,
+      parameters: {
+        definitions: parametersDefinitions,
+        validationErrors: {},
+      },
       connections: templateManifest.connections,
     };
   } catch (ex) {
