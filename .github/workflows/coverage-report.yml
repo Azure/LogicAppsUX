@@ -50,7 +50,7 @@ jobs:
                 args: [--frozen-lockfile, --strict-peer-dependencies]   
 
         - run: turbo run test:lib
-        - uses: ScaCap/code-coverage-assistant
+        - uses: ScaCap/code-coverage-assistant@v1.1
           with:
               github-token: ${{ secrets.AUTOMATION_PAT }}
               monorepo-base-path: "."
