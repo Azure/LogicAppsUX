@@ -1,17 +1,21 @@
 import { List, Text } from '@fluentui/react';
+import type { WorkflowParameterUpdateEvent } from '@microsoft/designer-ui';
 import { WorkflowparameterField } from '@microsoft/designer-ui';
-import type { TemplateParameterDefinition } from '../../../core/state/templates/templateSlice';
+import { updateTemplateParameterValue, type TemplateParameterDefinition } from '../../../core/state/templates/templateSlice';
 import { useIntl } from 'react-intl';
-import type { RootState } from '../../../core/state/templates/store';
-import { useSelector } from 'react-redux';
+import type { AppDispatch, RootState } from '../../../core/state/templates/store';
+import { useDispatch, useSelector } from 'react-redux';
 
 const VALUE_KEY = 'value';
 
 export const DisplayParameters = () => {
-  const intl = useIntl();
+  const dispatch = useDispatch<AppDispatch>();
   const { parameters } = useSelector((state: RootState) => state.template);
+  const intl = useIntl();
   const validationErrors = parameters.validationErrors;
   const parametersDefinition = Object.entries(parameters.definitions).map(([key, value]) => ({ id: key, ...value }));
+
+  const onUpdateParameterValue = (event: WorkflowParameterUpdateEvent) => dispatch(updateTemplateParameterValue(event));
 
   const titleText = intl.formatMessage({
     defaultMessage: 'Parameters',
@@ -31,7 +35,7 @@ export const DisplayParameters = () => {
               [VALUE_KEY]: validationErrors[item?.name ?? ''],
             }}
             setName={() => {}}
-            onChange={() => {}}
+            onChange={onUpdateParameterValue}
             isEditable={{
               [VALUE_KEY]: true,
             }}

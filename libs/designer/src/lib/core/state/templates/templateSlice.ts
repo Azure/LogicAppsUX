@@ -1,7 +1,11 @@
-import type { LogicAppsV2, Template } from '@microsoft/logic-apps-shared';
+import { getIntl, getRecordEntry, type LogicAppsV2, type Template } from '@microsoft/logic-apps-shared';
 import type { PayloadAction } from '@reduxjs/toolkit';
 import { createAsyncThunk, createSlice } from '@reduxjs/toolkit';
 import { templatesPathFromState, type RootState } from './store';
+import type { WorkflowParameterUpdateEvent } from '@microsoft/designer-ui';
+import { convertWorkflowParameterTypeToSwaggerType } from '../../../core/utils/tokens';
+import { validateType } from '../../../core/utils/validation';
+import Constants from '../../../common/constants';
 
 export interface TemplateParameterDefinition extends Template.Parameter {
   value?: any;
@@ -42,12 +46,82 @@ export const loadTemplate = createAsyncThunk(
   }
 );
 
+export const validateParameterValue = (data: { type: string; value?: string }, required = true): string | undefined => {
+  const intl = getIntl();
+
+  const { value: valueToValidate, type } = data;
+  if (valueToValidate === '' || valueToValidate === undefined) {
+    if (!required) {
+      return undefined;
+    }
+    return intl.formatMessage({
+      defaultMessage: 'Must provide value for parameter.',
+      id: 'VL9wOu',
+      description: 'Error message when the workflow parameter value is empty.',
+    });
+  }
+
+  const swaggerType = convertWorkflowParameterTypeToSwaggerType(type);
+  let error = validateType(swaggerType, /* parameterFormat */ '', valueToValidate);
+
+  if (error) {
+    return error;
+  }
+
+  switch (swaggerType) {
+    case Constants.SWAGGER.TYPE.ARRAY: {
+      let isInvalid = false;
+      try {
+        isInvalid = !Array.isArray(JSON.parse(valueToValidate));
+      } catch {
+        isInvalid = true;
+      }
+
+      error = isInvalid
+        ? intl.formatMessage({ defaultMessage: 'Enter a valid Array.', id: 'JgugQX', description: 'Error validation message' })
+        : undefined;
+      break;
+    }
+
+    case Constants.SWAGGER.TYPE.OBJECT:
+    case Constants.SWAGGER.TYPE.BOOLEAN: {
+      try {
+        JSON.parse(valueToValidate);
+      } catch {
+        error =
+          swaggerType === Constants.SWAGGER.TYPE.BOOLEAN
+            ? intl.formatMessage({ defaultMessage: 'Enter a valid Boolean.', id: 'b7BQdu', description: 'Error validation message' })
+            : intl.formatMessage({ defaultMessage: 'Enter a valid JSON.', id: 'dEe6Ob', description: 'Error validation message' });
+      }
+      break;
+    }
+
+    default:
+      break;
+  }
+  return error;
+};
+
 export const templateSlice = createSlice({
   name: 'template',
   initialState,
   reducers: {
     changeCurrentTemplateName: (state, action: PayloadAction<string>) => {
       state.templateName = action.payload;
+    },
+    updateTemplateParameterValue: (state, action: PayloadAction<WorkflowParameterUpdateEvent>) => {
+      const {
+        id,
+        newDefinition: { type, value }, //TODO: add required?
+        // useLegacy = false,
+      } = action.payload;
+      const validationError = validateParameterValue({ type, value }, true);
+
+      state.parameters.definitions[id] = {
+        ...(getRecordEntry(state.parameters.definitions, id) ?? ({} as any)),
+        value,
+      };
+      state.parameters.validationErrors[id] = validationError;
     },
   },
   extraReducers: (builder) => {
@@ -73,7 +147,7 @@ export const templateSlice = createSlice({
   },
 });
 
-export const { changeCurrentTemplateName } = templateSlice.actions;
+export const { changeCurrentTemplateName, updateTemplateParameterValue } = templateSlice.actions;
 
 const loadTemplateFromGithub = async (
   templateName: string,
@@ -87,7 +161,10 @@ const loadTemplateFromGithub = async (
     const templateManifest: Template.Manifest =
       manifest ?? (await import(`${templatesPathFromState}/${templateName}/manifest.json`)).default;
     const parametersDefinitions = templateManifest.parameters?.reduce((result: Record<string, TemplateParameterDefinition>, parameter) => {
-      result[parameter.name] = parameter;
+      result[parameter.name] = {
+        ...parameter,
+        value: parameter.default,
+      };
       return result;
     }, {});
 
