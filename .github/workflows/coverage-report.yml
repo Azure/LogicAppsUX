@@ -49,7 +49,7 @@ jobs:
               - recursive: true
                 args: [--frozen-lockfile, --strict-peer-dependencies]   
 
-        - run: turbo run test:lib
+        - run: pnpm turbo run test:lib
         - uses: ScaCap/code-coverage-assistant@v1.1
           with:
               github-token: ${{ secrets.AUTOMATION_PAT }}
