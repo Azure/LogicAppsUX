@@ -14,7 +14,9 @@ jobs:
     steps:
         - name: 'Checkout Github Action'
           uses: actions/checkout@master
-
+          with:
+            fetch-depth: 0
+            
         - name: Cache turbo build setup
           uses: actions/cache@v4
           with:
