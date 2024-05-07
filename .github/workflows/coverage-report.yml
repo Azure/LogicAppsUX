@@ -24,6 +24,10 @@ jobs:
             key: ${{ runner.os }}-turbo-${{ github.sha }}
             restore-keys: |
               ${{ runner.os }}-turbo-
+        - uses: actions/setup-dotnet@v4
+          with:
+            dotnet-version: 6.x
+            cache: true
 
         - name: Set up Node.js 
           uses: actions/setup-node@v1
@@ -38,17 +42,24 @@ jobs:
                 args: [--frozen-lockfile, --strict-peer-dependencies]   
 
         - run: pnpm turbo run test:lib --cache-dir=.turbo -- --changed origin/main
-        - run: npx cobertura-merge-globby -o coverage.xml --files="**/cobertura-coverage.xml"
+        - name: Create code coverage report
+          run: |
+            dotnet tool install -g dotnet-reportgenerator-globaltool
+            reportgenerator -reports:"libs/*/coverage/cobertura-coverage.xml" -targetdir:CodeCoverage -reporttypes:'MarkdownSummaryGithub,Cobertura'
+
         - name: Generate Coverage Report
           uses: clearlyip/code-coverage-report-action@v4
           id: code_coverage_report_action
           with:
             #Location of the generate coverage file
-            filename: 'coverage.xml'
+            filename: 'CodeCoverage/Cobertura.xml'
             github_token: ${{ secrets.GITHUB_TOKEN }}
             badge: true
             fail_on_negative_difference: true
             artifact_download_workflow_names: 'base-coverage'
+
+        - name: Write to Job Summary
+          run: cat CodeCoverage/SummaryGithub.md >> $GITHUB_STEP_SUMMARY
         - name: Add Coverage PR Comment
           #Make sure the report was generated and that the event is actually a pull request, run if failed or success
           uses: marocchino/sticky-pull-request-comment@v2
