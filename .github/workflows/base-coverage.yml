@@ -1,4 +1,4 @@
-name: Generate Base Main Coverage Report
+name: 'base-coverage'
 
 on:
   push:
