@@ -2,7 +2,7 @@ name: Playwright Tests - Real APIs
 on:
   workflow_dispatch:
   schedule:
-    - cron: '0 */6 * * *'
+    - cron: '0 */2 * * *'
 concurrency:
   group: e2e_tests
   cancel-in-progress: true
