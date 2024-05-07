@@ -60,21 +60,23 @@ jobs:
                 args: [--frozen-lockfile, --strict-peer-dependencies]   
 
         - run: pnpm turbo run test:lib --cache-dir=.turbo 
-        - run: |
-            chmod +x ./merge-lcov.sh
-            ./merge-lcov.sh
-          shell: bash
-        
-        # - run: pnpm lcov-result-merger 'libs/*/coverage/lcov.info' './coverage'
-        - name: Setup LCOV
-          uses: hrishikesh-kadam/setup-lcov@v1
 
-        - name: Report code coverage
-          uses: zgosalvez/github-actions-report-lcov@v3
+        - name: Code Coverage Report
+          uses: irongut/CodeCoverageSummary@v1.3.0
           with:
-            coverage-files: "**/coverage/lcov.info"
-            minimum-coverage: 0
-            artifact-name: code-coverage-report
-            github-token: ${{ secrets.GITHUB_TOKEN }}
-            working-directory: .
-            update-comment: true
+            filename: "libs/**/coverage/coverage.cobertura.xml"
+            badge: true
+            fail_below_min: false
+            format: markdown
+            hide_branch_rate: false
+            hide_complexity: true
+            indicators: true
+            output: both
+            thresholds: '0 50'
+            
+        - name: Add Coverage PR Comment
+          uses: marocchino/sticky-pull-request-comment@v2
+          if: github.event_name == 'pull_request'
+          with:
+            recreate: true
+            path: code-coverage-results.md
