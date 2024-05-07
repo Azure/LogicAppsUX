@@ -60,23 +60,19 @@ jobs:
                 args: [--frozen-lockfile, --strict-peer-dependencies]   
 
         - run: pnpm turbo run test:lib --cache-dir=.turbo 
-
-        - name: Code Coverage Report
-          uses: irongut/CodeCoverageSummary@v1.3.0
+        - run: npx cobertura-merge-globby -o coverage.xml --files="**/cobertura-coverage.xml"
+        - name: Generate Coverage Report
+          uses: clearlyip/code-coverage-report-action@v4
+          id: code_coverage_report_action
           with:
-            filename: "libs/**/coverage/cobertura-coverage.xml"
+            #Location of the generate coverage file
+            filename: 'coverage.xml'
+            github_token: ${{ secrets.GITHUB_TOKEN }}
             badge: true
-            fail_below_min: false
-            format: markdown
-            hide_branch_rate: false
-            hide_complexity: true
-            indicators: true
-            output: both
-            thresholds: '0 50'
-
         - name: Add Coverage PR Comment
+          #Make sure the report was generated and that the event is actually a pull request, run if failed or success
           uses: marocchino/sticky-pull-request-comment@v2
-          if: github.event_name == 'pull_request'
+          if: steps.code_coverage_report_action.outputs.file != '' && github.event_name == 'pull_request' && (success() || failure())
           with:
             recreate: true
             path: code-coverage-results.md
