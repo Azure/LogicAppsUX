@@ -46,7 +46,7 @@ jobs:
             key: ${{ runner.os }}-turbo-${{ github.sha }}
             restore-keys: |
               ${{ runner.os }}-turbo-
-                
+
         - name: Set up Node.js 
           uses: actions/setup-node@v1
           with:
@@ -59,7 +59,7 @@ jobs:
               - recursive: true
                 args: [--frozen-lockfile, --strict-peer-dependencies]   
 
-        - run: pnpm turbo run test:lib
+        - run: pnpm turbo run test:lib --cache-dir=.turbo
         - name: Setup LCOV
           uses: hrishikesh-kadam/setup-lcov@v1
 
