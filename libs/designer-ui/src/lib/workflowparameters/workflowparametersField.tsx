@@ -10,7 +10,7 @@ import type {
   ITextStyles,
 } from '@fluentui/react';
 import { Dropdown, FontWeights, getTheme, Label, Text, TextField } from '@fluentui/react';
-import { equals } from '@microsoft/logic-apps-shared';
+import { equals, getRecordEntry } from '@microsoft/logic-apps-shared';
 import { useState } from 'react';
 import { useIntl } from 'react-intl';
 
@@ -58,6 +58,7 @@ const textStyles: Partial<ITextStyles> = {
 };
 
 const NAME_KEY = 'name';
+const TYPE_KEY = 'type';
 const VALUE_KEY = 'value';
 const DEFAULT_VALUE_KEY = 'defaultValue';
 
@@ -76,7 +77,14 @@ export interface WorkflowparameterFieldProps {
   onChange?: WorkflowParameterUpdateHandler;
   useLegacy?: boolean;
   isReadOnly?: boolean;
-  isEditable?: boolean;
+  isEditable?:
+    | boolean
+    | {
+        [NAME_KEY]?: boolean;
+        [TYPE_KEY]?: boolean;
+        [VALUE_KEY]?: boolean;
+        [DEFAULT_VALUE_KEY]?: boolean;
+      };
 }
 
 export const WorkflowparameterField = ({
@@ -290,13 +298,17 @@ export const WorkflowparameterField = ({
     );
   };
 
+  const isFieldEditable = (fieldKey: string): boolean | undefined => {
+    return typeof isEditable === 'boolean' ? isEditable : getRecordEntry(isEditable, fieldKey);
+  };
+
   return (
     <>
       <div className="msla-workflow-parameter-field">
         <Label styles={labelStyles} required={true} htmlFor={parameterDetails.name}>
           {nameTitle}
         </Label>
-        {isEditable ? (
+        {isFieldEditable(NAME_KEY) ? (
           <TextField
             data-testid={parameterDetails.name}
             styles={textFieldStyles}
@@ -316,7 +328,7 @@ export const WorkflowparameterField = ({
         <Label styles={labelStyles} required={true} htmlFor={parameterDetails.type}>
           {typeTitle}
         </Label>
-        {isEditable ? (
+        {isFieldEditable(TYPE_KEY) ? (
           <Dropdown
             data-testid={parameterDetails.type}
             id={parameterDetails.type}
@@ -337,7 +349,7 @@ export const WorkflowparameterField = ({
             <Label styles={labelStyles} required={true} htmlFor={parameterDetails.defaultValue}>
               {defaultValueTitle}
             </Label>
-            {isEditable ? (
+            {isFieldEditable(DEFAULT_VALUE_KEY) ? (
               <TextField
                 data-testid={parameterDetails.defaultValue}
                 id={parameterDetails.defaultValue}
@@ -359,7 +371,7 @@ export const WorkflowparameterField = ({
             <Label styles={labelStyles} htmlFor={parameterDetails.value}>
               {actualValueTitle}
             </Label>
-            {isEditable ? (
+            {isFieldEditable(VALUE_KEY) ? (
               <TextField
                 data-testid={parameterDetails.value}
                 id={parameterDetails.value}
@@ -379,7 +391,7 @@ export const WorkflowparameterField = ({
           <Label styles={labelStyles} required={true} htmlFor={parameterDetails.value}>
             {valueTitle}
           </Label>
-          {isEditable ? (
+          {isFieldEditable(VALUE_KEY) ? (
             <TextField
               data-testid={parameterDetails.value}
               id={parameterDetails.value}

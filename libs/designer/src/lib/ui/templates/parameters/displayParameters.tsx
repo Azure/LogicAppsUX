@@ -32,7 +32,9 @@ export const DisplayParameters = () => {
             }}
             setName={() => {}}
             onChange={() => {}}
-            isEditable={true}
+            isEditable={{
+              [VALUE_KEY]: true,
+            }}
             isReadOnly={false}
             useLegacy={false}
           />
