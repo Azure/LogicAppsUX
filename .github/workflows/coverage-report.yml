@@ -24,10 +24,6 @@ jobs:
             key: ${{ runner.os }}-turbo-${{ github.sha }}
             restore-keys: |
               ${{ runner.os }}-turbo-
-        - uses: actions/setup-dotnet@v4
-          with:
-            dotnet-version: 6.x
-            cache: true
 
         - name: Set up Node.js 
           uses: actions/setup-node@v1
