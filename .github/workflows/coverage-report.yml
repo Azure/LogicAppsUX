@@ -28,7 +28,7 @@ jobs:
             - recursive: true
               args: [--frozen-lockfile, --strict-peer-dependencies]
             
-      - run: turbo run test:lib
+      - run: pnpm turbo run test:lib --cache-dir=.turbo 
       - run: npx cobertura-merge-globby -o coverage.xml --files="**/cobertura-coverage.xml"
       - uses: actions/upload-artifact@v4
         if: always()
