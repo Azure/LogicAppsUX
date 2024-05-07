@@ -10,7 +10,7 @@ export default defineProject({
     watch: false,
     environment: 'jsdom',
     setupFiles: ['test-setup.ts'],
-    coverage: { enabled: true, provider: 'istanbul', include: ['src/**/*'], reporter: ['html', 'json'] },
+    coverage: { enabled: true, provider: 'istanbul', include: ['src/**/*'], reporter: ['html', 'json', 'lcov'] },
     restoreMocks: true,
 
   },

@@ -1,0 +1,54 @@
+name: Test Runner
+
+on:
+  pull_request:
+    branches: [main, dev/*, hotfix/*]
+jobs:
+  base-coverage:
+    runs-on: ubuntu-latest
+
+    steps:
+      # checkout the repo
+      - name: 'Checkout Github Action'
+        uses: actions/checkout@master
+        with:
+            ref: main
+
+      - name: Set up Node.js 
+        uses: actions/setup-node@v1
+        with:
+          node-version: 20.x
+
+      - uses: pnpm/action-setup@v3
+        with:
+          version: 8
+          run_install: |
+            - recursive: true
+              args: [--frozen-lockfile, --strict-peer-dependencies]
+            
+      - run: turbo run test:lib
+
+  pr-coverage:
+    runs-on: ubuntu-latest    
+    steps:
+        # checkout the repo
+        - name: 'Checkout Github Action'
+          uses: actions/checkout@master
+
+        - name: Set up Node.js 
+          uses: actions/setup-node@v1
+          with:
+            node-version: 20.x  
+
+        - uses: pnpm/action-setup@v3
+          with:
+            version: 8
+            run_install: |
+              - recursive: true
+                args: [--frozen-lockfile, --strict-peer-dependencies]   
+
+        - run: turbo run test:lib
+        - uses: ScaCap/code-coverage-assistant
+          with:
+              github-token: ${{ secrets.AUTOMATION_PAT }}
+              monorepo-base-path: "."
