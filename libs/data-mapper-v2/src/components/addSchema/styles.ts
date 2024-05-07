@@ -35,7 +35,10 @@ export const useStyles = makeStyles({
     display: 'flex',
     height: '100vh',
   },
-  drawer: {
+  uberDrawer: {
+    ...shorthands.overflow('visible'),
+  },
+  defaultDrawer: {
     backgroundColor: '#fff',
   },
   fileSelectedDrawer: {
@@ -51,9 +54,10 @@ export const useStyles = makeStyles({
     width: '85%',
     alignSelf: 'center',
   },
-  searchBoxWrapper: {
+  treeWrapper: {
     display: 'flex',
     width: '100%',
     justifyContent: 'center',
+    flexDirection: 'column',
   },
 });

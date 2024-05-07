@@ -63,8 +63,7 @@ export const DataMapperDesigner = ({ readCurrentCustomXsltPathOptions, setIsMapS
             readCurrentSchemaOptions={() => console.log('')}
             schemaType={SchemaType.Source}
           />
-
-          <div id="editorView" style={{ display: 'flex', flex: '1 1 1px' }}>
+          <div id="editorView" style={{ display: 'flex', flex: '1 1 1px', zIndex: -1 }}>
             <div
               id="centerViewWithBreadcrumb"
               style={{

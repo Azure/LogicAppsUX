@@ -229,7 +229,8 @@ export const AddSchemaDrawer = ({ readCurrentSchemaOptions, onSubmitSchemaFileSe
         open={!!currentPanelView}
         size="small"
         className={mergeClasses(
-          selectedSchemaFile ? styles.fileSelectedDrawer : styles.drawer,
+          styles.uberDrawer,
+          selectedSchemaFile ? styles.fileSelectedDrawer : styles.defaultDrawer,
           schemaType === SchemaType.Source ? styles.leftDrawer : styles.rightDrawer
         )}
       >
