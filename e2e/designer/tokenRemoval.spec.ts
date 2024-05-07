@@ -45,6 +45,30 @@ test.describe(
       expect(JSON.stringify(serializedNew)).not.toContain("@variables('ArrayVariable')");
       expect(JSON.stringify(serializedNew)).not.toContain("@{variables('ArrayVariable')}");
     });
+
+    test('Tokens should be removed from parameters when trigger is deleted', async ({ page }) => {
+      await page.goto('/');
+
+      await GoToMockWorkflow(page, 'Panel');
+      const serializedOld: any = await getSerializedWorkflowFromState(page);
+      expect
+        .soft(serializedOld.definition.actions.Parse_JSON.inputs.content)
+        .toEqual(
+          "@{triggerBody()?['string']}@{variables('ArrayVariable')}@{parameters('EILCO Admin Nominations-OCSA List (cr773_EILCOAdminNominations_OCSA_L2)')}"
+        );
+      await page.getByTestId('card-manual').click({
+        button: 'right',
+      });
+      await page.getByText('Delete', { exact: true }).click();
+      await page.getByRole('button', { name: 'OK' }).click();
+      const serializedNew: any = await getSerializedWorkflowFromState(page);
+      expect(serializedNew.definition.actions.Parse_JSON.inputs.content).toEqual(
+        "@{variables('ArrayVariable')}@{parameters('EILCO Admin Nominations-OCSA List (cr773_EILCOAdminNominations_OCSA_L2)')}"
+      );
+      expect(JSON.stringify(serializedNew)).not.toContain("@triggerBody()?['string']");
+      expect(JSON.stringify(serializedNew)).not.toContain("@{triggerBody()?['string']}");
+    });
+
     test('Tokens should be removed from parameters when workflow parameter is deleted', async ({ page }) => {
       await page.goto('/');
 

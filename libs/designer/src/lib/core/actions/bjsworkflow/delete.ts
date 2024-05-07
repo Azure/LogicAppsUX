@@ -17,7 +17,7 @@ import type { Dispatch } from '@reduxjs/toolkit';
 import { createAsyncThunk } from '@reduxjs/toolkit';
 import { batch } from 'react-redux';
 import { deleteParameter } from '../../state/workflowparameters/workflowparametersSlice';
-import { isParameterToken, isTokenValueSegment, isVariableToken } from '../../utils/parameters/segment';
+import { isOutputToken, isParameterToken, isTokenValueSegment, isVariableToken } from '../../utils/parameters/segment';
 
 type DeleteOperationPayload = {
   nodeId: string;
@@ -37,23 +37,23 @@ export const deleteOperation = createAsyncThunk(
   'deleteOperation',
   async (deletePayload: DeleteOperationPayload, { getState, dispatch }) => {
     batch(() => {
-      const { nodeId } = deletePayload;
+      const { nodeId, isTrigger } = deletePayload;
 
       dispatch(clearFocusNode());
       dispatch(clearPanel());
 
       dispatch(deleteNode(deletePayload));
       deleteCustomCodeInfo(nodeId, dispatch, getState() as RootState);
-      deleteOperationDetails(nodeId, dispatch, getState() as RootState);
+      deleteOperationDetails(nodeId, dispatch, getState() as RootState, isTrigger);
       updateAllUpstreamNodes(getState() as RootState, dispatch);
     });
   }
 );
 
-const deleteOperationDetails = async (nodeId: string, dispatch: Dispatch, state: RootState): Promise<void> => {
+const deleteOperationDetails = async (nodeId: string, dispatch: Dispatch, state: RootState, isTrigger?: boolean): Promise<void> => {
   dispatch(removeNodeConnectionData({ nodeId }));
   dispatch(deinitializeNodes([nodeId]));
-  removeAllTokensFromNode(state, dispatch, nodeId);
+  removeAllTokensFromNode(state, dispatch, nodeId, undefined, isTrigger);
   dispatch(deinitializeTokensAndVariables({ id: nodeId }));
 
   dispatch(deinitializeOperationInfo({ id: nodeId }));
@@ -61,7 +61,13 @@ const deleteOperationDetails = async (nodeId: string, dispatch: Dispatch, state:
   dispatch(deinitializeStaticResultProperty({ id: nodeId + 0 }));
 };
 
-export const removeAllTokensFromNode = (state: RootState, dispatch: Dispatch, nodeId?: string, parameterId?: String): void => {
+export const removeAllTokensFromNode = (
+  state: RootState,
+  dispatch: Dispatch,
+  nodeId?: string,
+  parameterId?: String,
+  isTrigger?: boolean
+): void => {
   const variables = nodeId ? state.tokens.variables[nodeId] : [];
   const nodeInputs = state.operations.inputParameters;
   for (const [nid, inputParam] of Object.entries(nodeInputs)) {
@@ -84,7 +90,10 @@ export const removeAllTokensFromNode = (state: RootState, dispatch: Dispatch, no
             } else if (parameterId && isParameterToken(value.token) && value.token?.name === parameterId) {
               paramValue = paramValue.filter((v) => v.id !== value.id);
               updatedValue = true;
-            } else if (nodeId && value.token?.actionName === nodeId) {
+            } else if (
+              nodeId &&
+              (value.token?.actionName === nodeId || (isOutputToken(value.token) && !value.token?.actionName && isTrigger))
+            ) {
               paramValue = paramValue.filter((v) => v.id !== value.id);
               updatedValue = true;
             }
