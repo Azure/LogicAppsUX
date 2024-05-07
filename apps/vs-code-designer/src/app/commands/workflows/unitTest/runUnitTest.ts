@@ -2,15 +2,15 @@
  *  Copyright (c) Microsoft Corporation. All rights reserved.
  *  Licensed under the MIT License. See License.txt in the project root for license information.
  *--------------------------------------------------------------------------------------------*/
-import { defaultExtensionBundlePathValue, runUnitTestEvent } from '../../../../constants';
+import { defaultExtensionBundlePathValue, runUnitTestEvent, testsDirectoryName } from '../../../../constants';
 import { ext } from '../../../../extensionVariables';
 import { localize } from '../../../../localize';
-import { getUnitTestName, type UnitTestResult } from '../../../utils/unitTests';
+import { getUnitTestName, pickUnitTest, type UnitTestResult } from '../../../utils/unitTests';
 import { type IActionContext, callWithTelemetryAndErrorHandling } from '@microsoft/vscode-azext-utils';
 import * as vscode from 'vscode';
 import * as cp from 'child_process';
 import * as path from 'path';
-import { getWorkspacePath } from '../../../utils/workspace';
+import { getWorkspacePath, isMultiRootWorkspace } from '../../../utils/workspace';
 import { getLatestBundleVersion } from '../../../utils/bundleFeed';
 
 /**
@@ -28,7 +28,19 @@ export async function runUnitTest(context: IActionContext, node: vscode.Uri | vs
 
     return await vscode.window.withProgress(options, async () => {
       try {
-        const unitTestPath = node instanceof vscode.Uri ? node.fsPath : node.uri.fsPath;
+        let unitTestPath: string;
+        if (node && node instanceof vscode.Uri) {
+          unitTestPath = node.fsPath;
+        } else if (node && !(node instanceof vscode.Uri) && node.uri instanceof vscode.Uri) {
+          unitTestPath = node.uri.fsPath;
+        } else if (isMultiRootWorkspace()) {
+          const workspacePath = path.dirname(vscode.workspace.workspaceFolders[0].uri.fsPath);
+          const unitTest = await pickUnitTest(context, path.join(workspacePath, testsDirectoryName));
+          unitTestPath = (vscode.Uri.file(unitTest.data) as vscode.Uri).fsPath;
+        } else {
+          throw new Error(localize('expectedWorkspace', 'In order to create unit tests, you must have a workspace open.'));
+        }
+
         const start = Date.now();
         await new Promise((resolve) => setTimeout(resolve, 1000 + Math.random() * 1000));
         const duration = Date.now() - start;
