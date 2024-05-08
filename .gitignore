@@ -10,7 +10,7 @@ build
 .nx
 # dependencies
 node_modules
-
+/CodeCoverage
 # IDEs and editors
 /.idea
 .project

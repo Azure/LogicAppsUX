@@ -25,7 +25,7 @@ exports[`ui/monitoring/values/xml > should render XML 1`] = `
         className="buttons"
       >
         <button
-          aria-label="Select all text in XML"
+          aria-label="Select all text in 'XML'"
           className="ms-Button ms-Button--icon root-109"
           data-is-focusable={true}
           onClick={[Function]}
@@ -34,6 +34,7 @@ exports[`ui/monitoring/values/xml > should render XML 1`] = `
           onKeyUp={[Function]}
           onMouseDown={[Function]}
           onMouseUp={[Function]}
+          title="Select all text in 'XML'"
           type="button"
         >
           <span
@@ -64,6 +65,7 @@ exports[`ui/monitoring/values/xml > should render XML 1`] = `
           onKeyUp={[Function]}
           onMouseDown={[Function]}
           onMouseUp={[Function]}
+          title="Copy the value of 'XML' to the clipboard"
           type="button"
         >
           <span
@@ -89,8 +91,8 @@ exports[`ui/monitoring/values/xml > should render XML 1`] = `
         className="prism-code language-json"
         style={
           {
-            "backgroundColor": "#1E1E1E",
-            "color": "#9CDCFE",
+            "backgroundColor": "#ffffff",
+            "color": "#000000",
           }
         }
       >
@@ -99,7 +101,7 @@ exports[`ui/monitoring/values/xml > should render XML 1`] = `
           style={
             {
               "backgroundColor": undefined,
-              "color": "#9CDCFE",
+              "color": "#000000",
             }
           }
         >
@@ -138,7 +140,7 @@ exports[`ui/monitoring/values/xml > should render XML with encoded UTF-8 Chinese
         className="buttons"
       >
         <button
-          aria-label="Select all text in XML"
+          aria-label="Select all text in 'XML'"
           className="ms-Button ms-Button--icon root-109"
           data-is-focusable={true}
           onClick={[Function]}
@@ -147,6 +149,7 @@ exports[`ui/monitoring/values/xml > should render XML with encoded UTF-8 Chinese
           onKeyUp={[Function]}
           onMouseDown={[Function]}
           onMouseUp={[Function]}
+          title="Select all text in 'XML'"
           type="button"
         >
           <span
@@ -177,6 +180,7 @@ exports[`ui/monitoring/values/xml > should render XML with encoded UTF-8 Chinese
           onKeyUp={[Function]}
           onMouseDown={[Function]}
           onMouseUp={[Function]}
+          title="Copy the value of 'XML' to the clipboard"
           type="button"
         >
           <span
@@ -202,8 +206,8 @@ exports[`ui/monitoring/values/xml > should render XML with encoded UTF-8 Chinese
         className="prism-code language-json"
         style={
           {
-            "backgroundColor": "#1E1E1E",
-            "color": "#9CDCFE",
+            "backgroundColor": "#ffffff",
+            "color": "#000000",
           }
         }
       >
@@ -212,7 +216,7 @@ exports[`ui/monitoring/values/xml > should render XML with encoded UTF-8 Chinese
           style={
             {
               "backgroundColor": undefined,
-              "color": "#9CDCFE",
+              "color": "#000000",
             }
           }
         >
@@ -251,7 +255,7 @@ exports[`ui/monitoring/values/xml > should render XML without the UTF-8 byte ord
         className="buttons"
       >
         <button
-          aria-label="Select all text in XML"
+          aria-label="Select all text in 'XML'"
           className="ms-Button ms-Button--icon root-109"
           data-is-focusable={true}
           onClick={[Function]}
@@ -260,6 +264,7 @@ exports[`ui/monitoring/values/xml > should render XML without the UTF-8 byte ord
           onKeyUp={[Function]}
           onMouseDown={[Function]}
           onMouseUp={[Function]}
+          title="Select all text in 'XML'"
           type="button"
         >
           <span
@@ -290,6 +295,7 @@ exports[`ui/monitoring/values/xml > should render XML without the UTF-8 byte ord
           onKeyUp={[Function]}
           onMouseDown={[Function]}
           onMouseUp={[Function]}
+          title="Copy the value of 'XML' to the clipboard"
           type="button"
         >
           <span
@@ -315,8 +321,8 @@ exports[`ui/monitoring/values/xml > should render XML without the UTF-8 byte ord
         className="prism-code language-json"
         style={
           {
-            "backgroundColor": "#1E1E1E",
-            "color": "#9CDCFE",
+            "backgroundColor": "#ffffff",
+            "color": "#000000",
           }
         }
       >
@@ -325,7 +331,7 @@ exports[`ui/monitoring/values/xml > should render XML without the UTF-8 byte ord
           style={
             {
               "backgroundColor": undefined,
-              "color": "#9CDCFE",
+              "color": "#000000",
             }
           }
         >
@@ -364,7 +370,7 @@ exports[`ui/monitoring/values/xml > should render a zero-width space if value is
         className="buttons"
       >
         <button
-          aria-label="Select all text in XML"
+          aria-label="Select all text in 'XML'"
           className="ms-Button ms-Button--icon root-109"
           data-is-focusable={true}
           onClick={[Function]}
@@ -373,6 +379,7 @@ exports[`ui/monitoring/values/xml > should render a zero-width space if value is
           onKeyUp={[Function]}
           onMouseDown={[Function]}
           onMouseUp={[Function]}
+          title="Select all text in 'XML'"
           type="button"
         >
           <span
@@ -403,6 +410,7 @@ exports[`ui/monitoring/values/xml > should render a zero-width space if value is
           onKeyUp={[Function]}
           onMouseDown={[Function]}
           onMouseUp={[Function]}
+          title="Copy the value of 'XML' to the clipboard"
           type="button"
         >
           <span
@@ -428,8 +436,8 @@ exports[`ui/monitoring/values/xml > should render a zero-width space if value is
         className="prism-code language-json"
         style={
           {
-            "backgroundColor": "#1E1E1E",
-            "color": "#9CDCFE",
+            "backgroundColor": "#ffffff",
+            "color": "#000000",
           }
         }
       >
@@ -438,7 +446,7 @@ exports[`ui/monitoring/values/xml > should render a zero-width space if value is
           style={
             {
               "backgroundColor": undefined,
-              "color": "#9CDCFE",
+              "color": "#000000",
             }
           }
         >
