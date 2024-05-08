@@ -457,23 +457,6 @@ export const Dseparators: string[] = [Separators.OpenParenthesis, Separators.Clo
 
 export const reservedToken: string[] = [ReservedToken.for, ReservedToken.if, ReservedToken.backout];
 
-// const constructFunctionRepresentation = (tokens: string[]): FunctionInput => {
-//   if (tokens.length === 1) {
-//     return tokens[0];
-//   } else {
-//     const func: ParseFunc = { name: tokens[0], inputs: [] };
-//     let i = 2; // start of the function inputs
-//     let currentStart = 2;
-//     while (i < tokens.length-1) { // account for closing parenthesis
-//       if ()
-//         func.inputs.push(constructFunctionRepresentation());
-//       }
-//       i++;
-//     }
-//     return func;
-//   }
-// }
-
 export const separateFunctions = (targetKey: string): string[] => {
   const tokens: string[] = [];
 
@@ -574,11 +557,12 @@ export const lexThisThing = (targetKey: string): string[] => {
 };
 
 export interface ParseFunc {
+  type: 'Function'
   name: string;
   inputs: FunctionCreationMetadata[];
 }
 
-export type FunctionCreationMetadata = string | ParseFunc;
+export type FunctionCreationMetadata = ParseFunc | SingleValueMetadata;
 
 export const createTargetOrFunction = (tokens: string[]): { term: FunctionCreationMetadata; nextIndex: number } => {
   if (tokens.length === 1) {
@@ -604,14 +588,44 @@ export const createTargetOrFunction = (tokens: string[]): { term: FunctionCreati
   return { term: tokens[0], nextIndex: 2 };
 };
 
+type SingleValueMetadata = {
+  type: 'SingleValueMetadata',
+  specialCharacters?: 'index' | 'customValue' | 'directAccess' | 'loopCurrentNodeDot',
+  value: string,
+}
+
+const isTokenCustomValue = (value: string): boolean => {
+  return value.startsWith('"') || !Number.isNaN(parseInt(value));
+};
+
+const currentLoopNodeDot = '.';
+
+export const getSingleValueMetadata = (token: string) => {
+  const metadata: SingleValueMetadata = {
+    value: token,
+  };
+  if (token.startsWith(Separators.Dollar)) {
+    metadata.type = 'index';
+  } else if (token === currentLoopNodeDot) {
+    metadata.type = 'loopCurrentNodeDot';
+  } else if (isTokenCustomValue(token)) {
+    metadata.type = 'customValue';
+  } else if (token.includes('[')) {
+    metadata.type = 'directAccess';
+    // danielle also include separated values here
+  } // if it is a loop with backout
+  return metadata;
+}
+
 // danielle how do we handle this? /ns0:Root/Looping/VehicleTrips/Vehicle[is-equal(VehicleId, /ns0:Root/Looping/VehicleTrips/Trips[$i]/VehicleId)]/VehicleRegistration'
-export const createTargetOrFunctionRefactor = (tokens: string[]): { term: FunctionCreationMetadata; nextIndex: number } => {
+export const createSchemaNodeOrFunction = (tokens: string[]): { term: FunctionCreationMetadata; nextIndex: number } => {
   if (tokens.length === 1) {
-    return { term: tokens[0], nextIndex: 2 };
+    const singleValue = getSingleValueMetadata(tokens[0]);
+    return { term: singleValue, nextIndex: 2 };
   }
   // determine if token is a function
   if (tokens[1] === Separators.OpenParenthesis) {
-    const func: ParseFunc = { name: tokens[0], inputs: [] };
+    const func: ParseFunc = { type: 'Function', name: tokens[0], inputs: [] };
     if (tokens[0].includes('/')) {
       return { term: tokens[0], nextIndex: 2 };
     }
@@ -626,7 +640,7 @@ export const createTargetOrFunctionRefactor = (tokens: string[]): { term: Functi
           // function with no inputs
           return { term: func, nextIndex: i + 1 };
         }
-        func.inputs.push(createTargetOrFunctionRefactor(tokens.slice(start, i)).term);
+        func.inputs.push(createSchemaNodeOrFunction(tokens.slice(start, i)).term);
         start = i + 2;
         parenCount--;
       } else if (tokens[i] === Separators.CloseParenthesis) {
@@ -634,14 +648,15 @@ export const createTargetOrFunctionRefactor = (tokens: string[]): { term: Functi
       } else if (tokens[i] !== Separators.Comma) {
         //func.inputs.push(createTargetOrFunction(tokens.slice(i)).term);
       } else if (tokens[i] === Separators.Comma && parenCount === 1) {
-        func.inputs.push(createTargetOrFunctionRefactor(tokens.slice(start, i)).term);
+        func.inputs.push(createSchemaNodeOrFunction(tokens.slice(start, i)).term);
         start = i + 1;
       }
       i++;
     }
     return { term: func, nextIndex: i + 1 };
   }
-  return { term: tokens[0], nextIndex: 2 };
+  const singleValue = getSingleValueMetadata(tokens[0]);
+  return { term: singleValue, nextIndex: 2 };
 };
 
 export const removeSequenceFunction = (tokens: string[]): string => {

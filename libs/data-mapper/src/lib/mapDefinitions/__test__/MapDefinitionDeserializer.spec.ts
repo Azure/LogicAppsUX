@@ -511,6 +511,10 @@ describe('mapDefinitions/MapDefinitionDeserializer', () => {
             '$for(/ns0:Root/Looping/Employee)': {
               Person: {
                 Name: 'TelephoneNumber',
+                Info: {  // 3 infos
+                  first: "a",
+                  last: 'b'
+                }
               },
             },
           },

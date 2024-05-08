@@ -15,7 +15,7 @@ import {
   getSourceNode,
   separateFunctions,
   DReservedToken,
-  createSchemaNodeOrFunctionRefactor,
+  createSchemaNodeOrFunction,
   addParentConnectionForRepeatingElementsNested,
   amendSourceKeyForDirectAccessIfNeeded,
 } from "../utils/DataMap.Utils";
@@ -187,7 +187,7 @@ export class MapDefinitionDeserializerRefactor {
   ) => {
     const tokens = separateFunctions(key);
     const functionMetadata =
-      funcMetadata || createSchemaNodeOrFunctionRefactor(tokens).term;
+      funcMetadata || createSchemaNodeOrFunction(tokens).term;
 
     let sourceSchemaNode = findNodeForKey(
       key,
@@ -403,7 +403,7 @@ export class MapDefinitionDeserializerRefactor {
     connections: ConnectionDictionary
   ) => {
     const tokens = separateFunctions(leftSideKey);
-    const forOrIfObj = createSchemaNodeOrFunctionRefactor(tokens);
+    const forOrIfObj = createSchemaNodeOrFunction(tokens);
     if ((forOrIfObj.term as ParseFunc).name === DReservedToken.if) {
       if (parentTargetNode) {
         this.handleIfFunction(forOrIfObj.term as ParseFunc, connections);
@@ -619,7 +619,7 @@ export class MapDefinitionDeserializerRefactor {
       const amendedSourceKey = amendSourceKeyForDirectAccessIfNeeded(key);
 
       const directAccessSeparated = separateFunctions(amendedSourceKey[0]);
-      const idk = createSchemaNodeOrFunctionRefactor(directAccessSeparated);
+      const idk = createSchemaNodeOrFunction(directAccessSeparated);
 
       this.handleSingleValueOrFunction("", idk.term, targetNode, connections);
     } else {
