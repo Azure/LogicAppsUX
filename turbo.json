@@ -1,5 +1,6 @@
 {
     "$schema": "https://turbo.build/schema.json",
+    "experimentalUI": true,
     "pipeline": {
         "e2e": {
             "cache": false,
@@ -23,8 +24,14 @@
                 "build/**"
             ]
         },
-        "build:vscode": {
+        "vscode-designer#build:extension": {
             "cache": false
+        },
+        "vscode-react#build:extension": {
+            "cache": false,
+            "dependsOn": [
+                "vscode-designer#build:extension"
+            ]
         },
         "dev": {
             "cache": false,
@@ -45,7 +52,12 @@
                 "coverage/**"
             ]
         },
-        "vscode:designer:pack":{
+        "test:extension-unit": {
+            "outputs": [
+                "coverage/**"
+            ]
+        },
+        "vscode:designer:pack": {
             "cache": false,
             "dependsOn": [
                 "build"

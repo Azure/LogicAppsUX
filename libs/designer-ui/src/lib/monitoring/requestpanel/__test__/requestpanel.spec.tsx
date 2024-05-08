@@ -1,6 +1,7 @@
 import type { RequestPanelProps } from '../index';
 import { RequestPanel } from '../index';
 import { setIconOptions } from '@fluentui/react';
+import React from 'react';
 import renderer from 'react-test-renderer';
 import ShallowRenderer from 'react-test-renderer/shallow';
 import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
@@ -32,7 +33,7 @@ describe('lib/monitoring/requestpanel', () => {
   });
 
   it('should render with a request', () => {
-    const props = {
+    const props: RequestPanelProps = {
       ...minimal,
       requestHistory: [
         {
@@ -53,7 +54,7 @@ describe('lib/monitoring/requestpanel', () => {
   });
 
   it('should render with a secured request', () => {
-    const props = {
+    const props: RequestPanelProps = {
       ...minimal,
       requestHistory: [
         {
@@ -62,7 +63,7 @@ describe('lib/monitoring/requestpanel', () => {
             request: {
               headers: {},
               method: 'GET',
-              url: 'https://httpbin.org/get',
+              uri: 'https://httpbin.org/get',
             },
             secureData: {
               properties: ['request'],

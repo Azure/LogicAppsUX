@@ -62,13 +62,14 @@ Push-ActionOutputs -body $result`;
 #r "Microsoft.Azure.Workflows.Scripting"
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Primitives;
-using Microsoft.Azure.Workflows.Scripting;g;
+using Microsoft.Extensions.Logging;
+using Microsoft.Azure.Workflows.Scripting;
 
 /// <summary>
 /// Executes the inline csharp code.
 /// </summary>
 /// <param name="context">The workflow context.</param>
-public static async Task<Weather> Run(WorkflowContext context)
+public static async Task<Weather> Run(WorkflowContext context, ILogger log)
 {
   var outputs = (await context.GetActionResults("compose").ConfigureAwait(false)).Outputs;
 
@@ -78,6 +79,9 @@ public static async Task<Weather> Run(WorkflowContext context)
   var currentTemp = temperatureScale == "Celsius" ? rnd.Next(1, 30) : rnd.Next(40, 90);
   var lowTemp = currentTemp - 10;
   var highTemp = currentTemp + 10;
+  var zipCode = (int) outputs["zipCode"];
+
+  log.LogInformation("Starting func_name with Zip Code: " + zipCode + " and Scale: " + temperatureScale);
 
   // Create a Weather object with the temperature information
   var weather = new Weather()

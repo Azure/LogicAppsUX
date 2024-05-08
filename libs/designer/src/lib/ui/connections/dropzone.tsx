@@ -335,7 +335,7 @@ export const DropZone: React.FC<DropZoneProps> = ({ graphId, parentId, childId, 
                   {isPasteEnabled && (
                     <>
                       <MenuDivider />
-                      <MenuItem icon={<ClipboardIcon />} onClick={handlePasteClicked}>
+                      <MenuItem icon={<ClipboardIcon />} onClick={handlePasteClicked} data-automation-id={automationId('paste')}>
                         {pasteFromClipboard}
                       </MenuItem>
                     </>

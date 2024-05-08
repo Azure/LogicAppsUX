@@ -1,33 +1,24 @@
 import { test, expect } from '@playwright/test';
+import { getSerializedWorkflowFromState } from './utils/designerFunctions';
+import { GoToMockWorkflow } from './utils/GoToWorkflow';
 
 test(
   'Mock: Expect Copy and Paste of Scopes to work on single workflow',
   {
     tag: '@mock',
   },
-  async ({ page, browserName, context }) => {
-    test.skip(browserName === 'webkit');
-    if (browserName === 'webkit') {
-      context.grantPermissions(['clipboard-read'], { origin: 'http://localhost:4200' });
-    }
+  async ({ page }) => {
     await page.goto('/');
-    await page.getByText('Select an option').click();
-    await page.getByRole('option', { name: 'Conditionals', exact: true }).click();
-    await page.getByRole('button', { name: 'Toolbox' }).click();
-    await page.waitForLoadState('networkidle');
-    await page.getByTestId('rf__node-Condition-#scope').getByRole('button', { name: 'Condition' }).focus();
-    await page.keyboard.press('Control+C');
-    await page.getByTestId('rf__edge-Initialize_variable-Condition').getByLabel('Insert a new step between').focus();
-    await page.keyboard.press('Control+V');
-    await page.waitForTimeout(1000);
-    const serialized: any = await page.evaluate(() => {
-      return new Promise((resolve) => {
-        setTimeout(() => {
-          const state = (window as any).DesignerStore.getState();
-          resolve((window as any).DesignerModule.serializeBJSWorkflow(state));
-        }, 5000);
-      });
+    await GoToMockWorkflow(page, 'Conditionals');
+    await page.getByTestId('card-condition').click({
+      button: 'right',
     });
+    await page.getByTestId('msla-copy-menu-option').click();
+
+    await page.getByTestId('msla-plus-button-initialize_variable-condition').click();
+    await page.getByTestId('msla-paste-button-initialize_variable-condition').click();
+    await page.waitForTimeout(1000);
+    const serialized: any = await getSerializedWorkflowFromState(page);
     expect(serialized.definition).toEqual(verificationWorkflow);
   }
 );
