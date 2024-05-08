@@ -178,7 +178,6 @@ export const BaseEditor = ({
         id={editorId}
         ref={containerRef}
         data-automation-id={dataAutomationId}
-        title={placeholder}
       >
         {htmlEditor ? (
           <Toolbar
@@ -190,7 +189,7 @@ export const BaseEditor = ({
         ) : null}
         <TextPlugin
           contentEditable={
-            <ContentEditable className={css('editor-input', readonly && 'readonly')} ariaLabelledBy={labelId} ariaDescribedBy={id} />
+            <ContentEditable className={css('editor-input', readonly && 'readonly')} ariaLabelledBy={labelId} ariaDescribedBy={id} title={placeholder} />
           }
           placeholder={
             <span className="editor-placeholder" ref={placeholderRef}>
