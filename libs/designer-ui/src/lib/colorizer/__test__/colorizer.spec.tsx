@@ -1,6 +1,5 @@
 import type { ColorizerProps } from '../index';
 import { Colorizer } from '../index';
-import { DirectionalHint } from '@fluentui/react';
 import React from 'react';
 import ShallowRenderer from 'react-test-renderer/shallow';
 import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
@@ -35,5 +34,15 @@ describe('lib/colorizer', () => {
 
     const utcButton = buttons[0];
     expect(utcButton.props.title).toBe(`Switch '${minimal.ariaLabel}' to the UTC time format`);
+  });
+
+  it('should call toggleUTC function when UTC button is clicked', () => {
+    const toggleUTC = vi.fn();
+    renderer.render(<Colorizer {...minimal} utcProps={{ toggleUTC, showUTC: true }} ariaLabel="start time" />);
+    const colorizer = renderer.getRenderOutput();
+    const buttons = colorizer.props.children[0].props.children;
+    const utcButton = buttons[0];
+    utcButton.props.onClick();
+    expect(toggleUTC).toHaveBeenCalledTimes(1);
   });
 });
