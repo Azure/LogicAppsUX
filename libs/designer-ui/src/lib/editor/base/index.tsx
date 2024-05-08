@@ -170,13 +170,6 @@ export const BaseEditor = ({
 
   const id = useId('msla-described-by-message');
   const TextPlugin = htmlEditor === 'rich-html' ? RichTextPlugin : PlainTextPlugin;
-
-  const textboxBody = intl.formatMessage({
-    defaultMessage: 'input text',
-    id: '0Xd8/X',
-    description: 'Body of text field',
-  });
-
   return (
     <>
       <div
@@ -196,12 +189,7 @@ export const BaseEditor = ({
         ) : null}
         <TextPlugin
           contentEditable={
-            <ContentEditable
-              className={css('editor-input', readonly && 'readonly')}
-              ariaLabelledBy={labelId}
-              ariaLabel={textboxBody}
-              ariaDescribedBy={id}
-            />
+            <ContentEditable className={css('editor-input', readonly && 'readonly')} ariaLabelledBy={labelId} ariaDescribedBy={id} />
           }
           placeholder={
             <span className="editor-placeholder" ref={placeholderRef}>
