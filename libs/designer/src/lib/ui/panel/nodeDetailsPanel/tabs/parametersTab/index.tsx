@@ -216,7 +216,7 @@ const ParameterSection = ({
   const panelLocation = usePanelLocation();
   const nodeTitle = replaceWhiteSpaceWithUnderscore(useNodeDisplayName(nodeId));
 
-  const { suppressCastingForSerialize, hideUTFExpressions } = useHostOptions();
+  const { focusOpensTokenPicker, hideUTFExpressions, suppressCastingForSerialize } = useHostOptions();
 
   const [tokenMapping, setTokenMapping] = useState<Record<string, ValueSegment>>({});
 
@@ -430,6 +430,7 @@ const ParameterSection = ({
         placeholder,
         editorViewModel: remappedEditorViewModel,
         conditionalVisibility,
+        focusOpensTokenPicker,
       };
       const { editor, editorOptions } = getEditorAndOptions(operationInfo, param, upstreamNodeIds ?? [], variables);
 

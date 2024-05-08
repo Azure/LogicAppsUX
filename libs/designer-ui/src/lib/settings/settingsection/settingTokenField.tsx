@@ -59,6 +59,7 @@ export interface SettingTokenFieldProps extends SettingProps {
   validationErrors?: string[];
   hideValidationErrors?: ChangeHandler;
   suppressCastingForSerialize?: boolean;
+  focusOpensTokenPicker?: boolean;
 }
 
 export const SettingTokenField = ({ ...props }: SettingTokenFieldProps) => {
@@ -107,6 +108,7 @@ export const TokenField = ({
   onCastParameter,
   getTokenPicker,
   suppressCastingForSerialize,
+  focusOpensTokenPicker,
 }: TokenFieldProps) => {
   const dropdownOptions = getDropdownOptionsFromOptions(editorOptions);
   const labelForAutomationId = replaceWhiteSpaceWithUnderscore(label);
@@ -380,7 +382,7 @@ export const TokenField = ({
           labelId={labelId}
           className="msla-setting-token-editor-container"
           placeholder={placeholder}
-          basePlugins={{ tokens: showTokens }}
+          basePlugins={{ tokens: showTokens, focusOpensTokenPicker: focusOpensTokenPicker }}
           readonly={readOnly}
           initialValue={value}
           tokenPickerButtonProps={tokenpickerButtonProps}

@@ -35,8 +35,9 @@ const initialState: DesignerOptionsState = {
   panelTabHideKeys: [],
   hostOptions: {
     displayRuntimeInfo: true,
-    suppressCastingForSerialize: false,
+    focusOpensTokenPicker: false,
     recurrenceInterval: undefined,
+    suppressCastingForSerialize: false,
   },
 };
 

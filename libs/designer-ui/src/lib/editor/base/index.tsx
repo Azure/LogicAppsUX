@@ -78,6 +78,7 @@ export interface BasePlugins {
   autoFocus?: boolean;
   autoLink?: boolean;
   clearEditor?: boolean;
+  focusOpensTokenPicker?: boolean;
   history?: boolean;
   tokens?: boolean;
   treeView?: boolean;
@@ -110,7 +111,7 @@ export const BaseEditor = ({
   const containerRef = useRef<HTMLDivElement>(null);
   const placeholderRef = useRef<HTMLDivElement>(null);
   const [isEditorFocused, setIsEditorFocused] = useState(false);
-  const [isTokenPickerOpened, setIsTokenPickerOpened] = useState(false);
+  const [isTokenPickerOpened, setIsTokenPickerOpened] = useState(basePlugins.focusOpensTokenPicker === true);
   const [tokenPickerMode, setTokenPickerMode] = useState<TokenPickerMode | undefined>();
   const [floatingAnchorElem, setFloatingAnchorElem] = useState<HTMLDivElement | null>(null);
 
