@@ -2,6 +2,8 @@ import { css, useTheme } from '@fluentui/react';
 import type { MutableRefObject, RefObject } from 'react';
 import { createContext, useEffect, useMemo, useCallback, useState } from 'react';
 
+type DropdownItemHTMLElement = HTMLButtonElement | HTMLInputElement;
+
 interface DropdownItemsProps {
   children: React.ReactNode;
   dropDownRef: MutableRefObject<HTMLDivElement | null>;
@@ -10,19 +12,19 @@ interface DropdownItemsProps {
 }
 
 export type DropDownContextType = {
-  registerItem: (ref: RefObject<HTMLButtonElement>) => void;
+  registerItem: (ref: RefObject<DropdownItemHTMLElement>) => void;
 };
 
 export const DropDownContext = createContext<DropDownContextType | null>(null);
 
 export const DropDownItems = ({ children, dropDownRef, stopCloseOnClickSelf, onClose }: DropdownItemsProps) => {
   const { isInverted } = useTheme();
-  const [items, setItems] = useState<RefObject<HTMLButtonElement>[]>();
-  const [highlightedItem, setHighlightedItem] = useState<RefObject<HTMLButtonElement>>();
+  const [items, setItems] = useState<RefObject<DropdownItemHTMLElement>[]>();
+  const [highlightedItem, setHighlightedItem] = useState<RefObject<DropdownItemHTMLElement>>();
 
   // register item to end of list
   const registerItem = useCallback(
-    (itemRef: RefObject<HTMLButtonElement>) => {
+    (itemRef: RefObject<DropdownItemHTMLElement>) => {
       setItems((prev) => (prev ? [...prev, itemRef] : [itemRef]));
     },
     [setItems]
@@ -94,6 +96,7 @@ export const DropDownItems = ({ children, dropDownRef, stopCloseOnClickSelf, onC
             e.relatedTarget?.classList.contains('fontsize-item') ||
             e.relatedTarget?.classList.contains('fontfamily-item') ||
             e.relatedTarget?.classList.contains('fontcolor-item') ||
+            e.relatedTarget?.classList.contains('default-color-buttons') ||
             e.target.classList.contains('blockcontrol-item') ||
             e.target.classList.contains('default-color-buttons')
           ) {
