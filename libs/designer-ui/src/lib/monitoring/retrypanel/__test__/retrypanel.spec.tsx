@@ -5,6 +5,7 @@ import React from 'react';
 import renderer from 'react-test-renderer';
 import ShallowRenderer from 'react-test-renderer/shallow';
 import { describe, vi, beforeEach, afterEach, beforeAll, afterAll, it, test, expect } from 'vitest';
+import timezoneMock from 'timezone-mock';
 describe('lib/monitoring/retrypanel', () => {
   let minimal: RetryPanelProps;
 
@@ -12,6 +13,11 @@ describe('lib/monitoring/retrypanel', () => {
     setIconOptions({
       disableWarnings: true,
     });
+    timezoneMock.register('UTC');
+  });
+
+  afterAll(() => {
+    timezoneMock.unregister();
   });
 
   beforeEach(() => {
