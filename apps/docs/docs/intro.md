@@ -69,5 +69,5 @@ pnpm turbo run test:lib
 To run E2E tests, execute:
 
 ```bash
-pnpm run test:e2e
+pnpm run test:e2e --grep @mock
 ```
