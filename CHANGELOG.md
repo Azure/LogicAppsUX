@@ -1,4 +1,13 @@
 # Logic Apps Designer
+### [4.13.5](https://github.com/Azure/LogicAppsUX/compare/v4.13.4...v4.13.5) (2024-05-08)
+
+### [4.13.4](https://github.com/Azure/LogicAppsUX/compare/v4.13.3...v4.13.4) (2024-05-06)
+
+
+### Bug Fixes
+
+* **Designer:** Only show dropdown for array editor when there are options ([#4786](https://github.com/Azure/LogicAppsUX/issues/4786)) ([934c32e](https://github.com/Azure/LogicAppsUX/commit/934c32eea28392b03a393745f91bcb1dc5b41612))
+
 ### [4.13.3](https://github.com/Azure/LogicAppsUX/compare/v4.13.2...v4.13.3) (2024-05-02)
 
 
