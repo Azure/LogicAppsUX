@@ -12,7 +12,7 @@ export interface ColorizerProps {
 
 export const Colorizer: React.FC<ColorizerProps> = ({ ariaLabel, code, language = 'json' }) => {
   const { isInverted } = useTheme();
-  const theme = useMemo(() => (isInverted ? themes.vsDark : themes.vsDark), [isInverted]);
+  const theme = useMemo(() => (isInverted ? themes.vsDark : themes.vsLight), [isInverted]);
   const elementRef = useRef<HTMLPreElement | null>(null);
   const [_, copyToClipboard] = useCopyToClipboard();
   const selectText = useCallback(() => {
