@@ -25,7 +25,7 @@ exports[`ui/monitoring/values/_raw > should render 1`] = `
         className="buttons"
       >
         <button
-          aria-label="Select all text in display-name"
+          aria-label="Select all text in 'display-name'"
           className="ms-Button ms-Button--icon root-109"
           data-is-focusable={true}
           onClick={[Function]}
@@ -34,6 +34,7 @@ exports[`ui/monitoring/values/_raw > should render 1`] = `
           onKeyUp={[Function]}
           onMouseDown={[Function]}
           onMouseUp={[Function]}
+          title="Select all text in 'display-name'"
           type="button"
         >
           <span
@@ -64,6 +65,7 @@ exports[`ui/monitoring/values/_raw > should render 1`] = `
           onKeyUp={[Function]}
           onMouseDown={[Function]}
           onMouseUp={[Function]}
+          title="Copy the value of 'display-name' to the clipboard"
           type="button"
         >
           <span
@@ -89,8 +91,8 @@ exports[`ui/monitoring/values/_raw > should render 1`] = `
         className="prism-code language-json"
         style={
           {
-            "backgroundColor": "#1E1E1E",
-            "color": "#9CDCFE",
+            "backgroundColor": "#ffffff",
+            "color": "#000000",
           }
         }
       >
@@ -99,7 +101,7 @@ exports[`ui/monitoring/values/_raw > should render 1`] = `
           style={
             {
               "backgroundColor": undefined,
-              "color": "#9CDCFE",
+              "color": "#000000",
             }
           }
         >
@@ -138,7 +140,7 @@ exports[`ui/monitoring/values/_raw > should rendered a zero-width space if value
         className="buttons"
       >
         <button
-          aria-label="Select all text in display-name"
+          aria-label="Select all text in 'display-name'"
           className="ms-Button ms-Button--icon root-109"
           data-is-focusable={true}
           onClick={[Function]}
@@ -147,6 +149,7 @@ exports[`ui/monitoring/values/_raw > should rendered a zero-width space if value
           onKeyUp={[Function]}
           onMouseDown={[Function]}
           onMouseUp={[Function]}
+          title="Select all text in 'display-name'"
           type="button"
         >
           <span
@@ -177,6 +180,7 @@ exports[`ui/monitoring/values/_raw > should rendered a zero-width space if value
           onKeyUp={[Function]}
           onMouseDown={[Function]}
           onMouseUp={[Function]}
+          title="Copy the value of 'display-name' to the clipboard"
           type="button"
         >
           <span
@@ -202,8 +206,8 @@ exports[`ui/monitoring/values/_raw > should rendered a zero-width space if value
         className="prism-code language-json"
         style={
           {
-            "backgroundColor": "#1E1E1E",
-            "color": "#9CDCFE",
+            "backgroundColor": "#ffffff",
+            "color": "#000000",
           }
         }
       >
@@ -212,7 +216,7 @@ exports[`ui/monitoring/values/_raw > should rendered a zero-width space if value
           style={
             {
               "backgroundColor": undefined,
-              "color": "#9CDCFE",
+              "color": "#000000",
             }
           }
         >

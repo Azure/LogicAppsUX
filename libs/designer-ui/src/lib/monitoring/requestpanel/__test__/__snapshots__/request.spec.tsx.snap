@@ -38,7 +38,7 @@ exports[`lib/monitoring/requestpanel/request > should render 1`] = `
             className="buttons"
           >
             <button
-              aria-label="Select all text in Method"
+              aria-label="Select all text in 'Method'"
               className="ms-Button ms-Button--icon root-109"
               data-is-focusable={true}
               onClick={[Function]}
@@ -47,6 +47,7 @@ exports[`lib/monitoring/requestpanel/request > should render 1`] = `
               onKeyUp={[Function]}
               onMouseDown={[Function]}
               onMouseUp={[Function]}
+              title="Select all text in 'Method'"
               type="button"
             >
               <span
@@ -77,6 +78,7 @@ exports[`lib/monitoring/requestpanel/request > should render 1`] = `
               onKeyUp={[Function]}
               onMouseDown={[Function]}
               onMouseUp={[Function]}
+              title="Copy the value of 'Method' to the clipboard"
               type="button"
             >
               <span
@@ -102,8 +104,8 @@ exports[`lib/monitoring/requestpanel/request > should render 1`] = `
             className="prism-code language-json"
             style={
               {
-                "backgroundColor": "#1E1E1E",
-                "color": "#9CDCFE",
+                "backgroundColor": "#ffffff",
+                "color": "#000000",
               }
             }
           >
@@ -112,7 +114,7 @@ exports[`lib/monitoring/requestpanel/request > should render 1`] = `
               style={
                 {
                   "backgroundColor": undefined,
-                  "color": "#9CDCFE",
+                  "color": "#000000",
                 }
               }
             >
@@ -148,7 +150,7 @@ exports[`lib/monitoring/requestpanel/request > should render 1`] = `
             className="buttons"
           >
             <button
-              aria-label="Select all text in URI"
+              aria-label="Select all text in 'URI'"
               className="ms-Button ms-Button--icon root-109"
               data-is-focusable={true}
               onClick={[Function]}
@@ -157,6 +159,7 @@ exports[`lib/monitoring/requestpanel/request > should render 1`] = `
               onKeyUp={[Function]}
               onMouseDown={[Function]}
               onMouseUp={[Function]}
+              title="Select all text in 'URI'"
               type="button"
             >
               <span
@@ -187,6 +190,7 @@ exports[`lib/monitoring/requestpanel/request > should render 1`] = `
               onKeyUp={[Function]}
               onMouseDown={[Function]}
               onMouseUp={[Function]}
+              title="Copy the value of 'URI' to the clipboard"
               type="button"
             >
               <span
@@ -212,8 +216,8 @@ exports[`lib/monitoring/requestpanel/request > should render 1`] = `
             className="prism-code language-json"
             style={
               {
-                "backgroundColor": "#1E1E1E",
-                "color": "#9CDCFE",
+                "backgroundColor": "#ffffff",
+                "color": "#000000",
               }
             }
           >
@@ -222,7 +226,7 @@ exports[`lib/monitoring/requestpanel/request > should render 1`] = `
               style={
                 {
                   "backgroundColor": undefined,
-                  "color": "#9CDCFE",
+                  "color": "#000000",
                 }
               }
             >
@@ -458,7 +462,7 @@ exports[`lib/monitoring/requestpanel/request > should render a body 1`] = `
             className="buttons"
           >
             <button
-              aria-label="Select all text in Method"
+              aria-label="Select all text in 'Method'"
               className="ms-Button ms-Button--icon root-109"
               data-is-focusable={true}
               onClick={[Function]}
@@ -467,6 +471,7 @@ exports[`lib/monitoring/requestpanel/request > should render a body 1`] = `
               onKeyUp={[Function]}
               onMouseDown={[Function]}
               onMouseUp={[Function]}
+              title="Select all text in 'Method'"
               type="button"
             >
               <span
@@ -497,6 +502,7 @@ exports[`lib/monitoring/requestpanel/request > should render a body 1`] = `
               onKeyUp={[Function]}
               onMouseDown={[Function]}
               onMouseUp={[Function]}
+              title="Copy the value of 'Method' to the clipboard"
               type="button"
             >
               <span
@@ -522,8 +528,8 @@ exports[`lib/monitoring/requestpanel/request > should render a body 1`] = `
             className="prism-code language-json"
             style={
               {
-                "backgroundColor": "#1E1E1E",
-                "color": "#9CDCFE",
+                "backgroundColor": "#ffffff",
+                "color": "#000000",
               }
             }
           >
@@ -532,7 +538,7 @@ exports[`lib/monitoring/requestpanel/request > should render a body 1`] = `
               style={
                 {
                   "backgroundColor": undefined,
-                  "color": "#9CDCFE",
+                  "color": "#000000",
                 }
               }
             >
@@ -568,7 +574,7 @@ exports[`lib/monitoring/requestpanel/request > should render a body 1`] = `
             className="buttons"
           >
             <button
-              aria-label="Select all text in URI"
+              aria-label="Select all text in 'URI'"
               className="ms-Button ms-Button--icon root-109"
               data-is-focusable={true}
               onClick={[Function]}
@@ -577,6 +583,7 @@ exports[`lib/monitoring/requestpanel/request > should render a body 1`] = `
               onKeyUp={[Function]}
               onMouseDown={[Function]}
               onMouseUp={[Function]}
+              title="Select all text in 'URI'"
               type="button"
             >
               <span
@@ -607,6 +614,7 @@ exports[`lib/monitoring/requestpanel/request > should render a body 1`] = `
               onKeyUp={[Function]}
               onMouseDown={[Function]}
               onMouseUp={[Function]}
+              title="Copy the value of 'URI' to the clipboard"
               type="button"
             >
               <span
@@ -632,8 +640,8 @@ exports[`lib/monitoring/requestpanel/request > should render a body 1`] = `
             className="prism-code language-json"
             style={
               {
-                "backgroundColor": "#1E1E1E",
-                "color": "#9CDCFE",
+                "backgroundColor": "#ffffff",
+                "color": "#000000",
               }
             }
           >
@@ -642,7 +650,7 @@ exports[`lib/monitoring/requestpanel/request > should render a body 1`] = `
               style={
                 {
                   "backgroundColor": undefined,
-                  "color": "#9CDCFE",
+                  "color": "#000000",
                 }
               }
             >
@@ -858,7 +866,7 @@ exports[`lib/monitoring/requestpanel/request > should render a body 1`] = `
             className="buttons"
           >
             <button
-              aria-label="Select all text in Body"
+              aria-label="Select all text in 'Body'"
               className="ms-Button ms-Button--icon root-109"
               data-is-focusable={true}
               onClick={[Function]}
@@ -867,6 +875,7 @@ exports[`lib/monitoring/requestpanel/request > should render a body 1`] = `
               onKeyUp={[Function]}
               onMouseDown={[Function]}
               onMouseUp={[Function]}
+              title="Select all text in 'Body'"
               type="button"
             >
               <span
@@ -897,6 +906,7 @@ exports[`lib/monitoring/requestpanel/request > should render a body 1`] = `
               onKeyUp={[Function]}
               onMouseDown={[Function]}
               onMouseUp={[Function]}
+              title="Copy the value of 'Body' to the clipboard"
               type="button"
             >
               <span
@@ -922,8 +932,8 @@ exports[`lib/monitoring/requestpanel/request > should render a body 1`] = `
             className="prism-code language-json"
             style={
               {
-                "backgroundColor": "#1E1E1E",
-                "color": "#9CDCFE",
+                "backgroundColor": "#ffffff",
+                "color": "#000000",
               }
             }
           >
@@ -932,7 +942,7 @@ exports[`lib/monitoring/requestpanel/request > should render a body 1`] = `
               style={
                 {
                   "backgroundColor": undefined,
-                  "color": "#9CDCFE",
+                  "color": "#000000",
                 }
               }
             >
@@ -947,7 +957,7 @@ exports[`lib/monitoring/requestpanel/request > should render a body 1`] = `
               style={
                 {
                   "backgroundColor": undefined,
-                  "color": "#9CDCFE",
+                  "color": "#000000",
                 }
               }
             >
@@ -962,7 +972,7 @@ exports[`lib/monitoring/requestpanel/request > should render a body 1`] = `
               style={
                 {
                   "backgroundColor": undefined,
-                  "color": "#9CDCFE",
+                  "color": "#000000",
                 }
               }
             >
@@ -1018,7 +1028,7 @@ exports[`lib/monitoring/requestpanel/request > should render a body link 1`] = `
             className="buttons"
           >
             <button
-              aria-label="Select all text in Method"
+              aria-label="Select all text in 'Method'"
               className="ms-Button ms-Button--icon root-109"
               data-is-focusable={true}
               onClick={[Function]}
@@ -1027,6 +1037,7 @@ exports[`lib/monitoring/requestpanel/request > should render a body link 1`] = `
               onKeyUp={[Function]}
               onMouseDown={[Function]}
               onMouseUp={[Function]}
+              title="Select all text in 'Method'"
               type="button"
             >
               <span
@@ -1057,6 +1068,7 @@ exports[`lib/monitoring/requestpanel/request > should render a body link 1`] = `
               onKeyUp={[Function]}
               onMouseDown={[Function]}
               onMouseUp={[Function]}
+              title="Copy the value of 'Method' to the clipboard"
               type="button"
             >
               <span
@@ -1082,8 +1094,8 @@ exports[`lib/monitoring/requestpanel/request > should render a body link 1`] = `
             className="prism-code language-json"
             style={
               {
-                "backgroundColor": "#1E1E1E",
-                "color": "#9CDCFE",
+                "backgroundColor": "#ffffff",
+                "color": "#000000",
               }
             }
           >
@@ -1092,7 +1104,7 @@ exports[`lib/monitoring/requestpanel/request > should render a body link 1`] = `
               style={
                 {
                   "backgroundColor": undefined,
-                  "color": "#9CDCFE",
+                  "color": "#000000",
                 }
               }
             >
@@ -1128,7 +1140,7 @@ exports[`lib/monitoring/requestpanel/request > should render a body link 1`] = `
             className="buttons"
           >
             <button
-              aria-label="Select all text in URI"
+              aria-label="Select all text in 'URI'"
               className="ms-Button ms-Button--icon root-109"
               data-is-focusable={true}
               onClick={[Function]}
@@ -1137,6 +1149,7 @@ exports[`lib/monitoring/requestpanel/request > should render a body link 1`] = `
               onKeyUp={[Function]}
               onMouseDown={[Function]}
               onMouseUp={[Function]}
+              title="Select all text in 'URI'"
               type="button"
             >
               <span
@@ -1167,6 +1180,7 @@ exports[`lib/monitoring/requestpanel/request > should render a body link 1`] = `
               onKeyUp={[Function]}
               onMouseDown={[Function]}
               onMouseUp={[Function]}
+              title="Copy the value of 'URI' to the clipboard"
               type="button"
             >
               <span
@@ -1192,8 +1206,8 @@ exports[`lib/monitoring/requestpanel/request > should render a body link 1`] = `
             className="prism-code language-json"
             style={
               {
-                "backgroundColor": "#1E1E1E",
-                "color": "#9CDCFE",
+                "backgroundColor": "#ffffff",
+                "color": "#000000",
               }
             }
           >
@@ -1202,7 +1216,7 @@ exports[`lib/monitoring/requestpanel/request > should render a body link 1`] = `
               style={
                 {
                   "backgroundColor": undefined,
-                  "color": "#9CDCFE",
+                  "color": "#000000",
                 }
               }
             >
