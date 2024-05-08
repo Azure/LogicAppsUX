@@ -1,3 +1,4 @@
+import { useState } from 'react';
 import { RawValue } from './raw';
 import type { ValueProps } from './types';
 import type { FormatDateOptions } from 'react-intl';
@@ -10,14 +11,20 @@ const options: FormatDateOptions = {
   minute: 'numeric',
   month: 'numeric',
   second: 'numeric',
-  timeZone: 'UTC',
   year: 'numeric',
 };
 
 export const DateTimeValue: React.FC<ValueProps> = (props) => {
   const { value } = props;
+  const [showUTC, toggleUTC] = useState(false);
   const intl = useIntl();
-  const valueAsString = intl.formatDate(value, options);
+  const localTimeLabel = intl.formatMessage({
+    defaultMessage: 'Local Time',
+    id: 'ca7S+o',
+    description: 'Text for local time',
+  });
+  const valueAsString = `${intl.formatDate(value, options)} (${localTimeLabel})`;
+  const valueAsUTCString = `${intl.formatDate(value, { ...options, timeZone: 'UTC' })} (UTC)`;
 
-  return <RawValue {...props} value={valueAsString} />;
+  return <RawValue {...props} value={showUTC ? valueAsUTCString : valueAsString} utcProps={{ showUTC, toggleUTC }} />;
 };

@@ -17,6 +17,7 @@ const styles: Partial<IButtonStyles> = {
   },
   root: {
     border: 'none',
+    marginRight: '8px',
   },
   rootHovered: {
     border: 'none',

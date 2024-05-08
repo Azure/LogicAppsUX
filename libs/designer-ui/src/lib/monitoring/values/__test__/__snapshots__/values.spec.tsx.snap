@@ -77,7 +77,7 @@ exports[`ui/monitoring/values/value > should render a decimal value 1`] = `
         className="buttons"
       >
         <button
-          aria-label="Select all text in display-name"
+          aria-label="Select all text in 'display-name'"
           className="ms-Button ms-Button--icon root-110"
           data-is-focusable={true}
           onClick={[Function]}
@@ -86,6 +86,7 @@ exports[`ui/monitoring/values/value > should render a decimal value 1`] = `
           onKeyUp={[Function]}
           onMouseDown={[Function]}
           onMouseUp={[Function]}
+          title="Select all text in 'display-name'"
           type="button"
         >
           <span
@@ -116,6 +117,7 @@ exports[`ui/monitoring/values/value > should render a decimal value 1`] = `
           onKeyUp={[Function]}
           onMouseDown={[Function]}
           onMouseUp={[Function]}
+          title="Copy the value of 'display-name' to the clipboard"
           type="button"
         >
           <span
@@ -141,8 +143,8 @@ exports[`ui/monitoring/values/value > should render a decimal value 1`] = `
         className="prism-code language-json"
         style={
           {
-            "backgroundColor": "#1E1E1E",
-            "color": "#9CDCFE",
+            "backgroundColor": "#ffffff",
+            "color": "#000000",
           }
         }
       >
@@ -151,7 +153,7 @@ exports[`ui/monitoring/values/value > should render a decimal value 1`] = `
           style={
             {
               "backgroundColor": undefined,
-              "color": "#9CDCFE",
+              "color": "#000000",
             }
           }
         >
@@ -549,7 +551,7 @@ exports[`ui/monitoring/values/value > should render a number value 1`] = `
         className="buttons"
       >
         <button
-          aria-label="Select all text in display-name"
+          aria-label="Select all text in 'display-name'"
           className="ms-Button ms-Button--icon root-110"
           data-is-focusable={true}
           onClick={[Function]}
@@ -558,6 +560,7 @@ exports[`ui/monitoring/values/value > should render a number value 1`] = `
           onKeyUp={[Function]}
           onMouseDown={[Function]}
           onMouseUp={[Function]}
+          title="Select all text in 'display-name'"
           type="button"
         >
           <span
@@ -588,6 +591,7 @@ exports[`ui/monitoring/values/value > should render a number value 1`] = `
           onKeyUp={[Function]}
           onMouseDown={[Function]}
           onMouseUp={[Function]}
+          title="Copy the value of 'display-name' to the clipboard"
           type="button"
         >
           <span
@@ -613,8 +617,8 @@ exports[`ui/monitoring/values/value > should render a number value 1`] = `
         className="prism-code language-json"
         style={
           {
-            "backgroundColor": "#1E1E1E",
-            "color": "#9CDCFE",
+            "backgroundColor": "#ffffff",
+            "color": "#000000",
           }
         }
       >
@@ -623,7 +627,7 @@ exports[`ui/monitoring/values/value > should render a number value 1`] = `
           style={
             {
               "backgroundColor": undefined,
-              "color": "#9CDCFE",
+              "color": "#000000",
             }
           }
         >
@@ -662,7 +666,7 @@ exports[`ui/monitoring/values/value > should render a raw value 1`] = `
         className="buttons"
       >
         <button
-          aria-label="Select all text in raw"
+          aria-label="Select all text in 'raw'"
           className="ms-Button ms-Button--icon root-110"
           data-is-focusable={true}
           onClick={[Function]}
@@ -671,6 +675,7 @@ exports[`ui/monitoring/values/value > should render a raw value 1`] = `
           onKeyUp={[Function]}
           onMouseDown={[Function]}
           onMouseUp={[Function]}
+          title="Select all text in 'raw'"
           type="button"
         >
           <span
@@ -701,6 +706,7 @@ exports[`ui/monitoring/values/value > should render a raw value 1`] = `
           onKeyUp={[Function]}
           onMouseDown={[Function]}
           onMouseUp={[Function]}
+          title="Copy the value of 'raw' to the clipboard"
           type="button"
         >
           <span
@@ -726,8 +732,8 @@ exports[`ui/monitoring/values/value > should render a raw value 1`] = `
         className="prism-code language-json"
         style={
           {
-            "backgroundColor": "#1E1E1E",
-            "color": "#9CDCFE",
+            "backgroundColor": "#ffffff",
+            "color": "#000000",
           }
         }
       >
@@ -736,7 +742,7 @@ exports[`ui/monitoring/values/value > should render a raw value 1`] = `
           style={
             {
               "backgroundColor": undefined,
-              "color": "#9CDCFE",
+              "color": "#000000",
             }
           }
         >
@@ -775,7 +781,7 @@ exports[`ui/monitoring/values/value > should render an XML value 1`] = `
         className="buttons"
       >
         <button
-          aria-label="Select all text in XML"
+          aria-label="Select all text in 'XML'"
           className="ms-Button ms-Button--icon root-110"
           data-is-focusable={true}
           onClick={[Function]}
@@ -784,6 +790,7 @@ exports[`ui/monitoring/values/value > should render an XML value 1`] = `
           onKeyUp={[Function]}
           onMouseDown={[Function]}
           onMouseUp={[Function]}
+          title="Select all text in 'XML'"
           type="button"
         >
           <span
@@ -814,6 +821,7 @@ exports[`ui/monitoring/values/value > should render an XML value 1`] = `
           onKeyUp={[Function]}
           onMouseDown={[Function]}
           onMouseUp={[Function]}
+          title="Copy the value of 'XML' to the clipboard"
           type="button"
         >
           <span
@@ -839,8 +847,8 @@ exports[`ui/monitoring/values/value > should render an XML value 1`] = `
         className="prism-code language-json"
         style={
           {
-            "backgroundColor": "#1E1E1E",
-            "color": "#9CDCFE",
+            "backgroundColor": "#ffffff",
+            "color": "#000000",
           }
         }
       >
@@ -849,7 +857,7 @@ exports[`ui/monitoring/values/value > should render an XML value 1`] = `
           style={
             {
               "backgroundColor": undefined,
-              "color": "#9CDCFE",
+              "color": "#000000",
             }
           }
         >

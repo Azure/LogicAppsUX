@@ -992,6 +992,9 @@ importers:
       '@types/dompurify':
         specifier: 3.0.5
         version: 3.0.5
+      timezone-mock:
+        specifier: ^1.3.6
+        version: 1.3.6
 
   libs/logic-apps-shared:
     dependencies:
@@ -22637,6 +22640,10 @@ packages:
     engines: {node: '>=0.6.0'}
     dependencies:
       setimmediate: 1.0.5
+    dev: true
+
+  /timezone-mock@1.3.6:
+    resolution: {integrity: sha512-YcloWmZfLD9Li5m2VcobkCDNVaLMx8ohAb/97l/wYS3m+0TIEK5PFNMZZfRcusc6sFjIfxu8qcJT0CNnOdpqmg==}
     dev: true
 
   /tiny-invariant@1.3.1:
