@@ -30,7 +30,10 @@ jobs:
               - recursive: true
                 args: [--frozen-lockfile, --strict-peer-dependencies]   
 
-        - run: pnpm turbo run test:lib --cache-dir=.turbo 
+        - name: Run lib tests
+          run: pnpm turbo run test:lib --cache-dir=.turbo
+        - name: Run extension tests
+          run: pnpm turbo run test:extension-unit --cache-dir=.turbo
         - name: Create code coverage report
           run: |
             dotnet tool install -g dotnet-reportgenerator-globaltool
