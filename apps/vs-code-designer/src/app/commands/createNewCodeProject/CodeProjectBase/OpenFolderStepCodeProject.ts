@@ -8,6 +8,7 @@ import type { IProjectWizardContext } from '@microsoft/vscode-extension-logic-ap
 import { OpenBehavior } from '@microsoft/vscode-extension-logic-apps';
 import * as fs from 'fs';
 import { commands, Uri, workspace } from 'vscode';
+import { extensionCommand } from '../../../../constants';
 
 export class OpenFolderStepCodeProject extends AzureWizardExecuteStep<IProjectWizardContext> {
   public priority = 250;
@@ -39,7 +40,11 @@ export class OpenFolderStepCodeProject extends AzureWizardExecuteStep<IProjectWi
       workspace.updateWorkspaceFolders(openFolders.length, 0, { uri: uri });
     } else {
       // Open folder using executeCommand method of commands object with vscode.openFolder command
-      await commands.executeCommand('vscode.openFolder', uri, context.openBehavior === OpenBehavior.openInNewWindow /* forceNewWindow */);
+      await commands.executeCommand(
+        extensionCommand.vscodeOpenFolder,
+        uri,
+        context.openBehavior === OpenBehavior.openInNewWindow /* forceNewWindow */
+      );
     }
   }
 
