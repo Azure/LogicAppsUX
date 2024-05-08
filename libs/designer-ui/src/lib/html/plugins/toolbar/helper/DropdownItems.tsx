@@ -1,7 +1,8 @@
 import { css, useTheme } from '@fluentui/react';
 import type { MutableRefObject, RefObject } from 'react';
 import { createContext, useEffect, useMemo, useCallback, useState } from 'react';
-import type { DropdownItemHTMLElement } from './DropdownItemElement';
+
+type DropdownItemHTMLElement = HTMLButtonElement | HTMLInputElement;
 
 interface DropdownItemsProps {
   children: React.ReactNode;
