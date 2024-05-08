@@ -13,7 +13,7 @@ describe('lib/monitoring/retrypanel', () => {
     setIconOptions({
       disableWarnings: true,
     });
-    timezoneMock.register('UTC');
+    timezoneMock.register('Etc/GMT-4');
   });
 
   afterAll(() => {
