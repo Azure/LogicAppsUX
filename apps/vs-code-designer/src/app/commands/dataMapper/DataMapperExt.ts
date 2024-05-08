@@ -8,16 +8,24 @@ import type { MapDefinitionData } from '@microsoft/vscode-extension-logic-apps';
 import * as yaml from 'js-yaml';
 import * as path from 'path';
 import { Uri, ViewColumn, window } from 'vscode';
+import { localize } from '../../../localize';
 
 export default class DataMapperExt {
-  public static async openDataMapperPanel(dataMapName: string, context: IActionContext, mapDefinitionData?: MapDefinitionData) {
-    const workflowFolder = ext.logicAppWorkspace;
-
-    if (workflowFolder) {
-      await startBackendRuntime(workflowFolder, context);
-
-      DataMapperExt.createOrShow(dataMapName, mapDefinitionData);
-    }
+  public static async openDataMapperPanel(context: IActionContext, dataMapName?: string, mapDefinitionData?: MapDefinitionData) {
+    await startBackendRuntime(ext.logicAppWorkspace, context);
+    const name =
+      dataMapName ??
+      (await context.ui.showInputBox({
+        placeHolder: localize('dataMapName', 'Data Map name'),
+        prompt: localize('dataMapNamePrompt', 'Enter a name for your Data Map'),
+        validateInput: (value: string): string | undefined => {
+          if (!value || value.length === 0) {
+            return localize('projectNameEmpty', 'Data Map name cannot be empty');
+          }
+          return undefined;
+        },
+      }));
+    DataMapperExt.createOrShow(name, mapDefinitionData);
   }
 
   public static createOrShow(dataMapName: string, mapDefinitionData?: MapDefinitionData) {

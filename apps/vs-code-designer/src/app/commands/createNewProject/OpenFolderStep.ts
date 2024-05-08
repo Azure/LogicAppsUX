@@ -6,6 +6,7 @@ import { AzureWizardExecuteStep } from '@microsoft/vscode-azext-utils';
 import type { IProjectWizardContext } from '@microsoft/vscode-extension-logic-apps';
 import { OpenBehavior } from '@microsoft/vscode-extension-logic-apps';
 import { commands, Uri, workspace } from 'vscode';
+import { extensionCommand } from '../../../constants';
 
 export class OpenFolderStep extends AzureWizardExecuteStep<IProjectWizardContext> {
   public priority = 250;
@@ -20,7 +21,11 @@ export class OpenFolderStep extends AzureWizardExecuteStep<IProjectWizardContext
     if (context.openBehavior === OpenBehavior.addToWorkspace) {
       workspace.updateWorkspaceFolders(openFolders.length, 0, { uri: uri });
     } else {
-      await commands.executeCommand('vscode.openFolder', uri, context.openBehavior === OpenBehavior.openInNewWindow /* forceNewWindow */);
+      await commands.executeCommand(
+        extensionCommand.vscodeOpenFolder,
+        uri,
+        context.openBehavior === OpenBehavior.openInNewWindow /* forceNewWindow */
+      );
     }
   }
 
