@@ -1,4 +1,11 @@
 # Logic Apps Designer
+### [4.13.6](https://github.com/Azure/LogicAppsUX/compare/v4.13.5...v4.13.6) (2024-05-08)
+
+
+### Bug Fixes
+
+* **Designer:** Revert - Updated HTML Editor to support newline characters ([#4808](https://github.com/Azure/LogicAppsUX/issues/4808)) ([2bab271](https://github.com/Azure/LogicAppsUX/commit/2bab271590b32f0f9543428a164e6257e9114811)), closes [#4635](https://github.com/Azure/LogicAppsUX/issues/4635)
+
 ### [4.13.5](https://github.com/Azure/LogicAppsUX/compare/v4.13.4...v4.13.5) (2024-05-08)
 
 ### [4.13.4](https://github.com/Azure/LogicAppsUX/compare/v4.13.3...v4.13.4) (2024-05-06)
