@@ -52,6 +52,11 @@
                 "coverage/**"
             ]
         },
+        "test:extension-unit": {
+            "outputs": [
+                "coverage/**"
+            ]
+        },
         "vscode:designer:pack": {
             "cache": false,
             "dependsOn": [

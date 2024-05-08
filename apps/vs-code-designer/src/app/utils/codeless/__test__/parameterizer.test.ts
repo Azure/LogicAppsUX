@@ -27,7 +27,6 @@ describe('parameterizeConnection for ConnectionReferenceModel', () => {
         scheme: 'Key',
         parameter: "@appsetting('arm-connectionKey')",
       },
-      connectionProperties: null,
     };
 
     const parameters: any = {};
