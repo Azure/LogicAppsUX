@@ -173,12 +173,7 @@ export const BaseEditor = ({
 
   return (
     <>
-      <div
-        className={className ?? 'msla-editor-container'}
-        id={editorId}
-        ref={containerRef}
-        data-automation-id={dataAutomationId}
-      >
+      <div className={className ?? 'msla-editor-container'} id={editorId} ref={containerRef} data-automation-id={dataAutomationId}>
         {htmlEditor ? (
           <Toolbar
             isRawText={htmlEditor === 'raw-html'}
@@ -189,7 +184,12 @@ export const BaseEditor = ({
         ) : null}
         <TextPlugin
           contentEditable={
-            <ContentEditable className={css('editor-input', readonly && 'readonly')} ariaLabelledBy={labelId} ariaDescribedBy={id} title={placeholder} />
+            <ContentEditable
+              className={css('editor-input', readonly && 'readonly')}
+              ariaLabelledBy={labelId}
+              ariaDescribedBy={id}
+              title={placeholder}
+            />
           }
           placeholder={
             <span className="editor-placeholder" ref={placeholderRef}>
