@@ -64,58 +64,28 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Primitives;
 using Microsoft.Extensions.Logging;
 using Microsoft.Azure.Workflows.Scripting;
-
+using Newtonsoft.Json.Linq; 
+      
 /// <summary>
 /// Executes the inline csharp code.
 /// </summary>
 /// <param name="context">The workflow context.</param>
-public static async Task<Weather> Run(WorkflowContext context, ILogger log)
+/// <remarks> This is the entry-point to your code. The function signature should remain unchanged.</remarks> 
+public static async Task<Results> Run(WorkflowContext context, ILogger log)
 {
-  var outputs = (await context.GetActionResults("compose").ConfigureAwait(false)).Outputs;
+  var triggerOutputs = (await context.GetTriggerResults().ConfigureAwait(false)).Outputs; 
 
-  // Generate random temperature within a range based on the temperature scale
-  Random rnd = new Random();
-  var temperatureScale = outputs["temperatureScale"].ToString();
-  var currentTemp = temperatureScale == "Celsius" ? rnd.Next(1, 30) : rnd.Next(40, 90);
-  var lowTemp = currentTemp - 10;
-  var highTemp = currentTemp + 10;
-  var zipCode = (int) outputs["zipCode"];
+  log.LogInformation("Outputting results.");
 
-  log.LogInformation("Starting func_name with Zip Code: " + zipCode + " and Scale: " + temperatureScale);
-
-  // Create a Weather object with the temperature information
-  var weather = new Weather()
-  {
-    ZipCode = (int) outputs["zipCode"],
-    CurrentWeather = $"The current weather is {currentTemp} {temperatureScale}",
-    DayLow = $"The low for the day is {lowTemp} {temperatureScale}",
-    DayHigh = $"The high for the day is {highTemp} {temperatureScale}"
-  };
-
-  return weather;
+  return new Results 
+  { 
+    Outputs = triggerOutputs 
+  }; 
 }
 
-/// <summary>
-/// Represents the weather information.
-/// </summary>
-public class Weather
-{
-    /// <summary>
-    /// Gets or sets the zip code.
-    /// </summary>
-    public int ZipCode { get; set; }
-    /// <summary>
-    /// Gets or sets the current weather.
-    /// </summary>
-    public string CurrentWeather { get; set; }
-    /// <summary>
-    /// Gets or sets the low temperature for the day.
-    /// </summary>
-    public string DayLow { get; set; }
-    /// <summary>
-    /// Gets or sets the high temperature for the day.
-    /// </summary>
-    public string DayHigh { get; set; }
+public class Results 
+{ 
+  public JToken Outputs {get; set;} 
 }`;
     default:
       return '';
