@@ -170,7 +170,6 @@ export const BaseEditor = ({
 
   const id = useId('msla-described-by-message');
   const TextPlugin = htmlEditor === 'rich-html' ? RichTextPlugin : PlainTextPlugin;
-
   return (
     <>
       <div
