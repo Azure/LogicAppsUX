@@ -2,7 +2,7 @@
 import type { editor } from 'monaco-editor';
 import type { ExpressionEditorEvent } from '../../expressioneditor';
 import { ExpressionEditor } from '../../expressioneditor';
-import { useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useRef, useState } from 'react';
 import { TokenPickerMode, getWindowDimensions } from '../../tokenpicker';
 import type { ICalloutContentStyles, ISearchBox, PivotItem } from '@fluentui/react';
 import { Callout, DirectionalHint, SearchBox } from '@fluentui/react';
@@ -11,7 +11,6 @@ import { useIntl } from 'react-intl';
 import { TokenPickerSection } from '../../tokenpicker/tokenpickersection/tokenpickersection';
 import type { TokenGroup } from '../../tokenpicker/models/token';
 import type { GetValueSegmentHandler } from '../../tokenpicker/tokenpickersection/tokenpickeroption';
-import { useBoolean } from '@fluentui/react-hooks';
 
 export interface ConditionExpressionProps {
   editorId: string;
@@ -38,7 +37,7 @@ export function ConditionExpression({
   const [expressionEditorDragDistance, setExpressionEditorDragDistance] = useState(0);
   const [expressionEditorCurrentHeight, setExpressionEditorCurrentHeight] = useState(windowDimensions.height < 400 ? 50 : 100);
   const [_expressionEditorError, setExpressionEditorError] = useState<string>('');
-  const [isCalloutVisible, { toggle: toggleIsCalloutVisible }] = useBoolean(false);
+  const [isCalloutVisible, setIsCalloutVisible] = useState(false);
   const [searchQuery, setSearchQuery] = useState('');
   const [selectedKey, setSelectedKey] = useState<TokenPickerMode>(TokenPickerMode.EXPRESSION);
 
@@ -96,6 +95,19 @@ export function ConditionExpression({
     },
   };
 
+  const handleDraggingOut = useCallback(() => {
+    if (isDraggingExpressionEditor) {
+      setIsDraggingExpressionEditor(false);
+    }
+  }, [isDraggingExpressionEditor]);
+
+  const handleFocusExpression = useCallback(() => {
+    console.log('charlie', isCalloutVisible);
+    if (!isCalloutVisible) {
+      setIsCalloutVisible(true);
+    }
+  }, [isCalloutVisible]);
+
   // Pending things to do
   // 1.- on value change
   // 2.- z-index
@@ -103,16 +115,8 @@ export function ConditionExpression({
     <>
       <div
         id={`condition-expression-${editorId}`}
-        onMouseUp={() => {
-          if (isDraggingExpressionEditor) {
-            setIsDraggingExpressionEditor(false);
-          }
-        }}
-        onMouseLeave={() => {
-          if (isDraggingExpressionEditor) {
-            setIsDraggingExpressionEditor(false);
-          }
-        }}
+        onMouseUp={handleDraggingOut}
+        onMouseLeave={handleDraggingOut}
         onMouseMove={handleExpressionEditorMoveDistance}
       >
         <ExpressionEditor
@@ -126,7 +130,7 @@ export function ConditionExpression({
           setCurrentHeight={setExpressionEditorCurrentHeight}
           setExpressionEditorError={setExpressionEditorError}
           hideUTFExpressions={false}
-          onFocus={toggleIsCalloutVisible}
+          onFocus={handleFocusExpression}
         />
       </div>
       {isCalloutVisible && (
@@ -143,7 +147,7 @@ export function ConditionExpression({
             hostId: 'msla-layer-host',
           }}
           onDismiss={() => {
-            toggleIsCalloutVisible();
+            setIsCalloutVisible(false);
           }}
           styles={calloutStyles}
         >
